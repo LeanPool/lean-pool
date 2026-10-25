@@ -71,13 +71,13 @@ namespace ModularCurve
 
 open AlgebraicCurve
 
-def EisensteinQuotientInvariantsFiniteAt (p : ℕ) [NeZero p]
+def EisensteinQuotientInvariantsFiniteAt (p : ℕ)
     (inst : Module HeckeAlg (JZero p)) : Prop :=
   letI := inst
   EisensteinQuotientInvariantsFinite
     (G := AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (JZero p) (eisensteinIdeal p)
 
-def SpecializationSlot (p q : ℕ) [NeZero p] (inst : Module HeckeAlg (JZero p)) : Prop :=
+def SpecializationSlot (p q : ℕ) (inst : Module HeckeAlg (JZero p)) : Prop :=
   letI := inst
   SpecializationExists (K := ℚ) (L := AlgebraicClosure ℚ) p q (JZero p)
 

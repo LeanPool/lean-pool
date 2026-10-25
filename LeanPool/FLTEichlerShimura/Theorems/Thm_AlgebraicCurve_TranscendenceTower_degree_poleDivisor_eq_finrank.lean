@@ -138,7 +138,7 @@ p2m_export "AlgebraicCurve.Divisor" "degree degree_single principal smul_def smu
 end Divisor
 variable {D : Divisor K F}
 p2m_open_scoped "AlgebraicCurve.Divisor" in
-theorem Divisor.degree_nonneg_of_nonneg [IsCurveOver K F]
+theorem Divisor.degree_nonneg_of_nonneg
     {D : Divisor K F} (hD : ∀ v, 0 ≤ D v) : 0 ≤ Divisor.degree D := by
   rw [Divisor.degree_eq_sum_support]
   exact Finset.sum_nonneg fun v _ => mul_nonneg (hD v) (Int.natCast_nonneg _)
@@ -944,7 +944,7 @@ theorem range_lSpaceQuotientToAdeleBddQuotient {D₁ D₂ : Divisor K F} (hD : D
     rw [hβsub]; exact (adeleBdd D₁).neg_mem hγ
 
 
-theorem finrank_adeleBddSup_quotient [IsCurveOver K F] [Nonempty (Place K F)]
+theorem finrank_adeleBddSup_quotient [IsCurveOver K F]
     {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂) [hL : FiniteDimensional K (LSpace D₂)] :
     Module.Finite K (↥(adeleBdd D₂ ⊔ globalSub K F)
         ⧸ (adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂ ⊔ globalSub K F).subtype) ∧
@@ -1013,7 +1013,7 @@ theorem finrank_adeleBddSup_quotient [IsCurveOver K F] [Nonempty (Place K F)]
 
 section Index
 
-variable [IsCurveOver K F] [Nonempty (Place K F)]
+variable [IsCurveOver K F]
 
 theorem adeleBddSup_eq_of_degree_sub_ell_eq {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂)
     [FiniteDimensional K (LSpace D₂)]
@@ -1044,7 +1044,6 @@ end RiemannGenusReachedAt
 namespace RiemannGenusReachedAt
 p2m_open_scoped "AlgebraicCurve.RiemannGenusReachedAt" in
 private theorem _root_.AlgebraicCurve.RiemannGenusReachedAt.eq_of_ge [IsCurveOver K F]
-    [Nonempty (Place K F)]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀)
     {D : Divisor K F} (hD : D₀ ≤ D) :
@@ -1058,7 +1057,7 @@ private theorem _root_.AlgebraicCurve.RiemannGenusReachedAt.eq_of_ge [IsCurveOve
 end RiemannGenusReachedAt
 p2m_export "AlgebraicCurve" "RiemannGenusReachedAt.eq_of_ge"
 
-theorem adeleSpace_eq_of_genusReached [IsCurveOver K F] [Nonempty (Place K F)]
+theorem adeleSpace_eq_of_genusReached [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
     adeleSpace K F = adeleBdd D₀ ⊔ globalSub K F := by
@@ -1074,7 +1073,7 @@ theorem adeleSpace_eq_of_genusReached [IsCurveOver K F] [Nonempty (Place K F)]
   rw [← hsup]
   exact le_sup_left
 
-theorem indexOfSpecialty_eq_zero_of_genusReached [IsCurveOver K F] [Nonempty (Place K F)]
+theorem indexOfSpecialty_eq_zero_of_genusReached [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
     indexOfSpecialty D₀ = 0 := by
@@ -1086,7 +1085,7 @@ theorem indexOfSpecialty_eq_zero_of_genusReached [IsCurveOver K F] [Nonempty (Pl
 
 
 
-theorem gate_indexOfSpecialty_at_witness [IsCurveOver K F] [Nonempty (Place K F)]
+theorem gate_indexOfSpecialty_at_witness [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
     (indexOfSpecialty D₀ : ℤ) = 0 := by
@@ -1095,7 +1094,7 @@ theorem gate_indexOfSpecialty_at_witness [IsCurveOver K F] [Nonempty (Place K F)
   have h3 := indexOfSpecialty_eq_zero_of_genusReached h
   exact_mod_cast h3
 
-theorem gate_riemannInequality_of_genusReached [IsCurveOver K F] [Nonempty (Place K F)]
+theorem gate_riemannInequality_of_genusReached [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) (D : Divisor K F) :
     Divisor.degree D + 1 - γ ≤ (ell D : ℤ) := by
@@ -1275,7 +1274,7 @@ variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 section Finiteness
 
-variable [IsCurveOver K F] [Nonempty (Place K F)]
+variable [IsCurveOver K F]
   [FiniteDimensional K (LSpace (0 : Divisor K F))]
 
 theorem omegaSpace_finite_of_genusReached
@@ -1428,7 +1427,7 @@ theorem stichtenothGenusExists_of_bounded
   ⟨‹_›, ‹_›, exists_riemannGenusReachedAt_of_bounded hbdd⟩
 
 
-theorem indexOfSpecialty_sub_of_ge [IsCurveOver K F] [Nonempty (Place K F)]
+theorem indexOfSpecialty_sub_of_ge [IsCurveOver K F]
     {D₀ D : Divisor K F} (hD : D₀ ≤ D)
     [FiniteDimensional K (LSpace D)]
     [hfin : Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F D₀)] :
@@ -1472,7 +1471,7 @@ theorem indexOfSpecialty_sub_of_ge [IsCurveOver K F] [Nonempty (Place K F)]
       rw [hiD, hi0]; exact_mod_cast hdimCA
     linarith [hdimBA, hcast]
 
-theorem degreeSub_ell_le_of_indexFinite [IsCurveOver K F] [Nonempty (Place K F)]
+theorem degreeSub_ell_le_of_indexFinite [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {D₀ : Divisor K F}
     (hfin : Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F D₀))
@@ -1489,7 +1488,7 @@ theorem degreeSub_ell_le_of_indexFinite [IsCurveOver K F] [Nonempty (Place K F)]
   have hi0 : (0 : ℤ) ≤ indexOfSpecialty (D ⊔ D₀) := Int.natCast_nonneg _
   linarith
 
-theorem riemannGenusBounded_of_indexFinite [IsCurveOver K F] [Nonempty (Place K F)]
+theorem riemannGenusBounded_of_indexFinite [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (hfin : IndexOfSpecialtyFinite K F) :
     RiemannGenusBounded K F := by
@@ -1525,13 +1524,13 @@ theorem stichtenothGenusExists_iff_indexFinite
   ⟨indexOfSpecialtyFinite_of_stichtenothGenusExists,
     stichtenothGenusExists_of_indexFinite⟩
 
-theorem gate_indexOfSpecialty_engine_at_witness [IsCurveOver K F] [Nonempty (Place K F)]
+theorem gate_indexOfSpecialty_engine_at_witness [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
     (indexOfSpecialty D₀ : ℤ) = 0 := by
   exact_mod_cast indexOfSpecialty_eq_zero_of_genusReached h
 
-theorem gate_stichtenothGenus_le_of_indexFinite [IsCurveOver K F] [Nonempty (Place K F)]
+theorem gate_stichtenothGenus_le_of_indexFinite [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {D₀ : Divisor K F}
     (hfin : Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F D₀))
@@ -1545,7 +1544,7 @@ theorem gate_riemannGenusBounded_of_reachedAt
     RiemannGenusBounded K F :=
   ⟨γ - 1, h.isMax⟩
 
-theorem gate_indexOfSpecialtyFinite_at_zero [IsCurveOver K F] [Nonempty (Place K F)]
+theorem gate_indexOfSpecialtyFinite_at_zero [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
     Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F (0 : Divisor K F)) :=
@@ -1699,7 +1698,6 @@ p2m_export "AlgebraicCurve" "PoleDivisorPackage.ell_nsmul_sub_pos"
 namespace PoleDivisorPackage
 p2m_open_scoped "AlgebraicCurve.PoleDivisorPackage" in
 private theorem _root_.AlgebraicCurve.PoleDivisorPackage.degree_sub_ell_le [IsCurveOver K F]
-    [Nonempty (Place K F)]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (P : PoleDivisorPackage K F) (D : Divisor K F) :
     Divisor.degree D - ell D ≤ (P.n : ℤ) * (P.c - 1) := by
@@ -1747,7 +1745,7 @@ private theorem _root_.AlgebraicCurve.PoleDivisorPackage.degree_sub_ell_le [IsCu
 end PoleDivisorPackage
 p2m_export "AlgebraicCurve" "PoleDivisorPackage.degree_sub_ell_le"
 
-theorem riemannGenusBounded_of_poleDivisorPackage [IsCurveOver K F] [Nonempty (Place K F)]
+theorem riemannGenusBounded_of_poleDivisorPackage [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (P : PoleDivisorPackage K F) :
     RiemannGenusBounded K F :=
@@ -1779,7 +1777,7 @@ theorem stichtenothGenusExists_of_hasPoleDivisorPackage [IsCurveOver K F]
   stichtenothGenusExists_of_poleDivisorPackage h.some
 
 theorem gate_stichtenothGenus_le_of_poleDivisorPackage [IsCurveOver K F]
-    [Nonempty (Place K F)] [FiniteDimensional K (LSpace (0 : Divisor K F))]
+    [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (P : PoleDivisorPackage K F)
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
     γ ≤ (P.n : ℤ) * (P.c - 1) + 1 := by
@@ -2078,7 +2076,7 @@ theorem gate_degree_pullback_single_of_deg_eq [HasPrincipalDivisors K F]
   rw [Divisor.degree_pullback, Divisor.degree_single, hd]; ring
 
 theorem gate_stichtenothGenus_le_of_transcendenceTower [IsCurveOver K F]
-    [Nonempty (Place K F)] [FiniteDimensional K (LSpace (0 : Divisor K F))]
+    [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (T : TranscendenceTower K E F) (IB : IntegralBasisInLSpace T)
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
     γ ≤ (Module.finrank E F : ℤ) * (IB.c - 1) + 1 :=

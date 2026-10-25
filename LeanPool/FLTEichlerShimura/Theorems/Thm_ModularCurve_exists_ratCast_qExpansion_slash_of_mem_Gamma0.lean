@@ -237,7 +237,7 @@ theorem mul_inv_mem_Gamma1 {γ γ' : SL(2, ℤ)} (hγ : γ ∈ Gamma0 M) (hγ' :
   · rw [zero_mul, zero_add, ← h00, mul_comm, hdet]
   · simp
 
-theorem slash_eq_of_apply_eq [NeZero M] (f : ModularForm Γ₁(M) k) {γ γ' : SL(2, ℤ)}
+theorem slash_eq_of_apply_eq (f : ModularForm Γ₁(M) k) {γ γ' : SL(2, ℤ)}
     (hγ : γ ∈ Gamma0 M) (hγ' : γ' ∈ Gamma0 M)
     (h : ((γ 1 1 : ℤ) : ZMod M) = ((γ' 1 1 : ℤ) : ZMod M)) :
     (⇑f : ℍ → ℂ) ∣[k] γ = (⇑f : ℍ → ℂ) ∣[k] γ' := by

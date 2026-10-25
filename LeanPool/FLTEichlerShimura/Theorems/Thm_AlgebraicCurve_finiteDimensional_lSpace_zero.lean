@@ -71,7 +71,7 @@ open AlgebraicCurve
 
 theorem solution
     (K : Type u) (F : Type v) [Field K] [Field F] [Algebra K F]
-    [IsCurveOver K F] [Algebra.EssFiniteType K F] [Nonempty (Place K F)] :
+    [IsCurveOver K F] [Nonempty (Place K F)] :
     FiniteDimensional K (LSpace (0 : Divisor K F)) := by
   classical
   have hord : ∀ f : F, f ∈ LSpace (0 : Divisor K F) → f ≠ 0 →
@@ -164,7 +164,7 @@ noncomputable section
 universe u v
 theorem AlgebraicCurve.finiteDimensional_lSpace_zero
     (K : Type u) (F : Type v) [Field K] [Field F] [Algebra K F]
-    [IsCurveOver K F] [Algebra.EssFiniteType K F] [Nonempty (Place K F)] :
+    [IsCurveOver K F] [Nonempty (Place K F)] :
     FiniteDimensional K (LSpace (0 : Divisor K F)) :=
   solution K F
 end

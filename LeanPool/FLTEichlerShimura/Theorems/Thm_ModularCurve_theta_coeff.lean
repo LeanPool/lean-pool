@@ -158,7 +158,7 @@ namespace PhiGen
 p2m_export "ModularCurve.PhiGen" "sum_qTwist_coeff"
 end ModularCurve.PhiGen
 p2m_open_scoped "ModularCurve ModularCurve.PhiGen" in
-private theorem ModularCurve.PhiGen.weightTwo_coeff_sum_slots {K : Type*} [Field K] [Algebra ℚ K]
+private theorem ModularCurve.PhiGen.weightTwo_coeff_sum_slots {K : Type*} [Field K]
     (ℓ : ℕ) [NeZero ℓ] (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) ℓ) (f : LaurentSeries K) (n : ℤ) :
     ((ℓ * ℓ) • qExpand K (ℓ * ℓ) f + ∑ b ∈ Finset.range ℓ, qTwist (ζ ^ b) f).coeff ((ℓ : ℤ) * n) =
       (ℓ : K) * (f.coeff ((ℓ : ℤ) * n) + if (ℓ : ℤ) ∣ n then (ℓ : K) * f.coeff (n / ℓ) else 0) := by
@@ -203,7 +203,7 @@ private theorem ModularCurve.PhiGen.weightTwo_coeff_sum_slots_inv {K : Type*} [F
 
 p2m_open_scoped "ModularCurve ModularCurve.PhiGen" in
 private theorem ModularCurve.PhiGen.weightTwo_coeff_sum_slots_not_dvd {K : Type*} [Field K]
-    [Algebra ℚ K] (ℓ : ℕ) [NeZero ℓ] (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) ℓ) (f : LaurentSeries K)
+    (ℓ : ℕ) [NeZero ℓ] (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) ℓ) (f : LaurentSeries K)
     {k : ℤ} (hk : ¬ (ℓ : ℤ) ∣ k) :
     ((ℓ * ℓ) • qExpand K (ℓ * ℓ) f + ∑ b ∈ Finset.range ℓ, qTwist (ζ ^ b) f).coeff k = 0 := by
   rw [HahnSeries.coeff_add, HahnSeries.coeff_nsmul, Pi.smul_apply, sum_qTwist_coeff ℓ ζ hζ f,

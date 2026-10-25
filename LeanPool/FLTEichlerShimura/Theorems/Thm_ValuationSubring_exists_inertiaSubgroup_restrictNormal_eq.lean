@@ -70,7 +70,7 @@ local notation "Qb" => AlgebraicClosure ℚ
 
 namespace InertiaRestrict
 
-theorem inertia_restrictNormal (L : IntermediateField ℚ Qb) [FiniteDimensional ℚ L]
+theorem inertia_restrictNormal (L : IntermediateField ℚ Qb)
     [Normal ℚ L] (A : ValuationSubring Qb) (σ : A.inertiaSubgroup ℚ) :
     ∃ τ : (A.comap (algebraMap L Qb)).inertiaSubgroup ℚ,
       ((τ : (A.comap (algebraMap L Qb)).decompositionSubgroup ℚ) : L ≃ₐ[ℚ] L)
@@ -132,7 +132,7 @@ theorem inertia_restrictNormal (L : IntermediateField ℚ Qb) [FiniteDimensional
 end InertiaRestrict
 
 theorem solution
-    (L : IntermediateField ℚ (AlgebraicClosure ℚ)) [FiniteDimensional ℚ L] [Normal ℚ L]
+    (L : IntermediateField ℚ (AlgebraicClosure ℚ)) [Normal ℚ L]
     (A : ValuationSubring (AlgebraicClosure ℚ)) (σ : A.inertiaSubgroup ℚ) :
     ∃ τ : (A.comap (algebraMap L (AlgebraicClosure ℚ))).inertiaSubgroup ℚ,
       ((τ : (A.comap (algebraMap L (AlgebraicClosure ℚ))).decompositionSubgroup ℚ) : L ≃ₐ[ℚ] L)
@@ -149,7 +149,7 @@ end privateSection
 public section publicSection
 
 theorem ValuationSubring.exists_inertiaSubgroup_restrictNormal_eq
-    (L : IntermediateField ℚ (AlgebraicClosure ℚ)) [FiniteDimensional ℚ L] [Normal ℚ L]
+    (L : IntermediateField ℚ (AlgebraicClosure ℚ)) [Normal ℚ L]
     (A : ValuationSubring (AlgebraicClosure ℚ)) (σ : A.inertiaSubgroup ℚ) :
     ∃ τ : (A.comap (algebraMap L (AlgebraicClosure ℚ))).inertiaSubgroup ℚ,
       ((τ : (A.comap (algebraMap L (AlgebraicClosure ℚ))).decompositionSubgroup ℚ) : L ≃ₐ[ℚ] L)

@@ -978,7 +978,7 @@ open ModularForm
 
 variable {N : ℕ} {K : IntermediateField ℚ ℂ}
 
-private lemma kPole_fricke [NeZero N] {fricke : (Fin 2 → ZMod N) → ℍ → ℂ}
+private lemma kPole_fricke {fricke : (Fin 2 → ZMod N) → ℍ → ℂ}
     {v : Fin 2 → ZMod N}
     (hmd : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fricke v))
     (hper : Function.Periodic ((fricke v * ModularForm.discriminant ^ 1) ∘

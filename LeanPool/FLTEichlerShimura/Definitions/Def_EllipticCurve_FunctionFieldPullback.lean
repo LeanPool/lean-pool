@@ -314,15 +314,15 @@ theorem pointHom_mk (Q : (W⁄(W⁄K).FunctionField).Point) (hQ : Q ≠ 0) (g : 
     pointHom Q hQ (CoordinateRing.mk (W⁄K) g) = g.eval₂ (aeval (R := K) Q.xc).toRingHom Q.yc :=
   AdjoinRoot.lift_mk (eval₂_polynomial_of_point Q hQ) g
 
-@[simp] theorem pointHom_mk_C_C (Q : (W⁄(W⁄K).FunctionField).Point) (hQ : Q ≠ 0) (c : K) :
+theorem pointHom_mk_C_C (Q : (W⁄(W⁄K).FunctionField).Point) (hQ : Q ≠ 0) (c : K) :
     pointHom Q hQ (CoordinateRing.mk (W⁄K) (C (C c))) = algebraMap K _ c :=
   (pointHom Q hQ).commutes c
 
-@[simp] theorem pointHom_mk_C_X (Q : (W⁄(W⁄K).FunctionField).Point) (hQ : Q ≠ 0) :
+theorem pointHom_mk_C_X (Q : (W⁄(W⁄K).FunctionField).Point) (hQ : Q ≠ 0) :
     pointHom Q hQ (CoordinateRing.mk (W⁄K) (C X)) = Q.xc := by
   rw [pointHom_mk, eval₂_C, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, aeval_X]
 
-@[simp] theorem pointHom_mk_Y (Q : (W⁄(W⁄K).FunctionField).Point) (hQ : Q ≠ 0) :
+theorem pointHom_mk_Y (Q : (W⁄(W⁄K).FunctionField).Point) (hQ : Q ≠ 0) :
     pointHom Q hQ (CoordinateRing.mk (W⁄K) Y) = Q.yc := by
   rw [pointHom_mk, eval₂_X]
 

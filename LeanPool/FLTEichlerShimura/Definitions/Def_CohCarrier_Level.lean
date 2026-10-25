@@ -479,7 +479,7 @@ theorem conjLowerMat_conjUpperMat [NeZero d] (A : SL(2, ℤ)) (hb : (d : ℤ) �
   fin_cases i <;> fin_cases j <;>
     simp [conjLowerMat, conjUpperMat, Int.ediv_mul_cancel hb, Int.mul_ediv_cancel _ hd]
 
-theorem Gamma_subgroupOf_le_range_iotaDeg [NeZero M'] [NeZero d] (h : LevelLE M M' H H' d) :
+theorem Gamma_subgroupOf_le_range_iotaDeg [NeZero d] (h : LevelLE M M' H H' d) :
     (Gamma (M' * d)).subgroupOf (GammaH M H) ≤ (iotaDeg M M' H H' d h).range := by
   intro γ hγ
   rw [Subgroup.mem_subgroupOf, Gamma_mem] at hγ

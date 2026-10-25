@@ -82,7 +82,7 @@ abbrev FullKernelIsRootAt (N : ℕ) [NeZero N] : Prop :=
       (Int.castRingHom (HahnSeries ℚ (AlgebraicClosure ℚ))) W.j)).IsRoot
       (W.fullKernelQuotient Q N).j
 
-abbrev FullKernelInjAt (N : ℕ) [NeZero N] : Prop :=
+abbrev FullKernelInjAt (N : ℕ) : Prop :=
   ∀ [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
     (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
     (_ : Transcendental ℚ W.j) (Q Q' : W.toAffine.Point)
@@ -94,7 +94,7 @@ abbrev FullKernelInjAt (N : ℕ) [NeZero N] : Prop :=
       (W.fullKernelQuotient Q N).j = (W.fullKernelQuotient Q' N).j),
     AddSubgroup.zmultiples Q = AddSubgroup.zmultiples Q'
 
-abbrev FullKernelDiscAt (N : ℕ) [NeZero N] : Prop :=
+abbrev FullKernelDiscAt (N : ℕ) : Prop :=
   ∀ {L : Type} [Field L] [DecidableEq L] [IsAlgClosed L], (2 : L) ≠ 0 →
     ∀ (W : WeierstrassCurve L) [W.IsElliptic] (Q : W.toAffine.Point),
       addOrderOf Q = N → (W.fullKernelQuotient Q N).Δ ≠ 0
@@ -103,7 +103,6 @@ attribute [local instance] isAlgClosed_H charZero_H
 
 open scoped Classical in
 theorem isElliptic_fullKernelQuotient_cycSubGen (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ}
-    [NeZero N]
     (hW3 : FullKernelDiscAt N) (G : CycSubH E N) :
     (E.fullKernelQuotient (cycSubGen E G) N).IsElliptic :=
   ⟨isUnit_iff_ne_zero.mpr (hW3 two_ne_zero E (cycSubGen E G) (addOrderOf_cycSubGen E G))⟩

@@ -31,7 +31,6 @@ import Mathlib.NumberTheory.ModularForms.JacobiTheta.TwoVariable
 import Mathlib.RingTheory.Int.Basic
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Topology.Separation.CompletelyRegular
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Modularity of the weight-one Eisenstein series E₁(1,χ₋₃)
@@ -323,9 +322,6 @@ lemma hexThetaTerm_swap (σ : ℂ) (x y : ℤ) :
   push_cast
   ring
 
-lemma hexThetaTerm_zero_zero (σ : ℂ) : hexThetaTerm σ (0, 0) = 1 := by
-  simp [hexThetaTerm]
-
 lemma norm_hexThetaTerm (σ : ℂ) (p : ℤ × ℤ) :
     ‖hexThetaTerm σ p‖ =
       rexp (-(2 * π * σ.im) * ((p.1 : ℝ) ^ 2 + (p.1 : ℝ) * (p.2 : ℝ) + (p.2 : ℝ) ^ 2)) := by
@@ -353,10 +349,6 @@ lemma summable_norm_cexp_neg_quadratic {a : ℂ} (ha : 0 < a.re) (b : ℂ) :
   have hZ := hO.comp_tendsto Int.tendsto_coe_cofinite
   simp only [Function.comp_def, Complex.ofReal_intCast] at hZ
   exact summable_of_isBigO (Real.summable_abs_int_rpow one_lt_two) hZ
-
-lemma summable_cexp_neg_quadratic {a : ℂ} (ha : 0 < a.re) (b : ℂ) :
-    Summable fun n : ℤ => cexp (-π * a * (n : ℂ) ^ 2 + 2 * π * b * (n : ℂ)) :=
-  (summable_norm_cexp_neg_quadratic ha b).of_norm
 
 lemma summable_rexp_neg_mul_int_sq {c : ℝ} (hc : 0 < c) :
     Summable fun n : ℤ => rexp (-(c * (n : ℝ) ^ 2)) := by
@@ -1365,8 +1357,6 @@ namespace AnalyticCore
 open Finset FLT.EisensteinWeightOne
 
 private def _root_.S17E1.FLT.AnalyticCore.hexForm (x y : ℤ) : ℤ := x * x + x * y + y * y
-
-p2m_export "S17E1.FLT.AnalyticCore" "hexForm"
 
 theorem four_mul_hexForm (x y : ℤ) :
     4 * hexForm x y = (2 * x + y) ^ 2 + 3 * y ^ 2 := by

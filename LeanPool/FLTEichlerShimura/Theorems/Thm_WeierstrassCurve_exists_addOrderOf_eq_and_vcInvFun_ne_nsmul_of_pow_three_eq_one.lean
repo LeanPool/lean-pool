@@ -89,25 +89,27 @@ namespace NonScalar
 
 variable {L : Type*} [Field L]
 
-def xco [DecidableEq L] {W : WeierstrassCurve L} : W.toAffine.Point → Option L
+def xco {W : WeierstrassCurve L} : W.toAffine.Point → Option L
   | 0 => none
   | .some x _ _ => some x
 
-@[scoped simp] theorem xco_zero [DecidableEq L] {W : WeierstrassCurve L} :
-    xco (0 : W.toAffine.Point) = none := rfl
-@[scoped simp] theorem xco_some [DecidableEq L] {W : WeierstrassCurve L} {x y : L} (h :
+@[scoped simp] theorem xco_zero {W : WeierstrassCurve L} :
+    xco (0 : W.toAffine.Point) = none := open scoped Classical in rfl
+@[scoped simp] theorem xco_some {W : WeierstrassCurve L} {x y : L} (h :
   W.toAffine.Nonsingular x y) :
-    xco (Point.some x y h) = some x := rfl
+    xco (Point.some x y h) = some x := open scoped Classical in rfl
 
-theorem xco_neg [DecidableEq L] {W : WeierstrassCurve L} (P : W.toAffine.Point) :
+theorem xco_neg {W : WeierstrassCurve L} (P : W.toAffine.Point) :
     xco (-P) = xco P := by
+  classical
   rcases P with _ | ⟨x, y, h⟩
   · rfl
   · rw [Point.neg_some]; rfl
 
-theorem eq_or_eq_neg_of_xco_eq [DecidableEq L] {W : WeierstrassCurve L} {P Q : W.toAffine.Point}
+theorem eq_or_eq_neg_of_xco_eq {W : WeierstrassCurve L} {P Q : W.toAffine.Point}
     (hPQ : xco P = xco Q) :
     P = Q ∨ P = -Q := by
+  classical
   rcases P with _ | ⟨x, y, h⟩ <;> rcases Q with _ | ⟨x', y', h'⟩
   · exact Or.inl rfl
   · simp [xco] at hPQ
@@ -126,9 +128,10 @@ theorem eq_or_eq_neg_of_xco_eq [DecidableEq L] {W : WeierstrassCurve L} {P Q : W
     · exact Or.inl rfl
     · right; rw [Point.neg_some]
 
-theorem xco_eq_of_heq [DecidableEq L] {W₁ W₂ : WeierstrassCurve L} (e : W₁ = W₂)
+theorem xco_eq_of_heq {W₁ W₂ : WeierstrassCurve L} (e : W₁ = W₂)
     {P : W₁.toAffine.Point} {Q : W₂.toAffine.Point}
     (h : HEq P Q) : xco P = xco Q := by
+  classical
   subst e
   rw [eq_of_heq h]
 
@@ -141,9 +144,10 @@ theorem xco_castPt [DecidableEq L] {W₁ W₂ : WeierstrassCurve L} (e : W₁ = 
     xco (castPt e P) = xco P := by
   subst e; rfl
 
-theorem xco_vcInvFun [DecidableEq L] (u : Lˣ) (W : WeierstrassCurve L) (P : W.toAffine.Point) :
+theorem xco_vcInvFun (u : Lˣ) (W : WeierstrassCurve L) (P : W.toAffine.Point) :
     xco (Point.vcInvFun (⟨u, 0, 0, 0⟩ : VariableChange L) W.toAffine P) = (xco P).map (fun x =>
       ((u⁻¹ : Lˣ) : L) ^ 2 * x) := by
+  classical
   rcases P with _ | ⟨x, y, h⟩
   · rfl
   · change some _ = some _
@@ -236,7 +240,7 @@ end P2MWs13.NonScalar
 open P2MWs13.NonScalar in
 private theorem order_two_point_not_scalar
     {L : Type*} [Field L] [DecidableEq L] [CharZero L] [IsAlgClosed L]
-    (W : WeierstrassCurve L) [W.IsElliptic]
+    (W : WeierstrassCurve L)
     (B : L) (hWdef : W = ⟨0, 0, 0, 0, B⟩) (hB : B ≠ 0)
     (u : Lˣ) (hu1 : (u : L) ≠ 1) :
     ∃ (x y : L) (h : W.toAffine.Nonsingular x y),
@@ -282,7 +286,7 @@ private theorem order_two_point_not_scalar
 open P2MWs13.NonScalar in
 private theorem torsion_root_count_contradiction
     {L : Type*} [Field L] [DecidableEq L]
-    (W : WeierstrassCurve L) [W.IsElliptic]
+    (W : WeierstrassCurve L)
     (p : ℕ) (hp : p.Prime) (m : ℕ) (hmle : 2 * m ≤ p - 1)
     (F : L[X]) (hF0 : F ≠ 0) (hFdeg : F.natDegree ≤ m ^ 2)
     (Ep : AddSubgroup W.toAffine.Point) (hcard : Nat.card Ep = p ^ 2)

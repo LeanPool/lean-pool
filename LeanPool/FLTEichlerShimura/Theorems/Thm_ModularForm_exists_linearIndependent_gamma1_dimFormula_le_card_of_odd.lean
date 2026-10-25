@@ -120,7 +120,7 @@ theorem finite_doubleCoset_quotient {G : Type*} [Group G] (H K : Subgroup G) [H.
     induction q using Quotient.inductionOn' with
     | h g => exact ⟨Quotient.mk'' g, rfl⟩
 
-theorem exists_coe_eq_jqModC (M : ℕ) [NeZero M] :
+theorem exists_coe_eq_jqModC (M : ℕ) :
     ∃ y : ↥(ModularCurve.laurentBaseChange ℂ (ModularCurve.qExpFunctionFieldC ℚ
       (CongruenceSubgroup.Gamma1 M))),
       (y : LaurentSeries ℂ) = ModularCurve.jqModC ℂ := by

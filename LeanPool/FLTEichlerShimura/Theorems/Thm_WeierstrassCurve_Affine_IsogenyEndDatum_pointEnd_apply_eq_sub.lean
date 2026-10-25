@@ -72,8 +72,8 @@ open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 universe u
 
 theorem solution
-    {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-    {W : WeierstrassCurve.Affine F} [W.IsElliptic] [GenusOnePlaceGate W] [AbelTheorem W]
+    {F : Type u} [Field F] [DecidableEq F]
+    {W : WeierstrassCurve.Affine F} [GenusOnePlaceGate W] [AbelTheorem W]
     (D : IsogenyEndDatum W) (hN : NormFormulaAlong F D.ι D.hfin) (P : W.Point) :
     D.pointEnd hN P
       = (pointEquivPlace (W := W)).symm ((placeOfPoint P).restrictAlong D.ι D.hι)
@@ -109,8 +109,8 @@ open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 
 universe u
 theorem WeierstrassCurve.Affine.IsogenyEndDatum.pointEnd_apply_eq_sub
-    {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-    {W : WeierstrassCurve.Affine F} [W.IsElliptic] [GenusOnePlaceGate W] [AbelTheorem W]
+    {F : Type u} [Field F] [DecidableEq F]
+    {W : WeierstrassCurve.Affine F} [GenusOnePlaceGate W] [AbelTheorem W]
     (D : IsogenyEndDatum W) (hN : NormFormulaAlong F D.ι D.hfin) (P : W.Point) :
     D.pointEnd hN P
       = (pointEquivPlace (W := W)).symm ((placeOfPoint P).restrictAlong D.ι D.hι)

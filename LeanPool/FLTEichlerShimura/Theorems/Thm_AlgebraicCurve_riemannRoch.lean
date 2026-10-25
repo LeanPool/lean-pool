@@ -51,7 +51,7 @@ namespace AlgebraicCurve
 private theorem riemannRoch_and_constants_of_curve
     {K F : Type*} [Field K] [Field F] [Algebra K F] [IsAlgClosed K]
     [Algebra.EssFiniteType K F] [IsCurveOver K F]
-    [HasCanonicalDivisor (K := K) (F := F)] [∀ v : Place K F, v.DCoordGenerates] :
+    :
     FunctionFieldRiemannRoch K F ∧ ConstantsAreBase K F := by
   classical
   obtain ⟨t, ht, hfin, hsep⟩ := IsCurveOver.exists_separating_transcendental (K := K) (F := F)

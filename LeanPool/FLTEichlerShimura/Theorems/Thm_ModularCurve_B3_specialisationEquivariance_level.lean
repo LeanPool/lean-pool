@@ -366,7 +366,7 @@ theorem natCast_H_ne_zero {n : ℕ} (hn : n ≠ 0) : (n : H) ≠ 0 := by
   exact HahnSeries.single_ne_zero (Nat.cast_ne_zero.mpr hn)
 
 open scoped Classical in
-private theorem torsion_coords_integral (W : WeierstrassCurve H) [W.IsElliptic]
+private theorem torsion_coords_integral (W : WeierstrassCurve H)
     (hW : IntegralCoeffs W) (hΔ : W.Δ.orderTop = 0) {x y : H}
     (h : W.toAffine.Nonsingular x y) {n : ℕ} (hn : n ≠ 0)
     (htor : n • (WeierstrassCurve.Affine.Point.some x y h : W.toAffine.Point) = 0) :

@@ -87,13 +87,13 @@ p2m_open "ModularCurve"
 
 namespace B1Zero
 
-abbrev jAdj (L : Type*) [Field L] [Algebra ℚ L] : IntermediateField L (LaurentSeries L) :=
+abbrev jAdj (L : Type*) [Field L] : IntermediateField L (LaurentSeries L) :=
   IntermediateField.adjoin L ({jqModC L} : Set (LaurentSeries L))
 
-abbrev jGenL (L : Type*) [Field L] [Algebra ℚ L] : jAdj L :=
+abbrev jGenL (L : Type*) [Field L] : jAdj L :=
   ⟨jqModC L, IntermediateField.mem_adjoin_simple_self L (jqModC L)⟩
 
-abbrev ΦL (L : Type*) [Field L] [Algebra ℚ L] (N : ℕ) [NeZero N] (data : ModularPolynomialData N) :
+abbrev ΦL (L : Type*) [Field L] (N : ℕ) [NeZero N] (data : ModularPolynomialData N) :
     Polynomial (jAdj L) :=
   data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom (jAdj L)) (jGenL L))
 
@@ -111,7 +111,7 @@ theorem eval₂_Φ_jqModC_jqNModC (L : Type*) [Field L] [Algebra ℚ L] (N : ℕ
   rw [Polynomial.hom_eval₂, hθ, map_zero, coeffEmb_jqN] at h
   exact h
 
-theorem monic_ΦL (L : Type*) [Field L] [Algebra ℚ L] (N : ℕ) [NeZero N]
+theorem monic_ΦL (L : Type*) [Field L] (N : ℕ) [NeZero N]
     (data : ModularPolynomialData N) : (ΦL L N data).Monic :=
   data.monic.map _
 

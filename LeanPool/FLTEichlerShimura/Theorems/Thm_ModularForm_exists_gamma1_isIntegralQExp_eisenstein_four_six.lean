@@ -114,7 +114,7 @@ theorem isIntegralQExp_E6 :
 end E46Aux
 
 open E46Aux in
-theorem solution (M : ℕ) [NeZero M] :
+theorem solution (M : ℕ) :
     ∃ (E4 : ModularForm (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)) 4)
       (E6 : ModularForm (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)) 6),
       ModularCurve.IsIntegralQExp E4 (PowerSeries.mk fun n => if n = 0 then 1 else 240 * (σ 3 n :
@@ -136,7 +136,7 @@ public section publicSection
 
 
 open scoped ArithmeticFunction.sigma
-theorem ModularForm.exists_gamma1_isIntegralQExp_eisenstein_four_six (M : ℕ) [NeZero M] :
+theorem ModularForm.exists_gamma1_isIntegralQExp_eisenstein_four_six (M : ℕ) :
     ∃ (E4 : ModularForm (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)) 4)
       (E6 : ModularForm (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ)) 6),
       ModularCurve.IsIntegralQExp E4 (PowerSeries.mk fun n => if n = 0 then 1 else 240 * (σ 3 n :

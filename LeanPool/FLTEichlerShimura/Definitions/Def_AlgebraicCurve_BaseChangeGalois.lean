@@ -265,7 +265,6 @@ instance : DistribMulAction (SemilinearAut K F) (Divisor K F) :=
 theorem divisor_smul_def (g : SemilinearAut K F) (D : Divisor K F) :
     g • D = Finsupp.mapDomain (g • ·) D := rfl
 
-@[simp]
 theorem smul_single (g : SemilinearAut K F) (v : Place K F) (n : ℤ) :
     g • Finsupp.single v n = Finsupp.single (g • v) n := by
   rw [divisor_smul_def, Finsupp.mapDomain_single]

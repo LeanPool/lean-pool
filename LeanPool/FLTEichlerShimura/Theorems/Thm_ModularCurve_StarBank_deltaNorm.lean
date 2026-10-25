@@ -111,7 +111,7 @@ theorem qExpand_ofPowerSeries {R : Type*} [CommRing R] (N : ℕ) [NeZero N] (f :
       exact fun h => hk (Int.natCast_dvd_natCast.2 h)
     · rw [ofPowerSeries_coeff_of_neg _ hk0]
 
-theorem continuous_of_coeff {R S : Type*} [Semiring R] [Semiring S] [TopologicalSpace R]
+theorem continuous_of_coeff {R S : Type*} [Semiring S] [TopologicalSpace R]
     [TopologicalSpace S] (g : PowerSeries R → PowerSeries S)
     (h : ∀ d, Continuous fun φ => PowerSeries.coeff d (g φ)) : Continuous g :=
   continuous_iff_continuousAt.2 fun φ =>

@@ -286,15 +286,15 @@ theorem fibreAddEquiv_apply (j₀ : Qbar) (P : (specialFibre (goodModel j₀)).t
           (specialFibre (goodModel j₀)).toAffine P) := rfl
 
 open scoped Classical in
-def redTorsionEquiv (W : WeierstrassCurve H) [W.IsElliptic] (hW : IntegralCoeffs W)
-    (hΔ : W.Δ.orderTop = 0) [(specialFibre W).IsElliptic] (p : ℕ) [Fact p.Prime] :
+def redTorsionEquiv (W : WeierstrassCurve H) (hW : IntegralCoeffs W)
+    (hΔ : W.Δ.orderTop = 0) (p : ℕ) [Fact p.Prime] :
     Submodule.torsionBy ℤ W.toAffine.Point (p : ℤ) ≃+
       Submodule.torsionBy ℤ (specialFibre W).toAffine.Point (p : ℤ) :=
   Classical.choose (exists_torsionBy_reduction_addEquiv W hW hΔ p)
 
 open scoped Classical in
-theorem redTorsionEquiv_spec (W : WeierstrassCurve H) [W.IsElliptic] (hW : IntegralCoeffs W)
-    (hΔ : W.Δ.orderTop = 0) [(specialFibre W).IsElliptic] (p : ℕ) [Fact p.Prime]
+theorem redTorsionEquiv_spec (W : WeierstrassCurve H) (hW : IntegralCoeffs W)
+    (hΔ : W.Δ.orderTop = 0) (p : ℕ) [Fact p.Prime]
     (P : Submodule.torsionBy ℤ W.toAffine.Point (p : ℤ)) (x y : H)
     (h : W.toAffine.Nonsingular x y)
     (hP : (P : W.toAffine.Point) = WeierstrassCurve.Affine.Point.some x y h) :
@@ -306,14 +306,14 @@ theorem redTorsionEquiv_spec (W : WeierstrassCurve H) [W.IsElliptic] (hW : Integ
   Classical.choose_spec (exists_torsionBy_reduction_addEquiv W hW hΔ p) P x y h hP
 
 open scoped Classical in
-def cycRed (W : WeierstrassCurve H) [W.IsElliptic] (hW : IntegralCoeffs W) (hΔ : W.Δ.orderTop = 0)
-    [(specialFibre W).IsElliptic] (p : ℕ) [Fact p.Prime] :
+def cycRed (W : WeierstrassCurve H) (hW : IntegralCoeffs W) (hΔ : W.Δ.orderTop = 0)
+    (p : ℕ) [Fact p.Prime] :
     CycSubH W p ≃ CycSub (specialFibre W) p :=
   (cycOfTorsionBy W.toAffine.Point p).trans <|
     (cycOfCongr (redTorsionEquiv W hW hΔ p) p).trans
       (cycOfTorsionBy (specialFibre W).toAffine.Point p).symm
 
-def bridge3Specialise (p : ℕ) [Fact p.Prime] [NeZero p] (j₀ : Qbar) :
+def bridge3Specialise (p : ℕ) [Fact p.Prime] (j₀ : Qbar) :
     CycSubH (nearCurve j₀) p ≃ CycSub (WeierstrassCurve.ofJ j₀) p :=
   (cycScale p j₀).trans <|
     (cycRed (goodModel j₀) (goodModel_spec j₀).1 (goodModel_spec j₀).2 p).trans

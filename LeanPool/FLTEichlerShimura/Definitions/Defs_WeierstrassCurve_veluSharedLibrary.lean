@@ -3260,20 +3260,22 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve F)
   (W.veluX S r - r) ^ 3 - ∑ A ∈ S, (W.veluX {A} r - r) ^ 3
 
 @[expose] public def veluDeficitCrossQuadBetaOnly
-    [DecidableEq F] (S : Finset (F × F)) (r s : F) : F :=
+    (S : Finset (F × F)) (r s : F) : F :=
   W.veluDeficitCrossQuadCubeBeta S r s + W.veluDeficitCrossQuadAlphaCube S r
 
-lemma veluDeficitCrossQuadCubeBeta_eq_betaOnly_sub_alphaCube [DecidableEq F]
+lemma veluDeficitCrossQuadCubeBeta_eq_betaOnly_sub_alphaCube
     (S : Finset (F × F)) (r s : F) :
     W.veluDeficitCrossQuadCubeBeta S r s
       = W.veluDeficitCrossQuadBetaOnly S r s - W.veluDeficitCrossQuadAlphaCube S r := by
+  classical
   unfold veluDeficitCrossQuadBetaOnly; ring
 
-theorem veluDeficitCrossQuadBetaOnly_eq [DecidableEq F] (S : Finset (F × F)) (r s : F) :
+theorem veluDeficitCrossQuadBetaOnly_eq (S : Finset (F × F)) (r s : F) :
     W.veluDeficitCrossQuadBetaOnly S r s
       = ((W.veluY S r s - s) ^ 2 + W.a₁ * (W.veluX S r - r) * (W.veluY S r s - s))
         - ∑ A ∈ S, ((W.veluY {A} r s - s) ^ 2
             + W.a₁ * (W.veluX {A} r - r) * (W.veluY {A} r s - s)) := by
+  classical
   unfold veluDeficitCrossQuadBetaOnly veluDeficitCrossQuadCubeBeta veluDeficitCrossQuadAlphaCube
     veluDeficitCrossQuad veluDeficitCrossQuadAlphaSq veluDeficitQuad
   have hsum : (∑ A ∈ S, ((W.veluY {A} r s - s) ^ 2
@@ -4120,12 +4122,13 @@ end Psi2Sq
 
 section Parity
 
-variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F)
+variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
 theorem veluDeficitCrossQuadBetaOnly_negY_of_equation {S : Finset (F × F)} {r s : F}
     (hP : W.toAffine.Equation r s) :
     W.veluDeficitCrossQuadBetaOnly S r (W.toAffine.negY r s)
       = W.veluDeficitCrossQuadBetaOnly S r s := by
+  classical
   unfold veluDeficitCrossQuadBetaOnly veluDeficitCrossQuadCubeBeta
   rw [W.veluDeficitCrossQuad_negY_of_equation hP]
 
@@ -4438,10 +4441,11 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve F)
   (W.veluX S r - r) * (W.veluY S r s - s)
     - ∑ A ∈ S, (W.veluX {A} r - r) * (W.veluY {A} r s - s)
 
-theorem veluDeficitCrossQuadBetaOnly_eq_betaSq_add_alphaBeta [DecidableEq F]
+theorem veluDeficitCrossQuadBetaOnly_eq_betaSq_add_alphaBeta
     (S : Finset (F × F)) (r s : F) :
     W.veluDeficitCrossQuadBetaOnly S r s
       = W.veluDeficitCrossQuadBetaSq S r s + W.a₁ * W.veluDeficitCrossQuadAlphaBeta S r s := by
+  classical
   rw [W.veluDeficitCrossQuadBetaOnly_eq, veluDeficitCrossQuadBetaSq,
     veluDeficitCrossQuadAlphaBeta]
   have hper : ∀ A ∈ S, ((W.veluY {A} r s - s) ^ 2

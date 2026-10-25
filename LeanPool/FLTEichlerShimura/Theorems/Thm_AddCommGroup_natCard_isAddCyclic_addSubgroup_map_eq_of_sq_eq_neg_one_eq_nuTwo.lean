@@ -64,7 +64,7 @@ namespace P2MW.S_AddCommGroup_natCard_isAddCyclic_addSubgroup_map_eq_of_sq_eq_ne
 
 open ModularCurve
 
-theorem l3x_transport {A : Type*} [AddCommGroup A] (n : ℕ) [NeZero n]
+theorem l3x_transport {A : Type*} [AddCommGroup A] (n : ℕ)
     {M : Type*} [AddCommGroup M]
     (ι : M →+ A) (hι : Function.Injective ι) (hιr : ∀ a : A, n • a = 0 → ∃ m, ι m = a)
     (σ : A →+ A) (T : M →+ M) (hT : ∀ m, ι (T m) = σ (ι m)) :

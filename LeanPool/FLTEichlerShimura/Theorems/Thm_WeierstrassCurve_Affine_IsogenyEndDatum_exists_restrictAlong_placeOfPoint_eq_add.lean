@@ -84,11 +84,11 @@ open WeierstrassCurve Affine AlgebraicCurve
 namespace WeierstrassCurve
 namespace Affine
 
-theorem placeOfPointEquiv_symm_eq {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-    (W : Affine F) [W.IsElliptic] [GenusOnePlaceGate W] [GenusOnePlaceGate.IsCentred W]
-    [AbelTheorem W]
+theorem placeOfPointEquiv_symm_eq {F : Type*} [Field F]
+    (W : Affine F) [GenusOnePlaceGate W]
     (v : AlgebraicCurve.Place F W.FunctionField) :
     (placeOfPointEquiv W).symm v = (pointEquivPlace (W := W)).symm v := by
+  classical
   apply placeOfPoint_injective (W := W)
   rw [placeOfPoint_placeOfPointEquiv_symm]
   exact ((pointEquivPlace (W := W)).apply_symm_apply v).symm

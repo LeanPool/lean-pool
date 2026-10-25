@@ -444,7 +444,7 @@ variable (N : ℕ) (K : IntermediateField ℚ ℂ) (φ : K →+* ℂ)
 
 local notation "Δ" => ModularForm.discriminant
 
-def TRel [NeZero N] (g g' : ℍ → ℂ) : Prop :=
+def TRel (g g' : ℍ → ℂ) : Prop :=
   MDifferentiable 𝓘(ℂ) 𝓘(ℂ) g ∧ MDifferentiable 𝓘(ℂ) 𝓘(ℂ) g' ∧
     ∃ m : ℕ,
       (Function.Periodic ((g * ModularForm.discriminant ^ m) ∘ UpperHalfPlane.ofComplex) N ∧
@@ -461,7 +461,7 @@ def TRel [NeZero N] (g g' : ℍ → ℂ) : Prop :=
 
 variable {N K φ}
 
-theorem TRel.exists [NeZero N] {g g' : ℍ → ℂ} (h : TRel N K φ g g') :
+theorem TRel.exists {g g' : ℍ → ℂ} (h : TRel N K φ g g') :
     ∃ m : ℕ, RatAt N K m g ∧ RatAt N K m g' ∧
       ∀ (n : ℕ) (z : K), (z : ℂ) = (qExpansion N (g * Δ ^ m)).coeff n →
         (qExpansion N (g' * Δ ^ m)).coeff n = φ z := by
@@ -480,7 +480,7 @@ theorem TRel.map_eq {g g' : ℍ → ℂ} {m : ℕ}
   rw [← hp, PowerSeries.coeff_map]
   rfl
 
-theorem tRel_self_of_rat [NeZero N] {g : ℍ → ℂ} {m : ℕ} (hg : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) g)
+theorem tRel_self_of_rat {g : ℍ → ℂ} {m : ℕ} (hg : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) g)
     (hper : Periodic ((g * Δ ^ m) ∘ ofComplex) N) (hbd : IsBoundedAtImInfty (g * Δ ^ m))
     (hrat : ∀ n, ∃ r : ℚ, (qExpansion N (g * Δ ^ m)).coeff n = (r : ℂ)) : TRel N K φ g g := by
   have hmem : ∀ n, (qExpansion N (g * Δ ^ m)).coeff n ∈ K := by

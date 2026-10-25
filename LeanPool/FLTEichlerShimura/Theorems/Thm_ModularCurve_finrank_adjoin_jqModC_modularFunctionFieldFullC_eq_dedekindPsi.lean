@@ -239,7 +239,7 @@ theorem restrictScalars_adjoin_eq_full (N : ℕ) [NeZero N] (hN : (N : K) ≠ 0)
     rw [jq_congr K hk]
     exact mem_adjoin_of_mul_dvd K N hN k d (hk ▸ dvd_refl N)
 
-theorem adjoin_jqModC_le_full (N : ℕ) [NeZero N] : E𝕛 ≤ modularFunctionFieldFullC K N := by
+theorem adjoin_jqModC_le_full (N : ℕ) : E𝕛 ≤ modularFunctionFieldFullC K N := by
   rw [adjoin_le_iff, Set.singleton_subset_iff]
   exact jqModC_mem_full K N
 

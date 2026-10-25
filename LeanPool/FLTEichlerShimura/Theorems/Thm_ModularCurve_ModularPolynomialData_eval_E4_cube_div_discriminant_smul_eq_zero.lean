@@ -128,7 +128,7 @@ theorem coe_delta1 : ⇑delta1 = ⇑deltaSL := rfl
 
 def An (f : ℍ → ℂ) : Prop := AnalyticAt ℂ (cuspFunction 1 f) 0
 
-theorem an_of_modularForm {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [Γ.HasDetPlusMinusOne]
+theorem an_of_modularForm {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
     (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) (f : ModularForm Γ k) : An ⇑f := by
   have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
   exact UpperHalfPlane.analyticAt_cuspFunction_zero one_pos

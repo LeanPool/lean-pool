@@ -1696,7 +1696,7 @@ theorem adjoin_le_transcendentalChart_s12 (t : F) :
 attribute [local instance] FractionRing.liftAlgebra FractionRing.isScalarTower_liftAlgebra
 
 theorem finite_ordDifferential_D_ne_zero_s12 (hspan : ValSubringKaehlerSpanTop K F)
-    [IsCurveOver K F] [∀ v : Place K F, v.DCoordGenerates] [PerfectField K]
+    [IsCurveOver K F] [∀ v : Place K F, v.DCoordGenerates]
     {t : F} (htr : Transcendental K t) [FiniteDimensional K⟮t⟯ F] [Algebra.IsSeparable K⟮t⟯ F] :
     {v : Place K F | v.ordDifferential (KaehlerDifferential.D K F t) ≠ 0}.Finite := by
   classical

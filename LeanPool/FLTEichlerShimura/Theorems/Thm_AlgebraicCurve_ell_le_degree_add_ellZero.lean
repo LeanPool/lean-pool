@@ -101,7 +101,7 @@ p2m_export "AlgebraicCurve.Divisor" "degree degree_single principal smul_def"
 end Divisor
 variable {D : Divisor K F}
 p2m_open_scoped "AlgebraicCurve.Divisor" in
-theorem Divisor.degree_nonneg_of_nonneg [IsCurveOver K F]
+theorem Divisor.degree_nonneg_of_nonneg
     {D : Divisor K F} (hD : ∀ v, 0 ≤ D v) : 0 ≤ Divisor.degree D := by
   rw [Divisor.degree_eq_sum_support]
   exact Finset.sum_nonneg fun v _ => mul_nonneg (hD v) (Int.natCast_nonneg _)
@@ -374,7 +374,7 @@ end
 
 open _root_.AlgebraicCurve _root_.P2MW.S_AlgebraicCurve_ell_le_degree_add_ellZero.AlgebraicCurve in
 theorem solution {K F : Type*} [Field K] [Field F] [Algebra K F] [IsCurveOver K F] {D : Divisor K F}
-    (hD : 0 ≤ D) [FiniteDimensional K ↥(LSpace (0 : Divisor K F))] :
+    (hD : 0 ≤ D) :
     (ell D : ℤ) ≤ Divisor.degree D + ell (0 : Divisor K F) :=
   AlgebraicCurve.ell_le_degree_add_ellZero_port (K := K) (F := F) (D := D) (hD := hD)
 
@@ -390,7 +390,7 @@ public section publicSection
 namespace AlgebraicCurve
 theorem ell_le_degree_add_ellZero {K F : Type*} [Field K] [Field F] [Algebra K F] [IsCurveOver K F]
     {D : Divisor K F}
-    (hD : 0 ≤ D) [FiniteDimensional K ↥(LSpace (0 : Divisor K F))] :
+    (hD : 0 ≤ D) :
     (ell D : ℤ) ≤ Divisor.degree D + ell (0 : Divisor K F) :=
   solution hD
 end AlgebraicCurve

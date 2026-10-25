@@ -345,7 +345,7 @@ theorem intSeriesC_eq_zero_iff (p : PowerSeries ℤ) :
 
 variable {K}
 
-def tRed (K : Type*) [Field K] [CharZero K] (D : IDatum M H w) (γ : SL(2, ℤ))
+def tRed (K : Type*) [Field K] (D : IDatum M H w) (γ : SL(2, ℤ))
     (hγ : γ ∈ CongruenceSubgroup.Gamma0 M) : LaurentSeries K :=
   (((texp D γ hγ : ℤ) : K)⁻¹) • intSeriesC K (trans D γ hγ).p
 
@@ -688,10 +688,10 @@ section Formal
 variable {M : ℕ} [NeZero M] {H : Subgroup (ZMod M)ˣ} {w w₁ w₂ : ℤ} {K : Type*} [Field K]
     [CharZero K]
 
-def ev (K : Type*) [Field K] [CharZero K] (w : ℤ) : (IDatum M H w →₀ K) →ₗ[K] LaurentSeries K :=
+def ev (K : Type*) [Field K] (w : ℤ) : (IDatum M H w →₀ K) →ₗ[K] LaurentSeries K :=
   Finsupp.linearCombination K (fun D : IDatum M H w => intSeriesC K D.p)
 
-def evT (K : Type*) [Field K] [CharZero K] (w : ℤ) (γ : SL(2, ℤ))
+def evT (K : Type*) [Field K] (w : ℤ) (γ : SL(2, ℤ))
     (hγ : γ ∈ CongruenceSubgroup.Gamma0 M) :
     (IDatum M H w →₀ K) →ₗ[K] LaurentSeries K :=
   Finsupp.linearCombination K (fun D : IDatum M H w => tRed K D γ hγ)
@@ -704,19 +704,23 @@ theorem smul_mul_smul' (a b : K) (x y : LaurentSeries K) :
     map_mul]; ring
 
 omit [NeZero M] in
+omit [CharZero K] in
 @[scoped simp] theorem ev_single (D : IDatum M H w) (c : K) :
     ev K w (Finsupp.single D c) = c • intSeriesC K D.p := by
   simp [ev]
 
+omit [CharZero K] in
 @[scoped simp] theorem evT_single (D : IDatum M H w) (c : K) (γ : SL(2, ℤ))
     (hγ : γ ∈ CongruenceSubgroup.Gamma0 M) :
     evT K w γ hγ (Finsupp.single D c) = c • tRed K D γ hγ := by
   simp [evT]
 
 omit [NeZero M] in
+omit [CharZero K] in
 theorem ev_apply (l : IDatum M H w →₀ K) : ev K w l = ∑ D ∈ l.support, l D • intSeriesC K D.p := by
   rw [ev, Finsupp.linearCombination_apply, Finsupp.sum]
 
+omit [CharZero K] in
 theorem evT_apply (l : IDatum M H w →₀ K) (γ : SL(2, ℤ)) (hγ : γ ∈ CongruenceSubgroup.Gamma0 M) :
     evT K w γ hγ l = ∑ D ∈ l.support, l D • tRed K D γ hγ := by
   rw [evT, Finsupp.linearCombination_apply, Finsupp.sum]
@@ -736,6 +740,7 @@ theorem evT_eq_of_ev_eq {l l' : IDatum M H w →₀ K} (γ : SL(2, ℤ))
 def fmul (l : IDatum M H w₁ →₀ K) (l' : IDatum M H w₂ →₀ K) : IDatum M H (w₁ + w₂) →₀ K :=
   l.sum fun D a => l'.sum fun E b => Finsupp.single (D.mul E) (a * b)
 
+omit [CharZero K] in
 theorem ev_fmul (l : IDatum M H w₁ →₀ K) (l' : IDatum M H w₂ →₀ K) :
     ev K (w₁ + w₂) (fmul l l') = ev K w₁ l * ev K w₂ l' := by
   classical
@@ -774,6 +779,7 @@ def ftrans (l : IDatum M H w →₀ K) (γ : SL(2, ℤ)) (hγ : γ ∈ Congruenc
     IDatum M H w →₀ K :=
   l.sum fun D a => Finsupp.single (trans D γ hγ) (a * ((texp D γ hγ : ℤ) : K)⁻¹)
 
+omit [CharZero K] in
 theorem ev_ftrans (l : IDatum M H w →₀ K) (γ : SL(2, ℤ)) (hγ : γ ∈ CongruenceSubgroup.Gamma0 M) :
     ev K w (ftrans l γ hγ) = evT K w γ hγ l := by
   classical
@@ -857,6 +863,7 @@ omit [CharZero K] in
 theorem C_eq_algebraMap' (c : K) : HahnSeries.C c = algebraMap K (LaurentSeries K) c := by
   exact (HahnSeries.ofPowerSeries_C (Γ := ℤ) (R := K) c).symm
 
+omit [CharZero K] in
 @[scoped simp] theorem ev_single_oneD (c : K) :
     ev K 0 (Finsupp.single (oneD : IDatum M H 0) c) = algebraMap K _ c := by
   rw [ev_single, oneD_p, intSeriesC_one, ← HahnSeries.C_mul_eq_smul, mul_one, C_eq_algebraMap']
@@ -876,7 +883,7 @@ variable (K) in
 def IsRep (x : LaurentSeries K) (w : ℤ) (l l' : IDatum M H w →₀ K) : Prop :=
   ev K w l' ≠ 0 ∧ x = ev K w l / ev K w l'
 
-def Efield (K : Type*) [Field K] [CharZero K] (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) :
+def Efield (K : Type*) [Field K] (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) :
     IntermediateField K (LaurentSeries K) where
   carrier := {x | ∃ (w : ℤ) (l l' : IDatum M H w →₀ K), IsRep K x w l l'}
   mul_mem' := by
@@ -899,10 +906,12 @@ def Efield (K : Type*) [Field K] [CharZero K] (M : ℕ) [NeZero M] (H : Subgroup
       simp [hl]
     · exact ⟨w, l', l, hl, by rw [inv_div]⟩
 
+omit [CharZero K] in
 theorem mem_Efield_iff {x : LaurentSeries K} :
     x ∈ Efield K M H ↔ ∃ (w : ℤ) (l l' : IDatum M H w →₀ K), IsRep K x w l l' := Iff.rfl
 
 omit [NeZero M] in
+omit [CharZero K] in
 theorem exists_mem_support_ne_zero {l : IDatum M H w →₀ K} (h : ev K w l ≠ 0) :
     ∃ G ∈ l.support, intSeriesC K G.p ≠ 0 := by
   by_contra! hcon
@@ -911,6 +920,7 @@ theorem exists_mem_support_ne_zero {l : IDatum M H w →₀ K} (h : ev K w l ≠
   exact Finset.sum_eq_zero fun D hD => by rw [hcon D hD, smul_zero]
 
 omit [NeZero M] in
+omit [CharZero K] in
 theorem ev_div_mem {l : IDatum M H w →₀ K} (G : IDatum M H w) (hG : intSeriesC K G.p ≠ 0) :
     ev K w l / intSeriesC K G.p ∈ qExpFunctionFieldC K (CohCarrier.GammaH M H) := by
   rw [ev_apply, Finset.sum_div]
@@ -920,6 +930,7 @@ theorem ev_div_mem {l : IDatum M H w →₀ K} (G : IDatum M H w) (hG : intSerie
   rw [C_eq_algebraMap']
   exact IntermediateField.algebraMap_mem _ _
 
+omit [CharZero K] in
 theorem Efield_eq : Efield K M H = qExpFunctionFieldC K (CohCarrier.GammaH M H) := by
   apply le_antisymm
   · rintro x ⟨w, l, l', hl', rfl⟩
@@ -931,6 +942,7 @@ theorem Efield_eq : Efield K M H = qExpFunctionFieldC K (CohCarrier.GammaH M H) 
     exact ⟨k, Finsupp.single ⟨f, pf, hf⟩ 1, Finsupp.single ⟨g, pg, hg⟩ 1,
       by simpa using hg0, by simp⟩
 
+omit [CharZero K] in
 theorem exists_rep {x : LaurentSeries K} (hx : x ∈ qExpFunctionFieldC K (CohCarrier.GammaH M H)) :
     ∃ (w : ℤ) (l l' : IDatum M H w →₀ K), IsRep K x w l l' := by
   rwa [← Efield_eq] at hx

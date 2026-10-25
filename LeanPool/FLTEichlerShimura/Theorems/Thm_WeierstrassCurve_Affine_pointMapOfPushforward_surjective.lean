@@ -71,9 +71,9 @@ open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 universe u
 
 theorem solution
-    {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-    (E E' : WeierstrassCurve.Affine F) [E.IsElliptic] [GenusOnePlaceGate E] [AbelTheorem E]
-    [E'.IsElliptic] [GenusOnePlaceGate E'] [AbelTheorem E']
+    {F : Type u} [Field F] [DecidableEq F] [CharZero F]
+    (E E' : WeierstrassCurve.Affine F) [GenusOnePlaceGate E] [AbelTheorem E]
+    [GenusOnePlaceGate E'] [AbelTheorem E']
     (ι : E'.FunctionField →ₐ[F] E.FunctionField) (hι : ι.toRingHom.IsIntegral)
     (hfin : FiniteAlong F ι) (hN : NormFormulaAlong F ι hfin) :
     Function.Surjective (pointMapOfPushforward ι hι hfin hN) := by
@@ -124,9 +124,9 @@ open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 
 universe u
 theorem WeierstrassCurve.Affine.pointMapOfPushforward_surjective
-    {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-    (E E' : WeierstrassCurve.Affine F) [E.IsElliptic] [GenusOnePlaceGate E] [AbelTheorem E]
-    [E'.IsElliptic] [GenusOnePlaceGate E'] [AbelTheorem E']
+    {F : Type u} [Field F] [DecidableEq F] [CharZero F]
+    (E E' : WeierstrassCurve.Affine F) [GenusOnePlaceGate E] [AbelTheorem E]
+    [GenusOnePlaceGate E'] [AbelTheorem E']
     (ι : E'.FunctionField →ₐ[F] E.FunctionField) (hι : ι.toRingHom.IsIntegral)
     (hfin : FiniteAlong F ι) (hN : NormFormulaAlong F ι hfin) :
     Function.Surjective (pointMapOfPushforward ι hι hfin hN) :=

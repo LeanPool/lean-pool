@@ -352,7 +352,7 @@ theorem eq_of_center_eq [Γ.FiniteIndex] [hT : Fact (ModularGroup.T ∈ Γ)]
   rw [hc]
 
 open AlgebraicCurve in
-theorem mem_of_mul_eq [Γ.FiniteIndex] {Q : Place ℂ (CF Γ)}
+theorem mem_of_mul_eq {Q : Place ℂ (CF Γ)}
     (hQ : ∀ b : B Γ x, algebraMap (B Γ x) (CF Γ) b ∈ Q.toValuationSubring)
     {y : CF Γ} {b s : B Γ x} (hs : s ∉ Place.center (B Γ x) Q hQ)
     (hy : y * algebraMap (B Γ x) (CF Γ) s = algebraMap (B Γ x) (CF Γ) b) :

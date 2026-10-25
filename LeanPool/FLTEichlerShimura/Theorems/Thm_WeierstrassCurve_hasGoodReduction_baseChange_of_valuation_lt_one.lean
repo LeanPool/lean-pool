@@ -72,7 +72,7 @@ namespace GoodReductionUp
 theorem hasGoodReduction_comap (R : Type*) [CommRing R] [IsDomain R]
     [IsDiscreteValuationRing R] [Algebra R ℚ] [IsFractionRing R ℚ]
     (W : WeierstrassCurve ℚ) [W.HasGoodReduction R]
-    (L : IntermediateField ℚ Qb) [FiniteDimensional ℚ L]
+    (L : IntermediateField ℚ Qb)
     (S : ValuationSubring L) [IsDiscreteValuationRing S]
     (q : ℕ) (hq : q.Prime) (hgen : Irreducible (q : R))
     (hS : S.valuation (q : L) < 1) :
@@ -190,7 +190,7 @@ theorem solution
     (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] [Algebra R ℚ]
     [IsFractionRing R ℚ]
     (E : WeierstrassCurve ℚ) [E.HasGoodReduction R]
-    (L : IntermediateField ℚ (AlgebraicClosure ℚ)) [FiniteDimensional ℚ L]
+    (L : IntermediateField ℚ (AlgebraicClosure ℚ))
     (S : ValuationSubring L) [IsDiscreteValuationRing S]
     {q : ℕ} (hq : q.Prime) (hqR : Irreducible (q : R)) (hS : S.valuation (q : L) < 1) :
     (E.baseChange L).HasGoodReduction S :=
@@ -208,7 +208,7 @@ theorem WeierstrassCurve.hasGoodReduction_baseChange_of_valuation_lt_one
     (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] [Algebra R ℚ]
     [IsFractionRing R ℚ]
     (E : WeierstrassCurve ℚ) [E.HasGoodReduction R]
-    (L : IntermediateField ℚ (AlgebraicClosure ℚ)) [FiniteDimensional ℚ L]
+    (L : IntermediateField ℚ (AlgebraicClosure ℚ))
     (S : ValuationSubring L) [IsDiscreteValuationRing S]
     {q : ℕ} (hq : q.Prime) (hqR : Irreducible (q : R)) (hS : S.valuation (q : L) < 1) :
     (E.baseChange L).HasGoodReduction S :=

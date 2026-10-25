@@ -407,7 +407,7 @@ private theorem finrank_prime_step {M n : ℕ} [NeZero M] [NeZero n]
 
 /-- Prime-level splitting supplies the required neighboring slot. -/
 private theorem phiAtSeed_isRoot_slot {M p a b d'' : ℕ}
-    [NeZero M] [NeZero p] [NeZero a] [NeZero d''] [Fact p.Prime]
+    [NeZero M] [NeZero p] [NeZero a] [Fact p.Prime]
     (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) M)
     (hMM' : M = a * d'' * p) (hbr : b < M / a)
     (dp : ModularPolynomialData p) :
@@ -491,7 +491,7 @@ private theorem integral_prime_step {n M p : ℕ}
 
 /-- Extend a lower-level slot embedding across one prime step. -/
 private theorem isRoot_slot_prime_step {M a b d'' p : ℕ}
-    [NeZero M] [NeZero a] [NeZero d''] [NeZero p] [NeZero (a * d'')] [Fact p.Prime]
+    [NeZero M] [NeZero a] [NeZero p] [NeZero (a * d'')] [Fact p.Prime]
     (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) M)
     (hall : LevelData k M)
     (IH : ∀ m, m < M → ∀ [NeZero m] (ζ : Kˣ),

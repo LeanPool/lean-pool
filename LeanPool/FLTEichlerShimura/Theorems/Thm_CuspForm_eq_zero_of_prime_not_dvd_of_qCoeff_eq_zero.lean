@@ -425,7 +425,7 @@ theorem qCoeff_iter (hp : p.Prime) (hpm : ¬ p ∣ m) (G : Supp m p) (a n : ℕ)
     · have h' : ¬ p ^ (a + 1) ∣ n := fun h => hpn ((dvd_pow_self p (Nat.succ_ne_zero a)).trans h)
       rw [ite_eq_right hpn, ite_eq_right h']
 
-def qCoeffLin (m n : ℕ) [NeZero m] : CuspForm (CongruenceSubgroup.Gamma0 m) 2 →ₗ[ℂ] ℂ where
+def qCoeffLin (m n : ℕ) : CuspForm (CongruenceSubgroup.Gamma0 m) 2 →ₗ[ℂ] ℂ where
   toFun G := ModularFormClass.qCoeff G n
   map_add' f g := by
     have hΓ : (1 : ℝ) ∈ ((CongruenceSubgroup.Gamma0 m : Subgroup SL(2, ℤ)) :
@@ -441,10 +441,10 @@ def qCoeffLin (m n : ℕ) [NeZero m] : CuspForm (CongruenceSubgroup.Gamma0 m) 2 
     rw [FunLike.coe_smul, ModularForm.qExpansion_smul one_pos hΓ, _root_.map_smul]
     rfl
 
-theorem qCoeffLin_apply (m n : ℕ) [NeZero m] (G : CuspForm (CongruenceSubgroup.Gamma0 m) 2) :
+theorem qCoeffLin_apply (m n : ℕ) (G : CuspForm (CongruenceSubgroup.Gamma0 m) 2) :
     qCoeffLin m n G = ModularFormClass.qCoeff G n := rfl
 
-theorem qCoeff_zero' (m n : ℕ) [NeZero m] :
+theorem qCoeff_zero' (m n : ℕ) :
     ModularFormClass.qCoeff (0 : CuspForm (CongruenceSubgroup.Gamma0 m) 2) n = 0 := by
   rw [← qCoeffLin_apply, map_zero]
 

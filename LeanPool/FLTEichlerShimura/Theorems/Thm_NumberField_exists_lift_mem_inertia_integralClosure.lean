@@ -74,7 +74,7 @@ local notation "ℚ̄" => AlgebraicClosure ℚ
 local notation "𝔅" => integralClosure ℤ (AlgebraicClosure ℚ)
 
 theorem solution
-    (L : IntermediateField ℚ (AlgebraicClosure ℚ)) [FiniteDimensional ℚ L] [IsGalois ℚ L]
+    (L : IntermediateField ℚ (AlgebraicClosure ℚ)) [IsGalois ℚ L]
     (Q : Ideal (NumberField.RingOfIntegers L)) [Q.IsMaximal] {q : ℕ}
     (hqQ : (q : NumberField.RingOfIntegers L) ∈ Q) (τ : L ≃ₐ[ℚ] L)
     (hτ : τ ∈ Q.inertia (L ≃ₐ[ℚ] L)) :
@@ -260,7 +260,7 @@ public section publicSection
 
 
 theorem NumberField.exists_lift_mem_inertia_integralClosure
-    (L : IntermediateField ℚ (AlgebraicClosure ℚ)) [FiniteDimensional ℚ L] [IsGalois ℚ L]
+    (L : IntermediateField ℚ (AlgebraicClosure ℚ)) [IsGalois ℚ L]
     (Q : Ideal (NumberField.RingOfIntegers L)) [Q.IsMaximal] {q : ℕ}
     (hqQ : (q : NumberField.RingOfIntegers L) ∈ Q) (τ : L ≃ₐ[ℚ] L) (hτ : τ ∈ Q.inertia (L ≃ₐ[ℚ] L))
     :

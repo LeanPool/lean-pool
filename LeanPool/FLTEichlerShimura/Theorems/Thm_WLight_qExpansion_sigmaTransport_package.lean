@@ -514,7 +514,7 @@ private lemma TransAt.mulT [NeZero N] {m₁ m₂ : ℕ} {g₁ g₁' g₂ g₂' :
   rw [hz, AddSubmonoidClass.coe_finsetSum]
   exact Finset.sum_congr rfl fun ij _ => rfl
 
-private lemma transAt_self_of_rat [NeZero N] {m : ℕ} {g : ℍ → ℂ}
+private lemma transAt_self_of_rat {m : ℕ} {g : ℍ → ℂ}
     (hper : Function.Periodic ((g * ⇑CuspForm.discriminant ^ m) ∘ ofComplex) N)
     (hbd : IsBoundedAtImInfty (g * ⇑CuspForm.discriminant ^ m))
     (hrat : ∀ n : ℕ, ∃ q : ℚ, (qExpansion N (g * ⇑CuspForm.discriminant ^ m)).coeff n = (q : ℂ)) :

@@ -3814,7 +3814,7 @@ theorem canonicalLocalResidueDataK_res_differentialCoeff_D_mul_inv_ratFunc
 
 end RatFuncClauses
 theorem canonicalLocalResidueKSimplePoleCoordIndep_ratFunc (K : Type*) [Field K] [CharZero K]
-    [HasCanonicalLocalResidueKStar K (RatFunc K)] :
+    :
     CanonicalLocalResidueKSimplePoleCoordIndep K (RatFunc K) :=
   fun v _ hπ' R => canonicalLocalResidueDataK_res_differentialCoeff_D_mul_inv_ratFunc v hπ' R
 
@@ -3914,7 +3914,7 @@ namespace MilneAvAg9bRd13T2CoordIndepChar3
 
 private theorem
   ag9b13t_res_differentialCoeff_D_mul_pow_inv_of_surj_of_natCast_ne_zero
-    {K F : Type*} [Field K] [Field F] [Algebra K F] [HasCanonicalLocalResidueKStar K F]
+    {K F : Type*} [Field K] [Field F] [Algebra K F]
     (v : Place K F) [v.DCoordGenerates] [Nontrivial Ω[F⁄K]]
     (hsurj : Function.Surjective (algebraMap K v.ResidueField))
     (hint : ∀ h : F, h ∈ v.toValuationSubring →
@@ -4963,7 +4963,7 @@ theorem p0n22_cpf_one_add_inv_mem
   refine v.mem_of_ord_nonneg (inv_ne_zero (p0n22_cpf_one_add_ne_zero v hg)) ?_
   rw [v.ord_inv, p0n22_cpf_ord_one_add_eq_zero v hg, _root_.neg_zero]
 
-theorem p0n22_cpf_logDeriv_mul [PerfectField K]
+theorem p0n22_cpf_logDeriv_mul
     (v : Place K (RatFunc K)) [v.DCoordGenerates]
     [Nontrivial Ω[(RatFunc K)⁄K]]
     {w₁ w₂ : RatFunc K} (h1 : w₁ ≠ 0) (h2 : w₂ ≠ 0) :
@@ -4983,8 +4983,7 @@ theorem p0n22_cpf_logDeriv_mul [PerfectField K]
       * hc2
 
 theorem p0n22_cpf_logDeriv_mem [PerfectField K]
-    (v : Place K (RatFunc K)) [v.DCoordGenerates]
-    [Nontrivial Ω[(RatFunc K)⁄K]]
+    (v : Place K (RatFunc K))
     {w : RatFunc K} (hw0 : w ≠ 0) (hword : v.ord w = 0) :
     v.differentialCoeff (KaehlerDifferential.D K (RatFunc K) w) * w⁻¹
       ∈ v.toValuationSubring := by
@@ -5740,7 +5739,6 @@ end
 
 theorem solution
     (K : Type*) [Field K] [IsAlgClosed K]
-    [AlgebraicCurve.HasCanonicalLocalResidueKStar K (RatFunc K)]
     [AlgebraicCurve.HasCanonicalDivisor (K := K) (F := RatFunc K)]
     [∀ v : AlgebraicCurve.Place K (RatFunc K), v.DCoordGenerates] :
     AlgebraicCurve.ResidueTheoremK K (RatFunc K) := by
@@ -5756,7 +5754,6 @@ public section publicSection
 
 theorem AlgebraicCurve.residueTheoremK_ratFunc_of_isAlgClosed
     (K : Type*) [Field K] [IsAlgClosed K]
-    [AlgebraicCurve.HasCanonicalLocalResidueKStar K (RatFunc K)]
     [AlgebraicCurve.HasCanonicalDivisor (K := K) (F := RatFunc K)]
     [∀ v : AlgebraicCurve.Place K (RatFunc K), v.DCoordGenerates] :
     AlgebraicCurve.ResidueTheoremK K (RatFunc K) := by

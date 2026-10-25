@@ -107,26 +107,26 @@ end Fricke
 
 section Full
 
-def IsFrickeAutFull (N : ℕ) [NeZero N]
+def IsFrickeAutFull (N : ℕ)
     (σ : modularFunctionFieldFull N ≃ₐ[ℚ] modularFunctionFieldFull N) : Prop :=
   ∀ (a b : ℕ) (hab : a * b = N) (_ : NeZero a) (_ : NeZero b),
     σ ⟨qExpand ℚ a jq, jqd_mem_full N (Dvd.intro b hab)⟩
       = ⟨qExpand ℚ b jq, jqd_mem_full N (Dvd.intro_left a hab)⟩
 
 open Classical in
-def frickeInvolutionFull (N : ℕ) [NeZero N] :
+def frickeInvolutionFull (N : ℕ) :
     modularFunctionFieldFull N ≃ₐ[ℚ] modularFunctionFieldFull N :=
   if h : ∃ σ : modularFunctionFieldFull N ≃ₐ[ℚ] modularFunctionFieldFull N, IsFrickeAutFull N σ
   then h.choose else AlgEquiv.refl
 
-theorem isFrickeAutFull_frickeInvolutionFull (N : ℕ) [NeZero N]
+theorem isFrickeAutFull_frickeInvolutionFull (N : ℕ)
     (h : ∃ σ : modularFunctionFieldFull N ≃ₐ[ℚ] modularFunctionFieldFull N,
       IsFrickeAutFull N σ) :
     IsFrickeAutFull N (frickeInvolutionFull N) := by
   rw [frickeInvolutionFull, dite_eq_left h]
   exact h.choose_spec
 
-theorem frickeInvolutionFull_eq_refl (N : ℕ) [NeZero N]
+theorem frickeInvolutionFull_eq_refl (N : ℕ)
     (h : ¬ ∃ σ : modularFunctionFieldFull N ≃ₐ[ℚ] modularFunctionFieldFull N,
       IsFrickeAutFull N σ) :
     frickeInvolutionFull N = AlgEquiv.refl := by

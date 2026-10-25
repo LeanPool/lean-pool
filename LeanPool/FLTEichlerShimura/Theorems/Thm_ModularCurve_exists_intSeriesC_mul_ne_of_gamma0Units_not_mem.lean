@@ -95,7 +95,7 @@ private theorem faithCoeff_one (M : ℕ) (c : (ZMod M)ˣ) :
       := by
   simp [faithCoeff, Nat.divisors_one]
 
-private theorem faith_ne_neg {M : ℕ} [NeZero M] (hM : 3 ≤ M) (c : (ZMod M)ˣ) : c ≠ -c := by
+private theorem faith_ne_neg {M : ℕ} (hM : 3 ≤ M) (c : (ZMod M)ˣ) : c ≠ -c := by
   intro h
   have hc : (c : ZMod M) = -(c : ZMod M) := by
     rw [← Units.val_neg]
@@ -139,7 +139,7 @@ private theorem faith_sum_even {M : ℕ} [NeZero M] (hM : 3 ≤ M) (A : Finset (
 
 end FaithHelpers
 
-private theorem sum_faithCoeff_one (M : ℕ) [NeZero M] (s : Finset (ZMod M)ˣ)
+private theorem sum_faithCoeff_one (M : ℕ) (s : Finset (ZMod M)ˣ)
     (v : (ZMod M)ˣ) :
     ∑ c ∈ s, faithCoeff M (c * v) 1 =
       ((s.filter fun c => c * v = 1 ∨ c * v = -1).card : ℤ) := by
@@ -157,7 +157,7 @@ private theorem sum_faithCoeff_one (M : ℕ) [NeZero M] (s : Finset (ZMod M)ˣ)
   refine Finset.sum_congr rfl fun c _ => ?_
   simp only [faithCoeff_one, hPQ]
 
-private theorem card_filter_one_or_neg_one (M : ℕ) [NeZero M] (hM3 : 3 ≤ M) :
+private theorem card_filter_one_or_neg_one (M : ℕ) (hM3 : 3 ≤ M) :
     ∀ (s : Finset (ZMod M)ˣ), (1 : (ZMod M)ˣ) ∈ s → (-1 : (ZMod M)ˣ) ∈ s →
       (s.filter fun c => c * 1 = 1 ∨ c * 1 = -1).card = 2 := by
   classical

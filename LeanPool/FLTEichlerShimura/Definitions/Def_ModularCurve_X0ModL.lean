@@ -179,7 +179,7 @@ theorem modularFunctionFieldC_le_full :
   · exact jqModC_mem_full K N
   · exact jqModCd_mem_full K N dvd_rfl
 
-theorem full_degeneracyC_le {N M : ℕ} [NeZero N] [NeZero M] (h : N ∣ M) :
+theorem full_degeneracyC_le {N M : ℕ} (h : N ∣ M) :
     modularFunctionFieldFullC K N ≤ modularFunctionFieldFullC K M := by
   rw [modularFunctionFieldFullC, adjoin_le_iff]
   rintro x ⟨d, hne, hdvd, rfl⟩

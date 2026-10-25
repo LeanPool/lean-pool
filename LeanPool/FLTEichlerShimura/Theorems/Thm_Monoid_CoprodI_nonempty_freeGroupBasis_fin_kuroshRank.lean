@@ -121,7 +121,7 @@ theorem stabilizer_eq_bot_of_conjTrivial (hAH : ConjTrivial A H) (q : G ⧸ H) :
     have : (a : G) = 1 := by rw [← inv_inv (a : G), hinv, inv_one]
     exact Subgroup.mem_bot.mpr (Subtype.ext this)
 
-theorem card_dvd_index_of_conjTrivial [Finite A] [H.FiniteIndex] (hAH : ConjTrivial A H) :
+theorem card_dvd_index_of_conjTrivial (hAH : ConjTrivial A H) :
     Nat.card A ∣ H.index := by
   classical
   have key := MulAction.selfEquivSigmaOrbitsQuotientStabilizer A (G ⧸ H)
@@ -179,7 +179,7 @@ end RankArithmetic
 
 section Core
 
-def KuroshRankFormula (G : Fin 2 → Type*) [∀ i, Group (G i)] [∀ i, Finite (G i)] : Prop :=
+def KuroshRankFormula (G : Fin 2 → Type*) [∀ i, Group (G i)] : Prop :=
   ∀ H : Subgroup (Monoid.CoprodI G), H.FiniteIndex →
     (∀ i, ConjTrivial (Monoid.CoprodI.of (i := i)).range H) →
     Nonempty (FreeGroupBasis
@@ -197,8 +197,9 @@ theorem card_range_of (i : Fin 2) :
       = Nat.card (G i) :=
   (Nat.card_congr (MonoidHom.ofInjective (Monoid.CoprodI.of_injective i)).toEquiv).symm
 
+omit [∀ (i : Fin 2), Finite (G i)] in
 theorem six_dvd_index_of_conjTrivial (h2 : Nat.card (G 0) = 2) (h3 : Nat.card (G 1) = 3)
-    (H : Subgroup (Monoid.CoprodI G)) [H.FiniteIndex]
+    (H : Subgroup (Monoid.CoprodI G))
     (hH : ∀ i, ConjTrivial (Monoid.CoprodI.of (i := i)).range H) :
     6 ∣ H.index := by
   have d0 := card_dvd_index_of_conjTrivial _ H (hH 0)
@@ -207,8 +208,9 @@ theorem six_dvd_index_of_conjTrivial (h2 : Nat.card (G 0) = 2) (h3 : Nat.card (G
   rw [card_range_of 1, h3] at d1
   exact six_dvd_of_two_dvd_of_three_dvd d0 d1
 
+omit [∀ (i : Fin 2), Finite (G i)] in
 theorem kuroshRank_index_eq (h2 : Nat.card (G 0) = 2) (h3 : Nat.card (G 1) = 3)
-    (H : Subgroup (Monoid.CoprodI G)) [H.FiniteIndex]
+    (H : Subgroup (Monoid.CoprodI G))
     (hH : ∀ i, ConjTrivial (Monoid.CoprodI.of (i := i)).range H) :
     kuroshRank (Nat.card (G 0)) (Nat.card (G 1)) H.index = 1 + H.index / 6 := by
   rw [h2, h3]

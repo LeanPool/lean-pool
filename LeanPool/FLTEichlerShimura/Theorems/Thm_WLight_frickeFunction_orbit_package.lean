@@ -304,7 +304,7 @@ private lemma cuspFunction_const (N : ℕ) (c : ℂ) :
     rw [Function.Periodic.cuspFunction_eq_of_nonzero _ _ hq]
     rfl
 
-private lemma NiceK.const {K : IntermediateField ℚ ℂ} {N : ℕ} [NeZero N] (c : ↥K) :
+private lemma NiceK.const {K : IntermediateField ℚ ℂ} {N : ℕ} (c : ↥K) :
     NiceK K N (fun _ : ℍ => (c : ℂ)) := by
   refine ⟨fun x => rfl, ?_, ?_, fun n => ?_⟩
   · exact mdifferentiable_const
@@ -320,15 +320,15 @@ private lemma NiceK.const {K : IntermediateField ℚ ℂ} {N : ℕ} [NeZero N] (
     · simp
     · simp [PowerSeries.coeff_C, hn]
 
-private lemma kPoleAt_of_niceK {K : IntermediateField ℚ ℂ} {N : ℕ} [NeZero N] {f : ℍ → ℂ} {m : ℕ}
+private lemma kPoleAt_of_niceK {K : IntermediateField ℚ ℂ} {N : ℕ} {f : ℍ → ℂ} {m : ℕ}
     (h : NiceK K N (f * ⇑CuspForm.discriminant ^ m)) : KPoleAt K N m f :=
   ⟨by exact_mod_cast h.1, h.2.2.1, h.2.2.2⟩
 
-private lemma niceK_mul_disc_pow {K : IntermediateField ℚ ℂ} {N : ℕ} [NeZero N] {f : ℍ → ℂ} {m : ℕ}
+private lemma niceK_mul_disc_pow {K : IntermediateField ℚ ℂ} {N : ℕ} {f : ℍ → ℂ} {m : ℕ}
     (hmd : MDiff f) (hf : KPoleAt K N m f) : NiceK K N (f * ⇑CuspForm.discriminant ^ m) :=
   ⟨by exact_mod_cast hf.1, hmd.mul (disc_hol.pow m), hf.2.1, hf.2.2⟩
 
-private lemma kPole_const {K : IntermediateField ℚ ℂ} {N : ℕ} [NeZero N] (c : ↥K) :
+private lemma kPole_const {K : IntermediateField ℚ ℂ} {N : ℕ} (c : ↥K) :
     KPole K N (algebraMap ↥K (ℍ → ℂ) c) := by
   have hc : algebraMap ↥K (ℍ → ℂ) c = fun _ : ℍ => (c : ℂ) := rfl
   rw [hc]
@@ -499,7 +499,7 @@ variable {N : ℕ}
 noncomputable def levelRingK (K : IntermediateField ℚ ℂ) (N : ℕ) : Subalgebra ↥K (ℍ → ℂ) :=
   Algebra.adjoin ↥K (levelGen N)
 
-lemma frickeF_mem_levelRingK {K : IntermediateField ℚ ℂ} [NeZero N] (i : FrickeIdx N) :
+lemma frickeF_mem_levelRingK {K : IntermediateField ℚ ℂ} (i : FrickeIdx N) :
     frickeF N i.1 ∈ levelRingK K N :=
   Algebra.subset_adjoin (Set.mem_insert_iff.mpr (Or.inr ⟨i, rfl⟩))
 
@@ -519,7 +519,7 @@ open scoped MatrixGroups Manifold
 
 variable {N : ℕ}
 
-lemma orbitCoeffOn_frickeF_mem_levelRingK [NeZero N] (s : Finset (FrickeIdx N)) (k : ℕ) :
+lemma orbitCoeffOn_frickeF_mem_levelRingK (s : Finset (FrickeIdx N)) (k : ℕ) :
     (fun τ : ℍ => (∏ i ∈ s, (X - C (frickeF N i.1 τ))).coeff k) ∈ levelRingK (kN N) N := by
   induction s using Finset.cons_induction generalizing k with
   | empty =>

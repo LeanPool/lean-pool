@@ -189,7 +189,7 @@ theorem coeffEmb_algebraMap (r : ℚ) :
   simp
 
 variable (N) in
-theorem isRatio_coeffEmb [NeZero N] {y : LaurentSeries ℚ} (hy : y ∈ modularFunctionFieldFull N) :
+theorem isRatio_coeffEmb {y : LaurentSeries ℚ} (hy : y ∈ modularFunctionFieldFull N) :
     IsRatio N (coeffEmb ℂ y) := by
   change y ∈ Subfield.closure (Set.range (algebraMap ℚ (LaurentSeries ℚ)) ∪ divisorExpansions N)
     at hy
@@ -208,7 +208,7 @@ theorem isRatio_coeffEmb [NeZero N] {y : LaurentSeries ℚ} (hy : y ∈ modularF
   | mul x y _ _ hx hy => simpa using hx.mul hy
 
 variable (N) in
-theorem isRatio_of_mem [NeZero N] {x : LaurentSeries ℂ}
+theorem isRatio_of_mem {x : LaurentSeries ℂ}
     (hx : x ∈ laurentBaseChange ℂ (modularFunctionFieldFull N)) : IsRatio N x := by
   rw [mem_laurentBaseChange_iff] at hx
   induction hx using Subfield.closure_induction with
@@ -228,7 +228,7 @@ end
 
 open UpperHalfPlane in
 theorem solution (N : ℕ)
-    [NeZero N] (x : LaurentSeries ℂ)
+    (x : LaurentSeries ℂ)
     (hx : x ∈ ModularCurve.laurentBaseChange ℂ (ModularCurve.modularFunctionFieldFull N)) :
     ∃ (k : ℤ) (g h : ModularForm (CongruenceSubgroup.Gamma0 N) k), h ≠ 0 ∧
       x * ((qExpansion 1 (h : ℍ → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ) =
@@ -246,7 +246,7 @@ public section publicSection
 
 open UpperHalfPlane in
 theorem ModularCurve.exists_modularForm_mul_qExpansion_eq_of_mem_laurentBaseChange (N : ℕ)
-    [NeZero N] (x : LaurentSeries ℂ)
+    (x : LaurentSeries ℂ)
     (hx : x ∈ ModularCurve.laurentBaseChange ℂ (ModularCurve.modularFunctionFieldFull N)) :
     ∃ (k : ℤ) (g h : ModularForm (CongruenceSubgroup.Gamma0 N) k), h ≠ 0 ∧
       x * ((qExpansion 1 (h : ℍ → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ) =

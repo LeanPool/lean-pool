@@ -120,7 +120,7 @@ theorem one_mem_strictPeriods (Γ : Subgroup SL(2, ℤ)) (hT : ModularGroup.T �
   rw [h1]
   exact Subgroup.mem_map_of_mem _ hT
 
-theorem conj_T_pow_index_mem (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] (σ : SL(2, ℤ)) :
+theorem conj_T_pow_index_mem (Γ : Subgroup SL(2, ℤ)) (σ : SL(2, ℤ)) :
     σ * ModularGroup.T ^ Γ.normalCore.index * σ⁻¹ ∈ Γ := by
   have h1 : ModularGroup.T ^ Γ.normalCore.index ∈ Γ.normalCore :=
     Subgroup.pow_index_mem Γ.normalCore ModularGroup.T
@@ -196,6 +196,7 @@ theorem coe_translate_SL {k : ℤ} (g : ModularForm (Γ : Subgroup (GL (Fin 2) �
   rw [SL_slash]
   exact ModularForm.coe_translate g _
 
+omit [Γ.FiniteIndex] in
 theorem slash_periodic_index {k : ℤ} (g : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k)
     (σ : SL(2, ℤ)) :
     Periodic ((⇑g ∣[k] σ) ∘ ofComplex) (Γ.normalCore.index : ℝ) := by

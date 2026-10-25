@@ -128,6 +128,7 @@ def heckeAlphaBar :
   IntermediateField.inclusion
     (laurentBaseChange_mono' L (full_degeneracy_le (dvd_mul_right N ℓ)))
 
+omit [NeZero N] [NeZero ℓ] in
 @[simp]
 theorem coe_heckeAlphaBar (x : laurentBaseChange L (modularFunctionFieldFull N)) :
     (heckeAlphaBar L N ℓ x : LaurentSeries L) = (x : LaurentSeries L) :=
@@ -160,6 +161,7 @@ def heckeBetaBar :
       change qExpand L ℓ (algebraMap L (LaurentSeries L) a) = algebraMap L (LaurentSeries L) a
       rw [algebraMap_laurentSeries_eq_single, qExpand_single, mul_zero] }
 
+omit [NeZero N] [NeZero ℓ] in
 theorem heckeAlphaBar_eq_inclusion
     (h : laurentBaseChange L (modularFunctionFieldFull N)
       ≤ laurentBaseChange L (modularFunctionFieldFull (N * ℓ))) :

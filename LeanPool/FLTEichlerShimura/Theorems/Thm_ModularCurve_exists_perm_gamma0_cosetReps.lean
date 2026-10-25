@@ -132,7 +132,7 @@ private theorem mul_rep_slot_inv_mem (ℓ : ℕ) [NeZero ℓ] [Fact (Nat.Prime �
     rw [ZMod.natCast_zmod_val]
     linear_combination hcy
 
-private theorem eq_of_mul_inv_mem (ℓ : ℕ) [NeZero ℓ] [Fact (Nat.Prime ℓ)] {i k : Fin (ℓ + 1)}
+private theorem eq_of_mul_inv_mem (ℓ : ℕ) [Fact (Nat.Prime ℓ)] {i k : Fin (ℓ + 1)}
     (h : rep ℓ i * (rep ℓ k)⁻¹ ∈ Gamma0 ℓ) : i = k := by
   induction i using Fin.cases with
   | zero =>

@@ -656,7 +656,7 @@ scoped instance levelGrp_faithful (N : ℕ) [NeZero N] :
     apply QuotientGroup.kerLift_injective (MulSemiringAction.toAlgAut SL(2, ℤ) ℂ ↥(levelRing N))
     exact AlgEquiv.ext fun f ↦ h f
 
-abbrev levelField (N : ℕ) [NeZero N] : Type := FractionRing ↥(levelRing N)
+abbrev levelField (N : ℕ) : Type := FractionRing ↥(levelRing N)
 
 noncomputable scoped instance levelGrpFieldAction (N : ℕ) [NeZero N] :
     MulSemiringAction (LevelGrp N) (levelField N) :=
@@ -688,7 +688,7 @@ private def _root_.WLight.jA (N : ℕ) : ↥(levelRing N) := ⟨j, j_mem_levelRi
 
 p2m_export "WLight" "jA"
 
-private def _root_.WLight.jK (N : ℕ) [NeZero N] :
+private def _root_.WLight.jK (N : ℕ) :
     levelField N := algebraMap ↥(levelRing N) (levelField N) (jA N)
 
 p2m_export "WLight" "jK"
@@ -800,21 +800,21 @@ scoped instance instNormal_pmGamma (N : ℕ) : (pmGamma N).Normal :=
 scoped instance instFiniteIndex_pmGamma (N : ℕ) [NeZero N] : (pmGamma N).FiniteIndex :=
   Subgroup.finiteIndex_of_le (Gamma_le_pmGamma N)
 
-def frickeKernel (N : ℕ) [NeZero N] : Subgroup SL(2, ℤ) where
+def frickeKernel (N : ℕ) : Subgroup SL(2, ℤ) where
   carrier := {γ | ∀ (i : FrickeIdx N) (τ : ℍ), frickeF N i.1 (γ • τ) = frickeF N i.1 τ}
   mul_mem' {a b} ha hb i τ := by rw [mul_smul, ha, hb]
   one_mem' i τ := by rw [one_smul]
   inv_mem' {a} ha i τ := by
     have := ha i (a⁻¹ • τ); rw [smul_inv_smul] at this; exact this.symm
 
-lemma mem_frickeKernel {N : ℕ} [NeZero N] {γ : SL(2, ℤ)} :
+lemma mem_frickeKernel {N : ℕ} {γ : SL(2, ℤ)} :
     γ ∈ frickeKernel N ↔ ∀ (i : FrickeIdx N) (τ : ℍ), frickeF N i.1 (γ • τ) = frickeF N i.1 τ :=
   Iff.rfl
 
 lemma neg_one_smul_upperHalfPlane (τ : ℍ) : (-1 : SL(2, ℤ)) • τ = τ := by
   rw [show (-1 : SL(2, ℤ)) = -(1 : SL(2, ℤ)) from rfl, ModularGroup.SL_neg_smul, one_smul]
 
-lemma neg_one_mem_frickeKernel (N : ℕ) [NeZero N] : (-1 : SL(2, ℤ)) ∈ frickeKernel N :=
+lemma neg_one_mem_frickeKernel (N : ℕ) : (-1 : SL(2, ℤ)) ∈ frickeKernel N :=
   fun _ τ ↦ by rw [neg_one_smul_upperHalfPlane]
 
 lemma Gamma_le_frickeKernel (N : ℕ) [NeZero N] : Γ(N) ≤ frickeKernel N :=
@@ -870,7 +870,7 @@ theorem finrank_adjoin_j_levelField (N : ℕ) [NeZero N] :
     Module.finrank ↥ℂ⟮jK N⟯ (levelField N) = (pmGamma N).index := by
   rw [← fixedIF_eq_adjoin, finrank_fixedIF, levelFixer_eq_pmGamma]
 
-theorem transcendental_jA (N : ℕ) [NeZero N] : Transcendental ℂ (jA N) := by
+theorem transcendental_jA (N : ℕ) : Transcendental ℂ (jA N) := by
   rw [transcendental_iff]
   intro P hP
   have hfun : (fun τ : ℍ ↦ Polynomial.eval (j τ) P) = 0 := by
@@ -884,7 +884,7 @@ theorem transcendental_jA (N : ℕ) [NeZero N] : Transcendental ℂ (jA N) := by
   rw [this]
   exact Set.infinite_univ
 
-theorem transcendental_jK (N : ℕ) [NeZero N] : Transcendental ℂ (jK N) := by
+theorem transcendental_jK (N : ℕ) : Transcendental ℂ (jK N) := by
   rw [transcendental_iff]
   intro P hP
   rw [jK, Polynomial.aeval_algebraMap_apply,
@@ -898,25 +898,25 @@ section C1_carrier
 open scoped UpperHalfPlane MatrixGroups IntermediateField IntermediateField.algebraAdjoinAdjoin
 p2m_open "Polynomial Real.Polynomial"
 
-abbrev polyJ (N : ℕ) [NeZero N] : Subalgebra ℂ (levelField N) := Algebra.adjoin ℂ {jK N}
+abbrev polyJ (N : ℕ) : Subalgebra ℂ (levelField N) := Algebra.adjoin ℂ {jK N}
 
 private abbrev _root_.WLight.ratJ (N : ℕ) [NeZero N] : IntermediateField ℂ (levelField N) := ℂ⟮jK N⟯
 
 p2m_export "WLight" "ratJ"
 
-noncomputable def polyJEquiv (N : ℕ) [NeZero N] : ℂ[X] ≃ₐ[ℂ] ↥(polyJ N) :=
+noncomputable def polyJEquiv (N : ℕ) : ℂ[X] ≃ₐ[ℂ] ↥(polyJ N) :=
   Polynomial.algEquivOfTranscendental ℂ (jK N) (transcendental_jK N)
 
 scoped instance (N : ℕ) [NeZero N] : IsDomain ↥(polyJ N) := inferInstance
 
-scoped instance (N : ℕ) [NeZero N] : IsPrincipalIdealRing ↥(polyJ N) :=
+scoped instance (N : ℕ) : IsPrincipalIdealRing ↥(polyJ N) :=
   IsPrincipalIdealRing.of_surjective (polyJEquiv N).toRingEquiv.toRingHom
     (polyJEquiv N).surjective
 
 scoped instance (N : ℕ) [NeZero N] : IsDedekindDomain ↥(polyJ N) :=
   IsPrincipalIdealRing.isDedekindDomain _
 
-scoped instance (N : ℕ) [NeZero N] : CharZero (levelField N) :=
+scoped instance (N : ℕ) : CharZero (levelField N) :=
   charZero_of_injective_algebraMap (FaithfulSMul.algebraMap_injective ℂ (levelField N))
 
 scoped instance (N : ℕ) [NeZero N] : CharZero ↥(ratJ N) :=
@@ -933,7 +933,7 @@ scoped instance (N : ℕ) [NeZero N] : Algebra.IsSeparable ↥(ratJ N) (levelFie
   haveI : Algebra.IsIntegral ↥(ratJ N) (levelField N) := Algebra.IsIntegral.of_finite _ _
   Algebra.IsSeparable.of_integral ↥(ratJ N) (levelField N)
 
-abbrev levelIntClosure (N : ℕ) [NeZero N] : Subalgebra ↥(polyJ N) (levelField N) :=
+abbrev levelIntClosure (N : ℕ) : Subalgebra ↥(polyJ N) (levelField N) :=
   integralClosure ↥(polyJ N) (levelField N)
 
 scoped instance (N : ℕ) [NeZero N] : IsDedekindDomain ↥(levelIntClosure N) :=

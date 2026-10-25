@@ -154,7 +154,7 @@ end ModularCurve.NoEllAux
 -- to unfold the concrete fraction field of the level-N ring of modular functions.
 private theorem ModularCurve.NoEllAux.keyEQ
     {K : Type*} [Field K] [Algebra ℂ K]
-    (M : ℕ) [NeZero M] (hM : 4 ≤ M) (t : K)
+    (M : ℕ) (hM : 4 ≤ M) (t : K)
     (E : IntermediateField ℂ K) (v : ↥E) (σ : SL(2, ℤ) →* (K ≃ₐ[ℂ] K))
     (hv : E.val v = t)
     (hfd : FiniteDimensional ℂ⟮t⟯ K)

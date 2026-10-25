@@ -217,7 +217,7 @@ theorem isAlgebraic_residue [CharZero L] [Algebra ℚ L]
       ← aeval_def]
     exact hPres
 
-theorem gate_isAlgebraic_int_vacuous_of_charP {R : Type*} [CommRing R] [Nontrivial R]
+theorem gate_isAlgebraic_int_vacuous_of_charP {R : Type*} [CommRing R]
     {ℓ : ℕ} (hℓ : ℓ.Prime) [CharP R ℓ] (x : R) : IsAlgebraic ℤ x := by
   refine ⟨C (ℓ : ℤ) * X, ?_, ?_⟩
   · intro h

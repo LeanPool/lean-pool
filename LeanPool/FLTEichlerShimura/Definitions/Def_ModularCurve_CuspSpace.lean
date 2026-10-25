@@ -85,8 +85,6 @@ def ratPoint (a c : ℤ) : OnePoint ℚ :=
 lemma ratPoint_of_ne_zero (a : ℤ) {c : ℤ} (hc : c ≠ 0) :
     ratPoint a c = (((a : ℚ) / (c : ℚ) : ℚ) : OnePoint ℚ) := ite_eq_right hc
 
-@[simp] lemma ratPoint_one_zero : ratPoint 1 0 = ∞ := ite_eq_left rfl
-
 @[simp] lemma ratPoint_zero_one : ratPoint 0 1 = ((0 : ℚ) : OnePoint ℚ) := by
   simp [ratPoint]
 
@@ -299,7 +297,7 @@ lemma cuspDenom_mk_ratPoint {a c : ℤ} (h : IsCoprime a c) :
 
 @[simp] lemma cuspDenom_mk_infty : cuspDenom N (mk N ∞) = N := rfl
 
-@[simp] lemma cuspDenom_mk_zero : cuspDenom N (mk N ((0 : ℚ) : OnePoint ℚ)) = 1 := by
+lemma cuspDenom_mk_zero : cuspDenom N (mk N ((0 : ℚ) : OnePoint ℚ)) = 1 := by
   rw [← ratPoint_zero_one, cuspDenom_mk_ratPoint (isCoprime_zero_left.mpr isUnit_one)]
   simp [Int.gcd]
 

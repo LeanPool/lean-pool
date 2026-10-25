@@ -102,7 +102,7 @@ noncomputable def subring : Subring ℚ̄ where
     simp only [NumberField.RingOfIntegers.coe_eq_algebraMap, map_neg] at ha ⊢
     rw [← ha]; ring
 
-theorem comap_ne_bot (K : IntermediateField ℚ ℚ̄) [NumberField K] :
+theorem comap_ne_bot (K : IntermediateField ℚ ℚ̄) :
     Qt.comap (algebraMap (𝓞 K) (𝓞 ℚ̄)) ≠ ⊥ := by
   have : (Qt.under ℤ).IsMaximal := Ideal.IsMaximal.under ℤ Qt
   have hne : Qt.under ℤ ≠ ⊥ := Ring.ne_bot_of_isMaximal_of_not_isField inferInstance Int.not_isField

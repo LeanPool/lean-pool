@@ -827,9 +827,9 @@ open _root_.WeierstrassCurve
   _root_.P2MW.S_OVERLONG_7837151f.AlgebraicCurve
   in
 theorem solution
-    {R₀ : Type u} [Field R₀] (W : WeierstrassCurve R₀) [W.IsElliptic]
-    (F : Type v) [Field F] [Algebra R₀ F] [IsAlgClosed F] [CharZero F]
-    (F' : Type w) [Field F'] [Algebra R₀ F'] [IsAlgClosed F'] [CharZero F']
+    {R₀ : Type u} [Field R₀] (W : WeierstrassCurve R₀)
+    (F : Type v) [Field F] [Algebra R₀ F]
+    (F' : Type w) [Field F'] [Algebra R₀ F']
     [Algebra F F'] [IsScalarTower R₀ F F']
     (ι : (W.baseChange F).toAffine.FunctionField →ₐ[F] (W.baseChange F).toAffine.FunctionField)
     (hι : ι.toRingHom.IsIntegral) (hfin : FiniteAlong F ι) :
@@ -855,9 +855,9 @@ open AlgebraicCurve
 
 universe u v w
 theorem WeierstrassCurve.Affine.exists_algHom_functionField_baseChange_finrankAlong_eq
-    {R₀ : Type u} [Field R₀] (W : WeierstrassCurve R₀) [W.IsElliptic]
-    (F : Type v) [Field F] [Algebra R₀ F] [IsAlgClosed F] [CharZero F]
-    (F' : Type w) [Field F'] [Algebra R₀ F'] [IsAlgClosed F'] [CharZero F']
+    {R₀ : Type u} [Field R₀] (W : WeierstrassCurve R₀)
+    (F : Type v) [Field F] [Algebra R₀ F]
+    (F' : Type w) [Field F'] [Algebra R₀ F']
     [Algebra F F'] [IsScalarTower R₀ F F']
     (ι : (W.baseChange F).toAffine.FunctionField →ₐ[F] (W.baseChange F).toAffine.FunctionField)
     (hι : ι.toRingHom.IsIntegral) (hfin : FiniteAlong F ι) :

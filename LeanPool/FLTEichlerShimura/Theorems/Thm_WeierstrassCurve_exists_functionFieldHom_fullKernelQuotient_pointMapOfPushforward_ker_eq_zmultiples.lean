@@ -690,10 +690,9 @@ namespace WeierstrassCurve
 namespace VeluTwoKernel
 
 theorem pointMapOfPushforward_eq_veluPointMap2 {F : Type*} [Field F] [DecidableEq F]
-    [IsAlgClosed F] [CharZero F] {W : WeierstrassCurve F} [W.toAffine.IsElliptic]
+    {W : WeierstrassCurve F}
     {x₀ y₀ : F} (h2 : (2 : F) ≠ 0) (hQ : W.toAffine.Equation x₀ y₀)
     (hgy : W.veluGy x₀ y₀ = 0) (hΔ' : (W.veluQuotient2 x₀ y₀).Δ ≠ 0)
-    [(W.veluQuotient2 x₀ y₀).toAffine.IsElliptic]
     [Affine.GenusOnePlaceGate W.toAffine] [Affine.AbelTheorem W.toAffine]
     [Affine.GenusOnePlaceGate (W.veluQuotient2 x₀ y₀).toAffine]
     [Affine.AbelTheorem (W.veluQuotient2 x₀ y₀).toAffine]
@@ -708,10 +707,9 @@ theorem pointMapOfPushforward_eq_veluPointMap2 {F : Type*} [Field F] [DecidableE
     (veluPointMap2_zero h2 hQ hgy hΔ') hseam P
 
 theorem ker_pointMapOfPushforward_eq_zmultiples {F : Type*} [Field F] [DecidableEq F]
-    [IsAlgClosed F] [CharZero F] {W : WeierstrassCurve F} [W.toAffine.IsElliptic]
+    {W : WeierstrassCurve F}
     {x₀ y₀ : F} (h2 : (2 : F) ≠ 0) (hQ : W.toAffine.Equation x₀ y₀)
     (hgy : W.veluGy x₀ y₀ = 0) (hΔ' : (W.veluQuotient2 x₀ y₀).Δ ≠ 0)
-    [(W.veluQuotient2 x₀ y₀).toAffine.IsElliptic]
     [Affine.GenusOnePlaceGate W.toAffine] [Affine.AbelTheorem W.toAffine]
     [Affine.GenusOnePlaceGate (W.veluQuotient2 x₀ y₀).toAffine]
     [Affine.AbelTheorem (W.veluQuotient2 x₀ y₀).toAffine]
@@ -795,8 +793,8 @@ private theorem AlgebraicCurve.Pic0.pushforwardAlongHom_comp
     ((Divisor.pushforwardAlong_pushforwardAlong φ χ hφ hχ hχφ (D : Divisor K F'')).symm))
 
 theorem WeierstrassCurve.Affine.pointMapOfPushforward_comp
-    {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-    {U V W : Affine F} [U.IsElliptic] [V.IsElliptic] [W.IsElliptic]
+    {F : Type*} [Field F] [DecidableEq F]
+    {U V W : Affine F}
     [GenusOnePlaceGate U] [AbelTheorem U] [GenusOnePlaceGate V] [AbelTheorem V]
     [GenusOnePlaceGate W] [AbelTheorem W]
     (φ : U.FunctionField →ₐ[F] V.FunctionField) (χ : V.FunctionField →ₐ[F] W.FunctionField)
@@ -812,8 +810,8 @@ theorem WeierstrassCurve.Affine.pointMapOfPushforward_comp
     Pic0.pushforwardAlongHom_comp φ χ hφ hχ hχφ hfinφ hfinχ hfinχφ hNφ hNχ hNχφ]
 
 theorem WeierstrassCurve.Affine.ker_pointMapOfPushforward_comp
-    {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-    {U V W : Affine F} [U.IsElliptic] [V.IsElliptic] [W.IsElliptic]
+    {F : Type*} [Field F] [DecidableEq F]
+    {U V W : Affine F}
     [GenusOnePlaceGate U] [AbelTheorem U] [GenusOnePlaceGate V] [AbelTheorem V]
     [GenusOnePlaceGate W] [AbelTheorem W]
     (φ : U.FunctionField →ₐ[F] V.FunctionField) (χ : V.FunctionField →ₐ[F] W.FunctionField)

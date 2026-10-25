@@ -85,7 +85,7 @@ namespace ModularCurve.KwF4gRRTate
 
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 
-def finrankTrace (φ : V →ₗ[K] V) [FiniteDimensional K (LinearMap.range φ)] : K :=
+def finrankTrace (φ : V →ₗ[K] V) : K :=
   LinearMap.trace K (LinearMap.range φ)
     (φ.restrict (fun x _ => LinearMap.mem_range_self φ x))
 
@@ -111,7 +111,7 @@ theorem tateCommRestrict_apply (pA φ ψ : V →ₗ[K] V) (a : LinearMap.range p
     (tateCommRestrict pA φ ψ a : V) = tateComm pA φ ψ (a : V) := rfl
 
 def tateCommTrace (pA φ ψ : V →ₗ[K] V)
-    [FiniteDimensional K (LinearMap.range (tateCommRestrict pA φ ψ))] : K :=
+    : K :=
   finrankTrace (tateCommRestrict pA φ ψ)
 
 theorem tateComm_eq_of_commute {pA φ ψ : V →ₗ[K] V}
@@ -181,7 +181,7 @@ variable {K : Type*} [Field K] {F : Type*} [Field F] [Algebra K F]
 variable {E : Type*} [Field E] [Algebra K E] [Algebra E F] [IsScalarTower K E F]
 variable [Algebra.IsIntegral E F] [HasPrincipalDivisors K E] [HasPrincipalDivisors K F]
 
-def kwHgfV352_completionTraceAt [FiniteDimensional E F]
+def kwHgfV352_completionTraceAt
     (v : Place K E) (w' : Place K F) (hw' : w' ∈ v.fiber F) (g : F) :
     v.adicCompletion :=
   Place.mem_fiber.mp hw' ▸ kw_ffgc_completionTraceF' E w' g
@@ -277,8 +277,7 @@ abbrev lmulK (fh : u.adicCompletion) : u.adicCompletion →ₗ[K] u.adicCompleti
   (Algebra.lmul K u.adicCompletion) fh
 
 def tateRes (fh gh : u.adicCompletion)
-    [FiniteDimensional K (LinearMap.range
-      (tateCommRestrict (tateProj u) (lmulK u fh) (lmulK u gh)))] : K :=
+    : K :=
   tateCommTrace (tateProj u) (lmulK u fh) (lmulK u gh)
 
 end TateProj
@@ -292,9 +291,8 @@ def KwF4gRRTateCommFinite : Prop :=
 
 variable [HasCanonicalLocalResidueKStar K L]
 
-def KwF4gRRTateAgreement (hfin : KwF4gRRTateCommFinite K L) : Prop :=
+def KwF4gRRTateAgreement : Prop :=
   ∀ (u : Place K L) [u.FiniteResidue] (fh : u.adicCompletion),
-    haveI := hfin u fh (algebraMap L u.adicCompletion u.uniformizer)
     tateRes u fh (algebraMap L u.adicCompletion u.uniformizer)
       = Algebra.trace K u.ResidueField (kwHgfV352_localResidueCompletion u fh)
 
@@ -302,28 +300,19 @@ variable (F E : Type*) [Field F] [Algebra K F] [Field E] [Algebra K E]
 variable [Algebra E F] [IsScalarTower K E F] [Algebra.IsIntegral E F]
 variable [HasCanonicalLocalResidueKStar K F] [HasCanonicalLocalResidueKStar K E]
 
-def KwF4gRRTateChainRule (hfinF : KwF4gRRTateCommFinite K F) : Prop :=
+def KwF4gRRTateChainRule : Prop :=
   ∀ [HasPrincipalDivisors K E] [HasPrincipalDivisors K F] [FiniteDimensional E F]
     [Nontrivial Ω[E⁄K]] [Nontrivial Ω[F⁄K]]
     (v : Place K E) [v.DCoordGenerates] (w : Place K F) [w.DCoordGenerates]
     (_ : w ∈ v.fiber F) (fh : w.adicCompletion),
-    haveI := hfinF w fh (algebraMap F w.adicCompletion (algebraMap E F v.uniformizer))
-    haveI := hfinF w (fh * algebraMap F w.adicCompletion
-      (w.differentialCoeff (kaehlerPullback K F E v.dCoord)))
-      (algebraMap F w.adicCompletion w.uniformizer)
     tateRes w fh (algebraMap F w.adicCompletion (algebraMap E F v.uniformizer))
       = tateRes w (fh * algebraMap F w.adicCompletion
           (w.differentialCoeff (kaehlerPullback K F E v.dCoord)))
           (algebraMap F w.adicCompletion w.uniformizer)
 
-def KwF4gRRTateTraceCompat (hfinF : KwF4gRRTateCommFinite K F)
-    (hfinE : KwF4gRRTateCommFinite K E) : Prop :=
+def KwF4gRRTateTraceCompat : Prop :=
   ∀ [HasPrincipalDivisors K E] [HasPrincipalDivisors K F] [FiniteDimensional E F]
     (v : Place K E) (w : Place K F) (hw : w ∈ v.fiber F) (g : F),
-    haveI := hfinF w (algebraMap F w.adicCompletion g)
-      (algebraMap F w.adicCompletion (algebraMap E F v.uniformizer))
-    haveI := hfinE v (kwHgfV352_completionTraceAt v w hw g)
-      (algebraMap E v.adicCompletion v.uniformizer)
     tateRes w (algebraMap F w.adicCompletion g)
         (algebraMap F w.adicCompletion (algebraMap E F v.uniformizer))
       = tateRes v (kwHgfV352_completionTraceAt v w hw g)
@@ -341,7 +330,7 @@ variable [Algebra.IsIntegral E F]
 variable [HasCanonicalLocalResidueKStar K E] [HasCanonicalLocalResidueKStar K F]
 
 def KwF4R1V391aResidueTraceCompletionCommute
-    [HasPrincipalDivisors K E] [HasPrincipalDivisors K F] : Prop :=
+    [HasPrincipalDivisors K F] : Prop :=
   ∀ [∀ w : Place K F, w.FiniteResidue] [FiniteDimensional E F]
     [Nontrivial Ω[E⁄K]] (v : Place K E) [v.DCoordGenerates]
     (w : Place K F) [w.DCoordGenerates] (_ : w ∈ v.fiber F) (g : F),

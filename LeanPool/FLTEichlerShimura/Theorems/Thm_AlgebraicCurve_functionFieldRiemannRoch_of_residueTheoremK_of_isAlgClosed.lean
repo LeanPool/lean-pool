@@ -304,7 +304,7 @@ namespace AlgebraicCurve
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 variable {D E : Divisor K F}
 
-theorem Divisor.degree_nonneg_of_nonneg [IsCurveOver K F]
+theorem Divisor.degree_nonneg_of_nonneg
     {D : Divisor K F} (hD : ∀ v, 0 ≤ D v) : 0 ≤ Divisor.degree D := by
   rw [Divisor.degree_eq_sum_support]
   exact Finset.sum_nonneg fun v _ => mul_nonneg (hD v) (Int.natCast_nonneg _)
@@ -1444,7 +1444,7 @@ theorem range_lSpaceQuotientToAdeleBddQuotient {D₁ D₂ : Divisor K F} (hD : D
       rw [← hsum, hfδ]; ring
     rw [hβsub]; exact (adeleBdd D₁).neg_mem hγ
 
-theorem finrank_adeleBddSup_quotient [IsCurveOver K F] [Nonempty (Place K F)]
+theorem finrank_adeleBddSup_quotient [IsCurveOver K F]
     {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂) [hL : FiniteDimensional K (LSpace D₂)] :
     Module.Finite K (↥(adeleBdd D₂ ⊔ globalSub K F)
         ⧸ (adeleBdd D₁ ⊔ globalSub K F).comap (adeleBdd D₂ ⊔ globalSub K F).subtype) ∧
@@ -1513,7 +1513,7 @@ theorem finrank_adeleBddSup_quotient [IsCurveOver K F] [Nonempty (Place K F)]
 
 section Index
 
-variable [IsCurveOver K F] [Nonempty (Place K F)]
+variable [IsCurveOver K F]
 
 theorem adeleBddSup_eq_of_degree_sub_ell_eq {D₁ D₂ : Divisor K F} (hD : D₁ ≤ D₂)
     [FiniteDimensional K (LSpace D₂)]
@@ -1541,7 +1541,6 @@ end Index
 namespace RiemannGenusReachedAt
 
 private theorem eq_of_ge [IsCurveOver K F]
-    [Nonempty (Place K F)]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀)
     {D : Divisor K F} (hD : D₀ ≤ D) :
@@ -1554,7 +1553,7 @@ private theorem eq_of_ge [IsCurveOver K F]
 
 end RiemannGenusReachedAt
 
-theorem adeleSpace_eq_of_genusReached [IsCurveOver K F] [Nonempty (Place K F)]
+theorem adeleSpace_eq_of_genusReached [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
     adeleSpace K F = adeleBdd D₀ ⊔ globalSub K F := by
@@ -1580,7 +1579,7 @@ theorem riemannIndexFormula_of_genusReached
   have := hne; have := hL0
   exact (indexOfSpecialty_eq_of_genusReached hD₀ D).2
 
-theorem gate_riemannInequality_of_genusReached [IsCurveOver K F] [Nonempty (Place K F)]
+theorem gate_riemannInequality_of_genusReached [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) (D : Divisor K F) :
     Divisor.degree D + 1 - γ ≤ (ell D : ℤ) := by
@@ -1803,7 +1802,7 @@ variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 section Finiteness
 
-variable [IsCurveOver K F] [Nonempty (Place K F)]
+variable [IsCurveOver K F]
   [FiniteDimensional K (LSpace (0 : Divisor K F))]
 
 theorem omegaSpace_finite_of_genusReached
@@ -1900,7 +1899,7 @@ theorem residuePairing_surjective_of_rankOne_max [HasPrincipalDivisors K F]
 
 section Identification
 
-variable [IsCurveOver K F] [Nonempty (Place K F)]
+variable [IsCurveOver K F]
   [FiniteDimensional K (LSpace (0 : Divisor K F))]
   [HasCanonicalDivisor (K := K) (F := F)]
 
@@ -1914,7 +1913,7 @@ theorem stichtenothGenus_nonneg
   have h0 : (0 : ℤ) ≤ (indexOfSpecialty (0 : Divisor K F) : ℤ) := Int.natCast_nonneg _
   push_cast at hi0; linarith
 
-omit [Nonempty (Place K F)] [FiniteDimensional K (LSpace (0 : Divisor K F))]
+omit [FiniteDimensional K (LSpace (0 : Divisor K F))]
   in
 theorem genus_eq_degree_div :
     ∃ (ω₀ : Ω[F⁄K]) (hω₀ : ω₀ ≠ 0),
@@ -2272,7 +2271,7 @@ theorem PoleDivisorPackage.ell_nsmul_sub_pos [IsCurveOver K F]
   have : (0 : ℤ) < (ell (m • P.B - A) : ℤ) := by linarith
   exact_mod_cast this
 
-theorem PoleDivisorPackage.degree_sub_ell_le [IsCurveOver K F] [Nonempty (Place K F)]
+theorem PoleDivisorPackage.degree_sub_ell_le [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (P : PoleDivisorPackage K F) (D : Divisor K F) :
     Divisor.degree D - ell D ≤ (P.n : ℤ) * (P.c - 1) := by
@@ -2317,7 +2316,7 @@ theorem PoleDivisorPackage.degree_sub_ell_le [IsCurveOver K F] [Nonempty (Place 
   have h412 := P.degree_nsmul_sub_ell_le hcm
   linarith
 
-theorem riemannGenusBounded_of_poleDivisorPackage [IsCurveOver K F] [Nonempty (Place K F)]
+theorem riemannGenusBounded_of_poleDivisorPackage [IsCurveOver K F]
     [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (P : PoleDivisorPackage K F) :
     RiemannGenusBounded K F :=
@@ -3186,15 +3185,7 @@ theorem solution
     [AlgebraicCurve.HasCanonicalDivisor (K := K) (F := F)]
     [∀ w : AlgebraicCurve.Place K F, w.DCoordGenerates]
     [Algebra (RatFunc K) F] [IsScalarTower K (RatFunc K) F]
-    [Algebra.IsIntegral (RatFunc K) F]
-    [AlgebraicCurve.HasLocalResidue K F]
-    [∀ w : AlgebraicCurve.Place K F, w.FiniteResidue]
-    [Nontrivial Ω[F⁄K]]
-    [AlgebraicCurve.IsCurveOver K F] [AlgebraicCurve.IsCurveOver K (RatFunc K)]
-    [∀ u : AlgebraicCurve.Place K (RatFunc K), u.FiniteResidue]
-    [AlgebraicCurve.HasCanonicalLocalResidueKStar K F]
     [Algebra.IsSeparable (RatFunc K) F]
-    [Nontrivial Ω[(RatFunc K)⁄K]] [∀ v : AlgebraicCurve.Place K (RatFunc K), v.DCoordGenerates]
     [FiniteDimensional (RatFunc K) F] [AlgebraicCurve.HasSeparableResidue K F]
     (hRTK : AlgebraicCurve.ResidueTheoremK K F) :
     AlgebraicCurve.FunctionFieldRiemannRoch K F := by
@@ -3213,15 +3204,7 @@ theorem AlgebraicCurve.functionFieldRiemannRoch_of_residueTheoremK_of_isAlgClose
     [AlgebraicCurve.HasCanonicalDivisor (K := K) (F := F)]
     [∀ w : AlgebraicCurve.Place K F, w.DCoordGenerates]
     [Algebra (RatFunc K) F] [IsScalarTower K (RatFunc K) F]
-    [Algebra.IsIntegral (RatFunc K) F]
-    [AlgebraicCurve.HasLocalResidue K F]
-    [∀ w : AlgebraicCurve.Place K F, w.FiniteResidue]
-    [Nontrivial Ω[F⁄K]]
-    [AlgebraicCurve.IsCurveOver K F] [AlgebraicCurve.IsCurveOver K (RatFunc K)]
-    [∀ u : AlgebraicCurve.Place K (RatFunc K), u.FiniteResidue]
-    [AlgebraicCurve.HasCanonicalLocalResidueKStar K F]
     [Algebra.IsSeparable (RatFunc K) F]
-    [Nontrivial Ω[(RatFunc K)⁄K]] [∀ v : AlgebraicCurve.Place K (RatFunc K), v.DCoordGenerates]
     [FiniteDimensional (RatFunc K) F] [AlgebraicCurve.HasSeparableResidue K F]
     (hRTK : AlgebraicCurve.ResidueTheoremK K F) :
     AlgebraicCurve.FunctionFieldRiemannRoch K F := by

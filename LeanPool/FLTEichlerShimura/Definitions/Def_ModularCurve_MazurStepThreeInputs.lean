@@ -112,6 +112,7 @@ def eisensteinQuotientRational (inst : Module HeckeAlg (JZero p)) :
     {x : JZero p | ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ,
       σ • x - x ∈ eisensteinKernelSubmodule p inst}
 
+omit [NeZero p] in
 theorem eisensteinQuotientInvariantsFiniteAt_iff (inst : Module HeckeAlg (JZero p)) :
     EisensteinQuotientInvariantsFiniteAt p inst ↔ (eisensteinQuotientRational p inst).Finite :=
   Iff.rfl

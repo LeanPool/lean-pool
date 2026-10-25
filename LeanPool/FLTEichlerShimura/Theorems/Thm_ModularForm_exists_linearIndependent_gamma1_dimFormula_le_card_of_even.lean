@@ -122,7 +122,7 @@ theorem finite_doubleCoset_quotient {G : Type*} [Group G] (H K : Subgroup G) [H.
 
 theorem exists_coe_eq_jqModC_laurentBaseChange_qExpFunctionFieldC
     (K : Type*) [Field K] [Algebra ℚ K]
-    (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) [Γ.FiniteIndex] :
+    (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) :
     ∃ y : ↥(ModularCurve.laurentBaseChange K (ModularCurve.qExpFunctionFieldC ℚ Γ)),
       (y : LaurentSeries K) = ModularCurve.jqModC K := by
   have hmem : ModularCurve.jq ∈ ModularCurve.qExpFunctionFieldC ℚ Γ := by

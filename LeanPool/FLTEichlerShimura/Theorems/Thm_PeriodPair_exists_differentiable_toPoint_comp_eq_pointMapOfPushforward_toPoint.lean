@@ -218,12 +218,10 @@ scoped instance instHasPrincipalDivisorsFunctionField_s13 {F : Type*} [Field F] 
 namespace IsogenyEndDatum
 p2m_export "WeierstrassCurve.Affine.IsogenyEndDatum" "pointEnd pointEnd_apply pointEnd_eq_of_seam \
   hfin hι mk ι"
-p2m_open "WeierstrassCurve.Affine.IsogenyEndDatum"
 
-variable {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-variable {W : Affine F} [W.IsElliptic] [GenusOnePlaceGate W] [AbelTheorem W]
+variable {F : Type*} [Field F] [DecidableEq F] [CharZero F]
+variable {W : Affine F} [GenusOnePlaceGate W] [AbelTheorem W]
 
-omit [IsAlgClosed F] [WeierstrassCurve.IsElliptic W] in
 theorem pointEnd_eq_pointEnd' (D : IsogenyEndDatum W) (hN : NormFormulaAlong F D.ι D.hfin) :
     D.pointEnd hN = D.pointEnd' := rfl
 

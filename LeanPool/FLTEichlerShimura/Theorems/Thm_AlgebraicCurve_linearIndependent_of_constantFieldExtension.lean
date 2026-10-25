@@ -84,7 +84,7 @@ theorem genericPoly_map (d N : ℕ) (v : Fin d → Fin N → R) (φ : R →+* S)
     (genericPoly d N v).map (mapRingHom φ) = genericPoly d N (fun j n => φ (v j n)) := by
   simp [genericPoly, Polynomial.map_sum, Polynomial.map_mul, Polynomial.map_pow]
 
-theorem genericPoly_monic [Nontrivial R] (d N : ℕ) (v : Fin d → Fin N → R) :
+theorem genericPoly_monic (d N : ℕ) (v : Fin d → Fin N → R) :
     (genericPoly d N v).Monic :=
   monic_X_pow_add (degree_sum_fin_lt _)
 

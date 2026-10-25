@@ -422,7 +422,7 @@ p2m_export "ModularCurve.PhiGen" "conj conj_zero conj_succ phiProd splits_prime_
   splits_of_prime"
 end ModularCurve.PhiGen
 p2m_open_scoped "ModularCurve ModularCurve.PhiGen" in
-private theorem ModularCurve.PhiGen.sum_qTwist_coeff {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)
+private theorem ModularCurve.PhiGen.sum_qTwist_coeff {K : Type*} [Field K] (ℓ : ℕ)
     (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) ℓ) (f : LaurentSeries K) (k : ℤ) :
     (∑ b ∈ Finset.range ℓ, qTwist (ζ ^ b) f).coeff k
       = if (ℓ : ℤ) ∣ k then (ℓ : K) * f.coeff k else 0 := by
@@ -454,7 +454,7 @@ private theorem ModularCurve.PhiGen.sum_qTwist_coeff {K : Type*} [Field K] [Alge
   · rw [ite_eq_right hd, ite_eq_right (fun h => hd (hiff.mp h)), zero_mul]
 
 p2m_open_scoped "ModularCurve ModularCurve.PhiGen" in
-private theorem ModularCurve.PhiGen.coeff_sum_slots {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)
+private theorem ModularCurve.PhiGen.coeff_sum_slots {K : Type*} [Field K] (ℓ : ℕ)
     [NeZero ℓ] (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) ℓ) (f : LaurentSeries K) (n : ℤ) :
     (qExpand K (ℓ * ℓ) f + ∑ b ∈ Finset.range ℓ, qTwist (ζ ^ b) f).coeff ((ℓ : ℤ) * n)
       = (if (ℓ : ℤ) ∣ n then f.coeff (n / ℓ) else 0) + (ℓ : K) * f.coeff ((ℓ : ℤ) * n) := by
@@ -477,7 +477,7 @@ private theorem ModularCurve.PhiGen.coeff_sum_slots {K : Type*} [Field K] [Algeb
     exact mul_left_cancel₀ hℓ0 h2
 
 p2m_open_scoped "ModularCurve ModularCurve.PhiGen" in
-private theorem ModularCurve.PhiGen.coeff_sum_slots_not_dvd {K : Type*} [Field K] [Algebra ℚ K]
+private theorem ModularCurve.PhiGen.coeff_sum_slots_not_dvd {K : Type*} [Field K]
     (ℓ : ℕ) [NeZero ℓ] (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) ℓ) (f : LaurentSeries K)
     {k : ℤ} (hk : ¬ (ℓ : ℤ) ∣ k) :
     (qExpand K (ℓ * ℓ) f + ∑ b ∈ Finset.range ℓ, qTwist (ζ ^ b) f).coeff k = 0 := by
@@ -497,7 +497,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
 end ModularCurve
 p2m_open_scoped "ModularCurve" in
 private theorem ModularCurve.coeff_trace_heckeBeta (L : Type*) [Field L] [Algebra ℚ L] (N ℓ : ℕ)
-    [NeZero N] [NeZero ℓ] (ζ : Lˣ) (hζ : IsPrimitiveRoot (ζ : L) ℓ)
+    [NeZero ℓ] (ζ : Lˣ) (hζ : IsPrimitiveRoot (ζ : L) ℓ)
     (hle : laurentBaseChange L (modularFunctionFieldFull N)
       ≤ laurentBaseChange L (modularFunctionFieldFull (N * ℓ)))
     (g : laurentBaseChange L (modularFunctionFieldFull N))
@@ -628,7 +628,7 @@ p2m_open "ModularCurve\
   " in
 open _root_.P2MW.S_ModularCurve_PhiGen_sum_qTwist_coeff.ModularCurve _root_.ModularCurve.PhiGen
   _root_.P2MW.S_ModularCurve_PhiGen_sum_qTwist_coeff.ModularCurve.PhiGen in
-theorem solution {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ) (ζ : Kˣ)
+theorem solution {K : Type*} [Field K] (ℓ : ℕ) (ζ : Kˣ)
     (hζ : IsPrimitiveRoot (ζ : K) ℓ) (f : LaurentSeries K) (k : ℤ) :
     (∑ b ∈ Finset.range ℓ, qTwist (ζ ^ b) f).coeff k = if (ℓ : ℤ) ∣ k then (ℓ : K) * f.coeff k else
       0 :=
@@ -644,7 +644,7 @@ public section publicSection
 
 
 open ModularCurve ModularCurve.PhiGen
-theorem ModularCurve.PhiGen.sum_qTwist_coeff {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ) (ζ : Kˣ)
+theorem ModularCurve.PhiGen.sum_qTwist_coeff {K : Type*} [Field K] (ℓ : ℕ) (ζ : Kˣ)
     (hζ : IsPrimitiveRoot (ζ : K) ℓ) (f : LaurentSeries K) (k : ℤ) :
     (∑ b ∈ Finset.range ℓ, qTwist (ζ ^ b) f).coeff k = if (ℓ : ℤ) ∣ k then (ℓ : K) * f.coeff k else
       0 :=

@@ -434,11 +434,11 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra 
 variable (F)
 variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Place K F')
 
-abbrev kw_ffgc_completionTrace [FiniteDimensional F F'] :
+abbrev kw_ffgc_completionTrace :
     W.adicCompletion →ₗ[(W.restrict F).adicCompletion] (W.restrict F).adicCompletion :=
   Algebra.trace (W.restrict F).adicCompletion W.adicCompletion
 
-def kw_ffgc_completionTraceF' [FiniteDimensional F F'] : F' →ₗ[F] (W.restrict F).adicCompletion :=
+def kw_ffgc_completionTraceF' : F' →ₗ[F] (W.restrict F).adicCompletion :=
   { toFun := fun g => kw_ffgc_completionTrace F W (algebraMap F' W.adicCompletion g)
     map_add' := fun x y => by simp only [map_add]
     map_smul' := fun c x => by

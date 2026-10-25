@@ -38,15 +38,15 @@ $\rho(\sigma)v-v\in L$ for all $v$ and all $\sigma$ in the inertia subgroup of $
 trivially on `ρ.V/L`). (3) `IsUnipotentOnInertiaAt ρ q`: for every $P$ above $q$ and every inertia
 element $\sigma$, $\operatorname{charpoly}(\rho(\sigma))=(X-1)^{2}$ — an equality of characteristic
 polynomials, which over a non-reduced `A` is strictly stronger than $(\rho(\sigma)-1)^{2}=0$. (4)
-[`GaloisRep.ordinaryCondition 𝒪 p S`](../def/GaloisRep_LocalConditions.html#L28) and
-[`GaloisRep.minimalOrdinaryCondition 𝒪 p S`](../def/GaloisRep_LocalConditions.html#L33) package
+[`GaloisRep.ordinaryCondition p S`](../def/GaloisRep_LocalConditions.html#L28) and
+[`GaloisRep.minimalOrdinaryCondition p S`](../def/GaloisRep_LocalConditions.html#L33) package
 these as predicates on representations over varying coefficient rings (binder `⦃A⦄`, local
-`𝒪`-algebras): the former is `DetIsCyclotomic p` ∧ `IsOrdinaryAt p` ∧ unramified (`IsUnramifiedAt`)
+rings): the former is `DetIsCyclotomic p` ∧ `IsOrdinaryAt p` ∧ unramified (`IsUnramifiedAt`)
 at every prime $q\notin S$, imposing nothing at the primes of $S$ other than $p$; the latter adds
 `IsUnipotentOnInertiaAt q` for every prime $q\in S$ with $q\neq p$. The names `LiesOverPrime`,
 `inertiaSubgroupIn` and `IsUnramifiedAt` are not defined here; they come from the imported
 definitions or from Mathlib. No representability, minimality or uniqueness statement is made in this
-module, and the `𝒪`-algebra structure enters only through the signature.
+module.
 
 **Relation to Mathlib.** The local data are phrased with Mathlib's valuation subrings of
 $\overline{\mathbb Q}$ and their decomposition subgroups; Mathlib has no notion of a deformation
@@ -54,8 +54,8 @@ condition on a Galois representation, so `ordinaryCondition` and `minimalOrdinar
 the underlying [`GaloisRepAdic`](../def/GaloisRep_Adic.html#L16), are the project's own.
 
 **Where it is used.** These predicates are the deformation conditions fed to the project's
-deformation-ring data: `minimalOrdinaryCondition 𝒪 p S` stands for the minimal ordinary problem used
-in the patching and numerical-criterion steps, while `ordinaryCondition 𝒪 p S` with $S$ containing
+deformation-ring data: `minimalOrdinaryCondition p S` stands for the minimal ordinary problem used
+in the patching and numerical-criterion steps, while `ordinaryCondition p S` with $S$ containing
 $p$ and the bad primes is the weaker, type-$\Sigma$ problem through which the representation
 attached to a semistable elliptic curve is taken to factor.
 
@@ -89,14 +89,14 @@ end GaloisRepAdic
 
 namespace GaloisRep
 
-def ordinaryCondition (𝒪 : Type) [CommRing 𝒪] (p : ℕ) (S : Finset ℕ) :
-    ∀ ⦃A : Type⦄ [CommRing A] [IsLocalRing A] [Algebra 𝒪 A], GaloisRepAdic A → Prop :=
-  fun _A _ _ _ ρ => ρ.DetIsCyclotomic p ∧ ρ.IsOrdinaryAt p ∧
+def ordinaryCondition (p : ℕ) (S : Finset ℕ) :
+    ∀ ⦃A : Type⦄ [CommRing A] [IsLocalRing A], GaloisRepAdic A → Prop :=
+  fun _A _ _ ρ => ρ.DetIsCyclotomic p ∧ ρ.IsOrdinaryAt p ∧
     ∀ q : ℕ, q.Prime → q ∉ S → ρ.IsUnramifiedAt q
 
-def minimalOrdinaryCondition (𝒪 : Type) [CommRing 𝒪] (p : ℕ) (S : Finset ℕ) :
-    ∀ ⦃A : Type⦄ [CommRing A] [IsLocalRing A] [Algebra 𝒪 A], GaloisRepAdic A → Prop :=
-  fun _A _ _ _ ρ => ordinaryCondition 𝒪 p S ρ ∧
+def minimalOrdinaryCondition (p : ℕ) (S : Finset ℕ) :
+    ∀ ⦃A : Type⦄ [CommRing A] [IsLocalRing A], GaloisRepAdic A → Prop :=
+  fun _A _ _ ρ => ordinaryCondition p S ρ ∧
     ∀ q ∈ S, q.Prime → q ≠ p → ρ.IsUnipotentOnInertiaAt q
 
 end GaloisRep

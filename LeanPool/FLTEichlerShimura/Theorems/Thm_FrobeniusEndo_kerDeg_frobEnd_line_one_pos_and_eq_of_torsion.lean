@@ -269,7 +269,7 @@ lemma exists_nonsingular [IsAlgClosed k] [W.IsElliptic] (x : k) :
   simp only [IsRoot, eval_add, eval_mul, eval_pow, eval_C, eval_X, one_mul] at hy
   linear_combination hy
 
-lemma zsmul_x_mul_ΨSq [DecidableEq k] [W.IsElliptic] (n : ℤ) {x y : k}
+lemma zsmul_x_mul_ΨSq [DecidableEq k] (n : ℤ) {x y : k}
     (h : W.toAffine.Nonsingular x y) {x' y' : k} (h' : W.toAffine.Nonsingular x' y')
     (hn : n • Point.some x y h = Point.some x' y' h') :
     x' * (W.ΨSq n).eval x = (W.Φ n).eval x := by

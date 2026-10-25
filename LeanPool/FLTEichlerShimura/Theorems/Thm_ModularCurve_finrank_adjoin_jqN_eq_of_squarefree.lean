@@ -396,14 +396,16 @@ p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
-def IsLevel (K : Type*) [Field K] [Algebra ℚ K] (N M : ℕ) (y : LaurentSeries K) : Prop :=
+def IsLevel (K : Type*) [Field K] (N M : ℕ) (y : LaurentSeries K) : Prop :=
   ∃ (e d : ℕ) (_ : NeZero e) (w : Kˣ),
     d ∣ M ∧ e * (d * d) = N * N * M ∧ w ^ M = 1 ∧ y = TS K e w
 
+omit [Algebra ℚ K] in
 theorem isLevel_iota (N : ℕ) [NeZero N] (M : ℕ) [NeZero M] :
     IsLevel K N M (TS K (N * N * M) 1) :=
   ⟨N * N * M, 1, inferInstance, 1, one_dvd M, by ring, one_pow M, rfl⟩
 
+omit [Algebra ℚ K] in
 theorem isLevel_one (N : ℕ) [NeZero N] : IsLevel K N 1 (TS K (N * N) 1) :=
   ⟨N * N, 1, inferInstance, 1, one_dvd 1, by ring, one_pow 1, rfl⟩
 
@@ -423,6 +425,7 @@ private theorem prime_step_facts (N : ℕ) (hN : Squarefree N) {M q : ℕ} (hq :
   exact ⟨hqN, hqN.trans (dvd_mul_left N N), hcop,
     fun hdvd => hq.ne_one (Nat.eq_one_of_dvd_coprimes hcop hdvd dvd_rfl)⟩
 
+omit [Algebra ℚ K] in
 private theorem level_exponent_eq {N M : ℕ} {v : LaurentSeries K} (hv : IsLevel K N M v)
     (e' : ℕ) [NeZero e'] (w' : Kˣ) (hveq : v = TS K e' w') :
     ∃ d' : ℕ, d' ∣ M ∧ e' * (d' * d') = N * N * M ∧ w' ^ M = 1 := by
@@ -432,7 +435,7 @@ private theorem level_exponent_eq {N M : ℕ} {v : LaurentSeries K} (hv : IsLeve
   exact ⟨dz, hdz, hezd, hwz⟩
 
 theorem isLevel_mul_of_isRoot (N : ℕ) [NeZero N] (hN : Squarefree N) (ζ : Kˣ)
-    (hζ : IsPrimitiveRoot (ζ : K) (N * N)) {M q : ℕ} [NeZero M] [hq : Fact (Nat.Prime q)]
+    (hζ : IsPrimitiveRoot (ζ : K) (N * N)) {M q : ℕ} [hq : Fact (Nat.Prime q)]
     (hMq : M * q ∣ N) (data : ModularPolynomialData q) {y z : LaurentSeries K}
     (hy : IsLevel K N M y) (hz : (phiAtSeed data y).IsRoot z) :
     IsLevel K N (M * q) z := by
@@ -472,7 +475,7 @@ theorem isLevel_mul_of_isRoot (N : ℕ) [NeZero N] (hN : Squarefree N) (ζ : Kˣ
       rw [h1, h2, one_mul]
 
 theorem eq_of_isRoot_of_isLevel (N : ℕ) [NeZero N] (hN : Squarefree N) (ζ : Kˣ)
-    (hζ : IsPrimitiveRoot (ζ : K) (N * N)) {M q : ℕ} [NeZero M] [hq : Fact (Nat.Prime q)]
+    (hζ : IsPrimitiveRoot (ζ : K) (N * N)) {M q : ℕ} [hq : Fact (Nat.Prime q)]
     (hMq : M * q ∣ N) (data : ModularPolynomialData q) {y z z' : LaurentSeries K}
     (hy : IsLevel K N (M * q) y) (hz : (phiAtSeed data y).IsRoot z)
     (hz' : (phiAtSeed data y).IsRoot z') (hzM : IsLevel K N M z) (hz'M : IsLevel K N M z') :

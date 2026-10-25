@@ -206,7 +206,7 @@ end M4WilesOmegaXY
 open Polynomial
 open scoped Polynomial.Bivariate
 
-theorem solution {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F) [W.IsElliptic] (n :
+theorem solution {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F) (n :
   ℤ) {x y : F} (h : W.toAffine.Nonsingular x y) {x' y' : F} (h' : W.toAffine.Nonsingular x' y') (hn
   : n • WeierstrassCurve.Affine.Point.some x y h = WeierstrassCurve.Affine.Point.some x' y' h') :
     x' * ((W.ψ n).evalEval x y) ^ 2 = (W.φ n).evalEval x y :=
@@ -225,7 +225,7 @@ open Polynomial
 open scoped Polynomial.Bivariate
 
 theorem WeierstrassCurve.Affine.Point.zsmul_x_mul_psi_sq {F : Type*} [Field F] [DecidableEq F] (W :
-  WeierstrassCurve F) [W.IsElliptic] (n : ℤ) {x y : F} (h : W.toAffine.Nonsingular x y) {x' y' : F}
+  WeierstrassCurve F) (n : ℤ) {x y : F} (h : W.toAffine.Nonsingular x y) {x' y' : F}
   (h' : W.toAffine.Nonsingular x' y') (hn : n • WeierstrassCurve.Affine.Point.some x y h =
   WeierstrassCurve.Affine.Point.some x' y' h') :
     x' * ((W.ψ n).evalEval x y) ^ 2 = (W.φ n).evalEval x y :=

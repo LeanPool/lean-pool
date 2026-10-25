@@ -648,7 +648,7 @@ open _root_.WeierstrassCurve
   _root_.P2MW.S_OVERLONG_e162e25a.ModularCurve
   in
 theorem solution
-    {K : Type u} [Field K] [IsAlgClosed K] [CharZero K]
+    {K : Type u} [Field K] [CharZero K]
     (W : WeierstrassCurve K) [W.IsElliptic]
     {N : ℕ} [NeZero N] (hN : Squarefree N) (data : ModularCurve.ModularPolynomialData N)
     (D : IsogenyEndDatum W.toAffine) (hdeg : finrankAlong K D.ι = N) :
@@ -735,7 +735,7 @@ open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 
 universe u
 theorem WeierstrassCurve.Affine.IsogenyEndDatum.aeval_j_diag_eq_zero_of_finrankAlong_eq
-    {K : Type u} [Field K] [IsAlgClosed K] [CharZero K]
+    {K : Type u} [Field K] [CharZero K]
     (W : WeierstrassCurve K) [W.IsElliptic]
     {N : ℕ} [NeZero N] (hN : Squarefree N) (data : ModularCurve.ModularPolynomialData N)
     (D : IsogenyEndDatum W.toAffine) (hdeg : finrankAlong K D.ι = N) :

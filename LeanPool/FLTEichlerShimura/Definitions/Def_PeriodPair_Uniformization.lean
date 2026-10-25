@@ -129,7 +129,6 @@ def toPoint (h : L.DiscriminantNeZero) (z : ℂ) : L.weierstrassCurve.toAffine.P
 theorem toPoint_of_mem (h : L.DiscriminantNeZero) {z : ℂ} (hz : z ∈ L.lattice) :
     L.toPoint h z = 0 := by simp [toPoint, hz]
 
-@[simp]
 theorem toPoint_zero (h : L.DiscriminantNeZero) : L.toPoint h 0 = 0 :=
   L.toPoint_of_mem h (zero_mem _)
 

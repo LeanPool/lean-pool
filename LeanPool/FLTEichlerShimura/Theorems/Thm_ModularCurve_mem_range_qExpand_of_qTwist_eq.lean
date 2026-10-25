@@ -69,7 +69,7 @@ namespace ModularCurve
 p2m_export "ModularCurve" "qTwist qTwist_coeff qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd"
 p2m_open "ModularCurve"
 
-theorem coeff_eq_zero_of_qTwist_eq {K : Type*} [Field K] (n : ℕ) [NeZero n] (ζ : Kˣ)
+theorem coeff_eq_zero_of_qTwist_eq {K : Type*} [Field K] (n : ℕ) (ζ : Kˣ)
     (hζ : IsPrimitiveRoot (ζ : K) n) (f : LaurentSeries K) (h : qTwist ζ f = f) {k : ℤ}
     (hk : ¬ (n : ℤ) ∣ k) : f.coeff k = 0 := by
   have hc := congrArg (fun g : LaurentSeries K => g.coeff k) h

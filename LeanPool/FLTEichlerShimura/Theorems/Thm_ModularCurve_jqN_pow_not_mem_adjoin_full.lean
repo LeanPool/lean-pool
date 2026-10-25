@@ -414,20 +414,20 @@ private theorem range_qExpand_congr {A A' : ℕ} [NeZero A] [NeZero A'] (h : A =
   · rintro ⟨w, rfl⟩; exact ⟨w, (qExpand_congr h w).symm⟩
   · rintro ⟨w, rfl⟩; exact ⟨w, qExpand_congr h w⟩
 
-private def chainField (M p : ℕ) [NeZero M] [NeZero p] (i : ℕ) :
+private def chainField (M p : ℕ) [NeZero p] (i : ℕ) :
     IntermediateField ℚ (LaurentSeries ℚ) :=
   IntermediateField.adjoin ℚ ((modularFunctionFieldFull M : Set (LaurentSeries ℚ))
     ∪ {x : LaurentSeries ℚ | ∃ j : ℕ, j ≤ i ∧ x = jqN (p ^ j)})
 
-private theorem mem_chainField (M p : ℕ) [NeZero M] [NeZero p] {j i : ℕ} (hj : j ≤ i) :
+private theorem mem_chainField (M p : ℕ) [NeZero p] {j i : ℕ} (hj : j ≤ i) :
     jqN (p ^ j) ∈ chainField M p i :=
   IntermediateField.subset_adjoin ℚ _ (Or.inr ⟨j, hj, rfl⟩)
 
-private theorem full_le_chainField (M p : ℕ) [NeZero M] [NeZero p] (i : ℕ) :
+private theorem full_le_chainField (M p : ℕ) [NeZero p] (i : ℕ) :
     modularFunctionFieldFull M ≤ chainField M p i :=
   fun _ hx => IntermediateField.subset_adjoin ℚ _ (Or.inl hx)
 
-private theorem chainField_zero (M p : ℕ) [NeZero M] [NeZero p] :
+private theorem chainField_zero (M p : ℕ) [NeZero p] :
     chainField M p 0 = modularFunctionFieldFull M := by
   apply le_antisymm
   · rw [chainField, IntermediateField.adjoin_le_iff]
@@ -440,14 +440,14 @@ private theorem chainField_zero (M p : ℕ) [NeZero M] [NeZero p] :
       rwa [qExpand_one_apply] at h2
   · exact full_le_chainField M p 0
 
-private theorem chainField_mono (M p : ℕ) [NeZero M] [NeZero p] (i : ℕ) :
+private theorem chainField_mono (M p : ℕ) [NeZero p] (i : ℕ) :
     chainField M p i ≤ chainField M p (i + 1) := by
   rw [chainField, chainField]
   refine IntermediateField.adjoin.mono ℚ _ _ (Set.union_subset_union_right _ ?_)
   rintro z ⟨j, hj, rfl⟩
   exact ⟨j, le_trans hj (Nat.le_succ i), rfl⟩
 
-private theorem chainField_succ (M p : ℕ) [NeZero M] [NeZero p] (i : ℕ) :
+private theorem chainField_succ (M p : ℕ) [NeZero p] (i : ℕ) :
     chainField M p (i + 1) = IntermediateField.adjoin ℚ
       ((chainField M p i : Set (LaurentSeries ℚ)) ∪ {jqN (p ^ i * p)}) := by
   apply le_antisymm

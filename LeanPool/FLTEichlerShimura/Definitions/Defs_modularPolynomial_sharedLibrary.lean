@@ -146,7 +146,7 @@ theorem phiAtSeed_map {R S : Type*} [CommRing R] [CommRing S] {n : ℕ} [NeZero 
   · exact RingHom.ext_int _ _
   · simp
 
-theorem phiAtSeed_monic {R : Type*} [CommRing R] [Nontrivial R] {n : ℕ} [NeZero n]
+theorem phiAtSeed_monic {R : Type*} [CommRing R] {n : ℕ} [NeZero n]
     (data : ModularPolynomialData n) (x : R) : (phiAtSeed data x).Monic :=
   data.monic.map _
 

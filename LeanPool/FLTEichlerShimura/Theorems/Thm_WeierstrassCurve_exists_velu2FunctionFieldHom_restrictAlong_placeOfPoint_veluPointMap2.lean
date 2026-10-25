@@ -691,23 +691,22 @@ end Velu2FFPort
 
 open Velu2FFPort in
 theorem solution
-    {F : Type*} [Field F] [DecidableEq F] [CharZero F] [IsAlgClosed F]
+    {F : Type*} [Field F] [CharZero F] [IsAlgClosed F]
     {W : WeierstrassCurve F} [W.IsElliptic]
     {x₀ y₀ : F} (hQ : W.toAffine.Equation x₀ y₀) (hgy : W.veluGy x₀ y₀ = 0)
     (hΔ' : (W.veluQuotient2 x₀ y₀).Δ ≠ 0)
     [(W.veluQuotient2 x₀ y₀).IsElliptic]
     [WeierstrassCurve.Affine.GenusOnePlaceGate W.toAffine]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W.toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem W.toAffine]
     [WeierstrassCurve.Affine.GenusOnePlaceGate (W.veluQuotient2 x₀ y₀).toAffine]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (W.veluQuotient2 x₀ y₀).toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (W.veluQuotient2 x₀ y₀).toAffine] :
+    :
     ∃ (ι : (W.veluQuotient2 x₀ y₀).toAffine.FunctionField →ₐ[F] W.toAffine.FunctionField)
       (hι : ι.toRingHom.IsIntegral) (_ : AlgebraicCurve.FiniteAlong F ι),
       ∀ P : W.toAffine.Point,
         (WeierstrassCurve.Affine.placeOfPoint P).restrictAlong ι hι
           = WeierstrassCurve.Affine.placeOfPoint
-              (WeierstrassCurve.veluPointMap2 two_ne_zero hQ hgy hΔ' P) :=
+              (WeierstrassCurve.veluPointMap2 two_ne_zero hQ hgy hΔ' P) := open scoped Classical in
   ⟨ffHom hQ hgy, isIntegral_ffHom hQ hgy, finiteAlong_ffHom hQ hgy,
     restrictAlong_placeOfPoint_veluPointMap2 hQ hgy hΔ' two_ne_zero⟩
 
@@ -716,23 +715,22 @@ end privateSection
 public section publicSection
 
 theorem WeierstrassCurve.exists_velu2FunctionFieldHom_restrictAlong_placeOfPoint_veluPointMap2
-    {F : Type*} [Field F] [DecidableEq F] [CharZero F] [IsAlgClosed F]
+    {F : Type*} [Field F] [CharZero F] [IsAlgClosed F]
     {W : WeierstrassCurve F} [W.IsElliptic]
     {x₀ y₀ : F} (hQ : W.toAffine.Equation x₀ y₀) (hgy : W.veluGy x₀ y₀ = 0)
     (hΔ' : (W.veluQuotient2 x₀ y₀).Δ ≠ 0)
     [(W.veluQuotient2 x₀ y₀).IsElliptic]
     [WeierstrassCurve.Affine.GenusOnePlaceGate W.toAffine]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W.toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem W.toAffine]
     [WeierstrassCurve.Affine.GenusOnePlaceGate (W.veluQuotient2 x₀ y₀).toAffine]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred (W.veluQuotient2 x₀ y₀).toAffine]
-    [WeierstrassCurve.Affine.AbelTheorem (W.veluQuotient2 x₀ y₀).toAffine] :
+    :
     ∃ (ι : (W.veluQuotient2 x₀ y₀).toAffine.FunctionField →ₐ[F] W.toAffine.FunctionField)
       (hι : ι.toRingHom.IsIntegral) (_hfin : AlgebraicCurve.FiniteAlong F ι),
       ∀ P : W.toAffine.Point,
         (WeierstrassCurve.Affine.placeOfPoint P).restrictAlong ι hι
           = WeierstrassCurve.Affine.placeOfPoint
-              (WeierstrassCurve.veluPointMap2 two_ne_zero hQ hgy hΔ' P) :=
+              (WeierstrassCurve.veluPointMap2 two_ne_zero hQ hgy hΔ' P) := open scoped Classical in
   solution hQ hgy hΔ'
 
 end publicSection

@@ -84,12 +84,12 @@ def Emb (N : ℕ) [NeZero N] (j₀ : AlgebraicClosure ℚ) : Type :=
   {ψ : ↥(modularFunctionFieldBar N) →ₐ[AlgebraicClosure ℚ] HahnSeries ℚ (AlgebraicClosure ℚ) //
     ψ (jBar N) = HahnSeries.C j₀ + HahnSeries.single (1 : ℚ) (1 : AlgebraicClosure ℚ)}
 
-def Induces {N : ℕ} [NeZero N]
+def Induces {N : ℕ}
     (ψ : ↥(modularFunctionFieldBar N) →ₐ[AlgebraicClosure ℚ] HahnSeries ℚ (AlgebraicClosure ℚ))
     (w : Place (AlgebraicClosure ℚ) ↥(modularFunctionFieldBar N)) : Prop :=
   ∃ g : ℚ, 0 < g ∧ ∀ x : ↥(modularFunctionFieldBar N), (w.ord x : ℚ) * g = (ψ x).order
 
-def SamePlace {N : ℕ} [NeZero N]
+def SamePlace {N : ℕ}
     (ψ ψ' : ↥(modularFunctionFieldBar N) →ₐ[AlgebraicClosure ℚ] HahnSeries ℚ (AlgebraicClosure ℚ)) :
     Prop :=
   ∃ w : Place (AlgebraicClosure ℚ) ↥(modularFunctionFieldBar N), Induces ψ w ∧ Induces ψ' w

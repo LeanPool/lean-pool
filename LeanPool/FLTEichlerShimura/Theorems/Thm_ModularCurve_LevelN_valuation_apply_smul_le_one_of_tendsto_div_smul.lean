@@ -718,7 +718,6 @@ open scoped MatrixGroups Topology Manifold in
 theorem solution
     (M : ℕ) [NeZero M]
     (K : Type*) [Field K] [Algebra ℂ K] [Algebra (ModularCurve.LevelN.ring M) K]
-    [IsScalarTower ℂ (ModularCurve.LevelN.ring M) K]
     [IsFractionRing (ModularCurve.LevelN.ring M) K]
     (hst : ∀ γ : SL(2, ℤ), ∀ F ∈ ModularCurve.LevelN.ring M,
       (fun τ : UpperHalfPlane => F (γ • τ)) ∈ ModularCurve.LevelN.ring M)
@@ -735,7 +734,7 @@ theorem solution
               (UpperHalfPlane.qExpansion M (ModularForm.discriminant : UpperHalfPlane → ℂ)) ^ m =
           HahnSeries.ofPowerSeries ℤ ℂ (UpperHalfPlane.qExpansion M (F * ModularForm.discriminant ^
             m)))
-    (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex]
+    (Γ : Subgroup SL(2, ℤ))
     (hT : ModularGroup.T ∈ Γ)
     {k : ℤ} (g h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (z : K)
     (hz : E z * ModularCurve.qExpand ℂ M
@@ -919,7 +918,6 @@ open scoped MatrixGroups Topology
 theorem ModularCurve.LevelN.valuation_apply_smul_le_one_of_tendsto_div_smul
     (M : ℕ) [NeZero M]
     (K : Type*) [Field K] [Algebra ℂ K] [Algebra (ModularCurve.LevelN.ring M) K]
-    [IsScalarTower ℂ (ModularCurve.LevelN.ring M) K]
     [IsFractionRing (ModularCurve.LevelN.ring M) K]
     (hst : ∀ γ : SL(2, ℤ), ∀ F ∈ ModularCurve.LevelN.ring M,
       (fun τ : UpperHalfPlane => F (γ • τ)) ∈ ModularCurve.LevelN.ring M)
@@ -936,7 +934,7 @@ theorem ModularCurve.LevelN.valuation_apply_smul_le_one_of_tendsto_div_smul
               (UpperHalfPlane.qExpansion M (ModularForm.discriminant : UpperHalfPlane → ℂ)) ^ m =
           HahnSeries.ofPowerSeries ℤ ℂ (UpperHalfPlane.qExpansion M (F * ModularForm.discriminant ^
             m)))
-    (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex]
+    (Γ : Subgroup SL(2, ℤ))
     (hT : ModularGroup.T ∈ Γ)
     {k : ℤ} (g h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (z : K)
     (hz : E z * ModularCurve.qExpand ℂ M

@@ -79,6 +79,7 @@ def heckeOperatorBar (ℓ : Nat.Primes) : Module.End ℤ (JZero N) :=
   haveI : NeZero (ℓ : ℕ) := ⟨ℓ.2.ne_zero⟩
   (heckeOperatorAlong (AlgebraicClosure ℚ) N ℓ).toIntLinearMap
 
+omit [NeZero N] in
 theorem heckeOperatorBar_apply (ℓ : Nat.Primes) (x : JZero N) :
     heckeOperatorBar N ℓ x =
       (haveI : NeZero (ℓ : ℕ) := ⟨ℓ.2.ne_zero⟩; heckeOperatorAlong (AlgebraicClosure ℚ) N ℓ x) :=
@@ -94,6 +95,7 @@ section Eval
 
 variable {N : ℕ} [NeZero N]
 
+omit [NeZero N] in
 theorem isMulCommutative_adjoin_heckeOperatorBar (h : HeckeOperatorsCommuteBar N) :
     IsMulCommutative (Algebra.adjoin ℤ (Set.range (heckeOperatorBar N))) :=
   Algebra.isMulCommutative_adjoin ℤ (by
@@ -112,21 +114,25 @@ def heckeEvalBarAux (h : HeckeOperatorsCommuteBar N) :
 def heckeEvalBar (h : HeckeOperatorsCommuteBar N) : HeckeAlg →+* Module.End ℤ (JZero N) :=
   ((Algebra.adjoin ℤ (Set.range (heckeOperatorBar N))).val.comp (heckeEvalBarAux h)).toRingHom
 
+omit [NeZero N] in
 theorem heckeEvalBar_apply (h : HeckeOperatorsCommuteBar N) (t : HeckeAlg) :
     heckeEvalBar h t = (heckeEvalBarAux h t : Module.End ℤ (JZero N)) :=
   rfl
 
 open scoped IsMulCommutative in
+omit [NeZero N] in
 theorem heckeEvalBarAux_heckeGen (h : HeckeOperatorsCommuteBar N) (ℓ : Nat.Primes) :
     heckeEvalBarAux h (heckeGen ℓ) =
       ⟨heckeOperatorBar N ℓ, Algebra.subset_adjoin (Set.mem_range_self ℓ)⟩ :=
   haveI := isMulCommutative_adjoin_heckeOperatorBar h
   MvPolynomial.aeval_X _ ℓ
 
+omit [NeZero N] in
 theorem heckeEvalBar_heckeGen (h : HeckeOperatorsCommuteBar N) (ℓ : Nat.Primes) :
     heckeEvalBar h (heckeGen ℓ) = heckeOperatorBar N ℓ := by
   rw [heckeEvalBar_apply, heckeEvalBarAux_heckeGen]
 
+omit [NeZero N] in
 theorem heckeEvalBar_C (h : HeckeOperatorsCommuteBar N) (a : ℤ) :
     heckeEvalBar h (MvPolynomial.C a) = (a : Module.End ℤ (JZero N)) := by
   rw [← MvPolynomial.algebraMap_eq, eq_intCast, map_intCast]
@@ -145,16 +151,19 @@ def heckeModuleBar : Module HeckeAlg (JZero N) :=
 
 variable {N}
 
+omit [NeZero N] in
 theorem heckeModuleBar_smul_def (h : HeckeOperatorsCommuteBar N) (t : HeckeAlg) (x : JZero N) :
     (letI := heckeModuleBar N; t • x) = heckeEvalBar h t x := by
   have e : heckeModuleBar N = Module.compHom (JZero N) (heckeEvalBar h) := dite_eq_left h
   rw [e]
   rfl
 
+omit [NeZero N] in
 theorem heckeModuleBar_heckeGen_smul (h : HeckeOperatorsCommuteBar N) (ℓ : Nat.Primes)
     (x : JZero N) : (letI := heckeModuleBar N; heckeGen ℓ • x) = heckeOperatorBar N ℓ x := by
   rw [heckeModuleBar_smul_def h, heckeEvalBar_heckeGen]
 
+omit [NeZero N] in
 theorem heckeModuleBar_smul_of_not (h : ¬ HeckeOperatorsCommuteBar N) (t : HeckeAlg) (x : JZero N) :
     (letI := heckeModuleBar N; t • x) = MvPolynomial.constantCoeff t • x := by
   have e : heckeModuleBar N =
@@ -165,10 +174,12 @@ theorem heckeModuleBar_smul_of_not (h : ¬ HeckeOperatorsCommuteBar N) (t : Heck
   change (MvPolynomial.eval₂Hom (Int.castRingHom ℤ) (0 : Nat.Primes → ℤ) t) • x = _
   rw [MvPolynomial.eval₂Hom_zero_apply, eq_intCast, Int.cast_id]
 
+omit [NeZero N] in
 theorem heckeModuleBar_heckeGen_smul_of_not (h : ¬ HeckeOperatorsCommuteBar N) (ℓ : Nat.Primes)
     (x : JZero N) : (letI := heckeModuleBar N; heckeGen ℓ • x) = 0 := by
   rw [heckeModuleBar_smul_of_not h, heckeGen, MvPolynomial.constantCoeff_X, zero_zsmul]
 
+omit [NeZero N] in
 theorem heckeModuleBar_C_smul (a : ℤ) (x : JZero N) :
     (letI := heckeModuleBar N; (MvPolynomial.C a : HeckeAlg) • x) = a • x := by
   by_cases h : HeckeOperatorsCommuteBar N

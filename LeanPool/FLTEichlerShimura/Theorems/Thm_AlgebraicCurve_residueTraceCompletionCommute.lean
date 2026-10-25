@@ -611,12 +611,12 @@ variable [HasCanonicalLocalResidueKStar K E] [HasCanonicalLocalResidueKStar K F]
 
 theorem kwF4gRRTate_RTCC_of_tate
     [HasPrincipalDivisors K E] [HasPrincipalDivisors K F]
-    [Nontrivial Ω[F⁄K]] [∀ w : Place K F, w.DCoordGenerates]
+    [Nontrivial Ω[F⁄K]]
     [∀ u : Place K E, u.FiniteResidue]
     (hfinF : KwF4gRRTateCommFinite K F) (hfinE : KwF4gRRTateCommFinite K E)
-    (hAF : KwF4gRRTateAgreement K F hfinF) (hAE : KwF4gRRTateAgreement K E hfinE)
-    (hC : KwF4gRRTateChainRule K F E hfinF)
-    (hT : KwF4gRRTateTraceCompat K F E hfinF hfinE) :
+    (hAF : KwF4gRRTateAgreement K F) (hAE : KwF4gRRTateAgreement K E)
+    (hC : KwF4gRRTateChainRule K F E)
+    (hT : KwF4gRRTateTraceCompat K F E) :
     KwF4R1V391aResidueTraceCompletionCommute K F E := by
   intro _ _ _ v _ w _ hw g
   unfold kaehlerResidueTerm
@@ -652,7 +652,7 @@ theorem solution
     [Algebra.IsIntegral E F]
     [∀ u : AlgebraicCurve.Place K E, u.FiniteResidue]
     [AlgebraicCurve.IsCurveOver K F] [AlgebraicCurve.IsCurveOver K E] [PerfectField K]
-    [Nontrivial Ω[F⁄K]] [∀ w : AlgebraicCurve.Place K F, w.DCoordGenerates]
+    [Nontrivial Ω[F⁄K]]
     [Algebra.IsSeparable E F] :
     ModularCurve.KwF4R1V391a.KwF4R1V391aResidueTraceCompletionCommute K F E :=
   let hF : ModularCurve.KwF4gRRTate.KwF4gRRTateCommFinite K F := AlgebraicCurve.tateCommFinite
@@ -675,7 +675,7 @@ theorem AlgebraicCurve.residueTraceCompletionCommute
     [Algebra.IsIntegral E F]
     [∀ u : AlgebraicCurve.Place K E, u.FiniteResidue]
     [AlgebraicCurve.IsCurveOver K F] [AlgebraicCurve.IsCurveOver K E] [PerfectField K]
-    [Nontrivial Ω[F⁄K]] [∀ w : AlgebraicCurve.Place K F, w.DCoordGenerates]
+    [Nontrivial Ω[F⁄K]]
     [Algebra.IsSeparable E F] :
     ModularCurve.KwF4R1V391a.KwF4R1V391aResidueTraceCompletionCommute K F E :=
   solution

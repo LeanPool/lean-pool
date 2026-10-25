@@ -407,7 +407,6 @@ instance : DistribMulAction (F ≃ₐ[K] F) (Divisor K F) := Finsupp.comapDistri
 theorem smul_def (σ : F ≃ₐ[K] F) (D : Divisor K F) :
     σ • D = Finsupp.mapDomain (σ • ·) D := rfl
 
-@[simp]
 theorem smul_single (σ : F ≃ₐ[K] F) (v : Place K F) (n : ℤ) :
     σ • Finsupp.single v n = Finsupp.single (σ • v) n := by
   rw [smul_def, Finsupp.mapDomain_single]

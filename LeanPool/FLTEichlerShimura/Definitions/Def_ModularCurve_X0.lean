@@ -104,7 +104,6 @@ theorem qExpand_single (k : ℤ) (r : R) :
     qExpand R N (HahnSeries.single k r) = HahnSeries.single ((N : ℤ) * k) r :=
   HahnSeries.embDomain_single
 
-@[simp]
 theorem qExpand_C (r : R) : qExpand R N (HahnSeries.C r) = HahnSeries.C r :=
   HahnSeries.embDomainRingHom_C
 
@@ -372,7 +371,7 @@ theorem modularFunctionField_le_full :
     rwa [qExpand_one_apply] at h
   · exact jqd_mem_full N dvd_rfl
 
-theorem full_degeneracy_le {N M : ℕ} [NeZero N] [NeZero M] (h : N ∣ M) :
+theorem full_degeneracy_le {N M : ℕ} (h : N ∣ M) :
     modularFunctionFieldFull N ≤ modularFunctionFieldFull M := by
   rw [modularFunctionFieldFull, adjoin_le_iff]
   rintro x ⟨d, hne, hdvd, rfl⟩

@@ -164,7 +164,7 @@ lemma conjPoly_eval (H : Fin n → L) (i₀ : Fin n) : (conjPoly H).eval (H i₀
   exact Finset.prod_eq_zero (Finset.mem_univ i₀) (by simp)
 
 omit [CommRing L'] in
-lemma conjPoly_monic [Nontrivial L] (H : Fin n → L) : (conjPoly H).Monic :=
+lemma conjPoly_monic (H : Fin n → L) : (conjPoly H).Monic :=
   Polynomial.monic_prod_of_monic _ _ fun i _ => Polynomial.monic_X_sub_C (H i)
 
 omit [CommRing L'] in

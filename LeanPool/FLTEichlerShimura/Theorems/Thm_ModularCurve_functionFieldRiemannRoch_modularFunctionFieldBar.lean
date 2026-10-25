@@ -218,8 +218,9 @@ theorem solution (N : ℕ) [NeZero N] :
       (AlgebraicClosure ℚ))
   have : ∀ v : Place (AlgebraicClosure ℚ) (RatFunc (AlgebraicClosure ℚ)), v.DCoordGenerates :=
     dCoordGenerates_of_isCurveOver
-  exact @functionFieldRiemannRoch_of_isAlgClosed (AlgebraicClosure ℚ) (modularFunctionFieldBar N)
-    _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+  intro _ _ _ ω hω D
+  exact functionFieldRiemannRoch_of_isAlgClosed
+    (K := AlgebraicClosure ℚ) (F := modularFunctionFieldBar N) hω D
 
 end privateSection
 

@@ -394,7 +394,7 @@ theorem coreC2 (𝔤 𝔥 : 𝒩) (X : LaurentSeries ℂ) (hX : X * ψ 𝔥 = ψ
 end ANb
 
 open ANb in
-theorem solution (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) [Γ.FiniteIndex]
+theorem solution (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ))
     (hT : ModularGroup.T ∈ Γ) {k : ℤ} (m : ℕ)
     (g h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (X : LaurentSeries ℂ)
     (hX : X * ((UpperHalfPlane.qExpansion 1 (h : UpperHalfPlane → ℂ) : PowerSeries ℂ) :
@@ -596,7 +596,7 @@ public section publicSection
 open ModularCurve
 open scoped MatrixGroups ModularForm
 theorem ModularCurve.eventually_norm_slash_le_mul_of_isIntegral_adjoin_jqModC_inv_sq
-    (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) [Γ.FiniteIndex] (hT : ModularGroup.T ∈ Γ)
+    (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) (hT : ModularGroup.T ∈ Γ)
     {k : ℤ} (m : ℕ)
     (g h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (X : LaurentSeries ℂ)
     (hX : X * ((UpperHalfPlane.qExpansion 1 (h : UpperHalfPlane → ℂ) : PowerSeries ℂ) :

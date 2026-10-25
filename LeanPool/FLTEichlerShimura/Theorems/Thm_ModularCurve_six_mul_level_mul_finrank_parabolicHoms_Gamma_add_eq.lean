@@ -436,7 +436,7 @@ theorem trace_ne (hN : 2 ≤ N) (g : SL(2, ℤ)) (hg : g ∈ Gpm N) :
   · rw [Matrix.SpecialLinearGroup.coe_neg, Matrix.trace_neg]
     omega
 
-theorem T_zpow_mem_Gpm_iff [NeZero N] (n : ℤ) :
+theorem T_zpow_mem_Gpm_iff (n : ℤ) :
     ModularGroup.T ^ n ∈ Gpm N ↔ (N : ℤ) ∣ n := by
   constructor
   · intro h
@@ -459,7 +459,7 @@ theorem T_zpow_mem_Gpm_iff [NeZero N] (n : ℤ) :
     have := CongruenceSubgroup.ModularGroup_T_pow_mem_Gamma (N : ℤ) n h
     rwa [Int.natAbs_natCast] at this
 
-theorem width_Gpm [NeZero N] (x : SL(2, ℤ) ⧸ Gpm N) : width (Gpm N) x = N := by
+theorem width_Gpm (x : SL(2, ℤ) ⧸ Gpm N) : width (Gpm N) x = N := by
   induction x using QuotientGroup.induction_on with
   | H g =>
     have key : ∀ n : ℤ, (width (Gpm N) (g : SL(2, ℤ) ⧸ Gpm N) : ℤ) ∣ n ↔ (N : ℤ) ∣ n := by
@@ -575,7 +575,7 @@ theorem resP_bijective : Function.Bijective (resP N) := by
     ext γ
     exact hχres γ
 
-theorem finrank_parabolicHoms_Gpm [NeZero N] :
+theorem finrank_parabolicHoms_Gpm :
     Module.finrank ℚ (parabolicHoms ℚ (Gpm N) ℚ) =
       Module.finrank ℚ (parabolicHoms ℚ (CongruenceSubgroup.Gamma N) ℚ) :=
   LinearEquiv.finrank_eq (LinearEquiv.ofBijective (resP N) (resP_bijective N))

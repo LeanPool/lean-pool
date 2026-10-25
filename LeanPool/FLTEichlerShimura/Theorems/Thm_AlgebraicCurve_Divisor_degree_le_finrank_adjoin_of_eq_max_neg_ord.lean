@@ -650,7 +650,6 @@ private theorem principal_parts_linearIndependent
 
 theorem solution
     {K F : Type*} [Field K] [Field F] [Algebra K F] [IsCurveOver K F]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (x : F) (hx : Transcendental K x)
     [FiniteDimensional (IntermediateField.adjoin K ({x} : Set F)) F]
     (D : Divisor K F) (hD : ∀ v : Place K F, D v = max 0 (-v.ord x)) :
@@ -691,7 +690,6 @@ public section publicSection
 
 theorem AlgebraicCurve.Divisor.degree_le_finrank_adjoin_of_eq_max_neg_ord
     {K F : Type*} [Field K] [Field F] [Algebra K F] [IsCurveOver K F]
-    [FiniteDimensional K (LSpace (0 : Divisor K F))]
     (x : F) (hx : Transcendental K x)
     [FiniteDimensional (IntermediateField.adjoin K ({x} : Set F)) F]
     (D : Divisor K F) (hD : ∀ v : Place K F, D v = max 0 (-v.ord x)) :

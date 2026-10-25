@@ -78,7 +78,7 @@ variable [HasCanonicalLocalResidueKStar K F]
 
 theorem kaehlerResidueTerm_eq_zero_of_adeleBdd_canonical
     [HasCanonicalDivisor (K := K) (F := F)] [∀ v : Place K F, v.DCoordGenerates]
-    [Nontrivial Ω[F⁄K]] {ω : Ω[F⁄K]} (hω : ω ≠ 0)
+    {ω : Ω[F⁄K]} (hω : ω ≠ 0)
     {α : Place K F → F} (hα : α ∈ adeleBdd (canonicalDivisorOf hω)) (v : Place K F) :
     kaehlerResidueTerm ω α v = 0 := by
   refine kaehlerResidueTerm_eq_zero_of_ord_nonneg ?_
@@ -96,7 +96,7 @@ theorem kaehlerResidueTerm_eq_zero_of_adeleBdd_canonical
 
 theorem kaehlerResidueTerm_support_subset
     [HasCanonicalDivisor (K := K) (F := F)] [∀ v : Place K F, v.DCoordGenerates]
-    [Nontrivial Ω[F⁄K]] {ω : Ω[F⁄K]} (hω : ω ≠ 0)
+    {ω : Ω[F⁄K]} (hω : ω ≠ 0)
     {D : Divisor K F} {α : Place K F → F} (hα : α ∈ adeleBdd D) :
     Function.support (kaehlerResidueTerm ω α) ⊆ ↑(D - canonicalDivisorOf hω).support := by
   intro v hv
@@ -118,14 +118,14 @@ theorem kaehlerResidueTerm_support_subset
 
 theorem kaehlerResidueTerm_support_finite
     [HasCanonicalDivisor (K := K) (F := F)] [∀ v : Place K F, v.DCoordGenerates]
-    [Nontrivial Ω[F⁄K]] {ω : Ω[F⁄K]} (hω : ω ≠ 0)
+    {ω : Ω[F⁄K]} (hω : ω ≠ 0)
     {D : Divisor K F} {α : Place K F → F} (hα : α ∈ adeleBdd D) :
     (Function.support (kaehlerResidueTerm ω α)).Finite :=
   Set.Finite.subset (Finset.finite_toSet _) (kaehlerResidueTerm_support_subset hω hα)
 
 theorem kaehlerResidueTerm_support_finite_of_adeleSpace
     [HasCanonicalDivisor (K := K) (F := F)] [∀ v : Place K F, v.DCoordGenerates]
-    [Nontrivial Ω[F⁄K]] {ω : Ω[F⁄K]} (hω : ω ≠ 0)
+    {ω : Ω[F⁄K]} (hω : ω ≠ 0)
     {α : Place K F → F} (hα : α ∈ adeleSpace K F) :
     (Function.support (kaehlerResidueTerm ω α)).Finite := by
   obtain ⟨D, hD⟩ := mem_adeleSpace_iff.mp hα
@@ -152,9 +152,11 @@ def weilOfKaehler {ω : Ω[F⁄K]} (hω : ω ≠ 0) : Module.Dual K (adeleSpace 
     rw [Submodule.coe_smul, Pi.smul_apply, Algebra.smul_def, mul_assoc,
       ← Algebra.smul_def, map_smul, map_smul]
 
+omit [Nontrivial Ω[F⁄K]] in
 theorem weilOfKaehler_apply {ω : Ω[F⁄K]} (hω : ω ≠ 0) (α : adeleSpace K F) :
     weilOfKaehler K F hω α = ∑ᶠ v, kaehlerResidueTerm ω (α : Place K F → F) v := rfl
 
+omit [Nontrivial Ω[F⁄K]] in
 theorem weilOfKaehler_vanish_adeleBdd_canonical {ω : Ω[F⁄K]} (hω : ω ≠ 0)
     {α : adeleSpace K F} (hα : (α : Place K F → F) ∈ adeleBdd (canonicalDivisorOf hω)) :
     weilOfKaehler K F hω α = 0 := by

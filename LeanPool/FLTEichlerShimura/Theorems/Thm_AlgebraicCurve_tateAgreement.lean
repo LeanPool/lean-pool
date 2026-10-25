@@ -53,7 +53,7 @@ instance `FiniteResidue`, i.e. its residue field is a finite $K$-module. Let `hf
 $\widehat{L}_u$, the range of the endomorphism `tateCommRestrict` built from the projection
 `tateProj u` of $\widehat{L}_u$ onto the $K$-submodule of adic integers along a chosen complement
 and from the multiplication operators by $\hat f$ and $\hat g$ is finite-dimensional over $K$. The
-conclusion is `KwF4gRRTateAgreement K L hfin`: for every place $u$ with finite residue field and
+conclusion is `KwF4gRRTateAgreement K L`: for every place $u$ with finite residue field and
 every $\hat f \in \widehat{L}_u$, the Tate residue `tateRes u` of $\hat f$ against the image in
 $\widehat{L}_u$ of a uniformizer of $u$ — the trace of the restricted commutator furnished by `hfin`
 — equals $\operatorname{Tr}_{\kappa(u)/K}$ of `kwHgfV352_localResidueCompletion u` $\hat f$, the
@@ -1034,7 +1034,7 @@ theorem finrankTrace_eq_trace_on_superspace
 theorem finrankTrace_eq_trace_of_injective
     {K V R : Type*} [Field K] [AddCommGroup V] [Module K V]
     [AddCommGroup R] [Module K R] [FiniteDimensional K R]
-    (T : V →ₗ[K] V) [FiniteDimensional K (LinearMap.range T)]
+    (T : V →ₗ[K] V)
     (i : R →ₗ[K] V) (hi : Function.Injective i) (A : R →ₗ[K] R)
     (himage : ∀ x, T x ∈ LinearMap.range i)
     (hcomm : ∀ r, T (i r) = i (A r)) :
@@ -1553,8 +1553,6 @@ section Additivity
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 
 theorem finrankTrace_congr {φ ψ : V →ₗ[K] V}
-    [hφ : FiniteDimensional K (LinearMap.range φ)]
-    [hψ : FiniteDimensional K (LinearMap.range ψ)]
     (h : φ = ψ) : finrankTrace φ = finrankTrace ψ := by
   subst h; rfl
 
@@ -1833,7 +1831,7 @@ variable [∀ u : Place K L, u.FiniteResidue]
 theorem kwF4gRRTate_agreement_of_cohenTateAgreement
     (hfin : KwF4gRRTateCommFinite K L)
     (hCTA : KwF4gRRTateCohenTateAgreement K L) :
-    KwF4gRRTateAgreement K L hfin := by
+    KwF4gRRTateAgreement K L := by
   intro u _ fh
   obtain ⟨pC, hpC, hCTA_u⟩ := hCTA u
   set ghπ := algebraMap L u.adicCompletion u.uniformizer
@@ -1900,9 +1898,7 @@ variable [HasCanonicalLocalResidueKStar K L]
 variable {u : Place K L} [u.FiniteResidue]
 
 theorem tateCommTrace_of_kernelData (D : TateCohenKernelData u) (fh : u.adicCompletion)
-    [FiniteDimensional K (LinearMap.range
-      (tateCommRestrict D.pC (lmulK u fh)
-        (lmulK u (algebraMap L u.adicCompletion u.uniformizer))))] :
+    :
     tateCommTrace D.pC (lmulK u fh)
         (lmulK u (algebraMap L u.adicCompletion u.uniformizer))
       = Algebra.trace K u.ResidueField (kwHgfV352_localResidueCompletion u fh) := by
@@ -1945,7 +1941,7 @@ theorem kwF4gRRTate_agreement_of_kernelData
     [∀ u : Place K L, u.FiniteResidue]
     (hfin : KwF4gRRTateCommFinite K L)
     (hD : KwF4gRRTateCohenKernelDataExists K L) :
-    KwF4gRRTateAgreement K L hfin :=
+    KwF4gRRTateAgreement K L :=
   kwF4gRRTate_agreement_of_cohenTateAgreement hfin
     (kwF4gRRTate_cohenTateAgreement_of_kernelData hD)
 
@@ -3252,7 +3248,7 @@ theorem solution
     [AlgebraicCurve.IsCurveOver K L] [PerfectField K]
     [∀ u : AlgebraicCurve.Place K L, u.FiniteResidue]
     (hfin : ModularCurve.KwF4gRRTate.KwF4gRRTateCommFinite K L) :
-    ModularCurve.KwF4gRRTate.KwF4gRRTateAgreement K L hfin :=
+    ModularCurve.KwF4gRRTate.KwF4gRRTateAgreement K L :=
   ModularCurve.KwF4gRRTate.kwF4gRRTate_agreement_of_kernelData hfin
     ModularCurve.KwTateRR3.kwTateRR3_cohenKernelDataExists
 
@@ -3265,7 +3261,7 @@ theorem AlgebraicCurve.tateAgreement
     [AlgebraicCurve.IsCurveOver K L] [PerfectField K]
     [∀ u : AlgebraicCurve.Place K L, u.FiniteResidue]
     (hfin : ModularCurve.KwF4gRRTate.KwF4gRRTateCommFinite K L) :
-    ModularCurve.KwF4gRRTate.KwF4gRRTateAgreement K L hfin :=
+    ModularCurve.KwF4gRRTate.KwF4gRRTateAgreement K L :=
   solution hfin
 
 end publicSection

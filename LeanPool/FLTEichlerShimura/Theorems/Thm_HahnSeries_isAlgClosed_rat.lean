@@ -416,7 +416,7 @@ structure IsBallChain {ι : Type*} [LinearOrder ι]
   δ_mono : Monotone δ
   mem_ball : ∀ ⦃i j : ι⦄, i ≤ j → δ i ≤ (r j - r i).orderTop
 
-def pseudoLimitCoeff {ι : Type*} [LinearOrder ι]
+def pseudoLimitCoeff {ι : Type*}
     (r : ι → HahnSeries Γ K) (δ : ι → WithTop Γ) (g : Γ) [Decidable (∃ i, g < δ i)] : K :=
   if h : ∃ i, (g : WithTop Γ) < δ i then (r h.choose).coeff g else 0
 

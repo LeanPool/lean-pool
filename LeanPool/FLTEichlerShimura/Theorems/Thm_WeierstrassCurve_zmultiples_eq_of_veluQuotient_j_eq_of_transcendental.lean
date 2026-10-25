@@ -85,9 +85,9 @@ theorem charZero_hahn : CharZero (HahnSeries ℚ (AlgebraicClosure ℚ)) :=
   (RingHom.charZero_iff (HahnSeries.C (R := AlgebraicClosure ℚ) (Γ := ℚ)).injective).mp
     inferInstance
 
-theorem normFormulaAlong_of_elliptic {F : Type*} [Field F] [IsAlgClosed F]
+theorem normFormulaAlong_of_elliptic {F : Type*} [Field F]
     [CharZero F]
-    {V W : Affine F} [V.IsElliptic] [W.IsElliptic] (ι : V.FunctionField →ₐ[F] W.FunctionField)
+    {V W : Affine F} (ι : V.FunctionField →ₐ[F] W.FunctionField)
     (hfin : FiniteAlong F ι) : NormFormulaAlong F ι hfin := by
   classical
   have : HasPrincipalDivisors F W.FunctionField := hasPrincipalDivisors_functionField W

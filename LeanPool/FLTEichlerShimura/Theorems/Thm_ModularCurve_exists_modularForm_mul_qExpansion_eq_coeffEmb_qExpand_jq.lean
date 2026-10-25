@@ -151,7 +151,7 @@ end
 open UpperHalfPlane in
 open ModularCurve.JqdRatioOfLevel in
 theorem solution (N d : ℕ)
-    [NeZero N] [NeZero d] (hd : d ∣ N) :
+    [NeZero d] (hd : d ∣ N) :
     ∃ (k : ℤ) (g h : ModularForm (CongruenceSubgroup.Gamma0 N) k), h ≠ 0 ∧
       ModularCurve.coeffEmb ℂ (ModularCurve.qExpand ℚ d ModularCurve.jq) *
           ((qExpansion 1 (h : ℍ → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ) =
@@ -173,7 +173,7 @@ public section publicSection
 
 open UpperHalfPlane in
 theorem ModularCurve.exists_modularForm_mul_qExpansion_eq_coeffEmb_qExpand_jq (N d : ℕ)
-    [NeZero N] [NeZero d] (hd : d ∣ N) :
+    [NeZero d] (hd : d ∣ N) :
     ∃ (k : ℤ) (g h : ModularForm (CongruenceSubgroup.Gamma0 N) k), h ≠ 0 ∧
       ModularCurve.coeffEmb ℂ (ModularCurve.qExpand ℚ d ModularCurve.jq) *
           ((qExpansion 1 (h : ℍ → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ) =

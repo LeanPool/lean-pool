@@ -207,8 +207,8 @@ theorem ell_canonical_eq_genus (hRR : FunctionFieldRiemannRoch K F) (hC : Consta
 end Comparison
 
 theorem riemannRoch_and_constantsAreBase [IsAlgClosed K] [Algebra.EssFiniteType K F]
-    [IsCurveOver K F] [HasCanonicalDivisor (K := K) (F := F)]
-    [∀ v : Place K F, v.DCoordGenerates] :
+    [IsCurveOver K F]
+    :
     FunctionFieldRiemannRoch K F ∧ ConstantsAreBase K F := by
   classical
   obtain ⟨t, ht, htfd, htsep⟩ :=

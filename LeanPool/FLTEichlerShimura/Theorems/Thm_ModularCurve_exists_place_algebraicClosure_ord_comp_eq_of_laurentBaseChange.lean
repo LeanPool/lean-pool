@@ -177,7 +177,7 @@ end ModularCurve.T1Aux
 
 open ModularCurve.T1Aux in
 theorem solution
-    (K : Type*) [Field K] [Algebra ℚ K] [IsAlgClosed K]
+    (K : Type*) [Field K] [Algebra ℚ K]
     (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) (hT : ModularGroup.T ∈ Γ) [Γ.FiniteIndex]
     (τ : AlgebraicClosure ℚ →ₐ[ℚ] K)
     (Ψ : ↥(ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ
@@ -283,7 +283,7 @@ public section publicSection
 
 
 theorem ModularCurve.exists_place_algebraicClosure_ord_comp_eq_of_laurentBaseChange
-    (K : Type*) [Field K] [Algebra ℚ K] [IsAlgClosed K]
+    (K : Type*) [Field K] [Algebra ℚ K]
     (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) (hT : ModularGroup.T ∈ Γ) [Γ.FiniteIndex]
     (τ : AlgebraicClosure ℚ →ₐ[ℚ] K)
     (Ψ : ↥(ModularCurve.laurentBaseChange (AlgebraicClosure ℚ) (ModularCurve.qExpFunctionFieldC ℚ

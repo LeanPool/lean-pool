@@ -73,10 +73,11 @@ namespace P2MW.S_WeierstrassCurve_Affine_forall_normFormulaAlong_of_isAlgClosed_
 
 open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 
-theorem solution {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-    (W : WeierstrassCurve.Affine F) [W.IsElliptic]
-    [GenusOnePlaceGate W] [GenusOnePlaceGate.IsCentred W] [AbelTheorem W] :
+theorem solution {F : Type*} [Field F] [CharZero F]
+    (W : WeierstrassCurve.Affine F)
+    :
     ∀ D : IsogenyEndDatum W, NormFormulaAlong F D.ι D.hfin := by
+  classical
   have : CharZero W.FunctionField :=
     (RingHom.charZero_iff (algebraMap F W.FunctionField).injective).mp ‹CharZero F›
   have : HasPrincipalDivisors F W.FunctionField := hasPrincipalDivisors_functionField W
@@ -95,10 +96,10 @@ public section publicSection
 
 open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 theorem WeierstrassCurve.Affine.forall_normFormulaAlong_of_isAlgClosed_of_charZero
-    {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-    (W : WeierstrassCurve.Affine F) [W.IsElliptic]
-    [GenusOnePlaceGate W] [GenusOnePlaceGate.IsCentred W] [AbelTheorem W] :
-    ∀ D : IsogenyEndDatum W, NormFormulaAlong F D.ι D.hfin :=
+    {F : Type*} [Field F] [CharZero F]
+    (W : WeierstrassCurve.Affine F)
+    :
+    ∀ D : IsogenyEndDatum W, NormFormulaAlong F D.ι D.hfin := open scoped Classical in
   solution W
 
 end publicSection

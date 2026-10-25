@@ -380,7 +380,7 @@ section BEightEngine
 open Function
 
 private theorem linearIndependent_pi_algebraMap_of_field {k K σ ι : Type*}
-    [Field k] [CommRing K] [Nontrivial K] [Algebra k K]
+    [Field k] [CommRing K] [Algebra k K]
     {v : ι → σ → k} (hv : LinearIndependent k v) :
     LinearIndependent K (fun i n ↦ algebraMap k K (v i n)) := by
   classical
@@ -420,7 +420,7 @@ open scoped Manifold
 
 variable {N : ℕ}
 
-private lemma mdpb_finsetSum_smul [NeZero N] {ι : Type*}
+private lemma mdpb_finsetSum_smul {ι : Type*}
     (s : Finset ι) (c : ι → ℂ) {g : ι → ℍ → ℂ}
     (hhol : ∀ i ∈ s, MDiff (g i)) (hper : ∀ i ∈ s, Periodic ((g i) ∘ ofComplex) N)
     (hbd : ∀ i ∈ s, IsBoundedAtImInfty (g i)) :

@@ -459,9 +459,8 @@ namespace WeierstrassCurve
 namespace Affine
 universe u
 
-variable {F : Type u} [Field F] (W : Affine F) [W.IsElliptic] [W.GenusOnePlaceGate]
+variable {F : Type u} [Field F] (W : Affine F) [W.GenusOnePlaceGate]
 
-omit [W.IsElliptic] in
 @[scoped simp] theorem placeOfPointEquiv_symm_placeOfPoint (P : W.Point) :
     (placeOfPointEquiv W).symm (placeOfPoint P) = P :=
   (placeOfPointEquiv W).symm_apply_apply P
@@ -643,9 +642,9 @@ universe u
 
 variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 
-def cmm10_deg_DatumKernelDegreeFace (W : Affine F) [W.IsElliptic]
+def cmm10_deg_DatumKernelDegreeFace (W : Affine F)
     [WeierstrassCurve.Affine.GenusOnePlaceGate W]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
+    [WeierstrassCurve.Affine.AbelTheorem W]
     :
     Prop :=
   ∀ D : IsogenyEndDatum W,
@@ -1931,10 +1930,10 @@ universe u
 section GeneralW
 
 variable {F : Type u} [Field F] [DecidableEq F] [CharZero F]
-variable {W : Affine F} [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
+variable {W : Affine F} [WeierstrassCurve.Affine.GenusOnePlaceGate W]
+    [WeierstrassCurve.Affine.AbelTheorem W]
 
-omit [DecidableEq F] [W.IsElliptic] [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
+omit [DecidableEq F] [W.AbelTheorem] in
 theorem kw_geomMorph_surjective (D : IsogenyEndDatum W) :
     Surjective D.geomMorph := fun Q => by
   have : CharZero W.FunctionField :=
@@ -1944,7 +1943,6 @@ theorem kw_geomMorph_surjective (D : IsogenyEndDatum W) :
   exact ⟨(placeOfPointEquiv W).symm w, placeOfPoint_injective (by
     rw [← D.placeOfPoint_geomMorph, placeOfPoint_placeOfPointEquiv_symm, hw])⟩
 
-omit [W.IsElliptic] [GenusOnePlaceGate.IsCentred W] in
 theorem kw_pointEnd_surjective (D : IsogenyEndDatum W) :
     Surjective (D.pointEnd' : W.Point → W.Point) := fun R => by
   obtain ⟨P, hP⟩ := kw_geomMorph_surjective D (R + D.geomMorph 0)
@@ -2060,6 +2058,7 @@ theorem kw_natCard_restrictAlong_fiber_eq_degree_of_unramified (D : IsogenyEndDa
     right_inv := fun _ => rfl }
 
 omit [IsAlgClosed F] in
+omit [WeierstrassCurve.IsElliptic W] [GenusOnePlaceGate.IsCentred W] in
 theorem kw_datumKernelDegreeFace_of_existsUnramified
     (hunram : ∀ D : IsogenyEndDatum W, kw_ExistsUnramifiedBasePlace D) :
     ModularCurve.cmm10_deg_DatumKernelDegreeFace W := fun D => by
@@ -2113,10 +2112,10 @@ end
 
 namespace WeierstrassCurve
 namespace Affine
-theorem kw_point_infinite {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-    {W : Affine F} [W.IsElliptic] [GenusOnePlaceGate W] [GenusOnePlaceGate.IsCentred W]
-    [AbelTheorem W] :
-    Infinite W.Point :=
+theorem kw_point_infinite {F : Type*} [Field F] [IsAlgClosed F]
+    {W : Affine F} [W.IsElliptic]
+    :
+    Infinite W.Point := open scoped Classical in
   WeierstrassCurve.point_infinite (W := W)
 
 end Affine
@@ -2137,6 +2136,8 @@ variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable {W : Affine F} [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
+omit [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
+omit [DecidableEq F] in
 theorem kw_existsUnramifiedBasePlace_proved (D : IsogenyEndDatum W) :
     kw_ExistsUnramifiedBasePlace D := by
   classical
@@ -2191,6 +2192,7 @@ theorem kw_existsUnramifiedBasePlace_proved (D : IsogenyEndDatum W) :
     (v := v) (w := w) hw θ hgen hθint hram
   exact hvS₂ ⟨w, hpos.ne', hw⟩
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_datumKernelDegreeFace_unconditional :
     ModularCurve.cmm10_deg_DatumKernelDegreeFace W :=
   kw_datumKernelDegreeFace_of_existsUnramified kw_existsUnramifiedBasePlace_proved
@@ -2298,7 +2300,6 @@ end
 
 namespace WeierstrassCurve
 theorem surjective_zsmul_of_ne_zero {K : Type*} [Field K] [DecidableEq K] [IsAlgClosed K]
-    [CharZero K]
     (W : WeierstrassCurve K) [W.IsElliptic] {m : ℤ} (hm : m ≠ 0) :
     Function.Surjective (fun P : W.toAffine.Point => m • P) := fun P =>
   WeierstrassCurve.Affine.Point.exists_zsmul_eq_of_isAlgClosed W hm P
@@ -2330,6 +2331,7 @@ theorem kw_pointEnd_mul_dualPointEnd (D : IsogenyEndDatum W) :
   ModularCurve.Es1a1.es1a1_pointEnd_mul_dualPointEnd D
     (ModularCurve.Es1a1.es1a3_fi_isogenyEndDatum D)
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_pointEnd_mul_cancel (D : IsogenyEndDatum W) (ψ : AddMonoid.End W.Point)
     (hzero : D.pointEnd' * ψ = 0) : ψ = 0 := by
   have hkerF : Nat.card (AddMonoidHom.ker (D.pointEnd' : W.Point →+ W.Point)) = D.degree :=
@@ -2348,6 +2350,7 @@ theorem kw_pointEnd_mul_cancel (D : IsogenyEndDatum W) (ψ : AddMonoid.End W.Poi
   rw [← hQ, map_zsmul]
   exact hkill
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dualPointEnd_unique (D : IsogenyEndDatum W) (ψ : AddMonoid.End W.Point)
     (hψ : D.pointEnd' * ψ = ((D.degree : ℤ) : AddMonoid.End W.Point)) :
     ψ = kw_dualPointEnd D := by
@@ -2355,14 +2358,15 @@ theorem kw_dualPointEnd_unique (D : IsogenyEndDatum W) (ψ : AddMonoid.End W.Poi
     rw [mul_sub, hψ, kw_pointEnd_mul_dualPointEnd D, sub_self]
   exact sub_eq_zero.mp (kw_pointEnd_mul_cancel D _ hzero)
 
-def KwDualTraceWitness (W : Affine F) [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
+def KwDualTraceWitness (W : Affine F) [WeierstrassCurve.Affine.GenusOnePlaceGate W]
+    [WeierstrassCurve.Affine.AbelTheorem W]
     :
     Prop :=
   ∀ D : IsogenyEndDatum W, ∃ t : ℤ,
     D.pointEnd' + kw_dualPointEnd D = ((t : ℤ) : AddMonoid.End W.Point)
 
 omit [IsAlgClosed F] in
+omit [WeierstrassCurve.IsElliptic W] [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dualInSubring_of_traceWitness (htw : KwDualTraceWitness W)
     (D : IsogenyEndDatum W) :
     kw_dualPointEnd D ∈ isogenyEndSubring W (fun D => D.normFormulaAlong_auto) := by
@@ -2385,8 +2389,8 @@ namespace WeierstrassCurve
 namespace Affine
 scoped instance kw_charZero_end_point {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F]
   [CharZero F]
-    {W : Affine F} [W.IsElliptic] [GenusOnePlaceGate W] [GenusOnePlaceGate.IsCentred W]
-    [AbelTheorem W] :
+    {W : Affine F} [W.IsElliptic]
+    :
     CharZero (AddMonoid.End W.Point) := by
   have key : ∀ n : ℕ, (n : AddMonoid.End W.Point) = 0 → n = 0 := by
     intro n hn
@@ -2454,6 +2458,7 @@ variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable {W : Affine F} [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_pointEnd_ne_zero (D : IsogenyEndDatum W) : D.pointEnd' ≠ 0 := by
   intro hzero
   have hker : Nat.card (AddMonoidHom.ker D.pointEnd') = D.degree :=
@@ -2465,11 +2470,13 @@ theorem kw_pointEnd_ne_zero (D : IsogenyEndDatum W) : D.pointEnd' ≠ 0 := by
     Nat.card_eq_zero_of_infinite] at hker
   exact (ModularCurve.cmm10_deg_degree_pos D).ne' hker.symm
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_degree_eq_of_pointEnd_eq {D₁ D₂ : IsogenyEndDatum W}
     (h : D₁.pointEnd' = D₂.pointEnd') : D₁.degree = D₂.degree := by
   rw [← kw_datumKernelDegreeFace_unconditional D₁,
     ← kw_datumKernelDegreeFace_unconditional D₂, h]
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dualPointEnd_eq_of_pointEnd_eq {D₁ D₂ : IsogenyEndDatum W}
     (h : D₁.pointEnd' = D₂.pointEnd') :
     kw_dualPointEnd D₁ = kw_dualPointEnd D₂ := by
@@ -2477,12 +2484,14 @@ theorem kw_dualPointEnd_eq_of_pointEnd_eq {D₁ D₂ : IsogenyEndDatum W}
   rw [← h, ← kw_degree_eq_of_pointEnd_eq h]
   exact kw_pointEnd_mul_dualPointEnd D₁
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dualPointEnd_idDatum :
     kw_dualPointEnd (IsogenyEndDatum.idDatum W) = 1 := by
   refine (kw_dualPointEnd_unique (IsogenyEndDatum.idDatum W) 1 ?_).symm
   rw [IsogenyEndDatum.idDatum_pointEnd, IsogenyEndDatum.degree_idDatum, mul_one,
     Nat.cast_one, Int.cast_one]
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_degree_of_pointEnd_intCast (D : IsogenyEndDatum W) (n : ℤ)
     (hn : D.pointEnd' = ((n : ℤ) : AddMonoid.End W.Point)) :
     (D.degree : ℤ) = n ^ 2 := by
@@ -2507,6 +2516,7 @@ theorem kw_degree_of_pointEnd_intCast (D : IsogenyEndDatum W) (n : ℤ)
     ModularCurve.cmm5_dp_natCard_ker_natCast (W := W) n.natAbs hna, Nat.cast_pow,
     Int.natAbs_sq]
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dualPointEnd_of_pointEnd_intCast (D : IsogenyEndDatum W) (n : ℤ)
     (hn : D.pointEnd' = ((n : ℤ) : AddMonoid.End W.Point)) :
     kw_dualPointEnd D = ((n : ℤ) : AddMonoid.End W.Point) := by
@@ -2533,8 +2543,8 @@ variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable {W : Affine F} [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
-def KwShiftDatumSupply (W : Affine F) [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
+def KwShiftDatumSupply (W : Affine F) [WeierstrassCurve.Affine.GenusOnePlaceGate W]
+    [WeierstrassCurve.Affine.AbelTheorem W]
     :
     Prop :=
   ∀ D : IsogenyEndDatum W, 1 + D.pointEnd' ≠ 0 →
@@ -2542,15 +2552,16 @@ def KwShiftDatumSupply (W : Affine F) [W.IsElliptic] [WeierstrassCurve.Affine.Ge
       D'.pointEnd' = 1 + D.pointEnd' ∧
       kw_dualPointEnd D' = 1 + kw_dualPointEnd D
 
-def KwDualConormAdditivityAtOne (W : Affine F) [W.IsElliptic]
+def KwDualConormAdditivityAtOne (W : Affine F)
     [WeierstrassCurve.Affine.GenusOnePlaceGate W]
-    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
+    [WeierstrassCurve.Affine.AbelTheorem W]
     :
     Prop :=
   ∀ D D' : IsogenyEndDatum W, D'.pointEnd' = 1 + D.pointEnd' →
     kw_dualPointEnd D' = 1 + kw_dualPointEnd D
 
 omit [IsAlgClosed F] in
+omit [WeierstrassCurve.IsElliptic W] [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dualTraceWitness_of_shiftDatumSupply
     (hsh : KwShiftDatumSupply W) : KwDualTraceWitness W := by
   intro D
@@ -2580,6 +2591,7 @@ theorem kw_dualTraceWitness_of_shiftDatumSupply
     abel
 
 omit [IsAlgClosed F] in
+omit [WeierstrassCurve.IsElliptic W] [GenusOnePlaceGate.IsCentred W] in
 theorem kw_shiftDatumSupply_of_addDatumSupply_of_dualAdditivity
     (hadd : ModularCurve.KwIsogenyEndAddDatumSupply W)
     (hdual : KwDualConormAdditivityAtOne W) :
@@ -2592,6 +2604,7 @@ theorem kw_shiftDatumSupply_of_addDatumSupply_of_dualAdditivity
   exact ⟨D', hD', hdual D D' hD'⟩
 
 omit [IsAlgClosed F] in
+omit [WeierstrassCurve.IsElliptic W] [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dualTraceWitness_of_addDatumSupply_of_dualAdditivity
     (hadd : ModularCurve.KwIsogenyEndAddDatumSupply W)
     (hdual : KwDualConormAdditivityAtOne W) :
@@ -2657,6 +2670,7 @@ def KwDCAOGeomMorphDualAdditivity : Prop :=
 
 variable {W}
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dcao_of_phiRowGenericW (h : KwDualAdditivityPhiRowGenericW W) :
     KwDualConormAdditivityAtOne W := by
   intro D D' hpt
@@ -2721,6 +2735,7 @@ variable {W : Affine F} [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGat
 local instance kw_dcao_instHPD : HasPrincipalDivisors F W.FunctionField :=
   hasPrincipalDivisors_functionField _
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dcao_unramified_proved (D : IsogenyEndDatum W) :
     IsogenyEndDatum.kw_ipfd_unramified D :=
   IsogenyEndDatum.kw_iucz_unramified_of_existsUnramifiedBasePlace D
@@ -2783,6 +2798,7 @@ theorem kw_dcao_compDatum_degree (D₁ D₂ : IsogenyEndDatum W) :
     = finrankAlong F D₁.ι * finrankAlong F D₂.ι
   rw [IsogenyEndDatum.compDatum_ι, finrankAlong_comp]
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dcao_dual_comp (D₁ D₂ : IsogenyEndDatum W) :
     kw_dualPointEnd (IsogenyEndDatum.compDatum W D₁ D₂)
       = kw_dualPointEnd D₂ * kw_dualPointEnd D₁ := by
@@ -2961,6 +2977,7 @@ theorem kw_dcao_sumDatum_of_hgm (D₁ D₂ D₃ : IsogenyEndDatum W)
   exact placeOfPoint_injective
     (((⟨_, hι, hfin⟩ : IsogenyEndDatum W).placeOfPoint_geomMorph P).symm.trans hseam)
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dcao_ord_Dtransport (D : IsogenyEndDatum W) (f : W.FunctionField)
     (P : W.Point) :
     (placeOfPoint P).ord (D.ι f) = (placeOfPoint (D.geomMorph P)).ord f := by
@@ -3892,6 +3909,7 @@ local instance kw_dcao_wire_instHPD : HasPrincipalDivisors F W.FunctionField :=
 abbrev kw_dcao_specExplicit (D₁ D₂ : IsogenyEndDatum W) (a b : F) : W.FunctionField :=
   kw_dcao_specVert D₁ D₂ a * (kw_dcao_specLine D₁ D₂ a b)⁻¹
 
+omit [GenusOnePlaceGate.IsCentred W] in
 theorem kw_dcao_defect_pointDivisor_coeff (D₁ D₂ D₃ : IsogenyEndDatum W)
     (hgm : ∀ P, D₃.geomMorph P = D₁.geomMorph P + D₂.geomMorph P) (L P : W.Point) :
     (Divisor.pullbackAlong D₃.ι D₃.hι

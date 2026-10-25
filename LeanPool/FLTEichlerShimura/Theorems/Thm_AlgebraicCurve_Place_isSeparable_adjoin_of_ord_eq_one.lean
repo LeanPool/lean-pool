@@ -141,7 +141,7 @@ private theorem finrank_algebraMapRange_eq :
   exact congrArg Cardinal.toNat h.symm
 
 private theorem finrank_frobeniusSubfield_eq [FiniteDimensional E M]
-    [FiniteDimensional (frobeniusSubfield E p) E] :
+    :
     Module.finrank (frobeniusSubfield M p) M = Module.finrank (frobeniusSubfield E p) E := by
   set Mp : Subfield M := frobeniusSubfield M p with hMp
   set Ep' : Subfield M := frobeniusSubfieldImageInM (E := E) (M := M) p with hEp'
@@ -384,7 +384,7 @@ private theorem not_pow_of_ord_eq_one {K F : Type*} [Field K] [Field F] [Algebra
   omega
 
 private theorem D_pow_eq_zero {E M : Type*} [CommRing E] [CommRing M]
-    [Algebra E M] (p : ℕ) [Fact p.Prime] [CharP M p] (a : M) :
+    [Algebra E M] (p : ℕ) [CharP M p] (a : M) :
     D E M (a ^ p) = 0 := by
   rw [Derivation.leibniz_pow, ← Nat.cast_smul_eq_nsmul M, CharP.cast_eq_zero M p, zero_smul]
 

@@ -428,7 +428,7 @@ theorem exists_ord_sub_pos [IsAlgClosed K'] [IsCurveOver K' F']
   have hv₀mem : v₀ ∈ D.support := by rw [Finsupp.mem_support_iff, hD]; exact hv₀
   exact hv₀ (by rw [← hD]; exact hall v₀ hv₀mem)
 
-theorem trace_mem [IsAlgClosed K] [IsAlgClosed K'] [IsCurveOver K F] [IsCurveOver K' F']
+theorem trace_mem [IsAlgClosed K] [IsAlgClosed K'] [IsCurveOver K F]
     {x : F} (hx : Transcendental K x)
     (hfg' : ∃ j : F', Transcendental K' j ∧
       FiniteDimensional (IntermediateField.adjoin K' ({j} : Set F')) F')

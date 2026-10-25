@@ -448,18 +448,15 @@ theorem kw_surge_hgf4_toAffine_map_eq (V : WeierstrassCurve R₀) :
 
 open CoordinateRing in
 omit [IsAlgClosed F] [CharZero F] [IsAlgClosed F'] [CharZero F'] in
-theorem kw_surge_hgf4_χE_algebraMap_XClass (V : WeierstrassCurve R₀) [V.IsElliptic]
-    [(V⁄F).IsElliptic] [(V⁄F).toAffine.GenusOnePlaceGate]
-    [GenusOnePlaceGate.IsCentred (V⁄F).toAffine]
-    [(V⁄F).toAffine.AbelTheorem] [(V⁄F').IsElliptic]
-    [(V⁄F').toAffine.GenusOnePlaceGate]
-    [GenusOnePlaceGate.IsCentred (V⁄F').toAffine]
-    [(V⁄F').toAffine.AbelTheorem] (x : F) :
+omit [DecidableEq F] [DecidableEq F'] in
+theorem kw_surge_hgf4_χE_algebraMap_XClass (V : WeierstrassCurve R₀)
+    (x : F) :
     kw_functionFieldMapAlongGeneral V F F'
         (algebraMap (V⁄F).toAffine.CoordinateRing (V⁄F).toAffine.FunctionField
           (XClass (V⁄F).toAffine x))
       = algebraMap (V⁄F').toAffine.CoordinateRing (V⁄F').toAffine.FunctionField
           (XClass (V⁄F').toAffine (algebraMap F F' x)) := by
+  classical
   have hF : algebraMap (V⁄F).toAffine.CoordinateRing (V⁄F).toAffine.FunctionField
       (XClass (V⁄F).toAffine x)
       = polyToFunctionField (V⁄F).toAffine X - algebraMap F (V⁄F).toAffine.FunctionField x := by
@@ -474,16 +471,15 @@ theorem kw_surge_hgf4_χE_algebraMap_XClass (V : WeierstrassCurve R₀) [V.IsEll
 
 open CoordinateRing in
 omit [IsAlgClosed F] [CharZero F] [IsAlgClosed F'] [CharZero F'] in
-theorem kw_surge_hgf4_χE_algebraMap_YClass (V : WeierstrassCurve R₀) [V.IsElliptic]
-    [(V⁄F).IsElliptic] [(V⁄F).toAffine.GenusOnePlaceGate]
-    [GenusOnePlaceGate.IsCentred (V⁄F).toAffine] [(V⁄F).toAffine.AbelTheorem] [(V⁄F').IsElliptic]
-    [(V⁄F').toAffine.GenusOnePlaceGate] [GenusOnePlaceGate.IsCentred (V⁄F').toAffine]
-    [(V⁄F').toAffine.AbelTheorem] (y : F) :
+omit [DecidableEq F] [DecidableEq F'] in
+theorem kw_surge_hgf4_χE_algebraMap_YClass (V : WeierstrassCurve R₀)
+    (y : F) :
     kw_functionFieldMapAlongGeneral V F F'
         (algebraMap (V⁄F).toAffine.CoordinateRing (V⁄F).toAffine.FunctionField
           (YClass (V⁄F).toAffine (C y)))
       = algebraMap (V⁄F').toAffine.CoordinateRing (V⁄F').toAffine.FunctionField
           (YClass (V⁄F').toAffine (C (algebraMap F F' y))) := by
+  classical
   have hF : algebraMap (V⁄F).toAffine.CoordinateRing (V⁄F).toAffine.FunctionField
       (YClass (V⁄F).toAffine (C y))
       = yGen (V⁄F).toAffine - algebraMap F (V⁄F).toAffine.FunctionField y := by
@@ -500,11 +496,16 @@ theorem kw_surge_hgf4_χE_algebraMap_YClass (V : WeierstrassCurve R₀) [V.IsEll
 
 omit [IsDomain ((toAffine E₀⁄F).FunctionField ⊗[F] F')] in
 omit [CharZero F] [CharZero F'] in
+omit [E₀.IsElliptic] [GenusOnePlaceGate.IsCentred (toAffine E₀⁄F)] [(toAffine E₀⁄F).AbelTheorem]
+  [GenusOnePlaceGate.IsCentred (toAffine E₀⁄F')] [(toAffine E₀⁄F').AbelTheorem] in
+omit [DecidableEq F] [DecidableEq F'] [(toAffine E₀⁄F).GenusOnePlaceGate]
+  [(toAffine E₀⁄F').GenusOnePlaceGate] in
 theorem kw_surge_hgf4_χE_VSR_compat {x y : F} (hP : (E₀⁄F).toAffine.Nonsingular x y)
     (hσP : (E₀⁄F').toAffine.Nonsingular (algebraMap F F' x) (algebraMap F F' y))
     (g : (E₀⁄F).toAffine.FunctionField) :
     χE g ∈ (placeOfEquation hσP.left).toValuationSubring ↔
       g ∈ (placeOfEquation hP.left).toValuationSubring := by
+  classical
   have hχE_inj : Function.Injective (χE : _ →ₐ[F] _) :=
     (kw_functionFieldMapAlongGeneral E₀ F F').injective
   classical
@@ -751,12 +752,17 @@ theorem kw_surge_hgf4_bcIota₁_compat (a : (E₀'⁄F).toAffine.FunctionField) 
 
 omit [IsDomain ((toAffine E₀⁄F).FunctionField ⊗[F] F')] in
 omit [CharZero F] [CharZero F'] in
+omit [E₀.IsElliptic] [GenusOnePlaceGate.IsCentred (toAffine E₀⁄F)] [(toAffine E₀⁄F).AbelTheorem]
+  [GenusOnePlaceGate.IsCentred (toAffine E₀⁄F')] [(toAffine E₀⁄F').AbelTheorem] in
+omit [DecidableEq F] [DecidableEq F'] [(toAffine E₀⁄F).GenusOnePlaceGate]
+  [(toAffine E₀⁄F').GenusOnePlaceGate] in
 /-- Positivity of the order at an affine point is preserved by scalar extension. -/
 theorem baseChange_ord_pos_iff {x y : F} (hP : (E₀⁄F).toAffine.Nonsingular x y)
     (hσP : (E₀⁄F').toAffine.Nonsingular (algebraMap F F' x) (algebraMap F F' y))
     (h : (E₀⁄F).toAffine.FunctionField) (hh : h ≠ 0) :
     0 < (placeOfEquation hσP.left).ord (χE h) ↔
       0 < (placeOfEquation hP.left).ord h := by
+  classical
   have hχEh_ne : χE h ≠ 0 :=
     (map_ne_zero_iff _ (kw_functionFieldMapAlongGeneral E₀ F F').injective).mpr hh
   have hVSR := kw_surge_hgf4_χE_VSR_compat E₀ F F' hP hσP
@@ -795,6 +801,7 @@ theorem baseChange_ord_pos_iff {x y : F} (hP : (E₀⁄F).toAffine.Nonsingular x
 
 include hσ in
 omit [E₀'.IsElliptic] in
+omit [E₀.IsElliptic] in
 theorem kw_surge_hgf4_pmop_naturality :
     let hι₁ := kw_surge_hgf4_bcIota₁_isIntegral E₀ E₀' F F' ι₀ hfin₀
     let hfin₁ := kw_surge_hgf4_bcIota₁_finiteAlong E₀ E₀' F F' ι₀ hfin₀
@@ -961,7 +968,7 @@ universe u
 
 public section
 
-variable {R₀ : Type u} [Field R₀] (E₀ E₀' : WeierstrassCurve R₀) [E₀.IsElliptic]
+variable {R₀ : Type u} [Field R₀] (E₀ E₀' : WeierstrassCurve R₀)
 variable (F : Type u) [Field F] [Algebra R₀ F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable (F' : Type u) [Field F'] [Algebra R₀ F'] [DecidableEq F'] [IsAlgClosed F'] [CharZero F']
 variable [Algebra F F'] [IsScalarTower R₀ F F']

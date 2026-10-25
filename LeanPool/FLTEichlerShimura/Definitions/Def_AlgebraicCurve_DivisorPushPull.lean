@@ -418,7 +418,6 @@ def restrictInclusion : (w.restrict F).toValuationSubring →+* w.toValuationSub
   map_zero' := Subtype.ext (map_zero (algebraMap F F'))
   map_add' a b := Subtype.ext (map_add (algebraMap F F') (a : F) (b : F))
 
-@[simp]
 theorem coe_restrictInclusion (a : (w.restrict F).toValuationSubring) :
     ((restrictInclusion F w a : w.toValuationSubring) : F') = algebraMap F F' (a : F) := rfl
 
@@ -439,7 +438,6 @@ variable (F) in
 def restrictResidueMap : (w.restrict F).ResidueField →+* w.ResidueField :=
   IsLocalRing.ResidueField.map (restrictInclusion F w)
 
-@[simp]
 theorem restrictResidueMap_residue (a : (w.restrict F).toValuationSubring) :
     restrictResidueMap F w (IsLocalRing.residue _ a) =
       IsLocalRing.residue _ (restrictInclusion F w a) :=
@@ -517,11 +515,11 @@ theorem pushforward_apply [DecidableEq (Place K F)] (D : Divisor K F') (v : Plac
   simp [Finsupp.single_apply]
 
 variable (K F F') in
-def PushforwardNormFormula [Module.Finite F F'] : Prop :=
+def PushforwardNormFormula : Prop :=
   ∀ (f : F'), f ≠ 0 → ∀ D : Divisor K F', (∀ w, D w = w.ord f) →
     ∀ v : Place K F, pushforward F D v = v.ord (Algebra.norm F f)
 
-theorem pushforward_eq_of_normFormula [Module.Finite F F']
+theorem pushforward_eq_of_normFormula
     (H : PushforwardNormFormula K F F') {f : F'} (hf : f ≠ 0)
     {D : Divisor K F'} (hD : ∀ w, D w = w.ord f)
     {E : Divisor K F} (hE : ∀ v, E v = v.ord (Algebra.norm F f)) :

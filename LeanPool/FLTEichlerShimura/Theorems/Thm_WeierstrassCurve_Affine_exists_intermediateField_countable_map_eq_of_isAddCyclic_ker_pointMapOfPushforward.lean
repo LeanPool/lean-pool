@@ -1939,7 +1939,7 @@ end Bridge
 
 section BCPinnedDischarge
 
-variable {K : Type uK} [Field K] [Algebra ℚ K] [DecidableEq K] [IsAlgClosed K] [CharZero K]
+variable {K : Type uK} [Field K] [Algebra ℚ K]
 variable {K₀ : IntermediateField ℚ K}
 variable (E₀ E₀' : WeierstrassCurve K₀)
 
@@ -1947,7 +1947,6 @@ variable (ι : (E₀'.map (algebraMap K₀ K)).toAffine.FunctionField
   →ₐ[K] (E₀.map (algebraMap K₀ K)).toAffine.FunctionField)
 variable (hcoeffs : kw_surgehgf4_hSD_CoeffsHyp E₀ E₀' ι)
 
-omit [DecidableEq K] [IsAlgClosed K] [CharZero K] in
 theorem kw_surgehgf4_cfe_bcIota₁NoAC_eq_ι :
     kw_surgehgf4_hfgkd_bcIota₁NoAC E₀ E₀' (↥K₀) K
         (kw_surgehgf4_hSD_ι' E₀ E₀' ι hcoeffs) = ι := by
@@ -1975,7 +1974,6 @@ theorem kw_surgehgf4_cfe_bcIota₁NoAC_eq_ι :
     rw [kw_functionFieldMapAlongGeneral_yGen] at key
     exact key.symm
 
-omit [DecidableEq K] [IsAlgClosed K] [CharZero K] in
 theorem kw_surgehgf4_cfe_pinnedFinrankEq :
     KwD5BCSubfieldDescentPinnedFinrankEq E₀ E₀' ι hcoeffs := by
   classical

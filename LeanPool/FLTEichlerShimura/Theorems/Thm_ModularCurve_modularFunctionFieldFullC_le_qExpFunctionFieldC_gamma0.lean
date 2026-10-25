@@ -65,7 +65,7 @@ section privateSection
 namespace P2MW.S_ModularCurve_modularFunctionFieldFullC_le_qExpFunctionFieldC_gamma0
 
 theorem solution
-    (K : Type*) [Field K] (M : ℕ) [NeZero M] :
+    (K : Type*) [Field K] (M : ℕ) :
     ModularCurve.modularFunctionFieldFullC K M ≤
       ModularCurve.qExpFunctionFieldC K (CongruenceSubgroup.Gamma0 M) := by
   rw [ModularCurve.modularFunctionFieldFullC, IntermediateField.adjoin_le_iff]
@@ -102,7 +102,7 @@ end privateSection
 public section publicSection
 
 theorem ModularCurve.modularFunctionFieldFullC_le_qExpFunctionFieldC_gamma0
-    (K : Type*) [Field K] (M : ℕ) [NeZero M] :
+    (K : Type*) [Field K] (M : ℕ) :
     ModularCurve.modularFunctionFieldFullC K M ≤
       ModularCurve.qExpFunctionFieldC K (CongruenceSubgroup.Gamma0 M) :=
   solution K M

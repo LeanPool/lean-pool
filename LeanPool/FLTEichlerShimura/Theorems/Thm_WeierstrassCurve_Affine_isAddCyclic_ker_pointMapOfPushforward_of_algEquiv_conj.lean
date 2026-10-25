@@ -216,10 +216,9 @@ p2m_export "WeierstrassCurve.Affine.IsogenyEndDatum" "pointEnd pointEnd_apply po
   hfin hι mk ι"
 p2m_open "WeierstrassCurve.Affine.IsogenyEndDatum"
 
-variable {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
-variable {W : Affine F} [W.IsElliptic] [GenusOnePlaceGate W] [AbelTheorem W]
+variable {F : Type*} [Field F] [DecidableEq F] [CharZero F]
+variable {W : Affine F} [GenusOnePlaceGate W] [AbelTheorem W]
 
-omit [IsAlgClosed F] [WeierstrassCurve.IsElliptic W] in
 theorem pointEnd_eq_pointEnd' (D : IsogenyEndDatum W) (hN : NormFormulaAlong F D.ι D.hfin) :
     D.pointEnd hN = D.pointEnd' := rfl
 
@@ -1513,10 +1512,10 @@ open _root_.WeierstrassCurve
 theorem solution
     (E E' D D' : WeierstrassCurve.Affine ℂ) [E.IsElliptic] [E'.IsElliptic] [D.IsElliptic]
     [D'.IsElliptic]
-    [GenusOnePlaceGate E] [GenusOnePlaceGate.IsCentred E] [AbelTheorem E]
-    [GenusOnePlaceGate E'] [GenusOnePlaceGate.IsCentred E'] [AbelTheorem E']
-    [GenusOnePlaceGate D] [GenusOnePlaceGate.IsCentred D] [AbelTheorem D]
-    [GenusOnePlaceGate D'] [GenusOnePlaceGate.IsCentred D'] [AbelTheorem D']
+    [GenusOnePlaceGate E] [AbelTheorem E]
+    [GenusOnePlaceGate E'] [AbelTheorem E']
+    [GenusOnePlaceGate D] [AbelTheorem D]
+    [GenusOnePlaceGate D'] [AbelTheorem D']
     (ι : E'.FunctionField →ₐ[ℂ] E.FunctionField) (hι : ι.toRingHom.IsIntegral)
     (hfin : FiniteAlong ℂ ι)
     (hN : NormFormulaAlong ℂ ι hfin)
@@ -1560,10 +1559,10 @@ open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 theorem WeierstrassCurve.Affine.isAddCyclic_ker_pointMapOfPushforward_of_algEquiv_conj
     (E E' D D' : WeierstrassCurve.Affine ℂ) [E.IsElliptic] [E'.IsElliptic] [D.IsElliptic]
     [D'.IsElliptic]
-    [GenusOnePlaceGate E] [GenusOnePlaceGate.IsCentred E] [AbelTheorem E]
-    [GenusOnePlaceGate E'] [GenusOnePlaceGate.IsCentred E'] [AbelTheorem E']
-    [GenusOnePlaceGate D] [GenusOnePlaceGate.IsCentred D] [AbelTheorem D]
-    [GenusOnePlaceGate D'] [GenusOnePlaceGate.IsCentred D'] [AbelTheorem D']
+    [GenusOnePlaceGate E] [AbelTheorem E]
+    [GenusOnePlaceGate E'] [AbelTheorem E']
+    [GenusOnePlaceGate D] [AbelTheorem D]
+    [GenusOnePlaceGate D'] [AbelTheorem D']
     (ι : E'.FunctionField →ₐ[ℂ] E.FunctionField) (hι : ι.toRingHom.IsIntegral)
     (hfin : FiniteAlong ℂ ι)
     (hN : NormFormulaAlong ℂ ι hfin)

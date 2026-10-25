@@ -79,7 +79,7 @@ lemma le_exp_neg_one_of_lt_one {x : ℤᵐ⁰} (hx : x < 1) : x ≤ exp (-1) := 
     omega
 
 omit [IsDedekindDomain R] in
-lemma isUnit_of_forall_not_mem [IsDomain R] {r : R} (hr : ∀ w : HeightOneSpectrum R, r ∉ w.asIdeal)
+lemma isUnit_of_forall_not_mem {r : R} (hr : ∀ w : HeightOneSpectrum R, r ∉ w.asIdeal)
     (w₀ : HeightOneSpectrum R) : IsUnit r := by
   by_contra hu
   obtain ⟨𝔪, h𝔪, hle⟩ := Ideal.exists_le_maximal (Ideal.span {r}) (Ideal.span_singleton_ne_top hu)

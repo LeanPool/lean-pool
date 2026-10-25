@@ -138,7 +138,7 @@ theorem exists_nat_meromorphicOrderAt_eq {f : ℂ → ℂ} {x : ℂ} (hf : Analy
 end IntParityAux
 
 private theorem j_sub_1728_ne_zero
-    (M : ℕ) [NeZero M]
+    (M : ℕ)
     (y : ↥(ModularCurve.laurentBaseChange ℂ (ModularCurve.qExpFunctionFieldC ℚ
       (CongruenceSubgroup.Gamma1 M))))
     (hy : (y : LaurentSeries ℂ) = ModularCurve.jqModC ℂ)

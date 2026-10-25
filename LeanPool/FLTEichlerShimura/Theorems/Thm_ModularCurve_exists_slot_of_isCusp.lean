@@ -804,7 +804,7 @@ theorem card_slotFinset (K : Type*) [Field K] [Algebra ℚ K] (N : ℕ) [NeZero 
 
 end SlotsAux1
 
-theorem card_slotFibre (N : ℕ) [NeZero N] {α : Type*} [DecidableEq α] (P : (_ : ℕ) × ℕ → α)
+theorem card_slotFibre (N : ℕ) {α : Type*} [DecidableEq α] (P : (_ : ℕ) × ℕ → α)
     (hP : ∀ s ∈ slotFinset N, ∀ s' ∈ slotFinset N,
       (P s = P s' ↔ s.1 = s'.1 ∧ s.2 ≡ s'.2 [MOD Nat.gcd s.1 (N / s.1)]))
     (s₀ : (_ : ℕ) × ℕ) (hs₀ : s₀ ∈ slotFinset N) :

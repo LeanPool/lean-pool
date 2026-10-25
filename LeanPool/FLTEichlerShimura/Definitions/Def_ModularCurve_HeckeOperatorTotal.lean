@@ -91,6 +91,7 @@ def heckeOperatorAlong :
 
 variable {L N ℓ}
 
+omit [NeZero N] in
 theorem heckeInputsAlong_intro (hα : HeckeAlphaBarIntegral L N ℓ) (hβ : HeckeBetaBarIntegral L N ℓ)
     [hP : HasPrincipalDivisors L (laurentBaseChange L (modularFunctionFieldFull (N * ℓ)))]
     (hFI : FundamentalIdentityAlong L (heckeBetaBar L N ℓ) hβ)
@@ -98,6 +99,7 @@ theorem heckeInputsAlong_intro (hα : HeckeAlphaBarIntegral L N ℓ) (hβ : Heck
     (hN : NormFormulaAlong L (heckeAlphaBar L N ℓ) hfin) : HeckeInputsAlong L N ℓ :=
   ⟨hα, hβ, hP, hfin, hFI, hN⟩
 
+omit [NeZero N] in
 theorem heckeOperatorAlong_eq (hα : HeckeAlphaBarIntegral L N ℓ) (hβ : HeckeBetaBarIntegral L N ℓ)
     [HasPrincipalDivisors L (laurentBaseChange L (modularFunctionFieldFull (N * ℓ)))]
     (hFI : FundamentalIdentityAlong L (heckeBetaBar L N ℓ) hβ)
@@ -107,6 +109,7 @@ theorem heckeOperatorAlong_eq (hα : HeckeAlphaBarIntegral L N ℓ) (hβ : Hecke
   have h : HeckeInputsAlong L N ℓ := heckeInputsAlong_intro hα hβ hFI hfin hN
   rw [heckeOperatorAlong, dite_eq_left h]
 
+omit [NeZero N] in
 theorem heckeOperatorAlong_of_not (h : ¬ HeckeInputsAlong L N ℓ) :
     heckeOperatorAlong L N ℓ = 0 := by
   rw [heckeOperatorAlong, dite_eq_right h]

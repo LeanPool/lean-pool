@@ -162,7 +162,7 @@ open scoped WeierstrassCurve.Affine
 variable {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
 variable (W : WeierstrassCurve F)
 
-theorem smul_formula_or_zero [W.IsElliptic] {n : ℕ} (_hn : 0 < n) {x₀ y₀ : K}
+theorem smul_formula_or_zero {n : ℕ} (_hn : 0 < n) {x₀ y₀ : K}
     (h : (W.baseChange K).toAffine.Nonsingular x₀ y₀) :
     (((W.baseChange K).ΨSq n).eval x₀ ≠ 0 →
       ∃ (x' y' : K) (h' : (W.baseChange K).toAffine.Nonsingular x' y'),
@@ -223,7 +223,7 @@ open scoped WeierstrassCurve.Affine
 variable {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
 variable (W : WeierstrassCurve F)
 
-theorem smul_x_eq [W.IsElliptic] {n : ℕ} (hn : 0 < n) {x₀ y₀ : K}
+theorem smul_x_eq {n : ℕ} (hn : 0 < n) {x₀ y₀ : K}
     (h : (W.baseChange K).toAffine.Nonsingular x₀ y₀)
     (hns : ((W.baseChange K).ΨSq n).eval x₀ ≠ 0) :
     ∃ (x' y' : K) (h' : (W.baseChange K).toAffine.Nonsingular x' y'),
@@ -286,7 +286,7 @@ theorem isCoprime_Φ_ΨSq [IsAlgClosed K] [W.IsElliptic] {n : ℕ} (hn : 0 < n) 
         rwa [Nat.cast_add, Nat.cast_one] at h2
       exact eval_ne_of_isCoprime (isCoprime_ΨSq_succ W n) hΨ0 hb
 
-theorem smul_eq_zero_of_ΨSq_eval_eq_zero [W.IsElliptic] {n : ℕ} (hn : 0 < n)
+theorem smul_eq_zero_of_ΨSq_eval_eq_zero {n : ℕ} (hn : 0 < n)
     {x₀ y₀ : K} (h : (W.baseChange K).toAffine.Nonsingular x₀ y₀)
     (hz : ((W.baseChange K).ΨSq n).eval x₀ = 0) :
     n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = 0 :=
@@ -297,7 +297,7 @@ theorem ΨSq_odd_eq_sq {n : ℕ} (hodd : Odd n) :
     (W.baseChange K).ΨSq n = ((W.baseChange K).preΨ' n) ^ 2 := by
   rw [ΨSq_ofNat, ite_eq_right (Nat.not_even_iff_odd.mpr hodd), mul_one]
 
-theorem smul_eq_zero_iff_preΨ'_eval [W.IsElliptic] {n : ℕ} (hodd : Odd n)
+theorem smul_eq_zero_iff_preΨ'_eval {n : ℕ} (hodd : Odd n)
     (hn : 0 < n) {x y : K} (h : (W.baseChange K).toAffine.Nonsingular x y) :
     n • (Point.some x y h : W.toAffine⟮K⟯) = 0 ↔
       ((W.baseChange K).preΨ' n).eval x = 0 := by
@@ -366,7 +366,7 @@ theorem separable_of_splits_of_squarefree {L : Type*} [Field L] {p : L[X]}
   (nodup_roots_iff_of_splits hp hs).mp (squarefree_roots_nodup hsq)
 
 omit [DecidableEq K] in
-theorem wronskian_Φ_ΨSq_ne_zero [W.IsElliptic] {n : ℕ} (hn : (n : K) ≠ 0) :
+theorem wronskian_Φ_ΨSq_ne_zero {n : ℕ} (hn : (n : K) ≠ 0) :
     derivative ((W.baseChange K).Φ n) * (W.baseChange K).ΨSq n -
       (W.baseChange K).Φ n * derivative ((W.baseChange K).ΨSq n) ≠ 0 := by
   have hn0 : n ≠ 0 := by rintro rfl; simp at hn
@@ -635,7 +635,7 @@ theorem Ψ₂Sq_ne_zero_of_isElliptic [W.IsElliptic] : (W.baseChange K).Ψ₂Sq 
       (-27 * E.b₆) * hb₆ + (-4 * E.b₄ ^ 3) * h2
   exact E.isUnit_Δ.ne_zero hΔ
 
-private theorem card_equation_fiber_of_psiTwo_ne_zero [W.IsElliptic] (x : K)
+private theorem card_equation_fiber_of_psiTwo_ne_zero (x : K)
     (hx : (W.baseChange K).Ψ₂Sq.eval x ≠ 0) :
     ((qpoly W x).roots.toFinset.image (fun y => (x, y))).card = 2 := by
   classical

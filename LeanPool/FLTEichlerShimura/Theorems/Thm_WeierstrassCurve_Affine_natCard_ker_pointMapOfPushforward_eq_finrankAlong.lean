@@ -259,12 +259,11 @@ section Gate
 
 universe u
 
-variable {F : Type u} [Field F] [DecidableEq F]
+variable {F : Type u} [Field F]
 variable {W : Affine F} [GenusOnePlaceGate W]
 
 variable (W)
 
-omit [DecidableEq F] in
 @[scoped simp] theorem placeOfPointEquiv_symm_placeOfPoint (P : W.Point) :
     (placeOfPointEquiv W).symm (placeOfPoint P) = P := by
   classical

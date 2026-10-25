@@ -215,6 +215,7 @@ def heckeDiffAlong :
       Ω[laurentBaseChange L (modularFunctionFieldFull N)⁄L] :=
   Differential.correspondence (heckeBetaBar L N ℓ) (heckeAlphaBar L N ℓ)
 
+omit [NeZero N] in
 theorem heckeDiffAlong_apply (ω : Ω[laurentBaseChange L (modularFunctionFieldFull N)⁄L]) :
     heckeDiffAlong L N ℓ ω =
       Differential.traceAlong (heckeBetaBar L N ℓ) (Differential.pullbackAlong (heckeAlphaBar L N ℓ)
@@ -234,6 +235,7 @@ def heckeDiffBar (ℓ : Nat.Primes) :
   haveI : NeZero (ℓ : ℕ) := ⟨ℓ.2.ne_zero⟩
   heckeDiffAlong (AlgebraicClosure ℚ) N ℓ
 
+omit [NeZero N] in
 theorem heckeDiffBar_eq (ℓ : Nat.Primes) :
     heckeDiffBar N ℓ = (haveI : NeZero (ℓ : ℕ) := ⟨ℓ.2.ne_zero⟩;
       Differential.correspondence (heckeBetaBar (AlgebraicClosure ℚ) N ℓ)

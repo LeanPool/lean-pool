@@ -68,9 +68,8 @@ open ModularCurve AlgebraicCurve
 
 namespace S12Q
 
-variable (N : ℕ) [NeZero N]
+variable (N : ℕ)
 
-omit [NeZero N] in
 theorem mem_iff_ord_nonneg (w : Place (AlgebraicClosure ℚ) ↥(modularFunctionFieldBar N))
     {x : ↥(modularFunctionFieldBar N)} (hx : x ≠ 0) :
     x ∈ w.toValuationSubring ↔ 0 ≤ w.ord x := by
@@ -102,7 +101,7 @@ theorem induces_unique
 
 end S12Q
 
-theorem solution {N : ℕ} [NeZero N]
+theorem solution {N : ℕ}
     {ψ : ↥(modularFunctionFieldBar N) →ₐ[AlgebraicClosure ℚ] HahnSeries ℚ (AlgebraicClosure ℚ)}
     {w w' : Place (AlgebraicClosure ℚ) ↥(modularFunctionFieldBar N)}
     (h : Induces ψ w) (h' : Induces ψ w') : w = w' := by
@@ -118,7 +117,7 @@ public section publicSection
 
 
 open AlgebraicCurve ModularCurve IsDedekindDomain WithZero
-theorem ModularCurve.place_eq_of_induces {N : ℕ} [NeZero N]
+theorem ModularCurve.place_eq_of_induces {N : ℕ}
     {ψ : ↥(modularFunctionFieldBar N) →ₐ[AlgebraicClosure ℚ] HahnSeries ℚ (AlgebraicClosure ℚ)}
     {w w' : Place (AlgebraicClosure ℚ) ↥(modularFunctionFieldBar N)}
     (h : Induces ψ w) (h' : Induces ψ w')

@@ -199,7 +199,6 @@ def EvalSymm (Φ : Polynomial (Polynomial ℤ)) : Prop :=
     Φ.eval₂ (Polynomial.aeval (R := ℤ) x).toRingHom y
       = Φ.eval₂ (Polynomial.aeval (R := ℤ) y).toRingHom x
 
-@[simp]
 theorem aeval_toRingHom_X (x : LaurentSeries ℚ) :
     (Polynomial.aeval (R := ℤ) x).toRingHom Polynomial.X = x := by
   simp

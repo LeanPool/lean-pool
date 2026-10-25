@@ -401,10 +401,6 @@ def mulP (n : ℕ) : torsionBy ℤ M ((p ^ (n + 1) : ℕ) : ℤ) →+ torsionBy 
   map_zero' := Subtype.ext (smul_zero _)
   map_add' _ _ := Subtype.ext (smul_add _ _ _)
 
-omit [Fact p.Prime] in
-@[simp] theorem coe_mulP (n : ℕ) (m : torsionBy ℤ M ((p ^ (n + 1) : ℕ) : ℤ)) :
-    (mulP p M n m : M) = ((p : ℕ) : ℤ) • (m : M) := rfl
-
 variable (p M) in
 def kerMulPEquiv (n : ℕ) : (mulP p M n).ker ≃ torsionBy ℤ M ((p ^ 1 : ℕ) : ℤ) where
   toFun m := ⟨(m.1 : M), mem_torsionBy_one_of_smul_eq_zero (by
@@ -861,19 +857,6 @@ theorem tateModuleRepOfBasis_ρ
         ℚ) :=
   rfl
 
-@[simp] theorem tateModuleRepOfBasis_ρ_apply
-    (hcard : ∀ n : ℕ, Nat.card (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point ((p ^ n : ℕ) :
-      ℤ))
-      = (p ^ n) ^ 2)
-    (b : Module.Basis (Fin 2) ℤ_[p] (TateModule p (W⁄(AlgebraicClosure ℚ)).Point))
-    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)
-    (x : TateModule p (W⁄(AlgebraicClosure ℚ)).Point)
-    (n : ℕ) :
-    ((show TateModule p (W⁄(AlgebraicClosure ℚ)).Point from (W.tateModuleRepOfBasis p hcard b).ρ σ
-      x) :
-        ℕ → (W⁄(AlgebraicClosure ℚ)).Point) n
-      = σ • (x : ℕ → (W⁄(AlgebraicClosure ℚ)).Point) n := rfl
-
 end WeierstrassCurve
 
 namespace GaloisRep
@@ -969,17 +952,6 @@ theorem tateModuleRep_ρ (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
       = TateModule.rep p (W⁄(AlgebraicClosure ℚ)).Point (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure
         ℚ) :=
   rfl
-
-@[simp] theorem tateModuleRep_ρ_apply (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
-    (hcard : ∀ n : ℕ,
-      Nat.card (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^
-        2)
-    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)
-    (x : TateModule p (W⁄(AlgebraicClosure ℚ)).Point)
-    (n : ℕ) :
-    ((show TateModule p (W⁄(AlgebraicClosure ℚ)).Point from (W.tateModuleRep p hcard).ρ σ x) : ℕ →
-      _) n
-      = σ • (x : ℕ → (W⁄(AlgebraicClosure ℚ)).Point) n := rfl
 
 theorem tateModuleRepOfBasis_eq_tateModuleRep (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
     (hcard : ∀ n : ℕ,

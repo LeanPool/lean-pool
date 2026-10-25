@@ -1549,7 +1549,6 @@ theorem s2c_key (hp3 : 3 ≤ p) (hpodd : Odd p) (hord : addOrderOf Q = p)
 
 omit [CharZero F] in
 theorem s2c_zero (V : WeierstrassCurve F) (hVW : V = W)
-    [V.toAffine.IsElliptic]
     [gW : GenusOnePlaceGate W.toAffine] [cW : GenusOnePlaceGate.IsCentred W.toAffine]
     [aW : AbelTheorem W.toAffine]
     [gV : GenusOnePlaceGate V.toAffine] [cV : GenusOnePlaceGate.IsCentred V.toAffine]

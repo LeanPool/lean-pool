@@ -76,7 +76,7 @@ theorem solution
     (K F K' F' : Type*)
     [Field K] [Field F] [Field K'] [Field F'] [Algebra K F] [Algebra K' F']
     [Algebra K K'] [Algebra F F'] [Algebra K F'] [IsScalarTower K K' F'] [IsScalarTower K F F']
-    [IsAlgClosed K] [IsAlgClosed K'] [IsCurveOver K F] [IsCurveOver K' F']
+    [IsAlgClosed K] [IsCurveOver K F]
     (lift : Place K F → Place K' F')
     (hlift_ord : ∀ (P : Place K F) (f : F), (lift P).ord (algebraMap F F' f) = P.ord f)
     (hlift_inj : Function.Injective lift)
@@ -114,7 +114,7 @@ theorem AlgebraicCurve.mem_riemannRochSpace_of_sum_basis_smul_algebraMap_mem_map
     (K F K' F' : Type*)
     [Field K] [Field F] [Field K'] [Field F'] [Algebra K F] [Algebra K' F']
     [Algebra K K'] [Algebra F F'] [Algebra K F'] [IsScalarTower K K' F'] [IsScalarTower K F F']
-    [IsAlgClosed K] [IsAlgClosed K'] [IsCurveOver K F] [IsCurveOver K' F']
+    [IsAlgClosed K] [IsCurveOver K F]
     (lift : Place K F → Place K' F')
     (hlift_ord : ∀ (P : Place K F) (f : F), (lift P).ord (algebraMap F F' f) = P.ord f)
     (hlift_inj : Function.Injective lift)

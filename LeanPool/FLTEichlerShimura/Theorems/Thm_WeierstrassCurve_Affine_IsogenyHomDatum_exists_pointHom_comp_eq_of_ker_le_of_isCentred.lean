@@ -191,11 +191,13 @@ theorem hmap_seam (η : IsogenyHomDatum U V) (P : U.Point) :
     (placeOfPoint P).restrictAlong η.ι η.hι = placeOfPoint (hmap η P) :=
   ((pointEquivPlace (W := V)).apply_symm_apply _).symm
 
+omit [IsAlgClosed F] [CharZero F] [WeierstrassCurve.IsElliptic U] [WeierstrassCurve.IsElliptic V] in
 theorem pointHom_eq_hmap_sub (η : IsogenyHomDatum U V) (hN : NormFormulaAlong F η.ι η.hfin)
     (P : U.Point) :
     η.pointHom hN P = hmap η P - hmap η 0 :=
   IsogenyHomDatum.pointHom_apply_eq_sub η hN P
 
+omit [IsAlgClosed F] [CharZero F] [WeierstrassCurve.IsElliptic U] [WeierstrassCurve.IsElliptic V] in
 theorem hmap_add_of_ker (η : IsogenyHomDatum U V) (hN : NormFormulaAlong F η.ι η.hfin)
     (P T : U.Point)
     (hT : η.pointHom hN T = 0) : hmap η (P + T) = hmap η P := by
@@ -225,7 +227,7 @@ variable [GenusOnePlaceGate.IsCentred V₀]
 
 omit [DecidableEq F] in
 omit [IsAlgClosed F] [CharZero F] in
-theorem hrat_of_gate {V : WeierstrassCurve.Affine F} [V.IsElliptic] [GenusOnePlaceGate V] :
+theorem hrat_of_gate {V : WeierstrassCurve.Affine F} [GenusOnePlaceGate V] :
     ∀ w : Place F V.FunctionField, w.IsRational := by
   classical
   exact
@@ -234,9 +236,11 @@ theorem hrat_of_gate {V : WeierstrassCurve.Affine F} [V.IsElliptic] [GenusOnePla
 def τ (R : V₀.Point) : V₀.FunctionField ≃ₐ[F] V₀.FunctionField :=
   (exists_algEquiv_restrictAlong_placeOfPoint_eq_add (W := V₀) R).choose
 
+omit [CharZero F] [V₀.AbelTheorem] in
 theorem τ_isIntegral (R : V₀.Point) : (τ R).toAlgHom.toRingHom.IsIntegral :=
   (exists_algEquiv_restrictAlong_placeOfPoint_eq_add (W := V₀) R).choose_spec.choose
 
+omit [CharZero F] [V₀.AbelTheorem] in
 theorem τ_seam (R Q : V₀.Point) :
     (placeOfPoint Q).restrictAlong (τ R).toAlgHom (τ_isIntegral R) = placeOfPoint (Q + R) :=
   (exists_algEquiv_restrictAlong_placeOfPoint_eq_add (W := V₀) R).choose_spec.choose_spec Q
@@ -247,6 +251,7 @@ theorem algEquiv_isIntegral (e : V₀.FunctionField ≃ₐ[F] V₀.FunctionField
     e.toAlgHom.toRingHom.IsIntegral :=
   RingHom.isIntegral_of_surjective _ e.surjective
 
+omit [V₀.AbelTheorem] in
 theorem τ_add (S T : V₀.Point) : τ (S + T) = (τ S) * (τ T) := by
   apply AlgEquiv.ext
   intro f
@@ -260,6 +265,7 @@ theorem τ_add (S T : V₀.Point) : τ (S + T) = (τ S) * (τ T) := by
       (τ_isIntegral S) hint (placeOfPoint P), τ_seam, τ_seam, add_assoc]
   exact DFunLike.congr_fun key f
 
+omit [V₀.AbelTheorem] in
 theorem τ_zero : τ (0 : V₀.Point) = 1 := by
   apply AlgEquiv.ext
   intro f
@@ -271,6 +277,7 @@ theorem τ_zero : τ (0 : V₀.Point) = 1 := by
     exact (restrictAlong_algHomId (placeOfPoint P) _).symm
   exact DFunLike.congr_fun key f
 
+omit [CharZero F] [V₀.AbelTheorem] in
 theorem τ_eq_one_imp {T : V₀.Point} (h : τ T = 1) : T = 0 := by
   have h1 := τ_seam T 0
   have h2 : (placeOfPoint (0 : V₀.Point)).restrictAlong (τ T).toAlgHom (τ_isIntegral T)
@@ -322,7 +329,7 @@ theorem mem_fixedPoints_iff (f : V₀.FunctionField) :
   · intro hf g
     exact hf ((Multiplicative.toAdd g : (φ.pointHom hNφ).ker) : V₀.Point) (Multiplicative.toAdd g).2
 
-theorem τ_comp_eq_of_ker {V : WeierstrassCurve.Affine F} [V.IsElliptic] [GenusOnePlaceGate V]
+theorem τ_comp_eq_of_ker {V : WeierstrassCurve.Affine F} [GenusOnePlaceGate V]
     [AbelTheorem V]
     (η : IsogenyHomDatum V₀ V) (hN : NormFormulaAlong F η.ι η.hfin) (T : V₀.Point)
     (hT : η.pointHom hN T = 0) : (τ T).toAlgHom.comp η.ι = η.ι := by
@@ -333,6 +340,7 @@ theorem τ_comp_eq_of_ker {V : WeierstrassCurve.Affine F} [V.IsElliptic] [GenusO
   rw [← Place.restrictAlong_restrictAlong η.ι (τ T).toAlgHom η.hι (τ_isIntegral T) hint,
     τ_seam, hmap_seam, hmap_seam, hmap_add_of_ker η hN P T hT]
 
+omit [WeierstrassCurve.IsElliptic V₁] in
 theorem fieldRange_le_fixedPoints :
     φ.ι.fieldRange.toSubfield
       ≤ FixedPoints.subfield (Multiplicative (φ.pointHom hNφ).ker) V₀.FunctionField := by
@@ -388,6 +396,7 @@ variable (ψ : IsogenyHomDatum V₀ V₂) (hNψ : NormFormulaAlong F ψ.ι ψ.hf
 variable (hker : ∀ P : V₀.Point, φ.pointHom hNφ P = 0 → ψ.pointHom hNψ P = 0)
 
 include hker in
+omit [WeierstrassCurve.IsElliptic V₂] in
 theorem psi_range_le : ψ.ι.range ≤ φ.ι.range := by
   intro f hf
   obtain ⟨g, rfl⟩ := (AlgHom.mem_range ψ.ι).mp hf
@@ -409,7 +418,7 @@ open S13CIII in
 theorem solution
     {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
     {V₀ V₁ V₂ : WeierstrassCurve.Affine F} [V₀.IsElliptic] [GenusOnePlaceGate V₀] [AbelTheorem V₀]
-    [V₁.IsElliptic] [GenusOnePlaceGate V₁] [AbelTheorem V₁] [V₂.IsElliptic] [GenusOnePlaceGate V₂]
+    [V₁.IsElliptic] [GenusOnePlaceGate V₁] [AbelTheorem V₁] [GenusOnePlaceGate V₂]
     [AbelTheorem V₂]
     [GenusOnePlaceGate.IsCentred V₀]
     (φ : IsogenyHomDatum V₀ V₁) (hNφ : NormFormulaAlong F φ.ι φ.hfin)
@@ -449,7 +458,7 @@ universe u
 theorem WeierstrassCurve.Affine.IsogenyHomDatum.exists_pointHom_comp_eq_of_ker_le_of_isCentred
     {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
     {V₀ V₁ V₂ : WeierstrassCurve.Affine F} [V₀.IsElliptic] [GenusOnePlaceGate V₀] [AbelTheorem V₀]
-    [V₁.IsElliptic] [GenusOnePlaceGate V₁] [AbelTheorem V₁] [V₂.IsElliptic] [GenusOnePlaceGate V₂]
+    [V₁.IsElliptic] [GenusOnePlaceGate V₁] [AbelTheorem V₁] [GenusOnePlaceGate V₂]
     [AbelTheorem V₂]
     [GenusOnePlaceGate.IsCentred V₀]
     (φ : IsogenyHomDatum V₀ V₁) (hNφ : NormFormulaAlong F φ.ι φ.hfin)

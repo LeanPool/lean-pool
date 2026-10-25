@@ -1000,7 +1000,7 @@ theorem mem_toValuationSubring_iff_ord {F : Type*} [Field F] [Algebra ℂ F]
     rw [mul_inv_cancel₀ hx0, map_one] at hlt'
     exact lt_irrefl _ hlt'
 
-variable (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] (hT : ModularGroup.T ∈ Γ)
+variable (Γ : Subgroup SL(2, ℤ)) (hT : ModularGroup.T ∈ Γ)
 
 include hT in
 theorem place_eq_of_readouts (σ : SL(2, ℤ))

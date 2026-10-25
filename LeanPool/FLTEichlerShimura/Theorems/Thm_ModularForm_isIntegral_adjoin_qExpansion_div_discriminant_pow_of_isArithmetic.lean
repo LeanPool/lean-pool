@@ -365,7 +365,7 @@ private theorem isIntegral_of_signed_relation {K : Type*} [Field K] [Algebra ℂ
 
 
 open PenA.ALG SlashInvariantForm in
-theorem solution {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsArithmetic] [𝒢.HasDetOne]
+theorem solution {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsArithmetic]
     (h1 : 1 ∈ 𝒢.strictPeriods) (m : ℕ) {k : ℤ} (hk : k = 12 * m) (g : ModularForm 𝒢 k) :
     IsIntegral (Algebra.adjoin ℂ {(qExpansion 1 ModularForm.E₄) ^ 3 /
         (qExpansion 1 Δ : LaurentSeries ℂ)})
@@ -550,7 +550,7 @@ public section publicSection
 open UpperHalfPlane
 open scoped MatrixGroups
 theorem ModularForm.isIntegral_adjoin_qExpansion_div_discriminant_pow_of_isArithmetic
-    {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsArithmetic] [𝒢.HasDetOne] (h1 : (1 : ℝ) ∈ 𝒢.strictPeriods)
+    {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsArithmetic] (h1 : (1 : ℝ) ∈ 𝒢.strictPeriods)
     (m : ℕ) {k : ℤ} (hk : k = 12 * m) (g : ModularForm 𝒢 k) :
     IsIntegral (Algebra.adjoin ℂ ({((qExpansion 1 ModularForm.E₄ :
       LaurentSeries ℂ) ^ 3 / (qExpansion 1 Δ : LaurentSeries ℂ))} :

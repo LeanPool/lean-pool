@@ -135,7 +135,7 @@ theorem vanish {P : ℍ → ℂ} (hP : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) P) {W
 
 end ANa
 
-theorem solution (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) [Γ.FiniteIndex] {a b : ℤ}
+theorem solution (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) {a b : ℤ}
     (c : ℤ) (habc : b + c = a)
     (Φ : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) a)
     (Ψ : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) b) (hΨ : Ψ ≠ 0)
@@ -264,7 +264,7 @@ public section publicSection
 
 open scoped MatrixGroups ModularForm
 theorem ModularForm.exists_modularForm_mul_eq_of_analyticOrderAt_le_of_finiteIndex
-    (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) [Γ.FiniteIndex] {a b : ℤ} (c : ℤ)
+    (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) {a b : ℤ} (c : ℤ)
     (habc : b + c = a)
     (Φ : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) a)
     (Ψ : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) b) (hΨ : Ψ ≠ 0)

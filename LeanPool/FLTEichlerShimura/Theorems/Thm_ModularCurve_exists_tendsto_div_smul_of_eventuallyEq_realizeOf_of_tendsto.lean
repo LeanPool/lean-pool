@@ -93,7 +93,7 @@ scoped instance wd_neZero (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] : NeZero (
 theorem wd_pos (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] : (0 : ℝ) < wd Γ := by
   exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne (wd Γ))
 
-private theorem conj_T_zpow_mem (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] (σ : SL(2, ℤ)) :
+private theorem conj_T_zpow_mem (Γ : Subgroup SL(2, ℤ)) (σ : SL(2, ℤ)) :
     σ * ModularGroup.T ^ (wd Γ : ℤ) * σ⁻¹ ∈ Γ := by
   have h1 : ModularGroup.T ^ (wd Γ : ℤ) ∈ Γ.normalCore := by
     rw [zpow_natCast]
@@ -118,7 +118,7 @@ private theorem mapGL_T_zpow (N : ℕ) :
   fin_cases i <;> fin_cases j <;>
     simp [Matrix.GeneralLinearGroup.upperRightHom]
 
-theorem natCast_mem_strictPeriods_translate (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex]
+theorem natCast_mem_strictPeriods_translate (Γ : Subgroup SL(2, ℤ))
     (σ : SL(2, ℤ)) :
     (wd Γ : ℝ) ∈ Subgroup.strictPeriods
       (ConjAct.toConjAct ((σ : GL (Fin 2) ℝ))⁻¹ • ((Γ : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2)
@@ -135,6 +135,7 @@ theorem coe_translate_SL (g : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (�
   rw [SL_slash]
   exact ModularForm.coe_translate g _
 
+omit [Γ.FiniteIndex] in
 theorem slash_periodic (g : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (σ : SL(2, ℤ)) :
     Periodic ((⇑g ∣[k] σ) ∘ ofComplex) (wd Γ : ℝ) := by
   rw [← coe_translate_SL g σ]

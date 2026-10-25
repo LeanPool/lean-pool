@@ -422,7 +422,7 @@ private abbrev Gen (d : ℕ) [NeZero d] : Prop := modularFunctionField d = modul
 private abbrev Hall (N : ℕ) : Prop := ∀ d : ℕ, d ∣ N → ∀ [NeZero d], Tight d ∧ Gen d
 
 
-private theorem full_congr {n m : ℕ} [NeZero n] [NeZero m] (h : n = m) :
+private theorem full_congr {n m : ℕ} [NeZero m] (h : n = m) :
     modularFunctionFieldFull n = modularFunctionFieldFull m := by
   subst h; rfl
 
@@ -469,7 +469,7 @@ private theorem relfinrank_full_of (N : ℕ) [NeZero N] (ht : Tight N) (hg : Gen
   unfold Tight at ht
   rw [← hg, ModularCurve.relfinrank_modularFunctionField N, ht]
 
-private theorem F0_le_full (N : ℕ) [NeZero N] : ℚ⟮jq⟯ ≤ modularFunctionFieldFull N := by
+private theorem F0_le_full (N : ℕ) : ℚ⟮jq⟯ ≤ modularFunctionFieldFull N := by
   rw [IntermediateField.adjoin_le_iff, Set.singleton_subset_iff]
   have h := jqd_mem_full N (one_dvd N)
   rw [qExpand_one_apply] at h

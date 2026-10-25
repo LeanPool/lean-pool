@@ -73,6 +73,7 @@ def frickeInvolutionBar :
     modularFunctionFieldBar N ≃ₐ[AlgebraicClosure ℚ] modularFunctionFieldBar N :=
   geomAut (AlgebraicClosure ℚ) (modularFunctionFieldFull N) (frickeInvolutionFull N)
 
+omit [NeZero N] in
 theorem frickeInvolutionBar_def :
     frickeInvolutionBar N =
       geomAut (AlgebraicClosure ℚ) (modularFunctionFieldFull N) (frickeInvolutionFull N) :=

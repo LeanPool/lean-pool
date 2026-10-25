@@ -76,7 +76,7 @@ open IntermediateField AlgebraicCurve ModularCurve
 
 section EFIX
 
-private theorem JD_ofNat_eq_algebraMap_bar (N : ℕ) [NeZero N] (k : ℕ) [k.AtLeastTwo] :
+private theorem JD_ofNat_eq_algebraMap_bar (N : ℕ) (k : ℕ) [k.AtLeastTwo] :
     (OfNat.ofNat k : modularFunctionFieldBar N) =
       algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N)
         (OfNat.ofNat k : AlgebraicClosure ℚ) := by

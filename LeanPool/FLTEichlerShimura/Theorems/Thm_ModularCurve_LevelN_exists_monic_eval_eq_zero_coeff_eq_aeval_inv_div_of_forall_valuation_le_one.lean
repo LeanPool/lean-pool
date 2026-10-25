@@ -151,7 +151,6 @@ end N3Prep
 
 theorem valinf_draft (M : ℕ) [NeZero M]
     (K : Type*) [Field K] [Algebra ℂ K] [Algebra (ModularCurve.LevelN.ring M) K]
-    [IsScalarTower ℂ (ModularCurve.LevelN.ring M) K] [IsFractionRing (ModularCurve.LevelN.ring M) K]
     (E : K →ₐ[ℂ] LaurentSeries ℂ)
     (hEj : E (algebraMap (ModularCurve.LevelN.ring M) K (ModularCurve.LevelN.jGen M)) =
       ModularCurve.qExpand ℂ M (ModularCurve.jqModC ℂ))
@@ -265,8 +264,6 @@ theorem N3Prep.exists_monic_eval_eq_zero_coeff_mem_fixedField
 theorem solution
     (M : ℕ) [NeZero M]
     (K : Type*) [Field K] [Algebra ℂ K] [Algebra (ModularCurve.LevelN.ring M) K]
-    [IsScalarTower ℂ (ModularCurve.LevelN.ring M) K]
-    [IsFractionRing (ModularCurve.LevelN.ring M) K]
     (σ : SL(2, ℤ) →* (K ≃ₐ[ℂ] K))
     (hker : σ.ker = CongruenceSubgroup.Gamma M ⊔ Subgroup.zpowers (-1 : SL(2, ℤ)))
     (hfixed : IntermediateField.fixedField σ.range =
@@ -312,8 +309,6 @@ theorem
   ModularCurve.LevelN.exists_monic_eval_eq_zero_coeff_eq_aeval_inv_div_of_forall_valuation_le_one
     (M : ℕ) [NeZero M]
     (K : Type*) [Field K] [Algebra ℂ K] [Algebra (ModularCurve.LevelN.ring M) K]
-    [IsScalarTower ℂ (ModularCurve.LevelN.ring M) K]
-    [IsFractionRing (ModularCurve.LevelN.ring M) K]
     (σ : SL(2, ℤ) →* (K ≃ₐ[ℂ] K))
     (hker : σ.ker = CongruenceSubgroup.Gamma M ⊔ Subgroup.zpowers (-1 : SL(2, ℤ)))
     (hfixed : IntermediateField.fixedField σ.range =

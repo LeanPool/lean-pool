@@ -135,7 +135,7 @@ private theorem finrank_algebraMapRange_eq :
   exact congrArg Cardinal.toNat h.symm
 
 private theorem finrank_frobeniusSubfield_eq [FiniteDimensional E M]
-    [FiniteDimensional (frobeniusSubfield E p) E] :
+    :
     Module.finrank (frobeniusSubfield M p) M = Module.finrank (frobeniusSubfield E p) E := by
   set Mp : Subfield M := frobeniusSubfield M p with hMp
   set Ep' : Subfield M := frobeniusSubfieldImageInM (E := E) (M := M) p with hEp'

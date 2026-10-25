@@ -537,12 +537,12 @@ theorem finiteAlong_norm [FiniteDimensional K⟮t⟯ M] (ψ : F →ₐ[K] M) (h�
   have : FiniteDimensional K⟮ψ x⟯ M := by rw [hψ]; infer_instance
   exact finiteAlong_of_finiteDimensional_adjoin ψ x
 
-theorem separableAlong_norm [FiniteDimensional K⟮t⟯ M] [IsGalois K⟮t⟯ M] (ψ : F →ₐ[K] M)
+theorem separableAlong_norm [IsGalois K⟮t⟯ M] (ψ : F →ₐ[K] M)
     (hψ : ψ x = t) : SeparableAlong K ψ := by
   have : IsGalois K⟮ψ x⟯ M := by rw [hψ]; infer_instance
   exact separableAlong_of_isSeparable_adjoin ψ x
 
-theorem isGalois_along [FiniteDimensional K⟮t⟯ M] [IsGalois K⟮t⟯ M] (ψ : F →ₐ[K] M)
+theorem isGalois_along [IsGalois K⟮t⟯ M] (ψ : F →ₐ[K] M)
     (hψ : ψ x = t) : @IsGalois F _ M _ (algebraAlong ψ) := by
   let := algebraAlong ψ
   have : IsGalois K⟮ψ x⟯ M := by rw [hψ]; infer_instance
