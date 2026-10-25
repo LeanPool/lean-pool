@@ -61,6 +61,8 @@ elliptic-curve part of the argument.
 
 namespace WeierstrassCurve
 
+/-- The candidate Vélu quotient formed from the first `N - 1` positive multiples of the point,
+using zero coordinates for any multiple at infinity. -/
 def fullKernelQuotient {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F)
     (Q : W.toAffine.Point) (N : ℕ) : WeierstrassCurve F :=
   W.veluQuotientOfSums

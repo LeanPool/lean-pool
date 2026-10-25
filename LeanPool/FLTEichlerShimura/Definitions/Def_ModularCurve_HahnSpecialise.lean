@@ -107,6 +107,7 @@ theorem reduceHom_injOn_nsmul_eq_zero {N : ℕ} (hN : (N : ResidueField A) ≠ 0
 
 end WeierstrassCurve
 
+/-- Cyclic subgroups of an additive group admitting a generator of exact order `N`. -/
 def CycSubOf (G : Type*) [AddGroup G] (N : ℕ) : Type _ :=
   {S : AddSubgroup G // ∃ g : G, addOrderOf g = N ∧ S = AddSubgroup.zmultiples g}
 
@@ -126,6 +127,8 @@ theorem addOrderOf_map_of_injOn {g : G} (hg : addOrderOf g = N) : addOrderOf (f 
     · rw [smul_comm, ← hg, addOrderOf_nsmul_eq_zero, smul_zero]
     · rw [map_nsmul, addOrderOf_nsmul_eq_zero, map_zero]
 
+/-- Map cyclic subgroups along the homomorphism, using its supplied injectivity on `N`-torsion to
+preserve exact order. -/
 def map : CycSubOf G N → CycSubOf G' N := fun S =>
   ⟨S.1.map f, by
     obtain ⟨g, hg, hS⟩ := S.2
@@ -141,6 +144,7 @@ open ModularCurve.B3
 
 open ModularCurve.TatePoint
 
+/-- The valuation subring of rational-exponent Hahn series with nonnegative order. -/
 def valuationSubringH : ValuationSubring H :=
   { integralO with
   mem_or_inv_mem' := fun x => by
@@ -163,6 +167,7 @@ def valuationSubringH : ValuationSubring H :=
 
 theorem mem_valuationSubringH {x : H} : x ∈ valuationSubringH ↔ 0 ≤ x.orderTop := Iff.rfl
 
+/-- The constant-coefficient residue homomorphism on the nonnegative-order Hahn series. -/
 def resH : valuationSubringH →+* Qbar where
   toFun x := (x : H).coeff 0
   map_one' := by simp
@@ -186,6 +191,7 @@ theorem resH_surjective : Function.Surjective resH := fun c => by
 theorem ker_resH : RingHom.ker resH = maximalIdeal valuationSubringH :=
   IsLocalRing.eq_maximalIdeal (RingHom.ker_isMaximal_of_surjective resH resH_surjective)
 
+/-- Identify the residue field of the Hahn valuation ring with its coefficient field. -/
 def residueFieldEquiv : ResidueField valuationSubringH ≃+* Qbar :=
   (Ideal.quotEquivOfEq ker_resH.symm).trans (RingHom.quotientKerEquivOfSurjective resH_surjective)
 
@@ -200,6 +206,7 @@ open ModularCurve.B3
 
 open WeierstrassCurve
 
+/-- View a Weierstrass curve with integral coefficients as a curve over the Hahn valuation ring. -/
 def liftModel (E : WeierstrassCurve H) (hE : IntegralCoeffs E) :
     WeierstrassCurve valuationSubringH :=
   ⟨⟨E.a₁, hE.1⟩, ⟨E.a₂, hE.2.1⟩, ⟨E.a₃, hE.2.2.1⟩, ⟨E.a₄, hE.2.2.2.1⟩, ⟨E.a₆, hE.2.2.2.2⟩⟩
@@ -283,6 +290,8 @@ open ModularCurve.B3
 
 open WeierstrassCurve
 
+/-- The coefficient field as an algebra over the Hahn valuation ring via the residue
+homomorphism. -/
 @[reducible] def algebraQbar : Algebra valuationSubringH Qbar := resH.toAlgebra
 
 attribute [local instance] algebraQbar
@@ -290,12 +299,16 @@ attribute [local instance] algebraQbar
 @[simp] theorem algebraMap_Qbar_apply (x : valuationSubringH) :
     algebraMap valuationSubringH Qbar x = (x : H).coeff 0 := rfl
 
+/-- The residue-field identification bundled as an algebra equivalence over the Hahn valuation
+ring. -/
 def residueAlgEquiv : ResidueField valuationSubringH ≃ₐ[valuationSubringH] Qbar :=
   AlgEquiv.ofRingEquiv (f := residueFieldEquiv) (fun _ => rfl)
 
 variable (E : WeierstrassCurve H) (hE : IntegralCoeffs E)
 
 open scoped Classical in
+/-- Transport points of the residue-field curve to points of the constant-coefficient special
+fiber. -/
 def specialFibrePointMap :
     ((liftModel E hE).map (residue valuationSubringH)).toAffine.Point →+
       (specialFibre E).toAffine.Point :=
@@ -307,6 +320,7 @@ theorem specialFibrePointMap_injective : Function.Injective (specialFibrePointMa
   exact Affine.Point.map_injective _
 
 open scoped Classical in
+/-- The good-reduction homomorphism from Hahn-series points to points of the special fiber. -/
 def specialise (hΔ : (specialFibre E).Δ ≠ 0) :
     E.toAffine.Point →+ (specialFibre E).toAffine.Point :=
   (specialFibrePointMap E hE).comp
@@ -383,6 +397,7 @@ open ModularCurve.B3
 variable (E : WeierstrassCurve H) (hE : IntegralCoeffs E) (hΔ : (specialFibre E).Δ ≠ 0)
 
 open scoped Classical in
+/-- Specialize cyclic subgroups of the specified nonzero order to the good special fiber. -/
 def specialiseCycSub (N : ℕ) [NeZero N] : CycSubH E N → CycSub (specialFibre E) N :=
   (CycSubOf.map (specialise E hE hΔ)
     (fun _ _ hP hQ h => specialise_injOn_nsmul_eq_zero E hE hΔ (NeZero.ne N) hP hQ h) :)

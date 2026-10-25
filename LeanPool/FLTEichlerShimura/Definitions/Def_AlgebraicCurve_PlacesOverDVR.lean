@@ -140,6 +140,8 @@ variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 variable {R : Type*} [CommRing R] [IsDedekindDomain R] [Algebra R F] [IsFractionRing R F]
 variable (w : Place K F)
 
+/-- The homomorphism from an affine chart ring into the valuation ring of a place regular on that
+chart. -/
 def chartHom (hw : ∀ r : R, algebraMap R F r ∈ w.toValuationSubring) :
     R →+* w.toValuationSubring :=
   (algebraMap R F).codRestrict w.toValuationSubring.toSubring hw
@@ -150,6 +152,8 @@ private theorem coe_chartHom (hw : ∀ r : R, algebraMap R F r ∈ w.toValuation
     (chartHom w hw r : F) = algebraMap R F r := rfl
 
 variable (R) in
+/-- The prime ideal of the chart ring obtained by pulling back the maximal ideal of the valuation
+ring. -/
 def center (hw : ∀ r : R, algebraMap R F r ∈ w.toValuationSubring) : Ideal R :=
   (IsLocalRing.maximalIdeal w.toValuationSubring).comap (chartHom w hw)
 
@@ -202,6 +206,7 @@ theorem center_ne_bot (hw : ∀ r : R, algebraMap R F r ∈ w.toValuationSubring
   exact mul_mem (hw a) (inv_algebraMap_mem w hw (hunit b (nonZeroDivisors.ne_zero hb)))
 
 variable (R) in
+/-- The center of the place bundled as a height-one prime of the chart ring. -/
 def centerHeightOneSpectrum (hw : ∀ r : R, algebraMap R F r ∈ w.toValuationSubring) :
     HeightOneSpectrum R :=
   ⟨center R w hw, inferInstance, center_ne_bot w hw⟩
@@ -253,6 +258,7 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F']
   [FiniteDimensional F F'] [Algebra.IsSeparable F F']
 
 variable (F') in
+/-- The upstairs function field as an algebra over the downstairs valuation ring. -/
 @[reducible] def valuationSubringAlgebra (v : Place K F) : Algebra v.toValuationSubring F' :=
   ((algebraMap F F').comp (algebraMap v.toValuationSubring F)).toAlgebra
 
@@ -261,6 +267,7 @@ section Setup
 variable (v : Place K F)
 
 variable (F') in
+/-- The integral closure of the downstairs valuation ring in the upstairs function field. -/
 abbrev integralClosureAt : Type _ := integralClosure v.toValuationSubring F'
 
 instance : IsDedekindDomain (integralClosureAt F' v) :=
@@ -358,6 +365,7 @@ theorem forall_mem_of_restrict_eq (hw : w.restrict F = v) (c : integralClosureAt
   exact hOv _ (Q.coeff i).2
 
 variable (F' v) in
+/-- The height-one prime of the integral closure corresponding to a place above the given place. -/
 def fiberCenter (hw : w.restrict F = v) : HeightOneSpectrum (integralClosureAt F' v) :=
   centerHeightOneSpectrum (integralClosureAt F' v) w (forall_mem_of_restrict_eq hw)
 
@@ -420,6 +428,7 @@ section Bijection
 
 variable {v : Place K F}
 
+/-- The upstairs place associated to a height-one prime of the integral closure. -/
 def placeOfPrime (P : HeightOneSpectrum (integralClosureAt F' v)) : Place K F' where
   toValuationSubring := HeightOneSpectrum.valuationSubringAtPrime F' P
   algebraMap_mem' := fun a => by
@@ -490,6 +499,7 @@ section Fiber
 variable (v : Place K F)
 
 variable (F') in
+/-- Identify places above the given place with height-one primes of its integral closure. -/
 def fiberEquiv :
     {w : Place K F' // w.restrict F = v} ≃ HeightOneSpectrum (integralClosureAt F' v) where
   toFun w := fiberCenter F' v w.2
@@ -520,6 +530,7 @@ theorem finite_setOf_restrict_eq : {w : Place K F' | w.restrict F = v}.Finite :=
   exact Set.toFinite _
 
 variable (F') in
+/-- The finite set of places above the specified downstairs place. -/
 def fiberOver : Finset (Place K F') :=
   (finite_setOf_restrict_eq (F' := F') v).toFinset
 

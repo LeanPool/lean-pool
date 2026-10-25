@@ -72,13 +72,19 @@ recorded in our port)). See ATTRIBUTION.md and NOTICE in the source repository.
 
 @[expose] public section publicSection
 
+/-- A primitive nonzero Fermat counterexample of prime exponent at least five, with the
+prescribed parity normalization. -/
 structure FreyPackage where
+  /-- The first nonzero integer in the normalized Fermat counterexample. -/
   a : ℤ
+  /-- The even nonzero integer in the normalized Fermat counterexample. -/
   b : ℤ
+  /-- The nonzero integer whose `p`th power is the sum of the other two `p`th powers. -/
   c : ℤ
   ha0 : a ≠ 0
   hb0 : b ≠ 0
   hc0 : c ≠ 0
+  /-- The prime exponent of the Fermat counterexample, at least five. -/
   p : ℕ
   pp : Nat.Prime p
   hp5 : 5 ≤ p
@@ -130,6 +136,7 @@ lemma two_dvd_abc (P : FreyPackage) : (2 : ℤ) ∣ P.a * P.b * P.c :=
   dvd_mul_of_dvd_left (dvd_mul_of_dvd_right
     ((ZMod.intCast_zmod_eq_zero_iff_dvd P.b 2).1 P.hb2) _) _
 
+/-- The integral Frey equation associated to the normalized counterexample. -/
 def freyCurveInt (P : FreyPackage) : WeierstrassCurve ℤ where
   a₁ := 1
   a₂ := (P.b ^ P.p - 1 - P.a ^ P.p) / 4
@@ -137,6 +144,7 @@ def freyCurveInt (P : FreyPackage) : WeierstrassCurve ℤ where
   a₄ := -(P.a ^ P.p) * (P.b ^ P.p) / 16
   a₆ := 0
 
+/-- The rational Frey curve associated to the normalized counterexample. -/
 def freyCurve (P : FreyPackage) : WeierstrassCurve ℚ where
   a₁ := 1
   a₂ := (P.b ^ P.p - 1 - P.a ^ P.p) / 4

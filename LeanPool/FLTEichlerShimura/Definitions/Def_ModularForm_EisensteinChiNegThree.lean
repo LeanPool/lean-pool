@@ -65,19 +65,24 @@ modules that set up that congruence.
 
 namespace EisensteinWeightOne
 
+/-- The quadratic Dirichlet character modulo three, with values `0, 1, -1`. -/
 def chiNegThree (n : ℕ) : ℤ :=
   if n % 3 = 1 then 1 else if n % 3 = 2 then -1 else 0
 
+/-- The divisor sum of the quadratic character modulo three. -/
 def sigmaChi (n : ℕ) : ℤ :=
   ∑ d ∈ n.divisors, chiNegThree d
 
+/-- The weight-one Eisenstein candidate `1 + 6 * ∑ n ≥ 1, sigmaChi n * q ^ n`. -/
 def e1Chi3 : PowerSeries ℤ :=
   PowerSeries.mk fun n => if n = 0 then 1 else 6 * sigmaChi n
 
+/-- The coefficientwise image of `e1Chi3` in power series over the target ring. -/
 noncomputable def e1Chi3In (R : Type*) [CommRing R] : PowerSeries R :=
   PowerSeries.map (Int.castRingHom R) e1Chi3
 
 open CongruenceSubgroup in
+/-- The series `e1Chi3` is the Fourier expansion of a weight-one modular form on `Γ₁(3)`. -/
 def E1Chi3IsModular : Prop :=
   ∃ f : ModularForm (Gamma1 3) 1, ∀ z : UpperHalfPlane,
     f z = ∑' n : ℕ,

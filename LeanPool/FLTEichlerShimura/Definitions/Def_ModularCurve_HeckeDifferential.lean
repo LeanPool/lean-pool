@@ -85,6 +85,7 @@ section Euler
 
 variable (R : Type*) [CommRing R]
 
+/-- The Laurent-series operator multiplying the coefficient of `q^n` by `n`. -/
 def qEulerFun (x : LaurentSeries R) : LaurentSeries R where
   coeff n := (n : R) * x.coeff n
   isPWO_support' := x.isPWO_support.mono fun n hn => by
@@ -107,6 +108,7 @@ theorem algebraMap_laurentSeries_apply_alt (c : R) :
   rw [HahnSeries.algebraMap_apply', h1, HahnSeries.ofPowerSeries_C]
   rfl
 
+/-- The Euler derivation `q d/dq` on Laurent series. -/
 def qEuler : Derivation R (LaurentSeries R) (LaurentSeries R) where
   toFun := qEulerFun R
   map_add' x y := by
@@ -188,11 +190,13 @@ section QExpansion
 
 variable {L : Type*} [Field L] (F : IntermediateField L (LaurentSeries L))
 
+/-- Restrict the Euler derivation to the specified intermediate Laurent-series field. -/
 def qEulerOn : Derivation L F (LaurentSeries L) :=
   (qEuler L).compAlgebraMap F
 
 @[simp] theorem qEulerOn_apply (x : F) : qEulerOn F x = qEuler L (x : LaurentSeries L) := rfl
 
+/-- The linear map on Kähler differentials induced by the Euler derivation of expansions. -/
 def diffQExp : Ω[F⁄L] →ₗ[F] LaurentSeries L :=
   (qEulerOn F).liftKaehlerDifferential
 
@@ -210,6 +214,7 @@ section Hecke
 
 variable (L : Type*) [Field L] [Algebra ℚ L] (N ℓ : ℕ) [NeZero N] [NeZero ℓ]
 
+/-- The differential correspondence associated to the two Hecke degeneracy maps. -/
 def heckeDiffAlong :
     Ω[laurentBaseChange L (modularFunctionFieldFull N)⁄L] →ₗ[L]
       Ω[laurentBaseChange L (modularFunctionFieldFull N)⁄L] :=
@@ -230,6 +235,8 @@ variable (N : ℕ)
 
 variable [NeZero N]
 
+/-- The prime-indexed Hecke endomorphism on differentials of the base-changed full modular
+function field. -/
 def heckeDiffBar (ℓ : Nat.Primes) :
     Module.End (AlgebraicClosure ℚ) Ω[modularFunctionFieldBar N⁄AlgebraicClosure ℚ] :=
   haveI : NeZero (ℓ : ℕ) := ⟨ℓ.2.ne_zero⟩
@@ -242,10 +249,13 @@ theorem heckeDiffBar_eq (ℓ : Nat.Primes) :
         (heckeAlphaBar (AlgebraicClosure ℚ) N ℓ)) :=
   rfl
 
+/-- The expansion map on Kähler differentials of the base-changed full modular function field. -/
 abbrev diffQExpBar : Ω[modularFunctionFieldBar N⁄AlgebraicClosure ℚ] →ₗ[modularFunctionFieldBar N]
     LaurentSeries (AlgebraicClosure ℚ) :=
   diffQExp (modularFunctionFieldBar N)
 
+/-- The subspace of differentials regular at every place of the base-changed full modular
+function field. -/
 abbrev regularDifferentialsBar : Submodule (AlgebraicClosure ℚ)
     Ω[modularFunctionFieldBar N⁄AlgebraicClosure ℚ] :=
   regularDifferentials (AlgebraicClosure ℚ) (modularFunctionFieldBar N)

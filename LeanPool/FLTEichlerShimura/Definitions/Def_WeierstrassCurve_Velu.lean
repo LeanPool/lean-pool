@@ -63,14 +63,19 @@ namespace WeierstrassCurve
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
 
+/-- The x partial derivative of the affine Weierstrass equation used in Vélu's formulas. -/
 def veluGx (x y : R) : R := 3 * x ^ 2 + 2 * W.a₂ * x + W.a₄ - W.a₁ * y
 
+/-- The y partial derivative of the affine Weierstrass equation used in Vélu's formulas. -/
 def veluGy (x y : R) : R := -(2 * y + W.a₁ * x + W.a₃)
 
+/-- The Vélu summand `2 * veluGx - a₁ * veluGy` controlling the quotient's fourth coefficient. -/
 def veluT (x y : R) : R := 2 * W.veluGx x y - W.a₁ * W.veluGy x y
 
+/-- The square of `veluGy`, appearing in Vélu's quotient formulas. -/
 def veluU (x y : R) : R := W.veluGy x y ^ 2
 
+/-- The Vélu summand `veluU + x * veluT` controlling the quotient's sixth coefficient. -/
 def veluW (x y : R) : R := W.veluU x y + x * W.veluT x y
 
 lemma veluT_eq (x y : R) : W.veluT x y = 6 * x ^ 2 + W.b₂ * x + W.b₄ := by
@@ -104,14 +109,17 @@ lemma veluGy_eq_zero_of_negY_eq {x y : R} (h : W.toAffine.negY x y = y) :
 
 variable (S : Finset (R × R))
 
+/-- The sum of the `veluT` contributions over the chosen finite set of coordinate pairs. -/
 def veluTSum : R := ∑ P ∈ S, W.veluT P.1 P.2
 
+/-- The sum of the `veluW` contributions over the chosen finite set of coordinate pairs. -/
 def veluWSum : R := ∑ P ∈ S, W.veluW P.1 P.2
 
 @[simp] lemma veluTSum_empty : W.veluTSum ∅ = 0 := by simp [veluTSum]
 
 @[simp] lemma veluWSum_empty : W.veluWSum ∅ = 0 := by simp [veluWSum]
 
+/-- The Weierstrass equation given by Vélu's coefficient formulas for the chosen finite set. -/
 def veluQuotient : WeierstrassCurve R where
   a₁ := W.a₁
   a₂ := W.a₂
@@ -146,6 +154,7 @@ lemma veluQuotient_b₈ :
     veluQuotient_a₆]
   ring
 
+/-- Every coordinate pair in the chosen finite set lies on the affine Weierstrass equation. -/
 structure IsVeluSet : Prop where
   equation : ∀ P ∈ S, W.toAffine.Equation P.1 P.2
 

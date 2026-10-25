@@ -70,6 +70,7 @@ open scoped MatrixGroups
 
 section ConjMatrix
 
+/-- The diagonal matrix with entries `1` and `ℓ` used in the Hecke correspondence. -/
 def alphaMat (ℓ : ℕ) : Matrix (Fin 2) (Fin 2) ℤ := !![1, 0; 0, (ℓ : ℤ)]
 
 @[simp] theorem alphaMat_apply_zero_zero (ℓ : ℕ) : alphaMat ℓ 0 0 = 1 := rfl
@@ -92,6 +93,8 @@ theorem eq_of_mul_alphaMat_eq {ℓ : ℕ} (hℓ : (ℓ : ℤ) ≠ 0) {A B : Matr
   · exact h0
   · exact mul_right_cancel₀ hℓ h1
 
+/-- Diagonal conjugation dividing the upper-right entry by `ℓ` and multiplying the lower-left
+entry by `ℓ`. -/
 def heckeConjMat (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) : Matrix (Fin 2) (Fin 2) ℤ :=
   !![g 0 0, g 0 1 / (ℓ : ℤ); g 1 0 * (ℓ : ℤ), g 1 1]
 
@@ -161,6 +164,7 @@ end ConjMatrix
 
 section HeckeSubgroup
 
+/-- The subgroup of `SL(2, ℤ)` with upper-right entry divisible by `ℓ`. -/
 def heckeUpperSL (ℓ : ℕ) : Subgroup SL(2, ℤ) where
   carrier := {g | (ℓ : ℤ) ∣ g 0 1}
   one_mem' := by simp
@@ -183,12 +187,14 @@ theorem mem_heckeUpperSL {ℓ : ℕ} {g : SL(2, ℤ)} : g ∈ heckeUpperSL ℓ �
 
 variable (N ℓ : ℕ)
 
+/-- The intersection of `Γ₀(N)` with `heckeUpperSL`. -/
 def heckeUpper : Subgroup (Gamma0 N) := (heckeUpperSL ℓ).subgroupOf (Gamma0 N)
 
 theorem mem_heckeUpper {γ : Gamma0 N} :
     γ ∈ heckeUpper N ℓ ↔ (ℓ : ℤ) ∣ (γ : SL(2, ℤ)) 0 1 :=
   Iff.rfl
 
+/-- Reduction modulo `ℓ` of matrices in `Γ₀(N)`. -/
 def gammaZeroRed : Gamma0 N →* SL(2, ZMod ℓ) :=
   (Matrix.SpecialLinearGroup.map (n := Fin 2) (Int.castRingHom (ZMod ℓ))).comp
     (Gamma0 N).subtype
@@ -208,6 +214,7 @@ instance instFiniteIndexHeckeUpper [NeZero ℓ] : (heckeUpper N ℓ).FiniteIndex
 
 variable [NeZero ℓ]
 
+/-- The special linear matrix obtained by diagonal conjugation of a matrix in `heckeUpperSL`. -/
 def heckeConjSL (γ : heckeUpper N ℓ) : SL(2, ℤ) :=
   ⟨heckeConjMat ℓ ((γ : Gamma0 N) : SL(2, ℤ)), by
     rw [det_heckeConjMat (Int.natCast_ne_zero.mpr (NeZero.ne ℓ)) ((mem_heckeUpper N ℓ).mp γ.2)]
@@ -227,6 +234,7 @@ theorem heckeConjSL_mem_Gamma0 (γ : heckeUpper N ℓ) : heckeConjSL N ℓ γ �
     Gamma0_mem.mp (γ : Gamma0 N).2
   rw [hc, zero_mul]
 
+/-- The diagonal-conjugation homomorphism from `heckeUpper` to `Γ₀(N)`. -/
 def heckeConj : heckeUpper N ℓ →* Gamma0 N where
   toFun γ := ⟨heckeConjSL N ℓ γ, heckeConjSL_mem_Gamma0 N ℓ γ⟩
   map_one' := by
@@ -263,6 +271,7 @@ section Transfer
 
 variable {G : Type*} [Group G] (H : Subgroup G) {A : Type*} [AddCommGroup A]
 
+/-- Restriction of additive characters to a subgroup. -/
 def resHom : (Additive G →+ A) →+ (Additive H →+ A) :=
   AddMonoidHom.mk' (fun φ => φ.comp (MonoidHom.toAdditive H.subtype)) fun _ _ => rfl
 
@@ -271,6 +280,7 @@ theorem resHom_apply (φ : Additive G →+ A) (γ : H) :
     resHom H φ (Additive.ofMul γ) = φ (Additive.ofMul (γ : G)) :=
   rfl
 
+/-- The subgroup element `(g • q).out⁻¹ * g * q.out` used in the transfer formula. -/
 noncomputable def transferAux (g : G) (q : G ⧸ H) : H :=
   ⟨(g • q).out⁻¹ * (g * q.out), by
     refine QuotientGroup.eq.mp ?_
@@ -293,6 +303,7 @@ theorem transferAux_mul (g₁ g₂ : G) (q : G ⧸ H) :
 
 variable [H.FiniteIndex]
 
+/-- Corestriction of additive characters from a finite-index subgroup. -/
 noncomputable def coresHom : (Additive H →+ A) →+ (Additive G →+ A) :=
   AddMonoidHom.mk'
     (fun φ =>
@@ -326,6 +337,7 @@ section Pullback
 
 variable {G K : Type*} [Group G] [Group K] {A : Type*} [AddCommGroup A]
 
+/-- Pullback of additive characters along a group homomorphism. -/
 def pullbackHom (f : G →* K) : (Additive K →+ A) →+ (Additive G →+ A) :=
   AddMonoidHom.mk' (fun φ => φ.comp (MonoidHom.toAdditive f)) fun _ _ => rfl
 
@@ -340,6 +352,7 @@ section HeckeOperator
 
 variable (N ℓ : ℕ) [NeZero ℓ] (A : Type*) [AddCommGroup A]
 
+/-- The Hecke operator on additive characters defined by conjugation pullback and corestriction. -/
 noncomputable def heckeOperatorHom :
     (Additive (Gamma0 N) →+ A) →+ (Additive (Gamma0 N) →+ A) :=
   (coresHom (heckeUpper N ℓ)).comp (pullbackHom (heckeConj N ℓ))
@@ -351,10 +364,13 @@ theorem heckeOperatorHom_apply (φ : Additive (Gamma0 N) →+ A) (g : Gamma0 N) 
         φ (Additive.ofMul ((heckeConj N ℓ (transferAux (heckeUpper N ℓ) g q) : Gamma0 N))) :=
   rfl
 
+/-- The U-operator on additive characters, using the same correspondence formula as
+`heckeOperatorHom`. -/
 noncomputable abbrev uOperatorHom (q : ℕ) [NeZero q] :
     (Additive (Gamma0 N) →+ A) →+ (Additive (Gamma0 N) →+ A) :=
   heckeOperatorHom N q A
 
+/-- The Hecke correspondence subgroup has index `ℓ + 1`. -/
 def HeckeIndexEq : Prop := (heckeUpper N ℓ).index = ℓ + 1
 
 end HeckeOperator

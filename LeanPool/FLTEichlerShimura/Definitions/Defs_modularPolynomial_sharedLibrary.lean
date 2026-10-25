@@ -54,6 +54,7 @@ namespace ModularCurve.W1
 
 variable {K : Type*} [Field K]
 
+/-- The twisted and expanded `j`-series obtained by applying `qTwist u` and then `qExpand e`. -/
 def TS (K : Type*) [Field K] (e : ℕ) [NeZero e] (u : Kˣ) : LaurentSeries K :=
   qExpand K e (qTwist u (jqModC K))
 
@@ -133,6 +134,8 @@ theorem TS_eq_coeffEmb [Algebra ℚ K] (e : ℕ) [NeZero e] (u : Kˣ) :
     exact map_jqModC (algebraMap ℚ K)
   rw [TS, h]
 
+/-- The polynomial in the second variable obtained by specializing the modular polynomial's first
+variable at the supplied seed. -/
 def phiAtSeed {R : Type*} [CommRing R] {n : ℕ} [NeZero n] (data : ModularPolynomialData n) (x : R) :
     Polynomial R :=
   data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom R) x)
@@ -218,6 +221,7 @@ private theorem exists_isPrimitiveRoot_cyclotomicField (N : ℕ) [NeZero N] :
   exact IsCyclotomicExtension.exists_isPrimitiveRoot ℚ (CyclotomicField N ℚ) (Set.mem_singleton N)
     (NeZero.ne N)
 
+/-- A chosen primitive `N`th root of unity in the cyclotomic field, bundled as a unit. -/
 @[no_expose] def cycUnit (N : ℕ) [NeZero N] : (CyclotomicField N ℚ)ˣ :=
   ((exists_isPrimitiveRoot_cyclotomicField N).choose_spec.isUnit (NeZero.ne N)).unit
 
@@ -295,9 +299,11 @@ theorem phiAtSeed_eval_symm {n : ℕ} [NeZero n] (data : ModularPolynomialData n
 
 /-! ## Counting primitive slots -/
 
+/-- Count residues `b` modulo `d` for which the triple `(n / d, b, d)` is primitive. -/
 def slotAt (n d : ℕ) : ℕ :=
   ((Finset.range d).filter fun b => Nat.gcd (Nat.gcd (n / d) b) d = 1).card
 
+/-- The total number of primitive coset slots, summed over divisors of the level. -/
 def slots (n : ℕ) : ℕ := ∑ d ∈ n.divisors, slotAt n d
 
 private theorem slotCond_iff (x d b : ℕ) :

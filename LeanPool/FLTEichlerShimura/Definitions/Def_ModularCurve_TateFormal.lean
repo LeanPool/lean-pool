@@ -65,6 +65,7 @@ open PowerSeries HahnSeries
 
 namespace ModularCurve
 
+/-- The integer coefficient `(5 * d³ + 7 * d⁵) / 12` used in the formal Tate equation. -/
 def tateB (d : ℕ) : ℤ := (5 * (d : ℤ) ^ 3 + 7 * (d : ℤ) ^ 5) / 12
 
 theorem twelve_mul_tateB (d : ℕ) : 12 * tateB d = 5 * (d : ℤ) ^ 3 + 7 * (d : ℤ) ^ 5 := by
@@ -82,12 +83,15 @@ theorem twelve_mul_tateB (d : ℕ) : 12 * tateB d = 5 * (d : ℤ) ^ 3 + 7 * (d :
   rw [tateB]
   exact Int.mul_ediv_cancel' (key _)
 
+/-- The formal Tate equation's fourth coefficient, with q-coefficients `-5 * ∑ d ∣ n, d³`. -/
 def tateA4 : PowerSeries ℤ :=
   PowerSeries.mk fun n => -∑ d ∈ n.divisors, (5 * (d : ℤ) ^ 3)
 
+/-- The formal Tate equation's sixth coefficient, with q-coefficients `-∑ d ∣ n, tateB d`. -/
 def tateA6 : PowerSeries ℤ :=
   PowerSeries.mk fun n => -∑ d ∈ n.divisors, tateB d
 
+/-- The normalized weight-six Eisenstein power series with integer coefficients. -/
 def eisenstein6 : PowerSeries ℤ :=
   PowerSeries.mk fun n => if n = 0 then 1 else -504 * ∑ d ∈ n.divisors, (d : ℤ) ^ 5
 
@@ -125,6 +129,7 @@ theorem coeff_one_tateA6 : PowerSeries.coeff 1 tateA6 = -1 := by
   have h : tateB 1 = 1 := by norm_num [tateB]
   rw [coeff_tateA6, Nat.divisors_one, Finset.sum_singleton, h]
 
+/-- The formal Tate Weierstrass equation over integer power series. -/
 def tatePowerSeries : WeierstrassCurve (PowerSeries ℤ) := ⟨1, 0, 0, tateA4, tateA6⟩
 
 @[simp] theorem tatePowerSeries_a₁ : tatePowerSeries.a₁ = 1 := rfl
@@ -133,12 +138,15 @@ def tatePowerSeries : WeierstrassCurve (PowerSeries ℤ) := ⟨1, 0, 0, tateA4, 
 @[simp] theorem tatePowerSeries_a₄ : tatePowerSeries.a₄ = tateA4 := rfl
 @[simp] theorem tatePowerSeries_a₆ : tatePowerSeries.a₆ = tateA6 := rfl
 
+/-- The coefficient-casting map from integer power series to Laurent series over the coefficient
+field. -/
 def laurentOfInt (K : Type*) [CommRing K] : PowerSeries ℤ →+* LaurentSeries K :=
   (HahnSeries.ofPowerSeries ℤ K).comp (PowerSeries.map (Int.castRingHom K))
 
 theorem laurentOfInt_apply (K : Type*) [CommRing K] (f : PowerSeries ℤ) :
     laurentOfInt K f = HahnSeries.ofPowerSeries ℤ K (f.map (Int.castRingHom K)) := rfl
 
+/-- The Tate Weierstrass equation over the Laurent-series field, obtained from `tatePowerSeries`. -/
 def tateLaurent (K : Type*) [CommRing K] : WeierstrassCurve (LaurentSeries K) :=
   tatePowerSeries.map (laurentOfInt K)
 

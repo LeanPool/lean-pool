@@ -65,6 +65,7 @@ namespace Affine.Point
 
 variable {R : Type*} [CommRing R] {W : Affine R}
 
+/-- The coordinate pair of an affine point, with value `(0, 0)` at infinity. -/
 def coordsOrZero : W.Point → R × R
   | .zero => (0, 0)
   | .some x y _ => (x, y)
@@ -80,6 +81,7 @@ section SummingSet
 
 variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F)
 
+/-- The finite set of coordinate pairs of `k • Q` for `1 ≤ k ≤ n`, using `(0, 0)` at infinity. -/
 def oddOrderSummingSet (Q : W.toAffine.Point) (n : ℕ) : Finset (F × F) :=
   (Finset.Icc 1 n).image fun k => (k • Q).coordsOrZero
 

@@ -66,6 +66,8 @@ namespace WeierstrassCurve
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
 
+/-- The chosen points lie on the curve, have nonzero `veluGy` and have pairwise distinct
+x-coordinates. -/
 structure IsOddVeluSet (S : Finset (R × R)) : Prop where
   equation : ∀ P ∈ S, W.toAffine.Equation P.1 P.2
   gy_ne_zero : ∀ P ∈ S, W.veluGy P.1 P.2 ≠ 0
@@ -100,6 +102,8 @@ section QuotientMap
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
+/-- The x-coordinate rational expression in Vélu's quotient formulas for the chosen finite set of
+points. -/
 noncomputable def veluX (S : Finset (F × F)) (x : F) : F :=
   x + ∑ Q ∈ S, (W.veluT Q.1 Q.2 / (x - Q.1) + W.veluU Q.1 Q.2 / (x - Q.1) ^ 2)
 

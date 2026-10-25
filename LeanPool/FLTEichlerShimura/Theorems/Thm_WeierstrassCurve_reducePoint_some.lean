@@ -36,10 +36,10 @@ of the affine curve attached to $W$, and suppose that the $\mathrm{maximalIdeal}
 on $K$ satisfies $v(x) \le 1$ and $v(y) \le 1$, i.e. both coordinates are integral. The conclusion
 asserts the existence of a proof $h'$ that $(\mathrm{reduceCoord}\ R\ x, \mathrm{reduceCoord}\ R\
 y)$ is a nonsingular point of the reduced curve `W.reduction R` over the residue field of $R$, such
-that `reducePoint_alt R W` applied to the affine point `.some x y h` equals the affine point `.some`
+that `reducePointAlt R W` applied to the affine point `.some x y h` equals the affine point `.some`
 with these two coordinates and witness $h'$. Here $\mathrm{reduceCoord}\ R\ z$ is the residue in the
 residue field of some $r \in R$ with $\mathrm{algebraMap}\ R\ K\ r = z$ when such $r$ exists, and
-$0$ otherwise; and `reducePoint_alt` is defined by cases, sending `.some x y _` to the point with
+$0$ otherwise; and `reducePointAlt` is defined by cases, sending `.some x y _` to the point with
 reduced coordinates when both valuations are $\le 1$ and the reduced pair is nonsingular, and to the
 zero point otherwise.
 
@@ -71,7 +71,7 @@ theorem reducePoint_some' (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValua
     [W.HasGoodReduction R] {x y : K} (h : W.toAffine.Nonsingular x y)
     (hx : valuation K (IsDiscreteValuationRing.maximalIdeal R) x ≤ 1)
     (hy : valuation K (IsDiscreteValuationRing.maximalIdeal R) y ≤ 1) :
-    ∃ h', reducePoint_alt R W (.some x y h) = .some (reduceCoord R x) (reduceCoord R y) h' := by
+    ∃ h', reducePointAlt R W (.some x y h) = .some (reduceCoord R x) (reduceCoord R y) h' := by
   obtain ⟨rx, hrx⟩ := exists_lift_of_le_one hx
   obtain ⟨ry, hry⟩ := exists_lift_of_le_one hy
   have hex : ∃ r : R, algebraMap R K r = x := ⟨rx, hrx⟩
@@ -100,7 +100,7 @@ theorem reducePoint_some' (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValua
     (IsDiscreteValuationRing.maximalIdeal R) y ≤ 1 :=
     ⟨hx, hy⟩
   refine ⟨hns, ?_⟩
-  simp only [reducePoint_alt, dite_eq_left hxy, dite_eq_left hns]
+  simp only [reducePointAlt, dite_eq_left hxy, dite_eq_left hns]
 
 end ReduceSome
 
@@ -112,7 +112,7 @@ theorem solution
       ≤ 1)
     (hy : IsDedekindDomain.HeightOneSpectrum.valuation K (IsDiscreteValuationRing.maximalIdeal R) y
       ≤ 1) :
-    ∃ h', WeierstrassCurve.reducePoint_alt R W (.some x y h)
+    ∃ h', WeierstrassCurve.reducePointAlt R W (.some x y h)
       = .some (WeierstrassCurve.reduceCoord R x) (WeierstrassCurve.reduceCoord R y) h' :=
   ReduceSome.reducePoint_some' R W h hx hy
 
@@ -132,7 +132,7 @@ theorem WeierstrassCurve.reducePoint_some
       ≤ 1)
     (hy : IsDedekindDomain.HeightOneSpectrum.valuation K (IsDiscreteValuationRing.maximalIdeal R) y
       ≤ 1) :
-    ∃ h', WeierstrassCurve.reducePoint_alt R W (.some x y h)
+    ∃ h', WeierstrassCurve.reducePointAlt R W (.some x y h)
       = .some (WeierstrassCurve.reduceCoord R x) (WeierstrassCurve.reduceCoord R y) h' :=
   solution R W h hx hy
 

@@ -48,7 +48,7 @@ the pair $(\varphi,\hat\varphi)$ is a dual pair with integer $n$, the two commut
 the roles of $\varphi,\hat\varphi$ may be exchanged. `intLinComb` produces data for $a + b\varphi$
 with dual $a + b\hat\varphi$, trace $2a + tb$ and norm $a^2 + tab + nb^2$, whence the discriminant
 scales by $b^2$ and negativity of $t^2 - 4n$ is preserved for $b \neq 0$. `ofCharPoly` builds data
-from a relation $\varphi^2 - t\varphi + n = 0$, and `dualEndData_intCast` treats $\varphi = m$.
+from a relation $\varphi^2 - t\varphi + n = 0$, and `dualEndDataIntCast` treats $\varphi = m$.
 
 Two named predicates on a subring $S \subseteq \mathrm{End}(A)$ record what is not proved here:
 [`DualIsogenyExistence S`](../def/DualIsogenyAPI.html#L274) asserts that every $\varphi \in S$
@@ -77,6 +77,7 @@ namespace AddMonoidHom
 
 variable {A B C : Type*} [AddCommGroup A] [AddCommGroup B] [AddCommGroup C]
 
+/-- Two additive maps are a dual pair if both composites are multiplication by the same integer. -/
 structure IsDualPair (φ : A →+ B) (ψ : B →+ A) (n : ℤ) : Prop where
   comp_left : ∀ a, ψ (φ a) = n • a
   comp_right : ∀ b, φ (ψ b) = n • b
@@ -149,9 +150,13 @@ namespace AddMonoid.End
 
 variable {A : Type*} [AddCommGroup A]
 
+/-- A dual endomorphism with integer trace and norm satisfying the sum and product identities. -/
 structure DualEndData (φ : AddMonoid.End A) where
+  /-- The chosen dual endomorphism. -/
   dual : AddMonoid.End A
+  /-- The integer giving the sum of the endomorphism and its dual. -/
   trace : ℤ
+  /-- The integer giving both products of the endomorphism and its dual. -/
   norm : ℤ
   add_dual : φ + dual = (trace : AddMonoid.End A)
   mul_dual : φ * dual = (norm : AddMonoid.End A)
@@ -192,6 +197,7 @@ theorem charPoly_apply (D : DualEndData φ) (a : A) :
   have h2 := D.add_dual_apply (φ a)
   rw [← h1, ← h2, sub_add_cancel_left]; exact neg_add_cancel _
 
+/-- Dual data with the endomorphism and its dual interchanged. -/
 def symm (D : DualEndData φ) : DualEndData D.dual where
   dual := φ
   trace := D.trace
@@ -235,6 +241,8 @@ theorem intLinComb_mul_dual (D : DualEndData φ) (a b : ℤ) :
         rw [hcr, hsum, ← mul_zsmul, ← mul_zsmul, ← add_zsmul, ← add_zsmul]
         congr 1; ring
 
+/-- Dual data for `a + b * φ`, with trace `2 * a + trace * b` and the corresponding quadratic
+norm. -/
 def intLinComb (D : DualEndData φ) (a b : ℤ) :
     DualEndData ((a : AddMonoid.End A) + (b : AddMonoid.End A) * φ) where
   dual := (a : AddMonoid.End A) + (b : AddMonoid.End A) * D.dual
@@ -280,6 +288,7 @@ theorem intLinComb_disc_neg (D : DualEndData φ) {a b : ℤ} (hb : b ≠ 0)
 
 end DualEndData
 
+/-- Dual data constructed from an integer quadratic relation satisfied by the endomorphism. -/
 def DualEndData.ofCharPoly (φ : AddMonoid.End A) (t n : ℤ)
     (hchar : φ * φ - (t : AddMonoid.End A) * φ + (n : AddMonoid.End A) = 0) :
     DualEndData φ where
@@ -309,7 +318,9 @@ def DualEndData.ofCharPoly (φ : AddMonoid.End A) (t n : ℤ)
 @[simp] theorem DualEndData.ofCharPoly_dual (φ : AddMonoid.End A) (t n : ℤ) (h) :
     (DualEndData.ofCharPoly φ t n h).dual = (t : AddMonoid.End A) - φ := rfl
 
-def dualEndData_intCast (m : ℤ) : DualEndData (A := A) (m : AddMonoid.End A) where
+/-- Dual data for multiplication by an integer, whose dual is itself and whose norm is its
+square. -/
+def dualEndDataIntCast (m : ℤ) : DualEndData (A := A) (m : AddMonoid.End A) where
   dual := (m : AddMonoid.End A)
   trace := 2 * m
   norm := m ^ 2
@@ -318,13 +329,13 @@ def dualEndData_intCast (m : ℤ) : DualEndData (A := A) (m : AddMonoid.End A) w
   dual_mul := by rw [← Int.cast_mul, ← sq]
 
 @[simp] theorem dualEndData_intCast_norm (m : ℤ) :
-    (dualEndData_intCast (A := A) m).norm = m ^ 2 := rfl
+    (dualEndDataIntCast (A := A) m).norm = m ^ 2 := rfl
 
 @[simp] theorem dualEndData_intCast_trace (m : ℤ) :
-    (dualEndData_intCast (A := A) m).trace = 2 * m := rfl
+    (dualEndDataIntCast (A := A) m).trace = 2 * m := rfl
 
 @[simp] theorem dualEndData_intCast_dual (m : ℤ) :
-    (dualEndData_intCast (A := A) m).dual = (m : AddMonoid.End A) := rfl
+    (dualEndDataIntCast (A := A) m).dual = (m : AddMonoid.End A) := rfl
 
 end AddMonoid.End
 
@@ -332,9 +343,12 @@ section NamedResiduals
 
 variable {A : Type*} [AddCommGroup A]
 
+/-- Every endomorphism in the subring admits dual data with dual in the subring and nonnegative
+norm. -/
 def DualIsogenyExistence (S : Subring (AddMonoid.End A)) : Prop :=
   ∀ φ ∈ S, ∃ D : AddMonoid.End.DualEndData φ, D.dual ∈ S ∧ 0 ≤ D.norm
 
+/-- Dual data for a sum can be chosen so that its dual is the sum of two prescribed duals. -/
 def DualAdditivityResidual (S : Subring (AddMonoid.End A)) : Prop :=
   ∀ φ ∈ S, ∀ ψ ∈ S, ∀ Dφ : AddMonoid.End.DualEndData φ, ∀ Dψ : AddMonoid.End.DualEndData ψ,
     ∃ D : AddMonoid.End.DualEndData (φ + ψ), D.dual = Dφ.dual + Dψ.dual
@@ -343,7 +357,7 @@ theorem dualIsogenyExistence_bot :
     DualIsogenyExistence (⊥ : Subring (AddMonoid.End A)) := by
   intro φ hφ
   obtain ⟨m, rfl⟩ := Subring.mem_bot.mp hφ
-  exact ⟨AddMonoid.End.dualEndData_intCast m, Subring.mem_bot.mpr ⟨m, rfl⟩, sq_nonneg m⟩
+  exact ⟨AddMonoid.End.dualEndDataIntCast m, Subring.mem_bot.mpr ⟨m, rfl⟩, sq_nonneg m⟩
 
 end NamedResiduals
 
@@ -362,8 +376,8 @@ theorem gate_intLinComb_norm_at_one :
   decide
 
 theorem gate_dualEndData_intCast_three :
-    (AddMonoid.End.dualEndData_intCast (A := ℤ) 3).norm = 9
-    ∧ (AddMonoid.End.dualEndData_intCast (A := ℤ) 3).trace = 6 := ⟨rfl, rfl⟩
+    (AddMonoid.End.dualEndDataIntCast (A := ℤ) 3).norm = 9
+    ∧ (AddMonoid.End.dualEndDataIntCast (A := ℤ) 3).trace = 6 := ⟨rfl, rfl⟩
 
 theorem gate_intLinComb_disc_scaling :
     ((AddMonoid.End.DualEndData.ofCharPoly (A := ℤ) 1 2 1

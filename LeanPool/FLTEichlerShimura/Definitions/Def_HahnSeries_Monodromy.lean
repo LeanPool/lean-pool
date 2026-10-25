@@ -70,6 +70,7 @@ namespace HahnSeries
 
 variable {R : Type*} [CommRing R]
 
+/-- Twisting a Hahn series by multiplying its coefficient at `q` by the character value `χ q`. -/
 def hahnTwistFun (χ : Multiplicative ℚ →* Rˣ) (x : HahnSeries ℚ R) : HahnSeries ℚ R where
   coeff a := χ (Multiplicative.ofAdd a) * x.coeff a
   isPWO_support' := x.isPWO_support'.mono fun a ha => by
@@ -95,6 +96,7 @@ theorem hahnTwistFun_single (χ : Multiplicative ℚ →* Rˣ) (a : ℚ) (r : R)
     rw [coeff_single_same, coeff_single_same]
   · rw [coeff_single_of_ne hb, coeff_single_of_ne hb, mul_zero]
 
+/-- The coefficient-twisting algebra automorphism associated to a character. -/
 def hahnTwist (χ : Multiplicative ℚ →* Rˣ) : HahnSeries ℚ R ≃ₐ[R] HahnSeries ℚ R where
   toFun := hahnTwistFun χ
   invFun := hahnTwistFun χ⁻¹
@@ -154,6 +156,7 @@ theorem order_hahnTwist (χ : Multiplicative ℚ →* Rˣ) (x : HahnSeries ℚ R
     · exact fun h0 => hx' (coeff_order_eq_zero.mp (by rw [coeff_hahnTwist, h0, mul_zero]))
 
 variable (R) in
+/-- The subgroup of exponent characters whose value at `1` is `1`. -/
 def MonoChar : Subgroup (Multiplicative ℚ →* Rˣ) :=
   (MonoidHom.eval (Multiplicative.ofAdd (1 : ℚ))).ker
 
@@ -161,6 +164,7 @@ theorem mem_monoChar_iff {χ : Multiplicative ℚ →* Rˣ} :
     χ ∈ MonoChar R ↔ χ (Multiplicative.ofAdd (1 : ℚ)) = 1 :=
   Iff.rfl
 
+/-- The homomorphism sending an exponent character to its coefficient-twisting automorphism. -/
 def hahnTwistHom : (Multiplicative ℚ →* Rˣ) →* (HahnSeries ℚ R ≃ₐ[R] HahnSeries ℚ R) where
   toFun := hahnTwist
   map_one' := by
@@ -179,6 +183,7 @@ theorem hahnTwistHom_apply (χ : Multiplicative ℚ →* Rˣ) :
   (rfl)
 
 variable (R) in
+/-- The subgroup of Hahn-series automorphisms arising from characters in `MonoChar`. -/
 @[expose] def monodromy : Subgroup (HahnSeries ℚ R ≃ₐ[R] HahnSeries ℚ R) :=
   (MonoChar R).map hahnTwistHom
 
@@ -257,6 +262,7 @@ private theorem fixedFun_add [DecidableEq K] (σ : K ≃ₐ[k] K) (E : Weierstra
     · rw [hslope, haddX]
     · rw [hslope, haddY]
 
+/-- The action on points of a field automorphism fixing the curve's coefficients. -/
 def fixedTransport [DecidableEq K] (σ : K ≃ₐ[k] K) (E : WeierstrassCurve K)
     (hE : E.map (σ : K →+* K) = E) : E.toAffine.Point ≃+ E.toAffine.Point where
   toFun := fixedFun σ E hE

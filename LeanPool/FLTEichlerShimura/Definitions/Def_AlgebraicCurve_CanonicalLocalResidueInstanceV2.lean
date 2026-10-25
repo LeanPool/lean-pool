@@ -52,9 +52,9 @@ surjective. For larger residue fields, `CoefficientFieldSection` is a $K$-algebr
 $\kappa(v)\to\mathcal O_v$ splitting the residue map, `CanonicalLocalResidueDataS \sigma` adds
 vanishing on $\sigma(a)\pi^{-(n+1)}$, $n\ge 1$, and such data again agree on pole submodules. A
 parallel development replaces $\mathcal O_v$ by its adic completion $\widehat{\mathcal O}_v$: the
-level-one evaluation `lg37_residueHat` onto $\kappa(v)$ is surjective with kernel the maximal ideal,
+level-one evaluation `lg37ResidueHat` onto $\kappa(v)$ is surjective with kernel the maximal ideal,
 the completion is Henselian and local, separable monic polynomials lift roots from $\kappa(v)$
-uniquely, `Lg37CompletionSection` records a $K$-algebra section of `lg37_residueHat`, one such
+uniquely, `Lg37CompletionSection` records a $K$-algebra section of `lg37ResidueHat`, one such
 section is obtained from a primitive element of $\kappa(v)/K$ together with a lifted root of its
 minimal polynomial, and every element has a unique truncated Taylor expansion
 $\sum_{i<n}\sigma(a_i)\pi^i$ modulo $\mathfrak m^n$. Auxiliary instances provide the residue-field
@@ -126,6 +126,7 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F']
   [Algebra K F'] [Algebra F F'] [Algebra K F] [IsScalarTower K F F']
   [Algebra.IsIntegral F F'] (w : Place K F')
 
+/-- The map from the valuation ring of the restricted place into the valuation ring upstairs. -/
 def restrictSubringHom : (w.restrict F).toValuationSubring →+* w.toValuationSubring :=
   RingHom.codRestrict
     ((algebraMap F F').comp (w.restrict F).toValuationSubring.subtype)
@@ -151,10 +152,11 @@ instance instIsLocalHom_restrictSubringHom : IsLocalHom (w.restrictSubringHom (F
   exact isUnit_iff_exists_inv.mpr
     ⟨⟨(a : F)⁻¹, hmem⟩, Subtype.ext (mul_inv_cancel₀ ha0)⟩
 
+/-- The homomorphism on residue fields induced by restriction of the place. -/
 def residueFieldMapRestrict : (w.restrict F).ResidueField →+* w.ResidueField :=
   IsLocalRing.ResidueField.map (w.restrictSubringHom (F := F))
 
-instance instAlgebra_restrictResidueField : Algebra (w.restrict F).ResidueField w.ResidueField :=
+instance instAlgebraRestrictResidueField : Algebra (w.restrict F).ResidueField w.ResidueField :=
   (w.residueFieldMapRestrict (F := F)).toAlgebra
 
 theorem algebraMap_residueField_residue (x : (w.restrict F).toValuationSubring) :
@@ -194,6 +196,8 @@ namespace Place
 
 variable (v : Place K F)
 
+/-- A chosen irreducible element of the discrete valuation ring, viewed as an element of that
+ring. -/
 def uniformizerSubring : v.toValuationSubring :=
   (IsDiscreteValuationRing.exists_irreducible v.toValuationSubring).choose
 
@@ -210,6 +214,7 @@ theorem uniformizerSubring_mem_maximalIdeal :
 theorem uniformizer_mem : v.uniformizer ∈ v.toValuationSubring :=
   v.uniformizerSubring.2
 
+/-- The subspace of functions made integral by multiplying once by the chosen uniformizer. -/
 def simplePoleSubmodule : Submodule K F where
   carrier := {f | v.uniformizer * f ∈ v.toValuationSubring}
   add_mem' {f g} hf hg := by
@@ -228,6 +233,8 @@ theorem mem_simplePoleSubmodule_of_mem {f : F} (hf : f ∈ v.toValuationSubring)
     f ∈ v.simplePoleSubmodule :=
   mul_mem v.uniformizer_mem hf
 
+/-- Multiply a function with at most a simple pole by the uniformizer to obtain an integral
+element. -/
 def simplePoleMulUniformizer : v.simplePoleSubmodule →ₗ[K] v.toValuationSubring where
   toFun f := ⟨v.uniformizer * f.1, f.2⟩
   map_add' f g := Subtype.ext (mul_add _ _ _)
@@ -237,6 +244,8 @@ def simplePoleMulUniformizer : v.simplePoleSubmodule →ₗ[K] v.toValuationSubr
     simp only [Algebra.smul_def, MulMemClass.coe_mul, v.coe_algebraMap, Submodule.coe_smul,
       mul_left_comm]
 
+/-- Extract the residue of the product with the uniformizer from a function with at most a simple
+pole. -/
 def simplePoleResidueAux : v.simplePoleSubmodule →ₗ[K] v.ResidueField :=
   (Ideal.Quotient.mkₐ K (IsLocalRing.maximalIdeal v.toValuationSubring)).toLinearMap
     ∘ₗ v.simplePoleMulUniformizer
@@ -252,6 +261,7 @@ theorem simplePoleResidueAux_eq_zero_of_mem {f : F} (hf : f ∈ v.toValuationSub
   rw [hmul]
   exact Ideal.mul_mem_right _ _ v.uniformizerSubring_mem_maximalIdeal
 
+/-- Choose a linear extension of the simple-pole residue functional to the whole function field. -/
 def localResidueExtend : F →ₗ[K] v.ResidueField :=
   v.simplePoleResidueAux.exists_extend.choose
 
@@ -260,6 +270,7 @@ theorem localResidueExtend_apply_of_mem {f : F} (hf : f ∈ v.simplePoleSubmodul
   congrArg (fun φ => φ (⟨f, hf⟩ : v.simplePoleSubmodule))
     v.simplePoleResidueAux.exists_extend.choose_spec
 
+/-- Local residue data obtained by linearly extending the simple-pole functional. -/
 def localResidueDataOfExtend : v.LocalResidueData where
   res := v.localResidueExtend
   res_of_mem f hf := by
@@ -306,6 +317,8 @@ namespace Place
 
 variable (v : Place K F)
 
+/-- The subspace of functions made integral by multiplication by the `n`th power of the
+uniformizer. -/
 def poleSubmodule (n : ℕ) : Submodule K F where
   carrier := {f | v.uniformizer ^ n * f ∈ v.toValuationSubring}
   add_mem' {f g} hf hg := by
@@ -359,6 +372,7 @@ theorem iSup_poleSubmodule_eq_top : ⨆ n, v.poleSubmodule n = ⊤ := by
     have h := Int.self_le_toNat (-v.ord f)
     omega
 
+/-- Clear a pole of order at most `n` by multiplying by the `n`th power of the uniformizer. -/
 def poleMulUniformizerPow (n : ℕ) : v.poleSubmodule n →ₗ[K] v.toValuationSubring where
   toFun f := ⟨v.uniformizer ^ n * f.1, f.2⟩
   map_add' f g := Subtype.ext (mul_add _ _ _)
@@ -368,6 +382,7 @@ def poleMulUniformizerPow (n : ℕ) : v.poleSubmodule n →ₗ[K] v.toValuationS
     simp only [Algebra.smul_def, MulMemClass.coe_mul, v.coe_algebraMap, Submodule.coe_smul,
       mul_left_comm]
 
+/-- The residue of a function after clearing its pole with the specified uniformizer power. -/
 def laurentTailCoeff (n : ℕ) : v.poleSubmodule n →ₗ[K] v.ResidueField :=
   (Ideal.Quotient.mkₐ K (IsLocalRing.maximalIdeal v.toValuationSubring)).toLinearMap
     ∘ₗ v.poleMulUniformizerPow n
@@ -564,6 +579,8 @@ theorem linearIndependent_higherPoleMonomial_mkQ :
   simp only [← map_smul, ← map_sum] at h
   rwa [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero] at h
 
+/-- On the span of higher-pole monomials modulo simple poles, reproduce their values under the
+chosen residue extension. -/
 def higherPoleCorrectionAux :
     Submodule.span K
         (Set.range fun m : ℕ => (v.poleSubmodule 1).mkQ ((v.uniformizer ^ (m + 2))⁻¹))
@@ -571,6 +588,8 @@ def higherPoleCorrectionAux :
   (Basis.span v.linearIndependent_higherPoleMonomial_mkQ).constr K
     (fun m => v.localResidueExtend ((v.uniformizer ^ (m + 2))⁻¹))
 
+/-- Extend the higher-pole correction to the function field, vanishing on functions with at most
+simple poles. -/
 def higherPoleCorrection : F →ₗ[K] v.ResidueField :=
   v.higherPoleCorrectionAux.exists_extend.choose ∘ₗ (v.poleSubmodule 1).mkQ
 
@@ -595,6 +614,8 @@ theorem higherPoleCorrection_uniformizer_pow_inv (m : ℕ) :
     (fun m => v.localResidueExtend ((v.uniformizer ^ (m + 2))⁻¹)) m
   rwa [Basis.span_apply] at hb
 
+/-- Canonical local residue data obtained by subtracting the higher-pole correction from the
+chosen linear extension. -/
 def canonicalLocalResidueDataKOfExtend : v.CanonicalLocalResidueDataK where
   res := v.localResidueExtend - v.higherPoleCorrection
   res_of_mem f hf := by
@@ -664,10 +685,14 @@ namespace Place
 
 variable (v : Place K F)
 
+/-- A constant-field algebra section of the residue map into the valuation ring. -/
 structure CoefficientFieldSection where
+  /-- The coefficient-field lift from the residue field into the valuation ring. -/
   lift : v.ResidueField →ₐ[K] v.toValuationSubring
   residue_lift : ∀ a, IsLocalRing.residue _ (lift a) = a
 
+/-- Local residue data annihilating all higher-pole monomials with coefficients lifted by the
+specified section. -/
 structure CanonicalLocalResidueDataS (σ : v.CoefficientFieldSection)
     extends v.LocalResidueData where
   res_higherPoleSectionMonomial : ∀ (n : ℕ), 1 ≤ n → ∀ a : v.ResidueField,
@@ -704,6 +729,8 @@ theorem canonicalLocalResidueDataS_agree_on_poleSubmodule (σ : v.CoefficientFie
         v.laurentTail_remainder_mem_poleSubmodule hf hclift
       rw [← R₁.res_laurentRecS hn f a, ← R₂.res_laurentRecS hn f a, ih hrem]
 
+/-- Construct a coefficient-field section when the constant field maps bijectively onto the
+residue field. -/
 def coefficientFieldSectionOfBijective
     (hbij : Function.Bijective (algebraMap K v.ResidueField)) :
     v.CoefficientFieldSection where
@@ -737,21 +764,25 @@ section CompletionCarrier
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
-abbrev lg37_completion (v : Place K F) : Type _ :=
+/-- The maximal-ideal-adic completion of the place's valuation ring. -/
+abbrev lg37Completion (v : Place K F) : Type _ :=
   AdicCompletion (IsLocalRing.maximalIdeal v.toValuationSubring) v.toValuationSubring
 
-def lg37_residueHat (v : Place K F) :
-    lg37_completion v →+* v.ResidueField :=
+/-- The residue map from the completed valuation ring to the original residue field. -/
+def lg37ResidueHat (v : Place K F) :
+    lg37Completion v →+* v.ResidueField :=
   (AdicCompletion.evalOneₐ (IsLocalRing.maximalIdeal v.toValuationSubring)).toRingHom
 
 theorem lg37_residueHat_algebraMap (v : Place K F) (x : v.toValuationSubring) :
-    lg37_residueHat v
-        (algebraMap v.toValuationSubring (lg37_completion v) x)
+    lg37ResidueHat v
+        (algebraMap v.toValuationSubring (lg37Completion v) x)
       = IsLocalRing.residue v.toValuationSubring x := rfl
 
+/-- A constant-field algebra section of the residue map into the completed valuation ring. -/
 structure Lg37CompletionSection (v : Place K F) where
-  lift : v.ResidueField →ₐ[K] lg37_completion v
-  residueHat_lift : ∀ a, lg37_residueHat v (lift a) = a
+  /-- The lift of residue-field elements into the completed valuation ring. -/
+  lift : v.ResidueField →ₐ[K] lg37Completion v
+  residueHat_lift : ∀ a, lg37ResidueHat v (lift a) = a
 
 end CompletionCarrier
 
@@ -774,30 +805,31 @@ section Engine
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
-noncomputable abbrev mp72a102_t1_maximalIdealHat (v : Place K F) :
-    Ideal (lg37_completion v) :=
+/-- The extension of the valuation ring's maximal ideal to its adic completion. -/
+noncomputable abbrev mp72a102T1MaximalIdealHat (v : Place K F) :
+    Ideal (lg37Completion v) :=
   (IsLocalRing.maximalIdeal v.toValuationSubring).map
-    (algebraMap v.toValuationSubring (lg37_completion v))
+    (algebraMap v.toValuationSubring (lg37Completion v))
 
 theorem mp72a102_t1_isScalarTower (v : Place K F) :
-    IsScalarTower K v.toValuationSubring (lg37_completion v) :=
+    IsScalarTower K v.toValuationSubring (lg37Completion v) :=
   IsScalarTower.of_algebraMap_eq fun _ => rfl
 
 theorem mp72a102_t1_isAdicComplete_maximalIdealHat (v : Place K F) :
-    IsAdicComplete (mp72a102_t1_maximalIdealHat v) (lg37_completion v) :=
+    IsAdicComplete (mp72a102T1MaximalIdealHat v) (lg37Completion v) :=
   (IsAdicComplete.map_algebraMap_iff (IsLocalRing.maximalIdeal v.toValuationSubring)
-      (lg37_completion v)).mpr
+      (lg37Completion v)).mpr
     (AdicCompletion.isAdicComplete
       (IsPrincipalIdealRing.principal
         (IsLocalRing.maximalIdeal v.toValuationSubring)).fg)
 
 theorem mp72a102_t1_henselianRing_completion (v : Place K F) :
-    HenselianRing (lg37_completion v) (mp72a102_t1_maximalIdealHat v) :=
+    HenselianRing (lg37Completion v) (mp72a102T1MaximalIdealHat v) :=
   letI := mp72a102_t1_isAdicComplete_maximalIdealHat v
-  IsAdicComplete.henselianRing (lg37_completion v) (mp72a102_t1_maximalIdealHat v)
+  IsAdicComplete.henselianRing (lg37Completion v) (mp72a102T1MaximalIdealHat v)
 
 theorem mp72a102_t1_maximalIdealHat_le_ker_residueHat (v : Place K F) :
-    mp72a102_t1_maximalIdealHat v ≤ RingHom.ker (lg37_residueHat v) :=
+    mp72a102T1MaximalIdealHat v ≤ RingHom.ker (lg37ResidueHat v) :=
   Ideal.map_le_iff_le_comap.mpr fun s hs => by
     rw [Ideal.mem_comap, RingHom.mem_ker, lg37_residueHat_algebraMap]
     exact (IsLocalRing.residue_eq_zero_iff s).mpr hs
@@ -805,10 +837,10 @@ theorem mp72a102_t1_maximalIdealHat_le_ker_residueHat (v : Place K F) :
 theorem mp72a102_t1_exists_completion_root_of_residue_root
     (v : Place K F) {p : K[X]} (hpmon : p.Monic) (hpsep : p.Separable)
     {rbar : v.ResidueField} (hrbar : Polynomial.aeval rbar p = 0) :
-    ∃ α : lg37_completion v,
-      Polynomial.aeval α p = 0 ∧ lg37_residueHat v α = rbar := by
+    ∃ α : lg37Completion v,
+      Polynomial.aeval α p = 0 ∧ lg37ResidueHat v α = rbar := by
   classical
-  have _htower : IsScalarTower K v.toValuationSubring (lg37_completion v) :=
+  have _htower : IsScalarTower K v.toValuationSubring (lg37Completion v) :=
     mp72a102_t1_isScalarTower v
   obtain ⟨a, ha⟩ := IsLocalRing.residue_surjective (R := v.toValuationSubring) rbar
   have hapI : Polynomial.aeval a p ∈ IsLocalRing.maximalIdeal v.toValuationSubring := by
@@ -819,49 +851,49 @@ theorem mp72a102_t1_exists_completion_root_of_residue_root
         Polynomial.aeval_algebraMap_apply]
     rw [h1, hrbar]
   have hapIhat : Polynomial.aeval
-      (algebraMap v.toValuationSubring (lg37_completion v) a) p
-        ∈ mp72a102_t1_maximalIdealHat v := by
+      (algebraMap v.toValuationSubring (lg37Completion v) a) p
+        ∈ mp72a102T1MaximalIdealHat v := by
     rw [Polynomial.aeval_algebraMap_apply]
     exact Ideal.mem_map_of_mem _ hapI
-  have hfeval : ∀ x : lg37_completion v,
-      (p.map (algebraMap K (lg37_completion v))).eval x = Polynomial.aeval x p :=
+  have hfeval : ∀ x : lg37Completion v,
+      (p.map (algebraMap K (lg37Completion v))).eval x = Polynomial.aeval x p :=
     fun x => by rw [Polynomial.eval_map, ← Polynomial.aeval_def]
   have hfderiv :
-      (p.map (algebraMap K (lg37_completion v))).derivative.eval
-          (algebraMap v.toValuationSubring (lg37_completion v) a)
+      (p.map (algebraMap K (lg37Completion v))).derivative.eval
+          (algebraMap v.toValuationSubring (lg37Completion v) a)
         = Polynomial.aeval
-            (algebraMap v.toValuationSubring (lg37_completion v) a)
+            (algebraMap v.toValuationSubring (lg37Completion v) a)
             (Polynomial.derivative p) := by
     rw [Polynomial.derivative_map, Polynomial.eval_map, ← Polynomial.aeval_def]
   obtain ⟨u, w, huw⟩ := hpsep
-  have hunit : IsUnit (Ideal.Quotient.mk (mp72a102_t1_maximalIdealHat v)
-      ((p.map (algebraMap K (lg37_completion v))).derivative.eval
-        (algebraMap v.toValuationSubring (lg37_completion v) a))) := by
+  have hunit : IsUnit (Ideal.Quotient.mk (mp72a102T1MaximalIdealHat v)
+      ((p.map (algebraMap K (lg37Completion v))).derivative.eval
+        (algebraMap v.toValuationSubring (lg37Completion v) a))) := by
     rw [hfderiv]
-    set a₀ := algebraMap v.toValuationSubring (lg37_completion v) a
+    set a₀ := algebraMap v.toValuationSubring (lg37Completion v) a
     have h1 : Polynomial.aeval a₀ u * Polynomial.aeval a₀ p
         + Polynomial.aeval a₀ w * Polynomial.aeval a₀ (Polynomial.derivative p)
         = 1 := by
       have h0 := congrArg (Polynomial.aeval (R := K) a₀) huw
       simpa only [map_add, map_mul, map_one] using h0
-    have h2 := congrArg (Ideal.Quotient.mk (mp72a102_t1_maximalIdealHat v)) h1
+    have h2 := congrArg (Ideal.Quotient.mk (mp72a102T1MaximalIdealHat v)) h1
     rw [map_add, map_mul, map_mul, map_one,
       Ideal.Quotient.eq_zero_iff_mem.mpr hapIhat, mul_zero, zero_add] at h2
     exact IsUnit.of_mul_eq_one _ ((mul_comm _ _).trans h2)
   obtain ⟨α, hαroot, hαnear⟩ :=
     (mp72a102_t1_henselianRing_completion v).is_henselian
-      (p.map (algebraMap K (lg37_completion v))) (hpmon.map _)
-      (algebraMap v.toValuationSubring (lg37_completion v) a)
+      (p.map (algebraMap K (lg37Completion v))) (hpmon.map _)
+      (algebraMap v.toValuationSubring (lg37Completion v) a)
       (by rw [hfeval]; exact hapIhat) hunit
   refine ⟨α, ?_, ?_⟩
   · rw [← hfeval]
     exact hαroot
-  · have h0 : lg37_residueHat v
-        (α - algebraMap v.toValuationSubring (lg37_completion v) a) = 0 :=
+  · have h0 : lg37ResidueHat v
+        (α - algebraMap v.toValuationSubring (lg37Completion v) a) = 0 :=
       RingHom.mem_ker.mp (mp72a102_t1_maximalIdealHat_le_ker_residueHat v hαnear)
-    have heq : lg37_residueHat v α
-        = lg37_residueHat v
-            (algebraMap v.toValuationSubring (lg37_completion v) a) := by
+    have heq : lg37ResidueHat v α
+        = lg37ResidueHat v
+            (algebraMap v.toValuationSubring (lg37Completion v) a) := by
       rwa [map_sub, sub_eq_zero] at h0
     rw [heq, lg37_residueHat_algebraMap, ha]
 
@@ -936,30 +968,30 @@ section Carrier
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 theorem mp72a102_t3_evalDepth_add (v : Place K F) (n : ℕ)
-    (x y : lg37_completion v) :
+    (x y : lg37Completion v) :
     AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n (x + y)
       = AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n x
         + AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n y :=
   map_add _ x y
 
 theorem mp72a102_t3_evalDepth_mul (v : Place K F) (n : ℕ)
-    (x y : lg37_completion v) :
+    (x y : lg37Completion v) :
     AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n (x * y)
       = AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n x
         * AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n y :=
   map_mul _ x y
 
 theorem mp72a102_t3_residueHat_congr_of_depth_one (v : Place K F)
-    {x y : lg37_completion v}
+    {x y : lg37Completion v}
     (h : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) 1 x
         = AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) 1 y) :
-    lg37_residueHat v x = lg37_residueHat v y := by
+    lg37ResidueHat v x = lg37ResidueHat v y := by
   change AdicCompletion.evalOneₐ (maximalIdeal v.toValuationSubring) x
       = AdicCompletion.evalOneₐ (maximalIdeal v.toValuationSubring) y
   rw [← AdicCompletion.factorₐ_evalₐ_one, ← AdicCompletion.factorₐ_evalₐ_one, h]
 
 theorem mp72a102_t3_evalDepth_one_eq_zero_of_residueHat (v : Place K F)
-    {x : lg37_completion v} (hx : lg37_residueHat v x = 0) :
+    {x : lg37Completion v} (hx : lg37ResidueHat v x = 0) :
     AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) 1 x = 0 :=
   mp72a102_t3_evalₐ_one_eq_zero_of_evalOneₐ _ hx
 
@@ -970,11 +1002,11 @@ theorem mp72a102_t3_eq_uniformizer_mul_of_mem_maximalIdeal (v : Place K F)
   exact hw
 
 theorem mp72a102_t3_exists_uniformizer_factor (v : Place K F)
-    {x : lg37_completion v} (hx : lg37_residueHat v x = 0) (n : ℕ) :
+    {x : lg37Completion v} (hx : lg37ResidueHat v x = 0) (n : ℕ) :
     ∃ u : v.toValuationSubring,
       AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n
-        (x - algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring
-          * algebraMap v.toValuationSubring (lg37_completion v) u) = 0 := by
+        (x - algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring
+          * algebraMap v.toValuationSubring (lg37Completion v) u) = 0 := by
   rcases n with _ | n
   · exact ⟨0, mp72a102_t3_evalₐ_zero_depth _ _⟩
   · obtain ⟨w, hw⟩ := Ideal.Quotient.mk_surjective
@@ -993,55 +1025,55 @@ theorem mp72a102_t3_exists_uniformizer_factor (v : Place K F)
       ← map_mul, ← hu, ← hw, sub_self]
 
 theorem mp72a102_t3_sigma_taylor_expansion (v : Place K F)
-    (S : Lg37CompletionSection v) (n : ℕ) (x : lg37_completion v) :
+    (S : Lg37CompletionSection v) (n : ℕ) (x : lg37Completion v) :
     ∃ a : ℕ → v.ResidueField,
       AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n
         (x - ∑ i ∈ Finset.range n, S.lift (a i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i) = 0 := by
   induction n generalizing x with
   | zero => exact ⟨fun _ => 0, mp72a102_t3_evalₐ_zero_depth _ _⟩
   | succ n ih =>
-    have hres : lg37_residueHat v (x - S.lift (lg37_residueHat v x)) = 0 := by
+    have hres : lg37ResidueHat v (x - S.lift (lg37ResidueHat v x)) = 0 := by
       rw [map_sub, S.residueHat_lift, sub_self]
     obtain ⟨u, hu⟩ := mp72a102_t3_exists_uniformizer_factor v hres (n + 1)
-    obtain ⟨a, ha⟩ := ih (algebraMap v.toValuationSubring (lg37_completion v) u)
+    obtain ⟨a, ha⟩ := ih (algebraMap v.toValuationSubring (lg37Completion v) u)
     have hshift := mp72a102_t3_evalₐ_succ_mul_eq_zero
       (maximalIdeal v.toValuationSubring) v.uniformizerSubring_mem_maximalIdeal ha
     refine ⟨fun i => Nat.rec (motive := fun _ => v.ResidueField)
-      (lg37_residueHat v x) (fun j _ => a j) i, ?_⟩
+      (lg37ResidueHat v x) (fun j _ => a j) i, ?_⟩
     rw [Finset.sum_range_succ']
     change AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (n + 1)
         (x - ((∑ i ∈ Finset.range n, S.lift (a i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ (i + 1))
-          + S.lift (lg37_residueHat v x)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+          + S.lift (lg37ResidueHat v x)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ 0)) = 0
     have hsum : ∑ i ∈ Finset.range n, S.lift (a i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ (i + 1)
-        = algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring
+        = algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring
           * ∑ i ∈ Finset.range n, S.lift (a i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i := by
       rw [Finset.mul_sum]
       exact Finset.sum_congr rfl fun i _ => by ring
     rw [hsum, pow_zero, mul_one]
-    have hdecomp : x - (algebraMap v.toValuationSubring (lg37_completion v)
+    have hdecomp : x - (algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring
           * ∑ i ∈ Finset.range n, S.lift (a i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i
-          + S.lift (lg37_residueHat v x))
-        = (x - S.lift (lg37_residueHat v x)
-            - algebraMap v.toValuationSubring (lg37_completion v)
+          + S.lift (lg37ResidueHat v x))
+        = (x - S.lift (lg37ResidueHat v x)
+            - algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring
-              * algebraMap v.toValuationSubring (lg37_completion v) u)
-          + algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring
-            * (algebraMap v.toValuationSubring (lg37_completion v) u
+              * algebraMap v.toValuationSubring (lg37Completion v) u)
+          + algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring
+            * (algebraMap v.toValuationSubring (lg37Completion v) u
               - ∑ i ∈ Finset.range n, S.lift (a i)
-                * algebraMap v.toValuationSubring (lg37_completion v)
+                * algebraMap v.toValuationSubring (lg37Completion v)
                     v.uniformizerSubring ^ i) := by
       ring
     rw [hdecomp, map_add, hu, hshift, add_zero]
@@ -1068,17 +1100,18 @@ section ResidueCalculus
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 theorem mp72a102_t2_residueHat_algebraMap_base (v : Place K F) (c : K) :
-    lg37_residueHat v (algebraMap K (lg37_completion v) c)
+    lg37ResidueHat v (algebraMap K (lg37Completion v) c)
       = algebraMap K v.ResidueField c := by
-  have h : algebraMap K (lg37_completion v) c
-      = algebraMap v.toValuationSubring (lg37_completion v)
+  have h : algebraMap K (lg37Completion v) c
+      = algebraMap v.toValuationSubring (lg37Completion v)
           (algebraMap K v.toValuationSubring c) := rfl
   rw [h, lg37_residueHat_algebraMap v]
   rfl
 
-def mp72a102_t2_residueHatAlgHom (v : Place K F) :
-    lg37_completion v →ₐ[K] v.ResidueField where
-  toRingHom := lg37_residueHat v
+/-- The completed residue map bundled as an algebra homomorphism over the constant field. -/
+def mp72a102T2ResidueHatAlgHom (v : Place K F) :
+    lg37Completion v →ₐ[K] v.ResidueField where
+  toRingHom := lg37ResidueHat v
   commutes' := mp72a102_t2_residueHat_algebraMap_base v
 
 end ResidueCalculus
@@ -1095,6 +1128,8 @@ section GenericIso
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
 
+/-- Identify the residue field with the quotient by the minimal polynomial of the supplied
+primitive element. -/
 noncomputable def residueFieldAdjoinRootEquiv {ᾱ : v.ResidueField} (hint : IsIntegral K ᾱ)
     (htop : K⟮ᾱ⟯ = ⊤) :
     AdjoinRoot (minpoly K ᾱ) ≃ₐ[K] v.ResidueField :=
@@ -1114,25 +1149,27 @@ section GenericSection
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
 
+/-- Construct a completed coefficient-field section from a lift of a primitive residue-field
+element satisfying its minimal polynomial. -/
 noncomputable def sectionOfPrimitiveRoot {ᾱ : v.ResidueField} (hint : IsIntegral K ᾱ)
-    (htop : K⟮ᾱ⟯ = ⊤) (αhat : lg37_completion v)
+    (htop : K⟮ᾱ⟯ = ⊤) (αhat : lg37Completion v)
     (hroot : (aeval αhat) (minpoly K ᾱ) = 0)
-    (hres : lg37_residueHat v αhat = ᾱ) :
+    (hres : lg37ResidueHat v αhat = ᾱ) :
     Lg37CompletionSection v := by
-  have hroot' : (minpoly K ᾱ).eval₂ (Algebra.ofId K (lg37_completion v)) αhat = 0 := by
+  have hroot' : (minpoly K ᾱ).eval₂ (Algebra.ofId K (lg37Completion v)) αhat = 0 := by
     change (aeval αhat) (minpoly K ᾱ) = 0
     exact hroot
   refine
     { lift := (AdjoinRoot.liftAlgHom (minpoly K ᾱ)
-        (Algebra.ofId K (lg37_completion v)) αhat hroot').comp
+        (Algebra.ofId K (lg37Completion v)) αhat hroot').comp
           (residueFieldAdjoinRootEquiv v hint htop).symm.toAlgHom
       residueHat_lift := ?_ }
   intro a
-  have hres' : lg37_residueHat v αhat
+  have hres' : lg37ResidueHat v αhat
       = residueFieldAdjoinRootEquiv v hint htop (AdjoinRoot.root (minpoly K ᾱ)) :=
     hres.trans (residueFieldAdjoinRootEquiv_root v hint htop).symm
-  have hkey : (mp72a102_t2_residueHatAlgHom v).comp
-        (AdjoinRoot.liftAlgHom (minpoly K ᾱ) (Algebra.ofId K (lg37_completion v)) αhat hroot')
+  have hkey : (mp72a102T2ResidueHatAlgHom v).comp
+        (AdjoinRoot.liftAlgHom (minpoly K ᾱ) (Algebra.ofId K (lg37Completion v)) αhat hroot')
       = (residueFieldAdjoinRootEquiv v hint htop).toAlgHom := by
     refine AdjoinRoot.algHom_ext ?_
     rw [AlgHom.comp_apply, AdjoinRoot.liftAlgHom_root]
@@ -1165,9 +1202,9 @@ section Calculus
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 theorem mp72a103_t2_evalDepth_of_uniformizer_mul (v : Place K F) {n : ℕ}
-    {z : lg37_completion v}
+    {z : lg37Completion v}
     (h : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (n + 1)
-        (algebraMap v.toValuationSubring (lg37_completion v)
+        (algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring * z) = 0) :
     AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n z = 0 := by
   obtain ⟨w, hw⟩ := Ideal.Quotient.mk_surjective
@@ -1193,7 +1230,7 @@ theorem mp72a103_t2_lift_eq_zero_of_depth_one (v : Place K F)
     (S : Lg37CompletionSection v) {c : v.ResidueField}
     (h : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) 1 (S.lift c) = 0) :
     c = 0 := by
-  have hres : lg37_residueHat v (S.lift c) = lg37_residueHat v 0 :=
+  have hres : lg37ResidueHat v (S.lift c) = lg37ResidueHat v 0 :=
     mp72a102_t3_residueHat_congr_of_depth_one v (by rw [h, map_zero])
   rwa [S.residueHat_lift, map_zero] at hres
 
@@ -1202,7 +1239,7 @@ theorem mp72a103_t2_taylor_coeff_eq_zero_of_depth (v : Place K F)
     ∀ (n : ℕ) (a : ℕ → v.ResidueField),
       AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n
         (∑ i ∈ Finset.range n, S.lift (a i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i) = 0 →
       ∀ i < n, a i = 0 := by
   intro n
@@ -1211,11 +1248,11 @@ theorem mp72a103_t2_taylor_coeff_eq_zero_of_depth (v : Place K F)
   | succ n ih =>
     intro a h
     have hsplit : (∑ i ∈ Finset.range (n + 1), S.lift (a i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i)
-        = algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring
+        = algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring
             * (∑ i ∈ Finset.range n, S.lift (a (i + 1))
-              * algebraMap v.toValuationSubring (lg37_completion v)
+              * algebraMap v.toValuationSubring (lg37Completion v)
                   v.uniformizerSubring ^ i)
           + S.lift (a 0) := by
       rw [Finset.sum_range_succ', pow_zero, mul_one, Finset.mul_sum]
@@ -1224,13 +1261,13 @@ theorem mp72a103_t2_taylor_coeff_eq_zero_of_depth (v : Place K F)
     have hfac1 := mp72a102_t3_evalₐ_factor (maximalIdeal v.toValuationSubring)
       (show 1 ≤ n + 1 by omega)
       (∑ i ∈ Finset.range (n + 1), S.lift (a i)
-        * algebraMap v.toValuationSubring (lg37_completion v)
+        * algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring ^ i)
     rw [h, map_zero] at hfac1
     have hT1 : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) 1
-        (algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring
+        (algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring
           * (∑ i ∈ Finset.range n, S.lift (a (i + 1))
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i)) = 0 :=
       mp72a102_t3_evalₐ_succ_mul_eq_zero (maximalIdeal v.toValuationSubring)
         v.uniformizerSubring_mem_maximalIdeal
@@ -1243,7 +1280,7 @@ theorem mp72a103_t2_taylor_coeff_eq_zero_of_depth (v : Place K F)
     have ha0 : a 0 = 0 := mp72a103_t2_lift_eq_zero_of_depth_one v S h1
     have hT : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) n
         (∑ i ∈ Finset.range n, S.lift (a (i + 1))
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i) = 0 := by
       apply mp72a103_t2_evalDepth_of_uniformizer_mul v
       have h' := h
@@ -1276,23 +1313,23 @@ theorem maximalIdeal_fg (v : Place K F) :
 theorem isAdicComplete_map (v : Place K F) :
     IsAdicComplete
         ((maximalIdeal v.toValuationSubring).map
-          (algebraMap v.toValuationSubring (lg37_completion v)))
-        (lg37_completion v) :=
+          (algebraMap v.toValuationSubring (lg37Completion v)))
+        (lg37Completion v) :=
   mp72a102_t1_isAdicComplete_maximalIdealHat v
 
 theorem residueHat_surjective (v : Place K F) :
-    Function.Surjective (lg37_residueHat v) := fun y => by
+    Function.Surjective (lg37ResidueHat v) := fun y => by
   obtain ⟨x, hx⟩ := IsLocalRing.residue_surjective (R := v.toValuationSubring) y
-  exact ⟨algebraMap v.toValuationSubring (lg37_completion v) x,
+  exact ⟨algebraMap v.toValuationSubring (lg37Completion v) x,
     (lg37_residueHat_algebraMap v x).trans hx⟩
 
 theorem ker_residueHat (v : Place K F) :
-    RingHom.ker (lg37_residueHat v)
+    RingHom.ker (lg37ResidueHat v)
       = (maximalIdeal v.toValuationSubring).map
-          (algebraMap v.toValuationSubring (lg37_completion v)) := by
+          (algebraMap v.toValuationSubring (lg37Completion v)) := by
   apply le_antisymm
   · intro x hx
-    have hx0 : lg37_residueHat v x = 0 := RingHom.mem_ker.mp hx
+    have hx0 : lg37ResidueHat v x = 0 := RingHom.mem_ker.mp hx
     have htop : ((maximalIdeal v.toValuationSubring) ^ 1 • ⊤ :
         Ideal v.toValuationSubring) = (maximalIdeal v.toValuationSubring) ^ 1 := by
       ext a; simp
@@ -1316,7 +1353,7 @@ theorem ker_residueHat (v : Place K F) :
       (Ideal.quotientEquivAlgOfEq v.toValuationSubring htop).injective
         (h4.trans (map_zero _).symm)
     have h6 : x ∈ ((maximalIdeal v.toValuationSubring) ^ 1 • ⊤ :
-        Submodule v.toValuationSubring (lg37_completion v)) := by
+        Submodule v.toValuationSubring (lg37Completion v)) := by
       rw [AdicCompletion.pow_smul_top_eq_ker_eval (maximalIdeal_fg v)]
       exact LinearMap.mem_ker.mpr h3
     rw [pow_one, Ideal.smul_top_eq_map] at h6
@@ -1328,46 +1365,46 @@ theorem ker_residueHat (v : Place K F) :
 
 theorem map_isMaximal (v : Place K F) :
     ((maximalIdeal v.toValuationSubring).map
-        (algebraMap v.toValuationSubring (lg37_completion v))).IsMaximal := by
+        (algebraMap v.toValuationSubring (lg37Completion v))).IsMaximal := by
   rw [← ker_residueHat v]
   exact RingHom.ker_isMaximal_of_surjective _ (residueHat_surjective v)
 
 instance isLocalRing_completion (v : Place K F) :
-    IsLocalRing (lg37_completion v) := by
+    IsLocalRing (lg37Completion v) := by
   have := map_isMaximal v
   have := isAdicComplete_map v
   exact isLocalRing_of_isAdicComplete_maximal
     ((maximalIdeal v.toValuationSubring).map
-      (algebraMap v.toValuationSubring (lg37_completion v)))
+      (algebraMap v.toValuationSubring (lg37Completion v)))
 
 theorem ker_residueHat_eq_maximalIdeal (v : Place K F) :
-    RingHom.ker (lg37_residueHat v)
-      = maximalIdeal (lg37_completion v) := by
+    RingHom.ker (lg37ResidueHat v)
+      = maximalIdeal (lg37Completion v) := by
   rw [ker_residueHat v]
   exact (IsLocalRing.eq_maximalIdeal (map_isMaximal v))
 
 theorem hensel_unique (v : Place K F) {p : K[X]} (hsep : p.Separable)
-    {α β : lg37_completion v}
+    {α β : lg37Completion v}
     (hα : aeval α p = 0) (hβ : aeval β p = 0)
-    (hres : lg37_residueHat v α = lg37_residueHat v β) : α = β := by
+    (hres : lg37ResidueHat v α = lg37ResidueHat v β) : α = β := by
   have := isLocalRing_completion v
-  set f := p.map (algebraMap K (lg37_completion v)) with hf
+  set f := p.map (algebraMap K (lg37Completion v)) with hf
   have hevalα : f.eval α = 0 := by rw [hf, eval_map, ← aeval_def]; exact hα
   have hevalβ : f.eval β = 0 := by rw [hf, eval_map, ← aeval_def]; exact hβ
   set φ := (AdicCompletion.evalOneₐ (maximalIdeal v.toValuationSubring)).restrictScalars K
     with hφ
-  have hφeq : ∀ z, φ z = lg37_residueHat v z := fun z => rfl
-  have hsub0 : lg37_residueHat v (α - β) = 0 := by rw [map_sub, hres, sub_self]
-  have hmem : (α - β) ∈ maximalIdeal (lg37_completion v) := by
+  have hφeq : ∀ z, φ z = lg37ResidueHat v z := fun z => rfl
+  have hsub0 : lg37ResidueHat v (α - β) = 0 := by rw [map_sub, hres, sub_self]
+  have hmem : (α - β) ∈ maximalIdeal (lg37Completion v) := by
     rw [← ker_residueHat_eq_maximalIdeal v]; exact RingHom.mem_ker.mpr hsub0
   have hnu : ¬ IsUnit (α - β) := fun hu => notMem_maximalIdeal.mpr hu hmem
   have hfderiv : f.derivative.eval α = aeval α (derivative p) := by
     rw [hf, derivative_map, eval_map, ← aeval_def]
-  have hαroot : aeval (lg37_residueHat v α) p = 0 := by
+  have hαroot : aeval (lg37ResidueHat v α) p = 0 := by
     have h := Polynomial.aeval_algHom_apply φ α p
     rw [hφeq, hφeq, hα, map_zero] at h
     exact h
-  have hderivbar : aeval (lg37_residueHat v α) (derivative p) ≠ 0 :=
+  have hderivbar : aeval (lg37ResidueHat v α) (derivative p) ≠ 0 :=
     hsep.aeval_derivative_ne_zero hαroot
   have hunit : IsUnit (f.derivative.eval α) := by
     rw [← notMem_maximalIdeal, ← ker_residueHat_eq_maximalIdeal v, RingHom.mem_ker, hfderiv]
@@ -1403,13 +1440,15 @@ theorem section_unique (v : Place K F)
   have hb := DFunLike.congr_fun hcomp b
   simpa only [AlgHom.comp_apply, AlgEquiv.coe_toAlgHom] using hb
 
+/-- The chosen coefficient of degree `n` in the section-based uniformizer expansion of a
+completed integral element. -/
 noncomputable def aCoeff (v : Place K F) (S : Lg37CompletionSection v)
-    (n : ℕ) (x : lg37_completion v) : v.ResidueField :=
+    (n : ℕ) (x : lg37Completion v) : v.ResidueField :=
   (Classical.choose (mp72a102_t3_sigma_taylor_expansion v S (n + 1) x)) n
 
 theorem aCoeff_section_indep (v : Place K F)
     [FiniteDimensional K v.ResidueField] [Algebra.IsSeparable K v.ResidueField]
-    (S S' : Lg37CompletionSection v) (n : ℕ) (x : lg37_completion v) :
+    (S S' : Lg37CompletionSection v) (n : ℕ) (x : lg37Completion v) :
     aCoeff v S n x = aCoeff v S' n x := by
   have hlift : S.lift = S'.lift := section_unique v S S'
   have ha := Classical.choose_spec (mp72a102_t3_sigma_taylor_expansion v S (n + 1) x)
@@ -1418,21 +1457,21 @@ theorem aCoeff_section_indep (v : Place K F)
   set a' := Classical.choose (mp72a102_t3_sigma_taylor_expansion v S' (n + 1) x) with ha'_def
   have ha'' : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (n + 1)
       (x - ∑ i ∈ Finset.range (n + 1), S.lift (a' i)
-        * algebraMap v.toValuationSubring (lg37_completion v)
+        * algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring ^ i) = 0 := by
     simpa only [← hlift] using ha'
   have key : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (n + 1)
       (∑ i ∈ Finset.range (n + 1), S.lift ((fun i => a' i - a i) i)
-        * algebraMap v.toValuationSubring (lg37_completion v)
+        * algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring ^ i) = 0 := by
     have e1 : (∑ i ∈ Finset.range (n + 1), S.lift (a' i - a i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i)
         = (x - ∑ i ∈ Finset.range (n + 1), S.lift (a i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i)
           - (x - ∑ i ∈ Finset.range (n + 1), S.lift (a' i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i) := by
       rw [Finset.sum_congr rfl
         (fun i _ => by rw [map_sub, sub_mul]), Finset.sum_sub_distrib]
@@ -1455,19 +1494,19 @@ namespace ModularCurve.KwNo6Pin
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 theorem aCoeff_zero (v : Place K F) (S : Lg37CompletionSection v)
-    (x : lg37_completion v) :
-    aCoeff v S 0 x = lg37_residueHat v x := by
+    (x : lg37Completion v) :
+    aCoeff v S 0 x = lg37ResidueHat v x := by
   have ha := Classical.choose_spec (mp72a102_t3_sigma_taylor_expansion v S 1 x)
   set a := Classical.choose (mp72a102_t3_sigma_taylor_expansion v S 1 x) with ha_def
   rw [Finset.sum_range_one, pow_zero, mul_one] at ha
-  have hres : lg37_residueHat v (x - S.lift (a 0)) = lg37_residueHat v 0 :=
+  have hres : lg37ResidueHat v (x - S.lift (a 0)) = lg37ResidueHat v 0 :=
     mp72a102_t3_residueHat_congr_of_depth_one v (by rw [ha, map_zero])
   rw [map_sub, S.residueHat_lift, map_zero, sub_eq_zero] at hres
   simp only [aCoeff, ← ha_def]
   exact hres.symm
 
 theorem aCoeff_add (v : Place K F) (S : Lg37CompletionSection v) (m : ℕ)
-    (x y : lg37_completion v) :
+    (x y : lg37Completion v) :
     aCoeff v S m (x + y) = aCoeff v S m x + aCoeff v S m y := by
   have hx := Classical.choose_spec (mp72a102_t3_sigma_taylor_expansion v S (m + 1) x)
   have hy := Classical.choose_spec (mp72a102_t3_sigma_taylor_expansion v S (m + 1) y)
@@ -1478,16 +1517,16 @@ theorem aCoeff_add (v : Place K F) (S : Lg37CompletionSection v) (m : ℕ)
     with haxy_def
   have hsum : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (m + 1)
       ((x + y) - ∑ i ∈ Finset.range (m + 1), S.lift ((fun i => ax i + ay i) i)
-        * algebraMap v.toValuationSubring (lg37_completion v)
+        * algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring ^ i) = 0 := by
     have e : (x + y) - ∑ i ∈ Finset.range (m + 1), S.lift (ax i + ay i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i
         = (x - ∑ i ∈ Finset.range (m + 1), S.lift (ax i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i)
           + (y - ∑ i ∈ Finset.range (m + 1), S.lift (ay i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i) := by
       rw [Finset.sum_congr rfl (fun i _ => by rw [map_add, add_mul]),
         Finset.sum_add_distrib]
@@ -1495,16 +1534,16 @@ theorem aCoeff_add (v : Place K F) (S : Lg37CompletionSection v) (m : ℕ)
     rw [e, mp72a102_t3_evalDepth_add, hx, hy, add_zero]
   have key : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (m + 1)
       (∑ i ∈ Finset.range (m + 1), S.lift ((fun i => (ax i + ay i) - axy i) i)
-        * algebraMap v.toValuationSubring (lg37_completion v)
+        * algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring ^ i) = 0 := by
     have e1 : (∑ i ∈ Finset.range (m + 1), S.lift ((ax i + ay i) - axy i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i)
         = ((x + y) - ∑ i ∈ Finset.range (m + 1), S.lift (axy i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i)
           - ((x + y) - ∑ i ∈ Finset.range (m + 1), S.lift (ax i + ay i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i) := by
       rw [Finset.sum_congr rfl (fun i _ => by rw [map_sub, sub_mul]),
         Finset.sum_sub_distrib]
@@ -1517,53 +1556,53 @@ theorem aCoeff_add (v : Place K F) (S : Lg37CompletionSection v) (m : ℕ)
   exact han
 
 theorem aCoeff_smul (v : Place K F) (S : Lg37CompletionSection v) (m : ℕ) (c : K)
-    (x : lg37_completion v) :
-    aCoeff v S m (algebraMap K (lg37_completion v) c * x)
+    (x : lg37Completion v) :
+    aCoeff v S m (algebraMap K (lg37Completion v) c * x)
       = algebraMap K v.ResidueField c * aCoeff v S m x := by
   have hx := Classical.choose_spec (mp72a102_t3_sigma_taylor_expansion v S (m + 1) x)
   have hcx := Classical.choose_spec (mp72a102_t3_sigma_taylor_expansion v S (m + 1)
-    (algebraMap K (lg37_completion v) c * x))
+    (algebraMap K (lg37Completion v) c * x))
   set ax := Classical.choose (mp72a102_t3_sigma_taylor_expansion v S (m + 1) x) with hax_def
   set acx := Classical.choose (mp72a102_t3_sigma_taylor_expansion v S (m + 1)
-    (algebraMap K (lg37_completion v) c * x)) with hacx_def
+    (algebraMap K (lg37Completion v) c * x)) with hacx_def
   have hsmul : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (m + 1)
-      ((algebraMap K (lg37_completion v) c * x)
+      ((algebraMap K (lg37Completion v) c * x)
         - ∑ i ∈ Finset.range (m + 1),
             S.lift ((fun i => algebraMap K v.ResidueField c * ax i) i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i) = 0 := by
-    have e : (algebraMap K (lg37_completion v) c * x)
+    have e : (algebraMap K (lg37Completion v) c * x)
           - ∑ i ∈ Finset.range (m + 1), S.lift (algebraMap K v.ResidueField c * ax i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i
-        = algebraMap K (lg37_completion v) c
+        = algebraMap K (lg37Completion v) c
           * (x - ∑ i ∈ Finset.range (m + 1), S.lift (ax i)
-              * algebraMap v.toValuationSubring (lg37_completion v)
+              * algebraMap v.toValuationSubring (lg37Completion v)
                   v.uniformizerSubring ^ i) := by
       rw [mul_sub, Finset.mul_sum]
       congr 1
       refine Finset.sum_congr rfl (fun i _ => ?_)
       have hlift : S.lift (algebraMap K v.ResidueField c * ax i)
-          = algebraMap K (lg37_completion v) c * S.lift (ax i) := by
+          = algebraMap K (lg37Completion v) c * S.lift (ax i) := by
         rw [← Algebra.smul_def c (ax i), map_smul, Algebra.smul_def]
       rw [hlift, mul_assoc]
     rw [e, mp72a102_t3_evalDepth_mul, hx, mul_zero]
   have key : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (m + 1)
       (∑ i ∈ Finset.range (m + 1),
           S.lift ((fun i => algebraMap K v.ResidueField c * ax i - acx i) i)
-        * algebraMap v.toValuationSubring (lg37_completion v)
+        * algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring ^ i) = 0 := by
     have e1 : (∑ i ∈ Finset.range (m + 1),
             S.lift (algebraMap K v.ResidueField c * ax i - acx i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i)
-        = ((algebraMap K (lg37_completion v) c * x)
+        = ((algebraMap K (lg37Completion v) c * x)
             - ∑ i ∈ Finset.range (m + 1), S.lift (acx i)
-              * algebraMap v.toValuationSubring (lg37_completion v)
+              * algebraMap v.toValuationSubring (lg37Completion v)
                   v.uniformizerSubring ^ i)
-          - ((algebraMap K (lg37_completion v) c * x)
+          - ((algebraMap K (lg37Completion v) c * x)
             - ∑ i ∈ Finset.range (m + 1), S.lift (algebraMap K v.ResidueField c * ax i)
-              * algebraMap v.toValuationSubring (lg37_completion v)
+              * algebraMap v.toValuationSubring (lg37Completion v)
                   v.uniformizerSubring ^ i) := by
       rw [Finset.sum_congr rfl (fun i _ => by rw [map_sub, sub_mul]),
         Finset.sum_sub_distrib]
@@ -1576,33 +1615,33 @@ theorem aCoeff_smul (v : Place K F) (S : Lg37CompletionSection v) (m : ℕ) (c :
   exact han
 
 theorem aCoeff_shift (v : Place K F) (S : Lg37CompletionSection v) (n : ℕ)
-    (x : lg37_completion v) :
+    (x : lg37Completion v) :
     aCoeff v S (n + 1)
-        (algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring * x)
+        (algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring * x)
       = aCoeff v S n x := by
   have ha := Classical.choose_spec (mp72a102_t3_sigma_taylor_expansion v S (n + 1) x)
   have hpx := Classical.choose_spec (mp72a102_t3_sigma_taylor_expansion v S (n + 2)
-    (algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring * x))
+    (algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring * x))
   set a := Classical.choose (mp72a102_t3_sigma_taylor_expansion v S (n + 1) x) with ha_def
   set b := Classical.choose (mp72a102_t3_sigma_taylor_expansion v S (n + 2)
-    (algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring * x))
+    (algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring * x))
     with hb_def
   set c : ℕ → v.ResidueField :=
     fun i => Nat.rec (motive := fun _ => v.ResidueField) 0 (fun j _ => a j) i with hc_def
   have hshift : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (n + 2)
-      ((algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring * x)
+      ((algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring * x)
         - ∑ i ∈ Finset.range (n + 2), S.lift (c i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i) = 0 := by
     have hmul := mp72a102_t3_evalₐ_succ_mul_eq_zero (maximalIdeal v.toValuationSubring)
       v.uniformizerSubring_mem_maximalIdeal ha
-    have e : (algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring * x)
+    have e : (algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring * x)
           - ∑ i ∈ Finset.range (n + 2), S.lift (c i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i
-        = algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring
+        = algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring
           * (x - ∑ i ∈ Finset.range (n + 1), S.lift (a i)
-              * algebraMap v.toValuationSubring (lg37_completion v)
+              * algebraMap v.toValuationSubring (lg37Completion v)
                   v.uniformizerSubring ^ i) := by
       have hc0 : c 0 = 0 := rfl
       have hcs : ∀ i, c (i + 1) = a i := fun _ => rfl
@@ -1615,18 +1654,18 @@ theorem aCoeff_shift (v : Place K F) (S : Lg37CompletionSection v) (n : ℕ)
     exact hmul
   have key : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (n + 2)
       (∑ i ∈ Finset.range (n + 2), S.lift ((fun i => c i - b i) i)
-        * algebraMap v.toValuationSubring (lg37_completion v)
+        * algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring ^ i) = 0 := by
     have e1 : (∑ i ∈ Finset.range (n + 2), S.lift (c i - b i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i)
-        = ((algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring * x)
+        = ((algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring * x)
             - ∑ i ∈ Finset.range (n + 2), S.lift (b i)
-              * algebraMap v.toValuationSubring (lg37_completion v)
+              * algebraMap v.toValuationSubring (lg37Completion v)
                   v.uniformizerSubring ^ i)
-          - ((algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring * x)
+          - ((algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring * x)
             - ∑ i ∈ Finset.range (n + 2), S.lift (c i)
-              * algebraMap v.toValuationSubring (lg37_completion v)
+              * algebraMap v.toValuationSubring (lg37Completion v)
                   v.uniformizerSubring ^ i) := by
       rw [Finset.sum_congr rfl (fun i _ => by rw [map_sub, sub_mul]),
         Finset.sum_sub_distrib]
@@ -1643,18 +1682,18 @@ theorem aCoeff_shift (v : Place K F) (S : Lg37CompletionSection v) (n : ℕ)
   exact hbn
 
 theorem aCoeff_shift_pow (v : Place K F) (S : Lg37CompletionSection v) (n k : ℕ)
-    (x : lg37_completion v) :
+    (x : lg37Completion v) :
     aCoeff v S (n + k)
-        ((algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring) ^ k
+        ((algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring) ^ k
           * x)
       = aCoeff v S n x := by
   induction k with
   | zero => simp
   | succ k ih =>
-    have hstep : (algebraMap v.toValuationSubring (lg37_completion v)
+    have hstep : (algebraMap v.toValuationSubring (lg37Completion v)
           v.uniformizerSubring) ^ (k + 1) * x
-        = algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring
-          * ((algebraMap v.toValuationSubring (lg37_completion v)
+        = algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring
+          * ((algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring) ^ k * x) := by
       rw [pow_succ]; ring
     rw [show n + (k + 1) = (n + k) + 1 from by omega, hstep, aCoeff_shift, ih]
@@ -1665,29 +1704,29 @@ theorem aCoeff_one_eq_zero (v : Place K F) (S : Lg37CompletionSection v)
   set cc := Classical.choose (mp72a102_t3_sigma_taylor_expansion v S (n + 1) 1) with hcc_def
   set e : ℕ → v.ResidueField := fun i => if i = 0 then 1 else 0 with he_def
   have hesum : (∑ i ∈ Finset.range (n + 1), S.lift (e i)
-      * algebraMap v.toValuationSubring (lg37_completion v)
+      * algebraMap v.toValuationSubring (lg37Completion v)
           v.uniformizerSubring ^ i) = 1 := by
     rw [Finset.sum_eq_single 0]
     · simp [he_def]
     · intro i _ hi; simp [he_def, hi]
     · intro h; exact absurd (Finset.mem_range.mpr (by omega)) h
   have hevalid : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (n + 1)
-      ((1 : lg37_completion v) - ∑ i ∈ Finset.range (n + 1), S.lift (e i)
-        * algebraMap v.toValuationSubring (lg37_completion v)
+      ((1 : lg37Completion v) - ∑ i ∈ Finset.range (n + 1), S.lift (e i)
+        * algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring ^ i) = 0 := by
     rw [hesum, sub_self, map_zero]
   have key : AdicCompletion.evalₐ (maximalIdeal v.toValuationSubring) (n + 1)
       (∑ i ∈ Finset.range (n + 1), S.lift ((fun i => e i - cc i) i)
-        * algebraMap v.toValuationSubring (lg37_completion v)
+        * algebraMap v.toValuationSubring (lg37Completion v)
             v.uniformizerSubring ^ i) = 0 := by
     have e1 : (∑ i ∈ Finset.range (n + 1), S.lift (e i - cc i)
-          * algebraMap v.toValuationSubring (lg37_completion v)
+          * algebraMap v.toValuationSubring (lg37Completion v)
               v.uniformizerSubring ^ i)
-        = ((1 : lg37_completion v) - ∑ i ∈ Finset.range (n + 1), S.lift (cc i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+        = ((1 : lg37Completion v) - ∑ i ∈ Finset.range (n + 1), S.lift (cc i)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i)
-          - ((1 : lg37_completion v) - ∑ i ∈ Finset.range (n + 1), S.lift (e i)
-            * algebraMap v.toValuationSubring (lg37_completion v)
+          - ((1 : lg37Completion v) - ∑ i ∈ Finset.range (n + 1), S.lift (e i)
+            * algebraMap v.toValuationSubring (lg37Completion v)
                 v.uniformizerSubring ^ i) := by
       rw [Finset.sum_congr rfl (fun i _ => by rw [map_sub, sub_mul]),
         Finset.sum_sub_distrib]
@@ -1711,11 +1750,15 @@ theorem clearPow_mem (v : Place K F) (f : F) {N : ℕ} (hN : (-v.ord f).toNat �
     have hNc : ((-v.ord f).toNat : ℤ) ≤ (N : ℤ) := by exact_mod_cast hN
     omega
 
+/-- The completed integral element obtained by multiplying the function by the uniformizer to
+power `N + 1`. -/
 noncomputable def clearedHat (v : Place K F) (f : F) {N : ℕ} (hN : (-v.ord f).toNat ≤ N) :
-    lg37_completion v :=
-  algebraMap v.toValuationSubring (lg37_completion v)
+    lg37Completion v :=
+  algebraMap v.toValuationSubring (lg37Completion v)
     ⟨v.uniformizer ^ (N + 1) * f, clearPow_mem v f hN⟩
 
+/-- Extract the coefficient of the simple pole by clearing poles and using the chosen completed
+coefficient-field section. -/
 noncomputable def resStar (v : Place K F) (S : Lg37CompletionSection v) (f : F) :
     v.ResidueField :=
   aCoeff v S ((-v.ord f).toNat) (clearedHat v f (le_refl _))
@@ -1760,12 +1803,13 @@ theorem resStar_smul (v : Place K F) (S : Lg37CompletionSection v) (c : K) (f : 
     Algebra.smul_def c (aCoeff v S N (clearedHat v f hf)), ← aCoeff_smul]
   congr 1
   unfold clearedHat
-  rw [IsScalarTower.algebraMap_apply K v.toValuationSubring (lg37_completion v) c, ← map_mul]
+  rw [IsScalarTower.algebraMap_apply K v.toValuationSubring (lg37Completion v) c, ← map_mul]
   congr 1
   apply Subtype.ext
   push_cast [v.coe_algebraMap, Algebra.smul_def]
   ring
 
+/-- The section-based simple-pole coefficient extraction as a linear map over the constant field. -/
 noncomputable def resStarₗ (v : Place K F) (S : Lg37CompletionSection v) :
     F →ₗ[K] v.ResidueField where
   toFun := resStar v S
@@ -1816,11 +1860,13 @@ theorem resStar_higherPoleMonomial (v : Place K F) (S : Lg37CompletionSection v)
     push_cast [v.coe_uniformizerSubring]
     rw [pow_succ, mul_right_comm, mul_inv_cancel₀ (v.uniformizer_pow_ne_zero (n + 1)), one_mul]
   rw [hfac]
-  have : algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring
-      = algebraMap v.toValuationSubring (lg37_completion v) v.uniformizerSubring * 1 := by
+  have : algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring
+      = algebraMap v.toValuationSubring (lg37Completion v) v.uniformizerSubring * 1 := by
     rw [mul_one]
   rw [this, aCoeff_shift, aCoeff_one_eq_zero v S hn]
 
+/-- Canonical local residue data obtained from coefficient extraction in the completed valuation
+ring. -/
 noncomputable def canonicalLocalResidueDataKStar (v : Place K F)
     (S : Lg37CompletionSection v) : v.CanonicalLocalResidueDataK where
   res := resStarₗ v S

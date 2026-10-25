@@ -573,7 +573,7 @@ def KwTensorFracIotaFinrankSeamGeneral : Prop :=
 
 def kw_isogenyEndDatumBaseChangeIotaGeneral (D : IsogenyEndDatum (W⁄F)) :
     (W⁄F').FunctionField →ₐ[F'] (W⁄F').FunctionField :=
-  let ψ := kw_functionFieldTensorFracEquivGeneral W F F'
+  let ψ := kwFunctionFieldTensorFracEquivGeneral W F F'
   { ψ.symm.toRingEquiv.toRingHom.comp
       ((kw_tensorFracIotaRingHomGeneral W F F' D).comp ψ.toRingEquiv.toRingHom) with
     commutes' := fun c => by
@@ -601,7 +601,7 @@ theorem kw_isogenyEndDatumBaseChangeAlong_of_isDomain_tensorGeneral
     (σ : F →ₐ[R₀] F') (N : ℕ) : KwIsogenyEndDatumBaseChangeAlongGeneral W F F' σ N := by
   classical
   intro ⟨D, hD⟩
-  let ψ := kw_functionFieldTensorFracEquivGeneral W F F'
+  let ψ := kwFunctionFieldTensorFracEquivGeneral W F F'
   let ιFr := kw_tensorFracIotaRingHomGeneral W F F' D
   obtain ⟨hfin_Fr, hdeg_Fr⟩ := hseam D
   have hcomm : ∀ x, ιFr (ψ x) = ψ (kw_isogenyEndDatumBaseChangeIotaGeneral W F F' D x) :=

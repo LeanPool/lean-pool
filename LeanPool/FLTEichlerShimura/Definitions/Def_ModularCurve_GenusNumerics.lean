@@ -63,10 +63,13 @@ particular for the small levels occurring after level lowering.
 
 namespace ModularCurve
 
+/-- The number of solutions of `x² + 1 = 0` modulo `N`. -/
 noncomputable def nuTwo (N : ℕ) : ℕ := Nat.card {x : ZMod N // x ^ 2 + 1 = 0}
 
+/-- The number of solutions of `x² + x + 1 = 0` modulo `N`. -/
 noncomputable def nuThree (N : ℕ) : ℕ := Nat.card {x : ZMod N // x ^ 2 + x + 1 = 0}
 
+/-- The cusp-counting sum `∑ d ∣ N, φ(gcd(d, N / d))`. -/
 def cuspCount (N : ℕ) : ℕ :=
   ∑ d ∈ N.divisors, Nat.totient (Nat.gcd d (N / d))
 
@@ -74,6 +77,8 @@ def cuspCount (N : ℕ) : ℕ :=
 lemma cuspCount_one : cuspCount 1 = 1 := by
   simp [cuspCount]
 
+/-- The rational expression `1 + ψ(N)/12 - ν₂(N)/4 - ν₃(N)/3 - cuspCount(N)/2` for the genus
+formula. -/
 noncomputable def genusFormula (N : ℕ) : ℚ :=
   1 + (dedekindPsi N : ℚ) / 12 - (nuTwo N : ℚ) / 4 - (nuThree N : ℚ) / 3
     - (cuspCount N : ℚ) / 2

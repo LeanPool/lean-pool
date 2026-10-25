@@ -62,9 +62,11 @@ the Frey–Serre–Ribet step.
 
 @[expose] public section publicSection
 
+/-- The integer submodule spanned by cusp forms with integral width-one q-expansion coefficients. -/
 def CuspForm.intLattice (N : ℕ) (k : ℤ) : Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N) k) :=
   Submodule.span ℤ {f | ∀ n : ℕ, ∃ m : ℤ, ModularFormClass.qCoeff f n = (m : ℂ)}
 
+/-- The complex span of the integral q-expansion lattice is the whole cusp-form space. -/
 def CuspForm.HasIntegralStructure (N : ℕ) (k : ℤ) : Prop :=
   Submodule.span ℂ ((CuspForm.intLattice N k : Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N)
     k)) :

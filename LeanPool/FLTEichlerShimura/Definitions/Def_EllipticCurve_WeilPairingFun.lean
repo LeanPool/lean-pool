@@ -67,6 +67,7 @@ variable {R : Type*} [Field R] (W : WeierstrassCurve R) (K : Type*) [Field K] [A
   [DecidableEq K]
 
 open Classical in
+/-- The coordinate-ring ideal of a nonzero point, with the unit ideal at infinity. -/
 noncomputable def placeIdeal (P : (W⁄K).Point) : Ideal (W⁄K).CoordinateRing :=
   if hP : P = 0 then ⊤ else (placeOf W K P hP).asIdeal
 
@@ -75,11 +76,14 @@ theorem placeIdeal_zero : placeIdeal W K 0 = ⊤ := dite_eq_left rfl
 theorem placeIdeal_of_ne_zero {P : (W⁄K).Point} (hP : P ≠ 0) :
     placeIdeal W K P = (placeOf W K P hP).asIdeal := dite_eq_right hP
 
+/-- The set of points mapped to `Q` by multiplication by the integer `n`. -/
 def fibSet (n : ℤ) (Q : (W⁄K).Point) : Set (W⁄K).Point := {P | n • P = Q}
 
 @[simp] theorem mem_fibSet {n : ℤ} {Q P : (W⁄K).Point} : P ∈ fibSet W K n Q ↔ n • P = Q := Iff.rfl
 
 open Classical in
+/-- The product of point ideals over the multiplication fiber, or the unit ideal if the fiber is
+infinite. -/
 noncomputable def fibIdeal (n : ℤ) (Q : (W⁄K).Point) : Ideal (W⁄K).CoordinateRing :=
   if h : (fibSet W K n Q).Finite then ∏ P ∈ h.toFinset, placeIdeal W K P else ⊤
 
@@ -88,6 +92,7 @@ theorem fibIdeal_eq {n : ℤ} {Q : (W⁄K).Point} (h : (fibSet W K n Q).Finite) 
   rw [fibIdeal, dite_eq_left h]
 
 open Classical in
+/-- A chosen generator of the fiber ideal when it is principal, and one otherwise. -/
 noncomputable def weilNum (n : ℤ) (T : (W⁄K).Point) : (W⁄K).CoordinateRing :=
   if h : (fibIdeal W K n T).IsPrincipal then @Submodule.IsPrincipal.generator _ _ _ _ _ _ h else 1
 
@@ -96,11 +101,13 @@ theorem span_weilNum {n : ℤ} {T : (W⁄K).Point} (h : (fibIdeal W K n T).IsPri
   rw [weilNum, dite_eq_left h]
   exact @Ideal.span_singleton_generator _ _ _ h
 
+/-- The ratio of fiber-ideal generators over `T` and over zero, as a function-field element. -/
 noncomputable def weilFun (n : ℤ) (T : (W⁄K).Point) : (W⁄K).FunctionField :=
   algebraMap _ (W⁄K).FunctionField (weilNum W K n T) / algebraMap _ (W⁄K).FunctionField (weilNum W K
     n 0)
 
 open Classical in
+/-- The unit scaling `weilFun n T` under translation by `S`, if one exists; otherwise one. -/
 noncomputable def weilPairing0 [IsAlgClosed K] [W.IsElliptic] (n : ℤ) (S T : (W⁄K).Point) : Kˣ :=
   if h : ∃ c : Kˣ, transEquiv W K S (weilFun W K n T) =
       algebraMap K (W⁄K).FunctionField (c : K) * weilFun W K n T

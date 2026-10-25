@@ -76,6 +76,7 @@ theorem nontrivial_valueGroup_inftyValuation :
   · rw [ne_eq, Units.ext_iff, Units.val_mk0, Units.val_one, RatFunc.inftyValuation.X]
     simp
 
+/-- The place at infinity of the rational function field. -/
 def placeInfty : Place K (RatFunc K) :=
   haveI := nontrivial_valueGroup_inftyValuation K
   { toValuationSubring := (RatFunc.inftyValuation K).valuationSubring

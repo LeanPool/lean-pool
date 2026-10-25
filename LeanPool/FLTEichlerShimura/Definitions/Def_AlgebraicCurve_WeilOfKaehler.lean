@@ -135,6 +135,8 @@ variable [HasCanonicalDivisor (K := K) (F := F)] [∀ v : Place K F, v.DCoordGen
   [Nontrivial Ω[F⁄K]]
 
 variable (K F) in
+/-- The functional on divisor-bounded families obtained by summing the traced residues against a
+nonzero Kähler differential. -/
 def weilOfKaehler {ω : Ω[F⁄K]} (hω : ω ≠ 0) : Module.Dual K (adeleSpace K F) where
   toFun α := ∑ᶠ v, kaehlerResidueTerm ω (α : Place K F → F) v
   map_add' α β := by
@@ -166,16 +168,21 @@ theorem weilOfKaehler_vanish_adeleBdd_canonical {ω : Ω[F⁄K]} (hω : ω ≠ 0
 
 variable (K F)
 
+/-- The functional obtained by summing residues vanishes on each diagonal global function. -/
 def ResidueTheorem : Prop :=
   ∀ [HasPrincipalDivisors K F] {ω : Ω[F⁄K]} (hω : ω ≠ 0) (f : F),
     weilOfKaehler K F hω ⟨diagonalHom K F f, diagonal_mem_adeleSpace f⟩ = 0
 
+/-- A nonzero Kähler differential gives a nonzero Weil functional whose greatest bounding divisor
+is its canonical divisor. -/
 def WeilKaehlerAgree : Prop :=
   ∀ [HasPrincipalDivisors K F] {ω : Ω[F⁄K]} (hω : ω ≠ 0),
     weilOfKaehler K F hω ≠ 0 ∧
     weilOfKaehler K F hω ∈ omegaSpace (canonicalDivisorOf hω) ∧
     ∀ D : Divisor K F, weilOfKaehler K F hω ∈ omegaSpace D → D ≤ canonicalDivisorOf hω
 
+/-- Multiplication by a nonzero Weil functional with maximal bounding divisor maps `L(W - D)`
+onto the annihilator space for `D`. -/
 def ResiduePairingSurjective : Prop :=
   ∀ [HasPrincipalDivisors K F] (W D : Divisor K F)
     {φ : Module.Dual K (adeleSpace K F)} (hφ : φ ∈ omegaSpace W) (_hφ0 : φ ≠ 0)

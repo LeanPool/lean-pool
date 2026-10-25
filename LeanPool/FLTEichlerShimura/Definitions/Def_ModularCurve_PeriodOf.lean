@@ -96,6 +96,7 @@ section Period
 
 variable (Γ : Subgroup SL(2, ℤ))
 
+/-- The straight-segment period integrand for a weight-two cusp form on the specified subgroup. -/
 def periodIntegrandOf (τ₀ τ₁ : ℍ) (f : CuspForm Γ 2) (t : ℝ) : ℂ :=
   f (segmentPath τ₀ τ₁ t) * ((τ₁ : ℂ) - τ₀)
 
@@ -118,6 +119,8 @@ theorem periodIntegrandOf_smul (τ₀ τ₁ : ℍ) (c : ℂ) (f : CuspForm Γ 2)
   funext t
   simp [periodIntegrandOf, mul_assoc]
 
+/-- The linear functional integrating a weight-two cusp form for the specified subgroup along a
+straight segment. -/
 def periodAlongOf (τ₀ τ₁ : ℍ) : Module.Dual ℂ (CuspForm Γ 2) where
   toFun f := ∫ t in (0 : ℝ)..1, periodIntegrandOf Γ τ₀ τ₁ f t
   map_add' f g := by
@@ -132,6 +135,7 @@ theorem periodAlongOf_apply (τ₀ τ₁ : ℍ) (f : CuspForm Γ 2) :
     periodAlongOf Γ τ₀ τ₁ f = ∫ t in (0 : ℝ)..1, f (segmentPath τ₀ τ₁ t) * ((τ₁ : ℂ) - τ₀) :=
   rfl
 
+/-- The period functional from `I` to its translate by the element of the specified subgroup. -/
 def periodOf (γ : Γ) : Module.Dual ℂ (CuspForm Γ 2) :=
   periodAlongOf Γ UpperHalfPlane.I ((γ : SL(2, ℤ)) • UpperHalfPlane.I)
 
@@ -141,12 +145,15 @@ theorem periodOf_apply (γ : Γ) (f : CuspForm Γ 2) :
         ((((γ : SL(2, ℤ)) • UpperHalfPlane.I : ℍ) : ℂ) - (UpperHalfPlane.I : ℂ)) :=
   rfl
 
+/-- The integer span of period functionals for the specified subgroup. -/
 def periodLatticeOf : Submodule ℤ (Module.Dual ℂ (CuspForm Γ 2)) :=
   Submodule.span ℤ (Set.range (periodOf Γ))
 
 theorem periodOf_mem_periodLatticeOf (γ : Γ) : periodOf Γ γ ∈ periodLatticeOf Γ :=
   Submodule.subset_span (Set.mem_range_self γ)
 
+/-- The function is a primitive of the cusp form, has constant group-equivariance defects,
+vanishes at infinity, and has finite limits at every cusp. -/
 def HasEquivariantPrimitiveOf (f : CuspForm Γ 2) (F : ℍ → ℂ) : Prop :=
   (∀ τ : ℍ, HasDerivAt (F ∘ ofComplex) (f τ) ↑τ) ∧
     Tendsto F atImInfty (𝓝 0) ∧
@@ -154,6 +161,8 @@ def HasEquivariantPrimitiveOf (f : CuspForm Γ 2) (F : ℍ → ℂ) : Prop :=
     ∀ δ : SL(2, ℤ), ∃ L : ℂ, Tendsto (fun w : ℍ => F (δ • w)) atImInfty (𝓝 L)
 
 open Classical in
+/-- The period homomorphism of a chosen equivariant primitive satisfying the cusp conditions, or
+zero if no such primitive exists. -/
 def periodMapOf (f : CuspForm Γ 2) : Additive Γ →+ ℂ :=
   if h : ∃ F : ℍ → ℂ, HasEquivariantPrimitiveOf Γ f F then h.choose_spec.2.2.1.periodHom else 0
 
@@ -188,10 +197,14 @@ namespace CuspForm
 
 variable (Γ : Subgroup SL(2, ℤ)) {k : ℤ}
 
+/-- The Petersson integrand summed over cosets of the specified subgroup in the full modular
+group. -/
 def peterssonIntegrandOf (f g : CuspForm Γ k) (τ : UpperHalfPlane) : ℂ :=
   ∑ᶠ q : SL(2, ℤ) ⧸ Γ,
     UpperHalfPlane.petersson k (⇑f ∣[k] (q.out⁻¹ : SL(2, ℤ))) (⇑g ∣[k] (q.out⁻¹ : SL(2, ℤ))) τ
 
+/-- The Petersson pairing obtained by integrating the coset-summed integrand over the standard
+modular fundamental domain. -/
 def peterssonOf (f g : CuspForm Γ k) : ℂ :=
   MeasureTheory.integral (MeasureTheory.volume.restrict ModularGroup.fd) (peterssonIntegrandOf Γ f
     g)

@@ -116,6 +116,8 @@ private theorem algebraMap_mul_eq_smul (c : L) (y : LaurentSeries L) :
 variable [Algebra ℚ L]
 variable (F₀ : IntermediateField ℚ (LaurentSeries ℚ))
 
+/-- The rational algebra map from `L ⊗[ℚ] F₀` to Laurent series, sending `c ⊗ f` to `c * coeffEmb
+f`. -/
 def baseChangeRatAlgHom : L ⊗[ℚ] F₀ →ₐ[ℚ] LaurentSeries L :=
   Algebra.TensorProduct.productMap (algebraMap L (LaurentSeries L)).toRatAlgHom
     ((coeffEmb L).comp (F₀.val : F₀ →+* LaurentSeries ℚ)).toRatAlgHom
@@ -125,6 +127,8 @@ theorem baseChangeRatAlgHom_tmul (c : L) (f : F₀) :
       algebraMap L (LaurentSeries L) c * coeffEmb L (f : LaurentSeries ℚ) :=
   Algebra.TensorProduct.productMap_apply_tmul _ _ c f
 
+/-- The `L`-algebra map realizing scalar extension of a rational Laurent-series field inside
+`LaurentSeries L`. -/
 def baseChangeHom : L ⊗[ℚ] F₀ →ₐ[L] LaurentSeries L :=
   { baseChangeRatAlgHom L F₀ with
     commutes' := fun c => by
@@ -215,6 +219,8 @@ theorem exists_baseChangeHom_eq {y : LaurentSeries L} (hy : y ∈ laurentBaseCha
     exact ⟨(1 : L) ⊗ₜ ⟨f, hf⟩, baseChangeHom_one_tmul L F₀ ⟨f, hf⟩⟩
   exact hle hy
 
+/-- The algebra equivalence between the tensor-product scalar extension and the Laurent-series
+base-change field. -/
 def baseChangeEquiv : L ⊗[ℚ] F₀ ≃ₐ[L] laurentBaseChange L F₀ :=
   AlgEquiv.ofBijective
     { toFun := fun x => ⟨baseChangeHom L F₀ x, baseChangeHom_mem L F₀ x⟩
@@ -248,6 +254,8 @@ theorem baseChangeEquiv_tmul (c : L) (f : F₀) :
         Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul],
     map_mul, AlgEquiv.commutes, baseChangeEquiv_one_tmul]
 
+/-- Extension of rational function-field automorphisms to automorphisms of the Laurent-series
+base change over `L`. -/
 def geomAut : (F₀ ≃ₐ[ℚ] F₀) →* (laurentBaseChange L F₀ ≃ₐ[L] laurentBaseChange L F₀) :=
   MonoidHom.mk'
     (fun σ => ((baseChangeEquiv L F₀).symm.trans

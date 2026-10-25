@@ -39,7 +39,7 @@ be an element such that $F$ is algebraic over the intermediate field $K(x) =$
 valuation subring of $F$ containing $\operatorname{algebraMap} K F(a)$ for every $a \in K$, distinct
 from $F$ itself, and whose ring is a principal ideal ring. For $f \in F$, $\operatorname{ord}_v f$
 denotes $-\log$ of the value of $f$ under the adic valuation of the associated height-one prime, an
-element of $\mathbb{Z}$; `uniformizer_alt` is a chosen $t \in F$ with $\operatorname{ord}_v t = 1$
+element of $\mathbb{Z}$; `uniformizerAlt` is a chosen $t \in F$ with $\operatorname{ord}_v t = 1$
 when such a $t$ exists and $0$ otherwise; for $t \in F$ and $\omega \in \Omega_{F/K}$,
 $\operatorname{diffCoeff} t\,\omega$ is a chosen $g \in F$ with $\omega = g \cdot D_{K/F}t$ when one
 exists and $0$ otherwise; and $\operatorname{ordDiff}_v \omega :=
@@ -84,10 +84,10 @@ variable [CharZero K] (x : F) [Algebra.IsAlgebraic (IntermediateField.adjoin K (
 include x in
 theorem ordDiff_smul (v : Place K F) {g : F} (hg : g ≠ 0) {ω : Ω[F⁄K]} (hω : ω ≠ 0) :
     v.ordDiff (g • ω) = v.ord g + v.ordDiff ω := by
-  have h1 : v.ord v.uniformizer_alt ≠ 0 := by
+  have h1 : v.ord v.uniformizerAlt ≠ 0 := by
     rw [v.ord_uniformizer_alt v.exists_ord_eq_one]; exact one_ne_zero
-  set a := Place.diffCoeff v.uniformizer_alt ω with ha
-  have hωa : a • D K F v.uniformizer_alt = ω := Place.diffCoeff_smul_D_of_ord_ne_zero x v h1 ω
+  set a := Place.diffCoeff v.uniformizerAlt ω with ha
+  have hωa : a • D K F v.uniformizerAlt = ω := Place.diffCoeff_smul_D_of_ord_ne_zero x v h1 ω
   have ha0 : a ≠ 0 := by
     intro h0; rw [h0, zero_smul] at hωa; exact hω hωa.symm
   rw [Place.ordDiff_def, Place.ordDiff_def, ← ha, ← hωa, smul_smul,

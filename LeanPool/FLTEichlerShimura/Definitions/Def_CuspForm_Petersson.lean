@@ -73,10 +73,13 @@ namespace CuspForm
 
 variable {N : ℕ} {k : ℤ}
 
+/-- The sum of Petersson integrands over cosets of the modular subgroup. -/
 def peterssonIntegrand (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k) (τ : UpperHalfPlane) : ℂ :=
   ∑ᶠ q : SL(2, ℤ) ⧸ CongruenceSubgroup.Gamma0 N,
     UpperHalfPlane.petersson k (⇑f ∣[k] (q.out⁻¹ : SL(2, ℤ))) (⇑g ∣[k] (q.out⁻¹ : SL(2, ℤ))) τ
 
+/-- The Petersson pairing, integrating the coset-summed integrand over the modular fundamental
+domain. -/
 def petersson (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k) : ℂ :=
   MeasureTheory.integral (MeasureTheory.volume.restrict ModularGroup.fd) (peterssonIntegrand f g)
 

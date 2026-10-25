@@ -77,9 +77,12 @@ section Pairs
 
 variable (N : ℕ) (L : Type*) [Field L] [DecidableEq L]
 
+/-- An elliptic curve with a chosen point of exact order equal to the level. -/
 structure Gamma0Pair where
+  /-- The elliptic curve underlying the level structure. -/
   toCurve : WeierstrassCurve L
   isElliptic : toCurve.IsElliptic
+  /-- The chosen generator of exact order equal to the level. -/
   gen : toCurve.toAffine.Point
   addOrderOf_gen : addOrderOf gen = N
 
@@ -87,13 +90,17 @@ attribute [instance] Gamma0Pair.isElliptic
 
 variable {N L}
 
+/-- An elementary identification by a Weierstrass change of variables and a coprime change of
+generator. -/
 def Gamma0Pair.Step (P Q : Gamma0Pair N L) : Prop :=
   ∃ γ : VariableChange L, ∃ _ : γ • P.toCurve = Q.toCurve, ∃ k : ℕ, k.Coprime N ∧
     HEq Q.gen (k • Point.vcInvFun γ P.toCurve.toAffine P.gen)
 
 variable (N L) in
+/-- The quotient of pairs by changes of variables and coprime changes of their torsion generator. -/
 def ModuliPoint : Type _ := Quot (Gamma0Pair.Step (N := N) (L := L))
 
+/-- The `j`-invariant of a moduli point, independent of its representative. -/
 noncomputable def ModuliPoint.j : ModuliPoint N L → L :=
   Quot.lift (fun P => P.toCurve.j) fun P Q h => by
     obtain ⟨γ, hγ, -⟩ := h
@@ -168,6 +175,7 @@ theorem ratPointMap_vcInvFun_heq (σ : L →+* L') (γ : VariableChange L) (V : 
 
 variable {N : ℕ}
 
+/-- Base change of an elliptic curve with its chosen level generator along a field homomorphism. -/
 def gamma0PairMap (σ : L →+* L') (P : Gamma0Pair N L) : Gamma0Pair N L' where
   toCurve := P.toCurve.map σ
   isElliptic := inferInstance
@@ -202,6 +210,7 @@ theorem gamma0PairStep_map (σ : L →+* L') {P Q : Gamma0Pair N L}
     exact Point.heq_nsmul (WeierstrassCurve.map_variableChange WP γ σ).symm k
       (ratPointMap_vcInvFun_heq σ γ WP gP)
 
+/-- The map on moduli points induced by base change along a field homomorphism. -/
 def moduliPointMapRingHom (σ : L →+* L') : ModuliPoint N L → ModuliPoint N L' :=
   Quot.lift (fun P => (Quot.mk _ (gamma0PairMap σ P) : ModuliPoint N L'))
     fun _ _ h => Quot.sound (gamma0PairStep_map σ h)

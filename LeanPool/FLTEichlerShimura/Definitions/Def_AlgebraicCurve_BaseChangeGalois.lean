@@ -73,6 +73,7 @@ namespace AlgebraicCurve
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
+/-- The group of compatible ring automorphisms of the function field and its constant field. -/
 def SemilinearAut : Subgroup (RingAut F × RingAut K) where
   carrier := {p | ∀ a : K, p.1 (algebraMap K F a) = algebraMap K F (p.2 a)}
   one_mem' _ := rfl
@@ -92,8 +93,10 @@ theorem mem_iff {p : RingAut F × RingAut K} :
     p ∈ SemilinearAut K F ↔ ∀ a : K, p.1 (algebraMap K F a) = algebraMap K F (p.2 a) :=
   Iff.rfl
 
+/-- The automorphism of the function field underlying a semilinear automorphism. -/
 def toRingAut (g : SemilinearAut K F) : F ≃+* F := g.val.1
 
+/-- The automorphism of the constant field underlying a semilinear automorphism. -/
 def baseAut (g : SemilinearAut K F) : K ≃+* K := g.val.2
 
 theorem commutes (g : SemilinearAut K F) (a : K) :
@@ -134,6 +137,7 @@ theorem smul_algebraMap (g : SemilinearAut K F) (a : K) :
     g • algebraMap K F a = algebraMap K F (baseAut g a) :=
   commutes g a
 
+/-- The inclusion of constant-field-linear automorphisms into semilinear automorphisms. -/
 def ofAlgAut : (F ≃ₐ[K] F) →* SemilinearAut K F where
   toFun σ := ⟨((σ : F ≃+* F), 1), fun a => by simp⟩
   map_one' := Subtype.ext (by ext <;> rfl)
@@ -162,6 +166,7 @@ theorem pointwise_smul_top : g • (⊤ : ValuationSubring F) = ⊤ := by
   simp only [ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem]
   exact ⟨fun _ => ValuationSubring.mem_top x, fun _ => ValuationSubring.mem_top _⟩
 
+/-- The valuation-ring equivalence induced by a semilinear automorphism. -/
 def smulValuationSubringEquiv (A : ValuationSubring F) :
     A ≃+* (g • A : ValuationSubring F) where
   toFun x := ⟨g • (x : F), ValuationSubring.smul_mem_pointwise_smul g (x : F) A x.2⟩
@@ -229,6 +234,7 @@ theorem ord_smul (f : F) : (g • v).ord (g • f) = v.ord f := by
   rw [show g • f = toRingAut g f from rfl, key,
     (g • v).ord_unit_smul_zpow hu'.unit hπ' n]
 
+/-- The residue-field ring equivalence induced by a semilinear automorphism. -/
 def smulResidueRingEquiv : v.ResidueField ≃+* (g • v).ResidueField :=
   IsLocalRing.ResidueField.mapEquiv (smulValuationSubringEquiv g v.toValuationSubring)
 
@@ -303,6 +309,7 @@ theorem smul_mem_principal (g : SemilinearAut K F) {D : Divisor K F}
   rw [smul_inv_smul] at h
   exact h.symm
 
+/-- The additive action of a semilinear automorphism on degree-zero divisors. -/
 def degZeroSMulHom (g : SemilinearAut K F) :
     Divisor.degZero (K := K) (F := F) →+ Divisor.degZero (K := K) (F := F) :=
   ((DistribSMul.toAddMonoidHom (Divisor K F) g).domRestrict
@@ -401,6 +408,7 @@ instance instSMulCommClassZModTorsion (n : ℕ) :
     ZMod.map_smul (DistribSMul.toAddMonoidHom (Pic0.torsion K F n) g) c x
 
 variable (K F) in
+/-- The representation of semilinear automorphisms on the `n`-torsion of `Pic0` over `ZMod n`. -/
 def torsionRep (n : ℕ) : SemilinearAut K F →* Module.End (ZMod n) (Pic0.torsion K F n) :=
   DistribMulAction.toModuleEnd (ZMod n) (Pic0.torsion K F n)
 

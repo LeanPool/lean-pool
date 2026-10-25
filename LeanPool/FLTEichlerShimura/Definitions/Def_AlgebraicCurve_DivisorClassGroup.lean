@@ -75,7 +75,10 @@ namespace AlgebraicCurve
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
+/-- A discrete valuation ring in `F`, containing the constants `K`, represented by its valuation
+subring. -/
 structure Place where
+  /-- The valuation subring defining the place. -/
   toValuationSubring : ValuationSubring F
   algebraMap_mem' : ∀ a : K, algebraMap K F a ∈ toValuationSubring
   ne_top' : toValuationSubring ≠ ⊤
@@ -132,13 +135,17 @@ theorem coe_algebraMap (a : K) :
 instance : IsScalarTower K v.toValuationSubring F :=
   IsScalarTower.of_algebraMap_eq fun a => (v.coe_algebraMap a).symm
 
+/-- The residue field of the valuation ring at a place. -/
 abbrev ResidueField : Type _ := IsLocalRing.ResidueField v.toValuationSubring
 
+/-- The residue field degree over the constants, with `finrank`'s value zero for infinite degree. -/
 def deg : ℕ := Module.finrank K v.ResidueField
 
+/-- The residue field at this place is finite-dimensional over the constants. -/
 class FiniteResidue : Prop where
   finite : Module.Finite K v.ResidueField
 
+/-- The maximal ideal of the valuation ring, viewed as a height-one prime. -/
 def heightOneSpectrum : HeightOneSpectrum v.toValuationSubring :=
   IsDiscreteValuationRing.maximalIdeal _
 
@@ -146,6 +153,7 @@ def heightOneSpectrum : HeightOneSpectrum v.toValuationSubring :=
 theorem heightOneSpectrum_asIdeal :
     v.heightOneSpectrum.asIdeal = IsLocalRing.maximalIdeal v.toValuationSubring := rfl
 
+/-- The multiplicative integer-valued valuation associated to the place. -/
 def adicValuation : Valuation F ℤᵐ⁰ := v.heightOneSpectrum.valuation F
 
 theorem adicValuation_ne_zero {f : F} (hf : f ≠ 0) : v.adicValuation f ≠ 0 :=
@@ -166,6 +174,7 @@ theorem adicValuation_coe_irreducible {π : v.toValuationSubring} (hπ : Irreduc
   exact HeightOneSpectrum.intValuation_singleton _ hπ.ne_zero
     (by rw [heightOneSpectrum_asIdeal, hπ.maximalIdeal_eq])
 
+/-- The order at the place, with the convention `ord 0 = 0`. -/
 def ord (f : F) : ℤ := -(WithZero.log (v.adicValuation f))
 
 @[simp]
@@ -225,12 +234,14 @@ theorem exists_unit_mul_zpow {f : F} (hf : f ≠ 0) {π : v.toValuationSubring}
 
 end Place
 
+/-- A finitely supported integer-valued function on the places of `F` over `K`. -/
 abbrev Divisor : Type _ := Place K F →₀ ℤ
 
 namespace Divisor
 
 variable {K F}
 
+/-- The degree homomorphism, weighting each coefficient by the residue field degree. -/
 def degree : Divisor K F →+ ℤ :=
   Finsupp.liftAddHom fun v => AddMonoidHom.mulRight (v.deg : ℤ)
 
@@ -239,13 +250,16 @@ theorem degree_single (v : Place K F) (n : ℤ) :
     degree (Finsupp.single v n) = n * v.deg := by
   simp [degree]
 
+/-- The subgroup of divisors of degree zero. -/
 def degZero : AddSubgroup (Divisor K F) := degree.ker
 
 theorem mem_degZero {D : Divisor K F} : D ∈ degZero (K := K) (F := F) ↔ degree D = 0 :=
   Iff.rfl
 
+/-- A divisor is principal if its coefficients are the orders of a nonzero function. -/
 def IsPrincipal (D : Divisor K F) : Prop := ∃ f : F, f ≠ 0 ∧ ∀ v : Place K F, D v = v.ord f
 
+/-- The subgroup of principal divisors. -/
 def principal : AddSubgroup (Divisor K F) where
   carrier := {D | IsPrincipal D}
   zero_mem' := ⟨1, one_ne_zero, fun v => by simp⟩
@@ -263,12 +277,15 @@ theorem mem_principal {D : Divisor K F} :
 
 end Divisor
 
+/-- Every nonzero function has a finitely supported divisor of degree zero. -/
 class HasPrincipalDivisors : Prop where
   exists_divisor : ∀ f : F, f ≠ 0 → ∃ D : Divisor K F,
     (∀ v : Place K F, D v = v.ord f) ∧ Divisor.degree D = 0
 
+/-- The divisor class group: divisors modulo principal divisors. -/
 abbrev Pic : Type _ := Divisor K F ⧸ Divisor.principal (K := K) (F := F)
 
+/-- The group of degree-zero divisors modulo principal divisors of degree zero. -/
 abbrev Pic0 : Type _ :=
   Divisor.degZero (K := K) (F := F) ⧸
     (Divisor.principal (K := K) (F := F)).addSubgroupOf (Divisor.degZero (K := K) (F := F))
@@ -277,6 +294,7 @@ namespace Pic0
 
 variable {K F}
 
+/-- The class of a degree-zero divisor in `Pic0`. -/
 def mk (D : Divisor.degZero (K := K) (F := F)) : Pic0 K F := QuotientAddGroup.mk D
 
 theorem mk_surjective : Function.Surjective (mk (K := K) (F := F)) :=
@@ -289,6 +307,7 @@ theorem mk_add (D E : Divisor.degZero (K := K) (F := F)) : mk (D + E) = mk D + m
 theorem mk_zero : mk (0 : Divisor.degZero (K := K) (F := F)) = 0 := rfl
 
 variable (K F) in
+/-- The subgroup of `Pic0` annihilated by multiplication by `n`. -/
 def torsion (n : ℕ) : AddSubgroup (Pic0 K F) :=
   (Submodule.torsionBy ℤ (Pic0 K F) (n : ℤ)).toAddSubgroup
 
@@ -297,6 +316,7 @@ theorem mem_torsion {n : ℕ} {x : Pic0 K F} : x ∈ torsion K F n ↔ (n : ℤ)
 
 end Pic0
 
+/-- The cardinality formula `p ^ (2 * g * n)` for the `p ^ n`-torsion of `Pic0`. -/
 def AbelJacobiCard (p : ℕ) (g : ℕ) : Prop :=
   ∀ n : ℕ, Nat.card (Pic0.torsion K F (p ^ n)) = p ^ (2 * g * n)
 
@@ -307,6 +327,7 @@ open scoped Pointwise
 variable {K F}
 variable (σ : F ≃ₐ[K] F)
 
+/-- The equivalence of valuation rings induced by an automorphism of the function field. -/
 def smulRingEquiv (A : ValuationSubring F) : A ≃+* (σ • A : ValuationSubring F) where
   toFun x := ⟨σ x, by
     simpa [AlgEquiv.smul_def] using
@@ -378,6 +399,7 @@ theorem ord_smul (f : F) : (σ • v).ord (σ f) = v.ord f := by
     rw [hcoeu, hcoeπ, hu, map_mul, map_zpow₀]
   rw [key, (σ • v).ord_unit_smul_zpow hu'.unit hπ' n]
 
+/-- The residue field equivalence induced by an automorphism of the function field. -/
 def smulResidueAlgEquiv : v.ResidueField ≃ₐ[K] (σ • v).ResidueField :=
   AlgEquiv.ofRingEquiv (f := IsLocalRing.ResidueField.mapEquiv
       (smulRingEquiv σ v.toValuationSubring)) <| fun a => by
@@ -448,6 +470,7 @@ open scoped Pointwise
 
 variable {K F}
 
+/-- The action of function-field automorphisms on degree-zero divisors. -/
 def degZeroSMulHom (σ : F ≃ₐ[K] F) :
     Divisor.degZero (K := K) (F := F) →+ Divisor.degZero (K := K) (F := F) :=
   ((DistribSMul.toAddMonoidHom (Divisor K F) σ).domRestrict
@@ -502,6 +525,7 @@ theorem isPrincipalIdealRing_valuationSubring (w : HeightOneSpectrum R) :
   infer_instance
 
 open IsDedekindDomain.HeightOneSpectrum in
+/-- The place determined by a height-one prime of a Dedekind domain in its fraction field. -/
 def ofHeightOneSpectrum [Algebra K R] [IsScalarTower K R F] (w : HeightOneSpectrum R) :
     Place K F where
   toValuationSubring := (w.valuation F).valuationSubring

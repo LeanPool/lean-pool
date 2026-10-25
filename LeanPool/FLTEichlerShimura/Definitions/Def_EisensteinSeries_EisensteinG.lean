@@ -60,6 +60,7 @@ part of the development.
 
 namespace EisensteinSeries
 
+/-- The Eisenstein sum over lattice vectors in the prescribed residue class modulo `N`. -/
 noncomputable def eisensteinG (N : ℕ) (k : ℤ) (a : Fin 2 → ZMod N) (z : UpperHalfPlane) : ℂ :=
   ∑' v : {v : Fin 2 → ℤ // ((↑) : ℤ → ZMod N) ∘ v = a}, eisSummand k v.1 z
 

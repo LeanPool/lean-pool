@@ -63,6 +63,7 @@ namespace HahnSeries
 
 variable {K : Type*} [Field K]
 
+/-- The additive map sending an integral exponent `k` to the rational exponent `k / e`. -/
 def ramScale (e : ℕ) : ℤ →+ ℚ where
   toFun k := (k : ℚ) / e
   map_zero' := by simp
@@ -81,13 +82,16 @@ theorem ramScale_le_iff {e : ℕ} (he : 0 < e) (a b : ℤ) :
   have he' : (0 : ℚ) < e := Nat.cast_pos.mpr he
   simp only [ramScale_apply, div_le_div_iff_of_pos_right he', Int.cast_le]
 
+/-- The Hahn-series embedding replacing each integral exponent `k` by `k / e`. -/
 def puiseuxRamEmb {e : ℕ} (he : 0 < e) : HahnSeries ℤ K →+* HahnSeries ℚ K :=
   HahnSeries.embDomainRingHom (ramScale e) (ramScale_injective he) (ramScale_le_iff he)
 
+/-- Every exponent in the support belongs to `(1 / e)ℤ`. -/
 def HasRamBound (e : ℕ) (y : HahnSeries ℚ K) : Prop :=
   y.support ⊆ Set.range (fun k : ℤ => (k : ℚ) / e)
 
 variable (K) in
+/-- The subfield of rational-exponent Hahn series obtained by the embedding `puiseuxRamEmb`. -/
 def puiseuxRamSubfield {e : ℕ} (he : 0 < e) : Subfield (HahnSeries ℚ K) :=
   (puiseuxRamEmb (K := K) he).fieldRange
 

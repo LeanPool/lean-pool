@@ -484,7 +484,7 @@ variable {E E' : Affine K} [E.IsElliptic] [GenusOnePlaceGate E] [AbelTheorem E]
 variable (ι : E'.FunctionField →ₐ[K] E.FunctionField)
 variable (hι : ι.toRingHom.IsIntegral) (hfin : FiniteAlong K ι) (hN : NormFormulaAlong K ι hfin)
 
-local notation "gBC" => kw_fdn2_qephod_hend7_geomMorphBC ι hι
+local notation "gBC" => kwFdn2QephodHend7GeomMorphBC ι hι
 
 def kw_fdn2_qephod_hend7_restrictAlong_fiber_equiv_pmop_fiber
     (v : Place K E'.FunctionField) :

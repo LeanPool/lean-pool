@@ -90,10 +90,10 @@ variable [CharZero K] (x : F) [Algebra.IsAlgebraic (IntermediateField.adjoin K (
 include x in
 theorem ordDiff_smul (v : Place K F) {g : F} (hg : g ≠ 0) {ω : Ω[F⁄K]} (hω : ω ≠ 0) :
     v.ordDiff (g • ω) = v.ord g + v.ordDiff ω := by
-  have h1 : v.ord v.uniformizer_alt ≠ 0 := by
+  have h1 : v.ord v.uniformizerAlt ≠ 0 := by
     rw [v.ord_uniformizer_alt v.exists_ord_eq_one]; exact one_ne_zero
-  set a := Place.diffCoeff v.uniformizer_alt ω with ha
-  have hωa : a • D K F v.uniformizer_alt = ω := Place.diffCoeff_smul_D_of_ord_ne_zero x v h1 ω
+  set a := Place.diffCoeff v.uniformizerAlt ω with ha
+  have hωa : a • D K F v.uniformizerAlt = ω := Place.diffCoeff_smul_D_of_ord_ne_zero x v h1 ω
   have ha0 : a ≠ 0 := by
     intro h0; rw [h0, zero_smul] at hωa; exact hω hωa.symm
   rw [Place.ordDiff_def, Place.ordDiff_def, ← ha, ← hωa, smul_smul,
@@ -128,12 +128,12 @@ include x in
 theorem ordDiff_eq_ord_diffCoeff (v : Place K F) {t : F} (ht : v.ord t = 1) (ω : Ω[F⁄K]) :
     v.ordDiff ω = v.ord (Place.diffCoeff t ω) := by
   have ht0 : v.ord t ≠ 0 := by rw [ht]; exact one_ne_zero
-  have hu : v.ord v.uniformizer_alt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
-  have hu0 : v.ord v.uniformizer_alt ≠ 0 := by rw [hu]; exact one_ne_zero
+  have hu : v.ord v.uniformizerAlt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
+  have hu0 : v.ord v.uniformizerAlt ≠ 0 := by rw [hu]; exact one_ne_zero
   set a := Place.diffCoeff t ω with ha
-  set c := Place.diffCoeff v.uniformizer_alt (D K F t) with hc
+  set c := Place.diffCoeff v.uniformizerAlt (D K F t) with hc
   have hω : a • D K F t = ω := Place.diffCoeff_smul_D_of_ord_ne_zero x v ht0 ω
-  have hDt : c • D K F v.uniformizer_alt = D K F t :=
+  have hDt : c • D K F v.uniformizerAlt = D K F t :=
     Place.diffCoeff_smul_D_of_ord_ne_zero x v hu0 _
   have hc0 : c ≠ 0 := by
     rintro h; rw [h, zero_smul] at hDt; exact Place.D_ne_zero_of_ord_ne_zero x v ht0 hDt.symm

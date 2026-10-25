@@ -74,6 +74,8 @@ section FibrePoly
 
 variable {k : Type*} [Field k]
 
+/-- The polynomial in the second variable obtained by evaluating the first variable of the
+modular polynomial. -/
 def fibrePoly (Φ : Polynomial (Polynomial ℤ)) (a : k) : Polynomial k :=
   Φ.map (Polynomial.eval₂RingHom (Int.castRingHom k) a)
 

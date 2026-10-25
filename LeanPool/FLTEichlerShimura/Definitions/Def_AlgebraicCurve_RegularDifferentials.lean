@@ -86,6 +86,8 @@ theorem exists_ord_eq_one_and_dCoord_eq (v : Place K F) :
 
 end Place
 
+/-- The submodule of differentials that are integral multiples of the local coordinate
+differential at every place. -/
 def regularDifferentials : Submodule K Ω[F⁄K] where
   carrier := {ω | ∀ v : Place K F, ∃ f ∈ v.toValuationSubring, ω = f • v.dCoord}
   zero_mem' v := ⟨0, v.toValuationSubring.zero_mem, by rw [zero_smul]⟩

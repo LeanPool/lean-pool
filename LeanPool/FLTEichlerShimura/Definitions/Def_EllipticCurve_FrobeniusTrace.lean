@@ -86,6 +86,7 @@ instance instSMulCommClassAlgEquivZModTorsionBy (n : ℕ) :
     ZMod.map_smul (DistribSMul.toAddMonoidHom (Submodule.torsionBy ℤ (W'⁄K).Point n) σ) c x
 
 variable (S) in
+/-- The Galois action on the `n`-torsion points, as a representation over `ZMod n`. -/
 def galoisRepModuleEnd (W' : Affine R) (n : ℕ) :
     (K ≃ₐ[S] K) →* Module.End (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n) :=
   DistribMulAction.toModuleEnd (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n)
@@ -96,6 +97,7 @@ def galoisRepModuleEnd (W' : Affine R) (n : ℕ) :
   rfl
 
 variable (S) in
+/-- The trace in `ZMod n` of the automorphism's action on `n`-torsion points. -/
 def galoisTrace (W' : Affine R) (n : ℕ) (σ : K ≃ₐ[S] K) : ZMod n :=
   LinearMap.trace (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n) (galoisRepModuleEnd S W' n σ)
 
@@ -111,6 +113,8 @@ namespace ValuationSubring
 
 variable {K L : Type*} [Field K] [Field L] [Algebra K L]
 
+/-- The automorphism stabilizes the valuation ring and acts on its residue field by the `q`th
+power map. -/
 def IsFrobeniusAt (A : ValuationSubring L) (σ : L ≃ₐ[K] L) (q : ℕ) : Prop :=
   ∃ hσ : σ ∈ A.decompositionSubgroup K,
     ∀ x : IsLocalRing.ResidueField A, (⟨σ, hσ⟩ : A.decompositionSubgroup K) • x = x ^ q

@@ -83,16 +83,21 @@ noncomputable section
 open scoped WeierstrassCurve.Affine TensorProduct
 open Polynomial
 
+/-- The Galois action factors through a finite intermediate extension of the rational numbers. -/
 def GaloisFactorsThroughFiniteLevel {M : Type} [MulOneClass M]
     (ρ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* M) : Prop :=
   ∃ L : IntermediateField ℚ (AlgebraicClosure ℚ), FiniteDimensional ℚ L ∧
     ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, (∀ x ∈ L, σ x = x) → ρ σ = 1
 
+/-- A two-dimensional representation over the coefficient field whose Galois action factors
+through a finite level. -/
 structure ResidualGaloisRep (k : Type) [Field k] : Type 1 where
+  /-- The underlying vector space of the residual representation. -/
   V : Type
   [instAddCommGroup : AddCommGroup V]
   [instModule : Module k V]
   finrank_eq : Module.finrank k V = 2
+  /-- The Galois action on the underlying vector space. -/
   ρ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* Module.End k V
   factorsThroughFiniteLevel : GaloisFactorsThroughFiniteLevel ρ
 
@@ -106,10 +111,13 @@ namespace ResidualGaloisRep
 
 variable {k : Type} [Field k]
 
+/-- Inertia acts trivially at every valuation above the specified rational prime. -/
 def IsUnramifiedAt (ρ : ResidualGaloisRep k) (q : ℕ) : Prop :=
   ∀ A : ValuationSubring (AlgebraicClosure ℚ), A.LiesOverPrime q →
     ∀ σ ∈ A.inertiaSubgroupIn ℚ, ρ.ρ σ = 1
 
+/-- At each prime away from the level and coefficient characteristic, the Frobenius
+characteristic polynomial has the prescribed eigenform coefficient. -/
 def IsAttachedTo (ρ : ResidualGaloisRep k) {N : ℕ}
     (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2)
     (φ : integralClosure ℤ ℂ →+* k) : Prop :=
@@ -119,14 +127,17 @@ def IsAttachedTo (ρ : ResidualGaloisRep k) {N : ℕ}
         ∃ a : integralClosure ℤ ℂ, (a : ℂ) = ModularFormClass.qCoeff f ℓ ∧
           LinearMap.charpoly (ρ.ρ σ) = X ^ 2 - C (φ a) * X + C ((ℓ : k))
 
+/-- Every nontrivial involution in the Galois group acts with determinant `-1`. -/
 def IsOdd (ρ : ResidualGaloisRep k) : Prop :=
   ∀ c : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, c * c = 1 → c ≠ 1 →
     LinearMap.det (ρ.ρ c) = -1
 
+/-- The only invariant subspaces of the representation are zero and the whole space. -/
 def IsIrreducible (ρ : ResidualGaloisRep k) : Prop :=
   ∀ W : Submodule k ρ.V, (∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ,
     ∀ x ∈ W, ρ.ρ σ x ∈ W) → W = ⊥ ∨ W = ⊤
 
+/-- Extend the coefficient field of the representation by tensoring its underlying vector space. -/
 abbrev baseChange (k' : Type) [Field k'] [Algebra k k'] (ρ : ResidualGaloisRep k) :
     ResidualGaloisRep k' :=
   { V := k' ⊗[k] ρ.V
@@ -139,16 +150,20 @@ abbrev baseChange (k' : Type) [Field k'] [Algebra k k'] (ρ : ResidualGaloisRep 
       exact ⟨L, hL, fun σ hσ => by
         rw [MonoidHom.coe_mk, OneHom.coe_mk, h1 σ hσ, LinearMap.baseChange_one]⟩ }
 
+/-- Extend coefficients along the specified field homomorphism. -/
 def baseChangeAlong {k' : Type} [Field k'] (φ : k →+* k') (ρ : ResidualGaloisRep k) :
     ResidualGaloisRep k' :=
   letI : Algebra k k' := φ.toAlgebra
   ρ.baseChange k'
 
+/-- The representation remains irreducible after extending coefficients to an algebraic closure. -/
 def IsAbsolutelyIrreducible (ρ : ResidualGaloisRep k) : Prop :=
   (ρ.baseChange (AlgebraicClosure k)).IsIrreducible
 
 end ResidualGaloisRep
 
+/-- Package the Galois action on the curve's `p`-torsion using the supplied cardinality and
+finite-level hypotheses. -/
 def WeierstrassCurve.residualGaloisRepOf (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
     (hcard : Nat.card (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point p) = p ^ 2)
     (hker : GaloisFactorsThroughFiniteLevel

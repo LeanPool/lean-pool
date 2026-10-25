@@ -198,10 +198,12 @@ namespace Point
 
 variable {S : Type*} [CommRing S] {V : Affine S}
 
+/-- The x-coordinate of an affine point, with value zero at infinity. -/
 def xc : V.Point → S
   | 0 => 0
   | some x _ _ => x
 
+/-- The y-coordinate of an affine point, with value zero at infinity. -/
 def yc : V.Point → S
   | 0 => 0
   | some _ y _ => y
@@ -228,9 +230,11 @@ variable {R : Type*} [Field R] (W : WeierstrassCurve R) (K : Type*) [Field K] [A
 noncomputable instance instDecidableEqFunctionField : DecidableEq (W⁄K).FunctionField :=
   Classical.decEq _
 
+/-- The x-coordinate generator in the function field of the base-changed curve. -/
 noncomputable def genericX : (W⁄K).FunctionField :=
   algebraMap (W⁄K).CoordinateRing (W⁄K).FunctionField (CoordinateRing.mk (W⁄K) (C X))
 
+/-- The y-coordinate generator in the function field of the base-changed curve. -/
 noncomputable def genericY : (W⁄K).FunctionField :=
   algebraMap (W⁄K).CoordinateRing (W⁄K).FunctionField (CoordinateRing.mk (W⁄K) Y)
 
@@ -282,6 +286,7 @@ theorem generic_nonsingular [W.IsElliptic] :
     exact W.isUnit_Δ
   exact (equation_iff_nonsingular (W := W⁄(W⁄K).FunctionField)).mp (generic_equation W K)
 
+/-- The point over the function field with the generic x- and y-coordinates. -/
 noncomputable def genericPoint [W.IsElliptic] : (W⁄(W⁄K).FunctionField).Point :=
   .some _ _ (generic_nonsingular W K)
 
@@ -300,6 +305,7 @@ theorem eval₂_polynomial_of_point (Q : (W⁄(W⁄K).FunctionField).Point) (hQ 
   rw [← evalEval_baseChange_polynomial]
   exact (Point.nonsingular_xc_yc hQ).left
 
+/-- The homomorphism evaluating the coordinate ring at a nonzero function-field-valued point. -/
 noncomputable def pointHom (Q : (W⁄(W⁄K).FunctionField).Point) (hQ : Q ≠ 0) :
     (W⁄K).CoordinateRing →ₐ[K] (W⁄K).FunctionField :=
   { AdjoinRoot.lift (aeval (R := K) Q.xc).toRingHom Q.yc (eval₂_polynomial_of_point Q hQ) with
@@ -402,6 +408,8 @@ theorem pointHom_injective_of_ne_baseChange [DecidableEq K] [IsAlgClosed K] [W.I
   rw [Point.eq_some_xc_yc hQ, Point.baseChange, Point.map_some]
   congr 1
 
+/-- The function-field homomorphism extending an injective evaluation homomorphism on the
+coordinate ring. -/
 noncomputable def pointPull (Q : (W⁄(W⁄K).FunctionField).Point) (hQ : Q ≠ 0)
     (hinj : Function.Injective (pointHom Q hQ)) :
     (W⁄K).FunctionField →ₐ[K] (W⁄K).FunctionField :=
@@ -553,6 +561,7 @@ theorem transHom_injective (S : (W⁄K).Point) :
       (genericPoint_add_baseChange_ne_zero W K S)) :=
   pointHom_injective_of_ne_baseChange _ _ (genericPoint_add_baseChange_ne_baseChange W K S)
 
+/-- The pullback on the function field induced by translation by a rational point. -/
 noncomputable def transPull (S : (W⁄K).Point) : (W⁄K).FunctionField →ₐ[K] (W⁄K).FunctionField :=
   pointPull _ (genericPoint_add_baseChange_ne_zero W K S) (transHom_injective W K S)
 
@@ -603,6 +612,7 @@ theorem transPull_zero : transPull W K 0 = AlgHom.id K _ := by
   rw [pointHom_congr h0 _ (Point.some_ne_zero _), pointHom_genericPoint]
   exact RingHom.ext fun x => rfl
 
+/-- The function-field algebra automorphism induced by translation by a rational point. -/
 noncomputable def transEquiv (S : (W⁄K).Point) : (W⁄K).FunctionField ≃ₐ[K] (W⁄K).FunctionField :=
   AlgEquiv.ofAlgHom (transPull W K S) (transPull W K (-S))
     (by rw [transPull_comp, add_neg_cancel, transPull_zero])
@@ -674,6 +684,7 @@ theorem negHom_injective :
   exact
     pointHom_injective_of_ne_baseChange _ _ (neg_genericPoint_ne_baseChange W K)
 
+/-- The pullback on the function field induced by negation on the curve. -/
 noncomputable def negPull : (W⁄K).FunctionField →ₐ[K] (W⁄K).FunctionField :=
   pointPull _ (neg_ne_zero.mpr (Point.some_ne_zero _)) (negHom_injective W K)
 
@@ -720,6 +731,7 @@ theorem negPull_comp_negPull : (negPull W K).comp (negPull W K) = AlgHom.id K _ 
     pointHom_congr hP' _ (Point.some_ne_zero _), pointHom_genericPoint]
   exact RingHom.ext fun x => rfl
 
+/-- The function-field algebra automorphism induced by negation on the curve. -/
 noncomputable def negEquiv : (W⁄K).FunctionField ≃ₐ[K] (W⁄K).FunctionField :=
   AlgEquiv.ofAlgHom _ _ (negPull_comp_negPull W K) (negPull_comp_negPull W K)
 
@@ -764,6 +776,8 @@ theorem negEquiv_symm : (negEquiv W K).symm = negEquiv W K := by
   exact
     rfl
 
+/-- The multiple of the generic point is nonzero and is not the base change of any rational
+point. -/
 def MulGood (n : ℤ) : Prop :=
   n • genericPoint W K ≠ 0 ∧
     ∀ P : (W⁄K).Point, n • genericPoint W K ≠ Point.baseChange K (W⁄K).FunctionField P
@@ -773,6 +787,7 @@ theorem mulHom_injective {n : ℤ} (h : MulGood W K n) :
   pointHom_injective_of_ne_baseChange _ _ h.2
 
 open Classical in
+/-- The pullback by multiplication by `n` when `MulGood` holds, and the identity otherwise. -/
 noncomputable def mulPull (n : ℤ) : (W⁄K).FunctionField →ₐ[K] (W⁄K).FunctionField :=
   if h : MulGood W K n then pointPull (n • genericPoint W K) h.1 (mulHom_injective W K h)
   else AlgHom.id K _
@@ -894,6 +909,7 @@ section Places
 variable {R : Type*} [Field R] (W : WeierstrassCurve R) (K : Type*) [Field K] [Algebra R K]
   [DecidableEq K]
 
+/-- The height-one prime of the coordinate ring associated to a nonzero rational point. -/
 noncomputable def placeOf (P : (W⁄K).Point) (hP : P ≠ 0) :
     IsDedekindDomain.HeightOneSpectrum (W⁄K).CoordinateRing where
   asIdeal := CoordinateRing.XYIdeal (W⁄K) P.xc (C P.yc)
@@ -916,6 +932,7 @@ theorem placeOf_surjective [IsAlgClosed K] [W.IsElliptic]
   refine ⟨.some a b ((equation_iff_nonsingular (W := W⁄K)).mp hab), Point.some_ne_zero _, ?_⟩
   exact IsDedekindDomain.HeightOneSpectrum.ext hv.symm
 
+/-- Evaluation of the coordinate ring at the given affine point. -/
 noncomputable def CoordinateRing.evalAt {a b : K} (h : (W⁄K).Equation a b) :
     (W⁄K).CoordinateRing →+* K :=
   AdjoinRoot.evalEval h
@@ -971,6 +988,7 @@ namespace Valuation
 variable {L : Type*} [CommRing L] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (v : Valuation L Γ₀)
 
+/-- Congruence modulo the maximal ideal, expressed by `v (a - b) < 1`. -/
 def Cong (a b : L) : Prop := v (a - b) < 1
 
 variable {v}

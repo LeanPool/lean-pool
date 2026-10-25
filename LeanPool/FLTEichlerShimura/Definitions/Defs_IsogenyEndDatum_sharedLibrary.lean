@@ -134,6 +134,8 @@ theorem eq_of_XYIdeal_eq {x₁ y₁ x₂ y₂ : F} (h₂ : W.Equation x₂ y₂)
 
 end publicSection
 
+/-- The height-one prime of the coordinate ring defined by a pair of coordinates satisfying the
+curve equation. -/
 @[expose] public def heightOneSpectrumOfEquation {x y : F} (h : W.Equation x y) :
     HeightOneSpectrum W.CoordinateRing where
   asIdeal := XYIdeal W x (C y)
@@ -151,9 +153,11 @@ end publicSection
 
 end CoordinateRing
 
+/-- Every element of the affine coordinate ring is integral at the place. -/
 @[expose] public def IsFinitePlace (v : AlgebraicCurve.Place F W.FunctionField) : Prop :=
   ∀ r : W.CoordinateRing, algebraMap W.CoordinateRing W.FunctionField r ∈ v.toValuationSubring
 
+/-- The coordinate-ring homomorphism into the valuation ring of a finite place. -/
 @[expose] public def IsFinitePlace.ringHom {v : AlgebraicCurve.Place F W.FunctionField}
     (hv : IsFinitePlace v) :
     W.CoordinateRing →+* v.toValuationSubring where
@@ -172,6 +176,8 @@ theorem IsFinitePlace.coe_ringHom_apply {v : AlgebraicCurve.Place F W.FunctionFi
 
 end publicSection
 
+/-- The prime ideal of the coordinate ring obtained by pulling back the maximal ideal of the
+finite place's valuation ring. -/
 @[expose] public def IsFinitePlace.centre {v : AlgebraicCurve.Place F W.FunctionField}
     (hv : IsFinitePlace v) :
     Ideal W.CoordinateRing :=
@@ -213,6 +219,7 @@ end publicSection
 
 variable [IsDedekindDomain W.CoordinateRing]
 
+/-- The function-field place associated to coordinates satisfying the affine curve equation. -/
 @[expose] public def placeOfEquation {x y : F} (h : W.Equation x y) :
     AlgebraicCurve.Place F W.FunctionField :=
   AlgebraicCurve.Place.ofHeightOneSpectrum (heightOneSpectrumOfEquation h)
@@ -298,6 +305,7 @@ end publicSection
 
 namespace InfinitePlace
 
+/-- The function-field place associated to the identity point at infinity. -/
 @[expose] public def place : AlgebraicCurve.Place F W.FunctionField := placeOfPoint (0 : W.Point)
 
 
@@ -404,6 +412,8 @@ theorem normFormulaAlong_auto (D :
 
 end publicSection
 
+/-- The point-group endomorphism induced by the isogeny datum, using its automatically supplied
+norm formula. -/
 @[expose] public def pointEnd' (D : IsogenyEndDatum
   W) :
     AddMonoid.End W.Point := D.pointEnd D.normFormulaAlong_auto
@@ -510,6 +520,8 @@ variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable (W : Affine F) [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
+/-- Every nonzero sum of point endomorphisms arising from isogeny data is represented by another
+such datum. -/
 public abbrev KwIsogenyEndAddDatumSupply : Prop :=
   ∀ D₁ D₂ : IsogenyEndDatum W, D₁.pointEnd' + D₂.pointEnd' ≠ 0 →
     ∃ D₃ : IsogenyEndDatum W, D₃.pointEnd' = D₁.pointEnd' + D₂.pointEnd'
@@ -556,6 +568,7 @@ end publicSection
 
 omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [W.IsElliptic]
   [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
+/-- The equivalence between elliptic-curve points and places of the function field. -/
 @[expose] public def placeOfPointEquiv : W.Point ≃ AlgebraicCurve.Place F W.FunctionField :=
   pointEquivPlace (W := W)
 
@@ -574,6 +587,8 @@ open WeierstrassCurve.Affine.IsogenyEndDatum
 
 variable {W}
 
+/-- The point map obtained by restricting places along the function-field endomorphism and
+converting back to points. -/
 @[expose] public def geomMorph (D : IsogenyEndDatum
   W) :
     W.Point → W.Point :=
@@ -880,6 +895,8 @@ variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable (W : Affine F) [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
+/-- Every nonzero sum of isogeny point endomorphisms is represented by a datum whose geometric
+point map is the pointwise sum. -/
 public abbrev KwIsogenyEndAddGeomMorphSupply : Prop :=
   ∀ D₁ D₂ : IsogenyEndDatum W, D₁.pointEnd' + D₂.pointEnd' ≠ 0 →
     ∃ D₃ : IsogenyEndDatum W, ∀ P : W.Point,
@@ -1044,6 +1061,7 @@ variable {F : Type*} [Field F] (W : Affine F)
 
 variable {W}
 
+/-- The image of the affine `y`-coordinate in the function field. -/
 @[expose] public def yGen (W : Affine F) : W.FunctionField :=
   algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y)
 
@@ -1158,6 +1176,8 @@ theorem eval₂_polynomial_of_equation_map {xP yP : W.FunctionField}
 
 end publicSection
 
+/-- Evaluate the affine coordinate ring at a function-field-valued point satisfying the curve
+equation. -/
 @[expose] public def pointPullbackCoordHom {xP yP : W.FunctionField}
     (h : (W.map ι).toAffine.Equation xP yP) :
     W.CoordinateRing →ₐ[F] W.FunctionField where
@@ -1201,6 +1221,8 @@ theorem pointPullbackCoordHom_injective {xP yP : W.FunctionField}
 
 end publicSection
 
+/-- Extend coordinate evaluation to a function-field endomorphism using the supplied
+transcendence of its `x`-coordinate. -/
 @[expose] public def pointPullbackHom {xP yP : W.FunctionField}
     (h : (W.map ι).toAffine.Equation xP yP)
     (hx : Function.Injective (Polynomial.aeval (R := F) xP)) :
@@ -1516,6 +1538,8 @@ section
 
 universe u
 
+/-- Classical decidable equality on the affine curve's function field for the endomorphism
+arguments. -/
 public local instance instDecEqFunctionFieldEndst20Ps {F : Type u} [Field F]
     {W : WeierstrassCurve.Affine F} : DecidableEq W.FunctionField :=
   Classical.decEq _
@@ -1701,6 +1725,7 @@ section AddLawCore
 
 variable {F : Type u} [Field F]
 
+/-- Classical decidable equality on the function field for addition of isogeny maps. -/
 public local instance instDecEqFunctionFieldEs1a6Add {W : WeierstrassCurve.Affine F} :
     DecidableEq W.FunctionField :=
   Classical.decEq _
@@ -1729,7 +1754,9 @@ end publicSection
 
 variable (φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField)
 
-@[expose] public def es1a6_addCollapse : Prop :=
+/-- The two function-field-valued points have equal `x`-coordinates and opposite `y`-coordinates
+in the curve's group law. -/
+@[expose] public def es1a6AddCollapse : Prop :=
   φ₁ (polyToFunctionField W X) = φ₂ (polyToFunctionField W X) ∧
     φ₁ (yGen W) = (W.map (algebraMap F W.FunctionField)).toAffine.negY
       (φ₂ (polyToFunctionField W X)) (φ₂ (yGen W))
@@ -1738,19 +1765,21 @@ public section publicSection
 
 theorem es1a6_add_not_collapse_of_X_ne
     (hne : φ₁ (polyToFunctionField W X) ≠ φ₂ (polyToFunctionField W X)) :
-    ¬ es1a6_addCollapse W φ₁ φ₂ :=
+    ¬ es1a6AddCollapse W φ₁ φ₂ :=
   fun hc => hne hc.1
 
 end publicSection
 
-@[expose] public def es1a6_addSumX : W.FunctionField :=
+/-- The rational `x`-coordinate obtained by adding the two function-field-valued points. -/
+@[expose] public def es1a6AddSumX : W.FunctionField :=
   (W.map (algebraMap F W.FunctionField)).toAffine.addX
     (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
     ((W.map (algebraMap F W.FunctionField)).toAffine.slope
       (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
       (φ₁ (yGen W)) (φ₂ (yGen W)))
 
-@[expose] public def es1a6_addSumY : W.FunctionField :=
+/-- The rational `y`-coordinate obtained by adding the two function-field-valued points. -/
+@[expose] public def es1a6AddSumY : W.FunctionField :=
   (W.map (algebraMap F W.FunctionField)).toAffine.addY
     (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X)) (φ₁ (yGen W))
     ((W.map (algebraMap F W.FunctionField)).toAffine.slope
@@ -1759,41 +1788,43 @@ end publicSection
 
 public section publicSection
 
-theorem es1a6_addSum_equation (hcol : ¬ es1a6_addCollapse W φ₁ φ₂) :
+theorem es1a6_addSum_equation (hcol : ¬ es1a6AddCollapse W φ₁ φ₂) :
     (W.map (algebraMap F W.FunctionField)).toAffine.Equation
-      (es1a6_addSumX W φ₁ φ₂) (es1a6_addSumY W φ₁ φ₂) := by
-  unfold es1a6_addSumX es1a6_addSumY
+      (es1a6AddSumX W φ₁ φ₂) (es1a6AddSumY W φ₁ φ₂) := by
+  unfold es1a6AddSumX es1a6AddSumY
   exact equation_add (es1a6_add_equation W φ₁) (es1a6_add_equation W φ₂)
     (fun hxy => hcol hxy)
 
 end publicSection
 
 
-@[expose] public def es1a6_addSumPullbackHom (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6_addSumX W φ₁ φ₂))) :
+/-- The function-field map defined by the sum coordinates, using the noncollapse and
+transcendence hypotheses. -/
+@[expose] public def es1a6AddSumPullbackHom (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6AddSumX W φ₁ φ₂))) :
     W.FunctionField →ₐ[F] W.FunctionField :=
   pointPullbackHom (es1a6_addSum_equation W φ₁ φ₂ hcol) htr
 
 public section publicSection
 
-theorem es1a6_addSumPullbackHom_X (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6_addSumX W φ₁ φ₂))) :
-    es1a6_addSumPullbackHom W φ₁ φ₂ hcol htr (polyToFunctionField W X)
-      = es1a6_addSumX W φ₁ φ₂ :=
+theorem es1a6_addSumPullbackHom_X (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6AddSumX W φ₁ φ₂))) :
+    es1a6AddSumPullbackHom W φ₁ φ₂ hcol htr (polyToFunctionField W X)
+      = es1a6AddSumX W φ₁ φ₂ :=
   pointPullbackHom_polyToFunctionField_X _ _
 
-theorem es1a6_addSumPullbackHom_yGen (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6_addSumX W φ₁ φ₂))) :
-    es1a6_addSumPullbackHom W φ₁ φ₂ hcol htr (yGen W) = es1a6_addSumY W φ₁ φ₂ :=
+theorem es1a6_addSumPullbackHom_yGen (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6AddSumX W φ₁ φ₂))) :
+    es1a6AddSumPullbackHom W φ₁ φ₂ hcol htr (yGen W) = es1a6AddSumY W φ₁ φ₂ :=
   pointPullbackHom_yGen _ _
 
 end publicSection
 
 theorem es1a6_add_sumX_isAlgebraic_constant_point [IsAlgClosed F]
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (halg : IsAlgebraic F (es1a6_addSumX W φ₁ φ₂)) :
-    ∃ c d : F, es1a6_addSumX W φ₁ φ₂ = algebraMap F W.FunctionField c ∧
-      es1a6_addSumY W φ₁ φ₂ = algebraMap F W.FunctionField d ∧ W.Equation c d := by
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (halg : IsAlgebraic F (es1a6AddSumX W φ₁ φ₂)) :
+    ∃ c d : F, es1a6AddSumX W φ₁ φ₂ = algebraMap F W.FunctionField c ∧
+      es1a6AddSumY W φ₁ φ₂ = algebraMap F W.FunctionField d ∧ W.Equation c d := by
   obtain ⟨c, hc⟩ := exists_algebraMap_eq_of_isAlgebraic halg
   have heq := es1a6_addSum_equation W φ₁ φ₂ hcol
   rw [equation_iff'] at heq
@@ -1809,7 +1840,7 @@ theorem es1a6_add_sumX_isAlgebraic_constant_point [IsAlgClosed F]
       Polynomial.coeff_C_mul, Polynomial.coeff_C, Polynomial.coeff_X,
       Polynomial.coeff_zero] at h2
     norm_num at h2
-  have halgY : IsAlgebraic F (es1a6_addSumY W φ₁ φ₂) := by
+  have halgY : IsAlgebraic F (es1a6AddSumY W φ₁ φ₂) := by
     refine ⟨X ^ 2 + C (W.a₁ * c + W.a₃) * X
       - C (c ^ 3 + W.a₂ * c ^ 2 + W.a₄ * c + W.a₆), hq0, ?_⟩
     simp only [map_add, map_sub, map_mul, map_pow, Polynomial.aeval_X,
@@ -1824,32 +1855,32 @@ theorem es1a6_add_sumX_isAlgebraic_constant_point [IsAlgClosed F]
   exact (Affine.map_equation W (algebraMap F W.FunctionField).injective c d).mp hmap
 
 theorem es1a6_add_sumX_transcendental_or_constant_point [IsAlgClosed F]
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂) :
-    Transcendental F (es1a6_addSumX W φ₁ φ₂) ∨
-      ∃ c d : F, es1a6_addSumX W φ₁ φ₂ = algebraMap F W.FunctionField c ∧
-        es1a6_addSumY W φ₁ φ₂ = algebraMap F W.FunctionField d ∧ W.Equation c d := by
-  by_cases halg : IsAlgebraic F (es1a6_addSumX W φ₁ φ₂)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂) :
+    Transcendental F (es1a6AddSumX W φ₁ φ₂) ∨
+      ∃ c d : F, es1a6AddSumX W φ₁ φ₂ = algebraMap F W.FunctionField c ∧
+        es1a6AddSumY W φ₁ φ₂ = algebraMap F W.FunctionField d ∧ W.Equation c d := by
+  by_cases halg : IsAlgebraic F (es1a6AddSumX W φ₁ φ₂)
   · exact Or.inr (es1a6_add_sumX_isAlgebraic_constant_point W φ₁ φ₂ hcol halg)
   · exact Or.inl halg
 
 theorem es1a6_add_sumX_transcendental_of_forall_ne [IsAlgClosed F]
-    (hnc : ∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) :
-    Transcendental F (es1a6_addSumX W φ₁ φ₂) := by
+    (hnc : ∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) :
+    Transcendental F (es1a6AddSumX W φ₁ φ₂) := by
   intro halg
   obtain ⟨c, hc⟩ := exists_algebraMap_eq_of_isAlgebraic halg
   exact hnc c hc.symm
 
 theorem es1a6_add_sumX_not_transcendental_of_eq_const (c : F)
-    (hc : es1a6_addSumX W φ₁ φ₂ = algebraMap F W.FunctionField c) :
-    ¬ Transcendental F (es1a6_addSumX W φ₁ φ₂) := by
+    (hc : es1a6AddSumX W φ₁ φ₂ = algebraMap F W.FunctionField c) :
+    ¬ Transcendental F (es1a6AddSumX W φ₁ φ₂) := by
   rw [hc]
   exact fun htr => htr (isAlgebraic_algebraMap c)
 
 public section publicSection
 
 theorem es1a6_add_aeval_sumX_injective_of_forall_ne [IsAlgClosed F]
-    (hnc : ∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) :
-    Function.Injective (Polynomial.aeval (R := F) (es1a6_addSumX W φ₁ φ₂)) :=
+    (hnc : ∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) :
+    Function.Injective (Polynomial.aeval (R := F) (es1a6AddSumX W φ₁ φ₂)) :=
   (injective_iff_map_eq_zero _).mpr fun p hp =>
     transcendental_iff.mp (es1a6_add_sumX_transcendental_of_forall_ne W φ₁ φ₂ hnc) p hp
 
@@ -1892,6 +1923,7 @@ variable {W : WeierstrassCurve.Affine F} [W.IsElliptic]
     [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
+/-- Classical decidable equality on the function field for identifying sum coordinates at places. -/
 public local instance instDecEqFunctionFieldEs1a6AddSeam :
     DecidableEq W.FunctionField :=
   Classical.decEq _
@@ -1901,60 +1933,62 @@ variable (φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField)
 omit [DecidableEq F] [CharZero F] [W.GenusOnePlaceGate] [GenusOnePlaceGate.IsCentred W]
   [W.AbelTheorem] in
 theorem es1a6_addSumSeam_some
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6_addSumX W φ₁ φ₂)))
-    (hι : (es1a6_addSumPullbackHom W φ₁ φ₂ hcol htr).toRingHom.IsIntegral)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6AddSumX W φ₁ φ₂)))
+    (hι : (es1a6AddSumPullbackHom W φ₁ φ₂ hcol htr).toRingHom.IsIntegral)
     (v : AlgebraicCurve.Place F W.FunctionField) {x₃ y₃ : F} (h₃ : W.Equation x₃ y₃)
-    (hdx : 0 < v.ord (es1a6_addSumX W φ₁ φ₂ - algebraMap F W.FunctionField x₃))
-    (hdy : 0 < v.ord (es1a6_addSumY W φ₁ φ₂ - algebraMap F W.FunctionField y₃)) :
-    v.restrictAlong (es1a6_addSumPullbackHom W φ₁ φ₂ hcol htr) hι
+    (hdx : 0 < v.ord (es1a6AddSumX W φ₁ φ₂ - algebraMap F W.FunctionField x₃))
+    (hdy : 0 < v.ord (es1a6AddSumY W φ₁ φ₂ - algebraMap F W.FunctionField y₃)) :
+    v.restrictAlong (es1a6AddSumPullbackHom W φ₁ φ₂ hcol htr) hι
       = placeOfEquation h₃ := by
-  have hreg : es1a6_addSumX W φ₁ φ₂ ∈ v.toValuationSubring := by
-    by_cases hz : es1a6_addSumX W φ₁ φ₂ - algebraMap F W.FunctionField x₃ = 0
+  have hreg : es1a6AddSumX W φ₁ φ₂ ∈ v.toValuationSubring := by
+    by_cases hz : es1a6AddSumX W φ₁ φ₂ - algebraMap F W.FunctionField x₃ = 0
     · rw [sub_eq_zero.mp hz]
       exact v.algebraMap_mem' x₃
-    · have hsub : es1a6_addSumX W φ₁ φ₂ - algebraMap F W.FunctionField x₃
+    · have hsub : es1a6AddSumX W φ₁ φ₂ - algebraMap F W.FunctionField x₃
           ∈ v.toValuationSubring :=
         AlgebraicCurve.Place.mem_of_ord_nonneg v hz hdx.le
       have h2 := add_mem hsub (v.algebraMap_mem' x₃)
       rwa [sub_add_cancel] at h2
   exact es1a6_addSeam_restrictAlong_eq_placeOfEquation
-    (es1a6_addSumPullbackHom W φ₁ φ₂ hcol htr) hι
+    (es1a6AddSumPullbackHom W φ₁ φ₂ hcol htr) hι
     (es1a6_addSumPullbackHom_X W φ₁ φ₂ hcol htr)
     (es1a6_addSumPullbackHom_yGen W φ₁ φ₂ hcol htr) v h₃ hreg hdx hdy
 
 omit [CharZero F] in
 omit [DecidableEq F] [W.AbelTheorem] in
 theorem es1a6_addSumSeam_pole
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6_addSumX W φ₁ φ₂)))
-    (hι : (es1a6_addSumPullbackHom W φ₁ φ₂ hcol htr).toRingHom.IsIntegral)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6AddSumX W φ₁ φ₂)))
+    (hι : (es1a6AddSumPullbackHom W φ₁ φ₂ hcol htr).toRingHom.IsIntegral)
     (v : AlgebraicCurve.Place F W.FunctionField)
-    (hpole : es1a6_addSumX W φ₁ φ₂ ∉ v.toValuationSubring) :
-    v.restrictAlong (es1a6_addSumPullbackHom W φ₁ φ₂ hcol htr) hι
+    (hpole : es1a6AddSumX W φ₁ φ₂ ∉ v.toValuationSubring) :
+    v.restrictAlong (es1a6AddSumPullbackHom W φ₁ φ₂ hcol htr) hι
       = (InfinitePlace.place : AlgebraicCurve.Place F W.FunctionField) :=
   AbstractSeam.restrictAlong_eq_infinitePlace
-    (es1a6_addSumPullbackHom W φ₁ φ₂ hcol htr) hι
+    (es1a6AddSumPullbackHom W φ₁ φ₂ hcol htr) hι
     (es1a6_addSumPullbackHom_X W φ₁ φ₂ hcol htr) v hpole
 
-@[expose] public def es1a6_addSumSeamDataAt (v : AlgebraicCurve.Place F W.FunctionField) :
+/-- The sum coordinates specialize to the specified point at the place, with a pole in the
+`x`-coordinate for the point at infinity. -/
+@[expose] public def es1a6AddSumSeamDataAt (v : AlgebraicCurve.Place F W.FunctionField) :
     W.Point → Prop
-  | .zero => es1a6_addSumX W φ₁ φ₂ ∉ v.toValuationSubring
+  | .zero => es1a6AddSumX W φ₁ φ₂ ∉ v.toValuationSubring
   | .some x₃ y₃ _ =>
-      0 < v.ord (es1a6_addSumX W φ₁ φ₂ - algebraMap F W.FunctionField x₃) ∧
-        0 < v.ord (es1a6_addSumY W φ₁ φ₂ - algebraMap F W.FunctionField y₃)
+      0 < v.ord (es1a6AddSumX W φ₁ φ₂ - algebraMap F W.FunctionField x₃) ∧
+        0 < v.ord (es1a6AddSumY W φ₁ φ₂ - algebraMap F W.FunctionField y₃)
 
 public section publicSection
 
 omit [CharZero F] in
 omit [DecidableEq F] [W.AbelTheorem] in
 theorem es1a6_addSumSeam_of_data
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6_addSumX W φ₁ φ₂)))
-    (hι : (es1a6_addSumPullbackHom W φ₁ φ₂ hcol htr).toRingHom.IsIntegral)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6AddSumX W φ₁ φ₂)))
+    (hι : (es1a6AddSumPullbackHom W φ₁ φ₂ hcol htr).toRingHom.IsIntegral)
     (P Q : W.Point)
-    (hdat : es1a6_addSumSeamDataAt φ₁ φ₂ (placeOfPoint P) Q) :
-    (placeOfPoint P).restrictAlong (es1a6_addSumPullbackHom W φ₁ φ₂ hcol htr) hι
+    (hdat : es1a6AddSumSeamDataAt φ₁ φ₂ (placeOfPoint P) Q) :
+    (placeOfPoint P).restrictAlong (es1a6AddSumPullbackHom W φ₁ φ₂ hcol htr) hι
       = placeOfPoint Q := by
   cases Q with
   | zero =>
@@ -1989,7 +2023,9 @@ variable {W : WeierstrassCurve.Affine F} [W.IsElliptic]
     [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
-@[expose] public def es1a11_coordSeamDataAt (φ : W.FunctionField →ₐ[F] W.FunctionField)
+/-- The coordinates of the function-field map specialize to the specified point, with a pole in
+the `x`-coordinate at infinity. -/
+@[expose] public def es1a11CoordSeamDataAt (φ : W.FunctionField →ₐ[F] W.FunctionField)
     (v : AlgebraicCurve.Place F W.FunctionField) : W.Point → Prop
   | .zero => φ (polyToFunctionField W X) ∉ v.toValuationSubring
   | .some x₃ y₃ _ =>
@@ -2000,7 +2036,7 @@ omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [WeierstrassCurve.IsElliptic W
   [W.GenusOnePlaceGate] [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
 theorem es1a11_coordSeamDataAt_iff_pbd (φ : W.FunctionField →ₐ[F] W.FunctionField)
     (v : AlgebraicCurve.Place F W.FunctionField) (Q : W.Point) :
-    es1a11_coordSeamDataAt φ v Q ↔ es1a8_coordSeamDataAt_pbd φ v Q := by
+    es1a11CoordSeamDataAt φ v Q ↔ es1a8_coordSeamDataAt_pbd φ v Q := by
   cases Q <;> exact Iff.rfl
 
 end CoordSeamEs1a11
@@ -2208,6 +2244,8 @@ namespace Es1a1
 
 universe u
 
+/-- Classical decidable equality on the function field for the pole case of the
+nonconstant-coordinate argument. -/
 public local instance instDecEqFunctionFieldEs1a10NcPole {F : Type u} [Field F]
     {W : WeierstrassCurve.Affine F} :
     DecidableEq W.FunctionField :=
@@ -2234,6 +2272,8 @@ variable {W : WeierstrassCurve.Affine F} [W.IsElliptic]
     [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
+/-- Classical decidable equality on the function field for the vertical case of the
+nonconstant-coordinate argument. -/
 public local instance instDecEqFunctionFieldEs1a10NcVertical :
     DecidableEq W.FunctionField :=
   Classical.decEq _
@@ -2255,6 +2295,8 @@ namespace Es1a1
 
 universe u
 
+/-- Classical decidable equality on the function field for the nonconstant sum-coordinate
+argument. -/
 public local instance instDecEqFunctionFieldEs1a9Nc {F : Type u} [Field F]
     {W : WeierstrassCurve.Affine F} :
     DecidableEq W.FunctionField :=
@@ -2283,11 +2325,11 @@ variable (W : WeierstrassCurve.Affine F)
 variable (φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField)
 
 theorem mmr46_gc_addSumX_ne_const_of_not_constPoint [IsAlgClosed F]
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
     (hres : ∀ c d : F, W.Equation c d →
-      ¬ (es1a6_addSumX W φ₁ φ₂ = algebraMap F W.FunctionField c ∧
-        es1a6_addSumY W φ₁ φ₂ = algebraMap F W.FunctionField d)) :
-    ∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c := by
+      ¬ (es1a6AddSumX W φ₁ φ₂ = algebraMap F W.FunctionField c ∧
+        es1a6AddSumY W φ₁ φ₂ = algebraMap F W.FunctionField d)) :
+    ∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c := by
   intro c hc
   rcases es1a6_add_sumX_transcendental_or_constant_point W φ₁ φ₂ hcol with
     htr | ⟨c', d, hx, hy, heq⟩
@@ -2469,8 +2511,8 @@ end publicSection
 
 theorem mmr73_cs_geomMorph_add_eq_of_addSum_const [DecidableEq F] (D₁ D₂ : IsogenyEndDatum W)
     (hX : D₁.ι (polyToFunctionField W X) ≠ D₂.ι (polyToFunctionField W X)) {c d : F}
-    (hcd : W.Nonsingular c d) (hx : es1a6_addSumX W D₁.ι D₂.ι = algebraMap F W.FunctionField c)
-    (hy : es1a6_addSumY W D₁.ι D₂.ι = algebraMap F W.FunctionField d) (Q : W.Point)
+    (hcd : W.Nonsingular c d) (hx : es1a6AddSumX W D₁.ι D₂.ι = algebraMap F W.FunctionField c)
+    (hy : es1a6AddSumY W D₁.ι D₂.ι = algebraMap F W.FunctionField d) (Q : W.Point)
     (h1 : (placeOfPoint Q).ord (D₁.ι (polyToFunctionField W X)) = 0)
     (h2 : (placeOfPoint Q).ord (D₂.ι (polyToFunctionField W X)) = 0)
     (h3 : (placeOfPoint Q).ord (D₁.ι (yGen W)) = 0) (h4 : (placeOfPoint Q).ord (D₂.ι (yGen W)) = 0)
@@ -2571,15 +2613,15 @@ theorem mmr73_cs_geomMorph_add_eq_of_addSum_const [DecidableEq F] (D₁ D₂ : I
       (placeOfPoint Q).evalAt_mul hrat ((placeOfPoint Q).algebraMap_mem' W.a₁) hΛmem,
       (placeOfPoint Q).evalAt_algebraMap W.a₁,
       (placeOfPoint Q).evalAt_algebraMap W.a₂, ha₁, ha₂]
-  have hX0 : es1a6_addSumX W D₁.ι D₂.ι
+  have hX0 : es1a6AddSumX W D₁.ι D₂.ι
       = Λ * Λ + algebraMap F W.FunctionField W.a₁ * Λ
         - algebraMap F W.FunctionField W.a₂ - D₁.ι (polyToFunctionField W X)
         - D₂.ι (polyToFunctionField W X) := by
-    unfold es1a6_addSumX
+    unfold es1a6AddSumX
     rw [slope_of_X_ne hX, ← hΛdef]
     simp only [addX, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂]
     ring
-  have hY0 : es1a6_addSumY W D₁.ι D₂.ι
+  have hY0 : es1a6AddSumY W D₁.ι D₂.ι
       = -(Λ * ((Λ * Λ + algebraMap F W.FunctionField W.a₁ * Λ
             - algebraMap F W.FunctionField W.a₂
             - D₁.ι (polyToFunctionField W X) - D₂.ι (polyToFunctionField W X))
@@ -2589,7 +2631,7 @@ theorem mmr73_cs_geomMorph_add_eq_of_addSum_const [DecidableEq F] (D₁ D₂ : I
               - algebraMap F W.FunctionField W.a₂
               - D₁.ι (polyToFunctionField W X) - D₂.ι (polyToFunctionField W X))
         - algebraMap F W.FunctionField W.a₃ := by
-    unfold es1a6_addSumY
+    unfold es1a6AddSumY
     rw [slope_of_X_ne hX, ← hΛdef]
     simp only [addY, negAddY, negY, addX, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂,
       WeierstrassCurve.map_a₃]
@@ -2644,14 +2686,14 @@ theorem mmr73_cs_geomMorph_add_eq_of_addSum_const [DecidableEq F] (D₁ D₂ : I
   rw [hP₁, hP₂, Point.add_of_X_ne hane]
   refine mmr48_sp_point_some_congr ?_ ?_ _ hcd
   · rw [hslope]
-    have h0 : (placeOfPoint Q).evalAt (es1a6_addSumX W D₁.ι D₂.ι) = c := by
+    have h0 : (placeOfPoint Q).evalAt (es1a6AddSumX W D₁.ι D₂.ι) = c := by
       rw [hx, (placeOfPoint Q).evalAt_algebraMap c]
     rw [hX0, hBX] at h0
     rw [← h0]
     simp only [addX]
     ring
   · rw [hslope]
-    have h0 : (placeOfPoint Q).evalAt (es1a6_addSumY W D₁.ι D₂.ι) = d := by
+    have h0 : (placeOfPoint Q).evalAt (es1a6AddSumY W D₁.ι D₂.ι) = d := by
       rw [hy, (placeOfPoint Q).evalAt_algebraMap d]
     rw [hY0, hBY] at h0
     rw [← h0]
@@ -2701,7 +2743,7 @@ variable {F : Type u} [Field F] [IsAlgClosed F] {W : Affine F} [W.IsElliptic]
 public section publicSection
 
 theorem kw_coordSeamDataAt_geomMorph (D : IsogenyEndDatum W) (P : W.Point) :
-    es1a11_coordSeamDataAt D.ι (placeOfPoint P) (D.geomMorph P) :=
+    es1a11CoordSeamDataAt D.ι (placeOfPoint P) (D.geomMorph P) :=
   (es1a11_coordSeamDataAt_iff_pbd D.ι (placeOfPoint P) (D.geomMorph P)).mpr
     (es1a8_coordSeamDataAt_of_restrictAlong_pbd D.ι D.hι (placeOfPoint P)
       (D.geomMorph P) (D.placeOfPoint_geomMorph P))
@@ -2731,7 +2773,9 @@ variable (W : WeierstrassCurve.Affine F)
 
 variable (φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField)
 
-@[expose] public def es1a8_addCollapse_cmp : Prop :=
+/-- The coordinate criterion that the two function-field-valued points are negatives of each
+other. -/
+@[expose] public def es1a8AddCollapseCmp : Prop :=
   φ₁ (polyToFunctionField W X) = φ₂ (polyToFunctionField W X) ∧
     φ₁ (yGen W) = (W.map (algebraMap F W.FunctionField)).toAffine.negY
       (φ₂ (polyToFunctionField W X)) (φ₂ (yGen W))
@@ -2779,7 +2823,7 @@ theorem es1a8_negYGen_map_cmp (W : WeierstrassCurve.Affine F)
 
 theorem es1a8_addCollapse_iota_comp_cmp {W : WeierstrassCurve.Affine F}
     {φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField}
-    (hcol : es1a8_addCollapse_cmp W φ₁ φ₂) :
+    (hcol : es1a8AddCollapseCmp W φ₁ φ₂) :
     φ₁ = φ₂.comp (es1a4_negPullbackHom W) := by
   refine es1a8_functionField_algHom_ext_cmp ?_ ?_
   · rw [AlgHom.comp_apply, es1a4_negPullbackHom_X]
@@ -2806,7 +2850,7 @@ variable {W : WeierstrassCurve.Affine F} [W.IsElliptic]
 omit [CharZero F] in
 omit [DecidableEq F] [W.AbelTheorem] in
 theorem es1a8_addCollapse_geomMorph_eq_neg_cmp (D₁ D₂ : IsogenyEndDatum W)
-    (hcol : es1a8_addCollapse_cmp W D₁.ι D₂.ι) (P : W.Point) :
+    (hcol : es1a8AddCollapseCmp W D₁.ι D₂.ι) (P : W.Point) :
     D₁.geomMorph P = -(D₂.geomMorph P) := by
   have hcomp : D₁.ι = D₂.ι.comp (es1a4_negPullbackHom W) :=
     es1a8_addCollapse_iota_comp_cmp hcol
@@ -2830,7 +2874,7 @@ theorem es1a8_addCollapse_geomMorph_eq_neg_cmp (D₁ D₂ : IsogenyEndDatum W)
 public section publicSection
 
 theorem es1a8_addCollapse_pointEnd_add_eq_zero_cmp (D₁ D₂ : IsogenyEndDatum W)
-    (hcol : es1a8_addCollapse_cmp W D₁.ι D₂.ι) :
+    (hcol : es1a8AddCollapseCmp W D₁.ι D₂.ι) :
     D₁.pointEnd' + D₂.pointEnd' = 0 := by
   refine AddMonoidHom.ext fun P => ?_
   change D₁.pointEnd' P + D₂.pointEnd' P = 0
@@ -2844,7 +2888,7 @@ end publicSection
 
 theorem es1a8_add_not_collapse_of_pointEnd_add_ne_zero_cmp (D₁ D₂ : IsogenyEndDatum W)
     (h0 : D₁.pointEnd' + D₂.pointEnd' ≠ 0) :
-    ¬ es1a8_addCollapse_cmp W D₁.ι D₂.ι :=
+    ¬ es1a8AddCollapseCmp W D₁.ι D₂.ι :=
   fun hcol => h0 (es1a8_addCollapse_pointEnd_add_eq_zero_cmp D₁ D₂ hcol)
 
 end CollapseHalfCmp
@@ -3031,41 +3075,45 @@ variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
 variable (W : Affine F) [W.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlaceGate W]
     [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W] [WeierstrassCurve.Affine.AbelTheorem W]
 
-public abbrev kw_hk5f_addSumXNonConstGuardAt : Prop :=
+/-- A nonzero sum of isogeny point endomorphisms has a rational sum `x`-coordinate unequal to
+every constant. -/
+public abbrev kwHk5fAddSumXNonConstGuardAt : Prop :=
   ∀ D₁ D₂ : IsogenyEndDatum W, D₁.pointEnd' + D₂.pointEnd' ≠ 0 →
-    ∀ c : F, es1a6_addSumX W D₁.ι D₂.ι ≠ algebraMap F W.FunctionField c
+    ∀ c : F, es1a6AddSumX W D₁.ι D₂.ι ≠ algebraMap F W.FunctionField c
 
 abbrev kw_hk5f_addSumCoordSeamDataNCAt : Prop :=
   ∀ φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField,
-    ¬ es1a6_addCollapse W φ₁ φ₂ →
-    (∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) →
+    ¬ es1a6AddCollapse W φ₁ φ₂ →
+    (∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) →
     ∀ (v : AlgebraicCurve.Place F W.FunctionField) (Q₁ Q₂ : W.Point),
-      es1a11_coordSeamDataAt φ₁ v Q₁ → es1a11_coordSeamDataAt φ₂ v Q₂ →
-      es1a6_addSumSeamDataAt φ₁ φ₂ v (Q₁ + Q₂)
+      es1a11CoordSeamDataAt φ₁ v Q₁ → es1a11CoordSeamDataAt φ₂ v Q₂ →
+      es1a6AddSumSeamDataAt φ₁ φ₂ v (Q₁ + Q₂)
 
-public abbrev kw_hk5f_addIntegralFiniteDataAt : Prop :=
+/-- The function-field map defined by noncollapsed transcendental sum coordinates is integral and
+finite. -/
+public abbrev kwHk5fAddIntegralFiniteDataAt : Prop :=
   ∀ D₁ D₂ : IsogenyEndDatum W,
-    ∀ (hcol : ¬ es1a6_addCollapse W D₁.ι D₂.ι)
-      (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6_addSumX W D₁.ι D₂.ι))),
-      (es1a6_addSumPullbackHom W D₁.ι D₂.ι hcol htr).toRingHom.IsIntegral ∧
-        FiniteAlong F (es1a6_addSumPullbackHom W D₁.ι D₂.ι hcol htr)
+    ∀ (hcol : ¬ es1a6AddCollapse W D₁.ι D₂.ι)
+      (htr : Function.Injective (Polynomial.aeval (R := F) (es1a6AddSumX W D₁.ι D₂.ι))),
+      (es1a6AddSumPullbackHom W D₁.ι D₂.ι hcol htr).toRingHom.IsIntegral ∧
+        FiniteAlong F (es1a6AddSumPullbackHom W D₁.ι D₂.ι hcol htr)
 
 theorem kw_hk5f_addGeomMorphSupply_of_atoms
-    (hg : kw_hk5f_addSumXNonConstGuardAt W)
+    (hg : kwHk5fAddSumXNonConstGuardAt W)
     (hncseam : kw_hk5f_addSumCoordSeamDataNCAt W)
-    (hifd : kw_hk5f_addIntegralFiniteDataAt W) :
+    (hifd : kwHk5fAddIntegralFiniteDataAt W) :
     KwIsogenyEndAddGeomMorphSupply W := by
   intro D₁ D₂ h0
-  have hcol : ¬ es1a6_addCollapse W D₁.ι D₂.ι := by
+  have hcol : ¬ es1a6AddCollapse W D₁.ι D₂.ι := by
     have := es1a8_add_not_collapse_of_pointEnd_add_ne_zero_cmp D₁ D₂ h0
-    rwa [show es1a8_addCollapse_cmp W D₁.ι D₂.ι = es1a6_addCollapse W D₁.ι D₂.ι from rfl]
+    rwa [show es1a8AddCollapseCmp W D₁.ι D₂.ι = es1a6AddCollapse W D₁.ι D₂.ι from rfl]
       at this
   have hnc := hg D₁ D₂ h0
   have htr : Function.Injective
-      (Polynomial.aeval (R := F) (es1a6_addSumX W D₁.ι D₂.ι)) :=
+      (Polynomial.aeval (R := F) (es1a6AddSumX W D₁.ι D₂.ι)) :=
     es1a6_add_aeval_sumX_injective_of_forall_ne W D₁.ι D₂.ι hnc
   obtain ⟨hι, hfin⟩ := hifd D₁ D₂ hcol htr
-  refine ⟨⟨es1a6_addSumPullbackHom W D₁.ι D₂.ι hcol htr, hι, hfin⟩, fun P => ?_⟩
+  refine ⟨⟨es1a6AddSumPullbackHom W D₁.ι D₂.ι hcol htr, hι, hfin⟩, fun P => ?_⟩
   have h1 := kw_coordSeamDataAt_geomMorph D₁ P
   have h2 := kw_coordSeamDataAt_geomMorph D₂ P
   have hsum := hncseam D₁.ι D₂.ι hcol hnc (placeOfPoint P)
@@ -3103,7 +3151,7 @@ variable (φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField)
 
 theorem mmr62_cd_collision_yGen_eq
     (hx : φ₁ (polyToFunctionField W X) = φ₂ (polyToFunctionField W X))
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂) :
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂) :
     φ₁ (yGen W) = φ₂ (yGen W) := by
   have _pin := Classical.em True
   rcases Y_eq_of_X_eq (es1a6_add_equation W φ₁) (es1a6_add_equation W φ₂) hx with h | h
@@ -3147,12 +3195,12 @@ theorem mmr62_cd_map_dupSlope_eq_slope [CharZero F]
 
 theorem mmr62_cd_collision_addSumX_eq_map_dupX [CharZero F]
     (hx : φ₁ (polyToFunctionField W X) = φ₂ (polyToFunctionField W X))
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂) :
-    es1a6_addSumX W φ₁ φ₂ = φ₂ (endst20_ps_dupX W) := by
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂) :
+    es1a6AddSumX W φ₁ φ₂ = φ₂ (endst20_ps_dupX W) := by
   have _pin := Classical.em True
   have hy := mmr62_cd_collision_yGen_eq W φ₁ φ₂ hx hcol
   have hslope := mmr62_cd_map_dupSlope_eq_slope W φ₂
-  unfold es1a6_addSumX endst20_ps_dupX
+  unfold es1a6AddSumX endst20_ps_dupX
   rw [hx, hy, ← hslope]
   simp only [addX, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂, map_add, map_sub, map_mul,
     map_pow, AlgHom.commutes]
@@ -3172,16 +3220,16 @@ theorem mmr62_cd_map_dupX_transcendental [IsAlgClosed F] [CharZero F]
 
 theorem mmr62_cd_collision_addSumX_transcendental [IsAlgClosed F] [CharZero F]
     (hx : φ₁ (polyToFunctionField W X) = φ₂ (polyToFunctionField W X))
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂) :
-    Transcendental F (es1a6_addSumX W φ₁ φ₂) := by
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂) :
+    Transcendental F (es1a6AddSumX W φ₁ φ₂) := by
   have _pin := Classical.em True
   rw [mmr62_cd_collision_addSumX_eq_map_dupX W φ₁ φ₂ hx hcol]
   exact mmr62_cd_map_dupX_transcendental W φ₂
 
 theorem mmr62_cd_collision_addSumX_ne_const [IsAlgClosed F] [CharZero F]
     (hx : φ₁ (polyToFunctionField W X) = φ₂ (polyToFunctionField W X))
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂) (c : F) :
-    es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c := by
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂) (c : F) :
+    es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c := by
   have _pin := Classical.em True
   intro hc
   refine mmr62_cd_collision_addSumX_transcendental W φ₁ φ₂ hx hcol ?_
@@ -3189,8 +3237,8 @@ theorem mmr62_cd_collision_addSumX_ne_const [IsAlgClosed F] [CharZero F]
   exact isAlgebraic_algebraMap c
 
 theorem mmr62_cd_not_collapse_of_not_collapse_cmp
-    (h : ¬ es1a8_addCollapse_cmp W φ₁ φ₂) :
-    ¬ es1a6_addCollapse W φ₁ φ₂ := by
+    (h : ¬ es1a8AddCollapseCmp W φ₁ φ₂) :
+    ¬ es1a6AddCollapse W φ₁ φ₂ := by
   have _pin := Classical.em True
   intro hc
   exact h ⟨hc.1, hc.2⟩
@@ -3219,10 +3267,10 @@ public section publicSection
 
 omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [WeierstrassCurve.IsElliptic W]
   [W.GenusOnePlaceGate] [GenusOnePlaceGate.IsCentred W] [W.AbelTheorem] in
-theorem kw_hk5f_addIntegralFiniteDataAt_proved : kw_hk5f_addIntegralFiniteDataAt W := by
+theorem kw_hk5f_addIntegralFiniteDataAt_proved : kwHk5fAddIntegralFiniteDataAt W := by
   intro D₁ D₂ hcol htr
   have htrans : Transcendental F
-      (es1a6_addSumPullbackHom W D₁.ι D₂.ι hcol htr (polyToFunctionField W X)) := by
+      (es1a6AddSumPullbackHom W D₁.ι D₂.ι hcol htr (polyToFunctionField W X)) := by
     rw [es1a6_addSumPullbackHom_X]
     exact transcendental_iff_injective.mpr htr
   exact ⟨es1a8_addInt_selfHom_isIntegral_cmp _ htrans,
@@ -3232,11 +3280,11 @@ theorem kw_hk5f_addSumCoordSeamDataNCAt_proved
     {F : Type*} [Field F] [DecidableEq F] [IsAlgClosed F]
     (W : WeierstrassCurve.Affine F) [W.IsElliptic] :
     ∀ φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField,
-      ¬ es1a6_addCollapse W φ₁ φ₂ →
-      (∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) →
+      ¬ es1a6AddCollapse W φ₁ φ₂ →
+      (∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) →
       ∀ (v : AlgebraicCurve.Place F W.FunctionField) (Q₁ Q₂ : W.Point),
-        es1a11_coordSeamDataAt φ₁ v Q₁ → es1a11_coordSeamDataAt φ₂ v Q₂ →
-        es1a6_addSumSeamDataAt φ₁ φ₂ v (Q₁ + Q₂) := by
+        es1a11CoordSeamDataAt φ₁ v Q₁ → es1a11CoordSeamDataAt φ₂ v Q₂ →
+        es1a6AddSumSeamDataAt φ₁ φ₂ v (Q₁ + Q₂) := by
   intro φ₁ φ₂ hcol hnc v Q₁ Q₂ h1 h2
   have E := @WeierstrassCurve.Affine.FunctionField.addX_addY_specialize_at_place F _ _ _ W _
     instDecEqFunctionFieldEs1a6Add φ₁ φ₂
@@ -3294,9 +3342,9 @@ theorem kw_hk5f_pointEnd_add_eq_zero_of_cofinite_geomMorph_sum
 theorem kw_hk5f_collision_pointEnd_add_eq_zero
     (D₁ D₂ : IsogenyEndDatum W)
     (hX : D₁.ι (polyToFunctionField W X) = D₂.ι (polyToFunctionField W X))
-    (c : F) (hx : es1a6_addSumX W D₁.ι D₂.ι = algebraMap F W.FunctionField c) :
+    (c : F) (hx : es1a6AddSumX W D₁.ι D₂.ι = algebraMap F W.FunctionField c) :
     D₁.pointEnd' + D₂.pointEnd' = 0 := by
-  by_cases hcol : es1a8_addCollapse_cmp W D₁.ι D₂.ι
+  by_cases hcol : es1a8AddCollapseCmp W D₁.ι D₂.ι
   · exact es1a8_addCollapse_pointEnd_add_eq_zero_cmp D₁ D₂ hcol
   · exact absurd hx (mmr62_cd_collision_addSumX_ne_const W D₁.ι D₂.ι hX
       (mmr62_cd_not_collapse_of_not_collapse_cmp W D₁.ι D₂.ι hcol) c)
@@ -3306,8 +3354,8 @@ theorem kw_hk5f_transversal_cofinite_geomMorph_sum
     (D₁ D₂ : IsogenyEndDatum W)
     (hX : D₁.ι (polyToFunctionField W X) ≠ D₂.ι (polyToFunctionField W X))
     (c d : F) (hEq : W.Equation c d)
-    (hx : es1a6_addSumX W D₁.ι D₂.ι = algebraMap F W.FunctionField c)
-    (hy : es1a6_addSumY W D₁.ι D₂.ι = algebraMap F W.FunctionField d) :
+    (hx : es1a6AddSumX W D₁.ι D₂.ι = algebraMap F W.FunctionField c)
+    (hy : es1a6AddSumY W D₁.ι D₂.ι = algebraMap F W.FunctionField d) :
     ∃ T : W.Point, {Q : W.Point | D₁.geomMorph Q + D₂.geomMorph Q ≠ T}.Finite := by
   have : HasPrincipalDivisors F W.FunctionField := hasPrincipalDivisors_functionField _
   have hcd : W.Nonsingular c d :=
@@ -3338,7 +3386,7 @@ theorem kw_hk5f_transversal_cofinite_geomMorph_sum
 
 public section publicSection
 
-theorem kw_hk5f_addSumXNonConstGuardAt_proved : kw_hk5f_addSumXNonConstGuardAt W := by
+theorem kw_hk5f_addSumXNonConstGuardAt_proved : kwHk5fAddSumXNonConstGuardAt W := by
   intro D₁ D₂ h0
   refine mmr46_gc_addSumX_ne_const_of_not_constPoint W D₁.ι D₂.ι ?_ ?_
   · intro hc
@@ -3441,7 +3489,9 @@ end publicSection
 
 namespace ModularCurve
 
-@[expose] public def kw_coordinateRingBasis {R : Type*} [CommRing R] (V : Affine R) :
+/-- The constant-ring basis of the affine coordinate ring consisting of powers of `x`, with and
+without a factor of `y`. -/
+@[expose] public def kwCoordinateRingBasis {R : Type*} [CommRing R] (V : Affine R) :
     Module.Basis (ℕ × Fin 2) R V.CoordinateRing :=
   (Polynomial.basisMonomials R).smulTower (CoordinateRing.basis V)
 
@@ -3512,6 +3562,7 @@ theorem eval₂_polynomial_of_equation_map_target {xP yP : L}
 
 end publicSection
 
+/-- Evaluate the affine coordinate ring at a point over the specified extension field. -/
 @[expose] public def pointPullbackCoordHomTo {xP yP : L}
     (h : (W.map (algebraMap F L)).toAffine.Equation xP yP) :
     W.CoordinateRing →ₐ[F] L where
@@ -3555,6 +3606,8 @@ theorem pointPullbackCoordHomTo_injective {xP yP : L}
 
 end publicSection
 
+/-- Extend coordinate evaluation to the function field when the specified `x`-coordinate is
+transcendental over the base. -/
 @[expose] public def pointPullbackHomTo {xP yP : L}
     (h : (W.map (algebraMap F L)).toAffine.Equation xP yP)
     (hx : Function.Injective (Polynomial.aeval (R := F) xP)) :
@@ -3602,10 +3655,12 @@ variable {E E' : Affine K} [GenusOnePlaceGate E] [AbelTheorem E]
 variable (ι : E'.FunctionField →ₐ[K] E.FunctionField)
 variable (hι : ι.toRingHom.IsIntegral) (hfin : FiniteAlong K ι) (hN : NormFormulaAlong K ι hfin)
 
-@[expose] public def kw_fdn2_qephod_hend7_geomMorphBC : E.Point → E'.Point :=
+/-- The contravariant point map obtained by restricting places along the specified integral
+function-field map. -/
+@[expose] public def kwFdn2QephodHend7GeomMorphBC : E.Point → E'.Point :=
   fun P => (placeOfPointEquiv E').symm ((placeOfPoint P).restrictAlong ι hι)
 
-local notation "gBC" => kw_fdn2_qephod_hend7_geomMorphBC ι hι
+local notation "gBC" => kwFdn2QephodHend7GeomMorphBC ι hι
 
 public section publicSection
 
@@ -3683,7 +3738,9 @@ theorem kw_equation_map_polyToFunctionField_yGen_over_baseGeneral :
 
 end publicSection
 
-@[expose] public def kw_functionFieldMapAlongGeneral :
+/-- The function-field homomorphism induced by extending the coefficient field of the Weierstrass
+curve. -/
+@[expose] public def kwFunctionFieldMapAlongGeneral :
     (W⁄F).FunctionField →ₐ[F] (W⁄F').FunctionField :=
   pointPullbackHomTo (kw_equation_map_polyToFunctionField_yGen_over_baseGeneral W F F')
     ((injective_iff_map_eq_zero _).mpr fun p hp =>
@@ -3693,20 +3750,22 @@ end publicSection
 public section publicSection
 
 theorem kw_functionFieldMapAlongGeneral_polyToFunctionField_X :
-    kw_functionFieldMapAlongGeneral W F F' (polyToFunctionField (W⁄F) X)
+    kwFunctionFieldMapAlongGeneral W F F' (polyToFunctionField (W⁄F) X)
       = polyToFunctionField (W⁄F') X := by
   classical
   exact
     pointPullbackHomTo_polyToFunctionField_X _ _
 
 theorem kw_functionFieldMapAlongGeneral_yGen :
-    kw_functionFieldMapAlongGeneral W F F' (yGen (W⁄F)) = yGen (W⁄F') := by
+    kwFunctionFieldMapAlongGeneral W F F' (yGen (W⁄F)) = yGen (W⁄F') := by
   classical
   exact
     pointPullbackHomTo_yGen _ _
 
 end publicSection
 
+/-- The tensor product of the curve's function field with the larger coefficient field is an
+integral domain. -/
 @[expose] public def KwFunctionFieldTensorIsDomainGeneral : Prop :=
   IsDomain ((W⁄F).FunctionField ⊗[F] F')
 
@@ -3818,7 +3877,9 @@ section
 
 variable [IsDomain ((W⁄F).FunctionField ⊗[F] F')]
 
-@[expose] public def kw_functionFieldTensorFracHomGeneral :
+/-- Map the base-changed curve's function field into the fraction field of the tensor product of
+the original field and the new constants. -/
+@[expose] public def kwFunctionFieldTensorFracHomGeneral :
     (W⁄F').FunctionField →ₐ[F'] FractionRing ((W⁄F).FunctionField ⊗[F] F') :=
   pointPullbackHomTo (kw_equation_tensorFracXYGeneral W F F')
     (kw_transcendental_tensorFracXGeneral W F F')
@@ -3826,7 +3887,7 @@ variable [IsDomain ((W⁄F).FunctionField ⊗[F] F')]
 public section publicSection
 
 theorem kw_functionFieldTensorFracHomGeneral_X :
-    kw_functionFieldTensorFracHomGeneral W F F' (polyToFunctionField (W⁄F') X)
+    kwFunctionFieldTensorFracHomGeneral W F F' (polyToFunctionField (W⁄F') X)
       = algebraMap ((W⁄F).FunctionField ⊗[F] F') _
           ((polyToFunctionField (W⁄F) X) ⊗ₜ[F] (1 : F')) := by
   classical
@@ -3834,27 +3895,27 @@ theorem kw_functionFieldTensorFracHomGeneral_X :
     pointPullbackHomTo_polyToFunctionField_X _ _
 
 theorem kw_functionFieldTensorFracHomGeneral_yGen :
-    kw_functionFieldTensorFracHomGeneral W F F' (yGen (W⁄F'))
+    kwFunctionFieldTensorFracHomGeneral W F F' (yGen (W⁄F'))
       = algebraMap ((W⁄F).FunctionField ⊗[F] F') _ ((yGen (W⁄F)) ⊗ₜ[F] (1 : F')) := by
   classical
   exact
     pointPullbackHomTo_yGen _ _
 
 theorem kw_functionFieldTensorFracHomGeneral_bijective :
-    Function.Bijective (kw_functionFieldTensorFracHomGeneral W F F') := by
+    Function.Bijective (kwFunctionFieldTensorFracHomGeneral W F F') := by
   classical
-  refine ⟨(kw_functionFieldTensorFracHomGeneral W F F').injective, ?_⟩
-  set ψ := kw_functionFieldTensorFracHomGeneral W F F'
-  have hκ : (ψ.restrictScalars F).comp (kw_functionFieldMapAlongGeneral W F F')
+  refine ⟨(kwFunctionFieldTensorFracHomGeneral W F F').injective, ?_⟩
+  set ψ := kwFunctionFieldTensorFracHomGeneral W F F'
+  have hκ : (ψ.restrictScalars F).comp (kwFunctionFieldMapAlongGeneral W F F')
       = (IsScalarTower.toAlgHom F ((W⁄F).FunctionField ⊗[F] F')
           (FractionRing ((W⁄F).FunctionField ⊗[F] F'))).comp
           (Algebra.TensorProduct.includeLeft (R := F)) := by
     refine kw_functionField_algHom_ext ?_ ?_
-    · change ψ (kw_functionFieldMapAlongGeneral W F F' (polyToFunctionField (W⁄F) X)) = _
+    · change ψ (kwFunctionFieldMapAlongGeneral W F F' (polyToFunctionField (W⁄F) X)) = _
       rw [kw_functionFieldMapAlongGeneral_polyToFunctionField_X,
         kw_functionFieldTensorFracHomGeneral_X]
       rfl
-    · change ψ (kw_functionFieldMapAlongGeneral W F F' (yGen (W⁄F))) = _
+    · change ψ (kwFunctionFieldMapAlongGeneral W F F' (yGen (W⁄F))) = _
       rw [kw_functionFieldMapAlongGeneral_yGen, kw_functionFieldTensorFracHomGeneral_yGen]
       rfl
   have hT_sub : ∀ t : (W⁄F).FunctionField ⊗[F] F',
@@ -3867,7 +3928,7 @@ theorem kw_functionFieldTensorFracHomGeneral_bijective :
             by rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul],
         map_mul]
       refine mul_mem ?_ ⟨algebraMap F' _ c, ?_⟩
-      · exact ⟨kw_functionFieldMapAlongGeneral W F F' a, DFunLike.congr_fun hκ a⟩
+      · exact ⟨kwFunctionFieldMapAlongGeneral W F F' a, DFunLike.congr_fun hκ a⟩
       · simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, ψ.commutes,
           IsScalarTower.algebraMap_apply F' ((W⁄F).FunctionField ⊗[F] F')
             (FractionRing ((W⁄F).FunctionField ⊗[F] F')),
@@ -3879,7 +3940,9 @@ theorem kw_functionFieldTensorFracHomGeneral_bijective :
 
 end publicSection
 
-@[expose] public def kw_functionFieldTensorFracEquivGeneral :
+/-- Identify the base-changed curve's function field with the fraction field of the
+function-field tensor product. -/
+@[expose] public def kwFunctionFieldTensorFracEquivGeneral :
     (W⁄F').FunctionField ≃ₐ[F'] FractionRing ((W⁄F).FunctionField ⊗[F] F') :=
   AlgEquiv.ofBijective _ (kw_functionFieldTensorFracHomGeneral_bijective W F F')
 
@@ -3893,11 +3956,11 @@ public section publicSection
 omit [Algebra R₀ F'] [IsScalarTower R₀ F F'] in
 theorem kw_coordinateRingMap_basisGeneral (i : ℕ × Fin 2) :
     CoordinateRing.map (W⁄F).toAffine (algebraMap F F')
-        (kw_coordinateRingBasis (W⁄F).toAffine i)
-      = kw_coordinateRingBasis ((W⁄F).toAffine.map (algebraMap F F')) i := by
+        (kwCoordinateRingBasis (W⁄F).toAffine i)
+      = kwCoordinateRingBasis ((W⁄F).toAffine.map (algebraMap F F')) i := by
   classical
   obtain ⟨n, j⟩ := i
-  simp only [kw_coordinateRingBasis, Module.Basis.smulTower_apply,
+  simp only [kwCoordinateRingBasis, Module.Basis.smulTower_apply,
     Polynomial.coe_basisMonomials, CoordinateRing.map_smul]
   congr 1
   · simp [Polynomial.map_monomial]
@@ -3908,7 +3971,8 @@ theorem kw_coordinateRingMap_basisGeneral (i : ℕ × Fin 2) :
 
 end publicSection
 
-@[expose] public def kw_coordinateRingMapAlongGeneral :
+/-- The affine coordinate-ring homomorphism induced by extension of the coefficient field. -/
+@[expose] public def kwCoordinateRingMapAlongGeneral :
     CR →ₐ[F] ((W⁄F).toAffine.map (algebraMap F F')).CoordinateRing where
   __ := CoordinateRing.map (W⁄F).toAffine (algebraMap F F')
   commutes' r := by
@@ -3939,11 +4003,11 @@ theorem kw_coordinateRingTensor_isDomainGeneral : IsDomain (CR ⊗[F] F') := by
       (Algebra.TensorProduct.comm F CR F').injective
   set W'' := (W⁄F).toAffine.map (algebraMap F F') with hW''
   let θ : F' ⊗[F] CR →ₐ[F'] W''.CoordinateRing :=
-    AlgHom.liftEquiv F F' CR W''.CoordinateRing (kw_coordinateRingMapAlongGeneral W F F')
+    AlgHom.liftEquiv F F' CR W''.CoordinateRing (kwCoordinateRingMapAlongGeneral W F F')
   have hθ : Function.Injective θ := by
     let bT : Module.Basis (ℕ × Fin 2) F' (F' ⊗[F] CR) :=
-      Algebra.TensorProduct.basis F' (kw_coordinateRingBasis (W⁄F).toAffine)
-    let bD : Module.Basis (ℕ × Fin 2) F' W''.CoordinateRing := kw_coordinateRingBasis W''
+      Algebra.TensorProduct.basis F' (kwCoordinateRingBasis (W⁄F).toAffine)
+    let bD : Module.Basis (ℕ × Fin 2) F' W''.CoordinateRing := kwCoordinateRingBasis W''
     have key : ∀ i, θ.toLinearMap (bT i) = (bT.equiv bD (Equiv.refl _)) (bT i) := fun i => by
       rw [Module.Basis.equiv_apply, Equiv.refl_apply, AlgHom.toLinearMap_apply]
       simp only [bT, Algebra.TensorProduct.basis_apply, θ, AlgHom.liftEquiv_tmul, one_smul]

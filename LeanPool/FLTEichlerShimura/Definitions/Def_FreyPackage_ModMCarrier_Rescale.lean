@@ -74,6 +74,7 @@ namespace FreyPackage.ModMCarrier
 section Cocycle
 variable {R M d : ℕ}
 
+/-- The integral diagonal matrix with entries `d, 1`, used for rescaling modular forms. -/
 def diagMatInt (d : ℕ) : Matrix (Fin 2) (Fin 2) ℤ := !![(d : ℤ), 0; 0, 1]
 
 lemma exists_cocycle_rescale (hdRM : d * R ∣ M) {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 M) :
@@ -157,6 +158,7 @@ end Cocycle
 section Cusps
 variable {R M d : ℕ}
 
+/-- The rational diagonal matrix with entries `d, 1`, bundled as an invertible matrix. -/
 def heckeDiagMatrixQ (hd : d ≠ 0) : GL (Fin 2) ℚ :=
   Matrix.GeneralLinearGroup.mkOfDetNeZero !![(d : ℚ), 0; 0, 1]
     (by
@@ -200,6 +202,8 @@ private lemma aux_neZero_d (hdRM : d * R ∣ M) : d ≠ 0 := by
 private lemma aux_neZero_R (hdRM : d * R ∣ M) : NeZero R :=
   ⟨by rintro rfl; exact NeZero.ne M (Nat.eq_zero_of_zero_dvd (mul_zero d ▸ hdRM))⟩
 
+/-- The linear degeneracy map from level `Γ₀(R)` to `Γ₀(M)` given by slash action of `diag(d,
+1)`. -/
 def rescaleLin (hdRM : d * R ∣ M) (k : ℤ) :
     CuspForm (Gamma0 R) k →ₗ[ℂ] CuspForm (Gamma0 M) k where
   toFun f :=
@@ -231,6 +235,7 @@ omit [NeZero M] in
 lemma _root_.ModularForm.AtkinLehnerDatum.q_mul_R_dvd : q' * W.R ∣ M :=
   ⟨1, W.hM.trans (mul_one (q' * W.R)).symm⟩
 
+/-- The rescaling map specialized to the complementary level in the Atkin-Lehner datum. -/
 abbrev rescaleLinAL (k : ℤ) :
     CuspForm (Gamma0 W.R) k →ₗ[ℂ] CuspForm (Gamma0 M) k :=
   rescaleLin W.q_mul_R_dvd k

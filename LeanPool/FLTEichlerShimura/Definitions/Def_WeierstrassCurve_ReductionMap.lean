@@ -203,6 +203,8 @@ theorem Affine.nonsingular_residue (hΔ : (W.map (residue A)).Δ ≠ 0) {x y : A
 variable {W}
 
 open Classical in
+/-- Reduce integral affine coordinates to the good-reduction curve, sending nonintegral points
+and infinity to infinity. -/
 noncomputable def reducePoint (hΔ : (W.map (residue A)).Δ ≠ 0) :
     (W.map A.subtype).toAffine.Point → (W.map (residue A)).toAffine.Point
   | .zero => .zero

@@ -79,6 +79,7 @@ namespace ModularForm
 
 variable {N : ℕ} {p : ℕ}
 
+/-- The linear Hecke operator `T` on modular forms, using the specified slash-action sum. -/
 def heckeTLin (k : ℤ) (hp : p.Prime) (hpN : ¬ p ∣ N) :
     ModularForm (CongruenceSubgroup.Gamma0 N) k →ₗ[ℂ] ModularForm (CongruenceSubgroup.Gamma0 N) k :=
   haveI : NeZero N := ⟨fun h => hpN (h ▸ dvd_zero p)⟩
@@ -93,6 +94,7 @@ def heckeTLin (k : ℤ) (hp : p.Prime) (hpN : ¬ p ∣ N) :
     map_smul' := fun c f => DFunLike.coe_injective <|
       show heckeT k p ⇑(c • f) = c • heckeT k p ⇑f by rw [FunLike.coe_smul, heckeT_smul] }
 
+/-- The linear Hecke operator `U` on modular forms, using the specified slash-action sum. -/
 def heckeULin (k : ℤ) [NeZero N] (hpN : p ∣ N) :
     ModularForm (CongruenceSubgroup.Gamma0 N) k →ₗ[ℂ]
       ModularForm (CongruenceSubgroup.Gamma0 N) k where
@@ -130,6 +132,7 @@ open ModularForm
 
 variable {N : ℕ} {p : ℕ}
 
+/-- The linear Hecke operator `T` restricted to cusp forms. -/
 def heckeTLin (k : ℤ) (hp : p.Prime) (hpN : ¬ p ∣ N) :
     CuspForm (CongruenceSubgroup.Gamma0 N) k →ₗ[ℂ] CuspForm (CongruenceSubgroup.Gamma0 N) k :=
   haveI : NeZero N := ⟨fun h => hpN (h ▸ dvd_zero p)⟩
@@ -144,6 +147,7 @@ def heckeTLin (k : ℤ) (hp : p.Prime) (hpN : ¬ p ∣ N) :
     map_smul' := fun c f => DFunLike.coe_injective <|
       show heckeT k p ⇑(c • f) = c • heckeT k p ⇑f by rw [FunLike.coe_smul, heckeT_smul] }
 
+/-- The linear Hecke operator `U` restricted to cusp forms. -/
 def heckeULin (k : ℤ) [NeZero N] (hpN : p ∣ N) :
     CuspForm (CongruenceSubgroup.Gamma0 N) k →ₗ[ℂ] CuspForm (CongruenceSubgroup.Gamma0 N) k where
   toFun f :=

@@ -254,39 +254,39 @@ include x in
 theorem ordDiff_eq_ordDifferential (v : Place K F) [v.DCoordGenerates]
     (ω : Ω[F⁄K]) : v.ordDiff ω = v.ordDifferential ω := by
   obtain ⟨t₂, ht₂, hdc⟩ := exists_dCoord_eq_D v
-  have ht₁ : v.ord v.uniformizer_alt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
-  have hc_smul : Place.diffCoeff v.uniformizer_alt (D K F t₂) • D K F v.uniformizer_alt = D K F t₂
+  have ht₁ : v.ord v.uniformizerAlt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
+  have hc_smul : Place.diffCoeff v.uniformizerAlt (D K F t₂) • D K F v.uniformizerAlt = D K F t₂
     :=
     Place.diffCoeff_smul_D_of_ord_eq_one x v ht₁ _
-  have hc'_smul : Place.diffCoeff t₂ (D K F v.uniformizer_alt) • D K F t₂ = D K F v.uniformizer_alt
+  have hc'_smul : Place.diffCoeff t₂ (D K F v.uniformizerAlt) • D K F t₂ = D K F v.uniformizerAlt
     :=
     Place.diffCoeff_smul_D_of_ord_eq_one x v ht₂ _
-  have hD₁ : D K F v.uniformizer_alt ≠ 0 := Place.D_ne_zero_of_ord_eq_one x v ht₁
-  have hcc' : Place.diffCoeff t₂ (D K F v.uniformizer_alt) *
-      Place.diffCoeff v.uniformizer_alt (D K F t₂) = 1 := by
+  have hD₁ : D K F v.uniformizerAlt ≠ 0 := Place.D_ne_zero_of_ord_eq_one x v ht₁
+  have hcc' : Place.diffCoeff t₂ (D K F v.uniformizerAlt) *
+      Place.diffCoeff v.uniformizerAlt (D K F t₂) = 1 := by
     refine coeff_unique hD₁ ?_
     rw [mul_smul, hc_smul, hc'_smul, one_smul]
-  have hc0 : Place.diffCoeff v.uniformizer_alt (D K F t₂) ≠ 0 := by
+  have hc0 : Place.diffCoeff v.uniformizerAlt (D K F t₂) ≠ 0 := by
     intro h0
     rw [h0, mul_zero] at hcc'
     exact zero_ne_one hcc'
-  have hc'0 : Place.diffCoeff t₂ (D K F v.uniformizer_alt) ≠ 0 := by
+  have hc'0 : Place.diffCoeff t₂ (D K F v.uniformizerAlt) ≠ 0 := by
     intro h0
     rw [h0, zero_mul] at hcc'
     exact zero_ne_one hcc'
-  have hordc : v.ord (Place.diffCoeff v.uniformizer_alt (D K F t₂)) = 0 := by
-    have h1 : 0 ≤ v.ord (Place.diffCoeff v.uniformizer_alt (D K F t₂)) :=
+  have hordc : v.ord (Place.diffCoeff v.uniformizerAlt (D K F t₂)) = 0 := by
+    have h1 : 0 ≤ v.ord (Place.diffCoeff v.uniformizerAlt (D K F t₂)) :=
       Place.ord_diffCoeff_D_nonneg_of_perfectField x v ht₁ (by rw [ht₂]; exact zero_le_one)
-    have h2 : 0 ≤ v.ord (Place.diffCoeff t₂ (D K F v.uniformizer_alt)) :=
+    have h2 : 0 ≤ v.ord (Place.diffCoeff t₂ (D K F v.uniformizerAlt)) :=
       Place.ord_diffCoeff_D_nonneg_of_perfectField x v ht₂ (by rw [ht₁]; exact zero_le_one)
     have h3 := v.ord_mul hc'0 hc0
     rw [hcc', v.ord_one] at h3
     omega
-  have ha : Place.diffCoeff v.uniformizer_alt ω • D K F v.uniformizer_alt = ω :=
+  have ha : Place.diffCoeff v.uniformizerAlt ω • D K F v.uniformizerAlt = ω :=
     Place.diffCoeff_smul_D_of_ord_eq_one x v ht₁ ω
   have hb : v.differentialCoeff ω • v.dCoord = ω := v.differentialCoeff_smul_dCoord ω
-  have hab : Place.diffCoeff v.uniformizer_alt ω =
-      v.differentialCoeff ω * Place.diffCoeff v.uniformizer_alt (D K F t₂) := by
+  have hab : Place.diffCoeff v.uniformizerAlt ω =
+      v.differentialCoeff ω * Place.diffCoeff v.uniformizerAlt (D K F t₂) := by
     refine coeff_unique hD₁ ?_
     rw [ha, mul_smul, hc_smul, ← hdc, hb]
   rw [Place.ordDiff_def, Place.ordDifferential, hab]

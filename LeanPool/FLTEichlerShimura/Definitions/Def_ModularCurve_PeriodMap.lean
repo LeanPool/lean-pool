@@ -69,9 +69,11 @@ open scoped MatrixGroups
 
 variable (Γ : Subgroup SL(2, ℤ)) (F : ℍ → ℂ)
 
+/-- The difference `F (γ • z) - F z` is independent of `z` for every group element. -/
 def IsEquivariantPrimitive : Prop :=
   ∀ γ : Γ, ∃ c : ℂ, ∀ z : ℍ, F ((γ : SL(2, ℤ)) • z) - F z = c
 
+/-- An additive character vanishes on every element with squared trace equal to four. -/
 def IsParabolicHom {A : Type*} [AddCommGroup A] (φ : Additive Γ →+ A) : Prop :=
   ∀ γ : Γ, ((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).trace ^ 2 = 4 → φ (Additive.ofMul γ) = 0
 
@@ -79,6 +81,7 @@ variable {Γ F}
 
 namespace IsEquivariantPrimitive
 
+/-- The period of an equivariant primitive, evaluated at the base point `I`. -/
 noncomputable def period (_hF : IsEquivariantPrimitive Γ F) (γ : Γ) : ℂ :=
   F ((γ : SL(2, ℤ)) • UpperHalfPlane.I) - F UpperHalfPlane.I
 
@@ -103,6 +106,7 @@ theorem period_mul (hF : IsEquivariantPrimitive Γ F) (γ δ : Γ) :
   rw [hsmul] at h1
   linear_combination h2 + h3 - h1
 
+/-- The additive character given by the periods of an equivariant primitive. -/
 noncomputable def periodHom (hF : IsEquivariantPrimitive Γ F) : Additive Γ →+ ℂ where
   toFun γ := hF.period (Additive.toMul γ)
   map_zero' := hF.period_one
@@ -119,6 +123,7 @@ section ParabolicHoms
 
 variable (R : Type*) [Semiring R] (Γ : Subgroup SL(2, ℤ)) (A : Type*) [AddCommGroup A] [Module R A]
 
+/-- The submodule of additive characters vanishing on parabolic elements. -/
 def parabolicHoms : Submodule R (Additive Γ →+ A) where
   carrier := {φ | IsParabolicHom Γ φ}
   zero_mem' := fun _ _ => rfl

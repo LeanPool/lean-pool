@@ -66,11 +66,14 @@ namespace LanglandsTunnell
 
 open NumberField Ideal FrobeniusDensity
 
+/-- The odd exponents `1, 3, 5, 7` modulo eight, represented as a finite set of natural numbers. -/
 def oddJ : Finset ℕ := {1, 3, 5, 7}
 
 variable {L : Type*} [Field L] [NumberField L] [IsGalois ℚ L]
 
 open scoped Classical in
+/-- The number of degree-one primes of the fixed field of `σ` above `ℓ` admitting an unramified
+lift with Frobenius `σ ^ m`; zero at excluded or nonprime `ℓ`. -/
 noncomputable def labelledCount (σ : L ≃ₐ[ℚ] L) (S₀ : Finset ℕ) (m : Fin 8) (ℓ : ℕ) : ℕ :=
   if ℓ ∈ S₀ then 0 else
   if hℓ : ℓ.Prime then
@@ -91,6 +94,8 @@ theorem labelledCount_of_mem_S₀ (σ : L ≃ₐ[ℚ] L) (S₀ : Finset ℕ) (m 
   simp [labelledCount, h]
 
 open scoped Classical in
+/-- The indicator that `ℓ` is prime and has an unramified prime above it whose Frobenius is
+conjugate to `σ`. -/
 noncomputable def classIndicator (σ : L ≃ₐ[ℚ] L) (ℓ : ℕ) : ℕ :=
   if ∃ _ : ℓ.Prime, ∃ (Q : Ideal (𝓞 L)) (_ : Q.IsPrime) (_ : Q.LiesOver (ratPrimeIdeal ℓ))
         (_ : Q.inertia (L ≃ₐ[ℚ] L) = ⊥),

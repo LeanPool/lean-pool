@@ -74,36 +74,49 @@ section PairStab
 
 variable {N : ℕ} {L : Type*} [Field L] [DecidableEq L]
 
+/-- The cardinality of changes of variables fixing the curve and preserving its cyclic level
+structure up to a coprime change of generator. -/
 noncomputable def pairStabCard (P : Gamma0Pair N L) : ℕ :=
   Nat.card {γ : VariableChange L // γ • P.toCurve = P.toCurve ∧
     ∃ k : ℕ, k.Coprime N ∧ HEq P.gen (k • Point.vcInvFun γ P.toCurve.toAffine P.gen)}
 
 end PairStab
 
+/-- Embeddings into rational-exponent Hahn series sending `j` to the specified constant plus `q`. -/
 def Emb (N : ℕ) [NeZero N] (j₀ : AlgebraicClosure ℚ) : Type :=
   {ψ : ↥(modularFunctionFieldBar N) →ₐ[AlgebraicClosure ℚ] HahnSeries ℚ (AlgebraicClosure ℚ) //
     ψ (jBar N) = HahnSeries.C j₀ + HahnSeries.single (1 : ℚ) (1 : AlgebraicClosure ℚ)}
 
+/-- The Hahn-series order of each embedded function is a fixed positive rational multiple of its
+place order. -/
 def Induces {N : ℕ}
     (ψ : ↥(modularFunctionFieldBar N) →ₐ[AlgebraicClosure ℚ] HahnSeries ℚ (AlgebraicClosure ℚ))
     (w : Place (AlgebraicClosure ℚ) ↥(modularFunctionFieldBar N)) : Prop :=
   ∃ g : ℚ, 0 < g ∧ ∀ x : ↥(modularFunctionFieldBar N), (w.ord x : ℚ) * g = (ψ x).order
 
+/-- The two Hahn-series embeddings induce the same place, allowing different positive valuation
+normalizations. -/
 def SamePlace {N : ℕ}
     (ψ ψ' : ↥(modularFunctionFieldBar N) →ₐ[AlgebraicClosure ℚ] HahnSeries ℚ (AlgebraicClosure ℚ)) :
     Prop :=
   ∃ w : Place (AlgebraicClosure ℚ) ↥(modularFunctionFieldBar N), Induces ψ w ∧ Induces ψ' w
 
+/-- Cyclic subgroups of the elliptic curve's point group admitting a generator of exact order
+`N`. -/
 def CycSub (E₀ : WeierstrassCurve (AlgebraicClosure ℚ)) (N : ℕ) : Type :=
   {H : AddSubgroup E₀.toAffine.Point //
     ∃ g : E₀.toAffine.Point, addOrderOf g = N ∧ H = AddSubgroup.zmultiples g}
 
+/-- The cyclic subgroups have generators identified by a change of variables fixing the elliptic
+curve. -/
 def SameOrbit (E₀ : WeierstrassCurve (AlgebraicClosure ℚ)) (H H' : AddSubgroup E₀.toAffine.Point) :
     Prop :=
   ∃ γ : VariableChange (AlgebraicClosure ℚ), ∃ _ : γ • E₀ = E₀, ∃ g g' : E₀.toAffine.Point,
     H = AddSubgroup.zmultiples g ∧ H' = AddSubgroup.zmultiples g' ∧
       HEq g' (Point.vcInvFun γ E₀.toAffine g)
 
+/-- A dictionary between nearby Hahn-series embeddings and cyclic subgroups, identifying equal
+induced places with automorphism orbits. -/
 def EMD (N : ℕ) [NeZero N] (j₀ : AlgebraicClosure ℚ) : Prop :=
   ∃ (E₀ : WeierstrassCurve (AlgebraicClosure ℚ)) (_ : E₀.IsElliptic), E₀.j = j₀ ∧
     ∃ Φ : Emb N j₀ ≃ CycSub E₀ N, ∀ ψ ψ' : Emb N j₀,

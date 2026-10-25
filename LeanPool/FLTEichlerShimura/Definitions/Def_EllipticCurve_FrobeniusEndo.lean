@@ -74,6 +74,7 @@ section Pencil
 
 variable {A : Type*} [AddCommGroup A]
 
+/-- The endomorphism `m • id - n • ψ` associated to the integer pair `(m, n)`. -/
 def linePencil (ψ : A →+ A) (m n : ℤ) : A →+ A :=
   m • AddMonoidHom.id A - n • ψ
 
@@ -81,6 +82,8 @@ def linePencil (ψ : A →+ A) (m n : ℤ) : A →+ A :=
     linePencil ψ m n P = m • P - n • ψ P :=
   rfl
 
+/-- The cardinality of the kernel of the endomorphism, with the `Nat.card` convention for
+infinite kernels. -/
 def kerDeg (ψ : A →+ A) (m n : ℤ) : ℕ :=
   Nat.card (linePencil ψ m n).ker
 
@@ -99,17 +102,20 @@ variable {R : Type*} {S : Type*} {k : Type*} [CommRing R] [CommRing S] [Field k]
   [Algebra R S] [Algebra R k] [Algebra S k] [IsScalarTower R S k]
   (W : WeierstrassCurve R) (σ : k ≃ₐ[S] k)
 
+/-- The point-group endomorphism induced by the specified Galois automorphism. -/
 abbrev frobEnd : (W⁄k).Point →+ (W⁄k).Point :=
   DistribSMul.toAddMonoidHom (W⁄k).Point σ
 
 lemma frobEnd_apply (P : (W⁄k).Point) : frobEnd W σ P = σ • P :=
   rfl
 
+/-- The endomorphism `m • id - n • Frobenius` on the indicated torsion subgroup. -/
 abbrev frobPencilEnd (p : ℕ) (m n : ℤ) :
     Module.End (ZMod p) (Submodule.torsionBy ℤ (W⁄k).Point p) :=
   ((m : ZMod p) • (1 : Module.End (ZMod p) (Submodule.torsionBy ℤ (W⁄k).Point p))) -
     (n : ZMod p) • galoisRepModuleEnd S W p σ
 
+/-- Frobenius satisfies the quadratic relation `F² - aF + q = 0` on every point. -/
 def FrobCharEqOnPoints (a : ℤ) (q : ℕ) : Prop :=
   ∀ P : (W⁄k).Point, σ • (σ • P) - a • (σ • P) + (q : ℤ) • P = 0
 

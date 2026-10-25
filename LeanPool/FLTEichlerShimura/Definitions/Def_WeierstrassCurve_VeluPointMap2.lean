@@ -70,9 +70,11 @@ section CommRing
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve R) (x₀ y₀ : R)
 
+/-- The numerator of the order-two Vélu `x`-coordinate over the denominator `(x - x₀)²`. -/
 def velu2XNum (x : R) : R :=
   x * (x - x₀) ^ 2 + W.veluGx x₀ y₀ * (x - x₀)
 
+/-- The numerator of the order-two Vélu `y`-coordinate over the denominator `(x - x₀)³`. -/
 def velu2YNum (x y : R) : R :=
   y * (x - x₀) ^ 3 - W.veluGx x₀ y₀ * (W.a₁ * (x - x₀) + y - y₀) * (x - x₀)
 
@@ -145,9 +147,11 @@ section Field
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
+/-- The rational `x`-coordinate formula for the Vélu quotient by a point of order two. -/
 noncomputable def velu2X (x₀ y₀ x : F) : F :=
   x + W.veluGx x₀ y₀ / (x - x₀)
 
+/-- The rational `y`-coordinate formula for the Vélu quotient by a point of order two. -/
 noncomputable def velu2Y (x₀ y₀ x y : F) : F :=
   y - W.veluGx x₀ y₀ * (W.a₁ * (x - x₀) + y - y₀) / (x - x₀) ^ 2
 
@@ -192,6 +196,7 @@ variable (hchar : (2 : F) ≠ 0) {x₀ y₀ : F} (hQ : W.toAffine.Equation x₀ 
   (hgy : W.veluGy x₀ y₀ = 0) (hΔ : (W.veluQuotient2 x₀ y₀).Δ ≠ 0)
 
 open scoped Classical in
+/-- The point map to the order-two Vélu quotient, sending the kernel and infinity to infinity. -/
 noncomputable def veluPointMap2 :
     W.toAffine.Point → (W.veluQuotient2 x₀ y₀).toAffine.Point
   | .zero => .zero

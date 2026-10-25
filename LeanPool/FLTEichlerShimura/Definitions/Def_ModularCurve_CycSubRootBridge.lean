@@ -97,6 +97,7 @@ section Gen
 
 variable (E : WeierstrassCurve H) {p : ℕ}
 
+/-- Choose a generator of the specified cyclic subgroup with exact order equal to its level. -/
 def cycSubGen (G : CycSubH E p) : E.toAffine.Point := Classical.choose G.2
 
 open scoped Classical in
@@ -111,6 +112,8 @@ theorem coe_eq_zmultiples_cycSubGen (G : CycSubH E p) :
 theorem CycSubH.ext {G G' : CycSubH E p} (h : G.1 = G'.1) : G = G' := Subtype.ext h
 
 open scoped Classical in
+/-- The coordinate pairs of the first half of the nonzero multiples of the chosen cyclic-subgroup
+generator. -/
 def cycSubSummingSet (G : CycSubH E p) : Finset (H × H) :=
   E.oddOrderSummingSet (cycSubGen E G) ((p - 1) / 2)
 
@@ -142,6 +145,8 @@ theorem isRoot_map_j_veluQuotient_j_of_eq {N : ℕ} [NeZero N] (n : ℕ) (hN : 2
   subst hN
   exact ModularPolynomialData.isRoot_map_j_veluQuotient_j_of_addOrderOf_eq E n Q hQ hΔ data
 
+/-- The modular-polynomial root given by the `j`-invariant of the Vélu quotient by the cyclic
+subgroup of odd prime order. -/
 def cycSubRoot (hp2 : p ≠ 2) (data : ModularPolynomialData p) (G : CycSubH E p) :
     RootsAt data E.j :=
   ⟨@WeierstrassCurve.j H _ (E.veluQuotient (cycSubSummingSet E G))
@@ -213,6 +218,8 @@ theorem finite_cycSubH [E.IsElliptic] [NeZero p] : Finite (CycSubH E p) :=
       p))).ne')
 
 open scoped Classical in
+/-- Identify specialized modular-polynomial roots with membership in the finite set of polynomial
+roots. -/
 def rootsAtEquivMemRootsToFinset [NeZero p] (data : ModularPolynomialData p) (jv : H) :
     RootsAt data jv ≃
       {y : H // y ∈ (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom H) jv)).roots.toFinset}
@@ -246,6 +253,8 @@ theorem cycSubRoot_bijective (hp2 : p ≠ 2) (data : ModularPolynomialData p)
   rw [natCard_cycSubH]
   exact natCard_rootsAt_le data E.j
 
+/-- For transcendental `j`, identify specialized modular-polynomial roots with cyclic subgroups
+of the specified odd prime order. -/
 def rootsEquivCycSubH (hp2 : p ≠ 2) (data : ModularPolynomialData p)
     (hj : Transcendental Qbar E.j) : RootsAt data E.j ≃ CycSubH E p :=
   (Equiv.ofBijective (cycSubRoot E hp2 data) (cycSubRoot_bijective E hp2 data hj)).symm

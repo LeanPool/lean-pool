@@ -47,6 +47,8 @@ public section
 
 namespace UpperHalfPlane.NiceFunction
 
+/-- The function is one-periodic, holomorphic on the upper half-plane, and bounded at imaginary
+infinity. -/
 @[expose] def Nice (f : ℍ → ℂ) : Prop :=
   Function.Periodic (f ∘ ofComplex) 1 ∧ MDifferentiable 𝓘(ℂ) 𝓘(ℂ) f ∧ IsBoundedAtImInfty f
 
@@ -59,6 +61,8 @@ theorem Nice.add {f g : ℍ → ℂ} (hf : Nice f) (hg : Nice g) : Nice (f + g) 
 theorem Nice.const (c : ℂ) : Nice (fun _ => c) :=
   ⟨fun _ => rfl, mdifferentiable_const, Filter.const_boundedAtFilter _ _⟩
 
+/-- The complex subalgebra of one-periodic holomorphic upper-half-plane functions bounded at
+imaginary infinity. -/
 @[expose] def niceSubalgebra : Subalgebra ℂ (ℍ → ℂ) where
   carrier := {f | Nice f}
   mul_mem' hf hg := hf.mul hg
@@ -70,6 +74,7 @@ local notation "𝒩" => niceSubalgebra
 theorem an (f : 𝒩) : AnalyticAt ℂ (cuspFunction 1 (f : ℍ → ℂ)) 0 :=
   UpperHalfPlane.analyticAt_cuspFunction_zero one_pos f.2.1 f.2.2.1 f.2.2.2
 
+/-- The algebra homomorphism taking a nice function to its power-series expansion at infinity. -/
 @[expose] def qexpHom : 𝒩 →ₐ[ℂ] PowerSeries ℂ where
   toFun f := qExpansion 1 (f : ℍ → ℂ)
   map_one' := UpperHalfPlane.qExpansion_one 1
@@ -86,6 +91,7 @@ theorem an (f : 𝒩) : AnalyticAt ℂ (cuspFunction 1 (f : ℍ → ℂ)) 0 :=
 
 theorem qexpHom_apply (f : 𝒩) : qexpHom f = qExpansion 1 (f : ℍ → ℂ) := rfl
 
+/-- The algebra homomorphism taking a nice function to its Laurent-series expansion. -/
 @[expose] def ψ : 𝒩 →ₐ[ℂ] LaurentSeries ℂ :=
   { (HahnSeries.ofPowerSeries ℤ ℂ).comp qexpHom.toRingHom with
     commutes' := fun c => by
@@ -107,6 +113,8 @@ theorem ψ_injective : Function.Injective ψ := by
 theorem ψ_eq_zero_iff (f : 𝒩) : ψ f = 0 ↔ f = 0 :=
   ⟨fun h => ψ_injective (by grind), by grind⟩
 
+/-- Precompose a nice function with `ofComplex` to obtain a complex-valued function on the
+complex plane. -/
 @[expose] def toC : 𝒩 →ₐ[ℂ] (ℂ → ℂ) where
   toFun f := (f : ℍ → ℂ) ∘ ofComplex
   map_one' := rfl
@@ -128,6 +136,8 @@ theorem nice_of_modularForm {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : �
   refine ⟨?_, ModularFormClass.holo f, ModularFormClass.bdd_at_infty f⟩
   simpa using SlashInvariantFormClass.periodic_comp_ofComplex (h := 1) f h1
 
+/-- View a modular form with strict period one as a periodic holomorphic function bounded at
+imaginary infinity. -/
 @[expose] def ofMF {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
     [ModularFormClass F Γ k] (f : F) (h1 : (1 : ℝ) ∈ Γ.strictPeriods) : 𝒩 :=
   ⟨f, nice_of_modularForm f h1⟩
@@ -136,10 +146,13 @@ theorem nice_of_modularForm {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : �
     [ModularFormClass F Γ k] (f : F) (h1 : (1 : ℝ) ∈ Γ.strictPeriods) :
     ((ofMF f h1 : 𝒩) : ℍ → ℂ) = f := rfl
 
+/-- The Eisenstein series of weight four viewed in the nice-function subalgebra. -/
 @[expose] def 𝔞 : 𝒩 := ofMF ModularForm.E₄ one_mem_strictPeriods_SL
 
+/-- The Eisenstein series of weight six viewed in the nice-function subalgebra. -/
 @[expose] def 𝔟 : 𝒩 := ofMF ModularForm.E₆ one_mem_strictPeriods_SL
 
+/-- The discriminant cusp form viewed in the nice-function subalgebra. -/
 @[expose] def 𝔡 : 𝒩 := ofMF CuspForm.discriminant one_mem_strictPeriods_SL
 
 theorem ψ𝔞 : ψ 𝔞 = HahnSeries.ofPowerSeries ℤ ℂ (qExpansion 1 (ModularForm.E₄ : ℍ → ℂ)) := rfl

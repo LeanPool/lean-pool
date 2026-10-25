@@ -75,6 +75,8 @@ namespace ModularCurve
 variable (N : ℕ) [NeZero N]
 
 open scoped Classical in
+/-- Choose the differential whose expansion matches the given analytic function after embedding
+constants, or return zero if no such function-field coefficient exists. -/
 def omegaOf (f : ℍ → ℂ) (σ : AlgebraicClosure ℚ →+* ℂ) :
     Ω[modularFunctionFieldBar N⁄AlgebraicClosure ℚ] :=
   if h : ∃ x : modularFunctionFieldBar N,

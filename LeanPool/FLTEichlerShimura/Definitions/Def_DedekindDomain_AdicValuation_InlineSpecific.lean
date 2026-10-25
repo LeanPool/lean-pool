@@ -339,6 +339,7 @@ theorem exists_adicValued_sub_lt_of_adicCompletionInteger
   rw [algebraMap_adicCompletion, Function.comp_apply] at ha
   rwa [ha]
 
+/-- The maximal ideal of the valuation ring in the completion at a height-one prime. -/
 noncomputable abbrev completionIdeal : Ideal (v.adicCompletionIntegers K) :=
   IsLocalRing.maximalIdeal (adicCompletionIntegers K v)
 
@@ -357,11 +358,14 @@ instance : (v.completionIdeal K).LiesOver v.asIdeal := ⟨by
       valuedAdicCompletion_eq_valuation, valuation_lt_one_iff_mem]⟩
 
 open IsLocalRing in
+/-- The canonical homomorphism from the prime's residue field to the residue field of its
+completion. -/
 noncomputable def ResidueFieldToCompletionResidueField :
     A ⧸ v.asIdeal →+* ResidueField (v.adicCompletionIntegers K) :=
   Ideal.quotientMap _ (algebraMap _ _) <| le_of_eq Ideal.LiesOver.over
 
 open IsLocalRing in
+/-- The residue field equivalence induced by completion at a height-one prime. -/
 noncomputable def ResidueFieldEquivCompletionResidueField :
     A ⧸ v.asIdeal ≃+* ResidueField (v.adicCompletionIntegers K) :=
   .ofBijective (ResidueFieldToCompletionResidueField K v)

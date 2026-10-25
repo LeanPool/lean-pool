@@ -80,9 +80,11 @@ private lemma eval_Ψ₃_eq (x : R) :
     (W.Ψ₃).eval x = 3 * x ^ 4 + W.b₂ * x ^ 3 + 3 * W.b₄ * x ^ 2 + 3 * W.b₆ * x + W.b₈ := by
   rw [Ψ₃]; eval_simp
 
+/-- The numerator of the singleton Vélu `x`-coordinate over the denominator `(x - x₀)²`. -/
 def veluXNum (x₀ y₀ x : R) : R :=
   x * (x - x₀) ^ 2 + W.veluT x₀ y₀ * (x - x₀) + W.veluU x₀ y₀
 
+/-- The numerator of the singleton Vélu `y`-coordinate over the denominator `(x - x₀)³`. -/
 def veluYNum (x₀ y₀ x y : R) : R :=
   y * (x - x₀) ^ 3 - (W.veluU x₀ y₀ * (2 * y + W.a₁ * x + W.a₃)
     + W.veluT x₀ y₀ * (W.a₁ * (x - x₀) + y - y₀) * (x - x₀)
@@ -173,6 +175,8 @@ section Field
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
+/-- The Vélu `y`-coordinate formula obtained by summing corrections over the finite kernel-point
+set. -/
 noncomputable def veluY (S : Finset (F × F)) (x y : F) : F :=
   y - ∑ Q ∈ S, (W.veluU Q.1 Q.2 * (2 * y + W.a₁ * x + W.a₃) / (x - Q.1) ^ 3
     + W.veluT Q.1 Q.2 * (W.a₁ * (x - Q.1) + y - Q.2) / (x - Q.1) ^ 2

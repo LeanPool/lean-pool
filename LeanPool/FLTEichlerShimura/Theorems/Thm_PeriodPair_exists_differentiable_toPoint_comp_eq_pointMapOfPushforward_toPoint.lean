@@ -1451,7 +1451,7 @@ variable {E E' : Affine K} [E.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlace
 variable (ι : E'.FunctionField →ₐ[K] E.FunctionField)
 variable (hι : ι.toRingHom.IsIntegral) (hfin : FiniteAlong K ι)
 
-local notation "gBC" => kw_fdn2_qephod_hend7_geomMorphBC ι hι
+local notation "gBC" => kwFdn2QephodHend7GeomMorphBC ι hι
 
 end GeomMorphBC
 end ModularCurve
@@ -1920,7 +1920,7 @@ variable {E E' : Affine K} [E.IsElliptic] [WeierstrassCurve.Affine.GenusOnePlace
 variable (ι : E'.FunctionField →ₐ[K] E.FunctionField)
 variable (hι : ι.toRingHom.IsIntegral)
 
-local notation "gBC" => kw_fdn2_qephod_hend7_geomMorphBC ι hι
+local notation "gBC" => kwFdn2QephodHend7GeomMorphBC ι hι
 
 omit [WeierstrassCurve.IsElliptic E] [GenusOnePlaceGate.IsCentred E] [E.AbelTheorem] in
 omit [DecidableEq K] [CharZero K] [E'.AbelTheorem] in
@@ -2041,7 +2041,7 @@ theorem kw_surgehgf4_hH2f_betweenCurvesCocountableAffineHoloCoordsWeak :
   let W' := L'.weierstrassCurve.toAffine
   set ξ := ι'' (polyToFunctionField W' X) with hξdef
   set η := ι'' (yGen W') with hηdef
-  set c₀ := kw_fdn2_qephod_hend7_geomMorphBC ι'' hι'' 0 with hc₀def
+  set c₀ := kwFdn2QephodHend7GeomMorphBC ι'' hι'' 0 with hc₀def
   obtain ⟨pξ, qξ, hqξ, hξeq⟩ := IsFractionRing.div_surjective (A := W.CoordinateRing) ξ
   obtain ⟨pη, qη, hqη, hηeq⟩ := IsFractionRing.div_surjective (A := W.CoordinateRing) η
   obtain ⟨pξ', rfl⟩ := AdjoinRoot.mk_surjective pξ
@@ -2062,8 +2062,8 @@ theorem kw_surgehgf4_hH2f_betweenCurvesCocountableAffineHoloCoordsWeak :
     exact Df.support.finite_toSet.subset fun v hv => Finsupp.mem_support_iff.mpr (hDf v ▸ hv)
   have hTq_fin : Tq.Finite := Set.Finite.preimage placeOfPoint_injective.injOn
     ((hfin_ord hqξ0).union (hfin_ord hqη0))
-  set Tc : Set W.Point := {P | kw_fdn2_qephod_hend7_geomMorphBC ι'' hι'' P = c₀}
-    ∪ {P | kw_fdn2_qephod_hend7_geomMorphBC ι'' hι'' P = -c₀}
+  set Tc : Set W.Point := {P | kwFdn2QephodHend7GeomMorphBC ι'' hι'' P = c₀}
+    ∪ {P | kwFdn2QephodHend7GeomMorphBC ι'' hι'' P = -c₀}
   have hTc_fin : Tc.Finite :=
     (kw_surgehgf4_hH2f_finite_geomMorphBC_preimage ι'' hι'' c₀).union
       (kw_surgehgf4_hH2f_finite_geomMorphBC_preimage ι'' hι'' (-c₀))
@@ -2094,7 +2094,7 @@ theorem kw_surgehgf4_hH2f_betweenCurvesCocountableAffineHoloCoordsWeak :
     ((L.kw_differentiableOn_evalEval_wp pη').mono hU₁Λ).div
       ((L.kw_differentiableOn_evalEval_wp qη').mono hU₁Λ) fun z hz => hz.2.2
   have hgeom : ∀ z ∈ U₁, ∃ hns : W'.Nonsingular (A z) (B z),
-      kw_fdn2_qephod_hend7_geomMorphBC ι'' hι'' (L.kw_toPointHom z)
+      kwFdn2QephodHend7GeomMorphBC ι'' hι'' (L.kw_toPointHom z)
         = Point.some (A z) (B z) hns := by
     intro z hz
     have hzΛ : z ∉ L.lattice := hU₁Λ hz
@@ -2137,12 +2137,12 @@ theorem kw_surgehgf4_hH2f_betweenCurvesCocountableAffineHoloCoordsWeak :
       refine AlgebraicCurve.Place.mem_of_ord_nonneg (placeOfEquation hrs) hηne ?_
       rw [← hηeq, (placeOfEquation hrs).ord_div hpη0 hqη0, hordqη, sub_zero]
       exact ord_placeOfEquation_nonneg hrs _
-    have hgm_ne : kw_fdn2_qephod_hend7_geomMorphBC ι'' hι'' (L.kw_toPointHom z) ≠ 0 :=
+    have hgm_ne : kwFdn2QephodHend7GeomMorphBC ι'' hι'' (L.kw_toPointHom z) ≠ 0 :=
       kw_surgehgf4_hH2f_geomMorphBC_ne_zero ι'' hι'' _ (hplace ▸ hξmem)
     obtain ⟨a, b, hab, hgm_eq⟩ : ∃ a b hab,
-        kw_fdn2_qephod_hend7_geomMorphBC ι'' hι'' (L.kw_toPointHom z)
+        kwFdn2QephodHend7GeomMorphBC ι'' hι'' (L.kw_toPointHom z)
           = Point.some a b hab := by
-      rcases hP : kw_fdn2_qephod_hend7_geomMorphBC ι'' hι'' (L.kw_toPointHom z) with
+      rcases hP : kwFdn2QephodHend7GeomMorphBC ι'' hι'' (L.kw_toPointHom z) with
         _ | ⟨a, b, hab⟩
       · exact absurd hP hgm_ne
       · exact ⟨a, b, hab, rfl⟩

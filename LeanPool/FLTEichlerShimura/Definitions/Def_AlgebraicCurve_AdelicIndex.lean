@@ -81,8 +81,10 @@ namespace AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
+/-- The Riemann–Roch space of functions whose poles are bounded by the divisor. -/
 abbrev LSpace (D : Divisor K F) : Submodule K F := riemannRochSpace D
 
+/-- The dimension over the constant field of the Riemann–Roch space. -/
 abbrev ell (D : Divisor K F) : ℕ := Module.finrank K (LSpace D)
 
 variable {D E : Divisor K F}
@@ -112,6 +114,7 @@ theorem algebraMap_mem_lSpace_zero (c : K) :
 theorem one_mem_lSpace_zero : (1 : F) ∈ LSpace (0 : Divisor K F) := by
   simpa using algebraMap_mem_lSpace_zero (K := K) (F := F) 1
 
+/-- Every function in `L(0)` is a scalar from the specified constant field. -/
 def ConstantsAreBase (K F : Type*) [Field K] [Field F] [Algebra K F] : Prop :=
   LSpace (0 : Divisor K F) = LinearMap.range (Algebra.linearMap K F)
 
@@ -120,6 +123,7 @@ theorem ell_zero_eq_one_of_constantsAreBase (h : ConstantsAreBase K F) :
   rw [ell, h, LinearMap.finrank_range_of_inj (f := Algebra.linearMap K F)
     (algebraMap K F).injective, Module.finrank_self]
 
+/-- Families of function-field elements satisfying the valuation bounds prescribed by a divisor. -/
 def adeleBdd (D : Divisor K F) : Submodule K (Place K F → F) where
   carrier := {α | ∀ v : Place K F, v.adicValuation (α v) ≤ WithZero.exp (D v)}
   add_mem' := fun {α β} hα hβ v =>
@@ -142,6 +146,7 @@ theorem adeleBdd_mono (hDE : D ≤ E) : adeleBdd D ≤ adeleBdd E := fun _ hα v
   (hα v).trans (WithZero.exp_le_exp.mpr (hDE v))
 
 variable (K F) in
+/-- The linear map sending a function to the constant family with that value at every place. -/
 def diagonalHom : F →ₗ[K] (Place K F → F) where
   toFun f := fun _ => f
   map_add' _ _ := rfl
@@ -159,6 +164,7 @@ theorem diagonal_mem_adeleBdd_iff {f : F} :
   simp only [mem_adeleBdd, diagonalHom_apply, mem_lSpace_iff]
 
 variable (K F) in
+/-- The space of families bounded by some divisor, hence with only finitely many poles. -/
 def adeleSpace : Submodule K (Place K F → F) := ⨆ D : Divisor K F, adeleBdd D
 
 theorem adeleBdd_le_adeleSpace : adeleBdd D ≤ adeleSpace K F := le_iSup adeleBdd D
@@ -175,6 +181,7 @@ theorem diagonal_mem_adeleSpace [HasPrincipalDivisors K F] (f : F) :
     exact le_of_eq (by rw [Place.ord, neg_neg, WithZero.exp_log (v.adicValuation_ne_zero hf)])
 
 variable (K F) in
+/-- The diagonal subspace of families arising from a single global function. -/
 def globalSub : Submodule K (Place K F → F) := LinearMap.range (diagonalHom K F)
 
 theorem diagonal_mem_globalSub (f : F) : diagonalHom K F f ∈ globalSub K F :=
@@ -191,6 +198,8 @@ theorem map_diagonal_lSpace (D : Divisor K F) :
     obtain ⟨f, hf⟩ := LinearMap.mem_range.mp hglob
     exact ⟨f, diagonal_mem_adeleBdd_iff.mp (by rw [hf]; exact hbdd), hf⟩
 
+/-- Identify the Riemann–Roch space with the intersection of bounded families and global
+functions. -/
 def lSpaceEquivAdeleBddInfGlobal [Nonempty (Place K F)] (D : Divisor K F) :
     LSpace D ≃ₗ[K] (adeleBdd D ⊓ globalSub K F : Submodule K (Place K F → F)) :=
   (Submodule.equivMapOfInjective (diagonalHom K F) diagonalHom_injective (LSpace D)).trans
@@ -200,6 +209,7 @@ theorem finrank_adeleBdd_inf_global_eq_ell [Nonempty (Place K F)] (D : Divisor K
     Module.finrank K (adeleBdd D ⊓ globalSub K F : Submodule K (Place K F → F)) = ell D :=
   ((lSpaceEquivAdeleBddInfGlobal D).finrank_eq).symm
 
+/-- The dimension of the quotient by bounded families and diagonal global functions. -/
 def indexOfSpecialty (D : Divisor K F) : ℕ :=
   Module.finrank K
     ((adeleSpace K F) ⧸
@@ -216,6 +226,7 @@ theorem mem_adeleSpace_iff {α : Place K F → F} :
   exact Submodule.mem_iSup_of_directed _ adeleBdd_directed
 
 variable (K F) in
+/-- The sum of the bounded-family subspace and the diagonal global-function subspace. -/
 abbrev adeleBddPrincipal (D : Divisor K F) : Submodule K (adeleSpace K F) :=
   (adeleBdd D).comap (adeleSpace K F).subtype ⊔
     (globalSub K F).comap (adeleSpace K F).subtype
@@ -223,6 +234,7 @@ abbrev adeleBddPrincipal (D : Divisor K F) : Submodule K (adeleSpace K F) :=
 theorem indexOfSpecialty_eq (D : Divisor K F) :
     indexOfSpecialty D = Module.finrank K (adeleSpace K F ⧸ adeleBddPrincipal K F D) := rfl
 
+/-- The linear functionals vanishing on both the divisor-bounded families and global functions. -/
 def omegaSpace (D : Divisor K F) : Submodule K (Module.Dual K (adeleSpace K F)) :=
   (adeleBddPrincipal K F D).dualAnnihilator
 
@@ -241,6 +253,7 @@ theorem omegaSpace_antitone {D E : Divisor K F} (hDE : D ≤ E) :
   Submodule.dualAnnihilator_anti
     (sup_le_sup_right (Submodule.comap_mono (adeleBdd_mono hDE)) _)
 
+/-- Identify the annihilator space with the dual of the corresponding adelic quotient. -/
 def omegaSpaceEquivIndexDual (D : Divisor K F) :
     omegaSpace D ≃ₗ[K] Module.Dual K (adeleSpace K F ⧸ adeleBddPrincipal K F D) :=
   (Submodule.dualQuotEquivDualAnnihilator (adeleBddPrincipal K F D)).symm
@@ -251,6 +264,7 @@ theorem finrank_omegaSpace_eq_indexOfSpecialty (D : Divisor K F) :
     Subspace.dual_finrank_eq]
 
 variable (K F) in
+/-- The space of linear functionals belonging to the annihilator for some divisor. -/
 def weilDifferentialModule : Submodule K (Module.Dual K (adeleSpace K F)) :=
   ⨆ D : Divisor K F, omegaSpace D
 
@@ -267,6 +281,7 @@ theorem mem_weilDifferentialModule_iff {φ : Module.Dual K (adeleSpace K F)} :
   exact Submodule.mem_iSup_of_directed _ omegaSpace_directed
 
 variable (K) in
+/-- Pointwise multiplication of a family by a function-field element, as a linear map. -/
 def mulAdele (f : F) : (Place K F → F) →ₗ[K] (Place K F → F) where
   toFun α := fun v => f * α v
   map_add' α β := funext fun v => mul_add f (α v) (β v)
@@ -311,6 +326,8 @@ theorem mulAdele_mem_adeleSpace [HasPrincipalDivisors K F] (f : F) {α : Place K
     exact adeleBdd_le_adeleSpace (D := D - P) (mulAdele_mem_adeleBdd_sub hf hP hD)
 
 variable (K F) in
+/-- Multiplication by a function-field element restricted to the space of divisor-bounded
+families. -/
 def adeleSpaceMul [HasPrincipalDivisors K F] (f : F) :
     adeleSpace K F →ₗ[K] adeleSpace K F :=
   (mulAdele K f).restrict fun _ => mulAdele_mem_adeleSpace f
@@ -320,6 +337,7 @@ theorem adeleSpaceMul_coe [HasPrincipalDivisors K F] (f : F) (α : adeleSpace K 
     (adeleSpaceMul K F f α : Place K F → F) = mulAdele K f (α : Place K F → F) := rfl
 
 variable (K F) in
+/-- The action on Weil differentials obtained by precomposing with multiplication on families. -/
 def weilSmul [HasPrincipalDivisors K F] (f : F) :
     Module.Dual K (adeleSpace K F) →ₗ[K] Module.Dual K (adeleSpace K F) :=
   (adeleSpaceMul K F f).dualMap
@@ -394,6 +412,8 @@ theorem weilSmul_mem_omegaSpace_of_mem_lSpace [HasPrincipalDivisors K F]
     linarith
 
 variable (K F) in
+/-- Multiply a Weil differential bounded by `W` by a function in `L(W - D)` to obtain one bounded
+by `D`. -/
 def residuePairing [HasPrincipalDivisors K F] (W D : Divisor K F)
     {φ : Module.Dual K (adeleSpace K F)} (hφ : φ ∈ omegaSpace W) :
     LSpace (W - D) →ₗ[K] omegaSpace D where
@@ -447,37 +467,46 @@ theorem ell_sub_le_indexOfSpecialty [HasPrincipalDivisors K F] (W D : Divisor K 
 
 variable (K F)
 
+/-- Every nonzero Weil differential freely generates the space of Weil differentials over the
+function field. -/
 def WeilDifferentialRankOne [HasPrincipalDivisors K F] : Prop :=
   ∀ {φ : Module.Dual K (adeleSpace K F)}, φ ∈ weilDifferentialModule K F → φ ≠ 0 →
     ∀ {μ : Module.Dual K (adeleSpace K F)}, μ ∈ weilDifferentialModule K F →
       ∃! f : F, μ = weilSmul K F f φ
 
+/-- Every nonzero Weil differential admits a greatest divisor bounding it. -/
 def HasWeilCanonicalDivisor : Prop :=
   ∀ {φ : Module.Dual K (adeleSpace K F)}, φ ∈ weilDifferentialModule K F → φ ≠ 0 →
     ∃ W : Divisor K F, φ ∈ omegaSpace W ∧ ∀ D : Divisor K F, φ ∈ omegaSpace D → D ≤ W
 
 variable {K F}
 
+/-- The finite-dimensional space `L(D₀)` attains the maximal value `γ - 1` of `deg D - ell D`. -/
 structure RiemannGenusReachedAt (γ : ℤ) (D₀ : Divisor K F) : Prop where
   finite : FiniteDimensional K (LSpace D₀)
   eq : Divisor.degree D₀ - (ell D₀ : ℤ) = γ - 1
   isMax : ∀ D : Divisor K F, Divisor.degree D - (ell D : ℤ) ≤ γ - 1
 
 variable (K F) in
+/-- There are places, `L(0)` is finite-dimensional, and the genus bound is attained at some
+divisor. -/
 def RiemannGenusReached (γ : ℤ) : Prop :=
   Nonempty (Place K F) ∧ FiniteDimensional K (LSpace (0 : Divisor K F)) ∧
     ∃ D₀ : Divisor K F, RiemannGenusReachedAt γ D₀
 
 variable (K F) in
+/-- A genus value and a divisor attaining its Riemann–Roch dimension bound exist. -/
 def StichtenothGenusExists : Prop :=
   Nonempty (Place K F) ∧ FiniteDimensional K (LSpace (0 : Divisor K F)) ∧
     ∃ (γ : ℤ) (D₀ : Divisor K F), RiemannGenusReachedAt γ D₀
 
 variable (K F) in
+/-- The quantities `deg D - ell D` are bounded above as the divisor varies. -/
 def RiemannGenusBounded : Prop :=
   ∃ γ : ℤ, ∀ D : Divisor K F, Divisor.degree D - (ell D : ℤ) ≤ γ
 
 variable (K F) in
+/-- The adelic quotient associated to some divisor is finite-dimensional over the constant field. -/
 def IndexOfSpecialtyFinite : Prop :=
   ∃ D₀ : Divisor K F, Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F D₀)
 

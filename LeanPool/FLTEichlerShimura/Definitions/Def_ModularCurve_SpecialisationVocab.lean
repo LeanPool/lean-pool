@@ -126,6 +126,7 @@ theorem coeff_zero_pow_of_integral {x : H} (hx : 0 ≤ x.orderTop) (k : ℕ) :
   | succ k ih =>
     rw [pow_succ, pow_succ, coeff_zero_mul_of_integral (orderTop_pow_nonneg hx k) hx, ih]
 
+/-- The subring of Hahn series with nonnegative valuation. -/
 def integralO : Subring H where
   carrier := {x : H | 0 ≤ x.orderTop}
   zero_mem' := by
@@ -144,6 +145,7 @@ def integralO : Subring H where
 
 theorem mem_integralO {x : H} : x ∈ integralO ↔ 0 ≤ x.orderTop := by exact Iff.rfl
 
+/-- The constant-coefficient residue map on the integral Hahn-series subring. -/
 def resO : integralO →+* Qbar where
   toFun x := (x : H).coeff 0
   map_one' := by
@@ -158,13 +160,16 @@ def resO : integralO →+* Qbar where
 
 @[simp] theorem resO_apply (x : integralO) : resO x = (x : H).coeff 0 := rfl
 
+/-- All five Weierstrass coefficients have nonnegative Hahn-series valuation. -/
 def IntegralCoeffs (W : WeierstrassCurve H) : Prop :=
   0 ≤ W.a₁.orderTop ∧ 0 ≤ W.a₂.orderTop ∧ 0 ≤ W.a₃.orderTop ∧
     0 ≤ W.a₄.orderTop ∧ 0 ≤ W.a₆.orderTop
 
+/-- The Weierstrass curve obtained by taking the constant coefficient of each coefficient series. -/
 def specialFibre (W : WeierstrassCurve H) : WeierstrassCurve Qbar :=
   ⟨W.a₁.coeff 0, W.a₂.coeff 0, W.a₃.coeff 0, W.a₄.coeff 0, W.a₆.coeff 0⟩
 
+/-- The unit represented by the Hahn monomial of the specified exponent. -/
 def sU (q : ℚ) : Hˣ where
   val := HahnSeries.single q 1
   inv := HahnSeries.single (-q) 1
@@ -177,12 +182,14 @@ def sU (q : ℚ) : Hˣ where
 
 @[simp] theorem val_inv_sU (q : ℚ) : (((sU q)⁻¹ : Hˣ) : H) = HahnSeries.single (-q) 1 := rfl
 
+/-- The chosen scaling change of variables, with special choices at `j = 0` and `j = 1728`. -/
 def scaleVC (j₀ : Qbar) : VariableChange H :=
   if j₀ = 0 then
     ⟨sU (2 / 12), -(jNear 0 - 1728) ^ 2 / 12, -(jNear 0 - 1728) / 2, (jNear 0 - 1728) ^ 3 / 24⟩
   else if j₀ = 1728 then ⟨sU (9 / 12), 0, 0, 0⟩
   else 1
 
+/-- The model obtained from the nearby curve by the chosen scaling change of variables. -/
 def goodModel (j₀ : Qbar) : WeierstrassCurve H := scaleVC j₀ • nearCurve j₀
 
 theorem scaleVC_zero : scaleVC 0 =

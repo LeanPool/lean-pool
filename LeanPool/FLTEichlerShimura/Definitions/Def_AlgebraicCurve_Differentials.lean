@@ -28,7 +28,7 @@ Mathlib's module of Kähler differentials $\Omega[F\!\mid\!K]$ with its universa
 `KaehlerDifferential.D K F`; the places of $F/K$ and their $\mathbb{Z}$-valued order function
 `Place.ord` (normalised so that an irreducible element of the valuation ring has order $1$, and with
 $\operatorname{ord} 0 = 0$) are those of the divisor-class-group module. Four total, choice-based
-definitions are made. For a place $v$, `Place.uniformizer_alt` is a chosen $t \in F$ with
+definitions are made. For a place $v$, `Place.uniformizerAlt` is a chosen $t \in F$ with
 $v.\mathrm{ord}\,t = 1$ when such a $t$ exists and $0$ otherwise; `ord_uniformizer_alt` records that
 under the hypothesis that some element of order $1$ exists, the chosen element has order $1$. For $t
 \in F$ and $\omega \in \Omega[F\!\mid\!K]$, `Place.diffCoeff t ω` is a chosen $g \in F$ with $\omega
@@ -75,14 +75,16 @@ namespace Place
 variable (v : Place K F)
 
 open Classical in
-def uniformizer_alt : F :=
+/-- A chosen element of order one at the place, or zero if no such element exists. -/
+def uniformizerAlt : F :=
   if h : ∃ t : F, v.ord t = 1 then h.choose else 0
 
-theorem ord_uniformizer_alt (h : ∃ t : F, v.ord t = 1) : v.ord v.uniformizer_alt = 1 := by
-  rw [uniformizer_alt, dite_eq_left h]
+theorem ord_uniformizer_alt (h : ∃ t : F, v.ord t = 1) : v.ord v.uniformizerAlt = 1 := by
+  rw [uniformizerAlt, dite_eq_left h]
   exact h.choose_spec
 
 open Classical in
+/-- A chosen coefficient expressing `ω` as a multiple of `D t`, or zero if none exists. -/
 def diffCoeff (t : F) (ω : Ω[F⁄K]) : F :=
   if h : ∃ g : F, ω = g • D K F t then h.choose else 0
 
@@ -95,14 +97,16 @@ theorem diffCoeff_of_not_exists {t : F} {ω : Ω[F⁄K]} (h : ¬ ∃ g : F, ω =
     diffCoeff t ω = 0 := by
   rw [diffCoeff, dite_eq_right h]
 
+/-- The order of a differential's coefficient relative to the chosen local parameter. -/
 def ordDiff (ω : Ω[F⁄K]) : ℤ :=
-  v.ord (diffCoeff v.uniformizer_alt ω)
+  v.ord (diffCoeff v.uniformizerAlt ω)
 
-theorem ordDiff_def (ω : Ω[F⁄K]) : v.ordDiff ω = v.ord (diffCoeff v.uniformizer_alt ω) := rfl
+theorem ordDiff_def (ω : Ω[F⁄K]) : v.ordDiff ω = v.ord (diffCoeff v.uniformizerAlt ω) := rfl
 
 end Place
 
 variable (K F) in
+/-- The differential has nonnegative order at every place. -/
 def IsRegularDiff (ω : Ω[F⁄K]) : Prop :=
   ∀ v : Place K F, 0 ≤ v.ordDiff ω
 
@@ -110,6 +114,7 @@ theorem isRegularDiff_iff (ω : Ω[F⁄K]) :
     IsRegularDiff K F ω ↔ ∀ v : Place K F, 0 ≤ v.ordDiff ω := Iff.rfl
 
 variable (K F) in
+/-- The constant-field subspace spanned by the differentials satisfying `IsRegularDiff`. -/
 def regularDiffs : Submodule K Ω[F⁄K] :=
   Submodule.span K {ω : Ω[F⁄K] | IsRegularDiff K F ω}
 
@@ -124,6 +129,7 @@ section Pullback
 
 variable {F' : Type*} [Field F'] [Algebra K F']
 
+/-- Pullback of Kähler differentials along a homomorphism of function fields over the constants. -/
 def pullbackDiff (φ : F →ₐ[K] F') : Ω[F⁄K] →ₗ[K] Ω[F'⁄K] :=
   letI : Algebra F F' := φ.toRingHom.toAlgebra
   haveI : IsScalarTower K F F' := IsScalarTower.of_algebraMap_eq fun k => (φ.commutes k).symm

@@ -111,9 +111,9 @@ scoped instance kw_ffgc_isIntegrallyClosed_adicCompletionIntegers :
       (K := F) (v := (W.restrict F).heightOneSpectrum))
 
 theorem kw_ffgc_adicCompletionComapIntegers_injective :
-    Function.Injective (kw_ffgc_adicCompletionComapIntegers F W) := by
+    Function.Injective (kwFfgcAdicCompletionComapIntegers F W) := by
   intro a b hab
-  exact Subtype.ext ((kw_ffgc_adicCompletionComap F W).injective
+  exact Subtype.ext ((kwFfgcAdicCompletionComap F W).injective
     (congrArg Subtype.val hab))
 
 scoped instance kw_ffgc_isTorsionFree_adicCompletionComapIntegers :
@@ -132,9 +132,9 @@ open WithZeroMulInt Valuation.IsRankOneDiscrete
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (V : Place K F)
 
 theorem kw_ffgc_norm_adicCompletion_eq (x : V.adicCompletion) :
-    letI := kw_ffgc_rankOne_adicCompletion V
+    letI := kwFfgcRankOneAdicCompletion V
     ‖x‖ = (WithZeroMulInt.toNNReal (two_ne_zero) (Valued.v x) : ℝ) := by
-  let := kw_ffgc_rankOne_adicCompletion V
+  let := kwFfgcRankOneAdicCompletion V
   have h := valueGroup₀_equiv_withZeroMulInt_restrict_apply_of_surjective
     (V.heightOneSpectrum.valuedAdicCompletion_surjective F) x
   simp only [Valued.toNormedField.norm_def, Valuation.RankOne.hom]
@@ -153,11 +153,11 @@ variable (F)
 variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Place K F')
 
 theorem kw_ffgc_absoluteValue_extends (c : (W.restrict F).adicCompletion) :
-    letI := kw_ffgc_rankOne_adicCompletion (W.restrict F)
-    kw_ffgc_absoluteValue F W
+    letI := kwFfgcRankOneAdicCompletion (W.restrict F)
+    kwFfgcAbsoluteValue F W
       (algebraMap (W.restrict F).adicCompletion W.adicCompletion c) = ‖c‖ := by
-  let := kw_ffgc_rankOne_adicCompletion (W.restrict F)
-  let := kw_ffgc_rankOne_adicCompletion W
+  let := kwFfgcRankOneAdicCompletion (W.restrict F)
+  let := kwFfgcRankOneAdicCompletion W
   have hr : (0 : ℝ) < (W.ramificationIndex F : ℝ) :=
     Nat.cast_pos.mpr (W.ramificationIndex_pos (F := F))
   change ‖algebraMap (W.restrict F).adicCompletion W.adicCompletion c‖
@@ -181,8 +181,8 @@ theorem kw_ffgc_isIntegral_adicCompletionIntegers_of_algebraic
     [Algebra.IsAlgebraic (W.restrict F).adicCompletion W.adicCompletion]
     (x : W.adicCompletionIntegers) :
     _root_.IsIntegral (W.restrict F).adicCompletionIntegers x := by
-  let := kw_ffgc_rankOne_adicCompletion (W.restrict F)
-  let := kw_ffgc_rankOne_adicCompletion W
+  let := kwFfgcRankOneAdicCompletion (W.restrict F)
+  let := kwFfgcRankOneAdicCompletion W
   let : NontriviallyNormedField (W.restrict F).adicCompletion :=
     Valued.toNontriviallyNormedField (W.restrict F).adicCompletion ℤᵐ⁰
   have : IsUltrametricDist (W.restrict F).adicCompletion :=
@@ -195,7 +195,7 @@ theorem kw_ffgc_isIntegral_adicCompletionIntegers_of_algebraic
   have hsn : spectralNorm (W.restrict F).adicCompletion W.adicCompletion
         (x : W.adicCompletion)
       = ‖(x : W.adicCompletion)‖ ^ ((W.ramificationIndex F : ℝ))⁻¹ :=
-    (spectralNorm_unique_field_norm_ext (f := kw_ffgc_absoluteValue F W)
+    (spectralNorm_unique_field_norm_ext (f := kwFfgcAbsoluteValue F W)
       (kw_ffgc_absoluteValue_extends F W) (x : W.adicCompletion)).symm
   have hspec : spectralValue (minpoly (W.restrict F).adicCompletion
       (x : W.adicCompletion)) ≤ 1 := by
@@ -266,7 +266,7 @@ variable (F)
 variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Place K F')
 
 theorem kw_ffgc_completionTraceF'_apply (g : F') :
-    kw_ffgc_completionTraceF' F W g
+    kwFfgcCompletionTraceF' F W g
       = Algebra.trace (W.restrict F).adicCompletion W.adicCompletion
           (algebraMap F' W.adicCompletion g) := rfl
 
@@ -2010,9 +2010,9 @@ theorem kwF4gRRTate_traceCompat_of_blockSum
       = LinearMap.trace V₀ W₀ (Algebra.lmul V₀ W₀ (algebraMap F W₀ g)) from rfl, htr,
       hM, Matrix.trace]
     rfl
-  have hcast : kwHgfV352_completionTraceAt (w.restrict E) w hw g
-      = kw_ffgc_completionTraceF' E w g := rfl
-  have hτ : ∑ i, M i i = kwHgfV352_completionTraceAt (w.restrict E) w hw g := by
+  have hcast : kwHgfV352CompletionTraceAt (w.restrict E) w hw g
+      = kwFfgcCompletionTraceF' E w g := rfl
+  have hτ : ∑ i, M i i = kwHgfV352CompletionTraceAt (w.restrict E) w hw g := by
     rw [hcast, kw_ffgc_completionTraceF'_apply, hdiag]
   rw [show (∑ i ∈ Finset.univ, M i i) = ∑ i, M i i from rfl, hτ]
 
@@ -2630,7 +2630,7 @@ scoped instance kwF4R1V384a_instAlgebraFiberCompletion (v : Place K E) (w' : v.f
   rcases w' with ⟨w', hw'⟩
   have hv : w'.restrict E = v := Place.mem_fiber.mp hw'
   subst hv
-  exact kw_ffgc_algebraAdicCompletionComap E w'
+  exact kwFfgcAlgebraAdicCompletionComap E w'
 
 scoped instance kwF4R1V384a_instIsScalarTowerFiberCompletion (v : Place K E) (w' : v.fiber F) :
     IsScalarTower E v.adicCompletion w'.1.adicCompletion := by
@@ -2676,13 +2676,13 @@ variable [FiniteDimensional E F]
 omit [HasPrincipalDivisors K F] [FiniteDimensional E F] in
 theorem kwF4R1V384a_completionLinearCombination_surjective
     (w' : Place K F) {ι : Type*} [Fintype ι] (b : Module.Basis ι E F) :
-    Function.Surjective (kw_ffgc_completionLinearCombination E w' b) := by
-  let := kw_ffgc_rankOne_adicCompletion (K := K) (w'.restrict E)
+    Function.Surjective (kwFfgcCompletionLinearCombination E w' b) := by
+  let := kwFfgcRankOneAdicCompletion (K := K) (w'.restrict E)
   let : NontriviallyNormedField (w'.restrict E).adicCompletion :=
     Valued.toNontriviallyNormedField (w'.restrict E).adicCompletion
       (WithZero (Multiplicative ℤ))
   rw [← Set.range_eq_univ, ← LinearMap.coe_range,
-    ← (LinearMap.range (kw_ffgc_completionLinearCombination E w' b))
+    ← (LinearMap.range (kwFfgcCompletionLinearCombination E w' b))
         |>.closed_of_finiteDimensional.closure_eq]
   exact (kw_ffgc_denseRange_completionLinearCombination E w' b).closure_range
 
@@ -2696,7 +2696,7 @@ theorem kwF4R1V384a_semilocalComponent_surjective (v : Place K E) (w' : v.fiber 
   obtain ⟨c, hc⟩ := kwF4R1V384a_completionLinearCombination_surjective w' b y
   refine ⟨∑ i, c i ⊗ₜ[E] b i, ?_⟩
   rw [map_sum, ← hc]
-  unfold kw_ffgc_completionLinearCombination
+  unfold kwFfgcCompletionLinearCombination
   rw [Fintype.linearCombination_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [kwF4R1V384a_semilocalComponent_tmul, Algebra.smul_def]

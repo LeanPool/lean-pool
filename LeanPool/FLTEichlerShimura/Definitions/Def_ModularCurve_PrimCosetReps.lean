@@ -59,6 +59,7 @@ underlies the modular-curve material used in the Frey–Serre–Ribet–Wiles–
 
 namespace ModularCurve
 
+/-- The finite set of primitive triples `(a, b, d)` with `ad = N` and `0 ≤ b < d`. -/
 def primCosetReps (N : ℕ) : Finset (ℕ × ℕ × ℕ) :=
   Finset.filter
     (fun t => t.1 * t.2.2 = N ∧ t.2.1 < t.2.2 ∧ Nat.gcd t.1 (Nat.gcd t.2.1 t.2.2) = 1)
@@ -85,6 +86,8 @@ section Conjugates
 
 variable {K : Type*} [Field K]
 
+/-- The conjugate `j`-expansion associated to a coset triple, with zero as the fallback when its
+first entry is zero. -/
 noncomputable def cosetConj (ζ : Kˣ) (J : LaurentSeries K) (t : ℕ × ℕ × ℕ) : LaurentSeries K :=
   if h : t.1 = 0 then 0 else
     haveI : NeZero t.1 := ⟨h⟩
@@ -95,6 +98,7 @@ theorem cosetConj_eq (ζ : Kˣ) (J : LaurentSeries K) (a b d : ℕ) [NeZero a] :
   unfold cosetConj
   rw [dite_eq_right (NeZero.ne a)]
 
+/-- The product of the linear factors defined by the coset conjugates of `j`. -/
 noncomputable def cosetTwoVarPoly (ζ : Kˣ) (N : ℕ) (J : LaurentSeries K) :
     Polynomial (LaurentSeries K) :=
   (primCosetReps N).prod fun t => Polynomial.X - Polynomial.C (cosetConj ζ J t)

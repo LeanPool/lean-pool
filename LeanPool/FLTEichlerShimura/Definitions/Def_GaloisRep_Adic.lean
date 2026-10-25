@@ -75,6 +75,8 @@ that import it are phrased.
 
 open scoped TensorProduct
 
+/-- At every maximal-ideal power, the action is trivial modulo that power on the subgroup fixing
+some finite extension of the rationals. -/
 def GaloisActionIsAdicContinuous (A : Type) [CommRing A] [IsLocalRing A]
     {V : Type} [AddCommGroup V] [Module A V]
     (ρ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* Module.End A V) : Prop :=
@@ -82,13 +84,17 @@ def GaloisActionIsAdicContinuous (A : Type) [CommRing A] [IsLocalRing A]
     ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, (∀ x ∈ L, σ x = x) →
       ∀ v : V, ρ σ v - v ∈ (IsLocalRing.maximalIdeal A ^ n) • (⊤ : Submodule A V)
 
+/-- An adically continuous Galois representation on a finite free rank-two module over a local
+coefficient ring. -/
 structure GaloisRepAdic (A : Type) [CommRing A] [IsLocalRing A] : Type 1 where
+  /-- The finite free rank-two module carrying the representation. -/
   V : Type
   [instAddCommGroup : AddCommGroup V]
   [instModule : Module A V]
   [instFree : Module.Free A V]
   [instFinite : Module.Finite A V]
   finrank_eq : Module.finrank A V = 2
+  /-- The Galois action by linear endomorphisms of the coefficient module. -/
   ρ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* Module.End A V
   isAdicContinuous : GaloisActionIsAdicContinuous A ρ
 
@@ -99,17 +105,22 @@ namespace GaloisRepAdic
 
 variable {A : Type} [CommRing A] [IsLocalRing A]
 
+/-- Inertia acts trivially at every valuation above the specified rational prime. -/
 def IsUnramifiedAt (ρ : GaloisRepAdic A) (q : ℕ) : Prop :=
   ∀ P : ValuationSubring (AlgebraicClosure ℚ), P.LiesOverPrime q →
     ∀ σ ∈ P.inertiaSubgroupIn ℚ, ρ.ρ σ = 1
 
+/-- The determinant character of the Galois representation, valued in units of the coefficient
+ring. -/
 noncomputable def det (ρ : GaloisRepAdic A) : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* Aˣ :=
   (LinearMap.det.comp ρ.ρ).toHomUnits
 
+/-- The trace of a Galois element acting on the coefficient module. -/
 noncomputable def trace (ρ : GaloisRepAdic A) (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
     A :=
   LinearMap.trace A ρ.V (ρ.ρ σ)
 
+/-- Extend the representation's coefficients along a local ring homomorphism. -/
 noncomputable def baseChangeAlong {B : Type} [CommRing B] [IsLocalRing B] (φ : A →+* B)
     (hφ : IsLocalHom φ) (ρ : GaloisRepAdic A) : GaloisRepAdic B :=
   letI : Algebra A B := φ.toAlgebra
@@ -147,6 +158,7 @@ noncomputable def baseChangeAlong {B : Type} [CommRing B] [IsLocalRing B] (φ : 
         rw [map_add, add_sub_add_comm]
         exact Submodule.add_mem _ hx hy }
 
+/-- Reduce the representation to the residue field of its coefficient ring. -/
 noncomputable def residual (ρ : GaloisRepAdic A) :
     ResidualGaloisRep (IsLocalRing.ResidueField A) :=
   { V := IsLocalRing.ResidueField A ⊗[A] ρ.V
@@ -178,30 +190,37 @@ noncomputable def residual (ρ : GaloisRepAdic A) :
         exact hkill _ (h1 σ hσ v) c
       | add x y hx hy => rw [map_add, map_add, hx, hy] }
 
+/-- A linear equivalence intertwining two adic Galois representations. -/
 structure Equiv (ρ₁ ρ₂ : GaloisRepAdic A) where
+  /-- The underlying linear equivalence between the coefficient modules. -/
   toLinearEquiv : ρ₁.V ≃ₗ[A] ρ₂.V
   map_apply : ∀ (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (x : ρ₁.V),
     toLinearEquiv (ρ₁.ρ σ x) = ρ₂.ρ σ (toLinearEquiv x)
 
+/-- There exists a linear equivalence intertwining the two Galois actions. -/
 def IsEquiv (ρ₁ ρ₂ : GaloisRepAdic A) : Prop :=
   Nonempty (Equiv ρ₁ ρ₂)
 
 namespace Equiv
 
+/-- The identity intertwining equivalence of an adic Galois representation. -/
 def refl (ρ : GaloisRepAdic A) : Equiv ρ ρ :=
   { toLinearEquiv := LinearEquiv.refl A ρ.V
     map_apply := fun _ _ => rfl }
 
+/-- The inverse of an intertwining equivalence. -/
 def symm {ρ₁ ρ₂ : GaloisRepAdic A} (e : Equiv ρ₁ ρ₂) : Equiv ρ₂ ρ₁ :=
   { toLinearEquiv := e.toLinearEquiv.symm
     map_apply := fun σ y => e.toLinearEquiv.injective (by
       rw [LinearEquiv.apply_symm_apply, e.map_apply, LinearEquiv.apply_symm_apply]) }
 
+/-- The composite of two intertwining equivalences. -/
 def trans {ρ₁ ρ₂ ρ₃ : GaloisRepAdic A} (e : Equiv ρ₁ ρ₂) (e' : Equiv ρ₂ ρ₃) : Equiv ρ₁ ρ₃ :=
   { toLinearEquiv := e.toLinearEquiv.trans e'.toLinearEquiv
     map_apply := fun σ x => by
       rw [LinearEquiv.trans_apply, LinearEquiv.trans_apply, e.map_apply, e'.map_apply] }
 
+/-- Extend an intertwining equivalence along a local homomorphism of coefficient rings. -/
 noncomputable def baseChangeAlong {B : Type} [CommRing B] [IsLocalRing B] (φ : A →+* B)
     (hφ : IsLocalHom φ) {ρ₁ ρ₂ : GaloisRepAdic A} (e : Equiv ρ₁ ρ₂) :
     Equiv (ρ₁.baseChangeAlong φ hφ) (ρ₂.baseChangeAlong φ hφ) :=
@@ -224,6 +243,7 @@ namespace GaloisRepAdic
 
 variable {A : Type} [CommRing A] [IsLocalRing A]
 
+/-- The intertwining equivalence obtained by reducing coefficients to the residue field. -/
 noncomputable def Equiv.residual {ρ₁ ρ₂ : GaloisRepAdic A} (e : Equiv ρ₁ ρ₂) :
     ResidualGaloisRep.Equiv ρ₁.residual ρ₂.residual :=
   { toLinearEquiv :=
@@ -239,6 +259,7 @@ noncomputable def Equiv.residual {ρ₁ ρ₂ : GaloisRepAdic A} (e : Equiv ρ�
           LinearMap.baseChange_tmul, e.map_apply]
       | add x y hx hy => simp only [map_add, hx, hy] }
 
+/-- View an adic representation over a field as a residual representation over the same field. -/
 def toResidualGaloisRep {k : Type} [Field k] (ρ : GaloisRepAdic k) : ResidualGaloisRep k :=
   { V := ρ.V
     finrank_eq := ρ.finrank_eq
@@ -252,6 +273,7 @@ def toResidualGaloisRep {k : Type} [Field k] (ρ : GaloisRepAdic k) : ResidualGa
       rw [hbot, pow_one, Submodule.bot_smul, Submodule.mem_bot, sub_eq_zero] at h
       exact h }
 
+/-- View a residual representation as an adic representation over its coefficient field. -/
 def ofResidualGaloisRep {k : Type} [Field k] (ρ : ResidualGaloisRep k) : GaloisRepAdic k :=
   { V := ρ.V
     finrank_eq := ρ.finrank_eq

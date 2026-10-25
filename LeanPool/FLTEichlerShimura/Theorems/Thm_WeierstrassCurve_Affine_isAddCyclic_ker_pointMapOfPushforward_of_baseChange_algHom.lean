@@ -99,7 +99,7 @@ variable {E E' : Affine K} [E.IsElliptic] [GenusOnePlaceGate E] [AbelTheorem E]
 variable (ι : E'.FunctionField →ₐ[K] E.FunctionField)
 variable (hι : ι.toRingHom.IsIntegral) (hfin : FiniteAlong K ι) (hN : NormFormulaAlong K ι hfin)
 
-local notation "gBC" => kw_fdn2_qephod_hend7_geomMorphBC ι hι
+local notation "gBC" => kwFdn2QephodHend7GeomMorphBC ι hι
 
 end GeomMorphBC
 end ModularCurve
@@ -213,8 +213,8 @@ def KwD5BetweenCurvesKerTransportAlongEmbed : Prop :=
     (ι₂ : (E₀'⁄F₂).toAffine.FunctionField →ₐ[F₂] (E₀⁄F₂).toAffine.FunctionField)
     (hι₂ : ι₂.toRingHom.IsIntegral) (hfin₂ : FiniteAlong F₂ ι₂)
     (_hχ : ∀ x : (E₀'⁄F₁).toAffine.FunctionField,
-      ι₂ (kw_functionFieldMapAlongGeneral E₀' F₁ F₂ x)
-        = kw_functionFieldMapAlongGeneral E₀ F₁ F₂ (ι₁ x))
+      ι₂ (kwFunctionFieldMapAlongGeneral E₀' F₁ F₂ x)
+        = kwFunctionFieldMapAlongGeneral E₀ F₁ F₂ (ι₁ x))
     (N : ℕ) [NeZero N],
     IsAddCyclic (AddMonoidHom.ker
       (pointMapOfPushforward ι₂ hι₂ hfin₂ (normFormulaAlong_of_elliptic ι₂ hfin₂))) →
@@ -252,12 +252,12 @@ theorem kw_surgehgf4_hfgkd_ktd_kerTransport_proved :
   have heq : ι₂ = ι₂' := by
     refine kw_functionField_algHom_ext ?_ ?_
     · rw [show polyToFunctionField (E₀'⁄F₂).toAffine X
-            = kw_functionFieldMapAlongGeneral E₀' F₁ F₂
+            = kwFunctionFieldMapAlongGeneral E₀' F₁ F₂
                 (polyToFunctionField (E₀'⁄F₁).toAffine X) from
           (kw_functionFieldMapAlongGeneral_polyToFunctionField_X E₀' F₁ F₂).symm,
         hχ, hcompat]
     · rw [show yGen (E₀'⁄F₂).toAffine
-            = kw_functionFieldMapAlongGeneral E₀' F₁ F₂ (yGen (E₀'⁄F₁).toAffine) from
+            = kwFunctionFieldMapAlongGeneral E₀' F₁ F₂ (yGen (E₀'⁄F₁).toAffine) from
           (kw_functionFieldMapAlongGeneral_yGen E₀' F₁ F₂).symm,
         hχ, hcompat]
   subst ι₂'
@@ -360,11 +360,11 @@ theorem solution
     (hcard : Nat.card (pointMapOfPushforward ι₂ hι₂ hfin₂ hN₂).ker = N) :
     IsAddCyclic (pointMapOfPushforward ι₁ hι₁ hfin₁ hN₁).ker ∧
       Nat.card (pointMapOfPushforward ι₁ hι₁ hfin₁ hN₁).ker = N := by
-  have hχE : χ = ModularCurve.kw_functionFieldMapAlongGeneral E₀ F₁ F₂ := by
+  have hχE : χ = ModularCurve.kwFunctionFieldMapAlongGeneral E₀ F₁ F₂ := by
     refine WeierstrassCurve.Affine.kw_functionField_algHom_ext ?_ ?_
     · rw [hχX, ModularCurve.kw_functionFieldMapAlongGeneral_polyToFunctionField_X]
     · rw [ModularCurve.kw_functionFieldMapAlongGeneral_yGen]; exact hχY
-  have hχE' : χ' = ModularCurve.kw_functionFieldMapAlongGeneral E₀' F₁ F₂ := by
+  have hχE' : χ' = ModularCurve.kwFunctionFieldMapAlongGeneral E₀' F₁ F₂ := by
     refine WeierstrassCurve.Affine.kw_functionField_algHom_ext ?_ ?_
     · rw [hχ'X, ModularCurve.kw_functionFieldMapAlongGeneral_polyToFunctionField_X]
     · rw [ModularCurve.kw_functionFieldMapAlongGeneral_yGen]; exact hχ'Y

@@ -73,29 +73,41 @@ noncomputable section
 
 namespace AlgebraicCurve
 
+/-- A positive-degree pole bound for a function together with uniformly bounded auxiliary
+functions whose products with its powers are linearly independent. -/
 structure PoleDivisorPackage (K F : Type*) [Field K] [Field F] [Algebra K F] where
+  /-- The function whose powers enter the linearly independent family. -/
   x : F
+  /-- The effective divisor bounding the poles of `x`. -/
   B : Divisor K F
   hB_eff : 0 ≤ B
   hx_mem : x ∈ LSpace B
+  /-- The positive degree of the pole-bound divisor and the number of auxiliary functions. -/
   n : ℕ
   hn_pos : 0 < n
   degB_eq : Divisor.degree B = n
+  /-- The common multiple of the pole-bound divisor bounding the auxiliary functions. -/
   c : ℕ
+  /-- The auxiliary functions whose products with powers of `x` form the independent family. -/
   u : Fin n → F
   hu_mem : ∀ i, u i ∈ LSpace (c • B)
   lin_indep : LinearIndependent K (fun p : ℕ × Fin n => x ^ p.1 * u p.2)
 
+/-- A pole-divisor package exists for the function field. -/
 def HasPoleDivisorPackage (K F : Type*) [Field K] [Field F] [Algebra K F] : Prop :=
   Nonempty (PoleDivisorPackage K F)
 
 variable {K E F : Type*} [Field K] [Field E] [Field F]
   [Algebra K E] [Algebra K F] [Algebra E F] [IsScalarTower K E F]
 
+/-- A tower of function fields with a transcendental element downstairs having a unique simple
+pole at a degree-one place. -/
 structure TranscendenceTower (K E F : Type*) [Field K] [Field E] [Field F]
     [Algebra K E] [Algebra K F] [Algebra E F] [IsScalarTower K E F] where
+  /-- The downstairs function with a unique simple pole. -/
   x : E
   hx_indep : LinearIndependent K (fun j : ℕ => x ^ j)
+  /-- The degree-one place where the distinguished function has its simple pole. -/
   v : Place K E
   hvdeg : v.deg = 1
   hxv : v.ord x = -1
@@ -105,35 +117,49 @@ namespace TranscendenceTower
 
 variable (T : TranscendenceTower K E F)
 
+/-- The image of the distinguished downstairs function in the upstairs field. -/
 abbrev xF : F := algebraMap E F T.x
 
+/-- The pullback of the distinguished degree-one place to the upstairs field. -/
 def poleDivisor [Algebra.IsSeparable E F] [HasPrincipalDivisors K F] : Divisor K F :=
   Divisor.pullback F (Finsupp.single T.v 1)
 
+/-- The image of every ring element is regular at all downstairs places other than the
+distinguished pole. -/
 def RegularOutside (A : Type*) [CommRing A] [Algebra A E] (T : TranscendenceTower K E F) : Prop :=
   ∀ u : Place K E, u ≠ T.v → ∀ a : A, algebraMap A E a ∈ u.toValuationSubring
 
 end TranscendenceTower
 
+/-- A family indexed by the field degree, linearly independent over the downstairs field and
+lying in a common Riemann–Roch space. -/
 structure IntegralBasisInLSpace [Algebra.IsSeparable E F] [HasPrincipalDivisors K F]
     (T : TranscendenceTower K E F) where
+  /-- The multiple of the pole divisor bounding all members of the family. -/
   c : ℕ
+  /-- The linearly independent family of upstairs functions with uniformly bounded poles. -/
   u : Fin (Module.finrank E F) → F
   hu_indep : LinearIndependent E u
   hu_mem : ∀ i, u i ∈ LSpace (c • T.poleDivisor)
 
 variable (K E F) in
+/-- There exists a family indexed by the field degree, linearly independent downstairs and
+bounded by a multiple of the pole divisor. -/
 def HasIntegralBasisInLSpace [Algebra.IsSeparable E F] [HasPrincipalDivisors K F]
     (T : TranscendenceTower K E F) : Prop :=
   Nonempty (IntegralBasisInLSpace T)
 
 variable (K E F) in
+/-- There exists a family indexed by the field degree, linearly independent downstairs and
+regular away from the distinguished fiber. -/
 def HasIntegralBasisRegularOutside [Algebra.IsSeparable E F] (T : TranscendenceTower K E F) :
     Prop :=
   ∃ u : Fin (Module.finrank E F) → F, LinearIndependent E u ∧
     ∀ i, ∀ w : Place K F, w.restrict E ≠ T.v → 0 ≤ w.ord (u i)
 
 variable (K E F) in
+/-- A subalgebra of the downstairs field has that field as its fraction field and is regular away
+from the distinguished place. -/
 def HasRegularFractionSubring (T : TranscendenceTower K E F) : Prop :=
   ∃ (A : Subalgebra K E), IsFractionRing A E ∧
     ∀ u : Place K E, u ≠ T.v → ∀ a ∈ A, a ∈ u.toValuationSubring

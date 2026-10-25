@@ -91,12 +91,14 @@ theorem isHomogeneous_linePow (τ : ℂ) :
     ((C τ * X 0 + X 1 : MvPolynomial (Fin 2) ℂ) ^ n).IsHomogeneous n := by
   simpa using (isHomogeneous_line τ).pow n
 
+/-- The homogeneous polynomial `(τ X₀ + X₁)^n` used in the Eichler integrand. -/
 def linePow (τ : ℂ) : ↥(BinaryForm ℂ n) :=
   ⟨(C τ * X 0 + X 1) ^ n, (mem_homogeneousSubmodule n _).mpr (isHomogeneous_linePow n τ)⟩
 
 @[simp] theorem coe_linePow (τ : ℂ) :
     ((linePow n τ : ↥(BinaryForm ℂ n)) : MvPolynomial (Fin 2) ℂ) = (C τ * X 0 + X 1) ^ n := rfl
 
+/-- The automorphy factor `cτ + d` for the specified matrix. -/
 def jFactor (g : SL(2, ℤ)) (τ : ℍ) :
     ℂ := ((g : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : ℂ) * (τ : ℂ) + ((g : Matrix (Fin 2) (Fin 2) ℤ) 1 1 :
       ℂ)
@@ -142,6 +144,7 @@ section Equivariant
 
 variable {K : Type*} [CommRing K] {Γ : Subgroup SL(2, ℤ)} {V : Type*} [AddCommGroup V] [Module K V]
 
+/-- The primitive has constant equivariance defect for each element of the group. -/
 def IsEquivariantPrimitiveWith (ρ : Representation K Γ V) (F : ℍ → V) : Prop :=
   ∀ γ : Γ, ∃ c : V, ∀ τ : ℍ, F ((γ : SL(2, ℤ)) • τ) - ρ γ (F τ) = c
 
@@ -149,6 +152,8 @@ namespace IsEquivariantPrimitiveWith
 
 variable {ρ : Representation K Γ V} {F : ℍ → V}
 
+/-- The group cocycle obtained by evaluating the constant equivariance defect at the base point
+`I`. -/
 def cocycle (_hF : IsEquivariantPrimitiveWith ρ F) (γ : Γ) : V :=
   F ((γ : SL(2, ℤ)) • I) - ρ γ (F I)
 
@@ -180,6 +185,8 @@ section EichlerIntegral
 
 variable (n : ℕ)
 
+/-- The coefficientwise derivative of the primitive is the modular form times the polynomial
+`linePow`. -/
 def IsEichlerIntegral (f : ℍ → ℂ) (F : ℍ → ↥(BinaryForm ℂ n)) : Prop :=
   ∀ (d : Fin 2 →₀ ℕ) (τ : ℍ),
     HasDerivAt (fun z : ℂ => AddMonoidAlgebra.coeff ((F (ofComplex z) : ↥(BinaryForm ℂ n)) :
@@ -190,6 +197,8 @@ def IsEichlerIntegral (f : ℍ → ℂ) (F : ℍ → ↥(BinaryForm ℂ n)) : Pr
 variable (N : ℕ)
 
 open Classical in
+/-- The parabolic cohomology class of a chosen Eichler primitive, with zero as the fallback when
+no such primitive and cocycle data exist. -/
 def eichlerShimuraMap (f : ℍ → ℂ) :
     coeffH1par ((binaryFormRepSL ℂ n).comp (Gamma0 N).subtype) :=
   if h : ∃ F : ℍ → ↥(BinaryForm ℂ n), IsEichlerIntegral n f F ∧

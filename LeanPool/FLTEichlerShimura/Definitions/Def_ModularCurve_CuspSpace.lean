@@ -77,6 +77,7 @@ namespace ModularCurve
 
 noncomputable section DL_portligature
 
+/-- The point `a / c` of the rational projective line, with the point at infinity when `c = 0`. -/
 def ratPoint (a c : ℤ) : OnePoint ℚ :=
   if c = 0 then ∞ else (((a : ℚ) / (c : ℚ) : ℚ) : OnePoint ℚ)
 
@@ -160,15 +161,18 @@ lemma isCoprime_smul_pair (γ : SL(2, ℤ)) {a c : ℤ} (h : IsCoprime a c) :
 
 variable (N : ℕ)
 
+/-- The image of `Γ₀(N)` in the rational general linear group. -/
 def Gamma0Q : Subgroup (GL (Fin 2) ℚ) := (Gamma0 N).map (mapGL ℚ)
 
 lemma mem_Gamma0Q {g : GL (Fin 2) ℚ} :
     g ∈ Gamma0Q N ↔ ∃ γ ∈ Gamma0 N, mapGL ℚ γ = g := Iff.rfl
 
+/-- The cusp set of `Γ₀(N)`, as the orbit quotient of the rational projective line. -/
 abbrev CuspSpace : Type := MulAction.orbitRel.Quotient (Gamma0Q N) (OnePoint ℚ)
 
 namespace CuspSpace
 
+/-- The cusp class of a point on the rational projective line. -/
 def mk (x : OnePoint ℚ) : CuspSpace N := ⟦x⟧
 
 lemma mk_surjective : Function.Surjective (mk N) := by
@@ -200,6 +204,7 @@ lemma mk_smul_infty_eq_of_mem {a b : SL(2, ℤ)} (hab : a⁻¹ * b ∈ Gamma0 N)
   rw [key]
   exact (mk_smul (inv_mem hab) _).symm
 
+/-- The map sending a modular-group coset represented by `γ` to the cusp of `γ⁻¹ ∞`. -/
 def fromCoset : SL(2, ℤ) ⧸ Gamma0 N → CuspSpace N :=
   Quotient.lift (fun g => mk N (mapGL ℚ g⁻¹ • ∞))
     (fun _ _ hab => mk_smul_infty_eq_of_mem N (QuotientGroup.leftRel_apply.mp hab))
@@ -231,6 +236,7 @@ instance instSubsingletonOfOne : Subsingleton (CuspSpace 1) := by
     by rw [← mul_smul, ← map_mul, inv_mul_cancel_right]]
   exact mk_smul (hmem _) _
 
+/-- The cusp denominator `gcd (denominator q) N`, with value `N` at infinity. -/
 def cuspDenomAux (x : OnePoint ℚ) : ℕ :=
   x.elim N fun q => Nat.gcd q.den N
 
@@ -282,6 +288,7 @@ lemma cuspDenomAux_smul {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 N) (x : OnePoint 
 
 variable (N)
 
+/-- The denominator invariant of a cusp of `Γ₀(N)`. -/
 def cuspDenom : CuspSpace N → ℕ :=
   Quotient.lift (cuspDenomAux N) (by
     rintro x y ⟨⟨g, γ, hγ, rfl⟩, rfl⟩
@@ -314,11 +321,13 @@ lemma cuspDenom_mk_ratPoint_one_dvd {e : ℕ} (he : e ∣ N) :
     cuspDenom N (mk N (ratPoint 1 e)) = e := by
   rw [cuspDenom_mk_ratPoint isCoprime_one_left, Int.gcd_natCast_natCast, Nat.gcd_eq_left he]
 
+/-- The criterion for equality of cusp normal forms using denominators and numerator congruences. -/
 def NormalFormCriterion (N : ℕ) : Prop :=
   ∀ (a a' : ℤ) (e : ℕ), e ∣ N → IsCoprime a (e : ℤ) → IsCoprime a' (e : ℤ) →
     (mk N (ratPoint a e) = mk N (ratPoint a' e) ↔
       (a : ZMod (Nat.gcd e (N / e))) = (a' : ZMod (Nat.gcd e (N / e))))
 
+/-- A classification of cusps by divisors `d` of `N` and units modulo `gcd d (N / d)`. -/
 def Classification (N : ℕ) : Prop :=
   Nonempty (CuspSpace N ≃ (d : N.divisors) × (ZMod (Nat.gcd d (N / (d : ℕ))))ˣ)
 
@@ -366,6 +375,7 @@ theorem gcd_sq_gcd_left (c N : ℕ) : Nat.gcd (Nat.gcd c N ^ 2) N = Nat.gcd (c ^
     rw [Nat.Coprime.gcd_mul_left_cancel g hcop]
   rw [hL, hR]
 
+/-- The cusp-width formula `N / gcd (d²) N` in terms of the cusp denominator. -/
 def cuspWidthOfDenom (N d : ℕ) : ℕ := N / Nat.gcd (d ^ 2) N
 
 theorem gcd_mul_cuspWidthOfDenom (N d : ℕ) :
@@ -401,6 +411,7 @@ namespace CuspSpace
 
 variable {N : ℕ}
 
+/-- The width assigned to a cusp by its denominator invariant. -/
 def cuspWidth (x : CuspSpace N) : ℕ := cuspWidthOfDenom N (cuspDenom N x)
 
 theorem cuspWidth_mk_ratPoint {a c : ℤ} (h : IsCoprime a c) :

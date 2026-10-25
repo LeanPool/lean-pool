@@ -36,13 +36,13 @@ $R$-algebra structure making it a fraction field of $R$, and let $W$ be a Weiers
 carrying an instance of the predicate `WeierstrassCurve.HasGoodReduction` for $R$. Let $x, y \in K$
 satisfy `W.toAffine.Nonsingular x y`, i.e. $(x,y)$ is a nonsingular affine point of $W$. Write $v$
 for the valuation on $K$ attached to the maximal ideal of $R$ as a height-one prime of $R$, in the
-multiplicative normalisation, and let `reducePoint_alt` be the reduction map on affine points, which
+multiplicative normalisation, and let `reducePointAlt` be the reduction map on affine points, which
 sends the point at infinity to the point at infinity and sends a nonsingular affine point $(x,y)$ to
 the point with coordinates `reduceCoord R x`, `reduceCoord R y` on the reduced curve `W.reduction R`
 when $v(x) \le 1$, $v(y) \le 1$ and that pair is a nonsingular point of the reduced curve, and to
 the point at infinity in all remaining cases (here `reduceCoord R x` is the residue in the residue
 field of $R$ of a chosen preimage of $x$ in $R$ when one exists, and $0$ otherwise). The assertion
-is that `reducePoint_alt R W (.some x y h)` equals the point at infinity if and only if $v(x) \le 1$
+is that `reducePointAlt R W (.some x y h)` equals the point at infinity if and only if $v(x) \le 1$
 fails.
 
 This identifies the kernel of reduction on affine points: a nonsingular affine point of a curve with
@@ -71,7 +71,7 @@ theorem solution
     (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
     {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
     (W : WeierstrassCurve K) [W.HasGoodReduction R] {x y : K} (h : W.toAffine.Nonsingular x y) :
-    WeierstrassCurve.reducePoint_alt R W (.some x y h) = .zero ↔
+    WeierstrassCurve.reducePointAlt R W (.some x y h) = .zero ↔
       ¬ IsDedekindDomain.HeightOneSpectrum.valuation K (IsDiscreteValuationRing.maximalIdeal R) x ≤
         1 := by
   classical
@@ -100,7 +100,7 @@ theorem WeierstrassCurve.reducePoint_some_eq_zero_iff
     (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
     {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
     (W : WeierstrassCurve K) [W.HasGoodReduction R] {x y : K} (h : W.toAffine.Nonsingular x y) :
-    WeierstrassCurve.reducePoint_alt R W (.some x y h) = .zero ↔
+    WeierstrassCurve.reducePointAlt R W (.some x y h) = .zero ↔
       ¬ IsDedekindDomain.HeightOneSpectrum.valuation K (IsDiscreteValuationRing.maximalIdeal R) x ≤
         1 :=
   solution R W h

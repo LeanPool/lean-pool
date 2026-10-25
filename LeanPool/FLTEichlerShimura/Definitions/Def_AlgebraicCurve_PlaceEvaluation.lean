@@ -71,12 +71,15 @@ namespace Place
 
 variable (v : Place K F)
 
+/-- The constant field maps surjectively onto the residue field at the place. -/
 def IsRational : Prop := Function.Surjective (algebraMap K v.ResidueField)
 
 theorem algebraMap_residueField_injective :
     Function.Injective (algebraMap K v.ResidueField) :=
   (algebraMap K v.ResidueField).injective
 
+/-- A chosen inverse on the image of the constant field in the residue field, used at rational
+places. -/
 def residueInv : v.ResidueField → K :=
   Function.invFun (algebraMap K v.ResidueField)
 
@@ -88,6 +91,7 @@ theorem residueInv_algebraMap (a : K) : v.residueInv (algebraMap K v.ResidueFiel
   Function.leftInverse_invFun v.algebraMap_residueField_injective a
 
 open Classical in
+/-- Evaluation by residue followed by `residueInv`, with value zero outside the valuation ring. -/
 def evalAt (f : F) : K :=
   if hf : f ∈ v.toValuationSubring then
     v.residueInv (residue v.toValuationSubring ⟨f, hf⟩)
@@ -113,6 +117,8 @@ end Place
 
 namespace Divisor
 
+/-- Evaluation of a function on a divisor, multiplying its values with the divisor's integer
+exponents. -/
 def evalFun (f : F) (D : Divisor K F) : K :=
   D.prod fun v n => v.evalAt f ^ n
 
@@ -130,6 +136,8 @@ theorem evalFun_single (f : F) (v : Place K F) (n : ℤ) :
 end Divisor
 
 variable (K F) in
+/-- The equality `f(div g) = g(div f)` for disjoint principal divisors supported at rational
+places. -/
 def WeilReciprocity : Prop :=
   ∀ (f g : F) (Df Dg : Divisor K F), f ≠ 0 → g ≠ 0 →
     (∀ v : Place K F, Df v = v.ord f) → (∀ v : Place K F, Dg v = v.ord g) →

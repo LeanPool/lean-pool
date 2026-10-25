@@ -77,6 +77,7 @@ section Theta
 
 variable (L : Type*) [Field L]
 
+/-- The Laurent-series derivation `q * d/dq`, as a linear map. -/
 def thetaL : LaurentSeries L →ₗ[L] LaurentSeries L where
   toFun f := single (1 : ℤ) (1 : L) * LaurentSeries.derivative L f
   map_add' f g := by rw [map_add, mul_add]
@@ -95,12 +96,14 @@ section QExpansionDiff
 
 variable {K F L : Type*} [Field K] [Field F] [Algebra K F] [Field L] [Algebra K L]
 
+/-- A linear map on differentials compatible with q-expansion and the derivation `q * d/dq`. -/
 def IsQExpansionDiffAlong (σ : F →ₐ[K] LaurentSeries L) (φ : Ω[F⁄K] →ₗ[K] LaurentSeries L) :
     Prop :=
   (∀ x : F, φ (KaehlerDifferential.D K F x) = thetaL L (σ x)) ∧
     ∀ (f : F) (ω : Ω[F⁄K]), φ (f • ω) = σ f * φ ω
 
 open scoped Classical in
+/-- A map satisfying `IsQExpansionDiffAlong`, if one exists; otherwise the zero map. -/
 def qExpansionDiffAlong (σ : F →ₐ[K] LaurentSeries L) : Ω[F⁄K] →ₗ[K] LaurentSeries L :=
   if h : ∃ φ : Ω[F⁄K] →ₗ[K] LaurentSeries L, IsQExpansionDiffAlong σ φ then h.choose else 0
 
@@ -115,11 +118,14 @@ section TraceDiff
 variable (K F F' : Type*) [Field K] [Field F] [Field F'] [Algebra K F] [Algebra K F']
   [Algebra F F'] [IsScalarTower K F F']
 
+/-- Compatibility of a differential trace map with the field trace on multiples of pulled-back
+differentials. -/
 def IsTraceDiff (t : Ω[F'⁄K] →ₗ[F] Ω[F⁄K]) : Prop :=
   ∀ (y : F') (ω : Ω[F⁄K]),
     t (y • KaehlerDifferential.map K K F F' ω) = Algebra.trace F F' y • ω
 
 open scoped Classical in
+/-- A differential trace map satisfying `IsTraceDiff`, if one exists; otherwise the zero map. -/
 def traceDiff : Ω[F'⁄K] →ₗ[F] Ω[F⁄K] :=
   if h : ∃ t : Ω[F'⁄K] →ₗ[F] Ω[F⁄K], IsTraceDiff K F F' t then h.choose else 0
 

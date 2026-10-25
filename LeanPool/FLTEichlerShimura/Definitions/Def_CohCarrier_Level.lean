@@ -119,6 +119,7 @@ theorem toAdditiveLeft_mul {α β : Type*} [MulOneClass α] [AddCommGroup β]
   ext a
   simp [toAdd_mul]
 
+/-- Corestriction of additive characters from a finite-index subgroup. -/
 noncomputable def coresAdd (K : Subgroup G) [K.FiniteIndex] {B : Type*} [AddCommGroup B]
     (φ : Additive ↥K →+ B) : Additive G →+ B :=
   MonoidHom.toAdditiveLeft (MonoidHom.transfer (AddMonoidHom.toMultiplicativeRight φ))
@@ -146,6 +147,7 @@ section Level
 
 variable (M : ℕ)
 
+/-- The subgroup of `SL(2, ℤ)` whose upper-right entry is divisible by `ℓ`. -/
 def Gamma0Upper (ℓ : ℕ) : Subgroup SL(2, ℤ) where
   carrier := { g | (g 0 1 : ZMod ℓ) = 0 }
   one_mem' := by simp
@@ -177,6 +179,7 @@ theorem Gamma0_d_mul_a (γ : Gamma0 M) :
   rw [mul_comm]
   exact h
 
+/-- The homomorphism from `Γ₀(M)` to units modulo `M` given by the lower-right entry. -/
 def gamma0Units : Gamma0 M →* (ZMod M)ˣ where
   toFun γ :=
     { val := Gamma0Map M γ
@@ -189,6 +192,7 @@ def gamma0Units : Gamma0 M →* (ZMod M)ˣ where
 @[simp]
 theorem val_gamma0Units (γ : Gamma0 M) : (gamma0Units M γ : ZMod M) = Gamma0Map M γ := rfl
 
+/-- The subgroup of `Γ₀(M)` whose lower-right entry modulo `M` lies in `H`. -/
 def GammaH (H : Subgroup (ZMod M)ˣ) : Subgroup SL(2, ℤ) :=
   (H.comap (gamma0Units M)).map (Gamma0 M).subtype
 
@@ -218,6 +222,7 @@ section Carrier
 
 variable (M : ℕ) (H : Subgroup (ZMod M)ˣ) (A : Type*) [AddCommGroup A]
 
+/-- First cohomology with trivial coefficients, represented by additive characters of `GammaH`. -/
 abbrev H1 : Type _ := Additive ↥(GammaH M H) →+ A
 
 example (R : Type*) [CommRing R] [Module R A] : Module R (H1 M H A) := inferInstance
@@ -228,6 +233,8 @@ section Operators
 
 variable (M : ℕ) (H : Subgroup (ZMod M)ˣ) (ℓ : ℕ)
 
+/-- The matrix obtained by dividing the upper-right entry by `ℓ` and multiplying the lower-left
+entry by `ℓ`. -/
 def conjUpperMat (A : SL(2, ℤ)) (h : (ℓ : ℤ) ∣ A 0 1) : SL(2, ℤ) :=
   ⟨!![A 0 0, A 0 1 / ℓ; A 1 0 * ℓ, A 1 1], by
     rw [Matrix.det_fin_two_of]
@@ -269,6 +276,7 @@ theorem conjUpperMat_mul (A B : SL(2, ℤ)) (hA : (ℓ : ℤ) ∣ A 0 1) (hB : (
     (conjUpperMat ℓ A h) 1 0 = A 1 0 * ℓ := by
   simp [conjUpperMat]
 
+/-- The subgroup of `GammaH` whose upper-right entry is divisible by `ℓ`. -/
 abbrev GammaHUpper : Subgroup ↥(GammaH M H) := (Gamma0Upper ℓ).subgroupOf (GammaH M H)
 
 theorem dvd_of_mem_GammaHUpper (γ : ↥(GammaHUpper M H ℓ)) : (ℓ : ℤ) ∣ (γ : SL(2, ℤ)) 0 1 := by
@@ -286,6 +294,7 @@ theorem conjUpperMat_mem (γ : ↥(GammaHUpper M H ℓ)) :
     ext
     simp only [val_gamma0Units, Gamma0Map, MonoidHom.coe_mk, OneHom.coe_mk, conjUpperMat_apply_11]
 
+/-- The homomorphism from `GammaHUpper` to `GammaH` induced by diagonal conjugation. -/
 def conjL : ↥(GammaHUpper M H ℓ) →* ↥(GammaH M H) where
   toFun γ := ⟨conjUpperMat ℓ (γ : SL(2, ℤ)) (dvd_of_mem_GammaHUpper M H ℓ γ),
     conjUpperMat_mem M H ℓ γ⟩
@@ -308,6 +317,8 @@ theorem Gamma0Upper_isCongruenceSubgroup [NeZero ℓ] : IsCongruenceSubgroup (Ga
 instance Gamma0Upper_finiteIndex [NeZero ℓ] : (Gamma0Upper ℓ).FiniteIndex :=
   (Gamma0Upper_isCongruenceSubgroup ℓ).finiteIndex
 
+/-- The operator on additive characters obtained by conjugation pullback followed by
+corestriction. -/
 noncomputable def heckeT [NeZero ℓ] : H1 M H A →+ H1 M H A where
   toFun φ :=
     MonoidHom.toAdditiveLeft
@@ -342,6 +353,7 @@ theorem conj_mem_GammaH (σ : Gamma0 M) (γ : ↥(GammaH M H)) :
   rw [Subgroup.mem_subgroupOf] at this
   exact this
 
+/-- Conjugation on `GammaH` by an element of `Γ₀(M)`. -/
 def conjHom (σ : Gamma0 M) : ↥(GammaH M H) →* ↥(GammaH M H) where
   toFun γ := ⟨(σ : SL(2, ℤ)) * (γ : SL(2, ℤ)) * (σ : SL(2, ℤ))⁻¹, conj_mem_GammaH M H σ γ⟩
   map_one' := Subtype.ext (by simp)
@@ -349,6 +361,7 @@ def conjHom (σ : Gamma0 M) : ↥(GammaH M H) →* ↥(GammaH M H) where
     simp only [Subgroup.coe_mul]
     group)
 
+/-- The diamond action on additive characters by precomposition with conjugation. -/
 def diamondRaw (σ : Gamma0 M) : H1 M H A →+ H1 M H A where
   toFun φ := φ.comp (MonoidHom.toAdditive (conjHom M H σ))
   map_zero' := by ext; rfl
@@ -360,6 +373,8 @@ section LevelMaps
 
 variable (M M' : ℕ) (H : Subgroup (ZMod M)ˣ) (H' : Subgroup (ZMod M')ˣ) (d : ℕ)
 
+/-- The matrix obtained by multiplying the upper-right entry by `d` and dividing the lower-left
+entry by `d`. -/
 def conjLowerMat (A : SL(2, ℤ)) (h : (d : ℤ) ∣ A 1 0) : SL(2, ℤ) :=
   ⟨!![A 0 0, A 0 1 * d; A 1 0 / d, A 1 1], by
     rw [Matrix.det_fin_two_of]
@@ -393,6 +408,8 @@ theorem conjLowerMat_mul (A B : SL(2, ℤ)) (hA : (d : ℤ) ∣ A 1 0) (hB : (d 
   simp [coe_conjLowerMat, Matrix.mul_apply, hmul, h1, h2, h3]
   ring
 
+/-- The divisibility and subgroup-containment conditions defining a degeneracy map between
+levels. -/
 structure LevelLE : Prop where
   dvd : M ∣ M'
   ddvd : d ∣ M' / M
@@ -447,6 +464,7 @@ theorem LevelLE.conjLowerMat_mem [NeZero d] (h : LevelLE M M' H H' d) (γ : ↥(
 
 variable (M M' H H' d)
 
+/-- The subgroup homomorphism defining the degeneracy map between the specified levels. -/
 def iotaDeg [NeZero d] (h : LevelLE M M' H H' d) : ↥(GammaH M' H') →* ↥(GammaH M H) where
   toFun γ := ⟨conjLowerMat d (γ : SL(2, ℤ)) (h.dvd_entry γ), h.conjLowerMat_mem γ⟩
   map_one' := by
@@ -460,11 +478,13 @@ def iotaDeg [NeZero d] (h : LevelLE M M' H H' d) : ↥(GammaH M' H') →* ↥(Ga
 
 variable (A : Type*) [AddCommGroup A]
 
+/-- Pullback of additive characters along the degeneracy homomorphism. -/
 def iDeg' [NeZero d] (h : LevelLE M M' H H' d) : H1 M H A →+ H1 M' H' A where
   toFun φ := φ.comp (MonoidHom.toAdditive (iotaDeg M M' H H' d h))
   map_zero' := by ext; rfl
   map_add' := by intro φ ψ; ext; rfl
 
+/-- The linear map on additive characters induced by degeneracy pullback. -/
 def iDegL (R : Type*) [Semiring R] [Module R A] [NeZero d] (h : LevelLE M M' H H' d) :
     H1 M H A →ₗ[R] H1 M' H' A where
   toFun φ := φ.comp (MonoidHom.toAdditive (iotaDeg M M' H H' d h))
@@ -542,11 +562,13 @@ theorem iotaDeg_injective [NeZero d] (h : LevelLE M M' H H' d) :
       _ = (δ : SL(2, ℤ)) 1 0 := Int.mul_ediv_cancel' (h.dvd_entry δ)
   · simpa [conjLowerMat] using e 1 1
 
+/-- An additive character transported to the image of the degeneracy homomorphism. -/
 noncomputable def pushChar [NeZero d] (h : LevelLE M M' H H' d) (φ : H1 M' H' A) :
     Additive ↥((iotaDeg M M' H H' d h).range) →+ A :=
   φ.comp (MonoidHom.toAdditive
     ((iotaDeg M M' H H' d h).ofInjective (iotaDeg_injective M M' H H' d h)).symm.toMonoidHom)
 
+/-- The reverse degeneracy map on additive characters, using transfer from the image subgroup. -/
 noncomputable def jDeg [NeZero M'] [NeZero d] (h : LevelLE M M' H H' d) :
     H1 M' H' A →+ H1 M H A where
   toFun φ := coresAdd _ (pushChar M M' H H' d A h φ)
@@ -560,6 +582,7 @@ noncomputable def jDeg [NeZero M'] [NeZero d] (h : LevelLE M M' H H' d) :
       ext; rfl
     rw [this, coresAdd_add]
 
+/-- The linear map on additive characters induced by reverse degeneracy. -/
 noncomputable def jDegL (R : Type*) [Semiring R] [Module R A] [NeZero M'] [NeZero d]
     (h : LevelLE M M' H H' d) : H1 M' H' A →ₗ[R] H1 M H A where
   toFun φ := coresAdd _ (pushChar M M' H H' d A h φ)

@@ -44,11 +44,11 @@ relevant range is finite dimensional.
 
 Four `Prop`-valued predicates record the expected properties: `KwF4gRRTateCommFinite` (that
 finiteness always holds), `KwF4gRRTateAgreement` (`tateRes` against a uniformizer equals the
-$K$-trace from the residue field of `kwHgfV352_localResidueCompletion`, the local residue of an
+$K$-trace from the residue field of `kwHgfV352LocalResidueCompletion`, the local residue of an
 integral approximant of an element of the completion), `KwF4gRRTateChainRule` (replacing a
 uniformizer pulled back from $E$ by the uniformizer at $w$ at the cost of multiplying by the
 differential coefficient of the pullback of $v$'s $\mathrm{d}$-coordinate), and
-`KwF4gRRTateTraceCompat` (compatibility with `kwHgfV352_completionTraceAt`, the local trace of $g\in
+`KwF4gRRTateTraceCompat` (compatibility with `kwHgfV352CompletionTraceAt`, the local trace of $g\in
 F$ at $w\mid v$ read in $\hat E_v$).
 
 The remaining predicates concern Kähler differentials: `kaehlerPullback` and `kaehlerCotrace` are
@@ -85,10 +85,12 @@ namespace ModularCurve.KwF4gRRTate
 
 variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 
+/-- The trace of the endomorphism restricted to its own range. -/
 def finrankTrace (φ : V →ₗ[K] V) : K :=
   LinearMap.trace K (LinearMap.range φ)
     (φ.restrict (fun x _ => LinearMap.mem_range_self φ x))
 
+/-- The projected commutator `pA φ pA ψ - pA ψ pA φ` used in Tate's residue construction. -/
 def tateComm (pA φ ψ : V →ₗ[K] V) : V →ₗ[K] V :=
   pA ∘ₗ φ ∘ₗ pA ∘ₗ ψ - pA ∘ₗ ψ ∘ₗ pA ∘ₗ φ
 
@@ -103,6 +105,7 @@ theorem tateComm_antisymm (pA φ ψ : V →ₗ[K] V) :
     tateComm pA φ ψ = - tateComm pA ψ φ := by
   unfold tateComm; rw [neg_sub]
 
+/-- The projected commutator restricted to the range of the projection operator. -/
 def tateCommRestrict (pA φ ψ : V →ₗ[K] V) :
     LinearMap.range pA →ₗ[K] LinearMap.range pA :=
   (tateComm pA φ ψ).restrict (fun x _ => tateComm_mem_range pA φ ψ x)
@@ -110,6 +113,7 @@ def tateCommRestrict (pA φ ψ : V →ₗ[K] V) :
 theorem tateCommRestrict_apply (pA φ ψ : V →ₗ[K] V) (a : LinearMap.range pA) :
     (tateCommRestrict pA φ ψ a : V) = tateComm pA φ ψ (a : V) := rfl
 
+/-- The trace on the range of the restricted projected commutator. -/
 def tateCommTrace (pA φ ψ : V →ₗ[K] V)
     : K :=
   finrankTrace (tateCommRestrict pA φ ψ)
@@ -131,6 +135,7 @@ namespace AlgebraicCurve
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 variable (E : Type*) [Field E] [Algebra K E] [Algebra E F] [IsScalarTower K E F]
 
+/-- Pull a Kähler differential from the downstairs field to the upstairs field. -/
 def kaehlerPullback (ωE : Ω[E⁄K]) : Ω[F⁄K] :=
   KaehlerDifferential.map K K E F ωE
 
@@ -140,6 +145,8 @@ namespace AlgebraicCurve.Place
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
+/-- The subspace of functions whose product with the local coefficient of the differential is
+integral. -/
 def regularSubmodule (w : Place K F) (ωF : Ω[F⁄K]) : Submodule K F where
   carrier := {f : F | f * w.differentialCoeff ωF ∈ w.toValuationSubring}
   zero_mem' := by simp only [Set.mem_ofPred_eq, zero_mul]; exact zero_mem _
@@ -156,6 +163,7 @@ namespace AlgebraicCurve
 variable (K E F : Type*) [Field K] [Field E] [Field F]
   [Algebra K E] [Algebra K F] [Algebra E F] [IsScalarTower K E F]
 
+/-- The downstairs-linear map on Kähler differentials induced by the field inclusion. -/
 abbrev kaehlerCotrace : Ω[E⁄K] →ₗ[E] Ω[F⁄K] :=
   KaehlerDifferential.map K K E F
 
@@ -169,7 +177,9 @@ variable {K E : Type*} [Field K] [Field E] [Algebra K E]
 
 variable [HasCanonicalLocalResidueKStar K E]
 
-def kwHgfV352_localResidueCompletion (v : Place K E) (xh : v.adicCompletion) :
+/-- Extend local residue to a completed element by choosing a function differing from it by an
+integral completed element. -/
+def kwHgfV352LocalResidueCompletion (v : Place K E) (xh : v.adicCompletion) :
     v.ResidueField :=
   v.localResidue (kwHgfV352_exists_sub_mem_adicCompletionIntegers v xh).choose
 
@@ -181,10 +191,12 @@ variable {K : Type*} [Field K] {F : Type*} [Field F] [Algebra K F]
 variable {E : Type*} [Field E] [Algebra K E] [Algebra E F] [IsScalarTower K E F]
 variable [Algebra.IsIntegral E F] [HasPrincipalDivisors K E] [HasPrincipalDivisors K F]
 
-def kwHgfV352_completionTraceAt
+/-- The completed field trace from the specified place upstairs, transported to the completion at
+the given downstairs place. -/
+def kwHgfV352CompletionTraceAt
     (v : Place K E) (w' : Place K F) (hw' : w' ∈ v.fiber F) (g : F) :
     v.adicCompletion :=
-  Place.mem_fiber.mp hw' ▸ kw_ffgc_completionTraceF' E w' g
+  Place.mem_fiber.mp hw' ▸ kwFfgcCompletionTraceF' E w' g
 
 end CompletionTraceAt
 
@@ -195,6 +207,8 @@ variable (E : Type*) [Field E] [Algebra K E] [Algebra E F] [IsScalarTower K E F]
 variable [HasCanonicalLocalResidueKStar K E] [HasCanonicalLocalResidueKStar K F]
 variable [Algebra.IsIntegral E F]
 
+/-- The local residue–trace identity for powers of an integral element divided by powers of a
+uniformizer supported at one place of the fiber. -/
 def KwHgfV352R3MPGKPowBasisLocal : Prop :=
   ∀ [HasPrincipalDivisors K E] [HasPrincipalDivisors K F] [∀ w : Place K F, w.FiniteResidue]
     [FiniteDimensional E F]
@@ -209,16 +223,20 @@ def KwHgfV352R3MPGKPowBasisLocal : Prop :=
     kaehlerResidueTerm (kaehlerPullback K F E ωE)
         (diagonalHom K F (θ ^ j * (π ^ (k + 1))⁻¹)) w
       = Algebra.trace K v.ResidueField
-          (kwHgfV352_localResidueCompletion v
-            (kwHgfV352_completionTraceAt v w hw (θ ^ j * (π ^ (k + 1))⁻¹)
+          (kwHgfV352LocalResidueCompletion v
+            (kwHgfV352CompletionTraceAt v w hw (θ ^ j * (π ^ (k + 1))⁻¹)
               * algebraMap E v.adicCompletion (v.differentialCoeff ωE)))
 
+/-- The global field trace in a downstairs completion is the sum of the local completed traces
+above that place. -/
 def KwHgfV352CompletionTraceSum : Prop :=
   ∀ [HasPrincipalDivisors K E] [HasPrincipalDivisors K F] [FiniteDimensional E F]
     (v : Place K E) (g : F),
     algebraMap E v.adicCompletion (Algebra.trace E F g)
-      = ∑ w' ∈ (v.fiber F).attach, kwHgfV352_completionTraceAt v w'.1 w'.2 g
+      = ∑ w' ∈ (v.fiber F).attach, kwHgfV352CompletionTraceAt v w'.1 w'.2 g
 
+/-- For each upstairs residue-data family and nonzero differential, there is a downstairs family
+making the fiberwise residue sum equal the residue of the trace. -/
 def FiberKaehlerCotraceResidueIdentityK : Prop :=
   ∀ [HasPrincipalDivisors K E] [HasPrincipalDivisors K F]
     (RfamF : ∀ w : Place K F, w.CanonicalLocalResidueDataK)
@@ -229,6 +247,8 @@ def FiberKaehlerCotraceResidueIdentityK : Prop :=
             (diagonalHom K F f) w
           = kaehlerResidueTermKFam RfamE ωE (diagonalHom K E (Algebra.trace E F f)) v
 
+/-- The residue–trace identity for functions whose differential product is nonregular at at most
+one place in the fiber, with a compatible downstairs residue-data family. -/
 def CotraceResidueIdentityOnFiberLocalizedK : Prop :=
   ∀ [HasPrincipalDivisors K E] [HasPrincipalDivisors K F]
     (RfamF : ∀ w : Place K F, w.CanonicalLocalResidueDataK)
@@ -256,6 +276,8 @@ section TateProj
 
 variable (u : Place K L)
 
+/-- The integral elements of the completed function field, as a submodule over the constant
+field. -/
 def adicIntegersKSubmod : Submodule K u.adicCompletion where
   carrier := u.adicCompletionIntegers
   add_mem' := add_mem
@@ -267,15 +289,18 @@ def adicIntegersKSubmod : Submodule K u.adicCompletion where
       exact (kwHgfV352_algebraMap_mem_adicCompletionIntegers_iff u _).mpr
         (u.algebraMap_mem' c)) hx
 
+/-- A chosen constant-field-linear projection from the completion onto its integral subspace. -/
 def tateProj : u.adicCompletion →ₗ[K] u.adicCompletion :=
   letI B := Classical.choose (Submodule.exists_isCompl (adicIntegersKSubmod u))
   (adicIntegersKSubmod u).subtype ∘ₗ
     Submodule.projectionOnto (adicIntegersKSubmod u) B
       (Classical.choose_spec (Submodule.exists_isCompl (adicIntegersKSubmod u)))
 
+/-- Multiplication by the completed element, as a constant-field-linear endomorphism. -/
 abbrev lmulK (fh : u.adicCompletion) : u.adicCompletion →ₗ[K] u.adicCompletion :=
   (Algebra.lmul K u.adicCompletion) fh
 
+/-- The Tate residue defined as the projected-commutator trace of two multiplication operators. -/
 def tateRes (fh gh : u.adicCompletion)
     : K :=
   tateCommTrace (tateProj u) (lmulK u fh) (lmulK u gh)
@@ -284,6 +309,8 @@ end TateProj
 
 variable (K L)
 
+/-- The restricted projected commutator of any two multiplication operators has
+finite-dimensional range. -/
 def KwF4gRRTateCommFinite : Prop :=
   ∀ (u : Place K L) (fh gh : u.adicCompletion),
     FiniteDimensional K (LinearMap.range
@@ -291,15 +318,19 @@ def KwF4gRRTateCommFinite : Prop :=
 
 variable [HasCanonicalLocalResidueKStar K L]
 
+/-- Pairing with a uniformizer in the Tate residue equals the residue-field trace of the chosen
+local residue. -/
 def KwF4gRRTateAgreement : Prop :=
   ∀ (u : Place K L) [u.FiniteResidue] (fh : u.adicCompletion),
     tateRes u fh (algebraMap L u.adicCompletion u.uniformizer)
-      = Algebra.trace K u.ResidueField (kwHgfV352_localResidueCompletion u fh)
+      = Algebra.trace K u.ResidueField (kwHgfV352LocalResidueCompletion u fh)
 
 variable (F E : Type*) [Field F] [Algebra K F] [Field E] [Algebra K E]
 variable [Algebra E F] [IsScalarTower K E F] [Algebra.IsIntegral E F]
 variable [HasCanonicalLocalResidueKStar K F] [HasCanonicalLocalResidueKStar K E]
 
+/-- The Tate residue transforms under pullback of a downstairs uniformizer by multiplication by
+its local differential coefficient. -/
 def KwF4gRRTateChainRule : Prop :=
   ∀ [HasPrincipalDivisors K E] [HasPrincipalDivisors K F] [FiniteDimensional E F]
     [Nontrivial Ω[E⁄K]] [Nontrivial Ω[F⁄K]]
@@ -310,12 +341,13 @@ def KwF4gRRTateChainRule : Prop :=
           (w.differentialCoeff (kaehlerPullback K F E v.dCoord)))
           (algebraMap F w.adicCompletion w.uniformizer)
 
+/-- Tate residues of upstairs elements are compatible with the local completed field trace. -/
 def KwF4gRRTateTraceCompat : Prop :=
   ∀ [HasPrincipalDivisors K E] [HasPrincipalDivisors K F] [FiniteDimensional E F]
     (v : Place K E) (w : Place K F) (hw : w ∈ v.fiber F) (g : F),
     tateRes w (algebraMap F w.adicCompletion g)
         (algebraMap F w.adicCompletion (algebraMap E F v.uniformizer))
-      = tateRes v (kwHgfV352_completionTraceAt v w hw g)
+      = tateRes v (kwHgfV352CompletionTraceAt v w hw g)
           (algebraMap E v.adicCompletion v.uniformizer)
 
 end ModularCurve.KwF4gRRTate
@@ -329,6 +361,8 @@ variable (E : Type*) [Field E] [Algebra K E] [Algebra E F] [IsScalarTower K E F]
 variable [Algebra.IsIntegral E F]
 variable [HasCanonicalLocalResidueKStar K E] [HasCanonicalLocalResidueKStar K F]
 
+/-- The traced upstairs residue of a pulled-back coordinate differential equals the downstairs
+residue of the completed trace. -/
 def KwF4R1V391aResidueTraceCompletionCommute
     [HasPrincipalDivisors K F] : Prop :=
   ∀ [∀ w : Place K F, w.FiniteResidue] [FiniteDimensional E F]
@@ -336,8 +370,8 @@ def KwF4R1V391aResidueTraceCompletionCommute
     (w : Place K F) [w.DCoordGenerates] (_ : w ∈ v.fiber F) (g : F),
     kaehlerResidueTerm (kaehlerPullback K F E v.dCoord) (diagonalHom K F g) w
       = Algebra.trace K v.ResidueField
-          (kwHgfV352_localResidueCompletion v
-            (kwHgfV352_completionTraceAt v w ‹w ∈ v.fiber F› g))
+          (kwHgfV352LocalResidueCompletion v
+            (kwHgfV352CompletionTraceAt v w ‹w ∈ v.fiber F› g))
 
 end ModularCurve.KwF4R1V391a
 

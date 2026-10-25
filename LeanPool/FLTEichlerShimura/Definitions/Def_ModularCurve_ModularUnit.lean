@@ -67,6 +67,7 @@ open HahnSeries
 
 namespace ModularCurve
 
+/-- The Laurent series has order `m` and leading coefficient one. -/
 def IsMonicOfOrder (f : LaurentSeries ℚ) (m : ℤ) : Prop :=
   f.order = m ∧ f.leadingCoeff = 1
 
@@ -153,6 +154,7 @@ end IsMonicOfOrder
 
 section ModularUnit
 
+/-- The rational-coefficient power series `Δ / q` obtained from `dedekindEtaUnit`. -/
 def dedekindEtaUnitQ : PowerSeries ℚ := dedekindEtaUnit.map (Int.castRingHom ℚ)
 
 @[simp]
@@ -161,6 +163,7 @@ theorem constantCoeff_dedekindEtaUnitQ : PowerSeries.constantCoeff dedekindEtaUn
     PowerSeries.coeff_zero_eq_constantCoeff, constantCoeff_dedekindEtaUnit]
   simp
 
+/-- The Laurent series of the modular discriminant, `q * dedekindEtaUnitQ`. -/
 def deltaSeries : LaurentSeries ℚ :=
   HahnSeries.single (1 : ℤ) 1 * HahnSeries.ofPowerSeries ℤ ℚ dedekindEtaUnitQ
 
@@ -173,6 +176,7 @@ theorem deltaSeries_ne_zero : deltaSeries ≠ 0 := isMonicOfOrder_deltaSeries.ne
 
 variable (p : ℕ) [NeZero p]
 
+/-- The discriminant series after substitution `q ↦ q ^ p`. -/
 def deltaSeriesN : LaurentSeries ℚ := qExpand ℚ p deltaSeries
 
 theorem isMonicOfOrder_deltaSeriesN : IsMonicOfOrder (deltaSeriesN p) (p : ℤ) := by
@@ -181,6 +185,7 @@ theorem isMonicOfOrder_deltaSeriesN : IsMonicOfOrder (deltaSeriesN p) (p : ℤ) 
 
 theorem deltaSeriesN_ne_zero : deltaSeriesN p ≠ 0 := (isMonicOfOrder_deltaSeriesN p).ne_zero
 
+/-- The Laurent-series quotient `Δ(q) / Δ(q ^ p)`. -/
 def modularUnitSeries : LaurentSeries ℚ := deltaSeries * (deltaSeriesN p)⁻¹
 
 theorem modularUnitSeries_mul_deltaSeriesN :
@@ -223,6 +228,7 @@ theorem modularUnitSeries_mul (a b : ℕ) [NeZero a] [NeZero b] [NeZero (a * b)]
 
 end ModularUnit
 
+/-- The integer `(p - 1) / gcd(p - 1, 12)`, the numerator of `(p - 1) / 12` in lowest terms. -/
 def eisensteinNumerator (p : ℕ) : ℕ := (p - 1) / Nat.gcd (p - 1) 12
 
 theorem eisensteinNumerator_dvd (p : ℕ) : eisensteinNumerator p ∣ p - 1 :=

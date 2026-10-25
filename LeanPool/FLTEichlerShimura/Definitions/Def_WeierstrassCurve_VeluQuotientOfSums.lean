@@ -62,6 +62,7 @@ namespace WeierstrassCurve
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
 
+/-- The Vélu quotient equation with coefficients `a₄ - 5 * t` and `a₆ - b₂ * t - 7 * w`. -/
 def veluQuotientOfSums (t w : R) : WeierstrassCurve R where
   a₁ := W.a₁
   a₂ := W.a₂

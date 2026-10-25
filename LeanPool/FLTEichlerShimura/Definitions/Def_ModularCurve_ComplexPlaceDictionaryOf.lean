@@ -79,6 +79,8 @@ open scoped MatrixGroups Topology
 
 namespace ModularCurve
 
+/-- Evaluate a quotient of equal-weight modular forms representing the function-field element,
+with zero as the fallback when no suitable representation exists. -/
 def realizeOf (Γ : Subgroup SL(2, ℤ)) (x : LaurentSeries ℂ) (τ : ℍ) : ℂ := by
   classical
   exact
@@ -111,9 +113,13 @@ theorem realizeOf_of_not (Γ : Subgroup SL(2, ℤ)) (x : LaurentSeries ℂ) (τ 
   rw [realizeOf_def]
   exact dite_eq_right h
 
+/-- A dictionary between analytic points and function-field places, recording invariance, local
+ramification, and the boundedness criterion for integrality. -/
 structure ComplexPlaceDictionaryOf (Γ : Subgroup SL(2, ℤ))
     (F₀ : IntermediateField ℚ (LaurentSeries ℚ)) where
+  /-- The place associated to an upper-half-plane point. -/
   pt : ℍ → AlgebraicCurve.Place ℂ (laurentBaseChange ℂ F₀)
+  /-- The positive local ramification factor relating analytic and algebraic orders. -/
   ramification : ℍ → ℕ
   ramification_pos : ∀ τ : ℍ, 0 < ramification τ
   pt_smul : ∀ (γ : Γ) (τ : ℍ), pt ((γ : SL(2, ℤ)) • τ) = pt τ
@@ -142,6 +148,7 @@ theorem realizeOf_gamma0 (N : ℕ) (x : LaurentSeries ℂ) (τ : ℍ) :
     realizeOf (CongruenceSubgroup.Gamma0 N) x τ = realize N x τ :=
   rfl
 
+/-- View a Gamma-zero place dictionary as a dictionary for the general subgroup vocabulary. -/
 def ComplexPlaceDictionaryOf.ofGamma0 {N : ℕ} [NeZero N] (D : ComplexPlaceDictionary N) :
     ComplexPlaceDictionaryOf (CongruenceSubgroup.Gamma0 N) (modularFunctionFieldFull N) where
   pt := D.pt
@@ -151,6 +158,7 @@ def ComplexPlaceDictionaryOf.ofGamma0 {N : ℕ} [NeZero N] (D : ComplexPlaceDict
   mem_pt_iff := D.mem_pt_iff
   meromorphicOrderAt_realizeOf := D.meromorphicOrderAt_realize
 
+/-- Specialize the general place dictionary to the Gamma-zero vocabulary. -/
 def ComplexPlaceDictionaryOf.toGamma0 {N : ℕ} [NeZero N]
     (D : ComplexPlaceDictionaryOf (CongruenceSubgroup.Gamma0 N) (modularFunctionFieldFull N)) :
     ComplexPlaceDictionary N where

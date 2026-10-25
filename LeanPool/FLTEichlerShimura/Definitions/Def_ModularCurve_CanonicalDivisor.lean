@@ -78,6 +78,7 @@ namespace Place
 variable {K F}
 variable (v : Place K F)
 
+/-- A chosen uniformizer of the discrete valuation ring, regarded as a function-field element. -/
 def uniformizer : F :=
   ((IsDiscreteValuationRing.exists_irreducible v.toValuationSubring).choose : F)
 
@@ -89,8 +90,11 @@ private theorem uniformizer_ne_zero : v.uniformizer ≠ 0 := by
   intro h
   simpa [h, v.ord_zero] using v.ord_uniformizer
 
+/-- The differential of the chosen uniformizer at the place. -/
 def dCoord : Ω[F⁄K] := KaehlerDifferential.D K F v.uniformizer
 
+/-- The differential of the chosen uniformizer spans the module of Kähler differentials over the
+function field. -/
 class DCoordGenerates : Prop where
   span_eq_top : Submodule.span F {v.dCoord} = ⊤
 
@@ -102,6 +106,7 @@ theorem dCoord_ne_zero [v.DCoordGenerates] [Nontrivial Ω[F⁄K]] : v.dCoord ≠
   rw [h0, Submodule.span_zero_singleton] at hx_mem
   exact hx hx_mem
 
+/-- A chosen coefficient of a differential relative to `dCoord`, or zero if no expression exists. -/
 def differentialCoeff (ω : Ω[F⁄K]) : F :=
   letI := Classical.propDecidable
   if h : ∃ f : F, ω = f • v.dCoord then h.choose else 0
@@ -141,6 +146,7 @@ theorem differentialCoeff_smul [v.DCoordGenerates] [Nontrivial Ω[F⁄K]]
   v.differentialCoeff_unique
     (by rw [mul_smul, v.differentialCoeff_smul_dCoord])
 
+/-- The order at the place of the differential's coefficient relative to `dCoord`. -/
 def ordDifferential (ω : Ω[F⁄K]) : ℤ := v.ord (v.differentialCoeff ω)
 
 theorem gate_ordDifferential_dCoord [v.DCoordGenerates] [Nontrivial Ω[F⁄K]] :

@@ -68,10 +68,12 @@ namespace AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
+/-- The local orders of each nonzero differential form the coefficients of a divisor. -/
 class HasCanonicalDivisor : Prop where
   exists_divisor : ∀ ω : Ω[F⁄K], ω ≠ 0 → ∃ D : Divisor K F,
     ∀ v : Place K F, D v = v.ordDifferential ω
 
+/-- Choose the divisor of a nonzero differential from the canonical-divisor hypothesis. -/
 def canonicalDivisorOf [HasCanonicalDivisor (K := K) (F := F)]
     {ω : Ω[F⁄K]} (hω : ω ≠ 0) : Divisor K F :=
   (HasCanonicalDivisor.exists_divisor ω hω).choose
@@ -81,12 +83,15 @@ theorem canonicalDivisorOf_apply [HasCanonicalDivisor (K := K) (F := F)]
     canonicalDivisorOf hω v = v.ordDifferential ω :=
   (HasCanonicalDivisor.exists_divisor ω hω).choose_spec v
 
+/-- The divisor class of a chosen nonzero differential, or zero if no such differential exists. -/
 def canonicalClass (K F : Type*) [Field K] [Field F] [Algebra K F]
     [HasCanonicalDivisor (K := K) (F := F)] : Pic K F :=
   letI := Classical.propDecidable
   if h : ∃ ω : Ω[F⁄K], ω ≠ 0 then QuotientAddGroup.mk (canonicalDivisorOf h.choose_spec)
   else 0
 
+/-- The natural number `(deg K + 2).toNat / 2` for a chosen canonical divisor `K`, or zero if
+there is no nonzero differential. -/
 def genus (K F : Type*) [Field K] [Field F] [Algebra K F]
     [HasCanonicalDivisor (K := K) (F := F)] : ℕ :=
   letI := Classical.propDecidable

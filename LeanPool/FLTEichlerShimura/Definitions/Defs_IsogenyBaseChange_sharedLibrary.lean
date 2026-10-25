@@ -228,8 +228,8 @@ def kw_surge_hgf4_bcTensorFracIotaAlg :
 
 def kw_surge_hgf4_bcIota₁ :
     (E₀'⁄F').toAffine.FunctionField →ₐ[F'] (E₀⁄F').toAffine.FunctionField :=
-  let ψE := kw_functionFieldTensorFracEquivGeneral E₀ F F'
-  let ψE' := kw_functionFieldTensorFracEquivGeneral E₀' F F'
+  let ψE := kwFunctionFieldTensorFracEquivGeneral E₀ F F'
+  let ψE' := kwFunctionFieldTensorFracEquivGeneral E₀' F F'
   (ψE.symm.toAlgHom.comp (kw_surge_hgf4_bcTensorFracIotaAlg E₀ E₀' F F' ι₀)).comp
     ψE'.toAlgHom
 
@@ -361,8 +361,8 @@ omit [E₀.IsElliptic] [E₀'.IsElliptic] [DecidableEq F] [IsAlgClosed F] [CharZ
 theorem kw_surge_hgf4_bcIota₁_finiteAlong (hfin₀ : FiniteAlong F ι₀) :
     FiniteAlong F' (kw_surge_hgf4_bcIota₁ E₀ E₀' F F' ι₀) := by
   have hFr_fin := (kw_surge_hgf4_bcTensorFracIotaSeam E₀ E₀' F F' ι₀ hfin₀).1
-  let ψE := kw_functionFieldTensorFracEquivGeneral E₀ F F'
-  let ψE' := kw_functionFieldTensorFracEquivGeneral E₀' F F'
+  let ψE := kwFunctionFieldTensorFracEquivGeneral E₀ F F'
+  let ψE' := kwFunctionFieldTensorFracEquivGeneral E₀' F F'
   have h1 : RingHom.Finite ψE'.toAlgHom.toRingHom :=
     RingHom.Finite.of_surjective _ ψE'.surjective
   have h2 : RingHom.Finite ψE.symm.toAlgHom.toRingHom :=
@@ -402,8 +402,8 @@ omit [E₀.IsElliptic] [E₀'.IsElliptic] [DecidableEq F] [IsAlgClosed F] [CharZ
   [(toAffine E₀'⁄F').AbelTheorem] in
 theorem kw_surge_hgf4_bcIota₁_finrankAlong (hfin₀ : FiniteAlong F ι₀) :
     finrankAlong F' (kw_surge_hgf4_bcIota₁ E₀ E₀' F F' ι₀) = finrankAlong F ι₀ := by
-  let ψE := kw_functionFieldTensorFracEquivGeneral E₀ F F'
-  let ψE' := kw_functionFieldTensorFracEquivGeneral E₀' F F'
+  let ψE := kwFunctionFieldTensorFracEquivGeneral E₀ F F'
+  let ψE' := kwFunctionFieldTensorFracEquivGeneral E₀' F F'
   let ιFr := kw_surge_hgf4_bcTensorFracIota E₀ E₀' F F' ι₀
   have hcomm : ∀ x, ιFr (ψE' x)
       = ψE (kw_surge_hgf4_bcIota₁ E₀ E₀' F F' ι₀ x) := fun x => by
@@ -424,8 +424,8 @@ section Naturality
 variable (hι₀ : ι₀.toRingHom.IsIntegral) (hfin₀ : FiniteAlong F ι₀)
 variable (σ : F →ₐ[R₀] F') (hσ : ∀ c, σ c = algebraMap F F' c)
 
-local notation "χE" => kw_functionFieldMapAlongGeneral E₀ F F'
-local notation "χE'" => kw_functionFieldMapAlongGeneral E₀' F F'
+local notation "χE" => kwFunctionFieldMapAlongGeneral E₀ F F'
+local notation "χE'" => kwFunctionFieldMapAlongGeneral E₀' F F'
 local notation "ι₁" => kw_surge_hgf4_bcIota₁ E₀ E₀' F F' ι₀
 
 theorem kw_surge_hgf4_place_inv_mem_of_isUnit {K L : Type*} [Field K] [Field L] [Algebra K L]
@@ -451,7 +451,7 @@ omit [IsAlgClosed F] [CharZero F] [IsAlgClosed F'] [CharZero F'] in
 omit [DecidableEq F] [DecidableEq F'] in
 theorem kw_surge_hgf4_χE_algebraMap_XClass (V : WeierstrassCurve R₀)
     (x : F) :
-    kw_functionFieldMapAlongGeneral V F F'
+    kwFunctionFieldMapAlongGeneral V F F'
         (algebraMap (V⁄F).toAffine.CoordinateRing (V⁄F).toAffine.FunctionField
           (XClass (V⁄F).toAffine x))
       = algebraMap (V⁄F').toAffine.CoordinateRing (V⁄F').toAffine.FunctionField
@@ -474,7 +474,7 @@ omit [IsAlgClosed F] [CharZero F] [IsAlgClosed F'] [CharZero F'] in
 omit [DecidableEq F] [DecidableEq F'] in
 theorem kw_surge_hgf4_χE_algebraMap_YClass (V : WeierstrassCurve R₀)
     (y : F) :
-    kw_functionFieldMapAlongGeneral V F F'
+    kwFunctionFieldMapAlongGeneral V F F'
         (algebraMap (V⁄F).toAffine.CoordinateRing (V⁄F).toAffine.FunctionField
           (YClass (V⁄F).toAffine (C y)))
       = algebraMap (V⁄F').toAffine.CoordinateRing (V⁄F').toAffine.FunctionField
@@ -507,7 +507,7 @@ theorem kw_surge_hgf4_χE_VSR_compat {x y : F} (hP : (E₀⁄F).toAffine.Nonsing
       g ∈ (placeOfEquation hP.left).toValuationSubring := by
   classical
   have hχE_inj : Function.Injective (χE : _ →ₐ[F] _) :=
-    (kw_functionFieldMapAlongGeneral E₀ F F').injective
+    (kwFunctionFieldMapAlongGeneral E₀ F F').injective
   classical
   have hmk (W : Affine F) : ∀ q : F[X][Y],
       algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W q)
@@ -705,20 +705,20 @@ omit [E₀.IsElliptic] [E₀'.IsElliptic] [DecidableEq F] [IsAlgClosed F] [CharZ
   [(toAffine E₀'⁄F').AbelTheorem] in
 theorem kw_surge_hgf4_bcIota₁_compat (a : (E₀'⁄F).toAffine.FunctionField) :
     (ι₁) (χE' a) = χE (ι₀ a) := by
-  let ψE := kw_functionFieldTensorFracEquivGeneral E₀ F F'
-  let ψE' := kw_functionFieldTensorFracEquivGeneral E₀' F F'
+  let ψE := kwFunctionFieldTensorFracEquivGeneral E₀ F F'
+  let ψE' := kwFunctionFieldTensorFracEquivGeneral E₀' F F'
   have hκE' : ψE' (χE' a)
       = algebraMap ((E₀'⁄F).toAffine.FunctionField ⊗[F] F') _ (a ⊗ₜ[F] (1 : F')) := by
-    have hκ : ((kw_functionFieldTensorFracHomGeneral E₀' F F').restrictScalars F).comp
-        (kw_functionFieldMapAlongGeneral E₀' F F')
+    have hκ : ((kwFunctionFieldTensorFracHomGeneral E₀' F F').restrictScalars F).comp
+        (kwFunctionFieldMapAlongGeneral E₀' F F')
         = (IsScalarTower.toAlgHom F ((E₀'⁄F).toAffine.FunctionField ⊗[F] F')
             (FractionRing ((E₀'⁄F).toAffine.FunctionField ⊗[F] F'))).comp
             (Algebra.TensorProduct.includeLeft (R := F)) := by
       refine kw_functionField_algHom_ext ?_ ?_
-      · change kw_functionFieldTensorFracHomGeneral E₀' F F' (χE' _) = _
+      · change kwFunctionFieldTensorFracHomGeneral E₀' F F' (χE' _) = _
         rw [kw_functionFieldMapAlongGeneral_polyToFunctionField_X,
           kw_functionFieldTensorFracHomGeneral_X]; rfl
-      · change kw_functionFieldTensorFracHomGeneral E₀' F F' (χE' _) = _
+      · change kwFunctionFieldTensorFracHomGeneral E₀' F F' (χE' _) = _
         rw [kw_functionFieldMapAlongGeneral_yGen, kw_functionFieldTensorFracHomGeneral_yGen]
         rfl
     exact DFunLike.congr_fun hκ a
@@ -727,16 +727,16 @@ theorem kw_surge_hgf4_bcIota₁_compat (a : (E₀'⁄F).toAffine.FunctionField) 
     intro b
     refine ψE.injective ?_
     rw [AlgEquiv.apply_symm_apply]
-    have hκ : ((kw_functionFieldTensorFracHomGeneral E₀ F F').restrictScalars F).comp
-        (kw_functionFieldMapAlongGeneral E₀ F F')
+    have hκ : ((kwFunctionFieldTensorFracHomGeneral E₀ F F').restrictScalars F).comp
+        (kwFunctionFieldMapAlongGeneral E₀ F F')
         = (IsScalarTower.toAlgHom F ((E₀⁄F).toAffine.FunctionField ⊗[F] F')
             (FractionRing ((E₀⁄F).toAffine.FunctionField ⊗[F] F'))).comp
             (Algebra.TensorProduct.includeLeft (R := F)) := by
       refine kw_functionField_algHom_ext ?_ ?_
-      · change kw_functionFieldTensorFracHomGeneral E₀ F F' (χE _) = _
+      · change kwFunctionFieldTensorFracHomGeneral E₀ F F' (χE _) = _
         rw [kw_functionFieldMapAlongGeneral_polyToFunctionField_X,
           kw_functionFieldTensorFracHomGeneral_X]; rfl
-      · change kw_functionFieldTensorFracHomGeneral E₀ F F' (χE _) = _
+      · change kwFunctionFieldTensorFracHomGeneral E₀ F F' (χE _) = _
         rw [kw_functionFieldMapAlongGeneral_yGen, kw_functionFieldTensorFracHomGeneral_yGen]
         rfl
     exact (DFunLike.congr_fun hκ b).symm
@@ -764,7 +764,7 @@ theorem baseChange_ord_pos_iff {x y : F} (hP : (E₀⁄F).toAffine.Nonsingular x
       0 < (placeOfEquation hP.left).ord h := by
   classical
   have hχEh_ne : χE h ≠ 0 :=
-    (map_ne_zero_iff _ (kw_functionFieldMapAlongGeneral E₀ F F').injective).mpr hh
+    (map_ne_zero_iff _ (kwFunctionFieldMapAlongGeneral E₀ F F').injective).mpr hh
   have hVSR := kw_surge_hgf4_χE_VSR_compat E₀ F F' hP hσP
   constructor <;> intro hpos
   · have hχEh_mem : χE h ∈ (placeOfEquation hσP.left).toValuationSubring :=
@@ -815,8 +815,8 @@ theorem kw_surge_hgf4_pmop_naturality :
     (normFormulaAlong_of_elliptic ι₀ hfin₀)
   have hgBC₁ := kw_fdn2_qephod_hend7_pmop_eq_geomMorphBC_sub (ι₁) hι₁ hfin₁
     (normFormulaAlong_of_elliptic ι₁ hfin₁)
-  let g₀ := kw_fdn2_qephod_hend7_geomMorphBC ι₀ hι₀
-  let g₁ := kw_fdn2_qephod_hend7_geomMorphBC (ι₁) hι₁
+  let g₀ := kwFdn2QephodHend7GeomMorphBC ι₀ hι₀
+  let g₁ := kwFdn2QephodHend7GeomMorphBC (ι₁) hι₁
   have hgBC_nat_affine : ∀ {x y : F} (hP : (E₀⁄F).toAffine.Nonsingular x y),
       g₁ (σE (.some x y hP)) = σE' (g₀ (.some x y hP)) := by
     intro x y hP
@@ -989,8 +989,8 @@ theorem exists_functionFieldHom_baseChange_compatible
     ∃ (ι₁ : (E₀'⁄F').toAffine.FunctionField →ₐ[F'] (E₀⁄F').toAffine.FunctionField)
       (hι₁ : ι₁.toRingHom.IsIntegral) (hfin₁ : FiniteAlong F' ι₁),
       finrankAlong F' ι₁ = finrankAlong F ι₀ ∧
-      (∀ a, ι₁ (kw_functionFieldMapAlongGeneral E₀' F F' a) =
-        kw_functionFieldMapAlongGeneral E₀ F F' (ι₀ a)) ∧
+      (∀ a, ι₁ (kwFunctionFieldMapAlongGeneral E₀' F F' a) =
+        kwFunctionFieldMapAlongGeneral E₀ F F' (ι₀ a)) ∧
       (∀ P, pointMapOfPushforward ι₁ hι₁ hfin₁
           (normFormulaAlong_of_elliptic ι₁ hfin₁)
           (Point.map (W' := E₀.toAffine) (IsScalarTower.toAlgHom R₀ F F') P) =

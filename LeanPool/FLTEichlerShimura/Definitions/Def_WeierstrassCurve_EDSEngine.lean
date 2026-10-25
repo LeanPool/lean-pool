@@ -14,7 +14,7 @@ Licensed under Apache License 2.0
 
 module
 
-public import LeanPool.FLTEichlerShimura.Definitions.Def_Compat_Mathlib430
+public import Mathlib.NumberTheory.EllipticDivisibilitySequence
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Jacobian.Point
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 
@@ -32,7 +32,7 @@ W((m+n)\,\mathrm{tdiv}\,2)\cdot W((m-n)\,\mathrm{tdiv}\,2)$, and `rel₄`, `rel�
 are the associated quadratic and quartic expressions, `net W p q r s` $=
 W(p+q+s)W(p-q)W(r+s)W(r)-W(p+r+s)W(p-r)W(q+s)W(q)+W(q+r+s)W(q-r)W(p+s)W(p)$; `Rel₃ W m n r` is the
 three‑term elliptic relation at $(m,n,r)$, so that
-[`IsEllSequence'`](../def/Compat_Mathlib430.html#L237) is exactly $\forall m,n,r$, `Rel₃`.
+`IsEllipticSequence` is equivalent to $\forall m,n,r$, `Rel₃`.
 `OddRec`/`EvenRec` are the doubling recursions $W(2m+1)W(1)^3=W(m+2)W(m)^3-W(m-1)W(m+1)^3$ and
 $W(2m)W(2)W(1)^2=W(m)(W(m-1)^2W(m+2)-W(m-2)W(m+1)^2)$; `invarNum`, `invarDenom` form the quotient
 shown to be independent of $n$. The combinatorial predicates `HaveSameParity₄`, `StrictAnti₄` ($0\le
@@ -59,12 +59,10 @@ $2\omega_n+a_1\phi_n\psi_n+a_3\psi_n^3=\psi^c_n$, with $\omega_0=1$, $\omega_1=Y
 **Relation to Mathlib.** Mathlib supplies `normEDS`, `preNormEDS` and the division polynomials
 $\psi_n$, $\phi_n$, $\Psi_3$, $\mathrm{pre}\Psi_4$;
 [`compl₂EDS`](../def/WeierstrassCurve_EDSEngine.html#L580) agrees with Mathlib's `complEDS₂`. The
-predicates [`IsEllSequence'`](../def/Compat_Mathlib430.html#L237),
-[`IsDivSequence'`](../def/Compat_Mathlib430.html#L241),
-[`IsEllDivSequence'`](../def/Compat_Mathlib430.html#L244) are the renamed copies of earlier Mathlib
-predicates kept in the project's compatibility module. The complementary sequence `complEDS`, the
-polynomial `ωe`, the universal Weierstrass curve with its coordinate ring and function field, and
-the specialisation homomorphisms have no Mathlib counterpart here.
+sequence predicates are Mathlib's `IsEllipticSequence`, `IsDvdSequence` and
+`IsEllipticDvdSequence`, with divisibility indexed by integers. The complementary sequence
+`complEDS`, the polynomial `ωe`, the universal Weierstrass curve with its coordinate ring and
+function field, and the specialisation homomorphisms have no Mathlib counterpart here.
 
 **Where it is used.** The formulas assembled here express multiplication by $n$ on a Weierstrass
 curve through $\phi_n$, $\omega_n$ and $\psi_n$, first for the generic point of the universal curve
@@ -78,6 +76,7 @@ elliptic curves needed for the Galois representations attached to the Frey curve
 
 namespace WeierstrassCurve.Affine
 
+/-- Notation for the affine point group after base change to the indicated coefficient ring. -/
 scoped notation3:max W' "⟮" S "⟯" =>
   WeierstrassCurve.Affine.Point (WeierstrassCurve.Affine.baseChange W' S)
 
@@ -102,12 +101,16 @@ open scoped nonZeroDivisors
 
 namespace EllSequence
 
+/-- The product of sequence values at the half-sum and half-difference of the two indices. -/
 def addMulSub (m n : ℤ) : R := W ((m + n).tdiv 2) * W ((m - n).tdiv 2)
 
+/-- The three-term four-index Plücker expression formed from half-sum and half-difference
+products. -/
 def rel₄ (a b c d : ℤ) : R :=
   addMulSub W a b * addMulSub W c d
     - addMulSub W a c * addMulSub W b d + addMulSub W a d * addMulSub W b c
 
+/-- The four-variable elliptic-net relation expression. -/
 def net (p q r s : ℤ) : R :=
   W (p + q + s) * W (p - q) * W (r + s) * W r
     - W (p + r + s) * W (p - r) * W (q + s) * W q
@@ -121,17 +124,35 @@ lemma net_eq_rel₄ {p q r s : ℤ} :
     Int.mul_tdiv_cancel_left _ two_ne_zero]
   ring
 
+/-- The three-index elliptic-sequence addition relation. -/
 def Rel₃ (m n r : ℤ) : Prop :=
   W (m + n) * W (m - n) * W r ^ 2 =
     W (m + r) * W (m - r) * W n ^ 2 - W (n + r) * W (n - r) * W m ^ 2
 
-lemma _root_.isEllSequence_iff_rel₃ : IsEllSequence' W ↔ ∀ m n r : ℤ, Rel₃ W m n r :=
-  Iff.rfl
+lemma _root_.isEllSequence_iff_rel₃ : IsEllipticSequence W ↔ ∀ m n r : ℤ, Rel₃ W m n r := by
+  constructor
+  · intro h m n r
+    have hrel := h m n r
+    simp only [IsEllipticNet.rel, add_zero] at hrel
+    dsimp only [Rel₃]
+    linear_combination hrel
+  · intro h m n r
+    have hrel := h m n r
+    dsimp only [Rel₃] at hrel
+    simp only [IsEllipticNet.rel, add_zero]
+    linear_combination hrel
 
+lemma _root_.IsEllipticSequence.rel₃ {W : ℤ → R} (h : IsEllipticSequence W) (m n r : ℤ) :
+    W (m + n) * W (m - n) * W r ^ 2 =
+      W (m + r) * W (m - r) * W n ^ 2 - W (n + r) * W (n - r) * W m ^ 2 :=
+  (isEllSequence_iff_rel₃ W).mp h m n r
+
+/-- The numerator of the elliptic-sequence invariant associated to the two indices. -/
 def invarNum (s n : ℤ) : R :=
   (W (n + 2 * s) * W (n - s) ^ 2 + W (n + s) ^ 2 * W (n - 2 * s)) * W s ^ 2
     + W n ^ 3 * W (2 * s) ^ 2
 
+/-- The denominator of the elliptic-sequence invariant associated to the two indices. -/
 def invarDenom (s n : ℤ) : R := W (n + s) * W n * W (n - s)
 
 theorem invar_of_net (net_eq_zero : ∀ p q r s, net W p q r s = 0) (s m n : ℤ) :
@@ -187,11 +208,14 @@ section transf
 
 variable (a b c d : ℤ)
 
+/-- The four indices are strictly decreasing and the last is nonnegative. -/
 def StrictAnti₄ : Prop := 0 ≤ d ∧ d < c ∧ c < b ∧ b < a
 
+/-- The four indices have the same parity, expressed through powers of `-1`. -/
 def HaveSameParity₄ : Prop :=
   a.negOnePow = b.negOnePow ∧ b.negOnePow = c.negOnePow ∧ c.negOnePow = d.negOnePow
 
+/-- Half the sum of the four indices, using integer division. -/
 def avg₄ : ℤ := (a + b + c + d) / 2
 
 namespace HaveSameParity₄
@@ -238,6 +262,8 @@ lemma six_le_of_strictAnti₄ (anti : StrictAnti₄ a b c d) : 6 ≤ a := by
   exacts [same.1, same.2.1, same.2.2]
 
 variable (W) in
+/-- The product of sequence values at the half-sum of the first pair and half-difference of the
+second pair. -/
 def addMulSub₄ (a b c d : ℤ) : R := W ((a + b).tdiv 2) * W ((c - d).tdiv 2)
 
 lemma addMulSub₄_mul_addMulSub₄ :
@@ -279,6 +305,7 @@ end HaveSameParity₄
 
 end transf
 
+/-- The four-index relation multiplied by a further half-sum and half-difference product. -/
 def rel₆ (k l a b c d : ℤ) : R := addMulSub W k l * rel₄ W a b c d
 
 lemma rel₃_iff₄ (m n r : ℤ) :
@@ -310,9 +337,11 @@ theorem addMulSub_sq_mul_rel₄_eq₉ (c d m n r s : ℤ) :
       + addMulSub W c d * (rel₆ W n r m s c d - rel₆ W n s m r c d + rel₆ W r s m n c d) := by
   simp_rw [rel₆, rel₄]; ring
 
+/-- The odd-index doubling recurrence for an elliptic sequence. -/
 def OddRec (m : ℤ) : Prop :=
   W (2 * m + 1) * W 1 ^ 3 = W (m + 2) * W m ^ 3 - W (m - 1) * W (m + 1) ^ 3
 
+/-- The even-index doubling recurrence for an elliptic sequence. -/
 def EvenRec (m : ℤ) : Prop :=
   W (2 * m) * W 2 * W 1 ^ 2 = W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2)
 
@@ -327,8 +356,10 @@ lemma rel₄_iff_evenRec (m : ℤ) : rel₄ W (2 * m + 1) (2 * m - 1) 3 1 = 0 �
   change _ ↔ rel₄ W (2 * m + 1) (2 * (m - 1) + 1) (2 * 1 + 1) (2 * 0 + 1) = 0
   simp_rw [rel₄, addMulSub_odd]; ring_nf
 
+/-- The least nonnegative index of the same parity as the given index. -/
 def dMin (a : ℤ) : ℤ := if Even a then 0 else 1
 
+/-- The next nonnegative index of the same parity after `dMin`. -/
 def cMin (a : ℤ) : ℤ := dMin a + 2
 
 lemma dMin_nonneg (a : ℤ) : 0 ≤ dMin a := by rw [dMin]; split_ifs <;> decide
@@ -359,6 +390,8 @@ open Int
 section Rel₄OfValid
 
 variable (W) in
+/-- The four-index relation vanishes for strictly decreasing nonnegative indices of the same
+parity. -/
 def Rel₄OfValid (a b c d : ℤ) : Prop :=
   HaveSameParity₄ a b c d → StrictAnti₄ a b c d → rel₄ W a b c d = 0
 
@@ -461,6 +494,7 @@ lemma rel₄_swap₂₃ {m n r s : ℤ} : rel₄ W m n r s = - rel₄ W m n s r 
 open Equiv
 
 variable (W) in
+/-- The four-index relation with its arguments packaged as a function on `Fin 4`. -/
 def relFin4 (t : Fin 4 → ℤ) : R := rel₄ W (t 0) (t 1) (t 2) (t 3)
 
 include neg in
@@ -510,7 +544,7 @@ theorem rel₄_of_oddRec_evenRec {a b c d : ℤ} (same : HaveSameParity₄ a b c
   exact ⟨nonneg _, (anti <| by decide).lt_of_ne h₃₂,
     (anti <| by decide).lt_of_ne h₂₁, (anti <| by decide).lt_of_ne h₁₀⟩
 include neg zero one two oddRec evenRec in
-theorem _root_.IsEllSequence'.of_oddRec_evenRec : IsEllSequence' W := by
+theorem _root_.IsEllipticSequence.of_oddRec_evenRec : IsEllipticSequence W := by
   rw [isEllSequence_iff_rel₃]
   intro m n r
   rw [rel₃_iff₄, rel₄_of_oddRec_evenRec neg zero one two oddRec evenRec]
@@ -523,41 +557,32 @@ open EllSequence
 
 variable {W}
 
-lemma IsEllSequence'.map (h : IsEllSequence' W) : IsEllSequence' (f ∘ W) :=
-  fun m n r => by simpa using congr_arg f (h m n r)
-
-lemma IsDivSequence'.map (h : IsDivSequence' W) : IsDivSequence' (f ∘ W) :=
-  (map_dvd f <| h · · ·)
-
-lemma IsEllDivSequence'.map (h : IsEllDivSequence' W) : IsEllDivSequence' (f ∘ W) :=
-  ⟨h.1.map f, h.2.map f⟩
-
-namespace IsEllSequence'
+namespace IsEllipticSequence
 
 open EllSequence
 
-variable (ell : IsEllSequence' W)
+variable (ell : IsEllipticSequence W)
 
 include ell in
-lemma oddRec (m : ℤ) : OddRec W m := (rel₃_iff_oddRec W m).mp (ell _ _ _)
+lemma oddRec (m : ℤ) : OddRec W m := (rel₃_iff_oddRec W m).mp (ell.rel₃ _ _ _)
 include ell in
-lemma evenRec (m : ℤ) : EvenRec W m := (rel₃_iff_evenRec W m).mp (ell _ _ _)
+lemma evenRec (m : ℤ) : EvenRec W m := (rel₃_iff_evenRec W m).mp (ell.rel₃ _ _ _)
 
 include ell in
 lemma zero' [IsReduced R] : W 0 = 0 := by
-  have := ell 0 0 0
+  have := ell.rel₃ 0 0 0
   simp_rw [add_zero, sub_self, mul_assoc, ← pow_succ'] at this
   exact IsReduced.eq_zero _ ⟨_, this⟩
 include ell in
 lemma zero (m : ℤ) (mem : W (2 * m) ∈ R⁰) : W 0 = 0 := by
-  have := ell m m (2 * m)
+  have := ell.rel₃ m m (2 * m)
   rw [add_comm, sub_self, sub_self, ← two_mul, mul_comm (W _)] at this
   exact (mem_nonZeroDivisors_iff.mp mem).2 _
     ((mem_nonZeroDivisors_iff.mp (pow_mem mem 2)).2 _ this)
 include ell in
 lemma sub_add_neg_sub_mul_eq_zero (m n r : ℤ) :
     (W (m - n) + W (-(m - n))) * W (m + n) * W r ^ 2 = 0 := by
-  have := congr($(ell m n r) + $(ell n m r))
+  have := congr($(ell.rel₃ m n r) + $(ell.rel₃ n m r))
   rw [add_comm n, ← right_distrib, ← left_distrib, mul_comm (W _)] at this
   convert this using 4 <;> ring_nf
 
@@ -585,7 +610,7 @@ include ell in
 include one two in
 lemma invar (s m n : ℤ) : invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m :=
   invar_of_net _ (ell.net one two) _ _ _
-end IsEllSequence'
+end IsEllipticSequence
 
 variable (b c d : R)
 
@@ -600,6 +625,8 @@ section Complement
 
 variable (b c d : R) (m : ℤ)
 
+/-- An auxiliary division-polynomial expression used to define the complementary doubling
+sequence without division. -/
 def compl₂EDSAux : R :=
   preNormEDS (b ^ 4) c d (m - 2) * preNormEDS (b ^ 4) c d (m + 1) ^ 2 * if Even m then 1 else b
 
@@ -614,6 +641,8 @@ lemma compl₂EDSAux_mul_b :
   simp_rw [compl₂EDSAux, normEDS, Int.even_add, Int.even_sub, Int.not_even_one, even_two,
     iff_false, iff_true]; split_ifs <;> ring
 
+/-- The complementary doubling sequence whose product with the normalized elliptic sequence gives
+its doubled-index values. -/
 def compl₂EDS : R :=
   letI p := preNormEDS (b ^ 4) c d
   (p (m - 1) ^ 2 * p (m + 2) - p (m - 2) * p (m + 1) ^ 2) * if Even m then 1 else b
@@ -652,6 +681,7 @@ namespace EllSequence
 
 variable (W₁ compl₂ : ℤ → R) (m : ℤ)
 
+/-- The recursively defined complementary sequence on natural indices for a fixed base index. -/
 def compl' : ℕ → R
   | 0 => 0
   | 1 => 1
@@ -665,6 +695,7 @@ def compl' : ℕ → R
         W₁ (((k : ℤ) + 1) * m + 1) * W₁ (((k : ℤ) + 1) * m - 1) * compl' k ^ 2
       - W₁ ((k : ℤ) * m + 1) * W₁ ((k : ℤ) * m - 1) * compl' (k + 1) ^ 2
 
+/-- The odd extension to integer indices of the complementary sequence. -/
 def compl (n : ℤ) : R := (n.sign : ℤ) * compl' W₁ compl₂ m n.natAbs
 
 lemma compl_ofNat (n : ℕ) : compl W₁ compl₂ m n = compl' W₁ compl₂ m n := by
@@ -675,6 +706,8 @@ lemma compl_ofNat (n : ℕ) : compl W₁ compl₂ m n = compl' W₁ compl₂ m n
 lemma compl_neg (n : ℤ) : compl W₁ compl₂ m (-n) = -compl W₁ compl₂ m n := by
   simp [compl]
 
+/-- The complementary sequence for normalized elliptic divisibility sequences, multiplying the
+base-index value to the product-index value. -/
 def complEDS := compl (normEDS b c d) (compl₂EDS b c d) m
 
 end EllSequence
@@ -728,10 +761,14 @@ lemma map_invarNum (s m : ℤ) : f (invarNum W s m) = invarNum (f ∘ W) s m := 
 lemma map_invarDenom (s m : ℤ) : f (invarDenom W s m) = invarDenom (f ∘ W) s m := by
   simp only [invarDenom, map_mul, Function.comp_apply]
 
+/-- The three indeterminates parametrizing the universal normalized elliptic divisibility
+sequence. -/
 inductive Param : Type | B : Param | C : Param | D : Param
 
 open Param MvPolynomial
 
+/-- The normalized elliptic divisibility sequence over the integer polynomial ring in the three
+parameters. -/
 noncomputable def universalNormEDS : ℤ → MvPolynomial Param ℤ := normEDS (X B) (X C) (X D)
 
 lemma normEDS_eq_aeval : normEDS b c d = (aeval (Param.rec b c d) <| universalNormEDS ·) := by
@@ -751,24 +788,23 @@ end Map
 
 section
 
-variable {b c d} {U : ℤ → R} (ellW : IsEllSequence' W) (ellU : IsEllSequence' U)
+variable {b c d} {U : ℤ → R} (ellW : IsEllipticSequence W) (ellU : IsEllipticSequence U)
 open MvPolynomial
 
-private lemma normEDS_of_mem_nonZeroDivisors (hb : b ∈ R⁰) : IsEllSequence' (normEDS b c d) :=
-  IsEllSequence'.of_oddRec_evenRec (normEDS_neg b c d) (normEDS_zero b c d)
+private lemma normEDS_of_mem_nonZeroDivisors (hb : b ∈ R⁰) : IsEllipticSequence (normEDS b c d) :=
+  IsEllipticSequence.of_oddRec_evenRec (normEDS_neg b c d) (normEDS_zero b c d)
     (by rw [normEDS_one]; exact one_mem _) (by rwa [normEDS_two])
     (fun m _ => by simp only [OddRec, normEDS_one, one_pow, mul_one]; exact normEDS_odd b c d m)
     (fun m _ => by
       simp only [EvenRec, normEDS_one, normEDS_two, one_pow, mul_one]
       rw [normEDS_even]; ring)
 
-protected lemma IsEllSequence'.normEDS : IsEllSequence' (normEDS b c d) := by
+protected lemma IsEllipticSequence.normEDS : IsEllipticSequence (normEDS b c d) := by
   rw [normEDS_eq_aeval]
-  exact IsEllSequence'.map _
-    (normEDS_of_mem_nonZeroDivisors <| mem_nonZeroDivisors_of_ne_zero <| X_ne_zero _)
+  exact (normEDS_of_mem_nonZeroDivisors <| mem_nonZeroDivisors_of_ne_zero <| X_ne_zero _).comp _
 
 include ellW ellU in
-protected lemma IsEllSequence'.ext (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
+protected lemma IsEllipticSequence.ext (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
     (h1 : W 1 = U 1) (h2 : W 2 = U 2) (h3 : W 3 = U 3) (h4 : W 4 = U 4) : W = U := by
   funext n
   induction n using Int.negInduction with
@@ -784,7 +820,7 @@ protected lemma IsEllSequence'.ext (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
   | neg ih n => rw [ellW.neg one two, ellU.neg (h1 ▸ one) (h2 ▸ two), ih]
 
 lemma normEDS_two_three_two : normEDS 2 3 2 = id := by
-  apply IsEllSequence'.normEDS.ext isEllSequence'_id <;>
+  apply IsEllipticSequence.normEDS.ext IsEllipticSequence.id <;>
     simp only [normEDS_one, normEDS_two, normEDS_three, normEDS_four]
   exacts [mem_nonZeroDivisors_of_ne_zero one_ne_zero,
     mem_nonZeroDivisors_of_ne_zero two_ne_zero, rfl, rfl, rfl, rfl]
@@ -812,15 +848,15 @@ variable (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
   (dvd₁₂ : W 1 ∣ W 2) (dvd₁₃ : W 1 ∣ W 3) (dvd₂₄ : W 2 ∣ W 4)
 
 include ellW one two dvd₁₂ dvd₁₃ dvd₂₄ in
-theorem IsEllSequence'.eq_normEDS_of_dvd : ∃ b c d, W = (W 1 * normEDS b c d ·) := by
+theorem IsEllipticSequence.eq_normEDS_of_dvd : ∃ b c d, W = (W 1 * normEDS b c d ·) := by
   obtain ⟨b, h₁₂⟩ := dvd₁₂
   obtain ⟨c, h₁₃⟩ := dvd₁₃
   obtain ⟨d, h₂₄⟩ := dvd₂₄
-  exact ⟨b, c, d, ellW.ext (IsEllSequence'.normEDS.smul _) one two (by simp) (by simp [h₁₂])
+  exact ⟨b, c, d, ellW.ext (IsEllipticSequence.normEDS.smul _) one two (by simp) (by simp [h₁₂])
     (by simp [h₁₃]) (by rw [h₂₄, h₁₂, normEDS_four]; ring)⟩
 
 include one two in
-theorem IsEllDivSequence'.eq_normEDS (h : IsEllDivSequence' W) :
+theorem IsEllipticDvdSequence.eq_normEDS (h : IsEllipticDvdSequence W) :
     ∃ b c d, W = (W 1 * normEDS b c d ·) :=
   h.1.eq_normEDS_of_dvd one two (h.2 _ _ ⟨2, rfl⟩) (h.2 _ _ ⟨3, rfl⟩) (h.2 _ _ ⟨2, rfl⟩)
 
@@ -830,7 +866,7 @@ variable (W₁ compl₂ : ℤ → R)
   (h₁ : ∀ m, W 1 * W₁ m = W m) (h₂ : ∀ m, W m * compl₂ m = W (2 * m)) (m n : ℤ)
 
 include ellW one two h₁ h₂ in
-lemma IsEllSequence'.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (mem : W m ∈ R⁰) :
+lemma IsEllipticSequence.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (mem : W m ∈ R⁰) :
     W m * compl W₁ compl₂ m n = W (n * m) := by
   induction n using Int.negInduction with
   | nat n =>
@@ -847,7 +883,7 @@ lemma IsEllSequence'.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (mem : W m �
         ← left_distrib, Nat.cast_mul]; rfl
     simp_rw [dite_eq_right (Nat.not_even_two_mul_add_one _), show (2 * k + 1) / 2 = k by omega]
     rw [← mul_cancel_right_mem_nonZeroDivisors (mul_mem mem <| pow_mem one 2)]
-    have := (ellW ((k + 1 + 1) * m) ((k + 1) * m) 1).symm
+    have := (ellW.rel₃ ((k + 1 + 1) * m) ((k + 1) * m) 1).symm
     simp_rw [← right_distrib, ← mul_sub_right_distrib, add_sub_cancel_left,
       ← h₁ (_ + 1), ← h₁ (_ - 1), ← Nat.cast_one (R := ℤ), ← Nat.cast_add] at this
     rw [← ih _ (by omega), ← ih _ (by omega)] at this
@@ -863,7 +899,7 @@ lemma normEDS_mul_complEDS (m n : ℤ) :
   · simp
   rw [normEDS_eq_aeval, universalNormEDS, complEDS_eq_aeval, ← map_mul]; congr 1
   have := @universalNormEDS_mem_nonZeroDivisors
-  exact IsEllSequence'.normEDS.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (this one_ne_zero)
+  exact IsEllipticSequence.normEDS.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (this one_ne_zero)
     (this two_ne_zero) _ _ (fun _ ↦ by simp) (fun _ ↦ normEDS_mul_compl₂EDS _ _ _ _) _ _ (this hm)
 
 lemma normEDS_mul_complEDS_div (hm : m ≠ 0) (n : ℤ) (dvd : m ∣ n) :
@@ -875,6 +911,8 @@ namespace EllSequence
 
 variable (b c d)
 
+/-- The reduced numerator obtained by removing the universal factor from the invariant numerator
+at first index one. -/
 def redInvarNum : R :=
   compl₂EDS b c d m + normEDS b c d m ^ 3 * b + 2 * compl₂EDSAux b c d m
 
@@ -887,6 +925,8 @@ lemma invarNum_eq_redInvarNum_mul : invarNum (normEDS b c d) 1 m = redInvarNum b
   simp_rw [redInvarNum, right_distrib, compl₂EDS_mul_b, mul_assoc 2 _ b,
     compl₂EDSAux_mul_b, invarNum_normEDS]; ring
 
+/-- The reduced denominator obtained by removing the universal factors from the invariant
+denominator at first index one. -/
 def redInvarDenom : R :=
   letI C := complEDS b c d
   letI W := normEDS b c d
@@ -958,21 +998,21 @@ end EllSequence
 
 end Complement
 
-protected theorem IsDivSequence'.normEDS : IsDivSequence' (normEDS b c d) := by
+protected theorem IsDvdSequence.normEDS : IsDvdSequence (normEDS b c d) := by
   rintro m _ ⟨n, rfl⟩
-  rw [Nat.cast_mul, mul_comm (m : ℤ), ← normEDS_mul_complEDS]
+  rw [mul_comm m, ← normEDS_mul_complEDS]
   exact dvd_mul_right _ _
 
-protected theorem IsEllDivSequence'.normEDS : IsEllDivSequence' (normEDS b c d) :=
-  ⟨IsEllSequence'.normEDS, IsDivSequence'.normEDS⟩
+protected theorem IsEllipticDvdSequence.normEDS : IsEllipticDvdSequence (normEDS b c d) :=
+  ⟨IsEllipticSequence.normEDS, IsDvdSequence.normEDS⟩
 
 include ellW one two dvd₁₂ dvd₁₃ dvd₂₄ in
-lemma IsEllSequence'.isDivSequence_of_dvd : IsDivSequence' W := by
+lemma IsEllipticSequence.isDivSequence_of_dvd : IsDvdSequence W := by
   obtain ⟨b, c, d, h⟩ := ellW.eq_normEDS_of_dvd one two dvd₁₂ dvd₁₃ dvd₂₄
-  rw [h]; exact IsDivSequence'.normEDS.smul _
+  rw [h]; exact IsDvdSequence.smul (W 1) IsDvdSequence.normEDS
 
 include ellW one two dvd₁₂ dvd₁₃ dvd₂₄ in
-lemma IsEllSequence'.isEllDivSequence_of_dvd : IsEllDivSequence' W :=
+lemma IsEllipticSequence.isEllDivSequence_of_dvd : IsEllipticDvdSequence W :=
   ⟨ellW, ellW.isDivSequence_of_dvd one two dvd₁₂ dvd₁₃ dvd₂₄⟩
 
 end Divisibility
@@ -981,7 +1021,7 @@ section
 
 lemma net_normEDS (p q r s : ℤ) : net (normEDS b c d) p q r s = 0 := by
   rw [normEDS_eq_aeval, ← Function.comp_def, ← map_net,
-    universalNormEDS, IsEllSequence'.normEDS.net, map_zero] <;>
+    universalNormEDS, IsEllipticSequence.normEDS.net, map_zero] <;>
     apply mem_nonZeroDivisors_of_ne_zero <;>
     simp only [normEDS_one, normEDS_two] <;>
     first
@@ -1036,6 +1076,7 @@ open scoped Polynomial.Bivariate
 
 namespace WeierstrassCurve
 
+/-- The five coefficient labels for a Weierstrass equation. -/
 inductive Coeff : Type | A₁ : Coeff | A₂ : Coeff | A₃ : Coeff | A₄ : Coeff | A₆ : Coeff
 
 namespace Affine.CoordinateRing
@@ -1057,6 +1098,7 @@ open scoped Polynomial Polynomial.Bivariate
 open Coeff
 
 open MvPolynomial (X) in
+/-- The universal Weierstrass curve over the integer polynomial ring in its five coefficients. -/
 def curve : Affine (MvPolynomial Coeff ℤ) :=
   { a₁ := X A₁, a₂ := X A₂, a₃ := X A₃, a₄ := X A₄, a₆ := X A₆ }
 
@@ -1065,10 +1107,13 @@ lemma Δ_curve_ne_zero : curve.Δ ≠ 0 := fun h ↦ by
   apply_fun MvPolynomial.eval (Coeff.rec 0 0 0 0 1) at h
   simp at h
 
+/-- The bivariate polynomial ring for affine coordinates of the universal curve. -/
 abbrev Poly : Type := (MvPolynomial Coeff ℤ)[X][Y]
 
+/-- The coordinate ring of the universal Weierstrass curve. -/
 protected abbrev Ring : Type := curve.CoordinateRing
 
+/-- The fraction field of the universal curve's coordinate ring. -/
 protected abbrev Field : Type := FractionRing Univ.Ring
 
 instance : CommRing Poly := Polynomial.commRing
@@ -1077,6 +1122,7 @@ lemma Poly.two_ne_zero : (2 : Poly) ≠ 0 :=
   Polynomial.C_ne_zero.mpr <| Polynomial.C_ne_zero.mpr fun h ↦ two_ne_zero' (α := ℤ) <|
     MvPolynomial.C_injective _ _ <| by rwa [← MvPolynomial.C_0] at h
 
+/-- The map from coordinate polynomials to the function field of the universal curve. -/
 def polyToField : Poly →+* Univ.Field := (algebraMap Univ.Ring _).comp <| AdjoinRoot.mk _
 
 lemma polyToField_apply (p : Poly) :
@@ -1097,6 +1143,7 @@ lemma algebraMap_field_injective :
   (IsFractionRing.injective Univ.Ring Univ.Field).comp
     (Affine.CoordinateRing.algebraMap_injective' _)
 
+/-- The universal curve base-changed to its own function field. -/
 abbrev pointedCurve : WeierstrassCurve Univ.Field :=
   baseChange curve Univ.Field
 
@@ -1112,12 +1159,14 @@ lemma equation_point : pointedCurve.toAffine.Equation (polyToField (C X)) (polyT
     eval_C_X_eval₂_map_C_X, polyToField_polynomial]
 
 open Polynomial Affine in
+/-- The generic affine point of the universal curve over its function field. -/
 def Affine.point : curve⟮Univ.Field⟯ :=
   .some (polyToField (C X)) (polyToField Y)
     ((pointedCurve.toAffine.equation_iff_nonsingular_of_Δ_ne_zero
       (by simpa only [pointedCurve, baseChange, map_Δ, map_ne_zero_iff _ algebraMap_field_injective]
         using Δ_curve_ne_zero)).mp equation_point)
 
+/-- The generic point of the universal curve in Jacobian coordinates. -/
 def Jacobian.point : Jacobian.Point (WeierstrassCurve.baseChange curve Univ.Field) :=
   Jacobian.Point.fromAffine Affine.point
 
@@ -1129,11 +1178,14 @@ open Polynomial (CC)
 @[simp] lemma pointedCurve_a₄ : pointedCurve.a₄ = polyToField (CC curve.a₄) := rfl
 @[simp] lemma pointedCurve_a₆ : pointedCurve.a₆ = polyToField (CC curve.a₆) := rfl
 
+/-- The universal curve base-changed to the coordinate polynomial ring. -/
 abbrev curvePoly : WeierstrassCurve Poly := WeierstrassCurve.baseChange curve Poly
 
+/-- The universal curve base-changed to its coordinate ring. -/
 abbrev curveRing : WeierstrassCurve Univ.Ring :=
   WeierstrassCurve.baseChange curve Univ.Ring
 
+/-- The universal curve base-changed to its function field. -/
 abbrev curveField : WeierstrassCurve Univ.Field :=
   WeierstrassCurve.baseChange curve Univ.Field
 
@@ -1141,6 +1193,7 @@ lemma curveField_eq : curveField = pointedCurve := rfl
 
 end Univ
 
+/-- The cuspidal Weierstrass equation `y² = x³` over the integers. -/
 def cusp : Affine ℤ := { a₁ := 0, a₂ := 0, a₃ := 0, a₄ := 0, a₆ := 0 }
 
 lemma cusp_equation_one_one : cusp.Equation 1 1 := by
@@ -1149,6 +1202,7 @@ lemma cusp_equation_one_one : cusp.Equation 1 1 := by
 open Univ
 variable {R} [CommRing R] (W : WeierstrassCurve R)
 
+/-- Evaluate the five universal coefficient variables at the coefficients of the given curve. -/
 def specialize : MvPolynomial Coeff ℤ →+* R :=
   (MvPolynomial.aeval <| Coeff.rec W.a₁ W.a₂ W.a₃ W.a₄ W.a₆).toRingHom
 
@@ -1160,6 +1214,8 @@ namespace Univ
 variable (x y : R)
 
 open Polynomial (eval₂RingHom) in
+/-- Evaluate the universal coefficient and coordinate variables at the given curve and
+coordinates. -/
 def polyEval : Poly →+* R := eval₂RingHom (eval₂RingHom W.specialize x) y
 
 open Polynomial in
@@ -1170,6 +1226,7 @@ lemma polyEval_apply (p : Poly) :
 variable {W x y} (eqn : Affine.Equation W x y)
 
 open Polynomial in
+/-- Evaluate the universal coordinate ring at a point satisfying the given curve equation. -/
 def ringEval : Univ.Ring →+* R :=
   AdjoinRoot.lift (eval₂RingHom W.specialize x) y <| by
     simp_rw [← coe_eval₂RingHom, eval₂RingHom_eval₂RingHom, RingHom.comp_apply, coe_mapRingHom]
@@ -1216,8 +1273,10 @@ variable {R : Type*} {S : Type*} [CommRing R] [CommRing S] (W : WeierstrassCurve
 
 noncomputable section
 
+/-- The polynomial `6X² + b₂X + b₄` used in the division-sequence invariant. -/
 def invar : R[X] := 6 * X ^ 2 + C W.b₂ * X + C W.b₄
 
+/-- The complementary division polynomial whose product with `ψₙ` is `ψ₂ₙ`. -/
 def ψc : ℤ → R[X][Y] := compl₂EDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄)
 
 open Affine (polynomial polynomialX polynomialY negPolynomial)
@@ -1240,6 +1299,7 @@ lemma preΨ₄_add_ψ₂_pow_four : C W.preΨ₄ + W.ψ₂ ^ 4 =
 lemma φ_mul_ψ (n : ℤ) : W.φ n * W.ψ n = C X * W.ψ n ^ 3 - invarDenom W.ψ 1 n := by
   rw [WeierstrassCurve.φ, invarDenom]; ring
 
+/-- The polynomial numerator for the `y`-coordinate of multiplication by an integer. -/
 protected def ωe (n : ℤ) : R[X][Y] :=
   redInvarDenom W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) n *
     ((CC W.a₁ * polynomialY W - polynomialX W) * C W.Ψ₃
@@ -1354,6 +1414,7 @@ lemma polyEval_cusp_ωe : polyEval cusp 1 1 (curve.ωe n) = 1 := by
   simp_rw [map_sub, map_mul, map_ofNat, polyEval_cusp_ψc] at this
   simpa [cusp, polyEval, specialize, curve] using this
 
+/-- The division sequence of the universal curve viewed in its function field. -/
 abbrev ψᵤ (n : ℤ) : Univ.Field := polyToField (curve.ψ n)
 
 lemma ψᵤ_eq_normEDS :
@@ -1361,7 +1422,8 @@ lemma ψᵤ_eq_normEDS :
       (polyToField curve.ψ₂) (polyToField <| C curve.Ψ₃) (polyToField <| C curve.preΨ₄) := by
   ext; rw [← map_normEDS]; rfl
 
-lemma isEllSequence_ψᵤ : IsEllSequence' ψᵤ := by rw [ψᵤ_eq_normEDS]; exact IsEllSequence'.normEDS
+lemma isEllSequence_ψᵤ : IsEllipticSequence ψᵤ := by
+  rw [ψᵤ_eq_normEDS]; exact IsEllipticSequence.normEDS
 lemma net_ψᵤ (p q r s) : EllSequence.net ψᵤ p q r s = 0 := by rw [ψᵤ_eq_normEDS]; apply net_normEDS
 
 lemma ψᵤ_ne_zero (h0 : n ≠ 0) : ψᵤ n ≠ 0 := fun h ↦ by
@@ -1383,8 +1445,10 @@ namespace Affine
 
 variable (n)
 
+/-- The candidate multiplication-map `x`-coordinate `φₙ / ψₙ²` at the generic point. -/
 def smulX : Univ.Field := polyToField (curve.φ n) / (ψᵤ n) ^ 2
 
+/-- The candidate multiplication-map `y`-coordinate `ωₙ / ψₙ³` at the generic point. -/
 def smulY : Univ.Field := polyToField (curve.ωe n) / (ψᵤ n) ^ 3
 variable {n}
 
@@ -1404,7 +1468,7 @@ lemma smulX_two : smulX 2 = smulX 1 - ψᵤ 3 / (ψᵤ 2) ^ 2 := by
 lemma smulX_sub_smulX (hm : m ≠ 0) (hn : n ≠ 0) :
     smulX m - smulX n = (ψᵤ (n + m) * ψᵤ (n - m)) / (ψᵤ n * ψᵤ m) ^ 2 := by
   rw [smulX_eq hm, smulX_eq hn, sub_sub_sub_cancel_left, div_sub_div]
-  · rw [mul_pow]; congr; convert (isEllSequence_ψᵤ n m 1).symm using 1
+  · rw [mul_pow]; congr; convert (isEllSequence_ψᵤ.rel₃ n m 1).symm using 1
     · ring
     · simp [ψᵤ]
   all_goals exact pow_ne_zero _ (ψᵤ_ne_zero <| by assumption)
@@ -1452,6 +1516,7 @@ lemma smulY_one_sub_negY :
 lemma smulY_one_ne_negY : smulY 1 ≠ pointedCurve.toAffine.negY (smulX 1) (smulY 1) := by
   rw [← sub_ne_zero, smulY_one_sub_negY]; exact ψᵤ_ne_zero two_ne_zero
 
+/-- The tangent slope at the generic point of the universal curve. -/
 def slopeOne : Univ.Field :=
   pointedCurve.toAffine.slope (smulX 1) (smulX 1) (smulY 1) (smulY 1)
 
@@ -1609,10 +1674,13 @@ lemma zsmul_point_ne (h : m ≠ n) : m • Jacobian.point ≠ n • Jacobian.poi
 
 lemma point_point : Jacobian.point.point = ⟦![polyToField (C X), polyToField Y, 1]⟧ := rfl
 
+/-- The coordinate-polynomial triple `[φₙ, ωₙ, ψₙ]` for multiplication by an integer. -/
 abbrev smulPoly (n : ℤ) : Fin 3 → Poly := ![curve.φ n, curve.ωe n, curve.ψ n]
 
+/-- The multiplication-coordinate triple mapped to the universal coordinate ring. -/
 abbrev smulRing (n : ℤ) : Fin 3 → Univ.Ring := AdjoinRoot.mk _ ∘ smulPoly n
 
+/-- The multiplication-coordinate triple mapped to the universal function field. -/
 abbrev smulField (n : ℤ) : Fin 3 → Univ.Field := polyToField ∘ smulPoly n
 
 lemma algebraMap_comp_smulRing (n : ℤ) : algebraMap _ _ ∘ smulRing n = smulField n := by
@@ -1665,8 +1733,8 @@ lemma dblXYZ_smulRing : dblXYZ curveRing (smulRing n) = smulRing (2 * n) :=
     simp_rw [← map_dblXYZ]; exact dblXYZ_smulField
 
 lemma addZ_smulPoly : addZ (smulPoly m) (smulPoly n) = curve.ψ (n + m) * curve.ψ (n - m) := by
-  have hES : IsEllSequence' (WeierstrassCurve.ψ curve) := IsEllSequence'.normEDS
-  simp_rw [addZ, smulPoly, φ]; convert (hES n m 1).symm using 1
+  have hES : IsEllipticSequence (WeierstrassCurve.ψ curve) := IsEllipticSequence.normEDS
+  simp_rw [addZ, smulPoly, φ]; convert (hES.rel₃ n m 1).symm using 1
   · simp only [fin3_def_ext]; ring
   · rw [ψ_one]; ring
 
@@ -1734,6 +1802,7 @@ end Jacobian
 end Univ
 
 variable (x y) in
+/-- Evaluate the multiplication-coordinate triple at the given affine coordinates. -/
 abbrev smulEval (n : ℤ) : Fin 3 → R := evalEval x y ∘ ![W.φ n, W.ωe n, W.ψ n]
 
 variable {W} (eqn : W.toAffine.Equation x y)

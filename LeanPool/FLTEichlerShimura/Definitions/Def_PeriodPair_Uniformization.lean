@@ -77,6 +77,8 @@ namespace PeriodPair
 
 variable (L : PeriodPair)
 
+/-- The complex Weierstrass equation `y² = x³ - (g₂ / 4) * x - g₃ / 4` associated to the period
+lattice. -/
 def weierstrassCurve : WeierstrassCurve ℂ where
   a₁ := 0
   a₂ := 0
@@ -112,6 +114,7 @@ theorem equation_weierstrassP {z : ℂ} (hz : z ∉ L.lattice) :
     weierstrassCurve_a₆]
   linear_combination (1 / 4 : ℂ) * h
 
+/-- The lattice invariants satisfy `g₂³ - 27 * g₃² ≠ 0`. -/
 def DiscriminantNeZero : Prop :=
   L.g₂ ^ 3 - 27 * L.g₃ ^ 2 ≠ 0
 
@@ -120,6 +123,7 @@ theorem DiscriminantNeZero.weierstrassCurve_Δ_ne_zero {L : PeriodPair}
   rwa [L.weierstrassCurve_Δ]
 
 open Classical in
+/-- The point parametrized by the Weierstrass functions, sending lattice elements to infinity. -/
 def toPoint (h : L.DiscriminantNeZero) (z : ℂ) : L.weierstrassCurve.toAffine.Point :=
   if hz : z ∈ L.lattice then 0
   else .some _ _ ((WeierstrassCurve.Affine.equation_iff_nonsingular_of_Δ_ne_zero
@@ -137,11 +141,13 @@ theorem toPoint_of_notMem (h : L.DiscriminantNeZero) {z : ℂ} (hz : z ∉ L.lat
       h.weierstrassCurve_Δ_ne_zero).mp (L.equation_weierstrassP hz)) := by
   simp [toPoint, hz]
 
+/-- The parametrization is additive and surjective, with kernel equal to the period lattice. -/
 def IsUniformization (h : L.DiscriminantNeZero) : Prop :=
   (∀ z w, L.toPoint h (z + w) = L.toPoint h z + L.toPoint h w) ∧
     Function.Surjective (L.toPoint h) ∧
       ∀ z, L.toPoint h z = 0 → z ∈ L.lattice
 
+/-- The lattice j-invariant `1728 * g₂³ / (g₂³ - 27 * g₃²)`. -/
 def jLattice : ℂ := 1728 * L.g₂ ^ 3 / (L.g₂ ^ 3 - 27 * L.g₃ ^ 2)
 
 theorem jLattice_eq_c₄_pow_three_div_Δ :
@@ -152,6 +158,7 @@ theorem jLattice_eq_c₄_pow_three_div_Δ :
   · rw [div_eq_div_iff h h]
     ring
 
+/-- Every complex number is the j-invariant of a period pair with nonzero discriminant. -/
 def JSurjective : Prop :=
   ∀ c : ℂ, ∃ L : PeriodPair, L.DiscriminantNeZero ∧ L.jLattice = c
 
@@ -166,6 +173,7 @@ theorem linearIndependent_coe_upperHalfPlane_one (τ : ℍ) :
   simp only [zero_smul, zero_add, smul_eq_zero, one_ne_zero, or_false] at h
   exact ⟨rfl, h⟩
 
+/-- The period pair `(τ, 1)` associated to a point of the upper half-plane. -/
 def ofTau (τ : ℍ) : PeriodPair where
   ω₁ := (τ : ℂ)
   ω₂ := 1
@@ -188,6 +196,7 @@ theorem scale_indep : LinearIndependent ℝ ![(α : ℂ) * L.ω₁, (α : ℂ) *
   exact L.indep.map' (LinearMap.mulLeft ℝ (α : ℂ))
     (LinearMap.ker_eq_bot_of_injective (mul_right_injective₀ α.ne_zero))
 
+/-- The period pair obtained by multiplying both periods by the nonzero scalar `α`. -/
 def scale : PeriodPair where
   ω₁ := (α : ℂ) * L.ω₁
   ω₂ := (α : ℂ) * L.ω₂
@@ -198,9 +207,11 @@ def scale : PeriodPair where
 
 end Scale
 
+/-- The index in `L` of the subgroup of periods of `L'` lying in `L`. -/
 def sublatticeIndex (L L' : PeriodPair) : ℕ :=
   (L'.lattice.toAddSubgroup.addSubgroupOf L.lattice.toAddSubgroup).index
 
+/-- The quotient of the lattice of `L` by its intersection with the lattice of `L'`. -/
 abbrev sublatticeQuotient (L L' : PeriodPair) :=
   L.lattice.toAddSubgroup ⧸ L'.lattice.toAddSubgroup.addSubgroupOf L.lattice.toAddSubgroup
 

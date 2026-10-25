@@ -423,7 +423,7 @@ theorem s7_exists_dualEndData_dual_mem_and_intLinComb_norm_pos
         0 < (D.intLinComb a b).norm := by
   by_cases hbot : φ ∈ (⊥ : Subring (AddMonoid.End W.Point))
   · obtain ⟨m, rfl⟩ := Subring.mem_bot.mp hbot
-    refine ⟨dualEndData_intCast m, intCast_mem _ m, fun a b hne => ?_⟩
+    refine ⟨dualEndDataIntCast m, intCast_mem _ m, fun a b hne => ?_⟩
     rw [DualEndData.intLinComb_norm, dualEndData_intCast_trace, dualEndData_intCast_norm]
     have hcast : (a : AddMonoid.End W.Point)
         + (b : AddMonoid.End W.Point) * ((m : ℤ) : AddMonoid.End W.Point)

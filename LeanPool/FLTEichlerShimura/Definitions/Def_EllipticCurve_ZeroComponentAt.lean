@@ -70,6 +70,8 @@ namespace WeierstrassCurve
 
 open scoped WeierstrassCurve.Affine
 
+/-- A point is at infinity, has nonintegral x-coordinate, or has integral coordinates with
+nonsingular reduction. -/
 def InZeroComponentAt (W : WeierstrassCurve ℤ) (A : ValuationSubring (AlgebraicClosure ℚ))
     (P : ((W.map (Int.castRingHom ℚ))⁄(AlgebraicClosure ℚ)).Point) : Prop :=
   P = 0 ∨ ∃ (x y : AlgebraicClosure ℚ)

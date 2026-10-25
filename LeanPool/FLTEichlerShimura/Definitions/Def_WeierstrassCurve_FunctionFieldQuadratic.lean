@@ -78,6 +78,7 @@ open CoordinateRing
 
 variable {F : Type*} [Field F] {W : Affine F}
 
+/-- The map from polynomials in the x-coordinate to the curve's function field. -/
 def polyToFunctionField (W : Affine F) : F[X] →+* W.FunctionField :=
   (algebraMap W.CoordinateRing W.FunctionField).comp (algebraMap F[X] W.CoordinateRing)
 
@@ -137,6 +138,7 @@ theorem algebraMap_polynomial_injective :
   exact polyToFunctionField_injective
 
 variable (W) in
+/-- The embedding of rational functions in the x-coordinate into the curve's function field. -/
 def ratFuncToFunctionField : RatFunc F →+* W.FunctionField :=
   IsFractionRing.lift algebraMap_polynomial_injective
 
@@ -146,7 +148,7 @@ theorem ratFuncToFunctionField_algebraMap (p : F[X]) :
       = algebraMap F[X] W.FunctionField p :=
   IsFractionRing.lift_algebraMap algebraMap_polynomial_injective p
 
-instance : Algebra (RatFunc F) W.FunctionField :=
+instance instAlgebraRatFuncFunctionFieldDefinitions : Algebra (RatFunc F) W.FunctionField :=
   (ratFuncToFunctionField W).toAlgebra
 
 instance : IsScalarTower F[X] (RatFunc F) W.FunctionField :=
@@ -160,10 +162,13 @@ instance : IsScalarTower F (RatFunc F) W.FunctionField := by
   exact (polyToFunctionField_C c).symm
 
 variable (W) in
+/-- The image of the y-coordinate in the curve's function field. -/
 def yCoord : W.FunctionField :=
   algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y)
 
 variable (W) in
+/-- The monic quadratic in the y-coordinate over the rational function field obtained from the
+Weierstrass equation. -/
 def weierstrassQuadratic : Polynomial (RatFunc F) :=
   X ^ 2 + (C (algebraMap F[X] (RatFunc F) (C W.a₁ * X + C W.a₃)) * X
     - C (algebraMap F[X] (RatFunc F) (X ^ 3 + C W.a₂ * X ^ 2 + C W.a₄ * X + C W.a₆)))

@@ -16,7 +16,7 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_AtkinLehner
 public import Mathlib.NumberTheory.Height.NumberField
-public import LeanPool.FLTEichlerShimura.Definitions.Def_Compat_Mathlib430
+public import Mathlib.Algebra.Ring.Action.Submonoid
 
 /-!
 # Naive height on the modular Jacobian via j-coordinates
@@ -39,7 +39,8 @@ subtraction in $\mathbb N$) of that polynomial.
 Let $K$ be an intermediate field of $\overline{\mathbb Q}/\mathbb Q$ of finite degree, made a number
 field by `numberField_of_finiteDimensional`. Then `divNaiveHeight N K g' D` is Mathlib's logarithmic
 height `Height.logHeight` of `symVec N g' D` regarded as a tuple over $K$, when all its entries lie
-in $K$, and $0$ otherwise. For a class $c$ in the fixed-point subgroup `JZero N ^+ K.fixingSubgroup`
+in $K$, and $0$ otherwise. For a class $c$ in the fixed-point subgroup
+`FixedPoints.addSubgroup ↥K.fixingSubgroup (JZero N)`
 of the degree-zero divisor class group, `JZero.repHeights N K g' c` is the set of reals
 `divNaiveHeight N K g' D` taken over pairs $(D,E)$ with $D$ effective, $E$ of degree zero, $E + g'
 \cdot (\mathrm{cuspInftyBar}\,N) = D$, $D$ invariant under the arithmetic Galois action of every
@@ -51,8 +52,8 @@ representative exists.
 
 **Relation to Mathlib.** The logarithmic height `Height.logHeight` over a number field is taken from
 Mathlib; places, divisors and the degree-zero class group `Pic0` belong to the project's own curve
-library, and the height on classes of `JZero` defined here has no Mathlib counterpart. The notation
-`α ^+ M` for `FixedPoints.addSubgroup M α` is re-declared in the project's compatibility module.
+library, and the height on classes of `JZero` defined here has no Mathlib counterpart.
+The fixed-point subgroup is Mathlib's `FixedPoints.addSubgroup`.
 
 **Where it is used.** These definitions provide the height function on Galois-invariant classes of
 the degree-zero divisor class group of the modular function field, the quantitative input for
@@ -71,22 +72,30 @@ namespace ModularCurve
 
 variable (N : ℕ) [NeZero N]
 
+/-- Choose a residue value of `j` at the place, using the default choice if no value makes `j -
+c` have positive order. -/
 def jCoord (v : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N)) : AlgebraicClosure ℚ :=
   Classical.epsilon fun c : AlgebraicClosure ℚ =>
     0 < v.ord ((⟨coeffEmb (AlgebraicClosure ℚ) jq, coeffEmb_mem_laurentBaseChange
       (AlgebraicClosure ℚ) (jq_mem_full N)⟩ : modularFunctionFieldBar N)
         - algebraMap (AlgebraicClosure ℚ) (modularFunctionFieldBar N) c)
 
+/-- The linear factor `X - j(v)` at a place where `j` is integral, or the constant polynomial one
+at a pole. -/
 def jFactor (v : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N)) :
     Polynomial (AlgebraicClosure ℚ) :=
   if 0 ≤ v.ord (⟨coeffEmb (AlgebraicClosure ℚ) jq, coeffEmb_mem_laurentBaseChange
     (AlgebraicClosure ℚ) (jq_mem_full N)⟩ : modularFunctionFieldBar N)
   then X - C (jCoord N v) else 1
 
+/-- The product of the places' linear `j`-factors, with exponents given by the nonnegative parts
+of the divisor coefficients. -/
 def symPoly (D : Divisor (AlgebraicClosure ℚ) (modularFunctionFieldBar N)) :
     Polynomial (AlgebraicClosure ℚ) :=
   D.prod fun v n => jFactor N v ^ n.toNat
 
+/-- The coefficient vector of the divisor's symmetric polynomial, indexed in descending order
+from the specified degree. -/
 def symVec (g' : ℕ) (D : Divisor (AlgebraicClosure ℚ) (modularFunctionFieldBar N)) :
     Fin (g' + 1) → AlgebraicClosure ℚ :=
   fun k => (symPoly N D).coeff (g' - k)
@@ -98,10 +107,15 @@ instance numberField_of_finiteDimensional (K : IntermediateField ℚ (AlgebraicC
 variable (K : IntermediateField ℚ (AlgebraicClosure ℚ)) [FiniteDimensional ℚ K]
 
 open scoped Classical in
+/-- The logarithmic height of the symmetric coefficient vector over the specified number field,
+or zero if its entries do not all belong to that field. -/
 def divNaiveHeight (g' : ℕ) (D : Divisor (AlgebraicClosure ℚ) (modularFunctionFieldBar N)) : ℝ :=
   if h : ∀ k, symVec N g' D k ∈ K then Height.logHeight fun k => (⟨symVec N g' D k, h k⟩ : K) else 0
 
-def JZero.repHeights (g' : ℕ) (c : ↥(JZero N^+↥K.fixingSubgroup)) : Set ℝ :=
+/-- The naive heights of effective Galois-invariant divisors representing the specified class
+after adding the fixed cusp divisor. -/
+def JZero.repHeights (g' : ℕ)
+    (c : ↥(FixedPoints.addSubgroup ↥K.fixingSubgroup (JZero N))) : Set ℝ :=
   {r | ∃ (D : Divisor (AlgebraicClosure ℚ) (modularFunctionFieldBar N))
       (E : Divisor.degZero (K := AlgebraicClosure ℚ) (F := ↥(modularFunctionFieldBar N))),
       (∀ v, 0 ≤ D v) ∧
@@ -112,7 +126,9 @@ def JZero.repHeights (g' : ℕ) (c : ↥(JZero N^+↥K.fixingSubgroup)) : Set �
       Pic0.mk E = (c : JZero N) ∧
       r = divNaiveHeight N K g' D}
 
-def JZero.naiveHeight (g' : ℕ) (c : ↥(JZero N^+↥K.fixingSubgroup)) : ℝ :=
+/-- The infimum of the naive heights of the specified effective representatives of the divisor
+class. -/
+def JZero.naiveHeight (g' : ℕ) (c : ↥(FixedPoints.addSubgroup ↥K.fixingSubgroup (JZero N))) : ℝ :=
   sInf (JZero.repHeights N K g' c)
 
 variable {N K}
@@ -145,16 +161,18 @@ theorem divNaiveHeight_nonneg (g' : ℕ)
   · exact Height.logHeight_nonneg _
   · exact le_rfl
 
-theorem JZero.repHeights_nonneg {g' : ℕ} {c : ↥(JZero N^+↥K.fixingSubgroup)} {r : ℝ}
+theorem JZero.repHeights_nonneg {g' : ℕ}
+    {c : ↥(FixedPoints.addSubgroup ↥K.fixingSubgroup (JZero N))} {r : ℝ}
     (hr : r ∈ JZero.repHeights N K g' c) : 0 ≤ r := by
   obtain ⟨D, E, -, -, -, -, rfl⟩ := hr
   exact divNaiveHeight_nonneg g' D
 
-theorem JZero.naiveHeight_nonneg (g' : ℕ) (c : ↥(JZero N^+↥K.fixingSubgroup)) :
+theorem JZero.naiveHeight_nonneg (g' : ℕ)
+    (c : ↥(FixedPoints.addSubgroup ↥K.fixingSubgroup (JZero N))) :
     0 ≤ JZero.naiveHeight N K g' c :=
   Real.sInf_nonneg fun _ hr => JZero.repHeights_nonneg hr
 
-theorem JZero.naiveHeight_le (g' : ℕ) (c : ↥(JZero N^+↥K.fixingSubgroup))
+theorem JZero.naiveHeight_le (g' : ℕ) (c : ↥(FixedPoints.addSubgroup ↥K.fixingSubgroup (JZero N)))
     (D : Divisor (AlgebraicClosure ℚ) (modularFunctionFieldBar N))
     (E : Divisor.degZero (K := AlgebraicClosure ℚ) (F := ↥(modularFunctionFieldBar N)))
     (hD : ∀ v, 0 ≤ D v)
@@ -166,7 +184,8 @@ theorem JZero.naiveHeight_le (g' : ℕ) (c : ↥(JZero N^+↥K.fixingSubgroup))
     JZero.naiveHeight N K g' c ≤ divNaiveHeight N K g' D :=
   csInf_le ⟨0, fun _ hr => JZero.repHeights_nonneg hr⟩ ⟨D, E, hD, hE, hK, hc, rfl⟩
 
-theorem JZero.naiveHeight_eq_zero (g' : ℕ) (c : ↥(JZero N^+↥K.fixingSubgroup))
+theorem JZero.naiveHeight_eq_zero (g' : ℕ)
+    (c : ↥(FixedPoints.addSubgroup ↥K.fixingSubgroup (JZero N)))
     (h : JZero.repHeights N K g' c = ∅) : JZero.naiveHeight N K g' c = 0 := by
   rw [JZero.naiveHeight, h, Real.sInf_empty]
 

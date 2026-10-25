@@ -72,6 +72,7 @@ open scoped MatrixGroups ModularForm
 
 namespace ModularForm
 
+/-- The invertible upper-triangular matrix with entries `a, b, 0, d`. -/
 def upperTriangularGL (a b d : ℝ) (had : a * d ≠ 0) : GL (Fin 2) ℝ :=
   Matrix.GeneralLinearGroup.mkOfDetNeZero !![a, b; 0, d]
     (by rwa [Matrix.det_fin_two_of, mul_zero, sub_zero])
@@ -80,9 +81,11 @@ def upperTriangularGL (a b d : ℝ) (had : a * d ≠ 0) : GL (Fin 2) ℝ :=
     ((upperTriangularGL a b d had : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) = !![a, b; 0, d] :=
       rfl
 
+/-- The Hecke matrix with rows `(1, j)` and `(0, p)`; the identity when `p = 0`. -/
 def heckeMatrix (p j : ℕ) : GL (Fin 2) ℝ :=
   if hp : p = 0 then 1 else upperTriangularGL 1 j p (by rw [one_mul]; exact_mod_cast hp)
 
+/-- The diagonal Hecke matrix with entries `p, 1`; the identity when `p = 0`. -/
 def heckeDiagMatrix (p : ℕ) : GL (Fin 2) ℝ :=
   if hp : p = 0 then 1 else upperTriangularGL p 0 1 (by rw [mul_one]; exact_mod_cast hp)
 
@@ -156,9 +159,12 @@ theorem slash_heckeDiagMatrix_apply (k : ℤ) {p : ℕ} (hp : p ≠ 0) (f : Uppe
   simp only [ContinuousAlgEquiv.refl_apply, Nat.abs_cast, Complex.ofReal_natCast, one_zpow, mul_one]
   rw [mul_comm]
 
+/-- The unnormalized U-operator, summing weight-`k` slash actions over the matrices `heckeMatrix
+p j`. -/
 def heckeU (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) : UpperHalfPlane → ℂ :=
   ∑ j ∈ Finset.range p, f ∣[k] heckeMatrix p j
 
+/-- The unnormalized T-operator, adding the slash action of `diag(p, 1)` to `heckeU`. -/
 def heckeT (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) : UpperHalfPlane → ℂ :=
   heckeU k p f + f ∣[k] heckeDiagMatrix p
 
@@ -225,9 +231,12 @@ theorem heckeT_sub (k : ℤ) (p : ℕ) (f g : UpperHalfPlane → ℂ) :
     heckeT k p (f - g) = heckeT k p f - heckeT k p g := by
   rw [sub_eq_add_neg, heckeT_add, heckeT_neg, ← sub_eq_add_neg]
 
+/-- The coefficient transformation `a(n * p) + p^(k - 1) * a(n / p)`, with the second term only
+when `p ∣ n`. -/
 def coeffHeckeT (k : ℤ) (p : ℕ) (a : ℕ → ℂ) (n : ℕ) : ℂ :=
   a (n * p) + if p ∣ n then (p : ℂ) ^ (k - 1) * a (n / p) else 0
 
+/-- The coefficient transformation sending `a(n)` to `a(n * p)`. -/
 def coeffHeckeU (p : ℕ) (a : ℕ → ℂ) (n : ℕ) : ℂ :=
   a (n * p)
 

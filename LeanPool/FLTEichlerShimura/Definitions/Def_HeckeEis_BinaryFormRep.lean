@@ -90,9 +90,11 @@ section BinaryForms
 
 variable (K : Type*) [CommRing K]
 
+/-- The module of homogeneous polynomials of degree `n` in two variables over `K`. -/
 abbrev BinaryForm (n : ℕ) : Submodule K (MvPolynomial (Fin 2) K) :=
   MvPolynomial.homogeneousSubmodule (Fin 2) K n
 
+/-- Substitution of the linear forms given by the columns of an integral two-by-two matrix. -/
 noncomputable def binarySubst (M : Matrix (Fin 2) (Fin 2) ℤ) :
     MvPolynomial (Fin 2) K →ₐ[K] MvPolynomial (Fin 2) K :=
   MvPolynomial.aeval fun j => ∑ i : Fin 2, C ((M i j : ℤ) : K) * X i
@@ -127,6 +129,7 @@ theorem binarySubst_mem {n : ℕ} (M : Matrix (Fin 2) (Fin 2) ℤ) {F : MvPolyno
 
 variable (n : ℕ)
 
+/-- The representation of `SL(2, ℤ)` on degree-`n` binary forms by linear substitution. -/
 noncomputable def binaryFormRepSL : Representation K SL(2, ℤ) (BinaryForm K n) where
   toFun g := (binarySubst K (g : Matrix (Fin 2) (Fin 2) ℤ)).toLinearMap.restrict
     fun F hF => binarySubst_mem K _ hF
@@ -149,6 +152,7 @@ theorem binaryFormRepSL_apply_coe (g : SL(2, ℤ)) (F : BinaryForm K n) :
       = binarySubst K (g : Matrix (Fin 2) (Fin 2) ℤ) F :=
   rfl
 
+/-- The linear substitution on binary forms associated to `diag(ℓ, 1)`. -/
 noncomputable def binaryFormAlphaAdj (ℓ : ℕ) : BinaryForm K n →ₗ[K] BinaryForm K n :=
   (binarySubst K !![(ℓ : ℤ), 0; 0, 1]).toLinearMap.restrict fun _F hF => binarySubst_mem K _ hF
 
@@ -164,6 +168,8 @@ section Eval
 
 variable (p : ℕ) [Fact p.Prime] (K : Type*) [CommRing K] [CharP K p]
 
+/-- Evaluation of a binary polynomial at a unimodular row modulo `p`, with coordinates cast into
+`K`. -/
 noncomputable def evalRow (F : MvPolynomial (Fin 2) K) (v : UnimodularRow (ZMod p)) : K :=
   MvPolynomial.eval ![ZMod.castHom (dvd_refl p) K v.1.1, ZMod.castHom (dvd_refl p) K v.1.2] F
 
@@ -182,6 +188,7 @@ theorem evalRow_eq_of_unit_mul {F : MvPolynomial (Fin 2) K} (hF : F ∈ BinaryFo
   rw [hvec, eval_smul_of_isHomogeneous ((MvPolynomial.mem_homogeneousSubmodule _ _).mp hF), hu,
     one_mul]
 
+/-- Evaluation of degree-`p - 1` binary forms as functions on the projective line over `ZMod p`. -/
 noncomputable def binaryFormEval : BinaryForm K (p - 1) →ₗ[K] (ProjectiveLine (ZMod p) → K) where
   toFun F := Quotient.lift (evalRow p K (F : MvPolynomial (Fin 2) K)) fun v w hvw => by
     obtain ⟨u, h1, h2⟩ := hvw

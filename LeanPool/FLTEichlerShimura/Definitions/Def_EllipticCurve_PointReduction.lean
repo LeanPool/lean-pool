@@ -34,7 +34,7 @@ value is the residue class of such an $r$ in the residue field; otherwise the va
 elements this is the composite $R \to \mathrm{ResidueField}\,R$ transported along $R \cong$
 (integral elements of $K$), while non-integral $x$ receive the junk value $0$.
 
-[`WeierstrassCurve.reducePoint_alt`](../def/EllipticCurve_PointReduction.html#L22) takes a
+[`WeierstrassCurve.reducePointAlt`](../def/EllipticCurve_PointReduction.html#L22) takes a
 Weierstrass curve $W$ over $K$ together with an instance of Mathlib's minimality predicate
 `W.IsMinimal R`, and produces a function from the points of the associated affine curve $W$ to the
 points of the affine curve attached to the reduced curve `W.reduction R` over the residue field. It
@@ -72,11 +72,14 @@ variable (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
   {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
 
 open Classical in
+/-- Reduction of an integral field element to the residue field; zero for a nonintegral element. -/
 def reduceCoord (x : K) : ResidueField R :=
   if h : ∃ r : R, algebraMap R K r = x then residue R h.choose else 0
 
 open Classical in
-def reducePoint_alt (W : WeierstrassCurve K) [W.IsMinimal R] :
+/-- Reduction of points on a minimal model, sending nonintegral or singularly reducing points to
+infinity. -/
+def reducePointAlt (W : WeierstrassCurve K) [W.IsMinimal R] :
     W.toAffine.Point → (W.reduction R).toAffine.Point
   | .zero => .zero
   | .some x y _ =>

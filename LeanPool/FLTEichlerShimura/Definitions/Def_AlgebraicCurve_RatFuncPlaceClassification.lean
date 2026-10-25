@@ -144,6 +144,8 @@ theorem eq_placeOfPoint_or_eq_placeInfty [IsAlgClosed K] [DecidableEq (RatFunc K
     exact Or.inl ⟨a, hw.trans ha⟩
   · exact Or.inr hw
 
+/-- The rational-function place at infinity for `none`, or the place at the specified scalar for
+`some`. -/
 def ofOption [DecidableEq (RatFunc K)] : Option K → Place K (RatFunc K) :=
   fun o => o.elim (placeInfty K) (placeOfPoint K)
 
@@ -160,6 +162,8 @@ private theorem ofOption_bijective [IsAlgClosed K] [DecidableEq (RatFunc K)] :
     · exact ⟨some a, ha.symm⟩
     · exact ⟨none, ha.symm⟩
 
+/-- Identify places of the rational function field over an algebraically closed field with
+scalars together with infinity. -/
 def placeEquivOption [IsAlgClosed K] [DecidableEq (RatFunc K)] :
     Place K (RatFunc K) ≃ Option K :=
   (Equiv.ofBijective (ofOption K) (by exact ofOption_bijective K)).symm

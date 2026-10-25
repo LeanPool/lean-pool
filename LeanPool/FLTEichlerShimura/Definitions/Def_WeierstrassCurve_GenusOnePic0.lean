@@ -73,15 +73,20 @@ universe u
 variable {F : Type u} [Field F]
 
 variable (W : Affine F) in
+/-- A chosen equivalence between rational points and function-field places, all of residue degree
+one. -/
 class GenusOnePlaceGate : Type u where
+  /-- The chosen equivalence between rational points and function-field places. -/
   pointEquivPlace : W.Point ≃ AlgebraicCurve.Place F W.FunctionField
   deg_eq_one : ∀ v : AlgebraicCurve.Place F W.FunctionField, v.deg = 1
 
 variable {W : Affine F} [GenusOnePlaceGate W]
 
+/-- The point-place equivalence supplied by `GenusOnePlaceGate`. -/
 abbrev pointEquivPlace : W.Point ≃ AlgebraicCurve.Place F W.FunctionField :=
   GenusOnePlaceGate.pointEquivPlace (W := W)
 
+/-- The place assigned to a rational point by the chosen point-place equivalence. -/
 def placeOfPoint : W.Point → AlgebraicCurve.Place F W.FunctionField :=
   pointEquivPlace (W := W)
 
@@ -107,6 +112,8 @@ theorem degree_eq_sum (D : AlgebraicCurve.Divisor F W.FunctionField) :
   exact Finsupp.sum_congr fun v _ => by
     rw [AddMonoidHom.mulRight_apply, deg_eq_one v, Nat.cast_one, mul_one]
 
+/-- The group-law sum of the points corresponding to a divisor's places, weighted by its
+coefficients. -/
 def divisorSum [DecidableEq F] :
     AlgebraicCurve.Divisor F W.FunctionField →+ W.Point :=
   Finsupp.liftAddHom fun v => zmultiplesHom W.Point ((pointEquivPlace (W := W)).symm v)
@@ -122,6 +129,7 @@ theorem divisorSum_single_placeOfPoint [DecidableEq F]
     divisorSum (Finsupp.single (placeOfPoint P) n) = n • P := by
   rw [divisorSum_single, pointEquivPlace_symm_placeOfPoint]
 
+/-- The degree-zero divisor `[P] - [0]` under the chosen point-place correspondence. -/
 def pointDivisor (P : W.Point) : Divisor.degZero (K := F) (F := W.FunctionField) :=
   ⟨Finsupp.single (placeOfPoint P) 1 - Finsupp.single (placeOfPoint (0 : W.Point)) 1, by
     rw [Divisor.mem_degZero, map_sub, Divisor.degree_single, Divisor.degree_single,
@@ -142,6 +150,7 @@ theorem divisorSum_pointDivisor [DecidableEq F] (P : W.Point) :
   rw [coe_pointDivisor, map_sub, divisorSum_single_placeOfPoint, divisorSum_single_placeOfPoint,
     one_smul, one_smul, sub_zero]
 
+/-- The class of `[P] - [0]` in the degree-zero divisor class group. -/
 def pointClass (P : W.Point) : AlgebraicCurve.Pic0 F W.FunctionField :=
   Pic0.mk (pointDivisor P)
 
@@ -150,6 +159,7 @@ theorem pointClass_zero : pointClass (0 : W.Point) = 0 := by
   rw [pointClass, pointDivisor_zero, Pic0.mk_zero]
 
 variable (W) in
+/-- A degree-zero divisor is principal exactly when its group-law sum of points is zero. -/
 class AbelTheorem [DecidableEq F] : Prop where
   isPrincipal_iff_divisorSum_eq_zero :
     ∀ D : AlgebraicCurve.Divisor F W.FunctionField, Divisor.degree D = 0 →
@@ -167,6 +177,7 @@ theorem isPrincipal_of_divisorSum_eq_zero {D : AlgebraicCurve.Divisor F W.Functi
     (h0 : Divisor.degree D = 0) (hD : divisorSum D = 0) : Divisor.IsPrincipal D :=
   (AbelTheorem.isPrincipal_iff_divisorSum_eq_zero D h0).mpr hD
 
+/-- The homomorphism from degree-zero divisor classes to points induced by the divisor sum. -/
 def pic0ToPoint : AlgebraicCurve.Pic0 F W.FunctionField →+ W.Point :=
   QuotientAddGroup.lift _
     (divisorSum.comp (Divisor.degZero (K := F) (F := W.FunctionField)).subtype)
@@ -202,6 +213,8 @@ theorem pic0ToPoint_injective : Function.Injective (pic0ToPoint (W := W)) := by
       (isPrincipal_of_divisorSum_eq_zero (Divisor.mem_degZero.mp hD0) hD)
 
 variable (W) in
+/-- The additive equivalence between degree-zero divisor classes and points supplied by Abel's
+theorem. -/
 def genusOnePic0Equiv : AlgebraicCurve.Pic0 F W.FunctionField ≃+ W.Point :=
   AddEquiv.ofBijective pic0ToPoint ⟨pic0ToPoint_injective, pic0ToPoint_surjective⟩
 

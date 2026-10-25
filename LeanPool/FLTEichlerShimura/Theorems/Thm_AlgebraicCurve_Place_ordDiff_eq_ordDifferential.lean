@@ -46,7 +46,7 @@ free of rank $1$ over $F$. Let $v$ be a place of $F/K$ (a valuation subring of $
 image of $K$, distinct from $F$ itself, and a principal ideal ring) and let $\omega \in
 \Omega_{F/K}$. The assertion is the equality of two integers attached to $\omega$ at $v$: on one
 side $\mathrm{ord}_v$ of the coefficient $g$ in a representation $\omega = g \cdot \mathrm{d}t$,
-where $t$ is the element chosen by `uniformizer_alt` from those with $\mathrm{ord}_v t = 1$ (and
+where $t$ is the element chosen by `uniformizerAlt` from those with $\mathrm{ord}_v t = 1$ (and
 $g$, as in `diffCoeff`, is a chosen solution, $0$ if none exists); on the other side
 $\mathrm{ord}_v$ of the coefficient chosen by `differentialCoeff` in a representation $\omega = f
 \cdot \mathrm{dCoord}_v$.

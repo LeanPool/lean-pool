@@ -78,6 +78,8 @@ section CommRing
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
 
+/-- The Weierstrass equation from Vélu's coefficient formulas for a single point intended to
+generate an order-two kernel. -/
 def veluQuotient2 (x₀ y₀ : R) : WeierstrassCurve R where
   a₁ := W.a₁
   a₂ := W.a₂
@@ -98,6 +100,7 @@ lemma veluQuotient2_a₆ :
 lemma veluQuotient2_b₂ : (W.veluQuotient2 x₀ y₀).b₂ = W.b₂ := by
   simp [b₂]
 
+/-- The quadratic discriminant expression `b₂² - 8 * b₂ * x₀ - 48 * x₀² - 32 * b₄`. -/
 def velu2QuadDisc (x₀ : R) : R :=
   W.b₂ ^ 2 - 8 * W.b₂ * x₀ - 48 * x₀ ^ 2 - 32 * W.b₄
 

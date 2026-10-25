@@ -138,14 +138,17 @@ section FunctionField
 
 variable (K : Type*) [Field K] (M : ℕ) (H : Subgroup (ZMod M)ˣ)
 
+/-- The expansion-defined function field for `Γ_H(M)` over the specified coefficient field. -/
 def xHFunctionFieldC : IntermediateField K (LaurentSeries K) :=
   qExpFunctionFieldC K (CohCarrier.GammaH M H)
 
+/-- The expansion-defined function field for `Γ_H(M)` over the rational numbers. -/
 abbrev xHFunctionField : IntermediateField ℚ (LaurentSeries ℚ) :=
   xHFunctionFieldC ℚ M H
 
 theorem xHFunctionFieldC_rat : xHFunctionFieldC ℚ M H = xHFunctionField M H := rfl
 
+/-- The expansion-defined function field for the intersection of `Γ_H(M)` with `Γ₀(t)`. -/
 def xHTopFunctionFieldC (t : ℕ) : IntermediateField K (LaurentSeries K) :=
   qExpFunctionFieldC K (CohCarrier.GammaH M H ⊓ Gamma0 t)
 
@@ -184,10 +187,13 @@ section Jacobian
 
 variable (M : ℕ) (H : Subgroup (ZMod M)ˣ)
 
+/-- The Laurent-series base change of the rational `Γ_H(M)` function field to an algebraic
+closure. -/
 abbrev xHFunctionFieldBar :
     IntermediateField (AlgebraicClosure ℚ) (LaurentSeries (AlgebraicClosure ℚ)) :=
   laurentBaseChange (AlgebraicClosure ℚ) (xHFunctionField M H)
 
+/-- The degree-zero divisor-class group of the base-changed `Γ_H(M)` function field. -/
 abbrev JH : Type _ :=
   Pic0 (AlgebraicClosure ℚ) (xHFunctionFieldBar M H)
 
@@ -196,6 +202,7 @@ example : DistribMulAction (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure �
 
 example : DistribMulAction (AddMonoid.End (JH M H)) (JH M H) := inferInstance
 
+/-- The arithmetic Galois representation on the `n`-torsion of the `Γ_H(M)` divisor-class group. -/
 def JH.torsionGaloisRep (n : ℕ) :
     (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →*
       Module.End (ZMod n) (Pic0.torsion (AlgebraicClosure ℚ) (xHFunctionFieldBar M H) n) :=
@@ -216,10 +223,12 @@ theorem JH.coe_torsionGaloisRep_apply {n : ℕ} (σ : AlgebraicClosure ℚ ≃�
 
 variable (p : ℕ) [Fact p.Prime]
 
+/-- The arithmetic Galois action on the Tate module of the `Γ_H(M)` divisor-class group. -/
 abbrev JH.tateGaloisRep :
     (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* Module.End ℤ_[p] (TateModule p (JH M H)) :=
   TateModule.rep p (JH M H) (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)
 
+/-- The action of divisor-class-group endomorphisms on its Tate module. -/
 abbrev JH.tateEnd : AddMonoid.End (JH M H) →* Module.End ℤ_[p] (TateModule p (JH M H)) :=
   TateModule.rep p (JH M H) (AddMonoid.End (JH M H))
 
@@ -233,6 +242,8 @@ theorem JH.tateEnd_apply_coe (f : AddMonoid.End (JH M H)) (x : TateModule p (JH 
     ((JH.tateEnd M H p f x : TateModule p (JH M H)) : ℕ → JH M H) n = f ((x : ℕ → JH M H) n) :=
   rfl
 
+/-- The degree-zero divisor-class group of the `Γ_H(M)` expansion field over the specified
+coefficient field. -/
 abbrev JHC (K : Type*) [Field K] : Type _ :=
   Pic0 K (xHFunctionFieldC K M H)
 

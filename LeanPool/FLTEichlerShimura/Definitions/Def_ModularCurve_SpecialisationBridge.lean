@@ -133,6 +133,8 @@ theorem nonsingular_specialFibre (W : WeierstrassCurve H) (hW : IntegralCoeffs W
   rw [← WeierstrassCurve.Affine.equation_iff_nonsingular]
   exact equation_specialFibre W hW hx hy h.1
 
+/-- Reduce integral affine coordinates to constant coefficients, sending infinity and points with
+nonintegral coordinates to infinity. -/
 def redPoint (W : WeierstrassCurve H) (hW : IntegralCoeffs W) (hΔ : W.Δ.orderTop = 0) :
     W.toAffine.Point → (specialFibre W).toAffine.Point
   | .zero => 0
@@ -155,6 +157,7 @@ theorem redPoint_some (W : WeierstrassCurve H) (hW : IntegralCoeffs W)
 
 universe u
 
+/-- Cyclic subgroups of the additive group admitting a generator of exact order `N`. -/
 def CycOf (A : Type u) [AddGroup A] (N : ℕ) : Type u :=
   {G : AddSubgroup A // ∃ g : A, addOrderOf g = N ∧ G = AddSubgroup.zmultiples g}
 
@@ -165,6 +168,7 @@ theorem CycSubH_eq_CycOf (E : WeierstrassCurve H) (N : ℕ) :
 theorem CycSub_eq_CycOf (E₀ : WeierstrassCurve Qbar) (N : ℕ) :
     CycSub E₀ N = CycOf E₀.toAffine.Point N := rfl
 
+/-- Transport cyclic subgroups of the specified order along an additive equivalence. -/
 def cycOfCongr {A B : Type*} [AddCommGroup A] [AddCommGroup B] (e : A ≃+ B) (N : ℕ) :
     CycOf A N ≃ CycOf B N where
   toFun G := ⟨G.1.map (e : A →+ B), by
@@ -193,6 +197,8 @@ theorem comap_subtype_zmultiples {A : Type*} [AddCommGroup A] (S : Submodule ℤ
         (AddMonoidHom.map_zmultiples S.subtype.toAddMonoidHom ⟨x, hx⟩).symm,
     AddSubgroup.comap_map_eq_self_of_injective (Submodule.injective_subtype S)]
 
+/-- Identify cyclic subgroups of order `N` in an additive group with those in its `N`-torsion
+subgroup. -/
 def cycOfTorsionBy (A : Type*) [AddCommGroup A] (N : ℕ) :
     CycOf A N ≃ CycOf (Submodule.torsionBy ℤ A N) N where
   toFun G := ⟨G.1.comap (Submodule.torsionBy ℤ A N).subtype.toAddMonoidHom, by
@@ -224,6 +230,7 @@ def cycOfTorsionBy (A : Type*) [AddCommGroup A] (N : ℕ) :
     ((cycOfTorsionBy A N).symm G).1 = G.1.map (Submodule.torsionBy ℤ A N).subtype.toAddMonoidHom :=
   rfl
 
+/-- The additive equivalence of point groups induced by a Weierstrass change of variables. -/
 def vcAddEquiv {K : Type*} [Field K] [DecidableEq K] (C : VariableChange K)
     (W : WeierstrassCurve K) :
     W.toAffine.Point ≃+ (C • W).toAffine.Point :=
@@ -234,6 +241,7 @@ def vcAddEquiv {K : Type*} [Field K] [DecidableEq K] (C : VariableChange K)
     (W : WeierstrassCurve K) (P : W.toAffine.Point) :
     vcAddEquiv C W P = WeierstrassCurve.Affine.Point.vcInvFun C W.toAffine P := rfl
 
+/-- Transport the point group along an equality of Weierstrass curves. -/
 def pointAddEquivOfEq {K : Type*} [Field K] [DecidableEq K] {W V : WeierstrassCurve K} (h : W = V) :
     W.toAffine.Point ≃+ V.toAffine.Point := by
   subst h; exact AddEquiv.refl _
@@ -255,6 +263,8 @@ theorem goodModel_spec (j₀ : Qbar) :
 
 attribute [instance] isElliptic_specialFibre_goodModel
 
+/-- Choose a change of variables identifying the good model's special fiber with the curve having
+invariant `j₀`. -/
 def fibreVC (j₀ : Qbar) : VariableChange Qbar :=
   Classical.choose (exists_variableChange_specialFibre_goodModel j₀)
 
@@ -263,6 +273,7 @@ theorem fibreVC_smul (j₀ : Qbar) :
   Classical.choose_spec (exists_variableChange_specialFibre_goodModel j₀)
 
 open scoped Classical in
+/-- The additive equivalence from the nearby curve to its scaled good model. -/
 def scaleAddEquiv (j₀ : Qbar) : (nearCurve j₀).toAffine.Point ≃+ (goodModel j₀).toAffine.Point :=
   vcAddEquiv (scaleVC j₀) (nearCurve j₀)
 
@@ -271,9 +282,12 @@ def scaleAddEquiv (j₀ : Qbar) : (nearCurve j₀).toAffine.Point ≃+ (goodMode
       WeierstrassCurve.Affine.Point.vcInvFun (scaleVC j₀) (nearCurve j₀).toAffine P := rfl
 
 open scoped Classical in
+/-- Transport cyclic subgroups from the nearby curve to its scaled good model. -/
 def cycScale (p : ℕ) (j₀ : Qbar) : CycSubH (nearCurve j₀) p ≃ CycSubH (goodModel j₀) p :=
   cycOfCongr (scaleAddEquiv j₀) p
 
+/-- The additive equivalence from the good model's special fiber to the curve with invariant
+`j₀`. -/
 def fibreAddEquiv (j₀ : Qbar) :
     (specialFibre (goodModel j₀)).toAffine.Point ≃+ (WeierstrassCurve.ofJ j₀).toAffine.Point :=
   (vcAddEquiv (fibreVC j₀) (specialFibre (goodModel j₀))).trans (pointAddEquivOfEq (fibreVC_smul
@@ -286,6 +300,7 @@ theorem fibreAddEquiv_apply (j₀ : Qbar) (P : (specialFibre (goodModel j₀)).t
           (specialFibre (goodModel j₀)).toAffine P) := rfl
 
 open scoped Classical in
+/-- Choose an additive equivalence of the prime-torsion subgroups agreeing with good reduction. -/
 def redTorsionEquiv (W : WeierstrassCurve H) (hW : IntegralCoeffs W)
     (hΔ : W.Δ.orderTop = 0) (p : ℕ) [Fact p.Prime] :
     Submodule.torsionBy ℤ W.toAffine.Point (p : ℤ) ≃+
@@ -306,6 +321,8 @@ theorem redTorsionEquiv_spec (W : WeierstrassCurve H) (hW : IntegralCoeffs W)
   Classical.choose_spec (exists_torsionBy_reduction_addEquiv W hW hΔ p) P x y h hP
 
 open scoped Classical in
+/-- The equivalence on prime-order cyclic subgroups induced by the chosen good-reduction torsion
+equivalence. -/
 def cycRed (W : WeierstrassCurve H) (hW : IntegralCoeffs W) (hΔ : W.Δ.orderTop = 0)
     (p : ℕ) [Fact p.Prime] :
     CycSubH W p ≃ CycSub (specialFibre W) p :=
@@ -313,6 +330,8 @@ def cycRed (W : WeierstrassCurve H) (hW : IntegralCoeffs W) (hΔ : W.Δ.orderTop
     (cycOfCongr (redTorsionEquiv W hW hΔ p) p).trans
       (cycOfTorsionBy (specialFibre W).toAffine.Point p).symm
 
+/-- The equivalence on prime-order cyclic subgroups obtained by scaling the nearby curve,
+reducing, and identifying the special fiber. -/
 def bridge3Specialise (p : ℕ) [Fact p.Prime] (j₀ : Qbar) :
     CycSubH (nearCurve j₀) p ≃ CycSub (WeierstrassCurve.ofJ j₀) p :=
   (cycScale p j₀).trans <|
@@ -347,6 +366,8 @@ theorem nearCurve_map_of_mem_monodromy (j₀ : Qbar) {m : H ≃ₐ[Qbar] H}
     (HahnSeries.fixes_single_one_of_mem_monodromy hm)
 
 open scoped Classical in
+/-- The additive automorphism of the nearby curve's point group induced by a monodromy
+automorphism fixing its coefficients. -/
 def nearTransport (j₀ : Qbar) (m : HahnSeries.monodromy Qbar) :
     (nearCurve j₀).toAffine.Point ≃+ (nearCurve j₀).toAffine.Point :=
   WeierstrassCurve.Affine.Point.fixedTransport (m : H ≃ₐ[Qbar] H) (nearCurve j₀)
@@ -363,6 +384,7 @@ theorem nearTransport_some (j₀ : Qbar) (m : HahnSeries.monodromy Qbar) (x y : 
     (m : H ≃ₐ[Qbar] H) (nearCurve j₀) (nearCurve_map_of_mem_monodromy j₀ m.2) x y h
 
 open scoped Classical in
+/-- The action on subgroups of the nearby curve's point group induced by monodromy transport. -/
 def b3Act (j₀ : Qbar) (m : HahnSeries.monodromy Qbar) :
     AddSubgroup (nearCurve j₀).toAffine.Point → AddSubgroup (nearCurve j₀).toAffine.Point :=
   AddSubgroup.map ((nearTransport j₀ m : _ ≃+ _) : _ →+ _)

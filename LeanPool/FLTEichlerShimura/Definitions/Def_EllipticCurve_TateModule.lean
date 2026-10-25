@@ -82,6 +82,8 @@ coefficients from $\mathbb{Z}_p$ to a general complete local coefficient ring.
 
 open IsLocalRing
 
+/-- The subgroup of compatible sequences of `p^n`-torsion elements, with transition map
+multiplication by `p`. -/
 def TateModule (p : ℕ) (M : Type) [AddCommGroup M] : AddSubgroup (ℕ → M) where
   carrier := {x | ∀ n, ((p ^ n : ℕ) : ℤ) • x n = 0 ∧ ((p : ℕ) : ℤ) • x (n + 1) = x n}
   add_mem' := fun {x y} hx hy n =>
@@ -192,6 +194,7 @@ theorem smul_apply_eq_zero_of_mem_span {n : ℕ} {a : ℤ_[p]}
   rw [natCast_smul_eq_of_zmod_eq (torsion x n) h, Nat.cast_zero, zero_smul]
 
 variable (p M) in
+/-- The additive projection from the Tate module to its `n`th torsion coordinate. -/
 def proj (n : ℕ) : TateModule p M →+ M where
   toFun x := (x : ℕ → M) n
   map_zero' := rfl
@@ -209,6 +212,8 @@ theorem proj_mem_torsionBy (n : ℕ) (x : TateModule p M) :
     proj p M n x ∈ Submodule.torsionBy ℤ M ((p ^ n : ℕ) : ℤ) :=
   (Submodule.mem_torsionBy_iff _ _).2 (torsion x n)
 
+/-- Shift a compatible sequence by `n` levels when its `n`th coordinate vanishes, giving a
+preimage under multiplication by `p^n`. -/
 def shiftOfProjEqZero (n : ℕ) (x : TateModule p M) (hx : proj p M n x = 0) : TateModule p M :=
   ⟨fun m => (x : ℕ → M) (m + n), fun m =>
     ⟨by
@@ -243,6 +248,7 @@ section action
 variable {G : Type} [Monoid G] [DistribMulAction G M]
 
 variable (p M G) in
+/-- The linear action on the Tate module induced by a distributive action on the original group. -/
 noncomputable def rep : G →* Module.End ℤ_[p] (TateModule p M) where
   toFun g :=
     { toFun := fun x => ⟨fun n => g • (x : ℕ → M) n, fun n =>
@@ -323,6 +329,8 @@ theorem ringChar_quotient_dvd (hp : (p : 𝒪) ∈ maximalIdeal 𝒪) (n : ℕ) 
     Ideal.Quotient.eq_zero_iff_mem]
   exact Ideal.pow_mem_pow hp n
 
+/-- Map the `p`-adic integers to the quotient by the `n`th maximal-ideal power using reduction
+modulo `p^n`. -/
 noncomputable def padicIntToRingLevel (hp : (p : 𝒪) ∈ maximalIdeal 𝒪) (n : ℕ) :
     ℤ_[p] →+* 𝒪 ⧸ maximalIdeal 𝒪 ^ n :=
   (ZMod.castHom (ringChar_quotient_dvd 𝒪 p hp n) (𝒪 ⧸ maximalIdeal 𝒪 ^ n)).comp (PadicInt.toZModPow
@@ -338,6 +346,8 @@ theorem padicIntToRingLevel_compat (hp : (p : 𝒪) ∈ maximalIdeal 𝒪) {m n 
 
 variable [IsAdicComplete (maximalIdeal 𝒪) 𝒪]
 
+/-- The homomorphism from the `p`-adic integers to the complete local ring induced by the
+compatible finite-level reductions. -/
 noncomputable def padicIntToRing (hp : (p : 𝒪) ∈ maximalIdeal 𝒪) : ℤ_[p] →+* 𝒪 :=
   IsAdicComplete.liftRingHom (maximalIdeal 𝒪) (padicIntToRingLevel 𝒪 p hp)
     (fun hle => padicIntToRingLevel_compat 𝒪 p hp hle)
@@ -396,12 +406,15 @@ theorem finite_torsionBy (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n
     rw [hcard n]; exact pow_ne_zero _ (pow_ne_zero _ (Fact.out : p.Prime).ne_zero))
 
 variable (p M) in
+/-- The transition homomorphism from `p^(n + 1)`-torsion to `p^n`-torsion given by multiplication
+by `p`. -/
 def mulP (n : ℕ) : torsionBy ℤ M ((p ^ (n + 1) : ℕ) : ℤ) →+ torsionBy ℤ M ((p ^ n : ℕ) : ℤ) where
   toFun m := ⟨((p : ℕ) : ℤ) • (m : M), smul_mem_torsionBy_of_mem_succ m.2⟩
   map_zero' := Subtype.ext (smul_zero _)
   map_add' _ _ := Subtype.ext (smul_add _ _ _)
 
 variable (p M) in
+/-- Identify the kernel of the torsion transition map with the `p`-torsion subgroup. -/
 def kerMulPEquiv (n : ℕ) : (mulP p M n).ker ≃ torsionBy ℤ M ((p ^ 1 : ℕ) : ℤ) where
   toFun m := ⟨(m.1 : M), mem_torsionBy_one_of_smul_eq_zero (by
     have h := m.2; rw [AddMonoidHom.mem_ker] at h; exact congrArg Subtype.val h)⟩
@@ -437,12 +450,15 @@ theorem exists_smul_eq_of_mem_torsionBy
   obtain ⟨m', hm'⟩ := mulP_surjective hcard n ⟨m, hm⟩
   exact ⟨m', m'.2, congrArg Subtype.val hm'⟩
 
+/-- Iterate the supplied choices of lifts through successive torsion levels. -/
 noncomputable def liftAux
     (next : (k : ℕ) → torsionBy ℤ M ((p ^ k : ℕ) : ℤ) → torsionBy ℤ M ((p ^ (k + 1) : ℕ) : ℤ))
     (n : ℕ) (m : torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) : (j : ℕ) → torsionBy ℤ M ((p ^ (n + j) : ℕ) : ℤ)
   | 0 => m
   | j + 1 => next (n + j) (liftAux next n m j)
 
+/-- Extend a torsion element to a sequence using the supplied lifts above its level and
+multiplication by powers of `p` below it. -/
 noncomputable def liftFun
     (next : (k : ℕ) → torsionBy ℤ M ((p ^ k : ℕ) : ℤ) → torsionBy ℤ M ((p ^ (k + 1) : ℕ) : ℤ))
     (n : ℕ) (m : torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) (k : ℕ) : M :=
@@ -571,6 +587,8 @@ theorem dvd_of_rel_apply {x y : TateModule p M}
     rw [pow_succ', Nat.cast_mul]
     exact ⟨mul_dvd_mul_left _ ha, mul_dvd_mul_left _ hb⟩
 
+/-- Form a linear combination of the `n`th coordinates of two Tate-module elements with
+coefficients modulo `p^n`. -/
 noncomputable def levelMap (x y : TateModule p M) (n : ℕ) (c : ZMod (p ^ n) × ZMod (p ^ n)) :
     torsionBy ℤ M ((p ^ n : ℕ) : ℤ) :=
   ⟨(c.1.val : ℤ) • (x : ℕ → M) n + (c.2.val : ℤ) • (y : ℕ → M) n, by
@@ -681,6 +699,8 @@ theorem top_le_span_pair (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n
   rw [Matrix.range_cons_cons_empty, Submodule.mem_span_pair]
   exact ⟨s, t, hst⟩
 
+/-- Choose a two-element basis of the Tate module when the `p^n`-torsion groups have cardinality
+`p^(2n)`. -/
 noncomputable def basisOfCard (hcard : ∀ n : ℕ, Nat.card (torsionBy ℤ M ((p ^ n : ℕ) : ℤ)) = (p ^ n)
   ^ 2) :
     Module.Basis (Fin 2) ℤ_[p] (TateModule p M) :=
@@ -753,6 +773,7 @@ namespace WeierstrassCurve
 
 open WeierstrassCurve.Affine WeierstrassCurve.Affine.Point
 
+/-- The set of affine coordinates of a point, or the empty set at infinity. -/
 def Affine.Point.coords {F : Type} [Field F] {W : WeierstrassCurve F} : W.toAffine.Point → Set F
   | 0 => ∅
   | @Affine.Point.some _ _ _ x y _ => {x, y}
@@ -776,6 +797,7 @@ theorem Affine.Point.algEquiv_smul_eq_self_of_forall_coords {F S : Type} [Field 
 
 variable (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
 
+/-- The rational field extension generated by the coordinates of all `p^n`-torsion points. -/
 noncomputable def torsionField (n : ℕ) : IntermediateField ℚ (AlgebraicClosure ℚ) :=
   IntermediateField.adjoin ℚ
     (⋃ P ∈ (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point ((p ^ n : ℕ) : ℤ) :
@@ -826,6 +848,8 @@ theorem finite_torsionBy_of_card (n : ℕ)
     Finite (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point ((p ^ n : ℕ) : ℤ)) :=
   Nat.finite_of_card_ne_zero (by rw [hcard]; exact pow_ne_zero 2 (pow_ne_zero n hp))
 
+/-- The rank-two adically continuous Galois representation on the Tate module, using the supplied
+basis and torsion cardinalities. -/
 noncomputable def tateModuleRepOfBasis
     (hcard : ∀ n : ℕ, Nat.card (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point ((p ^ n : ℕ) :
       ℤ))
@@ -931,6 +955,8 @@ namespace WeierstrassCurve
 
 open WeierstrassCurve.Affine WeierstrassCurve.Affine.Point
 
+/-- The Galois representation on the elliptic curve's Tate module, using the basis constructed
+from its torsion cardinalities. -/
 noncomputable def tateModuleRep (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
     (hcard : ∀ n : ℕ,
       Nat.card (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point ((p ^ n : ℕ) : ℤ)) = (p ^ n) ^

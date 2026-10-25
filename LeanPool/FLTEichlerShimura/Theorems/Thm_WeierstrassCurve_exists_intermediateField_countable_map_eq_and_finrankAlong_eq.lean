@@ -804,7 +804,7 @@ def KwTensorFracIotaFinrankSeamGeneralNoAC : Prop :=
 
 def kw_isogenyEndDatumBaseChangeIotaGeneralNoAC (D : TreeIsogenyEndDatum (W⁄F)) :
     (W⁄F').FunctionField →ₐ[F'] (W⁄F').FunctionField :=
-  let ψ := kw_functionFieldTensorFracEquivGeneral W F F'
+  let ψ := kwFunctionFieldTensorFracEquivGeneral W F F'
   { ψ.symm.toRingEquiv.toRingHom.comp
       ((kw_tensorFracIotaRingHomGeneralNoAC W F F' D).comp ψ.toRingEquiv.toRingHom) with
     commutes' := fun c => by
@@ -832,7 +832,7 @@ theorem kw_isogenyEndDatumBaseChangeAlong_of_isDomain_tensorGeneralNoAC
     (σ : F →ₐ[R₀] F') (N : ℕ) : KwIsogenyEndDatumBaseChangeAlongGeneralNoAC W F F' σ N := by
   classical
   intro ⟨D, hD⟩
-  let ψ := kw_functionFieldTensorFracEquivGeneral W F F'
+  let ψ := kwFunctionFieldTensorFracEquivGeneral W F F'
   let ιFr := kw_tensorFracIotaRingHomGeneralNoAC W F F' D
   obtain ⟨hfin_Fr, hdeg_Fr⟩ := hseam D
   have hcomm : ∀ x, ιFr (ψ x) = ψ (kw_isogenyEndDatumBaseChangeIotaGeneralNoAC W F F' D x) :=
@@ -1975,14 +1975,14 @@ theorem kw_iPFE_functionField_ringHom_ext {F : Type*} [Field F] {W : Affine F}
 omit [DecidableEq K] [IsAlgClosed K] [CharZero K] [E₀.IsElliptic] in
 private theorem kw_iPFE_fracHom_algebraMap
     [IsDomain ((E₀⁄(K₀ : Type uK)).FunctionField ⊗[K₀] K)] (r : K₀) :
-    kw_functionFieldTensorFracHomGeneral E₀ (K₀ : Type uK) K
+    kwFunctionFieldTensorFracHomGeneral E₀ (K₀ : Type uK) K
       (kw_iA_phi E₀ (algebraMap K₀ E₀.toAffine.FunctionField r)) =
         algebraMap ((E₀⁄(K₀ : Type uK)).FunctionField ⊗[K₀] K)
           (FractionRing ((E₀⁄(K₀ : Type uK)).FunctionField ⊗[K₀] K))
           (algebraMap K₀ E₀.toAffine.FunctionField r ⊗ₜ[K₀] (1 : K)) := by
   let T := (E₀⁄(K₀ : Type uK)).FunctionField ⊗[K₀] K
   let FrT := FractionRing T
-  let ψ := kw_functionFieldTensorFracHomGeneral E₀ (K₀ : Type uK) K
+  let ψ := kwFunctionFieldTensorFracHomGeneral E₀ (K₀ : Type uK) K
   let Φ := kw_iA_phi E₀
   have hL : ψ (Φ (algebraMap K₀ E₀.toAffine.FunctionField r))
       = algebraMap K FrT (algebraMap K₀ K r) := by
@@ -2000,13 +2000,13 @@ omit [DecidableEq K] [IsAlgClosed K] [CharZero K] [E₀.IsElliptic] in
 private theorem kw_iPFE_fracEquiv_phi
     [IsDomain ((E₀⁄(K₀ : Type uK)).FunctionField ⊗[K₀] K)] :
     ∀ a : E₀.toAffine.FunctionField,
-      kw_functionFieldTensorFracEquivGeneral E₀ (K₀ : Type uK) K (kw_iA_phi E₀ a) =
+      kwFunctionFieldTensorFracEquivGeneral E₀ (K₀ : Type uK) K (kw_iA_phi E₀ a) =
         algebraMap ((E₀⁄(K₀ : Type uK)).FunctionField ⊗[K₀] K)
           (FractionRing ((E₀⁄(K₀ : Type uK)).FunctionField ⊗[K₀] K))
           (a ⊗ₜ[K₀] (1 : K)) := by
   let T := (E₀⁄(K₀ : Type uK)).FunctionField ⊗[K₀] K
   let FrT := FractionRing T
-  let ψ := kw_functionFieldTensorFracHomGeneral E₀ (K₀ : Type uK) K
+  let ψ := kwFunctionFieldTensorFracHomGeneral E₀ (K₀ : Type uK) K
   let Φ := kw_iA_phi E₀
   have heq : ψ.toRingHom.comp Φ.toRingHom
       = (algebraMap T FrT).comp
@@ -2036,7 +2036,7 @@ theorem kw_iPFE_finrankEq : KwIotaPinnedFinrankEq E₀ D hcoeffs := by
     kw_functionFieldTensorIsDomain_dischargeGeneral E₀ (K₀ : Type uK) K
   let T := (E₀⁄(K₀ : Type uK)).FunctionField ⊗[K₀] K
   let FrT := FractionRing T
-  let ψ := kw_functionFieldTensorFracEquivGeneral E₀ (K₀ : Type uK) K
+  let ψ := kwFunctionFieldTensorFracEquivGeneral E₀ (K₀ : Type uK) K
   let ιFr := kw_tensorFracIotaRingHomGeneralNoAC E₀ (K₀ : Type uK) K D₀
   let Φ := kw_iA_phi E₀
   have hκ : ∀ a : E₀.toAffine.FunctionField,

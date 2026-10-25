@@ -39,11 +39,11 @@ element $x \in F$, the extension $F$ is algebraic over the intermediate field $K
 `IntermediateField.adjoin K {x}`. Let $v$ be a place of $F$ over $K$ in the sense of the project's
 structure [`AlgebraicCurve.Place`](def/AlgebraicCurve_DivisorClassGroup.html#L22): a valuation
 subring of $F$ containing the image of $K$ under the structure map, distinct from $F$ itself, and
-whose ring is a principal ideal ring. Recall the relevant definitions: `v.uniformizer_alt` is a
+whose ring is a principal ideal ring. Recall the relevant definitions: `v.uniformizerAlt` is a
 chosen element $t \in F$ with `v.ord t = 1` if one exists and $0$ otherwise; for $t \in F$ and a
 Kähler differential $\omega \in \Omega_{F/K}$, `Place.diffCoeff t ω` is a chosen $g \in F$ with
 $\omega = g \cdot D_{K,F}(t)$ if one exists and $0$ otherwise; and `v.ordDiff ω` is `v.ord` of
-`Place.diffCoeff v.uniformizer_alt ω`. The assertion is that `v.ordDiff 0 = 0`, that is, the order
+`Place.diffCoeff v.uniformizerAlt ω`. The assertion is that `v.ordDiff 0 = 0`, that is, the order
 at $v$ of the zero differential is $0$, in accordance with the convention $\operatorname{ord}_v(0) =
 0$ for functions.
 
@@ -102,8 +102,8 @@ theorem diffCoeff_smul_of_ord_ne_zero (v : Place K F) {t : F} (ht : v.ord t ≠ 
 
 include x in
 theorem ordDiff_smul_D_uniformizer (v : Place K F) (g : F) :
-    v.ordDiff (g • D K F v.uniformizer_alt) = v.ord g := by
-  have h1 : v.ord v.uniformizer_alt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
+    v.ordDiff (g • D K F v.uniformizerAlt) = v.ord g := by
+  have h1 : v.ord v.uniformizerAlt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
   rw [Place.ordDiff_def, diffCoeff_smul_of_ord_ne_zero x v (by rw [h1]; exact one_ne_zero)]
 
 include x in

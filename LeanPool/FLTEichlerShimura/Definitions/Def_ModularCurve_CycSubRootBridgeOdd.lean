@@ -81,6 +81,8 @@ theorem isElliptic_veluQuotient_cycSubSummingSet_of_odd (E : WeierstrassCurve H)
       ((N - 1) / 2) (cycSubGen E G)
       (by rw [addOrderOf_cycSubGen, two_mul_pred_div_two_add_one_of_odd hN]))⟩
 
+/-- The specialized modular-polynomial root given by the Vélu quotient by a cyclic subgroup of
+odd order. -/
 def cycSubRootOdd (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ} [NeZero N] (hN : Odd N)
     (data : ModularPolynomialData N) (G : CycSubH E N) : RootsAt data E.j :=
   ⟨@WeierstrassCurve.j H _ (E.veluQuotient (cycSubSummingSet E G))
@@ -121,6 +123,8 @@ theorem cycSubRootOdd_bijective (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ
   rw [natCard_cycSubH]
   exact natCard_rootsAt_le data E.j
 
+/-- For transcendental `j`, identify modular-polynomial roots with cyclic subgroups of the
+specified odd order. -/
 def rootsEquivCycSubHOdd (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ} [NeZero N] (hN : Odd N)
     (data : ModularPolynomialData N) (hj : Transcendental Qbar E.j)
     : RootsAt data E.j ≃ CycSubH E N :=
@@ -137,6 +141,7 @@ theorem rootsEquivCycSubHOdd_apply_eq_iff (E : WeierstrassCurve H) [E.IsElliptic
     rootsEquivCycSubHOdd E hN data hj r = G ↔ r = cycSubRootOdd E hN data G := by
   rw [← rootsEquivCycSubHOdd_symm_apply E hN data hj G, Equiv.eq_symm_apply]
 
+/-- The root–cyclic-subgroup dictionary for the nearby curve at the specified odd level. -/
 def dictOdd (N : ℕ) [NeZero N] (hN : Odd N) (data : ModularPolynomialData N) (j₀ : Qbar) :
     RootsAt data (nearCurve j₀).j ≃ CycSubH (nearCurve j₀) N :=
   rootsEquivCycSubHOdd (nearCurve j₀) hN data (nearCurve_j_transcendental j₀)

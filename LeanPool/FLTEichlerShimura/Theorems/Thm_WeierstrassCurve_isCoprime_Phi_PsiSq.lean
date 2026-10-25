@@ -19,6 +19,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 
+import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_EDSEngine
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 

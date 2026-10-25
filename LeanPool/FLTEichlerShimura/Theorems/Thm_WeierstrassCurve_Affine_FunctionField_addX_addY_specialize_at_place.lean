@@ -185,7 +185,7 @@ section CoordSeamEs1a11
 variable {F : Type u} [Field F] [DecidableEq F]
 variable {W : WeierstrassCurve.Affine F} [W.IsElliptic]
 
-def es1a11_coordSeamDataAt (φ : W.FunctionField →ₐ[F] W.FunctionField)
+def es1a11CoordSeamDataAt (φ : W.FunctionField →ₐ[F] W.FunctionField)
     (v : AlgebraicCurve.Place F W.FunctionField) : W.Point → Prop
   | .zero => φ (polyToFunctionField W X) ∉ v.toValuationSubring
   | .some x₃ y₃ _ =>
@@ -245,46 +245,46 @@ theorem es1a6_add_nonsingular (hΔ : W.Δ ≠ 0)
 
 variable (φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField)
 
-def es1a6_addCollapse : Prop :=
+def es1a6AddCollapse : Prop :=
   φ₁ (polyToFunctionField W X) = φ₂ (polyToFunctionField W X) ∧
     φ₁ (yGen W) = (W.map (algebraMap F W.FunctionField)).toAffine.negY
       (φ₂ (polyToFunctionField W X)) (φ₂ (yGen W))
 
 theorem es1a6_add_not_collapse_of_X_ne
     (hne : φ₁ (polyToFunctionField W X) ≠ φ₂ (polyToFunctionField W X)) :
-    ¬ es1a6_addCollapse W φ₁ φ₂ :=
+    ¬ es1a6AddCollapse W φ₁ φ₂ :=
   fun hc => hne hc.1
 
-def es1a6_addSumX : W.FunctionField :=
+def es1a6AddSumX : W.FunctionField :=
   (W.map (algebraMap F W.FunctionField)).toAffine.addX
     (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
     ((W.map (algebraMap F W.FunctionField)).toAffine.slope
       (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
       (φ₁ (yGen W)) (φ₂ (yGen W)))
 
-def es1a6_addSumY : W.FunctionField :=
+def es1a6AddSumY : W.FunctionField :=
   (W.map (algebraMap F W.FunctionField)).toAffine.addY
     (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X)) (φ₁ (yGen W))
     ((W.map (algebraMap F W.FunctionField)).toAffine.slope
       (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
       (φ₁ (yGen W)) (φ₂ (yGen W)))
 
-theorem es1a6_addSum_equation (hcol : ¬ es1a6_addCollapse W φ₁ φ₂) :
+theorem es1a6_addSum_equation (hcol : ¬ es1a6AddCollapse W φ₁ φ₂) :
     (W.map (algebraMap F W.FunctionField)).toAffine.Equation
-      (es1a6_addSumX W φ₁ φ₂) (es1a6_addSumY W φ₁ φ₂) := by
-  unfold es1a6_addSumX es1a6_addSumY
+      (es1a6AddSumX W φ₁ φ₂) (es1a6AddSumY W φ₁ φ₂) := by
+  unfold es1a6AddSumX es1a6AddSumY
   exact equation_add (es1a6_add_equation W φ₁) (es1a6_add_equation W φ₂)
     (fun hxy => hcol hxy)
 
-theorem es1a6_addSum_nonsingular (hΔ : W.Δ ≠ 0) (hcol : ¬ es1a6_addCollapse W φ₁ φ₂) :
+theorem es1a6_addSum_nonsingular (hΔ : W.Δ ≠ 0) (hcol : ¬ es1a6AddCollapse W φ₁ φ₂) :
     (W.map (algebraMap F W.FunctionField)).toAffine.Nonsingular
-      (es1a6_addSumX W φ₁ φ₂) (es1a6_addSumY W φ₁ φ₂) :=
+      (es1a6AddSumX W φ₁ φ₂) (es1a6AddSumY W φ₁ φ₂) :=
   (equation_iff_nonsingular_of_Δ_ne_zero (es1a6_add_map_Δ_ne_zero W hΔ)).mp
     (es1a6_addSum_equation W φ₁ φ₂ hcol)
 
 theorem es1a6_add_sumX_transcendental_of_forall_ne [IsAlgClosed F]
-    (hnc : ∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) :
-    Transcendental F (es1a6_addSumX W φ₁ φ₂) := by
+    (hnc : ∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) :
+    Transcendental F (es1a6AddSumX W φ₁ φ₂) := by
   intro halg
   obtain ⟨c, hc⟩ := exists_algebraMap_eq_of_isAlgebraic halg
   exact hnc c hc.symm
@@ -300,12 +300,12 @@ variable {W : WeierstrassCurve.Affine F} [W.IsElliptic]
 
 variable (φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField)
 
-def es1a6_addSumSeamDataAt (v : AlgebraicCurve.Place F W.FunctionField) :
+def es1a6AddSumSeamDataAt (v : AlgebraicCurve.Place F W.FunctionField) :
     W.Point → Prop
-  | .zero => es1a6_addSumX W φ₁ φ₂ ∉ v.toValuationSubring
+  | .zero => es1a6AddSumX W φ₁ φ₂ ∉ v.toValuationSubring
   | .some x₃ y₃ _ =>
-      0 < v.ord (es1a6_addSumX W φ₁ φ₂ - algebraMap F W.FunctionField x₃) ∧
-        0 < v.ord (es1a6_addSumY W φ₁ φ₂ - algebraMap F W.FunctionField y₃)
+      0 < v.ord (es1a6AddSumX W φ₁ φ₂ - algebraMap F W.FunctionField x₃) ∧
+        0 < v.ord (es1a6AddSumY W φ₁ φ₂ - algebraMap F W.FunctionField y₃)
 
 end SeamEngines
 
@@ -327,11 +327,11 @@ variable (W : Affine F) [W.IsElliptic]
 
 abbrev kw_hk5f_addSumCoordSeamDataNCAt : Prop :=
   ∀ φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField,
-    ¬ es1a6_addCollapse W φ₁ φ₂ →
-    (∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) →
+    ¬ es1a6AddCollapse W φ₁ φ₂ →
+    (∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) →
     ∀ (v : AlgebraicCurve.Place F W.FunctionField) (Q₁ Q₂ : W.Point),
-      es1a11_coordSeamDataAt φ₁ v Q₁ → es1a11_coordSeamDataAt φ₂ v Q₂ →
-      es1a6_addSumSeamDataAt φ₁ φ₂ v (Q₁ + Q₂)
+      es1a11CoordSeamDataAt φ₁ v Q₁ → es1a11CoordSeamDataAt φ₂ v Q₂ →
+      es1a6AddSumSeamDataAt φ₁ φ₂ v (Q₁ + Q₂)
 
 end Es1a1
 
@@ -998,9 +998,9 @@ theorem es1a10_ncPole_phi_equation (φ : W.FunctionField →ₐ[F] W.FunctionFie
 variable [IsAlgClosed F]
 
 theorem es1a10_ncPole_addSumY_ne_const
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (hnc : ∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) :
-    ∀ d : F, es1a6_addSumY W φ₁ φ₂ ≠ algebraMap F W.FunctionField d := by
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (hnc : ∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) :
+    ∀ d : F, es1a6AddSumY W φ₁ φ₂ ≠ algebraMap F W.FunctionField d := by
   intro d hd
   have heq := es1a6_addSum_equation W φ₁ φ₂ hcol
   rw [equation_iff'] at heq
@@ -1015,7 +1015,7 @@ theorem es1a10_ncPole_addSumY_ne_const
     simp only [Polynomial.coeff_add, Polynomial.coeff_X_pow, Polynomial.coeff_C_mul,
       Polynomial.coeff_C, Polynomial.coeff_X, Polynomial.coeff_zero] at h3
     norm_num at h3
-  have halgX : IsAlgebraic F (es1a6_addSumX W φ₁ φ₂) := by
+  have halgX : IsAlgebraic F (es1a6AddSumX W φ₁ φ₂) := by
     refine ⟨X ^ 3 + C W.a₂ * X ^ 2 + C (W.a₄ - W.a₁ * d) * X
       + C (W.a₆ - d ^ 2 - W.a₃ * d), hq0, ?_⟩
     simp only [map_add, map_sub, map_mul, map_pow, Polynomial.aeval_X,
@@ -1025,13 +1025,13 @@ theorem es1a10_ncPole_addSumY_ne_const
 
 theorem es1a10_ncPole_mixedOne_seamData
     (v : AlgebraicCurve.Place F W.FunctionField)
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (hnc : ∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (hnc : ∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c)
     {c d : F} (h : W.Nonsingular c d)
     (hpole : φ₁ (polyToFunctionField W X) ∉ v.toValuationSubring)
     (hx₂ : 0 < v.ord (φ₂ (polyToFunctionField W X) - algebraMap F W.FunctionField c))
     (hy₂ : 0 < v.ord (φ₂ (yGen W) - algebraMap F W.FunctionField d)) :
-    es1a6_addSumSeamDataAt φ₁ φ₂ v (Point.some c d h) := by
+    es1a6AddSumSeamDataAt φ₁ φ₂ v (Point.some c d h) := by
   classical
   have heqp := es1a10_ncPole_phi_equation (W := W) φ₁
   have heqf := es1a10_ncPole_phi_equation (W := W) φ₂
@@ -1062,10 +1062,10 @@ theorem es1a10_ncPole_mixedOne_seamData
     exact div_mul_cancel₀ _ hδ0
   have hXcore := es1a10_ncPole_addX_core v heqp heqf hpole hxf hyf hΛ
   have hYcore := es1a10_ncPole_addY_core v heqp heqf hpole hxf hyf hΛ
-  have hXred : es1a10_ncPole_reducesTo v (es1a6_addSumX W φ₁ φ₂) c := by
+  have hXred : es1a10_ncPole_reducesTo v (es1a6AddSumX W φ₁ φ₂) c := by
     change es1a10_ncPole_vanishesAt v
-      (es1a6_addSumX W φ₁ φ₂ - algebraMap F W.FunctionField c)
-    have hid : es1a6_addSumX W φ₁ φ₂ - algebraMap F W.FunctionField c
+      (es1a6AddSumX W φ₁ φ₂ - algebraMap F W.FunctionField c)
+    have hid : es1a6AddSumX W φ₁ φ₂ - algebraMap F W.FunctionField c
         = ((W.map (algebraMap F W.FunctionField)).toAffine.slope
               (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
               (φ₁ (yGen W)) (φ₂ (yGen W)) ^ 2
@@ -1077,7 +1077,7 @@ theorem es1a10_ncPole_mixedOne_seamData
             - φ₁ (polyToFunctionField W X) - φ₂ (polyToFunctionField W X)
             - φ₂ (polyToFunctionField W X))
           + (φ₂ (polyToFunctionField W X) - algebraMap F W.FunctionField c) := by
-      rw [show es1a6_addSumX W φ₁ φ₂
+      rw [show es1a6AddSumX W φ₁ φ₂
           = (W.map (algebraMap F W.FunctionField)).toAffine.addX
             (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
             ((W.map (algebraMap F W.FunctionField)).toAffine.slope
@@ -1087,10 +1087,10 @@ theorem es1a10_ncPole_mixedOne_seamData
       ring
     rw [hid]
     exact es1a10_ncPole_vanishesAt_add v hXcore hrx₂
-  have hYred : es1a10_ncPole_reducesTo v (es1a6_addSumY W φ₁ φ₂) d := by
+  have hYred : es1a10_ncPole_reducesTo v (es1a6AddSumY W φ₁ φ₂) d := by
     change es1a10_ncPole_vanishesAt v
-      (es1a6_addSumY W φ₁ φ₂ - algebraMap F W.FunctionField d)
-    have hid : es1a6_addSumY W φ₁ φ₂ - algebraMap F W.FunctionField d
+      (es1a6AddSumY W φ₁ φ₂ - algebraMap F W.FunctionField d)
+    have hid : es1a6AddSumY W φ₁ φ₂ - algebraMap F W.FunctionField d
         = -((W.map (algebraMap F W.FunctionField)).toAffine.slope
               (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
               (φ₁ (yGen W)) (φ₂ (yGen W))
@@ -1119,7 +1119,7 @@ theorem es1a10_ncPole_mixedOne_seamData
                 - algebraMap F W.FunctionField W.a₂
                 - φ₁ (polyToFunctionField W X) - φ₂ (polyToFunctionField W X)
                 - φ₂ (polyToFunctionField W X)) := by
-      rw [show es1a6_addSumY W φ₁ φ₂
+      rw [show es1a6AddSumY W φ₁ φ₂
           = (W.map (algebraMap F W.FunctionField)).toAffine.addY
             (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
             (φ₁ (yGen W))
@@ -1138,13 +1138,13 @@ theorem es1a10_ncPole_mixedOne_seamData
       (es1a10_ncPole_addSumY_ne_const φ₁ φ₂ hcol hnc d)⟩
 
 theorem es1a10_ncPole_mixedTwo_seamData (v : AlgebraicCurve.Place F W.FunctionField)
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (hnc : ∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (hnc : ∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c)
     {c d : F} (h : W.Nonsingular c d)
     (hpole : φ₂ (polyToFunctionField W X) ∉ v.toValuationSubring)
     (hx₁ : 0 < v.ord (φ₁ (polyToFunctionField W X) - algebraMap F W.FunctionField c))
     (hy₁ : 0 < v.ord (φ₁ (yGen W) - algebraMap F W.FunctionField d)) :
-    es1a6_addSumSeamDataAt φ₁ φ₂ v (Point.some c d h) := by
+    es1a6AddSumSeamDataAt φ₁ φ₂ v (Point.some c d h) := by
   have heqp := es1a10_ncPole_phi_equation (W := W) φ₂
   have heqf := es1a10_ncPole_phi_equation (W := W) φ₁
   have hrx₁ : es1a10_ncPole_reducesTo v (φ₁ (polyToFunctionField W X)) c :=
@@ -1174,10 +1174,10 @@ theorem es1a10_ncPole_mixedTwo_seamData (v : AlgebraicCurve.Place F W.FunctionFi
     ring
   have hXcore := es1a10_ncPole_addX_core v heqp heqf hpole hxf hyf hΛ
   have hYcore := es1a10_ncPole_addY_core v heqp heqf hpole hxf hyf hΛ
-  have hXred : es1a10_ncPole_reducesTo v (es1a6_addSumX W φ₁ φ₂) c := by
+  have hXred : es1a10_ncPole_reducesTo v (es1a6AddSumX W φ₁ φ₂) c := by
     change es1a10_ncPole_vanishesAt v
-      (es1a6_addSumX W φ₁ φ₂ - algebraMap F W.FunctionField c)
-    have hid : es1a6_addSumX W φ₁ φ₂ - algebraMap F W.FunctionField c
+      (es1a6AddSumX W φ₁ φ₂ - algebraMap F W.FunctionField c)
+    have hid : es1a6AddSumX W φ₁ φ₂ - algebraMap F W.FunctionField c
         = ((W.map (algebraMap F W.FunctionField)).toAffine.slope
               (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
               (φ₁ (yGen W)) (φ₂ (yGen W)) ^ 2
@@ -1189,7 +1189,7 @@ theorem es1a10_ncPole_mixedTwo_seamData (v : AlgebraicCurve.Place F W.FunctionFi
             - φ₂ (polyToFunctionField W X) - φ₁ (polyToFunctionField W X)
             - φ₁ (polyToFunctionField W X))
           + (φ₁ (polyToFunctionField W X) - algebraMap F W.FunctionField c) := by
-      rw [show es1a6_addSumX W φ₁ φ₂
+      rw [show es1a6AddSumX W φ₁ φ₂
           = (W.map (algebraMap F W.FunctionField)).toAffine.addX
             (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
             ((W.map (algebraMap F W.FunctionField)).toAffine.slope
@@ -1199,10 +1199,10 @@ theorem es1a10_ncPole_mixedTwo_seamData (v : AlgebraicCurve.Place F W.FunctionFi
       ring
     rw [hid]
     exact es1a10_ncPole_vanishesAt_add v hXcore hrx₁
-  have hYred : es1a10_ncPole_reducesTo v (es1a6_addSumY W φ₁ φ₂) d := by
+  have hYred : es1a10_ncPole_reducesTo v (es1a6AddSumY W φ₁ φ₂) d := by
     change es1a10_ncPole_vanishesAt v
-      (es1a6_addSumY W φ₁ φ₂ - algebraMap F W.FunctionField d)
-    have hid : es1a6_addSumY W φ₁ φ₂ - algebraMap F W.FunctionField d
+      (es1a6AddSumY W φ₁ φ₂ - algebraMap F W.FunctionField d)
+    have hid : es1a6AddSumY W φ₁ φ₂ - algebraMap F W.FunctionField d
         = -((W.map (algebraMap F W.FunctionField)).toAffine.slope
               (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
               (φ₁ (yGen W)) (φ₂ (yGen W))
@@ -1231,7 +1231,7 @@ theorem es1a10_ncPole_mixedTwo_seamData (v : AlgebraicCurve.Place F W.FunctionFi
                 - algebraMap F W.FunctionField W.a₂
                 - φ₂ (polyToFunctionField W X) - φ₁ (polyToFunctionField W X)
                 - φ₁ (polyToFunctionField W X)) := by
-      rw [show es1a6_addSumY W φ₁ φ₂
+      rw [show es1a6AddSumY W φ₁ φ₂
           = (W.map (algebraMap F W.FunctionField)).toAffine.addY
             (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
             (φ₁ (yGen W))
@@ -1252,65 +1252,65 @@ theorem es1a10_ncPole_mixedTwo_seamData (v : AlgebraicCurve.Place F W.FunctionFi
 omit [IsAlgClosed F] in
 theorem es1a10_ncPole_bothPole_notMem (v : AlgebraicCurve.Place F W.FunctionField)
     (hΔ : W.Δ ≠ 0)
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
     (hpole₁ : φ₁ (polyToFunctionField W X) ∉ v.toValuationSubring)
     (hpole₂ : φ₂ (polyToFunctionField W X) ∉ v.toValuationSubring) :
-    es1a6_addSumX W φ₁ φ₂ ∉ v.toValuationSubring := by
+    es1a6AddSumX W φ₁ φ₂ ∉ v.toValuationSubring := by
   intro hmem
   have heq₃ := es1a6_addSum_equation W φ₁ φ₂ hcol
   rw [equation_iff] at heq₃
   simp only [WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂, WeierstrassCurve.map_a₃,
     WeierstrassCurve.map_a₄,
     WeierstrassCurve.map_a₆] at heq₃
-  have hy₃mem : es1a6_addSumY W φ₁ φ₂ ∈ v.toValuationSubring := by
+  have hy₃mem : es1a6AddSumY W φ₁ φ₂ ∈ v.toValuationSubring := by
     by_contra hy
-    have hy0 : es1a6_addSumY W φ₁ φ₂ ≠ 0 := fun h0 => hy (by rw [h0]; exact zero_mem _)
-    have hyord : v.ord (es1a6_addSumY W φ₁ φ₂) < 0 := by
+    have hy0 : es1a6AddSumY W φ₁ φ₂ ≠ 0 := fun h0 => hy (by rw [h0]; exact zero_mem _)
+    have hyord : v.ord (es1a6AddSumY W φ₁ φ₂) < 0 := by
       by_contra hge
       exact hy (v.mem_of_ord_nonneg hy0 (not_lt.mp hge))
-    have hsmem : algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W φ₁ φ₂
+    have hsmem : algebraMap F W.FunctionField W.a₁ * es1a6AddSumX W φ₁ φ₂
         + algebraMap F W.FunctionField W.a₃ ∈ v.toValuationSubring :=
       add_mem (mul_mem (v.algebraMap_mem' W.a₁) hmem) (v.algebraMap_mem' W.a₃)
-    have hS0 : es1a6_addSumY W φ₁ φ₂
-        + (algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W φ₁ φ₂
+    have hS0 : es1a6AddSumY W φ₁ φ₂
+        + (algebraMap F W.FunctionField W.a₁ * es1a6AddSumX W φ₁ φ₂
           + algebraMap F W.FunctionField W.a₃) ≠ 0 := by
       intro hcon
       apply hy
-      have hyeq : es1a6_addSumY W φ₁ φ₂
-          = -(algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W φ₁ φ₂
+      have hyeq : es1a6AddSumY W φ₁ φ₂
+          = -(algebraMap F W.FunctionField W.a₁ * es1a6AddSumX W φ₁ φ₂
             + algebraMap F W.FunctionField W.a₃) := by
         linear_combination hcon
       rw [hyeq]
       exact neg_mem hsmem
-    have hSord : v.ord (es1a6_addSumY W φ₁ φ₂
-        + (algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W φ₁ φ₂
+    have hSord : v.ord (es1a6AddSumY W φ₁ φ₂
+        + (algebraMap F W.FunctionField W.a₁ * es1a6AddSumX W φ₁ φ₂
           + algebraMap F W.FunctionField W.a₃)) < 0 := by
-      rcases eq_or_ne (algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W φ₁ φ₂
+      rcases eq_or_ne (algebraMap F W.FunctionField W.a₁ * es1a6AddSumX W φ₁ φ₂
           + algebraMap F W.FunctionField W.a₃) 0 with hz | hz
       · rw [hz, add_zero]
         exact hyord
       · have hsord := v.ord_nonneg_of_mem hsmem
         rw [v.ord_add_eq_min hy0 hz (by omega)]
         omega
-    have hprodeq : es1a6_addSumY W φ₁ φ₂
-        * (es1a6_addSumY W φ₁ φ₂
-          + (algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W φ₁ φ₂
+    have hprodeq : es1a6AddSumY W φ₁ φ₂
+        * (es1a6AddSumY W φ₁ φ₂
+          + (algebraMap F W.FunctionField W.a₁ * es1a6AddSumX W φ₁ φ₂
             + algebraMap F W.FunctionField W.a₃))
-        = es1a6_addSumX W φ₁ φ₂ ^ 3
-          + algebraMap F W.FunctionField W.a₂ * es1a6_addSumX W φ₁ φ₂ ^ 2
-          + algebraMap F W.FunctionField W.a₄ * es1a6_addSumX W φ₁ φ₂
+        = es1a6AddSumX W φ₁ φ₂ ^ 3
+          + algebraMap F W.FunctionField W.a₂ * es1a6AddSumX W φ₁ φ₂ ^ 2
+          + algebraMap F W.FunctionField W.a₄ * es1a6AddSumX W φ₁ φ₂
           + algebraMap F W.FunctionField W.a₆ := by
       linear_combination heq₃
-    have hRmem : es1a6_addSumX W φ₁ φ₂ ^ 3
-        + algebraMap F W.FunctionField W.a₂ * es1a6_addSumX W φ₁ φ₂ ^ 2
-        + algebraMap F W.FunctionField W.a₄ * es1a6_addSumX W φ₁ φ₂
+    have hRmem : es1a6AddSumX W φ₁ φ₂ ^ 3
+        + algebraMap F W.FunctionField W.a₂ * es1a6AddSumX W φ₁ φ₂ ^ 2
+        + algebraMap F W.FunctionField W.a₄ * es1a6AddSumX W φ₁ φ₂
         + algebraMap F W.FunctionField W.a₆ ∈ v.toValuationSubring :=
       add_mem (add_mem (add_mem (pow_mem hmem 3)
         (mul_mem (v.algebraMap_mem' W.a₂) (pow_mem hmem 2)))
         (mul_mem (v.algebraMap_mem' W.a₄) hmem)) (v.algebraMap_mem' W.a₆)
-    have hLord : (0 : ℤ) ≤ v.ord (es1a6_addSumY W φ₁ φ₂
-        * (es1a6_addSumY W φ₁ φ₂
-          + (algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W φ₁ φ₂
+    have hLord : (0 : ℤ) ≤ v.ord (es1a6AddSumY W φ₁ φ₂
+        * (es1a6AddSumY W φ₁ φ₂
+          + (algebraMap F W.FunctionField W.a₁ * es1a6AddSumX W φ₁ φ₂
             + algebraMap F W.FunctionField W.a₃))) := by
       rw [hprodeq]
       exact v.ord_nonneg_of_mem hRmem
@@ -1320,14 +1320,14 @@ theorem es1a10_ncPole_bothPole_notMem (v : AlgebraicCurve.Place F W.FunctionFiel
   have h₂L := es1a6_add_nonsingular W hΔ φ₂
   have h₃L := es1a6_addSum_nonsingular W φ₁ φ₂ hΔ hcol
   have hadd9 : Point.some _ _ h₁L + Point.some _ _ h₂L
-      = Point.some (es1a6_addSumX W φ₁ φ₂) (es1a6_addSumY W φ₁ φ₂) h₃L :=
+      = Point.some (es1a6AddSumX W φ₁ φ₂) (es1a6AddSumY W φ₁ φ₂) h₃L :=
     Point.add_some (h₁ := h₁L) (h₂ := h₂L) hcol
-  have hgrp : Point.some (es1a6_addSumX W φ₁ φ₂) (es1a6_addSumY W φ₁ φ₂) h₃L
+  have hgrp : Point.some (es1a6AddSumX W φ₁ φ₂) (es1a6AddSumY W φ₁ φ₂) h₃L
       + -(Point.some _ _ h₁L) = Point.some _ _ h₂L := by
     rw [← hadd9, add_comm (Point.some _ _ h₁L) (Point.some _ _ h₂L),
       add_neg_cancel_right]
   rw [Point.neg_some] at hgrp
-  have hne₃₁ : es1a6_addSumX W φ₁ φ₂ ≠ φ₁ (polyToFunctionField W X) :=
+  have hne₃₁ : es1a6AddSumX W φ₁ φ₂ ≠ φ₁ (polyToFunctionField W X) :=
     fun hcon => hpole₁ (by rw [← hcon]; exact hmem)
   rw [Point.add_of_X_ne hne₃₁] at hgrp
   rw [Point.some.injEq] at hgrp
@@ -1353,13 +1353,13 @@ theorem es1a10_ncPole_bothPole_notMem (v : AlgebraicCurve.Place F W.FunctionFiel
         + algebraMap F W.FunctionField W.a₆ := by
     rw [hnegYdef]
     linear_combination heq₁
-  have heqf₃ : es1a6_addSumY W φ₁ φ₂ ^ 2
-      + algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W φ₁ φ₂
-        * es1a6_addSumY W φ₁ φ₂
-      + algebraMap F W.FunctionField W.a₃ * es1a6_addSumY W φ₁ φ₂
-      = es1a6_addSumX W φ₁ φ₂ ^ 3
-        + algebraMap F W.FunctionField W.a₂ * es1a6_addSumX W φ₁ φ₂ ^ 2
-        + algebraMap F W.FunctionField W.a₄ * es1a6_addSumX W φ₁ φ₂
+  have heqf₃ : es1a6AddSumY W φ₁ φ₂ ^ 2
+      + algebraMap F W.FunctionField W.a₁ * es1a6AddSumX W φ₁ φ₂
+        * es1a6AddSumY W φ₁ φ₂
+      + algebraMap F W.FunctionField W.a₃ * es1a6AddSumY W φ₁ φ₂
+      = es1a6AddSumX W φ₁ φ₂ ^ 3
+        + algebraMap F W.FunctionField W.a₂ * es1a6AddSumX W φ₁ φ₂ ^ 2
+        + algebraMap F W.FunctionField W.a₄ * es1a6AddSumX W φ₁ φ₂
         + algebraMap F W.FunctionField W.a₆ := by
     have h := es1a6_addSum_equation W φ₁ φ₂ hcol
     rw [equation_iff] at h
@@ -1367,43 +1367,43 @@ theorem es1a10_ncPole_bothPole_notMem (v : AlgebraicCurve.Place F W.FunctionFiel
       WeierstrassCurve.map_a₄,
       WeierstrassCurve.map_a₆] using h
   have hsl₃ : (W.map (algebraMap F W.FunctionField)).toAffine.slope
-      (es1a6_addSumX W φ₁ φ₂) (φ₁ (polyToFunctionField W X))
-      (es1a6_addSumY W φ₁ φ₂)
+      (es1a6AddSumX W φ₁ φ₂) (φ₁ (polyToFunctionField W X))
+      (es1a6AddSumY W φ₁ φ₂)
       ((W.map (algebraMap F W.FunctionField)).toAffine.negY
         (φ₁ (polyToFunctionField W X)) (φ₁ (yGen W)))
-      = (es1a6_addSumY W φ₁ φ₂
+      = (es1a6AddSumY W φ₁ φ₂
           - (W.map (algebraMap F W.FunctionField)).toAffine.negY
             (φ₁ (polyToFunctionField W X)) (φ₁ (yGen W)))
-        / (es1a6_addSumX W φ₁ φ₂ - φ₁ (polyToFunctionField W X)) :=
+        / (es1a6AddSumX W φ₁ φ₂ - φ₁ (polyToFunctionField W X)) :=
     slope_of_X_ne hne₃₁
   have hΛ₃ : (W.map (algebraMap F W.FunctionField)).toAffine.slope
-        (es1a6_addSumX W φ₁ φ₂) (φ₁ (polyToFunctionField W X))
-        (es1a6_addSumY W φ₁ φ₂)
+        (es1a6AddSumX W φ₁ φ₂) (φ₁ (polyToFunctionField W X))
+        (es1a6AddSumY W φ₁ φ₂)
         ((W.map (algebraMap F W.FunctionField)).toAffine.negY
           (φ₁ (polyToFunctionField W X)) (φ₁ (yGen W)))
-      * (φ₁ (polyToFunctionField W X) - es1a6_addSumX W φ₁ φ₂)
+      * (φ₁ (polyToFunctionField W X) - es1a6AddSumX W φ₁ φ₂)
       = (W.map (algebraMap F W.FunctionField)).toAffine.negY
           (φ₁ (polyToFunctionField W X)) (φ₁ (yGen W))
-        - es1a6_addSumY W φ₁ φ₂ := by
+        - es1a6AddSumY W φ₁ φ₂ := by
     rw [hsl₃, div_mul_eq_mul_div, div_eq_iff (sub_ne_zero.mpr hne₃₁)]
     ring
   have hXcore := es1a10_ncPole_addX_core v heqp' heqf₃ hpole₁ hmem hy₃mem hΛ₃
   have hid₂ : φ₂ (polyToFunctionField W X)
       = ((W.map (algebraMap F W.FunctionField)).toAffine.slope
-            (es1a6_addSumX W φ₁ φ₂) (φ₁ (polyToFunctionField W X))
-            (es1a6_addSumY W φ₁ φ₂)
+            (es1a6AddSumX W φ₁ φ₂) (φ₁ (polyToFunctionField W X))
+            (es1a6AddSumY W φ₁ φ₂)
             ((W.map (algebraMap F W.FunctionField)).toAffine.negY
               (φ₁ (polyToFunctionField W X)) (φ₁ (yGen W))) ^ 2
           + algebraMap F W.FunctionField W.a₁
             * (W.map (algebraMap F W.FunctionField)).toAffine.slope
-              (es1a6_addSumX W φ₁ φ₂) (φ₁ (polyToFunctionField W X))
-              (es1a6_addSumY W φ₁ φ₂)
+              (es1a6AddSumX W φ₁ φ₂) (φ₁ (polyToFunctionField W X))
+              (es1a6AddSumY W φ₁ φ₂)
               ((W.map (algebraMap F W.FunctionField)).toAffine.negY
                 (φ₁ (polyToFunctionField W X)) (φ₁ (yGen W)))
           - algebraMap F W.FunctionField W.a₂
-          - φ₁ (polyToFunctionField W X) - es1a6_addSumX W φ₁ φ₂
-          - es1a6_addSumX W φ₁ φ₂)
-        + es1a6_addSumX W φ₁ φ₂ := by
+          - φ₁ (polyToFunctionField W X) - es1a6AddSumX W φ₁ φ₂
+          - es1a6AddSumX W φ₁ φ₂)
+        + es1a6AddSumX W φ₁ φ₂ := by
     rw [← hx2eq]
     simp only [addX, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂]
     ring
@@ -1702,7 +1702,7 @@ theorem es1a10_ncVertical_nonsingular_certificate {c d : F}
 variable (φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField)
 
 theorem es1a10_ncVertical_slope_ord_neg (v : AlgebraicCurve.Place F W.FunctionField)
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
     {c d₁ d₂ : F} (h₁ : W.Nonsingular c d₁) (h₂ : W.Nonsingular c d₂)
     (hopp : d₁ = W.negY c d₂)
     (hx₁ : 0 < v.ord (φ₁ (polyToFunctionField W X) - algebraMap F W.FunctionField c))
@@ -1952,18 +1952,18 @@ theorem es1a10_ncVertical_addX_not_mem (v : AlgebraicCurve.Place F W.FunctionFie
   omega
 
 theorem es1a10_ncVertical_seamDataAt_zero (v : AlgebraicCurve.Place F W.FunctionField)
-    (h : es1a6_addSumX W φ₁ φ₂ ∉ v.toValuationSubring) :
-    es1a6_addSumSeamDataAt φ₁ φ₂ v 0 := h
+    (h : es1a6AddSumX W φ₁ φ₂ ∉ v.toValuationSubring) :
+    es1a6AddSumSeamDataAt φ₁ φ₂ v 0 := h
 
 theorem es1a10_ncVertical_seamData [DecidableEq F] (v : AlgebraicCurve.Place F W.FunctionField)
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
     {c d₁ d₂ : F} (h₁ : W.Nonsingular c d₁) (h₂ : W.Nonsingular c d₂)
     (hopp : d₁ = W.negY c d₂)
     (hx₁ : 0 < v.ord (φ₁ (polyToFunctionField W X) - algebraMap F W.FunctionField c))
     (hy₁ : 0 < v.ord (φ₁ (yGen W) - algebraMap F W.FunctionField d₁))
     (hx₂ : 0 < v.ord (φ₂ (polyToFunctionField W X) - algebraMap F W.FunctionField c))
     (hy₂ : 0 < v.ord (φ₂ (yGen W) - algebraMap F W.FunctionField d₂)) :
-    es1a6_addSumSeamDataAt φ₁ φ₂ v (Point.some c d₁ h₁ + Point.some c d₂ h₂) := by
+    es1a6AddSumSeamDataAt φ₁ φ₂ v (Point.some c d₁ h₁ + Point.some c d₂ h₂) := by
   have hrx₁ : es1a10_ncVertical_reducesTo v (φ₁ (polyToFunctionField W X)) c :=
     es1a10_ncVertical_reducesTo_of_ord_pos v hx₁
   have hrx₂ : es1a10_ncVertical_reducesTo v (φ₂ (polyToFunctionField W X)) c :=
@@ -1974,7 +1974,7 @@ theorem es1a10_ncVertical_seamData [DecidableEq F] (v : AlgebraicCurve.Place F W
     es1a10_ncVertical_slope_ord_neg φ₁ φ₂ v hcol h₁ h₂ hopp hx₁ hy₁ hx₂ hy₂
   rw [Point.add_of_Y_eq (rfl : c = c) hopp]
   refine es1a10_ncVertical_seamDataAt_zero φ₁ φ₂ v ?_
-  rw [show es1a6_addSumX W φ₁ φ₂
+  rw [show es1a6AddSumX W φ₁ φ₂
       = (W.map (algebraMap F W.FunctionField)).toAffine.addX
         (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
         ((W.map (algebraMap F W.FunctionField)).toAffine.slope
@@ -2318,9 +2318,9 @@ theorem es1a9_addY_reducesTo_nc (v : AlgebraicCurve.Place F W.FunctionField)
 variable (φ₁ φ₂ : W.FunctionField →ₐ[F] W.FunctionField) [IsAlgClosed F]
 
 theorem es1a9_addSumY_ne_const_nc
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (hnc : ∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) :
-    ∀ d : F, es1a6_addSumY W φ₁ φ₂ ≠ algebraMap F W.FunctionField d := by
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (hnc : ∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c) :
+    ∀ d : F, es1a6AddSumY W φ₁ φ₂ ≠ algebraMap F W.FunctionField d := by
   intro d hd
   have heq := es1a6_addSum_equation W φ₁ φ₂ hcol
   rw [equation_iff'] at heq
@@ -2335,7 +2335,7 @@ theorem es1a9_addSumY_ne_const_nc
     simp only [Polynomial.coeff_add, Polynomial.coeff_X_pow, Polynomial.coeff_C_mul,
       Polynomial.coeff_C, Polynomial.coeff_X, Polynomial.coeff_zero] at h3
     norm_num at h3
-  have halgX : IsAlgebraic F (es1a6_addSumX W φ₁ φ₂) := by
+  have halgX : IsAlgebraic F (es1a6AddSumX W φ₁ φ₂) := by
     refine ⟨X ^ 3 + C W.a₂ * X ^ 2 + C (W.a₄ - W.a₁ * d) * X
       + C (W.a₆ - d ^ 2 - W.a₃ * d), hq0, ?_⟩
     simp only [map_add, map_sub, map_mul, map_pow, Polynomial.aeval_X,
@@ -2346,14 +2346,14 @@ theorem es1a9_addSumY_ne_const_nc
 variable [DecidableEq F]
 theorem es1a9_chordCase_seamData_nc
     (v : AlgebraicCurve.Place F W.FunctionField)
-    (hnc : ∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c)
+    (hnc : ∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c)
     {c₁ d₁ c₂ d₂ : F} (h₁ : W.Nonsingular c₁ d₁) (h₂ : W.Nonsingular c₂ d₂)
     (hne : c₁ ≠ c₂)
     (hx₁ : 0 < v.ord (φ₁ (polyToFunctionField W X) - algebraMap F W.FunctionField c₁))
     (hy₁ : 0 < v.ord (φ₁ (yGen W) - algebraMap F W.FunctionField d₁))
     (hx₂ : 0 < v.ord (φ₂ (polyToFunctionField W X) - algebraMap F W.FunctionField c₂))
     (hy₂ : 0 < v.ord (φ₂ (yGen W) - algebraMap F W.FunctionField d₂)) :
-    es1a6_addSumSeamDataAt φ₁ φ₂ v (Point.some c₁ d₁ h₁ + Point.some c₂ d₂ h₂) := by
+    es1a6AddSumSeamDataAt φ₁ φ₂ v (Point.some c₁ d₁ h₁ + Point.some c₂ d₂ h₂) := by
   have hrx₁ : es1a9_reducesTo_nc v (φ₁ (polyToFunctionField W X)) c₁ :=
     es1a9_reducesTo_of_ord_pos_nc v hx₁
   have hry₁ : es1a9_reducesTo_nc v (φ₁ (yGen W)) d₁ :=
@@ -2372,18 +2372,18 @@ theorem es1a9_chordCase_seamData_nc
     rw [slope_of_X_ne hxne, slope_of_X_ne hne]
     exact es1a9_reducesTo_div_nc v (es1a9_reducesTo_sub_nc v hry₁ hry₂)
       (es1a9_reducesTo_sub_nc v hrx₁ hrx₂) (sub_ne_zero.mpr hne)
-  have hXred : es1a9_reducesTo_nc v (es1a6_addSumX W φ₁ φ₂)
+  have hXred : es1a9_reducesTo_nc v (es1a6AddSumX W φ₁ φ₂)
       (W.addX c₁ c₂ (W.slope c₁ c₂ d₁ d₂)) := by
-    rw [show es1a6_addSumX W φ₁ φ₂
+    rw [show es1a6AddSumX W φ₁ φ₂
         = (W.map (algebraMap F W.FunctionField)).toAffine.addX
           (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
           ((W.map (algebraMap F W.FunctionField)).toAffine.slope
             (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
             (φ₁ (yGen W)) (φ₂ (yGen W))) from rfl]
     exact es1a9_addX_reducesTo_nc v hrx₁ hrx₂ hsl
-  have hYred : es1a9_reducesTo_nc v (es1a6_addSumY W φ₁ φ₂)
+  have hYred : es1a9_reducesTo_nc v (es1a6AddSumY W φ₁ φ₂)
       (W.addY c₁ c₂ d₁ (W.slope c₁ c₂ d₁ d₂)) := by
-    rw [show es1a6_addSumY W φ₁ φ₂
+    rw [show es1a6AddSumY W φ₁ φ₂
         = (W.map (algebraMap F W.FunctionField)).toAffine.addY
           (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X)) (φ₁ (yGen W))
           ((W.map (algebraMap F W.FunctionField)).toAffine.slope
@@ -2398,14 +2398,14 @@ theorem es1a9_chordCase_seamData_nc
 
 theorem es1a9_tangentCase_seamData_nc
     (v : AlgebraicCurve.Place F W.FunctionField)
-    (hcol : ¬ es1a6_addCollapse W φ₁ φ₂)
-    (hnc : ∀ c : F, es1a6_addSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c)
+    (hcol : ¬ es1a6AddCollapse W φ₁ φ₂)
+    (hnc : ∀ c : F, es1a6AddSumX W φ₁ φ₂ ≠ algebraMap F W.FunctionField c)
     {c d : F} (h : W.Nonsingular c d) (h2tor : d ≠ W.negY c d)
     (hx₁ : 0 < v.ord (φ₁ (polyToFunctionField W X) - algebraMap F W.FunctionField c))
     (hy₁ : 0 < v.ord (φ₁ (yGen W) - algebraMap F W.FunctionField d))
     (hx₂ : 0 < v.ord (φ₂ (polyToFunctionField W X) - algebraMap F W.FunctionField c))
     (hy₂ : 0 < v.ord (φ₂ (yGen W) - algebraMap F W.FunctionField d)) :
-    es1a6_addSumSeamDataAt φ₁ φ₂ v (Point.some c d h + Point.some c d h) := by
+    es1a6AddSumSeamDataAt φ₁ φ₂ v (Point.some c d h + Point.some c d h) := by
   have hrx₁ : es1a9_reducesTo_nc v (φ₁ (polyToFunctionField W X)) c :=
     es1a9_reducesTo_of_ord_pos_nc v hx₁
   have hry₁ : es1a9_reducesTo_nc v (φ₁ (yGen W)) d :=
@@ -2510,18 +2510,18 @@ theorem es1a9_tangentCase_seamData_nc
         rwa [show d + d + W.a₁ * c + W.a₃ = d - W.negY c d by
           simp only [negY]; ring] at hDred
       exact es1a9_reducesTo_div_nc v hNred hDred' (sub_ne_zero.mpr h2tor)
-  have hXred : es1a9_reducesTo_nc v (es1a6_addSumX W φ₁ φ₂)
+  have hXred : es1a9_reducesTo_nc v (es1a6AddSumX W φ₁ φ₂)
       (W.addX c c (W.slope c c d d)) := by
-    rw [show es1a6_addSumX W φ₁ φ₂
+    rw [show es1a6AddSumX W φ₁ φ₂
         = (W.map (algebraMap F W.FunctionField)).toAffine.addX
           (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
           ((W.map (algebraMap F W.FunctionField)).toAffine.slope
             (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X))
             (φ₁ (yGen W)) (φ₂ (yGen W))) from rfl]
     exact es1a9_addX_reducesTo_nc v hrx₁ hrx₂ hsl
-  have hYred : es1a9_reducesTo_nc v (es1a6_addSumY W φ₁ φ₂)
+  have hYred : es1a9_reducesTo_nc v (es1a6AddSumY W φ₁ φ₂)
       (W.addY c c d (W.slope c c d d)) := by
-    rw [show es1a6_addSumY W φ₁ φ₂
+    rw [show es1a6AddSumY W φ₁ φ₂
         = (W.map (algebraMap F W.FunctionField)).toAffine.addY
           (φ₁ (polyToFunctionField W X)) (φ₂ (polyToFunctionField W X)) (φ₁ (yGen W))
           ((W.map (algebraMap F W.FunctionField)).toAffine.slope
@@ -2638,15 +2638,15 @@ theorem solution
         - algebraMap F W.FunctionField b)) := by
   have hinst : inst = Classical.decEq _ := Subsingleton.elim _ _
   subst hinst
-  have h1 : es1a11_coordSeamDataAt φ₁ v Q₁ := by
+  have h1 : es1a11CoordSeamDataAt φ₁ v Q₁ := by
     cases Q₁ with
     | zero => exact h₁0 rfl
     | some a b h => exact h₁s a b h rfl
-  have h2 : es1a11_coordSeamDataAt φ₂ v Q₂ := by
+  have h2 : es1a11CoordSeamDataAt φ₂ v Q₂ := by
     cases Q₂ with
     | zero => exact h₂0 rfl
     | some a b h => exact h₂s a b h rfl
-  have H : es1a6_addSumSeamDataAt φ₁ φ₂ v (Q₁ + Q₂) :=
+  have H : es1a6AddSumSeamDataAt φ₁ φ₂ v (Q₁ + Q₂) :=
     kw_hk5f_addSumCoordSeamDataNCAt_proved W φ₁ φ₂ (fun hc => hcol hc) hnc v Q₁ Q₂ h1 h2
   refine ⟨fun h0 => ?_, fun a b h hs => ?_⟩
   · rw [h0] at H; exact H

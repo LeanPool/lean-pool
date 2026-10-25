@@ -71,16 +71,21 @@ namespace ModularCurve
 
 open AlgebraicCurve
 
+/-- Finiteness of the Galois-invariant Eisenstein quotient for the supplied Hecke action on the
+level-`p` divisor-class group. -/
 def EisensteinQuotientInvariantsFiniteAt (p : ℕ)
     (inst : Module HeckeAlg (JZero p)) : Prop :=
   letI := inst
   EisensteinQuotientInvariantsFinite
     (G := AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (JZero p) (eisensteinIdeal p)
 
+/-- The specialization-existence condition at level `p` and torsion prime `q` for the supplied
+Hecke action. -/
 def SpecializationSlot (p q : ℕ) (inst : Module HeckeAlg (JZero p)) : Prop :=
   letI := inst
   SpecializationExists (K := ℚ) (L := AlgebraicClosure ℚ) p q (JZero p)
 
+/-- The geometric Hecke operator acts on the cuspidal class by multiplication by `1 + ℓ`. -/
 def HeckeKillsCuspidalClass (p ℓ : ℕ) [NeZero p] [NeZero ℓ]
     (hα : HeckeAlphaBarIntegral (AlgebraicClosure ℚ) p ℓ)
     (hβ : HeckeBetaBarIntegral (AlgebraicClosure ℚ) p ℓ)
@@ -92,6 +97,7 @@ def HeckeKillsCuspidalClass (p ℓ : ℕ) [NeZero p] [NeZero ℓ]
       (heckeAlphaBar (AlgebraicClosure ℚ) p ℓ) hfin) : Prop :=
   heckePic0Bar hα hβ hFI hfin hN (cuspidalClass p) - (1 + ℓ : ℤ) • cuspidalClass p = 0
 
+/-- Every element of the Eisenstein kernel annihilates the cuspidal divisor class. -/
 def EisensteinKernelKillsCuspidalClass (p : ℕ) [NeZero p]
     (inst : Module HeckeAlg (JZero p)) : Prop :=
   letI := inst

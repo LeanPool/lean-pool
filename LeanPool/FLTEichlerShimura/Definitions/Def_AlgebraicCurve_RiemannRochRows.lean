@@ -72,21 +72,27 @@ namespace AlgebraicCurve
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
+/-- The Riemann inequality `deg D + 1 - genus ≤ ell D` under the curve and canonical-divisor
+hypotheses. -/
 def RiemannInequality : Prop :=
   ∀ [IsCurveOver K F] [HasCanonicalDivisor (K := K) (F := F)],
     ∀ D : Divisor K F, Divisor.degree D + 1 - (genus K F : ℤ) ≤ (ell D : ℤ)
 
+/-- The index of specialty equals the excess of `ell D` over the Riemann lower bound. -/
 def RiemannIndexFormula : Prop :=
   ∀ [IsCurveOver K F] [HasCanonicalDivisor (K := K) (F := F)],
     ∀ D : Divisor K F,
       (indexOfSpecialty D : ℤ) = (ell D : ℤ) - (Divisor.degree D + 1 - (genus K F : ℤ))
 
+/-- Under the local-coordinate hypotheses, the adelic index equals the dimension of `L(K - D)`. -/
 def WeilDualityAdelic : Prop :=
   ∀ [IsCurveOver K F] [HasCanonicalDivisor (K := K) (F := F)]
     [∀ v : Place K F, v.DCoordGenerates],
     ∀ {ω : Ω[F⁄K]} (hω : ω ≠ 0) (D : Divisor K F),
       (indexOfSpecialty D : ℤ) = (ell (canonicalDivisorOf hω - D) : ℤ)
 
+/-- Under the local-coordinate hypotheses, the Riemann–Roch excess equals the dimension of `L(K -
+D)`. -/
 def WeilDuality : Prop :=
   ∀ [IsCurveOver K F] [HasCanonicalDivisor (K := K) (F := F)]
     [∀ v : Place K F, v.DCoordGenerates],
@@ -94,12 +100,15 @@ def WeilDuality : Prop :=
       (ell D : ℤ) - (Divisor.degree D + 1 - (genus K F : ℤ))
         = (ell (canonicalDivisorOf hω - D) : ℤ)
 
+/-- Under the local-coordinate hypotheses, the Weil annihilator space has dimension `ell(K - D)`. -/
 def WeilOmegaEllAgrees : Prop :=
   ∀ [IsCurveOver K F] [HasCanonicalDivisor (K := K) (F := F)]
     [∀ v : Place K F, v.DCoordGenerates],
     ∀ {ω : Ω[F⁄K]} (hω : ω ≠ 0) (D : Divisor K F),
       (Module.finrank K ↥(omegaSpace D) : ℤ) = (ell (canonicalDivisorOf hω - D) : ℤ)
 
+/-- The function-field Riemann–Roch identity under the curve, canonical-divisor, and
+local-coordinate hypotheses. -/
 def FunctionFieldRiemannRoch : Prop :=
   ∀ [IsCurveOver K F] [HasCanonicalDivisor (K := K) (F := F)]
     [∀ v : Place K F, v.DCoordGenerates],

@@ -75,11 +75,13 @@ namespace ValuationSubring
 
 variable {L : Type u} [Field L]
 
+/-- The image of `q` belongs to the maximal ideal of the valuation ring. -/
 def LiesOverPrime (A : ValuationSubring L) (q : ℕ) : Prop :=
   (q : L) ∈ A.nonunits
 
 variable (K : Type*) [Field K] [Algebra K L]
 
+/-- The inertia subgroup viewed inside the full group of automorphisms over `K`. -/
 def inertiaSubgroupIn (A : ValuationSubring L) : Subgroup (L ≃ₐ[K] L) :=
   (A.inertiaSubgroup K).map (A.decompositionSubgroup K).subtype
 
@@ -93,6 +95,7 @@ variable {R : Type*} {S : Type*} {K : Type*} [CommRing R] [Field S] [Field K]
   [DecidableEq K] [Algebra R S] [Algebra R K] [Algebra S K] [IsScalarTower R S K]
 
 variable (S K) in
+/-- Every inertia element at every valuation ring above `q` fixes all `n`-torsion points. -/
 def GaloisRepUnramifiedAt (W' : Affine R) (n : ℕ) (q : ℕ) : Prop :=
   ∀ A : ValuationSubring K, A.LiesOverPrime q →
     ∀ σ ∈ A.inertiaSubgroupIn S,
@@ -104,6 +107,7 @@ namespace FreyPackage
 
 open WeierstrassCurve.Affine.Point
 
+/-- The action on the Frey curve's `p`-torsion is unramified at every valuation ring above `q`. -/
 def GaloisRepUnramifiedAt (P : FreyPackage) (q : ℕ) : Prop :=
   WeierstrassCurve.Affine.Point.GaloisRepUnramifiedAt (K := AlgebraicClosure ℚ) ℚ
     P.freyCurve P.p q

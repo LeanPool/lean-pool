@@ -74,6 +74,7 @@ universe u
 
 namespace ModularFormClass
 
+/-- The coefficient of the width-one q-expansion of a modular form. -/
 def qCoeff (f : ℍ → ℂ) (n : ℕ) : ℂ :=
   (qExpansion 1 f).coeff n
 
@@ -83,6 +84,8 @@ namespace CuspForm
 
 open ModularFormClass
 
+/-- The normalized weight-two eigenform condition expressed through multiplicativity and
+prime-power recurrences of q-coefficients. -/
 structure IsNormalizedEigenform {N : ℕ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
     Prop where
   qCoeff_one : qCoeff f 1 = 1
@@ -121,37 +124,48 @@ section Card
 
 variable {F : Type u} [CommRing F] (W : WeierstrassCurve F)
 
+/-- The cardinality of the group of rational points, including the point at infinity. -/
 def card : ℕ := Nat.card W.toAffine.Point
 
+/-- The Frobenius trace expressed as the field cardinality plus one minus the point count. -/
 def traceOfFrobenius : ℤ := (Nat.card F : ℤ) + 1 - (W.card : ℤ)
 
 end Card
 
+/-- Reduction of an integral Weierstrass equation modulo the natural number `p`. -/
 def reductionMod (W : WeierstrassCurve ℤ) (p : ℕ) : WeierstrassCurve (ZMod p) :=
   W.map (Int.castRingHom (ZMod p))
 
+/-- The Frobenius trace of the reduction of an integral Weierstrass model modulo `p`. -/
 def apOfModel (W : WeierstrassCurve ℤ) (p : ℕ) : ℤ :=
   (W.reductionMod p).traceOfFrobenius
 
+/-- The modulus does not divide the discriminant of the integral model. -/
 def IsGoodPrimeFor (W : WeierstrassCurve ℤ) (p : ℕ) : Prop :=
   ¬ (p : ℤ) ∣ W.Δ
 
+/-- Every prime dividing the discriminant does not divide `c₄`. -/
 def IsSemistableModel (W : WeierstrassCurve ℤ) : Prop :=
   ∀ p : ℕ, p.Prime → (p : ℤ) ∣ W.Δ → ¬ (p : ℤ) ∣ W.c₄
 
+/-- An integral equation becomes the given rational curve after a rational change of variables. -/
 def IsIntegralModelOf (W : WeierstrassCurve ℤ) (E : WeierstrassCurve ℚ) : Prop :=
   ∃ C : VariableChange ℚ, C • E = W.map (Int.castRingHom ℚ)
 
 open CuspForm
 
+/-- A normalized weight-two eigenform at the given level matches the model's traces at good
+primes away from the level. -/
 def IsModularModelOfLevel (W : WeierstrassCurve ℤ) (N : ℕ) : Prop :=
   ∃ f : CuspForm (CongruenceSubgroup.Gamma0 N) 2, f.IsNormalizedEigenform ∧
     ∀ p : ℕ, p.Prime → W.IsGoodPrimeFor p → ¬ p ∣ N →
       ModularFormClass.qCoeff f p = (W.apOfModel p : ℂ)
 
+/-- The integral model is modular at some positive level. -/
 def IsModularModel (W : WeierstrassCurve ℤ) : Prop :=
   ∃ N : ℕ, 0 < N ∧ W.IsModularModelOfLevel N
 
+/-- The rational curve admits a modular integral model. -/
 def IsModular (E : WeierstrassCurve ℚ) : Prop :=
   ∃ W : WeierstrassCurve ℤ, W.IsIntegralModelOf E ∧ W.IsModularModel
 

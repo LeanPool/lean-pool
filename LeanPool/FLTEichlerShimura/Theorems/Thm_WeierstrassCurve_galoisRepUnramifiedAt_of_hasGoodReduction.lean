@@ -122,14 +122,14 @@ private theorem torsion_fixed_of_reduction_fixed
     {L : Type*} [Field L] [DecidableEq L] [Algebra S L] [IsFractionRing S L]
     (W : WeierstrassCurve L) [W.HasGoodReduction S] {n : ℕ}
     (hn : (n : ResidueField S) ≠ 0) (f : W.toAffine.Point →+ W.toAffine.Point)
-    (hred : ∀ P, reducePoint_alt S W (f P) = reducePoint_alt S W P)
+    (hred : ∀ P, reducePointAlt S W (f P) = reducePointAlt S W P)
     (P : W.toAffine.Point) (hP : n • P = 0) : f P = P := by
   classical
   have hnD : n • (f P - P) = 0 := by
     rw [nsmul_sub, ← map_nsmul, hP, map_zero, sub_zero]
-  have hred0 : reducePoint_alt S W (f P - P) = 0 := by
-    have h : reducePoint_alt S W (f P - P) + reducePoint_alt S W P
-        = 0 + reducePoint_alt S W P := by
+  have hred0 : reducePointAlt S W (f P - P) = 0 := by
+    have h : reducePointAlt S W (f P - P) + reducePointAlt S W P
+        = 0 + reducePointAlt S W P := by
       rw [← WeierstrassCurve.reducePoint_add, sub_add_cancel, zero_add]
       exact hred P
     exact add_right_cancel h
@@ -266,15 +266,15 @@ theorem galoisRepUnramifiedAt_of_hasGoodReduction'
     exact h1
   have hzero : ∀ (a b : L) (hab : (E.baseChange L).toAffine.Nonsingular a b),
       ¬ (valuation L (maximalIdeal S) a ≤ 1 ∧ valuation L (maximalIdeal S) b ≤ 1) →
-      reducePoint_alt S (E.baseChange L) (.some a b hab) = 0 := by
+      reducePointAlt S (E.baseChange L) (.some a b hab) = 0 := by
     intro a b hab hguard
     change (if _ : valuation L (maximalIdeal S) a ≤ 1 ∧ valuation L (maximalIdeal S) b ≤ 1
         then _ else WeierstrassCurve.Affine.Point.zero) = _
     rw [dite_eq_right hguard]
     rfl
   have hred_fix : ∀ Q : (E.baseChange L).toAffine.Point,
-      reducePoint_alt S (E.baseChange L) (WeierstrassCurve.Affine.Point.map τL.toAlgHom Q)
-        = reducePoint_alt S (E.baseChange L) Q := by
+      reducePointAlt S (E.baseChange L) (WeierstrassCurve.Affine.Point.map τL.toAlgHom Q)
+        = reducePointAlt S (E.baseChange L) Q := by
     intro Q
     cases Q with
     | zero => rfl

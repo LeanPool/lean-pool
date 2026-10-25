@@ -69,6 +69,8 @@ namespace ModularCurve
 
 variable (N : ℕ) [NeZero N]
 
+/-- The Fricke automorphism of the full rational modular function field extended to
+algebraic-closure coefficients. -/
 def frickeInvolutionBar :
     modularFunctionFieldBar N ≃ₐ[AlgebraicClosure ℚ] modularFunctionFieldBar N :=
   geomAut (AlgebraicClosure ℚ) (modularFunctionFieldFull N) (frickeInvolutionFull N)
@@ -79,11 +81,13 @@ theorem frickeInvolutionBar_def :
       geomAut (AlgebraicClosure ℚ) (modularFunctionFieldFull N) (frickeInvolutionFull N) :=
   rfl
 
+/-- The image of the cusp at infinity under the base-changed Fricke automorphism. -/
 def cuspZeroBar : Place (AlgebraicClosure ℚ) (modularFunctionFieldBar N) :=
   frickeInvolutionBar N • cuspInftyBar N
 
 theorem cuspZeroBar_def : cuspZeroBar N = frickeInvolutionBar N • cuspInftyBar N := rfl
 
+/-- The divisor consisting of the cusp at zero minus the cusp at infinity. -/
 def cuspidalDivisor : Divisor (AlgebraicClosure ℚ) (modularFunctionFieldBar N) :=
   Finsupp.single (cuspZeroBar N) 1 - Finsupp.single (cuspInftyBar N) 1
 
@@ -95,6 +99,7 @@ theorem degree_cuspidalDivisor : Divisor.degree (cuspidalDivisor N) = 0 := by
   rw [cuspidalDivisor_def, map_sub, Divisor.degree_single, Divisor.degree_single, cuspZeroBar_def,
     Place.deg_smul, sub_self]
 
+/-- The cuspidal difference bundled as a degree-zero divisor. -/
 def cuspidalDivisor₀ :
     Divisor.degZero (K := AlgebraicClosure ℚ) (F := modularFunctionFieldBar N) :=
   ⟨cuspidalDivisor N, Divisor.mem_degZero.mpr (degree_cuspidalDivisor N)⟩
@@ -105,6 +110,7 @@ theorem coe_cuspidalDivisor₀ :
       cuspidalDivisor N :=
   rfl
 
+/-- The degree-zero divisor class of the cusp at zero minus the cusp at infinity. -/
 def cuspidalClass : JZero N := Pic0.mk (cuspidalDivisor₀ N)
 
 theorem cuspidalClass_def : cuspidalClass N = Pic0.mk (cuspidalDivisor₀ N) := rfl

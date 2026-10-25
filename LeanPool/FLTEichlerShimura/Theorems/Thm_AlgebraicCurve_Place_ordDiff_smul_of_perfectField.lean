@@ -69,7 +69,7 @@ namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place"
 namespace Place
 p2m_export "AlgebraicCurve.Place" "diffCoeff ordDiff ordDiff_def ord_uniformizer_alt \
-  uniformizer_alt ord ord_mul diffCoeff_smul_D_of_ord_eq_one diffCoeff_smul_D_eq_of_ord_eq_one \
+  uniformizerAlt ord ord_mul diffCoeff_smul_D_of_ord_eq_one diffCoeff_smul_D_eq_of_ord_eq_one \
   exists_ord_eq_one"
 p2m_open "AlgebraicCurve.Place AlgebraicCurve"
 
@@ -78,18 +78,18 @@ private theorem H1_impl {K F : Type*} [Field K] [Field F] [Algebra K F] [Perfect
     (v : AlgebraicCurve.Place K F)
     {g : F} (hg : g ≠ 0) {ω : Ω[F⁄K]} (hω : ω ≠ 0) :
     v.ordDiff (g • ω) = v.ord g + v.ordDiff ω := by
-  have ht : v.ord v.uniformizer_alt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
-  have hrep : diffCoeff v.uniformizer_alt ω • KaehlerDifferential.D K F v.uniformizer_alt = ω :=
+  have ht : v.ord v.uniformizerAlt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
+  have hrep : diffCoeff v.uniformizerAlt ω • KaehlerDifferential.D K F v.uniformizerAlt = ω :=
     v.diffCoeff_smul_D_of_ord_eq_one x ht ω
-  have hgo : g • ω = (g * diffCoeff v.uniformizer_alt ω) • KaehlerDifferential.D K F
-    v.uniformizer_alt :=
+  have hgo : g • ω = (g * diffCoeff v.uniformizerAlt ω) • KaehlerDifferential.D K F
+    v.uniformizerAlt :=
     by
     conv_lhs => rw [← hrep]
     rw [smul_smul]
-  have hco : diffCoeff v.uniformizer_alt (g • ω) = g * diffCoeff v.uniformizer_alt ω := by
+  have hco : diffCoeff v.uniformizerAlt (g • ω) = g * diffCoeff v.uniformizerAlt ω := by
     rw [hgo]
     exact v.diffCoeff_smul_D_eq_of_ord_eq_one x ht _
-  have hc0 : diffCoeff v.uniformizer_alt ω ≠ 0 := by
+  have hc0 : diffCoeff v.uniformizerAlt ω ≠ 0 := by
     intro h0
     apply hω
     rw [← hrep, h0, zero_smul]

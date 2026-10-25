@@ -38,12 +38,12 @@ realised as a fraction field of $R$ via an algebra structure), write $\mathfrak{
 ideal of $R$ viewed as a height-one prime and let $v$ be the associated valuation on $K$. Let $W$ be
 a Weierstrass curve over $K$ satisfying the predicate `W.HasGoodReduction R`, so that $W$ has a
 reduction `W.reduction R` over the residue field of $R$ and the reduction map on points,
-`reducePoint_alt R W`, is defined: it sends the point at infinity to the point at infinity, and an
+`reducePointAlt R W`, is defined: it sends the point at infinity to the point at infinity, and an
 affine point $(x,y)$ to the affine point with coordinates `reduceCoord R x`, `reduceCoord R y` when
 $v(x) \le 1$, $v(y) \le 1$ and that reduced pair is nonsingular on `W.reduction R`, and to the point
 at infinity otherwise; here `reduceCoord R x` is the residue of a preimage of $x$ in $R$, and $0$ if
 $x$ has no such preimage. Let $(x_1,y_1)$ and $(x_2,y_2)$ be nonsingular affine points of $W$ over
-$K$ with $v(x_1) \le 1$ and $v(x_2) \le 1$. Then `reducePoint_alt R W` applied to the sum of the two
+$K$ with $v(x_1) \le 1$ and $v(x_2) \le 1$. Then `reducePointAlt R W` applied to the sum of the two
 points, taken in the group of $K$-points of the affine curve, equals the sum of the images of the
 two points.
 
@@ -74,7 +74,7 @@ p2m_export "WeierstrassCurve" "integralModel_a₂_eq Affine Affine.negY HasGoodR
   reduction Affine.map_addY integralModel integralModel_a₆_eq Affine.map_addX \
   Affine.nonsingular_add toAffine Affine.slope_of_Y_ne Affine.Point baseChange_integralModel_eq \
   Affine.addX Affine.Point.add_some map_a₆ map_a₁ Affine.equation_iff_nonsingular map_a₄ \
-  Affine.equation_iff integralModel_a₄_eq map_a₂ map_a₃ reduceCoord reducePoint_alt \
+  Affine.equation_iff integralModel_a₄_eq map_a₂ map_a₃ reduceCoord reducePointAlt \
   valuation_le_one_of_equation reducePoint_some reducePoint_some_eq_zero_iff"
 p2m_open "WeierstrassCurve"
 
@@ -570,8 +570,8 @@ theorem valuation_a₆_le_one : valuation K (maximalIdeal R) W.a₆ ≤ 1 := by
 theorem reducePoint_add_int_int [DecidableEq K] [DecidableEq (ResidueField R)]
     {x₁ y₁ x₂ y₂ : K} (h₁ : W.toAffine.Nonsingular x₁ y₁) (h₂ : W.toAffine.Nonsingular x₂ y₂)
     (hx₁ : valuation K (maximalIdeal R) x₁ ≤ 1) (hx₂ : valuation K (maximalIdeal R) x₂ ≤ 1) :
-    reducePoint_alt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
-      = reducePoint_alt R W (.some x₁ y₁ h₁) + reducePoint_alt R W (.some x₂ y₂ h₂) := by
+    reducePointAlt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
+      = reducePointAlt R W (.some x₁ y₁ h₁) + reducePointAlt R W (.some x₂ y₂ h₂) := by
   have hy₁ : valuation K (maximalIdeal R) y₁ ≤ 1 := valuation_le_one_of_equation R W h₁.1 hx₁
   have hy₂ : valuation K (maximalIdeal R) y₂ ≤ 1 := valuation_le_one_of_equation R W h₂.1 hx₂
   obtain ⟨h₁', hrP⟩ := reducePoint_some R W h₁ hx₁ hy₁
@@ -593,7 +593,7 @@ theorem reducePoint_add_int_int [DecidableEq K] [DecidableEq (ResidueField R)]
     have hy' : reduceCoord R y₁
         = (reduction R W).toAffine.negY (reduceCoord R x₂) (reduceCoord R y₂) := by
       rw [hxy.2, hnegK, reduceCoord_algebraMap, hnegbar, ← hc2x, ← hc2y]
-    have h0 : reducePoint_alt R W (0 : W.toAffine.Point) = 0 := rfl
+    have h0 : reducePointAlt R W (0 : W.toAffine.Point) = 0 := rfl
     rw [h0]
     exact (Affine.Point.add_of_Y_eq hx' hy').symm
   · rw [Affine.Point.add_some hxy]
@@ -705,9 +705,9 @@ theorem solution
       x₁ ≤ 1)
     (hx₂ : IsDedekindDomain.HeightOneSpectrum.valuation K (IsDiscreteValuationRing.maximalIdeal R)
       x₂ ≤ 1) :
-    WeierstrassCurve.reducePoint_alt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
-      = WeierstrassCurve.reducePoint_alt R W (.some x₁ y₁ h₁)
-        + WeierstrassCurve.reducePoint_alt R W (.some x₂ y₂ h₂) :=
+    WeierstrassCurve.reducePointAlt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
+      = WeierstrassCurve.reducePointAlt R W (.some x₁ y₁ h₁)
+        + WeierstrassCurve.reducePointAlt R W (.some x₂ y₂ h₂) :=
   WeierstrassCurve.ReducePointAddPort.reducePoint_add_int_int R W h₁ h₂ hx₁ hx₂
 
 end S_WeierstrassCurve_reducePoint_some_add_some_of_le_one
@@ -728,9 +728,9 @@ theorem WeierstrassCurve.reducePoint_some_add_some_of_le_one
       x₁ ≤ 1)
     (hx₂ : IsDedekindDomain.HeightOneSpectrum.valuation K (IsDiscreteValuationRing.maximalIdeal R)
       x₂ ≤ 1) :
-    WeierstrassCurve.reducePoint_alt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
-      = WeierstrassCurve.reducePoint_alt R W (.some x₁ y₁ h₁)
-        + WeierstrassCurve.reducePoint_alt R W (.some x₂ y₂ h₂) :=
+    WeierstrassCurve.reducePointAlt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
+      = WeierstrassCurve.reducePointAlt R W (.some x₁ y₁ h₁)
+        + WeierstrassCurve.reducePointAlt R W (.some x₂ y₂ h₂) :=
   solution R W h₁ h₂ hx₁ hx₂
 
 end publicSection

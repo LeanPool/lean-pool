@@ -73,19 +73,26 @@ namespace WeierstrassCurve
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
 
+/-- The complementary elliptic divisibility sequence used to construct the division-polynomial
+numerator `ω`. -/
 def ψDbl (n : ℤ) : R[X][Y] :=
   complEDS₂ W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) n
 
+/-- The division-polynomial expression for twice the numerator `ω` of the multiplication map's
+y-coordinate. -/
 def twoω (n : ℤ) : R[X][Y] :=
   W.ψDbl n - W.ψ n * (C (C W.a₁) * W.φ n + C (C W.a₃) * W.ψ n ^ 2)
 
 namespace Universal
 
+/-- The integer polynomial ring in the five universal Weierstrass coefficients. -/
 abbrev Poly : Type := MvPolynomial (Fin 5) ℤ
 
+/-- The Weierstrass curve whose five coefficients are the universal variables. -/
 def curve : WeierstrassCurve Poly :=
   ⟨MvPolynomial.X 0, MvPolynomial.X 1, MvPolynomial.X 2, MvPolynomial.X 3, MvPolynomial.X 4⟩
 
+/-- Specialization of the universal coefficient ring to the coefficients of a given curve. -/
 def specialize (W : WeierstrassCurve R) : Poly →+* R :=
   MvPolynomial.eval₂Hom (Int.castRingHom R) ![W.a₁, W.a₂, W.a₃, W.a₄, W.a₆]
 
@@ -99,6 +106,7 @@ lemma map_specialize : curve.map (specialize W) = W := by
   rcases W with ⟨a₁, a₂, a₃, a₄, a₆⟩
   simp [curve, specialize, WeierstrassCurve.map]
 
+/-- Integer division by two on each coefficient in the universal coefficient ring. -/
 def halveCoeff (r : Poly) : Poly :=
   AddMonoidAlgebra.ofCoeff
     (Finsupp.mapRange (fun z : ℤ => z / 2) (by simp) (AddMonoidAlgebra.coeff r))
@@ -110,6 +118,7 @@ lemma coeff_halveCoeff (r : Poly) (m : Fin 5 →₀ ℕ) :
     AddMonoidAlgebra.coeff (halveCoeff r) m = AddMonoidAlgebra.coeff r m / 2 :=
   Finsupp.mapRange_apply (hf := by simp) ..
 
+/-- Coefficientwise application of `halveCoeff` to a polynomial in the x-coordinate. -/
 def halveX (p : Poly[X]) : Poly[X] :=
   ⟨AddMonoidAlgebra.ofCoeff (p.toFinsupp.coeff.mapRange halveCoeff halveCoeff_zero)⟩
 
@@ -121,6 +130,7 @@ def halveX (p : Poly[X]) : Poly[X] :=
   ext i
   simp
 
+/-- Coefficientwise halving of the universal bivariate polynomial's integer coefficients. -/
 def halve (p : Poly[X][Y]) : Poly[X][Y] :=
   ⟨AddMonoidAlgebra.ofCoeff (p.toFinsupp.coeff.mapRange halveX halveX_zero)⟩
 
@@ -146,6 +156,8 @@ lemma halve_two_mul (p : Poly[X][Y]) : halve (2 * p) = p := by
 
 end Universal
 
+/-- The division polynomial obtained by specializing the coefficientwise half of universal
+`twoω`. -/
 def ω (n : ℤ) : R[X][Y] :=
   (Universal.halve (Universal.curve.twoω n)).map (mapRingHom (Universal.specialize W))
 

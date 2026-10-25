@@ -65,6 +65,7 @@ private theorem some_congr {V : Affine k} {x₁ y₁ x₂ y₂ : k} (hx : x₁ =
     Point.some x₁ y₁ h₁ = Point.some x₂ y₂ h₂ := by
   subst hx; subst hy; rfl
 
+/-- Base change of rational points along a field homomorphism, fixing the point at infinity. -/
 def ratPointMap : W₀.toAffine.Point → (W₀.map f).toAffine.Point
   | .zero => .zero
   | .some x y h => .some (f x) (f y) ((W₀.toAffine.map_nonsingular f.injective x y).mpr h)

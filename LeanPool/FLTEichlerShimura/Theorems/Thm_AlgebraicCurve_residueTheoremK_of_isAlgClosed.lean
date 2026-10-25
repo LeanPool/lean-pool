@@ -189,7 +189,7 @@ variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Pl
 theorem kw_ffgc_adicCompletionComapIntegers_mem_maximalIdeal
     {x : (W.restrict F).adicCompletionIntegers}
     (hx : x ∈ maximalIdeal (W.restrict F).adicCompletionIntegers) :
-    kw_ffgc_adicCompletionComapIntegers F W x ∈ maximalIdeal W.adicCompletionIntegers := by
+    kwFfgcAdicCompletionComapIntegers F W x ∈ maximalIdeal W.adicCompletionIntegers := by
   have hrpos := W.ramificationIndex_pos (F := F)
   rw [show maximalIdeal (W.restrict F).adicCompletionIntegers
       = (W.restrict F).heightOneSpectrum.completionIdeal F from rfl,
@@ -203,7 +203,7 @@ theorem kw_ffgc_adicCompletionComapIntegers_mem_maximalIdeal
     _ = 1 := one_pow _
 
 scoped instance kw_ffgc_isLocalHom_adicCompletionComapIntegers :
-    IsLocalHom (kw_ffgc_adicCompletionComapIntegers F W) where
+    IsLocalHom (kwFfgcAdicCompletionComapIntegers F W) where
   map_nonunit x hx := by
     by_contra hnu
     exact (IsLocalRing.notMem_maximalIdeal.mpr hx)
@@ -238,9 +238,9 @@ section SpectralSetup
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (V : Place K F)
 
 theorem kw_ffgc_norm_adicCompletion_eq (x : V.adicCompletion) :
-    letI := kw_ffgc_rankOne_adicCompletion V
+    letI := kwFfgcRankOneAdicCompletion V
     ‖x‖ = (WithZeroMulInt.toNNReal (two_ne_zero) (Valued.v x) : ℝ) := by
-  let := kw_ffgc_rankOne_adicCompletion V
+  let := kwFfgcRankOneAdicCompletion V
   have h := valueGroup₀_equiv_withZeroMulInt_restrict_apply_of_surjective
     (V.heightOneSpectrum.valuedAdicCompletion_surjective F) x
   simp only [Valued.toNormedField.norm_def, Valuation.RankOne.hom]
@@ -254,11 +254,11 @@ variable (F)
 variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Place K F')
 
 theorem kw_ffgc_absoluteValue_extends (c : (W.restrict F).adicCompletion) :
-    letI := kw_ffgc_rankOne_adicCompletion (W.restrict F)
-    kw_ffgc_absoluteValue F W
+    letI := kwFfgcRankOneAdicCompletion (W.restrict F)
+    kwFfgcAbsoluteValue F W
       (algebraMap (W.restrict F).adicCompletion W.adicCompletion c) = ‖c‖ := by
-  let := kw_ffgc_rankOne_adicCompletion (W.restrict F)
-  let := kw_ffgc_rankOne_adicCompletion W
+  let := kwFfgcRankOneAdicCompletion (W.restrict F)
+  let := kwFfgcRankOneAdicCompletion W
   have hr : (0 : ℝ) < (W.ramificationIndex F : ℝ) :=
     Nat.cast_pos.mpr (W.ramificationIndex_pos (F := F))
   change ‖algebraMap (W.restrict F).adicCompletion W.adicCompletion c‖
@@ -279,8 +279,8 @@ theorem kw_ffgc_isIntegral_adicCompletionIntegers_of_algebraic
     [Algebra.IsAlgebraic (W.restrict F).adicCompletion W.adicCompletion]
     (x : W.adicCompletionIntegers) :
     _root_.IsIntegral (W.restrict F).adicCompletionIntegers x := by
-  let := kw_ffgc_rankOne_adicCompletion (W.restrict F)
-  let := kw_ffgc_rankOne_adicCompletion W
+  let := kwFfgcRankOneAdicCompletion (W.restrict F)
+  let := kwFfgcRankOneAdicCompletion W
   let : NontriviallyNormedField (W.restrict F).adicCompletion :=
     Valued.toNontriviallyNormedField (W.restrict F).adicCompletion ℤᵐ⁰
   have : IsUltrametricDist (W.restrict F).adicCompletion :=
@@ -293,7 +293,7 @@ theorem kw_ffgc_isIntegral_adicCompletionIntegers_of_algebraic
   have hsn : spectralNorm (W.restrict F).adicCompletion W.adicCompletion
         (x : W.adicCompletion)
       = ‖(x : W.adicCompletion)‖ ^ ((W.ramificationIndex F : ℝ))⁻¹ :=
-    (spectralNorm_unique_field_norm_ext (f := kw_ffgc_absoluteValue F W)
+    (spectralNorm_unique_field_norm_ext (f := kwFfgcAbsoluteValue F W)
       (kw_ffgc_absoluteValue_extends F W) (x : W.adicCompletion)).symm
   have hspec : spectralValue (minpoly (W.restrict F).adicCompletion
       (x : W.adicCompletion)) ≤ 1 := by
@@ -355,7 +355,7 @@ variable (F)
 variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Place K F')
 
 theorem kw_ffgc_completionTraceF'_apply (g : F') :
-    kw_ffgc_completionTraceF' F W g
+    kwFfgcCompletionTraceF' F W g
       = Algebra.trace (W.restrict F).adicCompletion W.adicCompletion
           (algebraMap F' W.adicCompletion g) := rfl
 
@@ -1597,8 +1597,8 @@ variable [HasCanonicalLocalResidueKStar K E]
 
 theorem kwHgfV352_localResidueCompletion_spec (v : Place K E) (xh : v.adicCompletion)
     {x : E} (hx : algebraMap E v.adicCompletion x - xh ∈ v.adicCompletionIntegers) :
-    kwHgfV352_localResidueCompletion v xh = v.localResidue x := by
-  unfold kwHgfV352_localResidueCompletion
+    kwHgfV352LocalResidueCompletion v xh = v.localResidue x := by
+  unfold kwHgfV352LocalResidueCompletion
   set x₀ := (kwHgfV352_exists_sub_mem_adicCompletionIntegers v xh).choose
   have hx₀ := (kwHgfV352_exists_sub_mem_adicCompletionIntegers v xh).choose_spec
   have heq : algebraMap E v.adicCompletion (x₀ - x)
@@ -1614,16 +1614,16 @@ theorem kwHgfV352_localResidueCompletion_spec (v : Place K E) (xh : v.adicComple
   exact hzero
 
 theorem kwHgfV352_localResidueCompletion_algebraMap (v : Place K E) (x : E) :
-    kwHgfV352_localResidueCompletion v (algebraMap E v.adicCompletion x)
+    kwHgfV352LocalResidueCompletion v (algebraMap E v.adicCompletion x)
       = v.localResidue x :=
   kwHgfV352_localResidueCompletion_spec v _
     (by rw [sub_self]; exact zero_mem _)
 
 theorem kwHgfV352_localResidueCompletion_add (v : Place K E)
     (xh yh : v.adicCompletion) :
-    kwHgfV352_localResidueCompletion v (xh + yh)
-      = kwHgfV352_localResidueCompletion v xh
-        + kwHgfV352_localResidueCompletion v yh := by
+    kwHgfV352LocalResidueCompletion v (xh + yh)
+      = kwHgfV352LocalResidueCompletion v xh
+        + kwHgfV352LocalResidueCompletion v yh := by
   obtain ⟨x, hx⟩ := kwHgfV352_exists_sub_mem_adicCompletionIntegers v xh
   obtain ⟨y, hy⟩ := kwHgfV352_exists_sub_mem_adicCompletionIntegers v yh
   have heq : algebraMap E v.adicCompletion (x + y) - (xh + yh)
@@ -1637,8 +1637,8 @@ theorem kwHgfV352_localResidueCompletion_add (v : Place K E)
 
 theorem kwHgfV352_localResidueCompletion_sum (v : Place K E) {ι : Type*}
     (s : Finset ι) (f : ι → v.adicCompletion) :
-    kwHgfV352_localResidueCompletion v (∑ i ∈ s, f i)
-      = ∑ i ∈ s, kwHgfV352_localResidueCompletion v (f i) := by
+    kwHgfV352LocalResidueCompletion v (∑ i ∈ s, f i)
+      = ∑ i ∈ s, kwHgfV352LocalResidueCompletion v (f i) := by
   classical
   induction s using Finset.induction_on with
   | empty =>
@@ -1716,8 +1716,8 @@ variable [Algebra.IsIntegral E F] [HasPrincipalDivisors K F]
 
 omit [HasPrincipalDivisors K F] in
 theorem kwF4R1V391a_completionTraceF'_mul_algebraMap (w : Place K F) (g : F) (c : E) :
-    kw_ffgc_completionTraceF' E w (g * algebraMap E F c)
-      = kw_ffgc_completionTraceF' E w g
+    kwFfgcCompletionTraceF' E w (g * algebraMap E F c)
+      = kwFfgcCompletionTraceF' E w g
           * algebraMap E (w.restrict E).adicCompletion c := by
   rw [kw_ffgc_completionTraceF'_apply, kw_ffgc_completionTraceF'_apply, map_mul,
     kw_ffgc_adicCompletionComap_algebraMap_algebraMap E w c,
@@ -1726,12 +1726,12 @@ theorem kwF4R1V391a_completionTraceF'_mul_algebraMap (w : Place K F) (g : F) (c 
 
 theorem kwF4R1V391a_completionTraceAt_mul_algebraMap
     (v : Place K E) (w : Place K F) (hw : w ∈ v.fiber F) (g : F) (c : E) :
-    kwHgfV352_completionTraceAt v w hw (g * algebraMap E F c)
-      = kwHgfV352_completionTraceAt v w hw g * algebraMap E v.adicCompletion c := by
+    kwHgfV352CompletionTraceAt v w hw (g * algebraMap E F c)
+      = kwHgfV352CompletionTraceAt v w hw g * algebraMap E v.adicCompletion c := by
   have hv : w.restrict E = v := Place.mem_fiber.mp hw
   subst hv
-  change (Place.mem_fiber.mp hw ▸ kw_ffgc_completionTraceF' E w (g * algebraMap E F c))
-    = (Place.mem_fiber.mp hw ▸ kw_ffgc_completionTraceF' E w g)
+  change (Place.mem_fiber.mp hw ▸ kwFfgcCompletionTraceF' E w (g * algebraMap E F c))
+    = (Place.mem_fiber.mp hw ▸ kwFfgcCompletionTraceF' E w g)
         * algebraMap E (w.restrict E).adicCompletion c
   rw [kwF4R1V391a_completionTraceF'_mul_algebraMap w g c]
 
@@ -1823,7 +1823,7 @@ scoped instance kwF4R1V384a_instAlgebraFiberCompletion (v : Place K E) (w' : v.f
   rcases w' with ⟨w', hw'⟩
   have hv : w'.restrict E = v := Place.mem_fiber.mp hw'
   subst hv
-  exact kw_ffgc_algebraAdicCompletionComap E w'
+  exact kwFfgcAlgebraAdicCompletionComap E w'
 
 scoped instance kwF4R1V384a_instIsScalarTowerFiberCompletion (v : Place K E) (w' : v.fiber F) :
     IsScalarTower E v.adicCompletion w'.1.adicCompletion := by
@@ -1907,13 +1907,13 @@ variable [FiniteDimensional E F]
 omit [HasPrincipalDivisors K F] [FiniteDimensional E F] in
 theorem kwF4R1V384a_completionLinearCombination_surjective
     (w' : Place K F) {ι : Type*} [Fintype ι] (b : Module.Basis ι E F) :
-    Function.Surjective (kw_ffgc_completionLinearCombination E w' b) := by
-  let := kw_ffgc_rankOne_adicCompletion (K := K) (w'.restrict E)
+    Function.Surjective (kwFfgcCompletionLinearCombination E w' b) := by
+  let := kwFfgcRankOneAdicCompletion (K := K) (w'.restrict E)
   let : NontriviallyNormedField (w'.restrict E).adicCompletion :=
     Valued.toNontriviallyNormedField (w'.restrict E).adicCompletion
       (WithZero (Multiplicative ℤ))
   rw [← Set.range_eq_univ, ← LinearMap.coe_range,
-    ← (LinearMap.range (kw_ffgc_completionLinearCombination E w' b))
+    ← (LinearMap.range (kwFfgcCompletionLinearCombination E w' b))
         |>.closed_of_finiteDimensional.closure_eq]
   exact (kw_ffgc_denseRange_completionLinearCombination E w' b).closure_range
 
@@ -1927,7 +1927,7 @@ theorem kwF4R1V384a_semilocalComponent_surjective (v : Place K E) (w' : v.fiber 
   obtain ⟨c, hc⟩ := kwF4R1V384a_completionLinearCombination_surjective w' b y
   refine ⟨∑ i, c i ⊗ₜ[E] b i, ?_⟩
   rw [map_sum, ← hc]
-  unfold kw_ffgc_completionLinearCombination
+  unfold kwFfgcCompletionLinearCombination
   rw [Fintype.linearCombination_apply]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [kwF4R1V384a_semilocalComponent_tmul, Algebra.smul_def]
@@ -2055,7 +2055,7 @@ theorem kwF4R1V384a_trace_algebraMap_eq_completionTraceAt
     [HasPrincipalDivisors K F]
     (v : Place K E) (w' : v.fiber F) (g : F) :
     Algebra.trace v.adicCompletion w'.1.adicCompletion (algebraMap F w'.1.adicCompletion g)
-      = AlgebraicCurve.kwHgfV352_completionTraceAt v w'.1 w'.2 g := by
+      = AlgebraicCurve.kwHgfV352CompletionTraceAt v w'.1 w'.2 g := by
   rcases w' with ⟨w', hw'⟩
   have hv : w'.restrict E = v := Place.mem_fiber.mp hw'
   subst hv
@@ -2164,12 +2164,12 @@ variable [Algebra.IsIntegral E F]
 
 theorem kwF4R1V386a_spectralNorm_eq_absoluteValue [FiniteDimensional E F]
     (w' : Place K F) (y : w'.adicCompletion) :
-    letI := kw_ffgc_rankOne_adicCompletion (w'.restrict E)
+    letI := kwFfgcRankOneAdicCompletion (w'.restrict E)
     letI : NontriviallyNormedField (w'.restrict E).adicCompletion :=
       Valued.toNontriviallyNormedField (w'.restrict E).adicCompletion ℤᵐ⁰
     spectralNorm (w'.restrict E).adicCompletion w'.adicCompletion y
-      = kw_ffgc_absoluteValue E w' y := by
-  let := kw_ffgc_rankOne_adicCompletion (w'.restrict E)
+      = kwFfgcAbsoluteValue E w' y := by
+  let := kwFfgcRankOneAdicCompletion (w'.restrict E)
   let : NontriviallyNormedField (w'.restrict E).adicCompletion :=
     Valued.toNontriviallyNormedField (w'.restrict E).adicCompletion ℤᵐ⁰
   have : IsUltrametricDist (w'.restrict E).adicCompletion :=
@@ -2177,17 +2177,17 @@ theorem kwF4R1V386a_spectralNorm_eq_absoluteValue [FiniteDimensional E F]
       (fun a b => Valuation.norm_add_le Valued.v a b)
   have : Algebra.IsAlgebraic (w'.restrict E).adicCompletion w'.adicCompletion :=
     Algebra.IsAlgebraic.of_finite _ _
-  exact (spectralNorm_unique_field_norm_ext (f := kw_ffgc_absoluteValue E w')
+  exact (spectralNorm_unique_field_norm_ext (f := kwFfgcAbsoluteValue E w')
     (kw_ffgc_absoluteValue_extends E w') y).symm
 
 theorem kwF4R1V386a_spectralNorm_eq_absoluteValue_fiber
     [HasPrincipalDivisors K F] [FiniteDimensional E F]
     (v : Place K E) (w' : v.fiber F) (y : w'.1.adicCompletion) :
-    letI := kw_ffgc_rankOne_adicCompletion v
+    letI := kwFfgcRankOneAdicCompletion v
     letI : NontriviallyNormedField v.adicCompletion :=
       Valued.toNontriviallyNormedField v.adicCompletion ℤᵐ⁰
     spectralNorm v.adicCompletion w'.1.adicCompletion y
-      = kw_ffgc_absoluteValue E w'.1 y := by
+      = kwFfgcAbsoluteValue E w'.1 y := by
   rcases w' with ⟨w', hw'⟩
   have hv : w'.restrict E = v := Place.mem_fiber.mp hw'
   subst hv
@@ -2210,9 +2210,9 @@ theorem kwF4R1V386a_valuedAlgebraMap_le_one_iff (w' : Place K F) (g : F) :
 omit [Algebra K E] [IsScalarTower K E F] in
 theorem kwF4R1V386a_absoluteValue_algebraMap_le_one_iff
     (w' : Place K F) (g : F) :
-    kw_ffgc_absoluteValue E w' (algebraMap F w'.adicCompletion g) ≤ 1
+    kwFfgcAbsoluteValue E w' (algebraMap F w'.adicCompletion g) ≤ 1
       ↔ g ∈ w'.toValuationSubring := by
-  let := kw_ffgc_rankOne_adicCompletion w'
+  let := kwFfgcRankOneAdicCompletion w'
   have hr : (0 : ℝ) < ((w'.ramificationIndex E : ℝ))⁻¹ :=
     inv_pos.mpr (Nat.cast_pos.mpr (w'.ramificationIndex_pos (F := E)))
   change ‖algebraMap F w'.adicCompletion g‖ ^ ((w'.ramificationIndex E : ℝ))⁻¹ ≤ 1
@@ -2263,7 +2263,7 @@ theorem kwF4R1V386a_distinctKernels :
     have h' := hσcomp ((1 : v.adicCompletion) ⊗ₜ[E] g)
     rwa [kwF4R1V384a_semilocalComponent_tmul, map_one, one_mul,
       kwF4R1V384a_semilocalComponent_tmul, map_one, one_mul] at h'
-  let := kw_ffgc_rankOne_adicCompletion v
+  let := kwFfgcRankOneAdicCompletion v
   let : NontriviallyNormedField v.adicCompletion :=
     Valued.toNontriviallyNormedField v.adicCompletion ℤᵐ⁰
   have hσinj : Function.Injective σ := σ.toRingHom.injective
@@ -2316,7 +2316,7 @@ theorem kwF4R1V386a_ramificationIdx_completion_eq
       = (↑(Multiplicative.ofAdd (-(e : ℤ))) : ℤᵐ⁰) := by
     rw [show ((algebraMap _ w'.adicCompletionIntegers π
           : w'.adicCompletionIntegers) : w'.adicCompletion)
-        = kw_ffgc_adicCompletionComap E w' (π : (w'.restrict E).adicCompletion) from
+        = kwFfgcAdicCompletionComap E w' (π : (w'.restrict E).adicCompletion) from
       (kw_ffgc_adicCompletionComapIntegers_coe E w' π).symm,
       kw_ffgc_valued_adicCompletionComap, hπval', ← WithZero.coe_pow, WithZero.coe_inj,
       ← ofAdd_nsmul, nsmul_eq_mul, mul_neg_one, he]
@@ -2499,8 +2499,8 @@ theorem kw_es_fiberKaehlerCotraceResidueIdentity_of_RTCC_CTS
           kaehlerResidueTerm (kaehlerPullback K F E ωE) (diagonalHom K F f) w
       = ∑ w' ∈ (v.fiber F).attach,
           Algebra.trace K v.ResidueField
-            (kwHgfV352_localResidueCompletion v
-              (kwHgfV352_completionTraceAt v w'.1 w'.2 f
+            (kwHgfV352LocalResidueCompletion v
+              (kwHgfV352CompletionTraceAt v w'.1 w'.2 f
                 * algebraMap E v.adicCompletion (v.differentialCoeff ωE))) := by
         rw [← Finset.sum_attach (v.fiber F)
           (fun w => kaehlerResidueTerm (kaehlerPullback K F E ωE) (diagonalHom K F f) w)]
@@ -2510,14 +2510,14 @@ theorem kw_es_fiberKaehlerCotraceResidueIdentity_of_RTCC_CTS
           kwF4R1V391a_completionTraceAt_mul_algebraMap v w'.1 w'.2 f
             (v.differentialCoeff ωE)]
     _ = Algebra.trace K v.ResidueField
-          (kwHgfV352_localResidueCompletion v
-            ((∑ w' ∈ (v.fiber F).attach, kwHgfV352_completionTraceAt v w'.1 w'.2 f)
+          (kwHgfV352LocalResidueCompletion v
+            ((∑ w' ∈ (v.fiber F).attach, kwHgfV352CompletionTraceAt v w'.1 w'.2 f)
               * algebraMap E v.adicCompletion (v.differentialCoeff ωE))) := by
         rw [Finset.sum_mul,
           kwHgfV352_localResidueCompletion_sum v (v.fiber F).attach _,
           map_sum]
     _ = Algebra.trace K v.ResidueField
-          (kwHgfV352_localResidueCompletion v
+          (kwHgfV352LocalResidueCompletion v
             (algebraMap E v.adicCompletion (Algebra.trace E F f)
               * algebraMap E v.adicCompletion (v.differentialCoeff ωE))) := by
         rw [← hCTS v f]

@@ -78,6 +78,8 @@ section ArithmeticGalois
 variable {L : Type*} [Field L] [Algebra ℚ L]
 variable (F₀ : IntermediateField ℚ (LaurentSeries ℚ))
 
+/-- The automorphism of the base-changed function field induced by acting on its algebraic
+constants. -/
 def arithmeticRingAut (σ : L ≃ₐ[ℚ] L) :
     (laurentBaseChange L F₀) ≃+* (laurentBaseChange L F₀) where
   toFun x := ⟨coeffMap (σ : L →+* L) (x : LaurentSeries L),
@@ -113,6 +115,7 @@ theorem arithmeticRingAut_algebraMap (σ : L ≃ₐ[ℚ] L) (a : L) :
       = algebraMap L (laurentBaseChange L F₀) (σ a) :=
   Subtype.ext (coeffMap_algebraMap (σ : L →+* L) a)
 
+/-- The semilinear Galois action on the base-changed function field. -/
 def arithmeticGalois : (L ≃ₐ[ℚ] L) →* SemilinearAut L (laurentBaseChange L F₀) where
   toFun σ := ⟨(arithmeticRingAut F₀ σ, σ.toRingEquiv), fun a => arithmeticRingAut_algebraMap F₀ σ a⟩
   map_one' := by
@@ -170,16 +173,20 @@ section ModularInstance
 
 variable (N : ℕ)
 
+/-- The base change of the full rational modular function field to an algebraic closure of the
+rationals. -/
 abbrev modularFunctionFieldBar : IntermediateField (AlgebraicClosure ℚ)
     (LaurentSeries (AlgebraicClosure ℚ)) :=
   laurentBaseChange (AlgebraicClosure ℚ) (modularFunctionFieldFull N)
 
+/-- The degree-zero divisor-class group of the base-changed full modular function field. -/
 abbrev JZero : Type _ :=
   Pic0 (AlgebraicClosure ℚ) (modularFunctionFieldBar N)
 
 example : DistribMulAction (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (JZero N) :=
   inferInstance
 
+/-- The arithmetic Galois representation on the torsion of the degree-zero divisor-class group. -/
 def JZero.torsionGaloisRep (n : ℕ) :
     (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →*
       Module.End (ZMod n) (Pic0.torsion (AlgebraicClosure ℚ) (modularFunctionFieldBar N) n) :=

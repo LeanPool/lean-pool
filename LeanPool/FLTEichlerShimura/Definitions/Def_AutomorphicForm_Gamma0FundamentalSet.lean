@@ -75,6 +75,8 @@ open scoped Modular MatrixGroups Pointwise
 
 namespace FLT.Gamma0FundamentalSet
 
+/-- The union of translates of the standard modular fundamental set indexed by the chosen coset
+representatives. -/
 noncomputable def gammaFundamentalSet (Γ : Subgroup SL(2, ℤ)) : Set ℍ :=
   ⋃ q : SL(2, ℤ) ⧸ Γ, (Quotient.out q)⁻¹ • 𝒟
 
@@ -123,6 +125,8 @@ theorem exists_gamma0_smul_mem (N : ℕ) (z : ℍ) :
     ∃ γ ∈ Gamma0 N, γ • z ∈ gammaFundamentalSet (Gamma0 N) :=
   exists_smul_mem_gammaFundamentalSet (Gamma0 N) z
 
+/-- The corresponding union of translates of the standard fundamental set truncated at the
+specified height. -/
 noncomputable def truncatedGammaFundamentalSet (Γ : Subgroup SL(2, ℤ)) (y : ℝ) : Set ℍ :=
   ⋃ q : SL(2, ℤ) ⧸ Γ, (Quotient.out q)⁻¹ • truncatedFundamentalDomain y
 

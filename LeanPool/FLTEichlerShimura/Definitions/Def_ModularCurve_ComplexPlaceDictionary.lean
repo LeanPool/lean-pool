@@ -75,6 +75,8 @@ open scoped MatrixGroups Topology
 
 namespace ModularCurve
 
+/-- Evaluation of a Laurent series as a quotient of equal-weight modular forms with nonvanishing
+denominator at `τ`, if possible; zero otherwise. -/
 def realize (N : ℕ) (x : LaurentSeries ℂ) (τ : ℍ) : ℂ := by
   classical
   exact
@@ -86,8 +88,13 @@ def realize (N : ℕ) (x : LaurentSeries ℂ) (τ : ℍ) : ℂ := by
     then (H.choose.2.1 : ℍ → ℂ) τ / (H.choose.2.2 : ℍ → ℂ) τ
     else 0
 
+/-- A dictionary relating analytic points and meromorphic orders to algebraic places and their
+orders. -/
 structure ComplexPlaceDictionary (N : ℕ) [NeZero N] where
+  /-- The algebraic place assigned to a point of the upper half-plane. -/
   pt : ℍ → AlgebraicCurve.Place ℂ (laurentBaseChange ℂ (modularFunctionFieldFull N))
+  /-- The positive factor relating analytic vanishing order at `τ` to order at its assigned
+  place. -/
   ramification : ℍ → ℕ
   ramification_pos : ∀ τ : ℍ, 0 < ramification τ
   pt_smul : ∀ (γ : CongruenceSubgroup.Gamma0 N) (τ : ℍ), pt ((γ : SL(2, ℤ)) • τ) = pt τ

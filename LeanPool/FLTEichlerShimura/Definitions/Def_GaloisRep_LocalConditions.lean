@@ -68,12 +68,16 @@ namespace GaloisRepAdic
 
 variable {A : Type} [CommRing A] [IsLocalRing A]
 
+/-- The prime lies in the maximal ideal and the determinant agrees modulo `p^n` with the action
+on `p^n`th roots of unity. -/
 def DetIsCyclotomic (ρ : GaloisRepAdic A) (p : ℕ) : Prop :=
   (p : A) ∈ IsLocalRing.maximalIdeal A ∧
     ∀ (n : ℕ) (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (a : ℕ),
       (∀ μ : AlgebraicClosure ℚ, μ ^ p ^ n = 1 → σ μ = μ ^ a) →
         LinearMap.det (ρ.ρ σ) - (a : A) ∈ Ideal.span {((p ^ n : ℕ) : A)}
 
+/-- At every place above the prime, there is a rank-one direct summand stable under decomposition
+and containing the image of inertia minus the identity. -/
 def IsOrdinaryAt (ρ : GaloisRepAdic A) (p : ℕ) : Prop :=
   ∀ P : ValuationSubring (AlgebraicClosure ℚ), P.LiesOverPrime p →
     ∃ L : Submodule A ρ.V,
@@ -81,6 +85,7 @@ def IsOrdinaryAt (ρ : GaloisRepAdic A) (p : ℕ) : Prop :=
       (∀ σ ∈ P.decompositionSubgroup ℚ, ∀ v ∈ L, ρ.ρ σ v ∈ L) ∧
       (∀ σ ∈ P.inertiaSubgroupIn ℚ, ∀ v : ρ.V, ρ.ρ σ v - v ∈ L)
 
+/-- Every inertia element above the prime has characteristic polynomial `(X - 1)^2`. -/
 def IsUnipotentOnInertiaAt (ρ : GaloisRepAdic A) (q : ℕ) : Prop :=
   ∀ P : ValuationSubring (AlgebraicClosure ℚ), P.LiesOverPrime q →
     ∀ σ ∈ P.inertiaSubgroupIn ℚ, LinearMap.charpoly (ρ.ρ σ) = (Polynomial.X - 1) ^ 2
@@ -89,11 +94,15 @@ end GaloisRepAdic
 
 namespace GaloisRep
 
+/-- The determinant is cyclotomic, the representation is ordinary at `p`, and it is unramified
+outside the specified set. -/
 def ordinaryCondition (p : ℕ) (S : Finset ℕ) :
     ∀ ⦃A : Type⦄ [CommRing A] [IsLocalRing A], GaloisRepAdic A → Prop :=
   fun _A _ _ ρ => ρ.DetIsCyclotomic p ∧ ρ.IsOrdinaryAt p ∧
     ∀ q : ℕ, q.Prime → q ∉ S → ρ.IsUnramifiedAt q
 
+/-- The ordinary deformation condition with unipotent inertia at the specified ramified primes
+other than `p`. -/
 def minimalOrdinaryCondition (p : ℕ) (S : Finset ℕ) :
     ∀ ⦃A : Type⦄ [CommRing A] [IsLocalRing A], GaloisRepAdic A → Prop :=
   fun _A _ _ ρ => ordinaryCondition p S ρ ∧

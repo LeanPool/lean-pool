@@ -125,11 +125,15 @@ noncomputable instance instModuleZModTorsionBy (n : ℕ) :
     exact Submodule.smul_torsionBy _ x
 
 variable (S) in
+/-- The torsion submodule is preserved by every automorphism of the coefficient field over the
+base. -/
 def IsGaloisStable {n : ℕ}
     (N : Submodule (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n)) : Prop :=
   ∀ (σ : K ≃ₐ[S] K), ∀ x ∈ N, σ • x ∈ N
 
 variable (S) in
+/-- The torsion module is nontrivial and has no Galois-stable submodules other than bottom and
+top. -/
 def GaloisRepIsIrreducible (W' : Affine R) (n : ℕ) : Prop :=
   Nontrivial (Submodule.torsionBy ℤ (W'⁄K).Point n) ∧
     ∀ N : Submodule (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n),

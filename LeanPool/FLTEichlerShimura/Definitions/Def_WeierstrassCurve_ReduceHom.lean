@@ -508,6 +508,7 @@ theorem reducePoint_add_def (P Q : (W.map A.subtype).toAffine.Point) :
         exact reducePoint_add_of_mem_of_notMem hΔ h₂ h₁ hx₂ hx₁
       · exact reducePoint_add_of_notMem_of_notMem hΔ h₁ h₂ hx₁ hx₂
 
+/-- The good-reduction map on elliptic-curve points bundled as an additive homomorphism. -/
 noncomputable def reduceHom :
     (W.map A.subtype).toAffine.Point →+ (W.map (residue A)).toAffine.Point where
   toFun := reducePoint hΔ

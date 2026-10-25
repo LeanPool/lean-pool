@@ -37,7 +37,7 @@ Let $R$ be a discrete valuation ring which is a domain, and let $K$ be a field t
 field of $R$ via a given $R$-algebra structure. Let $W$ be a Weierstrass curve over $K$ admitting
 good reduction over $R$ (the predicate `W.HasGoodReduction R`, which in particular makes $W$ minimal
 over $R$, so that the reduced curve `W.reduction R` over the residue field of $R$ and the map
-[`WeierstrassCurve.reducePoint_alt R W`](def/EllipticCurve_PointReduction.html#L22) are available).
+[`WeierstrassCurve.reducePointAlt R W`](def/EllipticCurve_PointReduction.html#L22) are available).
 Write $v$ for the valuation `IsDedekindDomain.HeightOneSpectrum.valuation K` attached to the maximal
 ideal of $R$ viewed as a height-one prime. Let $x_1,y_1,x_2,y_2 \in K$ be such that $(x_1,y_1)$ and
 $(x_2,y_2)$ are nonsingular points of the affine curve associated with $W$, and suppose $v(x_1) \le
@@ -93,7 +93,7 @@ variable [W.HasGoodReduction R]
 
 private theorem _root_.Deep.reducePoint_some {x y : K} (h : W.toAffine.Nonsingular x y)
     (hx : valuation K (maximalIdeal R) x ≤ 1) (hy : valuation K (maximalIdeal R) y ≤ 1) :
-    ∃ h', reducePoint_alt R W (.some x y h) = .some (reduceCoord R x) (reduceCoord R y) h' :=
+    ∃ h', reducePointAlt R W (.some x y h) = .some (reduceCoord R x) (reduceCoord R y) h' :=
   WeierstrassCurve.reducePoint_some R W h hx hy
 
 p2m_export "Deep" "reducePoint_some"
@@ -560,8 +560,8 @@ private theorem reduceCoord_eq_of_sub_lt {x y : K}
 theorem reducePoint_add_int_pole [DecidableEq K]
     {x₁ y₁ x₂ y₂ : K} (h₁ : W.toAffine.Nonsingular x₁ y₁) (h₂ : W.toAffine.Nonsingular x₂ y₂)
     (hx₁ : valuation K (maximalIdeal R) x₁ ≤ 1) (hx₂ : ¬ valuation K (maximalIdeal R) x₂ ≤ 1) :
-    reducePoint_alt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
-      = reducePoint_alt R W (.some x₁ y₁ h₁) := by
+    reducePointAlt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
+      = reducePointAlt R W (.some x₁ y₁ h₁) := by
   classical
   obtain ⟨s, hs, hvx₂, hvy₂⟩ := valuation_dichotomy R W h₂.1 hx₂
   have hy₁ : valuation K (maximalIdeal R) y₁ ≤ 1 := valuation_y_le_one R W h₁.1 hx₁
@@ -598,8 +598,8 @@ theorem solution
       x₁ ≤ 1)
     (hx₂ : ¬ IsDedekindDomain.HeightOneSpectrum.valuation K (IsDiscreteValuationRing.maximalIdeal R)
       x₂ ≤ 1) :
-    WeierstrassCurve.reducePoint_alt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
-      = WeierstrassCurve.reducePoint_alt R W (.some x₁ y₁ h₁) := by
+    WeierstrassCurve.reducePointAlt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
+      = WeierstrassCurve.reducePointAlt R W (.some x₁ y₁ h₁) := by
   classical
   exact
     Deep.reducePoint_add_int_pole R W h₁ h₂ hx₁ hx₂
@@ -621,8 +621,8 @@ theorem WeierstrassCurve.reducePoint_some_add_some_of_not_le_one
       x₁ ≤ 1)
     (hx₂ : ¬ IsDedekindDomain.HeightOneSpectrum.valuation K (IsDiscreteValuationRing.maximalIdeal R)
       x₂ ≤ 1) :
-    WeierstrassCurve.reducePoint_alt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
-      = WeierstrassCurve.reducePoint_alt R W (.some x₁ y₁ h₁) := by
+    WeierstrassCurve.reducePointAlt R W (.some x₁ y₁ h₁ + .some x₂ y₂ h₂)
+      = WeierstrassCurve.reducePointAlt R W (.some x₁ y₁ h₁) := by
   classical
   exact
     solution R W h₁ h₂ hx₁ hx₂

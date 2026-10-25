@@ -45,7 +45,7 @@ value of $f$ under the $\mathbb{Z}^{m0}$-valued adic valuation attached to the h
 $v$, and for $\omega\in\Omega_{F/K}$ write
 $\operatorname{ordDiff}_v(\omega)=\operatorname{ord}_v\bigl(\operatorname{diffCoeff}
 t\,\omega\bigr)$, where $t$ is the chosen element of $F$ with $\operatorname{ord}_v(t)=1$ produced
-by `uniformizer_alt` and $\operatorname{diffCoeff} t\,\omega$ is a chosen $g\in F$ with
+by `uniformizerAlt` and $\operatorname{diffCoeff} t\,\omega$ is a chosen $g\in F$ with
 $\omega=g\cdot D_{K,F}t$ (and $0$ if no such $g$ exists). The assertion is that for every $f\in F$
 whose Kähler differential $D_{K,F}f\in\Omega_{F/K}$ is nonzero one has
 $$\operatorname{ord}_v(f)-1\;\le\;\operatorname{ordDiff}_v\bigl(D_{K,F}f\bigr).$$ In particular the
@@ -76,7 +76,7 @@ namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place"
 namespace Place
 p2m_export "AlgebraicCurve.Place" "diffCoeff ordDiff ordDiff_def ord_uniformizer_alt \
-  uniformizer_alt ord ord_zero ord_mul ord_inv ord_zpow diffCoeff_smul_D_of_ord_eq_one \
+  uniformizerAlt ord ord_zero ord_mul ord_inv ord_zpow diffCoeff_smul_D_of_ord_eq_one \
   diffCoeff_smul_D_eq_of_ord_eq_one ord_diffCoeff_D_nonneg_of_perfectField exists_ord_eq_one \
   min_ord_le_ord_add ord_algebraMap"
 p2m_open "AlgebraicCurve.Place AlgebraicCurve"
@@ -88,18 +88,18 @@ private theorem _root_.AlgebraicCurve.Place.ordDiff_smul_impl [PerfectField K] (
     (v : AlgebraicCurve.Place K F)
     {g : F} (hg : g ≠ 0) {ω : Ω[F⁄K]} (hω : ω ≠ 0) :
     v.ordDiff (g • ω) = v.ord g + v.ordDiff ω := by
-  have ht : v.ord v.uniformizer_alt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
-  have hrep : diffCoeff v.uniformizer_alt ω • KaehlerDifferential.D K F v.uniformizer_alt = ω :=
+  have ht : v.ord v.uniformizerAlt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
+  have hrep : diffCoeff v.uniformizerAlt ω • KaehlerDifferential.D K F v.uniformizerAlt = ω :=
     v.diffCoeff_smul_D_of_ord_eq_one x ht ω
-  have hgo : g • ω = (g * diffCoeff v.uniformizer_alt ω) • KaehlerDifferential.D K F
-    v.uniformizer_alt :=
+  have hgo : g • ω = (g * diffCoeff v.uniformizerAlt ω) • KaehlerDifferential.D K F
+    v.uniformizerAlt :=
     by
     conv_lhs => rw [← hrep]
     rw [smul_smul]
-  have hco : diffCoeff v.uniformizer_alt (g • ω) = g * diffCoeff v.uniformizer_alt ω := by
+  have hco : diffCoeff v.uniformizerAlt (g • ω) = g * diffCoeff v.uniformizerAlt ω := by
     rw [hgo]
     exact v.diffCoeff_smul_D_eq_of_ord_eq_one x ht _
-  have hc0 : diffCoeff v.uniformizer_alt ω ≠ 0 := by
+  have hc0 : diffCoeff v.uniformizerAlt ω ≠ 0 := by
     intro h0
     apply hω
     rw [← hrep, h0, zero_smul]
@@ -114,8 +114,8 @@ private theorem _root_.AlgebraicCurve.Place.H2_pos [PerfectField K] (x : F)
     [FiniteDimensional (IntermediateField.adjoin K ({x} : Set F)) F] (v : AlgebraicCurve.Place K F)
     {f : F} (hD : KaehlerDifferential.D K F f ≠ 0) (hn : 0 ≤ v.ord f) :
     v.ord f - 1 ≤ v.ordDiff (KaehlerDifferential.D K F f) := by
-  have ht : v.ord v.uniformizer_alt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
-  set t := v.uniformizer_alt with htdef
+  have ht : v.ord v.uniformizerAlt = 1 := v.ord_uniformizer_alt v.exists_ord_eq_one
+  set t := v.uniformizerAlt with htdef
   have ht0 : t ≠ 0 := by
     intro h0
     rw [h0, v.ord_zero] at ht

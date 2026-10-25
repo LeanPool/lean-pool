@@ -623,6 +623,7 @@ section Deficit
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
+/-- The residual of the quotient curve equation after inserting the candidate Vélu coordinates. -/
 @[expose] public def veluDeficit (S : Finset (F × F)) (r s : F) : F :=
   (W.veluY S r s) ^ 2 + W.a₁ * (W.veluX S r) * (W.veluY S r s) + W.a₃ * (W.veluY S r s)
     - ((W.veluX S r) ^ 3 + W.a₂ * (W.veluX S r) ^ 2
@@ -660,6 +661,8 @@ section ConstancyCarrier
 
 variable (F : Type*) [Field F] [DecidableEq F]
 
+/-- For a cyclic kernel of order `p`, the candidate Vélu coordinates satisfy the quotient
+equation away from the kernel's `x`-coordinates. -/
 @[expose] public def VeluDeficitConstancyAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),
@@ -1426,6 +1429,7 @@ def veluDeficitLin (S : Finset (F × F)) (r s : F) : F :=
   -(W.veluY S r s - s) * W.veluGy r s - (W.veluX S r - r) * W.veluGx r s
     + 5 * W.veluTSum S * r + W.b₂ * W.veluTSum S + 7 * W.veluWSum S
 
+/-- The nonlinear part of the equation residual in the Vélu coordinate corrections. -/
 @[expose] public def veluDeficitQuad (S : Finset (F × F)) (r s : F) : F :=
   (W.veluY S r s - s) ^ 2 + W.a₁ * (W.veluX S r - r) * (W.veluY S r s - s)
     - (3 * r + W.a₂) * (W.veluX S r - r) ^ 2 - (W.veluX S r - r) ^ 3
@@ -1456,6 +1460,8 @@ section SumDecomp
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
+/-- The nonlinear residual for the whole summing set minus the sum of the singleton nonlinear
+residuals. -/
 @[expose] public def veluDeficitCrossQuad (S : Finset (F × F)) (r s : F) : F :=
   W.veluDeficitQuad S r s - ∑ A ∈ S, W.veluDeficitQuad {A} r s
 
@@ -1647,11 +1653,14 @@ section FunctionFieldLift
 
 variable {F : Type*} [Field F] (W : Affine F)
 
+/-- Map the kernel-coordinate summing set into the curve's function field by extending constants. -/
 @[expose] public def liftSummingSet
     (S : Finset (F × F)) : Finset (W.FunctionField × W.FunctionField) :=
   S.map ⟨Prod.map (algebraMap F W.FunctionField) (algebraMap F W.FunctionField),
     (algebraMap F W.FunctionField).injective.prodMap (algebraMap F W.FunctionField).injective⟩
 
+/-- The candidate Vélu equation residual evaluated at the generic point as a function-field
+element. -/
 @[expose] public def veluDeficitFun (S : Finset (F × F)) : W.FunctionField :=
   (W.map (algebraMap F W.FunctionField)).veluDeficit (W.liftSummingSet S)
     (polyToFunctionField W X) (yGen W)
@@ -1786,6 +1795,8 @@ section RRCarrier
 
 variable (F : Type*) [Field F] [DecidableEq F]
 
+/-- For a cyclic kernel of order `p`, the equation residual is constant on curve points away from
+the kernel's `x`-coordinates. -/
 @[expose] public def VeluDeficitIsConstantAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),
@@ -1802,6 +1813,8 @@ variable {F : Type*} [Field F]
 variable (F)
 variable [DecidableEq F]
 
+/-- Any constant equal to the cyclic-kernel equation residual at every allowed curve point must
+be zero. -/
 @[expose] public def VeluDeficitConstantIsZeroAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),
@@ -2584,6 +2597,8 @@ section CrossQuadCarrier
 
 variable (F : Type*) [Field F] [DecidableEq F]
 
+/-- After clearing fourth powers of the kernel denominators, the cross residual is a polynomial
+of degree less than four times the summing-set length. -/
 @[expose] public def VeluDeficitCrossQuadProdDegLtAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),
@@ -2658,6 +2673,8 @@ section LiouvilleCarriers
 
 variable (F : Type*) [Field F] [DecidableEq F]
 
+/-- The cyclic-kernel residual at the generic point has nonnegative order at every function-field
+place. -/
 @[expose] public def VeluDeficitFunOrdNonnegAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),
@@ -2666,6 +2683,8 @@ variable (F : Type*) [Field F] [DecidableEq F]
           0 ≤ v.ord (W.toAffine.veluDeficitFun
             (W.oddOrderSummingSet (Point.some x₀ y₀ h₀) ((p - 1) / 2)))
 
+/-- If the generic cyclic-kernel residual is a scalar, its value at every allowed curve point is
+that same scalar. -/
 @[expose] public def VeluDeficitFunSpecializesConstAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),
@@ -2882,11 +2901,14 @@ section AlphaSqCross
 
 variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F)
 
+/-- The cross residual from the quadratic `x`-correction and its coupling with the total Vélu
+coefficient sum. -/
 @[expose] public def veluDeficitCrossQuadAlphaSq (S : Finset (F × F)) (r : F) : F :=
   (-(3 * r + W.a₂) * (W.veluX S r - r) ^ 2 + 5 * W.veluTSum S * (W.veluX S r - r))
     - ∑ A ∈ S, (-(3 * r + W.a₂) * (W.veluX {A} r - r) ^ 2
         + 5 * W.veluTSum {A} * (W.veluX {A} r - r))
 
+/-- The cross residual remaining after removing the quadratic `x`-correction component. -/
 @[expose] public def veluDeficitCrossQuadCubeBeta (S : Finset (F × F)) (r s : F) : F :=
   W.veluDeficitCrossQuad S r s - W.veluDeficitCrossQuadAlphaSq S r
 
@@ -2978,6 +3000,8 @@ section Reduction
 
 variable (F : Type*) [Field F] [DecidableEq F]
 
+/-- After clearing fourth-power kernel denominators, the cubic-and-`y` cross residual has
+polynomial degree below four times the summing-set length. -/
 @[expose] public def VeluDeficitCrossQuadCubeBetaDegLtAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),
@@ -3138,6 +3162,8 @@ section ResidueCarrier
 
 variable (F : Type*) [Field F] [DecidableEq F]
 
+/-- Evaluating the generic cyclic-kernel residual at the place of an allowed affine point gives
+the residual computed at its coordinates. -/
 @[expose] public def VeluDeficitFunEvalAtPlaceAt
     (hDD : ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 → IsDedekindDomain W.toAffine.CoordinateRing)
     (p : ℕ) : Prop :=
@@ -3256,9 +3282,13 @@ section Decomp
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
+/-- The cube of the total Vélu `x`-correction minus the sum of the cubes of the singleton
+corrections. -/
 @[expose] public def veluDeficitCrossQuadAlphaCube (S : Finset (F × F)) (r : F) : F :=
   (W.veluX S r - r) ^ 3 - ∑ A ∈ S, (W.veluX {A} r - r) ^ 3
 
+/-- The cross residual remaining after removing both the quadratic and cubic contributions in the
+`x`-correction. -/
 @[expose] public def veluDeficitCrossQuadBetaOnly
     (S : Finset (F × F)) (r s : F) : F :=
   W.veluDeficitCrossQuadCubeBeta S r s + W.veluDeficitCrossQuadAlphaCube S r
@@ -3412,6 +3442,8 @@ section Reduction
 
 variable (F : Type*) [Field F] [DecidableEq F]
 
+/-- The cleared cross residual involving `y`-corrections is a polynomial in `x` of degree below
+four times the summing-set length. -/
 @[expose] public def VeluDeficitCrossQuadBetaOnlyDegLtAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),
@@ -4195,6 +4227,8 @@ section Reduction
 
 variable (F : Type*) [Field F] [DecidableEq F]
 
+/-- The cleared `y`-correction cross residual is `M(x) + N(x)y`, with the degree of `M` below
+four times the summing-set length. -/
 @[expose] public def VeluDeficitCrossQuadBetaSDecompDegLtAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),
@@ -4434,9 +4468,13 @@ section TwoCrossTypes
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
+/-- The square of the total Vélu `y`-correction minus the sum of the squares of the singleton
+corrections. -/
 @[expose] public def veluDeficitCrossQuadBetaSq (S : Finset (F × F)) (r s : F) : F :=
   (W.veluY S r s - s) ^ 2 - ∑ A ∈ S, (W.veluY {A} r s - s) ^ 2
 
+/-- The product of the total Vélu coordinate corrections minus the sum of their singleton
+products. -/
 @[expose] public def veluDeficitCrossQuadAlphaBeta (S : Finset (F × F)) (r s : F) : F :=
   (W.veluX S r - r) * (W.veluY S r s - s)
     - ∑ A ∈ S, (W.veluX {A} r - r) * (W.veluY {A} r s - s)
@@ -4461,6 +4499,8 @@ section Reduction
 
 variable (F : Type*) [Field F] [DecidableEq F]
 
+/-- The cleared squared-`y`-correction cross term is `M(x) + N(x)y`, with the degree of `M` below
+four times the summing-set length. -/
 @[expose] public def VeluDeficitCrossQuadBetaSqDecompDegLtAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),
@@ -4474,6 +4514,8 @@ variable (F : Type*) [Field F] [DecidableEq F]
                     (r - A.1)) ^ 4
               = M.eval r + N.eval r * s
 
+/-- The cleared mixed-coordinate cross term is `M(x) + N(x)y`, with the degree of `M` below four
+times the summing-set length. -/
 @[expose] public def VeluDeficitCrossQuadAlphaBetaDecompDegLtAt (p : ℕ) : Prop :=
   ∀ (W : WeierstrassCurve F), W.Δ ≠ 0 →
     ∀ (x₀ y₀ : F) (h₀ : W.toAffine.Nonsingular x₀ y₀),

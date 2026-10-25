@@ -73,14 +73,19 @@ namespace ModularCurve
 
 variable (κ : Type*) [Field κ] (M : ℕ)
 
+/-- A weight-one form of level `Γ₁(M)` with integral expansion nonzero over the specified
+coefficient field. -/
 structure IntegralWeightOneForm where
+  /-- The weight-one modular form underlying the integral expansion data. -/
   form : ModularForm (Gamma1 M : Subgroup (GL (Fin 2) ℝ)) 1
+  /-- The integral power series representing the weight-one form's expansion. -/
   series : PowerSeries ℤ
   isIntegralQExp : IsIntegralQExp form series
   intSeriesC_ne_zero : intSeriesC κ series ≠ 0
 
 variable {κ M}
 
+/-- The inverse of the integral weight-one form's expansion over the coefficient field. -/
 def IntegralWeightOneForm.hasseRootFn (w : IntegralWeightOneForm κ M) : LaurentSeries κ :=
   (intSeriesC κ w.series)⁻¹
 
@@ -90,6 +95,7 @@ theorem IntegralWeightOneForm.hasseRootFn_ne_zero (w : IntegralWeightOneForm κ 
 
 variable (κ M)
 
+/-- Adjoin the inverse weight-one expansion to the level-`Γ₁(M)` function field. -/
 def igusaFunctionFieldX1C (w : IntegralWeightOneForm κ M) : IntermediateField κ (LaurentSeries κ) :=
   IgusaCover.igusaFunctionField (x1FunctionFieldC κ M) w.hasseRootFn
 
@@ -101,6 +107,8 @@ theorem hasseRootFn_mem_igusaFunctionFieldX1C (w : IntegralWeightOneForm κ M) :
     w.hasseRootFn ∈ igusaFunctionFieldX1C κ M w :=
   IgusaCover.mem_igusaFunctionField _ _
 
+/-- Diamond-action data fixing the level-`Γ₁(M)` field and scaling the adjoined inverse
+weight-one expansion with exponent `-1`. -/
 abbrev IgusaDiamondDataX1C (w : IntegralWeightOneForm κ M) (p : ℕ) [Fact p.Prime] [CharP κ p] :=
   IgusaCover.IgusaDiamondData p (-1) (x1FunctionFieldC κ M) w.hasseRootFn
 

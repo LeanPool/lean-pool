@@ -75,6 +75,8 @@ open UpperHalfPlane CongruenceSubgroup Filter Topology Period
 
 open scoped MatrixGroups
 
+/-- The function is a primitive of the weight-two cusp form, vanishes at infinity, has constant
+group increments and finite limits at all cusps. -/
 def HasEquivariantPrimitive (N : ℕ) (f : CuspForm (Gamma0 N) 2) (F : ℍ → ℂ) : Prop :=
   (∀ τ : ℍ, HasDerivAt (F ∘ ofComplex) (f τ) ↑τ) ∧
     Tendsto F atImInfty (𝓝 0) ∧
@@ -82,6 +84,8 @@ def HasEquivariantPrimitive (N : ℕ) (f : CuspForm (Gamma0 N) 2) (F : ℍ → �
     ∀ δ : SL(2, ℤ), ∃ L : ℂ, Tendsto (fun w : ℍ => F (δ • w)) atImInfty (𝓝 L)
 
 open Classical in
+/-- The additive period character of a chosen equivariant primitive, or zero if no such primitive
+exists. -/
 noncomputable def periodMap (N : ℕ) (f : CuspForm (Gamma0 N) 2) : Additive (Gamma0 N) →+ ℂ :=
   if h : ∃ F : ℍ → ℂ, HasEquivariantPrimitive N f F then h.choose_spec.2.2.1.periodHom else 0
 

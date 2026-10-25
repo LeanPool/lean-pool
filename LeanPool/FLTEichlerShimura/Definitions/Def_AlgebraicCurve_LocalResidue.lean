@@ -91,22 +91,28 @@ namespace Place
 
 variable (v : Place K F)
 
+/-- A residue-field-valued linear functional annihilating integral functions and extracting the
+simple-pole coefficient at a uniformizer. -/
 structure LocalResidueData where
+  /-- The residue-field-valued linear functional used to extract the simple-pole coefficient. -/
   res : F →ₗ[K] v.ResidueField
   res_of_mem : ∀ f : F, f ∈ v.toValuationSubring → res f = 0
   res_simplePole : ∀ (f : F) (hf : v.uniformizer * f ∈ v.toValuationSubring),
     res f = IsLocalRing.residue _ ⟨v.uniformizer * f, hf⟩
 
+/-- Local residue data that also annihilate the higher negative powers of the chosen uniformizer. -/
 structure CanonicalLocalResidueDataK extends v.LocalResidueData where
   res_higherPoleMonomial : ∀ (n : ℕ), 1 ≤ n → res (v.uniformizer ^ (n + 1))⁻¹ = 0
 
 end Place
 
 variable (K F) in
+/-- Local residue data exist at every place. -/
 class HasLocalResidue : Prop where
   exists_data : ∀ v : Place K F, Nonempty v.LocalResidueData
 
 variable (K F) in
+/-- Canonical local residue data exist at every place. -/
 class HasCanonicalLocalResidueK : Prop where
   exists_data : ∀ v : Place K F, Nonempty v.CanonicalLocalResidueDataK
 
@@ -115,7 +121,9 @@ instance (priority := 100) instHasLocalResidue_of_hasCanonicalLocalResidueK
   ⟨fun v => (HasCanonicalLocalResidueK.exists_data v).map (·.toLocalResidueData)⟩
 
 variable (K F) in
+/-- A choice of canonical local residue data at every place. -/
 class HasCanonicalLocalResidueKStar where
+  /-- The chosen family of canonical local residue data. -/
   dataKStar : ∀ v : Place K F, v.CanonicalLocalResidueDataK
 
 instance (priority := 100) instHasCanonicalLocalResidueK_of_hasCanonicalLocalResidueKStar
@@ -134,6 +142,7 @@ private theorem mem_of_ord_nonneg_localResidueAux {f : F} (hf : f ≠ 0) (h : 0 
     zpow_natCast]
   exact mul_mem (u : v.toValuationSubring).2 (pow_mem (π : v.toValuationSubring).2 _)
 
+/-- The local residue functional supplied by the chosen canonical residue data. -/
 noncomputable def localResidue [HasCanonicalLocalResidueKStar K F] :
     F →ₗ[K] v.ResidueField :=
   (HasCanonicalLocalResidueKStar.dataKStar v).res
@@ -172,6 +181,8 @@ theorem gate_localResidue_uniformizer_inv [HasCanonicalLocalResidueKStar K F] :
 
 end Place
 
+/-- The trace to the constant field of the local residue of an adelic coefficient times a
+differential. -/
 def kaehlerResidueTerm [HasCanonicalLocalResidueKStar K F]
     (ω : Ω[F⁄K]) (α : Place K F → F) (v : Place K F) : K :=
   Algebra.trace K v.ResidueField (v.localResidue (α v * v.differentialCoeff ω))
@@ -225,6 +236,7 @@ theorem single_mem_adeleSpace [DecidableEq (Place K F)]
       (single_mem_adeleBdd v g (Finsupp.single v (-v.ord g)) ?_)
     rw [v.adicValuation_eq_exp_neg_ord hg, Finsupp.single_eq_same]
 
+/-- The family supported at one place with the specified function-field value there. -/
 def adeleSingle [DecidableEq (Place K F)]
     (v : Place K F) (g : F) : adeleSpace K F :=
   ⟨Pi.single v g, single_mem_adeleSpace v g⟩
@@ -237,6 +249,7 @@ theorem adeleSingle_coe [DecidableEq (Place K F)]
 end Single
 
 variable (K F) in
+/-- The trace from each residue field to the constant field is a nonzero linear map. -/
 class HasSeparableResidue : Prop where
   trace_ne_zero : ∀ v : Place K F, (Algebra.trace K v.ResidueField : _ →ₗ[K] K) ≠ 0
 
@@ -244,10 +257,13 @@ section CanonicalKResidueTerm
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
+/-- The traced local residue of a function times a differential, using explicit canonical residue
+data. -/
 def Place.kaehlerResidueTermK (v : Place K F) (R : v.CanonicalLocalResidueDataK)
     (ω : Ω[F⁄K]) (f : F) : K :=
   Algebra.trace K v.ResidueField (R.res (f * v.differentialCoeff ω))
 
+/-- The local residue term obtained from a family of explicitly specified canonical residue data. -/
 def kaehlerResidueTermKFam (Rfam : ∀ v : Place K F, v.CanonicalLocalResidueDataK)
     (ω : Ω[F⁄K]) (α : Place K F → F) (v : Place K F) : K :=
   v.kaehlerResidueTermK (Rfam v) ω (α v)
@@ -322,6 +338,8 @@ theorem kaehlerResidueTermKFam_support_finite_of_adeleSpace
   obtain ⟨D, hD⟩ := mem_adeleSpace_iff.mp hα
   exact kaehlerResidueTermKFam_support_finite Rfam hω hD
 
+/-- The Weil functional obtained by summing the traced local residues against a nonzero Kähler
+differential. -/
 def weilOfKaehlerK (Rfam : ∀ v : Place K F, v.CanonicalLocalResidueDataK)
     {ω : Ω[F⁄K]} (hω : ω ≠ 0) : Module.Dual K (adeleSpace K F) where
   toFun α := ∑ᶠ v, kaehlerResidueTermKFam Rfam ω (α : Place K F → F) v
@@ -355,6 +373,8 @@ theorem weilOfKaehlerK_vanish_adeleBdd_canonical
 
 variable (K F)
 
+/-- For every choice of canonical residue data, the summed residue functional of a nonzero
+differential vanishes on global functions. -/
 def ResidueTheoremK : Prop :=
   ∀ (Rfam : ∀ v : Place K F, v.CanonicalLocalResidueDataK) [HasPrincipalDivisors K F]
     {ω : Ω[F⁄K]} (hω : ω ≠ 0) (f : F),

@@ -74,10 +74,14 @@ namespace ModularForm
 
 variable (M q : ℕ)
 
+/-- Bézout data for an Atkin-Lehner matrix, with `M = q * R` and `q * a - R * b = 1`. -/
 structure AtkinLehnerDatum : Type where
+  /-- The complementary factor `R` in the factorization `M = q * R`. -/
   R : ℕ
   hM : M = q * R
+  /-- The Bézout coefficient multiplying `q` in `q * a - R * b = 1`. -/
   a : ℤ
+  /-- The Bézout coefficient multiplying `R` in `q * a - R * b = 1`. -/
   b : ℤ
   bezout : (q : ℤ) * a - (R : ℤ) * b = 1
 
@@ -99,6 +103,7 @@ lemma R_pos [NeZero M] : 0 < W.R := by
   · exact absurd (W.hM.trans (Nat.mul_eq_zero.mpr (Or.inr h))) (NeZero.ne M)
   · exact h
 
+/-- The Atkin-Lehner matrix with rows `(q * a, b)` and `(q * R, q)`. -/
 def mat : Matrix (Fin 2) (Fin 2) ℤ := !![(q : ℤ) * W.a, W.b; (q : ℤ) * (W.R : ℤ), (q : ℤ)]
 
 @[simp] lemma det_mat : W.mat.det = (q : ℤ) := by
@@ -109,6 +114,7 @@ lemma mat_lowerLeft : W.mat 1 0 = (M : ℤ) := by
   rw [mat, W.hM_int]
   simp
 
+/-- The matrix satisfying `mat² = q • sqUnit`. -/
 def sqUnit : Matrix (Fin 2) (Fin 2) ℤ :=
   !![(q : ℤ) * W.a ^ 2 + (W.R : ℤ) * W.b, W.b * (W.a + 1);
      (q : ℤ) * (W.R : ℤ) * (W.a + 1), (W.R : ℤ) * W.b + (q : ℤ)]
@@ -133,6 +139,7 @@ theorem mat_sq : W.mat * W.mat = (q : ℤ) • W.sqUnit := by
   rw [sqUnit, Matrix.det_fin_two_of]
   linear_combination ((q : ℤ) * W.a - (W.R : ℤ) * W.b + 1) * W.bezout
 
+/-- The matrix `sqUnit` bundled as an element of the integral special linear group. -/
 def sqUnitSL : SL(2, ℤ) := ⟨W.sqUnit, W.det_sqUnit⟩
 
 @[simp] lemma sqUnitSL_coe : (W.sqUnitSL : Matrix (Fin 2) (Fin 2) ℤ) = W.sqUnit := rfl
@@ -146,6 +153,7 @@ lemma sqUnitSL_mem : W.sqUnitSL ∈ Gamma0 M := by
   push_cast
   simp
 
+/-- The Atkin-Lehner matrix regarded as an invertible real matrix. -/
 def alGL [NeZero M] : GL (Fin 2) ℝ :=
   Matrix.GeneralLinearGroup.mkOfDetNeZero (W.mat.map (algebraMap ℤ ℝ)) (by
     have h : ((W.mat).map (algebraMap ℤ ℝ)).det = (algebraMap ℤ ℝ) W.mat.det := by
@@ -176,6 +184,7 @@ lemma σ_alGL_apply [NeZero M] (z : ℂ) : σ W.alGL z = z := by
   rw [UpperHalfPlane.σ, ite_eq_left W.det_alGL_pos]
   simp
 
+/-- The Atkin-Lehner matrix regarded as an invertible rational matrix. -/
 def alGLQ [NeZero M] : GL (Fin 2) ℚ :=
   Matrix.GeneralLinearGroup.mkOfDetNeZero (W.mat.map (algebraMap ℤ ℚ)) (by
     have h : ((W.mat).map (algebraMap ℤ ℚ)).det = (algebraMap ℤ ℚ) W.mat.det := by
@@ -194,6 +203,7 @@ lemma alGLQ_map_castHom [NeZero M] : (W.alGLQ).map (Rat.castHom ℝ) = W.alGL :=
 
 end AtkinLehnerDatum
 
+/-- The weight-`k` slash action of the matrix associated to the Atkin-Lehner datum. -/
 def alSlash {M q : ℕ} (W : AtkinLehnerDatum M q) (k : ℤ) [NeZero M] (f : ℍ → ℂ) : ℍ → ℂ :=
   f ∣[k] W.alGL
 

@@ -72,6 +72,8 @@ noncomputable section
 
 namespace FLT.FundamentalDomainVolume
 
+/-- The horizontal band `|re z| ≤ A`, `a * 2 ^ n ≤ im z ≤ a * 2 ^ (n + 1)` in the upper
+half-plane. -/
 def band (A a : ℝ) (n : ℕ) : Set ℍ :=
   {z : ℍ | |z.re| ≤ A ∧ a * 2 ^ n ≤ z.im ∧ z.im ≤ a * 2 ^ (n + 1)}
 

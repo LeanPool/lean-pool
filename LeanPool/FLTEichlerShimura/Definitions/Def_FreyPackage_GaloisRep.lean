@@ -70,6 +70,7 @@ variable {R : Type r} {S : Type s} {K : Type v} [CommRing R] [CommRing S] [Field
   [DecidableEq K] {W' : Affine R} [Algebra R S] [Algebra R K] [Algebra S K]
   [IsScalarTower R S K]
 
+/-- The Galois representation on the `n`-torsion subgroup of the affine point group. -/
 noncomputable def galoisRep (W' : Affine R) (n : ℕ) :
     (K ≃ₐ[S] K) →*
       (Submodule.torsionBy ℤ (W'⁄K).Point n) ≃ₗ[ZMod n] (Submodule.torsionBy ℤ (W'⁄K).Point n) :=
@@ -87,9 +88,11 @@ namespace FreyPackage
 open WeierstrassCurve.Affine.Point
 open scoped WeierstrassCurve.Affine
 
+/-- Classical decidable equality on the algebraic closure used in the Frey-curve representation. -/
 noncomputable local instance instDecEqQbarRepresentation : DecidableEq (AlgebraicClosure ℚ) :=
   Classical.decEq _
 
+/-- The Galois action on the `p`-torsion of the Frey curve attached to the package. -/
 noncomputable def freyGaloisRep (P : FreyPackage) :
     (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →*
       (Submodule.torsionBy ℤ (P.freyCurve⁄(AlgebraicClosure ℚ)).Point P.p) ≃ₗ[ZMod P.p]

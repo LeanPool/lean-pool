@@ -71,6 +71,8 @@ open ModularCurve WeierstrassCurve Polynomial
 
 namespace ModularCurve.TatePoint
 
+/-- Every nonsingular full-kernel quotient by a point of exact order `N` has `j`-invariant a root
+of the specialized modular polynomial. -/
 abbrev FullKernelIsRootAt (N : ℕ) [NeZero N] : Prop :=
   ∀ [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
     (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
@@ -82,6 +84,8 @@ abbrev FullKernelIsRootAt (N : ℕ) [NeZero N] : Prop :=
       (Int.castRingHom (HahnSeries ℚ (AlgebraicClosure ℚ))) W.j)).IsRoot
       (W.fullKernelQuotient Q N).j
 
+/-- For transcendental `j`, equality of full-kernel quotient invariants implies equality of the
+cyclic subgroups of order `N`. -/
 abbrev FullKernelInjAt (N : ℕ) : Prop :=
   ∀ [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
     (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
@@ -94,6 +98,8 @@ abbrev FullKernelInjAt (N : ℕ) : Prop :=
       (W.fullKernelQuotient Q N).j = (W.fullKernelQuotient Q' N).j),
     AddSubgroup.zmultiples Q = AddSubgroup.zmultiples Q'
 
+/-- Over algebraically closed fields of characteristic different from two, full-kernel quotients
+by points of exact order `N` have nonzero discriminant. -/
 abbrev FullKernelDiscAt (N : ℕ) : Prop :=
   ∀ {L : Type} [Field L] [DecidableEq L] [IsAlgClosed L], (2 : L) ≠ 0 →
     ∀ (W : WeierstrassCurve L) [W.IsElliptic] (Q : W.toAffine.Point),
@@ -108,6 +114,8 @@ theorem isElliptic_fullKernelQuotient_cycSubGen (E : WeierstrassCurve H) [E.IsEl
   ⟨isUnit_iff_ne_zero.mpr (hW3 two_ne_zero E (cycSubGen E G) (addOrderOf_cycSubGen E G))⟩
 
 open scoped Classical in
+/-- The root associated to a cyclic subgroup of order `N`, using the supplied quotient-root and
+discriminant hypotheses. -/
 def cycSubRootN (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ} [NeZero N]
     (hW1 : FullKernelIsRootAt N)
     (hW3 : FullKernelDiscAt N) (data : ModularPolynomialData N) (G : CycSubH E N)
@@ -149,6 +157,8 @@ theorem cycSubRootN_bijective (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ} 
   rw [natCard_cycSubH]
   exact natCard_rootsAt_le data E.j
 
+/-- Identify roots and cyclic subgroups for transcendental `j`, using the supplied full-kernel
+root, injectivity, and discriminant hypotheses. -/
 def rootsEquivCycSubHN (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ} [NeZero N]
     (hW1 : FullKernelIsRootAt N) (hW2 : FullKernelInjAt N) (hW3 : FullKernelDiscAt N)
     (data : ModularPolynomialData N) (hj : Transcendental Qbar E.j)
@@ -168,6 +178,8 @@ theorem rootsEquivCycSubHN_apply_eq_iff (E : WeierstrassCurve H) [E.IsElliptic] 
     rootsEquivCycSubHN E hW1 hW2 hW3 data hj r = G ↔ r = cycSubRootN E hW1 hW3 data G := by
   rw [← rootsEquivCycSubHN_symm_apply E hW1 hW2 hW3 data hj G, Equiv.eq_symm_apply]
 
+/-- The root–cyclic-subgroup dictionary for the nearby curve, using the supplied full-kernel
+hypotheses at level `N`. -/
 def dictN (N : ℕ) [NeZero N] (data : ModularPolynomialData N) (j₀ : Qbar)
     (hW1 : FullKernelIsRootAt N)
     (hW2 : FullKernelInjAt N) (hW3 : FullKernelDiscAt N) :

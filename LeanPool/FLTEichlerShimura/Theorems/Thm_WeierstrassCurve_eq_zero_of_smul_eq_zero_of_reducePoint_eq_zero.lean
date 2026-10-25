@@ -41,7 +41,7 @@ form the reduced curve `W.reduction R` over the residue field of $R$). Let $n$ b
 whose image in `IsLocalRing.ResidueField R` is nonzero, and let $P$ be a point of the affine curve
 `W.toAffine`, i.e. either the point at infinity or a pair $(x,y)$ of elements of $K$ satisfying the
 nonsingular affine equation. Assume $n \cdot P = 0$ in the group of affine points, and that
-[`WeierstrassCurve.reducePoint_alt R W P = 0`](def/EllipticCurve_PointReduction.html#L22), i.e. $P$
+[`WeierstrassCurve.reducePointAlt R W P = 0`](def/EllipticCurve_PointReduction.html#L22), i.e. $P$
 dies under the reduction map which sends the point at infinity to the point at infinity, and sends
 an affine point $(x,y)$ to the point with coordinates $(\overline{x},\overline{y})$ — each
 coordinate being the residue of a chosen $R$-preimage when one exists and $0$ otherwise — provided
@@ -159,7 +159,7 @@ theorem solution
     {K : Type*} [Field K] [DecidableEq K] [Algebra R K] [IsFractionRing R K]
     (W : WeierstrassCurve K) [W.HasGoodReduction R] {n : ℕ}
     (hn : (n : IsLocalRing.ResidueField R) ≠ 0)
-    (P : W.toAffine.Point) (hP : n • P = 0) (h0 : WeierstrassCurve.reducePoint_alt R W P = 0) :
+    (P : W.toAffine.Point) (hP : n • P = 0) (h0 : WeierstrassCurve.reducePointAlt R W P = 0) :
     P = 0 := by
   cases P with
   | zero => rfl
@@ -201,7 +201,7 @@ theorem WeierstrassCurve.eq_zero_of_smul_eq_zero_of_reducePoint_eq_zero
     {K : Type*} [Field K] [DecidableEq K] [Algebra R K] [IsFractionRing R K]
     (W : WeierstrassCurve K) [W.HasGoodReduction R] {n : ℕ}
     (hn : (n : IsLocalRing.ResidueField R) ≠ 0)
-    (P : W.toAffine.Point) (hP : n • P = 0) (h0 : WeierstrassCurve.reducePoint_alt R W P = 0) :
+    (P : W.toAffine.Point) (hP : n • P = 0) (h0 : WeierstrassCurve.reducePointAlt R W P = 0) :
     P = 0 :=
   solution R W hn P hP h0
 

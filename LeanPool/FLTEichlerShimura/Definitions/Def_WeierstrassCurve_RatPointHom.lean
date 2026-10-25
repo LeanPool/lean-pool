@@ -104,6 +104,8 @@ theorem ratPointMap_add [DecidableEq F] [DecidableEq k] (P Q : W₀.toAffine.Poi
     exact Affine.Point.some_congr (by rw [Affine.map_slope, Affine.map_addX])
       (by rw [Affine.map_slope, Affine.map_addY]) _ _
 
+/-- The additive homomorphism on rational points induced by base change along a field
+homomorphism. -/
 @[simps]
 def ratPointHom [DecidableEq F] [DecidableEq k] :
     W₀.toAffine.Point →+ (W₀.map f).toAffine.Point where

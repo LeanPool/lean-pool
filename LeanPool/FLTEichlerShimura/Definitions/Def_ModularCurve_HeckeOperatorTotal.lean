@@ -73,6 +73,8 @@ open AlgebraicCurve
 
 variable (L : Type*) [Field L] [Algebra ℚ L] (N ℓ : ℕ) [NeZero N] [NeZero ℓ]
 
+/-- The two degeneracy maps satisfy the integrality, finiteness, fundamental-identity, and norm
+hypotheses required for the divisor-class correspondence. -/
 def HeckeInputsAlong : Prop :=
   ∃ (_ : HeckeAlphaBarIntegral L N ℓ) (hβ : HeckeBetaBarIntegral L N ℓ)
     (_ : HasPrincipalDivisors L (laurentBaseChange L (modularFunctionFieldFull (N * ℓ))))
@@ -81,6 +83,8 @@ def HeckeInputsAlong : Prop :=
       NormFormulaAlong L (heckeAlphaBar L N ℓ) hfin
 
 open Classical in
+/-- The Hecke correspondence on divisor classes when the required geometric hypotheses hold, and
+the zero homomorphism otherwise. -/
 def heckeOperatorAlong :
     Pic0 L (laurentBaseChange L (modularFunctionFieldFull N)) →+
       Pic0 L (laurentBaseChange L (modularFunctionFieldFull N)) :=

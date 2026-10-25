@@ -57,6 +57,8 @@ namespace AlgebraicCurve
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
+/-- Differentials of any two uniformizers at a place differ by multiplication by a function of
+order zero. -/
 @[expose] public def OrdDifferentialWellDefined : Prop :=
   ∀ (v : Place K F) (π π' : F), v.ord π = 1 → v.ord π' = 1 →
     ∃ u : F, v.ord u = 0 ∧
@@ -801,6 +803,7 @@ namespace AlgebraicCurve
 
 variable (K : Type*) [Field K]
 
+/-- The universal Kähler differential of the rational function variable. -/
 public abbrev dX : Ω[(RatFunc K)⁄K] := KaehlerDifferential.D K (RatFunc K) RatFunc.X
 
 theorem aeval_ratFuncX_eq_algebraMap (q : K[X]) :
@@ -1078,6 +1081,8 @@ section DXCoeff
 
 variable (K : Type*) [Field K]
 
+/-- The formal derivative of a rational function, computed from its numerator and denominator by
+the quotient rule. -/
 @[expose] public def ratFuncDXCoeff (f : RatFunc K) : RatFunc K :=
   algebraMap K[X] (RatFunc K) (f.num.derivative * f.denom - f.num * f.denom.derivative)
     / (algebraMap K[X] (RatFunc K) f.denom) ^ 2
@@ -1357,6 +1362,8 @@ variable [HasCanonicalLocalResidueKStar K (RatFunc K)]
 variable [∀ v : Place K (RatFunc K), v.DCoordGenerates] [Nontrivial Ω[(RatFunc K)⁄K]]
 variable [HasPrincipalDivisors K (RatFunc K)]
 
+/-- The local coefficient of the specified nonzero differential has order zero at every finite
+rational-function place. -/
 @[expose] public def P1DifferentialCoeffUnitFinite {ω₀ : Ω[(RatFunc K)⁄K]} (_hω₀ : ω₀ ≠ 0) : Prop :=
   ∀ v : Place K (RatFunc K), v ≠ placeInfty K → v.ord (v.differentialCoeff ω₀) = 0
 

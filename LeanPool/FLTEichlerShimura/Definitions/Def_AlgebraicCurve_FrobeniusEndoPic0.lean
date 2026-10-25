@@ -236,6 +236,7 @@ variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 variable {ℓ : ℕ} [Fact ℓ.Prime] [CharP F ℓ]
 variable (φ : F →ₐ[K] F)
 
+/-- Push degree-zero divisors forward along the given integral function-field endomorphism. -/
 def frobeniusPushforwardDegZero (hφ : φ.toRingHom.IsIntegral) :
     Divisor.degZero (K := K) (F := F) →+ Divisor.degZero (K := K) (F := F) :=
   ((Divisor.pushforwardAlong φ hφ).domRestrict
@@ -249,6 +250,8 @@ theorem coe_frobeniusPushforwardDegZero (hφ : φ.toRingHom.IsIntegral)
       = Divisor.pushforwardAlong φ hφ (D : Divisor K F) :=
   rfl
 
+/-- The endomorphism of degree-zero divisor classes induced by Frobenius pushforward under the
+supplied degree and place hypotheses. -/
 def IsFrobeniusEndo.pushforwardPic0 (h : IsFrobeniusEndo ℓ φ)
     (hφ : φ.toRingHom.IsIntegral) (hfin : FiniteAlong K φ)
     (hrank : finrankAlong K φ = ℓ)
@@ -338,6 +341,7 @@ section PullbackDescent
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] [HasPrincipalDivisors K F]
 variable {ℓ : ℕ} [Fact ℓ.Prime] {φ : F →ₐ[K] F}
 
+/-- Pull degree-zero divisors back along Frobenius using the fundamental identity. -/
 def IsFrobeniusEndo.frobeniusPullbackDegZero (h : IsFrobeniusEndo ℓ φ)
     (hφ : φ.toRingHom.IsIntegral) (hrank : finrankAlong K φ = ℓ)
     (hsurj : Function.Surjective (Place.restrictAlong φ hφ))
@@ -358,6 +362,7 @@ theorem IsFrobeniusEndo.coe_frobeniusPullbackDegZero (h : IsFrobeniusEndo ℓ φ
       = Divisor.pullbackAlong φ hφ (D : Divisor K F) :=
   rfl
 
+/-- The endomorphism of degree-zero divisor classes induced by Frobenius pullback. -/
 def IsFrobeniusEndo.pullbackPic0 (h : IsFrobeniusEndo ℓ φ)
     (hφ : φ.toRingHom.IsIntegral) (hrank : finrankAlong K φ = ℓ)
     (hsurj : Function.Surjective (Place.restrictAlong φ hφ))

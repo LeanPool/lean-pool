@@ -69,12 +69,17 @@ section Formulas
 
 variable (C : VariableChange K) (W : WeierstrassCurve.Affine K)
 
+/-- The x-coordinate transformation `u² * x' + r` of a Weierstrass change of variables. -/
 def vcX (x' : K) : K := (C.u : K) ^ 2 * x' + C.r
 
+/-- The y-coordinate transformation `u³ * y' + u² * s * x' + t` of a Weierstrass change of
+variables. -/
 def vcY (x' y' : K) : K := (C.u : K) ^ 3 * y' + (C.u : K) ^ 2 * C.s * x' + C.t
 
+/-- The inverse x-coordinate transformation `u⁻² * (x - r)`. -/
 def vcXInv (x : K) : K := ((C.u⁻¹ : Kˣ) : K) ^ 2 * (x - C.r)
 
+/-- The inverse y-coordinate transformation `u⁻³ * (y - t - s * (x - r))`. -/
 def vcYInv (x y : K) : K := ((C.u⁻¹ : Kˣ) : K) ^ 3 * (y - C.t - C.s * (x - C.r))
 
 variable {C W}
@@ -169,11 +174,13 @@ variable (C : VariableChange K) (W : WeierstrassCurve.Affine K)
 
 namespace Point
 
+/-- The map on affine points from the changed Weierstrass equation to the original equation. -/
 def vcFun : (C • W).toAffine.Point → W.Point
   | 0 => 0
   | .some x' y' h => .some (vcX C x') (vcY C x' y')
       ((nonsingular_variableChange_iff x' y').mp h)
 
+/-- The inverse map on affine points associated to a Weierstrass change of variables. -/
 def vcInvFun : W.Point → (C • W).toAffine.Point
   | 0 => 0
   | .some x y h => .some (vcXInv C x) (vcYInv C x y)
@@ -203,9 +210,11 @@ lemma vcFun_rightInverse : Function.RightInverse (vcInvFun C W) (vcFun C W) := b
     exact some_eq_some (vcX_vcXInv x) (vcY_vcYInv x y)
 
 variable (C W) in
+/-- The equivalence of point sets induced by a Weierstrass change of variables. -/
 noncomputable def variableChangeEquiv : (C • W).toAffine.Point ≃ W.Point :=
   ⟨vcFun C W, vcInvFun C W, vcFun_leftInverse, vcFun_rightInverse⟩
 
+/-- The equivalence of point sets induced by an equality with a changed Weierstrass equation. -/
 noncomputable def equivOfVariableChangeEq {V : WeierstrassCurve.Affine K}
     (h : C • W = V) : V.Point ≃ W.Point := by
   subst h; exact variableChangeEquiv C W

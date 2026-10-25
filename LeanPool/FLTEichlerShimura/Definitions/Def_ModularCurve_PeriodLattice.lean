@@ -82,6 +82,7 @@ namespace ModularCurve
 
 section Period
 
+/-- Clamp a real parameter to the closed interval from zero to one. -/
 def clamp01 (t : ℝ) : ℝ := max 0 (min t 1)
 
 theorem clamp01_nonneg (t : ℝ) : 0 ≤ clamp01 t := le_max_left _ _
@@ -94,6 +95,8 @@ theorem continuous_clamp01 : Continuous clamp01 :=
 theorem clamp01_of_mem {t : ℝ} (ht : t ∈ Set.Icc (0 : ℝ) 1) : clamp01 t = t := by
   rw [clamp01, min_eq_left ht.2, max_eq_right ht.1]
 
+/-- The complex point on the segment between the endpoints, using the clamped interpolation
+parameter. -/
 def segmentPoint (τ₀ τ₁ : ℍ) (t : ℝ) : ℂ :=
   (1 - clamp01 t) • (τ₀ : ℂ) + clamp01 t • (τ₁ : ℂ)
 
@@ -110,6 +113,8 @@ theorem continuous_segmentPoint (τ₀ τ₁ : ℍ) : Continuous (segmentPoint �
   ((continuous_const.sub continuous_clamp01).smul continuous_const).add
     (continuous_clamp01.smul continuous_const)
 
+/-- The straight segment between the endpoints, viewed as an upper-half-plane-valued path with
+clamped parameter. -/
 def segmentPath (τ₀ τ₁ : ℍ) (t : ℝ) : ℍ :=
   UpperHalfPlane.mk (segmentPoint τ₀ τ₁ t) (segmentPoint_im_pos τ₀ τ₁ t)
 
@@ -121,6 +126,8 @@ theorem continuous_segmentPath (τ₀ τ₁ : ℍ) : Continuous (segmentPath τ�
 
 variable (N : ℕ)
 
+/-- The weight-two cusp form evaluated along the straight segment, multiplied by its complex
+displacement. -/
 def periodIntegrand (τ₀ τ₁ : ℍ) (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) (t : ℝ) : ℂ :=
   f (segmentPath τ₀ τ₁ t) * ((τ₁ : ℂ) - τ₀)
 
@@ -143,6 +150,8 @@ theorem periodIntegrand_smul (τ₀ τ₁ : ℍ) (c : ℂ) (f : CuspForm (Congru
   funext t
   simp [periodIntegrand, mul_assoc]
 
+/-- The linear functional integrating a weight-two cusp form along the straight segment between
+the endpoints. -/
 def periodAlong (τ₀ τ₁ : ℍ) : Module.Dual ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2) where
   toFun f := ∫ t in (0 : ℝ)..1, periodIntegrand N τ₀ τ₁ f t
   map_add' f g := by
@@ -157,6 +166,7 @@ theorem periodAlong_apply (τ₀ τ₁ : ℍ) (f : CuspForm (CongruenceSubgroup.
     periodAlong N τ₀ τ₁ f = ∫ t in (0 : ℝ)..1, f (segmentPath τ₀ τ₁ t) * ((τ₁ : ℂ) - τ₀) :=
   rfl
 
+/-- The period functional along the segment from `I` to its translate by the group element. -/
 def period (γ : CongruenceSubgroup.Gamma0 N) :
     Module.Dual ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2) :=
   periodAlong N UpperHalfPlane.I ((γ : SL(2, ℤ)) • UpperHalfPlane.I)
@@ -168,6 +178,7 @@ theorem period_apply (γ : CongruenceSubgroup.Gamma0 N)
         ((((γ : SL(2, ℤ)) • UpperHalfPlane.I : ℍ) : ℂ) - (UpperHalfPlane.I : ℂ)) :=
   rfl
 
+/-- The integer span of the period functionals attached to elements of `Γ₀(N)`. -/
 def periodLattice : Submodule ℤ (Module.Dual ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2)) :=
   Submodule.span ℤ (Set.range (period N))
 
@@ -180,6 +191,8 @@ section Hecke
 
 variable (N : ℕ) [NeZero N]
 
+/-- The prime Hecke generator on weight-two cusp forms, using `U` at level-dividing primes and
+`T` elsewhere. -/
 def cuspHeckeGen (ℓ : Nat.Primes) : CuspForm.heckeAlgebra N 2 (∅ : Set ℕ) :=
   if h : (ℓ : ℕ) ∣ N then CuspForm.heckeAlgebra.U (S := (∅ : Set ℕ)) ℓ.prop h (Set.notMem_empty _)
   else CuspForm.heckeAlgebra.T (S := (∅ : Set ℕ)) ℓ.prop h (Set.notMem_empty _)
@@ -194,6 +207,8 @@ theorem cuspHeckeGen_of_not_dvd (ℓ : Nat.Primes) (h : ¬ (ℓ : ℕ) ∣ N) :
       CuspForm.heckeTLin 2 ℓ.prop h := by
   rw [cuspHeckeGen, dite_eq_right h]; rfl
 
+/-- Evaluate the abstract prime-indexed Hecke algebra in the algebra acting on weight-two cusp
+forms. -/
 def cuspHeckeAeval : HeckeAlg →ₐ[ℤ] CuspForm.heckeAlgebra N 2 (∅ : Set ℕ) :=
   MvPolynomial.aeval (cuspHeckeGen N)
 
@@ -235,6 +250,7 @@ theorem cuspHeckeAeval_range : (cuspHeckeAeval N).range = ⊤ := by
   rw [himg]
   rfl
 
+/-- The ring representation of the abstract Hecke algebra on weight-two cusp forms. -/
 def cuspHeckeRep : HeckeAlg →+* Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2) :=
   ((CuspForm.heckeAlgebra N 2 (∅ : Set ℕ)).val.comp (cuspHeckeAeval N)).toRingHom
 
@@ -266,6 +282,7 @@ theorem cuspHeckeRep_comm (s t : HeckeAlg) :
     cuspHeckeRep N s * cuspHeckeRep N t = cuspHeckeRep N t * cuspHeckeRep N s := by
   rw [← map_mul, ← map_mul, mul_comm]
 
+/-- The dual Hecke action on linear functionals of weight-two cusp forms. -/
 def dualHeckeRep :
     HeckeAlg →+* Module.End ℂ (Module.Dual ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2)) where
   toFun t := (cuspHeckeRep N t).dualMap
@@ -292,6 +309,7 @@ theorem dualHeckeRep_C (a : ℤ) (φ : Module.Dual ℂ (CuspForm (CongruenceSubg
   rw [dualHeckeRep_apply_apply, ← MvPolynomial.algebraMap_eq, eq_intCast, map_intCast,
     Module.End.intCast_apply, map_zsmul, LinearMap.smul_apply]
 
+/-- Each prime Hecke operator in the dual action preserves the period lattice. -/
 def PeriodLatticeHeckeStable : Prop :=
   ∀ (ℓ : Nat.Primes) (x : Module.Dual ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) 2)),
     x ∈ periodLattice N → dualHeckeRep N (heckeGen ℓ) x ∈ periodLattice N
@@ -311,6 +329,7 @@ theorem periodLattice_stable_of (h : PeriodLatticeHeckeStable N) (t : HeckeAlg)
 
 variable (N)
 
+/-- Restrict a dual Hecke operator to the period lattice using the supplied stability hypothesis. -/
 def periodLatticeRestrict (h : PeriodLatticeHeckeStable N) (t : HeckeAlg) :
     Module.End ℤ (periodLattice N) :=
   ((dualHeckeRep N t).toAddMonoidHom.toIntLinearMap).restrict
@@ -321,6 +340,8 @@ def periodLatticeRestrict (h : PeriodLatticeHeckeStable N) (t : HeckeAlg) :
     ((periodLatticeRestrict N h t x : periodLattice N) : Module.Dual ℂ _) = dualHeckeRep N t x :=
   rfl
 
+/-- The Hecke algebra action on the period lattice obtained from the supplied stability
+hypothesis. -/
 def periodLatticeRestrictHom (h : PeriodLatticeHeckeStable N) :
     HeckeAlg →+* Module.End ℤ (periodLattice N) where
   toFun := periodLatticeRestrict N h
@@ -330,6 +351,8 @@ def periodLatticeRestrictHom (h : PeriodLatticeHeckeStable N) :
   map_add' s t := LinearMap.ext fun x => Subtype.ext (by simp)
 
 open Classical in
+/-- The restricted Hecke action when the lattice is stable, otherwise the scalar action obtained
+by sending every prime generator to zero. -/
 def periodLatticeHeckeEnd : HeckeAlg →+* Module.End ℤ (periodLattice N) :=
   if h : PeriodLatticeHeckeStable N then periodLatticeRestrictHom N h
   else (Int.castRingHom (Module.End ℤ (periodLattice N))).comp
@@ -353,6 +376,7 @@ theorem periodLatticeHeckeEnd_of_not (h : ¬ PeriodLatticeHeckeStable N) (t : He
 
 variable (N)
 
+/-- The module structure on the period lattice defined by the totalized Hecke action. -/
 @[implicit_reducible]
 def periodLatticeModule : Module HeckeAlg (periodLattice N) :=
   Module.compHom (periodLattice N) (periodLatticeHeckeEnd N)

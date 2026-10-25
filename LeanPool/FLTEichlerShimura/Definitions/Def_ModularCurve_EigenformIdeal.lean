@@ -82,15 +82,19 @@ noncomputable section
 
 namespace ModularCurve
 
+/-- The Hecke ideal is the kernel of reduction of the prime eigenvalues of a normalized
+weight-two eigenform. -/
 def IsEigenformIdeal (N : ℕ) (𝔪 : Ideal HeckeAlg) : Prop :=
   ∃ (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) (_ : f.IsNormalizedEigenform)
     (k : Type) (_ : Field k) (_ : Finite k) (𝒪 : Subring ℂ)
     (h𝒪 : ∀ ℓ : Nat.Primes, ModularFormClass.qCoeff f ℓ ∈ 𝒪) (φ : 𝒪 →+* k),
       𝔪 = eigenIdeal (fun ℓ => φ ⟨ModularFormClass.qCoeff f ℓ, h𝒪 ℓ⟩)
 
+/-- The nonzero-torsion support condition for eigenform ideals at the specified level. -/
 abbrev EigenformSupportAt (N p : ℕ) (J : Type*) [AddCommGroup J] [Module HeckeAlg J] : Prop :=
   EigenformSupport p J (IsEigenformIdeal N)
 
+/-- The reduced Eichler–Shimura representation conditions at the specified level. -/
 abbrev EichlerShimuraDataAt {K L : Type*} [Field K] [Field L] [Algebra K L] (N p : ℕ)
     (J : Type*) [AddCommGroup J] [Module HeckeAlg J] [DistribMulAction (L ≃ₐ[K] L) J] :
     Prop :=

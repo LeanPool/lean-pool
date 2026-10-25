@@ -65,6 +65,7 @@ section ProjectiveLine
 
 variable {R S : Type*} [CommRing R] [CommRing S]
 
+/-- The two entries generate the unit ideal, equivalently `a * x + c * y = 1` is solvable. -/
 def IsUnimodularRow (a c : R) : Prop :=
   ∃ x y : R, x * a + y * c = 1
 
@@ -79,6 +80,7 @@ theorem IsUnimodularRow.map (f : R →+* S) {a c : R} (h : IsUnimodularRow a c) 
   obtain ⟨x, y, hxy⟩ := h
   exact ⟨f x, f y, by rw [← map_mul, ← map_mul, ← map_add, hxy, map_one]⟩
 
+/-- A pair of ring elements generating the unit ideal. -/
 abbrev UnimodularRow (R : Type*) [CommRing R] := { v : R × R // IsUnimodularRow v.1 v.2 }
 
 instance unimodularRowSetoid (R : Type*) [CommRing R] : Setoid (UnimodularRow R) where
@@ -92,12 +94,14 @@ instance unimodularRowSetoid (R : Type*) [CommRing R] : Setoid (UnimodularRow R)
       exact ⟨u' * u, by rw [Units.val_mul, mul_assoc, h1, h1'],
         by rw [Units.val_mul, mul_assoc, h2, h2']⟩
 
+/-- Unimodular rows modulo simultaneous scaling by a unit. -/
 def ProjectiveLine (R : Type*) [CommRing R] : Type _ :=
   Quotient (unimodularRowSetoid R)
 
 instance instFiniteProjectiveLine [Finite R] : Finite (ProjectiveLine R) :=
   Quotient.finite _
 
+/-- The map on projective lines induced by a ring homomorphism. -/
 def ProjectiveLine.map (f : R →+* S) : ProjectiveLine R → ProjectiveLine S :=
   Quotient.lift (fun v => (⟦⟨(f v.1.1, f v.1.2), v.2.map f⟩⟧ : ProjectiveLine S)) <| by
     rintro v w ⟨u, h1, h2⟩
@@ -120,6 +124,7 @@ section Borel
 
 variable {R : Type*} [CommRing R]
 
+/-- The upper-triangular subgroup of the special linear group. -/
 def borel (R : Type*) [CommRing R] : Subgroup (SpecialLinearGroup (Fin 2) R) where
   carrier := { M | M.1 1 0 = 0 }
   one_mem' := by

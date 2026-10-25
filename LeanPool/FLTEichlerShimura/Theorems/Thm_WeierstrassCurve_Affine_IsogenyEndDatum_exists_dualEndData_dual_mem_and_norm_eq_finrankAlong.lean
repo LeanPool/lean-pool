@@ -2854,7 +2854,7 @@ theorem kw_dcao_geomMorphDualAdditivity_of_defectPrincipal
     by_cases hneg : D₁.ι (yGen W)
         = (W.map (algebraMap F W.FunctionField)).toAffine.negY
             (D₂.ι (polyToFunctionField W X)) (D₂.ι (yGen W))
-    · have hcol : es1a8_addCollapse_cmp W D₁.ι D₂.ι := ⟨hX, hneg⟩
+    · have hcol : es1a8AddCollapseCmp W D₁.ι D₂.ι := ⟨hX, hneg⟩
       exact absurd (hpe.trans (es1a8_addCollapse_pointEnd_add_eq_zero_cmp D₁ D₂ hcol))
         (kw_pointEnd_ne_zero D₃)
     · have hY : D₁.ι (yGen W) = D₂.ι (yGen W) := Y_eq_of_Y_ne heq₁ heq₂ hX hneg
@@ -2935,7 +2935,7 @@ abbrev kw_dcao_lineIntercept (D₁ D₂ : IsogenyEndDatum W) : W.FunctionField :
   D₁.ι (yGen W) - kw_dcao_lineSlope D₁ D₂ * D₁.ι (polyToFunctionField W X)
 
 abbrev kw_dcao_specVert (D₁ D₂ : IsogenyEndDatum W) (a : F) : W.FunctionField :=
-  algebraMap F W.FunctionField a - es1a6_addSumX W D₁.ι D₂.ι
+  algebraMap F W.FunctionField a - es1a6AddSumX W D₁.ι D₂.ι
 
 abbrev kw_dcao_specLine (D₁ D₂ : IsogenyEndDatum W) (a b : F) : W.FunctionField :=
   algebraMap F W.FunctionField b
@@ -2944,7 +2944,7 @@ abbrev kw_dcao_specLine (D₁ D₂ : IsogenyEndDatum W) (a b : F) : W.FunctionFi
 
 theorem kw_dcao_addSumX_nonconst_of_hgm (D₁ D₂ D₃ : IsogenyEndDatum W)
     (hgm : ∀ P, D₃.geomMorph P = D₁.geomMorph P + D₂.geomMorph P) (c : F) :
-    es1a6_addSumX W D₁.ι D₂.ι ≠ algebraMap F W.FunctionField c :=
+    es1a6AddSumX W D₁.ι D₂.ι ≠ algebraMap F W.FunctionField c :=
   kw_hk5f_addSumXNonConstGuardAt_proved W D₁ D₂
     ((kw_dcao_pointEnd_add_of_geomMorph_add hgm) ▸ kw_pointEnd_ne_zero D₃) c
 
@@ -2957,16 +2957,16 @@ theorem kw_dcao_sumDatum_of_hgm (D₁ D₂ D₃ : IsogenyEndDatum W)
     (hgm : ∀ P, D₃.geomMorph P = D₁.geomMorph P + D₂.geomMorph P)
     (hX : D₁.ι (polyToFunctionField W X) ≠ D₂.ι (polyToFunctionField W X)) :
     ∃ Ds : IsogenyEndDatum W,
-      Ds.ι (polyToFunctionField W X) = es1a6_addSumX W D₁.ι D₂.ι
+      Ds.ι (polyToFunctionField W X) = es1a6AddSumX W D₁.ι D₂.ι
       ∧ ∀ P, Ds.geomMorph P = D₁.geomMorph P + D₂.geomMorph P := by
   have hnc := kw_dcao_addSumX_nonconst_of_hgm D₁ D₂ D₃ hgm
-  have hcol : ¬ es1a6_addCollapse W D₁.ι D₂.ι :=
+  have hcol : ¬ es1a6AddCollapse W D₁.ι D₂.ι :=
     es1a6_add_not_collapse_of_X_ne W D₁.ι D₂.ι hX
   have htr : Function.Injective
-      (Polynomial.aeval (R := F) (es1a6_addSumX W D₁.ι D₂.ι)) :=
+      (Polynomial.aeval (R := F) (es1a6AddSumX W D₁.ι D₂.ι)) :=
     es1a6_add_aeval_sumX_injective_of_forall_ne W D₁.ι D₂.ι hnc
   obtain ⟨hι, hfin⟩ := kw_hk5f_addIntegralFiniteDataAt_proved W D₁ D₂ hcol htr
-  refine ⟨⟨es1a6_addSumPullbackHom W D₁.ι D₂.ι hcol htr, hι, hfin⟩,
+  refine ⟨⟨es1a6AddSumPullbackHom W D₁.ι D₂.ι hcol htr, hι, hfin⟩,
     es1a6_addSumPullbackHom_X W D₁.ι D₂.ι hcol htr, fun P => ?_⟩
   have h1 := kw_coordSeamDataAt_geomMorph D₁ P
   have h2 := kw_coordSeamDataAt_geomMorph D₂ P
@@ -2995,7 +2995,7 @@ theorem kw_dcao_ord_specVert_eq_transport (D₁ D₂ D₃ : IsogenyEndDatum W)
   obtain ⟨Ds, hXs, hgms⟩ := kw_dcao_sumDatum_of_hgm D₁ D₂ D₃ hgm hX
   have hsp : kw_dcao_specVert D₁ D₂ a
       = Ds.ι (algebraMap F W.FunctionField a - polyToFunctionField W X) := by
-    change algebraMap F W.FunctionField a - es1a6_addSumX W D₁.ι D₂.ι = _
+    change algebraMap F W.FunctionField a - es1a6AddSumX W D₁.ι D₂.ι = _
     rw [map_sub, Ds.ι.commutes, hXs]
   rw [hsp, kw_dcao_ord_Dtransport Ds, hgms P]
 
@@ -3052,8 +3052,8 @@ theorem kw_dcao_specLine_negY_product (D₁ D₂ : IsogenyEndDatum W)
       _root_.map_neg, map_mul]
   change (_ - _ * _ - kw_dcao_lineIntercept D₁ D₂)
     * (_ - _ * _ - kw_dcao_lineIntercept D₁ D₂)
-    = -((_ - x₁) * (_ - x₂) * (_ - es1a6_addSumX W D₁.ι D₂.ι))
-  rw [hint, hsl, show es1a6_addSumX W D₁.ι D₂.ι
+    = -((_ - x₁) * (_ - x₂) * (_ - es1a6AddSumX W D₁.ι D₂.ι))
+  rw [hint, hsl, show es1a6AddSumX W D₁.ι D₂.ι
     = (W.map (algebraMap F W.FunctionField)).toAffine.addX x₁ x₂
         ((W.map (algebraMap F W.FunctionField)).toAffine.slope x₁ x₂ y₁ y₂) from rfl,
     ← hnegY]
@@ -3487,18 +3487,18 @@ theorem kw_dcao_sumDatum_Y_of_hgm (D₁ D₂ D₃ : IsogenyEndDatum W)
     (hgm : ∀ P, D₃.geomMorph P = D₁.geomMorph P + D₂.geomMorph P)
     (hX : D₁.ι (polyToFunctionField W X) ≠ D₂.ι (polyToFunctionField W X)) :
     ∃ Ds : IsogenyEndDatum W,
-      Ds.ι (polyToFunctionField W X) = es1a6_addSumX W D₁.ι D₂.ι
-      ∧ Ds.ι (yGen W) = es1a6_addSumY W D₁.ι D₂.ι
+      Ds.ι (polyToFunctionField W X) = es1a6AddSumX W D₁.ι D₂.ι
+      ∧ Ds.ι (yGen W) = es1a6AddSumY W D₁.ι D₂.ι
       ∧ ∀ P, Ds.geomMorph P = D₁.geomMorph P + D₂.geomMorph P := by
   have _pin := Classical.em True
   have hnc := kw_dcao_addSumX_nonconst_of_hgm D₁ D₂ D₃ hgm
-  have hcol : ¬ es1a6_addCollapse W D₁.ι D₂.ι :=
+  have hcol : ¬ es1a6AddCollapse W D₁.ι D₂.ι :=
     es1a6_add_not_collapse_of_X_ne W D₁.ι D₂.ι hX
   have htr : Function.Injective
-      (Polynomial.aeval (R := F) (es1a6_addSumX W D₁.ι D₂.ι)) :=
+      (Polynomial.aeval (R := F) (es1a6AddSumX W D₁.ι D₂.ι)) :=
     es1a6_add_aeval_sumX_injective_of_forall_ne W D₁.ι D₂.ι hnc
   obtain ⟨hι, hfin⟩ := kw_hk5f_addIntegralFiniteDataAt_proved W D₁ D₂ hcol htr
-  refine ⟨⟨es1a6_addSumPullbackHom W D₁.ι D₂.ι hcol htr, hι, hfin⟩,
+  refine ⟨⟨es1a6AddSumPullbackHom W D₁.ι D₂.ι hcol htr, hι, hfin⟩,
     es1a6_addSumPullbackHom_X W D₁.ι D₂.ι hcol htr,
     es1a6_addSumPullbackHom_yGen W D₁.ι D₂.ι hcol htr, fun P => ?_⟩
   have h1 := kw_coordSeamDataAt_geomMorph D₁ P
@@ -3679,9 +3679,9 @@ private theorem specialized_secant_line_formulas (D₁ D₂ : IsogenyEndDatum W)
       = (algebraMap F W.FunctionField c - y₂)
         - Λ * (algebraMap F W.FunctionField a - x₂)) ∧
     (∀ c : F, kw_dcao_specLine D₁ D₂ a c
-      = (es1a6_addSumY W D₁.ι D₂.ι + algebraMap F W.FunctionField (c + W.a₃)
-          + algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W D₁.ι D₂.ι)
-        - Λ * (algebraMap F W.FunctionField a - es1a6_addSumX W D₁.ι D₂.ι)) := by
+      = (es1a6AddSumY W D₁.ι D₂.ι + algebraMap F W.FunctionField (c + W.a₃)
+          + algebraMap F W.FunctionField W.a₁ * es1a6AddSumX W D₁.ι D₂.ι)
+        - Λ * (algebraMap F W.FunctionField a - es1a6AddSumX W D₁.ι D₂.ι)) := by
   set x₁ := D₁.ι (polyToFunctionField W X) with hx1d
   set x₂ := D₂.ι (polyToFunctionField W X) with hx2d
   set y₁ := D₁.ι (yGen W) with hy1d
@@ -3702,11 +3702,11 @@ private theorem specialized_secant_line_formulas (D₁ D₂ : IsogenyEndDatum W)
         - Λ * (algebraMap F W.FunctionField a - x₂) := by
     intro c; rw [hLform1 c]; linear_combination hΛδ
   have hLform3 : ∀ c : F, kw_dcao_specLine D₁ D₂ a c
-      = (es1a6_addSumY W D₁.ι D₂.ι + algebraMap F W.FunctionField (c + W.a₃)
-          + algebraMap F W.FunctionField W.a₁ * es1a6_addSumX W D₁.ι D₂.ι)
-        - Λ * (algebraMap F W.FunctionField a - es1a6_addSumX W D₁.ι D₂.ι) := by
+      = (es1a6AddSumY W D₁.ι D₂.ι + algebraMap F W.FunctionField (c + W.a₃)
+          + algebraMap F W.FunctionField W.a₁ * es1a6AddSumX W D₁.ι D₂.ι)
+        - Λ * (algebraMap F W.FunctionField a - es1a6AddSumX W D₁.ι D₂.ι) := by
     intro c; rw [hLform1 c]
-    simp only [es1a6_addSumY, es1a6_addSumX, ← hx1d, ← hx2d, ← hy1d, ← hy2d,
+    simp only [es1a6AddSumY, es1a6AddSumX, ← hx1d, ← hx2d, ← hy1d, ← hy2d,
       Affine.addY, Affine.negY, Affine.negAddY, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₃,
       map_add]
     ring

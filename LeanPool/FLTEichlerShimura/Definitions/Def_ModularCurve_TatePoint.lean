@@ -76,13 +76,17 @@ open ModularCurve WeierstrassCurve Polynomial
 
 namespace ModularCurve.TatePoint
 
+/-- The algebraic closure of the rational numbers used for the formal Tate-point construction. -/
 abbrev Qbar : Type := AlgebraicClosure ℚ
 
+/-- The field of rational-exponent Hahn series over the algebraic closure of the rationals. -/
 abbrev H : Type := HahnSeries ℚ Qbar
 
+/-- The Hahn series with constant term `j₀` and linear term `q`. -/
 def jNear (j₀ : Qbar) : H := HahnSeries.C j₀ + HahnSeries.single (1 : ℚ) (1 : Qbar)
 
 open scoped Classical in
+/-- The Weierstrass curve with `j`-invariant given by the nearby transcendental Hahn series. -/
 def nearCurve (j₀ : Qbar) : WeierstrassCurve H := WeierstrassCurve.ofJ (jNear j₀)
 
 open scoped Classical in
@@ -90,10 +94,14 @@ instance instIsElliptic_nearCurve (j₀ : Qbar) : (nearCurve j₀).IsElliptic :=
   unfold nearCurve; infer_instance
 
 open scoped Classical in
+/-- Cyclic subgroups of the point group equipped with the assertion that a generator has exact
+order `N`. -/
 def CycSubH (E : WeierstrassCurve H) (N : ℕ) : Type :=
   {G : AddSubgroup E.toAffine.Point //
     ∃ g : E.toAffine.Point, addOrderOf g = N ∧ G = AddSubgroup.zmultiples g}
 
+/-- The roots of the modular polynomial after specializing its first variable at the given
+`j`-value. -/
 def RootsAt {p : ℕ} [NeZero p] (data : ModularPolynomialData p) (jv : H) : Type :=
   {y : H // (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom H) jv)).IsRoot y}
 
@@ -119,15 +127,19 @@ section TatePoint
 variable (K : Type) [Field K] [Algebra ℚ K]
 variable (p : ℕ) [Fact (Nat.Prime p)] [NeZero p] (ζ : Kˣ)
 
+/-- The Tate curve after the substitution `q ↦ q^p`. -/
 def basePoint : WeierstrassCurve (LaurentSeries K) := (tateLaurent K).map (qExpand K p)
 
 variable (veluSlotSet : Fin (p + 1) → Finset (LaurentSeries K × LaurentSeries K))
 
+/-- The Vélu quotient of the base Tate curve by the finite set assigned to the specified slot. -/
 def slotQuotient (i : Fin (p + 1)) : WeierstrassCurve (LaurentSeries K) :=
   (basePoint K p).veluQuotient (veluSlotSet i)
 
 variable (instQ : ∀ i, (slotQuotient K p veluSlotSet i).IsElliptic)
 
+/-- The Vélu-slot conclusions: valid summing sets, the specified quotient curves,
+modular-polynomial factorization, and distinct quotient invariants. -/
 structure W4Conclusions (data : ModularPolynomialData p) : Prop where
   oddVeluSet : ∀ i, (basePoint K p).IsOddVeluSet (veluSlotSet i)
   slotCurve_succ : ∀ b : Fin p,
@@ -142,6 +154,8 @@ structure W4Conclusions (data : ModularPolynomialData p) : Prop where
     @WeierstrassCurve.j _ _ (slotQuotient K p veluSlotSet i) (instQ i)
 
 open scoped Classical in
+/-- Each slot has the expected number of summing points, all positive multiples of a point of
+exact order `p`. -/
 def W3Proper : Prop :=
   ∀ i, (veluSlotSet i).card = (p - 1) / 2 ∧
     ∃ g : (basePoint K p).toAffine.Point, addOrderOf g = p ∧
@@ -152,6 +166,8 @@ def W3Proper : Prop :=
 end TatePoint
 
 open scoped Classical in
+/-- For curves with transcendental `j`, modular-polynomial roots correspond to cyclic subgroups
+via Vélu quotients with the prescribed invariants. -/
 def ModuliDictionary (p : ℕ) [NeZero p] (data : ModularPolynomialData p) : Prop :=
   ∀ (E : WeierstrassCurve H) [E.IsElliptic], Transcendental Qbar E.j →
     Nonempty {e : RootsAt data E.j ≃ CycSubH E p //

@@ -171,6 +171,7 @@ section Scalars
 
 variable (k : Type*) [CommRing k] [Algebra k A]
 
+/-- Evaluation from the completion modulo a power of its maximal ideal to the original quotient. -/
 noncomputable def quotientMaximalIdealPowAlgHom (n : ℕ) :
     (AdicCompletion (maximalIdeal A) A ⧸ maximalIdeal (AdicCompletion (maximalIdeal A) A) ^ n)
       →ₐ[k] A ⧸ maximalIdeal A ^ n :=
@@ -194,6 +195,8 @@ theorem quotientMaximalIdealPowAlgHom_bijective (n : ℕ) :
     obtain ⟨x, rfl⟩ := surjective_evalₐ (maximalIdeal A) n z
     exact ⟨Ideal.Quotient.mk _ x, rfl⟩
 
+/-- The algebra equivalence between the completion's maximal-ideal-power quotient and the
+original quotient. -/
 noncomputable def quotientMaximalIdealPowAlgEquiv (n : ℕ) :
     (AdicCompletion (maximalIdeal A) A ⧸ maximalIdeal (AdicCompletion (maximalIdeal A) A) ^ n)
       ≃ₐ[k] A ⧸ maximalIdeal A ^ n :=
@@ -253,6 +256,8 @@ theorem algEquiv_algebraMap_mem_maximalIdeal {a : A} (ha : a ∈ maximalIdeal A)
   rw [maximalIdeal_eq_map_algEquiv Φ]
   exact Ideal.mem_map_of_mem _ ha
 
+/-- The maximal-ideal-power quotient equivalence transported along a chosen completion
+equivalence. -/
 noncomputable def quotientMaximalIdealPowAlgEquivOfAlgEquiv (n : ℕ) :
     (B ⧸ maximalIdeal B ^ n) ≃ₐ[k] A ⧸ maximalIdeal A ^ n :=
   (Ideal.quotientEquivAlg (maximalIdeal (AdicCompletion (maximalIdeal A) A) ^ n) (maximalIdeal B ^

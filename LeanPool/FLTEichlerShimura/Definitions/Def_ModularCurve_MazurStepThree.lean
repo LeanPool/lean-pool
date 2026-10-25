@@ -65,6 +65,8 @@ applied in the analysis of the Frey curve's $p$-torsion.
 @[expose] public section publicSection
 
 open WeierstrassCurve WeierstrassCurve.Affine in
+/-- The conditional Mazur step-three assertion placing rational prime-order torsion outside the
+identity components at the remaining bad primes. -/
 def MazurStepThree (p : ℕ) : Prop :=
   p.Prime → p ∉ ({2, 3, 5, 7, 13} : Finset ℕ) →
   ∀ (W : WeierstrassCurve ℤ), W.Δ ≠ 0 →

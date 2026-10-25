@@ -69,32 +69,39 @@ namespace ResidualGaloisRep
 
 variable {k : Type} [Field k]
 
+/-- A linear equivalence intertwining the Galois actions of two residual representations. -/
 structure Equiv (ρ₁ ρ₂ : ResidualGaloisRep k) where
+  /-- The underlying linear equivalence between the representation spaces. -/
   toLinearEquiv : ρ₁.V ≃ₗ[k] ρ₂.V
   map_apply : ∀ (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (x : ρ₁.V),
     toLinearEquiv (ρ₁.ρ σ x) = ρ₂.ρ σ (toLinearEquiv x)
 
+/-- There exists a linear equivalence intertwining the two Galois actions. -/
 def IsEquiv (ρ₁ ρ₂ : ResidualGaloisRep k) : Prop :=
   Nonempty (Equiv ρ₁ ρ₂)
 
 namespace Equiv
 
+/-- The identity intertwining equivalence of a residual representation. -/
 def refl (ρ : ResidualGaloisRep k) : Equiv ρ ρ where
   toLinearEquiv := LinearEquiv.refl k ρ.V
   map_apply _ _ := rfl
 
+/-- The inverse of an intertwining equivalence. -/
 def symm {ρ₁ ρ₂ : ResidualGaloisRep k} (e : Equiv ρ₁ ρ₂) : Equiv ρ₂ ρ₁ where
   toLinearEquiv := e.toLinearEquiv.symm
   map_apply σ x := by
     apply e.toLinearEquiv.injective
     rw [e.map_apply, LinearEquiv.apply_symm_apply, LinearEquiv.apply_symm_apply]
 
+/-- The composite of two intertwining equivalences. -/
 def trans {ρ₁ ρ₂ ρ₃ : ResidualGaloisRep k} (e₁₂ : Equiv ρ₁ ρ₂) (e₂₃ : Equiv ρ₂ ρ₃) :
     Equiv ρ₁ ρ₃ where
   toLinearEquiv := e₁₂.toLinearEquiv.trans e₂₃.toLinearEquiv
   map_apply σ x := by
     rw [LinearEquiv.trans_apply, e₁₂.map_apply, e₂₃.map_apply, LinearEquiv.trans_apply]
 
+/-- Extend an intertwining equivalence along a homomorphism of coefficient fields. -/
 noncomputable def baseChangeAlong {k' : Type} [Field k'] (ψ : k →+* k')
     {ρ₁ ρ₂ : ResidualGaloisRep k} (e : Equiv ρ₁ ρ₂) :
     Equiv (ρ₁.baseChangeAlong ψ) (ρ₂.baseChangeAlong ψ) :=

@@ -241,6 +241,7 @@ theorem isAlgClosure_residueField [IsAlgClosed L] [CharZero L] [Algebra ℚ L]
   obtain ⟨a, rfl⟩ := residue_surjective (R := A) x
   exact isAlgebraic_residue A Fact.out a
 
+/-- Identify the residue field at a prime above `ℓ` with an algebraic closure of `ZMod ℓ`. -/
 noncomputable def residueFieldEquivAlgebraicClosure [IsAlgClosed L] [CharZero L] [Algebra ℚ L]
     [Algebra.IsAlgebraic ℚ L] [Fact ℓ.Prime] (hA : A.LiesOverPrime ℓ) :
     ResidueField A ≃+* AlgebraicClosure (ZMod ℓ) := by
@@ -265,6 +266,8 @@ variable (A : ValuationSubring L) [IsAlgClosed L] [CharZero L] [Algebra ℚ L]
 variable (hA : A.LiesOverPrime ℓ)
 
 open Classical in
+/-- Reduce an integral element into an algebraic closure of `ZMod ℓ`, returning zero for
+nonintegral elements. -/
 noncomputable def reduceAt (a : L) : AlgebraicClosure (ZMod ℓ) :=
   if h : a ∈ A then residueFieldEquivAlgebraicClosure A hA (residue A ⟨a, h⟩) else 0
 

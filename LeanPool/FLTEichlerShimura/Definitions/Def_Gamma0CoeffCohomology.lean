@@ -81,6 +81,8 @@ section Cocycles
 
 variable {G : Type*} [Group G] {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
 
+/-- The submodule of representation-valued functions satisfying the crossed-homomorphism
+identity. -/
 def coeffCocycles (ρ : Representation K G V) : Submodule K (G → V) where
   carrier := {z | ∀ g h : G, z (g * h) = z g + ρ g (z h)}
   zero_mem' := by
@@ -98,6 +100,7 @@ theorem mem_coeffCocycles_iff (ρ : Representation K G V) (z : G → V) :
     z ∈ coeffCocycles ρ ↔ ∀ g h : G, z (g * h) = z g + ρ g (z h) :=
   Iff.rfl
 
+/-- The linear map sending `v` to the principal cocycle `g ↦ ρ g v - v`. -/
 def coeffCoboundaryMap (ρ : Representation K G V) : V →ₗ[K] (G → V) where
   toFun v := fun g => ρ g v - v
   map_add' v w := by
@@ -113,6 +116,7 @@ theorem coeffCoboundaryMap_apply (ρ : Representation K G V) (v : V) (g : G) :
     coeffCoboundaryMap ρ v g = ρ g v - v :=
   rfl
 
+/-- The submodule of principal cocycles, the image of `coeffCoboundaryMap`. -/
 def coeffCoboundaries (ρ : Representation K G V) : Submodule K (G → V) :=
   LinearMap.range (coeffCoboundaryMap ρ)
 
@@ -139,10 +143,12 @@ section Parabolic
 
 variable {Γ : Subgroup SL(2, ℤ)} {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
 
+/-- For each element with squared trace four, the cocycle value lies in the image of `ρ γ - 1`. -/
 def IsParabolicCocycle (ρ : Representation K Γ V) (z : Γ → V) : Prop :=
   ∀ γ : Γ, ((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).trace ^ 2 = 4 →
     z γ ∈ LinearMap.range (ρ γ - 1)
 
+/-- The submodule of cocycles satisfying the parabolic condition. -/
 def coeffParabolicCocycles (ρ : Representation K Γ V) : Submodule K (Γ → V) where
   carrier := {z | z ∈ coeffCocycles ρ ∧ IsParabolicCocycle ρ z}
   zero_mem' := ⟨Submodule.zero_mem _, fun γ _ => by simp⟩
@@ -168,6 +174,8 @@ theorem coeffCoboundaries_le_coeffParabolicCocycles (ρ : Representation K Γ V)
   obtain ⟨v, rfl⟩ := hz
   exact ⟨v, by simp [coeffCoboundaryMap]⟩
 
+/-- Parabolic first cohomology with coefficients in `ρ`, as parabolic cocycles modulo
+coboundaries. -/
 def coeffH1par (ρ : Representation K Γ V) : Type _ :=
   ↥(coeffParabolicCocycles ρ) ⧸ (coeffCoboundaries ρ).comap (coeffParabolicCocycles ρ).subtype
 
@@ -179,6 +187,7 @@ instance instModuleCoeffH1par (ρ : Representation K Γ V) : Module K (coeffH1pa
   inferInstanceAs (Module K
     (↥(coeffParabolicCocycles ρ) ⧸ (coeffCoboundaries ρ).comap (coeffParabolicCocycles ρ).subtype))
 
+/-- The quotient map from parabolic cocycles to parabolic first cohomology. -/
 def coeffH1parMk (ρ : Representation K Γ V) : ↥(coeffParabolicCocycles ρ) →ₗ[K] coeffH1par ρ :=
   ((coeffCoboundaries ρ).comap (coeffParabolicCocycles ρ).subtype).mkQ
 
@@ -197,6 +206,8 @@ section Hecke
 variable (N : ℕ) (ℓ : ℕ) [NeZero ℓ]
 variable {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
 
+/-- The raw Hecke transfer formula on representation-valued functions. This definition alone
+asserts neither preservation of cocycles nor descent to cohomology. -/
 noncomputable def coeffHeckeFun (ρ : Representation K (Gamma0 N) V) (a : V →ₗ[K] V)
     (z : Gamma0 N → V) : Gamma0 N → V :=
   fun g =>

@@ -899,8 +899,8 @@ def kw_surgehgf4_hfgkd_bcTensorFracIotaAlg :
 
 def kw_surgehgf4_hfgkd_bcIota₁NoAC :
     (E₀'⁄F').toAffine.FunctionField →ₐ[F'] (E₀⁄F').toAffine.FunctionField :=
-  let ψE := kw_functionFieldTensorFracEquivGeneral E₀ F F'
-  let ψE' := kw_functionFieldTensorFracEquivGeneral E₀' F F'
+  let ψE := kwFunctionFieldTensorFracEquivGeneral E₀ F F'
+  let ψE' := kwFunctionFieldTensorFracEquivGeneral E₀' F F'
   (ψE.symm.toAlgHom.comp (kw_surgehgf4_hfgkd_bcTensorFracIotaAlg E₀ E₀' F F' ι')).comp
     ψE'.toAlgHom
 
@@ -1024,8 +1024,8 @@ theorem kw_surgehgf4_hfgkd_bcIota₁NoAC_finiteAlong (hfin' : FiniteAlong F ι')
     FiniteAlong F' (kw_surgehgf4_hfgkd_bcIota₁NoAC E₀ E₀' F F' ι') := by
   classical
   have hFr_fin := (kw_surgehgf4_hfgkd_bcTensorFracIotaSeam E₀ E₀' F F' ι' hfin').1
-  let ψE := kw_functionFieldTensorFracEquivGeneral E₀ F F'
-  let ψE' := kw_functionFieldTensorFracEquivGeneral E₀' F F'
+  let ψE := kwFunctionFieldTensorFracEquivGeneral E₀ F F'
+  let ψE' := kwFunctionFieldTensorFracEquivGeneral E₀' F F'
   have h1 : RingHom.Finite ψE'.toAlgHom.toRingHom :=
     RingHom.Finite.of_surjective _ ψE'.surjective
   have h2 : RingHom.Finite ψE.symm.toAlgHom.toRingHom :=
@@ -1060,8 +1060,8 @@ theorem kw_surgehgf4_hfgkd_bcIota₁NoAC_finrankAlong (hfin' : FiniteAlong F ι'
     finrankAlong F' (kw_surgehgf4_hfgkd_bcIota₁NoAC E₀ E₀' F F' ι')
       = finrankAlong F ι' := by
   classical
-  let ψE := kw_functionFieldTensorFracEquivGeneral E₀ F F'
-  let ψE' := kw_functionFieldTensorFracEquivGeneral E₀' F F'
+  let ψE := kwFunctionFieldTensorFracEquivGeneral E₀ F F'
+  let ψE' := kwFunctionFieldTensorFracEquivGeneral E₀' F F'
   let ιFr := kw_surgehgf4_hfgkd_bcTensorFracIota E₀ E₀' F F' ι'
   have hcomm : ∀ x, ιFr (ψE' x)
       = ψE (kw_surgehgf4_hfgkd_bcIota₁NoAC E₀ E₀' F F' ι' x) := fun x => by
@@ -1085,25 +1085,25 @@ omit [E₀'.IsElliptic] in
 omit [E₀.IsElliptic] [CharZero F] [CharZero F'] in
 theorem kw_surgehgf4_hfgkd_bcIota₁NoAC_compat (a : (E₀'⁄F).toAffine.FunctionField) :
     kw_surgehgf4_hfgkd_bcIota₁NoAC E₀ E₀' F F' ι'
-        (kw_functionFieldMapAlongGeneral E₀' F F' a)
-      = kw_functionFieldMapAlongGeneral E₀ F F' (ι' a) := by
+        (kwFunctionFieldMapAlongGeneral E₀' F F' a)
+      = kwFunctionFieldMapAlongGeneral E₀ F F' (ι' a) := by
   classical
-  let ψE := kw_functionFieldTensorFracEquivGeneral E₀ F F'
-  let ψE' := kw_functionFieldTensorFracEquivGeneral E₀' F F'
-  let χE := kw_functionFieldMapAlongGeneral E₀ F F'
-  let χE' := kw_functionFieldMapAlongGeneral E₀' F F'
+  let ψE := kwFunctionFieldTensorFracEquivGeneral E₀ F F'
+  let ψE' := kwFunctionFieldTensorFracEquivGeneral E₀' F F'
+  let χE := kwFunctionFieldMapAlongGeneral E₀ F F'
+  let χE' := kwFunctionFieldMapAlongGeneral E₀' F F'
   have hκE' : ψE' (χE' a)
       = algebraMap ((E₀'⁄F).toAffine.FunctionField ⊗[F] F') _ (a ⊗ₜ[F] (1 : F')) := by
-    have hκ : ((kw_functionFieldTensorFracHomGeneral E₀' F F').restrictScalars F).comp
+    have hκ : ((kwFunctionFieldTensorFracHomGeneral E₀' F F').restrictScalars F).comp
         χE'
         = (IsScalarTower.toAlgHom F ((E₀'⁄F).toAffine.FunctionField ⊗[F] F')
             (FractionRing ((E₀'⁄F).toAffine.FunctionField ⊗[F] F'))).comp
             (Algebra.TensorProduct.includeLeft (R := F)) := by
       refine kw_functionField_algHom_ext ?_ ?_
-      · change kw_functionFieldTensorFracHomGeneral E₀' F F' (χE' _) = _
+      · change kwFunctionFieldTensorFracHomGeneral E₀' F F' (χE' _) = _
         rw [kw_functionFieldMapAlongGeneral_polyToFunctionField_X,
           kw_functionFieldTensorFracHomGeneral_X]; rfl
-      · change kw_functionFieldTensorFracHomGeneral E₀' F F' (χE' _) = _
+      · change kwFunctionFieldTensorFracHomGeneral E₀' F F' (χE' _) = _
         rw [kw_functionFieldMapAlongGeneral_yGen,
           kw_functionFieldTensorFracHomGeneral_yGen]; rfl
     exact DFunLike.congr_fun hκ a
@@ -1112,16 +1112,16 @@ theorem kw_surgehgf4_hfgkd_bcIota₁NoAC_compat (a : (E₀'⁄F).toAffine.Functi
     intro b
     refine ψE.injective ?_
     rw [AlgEquiv.apply_symm_apply]
-    have hκ : ((kw_functionFieldTensorFracHomGeneral E₀ F F').restrictScalars F).comp
+    have hκ : ((kwFunctionFieldTensorFracHomGeneral E₀ F F').restrictScalars F).comp
         χE
         = (IsScalarTower.toAlgHom F ((E₀⁄F).toAffine.FunctionField ⊗[F] F')
             (FractionRing ((E₀⁄F).toAffine.FunctionField ⊗[F] F'))).comp
             (Algebra.TensorProduct.includeLeft (R := F)) := by
       refine kw_functionField_algHom_ext ?_ ?_
-      · change kw_functionFieldTensorFracHomGeneral E₀ F F' (χE _) = _
+      · change kwFunctionFieldTensorFracHomGeneral E₀ F F' (χE _) = _
         rw [kw_functionFieldMapAlongGeneral_polyToFunctionField_X,
           kw_functionFieldTensorFracHomGeneral_X]; rfl
-      · change kw_functionFieldTensorFracHomGeneral E₀ F F' (χE _) = _
+      · change kwFunctionFieldTensorFracHomGeneral E₀ F F' (χE _) = _
         rw [kw_functionFieldMapAlongGeneral_yGen,
           kw_functionFieldTensorFracHomGeneral_yGen]; rfl
     exact (DFunLike.congr_fun hκ b).symm
@@ -1151,8 +1151,8 @@ def KwD5BetweenCurvesKerTransportAlongEmbed : Prop :=
     (ι₂ : (E₀'⁄F₂).toAffine.FunctionField →ₐ[F₂] (E₀⁄F₂).toAffine.FunctionField)
     (hι₂ : ι₂.toRingHom.IsIntegral) (hfin₂ : FiniteAlong F₂ ι₂)
     (_hχ : ∀ x : (E₀'⁄F₁).toAffine.FunctionField,
-      ι₂ (kw_functionFieldMapAlongGeneral E₀' F₁ F₂ x)
-        = kw_functionFieldMapAlongGeneral E₀ F₁ F₂ (ι₁ x))
+      ι₂ (kwFunctionFieldMapAlongGeneral E₀' F₁ F₂ x)
+        = kwFunctionFieldMapAlongGeneral E₀ F₁ F₂ (ι₁ x))
     (N : ℕ) [NeZero N],
     IsAddCyclic (AddMonoidHom.ker
       (pointMapOfPushforward ι₂ hι₂ hfin₂ (normFormulaAlong_of_elliptic ι₂ hfin₂))) →
@@ -1171,8 +1171,8 @@ def KwD5BetweenCurvesChiCompChiEqPhi : Prop :=
       [Algebra F₁ K] [IsScalarTower (↥K₀) F₁ K]
       [(W.map (algebraMap (↥K₀) K)).IsElliptic]
       (a : W.toAffine.FunctionField),
-    kw_functionFieldMapAlongGeneral W F₁ K
-      (kw_functionFieldMapAlongGeneral W (↥K₀) F₁ a)
+    kwFunctionFieldMapAlongGeneral W F₁ K
+      (kwFunctionFieldMapAlongGeneral W (↥K₀) F₁ a)
     = kw_iotaDescentPhi (W.map (algebraMap (↥K₀) K)) W rfl a
 
 end KerTransportMint
@@ -1226,69 +1226,69 @@ theorem kw_surgehgf4_hfgkd_hKD_of_kerTransport
   let : Algebra (AlgebraicClosure (↥K₀)) K := τ.toRingHom.toAlgebra
   have : IsScalarTower (↥K₀) (AlgebraicClosure (↥K₀)) K :=
     IsScalarTower.of_algebraMap_eq fun r => (τ.commutes r).symm
-  have hD3 : ∀ a, ι₀ (kw_functionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀)) a)
-      = kw_functionFieldMapAlongGeneral E₀ (↥K₀) (AlgebraicClosure (↥K₀)) (ι' a) :=
+  have hD3 : ∀ a, ι₀ (kwFunctionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀)) a)
+      = kwFunctionFieldMapAlongGeneral E₀ (↥K₀) (AlgebraicClosure (↥K₀)) (ι' a) :=
     kw_surgehgf4_hfgkd_bcIota₁NoAC_compat E₀ E₀' (↥K₀) (AlgebraicClosure (↥K₀)) ι'
   clear_value ι₀ τ
   have hχΦE : ∀ a : E₀.toAffine.FunctionField,
-      kw_functionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K
-        (kw_functionFieldMapAlongGeneral E₀ (↥K₀) (AlgebraicClosure (↥K₀)) a)
+      kwFunctionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K
+        (kwFunctionFieldMapAlongGeneral E₀ (↥K₀) (AlgebraicClosure (↥K₀)) a)
       = kw_iotaDescentPhi (E₀.map (algebraMap (↥K₀) K)) E₀ rfl a :=
     hχB K K₀ E₀ (AlgebraicClosure (↥K₀))
   have hχΦE' : ∀ a : E₀'.toAffine.FunctionField,
-      kw_functionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K
-        (kw_functionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀)) a)
+      kwFunctionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K
+        (kwFunctionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀)) a)
       = kw_iotaDescentPhi (E₀'.map (algebraMap (↥K₀) K)) E₀' rfl a :=
     hχB K K₀ E₀' (AlgebraicClosure (↥K₀))
   have hχ : ∀ x : (E₀'⁄(AlgebraicClosure (↥K₀))).toAffine.FunctionField,
-      ι (kw_functionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K x)
-        = kw_functionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K (ι₀ x) := by
+      ι (kwFunctionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K x)
+        = kwFunctionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K (ι₀ x) := by
     have hext := kw_iPFE_functionField_ringHom_ext
       (F := AlgebraicClosure (↥K₀)) (W := (E₀'⁄(AlgebraicClosure (↥K₀))).toAffine)
       (f := ι.toRingHom.comp
-        (kw_functionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K).toRingHom)
-      (g := (kw_functionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K).toRingHom.comp
+        (kwFunctionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K).toRingHom)
+      (g := (kwFunctionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K).toRingHom.comp
         ι₀.toRingHom)
       (fun r => by
-        have h1 : ι ((kw_functionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K)
+        have h1 : ι ((kwFunctionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K)
           (algebraMap _ _ r)) = algebraMap (AlgebraicClosure (↥K₀)) ((E₀⁄K).toAffine.FunctionField)
           r :=
           by
-          rw [(kw_functionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K).commutes r,
+          rw [(kwFunctionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K).commutes r,
             IsScalarTower.algebraMap_apply (AlgebraicClosure (↥K₀)) K
             ((E₀'⁄K).toAffine.FunctionField) r]
           exact (ι.commutes _).trans (IsScalarTower.algebraMap_apply (AlgebraicClosure (↥K₀)) K
             ((E₀⁄K).toAffine.FunctionField) r).symm
-        have h2 : (kw_functionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K) (ι₀
+        have h2 : (kwFunctionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K) (ι₀
           (algebraMap _ _ r)) = algebraMap (AlgebraicClosure (↥K₀)) ((E₀⁄K).toAffine.FunctionField)
           r :=
           by
-          rw [ι₀.commutes r, (kw_functionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀))
+          rw [ι₀.commutes r, (kwFunctionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀))
             K).commutes r]
         exact h1.trans h2.symm)
       (by
-        have key : ι ((kw_functionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K)
-          ((kw_functionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀)))
+        have key : ι ((kwFunctionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K)
+          ((kwFunctionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀)))
           (polyToFunctionField (E₀'⁄(↥K₀)) X)))
-            = (kw_functionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K) (ι₀
-              ((kw_functionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀)))
+            = (kwFunctionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K) (ι₀
+              ((kwFunctionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀)))
               (polyToFunctionField (E₀'⁄(↥K₀)) X))) := by
           exact (congrArg ι (hχΦE' _)).trans
             ((hcompat _).trans ((hχΦE _).symm.trans
-              (congrArg (kw_functionFieldMapAlongGeneral E₀
+              (congrArg (kwFunctionFieldMapAlongGeneral E₀
                 (AlgebraicClosure (↥K₀)) K) (hD3 _)).symm))
         rw [kw_functionFieldMapAlongGeneral_polyToFunctionField_X] at key
         exact key)
       (by
-        have key : ι ((kw_functionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K)
-          ((kw_functionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀))) (yGen
+        have key : ι ((kwFunctionFieldMapAlongGeneral E₀' (AlgebraicClosure (↥K₀)) K)
+          ((kwFunctionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀))) (yGen
           (E₀'⁄(↥K₀)))))
-            = (kw_functionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K) (ι₀
-              ((kw_functionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀))) (yGen
+            = (kwFunctionFieldMapAlongGeneral E₀ (AlgebraicClosure (↥K₀)) K) (ι₀
+              ((kwFunctionFieldMapAlongGeneral E₀' (↥K₀) (AlgebraicClosure (↥K₀))) (yGen
               (E₀'⁄(↥K₀))))) := by
           exact (congrArg ι (hχΦE' _)).trans
             ((hcompat _).trans ((hχΦE _).symm.trans
-              (congrArg (kw_functionFieldMapAlongGeneral E₀
+              (congrArg (kwFunctionFieldMapAlongGeneral E₀
                 (AlgebraicClosure (↥K₀)) K) (hD3 _)).symm))
         rw [kw_functionFieldMapAlongGeneral_yGen] at key
         exact key)
@@ -1824,8 +1824,8 @@ namespace ModularCurve
 theorem kw_surgehgf4_hfgkd_chiCompChiEqPhi_proved :
     KwD5BetweenCurvesChiCompChiEqPhi.{uK} := by
   intro K _ _ _ K₀ W _ F₁ _ _ _ _ _ _ _
-  let χ₁ := kw_functionFieldMapAlongGeneral W (↥K₀) F₁
-  let χ₂ := kw_functionFieldMapAlongGeneral W F₁ K
+  let χ₁ := kwFunctionFieldMapAlongGeneral W (↥K₀) F₁
+  let χ₂ := kwFunctionFieldMapAlongGeneral W F₁ K
   let Φ := kw_iotaDescentPhi (W.map (algebraMap (↥K₀) K)) W rfl
   suffices h : (χ₂.toRingHom.comp χ₁.toRingHom
       : W.toAffine.FunctionField →+* (W.map (algebraMap (↥K₀) K)).toAffine.FunctionField)
@@ -1876,14 +1876,14 @@ variable (E₀ : WeierstrassCurve K₀) [E₀.IsElliptic]
 attribute [-instance] IntermediateField.instAlgebraSubtypeMem in
 def kw_surgehgf4_cfe_fχ :
     E₀.toAffine.FunctionField →+* (E₀.map (algebraMap K₀ K)).toAffine.FunctionField :=
-  (kw_functionFieldMapAlongGeneral E₀ (↥K₀) K).toRingHom
+  (kwFunctionFieldMapAlongGeneral E₀ (↥K₀) K).toRingHom
 
 attribute [-instance] IntermediateField.instAlgebraSubtypeMem in
 omit [DecidableEq K] in
 omit [IsAlgClosed K] in
 omit [CharZero K] [E₀.IsElliptic] in
 theorem kw_surgehgf4_cfe_fχ_apply (a : E₀.toAffine.FunctionField) :
-    kw_surgehgf4_cfe_fχ E₀ a = kw_functionFieldMapAlongGeneral E₀ (↥K₀) K a := by
+    kw_surgehgf4_cfe_fχ E₀ a = kwFunctionFieldMapAlongGeneral E₀ (↥K₀) K a := by
   classical
   exact
     rfl
@@ -1893,12 +1893,12 @@ omit [DecidableEq K] in
 omit [IsAlgClosed K] in
 omit [CharZero K] [E₀.IsElliptic] in
 theorem kw_surgehgf4_cfe_chi_const (r : ↥K₀) :
-    kw_functionFieldMapAlongGeneral E₀ (↥K₀) K
+    kwFunctionFieldMapAlongGeneral E₀ (↥K₀) K
         (algebraMap (↥K₀) E₀.toAffine.FunctionField r)
       = algebraMap K (E₀.map (algebraMap K₀ K)).toAffine.FunctionField
           (algebraMap (↥K₀) K r) := by
   classical
-  erw [(kw_functionFieldMapAlongGeneral E₀ (↥K₀) K).commutes r]
+  erw [(kwFunctionFieldMapAlongGeneral E₀ (↥K₀) K).commutes r]
   exact IsScalarTower.algebraMap_apply (↥K₀) K (E₀⁄K).FunctionField r
 
 omit [DecidableEq K] in
@@ -1930,7 +1930,7 @@ omit [DecidableEq K] in
 omit [IsAlgClosed K] in
 omit [CharZero K] [E₀.IsElliptic] in
 theorem kw_surgehgf4_cfe_chi_eq_phi_apply (a : E₀.toAffine.FunctionField) :
-    kw_functionFieldMapAlongGeneral E₀ (↥K₀) K a = kw_iA_phi E₀ a := by
+    kwFunctionFieldMapAlongGeneral E₀ (↥K₀) K a = kw_iA_phi E₀ a := by
   classical
   rw [← kw_surgehgf4_cfe_fχ_apply]
   exact DFunLike.congr_fun (kw_surgehgf4_cfe_fχ_eq_phi E₀) a
@@ -1953,10 +1953,10 @@ theorem kw_surgehgf4_cfe_bcIota₁NoAC_eq_ι :
   classical
   set ι' := kw_surgehgf4_hSD_ι' E₀ E₀' ι hcoeffs with hι'_def
   refine kw_functionField_algHom_ext ?_ ?_
-  · have key : ι (kw_functionFieldMapAlongGeneral E₀' (↥K₀) K (polyToFunctionField
+  · have key : ι (kwFunctionFieldMapAlongGeneral E₀' (↥K₀) K (polyToFunctionField
       (E₀'⁄(↥K₀)).toAffine X))
         = kw_surgehgf4_hfgkd_bcIota₁NoAC E₀ E₀' (↥K₀) K ι'
-            (kw_functionFieldMapAlongGeneral E₀' (↥K₀) K (polyToFunctionField
+            (kwFunctionFieldMapAlongGeneral E₀' (↥K₀) K (polyToFunctionField
               (E₀'⁄(↥K₀)).toAffine X)) := by
       exact (congrArg ι (kw_surgehgf4_cfe_chi_eq_phi_apply E₀' _)).trans
         ((kw_surgehgf4_hSD_phiCompat_apply E₀ E₀' ι hcoeffs _).trans
@@ -1964,9 +1964,9 @@ theorem kw_surgehgf4_cfe_bcIota₁NoAC_eq_ι :
             (kw_surgehgf4_hfgkd_bcIota₁NoAC_compat E₀ E₀' (↥K₀) K ι' _).symm))
     rw [kw_functionFieldMapAlongGeneral_polyToFunctionField_X] at key
     exact key.symm
-  · have key : ι (kw_functionFieldMapAlongGeneral E₀' (↥K₀) K (yGen (E₀'⁄(↥K₀)).toAffine))
+  · have key : ι (kwFunctionFieldMapAlongGeneral E₀' (↥K₀) K (yGen (E₀'⁄(↥K₀)).toAffine))
         = kw_surgehgf4_hfgkd_bcIota₁NoAC E₀ E₀' (↥K₀) K ι'
-            (kw_functionFieldMapAlongGeneral E₀' (↥K₀) K (yGen (E₀'⁄(↥K₀)).toAffine)) := by
+            (kwFunctionFieldMapAlongGeneral E₀' (↥K₀) K (yGen (E₀'⁄(↥K₀)).toAffine)) := by
       exact (congrArg ι (kw_surgehgf4_cfe_chi_eq_phi_apply E₀' _)).trans
         ((kw_surgehgf4_hSD_phiCompat_apply E₀ E₀' ι hcoeffs _).trans
           ((kw_surgehgf4_cfe_chi_eq_phi_apply E₀ _).symm.trans
@@ -2026,10 +2026,10 @@ theorem s13_stub_ktd : KwD5BetweenCurvesKerTransportAlongEmbed.{uK} := by
     hcard
   exact WeierstrassCurve.Affine.isAddCyclic_ker_pointMapOfPushforward_of_baseChange_algHom R₀ E₀ E₀'
     F₁ F₂
-    (kw_functionFieldMapAlongGeneral E₀ F₁ F₂)
+    (kwFunctionFieldMapAlongGeneral E₀ F₁ F₂)
     (kw_functionFieldMapAlongGeneral_polyToFunctionField_X E₀ F₁ F₂)
     (kw_functionFieldMapAlongGeneral_yGen E₀ F₁ F₂)
-    (kw_functionFieldMapAlongGeneral E₀' F₁ F₂)
+    (kwFunctionFieldMapAlongGeneral E₀' F₁ F₂)
     (kw_functionFieldMapAlongGeneral_polyToFunctionField_X E₀' F₁ F₂)
     (kw_functionFieldMapAlongGeneral_yGen E₀' F₁ F₂)
     ι₁ hι₁ hfin₁ (WeierstrassCurve.Affine.normFormulaAlong_of_elliptic ι₁ hfin₁)

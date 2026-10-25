@@ -88,6 +88,8 @@ section TowerMaps
 
 variable (L : Type*) [Field L] [Algebra ℚ L] {N M : ℕ} [NeZero N] [NeZero M]
 
+/-- The inclusion of full modular function fields with base-changed constants when the first
+level divides the second. -/
 def towerInclBar (h : N ∣ M) :
     laurentBaseChange L (modularFunctionFieldFull N) →ₐ[L]
       laurentBaseChange L (modularFunctionFieldFull M) :=
@@ -118,6 +120,8 @@ theorem towerInclBar_self (h : N ∣ N) (x : laurentBaseChange L (modularFunctio
   Subtype.ext (coe_towerInclBar L h x)
 
 variable (N) in
+/-- The level-tower map obtained by substituting `q^ℓ` for `q` and including into the specified
+larger level. -/
 def towerSubstBar (ℓ : ℕ) [NeZero ℓ] (h : N * ℓ ∣ M) :
     laurentBaseChange L (modularFunctionFieldFull N) →ₐ[L]
       laurentBaseChange L (modularFunctionFieldFull M) :=
@@ -192,6 +196,8 @@ omit [NeZero N] [NeZero ℓ] [NeZero ℓ'] [NeZero M] in
 theorem dvd_of_eq_roof (hM : M = N * ℓ * ℓ') : N * ℓ ∣ M ∧ N * ℓ' * ℓ ∣ M :=
   ⟨⟨ℓ', hM⟩, ⟨1, by rw [hM]; ring⟩⟩
 
+/-- The divisor base-change identity exchanging pullback and pushforward in the specified
+degeneracy square. -/
 def HeckeExchangeAt (hM : M = N * ℓ * ℓ') : Prop :=
   ∀ [HasPrincipalDivisors L (laurentBaseChange L (modularFunctionFieldFull (N * ℓ)))]
     [HasPrincipalDivisors L (laurentBaseChange L (modularFunctionFieldFull M))]

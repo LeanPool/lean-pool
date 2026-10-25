@@ -139,6 +139,7 @@ section QAdicPlaceMod
 variable (F : IntermediateField K (LaurentSeries K))
 
 variable {F} in
+/-- The `j`-expansion viewed as an element of the chosen intermediate Laurent-series field. -/
 def jModElt (hF : jqModC K ∈ F) : F := ⟨jqModC K, hF⟩
 
 variable {F} in
@@ -163,6 +164,7 @@ theorem qIntegersBar_ne_top_of_jqModC_mem (hF : jqModC K ∈ F) : qIntegersBar K
   exact jModElt_notMem_qIntegersBar K hF (h ▸ ValuationSubring.mem_top _)
 
 variable {F} in
+/-- The inverse of the `j`-expansion in the chosen intermediate field. -/
 def jModInvElt (hF : jqModC K ∈ F) : F := (jModElt K hF)⁻¹
 
 variable {F} in
@@ -187,6 +189,7 @@ theorem jModInvElt_mem_qIntegersBar (hF : jqModC K ∈ F) :
   omega
 
 variable {F} in
+/-- The inverse of `j` viewed in the valuation ring of the induced place. -/
 def uniformizerMod (hF : jqModC K ∈ F) : qIntegersBar K F :=
   ⟨jModInvElt K hF, jModInvElt_mem_qIntegersBar K hF⟩
 
@@ -260,6 +263,8 @@ theorem qIntegersBar_isPrincipalIdealRing_of_jqModC_mem (hF : jqModC K ∈ F) :
   exact hπn
 
 variable {F} in
+/-- The place induced by the Laurent-series valuation on an intermediate field containing the
+`j`-expansion. -/
 def qInftyPlaceMod (hF : jqModC K ∈ F) : Place K F where
   toValuationSubring := qIntegersBar K F
   algebraMap_mem' := fun a => by
@@ -374,6 +379,7 @@ section LevelN
 
 variable (N : ℕ) [NeZero N]
 
+/-- The geometric cusp at infinity on the two-`j` modular function field. -/
 def cuspInftyGeom : Place K (modularFunctionFieldC K N) :=
   qInftyPlaceMod K (jqModC_mem K N)
 

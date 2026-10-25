@@ -39,10 +39,10 @@ field of $R$ (with the residue field of $R$ and $K$ carrying decidable equality)
 Weierstrass curve over $K$ satisfying the predicate `WeierstrassCurve.HasGoodReduction` for $R$, so
 that in particular $W$ is minimal over $R$ and has a reduction `W.reduction R` over the residue
 field. For points $P$ and $Q$ of the affine group $W(K)$ given by the chord–tangent law, the
-assertion is that the map [`WeierstrassCurve.reducePoint_alt R
+assertion is that the map [`WeierstrassCurve.reducePointAlt R
 W`](def/EllipticCurve_PointReduction.html#L22) from $W(K)$ to the points of the reduced curve
 commutes with addition: the reduction of $P+Q$ equals the sum of the reductions of $P$ and of $Q$.
-Here `reducePoint_alt` sends the point at infinity to the point at infinity, and sends an affine
+Here `reducePointAlt` sends the point at infinity to the point at infinity, and sends an affine
 point $(x,y)$ to the affine point with coordinates `reduceCoord R x`, `reduceCoord R y` — the
 residue classes of chosen preimages in $R$ of $x$ and $y$, and $0$ when no preimage exists —
 provided both $x$ and $y$ have valuation at most $1$ at the maximal ideal of $R$ and the resulting
@@ -76,17 +76,17 @@ theorem solution
     {K : Type*} [Field K] [DecidableEq K] [Algebra R K] [IsFractionRing R K]
     [DecidableEq (IsLocalRing.ResidueField R)]
     (W : WeierstrassCurve K) [W.HasGoodReduction R] (P Q : W.toAffine.Point) :
-    WeierstrassCurve.reducePoint_alt R W (P + Q)
-      = WeierstrassCurve.reducePoint_alt R W P + WeierstrassCurve.reducePoint_alt R W Q := by
+    WeierstrassCurve.reducePointAlt R W (P + Q)
+      = WeierstrassCurve.reducePointAlt R W P + WeierstrassCurve.reducePointAlt R W Q := by
   cases P with
   | zero =>
-    change reducePoint_alt R W (0 + Q) = reducePoint_alt R W 0 + reducePoint_alt R W Q
-    rw [zero_add, show reducePoint_alt R W (0 : W.toAffine.Point) = 0 from rfl, zero_add]
+    change reducePointAlt R W (0 + Q) = reducePointAlt R W 0 + reducePointAlt R W Q
+    rw [zero_add, show reducePointAlt R W (0 : W.toAffine.Point) = 0 from rfl, zero_add]
   | some x₁ y₁ h₁ =>
     cases Q with
     | zero =>
-      change reducePoint_alt R W (_ + 0) = _ + reducePoint_alt R W 0
-      rw [add_zero, show reducePoint_alt R W (0 : W.toAffine.Point) = 0 from rfl, add_zero]
+      change reducePointAlt R W (_ + 0) = _ + reducePointAlt R W 0
+      rw [add_zero, show reducePointAlt R W (0 : W.toAffine.Point) = 0 from rfl, add_zero]
     | some x₂ y₂ h₂ =>
       by_cases hx₁ : valuation K (IsDiscreteValuationRing.maximalIdeal R) x₁ ≤ 1
       · by_cases hx₂ : valuation K (IsDiscreteValuationRing.maximalIdeal R) x₂ ≤ 1
@@ -124,7 +124,7 @@ theorem solution
               have hpole_n : ¬ valuation K (IsDiscreteValuationRing.maximalIdeal R) xn ≤ 1 := by
                 rw [← hQ'.1]
                 exact hx₁
-              have h0 := congrArg (reducePoint_alt R W) hQeq
+              have h0 := congrArg (reducePointAlt R W) hQeq
               rw [WeierstrassCurve.reducePoint_some_add_some_of_not_le_one R W h₃ hn hx₃
                 hpole_n] at h0
               obtain ⟨h₃'', hrS⟩ := WeierstrassCurve.reducePoint_some R W h₃ hx₃ hy₃
@@ -144,8 +144,8 @@ theorem WeierstrassCurve.reducePoint_add
     {K : Type*} [Field K] [DecidableEq K] [Algebra R K] [IsFractionRing R K]
     [DecidableEq (IsLocalRing.ResidueField R)]
     (W : WeierstrassCurve K) [W.HasGoodReduction R] (P Q : W.toAffine.Point) :
-    WeierstrassCurve.reducePoint_alt R W (P + Q)
-      = WeierstrassCurve.reducePoint_alt R W P + WeierstrassCurve.reducePoint_alt R W Q :=
+    WeierstrassCurve.reducePointAlt R W (P + Q)
+      = WeierstrassCurve.reducePointAlt R W P + WeierstrassCurve.reducePointAlt R W Q :=
   solution R W P Q
 
 end publicSection

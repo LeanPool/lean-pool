@@ -191,6 +191,8 @@ theorem exists_ord_algebraMap_pos [Algebra.IsIntegral F F'] :
   have := (mem_comap_iff_ord_nonneg hg0).not.mp hg
   omega
 
+/-- The least positive order attained by a nonzero element of the smaller field, or zero if none
+exists. -/
 def ramificationIndex (F : Type*) [Field F] [Algebra F F'] : ℕ :=
   sInf {n : ℕ | 0 < n ∧ ∃ f : F, f ≠ 0 ∧ w.ord (algebraMap F F' f) = n}
 
@@ -324,6 +326,7 @@ section RestrictDef
 variable [Algebra K F] [IsScalarTower K F F']
 
 variable (F) in
+/-- Restriction of a place along the given integral field extension. -/
 def restrict : Place K F where
   toValuationSubring := w.toValuationSubring.comap (algebraMap F F')
   algebraMap_mem' a := by
@@ -411,6 +414,7 @@ namespace Place
 variable (w : Place K F')
 
 variable (F) in
+/-- The inclusion of the restricted place's valuation ring into the original valuation ring. -/
 def restrictInclusion : (w.restrict F).toValuationSubring →+* w.toValuationSubring where
   toFun a := ⟨algebraMap F F' (a : F), ValuationSubring.mem_comap.mp a.2⟩
   map_one' := Subtype.ext (map_one (algebraMap F F'))
@@ -435,6 +439,7 @@ instance instIsLocalHomRestrictInclusion : IsLocalHom (restrictInclusion F w) wh
     exact (isUnit_mk_comap_iff ha0 a.2).mpr hord
 
 variable (F) in
+/-- The map on residue fields induced by restriction of a place. -/
 def restrictResidueMap : (w.restrict F).ResidueField →+* w.ResidueField :=
   IsLocalRing.ResidueField.map (restrictInclusion F w)
 
@@ -462,6 +467,7 @@ instance instIsScalarTowerResidueFieldRestrictPushforward :
   rw [← IsScalarTower.algebraMap_apply]
 
 variable (F) in
+/-- The residue field degree of a place over its restriction to the smaller field. -/
 def inertiaDeg : ℕ := Module.finrank (w.restrict F).ResidueField w.ResidueField
 
 theorem deg_restrict_mul_inertiaDeg : (w.restrict F).deg * w.inertiaDeg F = w.deg :=
@@ -472,6 +478,7 @@ end Place
 namespace Divisor
 
 variable (F) in
+/-- The map sending each place to its restriction, without residue-degree weights. -/
 def mapRestrict : Divisor K F' →+ Divisor K F :=
   Finsupp.liftAddHom fun w => Finsupp.singleAddHom (w.restrict F)
 
@@ -481,6 +488,7 @@ theorem mapRestrict_single (w : Place K F') (n : ℤ) :
   simp [mapRestrict]
 
 variable (F) in
+/-- Pushforward of divisors, weighting each restricted place by the residue field degree. -/
 def pushforward : Divisor K F' →+ Divisor K F :=
   Finsupp.liftAddHom fun w =>
     (Finsupp.singleAddHom (w.restrict F)).comp (AddMonoidHom.mulRight (w.inertiaDeg F : ℤ))
@@ -515,6 +523,7 @@ theorem pushforward_apply [DecidableEq (Place K F)] (D : Divisor K F') (v : Plac
   simp [Finsupp.single_apply]
 
 variable (K F F') in
+/-- Pushforward sends the divisor of a nonzero function to the divisor of its field norm. -/
 def PushforwardNormFormula : Prop :=
   ∀ (f : F'), f ≠ 0 → ∀ D : Divisor K F', (∀ w, D w = w.ord f) →
     ∀ v : Place K F, pushforward F D v = v.ord (Algebra.norm F f)
@@ -547,6 +556,7 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F']
 namespace Place
 
 variable (F') in
+/-- The finite set of places of the extension restricting to the given place. -/
 def fiber (v : Place K F) : Finset (Place K F') :=
   (restrict_fiber_finite v).toFinset
 
@@ -563,6 +573,7 @@ end Place
 namespace Divisor
 
 variable (F') in
+/-- Pullback of an integer multiple of one place, weighted by ramification indices. -/
 def pullbackSingleHom (v : Place K F) : ℤ →+ Divisor K F' where
   toFun n := ∑ w ∈ v.fiber F', Finsupp.single w (n * w.ramificationIndex F)
   map_zero' := by simp
@@ -576,6 +587,7 @@ theorem pullbackSingleHom_apply (v : Place K F) (n : ℤ) :
   rfl
 
 variable (F') in
+/-- Pullback of divisors, summing over places above each place with ramification weights. -/
 def pullback : Divisor K F →+ Divisor K F' :=
   Finsupp.liftAddHom (pullbackSingleHom F')
 
@@ -637,6 +649,8 @@ theorem pullback_mem_principal {D : Divisor K F} (hD : D ∈ principal (K := K) 
 end Divisor
 
 variable (K F F') in
+/-- The sum of ramification indices times residue degrees over a place equals the extension
+degree times that place's degree. -/
 class FundamentalIdentity : Prop where
   sum_ramificationIndex_mul_deg : ∀ v : Place K F,
     ∑ w ∈ v.fiber F', (w.ramificationIndex F : ℤ) * (w.deg : ℤ)
@@ -679,6 +693,8 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F']
   [Algebra.IsIntegral F F'] [HasPrincipalDivisors K F']
 
 variable (K F F') in
+/-- The sum of ramification indices times inertia degrees above each place equals the field
+extension degree. -/
 class SumRamificationInertia : Prop where
   sum_ramificationIndex_mul_inertiaDeg : ∀ v : Place K F,
     ∑ w ∈ v.fiber F', (w.ramificationIndex F : ℤ) * (w.inertiaDeg F : ℤ)
@@ -707,6 +723,7 @@ instance (priority := 100) instFundamentalIdentityOfSumRamificationInertia
 namespace Pic0
 
 variable (F') in
+/-- Pullback of degree-zero divisors, using the fundamental degree identity. -/
 def pullbackDegZeroHom [FundamentalIdentity K F F'] :
     Divisor.degZero (K := K) (F := F) →+ Divisor.degZero (K := K) (F := F') :=
   ((Divisor.pullback F').domRestrict (Divisor.degZero (K := K) (F := F))).codRestrict _
@@ -718,6 +735,7 @@ theorem coe_pullbackDegZeroHom [FundamentalIdentity K F F']
     (pullbackDegZeroHom F' D : Divisor K F') = Divisor.pullback F' (D : Divisor K F) := rfl
 
 variable (F') in
+/-- The homomorphism on degree-zero divisor classes induced by pullback. -/
 def pullbackHom [FundamentalIdentity K F F'] : Pic0 K F →+ Pic0 K F' :=
   QuotientAddGroup.map _ _ (pullbackDegZeroHom F') (by
     rintro ⟨D, hD0⟩ hD
@@ -729,6 +747,7 @@ theorem pullbackHom_mk [FundamentalIdentity K F F']
     pullbackHom F' (mk D) = mk (pullbackDegZeroHom F' D) := rfl
 
 variable (F) in
+/-- The homomorphism on degree-zero divisors induced by residue-degree-weighted pushforward. -/
 def pushforwardDegZeroHom :
     Divisor.degZero (K := K) (F := F') →+ Divisor.degZero (K := K) (F := F) :=
   ((Divisor.pushforward F).domRestrict (Divisor.degZero (K := K) (F := F'))).codRestrict _
@@ -740,6 +759,7 @@ theorem coe_pushforwardDegZeroHom (D : Divisor.degZero (K := K) (F := F')) :
     (pushforwardDegZeroHom F D : Divisor K F) = Divisor.pushforward F (D : Divisor K F') := rfl
 
 variable (K F F') in
+/-- The homomorphism on degree-zero divisor classes induced by pushforward and the norm formula. -/
 def pushforwardHom [Module.Finite F F'] (H : Divisor.PushforwardNormFormula K F F') :
     Pic0 K F' →+ Pic0 K F :=
   QuotientAddGroup.map _ _ (pushforwardDegZeroHom F) (by

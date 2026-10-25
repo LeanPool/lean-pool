@@ -46,7 +46,7 @@ $V=W.\mathrm{restrict}\,F$ (the contraction of $\mathcal O_W$ along $F\to F'$) a
 $e=W.\mathrm{ramificationIndex}\,F$ (the least positive value attained by $\mathrm{ord}_W$ on
 nonzero elements of $F$). The valuation identity $v_W(\iota x)=v_V(x)^e$ is proved on $F$, then on
 the `WithVal` models, where the induced map is shown uniformly continuous; completing it gives the
-ring homomorphism `kw_ffgc_adicCompletionComap` $\hat F_V\to\hat{F'}_W$, continuous, compatible with
+ring homomorphism `kwFfgcAdicCompletionComap` $\hat F_V\to\hat{F'}_W$, continuous, compatible with
 the coercions from $F$, and satisfying $v(\varphi x)=v(x)^e$; it carries $\hat{\mathcal O}_V$ into
 $\hat{\mathcal O}_W$, whence a map of integer rings and the corresponding algebra structures, scalar
 towers and continuity of scalar multiplication. Further declarations: a rank-one structure on the
@@ -76,7 +76,8 @@ treatment of divisors and residues on curves, which feeds the modular-curve part
 
 @[expose] public section publicSection
 
-instance {K L : Type*} [Field K] [Semiring L] (O : ValuationSubring K) [Algebra K L] :
+instance instAlgebraSubtypeMemValuationSubringDefinitions
+    {K L : Type*} [Field K] [Semiring L] (O : ValuationSubring K) [Algebra K L] :
     Algebra O L where
   smul r x := r.1 • x
   algebraMap := (algebraMap K L).comp (algebraMap O K)
@@ -93,8 +94,10 @@ section AdicCompletion
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (V : Place K F)
 
+/-- The completion of the function field at the place. -/
 abbrev adicCompletion : Type _ := V.heightOneSpectrum.adicCompletion F
 
+/-- The valuation ring in the completion at the place. -/
 abbrev adicCompletionIntegers : ValuationSubring V.adicCompletion :=
   V.heightOneSpectrum.adicCompletionIntegers F
 
@@ -170,7 +173,8 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra 
 variable (F)
 variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Place K F')
 
-def kw_ffgc_adicCompletionComap : (W.restrict F).adicCompletion →+* W.adicCompletion :=
+/-- The map from the completion at a restricted place to the completion upstairs. -/
+def kwFfgcAdicCompletionComap : (W.restrict F).adicCompletion →+* W.adicCompletion :=
   ((IsDedekindDomain.HeightOneSpectrum.adicCompletion.equiv F'
     W.heightOneSpectrum).symm.toRingHom.comp
     (UniformSpace.Completion.mapRingHom
@@ -181,8 +185,8 @@ def kw_ffgc_adicCompletionComap : (W.restrict F).adicCompletion →+* W.adicComp
       F).heightOneSpectrum).toRingHom
 
 theorem kw_ffgc_continuous_adicCompletionComap :
-    Continuous (kw_ffgc_adicCompletionComap F W) := by
-  have h : ⇑(kw_ffgc_adicCompletionComap F W) =
+    Continuous (kwFfgcAdicCompletionComap F W) := by
+  have h : ⇑(kwFfgcAdicCompletionComap F W) =
       IsDedekindDomain.HeightOneSpectrum.adicCompletion.ofCompletion ∘ UniformSpace.Completion.map
         (WithVal.map ((W.restrict F).heightOneSpectrum.valuation F)
           (W.heightOneSpectrum.valuation F') (algebraMap F F')) ∘
@@ -194,7 +198,7 @@ theorem kw_ffgc_continuous_adicCompletionComap :
 
 theorem kw_ffgc_adicCompletionComap_coe
     (x : WithVal ((W.restrict F).heightOneSpectrum.valuation F)) :
-    kw_ffgc_adicCompletionComap F W (x : (W.restrict F).adicCompletion)
+    kwFfgcAdicCompletionComap F W (x : (W.restrict F).adicCompletion)
       = (WithVal.map ((W.restrict F).heightOneSpectrum.valuation F)
           (W.heightOneSpectrum.valuation F') (algebraMap F F') x : W.adicCompletion) :=
   by
@@ -204,7 +208,7 @@ theorem kw_ffgc_adicCompletionComap_coe
 
 open WithZeroTopology in
 theorem kw_ffgc_valued_adicCompletionComap (x : (W.restrict F).adicCompletion) :
-    Valued.v (kw_ffgc_adicCompletionComap F W x)
+    Valued.v (kwFfgcAdicCompletionComap F W x)
       = Valued.v x ^ W.ramificationIndex F := by
   obtain ⟨x, rfl⟩ :=
     IsDedekindDomain.HeightOneSpectrum.adicCompletion.ofCompletion_surjective F _ x
@@ -242,21 +246,22 @@ variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Pl
 
 theorem kw_ffgc_adicCompletionComap_mem_integers
     {x : (W.restrict F).adicCompletion} (hx : x ∈ (W.restrict F).adicCompletionIntegers) :
-    kw_ffgc_adicCompletionComap F W x ∈ W.adicCompletionIntegers := by
+    kwFfgcAdicCompletionComap F W x ∈ W.adicCompletionIntegers := by
   rw [HeightOneSpectrum.mem_adicCompletionIntegers] at hx ⊢
   rw [kw_ffgc_valued_adicCompletionComap]
   exact pow_le_one' hx _
 
-def kw_ffgc_adicCompletionComapIntegers :
+/-- The induced map between the valuation rings of the restricted and upstairs completions. -/
+def kwFfgcAdicCompletionComapIntegers :
     (W.restrict F).adicCompletionIntegers →+* W.adicCompletionIntegers :=
-  (kw_ffgc_adicCompletionComap F W).restrict _ _
+  (kwFfgcAdicCompletionComap F W).restrict _ _
     fun _ hx => kw_ffgc_adicCompletionComap_mem_integers F W hx
 
 @[simp]
 theorem kw_ffgc_adicCompletionComapIntegers_coe
     (x : (W.restrict F).adicCompletionIntegers) :
-    (kw_ffgc_adicCompletionComapIntegers F W x : W.adicCompletion)
-      = kw_ffgc_adicCompletionComap F W (x : (W.restrict F).adicCompletion) := rfl
+    (kwFfgcAdicCompletionComapIntegers F W x : W.adicCompletion)
+      = kwFfgcAdicCompletionComap F W (x : (W.restrict F).adicCompletion) := rfl
 
 end IntegerComap
 
@@ -274,21 +279,24 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra 
 variable (F)
 variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Place K F')
 
-scoped instance kw_ffgc_algebraAdicCompletionComap :
+/-- The algebra structure on the upstairs completion induced by the restricted-completion map. -/
+scoped instance kwFfgcAlgebraAdicCompletionComap :
     Algebra (W.restrict F).adicCompletion W.adicCompletion :=
-  (kw_ffgc_adicCompletionComap F W).toAlgebra
+  (kwFfgcAdicCompletionComap F W).toAlgebra
 
 theorem kw_ffgc_algebraMap_adicCompletionComap_eq :
     algebraMap (W.restrict F).adicCompletion W.adicCompletion
-      = kw_ffgc_adicCompletionComap F W := rfl
+      = kwFfgcAdicCompletionComap F W := rfl
 
-scoped instance kw_ffgc_algebraAdicCompletionComapIntegers :
+/-- The corresponding algebra structure on the valuation rings of the completions. -/
+scoped instance kwFfgcAlgebraAdicCompletionComapIntegers :
     Algebra (W.restrict F).adicCompletionIntegers W.adicCompletionIntegers :=
-  (kw_ffgc_adicCompletionComapIntegers F W).toAlgebra
+  (kwFfgcAdicCompletionComapIntegers F W).toAlgebra
 
-scoped instance kw_ffgc_algebraAdicCompletionIntegersToCompletion :
+/-- The upstairs completion as an algebra over the downstairs completed valuation ring. -/
+scoped instance kwFfgcAlgebraAdicCompletionIntegersToCompletion :
     Algebra (W.restrict F).adicCompletionIntegers W.adicCompletion :=
-  ((kw_ffgc_adicCompletionComap F W).comp
+  ((kwFfgcAdicCompletionComap F W).comp
     (algebraMap (W.restrict F).adicCompletionIntegers (W.restrict F).adicCompletion)).toAlgebra
 
 instance kw_ffgc_isScalarTower_integersCompletionCompletion :
@@ -311,8 +319,9 @@ open WithZeroMulInt Valuation.IsRankOneDiscrete
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (V : Place K F)
 
+/-- The rank-one structure for the valuation on the completed function field. -/
 @[implicit_reducible]
-noncomputable def kw_ffgc_rankOne_adicCompletion :
+noncomputable def kwFfgcRankOneAdicCompletion :
     (Valued.v : Valuation V.adicCompletion ℤᵐ⁰).RankOne :=
   Valuation.IsRankOneDiscrete.rankOne _ (one_lt_two (α := ℝ≥0))
 
@@ -328,8 +337,10 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra 
 variable (F)
 variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Place K F')
 
-noncomputable def kw_ffgc_absoluteValue : AbsoluteValue W.adicCompletion ℝ :=
-  letI := kw_ffgc_rankOne_adicCompletion W
+/-- The absolute value on the upstairs completion normalized by the reciprocal ramification
+index. -/
+noncomputable def kwFfgcAbsoluteValue : AbsoluteValue W.adicCompletion ℝ :=
+  letI := kwFfgcRankOneAdicCompletion W
   have hr : (0 : ℝ) < ((W.ramificationIndex F : ℝ))⁻¹ :=
     inv_pos.mpr (Nat.cast_pos.mpr (W.ramificationIndex_pos (F := F)))
   { toFun := fun y => ‖y‖ ^ ((W.ramificationIndex F : ℝ))⁻¹
@@ -397,7 +408,9 @@ theorem kw_ffgc_algebraMap_smul_algebraMap (c : F) (b : F') :
   rw [Algebra.smul_def, Algebra.smul_def, map_mul,
     kw_ffgc_adicCompletionComap_algebraMap_algebraMap]
 
-def kw_ffgc_completionLinearCombination {ι : Type*} [Fintype ι] (b : Module.Basis ι F F') :
+/-- Extend linear combination in a basis of the field extension to coefficients in the completed
+base field. -/
+def kwFfgcCompletionLinearCombination {ι : Type*} [Fintype ι] (b : Module.Basis ι F F') :
     (ι → (W.restrict F).adicCompletion)
       →ₗ[(W.restrict F).adicCompletion] W.adicCompletion :=
   Fintype.linearCombination (W.restrict F).adicCompletion
@@ -405,25 +418,25 @@ def kw_ffgc_completionLinearCombination {ι : Type*} [Fintype ι] (b : Module.Ba
 
 theorem kw_ffgc_denseRange_completionLinearCombination {ι : Type*} [Fintype ι]
     (b : Module.Basis ι F F') :
-    DenseRange (kw_ffgc_completionLinearCombination F W b) := by
+    DenseRange (kwFfgcCompletionLinearCombination F W b) := by
   apply (IsDedekindDomain.HeightOneSpectrum.denseRange_algebraMap F' W.heightOneSpectrum).mono
   rintro _ ⟨l, rfl⟩
   refine ⟨fun i => algebraMap F (W.restrict F).adicCompletion (b.repr l i), ?_⟩
-  simp only [kw_ffgc_completionLinearCombination, Fintype.linearCombination_apply,
+  simp only [kwFfgcCompletionLinearCombination, Fintype.linearCombination_apply,
     kw_ffgc_algebraMap_smul_algebraMap, ← map_sum]
   congr 1
   exact b.sum_repr l
 
 instance kw_ffgc_finiteDimensional_adicCompletion [FiniteDimensional F F'] :
     FiniteDimensional (W.restrict F).adicCompletion W.adicCompletion := by
-  let := kw_ffgc_rankOne_adicCompletion (W.restrict F)
+  let := kwFfgcRankOneAdicCompletion (W.restrict F)
   let : NontriviallyNormedField (W.restrict F).adicCompletion :=
     Valued.toNontriviallyNormedField (W.restrict F).adicCompletion ℤᵐ⁰
   let b := Module.finBasis F F'
-  exact Module.Finite.of_surjective (kw_ffgc_completionLinearCombination F W b) (by
+  exact Module.Finite.of_surjective (kwFfgcCompletionLinearCombination F W b) (by
     rw [← Set.range_eq_univ, ← LinearMap.coe_range,
       ← (LinearMap.range
-          (kw_ffgc_completionLinearCombination F W b)).closed_of_finiteDimensional.closure_eq]
+          (kwFfgcCompletionLinearCombination F W b)).closed_of_finiteDimensional.closure_eq]
     exact (kw_ffgc_denseRange_completionLinearCombination F W b).closure_range)
 
 end FiniteDimensional
@@ -434,12 +447,14 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra 
 variable (F)
 variable [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F'] (W : Place K F')
 
-abbrev kw_ffgc_completionTrace :
+/-- The field trace on the completed extension. -/
+abbrev kwFfgcCompletionTrace :
     W.adicCompletion →ₗ[(W.restrict F).adicCompletion] (W.restrict F).adicCompletion :=
   Algebra.trace (W.restrict F).adicCompletion W.adicCompletion
 
-def kw_ffgc_completionTraceF' : F' →ₗ[F] (W.restrict F).adicCompletion :=
-  { toFun := fun g => kw_ffgc_completionTrace F W (algebraMap F' W.adicCompletion g)
+/-- The completed field trace restricted to elements of the original upstairs function field. -/
+def kwFfgcCompletionTraceF' : F' →ₗ[F] (W.restrict F).adicCompletion :=
+  { toFun := fun g => kwFfgcCompletionTrace F W (algebraMap F' W.adicCompletion g)
     map_add' := fun x y => by simp only [map_add]
     map_smul' := fun c x => by
       simp only [Algebra.smul_def, map_mul, RingHom.id_apply,
@@ -548,6 +563,7 @@ theorem algebraMap_K_mem_adicCompletionIntegers (c : K) :
   rw [IsScalarTower.algebraMap_apply K L u.adicCompletion]
   exact (kwHgfV352_algebraMap_mem_adicCompletionIntegers_iff u _).mpr (u.algebraMap_mem' c)
 
+/-- The map from the constant field into the valuation ring of the completed function field. -/
 def algebraMapKIntegers : K →+* u.adicCompletionIntegers where
   toFun c := ⟨algebraMap K u.adicCompletion c, algebraMap_K_mem_adicCompletionIntegers u c⟩
   map_one' := Subtype.ext (map_one _)
