@@ -7,12 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise516ThueMorse
 public import Mathlib.Algebra.Ring.Parity
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 5.16 follow-up (Scott 1981, PRG-19, Lecture V) — overlap-freeness of
@@ -123,8 +117,9 @@ theorem no_overlap (p : ℕ) : ∀ i, ¬ Overlap i p := by
       rcases Nat.eq_zero_or_pos q with rfl | hq1
       · -- `p = 1`: three consecutive equal symbols.
         refine no_three_consec i ⟨?_, ?_⟩
-        · have := hrel 0 (by omega); simpa using this
-        · have := hrel 1 (by omega); simpa [show i + 1 + 1 = i + 2 by omega] using this
+        · have := hrel 0 (by omega); simpa only [add_zero, mul_zero, zero_add] using this
+        · have := hrel 1 (by omega); simpa only [mul_zero, zero_add,
+          show i + 1 + 1 = i + 2 by omega] using this
       · -- `p = 2q+1 ≥ 3`.
         obtain ⟨a, hi | hi⟩ := Nat.even_or_odd' i
         · -- `i = 2a`: relations at `k = 0,1,2,3` give a run of three equal symbols at `a+q`.
@@ -257,6 +252,6 @@ theorem tElt_cube_free (u a : Str) (ha : a ≠ []) :
     show u.length + a.length + k - u.length = k + a.length by omega] at e2
   -- Period: `(a++(a++a))[k]? = (a++(a++a))[k+|a|]?`.
   have hper := append_three_period a k (by omega)
-  simp_all
+  simp_all only [ne_eq, List.append_assoc, List.length_append, Option.some.injEq]
 
 end Domain.Neighborhood.Exercise516

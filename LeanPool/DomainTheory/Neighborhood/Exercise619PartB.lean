@@ -8,18 +8,8 @@ module
 public import LeanPool.DomainTheory.Neighborhood.Exercise619
 public import LeanPool.DomainTheory.Neighborhood.Definition610
 public import LeanPool.DomainTheory.Neighborhood.Exercise510
-public import Mathlib.Order.Directed
-public import Mathlib.Order.SetNotation
 public import Mathlib.Tactic.Attr.Core
-public import Mathlib.Tactic.Basic
-import Mathlib.Data.Finset.Attr
 import Mathlib.Data.List.Monad
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.Continuity.Init
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 6.19 (Scott 1981, PRG-19, §6) — Part B: the functor algebra
@@ -133,7 +123,7 @@ theorem embBit_not_subset_cross {b b' : Bool} (h : b ≠ b') {X Y : Set Str} (hX
     (hsub : embBit b X ⊆ embBit b' Y) : False := by
   obtain ⟨t, ht⟩ := hX
   obtain ⟨w', he, -⟩ := hsub ⟨t, rfl, ht⟩
-  simp_all
+  simp_all only [ne_eq, List.cons.injEq, false_and]
 
 /-! ## The functorial action of sum on maps -/
 
@@ -267,22 +257,18 @@ theorem sumMapTok_id :
     sumMapTok (idMap A₀.sys) (idMap A₁.sys) = idMap (A₀.sum A₁).sys := by
   apply ApproximableMap.ext
   intro W W'
-  constructor
-  · rintro (⟨hW, rfl⟩ | ⟨X, X', ⟨hX, hX', hsub⟩, rfl, rfl⟩ | ⟨Y, Y', ⟨hY, hY', hsub⟩, rfl, rfl⟩)
-    · exact ⟨hW, (A₀.sum A₁).sys.master_mem, (A₀.sum A₁).sys.sub_master hW⟩
-    · exact ⟨Or.inr (Or.inl ⟨X, hX, rfl⟩), Or.inr (Or.inl ⟨X', hX', rfl⟩), embBit_subset.mpr hsub⟩
-    · exact ⟨Or.inr (Or.inr ⟨Y, hY, rfl⟩), Or.inr (Or.inr ⟨Y', hY', rfl⟩), embBit_subset.mpr hsub⟩
-  · rintro ⟨hW, hW', hsub⟩
-    rcases hW' with rfl | ⟨X', hX', rfl⟩ | ⟨Y', hY', rfl⟩
-    · exact Or.inl ⟨hW, rfl⟩
-    · rcases hW with rfl | ⟨X, hX, rfl⟩ | ⟨Y, hY, rfl⟩
-      · exact absurd (hsub nil_mem_sumTokMaster) nil_not_mem_embBit
-      · exact Or.inr (Or.inl ⟨X, X', ⟨hX, hX', embBit_subset.mp hsub⟩, rfl, rfl⟩)
-      · exact absurd hsub (fun h => embBit_not_subset_cross (by decide) (A₁.ne Y hY) h)
-    · rcases hW with rfl | ⟨X, hX, rfl⟩ | ⟨Y, hY, rfl⟩
-      · exact absurd (hsub nil_mem_sumTokMaster) nil_not_mem_embBit
-      · exact absurd hsub (fun h => embBit_not_subset_cross (by decide) (A₀.ne X hX) h)
-      · exact Or.inr (Or.inr ⟨Y, Y', ⟨hY, hY', embBit_subset.mp hsub⟩, rfl, rfl⟩)
+  apply (sumMapTok (idMap A₀.sys) (idMap A₁.sys)).relation_iff_subset_of_diagonal
+  · rintro W (rfl | ⟨X, hX, rfl⟩ | ⟨Y, hY, rfl⟩)
+    · exact Or.inl ⟨(A₀.sum A₁).sys.master_mem, rfl⟩
+    · exact Or.inr (Or.inl ⟨X, X,
+        ⟨hX, hX, subset_rfl⟩, rfl, rfl⟩)
+    · exact Or.inr (Or.inr ⟨Y, Y,
+        ⟨hY, hY, subset_rfl⟩, rfl, rfl⟩)
+  · rintro W W' (⟨hW, rfl⟩ | ⟨X, X', ⟨_, _, hXs⟩, rfl, rfl⟩ |
+        ⟨Y, Y', ⟨_, _, hYs⟩, rfl, rfl⟩)
+    · exact (A₀.sum A₁).sys.sub_master hW
+    · exact embBit_subset.mpr hXs
+    · exact embBit_subset.mpr hYs
 
 /-- **`(g₀ ∘ f₀) + (g₁ ∘ f₁) = (g₀ + g₁) ∘ (f₀ + f₁)`.** -/
 theorem sumMapTok_comp (f₀ : ApproximableMap A₀.sys B₀.sys) (f₁ : ApproximableMap A₁.sys B₁.sys)
@@ -320,13 +306,11 @@ theorem prodMapTok_id :
     prodMapTok (idMap A₀.sys) (idMap A₁.sys) = idMap (A₀.prod A₁).sys := by
   apply ApproximableMap.ext
   intro W W'
-  constructor
-  · rintro ⟨X, Y, X', Y', ⟨hX, hX', hsX⟩, ⟨hY, hY', hsY⟩, rfl, rfl⟩
-    exact ⟨prodTok_mem_prodTokNbhd hX hY, prodTok_mem_prodTokNbhd hX' hY',
-      prodTokNbhd_subset_iff.mpr ⟨hsX, hsY⟩⟩
-  · rintro ⟨⟨X, Y, hX, hY, rfl⟩, ⟨X', Y', hX', hY', rfl⟩, hsub⟩
-    obtain ⟨hsX, hsY⟩ := prodTokNbhd_subset_iff.mp hsub
-    exact ⟨X, Y, X', Y', ⟨hX, hX', hsX⟩, ⟨hY, hY', hsY⟩, rfl, rfl⟩
+  apply (prodMapTok (idMap A₀.sys) (idMap A₁.sys)).relation_iff_subset_of_diagonal
+  · rintro W ⟨X, Y, hX, hY, rfl⟩
+    exact ⟨X, Y, X, Y, ⟨hX, hX, subset_rfl⟩, ⟨hY, hY, subset_rfl⟩, rfl, rfl⟩
+  · rintro W W' ⟨X, Y, X', Y', ⟨_, _, hXs⟩, ⟨_, _, hYs⟩, rfl, rfl⟩
+    exact prodTokNbhd_subset_iff.mpr ⟨hXs, hYs⟩
 
 /-- **`(g₀ ∘ f₀) × (g₁ ∘ f₁) = (g₀ × g₁) ∘ (f₀ × f₁)`.** -/
 theorem prodMapTok_comp (f₀ : ApproximableMap A₀.sys B₀.sys) (f₁ : ApproximableMap A₁.sys B₁.sys)
@@ -738,9 +722,11 @@ theorem insertTag_continuous {ℱ : Set (Set Str)} {U : Set Str} (hne : ℱ.None
   · rintro (rfl | hw | hw)
     · obtain ⟨Γ, hΓ⟩ := hne; exact ⟨Γ, hΓ, Or.inl rfl⟩
     · obtain ⟨w', rfl, hw'⟩ := hw
-      simp_all
+      simp_all only [reduceCtorEq, mem_embBit, List.cons.injEq, true_and, exists_eq_left',
+        Bool.false_eq_true, false_and, exists_const, or_false, false_or]
     · obtain ⟨w', rfl, hw'⟩ := hw
-      simp_all
+      simp_all only [reduceCtorEq, mem_embBit, List.cons.injEq, Bool.true_eq_false, false_and,
+        exists_const, true_and, exists_eq_left', false_or]
   · rintro ⟨Γ, hΓ, (rfl | hw | hw)⟩
     · exact Or.inl rfl
     · obtain ⟨w', rfl, hw'⟩ := hw
@@ -824,7 +810,7 @@ theorem mFun_iter_fixed (T : FExpr) (hT : T.RootedConst) :
     exact ⟨mIter T (max i j), ⟨max i j, rfl⟩,
       mIter_mono T hT (le_max_left i j), mIter_mono T hT (le_max_right i j)⟩
   have hU : ∀ v, v ∈ (⋃ n, mIter T n) ↔ ∃ S ∈ Set.range (mIter T), v ∈ S := by
-    simp_all
+    exact fun v => Iff.of_eq rfl
   apply Set.ext; intro w
   rw [mFun_continuous T hdir hne hU w]
   constructor

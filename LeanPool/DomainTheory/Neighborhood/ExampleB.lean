@@ -6,7 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
-public import Mathlib.Data.Set.Basic
 import Mathlib.Tactic.Attr.Core
 
 /-!
@@ -70,7 +69,7 @@ def cone (σ : Str) : Set Str := {w | σ <+: w}
 
 /-- `ΛΣ* = Σ*`: the cone of the empty string is everything (Scott's `Δ`). -/
 theorem cone_nil : cone [] = Set.univ := by
-  ext w; simp [cone]
+  ext w; simp only [cone, List.nil_prefix, Set.ofPred_true, Set.mem_univ]
 
 /-- **Cones reverse the prefix order.** `σΣ* ⊆ τΣ*` iff `τ` is an initial segment
 of `σ`: a longer
@@ -150,7 +149,7 @@ theorem prepend_cone (σ ρ : Str) : prepend σ (cone ρ) = cone (σ ++ ρ) := b
   ext w
   simp only [mem_prepend, mem_cone]
   constructor
-  · simp_all
+  · simp_all only [forall_exists_index, List.prefix_append_right_inj, implies_true]
   · rintro ⟨t, ht⟩
     exact ⟨ρ ++ t, List.prefix_append ρ t, by rw [← ht, List.append_assoc]⟩
 
@@ -159,7 +158,7 @@ theorem prepend_univ (σ : Str) : prepend σ Set.univ = cone σ := by
   ext w
   simp only [mem_prepend, Set.mem_univ, true_and, mem_cone]
   constructor
-  · simp_all
+  · simp_all only [forall_exists_index, List.prefix_append, implies_true]
   · rintro ⟨t, ht⟩
     exact ⟨t, ht.symm⟩
 

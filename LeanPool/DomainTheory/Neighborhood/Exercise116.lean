@@ -7,7 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
 public import Mathlib.Basic.Finite.Defs
-public import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.Finite.Basic
 
 /-!
@@ -90,7 +89,7 @@ def toExcluded (x : cofiniteSystem.Element) : Set ℕ := {n | x.mem ({n}ᶜ)}
 
 /-- Each `{n}ᶜ` is a neighbourhood (its complement `{n}` is finite). -/
 theorem mem_compl_singleton (n : ℕ) : cofiniteSystem.mem (({n} : Set ℕ)ᶜ) := by
-  simp_all
+  simp_all only [cofiniteSystem_mem, compl_compl, Set.finite_singleton]
 
 /-- **Reconstruction lemma.** For finite `F` of points each of whose
 single-deletion `{n}ᶜ`
@@ -107,11 +106,12 @@ theorem mem_compl_of_finite (x : cofiniteSystem.Element) {F : Set ℕ} (hF : F.F
 
 /-- For `n ∉ Y`, the neighbourhood `Y` is contained in `{n}ᶜ`. -/
 theorem subset_compl_singleton {Y : Set ℕ} {n : ℕ} (hn : n ∈ Yᶜ) : Y ⊆ ({n} : Set ℕ)ᶜ := by
-  simp_all
+  exact Set.subset_compl_singleton_iff.mpr hn
 
 theorem toExcluded_ofExcluded (E : Set ℕ) : toExcluded (ofExcluded E) = E := by
   ext n
-  simp_all
+  simp_all only [mem_toExcluded, mem_ofExcluded, compl_compl, Set.finite_singleton,
+    Set.singleton_subset_iff, true_and]
 
 theorem ofExcluded_toExcluded (x : cofiniteSystem.Element) :
     ofExcluded (toExcluded x) = x := by

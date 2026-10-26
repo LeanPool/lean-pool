@@ -6,12 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
-public import Mathlib.Data.Set.Basic
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 1.15 (Scott 1981, PRG-19, §1) — non-isomorphic "finite-only" domains
@@ -59,7 +53,7 @@ open Domain.Neighborhood NeighborhoodSystem
 
 /-- `{n} ∩ {m} = ∅` for `n ≠ m`. -/
 theorem singleton_disjoint {n m : ℕ} (h : n ≠ m) : ({n} : Set ℕ) ∩ {m} = ∅ := by
-  simp_all
+  exact Set.singleton_inter_eq_empty.mpr h
 
 /-! ## The flat domain `flat`. -/
 
@@ -110,7 +104,8 @@ theorem flat_classify (x : flat.Element) :
     · intro hx
       rcases (x.sub hx) with rfl | ⟨k, rfl⟩
       · exact ⟨Or.inl rfl, Set.subset_univ _⟩
-      · simp_all
+      · simp_all only [mem_principal, flat_mem, Set.singleton_ne_univ,
+        Set.singleton_eq_singleton_iff, exists_eq', or_true, Std.le_refl, and_self]
     · rintro ⟨hWmem, hsub⟩
       exact x.up_mem hn hWmem hsub
   · refine Or.inl ?_
@@ -132,10 +127,10 @@ theorem flat_atom_maximal (n : ℕ) (y : flat.Element)
   rcases flat_classify y with rfl | ⟨m, rfl⟩
   · exfalso
     have hmem : flat.bot.mem {n} := hle {n} ⟨flat_mem_singleton n, subset_rfl⟩
-    simp_all
+    simp_all only [mem_bot, flat_master, Set.singleton_ne_univ]
   · have hsub : ({m} : Set ℕ) ⊆ {n} :=
       (flat.principal_le_iff (flat_mem_singleton n) (flat_mem_singleton m)).mp hle
-    simp_all
+    exact principal.congr_simp flat (congrArg singleton (hsub rfl)) (flat_mem_singleton m)
 
 /-- **Flat has no strict 3-chain** (`a ⊏ b ⊏ c` is impossible): `⊥` is least and
 atoms are
@@ -150,7 +145,7 @@ theorem flat_no_three_chain : ¬ ∃ a b c : flat.Element, a < b ∧ b < c := by
 theorem flat_no_infinite_chain : ¬ ∃ f : ℕ → flat.Element, StrictMono f := by
   rintro ⟨f, hf⟩
   exact flat_no_three_chain
-    ⟨f 0, f 1, f 2, hf (by norm_num), hf (by norm_num)⟩
+    ⟨f 0, f 1, f 2, hf (by decide), hf (by decide)⟩
 
 /-- **All elements of `flat` are finite** (principal). -/
 theorem flat_all_finite (x : flat.Element) :
@@ -175,15 +170,19 @@ theorem stemNOD : NestedOrDisjoint stemMem := by
   have pair_single : ∀ m : ℕ, ({m} : Set ℕ) ⊆ {0, 1} ∨ ({0, 1} : Set ℕ) ∩ {m} = ∅ := by
     intro m
     by_cases h : m = 0 ∨ m = 1
-    · simp_all
-    · simp_all
+    · simp_all only [Set.singleton_subset_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+      Set.inter_singleton_of_mem, Set.singleton_ne_empty, or_false]
+    · simp_all only [not_or, Set.singleton_subset_iff, Set.mem_insert_iff,
+      Set.mem_singleton_iff, or_self, not_false_eq_true, Set.inter_singleton_of_notMem, or_true]
   rintro X Y (rfl | rfl | ⟨n, rfl⟩) (rfl | rfl | ⟨m, rfl⟩)
   · exact Or.inl (subset_refl _)
   · exact Or.inr (Or.inl (Set.subset_univ _))
   · exact Or.inr (Or.inl (Set.subset_univ _))
   · exact Or.inl (Set.subset_univ _)
   · exact Or.inl (subset_refl _)
-  · simp_all
+  · simp_all only [Set.singleton_subset_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
+    Set.inter_singleton_eq_empty, not_or, Set.subset_singleton_iff, forall_eq_or_imp, forall_eq,
+    or_true]
   · exact Or.inl (Set.subset_univ _)
   · rcases pair_single n with h | h
     · exact Or.inl h
@@ -221,12 +220,15 @@ theorem stem_three_chain : ∃ a b c : stem.Element, a < b ∧ b < c := by
   · refine stem_principal_lt stem_mem_univ stem_mem_pair (Set.subset_univ _) ?_
     intro h
     have : (2 : ℕ) ∈ ({0, 1} : Set ℕ) := h ▸ Set.mem_univ 2
-    simp at this
+    simp only [Set.mem_insert_iff, reduceCtorEq, Set.mem_singleton_iff, Nat.succ_ne_self,
+      or_self] at this
   · refine stem_principal_lt stem_mem_pair stem_mem_zero
-      (Set.singleton_subset_iff.mpr (by simp)) ?_
+      (Set.singleton_subset_iff.mpr (by simp only [Set.mem_insert_iff, Set.mem_singleton_iff,
+        Nat.zero_ne_one, or_false])) ?_
     intro h
-    have : (1 : ℕ) ∈ ({0} : Set ℕ) := h ▸ (by simp : (1 : ℕ) ∈ ({0, 1} : Set ℕ))
-    simp at this
+    have : (1 : ℕ) ∈ ({0} : Set ℕ) := h ▸ (by simp only [Set.mem_insert_iff, Nat.succ_ne_self,
+      Set.mem_singleton_iff, or_true] : (1 : ℕ) ∈ ({0, 1} : Set ℕ))
+    simp only [Set.mem_singleton_iff, Nat.succ_ne_self] at this
 
 /-! ## Non-isomorphism. -/
 

@@ -92,24 +92,24 @@ def child (a : Tree n) (i : Fin n) : Tree n := select a [i]
 
 /-- **Scott's selector recursion, base case `aΛ = a`.** -/
 @[simp] theorem select_nil (a : Tree n) : select a [] = a := by
-  funext τ; simp
+  funext τ; simp only [select_apply, List.nil_append]
 
 /-- **Scott's selector recursion, step `a(iσ) = (aᵢ)σ`.** Reading the digit `i`
 then `σ` is the same
 as descending to the `i`-th child `aᵢ` and reading `σ` there. -/
 theorem select_cons (a : Tree n) (i : Fin n) (σ : List (Fin n)) :
     select a (i :: σ) = select (child a i) σ := by
-  funext τ; simp [child]
+  funext τ; simp only [select_apply, List.cons_append, child, List.nil_append]
 
 /-- `pos(aσ) = a σ`: the root label of the subtree at `σ` is the label `a` assigns
 to node `σ`. -/
 @[simp] theorem pos_select (a : Tree n) (σ : List (Fin n)) : pos (select a σ) = a σ := by
-  simp [pos]
+  simp only [pos, select_apply, List.append_nil]
 
 /-- Composing selectors: `a(στ) = (aσ)τ`. -/
 theorem select_append (a : Tree n) (σ τ : List (Fin n)) :
     select a (σ ++ τ) = select (select a σ) τ := by
-  funext ρ; simp [List.append_assoc]
+  funext ρ; simp only [select_apply, List.append_assoc]
 
 /-- **Scott's language of a tree.** `L_a = {σ ∈ Σ* ∣ pos(aσ) = true}` — the
 selectors that land on a
@@ -146,7 +146,8 @@ theorem treeLang_injective : Function.Injective (treeLang (n := n)) := by
   funext σ
   have hmem : (σ ∈ treeLang a) ↔ (σ ∈ treeLang a') := by rw [h]
   simp only [mem_treeLang] at hmem
-  cases ha : a σ <;> cases ha' : a' σ <;> simp_all
+  cases ha : a σ <;> cases ha' : a' σ <;>
+    simp_all only [Bool.false_eq_true, iff_false, not_true_eq_false, iff_true]
 
 /-- **Eventual periodicity (Scott).** A tree `a` is *eventually periodic* iff the
 set of its
