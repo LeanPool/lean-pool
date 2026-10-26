@@ -2,15 +2,15 @@
 
 from __future__ import annotations
 
+import json
+import subprocess
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
 
 from lean_pool.quality import (
-    _axiom_audit_missing,
-    _axiom_audit_resolved,
-    _Declaration,
+    _audit_axioms,
     _parse_axiom_output,
     _parse_declarations,
     _parse_option_audit_output,
@@ -783,46 +783,108 @@ def test_quality_check_rejects_invalid_provenance(tmp_path: Path) -> None:
     assert any("invalid provenance" in error.message for error in errors)
 
 
-def test_axiom_audit_resolved_parses_success_lines() -> None:
-    """`#print axioms` success lines populate the resolved set; _root_ stripped.
-
-    Both output forms must be recognized — the with-axioms list and the
-    axiom-free message that pure `def`s produce.
-    """
-    stdout = (
-        "'_root_.Foo.bar' depends on axioms: [Classical.choice, propext]\n"
-        "'baz' depends on axioms: []\n"
-        "'_root_.hello' does not depend on any axioms\n"
-        # Names ending in `'` are echoed by Lean as `'foo'' ...`; the parser
-        # must capture the prime, not stop at the embedded quote.
-        "'_root_.Ns.neg_one_pow_ne_zero'' does not depend on any axioms\n"
-        "'_root_.Ns.exp_poly_sub_prod'' depends on axioms: [propext]\n"
+def _axiom_output(
+    declarations: list[dict],
+    modules: list[str] | None = None,
+) -> str:
+    """Encode the environment audit's line-oriented JSON protocol."""
+    modules = modules if modules is not None else ["LeanPool.Basic"]
+    complete = {
+        "kind": "complete",
+        "modules": modules,
+        "declarations": len(declarations),
+    }
+    return "".join(
+        "LEANPOOL_AXIOM_AUDIT|" + json.dumps(record) + "\n"
+        for record in [*declarations, complete]
     )
 
-    assert _axiom_audit_resolved(stdout) == {
-        "Foo.bar",
-        "baz",
-        "hello",
-        "Ns.neg_one_pow_ne_zero'",
-        "Ns.exp_poly_sub_prod'",
+
+def _axiom_record(name: str = "foo", axioms: list[str] | None = None) -> dict:
+    """Construct a declaration record with a compiler-provided source location."""
+    return {
+        "kind": "declaration",
+        "module": "LeanPool.Basic",
+        "name": name,
+        "line": 12,
+        "axioms": axioms if axioms is not None else [],
     }
 
 
-def test_axiom_audit_missing_attributes_stderr_to_each_declaration(
-    tmp_path: Path,
+@pytest.mark.parametrize("name", ["foo", "Ns.foo'", "Ns.odd name|with punctuation"])
+@pytest.mark.parametrize("axioms", [[], ["propext", "Classical.choice", "Quot.sound"]])
+def test_axiom_audit_accepts_allowed_results(
+    tmp_path: Path, name: str, axioms: list[str]
 ) -> None:
-    """Per-declaration errors quote the matching stderr line."""
-    decl_a = _Declaration(name="foo'", path=tmp_path / "A.lean", line=12, kind="lemma")
-    decl_b = _Declaration(name="bar", path=tmp_path / "B.lean", line=34, kind="lemma")
-    stderr = "/tmp/x.lean:5:0: error: unknown constant '_root_.foo''\n"
+    """JSON records need no Lean-name or pretty-printer parsing."""
+    output = _axiom_output([_axiom_record(name, axioms)])
+    assert _parse_axiom_output(tmp_path, ["LeanPool.Basic"], output) == []
 
-    errors = _axiom_audit_missing([decl_a, decl_b], stderr)
 
-    assert len(errors) == 2
-    assert errors[0].path == tmp_path / "A.lean" and errors[0].line == 12
-    assert "unknown constant" in errors[0].message
-    assert errors[1].path == tmp_path / "B.lean" and errors[1].line == 34
-    assert "produced no result" in errors[1].message
+def test_axiom_audit_accepts_empty_module(tmp_path: Path) -> None:
+    """An explicitly completed module with no public declarations is valid."""
+    assert _parse_axiom_output(tmp_path, ["LeanPool.Basic"], _axiom_output([])) == []
+
+
+@pytest.mark.parametrize(
+    "output",
+    [
+        "",
+        "LEANPOOL_AXIOM_AUDIT|{broken JSON\n",
+        "LEANPOOL_AXIOM_AUDIT|[]\n",
+        _axiom_output([_axiom_record()]).splitlines()[0] + "\n",
+        _axiom_output([]).replace('"declarations": 0', '"declarations": 1'),
+        _axiom_output([], ["LeanPool.Other"]),
+        _axiom_output([_axiom_record(), _axiom_record()]),
+        _axiom_output([{**_axiom_record(), "module": "Mathlib.Other"}]),
+        _axiom_output([{**_axiom_record(), "line": -1}]),
+        _axiom_output([{**_axiom_record(), "axioms": "sorryAx"}]),
+        _axiom_output([{**_axiom_record(), "axioms": [None]}]),
+    ],
+)
+def test_axiom_audit_rejects_incomplete_or_invalid_output(
+    tmp_path: Path, output: str
+) -> None:
+    """Malformed, partial, duplicate, or out-of-scope results fail closed."""
+    errors = _parse_axiom_output(tmp_path, ["LeanPool.Basic"], output)
+    assert errors
+    assert "did not complete" in errors[0].message
+
+
+def test_axiom_audit_rejects_nonzero_exit_with_completion(tmp_path: Path) -> None:
+    """A completion marker cannot conceal a subprocess failure."""
+    errors = _parse_axiom_output(
+        tmp_path, ["LeanPool.Basic"], _axiom_output([]), "import failed", 1
+    )
+    assert len(errors) == 1
+    assert "import failed" in errors[0].message
+
+
+def test_axiom_audit_uses_environment_not_source_parser(tmp_path: Path) -> None:
+    """Only module names are passed to Lean; source declaration parsing is unused."""
+    with (
+        patch("lean_pool.quality._declarations_in", side_effect=AssertionError),
+        patch(
+            "lean_pool.quality.subprocess.run",
+            return_value=subprocess.CompletedProcess(
+                [], 0, _axiom_output([_axiom_record()]), ""
+            ),
+        ) as run,
+    ):
+        assert _audit_axioms(tmp_path, ["LeanPool.Basic"]) == []
+    command = run.call_args.args[0]
+    assert command[:4] == ["lake", "env", "lean", "--run"]
+    assert json.loads(run.call_args.kwargs["input"]) == ["LeanPool.Basic"]
+    assert len(command) == 5
+    assert not Path(command[4]).exists()
+
+
+def test_axiom_audit_missing_lake_fails_closed(tmp_path: Path) -> None:
+    """A missing toolchain is an audit failure, not an implicit pass."""
+    with patch("lean_pool.quality.subprocess.run", side_effect=FileNotFoundError):
+        errors = _audit_axioms(tmp_path, ["LeanPool.Basic"])
+    assert len(errors) == 1
+    assert "failed" in errors[0].message
 
 
 def test_quality_check_rejects_duplicate_slug(tmp_path: Path) -> None:
@@ -957,16 +1019,15 @@ def test_quality_check_rejects_unproved_terms(tmp_path: Path, proof: str) -> Non
 
 def test_axiom_audit_rejects_sorry_axiom(tmp_path: Path) -> None:
     """A compiled proof hole fails even when textual checks cannot see it."""
-    declaration = _Declaration(
-        "unfinished", tmp_path / "LeanPool/Basic.lean", 7, "theorem"
-    )
     errors = _parse_axiom_output(
         tmp_path,
-        [declaration],
-        "'unfinished' depends on axioms: [propext, sorryAx]\n",
+        ["LeanPool.Basic"],
+        _axiom_output([_axiom_record("unfinished", ["propext", "sorryAx"])]),
     )
     assert len(errors) == 1
     assert "unallowlisted axioms: sorryAx" in errors[0].message
+    assert errors[0].path == tmp_path / "LeanPool/Basic.lean"
+    assert errors[0].line == 12
 
 
 @pytest.mark.parametrize("name", ["unfinished", "unfinished.eq_def"])
@@ -983,18 +1044,21 @@ def test_environment_audit_rejects_proof_holes(tmp_path: Path, name: str) -> Non
     assert "sorryAx" in errors[0].message
 
 
-@pytest.mark.parametrize("extra", ["", ",\n sorryAx", ",\n customAxiom"])
-def test_axiom_audit_reads_wrapped_lists(tmp_path: Path, extra: str) -> None:
-    """Lean's wrapped axiom output preserves both safe and forbidden findings."""
-    declaration = _Declaration(
-        "Widget.long_theorem_name", tmp_path / "LeanPool/Widget.lean", 7, "theorem"
-    )
+@pytest.mark.parametrize("extra", [[], ["sorryAx"], ["customAxiom"]])
+def test_axiom_audit_reads_axiom_arrays(tmp_path: Path, extra: list[str]) -> None:
+    """Structured axiom arrays preserve both safe and forbidden findings."""
     errors = _parse_axiom_output(
         tmp_path,
-        [declaration],
-        "'Widget.long_theorem_name' depends on axioms: [propext,\n"
-        f" Classical.choice,\n Quot.sound{extra}]\n",
+        ["LeanPool.Basic"],
+        _axiom_output(
+            [
+                _axiom_record(
+                    "Widget.long_theorem_name",
+                    ["propext", "Classical.choice", "Quot.sound", *extra],
+                )
+            ]
+        ),
     )
     assert bool(errors) == bool(extra)
     if extra:
-        assert extra.split()[-1] in errors[0].message
+        assert extra[0] in errors[0].message
