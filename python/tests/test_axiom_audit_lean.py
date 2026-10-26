@@ -33,6 +33,7 @@ def test_compiled_axiom_audit(tmp_path: Path) -> None:
         '[[lean_lib]]\nname = "AuditLegacy"\n'
         '[[lean_lib]]\nname = "AuditLeaks"\n'
         '[[lean_lib]]\nname = "AuditDependency"\n'
+        '[[lean_lib]]\nname = "AuditSmuggled"\n'
     )
     (tmp_path / "AuditDependency.lean").write_text(
         "axiom unusedImportedAxiom : False\n"
@@ -44,6 +45,7 @@ def test_compiled_axiom_audit(tmp_path: Path) -> None:
         "axiom hiddenAxiom : False\n"
         "public section\nnoncomputable section Local.Inner\n"
         "theorem good : True := True.intro\n"
+        "unsafe def unsafeProof : False := lcProof\n"
         "theorem allowed (p q : Prop) (h : p ↔ q) : p = q := propext h\n"
         "end Local.Inner\nend\nend AuditModern\n"
     )
@@ -52,6 +54,7 @@ def test_compiled_axiom_audit(tmp_path: Path) -> None:
         'initialize IO.eprintln "PROJECT_INITIALIZER_EXECUTED"\n'
         "private theorem explicitlyPrivate : False := by sorry\n"
         "theorem good : True := True.intro\n"
+        "unsafe def runtime._aux_1 : False := lcProof\n"
         'elab "makeAuditFact" : command => do\n'
         "  Lean.Elab.Command.elabCommand\n"
         "    (← `(theorem generatedFact : True := True.intro))\n"
@@ -62,7 +65,8 @@ def test_compiled_axiom_audit(tmp_path: Path) -> None:
         "private theorem helper : False := AuditModern.hiddenUnused\n"
         "public theorem leakedSorry : False := helper\n"
         "public theorem leakedAxiom : False := AuditModern.hiddenAxiom\n"
-        "public axiom newAxiom : False\nend AuditLeaks\n"
+        "public axiom newAxiom : False\n"
+        "public theorem named._aux_1 : False := helper\nend AuditLeaks\n"
     )
     build = subprocess.run(
         [str(lake), "build", "AuditModern", "AuditLegacy", "AuditLeaks"],
@@ -99,14 +103,36 @@ def test_compiled_axiom_audit(tmp_path: Path) -> None:
         "hiddenUnused" in name or "explicitlyPrivate" in name for name in names
     )
     assert "unusedImportedAxiom" not in names
-    assert len(errors) == 3, errors
+    assert "AuditModern.unsafeProof" not in names
+    assert "AuditLegacy.runtime._aux_1" not in names
+    assert len(errors) == 4, errors
     by_name = {error.message.split(" depends on")[0]: error for error in errors}
     assert set(by_name) == {
         "AuditLeaks.leakedSorry",
         "AuditLeaks.leakedAxiom",
         "AuditLeaks.newAxiom",
+        "AuditLeaks.named._aux_1",
     }
     assert "sorryAx" in by_name["AuditLeaks.leakedSorry"].message
     assert "hiddenAxiom" in by_name["AuditLeaks.leakedAxiom"].message
+    assert "sorryAx" in by_name["AuditLeaks.named._aux_1"].message
     assert by_name["AuditLeaks.leakedSorry"].path == tmp_path / "AuditLeaks.lean"
     assert by_name["AuditLeaks.leakedSorry"].line == 5
+
+    # Skipping unsafe audit roots must not let one prove a safe theorem with them.
+    (tmp_path / "AuditSmuggled.lean").write_text(
+        "module\nimport AuditModern\n"
+        "public theorem smuggled : False := AuditModern.unsafeProof\n"
+    )
+    rejected = subprocess.run(
+        [str(lake), "build", "AuditSmuggled"],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        timeout=180,
+    )
+    assert rejected.returncode != 0
+    diagnostics = rejected.stdout + rejected.stderr
+    assert "unsafe" in diagnostics.lower()
+    assert "AuditModern.unsafeProof" in diagnostics
+    assert "AuditSmuggled.lean:3:" in diagnostics

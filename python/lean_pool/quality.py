@@ -718,8 +718,11 @@ def auditAxioms (env : Environment) (modules : List Name) : CoreM Unit := do
     for declName in data.constNames do
       -- Private declarations are dependencies, not independent audit roots.
       if isPrivateName declName then continue
-      unless env.contains declName do
-        throwError "missing declaration in audit environment: {declName}"
+      let some info := env.find? declName
+        | throwError "missing declaration in audit environment: {declName}"
+      -- Compiler-generated executable code may contain proof-erasure axioms.
+      -- Unsafe constants cannot be dependencies of ordinary kernel proofs.
+      if info.isUnsafe then continue
       let axioms ← collectAxioms declName
       let ranges ← findDeclarationRanges? declName
       let line := ranges.map (·.range.pos.line) |>.getD 1
@@ -753,7 +756,7 @@ def main : IO Unit := do
 
 
 def _check_axioms(root: Path) -> list[_QualityError]:
-    """Audit every non-private pool declaration, including generated declarations."""
+    """Audit safe, non-private pool declarations, including generated declarations."""
     return _audit_axioms(root, [m for unit in pool_units(root) for m in unit])
 
 
