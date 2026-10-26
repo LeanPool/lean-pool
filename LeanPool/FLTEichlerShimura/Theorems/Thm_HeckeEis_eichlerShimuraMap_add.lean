@@ -69,7 +69,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_HeckeEis_eichlerShimuraMap_add
 
 noncomputable section
@@ -102,17 +101,6 @@ theorem cocycle_add (hF : IsEquivariantPrimitiveWith ρ F) (hG : IsEquivariantPr
   change (F + G) ((γ : SL(2, ℤ)) • I) - ρ γ ((F + G) I) = (F _ - ρ γ (F I)) + (G _ - ρ γ (G I))
   rw [Pi.add_apply, Pi.add_apply, map_add]
   abel
-
-theorem smul (hF : IsEquivariantPrimitiveWith ρ F) (c : K) :
-    IsEquivariantPrimitiveWith ρ (c • F) := fun γ =>
-  ⟨c • hF.cocycle γ, fun τ => by
-    rw [Pi.smul_apply, Pi.smul_apply, map_smul, ← hF.sub_eq_cocycle γ τ, smul_sub]⟩
-
-theorem cocycle_smul (hF : IsEquivariantPrimitiveWith ρ F) (c : K) :
-    (smul hF c).cocycle = c • hF.cocycle := by
-  funext γ
-  change (c • F) ((γ : SL(2, ℤ)) • I) - ρ γ ((c • F) I) = c • (F _ - ρ γ (F I))
-  rw [Pi.smul_apply, Pi.smul_apply, map_smul, smul_sub]
 
 end EichlerLinAux
 
@@ -154,7 +142,6 @@ export P2MW.S_HeckeEis_eichlerShimuraMap_add (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups ModularForm
 theorem HeckeEis.eichlerShimuraMap_add (n N : ℕ) [NeZero N]

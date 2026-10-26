@@ -333,9 +333,6 @@ theorem norm_qq_lt_one (τ : ℍ) : ‖qq N τ‖ < 1 := by
   have h2 : -2 * π * τ.im / N = -(2 * π * τ.im / N) := by ring
   rw [h2]; linarith
 
-omit [NeZero N] in
-theorem norm_qq_pos (τ : ℍ) : 0 < ‖qq N τ‖ := by rw [norm_qq]; exact Real.exp_pos _
-
 def Gt (τ : ℍ) (i : Idx) : ℂ := coef N a₂ i * qq N τ ^ expo N a₁ i
 
 def Ft (τ : ℍ) (p : ℕ+ × ℕ+) : ℂ := ∑ j : Fin 3, Gt N a₁ a₂ τ (p, j)

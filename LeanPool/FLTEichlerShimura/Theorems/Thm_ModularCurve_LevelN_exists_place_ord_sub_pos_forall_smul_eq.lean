@@ -72,9 +72,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_OVERLONG_3959a5e7
-
 
 open UpperHalfPlane Filter Topology
 open scoped MatrixGroups Manifold
@@ -377,14 +375,6 @@ theorem jSub_mem_nonunits (τ₀ : ℍ) :
   rw [ValuationSubring.mem_nonunits_iff_or]
   exact Or.inr (inv_jSub_notMem N K τ₀)
 
-theorem algebraMap_mem_analyticPlace (τ₀ : ℍ) (F : ring N) :
-    algebraMap (ring N) K F ∈ (analyticPlace N K τ₀).toValuationSubring := by
-  rw [mem_analyticPlace_iff, ordValuationK_algebraMap]
-  by_cases hF : (F : ℍ → ℂ) = 0
-  · rw [ordFun_zero' N τ₀ hF]; exact zero_le
-  · rw [ordFun_of_ne_zero N τ₀ hF, ← WithZero.exp_zero, WithZero.exp_le_exp]
-    omega
-
 end FractionField
 
 omit [NeZero N] in
@@ -562,7 +552,9 @@ theorem ord_jSub_pos (τ₀ : ℍ) :
 
 end Stabiliser
 
-end ModularCurve.LevelN.AnalyticPlaces
+end AnalyticPlaces
+end LevelN
+end ModularCurve
 
 open _root_.ModularCurve.LevelN
   _root_.P2MW.S_OVERLONG_3959a5e7.ModularCurve.LevelN
@@ -599,7 +591,6 @@ export P2MW.S_OVERLONG_3959a5e7 (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem ModularCurve.LevelN.exists_place_ord_sub_pos_forall_smul_eq (N : ℕ) [NeZero N]

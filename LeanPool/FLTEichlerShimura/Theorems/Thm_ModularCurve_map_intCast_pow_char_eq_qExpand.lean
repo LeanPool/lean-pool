@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_map_intCast_pow_char_eq_qExpand
 
 noncomputable section
@@ -93,8 +92,6 @@ def laurentMap (f : R →+* S) : LaurentSeries R →+* LaurentSeries S where
     rw [HahnSeries.coeff_add, HahnSeries.coeff_add, map_add]
     rfl
 
-theorem laurentMap_apply (f : R →+* S) (x : LaurentSeries R) : laurentMap f x = x.map f := rfl
-
 @[scoped simp]
 theorem laurentMap_coeff (f : R →+* S) (x : LaurentSeries R) (k : ℤ) :
     (laurentMap f x).coeff k = f (x.coeff k) := rfl
@@ -116,15 +113,6 @@ theorem laurentMap_ofPowerSeries (f : R →+* S) (p : PowerSeries R) :
     rw [HahnSeries.ofPowerSeries_apply_coeff, HahnSeries.ofPowerSeries_apply_coeff,
       PowerSeries.coeff_map]
   · rw [ofPowerSeries_coeff_of_neg _ hk, ofPowerSeries_coeff_of_neg _ hk, map_zero]
-
-theorem laurentMap_qExpand (f : R →+* S) (N : ℕ) [NeZero N] (x : LaurentSeries R) :
-    laurentMap f (qExpand R N x) = qExpand S N (laurentMap f x) := by
-  ext k
-  rw [laurentMap_coeff]
-  by_cases hk : (N : ℤ) ∣ k
-  · obtain ⟨m, rfl⟩ := hk
-    rw [qExpand_coeff_mul, qExpand_coeff_mul, laurentMap_coeff]
-  · rw [qExpand_coeff_of_not_dvd N x hk, qExpand_coeff_of_not_dvd N _ hk, map_zero]
 
 end LaurentMap
 
@@ -237,7 +225,6 @@ export P2MW.S_ModularCurve_map_intCast_pow_char_eq_qExpand (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.map_intCast_pow_char_eq_qExpand {K : Type*} [CommRing K] (ℓ : ℕ) [Fact ℓ.Prime]

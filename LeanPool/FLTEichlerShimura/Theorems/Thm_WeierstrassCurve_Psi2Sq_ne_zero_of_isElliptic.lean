@@ -19,7 +19,6 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 
-
 /-!
 # Nonvanishing of Ψ₂² for an elliptic curve in any characteristic
 
@@ -56,27 +55,9 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_Psi2Sq_ne_zero_of_isElliptic
 
 open Polynomial
-
-theorem PortCard.sub_negY_sq_eq_eval_Ψ₂Sq {R : Type*} [CommRing R] (W : WeierstrassCurve R)
-    {x y : R} (e : W.toAffine.Equation x y) :
-    (y - W.toAffine.negY x y) ^ 2 = W.Ψ₂Sq.eval x := by
-  rw [WeierstrassCurve.Affine.equation_iff] at e
-  simp only [WeierstrassCurve.Affine.negY, WeierstrassCurve.Ψ₂Sq, WeierstrassCurve.b₂,
-    WeierstrassCurve.b₄, WeierstrassCurve.b₆, eval_add, eval_mul, eval_pow, eval_C, eval_X]
-  linear_combination 4 * e
-
-theorem PortCard.two_smul_some_eq_zero_iff {F : Type*} [Field F] [DecidableEq F]
-    (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y) :
-    2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ W.Ψ₂Sq.eval x = 0 := by
-  have key : 2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ y = W.toAffine.negY x y := by
-    rw [two_nsmul, add_eq_zero_iff_eq_neg, WeierstrassCurve.Affine.Point.neg_some,
-      WeierstrassCurve.Affine.Point.some.injEq]
-    simp
-  rw [key, ← PortCard.sub_negY_sq_eq_eval_Ψ₂Sq W h.left, pow_eq_zero_iff two_ne_zero, sub_eq_zero]
 
 theorem PortCard.Ψ₂Sq_ne_zero_of_isElliptic {F : Type*} [Field F] (W : WeierstrassCurve F)
     [W.IsElliptic] : W.Ψ₂Sq ≠ 0 := by
@@ -105,7 +86,6 @@ export P2MW.S_WeierstrassCurve_Psi2Sq_ne_zero_of_isElliptic (solution)
 end privateSection
 
 public section publicSection
-
 
 theorem WeierstrassCurve.Psi2Sq_ne_zero_of_isElliptic {F : Type*} [Field F] (W : WeierstrassCurve F)
     [W.IsElliptic] :

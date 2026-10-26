@@ -72,9 +72,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_OVERLONG_0e0b1d23
-
 
 open Matrix MatrixGroups Subgroup MulAction
 
@@ -215,10 +213,6 @@ def Θ (hneg : (-1 : SL(2, ℤ)) ∈ Γ) : orbitRel.Quotient (zpowers ModularGro
         exact ⟨(g : SL(2, ℤ) ⧸ Γ), rfl⟩⟩)
     (fun x y => mem_orbit_iff_θ Γ hneg x y)
 
-theorem Θ_mk (hneg : (-1 : SL(2, ℤ)) ∈ Γ) (x : SL(2, ℤ) ⧸ Γ) :
-    Θ Γ hneg (Quotient.mk (orbitRel (zpowers ModularGroup.T) _) x)
-      = Quotient.mk (orbitRel (zpowers τ) _) (θ Γ x) := rfl
-
 end Main
 
 end BassSerreCuspSL2
@@ -274,7 +268,6 @@ export
 end privateSection
 
 public section publicSection
-
 
 theorem Matrix.SpecialLinearGroup.exists_addMonoidHom_conj_T_pow_minimalPeriod_eq_of_finsum_eq_zero
     (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) [Γ.FiniteIndex]

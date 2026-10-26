@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_exists_addEquiv_point_variableChange
 
 p2m_open "WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point"
@@ -271,20 +270,6 @@ noncomputable def pointEquiv₀ : W.toAffine.Point ≃+ (C • W).toAffine.Point
           slope_pt C W h₁.1 h₂.1 hxy, addX_pt, addY_pt]
         exact ⟨rfl, rfl⟩
 
-lemma pointEquiv₀_some {x y : K} (h : W.toAffine.Nonsingular x y) :
-    pointEquiv₀ W C (.some x y h) = .some (C.ptX x) (C.ptY x y) ((nonsingular_pt_iff C W x y).mpr h)
-      :=
-  rfl
-
-private theorem _root_.WeierstrassCurve.exists_addEquiv_point_variableChange_dev :
-    ∃ e : W.toAffine.Point ≃+ (C • W).toAffine.Point, ∀ (x y : K) (h : W.toAffine.Nonsingular x y),
-      ∃ h' : (C • W).toAffine.Nonsingular ((↑C.u⁻¹ : K) ^ 2 * (x - C.r))
-          ((↑C.u⁻¹ : K) ^ 3 * (y - C.s * x + (C.s * C.r - C.t))),
-        e (WeierstrassCurve.Affine.Point.some x y h) =
-          WeierstrassCurve.Affine.Point.some ((↑C.u⁻¹ : K) ^ 2 * (x - C.r))
-            ((↑C.u⁻¹ : K) ^ 3 * (y - C.s * x + (C.s * C.r - C.t))) h' :=
-  ⟨pointEquiv₀ W C, fun x y h => ⟨(nonsingular_pt_iff C W x y).mpr h, rfl⟩⟩
-
 end SameField
 
 end VariableChange
@@ -308,7 +293,6 @@ export P2MW.S_WeierstrassCurve_exists_addEquiv_point_variableChange (solution)
 end privateSection
 
 public section publicSection
-
 
 open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point
 theorem WeierstrassCurve.exists_addEquiv_point_variableChange {K : Type*} [Field K] [DecidableEq K]

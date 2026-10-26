@@ -20,7 +20,6 @@ module
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
-
 /-!
 # Cosets of Γ₀(N) fixed by ST number ν₃(N)
 
@@ -56,7 +55,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 -/
 
 section privateSection
-
 
 namespace P2MW.S_ModularCurve_natCard_fixedPoints_ST_cosets_Gamma0_eq_nuThree
 
@@ -164,15 +162,6 @@ theorem toFixed_surjective (s : ℤ) : Function.Surjective (toFixed N s) := by
 theorem card_fixed_eq (s : ℤ) : Nat.card (Fixed N s) = Nat.card (Roots N s) :=
   (Nat.card_congr (Equiv.ofBijective _ ⟨toFixed_injective N s, toFixed_surjective N s⟩)).symm
 
-theorem card_fixed_S :
-    Nat.card {x : SL(2, ℤ) ⧸ CongruenceSubgroup.Gamma0 N // ModularGroup.S • x = x} =
-      ModularCurve.nuTwo N := by
-  have h : Nat.card {y : X N // S • y = y} = Nat.card (Roots N 0) := by
-    rw [← V_zero]; exact card_fixed_eq N 0
-  refine h.trans ?_
-  unfold ModularCurve.nuTwo
-  exact Nat.card_congr (Equiv.subtypeEquivRight fun x => by simp)
-
 theorem card_fixed_ST :
     Nat.card {x : SL(2, ℤ) ⧸ CongruenceSubgroup.Gamma0 N //
         (ModularGroup.S * ModularGroup.T) • x = x} =
@@ -199,7 +188,6 @@ export P2MW.S_ModularCurve_natCard_fixedPoints_ST_cosets_Gamma0_eq_nuThree (solu
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem ModularCurve.natCard_fixedPoints_ST_cosets_Gamma0_eq_nuThree (N : ℕ) [NeZero N] :

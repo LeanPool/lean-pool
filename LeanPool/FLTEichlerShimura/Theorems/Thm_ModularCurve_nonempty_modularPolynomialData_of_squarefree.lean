@@ -63,7 +63,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_nonempty_modularPolynomialData_of_squarefree
 
 noncomputable section
@@ -113,13 +112,6 @@ theorem dedekindPsi_mul_of_coprime (M N : ℕ) (h : Nat.Coprime M N) :
     dedekindPsi (M * N) = dedekindPsi M * dedekindPsi N := by
   simp only [dedekindPsi_eq_mul_apply]
   exact isMultiplicative_squarefreeIndicator_mul_id.map_mul_of_coprime h
-
-private theorem le_dedekindPsi (N : ℕ) (hN : N ≠ 0) : N ≤ dedekindPsi N := by
-  rw [dedekindPsi]
-  have h1 : (1 : ℕ) ∈ {d ∈ N.divisors | Squarefree d} :=
-    Finset.mem_filter.mpr ⟨Nat.one_mem_divisors.mpr hN, squarefree_one⟩
-  simpa using Finset.single_le_sum (f := fun d => N / d) (fun d _ => Nat.zero_le _) h1
-
 
 end DedekindPsi
 
@@ -496,11 +488,6 @@ private def _root_.ModularCurve.ModularPolynomialData.biResultantPacket {m n : �
 end ModularPolynomialData
 p2m_export "ModularCurve" "ModularPolynomialData.biResultantPacket"
 
-theorem nonempty_modularPolynomialData_mul_of_coprime {m n : ℕ} [NeZero m] [NeZero n]
-    (data : ModularPolynomialData m) (data' : ModularPolynomialData n)
-    (hmn : Nat.Coprime m n) : Nonempty (ModularPolynomialData (m * n)) :=
-  ⟨data.biResultantPacket data' hmn⟩
-
 private def castModularPolynomialData {M N : ℕ} [NeZero M] [NeZero N] (h : M = N)
     (d : ModularPolynomialData M) : ModularPolynomialData N where
   Φ := d.Φ
@@ -558,7 +545,6 @@ export P2MW.S_ModularCurve_nonempty_modularPolynomialData_of_squarefree (solutio
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.nonempty_modularPolynomialData_of_squarefree (N : ℕ) [NeZero N]

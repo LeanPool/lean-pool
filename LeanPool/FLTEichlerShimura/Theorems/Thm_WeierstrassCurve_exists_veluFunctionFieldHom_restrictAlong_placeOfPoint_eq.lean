@@ -33,7 +33,6 @@ import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Topology.MetricSpace.Bounded
 import Mathlib.Data.EReal.Operations
 import Mathlib.Topology.Algebra.InfiniteSum.Order
-import Mathlib.RingTheory.Etale.Basic
 import Mathlib.RingTheory.Henselian
 import Mathlib.Algebra.Order.Ring.Star
 
@@ -87,81 +86,6 @@ open AlgebraicCurve Place WeierstrassCurve Polynomial IsDedekindDomain Affine Co
 open scoped Polynomial.Bivariate
 
 noncomputable section
-
-namespace WeierstrassCurve
-namespace Affine
-
-variable {F : Type*} [Field F] {W : Affine F}
-
-theorem S13_ofHeightOneSpectrum_injective {R : Type*} [CommRing R] [IsDedekindDomain R]
-    [Algebra R W.FunctionField] [IsFractionRing R W.FunctionField] [Algebra F R]
-    [IsScalarTower F R W.FunctionField] :
-    Function.Injective (AlgebraicCurve.Place.ofHeightOneSpectrum (K := F) (R := R) (F :=
-      W.FunctionField)) := by
-  intro w₁ w₂ h
-  refine HeightOneSpectrum.eq_of_valuation_isEquiv_valuation (K := W.FunctionField) ?_
-  rw [Valuation.isEquiv_iff_valuationSubring]
-  exact congrArg AlgebraicCurve.Place.toValuationSubring h
-
-variable [IsDedekindDomain W.CoordinateRing]
-
-theorem placeOfEquation_injective {x₁ y₁ x₂ y₂ : F} (h₁ : W.Equation x₁ y₁)
-    (h₂ : W.Equation x₂ y₂) (h : placeOfEquation h₁ = placeOfEquation h₂) :
-    x₁ = x₂ ∧ y₁ = y₂ :=
-  eq_of_XYIdeal_eq h₂
-    (congrArg HeightOneSpectrum.asIdeal (S13_ofHeightOneSpectrum_injective h))
-
-section CentredGate
-
-variable [DecidableEq F] [GenusOnePlaceGate W] [GenusOnePlaceGate.IsCentred W]
-
-namespace InfinitePlace
-
-omit [DecidableEq F] in
-omit [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem deg_eq_one : (InfinitePlace.place : AlgebraicCurve.Place F W.FunctionField).deg = 1 := by
-  classical
-  exact
-    deg_placeOfPoint (W := W) 0
-
-end InfinitePlace
-
-omit [DecidableEq F] in
-omit [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem placeOfPoint_zero' : placeOfPoint (0 : W.Point) = InfinitePlace.place := by
-  classical
-  exact
-    rfl
-
-omit [DecidableEq F] in
-omit [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem placeOfPoint_surjective' : Function.Surjective (placeOfPoint (W := W)) := by
-  classical
-  exact
-    (pointEquivPlace (W := W)).surjective
-
-end CentredGate
-end Affine
-end WeierstrassCurve
-
-namespace WeierstrassCurve
-namespace Affine
-scoped instance instHasPrincipalDivisorsFunctionField_s13 {F : Type*} [Field F] [CharZero F]
-    {W : Affine F} : HasPrincipalDivisors F W.FunctionField :=
-  hasPrincipalDivisors_functionField W
-
-namespace IsogenyEndDatum
-
-variable {F : Type*} [Field F] [DecidableEq F] [CharZero F]
-variable {W : Affine F} [W.IsElliptic] [GenusOnePlaceGate W] [AbelTheorem W]
-
-omit [WeierstrassCurve.IsElliptic W] in
-theorem pointEnd_eq_pointEnd' (D : IsogenyEndDatum W) (hN : NormFormulaAlong F D.ι D.hfin) :
-    D.pointEnd hN = D.pointEnd' := rfl
-
-end IsogenyEndDatum
-end Affine
-end WeierstrassCurve
 
 section
 
@@ -235,74 +159,6 @@ end WeierstrassCurve
 end
 
 section
-
-namespace AlgebraicCurve
-variable (K F : Type*) [Field K] [Field F] [Algebra K F]
-
-namespace Place
-
-variable {K F}
-
-variable (v : Place K F)
-
-scoped instance : IsPrincipalIdealRing v.toValuationSubring := v.isPrincipalIdealRing'
-
-scoped instance : IsDiscreteValuationRing v.toValuationSubring where
-  not_a_field' := by
-    rw [ne_eq, ← IsLocalRing.isField_iff_maximalIdeal_eq]
-    exact ValuationSubring.not_isField_of_ne_top F v.ne_top'
-
-scoped instance : Algebra K v.toValuationSubring :=
-  ((algebraMap K F).codRestrict v.toValuationSubring.toSubring v.algebraMap_mem').toAlgebra
-
-end Place
-
-namespace Place
-
-open scoped _root_.Pointwise
-
-variable {K F}
-variable (σ : F ≃ₐ[K] F)
-
-scoped instance : SMul (F ≃ₐ[K] F) (Place K F) where
-  smul σ v :=
-    { toValuationSubring := σ • v.toValuationSubring
-      algebraMap_mem' := fun a => by
-        have h := ValuationSubring.smul_mem_pointwise_smul σ (algebraMap K F a)
-          v.toValuationSubring (v.algebraMap_mem' a)
-        rwa [AlgEquiv.smul_def, σ.commutes] at h
-      ne_top' := fun h => v.ne_top' <| by
-        have := congrArg (σ⁻¹ • ·) h
-        simpa [ValuationSubring.pointwise_smul_top] using this
-      isPrincipalIdealRing' :=
-        IsPrincipalIdealRing.of_surjective
-          (smulRingEquiv σ v.toValuationSubring : _ ≃+* _)
-          (smulRingEquiv σ v.toValuationSubring).surjective }
-
-end Place
-end AlgebraicCurve
-end
-
-section
-
-section
-
-open Ideal Module
-
-namespace WeierstrassCurve
-namespace Affine
-universe u
-
-variable {F : Type u} [Field F] {W : Affine F}
-
-namespace CoordinateRing
-scoped instance : Algebra.FiniteType F W.CoordinateRing :=
-  Algebra.FiniteType.trans (S := Polynomial F) inferInstance inferInstance
-
-end CoordinateRing
-end Affine
-end WeierstrassCurve
-end
 
 section
 
@@ -465,31 +321,7 @@ namespace WeierstrassCurve
 namespace Affine
 variable {F : Type*} [Field F] (W : Affine F)
 
-private def veluXNumPoly (x₀ y₀ : F) : F[X] :=
-  X * (X - C x₀) ^ 2 + C (W.veluT x₀ y₀) * (X - C x₀) + C (W.veluU x₀ y₀)
-
-private def veluYNumQ (x₀ y₀ : F) : F[X] :=
-  (X - C x₀) ^ 3 - C (2 * W.veluU x₀ y₀) - C (W.veluT x₀ y₀) * (X - C x₀)
-
-private def veluYNumP (x₀ y₀ : F) : F[X] :=
-  -(C (W.veluU x₀ y₀) * (C W.a₁ * X + C W.a₃)
-    + C (W.veluT x₀ y₀) * (C W.a₁ * (X - C x₀) - C y₀) * (X - C x₀)
-    + C (W.a₁ * W.veluU x₀ y₀ - W.veluGx x₀ y₀ * W.veluGy x₀ y₀) * (X - C x₀))
-
 variable {W}
-
-variable (W) in
-def veluXFun (x₀ y₀ : F) : W.FunctionField :=
-  polyToFunctionField W (W.veluXNumPoly x₀ y₀) / polyToFunctionField W ((X - C x₀) ^ 2)
-
-variable (W) in
-def veluYNumCR (x₀ y₀ : F) : W.CoordinateRing :=
-  W.veluYNumP x₀ y₀ • (1 : W.CoordinateRing) + W.veluYNumQ x₀ y₀ • CoordinateRing.mk W Y
-
-variable (W) in
-def veluYFun (x₀ y₀ : F) : W.FunctionField :=
-  algebraMap W.CoordinateRing W.FunctionField (veluYNumCR W x₀ y₀)
-    / polyToFunctionField W ((X - C x₀) ^ 3)
 
 section OrdAtPoint
 

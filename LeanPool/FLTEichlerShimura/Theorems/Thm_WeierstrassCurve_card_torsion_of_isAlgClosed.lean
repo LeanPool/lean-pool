@@ -62,7 +62,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_card_torsion_of_isAlgClosed
 
 section PortTorsionSmulFormulaEngine
@@ -146,7 +145,8 @@ theorem isCoprime_ΨSq_succ [W.IsElliptic] (n : ℕ) :
     exact hsub
   exact Affine.Point.some_ne_zero hns hP
 
-end Deep.Gen
+end Gen
+end Deep
 
 end PortGenNetIdentities
 
@@ -207,7 +207,8 @@ theorem smul_formula_or_zero {n : ℕ} (_hn : 0 < n) {x₀ y₀ : K}
     rw [← natCast_zsmul]
     exact ((W.baseChange K).smul_eq_zero_iff_evalEval_ψ h (n : ℤ)).mpr hψ0
 
-end Deep.Gen
+end Gen
+end Deep
 
 end PortGenInduction
 
@@ -292,31 +293,8 @@ theorem smul_eq_zero_of_ΨSq_eval_eq_zero {n : ℕ} (hn : 0 < n)
     n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = 0 :=
   (smul_formula_or_zero W hn h).2 hz
 
-omit [DecidableEq K] in
-theorem ΨSq_odd_eq_sq {n : ℕ} (hodd : Odd n) :
-    (W.baseChange K).ΨSq n = ((W.baseChange K).preΨ' n) ^ 2 := by
-  rw [ΨSq_ofNat, ite_eq_right (Nat.not_even_iff_odd.mpr hodd), mul_one]
-
-theorem smul_eq_zero_iff_preΨ'_eval {n : ℕ} (hodd : Odd n)
-    (hn : 0 < n) {x y : K} (h : (W.baseChange K).toAffine.Nonsingular x y) :
-    n • (Point.some x y h : W.toAffine⟮K⟯) = 0 ↔
-      ((W.baseChange K).preΨ' n).eval x = 0 := by
-  constructor
-  · intro hsmul
-    by_contra hne
-    have hns : ((W.baseChange K).ΨSq n).eval x ≠ 0 := by
-      rw [ΨSq_odd_eq_sq W hodd, eval_pow]
-      exact pow_ne_zero 2 hne
-    obtain ⟨x', y', h', heq, -⟩ := smul_x_eq W hn h hns
-    rw [hsmul] at heq
-    exact Point.some_ne_zero h' heq.symm
-  · intro hz
-    have hz' : ((W.baseChange K).ΨSq n).eval x = 0 := by
-      rw [ΨSq_odd_eq_sq W hodd, eval_pow, hz]
-      exact zero_pow two_ne_zero
-    exact smul_eq_zero_of_ΨSq_eval_eq_zero W hn h hz'
-
-end Deep.Gen
+end Gen
+end Deep
 
 end PortGenSmulFormula
 
@@ -360,10 +338,6 @@ theorem squarefree_roots_nodup {R : Type*} [CommRing R] [IsDomain R] {p : R[X]}
       _ ∣ (X - C a) ^ rootMultiplicity a p := pow_dvd_pow _ h
       _ ∣ p := pow_rootMultiplicity_dvd p a
   exact not_isUnit_X_sub_C a (hsq _ h2)
-
-theorem separable_of_splits_of_squarefree {L : Type*} [Field L] {p : L[X]}
-    (hp : p ≠ 0) (hs : p.Splits) (hsq : Squarefree p) : p.Separable :=
-  (nodup_roots_iff_of_splits hp hs).mp (squarefree_roots_nodup hsq)
 
 omit [DecidableEq K] in
 theorem wronskian_Φ_ΨSq_ne_zero {n : ℕ} (hn : (n : K) ≠ 0) :
@@ -920,7 +894,8 @@ theorem card_nTorsion_odd_fibers [W.IsElliptic] {n : ℕ} (hodd : Odd n)
 
 end AlgClosed
 
-end Deep.Gen
+end Gen
+end Deep
 
 end PortGenCardViaFibers
 
@@ -947,7 +922,8 @@ theorem mem_nTorsion_two_iff {x y : K} (h : (W.baseChange K).toAffine.Nonsingula
 
 end
 
-end Deep.Gen
+end Gen
+end Deep
 
 end PortGenCard
 
@@ -1324,7 +1300,8 @@ theorem card_nTorsion [IsAlgClosed K] [W.IsElliptic] (n : ℕ) (hn : (n : K) ≠
 
 end
 
-end Deep.Gen
+end Gen
+end Deep
 
 end PortGenCardAll
 
@@ -1346,7 +1323,6 @@ export P2MW.S_WeierstrassCurve_card_torsion_of_isAlgClosed (solution)
 end privateSection
 
 public section publicSection
-
 
 open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point
 theorem WeierstrassCurve.card_torsion_of_isAlgClosed {F : Type*} {K : Type*} [Field F] [Field K]

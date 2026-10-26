@@ -74,9 +74,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_LevelN_valuation_apply_smul_le_one_of_tendsto_div_smul
-
 
 open UpperHalfPlane Filter Topology Function
 open scoped MatrixGroups Manifold Real
@@ -106,9 +104,6 @@ variable {G G₁ G₂ : ℍ → ℂ}
 
 theorem analyticAt (hG : Good h G) (hh : 0 < h) : AnalyticAt ℂ (cuspFunction h G) 0 :=
   analyticAt_cuspFunction_zero hh hG.periodic hG.mdiff hG.bdd
-
-theorem continuousAt (hG : Good h G) (hh : 0 < h) : ContinuousAt (cuspFunction h G) 0 :=
-  (hG.analyticAt hh).continuousAt
 
 theorem mul (h₁ : Good h G₁) (h₂ : Good h G₂) : Good h (G₁ * G₂) where
   periodic := by
@@ -141,14 +136,6 @@ end Good
 
 variable {G G₁ G₂ : ℍ → ℂ}
 
-theorem cuspFunction_mul_of_good (hh : 0 < h) (h₁ : Good h G₁) (h₂ : Good h G₂) :
-    cuspFunction h (G₁ * G₂) = cuspFunction h G₁ * cuspFunction h G₂ :=
-  cuspFunction_mul (h₁.continuousAt hh) (h₂.continuousAt hh)
-
-theorem cuspFunction_add_of_good (hh : 0 < h) (h₁ : Good h G₁) (h₂ : Good h G₂) :
-    cuspFunction h (G₁ + G₂) = cuspFunction h G₁ + cuspFunction h G₂ :=
-  cuspFunction_add (h₁.continuousAt hh) (h₂.continuousAt hh)
-
 theorem qExpansion_mul_of_good (hh : 0 < h) (h₁ : Good h G₁) (h₂ : Good h G₂) :
     qExpansion h (G₁ * G₂) = qExpansion h G₁ * qExpansion h G₂ :=
   qExpansion_mul (h₁.analyticAt hh) (h₂.analyticAt hh)
@@ -156,12 +143,6 @@ theorem qExpansion_mul_of_good (hh : 0 < h) (h₁ : Good h G₁) (h₂ : Good h 
 theorem qExpansion_add_of_good (hh : 0 < h) (h₁ : Good h G₁) (h₂ : Good h G₂) :
     qExpansion h (G₁ + G₂) = qExpansion h G₁ + qExpansion h G₂ :=
   qExpansion_add (h₁.analyticAt hh) (h₂.analyticAt hh)
-
-theorem qExpansion_pow_of_good (hh : 0 < h) (hG : Good h G) :
-    ∀ n : ℕ, qExpansion h (G ^ n) = qExpansion h G ^ n
-  | 0 => by rw [pow_zero, pow_zero, qExpansion_one]
-  | n + 1 => by rw [pow_succ, pow_succ, qExpansion_mul_of_good hh (hG.pow n) hG,
-      qExpansion_pow_of_good hh hG n]
 
 theorem qExpansion_const (hh : 0 < h) (c : ℂ) :
     qExpansion h (fun _ : ℍ => c) = PowerSeries.C c := by
@@ -180,12 +161,6 @@ theorem Q_mul (hh : 0 < h) (h₁ : Good h G₁) (h₂ : Good h G₂) : Q h (G₁
 
 theorem Q_add (hh : 0 < h) (h₁ : Good h G₁) (h₂ : Good h G₂) : Q h (G₁ + G₂) = Q h G₁ + Q h G₂ := by
   simp only [Q, qExpansion_add_of_good hh h₁ h₂, map_add]
-
-theorem Q_pow (hh : 0 < h) (hG : Good h G) (n : ℕ) : Q h (G ^ n) = Q h G ^ n := by
-  simp only [Q, qExpansion_pow_of_good hh hG n, map_pow]
-
-theorem Q_one (h : ℝ) : Q h (1 : ℍ → ℂ) = 1 := by
-  simp only [Q, qExpansion_one, map_one]
 
 theorem Q_const (hh : 0 < h) (c : ℂ) : Q h (fun _ : ℍ => c) = HahnSeries.C c := by
   simp only [Q, qExpansion_const hh c, HahnSeries.ofPowerSeries_C]
@@ -217,22 +192,10 @@ theorem good_discriminant (N : ℕ) : Good N Δ where
   mdiff := CuspForm.discriminant.holo'
   bdd := ModularForm.discriminant_isZeroAtImInfty.isBoundedAtImInfty
 
-theorem good_E₄ (N : ℕ) : Good N (ModularForm.E₄ : ℍ → ℂ) where
-  periodic := SlashInvariantFormClass.periodic_comp_ofComplex ModularForm.E₄
-      (natCast_mem_strictPeriods N)
-  mdiff := ModularForm.E₄.holo'
-  bdd := ModularFormClass.bdd_at_infty ModularForm.E₄
-
 theorem discriminant_ne_zero' : (Δ : ℍ → ℂ) ≠ 0 := by
   intro h0
   have := congrFun h0 UpperHalfPlane.I
   exact ModularForm.discriminant_ne_zero _ this
-
-theorem discriminant_pow_ne_zero (m : ℕ) : ((Δ : ℍ → ℂ) ^ m) ≠ 0 := by
-  intro h0
-  have := congrFun h0 UpperHalfPlane.I
-  simp only [Pi.pow_apply, Pi.zero_apply, pow_eq_zero_iff', ne_eq] at this
-  exact ModularForm.discriminant_ne_zero _ this.1
 
 theorem mul_discriminant_pow_eq_zero_iff (F : ℍ → ℂ) (m : ℕ) :
     F * (Δ : ℍ → ℂ) ^ m = 0 ↔ F = 0 := by
@@ -266,15 +229,6 @@ theorem mdifferentiable_of_mem {F : ℍ → ℂ} (hF : F ∈ ring N) : MDifferen
     (fun v τ => rfl) (fricke N) (fun v τ => rfl) jAnalytic (fun τ => rfl)
   exact h.2.2.2.2.1 F hF
 
-theorem eq_zero_or_eq_zero_of_mul_eq_zero {a b : ℍ → ℂ} (ha : a ∈ ring N) (hb : b ∈ ring N)
-    (hab : a * b = 0) : a = 0 ∨ b = 0 := by
-  have h := WLight.levelN_structure_package N PeriodPair.ofTau (fun τ => ⟨rfl, rfl⟩) (wp N)
-    (fun v τ => rfl) (fricke N) (fun v τ => rfl) jAnalytic (fun τ => rfl)
-  exact h.2.2.2.2.2 a b ha hb hab
-
-abbrev redMat (γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) (ZMod N) :=
-  (γ : Matrix (Fin 2) (Fin 2) ℤ).map ((↑) : ℤ → ZMod N)
-
 theorem fricke_smul_of_mem (v : Fin 2 → ZMod N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ CongruenceSubgroup.Gamma N) (τ : ℍ) : fricke N v (γ • τ) = fricke N v τ :=
   (WLight.frickeFunction_modularity_package N PeriodPair.ofTau (fun _ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1
@@ -297,10 +251,6 @@ theorem jAnalytic_smul (γ : SL(2, ℤ)) (τ : ℍ) : jAnalytic (γ • τ) = jA
 
 def precomp (g : SL(2, ℤ)) : (ℍ → ℂ) →ₐ[ℂ] (ℍ → ℂ) :=
   AlgHom.pi (fun τ => Pi.evalAlgHom ℂ (fun _ : ℍ => ℂ) (g • τ))
-
-omit [NeZero N] in
-@[scoped simp]
-theorem precomp_apply (g : SL(2, ℤ)) (F : ℍ → ℂ) (τ : ℍ) : precomp g F τ = F (g • τ) := rfl
 
 theorem smul_eq_self_of_mem {F : ℍ → ℂ} (hF : F ∈ ring N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ CongruenceSubgroup.Gamma N) (τ : ℍ) : F (γ • τ) = F τ := by
@@ -375,8 +325,6 @@ section Expansion
 local notation "Δ" => ModularForm.discriminant
 
 variable (N : ℕ) [NeZero N]
-
-theorem castN_pos : (0 : ℝ) < N := Nat.cast_pos.mpr (NeZero.pos N)
 
 def PB (F : ℍ → ℂ) (m : ℕ) : Prop := IsBoundedAtImInfty (F * (Δ : ℍ → ℂ) ^ m)
 
@@ -710,7 +658,9 @@ theorem qExpansion_ne_zero_of_Q_ne_zero {w : ℝ} {F : ℍ → ℂ} (hF : Q w F 
 
 end Assembly
 
-end ModularCurve.LevelN.CuspExpChi
+end CuspExpChi
+end LevelN
+end ModularCurve
 end
 
 open ModularCurve.LevelN.CuspExpChi UpperHalfPlane Filter in
@@ -911,7 +861,6 @@ export P2MW.S_ModularCurve_LevelN_valuation_apply_smul_le_one_of_tendsto_div_smu
 end privateSection
 
 public section publicSection
-
 
 open UpperHalfPlane
 open scoped MatrixGroups Topology

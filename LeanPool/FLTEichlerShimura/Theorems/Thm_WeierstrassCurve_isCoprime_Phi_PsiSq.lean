@@ -59,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_isCoprime_Phi_PsiSq
 
 section PortGenNetIdentities
@@ -118,70 +117,10 @@ theorem isCoprime_ΨSq_succ [W.IsElliptic] (n : ℕ) :
     exact hsub
   exact Affine.Point.some_ne_zero hns hP
 
-end Deep.Gen
+end Gen
+end Deep
 
 end PortGenNetIdentities
-
-section PortGenInduction
-
-namespace Deep
-namespace Gen
-
-open WeierstrassCurve WeierstrassCurve.Affine Polynomial
-
-open scoped WeierstrassCurve.Affine
-
-variable {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
-variable (W : WeierstrassCurve F)
-
-theorem smul_formula_or_zero {n : ℕ} (_hn : 0 < n) {x₀ y₀ : K}
-    (h : (W.baseChange K).toAffine.Nonsingular x₀ y₀) :
-    (((W.baseChange K).ΨSq n).eval x₀ ≠ 0 →
-      ∃ (x' y' : K) (h' : (W.baseChange K).toAffine.Nonsingular x' y'),
-        n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = Point.some x' y' h' ∧
-          x' * ((W.baseChange K).ΨSq n).eval x₀ = ((W.baseChange K).Φ n).eval x₀) ∧
-    (((W.baseChange K).ΨSq n).eval x₀ = 0 →
-      n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = 0) := by
-  have heq : (W.baseChange K).toAffine.Equation x₀ y₀ := h.left
-  have hψsq := (W.baseChange K).evalEval_ψ_sq heq (n : ℤ)
-  constructor
-  · intro hΨ
-    have hψ : ((W.baseChange K).ψ (n : ℤ)).evalEval x₀ y₀ ≠ 0 := by
-      intro h0
-      exact hΨ (by rw [← hψsq, h0]; exact zero_pow two_ne_zero)
-    have key := zsmul_eq_smulEval (W.baseChange K) h (n : ℤ)
-    have hVz : smulEval (W.baseChange K) x₀ y₀ (n : ℤ) 2 ≠ 0 := hψ
-    have hV := key ▸ ((n : ℤ) • Jacobian.Point.fromAffine (Point.some x₀ y₀ h)).nonsingular
-    have hQeq : ((n : ℤ) • Jacobian.Point.fromAffine (Point.some x₀ y₀ h)) =
-        Jacobian.Point.mk hV := Jacobian.Point.ext key
-    refine ⟨smulEval (W.baseChange K) x₀ y₀ (n : ℤ) 0 /
-        smulEval (W.baseChange K) x₀ y₀ (n : ℤ) 2 ^ 2,
-      smulEval (W.baseChange K) x₀ y₀ (n : ℤ) 1 /
-        smulEval (W.baseChange K) x₀ y₀ (n : ℤ) 2 ^ 3,
-      (Jacobian.nonsingular_of_Z_ne_zero hVz).mp hV, ?_, ?_⟩
-    · calc n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯)
-          = Jacobian.Point.toAffineAddEquiv (W.baseChange K)
-            ((n : ℤ) • Jacobian.Point.fromAffine (Point.some x₀ y₀ h)) := by
-            rw [map_zsmul, ← Jacobian.Point.toAffineAddEquiv_symm_apply,
-              AddEquiv.apply_symm_apply, natCast_zsmul]
-        _ = _ := by
-            rw [hQeq, Jacobian.Point.toAffineAddEquiv_apply]
-            exact Jacobian.Point.toAffineLift_of_Z_ne_zero hVz
-    · change ((W.baseChange K).φ (n : ℤ)).evalEval x₀ y₀ /
-          ((W.baseChange K).ψ (n : ℤ)).evalEval x₀ y₀ ^ 2 *
-          ((W.baseChange K).ΨSq (n : ℤ)).eval x₀ =
-          ((W.baseChange K).Φ (n : ℤ)).eval x₀
-      rw [← hψsq, div_mul_cancel₀ _ (pow_ne_zero 2 hψ),
-        (W.baseChange K).evalEval_φ heq]
-  · intro hΨ
-    have hψ0 : ((W.baseChange K).ψ (n : ℤ)).evalEval x₀ y₀ = 0 :=
-      sq_eq_zero_iff.mp (hψsq.trans hΨ)
-    rw [← natCast_zsmul]
-    exact ((W.baseChange K).smul_eq_zero_iff_evalEval_ψ h (n : ℤ)).mpr hψ0
-
-end Deep.Gen
-
-end PortGenInduction
 
 section PortGenSmulFormula
 
@@ -194,14 +133,6 @@ open scoped WeierstrassCurve.Affine
 
 variable {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
 variable (W : WeierstrassCurve F)
-
-theorem smul_x_eq {n : ℕ} (hn : 0 < n) {x₀ y₀ : K}
-    (h : (W.baseChange K).toAffine.Nonsingular x₀ y₀)
-    (hns : ((W.baseChange K).ΨSq n).eval x₀ ≠ 0) :
-    ∃ (x' y' : K) (h' : (W.baseChange K).toAffine.Nonsingular x' y'),
-      n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = Point.some x' y' h' ∧
-        x' * ((W.baseChange K).ΨSq n).eval x₀ = ((W.baseChange K).Φ n).eval x₀ :=
-  (smul_formula_or_zero W hn h).1 hns
 
 omit [DecidableEq K] in
 private lemma eval_ne_of_isCoprime {f g : Polynomial K} (h : IsCoprime f g) {x₀ : K}
@@ -261,37 +192,8 @@ private theorem _root_.Deep.Gen.isCoprime_Φ_ΨSq [IsAlgClosed K] [W.IsElliptic]
 
 p2m_export "Deep.Gen" "isCoprime_Φ_ΨSq"
 
-theorem smul_eq_zero_of_ΨSq_eval_eq_zero {n : ℕ} (hn : 0 < n)
-    {x₀ y₀ : K} (h : (W.baseChange K).toAffine.Nonsingular x₀ y₀)
-    (hz : ((W.baseChange K).ΨSq n).eval x₀ = 0) :
-    n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = 0 :=
-  (smul_formula_or_zero W hn h).2 hz
-
-omit [DecidableEq K] in
-theorem ΨSq_odd_eq_sq {n : ℕ} (hodd : Odd n) :
-    (W.baseChange K).ΨSq n = ((W.baseChange K).preΨ' n) ^ 2 := by
-  rw [ΨSq_ofNat, ite_eq_right (Nat.not_even_iff_odd.mpr hodd), mul_one]
-
-theorem smul_eq_zero_iff_preΨ'_eval {n : ℕ} (hodd : Odd n)
-    (hn : 0 < n) {x y : K} (h : (W.baseChange K).toAffine.Nonsingular x y) :
-    n • (Point.some x y h : W.toAffine⟮K⟯) = 0 ↔
-      ((W.baseChange K).preΨ' n).eval x = 0 := by
-  constructor
-  · intro hsmul
-    by_contra hne
-    have hns : ((W.baseChange K).ΨSq n).eval x ≠ 0 := by
-      rw [ΨSq_odd_eq_sq W hodd, eval_pow]
-      exact pow_ne_zero 2 hne
-    obtain ⟨x', y', h', heq, -⟩ := smul_x_eq W hn h hns
-    rw [hsmul] at heq
-    exact Point.some_ne_zero h' heq.symm
-  · intro hz
-    have hz' : ((W.baseChange K).ΨSq n).eval x = 0 := by
-      rw [ΨSq_odd_eq_sq W hodd, eval_pow, hz]
-      exact zero_pow two_ne_zero
-    exact smul_eq_zero_of_ΨSq_eval_eq_zero W hn h hz'
-
-end Deep.Gen
+end Gen
+end Deep
 
 end PortGenSmulFormula
 
@@ -331,7 +233,6 @@ export P2MW.S_WeierstrassCurve_isCoprime_Phi_PsiSq (solution)
 end privateSection
 
 public section publicSection
-
 
 theorem WeierstrassCurve.isCoprime_Phi_PsiSq {F : Type*} [Field F] (W : WeierstrassCurve F)
     [W.IsElliptic] (n : ℤ) :

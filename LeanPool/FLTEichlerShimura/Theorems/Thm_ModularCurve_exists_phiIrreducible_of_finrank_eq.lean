@@ -67,7 +67,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_exists_phiIrreducible_of_finrank_eq
 
 noncomputable section
@@ -80,10 +79,6 @@ namespace W1
 p2m_open "ModularCurve"
 
 open Polynomial IntermediateField
-
-theorem coe_evalAtJGen (g : Polynomial ℤ) :
-    ((evalAtJGen g : ℚ⟮jq⟯) : LaurentSeries ℚ) = evalAtJ g :=
-  RingHom.congr_fun algebraMap_comp_evalAtJGen g
 
 theorem aeval_map_intCast (g : Polynomial ℤ) :
     Polynomial.aeval jq (g.map (algebraMap ℤ ℚ)) = evalAtJ g := by
@@ -100,7 +95,8 @@ theorem evalAtJGen_injective : Function.Injective evalAtJGen := by
     exact ModularCurve.PhiGen.evalAtJ_injective
   exact h.of_comp
 
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 open IntermediateField Polynomial
 
@@ -230,7 +226,6 @@ export P2MW.S_ModularCurve_exists_phiIrreducible_of_finrank_eq (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve ModularCurve.PhiGen
 theorem ModularCurve.exists_phiIrreducible_of_finrank_eq (N : ℕ) [NeZero N] (h : Module.finrank

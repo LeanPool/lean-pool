@@ -24,10 +24,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_diffCoeff_sm
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_diffCoeff_smul_D_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_ord_eq_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_diffCoeff_D_nonneg
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_add_eq_of_lt
-import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_natCast
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
-import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
 import Mathlib.RingTheory.Flat.TorsionFree
 
 /-!
@@ -70,7 +67,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_Place_ordDiff_eq_ord_diffCoeff
 
 noncomputable section
@@ -84,23 +80,6 @@ namespace FF2R4A
 p2m_open "AlgebraicCurve"
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
-
-section R3grade
-variable [CharZero K] (x : F) [Algebra.IsAlgebraic (IntermediateField.adjoin K ({x} : Set F)) F]
-
-include x in
-theorem ordDiff_smul (v : Place K F) {g : F} (hg : g ≠ 0) {ω : Ω[F⁄K]} (hω : ω ≠ 0) :
-    v.ordDiff (g • ω) = v.ord g + v.ordDiff ω := by
-  have h1 : v.ord v.uniformizerAlt ≠ 0 := by
-    rw [v.ord_uniformizer_alt v.exists_ord_eq_one]; exact one_ne_zero
-  set a := Place.diffCoeff v.uniformizerAlt ω with ha
-  have hωa : a • D K F v.uniformizerAlt = ω := Place.diffCoeff_smul_D_of_ord_ne_zero x v h1 ω
-  have ha0 : a ≠ 0 := by
-    intro h0; rw [h0, zero_smul] at hωa; exact hω hωa.symm
-  rw [Place.ordDiff_def, Place.ordDiff_def, ← ha, ← hωa, smul_smul,
-    Place.diffCoeff_smul_D_eq x v h1, v.ord_mul hg ha0]
-
-end R3grade
 
 section R4grade
 variable [CharZero K] (x : F) [FiniteDimensional (IntermediateField.adjoin K ({x} : Set F)) F]
@@ -144,84 +123,10 @@ theorem ordDiff_eq_ord_diffCoeff (v : Place K F) {t : F} (ht : v.ord t = 1) (ω 
   · rw [h0, zero_mul]
   · rw [v.ord_mul ha0 hc0, hcord, add_zero]
 
-include x in
-theorem ordDiff_D_nonneg (v : Place K F) {f : F} (hf : 0 ≤ v.ord f) : 0 ≤ v.ordDiff (D K F f) := by
-  obtain ⟨t, ht⟩ := v.exists_ord_eq_one
-  rw [ordDiff_eq_ord_diffCoeff x v ht]
-  exact Place.ord_diffCoeff_D_nonneg x v ht hf
-
-include x in
-theorem ordDiff_D_of_ord_pos (v : Place K F) {f : F} (hf : 0 < v.ord f) :
-    v.ordDiff (D K F f) = v.ord f - 1 := by
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
-  have hπord : v.ord (π : F) = 1 := v.ord_coe_irreducible hπ
-  have hπ0 : v.ord (π : F) ≠ 0 := by rw [hπord]; exact one_ne_zero
-  have hf0 : f ≠ 0 := by rintro rfl; simp at hf
-  obtain ⟨u, hu⟩ := v.exists_unit_mul_zpow hf0 hπ
-  obtain ⟨n, hn⟩ : ∃ n : ℕ, v.ord f = n := ⟨(v.ord f).toNat, (Int.toNat_of_nonneg hf.le).symm⟩
-  have hn0 : n ≠ 0 := by rintro rfl; simp [hn] at hf
-  rw [hn, zpow_natCast] at hu
-  have : CharZero F := charZero_of_injective_algebraMap (algebraMap K F).injective
-  set uF : F := ((u : v.toValuationSubring) : F) with huF
-  have huF0 : uF ≠ 0 := by
-    intro h; apply hf0; rw [hu, h, zero_mul]
-  have hπF : (π : F) ≠ 0 := by
-    intro h; rw [h, v.ord_zero] at hπord; exact zero_ne_one hπord
-  have hnF : (n : F) ≠ 0 := Nat.cast_ne_zero.mpr hn0
-  have huord : v.ord uF = 0 := v.ord_coe_unit u
-  set cu := Place.diffCoeff (π : F) (D K F uF) with hcu
-  have hcu_ge : 0 ≤ v.ord cu := Place.ord_diffCoeff_D_nonneg x v hπord huord.ge
-  have hDu : cu • D K F (π : F) = D K F uF := Place.diffCoeff_smul_D_of_ord_ne_zero x v hπ0 _
-  have hDf : D K F f = (uF * (n * (π : F) ^ (n - 1)) + (π : F) ^ n * cu) • D K F (π : F) := by
-    rw [hu, Derivation.leibniz, Derivation.leibniz_pow, ← hDu, ← Nat.cast_smul_eq_nsmul F]
-    simp only [smul_smul]
-    rw [← add_smul]
-  rw [ordDiff_eq_ord_diffCoeff x v hπord, hDf, Place.diffCoeff_smul_D_eq x v hπ0, hn]
-  have hπn1 : v.ord ((π : F) ^ (n - 1)) = ((n - 1 : ℕ) : ℤ) := by
-    rw [← zpow_natCast, v.ord_zpow, hπord, mul_one]
-  have hA0 : uF * (n * (π : F) ^ (n - 1)) ≠ 0 :=
-    mul_ne_zero huF0 (mul_ne_zero hnF (pow_ne_zero _ hπF))
-  have hA : v.ord (uF * (n * (π : F) ^ (n - 1))) = ((n - 1 : ℕ) : ℤ) := by
-    rw [v.ord_mul huF0 (mul_ne_zero hnF (pow_ne_zero _ hπF)), huord, zero_add,
-      v.ord_mul hnF (pow_ne_zero _ hπF), v.ord_natCast n, zero_add, hπn1]
-  have hsub : ((n - 1 : ℕ) : ℤ) = (n : ℤ) - 1 := by
-    rw [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr hn0)]; simp
-  rcases eq_or_ne cu 0 with hcu0 | hcu0
-  · rw [hcu0, mul_zero, add_zero, hA, hsub]
-  · have hB : v.ord ((π : F) ^ n * cu) = (n : ℤ) + v.ord cu := by
-      rw [v.ord_mul (pow_ne_zero _ hπF) hcu0, ← zpow_natCast, v.ord_zpow, hπord, mul_one]
-    rw [Place.ord_add_eq_of_lt v hA0 (mul_ne_zero (pow_ne_zero _ hπF) hcu0) (by
-      rw [hA, hB, hsub]; omega), hA, hsub]
-
-include x in
-theorem ordDiff_D_eq_ord_sub_one (v : Place K F) {f : F} (hf : v.ord f ≠ 0) :
-    v.ordDiff (D K F f) = v.ord f - 1 := by
-  rcases lt_or_gt_of_ne hf with hneg | hpos
-  · have hf0 : f ≠ 0 := by rintro rfl; simp at hneg
-    have hinv : 0 < v.ord f⁻¹ := by rw [v.ord_inv]; omega
-    have hinv0 : v.ord f⁻¹ ≠ 0 := hinv.ne'
-    have hDf : D K F f = (-(f ^ 2)) • D K F f⁻¹ := by
-      rw [Derivation.leibniz_inv, smul_smul]
-      have : -(f ^ 2) * -(f⁻¹ ^ 2) = 1 := by field_simp
-      rw [this, one_smul]
-    rw [hDf, ordDiff_smul x v (neg_ne_zero.mpr (pow_ne_zero 2 hf0))
-      (Place.D_ne_zero_of_ord_ne_zero x v hinv0), ordDiff_D_of_ord_pos x v hinv, v.ord_neg,
-      ← zpow_natCast, v.ord_zpow, v.ord_inv]
-    push_cast
-    ring
-  · exact ordDiff_D_of_ord_pos x v hpos
-
-include x in
-theorem ordDiff_D_eq_ord_sub_algebraMap_sub_one (v : Place K F) {f : F} {c : K}
-    (hfc : v.ord (f - algebraMap K F c) ≠ 0) :
-    v.ordDiff (D K F f) = v.ord (f - algebraMap K F c) - 1 := by
-  have : D K F f = D K F (f - algebraMap K F c) := by
-    rw [map_sub, Derivation.map_algebraMap, sub_zero]
-  rw [this, ordDiff_D_eq_ord_sub_one x v hfc]
-
 end R4grade
 
-end AlgebraicCurve.FF2R4A
+end FF2R4A
+end AlgebraicCurve
 
 end
 

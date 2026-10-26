@@ -26,11 +26,9 @@ import Mathlib.RingTheory.LocalProperties.Reduced
 import Mathlib.RingTheory.Henselian
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
-import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
 import LeanPool.FLTEichlerShimura.Definitions.Defs_WeierstrassCurve_veluSharedLibrary
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_min_ord_le_ord_add_v2
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
 
 /-!
 # Translation by R as a function-field automorphism on places

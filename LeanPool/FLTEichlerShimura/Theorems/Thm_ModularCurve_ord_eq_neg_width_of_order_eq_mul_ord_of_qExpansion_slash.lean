@@ -26,17 +26,14 @@ import Mathlib.Data.Int.Star
 import Mathlib.NumberTheory.ModularForms.NormTrace
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Repartitions
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_finset_sum_ord_sub_algebraMap_eq_finrank_of_isAlgClosed
-import LeanPool.FLTEichlerShimura.Theorems.Thm_CongruenceSubgroup_conj_T_zpow_mem_Gamma1_of_mem_sup_zpowers_neg_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_apply_eq_of_forall_ord_eq_zero_tendsto_realizeOf
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_modularForm_mul_qExpansion_eq_of_mem_laurentBaseChange_qExpFunctionFieldC
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_ringHom_place_order_eq_mul_ord_of_qExpansion_slash
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqModC_laurentBaseChange_qExpFunctionFieldC_gamma1_eq_index
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_natCard_place_ord_neg_laurentBaseChange_gamma1_eq_natCard_doubleCoset
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_neg_width_le_ord_of_order_eq_mul_ord_of_qExpansion_slash
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_realizeOf_eq_div
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_and_finiteDimensional_adjoin_laurentBaseChange_qExpFunctionFieldC_of_coe_eq_jqModC
-import LeanPool.FLTEichlerShimura.Theorems.Thm_UpperHalfPlane_qExpansion_coeff_mul_width
 import Mathlib.RingTheory.SimpleRing.Principal
+import Mathlib.GroupTheory.DoubleCoset
 
 /-!
 # Order of j at a cusp place equals minus its width
@@ -87,9 +84,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_ord_eq_neg_width_of_order_eq_mul_ord_of_qExpansion_slash
-
 
 open ModularCurve UpperHalfPlane ModularForm Filter Function Complex
   Matrix.SpecialLinearGroup
@@ -359,12 +354,6 @@ theorem index_pm_eq_sum_cw [Fintype (Cusp Γ)] :
   conv_lhs => rw [hc]
   exact natCard_fibre Γ c.out
 
-omit [Γ.FiniteIndex] in
-theorem check_DoubleCoset_eq (a b : SL(2, ℤ)) :
-    DoubleCoset.mk (Γ : Subgroup SL(2, ℤ)) KT a = DoubleCoset.mk (Γ : Subgroup SL(2, ℤ)) KT b ↔
-      ∃ h ∈ Γ, ∃ k ∈ KT, b = h * a * k :=
-  DoubleCoset.eq (H := Γ) (K := KT) (a := a) (b := b)
-
 end cusp
 
 section slash
@@ -445,25 +434,6 @@ end slash
 
 section order
 
-theorem order_eq_of_coeff {R : Type*} [CommRing R] {x : LaurentSeries R} {m : ℤ}
-    (hm : x.coeff m ≠ 0) (hlt : ∀ k < m, x.coeff k = 0) : x.order = m := by
-  have hx : x ≠ 0 := fun h => hm (by simp [h])
-  apply le_antisymm (HahnSeries.order_le_of_coeff_ne_zero hm)
-  by_contra hlt'
-  exact (fun h => hx (HahnSeries.coeff_order_eq_zero.mp h)) (hlt _ (not_le.mp hlt'))
-
-theorem order_ofPowerSeries {R : Type*} [CommRing R] {p : PowerSeries R} (hp : p ≠ 0) :
-    (HahnSeries.ofPowerSeries ℤ R p).order = p.order.toNat := by
-  apply order_eq_of_coeff
-  · rw [HahnSeries.ofPowerSeries_apply_coeff]
-    exact PowerSeries.coeff_order hp
-  · intro k hk
-    rcases lt_or_ge k 0 with hk0 | hk0
-    · exact ModularCurve.ofPowerSeries_coeff_of_neg _ hk0
-    · obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le hk0
-      rw [HahnSeries.ofPowerSeries_apply_coeff]
-      exact PowerSeries.coeff_of_lt_order_toNat n (by exact_mod_cast hk)
-
 abbrev Lq (n : ℝ) (f : ℍ → ℂ) : LaurentSeries ℂ :=
   ((qExpansion n f : PowerSeries ℂ) : LaurentSeries ℂ)
 
@@ -473,23 +443,6 @@ theorem Lq_ne_zero_iff (n : ℝ) (f : ℍ → ℂ) : Lq n f ≠ 0 ↔ qExpansion
   · intro h; exact HahnSeries.ofPowerSeries_injective (by rw [h, map_zero])
   · intro h; rw [h, map_zero]
 
-theorem dvd_order_Lq_of_periodic {f : ℍ → ℂ} (h m' : ℕ) (hh : 0 < h) (hm' : 0 < m')
-    (hper : Periodic (f ∘ ofComplex) (h : ℝ))
-    (hhol : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) f) (hbdd : IsBoundedAtImInfty f)
-    (hne : Lq ((m' : ℝ) * h) f ≠ 0) :
-    (m' : ℤ) ∣ (Lq ((m' : ℝ) * h) f).order := by
-  have hne' : qExpansion ((m' : ℝ) * h) f ≠ 0 := (Lq_ne_zero_iff _ _).mp hne
-  rw [Lq, order_ofPowerSeries hne']
-  have hc := PowerSeries.coeff_order hne'
-  have h35 :=
-    UpperHalfPlane.qExpansion_coeff_mul_width f (h : ℝ) (by exact_mod_cast hh) hper hhol hbdd
-    m' hm' (qExpansion ((m' : ℝ) * h) f).order.toNat
-  by_contra hnd
-  have hnd' : ¬ m' ∣ (qExpansion ((m' : ℝ) * h) f).order.toNat := by
-    intro hd; exact hnd (by exact_mod_cast hd)
-  rw [ite_eq_right hnd'] at h35
-  exact hc h35
-
 end order
 
 section readout
@@ -497,93 +450,6 @@ section readout
 variable (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex]
 
 abbrev CF := ↥(ModularCurve.laurentBaseChange ℂ (ModularCurve.qExpFunctionFieldC ℚ Γ))
-
-theorem neg_ord_dvd_of_readout (hT : ModularGroup.T ∈ Γ) (σ : SL(2, ℤ)) (h : ℕ) (hh : 0 < h)
-    (hreg : σ * ModularGroup.T ^ (h : ℤ) * σ⁻¹ ∈ Γ) (hdvd : h ∣ Γ.normalCore.index)
-    (Φ : CF Γ →+* LaurentSeries ℂ) (P : AlgebraicCurve.Place ℂ (CF Γ)) (e : ℕ) (he : 0 < e)
-    (hpres : ∀ (x : CF Γ) (k : ℤ)
-          (g hf : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k), hf ≠ 0 →
-        (x : LaurentSeries ℂ) *
-            ((UpperHalfPlane.qExpansion 1 (hf : UpperHalfPlane → ℂ) : PowerSeries ℂ) : LaurentSeries
-              ℂ) =
-          ((UpperHalfPlane.qExpansion 1 (g : UpperHalfPlane → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ)
-            →
-        Φ x * ((UpperHalfPlane.qExpansion (Γ.normalCore.index : ℝ)
-              ((hf : UpperHalfPlane → ℂ) ∣[k] σ) : PowerSeries ℂ) : LaurentSeries ℂ) =
-          ((UpperHalfPlane.qExpansion (Γ.normalCore.index : ℝ)
-              ((g : UpperHalfPlane → ℂ) ∣[k] σ) : PowerSeries ℂ) : LaurentSeries ℂ))
-    (hord : ∀ x : CF Γ, x ≠ 0 → (Φ x).order = e * P.ord x)
-    (y : CF Γ) (hey : (e : ℤ) * P.ord y = -(Γ.normalCore.index : ℤ)) :
-    P.ord y < 0 ∧ (-P.ord y) ∣ (h : ℤ) := by
-  set N := Γ.normalCore.index with hNdef
-  have hNpos : 0 < N := Nat.pos_of_ne_zero Subgroup.FiniteIndex.index_ne_zero
-  obtain ⟨m', hm'⟩ := hdvd
-  have hm'pos : 0 < m' := by
-    rcases Nat.eq_zero_or_pos m' with h0 | h0
-    · rw [h0, mul_zero] at hm'; omega
-    · exact h0
-  have hNreal : (N : ℝ) = (m' : ℝ) * h := by rw [hm']; push_cast; ring
-  have hD : ∀ x : CF Γ, x ≠ 0 → (m' : ℤ) ∣ (Φ x).order := by
-    intro x hx
-    obtain ⟨k, g, hf, hf0, hx'⟩ :=
-      ModularCurve.exists_modularForm_mul_qExpansion_eq_of_mem_laurentBaseChange_qExpFunctionFieldC
-        Γ hT (x : LaurentSeries ℂ) x.2
-    have hp := hpres x k g hf hf0 hx'
-    have hper_f := slash_periodic_nat hf σ h hreg
-    have hper_g := slash_periodic_nat g σ h hreg
-    have hperN : Periodic ((⇑hf ∣[k] σ) ∘ ofComplex) ((N : ℝ)) :=
-      slash_periodic_nat hf σ N (conj_T_zpow_index_mem σ)
-    have hLf : Lq (N : ℝ) (⇑hf ∣[k] σ) ≠ 0 := by
-      rw [Lq_ne_zero_iff, Ne, qExpansion_eq_zero_iff (by exact_mod_cast hNpos)
-        hperN (slash_mdiff hf σ) (slash_bddAtImInfty hf σ)]
-      intro h0
-      apply hf0
-      have h1 : ⇑hf = (0 : ℍ → ℂ) := by
-        have h2 := congrArg (· ∣[k] (σ⁻¹ : SL(2, ℤ))) h0
-        simpa only [SL_slash, ← SlashAction.slash_mul, ← map_mul, mul_inv_cancel, map_one,
-          SlashAction.slash_one, SlashAction.zero_slash] using h2
-      exact DFunLike.ext' h1
-    have hΦx : Φ x ≠ 0 := (map_ne_zero_iff Φ Φ.injective).mpr hx
-    have hLg : Lq (N : ℝ) (⇑g ∣[k] σ) ≠ 0 := by
-      change Φ x * Lq (N : ℝ) (⇑hf ∣[k] σ) = Lq (N : ℝ) (⇑g ∣[k] σ) at hp
-      rw [← hp]; exact mul_ne_zero hΦx hLf
-    have hordmul : (Φ x).order + (Lq (N : ℝ) (⇑hf ∣[k] σ)).order = (Lq (N : ℝ) (⇑g ∣[k] σ)).order :=
-      by
-      rw [← HahnSeries.order_mul hΦx hLf]
-      exact congrArg HahnSeries.order hp
-    have hdf : (m' : ℤ) ∣ (Lq (N : ℝ) (⇑hf ∣[k] σ)).order := by
-      rw [hNreal]
-      refine dvd_order_Lq_of_periodic h m' hh hm'pos hper_f (slash_mdiff hf σ) (slash_bddAtImInfty
-        hf σ) ?_
-      rw [← hNreal]; exact hLf
-    have hdg : (m' : ℤ) ∣ (Lq (N : ℝ) (⇑g ∣[k] σ)).order := by
-      rw [hNreal]
-      refine dvd_order_Lq_of_periodic h m' hh hm'pos hper_g (slash_mdiff g σ) (slash_bddAtImInfty g
-        σ) ?_
-      rw [← hNreal]; exact hLg
-    have : (Φ x).order = (Lq (N : ℝ) (⇑g ∣[k] σ)).order - (Lq (N : ℝ) (⇑hf ∣[k] σ)).order :=
-      by omega
-    rw [this]; exact dvd_sub hdg hdf
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible P.toValuationSubring
-  have hπ1 : P.ord (π : CF Γ) = 1 := AlgebraicCurve.Place.ord_coe_irreducible P hπ
-  have hπ0 : (π : CF Γ) ≠ 0 := by
-    intro h0; rw [h0, AlgebraicCurve.Place.ord_zero] at hπ1; exact zero_ne_one hπ1
-  have hme : (m' : ℤ) ∣ (e : ℤ) := by
-    have := hD _ hπ0
-    rwa [hord _ hπ0, hπ1, mul_one] at this
-  obtain ⟨c, hc⟩ := hme
-  have hepos : (0 : ℤ) < e := by exact_mod_cast he
-  have hm'posZ : (0 : ℤ) < m' := by exact_mod_cast hm'pos
-  have hcpos : 0 < c := by nlinarith
-  have hNZ : (N : ℤ) = (h : ℤ) * m' := by exact_mod_cast hm'
-  have hneg : P.ord y < 0 := by nlinarith
-  refine ⟨hneg, ⟨c, ?_⟩⟩
-  have h1 : (m' : ℤ) * (c * P.ord y) = (m' : ℤ) * (-(h : ℤ)) := by
-    calc (m' : ℤ) * (c * P.ord y) = (e : ℤ) * P.ord y := by rw [hc]; ring
-      _ = -(N : ℤ) := hey
-      _ = (m' : ℤ) * (-(h : ℤ)) := by rw [hNZ]; ring
-  have h2 := mul_left_cancel₀ hm'posZ.ne' h1
-  linarith
 
 end readout
 
@@ -711,65 +577,6 @@ theorem cw_mul_mul_eq {σ h k : SL(2, ℤ)} (hh : h ∈ Γ) (hk : k ∈ KT) :
     ((key _).mpr (conj_pow_width_mem _ _ _))
     (fun n hn hmem => width_le _ _ _ hn ((key n).mp hmem))
 
-open AlgebraicCurve in
-theorem ord_eq_neg_cw_of_squeeze
-    {F : Type*} [Field F] [Algebra ℂ F]
-    (y : F) (htr : Transcendental ℂ y)
-    (hfin : FiniteDimensional ↥(IntermediateField.adjoin ℂ ({y} : Set F)) F)
-    (hfull : Module.finrank ↥(IntermediateField.adjoin ℂ ({y} : Set F)) F = (pm Γ).index)
-    (hcard : Nat.card {P : Place ℂ F // P.ord y < 0} = Nat.card (Cusp Γ))
-    (Pl : SL(2, ℤ) → Place ℂ F)
-    (hinv : ∀ σ σ' : SL(2, ℤ), (∃ γ ∈ Γ, ∃ k ∈ (KT : Subgroup SL(2, ℤ)), σ' = γ * σ * k) →
-      Pl σ' = Pl σ)
-    (hsurj : ∀ P : Place ℂ F, P.ord y < 0 → ∃ σ, Pl σ = P)
-    (hbound : ∀ σ, (Pl σ).ord y < 0 ∧ -(Pl σ).ord y ≤ (cw Γ σ : ℤ))
-    (σ : SL(2, ℤ)) : (Pl σ).ord y = -(cw Γ σ : ℤ) := by
-  classical
-  have hadj : IntermediateField.adjoin ℂ ({y⁻¹} : Set F) =
-      IntermediateField.adjoin ℂ ({y} : Set F) := by
-    apply le_antisymm
-    · rw [IntermediateField.adjoin_simple_le_iff]
-      exact inv_mem (IntermediateField.mem_adjoin_simple_self ℂ y)
-    · rw [IntermediateField.adjoin_simple_le_iff]
-      have := inv_mem (IntermediateField.mem_adjoin_simple_self ℂ y⁻¹)
-      rwa [inv_inv] at this
-  have htr' : Transcendental ℂ y⁻¹ := fun h => htr (IsAlgebraic.inv_iff.mp h)
-  have hfin' : FiniteDimensional ↥(IntermediateField.adjoin ℂ ({y⁻¹} : Set F)) F := by
-    rw [hadj]; exact hfin
-  obtain ⟨S, hS, hsum⟩ :=
-    AlgebraicCurve.exists_finset_sum_ord_sub_algebraMap_eq_finrank_of_isAlgClosed ℂ y⁻¹ htr'
-      hfin' 0
-  rw [hadj, hfull] at hsum
-  simp only [map_zero, sub_zero, Place.ord_inv, neg_pos] at hS hsum
-  let : Fintype {P : Place ℂ F // P.ord y < 0} := Fintype.subtype S hS
-  let : Fintype (Cusp Γ) := Fintype.ofFinite _
-  have hout : ∀ τ : SL(2, ℤ),
-      Pl (DoubleCoset.mk (Γ : Subgroup SL(2, ℤ)) KT τ : Cusp Γ).out = Pl τ := by
-    intro τ
-    obtain ⟨h, hh, k, hk, he⟩ := DoubleCoset.mk_out_eq_mul (Γ : Subgroup SL(2, ℤ)) KT τ
-    exact hinv τ _ ⟨h, hh, k, hk, he⟩
-  have hΨsurj : Function.Surjective
-      (fun c : Cusp Γ => (⟨Pl c.out, (hbound c.out).1⟩ : {P : Place ℂ F // P.ord y < 0})) := by
-    rintro ⟨P, hP⟩
-    obtain ⟨τ, rfl⟩ := hsurj P hP
-    exact ⟨DoubleCoset.mk (Γ : Subgroup SL(2, ℤ)) KT τ, Subtype.ext (hout τ)⟩
-  have hΨbij : Function.Bijective
-      (fun c : Cusp Γ => (⟨Pl c.out, (hbound c.out).1⟩ : {P : Place ℂ F // P.ord y < 0})) :=
-    (Nat.bijective_iff_surjective_and_card _).mpr ⟨hΨsurj, hcard.symm⟩
-  have hsum1 : ∑ c : Cusp Γ, (-(Pl c.out).ord y) = ((pm Γ).index : ℤ) := by
-    rw [← hsum, Finset.sum_subtype (F := inferInstance) S hS]
-    exact hΨbij.sum_comp (fun P : {P : Place ℂ F // P.ord y < 0} => -(P : Place ℂ F).ord y)
-  have hsum2 : ∑ c : Cusp Γ, (cw Γ c.out : ℤ) = ((pm Γ).index : ℤ) := by
-    rw [index_pm_eq_sum_cw Γ, Nat.cast_sum]
-  have hle : ∀ c ∈ (Finset.univ : Finset (Cusp Γ)), (-(Pl c.out).ord y) ≤ (cw Γ c.out : ℤ) :=
-    fun c _ => (hbound c.out).2
-  have heq := (Finset.sum_eq_sum_iff_of_le hle).mp (hsum1.trans hsum2.symm)
-  have h1 := heq (DoubleCoset.mk (Γ : Subgroup SL(2, ℤ)) KT σ) (Finset.mem_univ _)
-  rw [hout σ] at h1
-  obtain ⟨h, hh, k, hk, he⟩ := DoubleCoset.mk_out_eq_mul (Γ : Subgroup SL(2, ℤ)) KT σ
-  rw [he, cw_mul_mul_eq Γ hh hk] at h1
-  omega
-
 end squeeze
 
 section final
@@ -778,119 +585,10 @@ open CongruenceSubgroup
 
 variable (M : ℕ) [NeZero M]
 
-omit [NeZero M] in
-theorem T_mem_Gamma1 : ModularGroup.T ∈ Gamma1 M := by
-  rw [CongruenceSubgroup.Gamma1_mem]; simp [ModularGroup.T]
-
-def Pl (σ : SL(2, ℤ)) : AlgebraicCurve.Place ℂ (CF (Gamma1 M)) :=
-  (ModularCurve.exists_ringHom_place_order_eq_mul_ord_of_qExpansion_slash (Gamma1 M) (T_mem_Gamma1
-    M)
-    (ModularCurve.qExpFunctionFieldC ℚ (Gamma1 M)) rfl σ).choose_spec.choose
-
-lemma Pl_spec (σ : SL(2, ℤ)) :
-    let Φ := Exists.choose
-      (ModularCurve.exists_ringHom_place_order_eq_mul_ord_of_qExpansion_slash
-        (Gamma1 M) (T_mem_Gamma1 M)
-        (ModularCurve.qExpFunctionFieldC ℚ (Gamma1 M)) rfl σ)
-    ∃ e : ℕ,
-      0 < e ∧
-      (∀ x : CF (Gamma1 M), x ∈ (Pl M σ).toValuationSubring ↔ 0 ≤ (Φ x).order) ∧
-      (∀ x : CF (Gamma1 M), x ∈ (Pl M σ).toValuationSubring ↔
-        ∃ L : ℂ, Filter.Tendsto
-          (fun τ : UpperHalfPlane => ModularCurve.realizeOf (Gamma1 M)
-            (x : LaurentSeries ℂ) (σ • τ)) atImInfty (𝓝 L)) ∧
-      (∀ (x : CF (Gamma1 M)) (k : ℤ)
-          (g h : ModularForm (Gamma1 M : Subgroup (GL (Fin 2) ℝ)) k), h ≠ 0 →
-        (x : LaurentSeries ℂ) *
-            ((qExpansion 1 (h : UpperHalfPlane → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ) =
-          ((qExpansion 1 (g : UpperHalfPlane → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ) →
-        Φ x * ((qExpansion ((Gamma1 M).normalCore.index : ℝ)
-              ((h : UpperHalfPlane → ℂ) ∣[k] σ) : PowerSeries ℂ) : LaurentSeries ℂ) =
-          ((qExpansion ((Gamma1 M).normalCore.index : ℝ)
-              ((g : UpperHalfPlane → ℂ) ∣[k] σ) : PowerSeries ℂ) : LaurentSeries ℂ)) ∧
-      (∀ c : ℂ, Φ (algebraMap ℂ (CF (Gamma1 M)) c) = HahnSeries.C c) ∧
-      (∀ x : CF (Gamma1 M), x ≠ 0 → (Φ x).order = e * (Pl M σ).ord x) ∧
-      (∀ y : CF (Gamma1 M), (y : LaurentSeries ℂ) = ModularCurve.jqModC ℂ →
-        (Φ y).order = -((Gamma1 M).normalCore.index : ℤ) ∧
-          (e : ℤ) * (Pl M σ).ord y = -((Gamma1 M).normalCore.index : ℤ) ∧
-          y ∉ (Pl M σ).toValuationSubring) ∧
-      (∀ x : CF (Gamma1 M), x ≠ 0 → ∃ L : ℂ, L ≠ 0 ∧
-        Filter.Tendsto
-          (fun τ : UpperHalfPlane => ModularCurve.realizeOf (Gamma1 M)
-            (x : LaurentSeries ℂ) (σ • τ) *
-            Complex.exp (-(2 * Real.pi * Complex.I *
-              ((e : ℤ) * (Pl M σ).ord x : ℂ) * (τ : ℂ) /
-                ((Gamma1 M).normalCore.index : ℂ))))
-          atImInfty (𝓝 L)) := by
-  exact (ModularCurve.exists_ringHom_place_order_eq_mul_ord_of_qExpansion_slash
-    (Gamma1 M) (T_mem_Gamma1 M) (ModularCurve.qExpFunctionFieldC ℚ (Gamma1 M))
-      rfl σ).choose_spec.choose_spec
-
 theorem not_mem_of_ord_neg {F : Type*} [Field F] [Algebra ℂ F] (P : AlgebraicCurve.Place ℂ F)
     {x : F}
     (hx : P.ord x < 0) : x ∉ P.toValuationSubring := fun hmem =>
   ((P.not_adicValuation_le_one_iff).mpr hx) (P.adicValuation_le_one_of_mem hmem)
-
-omit [NeZero M] in
-theorem four_not_dvd (hM : 5 ≤ M) : ¬ M ∣ 4 := fun h => by
-  have := Nat.le_of_dvd (by norm_num) h; omega
-
-theorem ord_Pl_eq_neg_cw (hM : 5 ≤ M) (y : CF (Gamma1 M))
-    (hy : (y : LaurentSeries ℂ) = ModularCurve.jqModC ℂ) (σ : SL(2, ℤ)) :
-    (Pl M σ).ord y = -(cw (Gamma1 M) σ : ℤ) := by
-  have hT := T_mem_Gamma1 M
-  obtain ⟨htr, hfin⟩ :=
-  transcendental_and_finiteDimensional_adjoin_laurentBaseChange_qExpFunctionFieldC_of_coe_eq_jqModC
-      ℂ (Gamma1 M) hT y hy
-  have := hfin
-  have hfull :=
-    ModularCurve.finrank_adjoin_jqModC_laurentBaseChange_qExpFunctionFieldC_gamma1_eq_index ℂ M y hy
-  have hcard :=
-    ModularCurve.natCard_place_ord_neg_laurentBaseChange_gamma1_eq_natCard_doubleCoset ℂ M y hy
-  have hE2 : ∀ (σ : SL(2, ℤ)) (x : CF (Gamma1 M)), x ∈ (Pl M σ).toValuationSubring ↔
-      ∃ L : ℂ, Tendsto (fun τ : ℍ => ModularCurve.realizeOf (Gamma1 M) (x : LaurentSeries ℂ) (σ •
-        τ))
-        atImInfty (𝓝 L) := by
-    intro σ x
-    obtain ⟨e, he, hE1, hE2, -⟩ := Pl_spec M σ
-    exact hE2 x
-  have hinv : ∀ σ σ' : SL(2, ℤ), (∃ γ ∈ Gamma1 M, ∃ k ∈ (KT : Subgroup SL(2, ℤ)), σ' = γ * σ * k) →
-      Pl M σ' = Pl M σ := fun σ σ' h => place_eq_of_doubleCoset (Gamma1 M) hT (Pl M) hE2 h
-  have hΓPl : ∀ γ ∈ Gamma1 M, ∀ σ : SL(2, ℤ), Pl M (γ * σ) = Pl M σ := fun γ hγ σ =>
-    hinv σ (γ * σ) ⟨γ, hγ, 1, Subgroup.one_mem _, by simp⟩
-  have hlim : ∀ (σ : SL(2, ℤ)) (x : CF (Gamma1 M)), x ≠ 0 → (Pl M σ).ord x = 0 →
-      ∃ L : ℂ, L ≠ 0 ∧ Tendsto (fun τ : ℍ => ModularCurve.realizeOf (Gamma1 M) (x : LaurentSeries ℂ)
-        (σ • τ))
-        atImInfty (𝓝 L) := by
-    intro σ x hx h0
-    obtain ⟨e, he, hE1, hE2', hpres, hconst, hord, hy', hlimσ⟩ := Pl_spec M σ
-    obtain ⟨L, hL, hten⟩ := hlimσ x hx
-    refine ⟨L, hL, ?_⟩
-    refine Tendsto.congr (fun τ => ?_) hten
-    rw [h0]; simp
-  have hsurj : ∀ P : AlgebraicCurve.Place ℂ (CF (Gamma1 M)), P.ord y < 0 → ∃ σ, Pl M σ = P :=
-    fun P hP => ModularCurve.exists_apply_eq_of_forall_ord_eq_zero_tendsto_realizeOf (Gamma1 M) hT
-      (Gamma1_is_congruence M) _ rfl y hy (Pl M) hΓPl hlim P (not_mem_of_ord_neg P hP)
-  have hbound : ∀ σ : SL(2, ℤ), (Pl M σ).ord y < 0 ∧ -(Pl M σ).ord y ≤ (cw (Gamma1 M) σ : ℤ) := by
-    intro σ
-    obtain ⟨e, he, hE1, hE2', hpres, hconst, hord, hy', hlimσ⟩ := Pl_spec M σ
-    obtain ⟨hΦy, hey, hynot⟩ := hy' y hy
-    have hwpos := width_pos (pm (Gamma1 M)) σ ModularGroup.T
-    have hmem_pm : σ * ModularGroup.T ^ (cw (Gamma1 M) σ : ℤ) * σ⁻¹ ∈ pm (Gamma1 M) := by
-      rw [zpow_natCast]; exact conj_pow_width_mem (pm (Gamma1 M)) σ ModularGroup.T
-    have hreg :=
-      CongruenceSubgroup.conj_T_zpow_mem_Gamma1_of_mem_sup_zpowers_neg_one M (four_not_dvd M hM) σ _
-        hmem_pm
-    have hdvd : cw (Gamma1 M) σ ∣ (Gamma1 M).normalCore.index := by
-      have h1 : σ * ModularGroup.T ^ ((Gamma1 M).normalCore.index : ℤ) * σ⁻¹ ∈ pm (Gamma1 M) :=
-        Subgroup.mem_sup_left (conj_T_zpow_index_mem σ)
-      rw [conj_zpow_mem_iff_dvd] at h1
-      exact_mod_cast h1
-    obtain ⟨hneg, hdv⟩ :=
-      neg_ord_dvd_of_readout (Gamma1 M) hT σ (cw (Gamma1 M) σ) hwpos hreg hdvd _ (Pl M σ)
-      e he hpres hord y hey
-    refine ⟨hneg, Int.le_of_dvd (by exact_mod_cast hwpos) hdv⟩
-  exact ord_eq_neg_cw_of_squeeze (Gamma1 M) y htr hfin hfull hcard (Pl M) hinv hsurj hbound σ
 
 end final
 
@@ -1230,7 +928,6 @@ export P2MW.S_ModularCurve_ord_eq_neg_width_of_order_eq_mul_ord_of_qExpansion_sl
 end privateSection
 
 public section publicSection
-
 
 open CongruenceSubgroup ModularCurve
 open scoped MatrixGroups ModularForm

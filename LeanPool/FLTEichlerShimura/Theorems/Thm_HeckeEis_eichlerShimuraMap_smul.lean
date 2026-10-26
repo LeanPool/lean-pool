@@ -68,7 +68,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_HeckeEis_eichlerShimuraMap_smul
 
 noncomputable section
@@ -86,19 +85,6 @@ namespace EichlerLinAux
 
 variable {K : Type*} [CommRing K] {Γ : Subgroup SL(2, ℤ)} {V : Type*} [AddCommGroup V] [Module K V]
   {ρ : Representation K Γ V} {F G : ℍ → V}
-
-theorem add (hF : IsEquivariantPrimitiveWith ρ F) (hG : IsEquivariantPrimitiveWith ρ G) :
-    IsEquivariantPrimitiveWith ρ (F + G) := fun γ =>
-  ⟨hF.cocycle γ + hG.cocycle γ, fun τ => by
-    rw [Pi.add_apply, Pi.add_apply, map_add, ← hF.sub_eq_cocycle γ τ, ← hG.sub_eq_cocycle γ
-      τ]; abel⟩
-
-theorem cocycle_add (hF : IsEquivariantPrimitiveWith ρ F) (hG : IsEquivariantPrimitiveWith ρ G) :
-    (add hF hG).cocycle = hF.cocycle + hG.cocycle := by
-  funext γ
-  change (F + G) ((γ : SL(2, ℤ)) • I) - ρ γ ((F + G) I) = (F _ - ρ γ (F I)) + (G _ - ρ γ (G I))
-  rw [Pi.add_apply, Pi.add_apply, map_add]
-  abel
 
 private theorem _root_.HeckeEis.EichlerLinAux.smul (hF : IsEquivariantPrimitiveWith ρ F) (c : K) :
     IsEquivariantPrimitiveWith ρ (c • F) := fun γ =>
@@ -147,7 +133,6 @@ export P2MW.S_HeckeEis_eichlerShimuraMap_smul (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups ModularForm
 theorem HeckeEis.eichlerShimuraMap_smul (n N : ℕ) [NeZero N] (c : ℂ)

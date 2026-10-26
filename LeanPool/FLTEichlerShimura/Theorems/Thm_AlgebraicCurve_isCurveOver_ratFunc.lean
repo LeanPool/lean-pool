@@ -22,7 +22,6 @@ public import Mathlib.RingTheory.SimpleRing.Principal
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 
 import Mathlib.RingTheory.DedekindDomain.Factorization
-import Mathlib.RingTheory.Flat.TorsionFree
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaceClassification
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_algebraMap
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
@@ -64,7 +63,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 -/
 
 section privateSection
-
 
 namespace P2MW.S_AlgebraicCurve_isCurveOver_ratFunc
 
@@ -148,10 +146,6 @@ theorem finite_setOf_ord_ne_zero {f : RatFunc K} (hf : f ≠ 0) :
       ((Place.isEquiv_adicValuation_ofHeightOneSpectrum (K := K) (F := RatFunc K)
         w).eq_one_iff_eq_one.mp hone)
   · exact Or.inr fun w h => hcase ⟨w, h⟩
-
-theorem finite_support_ord {f : RatFunc K} (hf : f ≠ 0) :
-    {v : Place K (RatFunc K) | v.ord f ≠ 0}.Finite :=
-  finite_setOf_ord_ne_zero hf
 
 section DegInfty
 
@@ -268,16 +262,7 @@ p2m_open "AlgebraicCurve.Place"
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
 
-private theorem _root_.AlgebraicCurve.Place.isUnit_algebraMap {c : K} (hc : c ≠ 0) :
-    IsUnit (algebraMap K v.toValuationSubring c) :=
-  (isUnit_iff_ne_zero.mpr hc).map _
-
 p2m_export "AlgebraicCurve.Place" "isUnit_algebraMap"
-
-private theorem _root_.AlgebraicCurve.Place.adicValuation_algebraMap {c : K} (hc : c ≠ 0) :
-    v.adicValuation (algebraMap K F c) = 1 := by
-  rw [← v.coe_algebraMap]
-  exact (v.adicValuation_coe_eq_one_iff _).mpr (v.isUnit_algebraMap hc)
 
 p2m_export "AlgebraicCurve.Place" "adicValuation_algebraMap"
 
@@ -461,10 +446,6 @@ def principalDivisor {f : RatFunc K} (hf : f ≠ 0) : Divisor K (RatFunc K) :=
 theorem principalDivisor_apply {f : RatFunc K} (hf : f ≠ 0) (v : Place K (RatFunc K)) :
     principalDivisor hf v = v.ord f := rfl
 
-theorem principalDivisor_isPrincipal {f : RatFunc K} (hf : f ≠ 0) :
-    (principalDivisor hf).IsPrincipal :=
-  ⟨f, hf, fun _ => rfl⟩
-
 theorem degree_eq_zero_of_forall_eq_ord {f : RatFunc K} (D : Divisor K (RatFunc K))
     (hD : ∀ v : Place K (RatFunc K), D v = v.ord f) : Divisor.degree D = 0 := by
   rcases eq_or_ne f 0 with rfl | hf
@@ -494,25 +475,6 @@ theorem degree_eq_zero_of_forall_eq_ord {f : RatFunc K} (D : Divisor K (RatFunc 
 theorem degree_principalDivisor {f : RatFunc K} (hf : f ≠ 0) :
     Divisor.degree (principalDivisor hf) = 0 :=
   degree_eq_zero_of_forall_eq_ord (principalDivisor hf) fun _ => rfl
-
-theorem sum_ord_mul_deg_eq_zero {f : RatFunc K} (hf : f ≠ 0) :
-    ∑ v ∈ (finite_setOf_ord_ne_zero hf).toFinset, v.ord f * (v.deg : ℤ) = 0 := by
-  have h1 : (principalDivisor hf : Divisor K (RatFunc K))
-      = ∑ v ∈ (finite_setOf_ord_ne_zero hf).toFinset, Finsupp.single v (v.ord f) :=
-    (Finsupp.sum_single (principalDivisor hf)).symm
-  have h2 := degree_principalDivisor hf
-  rw [h1, map_sum] at h2
-  simp only [Divisor.degree_single] at h2
-  exact h2
-
-theorem degree_eq_zero_of_isPrincipal {D : Divisor K (RatFunc K)} (hD : D.IsPrincipal) :
-    Divisor.degree D = 0 := by
-  obtain ⟨f, -, hDf⟩ := hD
-  exact degree_eq_zero_of_forall_eq_ord D hDf
-
-theorem principal_le_degZero :
-    Divisor.principal (K := K) (F := RatFunc K) ≤ Divisor.degZero (K := K) (F := RatFunc K) :=
-  fun _ hD => degree_eq_zero_of_isPrincipal hD
 
 scoped instance instHasPrincipalDivisors : HasPrincipalDivisors K (RatFunc K) where
   exists_divisor _ hf := ⟨principalDivisor hf, fun _ => rfl, degree_principalDivisor hf⟩
@@ -546,14 +508,7 @@ variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
 theorem finiteResidue_of_deg_pos (h : 0 < v.deg) : v.FiniteResidue :=
   ⟨Module.finite_of_finrank_pos h⟩
 
-private theorem _root_.AlgebraicCurve.Place.deg_pos [v.FiniteResidue] : 0 < v.deg := by
-  have : Module.Finite K v.ResidueField := FiniteResidue.finite
-  exact Module.finrank_pos
-
 p2m_export "AlgebraicCurve.Place" "deg_pos"
-
-theorem deg_ne_zero [v.FiniteResidue] : v.deg ≠ 0 :=
-  v.deg_pos.ne'
 
 end DegPos
 end Place
@@ -633,7 +588,6 @@ export P2MW.S_AlgebraicCurve_isCurveOver_ratFunc (solution)
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.isCurveOver_ratFunc (K : Type*) [Field K] :

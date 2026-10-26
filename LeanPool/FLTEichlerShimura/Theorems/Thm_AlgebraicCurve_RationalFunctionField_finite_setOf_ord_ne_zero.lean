@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_RationalFunctionField_finite_setOf_ord_ne_zero
 
 noncomputable section
@@ -175,15 +174,6 @@ private def placeInfty' : Place K (RatFunc K) where
     (Valuation.valuationSubring_isDiscreteValuationRing
       (RatFunc.inftyValuation K)).toIsPrincipalIdealRing
 
-private theorem placeInfty'_ne_ofHeightOneSpectrum (w : HeightOneSpectrum K[X]) :
-    placeInfty' K ≠ Place.ofHeightOneSpectrum w := by
-  intro h
-  refine RatFunc.adicValuation_not_isEquiv_infty_valuation w
-    ((Valuation.isEquiv_iff_valuationSubring _ _).mpr ?_)
-  have h2 := congrArg Place.toValuationSubring h
-  rw [Place.ofHeightOneSpectrum_toValuationSubring] at h2
-  exact h2.symm
-
 end PlaceInfty
 
 variable {K}
@@ -267,7 +257,6 @@ export P2MW.S_AlgebraicCurve_RationalFunctionField_finite_setOf_ord_ne_zero (sol
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.RationalFunctionField.finite_setOf_ord_ne_zero {K : Type*} [Field K]

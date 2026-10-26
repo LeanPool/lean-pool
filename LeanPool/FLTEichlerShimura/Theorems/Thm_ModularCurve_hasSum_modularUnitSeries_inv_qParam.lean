@@ -70,7 +70,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_hasSum_modularUnitSeries_inv_qParam
 
 noncomputable section
@@ -211,17 +210,10 @@ private theorem hasSum_theta_deltaSeriesN (N : ℕ) [NeZero N] (τ : ℍ) :
       ModularCurve.qExpand_coeff_of_not_dvd N deltaSeries (fun ⟨c, hc⟩ => hm ⟨c, hc.symm⟩),
       Rat.cast_zero, zero_mul]
 
-private theorem theta_deltaSeriesN_ne_zero (N : ℕ) [NeZero N] : theta (deltaSeriesN N) ≠ 0 := by
-  have h1 : (theta (deltaSeriesN N)).coeff ((N : ℕ) : ℤ) = 1 := by
-    rw [theta_coeff, (ModularCurve.isMonicOfOrder_deltaSeriesN N).coeff_self, Rat.cast_one]
-  exact HahnSeries.ne_zero_of_coeff_ne_zero (h1 ▸ one_ne_zero)
-
 private theorem theta_deltaSeries_ne_zero : theta deltaSeries ≠ 0 := by
   have h1 : (theta deltaSeries).coeff (1 : ℤ) = 1 := by
     rw [theta_coeff, ModularCurve.isMonicOfOrder_deltaSeries.coeff_self, Rat.cast_one]
   exact HahnSeries.ne_zero_of_coeff_ne_zero (h1 ▸ one_ne_zero)
-
-private def phiFun (N : ℕ) : ℂ → ℂ := fun w => gfun w / gfun (w ^ N)
 
 private def psiFun (N : ℕ) : ℂ → ℂ := fun w => gfun (w ^ N) / gfun w
 
@@ -235,13 +227,6 @@ private lemma differentiableOn_gfun_pow (N : ℕ) [NeZero N] :
     DifferentiableOn ℂ (fun w : ℂ => gfun (w ^ N)) (Metric.ball (0 : ℂ) 1) :=
   differentiableOn_gfun.comp ((differentiable_pow N).differentiableOn)
     fun _ hw => pow_mem_ball hw
-
-private lemma differentiableOn_phiFun (N : ℕ) [NeZero N] :
-    DifferentiableOn ℂ (phiFun N) (Metric.ball (0 : ℂ) 1) := by
-  refine DifferentiableOn.div differentiableOn_gfun (differentiableOn_gfun_pow N)
-    fun w hw => gfun_ne_zero ?_
-  have := pow_mem_ball (N := N) hw
-  rwa [Metric.mem_ball, dist_zero_right] at this
 
 private lemma differentiableOn_psiFun (N : ℕ) [NeZero N] :
     DifferentiableOn ℂ (psiFun N) (Metric.ball (0 : ℂ) 1) := by

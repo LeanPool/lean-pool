@@ -63,7 +63,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_StarBank_eisInt_series
 
 open scoped ArithmeticFunction.sigma
@@ -105,7 +104,8 @@ theorem eisInt_not_dvd_den_shift {ℓ : ℕ} [Fact ℓ.Prime] (hℓ5 : 5 ≤ ℓ
   exact (Nat.Prime.coprime_iff_not_dvd hℓp).mp
     (Nat.Coprime.of_dvd_left hdendvd hcop).symm hdvd
 
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 theorem ModularCurve.StarBank.eisInt_dvd_den {ℓ : ℕ} [Fact ℓ.Prime] (hℓ5 : 5 ≤ ℓ) :
     ℓ ∣ (bernoulli (ℓ - 1)).den := by
@@ -118,20 +118,6 @@ theorem ModularCurve.StarBank.eisInt_dvd_den {ℓ : ℕ} [Fact ℓ.Prime] (hℓ5
     rw [hsimp, hℓden] at h
     exact h
   exact ((hℓp.dvd_mul).mp hdvd).resolve_left hshift
-
-private theorem ModularCurve.StarBank.eisInt_not_dvd_num {ℓ : ℕ} [Fact ℓ.Prime] (hℓ5 : 5 ≤ ℓ) :
-    ¬ (ℓ : ℤ) ∣ (bernoulli (ℓ - 1)).num := by
-  intro hdvd
-  have hden := ModularCurve.StarBank.eisInt_dvd_den hℓ5
-  have hnum : ℓ ∣ (bernoulli (ℓ - 1)).num.natAbs := by
-    have := Int.natAbs_dvd_natAbs.mpr hdvd
-    simpa using this
-  have hcop := (bernoulli (ℓ - 1)).reduced
-  have hgcd : ℓ ∣ Nat.gcd (bernoulli (ℓ - 1)).num.natAbs (bernoulli (ℓ - 1)).den :=
-    Nat.dvd_gcd hnum hden
-  unfold Nat.Coprime at hcop
-  rw [hcop] at hgcd
-  exact (Nat.Prime.one_lt (Fact.out : ℓ.Prime)).ne' (Nat.dvd_one.mp hgcd)
 
 theorem ModularCurve.StarBank.eisInt_bernoulli_ne_zero
     {ℓ : ℕ} [Fact ℓ.Prime] (hℓ5 : 5 ≤ ℓ) : bernoulli (ℓ - 1) ≠ 0 := by
@@ -214,7 +200,6 @@ export P2MW.S_ModularCurve_StarBank_eisInt_series (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped ArithmeticFunction.sigma
 open Finset

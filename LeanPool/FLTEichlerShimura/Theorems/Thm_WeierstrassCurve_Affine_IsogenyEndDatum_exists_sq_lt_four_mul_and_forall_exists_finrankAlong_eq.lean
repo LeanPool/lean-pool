@@ -75,7 +75,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_OVERLONG_e21b3de7
 
 open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
@@ -85,7 +84,6 @@ universe u
 noncomputable section
 
 namespace Ws13S7
-
 
 open AddMonoid.End
 
@@ -104,33 +102,6 @@ theorem dd_charPoly_eq {φ : AddMonoid.End A} (D : DualEndData φ) :
     φ * φ = (D.trace : AddMonoid.End A) * φ - (D.norm : AddMonoid.End A) := by
   have h := D.charPoly
   rwa [sub_add, sub_eq_zero] at h
-
-theorem dd_intLinComb_norm_pos_of_disc_neg {φ : AddMonoid.End A} (D : DualEndData φ)
-    (hdisc : D.trace ^ 2 < 4 * D.norm) {a b : ℤ} (hb : b ≠ 0) :
-    0 < (D.intLinComb a b).norm := by
-  rw [DualEndData.intLinComb_norm]
-  have key : 4 * (a ^ 2 + D.trace * a * b + D.norm * b ^ 2)
-      = (2 * a + D.trace * b) ^ 2 + (4 * D.norm - D.trace ^ 2) * b ^ 2 := by ring
-  have hbsq : (0 : ℤ) < b ^ 2 := by positivity
-  nlinarith [sq_nonneg (2 * a + D.trace * b)]
-
-theorem dd_intLinComb_norm_pos_of_b_eq_zero {φ : AddMonoid.End A} (D : DualEndData φ)
-    {a : ℤ} (ha : a ≠ 0) :
-    0 < (D.intLinComb a 0).norm := by
-  rw [DualEndData.intLinComb_norm]
-  have : a ^ 2 + D.trace * a * 0 + D.norm * 0 ^ 2 = a ^ 2 := by ring
-  rw [this]; positivity
-
-theorem dd_intLinComb_norm_pos_of_disc_neg_of_ne_zero {φ : AddMonoid.End A}
-    (D : DualEndData φ) (hdisc : D.trace ^ 2 < 4 * D.norm) {a b : ℤ}
-    (hne : (a : AddMonoid.End A) + (b : AddMonoid.End A) * φ ≠ 0) :
-    0 < (D.intLinComb a b).norm := by
-  rcases eq_or_ne b 0 with rfl | hb
-  · have ha : a ≠ 0 := by
-      rintro rfl
-      exact hne (by simp)
-    exact dd_intLinComb_norm_pos_of_b_eq_zero D ha
-  · exact dd_intLinComb_norm_pos_of_disc_neg D hdisc hb
 
 theorem binaryQuadForm_pos_of_neg_disc {t n a b : ℤ} (hdisc : t ^ 2 < 4 * n)
     (hform : a ^ 2 + t * a * b + n * b ^ 2 = 0) : a = 0 ∧ b = 0 := by
@@ -415,35 +386,6 @@ theorem dualEndData_disc_neg_of_notBot
     isogenyEndSubring_mul_left_cancel W hNs (intCast_mem _ 2) h2ne hcancel
   exact hbot (Subring.mem_bot.mpr ⟨m, (sub_eq_zero.mp hφm).symm⟩)
 
-theorem s7_exists_dualEndData_dual_mem_and_intLinComb_norm_pos
-    (hNs : ∀ D : IsogenyEndDatum W, NormFormulaAlong F D.ι D.hfin)
-    (φ : AddMonoid.End W.Point) (hφ : φ ∈ isogenyEndSubring W hNs) :
-    ∃ D : AddMonoid.End.DualEndData φ, D.dual ∈ isogenyEndSubring W hNs ∧
-      ∀ a b : ℤ, (a : AddMonoid.End W.Point) + (b : AddMonoid.End W.Point) * φ ≠ 0 →
-        0 < (D.intLinComb a b).norm := by
-  by_cases hbot : φ ∈ (⊥ : Subring (AddMonoid.End W.Point))
-  · obtain ⟨m, rfl⟩ := Subring.mem_bot.mp hbot
-    refine ⟨dualEndDataIntCast m, intCast_mem _ m, fun a b hne => ?_⟩
-    rw [DualEndData.intLinComb_norm, dualEndData_intCast_trace, dualEndData_intCast_norm]
-    have hcast : (a : AddMonoid.End W.Point)
-        + (b : AddMonoid.End W.Point) * ((m : ℤ) : AddMonoid.End W.Point)
-          = ((a + b * m : ℤ) : AddMonoid.End W.Point) := by
-      rw [Int.cast_add, Int.cast_mul]
-    have habm : a + b * m ≠ 0 := by
-      rintro habm
-      exact hne (by rw [hcast, habm, Int.cast_zero])
-    have hsq : a ^ 2 + 2 * m * a * b + m ^ 2 * b ^ 2 = (a + b * m) ^ 2 := by ring
-    rw [hsq]; positivity
-  · have hφ0 : φ ≠ 0 := by
-      intro h; apply hbot; rw [h]; exact zero_mem _
-    obtain ⟨D, rfl⟩ :=
-      IsogenyEndDatum.exists_pointEnd_eq_of_mem_isogenyEndSubring hNs φ hφ hφ0
-    obtain ⟨DD, hdual, -⟩ :=
-      IsogenyEndDatum.exists_dualEndData_dual_mem_and_norm_eq_finrankAlong hNs D
-    have hdisc := dualEndData_disc_neg_of_notBot W hNs hφ hbot DD
-    exact ⟨DD, hdual, fun a b hne =>
-      dd_intLinComb_norm_pos_of_disc_neg_of_ne_zero DD hdisc hne⟩
-
 theorem dd_norm_trace_unique {A : Type*} [AddCommGroup A]
     (hinj : Function.Injective (Int.cast : ℤ → AddMonoid.End A))
     {φ : AddMonoid.End A} (DD DD₀ : DualEndData φ)
@@ -567,7 +509,6 @@ export
 end privateSection
 
 public section publicSection
-
 
 open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 

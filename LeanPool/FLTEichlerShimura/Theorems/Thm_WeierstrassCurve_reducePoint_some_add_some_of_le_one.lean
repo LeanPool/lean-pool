@@ -63,7 +63,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_reducePoint_some_add_some_of_le_one
 
 namespace WeierstrassCurve
@@ -118,9 +117,6 @@ theorem reduction_a₃ : (reduction R W).a₃ = residue R (integralModel R W).a�
 
 theorem reduction_a₄ : (reduction R W).a₄ = residue R (integralModel R W).a₄ := by
   simp only [reduction, map_a₄]
-
-theorem reduction_a₆ : (reduction R W).a₆ = residue R (integralModel R W).a₆ := by
-  simp only [reduction, map_a₆]
 
 theorem equation_lift {x y : K} (h : W.toAffine.Equation x y) {rx ry : R}
     (hrx : algebraMap R K rx = x) (hry : algebraMap R K ry = y) :
@@ -557,15 +553,6 @@ theorem valuation_a₁_le_one : valuation K (maximalIdeal R) W.a₁ ≤ 1 := by
 
 theorem valuation_a₂_le_one : valuation K (maximalIdeal R) W.a₂ ≤ 1 := by
   rw [← integralModel_a₂_eq R W]; exact valuation_le_one (maximalIdeal R) _
-
-theorem valuation_a₃_le_one : valuation K (maximalIdeal R) W.a₃ ≤ 1 := by
-  rw [← integralModel_a₃_eq R W]; exact valuation_le_one (maximalIdeal R) _
-
-theorem valuation_a₄_le_one : valuation K (maximalIdeal R) W.a₄ ≤ 1 := by
-  rw [← integralModel_a₄_eq R W]; exact valuation_le_one (maximalIdeal R) _
-
-theorem valuation_a₆_le_one : valuation K (maximalIdeal R) W.a₆ ≤ 1 := by
-  rw [← integralModel_a₆_eq R W]; exact valuation_le_one (maximalIdeal R) _
 
 theorem reducePoint_add_int_int [DecidableEq K] [DecidableEq (ResidueField R)]
     {x₁ y₁ x₂ y₂ : K} (h₁ : W.toAffine.Nonsingular x₁ y₁) (h₂ : W.toAffine.Nonsingular x₂ y₂)

@@ -74,9 +74,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_LevelN_exists_place_analyticOrderAt_eq_mul_ord
-
 
 open UpperHalfPlane Filter Topology
 open scoped MatrixGroups Manifold
@@ -368,26 +366,6 @@ theorem mem_analyticPlace_iff (τ₀ : ℍ) (x : K) :
     x ∈ (analyticPlace N K τ₀).toValuationSubring ↔ ordValuationK N K τ₀ x ≤ 1 := by
   rw [analyticPlace_toValuationSubring, Valuation.mem_valuationSubring_iff]
 
-theorem inv_jSub_notMem (τ₀ : ℍ) :
-    (algebraMap (ring N) K (jSub N τ₀))⁻¹ ∉ (analyticPlace N K τ₀).toValuationSubring := by
-  rw [mem_analyticPlace_iff, map_inv₀, not_le, one_lt_inv₀]
-  · exact ordValuationK_jSub_lt_one N K τ₀
-  · rw [ordValuationK_algebraMap]
-    exact (zero_le.lt_of_ne (ordValuation_ne_zero N τ₀ (jSub_ne_zero N τ₀)).symm)
-
-theorem jSub_mem_nonunits (τ₀ : ℍ) :
-    algebraMap (ring N) K (jSub N τ₀) ∈ (analyticPlace N K τ₀).toValuationSubring.nonunits := by
-  rw [ValuationSubring.mem_nonunits_iff_or]
-  exact Or.inr (inv_jSub_notMem N K τ₀)
-
-theorem algebraMap_mem_analyticPlace (τ₀ : ℍ) (F : ring N) :
-    algebraMap (ring N) K F ∈ (analyticPlace N K τ₀).toValuationSubring := by
-  rw [mem_analyticPlace_iff, ordValuationK_algebraMap]
-  by_cases hF : (F : ℍ → ℂ) = 0
-  · rw [ordFun_zero' N τ₀ hF]; exact zero_le
-  · rw [ordFun_of_ne_zero N τ₀ hF, ← WithZero.exp_zero, WithZero.exp_le_exp]
-    omega
-
 theorem exists_pos_neg_log_eq_mul_ord (τ₀ : ℍ) :
     ∃ e : ℕ, 0 < e ∧ ∀ x : K, x ≠ 0 →
       -(WithZero.log (ordValuationK N K τ₀ x)) = (e : ℤ) * (analyticPlace N K τ₀).ord x := by
@@ -460,7 +438,9 @@ theorem exists_place_ordAt_eq_mul_ord (τ₀ : ℍ) :
 
 end FractionField
 
-end ModularCurve.LevelN.AnalyticOrderPlace
+end AnalyticOrderPlace
+end LevelN
+end ModularCurve
 end
 
 theorem solution (N : ℕ) [NeZero N]
@@ -481,7 +461,6 @@ export P2MW.S_ModularCurve_LevelN_exists_place_analyticOrderAt_eq_mul_ord (solut
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem ModularCurve.LevelN.exists_place_analyticOrderAt_eq_mul_ord (N : ℕ) [NeZero N]

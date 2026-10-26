@@ -77,7 +77,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 local notation "Γ₁ℝ " M => (CongruenceSubgroup.Gamma1 M : Subgroup (GL (Fin 2) ℝ))
 local notation "Γᴴℝ " M ", " H => (CohCarrier.GammaH M H : Subgroup (GL (Fin 2) ℝ))
 
@@ -110,12 +109,6 @@ theorem Gamma1_le_GammaH : CongruenceSubgroup.Gamma1 M ≤ CohCarrier.GammaH M H
 
 scoped instance GammaH_finiteIndex' : (CohCarrier.GammaH M H).FiniteIndex :=
   Subgroup.finiteIndex_of_le (Gamma1_le_GammaH M H)
-
-omit [NeZero M] in
-theorem T_mem_GammaH : ModularGroup.T ∈ CohCarrier.GammaH M H := by
-  apply Gamma1_le_GammaH M H
-  apply (CongruenceSubgroup.Gamma1_mem M ModularGroup.T).mpr
-  norm_num [ModularGroup.T]
 
 omit [NeZero M] in
 theorem one_mem_strictPeriods : (1 : ℝ) ∈ (Γᴴℝ M, H).strictPeriods := by
@@ -906,10 +899,6 @@ def Efield (K : Type*) [Field K] (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) 
       simp [hl]
     · exact ⟨w, l', l, hl, by rw [inv_div]⟩
 
-omit [CharZero K] in
-theorem mem_Efield_iff {x : LaurentSeries K} :
-    x ∈ Efield K M H ↔ ∃ (w : ℤ) (l l' : IDatum M H w →₀ K), IsRep K x w l l' := Iff.rfl
-
 omit [NeZero M] in
 omit [CharZero K] in
 theorem exists_mem_support_ne_zero {l : IDatum M H w →₀ K} (h : ev K w l ≠ 0) :
@@ -1153,8 +1142,6 @@ theorem slash_neg_one (F : ℍ → ℂ) (k : ℤ) : F ∣[k] (-1 : SL(2, ℤ)) =
   rw [zpow_neg, ← inv_zpow, inv_neg, inv_one]
 
 def sgn (w : ℤ) : ℤ := if Even w then 1 else -1
-
-theorem sgn_ne_zero (w : ℤ) : sgn w ≠ 0 := by unfold sgn; split_ifs <;> decide
 
 theorem cast_sgn (w : ℤ) : ((sgn w : ℤ) : ℂ) = (-1 : ℂ) ^ w := by
   unfold sgn

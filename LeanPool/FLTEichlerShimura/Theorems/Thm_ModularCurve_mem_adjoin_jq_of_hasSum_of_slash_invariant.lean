@@ -70,7 +70,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_mem_adjoin_jq_of_hasSum_of_slash_invariant
 
 noncomputable section
@@ -96,9 +95,6 @@ variable {h : ℝ} {A B : LaurentSeries ℂ} {F G : ℍ → ℂ}
 lemma add (hA : RealL h A F) (hB : RealL h B G) : RealL h (A + B) (F + G) := fun τ => by
   simpa [add_mul] using (hA τ).add (hB τ)
 
-lemma neg (hA : RealL h A F) : RealL h (-A) (-F) := fun τ => by
-  simpa [neg_mul] using (hA τ).neg
-
 lemma sub (hA : RealL h A F) (hB : RealL h B G) : RealL h (A - B) (F - G) := fun τ => by
   simpa [sub_mul] using (hA τ).sub (hB τ)
 
@@ -115,64 +111,9 @@ lemma single (h : ℝ) (a : ℂ) (n : ℤ) :
 lemma C (h : ℝ) (a : ℂ) : RealL h (HahnSeries.C a) (fun _ => a) := by
   simpa using single h a 0
 
-lemma one (h : ℝ) : RealL h 1 1 := by
-  have h__af := C h 1
-  simp only [HahnSeries.C_apply, HahnSeries.single_zero_one] at h__af
-  exact h__af
-
-lemma zero (h : ℝ) : RealL h 0 0 := fun τ => by simp [hasSum_zero]
-
 lemma congr {A' : LaurentSeries ℂ} {F' : ℍ → ℂ} (hA : RealL h A F) (h1 : A = A')
     (h2 : ∀ τ, F τ = F' τ) :
     RealL h A' F' := fun τ => by rw [← h1, ← h2]; exact hA τ
-
-lemma prod (hh : 0 < h) {ι : Type} (s : Finset ι) {A : ι → LaurentSeries ℂ} {F : ι → ℍ → ℂ}
-    (hAF : ∀ i ∈ s, RealL h (A i) (F i)) : RealL h (∏ i ∈ s, A i) (fun τ => ∏ i ∈ s, F i τ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => (have h__af := one h; simp only [Finset.prod_empty] at h__af ⊢; exact h__af)
-  | insert a s ha ih =>
-    have h1 :=
-      (hAF a (Finset.mem_insert_self a s)).mul hh (ih fun i hi => hAF i (Finset.mem_insert_of_mem
-        hi))
-    refine h1.congr (Finset.prod_insert ha).symm fun τ => ?_
-    simp [Finset.prod_insert ha]
-
-lemma coeff_prod_X_sub_C (hh : 0 < h) {ι : Type} (s : Finset ι) {a : ι → LaurentSeries ℂ}
-    {α : ι → ℍ → ℂ} (haα : ∀ i ∈ s, RealL h (a i) (α i)) (k : ℕ) :
-    RealL h ((∏ i ∈ s, (Polynomial.X - Polynomial.C (a i))).coeff k)
-      (fun τ => (∏ i ∈ s, (Polynomial.X - Polynomial.C (α i τ))).coeff k) := by
-  classical
-  induction s using Finset.induction_on generalizing k with
-  | empty =>
-    simp only [Finset.prod_empty, Polynomial.coeff_one]
-    by_cases hk : k = 0
-    · subst hk; (have h__af := one h; simp only [↓reduceIte] at h__af ⊢; exact h__af)
-    · have h__af := zero h
-      simp only [hk, ↓reduceIte] at h__af ⊢
-      exact h__af
-  | insert b s hb ih =>
-    have ih' := fun k => ih (fun i hi => haα i (Finset.mem_insert_of_mem hi)) k
-    have hb' := haα b (Finset.mem_insert_self b s)
-    have hA : (∏ i ∈ insert b s, (Polynomial.X - Polynomial.C (a i))) =
-        (∏ i ∈ s, (Polynomial.X - Polynomial.C (a i))) * (Polynomial.X - Polynomial.C (a b)) :=
-      (Finset.prod_insert hb).trans (mul_comm (G := Polynomial (LaurentSeries ℂ)) _ _)
-    have hfun : ∀ τ : ℍ, (∏ i ∈ insert b s, (Polynomial.X - Polynomial.C (α i τ))) =
-        (∏ i ∈ s, (Polynomial.X - Polynomial.C (α i τ))) * (Polynomial.X - Polynomial.C (α b τ)) :=
-      fun τ => (Finset.prod_insert hb).trans (mul_comm (G := Polynomial ℂ) _ _)
-    cases k with
-    | zero =>
-      refine ((ih' 0).mul hh hb').neg.congr ?_ fun τ => ?_
-      · rw [hA, Polynomial.mul_coeff_zero, Polynomial.coeff_sub, Polynomial.coeff_X_zero,
-          Polynomial.coeff_C_zero, zero_sub]
-        exact (mul_neg (α := LaurentSeries ℂ) _ _).symm
-      · simp only [hfun τ, Polynomial.mul_coeff_zero, Pi.neg_apply, Pi.mul_apply,
-          Polynomial.coeff_sub,
-          Polynomial.coeff_X_zero, Polynomial.coeff_C_zero, zero_sub, mul_neg]
-    | succ k =>
-      refine ((ih' k).sub ((ih' (k + 1)).mul hh hb')).congr ?_ fun τ => ?_
-      · rw [hA, Polynomial.coeff_mul_X_sub_C]
-      · simp only [hfun τ, Polynomial.coeff_mul_X_sub_C, Pi.sub_apply, Pi.mul_apply]
 
 end RealL
 
@@ -183,8 +124,6 @@ def jt (τ : ℍ) : ℂ := ModularForm.E₄ τ ^ 3 / ModularForm.discriminant τ
 abbrev castC : ℚ →+* ℂ := Rat.castHom ℂ
 
 def jqC : LaurentSeries ℂ := coeffMap castC jq
-
-lemma jqC_coeff (m : ℤ) : jqC.coeff m = ((jq.coeff m : ℚ) : ℂ) := rfl
 
 lemma realL_jqC : RealL 1 jqC jt := fun τ => ModularCurve.hasSum_jq_qParam τ
 

@@ -67,7 +67,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_ord_jLinePlaceZero_jGen
 
 open IntermediateField AlgebraicCurve AlgebraicCurve.RationalFunctionField
@@ -89,13 +88,6 @@ theorem equiv_X_sub_C (b : ℚ) :
   congr 1
   exact RingHom.map_rat_algebraMap ModularCurve.jLineRingEquiv.toRingHom b
 
-theorem exists_eq_congr (v : Place ℚ ↥ℚ⟮ModularCurve.jq⟯) :
-    ∃ v' : Place ℚ (RatFunc ℚ), v = Place.congrRingEquiv ModularCurve.jLineRingEquiv
-      (RingHom.map_rat_algebraMap ModularCurve.jLineRingEquiv.toRingHom) v' :=
-  ⟨(Place.congrEquiv ModularCurve.jLineRingEquiv
-      (RingHom.map_rat_algebraMap ModularCurve.jLineRingEquiv.toRingHom)).symm v,
-    ((Place.congrEquiv _ _).apply_symm_apply v).symm⟩
-
 theorem ord_congr_jGen_sub (b : ℚ) (v' : Place ℚ (RatFunc ℚ)) :
     (Place.congrRingEquiv ModularCurve.jLineRingEquiv
         (RingHom.map_rat_algebraMap ModularCurve.jLineRingEquiv.toRingHom) v').ord
@@ -107,13 +99,8 @@ theorem ord_congr_jGen_sub (b : ℚ) (v' : Place ℚ (RatFunc ℚ)) :
     (algebraMap (Polynomial ℚ) (RatFunc ℚ) (Polynomial.X - Polynomial.C b))).trans
       (ord_X_sub_C ℚ b v')
 
-theorem injective_congr : Function.Injective (Place.congrRingEquiv ModularCurve.jLineRingEquiv
-      (RingHom.map_rat_algebraMap ModularCurve.jLineRingEquiv.toRingHom) : Place ℚ (RatFunc ℚ) → _)
-        :=
-  (Place.congrEquiv ModularCurve.jLineRingEquiv
-      (RingHom.map_rat_algebraMap ModularCurve.jLineRingEquiv.toRingHom)).injective
-
-end ModularCurve.JLineOrdAux
+end JLineOrdAux
+end ModularCurve
 
 open ModularCurve.JLineOrdAux
 
@@ -132,7 +119,6 @@ export P2MW.S_ModularCurve_ord_jLinePlaceZero_jGen (solution)
 end privateSection
 
 public section publicSection
-
 
 open IntermediateField AlgebraicCurve
 theorem ModularCurve.ord_jLinePlaceZero_jGen :

@@ -71,7 +71,6 @@ open _root_.ModularCurve.ModularPolynomialHelpers
 
 open _root_.ModularCurve.W1
 
-
 namespace P2MW.S_ModularCurve_finrank_adjoin_jqN_prime_of_not_mem
 
 noncomputable section
@@ -89,21 +88,6 @@ p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
-
-
-
-
-
-
-
-
-
-
-
-
-theorem iota_jq (N : ℕ) [NeZero N] : coeffEmb K (qExpand ℚ N jq) = TS K N 1 := by
-  rw [coeffEmb_qExpand, TS_eq_coeffEmb, qTwist_one_apply]
-
 theorem conj_zero_eq (p : ℕ) [Fact p.Prime] (ζ : Kˣ) :
     conj p ζ (0 : Fin (p + 1)) = TS K (p * p) 1 := by
   rw [conj_zero, TS_eq_coeffEmb, qTwist_one_apply]
@@ -119,7 +103,8 @@ theorem qTwist_iota_of_pow_eq_one (N : ℕ) [NeZero N] (v : Kˣ) (hv : v ^ N = 1
   have : v ^ (N : ℤ) = 1 := by exact_mod_cast hv
   rw [this, qTwist_one_apply]
 
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_injective \
@@ -147,12 +132,6 @@ def qTwistEquiv (u : Kˣ) : LaurentSeries K ≃+* LaurentSeries K where
 omit [Algebra ℚ K] in
 @[scoped simp] theorem qTwistEquiv_apply (u : Kˣ) (f : LaurentSeries K) :
     qTwistEquiv u f = qTwist u f := rfl
-
-omit [Algebra ℚ K] in
-theorem coe_qTwistEquiv (u : Kˣ) :
-    ((qTwistEquiv u : LaurentSeries K ≃+* LaurentSeries K) : LaurentSeries K →+* LaurentSeries K) =
-      qTwist u :=
-  RingHom.ext fun _ => rfl
 
 omit [Algebra ℚ K] in
 theorem qTwist_TS_one_cycle (ζ : Kˣ) {p : ℕ} (hζp : ζ ^ p = 1) (b : ℕ) :
@@ -207,13 +186,11 @@ theorem roots_phiProd_conj_nodup (p : ℕ) [hp : Fact p.Prime] (ζ : Kˣ)
     have hζu : IsPrimitiveRoot ζ p := IsPrimitiveRoot.coe_units_iff.mp hζ
     exact hζu.pow_inj hb hb' hu
 
-
-
-
 theorem cycUnit_pow (N : ℕ) [NeZero N] : cycUnit N ^ N = 1 :=
   Units.ext (by rw [Units.val_pow_eq_pow_val, (cycUnit_spec N).pow_eq_one, Units.val_one])
 
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_injective \
@@ -221,24 +198,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   ModularPolynomialData coeffEmb coeffEmb_coeff qTwist qTwist_coeff qTwist_one_apply qTwist_qTwist \
   qTwist_qExpand coeffMap_qExpand PhiGen.splits_of_prime exists_phiIrreducible_evalSymm \
   dedekindPsi_prime"
-namespace W1
-p2m_open "ModularCurve"
-
-
-
-
-
-
-
-
-theorem phiAtSeed_iota_eval {K : Type*} [Field K] [Algebra ℚ K] (A : ℕ) [NeZero A] (n : ℕ)
-    [NeZero n]
-    (data : ModularPolynomialData n) (M : ℕ) [NeZero M] :
-    (phiAtSeed data (coeffEmb K (qExpand ℚ A (jqN M)))).eval (coeffEmb K (qExpand ℚ A (jqN (M *
-      n)))) = 0 :=
-  phiAtSeed_eval_map data _ _ ((coeffEmb K).comp (qExpand ℚ A)) (phiAtSeed_jqN_eval n data M)
-
-end ModularCurve.W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_injective \
@@ -270,7 +230,8 @@ theorem phiAtSeed_iota_jq_eq_phiProd (p : ℕ) [Fact p.Prime] (ζ : Kˣ)
   refine Polynomial.ringHom_ext' (RingHom.ext_int _ _) ?_
   simp [evalAtJ_X]
 
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_injective \
@@ -346,7 +307,6 @@ export P2MW.S_ModularCurve_finrank_adjoin_jqN_prime_of_not_mem (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.finrank_adjoin_jqN_prime_of_not_mem (F : IntermediateField ℚ (LaurentSeries ℚ))

@@ -175,14 +175,6 @@ theorem IsInt.cross {f : LaurentSeries L} {x y x' y' : LaurentSeries A}
   apply ι_injective A
   grind
 
-theorem IsInt.inv_of {f : LaurentSeries L} {x y : LaurentSeries A} (hx : ϖ A x ≠ 0)
-    (h : f * ι A y = ι A x) : f⁻¹ * ι A x = ι A y := by
-  have hf : f ≠ 0 := by
-    rintro rfl
-    rw [zero_mul, eq_comm, ι_eq_zero_iff] at h
-    grind
-  grind
-
 end Coeff
 
 section Scaling
@@ -639,9 +631,6 @@ def jF : FF := ⟨jqModC L, jqModC_mem_FF Γ⟩
 
 theorem coe_jF : ((jF Γ : FF) : LaurentSeries L) = jqModC L := rfl
 
-theorem coe_jF' : ((jF Γ : FF) : LaurentSeries L) = ι A (jqModC A) := by
-  rw [coe_jF, coeffMap_jqModC]
-
 def jbar (K : Type*) [Field K] : qExpFunctionFieldC K Γ :=
   ⟨jqModC K, intFormRatiosC_subset K Γ (ModularCurve.jqModC_mem_intFormRatiosC K Γ)⟩
 
@@ -658,15 +647,6 @@ theorem transcendental_jF : Transcendental L (jF Γ : FF) :=
   fun h => transcendental_jqModC L
     ((isAlgebraic_algHom_iff (laurentBaseChange L (qExpFunctionFieldC ℚ Γ)).val
       Subtype.val_injective).mpr h)
-
-theorem jF_mem_gaussRing : (jF Γ : FF) ∈ gaussRing A Γ :=
-  (mem_gaussRing_iff A Γ _).mpr
-    ⟨jqModC A, 1, by grind, by rw [map_one, mul_one, coe_jF']⟩
-
-theorem resHom_jF : resHom A Γ ⟨jF Γ, jF_mem_gaussRing A Γ⟩ = jqModC kk := by
-  rw [resHom_eq A Γ (f := ⟨jF Γ, jF_mem_gaussRing A Γ⟩) (x := jqModC A) (y := 1)
-    (by grind) (by rw [map_one, mul_one]; exact coe_jF' A Γ),
-    map_one, div_one, coeffMap_jqModC]
 
 theorem intSeriesC_ne_zero_rat {K : Type*} [Field K] {p : PowerSeries ℤ} (hp : intSeriesC K p ≠ 0) :
     intSeriesC ℚ p ≠ 0 := by
@@ -724,7 +704,6 @@ theorem exists_resHom_eq {z : LaurentSeries kk} (hz : z ∈ qExpFunctionFieldC k
       rw [resHom_eq A Γ (f := ⟨_, hO⟩) hϖg hw, ϖ_intSeriesA, ϖ_intSeriesA]
   obtain ⟨f, hf⟩ := hle (show z ∈ Subfield.closure _ from hz)
   exact ⟨f, hf⟩
-
 
 theorem exists_adjoin_coe_eq_resHom {g : FF} (hgK : g ∈ IntermediateField.adjoin L {(jF Γ : FF)})
     (hgO : g ∈ gaussRing A Γ) :

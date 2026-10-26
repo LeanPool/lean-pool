@@ -64,7 +64,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_Period_exists_basis_parabolicHoms_castAddHom_comp
 
 open scoped MatrixGroups
@@ -482,10 +481,6 @@ private noncomputable def coordZ (hg : Subgroup.closure (Set.range g) = ⊤) :
     ModularCurve.Period.parabolicHoms ℤ Γ ℤ ≃ₗ[ℤ] (Fin (t g) → ℤ) :=
   LinearEquiv.ofBijective (coordZlin g) (coord_bijective g hg int_tf)
 
-private theorem coordZ_apply (hg : Subgroup.closure (Set.range g) = ⊤)
-    (φ : ModularCurve.Period.parabolicHoms ℤ Γ ℤ) :
-    coordZ g hg φ = Λ g (ev g (φ : Additive Γ →+ ℤ)) := rfl
-
 private noncomputable def coordKlin (K : Type*) [Field K] :
     ModularCurve.Period.parabolicHoms K Γ K →ₗ[K] (Fin (t g) → K) where
   toFun φ := Λ g (ev g (φ : Additive Γ →+ K))
@@ -577,7 +572,6 @@ export P2MW.S_ModularCurve_Period_exists_basis_parabolicHoms_castAddHom_comp (so
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem ModularCurve.Period.exists_basis_parabolicHoms_castAddHom_comp

@@ -30,7 +30,6 @@ import Mathlib.Tactic.NormNum.Prime
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlacesOverDVR
 import Mathlib.Analysis.Normed.Ring.Lemmas
-import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.Henselian
 import Mathlib.Algebra.Order.Ring.Star
 
@@ -78,98 +77,12 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
+-- WARNING: the P2M scaffolding is really needed in this file!
 namespace P2MW.S_OVERLONG_a3e19da5
-
-p2m_open "Ideal~map_mul"
 
 open Module Polynomial
 
 open scoped nonZeroDivisors Polynomial.Bivariate
-
-namespace WeierstrassCurve
-namespace Affine
-p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
-
-universe u
-
-variable {F : Type u} [Field F] {W : Affine F}
-
-namespace CoordinateRing
-p2m_open "WeierstrassCurve.Affine.CoordinateRing"
-
-scoped instance : Algebra.FiniteType F W.CoordinateRing :=
-  Algebra.FiniteType.trans (S := Polynomial F) inferInstance inferInstance
-
-theorem exists_eq_XYIdeal_of_isMaximal [IsAlgClosed F] (𝔪 : Ideal W.CoordinateRing)
-    (h𝔪 : 𝔪.IsMaximal) : ∃ x y : F, W.Equation x y ∧ XYIdeal W x (C y) = 𝔪 := by
-  have := h𝔪
-  let : Field (W.CoordinateRing ⧸ 𝔪) := Ideal.Quotient.field 𝔪
-  have : Module.Finite F (W.CoordinateRing ⧸ 𝔪) :=
-    finite_of_finite_type_of_isJacobsonRing F (W.CoordinateRing ⧸ 𝔪)
-  have he : Function.Bijective (algebraMap F (W.CoordinateRing ⧸ 𝔪)) :=
-    IsAlgClosed.algebraMap_bijective_of_isIntegral
-  obtain ⟨x, hx⟩ := he.2 (Ideal.Quotient.mk 𝔪 (mk W (Polynomial.C Polynomial.X)))
-  obtain ⟨y, hy⟩ := he.2 (Ideal.Quotient.mk 𝔪 (mk W Y))
-  have hconst : ∀ a : F, Ideal.Quotient.mk 𝔪 ((CoordinateRing.mk W) (Polynomial.C (Polynomial.C a)))
-      = algebraMap F (W.CoordinateRing ⧸ 𝔪) a := by
-    intro a
-    have h1 : (CoordinateRing.mk W) (Polynomial.C (Polynomial.C a))
-        = algebraMap F W.CoordinateRing a := by
-      rw [AdjoinRoot.algebraMap_eq', RingHom.comp_apply, Polynomial.algebraMap_apply,
-        Algebra.algebraMap_self_apply]
-      rfl
-    rw [h1, ← Ideal.Quotient.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
-  have key : ((Ideal.Quotient.mk 𝔪).comp
-        (mk W : Polynomial (Polynomial F) →+* W.CoordinateRing)) =
-      (algebraMap F (W.CoordinateRing ⧸ 𝔪)).comp
-        ((Polynomial.evalRingHom x).comp (Polynomial.evalRingHom (Polynomial.C y))) := by
-    refine Polynomial.ringHom_ext' (Polynomial.ringHom_ext (fun a => ?_) ?_) ?_
-    · simp only [RingHom.comp_apply, Polynomial.coe_evalRingHom, Polynomial.eval_C]
-      exact hconst a
-    · simp only [RingHom.comp_apply, Polynomial.coe_evalRingHom, Polynomial.eval_X,
-        Polynomial.eval_C]
-      exact hx.symm
-    · simp only [RingHom.comp_apply, Polynomial.coe_evalRingHom, Polynomial.eval_X,
-        Polynomial.eval_C]
-      exact hy.symm
-  have heval : W.Equation x y := by
-    have h0 := DFunLike.congr_fun key W.polynomial
-    simp only [RingHom.comp_apply, AdjoinRoot.mk_self, _root_.map_zero,
-      Polynomial.coe_evalRingHom] at h0
-    exact (map_eq_zero_iff (algebraMap F (W.CoordinateRing ⧸ 𝔪)) he.1).mp h0.symm
-  have hXmem : XClass W x ∈ 𝔪 := by
-    have h2 : ((Ideal.Quotient.mk 𝔪).comp (mk W))
-        (Polynomial.C (Polynomial.X - Polynomial.C x)) = 0 := by
-      rw [key]
-      simp
-    rw [← Ideal.Quotient.eq_zero_iff_mem]
-    exact h2
-  have hYmem : YClass W (Polynomial.C y) ∈ 𝔪 := by
-    have h2 : ((Ideal.Quotient.mk 𝔪).comp (mk W))
-        (Y - Polynomial.C (Polynomial.C y)) = 0 := by
-      rw [key]
-      simp
-    rw [← Ideal.Quotient.eq_zero_iff_mem]
-    exact h2
-  refine ⟨x, y, heval, ?_⟩
-  have hXY_le : XYIdeal W x (Polynomial.C y) ≤ 𝔪 := by
-    rw [XYIdeal, Ideal.span_le]
-    rintro _ (rfl | rfl)
-    · exact hXmem
-    · exact hYmem
-  have hXY_max : (XYIdeal W x (Polynomial.C y)).IsMaximal :=
-    Ideal.Quotient.maximal_of_isField _
-      ((quotientXYIdealEquiv (W' := W) (x := x) (y := Polynomial.C y)
-        heval).toMulEquiv.isField (Field.toIsField F))
-  exact hXY_max.eq_of_le h𝔪.ne_top hXY_le
-
-end CoordinateRing
-
-end Affine
-end WeierstrassCurve
-
-open
-  P2MW.S_OVERLONG_a3e19da5.WeierstrassCurve.Affine.CoordinateRing
 
 section
 
@@ -328,113 +241,6 @@ end
 
 section
 
-section
-
-p2m_open "FractionalIdeal Polynomial"
-
-open scoped nonZeroDivisors Polynomial.Bivariate
-
-namespace FractionalIdeal
-p2m_open "FractionalIdeal"
-
-variable {R : Type*} (K : Type*) [CommRing R] [IsDomain R] [Field K] [Algebra R K]
-  [IsFractionRing R K]
-
-theorem isUnit_coeIdeal_of_forall_isMaximal [IsNoetherianRing R]
-    (hmax : ∀ 𝔪 : Ideal R, 𝔪.IsMaximal → 𝔪 ≠ ⊥ → IsUnit (𝔪 : FractionalIdeal R⁰ K))
-    (I : Ideal R) : I ≠ ⊥ → IsUnit (I : FractionalIdeal R⁰ K) := by
-  refine IsNoetherian.induction
-    (P := fun I : Ideal R => I ≠ ⊥ → IsUnit (I : FractionalIdeal R⁰ K)) (fun I ih hI => ?_) I
-  rcases eq_or_ne I ⊤ with rfl | hItop
-  · rw [coeIdeal_top]
-    exact isUnit_one
-  obtain ⟨𝔪, h𝔪, hI𝔪⟩ := Ideal.exists_le_maximal I hItop
-  have h𝔪0 : 𝔪 ≠ ⊥ := fun h => hI (le_bot_iff.mp (h ▸ hI𝔪))
-  have h𝔪unit : IsUnit (𝔪 : FractionalIdeal R⁰ K) := hmax 𝔪 h𝔪 h𝔪0
-  have h𝔪inv : (𝔪 : FractionalIdeal R⁰ K) * (𝔪 : FractionalIdeal R⁰ K)⁻¹ = 1 :=
-    (mul_inv_cancel_iff_isUnit K).mpr h𝔪unit
-  have hle : (I : FractionalIdeal R⁰ K) * (𝔪 : FractionalIdeal R⁰ K)⁻¹ ≤ 1 := by
-    calc (I : FractionalIdeal R⁰ K) * (𝔪 : FractionalIdeal R⁰ K)⁻¹
-        ≤ (𝔪 : FractionalIdeal R⁰ K) * (𝔪 : FractionalIdeal R⁰ K)⁻¹ := by gcongr
-      _ = 1 := h𝔪inv
-  obtain ⟨J, hJ⟩ := le_one_iff_exists_coeIdeal.mp hle
-  have hJ𝔪 : J * 𝔪 = I := by
-    rw [← coeIdeal_inj (K := K), coeIdeal_mul, hJ, mul_assoc,
-      mul_comm (𝔪 : FractionalIdeal R⁰ K)⁻¹, h𝔪inv, mul_one]
-  have hIJ : I ≤ J := hJ𝔪 ▸ Ideal.mul_le_left
-  have hJ0 : J ≠ ⊥ := fun h => hI (le_bot_iff.mp (h ▸ hIJ))
-  have hne : I ≠ J := by
-    rintro rfl
-    have hsmul : I ≤ 𝔪 • I := by
-      rw [Ideal.smul_eq_mul, mul_comm]
-      exact le_of_eq hJ𝔪.symm
-    obtain ⟨r, hr𝔪, hr⟩ := Submodule.exists_sub_one_mem_and_smul_eq_zero_of_fg_of_le_smul 𝔪 I
-      (IsNoetherian.noetherian I) hsmul
-    obtain ⟨n, hnI, hn0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hI
-    have hr0 : r = 0 := by
-      have hrn := hr n hnI
-      rw [smul_eq_mul] at hrn
-      exact (mul_eq_zero.mp hrn).resolve_right hn0
-    exact h𝔪.ne_top (𝔪.eq_top_of_isUnit_mem (by simpa [hr0] using hr𝔪) isUnit_one.neg)
-  have hJunit : IsUnit (J : FractionalIdeal R⁰ K) := ih J (lt_of_le_of_ne hIJ hne) hJ0
-  rw [← hJ𝔪, coeIdeal_mul]
-  exact hJunit.mul h𝔪unit
-
-theorem isUnit_of_forall_isMaximal [IsNoetherianRing R]
-    (hmax : ∀ 𝔪 : Ideal R, 𝔪.IsMaximal → 𝔪 ≠ ⊥ → IsUnit (𝔪 : FractionalIdeal R⁰ K))
-    (I : FractionalIdeal R⁰ K) (hI : I ≠ 0) : IsUnit I := by
-  obtain ⟨a, J, ha, rfl⟩ := exists_eq_spanSingleton_mul I
-  have ha' : algebraMap R K a ≠ 0 := mt IsFractionRing.to_map_eq_zero_iff.mp ha
-  refine IsUnit.mul ?_ (isUnit_coeIdeal_of_forall_isMaximal K hmax J ?_)
-  · exact isUnit_iff_exists_inv.mpr ⟨spanSingleton R⁰ (algebraMap R K a), by
-      rw [FractionalIdeal.spanSingleton_mul_spanSingleton, inv_mul_cancel₀ ha',
-        FractionalIdeal.spanSingleton_one]⟩
-  · rintro rfl
-    simp at hI
-
-end FractionalIdeal
-
-open FractionalIdeal
-
-theorem isDedekindDomain_of_forall_isMaximal_isUnit {R : Type*} (K : Type*) [CommRing R]
-    [IsDomain R] [Field K] [Algebra R K] [IsFractionRing R K] [IsNoetherianRing R]
-    (hmax : ∀ 𝔪 : Ideal R, 𝔪.IsMaximal → 𝔪 ≠ ⊥ → IsUnit (𝔪 : FractionalIdeal R⁰ K)) :
-    IsDedekindDomain R :=
-  (isDedekindDomain_iff_mul_inv_cancel (K := K)).mpr fun I hI =>
-    (mul_inv_cancel_iff_isUnit K).mpr (isUnit_of_forall_isMaximal K hmax I hI)
-
-namespace WeierstrassCurve
-namespace Affine
-p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
-
-universe u
-
-variable {F : Type u} [Field F] {W : Affine F}
-
-namespace CoordinateRing
-p2m_open "WeierstrassCurve.Affine.CoordinateRing"
-
-theorem isUnit_coeIdeal_of_isMaximal [IsAlgClosed F] (hΔ : W.Δ ≠ 0)
-    {𝔪 : Ideal W.CoordinateRing} (h𝔪 : 𝔪.IsMaximal) :
-    IsUnit (𝔪 : FractionalIdeal W.CoordinateRing⁰ W.FunctionField) := by
-  obtain ⟨x, y, hxy, hXY⟩ := exists_eq_XYIdeal_of_isMaximal 𝔪 h𝔪
-  rw [← hXY, ← XYIdeal'_eq ((W.equation_iff_nonsingular_of_Δ_ne_zero hΔ).mp hxy)]
-  exact (XYIdeal' _).isUnit
-
-theorem isDedekindDomain_of_Δ_ne_zero [IsAlgClosed F] (hΔ : W.Δ ≠ 0) :
-    IsDedekindDomain W.CoordinateRing :=
-  isDedekindDomain_of_forall_isMaximal_isUnit W.FunctionField
-    fun _𝔪 h𝔪 _ => isUnit_coeIdeal_of_isMaximal hΔ h𝔪
-
-scoped instance [IsAlgClosed F] [W.IsElliptic] : IsDedekindDomain W.CoordinateRing :=
-  isDedekindDomain_of_Δ_ne_zero (W.coe_Δ' ▸ W.Δ'.ne_zero)
-
-end CoordinateRing
-
-end Affine
-end WeierstrassCurve
-end
-
 noncomputable section
 
 open IsDedekindDomain Polynomial
@@ -536,23 +342,6 @@ p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
 
 variable {F : Type*} [Field F] {W : Affine F}
 
-namespace CoordinateRing
-p2m_open "WeierstrassCurve.Affine.CoordinateRing"
-
-theorem XYIdeal_isMaximal {x y : F} (h : W.Equation x y) :
-    (XYIdeal W x (C y)).IsMaximal :=
-  Ideal.Quotient.maximal_of_isField _
-    ((quotientXYIdealEquiv (W' := W) (x := x) (y := C y) h).toMulEquiv.isField
-      (Field.toIsField F))
-
-theorem XYIdeal_ne_bot (x : F) (y : F[X]) : XYIdeal W x y ≠ ⊥ := by
-  intro hbot
-  have hX : XClass W x ∈ XYIdeal W x y := Ideal.subset_span (Set.mem_insert _ _)
-  rw [hbot, Ideal.mem_bot] at hX
-  exact XClass_ne_zero x hX
-
-end CoordinateRing
-
 p2m_open "WeierstrassCurve.Affine.CoordinateRing \
   P2MW.S_OVERLONG_a3e19da5.WeierstrassCurv\
   e.Affine.CoordinateRing"
@@ -617,8 +406,7 @@ section
 
 noncomputable section
 
-p2m_open "AlgebraicCurve \
-  P2MW.S_OVERLONG_a3e19da5.AlgebraicCurve"
+p2m_open "AlgebraicCurve"
 
 namespace WeierstrassCurve
 namespace Affine
@@ -763,8 +551,7 @@ namespace WeierstrassCurve
 namespace Affine
 p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
 
-p2m_open "WeierstrassCurve.Affine.CoordinateRing \
-  P2MW.S_OVERLONG_a3e19da5.WeierstrassCurv\
+p2m_open "WeierstrassCurve.Affine.CoordinateRing P2MW.S_OVERLONG_a3e19da5.WeierstrassCurv\
   e.Affine.CoordinateRing AlgebraicCurve \
   P2MW.S_OVERLONG_a3e19da5.AlgebraicCurve"
 
@@ -1190,11 +977,8 @@ section
 
 noncomputable section
 
-p2m_open "AlgebraicCurve \
-  P2MW.S_OVERLONG_a3e19da5.AlgebraicCurve \
-  IsDedekindDomain FractionalIdeal \
-  P2MW.S_OVERLONG_a3e19da5.FractionalIdea\
-  l WithZero Polynomial"
+p2m_open "AlgebraicCurve P2MW.S_OVERLONG_a3e19da5.AlgebraicCurve IsDedekindDomain FractionalIdeal \
+  WithZero Polynomial"
 
 open scoped nonZeroDivisors Polynomial.Bivariate
 

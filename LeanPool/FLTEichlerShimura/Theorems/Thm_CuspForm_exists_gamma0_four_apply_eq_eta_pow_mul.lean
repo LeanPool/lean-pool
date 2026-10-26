@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_CuspForm_exists_gamma0_four_apply_eq_eta_pow_mul
 
 open scoped MatrixGroups ModularForm Real UpperHalfPlane
@@ -175,12 +174,6 @@ lemma eta_neg_inv_pow (w : ℂ) (hw : 0 < w.im) (e : ℕ) :
   rw [this, sqrt_sq, sqrt_sq, ← pow_mul]
 
 def CS (a' b' c' : ℕ) : ℂ := (I⁻¹) ^ (a' + b' + c') * (2⁻¹ : ℂ) ^ b' * (4⁻¹ : ℂ) ^ c'
-
-lemma CS_ne_zero (a' b' c' : ℕ) : CS a' b' c' ≠ 0 := by
-  unfold CS
-  exact mul_ne_zero (mul_ne_zero (pow_ne_zero _ (inv_ne_zero I_ne_zero)) (pow_ne_zero _ (by
-    norm_num)))
-    (pow_ne_zero _ (by norm_num))
 
 lemma Fc_neg_inv (a' b' c' : ℕ) (z : ℂ) (hz : 0 < z.im) :
     Fc (2 * a') (2 * b') (2 * c') (-z⁻¹) =
@@ -671,7 +664,6 @@ export P2MW.S_CuspForm_exists_gamma0_four_apply_eq_eta_pow_mul (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem CuspForm.exists_gamma0_four_apply_eq_eta_pow_mul (a b c : ℕ) (h0 : 0 < a + b + c)

@@ -69,7 +69,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_Place_exists_comap_algebraMap_eq_of_constantFieldExtension
 
 open AlgebraicCurve
@@ -127,12 +126,6 @@ theorem mem_iff_ord_nonneg (f : F) : f ∈ v.toValuationSubring ↔ 0 ≤ v.ord 
   have := one_le_ord_of_mem_of_inv_not_mem v hinv (by simpa using hmem)
   rw [v.ord_inv] at this
   omega
-
-theorem ord_algebraMap_eq_zero {L : Type*} [Field L] [Algebra F L] {K' : Type*} [Field K']
-    [Algebra K' L] (w : Place K' L) {f : F}
-    (h1 : algebraMap F L f ∈ w.toValuationSubring)
-    (h2 : algebraMap F L f⁻¹ ∈ w.toValuationSubring) : w.ord (algebraMap F L f) = 0 :=
-  ord_eq_zero_of_mem_of_inv_mem w h1 (by simpa using h2)
 
 end Basic
 
@@ -208,8 +201,6 @@ noncomputable def rangePsi : Subring F' where
     rintro _ ⟨w, rfl⟩
     exact ⟨-w, map_neg _ _⟩
 
-theorem mem_rangePsi_iff {y : F'} : y ∈ rangePsi F' B P ↔ ∃ w, Psi F' B P w = y := Iff.rfl
-
 theorem algebraMap_mem_rangePsi (d : K') : algebraMap K' F' d ∈ rangePsi F' B P :=
   ⟨pureW B P d 1, by simp [Psi_pureW]⟩
 
@@ -242,9 +233,6 @@ noncomputable def fracPsi : Subalgebra K' F' where
     ring
   zero_mem' := ⟨0, 1, by simp, by simp⟩
   algebraMap_mem' d := ⟨pureW B P d 1, 1, by simp, by simp [Psi_pureW]⟩
-
-theorem mem_fracPsi_iff {y : F'} : y ∈ fracPsi F' B P ↔ ∃ w, ∃ s : P.toValuationSubring,
-    (s : F) ≠ 0 ∧ y * algebraMap F F' (s : F) = Psi F' B P w := Iff.rfl
 
 theorem algebraMap_mem_fracPsi (f : F) : algebraMap F F' f ∈ fracPsi F' B P := by
   rcases P.toValuationSubring.mem_or_inv_mem f with h | h
@@ -682,7 +670,6 @@ export P2MW.S_AlgebraicCurve_Place_exists_comap_algebraMap_eq_of_constantFieldEx
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.Place.exists_comap_algebraMap_eq_of_constantFieldExtension

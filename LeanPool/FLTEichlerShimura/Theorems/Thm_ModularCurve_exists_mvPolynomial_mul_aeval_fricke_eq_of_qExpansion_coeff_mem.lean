@@ -75,7 +75,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_exists_mvPolynomial_mul_aeval_fricke_eq_of_qExpansion_coeff_mem
 
 noncomputable section
@@ -113,8 +112,6 @@ abbrev Idx : Type := Option {v : Fin 2 → ZMod N // v ≠ 0}
 
 def gen : Idx N → ℍ → ℂ := fun o => o.elim X.jf fun v => X.fricke v.1
 
-theorem gen_eq : gen X = fun o : Idx N => o.elim X.jf fun v => X.fricke v.1 := rfl
-
 section Width
 
 local notation "Δ" => ModularForm.discriminant
@@ -130,13 +127,6 @@ theorem periodic_disc_one : Periodic ((Δ : ℍ → ℂ) ∘ ofComplex) 1 := by
 theorem isBoundedAtImInfty_disc : IsBoundedAtImInfty (Δ : ℍ → ℂ) := by
   have := ModularFormClass.bdd_at_infty CuspForm.discriminant
   rwa [CuspForm.coe_discriminant] at this
-
-theorem disc_ne_zero_fun : (Δ : ℍ → ℂ) ≠ 0 := fun h => by
-  have := congrFun h UpperHalfPlane.I
-  exact discriminant_ne_zero _ this
-
-theorem disc_pow_ne_zero (m : ℕ) (τ : ℍ) : (Δ ^ m : ℍ → ℂ) τ ≠ 0 := by
-  rw [Pi.pow_apply]; exact pow_ne_zero _ (discriminant_ne_zero τ)
 
 theorem periodic_ofComplex_natCast {g : ℍ → ℂ} (h : Periodic (g ∘ ofComplex) 1) (n : ℕ) :
     Periodic (g ∘ ofComplex) n := by
@@ -155,18 +145,6 @@ theorem periodic_pow {g : ℍ → ℂ} {c : ℂ} (h : Periodic (g ∘ ofComplex)
   induction m with
   | zero => intro z; simp
   | succ m ih => rw [pow_succ]; exact periodic_mul ih h
-
-theorem periodic_smul {g : ℍ → ℂ} {c : ℂ} (h : Periodic (g ∘ ofComplex) c) (a : ℂ) :
-    Periodic ((a • g) ∘ ofComplex) c := by
-  intro z; have h1 := h z; simp only [comp_apply, Pi.smul_apply] at h1 ⊢; rw [h1]
-
-theorem periodic_add {g g' : ℍ → ℂ} {c : ℂ} (h : Periodic (g ∘ ofComplex) c)
-    (h' : Periodic (g' ∘ ofComplex) c) : Periodic ((g + g') ∘ ofComplex) c := by
-  intro z
-  have h1 := h z
-  have h2 := h' z
-  simp only [comp_apply, Pi.add_apply] at h1 h2 ⊢
-  rw [h1, h2]
 
 theorem qExpansion_coeff_unique' {h : ℝ} (hh : 0 < h) {g : ℍ → ℂ} {c : ℕ → ℂ}
     (hg : AnalyticAt ℂ (cuspFunction h g) 0)
@@ -224,15 +202,6 @@ theorem qExpansion_widthN_rat {g : ℍ → ℂ} (hg : MDifferentiable 𝓘(ℂ) 
   split_ifs with h
   · exact hrat _
   · exact ⟨0, by simp⟩
-
-theorem qExpansion_widthOne_rat {g : ℍ → ℂ} (hg : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) g)
-    (hper : Periodic (g ∘ ofComplex) 1) (hbd : IsBoundedAtImInfty g)
-    (hrat : ∀ n, ∃ r : ℚ, (qExpansion N g).coeff n = (r : ℂ)) (n : ℕ) :
-    ∃ r : ℚ, (qExpansion 1 g).coeff n = (r : ℂ) := by
-  obtain ⟨r, hr⟩ := hrat (N * n)
-  rw [qExpansion_coeff_widthN N hg hper hbd, ite_eq_left (dvd_mul_right N n),
-    Nat.mul_div_cancel_left _ (NeZero.pos N)] at hr
-  exact ⟨r, hr⟩
 
 theorem qExpansion_disc_rat_one (n : ℕ) :
     ∃ r : ℚ, (qExpansion 1 (Δ : ℍ → ℂ)).coeff n = (r : ℂ) := by
@@ -324,25 +293,6 @@ theorem RatAt.of_le {m m' : ℕ} (hm : m ≤ m') {g : ℍ → ℂ} (h : RatAt N 
   | zero => simpa using h
   | succ d ih => exact (ih (Nat.le_add_right m d)).succ
 
-omit [NeZero N] in
-theorem RatAt.exists_map {m : ℕ} {g : ℍ → ℂ} (h : RatAt N K m g) :
-    ∃ p : PowerSeries K, p.map (algebraMap K ℂ) = qExpansion N (g * Δ ^ m) := by
-  refine ⟨PowerSeries.mk fun n => ⟨_, h.mem n⟩, ?_⟩
-  ext n
-  simp
-
-theorem RatAt.qExpansion_ne_zero {m : ℕ} {g : ℍ → ℂ} (h : RatAt N K m g) (hg : g ≠ 0) :
-    qExpansion N (g * Δ ^ m) ≠ 0 := by
-  rw [Ne, qExpansion_eq_zero_iff (natCast_pos N) h.periodic h.mdiff_mul h.bdd]
-  intro h0
-  apply hg
-  funext τ
-  have := congrFun h0 τ
-  simp only [Pi.mul_apply, Pi.zero_apply, mul_eq_zero] at this
-  rcases this with h1 | h1
-  · exact h1
-  · exact absurd h1 (disc_pow_ne_zero m τ)
-
 end Width
 
 section Invariance
@@ -427,9 +377,6 @@ section Descent
 variable {N : ℕ} [NeZero N] (X : FD N)
 
 local notation "Δ" => ModularForm.discriminant
-
-theorem smul_eq_coe_smul (K : IntermediateField ℚ ℂ) (κ : K) (f : ℍ → ℂ) :
-    κ • f = (κ : ℂ) • f := rfl
 
 theorem exists_rat_combination (K : IntermediateField ℚ ℂ) {n M : ℕ} {Gi : Fin n → ℍ → ℂ}
     {G : ℍ → ℂ} (hGi : ∀ i, RatAt N K M (Gi i)) (hG : RatAt N K M G)
@@ -661,7 +608,6 @@ export P2MW.S_ModularCurve_exists_mvPolynomial_mul_aeval_fricke_eq_of_qExpansion
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups Manifold in
 theorem ModularCurve.exists_mvPolynomial_mul_aeval_fricke_eq_of_qExpansion_coeff_mem

@@ -19,7 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqN_eq_of_squarefree
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_full_of_squarefree
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_relfinrank_modularFunctionField
@@ -65,12 +64,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_functionFieldGeneration_of_squarefree
 
 noncomputable section
 
-p2m_open "ModularCurve ModularCurve.PhiGen"
+p2m_open "ModularCurve"
 open scoped IntermediateField
 
 namespace ModularCurve
@@ -98,25 +96,6 @@ private theorem ModularCurve.functionFieldGeneration_of_squarefree (N : ℕ) [Ne
     (Nat.eq_of_mul_eq_mul_left hψ (hmul.trans (Nat.mul_one _).symm))
   exact IntermediateField.relfinrank_eq_one_iff.mp hone
 
-p2m_open_scoped "ModularCurve" in
-private theorem ModularCurve.phiIrreducible_of_squarefree (N : ℕ) [NeZero N] (hN : Squarefree N)
-    (data : ModularPolynomialData N) :
-    PhiIrreducible data := by
-  have hroot : Polynomial.aeval (jqN N) data.toAdjoin = 0 := by
-    rw [ModularPolynomialData.toAdjoin, Polynomial.aeval_def, Polynomial.eval₂_map,
-      algebraMap_comp_evalAtJGen]
-    exact data.eval_eq_zero
-  have hint : IsIntegral ℚ⟮jq⟯ (jqN N) :=
-    ⟨_, data.toAdjoin_monic, by rwa [Polynomial.aeval_def] at hroot⟩
-  have hdeg : (minpoly ℚ⟮jq⟯ (jqN N)).natDegree = dedekindPsi N := by
-    rw [← IntermediateField.adjoin.finrank hint]; exact finrank_adjoin_jqN_eq_of_squarefree N hN
-  have heq : data.toAdjoin = minpoly ℚ⟮jq⟯ (jqN N) := by
-    refine Polynomial.eq_of_monic_of_dvd_of_natDegree_le (minpoly.monic hint) data.toAdjoin_monic
-      (minpoly.dvd _ _ hroot) ?_
-    rw [hdeg, ModularPolynomialData.toAdjoin, data.monic.natDegree_map, data.natDegree_eq]
-  rw [PhiIrreducible, heq]
-  exact minpoly.irreducible hint
-
 open _root_.ModularCurve
   _root_.P2MW.S_ModularCurve_functionFieldGeneration_of_squarefree.ModularCurve in
 theorem solution (N : ℕ) [NeZero N] (hN : Squarefree N) : FunctionFieldGeneration N :=
@@ -130,7 +109,6 @@ export P2MW.S_ModularCurve_functionFieldGeneration_of_squarefree (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.functionFieldGeneration_of_squarefree (N : ℕ) [NeZero N] (hN : Squarefree N) :

@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_Place_exists_toValuationSubring_eq_comap
 
 noncomputable section
@@ -115,13 +114,6 @@ private theorem _root_.AlgebraicCurve.Place.mem_iff_ord_nonneg' {f : F} (hf : f 
   ⟨v.ord_nonneg_of_mem', v.mem_of_ord_nonneg' hf⟩
 
 p2m_export "AlgebraicCurve.Place" "mem_iff_ord_nonneg'"
-private theorem exists_ord_pos_mem' : ∃ f : F, f ≠ 0 ∧ 0 < v.ord f ∧ f ∈ v.toValuationSubring := by
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
-  refine ⟨(π : F), ?_, ?_, π.2⟩
-  · simpa [ne_eq, ZeroMemClass.coe_eq_zero] using hπ.ne_zero
-  · rw [v.ord_coe_irreducible hπ]
-    exact one_pos
-
 end SinglePlace
 
 section Restrict
@@ -349,37 +341,6 @@ private def _root_.AlgebraicCurve.Place.restrict' : Place K F where
   isPrincipalIdealRing' := w.isPrincipalIdealRing_comap'
 
 p2m_export "AlgebraicCurve.Place" "restrict'"
-private theorem ord_restrict' (f : F) :
-    w.ord (algebraMap F F' f) = ramificationIndex' (F := F) w * (w.restrict' F).ord f := by
-  rcases eq_or_ne f 0 with rfl | hf
-  · simp
-  obtain ⟨g, hg0, hge⟩ := w.exists_ord_eq_ramificationIndex' (F := F)
-  have hepos : 0 < ramificationIndex' (F := F) w := w.ramificationIndex'_pos (F := F)
-  have hgmem : g ∈ w.toValuationSubring.comap (algebraMap F F') :=
-    (mem_comap_iff_ord_nonneg' hg0).mpr (by omega)
-  obtain ⟨u, hu⟩ := (w.restrict' F).exists_unit_mul_zpow hf
-    (π := ⟨g, hgmem⟩) (irreducible_mk_comap' w hg0 hgmem hge)
-  set n : ℤ := (w.restrict' F).ord f with hn
-  have hune : ((u : (w.restrict' F).toValuationSubring) : F) ≠ 0 := by
-    intro h0
-    have := u.mul_inv
-    rw [Subtype.ext_iff] at this
-    push_cast at this
-    rw [h0, zero_mul] at this
-    exact zero_ne_one this
-  have huord : w.ord (algebraMap F F' ((u : (w.restrict' F).toValuationSubring) : F)) = 0 :=
-    (isUnit_mk_comap_iff' hune (u : (w.restrict' F).toValuationSubring).2).mp u.isUnit
-  have hgz : (algebraMap F F' g) ^ n ≠ 0 := zpow_ne_zero _ (algebraMap_ne_zero' hg0)
-  calc w.ord (algebraMap F F' f)
-      = w.ord (algebraMap F F' (((u : (w.restrict' F).toValuationSubring) : F) * g ^ n)) := by
-        rw [← hu]
-    _ = w.ord (algebraMap F F' ((u : (w.restrict' F).toValuationSubring) : F))
-          + w.ord ((algebraMap F F' g) ^ n) := by
-        rw [map_mul, map_zpow₀]
-        exact w.ord_mul (algebraMap_ne_zero' hune) hgz
-    _ = ramificationIndex' (F := F) w * n := by
-        rw [huord, w.ord_zpow, hge, zero_add, mul_comm]
-
 theorem rowMain :
     ∃ v : Place K F, v.toValuationSubring = w.toValuationSubring.comap (algebraMap F F') :=
   ⟨w.restrict' F, rfl⟩
@@ -408,7 +369,6 @@ export P2MW.S_AlgebraicCurve_Place_exists_toValuationSubring_eq_comap (solution)
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.Place.exists_toValuationSubring_eq_comap {K F F' : Type*} [Field K] [Field F]

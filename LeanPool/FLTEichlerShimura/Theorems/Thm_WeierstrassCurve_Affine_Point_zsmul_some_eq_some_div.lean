@@ -59,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_Affine_Point_zsmul_some_eq_some_div
 
 section PortCardMulX
@@ -100,20 +99,6 @@ theorem zsmul_some_eq_some_of_evalEval_ψ_ne_zero {x y : F} (h : W.toAffine.Nons
     rw [div_mul_cancel₀ _ (pow_ne_zero 2 hψ)]
   · change (W.φ n).evalEval x y / (W.ψ n).evalEval x y ^ 2 * (W.ΨSq n).eval x = (W.Φ n).eval x
     rw [← hψsq, div_mul_cancel₀ _ (pow_ne_zero 2 hψ), W.evalEval_φ heq]
-
-theorem zsmul_some_eq_some_of_eval_ΨSq_ne_zero {x y : F} (h : W.toAffine.Nonsingular x y)
-    {n : ℤ} (hn : (W.ΨSq n).eval x ≠ 0) :
-    ∃ (x' y' : F) (h' : W.toAffine.Nonsingular x' y'),
-      n • Point.some x y h = Point.some x' y' h' ∧ x' * (W.ΨSq n).eval x = (W.Φ n).eval x := by
-  have hψ : (W.ψ n).evalEval x y ≠ 0 := fun h0 =>
-    hn (by rw [← W.evalEval_ψ_sq h.left n, h0]; exact zero_pow two_ne_zero)
-  obtain ⟨x', y', h', hP, -, hx⟩ := zsmul_some_eq_some_of_evalEval_ψ_ne_zero W h hψ
-  exact ⟨x', y', h', hP, hx⟩
-
-theorem zsmul_some_eq_zero_iff_eval_ΨSq {x y : F} (h : W.toAffine.Nonsingular x y) (n : ℤ) :
-    n • Point.some x y h = 0 ↔ (W.ΨSq n).eval x = 0 := by
-  rw [W.smul_eq_zero_iff_evalEval_ψ h n, ← W.evalEval_ψ_sq h.left n]
-  exact ⟨fun h0 => by rw [h0]; exact zero_pow two_ne_zero, fun h0 => (sq_eq_zero_iff).mp h0⟩
 
 theorem zsmul_some_eq_some_div {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
     (hψ : (W.ψ n).evalEval x y ≠ 0) :

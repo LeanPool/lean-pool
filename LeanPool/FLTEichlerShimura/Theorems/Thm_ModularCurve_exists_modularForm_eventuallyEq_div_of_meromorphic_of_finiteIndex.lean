@@ -152,11 +152,6 @@ theorem levelOne_smul {k : ℤ} (f : ModularForm 𝒮ℒ k) (g : SL(2, ℤ)) (τ
     (MonoidHom.mem_range.mpr ⟨g, rfl⟩) τ
   simpa using this
 
-theorem levelOne_slash {k : ℤ} (f : ModularForm 𝒮ℒ k) (g : SL(2, ℤ)) :
-    (f : ℍ → ℂ) ∣[k] g = f := by
-  rw [ModularForm.SL_slash]
-  exact f.slash_action_eq' _ (MonoidHom.mem_range.mpr ⟨g, rfl⟩)
-
 theorem P_smul_self (t : ℍ) (g : SL(2, ℤ)) : P t (g • t) = 0 := by
   rw [levelOne_smul, P_self, mul_zero]
 
@@ -175,7 +170,7 @@ def restrict (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] {k : ℤ} (f : ModularF
 
 @[scoped simp] theorem coe_restrict (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] {k : ℤ}
     (f : ModularForm 𝒮ℒ k) :
-    (⇑(restrict Γ f) : ℍ → ℂ) = f := rfl
+  (⇑(restrict Γ f) : ℍ → ℂ) = f := rfl
 
 theorem analyticAt_comp_ofComplex {k : ℤ} (f : ModularForm 𝒮ℒ k) (τ : ℍ) :
     AnalyticAt ℂ (fun z : ℂ => (f : ℍ → ℂ) (ofComplex z)) (τ : ℂ) := by
@@ -267,11 +262,9 @@ structure Datum (Γ : Subgroup SL(2, ℤ)) where
   F : ℍ → ℂ
   mer : ∀ τ : ℍ, MeromorphicAt (fun z : ℂ => F (ofComplex z)) (τ : ℂ)
   inv : ∀ γ ∈ Γ, ∀ τ : ℍ, F (γ • τ) = F τ
-
   C : SL(2, ℤ) → ℝ
 
   c : SL(2, ℤ) → ℝ
-
   A : SL(2, ℤ) → ℝ
   C_nonneg : ∀ σ, 0 ≤ C σ
   c_nonneg : ∀ σ, 0 ≤ c σ
@@ -418,9 +411,6 @@ def negord (t : ℍ) : ℕ := Int.toNat (-(WithTop.untopD 0 (X.ord t)))
 
 def n : ℕ := 1 + ∑ q : SL(2, ℤ) ⧸ Γ, ⌈X.C (ρ q)⌉₊ +
   ∑ t ∈ X.Tf, X.negord t
-
-theorem one_le_n : 1 ≤ X.n := by
-  unfold n; omega
 
 theorem C_le_n (q : SL(2, ℤ) ⧸ Γ) : X.C (ρ q) ≤ X.n := by
   have h1 : X.C (ρ q) ≤ ⌈X.C (ρ q)⌉₊ := Nat.le_ceil _
@@ -664,7 +654,8 @@ theorem final (τ : ℍ) :
 
 end Datum
 
-end ModularCurve.GAGAMeroFun
+end GAGAMeroFun
+end ModularCurve
 
 open ModularCurve.GAGAMeroFun in
 theorem solution (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex]

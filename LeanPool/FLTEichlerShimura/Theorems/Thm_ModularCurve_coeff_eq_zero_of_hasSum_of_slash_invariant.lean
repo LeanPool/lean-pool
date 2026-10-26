@@ -59,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_coeff_eq_zero_of_hasSum_of_slash_invariant
 
 noncomputable section
@@ -168,24 +167,6 @@ theorem isBoundedAtImInfty (hh : 0 < h)
     (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) :
     IsBoundedAtImInfty F :=
   (tendsto_atImInfty hh hF).isBigO_one ℝ
-
-theorem periodic (hh : 0 < h)
-    (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) :
-    Periodic (F ∘ ofComplex) h := by
-  intro w
-  by_cases hw : 0 < w.im
-  · have hw' : 0 < (w + h).im := by simpa using hw
-    simp only [Function.comp_apply, apply_eq_discFun hh hF, ofComplex_apply_of_im_pos hw,
-      ofComplex_apply_of_im_pos hw']
-    congr 1
-    simp only [Periodic.qParam]
-    rw [show 2 * ↑Real.pi * Complex.I * (w + ↑h) / ↑h = 2 * ↑Real.pi * Complex.I * w / ↑h + 2 *
-      ↑Real.pi * Complex.I by
-      field_simp [(Complex.ofReal_ne_zero.mpr hh.ne')]]
-    rw [Complex.exp_add, Complex.exp_two_pi_mul_I, mul_one]
-  · push Not at hw
-    have hw' : (w + h).im ≤ 0 := by simpa using hw
-    simp only [Function.comp_apply, ofComplex_apply_eq_of_im_nonpos hw' hw]
 
 theorem coeff_unique {d : ℕ → ℂ} (hh : 0 < h)
     (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ))

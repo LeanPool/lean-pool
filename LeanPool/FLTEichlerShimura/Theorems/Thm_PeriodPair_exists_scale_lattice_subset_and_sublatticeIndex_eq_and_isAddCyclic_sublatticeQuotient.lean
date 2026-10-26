@@ -30,7 +30,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_isUniformization_toPoi
 import Mathlib.LinearAlgebra.FreeModule.ModN
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 import Mathlib.Analysis.Complex.Liouville
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
 import Mathlib.Tactic.NormNum.Prime
 import Mathlib.RingTheory.Flat.TorsionFree
 
@@ -112,65 +111,16 @@ open scoped Polynomial.Bivariate
 
 variable {F : Type*} [Field F] {W : Affine F}
 
-theorem S13_ofHeightOneSpectrum_injective {R : Type*} [CommRing R] [IsDedekindDomain R]
-    [Algebra R W.FunctionField] [IsFractionRing R W.FunctionField] [Algebra F R]
-    [IsScalarTower F R W.FunctionField] :
-    Function.Injective (AlgebraicCurve.Place.ofHeightOneSpectrum (K := F) (R := R) (F :=
-      W.FunctionField)) := by
-  intro w₁ w₂ h
-  refine HeightOneSpectrum.eq_of_valuation_isEquiv_valuation (K := W.FunctionField) ?_
-  rw [Valuation.isEquiv_iff_valuationSubring]
-  exact congrArg AlgebraicCurve.Place.toValuationSubring h
-
 namespace CoordinateRing
 p2m_export "WeierstrassCurve.Affine.CoordinateRing" "XYIdeal quotientXYIdealEquiv YClass mk map \
   XClass isDedekindDomain exists_eq_XYIdeal XYIdeal_isMaximal XYIdeal_ne_bot"
-p2m_open "WeierstrassCurve.Affine.CoordinateRing"
-
 end CoordinateRing
 
 p2m_open "WeierstrassCurve.Affine.CoordinateRing \
   P2MW.S_OVERLONG_96bd748a.WeierstrassCurve.Affine.CoordinateRing"
 
-variable [IsDedekindDomain W.CoordinateRing]
-
-theorem placeOfEquation_injective {x₁ y₁ x₂ y₂ : F} (h₁ : W.Equation x₁ y₁)
-    (h₂ : W.Equation x₂ y₂) (h : placeOfEquation h₁ = placeOfEquation h₂) :
-    x₁ = x₂ ∧ y₁ = y₂ :=
-  eq_of_XYIdeal_eq h₂
-    (congrArg HeightOneSpectrum.asIdeal (S13_ofHeightOneSpectrum_injective h))
-
-section CentredGate
-
-variable [DecidableEq F] [GenusOnePlaceGate W] [GenusOnePlaceGate.IsCentred W]
-
-namespace InfinitePlace
-
-omit [DecidableEq F] in
-omit [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem deg_eq_one : (InfinitePlace.place : AlgebraicCurve.Place F W.FunctionField).deg = 1 := by
-  classical
-  exact
-    deg_placeOfPoint (W := W) 0
-
-end InfinitePlace
-
-omit [DecidableEq F] in
-omit [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem placeOfPoint_zero' : placeOfPoint (0 : W.Point) = InfinitePlace.place := by
-  classical
-  exact
-    rfl
-
-omit [DecidableEq F] in
-omit [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem placeOfPoint_surjective' : Function.Surjective (placeOfPoint (W := W)) := by
-  classical
-  exact
-    (pointEquivPlace (W := W)).surjective
-
-end CentredGate
-end WeierstrassCurve.Affine
+end Affine
+end WeierstrassCurve
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.negY a₃ a₁ map mk Affine.Point.some \
@@ -190,23 +140,12 @@ p2m_open "WeierstrassCurve.Affine WeierstrassCurve"
 
 p2m_open "AlgebraicCurve~Place.ord_nonneg_of_mem~Place.mem_of_ord_nonneg~Place.mem_iff_ord_nonneg"
 
-scoped instance instHasPrincipalDivisorsFunctionField_s13 {F : Type*} [Field F] [CharZero F]
-    {W : Affine F} : HasPrincipalDivisors F W.FunctionField :=
-  hasPrincipalDivisors_functionField W
-
 namespace IsogenyEndDatum
 p2m_export "WeierstrassCurve.Affine.IsogenyEndDatum" "pointEnd pointEnd_apply pointEnd_eq_of_seam \
   hfin hι mk ι"
-p2m_open "WeierstrassCurve.Affine.IsogenyEndDatum"
-
-variable {F : Type*} [Field F] [DecidableEq F] [CharZero F]
-variable {W : Affine F} [GenusOnePlaceGate W] [AbelTheorem W]
-
-theorem pointEnd_eq_pointEnd' (D : IsogenyEndDatum W) (hN : NormFormulaAlong F D.ι D.hfin) :
-    D.pointEnd hN = D.pointEnd' := rfl
-
 end IsogenyEndDatum
-end WeierstrassCurve.Affine
+end Affine
+end WeierstrassCurve
 
 namespace WeierstrassCurve
 p2m_export "WeierstrassCurve" "Affine Affine.negY a₃ a₁ map Affine.CoordinateRing mk \
@@ -222,13 +161,8 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY CoordinateRing map Point.som
   algebraMap_mk_C_X_notMem_toValuationSubring_placeOfPoint_zero CoordinateRing.isDedekindDomain \
   CoordinateRing.exists_eq_XYIdeal CoordinateRing.XYIdeal_isMaximal CoordinateRing.XYIdeal_ne_bot \
   hasPrincipalDivisors_functionField"
-end WeierstrassCurve.Affine
-p2m_open_scoped "WeierstrassCurve WeierstrassCurve.Affine" in
-scoped instance WeierstrassCurve.Affine.instHasPrincipalDivisorsFunctionField_s13e2
-    {F : Type*} [Field F] [CharZero F] (W : WeierstrassCurve.Affine F) :
-    AlgebraicCurve.HasPrincipalDivisors F W.FunctionField :=
-  WeierstrassCurve.Affine.hasPrincipalDivisors_functionField W
-
+end Affine
+end WeierstrassCurve
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Pic0.pushforwardAlongHom algebraAlong isScalarTower_along FiniteAlong \
   NormFormulaAlong SeparableAlong Place Place.ext HasPrincipalDivisors Pic0 \
@@ -276,16 +210,6 @@ private theorem _root_.PeriodPair.kw_toPoint_add (hD : L.DiscriminantNeZero) (z 
 
 p2m_export "PeriodPair" "kw_toPoint_add"
 
-theorem kw_toPoint_surjective (hD : L.DiscriminantNeZero) : Function.Surjective (L.toPoint hD) :=
-  (L.isUniformization_toPoint hD).2.1
-
-theorem kw_toPoint_eq_zero_iff (hD : L.DiscriminantNeZero) (z : ℂ) :
-    L.toPoint hD z = 0 ↔ z ∈ L.lattice :=
-  ⟨(L.isUniformization_toPoint hD).2.2 z, fun hz => L.toPoint_of_mem hD hz⟩
-
-scoped instance kw_instIsElliptic : L.weierstrassCurve.IsElliptic :=
-  ⟨isUnit_iff_ne_zero.mpr L.kw_discriminantNeZero.weierstrassCurve_Δ_ne_zero⟩
-
 section Liouville
 
 private theorem _root_.PeriodPair.sub_fract_mem_lattice (z : ℂ) :
@@ -330,20 +254,6 @@ private theorem _root_.PeriodPair.toPoint_add_mem (h : L.DiscriminantNeZero) (z 
     exact ⟨hP, by rw [hP']⟩
 
 p2m_export "PeriodPair" "toPoint_add_mem"
-
-theorem toPoint_neg (h : L.DiscriminantNeZero) (z : ℂ) :
-    L.toPoint h (-z) = -L.toPoint h z := by
-  by_cases hz : z ∈ L.lattice
-  · rw [L.toPoint_of_mem h hz, L.toPoint_of_mem h (neg_mem hz)]; rfl
-  · have hnz : -z ∉ L.lattice := fun hmem => hz (by simpa using neg_mem hmem)
-    rw [L.toPoint_of_notMem h hz, L.toPoint_of_notMem h hnz,
-      WeierstrassCurve.Affine.Point.neg_some]
-    simp only [WeierstrassCurve.Affine.Point.some.injEq]
-    refine ⟨L.weierstrassP_neg z, ?_⟩
-    rw [L.derivWeierstrassP_neg]
-    show -℘'[L] z / 2 = L.weierstrassCurve.toAffine.negY (℘[L] z) (℘'[L] z / 2)
-    rw [WeierstrassCurve.Affine.negY, weierstrassCurve_a₁, weierstrassCurve_a₃]
-    ring
 
 end ToPointLemmas
 
@@ -425,12 +335,6 @@ variable (α : ℂˣ)
 
 private def mulLeftR (a : ℂ) : ℂ →ₗ[ℝ] ℂ := Algebra.lmul ℝ ℂ a
 
-@[scoped simp] private theorem mulLeftR_apply (a z : ℂ) : mulLeftR a z = a * z := rfl
-
-private theorem mulLeftR_injective {a : ℂ} (ha : a ≠ 0) :
-    Function.Injective (mulLeftR a) := fun _ _ h => by
-  simpa using mul_left_cancel₀ ha h
-
 private def mulLeftZ (a : ℂ) : ℂ →ₗ[ℤ] ℂ := (mulLeftR a).restrictScalars ℤ
 
 @[scoped simp] private theorem mulLeftZ_apply (a z : ℂ) : mulLeftZ a z = a * z := rfl
@@ -455,77 +359,8 @@ private theorem _root_.PeriodPair.mem_scale_lattice_iff {z : ℂ} :
 
 p2m_export "PeriodPair" "mem_scale_lattice_iff"
 
-private def _root_.PeriodPair.scaleLatticeEquiv : L.lattice ≃ₗ[ℤ] (L.scale α).lattice :=
-  (Submodule.equivMapOfInjective (mulLeftZ (α : ℂ))
-    (fun _ _ h => mul_left_cancel₀ α.ne_zero (by simpa using h)) L.lattice).trans
-    (LinearEquiv.ofEq _ _ (L.scale_lattice α).symm)
-
 p2m_export "PeriodPair" "scaleLatticeEquiv"
-@[scoped simp] theorem scaleLatticeEquiv_apply (l : L.lattice) :
-    ((L.scaleLatticeEquiv α l : (L.scale α).lattice) : ℂ) = (α : ℂ) * (l : ℂ) := rfl
-
 end Scale
-
-section Homogeneity
-
-variable (α : ℂˣ)
-
-theorem G_scale (n : ℕ) : (L.scale α).G n = ((α : ℂ) ^ n)⁻¹ * L.G n := by
-  unfold G
-  rw [← (L.scaleLatticeEquiv α).toEquiv.tsum_eq]
-  simp only [LinearEquiv.coe_toEquiv, scaleLatticeEquiv_apply, mul_pow, mul_inv]
-  exact tsum_mul_left
-
-theorem g₂_scale : (L.scale α).g₂ = ((α : ℂ) ^ 4)⁻¹ * L.g₂ := by
-  unfold g₂; rw [G_scale]; ring
-
-theorem g₃_scale : (L.scale α).g₃ = ((α : ℂ) ^ 6)⁻¹ * L.g₃ := by
-  unfold g₃; rw [G_scale]; ring
-
-theorem discriminant_scale :
-    (L.scale α).g₂ ^ 3 - 27 * (L.scale α).g₃ ^ 2
-      = ((α : ℂ) ^ 12)⁻¹ * (L.g₂ ^ 3 - 27 * L.g₃ ^ 2) := by
-  rw [g₂_scale, g₃_scale]; ring
-
-theorem g₂_cubed_scale : (L.scale α).g₂ ^ 3 = ((α : ℂ) ^ 12)⁻¹ * L.g₂ ^ 3 := by
-  rw [g₂_scale, mul_pow, inv_pow, ← pow_mul]
-
-theorem jLattice_scale : (L.scale α).jLattice = L.jLattice := by
-  have hα : ((α : ℂ) ^ 12)⁻¹ ≠ 0 := inv_ne_zero (pow_ne_zero _ α.ne_zero)
-  unfold jLattice
-  rw [discriminant_scale, g₂_cubed_scale, mul_left_comm (1728 : ℂ), mul_div_mul_left _ _ hα]
-
-theorem discriminantNeZero_scale_iff :
-    (L.scale α).DiscriminantNeZero ↔ L.DiscriminantNeZero := by
-  unfold DiscriminantNeZero
-  rw [discriminant_scale]
-  simp only [mul_ne_zero_iff, and_iff_right (inv_ne_zero (pow_ne_zero 12 α.ne_zero))]
-
-end Homogeneity
-
-section LatticeDependence
-
-variable {L L' : PeriodPair}
-
-private def latticeEquivOfEq (h : L.lattice = L'.lattice) : L.lattice ≃ L'.lattice where
-  toFun l := ⟨(l : ℂ), h ▸ l.2⟩
-  invFun l := ⟨(l : ℂ), h.symm ▸ l.2⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-theorem G_eq_of_lattice_eq (h : L.lattice = L'.lattice) (n : ℕ) : L.G n = L'.G n :=
-  (latticeEquivOfEq h).tsum_eq fun l => ((l : ℂ) ^ n)⁻¹
-
-theorem g₂_eq_of_lattice_eq (h : L.lattice = L'.lattice) : L.g₂ = L'.g₂ := by
-  unfold g₂; rw [G_eq_of_lattice_eq h]
-
-theorem g₃_eq_of_lattice_eq (h : L.lattice = L'.lattice) : L.g₃ = L'.g₃ := by
-  unfold g₃; rw [G_eq_of_lattice_eq h]
-
-theorem jLattice_eq_of_lattice_eq (h : L.lattice = L'.lattice) : L.jLattice = L'.jLattice := by
-  unfold jLattice; rw [g₂_eq_of_lattice_eq h, g₃_eq_of_lattice_eq h]
-
-end LatticeDependence
 
 section Gates
 
@@ -574,10 +409,6 @@ private def _root_.PeriodPair.kw_toPointAddEquiv :
     (L.kw_isUniformization).2.1 L.kw_ker_toPointHom.symm
 
 p2m_export "PeriodPair" "kw_toPointAddEquiv"
-theorem kw_toPointAddEquiv_mk (z : ℂ) :
-    L.kw_toPointAddEquiv (QuotientAddGroup.mk z) = L.toPoint L.kw_discriminantNeZero z :=
-  rfl
-
 scoped instance kw_infinite_quotientLattice : Infinite (ℂ ⧸ L.lattice.toAddSubgroup) := by
   rw [← not_finite_iff_infinite]; intro hfin
   have : Countable L.lattice.toAddSubgroup :=
@@ -675,7 +506,8 @@ p2m_export "WeierstrassCurve.Affine" "Equation negY CoordinateRing map Point.som
   algebraMap_mk_C_X_notMem_toValuationSubring_placeOfPoint_zero CoordinateRing.isDedekindDomain \
   CoordinateRing.exists_eq_XYIdeal CoordinateRing.XYIdeal_isMaximal CoordinateRing.XYIdeal_ne_bot \
   hasPrincipalDivisors_functionField"
-end WeierstrassCurve.Affine
+end Affine
+end WeierstrassCurve
 
 section
 
@@ -718,16 +550,6 @@ p2m_open "WeierstrassCurve \
   P2MW.S_OVERLONG_96bd748a.ModularCurve"
 
 namespace ModularCurve
-
-section IntersectionEngine
-
-structure MilneI72IntersectionData (g : ℕ) where
-  intProd : MultilinearMap ℤ (fun _ : Fin g => ℤ) ℤ
-  degMul : ℤ → ℤ
-  pullback_intProd : ∀ n : ℤ, intProd (fun _ => n ^ 2) = degMul n * intProd 1
-  intProd_one_ne_zero : intProd 1 ≠ 0
-
-end IntersectionEngine
 
 section LatticeQuotient
 

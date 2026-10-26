@@ -19,8 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
-
 /-!
 # Prescribed orders at finitely many places
 
@@ -58,24 +56,15 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
-namespace P2MW.S_AlgebraicCurve_Place_exists_forall_ord_eq
-
 open IsDedekindDomain
 
 namespace AlgebraicCurve
-p2m_export "AlgebraicCurve" "Place Place.ext Place.ord"
-p2m_open "AlgebraicCurve"
 
 namespace Place
-p2m_export "AlgebraicCurve.Place" "ext heightOneSpectrum heightOneSpectrum_asIdeal adicValuation \
-  adicValuation_ne_zero adicValuation_coe ord ord_zero ord_one ord_mul ord_inv ord_coe_irreducible \
-  ord_zpow exists_unit_mul_zpow ne_top' toValuationSubring"
-p2m_open "AlgebraicCurve.Place"
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
 
-private theorem _root_.AlgebraicCurve.Place.mem_iff_adicValuation_le_one' (x : F) :
+theorem mem_iff_adicValuation_le_one' (x : F) :
     x ∈ v.toValuationSubring ↔ v.adicValuation x ≤ 1 := by
   constructor
   · intro hx
@@ -93,9 +82,7 @@ private theorem _root_.AlgebraicCurve.Place.mem_iff_adicValuation_le_one' (x : F
       have hy' : x⁻¹ * (y : F) = 1 := by
         have h := congrArg (fun z : v.toValuationSubring => (z : F)) hy
         simpa using h
-      have hxy : x = (y : F) := (inv_mul_eq_one₀ hx0).mp hy'
-      rw [hxy]
-      exact y.2
+      grind
     have hmem : (⟨x⁻¹, hxi⟩ : v.toValuationSubring) ∈ v.heightOneSpectrum.asIdeal := by
       rw [heightOneSpectrum_asIdeal, IsLocalRing.mem_maximalIdeal]
       exact hnu
@@ -103,44 +90,30 @@ private theorem _root_.AlgebraicCurve.Place.mem_iff_adicValuation_le_one' (x : F
       rw [show x⁻¹ = ((⟨x⁻¹, hxi⟩ : v.toValuationSubring) : F) from rfl, v.adicValuation_coe]
       exact (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).mpr hmem
     have hgt : 1 < v.adicValuation x := (Valuation.one_lt_val_iff _ hx0).mpr hlt
-    exact not_le.mpr hgt hle
+    grind
 
-p2m_export "AlgebraicCurve.Place" "mem_iff_adicValuation_le_one'"
-
-private theorem _root_.AlgebraicCurve.Place.adicValuation_eq_exp_neg_ord {x : F} (hx : x ≠ 0) :
+theorem adicValuation_eq_exp_neg_ord {x : F} (hx : x ≠ 0) :
     v.adicValuation x = WithZero.exp (-v.ord x) := by
   rw [ord, neg_neg, WithZero.exp_log (v.adicValuation_ne_zero hx)]
 
-p2m_export "AlgebraicCurve.Place" "adicValuation_eq_exp_neg_ord"
-
-private theorem _root_.AlgebraicCurve.Place.mem_iff_ord_nonneg' {x : F} (hx : x ≠ 0) :
+theorem mem_iff_ord_nonneg' {x : F} (hx : x ≠ 0) :
     x ∈ v.toValuationSubring ↔ 0 ≤ v.ord x := by
   rw [v.mem_iff_adicValuation_le_one', v.adicValuation_eq_exp_neg_ord hx, ← WithZero.exp_zero,
     WithZero.exp_le_exp, neg_nonpos]
 
-p2m_export "AlgebraicCurve.Place" "mem_iff_ord_nonneg'"
-
-private theorem _root_.AlgebraicCurve.Place.not_mem_iff_ord_neg (x : F) :
+theorem not_mem_iff_ord_neg (x : F) :
     x ∉ v.toValuationSubring ↔ v.ord x < 0 := by
   rcases eq_or_ne x 0 with rfl | hx
   · simp
   · rw [v.mem_iff_ord_nonneg' hx, not_le]
 
-p2m_export "AlgebraicCurve.Place" "not_mem_iff_ord_neg"
-
-private theorem _root_.AlgebraicCurve.Place.adicValuation_lt_one_iff_ord_pos {x : F} (hx : x ≠ 0) :
+theorem adicValuation_lt_one_iff_ord_pos {x : F} (hx : x ≠ 0) :
     v.adicValuation x < 1 ↔ 0 < v.ord x := by
   rw [v.adicValuation_eq_exp_neg_ord hx, ← WithZero.exp_zero, WithZero.exp_lt_exp, neg_lt_zero]
 
-p2m_export "AlgebraicCurve.Place" "adicValuation_lt_one_iff_ord_pos"
-private theorem _root_.AlgebraicCurve.Place.one_lt_adicValuation_iff_ord_neg {x : F} (hx : x ≠ 0) :
+theorem one_lt_adicValuation_iff_ord_neg {x : F} (hx : x ≠ 0) :
     1 < v.adicValuation x ↔ v.ord x < 0 := by
   rw [v.adicValuation_eq_exp_neg_ord hx, ← WithZero.exp_zero, WithZero.exp_lt_exp, neg_pos]
-
-p2m_export "AlgebraicCurve.Place" "one_lt_adicValuation_iff_ord_neg"
-theorem adicValuation_le_exp_neg_iff_le_ord {x : F} (hx : x ≠ 0) (N : ℤ) :
-    v.adicValuation x ≤ WithZero.exp (-N) ↔ N ≤ v.ord x := by
-  rw [v.adicValuation_eq_exp_neg_ord hx, WithZero.exp_le_exp, neg_le_neg_iff]
 
 theorem ord_coe_unit_eq_zero_of_le {v w : Place K F}
     (h : v.toValuationSubring ≤ w.toValuationSubring) (u : v.toValuationSubringˣ) :
@@ -175,8 +148,7 @@ theorem exists_mem_and_not_mem {v w : Place K F} (hvw : v ≠ w) :
   have key : ∀ x : F, x ≠ 0 → w.ord x = v.ord x * w.ord (π : F) := by
     intro x hx
     obtain ⟨u, hux⟩ := v.exists_unit_mul_zpow hx hπ
-    have hu0 : ((u : v.toValuationSubring) : F) ≠ 0 := by
-      simp [ne_eq, ZeroMemClass.coe_eq_zero]
+    have hu0 : ((u : v.toValuationSubring) : F) ≠ 0 := by simp
     conv_lhs => rw [hux]
     rw [w.ord_mul hu0 (zpow_ne_zero _ hπ0), ord_coe_unit_eq_zero_of_le hle u, zero_add, w.ord_zpow]
   rcases eq_or_ne (w.ord (π : F)) 0 with he | he
@@ -214,7 +186,7 @@ theorem exists_ord_neg_and_ord_pos {v w : Place K F} (hvw : v ≠ w) :
     have h2 : w.ord x < 0 := (w.not_mem_iff_ord_neg x).mp hxw
     omega
 
-private theorem _root_.AlgebraicCurve.Place.one_add_ne_zero_and_ord_eq_of_ord_neg {t : F}
+theorem one_add_ne_zero_and_ord_eq_of_ord_neg {t : F}
     (ht : v.ord t < 0) :
     1 + t ≠ 0 ∧ v.ord (1 + t) = v.ord t := by
   have ht0 : t ≠ 0 := by rintro rfl; simp at ht
@@ -229,12 +201,9 @@ private theorem _root_.AlgebraicCurve.Place.one_add_ne_zero_and_ord_eq_of_ord_ne
     rw [h, Valuation.map_zero] at hsum
     exact v.adicValuation_ne_zero ht0 hsum.symm
   refine ⟨hne, ?_⟩
-  simp only [Place.ord]
-  rw [hsum]
+  simp [Place.ord, hsum]
 
-p2m_export "AlgebraicCurve.Place" "one_add_ne_zero_and_ord_eq_of_ord_neg"
-
-private theorem _root_.AlgebraicCurve.Place.ord_one_add_of_ord_pos {t : F} (ht : 0 < v.ord t) :
+theorem ord_one_add_of_ord_pos {t : F} (ht : 0 < v.ord t) :
     v.ord (1 + t) = 0 := by
   have ht0 : t ≠ 0 := by rintro rfl; simp at ht
   have hval : v.adicValuation t < v.adicValuation 1 := by
@@ -245,8 +214,6 @@ private theorem _root_.AlgebraicCurve.Place.ord_one_add_of_ord_pos {t : F} (ht :
     v.adicValuation.map_add_eq_of_lt_left hval
   simp only [Place.ord]
   rw [hsum, Valuation.map_one, WithZero.log_one, neg_zero]
-
-p2m_export "AlgebraicCurve.Place" "ord_one_add_of_ord_pos"
 
 theorem exists_ord_neg_forall_ord_pos (T : Finset (Place K F)) {v : Place K F}
     (hv : v ∉ T) :
@@ -303,8 +270,7 @@ theorem exists_ord_neg_forall_ord_pos (T : Finset (Place K F)) {v : Place K F}
               w.ord_mul ht0 (inv_ne_zero hne), w.ord_inv, h1t, w.ord_zpow]
             have hb : (m : ℤ) * 1 ≤ (m : ℤ) * w.ord z :=
               mul_le_mul_of_nonneg_left (by omega) (by omega)
-            have h2 := hmw w hws
-            omega
+            grind
       · have ht0 : (z ^ (m : ℤ)) ≠ 0 := zpow_ne_zero _ hz0
         refine ⟨z ^ (m : ℤ) * u, ?_, ?_⟩
         · rw [v.ord_mul ht0 hu0, v.ord_zpow]
@@ -319,27 +285,21 @@ theorem exists_ord_neg_forall_ord_pos (T : Finset (Place K F)) {v : Place K F}
             have h1 := hzs w hws
             have hb : (m : ℤ) * 1 ≤ (m : ℤ) * w.ord z :=
               mul_le_mul_of_nonneg_left (by omega) (by omega)
-            have h2 := hmw w hws
-            omega
-      · exact ⟨z, hzv, fun w hw =>
-          (Finset.mem_insert.mp hw).elim (fun h => h ▸ hc) (hzs w)⟩
+            grind
+      · grind
 
 theorem exists_indicator (T : Finset (Place K F)) {v : Place K F} {z : F} (hzv : v.ord z < 0)
     (hzT : ∀ w ∈ T, w ≠ v → 0 < w.ord z) (N : ℤ) :
     ∃ e : F, v.adicValuation (e - 1) ≤ WithZero.exp (-N) ∧
       ∀ w ∈ T, w ≠ v → w.adicValuation e ≤ WithZero.exp (-N) := by
-  have hz0 : z ≠ 0 := by
-    rintro rfl
-    rw [ord_zero] at hzv
-    exact lt_irrefl _ hzv
-  obtain ⟨k, hkN, hk1⟩ : ∃ k : ℕ, N ≤ k ∧ (1 : ℤ) ≤ k :=
-    ⟨N.toNat + 1, by have := Int.self_le_toNat N; push_cast; omega, by push_cast; omega⟩
+  have hz0 : z ≠ 0 := by grind [ord_zero]
+  obtain ⟨k, hkN, hk1⟩ : ∃ k : ℕ, N ≤ k ∧ (1 : ℤ) ≤ k := ⟨N.toNat + 1, by grind⟩
   have hy0 : z ^ k ≠ 0 := pow_ne_zero _ hz0
   have hordy : ∀ w : Place K F, w.ord (z ^ k) = k * w.ord z := fun w => by
     rw [← zpow_natCast, ord_zpow]
   have hvy : v.ord (z ^ k) < 0 := by
     rw [hordy]
-    exact mul_neg_of_pos_of_neg (by exact_mod_cast hk1) hzv
+    exact mul_neg_of_pos_of_neg (mod_cast hk1) hzv
   have hvy' : 1 < v.adicValuation (z ^ k) := (v.one_lt_adicValuation_iff_ord_neg hy0).mpr hvy
   have h1y : v.adicValuation (1 + z ^ k) = v.adicValuation (z ^ k) :=
     Valuation.map_add_eq_of_lt_right _ (by rwa [map_one])
@@ -348,14 +308,13 @@ theorem exists_indicator (T : Finset (Place K F)) {v : Place K F} {z : F} (hzv :
     rw [h, map_zero] at h1y
     exact v.adicValuation_ne_zero hy0 h1y.symm
   refine ⟨z ^ k / (1 + z ^ k), ?_, fun w hw hwv => ?_⟩
-  · have he : z ^ k / (1 + z ^ k) - 1 = -(1 + z ^ k)⁻¹ := by
-      rw [div_sub_one h1y0, show z ^ k - (1 + z ^ k) = -1 by ring, neg_div, one_div]
+  · have he : z ^ k / (1 + z ^ k) - 1 = -(1 + z ^ k)⁻¹ := by grind
     rw [he, Valuation.map_neg, map_inv₀, h1y, v.adicValuation_eq_exp_neg_ord hy0,
       ← WithZero.exp_neg, neg_neg, WithZero.exp_le_exp, hordy]
     nlinarith
   · have hwy : 0 < w.ord (z ^ k) := by
       rw [hordy]
-      exact mul_pos (by exact_mod_cast hk1) (hzT w hw hwv)
+      exact mul_pos (mod_cast hk1) (hzT w hw hwv)
     have hwy' : w.adicValuation (z ^ k) < 1 := (w.adicValuation_lt_one_iff_ord_pos hy0).mpr hwy
     rw [map_div₀, Valuation.map_one_add_of_lt _ hwy', div_one, w.adicValuation_eq_exp_neg_ord hy0,
       WithZero.exp_le_exp, neg_le_neg_iff, hordy]
@@ -388,9 +347,7 @@ theorem exists_forall_ord_eq_of_sep (T : Finset (Place K F)) (n : Place K F → 
         ≤ ∑ v' ∈ T, ∑ w' ∈ T, (|n v'| + |v'.ord (t w')|) :=
       Finset.single_le_sum (f := fun v' => ∑ w' ∈ T, (|n v'| + |v'.ord (t w')|))
         (fun _ _ => Finset.sum_nonneg fun _ _ => by positivity) hv
-    have h3 : n v ≤ |n v| := le_abs_self _
-    have h4 : -v.ord (t w) ≤ |v.ord (t w)| := neg_le_abs _
-    omega
+    grind
   have hind : ∀ v : Place K F, ∃ e : F, v ∈ T →
       (v.adicValuation (e - 1) ≤ WithZero.exp (-B) ∧
         ∀ w ∈ T, w ≠ v → w.adicValuation e ≤ WithZero.exp (-B)) := by
@@ -415,10 +372,7 @@ theorem exists_forall_ord_eq_of_sep (T : Finset (Place K F)) (n : Place K F → 
         calc WithZero.exp (-(n v)) * v.adicValuation (e v - 1)
             ≤ WithZero.exp (-(n v)) * WithZero.exp (-B) := mul_le_mul_right (he v hv).1 _
           _ = WithZero.exp (-(n v) + -B) := (WithZero.exp_add _ _).symm
-          _ ≤ WithZero.exp (-(n v + 1)) := WithZero.exp_le_exp.mpr (by
-              have h := hB v hv v hv
-              rw [htv] at h
-              omega)
+          _ ≤ WithZero.exp (-(n v + 1)) := WithZero.exp_le_exp.mpr (by grind)
       · apply Valuation.map_sum_le
         intro w hw
         obtain ⟨hwv, hwT⟩ := Finset.mem_erase.mp hw
@@ -427,9 +381,7 @@ theorem exists_forall_ord_eq_of_sep (T : Finset (Place K F)) (n : Place K F → 
             ≤ WithZero.exp (-(v.ord (t w))) * WithZero.exp (-B) :=
               mul_le_mul_right ((he w hwT).2 v hv hwv.symm) _
           _ = WithZero.exp (-(v.ord (t w)) + -B) := (WithZero.exp_add _ _).symm
-          _ ≤ WithZero.exp (-(n v + 1)) := WithZero.exp_le_exp.mpr (by
-              have h := hB v hv w hwT
-              omega)
+          _ ≤ WithZero.exp (-(n v + 1)) := WithZero.exp_le_exp.mpr (by grind)
     rw [hsplit, Valuation.map_add_eq_of_lt_left _ (lt_of_le_of_lt hsmall ?_), hvt]
     rw [hvt, WithZero.exp_lt_exp]
     omega
@@ -448,7 +400,7 @@ end Place
 
 end AlgebraicCurve
 
-p2m_open "AlgebraicCurve P2MW.S_AlgebraicCurve_Place_exists_forall_ord_eq.AlgebraicCurve"
+open AlgebraicCurve
 
 theorem solution {K F : Type*} [Field K] [Field F] [Algebra K F]
     (T : Finset (Place K F)) (n : Place K F → ℤ) :
@@ -457,18 +409,12 @@ theorem solution {K F : Type*} [Field K] [Field F] [Algebra K F]
   refine Place.exists_forall_ord_eq_of_sep T n fun v hv => ?_
   obtain ⟨z, hzv, hzT⟩ :=
     Place.exists_ord_neg_forall_ord_pos (T.erase v) (Finset.notMem_erase v T)
-  exact ⟨z, hzv, fun w hw hwv => hzT w (Finset.mem_erase.mpr ⟨hwv, hw⟩)⟩
-
-end S_AlgebraicCurve_Place_exists_forall_ord_eq
-end P2MW
-export P2MW.S_AlgebraicCurve_Place_exists_forall_ord_eq (solution)
+  grind
 
 end privateSection
 
 public section publicSection
 
-
-open AlgebraicCurve
 theorem AlgebraicCurve.Place.exists_forall_ord_eq {K F : Type*} [Field K] [Field F] [Algebra K F]
     (T : Finset (Place K F)) (n : Place K F → ℤ) :
     ∃ f : F, f ≠ 0 ∧ ∀ v ∈ T, v.ord f = n v :=

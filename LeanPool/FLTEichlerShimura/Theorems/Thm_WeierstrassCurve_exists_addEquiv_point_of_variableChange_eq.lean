@@ -325,8 +325,6 @@ noncomputable def pointEquiv : (E⁄K).Point ≃+ ((C • E)⁄K).Point where
           bc_slope E C h₁.1 h₂.1 hxy, bc_addX, bc_addY]
         exact ⟨rfl, rfl⟩
 
-@[scoped simp] lemma pointEquiv_zero : pointEquiv E C (0 : (E⁄K).Point) = 0 := rfl
-
 @[scoped simp] lemma pointEquiv_some {x y : K} (h : (E⁄K).Nonsingular x y) :
     pointEquiv E C (.some x y h) = .some ((C.baseChange K).ptX x) ((C.baseChange K).ptY x y)
       ((bc_nonsingular_iff E C _ _).mp <| (nonsingular_pt_iff (C.baseChange K) (E⁄K) x y).mpr h) :=

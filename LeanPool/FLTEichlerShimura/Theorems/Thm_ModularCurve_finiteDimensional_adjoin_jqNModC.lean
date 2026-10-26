@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_finiteDimensional_adjoin_jqNModC
 
 noncomputable section
@@ -142,20 +141,6 @@ private theorem aeval_phiOver (Φ : Polynomial (Polynomial ℤ)) :
       Polynomial.eval₂_X]
     rfl
 
-theorem finrank_adjoin_jqNModC_le (data : ModularPolynomialData N) :
-    Module.finrank (IntermediateField.adjoin K ({jqModC K} : Set (LaurentSeries K)))
-      (IntermediateField.adjoin (IntermediateField.adjoin K ({jqModC K} : Set (LaurentSeries K)))
-        ({jqNModC K N} : Set (LaurentSeries K))) ≤ dedekindPsi N := by
-  set E := IntermediateField.adjoin K ({jqModC K} : Set (LaurentSeries K))
-  have hmonic : (phiOver K data.Φ).Monic := data.monic.map _
-  have hroot : Polynomial.aeval (jqNModC K N) (phiOver K data.Φ) = 0 := by
-    rw [aeval_phiOver, phiAt_eq_zero]
-  have hint : IsIntegral E (jqNModC K N) :=
-    ⟨phiOver K data.Φ, hmonic, by rwa [← Polynomial.aeval_def]⟩
-  rw [IntermediateField.adjoin.finrank hint, ← data.natDegree_eq, ← (data.monic.natDegree_map _ :
-    (phiOver K data.Φ).natDegree = _)]
-  exact Polynomial.natDegree_le_of_dvd (minpoly.dvd E _ hroot) hmonic.ne_zero
-
 private theorem finiteDimensional_adjoin_jqNModC (data : ModularPolynomialData N) :
     FiniteDimensional (IntermediateField.adjoin K ({jqModC K} : Set (LaurentSeries K)))
       (IntermediateField.adjoin (IntermediateField.adjoin K ({jqModC K} : Set (LaurentSeries K)))
@@ -186,7 +171,6 @@ export P2MW.S_ModularCurve_finiteDimensional_adjoin_jqNModC (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.finiteDimensional_adjoin_jqNModC (K : Type*) [Field K] {N : ℕ} [NeZero N]

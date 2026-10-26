@@ -71,9 +71,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_HeckeEis_finrank_coeffH1par_gamma0_le_finrank_coeffH1par_top_induced
-
 
 namespace HeckeEis
 p2m_export "HeckeEis" "coeffCocycles coeffCoboundaries mem_coeffCoboundaries_iff \
@@ -117,7 +115,8 @@ theorem mem_range_of_sum_pow_apply_eq_zero {V : Type*} [AddCommGroup V] [Module 
   rw [map_sum, LinearMap.coe_sum, Finset.sum_apply]
   simpa only [map_pow, aeval_X] using hv
 
-end HeckeEis.UBSol
+end UBSol
+end HeckeEis
 
 noncomputable section
 
@@ -133,7 +132,6 @@ open MvPolynomial
 
 variable (N : ℕ) (n : ℕ)
 
-abbrev G2 := SL(2, ℤ)
 abbrev Gt : Subgroup SL(2, ℤ) := ⊤
 abbrev Γ0 : Subgroup SL(2, ℤ) := CongruenceSubgroup.Gamma0 N
 abbrev X0 := SL(2, ℤ) ⧸ CongruenceSubgroup.Gamma0 N
@@ -162,10 +160,6 @@ theorem tr_mul (g h : SL(2, ℤ)) (x : X0 N) : tr (g * h) x = tr g x * tr h (g�
 theorem out_mul_tr (g : SL(2, ℤ)) (x : X0 N) :
     x.out * ((tr g x : ↥(Γ0 N)) : SL(2, ℤ)) = g * (g⁻¹ • x).out := by
   rw [coe_tr, mul_inv_cancel_left]
-
-theorem tr_one (x : X0 N) : tr 1 x = 1 := by
-  apply Subtype.ext
-  simp
 
 end Cosets
 
@@ -263,7 +257,8 @@ theorem mem_coeffCoboundaries_of_Sh {z : ↥(Γ0 N) → Vn n}
 
 end Shapiro
 
-end HeckeEis.UBSol
+end UBSol
+end HeckeEis
 end
 
 noncomputable section
@@ -414,7 +409,8 @@ theorem Sh_mem_coeffParabolicCocycles {z : ↥(Γ0 N) → Vn n}
   exact ⟨w + F, by rw [map_add, hw, sub_add_cancel]⟩
 
 end Parabolic
-end HeckeEis.UBSol
+end UBSol
+end HeckeEis
 end
 
 noncomputable section
@@ -572,7 +568,8 @@ theorem main :
   exact LinearMap.finrank_le_finrank_of_injective (Ψ_injective W hW)
 
 end Final
-end HeckeEis.UBSol
+end UBSol
+end HeckeEis
 end
 
 open scoped MatrixGroups in
@@ -594,7 +591,6 @@ export P2MW.S_HeckeEis_finrank_coeffH1par_gamma0_le_finrank_coeffH1par_top_induc
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem HeckeEis.finrank_coeffH1par_gamma0_le_finrank_coeffH1par_top_induced (N : ℕ) [NeZero N]

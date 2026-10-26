@@ -73,7 +73,6 @@ Chris Birkbeck; Authors: Chris Birkbeck). See ATTRIBUTION.md and NOTICE in the s
 
 section privateSection
 
-
 namespace P2MW.S_EisensteinSeries_exists_modularForm_coe_eq_eisensteinG
 
 open scoped MatrixGroups CongruenceSubgroup ModularForm Topology Manifold Matrix
@@ -205,9 +204,6 @@ noncomputable def eisensteinGMF [NeZero N] (hk : 3 ≤ k) (a : Fin 2 → ZMod N)
     rw [OnePoint.isBoundedAt_iff_forall_SL2Z hc]
     exact fun γ hγ => isBoundedAtImInfty_eisensteinGSIF_slash a hk γ
 
-lemma coe_eisensteinGMF [NeZero N] (hk : 3 ≤ k) (a : Fin 2 → ZMod N) :
-    ⇑(eisensteinGMF hk a) = EisensteinSeries.eisensteinG N k a := rfl
-
 end CardG1
 
 theorem solution (N : ℕ) [NeZero N] (k : ℤ) (hk : 3 ≤ k) (a : Fin 2 → ZMod N) :
@@ -223,7 +219,6 @@ export P2MW.S_EisensteinSeries_exists_modularForm_coe_eq_eisensteinG (solution)
 end privateSection
 
 public section publicSection
-
 
 open Matrix
 open scoped MatrixGroups CongruenceSubgroup ModularForm

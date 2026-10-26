@@ -69,9 +69,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_HexagonalLattice_summable_thetaTerm_and_tsum_neg_inv_three_mul
-
 
 open Complex Real
 
@@ -93,9 +91,6 @@ lemma hexThetaTerm_swap (σ : ℂ) (x y : ℤ) :
   congr 1
   push_cast
   ring
-
-lemma hexThetaTerm_zero_zero (σ : ℂ) : hexThetaTerm σ (0, 0) = 1 := by
-  simp [hexThetaTerm]
 
 lemma norm_hexThetaTerm (σ : ℂ) (p : ℤ × ℤ) :
     ‖hexThetaTerm σ p‖ =
@@ -124,10 +119,6 @@ lemma summable_norm_cexp_neg_quadratic {a : ℂ} (ha : 0 < a.re) (b : ℂ) :
   have hZ := hO.comp_tendsto Int.tendsto_coe_cofinite
   simp only [Function.comp_def, Complex.ofReal_intCast] at hZ
   exact summable_of_isBigO (Real.summable_abs_int_rpow one_lt_two) hZ
-
-lemma summable_cexp_neg_quadratic {a : ℂ} (ha : 0 < a.re) (b : ℂ) :
-    Summable fun n : ℤ => cexp (-π * a * (n : ℂ) ^ 2 + 2 * π * b * (n : ℂ)) :=
-  (summable_norm_cexp_neg_quadratic ha b).of_norm
 
 lemma summable_rexp_neg_mul_int_sq {c : ℝ} (hc : 0 < c) :
     Summable fun n : ℤ => rexp (-(c * (n : ℝ) ^ 2)) := by
@@ -189,9 +180,6 @@ lemma neg_pi_div_neg_three_I_mul_div_two {σ : ℂ} (hσ : σ ≠ 0) :
     (div_ne_zero (mul_ne_zero (mul_ne_zero (by norm_num) Complex.I_ne_zero) hσ) (by norm_num))
     (mul_ne_zero (by norm_num) hσ)]
   linear_combination (-3 * (π : ℂ) * σ) * Complex.I_sq
-
-lemma I_mul_I_mul (w : ℂ) : I * (I * w) = -w := by
-  rw [← mul_assoc, Complex.I_mul_I, neg_one_mul]
 
 lemma exponent_initial (σ : ℂ) (x y : ℤ) :
     2 * π * I * σ * ((x : ℂ) ^ 2 + (x : ℂ) * (y : ℂ) + (y : ℂ) ^ 2) =
@@ -363,14 +351,6 @@ theorem hexTheta_eq_mul_self_neg_inv {σ : ℂ} (hσ : 0 < σ.im) :
           _ = hexTheta (-1 / (3 * σ)) := ((summable_hexThetaTerm hσ').tsum_prod).symm
       rw [hS]
       ring
-
-lemma re_cpow_half_pos {z : ℂ} (hz : 0 < z.re) : 0 < (z ^ (1 / 2 : ℂ)).re := by
-  have hz0 : z ≠ 0 := fun h => by simp [h] at hz
-  have harg : |Complex.arg z| < π / 2 := Complex.abs_arg_lt_pi_div_two_iff.mpr (Or.inl hz)
-  rw [abs_lt] at harg
-  rw [show (1 / 2 : ℂ) = ((1 / 2 : ℝ) : ℂ) by norm_num, Complex.cpow_ofReal_re]
-  exact mul_pos (Real.rpow_pos_of_pos (norm_pos_iff.mpr hz0) _)
-    (Real.cos_pos_of_mem_Ioo ⟨by linarith [harg.1, pi_pos], by linarith [harg.2, pi_pos]⟩)
 
 lemma re_cpow_half_mul_cpow_half_pos {a b : ℂ} (ha : 0 < a.re) (hb : 0 < b.re) :
     0 < (a ^ (1 / 2 : ℂ) * b ^ (1 / 2 : ℂ)).re := by

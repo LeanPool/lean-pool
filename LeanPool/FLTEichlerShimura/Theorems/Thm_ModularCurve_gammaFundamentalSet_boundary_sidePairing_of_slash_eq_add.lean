@@ -21,7 +21,6 @@ public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Topology
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
-
 /-!
 # Side pairing on the boundary of a tiled fundamental set
 
@@ -68,7 +67,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 -/
 
 section privateSection
-
 
 namespace P2MW.S_ModularCurve_gammaFundamentalSet_boundary_sidePairing_of_slash_eq_add
 
@@ -150,8 +148,6 @@ theorem T_smul_coe (w : ℍ) : ((ModularGroup.T • w : ℍ) : ℂ) = (w : ℂ) 
 
 theorem S_smul_coe (w : ℍ) : ((ModularGroup.S • w : ℍ) : ℂ) = -((w : ℂ))⁻¹ := by
   rw [UpperHalfPlane.modular_S_smul]; simp [inv_neg]
-
-theorem ray_pt_im (x y : ℝ) : ((x : ℂ) + y * Complex.I).im = y := by simp
 
 theorem T_smul_leftRay {y : ℝ} (hy : 0 < y) :
     ModularGroup.T • ofComplex (-(1 / 2) + y * Complex.I) = ofComplex (1 / 2 + y * Complex.I) := by
@@ -254,7 +250,8 @@ theorem slash2_eq_of_twist {φ ψ : ℍ → ℂ} {c : SL(2, ℤ) → ℂ}
   funext w
   rw [← hφ γ hγ w, slash2, D, ← div_eq_mul_one_div]
 
-end ModularCurve.GammaSidePairing
+end GammaSidePairing
+end ModularCurve
 
 open ModularCurve.GammaSidePairing in
 theorem solution
@@ -344,7 +341,6 @@ export P2MW.S_ModularCurve_gammaFundamentalSet_boundary_sidePairing_of_slash_eq_
 end privateSection
 
 public section publicSection
-
 
 open UpperHalfPlane MeasureTheory
 open scoped MatrixGroups

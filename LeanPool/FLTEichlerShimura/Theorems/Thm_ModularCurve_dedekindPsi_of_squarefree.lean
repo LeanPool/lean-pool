@@ -62,44 +62,15 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_dedekindPsi_of_squarefree
 
 namespace ModularCurve
 p2m_export "ModularCurve" "dedekindPsi dedekindPsi_one dedekindPsi_mul_of_coprime dedekindPsi_prime"
-namespace W1
-p2m_open "ModularCurve"
-
-private theorem psi_prime_pow_aux {p : ℕ} (hp : p.Prime) (k : ℕ) :
-    ModularCurve.dedekindPsi (p ^ (k + 1)) = p ^ (k + 1) + p ^ k := by
-  unfold ModularCurve.dedekindPsi
-  have hfil : Finset.filter (fun d => Squarefree d) (p ^ (k + 1)).divisors = {1, p} := by
-    ext x
-    simp only [Finset.mem_filter, Nat.mem_divisors_prime_pow hp, Finset.mem_insert,
-      Finset.mem_singleton]
-    constructor
-    · rintro ⟨⟨j, -, rfl⟩, hsq⟩
-      rcases Nat.eq_zero_or_pos j with rfl | hj0
-      · exact Or.inl (pow_zero p)
-      · have hj1 : j = 1 := ((Nat.squarefree_pow_iff hp.ne_one hj0.ne').mp hsq).2
-        subst hj1
-        exact Or.inr (pow_one p)
-    · rintro (rfl | rfl)
-      · exact ⟨⟨0, Nat.zero_le _, (pow_zero p).symm⟩, squarefree_one⟩
-      · exact ⟨⟨1, by omega, (pow_one _).symm⟩, hp.prime.squarefree⟩
-  rw [hfil, Finset.sum_pair hp.one_lt.ne, Nat.div_one, pow_succ,
-    Nat.mul_div_cancel _ hp.pos]
-
-end ModularCurve.W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "dedekindPsi dedekindPsi_one dedekindPsi_mul_of_coprime dedekindPsi_prime"
 end ModularCurve
-p2m_open_scoped "ModularCurve" in
-private theorem ModularCurve.dedekindPsi_prime_pow {p : ℕ} (hp : p.Prime) (k : ℕ) :
-    dedekindPsi (p ^ (k + 1)) = (p + 1) * p ^ k := by
-  rw [ModularCurve.W1.psi_prime_pow_aux hp k, Nat.add_mul, Nat.one_mul, ← pow_succ']
-
 p2m_open_scoped "ModularCurve" in
 private theorem ModularCurve.dedekindPsi_of_squarefree {N : ℕ} (hN : Squarefree N) :
     dedekindPsi N = ∏ p ∈ N.primeFactors, (p + 1) := by
@@ -132,7 +103,6 @@ export P2MW.S_ModularCurve_dedekindPsi_of_squarefree (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.dedekindPsi_of_squarefree {N : ℕ} (hN : Squarefree N) :

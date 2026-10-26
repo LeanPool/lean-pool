@@ -72,7 +72,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_Complex_integral_modularFundamentalDomain_eq_boundary_of_hasFDerivAt
 
 open MeasureTheory Set Filter Topology
@@ -119,9 +118,6 @@ lemma h_le_one (x : ℝ) : h x ≤ 1 := by
   unfold h
   rw [Real.sqrt_le_left zero_le_one]
   nlinarith [sq_nonneg x]
-
-lemma h_sq {x : ℝ} (hx : |x| ≤ 1 / 2) : h x ^ 2 = 1 - x ^ 2 :=
-  Real.sq_sqrt (le_trans (by norm_num) (three_quarters_le hx))
 
 lemma mem_D_iff {x y : ℝ} : (⟨x, y⟩ : ℂ) ∈ D ↔ |x| ≤ 1 / 2 ∧ h x ≤ y := by
   simp only [D, mem_ofPred_eq, Complex.norm_def, Complex.normSq_mk, Real.one_le_sqrt]
@@ -692,7 +688,8 @@ theorem main :
 
 end Hyp
 
-end Complex.GreenFD
+end GreenFD
+end Complex
 
 end
 
@@ -716,7 +713,6 @@ export P2MW.S_Complex_integral_modularFundamentalDomain_eq_boundary_of_hasFDeriv
 end privateSection
 
 public section publicSection
-
 
 open MeasureTheory
 theorem Complex.integral_modularFundamentalDomain_eq_boundary_of_hasFDerivAt

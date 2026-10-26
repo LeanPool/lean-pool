@@ -65,7 +65,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_EisensteinSeries_weierstrassZeta_add_one_and_add_tau_and_smul
 
 open scoped Topology Real MatrixGroups Matrix
@@ -152,14 +151,6 @@ lemma cot_pi_add_one (w : ℂ) : Complex.cot (π * (w + 1)) = Complex.cot (π * 
     rw [mul_add, Complex.exp_add, mul_one, Complex.exp_two_pi_mul_I, mul_one]
   rw [this]
 
-lemma cot_pi_add_intCast (w : ℂ) (n : ℤ) : Complex.cot (π * (w + n)) = Complex.cot (π * w) := by
-  induction n using Int.induction_on with
-  | zero => simp
-  | succ n ih => rw [← ih]; push_cast; rw [← add_assoc, cot_pi_add_one]
-  | pred n ih =>
-      rw [← ih]; push_cast
-      rw [show w + -(n : ℂ) = (w + (-(n : ℂ) - 1)) + 1 by ring, cot_pi_add_one]
-
 lemma norm_cexp_two_pi_I (w : ℂ) : ‖cexp (2 * π * I * w)‖ = Real.exp (-2 * π * w.im) := by
   rw [Complex.norm_exp]
   congr 1
@@ -198,15 +189,6 @@ lemma norm_pi_cot_add_le {w : ℂ} {Y : ℝ} (hY : 0 < Y) (hw : Y ≤ w.im) :
       _ ≤ ‖1 - cexp (2 * π * I * w)‖ := norm_sub_norm_le _ _
   have hpos : 0 < 1 - Real.exp (-2 * π * Y) := by linarith
   exact div_le_div_of_nonneg_left (by positivity) hpos hden
-
-lemma norm_pi_cot_sub_le {w : ℂ} {Y : ℝ} (hY : 0 < Y) (hw : w.im ≤ -Y) :
-    ‖π * Complex.cot (π * w) - π * I‖ ≤
-      2 * π * Real.exp (2 * π * w.im) / (1 - Real.exp (-2 * π * Y)) := by
-  have hw' : Y ≤ (-w).im := by simp; linarith
-  have := norm_pi_cot_add_le hY hw'
-  rw [show π * (-w) = -(π * w) by ring, cot_neg] at this
-  rw [show π * Complex.cot (π * w) - π * I = -(π * -Complex.cot (π * w) + π * I) by ring, norm_neg]
-  simpa using this
 
 lemma tendsto_pi_cot_add (z : ℂ) :
     Tendsto (fun M : ℕ => π * Complex.cot (π * (z + (M : ℂ) * τ))) atTop (𝓝 (-(π * I))) := by
@@ -352,7 +334,6 @@ export P2MW.S_EisensteinSeries_weierstrassZeta_add_one_and_add_tau_and_smul (sol
 end privateSection
 
 public section publicSection
-
 
 open scoped Real MatrixGroups
 theorem EisensteinSeries.weierstrassZeta_add_one_and_add_tau_and_smul (τ : UpperHalfPlane) :

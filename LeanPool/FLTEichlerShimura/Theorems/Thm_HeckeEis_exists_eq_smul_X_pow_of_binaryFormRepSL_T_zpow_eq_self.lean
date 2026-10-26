@@ -68,7 +68,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_HeckeEis_exists_eq_smul_X_pow_of_binaryFormRepSL_T_zpow_eq_self
 
 namespace HeckeEis
@@ -81,14 +80,6 @@ open scoped MatrixGroups
 namespace UnipotentFixedAux
 
 variable {R : Type*} [CommRing R] {n : ℕ}
-
-private theorem _root_.HeckeEis.UnipotentFixedAux.monomial_eq (n j : ℕ) :
-    (MvPolynomial.monomial (Finsupp.single 0 (n - j) + Finsupp.single 1 j) (1 : R))
-      = MvPolynomial.X 0 ^ (n - j) * MvPolynomial.X 1 ^ j := by
-  rw [MvPolynomial.monomial_eq, MvPolynomial.C_1, one_mul, Finsupp.prod_add_index' (by
-    simp) (by
-      simp [pow_add]),
-    Finsupp.prod_single_index (by simp), Finsupp.prod_single_index (by simp)]
 
 p2m_export "HeckeEis.UnipotentFixedAux" "monomial_eq"
 variable (n) in
@@ -261,7 +252,6 @@ export P2MW.S_HeckeEis_exists_eq_smul_X_pow_of_binaryFormRepSL_T_zpow_eq_self (s
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem HeckeEis.exists_eq_smul_X_pow_of_binaryFormRepSL_T_zpow_eq_self {R : Type*} [CommRing R]

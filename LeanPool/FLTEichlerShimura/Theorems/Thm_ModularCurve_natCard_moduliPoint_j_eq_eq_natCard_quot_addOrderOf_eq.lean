@@ -111,21 +111,19 @@ theorem vcXInv_one (x : K) : vcXInv (1 : VariableChange K) x = x := by
 theorem vcYInv_one (x y : K) : vcYInv (1 : VariableChange K) x y = y := by
   simp [WeierstrassCurve.Affine.vcYInv, VariableChange.one_def]
 
-variable [DecidableEq K]
-
-omit [DecidableEq K] in
 theorem vcInvFun_some (γ : VariableChange K) (W : WeierstrassCurve.Affine K) {x y : K}
     (h : W.Nonsingular x y) :
     Point.vcInvFun γ W (Point.some x y h) = Point.some (vcXInv γ x) (vcYInv γ x y)
       ((nonsingular_variableChange_iff (vcXInv γ x) (vcYInv γ x y)).mpr (by rwa [vcX_vcXInv,
         vcY_vcYInv])) := rfl
 
-omit [DecidableEq K] in
 theorem Point.heq_vcInvFun (γ : VariableChange K) {V V' : WeierstrassCurve.Affine K}
     (hV : V' = V) {S : V'.Point} {T : V.Point} (h : HEq S T) :
     HEq (Point.vcInvFun γ V' S) (Point.vcInvFun γ V T) := by
   subst hV
   rw [eq_of_heq h]
+
+variable [DecidableEq K]
 
 noncomputable def vcInvHom (γ : VariableChange K) (W : WeierstrassCurve.Affine K) :
     W.Point →+ (γ • W).toAffine.Point :=
@@ -248,7 +246,8 @@ theorem mk_eq_mk_iff_step {P Q : Gamma0Pair N K} :
     (Quot.mk _ P : ModuliPoint N K) = Quot.mk _ Q ↔ Gamma0Pair.Step P Q :=
   Quot.eq.trans (stepEquivalence (N := N) (K := K)).eqvGen_iff
 
-end P2MWs13.ModuliFibre
+end ModuliFibre
+end P2MWs13
 
 open P2MWs13.ModuliFibre ModularCurve in
 theorem solution
@@ -297,7 +296,6 @@ export P2MW.S_ModularCurve_natCard_moduliPoint_j_eq_eq_natCard_quot_addOrderOf_e
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve WeierstrassCurve WeierstrassCurve.Affine
 theorem ModularCurve.natCard_moduliPoint_j_eq_eq_natCard_quot_addOrderOf_eq

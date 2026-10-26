@@ -21,7 +21,6 @@ public import Mathlib.Basic.Complex.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_Gamma0CoeffCohomology
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeEis_BinaryFormRep
 
-import Mathlib.Algebra.MvPolynomial.Monad
 import Mathlib.Analysis.CStarAlgebra.Classes
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
@@ -75,9 +74,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_HeckeEis_exists_coeffH1par_semilinearMap_starRingEnd
-
 
 noncomputable section
 
@@ -92,11 +89,6 @@ open MvPolynomial
 open scoped MatrixGroups
 
 variable {R R' : Type*} [CommRing R] [CommRing R']
-
-theorem binarySubst_eq_bind₁ (S : Type*) [CommRing S] (M : Matrix (Fin 2) (Fin 2) ℤ)
-    (P : MvPolynomial (Fin 2) S) :
-    binarySubst S M P = bind₁ (fun j => ∑ i : Fin 2, C ((M i j : ℤ) : S) * X i) P := by
-  rw [binarySubst, aeval_eq_bind₁]
 
 theorem map_binarySubst_int (φ : ℤ →+* R) (M : Matrix (Fin 2) (Fin 2) ℤ)
     (P : MvPolynomial (Fin 2) ℤ) :
@@ -165,12 +157,6 @@ theorem pushCoeff_sub (P Q : MvPolynomial (Fin 2) R) :
 
 theorem pushCoeff_zero : pushCoeff f (0 : MvPolynomial (Fin 2) R) = 0 := by
   ext d; simp
-
-theorem eq_pushCoeff_iff (P : MvPolynomial (Fin 2) R) (Q : MvPolynomial (Fin 2) R') :
-    Q = pushCoeff f P ↔ ∀ d, AddMonoidAlgebra.coeff Q d = f (AddMonoidAlgebra.coeff P d) := by
-  constructor
-  · rintro rfl d; exact coeff_pushCoeff f P d
-  · intro h; ext d; rw [h d, coeff_pushCoeff]
 
 theorem pushCoeff_binarySubst (M : Matrix (Fin 2) (Fin 2) ℤ) (P : MvPolynomial (Fin 2) R) :
     pushCoeff f (binarySubst R M P) = binarySubst R' M (pushCoeff f P) := by
@@ -262,10 +248,6 @@ def pushPar : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp Γ.subtype)
     (((pushPar f n z).1 g : ↥(BinaryForm R' n)) : MvPolynomial (Fin 2) R') = pushCoeff f (z.1 g) :=
       rfl
 
-theorem pushPar_apply_val (z : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp Γ.subtype)))
-    (g : Γ) :
-    (pushPar f n z).1 g = pushForm f n (z.1 g) := rfl
-
 theorem mk_eq_mk_iff {S : Type*} [CommRing S]
     (a b : ↥(coeffParabolicCocycles ((binaryFormRepSL S n).comp Γ.subtype))) :
     coeffH1parMk _ a = coeffH1parMk _ b ↔
@@ -318,27 +300,9 @@ theorem pushH1par_mk (z : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp
 
 end Cocycles
 
-end HeckeEis.ConjAux
+end ConjAux
+end HeckeEis
 end
-
-namespace HeckeEis
-p2m_export "HeckeEis" "BinaryForm binarySubst binarySubst_X binarySubst_C binaryFormRepSL \
-  coeffCocycles coeffCoboundaries mem_coeffCoboundaries_iff IsParabolicCocycle \
-  coeffParabolicCocycles coeffH1par coeffH1parMk coeffH1parMk_surjective coeffH1parMk_eq_zero_iff"
-namespace ConjAux
-p2m_open "HeckeEis"
-
-open MvPolynomial
-open scoped MatrixGroups
-
-theorem pushCoeff_ringHom_eq_map {R R' : Type*} [CommRing R] [CommRing R'] (φ : R →+* R')
-    (P : MvPolynomial (Fin 2) R) :
-    pushCoeff φ.toAddMonoidHom P = MvPolynomial.map φ P := by
-  ext d
-  rw [coeff_pushCoeff, coeff_map]
-  rfl
-
-end HeckeEis.ConjAux
 
 noncomputable section
 
@@ -420,7 +384,8 @@ theorem pushCoeff_cj_eq_map (P : MvPolynomial (Fin 2) ℂ) :
   rw [coeff_pushCoeff, coeff_map]
   rfl
 
-end HeckeEis.ConjAux
+end ConjAux
+end HeckeEis
 end
 
 open scoped MatrixGroups in
@@ -449,7 +414,6 @@ export P2MW.S_HeckeEis_exists_coeffH1par_semilinearMap_starRingEnd (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem HeckeEis.exists_coeffH1par_semilinearMap_starRingEnd (n : ℕ) (Γ : Subgroup SL(2, ℤ)) :

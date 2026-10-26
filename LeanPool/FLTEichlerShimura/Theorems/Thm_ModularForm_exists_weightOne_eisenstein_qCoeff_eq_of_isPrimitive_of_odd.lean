@@ -66,7 +66,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularForm_exists_weightOne_eisenstein_qCoeff_eq_of_isPrimitive_of_odd
 
 open scoped Topology Real MatrixGroups Matrix CongruenceSubgroup ModularForm Manifold
@@ -337,24 +336,6 @@ lemma denom_eq (γ : SL(2, ℤ)) (τ : ℍ) :
   simp [ModularGroup.denom_apply]
 
 variable (L)
-
-def E0SIF (hL : 3 ≤ L) : SlashInvariantForm (CongruenceSubgroup.Gamma1 L) 1 where
-  toFun := E0 L χ
-  slash_action_eq' A hA := by
-    obtain ⟨γ, hγ, rfl⟩ := hA
-    have hγ' : γ ∈ CongruenceSubgroup.Gamma1 L := hγ
-    rw [CongruenceSubgroup.Gamma1_mem] at hγ'
-    have hγ0 : γ ∈ CongruenceSubgroup.Gamma0 L := by
-      rw [CongruenceSubgroup.Gamma0_mem]; exact hγ'.2.2
-    change E0 L χ ∣[(1 : ℤ)] (γ : GL (Fin 2) ℝ) = E0 L χ
-    funext τ
-    rw [← ModularForm.SL_slash, ModularForm.SL_slash_apply, E0_smul χ hL γ hγ0 τ, hγ'.2.1, map_one]
-    have hD : (denom γ τ : ℂ) ≠ 0 := denom_ne_zero _ τ
-    field_simp
-
-lemma E0SIF_apply (hL : 3 ≤ L) (τ : ℍ) : E0SIF L χ hL τ = E0 L χ τ := rfl
-
-lemma coe_E0SIF (hL : 3 ≤ L) : ⇑(E0SIF L χ hL) = E0 L χ := rfl
 
 variable {L}
 
@@ -699,8 +680,6 @@ def E1MF (hL : 3 ≤ L) : ModularForm (CongruenceSubgroup.Gamma1 L) 1 where
 
 lemma E1MF_apply (hL : 3 ≤ L) (τ : ℍ) : E1MF L χ hL τ = E1 L χ τ := rfl
 
-lemma coe_E1MF (hL : 3 ≤ L) : ⇑(E1MF L χ hL) = E1 L χ := rfl
-
 omit [NeZero L] in
 lemma T_mem_Gamma1 : ModularGroup.T ∈ CongruenceSubgroup.Gamma1 L := by
   rw [CongruenceSubgroup.Gamma1_mem]
@@ -790,7 +769,6 @@ export P2MW.S_ModularForm_exists_weightOne_eisenstein_qCoeff_eq_of_isPrimitive_o
 end privateSection
 
 public section publicSection
-
 
 open CongruenceSubgroup
 open scoped MatrixGroups

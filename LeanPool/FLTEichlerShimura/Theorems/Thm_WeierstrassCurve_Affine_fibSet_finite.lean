@@ -56,7 +56,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_Affine_fibSet_finite
 
 open WeierstrassCurve WeierstrassCurve.Affine IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
@@ -80,17 +79,6 @@ theorem torsion_finite {n : ℕ} (hn : (n : K) ≠ 0) :
     rw [Set.mem_ofPred_eq, SetLike.mem_coe, Submodule.mem_torsionBy_iff]
   rw [hset]
   exact Set.toFinite _
-
-theorem card_torsion_toFinset {n : ℕ} (hn : (n : K) ≠ 0) :
-    (torsion_finite W hn).toFinset.card = n ^ 2 := by
-  rw [← WeierstrassCurve.card_torsion_of_isAlgClosed (K := K) W hn, ←
-    Nat.card_eq_card_finite_toFinset]
-  have hset : {S : (W⁄K).Point | (n : ℤ) • S = 0} =
-      ((Submodule.torsionBy ℤ (W⁄K).Point n : Submodule ℤ (W⁄K).Point) : Set (W⁄K).Point) := by
-    ext S
-    rw [Set.mem_ofPred_eq, SetLike.mem_coe, Submodule.mem_torsionBy_iff]
-  rw [hset]
-  rfl
 
 theorem fibSet_finite' {n : ℕ} (hn : (n : K) ≠ 0) (Q : (W⁄K).Point) : (fibSet W K n Q).Finite := by
   by_cases hne : ∃ P₀ : (W⁄K).Point, (n : ℤ) • P₀ = Q
@@ -117,7 +105,6 @@ export P2MW.S_WeierstrassCurve_Affine_fibSet_finite (solution)
 end privateSection
 
 public section publicSection
-
 
 open WeierstrassCurve WeierstrassCurve.Affine IsDedekindDomain WithZero
 

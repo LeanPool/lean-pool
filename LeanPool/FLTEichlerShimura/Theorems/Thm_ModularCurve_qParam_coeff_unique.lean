@@ -59,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_qParam_coeff_unique
 
 noncomputable section
@@ -74,10 +73,6 @@ namespace ModularCurve
 namespace Realized
 
 variable {h : ℝ} {F : ℍ → ℂ} {c : ℕ → ℂ}
-
-lemma norm_qParam_lt_one_of_pos (hh : 0 < h) (τ : ℍ) : ‖𝕢 h (τ : ℂ)‖ < 1 := by
-  rw [Periodic.norm_qParam, Real.exp_lt_one_iff, neg_mul, coe_im, neg_mul, neg_div, neg_lt_zero]
-  exact div_pos (by positivity [τ.im_pos]) hh
 
 lemma hasSum_cuspFunction_punctured (hh : 0 < h)
     (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) {q : ℂ} (hq : ‖q‖ < 1)
@@ -111,81 +106,6 @@ lemma hasFPowerSeriesOnBall_update (hh : 0 < h)
     rcases eq_or_ne y 0 with rfl | hy'
     · simpa +contextual [zero_pow_eq] using hasSum_ite_eq 0 (c 0)
     · simpa [update_of_ne hy', mul_comm] using hasSum_cuspFunction_punctured hh hF hy hy'
-
-def discFun (h : ℝ) (F : ℍ → ℂ) (c : ℕ → ℂ) : ℂ → ℂ := update (cuspFunction h F) 0 (c 0)
-
-lemma hasSum_discFun (hh : 0 < h) (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ))
-    {q : ℂ} (hq : ‖q‖ < 1) : HasSum (fun m : ℕ => c m * q ^ m) (discFun h F c q) := by
-  have hy : q ∈ Metric.eball (0 : ℂ) 1 := by
-    rw [← ENNReal.coe_one, Metric.eball_coe]; simpa using hq
-  have h := (hasFPowerSeriesOnBall_update hh hF).hasSum hy
-  rw [zero_add] at h
-  simpa [discFun, mul_comm] using h
-
-lemma apply_eq_discFun (hh : 0 < h)
-    (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ))
-    (τ : ℍ) : F τ = discFun h F c (𝕢 h (τ : ℂ)) :=
-  (hF τ).unique (hasSum_discFun hh hF (norm_qParam_lt_one_of_pos hh τ))
-
-lemma differentiableOn_discFun (hh : 0 < h)
-    (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) :
-    DifferentiableOn ℂ (discFun h F c) (Metric.ball 0 1) := by
-  have h1 := (hasFPowerSeriesOnBall_update hh hF).differentiableOn
-  rwa [← ENNReal.coe_one, Metric.eball_coe, NNReal.coe_one] at h1
-
-lemma continuousAt_discFun (hh : 0 < h)
-    (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) {q : ℂ} (hq : ‖q‖ < 1) :
-    ContinuousAt (discFun h F c) q :=
-  ((differentiableOn_discFun hh hF).differentiableAt
-    (Metric.isOpen_ball.mem_nhds (by simpa using hq))).continuousAt
-
-lemma discFun_zero : discFun h F c 0 = c 0 := by simp [discFun]
-
-theorem mdifferentiable (hh : 0 < h)
-    (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) :
-    MDifferentiable (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) F := by
-  rw [UpperHalfPlane.mdifferentiable_iff]
-  have h1 : DifferentiableOn ℂ (fun z : ℂ => discFun h F c (𝕢 h z)) {z : ℂ | 0 < z.im} := by
-    intro z hz
-    have hzq : ‖𝕢 h z‖ < 1 := by
-      have := norm_qParam_lt_one_of_pos hh ⟨z, hz⟩
-      simpa using this
-    exact (((differentiableOn_discFun hh hF).differentiableAt
-      (Metric.isOpen_ball.mem_nhds (by simpa using hzq))).comp z
-      ((Periodic.differentiable_qParam (h := h)) z)).differentiableWithinAt
-  refine h1.congr fun z hz => ?_
-  simp only [Function.comp_apply, apply_eq_discFun hh hF, ofComplex_apply_of_im_pos hz]
-
-theorem tendsto_atImInfty (hh : 0 < h)
-    (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) :
-    Tendsto F atImInfty (𝓝 (c 0)) := by
-  have h1 : Tendsto (fun τ : ℍ => discFun h F c (𝕢 h (τ : ℂ))) atImInfty (𝓝 (discFun h F c 0)) :=
-    (continuousAt_discFun hh hF (q := 0) (by simp)).tendsto.comp (qParam_tendsto_atImInfty hh)
-  rw [discFun_zero] at h1
-  exact h1.congr fun τ => (apply_eq_discFun hh hF τ).symm
-
-theorem isBoundedAtImInfty (hh : 0 < h)
-    (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) :
-    IsBoundedAtImInfty F :=
-  (tendsto_atImInfty hh hF).isBigO_one ℝ
-
-theorem periodic (hh : 0 < h)
-    (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) :
-    Periodic (F ∘ ofComplex) h := by
-  intro w
-  by_cases hw : 0 < w.im
-  · have hw' : 0 < (w + h).im := by simpa using hw
-    simp only [Function.comp_apply, apply_eq_discFun hh hF, ofComplex_apply_of_im_pos hw,
-      ofComplex_apply_of_im_pos hw']
-    congr 1
-    simp only [Periodic.qParam]
-    rw [show 2 * ↑Real.pi * Complex.I * (w + ↑h) / ↑h = 2 * ↑Real.pi * Complex.I * w / ↑h + 2 *
-      ↑Real.pi * Complex.I by
-      field_simp [(Complex.ofReal_ne_zero.mpr hh.ne')]]
-    rw [Complex.exp_add, Complex.exp_two_pi_mul_I, mul_one]
-  · push Not at hw
-    have hw' : (w + h).im ≤ 0 := by simpa using hw
-    simp only [Function.comp_apply, ofComplex_apply_eq_of_im_nonpos hw' hw]
 
 theorem coeff_unique {d : ℕ → ℂ} (hh : 0 < h)
     (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ))

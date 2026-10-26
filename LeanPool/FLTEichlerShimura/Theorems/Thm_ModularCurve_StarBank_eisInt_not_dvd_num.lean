@@ -20,7 +20,12 @@ module
 public import Mathlib.NumberTheory.Bernoulli
 
 import Mathlib.Algebra.GCDMonoid.FinsetLemmas
-import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
+import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
+import Mathlib.Analysis.SpecialFunctions.Bernstein
+import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Tactic.NormNum.Parity
 
 /-!
 # A prime ℓ ≥ 5 does not divide num(B_{ℓ-1})
@@ -59,7 +64,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 -/
 
 section privateSection
-
 
 namespace P2MW.S_ModularCurve_StarBank_eisInt_not_dvd_num
 
@@ -102,7 +106,8 @@ theorem eisInt_not_dvd_den_shift {ℓ : ℕ} [Fact ℓ.Prime] (hℓ5 : 5 ≤ ℓ
   exact (Nat.Prime.coprime_iff_not_dvd hℓp).mp
     (Nat.Coprime.of_dvd_left hdendvd hcop).symm hdvd
 
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 theorem ModularCurve.StarBank.eisInt_dvd_den {ℓ : ℕ} [Fact ℓ.Prime] (hℓ5 : 5 ≤ ℓ) :
     ℓ ∣ (bernoulli (ℓ - 1)).den := by
@@ -130,67 +135,6 @@ private theorem ModularCurve.StarBank.eisInt_not_dvd_num {ℓ : ℕ} [Fact ℓ.P
   rw [hcop] at hgcd
   exact (Nat.Prime.one_lt (Fact.out : ℓ.Prime)).ne' (Nat.dvd_one.mp hgcd)
 
-theorem ModularCurve.StarBank.eisInt_bernoulli_ne_zero
-    {ℓ : ℕ} [Fact ℓ.Prime] (hℓ5 : 5 ≤ ℓ) : bernoulli (ℓ - 1) ≠ 0 := by
-  intro h
-  have := ModularCurve.StarBank.eisInt_dvd_den hℓ5
-  rw [h, Rat.den_zero] at this
-  exact (Nat.Prime.one_lt (Fact.out : ℓ.Prime)).ne' (Nat.dvd_one.mp this)
-
-theorem ModularCurve.StarBank.eisInt_coeff {ℓ : ℕ} [Fact ℓ.Prime] (hℓ5 : 5 ≤ ℓ)
-    (hk : 3 ≤ ℓ - 1) (m : ℕ) :
-    ∃ z : ℤ, ((bernoulli (ℓ - 1)).num : ℂ)
-          * (UpperHalfPlane.qExpansion 1 (ModularForm.E hk)).coeff m = ↑z
-        ∧ (m = 0 → z = (bernoulli (ℓ - 1)).num) ∧ (1 ≤ m → (ℓ : ℤ) ∣ z) := by
-  classical
-  have hℓp : ℓ.Prime := Fact.out
-  have hkeven : Even (ℓ - 1) := by
-    obtain ⟨c, hc⟩ := hℓp.odd_of_ne_two (by omega); exact ⟨c, by omega⟩
-  set B := bernoulli (ℓ - 1) with hBdef
-  have hB0 : B ≠ 0 := ModularCurve.StarBank.eisInt_bernoulli_ne_zero hℓ5
-  have hcoeff := EisensteinSeries.E_qExpansion_coeff hk hkeven m
-  rcases Nat.eq_zero_or_pos m with hm0 | hm1
-  · subst hm0
-    refine ⟨B.num, ?_, fun _ => rfl, by omega⟩
-    rw [hcoeff]; simp
-  · have hm1' : m ≠ 0 := hm1.ne'
-    rw [hcoeff, ite_eq_right hm1']
-    refine ⟨-(2 * (↑(ℓ - 1) : ℤ) * (↑B.den : ℤ) * (↑(σ (ℓ - 1 - 1) m) : ℤ)), ?_, ?_, ?_⟩
-    · have hnum : (B.num : ℂ) ≠ 0 := by
-        exact_mod_cast Rat.num_ne_zero.mpr hB0
-      have hcast : ((B : ℚ) : ℂ) = (B.num : ℂ) / (B.den : ℂ) := by
-        exact_mod_cast Rat.cast_def (K := ℂ) B
-      rw [hcast]
-      have hden0 : (B.den : ℂ) ≠ 0 := by
-        exact_mod_cast B.den_ne_zero
-      field_simp
-      push_cast
-      ring
-    · intro h; omega
-    · intro _
-      have hd : (ℓ : ℤ) ∣ (↑B.den : ℤ) :=
-        Int.natCast_dvd_natCast.mpr (ModularCurve.StarBank.eisInt_dvd_den hℓ5)
-      exact dvd_neg.mpr ((hd.mul_left _).mul_right _)
-
-private theorem ModularCurve.StarBank.eisInt_series {ℓ : ℕ} [Fact ℓ.Prime] (hℓ5 : 5 ≤ ℓ)
-    (hk : 3 ≤ ℓ - 1) :
-    ∃ T : PowerSeries ℤ,
-      T.map (Int.castRingHom ℂ)
-        = ((bernoulli (ℓ - 1)).num : ℂ) • UpperHalfPlane.qExpansion 1 (⇑(ModularForm.E hk))
-      ∧ PowerSeries.constantCoeff T = (bernoulli (ℓ - 1)).num
-      ∧ ∀ m, 1 ≤ m → (ℓ : ℤ) ∣ T.coeff m := by
-  classical
-  refine ⟨PowerSeries.mk fun m => (ModularCurve.StarBank.eisInt_coeff hℓ5 hk m).choose,
-    ?_, ?_, ?_⟩
-  · ext m
-    rw [PowerSeries.coeff_map, PowerSeries.coeff_mk, PowerSeries.coeff_smul, smul_eq_mul]
-    exact (ModularCurve.StarBank.eisInt_coeff hℓ5 hk m).choose_spec.1.symm
-  · rw [← PowerSeries.coeff_zero_eq_constantCoeff_apply, PowerSeries.coeff_mk]
-    exact (ModularCurve.StarBank.eisInt_coeff hℓ5 hk 0).choose_spec.2.1 rfl
-  · intro m hm
-    rw [PowerSeries.coeff_mk]
-    exact (ModularCurve.StarBank.eisInt_coeff hℓ5 hk m).choose_spec.2.2 hm
-
 example : ¬ (7 : ℤ) ∣ (-240 : ℤ) := by decide
 
 open scoped ArithmeticFunction.sigma
@@ -206,7 +150,6 @@ export P2MW.S_ModularCurve_StarBank_eisInt_not_dvd_num (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped ArithmeticFunction.sigma
 open Finset

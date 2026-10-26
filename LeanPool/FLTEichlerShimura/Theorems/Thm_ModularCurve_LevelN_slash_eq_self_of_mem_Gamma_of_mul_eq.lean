@@ -66,9 +66,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_LevelN_slash_eq_self_of_mem_Gamma_of_mul_eq
-
 
 noncomputable section
 
@@ -83,9 +81,6 @@ namespace WeightTwo
 p2m_open "ModularCurve.LevelN ModularCurve"
 
 variable (N : ℕ) [NeZero N]
-
-abbrev redMat (γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) (ZMod N) :=
-  (γ : Matrix (Fin 2) (Fin 2) ℤ).map ((↑) : ℤ → ZMod N)
 
 theorem mdifferentiable_of_mem {F : ℍ → ℂ} (hF : F ∈ ring N) : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) F := by
   have h := WLight.levelN_structure_package N PeriodPair.ofTau (fun τ => ⟨rfl, rfl⟩) (wp N)
@@ -299,7 +294,9 @@ theorem slash_eq_self {F : ℍ → ℂ} (hF : MDifferentiable 𝓘(ℂ) 𝓘(ℂ
     rw [Pi.sub_apply, slash_apply_eq_of_ne N ha hb hc he h hγ τ hτ, sub_self])
   exact sub_eq_zero.mp this
 
-end ModularCurve.LevelN.WeightTwo
+end WeightTwo
+end LevelN
+end ModularCurve
 
 theorem solution (N : ℕ) [NeZero N] (F : UpperHalfPlane → ℂ)
     (hF : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) F)
@@ -321,7 +318,6 @@ export P2MW.S_ModularCurve_LevelN_slash_eq_self_of_mem_Gamma_of_mul_eq (solution
 end privateSection
 
 public section publicSection
-
 
 open scoped Manifold MatrixGroups ModularForm
 theorem ModularCurve.LevelN.slash_eq_self_of_mem_Gamma_of_mul_eq (N : ℕ) [NeZero N]

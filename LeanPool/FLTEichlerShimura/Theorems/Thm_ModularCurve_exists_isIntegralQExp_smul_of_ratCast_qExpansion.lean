@@ -67,7 +67,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_exists_isIntegralQExp_smul_of_ratCast_qExpansion
 
 noncomputable section
@@ -99,11 +98,6 @@ theorem IsRat.mul {q q' : PowerSeries ℂ} (h : IsRat q) (h' : IsRat q') : IsRat
   obtain ⟨p, rfl⟩ := h
   obtain ⟨p', rfl⟩ := h'
   exact ⟨p * p', by rw [map_mul]⟩
-
-theorem IsRat.pow {q : PowerSeries ℂ} (h : IsRat q) (n : ℕ) : IsRat (q ^ n) := by
-  rw [isRat_iff_exists_map] at h ⊢
-  obtain ⟨p, rfl⟩ := h
-  exact ⟨p ^ n, by rw [map_pow]⟩
 
 theorem isRat_of_int {q : PowerSeries ℂ} (P : PowerSeries ℤ) (h : P.map (Int.castRingHom ℂ) = q) :
     IsRat q := fun n => ⟨((PowerSeries.coeff n P : ℤ) : ℚ), by
@@ -145,10 +139,6 @@ section Level
 
 variable {M : ℕ} {k : ℤ}
 
-theorem T_pow_mem_Gamma1 (M : ℕ) (t : ℤ) : ModularGroup.T ^ t ∈ Gamma1 M := by
-  rw [Gamma1_mem, ModularGroup.coe_T_zpow]
-  simp
-
 theorem T_mem_Gamma1 (M : ℕ) : ModularGroup.T ∈ Gamma1 M := by
   simp
 
@@ -176,9 +166,6 @@ p2m_export "X1BoundedDenominators" "Gamma1_le_of_dvd"
 
 def res {M' : ℕ} (h : M ∣ M') (f : ModularForm Γ₁(M) k) : ModularForm Γ₁(M') k :=
   restrictForm (Subgroup.map_mono (Gamma1_le_of_dvd h)) f
-
-@[scoped simp] theorem coe_res {M' : ℕ} (h : M ∣ M') (f : ModularForm Γ₁(M) k) :
-    (⇑(res h f) : ℍ → ℂ) = f := rfl
 
 def resSL (M : ℕ) {k : ℤ} (f : ModularForm 𝒮ℒ k) : ModularForm Γ₁(M) k :=
   restrictForm (Subgroup.map_le_range _ _) f

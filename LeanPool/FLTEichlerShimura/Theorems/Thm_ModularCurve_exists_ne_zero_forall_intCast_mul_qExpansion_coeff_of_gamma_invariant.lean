@@ -299,11 +299,6 @@ def nice : Subalgebra ℂ (ℍ → ℂ) where
 
 variable {N}
 
-omit [NeZero N] in
-theorem mem_nice {g : ℍ → ℂ} :
-    g ∈ nice N ↔ MDifferentiable 𝓘(ℂ) 𝓘(ℂ) g ∧ Periodic (g ∘ ofComplex) N ∧ IsBoundedAtImInfty g :=
-      Iff.rfl
-
 theorem analyticAt_of_mem {g : ℍ → ℂ} (hg : g ∈ nice N) : AnalyticAt ℂ (cuspFunction N g) 0 :=
   analyticAt_cuspFunction_zero (natCast_pos N) hg.2.1 hg.1 hg.2.2
 
@@ -321,8 +316,6 @@ def qE : nice N →ₐ[ℂ] PowerSeries ℂ where
     rw [h1, qExpansion_smul (analyticAt_of_mem (nice N).one_mem), qExpansion_one,
       PowerSeries.smul_eq_C_mul,
       mul_one]
-
-theorem qE_apply (g : nice N) : qE N g = qExpansion N (g : ℍ → ℂ) := rfl
 
 theorem qE_eq_zero_iff (g : nice N) : qE N g = 0 ↔ (g : ℍ → ℂ) = 0 :=
   qExpansion_eq_zero_iff (natCast_pos N) g.2.2.1 g.2.1 g.2.2.2
@@ -345,9 +338,6 @@ theorem disc_mem : (Δ : ℍ → ℂ) ∈ nice N := by
   exact this
 
 def dN : nice N := ⟨Δ, disc_mem⟩
-
-omit [NeZero N] in
-@[scoped simp] theorem coe_dN : ((dN : nice N) : ℍ → ℂ) = Δ := rfl
 
 def E4cube : ModularForm 𝒮ℒ 12 := (E₄.pow 3).mcast (by norm_num)
 
@@ -1237,11 +1227,6 @@ theorem BddK.autS [NeZero N] {ψ : PowerSeries (kN N)} (h : BddK ψ) (σ : (kN N
   rw [this]
   exact aut_mem_AZ N σ _ (hψ n)
 
-theorem autS_map_rat (σ : (kN N) ≃ₐ[ℚ] (kN N)) (y : PowerSeries ℚ) :
-    autS σ (y.map (algebraMap ℚ (kN N))) = y.map (algebraMap ℚ (kN N)) := by
-  ext n
-  rw [coeff_autS, PowerSeries.coeff_map, AlgEquiv.commutes]
-
 theorem bddQ_of_bddK_map [NeZero N] {y : PowerSeries ℚ} (h : BddK (y.map (algebraMap ℚ (kN N)))) :
     BddQ y := by
   rw [bddK_iff_map, map_rat_K] at h
@@ -1462,7 +1447,6 @@ export P2MW.S_ModularCurve_exists_ne_zero_forall_intCast_mul_qExpansion_coeff_of
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups Manifold in
 theorem ModularCurve.exists_ne_zero_forall_intCast_mul_qExpansion_coeff_of_gamma_invariant

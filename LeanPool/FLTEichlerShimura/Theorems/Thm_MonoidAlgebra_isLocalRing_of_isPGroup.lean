@@ -77,9 +77,6 @@ variable {𝒪 : Type u} [CommRing 𝒪] {G : Type v} [CommGroup G]
 
 local notation "Λ" => MonoidAlgebra 𝒪 G
 
-theorem counit_of (g : G) : Coalgebra.counit (R := 𝒪) (MonoidAlgebra.of 𝒪 G g) = 1 := by
-  rw [MonoidAlgebra.of_apply, MonoidAlgebra.counit_single, CommSemiring.counit_apply]
-
 theorem sub_algebraMap_counit_mem (x : Λ) :
     x - algebraMap 𝒪 Λ (Coalgebra.counit (R := 𝒪) x) ∈
       Ideal.span (Set.range fun g : G => MonoidAlgebra.of 𝒪 G g - 1) := by

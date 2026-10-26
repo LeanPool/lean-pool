@@ -79,7 +79,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_PhiGen_PhiGenDescends_hasSum_cosetPoly_coeff
 
 noncomputable section
@@ -102,9 +101,6 @@ def RealL (h : ℝ) (A : LaurentSeries ℂ) (F : ℍ → ℂ) : Prop :=
 namespace RealL
 
 variable {h : ℝ} {A B : LaurentSeries ℂ} {F G : ℍ → ℂ}
-
-lemma add (hA : RealL h A F) (hB : RealL h B G) : RealL h (A + B) (F + G) := fun τ => by
-  simpa [add_mul] using (hA τ).add (hB τ)
 
 lemma neg (hA : RealL h A F) : RealL h (-A) (-F) := fun τ => by
   simpa [neg_mul] using (hA τ).neg
@@ -135,18 +131,6 @@ lemma zero (h : ℝ) : RealL h 0 0 := fun τ => by simp [hasSum_zero]
 lemma congr {A' : LaurentSeries ℂ} {F' : ℍ → ℂ} (hA : RealL h A F) (h1 : A = A')
     (h2 : ∀ τ, F τ = F' τ) :
     RealL h A' F' := fun τ => by rw [← h1, ← h2]; exact hA τ
-
-lemma prod (hh : 0 < h) {ι : Type} (s : Finset ι) {A : ι → LaurentSeries ℂ} {F : ι → ℍ → ℂ}
-    (hAF : ∀ i ∈ s, RealL h (A i) (F i)) : RealL h (∏ i ∈ s, A i) (fun τ => ∏ i ∈ s, F i τ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => (have h__af := one h; simp only [Finset.prod_empty] at h__af ⊢; exact h__af)
-  | insert a s ha ih =>
-    have h1 :=
-      (hAF a (Finset.mem_insert_self a s)).mul hh (ih fun i hi => hAF i (Finset.mem_insert_of_mem
-        hi))
-    refine h1.congr (Finset.prod_insert ha).symm fun τ => ?_
-    simp [Finset.prod_insert ha]
 
 lemma coeff_prod_X_sub_C (hh : 0 < h) {ι : Type} (s : Finset ι) {a : ι → LaurentSeries ℂ}
     {α : ι → ℍ → ℂ} (haα : ∀ i ∈ s, RealL h (a i) (α i)) (k : ℕ) :
@@ -216,11 +200,6 @@ lemma sigma_zeta : sigma ℓ ζ hζ (ζ : CyclotomicField ℓ ℚ) = expRoot ℓ
     (Polynomial.cyclotomic.irreducible_rat hℓ.out.pos) (e.symm r)
   rw [Equiv.apply_symm_apply] at h
   exact h.symm
-
-omit hℓ in
-lemma sigma_ratCast' (σ : CyclotomicField ℓ ℚ →+* ℂ) (q : ℚ) :
-    σ (q : CyclotomicField ℓ ℚ) = (q : ℂ) :=
-  map_ratCast σ q
 
 end Sigma
 

@@ -75,7 +75,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_mem_span_range_algebraMap_of_constantFieldExtension_of_isAlgClosed
 
 p2m_open "AlgebraicCurve Polynomial"
@@ -136,10 +135,6 @@ theorem ord_algebraMap (a : k) : w.ord (algebraMap k L a) = 0 := by
   exact ord_eq_zero_of_mem_of_inv_mem w (w.algebraMap_mem' a)
     (by rw [← map_inv₀]; exact w.algebraMap_mem' a⁻¹)
 
-theorem irreducible_coe_ne_zero {π : w.toValuationSubring} (hπ : Irreducible π) : (π : L) ≠ 0 := by
-  intro h
-  exact hπ.ne_zero (by exact_mod_cast h)
-
 theorem ord_coe_isUnit {X : w.toValuationSubring} (h : IsUnit X) : w.ord (X : L) = 0 := by
   obtain ⟨u, rfl⟩ := h
   exact w.ord_coe_unit u
@@ -168,12 +163,6 @@ theorem ord_algebraMap_add_eq_zero {a : k} (ha : a ≠ 0) {f : L} (hf : 0 < w.or
     mem_maximalIdeal_of_ord_pos w (by simpa using hf)
   have h := ord_coe_isUnit w (isUnit_add_of_mem_maximalIdeal w hX hY)
   simpa using h
-
-theorem ord_mul_of_ord_eq_zero {f g : L} (hf : w.ord f = 0) (hf0 : f ≠ 0) :
-    w.ord (f * g) = w.ord g := by
-  rcases eq_or_ne g 0 with rfl | hg
-  · simp
-  rw [w.ord_mul hf0 hg, hf, zero_add]
 
 theorem exists_sub_algebraMap_mem_maximalIdeal [IsAlgClosed k] [IsCurveOver k L]
     (X : w.toValuationSubring) :
@@ -671,10 +660,6 @@ def iota (x : F) :
   map_zero' := Subtype.ext (by simp)
   map_add' a b := Subtype.ext (by simp)
 
-@[scoped simp] theorem coe_iota (x : F) (a : IntermediateField.adjoin K ({x} : Set F)) :
-    ((iota K K' F' x a : IntermediateField.adjoin K' ({algebraMap F F' x} : Set F')) : F') =
-      algebraMap F F' a := rfl
-
 theorem algebraMap_smul (x : F) (a : IntermediateField.adjoin K ({x} : Set F)) (f : F) :
     algebraMap F F' (a • f) = iota K K' F' x a • algebraMap F F' f := by
   rw [Algebra.smul_def, Algebra.smul_def, map_mul]
@@ -914,7 +899,8 @@ theorem mem_span_range_algebraMap_of_constantFieldExtension
 
 end Main
 
-end AlgebraicCurve.W7XH
+end W7XH
+end AlgebraicCurve
 
 theorem solution
     (K F K' F' : Type*)
@@ -943,7 +929,6 @@ export P2MW.S_AlgebraicCurve_mem_span_range_algebraMap_of_constantFieldExtension
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.mem_span_range_algebraMap_of_constantFieldExtension_of_isAlgClosed

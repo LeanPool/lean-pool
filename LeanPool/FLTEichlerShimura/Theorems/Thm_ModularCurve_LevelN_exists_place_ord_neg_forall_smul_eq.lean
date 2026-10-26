@@ -67,9 +67,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_LevelN_exists_place_ord_neg_forall_smul_eq
-
 
 open UpperHalfPlane Filter Topology Function
 open scoped MatrixGroups Manifold Real
@@ -397,9 +395,6 @@ theorem eq_zero_or_eq_zero_of_mul_eq_zero {a b : ℍ → ℂ} (ha : a ∈ ring N
     (fun v τ => rfl) (fricke N) (fun v τ => rfl) jAnalytic (fun τ => rfl)
   exact h.2.2.2.2.2 a b ha hb hab
 
-abbrev redMat (γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) (ZMod N) :=
-  (γ : Matrix (Fin 2) (Fin 2) ℤ).map ((↑) : ℤ → ZMod N)
-
 theorem fricke_smul_of_mem (v : Fin 2 → ZMod N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ CongruenceSubgroup.Gamma N) (τ : ℍ) : fricke N v (γ • τ) = fricke N v τ :=
   (WLight.frickeFunction_modularity_package N PeriodPair.ofTau (fun _ => ⟨rfl, rfl⟩)).2.2.2.2.2.2.1
@@ -422,10 +417,6 @@ theorem jAnalytic_smul (γ : SL(2, ℤ)) (τ : ℍ) : jAnalytic (γ • τ) = jA
 
 def precomp (g : SL(2, ℤ)) : (ℍ → ℂ) →ₐ[ℂ] (ℍ → ℂ) :=
   AlgHom.pi (fun τ => Pi.evalAlgHom ℂ (fun _ : ℍ => ℂ) (g • τ))
-
-omit [NeZero N] in
-@[scoped simp]
-theorem precomp_apply (g : SL(2, ℤ)) (F : ℍ → ℂ) (τ : ℍ) : precomp g F τ = F (g • τ) := rfl
 
 theorem smul_eq_self_of_mem {F : ℍ → ℂ} (hF : F ∈ ring N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ CongruenceSubgroup.Gamma N) (τ : ℍ) : F (γ • τ) = F τ := by
@@ -932,7 +923,9 @@ theorem smul_cuspPlace_eq
 
 end Valuation
 
-end ModularCurve.LevelN.CuspPlaces
+end CuspPlaces
+end LevelN
+end ModularCurve
 
 open _root_.ModularCurve.LevelN
   _root_.P2MW.S_ModularCurve_LevelN_exists_place_ord_neg_forall_smul_eq.ModularCurve.LevelN
@@ -961,7 +954,6 @@ export P2MW.S_ModularCurve_LevelN_exists_place_ord_neg_forall_smul_eq (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem ModularCurve.LevelN.exists_place_ord_neg_forall_smul_eq (N : ℕ) [NeZero N]

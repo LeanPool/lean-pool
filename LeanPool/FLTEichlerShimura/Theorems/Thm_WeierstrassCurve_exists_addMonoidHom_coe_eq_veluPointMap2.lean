@@ -79,10 +79,6 @@ lemma negY_eq_of_veluGy_eq_zero (hgy : W.veluGy x₀ y₀ = 0) :
   simp only [Affine.negY]
   linear_combination hgy
 
-lemma veluGy_eq_zero_iff_negY_eq :
-    W.veluGy x₀ y₀ = 0 ↔ W.toAffine.negY x₀ y₀ = y₀ :=
-  ⟨negY_eq_of_veluGy_eq_zero, fun h => W.veluGy_eq_zero_of_negY_eq h⟩
-
 end NegYFixedPoint
 
 section FibreSingleton
@@ -331,126 +327,6 @@ end Field
 
 end WeierstrassCurve
 end Piece_KwVeluOrderTwoAddKernel
-
-section Piece_KwVeluOrderTwoSecantXContent
-open Polynomial WeierstrassCurve.Affine WeierstrassCurve.Affine
-
-namespace WeierstrassCurve
-
-section CommRing
-
-variable {R : Type*} [CommRing R] {W : WeierstrassCurve R} {x₀ y₀ x₁ y₁ x₂ y₂ : R}
-
-theorem kw_velu2_secX_SI2 (hP₁ : W.toAffine.Equation x₁ y₁)
-    (hP₂ : W.toAffine.Equation x₂ y₂) (hQ : W.toAffine.Equation x₀ y₀)
-    (hord : 2 * y₀ + W.a₁ * x₀ + W.a₃ = 0) :
-    (x₁ - x₀) * (x₂ - x₀) * (x₁ - x₂) * ((x₁ - x₀) * (x₂ - x₀) - W.veluGx x₀ y₀)
-      = ((x₂ - x₀) * (W.a₁ * (x₁ - x₀) + y₁ - y₀)
-            + (x₁ - x₀) * (W.a₁ * (x₂ - x₀) + y₂ - y₀) - W.a₁ * ((x₁ - x₀) * (x₂ - x₀)))
-        * ((x₂ - x₀) * (y₁ - y₀) - (x₁ - x₀) * (y₂ - y₀)) := by
-  rw [Affine.equation_iff] at hP₁ hP₂ hQ
-  simp only [veluGx]
-  linear_combination (-(x₂ - x₀) ^ 2) * hP₁ + (x₁ - x₀) ^ 2 * hP₂
-    + (-(x₁ - x₂) * ((x₁ - x₀) + (x₂ - x₀))) * hQ
-    + ((x₂ - x₀) ^ 2 * y₁ - (x₁ - x₀) ^ 2 * y₂
-        + (x₁ - x₂) * ((x₁ - x₀) + (x₂ - x₀)) * y₀) * hord
-
-theorem kw_velu2_secX_SI3 (hP₁ : W.toAffine.Equation x₁ y₁)
-    (hP₂ : W.toAffine.Equation x₂ y₂) (hQ : W.toAffine.Equation x₀ y₀)
-    (hord : 2 * y₀ + W.a₁ * x₀ + W.a₃ = 0) :
-    ((y₁ - y₂) ^ 2 + W.a₁ * (y₁ - y₂) * (x₁ - x₂) - (W.a₂ + x₀ + x₁ + x₂) * (x₁ - x₂) ^ 2)
-        * ((x₂ - x₀) * (W.a₁ * (x₁ - x₀) + y₁ - y₀)
-            + (x₁ - x₀) * (W.a₁ * (x₂ - x₀) + y₂ - y₀) - W.a₁ * ((x₁ - x₀) * (x₂ - x₀)))
-      = (x₁ - x₂) * ((x₁ - x₀) * (x₂ - x₀) - W.veluGx x₀ y₀)
-        * ((x₂ - x₀) * (y₁ - y₀) - (x₁ - x₀) * (y₂ - y₀)) := by
-  rw [Affine.equation_iff] at hP₁ hP₂ hQ
-  simp only [veluGx]
-  linear_combination
-    (-W.a₁*x₀*x₁ + W.a₁*x₀*x₂ + W.a₁*x₁*x₂ - W.a₁*x₂ ^ 2 - x₀*y₁ + x₀*y₂ - x₁*y₀ + x₁*y₂ + x₂*y₀
-     + x₂*y₁ - 2*x₂*y₂) * hP₁
-    + (W.a₁*x₀*x₁ - W.a₁*x₀*x₂ - W.a₁*x₁ ^ 2 + W.a₁*x₁*x₂ + x₀*y₁ - x₀*y₂ + x₁*y₀ - 2*x₁*y₁
-     + x₁*y₂ - x₂*y₀ + x₂*y₁) * hP₂
-    + ((x₁ - x₂) * (W.a₁ * (x₁ - x₂) + 2 * (y₁ - y₂))) * hQ
-    + (-(W.a₁ * (x₁ - x₂) + (y₁ - y₂))
-        * ((x₂ - x₀) * (y₁ - y₀) - (x₁ - x₀) * (y₂ - y₀))) * hord
-
-end CommRing
-
-end WeierstrassCurve
-end Piece_KwVeluOrderTwoSecantXContent
-
-
-section Piece_KwVeluOrderTwoSecantAtoms
-open Polynomial WeierstrassCurve.Affine WeierstrassCurve.Affine
-
-namespace WeierstrassCurve
-
-section Field
-
-variable {F : Type*} [Field F] [DecidableEq F] {W : WeierstrassCurve F} {x₀ y₀ x₁ y₁ x₂ y₂ : F}
-
-theorem kw_velu2_dXA_cleared (hx12 : x₁ ≠ x₂) :
-    (x₁ - x₂) ^ 2 * (W.toAffine.addX x₁ x₂ (W.toAffine.slope x₁ x₂ y₁ y₂) - x₀)
-      = (y₁ - y₂) ^ 2 + W.a₁ * (y₁ - y₂) * (x₁ - x₂)
-          - (W.a₂ + x₀ + x₁ + x₂) * (x₁ - x₂) ^ 2 := by
-  have hd₁₂ : x₁ - x₂ ≠ 0 := sub_ne_zero.mpr hx12
-  simp only [Affine.addX, Affine.slope_of_X_ne hx12]
-  field_simp
-  ring
-
-variable (hx12 : x₁ ≠ x₂) (hx₁ : x₁ ≠ x₀) (hx₂ : x₂ ≠ x₀)
-  (hX12 : W.velu2X x₀ y₀ x₁ ≠ W.velu2X x₀ y₀ x₂)
-
-include hx12 hx₁ hx₂ hX12 in
-theorem kw_velu2_slopeDiff_cleared :
-    ((W.veluQuotient2 x₀ y₀).toAffine.slope (W.velu2X x₀ y₀ x₁) (W.velu2X x₀ y₀ x₂)
-          (W.velu2Y x₀ y₀ x₁ y₁) (W.velu2Y x₀ y₀ x₂ y₂)
-        - W.toAffine.slope x₁ x₂ y₁ y₂)
-      * ((x₁ - x₀) * (x₂ - x₀)) * ((x₁ - x₀) * (x₂ - x₀) - W.veluGx x₀ y₀)
-      = W.veluGx x₀ y₀
-        * ((x₂ - x₀) * (W.a₁ * (x₁ - x₀) + y₁ - y₀)
-            + (x₁ - x₀) * (W.a₁ * (x₂ - x₀) + y₂ - y₀)
-            - W.a₁ * ((x₁ - x₀) * (x₂ - x₀))) := by
-  have hd₁ : x₁ - x₀ ≠ 0 := sub_ne_zero.mpr hx₁
-  have hd₂ : x₂ - x₀ ≠ 0 := sub_ne_zero.mpr hx₂
-  have hd₁₂ : x₁ - x₂ ≠ 0 := sub_ne_zero.mpr hx12
-  have hX12' : W.velu2X x₀ y₀ x₁ - W.velu2X x₀ y₀ x₂ ≠ 0 := sub_ne_zero.mpr hX12
-  have hD₁₂ : (x₁ - x₀) * (x₂ - x₀) - W.veluGx x₀ y₀ ≠ 0 := fun h =>
-    hX12' (by rw [kw_velu2X_sub_velu2X hx₁ hx₂, h, mul_zero, zero_div])
-  rw [Affine.slope_of_X_ne hX12, Affine.slope_of_X_ne hx12,
-    kw_velu2X_sub_velu2X hx₁ hx₂]
-  simp only [velu2Y]
-  field_simp
-  ring
-
-include hx12 hx₁ hx₂ hX12 in
-theorem kw_velu2_slopeSum_cleared :
-    ((W.veluQuotient2 x₀ y₀).toAffine.slope (W.velu2X x₀ y₀ x₁) (W.velu2X x₀ y₀ x₂)
-          (W.velu2Y x₀ y₀ x₁ y₁) (W.velu2Y x₀ y₀ x₂ y₂)
-        + W.toAffine.slope x₁ x₂ y₁ y₂ + W.a₁)
-      * ((x₁ - x₀) * (x₂ - x₀)) * (x₁ - x₂) * ((x₁ - x₀) * (x₂ - x₀) - W.veluGx x₀ y₀)
-      = (x₁ - x₂) * ((x₁ - x₀) * (x₂ - x₀))
-          * ((x₂ - x₀) * (W.a₁ * (x₁ - x₀) + y₁ - y₀)
-              + (x₁ - x₀) * (W.a₁ * (x₂ - x₀) + y₂ - y₀)
-              - W.a₁ * ((x₁ - x₀) * (x₂ - x₀)))
-        + ((x₁ - x₀) * (x₂ - x₀) - W.veluGx x₀ y₀) * ((x₁ - x₀) + (x₂ - x₀))
-          * ((x₂ - x₀) * (y₁ - y₀) - (x₁ - x₀) * (y₂ - y₀)) := by
-  have hd₁ : x₁ - x₀ ≠ 0 := sub_ne_zero.mpr hx₁
-  have hd₂ : x₂ - x₀ ≠ 0 := sub_ne_zero.mpr hx₂
-  have hd₁₂ : x₁ - x₂ ≠ 0 := sub_ne_zero.mpr hx12
-  have hX12' : W.velu2X x₀ y₀ x₁ - W.velu2X x₀ y₀ x₂ ≠ 0 := sub_ne_zero.mpr hX12
-  have hD₁₂ : (x₁ - x₀) * (x₂ - x₀) - W.veluGx x₀ y₀ ≠ 0 := fun h =>
-    hX12' (by rw [kw_velu2X_sub_velu2X hx₁ hx₂, h, mul_zero, zero_div])
-  rw [Affine.slope_of_X_ne hX12, Affine.slope_of_X_ne hx12,
-    kw_velu2X_sub_velu2X hx₁ hx₂]
-  simp only [velu2Y]
-  field_simp
-  ring
-
-end Field
-
-end WeierstrassCurve
-end Piece_KwVeluOrderTwoSecantAtoms
 
 section Piece_KwVeluOrderTwoSecantCarrier
 open Polynomial
@@ -1046,7 +922,6 @@ theorem solution
 end privateSection
 
 public section publicSection
-
 
 open Polynomial WeierstrassCurve WeierstrassCurve.Affine
 theorem WeierstrassCurve.exists_addMonoidHom_coe_eq_veluPointMap2

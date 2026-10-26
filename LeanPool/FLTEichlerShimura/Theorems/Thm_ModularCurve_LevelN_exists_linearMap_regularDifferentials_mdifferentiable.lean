@@ -75,9 +75,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_LevelN_exists_linearMap_regularDifferentials_mdifferentiable
-
 
 noncomputable section
 
@@ -120,17 +118,6 @@ theorem jAnalytic_transcendental (P : Polynomial ℂ) (hP : ∀ τ : ℍ, P.eval
     P = 0 :=
   (pkg N).1 P hP
 
-scoped instance instIsDomain : IsDomain (ring N) := by
-  have hnz : NoZeroDivisors (ring N) := ⟨fun {a b} h => by
-    rcases eq_zero_or_eq_zero_of_mul_eq_zero N a.2 b.2 (by simpa using congrArg Subtype.val h)
-      with h | h
-    · exact Or.inl (Subtype.ext h)
-    · exact Or.inr (Subtype.ext h)⟩
-  have hnt : Nontrivial (ring N) := ⟨⟨0, 1, fun h => by
-    have := congrFun (congrArg Subtype.val h) UpperHalfPlane.I
-    simp at this⟩⟩
-  exact NoZeroDivisors.to_isDomain _
-
 def 𝕌 : Set ℂ := {z : ℂ | 0 < z.im}
 
 theorem isOpen_𝕌 : IsOpen 𝕌 := isOpen_upperHalfPlaneSet
@@ -150,8 +137,11 @@ theorem up_apply_of_mem (F : ℍ → ℂ) {z : ℂ} (hz : z ∈ 𝕌) : up F z =
   simp [up, ofComplex_apply_of_im_pos hz]
 
 @[scoped simp] theorem up_mul (F G : ℍ → ℂ) : up (F * G) = up F * up G := rfl
+
 @[scoped simp] theorem up_add (F G : ℍ → ℂ) : up (F + G) = up F + up G := rfl
+
 @[scoped simp] theorem up_zero : up (0 : ℍ → ℂ) = 0 := rfl
+
 @[scoped simp] theorem up_one : up (1 : ℍ → ℂ) = 1 := rfl
 
 theorem up_eq_zero_iff (F : ℍ → ℂ) : (∀ z ∈ 𝕌, up F z = 0) ↔ F = 0 := by
@@ -193,12 +183,6 @@ theorem eventuallyEq_𝓕_iff {f g : ℂ → ℂ} : f =ᶠ[𝓕] g ↔ ∀ x ∈
 theorem eventually_nhdsNE_of_𝓕 {p : ℂ → Prop} (h : ∀ᶠ z in 𝓕, p z) {x : ℂ} (hx : x ∈ 𝕌) :
     ∀ᶠ z in 𝓝[≠] x, p z :=
   mem_𝓕_iff.mp h x hx
-
-scoped instance 𝓕_neBot : NeBot 𝓕 := by
-  refine ⟨fun h => ?_⟩
-  have hmem : (∅ : Set ℂ) ∈ 𝓕 := by rw [h]; exact Filter.mem_bot
-  have := mem_𝓕_iff.mp hmem _ I_mem_𝕌
-  exact (NormedField.nhdsNE_neBot ((UpperHalfPlane.I : ℍ) : ℂ)).ne (empty_mem_iff_bot.mp this)
 
 theorem eventually_ne_zero {F : ℍ → ℂ} (hF : F ∈ ring N) (hF0 : F ≠ 0) :
     ∀ᶠ z in 𝓕, up F z ≠ 0 := by
@@ -381,10 +365,6 @@ theorem germ_mul (f g : ℂ → ℂ) : germ N K (fun z => f z * g z) = germ N K 
 
 omit [NeZero N] [Field K] [Algebra ℂ K] [Algebra (↥(ring N)) K] [IsScalarTower ℂ (↥(ring N)) K]
   [IsFractionRing (↥(ring N)) K] in
-theorem germ_mul' (f g : ℂ → ℂ) : germ N K (f * g) = germ N K f * germ N K g := rfl
-
-omit [NeZero N] [Field K] [Algebra ℂ K] [Algebra (↥(ring N)) K] [IsScalarTower ℂ (↥(ring N)) K]
-  [IsFractionRing (↥(ring N)) K] in
 theorem germ_add (f g : ℂ → ℂ) : germ N K (fun z => f z + g z) = germ N K f + germ N K g := rfl
 
 omit [NeZero N] [Field K] [Algebra ℂ K] [Algebra (↥(ring N)) K] [IsScalarTower ℂ (↥(ring N)) K]
@@ -425,8 +405,6 @@ def φ : K →+* Gm N K where
   map_add' x y := by
     rw [← germ_add, germ_eq_iff]
     exact real_add N K x y
-
-theorem φ_apply (k : K) : φ N K k = germ N K (real N K k) := rfl
 
 scoped instance algebraK : Algebra K (Gm N K) := (φ N K).toAlgebra
 
@@ -776,9 +754,6 @@ def Ψ : AlgebraicCurve.regularDifferentials ℂ K →ₗ[ℂ] (ℍ → ℂ) whe
     rw [Φ₀_smul_C]
     exact (glue_smul N K c (locAnalytic_Φ₀ N K ω.2) (coe_mem_𝕌 τ)).symm
 
-theorem Ψ_apply (ω : AlgebraicCurve.regularDifferentials ℂ K) (τ : ℍ) :
-    Ψ N K ω τ = glue N K (Φ₀ N K (ω : Ω[K⁄ℂ])) τ := rfl
-
 theorem up_Ψ_eqOn (ω : AlgebraicCurve.regularDifferentials ℂ K) :
     Set.EqOn (up (Ψ N K ω)) (glue N K (Φ₀ N K (ω : Ω[K⁄ℂ]))) 𝕌 := by
   intro z hz
@@ -897,7 +872,9 @@ theorem Ψ_injective : Function.Injective (Ψ N K) := by
 
 end Identity
 
-end ModularCurve.LevelN.HolDiff
+end HolDiff
+end LevelN
+end ModularCurve
 
 open ModularCurve.LevelN.HolDiff in
 theorem solution (N : ℕ) [NeZero N]
@@ -939,7 +916,6 @@ export P2MW.S_ModularCurve_LevelN_exists_linearMap_regularDifferentials_mdiffere
 end privateSection
 
 public section publicSection
-
 
 open scoped Manifold
 theorem ModularCurve.LevelN.exists_linearMap_regularDifferentials_mdifferentiable

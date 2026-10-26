@@ -19,9 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CycSubRootBridgeN
 
-import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CycSubRootBridgeOdd
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_zmultiples_eq_of_veluQuotient_j_eq_of_transcendental
-import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_veluQuotient_oddOrderSummingSet_discriminant_ne_zero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ModularPolynomialData_isRoot_map_j_veluQuotient_j_of_addOrderOf_eq
 
 /-!
@@ -75,46 +72,6 @@ theorem j_congr {R : Type*} [CommRing R] {X Y : WeierstrassCurve R} (h : X = Y) 
   subst h
   rfl
 
-private theorem _root_.WeierstrassCurve.fullKernelQuotient_eq_veluQuotient_of_odd_aux {F : Type*}
-    [Field F] [DecidableEq F] (W : WeierstrassCurve F)
-    (Q : W.toAffine.Point) {N : ℕ} (hN : Odd N) (hQ : addOrderOf Q = N) :
-    W.fullKernelQuotient Q N = W.veluQuotient (W.oddOrderSummingSet Q ((N - 1) / 2)) := by
-  obtain ⟨m, rfl⟩ := hN
-  have hm : (2 * m + 1 - 1) / 2 = m := by omega
-  rw [hm]
-  exact W.fullKernelQuotient_eq_veluQuotient_oddOrderSummingSet Q m hQ
-
-private theorem _root_.WeierstrassCurve.fullKernelQuotient_discriminant_ne_zero_of_odd {L : Type*}
-    [Field L] [DecidableEq L] [IsAlgClosed L]
-    (h2 : (2 : L) ≠ 0) (W : WeierstrassCurve L) [W.IsElliptic] (N : ℕ) [NeZero N] (hN : Odd N)
-    (Q : W.toAffine.Point) (hQ : addOrderOf Q = N) :
-    (W.fullKernelQuotient Q N).Δ ≠ 0 := by
-  obtain ⟨m, rfl⟩ := hN
-  rw [W.fullKernelQuotient_eq_veluQuotient_oddOrderSummingSet Q m hQ]
-  exact WeierstrassCurve.veluQuotient_oddOrderSummingSet_discriminant_ne_zero h2 W m Q hQ
-
-private theorem
-  _root_.WeierstrassCurve.zmultiples_eq_of_fullKernelQuotient_j_eq_of_transcendental_of_odd
-    [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
-    (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
-    (ht : Transcendental ℚ W.j) (N : ℕ) [NeZero N] (hN : Odd N) (Q Q' : W.toAffine.Point)
-    (hQ : addOrderOf Q = N) (hQ' : addOrderOf Q' = N)
-    (hΔ : (W.fullKernelQuotient Q N).Δ ≠ 0)
-    (hΔ' : (W.fullKernelQuotient Q' N).Δ ≠ 0)
-    (hj : haveI : (W.fullKernelQuotient Q N).IsElliptic := ⟨isUnit_iff_ne_zero.mpr hΔ⟩
-      haveI : (W.fullKernelQuotient Q' N).IsElliptic := ⟨isUnit_iff_ne_zero.mpr hΔ'⟩
-      (W.fullKernelQuotient Q N).j = (W.fullKernelQuotient Q' N).j) :
-    AddSubgroup.zmultiples Q = AddSubgroup.zmultiples Q' := by
-  obtain ⟨m, rfl⟩ := hN
-  have hWQ := W.fullKernelQuotient_eq_veluQuotient_oddOrderSummingSet Q m hQ
-  have hWQ' := W.fullKernelQuotient_eq_veluQuotient_oddOrderSummingSet Q' m hQ'
-  have hΔ₁ : (W.veluQuotient (W.oddOrderSummingSet Q m)).Δ ≠ 0 := by rw [← hWQ]; exact hΔ
-  have hΔ₂ : (W.veluQuotient (W.oddOrderSummingSet Q' m)).Δ ≠ 0 := by rw [← hWQ']; exact hΔ'
-  rw [j_congr hWQ ⟨isUnit_iff_ne_zero.mpr hΔ⟩ ⟨isUnit_iff_ne_zero.mpr hΔ₁⟩,
-    j_congr hWQ' ⟨isUnit_iff_ne_zero.mpr hΔ'⟩ ⟨isUnit_iff_ne_zero.mpr hΔ₂⟩] at hj
-  exact WeierstrassCurve.zmultiples_eq_of_veluQuotient_j_eq_of_transcendental W ht m Q Q' hQ hQ' hΔ₁
-    hΔ₂ hj
-
 end WeierstrassCurve
 
 theorem ModularCurve.ModularPolynomialData.isRoot_map_j_fullKernelQuotient_j_of_odd
@@ -138,55 +95,13 @@ namespace ModularCurve
 
 namespace TatePoint
 
-private theorem cycSubRootN_eq_cycSubRootOdd_aux (E : WeierstrassCurve H) [E.IsElliptic] {N : ℕ}
-    [NeZero N] (hN : Odd N)
-    (hW1 : FullKernelIsRootAt N) (hW3 : FullKernelDiscAt N) (data : ModularPolynomialData N)
-    (G : CycSubH E N) : cycSubRootN E hW1 hW3 data G = cycSubRootOdd E hN data G := by
-  classical
-  exact Subtype.ext (WeierstrassCurve.j_congr
-    (E.fullKernelQuotient_eq_veluQuotient_of_odd_aux (cycSubGen E G) hN (addOrderOf_cycSubGen E G))
-      _ _)
-
-private theorem rootsEquivCycSubHN_eq_rootsEquivCycSubHOdd_aux (E : WeierstrassCurve H)
-    [E.IsElliptic] {N : ℕ} [NeZero N]
-    (hN : Odd N) (hW1 : FullKernelIsRootAt N) (hW2 : FullKernelInjAt N) (hW3 : FullKernelDiscAt N)
-    (data : ModularPolynomialData N) (hj : Transcendental Qbar E.j) :
-    rootsEquivCycSubHN E hW1 hW2 hW3 data hj = rootsEquivCycSubHOdd E hN data hj := by
-  ext r : 1
-  rw [rootsEquivCycSubHN_apply_eq_iff, cycSubRootN_eq_cycSubRootOdd_aux E hN,
-    ← rootsEquivCycSubHOdd_apply_eq_iff E hN data hj r (rootsEquivCycSubHOdd E hN data hj r)]
-
-private theorem dictN_eq_dictOdd_aux (N : ℕ) [NeZero N] (hN : Odd N)
-    (data : ModularPolynomialData N) (j₀ : Qbar)
-    (hW1 : FullKernelIsRootAt N) (hW2 : FullKernelInjAt N) (hW3 : FullKernelDiscAt N) :
-    dictN N data j₀ hW1 hW2 hW3 = dictOdd N hN data j₀ :=
-  rootsEquivCycSubHN_eq_rootsEquivCycSubHOdd_aux (nearCurve j₀) hN hW1 hW2 hW3 data
-    (nearCurve_j_transcendental j₀)
-
 private theorem fullKernelIsRootAt_of_odd_aux (N : ℕ) [NeZero N] (hN : Odd N) :
     FullKernelIsRootAt N :=
   fun W _ Q hQ hΔ data =>
     ModularCurve.ModularPolynomialData.isRoot_map_j_fullKernelQuotient_j_of_odd W N hN Q hQ hΔ data
 
-private theorem fullKernelInjAt_of_odd_aux (N : ℕ) [NeZero N] (hN : Odd N) : FullKernelInjAt N :=
-  fun W _ ht Q Q' hQ hQ' hΔ hΔ' hj =>
-    W.zmultiples_eq_of_fullKernelQuotient_j_eq_of_transcendental_of_odd ht N hN Q Q' hQ hQ' hΔ hΔ'
-      hj
-
-private theorem fullKernelDiscAt_of_odd_aux (N : ℕ) [NeZero N] (hN : Odd N) : FullKernelDiscAt N :=
-  fun h2 W _ Q hQ => W.fullKernelQuotient_discriminant_ne_zero_of_odd h2 N hN Q hQ
-
-def dictNOdd (N : ℕ) [NeZero N] (hN : Odd N) (data : ModularPolynomialData N) (j₀ : Qbar) :
-    RootsAt data (nearCurve j₀).j ≃ CycSubH (nearCurve j₀) N :=
-  dictN N data j₀ (fullKernelIsRootAt_of_odd_aux N hN) (fullKernelInjAt_of_odd_aux N hN)
-    (fullKernelDiscAt_of_odd_aux N hN)
-
-theorem dictNOdd_eq_dictOdd (N : ℕ) [NeZero N] (hN : Odd N) (data : ModularPolynomialData N)
-    (j₀ : Qbar) :
-    dictNOdd N hN data j₀ = dictOdd N hN data j₀ :=
-  dictN_eq_dictOdd_aux N hN data j₀ _ _ _
-
-end ModularCurve.TatePoint
+end TatePoint
+end ModularCurve
 
 end
 

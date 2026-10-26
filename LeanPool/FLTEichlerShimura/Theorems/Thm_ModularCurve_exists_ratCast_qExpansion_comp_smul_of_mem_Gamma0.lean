@@ -72,7 +72,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_exists_ratCast_qExpansion_comp_smul_of_mem_Gamma0
 
 noncomputable section
@@ -132,11 +131,6 @@ abbrev Idx : Type := Option {v : Fin 2 → ZMod N // v ≠ 0}
 
 def gen (t : (Fin 2 → ZMod N) → (Fin 2 → ZMod N)) : Idx N → ℍ → ℂ :=
   fun o => o.elim jf fun v => fricke N (t v.1)
-
-theorem gen_none (t : (Fin 2 → ZMod N) → (Fin 2 → ZMod N)) : gen N t none = jf := rfl
-
-theorem gen_some (t : (Fin 2 → ZMod N) → (Fin 2 → ZMod N)) (v : {v : Fin 2 → ZMod N // v ≠ 0}) :
-    gen N t (some v) = fricke N (t v.1) := rfl
 
 section Cyclo
 
@@ -224,10 +218,6 @@ theorem isBoundedAtImInfty_disc : IsBoundedAtImInfty (Δ : ℍ → ℂ) := by
   have := ModularFormClass.bdd_at_infty CuspForm.discriminant
   rwa [CuspForm.coe_discriminant] at this
 
-theorem disc_ne_zero_fun : (Δ : ℍ → ℂ) ≠ 0 := fun h => by
-  have := congrFun h UpperHalfPlane.I
-  exact discriminant_ne_zero _ this
-
 theorem disc_pow_ne_zero (m : ℕ) (τ : ℍ) : (Δ ^ m : ℍ → ℂ) τ ≠ 0 := by
   rw [Pi.pow_apply]; exact pow_ne_zero _ (discriminant_ne_zero τ)
 
@@ -248,18 +238,6 @@ theorem periodic_pow {g : ℍ → ℂ} {c : ℂ} (h : Periodic (g ∘ ofComplex)
   induction m with
   | zero => intro z; simp
   | succ m ih => rw [pow_succ]; exact periodic_mul ih h
-
-theorem periodic_smul {g : ℍ → ℂ} {c : ℂ} (h : Periodic (g ∘ ofComplex) c) (a : ℂ) :
-    Periodic ((a • g) ∘ ofComplex) c := by
-  intro z; have h1 := h z; simp only [comp_apply, Pi.smul_apply] at h1 ⊢; rw [h1]
-
-theorem periodic_add {g g' : ℍ → ℂ} {c : ℂ} (h : Periodic (g ∘ ofComplex) c)
-    (h' : Periodic (g' ∘ ofComplex) c) : Periodic ((g + g') ∘ ofComplex) c := by
-  intro z
-  have h1 := h z
-  have h2 := h' z
-  simp only [comp_apply, Pi.add_apply] at h1 h2 ⊢
-  rw [h1, h2]
 
 theorem qExpansion_coeff_unique' {h : ℝ} (hh : 0 < h) {g : ℍ → ℂ} {c : ℕ → ℂ}
     (hg : AnalyticAt ℂ (cuspFunction h g) 0)
@@ -723,63 +701,6 @@ theorem ratAt_fricke {v : Fin 2 → ZMod N} (hv : v ≠ 0) : RatAt N (kN N) 1 (f
   bdd := by rw [pow_one]; exact isBoundedAtImInfty_fricke N hv
   mem := by rw [pow_one]; exact coeff_fricke_mem N hv
 
-theorem qExpansion_E₄_rat (n : ℕ) : ∃ r : ℚ, (qExpansion 1 (E₄ : ℍ → ℂ)).coeff n = (r : ℂ) := by
-  rw [ModularForm.E₄, EisensteinSeries.E_qExpansion_coeff (by norm_num) (by decide) n]
-  split_ifs
-  · exact ⟨1, by simp⟩
-  · exact ⟨-(2 * 4 / bernoulli 4) * (ArithmeticFunction.sigma 3 n : ℚ), by push_cast; ring⟩
-
-theorem qExpansion_E₆_rat (n : ℕ) : ∃ r : ℚ, (qExpansion 1 (E₆ : ℍ → ℂ)).coeff n = (r : ℂ) := by
-  rw [ModularForm.E₆, EisensteinSeries.E_qExpansion_coeff (by norm_num) (by decide) n]
-  split_ifs
-  · exact ⟨1, by simp⟩
-  · exact ⟨-(2 * 6 / bernoulli 6) * (ArithmeticFunction.sigma 5 n : ℚ), by push_cast; ring⟩
-
-theorem exists_map_of_rat {q : PowerSeries ℂ} (h : ∀ n, ∃ r : ℚ, q.coeff n = (r : ℂ)) :
-    ∃ p : PowerSeries ℚ, p.map (algebraMap ℚ ℂ) = q := by
-  choose r hr using h
-  exact ⟨PowerSeries.mk r, by ext n; simp [hr n]⟩
-
-theorem rat_of_exists_map {q : PowerSeries ℂ} (h : ∃ p : PowerSeries ℚ, p.map (algebraMap ℚ ℂ) = q)
-    (n : ℕ) : ∃ r : ℚ, q.coeff n = (r : ℂ) := by
-  obtain ⟨p, rfl⟩ := h
-  exact ⟨PowerSeries.coeff n p, by rw [PowerSeries.coeff_map]; rfl⟩
-
-def E4cube : ModularForm 𝒮ℒ 12 := (E₄.pow 3).mcast (by norm_num)
-
-theorem coe_E4cube : (⇑E4cube : ℍ → ℂ) = (E₄ : ℍ → ℂ) ^ 3 := by
-  rw [E4cube, coe_mcast, coe_pow]
-
-theorem qExpansion_E4cube_rat (n : ℕ) :
-    ∃ r : ℚ, (qExpansion 1 (⇑E4cube : ℍ → ℂ)).coeff n = (r : ℂ) := by
-  obtain ⟨p, hp⟩ := exists_map_of_rat qExpansion_E₄_rat
-  refine rat_of_exists_map ⟨p ^ 3, ?_⟩ n
-  rw [E4cube, ModularForm.qExpansion_mcast, ModularForm.qExpansion_pow one_pos
-    one_mem_strictPeriods_SL,
-    map_pow, hp]
-
-theorem ratAt_jf (K : IntermediateField ℚ ℂ) : RatAt N K 1 jf := by
-  have hj : jf * Δ ^ 1 = ⇑E4cube := by
-    funext τ
-    rw [coe_E4cube]
-    simp only [Pi.mul_apply, Pi.pow_apply, pow_one, jf]
-    field_simp [discriminant_ne_zero τ]
-  have hmd : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) jf := by
-    intro τ
-    have h1 : MDifferentiableAt 𝓘(ℂ) 𝓘(ℂ) (fun τ => E₄ τ ^ 3) τ := (E₄.holo' τ).pow 3
-    exact h1.div (mdifferentiable_disc τ) (discriminant_ne_zero τ)
-  refine ⟨hmd, ?_, ?_, ?_⟩
-  · rw [hj]; exact periodic_ofComplex_natCast (SlashInvariantFormClass.periodic_comp_ofComplex
-      E4cube
-      one_mem_strictPeriods_SL) N
-  · rw [hj]; exact ModularFormClass.bdd_at_infty E4cube
-  · intro n
-    rw [hj]
-    obtain ⟨r, hr⟩ := qExpansion_widthN_rat N (g := (⇑E4cube : ℍ → ℂ)) E4cube.holo'
-      (SlashInvariantFormClass.periodic_comp_ofComplex E4cube one_mem_strictPeriods_SL)
-      (ModularFormClass.bdd_at_infty E4cube) qExpansion_E4cube_rat n
-    rw [hr]; exact ratCast_mem r
-
 variable {N}
 variable (σ : (kN N) ≃ₐ[ℚ] (kN N)) {s : ℕ} (hs : s.Coprime N) (hσ : σ (zetaK N) = zetaK N ^ s)
 
@@ -912,9 +833,6 @@ section Descent
 variable {N : ℕ} [NeZero N]
 
 local notation "Δ" => ModularForm.discriminant
-
-theorem smul_eq_coe_smul (K : IntermediateField ℚ ℂ) (κ : K) (f : ℍ → ℂ) :
-    κ • f = (κ : ℂ) • f := rfl
 
 theorem exists_rat_combination (K : IntermediateField ℚ ℂ) {n M : ℕ} {Gi : Fin n → ℍ → ℂ}
     {G : ℍ → ℂ} (hGi : ∀ i, RatAt N K M (Gi i)) (hG : RatAt N K M G)
@@ -1359,7 +1277,6 @@ export P2MW.S_ModularCurve_exists_ratCast_qExpansion_comp_smul_of_mem_Gamma0 (so
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups Manifold in
 theorem ModularCurve.exists_ratCast_qExpansion_comp_smul_of_mem_Gamma0 (N : ℕ) [NeZero N] (m : ℕ)

@@ -68,9 +68,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularForm_exists_weight_one_gamma1_three_slash_fricke_eq_smul
-
 
 open Complex Real Set
 
@@ -114,9 +112,6 @@ def hexFormNat (v : ℤ × ℤ) : ℕ :=
 lemma hexFormNat_eq_iff (v : ℤ × ℤ) (n : ℕ) : hexFormNat v = n ↔ hexForm v = (n : ℤ) := by
   rw [← coe_hexFormNat, Int.natCast_inj]
 
-@[scoped simp] lemma hexFormNat_zero : hexFormNat (0, 0) = 0 := by
-  rw [hexFormNat_eq_iff]; rfl
-
 noncomputable def latticeTerm (τ : ℂ) (v : ℤ × ℤ) : ℂ :=
   Complex.exp (2 * (π : ℂ) * Complex.I * (hexFormNat v : ℂ) * τ)
 
@@ -157,32 +152,8 @@ lemma summable_gaussian_prod {t : ℝ} (ht : 0 < t) :
 theorem summable_latticeTerm {τ : ℂ} (hτ : 0 < τ.im) : Summable (latticeTerm τ) :=
   (summable_gaussian_prod hτ).of_norm_bounded (norm_latticeTerm_le_of_le_im hτ le_rfl)
 
-theorem not_summable_latticeTerm_zero : ¬ Summable (latticeTerm 0) := by
-  have h : latticeTerm 0 = fun _ ↦ (1 : ℂ) := by
-    funext v; simp [latticeTerm]
-  rw [h, summable_const_iff]
-  exact one_ne_zero
-
 noncomputable def latticeSum (τ : ℂ) : ℂ :=
   ∑' v : ℤ × ℤ, latticeTerm τ v
-
-lemma finite_fiber_hexFormNat (n : ℕ) : (hexFormNat ⁻¹' {n}).Finite := by
-  apply Set.Finite.subset
-    ((Finset.Icc (-(2 * n : ℤ)) (2 * n) ×ˢ Finset.Icc (-(2 * n : ℤ)) (2 * n)).finite_toSet)
-  rintro ⟨a, b⟩ hv
-  simp only [Set.mem_preimage, Set.mem_singleton_iff, hexFormNat_eq_iff] at hv
-  have hbox : a ^ 2 + b ^ 2 ≤ 2 * (n : ℤ) := by
-    have := sq_add_sq_le_two_mul_hexForm (a, b)
-    simp only [hexForm_mk] at this hv
-    omega
-  have ha2 : a ^ 2 ≤ 2 * (n : ℤ) := by nlinarith [sq_nonneg b]
-  have hb2 : b ^ 2 ≤ 2 * (n : ℤ) := by nlinarith [sq_nonneg a]
-  simp only [Finset.coe_product, Set.mem_prod, Finset.mem_coe, Finset.mem_Icc]
-  refine ⟨⟨?_, ?_⟩, ?_, ?_⟩
-  · nlinarith [Int.le_self_sq (-a)]
-  · nlinarith [Int.le_self_sq a]
-  · nlinarith [Int.le_self_sq (-b)]
-  · nlinarith [Int.le_self_sq b]
 
 noncomputable def repCount (n : ℕ) : ℕ :=
   (hexFormNat ⁻¹' {n}).ncard
@@ -211,12 +182,8 @@ theorem hasSum_repCount_qpow {τ : ℂ} (hτ : 0 < τ.im) :
   simp only [tsum_fiber_eq τ] at h
   exact h
 
-theorem latticeSum_eq_tsum_repCount {τ : ℂ} (hτ : 0 < τ.im) :
-    latticeSum τ
-      = ∑' n : ℕ, (repCount n : ℂ) * Complex.exp (2 * (π : ℂ) * Complex.I * (n : ℂ) * τ) :=
-  (hasSum_repCount_qpow hτ).tsum_eq.symm
-
-end A2Theta3.LatticeSum
+end LatticeSum
+end A2Theta3
 
 namespace A2Theta3
 
@@ -273,10 +240,6 @@ def repOfLabel : Option (ZMod 3) → SL(2, ℤ)
 @[scoped simp] lemma one_apply_one_zero : (1 : SL(2, ℤ)) 1 0 = 0 := rfl
 
 @[scoped simp] lemma one_apply_one_one : (1 : SL(2, ℤ)) 1 1 = 1 := rfl
-
-def transversal : Set SL(2, ℤ) := Set.range repOfLabel
-
-lemma one_mem_transversal : (1 : SL(2, ℤ)) ∈ transversal := ⟨none, rfl⟩
 
 def label (g : SL(2, ℤ)) : Option (ZMod 3) :=
   if (g 1 0 : ZMod 3) = 0 then none
@@ -349,26 +312,6 @@ theorem mul_inv_repOfLabel_mem_iff (g : SL(2, ℤ)) (l : Option (ZMod 3)) :
     · rw [ite_eq_right hc, Option.some_inj, eq_div_iff hc]
       constructor <;> intro h <;> linear_combination h
 
-theorem isComplement_transversal :
-    IsComplement (Gamma0 3 : Set SL(2, ℤ)) transversal := by
-  rw [isComplement_iff_existsUnique_mul_inv_mem]
-  intro g
-  refine ⟨⟨repOfLabel (label g), ⟨label g, rfl⟩⟩, ?_, ?_⟩
-  · exact (mul_inv_repOfLabel_mem_iff g (label g)).mpr rfl
-  · rintro ⟨x, l, rfl⟩ ht
-    exact Subtype.ext (congrArg repOfLabel ((mul_inv_repOfLabel_mem_iff g l).mp ht))
-
-lemma coe_toRightFun (g : SL(2, ℤ)) :
-    (isComplement_transversal.toRightFun g : SL(2, ℤ)) = repOfLabel (label g) := by
-  have huniq := isComplement_iff_existsUnique_mul_inv_mem.mp isComplement_transversal g
-  have h1 : g * ((isComplement_transversal.toRightFun g : SL(2, ℤ)))⁻¹
-      ∈ (Gamma0 3 : Set SL(2, ℤ)) :=
-    isComplement_transversal.mul_inv_toRightFun_mem g
-  have h2 : g * (((⟨repOfLabel (label g), ⟨label g, rfl⟩⟩ : transversal) : SL(2, ℤ)))⁻¹
-      ∈ (Gamma0 3 : Set SL(2, ℤ)) :=
-    (mul_inv_repOfLabel_mem_iff g (label g)).mpr rfl
-  exact congrArg Subtype.val (huniq.unique h1 h2)
-
 end Gamma0Three
 
 def U₃ : SL(2, ℤ) := ⟨!![1, 0; -3, 1], by simp [Matrix.det_fin_two_of]⟩
@@ -376,22 +319,7 @@ def U₃ : SL(2, ℤ) := ⟨!![1, 0; -3, 1], by simp [Matrix.det_fin_two_of]⟩
 @[scoped simp] lemma U₃_one_zero : U₃ 1 0 = -3 := rfl
 @[scoped simp] lemma U₃_one_one : U₃ 1 1 = 1 := rfl
 
-lemma T_mem_gamma0_three : ModularGroup.T ∈ Gamma0 3 := by
-  rw [Gamma0_mem]; decide
-
-lemma U₃_mem_gamma0_three : U₃ ∈ Gamma0 3 := by
-  rw [Gamma0_mem]; decide
-
-lemma neg_one_mem_gamma0_three : (-1 : SL(2, ℤ)) ∈ Gamma0 3 := by
-  rw [Gamma0_mem]; decide
-
 def gens : Set SL(2, ℤ) := {ModularGroup.T, U₃, -1}
-
-lemma gens_subset_gamma0_three : gens ⊆ (Gamma0 3 : Subgroup SL(2, ℤ)) := by
-  rintro x (rfl | rfl | rfl)
-  · exact T_mem_gamma0_three
-  · exact U₃_mem_gamma0_three
-  · exact neg_one_mem_gamma0_three
 
 theorem closure_T_U_neg_one_eq : Subgroup.closure gens = Gamma0 3 :=
   CongruenceSubgroup.closure_T_U_neg_one_eq_Gamma0_three U₃ rfl
@@ -527,10 +455,6 @@ def slashInvariantForm_of_T_U (F : ℍ → ℂ)
   slash_action_eq' := by
     rintro γ ⟨δ, hδ, rfl⟩
     exact slash_eq_self_of_mem_Gamma1 F hT hU hδ
-
-@[scoped simp] lemma coe_slashInvariantForm_of_T_U (F : ℍ → ℂ)
-    (hT : F ∣[(1 : ℤ)] ModularGroup.T = F) (hU : F ∣[(1 : ℤ)] U₃ = F) :
-    ⇑(slashInvariantForm_of_T_U F hT hU) = F := rfl
 
 end Packaging
 end A2Theta3
@@ -669,9 +593,6 @@ theorem hexThetaH_slash_U : hexThetaH ∣[(1 : ℤ)] U₃ = hexThetaH := by
 def thetaBound : ℝ :=
   ∑' v : ℤ × ℤ, Real.exp (-(π * (v.1 : ℝ) ^ 2)) * Real.exp (-(π * (v.2 : ℝ) ^ 2))
 
-lemma thetaBound_nonneg : 0 ≤ thetaBound :=
-  tsum_nonneg fun _ => mul_nonneg (Real.exp_pos _).le (Real.exp_pos _).le
-
 theorem norm_latticeSum_le_of_one_le_im {τ : ℂ} (hτ : 1 ≤ τ.im) :
     ‖latticeSum τ‖ ≤ thetaBound := by
   have hτ0 : 0 < τ.im := lt_of_lt_of_le one_pos hτ
@@ -805,29 +726,6 @@ lemma differentiable_latticeTerm (v : ℤ × ℤ) :
   unfold latticeTerm
   fun_prop
 
-def thetaBoundAt (T : ℝ) : ℝ :=
-  ∑' v : ℤ × ℤ, Real.exp (-(π * T * (v.1 : ℝ) ^ 2)) * Real.exp (-(π * T * (v.2 : ℝ) ^ 2))
-
-theorem norm_latticeSum_le_of_le_im {T : ℝ} (hT : 0 < T) {τ : ℂ} (hτ : T ≤ τ.im) :
-    ‖latticeSum τ‖ ≤ thetaBoundAt T := by
-  have hdom : ∀ v : ℤ × ℤ, ‖latticeTerm τ v‖
-      ≤ Real.exp (-(π * T * (v.1 : ℝ) ^ 2)) * Real.exp (-(π * T * (v.2 : ℝ) ^ 2)) :=
-    fun v => norm_latticeTerm_le_of_le_im hT hτ v
-  have hgauss : Summable fun v : ℤ × ℤ =>
-      Real.exp (-(π * T * (v.1 : ℝ) ^ 2)) * Real.exp (-(π * T * (v.2 : ℝ) ^ 2)) :=
-    summable_gaussian_prod hT
-  have hsum_norm : Summable fun v : ℤ × ℤ => ‖latticeTerm τ v‖ :=
-    Summable.of_nonneg_of_le (fun _ => norm_nonneg _) hdom hgauss
-  calc ‖latticeSum τ‖ ≤ ∑' v : ℤ × ℤ, ‖latticeTerm τ v‖ := norm_tsum_le_tsum_norm hsum_norm
-    _ ≤ ∑' v : ℤ × ℤ, Real.exp (-(π * T * (v.1 : ℝ) ^ 2))
-          * Real.exp (-(π * T * (v.2 : ℝ) ^ 2)) :=
-        hsum_norm.tsum_le_tsum hdom hgauss
-    _ = thetaBoundAt T := rfl
-
-theorem thetaBoundAt_one_eq : thetaBoundAt 1 = thetaBound := by
-  unfold thetaBoundAt thetaBound
-  simp only [mul_one]
-
 lemma isOpen_lt_im (T : ℝ) : IsOpen {z : ℂ | T < z.im} :=
   isOpen_lt continuous_const Complex.continuous_im
 
@@ -946,7 +844,6 @@ export P2MW.S_ModularForm_exists_weight_one_gamma1_three_slash_fricke_eq_smul (s
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups ModularForm in
 theorem ModularForm.exists_weight_one_gamma1_three_slash_fricke_eq_smul :

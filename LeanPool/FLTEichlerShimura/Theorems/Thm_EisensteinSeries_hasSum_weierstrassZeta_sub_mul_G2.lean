@@ -65,7 +65,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_EisensteinSeries_hasSum_weierstrassZeta_sub_mul_G2
 
 open scoped Topology Real
@@ -94,8 +93,6 @@ lemma om_ne_zero {v : Fin 2 → ℤ} (hv : v ≠ 0) : om τ v ≠ 0 := by
       have := congr_fun h i
       simpa using this)
   simpa [om] using this
-
-lemma om_zero : om τ 0 = 0 := by simp [om]
 
 lemma norm_om_ge {v : Fin 2 → ℤ} (hv : v ≠ 0) : r τ * ‖v‖ ≤ ‖om τ v‖ := by
   simpa [om] using r_mul_max_le τ hv
@@ -252,10 +249,6 @@ lemma intComp_self_of_not_isLatticePt {z : ℂ} (hz : ¬ IsLatticePt τ z) : z �
   rw [Complex.mem_integerComplement_iff]
   rintro ⟨k, hk⟩
   exact hz ⟨![0, k], by simp [om, hk]⟩
-
-lemma ne_zero_of_not_isLatticePt {z : ℂ} (hz : ¬ IsLatticePt τ z) : z ≠ 0 := by
-  rintro rfl
-  exact hz ⟨0, by simp [om]⟩
 
 lemma intComp_mul_of_ne_zero (τ : ℍ) {m : ℤ} (hm : m ≠ 0) : (m : ℂ) * τ ∈ ℂ_ℤ := by
   rw [Complex.mem_integerComplement_iff]
@@ -608,7 +601,6 @@ export P2MW.S_EisensteinSeries_hasSum_weierstrassZeta_sub_mul_G2 (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped Real
 theorem EisensteinSeries.hasSum_weierstrassZeta_sub_mul_G2 (τ : UpperHalfPlane) (z : ℂ)

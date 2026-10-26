@@ -19,8 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PhiGen
 
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_injective
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
@@ -68,7 +66,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 -/
 
 section privateSection
-
 
 namespace P2MW.S_ModularCurve_PhiGen_PhiGenDescends_poleOrderLE
 
@@ -292,28 +289,6 @@ private theorem tPoleOrderLE_phiProd_coeff {K : Type*} [Field K] (ℓ : ℕ)
   exact tPoleOrderLE_coeff_prod Finset.univ _ (conjPoleBound ℓ)
     (fun i _ k => tPoleOrderLE_coeff_X_sub_C (tPoleOrderLE_conj hconj0 hconjS hJ i) k) k
 
-theorem coeffEmb_qExpand_injective {K : Type*} [Field K] [Algebra ℚ K] {ℓ : ℕ}
-    [hℓ : Fact (Nat.Prime ℓ)] :
-    Function.Injective (fun f : LaurentSeries ℚ => coeffEmb K (qExpand ℚ ℓ f)) :=
-  (coeffEmb_injective K).comp (qExpand_injective (R := ℚ) ℓ)
-
-theorem PhiGenDescends.c_top {K : Type*} [Field K] [Algebra ℚ K] {ℓ : ℕ}
-    [hℓ : Fact (Nat.Prime ℓ)] {ζ : Kˣ} {c : ℕ → LaurentSeries ℚ}
-    (hc : PhiGenDescends ℓ ζ c) : c (ℓ + 1) = 1 := by
-  refine coeffEmb_qExpand_injective (K := K) (ℓ := ℓ) ?_
-  have h1 : (phiProd ℓ (conj ℓ ζ)).coeff (ℓ + 1) = 1 := by
-    have h := (phiProd_monic ℓ (conj ℓ ζ)).coeff_natDegree
-    rwa [phiProd_natDegree ℓ (conj ℓ ζ)] at h
-  simp only [← hc (ℓ + 1), h1, map_one]
-
-theorem PhiGenDescends.c_eq_zero {K : Type*} [Field K] [Algebra ℚ K] {ℓ : ℕ}
-    [hℓ : Fact (Nat.Prime ℓ)] {ζ : Kˣ} {c : ℕ → LaurentSeries ℚ}
-    (hc : PhiGenDescends ℓ ζ c) {k : ℕ} (hk : ℓ + 1 < k) : c k = 0 := by
-  refine coeffEmb_qExpand_injective (K := K) (ℓ := ℓ) ?_
-  have h1 : (phiProd ℓ (conj ℓ ζ)).coeff k = 0 :=
-    Polynomial.coeff_eq_zero_of_natDegree_lt (by rw [phiProd_natDegree]; exact hk)
-  simp only [← hc k, h1, map_zero]
-
 private theorem PhiGenDescends.poleOrderLE {K : Type*} [Field K] [Algebra ℚ K] {ℓ : ℕ}
     [hℓ : Fact (Nat.Prime ℓ)] {ζ : Kˣ} {c : ℕ → LaurentSeries ℚ}
     (hc : PhiGenDescends ℓ ζ c) (k : ℕ) : PoleOrderLE (c k) (ℓ + 1) := by
@@ -323,63 +298,6 @@ private theorem PhiGenDescends.poleOrderLE {K : Type*} [Field K] [Algebra ℚ K]
   rw [hc k, tPoleOrderLE_coeffEmb_iff] at hW3
   rw [← tPoleOrderLE_iff_poleOrderLE]
   exact tPoleOrderLE_of_qExpand (hW3.mono (le_of_eq (by ring)))
-
-theorem PhiGenDescends.sum_mul_jqN_pow_eq_zero {K : Type*} [Field K] [Algebra ℚ K]
-    {ℓ : ℕ} [hℓ : Fact (Nat.Prime ℓ)] {ζ : Kˣ} {c : ℕ → LaurentSeries ℚ}
-    (hc : PhiGenDescends ℓ ζ c) :
-    ∑ k ∈ Finset.range (ℓ + 2), c k * (jqN ℓ) ^ k = 0 := by
-  set F : LaurentSeries ℚ →+* LaurentSeries K := (coeffEmb K).comp (qExpand ℚ ℓ) with hF
-  have hFapp : ∀ f : LaurentSeries ℚ, F f = coeffEmb K (qExpand ℚ ℓ f) := fun f => rfl
-  have hFinj : Function.Injective F := coeffEmb_qExpand_injective
-  have hconj0 : conj ℓ ζ (0 : Fin (ℓ + 1)) = F (jqN ℓ) := by
-    change conj ℓ ζ 0 = coeffMap (algebraMap ℚ K) (qExpand ℚ ℓ (jqN ℓ))
-    rw [conj_zero, jqN, qExpand_qExpand, coeffMap_qExpand]
-    rfl
-  have hterm : ∀ k ∈ Finset.range (ℓ + 2),
-      F (c k * (jqN ℓ) ^ k)
-        = (phiProd ℓ (conj ℓ ζ)).coeff k * (conj ℓ ζ 0) ^ k := by
-    intro k _
-    rw [map_mul, map_pow, ← hconj0, hFapp, hc k]
-  refine hFinj ?_
-  rw [map_zero, map_sum, Finset.sum_congr rfl hterm]
-  rw [← Polynomial.eval_eq_sum_range' (n := ℓ + 2) (by rw [phiProd_natDegree]; omega)]
-  exact phiProd_eval_conj ℓ _ 0
-
-theorem evalAtJ_eq_aeval_map (Q : Polynomial ℤ) :
-    evalAtJ Q = Polynomial.aeval jq (Q.map (Int.castRingHom ℚ)) := by
-  have hcomp : (algebraMap ℚ (LaurentSeries ℚ)).comp (Int.castRingHom ℚ)
-      = algebraMap ℤ (LaurentSeries ℚ) := Subsingleton.elim _ _
-  rw [Polynomial.aeval_def, Polynomial.eval₂_map, hcomp]
-  rfl
-
-private theorem aeval_jq_eq_zero {p : Polynomial ℚ} (hp : Polynomial.aeval jq p = 0) :
-    p = 0 := by
-  by_contra hp0
-  set n := p.natDegree with hn
-  have hcoeff : (Polynomial.aeval jq p).coeff (-(n : ℤ)) = p.coeff n := by
-    rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range, HahnSeries.coeff_sum,
-      Finset.sum_eq_single n]
-    · rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul, coeff_jq_pow_self,
-        mul_one]
-    · intro i hi hin
-      have hilt : i < n := lt_of_le_of_ne (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)) hin
-      rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul, coeff_jq_pow_of_lt,
-        mul_zero]
-      omega
-    · intro hn'
-      exact absurd (Finset.self_mem_range_succ n) hn'
-  rw [hp] at hcoeff
-  simp only [HahnSeries.coeff_zero] at hcoeff
-  exact hp0 (Polynomial.leadingCoeff_eq_zero.mp hcoeff.symm)
-
-theorem evalAtJ_injective : Function.Injective evalAtJ := by
-  intro P Q hPQ
-  refine Polynomial.map_injective (Int.castRingHom ℚ) Int.cast_injective ?_
-  rw [evalAtJ_eq_aeval_map, evalAtJ_eq_aeval_map] at hPQ
-  have h0 : Polynomial.aeval jq
-      (P.map (Int.castRingHom ℚ) - Q.map (Int.castRingHom ℚ)) = 0 := by
-    rw [map_sub, hPQ, sub_self]
-  exact sub_eq_zero.mp (aeval_jq_eq_zero h0)
 
 end PhiGen
 end ModularCurve
@@ -401,7 +319,6 @@ export P2MW.S_ModularCurve_PhiGen_PhiGenDescends_poleOrderLE (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve ModularCurve.PhiGen
 theorem ModularCurve.PhiGen.PhiGenDescends.poleOrderLE {K : Type*} [Field K] [Algebra ℚ K] {ℓ : ℕ}

@@ -56,7 +56,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_order_jqModC
 
 noncomputable section
@@ -93,35 +92,6 @@ theorem coeff_jqModC_pow_of_lt {n : ℕ} {m : ℤ} (hm : m < -(n : ℤ)) :
 theorem coeff_jqModC_neg_one : (jqModC K).coeff (-1 : ℤ) = 1 := by
   simpa using coeff_jqModC_pow_self K 1
 
-theorem algebraMap_laurentSeries_eq_single (c : K) :
-    algebraMap K (LaurentSeries K) c = HahnSeries.single 0 c := by
-  have h1 : algebraMap K (PowerSeries K) c = PowerSeries.C c := by simp
-  rw [HahnSeries.algebraMap_apply', h1, HahnSeries.ofPowerSeries_C]
-  rfl
-
-theorem aeval_jqModC_eq_zero {p : Polynomial K} (hp : Polynomial.aeval (jqModC K) p = 0) :
-    p = 0 := by
-  by_contra hp0
-  set n := p.natDegree with hn
-  have hcoeff : (Polynomial.aeval (jqModC K) p).coeff (-(n : ℤ)) = p.coeff n := by
-    rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range, HahnSeries.coeff_sum,
-      Finset.sum_eq_single n]
-    · rw [algebraMap_laurentSeries_eq_single, HahnSeries.coeff_single_zero_mul,
-        coeff_jqModC_pow_self, mul_one]
-    · intro i hi hin
-      have hilt : i < n := lt_of_le_of_ne (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)) hin
-      rw [algebraMap_laurentSeries_eq_single, HahnSeries.coeff_single_zero_mul,
-        coeff_jqModC_pow_of_lt, mul_zero]
-      omega
-    · intro hn'
-      exact absurd (Finset.self_mem_range_succ n) hn'
-  rw [hp] at hcoeff
-  simp only [HahnSeries.coeff_zero] at hcoeff
-  exact hp0 (Polynomial.leadingCoeff_eq_zero.mp hcoeff.symm)
-
-theorem transcendental_jqModC : Transcendental K (jqModC K) :=
-  transcendental_iff.mpr fun _ hp => aeval_jqModC_eq_zero K hp
-
 theorem jqModC_ne_zero [Nontrivial K] : jqModC K ≠ 0 := by
   intro h
   have h1 : (jqModC K).coeff (-1 : ℤ) = 1 := coeff_jqModC_neg_one K
@@ -156,7 +126,6 @@ export P2MW.S_ModularCurve_order_jqModC (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.order_jqModC (K : Type*) [CommRing K] [Nontrivial K] :

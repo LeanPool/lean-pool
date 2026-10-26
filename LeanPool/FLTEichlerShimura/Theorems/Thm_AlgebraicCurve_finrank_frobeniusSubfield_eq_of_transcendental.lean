@@ -22,7 +22,6 @@ public import Mathlib.Algebra.CharP.Algebra
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
 
 import Mathlib.FieldTheory.Relrank
-import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 
 /-!
 # [M:Mᵖ]=p for a one-variable function field over a perfect field
@@ -60,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_finrank_frobeniusSubfield_eq_of_transcendental
 
 noncomputable section
@@ -79,15 +77,6 @@ private theorem mem_frobeniusSubfield_iff {M : Type*} [Field M] (p : ℕ) [ExpCh
 
 private theorem pow_mem_frobeniusSubfield {M : Type*} [Field M] (p : ℕ) [ExpChar M p] (a : M) :
     a ^ p ∈ frobeniusSubfield M p := (mem_frobeniusSubfield_iff p).mpr ⟨a, rfl⟩
-
-private def frobeniusRingEquivRange (M : Type*) [Field M] (p : ℕ) [ExpChar M p] :
-    M ≃+* frobeniusSubfield M p :=
-  RingEquiv.ofBijective (frobenius M p).rangeRestrict
-    ⟨fun _ _ h ↦ (frobenius M p).injective (Subtype.ext_iff.mp h),
-      (frobenius M p).rangeRestrict_surjective⟩
-
-private theorem frobeniusRingEquivRange_apply (M : Type*) [Field M] (p : ℕ) [ExpChar M p]
-    (a : M) : ((frobeniusRingEquivRange M p a : frobeniusSubfield M p) : M) = a ^ p := rfl
 
 section Transport
 
@@ -352,71 +341,8 @@ private theorem finrank_frobeniusSubfield_eq_of_transcendental {K M : Type*} [Fi
   rw [finrank_frobeniusSubfield_eq (E := ↥(IntermediateField.adjoin K ({t} : Set M))) p,
     finrank_frobeniusSubfield_adjoin_transcendental p htr]
 
-section PDigitsExists
-
-variable {M : Type*} [Field M] (p : ℕ) [hp : Fact p.Prime] [CharP M p]
-
-private theorem pDigits_exists_of_finrank_eq
-    (hfr : haveI : ExpChar M p := ExpChar.prime hp.out
-      Module.finrank (frobeniusSubfield M p) M = p)
-    {t : M} (htp : ∀ a : M, a ^ p ≠ t) (g : M) :
-    ∃ a : Fin p → M, g = ∑ i : Fin p, a i ^ p * t ^ (i : ℕ) := by
-  have : ExpChar M p := ExpChar.prime hp.out
-  have hlin := pDigits_linearIndependent p htp
-  let b : Module.Basis (Fin p) (frobeniusSubfield M p) M :=
-    basisOfLinearIndependentOfCardEqFinrank hlin (by rw [hfr, Fintype.card_fin])
-  have hbapply : ∀ i : Fin p, (b i : M) = t ^ (i : ℕ) := fun i ↦
-    congrFun (coe_basisOfLinearIndependentOfCardEqFinrank hlin
-      (by rw [hfr, Fintype.card_fin])) i
-  refine ⟨fun i ↦ (frobeniusRingEquivRange M p).symm (b.repr g i), ?_⟩
-  conv_lhs => rw [← b.sum_repr g]
-  refine Finset.sum_congr rfl fun i _ ↦ ?_
-  rw [hbapply i, ← frobeniusRingEquivRange_apply M p, RingEquiv.apply_symm_apply]
-  rfl
-
-end PDigitsExists
-
-private theorem pDigits_existsUnique_of_transcendental {K M : Type*} [Field K] [Field M]
-    [Algebra K M] [PerfectField K] (p : ℕ) [hp : Fact p.Prime] [CharP K p]
-    (t : M) (htr : Transcendental K t)
-    [FiniteDimensional (IntermediateField.adjoin K ({t} : Set M)) M]
-    (htp : ∀ a : M, a ^ p ≠ t) (g : M) :
-    ∃! a : Fin p → M, g = ∑ i : Fin p, a i ^ p * t ^ (i : ℕ) := by
-  have : CharP M p := charP_of_injective_algebraMap (algebraMap K M).injective p
-  have : ExpChar M p := ExpChar.prime hp.out
-  have hlin := pDigits_linearIndependent p htp
-  have hfr := finrank_frobeniusSubfield_eq_of_transcendental p t htr
-  let b : Module.Basis (Fin p) (frobeniusSubfield M p) M :=
-    basisOfLinearIndependentOfCardEqFinrank hlin (by rw [hfr, Fintype.card_fin])
-  have hbapply : ∀ i : Fin p, (b i : M) = t ^ (i : ℕ) := fun i ↦
-    congrFun (coe_basisOfLinearIndependentOfCardEqFinrank hlin
-      (by rw [hfr, Fintype.card_fin])) i
-  have hexpand : ∀ (c : Fin p → M),
-      ∑ i : Fin p, c i ^ p * t ^ (i : ℕ) =
-        ∑ i : Fin p, (frobeniusRingEquivRange M p (c i) : frobeniusSubfield M p) • b i := by
-    intro c
-    refine Finset.sum_congr rfl fun i _ ↦ ?_
-    rw [hbapply i, Subfield.smul_def, frobeniusRingEquivRange_apply, smul_eq_mul]
-  obtain ⟨a, ha⟩ := pDigits_exists_of_finrank_eq p hfr htp g
-  refine ⟨a, ha, ?_⟩
-  intro a' ha'
-  have key : ∀ i, frobeniusRingEquivRange M p (a i) = frobeniusRingEquivRange M p (a' i) := by
-    intro i
-    have hga : g = ∑ j : Fin p, (frobeniusRingEquivRange M p (a j) :
-        frobeniusSubfield M p) • b j := ha.trans (hexpand a)
-    have hga' : g = ∑ j : Fin p, (frobeniusRingEquivRange M p (a' j) :
-        frobeniusSubfield M p) • b j := ha'.trans (hexpand a')
-    have hra := b.repr_sum_self
-      (c := fun j ↦ (frobeniusRingEquivRange M p (a j) : frobeniusSubfield M p))
-    have hra' := b.repr_sum_self
-      (c := fun j ↦ (frobeniusRingEquivRange M p (a' j) : frobeniusSubfield M p))
-    rw [← hga] at hra
-    rw [← hga'] at hra'
-    exact congrFun (hra.symm.trans hra') i
-  funext i
-  exact (frobeniusRingEquivRange M p).injective (key i).symm
-
-end AlgebraicCurve.PthPowerIndex
+end PthPowerIndex
+end AlgebraicCurve
 
 theorem solution {K M : Type*} [Field K] [Field M] [Algebra K M]
     [PerfectField K] (p : ℕ) [hp : Fact p.Prime] [CharP K p] (t : M) (htr : Transcendental K t)

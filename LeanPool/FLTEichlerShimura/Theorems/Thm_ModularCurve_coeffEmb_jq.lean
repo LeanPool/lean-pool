@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_coeffEmb_jq
 
 noncomputable section
@@ -76,23 +75,6 @@ theorem ModularCurve.CharLRows.coeffEmb_jq (L : Type*) [Field L] [Algebra ℚ L]
   rw [← jqModC_rat]
   exact map_jqModC (algebraMap ℚ L)
 
-p2m_open_scoped "ModularCurve" in
-theorem ModularCurve.CharLRows.map_qExpand_aux {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S)
-    (N : ℕ) [NeZero N]
-    (x : LaurentSeries R) : (qExpand R N x).map f = qExpand S N (x.map f) := by
-  ext k
-  rw [HahnSeries.map_coeff]
-  by_cases hk : (N : ℤ) ∣ k
-  · obtain ⟨m, rfl⟩ := hk
-    rw [qExpand_coeff_mul, qExpand_coeff_mul, HahnSeries.map_coeff]
-  · rw [qExpand_coeff_of_not_dvd N _ hk, qExpand_coeff_of_not_dvd N _ hk, map_zero]
-
-p2m_open_scoped "ModularCurve" in
-theorem ModularCurve.CharLRows.coeffEmb_jqN (L : Type*) [Field L] [Algebra ℚ L] (N : ℕ) [NeZero N] :
-    coeffEmb L (jqN N) = jqNModC L N := by
-  rw [jqN, jqNModC, ← CharLRows.coeffEmb_jq L]
-  exact CharLRows.map_qExpand_aux (algebraMap ℚ L) N jq
-
 end
 
 open _root_.ModularCurve _root_.P2MW.S_ModularCurve_coeffEmb_jq.ModularCurve in
@@ -107,7 +89,6 @@ export P2MW.S_ModularCurve_coeffEmb_jq (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.coeffEmb_jq (L : Type*) [Field L] [Algebra ℚ L] :

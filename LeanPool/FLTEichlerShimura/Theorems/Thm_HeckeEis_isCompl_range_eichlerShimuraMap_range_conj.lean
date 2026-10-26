@@ -79,9 +79,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_HeckeEis_isCompl_range_eichlerShimuraMap_range_conj
-
 
 open scoped MatrixGroups
 
@@ -96,10 +94,6 @@ def realOfSemilinear {S H : Type*} [AddCommGroup S] [Module ℂ S] [AddCommGroup
   map_smul' r f := by
     rw [RingHom.id_apply, ← Complex.coe_smul, LinearMap.map_smulₛₗ, Complex.conj_ofReal,
       Complex.coe_smul]
-
-@[scoped simp] theorem realOfSemilinear_apply {S H : Type*} [AddCommGroup S] [Module ℂ S]
-  [AddCommGroup H] [Module ℂ H]
-    (T : S →ₛₗ[starRingEnd ℂ] H) (f : S) : realOfSemilinear T f = T f := rfl
 
 theorem isCompl_range_of_finrank_le {S H : Type*} [AddCommGroup S] [Module ℂ S]
     [FiniteDimensional ℂ S]
@@ -266,7 +260,6 @@ export P2MW.S_HeckeEis_isCompl_range_eichlerShimuraMap_range_conj (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem HeckeEis.isCompl_range_eichlerShimuraMap_range_conj (N : ℕ) [NeZero N] (n : ℕ)

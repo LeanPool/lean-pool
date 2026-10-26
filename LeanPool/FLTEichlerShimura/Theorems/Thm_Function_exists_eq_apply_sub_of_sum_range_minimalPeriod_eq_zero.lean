@@ -54,7 +54,6 @@ Prove2Me submission: `0e225520-8f2c-5b33-894a-9f2b9a1b7c36` (ACCEPTED).
 
 section privateSection
 
-
 namespace P2MW.S_Function_exists_eq_apply_sub_of_sum_range_minimalPeriod_eq_zero
 
 namespace Function
@@ -129,10 +128,6 @@ theorem idx_lt (x : X) : idx f hf x < minimalPeriod f (base f hf x) := by
       unfold idx at *
       omega)
   exact this key
-
-theorem minimalPeriod_base (x : X) : minimalPeriod f (base f hf x) = minimalPeriod f x := by
-  conv_rhs => rw [← iterate_idx f hf x]
-  rw [minimalPeriod_apply_iterate (minimalPeriod_pos_iff_mem_periodicPts.mp (hf _))]
 
 open Classical in
 theorem idx_apply (x : X) :

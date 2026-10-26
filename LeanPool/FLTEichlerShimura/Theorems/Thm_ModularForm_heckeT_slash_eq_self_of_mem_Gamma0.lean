@@ -64,7 +64,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularForm_heckeT_slash_eq_self_of_mem_Gamma0
 
 noncomputable section
@@ -78,10 +77,6 @@ p2m_export "ModularForm" "rec ext heckeMatrix heckeDiagMatrix heckeU heckeT heck
 p2m_open "ModularForm"
 
 namespace HeckeSlashInvariance
-
-@[scoped simp] theorem mapGL_apply (g : SL(2, ℤ)) (i j : Fin 2) :
-    (mapGL ℝ g : GL (Fin 2) ℝ) i j = ((g i j : ℤ) : ℝ) := by
-  simp
 
 theorem det_eq (g : SL(2, ℤ)) : g 0 0 * g 1 1 - g 0 1 * g 1 0 = 1 := by
   have h := g.det_coe
@@ -212,76 +207,6 @@ theorem heckeU_eq_sum_zmod (k : ℤ) (f : ℍ → ℂ) :
   exact sum_range_eq_sum_zmod _
 
 end reindex
-
-section heckeU
-
-variable {p : ℕ}
-
-theorem unit_of_apply_one_zero_eq_zero (g : SL(2, ℤ)) (hc : ((g 1 0 : ℤ) : ZMod p) = 0) :
-    ((g 0 0 : ℤ) : ZMod p) * ((g 1 1 : ℤ) : ZMod p) = 1 := by
-  have := congrArg (Int.cast : ℤ → ZMod p) (det_eq g)
-  push_cast at this
-  linear_combination this + ((g 0 1 : ℤ) : ZMod p) * hc
-
-def affinePerm (g : SL(2, ℤ)) (hc : ((g 1 0 : ℤ) : ZMod p) = 0) : Equiv.Perm (ZMod p) where
-  toFun j := ((g 1 1 : ℤ) : ZMod p) * (((g 0 1 : ℤ) : ZMod p) + ((g 1 1 : ℤ) : ZMod p) * j)
-  invFun j := ((g 0 0 : ℤ) : ZMod p) * (((g 0 0 : ℤ) : ZMod p) * j - ((g 0 1 : ℤ) : ZMod p))
-  left_inv j := by
-    linear_combination (((g 0 0 : ℤ) : ZMod p) * ((g 0 1 : ℤ) : ZMod p)
-      + j * (((g 0 0 : ℤ) : ZMod p) * ((g 1 1 : ℤ) : ZMod p) + 1)) *
-        unit_of_apply_one_zero_eq_zero g hc
-  right_inv j := by
-    linear_combination (-(((g 1 1 : ℤ) : ZMod p) * ((g 0 1 : ℤ) : ZMod p))
-      + j * (((g 0 0 : ℤ) : ZMod p) * ((g 1 1 : ℤ) : ZMod p) + 1)) *
-        unit_of_apply_one_zero_eq_zero g hc
-
-theorem affinePerm_apply (g : SL(2, ℤ)) (hc : ((g 1 0 : ℤ) : ZMod p) = 0) (j : ZMod p) :
-    affinePerm g hc j =
-      ((g 1 1 : ℤ) : ZMod p) * (((g 0 1 : ℤ) : ZMod p) + ((g 1 1 : ℤ) : ZMod p) * j) := rfl
-
-variable [NeZero p]
-
-theorem heckeMatrix_mul_of_dvd (g : SL(2, ℤ)) (hc : (p : ℤ) ∣ g 1 0) (x : ZMod p) :
-    ∃ g' : SL(2, ℤ), g' 1 0 = p * g 1 0 ∧
-      heckeMatrix p x.val * mapGL ℝ g =
-        mapGL ℝ g' * heckeMatrix p (affinePerm g ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr hc)
-          x).val := by
-  have hc0 : ((g 1 0 : ℤ) : ZMod p) = 0 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr hc
-  set x' := affinePerm g hc0 x with hx'
-  obtain ⟨e, he⟩ : (p : ℤ) ∣ g 0 1 + x.val * g 1 1 - x'.val * (g 0 0 + x.val * g 1 0) := by
-    rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-    push_cast
-    rw [ZMod.natCast_zmod_val, ZMod.natCast_zmod_val, hx', affinePerm_apply]
-    linear_combination (-(((g 0 1 : ℤ) : ZMod p) + x * ((g 1 1 : ℤ) : ZMod p))) *
-      unit_of_apply_one_zero_eq_zero g hc0
-      - (((g 1 1 : ℤ) : ZMod p) * (((g 0 1 : ℤ) : ZMod p) + ((g 1 1 : ℤ) : ZMod p) * x) * x) * hc0
-  exact heckeMatrix_mul_of_eq (NeZero.ne p) g x.val x'.val e (by linear_combination he)
-
-variable {N : ℕ} (k : ℤ)
-
-theorem heckeU_slash_mapGL (hpN : p ∣ N) (f : ℍ → ℂ)
-    (hf : ∀ γ ∈ (CongruenceSubgroup.Gamma0 N : Subgroup (GL (Fin 2) ℝ)), f ∣[k] γ = f)
-    (g : SL(2, ℤ)) (hg : g ∈ CongruenceSubgroup.Gamma0 N) :
-    heckeU k p f ∣[k] (mapGL ℝ g) = heckeU k p f := by
-  have hcN : (N : ℤ) ∣ g 1 0 :=
-    (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (CongruenceSubgroup.Gamma0_mem.mp hg)
-  have hc : (p : ℤ) ∣ g 1 0 := (Int.natCast_dvd_natCast.mpr hpN).trans hcN
-  rw [heckeU_eq_sum_zmod k f, SlashAction.sum_slash]
-  calc ∑ x : ZMod p, (f ∣[k] heckeMatrix p x.val) ∣[k] mapGL ℝ g
-      = ∑ x : ZMod p, f ∣[k] heckeMatrix p
-          (affinePerm g ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mpr hc) x).val := by
-        refine Finset.sum_congr rfl fun x _ ↦ ?_
-        obtain ⟨g', hg', hmul⟩ := heckeMatrix_mul_of_dvd g hc x
-        have hg'N : g' ∈ CongruenceSubgroup.Gamma0 N := by
-          rw [CongruenceSubgroup.Gamma0_mem, hg']
-          push_cast
-          rw [CongruenceSubgroup.Gamma0_mem.mp hg, mul_zero]
-        rw [← SlashAction.slash_mul, hmul, SlashAction.slash_mul,
-          hf _ (Subgroup.mem_map_of_mem (mapGL ℝ) hg'N)]
-    _ = ∑ x : ZMod p, f ∣[k] heckeMatrix p x.val :=
-        Equiv.sum_comp (affinePerm g _) (fun x ↦ f ∣[k] heckeMatrix p x.val)
-
-end heckeU
 
 section heckeT
 
@@ -422,20 +347,6 @@ theorem heckeT_slash_eq_self_of_mem_Gamma0' {N : ℕ} (k : ℤ) {p : ℕ} (hp : 
   have : Fact p.Prime := ⟨hp⟩
   obtain ⟨g, hg, rfl⟩ := hγ
   exact heckeT_slash_mapGL k hpN f hf g hg
-
-open HeckeSlashInvariance in
-theorem heckeU_slash_eq_self_of_mem_Gamma0' {N : ℕ} (k : ℤ) {p : ℕ} (hpN : p ∣ N)
-    {f : UpperHalfPlane → ℂ}
-    (hf : ∀ γ ∈ (CongruenceSubgroup.Gamma0 N : Subgroup (Matrix.GeneralLinearGroup (Fin 2) ℝ)),
-      SlashAction.map k γ f = f)
-    (γ : Matrix.GeneralLinearGroup (Fin 2) ℝ)
-    (hγ : γ ∈ (CongruenceSubgroup.Gamma0 N : Subgroup (Matrix.GeneralLinearGroup (Fin 2) ℝ))) :
-    SlashAction.map k γ (ModularForm.heckeU k p f) = ModularForm.heckeU k p f := by
-  rcases Nat.eq_zero_or_pos p with rfl | hp
-  · simp
-  have : NeZero p := ⟨hp.ne'⟩
-  obtain ⟨g, hg, rfl⟩ := hγ
-  exact heckeU_slash_mapGL k hpN f hf g hg
 
 end ModularForm
 

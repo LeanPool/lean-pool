@@ -19,7 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspondence
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PlaceEvaluation
-public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
 
 import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
@@ -30,7 +29,7 @@ import Mathlib.Data.EReal.Operations
 import Mathlib.Topology.Algebra.InfiniteSum.Order
 import Mathlib.RingTheory.Henselian
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.Algebra.Order.Ring.Star
+public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePic0
 
 /-!
 # Integral maps into K(E) determined by action on places
@@ -82,110 +81,14 @@ namespace WeierstrassCurve
 
 namespace Affine
 
-variable {F : Type*} [Field F] {W : Affine F}
-
-theorem S13_ofHeightOneSpectrum_injective {R : Type*} [CommRing R] [IsDedekindDomain R]
-    [Algebra R W.FunctionField] [IsFractionRing R W.FunctionField] [Algebra F R]
-    [IsScalarTower F R W.FunctionField] :
-    Function.Injective (AlgebraicCurve.Place.ofHeightOneSpectrum (K := F) (R := R) (F :=
-      W.FunctionField)) := by
-  intro w₁ w₂ h
-  refine HeightOneSpectrum.eq_of_valuation_isEquiv_valuation (K := W.FunctionField) ?_
-  rw [Valuation.isEquiv_iff_valuationSubring]
-  exact congrArg AlgebraicCurve.Place.toValuationSubring h
-
-variable [IsDedekindDomain W.CoordinateRing]
-
-theorem placeOfEquation_injective {x₁ y₁ x₂ y₂ : F} (h₁ : W.Equation x₁ y₁)
-    (h₂ : W.Equation x₂ y₂) (h : placeOfEquation h₁ = placeOfEquation h₂) :
-    x₁ = x₂ ∧ y₁ = y₂ :=
-  eq_of_XYIdeal_eq h₂
-    (congrArg HeightOneSpectrum.asIdeal (S13_ofHeightOneSpectrum_injective h))
-
-section CentredGate
-
-variable [DecidableEq F] [GenusOnePlaceGate W] [GenusOnePlaceGate.IsCentred W]
-
-namespace InfinitePlace
-
-omit [DecidableEq F] [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem deg_eq_one : (InfinitePlace.place : AlgebraicCurve.Place F W.FunctionField).deg = 1 := by
-  classical
-  exact
-    deg_placeOfPoint (W := W) 0
-
-end InfinitePlace
-
-omit [DecidableEq F] [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem placeOfPoint_zero' : placeOfPoint (0 : W.Point) = InfinitePlace.place :=
-  rfl
-
-omit [DecidableEq F] [IsDedekindDomain W.CoordinateRing] [GenusOnePlaceGate.IsCentred W] in
-theorem placeOfPoint_surjective' : Function.Surjective (placeOfPoint (W := W)) :=
-  (pointEquivPlace (W := W)).surjective
-
-end CentredGate
-end WeierstrassCurve.Affine
-
-namespace WeierstrassCurve
-
-namespace Affine
-
 open WeierstrassCurve.Affine WeierstrassCurve
 
 scoped instance instHasPrincipalDivisorsFunctionField_s13 {F : Type*} [Field F] [CharZero F]
     {W : Affine F} : HasPrincipalDivisors F W.FunctionField :=
   hasPrincipalDivisors_functionField W
 
-namespace IsogenyEndDatum
-
-open WeierstrassCurve.Affine.IsogenyEndDatum
-
-variable {F : Type*} [Field F] [DecidableEq F] [CharZero F]
-variable {W : Affine F} [GenusOnePlaceGate W] [AbelTheorem W]
-
-theorem pointEnd_eq_pointEnd' (D : IsogenyEndDatum W) (hN : NormFormulaAlong F D.ι D.hfin) :
-    D.pointEnd hN = D.pointEnd' := rfl
-
-end IsogenyEndDatum
-
-end WeierstrassCurve.Affine
-
-section
-
-namespace WeierstrassCurve
-
-namespace Affine
-
-variable {F : Type*} [Field F] {W : Affine F} (v : AlgebraicCurve.Place F W.FunctionField)
-
-theorem exists_equation [IsAlgClosed F] (W : Affine F) (x₀ : F) :
-    ∃ y₀ : F, W.Equation x₀ y₀ := by
-  set P : F[X] := Polynomial.X ^ 2 + Polynomial.C (W.a₁ * x₀ + W.a₃) * Polynomial.X
-    - Polynomial.C (x₀ ^ 3 + W.a₂ * x₀ ^ 2 + W.a₄ * x₀ + W.a₆) with hPdef
-  have hPdeg : P.degree ≠ 0 := by
-    have hcoeff : P.coeff 2 = 1 := by
-      rw [hPdef]
-      simp only [Polynomial.coeff_sub, Polynomial.coeff_add, Polynomial.coeff_X_pow,
-        Polynomial.coeff_C_mul, Polynomial.coeff_X, Polynomial.coeff_C]
-      norm_num
-    intro hcon
-    have h2 : P.coeff 2 = 0 := by
-      refine Polynomial.coeff_eq_zero_of_degree_lt ?_
-      rw [hcon]
-      norm_num
-    grind
-  obtain ⟨y₀, hy₀⟩ := IsAlgClosed.exists_root P hPdeg
-  refine ⟨y₀, ?_⟩
-  rw [equation_iff]
-  have h3 : P.eval y₀ = 0 := hy₀
-  rw [hPdef] at h3
-  simp only [Polynomial.eval_sub, Polynomial.eval_add, Polynomial.eval_pow,
-    Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_X] at h3
-  linear_combination h3
-
-end WeierstrassCurve.Affine
-end
+end Affine
+end WeierstrassCurve
 
 section
 

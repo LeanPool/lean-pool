@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_Affine_weilPairing0_galois
 
 p2m_open "WeierstrassCurve WeierstrassCurve.Affine IsDedekindDomain WithZero"
@@ -115,17 +114,6 @@ theorem galRing_exists (σ : K ≃ₐ[F] K) :
     rw [RingHom.comp_apply, RingHom.id_apply, galRingHom_comp, mul_inv_cancel, galRingHom_one]
   · refine RingHom.ext fun z => ?_
     rw [RingHom.comp_apply, RingHom.id_apply, galRingHom_comp, inv_mul_cancel, galRingHom_one]
-
-theorem galRing_map_XYIdeal (σ : K ≃ₐ[F] K) (φ : (W⁄K).CoordinateRing →+* (W⁄K).CoordinateRing)
-    (hφ : ∀ p : K[X][Y], φ (CoordinateRing.mk (W⁄K) p) =
-      CoordinateRing.mk (W⁄K) (p.map (mapRingHom (σ : K →+* K)))) (x y : K) :
-    (CoordinateRing.XYIdeal (W⁄K) x (C y)).map φ = CoordinateRing.XYIdeal (W⁄K) (σ x) (C (σ y))
-      := by
-  rw [CoordinateRing.XYIdeal, Ideal.map_span, Set.image_pair, CoordinateRing.XClass,
-    CoordinateRing.YClass, hφ, hφ]
-  simp only [Polynomial.map_sub, Polynomial.map_C, Polynomial.map_X, coe_mapRingHom,
-    RingHom.coe_coe]
-  rfl
 
 theorem galFunctionField_exists (σ : K ≃ₐ[F] K) :
     ∃ Φ : (W⁄K).FunctionField ≃+* (W⁄K).FunctionField, ∀ p : K[X][Y],
@@ -189,9 +177,6 @@ noncomputable def galAlgHom : (W⁄K).FunctionField →ₐ[F] (W⁄K).FunctionFi
   { Φ with commutes' := gal_algebraMap_base W σ Φ hΦ }
 
 omit [DecidableEq K] in
-@[scoped simp] theorem galAlgHom_apply (h : (W⁄K).FunctionField) : galAlgHom W σ Φ hΦ h = Φ h := rfl
-
-omit [DecidableEq K] in
 theorem map_galAlgHom_genericPoint [W.IsElliptic] :
     Point.map (galAlgHom W σ Φ hΦ) (genericPoint W K) = genericPoint W K := by
   rw [genericPoint, Point.map_some]
@@ -247,7 +232,8 @@ theorem gal_transEquiv [IsAlgClosed K] [W.IsElliptic] (S : (W⁄K).Point) (f : (
 
 end GalA
 
-end WeierstrassCurve.Affine
+end Affine
+end WeierstrassCurve
 
 open WeierstrassCurve.Affine
 
@@ -318,7 +304,6 @@ export P2MW.S_WeierstrassCurve_Affine_weilPairing0_galois (solution)
 end privateSection
 
 public section publicSection
-
 
 open WeierstrassCurve WeierstrassCurve.Affine IsDedekindDomain WithZero
 

@@ -19,7 +19,6 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 
-
 /-!
 # Division polynomial identity ψₙ(x,y)²=Ψ²ₙ(x) on the curve
 
@@ -57,7 +56,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_Affine_evalEval_psi_sq
 
 open Polynomial
@@ -73,14 +71,6 @@ theorem PortCard.evalEval_ψ_sq {R : Type*} [CommRing R] (W : WeierstrassCurve R
   have h0 : (W.toAffine.polynomial).evalEval x y = 0 := h
   have h1 := congrArg (evalEval x y) hp
   rw [evalEval_sub, evalEval_mul, h0, zero_mul, sub_eq_zero, evalEval_pow, evalEval_C] at h1
-  exact h1
-
-theorem PortCard.evalEval_φ {R : Type*} [CommRing R] (W : WeierstrassCurve R) {x y : R}
-    (h : W.toAffine.Equation x y) (n : ℤ) : (W.φ n).evalEval x y = (W.Φ n).eval x := by
-  obtain ⟨p, hp⟩ := AdjoinRoot.mk_eq_mk.mp (WeierstrassCurve.Affine.CoordinateRing.mk_φ W n)
-  have h0 : (W.toAffine.polynomial).evalEval x y = 0 := h
-  have h1 := congrArg (evalEval x y) hp
-  rw [evalEval_sub, evalEval_mul, h0, zero_mul, sub_eq_zero, evalEval_C] at h1
   exact h1
 
 theorem solution {R : Type*} [CommRing R] (W : WeierstrassCurve R) {x y : R}

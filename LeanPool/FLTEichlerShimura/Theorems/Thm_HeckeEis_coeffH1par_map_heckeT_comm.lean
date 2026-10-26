@@ -67,7 +67,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_HeckeEis_coeffH1par_map_heckeT_comm
 
 namespace HeckeEis
@@ -93,12 +92,6 @@ theorem map_binarySubst (M : Matrix (Fin 2) (Fin 2) ℤ) (p : MvPolynomial (Fin 
     · simp []
     · simp [binarySubst_X, Fin.sum_univ_two, map_add, map_mul]
   exact RingHom.congr_fun h p
-
-theorem map_binaryFormRepSL (n : ℕ) (g : SL(2, ℤ)) (v : ↥(BinaryForm R n)) :
-    MvPolynomial.map φ ((binaryFormRepSL R n g v : ↥(BinaryForm R n)) : MvPolynomial (Fin 2) R)
-      = binarySubst R' (g : Matrix (Fin 2) (Fin 2) ℤ) (MvPolynomial.map φ (v : MvPolynomial (Fin 2)
-        R)) := by
-  rw [binaryFormRepSL_apply_coe, map_binarySubst]
 
 theorem map_binaryFormAlphaAdj (n ℓ : ℕ) (v : ↥(BinaryForm R n)) :
     MvPolynomial.map φ ((binaryFormAlphaAdj R n ℓ v : ↥(BinaryForm R n)) : MvPolynomial (Fin 2) R)
@@ -214,7 +207,6 @@ export P2MW.S_HeckeEis_coeffH1par_map_heckeT_comm (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem HeckeEis.coeffH1par_map_heckeT_comm {R R' : Type*} [CommRing R] [CommRing R'] (φ : R →+* R')

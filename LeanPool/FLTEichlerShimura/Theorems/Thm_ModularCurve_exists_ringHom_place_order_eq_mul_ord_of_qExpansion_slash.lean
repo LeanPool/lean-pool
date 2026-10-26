@@ -82,9 +82,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_exists_ringHom_place_order_eq_mul_ord_of_qExpansion_slash
-
 
 open UpperHalfPlane ModularForm Filter Function Complex Matrix.SpecialLinearGroup OnePoint
 open scoped MatrixGroups Topology CongruenceSubgroup Pointwise Manifold
@@ -260,27 +258,6 @@ private theorem eventually_ne_zero_atImInfty {N : ℕ} [NeZero N] {F : ℍ → �
   rw [hid τ]
   exact mul_ne_zero (pow_ne_zero _ (Complex.exp_ne_zero _)) hτ
 
-private theorem tendsto_div_atImInfty_of_triple {N : ℕ} [NeZero N] {G H : ℍ → ℂ}
-    (pG : Periodic (G ∘ ofComplex) N) (dG : MDiff G) (bG : IsBoundedAtImInfty G)
-    (pH : Periodic (H ∘ ofComplex) N) (dH : MDiff H) (bH : IsBoundedAtImInfty H)
-    (hG0 : qExpansion N G ≠ 0) (hH0 : qExpansion N H ≠ 0)
-    (hord : (qExpansion N G).order = (qExpansion N H).order) :
-    ∃ L : ℂ, L ≠ 0 ∧ Tendsto (fun τ : ℍ => G τ / H τ) atImInfty (𝓝 L) := by
-  have hN : (0 : ℝ) < N := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)
-  obtain ⟨uG, cG, -, nG, idG⟩ := exists_chart pG dG bG hG0
-  obtain ⟨uH, cH, -, nH, idH⟩ := exists_chart pH dH bH hH0
-  have hm : (qExpansion (N : ℝ) G).order.toNat = (qExpansion (N : ℝ) H).order.toNat := by
-    rw [hord]
-  refine ⟨uG 0 / uH 0, div_ne_zero nG nH, ?_⟩
-  have hTG : Tendsto (fun τ : ℍ => uG (Periodic.qParam N τ)) atImInfty (𝓝 (uG 0)) :=
-    cG.tendsto.comp (qParam_tendsto_atImInfty hN)
-  have hTH : Tendsto (fun τ : ℍ => uH (Periodic.qParam N τ)) atImInfty (𝓝 (uH 0)) :=
-    cH.tendsto.comp (qParam_tendsto_atImInfty hN)
-  refine (hTG.div hTH nH).congr fun τ => ?_
-  have hqne : Periodic.qParam (N : ℝ) (τ : ℂ) ^ (qExpansion (N : ℝ) H).order.toNat ≠ 0 :=
-    pow_ne_zero _ (Complex.exp_ne_zero _)
-  rw [Pi.div_apply, idG τ, idH τ, hm, mul_div_mul_left _ _ hqne]
-
 private theorem chart_eventually_ne_zero {N : ℕ} [NeZero N] {u : ℂ → ℂ} (hu : ContinuousAt u 0)
     (hu0 : u 0 ≠ 0) :
     ∀ᶠ τ : ℍ in atImInfty, u (Periodic.qParam N τ) ≠ 0 := by
@@ -433,7 +410,6 @@ end S3CuspLimit
 
 namespace S3c
 
-
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 private theorem order_inv_laurent {x : LaurentSeries K} (hx : x ≠ 0) : (x⁻¹).order = -x.order := by
@@ -582,15 +558,9 @@ private def orderPlace : AlgebraicCurve.Place K F where
     exact not_le.mpr ht this
   isPrincipalIdealRing' := isPrincipalIdealRing_orderValuationSubring Φ
 
-private theorem orderPlace_toValuationSubring :
-    (orderPlace Φ hΦ ht).toValuationSubring = orderValuationSubring Φ := rfl
-
 private theorem mem_orderPlace_iff {x : F} :
     x ∈ (orderPlace Φ hΦ ht).toValuationSubring ↔ 0 ≤ (Φ x).order :=
   Iff.rfl
-
-private theorem not_mem_orderPlace : t ∉ (orderPlace Φ hΦ ht).toValuationSubring :=
-  not_le.mpr ht
 
 private theorem exists_order_eq_mul_ord :
     ∃ e : ℕ, 0 < e ∧ ∀ x : F, x ≠ 0 → (Φ x).order = e * (orderPlace Φ hΦ ht).ord x := by
@@ -615,18 +585,6 @@ private theorem exists_order_eq_mul_ord :
   rw [map_mul, map_zpow₀, HahnSeries.order_mul ((map_ne_zero_iff' Φ).2 hu0)
       (zpow_ne_zero _ ((map_ne_zero_iff' Φ).2 hϖ0)), huord, zero_add,
     order_zpow_laurent ((map_ne_zero_iff' Φ).2 hϖ0), mul_comm]
-
-private theorem ord_eq_zero_iff {x : F} (hx : x ≠ 0) :
-    (orderPlace Φ hΦ ht).ord x = 0 ↔ (Φ x).order = 0 := by
-  obtain ⟨e, he, h⟩ := exists_order_eq_mul_ord Φ hΦ ht
-  rw [h x hx]
-  constructor
-  · intro h0
-    rw [h0, mul_zero]
-  · intro h0
-    rcases mul_eq_zero.mp h0 with h1 | h1
-    · exact absurd h1 (by exact_mod_cast he.ne')
-    · exact h1
 
 end S3c
 
@@ -890,21 +848,6 @@ private theorem order_inv_lq {R : Type*} [Field R] {x : LaurentSeries R} (hx : x
     (x⁻¹).order = -x.order := by
   have h := HahnSeries.order_mul hx (inv_ne_zero hx)
   rw [mul_inv_cancel₀ hx, HahnSeries.order_one] at h
-  omega
-
-private theorem PowerSeries_order_eq_of_div_order_eq_zero {R : Type*} [Field R]
-    {p q : PowerSeries R}
-    (hp : p ≠ 0) (hq : q ≠ 0)
-    (h0 : (HahnSeries.ofPowerSeries ℤ R p / HahnSeries.ofPowerSeries ℤ R q).order = 0) :
-    p.order = q.order := by
-  have hpL : HahnSeries.ofPowerSeries ℤ R p ≠ 0 := fun h =>
-    hp (HahnSeries.ofPowerSeries_injective (by rw [h, map_zero]))
-  have hqL : HahnSeries.ofPowerSeries ℤ R q ≠ 0 := fun h =>
-    hq (HahnSeries.ofPowerSeries_injective (by rw [h, map_zero]))
-  rw [div_eq_mul_inv, HahnSeries.order_mul hpL (inv_ne_zero hqL), order_inv_lq hqL,
-    order_ofPowerSeries hp, order_ofPowerSeries hq] at h0
-  rw [← PowerSeries.coe_toNat_order hp, ← PowerSeries.coe_toNat_order hq]
-  norm_cast
   omega
 
 end Orders
@@ -1308,7 +1251,8 @@ private theorem qParam_zpow_neg_eq_exp (N : ℕ) (a b : ℤ) (τ : ℍ) :
   ring
 
 end S3readout
-end Ws49.CUSPLIM
+end CUSPLIM
+end Ws49
 
 open ModularCurve Ws49 CUSPLIM S3CuspLimit S3c
 
@@ -1400,7 +1344,6 @@ export P2MW.S_ModularCurve_exists_ringHom_place_order_eq_mul_ord_of_qExpansion_s
 end privateSection
 
 public section publicSection
-
 
 open UpperHalfPlane
 open scoped MatrixGroups Topology ModularForm

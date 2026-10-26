@@ -59,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_Affine_Point_zsmul_x_mul_psi_sq
 
 section PortCardMulXY
@@ -163,9 +162,6 @@ lemma Universal.twoω_curve_eq (n : ℤ) : Universal.curve.twoω n = 2 * Univers
 theorem ω_eq_ωe (n : ℤ) : W.ω n = W.ωe n := by
   rw [W.ω_eq_map_of_twoω_eq (Universal.twoω_curve_eq n), ← map_ωe, Universal.map_specialize]
 
-theorem two_mul_ω_eq_twoω (n : ℤ) : 2 * W.ω n = W.twoω n :=
-  W.two_mul_ω_of_twoω_universal_eq (Universal.twoω_curve_eq n)
-
 end WeierstrassCurve
 
 end M4WilesOmega
@@ -219,7 +215,6 @@ export P2MW.S_WeierstrassCurve_Affine_Point_zsmul_x_mul_psi_sq (solution)
 end privateSection
 
 public section publicSection
-
 
 open Polynomial
 open scoped Polynomial.Bivariate

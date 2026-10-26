@@ -70,9 +70,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_LevelN_exists_place_ord_jGen_le_two_three_level
-
 
 open UpperHalfPlane
 open scoped MatrixGroups IntermediateField Manifold
@@ -104,9 +102,6 @@ theorem E₆_smul (γ : SL(2, ℤ)) (τ : ℍ) :
 
 theorem S_smul_I : ModularGroup.S • UpperHalfPlane.I = UpperHalfPlane.I :=
   ModularGroup.stabilizer_I.mpr (by simp)
-
-theorem ST_smul_ρ : (ModularGroup.S * ModularGroup.T) • ρ = ρ :=
-  ModularGroup.stabilizer_ρ.mpr (by simp)
 
 theorem TinvS_smul_ρ : (ModularGroup.T⁻¹ * ModularGroup.S) • ρ = ρ :=
   ModularGroup.stabilizer_ρ.mpr (by simp)
@@ -219,10 +214,6 @@ theorem analyticAt_comp_ofComplex {G : ℍ → ℂ} (hG : MDiff G) (τ : ℍ) :
     UpperHalfPlane.mdifferentiable_iff.mp hG
   exact (hd.analyticOnNhd isOpen_upperHalfPlaneSet) τ τ.im_pos
 
-@[scoped simp] theorem comp_ofComplex_apply_coe (G : ℍ → ℂ) (τ : ℍ) :
-    (G ∘ ofComplex) (τ : ℂ) = G τ := by
-  simp [Function.comp_apply, ofComplex_apply]
-
 theorem analyticOrderAt_jsub (τ₀ : ℍ) :
     analyticOrderAt ((fun τ : ℍ => LevelN.jAnalytic τ - LevelN.jAnalytic τ₀) ∘ ofComplex) (τ₀ : ℂ) =
       ((Nat.card (MulAction.stabilizer SL(2, ℤ) τ₀) / 2 : ℕ) : ℕ∞) := by
@@ -245,12 +236,6 @@ theorem analyticOrderAt_jsub (τ₀ : ℍ) :
   | coe m =>
     simp only [ENat.map_natCast, WithTop.coe_eq_coe, Nat.cast_inj] at hmero
     exact_mod_cast hmero
-
-omit [NeZero M] in
-theorem coe_algebraMap_ring (c : ℂ) :
-    ((algebraMap ℂ (LevelN.ring M) c : LevelN.ring M) : ℍ → ℂ) = fun _ => c := by
-  funext τ
-  simp [Algebra.algebraMap_eq_smul_one]
 
 omit [NeZero M] in
 theorem jsub_mem (c : ℂ) : (fun τ : ℍ => LevelN.jAnalytic τ - c) ∈ LevelN.ring M := by
@@ -348,7 +333,9 @@ theorem main :
 
 end Places
 
-end ModularCurve.LevelN.SpecialRamification
+end SpecialRamification
+end LevelN
+end ModularCurve
 end
 
 theorem solution (N : ℕ) [NeZero N]
@@ -375,7 +362,6 @@ export P2MW.S_ModularCurve_LevelN_exists_place_ord_jGen_le_two_three_level (solu
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem ModularCurve.LevelN.exists_place_ord_jGen_le_two_three_level (N : ℕ) [NeZero N]

@@ -56,7 +56,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_coeff_jqModC_neg_one
 
 noncomputable section
@@ -85,59 +84,8 @@ theorem coeff_jqModC_pow_self (n : ℕ) : ((jqModC K) ^ n).coeff (-(n : ℤ)) = 
     show (0 : ℤ) = ((0 : ℕ) : ℤ) from rfl, HahnSeries.ofPowerSeries_apply_coeff,
     PowerSeries.coeff_zero_eq_constantCoeff, map_pow, constantCoeff_jNum_map, one_pow]
 
-theorem coeff_jqModC_pow_of_lt {n : ℕ} {m : ℤ} (hm : m < -(n : ℤ)) :
-    ((jqModC K) ^ n).coeff m = 0 := by
-  rw [jqModC_pow, HahnSeries.coeff_single_mul, one_mul]
-  exact ofPowerSeries_coeff_of_neg _ (by omega)
-
 theorem coeff_jqModC_neg_one : (jqModC K).coeff (-1 : ℤ) = 1 := by
   simpa using coeff_jqModC_pow_self K 1
-
-theorem algebraMap_laurentSeries_eq_single (c : K) :
-    algebraMap K (LaurentSeries K) c = HahnSeries.single 0 c := by
-  have h1 : algebraMap K (PowerSeries K) c = PowerSeries.C c := by simp
-  rw [HahnSeries.algebraMap_apply', h1, HahnSeries.ofPowerSeries_C]
-  rfl
-
-theorem aeval_jqModC_eq_zero {p : Polynomial K} (hp : Polynomial.aeval (jqModC K) p = 0) :
-    p = 0 := by
-  by_contra hp0
-  set n := p.natDegree with hn
-  have hcoeff : (Polynomial.aeval (jqModC K) p).coeff (-(n : ℤ)) = p.coeff n := by
-    rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range, HahnSeries.coeff_sum,
-      Finset.sum_eq_single n]
-    · rw [algebraMap_laurentSeries_eq_single, HahnSeries.coeff_single_zero_mul,
-        coeff_jqModC_pow_self, mul_one]
-    · intro i hi hin
-      have hilt : i < n := lt_of_le_of_ne (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)) hin
-      rw [algebraMap_laurentSeries_eq_single, HahnSeries.coeff_single_zero_mul,
-        coeff_jqModC_pow_of_lt, mul_zero]
-      omega
-    · intro hn'
-      exact absurd (Finset.self_mem_range_succ n) hn'
-  rw [hp] at hcoeff
-  simp only [HahnSeries.coeff_zero] at hcoeff
-  exact hp0 (Polynomial.leadingCoeff_eq_zero.mp hcoeff.symm)
-
-theorem transcendental_jqModC : Transcendental K (jqModC K) :=
-  transcendental_iff.mpr fun _ hp => aeval_jqModC_eq_zero K hp
-
-theorem jqModC_ne_zero [Nontrivial K] : jqModC K ≠ 0 := by
-  intro h
-  have h1 : (jqModC K).coeff (-1 : ℤ) = 1 := coeff_jqModC_neg_one K
-  rw [h, HahnSeries.coeff_zero] at h1
-  exact zero_ne_one h1
-
-theorem order_jqModC [Nontrivial K] : (jqModC K).order = -1 := by
-  refine le_antisymm (HahnSeries.order_le_of_coeff_ne_zero ?_) ?_
-  · rw [coeff_jqModC_neg_one]
-    exact one_ne_zero
-  · by_contra hlt
-    rw [not_le] at hlt
-    refine HahnSeries.coeff_order_eq_zero.not.mpr (jqModC_ne_zero K) ?_
-    have h := coeff_jqModC_pow_of_lt K (n := 1) (m := (jqModC K).order)
-      (by simpa using hlt)
-    simpa using h
 
 end CharLRows
 
@@ -156,7 +104,6 @@ export P2MW.S_ModularCurve_coeff_jqModC_neg_one (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.coeff_jqModC_neg_one (K : Type*) [CommRing K] :

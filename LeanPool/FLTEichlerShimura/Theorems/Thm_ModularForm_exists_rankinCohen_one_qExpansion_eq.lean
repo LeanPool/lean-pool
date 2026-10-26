@@ -64,7 +64,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularForm_exists_rankinCohen_one_qExpansion_eq
 
 open UpperHalfPlane Filter
@@ -135,7 +134,8 @@ theorem D_slash {F : ℍ → ℂ} (hF : MDiff F) (k : ℤ) (γ : SL(2, ℤ)) (τ
   field_simp
   ring
 
-end ModularForm.RankinCohenOne
+end RankinCohenOne
+end ModularForm
 
 namespace ModularForm
 p2m_export "ModularForm" "mk SL_slash_apply translate holo' add SL_slash ext bdd_at_cusps' mul"
@@ -222,17 +222,6 @@ theorem isBoundedAtImInfty_bracket {g h : ℍ → ℂ} (hg : MDiff g) (hh : MDif
   rw [bracket, sub_eq_add_neg]
   exact ((hgb.mul (isBoundedAtImInfty_D hh hhb)).smul _).add
     (((isBoundedAtImInfty_D hg hgb).mul hhb).smul _).neg
-
-theorem periodic_bracket {g h : ℍ → ℂ} (hg : Function.Periodic (g ∘ ofComplex) 1)
-    (hh : Function.Periodic (h ∘ ofComplex) 1) (k₁ k₂ : ℤ) :
-    Function.Periodic (bracket k₁ k₂ g h ∘ ofComplex) 1 := by
-  intro w
-  have h1 := hg w
-  have h2 := hh w
-  have h3 := periodic_D hg w
-  have h4 := periodic_D hh w
-  simp only [Function.comp_apply] at h1 h2 h3 h4 ⊢
-  rw [bracket_apply, bracket_apply, h1, h2, h3, h4]
 
 variable {Γ : Subgroup SL(2, ℤ)} {k₁ k₂ : ℤ}
 
@@ -336,7 +325,8 @@ theorem qExpansion_rankinCohen [Γ.FiniteIndex] (g : ModularForm Γ k₁) (h : M
 
 end
 
-end ModularForm.RankinCohenOne
+end RankinCohenOne
+end ModularForm
 
 end
 
@@ -363,7 +353,6 @@ export P2MW.S_ModularForm_exists_rankinCohen_one_qExpansion_eq (solution)
 end privateSection
 
 public section publicSection
-
 
 open UpperHalfPlane
 open scoped MatrixGroups

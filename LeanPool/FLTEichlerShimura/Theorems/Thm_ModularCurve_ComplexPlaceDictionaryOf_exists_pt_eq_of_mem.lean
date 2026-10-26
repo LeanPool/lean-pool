@@ -77,7 +77,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_ComplexPlaceDictionaryOf_exists_pt_eq_of_mem
 
 noncomputable section
@@ -196,11 +195,6 @@ def restrict {F : Type*} [FunLike F ℍ ℂ] {Γ Γ' : Subgroup (GL (Fin 2) ℝ)
   slash_action_eq' γ hγ := SlashInvariantFormClass.slash_action_eq f γ (hle hγ)
   holo' := ModularFormClass.holo f
   bdd_at_cusps' hc := ModularFormClass.bdd_at_cusps f (hc.mono hle)
-
-@[scoped simp]
-theorem coe_restrict {F : Type*} [FunLike F ℍ ℂ] {Γ Γ' : Subgroup (GL (Fin 2) ℝ)}
-    (hle : Γ' ≤ Γ) {k : ℤ} (f : F) [ModularFormClass F Γ k] :
-    ((restrict hle f : ModularForm Γ' k) : ℍ → ℂ) = f := rfl
 
 def G : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) 12 :=
   restrict (le_SL Γ) (ModularForm.mcast (by decide) (ModularForm.E₄.pow 3))
@@ -425,7 +419,9 @@ theorem exists_pt_eq [Γ.FiniteIndex] [hT : Fact (ModularGroup.T ∈ Γ)]
     simpa using this
   exact hyB ((FractionalIdeal.mem_one_iff _).mpr ⟨⟨y, (mem_B_iff Γ x).mpr hint'⟩, rfl⟩)
 
-end ModularCurve.Ws49.CCPL
+end CCPL
+end Ws49
+end ModularCurve
 end
 
 open scoped MatrixGroups in
@@ -449,7 +445,6 @@ export P2MW.S_ModularCurve_ComplexPlaceDictionaryOf_exists_pt_eq_of_mem (solutio
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem ModularCurve.ComplexPlaceDictionaryOf.exists_pt_eq_of_mem

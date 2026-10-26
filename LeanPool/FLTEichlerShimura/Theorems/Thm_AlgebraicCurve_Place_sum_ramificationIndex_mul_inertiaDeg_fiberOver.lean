@@ -65,7 +65,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg_fiberOver
 
 noncomputable section
@@ -265,13 +264,6 @@ private def toValuationSubringOfRestrictEq (hw : w.restrict F = v) :
   (algebraMap (integralClosureAt F' v) F').codRestrict
     w.toValuationSubring.toSubring (forall_mem_of_restrict_eq hw)
 
-omit [FiniteDimensional F F'] in
-@[scoped simp]
-private theorem coe_toValuationSubringOfRestrictEq (hw : w.restrict F = v)
-    (c : integralClosureAt F' v) :
-    (toValuationSubringOfRestrictEq hw c : F')
-      = algebraMap (integralClosureAt F' v) F' c := rfl
-
 private def residueOfCenter (hw : w.restrict F = v) :
     integralClosureAt F' v →+* w.ResidueField :=
   (IsLocalRing.residue w.toValuationSubring).comp (toValuationSubringOfRestrictEq hw)
@@ -354,15 +346,6 @@ private def residueFieldEquivQuotientCenter (hw : w.restrict F = v) :
   (Ideal.quotEquivOfEq (ker_residueOfCenter hw).symm).trans
     ((residueOfCenter hw).quotientKerEquivOfSurjective (surjective_residueOfCenter hw))
 
-private theorem residueFieldEquivQuotientCenter_mk (hw : w.restrict F = v)
-    (c : integralClosureAt F' v) :
-    residueFieldEquivQuotientCenter hw (Ideal.Quotient.mk _ c) = residueOfCenter hw c := by
-  change ((residueOfCenter hw).quotientKerEquivOfSurjective (surjective_residueOfCenter hw))
-    ((Ideal.quotEquivOfEq (ker_residueOfCenter hw).symm) (Ideal.Quotient.mk _ c))
-      = residueOfCenter hw c
-  rw [Ideal.quotEquivOfEq_mk]
-  exact RingHom.quotientKerEquivOfSurjective_apply_mk _ c
-
 private def placeCongrEquiv {u u' : Place K F} (h : u = u') :
     u.toValuationSubring ≃+* u'.toValuationSubring where
   toFun x := ⟨x.1, h ▸ x.2⟩
@@ -372,21 +355,9 @@ private def placeCongrEquiv {u u' : Place K F} (h : u = u') :
   map_mul' _ _ := rfl
   map_add' _ _ := rfl
 
-@[scoped simp]
-private theorem coe_placeCongrEquiv {u u' : Place K F} (h : u = u') (x : u.toValuationSubring) :
-    (placeCongrEquiv h x : F) = (x : F) := rfl
-
 private def restrictResidueFieldEquiv (hw : w.restrict F = v) :
     (w.restrict F).ResidueField ≃+* IsLocalRing.ResidueField v.toValuationSubring :=
   IsLocalRing.ResidueField.mapEquiv (placeCongrEquiv hw)
-
-omit [FiniteDimensional F F'] in
-private theorem restrictResidueFieldEquiv_residue (hw : w.restrict F = v)
-    (a : (w.restrict F).toValuationSubring) :
-    restrictResidueFieldEquiv hw (IsLocalRing.residue _ a)
-      = IsLocalRing.residue _ (placeCongrEquiv hw a) := by
-  simp only [restrictResidueFieldEquiv, IsLocalRing.ResidueField.mapEquiv_apply,
-    IsLocalRing.ResidueField.map_residue, RingEquiv.coe_toRingHom]
 
 private theorem inertiaDeg_eq_inertiaDeg_fiberCenter (hw : w.restrict F = v) :
     w.inertiaDeg F =
@@ -479,7 +450,6 @@ export P2MW.S_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg_fiberOve
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.Place.sum_ramificationIndex_mul_inertiaDeg_fiberOver {K F F' : Type*}

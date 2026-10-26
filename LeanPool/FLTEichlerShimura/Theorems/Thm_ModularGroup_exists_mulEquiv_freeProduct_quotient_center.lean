@@ -64,7 +64,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularGroup_exists_mulEquiv_freeProduct_quotient_center
 
 open Matrix MatrixGroups ModularGroup
@@ -86,8 +85,6 @@ namespace IrrationalPt
 scoped instance : CoeOut IrrationalPt ℝ := ⟨Subtype.val⟩
 
 @[scoped ext] theorem ext {x y : IrrationalPt} (h : (x : ℝ) = y) : x = y := Subtype.ext h
-
-theorem irrational (x : IrrationalPt) : Irrational (x : ℝ) := x.2
 
 noncomputable def sqrtTwo : IrrationalPt := ⟨Real.sqrt 2, irrational_sqrt_two⟩
 
@@ -272,8 +269,6 @@ theorem ST_sq_smul_pos_mem_neg {x : IrrationalPt} (hx : x ∈ Pos) :
 noncomputable def toPerm : SL(2, ℤ) →* Equiv.Perm IrrationalPt :=
   MulAction.toPermHom SL(2, ℤ) IrrationalPt
 
-theorem toPerm_apply (γ : SL(2, ℤ)) (x : IrrationalPt) : toPerm γ x = γ • x := rfl
-
 noncomputable def permS : Equiv.Perm IrrationalPt := toPerm S
 
 noncomputable def permU : Equiv.Perm IrrationalPt := toPerm (S * T)
@@ -288,49 +283,6 @@ theorem permS_sq : permS ^ 2 = 1 := by
 
 theorem permU_pow_three : permU ^ 3 = 1 := by
   rw [permU, ← map_pow, show (S * T) ^ 3 = -1 from by decide, toPerm_neg_one]
-
-theorem permS_ne_one : permS ≠ 1 := by
-  intro h
-  have h2 : permS IrrationalPt.sqrtTwo = IrrationalPt.sqrtTwo := by rw [h]; rfl
-  have h3 : ((S • IrrationalPt.sqrtTwo : IrrationalPt) : ℝ) = (IrrationalPt.sqrtTwo : ℝ) :=
-    congrArg _ h2
-  rw [S_smul_coe] at h3
-  have hpos := IrrationalPt.sqrtTwo_pos
-  have : -1 / (IrrationalPt.sqrtTwo : ℝ) < 0 := div_neg_of_neg_of_pos (by norm_num) hpos
-  linarith
-
-theorem permU_ne_one : permU ≠ 1 := by
-  intro h
-  have h2 : permU IrrationalPt.sqrtTwo = IrrationalPt.sqrtTwo := by rw [h]; rfl
-  have h3 : (((S * T) • IrrationalPt.sqrtTwo : IrrationalPt) : ℝ)
-      = (IrrationalPt.sqrtTwo : ℝ) := congrArg _ h2
-  rw [ST_smul_coe] at h3
-  have hpos := IrrationalPt.sqrtTwo_pos
-  have : -1 / ((IrrationalPt.sqrtTwo : ℝ) + 1) < 0 :=
-    div_neg_of_neg_of_pos (by norm_num) (by linarith)
-  linarith
-
-theorem permU_sq_ne_one : permU ^ 2 ≠ 1 := by
-  intro h
-  have h2 : (permU ^ 2) IrrationalPt.sqrtTwo = IrrationalPt.sqrtTwo := by rw [h]; rfl
-  have hcoe : (permU ^ 2) IrrationalPt.sqrtTwo
-      = (((S * T) * (S * T)) • IrrationalPt.sqrtTwo : IrrationalPt) := by
-    rw [pow_two, permU, ← map_mul]
-    rfl
-  rw [hcoe] at h2
-  have h3 : ((((S * T) * (S * T)) • IrrationalPt.sqrtTwo : IrrationalPt) : ℝ)
-      = (IrrationalPt.sqrtTwo : ℝ) := congrArg _ h2
-  rw [ST_sq_smul_coe] at h3
-  have hpos := IrrationalPt.sqrtTwo_pos
-  have : (-(IrrationalPt.sqrtTwo : ℝ) - 1) / (IrrationalPt.sqrtTwo : ℝ) < 0 :=
-    div_neg_of_neg_of_pos (by linarith) hpos
-  linarith
-
-theorem orderOf_permS : orderOf permS = 2 :=
-  orderOf_eq_prime permS_sq permS_ne_one
-
-theorem orderOf_permU : orderOf permU = 3 :=
-  orderOf_eq_prime permU_pow_three permU_ne_one
 
 open Subgroup
 
@@ -374,9 +326,6 @@ theorem incl_one_eq (h : G23 1) (hne : h ≠ 1) :
   · right; rw [map_mul, incl_ofAdd_one, gen_one]
 
 def pingPongSet : Fin 2 → Set IrrationalPt := ![Pos, Neg]
-
-@[scoped simp] theorem pingPongSet_zero : pingPongSet 0 = Pos := rfl
-@[scoped simp] theorem pingPongSet_one : pingPongSet 1 = Neg := rfl
 
 theorem pingPong : Pairwise fun i j => ∀ h : G23 i, h ≠ 1 →
     incl i h • pingPongSet j ⊆ pingPongSet i := by
@@ -583,7 +532,6 @@ export P2MW.S_ModularGroup_exists_mulEquiv_freeProduct_quotient_center (solution
 end privateSection
 
 public section publicSection
-
 
 theorem ModularGroup.exists_mulEquiv_freeProduct_quotient_center :
     ∃ e : Monoid.CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2)))

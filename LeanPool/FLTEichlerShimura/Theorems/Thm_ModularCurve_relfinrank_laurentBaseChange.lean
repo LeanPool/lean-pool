@@ -20,10 +20,7 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_LaurentCoeff
 public import Mathlib.FieldTheory.Relrank
 
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_jq
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqNModC_eq_of_prime
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_modularFunctionFieldBar_eq_restrictScalars
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_jq
+import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GeometricBaseChange
 
 /-!
 # Relative degree is preserved by constant field extension
@@ -68,7 +65,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 -/
 
 section privateSection
-
 
 namespace P2MW.S_ModularCurve_relfinrank_laurentBaseChange
 
@@ -120,9 +116,6 @@ def ψ (ht : t ∈ F₀) : E₀ F₀ t ht →+* E L F₀ t ht :=
   (coeffEmb L).restrict _ _ fun _ hx => coeffEmb_mem_laurentBaseChange L ((mem_extendScalars _).mp
     hx)
 
-theorem coe_φ (x : K₀ t) : (φ L x : LaurentSeries L) = coeffEmb L x := rfl
-theorem coe_ψ (ht : t ∈ F₀) (x : E₀ F₀ t ht) : (ψ L ht x : LaurentSeries L) = coeffEmb L x := rfl
-
 theorem ψ_compat (ht : t ∈ F₀) :
     (algebraMap (K L t) (E L F₀ t ht)).comp (φ L) = (ψ L ht).comp (algebraMap (K₀ t) (E₀ F₀ t ht))
       := by
@@ -141,10 +134,6 @@ theorem isAlgebraic_coeffEmb (ht : t ∈ F₀) [FiniteDimensional (K₀ t) (E₀
     LaurentSeries L) :=
     h2.algebraMap
   exact h3.isAlgebraic
-
-theorem laurentBaseChange_eq_adjoin :
-    laurentBaseChange L F₀ = IntermediateField.adjoin L (coeffEmb L '' (F₀ : Set (LaurentSeries ℚ)))
-      := rfl
 
 theorem restrictScalars_adjoin_K (ht : t ∈ F₀) :
     (IntermediateField.adjoin (K L t) (coeffEmb L '' (F₀ : Set (LaurentSeries ℚ)))).restrictScalars
@@ -396,33 +385,6 @@ theorem relfinrank_laurentBaseChange (L : Type*) [Field L] [Algebra ℚ L]
         :=
   relfinrank_eq L ht htr
 
-theorem relfinrank_laurentBaseChange_full (L : Type*) [Field L] [Algebra ℚ L] (N : ℕ) [NeZero N] :
-    IntermediateField.relfinrank (IntermediateField.adjoin L ({coeffEmb L jq} : Set (LaurentSeries
-      L)))
-        (laurentBaseChange L (modularFunctionFieldFull N))
-      = IntermediateField.relfinrank (IntermediateField.adjoin ℚ ({jq} : Set (LaurentSeries ℚ)))
-        (modularFunctionFieldFull N) :=
-  relfinrank_eq L (jq_mem_full N) transcendental_jq
-
-theorem relfinrank_restrictScalars {K X : Type*} [Field K] [Field X] [Algebra K X]
-    (A : IntermediateField K X) (T : IntermediateField A X) :
-    IntermediateField.relfinrank A (T.restrictScalars K) = Module.finrank A T := by
-  have hle : A ≤ T.restrictScalars K := fun x hx => T.algebraMap_mem ⟨x, hx⟩
-  rw [relfinrank_eq_finrank_of_le hle]
-  have : extendScalars hle = T := restrictScalars_injective K (extendScalars_restrictScalars hle)
-  rw [this]
-
-theorem relfinrank_full_prime (ℓ : ℕ) [Fact ℓ.Prime] :
-    IntermediateField.relfinrank (IntermediateField.adjoin ℚ ({jq} : Set (LaurentSeries ℚ)))
-      (modularFunctionFieldFull ℓ)
-      = ℓ + 1 := by
-  rw [← relfinrank_laurentBaseChange_full (AlgebraicClosure ℚ) ℓ, ←
-    finrank_adjoin_jqNModC_eq_of_prime ℓ]
-  have hbar : laurentBaseChange (AlgebraicClosure ℚ) (modularFunctionFieldFull ℓ) = _ :=
-    modularFunctionFieldBar_eq_restrictScalars ℓ
-  rw [hbar, coeffEmb_jq]
-  exact relfinrank_restrictScalars _ _
-
 end TransportRows
 
 end
@@ -442,7 +404,6 @@ export P2MW.S_ModularCurve_relfinrank_laurentBaseChange (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.relfinrank_laurentBaseChange (L : Type*) [Field L] [Algebra ℚ L]

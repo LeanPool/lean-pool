@@ -62,7 +62,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_PhiGen_conj_injective
 
 noncomputable section
@@ -97,12 +96,6 @@ theorem conj_zero_coeff_neg_one {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ
   have h3 : ℓ * ℓ = 1 := Nat.dvd_one.mp h2
   have h4 : 2 ≤ ℓ := hℓ.out.two_le
   nlinarith
-
-theorem conj_zero_coeff_neg_sq {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)
-    [hℓ : Fact (Nat.Prime ℓ)] (ζ : Kˣ) :
-    (conj ℓ ζ (0 : Fin (ℓ + 1))).coeff (-(ℓ * ℓ : ℕ) : ℤ) = 1 := by
-  rw [conj_zero, show (-(ℓ * ℓ : ℕ) : ℤ) = ((ℓ * ℓ : ℕ) : ℤ) * (-1 : ℤ) by ring,
-    qExpand_coeff_mul, coeff_coeffEmb_jq_neg_one]
 
 theorem conj_succ_coeff_neg_one {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)
     [hℓ : Fact (Nat.Prime ℓ)] (ζ : Kˣ) (b : Fin ℓ) :
@@ -155,7 +148,6 @@ export P2MW.S_ModularCurve_PhiGen_conj_injective (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve ModularCurve.PhiGen
 theorem ModularCurve.PhiGen.conj_injective {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)

@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_minpoly_jqN_eq_toAdjoin
 
 noncomputable section
@@ -84,14 +83,6 @@ private theorem minpoly_jqN_eq_toAdjoin (data : ModularPolynomialData N) (h : Ph
     minpoly ℚ⟮jq⟯ (jqN N) = data.toAdjoin :=
   (minpoly.eq_of_irreducible_of_monic h (aeval_jqN_toAdjoin data) data.toAdjoin_monic).symm
 
-theorem finrank_adjoin_jqN_eq (data : ModularPolynomialData N) (h : PhiIrreducible data) :
-    Module.finrank ℚ⟮jq⟯ ℚ⟮jq⟯⟮jqN N⟯ = dedekindPsi N := by
-  have hint : IsIntegral ℚ⟮jq⟯ (jqN N) := ⟨data.toAdjoin, data.toAdjoin_monic, by
-    rw [← Polynomial.aeval_def]; exact aeval_jqN_toAdjoin data⟩
-  rw [IntermediateField.adjoin.finrank hint, minpoly_jqN_eq_toAdjoin data h,
-    ModularPolynomialData.toAdjoin,
-    data.monic.natDegree_map, data.natDegree_eq]
-
 end ModularCurve
 
 end
@@ -109,7 +100,6 @@ export P2MW.S_ModularCurve_minpoly_jqN_eq_toAdjoin (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve ModularCurve.PhiGen
 theorem ModularCurve.minpoly_jqN_eq_toAdjoin {N : ℕ} [NeZero N] (data : ModularPolynomialData N)

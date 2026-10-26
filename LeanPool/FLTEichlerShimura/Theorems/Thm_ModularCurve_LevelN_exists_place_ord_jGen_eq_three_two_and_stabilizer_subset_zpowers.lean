@@ -73,9 +73,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_OVERLONG_d9a2a124
-
 
 p2m_open "UpperHalfPlane AlgebraicCurve"
 open scoped MatrixGroups IntermediateField Manifold
@@ -247,7 +245,8 @@ theorem eq_of_ord_algebraMap_eq {A : Type*} [CommRing A] [IsDomain A] [Algebra A
   · simp [zero_mem]
   rw [v.mem_iff_ord_nonneg' hx, w.mem_iff_ord_nonneg' hx, hall x hx]
 
-end AlgebraicCurve.Place
+end Place
+end AlgebraicCurve
 
 open AlgebraicCurve
 
@@ -403,7 +402,9 @@ theorem ord_smul_place_eq_of_smul_eq
 
 end Places
 
-end ModularCurve.LevelN.PlaceTransport
+end PlaceTransport
+end LevelN
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "LevelN.jAnalytic LevelN.ring LevelN.jGen LevelN.coe_jGen \
@@ -544,10 +545,6 @@ theorem analyticAt_comp_ofComplex {G : ℍ → ℂ} (hG : MDiff G) (τ : ℍ) :
     UpperHalfPlane.mdifferentiable_iff.mp hG
   exact (hd.analyticOnNhd isOpen_upperHalfPlaneSet) τ τ.im_pos
 
-@[scoped simp] theorem comp_ofComplex_apply_coe (G : ℍ → ℂ) (τ : ℍ) :
-    (G ∘ ofComplex) (τ : ℂ) = G τ := by
-  simp [Function.comp_apply, ofComplex_apply]
-
 theorem analyticOrderAt_jsub (τ₀ : ℍ) :
     analyticOrderAt ((fun τ : ℍ => LevelN.jAnalytic τ - LevelN.jAnalytic τ₀) ∘ ofComplex) (τ₀ : ℂ) =
       ((Nat.card (MulAction.stabilizer SL(2, ℤ) τ₀) / 2 : ℕ) : ℕ∞) := by
@@ -570,12 +567,6 @@ theorem analyticOrderAt_jsub (τ₀ : ℍ) :
   | coe m =>
     simp only [ENat.map_natCast, WithTop.coe_eq_coe, Nat.cast_inj] at hmero
     exact_mod_cast hmero
-
-omit [NeZero M] in
-theorem coe_algebraMap_ring (c : ℂ) :
-    ((algebraMap ℂ (LevelN.ring M) c : LevelN.ring M) : ℍ → ℂ) = fun _ => c := by
-  funext τ
-  simp [Algebra.algebraMap_eq_smul_one]
 
 omit [NeZero M] in
 theorem jsub_mem (c : ℂ) : (fun τ : ℍ => LevelN.jAnalytic τ - c) ∈ LevelN.ring M := by
@@ -674,9 +665,6 @@ theorem isIntegral_of_apply_eq (t : K) (hfin : FiniteDimensional ℂ⟮t⟯ K) (
 
 def liftGal (t : K) (φ : K ≃ₐ[ℂ] K) (hφ : ∀ z ∈ ℂ⟮t⟯, φ z = z) : K ≃ₐ[ℂ⟮t⟯] K :=
   { φ.toRingEquiv with commutes' := fun z => hφ z z.2 }
-
-theorem liftGal_apply (t : K) (φ : K ≃ₐ[ℂ] K) (hφ : ∀ z ∈ ℂ⟮t⟯, φ z = z) (y : K) :
-    liftGal K t φ hφ y = φ y := rfl
 
 theorem restrictScalars_liftGal (t : K) (φ : K ≃ₐ[ℂ] K) (hφ : ∀ z ∈ ℂ⟮t⟯, φ z = z) :
     (liftGal K t φ hφ).restrictScalars ℂ = φ := AlgEquiv.ext fun _ => rfl
@@ -830,7 +818,9 @@ theorem main (hM : 2 ≤ M)
 
 end Galois
 
-end ModularCurve.LevelN.Wall
+end Wall
+end LevelN
+end ModularCurve
 end
 
 theorem solution
@@ -870,7 +860,6 @@ export P2MW.S_OVERLONG_d9a2a124
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups IntermediateField
 theorem ModularCurve.LevelN.exists_place_ord_jGen_eq_three_two_and_stabilizer_subset_zpowers

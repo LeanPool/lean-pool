@@ -65,9 +65,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_CongruenceSubgroup_closure_T_U_neg_one_eq_Gamma0_three
-
 
 open Matrix CongruenceSubgroup Subgroup UpperHalfPlane
 open scoped MatrixGroups Pointwise
@@ -217,9 +215,6 @@ end Gamma0Three
 
 def U₃ : SL(2, ℤ) := ⟨!![1, 0; -3, 1], by simp [Matrix.det_fin_two_of]⟩
 
-@[scoped simp] lemma U₃_one_zero : U₃ 1 0 = -3 := rfl
-@[scoped simp] lemma U₃_one_one : U₃ 1 1 = 1 := rfl
-
 lemma T_mem_gamma0_three : ModularGroup.T ∈ Gamma0 3 := by
   rw [Gamma0_mem]; decide
 
@@ -286,9 +281,6 @@ theorem closure_T_U_neg_one_eq : Subgroup.closure gens = Gamma0 3 := by
   rw [← Gamma0Three.closure_schreierGens]
   exact (Subgroup.closure_le _).mpr Gamma0Three.schreierGens_subset_closure_gens
 
-theorem mem_closure_gens {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 3) : γ ∈ Subgroup.closure gens :=
-  closure_T_U_neg_one_eq ▸ hγ
-
 end A2Gamma0Three
 
 open scoped MatrixGroups in
@@ -305,7 +297,6 @@ export P2MW.S_CongruenceSubgroup_closure_T_U_neg_one_eq_Gamma0_three (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups in
 theorem CongruenceSubgroup.closure_T_U_neg_one_eq_Gamma0_three (U : SL(2, ℤ))

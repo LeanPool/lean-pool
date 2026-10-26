@@ -141,22 +141,6 @@ theorem ker_comp_eq_zmultiples {A B C : Type*} [AddCommGroup A] [AddCommGroup B]
       exact AddSubgroup.mem_zmultiples _
     rw [map_zsmul, map_zsmul, h0, zsmul_zero]
 
-theorem natCard_zmultiples_of_addOrderOf_eq {A : Type*} [AddCommGroup A] (Q : A) {N : ℕ}
-    (hQ : addOrderOf Q = N) : Nat.card (AddSubgroup.zmultiples Q) = N := by
-  rw [Nat.card_zmultiples, hQ]
-
-theorem nsmul_not_mem_ker {A B : Type*} [AddCommGroup A] [AddCommGroup B] (φ : A →+ B)
-    {Q : A} {M : ℕ} (hQ : addOrderOf Q = 2 * M)
-    (hker : φ.ker = AddSubgroup.zmultiples (M • Q)) {k : ℕ} (hk0 : 0 < k) (hk2 : k < 2 * M)
-    (hkM : k ≠ M) : k • Q ∉ φ.ker := by
-  rw [hker]
-  intro hk
-  obtain ⟨c, rfl⟩ := dvd_of_nsmul_mem_zmultiples_nsmul hQ hk
-  rcases c with _ | _ | c
-  · exact absurd rfl (Nat.pos_iff_ne_zero.mp hk0)
-  · exact hkM (mul_one M)
-  · exact absurd hk2 (by nlinarith)
-
 theorem addOrderOf_veluPointMap2 {F : Type*} [Field F] [DecidableEq F] (hchar : (2 : F) ≠ 0)
     (W : WeierstrassCurve F) [W.IsElliptic] (Q : W.toAffine.Point) (M : ℕ) (hM : M ≠ 0)
     (hQ : addOrderOf Q = 2 * M)
@@ -244,22 +228,8 @@ theorem veluPointMap2_eq_zero_iff {F : Type*} [Field F] {W : WeierstrassCurve F}
     · exact veluPointMap2_zero h2 hQ hgy hΔ
     · exact veluPointMap2_some_of_eq h2 hQ hgy hΔ hns rfl
 
-theorem ker_eq_zmultiples {F : Type*} [Field F] [DecidableEq F] {W : WeierstrassCurve F}
-    (h2 : (2 : F) ≠ 0) {x₀ y₀ : F} (hQ : W.toAffine.Equation x₀ y₀)
-    (hgy : W.veluGy x₀ y₀ = 0) (hΔ : (W.veluQuotient2 x₀ y₀).Δ ≠ 0)
-    (hns : W.toAffine.Nonsingular x₀ y₀)
-    (φ : W.toAffine.Point →+ (W.veluQuotient2 x₀ y₀).toAffine.Point)
-    (hφ : ∀ P, φ P = veluPointMap2 h2 hQ hgy hΔ P) :
-    φ.ker = AddSubgroup.zmultiples (.some x₀ y₀ hns) := by
-  refine le_antisymm ?_ (AddSubgroup.zmultiples_le.mpr ?_)
-  · intro P hP
-    rw [AddMonoidHom.mem_ker, hφ P] at hP
-    rcases (veluPointMap2_eq_zero_iff h2 hQ hgy hΔ hns P).mp hP with rfl | rfl
-    · exact zero_mem _
-    · exact AddSubgroup.mem_zmultiples _
-  · rw [AddMonoidHom.mem_ker, hφ]
-    exact veluPointMap2_some_of_eq h2 hQ hgy hΔ hns rfl
-end WeierstrassCurve.VeluTwoKernel
+end VeluTwoKernel
+end WeierstrassCurve
 
 namespace WeierstrassCurve
 
@@ -741,7 +711,9 @@ private theorem _root_.ModularCurve.TatePoint.DiscEvenEngine.fullKernelDiscAt_of
   · exact ModularCurve.TatePoint.fullKernelDiscAt_of_odd M hMO h2
       (W.veluQuotient2 x₀ y₀) (veluPointMap2 h2 h₀.1 hgy hΔ₂ Q) hQ₁
 
-end ModularCurve.TatePoint.DiscEvenEngine
+end DiscEvenEngine
+end TatePoint
+end ModularCurve
 
 namespace ModularCurve.TatePoint
 
@@ -750,7 +722,8 @@ private theorem _root_.ModularCurve.TatePoint.fullKernelDiscAt_of_even
     ModularCurve.TatePoint.FullKernelDiscAt N :=
   ModularCurve.TatePoint.DiscEvenEngine.fullKernelDiscAt_of_even N hE
 
-end ModularCurve.TatePoint
+end TatePoint
+end ModularCurve
 
 open ModularCurve TatePoint in
 theorem solution (N : ℕ) [NeZero N] : FullKernelDiscAt N := by

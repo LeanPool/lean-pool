@@ -19,7 +19,6 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 
-
 /-!
 # 2P=O iff x is a root of Ψ₂²
 
@@ -57,7 +56,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_Affine_Point_two_smul_some_eq_zero_iff
 
 open Polynomial
@@ -78,23 +76,6 @@ theorem PortCard.two_smul_some_eq_zero_iff {F : Type*} [Field F] [DecidableEq F]
       WeierstrassCurve.Affine.Point.some.injEq]
     simp
   rw [key, ← PortCard.sub_negY_sq_eq_eval_Ψ₂Sq W h.left, pow_eq_zero_iff two_ne_zero, sub_eq_zero]
-
-theorem PortCard.Ψ₂Sq_ne_zero_of_isElliptic {F : Type*} [Field F] (W : WeierstrassCurve F)
-    [W.IsElliptic] : W.Ψ₂Sq ≠ 0 := by
-  intro h0
-  rw [WeierstrassCurve.Ψ₂Sq_eq, Cubic.toPoly_eq_zero_iff] at h0
-  have h4 : (4 : F) = 0 := congrArg Cubic.a h0
-  have hb₂ : W.b₂ = 0 := congrArg Cubic.b h0
-  have hb₆ : W.b₆ = 0 := congrArg Cubic.d h0
-  have h2 : (2 : F) = 0 := by
-    have h22 : (2 : F) * 2 = 0 := by linear_combination h4
-    rcases mul_eq_zero.mp h22 with h | h <;> exact h
-  have hΔ : W.Δ = 0 := by
-    rw [show W.Δ = -W.b₂ ^ 2 * W.b₈ - 8 * W.b₄ ^ 3 - 27 * W.b₆ ^ 2 + 9 * W.b₂ * W.b₄ * W.b₆
-      from rfl]
-    linear_combination (-W.b₂ * W.b₈ + 9 * W.b₄ * W.b₆) * hb₂ + (-27 * W.b₆) * hb₆ +
-      (-4 * W.b₄ ^ 3) * h2
-  exact W.isUnit_Δ.ne_zero hΔ
 
 theorem solution {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F) {x y : F}
     (h : W.toAffine.Nonsingular x y) :

@@ -20,7 +20,6 @@ module
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.GroupTheory.CoprodI
 
-import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.Group
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
@@ -60,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 -/
 
 section privateSection
-
 
 namespace P2MW.S_Monoid_CoprodI_isTree_cosetGraph
 
@@ -103,10 +101,6 @@ theorem adj_mk {i j : ι} (hij : i ≠ j) (g : CoprodI G) :
     (graph G).Adj (Vertex.mk i g) (Vertex.mk j g) :=
   ⟨hij, g, rfl, rfl⟩
 
-theorem adj_iff_exists {v w : Vertex G} :
-    (graph G).Adj v w ↔ v.1 ≠ w.1 ∧ ∃ g, Vertex.mk v.1 g = v ∧ Vertex.mk w.1 g = w :=
-  Iff.rfl
-
 theorem adj_one {i j : ι} (hij : i ≠ j) :
     (graph G).Adj (Vertex.mk i (1 : CoprodI G)) (Vertex.mk j 1) :=
   adj_mk hij 1
@@ -114,23 +108,10 @@ theorem adj_one {i j : ι} (hij : i ≠ j) :
 scoped instance : SMul (CoprodI G) (Vertex G) where
   smul g v := ⟨v.1, g • v.2⟩
 
-theorem smul_def (g : CoprodI G) (v : Vertex G) : g • v = ⟨v.1, g • v.2⟩ :=
-  rfl
-
 @[scoped simp]
 theorem smul_mk (g : CoprodI G) (i : ι) (h : CoprodI G) :
     g • Vertex.mk i h = Vertex.mk i (g * h) :=
   rfl
-
-scoped instance : MulAction (CoprodI G) (Vertex G) where
-  one_smul := by
-    rintro ⟨i, x⟩
-    change (⟨i, (1 : CoprodI G) • x⟩ : Vertex G) = ⟨i, x⟩
-    rw [one_smul]
-  mul_smul g h := by
-    rintro ⟨i, x⟩
-    change (⟨i, (g * h) • x⟩ : Vertex G) = ⟨i, g • h • x⟩
-    rw [mul_smul]
 
 theorem smul_adj {v w : Vertex G} (g : CoprodI G) (h : (graph G).Adj v w) :
     (graph G).Adj (g • v) (g • w) := by
@@ -141,17 +122,9 @@ def smulHom (g : CoprodI G) : graph G →g graph G where
   toFun v := g • v
   map_rel' := smul_adj g
 
-@[scoped simp]
-theorem smulHom_apply (g : CoprodI G) (v : Vertex G) : smulHom g v = g • v :=
-  rfl
-
 theorem reachable_smul {v w : Vertex G} (g : CoprodI G) (h : (graph G).Reachable v w) :
     (graph G).Reachable (g • v) (g • w) :=
   h.map (smulHom g)
-
-theorem smul_eq_self_iff {h : CoprodI G} {i : ι} {g : CoprodI G} :
-    h • Vertex.mk i g = Vertex.mk i g ↔ g⁻¹ * h * g ∈ (of (M := G) (i := i)).range := by
-  rw [smul_mk, mk_eq_mk_iff, show (h * g)⁻¹ * g = (g⁻¹ * h * g)⁻¹ by group, inv_mem_iff]
 
 theorem mk_of_eq_mk_one {i : ι} (m : G i) :
     Vertex.mk (G := G) i (of m) = Vertex.mk i 1 :=
@@ -190,43 +163,6 @@ theorem connected [Nonempty ι] : (graph G).Connected := by
   rintro ⟨j, x⟩
   induction x using QuotientGroup.induction_on with
   | H g => exact reachable_one default g j
-
-theorem eq_one_of_mem_range_of_mem_range {i j : ι} (hij : i ≠ j) {x : CoprodI G}
-    (hi : x ∈ (of (M := G) (i := i)).range) (hj : x ∈ (of (M := G) (i := j)).range) :
-    x = 1 := by
-  classical
-  obtain ⟨a, rfl⟩ := MonoidHom.mem_range.mp hi
-  obtain ⟨b, hb⟩ := MonoidHom.mem_range.mp hj
-  have key := congrArg (lift (Pi.mulSingle i (MonoidHom.id (G i)))) hb
-  rw [lift_of, lift_of, Pi.mulSingle_eq_same, Pi.mulSingle_eq_of_ne hij.symm] at key
-  simp only [MonoidHom.one_apply, MonoidHom.id_apply] at key
-  rw [← key, map_one]
-
-theorem range_inf_range_eq_bot {i j : ι} (hij : i ≠ j) :
-    (of (M := G) (i := i)).range ⊓ (of (M := G) (i := j)).range = ⊥ := by
-  rw [eq_bot_iff]
-  intro x hx
-  rw [Subgroup.mem_inf] at hx
-  exact mem_bot.mpr (eq_one_of_mem_range_of_mem_range hij hx.1 hx.2)
-
-theorem eq_of_mk_eq_mk {i j : ι} (hij : i ≠ j) {g g' : CoprodI G}
-    (hgi : Vertex.mk (G := G) i g = Vertex.mk i g')
-    (hgj : Vertex.mk (G := G) j g = Vertex.mk j g') :
-    g = g' :=
-  inv_mul_eq_one.mp
-    (eq_one_of_mem_range_of_mem_range hij (mk_eq_mk_iff.mp hgi) (mk_eq_mk_iff.mp hgj))
-
-theorem adj_base_iff {i : ι} {w : Vertex G} :
-    (graph G).Adj (Vertex.mk i (1 : CoprodI G)) w ↔
-      i ≠ w.1 ∧ ∃ a : G i, Vertex.mk w.1 (of a) = w := by
-  constructor
-  · rintro ⟨hiw, g, hgi, hgw⟩
-    refine ⟨hiw, ?_⟩
-    obtain ⟨a, ha⟩ := MonoidHom.mem_range.mp
-      (show g ∈ (of (M := G) (i := i)).range by simpa using mk_eq_mk_iff.mp hgi)
-    exact ⟨a, by rw [ha]; exact hgw⟩
-  · rintro ⟨hiw, a, haw⟩
-    exact ⟨hiw, of a, (mk_of_eq_mk_one a), haw⟩
 
 theorem isTree_of_isAcyclic [Nonempty ι] (h : (graph G).IsAcyclic) : (graph G).IsTree :=
   ⟨connected, h⟩
@@ -396,9 +332,6 @@ theorem isTree [Nonempty ι] (htwo : ∀ a b c : ι, a = b ∨ a = c ∨ b = c) 
 theorem isTree_two {G : Fin 2 → Type*} [∀ i, Group (G i)] : (graph G).IsTree :=
   isTree (by decide)
 
-theorem isAcyclic_two {G : Fin 2 → Type*} [∀ i, Group (G i)] : (graph G).IsAcyclic :=
-  isAcyclic (by decide)
-
 end BassSerre
 end GroupTheory
 
@@ -430,7 +363,8 @@ theorem fromRel_eq_graph {G : Fin 2 → Type*} [∀ i, Group (G i)] :
     simp only [Vertex.mk, Sigma.mk.inj_iff, heq_eq_eq, true_and] at hx hy
     refine ⟨fun h => hij (congrArg Sigma.fst h), Or.inl ⟨hij, g, hx.symm, hy.symm⟩⟩
 
-end GroupTheory.BassSerre
+end BassSerre
+end GroupTheory
 
 theorem solution {G : Fin 2 → Type*} [∀ i, Group (G i)] :
     (SimpleGraph.fromRel fun v w : (i : Fin 2) × (Monoid.CoprodI G ⧸ (Monoid.CoprodI.of (M := G) (i
@@ -450,7 +384,6 @@ export P2MW.S_Monoid_CoprodI_isTree_cosetGraph (solution)
 end privateSection
 
 public section publicSection
-
 
 theorem Monoid.CoprodI.isTree_cosetGraph {G : Fin 2 → Type*} [∀ i, Group (G i)] :
     (SimpleGraph.fromRel fun v w : (i : Fin 2) × (Monoid.CoprodI G ⧸ (Monoid.CoprodI.of (M := G) (i

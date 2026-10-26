@@ -21,9 +21,7 @@ public import Mathlib.Basic.Complex.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_Gamma0CoeffCohomology
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeEis_BinaryFormRep
 
-import Mathlib.Algebra.MvPolynomial.Monad
 import Mathlib.Analysis.CStarAlgebra.Classes
-import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
 # Rational independence in H¹ₚₐᵣ persists over ℂ
@@ -70,88 +68,16 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
-namespace P2MW.S_HeckeEis_linearIndependent_coeffH1par_map_rat_complex
-
-namespace HeckeEis
-p2m_export "HeckeEis" "BinaryForm binarySubst binarySubst_X binarySubst_C binaryFormRepSL \
-  coeffCocycles coeffCoboundaries mem_coeffCoboundaries_iff IsParabolicCocycle \
-  coeffParabolicCocycles coeffH1par coeffH1parMk coeffH1parMk_surjective coeffH1parMk_eq_zero_iff"
-namespace GenAux
-p2m_open "HeckeEis"
-
-variable {G : Type*} [Group G] {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
-
-theorem coeffCocycles_apply_one {ρ : Representation K G V} {z : G → V} (hz : z ∈ coeffCocycles ρ) :
-    z 1 = 0 := by
-  have h := hz 1 1
-  rw [mul_one, map_one, Module.End.one_apply] at h
-  have : z 1 + z 1 = z 1 + 0 := by rw [add_zero]; exact h.symm
-  exact add_left_cancel this
-
-theorem coeffCocycles_apply_inv {ρ : Representation K G V} {z : G → V} (hz : z ∈ coeffCocycles ρ)
-    (g : G) :
-    z g⁻¹ = -(ρ g⁻¹ (z g)) := by
-  have h := hz g⁻¹ g
-  rw [inv_mul_cancel, coeffCocycles_apply_one hz] at h
-  exact eq_neg_of_add_eq_zero_left h.symm
-
-theorem mem_of_mem_coeffCocycles_of_closure_eq_top {ρ : Representation K G V} {z : G → V}
-    (hz : z ∈ coeffCocycles ρ)
-    (M : AddSubgroup V) (hM : ∀ (g : G) (v : V), v ∈ M → ρ g v ∈ M) {s : Set G}
-    (hs : Subgroup.closure s = ⊤)
-    (h : ∀ g ∈ s, z g ∈ M) (g : G) : z g ∈ M := by
-  let H : Subgroup G :=
-    { carrier := {g | z g ∈ M}
-      one_mem' := by
-        change z 1 ∈ M
-        rw [coeffCocycles_apply_one hz]; exact M.zero_mem
-      mul_mem' := by
-        intro a b ha hb
-        change z (a * b) ∈ M
-        rw [hz a b]
-        exact M.add_mem ha (hM a _ hb)
-      inv_mem' := by
-        intro a ha
-        change z a⁻¹ ∈ M
-        rw [coeffCocycles_apply_inv hz]
-        exact M.neg_mem (hM _ _ ha) }
-  have hle : (⊤ : Subgroup G) ≤ H := by
-    rw [← hs, Subgroup.closure_le]
-    exact h
-  exact hle (Subgroup.mem_top g)
-
-theorem coeffCocycles_eq_of_eqOn {ρ : Representation K G V} {z z' : G → V}
-    (hz : z ∈ coeffCocycles ρ) (hz' : z' ∈ coeffCocycles ρ)
-    {s : Set G} (hs : Subgroup.closure s = ⊤) (h : ∀ g ∈ s, z g = z' g) : z = z' := by
-  have hd : z - z' ∈ coeffCocycles ρ := Submodule.sub_mem _ hz hz'
-  funext g
-  have := mem_of_mem_coeffCocycles_of_closure_eq_top hd ⊥ (fun g v hv => by
-    rw [AddSubgroup.mem_bot] at hv ⊢; rw [hv, map_zero]) hs (fun g hg => by
-    rw [AddSubgroup.mem_bot, Pi.sub_apply, h g hg, sub_self]) g
-  rw [AddSubgroup.mem_bot, Pi.sub_apply] at this
-  exact sub_eq_zero.mp this
-
-end HeckeEis.GenAux
-
 noncomputable section
 
 namespace HeckeEis
-p2m_export "HeckeEis" "BinaryForm binarySubst binarySubst_X binarySubst_C binaryFormRepSL \
-  coeffCocycles coeffCoboundaries mem_coeffCoboundaries_iff IsParabolicCocycle \
-  coeffParabolicCocycles coeffH1par coeffH1parMk coeffH1parMk_surjective coeffH1parMk_eq_zero_iff"
+
 namespace CoeffMapAux
-p2m_open "HeckeEis"
 
 open MvPolynomial
 open scoped MatrixGroups
 
 variable {R R' : Type*} [CommRing R] [CommRing R']
-
-theorem binarySubst_eq_bind₁ (S : Type*) [CommRing S] (M : Matrix (Fin 2) (Fin 2) ℤ)
-    (P : MvPolynomial (Fin 2) S) :
-    binarySubst S M P = bind₁ (fun j => ∑ i : Fin 2, C ((M i j : ℤ) : S) * X i) P := by
-  rw [binarySubst, aeval_eq_bind₁]
 
 theorem map_binarySubst_int (φ : ℤ →+* R) (M : Matrix (Fin 2) (Fin 2) ℤ)
     (P : MvPolynomial (Fin 2) ℤ) :
@@ -221,12 +147,6 @@ theorem pushCoeff_sub (P Q : MvPolynomial (Fin 2) R) :
 theorem pushCoeff_zero : pushCoeff f (0 : MvPolynomial (Fin 2) R) = 0 := by
   ext d; simp
 
-theorem eq_pushCoeff_iff (P : MvPolynomial (Fin 2) R) (Q : MvPolynomial (Fin 2) R') :
-    Q = pushCoeff f P ↔ ∀ d, AddMonoidAlgebra.coeff Q d = f (AddMonoidAlgebra.coeff P d) := by
-  constructor
-  · rintro rfl d; exact coeff_pushCoeff f P d
-  · intro h; ext d; rw [h d, coeff_pushCoeff]
-
 theorem pushCoeff_binarySubst (M : Matrix (Fin 2) (Fin 2) ℤ) (P : MvPolynomial (Fin 2) R) :
     pushCoeff f (binarySubst R M P) = binarySubst R' M (pushCoeff f P) := by
   classical
@@ -289,17 +209,6 @@ theorem pushForm_comp_mem_coeffParabolicCocycles {z : Γ → ↥(BinaryForm R n)
       :=
   ⟨pushForm_comp_mem_coeffCocycles f n hz.1, isParabolicCocycle_pushForm_comp f n hz.2⟩
 
-theorem pushForm_comp_mem_coeffCoboundaries {z : Γ → ↥(BinaryForm R n)}
-    (hz : z ∈ coeffCoboundaries ((binaryFormRepSL R n).comp Γ.subtype)) :
-    (fun g => pushForm f n (z g)) ∈ coeffCoboundaries ((binaryFormRepSL R' n).comp Γ.subtype) := by
-  obtain ⟨v, hv⟩ := (mem_coeffCoboundaries_iff _ _).mp hz
-  rw [mem_coeffCoboundaries_iff]
-  refine ⟨pushForm f n v, funext fun g => ?_⟩
-  have h := congrFun hv g
-  change binaryFormRepSL R n (g : SL(2, ℤ)) v - v = z g at h
-  change binaryFormRepSL R' n (g : SL(2, ℤ)) (pushForm f n v) - pushForm f n v = pushForm f n (z g)
-  rw [← h, pushForm_sub, pushForm_binaryFormRepSL]
-
 def pushPar : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp Γ.subtype))
     →+ ↥(coeffParabolicCocycles ((binaryFormRepSL R' n).comp Γ.subtype)) where
   toFun z := ⟨fun g => pushForm f n (z.1 g), pushForm_comp_mem_coeffParabolicCocycles f n z.2⟩
@@ -312,76 +221,18 @@ def pushPar : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp Γ.subtype)
     change pushForm f n (z.1 g + w.1 g) = pushForm f n (z.1 g) + pushForm f n (w.1 g)
     rw [pushForm_add]
 
-@[scoped simp] theorem pushPar_apply_coe (z : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp
-  Γ.subtype))) (g : Γ) :
-    (((pushPar f n z).1 g : ↥(BinaryForm R' n)) : MvPolynomial (Fin 2) R') = pushCoeff f (z.1 g) :=
-      rfl
-
 theorem pushPar_apply_val (z : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp Γ.subtype)))
     (g : Γ) :
     (pushPar f n z).1 g = pushForm f n (z.1 g) := rfl
 
-theorem mk_eq_mk_iff {S : Type*} [CommRing S]
-    (a b : ↥(coeffParabolicCocycles ((binaryFormRepSL S n).comp Γ.subtype))) :
-    coeffH1parMk _ a = coeffH1parMk _ b ↔
-      ((a - b : ↥(coeffParabolicCocycles ((binaryFormRepSL S n).comp Γ.subtype))).1
-        ∈ coeffCoboundaries ((binaryFormRepSL S n).comp Γ.subtype)) := by
-  rw [← sub_eq_zero, ← map_sub, coeffH1parMk_eq_zero_iff]
-
-theorem pushPar_sub (a b : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp Γ.subtype))) :
-    pushPar f n (a - b) = pushPar f n a - pushPar f n b :=
-  map_sub (pushPar f n) a b
-
-theorem mk_pushPar_congr {a b : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp Γ.subtype))}
-    (h : coeffH1parMk _ a = coeffH1parMk _ b) :
-    coeffH1parMk _ (pushPar f n a) = coeffH1parMk _ (pushPar f n b) := by
-  rw [mk_eq_mk_iff] at h ⊢
-  rw [← pushPar_sub]
-  exact pushForm_comp_mem_coeffCoboundaries f n h
-
-def pushH1par :
-    coeffH1par ((binaryFormRepSL R n).comp Γ.subtype) →+
-      coeffH1par ((binaryFormRepSL R' n).comp Γ.subtype) where
-  toFun x := coeffH1parMk _ (pushPar f n (Function.surjInv (coeffH1parMk_surjective _) x))
-  map_zero' := by
-    have h0 : coeffH1parMk _ (Function.surjInv (coeffH1parMk_surjective ((binaryFormRepSL R n).comp
-      Γ.subtype)) 0)
-        = coeffH1parMk _ (0 : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp Γ.subtype))) :=
-          by
-      rw [Function.surjInv_eq (coeffH1parMk_surjective _), map_zero]
-    change coeffH1parMk _ (pushPar f n (Function.surjInv (coeffH1parMk_surjective _) 0)) = 0
-    rw [mk_pushPar_congr f n h0, map_zero, map_zero]
-  map_add' x y := by
-    have hxy : coeffH1parMk _ (Function.surjInv (coeffH1parMk_surjective ((binaryFormRepSL R n).comp
-      Γ.subtype)) (x + y))
-        = coeffH1parMk _ (Function.surjInv (coeffH1parMk_surjective ((binaryFormRepSL R n).comp
-          Γ.subtype)) x
-            + Function.surjInv (coeffH1parMk_surjective ((binaryFormRepSL R n).comp Γ.subtype)) y)
-              := by
-      rw [map_add, Function.surjInv_eq (coeffH1parMk_surjective _), Function.surjInv_eq
-        (coeffH1parMk_surjective _),
-        Function.surjInv_eq (coeffH1parMk_surjective _)]
-    change coeffH1parMk _ (pushPar f n (Function.surjInv (coeffH1parMk_surjective _) (x + y))) = _
-    rw [mk_pushPar_congr f n hxy, map_add, map_add]
-
-theorem pushH1par_mk (z : ↥(coeffParabolicCocycles ((binaryFormRepSL R n).comp Γ.subtype))) :
-    pushH1par f n (coeffH1parMk _ z) = coeffH1parMk _ (pushPar f n z) := by
-  change coeffH1parMk _ (pushPar f n (Function.surjInv (coeffH1parMk_surjective _) (coeffH1parMk _
-    z))) = _
-  apply mk_pushPar_congr
-  exact Function.surjInv_eq (coeffH1parMk_surjective _) _
-
 end Cocycles
 
-end HeckeEis.CoeffMapAux
+end CoeffMapAux
+end HeckeEis
 end
 
 namespace HeckeEis
-p2m_export "HeckeEis" "BinaryForm binarySubst binarySubst_X binarySubst_C binaryFormRepSL \
-  coeffCocycles coeffCoboundaries mem_coeffCoboundaries_iff IsParabolicCocycle \
-  coeffParabolicCocycles coeffH1par coeffH1parMk coeffH1parMk_surjective coeffH1parMk_eq_zero_iff"
 namespace CoeffMapAux
-p2m_open "HeckeEis"
 
 open MvPolynomial
 open scoped MatrixGroups
@@ -393,18 +244,15 @@ theorem pushCoeff_ringHom_eq_map {R R' : Type*} [CommRing R] [CommRing R'] (φ :
   rw [coeff_pushCoeff, coeff_map]
   rfl
 
-end HeckeEis.CoeffMapAux
+end CoeffMapAux
+end HeckeEis
 
 noncomputable section
 
 namespace HeckeEis
-p2m_export "HeckeEis" "BinaryForm binarySubst binarySubst_X binarySubst_C binaryFormRepSL \
-  coeffCocycles coeffCoboundaries mem_coeffCoboundaries_iff IsParabolicCocycle \
-  coeffParabolicCocycles coeffH1par coeffH1parMk coeffH1parMk_surjective coeffH1parMk_eq_zero_iff"
 namespace QCAux
-p2m_open "HeckeEis"
 
-open MvPolynomial HeckeEis.CoeffMapAux HeckeEis.GenAux
+open MvPolynomial HeckeEis.CoeffMapAux
 open scoped MatrixGroups
 
 abbrev ιQC : ℚ →+ ℂ := (algebraMap ℚ ℂ).toAddMonoidHom
@@ -430,60 +278,7 @@ theorem pushForm_π_smul_ι (α : Module.Basis.ofVectorSpaceIndex ℚ ℂ) (c : 
     (AddMonoidAlgebra.coeff (Q : MvPolynomial (Fin 2) ℚ) d)) = _
   rw [mul_comm, ← Algebra.smul_def, LinearMap.map_smul, smul_eq_mul, mul_comm]
 
-theorem sum_smul_pushForm_π (P : ↥(BinaryForm ℂ n))
-    (A : Finset (Module.Basis.ofVectorSpaceIndex ℚ ℂ))
-    (hA : ∀ d ∈ (P : MvPolynomial (Fin 2) ℂ).support,
-      (BQC.repr (AddMonoidAlgebra.coeff (P : MvPolynomial (Fin 2) ℂ) d)).support ⊆ A) :
-    ∑ α ∈ A, (BQC α : ℂ) • pushForm ιQC n (pushForm (πQC α) n P) = P := by
-  classical
-  apply Subtype.ext
-  ext d
-  rw [Submodule.coe_sum, coeff_sum]
-  simp only [Submodule.coe_smul, coeff_smul, coe_pushForm, coeff_pushCoeff, smul_eq_mul]
-  by_cases hd : d ∈ (P : MvPolynomial (Fin 2) ℂ).support
-  · set x : ℂ := AddMonoidAlgebra.coeff (P : MvPolynomial (Fin 2) ℂ) d
-    have hx := BQC.linearCombination_repr x
-    rw [Finsupp.linearCombination_apply,
-      Finsupp.sum_of_support_subset (BQC.repr x) (hA d hd) (fun i a => a • (BQC i : ℂ)) (fun i _ =>
-      zero_smul ℚ _)] at hx
-    conv_rhs => rw [← hx]
-    refine Finset.sum_congr rfl fun α _ => ?_
-    change (BQC α : ℂ) * (algebraMap ℚ ℂ) (BQC.coord α x) = (BQC.repr x α) • (BQC α : ℂ)
-    rw [Algebra.smul_def, mul_comm]
-    rfl
-  · rw [notMem_support_iff.mp hd]
-    refine Finset.sum_eq_zero fun α _ => ?_
-    change (BQC α : ℂ) * (algebraMap ℚ ℂ) ((BQC.coord α) (0 : ℂ)) = 0
-    rw [map_zero, map_zero, mul_zero]
-
 variable {Γ : Subgroup SL(2, ℤ)}
-
-theorem exists_eq_sum_smul_pushPar (s : Finset Γ) (hs : Subgroup.closure (s : Set Γ) = ⊤)
-    (Z : ↥(coeffParabolicCocycles ((binaryFormRepSL ℂ n).comp Γ.subtype))) :
-    ∃ A : Finset (Module.Basis.ofVectorSpaceIndex ℚ ℂ),
-      Z = ∑ α ∈ A, (BQC α : ℂ) • pushPar ιQC n (pushPar (πQC α) n Z) := by
-  classical
-  let A : Finset (Module.Basis.ofVectorSpaceIndex ℚ ℂ) :=
-    s.biUnion fun g => ((Z.1 g : ↥(BinaryForm ℂ n)) : MvPolynomial (Fin 2) ℂ).support.biUnion fun d
-      =>
-      (BQC.repr (AddMonoidAlgebra.coeff
-        ((Z.1 g : ↥(BinaryForm ℂ n)) : MvPolynomial (Fin 2) ℂ) d)).support
-  refine ⟨A, Subtype.ext ?_⟩
-  set T : ↥(coeffParabolicCocycles ((binaryFormRepSL ℂ n).comp Γ.subtype)) :=
-    ∑ α ∈ A, (BQC α : ℂ) • pushPar ιQC n (pushPar (πQC α) n Z) with hT
-  refine coeffCocycles_eq_of_eqOn Z.2.1 T.2.1 hs fun g hg => ?_
-  rw [hT]
-  rw [Submodule.coe_sum, Finset.sum_apply]
-  simp only [Submodule.coe_smul, Pi.smul_apply, pushPar_apply_val]
-  symm
-  apply sum_smul_pushForm_π
-  intro d hd
-  exact Finset.subset_biUnion_of_mem (fun d => (BQC.repr (AddMonoidAlgebra.coeff
-    ((Z.1 g : ↥(BinaryForm ℂ n)) : MvPolynomial (Fin 2) ℂ) d)).support) hd
-    |>.trans (Finset.subset_biUnion_of_mem (fun g => ((Z.1 g : ↥(BinaryForm ℂ n)) : MvPolynomial
-      (Fin 2) ℂ).support.biUnion fun d =>
-      (BQC.repr (AddMonoidAlgebra.coeff
-        ((Z.1 g : ↥(BinaryForm ℂ n)) : MvPolynomial (Fin 2) ℂ) d)).support) hg)
 
 variable (Ψ : coeffH1par ((binaryFormRepSL ℚ n).comp Γ.subtype) →+ coeffH1par ((binaryFormRepSL ℂ
   n).comp Γ.subtype))
@@ -503,19 +298,6 @@ theorem Ψ_mk (z : ↥(coeffParabolicCocycles ((binaryFormRepSL ℚ n).comp Γ.s
   apply Subtype.ext; funext g; apply Subtype.ext
   rw [hw g]
   exact (coe_pushForm_ιQC n _).symm
-
-include hΨ in
-theorem mem_span_range (s : Finset Γ) (hs : Subgroup.closure (s : Set Γ) = ⊤)
-    (X : coeffH1par ((binaryFormRepSL ℂ n).comp Γ.subtype)) :
-    X ∈ Submodule.span ℂ (Set.range Ψ) := by
-  classical
-  obtain ⟨Z, rfl⟩ := coeffH1parMk_surjective _ X
-  obtain ⟨A, hA⟩ := exists_eq_sum_smul_pushPar n s hs Z
-  rw [hA, map_sum]
-  refine Submodule.sum_mem _ fun α _ => ?_
-  rw [map_smul]
-  refine Submodule.smul_mem _ _ (Submodule.subset_span ⟨coeffH1parMk _ (pushPar (πQC α) n Z), ?_⟩)
-  exact Ψ_mk n Ψ hΨ _
 
 include hΨ in
 theorem linearIndependent_comp {ι : Type*}
@@ -561,7 +343,8 @@ theorem linearIndependent_comp {ι : Type*}
     simpa [Submodule.coe_sum, Submodule.coe_smul] using hrel
   exact hy t (fun j => BQC.coord α (c j)) hzero i hi
 
-end HeckeEis.QCAux
+end QCAux
+end HeckeEis
 end
 
 open scoped MatrixGroups in
@@ -579,14 +362,9 @@ theorem solution (n : ℕ) (Γ : Subgroup SL(2, ℤ))
     LinearIndependent ℂ (fun i => Ψ (y i)) :=
   HeckeEis.QCAux.linearIndependent_comp n Ψ hΨ y hy
 
-end S_HeckeEis_linearIndependent_coeffH1par_map_rat_complex
-end P2MW
-export P2MW.S_HeckeEis_linearIndependent_coeffH1par_map_rat_complex (solution)
-
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem HeckeEis.linearIndependent_coeffH1par_map_rat_complex (n : ℕ) (Γ : Subgroup SL(2, ℤ))

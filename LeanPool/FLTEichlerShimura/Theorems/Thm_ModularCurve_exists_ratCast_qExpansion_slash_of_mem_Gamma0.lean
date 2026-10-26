@@ -68,7 +68,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_exists_ratCast_qExpansion_slash_of_mem_Gamma0
 
 noncomputable section
@@ -107,11 +106,6 @@ theorem IsRat.smul {q : PowerSeries ℂ} (h : IsRat q) (r : ℚ) : IsRat ((r : �
   intro n
   obtain ⟨s, hs⟩ := h n
   exact ⟨r * s, by simp [hs]⟩
-
-theorem IsRat.neg {q : PowerSeries ℂ} (h : IsRat q) : IsRat (-q) := by
-  intro n
-  obtain ⟨s, hs⟩ := h n
-  exact ⟨-s, by simp [hs]⟩
 
 theorem IsRat.of_mul_eq {q u p : PowerSeries ℂ} (hu : IsRat u)
     (hu0 : PowerSeries.constantCoeff u = 1)
@@ -277,15 +271,6 @@ section Weight
 
 variable {M : ℕ} [NeZero M] {k : ℤ}
 
-omit [NeZero M] in
-theorem apply_smul (f : ModularForm Γ₁(M) k) {g : SL(2, ℤ)} (hg : g ∈ Gamma1 M) (τ : ℍ) :
-    f (g • τ) = denom (g : GL (Fin 2) ℝ) τ ^ k * f τ := by
-  have :=
-    SlashInvariantForm.slash_action_eqn'' f (Subgroup.mem_map_of_mem
-      (Matrix.SpecialLinearGroup.mapGL ℝ) hg) τ
-  rw [ModularGroup.sl_moeb]
-  exact this
-
 theorem disc_smul (α : SL(2, ℤ)) (τ : ℍ) :
     Δ (α • τ) = denom (α : GL (Fin 2) ℝ) τ ^ (12 : ℤ) * Δ τ := by
   have := SlashInvariantForm.slash_action_eqn'' CuspForm.discriminant (Γ := 𝒮ℒ)
@@ -298,11 +283,6 @@ theorem levelOne_smul {k' : ℤ} (E : ModularForm 𝒮ℒ k') (α : SL(2, ℤ)) 
   have := SlashInvariantForm.slash_action_eqn'' E (Γ := 𝒮ℒ) (γ := (α : GL (Fin 2) ℝ)) ⟨α, rfl⟩ τ
   rw [← ModularGroup.sl_moeb] at this
   exact this
-
-theorem levelOne_slash {k' : ℤ} (E : ModularForm 𝒮ℒ k') (α : SL(2, ℤ)) :
-    (⇑E : ℍ → ℂ) ∣[k'] α = ⇑E := by
-  rw [ModularForm.SL_slash]
-  exact SlashInvariantFormClass.slash_action_eq E _ ⟨α, rfl⟩
 
 theorem isRat_slash_mul (f : ModularForm Γ₁(M) k) (m : ℕ) {kE : ℤ} (E : ModularForm 𝒮ℒ kE)
     (hkE : k + kE = 12 * m) (hf : IsRat (qExpansion 1 f)) (hE : IsRat (qExpansion 1 E))
@@ -386,9 +366,6 @@ theorem constantCoeff_E6 : PowerSeries.constantCoeff (qExpansion 1 (E₆ : ℍ �
     EisensteinSeries.E_qExpansion_coeff_zero (by norm_num) (by decide)]
 
 def Eaux (a b : ℕ) : ModularForm 𝒮ℒ (a * 4 + b * 6) := (E₄.pow a).mul (E₆.pow b)
-
-theorem coe_Eaux (a b : ℕ) : (⇑(Eaux a b) : ℍ → ℂ) = (⇑E₄) ^ a * (⇑E₆) ^ b := by
-  rw [Eaux, coe_mul, coe_pow, coe_pow]
 
 theorem qExpansion_Eaux (a b : ℕ) :
     qExpansion 1 (⇑(Eaux a b)) = qExpansion 1 ⇑E₄ ^ a * qExpansion 1 ⇑E₆ ^ b := by
@@ -670,7 +647,6 @@ export P2MW.S_ModularCurve_exists_ratCast_qExpansion_slash_of_mem_Gamma0 (soluti
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups ModularForm in
 theorem ModularCurve.exists_ratCast_qExpansion_slash_of_mem_Gamma0 (M : ℕ) [NeZero M] {k : ℤ}

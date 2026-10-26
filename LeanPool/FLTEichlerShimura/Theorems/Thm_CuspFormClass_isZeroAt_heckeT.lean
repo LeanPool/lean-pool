@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_CuspFormClass_isZeroAt_heckeT
 
 namespace ModularForm
@@ -83,12 +82,6 @@ theorem isCusp_ratCast_smul {c : OnePoint ℝ} (hc : IsCusp c Γ) (g : GL (Fin 2
   obtain ⟨c, rfl⟩ := hc
   exact ⟨g • c, by rw [← Rat.coe_castHom, OnePoint.map_smul]⟩
 
-theorem isBoundedAt_slash_ratCast [ModularFormClass F Γ k] (f : F) (g : GL (Fin 2) ℚ)
-    {c : OnePoint ℝ}
-    (hc : IsCusp c Γ) : c.IsBoundedAt (⇑f ∣[k] (Matrix.GeneralLinearGroup.map (Rat.castHom ℝ) g)) k
-      :=
-  OnePoint.IsBoundedAt.smul_iff.mp (ModularFormClass.bdd_at_cusps f (isCusp_ratCast_smul hc g))
-
 theorem isZeroAt_slash_ratCast [CuspFormClass F Γ k] (f : F) (g : GL (Fin 2) ℚ) {c : OnePoint ℝ}
     (hc : IsCusp c Γ) : c.IsZeroAt (⇑f ∣[k] (Matrix.GeneralLinearGroup.map (Rat.castHom ℝ) g)) k :=
   OnePoint.IsZeroAt.smul_iff.mp (CuspFormClass.zero_at_cusps f (isCusp_ratCast_smul hc g))
@@ -100,13 +93,6 @@ section HeckeMatrices
 def ratUpperTriangularGL (a b d : ℚ) (had : a * d ≠ 0) : GL (Fin 2) ℚ :=
   Matrix.GeneralLinearGroup.mkOfDetNeZero !![a, b; 0, d]
     (by rwa [Matrix.det_fin_two_of, mul_zero, sub_zero])
-
-theorem upperTriangularGL_eq_map (a b d : ℚ) (had : a * d ≠ 0) :
-    upperTriangularGL a b d (by exact_mod_cast had) =
-      Matrix.GeneralLinearGroup.map (Rat.castHom ℝ) (ratUpperTriangularGL a b d had) := by
-  ext i j
-  fin_cases i <;> fin_cases j <;>
-    simp [ratUpperTriangularGL, upperTriangularGL, Matrix.GeneralLinearGroup.mkOfDetNeZero]
 
 theorem exists_heckeMatrix_eq_map (p j : ℕ) :
     ∃ g : GL (Fin 2) ℚ, heckeMatrix p j = Matrix.GeneralLinearGroup.map (Rat.castHom ℝ) g := by
@@ -134,19 +120,6 @@ section Cusps
 
 variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {k : ℤ}
 
-theorem isBoundedAt_sum {ι : Type*} {c : OnePoint ℝ} {k : ℤ} (s : Finset ι)
-    {f : ι → ℍ → ℂ} (hf : ∀ i ∈ s, c.IsBoundedAt (f i) k) : c.IsBoundedAt (∑ i ∈ s, f i) k := by
-  classical
-  induction s using Finset.induction_on with
-  | empty =>
-    intro g _
-    rw [Finset.sum_empty, SlashAction.zero_slash]
-    exact Filter.const_boundedAtFilter _ (0 : ℂ)
-  | insert a s ha ih =>
-    rw [Finset.sum_insert ha]
-    exact (hf a (Finset.mem_insert_self a s)).add (ih fun i hi => hf i (Finset.mem_insert_of_mem
-      hi))
-
 theorem isZeroAt_sum {ι : Type*} {c : OnePoint ℝ} {k : ℤ} (s : Finset ι)
     {f : ι → ℍ → ℂ} (hf : ∀ i ∈ s, c.IsZeroAt (f i) k) : c.IsZeroAt (∑ i ∈ s, f i) k := by
   classical
@@ -159,24 +132,6 @@ theorem isZeroAt_sum {ι : Type*} {c : OnePoint ℝ} {k : ℤ} (s : Finset ι)
     rw [Finset.sum_insert ha]
     exact (hf a (Finset.mem_insert_self a s)).add (ih fun i hi => hf i (Finset.mem_insert_of_mem
       hi))
-
-theorem isBoundedAt_heckeU [ModularFormClass F Γ k] (f : F) (p : ℕ) {c : OnePoint ℝ}
-    (hc : IsCusp c Γ) :
-    c.IsBoundedAt (heckeU k p ⇑f) k := by
-  rw [heckeU_def]
-  refine isBoundedAt_sum _ fun j _ => ?_
-  obtain ⟨g, hg⟩ := exists_heckeMatrix_eq_map p j
-  rw [hg]
-  exact isBoundedAt_slash_ratCast f g hc
-
-theorem isBoundedAt_heckeT [ModularFormClass F Γ k] (f : F) (p : ℕ) {c : OnePoint ℝ}
-    (hc : IsCusp c Γ) :
-    c.IsBoundedAt (heckeT k p ⇑f) k := by
-  rw [heckeT_eq_heckeU_add]
-  refine (isBoundedAt_heckeU f p hc).add ?_
-  obtain ⟨g, hg⟩ := exists_heckeDiagMatrix_eq_map p
-  rw [hg]
-  exact isBoundedAt_slash_ratCast f g hc
 
 theorem isZeroAt_heckeU [CuspFormClass F Γ k] (f : F) (p : ℕ) {c : OnePoint ℝ} (hc : IsCusp c Γ) :
     c.IsZeroAt (heckeU k p ⇑f) k := by
@@ -196,7 +151,8 @@ theorem isZeroAt_heckeT [CuspFormClass F Γ k] (f : F) (p : ℕ) {c : OnePoint �
 
 end Cusps
 
-end ModularForm.S06W2
+end S06W2
+end ModularForm
 
 theorem solution {F : Type*} [FunLike F UpperHalfPlane ℂ]
     {Γ : Subgroup (Matrix.GeneralLinearGroup (Fin 2) ℝ)} [Γ.IsArithmetic] {k : ℤ}

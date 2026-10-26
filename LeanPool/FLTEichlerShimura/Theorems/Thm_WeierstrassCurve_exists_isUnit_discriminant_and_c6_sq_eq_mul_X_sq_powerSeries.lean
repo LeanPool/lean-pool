@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_exists_isUnit_discriminant_and_c6_sq_eq_mul_X_sq_powerSeries
 
 open PowerSeries
@@ -69,14 +68,6 @@ namespace P2MWs13
 namespace GoodRedModels
 
 variable (K : Type*) [Field K]
-
-theorem isUnit_1728_sub_X_cube (h2 : (2 : K) ≠ 0) (h3 : (3 : K) ≠ 0) :
-    IsUnit ((1728 : PowerSeries K) - PowerSeries.X ^ 3) := by
-  refine PowerSeries.isUnit_iff_constantCoeff.mpr (isUnit_iff_ne_zero.mpr ?_)
-  simp only [map_sub, map_ofNat, map_pow, PowerSeries.constantCoeff_X]
-  have hfac : (1728 : K) = 2 ^ 6 * 3 ^ 3 := by norm_num
-  norm_num
-  rw [hfac]; exact mul_ne_zero (pow_ne_zero _ h2) (pow_ne_zero _ h3)
 
 theorem isUnit_1728_add_X_sq (h2 : (2 : K) ≠ 0) (h3 : (3 : K) ≠ 0) :
     IsUnit ((1728 : PowerSeries K) + PowerSeries.X ^ 2) := by
@@ -92,7 +83,8 @@ theorem isUnit_const (h2 : (2 : K) ≠ 0) (h3 : (3 : K) ≠ 0) (a b : ℕ) :
   simp only [map_mul, map_pow, map_ofNat]
   exact mul_ne_zero (pow_ne_zero _ h2) (pow_ne_zero _ h3)
 
-end P2MWs13.GoodRedModels
+end GoodRedModels
+end P2MWs13
 
 open P2MWs13.GoodRedModels in
 theorem solution

@@ -68,7 +68,6 @@ section privateSection
 
 open UpperHalfPlane.NiceFunction
 
-
 namespace P2MW.S_ModularCurve_eventually_norm_slash_le_mul_of_isIntegral_adjoin_jqModC_inv_sq
 
 p2m_open "UpperHalfPlane ModularCurve"
@@ -186,110 +185,6 @@ theorem norm_le_of_monic_relation {n : ℕ} {u : ℂ} {κ : ℕ → ℂ} {B : �
   rw [pow_succ, mul_comm] at hle
   have := le_of_mul_le_mul_right hle hpos
   linarith
-
-theorem coreC (𝔤 𝔥 : 𝒩) (X : LaurentSeries ℂ) (hX : X * ψ 𝔥 = ψ 𝔤) (M w : ℕ)
-    (h₂ : IsIntegral (Algebra.adjoin ℂ ({(𝐉)⁻¹} : Set (LaurentSeries ℂ)))
-      (X ^ (2 * M) * 𝐉 ^ (w * M + 1) * (𝐉 - algebraMap ℂ (LaurentSeries ℂ) 1728) ^ (w * M))) :
-    ∃ (n m : ℕ) (K : ℕ → 𝒩),
-      (∀ i ∈ Finset.range n, ∀ (A : SL(2, ℤ)) (τ : ℍ), (K i : ℍ → ℂ) (A • τ) =
-          denom (A : GL (Fin 2) ℝ) τ ^ (12 * m) * (K i : ℍ → ℂ) τ) ∧
-      (𝔤 ^ (2 * M) * 𝔞 ^ (3 * (w * M) + 3) * 𝔟 ^ (2 * (w * M))) ^ n * 𝔞 ^ (3 * m) +
-        ∑ i ∈ Finset.range n, K i * ((𝔤 ^ (2 * M) * 𝔞 ^ (3 * (w * M) + 3) * 𝔟 ^ (2 * (w * M))) ^ i *
-          (𝔥 ^ (2 * M) * 𝔡 ^ (2 * (w * M) + 1)) ^ (n - i)) = 0 := by
-  classical
-  have key1 : (X ^ (2 * M) * 𝐉 ^ (w * M + 1) * (𝐉 - algebraMap ℂ (LaurentSeries ℂ) 1728) ^ (w * M))
-    *
-      (ψ 𝔥 ^ (2 * M) * ψ 𝔡 ^ (2 * (w * M) + 1)) = ψ 𝔤 ^ (2 * M) * ψ 𝔞 ^ (3 * (w * M) + 3) * ψ 𝔟 ^ (2
-        * (w * M)) := by
-    calc (X ^ (2 * M) * 𝐉 ^ (w * M + 1) * (𝐉 - algebraMap ℂ (LaurentSeries ℂ) 1728) ^ (w * M)) *
-          (ψ 𝔥 ^ (2 * M) * ψ 𝔡 ^ (2 * (w * M) + 1))
-        = (X * ψ 𝔥) ^ (2 * M) * (𝐉 * ψ 𝔡) ^ (w * M + 1) * ((𝐉 - algebraMap ℂ (LaurentSeries ℂ) 1728)
-          * ψ 𝔡) ^ (w * M) := by
-          rw [mul_pow (𝐉 - algebraMap ℂ (LaurentSeries ℂ) 1728) (ψ 𝔡) (w * M), mul_pow X (ψ 𝔥),
-            mul_pow (𝐉) (ψ 𝔡)]
-          ring
-      _ = (ψ 𝔤) ^ (2 * M) * (ψ 𝔞 ^ 3) ^ (w * M + 1) * (ψ 𝔟 ^ 2) ^ (w * M) := by rw [hX, J_mul_D,
-        J_sub_mul_D]
-      _ = ψ 𝔤 ^ (2 * M) * ψ 𝔞 ^ (3 * (w * M) + 3) * ψ 𝔟 ^ (2 * (w * M)) := by
-          rw [← pow_mul, ← pow_mul, show 3 * (w * M + 1) = 3 * (w * M) + 3 by ring]
-  obtain ⟨p, hpm, hpev⟩ := h₂
-  rw [hpm.as_sum] at hpev
-  simp only [Polynomial.eval₂_add, Polynomial.eval₂_pow, Polynomial.eval₂_X,
-    Polynomial.eval₂_finsetSum,
-    Polynomial.eval₂_mul, Polynomial.eval₂_C] at hpev
-  set R := Algebra.adjoin ℂ ({(𝐉)⁻¹} : Set (LaurentSeries ℂ)) with hR
-  set Y := X ^ (2 * M) * 𝐉 ^ (w * M + 1) * (𝐉 - algebraMap ℂ (LaurentSeries ℂ) 1728) ^ (w * M) with
-    hY
-  set n := p.natDegree with hn
-  clear_value Y
-  have hmem : ∀ i, ∃ c : Polynomial ℂ,
-      Polynomial.aeval ((𝐉)⁻¹) c = algebraMap R (LaurentSeries ℂ) (p.coeff i) := by
-    intro i
-    have hi' : algebraMap R (LaurentSeries ℂ) (p.coeff i) ∈ (Polynomial.aeval (R := ℂ)
-      ((𝐉)⁻¹)).range :=
-      by
-      rw [← Algebra.adjoin_singleton_eq_range_aeval]
-      exact (p.coeff i).2
-    exact hi'
-  choose c hc using hmem
-  set m := ∑ i ∈ Finset.range n, (c i).natDegree with hm
-  have hdeg : ∀ i ∈ Finset.range n, (c i).natDegree ≤ m := fun i hi =>
-    Finset.single_le_sum (f := fun j => (c j).natDegree) (fun j _ => Nat.zero_le _) hi
-  clear_value m
-  let K : ℕ → 𝒩 := fun i =>
-    ∑ l ∈ Finset.range ((c i).natDegree + 1), algebraMap ℂ 𝒩 ((c i).coeff l) * (𝔡 ^ l * 𝔞 ^ (3 * (m
-      - l)))
-  have key3 : ∀ i ∈ Finset.range n, ψ 𝔞 ^ (3 * m) * algebraMap R (LaurentSeries ℂ) (p.coeff i) = ψ
-    (K i) :=
-    by
-    intro i hi
-    simp only [K, map_sum, map_mul, map_pow, AlgHom.commutes]
-    rw [← hc i, Polynomial.aeval_eq_sum_range, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun l hl => ?_
-    have hlm : l ≤ m := (Nat.lt_succ_iff.mp (Finset.mem_range.mp hl)).trans (hdeg i hi)
-    rw [Algebra.smul_def, mul_left_comm]
-    congr 1
-    calc ψ 𝔞 ^ (3 * m) * (𝐉)⁻¹ ^ l = ψ 𝔞 ^ (3 * (m - l)) * (ψ 𝔞 ^ 3) ^ l * (𝐉)⁻¹ ^ l := by
-          rw [← pow_mul, ← pow_add, show 3 * (m - l) + 3 * l = 3 * m by omega]
-      _ = ψ 𝔞 ^ (3 * (m - l)) * ((𝐉)⁻¹ * ψ 𝔞 ^ 3) ^ l := by rw [mul_pow ((𝐉)⁻¹)]; ring
-      _ = ψ 𝔡 ^ l * ψ 𝔞 ^ (3 * (m - l)) := by rw [Jinv_mul_A_cube, mul_comm]
-  let W : 𝒩 := 𝔤 ^ (2 * M) * 𝔞 ^ (3 * (w * M) + 3) * 𝔟 ^ (2 * (w * M))
-  let V : 𝒩 := 𝔥 ^ (2 * M) * 𝔡 ^ (2 * (w * M) + 1)
-  have k1 : Y * ψ V = ψ W := by
-    simp only [W, V, map_mul, map_pow]
-    exact key1
-  have key2 : ∀ i ≤ n, ψ V ^ n * Y ^ i = ψ W ^ i * ψ V ^ (n - i) := by
-    intro i hi
-    have e : ψ V ^ n = ψ V ^ i * ψ V ^ (n - i) := by
-      rw [← pow_add, Nat.add_sub_cancel' hi]
-    calc ψ V ^ n * Y ^ i = (Y * ψ V) ^ i * ψ V ^ (n - i) := by
-          rw [e, mul_pow Y (ψ V) i]; ring
-      _ = ψ W ^ i * ψ V ^ (n - i) := by rw [k1]
-  let E : 𝒩 := W ^ n * 𝔞 ^ (3 * m) + ∑ i ∈ Finset.range n, K i * (W ^ i * V ^ (n - i))
-  have hE : ψ E = ψ V ^ n * ψ 𝔞 ^ (3 * m) *
-      (Y ^ n + ∑ i ∈ Finset.range n, algebraMap R (LaurentSeries ℂ) (p.coeff i) * Y ^ i) := by
-    rw [mul_add, Finset.mul_sum]
-    simp only [E, map_add, map_sum, map_mul, map_pow]
-    congr 1
-    · have h2 := key2 n le_rfl
-      rw [Nat.sub_self, pow_zero, mul_one] at h2
-      rw [mul_right_comm, h2]
-    · refine Finset.sum_congr rfl fun i hi => ?_
-      have hin : i ≤ n := (Finset.mem_range.mp hi).le
-      rw [← key3 i hi, ← key2 i hin]
-      ring
-  have hE0 : E = 0 := by
-    apply ψ_injective
-    rw [hE, hpev, mul_zero, map_zero]
-  refine ⟨n, m, K, fun i hi A τ => ?_, hE0⟩
-  have hlm : ∀ l ∈ Finset.range ((c i).natDegree + 1), l ≤ m := fun l hl =>
-    (Nat.lt_succ_iff.mp (Finset.mem_range.mp hl)).trans (hdeg i hi)
-  change ev (A • τ) (K i) = denom (A : GL (Fin 2) ℝ) τ ^ (12 * m) * ev τ (K i)
-  simp only [K, map_sum, map_mul, map_pow, AlgHom.commutes, Finset.mul_sum]
-  refine Finset.sum_congr rfl fun l hl => ?_
-  rw [ev_apply, ev_apply, ev_apply, ev_apply, 𝔡_apply_smul, 𝔞_apply_smul,
-    show 12 * m = 12 * l + 4 * (3 * (m - l)) by have := hlm l hl; omega]
-  ring
 
 theorem coreC2 (𝔤 𝔥 : 𝒩) (X : LaurentSeries ℂ) (hX : X * ψ 𝔥 = ψ 𝔤) (w : ℕ)
     (h₂ : IsIntegral (Algebra.adjoin ℂ ({(𝐉)⁻¹} : Set (LaurentSeries ℂ)))
@@ -591,7 +486,6 @@ export P2MW.S_ModularCurve_eventually_norm_slash_le_mul_of_isIntegral_adjoin_jqM
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 open scoped MatrixGroups ModularForm

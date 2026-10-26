@@ -59,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_CuspForm_exists_degeneracy_Gamma0
 
 p2m_open_scoped "MatrixGroups ModularForm Pointwise"
@@ -74,23 +73,12 @@ p2m_open "ModularForm"
 
 variable {k : ℤ}
 
-def restrictMF {Γ Γ' : Subgroup (GL (Fin 2) ℝ)} (h : Γ' ≤ Γ) (F : ModularForm Γ k) :
-    ModularForm Γ' k where
-  toFun := F
-  slash_action_eq' γ hγ := SlashInvariantForm.slash_action_eqn F γ (h hγ)
-  holo' := F.holo'
-  bdd_at_cusps' hc := F.bdd_at_cusps' (hc.mono h)
-
 def restrictCF {Γ Γ' : Subgroup (GL (Fin 2) ℝ)} (h : Γ' ≤ Γ) (F : CuspForm Γ k) :
     CuspForm Γ' k where
   toFun := F
   slash_action_eq' γ hγ := SlashInvariantForm.slash_action_eqn F γ (h hγ)
   holo' := F.holo'
   zero_at_cusps' hc := F.zero_at_cusps' (hc.mono h)
-
-@[scoped simp] theorem coe_restrictMF {Γ Γ' : Subgroup (GL (Fin 2) ℝ)} (h : Γ' ≤ Γ) (F : ModularForm
-  Γ k) :
-    ⇑(restrictMF h F) = ⇑F := rfl
 
 @[scoped simp] theorem coe_restrictCF {Γ Γ' : Subgroup (GL (Fin 2) ℝ)} (h : Γ' ≤ Γ) (F : CuspForm Γ
   k) :
@@ -132,21 +120,6 @@ theorem Gamma0_le_conj_Gamma0 {M N d : ℕ} (hd : d ≠ 0) (hdiv : d * M ∣ N) 
     fin_cases i <;> fin_cases j <;>
       simp [Matrix.mul_apply, Fin.sum_univ_two, B, hc', mul_comm]
 
-theorem exists_modularForm {M N d : ℕ} [NeZero N] (hdiv : d * M ∣ N)
-    (f : ModularForm (CongruenceSubgroup.Gamma0 M) k) :
-    ∃ g : ModularForm (CongruenceSubgroup.Gamma0 N) k,
-      ⇑g = fun τ ↦ f (ModularForm.heckeDiagMatrix d • τ) := by
-  have hd : d ≠ 0 := by
-    rintro rfl
-    rw [zero_mul, zero_dvd_iff] at hdiv
-    exact NeZero.ne N hdiv
-  have hdk : ((d : ℂ) ^ (k - 1)) ≠ 0 := zpow_ne_zero _ (Nat.cast_ne_zero.mpr hd)
-  refine ⟨((d : ℂ) ^ (k - 1))⁻¹ •
-    restrictMF (Gamma0_le_conj_Gamma0 hd hdiv) (ModularForm.translate f (heckeDiagMatrix d)), ?_⟩
-  funext τ
-  rw [FunLike.coe_smul, Pi.smul_apply, coe_restrictMF, ModularForm.coe_translate,
-    slash_heckeDiagMatrix_apply k hd, smul_eq_mul, ← mul_assoc, inv_mul_cancel₀ hdk, one_mul]
-
 theorem exists_cuspForm {M N d : ℕ} [NeZero N] (hdiv : d * M ∣ N)
     (f : CuspForm (CongruenceSubgroup.Gamma0 M) k) :
     ∃ g : CuspForm (CongruenceSubgroup.Gamma0 N) k,
@@ -163,7 +136,8 @@ theorem exists_cuspForm {M N d : ℕ} [NeZero N] (hdiv : d * M ∣ N)
   change ((d : ℂ) ^ (k - 1))⁻¹ • (⇑f ∣[k] heckeDiagMatrix d) τ = _
   rw [slash_heckeDiagMatrix_apply k hd, smul_eq_mul, ← mul_assoc, inv_mul_cancel₀ hdk, one_mul]
 
-end ModularForm.DegeneracyPort
+end DegeneracyPort
+end ModularForm
 end
 
 theorem solution {k : ℤ} {M N d : ℕ} [NeZero N] (hd : d * M ∣ N)

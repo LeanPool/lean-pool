@@ -59,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_Place_exists_ord_algebraMap_eq_mul_ord
 
 noncomputable section
@@ -107,17 +106,6 @@ private theorem _root_.AlgebraicCurve.Place.mem_of_ord_nonneg' {f : F} (hf : f �
   exact mul_mem (u : v.toValuationSubring).2 (pow_mem (π : v.toValuationSubring).2 _)
 
 p2m_export "AlgebraicCurve.Place" "mem_of_ord_nonneg'"
-private theorem mem_iff_ord_nonneg' {f : F} (hf : f ≠ 0) :
-    f ∈ v.toValuationSubring ↔ 0 ≤ v.ord f :=
-  ⟨v.ord_nonneg_of_mem', v.mem_of_ord_nonneg' hf⟩
-
-private theorem exists_ord_pos_mem' : ∃ f : F, f ≠ 0 ∧ 0 < v.ord f ∧ f ∈ v.toValuationSubring := by
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
-  refine ⟨(π : F), ?_, ?_, π.2⟩
-  · simpa [ne_eq, ZeroMemClass.coe_eq_zero] using hπ.ne_zero
-  · rw [v.ord_coe_irreducible hπ]
-    exact one_pos
-
 end SinglePlace
 
 section Fiber
@@ -205,7 +193,6 @@ export P2MW.S_AlgebraicCurve_Place_exists_ord_algebraMap_eq_mul_ord (solution)
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.Place.exists_ord_algebraMap_eq_mul_ord {K F F' : Type*} [Field K] [Field F]

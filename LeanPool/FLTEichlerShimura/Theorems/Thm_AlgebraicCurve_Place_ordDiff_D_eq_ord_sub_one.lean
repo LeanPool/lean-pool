@@ -69,7 +69,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_Place_ordDiff_D_eq_ord_sub_one
 
 noncomputable section
@@ -144,12 +143,6 @@ theorem ordDiff_eq_ord_diffCoeff (v : Place K F) {t : F} (ht : v.ord t = 1) (ω 
   · rw [v.ord_mul ha0 hc0, hcord, add_zero]
 
 include x in
-theorem ordDiff_D_nonneg (v : Place K F) {f : F} (hf : 0 ≤ v.ord f) : 0 ≤ v.ordDiff (D K F f) := by
-  obtain ⟨t, ht⟩ := v.exists_ord_eq_one
-  rw [ordDiff_eq_ord_diffCoeff x v ht]
-  exact Place.ord_diffCoeff_D_nonneg x v ht hf
-
-include x in
 theorem ordDiff_D_of_ord_pos (v : Place K F) {f : F} (hf : 0 < v.ord f) :
     v.ordDiff (D K F f) = v.ord f - 1 := by
   obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
@@ -210,17 +203,10 @@ theorem ordDiff_D_eq_ord_sub_one (v : Place K F) {f : F} (hf : v.ord f ≠ 0) :
     ring
   · exact ordDiff_D_of_ord_pos x v hpos
 
-include x in
-theorem ordDiff_D_eq_ord_sub_algebraMap_sub_one (v : Place K F) {f : F} {c : K}
-    (hfc : v.ord (f - algebraMap K F c) ≠ 0) :
-    v.ordDiff (D K F f) = v.ord (f - algebraMap K F c) - 1 := by
-  have : D K F f = D K F (f - algebraMap K F c) := by
-    rw [map_sub, Derivation.map_algebraMap, sub_zero]
-  rw [this, ordDiff_D_eq_ord_sub_one x v hfc]
-
 end R4grade
 
-end AlgebraicCurve.FF2R4A
+end FF2R4A
+end AlgebraicCurve
 
 end
 

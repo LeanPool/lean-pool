@@ -69,7 +69,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_FrobeniusEndo_exists_x_linePencil_frobEnd_mul_collision_sq
 
 open Polynomial
@@ -162,12 +161,6 @@ lemma ν_pow_le (g : W.toAffine.CoordinateRing) (n : ℕ) : ν W (g ^ n) ≤ n *
   rw [_root_.map_pow]
   exact natDegree_pow_le
 
-lemma ν_pow (g : W.toAffine.CoordinateRing) (hg : g ≠ 0) (n : ℕ) : ν W (g ^ n) = n * ν W g := by
-  have hn : Algebra.norm K[X] g ≠ 0 := norm_ne_zero_of_ne_zero W hg
-  unfold ν
-  rw [_root_.map_pow]
-  exact natDegree_pow _ _
-
 lemma ν_add_le (g h : W.toAffine.CoordinateRing) : ν W (g + h) ≤ max (ν W g) (ν W h) := by
   obtain ⟨p, q, rfl⟩ := CoordinateRing.exists_smul_basis_eq g
   obtain ⟨p', q', rfl⟩ := CoordinateRing.exists_smul_basis_eq h
@@ -227,10 +220,6 @@ lemma ν_neg (g : W.toAffine.CoordinateRing) : ν W (-g) = ν W g := by
   congr 1
   ring
 
-lemma ν_sub_le (g h : W.toAffine.CoordinateRing) : ν W (g - h) ≤ max (ν W g) (ν W h) := by
-  rw [sub_eq_add_neg, ← ν_neg W h]
-  exact ν_add_le W g (-h)
-
 lemma ν_add_eq_of_lt {g h : W.toAffine.CoordinateRing} {N : ℕ} (hg : ν W g = N)
     (hh : ν W h < N) : ν W (g + h) = N := by
   apply le_antisymm
@@ -242,12 +231,6 @@ lemma ν_add_eq_of_lt {g h : W.toAffine.CoordinateRing} {N : ℕ} (hg : ν W g =
     rcases le_max_iff.mp h1 with h2 | h2
     · rwa [hg] at h2
     · omega
-
-lemma ν_mk_Y : ν W (CoordinateRing.mk W Y) = 3 := by
-  have h := ν_smul_basis_of_ne W 0 1 one_ne_zero
-  rw [zero_smul, zero_add, one_smul] at h
-  rw [h, natDegree_zero, natDegree_one]
-  rfl
 
 lemma ν_mk_negPolynomial : ν W (CoordinateRing.mk W W.toAffine.negPolynomial) = 3 := by
   have h := ν_smul_basis_of_ne W (-(C W.a₁ * X + C W.a₃)) (-1) (by norm_num)
@@ -551,11 +534,6 @@ lemma evalEval_eq_of_mk_eq {x y : K} (h : W.toAffine.Equation x y) {a b : K[X][Y
     ((congrArg (AdjoinRoot.evalEval (p := W.toAffine.polynomial) h) hab).trans
       (AdjoinRoot.evalEval_mk h b))
 
-lemma evalEval_eq_zero_of_mk_eq_zero {x y : K} (h : W.toAffine.Equation x y) {a : K[X][Y]}
-    (ha : CoordinateRing.mk W a = 0) : a.evalEval x y = 0 := by
-  have e := evalEval_eq_of_mk_eq W h (b := 0) (by rw [ha, _root_.map_zero])
-  rwa [evalEval_zero] at e
-
 lemma evalEval_ψ_sq {x y : K} (h : W.toAffine.Equation x y) (n : ℤ) :
     (W.ψ n).evalEval x y ^ 2 = (W.ΨSq n).eval x := by
   have e := evalEval_eq_of_mk_eq W h (a := W.ψ n ^ 2) (b := C (W.ΨSq n))
@@ -705,10 +683,6 @@ section Frobenius
 variable {R : Type*} [CommRing R] {F : Type*} [Field F] [Fintype F] {k : Type*} [Field k]
   [Algebra R F] [Algebra R k] [Algebra F k] [IsScalarTower R F k]
   (W : WeierstrassCurve R) (σ : k ≃ₐ[F] k) (hσ : ∀ x : k, σ x = x ^ Fintype.card F)
-
-include hσ in
-lemma pow_card_algebraMap (a : R) : (algebraMap R k a) ^ Fintype.card F = algebraMap R k a := by
-  rw [← hσ, IsScalarTower.algebraMap_apply R F k, AlgEquiv.commutes]
 
 include hσ in
 lemma negY_pow_card (x y : k) :
@@ -886,7 +860,6 @@ export P2MW.S_FrobeniusEndo_exists_x_linePencil_frobEnd_mul_collision_sq (soluti
 end privateSection
 
 public section publicSection
-
 
 open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point FrobeniusEndo
 

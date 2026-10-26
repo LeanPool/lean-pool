@@ -70,7 +70,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_PhiGen_evalSymm_of_splits
 
 noncomputable section
@@ -745,132 +744,6 @@ private theorem _root_.ModularCurve.ModularPolynomialData.evalSymm_of_irreducibl
 p2m_export "ModularCurve.ModularPolynomialData" "evalSymm_of_irreducible"
 end ModularPolynomialData
 
-section Engine
-
-private theorem swapBivar_C (c : Polynomial ℤ) :
-    swapBivar (Polynomial.C c) = c.map Polynomial.C := by
-  have hext : swapBivar.comp (Polynomial.C : Polynomial ℤ →+* Polynomial (Polynomial ℤ))
-      = Polynomial.mapRingHom (Polynomial.C : ℤ →+* Polynomial ℤ) := by
-    refine Polynomial.ringHom_ext' (Subsingleton.elim _ _) ?_
-    change swapBivar (Polynomial.C Polynomial.X)
-      = Polynomial.mapRingHom (Polynomial.C : ℤ →+* Polynomial ℤ) Polynomial.X
-    rw [swapBivar_C_X, Polynomial.coe_mapRingHom, Polynomial.map_X]
-  calc swapBivar (Polynomial.C c)
-      = swapBivar.comp (Polynomial.C : Polynomial ℤ →+* Polynomial (Polynomial ℤ)) c := rfl
-    _ = Polynomial.mapRingHom (Polynomial.C : ℤ →+* Polynomial ℤ) c := by rw [hext]
-    _ = c.map Polynomial.C := rfl
-
-private theorem degree_swapBivar_lt {Ψ : Polynomial (Polynomial ℤ)} {D : ℕ}
-    (h : ∀ k, (Ψ.coeff k).degree < (D : WithBot ℕ)) :
-    (swapBivar Ψ).degree < (D : WithBot ℕ) := by
-  conv_lhs => rw [Polynomial.as_sum_support_C_mul_X_pow Ψ, map_sum]
-  refine (Polynomial.degree_sum_le _ _).trans_lt
-    ((Finset.sup_lt_iff (WithBot.bot_lt_coe D)).2 fun k _ => ?_)
-  rw [map_mul, map_pow, swapBivar_C, swapBivar_X, ← map_pow]
-  refine lt_of_le_of_lt (le_trans (Polynomial.degree_mul_le _ _) ?_) (h k)
-  calc ((Ψ.coeff k).map Polynomial.C).degree + (Polynomial.C (Polynomial.X ^ k)).degree
-      ≤ (Ψ.coeff k).degree + 0 := by
-        gcongr
-        · exact le_of_eq (Polynomial.degree_map_eq_of_injective Polynomial.C_injective _)
-        · exact Polynomial.degree_C_le
-    _ = (Ψ.coeff k).degree := add_zero _
-
-theorem swapBivar_monic_of_coeff_bounds {Φ : Polynomial (Polynomial ℤ)} {d : ℕ}
-    (h0 : (Φ.coeff 0).Monic) (h0deg : (Φ.coeff 0).natDegree = d)
-    (hk : ∀ k, k ≠ 0 → (Φ.coeff k).degree < (d : WithBot ℕ)) :
-    (swapBivar Φ).Monic ∧ (swapBivar Φ).natDegree = d := by
-  have hsplit : swapBivar Φ = Polynomial.C Polynomial.X * swapBivar Φ.divX
-      + (Φ.coeff 0).map Polynomial.C := by
-    conv_lhs => rw [← Polynomial.X_mul_divX_add Φ]
-    rw [map_add, map_mul, swapBivar_X, swapBivar_C]
-  have hmap : ((Φ.coeff 0).map Polynomial.C).Monic := h0.map _
-  have hmapdeg : ((Φ.coeff 0).map Polynomial.C).degree = (d : WithBot ℕ) := by
-    rw [Polynomial.degree_eq_natDegree hmap.ne_zero, h0.natDegree_map, h0deg]
-  have hsmall : (Polynomial.C Polynomial.X * swapBivar Φ.divX).degree
-      < (d : WithBot ℕ) := by
-    refine lt_of_le_of_lt (Polynomial.degree_mul_le _ _) ?_
-    have hX : (Polynomial.C (Polynomial.X : Polynomial ℤ)).degree = 0 :=
-      Polynomial.degree_C Polynomial.X_ne_zero
-    rw [hX, zero_add]
-    exact degree_swapBivar_lt fun k => by
-      rw [Polynomial.coeff_divX]; exact hk (k + 1) (Nat.succ_ne_zero k)
-  have hlt : (Polynomial.C Polynomial.X * swapBivar Φ.divX).degree
-      < ((Φ.coeff 0).map Polynomial.C).degree := by rw [hmapdeg]; exact hsmall
-  refine ⟨?_, ?_⟩
-  · rw [hsplit]; exact hmap.add_of_right hlt
-  · rw [hsplit, Polynomial.natDegree_eq_of_degree_eq
-      (Polynomial.degree_add_eq_right_of_degree_lt hlt), h0.natDegree_map, h0deg]
-
-end Engine
-
-section Dictionary
-
-private theorem evalAtJ_eq_aeval_map_rat (P : Polynomial ℤ) :
-    evalAtJ P = Polynomial.aeval jq (P.map (Int.castRingHom ℚ)) := by
-  rw [evalAtJ_def, Polynomial.aeval_def, Polynomial.eval₂_map, Subsingleton.elim
-    ((algebraMap ℚ (LaurentSeries ℚ)).comp (Int.castRingHom ℚ))
-    (algebraMap ℤ (LaurentSeries ℚ))]
-  rfl
-
-private theorem coeff_aeval_jq_neg (P : Polynomial ℚ) {m : ℕ} (hm : P.natDegree ≤ m) :
-    (Polynomial.aeval jq P).coeff (-(m : ℤ)) = P.coeff m := by
-  rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range, HahnSeries.coeff_sum,
-    Finset.sum_eq_single m]
-  · rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul, coeff_jq_pow_self,
-      mul_one]
-  · intro i hi hin
-    have hilt : i < m :=
-      lt_of_le_of_ne (le_trans (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)) hm) hin
-    rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul,
-      coeff_jq_pow_of_lt (by omega), mul_zero]
-  · intro hm'
-    rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul,
-      Polynomial.coeff_eq_zero_of_natDegree_lt
-        (by simp only [Finset.mem_range, not_lt] at hm'; omega),
-      zero_mul]
-
-private theorem degree_lt_of_evalAtJ_coeff_eq_zero {P : Polynomial ℤ} {D : ℕ}
-    (h : ∀ m : ℕ, D ≤ m → (evalAtJ P).coeff (-(m : ℤ)) = 0) :
-    P.degree < (D : WithBot ℕ) := by
-  rcases eq_or_ne P 0 with rfl | hP0
-  · rw [Polynomial.degree_zero]; exact WithBot.bot_lt_coe D
-  rw [← Polynomial.natDegree_lt_iff_degree_lt hP0]
-  by_contra hle
-  rw [not_lt] at hle
-  have hQdeg : (P.map (Int.castRingHom ℚ)).natDegree = P.natDegree :=
-    Polynomial.natDegree_map_eq_of_injective Int.cast_injective P
-  have hcoeff := coeff_aeval_jq_neg (P.map (Int.castRingHom ℚ)) (m := P.natDegree) hQdeg.le
-  rw [← evalAtJ_eq_aeval_map_rat, h P.natDegree hle, Polynomial.coeff_map,
-    eq_intCast] at hcoeff
-  have hlead : P.coeff P.natDegree = 0 := by exact_mod_cast hcoeff.symm
-  exact hP0 (Polynomial.leadingCoeff_eq_zero.mp hlead)
-
-private theorem monic_of_evalAtJ_coeff_eq_one {P : Polynomial ℤ} {D : ℕ}
-    (hle : P.natDegree ≤ D) (h1 : (evalAtJ P).coeff (-(D : ℤ)) = 1) :
-    P.Monic ∧ P.natDegree = D := by
-  have hQdeg : (P.map (Int.castRingHom ℚ)).natDegree = P.natDegree :=
-    Polynomial.natDegree_map_eq_of_injective Int.cast_injective P
-  have hcoeff := coeff_aeval_jq_neg (P.map (Int.castRingHom ℚ)) (m := D) (hQdeg.le.trans hle)
-  rw [← evalAtJ_eq_aeval_map_rat, h1, Polynomial.coeff_map, eq_intCast] at hcoeff
-  have hPD : P.coeff D = 1 := by exact_mod_cast hcoeff.symm
-  have hge : D ≤ P.natDegree :=
-    Polynomial.le_natDegree_of_ne_zero (by rw [hPD]; exact one_ne_zero)
-  exact ⟨Polynomial.monic_of_natDegree_le_of_coeff_eq_one D hle hPD, le_antisymm hle hge⟩
-
-private theorem natDegree_le_of_evalAtJ_coeff_eq_zero {P : Polynomial ℤ} {D : ℕ}
-    (h : ∀ m : ℕ, D < m → (evalAtJ P).coeff (-(m : ℤ)) = 0) :
-    P.natDegree ≤ D := by
-  rcases eq_or_ne P 0 with rfl | hP0
-  · simp
-  by_contra hlt
-  rw [not_le] at hlt
-  have hdeg := degree_lt_of_evalAtJ_coeff_eq_zero (P := P) (D := D + 1)
-    (fun m hm => h m (by omega))
-  rw [← Polynomial.natDegree_lt_iff_degree_lt hP0] at hdeg
-  omega
-
-end Dictionary
-
 namespace ModularPolynomialData
 p2m_export "ModularCurve.ModularPolynomialData" "toAdjoin toAdjoin_monic monic eval_eq_zero \
   natDegree_eq Φ"
@@ -878,27 +751,7 @@ p2m_open "ModularCurve.ModularPolynomialData"
 
 variable {N : ℕ} [NeZero N] (data : ModularPolynomialData N)
 
-private theorem _root_.ModularCurve.ModularPolynomialData.transposeToAdjoin_monic_of_coeff_bounds
-    (h0 : (data.Φ.coeff 0).Monic) (h0deg : (data.Φ.coeff 0).natDegree = dedekindPsi N)
-    (hk : ∀ k, k ≠ 0 → (data.Φ.coeff k).degree < (dedekindPsi N : WithBot ℕ)) :
-    ((swapBivar data.Φ).map evalAtJGen).Monic ∧
-      ((swapBivar data.Φ).map evalAtJGen).natDegree = dedekindPsi N := by
-  obtain ⟨hmonic, hdeg⟩ := swapBivar_monic_of_coeff_bounds h0 h0deg hk
-  exact ⟨hmonic.map _, by rw [hmonic.natDegree_map, hdeg]⟩
-
 p2m_export "ModularCurve.ModularPolynomialData" "transposeToAdjoin_monic_of_coeff_bounds"
-
-theorem transposeToAdjoin_monic_of_qExpansion
-    (h0top : (evalAtJ (data.Φ.coeff 0)).coeff (-(dedekindPsi N : ℤ)) = 1)
-    (h0le : ∀ m : ℕ, dedekindPsi N < m → (evalAtJ (data.Φ.coeff 0)).coeff (-(m : ℤ)) = 0)
-    (hk : ∀ k, k ≠ 0 → ∀ m : ℕ, dedekindPsi N ≤ m →
-      (evalAtJ (data.Φ.coeff k)).coeff (-(m : ℤ)) = 0) :
-    ((swapBivar data.Φ).map evalAtJGen).Monic ∧
-      ((swapBivar data.Φ).map evalAtJGen).natDegree = dedekindPsi N := by
-  obtain ⟨h0monic, h0deg⟩ := monic_of_evalAtJ_coeff_eq_one
-    (natDegree_le_of_evalAtJ_coeff_eq_zero h0le) h0top
-  exact data.transposeToAdjoin_monic_of_coeff_bounds h0monic h0deg
-    fun k hk0 => degree_lt_of_evalAtJ_coeff_eq_zero (hk k hk0)
 
 end ModularPolynomialData
 
@@ -952,7 +805,6 @@ end PhiGen
 end ModularCurve
 end
 
-
 open _root_.ModularCurve _root_.P2MW.S_ModularCurve_PhiGen_evalSymm_of_splits.ModularCurve
   _root_.ModularCurve.PhiGen
   _root_.P2MW.S_ModularCurve_PhiGen_evalSymm_of_splits.ModularCurve.PhiGen in
@@ -972,7 +824,6 @@ export P2MW.S_ModularCurve_PhiGen_evalSymm_of_splits (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve ModularCurve.PhiGen
 theorem ModularCurve.PhiGen.evalSymm_of_splits {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)

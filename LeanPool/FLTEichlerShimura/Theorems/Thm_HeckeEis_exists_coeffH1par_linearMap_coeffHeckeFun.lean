@@ -61,7 +61,6 @@ Prove2Me submission: `424062d0-1ce2-5345-9953-29cf4d1db00e` (ACCEPTED).
 
 section privateSection
 
-
 namespace P2MW.S_HeckeEis_exists_coeffH1par_linearMap_coeffHeckeFun
 
 open scoped MatrixGroups
@@ -90,9 +89,6 @@ def coeffHeckeLin : (Gamma0 N → V) →ₗ[K] (Gamma0 N → V) where
   map_smul' c z := by
     funext g
     simp only [coeffHeckeFun_apply, Pi.smul_apply, map_smul, RingHom.id_apply, Finset.smul_sum]
-
-@[scoped simp] theorem coeffHeckeLin_apply (z : Gamma0 N → V) : coeffHeckeLin N ℓ ρ a z =
-  coeffHeckeFun N ℓ ρ a z := rfl
 
 variable {ρ a}
 
@@ -124,7 +120,8 @@ theorem heckeH1par_mk (ha : ∀ u : ↥(heckeUpper N ℓ), a ∘ₗ ρ (heckeCon
     heckeH1par N ℓ ha (coeffH1parMk ρ z) = coeffH1parMk ρ (parabolicHecke N ℓ ha z) :=
   rfl
 
-end HeckeEis.InducedHeckeSol
+end InducedHeckeSol
+end HeckeEis
 
 end
 
@@ -148,7 +145,6 @@ export P2MW.S_HeckeEis_exists_coeffH1par_linearMap_coeffHeckeFun (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 

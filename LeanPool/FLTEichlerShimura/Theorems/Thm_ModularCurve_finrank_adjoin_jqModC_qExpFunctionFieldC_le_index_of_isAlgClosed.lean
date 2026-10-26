@@ -76,7 +76,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_finrank_adjoin_jqModC_qExpFunctionFieldC_le_index_of_isAlgClosed
 
 noncomputable section
@@ -152,25 +151,6 @@ theorem isAlgebraic_residueField :
 
 end Residue
 
-section CharZero
-
-variable (K : Type*) [Field K]
-
-theorem coe_eq_zero_of_mem_maximalIdeal_top {a : (⊤ : ValuationSubring K)}
-    (ha : a ∈ IsLocalRing.maximalIdeal (⊤ : ValuationSubring K)) : (a : K) = 0 := by
-  by_contra h
-  apply (IsLocalRing.mem_maximalIdeal _).mp ha
-  refine ⟨⟨a, ⟨(a : K)⁻¹, trivial⟩, ?_, ?_⟩, rfl⟩
-  · exact Subtype.ext (mul_inv_cancel₀ h)
-  · exact Subtype.ext (inv_mul_cancel₀ h)
-
-def residueTopHom : IsLocalRing.ResidueField (⊤ : ValuationSubring K) →+* K :=
-  Ideal.Quotient.lift (IsLocalRing.maximalIdeal (⊤ : ValuationSubring K)) (⊤ : ValuationSubring
-    K).subtype
-    fun _ ha => coe_eq_zero_of_mem_maximalIdeal_top K ha
-
-end CharZero
-
 theorem jqModC_eq_div (K : Type*) [Field K] :
     ModularCurve.jqModC K = ModularCurve.intSeriesC K ModularCurve.jNum / ModularCurve.intSeriesC K
       PowerSeries.X := by
@@ -229,7 +209,8 @@ theorem bound_of_place (K : Type*) [Field K]
     (ModularCurve.finrank_adjoin_jqModC_laurentBaseChange_qExpFunctionFieldC_le_index
     L Γ hT Γ' hΓ' hneg X rfl)⟩
 
-end ModularCurve.DegKDeuring
+end DegKDeuring
+end ModularCurve
 
 end
 
@@ -275,7 +256,6 @@ export P2MW.S_ModularCurve_finrank_adjoin_jqModC_qExpFunctionFieldC_le_index_of_
 end privateSection
 
 public section publicSection
-
 
 theorem ModularCurve.finrank_adjoin_jqModC_qExpFunctionFieldC_le_index_of_isAlgClosed
     (K : Type*) [Field K] [IsAlgClosed K]

@@ -62,7 +62,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_FrobeniusEndo_frobCharEqOnPoints_of_charEq_on_torsion_of_trace_ne_zero
 
 section PortCardMulX
@@ -118,16 +117,6 @@ theorem zsmul_some_eq_zero_iff_eval_ΨSq {x y : F} (h : W.toAffine.Nonsingular x
   rw [W.smul_eq_zero_iff_evalEval_ψ h n, ← W.evalEval_ψ_sq h.left n]
   exact ⟨fun h0 => by rw [h0]; exact zero_pow two_ne_zero, fun h0 => (sq_eq_zero_iff).mp h0⟩
 
-theorem zsmul_some_eq_some_div {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
-    (hψ : (W.ψ n).evalEval x y ≠ 0) :
-    ∃ (y' : F) (h' : W.toAffine.Nonsingular ((W.Φ n).eval x / (W.ΨSq n).eval x) y'),
-      n • Point.some x y h = Point.some ((W.Φ n).eval x / (W.ΨSq n).eval x) y' h' := by
-  obtain ⟨x', y', h', hP, -, hx⟩ := zsmul_some_eq_some_of_evalEval_ψ_ne_zero W h hψ
-  have hΨ : (W.ΨSq n).eval x ≠ 0 := by
-    rw [← W.evalEval_ψ_sq h.left n]; exact pow_ne_zero 2 hψ
-  obtain rfl : x' = (W.Φ n).eval x / (W.ΨSq n).eval x := by rw [eq_div_iff hΨ]; exact hx
-  exact ⟨y', h', hP⟩
-
 end PortCard
 
 end PortCardMulX
@@ -163,12 +152,11 @@ private def _root_.WeierstrassCurve.Affine.Point.xOrZero : W.Point → R
   | .some x _ _ => x
 
 p2m_export "WeierstrassCurve.Affine.Point" "xOrZero"
-@[scoped simp] lemma xOrZero_zero : ((.zero : W.Point)).xOrZero = 0 := rfl
-
 @[scoped simp] lemma xOrZero_some {x y : R} (h : W.Nonsingular x y) :
     (Point.some x y h).xOrZero = x := rfl
 
-end Affine.Point
+end Point
+end Affine
 
 section AddQuad
 
@@ -1512,7 +1500,6 @@ export P2MW.S_FrobeniusEndo_frobCharEqOnPoints_of_charEq_on_torsion_of_trace_ne_
 end privateSection
 
 public section publicSection
-
 
 open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point FrobeniusEndo
 

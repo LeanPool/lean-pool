@@ -119,16 +119,6 @@ theorem isBoundedAtImInfty_heckeT (hf : IsBoundedAtImInfty f) :
     IsBoundedAtImInfty (heckeT k p f) :=
   (isBoundedAtImInfty_heckeU k p hf).add (hf.slash k (heckeDiagMatrix_one_zero p))
 
-theorem isZeroAtImInfty_heckeU (hf : IsZeroAtImInfty f) :
-    IsZeroAtImInfty (heckeU k p f) :=
-  Finset.sum_induction _ (fun g : ℍ → ℂ => IsZeroAtImInfty g)
-    (fun _ _ ha hb => ha.add hb) (zero_zeroAtFilter atImInfty)
-    (fun j _ => hf.slash k (heckeMatrix_one_zero p j))
-
-theorem isZeroAtImInfty_heckeT (hf : IsZeroAtImInfty f) :
-    IsZeroAtImInfty (heckeT k p f) :=
-  (isZeroAtImInfty_heckeU k p hf).add (hf.slash k (heckeDiagMatrix_one_zero p))
-
 theorem apply_eq_of_coe_eq_add_nat (hf : Periodic (f ∘ ofComplex) 1) {τ₁ τ₂ : ℍ} (m : ℕ)
     (h : (τ₁ : ℂ) = τ₂ + m) : f τ₁ = f τ₂ := by
   have h1 : (f ∘ ofComplex) ((τ₂ : ℂ) + m) = (f ∘ ofComplex) (τ₂ : ℂ) := by
@@ -173,12 +163,6 @@ theorem sum_heckeMatrix_smul_vadd (hp : p ≠ 0) (hf : Periodic (f ∘ ofComplex
   rw [apply_eq_of_coe_eq_add_nat hf 1 (coe_heckeMatrix_smul_self hp τ)] at h1
   exact add_right_cancel (h0.symm.trans h1)
 
-theorem heckeU_vadd (hf : Periodic (f ∘ ofComplex) 1) (τ : ℍ) :
-    heckeU k p f ((1 : ℝ) +ᵥ τ) = heckeU k p f τ := by
-  by_cases hp : p = 0
-  · simp only [hp, heckeU_zero_left, Pi.zero_apply]
-  · rw [heckeU_apply k hp, heckeU_apply k hp, sum_heckeMatrix_smul_vadd hp hf]
-
 theorem heckeT_vadd (hf : Periodic (f ∘ ofComplex) 1) (τ : ℍ) :
     heckeT k p f ((1 : ℝ) +ᵥ τ) = heckeT k p f τ := by
   by_cases hp : p = 0
@@ -200,10 +184,6 @@ theorem periodic_comp_ofComplex_of_vadd {g : ℍ → ℂ} (hg : ∀ τ : ℍ, g 
     have hw0 : im w ≤ 0 := not_lt.mp hw
     simp only [comp_apply, ofComplex_apply_eq_of_im_nonpos hw1 hw0]
 
-theorem periodic_heckeU_comp_ofComplex (hf : Periodic (f ∘ ofComplex) 1) :
-    Periodic (heckeU k p f ∘ ofComplex) 1 :=
-  periodic_comp_ofComplex_of_vadd (heckeU_vadd k p hf)
-
 theorem periodic_heckeT_comp_ofComplex (hf : Periodic (f ∘ ofComplex) 1) :
     Periodic (heckeT k p f ∘ ofComplex) 1 :=
   periodic_comp_ofComplex_of_vadd (heckeT_vadd k p hf)
@@ -217,22 +197,6 @@ theorem qExpansion_coeff_unique' {g : ℍ → ℂ} (hcont : Continuous g) {c : �
     (hs : ∀ τ : ℍ, HasSum (fun m ↦ c m • Periodic.qParam 1 τ ^ m) (g τ)) (m : ℕ) :
     c m = (qExpansion 1 g).coeff m :=
   UpperHalfPlane.qExpansion_coeff_unique (ContinuousMap.mk g hcont) one_pos hg hs m
-
-variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
-
-theorem hasSum_qCoeff [ModularFormClass F Γ k] (f : F) (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) (τ : ℍ) :
-    HasSum (fun m ↦ qCoeff f m • Periodic.qParam 1 τ ^ m) (f τ) := by
-  have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
-  exact hasSum_qExpansion one_pos (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ)
-    (holo f) (bdd_at_infty f) τ
-
-theorem eq_of_forall_qCoeff_eq [ModularFormClass F Γ k] {f g : F} (hΓ : (1 : ℝ) ∈ Γ.strictPeriods)
-    (h : ∀ n : ℕ, qCoeff f n = qCoeff g n) : f = g := by
-  refine DFunLike.ext f g fun τ => ?_
-  have hf := hasSum_qCoeff f hΓ τ
-  have hg := hasSum_qCoeff g hΓ τ
-  simp only [h] at hf
-  exact hf.unique hg
 
 end Uniqueness
 
@@ -343,12 +307,6 @@ theorem hasSum_diag (k : ℤ) (τ : ℍ) :
   rfl
 
 include hp hper hhol hbdd in
-theorem hasSum_heckeU (k : ℤ) (τ : ℍ) :
-    HasSum (fun n : ℕ ↦ coeffHeckeU p (qCoeff f) n • Periodic.qParam 1 τ ^ n) (heckeU k p f τ) := by
-  rw [heckeU_apply k hp]
-  simpa only [coeffHeckeU_apply, smul_eq_mul] using hasSum_average hp hper hhol hbdd τ
-
-include hp hper hhol hbdd in
 theorem hasSum_heckeT (k : ℤ) (τ : ℍ) :
     HasSum (fun n : ℕ ↦ coeffHeckeT k p (qCoeff f) n • Periodic.qParam 1 τ ^ n) (heckeT k p f τ) :=
       by
@@ -359,36 +317,12 @@ theorem hasSum_heckeT (k : ℤ) (τ : ℍ) :
   split_ifs <;> ring
 
 include hp hper hhol hbdd in
-theorem qCoeff_heckeU_bare (k : ℤ) (n : ℕ) :
-    qCoeff (heckeU k p f) n = coeffHeckeU p (qCoeff f) n :=
-  (qExpansion_coeff_unique' (mdifferentiable_heckeU k p hhol).continuous
-    (analyticAt_cuspFunction_zero one_pos (periodic_heckeU_comp_ofComplex k p hper)
-      (mdifferentiable_heckeU k p hhol) (isBoundedAtImInfty_heckeU k p hbdd))
-    (hasSum_heckeU hp hper hhol hbdd k) n).symm
-
-include hp hper hhol hbdd in
 theorem qCoeff_heckeT_bare (k : ℤ) (n : ℕ) :
     qCoeff (heckeT k p f) n = coeffHeckeT k p (qCoeff f) n :=
   (qExpansion_coeff_unique' (mdifferentiable_heckeT k p hhol).continuous
     (analyticAt_cuspFunction_zero one_pos (periodic_heckeT_comp_ofComplex k p hper)
       (mdifferentiable_heckeT k p hhol) (isBoundedAtImInfty_heckeT k p hbdd))
     (hasSum_heckeT hp hper hhol hbdd k) n).symm
-
-variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
-
-include hp in
-theorem qCoeff_heckeU_class [ModularFormClass F Γ k] (f : F) (hΓ : (1 : ℝ) ∈ Γ.strictPeriods)
-    (n : ℕ) : qCoeff (heckeU k p f) n = coeffHeckeU p (qCoeff f) n :=
-  haveI : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
-  qCoeff_heckeU_bare hp (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ) (holo f)
-    (bdd_at_infty f) k n
-
-include hp in
-theorem qCoeff_heckeT_class [ModularFormClass F Γ k] (f : F) (hΓ : (1 : ℝ) ∈ Γ.strictPeriods)
-    (n : ℕ) : qCoeff (heckeT k p f) n = coeffHeckeT k p (qCoeff f) n :=
-  haveI : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
-  qCoeff_heckeT_bare hp (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ) (holo f)
-    (bdd_at_infty f) k n
 
 end QExpAction
 

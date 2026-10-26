@@ -79,7 +79,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_ComplexPlaceDictionaryOf_ramification_eq_one_gamma1
 
 noncomputable section
@@ -104,26 +103,6 @@ def jf : ℍ → ℂ := fun τ => (E₄ : ℍ → ℂ) τ ^ 3 / ModularForm.disc
 lemma E₄_smul (γ : SL(2, ℤ)) (τ : ℍ) : E₄ (γ • τ) = denom γ τ ^ (4 : ℤ) * E₄ τ := by
   have h := slash_action_eqn'' (Γ := 𝒮ℒ) (k := (4 : ℤ)) E₄ (γ := (γ : GL (Fin 2) ℝ)) ⟨γ, rfl⟩ τ
   simpa [ModularGroup.sl_moeb] using h
-
-lemma Δ_smul (γ : SL(2, ℤ)) (τ : ℍ) :
-    ModularForm.discriminant (γ • τ) = denom γ τ ^ (12 : ℤ) * ModularForm.discriminant τ := by
-  have h := slash_action_eqn'' (Γ := 𝒮ℒ) (k := (12 : ℤ)) CuspForm.discriminant
-    (γ := (γ : GL (Fin 2) ℝ)) ⟨γ, rfl⟩ τ
-  simpa [ModularGroup.sl_moeb, CuspForm.coe_discriminant] using h
-
-lemma jf_smul (γ : SL(2, ℤ)) (τ : ℍ) : jf (γ • τ) = jf τ := by
-  simp only [jf]
-  rw [E₄_smul, Δ_smul]
-  have hd : denom (γ : GL (Fin 2) ℝ) τ ≠ 0 := denom_ne_zero _ _
-  have hΔ := discriminant_ne_zero τ
-  field_simp
-
-lemma mdifferentiable_jf : MDiff jf :=
-  (E₄.holo'.pow 3).div CuspForm.discriminant.holo' discriminant_ne_zero
-
-lemma mdiff_E₄ : MDiff (E₄ : ℍ → ℂ) := E₄.holo'
-lemma mdiff_E₆ : MDiff (E₆ : ℍ → ℂ) := E₆.holo'
-lemma mdiff_Δ : MDiff (ModularForm.discriminant : ℍ → ℂ) := CuspForm.discriminant.holo'
 
 lemma E₆_smul (γ : SL(2, ℤ)) (τ : ℍ) : E₆ (γ • τ) = denom γ τ ^ (6 : ℤ) * E₆ τ := by
   have h := slash_action_eqn'' (Γ := 𝒮ℒ) (k := (6 : ℤ)) E₆ (γ := (γ : GL (Fin 2) ℝ)) ⟨γ, rfl⟩ τ
@@ -174,23 +153,6 @@ lemma E₄_ρ : E₄ ρ = 0 := by
   rcases mul_eq_zero.mp this with h1 | h1
   · exact absurd (sub_eq_zero.mp h1) ρ_ne_one
   · exact h1
-
-lemma E₄_I_ne_zero : E₄ UpperHalfPlane.I ≠ 0 := by
-  intro h
-  have hΔ := discriminant_ne_zero UpperHalfPlane.I
-  rw [discriminant_eq_E₄_cube_sub_E₆_sq, h, E₆_I] at hΔ
-  norm_num at hΔ
-
-lemma E₆_ρ_ne_zero : E₆ ρ ≠ 0 := by
-  intro h
-  have hΔ := discriminant_ne_zero ρ
-  rw [discriminant_eq_E₄_cube_sub_E₆_sq, h, E₄_ρ] at hΔ
-  norm_num at hΔ
-
-lemma jf_ρ : jf ρ = 0 := by simp [jf, E₄_ρ]
-
-lemma jf_I_ne_zero : jf UpperHalfPlane.I ≠ 0 :=
-  div_ne_zero (pow_ne_zero _ E₄_I_ne_zero) (discriminant_ne_zero _)
 
 lemma E₄_smul_eq_zero_iff (γ : SL(2, ℤ)) (τ : ℍ) : E₄ (γ • τ) = 0 ↔ E₄ τ = 0 := by
   rw [E₄_smul, mul_eq_zero, or_iff_right]
@@ -256,12 +218,6 @@ lemma natCard_stabilizer_eq_two {τ : ℍ} (h : ∀ g : SL(2, ℤ), g • τ = �
     (q := fun g => g ∈ ({1, -1} : Finset SL(2, ℤ))) hiff), Nat.card_eq_finsetCard]
   decide
 
-lemma E₆_ne_zero_of_E₄_eq_zero {τ : ℍ} (h4 : E₄ τ = 0) : E₆ τ ≠ 0 := by
-  intro h6
-  have hΔ := discriminant_ne_zero τ
-  rw [discriminant_eq_E₄_cube_sub_E₆_sq, h4, h6] at hΔ
-  norm_num at hΔ
-
 lemma jf_eq_of_E₆_eq_zero {τ : ℍ} (h6 : E₆ τ = 0) : jf τ = 1728 := by
   have hΔ := discriminant_ne_zero τ
   have hΔ' := discriminant_eq_E₄_cube_sub_E₆_sq τ
@@ -290,11 +246,6 @@ def restrict {F : Type*} [FunLike F ℍ ℂ] {Γ Γ' : Subgroup (GL (Fin 2) ℝ)
   slash_action_eq' γ hγ := SlashInvariantFormClass.slash_action_eq f γ (hle hγ)
   holo' := ModularFormClass.holo f
   bdd_at_cusps' hc := ModularFormClass.bdd_at_cusps f (hc.mono hle)
-
-@[scoped simp]
-theorem coe_restrict {F : Type*} [FunLike F ℍ ℂ] {Γ Γ' : Subgroup (GL (Fin 2) ℝ)}
-    (hle : Γ' ≤ Γ) {k : ℤ} (f : F) [ModularFormClass F Γ k] :
-    ((restrict hle f : ModularForm Γ' k) : ℍ → ℂ) = f := rfl
 
 def G : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) 12 :=
   restrict (le_SL Γ) (ModularForm.mcast (by decide) (ModularForm.E₄.pow 3))
@@ -429,7 +380,8 @@ theorem exists_coe_eq_jqModC :
 
 end Main
 
-end ModularCurve.RamOne
+end RamOne
+end ModularCurve
 end
 
 open UpperHalfPlane ModularForm ModularGroup _root_.ModularCurve
@@ -533,7 +485,6 @@ export P2MW.S_ModularCurve_ComplexPlaceDictionaryOf_ramification_eq_one_gamma1 (
 end privateSection
 
 public section publicSection
-
 
 theorem ModularCurve.ComplexPlaceDictionaryOf.ramification_eq_one_gamma1
     (M : ℕ) [NeZero M] (hM : 4 ≤ M)

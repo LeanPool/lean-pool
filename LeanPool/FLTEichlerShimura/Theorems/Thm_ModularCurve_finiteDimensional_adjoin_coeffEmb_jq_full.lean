@@ -65,12 +65,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-private theorem charZero_intermediateField {K F : Type*}
-    [Field K] [Field F] [Algebra K F] [CharZero K]
-    (A : IntermediateField K F) : CharZero A := by
-  infer_instance
-
-
 namespace P2MW.S_ModularCurve_finiteDimensional_adjoin_coeffEmb_jq_full
 
 p2m_open "ModularCurve"
@@ -82,11 +76,6 @@ p2m_export "ModularCurve" "jq dedekindPsi modularFunctionFieldFull coeffEmb laur
 end ModularCurve
 
 -- Abstract fields prevent instance search from exploring unrelated intermediate-field towers.
-private theorem isSeparable_of_finiteDimensional {K F : Type*}
-    [Field K] [Field F] [Algebra K F] [FiniteDimensional K F] [CharZero K] :
-    Algebra.IsSeparable K F := by
-  infer_instance
-
 p2m_open_scoped "ModularCurve" in
 private theorem ModularCurve.finiteDimensional_adjoin_coeffEmb_jq_full (L : Type*) [Field L]
     [Algebra ℚ L] (N : ℕ) [NeZero N] :
@@ -129,22 +118,6 @@ private theorem ModularCurve.finiteDimensional_adjoin_coeffEmb_jq_full (L : Type
     Module.finite_of_finrank_pos (by rw [hrank]; exact dedekindPsi_pos N (NeZero.ne N))
   rwa [hcomap] at hfin
 
-p2m_open_scoped "ModularCurve" in
-private theorem ModularCurve.isSeparable_adjoin_coeffEmb_jq_full (L : Type*) [Field L] [Algebra ℚ L]
-    (N : ℕ) [NeZero N] :
-    Algebra.IsSeparable (IntermediateField.adjoin L ({⟨coeffEmb L jq, coeffEmb_mem_laurentBaseChange
-      L (jq_mem_full N)⟩} : Set (laurentBaseChange L (modularFunctionFieldFull N))))
-      (laurentBaseChange L (modularFunctionFieldFull N)) := by
-  set X : IntermediateField L (laurentBaseChange L (modularFunctionFieldFull N)) :=
-    IntermediateField.adjoin L ({⟨coeffEmb L jq, coeffEmb_mem_laurentBaseChange L (jq_mem_full
-      N)⟩} :
-      Set (laurentBaseChange L (modularFunctionFieldFull N))) with hX
-  have : FiniteDimensional X (laurentBaseChange L (modularFunctionFieldFull N)) :=
-    finiteDimensional_adjoin_coeffEmb_jq_full L N
-  have : CharZero L := charZero_of_injective_algebraMap (algebraMap ℚ L).injective
-  have : CharZero X := charZero_intermediateField X
-  exact isSeparable_of_finiteDimensional
-
 p2m_open "ModularCurve\
   " in
 open _root_.P2MW.S_ModularCurve_finiteDimensional_adjoin_coeffEmb_jq_full.ModularCurve in
@@ -161,7 +134,6 @@ export P2MW.S_ModularCurve_finiteDimensional_adjoin_coeffEmb_jq_full (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.finiteDimensional_adjoin_coeffEmb_jq_full (L : Type*) [Field L] [Algebra ℚ L]

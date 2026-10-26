@@ -55,7 +55,6 @@ Prove2Me submission: `ef4c7cb3-2936-51c4-953d-94be9ec44797` (ACCEPTED).
 
 section privateSection
 
-
 namespace P2MW.S_HeckeEis_coeffHeckeFun_mem_coeffCoboundaries
 
 open scoped MatrixGroups
@@ -82,41 +81,10 @@ theorem ha_apply (u : ↥U) (v : V) : a (ρ (c u) v) = ρ (u : Gamma0 N) (a v) :
   have := LinearMap.congr_fun (ha u) v
   simpa using this
 
-theorem cocycle_one {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) : z 1 = 0 := by
-  have h := hz 1 1
-  rw [mul_one, map_one, Module.End.one_apply] at h
-  have : z 1 + z 1 = z 1 + 0 := by rw [add_zero]; exact h.symm
-  exact add_left_cancel this
-
-theorem cocycle_map_inv {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) (x : ↥U) :
-    z (c x⁻¹) = -(ρ (c x⁻¹) (z (c x))) := by
-  have h1 : z (c x⁻¹ * c x) = z (c x⁻¹) + ρ (c x⁻¹) (z (c x)) := hz _ _
-  rw [← map_mul, inv_mul_cancel, map_one, cocycle_one N ρ hz] at h1
-  exact eq_neg_of_add_eq_zero_left h1.symm
-
 omit [NeZero ℓ] in
 theorem out_mul_transferAux (g : Gamma0 N) (q : Gamma0 N ⧸ U) :
     (g • q).out * (transferAux U g q : Gamma0 N) = g * q.out := by
   rw [coe_transferAux, mul_inv_cancel_left]
-
-include ha in
-theorem mem_coeffCocycles {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) :
-    coeffHeckeFun N ℓ ρ a z ∈ coeffCocycles ρ := by
-  let := (heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
-  intro g h
-  simp only [coeffHeckeFun_apply]
-  have key : ∀ q : Gamma0 N ⧸ U,
-      ρ ((g * h) • q).out (a (z (c (transferAux U (g * h) q))))
-        = ρ (g • (h • q)).out (a (z (c (transferAux U g (h • q)))))
-          + ρ g (ρ (h • q).out (a (z (c (transferAux U h q))))) := by
-    intro q
-    rw [transferAux_mul, map_mul, hz, map_add, map_add, mul_smul]
-    congr 1
-    rw [ha_apply N ℓ ρ a ha, ← Module.End.mul_apply, ← map_mul, out_mul_transferAux, map_mul,
-      Module.End.mul_apply]
-  rw [Finset.sum_congr rfl fun q _ => key q, Finset.sum_add_distrib, map_sum]
-  congr 1
-  exact Fintype.sum_bijective (h • ·) (MulAction.bijective h) _ _ fun q => rfl
 
 include ha in
 theorem mem_coeffCoboundaries {z : Gamma0 N → V} (hz : z ∈ coeffCoboundaries ρ) :
@@ -135,66 +103,6 @@ theorem mem_coeffCoboundaries {z : Gamma0 N → V} (hz : z ∈ coeffCoboundaries
   · exact (Fintype.sum_bijective (g • ·) (MulAction.bijective g)
       (fun q : Gamma0 N ⧸ U => ρ (g • q).out (a v)) (fun q : Gamma0 N ⧸ U => ρ q.out (a v)) fun q =>
         rfl).symm
-
-include ha in
-theorem sum_repr_sub_mem_coeffCoboundaries
-    (s : Gamma0 N ⧸ U → Gamma0 N) (t : Gamma0 N → Gamma0 N ⧸ U → ↥U)
-    (hs : ∀ q, (s q : Gamma0 N ⧸ U) = q)
-    (hst : ∀ g q, s (g • q) * (t g q : Gamma0 N) = g * s q)
-    {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) :
-    (fun g => let := (heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
-        ∑ q : Gamma0 N ⧸ U, ρ (s (g • q)) (a (z (c (t g q)))))
-      - coeffHeckeFun N ℓ ρ a z ∈ coeffCoboundaries ρ := by
-  let := (heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
-  have hu_mem : ∀ q : Gamma0 N ⧸ U, (q.out)⁻¹ * s q ∈ U := fun q =>
-    QuotientGroup.eq.mp ((QuotientGroup.out_eq' q).trans (hs q).symm)
-  have hex : ∀ q : Gamma0 N ⧸ U, ∃ uq : ↥U, s q = q.out * (uq : Gamma0 N) := fun q =>
-    ⟨⟨_, hu_mem q⟩, by rw [Subgroup.coe_mk, mul_inv_cancel_left]⟩
-  choose u hsq using hex
-  have ht : ∀ g q, t g q = (u (g • q))⁻¹ * transferAux U g q * u q := by
-    intro g q
-    apply Subtype.ext
-    have h1 := hst g q
-    rw [hsq, hsq] at h1
-    push_cast [coe_transferAux]
-    calc ((t g q : ↥U) : Gamma0 N)
-        = ((g • q).out * ↑(u (g • q)))⁻¹ * (((g • q).out * ↑(u (g • q))) * ↑(t g q)) := by group
-      _ = ((g • q).out * ↑(u (g • q)))⁻¹ * (g * (q.out * ↑(u q))) := by rw [h1]
-      _ = (↑(u (g • q)))⁻¹ * ((g • q).out⁻¹ * (g * q.out)) * ↑(u q) := by group
-  set F : V := ∑ q : Gamma0 N ⧸ U, ρ q.out (a (z (c (u q)))) with hF
-  refine ⟨F, ?_⟩
-  funext g
-  simp only [coeffCoboundaryMap_apply, Pi.sub_apply, coeffHeckeFun_apply]
-  have key : ∀ q : Gamma0 N ⧸ U,
-      ρ (s (g • q)) (a (z (c (t g q))))
-        = -(ρ (g • q).out (a (z (c (u (g • q))))))
-          + ρ (g • q).out (a (z (c (transferAux U g q))))
-          + ρ g (ρ q.out (a (z (c (u q))))) := by
-    intro q
-    rw [hsq (g • q), ht g q, map_mul c, map_mul c,
-      hz (c (u (g • q))⁻¹ * c (transferAux U g q)) (c (u q)),
-      hz (c (u (g • q))⁻¹) (c (transferAux U g q)),
-      cocycle_map_inv N ℓ ρ hz (u (g • q)), ← map_mul c]
-    simp only [map_add, map_neg, ha_apply N ℓ ρ a ha]
-    have e12 : ∀ v : V, ρ ((g • q).out * ((u (g • q) : ↥U) : Gamma0 N)) (ρ (((u (g • q))⁻¹ : ↥U) :
-      Gamma0 N) v)
-        = ρ (g • q).out v := by
-      intro v
-      rw [← Module.End.mul_apply, ← map_mul, Subgroup.coe_inv, mul_inv_cancel_right]
-    have e3 : ∀ v : V, ρ ((g • q).out * ((u (g • q) : ↥U) : Gamma0 N))
-        (ρ (((u (g • q))⁻¹ * transferAux U g q : ↥U) : Gamma0 N) v) = ρ g (ρ q.out v) := by
-      intro v
-      rw [← Module.End.mul_apply, ← map_mul, ← Module.End.mul_apply, ← map_mul]
-      congr 2
-      rw [Subgroup.coe_mul, Subgroup.coe_inv, ← out_mul_transferAux N ℓ g q]
-      group
-    rw [e12, e12, e3]
-  rw [Finset.sum_congr rfl fun q _ => key q, Finset.sum_add_distrib, Finset.sum_add_distrib,
-    Finset.sum_neg_distrib, ← map_sum]
-  have hre : ∑ q : Gamma0 N ⧸ U, ρ (g • q).out (a (z (c (u (g • q))))) = F :=
-    Fintype.sum_bijective (g • ·) (MulAction.bijective g) _ _ fun q => rfl
-  rw [hre]
-  abel
 
 end Sh2
 end HeckeEis
@@ -215,7 +123,6 @@ export P2MW.S_HeckeEis_coeffHeckeFun_mem_coeffCoboundaries (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 

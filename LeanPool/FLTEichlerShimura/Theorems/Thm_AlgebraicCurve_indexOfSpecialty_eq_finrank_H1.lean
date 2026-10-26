@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_indexOfSpecialty_eq_finrank_H1
 
 namespace AlgebraicCurve
@@ -76,9 +75,6 @@ open WithZero
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
-theorem mem_repartitionsOf_iff_coe_mem_adeleBdd {D : Divisor K F} {α : ↥(repartitions K F)} :
-    α ∈ repartitionsOf D ↔ (α : Place K F → F) ∈ adeleBdd D := Iff.rfl
-
 theorem mem_repartitions_of_mem_adeleBdd {D : Divisor K F} {α : Place K F → F} (hα : α ∈ adeleBdd D)
     :
     α ∈ repartitions K F :=
@@ -88,10 +84,6 @@ theorem mem_repartitions_of_mem_adeleSpace {α : Place K F → F} (hα : α ∈ 
     α ∈ repartitions K F := by
   obtain ⟨D, hD⟩ := mem_adeleSpace_iff.mp hα
   exact mem_repartitions_of_mem_adeleBdd hD
-
-theorem diagonalHom_eq_coe_algebraMap (f : F) :
-    diagonalHom K F f = ((algebraMap F ↥(repartitions K F) f : ↥(repartitions K F)) : Place K F → F)
-      := rfl
 
 theorem mem_principalRepartitions_iff_coe_mem_globalSub {α : ↥(repartitions K F)} :
     α ∈ principalRepartitions K F ↔ (α : Place K F → F) ∈ globalSub K F := by
@@ -151,11 +143,6 @@ theorem mem_adeleSpace_iff_mem_repartitions [HasPrincipalDivisors K F] {α : Pla
     obtain ⟨D, hD⟩ := h hα
     exact adeleBdd_le_adeleSpace (D := D) hD
 
-theorem adeleSpace_eq_restrictScalars_repartitions [HasPrincipalDivisors K F] :
-    adeleSpace K F = (Subalgebra.toSubmodule (repartitions K F)).restrictScalars K := by
-  ext α
-  exact mem_adeleSpace_iff_mem_repartitions
-
 noncomputable def adeleSpaceEquivRepartitions [HasPrincipalDivisors K F] :
     ↥(adeleSpace K F) ≃ₗ[K] ↥(repartitions K F) where
   toFun α := ⟨α, mem_adeleSpace_iff_mem_repartitions.mp α.2⟩
@@ -199,7 +186,6 @@ export P2MW.S_AlgebraicCurve_indexOfSpecialty_eq_finrank_H1 (solution)
 end privateSection
 
 public section publicSection
-
 
 namespace AlgebraicCurve
 theorem indexOfSpecialty_eq_finrank_H1 {K F : Type*} [Field K] [Field F] [Algebra K F]

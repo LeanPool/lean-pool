@@ -70,7 +70,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularFormClass_heckeT_heckeU_comm
 
 noncomputable section
@@ -90,16 +89,6 @@ private theorem _root_.W2WsF.eq_of_forall_qCoeff_eq {f g : ℍ → ℂ}
   UpperHalfPlane.eq_of_forall_qCoeff_eq hfper hfhol hfbdd hgper hghol hgbdd h
 
 p2m_export "W2WsF" "eq_of_forall_qCoeff_eq"
-
-theorem qCoeff_const_smul {f : ℍ → ℂ} (hper : Periodic (f ∘ ofComplex) 1) (hhol : MDiff f)
-    (hbdd : IsBoundedAtImInfty f) (c : ℂ) (n : ℕ) : qCoeff (c • f) n = c * qCoeff f n := by
-  simp only [qCoeff]
-  rw [UpperHalfPlane.qExpansion_smul (analyticAt_cuspFunction_zero one_pos hper hhol hbdd)]
-  simp
-
-theorem periodic_const_smul {f : ℍ → ℂ} (hper : Periodic (f ∘ ofComplex) 1) (c : ℂ) :
-    Periodic ((c • f) ∘ ofComplex) 1 := fun z ↦ by
-  simpa using congrArg (c * ·) (hper z)
 
 section Class
 

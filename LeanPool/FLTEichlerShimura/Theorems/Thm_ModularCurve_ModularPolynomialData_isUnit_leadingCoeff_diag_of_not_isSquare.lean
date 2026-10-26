@@ -20,11 +20,9 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_qExpand
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_splits_prime_at_slot
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_minpoly_jqN_map_eq_prod_slots
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqN_eq_dedekindPsi
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_modularFunctionField_eq_full
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_evalAtJ_injective
 import LeanPool.FLTEichlerShimura.Definitions.Defs_modularPolynomial_sharedLibrary
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
@@ -71,7 +69,6 @@ open _root_.ModularCurve.ModularPolynomialHelpers
 
 open _root_.ModularCurve.W1
 
-
 namespace P2MW.S_OVERLONG_9658fb33
 
 noncomputable section
@@ -90,37 +87,11 @@ p2m_open "ModularCurve"
 
 variable {K : Type*} [Field K] [Algebra ℚ K]
 
-
-
-
-
-
-
-
-
-
-
-
-
 theorem iota_jq (N : ℕ) [NeZero N] : coeffEmb K (qExpand ℚ N jq) = TS K N 1 := by
   rw [coeffEmb_qExpand, TS_eq_coeffEmb, qTwist_one_apply]
 
-theorem conj_zero_eq (p : ℕ) [Fact p.Prime] (ζ : Kˣ) :
-    conj p ζ (0 : Fin (p + 1)) = TS K (p * p) 1 := by
-  rw [conj_zero, TS_eq_coeffEmb, qTwist_one_apply]
-
-theorem conj_succ_eq (p : ℕ) [Fact p.Prime] (ζ : Kˣ) (b : Fin p) :
-    conj p ζ b.succ = TS K 1 (ζ ^ (b : ℕ)) := by
-  rw [conj_succ, TS_eq_coeffEmb, qExpand_one_apply]
-
-theorem qTwist_iota_of_pow_eq_one (N : ℕ) [NeZero N] (v : Kˣ) (hv : v ^ N = 1) (x : LaurentSeries ℚ)
-    :
-    qTwist v (coeffEmb K (qExpand ℚ N x)) = coeffEmb K (qExpand ℚ N x) := by
-  rw [coeffEmb_qExpand, qTwist_qExpand]
-  have : v ^ (N : ℤ) = 1 := by exact_mod_cast hv
-  rw [this, qTwist_one_apply]
-
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_one_apply \
@@ -129,93 +100,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   ModularPolynomialData.toAdjoin coeffEmb coeffEmb_coeff qTwist qTwist_coeff qTwist_one_apply \
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
-namespace W1
-p2m_open "ModularCurve"
-
-variable {K : Type*} [Field K] [Algebra ℚ K]
-
-def qTwistEquiv (u : Kˣ) : LaurentSeries K ≃+* LaurentSeries K where
-  toFun := qTwist u
-  invFun := qTwist u⁻¹
-  left_inv := fun f => by
-    change qTwist u⁻¹ (qTwist u f) = f
-    rw [qTwist_qTwist, inv_mul_cancel, qTwist_one_apply]
-  right_inv := fun f => by
-    change qTwist u (qTwist u⁻¹ f) = f
-    rw [qTwist_qTwist, mul_inv_cancel, qTwist_one_apply]
-  map_mul' := map_mul _
-  map_add' := map_add _
-
-omit [Algebra ℚ K] in
-@[scoped simp] theorem qTwistEquiv_apply (u : Kˣ) (f : LaurentSeries K) :
-    qTwistEquiv u f = qTwist u f := rfl
-
-omit [Algebra ℚ K] in
-theorem coe_qTwistEquiv (u : Kˣ) :
-    ((qTwistEquiv u : LaurentSeries K ≃+* LaurentSeries K) : LaurentSeries K →+* LaurentSeries K) =
-      qTwist u :=
-  RingHom.ext fun _ => rfl
-
-omit [Algebra ℚ K] in
-theorem qTwist_TS_one_cycle (ζ : Kˣ) {p : ℕ} (hζp : ζ ^ p = 1) (b : ℕ) :
-    qTwist ζ (TS K 1 (ζ ^ b)) = TS K 1 (ζ ^ ((b + 1) % p)) := by
-  rw [qTwist_TS]
-  congr 1
-  have : ζ ^ ((1 : ℕ) : ℤ) * ζ ^ b = ζ ^ (b + 1) := by rw [zpow_natCast, pow_one, pow_succ']
-  rw [this]
-  conv_lhs => rw [← Nat.mod_add_div (b + 1) p, pow_add, pow_mul, hζp, one_pow, mul_one]
-
-theorem phiProd_conj_eq (p : ℕ) [Fact p.Prime] (ζ : Kˣ) :
-    phiProd p (conj p ζ) = (Polynomial.X - Polynomial.C (TS K (p * p) 1)) *
-      ∏ b ∈ Finset.range p, (Polynomial.X - Polynomial.C (TS K 1 (ζ ^ b))) := by
-  rw [phiProd, Fin.prod_univ_succ, conj_zero_eq]
-  congr 1
-  rw [← Fin.prod_univ_eq_prod_range (fun b => Polynomial.X - Polynomial.C (TS K 1 (ζ ^ b))) p]
-  refine Finset.prod_congr rfl fun b _ => ?_
-  rw [conj_succ_eq]
-
-theorem roots_phiProd_conj (p : ℕ) [Fact p.Prime] (ζ : Kˣ) :
-    (phiProd p (conj p ζ)).roots = TS K (p * p) 1 ::ₘ (Multiset.range p).map (fun b => TS K 1 (ζ ^
-      b)) := by
-  classical
-  rw [phiProd_conj_eq]
-  have h1 : (Polynomial.X - Polynomial.C (TS K (p * p) 1) : Polynomial (LaurentSeries K)) ≠ 0 :=
-    Polynomial.X_sub_C_ne_zero _
-  have h2 : (∏ b ∈ Finset.range p, (Polynomial.X - Polynomial.C (TS K 1 (ζ ^ b)))) ≠ 0 :=
-    Finset.prod_ne_zero_iff.mpr fun b _ => Polynomial.X_sub_C_ne_zero _
-  rw [Polynomial.roots_mul (mul_ne_zero h1 h2), Polynomial.roots_X_sub_C,
-    Finset.prod_eq_multiset_prod,
-    Finset.range_val]
-  have hm : (Multiset.map (fun b => Polynomial.X - Polynomial.C (TS K 1 (ζ ^ b))) (Multiset.range
-    p)) =
-      ((Multiset.range p).map (fun b => TS K 1 (ζ ^ b))).map (fun a => Polynomial.X - Polynomial.C
-        a) := by
-    rw [Multiset.map_map]; rfl
-  rw [hm, Polynomial.roots_multiset_prod_X_sub_C, Multiset.singleton_add]
-
-omit [Algebra ℚ K] in
-theorem roots_phiProd_conj_nodup (p : ℕ) [hp : Fact p.Prime] (ζ : Kˣ)
-    (hζ : IsPrimitiveRoot (ζ : K) p) :
-    (TS K (p * p) 1 ::ₘ (Multiset.range p).map (fun b => TS K 1 (ζ ^ b))).Nodup := by
-  refine Multiset.nodup_cons.mpr ⟨?_, ?_⟩
-  · intro hmem
-    obtain ⟨b, -, hb⟩ := Multiset.mem_map.mp hmem
-    have := (TS_injective hb).1
-    have h2 := hp.out.two_le
-    nlinarith
-  · refine (Multiset.nodup_range p).map_on fun b hb b' hb' hbb' => ?_
-    rw [Multiset.mem_range] at hb hb'
-    have hu := (TS_injective hbb').2
-    have hζu : IsPrimitiveRoot ζ p := IsPrimitiveRoot.coe_units_iff.mp hζ
-    exact hζu.pow_inj hb hb' hu
-
-
-
-
-theorem cycUnit_pow (N : ℕ) [NeZero N] : cycUnit N ^ N = 1 :=
-  Units.ext (by rw [Units.val_pow_eq_pow_val, (cycUnit_spec N).pow_eq_one, Units.val_one])
-
-end ModularCurve.W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_one_apply \
@@ -224,17 +109,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   ModularPolynomialData.toAdjoin coeffEmb coeffEmb_coeff qTwist qTwist_coeff qTwist_one_apply \
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
-namespace W1
-p2m_open "ModularCurve"
-
-variable {K : Type*} [Field K]
-
-
-theorem qExpand_qTwist_TS (e : ℕ) [NeZero e] (u : Kˣ) (m : ℕ) [NeZero m] (w : Kˣ) :
-    qExpand K e (qTwist u (TS K m w)) = TS K (e * m) (u ^ (m : ℤ) * w) := by
-  rw [qTwist_TS, qExpand_TS]
-
-end ModularCurve.W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_one_apply \
@@ -243,104 +118,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   ModularPolynomialData.toAdjoin coeffEmb coeffEmb_coeff qTwist qTwist_coeff qTwist_one_apply \
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
-namespace W1
-p2m_open "ModularCurve"
-
-variable {K : Type*} [Field K] [Algebra ℚ K]
-
-private theorem prod_form_ne_zero (N : ℕ) (ζ : Kˣ) (p : ℕ) [NeZero p] (e : ℕ) [NeZero e]
-    (u : Kˣ) :
-    (Polynomial.X - Polynomial.C (qExpand K (p * (p * e)) (qTwist (u ^ (p * p)) (coeffEmb K jq)))) *
-        ∏ b ∈ Finset.range p,
-          (Polynomial.X - Polynomial.C (qExpand K e (qTwist (u * ζ ^ (b * (N / p))) (coeffEmb K
-            jq)))) ≠ 0 :=
-  mul_ne_zero (Polynomial.X_sub_C_ne_zero _)
-    (Polynomial.monic_prod_of_monic _ _ fun _ _ => Polynomial.monic_X_sub_C _).ne_zero
-
-theorem roots_prime_at_slot (N : ℕ) [NeZero N] (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) N)
-    (p : ℕ) [hp : Fact (Nat.Prime p)] (hpN : p ∣ N) (data : ModularPolynomialData p)
-    (e : ℕ) [NeZero e] (u : Kˣ) :
-    (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom (LaurentSeries K))
-        (qExpand K (p * e) (qTwist (u ^ p) (coeffEmb K jq))))).roots
-      = (qExpand K (p * (p * e)) (qTwist (u ^ (p * p)) (coeffEmb K jq))) ::ₘ
-          (Multiset.range p).map
-            (fun b => qExpand K e (qTwist (u * ζ ^ (b * (N / p))) (coeffEmb K jq))) := by
-  rw [ModularCurve.PhiGen.splits_prime_at_slot N ζ hζ p hpN data e u,
-    Polynomial.roots_mul (prod_form_ne_zero N ζ p e u), Polynomial.roots_X_sub_C,
-    Finset.prod_eq_multiset_prod, Finset.range_val,
-    show (Multiset.range p).map
-          (fun b => Polynomial.X - Polynomial.C (qExpand K e (qTwist (u * ζ ^ (b * (N / p)))
-    (coeffEmb K jq))))
-        = ((Multiset.range p).map
-            (fun b => qExpand K e (qTwist (u * ζ ^ (b * (N / p))) (coeffEmb K jq)))).map
-            (fun a => Polynomial.X - Polynomial.C a) from
-      (Multiset.map_map (fun a => Polynomial.X - Polynomial.C a)
-        (fun b => qExpand K e (qTwist (u * ζ ^ (b * (N / p))) (coeffEmb K jq)))
-        (Multiset.range p)).symm,
-    Polynomial.roots_multiset_prod_X_sub_C, Multiset.singleton_add]
-
-theorem roots_prime_at_slot_nodup (N : ℕ) [NeZero N] (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) N)
-    (p : ℕ) [hp : Fact (Nat.Prime p)] (hpN : p ∣ N) (e : ℕ) [NeZero e] (u : Kˣ) :
-    ((qExpand K (p * (p * e)) (qTwist (u ^ (p * p)) (coeffEmb K jq))) ::ₘ
-        (Multiset.range p).map
-          (fun b => qExpand K e (qTwist (u * ζ ^ (b * (N / p))) (coeffEmb K jq)))).Nodup := by
-  have hζp : IsPrimitiveRoot ((ζ ^ (N / p) : Kˣ) : K) p := isPrimitiveRoot_pow_div hζ hpN
-  rw [Multiset.nodup_cons]
-  constructor
-  · intro hmem
-    obtain ⟨b, hb, heq⟩ := Multiset.mem_map.mp hmem
-    have h := (TS_injective (K := K) (e := e) (e' := p * (p * e))
-      (u := u * ζ ^ (b * (N / p))) (u' := u ^ (p * p))
-      (by simpa only [TS_eq_coeffEmb] using heq)).1
-    have hp2 : 2 ≤ p := hp.out.two_le
-    have he1 : 0 < e := Nat.pos_of_ne_zero (NeZero.ne e)
-    have hmono : 2 * (2 * e) ≤ p * (p * e) := Nat.mul_le_mul hp2 (Nat.mul_le_mul hp2 le_rfl)
-    rw [← h] at hmono
-    omega
-  · refine Multiset.Nodup.map_on ?_ (Multiset.nodup_range p)
-    intro b hb b' hb' heq
-    rw [Multiset.mem_range] at hb hb'
-    have h := (TS_injective (K := K) (e := e) (e' := e)
-      (u := u * ζ ^ (b * (N / p))) (u' := u * ζ ^ (b' * (N / p)))
-      (by simpa only [TS_eq_coeffEmb] using heq)).2
-    have h2 : ζ ^ (b * (N / p)) = ζ ^ (b' * (N / p)) := mul_left_cancel h
-    have h3 : (ζ ^ (N / p)) ^ b = (ζ ^ (N / p)) ^ b' := by
-      rw [← pow_mul, ← pow_mul, Nat.mul_comm (N / p) b, Nat.mul_comm (N / p) b']
-      exact h2
-    have h4 : ((ζ ^ (N / p) : Kˣ) : K) ^ b = ((ζ ^ (N / p) : Kˣ) : K) ^ b' := by
-      rw [← Units.val_pow_eq_pow_val, ← Units.val_pow_eq_pow_val, h3]
-    exact hζp.pow_inj hb hb' h4
-
-theorem roots_prime_at_slot_roots_nodup (N : ℕ) [NeZero N] (ζ : Kˣ)
-    (hζ : IsPrimitiveRoot (ζ : K) N) (p : ℕ) [hp : Fact (Nat.Prime p)] (hpN : p ∣ N)
-    (data : ModularPolynomialData p) (e : ℕ) [NeZero e] (u : Kˣ) :
-    (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom (LaurentSeries K))
-        (qExpand K (p * e) (qTwist (u ^ p) (coeffEmb K jq))))).roots.Nodup := by
-  rw [roots_prime_at_slot N ζ hζ p hpN data e u]
-  exact roots_prime_at_slot_nodup N ζ hζ p hpN e u
-
-theorem isRoot_prime_at_slot_iff (N : ℕ) [NeZero N] (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) N)
-    (p : ℕ) [hp : Fact (Nat.Prime p)] (hpN : p ∣ N) (data : ModularPolynomialData p)
-    (e : ℕ) [NeZero e] (u : Kˣ) (y : LaurentSeries K) :
-    (data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom (LaurentSeries K))
-        (qExpand K (p * e) (qTwist (u ^ p) (coeffEmb K jq))))).IsRoot y ↔
-      y = qExpand K (p * (p * e)) (qTwist (u ^ (p * p)) (coeffEmb K jq)) ∨
-        ∃ b < p, y = qExpand K e (qTwist (u * ζ ^ (b * (N / p))) (coeffEmb K jq)) := by
-  have hne : data.Φ.map (Polynomial.eval₂RingHom (Int.castRingHom (LaurentSeries K))
-      (qExpand K (p * e) (qTwist (u ^ p) (coeffEmb K jq)))) ≠ 0 := by
-    rw [ModularCurve.PhiGen.splits_prime_at_slot N ζ hζ p hpN data e u]
-    exact prod_form_ne_zero N ζ p e u
-  rw [← Polynomial.mem_roots hne, roots_prime_at_slot N ζ hζ p hpN data e u,
-    Multiset.mem_cons, Multiset.mem_map]
-  constructor
-  · rintro (h | ⟨b, hb, rfl⟩)
-    · exact Or.inl h
-    · exact Or.inr ⟨b, Multiset.mem_range.mp hb, rfl⟩
-  · rintro (h | ⟨b, hb, rfl⟩)
-    · exact Or.inl h
-    · exact Or.inr ⟨b, Multiset.mem_range.mpr hb, rfl⟩
-
-end ModularCurve.W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_one_apply \
@@ -349,24 +127,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   ModularPolynomialData.toAdjoin coeffEmb coeffEmb_coeff qTwist qTwist_coeff qTwist_one_apply \
   qTwist_qTwist qTwist_qExpand coeffMap_qExpand PhiGen.splits_prime_at_slot \
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
-namespace W1
-p2m_open "ModularCurve"
-
-
-
-
-
-
-
-
-theorem phiAtSeed_iota_eval {K : Type*} [Field K] [Algebra ℚ K] (A : ℕ) [NeZero A] (n : ℕ)
-    [NeZero n]
-    (data : ModularPolynomialData n) (M : ℕ) [NeZero M] :
-    (phiAtSeed data (coeffEmb K (qExpand ℚ A (jqN M)))).eval (coeffEmb K (qExpand ℚ A (jqN (M *
-      n)))) = 0 :=
-  phiAtSeed_eval_map data _ _ ((coeffEmb K).comp (qExpand ℚ A)) (phiAtSeed_jqN_eval n data M)
-
-end ModularCurve.W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_one_apply \
@@ -478,7 +239,8 @@ private theorem w1_slot_factor (N a b : ℕ) [NeZero N] [NeZero a] (hN : ¬ IsSq
       rw [hlcv, heven.neg_pow, inv_pow, hv, inv_one]
 
 end U2Kit
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 open scoped IntermediateField
 
@@ -491,12 +253,6 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   minpoly_jqN_map_eq_prod_slots finrank_adjoin_jqN_eq_dedekindPsi modularFunctionField_eq_full"
 namespace W1
 p2m_open "ModularCurve"
-
-private theorem w1_evalAtJGen_injective : Function.Injective evalAtJGen := by
-  have h : Function.Injective ((algebraMap ℚ⟮jq⟯ (LaurentSeries ℚ)) ∘ evalAtJGen) := by
-    rw [← RingHom.coe_comp, algebraMap_comp_evalAtJGen]
-    exact evalAtJ_injective
-  exact h.of_comp
 
 private theorem w1_aeval_jqN_toAdjoin {N : ℕ} [NeZero N] (data : ModularPolynomialData N) :
     Polynomial.aeval (jqN N) data.toAdjoin = 0 := by
@@ -647,7 +403,8 @@ private theorem w1_diag_lc_pow (N : ℕ) [NeZero N] (hN : ¬ IsSquare N)
     exact hfW_pow
   exact_mod_cast hQpow
 
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_one_apply \
@@ -659,7 +416,8 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
 namespace ModularPolynomialData
 p2m_export "ModularCurve.ModularPolynomialData" "toAdjoin toAdjoin_monic monic eval_eq_zero \
   natDegree_eq Φ"
-end ModularCurve.ModularPolynomialData
+end ModularPolynomialData
+end ModularCurve
 p2m_open_scoped "ModularCurve ModularCurve.ModularPolynomialData" in
 private theorem ModularCurve.ModularPolynomialData.isUnit_leadingCoeff_diag_of_not_isSquare
     (N : ℕ) [NeZero N] (hN : ¬ IsSquare N) (data : ModularCurve.ModularPolynomialData N) :
@@ -675,14 +433,6 @@ private theorem ModularCurve.ModularPolynomialData.isUnit_leadingCoeff_diag_of_n
     · have := NeZero.ne N
       omega
   exact Int.isUnit_iff.mpr ((Int.natAbs_eq_iff.mp h2).imp id (by simp))
-
-p2m_open_scoped "ModularCurve ModularCurve.ModularPolynomialData" in
-theorem ModularCurve.ModularPolynomialData.leadingCoeff_diag_sq_eq_one
-    (N : ℕ) [NeZero N] (hN : ¬ IsSquare N) (data : ModularCurve.ModularPolynomialData N) :
-    (data.Φ.eval₂ (RingHom.id (Polynomial ℤ)) Polynomial.X).leadingCoeff ^ 2 = 1 := by
-  rcases Int.isUnit_iff.mp
-    (ModularCurve.ModularPolynomialData.isUnit_leadingCoeff_diag_of_not_isSquare N hN data)
-    with h | h <;> rw [h] <;> norm_num
 
 end
 
@@ -703,7 +453,6 @@ export P2MW.S_OVERLONG_9658fb33 (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.ModularPolynomialData.isUnit_leadingCoeff_diag_of_not_isSquare (N : ℕ)

@@ -14,7 +14,6 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.NumberTheory.EllipticDivisibilitySequence
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Jacobian.Point
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 

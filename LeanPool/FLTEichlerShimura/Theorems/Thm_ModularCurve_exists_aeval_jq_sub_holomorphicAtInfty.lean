@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_exists_aeval_jq_sub_holomorphicAtInfty
 
 noncomputable section
@@ -72,39 +71,6 @@ namespace ModularCurve
 p2m_export "ModularCurve" "algebraMap_apply_eq_single jq coeff_jq_pow_self coeff_jq_pow_of_lt \
   PoleOrderLE"
 p2m_open "ModularCurve"
-
-theorem poleOrderLE_iff_le_order {f : LaurentSeries ℚ} (hf : f ≠ 0) {n : ℕ} :
-    PoleOrderLE f n ↔ -(n : ℤ) ≤ f.order :=
-  (HahnSeries.le_order_iff_forall hf).symm
-
-theorem exists_poleOrderLE (f : LaurentSeries ℚ) : ∃ n : ℕ, PoleOrderLE f n :=
-  ⟨(-f.order).toNat, fun _ hk => HahnSeries.coeff_eq_zero_of_lt_order (by omega)⟩
-
-theorem poleOrderLE_aeval_jq (P : Polynomial ℚ) :
-    PoleOrderLE (Polynomial.aeval jq P) P.natDegree := by
-  intro k hk
-  rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range, HahnSeries.coeff_sum]
-  refine Finset.sum_eq_zero fun i hi => ?_
-  have hile : i ≤ P.natDegree := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
-  rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul,
-    coeff_jq_pow_of_lt (by omega), mul_zero]
-
-theorem coeff_aeval_jq_neg (P : Polynomial ℚ) {m : ℕ} (hm : P.natDegree ≤ m) :
-    (Polynomial.aeval jq P).coeff (-(m : ℤ)) = P.coeff m := by
-  rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range, HahnSeries.coeff_sum,
-    Finset.sum_eq_single m]
-  · rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul, coeff_jq_pow_self,
-      mul_one]
-  · intro i hi hin
-    have hilt : i < m :=
-      lt_of_le_of_ne (le_trans (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)) hm) hin
-    rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul,
-      coeff_jq_pow_of_lt (by omega), mul_zero]
-  · intro hm'
-    rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul,
-      Polynomial.coeff_eq_zero_of_natDegree_lt
-        (by simp only [Finset.mem_range, not_lt] at hm'; omega),
-      zero_mul]
 
 theorem poleOrderLE_sub_aeval_jq_succ {f : LaurentSeries ℚ} {n : ℕ}
     (hf : PoleOrderLE f (n + 1)) :
@@ -152,7 +118,6 @@ export P2MW.S_ModularCurve_exists_aeval_jq_sub_holomorphicAtInfty (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve ModularCurve.PhiGen
 theorem ModularCurve.exists_aeval_jq_sub_holomorphicAtInfty (n : ℕ) :

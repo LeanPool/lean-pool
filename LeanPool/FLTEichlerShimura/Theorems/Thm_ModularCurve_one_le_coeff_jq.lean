@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_one_le_coeff_jq
 
 noncomputable section
@@ -423,9 +422,6 @@ theorem one_le_coeff_jq' (n : ℕ) : (1 : ℚ) ≤ jq.coeff (n : ℤ) := by
   rw [h, coeff_jq_eq_coeff_jNum]
   exact_mod_cast one_le_coeff_jNum (n + 1)
 
-theorem coeff_jq_ne_zero (n : ℕ) : jq.coeff (n : ℤ) ≠ 0 :=
-  ne_of_gt (lt_of_lt_of_le zero_lt_one (one_le_coeff_jq' n))
-
 end ModularCurve
 
 theorem solution (n : ℕ) : (1 : ℚ) ≤ ModularCurve.jq.coeff (n : ℤ) :=
@@ -439,7 +435,6 @@ export P2MW.S_ModularCurve_one_le_coeff_jq (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.one_le_coeff_jq (n : ℕ) :

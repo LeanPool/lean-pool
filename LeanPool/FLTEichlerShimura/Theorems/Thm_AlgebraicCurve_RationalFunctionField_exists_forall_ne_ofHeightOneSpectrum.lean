@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_OVERLONG_20cd8cfe
 
 noncomputable section
@@ -81,61 +80,9 @@ p2m_open "AlgebraicCurve.Place"
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
 
-private theorem _root_.AlgebraicCurve.Place.adicValuation_valuationSubring' :
-    v.adicValuation.valuationSubring = v.toValuationSubring := by
-  ext x
-  rw [Valuation.mem_valuationSubring_iff]
-  constructor
-  · intro hx
-    obtain ⟨a, rfl⟩ := IsDiscreteValuationRing.exists_lift_of_le_one hx
-    exact a.2
-  · intro hx
-    exact v.heightOneSpectrum.valuation_le_one (⟨x, hx⟩ : v.toValuationSubring)
-
 p2m_export "AlgebraicCurve.Place" "adicValuation_valuationSubring'"
-private theorem _root_.AlgebraicCurve.Place.mem_iff_adicValuation_le_one' {f : F} :
-    f ∈ v.toValuationSubring ↔ v.adicValuation f ≤ 1 := by
-  rw [← v.adicValuation_valuationSubring']
-  exact Valuation.mem_valuationSubring_iff _ _
-
 p2m_export "AlgebraicCurve.Place" "mem_iff_adicValuation_le_one'"
-private theorem adicValuation_isRankOneDiscrete' : v.adicValuation.IsRankOneDiscrete :=
-  IsDiscreteValuationRing.isRankOneDiscrete v.toValuationSubring F
-
-private theorem adicValuation_isTrivialOn' : v.adicValuation.IsTrivialOn K :=
-  Valuation.IsTrivialOn.of_le_one v.adicValuation fun a =>
-    v.mem_iff_adicValuation_le_one'.mp (v.algebraMap_mem' a)
-
-private theorem _root_.AlgebraicCurve.Place.isEquiv_adicValuation_of_valuationSubring_eq' {Γ :
-  Type*}
-    [LinearOrderedCommGroupWithZero Γ] {w : Valuation F Γ}
-    (h : w.valuationSubring = v.toValuationSubring) : w.IsEquiv v.adicValuation :=
-  (Valuation.isEquiv_iff_valuationSubring _ _).mpr
-    (h.trans v.adicValuation_valuationSubring'.symm)
-
 p2m_export "AlgebraicCurve.Place" "isEquiv_adicValuation_of_valuationSubring_eq'"
-private theorem ord_eq_zero_iff_adicValuation_eq_one' {f : F} (hf : f ≠ 0) :
-    v.ord f = 0 ↔ v.adicValuation f = 1 := by
-  simp only [ord, neg_eq_zero]
-  constructor
-  · intro h
-    have h2 := exp_log (v.adicValuation_ne_zero hf)
-    rw [h, exp_zero] at h2
-    exact h2.symm
-  · intro h
-    rw [h, log_one]
-
-section OfHeightOneSpectrum
-
-variable {R : Type*} [CommRing R] [IsDedekindDomain R] [Algebra R F] [IsFractionRing R F]
-  [Algebra K R] [IsScalarTower K R F]
-
-private theorem isEquiv_adicValuation_ofHeightOneSpectrum' (w : HeightOneSpectrum R) :
-    (w.valuation F).IsEquiv (ofHeightOneSpectrum (K := K) w).adicValuation :=
-  (ofHeightOneSpectrum (K := K) w).isEquiv_adicValuation_of_valuationSubring_eq' rfl
-
-end OfHeightOneSpectrum
-
 end Place
 
 namespace RationalFunctionField
@@ -208,7 +155,6 @@ export P2MW.S_OVERLONG_20cd8cfe (solution)
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.RationalFunctionField.exists_forall_ne_ofHeightOneSpectrum {K : Type*}

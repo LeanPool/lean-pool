@@ -62,7 +62,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_diffQExpBar_injective_of_neZero
 
 p2m_open "KaehlerDifferential ModularCurve"
@@ -132,11 +131,6 @@ private theorem ModularCurve.diffQExpBar_injective_of_neZero (N : ℕ) [NeZero N
   have hx : x₁ = x₂ := Subtype.ext (mul_right_cancel₀ qEuler_coeffEmb_jq_ne_zero_aux h')
   rw [hx]
 
-p2m_open_scoped "ModularCurve" in
-private theorem ModularCurve.diffQExpBar_injective (ℓ : ℕ) [Fact ℓ.Prime] :
-    Function.Injective (diffQExpBar ℓ) :=
-  ModularCurve.diffQExpBar_injective_of_neZero ℓ
-
 open _root_.ModularCurve _root_.P2MW.S_ModularCurve_diffQExpBar_injective_of_neZero.ModularCurve in
 theorem solution (N : ℕ) [NeZero N] :
     Function.Injective (diffQExpBar N) :=
@@ -149,7 +143,6 @@ export P2MW.S_ModularCurve_diffQExpBar_injective_of_neZero (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.diffQExpBar_injective_of_neZero (N : ℕ) [NeZero N] :

@@ -69,7 +69,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WLight_weierstrassP_qExpansion_package
 
 noncomputable section
@@ -306,11 +305,6 @@ theorem lipschitz_two_closed {x : ℂ} (hx : x ∈ Complex.integerComplement) :
     (hG.analyticOnNhd isOpen_ball) (convex_ball x _).isPreconnected hz₀U hfg
     (mem_ball_self (half_pos hε))
 
-theorem summable_one_div_sub_int_sq (w : ℂ) :
-    Summable fun n : ℤ ↦ 1 / (w - n) ^ 2 := by
-  refine (Equiv.neg ℤ).summable_iff.mp ?_
-  simpa [Function.comp_def, sub_eq_add_neg] using summable_one_div_add_int_sq w
-
 theorem tsum_int_one_div_sq : ∑' n : ℤ, 1 / ((n : ℂ)) ^ 2 = (π : ℂ) ^ 2 / 3 := by
   have h := two_mul_riemannZeta_eq_tsum_int_inv_pow_of_even (k := 2) le_rfl even_two
   simp only [Nat.cast_ofNat, riemannZeta_two] at h
@@ -322,20 +316,6 @@ theorem two_pi_I_sq : (2 * π * I : ℂ) ^ 2 = -(4 * π ^ 2) := by
 
 theorem neg_pi_sq_div_three_div : -((π : ℂ) ^ 2 / 3) = (2 * π * I) ^ 2 * (1 / 12) := by
   rw [two_pi_I_sq]; ring
-
-theorem tsum_row_split (z l₀ : ℂ) :
-    ∑' d : ℤ, (1 / (z - (l₀ + d)) ^ 2 - 1 / (l₀ + d) ^ 2) =
-      ∑' d : ℤ, 1 / ((z - l₀) + d) ^ 2 - ∑' d : ℤ, 1 / (l₀ + d) ^ 2 := by
-  rw [Summable.tsum_sub _ (summable_one_div_add_int_sq l₀), ← tsum_one_div_sub_int_sq (z - l₀)]
-  · exact congrArg₂ _ (tsum_congr fun d ↦ by ring_nf) rfl
-  · simpa [sub_sub] using summable_one_div_sub_int_sq (z - l₀)
-
-theorem tsum_row_zero (z : ℂ) :
-    ∑' d : ℤ, (1 / (z - d) ^ 2 - 1 / ((d : ℂ)) ^ 2) =
-      ∑' d : ℤ, 1 / (z + d) ^ 2 - (π : ℂ) ^ 2 / 3 := by
-  rw [Summable.tsum_sub (summable_one_div_sub_int_sq z), tsum_one_div_sub_int_sq,
-    tsum_int_one_div_sq]
-  simpa [one_div] using EisensteinSeries.linear_right_summable (0 : ℂ) 1 (k := 2) le_rfl
 
 theorem lipschitz_two_of_im_neg' {w : ℂ} (hw : w.im < 0) :
     ∑' n : ℤ, 1 / (w + n) ^ 2 =
@@ -447,6 +427,7 @@ def periodPairOfTau (τ : ℍ) : PeriodPair where
     simpa using hst
 
 @[scoped simp] lemma periodPairOfTau_ω₁ (τ : ℍ) : (periodPairOfTau τ).ω₁ = (τ : ℂ) := rfl
+
 @[scoped simp] lemma periodPairOfTau_ω₂ (τ : ℍ) : (periodPairOfTau τ).ω₂ = 1 := rfl
 
 abbrev wpSummand (L : PeriodPair) (z : ℂ) (p : ℤ × ℤ) : ℂ :=
@@ -530,7 +511,6 @@ def zetaN (N : ℕ) : ℂ := cexp (2 * π * I / N)
 
 def qN (N : ℕ) (τ : ℂ) : ℂ := cexp (2 * π * I * τ / N)
 
-lemma zetaN_ne_zero (N : ℕ) : zetaN N ≠ 0 := Complex.exp_ne_zero _
 lemma qN_ne_zero (N : ℕ) (τ : ℂ) : qN N τ ≠ 0 := Complex.exp_ne_zero _
 
 lemma qN_pow_self {N : ℕ} (hN : N ≠ 0) (τ : ℂ) : qN N τ ^ N = cexp (2 * π * I * τ) := by
@@ -893,7 +873,6 @@ export P2MW.S_WLight_weierstrassP_qExpansion_package (solution)
 end privateSection
 
 public section publicSection
-
 
 open Complex Real
 open scoped UpperHalfPlane Manifold

@@ -354,9 +354,6 @@ theorem gen_mem (g : Gp) : g⁻¹ * τ ^ wd H (g : X H) * g ∈ H := by
 
 def genAt (g : Gp) : H := ⟨g⁻¹ * τ ^ wd H (g : X H) * g, gen_mem H g⟩
 
-omit [H.FiniteIndex] in
-@[scoped simp] theorem genAt_coe (g : Gp) : (genAt H g : Gp) = g⁻¹ * τ ^ wd H (g : X H) * g := rfl
-
 def enum (g : Gp) (j : ℕ) : X H := (((τ ^ j)⁻¹ * g : Gp) : X H)
 
 omit [H.FiniteIndex] in

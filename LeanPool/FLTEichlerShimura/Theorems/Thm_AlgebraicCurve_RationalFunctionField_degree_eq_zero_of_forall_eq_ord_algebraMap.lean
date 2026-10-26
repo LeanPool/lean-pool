@@ -68,7 +68,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_ord_algebraMap
 
 p2m_open "AlgebraicCurve"
@@ -105,12 +104,6 @@ def finitePlace {p : K[X]} (hp : Irreducible p) : Place K (RatFunc K) :=
   Place.ofHeightOneSpectrum (heightOneSpectrumOfIrreducible K hp)
 
 variable {K}
-
-theorem ne_finitePlace_of_forall_ne {v : Place K (RatFunc K)}
-    (hv : ∀ w : HeightOneSpectrum K[X], v ≠ Place.ofHeightOneSpectrum w) {p : K[X]}
-    (hp : Irreducible p) :
-    v ≠ finitePlace K hp :=
-  hv _
 
 theorem single_add_single_apply_eq_ord {vinf : Place K (RatFunc K)}
     (hvinf : ∀ w : HeightOneSpectrum K[X], vinf ≠ Place.ofHeightOneSpectrum w)
@@ -165,7 +158,8 @@ theorem degree_single_add_single {vinf : Place K (RatFunc K)}
 
 end WFj
 
-end AlgebraicCurve.RationalFunctionField
+end RationalFunctionField
+end AlgebraicCurve
 
 end
 
@@ -219,7 +213,6 @@ export P2MW.S_AlgebraicCurve_RationalFunctionField_degree_eq_zero_of_forall_eq_o
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.RationalFunctionField.degree_eq_zero_of_forall_eq_ord_algebraMap {K : Type*}

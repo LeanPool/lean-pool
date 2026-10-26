@@ -1562,15 +1562,6 @@ theorem range_sub_le (φ ψ : V →ₗ[K] V) :
   exact sub_mem (Submodule.mem_sup_left (mem_range_self φ y))
     (Submodule.mem_sup_right (mem_range_self ψ y))
 
-scoped instance instFinDimRangeSub (φ ψ : V →ₗ[K] V)
-    [FiniteDimensional K (LinearMap.range φ)]
-    [FiniteDimensional K (LinearMap.range ψ)] :
-    FiniteDimensional K (LinearMap.range (φ - ψ)) :=
-  haveI : FiniteDimensional K
-      ((LinearMap.range φ ⊔ LinearMap.range ψ : Submodule K V) : Type _) :=
-    Submodule.finiteDimensional_sup _ _
-  Submodule.finiteDimensional_of_le (range_sub_le φ ψ)
-
 theorem finrankTrace_sub (φ ψ : V →ₗ[K] V)
     [FiniteDimensional K (LinearMap.range φ)]
     [FiniteDimensional K (LinearMap.range ψ)] :

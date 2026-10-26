@@ -62,7 +62,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_qExpansion_discriminant_eq_X_mul_tprod
 
 noncomputable section
@@ -130,17 +129,6 @@ private lemma truncPoly_toPowerSeries (N : ℕ) :
       ∏ n ∈ Finset.range N, ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24 := by
   rw [truncPoly, ← Polynomial.coeToPowerSeries.ringHom_apply, map_prod]
   simp [Polynomial.coeToPowerSeries.ringHom_apply, Polynomial.coe_pow, Polynomial.coe_X]
-
-open Polynomial in
-private lemma iterate_deriv_polynomial_eval (p : ℂ[X]) (m : ℕ) :
-    deriv^[m] (fun q : ℂ => p.eval q) = fun q => (derivative^[m] p).eval q := by
-  induction m generalizing p with
-  | zero => rfl
-  | succ m ih =>
-    rw [Function.iterate_succ', Function.comp_apply, ih, Function.iterate_succ',
-      Function.comp_apply]
-    funext q
-    exact Polynomial.deriv _
 
 open Polynomial in
 private lemma truncPoly_eval (N : ℕ) (q : ℂ) :
@@ -261,7 +249,6 @@ export P2MW.S_ModularCurve_qExpansion_discriminant_eq_X_mul_tprod (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped PowerSeries.WithPiTopology
 theorem ModularCurve.qExpansion_discriminant_eq_X_mul_tprod :

@@ -62,7 +62,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_Place_exists_of_valuationSubring
 
 p2m_open "AlgebraicCurve IsDedekindDomain"
@@ -210,7 +209,8 @@ p2m_export "AlgebraicCurve" "Place Place.ofHeightOneSpectrum \
 namespace Place
 p2m_export "AlgebraicCurve.Place" "ord ofHeightOneSpectrum ofHeightOneSpectrum_toValuationSubring \
   toValuationSubring"
-end AlgebraicCurve.Place
+end Place
+end AlgebraicCurve
 p2m_open_scoped "AlgebraicCurve AlgebraicCurve.Place" in
 private theorem AlgebraicCurve.Place.exists_of_valuationSubring {K F : Type*} [Field K] [Field F]
     [Algebra K F] [CharZero K] (x : F)
@@ -253,18 +253,6 @@ private theorem AlgebraicCurve.Place.exists_of_valuationSubring {K F : Type*} [F
     have hyA : IsIntegral A y := hyI.tower_top
     obtain ⟨z, hz⟩ := (isIntegrallyClosed_iff F).mp inferInstance hyA
     exact hz ▸ z.2
-
-p2m_open_scoped "AlgebraicCurve AlgebraicCurve.Place" in
-private theorem AlgebraicCurve.Place.exists_toValuationSubring_eq_comap_ringHom {K F F' : Type*}
-    [Field K] [Field F] [Field F'] [Algebra K F] [CharZero K] (x : F)
-    [FiniteDimensional (IntermediateField.adjoin K ({x} : Set F)) F] (φ : F →+* F')
-    (w : ValuationSubring F') (hwK : ∀ a : K, φ (algebraMap K F a) ∈ w) (hwx : ∃ y : F, φ y ∉ w) :
-    ∃ v : AlgebraicCurve.Place K F, v.toValuationSubring = w.comap φ := by
-  refine AlgebraicCurve.Place.exists_of_valuationSubring x (w.comap φ)
-    (fun a => hwK a) ?_
-  intro h
-  obtain ⟨y, hy⟩ := hwx
-  exact hy (h ▸ ValuationSubring.mem_top y : y ∈ w.comap φ)
 
 end Roots
 

@@ -67,7 +67,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_HeckeEis_IsEichlerIntegral_slash
 
 noncomputable section
@@ -135,18 +134,6 @@ theorem coeff_binaryFormRepSL_eq_sum (g : SL(2, ℤ)) (v : ↥(BinaryForm K n)) 
 end Expansion
 
 section Calculus
-
-theorem apply_eq_apply_of_hasDerivAt_zero {D : ℂ → ℂ}
-    (hD : ∀ τ : ℍ, HasDerivAt D 0 ↑τ) (z w : ℍ) : D ↑z = D ↑w := by
-  have hmem : ∀ σ : ℍ, (↑σ : ℂ) ∈ {c : ℂ | 0 < c.im} := fun σ => σ.2
-  refine isOpen_upperHalfPlaneSet.is_const_of_fderiv_eq_zero
-    ((convex_halfSpace_im_gt 0).isPreconnected)
-    (fun x hx => ((hD ⟨x, hx⟩).differentiableAt).differentiableWithinAt)
-    (fun x hx => ?_) (hmem z) (hmem w)
-  have h0 := ((hD ⟨x, hx⟩).hasFDerivAt).fderiv
-  rw [Pi.zero_apply, h0]
-  ext1
-  simp
 
 theorem hasDerivAt_smul_ofComplex (γ : SL(2, ℤ)) (τ : ℍ) :
     HasDerivAt (fun z : ℂ => ((γ • ofComplex z : ℍ) : ℂ))
@@ -273,7 +260,6 @@ export P2MW.S_HeckeEis_IsEichlerIntegral_slash (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups ModularForm
 theorem HeckeEis.IsEichlerIntegral.slash {n : ℕ} {f : UpperHalfPlane → ℂ}

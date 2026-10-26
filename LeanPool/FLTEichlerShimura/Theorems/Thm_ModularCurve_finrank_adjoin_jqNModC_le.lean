@@ -68,7 +68,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_finrank_adjoin_jqNModC_le
 
 noncomputable section
@@ -164,16 +163,6 @@ private theorem finrank_adjoin_jqNModC_le (data : ModularPolynomialData N) :
     (phiOver K data.Φ).natDegree = _)]
   exact Polynomial.natDegree_le_of_dvd (minpoly.dvd E _ hroot) hmonic.ne_zero
 
-theorem finiteDimensional_adjoin_jqNModC (data : ModularPolynomialData N) :
-    FiniteDimensional (IntermediateField.adjoin K ({jqModC K} : Set (LaurentSeries K)))
-      (IntermediateField.adjoin (IntermediateField.adjoin K ({jqModC K} : Set (LaurentSeries K)))
-        ({jqNModC K N} : Set (LaurentSeries K))) := by
-  have hmonic : (phiOver K data.Φ).Monic := data.monic.map _
-  have hroot : Polynomial.aeval (jqNModC K N) (phiOver K data.Φ) = 0 := by
-    rw [aeval_phiOver, phiAt_eq_zero]
-  exact IntermediateField.adjoin.finiteDimensional ⟨phiOver K data.Φ, hmonic, by rwa [←
-    Polynomial.aeval_def]⟩
-
 end Degree
 
 end ModularCurve
@@ -194,7 +183,6 @@ export P2MW.S_ModularCurve_finrank_adjoin_jqNModC_le (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.finrank_adjoin_jqNModC_le (K : Type*) [Field K] {N : ℕ} [NeZero N]

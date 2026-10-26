@@ -68,7 +68,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_hasPrincipalDivisors_of_transcendental
 
 noncomputable section
@@ -238,32 +237,6 @@ private theorem le_ord_iff_mem_pow_fiberCenter (hw : w.restrict F = v)
     rw [exp_le_exp] at h1
     omega
 
-private theorem ramificationIndex_eq_ramificationIdx_fiberCenter (hw : w.restrict F = v) :
-    w.ramificationIndex F =
-      (IsLocalRing.maximalIdeal v.toValuationSubring).ramificationIdx'
-        (fiberCenter F' v hw).asIdeal := by
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
-  have hπ0 : π ≠ 0 := hπ.ne_zero
-  have hπC : algebraMap v.toValuationSubring (integralClosureAt F' v) π ≠ 0 :=
-    algebraMap_integralClosureAt_ne_zero hπ0
-  have hmap : (IsLocalRing.maximalIdeal v.toValuationSubring).map
-      (algebraMap v.toValuationSubring (integralClosureAt F' v))
-        = Ideal.span {algebraMap v.toValuationSubring (integralClosureAt F' v) π} := by
-    rw [hπ.maximalIdeal_eq, Ideal.map_span, Set.image_singleton]
-  have hord : w.ord (algebraMap (integralClosureAt F' v) F'
-      (algebraMap v.toValuationSubring (integralClosureAt F' v) π))
-        = w.ramificationIndex F := by
-    rw [ord_algebraMap_integralClosureAt hw, ValuationSubring.algebraMap_apply,
-      v.ord_coe_irreducible hπ, mul_one]
-  refine (Ideal.ramificationIdx'_spec ?_ ?_).symm
-  · rw [hmap, Ideal.span_singleton_le_iff_mem,
-      ← le_ord_iff_mem_pow_fiberCenter hw hπC, hord]
-  · rw [hmap, Ideal.span_singleton_le_iff_mem,
-      ← le_ord_iff_mem_pow_fiberCenter hw hπC, hord]
-    have : 0 < w.ramificationIndex F := w.ramificationIndex_pos
-    push_cast
-    omega
-
 end ValuationDictionary
 
 section ResidueDictionary
@@ -274,13 +247,6 @@ private def toValuationSubringOfRestrictEq (hw : w.restrict F = v) :
     integralClosureAt F' v →+* w.toValuationSubring :=
   (algebraMap (integralClosureAt F' v) F').codRestrict
     w.toValuationSubring.toSubring (forall_mem_of_restrict_eq hw)
-
-omit [FiniteDimensional F F'] in
-@[scoped simp]
-private theorem coe_toValuationSubringOfRestrictEq (hw : w.restrict F = v)
-    (c : integralClosureAt F' v) :
-    (toValuationSubringOfRestrictEq hw c : F')
-      = algebraMap (integralClosureAt F' v) F' c := rfl
 
 private def residueOfCenter (hw : w.restrict F = v) :
     integralClosureAt F' v →+* w.ResidueField :=
@@ -364,15 +330,6 @@ private def residueFieldEquivQuotientCenter (hw : w.restrict F = v) :
   (Ideal.quotEquivOfEq (ker_residueOfCenter hw).symm).trans
     ((residueOfCenter hw).quotientKerEquivOfSurjective (surjective_residueOfCenter hw))
 
-private theorem residueFieldEquivQuotientCenter_mk (hw : w.restrict F = v)
-    (c : integralClosureAt F' v) :
-    residueFieldEquivQuotientCenter hw (Ideal.Quotient.mk _ c) = residueOfCenter hw c := by
-  change ((residueOfCenter hw).quotientKerEquivOfSurjective (surjective_residueOfCenter hw))
-    ((Ideal.quotEquivOfEq (ker_residueOfCenter hw).symm) (Ideal.Quotient.mk _ c))
-      = residueOfCenter hw c
-  rw [Ideal.quotEquivOfEq_mk]
-  exact RingHom.quotientKerEquivOfSurjective_apply_mk _ c
-
 private def placeCongrEquiv {u u' : Place K F} (h : u = u') :
     u.toValuationSubring ≃+* u'.toValuationSubring where
   toFun x := ⟨x.1, h ▸ x.2⟩
@@ -382,21 +339,9 @@ private def placeCongrEquiv {u u' : Place K F} (h : u = u') :
   map_mul' _ _ := rfl
   map_add' _ _ := rfl
 
-@[scoped simp]
-private theorem coe_placeCongrEquiv {u u' : Place K F} (h : u = u') (x : u.toValuationSubring) :
-    (placeCongrEquiv h x : F) = (x : F) := rfl
-
 private def restrictResidueFieldEquiv (hw : w.restrict F = v) :
     (w.restrict F).ResidueField ≃+* IsLocalRing.ResidueField v.toValuationSubring :=
   IsLocalRing.ResidueField.mapEquiv (placeCongrEquiv hw)
-
-omit [FiniteDimensional F F'] in
-private theorem restrictResidueFieldEquiv_residue (hw : w.restrict F = v)
-    (a : (w.restrict F).toValuationSubring) :
-    restrictResidueFieldEquiv hw (IsLocalRing.residue _ a)
-      = IsLocalRing.residue _ (placeCongrEquiv hw a) := by
-  simp only [restrictResidueFieldEquiv, IsLocalRing.ResidueField.mapEquiv_apply,
-    IsLocalRing.ResidueField.map_residue, RingEquiv.coe_toRingHom]
 
 private theorem inertiaDeg_eq_inertiaDeg_fiberCenter (hw : w.restrict F = v) :
     w.inertiaDeg F =
@@ -836,7 +781,6 @@ export P2MW.S_AlgebraicCurve_hasPrincipalDivisors_of_transcendental (solution)
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.hasPrincipalDivisors_of_transcendental (K : Type*) [Field K] [CharZero K]

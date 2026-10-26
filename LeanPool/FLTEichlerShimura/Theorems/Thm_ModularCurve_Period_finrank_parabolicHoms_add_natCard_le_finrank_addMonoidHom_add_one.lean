@@ -72,9 +72,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_OVERLONG_46337943
-
 
 open Matrix MatrixGroups Subgroup MulAction ModularCurve.Period
 
@@ -87,9 +85,6 @@ variable (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] (K : Type) [Field K]
 abbrev Cu : Type := orbitRel.Quotient (zpowers ModularGroup.T) (SL(2, ℤ) ⧸ Γ)
 
 def cusp (x : SL(2, ℤ) ⧸ Γ) : Cu Γ := Quotient.mk (orbitRel (zpowers ModularGroup.T) _) x
-
-omit [Γ.FiniteIndex] in
-theorem cusp_surjective : Function.Surjective (cusp Γ) := Quotient.mk_surjective
 
 def wd (x : SL(2, ℤ) ⧸ Γ) : ℕ := Function.minimalPeriod (fun y => ModularGroup.T • y) x
 
@@ -221,7 +216,6 @@ export P2MW.S_OVERLONG_46337943
 end privateSection
 
 public section publicSection
-
 
 theorem ModularCurve.Period.finrank_parabolicHoms_add_natCard_le_finrank_addMonoidHom_add_one
     (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) [Γ.FiniteIndex]

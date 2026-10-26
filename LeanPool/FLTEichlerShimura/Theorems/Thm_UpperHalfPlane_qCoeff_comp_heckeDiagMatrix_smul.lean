@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_UpperHalfPlane_qCoeff_comp_heckeDiagMatrix_smul
 
 p2m_open "Complex Filter Function UpperHalfPlane ModularForm"
@@ -164,16 +163,8 @@ theorem qCoeff_comp_smul {F : ℍ → ℂ} (hper : Periodic (F ∘ ofComplex) 1)
   change (qExpansion 1 G).coeff n = if d ∣ n then (qExpansion 1 F).coeff (n / d) else 0
   exact key.symm
 
-theorem qCoeff_comp_smul_of_modularFormClass {FF : Type*} [FunLike FF ℍ ℂ]
-    {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [ModularFormClass FF Γ k] (f : FF)
-    (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) (hd : d ≠ 0) (n : ℕ) :
-    ModularFormClass.qCoeff (fun τ ↦ f (heckeDiagMatrix d • τ)) n =
-      if d ∣ n then ModularFormClass.qCoeff f (n / d) else 0 :=
-  haveI : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
-  qCoeff_comp_smul (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ) (ModularFormClass.holo f)
-    (ModularFormClass.bdd_at_infty f) hd n
-
-end UpperHalfPlane.DegeneracyQExp
+end DegeneracyQExp
+end UpperHalfPlane
 end
 
 theorem solution {f : UpperHalfPlane → ℂ}

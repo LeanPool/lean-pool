@@ -60,7 +60,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_veluX_oddOrderSummingSet_injOn_psi2Sq_roots
 
 p2m_open "Polynomial WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point"
@@ -92,18 +91,11 @@ private def _root_.WeierstrassCurve.Affine.Point.s18xOrZero : W.Point → R
   | .some x _ _ => x
 
 p2m_export "WeierstrassCurve.Affine.Point" "s18xOrZero"
-@[scoped simp] lemma s18xOrZero_zero : (.zero : W.Point).s18xOrZero = 0 := rfl
-
 @[scoped simp] lemma s18xOrZero_some {x y : R} (h : W.Nonsingular x y) :
     (Point.some x y h).s18xOrZero = x := rfl
 
-@[scoped simp] lemma s18xOrZero_neg (P : W.Point) : (-P).s18xOrZero = P.s18xOrZero := by
-  cases P <;> rfl
-
-lemma s18coordsOrZero_fst (P : W.Point) : P.coordsOrZero.1 = P.s18xOrZero := by
-  cases P <;> rfl
-
-end Affine.Point
+end Point
+end Affine
 
 open Affine.Point
 
@@ -843,7 +835,6 @@ export P2MW.S_WeierstrassCurve_veluX_oddOrderSummingSet_injOn_psi2Sq_roots (solu
 end privateSection
 
 public section publicSection
-
 
 open WeierstrassCurve
 theorem WeierstrassCurve.veluX_oddOrderSummingSet_injOn_psi2Sq_roots

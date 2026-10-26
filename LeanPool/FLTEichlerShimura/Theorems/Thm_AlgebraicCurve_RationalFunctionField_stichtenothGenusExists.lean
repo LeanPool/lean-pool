@@ -1114,12 +1114,6 @@ def transcendenceTower : TranscendenceTower K (RatFunc K) F where
   hxv := ord_placeInfty_X K
   hxreg := fun _ hu => ord_X_nonneg_of_ne_placeInfty K hu
 
-@[scoped simp]
-theorem transcendenceTower_x : (transcendenceTower K F).x = RatFunc.X := rfl
-
-@[scoped simp]
-theorem transcendenceTower_v : (transcendenceTower K F).v = placeInfty K := rfl
-
 omit [DecidableEq (RatFunc K)] in
 theorem aeval_X_eq_algebraMap (q : K[X]) :
     (Polynomial.aeval (R := K) (RatFunc.X : RatFunc K)) q

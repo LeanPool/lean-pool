@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_NumberField_exists_valuationSubring_eq_localization
 
 open scoped NumberField
@@ -73,10 +72,6 @@ namespace C6P1T3a
 variable (Qt : Ideal (𝓞 ℚ̄)) [Qt.IsMaximal]
 
 def carrier : Set ℚ̄ := {x | ∃ s : 𝓞 ℚ̄, s ∉ Qt ∧ ∃ a : 𝓞 ℚ̄, (s : ℚ̄) * x = a}
-
-omit [Qt.IsMaximal] in
-theorem mem_carrier {x : ℚ̄} :
-    x ∈ carrier Qt ↔ ∃ s : 𝓞 ℚ̄, s ∉ Qt ∧ ∃ a : 𝓞 ℚ̄, (s : ℚ̄) * x = a := Iff.rfl
 
 theorem one_notMem :
     (1 : 𝓞 ℚ̄) ∉ Qt := fun h => Ideal.IsPrime.ne_top' ((Ideal.eq_top_iff_one Qt).mpr h)
@@ -170,7 +165,6 @@ export P2MW.S_NumberField_exists_valuationSubring_eq_localization (solution)
 end privateSection
 
 public section publicSection
-
 
 open scoped NumberField Pointwise
 

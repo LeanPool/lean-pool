@@ -78,9 +78,7 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_finrank_parabolicHoms_le_two_mul_finrank_cuspForm_of_le_of_normal
-
 
 open scoped MatrixGroups ModularForm
 
@@ -207,12 +205,6 @@ def lower (hle : Γ' ≤ Γ) (f : CuspForm Γ 2) : CuspForm Γ' 2 where
   holo' := f.holo'
   zero_at_cusps' hc := CuspFormClass.zero_at_cusps f (hc.mono (map_mono_GL hle))
 
-@[scoped simp] theorem lower_apply (hle : Γ' ≤ Γ) (f : CuspForm Γ 2) (z : ℍ) :
-    lower hle f z = f z := rfl
-
-theorem coe_lower (hle : Γ' ≤ Γ) (f : CuspForm Γ 2) :
-    ((lower hle f : CuspForm Γ' 2) : ℍ → ℂ) = f := rfl
-
 theorem periodOf_lower (hle : Γ' ≤ Γ) (f : CuspForm Γ 2) (γ : Γ') :
     ModularCurve.periodOf Γ' γ (lower hle f) = ModularCurve.periodOf Γ ⟨γ, hle γ.2⟩ f := rfl
 
@@ -301,9 +293,6 @@ def act (δ : Γ) (g : CuspForm Γ' 2) : CuspForm Γ' 2 :=
 
 theorem coe_act (δ : Γ) (g : CuspForm Γ' 2) :
     ((act hle hn δ g : CuspForm Γ' 2) : ℍ → ℂ) = (g : ℍ → ℂ) ∣[(2 : ℤ)] (δ : SL(2, ℤ)) := rfl
-
-theorem act_apply (δ : Γ) (g : CuspForm Γ' 2) (z : ℍ) :
-    act hle hn δ g z = ((g : ℍ → ℂ) ∣[(2 : ℤ)] (δ : SL(2, ℤ))) z := rfl
 
 theorem hasDerivAt_smul_ofComplex (γ : SL(2, ℤ)) (τ : ℍ) :
     HasDerivAt (fun z : ℂ => ((γ • ofComplex z : ℍ) : ℂ))
@@ -469,7 +458,8 @@ theorem main (hle : Γ' ≤ Γ) (hn : (Γ'.subgroupOf Γ).Normal)
 
 end Descent
 
-end ModularCurve.ESDescent
+end ESDescent
+end ModularCurve
 end
 
 theorem solution
@@ -488,7 +478,6 @@ export P2MW.S_ModularCurve_finrank_parabolicHoms_le_two_mul_finrank_cuspForm_of_
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem ModularCurve.finrank_parabolicHoms_le_two_mul_finrank_cuspForm_of_le_of_normal

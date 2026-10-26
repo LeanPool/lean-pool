@@ -86,9 +86,6 @@ theorem algebraMap_eq_mk_C_C (a : F) :
     Algebra.algebraMap_self_apply]
   rfl
 
-theorem coe_smul (r : F) (z : W.CoordinateRing) : r • z = mk W (C (C r)) * z := by
-  rw [Algebra.smul_def, algebraMap_eq_mk_C_C]
-
 theorem algebraMap_poly_eq (p : F[X]) : algebraMap F[X] W.CoordinateRing p = mk W (C p) := by
   rw [Algebra.algebraMap_eq_smul_one, smul, mul_one]
 

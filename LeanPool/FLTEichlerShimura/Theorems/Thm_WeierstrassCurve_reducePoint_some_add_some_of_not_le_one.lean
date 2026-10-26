@@ -64,7 +64,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WeierstrassCurve_reducePoint_some_add_some_of_not_le_one
 
 open WeierstrassCurve IsDiscreteValuationRing IsDedekindDomain.HeightOneSpectrum
@@ -115,46 +114,6 @@ theorem reduceCoord_eq_zero_iff_lt {x : K}
   obtain ⟨r, hr⟩ := exists_algebraMap_eq_of_valuation_le_one R hx
   rw [← hr, reduceCoord_algebraMap, residue_eq_zero_iff]
   exact (valuation_lt_one_iff_mem (K := K) (maximalIdeal R) r).symm
-
-theorem reduction_a₁ : (reduction R W).a₁ = residue R (integralModel R W).a₁ := by
-  simp only [reduction, map_a₁]
-
-theorem reduction_a₂ : (reduction R W).a₂ = residue R (integralModel R W).a₂ := by
-  simp only [reduction, map_a₂]
-
-theorem reduction_a₃ : (reduction R W).a₃ = residue R (integralModel R W).a₃ := by
-  simp only [reduction, map_a₃]
-
-theorem reduction_a₄ : (reduction R W).a₄ = residue R (integralModel R W).a₄ := by
-  simp only [reduction, map_a₄]
-
-theorem reduction_a₆ : (reduction R W).a₆ = residue R (integralModel R W).a₆ := by
-  simp only [reduction, map_a₆]
-
-theorem equation_lift {x y : K} (h : W.toAffine.Equation x y) {rx ry : R}
-    (hrx : algebraMap R K rx = x) (hry : algebraMap R K ry = y) :
-    (integralModel R W).toAffine.Equation rx ry := by
-  have heqK : ((integralModel R W).map (algebraMap R K)).toAffine.Equation
-      (algebraMap R K rx) (algebraMap R K ry) := by
-    have hbc : (integralModel R W).map (algebraMap R K) = W := baseChange_integralModel_eq R W
-    rw [hbc, hrx, hry]
-    exact h
-  exact (Affine.map_equation _ (IsFractionRing.injective R K) _ _).mp heqK
-
-theorem reduced_nonsingular {rx ry : R} (h : (integralModel R W).toAffine.Equation rx ry) :
-    (reduction R W).toAffine.Nonsingular (residue R rx) (residue R ry) := by
-  have hell : (reduction R W).IsElliptic :=
-    (hasGoodReduction_iff_isElliptic_reduction R).mp ‹W.HasGoodReduction R›
-  have heqk : (reduction R W).toAffine.Equation (residue R rx) (residue R ry) :=
-    h.map (residue R)
-  exact Affine.equation_iff_nonsingular.mp heqk
-
-theorem slope_identity {x₁ y₁ x₂ y₂ : K} (h₁ : W.toAffine.Equation x₁ y₁)
-    (h₂ : W.toAffine.Equation x₂ y₂) :
-    (y₁ - y₂) * (y₁ + y₂ + W.a₁ * x₁ + W.a₃)
-      = (x₁ - x₂) * (x₁ ^ 2 + x₁ * x₂ + x₂ ^ 2 + W.a₂ * (x₁ + x₂) + W.a₄ - W.a₁ * y₂) := by
-  rw [Affine.equation_iff] at h₁ h₂
-  linear_combination h₁ - h₂
 
 theorem valuation_a₁_le_one : valuation K (maximalIdeal R) W.a₁ ≤ 1 := by
   rw [← integralModel_a₁_eq R W]; exact valuation_le_one (maximalIdeal R) _

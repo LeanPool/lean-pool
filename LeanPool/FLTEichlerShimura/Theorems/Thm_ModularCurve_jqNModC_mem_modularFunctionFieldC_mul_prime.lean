@@ -20,7 +20,6 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffMap_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_splits_prime_at_slot_of_isPrimitiveRoot
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_phiIrreducible_evalSymm
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Polynomial_mem_range_of_unique_common_root
@@ -72,7 +71,6 @@ open _root_.ModularCurve.ModularPolynomialHelpers
 
 open _root_.ModularCurve.W1
 
-
 namespace P2MW.S_ModularCurve_jqNModC_mem_modularFunctionFieldC_mul_prime
 
 noncomputable section
@@ -86,30 +84,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   jqNModC map_jqModC modularFunctionFieldC jqModC_mem jqNModC_mem coeffMap_qExpand \
   coeff_jqModC_neg_one order_jqModC PhiGen.splits_prime_at_slot_of_isPrimitiveRoot \
   exists_phiIrreducible_evalSymm minpoly_jqNModC_map_eq_prod_slots"
-namespace W1
-p2m_open "ModularCurve"
-
-variable {K : Type*} [Field K]
-
-
-theorem qExpand_qTwist_TS (e : ℕ) [NeZero e] (u : Kˣ) (m : ℕ) [NeZero m] (w : Kˣ) :
-    qExpand K e (qTwist u (TS K m w)) = TS K (e * m) (u ^ (m : ℤ) * w) := by
-  rw [qTwist_TS, qExpand_TS]
-
-theorem jqModC_eq_TS : jqModC K = TS K 1 1 := by
-  rw [TS, qTwist_one_apply, qExpand_one_apply]
-
-
-
-
-theorem qTwist_qExpand_of_pow_eq_one (A : ℕ) [NeZero A] (v : Kˣ) (hv : v ^ A = 1)
-    (x : LaurentSeries K) :
-    qTwist v (qExpand K A x) = qExpand K A x := by
-  rw [qTwist_qExpand]
-  have : v ^ (A : ℤ) = 1 := by exact_mod_cast hv
-  rw [this, qTwist_one_apply]
-
-end ModularCurve.W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_injective \
@@ -118,64 +93,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   jqNModC map_jqModC modularFunctionFieldC jqModC_mem jqNModC_mem coeffMap_qExpand \
   coeff_jqModC_neg_one order_jqModC PhiGen.splits_prime_at_slot_of_isPrimitiveRoot \
   exists_phiIrreducible_evalSymm minpoly_jqNModC_map_eq_prod_slots"
-namespace W1
-p2m_open "ModularCurve"
-
-section transport
-
-variable {R S : Type*} [CommRing R] [CommRing S]
-
-theorem coeffMap_qTwist (σ : R →+* S) (u : Rˣ) (f : LaurentSeries R) :
-    coeffMap σ (qTwist u f) = qTwist (Units.map σ.toMonoidHom u) (coeffMap σ f) := by
-  ext k
-  simp only [coeffMap_coeff, qTwist_coeff, map_mul]
-  congr 1
-  rw [← map_zpow, Units.coe_map]
-  rfl
-
-end transport
-
-variable {K : Type*} [Field K]
-
-theorem coeffMap_TS {L : Type*} [Field L] (σ : L →+* K) (e : ℕ) [NeZero e] (u : Lˣ) :
-    coeffMap σ (TS L e u) = TS K e (Units.map σ.toMonoidHom u) := by
-  rw [TS, TS, coeffMap_qExpand, coeffMap_qTwist]
-  exact congrArg (fun z => qExpand K e (qTwist (Units.map σ.toMonoidHom u) z)) (map_jqModC σ)
-
-def qTwistEquiv (u : Kˣ) : LaurentSeries K ≃+* LaurentSeries K where
-  toFun := qTwist u
-  invFun := qTwist u⁻¹
-  left_inv := fun f => by
-    change qTwist u⁻¹ (qTwist u f) = f
-    rw [qTwist_qTwist, inv_mul_cancel, qTwist_one_apply]
-  right_inv := fun f => by
-    change qTwist u (qTwist u⁻¹ f) = f
-    rw [qTwist_qTwist, mul_inv_cancel, qTwist_one_apply]
-  map_mul' := map_mul _
-  map_add' := map_add _
-
-@[scoped simp] theorem qTwistEquiv_apply (u : Kˣ) (f : LaurentSeries K) :
-    qTwistEquiv u f = qTwist u f := rfl
-
-theorem coe_qTwistEquiv (u : Kˣ) :
-    ((qTwistEquiv u : LaurentSeries K ≃+* LaurentSeries K) : LaurentSeries K →+* LaurentSeries K) =
-      qTwist u :=
-  RingHom.ext fun _ => rfl
-
-theorem qTwist_TS_one_cycle (ζ : Kˣ) {p : ℕ} (hζp : ζ ^ p = 1) (b : ℕ) :
-    qTwist ζ (TS K 1 (ζ ^ b)) = TS K 1 (ζ ^ ((b + 1) % p)) := by
-  rw [qTwist_TS]
-  congr 1
-  have : ζ ^ ((1 : ℕ) : ℤ) * ζ ^ b = ζ ^ (b + 1) := by rw [zpow_natCast, pow_one, pow_succ']
-  rw [this]
-  conv_lhs => rw [← Nat.mod_add_div (b + 1) p, pow_add, pow_mul, hζp, one_pow, mul_one]
-
-
-theorem units_pow_eq_one_of_isPrimitiveRoot {N : ℕ} {ζ : Kˣ} (hζ : IsPrimitiveRoot (ζ : K) N) :
-    ζ ^ N = 1 :=
-  Units.ext (by rw [Units.val_pow_eq_pow_val, hζ.pow_eq_one, Units.val_one])
-
-end ModularCurve.W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_injective \
@@ -184,30 +102,7 @@ p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qE
   jqNModC map_jqModC modularFunctionFieldC jqModC_mem jqNModC_mem coeffMap_qExpand \
   coeff_jqModC_neg_one order_jqModC PhiGen.splits_prime_at_slot_of_isPrimitiveRoot \
   exists_phiIrreducible_evalSymm minpoly_jqNModC_map_eq_prod_slots"
-namespace W1
-p2m_open "ModularCurve"
-
-
-
-
-
-
-
-
-theorem phiAtSeed_TS_eval {K : Type*} [Field K] (A : ℕ) [NeZero A] (n : ℕ) [NeZero n]
-    (data : ModularPolynomialData n) (d : ℕ) [NeZero d] :
-    (phiAtSeed data (TS K (A * d) 1)).eval (TS K (A * (d * n)) 1) = 0 := by
-  have h := phiAtSeed_eval_map data _ _ (qExpand K A) (phiAtSeed_jqNModC_eval (R := K) n data d)
-  rwa [qExpand_jqNModC, qExpand_jqNModC] at h
-
-theorem phiAtSeed_TS_eval_symm {K : Type*} [Field K] (A : ℕ) [NeZero A] (n : ℕ) [NeZero n]
-    (data : ModularPolynomialData n) (hsymm : EvalSymm data.Φ) (d : ℕ) [NeZero d] :
-    (phiAtSeed data (TS K (A * (d * n)) 1)).eval (TS K (A * d) 1) = 0 := by
-  have h :=
-    phiAtSeed_eval_map data _ _ (qExpand K A) (phiAtSeed_jqNModC_eval_symm (R := K) n data hsymm d)
-  rwa [qExpand_jqNModC, qExpand_jqNModC] at h
-
-end ModularCurve.W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_injective \
@@ -300,14 +195,8 @@ theorem isRoot_prime_at_slot_iff (p : ℕ) [hp : Fact (Nat.Prime p)] (ζ : Kˣ)
     · exact Or.inl h
     · exact Or.inr ⟨b, Multiset.mem_range.mpr hb, rfl⟩
 
-theorem roots_phiAtSeed_TS (p : ℕ) [hp : Fact (Nat.Prime p)] (ζ : Kˣ)
-    (hζ : IsPrimitiveRoot (ζ : K) p)
-    (data : ModularPolynomialData p) (e : ℕ) [NeZero e] (u : Kˣ) :
-    (phiAtSeed data (TS K (p * e) (u ^ p))).roots
-      = TS K (p * (p * e)) (u ^ (p * p)) ::ₘ (Multiset.range p).map (fun b => TS K e (u * ζ ^ b)) :=
-  roots_prime_at_slot p ζ hζ data e u
-
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_injective \
@@ -475,7 +364,8 @@ theorem jqNModC_mem_mffC_mul_prime_of_prod (M : ℕ) [NeZero M] (p : ℕ) [hp : 
   rw [← hval]
   exact f.2
 
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "qExpand qExpand_coeff_mul qExpand_coeff_of_not_dvd qExpand_injective \
@@ -528,7 +418,6 @@ export P2MW.S_ModularCurve_jqNModC_mem_modularFunctionFieldC_mul_prime (solution
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.jqNModC_mem_modularFunctionFieldC_mul_prime {K : Type*} [Field K]

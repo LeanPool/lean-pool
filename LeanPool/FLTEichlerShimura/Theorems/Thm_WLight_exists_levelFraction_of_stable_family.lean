@@ -20,9 +20,6 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
 public import Mathlib.NumberTheory.ModularForms.Discriminant
 
-import Mathlib.RingTheory.DedekindDomain.IntegralClosure
-import Mathlib.RingTheory.Adjoin.Polynomial.Transcendental
-import Mathlib.Analysis.Complex.Polynomial.Basic
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_levelOne_hauptmodul_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_modularity_package
 import LeanPool.FLTEichlerShimura.Theorems.Thm_WLight_frickeFunction_orbit_package
@@ -71,7 +68,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_WLight_exists_levelFraction_of_stable_family
 
 noncomputable section
@@ -87,9 +83,6 @@ p2m_open "PeriodPair ModularForm CuspForm"
 p2m_open "UpperHalfPlane~I"
 
 def j : ℍ → ℂ := fun z => E₄ z ^ 3 / ModularForm.discriminant z
-
-theorem j_surjective : Function.Surjective j :=
-  levelOne_hauptmodul_package.2.2.1
 
 def periodPairOfTau (τ : ℍ) : PeriodPair where
   ω₁ := (τ : ℂ)
@@ -266,8 +259,6 @@ lemma vecMulSL_ne_zero {N : ℕ} {a : Fin 2 → ZMod N} (ha : a ≠ 0) (γ : SL(
 
 abbrev FrickeIdx (N : ℕ) : Type := {a : Fin 2 → ZMod N // a ≠ 0}
 
-scoped instance (N : ℕ) [NeZero N] : Fintype (FrickeIdx N) := by unfold FrickeIdx; infer_instance
-
 theorem mdifferentiable_frickeF {N : ℕ} [NeZero N] (i : FrickeIdx N) :
     MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (frickeF N i.1) :=
   (r4a_package N).2.2.1 i.1 i.2
@@ -314,22 +305,6 @@ theorem frickeF_faithful {N : ℕ} [NeZero N] (γ : SL(2, ℤ))
   · exact Or.inr e
 
 end B3_spelling2
-
-section B6Instance
-
-p2m_open "UpperHalfPlane ModularForm CuspForm Polynomial Real.Polynomial"
-open scoped MatrixGroups Manifold
-
-theorem frickeF_integral_over_j (N : ℕ) [NeZero N] :
-    ∃ P : ℕ → Polynomial ℂ,
-      ∀ (i : FrickeIdx N) (τ : ℍ),
-        frickeF N i.1 τ ^ (N ^ 2 - 1) +
-          ∑ k ∈ Finset.range (N ^ 2 - 1),
-            Polynomial.eval (j τ) (P k) * frickeF N i.1 τ ^ k = 0 := by
-  obtain ⟨P, -, hP⟩ := (r4b_package N).2.2
-  exact ⟨P, fun i τ => hP i.1 i.2 τ⟩
-
-end B6Instance
 
 section B6Ring
 
@@ -480,17 +455,6 @@ theorem HolFn.eq_zero_or_eq_zero_of_mul_eq_zero {f g : ℍ → ℂ} (hf : f ∈ 
   rcases key with k | k
   · left; funext τ; simpa [ofComplex_apply] using k (τ : ℂ) τ.im_pos
   · right; funext τ; simpa [ofComplex_apply] using k (τ : ℂ) τ.im_pos
-
-scoped instance : NoZeroDivisors ↥HolFn where
-  eq_zero_or_eq_zero_of_mul_eq_zero {f g} h := by
-    rcases HolFn.eq_zero_or_eq_zero_of_mul_eq_zero f.2 g.2 (congrArg Subtype.val h) with e | e
-    · exact Or.inl (Subtype.ext e)
-    · exact Or.inr (Subtype.ext e)
-
-scoped instance : Nontrivial ↥HolFn :=
-  ⟨⟨0, 1, fun h ↦ zero_ne_one (congrFun (congrArg Subtype.val h) UpperHalfPlane.I)⟩⟩
-
-scoped instance : IsDomain ↥HolFn := NoZeroDivisors.to_isDomain _
 
 lemma j_smul_eq (γ : SL(2, ℤ)) (τ : ℍ) : j (γ • τ) = j τ := by
   have hγ : (Matrix.SpecialLinearGroup.mapGL ℝ γ : GL (Fin 2) ℝ) ∈ 𝒮ℒ := ⟨γ, rfl⟩
@@ -777,28 +741,7 @@ def adjoinNegOneSL {R : Type*} [CommRing R] (H : Subgroup SL(2, R)) : Subgroup S
     g ∈ adjoinNegOneSL H ↔ g ∈ H ∨ -g ∈ H :=
   Iff.rfl
 
-lemma le_adjoinNegOneSL {R : Type*} [CommRing R] (H : Subgroup SL(2, R)) :
-    H ≤ adjoinNegOneSL H := fun _ hg ↦ .inl hg
-
-lemma normal_adjoinNegOneSL {R : Type*} [CommRing R] {H : Subgroup SL(2, R)} (hH : H.Normal) :
-    (adjoinNegOneSL H).Normal := by
-  constructor
-  intro γ hγ g
-  rcases hγ with h | h
-  · exact .inl (hH.conj_mem γ h g)
-  · refine .inr ?_
-    rw [show -(g * γ * g⁻¹) = g * (-γ) * g⁻¹ by rw [mul_neg, neg_mul]]
-    exact hH.conj_mem (-γ) h g
-
 abbrev pmGamma (N : ℕ) : Subgroup SL(2, ℤ) := adjoinNegOneSL Γ(N)
-
-lemma Gamma_le_pmGamma (N : ℕ) : Γ(N) ≤ pmGamma N := le_adjoinNegOneSL _
-
-scoped instance instNormal_pmGamma (N : ℕ) : (pmGamma N).Normal :=
-  normal_adjoinNegOneSL (CongruenceSubgroup.Gamma_normal N)
-
-scoped instance instFiniteIndex_pmGamma (N : ℕ) [NeZero N] : (pmGamma N).FiniteIndex :=
-  Subgroup.finiteIndex_of_le (Gamma_le_pmGamma N)
 
 def frickeKernel (N : ℕ) : Subgroup SL(2, ℤ) where
   carrier := {γ | ∀ (i : FrickeIdx N) (τ : ℍ), frickeF N i.1 (γ • τ) = frickeF N i.1 τ}
@@ -831,19 +774,6 @@ theorem frickeKernel_eq_pmGamma (N : ℕ) [NeZero N] : frickeKernel N = pmGamma 
       rw [hrw]
       exact (frickeKernel N).mul_mem (neg_one_mem_frickeKernel N) (Gamma_le_frickeKernel N h)
 
-scoped instance instFiniteIndex_frickeKernel (N : ℕ) [NeZero N] : (frickeKernel N).FiniteIndex :=
-  frickeKernel_eq_pmGamma N ▸ instFiniteIndex_pmGamma N
-
-scoped instance instNormal_frickeKernel (N : ℕ) [NeZero N] : (frickeKernel N).Normal :=
-  frickeKernel_eq_pmGamma N ▸ instNormal_pmGamma N
-
-scoped instance instFinite_quotient_pmGamma (N : ℕ) [NeZero N] : Finite (SL(2, ℤ) ⧸ pmGamma N) :=
-  Subgroup.finite_quotient_of_finiteIndex
-
-scoped instance instFinite_quotient_frickeKernel (N : ℕ) [NeZero N] :
-    Finite (SL(2, ℤ) ⧸ frickeKernel N) :=
-  Subgroup.finite_quotient_of_finiteIndex
-
 end B7_group
 
 section B7_assembled
@@ -870,27 +800,6 @@ theorem finrank_adjoin_j_levelField (N : ℕ) [NeZero N] :
     Module.finrank ↥ℂ⟮jK N⟯ (levelField N) = (pmGamma N).index := by
   rw [← fixedIF_eq_adjoin, finrank_fixedIF, levelFixer_eq_pmGamma]
 
-theorem transcendental_jA (N : ℕ) : Transcendental ℂ (jA N) := by
-  rw [transcendental_iff]
-  intro P hP
-  have hfun : (fun τ : ℍ ↦ Polynomial.eval (j τ) P) = 0 := by
-    rw [← coe_aeval_jA N P, hP]; rfl
-  apply Polynomial.eq_zero_of_infinite_isRoot
-  have : {x : ℂ | P.IsRoot x} = Set.univ := by
-    ext z
-    simp only [Set.mem_ofPred_eq, Set.mem_univ, iff_true, Polynomial.IsRoot.def]
-    obtain ⟨τ, rfl⟩ := j_surjective z
-    exact congrFun hfun τ
-  rw [this]
-  exact Set.infinite_univ
-
-theorem transcendental_jK (N : ℕ) : Transcendental ℂ (jK N) := by
-  rw [transcendental_iff]
-  intro P hP
-  rw [jK, Polynomial.aeval_algebraMap_apply,
-    map_eq_zero_iff _ (IsFractionRing.injective ↥(levelRing N) (levelField N))] at hP
-  exact (transcendental_iff.mp (transcendental_jA N)) P hP
-
 end B7_assembled
 
 section C1_carrier
@@ -898,52 +807,9 @@ section C1_carrier
 open scoped UpperHalfPlane MatrixGroups IntermediateField IntermediateField.algebraAdjoinAdjoin
 p2m_open "Polynomial Real.Polynomial"
 
-abbrev polyJ (N : ℕ) : Subalgebra ℂ (levelField N) := Algebra.adjoin ℂ {jK N}
-
 private abbrev _root_.WLight.ratJ (N : ℕ) [NeZero N] : IntermediateField ℂ (levelField N) := ℂ⟮jK N⟯
 
 p2m_export "WLight" "ratJ"
-
-noncomputable def polyJEquiv (N : ℕ) : ℂ[X] ≃ₐ[ℂ] ↥(polyJ N) :=
-  Polynomial.algEquivOfTranscendental ℂ (jK N) (transcendental_jK N)
-
-scoped instance (N : ℕ) [NeZero N] : IsDomain ↥(polyJ N) := inferInstance
-
-scoped instance (N : ℕ) : IsPrincipalIdealRing ↥(polyJ N) :=
-  IsPrincipalIdealRing.of_surjective (polyJEquiv N).toRingEquiv.toRingHom
-    (polyJEquiv N).surjective
-
-scoped instance (N : ℕ) [NeZero N] : IsDedekindDomain ↥(polyJ N) :=
-  IsPrincipalIdealRing.isDedekindDomain _
-
-scoped instance (N : ℕ) : CharZero (levelField N) :=
-  charZero_of_injective_algebraMap (FaithfulSMul.algebraMap_injective ℂ (levelField N))
-
-scoped instance (N : ℕ) [NeZero N] : CharZero ↥(ratJ N) :=
-  charZero_of_injective_algebraMap (FaithfulSMul.algebraMap_injective ℂ ↥(ratJ N))
-
-lemma index_pmGamma_pos (N : ℕ) [NeZero N] : 0 < (pmGamma N).index := Nat.pos_of_ne_zero
-  Subgroup.FiniteIndex.index_ne_zero
-
-scoped instance (N : ℕ) [NeZero N] : FiniteDimensional ↥(ratJ N) (levelField N) :=
-  haveI : Module.Free ↥(ratJ N) (levelField N) := Module.Free.of_divisionRing _ _
-  Module.finite_of_finrank_pos (by rw [finrank_adjoin_j_levelField]; exact index_pmGamma_pos N)
-
-scoped instance (N : ℕ) [NeZero N] : Algebra.IsSeparable ↥(ratJ N) (levelField N) :=
-  haveI : Algebra.IsIntegral ↥(ratJ N) (levelField N) := Algebra.IsIntegral.of_finite _ _
-  Algebra.IsSeparable.of_integral ↥(ratJ N) (levelField N)
-
-abbrev levelIntClosure (N : ℕ) : Subalgebra ↥(polyJ N) (levelField N) :=
-  integralClosure ↥(polyJ N) (levelField N)
-
-scoped instance (N : ℕ) [NeZero N] : IsDedekindDomain ↥(levelIntClosure N) :=
-  integralClosure.isDedekindDomain ↥(polyJ N) ↥(ratJ N) (levelField N)
-
-def levelRingEval (N : ℕ) (τ : ℍ) : ↥(levelRing N) →ₐ[ℂ] ℂ :=
-  (Pi.evalAlgHom ℂ (fun _ : ℍ ↦ ℂ) τ).comp (levelRing N).val
-
-@[scoped simp] lemma levelRingEval_apply (N : ℕ) (τ : ℍ) (a : ↥(levelRing N)) :
-    levelRingEval N τ a = (a : ℍ → ℂ) τ := rfl
 
 end C1_carrier
 
@@ -1006,9 +872,6 @@ scoped instance ringAction : MulSemiringAction SL(2, ℤ) ↥D.ring where
   smul_add γ f g := Subtype.ext (smul_add γ f.1 g.1)
   smul_one γ := Subtype.ext (smul_one γ)
   smul_mul γ f g := Subtype.ext (smul_mul' γ f.1 g.1)
-
-@[scoped simp] lemma ring_coe_smul (γ : SL(2, ℤ)) (f : ↥D.ring) :
-    ((γ • f : ↥D.ring) : ℍ → ℂ) = γ • (f : ℍ → ℂ) := rfl
 
 scoped instance ring_smulCommClass : SMulCommClass SL(2, ℤ) ℂ ↥D.ring where
   smul_comm _ _ _ := rfl
@@ -1182,9 +1045,6 @@ noncomputable scoped instance (priority := 3000) moduleField : Module (levelFiel
 
 noncomputable scoped instance (priority := 3000) smulField : SMul (levelField N) D.field :=
   Algebra.toSMul
-
-scoped instance : IsScalarTower ℂ (levelField N) D.field :=
-  IsScalarTower.of_algebraMap_eq fun c ↦ (D.toField.commutes c).symm
 
 noncomputable scoped instance (priority := 3000) algebraRatJ : Algebra ↥(WLight.ratJ N) D.field :=
   ((algebraMap (levelField N) D.field).comp (algebraMap ↥(WLight.ratJ N) (levelField N))).toAlgebra
@@ -1374,7 +1234,6 @@ export P2MW.S_WLight_exists_levelFraction_of_stable_family (solution)
 end privateSection
 
 public section publicSection
-
 
 open Complex Real UpperHalfPlane
 open scoped Manifold MatrixGroups ModularForm

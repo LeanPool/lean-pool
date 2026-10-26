@@ -65,7 +65,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_finrank_parabolicHoms_Gamma_le_two_mul_finrank_cuspForm
 
 open scoped MatrixGroups
@@ -96,14 +95,9 @@ theorem S_mul_S : (ModularGroup.S : SL(2, ℤ)) * ModularGroup.S = -1 := by
 def toGammaOne (g : SL(2, ℤ)) : Gamma 1 :=
   ⟨g, by simp [CongruenceSubgroup.Gamma_one_top]⟩
 
-@[scoped simp]
-theorem coe_toGammaOne (g : SL(2, ℤ)) : ((toGammaOne g : Gamma 1) : SL(2, ℤ)) = g := rfl
-
 theorem toGammaOne_mul (g h : SL(2, ℤ)) : toGammaOne (g * h) = toGammaOne g * toGammaOne h := rfl
 
 theorem toGammaOne_one : toGammaOne 1 = 1 := rfl
-
-theorem toGammaOne_inv (g : SL(2, ℤ)) : toGammaOne g⁻¹ = (toGammaOne g)⁻¹ := rfl
 
 theorem toGammaOne_coe (γ : Gamma 1) : toGammaOne (γ : SL(2, ℤ)) = γ := by
   ext; rfl
@@ -172,7 +166,8 @@ theorem main_of_two_le (N : ℕ) (hN : 2 ≤ N) :
   have hpos : 0 < 6 * N := by omega
   exact Nat.le_of_mul_le_mul_left h2 hpos
 
-end ModularCurve.ESPrincipalAssembly
+end ESPrincipalAssembly
+end ModularCurve
 
 open ModularCurve.ESPrincipalAssembly in
 theorem solution (N : ℕ) [NeZero N] :
@@ -193,7 +188,6 @@ export P2MW.S_ModularCurve_finrank_parabolicHoms_Gamma_le_two_mul_finrank_cuspFo
 end privateSection
 
 public section publicSection
-
 
 open scoped MatrixGroups
 theorem ModularCurve.finrank_parabolicHoms_Gamma_le_two_mul_finrank_cuspForm (N : ℕ) [NeZero N] :

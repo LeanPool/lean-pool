@@ -61,7 +61,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_Place_exists_algHom_laurentSeries_order_eq_ord
 
 noncomputable section
@@ -493,21 +492,6 @@ private theorem order_ofPowerSeries_expPS (w : Place K F) (hw : w.deg = 1)
   rw [not_lt] at hge
   rw [le_antisymm hle hge, Int.toNat_of_nonneg (ord_coe_nonneg w hy)]
 
-private theorem exists_irreducible_coe_of_ord_eq_one (w : Place K F) {t : F}
-    (ht : w.ord t = 1) :
-    ∃ tO : w.toValuationSubring, (tO : F) = t ∧ Irreducible tO := by
-  have ht0 : t ≠ 0 := by
-    intro h
-    rw [h] at ht
-    simp at ht
-  obtain ⟨π₀, hπ₀⟩ := IsDiscreteValuationRing.exists_irreducible w.toValuationSubring
-  obtain ⟨u, hu⟩ := w.exists_unit_mul_zpow ht0 hπ₀
-  rw [ht, zpow_one] at hu
-  refine ⟨(u : w.toValuationSubring) * π₀, ?_, ?_⟩
-  · push_cast
-    exact hu.symm
-  · exact Associated.irreducible ⟨u, mul_comm π₀ (u : w.toValuationSubring)⟩ hπ₀
-
 private theorem exists_algHom_laurentSeries_of_irreducible (w : Place K F) (hw : w.deg = 1)
     {π : w.toValuationSubring} (hπ : Irreducible π) :
     ∃ φ : F →ₐ[K] LaurentSeries K,
@@ -546,23 +530,16 @@ private theorem exists_algHom_laurentSeries_of_irreducible (w : Place K F) (hw :
         (zpow_ne_zero _ (HahnSeries.single_ne_zero one_ne_zero)),
       hφu, zero_add, ← RatFunc.single_zpow, HahnSeries.order_single one_ne_zero]
 
-end AlgebraicCurve.Place
+end Place
+end AlgebraicCurve
 
 namespace AlgebraicCurve
 p2m_export "AlgebraicCurve" "Place"
 namespace Place
 p2m_export "AlgebraicCurve.Place" "ext coe_algebraMap ResidueField deg ord ord_coe_unit \
   exists_unit_mul_zpow toValuationSubring mk"
-end AlgebraicCurve.Place
-p2m_open_scoped "AlgebraicCurve AlgebraicCurve.Place" in
-private theorem AlgebraicCurve.Place.exists_algHom_laurentSeries_of_deg_eq_one
-    {K F : Type*} [Field K] [Field F] [Algebra K F] (w : Place K F) (hw : w.deg = 1)
-    (t : F) (ht : w.ord t = 1) :
-    ∃ φ : F →ₐ[K] LaurentSeries K,
-      φ t = HahnSeries.single (1 : ℤ) (1 : K) ∧ ∀ x : F, (φ x).order = w.ord x := by
-  obtain ⟨π, rfl, hπ⟩ := AlgebraicCurve.Place.exists_irreducible_coe_of_ord_eq_one w ht
-  exact AlgebraicCurve.Place.exists_algHom_laurentSeries_of_irreducible w hw hπ
-
+end Place
+end AlgebraicCurve
 p2m_open_scoped "AlgebraicCurve AlgebraicCurve.Place" in
 private theorem AlgebraicCurve.Place.exists_algHom_laurentSeries_order_eq_ord
     {K F : Type*} [Field K] [Field F] [Algebra K F] (w : Place K F) (hw : w.deg = 1) :
@@ -587,7 +564,6 @@ export P2MW.S_AlgebraicCurve_Place_exists_algHom_laurentSeries_order_eq_ord (sol
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve ModularCurve
 theorem AlgebraicCurve.Place.exists_algHom_laurentSeries_order_eq_ord {K F : Type*} [Field K]

@@ -75,7 +75,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_OVERLONG_9c064c5e
 
 open Matrix MatrixGroups ModularGroup Subgroup
@@ -89,8 +88,6 @@ theorem kurosh_two_three {m : ℕ} (hm : 6 ∣ m) : 1 + m - m / 2 - m / 3 = 1 + 
   omega
 
 abbrev G23 (i : Fin 2) : Type := Multiplicative (ZMod (i.val + 2))
-
-scoped instance factOneLt (i : Fin 2) : Fact (1 < i.val + 2) := ⟨by omega⟩
 
 theorem natCard_G23 (i : Fin 2) : Nat.card (G23 i) = i.val + 2 := by
   rw [Nat.card_eq_fintype_card, Fintype.card_multiplicative, ZMod.card]
@@ -241,7 +238,8 @@ theorem nonempty_freeGroupBasis [Γ.FiniteIndex] (hneg : (-1 : SL(2, ℤ)) ∈ �
 
 end Main
 
-end ModularCurve.FreeTransport
+end FreeTransport
+end ModularCurve
 
 theorem solution (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) [Γ.FiniteIndex]
     (hneg : (-1 : Matrix.SpecialLinearGroup (Fin 2) ℤ) ∈ Γ)
@@ -260,7 +258,6 @@ export
 end privateSection
 
 public section publicSection
-
 
 theorem Matrix.SpecialLinearGroup.nonempty_freeGroupBasis_map_quotient_center_of_forall_trace_ne
     (Γ : Subgroup (Matrix.SpecialLinearGroup (Fin 2) ℤ)) [Γ.FiniteIndex]

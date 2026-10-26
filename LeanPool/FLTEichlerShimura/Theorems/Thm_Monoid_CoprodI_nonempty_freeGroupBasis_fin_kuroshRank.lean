@@ -23,9 +23,7 @@ public import Mathlib.GroupTheory.Index
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Group.Action.Sigma
 import Mathlib.Algebra.Torsor.Defs
-import Mathlib.Data.Nat.Cast.Field
 import Mathlib.GroupTheory.FreeGroup.Reduce
-import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.Group
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Monoid_CoprodI_isTree_cosetGraph
 import LeanPool.FLTEichlerShimura.Theorems.Thm_SimpleGraph_exists_walkConnected_transversal_of_preconnected
@@ -71,7 +69,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_Monoid_CoprodI_nonempty_freeGroupBasis_fin_kuroshRank
 
 open Subgroup
@@ -87,93 +84,11 @@ variable {G : Type*} [Group G]
 def ConjTrivial (A H : Subgroup G) : Prop :=
   ∀ g x : G, x ∈ A → g⁻¹ * x * g ∈ H → x = 1
 
-theorem isOfFinOrder_conj {x : G} (g : G) (hx : IsOfFinOrder x) :
-    IsOfFinOrder (g⁻¹ * x * g) :=
-  (isConj_iff.mpr ⟨g⁻¹, by rw [inv_inv]⟩ : IsConj x (g⁻¹ * x * g)).isOfFinOrder hx
-
-theorem isOfFinOrder_of_mem_finite {A : Subgroup G} [Finite A] {x : G} (hx : x ∈ A) :
-    IsOfFinOrder x :=
-  Submonoid.isOfFinOrder_coe.mpr (isOfFinOrder_of_finite (⟨x, hx⟩ : A))
-
-theorem conjTrivial_of_torsionFree (A H : Subgroup G) [Finite A]
-    (hH : ∀ y : G, y ∈ H → IsOfFinOrder y → y = 1) : ConjTrivial A H := by
-  intro g x hxA hxH
-  have hfin : IsOfFinOrder (g⁻¹ * x * g) := isOfFinOrder_conj g (isOfFinOrder_of_mem_finite hxA)
-  have h0 : g⁻¹ * x * g = 1 := hH _ hxH hfin
-  have h1 : g⁻¹ * x * g = g⁻¹ * 1 * g := by rw [h0, mul_one, inv_mul_cancel]
-  exact mul_left_cancel (mul_right_cancel h1)
-
 end TorsionCriterion
-
-section Divisibility
-
-variable {G : Type*} [Group G] (A H : Subgroup G)
-
-theorem stabilizer_eq_bot_of_conjTrivial (hAH : ConjTrivial A H) (q : G ⧸ H) :
-    MulAction.stabilizer A q = ⊥ := by
-  rw [eq_bot_iff]
-  intro a ha
-  induction q using QuotientGroup.induction_on with
-  | H g =>
-    have hmem : (a : G) • (g : G ⧸ H) = (g : G ⧸ H) := ha
-    rw [MulAction.Quotient.smul_coe, QuotientGroup.eq, smul_eq_mul, mul_inv_rev] at hmem
-    have hinv : (a : G)⁻¹ = 1 := hAH g ((a : G)⁻¹) (inv_mem a.2) hmem
-    have : (a : G) = 1 := by rw [← inv_inv (a : G), hinv, inv_one]
-    exact Subgroup.mem_bot.mpr (Subtype.ext this)
-
-theorem card_dvd_index_of_conjTrivial (hAH : ConjTrivial A H) :
-    Nat.card A ∣ H.index := by
-  classical
-  have key := MulAction.selfEquivSigmaOrbitsQuotientStabilizer A (G ⧸ H)
-  have efib : ∀ ω : Quotient (MulAction.orbitRel A (G ⧸ H)),
-      (A ⧸ MulAction.stabilizer A ω.out) ≃ A := fun ω =>
-    (Subgroup.quotientEquivOfEq (stabilizer_eq_bot_of_conjTrivial A H hAH ω.out)).trans
-      QuotientGroup.quotientBot.toEquiv
-  have e : (G ⧸ H) ≃ Quotient (MulAction.orbitRel A (G ⧸ H)) × A :=
-    (key.trans (Equiv.sigmaCongrRight efib)).trans (Equiv.sigmaEquivProd _ _)
-  rw [Subgroup.index_eq_card, Nat.card_congr e, Nat.card_prod]
-  exact dvd_mul_left _ _
-
-end Divisibility
 
 section RankArithmetic
 
 def kuroshRank (a b m : ℕ) : ℕ := 1 + m - m / a - m / b
-
-theorem kuroshRank_add_eq {a b m : ℕ} (hab : m / a + m / b ≤ m) :
-    kuroshRank a b m + m / a + m / b = 1 + m := by
-  unfold kuroshRank
-  omega
-
-theorem kuroshRank_two_three {m : ℕ} (hm : 6 ∣ m) : kuroshRank 2 3 m = 1 + m / 6 := by
-  obtain ⟨k, rfl⟩ := hm
-  simp only [kuroshRank]
-  omega
-
-theorem six_dvd_of_two_dvd_of_three_dvd {m : ℕ} (h2 : 2 ∣ m) (h3 : 3 ∣ m) : 6 ∣ m :=
-  (by decide : Nat.Coprime 2 3).mul_dvd_of_dvd_of_dvd h2 h3
-
-theorem div_add_div_le {a b m : ℕ} (ha : 2 ≤ a) (hb : 2 ≤ b) : m / a + m / b ≤ m := by
-  have h1 : m / a ≤ m / 2 := Nat.div_le_div_left ha (by omega)
-  have h2 : m / b ≤ m / 2 := Nat.div_le_div_left hb (by omega)
-  omega
-
-theorem kuroshRank_eq_one_sub_eulerChar {K : Type*} [Field K] {a b m : ℕ}
-    (ha : a ∣ m) (hb : b ∣ m) (ha2 : 2 ≤ a) (hb2 : 2 ≤ b)
-    (ha0 : (a : K) ≠ 0) (hb0 : (b : K) ≠ 0) :
-    (kuroshRank a b m : K) = 1 - m * (1 / a + 1 / b - 1) := by
-  have hab : m / a + m / b ≤ m := div_add_div_le ha2 hb2
-  have key : ((kuroshRank a b m : ℕ) : K) + ((m / a : ℕ) : K) + ((m / b : ℕ) : K)
-      = 1 + (m : K) := by
-    rw [← Nat.cast_add, ← Nat.cast_add, kuroshRank_add_eq hab, Nat.cast_add, Nat.cast_one]
-  rw [Nat.cast_div ha ha0, Nat.cast_div hb hb0] at key
-  have hsolve : (kuroshRank a b m : K) = 1 + (m : K) - (m : K) / a - (m : K) / b := by
-    rw [eq_sub_iff_add_eq, eq_sub_iff_add_eq]
-    calc (kuroshRank a b m : K) + (m : K) / b + (m : K) / a
-        = (kuroshRank a b m : K) + (m : K) / a + (m : K) / b := by ring
-      _ = 1 + (m : K) := key
-  rw [hsolve]
-  ring
 
 end RankArithmetic
 
@@ -187,34 +102,11 @@ def KuroshRankFormula (G : Fin 2 → Type*) [∀ i, Group (G i)] : Prop :=
 
 variable {G : Fin 2 → Type*} [∀ i, Group (G i)] [∀ i, Finite (G i)]
 
-scoped instance finite_range_of (i : Fin 2) : Finite ((Monoid.CoprodI.of (i := i)).range :
-    Subgroup (Monoid.CoprodI G)) :=
-  Finite.of_equiv (G i) (MonoidHom.ofInjective (Monoid.CoprodI.of_injective i)).toEquiv
-
 omit [∀ i, Finite (G i)] in
 theorem card_range_of (i : Fin 2) :
     Nat.card ((Monoid.CoprodI.of (i := i)).range : Subgroup (Monoid.CoprodI G))
       = Nat.card (G i) :=
   (Nat.card_congr (MonoidHom.ofInjective (Monoid.CoprodI.of_injective i)).toEquiv).symm
-
-omit [∀ (i : Fin 2), Finite (G i)] in
-theorem six_dvd_index_of_conjTrivial (h2 : Nat.card (G 0) = 2) (h3 : Nat.card (G 1) = 3)
-    (H : Subgroup (Monoid.CoprodI G))
-    (hH : ∀ i, ConjTrivial (Monoid.CoprodI.of (i := i)).range H) :
-    6 ∣ H.index := by
-  have d0 := card_dvd_index_of_conjTrivial _ H (hH 0)
-  have d1 := card_dvd_index_of_conjTrivial _ H (hH 1)
-  rw [card_range_of 0, h2] at d0
-  rw [card_range_of 1, h3] at d1
-  exact six_dvd_of_two_dvd_of_three_dvd d0 d1
-
-omit [∀ (i : Fin 2), Finite (G i)] in
-theorem kuroshRank_index_eq (h2 : Nat.card (G 0) = 2) (h3 : Nat.card (G 1) = 3)
-    (H : Subgroup (Monoid.CoprodI G))
-    (hH : ∀ i, ConjTrivial (Monoid.CoprodI.of (i := i)).range H) :
-    kuroshRank (Nat.card (G 0)) (Nat.card (G 1)) H.index = 1 + H.index / 6 := by
-  rw [h2, h3]
-  exact kuroshRank_two_three (six_dvd_index_of_conjTrivial h2 h3 H hH)
 
 end Core
 
@@ -260,19 +152,12 @@ theorem adj_mk {i j : ι} (hij : i ≠ j) (g : CoprodI G) :
     (graph G).Adj (Vertex.mk i g) (Vertex.mk j g) :=
   ⟨hij, g, rfl, rfl⟩
 
-theorem adj_iff_exists {v w : Vertex G} :
-    (graph G).Adj v w ↔ v.1 ≠ w.1 ∧ ∃ g, Vertex.mk v.1 g = v ∧ Vertex.mk w.1 g = w :=
-  Iff.rfl
-
 theorem adj_one {i j : ι} (hij : i ≠ j) :
     (graph G).Adj (Vertex.mk i (1 : CoprodI G)) (Vertex.mk j 1) :=
   adj_mk hij 1
 
 scoped instance : SMul (CoprodI G) (Vertex G) where
   smul g v := ⟨v.1, g • v.2⟩
-
-theorem smul_def (g : CoprodI G) (v : Vertex G) : g • v = ⟨v.1, g • v.2⟩ :=
-  rfl
 
 @[scoped simp]
 theorem smul_mk (g : CoprodI G) (i : ι) (h : CoprodI G) :
@@ -297,10 +182,6 @@ theorem smul_adj {v w : Vertex G} (g : CoprodI G) (h : (graph G).Adj v w) :
 def smulHom (g : CoprodI G) : graph G →g graph G where
   toFun v := g • v
   map_rel' := smul_adj g
-
-@[scoped simp]
-theorem smulHom_apply (g : CoprodI G) (v : Vertex G) : smulHom g v = g • v :=
-  rfl
 
 theorem reachable_smul {v w : Vertex G} (g : CoprodI G) (h : (graph G).Reachable v w) :
     (graph G).Reachable (g • v) (g • w) :=
@@ -382,34 +263,12 @@ theorem eq_one_of_mem_range_of_mem_range {i j : ι} (hij : i ≠ j) {x : CoprodI
   simp only [MonoidHom.one_apply, MonoidHom.id_apply] at key
   rw [← key, map_one]
 
-theorem range_inf_range_eq_bot {i j : ι} (hij : i ≠ j) :
-    (of (M := G) (i := i)).range ⊓ (of (M := G) (i := j)).range = ⊥ := by
-  rw [eq_bot_iff]
-  intro x hx
-  rw [Subgroup.mem_inf] at hx
-  exact mem_bot.mpr (eq_one_of_mem_range_of_mem_range hij hx.1 hx.2)
-
 theorem eq_of_mk_eq_mk {i j : ι} (hij : i ≠ j) {g g' : CoprodI G}
     (hgi : Vertex.mk (G := G) i g = Vertex.mk i g')
     (hgj : Vertex.mk (G := G) j g = Vertex.mk j g') :
     g = g' :=
   inv_mul_eq_one.mp
     (eq_one_of_mem_range_of_mem_range hij (mk_eq_mk_iff.mp hgi) (mk_eq_mk_iff.mp hgj))
-
-theorem adj_base_iff {i : ι} {w : Vertex G} :
-    (graph G).Adj (Vertex.mk i (1 : CoprodI G)) w ↔
-      i ≠ w.1 ∧ ∃ a : G i, Vertex.mk w.1 (of a) = w := by
-  constructor
-  · rintro ⟨hiw, g, hgi, hgw⟩
-    refine ⟨hiw, ?_⟩
-    obtain ⟨a, ha⟩ := MonoidHom.mem_range.mp
-      (show g ∈ (of (M := G) (i := i)).range by simpa using mk_eq_mk_iff.mp hgi)
-    exact ⟨a, by rw [ha]; exact hgw⟩
-  · rintro ⟨hiw, a, haw⟩
-    exact ⟨hiw, of a, (mk_of_eq_mk_one a), haw⟩
-
-theorem isTree_of_isAcyclic [Nonempty ι] (h : (graph G).IsAcyclic) : (graph G).IsTree :=
-  ⟨connected, h⟩
 
 end BassSerre
 end GroupTheory
@@ -449,7 +308,8 @@ theorem isTree_two {G : Fin 2 → Type*} [∀ i, Group (G i)] : (graph G).IsTree
 theorem isAcyclic_two {G : Fin 2 → Type*} [∀ i, Group (G i)] : (graph G).IsAcyclic :=
   isTree_two.isAcyclic
 
-end GroupTheory.BassSerre
+end BassSerre
+end GroupTheory
 
 p2m_open "Subgroup MulAction SimpleGraph Monoid"
 
@@ -467,86 +327,6 @@ structure IsConnectedTransversal {V : Type*} (T : SimpleGraph V) (Γ : Type*) [G
   exists_mem_orbit : ∀ u : V, ∃ v ∈ D, v ∈ orbit Γ u
 
 variable {V : Type*} {T : SimpleGraph V} {Γ : Type*} [Group Γ] [MulAction Γ V]
-
-theorem walkConnected_singleton (T : SimpleGraph V) (v₀ : V) : WalkConnected T {v₀} := by
-  intro v hv w hw
-  rw [Set.mem_singleton_iff] at hv hw
-  subst hv; subst hw
-  exact ⟨Walk.nil, by simp⟩
-
-theorem WalkConnected.insert_of_adj {s : Set V} (hs : WalkConnected T s) {v w : V}
-    (hv : v ∈ s) (hadj : T.Adj v w) : WalkConnected T (insert w s) := by
-  have key : ∀ x ∈ insert w s, ∃ p : T.Walk v x, ∀ y ∈ p.support, y ∈ insert w s := by
-    intro x hx
-    rcases Set.mem_insert_iff.mp hx with rfl | hx
-    · refine ⟨Walk.cons hadj Walk.nil, fun y hy => ?_⟩
-      simp only [Walk.support_cons, Walk.support_nil, List.mem_cons,
-        List.not_mem_nil, or_false] at hy
-      rcases hy with rfl | rfl
-      · exact Set.mem_insert_of_mem _ hv
-      · exact Set.mem_insert _ _
-    · obtain ⟨p, hp⟩ := hs v hv x hx
-      exact ⟨p, fun y hy => Set.mem_insert_of_mem _ (hp y hy)⟩
-  intro a ha b hb
-  obtain ⟨p, hp⟩ := key a ha
-  obtain ⟨q, hq⟩ := key b hb
-  refine ⟨p.reverse.append q, fun y hy => ?_⟩
-  rw [Walk.support_append, List.mem_append] at hy
-  rcases hy with hy | hy
-  · rw [Walk.support_reverse, List.mem_reverse] at hy
-    exact hp y hy
-  · exact hq y (List.mem_of_mem_tail hy)
-
-theorem walkConnected_sUnion {c : Set (Set V)} (hchain : IsChain (· ⊆ ·) c)
-    (hwc : ∀ s ∈ c, WalkConnected T s) : WalkConnected T (⋃₀ c) := by
-  rintro v ⟨s, hs, hvs⟩ w ⟨t, ht, hwt⟩
-  rcases hchain.total hs ht with hst | hts
-  · obtain ⟨p, hp⟩ := hwc t ht v (hst hvs) w hwt
-    exact ⟨p, fun x hx => Set.mem_sUnion.mpr ⟨t, ht, hp x hx⟩⟩
-  · obtain ⟨p, hp⟩ := hwc s hs v hvs w (hts hwt)
-    exact ⟨p, fun x hx => Set.mem_sUnion.mpr ⟨s, hs, hp x hx⟩⟩
-
-private theorem mem_orbit_symm' {a b : V} (h : a ∈ orbit Γ b) : b ∈ orbit Γ a := by
-  obtain ⟨γ, rfl⟩ := h
-  exact ⟨γ⁻¹, inv_smul_smul γ b⟩
-
-theorem eq_of_mem_orbit_sUnion {c : Set (Set V)} (hchain : IsChain (· ⊆ ·) c)
-    (hinj : ∀ s ∈ c, ∀ v ∈ s, ∀ w ∈ s, v ∈ orbit Γ w → v = w) :
-    ∀ v ∈ ⋃₀ c, ∀ w ∈ ⋃₀ c, v ∈ orbit Γ w → v = w := by
-  rintro v ⟨s, hs, hvs⟩ w ⟨t, ht, hwt⟩ hvw
-  rcases hchain.total hs ht with hst | hts
-  · exact hinj t ht v (hst hvs) w hwt hvw
-  · exact hinj s hs v hvs w (hts hwt) hvw
-
-theorem eq_of_mem_orbit_insert {s : Set V}
-    (hs : ∀ v ∈ s, ∀ w ∈ s, v ∈ orbit Γ w → v = w) {w : V}
-    (hw : ¬∃ v ∈ s, v ∈ orbit Γ w) :
-    ∀ v ∈ insert w s, ∀ v' ∈ insert w s, v ∈ orbit Γ v' → v = v' := by
-  intro v hv v' hv' hvv'
-  rcases Set.mem_insert_iff.mp hv with rfl | hvs <;>
-    rcases Set.mem_insert_iff.mp hv' with rfl | hv's
-  · rfl
-  · exact absurd ⟨v', hv's, mem_orbit_symm' hvv'⟩ hw
-  · exact absurd ⟨v, hvs, hvv'⟩ hw
-  · exact hs v hvs v' hv's hvv'
-
-theorem exists_adj_of_walk (hsmul : ∀ (γ : Γ) {v w : V}, T.Adj v w → T.Adj (γ • v) (γ • w))
-    {s : Set V} {a b : V} (p : T.Walk a b) :
-    (∃ v ∈ s, v ∈ orbit Γ a) → (¬∃ v ∈ s, v ∈ orbit Γ b) →
-      ∃ v ∈ s, ∃ w, T.Adj v w ∧ ¬∃ v' ∈ s, v' ∈ orbit Γ w := by
-  induction p with
-  | nil => exact fun ha hb => absurd ha hb
-  | @cons a c b hac p ih =>
-    intro ha hb
-    by_cases hc : ∃ v ∈ s, v ∈ orbit Γ c
-    · exact ih hc hb
-    · obtain ⟨v, hvs, γ, hγ⟩ := ha
-      refine ⟨v, hvs, γ • c, ?_, ?_⟩
-      · rw [← hγ]
-        exact hsmul γ hac
-      · rintro ⟨v', hv's, hv'⟩
-        rw [MulAction.orbit_smul] at hv'
-        exact hc ⟨v', hv's, hv'⟩
 
 theorem exists_isConnectedTransversal
     (hsmul : ∀ (γ : Γ) {v w : V}, T.Adj v w → T.Adj (γ • v) (γ • w))
@@ -656,27 +436,6 @@ theorem edgeGen_smul (hD : IsConnectedTransversal (graph G) H D)
   rw [transl_mk_mul hD hfree, transl_mk_mul hD hfree]
   group
 
-theorem edgeGen_eq_one_iff (hD : IsConnectedTransversal (graph G) H D)
-    (hfree : ∀ (η : H) (v : Vertex G), η • v = v → η = 1) (g : CoprodI G) :
-    edgeGen hD g = 1 ↔ ∃ η : H, Vertex.mk 0 ((η : CoprodI G) * g) ∈ D ∧
-      Vertex.mk 1 ((η : CoprodI G) * g) ∈ D := by
-  constructor
-  · intro h
-    have hτ : transl hD (Vertex.mk 1 g) = transl hD (Vertex.mk 0 g) := by
-      rw [transl_mk_one_eq hD g, h, mul_one]
-    refine ⟨(transl hD (Vertex.mk 0 g))⁻¹, ?_, ?_⟩
-    · exact mem_of_transl_eq_one hD
-        (by rw [transl_mk_mul hD hfree]; exact inv_mul_cancel _)
-    · exact mem_of_transl_eq_one hD
-        (by rw [transl_mk_mul hD hfree, hτ]; exact inv_mul_cancel _)
-  · rintro ⟨η, h0, h1⟩
-    have e0 := transl_eq_one hD hfree h0
-    have e1 := transl_eq_one hD hfree h1
-    rw [transl_mk_mul hD hfree] at e0 e1
-    change (transl hD (Vertex.mk 0 g))⁻¹ * transl hD (Vertex.mk 1 g) = 1
-    rw [(inv_eq_of_mul_eq_one_right e0).symm, (inv_eq_of_mul_eq_one_right e1).symm]
-    group
-
 theorem inv_mul_transl_mem_closure (hD : IsConnectedTransversal (graph G) H D)
     {v w : Vertex G} (hadj : (graph G).Adj v w) :
     (transl hD v)⁻¹ * transl hD w ∈ Subgroup.closure (Set.range (edgeGen hD)) := by
@@ -727,11 +486,6 @@ theorem closure_range_edgeGen (hD : IsConnectedTransversal (graph G) H D)
     exact h1'
   rw [← h1]
   exact transl_mem_closure hD hfree _
-
-theorem closure_range_edgeGen_of_forall_mem (hD : IsConnectedTransversal (graph G) H D)
-    (hfree : ∀ h ∈ H, ∀ v : Vertex G, h • v = v → h = 1) :
-    Subgroup.closure (Set.range (edgeGen hD)) = ⊤ :=
-  closure_range_edgeGen hD (forall_smul_eq_of_forall_mem hfree)
 
 end BassSerre
 end GroupTheory
@@ -1033,14 +787,6 @@ theorem mem_farSide_of_transl_eq (hfree : ∀ (η : H) (v : Vertex G), η • v 
 variable (H) in
 def nonTreeRep (hD : IsConnectedTransversal (graph G) H D) : Set (CoprodI G) :=
   {g | Vertex.mk 0 g ∈ D ∧ edgeGen hD g ≠ 1}
-
-theorem mk_zero_mem_of_mem_nonTreeRep {g : CoprodI G} (hg : g ∈ nonTreeRep H hD) :
-    Vertex.mk 0 g ∈ D :=
-  hg.1
-
-theorem edgeGen_ne_one_of_mem_nonTreeRep {g : CoprodI G} (hg : g ∈ nonTreeRep H hD) :
-    edgeGen hD g ≠ 1 :=
-  hg.2
 
 include hD in
 theorem eq_of_mk_zero_mem (hfree : ∀ (η : H) (v : Vertex G), η • v = v → η = 1)
@@ -1572,7 +1318,6 @@ export P2MW.S_Monoid_CoprodI_nonempty_freeGroupBasis_fin_kuroshRank (solution)
 end privateSection
 
 public section publicSection
-
 
 theorem Monoid.CoprodI.nonempty_freeGroupBasis_fin_kuroshRank {G : Fin 2 → Type*} [∀ i, Group (G i)]
     [∀ i, Finite (G i)]

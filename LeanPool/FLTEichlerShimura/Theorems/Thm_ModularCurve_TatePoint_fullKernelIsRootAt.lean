@@ -26,7 +26,6 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrinci
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_normFormulaAlong
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_separableAlong_of_charZero
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_TatePoint_fullKernelIsRootAt_of_odd
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_TatePoint_fullKernelDiscAt_of_odd
 
 /-!
 # Root property of the full-kernel quotient at every level
@@ -119,14 +118,8 @@ theorem fullKernelIsRootAt_of_tower
       H W.toAffine (W.fullKernelQuotient Q N).toAffine ι hι hfin hN N hcyc hcard data
   · exact fullKernelIsRootAt_of_odd N hO
 
-theorem fullKernelDiscAt_of_tower
-    (hevD : ∀ (N : ℕ) [NeZero N], Even N → FullKernelDiscAt N) (N : ℕ) [NeZero N] :
-    FullKernelDiscAt N := by
-  rcases Nat.even_or_odd N with hE | hO
-  · exact hevD N hE
-  · exact fullKernelDiscAt_of_odd N hO
-
-end ModularCurve.TatePoint
+end TatePoint
+end ModularCurve
 
 end
 

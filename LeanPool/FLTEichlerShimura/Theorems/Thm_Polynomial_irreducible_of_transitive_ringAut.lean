@@ -57,7 +57,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_Polynomial_irreducible_of_transitive_ringAut
 
 p2m_open "Polynomial"
@@ -69,72 +68,6 @@ p2m_export "Polynomial" "C Splits.of_dvd card_roots' coeff_map natDegree_mul coe
   roots.le_of_dvd natDegree eval_C natDegree_sub_le eval_sub natDegree_map map_dvd natDegree_C mod \
   eval_map_algebraMap ext roots_map IsRoot ring roots_mul"
 end Polynomial
-p2m_open_scoped "Polynomial" in
-private theorem Polynomial.mem_range_of_unique_common_root {F L : Type*} [Field F] [Field L]
-    [Algebra F L]
-    (A B : Polynomial F) (hA : A ≠ 0) (hAs : (A.map (algebraMap F L)).Splits)
-    (hAnd : (A.map (algebraMap F L)).roots.Nodup) (x : L) (hxA : Polynomial.aeval x A = 0)
-    (hxB : Polynomial.aeval x B = 0)
-    (huniq : ∀ y : L, Polynomial.aeval y A = 0 → Polynomial.aeval y B = 0 → y = x) :
-    x ∈ (algebraMap F L).range := by
-  classical
-  set i := algebraMap F L with hi
-  set g := EuclideanDomain.gcd A B with hg
-  have hg0 : g ≠ 0 := fun h => hA (EuclideanDomain.gcd_eq_zero_iff.mp h).1
-  have hgA : g ∣ A := EuclideanDomain.gcd_dvd_left _ _
-  have hgB : g ∣ B := EuclideanDomain.gcd_dvd_right _ _
-  have hAm0 : A.map i ≠ 0 := (Polynomial.map_ne_zero_iff i.injective).mpr hA
-  have hgm0 : g.map i ≠ 0 := (Polynomial.map_ne_zero_iff i.injective).mpr hg0
-  have hxg : Polynomial.aeval x g = 0 := by
-    rw [hg, EuclideanDomain.gcd_eq_gcd_ab A B, map_add, map_mul, map_mul, hxA, hxB, zero_mul,
-      zero_mul,
-      add_zero]
-  have hroot_eq : ∀ y ∈ (g.map i).roots, y = x := by
-    intro y hy
-    rw [Polynomial.mem_roots hgm0, Polynomial.IsRoot.def, Polynomial.eval_map_algebraMap] at hy
-    refine huniq y ?_ ?_
-    · obtain ⟨c, hc⟩ := hgA
-      rw [hc, map_mul, hy, zero_mul]
-    · obtain ⟨c, hc⟩ := hgB
-      rw [hc, map_mul, hy, zero_mul]
-  have hxmem : x ∈ (g.map i).roots := by
-    rw [Polynomial.mem_roots hgm0, Polynomial.IsRoot.def, Polynomial.eval_map_algebraMap]; exact hxg
-  have hle : (g.map i).roots ≤ (A.map i).roots :=
-    Polynomial.roots.le_of_dvd hAm0 (Polynomial.map_dvd i hgA)
-  have hnd : (g.map i).roots.Nodup := Multiset.nodup_of_le hle hAnd
-  have hcount : (g.map i).roots.count x = Multiset.card (g.map i).roots :=
-    Multiset.count_eq_card.mpr fun y hy => (hroot_eq y hy).symm
-  have hcard : Multiset.card (g.map i).roots = 1 := by
-    have h1 : (g.map i).roots.count x ≤ 1 := Multiset.nodup_iff_count_le_one.mp hnd x
-    have h2 : 0 < (g.map i).roots.count x := Multiset.count_pos.mpr hxmem
-    omega
-  have hgs : (g.map i).Splits := Polynomial.Splits.of_dvd hAs hAm0 (Polynomial.map_dvd i hgA)
-  have hdeg : g.natDegree = 1 := by
-    rw [← Polynomial.natDegree_map i, hgs.natDegree_eq_card_roots, hcard]
-  have hgsF : g.Splits := Polynomial.Splits.of_natDegree_eq_one hdeg
-  exact hgsF.mem_range_of_isRoot hg0 ((Polynomial.mem_roots hgm0).mp hxmem)
-
-p2m_open_scoped "Polynomial" in
-private theorem Polynomial.mem_range_of_eval_eq_const {F L : Type*} [Field F] [Field L]
-    [Algebra F L]
-    (g : Polynomial F) (x : L) (s : Finset L) (hcard : g.natDegree < s.card)
-    (hval : ∀ y ∈ s, Polynomial.aeval y g = x) : x ∈ (algebraMap F L).range := by
-  classical
-  set i := algebraMap F L
-  set Q : Polynomial L := g.map i - Polynomial.C x with hQ
-  have hQdeg : Q.natDegree ≤ g.natDegree := by
-    refine (Polynomial.natDegree_sub_le _ _).trans ?_
-    rw [Polynomial.natDegree_map, Polynomial.natDegree_C, max_eq_left (Nat.zero_le _)]
-  have hQ0 : Q = 0 := by
-    refine Polynomial.eq_zero_of_natDegree_lt_card_of_eval_eq_zero' Q s (fun y hy => ?_)
-      (hQdeg.trans_lt hcard)
-    rw [hQ, Polynomial.eval_sub, Polynomial.eval_C, Polynomial.eval_map_algebraMap, hval y hy,
-      sub_self]
-  have hconst : g.map i = Polynomial.C x := sub_eq_zero.mp hQ0
-  refine ⟨g.coeff 0, ?_⟩
-  have := congrArg (fun P : Polynomial L => P.coeff 0) hconst
-  simpa only [Polynomial.coeff_map, Polynomial.coeff_C_zero] using this
-
 p2m_open_scoped "Polynomial" in
 private theorem Polynomial.irreducible_of_transitive_ringAut {F L : Type*} [Field F] [Field L]
     [Algebra F L]

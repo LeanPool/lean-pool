@@ -22,7 +22,6 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X0
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_finrank_adjoin_jqN_eq_of_prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_dedekindPsi_prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_evalAtJ_injective
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_phiIrreducible_evalSymm
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!
@@ -60,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 -/
 
 section privateSection
-
 
 namespace P2MW.S_ModularCurve_ModularPolynomialData_eq_of_prime
 
@@ -102,7 +100,8 @@ theorem toAdjoin_eq_minpoly (p : ℕ) [hp : Fact p.Prime] (data : ModularPolynom
     (minpoly.dvd _ _ (aeval_jqN_toAdjoin data)) ?_
   rw [hdeg, natDegree_toAdjoin, dedekindPsi_prime hp.out]
 
-end ModularCurve.W1
+end W1
+end ModularCurve
 
 namespace ModularCurve
 p2m_export "ModularCurve" "jq jqN dedekindPsi ModularPolynomialData evalAtJGen \
@@ -111,7 +110,8 @@ p2m_export "ModularCurve" "jq jqN dedekindPsi ModularPolynomialData evalAtJGen \
 namespace ModularPolynomialData
 p2m_export "ModularCurve.ModularPolynomialData" "toAdjoin toAdjoin_monic monic eval_eq_zero \
   natDegree_eq Φ"
-end ModularCurve.ModularPolynomialData
+end ModularPolynomialData
+end ModularCurve
 p2m_open_scoped "ModularCurve ModularCurve.ModularPolynomialData" in
 open ModularCurve.W1 in
 private theorem ModularCurve.ModularPolynomialData.eq_of_prime (p : ℕ) [hp : Fact (Nat.Prime p)]
@@ -130,13 +130,6 @@ p2m_export "ModularCurve" "jq jqN dedekindPsi ModularPolynomialData evalAtJGen \
   algebraMap_comp_evalAtJGen ModularPolynomialData.toAdjoin PhiIrreducible \
   finrank_adjoin_jqN_eq_of_prime dedekindPsi_prime exists_phiIrreducible_evalSymm"
 end ModularCurve
-p2m_open_scoped "ModularCurve" in
-private theorem ModularCurve.phiIrreducible_of_prime (p : ℕ) [hp : Fact (Nat.Prime p)]
-    (data : ModularPolynomialData p) :
-    PhiIrreducible data := by
-  obtain ⟨d₀, h, -⟩ := exists_phiIrreducible_evalSymm p
-  rwa [ModularCurve.ModularPolynomialData.eq_of_prime p data d₀]
-
 open _root_.ModularCurve _root_.P2MW.S_ModularCurve_ModularPolynomialData_eq_of_prime.ModularCurve
   in
 theorem solution (p : ℕ) [hp : Fact (Nat.Prime p)] (d d' : ModularPolynomialData p) : d = d' :=
@@ -150,7 +143,6 @@ export P2MW.S_ModularCurve_ModularPolynomialData_eq_of_prime (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.ModularPolynomialData.eq_of_prime (p : ℕ) [hp : Fact (Nat.Prime p)]

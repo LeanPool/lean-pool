@@ -59,7 +59,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_transcendental_jqModC
 
 noncomputable section
@@ -93,9 +92,6 @@ theorem coeff_jqModC_pow_of_lt {n : ℕ} {m : ℤ} (hm : m < -(n : ℤ)) :
   rw [jqModC_pow, HahnSeries.coeff_single_mul, one_mul]
   exact ofPowerSeries_coeff_of_neg _ (by omega)
 
-theorem coeff_jqModC_neg_one : (jqModC K).coeff (-1 : ℤ) = 1 := by
-  simpa using coeff_jqModC_pow_self K 1
-
 theorem algebraMap_laurentSeries_eq_single (c : K) :
     algebraMap K (LaurentSeries K) c = HahnSeries.single 0 c := by
   have h1 : algebraMap K (PowerSeries K) c = PowerSeries.C c := by simp
@@ -125,23 +121,6 @@ theorem aeval_jqModC_eq_zero {p : Polynomial K} (hp : Polynomial.aeval (jqModC K
 theorem transcendental_jqModC : Transcendental K (jqModC K) :=
   transcendental_iff.mpr fun _ hp => aeval_jqModC_eq_zero K hp
 
-theorem jqModC_ne_zero [Nontrivial K] : jqModC K ≠ 0 := by
-  intro h
-  have h1 : (jqModC K).coeff (-1 : ℤ) = 1 := coeff_jqModC_neg_one K
-  rw [h, HahnSeries.coeff_zero] at h1
-  exact zero_ne_one h1
-
-theorem order_jqModC [Nontrivial K] : (jqModC K).order = -1 := by
-  refine le_antisymm (HahnSeries.order_le_of_coeff_ne_zero ?_) ?_
-  · rw [coeff_jqModC_neg_one]
-    exact one_ne_zero
-  · by_contra hlt
-    rw [not_le] at hlt
-    refine HahnSeries.coeff_order_eq_zero.not.mpr (jqModC_ne_zero K) ?_
-    have h := coeff_jqModC_pow_of_lt K (n := 1) (m := (jqModC K).order)
-      (by simpa using hlt)
-    simpa using h
-
 end CharLRows
 
 end ModularCurve
@@ -159,7 +138,6 @@ export P2MW.S_ModularCurve_transcendental_jqModC (solution)
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.transcendental_jqModC (K : Type*) [CommRing K] :

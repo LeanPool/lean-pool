@@ -67,7 +67,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_OVERLONG_2a3d6b2b
 
 noncomputable section
@@ -117,36 +116,7 @@ private theorem _root_.AlgebraicCurve.Place.adicValuation_isTrivialOn' :
     v.mem_iff_adicValuation_le_one'.mp (v.algebraMap_mem' a)
 
 p2m_export "AlgebraicCurve.Place" "adicValuation_isTrivialOn'"
-private theorem _root_.AlgebraicCurve.Place.isEquiv_adicValuation_of_valuationSubring_eq' {Γ :
-  Type*}
-    [LinearOrderedCommGroupWithZero Γ] {w : Valuation F Γ}
-    (h : w.valuationSubring = v.toValuationSubring) : w.IsEquiv v.adicValuation :=
-  (Valuation.isEquiv_iff_valuationSubring _ _).mpr
-    (h.trans v.adicValuation_valuationSubring'.symm)
-
 p2m_export "AlgebraicCurve.Place" "isEquiv_adicValuation_of_valuationSubring_eq'"
-private theorem ord_eq_zero_iff_adicValuation_eq_one' {f : F} (hf : f ≠ 0) :
-    v.ord f = 0 ↔ v.adicValuation f = 1 := by
-  simp only [ord, neg_eq_zero]
-  constructor
-  · intro h
-    have h2 := exp_log (v.adicValuation_ne_zero hf)
-    rw [h, exp_zero] at h2
-    exact h2.symm
-  · intro h
-    rw [h, log_one]
-
-section OfHeightOneSpectrum
-
-variable {R : Type*} [CommRing R] [IsDedekindDomain R] [Algebra R F] [IsFractionRing R F]
-  [Algebra K R] [IsScalarTower K R F]
-
-private theorem isEquiv_adicValuation_ofHeightOneSpectrum' (w : HeightOneSpectrum R) :
-    (w.valuation F).IsEquiv (ofHeightOneSpectrum (K := K) w).adicValuation :=
-  (ofHeightOneSpectrum (K := K) w).isEquiv_adicValuation_of_valuationSubring_eq' rfl
-
-end OfHeightOneSpectrum
-
 end Place
 
 namespace RationalFunctionField
@@ -179,15 +149,6 @@ private def placeInfty' : Place K (RatFunc K) where
     haveI := nontrivial_valueGroup_inftyValuation K
     (Valuation.valuationSubring_isDiscreteValuationRing
       (RatFunc.inftyValuation K)).toIsPrincipalIdealRing
-
-private theorem placeInfty'_ne_ofHeightOneSpectrum (w : HeightOneSpectrum K[X]) :
-    placeInfty' K ≠ Place.ofHeightOneSpectrum w := by
-  intro h
-  refine RatFunc.adicValuation_not_isEquiv_infty_valuation w
-    ((Valuation.isEquiv_iff_valuationSubring _ _).mpr ?_)
-  have h2 := congrArg Place.toValuationSubring h
-  rw [Place.ofHeightOneSpectrum_toValuationSubring] at h2
-  exact h2.symm
 
 end PlaceInfty
 
@@ -238,7 +199,6 @@ export P2MW.S_OVERLONG_2a3d6b2b
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.RationalFunctionField.subsingleton_setOf_forall_ne_ofHeightOneSpectrum

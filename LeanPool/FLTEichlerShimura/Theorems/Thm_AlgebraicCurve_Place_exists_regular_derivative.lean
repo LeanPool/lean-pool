@@ -178,13 +178,6 @@ def toValuationSubringOfRestrictEq (hw : w.restrict F = v) :
   (algebraMap (integralClosureAt F' v) F').codRestrict
     w.toValuationSubring.toSubring (forall_mem_of_restrict_eq hw)
 
-omit [FiniteDimensional F F'] in
-@[scoped simp]
-theorem coe_toValuationSubringOfRestrictEq (hw : w.restrict F = v)
-    (c : integralClosureAt F' v) :
-    (toValuationSubringOfRestrictEq hw c : F')
-      = algebraMap (integralClosureAt F' v) F' c := rfl
-
 def residueOfCenter (hw : w.restrict F = v) :
     integralClosureAt F' v →+* w.ResidueField :=
   (IsLocalRing.residue w.toValuationSubring).comp (toValuationSubringOfRestrictEq hw)

@@ -19,7 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularForm_HeckeOperator
 
-
 /-!
 # Coefficient Hecke operators commute at coprime levels
 
@@ -61,26 +60,11 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularForm_coeffHeckeT_comm
 
 namespace M4cP1W2
 
 open ModularForm
-
-theorem coeffHeckeU_comm (p q : ℕ) (a : ℕ → ℂ) :
-    coeffHeckeU p (coeffHeckeU q a) = coeffHeckeU q (coeffHeckeU p a) := by
-  funext n
-  simp only [coeffHeckeU_apply, Nat.mul_right_comm]
-
-theorem coeffHeckeT_coeffHeckeU_comm (k : ℤ) {p q : ℕ} (hpq : Nat.Coprime p q) (a : ℕ → ℂ) :
-    coeffHeckeT k p (coeffHeckeU q a) = coeffHeckeU q (coeffHeckeT k p a) := by
-  funext n
-  simp only [coeffHeckeT_apply, coeffHeckeU_apply]
-  have hiff : p ∣ n * q ↔ p ∣ n := hpq.dvd_mul_right
-  by_cases hpn : p ∣ n
-  · rw [ite_eq_left hpn, ite_eq_left (hiff.mpr hpn), Nat.mul_right_comm, Nat.div_mul_right_comm hpn]
-  · rw [ite_eq_right hpn, ite_eq_right (fun h => hpn (hiff.mp h)), Nat.mul_right_comm]
 
 theorem coeffHeckeT_comm (k : ℤ) {p q : ℕ} (hpq : Nat.Coprime p q) (a : ℕ → ℂ) :
     coeffHeckeT k p (coeffHeckeT k q a) = coeffHeckeT k q (coeffHeckeT k p a) := by

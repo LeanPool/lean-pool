@@ -63,7 +63,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_IsCurveOver_exists_separating_transcendental
 
 noncomputable section
@@ -94,17 +93,9 @@ scoped instance instTranscendental [PerfectField K] [IsCurveOver K F] :
     Algebra.Transcendental K F :=
   Algebra.transcendental_iff_not_isAlgebraic.mpr not_isAlgebraic
 
-theorem exists_transcendental [PerfectField K] [IsCurveOver K F] :
-    ∃ t : F, Transcendental K t :=
-  Algebra.Transcendental.transcendental
-
 theorem trdeg_pos [PerfectField K] [IsCurveOver K F] :
     0 < Algebra.trdeg K F :=
   _root_.trdeg_pos K F
-
-theorem trdeg_ne_zero [PerfectField K] [IsCurveOver K F] :
-    Algebra.trdeg K F ≠ 0 :=
-  trdeg_pos.ne'
 
 theorem one_le_trdeg [PerfectField K] [IsCurveOver K F] :
     1 ≤ Algebra.trdeg K F :=
@@ -267,7 +258,6 @@ export P2MW.S_AlgebraicCurve_IsCurveOver_exists_separating_transcendental (solut
 end privateSection
 
 public section publicSection
-
 
 open IntermediateField Algebra
 

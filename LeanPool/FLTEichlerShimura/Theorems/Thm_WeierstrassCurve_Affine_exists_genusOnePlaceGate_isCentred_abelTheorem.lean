@@ -197,9 +197,6 @@ theorem xyIdeal_ne_bot (x₀ : F) (y₀ : F[X]) : XYIdeal W x₀ y₀ ≠ ⊥ :=
 def hosOf {x₀ y₀ : F} (h : W.Equation x₀ y₀) : HeightOneSpectrum W.CoordinateRing :=
   ⟨XYIdeal W x₀ (C y₀), (xyIdeal_isMaximal h).isPrime, xyIdeal_ne_bot x₀ (C y₀)⟩
 
-@[scoped simp] theorem hosOf_asIdeal {x₀ y₀ : F} (h : W.Equation x₀ y₀) :
-    (hosOf h).asIdeal = XYIdeal W x₀ (C y₀) := rfl
-
 section Closed
 
 variable [IsAlgClosed F] [W.IsElliptic]
@@ -213,8 +210,6 @@ scoped instance instHasPrincipalDivisors : AlgebraicCurve.HasPrincipalDivisors F
 def placeOfPt : W.Point → AlgebraicCurve.Place F W.FunctionField
   | .zero => vInf W
   | .some _ _ h => Place.ofHeightOneSpectrum (K := F) (F := W.FunctionField) (hosOf h.left)
-
-@[scoped simp] theorem placeOfPt_zero : placeOfPt (W := W) 0 = vInf W := rfl
 
 @[scoped simp] theorem placeOfPt_zero' : placeOfPt (Point.zero : W.Point) = vInf W := rfl
 
@@ -293,8 +288,6 @@ omit [IsAlgClosed F] [WeierstrassCurve.IsElliptic W] in
 omit [IsAlgClosed F] [WeierstrassCurve.IsElliptic W] in
 @[scoped simp] theorem unitIdealOfPoint_some {x y : F} (h : W.Nonsingular x y) :
     unitIdealOfPoint (.some x y h) = CoordinateRing.XYIdeal' h := rfl
-
-theorem placeOfPoint_eq (P : W.Point) : placeOfPoint (W := W) P = placeOfPt P := rfl
 
 theorem pointEquivPlace_symm_placeOfPt (P : W.Point) :
     (pointEquivPlace (W := W)).symm (placeOfPt P) = P :=

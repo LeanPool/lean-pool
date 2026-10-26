@@ -28,13 +28,9 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_coeffEmb_qExpand
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_exists_galoisPerm
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_mem_range_coeffEmb_of_forall_coeffMap_eq
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_mem_range_coeffEmb_qExpand_of_mem_inter
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_PhiGen_conj_injective
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_mem_range_qExpand_of_qTwist_eq
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_jq_qParam
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_E4_cube_div_discriminant_smul
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_qParam_mul_laurent
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_qParam_heckeMatrix_smul
-import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_hasSum_qParam_heckeDiagMatrix_smul
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_mem_adjoin_jq_of_hasSum_of_slash_invariant
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_perm_gamma0_cosetReps
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_sl2_heckeDiagMatrix_smul_eq
@@ -80,7 +76,6 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_ModularCurve_isIntegral_adjoin_jq_of_hasSum_of_gamma0_invariant
 
 noncomputable section
@@ -109,53 +104,17 @@ section Generic
 
 variable {L L' : Type*} [CommRing L] [CommRing L'] {n : ℕ}
 
-def interpPoly (H Y : Fin n → L) : L[X] :=
-  ∑ i, C (H i) * ∏ m ∈ Finset.univ.erase i, (X - C (Y m))
-
 def conjPoly (H : Fin n → L) : L[X] := ∏ i, (X - C (H i))
-
-omit [CommRing L'] in
-lemma prod_erase_perm (e : Equiv.Perm (Fin n)) (G : Fin n → L[X]) (i : Fin n) :
-    ∏ m ∈ Finset.univ.erase i, G (e m) = ∏ m ∈ Finset.univ.erase (e i), G m := by
-  refine Finset.prod_equiv e (fun m => ?_) (fun m _ => rfl)
-  simp [e.injective.eq_iff]
-
-lemma interpPoly_map (φ : L →+* L') (H Y : Fin n → L) :
-    (interpPoly H Y).map φ = interpPoly (φ ∘ H) (φ ∘ Y) := by
-  simp only [interpPoly, Polynomial.map_sum, Polynomial.map_mul, Polynomial.map_C,
-    Polynomial.map_prod,
-    Polynomial.map_sub, Polynomial.map_X, Function.comp_apply]
 
 lemma conjPoly_map (φ : L →+* L') (H : Fin n → L) : (conjPoly H).map φ = conjPoly (φ ∘ H) := by
   simp only [conjPoly, Polynomial.map_prod, Polynomial.map_sub, Polynomial.map_X, Polynomial.map_C,
     Function.comp_apply]
 
 omit [CommRing L'] in
-lemma interpPoly_perm (e : Equiv.Perm (Fin n)) (H Y : Fin n → L) :
-    interpPoly (H ∘ e) (Y ∘ e) = interpPoly H Y := by
-  unfold interpPoly
-  simp only [Function.comp_apply]
-  rw [← Equiv.sum_comp e (fun j => C (H j) * ∏ m ∈ Finset.univ.erase j, (X - C (Y m)))]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  rw [prod_erase_perm e (fun m => X - C (Y m)) i]
-
-omit [CommRing L'] in
 lemma conjPoly_perm (e : Equiv.Perm (Fin n)) (H : Fin n → L) : conjPoly (H ∘ e) = conjPoly H := by
   unfold conjPoly
   simp only [Function.comp_apply]
   exact Equiv.prod_comp e (fun j => X - C (H j))
-
-omit [CommRing L'] in
-lemma interpPoly_eval (H Y : Fin n → L) (i₀ : Fin n) :
-    (interpPoly H Y).eval (Y i₀) = H i₀ * ∏ m ∈ Finset.univ.erase i₀, (Y i₀ - Y m) := by
-  unfold interpPoly
-  rw [Polynomial.eval_finsetSum, Finset.sum_eq_single i₀]
-  · simp [Polynomial.eval_prod]
-  · intro i _ hi
-    rw [Polynomial.eval_mul, Polynomial.eval_prod]
-    refine mul_eq_zero_of_right _ (Finset.prod_eq_zero (i := i₀) (by simp [Ne.symm hi]) ?_)
-    simp
-  · intro h; exact absurd (Finset.mem_univ i₀) h
 
 omit [CommRing L'] in
 lemma conjPoly_eval (H : Fin n → L) (i₀ : Fin n) : (conjPoly H).eval (H i₀) = 0 := by
@@ -173,10 +132,6 @@ lemma conjPoly_natDegree [Nontrivial L] [NoZeroDivisors L] (H : Fin n → L) :
   unfold conjPoly
   rw [Polynomial.natDegree_prod _ _ fun i _ => Polynomial.X_sub_C_ne_zero (H i)]
   simp
-
-lemma eval_eq_sum_coeff {p : L[X]} {N : ℕ} (hN : p.natDegree < N) (x : L) :
-    p.eval x = ∑ k ∈ Finset.range N, p.coeff k * x ^ k := by
-  rw [Polynomial.eval_eq_sum_range' hN]
 
 end Generic
 
@@ -233,14 +188,6 @@ lemma coeffMap_slotH (f g : LaurentSeries ℚ) (σ : K ≃ₐ[ℚ] K) (e : Equiv
   · rw [liftPerm_succ, slotH_succ, slotH_succ, coeffMap_qTwist, coeffMap_coeffEmb,
       units_map_zeta_pow ℓ ζ (σ : K →+* K) e (fun b => he b) b]
 
-lemma coeffMap_conj (σ : K ≃ₐ[ℚ] K) (e : Equiv.Perm (Fin ℓ))
-    (he : ∀ b : Fin ℓ, σ ((ζ : K) ^ (b : ℕ)) = (ζ : K) ^ ((e b : Fin ℓ) : ℕ)) (i : Fin (ℓ + 1)) :
-    coeffMap (σ : K →+* K) (PhiGen.conj ℓ ζ i) = PhiGen.conj ℓ ζ (liftPerm ℓ e i) := by
-  refine Fin.cases ?_ (fun b => ?_) i
-  · rw [liftPerm_zero, PhiGen.conj_zero, coeffMap_qExpand, coeffMap_coeffEmb]
-  · rw [liftPerm_succ, PhiGen.conj_succ, PhiGen.conj_succ, coeffMap_qTwist, coeffMap_coeffEmb,
-      units_map_zeta_pow ℓ ζ (σ : K →+* K) e (fun b => he b) b]
-
 include hζ in
 omit hℓ [Algebra ℚ K] in
 lemma zeta_pow_ell : ζ ^ ℓ = 1 := by
@@ -265,48 +212,9 @@ lemma qTwist_slotH (f g : LaurentSeries ℚ) (i : Fin (ℓ + 1)) :
   · rw [liftPerm_succ, slotH_succ, slotH_succ, qTwist_qTwist, Equiv.coe_addRight, zeta_mul_zeta_pow
       ℓ ζ hζ]
 
-include hζ in
-lemma qTwist_conj (i : Fin (ℓ + 1)) :
-    qTwist ζ (PhiGen.conj ℓ ζ i) = PhiGen.conj ℓ ζ (liftPerm ℓ (Equiv.addRight (1 : Fin ℓ)) i) := by
-  have : NeZero ℓ := ⟨hℓ.out.ne_zero⟩
-  refine Fin.cases ?_ (fun b => ?_) i
-  · rw [liftPerm_zero, PhiGen.conj_zero, qTwist_qExpand]
-    congr 1
-    rw [show ((ℓ * ℓ : ℕ) : ℤ) = ((ℓ * ℓ : ℕ) : ℤ) from rfl, zpow_natCast, pow_mul, zeta_pow_ell ℓ ζ
-      hζ, one_pow,
-      qTwist_one_apply]
-  · rw [liftPerm_succ, PhiGen.conj_succ, PhiGen.conj_succ, qTwist_qTwist, Equiv.coe_addRight,
-      zeta_mul_zeta_pow ℓ ζ hζ]
-
-def interpK (f g : LaurentSeries ℚ) :
-    (LaurentSeries K)[X] := interpPoly (slotH ℓ ζ f g) (PhiGen.conj ℓ ζ)
-
 def conjK (f g : LaurentSeries ℚ) : (LaurentSeries K)[X] := conjPoly (slotH ℓ ζ f g)
 
 variable [IsGalois ℚ K] [FiniteDimensional ℚ K]
-
-include hζ in
-theorem exists_interpK_coeff_eq (f g : LaurentSeries ℚ) (k : ℕ) :
-    ∃ ξ : LaurentSeries ℚ, (interpK ℓ ζ f g).coeff k = coeffEmb K (qExpand ℚ ℓ ξ) := by
-  refine PhiGen.mem_range_coeffEmb_qExpand_of_mem_inter ?_ ?_
-  · refine mem_range_qExpand_of_qTwist_eq ℓ ζ hζ _ ?_
-    rw [← Polynomial.coeff_map, interpK, interpPoly_map]
-    have h1 : (⇑(qTwist ζ) ∘ slotH ℓ ζ f g) = slotH ℓ ζ f g ∘ liftPerm ℓ (Equiv.addRight (1 : Fin
-      ℓ)) :=
-      funext fun i => qTwist_slotH ℓ ζ hζ f g i
-    have h2 : (⇑(qTwist ζ) ∘ PhiGen.conj ℓ ζ) = PhiGen.conj ℓ ζ ∘ liftPerm ℓ (Equiv.addRight (1 :
-      Fin ℓ)) :=
-      funext fun i => qTwist_conj ℓ ζ hζ i
-    rw [h1, h2, interpPoly_perm]
-  · refine PhiGen.mem_range_coeffEmb_of_forall_coeffMap_eq
-      (fun c hc => (IsGalois.mem_range_algebraMap_iff_fixed c).mpr hc) fun σ => ?_
-    obtain ⟨e, he⟩ := PhiGen.exists_galoisPerm hζ (σ : K →+* K)
-    rw [← Polynomial.coeff_map, interpK, interpPoly_map]
-    have h1 : (⇑(coeffMap (σ : K →+* K)) ∘ slotH ℓ ζ f g) = slotH ℓ ζ f g ∘ liftPerm ℓ e :=
-      funext fun i => coeffMap_slotH ℓ ζ f g σ e he i
-    have h2 : (⇑(coeffMap (σ : K →+* K)) ∘ PhiGen.conj ℓ ζ) = PhiGen.conj ℓ ζ ∘ liftPerm ℓ e :=
-      funext fun i => coeffMap_conj ℓ ζ σ e he i
-    rw [h1, h2, interpPoly_perm]
 
 include hζ in
 theorem exists_conjK_coeff_eq (f g : LaurentSeries ℚ) (k : ℕ) :
@@ -335,9 +243,6 @@ namespace RealL
 
 variable {h : ℝ} {A B : LaurentSeries ℂ} {F G : ℍ → ℂ}
 
-lemma add (hA : RealL h A F) (hB : RealL h B G) : RealL h (A + B) (F + G) := fun τ => by
-  simpa [add_mul] using (hA τ).add (hB τ)
-
 lemma neg (hA : RealL h A F) : RealL h (-A) (-F) := fun τ => by
   simpa [neg_mul] using (hA τ).neg
 
@@ -365,29 +270,6 @@ lemma zero (h : ℝ) : RealL h 0 0 := fun τ => by simp [hasSum_zero]
 lemma congr {A' : LaurentSeries ℂ} {F' : ℍ → ℂ} (hA : RealL h A F) (h1 : A = A')
     (h2 : ∀ τ, F τ = F' τ) :
     RealL h A' F' := fun τ => by rw [← h1, ← h2]; exact hA τ
-
-lemma sum {ι : Type} (s : Finset ι) {A : ι → LaurentSeries ℂ} {F : ι → ℍ → ℂ}
-    (hAF : ∀ i ∈ s, RealL h (A i) (F i)) : RealL h (∑ i ∈ s, A i) (fun τ => ∑ i ∈ s, F i τ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa [Pi.zero_def] using zero h
-  | insert a s ha ih =>
-    have h1 :=
-      (hAF a (Finset.mem_insert_self a s)).add (ih fun i hi => hAF i (Finset.mem_insert_of_mem hi))
-    refine h1.congr (Finset.sum_insert ha).symm fun τ => ?_
-    simp [Finset.sum_insert ha]
-
-lemma prod (hh : 0 < h) {ι : Type} (s : Finset ι) {A : ι → LaurentSeries ℂ} {F : ι → ℍ → ℂ}
-    (hAF : ∀ i ∈ s, RealL h (A i) (F i)) : RealL h (∏ i ∈ s, A i) (fun τ => ∏ i ∈ s, F i τ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simpa [Pi.one_def] using one h
-  | insert a s ha ih =>
-    have h1 :=
-      (hAF a (Finset.mem_insert_self a s)).mul hh (ih fun i hi => hAF i (Finset.mem_insert_of_mem
-        hi))
-    refine h1.congr (Finset.prod_insert ha).symm fun τ => ?_
-    simp [Finset.prod_insert ha]
 
 lemma coeff_prod_X_sub_C (hh : 0 < h) {ι : Type} (s : Finset ι) {a : ι → LaurentSeries ℂ}
     {α : ι → ℍ → ℂ} (haα : ∀ i ∈ s, RealL h (a i) (α i)) (k : ℕ) :
@@ -422,25 +304,6 @@ lemma coeff_prod_X_sub_C (hh : 0 < h) {ι : Type} (s : Finset ι) {a : ι → La
       refine ((ih' k).sub ((ih' (k + 1)).mul hh hb')).congr ?_ fun τ => ?_
       · rw [hA, Polynomial.coeff_mul_X_sub_C]
       · simp only [hfun τ, Polynomial.coeff_mul_X_sub_C, Pi.sub_apply, Pi.mul_apply]
-
-lemma interpPoly_coeff (hh : 0 < h) {n : ℕ} {Hs Ys : Fin n → LaurentSeries ℂ} {η υ : Fin n → ℍ → ℂ}
-    (hH : ∀ i, RealL h (Hs i) (η i)) (hY : ∀ i, RealL h (Ys i) (υ i)) (k : ℕ) :
-    RealL h ((interpPoly Hs Ys).coeff k)
-      (fun τ => (interpPoly (fun i => η i τ) (fun i => υ i τ)).coeff k) := by
-  unfold interpPoly
-  have h1 : ∀ i ∈ (Finset.univ : Finset (Fin n)),
-      RealL h ((Polynomial.C (Hs i) * ∏ m ∈ Finset.univ.erase i, (Polynomial.X - Polynomial.C (Ys
-        m))).coeff k)
-        (fun τ => (Polynomial.C (η i τ) *
-          ∏ m ∈ Finset.univ.erase i, (Polynomial.X - Polynomial.C (υ m τ))).coeff k) := by
-    intro i _
-    refine ((hH i).mul hh (coeff_prod_X_sub_C hh (Finset.univ.erase i) (fun m _ => hY m) k)).congr
-      ?_ fun τ => ?_
-    · rw [Polynomial.coeff_C_mul]
-    · simp only [Pi.mul_apply, Polynomial.coeff_C_mul]
-  refine (sum Finset.univ h1).congr ?_ fun τ => ?_
-  · rw [Polynomial.finsetSum_coeff]
-  · simp only [Polynomial.finsetSum_coeff]
 
 lemma conjPoly_coeff (hh : 0 < h) {n : ℕ} {Hs : Fin n → LaurentSeries ℂ} {η : Fin n → ℍ → ℂ}
     (hH : ∀ i, RealL h (Hs i) (η i)) (k : ℕ) :
@@ -495,13 +358,6 @@ def expRoot : ℂ := Complex.exp (2 * Real.pi * Complex.I / ℓ)
 
 lemma isPrimitiveRoot_expRoot : IsPrimitiveRoot (expRoot ℓ) ℓ :=
   Complex.isPrimitiveRoot_exp ℓ hℓ.out.ne_zero
-
-omit hℓ in
-lemma expRoot_pow_zpow (b : ℕ) (m : ℤ) :
-    (expRoot ℓ ^ b) ^ m = Complex.exp (2 * Real.pi * Complex.I * b * m / ℓ) := by
-  rw [expRoot, ← Complex.exp_nat_mul, ← Complex.exp_int_mul]
-  congr 1
-  ring
 
 omit hℓ in
 lemma qParam_T_pow_smul (b : ℕ) (τ : ℍ) :
@@ -588,71 +444,6 @@ lemma realL_slotH (i : Fin (ℓ + 1)) :
     refine h.congr rfl fun τ => ?_
     simp only [slotF, cosetRep_succ, mul_smul]
 
-lemma coeffMap_conj_zero_eq :
-    coeffMap σ (PhiGen.conj ℓ ζ 0) = qExpand ℂ (ℓ * ℓ) (coeffMap castC jq) := by
-  rw [PhiGen.conj_zero, coeffMap_qExpand, coeffMap_sigma_coeffEmb]
-
-omit hℓ in
-lemma realL_jqC : RealL 1 (coeffMap castC jq) jt := fun τ => hasSum_jq_qParam τ
-
-omit hℓ in
-lemma heckeDiag_smul_S_T_pow_smul [NeZero ℓ] (b : ℕ) (τ : ℍ) :
-    ModularForm.heckeDiagMatrix ℓ • (ModularGroup.S * ModularGroup.T ^ b) • τ =
-      ModularGroup.S • ModularForm.heckeMatrix ℓ b • τ := by
-  have hT : ((ModularGroup.T ^ b : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) = !![1, (b : ℤ); 0, 1] :=
-    by
-    have := ModularGroup.coe_T_zpow (b : ℤ)
-    rwa [zpow_natCast] at this
-  set g : SL(2, ℤ) := ModularGroup.S * ModularGroup.T ^ b with hg
-  have hg' : (g : Matrix (Fin 2) (Fin 2) ℤ) = !![0, -1; 1, (b : ℤ)] := by
-    rw [hg, Matrix.SpecialLinearGroup.coe_mul, ModularGroup.coe_S, hT]
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
-  have h00 : g 0 0 = 0 := congrFun (congrFun hg' 0) 0
-  have h01 : g 0 1 = -1 := congrFun (congrFun hg' 0) 1
-  have h10 : g 1 0 = 1 := congrFun (congrFun hg' 1) 0
-  have h11 : g 1 1 = b := congrFun (congrFun hg' 1) 1
-  clear_value g
-  have hmat : ModularForm.heckeDiagMatrix ℓ * Matrix.SpecialLinearGroup.mapGL ℝ g =
-      Matrix.SpecialLinearGroup.mapGL ℝ ModularGroup.S * ModularForm.heckeMatrix ℓ b := by
-    ext i j
-    fin_cases i <;> fin_cases j <;>
-      simp [Matrix.mul_apply, Fin.sum_univ_two, ModularForm.val_heckeDiagMatrix (NeZero.ne ℓ),
-        ModularForm.val_heckeMatrix (NeZero.ne ℓ), ModularGroup.coe_S, h00, h01, h10, h11]
-  have h1 : ModularForm.heckeDiagMatrix ℓ • g • τ =
-      (ModularForm.heckeDiagMatrix ℓ * Matrix.SpecialLinearGroup.mapGL ℝ g) • τ := by
-    rw [mul_smul]; rfl
-  have h2 : ModularGroup.S • ModularForm.heckeMatrix ℓ b • τ =
-      (Matrix.SpecialLinearGroup.mapGL ℝ ModularGroup.S * ModularForm.heckeMatrix ℓ b) • τ := by
-    rw [mul_smul]; rfl
-  rw [h1, h2, hmat]
-
-include hσ in
-lemma realL_conj (i : Fin (ℓ + 1)) : RealL ℓ (coeffMap σ (PhiGen.conj ℓ ζ i)) (slotJ ℓ i) := by
-  have : NeZero ℓ := ⟨hℓ.out.ne_zero⟩
-  refine Fin.cases ?_ (fun b => ?_) i
-  · intro τ
-    have h := hasSum_qParam_heckeDiagMatrix_smul ℓ (coeffMap castC jq) jt realL_jqC τ
-    rw [coeffMap_conj_zero_eq]
-    simpa [slotJ, jtN] using h
-  · intro τ
-    have h := hasSum_qParam_heckeMatrix_smul ℓ (b : ℕ) (coeffMap castC jq) jt realL_jqC τ
-    have hval : slotJ ℓ b.succ τ = jt (ModularForm.heckeMatrix ℓ (b : ℕ) • τ) := by
-      rw [slotJ, jtN, cosetRep_succ, heckeDiag_smul_S_T_pow_smul]
-      exact E4_cube_div_discriminant_smul ModularGroup.S _
-    rw [hval]
-    refine h.congr_fun fun m => ?_
-    congr 1
-    rw [PhiGen.conj_succ, coeffMap_coeff, qTwist_coeff, map_mul, Units.val_zpow_eq_zpow_val,
-      map_zpow₀,
-      Units.val_pow_eq_pow_val, map_pow, hσ, expRoot_pow_zpow, coeffEmb_coeff, eq_ratCast,
-      map_ratCast,
-      coeffMap_coeff]
-    rfl
-
-def interpFun (k : ℕ) (τ : ℍ) :
-    ℂ := (interpPoly (fun i => slotF ℓ F i τ) (fun i => slotJ ℓ i τ)).coeff k
-
 def conjFun (k : ℕ) (τ : ℍ) : ℂ := (conjPoly fun i => slotF ℓ F i τ).coeff k
 
 variable (hinv : ∀ γ ∈ CongruenceSubgroup.Gamma0 ℓ, ∀ τ : ℍ, F (γ • τ) = F τ)
@@ -680,34 +471,11 @@ lemma slots_smul (γ : SL(2, ℤ)) : ∃ e : Equiv.Perm (Fin (ℓ + 1)),
   · rw [slotJ, slotJ, key, jtN_smul ℓ _ (he' i)]
 
 include hinv in
-lemma interpFun_smul (k : ℕ) (γ : SL(2, ℤ)) (τ : ℍ) :
-    interpFun ℓ F k (γ • τ) = interpFun ℓ F k τ := by
-  obtain ⟨e, h1, h2⟩ := slots_smul ℓ F hinv γ
-  unfold interpFun
-  have hH : (fun i => slotF ℓ F i (γ • τ)) = (fun i => slotF ℓ F i τ) ∘ e := funext fun i => h1 i τ
-  have hY : (fun i => slotJ ℓ i (γ • τ)) = (fun i => slotJ ℓ i τ) ∘ e := funext fun i => h2 i τ
-  rw [hH, hY, interpPoly_perm]
-
-include hinv in
 lemma conjFun_smul (k : ℕ) (γ : SL(2, ℤ)) (τ : ℍ) : conjFun ℓ F k (γ • τ) = conjFun ℓ F k τ := by
   obtain ⟨e, h1, -⟩ := slots_smul ℓ F hinv γ
   unfold conjFun
   have hH : (fun i => slotF ℓ F i (γ • τ)) = (fun i => slotF ℓ F i τ) ∘ e := funext fun i => h1 i τ
   rw [hH, conjPoly_perm]
-
-include hF hG hσ hinv in
-lemma mem_adjoin_of_interpK_coeff_eq (k : ℕ) (ξ : LaurentSeries ℚ)
-    (hξ : (interpK ℓ ζ f g).coeff k = coeffEmb K (qExpand ℚ ℓ ξ)) : ξ ∈ Algebra.adjoin ℚ {jq} := by
-  have h1 : RealL ℓ (coeffMap σ ((interpK ℓ ζ f g).coeff k)) (interpFun ℓ F k) := by
-    have h := RealL.interpPoly_coeff (h := (ℓ : ℝ)) (by exact_mod_cast hℓ.out.pos)
-      (fun i => realL_slotH ℓ ζ σ hσ f g F hF hG i) (fun i => realL_conj ℓ ζ σ hσ i) k
-    refine h.congr ?_ fun τ => rfl
-    rw [← Polynomial.coeff_map, interpK, interpPoly_map]
-    rfl
-  rw [hξ, coeffMap_sigma_coeffEmb, coeffMap_qExpand] at h1
-  have h2 := realL_one_of_realL_qExpand ℓ _ _ h1
-  exact mem_adjoin_jq_of_hasSum_of_slash_invariant ξ (interpFun ℓ F k) h2
-    (fun γ τ => interpFun_smul ℓ F hinv k γ τ)
 
 include hF hG hσ hinv in
 lemma mem_adjoin_of_conjK_coeff_eq (k : ℕ) (π : LaurentSeries ℚ)
@@ -757,69 +525,6 @@ lemma iota_injective : Function.Injective (iota (K := K) ℓ) :=
 omit [IsGalois ℚ K] [FiniteDimensional ℚ K] in
 lemma iota_eq_slotH_zero : iota ℓ f = slotH ℓ ζ f g 0 := by
   rw [iota_apply, slotH_zero]
-
-omit [IsGalois ℚ K] [FiniteDimensional ℚ K] in
-lemma iota_jqN : iota (K := K) ℓ (jqN ℓ) = PhiGen.conj ℓ ζ 0 := by
-  have : NeZero ℓ := ⟨hℓ.out.ne_zero⟩
-  rw [iota_apply, jqN, qExpand_qExpand, PhiGen.conj_zero, coeffEmb_qExpand]
-
-def dHat :
-    LaurentSeries K := ∏ m ∈ Finset.univ.erase (0 : Fin (ℓ + 1)), (PhiGen.conj ℓ ζ 0 - PhiGen.conj ℓ
-      ζ m)
-
-include hζ in
-omit [IsGalois ℚ K] [FiniteDimensional ℚ K] in
-lemma dHat_ne_zero : dHat ℓ ζ ≠ 0 := by
-  rw [dHat, Finset.prod_ne_zero_iff]
-  intro m hm h0
-  exact (Finset.ne_of_mem_erase hm) ((PhiGen.conj_injective ℓ ζ hζ (sub_eq_zero.mp h0)).symm)
-
-include hζ in
-lemma exists_sum_eq_mul_dHat (hmem : ∀ (k : ℕ) (ξ : LaurentSeries ℚ),
-      (interpK ℓ ζ f g).coeff k = coeffEmb K (qExpand ℚ ℓ ξ) → ξ ∈ Algebra.adjoin ℚ {jq}) :
-    ∃ x : LaurentSeries ℚ, x ∈ modularFunctionField ℓ ∧ iota ℓ x = iota ℓ f * dHat ℓ ζ := by
-  classical
-  have : NeZero ℓ := ⟨hℓ.out.ne_zero⟩
-  choose ξ hξ using fun k => exists_interpK_coeff_eq ℓ ζ hζ f g k
-  have hadj : Algebra.adjoin ℚ {jq} ≤ (modularFunctionField ℓ).toSubalgebra :=
-    Algebra.adjoin_le (Set.singleton_subset_iff.mpr (jq_mem ℓ))
-  refine ⟨∑ k ∈ Finset.range ((interpK ℓ ζ f g).natDegree + 1), ξ k * jqN ℓ ^ k, ?_, ?_⟩
-  · refine sum_mem fun k _ => mul_mem (hadj (hmem k (ξ k) (hξ k))) (pow_mem (jqN_mem ℓ) k)
-  · rw [map_sum]
-    simp only [map_mul, map_pow, iota_jqN ℓ ζ, iota_apply, ← hξ]
-    rw [← Polynomial.eval_eq_sum_range, interpK, interpPoly_eval, ← slotH_zero ℓ ζ f g, dHat]
-
-include hζ hσ hF hG hinv in
-theorem mem_modularFunctionField_of_data : f ∈ modularFunctionField ℓ := by
-  classical
-  have : NeZero ℓ := ⟨hℓ.out.ne_zero⟩
-  obtain ⟨x, hx, hιx⟩ := exists_sum_eq_mul_dHat ℓ ζ hζ f g
-    (fun k ξ h => mem_adjoin_of_interpK_coeff_eq ℓ ζ σ hσ f g F hF hG hinv k ξ h)
-  have h1F : ∀ τ : ℍ, HasSum (fun m : ℤ => (((1 : LaurentSeries ℚ).coeff m : ℚ) : ℂ) * 𝕢 1 (τ : ℂ) ^
-    m)
-      ((fun _ : ℍ => (1 : ℂ)) τ) := by
-    intro τ
-    have h := RealL.one 1 τ
-    rw [← map_one (coeffMap castC)] at h
-    exact h
-  have h1G : ∀ τ : ℍ, HasSum (fun m : ℤ => (((1 : LaurentSeries ℚ).coeff m : ℚ) : ℂ) * 𝕢 ℓ (τ : ℂ) ^
-    m)
-      ((fun _ : ℍ => (1 : ℂ)) (ModularGroup.S • τ)) := by
-    intro τ
-    have h := RealL.one (ℓ : ℝ) τ
-    rw [← map_one (coeffMap castC)] at h
-    exact h
-  obtain ⟨d, hd, hιd⟩ := exists_sum_eq_mul_dHat ℓ ζ hζ 1 1
-    (fun k ξ h => mem_adjoin_of_interpK_coeff_eq ℓ ζ σ hσ 1 1 (fun _ => 1) h1F h1G (fun _ _ _ =>
-      rfl) k ξ h)
-  rw [map_one, one_mul] at hιd
-  have hd0 : d ≠ 0 := by
-    rintro rfl
-    exact dHat_ne_zero ℓ ζ hζ (by rw [map_zero] at hιd; exact hιd.symm)
-  have hfd : f * d = x := iota_injective (K := K) ℓ (by rw [map_mul, hιd, hιx])
-  have hf : f = x * d⁻¹ := by rw [← hfd, mul_inv_cancel_right₀ hd0]
-  rw [hf]
-  exact mul_mem hx (inv_mem hd)
 
 include hζ hσ hF hG hinv in
 theorem isIntegral_of_data : IsIntegral (Algebra.adjoin ℚ {jq}) f := by
@@ -908,24 +613,6 @@ variable (f g : LaurentSeries ℚ) (F : ℍ → ℂ)
   (hG : ∀ τ : ℍ, HasSum (fun m : ℤ => ((g.coeff m : ℚ) : ℂ) * 𝕢 ℓ (τ : ℂ) ^ m) (F (ModularGroup.S •
     τ)))
   (hinv : ∀ γ ∈ CongruenceSubgroup.Gamma0 ℓ, ∀ τ : ℍ, F (γ • τ) = F τ)
-
-include hF hG hinv in
-theorem mem_modularFunctionField : f ∈ modularFunctionField ℓ := by
-  have : NeZero ((ℓ : ℕ) : ℚ) := ⟨Nat.cast_ne_zero.mpr hℓ.out.ne_zero⟩
-  have hcyc : IsCyclotomicExtension {ℓ} ℚ (CyclotomicField ℓ ℚ) :=
-    CyclotomicField.isCyclotomicExtension (n := ℓ) (K := ℚ)
-  have : FiniteDimensional ℚ (CyclotomicField ℓ ℚ) :=
-    IsCyclotomicExtension.finiteDimensional {ℓ} ℚ (CyclotomicField ℓ ℚ)
-  have : IsGalois ℚ (CyclotomicField ℓ ℚ) :=
-    IsCyclotomicExtension.isGalois (S := {ℓ}) (K := ℚ) (L := CyclotomicField ℓ ℚ)
-  obtain ⟨z, hz⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot ℚ (CyclotomicField ℓ ℚ)
-    (Set.mem_singleton ℓ) hℓ.out.ne_zero
-  have hzu : IsUnit z := hz.isUnit hℓ.out.ne_zero
-  have hζ : IsPrimitiveRoot ((hzu.unit : (CyclotomicField ℓ ℚ)ˣ) : CyclotomicField ℓ ℚ) ℓ := by
-    rw [hzu.unit_spec]; exact hz
-  exact mem_modularFunctionField_of_data ℓ hzu.unit hζ (sigma ℓ hzu.unit hζ) (sigma_zeta ℓ hzu.unit
-    hζ)
-    f g F hF hG hinv
 
 include hF hG hinv in
 theorem isIntegral_adjoin_jq : IsIntegral (Algebra.adjoin ℚ {jq}) f := by

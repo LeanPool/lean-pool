@@ -94,9 +94,6 @@ def coords {W : WeierstrassCurve L} : W.toAffine.Point → Option (L × L)
   | .some x y _ => some (x, y)
 
 omit [DecidableEq L] in
-@[scoped simp] theorem coords_zero {W : WeierstrassCurve L} :
-    coords (0 : W.toAffine.Point) = none := rfl
-omit [DecidableEq L] in
 @[scoped simp] theorem coords_some {W : WeierstrassCurve L} {x y : L} (h : W.toAffine.Nonsingular x
   y) :
     coords (Point.some x y h) = some (x, y) := rfl
@@ -111,18 +108,8 @@ theorem coords_injective {W : WeierstrassCurve L} : Function.Injective (coords (
     obtain ⟨rfl, rfl⟩ := hPQ
     rfl
 
-omit [DecidableEq L] in
-theorem coords_eq_of_heq {W₁ W₂ : WeierstrassCurve L} (e : W₁ = W₂) {P : W₁.toAffine.Point}
-    {Q : W₂.toAffine.Point}
-    (h : HEq P Q) : coords P = coords Q := by
-  subst e; rw [eq_of_heq h]
-
 def castPt {W₁ W₂ : WeierstrassCurve L} (e : W₁ = W₂) : W₁.toAffine.Point ≃+ W₂.toAffine.Point := by
   subst e; exact AddEquiv.refl _
-
-theorem heq_castPt {W₁ W₂ : WeierstrassCurve L} (e : W₁ = W₂) (P : W₁.toAffine.Point) :
-    HEq P (castPt e P) := by
-  subst e; rfl
 
 theorem castPt_eq_iff_heq {W₁ W₂ : WeierstrassCurve L} (e : W₁ = W₂) (P : W₁.toAffine.Point)
     (Q : W₂.toAffine.Point) :
@@ -633,7 +620,8 @@ theorem natCard_quot_R_eq (u : Lˣ) (hu : (u : L) ^ 2 = -1) (hN : N ≠ 0) :
 
 end Count
 
-end P2MWs13.R2a
+end R2a
+end P2MWs13
 end
 
 open P2MWs13.R2a in
@@ -718,7 +706,6 @@ export P2MW.S_ModularCurve_two_mul_natCard_moduliPoint_j_eq_1728_eq_dedekindPsi_
 end privateSection
 
 public section publicSection
-
 
 open ModularCurve
 theorem ModularCurve.two_mul_natCard_moduliPoint_j_eq_1728_eq_dedekindPsi_add_nuTwo

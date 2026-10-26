@@ -19,7 +19,6 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 
-import Mathlib.RingTheory.DedekindDomain.Factorization
 import Mathlib.RingTheory.RamificationInertia.Basic
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
@@ -66,11 +65,9 @@ https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536
 
 section privateSection
 
-
 namespace P2MW.S_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg
 
 p2m_open "AlgebraicCurve"
-
 
 noncomputable section
 
@@ -93,9 +90,6 @@ p2m_open "AlgebraicCurve.Place"
 section IntegrallyClosed
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F] (w : Place K F)
-
-private theorem _root_.AlgebraicCurve.Place.ord_neg (f : F) : w.ord (-f) = w.ord f := by
-  simp only [ord, Valuation.map_neg]
 
 p2m_export "AlgebraicCurve.Place" "ord_neg"
 
@@ -136,57 +130,7 @@ variable {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F'] [Algebra
 
 variable (w : Place K F')
 
-omit [FiniteDimensional F F'] in
-private theorem _root_.AlgebraicCurve.Place.aeval_mem {Q : Polynomial F} {x : F'}
-    (hcoeff : ∀ i, algebraMap F F' (Q.coeff i) ∈ w.toValuationSubring)
-    (hx : x ∈ w.toValuationSubring) :
-    Polynomial.aeval x Q ∈ w.toValuationSubring := by
-  rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range]
-  exact sum_mem fun i _ => mul_mem (hcoeff i) (pow_mem hx i)
-
 p2m_export "AlgebraicCurve.Place" "aeval_mem"
-
-theorem exists_coeff_ord_ne_zero {f : F'} (hf : f ≠ 0) (hford : w.ord f ≠ 0) :
-    ∃ i < (minpoly F f).natDegree, (minpoly F f).coeff i ≠ 0 ∧
-      w.ord (algebraMap F F' ((minpoly F f).coeff i)) ≠ 0 := by
-  by_contra hcon
-  push Not at hcon
-  set P := minpoly F f with hPdef
-  have hint : IsIntegral F f := Algebra.IsIntegral.isIntegral f
-  have hmonic : P.Monic := minpoly.monic hint
-  have hdeg : 0 < P.natDegree := minpoly.natDegree_pos hint
-  have hc0 : P.coeff 0 ≠ 0 := minpoly.coeff_zero_ne_zero hint hf
-  have hcoeff : ∀ i, algebraMap F F' (P.coeff i) ∈ w.toValuationSubring := by
-    intro i
-    rcases lt_trichotomy i P.natDegree with hi | hi | hi
-    · rcases eq_or_ne (P.coeff i) 0 with h0 | h0
-      · simp [h0]
-      · exact w.mem_of_ord_nonneg (by simpa using h0) (by have := hcon i hi h0; omega)
-    · subst hi
-      simp [hmonic.coeff_natDegree]
-    · simp [Polynomial.coeff_eq_zero_of_natDegree_lt hi]
-  have hfmem : f ∈ w.toValuationSubring := by
-    refine w.mem_of_eval_monic_eq_zero (P := P.map (algebraMap F F')) (hmonic.map _)
-      (fun i => by simpa using hcoeff i) ?_
-    rw [Polynomial.eval_map, ← Polynomial.aeval_def, hPdef, minpoly.aeval]
-  have hfpos : 0 < w.ord f := lt_of_le_of_ne (w.ord_nonneg_of_mem hfmem) (Ne.symm hford)
-  have hkey : algebraMap F F' (P.coeff 0) = -(f * Polynomial.aeval f P.divX) := by
-    have hsplit : Polynomial.aeval f (Polynomial.X * P.divX + Polynomial.C (P.coeff 0))
-        = (0 : F') := by rw [P.X_mul_divX_add]; exact minpoly.aeval F f
-    rw [map_add, map_mul, Polynomial.aeval_X, Polynomial.aeval_C] at hsplit
-    linear_combination hsplit
-  have hcof_mem : Polynomial.aeval f P.divX ∈ w.toValuationSubring :=
-    w.aeval_mem (fun i => by rw [Polynomial.coeff_divX]; exact hcoeff (i + 1)) hfmem
-  have hcof_ne : Polynomial.aeval f P.divX ≠ 0 := by
-    intro h
-    rw [h, mul_zero, neg_zero] at hkey
-    exact hc0 (by simpa using hkey)
-  have hpos0 : 0 < w.ord (algebraMap F F' (P.coeff 0)) := by
-    rw [hkey, w.ord_neg, w.ord_mul hf hcof_ne]
-    have := w.ord_nonneg_of_mem hcof_mem
-    omega
-  have := hcon 0 hdeg hc0
-  omega
 
 end SupportTransfer
 
@@ -199,11 +143,6 @@ variable (w : Place K F)
 private def chartHom (hw : ∀ r : R, algebraMap R F r ∈ w.toValuationSubring) :
     R →+* w.toValuationSubring :=
   (algebraMap R F).codRestrict w.toValuationSubring.toSubring hw
-
-omit [IsDedekindDomain R] [IsFractionRing R F] in
-@[scoped simp]
-private theorem coe_chartHom (hw : ∀ r : R, algebraMap R F r ∈ w.toValuationSubring) (r : R) :
-    (chartHom w hw r : F) = algebraMap R F r := rfl
 
 variable (R) in
 def center (hw : ∀ r : R, algebraMap R F r ∈ w.toValuationSubring) : Ideal R :=
@@ -262,11 +201,6 @@ def centerHeightOneSpectrum (hw : ∀ r : R, algebraMap R F r ∈ w.toValuationS
     HeightOneSpectrum R :=
   ⟨center R w hw, inferInstance, center_ne_bot w hw⟩
 
-@[scoped simp]
-theorem centerHeightOneSpectrum_asIdeal
-    (hw : ∀ r : R, algebraMap R F r ∈ w.toValuationSubring) :
-    (centerHeightOneSpectrum R w hw).asIdeal = center R w hw := rfl
-
 theorem valuationSubringAtPrime_centerHeightOneSpectrum_le
     (hw : ∀ r : R, algebraMap R F r ∈ w.toValuationSubring) :
     HeightOneSpectrum.valuationSubringAtPrime F (centerHeightOneSpectrum R w hw) ≤
@@ -283,77 +217,7 @@ theorem toValuationSubring_eq_of_forall_mem
   (ValuationSubring.eq_of_le_of_ne_top _
     (valuationSubringAtPrime_centerHeightOneSpectrum_le w hw) w.ne_top').symm
 
-theorem finite_setOf_forall_mem_and_ord_pos {r₀ : R} (hr₀ : r₀ ≠ 0) :
-    {w : Place K F | (∀ r : R, algebraMap R F r ∈ w.toValuationSubring) ∧
-      0 < w.ord (algebraMap R F r₀)}.Finite := by
-  have hfin : {p : HeightOneSpectrum R | p.asIdeal ∣ Ideal.span {r₀}}.Finite :=
-    Ideal.finite_factors (by simpa [Ideal.span_singleton_eq_bot] using hr₀)
-  rw [← Set.finite_coe_iff]
-  have := hfin.to_subtype
-  refine Finite.of_injective
-    (fun w => (⟨centerHeightOneSpectrum R w.1 w.2.1, ?_⟩ :
-      {p : HeightOneSpectrum R | p.asIdeal ∣ Ideal.span {r₀}})) ?_
-  · rw [Set.mem_ofPred_eq, centerHeightOneSpectrum_asIdeal, Ideal.dvd_span_singleton]
-    exact (mem_center_iff_ord_pos w.1 w.2.1 hr₀).mpr w.2.2
-  · intro w w' h
-    have hcenter : centerHeightOneSpectrum R w.1 w.2.1
-        = centerHeightOneSpectrum R w'.1 w'.2.1 := congrArg Subtype.val h
-    refine Subtype.ext (Place.ext ?_)
-    rw [toValuationSubring_eq_of_forall_mem w.1 w.2.1,
-      toValuationSubring_eq_of_forall_mem w'.1 w'.2.1, hcenter]
-
 end Chart
-
-section FiberFiniteness
-
-variable {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra K F']
-  [Algebra F F'] [IsScalarTower K F F'] [FiniteDimensional F F'] [Algebra.IsSeparable F F']
-
-theorem finite_setOf_restrict_eq (v : Place K F) :
-    {w : Place K F' | w.restrict F = v}.Finite := by
-  classical
-  let : Algebra v.toValuationSubring F' :=
-    ((algebraMap F F').comp (algebraMap v.toValuationSubring F)).toAlgebra
-  have : IsScalarTower v.toValuationSubring F F' :=
-    IsScalarTower.of_algebraMap_eq fun _ => rfl
-  have : IsDedekindDomain (integralClosure v.toValuationSubring F') :=
-    integralClosure.isDedekindDomain v.toValuationSubring F F'
-  have : IsFractionRing (integralClosure v.toValuationSubring F') F' :=
-    integralClosure.isFractionRing_of_finite_extension (A := v.toValuationSubring) F F'
-  obtain ⟨π, hπ0, hπpos⟩ := v.exists_ord_pos
-  have hπmem : π ∈ v.toValuationSubring := v.mem_of_ord_nonneg hπ0 hπpos.le
-  set C := integralClosure v.toValuationSubring F' with hC
-  set π' : C := algebraMap v.toValuationSubring C ⟨π, hπmem⟩ with hπ'
-  have hπ'F : algebraMap C F' π' = algebraMap F F' π := by
-    rw [hπ', ← IsScalarTower.algebraMap_apply, IsScalarTower.algebraMap_apply
-      v.toValuationSubring F F']
-    rfl
-  have hπ'0 : π' ≠ 0 := by
-    intro h
-    apply hπ0
-    have : algebraMap C F' π' = 0 := by rw [h, map_zero]
-    rw [hπ'F] at this
-    simpa using this
-  refine Set.Finite.subset (finite_setOf_forall_mem_and_ord_pos (R := C) hπ'0) ?_
-  rintro w (hw : w.restrict F = v)
-  have hOv : ∀ g : F, g ∈ v.toValuationSubring → algebraMap F F' g ∈ w.toValuationSubring := by
-    intro g hg
-    rw [← hw] at hg
-    exact hg
-  refine ⟨?_, ?_⟩
-  · intro c
-    obtain ⟨Q, hQmonic, hQeval⟩ := c.2
-    have : algebraMap C F' c = (c : F') := rfl
-    rw [this]
-    refine w.mem_of_eval_monic_eq_zero (P := Q.map (algebraMap v.toValuationSubring F'))
-      (hQmonic.map _) (fun i => ?_) (by rw [Polynomial.eval_map]; exact hQeval)
-    rw [Polynomial.coeff_map, IsScalarTower.algebraMap_apply v.toValuationSubring F F']
-    exact hOv _ (Q.coeff i).2
-  · rw [hπ'F, w.ord_restrict π, hw]
-    have hepos : 0 < w.ramificationIndex F := w.ramificationIndex_pos
-    positivity
-
-end FiberFiniteness
 
 end Place
 end AlgebraicCurve
@@ -687,13 +551,6 @@ def toValuationSubringOfRestrictEq (hw : w.restrict F = v) :
   (algebraMap (integralClosureAt F' v) F').codRestrict
     w.toValuationSubring.toSubring (forall_mem_of_restrict_eq hw)
 
-omit [FiniteDimensional F F'] in
-@[scoped simp]
-theorem coe_toValuationSubringOfRestrictEq (hw : w.restrict F = v)
-    (c : integralClosureAt F' v) :
-    (toValuationSubringOfRestrictEq hw c : F')
-      = algebraMap (integralClosureAt F' v) F' c := rfl
-
 def residueOfCenter (hw : w.restrict F = v) :
     integralClosureAt F' v →+* w.ResidueField :=
   (IsLocalRing.residue w.toValuationSubring).comp (toValuationSubringOfRestrictEq hw)
@@ -776,15 +633,6 @@ def residueFieldEquivQuotientCenter (hw : w.restrict F = v) :
   (Ideal.quotEquivOfEq (ker_residueOfCenter hw).symm).trans
     ((residueOfCenter hw).quotientKerEquivOfSurjective (surjective_residueOfCenter hw))
 
-theorem residueFieldEquivQuotientCenter_mk (hw : w.restrict F = v)
-    (c : integralClosureAt F' v) :
-    residueFieldEquivQuotientCenter hw (Ideal.Quotient.mk _ c) = residueOfCenter hw c := by
-  change ((residueOfCenter hw).quotientKerEquivOfSurjective (surjective_residueOfCenter hw))
-    ((Ideal.quotEquivOfEq (ker_residueOfCenter hw).symm) (Ideal.Quotient.mk _ c))
-      = residueOfCenter hw c
-  rw [Ideal.quotEquivOfEq_mk]
-  exact RingHom.quotientKerEquivOfSurjective_apply_mk _ c
-
 def placeCongrEquiv {u u' : Place K F} (h : u = u') :
     u.toValuationSubring ≃+* u'.toValuationSubring where
   toFun x := ⟨x.1, h ▸ x.2⟩
@@ -794,21 +642,9 @@ def placeCongrEquiv {u u' : Place K F} (h : u = u') :
   map_mul' _ _ := rfl
   map_add' _ _ := rfl
 
-@[scoped simp]
-theorem coe_placeCongrEquiv {u u' : Place K F} (h : u = u') (x : u.toValuationSubring) :
-    (placeCongrEquiv h x : F) = (x : F) := rfl
-
 def restrictResidueFieldEquiv (hw : w.restrict F = v) :
     (w.restrict F).ResidueField ≃+* IsLocalRing.ResidueField v.toValuationSubring :=
   IsLocalRing.ResidueField.mapEquiv (placeCongrEquiv hw)
-
-omit [FiniteDimensional F F'] in
-theorem restrictResidueFieldEquiv_residue (hw : w.restrict F = v)
-    (a : (w.restrict F).toValuationSubring) :
-    restrictResidueFieldEquiv hw (IsLocalRing.residue _ a)
-      = IsLocalRing.residue _ (placeCongrEquiv hw a) := by
-  simp only [restrictResidueFieldEquiv, IsLocalRing.ResidueField.mapEquiv_apply,
-    IsLocalRing.ResidueField.map_residue, RingEquiv.coe_toRingHom]
 
 theorem inertiaDeg_eq_inertiaDeg_fiberCenter (hw : w.restrict F = v) :
     w.inertiaDeg F =
@@ -984,12 +820,6 @@ theorem sum_ramificationIndex_mul_inertiaDeg_infra [HasPrincipalDivisors K F'] :
 end Assembly
 end Place
 
-scoped instance instSumRamificationInertia {K F F' : Type*} [Field K] [Field F] [Field F']
-    [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
-    [FiniteDimensional F F'] [Algebra.IsSeparable F F'] [HasPrincipalDivisors K F'] :
-    SumRamificationInertia K F F' :=
-  ⟨fun v => Place.sum_ramificationIndex_mul_inertiaDeg_infra v⟩
-
 end AlgebraicCurve
 
 theorem solution {K F F' : Type*} [Field K] [Field F] [Field F'] [Algebra K F] [Algebra K F']
@@ -1008,7 +838,6 @@ export P2MW.S_AlgebraicCurve_Place_sum_ramificationIndex_mul_inertiaDeg (solutio
 end privateSection
 
 public section publicSection
-
 
 open AlgebraicCurve
 theorem AlgebraicCurve.Place.sum_ramificationIndex_mul_inertiaDeg {K F F' : Type*} [Field K]
