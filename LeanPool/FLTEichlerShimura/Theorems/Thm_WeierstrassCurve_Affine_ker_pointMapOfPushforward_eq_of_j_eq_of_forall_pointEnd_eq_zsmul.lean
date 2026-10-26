@@ -1,0 +1,586 @@
+/-
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Lean Pool contributors
+-/
+
+/-
+Based on Prove2Me node
+WeierstrassCurve.Affine.ker_pointMapOfPushforward_eq_of_j_eq_of_forall_pointEnd_eq_zsmul
+(102db63a-46f1-5a3e-a4bf-eb9199ece59e) by Claude (2026-09-05).
+
+Proof based on Prove2Me submission a8b71afd-afb7-5df0-be34-30cd3f5422dd
+by Claude (2026-09-05); locally adapted.
+
+Licensed under Apache License 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+-/
+
+module
+
+public import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
+public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
+
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.AlgebraicGeometry.EllipticCurve.IsomOfJ
+import Mathlib.Data.Int.Star
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_pushforwardAlong_pushforwardAlong
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteAlong_comp
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteAlong_of_surjective
+import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_normFormulaAlong
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_IsogenyEndDatum_exists_pointEnd_eq_of_mem_isogenyEndSubring
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_IsogenyHomDatum_exists_pointHom_comp_eq_of_ker_le_of_isCentred
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_Point_exists_zsmul_eq_of_isAlgClosed
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_hasPrincipalDivisors_functionField
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_natCard_ker_pointMapOfPushforward_eq_finrankAlong
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_Affine_pointMapOfPushforward_surjective
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_card_torsionBy_eq_sq_of_isAlgClosed
+import LeanPool.FLTEichlerShimura.Theorems.Thm_WeierstrassCurve_nonempty_functionField_algEquiv_of_variableChange
+
+/-!
+# Kernel rigidity for isogenies out of a curve with End=ℤ
+
+Theorem statement:
+`WeierstrassCurve.Affine.ker_pointMapOfPushforward_eq_of_j_eq_of_forall_pointEnd_eq_zsmul`
+(`102db63a-46f1-5a3e-a4bf-eb9199ece59e`), by Claude, 2026-09-05.
+
+Proof: submission `a8b71afd-afb7-5df0-be34-30cd3f5422dd`, by Claude, 2026-09-05 (ACCEPTED); locally
+adapted.
+
+Let $F$ be an algebraically closed field of characteristic zero and let $W$ be an elliptic
+Weierstrass curve over $F$ whose affine model carries the genus-one place structure (a bijection
+between $W(F)$ and the places of $F(W)$ over $F$, all of degree $1$), is centred at each point (the
+classes of $X$ and of $Y-y$ lie in the nonunits of the valuation subring of the place attached to
+$(x,y)$), and satisfies the Abel theorem (a divisor of degree $0$ is principal exactly when its
+divisor sum vanishes). Assume moreover: for every isogeny endomorphism datum of $W$, that is every
+integral, module-finite $F$-algebra embedding $F(W)\hookrightarrow F(W)$, the pushforward norm
+formula holds (the pushforward of the divisor of a nonzero $f$ has order at each place $v$ equal to
+$\operatorname{ord}_v$ of the norm of $f$), and the induced endomorphism of $W(F)$ — obtained by
+transporting through the identification $W(F)\cong\operatorname{Pic}^0$ and pushing divisor classes
+forward — is $m\cdot\mathrm{id}$ for some $m \in \mathbb{Z}$. Let $V,V'$ be elliptic Weierstrass
+curves over $F$ likewise equipped with the genus-one place structure and the Abel theorem, and let
+$\iota \colon F(V) \to F(W)$ and $\iota' \colon F(V') \to F(W)$ be $F$-algebra maps that are
+integral and module-finite and satisfy the pushforward norm formula. If the kernels of the
+associated pushforward maps $W(F) \to V(F)$ and $W(F) \to V'(F)$ have the same cardinality and $j(V)
+= j(V')$, then these two kernels coincide as subgroups of $W(F)$.
+
+This is the kernel rigidity statement for a curve without complex multiplication: two isogenies out
+of $W$ whose kernels have the same order and whose targets have equal $j$-invariant differ by an
+isomorphism of the targets, hence have the same kernel. It underlies the injectivity of $C \mapsto
+j(W/C)$ on subgroups of a fixed order, and is used in the analysis of the modular polynomial and of
+the Tate point kernels
+([`ModularCurve.ModularPolynomialData.mem_of_isRoot_map_j_of_transcendental`]
+(thm.html#ModularCurve.ModularPolynomialData.mem_of_isRoot_map_j_of_transcendental)
+and [`ModularCurve.TatePoint.fullKernelInjAt`](thm.html#ModularCurve.TatePoint.fullKernelInjAt)).
+
+## Explanation of the source proof
+
+Proof transplanted from the FLT repository:
+https://github.com/anthropics/fermats-last-theorem/blob/aa2d8b34692b16c70f699536de0d8e75b9a3e9ef/P2M/Sol/S_WeierstrassCurve_Affine_ker_pointMapOfPushforward_eq_of_j_eq_of_forall_pointEnd_eq_zsmul.lean
+
+<!-- Generated by add_prove2me_provenance.py -->
+-/
+
+
+section privateSection
+
+noncomputable section
+
+namespace ModularCurve
+
+theorem cmm5_dp_natCard_ker_comp {A B C : Type*} [AddCommGroup A] [AddCommGroup B]
+    [AddCommGroup C] (f : A →+ B) (g : B →+ C) (hf : Function.Surjective f) :
+    Nat.card (AddMonoidHom.ker (g.comp f))
+      = Nat.card (AddMonoidHom.ker g) * Nat.card (AddMonoidHom.ker f) := by
+  have hmem : ∀ x : AddMonoidHom.ker (g.comp f),
+      (f.domRestrict (AddMonoidHom.ker (g.comp f))) x ∈ AddMonoidHom.ker g := by
+    intro x
+    have hx := x.2
+    rw [AddMonoidHom.mem_ker] at hx
+    rw [AddMonoidHom.mem_ker]
+    exact hx
+  have hle : AddMonoidHom.ker f ≤ AddMonoidHom.ker (g.comp f) := by
+    intro x hx
+    rw [AddMonoidHom.mem_ker] at hx
+    rw [AddMonoidHom.mem_ker, AddMonoidHom.comp_apply, hx, map_zero]
+  have hφker : Nat.card (AddMonoidHom.ker
+        (AddMonoidHom.codRestrict (f.domRestrict (AddMonoidHom.ker (g.comp f)))
+          (AddMonoidHom.ker g) hmem))
+      = Nat.card (AddMonoidHom.ker f) := by
+    rw [AddMonoidHom.ker_codRestrict, AddMonoidHom.ker_domRestrict]
+    exact Nat.card_congr (AddSubgroup.addSubgroupOfEquivOfLe hle).toEquiv
+  have hφsurj : Function.Surjective
+      (AddMonoidHom.codRestrict (f.domRestrict (AddMonoidHom.ker (g.comp f)))
+        (AddMonoidHom.ker g) hmem) := by
+    intro y
+    have hy : g (y : B) = 0 := by
+      have h := y.2
+      rwa [AddMonoidHom.mem_ker] at h
+    obtain ⟨x, hx⟩ := hf (y : B)
+    have hxK : x ∈ AddMonoidHom.ker (g.comp f) := by
+      rw [AddMonoidHom.mem_ker, AddMonoidHom.comp_apply, hx]
+      exact hy
+    exact ⟨⟨x, hxK⟩, Subtype.ext hx⟩
+  calc Nat.card (AddMonoidHom.ker (g.comp f))
+      = Nat.card (AddMonoidHom.ker (g.comp f) ⧸ AddMonoidHom.ker
+            (AddMonoidHom.codRestrict (f.domRestrict (AddMonoidHom.ker (g.comp f)))
+              (AddMonoidHom.ker g) hmem))
+          * Nat.card (AddMonoidHom.ker
+            (AddMonoidHom.codRestrict (f.domRestrict (AddMonoidHom.ker (g.comp f)))
+              (AddMonoidHom.ker g) hmem)) :=
+        AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup _
+    _ = Nat.card (AddMonoidHom.ker g) * Nat.card (AddMonoidHom.ker f) := by
+        rw [Nat.card_congr
+          (QuotientAddGroup.quotientKerEquivOfSurjective _ hφsurj).toEquiv, hφker]
+
+end ModularCurve
+
+namespace WeierstrassCurve
+
+namespace Affine
+
+open AlgebraicCurve
+
+scoped instance instHasPrincipalDivisorsFunctionField_a68c2 {F : Type*} [Field F] [CharZero F]
+    {W : Affine F} : HasPrincipalDivisors F W.FunctionField :=
+  hasPrincipalDivisors_functionField W
+
+section AutoNorm
+
+variable {F : Type*} [Field F] [CharZero F]
+variable {V W : Affine F} [V.IsElliptic] [W.IsElliptic]
+
+omit [WeierstrassCurve.IsElliptic V] [WeierstrassCurve.IsElliptic W] in
+theorem normFormulaAlong_of_elliptic (ι : V.FunctionField →ₐ[F] W.FunctionField)
+    (hfin : FiniteAlong F ι) : NormFormulaAlong F ι hfin := by
+  classical
+  have : CharZero V.FunctionField :=
+    charZero_of_injective_algebraMap (algebraMap F V.FunctionField).injective
+  have hsep : SeparableAlong F ι := by
+    let := algebraAlong ι
+    have := isScalarTower_along ι
+    have : Module.Finite V.FunctionField W.FunctionField := hfin
+    change Algebra.IsSeparable V.FunctionField W.FunctionField
+    infer_instance
+  exact AlgebraicCurve.normFormulaAlong ι hfin hsep
+
+end AutoNorm
+
+section Torsion
+
+universe u
+
+variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+variable (W : Affine F) [W.IsElliptic]
+
+theorem charZero_addMonoidEnd_point : CharZero (AddMonoid.End W.Point) := by
+  refine charZero_of_inj_zero fun n hn => ?_
+  by_contra hn0
+  have htop : ∀ k : ℕ, n ∣ k → Submodule.torsionBy ℤ W.Point (k : ℤ) = ⊤ := by
+    rintro k ⟨c, rfl⟩
+    refine eq_top_iff.mpr fun P _ => ?_
+    rw [Submodule.mem_torsionBy_iff]
+    have hP : (n : ℤ) • P = 0 := by
+      have h := DFunLike.congr_fun hn P
+      rw [AddMonoid.End.natCast_apply] at h
+      rw [natCast_zsmul]; exact h
+    rw [Nat.cast_mul, mul_comm, mul_smul, hP, smul_zero]
+  have hcard : ∀ k : ℕ, n ∣ k → k ≠ 0 → Nat.card W.Point = k ^ 2 := by
+    intro k hk hk0
+    have h : Nat.card (Submodule.torsionBy ℤ W.Point (k : ℤ)) = k ^ 2 :=
+      WeierstrassCurve.card_torsionBy_eq_sq_of_isAlgClosed W (n := k)
+        (Nat.cast_ne_zero.mpr hk0)
+    rw [htop k hk] at h
+    rwa [Nat.card_congr (Submodule.topEquiv (R := ℤ) (M := W.Point)).toEquiv] at h
+  have h1 := hcard n dvd_rfl hn0
+  have h2 := hcard (2 * n) (dvd_mul_left n 2) (by omega)
+  have h3 : n ^ 2 = (2 * n) ^ 2 := h1.symm.trans h2
+  have h4 : 3 * n ^ 2 = 0 := by nlinarith
+  have h5 : n = 0 := by
+    have : n ^ 2 = 0 := by omega
+    exact pow_eq_zero_iff (n := 2) (by norm_num) |>.mp this
+  exact hn0 h5
+
+theorem intCast_addMonoidEnd_point_injective :
+    Function.Injective (Int.cast : ℤ → AddMonoid.End W.Point) :=
+  haveI := charZero_addMonoidEnd_point W
+  Int.cast_injective
+
+variable {W} in
+omit [DecidableEq F] in
+theorem kw_point_infinite : Infinite W.Point := by
+  classical
+  rw [← not_finite_iff_infinite]
+  intro hfinite
+  have : Finite W.Point := hfinite
+  set N : ℕ := Nat.card W.Point with hN
+  have hNpos : 0 < N := Nat.card_pos
+  have htop : ∀ k : ℕ, N ∣ k → Submodule.torsionBy ℤ W.Point (k : ℤ) = ⊤ := by
+    rintro k ⟨c, rfl⟩
+    refine eq_top_iff.mpr fun P _ => ?_
+    rw [Submodule.mem_torsionBy_iff]
+    have hP : (N : ℤ) • P = 0 := by
+      rw [natCast_zsmul, hN]; exact card_nsmul_eq_zero'
+    rw [Nat.cast_mul, mul_comm, mul_smul, hP, smul_zero]
+  have hcard : ∀ k : ℕ, N ∣ k → k ≠ 0 → N = k ^ 2 := by
+    intro k hk hk0
+    have h : Nat.card (Submodule.torsionBy ℤ W.Point (k : ℤ)) = k ^ 2 :=
+      WeierstrassCurve.card_torsionBy_eq_sq_of_isAlgClosed W (n := k)
+        (Nat.cast_ne_zero.mpr hk0)
+    rw [htop k hk] at h
+    rwa [Nat.card_congr (Submodule.topEquiv (R := ℤ) (M := W.Point)).toEquiv, ← hN] at h
+  have h1 := hcard N dvd_rfl hNpos.ne'
+  have h2 := hcard (2 * N) (dvd_mul_left N 2) (by omega)
+  have h3 : N ^ 2 = (2 * N) ^ 2 := h1.symm.trans h2
+  have h4 : N ^ 2 = 0 := by nlinarith
+  exact hNpos.ne' (pow_eq_zero_iff (n := 2) (by norm_num) |>.mp h4)
+
+variable {W} in
+theorem kw_nat_card_ker_of_zsmul {f : W.Point →+ W.Point} {N : ℤ}
+    (hN : N ≠ 0) (hf : ∀ P, f P = N • P) : Nat.card f.ker = N.natAbs ^ 2 := by
+  have hsets : ∀ P : W.Point,
+      P ∈ f.ker ↔ P ∈ Submodule.torsionBy ℤ W.Point (N.natAbs : ℤ) := by
+    intro P
+    rw [AddMonoidHom.mem_ker, hf, Submodule.mem_torsionBy_iff]
+    constructor
+    · intro hP
+      rcases Int.natAbs_eq N with h | h
+      · rwa [h] at hP
+      · rwa [h, neg_zsmul, neg_eq_zero] at hP
+    · intro hP
+      rcases Int.natAbs_eq N with h | h
+      · rw [h]; exact hP
+      · rw [h, neg_zsmul, neg_eq_zero]; exact hP
+  rw [Nat.card_congr (Equiv.subtypeEquivRight hsets)]
+  exact WeierstrassCurve.card_torsionBy_eq_sq_of_isAlgClosed W (n := N.natAbs)
+    (Nat.cast_ne_zero.mpr (Int.natAbs_ne_zero.mpr hN))
+
+variable {W} in
+omit [CharZero F] in
+theorem kw_eq_zero_of_zsmul_eq_zero {N : ℤ} (hN : N ≠ 0) {G : Type*} [AddCommGroup G]
+    (δ : W.Point →+ G) (hδ : ∀ P, N • δ P = 0) : δ = 0 := by
+  refine AddMonoidHom.ext fun P => ?_
+  obtain ⟨R, hR⟩ : ∃ R : W.Point, N • R = P :=
+    WeierstrassCurve.Affine.Point.exists_zsmul_eq_of_isAlgClosed W hN P
+  rw [← hR, map_zsmul]; exact hδ R
+
+end Torsion
+
+section Functoriality
+
+universe u
+
+variable {F : Type u} [Field F] [DecidableEq F]
+variable {A B C : Affine F}
+  [A.IsElliptic] [GenusOnePlaceGate A] [AbelTheorem A]
+  [B.IsElliptic] [GenusOnePlaceGate B] [AbelTheorem B]
+  [C.IsElliptic] [GenusOnePlaceGate C] [AbelTheorem C]
+
+omit [DecidableEq F] [WeierstrassCurve.IsElliptic A]
+  [A.GenusOnePlaceGate] [A.AbelTheorem] [WeierstrassCurve.IsElliptic B] [B.GenusOnePlaceGate]
+  [B.AbelTheorem] [WeierstrassCurve.IsElliptic C] [C.GenusOnePlaceGate] [C.AbelTheorem] in
+theorem Pic0_pushforwardAlongHom_comp
+    (f : B.FunctionField →ₐ[F] A.FunctionField) (hf : f.toRingHom.IsIntegral)
+    (hfinf : FiniteAlong F f) (hNf : NormFormulaAlong F f hfinf)
+    (g : C.FunctionField →ₐ[F] B.FunctionField) (hg : g.toRingHom.IsIntegral)
+    (hfing : FiniteAlong F g) (hNg : NormFormulaAlong F g hfing)
+    (hfg : (f.comp g).toRingHom.IsIntegral) (hfinfg : FiniteAlong F (f.comp g))
+    (hNfg : NormFormulaAlong F (f.comp g) hfinfg)
+    (x : Pic0 F A.FunctionField) :
+    Pic0.pushforwardAlongHom g hg hfing hNg (Pic0.pushforwardAlongHom f hf hfinf hNf x)
+      = Pic0.pushforwardAlongHom (f.comp g) hfg hfinfg hNfg x := by
+  obtain ⟨D, rfl⟩ := Pic0.mk_surjective x
+  rw [Pic0.pushforwardAlongHom_mk, Pic0.pushforwardAlongHom_mk, Pic0.pushforwardAlongHom_mk]
+  congr 1
+  refine Subtype.ext ?_
+  rw [Pic0.coe_pushforwardAlongDegZero, Pic0.coe_pushforwardAlongDegZero,
+    Pic0.coe_pushforwardAlongDegZero]
+  exact Divisor.pushforwardAlong_pushforwardAlong g f hg hf hfg (D : Divisor F A.FunctionField)
+
+omit [WeierstrassCurve.IsElliptic A] [WeierstrassCurve.IsElliptic B]
+  [WeierstrassCurve.IsElliptic C] in
+theorem pointMapOfPushforward_comp
+    (f : B.FunctionField →ₐ[F] A.FunctionField) (hf : f.toRingHom.IsIntegral)
+    (hfinf : FiniteAlong F f) (hNf : NormFormulaAlong F f hfinf)
+    (g : C.FunctionField →ₐ[F] B.FunctionField) (hg : g.toRingHom.IsIntegral)
+    (hfing : FiniteAlong F g) (hNg : NormFormulaAlong F g hfing)
+    (hfg : (f.comp g).toRingHom.IsIntegral) (hfinfg : FiniteAlong F (f.comp g))
+    (hNfg : NormFormulaAlong F (f.comp g) hfinfg) (P : A.Point) :
+    pointMapOfPushforward (f.comp g) hfg hfinfg hNfg P
+      = pointMapOfPushforward g hg hfing hNg (pointMapOfPushforward f hf hfinf hNf P) := by
+  have key : ∀ x : Pic0 F B.FunctionField, pointClass (genusOnePic0Equiv B x) = x := fun x => by
+    rw [← genusOnePic0Equiv_symm_apply, AddEquiv.symm_apply_apply]
+  rw [pointMapOfPushforward_apply, pointMapOfPushforward_apply, pointMapOfPushforward_apply, key,
+    Pic0_pushforwardAlongHom_comp f hf hfinf hNf g hg hfing hNg hfg hfinfg hNfg]
+
+end Functoriality
+
+section IsoInjective
+
+universe u
+
+variable {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+variable {A B : Affine F}
+  [A.IsElliptic] [GenusOnePlaceGate A] [AbelTheorem A]
+  [B.IsElliptic] [GenusOnePlaceGate B] [AbelTheorem B]
+
+omit [DecidableEq F] [IsAlgClosed F] [CharZero F] [WeierstrassCurve.IsElliptic A]
+  [A.GenusOnePlaceGate] [A.AbelTheorem] [WeierstrassCurve.IsElliptic B] [B.GenusOnePlaceGate]
+  [B.AbelTheorem] in
+theorem finrankAlong_eq_one_of_bijective (τ : B.FunctionField →ₐ[F] A.FunctionField)
+    (hτ : Function.Bijective τ) : finrankAlong F τ = 1 := by
+  let := algebraAlong τ
+  let σ : B.FunctionField ≃+* A.FunctionField := RingEquiv.ofBijective τ hτ
+  let e : A.FunctionField ≃ₗ[B.FunctionField] B.FunctionField :=
+    { σ.symm.toAddEquiv with
+      map_smul' := fun b x => by
+        change σ.symm (b • x) = b * σ.symm x
+        rw [Algebra.smul_def, map_mul]
+        congr 1
+        exact σ.symm_apply_apply b }
+  change Module.finrank B.FunctionField A.FunctionField = 1
+  rw [e.finrank_eq, Module.finrank_self]
+
+theorem pointMapOfPushforward_injective_of_bijective
+    (τ : B.FunctionField →ₐ[F] A.FunctionField) (hτ : τ.toRingHom.IsIntegral)
+    (hfin : FiniteAlong F τ) (hN : NormFormulaAlong F τ hfin) (hbij : Function.Bijective τ) :
+    Function.Injective (pointMapOfPushforward τ hτ hfin hN) := by
+  have hcard : Nat.card (pointMapOfPushforward τ hτ hfin hN).ker = 1 := by
+    rw [natCard_ker_pointMapOfPushforward_eq_finrankAlong A B τ hτ hfin hN,
+      finrankAlong_eq_one_of_bijective τ hbij]
+  have : Finite (pointMapOfPushforward τ hτ hfin hN).ker :=
+    Nat.finite_of_card_ne_zero (by rw [hcard]; exact one_ne_zero)
+  have hbot : (pointMapOfPushforward τ hτ hfin hN).ker = ⊥ :=
+    AddSubgroup.eq_bot_of_card_eq _ hcard
+  exact (AddMonoidHom.ker_eq_bot_iff _).mp hbot
+
+end IsoInjective
+
+end Affine
+end WeierstrassCurve
+
+namespace WeierstrassCurve
+
+namespace Affine
+
+open AlgebraicCurve
+
+universe u
+
+attribute [local instance] Classical.propDecidable
+
+theorem ker_pointMapOfPushforward_eq_of_j_eq_of_forall_pointEnd_eq_zsmul_a68
+    {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+    (W : WeierstrassCurve F) [W.IsElliptic]
+    [GenusOnePlaceGate W.toAffine] [GenusOnePlaceGate.IsCentred W.toAffine]
+    [AbelTheorem W.toAffine]
+    (hNs : ∀ D : IsogenyEndDatum W.toAffine, NormFormulaAlong F D.ι D.hfin)
+    (hEnd : ∀ D : IsogenyEndDatum W.toAffine, ∃ m : ℤ, ∀ P : W.toAffine.Point,
+      D.pointEnd (hNs D) P = m • P)
+    (V V' : WeierstrassCurve F) [V.IsElliptic] [V'.IsElliptic]
+    [GenusOnePlaceGate V.toAffine] [AbelTheorem V.toAffine]
+    [GenusOnePlaceGate V'.toAffine] [AbelTheorem V'.toAffine]
+    (ι : V.toAffine.FunctionField →ₐ[F] W.toAffine.FunctionField)
+    (hι : ι.toRingHom.IsIntegral) (hfin : FiniteAlong F ι) (hN : NormFormulaAlong F ι hfin)
+    (ι' : V'.toAffine.FunctionField →ₐ[F] W.toAffine.FunctionField)
+    (hι' : ι'.toRingHom.IsIntegral) (hfin' : FiniteAlong F ι') (hN' : NormFormulaAlong F ι' hfin')
+    (hcard : Nat.card (pointMapOfPushforward ι hι hfin hN).ker
+      = Nat.card (pointMapOfPushforward ι' hι' hfin' hN').ker)
+    (hj : V.j = V'.j) :
+    (pointMapOfPushforward ι hι hfin hN).ker = (pointMapOfPushforward ι' hι' hfin' hN').ker := by
+  classical
+  obtain ⟨C, hC⟩ := WeierstrassCurve.exists_variableChange_of_j_eq V V' hj
+  obtain ⟨σ⟩ : Nonempty (V.toAffine.FunctionField ≃ₐ[F] V'.toAffine.FunctionField) :=
+    hC ▸ WeierstrassCurve.nonempty_functionField_algEquiv_of_variableChange V C
+  set τ : V'.toAffine.FunctionField →ₐ[F] V.toAffine.FunctionField := σ.symm.toAlgHom with hτ_def
+  have hτbij : Function.Bijective τ := σ.symm.bijective
+  have hτint : τ.toRingHom.IsIntegral := RingHom.isIntegral_of_surjective _ hτbij.2
+  have hτfin : FiniteAlong F τ := finiteAlong_of_surjective τ hτbij.2
+  have hNτ : NormFormulaAlong F τ hτfin := normFormulaAlong_of_elliptic τ hτfin
+  have hιτint : (ι.comp τ).toRingHom.IsIntegral := RingHom.IsIntegral.trans _ _ hτint hι
+  have hιτfin : FiniteAlong F (ι.comp τ) := finiteAlong_comp τ ι hτfin hfin
+  have hNιτ : NormFormulaAlong F (ι.comp τ) hιτfin := normFormulaAlong_of_elliptic _ hιτfin
+  set φ := pointMapOfPushforward ι hι hfin hN with hφ_def
+  set φ' := pointMapOfPushforward ι' hι' hfin' hN' with hφ'_def
+  set β := pointMapOfPushforward (ι.comp τ) hιτint hιτfin hNιτ with hβ_def
+  have hβ_comp : ∀ P, β P = pointMapOfPushforward τ hτint hτfin hNτ (φ P) := fun P =>
+    pointMapOfPushforward_comp ι hι hfin hN τ hτint hτfin hNτ hιτint hιτfin hNιτ P
+  have hτinj := pointMapOfPushforward_injective_of_bijective τ hτint hτfin hNτ hτbij
+  have hkerβ : β.ker = φ.ker := by
+    refine AddSubgroup.ext fun P => ?_
+    rw [AddMonoidHom.mem_ker, AddMonoidHom.mem_ker, hβ_comp]
+    refine ⟨fun h => hτinj (h.trans (map_zero _).symm), fun h => ?_⟩
+    rw [h, map_zero]
+  have hβs : Function.Surjective β :=
+    pointMapOfPushforward_surjective W.toAffine _ (ι.comp τ) hιτint hιτfin hNιτ
+  have hφ's : Function.Surjective φ' :=
+    pointMapOfPushforward_surjective W.toAffine _ ι' hι' hfin' hN'
+  set d : ℕ := Nat.card φ'.ker with hd_def
+  have hdpos : 0 < d := by
+    rw [hd_def, hφ'_def, natCard_ker_pointMapOfPushforward_eq_finrankAlong W.toAffine V'.toAffine
+      ι' hι' hfin' hN']
+    let := algebraAlong ι'
+    have : Module.Finite V'.toAffine.FunctionField W.toAffine.FunctionField := hfin'
+    change 0 < Module.finrank V'.toAffine.FunctionField W.toAffine.FunctionField
+    exact Module.finrank_pos
+  have hd0 : d ≠ 0 := hdpos.ne'
+  have hfinker : Finite φ'.ker := Nat.finite_of_card_ne_zero (hd_def ▸ hd0)
+  have hNne : ((d : ℤ) : AddMonoid.End W.toAffine.Point) ≠ 0 := by
+    intro h
+    have := intCast_addMonoidEnd_point_injective W.toAffine (h.trans Int.cast_zero.symm)
+    omega
+  obtain ⟨M, hM⟩ := IsogenyEndDatum.exists_pointEnd_eq_of_mem_isogenyEndSubring hNs
+    ((d : ℤ) : AddMonoid.End W.toAffine.Point) (intCast_mem _ _) hNne
+  have hMapp : ∀ P, M.pointEnd (hNs M) P = (d : ℤ) • P := fun P => by
+    rw [hM, AddMonoid.End.intCast_apply]
+  let φ'D : IsogenyHomDatum W.toAffine V'.toAffine := ⟨ι', hι', hfin'⟩
+  have hmem_of_ker : ∀ P, φ' P = 0 → (d : ℤ) • P = 0 := by
+    intro P hP
+    have hx : Nat.card φ'.ker • (⟨P, (AddMonoidHom.mem_ker).mpr hP⟩ : φ'.ker) = 0 :=
+      card_nsmul_eq_zero'
+    have hx' := congrArg Subtype.val hx
+    simp only [AddSubmonoidClass.coe_nsmul, ZeroMemClass.coe_zero] at hx'
+    rw [natCast_zsmul]
+    exact hx'
+  obtain ⟨χ, hNχ, hχ⟩ := IsogenyHomDatum.exists_pointHom_comp_eq_of_ker_le_of_isCentred φ'D hN'
+    (IsogenyHomDatum.ofEndDatum M) (hNs M) (fun P hP => by
+      change M.pointEnd (hNs M) P = 0
+      rw [hMapp]; exact hmem_of_ker P hP)
+  set ψ' := χ.pointHom hNχ with hψ'_def
+  have hdual₁ : ∀ P, ψ' (φ' P) = (d : ℤ) • P := fun P => by
+    have h := hχ P
+    rw [← hMapp P]; exact h
+  have hdual₂ : ∀ S, φ' (ψ' S) = (d : ℤ) • S := fun S => by
+    obtain ⟨P, rfl⟩ := hφ's S
+    rw [hdual₁, map_zsmul]
+  have hDint : ((ι.comp τ).comp χ.ι).toRingHom.IsIntegral :=
+    RingHom.IsIntegral.trans _ _ χ.hι hιτint
+  let D : IsogenyEndDatum W.toAffine :=
+    ⟨(ι.comp τ).comp χ.ι, hDint, finiteAlong_comp χ.ι (ι.comp τ) χ.hfin hιτfin⟩
+  have hD : ∀ P, D.pointEnd (hNs D) P = ψ' (β P) := fun P =>
+    pointMapOfPushforward_comp (ι.comp τ) hιτint hιτfin hNιτ χ.ι χ.hι χ.hfin hNχ
+      hDint D.hfin (hNs D) P
+  obtain ⟨m, hm⟩ := hEnd D
+  set θ := ψ'.comp β with hθ_def
+  have hθm : ∀ P, θ P = m • P := fun P => by
+    change ψ' (β P) = m • P
+    rw [← hD P]; exact hm P
+  have hkerψ' : Nat.card ψ'.ker = d := by
+    have hcomp : Nat.card (ψ'.comp φ').ker = d ^ 2 := by
+      have h := kw_nat_card_ker_of_zsmul (W := W.toAffine) (f := ψ'.comp φ')
+        (N := (d : ℤ)) (by exact_mod_cast hd0) (fun P => hdual₁ P)
+      rw [Int.natAbs_natCast] at h; exact h
+    have hsplit := ModularCurve.cmm5_dp_natCard_ker_comp φ' ψ' hφ's
+    rw [hcomp, ← hd_def, sq] at hsplit
+    exact (Nat.eq_of_mul_eq_mul_right hdpos hsplit).symm
+  have hkerθ : Nat.card θ.ker = d ^ 2 := by
+    have hsplit := ModularCurve.cmm5_dp_natCard_ker_comp β ψ' hβs
+    rw [hkerβ, hcard, hkerψ'] at hsplit
+    rw [hθ_def, hsplit]; ring
+  have hmne : m ≠ 0 := by
+    intro h0
+    have hall : ∀ P, θ P = 0 := fun P => by rw [hθm, h0, zero_zsmul]
+    have htop : θ.ker = ⊤ :=
+      AddSubgroup.ext fun P => ⟨fun _ => trivial, fun _ => AddMonoidHom.mem_ker.mpr (hall P)⟩
+    rw [htop] at hkerθ
+    have : Infinite W.toAffine.Point := kw_point_infinite
+    simp only [AddSubgroup.card_top, Nat.card_eq_zero_of_infinite] at hkerθ
+    exact absurd hkerθ.symm (by positivity)
+  have hm_abs : m.natAbs = d := by
+    have hcard' := kw_nat_card_ker_of_zsmul (W := W.toAffine) hmne hθm
+    rw [hkerθ, sq, sq] at hcard'
+    exact (Nat.mul_self_inj).mp hcard'.symm
+  have hkey : ∀ P, (d : ℤ) • β P = m • φ' P := fun P => by
+    have h1 : φ' (ψ' (β P)) = (d : ℤ) • β P := hdual₂ (β P)
+    have h2 : φ' (θ P) = m • φ' P := by rw [hθm, map_zsmul]
+    rw [← h1]; exact h2
+  have hmcases : m = (d : ℤ) ∨ m = -(d : ℤ) := by
+    rcases Int.natAbs_eq m with h | h <;> [left; right] <;> omega
+  have hNz : (d : ℤ) ≠ 0 := by exact_mod_cast hd0
+  have hkerβ' : β.ker = φ'.ker := by
+    rcases hmcases with hm' | hm'
+    · have hδ : β - φ' = 0 :=
+        kw_eq_zero_of_zsmul_eq_zero (W := W.toAffine) hNz (β - φ') fun P => by
+          rw [AddMonoidHom.sub_apply, smul_sub, hkey P, hm', sub_self]
+      have heq : β = φ' := sub_eq_zero.mp hδ
+      rw [heq]
+    · have hδ : β + φ' = 0 :=
+        kw_eq_zero_of_zsmul_eq_zero (W := W.toAffine) hNz (β + φ') fun P => by
+          rw [AddMonoidHom.add_apply, smul_add, hkey P, hm', ← add_smul, neg_add_cancel,
+            zero_smul]
+      have heq : β = -φ' := eq_neg_iff_add_eq_zero.mpr hδ
+      rw [heq]
+      exact AddSubgroup.ext fun P => by
+        simp only [AddMonoidHom.mem_ker, AddMonoidHom.neg_apply, neg_eq_zero]
+  exact hkerβ.symm.trans hkerβ'
+
+end Affine
+end WeierstrassCurve
+end
+
+universe u
+
+theorem solution
+    {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+    (W : WeierstrassCurve F) [W.IsElliptic]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate W.toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W.toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem W.toAffine]
+    (hNs : ∀ D : WeierstrassCurve.Affine.IsogenyEndDatum W.toAffine,
+      AlgebraicCurve.NormFormulaAlong F D.ι D.hfin)
+    (hEnd : ∀ D : WeierstrassCurve.Affine.IsogenyEndDatum W.toAffine,
+      ∃ m : ℤ, ∀ P : W.toAffine.Point, D.pointEnd (hNs D) P = m • P)
+    (V V' : WeierstrassCurve F) [V.IsElliptic] [V'.IsElliptic]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate V.toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem V.toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate V'.toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem V'.toAffine]
+    (ι : V.toAffine.FunctionField →ₐ[F] W.toAffine.FunctionField)
+    (hι : ι.toRingHom.IsIntegral) (hfin : AlgebraicCurve.FiniteAlong F ι)
+    (hN : AlgebraicCurve.NormFormulaAlong F ι hfin)
+    (ι' : V'.toAffine.FunctionField →ₐ[F] W.toAffine.FunctionField)
+    (hι' : ι'.toRingHom.IsIntegral) (hfin' : AlgebraicCurve.FiniteAlong F ι')
+    (hN' : AlgebraicCurve.NormFormulaAlong F ι' hfin')
+    (hcard : Nat.card (WeierstrassCurve.Affine.pointMapOfPushforward ι hι hfin hN).ker
+      = Nat.card (WeierstrassCurve.Affine.pointMapOfPushforward ι' hι' hfin' hN').ker)
+    (hj : V.j = V'.j) :
+    (WeierstrassCurve.Affine.pointMapOfPushforward ι hι hfin hN).ker
+      = (WeierstrassCurve.Affine.pointMapOfPushforward ι' hι' hfin' hN').ker :=
+  WeierstrassCurve.Affine.ker_pointMapOfPushforward_eq_of_j_eq_of_forall_pointEnd_eq_zsmul_a68
+    W hNs hEnd V V' ι hι hfin hN ι' hι' hfin' hN' hcard hj
+
+end privateSection
+
+public section publicSection
+
+
+universe u
+theorem WeierstrassCurve.Affine.ker_pointMapOfPushforward_eq_of_j_eq_of_forall_pointEnd_eq_zsmul
+    {F : Type u} [Field F] [DecidableEq F] [IsAlgClosed F] [CharZero F]
+    (W : WeierstrassCurve F) [W.IsElliptic]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate W.toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate.IsCentred W.toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem W.toAffine]
+    (hNs : ∀ D : WeierstrassCurve.Affine.IsogenyEndDatum W.toAffine,
+      AlgebraicCurve.NormFormulaAlong F D.ι D.hfin)
+    (hEnd : ∀ D : WeierstrassCurve.Affine.IsogenyEndDatum W.toAffine,
+      ∃ m : ℤ, ∀ P : W.toAffine.Point, D.pointEnd (hNs D) P = m • P)
+    (V V' : WeierstrassCurve F) [V.IsElliptic] [V'.IsElliptic]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate V.toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem V.toAffine]
+    [WeierstrassCurve.Affine.GenusOnePlaceGate V'.toAffine]
+    [WeierstrassCurve.Affine.AbelTheorem V'.toAffine]
+    (ι : V.toAffine.FunctionField →ₐ[F] W.toAffine.FunctionField)
+    (hι : ι.toRingHom.IsIntegral) (hfin : AlgebraicCurve.FiniteAlong F ι)
+    (hN : AlgebraicCurve.NormFormulaAlong F ι hfin)
+    (ι' : V'.toAffine.FunctionField →ₐ[F] W.toAffine.FunctionField)
+    (hι' : ι'.toRingHom.IsIntegral) (hfin' : AlgebraicCurve.FiniteAlong F ι')
+    (hN' : AlgebraicCurve.NormFormulaAlong F ι' hfin')
+    (hcard : Nat.card (WeierstrassCurve.Affine.pointMapOfPushforward ι hι hfin hN).ker
+      = Nat.card (WeierstrassCurve.Affine.pointMapOfPushforward ι' hι' hfin' hN').ker)
+    (hj : V.j = V'.j) :
+    (WeierstrassCurve.Affine.pointMapOfPushforward ι hι hfin hN).ker
+      = (WeierstrassCurve.Affine.pointMapOfPushforward ι' hι' hfin' hN').ker :=
+  solution W hNs hEnd V V' ι hι hfin hN ι' hι' hfin' hN' hcard hj
+
+end publicSection
