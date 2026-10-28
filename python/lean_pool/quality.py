@@ -13,7 +13,6 @@ from typing import Any
 
 import yaml
 
-from lean_pool.exposition.source_text import _find_boundary, _strip_prefixes, code_view
 from lean_pool.indexes import (
     discovers_modules,
     project_modules,
@@ -57,43 +56,6 @@ DECLARATION_PREFIX = (
     r"(?:@\[[^\n\]]+\]\s+)*"
     r"(?:(?:private|protected|noncomputable|scoped)\s+)*"
 )
-PROOF_COMMAND_KEYWORDS = (
-    *DECLARATION_KEYWORDS,
-    "example",
-    "opaque",
-    "axiom",
-    "constant",
-    "namespace",
-    "section",
-    "end",
-    "open",
-    "export",
-    "variable",
-    "include",
-    "omit",
-    "attribute",
-    "initialize",
-    "builtin_initialize",
-    "syntax",
-    "macro",
-    "macro_rules",
-    "elab",
-    "elab_rules",
-    "notation",
-    "infix",
-    "infixl",
-    "infixr",
-    "prefix",
-    "postfix",
-    "declare_syntax_cat",
-    "register_option",
-    "register_builtin_option",
-    "universe",
-    "universes",
-    "set_option",
-    "mutual",
-)
-
 # A (possibly dotted) Lean identifier: a leading letter or `_`, then letters /
 # digits / `_` / `'` / `.`. `\w` and `\W` are Unicode-aware in Python 3, so
 # this matches names with subscripts or Greek letters (`c₀`, `α`) that an
@@ -400,95 +362,13 @@ def _file_size_errors(paths: list[Path], limit: int) -> list[_QualityError]:
     return errors
 
 
-def _resolve_open_scopes(
-    code: str, starts: list[tuple[int, int, str]], pattern: re.Pattern[str]
-) -> list[tuple[int, int, str]]:
-    """Attach scoped opens to commands, but leave term/tactic opens inside proofs."""
-    commands = []
-    scope_start = None
-    for index, (line, start, keyword) in enumerate(starts):
-        prefix_start = start if scope_start is None else scope_start
-        scope_start = None
-        if keyword == "open":
-            end = starts[index + 1][1] if index + 1 < len(starts) else len(code)
-            position = _strip_prefixes(code, start, end)
-            if position == end:
-                scope_start = prefix_start
-                continue
-            match = pattern.match(code[position:end])
-            if match is None:
-                # An `open ... in` followed by a term/tactic is part of the proof.
-                continue
-            line = _line_number(code, position)
-            keyword = match[1]
-        commands.append((line, prefix_start, keyword))
-    return commands
-
-
-def _command_starts(code: str) -> list[tuple[int, int, str]]:
-    """Locate standard line-leading commands outside bracketed terms and quotations.
-
-    Each entry is (line number, offset, keyword). Independent commands may
-    have different indentation. Local `where` helpers use declaration names
-    rather than command keywords, so they remain inside the enclosing proof.
-    """
-    keywords = "|".join(PROOF_COMMAND_KEYWORDS)
-    prefix = (
-        r"(?:@\[[^\n\]]+\]\s+)*"
-        r"(?:(?:public|private|protected|noncomputable|scoped|local|nonrec|unsafe|partial)\s+)*"
-    )
-    pattern = re.compile(rf"^[ \t]*{prefix}({keywords})\b")
-    starts = []
-    depth = offset = 0
-    attribute_start = None
-    for number, line in enumerate(code.splitlines(keepends=True), start=1):
-        if depth == 0:
-            if match := pattern.match(line):
-                start = offset if attribute_start is None else attribute_start
-                starts.append((number, start, match[1]))
-                attribute_start = None
-            elif re.match(r"\s*@\[", line):
-                if attribute_start is None:
-                    attribute_start = offset
-            elif re.match(r"\s*#", line):
-                starts.append((number, offset, "diagnostic"))
-                attribute_start = None
-            elif line.strip():
-                attribute_start = None
-        for character in line:
-            if character in "([{⟨⦃":
-                depth += 1
-            elif character in ")]}⟩⦄":
-                depth = max(0, depth - 1)
-        offset += len(line)
-    return _resolve_open_scopes(code, starts, pattern)
-
-
-def _check_proof_sizes(root: Path) -> list[_QualityError]:
-    errors: list[_QualityError] = []
-    for path in _lean_content_files(root):
-        text = path.read_text()
-        code = code_view(text, mask_escaped_identifiers=True)
-        starts = _command_starts(code)
-        for index, (start_line, start, keyword) in enumerate(starts):
-            if keyword not in ("theorem", "lemma"):
-                continue
-            end = starts[index + 1][1] if index + 1 < len(starts) else len(text)
-            body_start = _find_boundary(code, start, end)
-            if body_start == end:
-                continue
-            proof_lines = sum(
-                bool(line.strip()) for line in code[body_start:end].splitlines()
-            )
-            if proof_lines > 200:
-                errors.append(
-                    _QualityError(
-                        path,
-                        start_line,
-                        f"proof has {proof_lines} code lines; limit is 200",
-                    )
-                )
-    return errors
+def _declaration_starts(stripped: str) -> list[tuple[int, str]]:
+    starts: list[tuple[int, str]] = []
+    pattern = re.compile(rf"^\s*{DECLARATION_PREFIX}(?:theorem|lemma)\b")
+    for index, line in enumerate(stripped.splitlines(), start=1):
+        if pattern.match(line):
+            starts.append((index, line))
+    return starts
 
 
 def _parse_declarations(root: Path) -> list[_Declaration]:
@@ -1578,7 +1458,6 @@ def run_checks(
         _check_lake_options,
         _check_style_nolints,
         _check_file_sizes,
-        _check_proof_sizes,
     ]
     errors = [error for check in checks for error in check(root)]
     errors.extend(

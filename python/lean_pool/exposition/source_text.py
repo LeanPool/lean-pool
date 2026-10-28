@@ -62,16 +62,10 @@ STATEMENT_CHARACTER_LIMIT = 1200
 
 _WHERE_RE = re.compile(r"(?<![\w.'])where(?![\w'])")
 _IN_RE = re.compile(r"(?<![\w.'])in(?![\w'])")
-_TYPE_BINDER_RE = re.compile(r"(?:let|have)(?:I'?)?(?=\s)")
-_CHAR_LITERAL_RE = re.compile(
-    r"'(?:\\(?:u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2}|[^\n])|[^'\\\n])'"
-)
 
 
-def code_view(
-    text: str, blank_strings: bool = True, *, mask_escaped_identifiers: bool = False
-) -> str:
-    """Return ``text`` with comments (and optionally string/character literals) blanked.
+def code_view(text: str, blank_strings: bool = True) -> str:
+    """Return ``text`` with comments (and optionally strings) blanked.
 
     Copied from ``scripts/proof-profile/statements.py``. Length and newline
     positions are preserved so indices computed on the result line up with
@@ -79,8 +73,6 @@ def code_view(
     doc comments (``/-- -/``) and module docs (``/-! -/``). With
     ``blank_strings=False`` string literals keep their content (used when
     trimming trailing comments off a command without eating a final string).
-    With ``mask_escaped_identifiers=True``, escaped names become neutral identifier
-    characters, preserving code-line counts without affecting bracket/keyword scans.
     """
     out: list[str] = []
     i, n = 0, len(text)
@@ -91,16 +83,6 @@ def code_view(
         c = text[i]
         two = text[i : i + 2]
         if state == normal:
-            if c == "«":
-                end = text.find("»", i + 1)
-                end = n if end < 0 else end + 1
-                literal = text[i:end]
-                if mask_escaped_identifiers:
-                    out.extend("\n" if c == "\n" else "_" for c in literal)
-                else:
-                    out.append(literal)
-                i = end
-                continue
             if two == "--":
                 out.append("  ")
                 i += 2
@@ -112,12 +94,6 @@ def code_view(
                 state = block
                 block_depth = 1
                 continue
-            if c == "'" and (i == 0 or not _ident_char(text[i - 1])):
-                if match := _CHAR_LITERAL_RE.match(text, i):
-                    literal = match[0]
-                    out.append(" " * len(literal) if blank_strings else literal)
-                    i = match.end()
-                    continue
             if c == '"':
                 out.append(" " if blank_strings else '"')
                 i += 1
@@ -150,7 +126,7 @@ def code_view(
         else:  # string literal
             if c == "\\":
                 if blank_strings:
-                    out.extend("\n" if c == "\n" else " " for c in text[i : i + 2])
+                    out.append("  " if i + 1 < n else " ")
                 else:
                     out.append(text[i : i + 2])
                 i += 2
@@ -246,7 +222,11 @@ def _find_boundary(
     while i < end:
         c = code[i]
         if depth == 0:
-            if _TYPE_BINDER_RE.match(code, i, end) and not _ident_char(
+            if code[i : i + 4] in ("let ", "let\n", "let\t") and not _ident_char(
+                code[i - 1] if i > start else " "
+            ):
+                pending_binders += 1
+            elif code[i : i + 5] in ("have ", "have\n", "have\t") and not _ident_char(
                 code[i - 1] if i > start else " "
             ):
                 pending_binders += 1

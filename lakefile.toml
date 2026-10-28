@@ -24,6 +24,12 @@ rev = "v4.35.0-rc3"
 [[lean_lib]]
 name = "LeanPool"
 globs = ["LeanPool.*"]
+plugins = ["LeanPoolLinters:shared"]
+
+[[lean_lib]]
+name = "LeanPoolLinters"
+srcDir = "scripts/ci"
+roots = ["LeanPoolLinters"]
 
 [[lean_exe]]
 name = "mk_all"

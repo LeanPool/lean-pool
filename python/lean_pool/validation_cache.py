@@ -22,6 +22,7 @@ SHARED_INPUTS = (
     "lake-manifest.json",
     "lakefile.toml",
     "lakefile.lean",
+    "scripts/ci/LeanPoolLinters.lean",
     "python/lean_pool/validation_cache.py",
     "python/pyproject.toml",
     "python/uv.lock",
