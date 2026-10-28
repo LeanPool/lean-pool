@@ -15,6 +15,7 @@ public import LeanPool.CompositionAlgebrasOverRings.Composition.Defs
 public import LeanPool.CompositionAlgebrasOverRings.Composition.Doubling
 public import LeanPool.CompositionAlgebrasOverRings.Composition.Examples
 public import LeanPool.CompositionAlgebrasOverRings.Composition.Fields.Basic
+public import LeanPool.CompositionAlgebrasOverRings.Composition.Fields.Euclidean
 public import LeanPool.CompositionAlgebrasOverRings.Composition.Fields.Finite
 public import LeanPool.CompositionAlgebrasOverRings.Composition.Fields.FractionField
 public import LeanPool.CompositionAlgebrasOverRings.Composition.Fields.Real
