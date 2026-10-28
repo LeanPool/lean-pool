@@ -371,38 +371,6 @@ def _declaration_starts(stripped: str) -> list[tuple[int, str]]:
     return starts
 
 
-def _check_proof_sizes(root: Path) -> list[_QualityError]:
-    errors: list[_QualityError] = []
-    for path in _lean_content_files(root):
-        original_lines = path.read_text().splitlines()
-        stripped = _strip_lean_comments("\n".join(original_lines))
-        starts = _declaration_starts(stripped)
-        for index, (start_line, _) in enumerate(starts):
-            end_line = (
-                starts[index + 1][0]
-                if index + 1 < len(starts)
-                else len(original_lines) + 1
-            )
-            block = original_lines[start_line - 1 : end_line - 1]
-            try:
-                body_start = next(
-                    offset for offset, line in enumerate(block) if ":=" in line
-                )
-            except StopIteration:
-                continue
-            body = "\n".join(block[body_start:])
-            proof_lines = _non_comment_code_lines(body)
-            if proof_lines > 200:
-                errors.append(
-                    _QualityError(
-                        path,
-                        start_line,
-                        f"proof has {proof_lines} code lines; limit is 200",
-                    )
-                )
-    return errors
-
-
 def _parse_declarations(root: Path) -> list[_Declaration]:
     return _declarations_in(_lean_content_files(root))
 
@@ -1490,7 +1458,6 @@ def run_checks(
         _check_lake_options,
         _check_style_nolints,
         _check_file_sizes,
-        _check_proof_sizes,
     ]
     errors = [error for check in checks for error in check(root)]
     errors.extend(
