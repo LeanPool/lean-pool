@@ -13,9 +13,8 @@ import pytest
 import yaml
 
 
-def test_lake_proof_length_plugin(tmp_path: Path) -> None:
-    """Load the plugin without source imports and check its source-range fixtures."""
-    root = Path(__file__).resolve().parents[2]
+def _pinned_lake(root: Path) -> Path:
+    """Find the pinned Lake executable, failing in CI if it is unavailable."""
     pin = (root / "lean-toolchain").read_text().strip()
     lake = (
         Path.home()
@@ -27,32 +26,37 @@ def test_lake_proof_length_plugin(tmp_path: Path) -> None:
         if os.environ.get("LEAN_POOL_REQUIRE_TEST_TOOLCHAIN") == "1":
             pytest.fail("required pinned Lean toolchain unavailable")
         pytest.skip("pinned Lean toolchain unavailable")
-    configuration = tomllib.loads((root / "lakefile.toml").read_text())
-    libraries = {library["name"]: library for library in configuration["lean_lib"]}
-    assert libraries["LeanPool"]["plugins"] == ["LeanPoolLinters:shared"]
-    assert libraries["LeanPoolLinters"]["srcDir"] == "scripts/ci"
-    (tmp_path / "lean-toolchain").write_text(pin + "\n")
-    (tmp_path / "lakefile.toml").write_text(
+    return lake
+
+
+def _write_test_project(root: Path, destination: Path) -> None:
+    """Create a dependency-free project that loads the plugin without imports."""
+    shutil.copyfile(root / "lean-toolchain", destination / "lean-toolchain")
+    (destination / "lakefile.toml").write_text(
         'name = "proof_length_test"\n'
         '[[lean_lib]]\nname = "LeanPoolLinters"\nsrcDir = "scripts/ci"\n'
         '[[lean_lib]]\nname = "LeanPool"\n'
         'roots = ["LeanPool", "DefaultBoundary"]\n'
         'plugins = ["LeanPoolLinters:shared"]\n'
     )
-    plugin = tmp_path / "scripts/ci/LeanPoolLinters.lean"
+    plugin = destination / "scripts/ci/LeanPoolLinters.lean"
     plugin.parent.mkdir(parents=True)
     shutil.copyfile(root / "scripts/ci/LeanPoolLinters.lean", plugin)
     fixtures = (root / "scripts/ci/LeanPoolLintersTest.lean").read_text()
     assert "import LeanPoolLinters" not in fixtures
     # Also emit a real, unguarded warning so CI's ordinary warning gate can see it.
-    consumer = tmp_path / "LeanPool.lean"
+    consumer = destination / "LeanPool.lean"
     consumer.write_text(
         fixtures + "\ntheorem unguardedLongProof : True := by\n"
         "  skip\n  skip\n  exact True.intro\n"
     )
+
+
+def _write_default_boundary_fixture(destination: Path) -> None:
+    """Generate proofs exactly at and one line above the production limit."""
     # Exercise the actual production default, not just the fixtures' small bound.
     # The guarded proof has 200 lines; its unguarded neighbour has 201.
-    (tmp_path / "DefaultBoundary.lean").write_text(
+    (destination / "DefaultBoundary.lean").write_text(
         "".join(
             [
                 "module\nimport Lean.Elab.GuardMsgs\n\n#guard_msgs in\n",
@@ -65,6 +69,18 @@ def test_lake_proof_length_plugin(tmp_path: Path) -> None:
             ]
         )
     )
+
+
+def test_lake_proof_length_plugin(tmp_path: Path) -> None:
+    """Load the plugin without source imports and check its source-range fixtures."""
+    root = Path(__file__).resolve().parents[2]
+    lake = _pinned_lake(root)
+    configuration = tomllib.loads((root / "lakefile.toml").read_text())
+    libraries = {library["name"]: library for library in configuration["lean_lib"]}
+    assert libraries["LeanPool"]["plugins"] == ["LeanPoolLinters:shared"]
+    assert libraries["LeanPoolLinters"]["srcDir"] == "scripts/ci"
+    _write_test_project(root, tmp_path)
+    _write_default_boundary_fixture(tmp_path)
     result = subprocess.run(
         [str(lake), "build", "LeanPool"],
         cwd=tmp_path,
