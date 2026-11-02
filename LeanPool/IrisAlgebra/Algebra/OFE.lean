@@ -5,6 +5,8 @@ Authors: Mario Carneiro, Sebastian Graf, Sergei Stepanenko, Markus de Medeiros
 -/
 module
 
+-- Adapted for Lean Pool from Iris-Lean.
+
 public import LeanPool.IrisAlgebra.Std.Nat
 public import LeanPool.IrisAlgebra.Std.Option
 
@@ -813,9 +815,6 @@ theorem Sigma.equiv_eq_alt {P : α → Type _} {x1 x2 : Sigma P} :
   obtain ⟨x1f, x1s⟩ := x1; obtain ⟨x2f, x2s⟩ := x2
   simp only at heq; subst heq; simp only at h; subst h; rfl
 
-theorem Sigma.equiv_eq {P : α → Type _} [∀ x, OFE (P x)] {x1 x2 : Sigma P} :
-    x1 = x2 ↔ ∀ n, x1 ≡{n}≡ x2 := eq_dist
-
 theorem Sigma.dist_eq {P : α → Type _} [∀ x, OFE (P x)] {n} {x1 x2 : Sigma P} :
     (x1 ≡{n}≡ x2) ↔ ∃ heq : x1.fst = x2.fst, heq ▸ x1.snd ≡{n}≡ x2.snd := Iff.rfl
 
@@ -1520,14 +1519,14 @@ open COFE
 notation "constOF" =>
   (fun (B : Type _) (A : Type _) (C : Type _) [COFE A] [COFE C] => B)
 
-instance oFunctorConstOF [COFE B] : OFunctor (constOF B) where
+instance oFunctorConstOF [OFE B] : OFunctor (constOF B) where
   ofe := _
   map _ _ := ⟨id, id_ne⟩
   map_ne := by intros; constructor; simp
   map_id := by simp
   map_comp := by simp
 
-instance OFunctor.constOFContractive [COFE B] : OFunctorContractive (constOF B) where
+instance OFunctor.constOFContractive [OFE B] : OFunctorContractive (constOF B) where
   map_contractive.1 _ _ := .rfl
 
 end ConstantFunctor

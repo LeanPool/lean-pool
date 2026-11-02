@@ -5,6 +5,8 @@ Authors: Markus de Medeiros, Janine Lohse
 -/
 module
 
+-- Adapted for Lean Pool from Iris-Lean.
+
 public import LeanPool.IrisAlgebra.Algebra.OFE
 public import LeanPool.IrisAlgebra.Algebra.CMRA
 public import LeanPool.IrisAlgebra.Algebra.Updates
@@ -222,7 +224,7 @@ def pcoreGenMap (x : GenMap β) : Option (GenMap β) := some ⟨fun k => core (x
 @[reducible] def GenMap.raValid : _root_.Iris.Validity (GenMap β) where
   ValidN n x := ✓{n} x.car
   Valid x := ✓ x.car
-  validN_ne {_n _x _y H} := Dist.validN H |>.mp
+  validN_ne {_n _x _y H} := fun v k => (Dist.validN (H k)).mp (v k)
   valid_iff_validN {_x} := ⟨fun Hv _ => Hv.validN, fun H => valid_iff_validN.mpr (H ·)⟩
   validN_succ {_x _n} := validN_succ
 

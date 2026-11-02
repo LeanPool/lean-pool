@@ -5,6 +5,8 @@ Authors: Sukharik (@suhr)
 -/
 module
 
+-- Adapted for Lean Pool from Iris-Lean.
+
 public import LeanPool.IrisAlgebra.Algebra.CMRA
 
 /-! Frame-preserving updates of ordered resources.
@@ -122,31 +124,31 @@ theorem Update.total [IsTotal α] : x ~~> y ↔ ∀ (n : Nat) (z : α), ✓{n} (
 theorem UpdateP.discrete [Discrete α] :
     x ~~>: P ↔ ∀ (mz : Option α), ✓ (x •? mz) → ∃ y, P y ∧ ✓ (y •? mz) where
   mp uxp := fun mz v =>
-    let ⟨y, py, vy⟩ := uxp 0 mz (Valid.validN v)
+    let ⟨y, py, vy⟩ := uxp 0 mz (Validity.Valid.validN v)
     ⟨y, py, discrete_valid vy⟩
   mpr h := fun n mz v =>
     let ⟨y, py, vy⟩ := h mz ((valid_iff_validN' n).mpr v)
-    ⟨y, py, Valid.validN vy⟩
+    ⟨y, py, Validity.Valid.validN vy⟩
 
 theorem Update.discrete [Discrete α] {x y : α} :
     x ~~> y ↔ ∀ (mz : Option α), ✓ (x •? mz) → ✓ (y •? mz) where
-  mp uxp := fun mz v => discrete_valid <| uxp 0 mz (Valid.validN v)
-  mpr h := fun n mz v => Valid.validN <| h mz ((valid_iff_validN' n).mpr v)
+  mp uxp := fun mz v => discrete_valid <| uxp 0 mz (Validity.Valid.validN v)
+  mpr h := fun n mz v => Validity.Valid.validN <| h mz ((valid_iff_validN' n).mpr v)
 
 theorem UpdateP.discrete_total [Discrete α] [IsTotal α] :
     x ~~>: P ↔ ∀ (z : α), ✓ (x • z) → ∃ y, P y ∧ ✓ (y • z) where
   mp uxp := fun z vz =>
-    let ⟨y, py, vy⟩ := UpdateP.total.mp uxp 0 z (Valid.validN vz)
+    let ⟨y, py, vy⟩ := UpdateP.total.mp uxp 0 z (Validity.Valid.validN vz)
     ⟨y, py, discrete_valid vy⟩
   mpr h :=
     UpdateP.total.mpr fun n z v =>
       let ⟨y, py, vy⟩ := h z ((valid_iff_validN' n).mpr v)
-      ⟨y, py, Valid.validN vy⟩
+      ⟨y, py, Validity.Valid.validN vy⟩
 
 theorem Update.discrete_total [Discrete α] [IsTotal α] :
     x ~~> y ↔ ∀ (z : α), ✓ (x • z) → ✓ (y • z) where
   mp uxp := fun z vz =>
-    discrete_valid <| Update.total.mp uxp 0 z (Valid.validN vz)
+    discrete_valid <| Update.total.mp uxp 0 z (Validity.Valid.validN vz)
   mpr h := Update.total.mpr fun n z v => (h z ((valid_iff_validN' n).mpr v)).validN
 
 -- (** * Transport *)

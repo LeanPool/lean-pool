@@ -5,6 +5,8 @@ Authors: Markus de Medeiros
 -/
 module
 
+-- Adapted for Lean Pool from Iris-Lean.
+
 public import LeanPool.IrisAlgebra.Algebra.CMRA
 public import LeanPool.IrisAlgebra.Algebra.OFE
 

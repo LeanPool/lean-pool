@@ -31,6 +31,9 @@ source:
   announcement_date: '2026-09-24T08:53:06Z'
   material_completion: https://github.com/leanprover-community/iris-lean/commit/81bc35088ba67d465db008f5261a9b341eb6cf6c
   material_completion_date: '2026-10-14T14:22:42Z'
+  upstream_notice: |-
+    Iris-Lean — Copyright (c) 2022–2026 The Iris-Lean Contributors.
+    Prior per-file copyright notices are preserved in this repository's git history (tag `copyright-notices`).
   original_copyright_notices:
   - Copyright (c) The Iris-Lean Contributors
   - Copyright (c) 2025 Сухарик. All rights reserved.

@@ -5,6 +5,8 @@ Authors: Zongyuan Liu
 -/
 module
 
+-- Adapted for Lean Pool from Iris-Lean.
+
 public import LeanPool.IrisAlgebra.Algebra.OFE
 
 /-! Non-expansive commutative monoids and their morphisms. -/

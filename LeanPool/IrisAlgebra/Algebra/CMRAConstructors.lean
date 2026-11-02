@@ -5,6 +5,8 @@ Authors: Mario Carneiro, Sukharik (@suhr), Markus de Medeiros, Puming Liu, Janin
 -/
 module
 
+-- Adapted for Lean Pool from Iris-Lean.
+
 public import LeanPool.IrisAlgebra.Algebra.CMRA
 
 /-! Resource algebra construction from embeddings and discrete data. -/

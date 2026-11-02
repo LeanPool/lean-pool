@@ -5,6 +5,8 @@ Authors: Markus de Medeiros
 -/
 module
 
+-- Adapted for Lean Pool from Iris-Lean.
+
 public import Mathlib.Init
 
 /-! Iteration of functions on natural numbers.

@@ -6,6 +6,8 @@ Authors: Markus de Medeiros
 
 module
 
+-- Adapted for Lean Pool from Iris-Lean.
+
 public import Mathlib.Init
 
 /-! Relations lifted to optional values.

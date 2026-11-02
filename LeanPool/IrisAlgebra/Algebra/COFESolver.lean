@@ -5,6 +5,8 @@ Authors: Mario Carneiro, Sebastian Graf
 -/
 module
 
+-- Adapted for Lean Pool from Iris-Lean.
+
 public import LeanPool.IrisAlgebra.Algebra.OFE
 
 /-! A guarded recursive domain equation solver.

@@ -5,6 +5,8 @@ Authors: Mario Carneiro, Sukharik (@suhr), Markus de Medeiros, Puming Liu, Janin
 -/
 module
 
+-- Adapted for Lean Pool from Iris-Lean.
+
 public import LeanPool.IrisAlgebra.Algebra.OFE
 public import LeanPool.IrisAlgebra.Algebra.Monoid
 
@@ -74,6 +76,9 @@ namespace Validity
 
 @[inherit_doc] prefix:50 "✓ " => Validity.Valid
 @[inherit_doc] notation:50 "✓{" n "} " x:51 => Validity.ValidN n x
+
+theorem Valid.validN [OFE α] [Validity α] : ✓ (x : α) → ✓{n} x :=
+  (valid_iff_validN.1 · _)
 
 end Validity
 
@@ -197,12 +202,34 @@ end
 /-! ## Order-free theory -/
 
 namespace ORA
-variable [OFE α] [Op α]
+variable [OFE α]
 
 export Op (op optionalOp op_ne assoc comm)
 export PCore (pcore pcore_ne pcore_idem core)
 export Validity (Valid ValidN validN_ne valid_iff_validN validN_succ)
 export IsTotal (total)
+
+section Validity
+variable [Validity α]
+
+theorem valid_mapN {x y : α} (f : ∀ n, ✓{n} x → ✓{n} y) (v : ✓ x) : ✓ y :=
+  valid_iff_validN.mpr fun n => f n v.validN
+
+theorem validN_dist_iff {x y : α} (e : x ≡{n}≡ y) : ✓{n} x ↔ ✓{n} y :=
+  ⟨validN_ne e, validN_ne e.symm⟩
+theorem _root_.Iris.OFE.Dist.validN : (x : α) ≡{n}≡ y → (✓{n} x ↔ ✓{n} y) := validN_dist_iff
+
+theorem validN_of_le {n n'} {x : α} (le : n' ≤ n) : ✓{n} x → ✓{n'} x :=
+  le.recOn id fun _ ih vs => ih (validN_succ vs)
+
+theorem validN_of_lt {n n'} {x : α} (lt : n' < n) : ✓{n} x → ✓{n'} x :=
+  validN_of_le (Nat.le_of_lt lt)
+
+theorem valid0_of_validN {n} {x : α} : ✓{n} x → ✓{0} x := validN_of_le (Nat.zero_le n)
+
+end Validity
+
+variable [Op α]
 
 /-! ## Op -/
 theorem op_right_dist (x : α) {y z : α} (e : y ≡{n}≡ z) : x • y ≡{n}≡ x • z :=
@@ -230,6 +257,12 @@ theorem opM_left_dist {n} {x y : α} (z : Option α) (e : x ≡{n}≡ y) : x •
   e.opM Dist.rfl
 theorem opM_right_dist {n} (x : α) {y z : Option α} (e : y ≡{n}≡ z) : x •? y ≡{n}≡ x •? z :=
   Dist.rfl.opM e
+
+instance cmra_op_ne2 : NonExpansive₂ (op (α := α)) where
+  ne _ _ _ e₁ _ _ e₂ := e₁.op e₂
+
+instance : NonExpansive₂ (optionalOp (α := α)) where
+  ne _ _ _ e₁ _ _ e₂ := e₁.opM e₂
 
 theorem op_opM_assoc (x y : α) (mz : Option α) : (x • y) •? mz = x • (y •? mz) := by
   unfold optionalOp; cases mz <;> simp [assoc]
@@ -409,37 +442,7 @@ class IdFree (x : α) where
   id_free0_r y : ✓{0} x → ¬x • y ≡{0}≡ x
 export IdFree (id_free0_r)
 
-theorem opM_ne_right {n} {x : α} {y₁ y₂ : Option α} (h : y₁ ≡{n}≡ y₂) : x •? y₁ ≡{n}≡ x •? y₂ :=
-  match y₁, y₂, h with
-  | none, none, _ => .rfl
-  | some _, some _, h => op_ne.ne h
-
-instance : NonExpansive₂ (optionalOp (α := α)) where
-  ne _ x₁ _ e₁ y₁ y₂ e₂ := match y₁, y₂, e₂ with
-    | none, none, _ => e₁
-    | some _, some y₂, e₂ =>
-      ((op_ne (x := x₁)).ne e₂).trans (Dist.of_eq comm |>.trans <|
-        ((op_ne (x := y₂)).ne e₁).trans (Dist.of_eq comm))
-
 /-! ## Validity -/
-
-theorem _root_.Iris.Validity.Valid.validN : ✓ (x : α) → ✓{n} x := (valid_iff_validN.1 · _)
-protected theorem Valid.validN : ✓ (x : α) → ✓{n} x := Iris.Validity.Valid.validN
-
-theorem valid_mapN {x y : α} (f : ∀ n, ✓{n} x → ✓{n} y) (v : ✓ x) : ✓ y :=
-  valid_iff_validN.mpr fun n => f n v.validN
-
-theorem validN_dist_iff {x y : α} (e : x ≡{n}≡ y) : ✓{n} x ↔ ✓{n} y :=
-  ⟨validN_ne e, validN_ne e.symm⟩
-theorem _root_.Iris.OFE.Dist.validN : (x : α) ≡{n}≡ y → (✓{n} x ↔ ✓{n} y) := validN_dist_iff
-
-theorem validN_of_le {n n'} {x : α} (le : n' ≤ n) : ✓{n} x → ✓{n'} x :=
-  le.recOn id fun _ ih vs => ih (validN_succ vs)
-
-theorem validN_of_lt {n n'} {x : α} (lt : n' < n) : ✓{n} x → ✓{n'} x :=
-  validN_of_le (Nat.le_of_lt lt)
-
-theorem valid0_of_validN {n} {x : α} : ✓{n} x → ✓{0} x := validN_of_le (Nat.zero_le n)
 
 theorem validN_op_right {n} {x y : α} : ✓{n} (x • y) → ✓{n} y :=
   fun v => validN_op_left (Op.comm (x := x) (y := y) ▸ v)
@@ -468,9 +471,6 @@ theorem validN_op_opM_right {mz : Option α} (h : ✓{n} (x • y : α) •? mz)
   validN_op_opM_left (validN_ne (opM_left_dist mz op_commN) h)
 
 /-! ## Core -/
-instance cmra_op_ne2 : NonExpansive₂ (op (α := α)) where
-  ne _ _ _ e₁ _ _ e₂ := e₁.op e₂
-
 theorem pcore_op_right {x : α} {cx} (e : pcore x = some cx) : x • cx = x :=
   Op.comm.trans (pcore_op_left e)
 
@@ -911,7 +911,6 @@ theorem ord0_of_ordN {n} {x y : α} : x ≼ₒ{n} y → x ≼ₒ{0} y := ordN_of
 theorem _root_.Iris.Ordered.OrderN.le {n n'} {x y : α} :
     n' ≤ n → x ≼ₒ{n} y → x ≼ₒ{n'} y := ordN_of_ordN_le
 
-theorem ordN_of_ordN_succ {n} {x y : α} : x ≼ₒ{n.succ} y → x ≼ₒ{n} y := ordN_succ
 theorem _root_.Iris.Ordered.OrderN.succ {n} {x y : α} : x ≼ₒ{n.succ} y → x ≼ₒ{n} y := ordN_succ
 
 section ordRefl
@@ -1103,10 +1102,10 @@ end increasing
 section discreteORA
 
 theorem valid_iff_validN' [Discrete α] (n) {x : α} : ✓ x ↔ ✓{n} x :=
-  ⟨Valid.validN, fun v => discrete_valid <| validN_of_le (Nat.zero_le n) v⟩
+  ⟨Validity.Valid.validN, fun v => discrete_valid <| validN_of_le (Nat.zero_le n) v⟩
 
 theorem valid_0_iff_validN [Discrete α] (n) {x : α} : ✓{0} x ↔ ✓{n} x :=
-  ⟨Valid.validN ∘ discrete_valid, validN_of_le (Nat.zero_le n)⟩
+  ⟨Validity.Valid.validN ∘ discrete_valid, validN_of_le (Nat.zero_le n)⟩
 
 theorem ord_iff_ordN [Discrete α] (n) {x y : α} : x ≼ₒ y ↔ x ≼ₒ{n} y :=
   ⟨ordN_of_ord _, fun h => discrete_ord (ord0_of_ordN h)⟩
