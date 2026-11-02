@@ -55,9 +55,10 @@ independent over $K$, and a nonzero finitely supported $g : \iota \to_0 F$. Then
 $\mathrm{ord}_{\mathrm{lift}\,v}(\Sigma) \le \mathrm{ord}_v(g_j)$ for every $j \in
 \operatorname{supp} g$.
 
-This is the no-cancellation half of the behaviour of places under a constant field extension, the
-computational core of the statement that the Riemann–Roch space of a divisor does not grow when the
-constant field is enlarged (Stichtenoth, Theorem 3.6.3(a)). It is used by
+This no-cancellation lemma is proved here under the stated place-lifting hypotheses. It supplies
+the coefficient-descent step toward the Riemann–Roch basis-invariance analogue below; compare
+Stichtenoth, Theorem 3.6.3(d), for algebraic constant field extensions. The present declaration
+does not assume that the extension of constants is algebraic. It is used by
 [`AlgebraicCurve.mem_riemannRochSpace_of_sum_basis_smul_algebraMap_mem_mapDomain`]
 (thm.html#AlgebraicCurve.mem_riemannRochSpace_of_sum_basis_smul_algebraMap_mem_mapDomain)
 to deduce membership of each coordinate $g_j$ in the Riemann–Roch space over $K$ from membership of

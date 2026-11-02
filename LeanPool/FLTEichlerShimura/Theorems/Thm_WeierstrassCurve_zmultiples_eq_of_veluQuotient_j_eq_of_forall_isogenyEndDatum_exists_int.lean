@@ -70,10 +70,14 @@ summing sets $\{(k\cdot Q)\text{-coordinates}:1\le k\le n\}$, resp. for $Q'$, ha
 discriminant, hence are elliptic, and have equal $j$-invariants. Then the subgroups of integer
 multiples of $Q$ and of $Q'$ coincide.
 
-This is the injectivity-on-cyclic-subgroups statement for $j$ of Vélu quotients for a curve whose
-endomorphisms are all integer multiples (Silverman, AEC III.4.12 in the form
-$\operatorname{Hom}(E,E')\cong\mathbb{Z}$): distinct cyclic subgroups of the same odd order give
-quotients with distinct $j$-invariants. It feeds the companion statement
+This injectivity-on-cyclic-subgroups statement is proved here using the stated integer-endomorphism
+hypothesis `hEnd`, the constructed quotient maps, and their kernel and norm properties: distinct
+cyclic subgroups of the same odd order give quotients with distinct $j$-invariants. Silverman,
+AEC III.4.12, gives the finite-kernel quotient and separable-isogeny construction as background;
+it does not state this injectivity result or an isomorphism
+$\operatorname{Hom}(E,E')\cong\mathbb{Z}$.
+The argument here applies `hEnd` to a composite endomorphism instead of assuming a rank-one Hom
+theorem. It feeds the companion statement
 [`WeierstrassCurve.zmultiples_eq_of_veluQuotient_j_eq_of_transcendental`]
 (thm.html#WeierstrassCurve.zmultiples_eq_of_veluQuotient_j_eq_of_transcendental),
 where the hypotheses on endomorphisms are replaced by transcendence of the parameter.

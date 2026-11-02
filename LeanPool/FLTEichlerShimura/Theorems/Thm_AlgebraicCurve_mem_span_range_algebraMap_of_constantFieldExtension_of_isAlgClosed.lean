@@ -58,10 +58,11 @@ Let $z \in F'$ be such that $z$ lies in the valuation ring of every place $v'$ o
 valuation ring contracts along $F \to F'$ to the valuation ring of no place of $F/K$. Then $z$ lies
 in the $K'$-span of the image of $F$ in $F'$.
 
-This is the classical statement that a function on a constant field extension $F' = K'\cdot F$ which
-is regular at every place of $F'/K'$ not lying over a place of $F/K$ already belongs to $K' \cdot F$
-(Chevalley; Stichtenoth, Theorem 3.6.3), here in a form free of any hypothesis on the
-characteristic, both base fields being algebraically closed. It is the substantive input to the
+This regularity-to-span lemma is proved here under the stated function-field and generation
+hypotheses, with both constant fields algebraically closed. It is an input to the Riemann–Roch
+base-change analogue below; compare Stichtenoth, Theorem 3.6.3(d), for basis invariance under
+algebraic constant field extensions. The extension of constants need not be algebraic here.
+It is the substantive input to the
 results identifying $L_{K'}(\mathrm{Con}\,D)$ with the $K'$-span of the image of $L_K(D)$ and
 comparing the corresponding dimensions under constant field extension.
 

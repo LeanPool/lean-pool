@@ -54,9 +54,10 @@ $v'$ pulled back along $F \to F'$ different from every place of $F/K$. Then for 
 $F/K$ whose Riemann–Roch space is finite-dimensional over $K$, the pushforward `D.mapDomain lift`
 satisfies $\ell_{K'}(\mathrm{mapDomain}\,\mathrm{lift}\,D) = \ell_K(D)$.
 
-This is the invariance of the Riemann–Roch dimension under a constant field extension with
-algebraically closed base field (Stichtenoth, Theorem 3.6.3(a)), the divisor being transported by
-the given lifting of places. It is used to compare genera across the extension, in the two
+This proves Riemann–Roch dimension invariance under the stated generation and place-lifting
+hypotheses, with the divisor transported by the given lifting of places. Compare Stichtenoth,
+Theorem 3.6.3(d), which treats algebraic constant field extensions. The present declaration does
+not assume that the extension of constants is algebraic. It is used to compare genera in the two
 inequalities
 [`AlgebraicCurve.genusFF_le_of_constantFieldExtension_of_isAlgClosed`]
 (thm.html#AlgebraicCurve.genusFF_le_of_constantFieldExtension_of_isAlgClosed)

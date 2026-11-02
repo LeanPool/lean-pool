@@ -46,8 +46,10 @@ $K$-linearly independent family and $g:\iota\to_{\mathrm f} F$. If $\sum_{j\in\m
 B_j\,g_j$ lies in the Riemann–Roch space of the pushforward divisor $\mathrm{lift}_*D$ in $F'$, then
 every $g_j$ lies in the Riemann–Roch space of $D$ in $F$.
 
-This is the descent half of the identification $L'(\mathrm{Con}\,D)=K'\otimes_K L_K(D)$ for a
-constant field extension, as in Stichtenoth, Theorem 3.6.3(a). It is used in
+This coefficient-descent lemma is proved here under the stated place-lifting hypotheses. It is
+used in the Riemann–Roch basis-invariance analogue below; compare Stichtenoth, Theorem 3.6.3(d),
+for algebraic constant field extensions. No algebraicity assumption on the extension of constants
+is made in this declaration. It is used in
 [`AlgebraicCurve.
 lSpace_mapDomain_subset_span_image_lSpace_of_constantFieldExtension_of_isAlgClosed`]
 (thm.html#AlgebraicCurve.

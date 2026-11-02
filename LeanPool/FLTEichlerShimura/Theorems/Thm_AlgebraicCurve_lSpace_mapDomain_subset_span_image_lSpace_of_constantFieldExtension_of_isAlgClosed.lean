@@ -50,9 +50,11 @@ $F/K$. Then for a divisor $D$ on $F/K$, every $f'$ in the Riemann–Roch space o
 divisor $\mathrm{lift}_*D$, i.e. with $v'(f') \le \exp((\mathrm{lift}_*D)(v'))$ for all places $v'$
 of $F'/K'$, lies in the $K'$-span of the image in $F'$ of the Riemann–Roch space of $D$.
 
-This is the inclusion $L'(\mathrm{Con}\,D) \subseteq K' \cdot L(D)$, the substantive half of the
-equality $L'(\mathrm{Con}\,D) = K' \otimes_K L(D)$ for a constant field extension of function fields
-(Stichtenoth, Theorem 3.6.3(a)). It is used to show that the dimension $\ell(D)$ is unchanged by
+This proves the inclusion $L'(\mathrm{Con}\,D) \subseteq K' \cdot L(D)$ under the stated
+generation and place-lifting hypotheses. It is the descent step toward the analogue of the basis
+invariance in Stichtenoth, Theorem 3.6.3(d), which treats algebraic constant field extensions;
+no algebraicity assumption on the extension of constants is made here. It is used to show that
+$\ell(D)$ is unchanged by
 such an extension, that the conorm map on degree-zero divisor classes is injective, and in an
 estimate for hyperplane sections on modular curves.
 
