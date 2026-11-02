@@ -49,7 +49,7 @@ theorem exists_invariant_integral_ideal_representative
     change FractionalIdeal.spanSingleton R⁰ (algebraMap R K (σ a)) *
         (FractionalIdeal.spanSingleton R⁰ (algebraMap R K a) * (J : FractionalIdeal R⁰ K)) =
       FractionalIdeal.spanSingleton R⁰ (algebraMap R K (σ a * a)) * (J : FractionalIdeal R⁰ K)
-    rw [map_mul, ← FractionalIdeal.spanSingleton_mul_spanSingleton, mul_assoc]
+    rw [map_mul, map_mul (FractionalIdeal.spanSingleton R⁰), mul_assoc]
   have hI0 : I ≠ 0 := by
     intro hh
     exact (toPrincipalIdeal R K u * J).ne_zero

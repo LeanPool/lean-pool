@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SumIntegralComparisons
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.Analysis.PSeries
+import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Tactic.Convert
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.GCongr

@@ -11,7 +11,7 @@ Upstream: jasondavies/ccdn-dimension-growth @ bb025e7207f3a35a21b898629f5678b72a
 public import LeanPool.CCDN.Algebra.MonomialEvaluationMatrix
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-import Mathlib.Data.Int.AbsoluteValue
+import Mathlib.Algebra.Order.AbsoluteValue.Int
 
 /-! Archimedean determinant bounds retaining each monomial's own degree.
 Their exponent is the sum of column degrees, not rank times the cutoff. -/

@@ -6,6 +6,7 @@ Authors: Lean Pool contributors
 module
 
 public import Mathlib.RingTheory.ClassGroup.Basic
+public import Mathlib.RingTheory.ClassGroup.ExtendedHom
 
 /-! Compatibility of class-group automorphism actions with integral-ideal representatives. -/
 
@@ -50,47 +51,16 @@ lemma classGroup_mulEquiv_mk0 {R S : Type*} [CommRing R] [CommRing S]
         mem_nonZeroDivisors_iff_ne_zero.mpr <|
           (Ideal.map_eq_bot_iff_of_injective g.injective).not.mpr
             (mem_nonZeroDivisors_iff_ne_zero.mp I.2)⟩ := by
-  apply (ClassGroup.equiv (FractionRing S)).injective
-  simp only [ClassGroup.mulEquiv, MulEquiv.trans_apply, MulEquiv.apply_symm_apply,
-    ClassGroup.equiv_mk0]
-  change (QuotientGroup.mk' (toPrincipalIdeal S (FractionRing S)).range)
-      ((Units.mapEquiv (FractionalIdeal.ringEquivOfRingEquiv
-        (FractionRing R) (FractionRing S) g).toMulEquiv) (FractionalIdeal.mk0 (FractionRing R) I)) =
-    (QuotientGroup.mk' (toPrincipalIdeal S (FractionRing S)).range) _
-  apply congrArg (QuotientGroup.mk' (toPrincipalIdeal S (FractionRing S)).range)
-  apply Units.ext
-  exact fractionalIdeal_ringEquiv_coeIdeal (FractionRing R) (FractionRing S) g I
+  exact ClassGroup.mulEquiv_mk0 g I
 
 /-- An involutive ring automorphism acts involutively on the class group. -/
 lemma classGroup_mulEquiv_involutive {R : Type*} [CommRing R] [IsDomain R]
     (σ : R ≃+* R) (hσ : Function.Involutive σ) :
     Function.Involutive (ClassGroup.mulEquiv σ) := by
-  have hσσ : σ.trans σ = RingEquiv.refl R := by ext x; exact hσ x
-  let F := FractionalIdeal.ringEquivOfRingEquiv (FractionRing R) (FractionRing R) σ
-  have hF : Function.Involutive F := by
-    intro I
-    dsimp only [F]
-    rw [← FractionalIdeal.ringEquivOfRingEquiv_trans_apply, hσσ,
-      FractionalIdeal.ringEquivOfRingEquiv_refl]
-    rfl
-  let G := (FractionalIdeal R⁰ (FractionRing R))ˣ
-  let N := (toPrincipalIdeal R (FractionRing R)).range
-  let φ : G ≃* G := Units.mapEquiv F.toMulEquiv
-  have hN : N.map φ.toMonoidHom = N :=
-    FractionalIdeal.map_ringEquivOfRingEquiv_toPrincipalIdeal σ
-  let q := QuotientGroup.congr N N φ hN
-  let e := ClassGroup.equiv (R := R) (FractionRing R)
-  have hc (c : ClassGroup R) : e (ClassGroup.mulEquiv σ c) = q (e c) := by
-    change e (e.symm (q (e c))) = _
-    exact e.apply_symm_apply _
   intro c
-  apply e.injective
-  rw [hc, hc]
-  refine QuotientGroup.induction_on (e c) ?_
-  intro I
-  change (QuotientGroup.mk' N) (φ (φ I)) = (QuotientGroup.mk' N) I
-  apply congrArg (QuotientGroup.mk' N)
-  apply Units.ext
-  exact hF I
+  rw [ClassGroup.mulEquiv_apply, ClassGroup.mulEquiv_apply, ClassGroup.map_map]
+  convert ClassGroup.map_id c
+  ext x
+  exact hσ x
 
 end CCDN
