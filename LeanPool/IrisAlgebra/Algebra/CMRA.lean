@@ -237,6 +237,12 @@ class CoreId (x : α) where
   core_id : pcore x = some x
 export CoreId (core_id)
 
+theorem CoreId.of_pcore_eq_some {x y : α} (e : pcore x = some y) : CoreId y where
+  core_id := pcore_idem e
+
+theorem core_eqv_self (x : α) [CoreId x] : core x = x := by
+  simp only [core, CoreId.core_id, Option.getD_some]
+
 end CoreProperties
 
 section ResourceProperties
@@ -259,6 +265,7 @@ export IdFree (id_free0_r)
 
 end ResourceProperties
 
+section Operations
 variable [Op α]
 
 /-! ## Op -/
@@ -413,6 +420,72 @@ theorem inc_of_inc0 [OFE.Discrete α] {x y : α} : x ≼{0} y → x ≼ y := (in
 theorem discrete_inc_r {x y : α} [HD : DiscreteE y] : x ≼{0} y → x ≼ y
   | ⟨z, hz⟩ => ⟨z, HD.discrete hz⟩
 
+section ResourceLaws
+variable [Validity α]
+
+theorem not_valid_exclN_op_left {n} {x : α} [Exclusive x] {y} : ¬✓{n} (x • y) :=
+  n.recOn (Exclusive.exclusive0_l _) fun _ ih => ih ∘ validN_succ
+
+theorem not_valid_exclN_op_right {n} {x : α} [Exclusive x] {y} : ¬✓{n} (y • x) :=
+  fun v => not_valid_exclN_op_left (Op.comm (x := y) (y := x) ▸ v)
+
+theorem not_valid_excl_op_left {x : α} [Exclusive x] {y} : ¬✓ (x • y) :=
+  fun v => Exclusive.exclusive0_l _ v.validN
+
+theorem not_excl_op_right {x : α} [Exclusive x] {y} : ¬✓ (y • x) :=
+  fun v => not_valid_excl_op_left (Op.comm (x := y) (y := x) ▸ v)
+
+theorem none_of_excl_valid_op {n} {x : α} [Exclusive x] {my} : ✓{n} (x •? my) → my = none := by
+  cases my <;> simp [optionalOp, not_valid_exclN_op_left]
+
+theorem not_valid_of_exclN_inc {n} {x : α} [Exclusive x] {y} : x ≼{n} y → ¬✓{n} y
+  | ⟨_, hz⟩, v => not_valid_exclN_op_left (validN_ne hz v)
+
+theorem not_valid_of_excl_inc {x : α} [Exclusive x] {y} : x ≼ y → ¬✓ y
+  | ⟨_, hz⟩, v => Exclusive.exclusive0_l _ <| hz ▸ v.validN
+
+theorem cancelable {x y z : α} [Cancelable x] (v : ✓ (x • y)) (e : x • y = x • z) : y = z :=
+  OFE.eq_dist_2 fun _ => cancelableN v.validN e.dist
+
+instance exclusive_cancelable {x : α} [Exclusive x] : Cancelable x where
+  cancelableN v _ := absurd v not_valid_exclN_op_left
+
+theorem op_opM_cancel_dist {x y z : α} {mw : Option α} [Cancelable x]
+    (vxy : ✓{n} x • y) (h : x • y ≡{n}≡ (x • z) •? mw) : y ≡{n}≡ z •? mw :=
+  match mw with
+  | none => cancelableN vxy h
+  | some _ => cancelableN vxy (h.trans (op_assocN.symm))
+
+theorem IdFree.of_dist {x₁ x₂ : α} {n} (e : x₁ ≡{n}≡ x₂) (h : IdFree x₁) : IdFree x₂ where
+  id_free0_r z v := fun h₂ =>
+    have ee := Dist.le e (Nat.zero_le _)
+    have := calc
+      x₁ • z ≡{0}≡ x₂ • z := op_left_dist z ee
+      _ ≡{0}≡ x₂ := h₂
+      _ ≡{0}≡ x₁ := ee.symm
+    h.id_free0_r _ ((validN_dist_iff ee).mpr v) this
+
+theorem _root_.Iris.OFE.Dist.idFree {x₁ x₂ : α} (e : x₁ ≡{n}≡ x₂) : IdFree x₁ ↔ IdFree x₂ :=
+  ⟨.of_dist e, .of_dist e.symm⟩
+
+theorem id_freeN_r {n n'} {x : α} [IdFree x] {y} (v : ✓{n} x) : ¬(x • y ≡{n'}≡ x) :=
+  id_free0_r _ (validN_of_le (Nat.zero_le _) v) |>.imp (·.le (Nat.zero_le _))
+
+theorem id_freeN_l {n n'} {x : α} [IdFree x] {y} (v : ✓{n} x) : ¬(y • x ≡{n'}≡ x) :=
+  id_freeN_r v ∘ Op.comm.dist.trans
+
+theorem id_free_r {x : α} [IdFree x] {y} (v : ✓ x) : ¬(x • y = x) :=
+  fun h => id_free0_r y (valid_iff_validN.mp v 0) h.dist
+
+theorem id_free_l {x : α} [IdFree x] {y} (v : ✓ x) : ¬(y • x = x) :=
+  id_free_r v ∘ Op.comm.trans
+
+instance exclusive_idFree {x : α} [Exclusive x] : IdFree x where
+  id_free0_r z v h := exclusive0_l z ((validN_dist_iff h.symm).mp v)
+
+end ResourceLaws
+end Operations
+
 section pcore
 variable [PCore α]
 
@@ -439,11 +512,26 @@ instance : NonExpansive (pcore (α := α)) where
 section total
 variable [IsTotal α]
 
-omit [Op α] in
 theorem pcore_eq_core (x : α) : pcore x = some (core x) := by
   unfold core
   have ⟨cx, hcx⟩ := IsTotal.total x
   simp [hcx]
+
+instance (y : α) : CoreId (core y) := CoreId.of_pcore_eq_some (pcore_eq_core _)
+
+theorem core_ne : NonExpansive (core : α → α) where
+  ne n x₁ x₂ H := by
+    change some (core x₁) ≡{n}≡ some (core x₂)
+    rw [← pcore_eq_core, ← pcore_eq_core]
+    exact NonExpansive.ne H
+
+theorem _root_.Iris.OFE.Dist.core :
+  ∀ {n} {x₁ x₂ : α}, x₁ ≡{n}≡ x₂ → core x₁ ≡{n}≡ core x₂ := @core_ne.ne
+
+theorem coreId_iff_core_eqv_self : CoreId (x : α) ↔ core x = x :=
+  ⟨fun _ => core_eqv_self x, fun e => { core_id := (pcore_eq_core x).trans (congrArg some e) }⟩
+
+theorem core_idem (x : α) : core (core x) = core x := core_eqv_self _
 
 end total
 end pcore
@@ -518,25 +606,6 @@ theorem pcore_valid {x : α} {cx} (e : pcore x = some cx) : ✓ x → ✓ cx :=
 
 theorem op_self (x : α) [CoreId x] : x • x = x := pcore_op_self CoreId.core_id
 
-theorem CoreId.of_pcore_eq_some {x y : α} (e : pcore x = some y) : CoreId y where
-  core_id := pcore_idem e
-
-/-! ## Exclusive elements -/
-theorem not_valid_exclN_op_left {n} {x : α} [Exclusive x] {y} : ¬✓{n} (x • y) :=
-  n.recOn (Exclusive.exclusive0_l _) fun _ ih => ih ∘ validN_succ
-
-theorem not_valid_exclN_op_right {n} {x : α} [Exclusive x] {y} : ¬✓{n} (y • x) :=
-  fun v => not_valid_exclN_op_left (Op.comm (x := y) (y := x) ▸ v)
-
-theorem not_valid_excl_op_left {x : α} [Exclusive x] {y} : ¬✓ (x • y) :=
-  fun v => Exclusive.exclusive0_l _ v.validN
-
-theorem not_excl_op_right {x : α} [Exclusive x] {y} : ¬✓ (y • x) :=
-  fun v => not_valid_excl_op_left (Op.comm (x := y) (y := x) ▸ v)
-
-theorem none_of_excl_valid_op {n} {x : α} [Exclusive x] {my} : ✓{n} (x •? my) → my = none := by
-  cases my <;> simp [optionalOp, not_valid_exclN_op_left]
-
 /-! ## Total cores -/
 
 section total
@@ -554,25 +623,6 @@ theorem core_op_core {x : α} : core x • core x = core x := pcore_op_self (pco
 theorem validN_core {n} {x : α} (v : ✓{n} x) : ✓{n} core x := pcore_validN (pcore_eq_core x) v
 
 theorem valid_core {x : α} (v : ✓ x) : ✓ core x := pcore_valid (pcore_eq_core x) v
-
-instance (y : α) : CoreId (core y) := CoreId.of_pcore_eq_some (pcore_eq_core _)
-
-theorem core_ne : NonExpansive (core : α → α) where
-  ne n x₁ x₂ H := by
-    change some (core x₁) ≡{n}≡ some (core x₂)
-    rw [← pcore_eq_core, ← pcore_eq_core]
-    exact NonExpansive.ne H
-
-theorem _root_.Iris.OFE.Dist.core :
-  ∀ {n} {x₁ x₂ : α}, x₁ ≡{n}≡ x₂ → core x₁ ≡{n}≡ core x₂ := @core_ne.ne
-
-theorem core_eqv_self (x : α) [CoreId x] : core (x : α) = x :=
-  Option.some.inj ((pcore_eq_core x).symm.trans CoreId.core_id)
-
-theorem coreId_iff_core_eqv_self : CoreId (x : α) ↔ core x = x :=
-  ⟨fun _ => core_eqv_self x, fun e => { core_id := (pcore_eq_core x).trans (congrArg some e) }⟩
-
-theorem core_idem (x : α) : core (core x) = core x := core_eqv_self _
 
 instance instOrderReflOfIsTotal : OrderRefl α where
   ord_refl x :=
@@ -616,12 +666,6 @@ theorem op_core_right_of_inc {x y : α} [CoreId x] : x ≼ y → x • y = y
 
 theorem op_core_left_of_inc {x y : α} [CoreId x] (le : x ≼ y) : y • x = y :=
   Op.comm.trans (op_core_right_of_inc le)
-
-theorem not_valid_of_exclN_inc {n} {x : α} [Exclusive x] {y} : x ≼{n} y → ¬✓{n} y
-  | ⟨_, hz⟩, v => not_valid_exclN_op_left (validN_ne hz v)
-
-theorem not_valid_of_excl_inc {x : α} [Exclusive x] {y} : x ≼ y → ¬✓ y
-  | ⟨_, hz⟩, v => Exclusive.exclusive0_l _ <| hz ▸ v.validN
 
 theorem incN_extend {n} {x y : α} (v : ✓{n} y) :
     x ≼{n} y → ∃ z, z ≼{n.succ} y ∧ z ≡{n}≡ x
@@ -859,7 +903,7 @@ instance (priority := low) UCMRA.ofIsInc [UORA α] [IsInc α] : UCMRA α := {}
   ord_refl _ := IncOrd.inc_ord ⟨d.unit, (Op.comm.trans d.unit_left_id).symm⟩
 
 /-- The laws asserting that a specified resource is a valid unit with itself as core. -/
-class IsUnit [ORA α] (ε : α) : Prop where
+class IsUnit [OFE α] [Op α] [PCore α] [Validity α] (ε : α) : Prop where
   unit_valid : ✓ ε
   unit_left_id : ε • x = x
   pcore_unit : ORA.pcore ε = some ε
@@ -1126,9 +1170,6 @@ end discreteORA
 
 section cancelableElements
 
-theorem cancelable {x y z : α} [Cancelable x] (v : ✓ (x • y)) (e : x • y = x • z) : y = z :=
-  OFE.eq_dist_2 fun _ => cancelableN v.validN e.dist
-
 theorem discrete_cancelable {x : α} [Discrete α]
     (H : ∀ {y z : α}, ✓ (x • y) → x • y = x • z → y = z) : Cancelable x where
   cancelableN {n} {_ _} v e := (H ((valid_iff_validN' n).mpr v) (Discrete.discrete e)).dist
@@ -1139,42 +1180,9 @@ instance cancelable_op {x y : α} [Cancelable x] [Cancelable y] : Cancelable (x 
     have v2 := validN_op_right v1
     cancelableN v2 <| cancelableN v1 <| op_assocN.trans <| e.trans op_assocN.symm
 
-instance exclusive_cancelable {x : α} [Exclusive x] : Cancelable x where
-  cancelableN v _ := absurd v not_valid_exclN_op_left
-
-theorem op_opM_cancel_dist {x y z : α} {mw : Option α} [Cancelable x]
-    (vxy : ✓{n} x • y) (h : x • y ≡{n}≡ (x • z) •? mw) : y ≡{n}≡ z •? mw :=
-  match mw with
-  | none => cancelableN vxy h
-  | some _ => cancelableN vxy (h.trans (op_assocN.symm))
-
 end cancelableElements
 
 section idFreeElements
-
-theorem IdFree.of_dist {x₁ x₂ : α} {n} (e : x₁ ≡{n}≡ x₂) (h : IdFree x₁) : IdFree x₂ where
-  id_free0_r z v := fun h₂ =>
-    have ee := Dist.le e (Nat.zero_le _)
-    have := calc
-      x₁ • z ≡{0}≡ x₂ • z := op_left_dist z ee
-      _ ≡{0}≡ x₂ := h₂
-      _ ≡{0}≡ x₁ := ee.symm
-    h.id_free0_r _ ((validN_dist_iff ee).mpr v) this
-
-theorem _root_.Iris.OFE.Dist.idFree {x₁ x₂ : α} (e : x₁ ≡{n}≡ x₂) : IdFree x₁ ↔ IdFree x₂ :=
-  ⟨.of_dist e, .of_dist e.symm⟩
-
-theorem id_freeN_r {n n'} {x : α} [IdFree x] {y} (v : ✓{n} x) : ¬(x • y ≡{n'}≡ x) :=
-  id_free0_r _ (validN_of_le (Nat.zero_le _) v) |>.imp (·.le (Nat.zero_le _))
-
-theorem id_freeN_l {n n'} {x : α} [IdFree x] {y} (v : ✓{n} x) : ¬(y • x ≡{n'}≡ x) :=
-  id_freeN_r v ∘ Op.comm.dist.trans
-
-theorem id_free_r {x : α} [IdFree x] {y} (v : ✓ x) : ¬(x • y = x) :=
-  fun h => id_free0_r y (valid_iff_validN.mp v 0) h.dist
-
-theorem id_free_l {x : α} [IdFree x] {y} (v : ✓ x) : ¬(y • x = x) :=
-  id_free_r v ∘ Op.comm.trans
 
 theorem discrete_id_free {x : α} [Discrete α] (H : ∀ y, ✓ x → ¬(x • y = x)) : IdFree x where
   id_free0_r y v h := H y (Discrete.discrete_valid v) (Discrete.discrete_0 h)
@@ -1185,9 +1193,6 @@ instance idFree_op_r {x y : α} [IdFree y] [Cancelable x] : IdFree (x • y) whe
 
 instance idFree_op_l {x y : α} [IdFree x] [Cancelable y] : IdFree (x • y) := by
   rw [Op.comm]; exact inferInstance
-
-instance exclusive_idFree {x : α} [Exclusive x] : IdFree x where
-  id_free0_r z v h := exclusive0_l z ((validN_dist_iff h.symm).mp v)
 
 end idFreeElements
 
