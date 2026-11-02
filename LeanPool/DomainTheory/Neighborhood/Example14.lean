@@ -430,56 +430,17 @@ private theorem inter_eq (X Y : Set Token) (hX : mem X) (hY : mem Y) :
     X ∩ Y = master ∨ X ∩ Y = left ∨ X ∩ Y = right ∨ X ∩ Y = leaf00 ∨
       X ∩ Y = leaf01 ∨ X ∩ Y = leaf10 ∨ X ∩ Y = leaf11 ∨ X ∩ Y = (∅ : Set Token) := by
   rcases (mem_iff X).mp hX with rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    rcases (mem_iff Y).mp hY with rfl | rfl | rfl | rfl | rfl | rfl | rfl
-  · exact Or.inl (master_inter _)
-  · exact Or.inr (Or.inl (master_inter _))
-  · exact Or.inr (Or.inr (Or.inl (master_inter _)))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl (master_inter _))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (master_inter _)))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (master_inter _))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (master_inter _)))))))
-  · exact Or.inr (Or.inl (inter_master _))
-  · exact Or.inr (Or.inl (Set.inter_self _))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (left_inter_right)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl (left_inter_leaf00))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (left_inter_leaf01)))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (left_inter_leaf10)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (left_inter_leaf11)))))))
-  · exact Or.inr (Or.inr (Or.inl (inter_master _)))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (right_inter_left)))))))
-  · exact Or.inr (Or.inr (Or.inl (Set.inter_self _)))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (right_inter_leaf00)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (right_inter_leaf01)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (right_inter_leaf10))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (right_inter_leaf11)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl (inter_master _))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl (leaf00_inter_left))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf00_inter_right)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl (Set.inter_self _))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf00_inter_leaf01)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf00_inter_leaf10)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf00_inter_leaf11)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (inter_master _)))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (leaf01_inter_left)))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf01_inter_right)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf01_inter_leaf00)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (Set.inter_self _)))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf01_inter_leaf10)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf01_inter_leaf11)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (inter_master _))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf10_inter_left)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (leaf10_inter_right))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf10_inter_leaf00)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf10_inter_leaf01)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (Set.inter_self _))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf10_inter_leaf11)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (inter_master _)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf11_inter_left)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (leaf11_inter_right)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf11_inter_leaf00)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf11_inter_leaf01)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (leaf11_inter_leaf10)))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (Set.inter_self _)))))))
+    rcases (mem_iff Y).mp hY with rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp only [master_inter, inter_master, Set.inter_self,
+      left_inter_right, right_inter_left, left_inter_leaf10, leaf10_inter_left,
+      left_inter_leaf11, leaf11_inter_left, right_inter_leaf00, leaf00_inter_right,
+      right_inter_leaf01, leaf01_inter_right, leaf00_inter_leaf01, leaf01_inter_leaf00,
+      leaf00_inter_leaf10, leaf10_inter_leaf00, leaf00_inter_leaf11, leaf11_inter_leaf00,
+      leaf01_inter_leaf10, leaf10_inter_leaf01, leaf01_inter_leaf11, leaf11_inter_leaf01,
+      leaf10_inter_leaf11, leaf11_inter_leaf10,
+      left_inter_leaf00, leaf00_inter_left, left_inter_leaf01, leaf01_inter_left,
+      right_inter_leaf10, leaf10_inter_right, right_inter_leaf11, leaf11_inter_right,
+      true_or, or_true]
 
 /-- **Example 1.4.** The binary-tree neighbourhood system on `Δ =
 {Λ,0,1,00,01,10,11}`. -/

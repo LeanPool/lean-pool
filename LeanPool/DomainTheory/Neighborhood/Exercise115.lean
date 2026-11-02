@@ -130,7 +130,9 @@ theorem flat_atom_maximal (n : ℕ) (y : flat.Element)
     simp_all only [mem_bot, flat_master, Set.singleton_ne_univ]
   · have hsub : ({m} : Set ℕ) ⊆ {n} :=
       (flat.principal_le_iff (flat_mem_singleton n) (flat_mem_singleton m)).mp hle
-    exact principal.congr_simp flat (congrArg singleton (hsub rfl)) (flat_mem_singleton m)
+    have hmn : m = n := hsub rfl
+    subst m
+    rfl
 
 /-- **Flat has no strict 3-chain** (`a ⊏ b ⊏ c` is impossible): `⊥` is least and
 atoms are
