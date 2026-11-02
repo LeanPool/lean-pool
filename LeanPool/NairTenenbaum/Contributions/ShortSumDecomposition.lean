@@ -22,6 +22,14 @@ covered by bounded smoothness or the intermediate logarithmic bands.
 
 namespace NairTenenbaum
 
+/-- A nonnegative weight is bounded by the indicators of four covering predicates. -/
+theorem le_sum_four_indicators {p q r s : Prop}
+    [Decidable p] [Decidable q] [Decidable r] [Decidable s]
+    {v : ℝ} (hv : 0 ≤ v) (h : p ∨ q ∨ r ∨ s) :
+    v ≤ (if p then v else 0) + (if q then v else 0) +
+      (if r then v else 0) + (if s then v else 0) := by
+  split_ifs <;> simp_all; linarith
+
 /-- A cutoff past the total mass includes every whole prime power. -/
 theorem primeSelect_range_eq_self {r : ℕ} (n : Tuple r) {q : ℕ} (hq : mass n < q) :
     primeSelect n (Finset.range q) = n := by

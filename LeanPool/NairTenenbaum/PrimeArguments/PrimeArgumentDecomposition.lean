@@ -15,13 +15,6 @@ public import LeanPool.NairTenenbaum.PrimeArguments.PrimeArgumentFirstContributi
 
 namespace NairTenenbaum
 
-private theorem le_four_indicator_sum {p q r s : Prop}
-    [Decidable p] [Decidable q] [Decidable r] [Decidable s]
-    {v : ℝ} (hv : 0 ≤ v) (h : p ∨ q ∨ r ∨ s) :
-    v ≤ (if p then v else 0) + (if q then v else 0) +
-      (if r then v else 0) + (if s then v else 0) := by
-  split_ifs <;> simp_all; linarith
-
 /-- Prime arguments above the analytic scale in an integer interval. Absolute
 values allow the decomposition to be stated independently of interval position. -/
 noncomputable def PolynomialSystem.primeIntegerSum {k r : ℕ} (P : PolynomialSystem k r)
@@ -74,7 +67,7 @@ theorem PolynomialSystem.primeIntegerSum_le_four_contributions {k r : ℕ} (P : 
     fun ht => hcut.trans_lt ht
   by_cases hprime : t.natAbs.Prime ∧ x < t.natAbs
   · simp only [hprime.1, hprime.2, hlarge hprime.2, and_true, ite_true]
-    exact le_four_indicator_sum hnonneg H'
+    exact le_sum_four_indicators hnonneg H'
   · rw [ite_eq_right hprime]
     exact add_nonneg (add_nonneg (add_nonneg (ite_nonneg hnonneg le_rfl)
       (ite_nonneg hnonneg le_rfl)) (ite_nonneg hnonneg le_rfl)) (ite_nonneg hnonneg le_rfl)

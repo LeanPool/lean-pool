@@ -102,7 +102,7 @@ theorem exists_smoothShortSum_mainTerm_bound {g : ℕ} (hg : 0 < g)
         (mul_le_mul_of_nonneg_left Hshort (Real.exp_pos _).le))
       exact H.trans_eq (by dsimp [V]; ring)
     have HC : E₁ * K + C₁ P.badDiscriminant ≤ (E₁ + E₂) * K + C₁ P.badDiscriminant := by
-      nlinarith
+      nlinarith only [hE₂, hK]
     exact (Hlarge.trans (mul_le_mul_of_nonneg_right HC hV)).trans_eq (by dsimp [V]; ring)
   · have Hfixed := P.fixedSmooth_sum_power_bound hdeg hF (zero_le_one.trans hB) hσ.le
       j hj (shortInterval x y) s hx₁ hc hq hmargin hvalue
@@ -116,8 +116,7 @@ theorem exists_smoothShortSum_mainTerm_bound {g : ℕ} (hg : 0 < g)
         _ ≤ E₂ * (K * V) := mul_le_mul_of_nonneg_left Herror' hE₂.le
         _ = _ := by ring
     have HC : E₂ * K ≤ (E₁ + E₂) * K + C₁ P.badDiscriminant := by
-      have := hC₁ P.badDiscriminant
-      nlinarith
+      nlinarith only [hE₁, hK, hC₁ P.badDiscriminant]
     exact (Hsmall.trans (mul_le_mul_of_nonneg_right HC hV)).trans_eq (by dsimp [V]; ring)
 
 /-- Corollary 6 with the nonconstancy of the restricted coordinate explicit.

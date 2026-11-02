@@ -102,6 +102,6 @@ theorem PolynomialSystem.integerSum_le_four_contributions {k r : ℕ} (P : Polyn
     · exact Or.inr (Or.inl (Finset.mem_filter.mp (H.mem_exceptionalSet hε hx ht)).2)
     · exact Or.inr (Or.inr (Or.inl (Finset.mem_filter.mp (H.mem_exceptionalSet hε hx ht)).2))
     · exact Or.inr (Or.inr (Or.inr ((P.hasIntermediatePrefixReal_iff hT _ _ _ _ t).mp H)))
-  split_ifs <;> simp_all; linarith
+  exact le_sum_four_indicators hnonneg H'
 
 end NairTenenbaum
