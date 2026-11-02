@@ -1231,7 +1231,7 @@ theorem capped_overflow_le (n : ℕ) (G : SimpleGraph (Fin n))
       = ∑ w ∈ Q, (sigma (G.degree w) * ((G.degree w : ℝ))
         - (5 / 4) * ((G.degree w : ℝ) - 4)) := by rw [hQ]
   rw [hQC]
-  nlinarith [hMpart, hQpart, hgrid]
+  linarith only [hMpart, hQpart, hgrid]
 
 /-! ## The exchange identity and the summed transfer -/
 

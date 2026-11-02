@@ -87,7 +87,8 @@ theorem uniform_power_four (t v : ℕ)
     dsimp [u, A] at *
     linarith
   have hcoef : 0 ≤ 773272 - 81 * u ^ 2 - 5297 * u := by
-    nlinarith [sq_nonneg (u - 36), sq_nonneg u]
+    have hsq := pow_le_pow_left₀ hu0 hu36 2
+    nlinarith only [hsq, hu36]
   have hgap :
       0 ≤ (A + 10 * T) ^ 4 - (T - 9) * A ^ 4 := by
     have hid :
@@ -97,10 +98,14 @@ theorem uniform_power_four (t v : ℕ)
       dsimp [A, u, T]
       ring
     rw [hid]
+    clear_value u
+    clear * - hu0 hcoef
     positivity
   have hend : (T - 9) * A ^ 4 ≤ (A + 10 * T) ^ 4 := by linarith
   have hcross : (A + 10 * T) * (5 * V) ≤ (5 * V + 10 * T) * A := by
-    nlinarith
+    have hmonotone := mul_le_mul_of_nonneg_left hVA
+      (show 0 ≤ 10 * T by linarith only [hT43])
+    nlinarith only [hmonotone]
   have hcross4 := pow_le_pow_left₀ (by positivity) hcross 4
   have hcross4' :
       (A + 10 * T) ^ 4 * (5 * V) ^ 4 ≤

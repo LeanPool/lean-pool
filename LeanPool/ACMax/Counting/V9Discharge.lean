@@ -448,7 +448,7 @@ theorem girth_excess_bound_holds (n : ℕ) (G : SimpleGraph (Fin n)) : GirthExce
       obtain ⟨d, hd⟩ : ∃ d, S.card = NN + d := ⟨S.card - NN, by omega⟩
       have h1 : d * (2 * r + 1) ≤ d * NN := Nat.mul_le_mul_left d h2r1
       rw [hd]
-      nlinarith [h1]
+      linarith [h1, Nat.zero_le (d * NN), Nat.zero_le (d ^ 2)]
     -- (iv) Collide with the side condition.
     omega
   -- Lift the short cycle from the component graph to `G` and convert to `ZMod`.

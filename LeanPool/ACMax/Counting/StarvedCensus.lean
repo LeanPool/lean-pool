@@ -864,6 +864,7 @@ theorem owner_sat_independence {n : ℕ} [Nonempty (Fin n)] (hn : 39 ≤ n)
     have e2 : (![o, s, t] : Fin 3 → Fin n) 2 = t := rfl
     refine master_cycle_fires (k := 3) (by norm_num) G hm h3 ![o, s, t] ?_ ?_ ?_ ?_
     · intro i j hij
+      clear * - hij hne_os hne_ot hne_st
       fin_cases i <;> fin_cases j <;> simp_all <;> rfl
     · intro i
       fin_cases i
@@ -1655,6 +1656,7 @@ theorem sat_sat_independence {n : ℕ} [Nonempty (Fin n)] (hn : 48 ≤ n)
     have e3 : (![s₁, t₁, s₂, t₂] : Fin 4 → Fin n) 3 = t₂ := rfl
     refine master_cycle_fires (k := 4) (by norm_num) G hm h3 ![s₁, t₁, s₂, t₂] ?_ ?_ ?_ ?_
     · intro i j hij
+      clear * - hij hne ht12ne hs1t1 hs1t2 hs2t1 hs2t2
       fin_cases i <;> fin_cases j <;> simp_all <;> rfl
     · intro i
       fin_cases i
