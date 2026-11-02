@@ -5,12 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Tauto
-public import LeanPool.ACMax.Spectral.AlgConn
-public import LeanPool.ACMax.Spectral.RayleighUpper
 public import LeanPool.ACMax.Spectral.TestVector
 
 /-!

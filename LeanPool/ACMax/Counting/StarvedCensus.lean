@@ -5,14 +5,9 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.GCongr
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
 public import LeanPool.ACMax.Counting.Moats
 public import LeanPool.ACMax.Counting.ResidualInterface
 public import LeanPool.ACMax.Counting.XBoundAssembly
-public import LeanPool.ACMax.Reduction.Residual
 
 /-!
 # The starved-world census and the owner-choke rows

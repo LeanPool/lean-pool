@@ -5,13 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.IntervalCases
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Push
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Tauto
-public import LeanPool.ACMax.Reduction.Residual
 public import LeanPool.ACMax.Counting.FarPair
 public import LeanPool.ACMax.Counting.DoubleStar
 

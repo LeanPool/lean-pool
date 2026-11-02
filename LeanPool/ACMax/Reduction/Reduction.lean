@@ -5,12 +5,8 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Convert
-public import Mathlib.Tactic.Ring
 public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
-public import LeanPool.ACMax.Spectral.AlgConn
 public import LeanPool.ACMax.Cuts.LowDegreeVertex
-public import LeanPool.ACMax.Cuts.WeightedCut
 public import LeanPool.ACMax.Cuts.Ind2K2
 public import LeanPool.ACMax.Cuts.TriangleFree2K2
 public import LeanPool.ACMax.Cuts.Disconnected

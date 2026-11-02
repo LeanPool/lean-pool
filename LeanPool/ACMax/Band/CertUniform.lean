@@ -6,7 +6,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 module
 
 public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.Positivity
 
@@ -173,6 +172,8 @@ theorem uniform_cubic_arith (t v ell : ℕ)
   have hb79 : b ≤ 79 := by dsimp [b]; linarith
   have hLa : L = a + 5 := by dsimp [a]; ring
   have hTb : T = b + 43 := by dsimp [b]; ring
+  -- Keep positivity in the shifted coordinates instead of expanding their definitions.
+  clear_value a b
   have hbracket :
       0 ≤ 4 * L ^ 3 - 6 * L ^ 2 + 8 * L - 3 * T + 30 := by
     have hid :
@@ -207,6 +208,7 @@ theorem uniform_cubic_arith (t v ell : ℕ)
       rw [hLa, hTb]
       ring
     rw [hid]
+    clear * - ha0 hb0 hcoef
     positivity
   let Q : ℤ :=
     (T - 10) * (A + X) + 5 * T * (T - 2 * L - 10)
@@ -214,7 +216,9 @@ theorem uniform_cubic_arith (t v ell : ℕ)
     have hAX : 10 * T ≤ A + X := by linarith
     have hcore : 0 ≤ 3 * T - 2 * L - 30 := by linarith
     dsimp [Q]
-    nlinarith
+    have hproduct := mul_le_mul_of_nonneg_left hAX (show 0 ≤ T - 10 by omega)
+    have hnonneg := mul_nonneg (show 0 ≤ 5 * T by omega) hcore
+    nlinarith only [hproduct, hnonneg]
   have hPX : 0 ≤ P X := by
     by_cases heq : A = 5 * T
     · have hX : X = 5 * T := by linarith
@@ -229,7 +233,15 @@ theorem uniform_cubic_arith (t v ell : ℕ)
         ring
       have hmul : 0 ≤ (A - 5 * T) * P X := by
         rw [hchord]
-        positivity
+        exact add_nonneg
+          (add_nonneg (mul_nonneg (sub_nonneg.mpr hXA) hPlo)
+            (mul_nonneg (sub_nonneg.mpr hTX) hPhi))
+          (mul_nonneg
+            (mul_nonneg
+              (mul_nonneg
+                (mul_nonneg (by norm_num) hwidth.le)
+                (sub_nonneg.mpr hXA))
+              (sub_nonneg.mpr hTX)) hQ)
       exact nonneg_of_mul_nonneg_right hmul hwidth
   have hdesiredZ :
       3 * (T - 10) * V ^ 3 ≤
@@ -331,6 +343,13 @@ theorem uniform_region_bounds (n X h : ℕ)
   dsimp
   omega
 
+/-- Convert the quadratic census bound into the strict power-certificate coefficient. -/
+theorem uniform_count_bound (t v : ℕ) (ht10 : 10 ≤ t) (hv : 1 ≤ v)
+    (hpoly : 10 * v + 1 + 9 * t ≤ t * t) :
+    t * (v - 1) + 1 ≤ (t - 10) * (v + t) := by
+  zify [ht10, hv] at hpoly ⊢
+  nlinarith only [hpoly]
+
 theorem sum_cert_of_power {t v ell : ℕ}
     (ht10 : 10 ≤ t)
     (hA : t * (v - 1) + 1 ≤ (t - 10) * (v + t))
@@ -391,8 +410,8 @@ theorem band_cert_uniform_48_122 (n X h : ℕ)
   have hsquare : 43 * t ≤ t * t := Nat.mul_le_mul_right t ht43
   have hlinear : 10 * v + 1 + 9 * t ≤ 43 * t := by omega
   have hpoly : 10 * v + 1 + 9 * t ≤ t * t := hlinear.trans hsquare
-  have hA : t * (v - 1) + 1 ≤ (t - 10) * (v + t) := by
-    nlinarith
+  have hA : t * (v - 1) + 1 ≤ (t - 10) * (v + t) :=
+    uniform_count_bound t v ht10 hv hpoly
   have hpower := uniform_power_certificate t v ell
     ht43 htv hv122 hell4 hell10 hlin
   change t * (v - 1) * v ^ ell <

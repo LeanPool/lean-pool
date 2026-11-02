@@ -5,14 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Convert
-public import Mathlib.Tactic.GCongr
-public import Mathlib.Tactic.Lift
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Push
-public import Mathlib.Tactic.Ring
-public import LeanPool.ACMax.Counting.CompactCell
-public import LeanPool.ACMax.Counting.DoubleStar
 public import LeanPool.ACMax.Counting.StarvedCensus
 public import LeanPool.ACMax.Counting.SqrtGirth
 

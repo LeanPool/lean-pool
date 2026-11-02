@@ -104,12 +104,13 @@ theorem moore_strip_core_sharp {N X H : ℤ} (hN : 123 ≤ N) (hH : 0 ≤ H) (hH
       ≤ 1000 * (384 * ((N - H) * (2 * N - X - 23))) := by nlinarith [hvpos, hQ]
   -- the excess factor, pushed to the master maximum
   have hQ2 : (16 * N + 7 * H - 150) ^ 2 ≤ (10 * (2 * N - X - 35)) ^ 2 := by
-    nlinarith [hQpos, hQ]
+    exact pow_le_pow_left₀ hQpos hQ 2
   have hmul : (6 * N + 160 - 23 * H) * (16 * N + 7 * H - 150) ^ 2
       ≤ (10 * (N - 4 - X - 3 * H)) * (10 * (2 * N - X - 35)) ^ 2 :=
     mul_le_mul hP hQ2 (sq_nonneg _) (by linarith)
   have hB : 23 * ((6 * N + 160 - 23 * H) * (16 * N + 7 * H - 150) ^ 2)
-      ≤ 1000 * (23 * ((N - 4 - X - 3 * H) * (2 * N - X - 35) ^ 2)) := by nlinarith [hmul]
+      ≤ 1000 * (23 * ((N - 4 - X - 3 * H) * (2 * N - X - 35) ^ 2)) := by
+    convert mul_le_mul_of_nonneg_left hmul (by norm_num : (0 : ℤ) ≤ 23) using 1; ring
   have htv := moore_strip_twovar_sharp hN hH h17
   linarith [hA, hB, htv]
 
@@ -134,13 +135,19 @@ theorem moore_strip_arith_sharp {N X H R : ℤ} (hN : 123 ≤ N)
   have hcore := moore_strip_core_sharp hN hH hHX hmaster
   -- the ball term: `12(2R + 1) = 24R + 12 ≥ 2N − X − 23`
   have hball : (N - H) * (2 * N - X - 23) ≤ 12 * ((N - H) * (2 * R + 1)) := by
-    nlinarith [hvpos, hR]
+    convert mul_le_mul_of_nonneg_left (add_le_add_right hR 12) hvpos using 1 <;> ring
   -- the excess term
-  have hsq : (2 * N - X - 35) ^ 2 ≤ 576 * R ^ 2 := by nlinarith [hR, hApos]
-  have hRR : 23 * R ^ 2 ≤ 8 * (3 * R ^ 2 - R) := by nlinarith [hR8]
-  have hexc : 23 * (2 * N - X - 35) ^ 2 ≤ 4608 * (3 * R ^ 2 - R) := by nlinarith [hsq, hRR]
+  have hsq : (2 * N - X - 35) ^ 2 ≤ 576 * R ^ 2 := by
+    convert pow_le_pow_left₀ hApos hR 2 using 1; ring
+  have hRR : 23 * R ^ 2 ≤ 8 * (3 * R ^ 2 - R) := by
+    nlinarith only [mul_nonneg (show 0 ≤ R by omega) (sub_nonneg.mpr hR8)]
+  have hexc : 23 * (2 * N - X - 35) ^ 2 ≤ 4608 * (3 * R ^ 2 - R) := by
+    have hleft := mul_le_mul_of_nonneg_left hsq (by norm_num : (0 : ℤ) ≤ 23)
+    have hright := mul_le_mul_of_nonneg_left hRR (by norm_num : (0 : ℤ) ≤ 576)
+    nlinarith only [hleft, hright]
   have hB : 23 * ((N - 4 - X - 3 * H) * (2 * N - X - 35) ^ 2)
-      ≤ 4608 * ((N - 4 - X - 3 * H) * (3 * R ^ 2 - R)) := by nlinarith [hq, hexc]
+      ≤ 4608 * ((N - 4 - X - 3 * H) * (3 * R ^ 2 - R)) := by
+    convert mul_le_mul_of_nonneg_left hexc hq using 1 <;> ring
   linarith [hcore, hball, hB]
 
 /-! ## The graph-level dispatch -/

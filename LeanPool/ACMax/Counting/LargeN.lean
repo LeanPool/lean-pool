@@ -5,18 +5,8 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.IntervalCases
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Push
-public import Mathlib.Tactic.Ring
-public import LeanPool.ACMax.Counting.CompactLedgers
 public import LeanPool.ACMax.Counting.XBoundAssembly
-public import LeanPool.ACMax.Counting.CompactCell
 public import LeanPool.ACMax.Cuts.TwoCut
-public import LeanPool.ACMax.Counting.HubCross
-public import LeanPool.ACMax.Counting.FarPair
-public import LeanPool.ACMax.Reduction.Residual
 
 /-!
 # The large-`n` assembly and the cloud bound

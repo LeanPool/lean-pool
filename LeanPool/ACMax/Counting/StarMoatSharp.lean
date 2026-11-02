@@ -7,10 +7,7 @@ module
 
 public import LeanPool.ACMax.Counting.StarNeighbors
 public import LeanPool.ACMax.Counting.Incidence
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Push
 public import LeanPool.ACMax.Counting.Moats
-public import LeanPool.ACMax.Counting.SparseCore
 public import LeanPool.ACMax.Counting.TripleCensus
 public import LeanPool.ACMax.Counting.DecoratedC4
 
