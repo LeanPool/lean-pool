@@ -10,12 +10,12 @@ public import LeanPool.EhrhartVolumeInequality.FourierAnalysis
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import all LeanPool.EhrhartVolumeInequality.FourierAnalysis
-import all Mathlib.MeasureTheory.Function.LpSpace.Basic
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Continuity
 import Mathlib.Analysis.Calculus.DerivativeTest
 import Mathlib.Analysis.Convex.Integral
 import Mathlib.Analysis.Matrix.Order
+import all Mathlib.MeasureTheory.Function.LpSpace.Basic
 
 /-!
 # Ehrhart volume inequality: Regularization
@@ -411,7 +411,7 @@ private theorem angularWeakScalarResolventCLM_fixed_iff_graph_zero
             angularDolbeaultGraphAmbient a))
           (WithLp.snd (angularWeakDolbeaultResolvent a f :
             angularDolbeaultGraphAmbient a)) = 0 := by
-      linear_combination hvar
+      exact add_eq_left.mp hvar
     have hgradient :
         WithLp.snd (angularWeakDolbeaultResolvent a f :
           angularDolbeaultGraphAmbient a) = 0 :=
@@ -420,9 +420,7 @@ private theorem angularWeakScalarResolventCLM_fixed_iff_graph_zero
         (angularWeakDolbeaultResolvent a f :
           angularDolbeaultGraphAmbient a) =
             WithLp.toLp 2 (f, (0 : angularWeightedFormL2 a)) := by
-      apply (WithLp.prodContinuousLinearEquiv 2 ℂ
-        (angularWeightedScalarL2 a)
-        (angularWeightedFormL2 a)).injective
+      apply WithLp.ofLp_injective 2
       exact Prod.ext hscalar hgradient
     rw [← hpair]
     exact (angularWeakDolbeaultResolvent a f).property
@@ -1724,7 +1722,7 @@ private theorem exists_sourceJointCoverCircle_uniform_bounds
   have hzmem : z ∈ Metric.closedBall q S := by
     apply Metric.mem_closedBall.mpr
     dsimp [S]
-    nlinarith [abs_nonneg R, norm_nonneg v,
+    linarith [abs_nonneg R, norm_nonneg v,
       mul_nonneg (abs_nonneg R) (norm_nonneg v)]
   refine ⟨⟨hL ⟨_, hzmem, rfl⟩,
     hC ⟨_, hzmem, rfl⟩⟩, ?_⟩
@@ -1827,13 +1825,13 @@ private theorem sourceJointCover_complex_line_submean_of_convergent_finite_appro
     have hmprod :
         (2 * Real.pi) * F (i m) (q m) ≤
           ∫ θ in 0..2 * Real.pi, u (γ m θ) := by
-      nlinarith [(le_div_iff₀ Real.two_pi_pos).mp hmdiv]
+      linarith [(le_div_iff₀ Real.two_pi_pos).mp hmdiv]
     rw [← intervalIntegral.integral_of_le Real.two_pi_pos.le,
       intervalIntegral.integral_sub
         (hangleint m) intervalIntegrable_const]
     simp only [intervalIntegral.integral_const,
       sub_zero, smul_eq_mul]
-    nlinarith
+    linarith
   have hshiftint (m : ℕ) :
       Integrable
         (fun θ : ℝ => u (γ m θ) - L)
@@ -1922,13 +1920,13 @@ private theorem sourceJointCover_complex_line_submean_of_convergent_finite_appro
   have hprod :
       (2 * Real.pi) * u q₀ ≤
         ∫ θ in 0..2 * Real.pi, u (γ₀ θ) := by
-    nlinarith
+    linarith
   have hdiv :
       u q₀ ≤
         (∫ θ in 0..2 * Real.pi, u (γ₀ θ)) /
           (2 * Real.pi) := by
     apply (le_div_iff₀ Real.two_pi_pos).mpr
-    nlinarith
+    linarith
   simpa only [mul_comm, mul_inv_rev, ge_iff_le, div_eq_mul_inv] using hdiv
 
 private theorem sourceJointCover_upperRegularization_family_complex_line_submean_all_radius
@@ -2145,7 +2143,7 @@ private theorem support_sourceJointTrueRadialBump_subset_closedBall
     have hprod : 0 ≤ (((k + 1 : ℕ) : ℝ) * ‖q.1 i‖) :=
       mul_nonneg hk.le (norm_nonneg _)
     apply (le_div_iff₀ hk).mpr
-    nlinarith
+    nlinarith only [hsq]
   have haux :
       ‖q.2‖ ≤ 1 / ((k + 1 : ℕ) : ℝ) := by
     have hs := sourceJointRadialNormSq_auxiliary_le q
@@ -2158,7 +2156,7 @@ private theorem support_sourceJointTrueRadialBump_subset_closedBall
     have hprod : 0 ≤ (((k + 1 : ℕ) : ℝ) * ‖q.2‖) :=
       mul_nonneg hk.le (norm_nonneg _)
     apply (le_div_iff₀ hk).mpr
-    nlinarith
+    nlinarith only [hsq]
   rw [Metric.mem_closedBall, dist_zero_right, Prod.norm_def,
     max_le_iff]
   exact ⟨(pi_norm_le_iff_of_nonneg (by positivity)).mpr hcoord,
@@ -3931,7 +3929,7 @@ private theorem hasDerivAt_momentStrictRadialCoordinateDerivative
     simp only [neg_add_cancel, Real.exp_zero]
   refine h.congr_deriv ?_
   congr 1
-  nlinarith [he]
+  linarith [he]
 
 private theorem momentStrictRadialCoordinateSecond_pos (y : ℝ) :
     0 < momentStrictRadialCoordinateSecond y := by
@@ -8982,7 +8980,7 @@ private theorem barPartial_complexReal_convolution_eq_of_compact_green
       (2 : ℂ) *
         (∫ t : E, G j t * (κ (x - t) : ℂ) ∂μ) := by
     rw [integral_neg] at hnegative
-    linear_combination -hnegative
+    exact neg_injective (hnegative.trans (neg_mul _ _))
   have hderiv := hκcompact.hasFDerivAt_convolution_right
     L hg hκ x
   have hint : Integrable

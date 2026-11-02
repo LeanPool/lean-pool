@@ -1880,7 +1880,7 @@ private theorem exists_smooth_convex_potential_uniformly_close {n : ℕ}
     dsimp [δ]
     rw [← mul_div_assoc]
     apply (div_lt_iff₀ (by linarith : 0 < L + 1)).mpr
-    nlinarith
+    linarith
   rw [Real.dist_eq] at hdist
   exact lt_of_le_of_lt hdist (by simpa only [ρ, L] using hsmall)
 
@@ -2246,11 +2246,11 @@ private theorem exists_phase_maximizer {n : ℕ}
     have hrange : (C - phase u φ 0) / δ ≤ R :=
       le_max_right _ _
     have hscale := (div_le_iff₀ hδ).mp hrange
-    nlinarith
+    linarith
   have hnorm := SupportFunction.norm_le_sum_abs x
   have hscale := mul_lt_mul_of_pos_left hxnorm hδ
   have hcoerce := hcoercive x
-  nlinarith [mul_le_mul_of_nonneg_left hnorm hδ.le]
+  linarith [mul_le_mul_of_nonneg_left hnorm hδ.le]
 
 private theorem legendreTransform_eq_of_maximizer {n : ℕ}
     {u : Space n} {φ : Space n → ℝ}
@@ -2860,7 +2860,7 @@ private theorem convexOn_logarithmicPotential {ι : Type*} [Fintype ι]
       · have hvar :=
           exponentialMoment_sq_le_partition_mul_second
             w order hw t
-        nlinarith
+        linarith
       · exact sq_nonneg _
     · exact hk.le
 
@@ -3073,7 +3073,7 @@ private theorem tendsto_normalized_jetLayercake_profile {n : ℕ}
   have hkne : (k : ℝ) ≠ 0 := by exact_mod_cast Nat.ne_of_gt hkpos
   have hdne :
       (BergmanMonomials.bergmanDimension K k : ℝ) ≠ 0 := by
-    exact_mod_cast
+    exact Nat.cast_ne_zero.mpr <|
       (BergmanMonomials.bergmanDimension_pos K hkpos).ne'
   rw [pow_succ]
   field_simp
@@ -3204,7 +3204,7 @@ private theorem convex_centeredSimplex (n : ℕ) :
     change -(1 : ℝ) ≤ a * x i + b * y i
     have hax : 0 ≤ a * (x i + 1) := mul_nonneg ha (by linarith [hx'.1 i])
     have hby : 0 ≤ b * (y i + 1) := mul_nonneg hb (by linarith [hy'.1 i])
-    nlinarith
+    linarith
   · change (∑ i, (a * x i + b * y i)) ≤ 1
     rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
     calc
@@ -4178,7 +4178,7 @@ private theorem roundedLatticeExponent_coordinate_error {n : ℕ}
   constructor
   · apply (div_le_iff₀ hkreal).mpr
     change (⌊(k : ℝ) * u i⌋ : ℝ) ≤ u i * (k : ℝ)
-    nlinarith
+    linarith
   · change u i - (⌊(k : ℝ) * u i⌋ : ℝ) / (k : ℝ) <
       1 / (k : ℝ)
     have heq :
@@ -5581,7 +5581,7 @@ private theorem exists_uniform_inner_supportBall {n : ℕ}
     have hznorm : ‖z‖ < ρ := by
       rw [hzform, norm_smul, Real.norm_eq_abs]
       norm_num
-      nlinarith
+      linarith
     have hzball : z ∈ Metric.ball (0 : Space n) r := by
       simpa only [Metric.mem_ball, dist_eq_norm, sub_zero] using hznorm.trans hρr
     have hzK : z ∈ K.carrier :=
@@ -5606,7 +5606,7 @@ private theorem exists_uniform_inner_supportBall {n : ℕ}
     have hznorm : ‖z‖ < ρ := by
       rw [hzform, norm_smul, Real.norm_eq_abs]
       norm_num
-      nlinarith
+      linarith
     have hzbound :
         |SupportFunction.pairing z x| ≤
           (d / 4) * ‖x‖ := by
@@ -5637,7 +5637,7 @@ private theorem exists_uniform_inner_supportBall {n : ℕ}
       SupportFunction.pairing_smul_left]
     have hzlow := (abs_le.mp hzbound).1
     norm_num
-    nlinarith [mul_nonneg hd.le (norm_nonneg x)]
+    linarith [mul_nonneg hd.le (norm_nonneg x)]
 
 private theorem realVolume_uniformInnerBall {n : ℕ}
     (c : Space n)
@@ -5975,7 +5975,7 @@ private theorem exists_minimumNormalizedSource_strong_moser_trudinger
     have hscaled := mul_le_mul_of_nonneg_left hc ht.le
     rw [← Real.exp_add]
     apply Real.exp_le_exp.mpr
-    nlinarith
+    linarith
   have hbound :
       minimumNormalizedSourcePartition D ≤
         Real.exp (t * B * minimumNormalizedSourceBodyEnergy D) * I := by
@@ -6038,7 +6038,7 @@ private theorem exists_sourceMomentBerman_superlevel_uniformEnergy
   intro D hL
   have hfunctional := minimumNormalizedSourceBermanFunctional_eq D
   unfold minimumNormalizedSourceBermanFunctional at hfunctional
-  nlinarith [hA D]
+  linarith [hA D]
 
 private theorem exists_sourceMomentBerman_maximizingSequence_uniformEnergy
     {n : ℕ} (K : CenteredBody n) :
@@ -6998,7 +6998,7 @@ private theorem exists_smooth_sourceSupportClipping_recovery {n : ℕ}
     dsimp [δ]
     rw [← mul_div_assoc]
     apply (div_lt_iff₀ (by linarith : 0 < L + 1)).mpr
-    nlinarith
+    linarith
   have hclose : ∀ x : Space n,
       |D.potential x - sourceSupportClipping F R x| < ε := by
     intro x
@@ -8195,13 +8195,13 @@ private theorem exists_finiteEnergyTargetGeodesic_minimum
           (finiteEnergyTargetGeodesic F v t 0 + C) / δ ≤ R :=
         le_max_right 0 _
       have h := (div_le_iff₀ hδ).mp hmax
-      nlinarith
+      linarith
     have hxcoerc := hcoerc x
     have hzeroMin := hmin hzero
     change
       finiteEnergyTargetGeodesic F v t m ≤
         finiteEnergyTargetGeodesic F v t 0 at hzeroMin
-    nlinarith [mul_lt_mul_of_pos_left hnorm hδ]
+    linarith [mul_lt_mul_of_pos_left hnorm hδ]
 
 private def finiteEnergyTargetGeodesicMinimumPoint
     {n : ℕ} {K : CenteredBody n}
