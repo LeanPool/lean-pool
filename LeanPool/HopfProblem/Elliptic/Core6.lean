@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+import Mathlib.AlgebraicTopology.FundamentalGroupoid.InducedMaps
 public import Mathlib.Tactic.NormNum.Parity
 public import Mathlib.AlgebraicTopology.FundamentalGroupoid.FundamentalGroup
 import all Mathlib.Topology.Homotopy.Lifting

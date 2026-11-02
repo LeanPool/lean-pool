@@ -10,6 +10,7 @@ public import Mathlib.Geometry.Manifold.IsManifold.Basic
 public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Foundations.Core3
 public import LeanPool.HopfProblem.Uniformization.CuspUniformization1
+import Mathlib.Geometry.Manifold.Algebra.Structures
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
 import all LeanPool.HopfProblem.Foundations.Core3

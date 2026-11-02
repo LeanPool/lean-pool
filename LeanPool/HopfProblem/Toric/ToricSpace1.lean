@@ -7,7 +7,7 @@ module
 public import Mathlib.Topology.Gluing
 public import Mathlib.Tactic.NormNum.Parity
 public import Mathlib.Topology.Compactification.OnePoint.ProjectiveLine
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 
 public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Pi1.FundamentalGroupVanKampen1

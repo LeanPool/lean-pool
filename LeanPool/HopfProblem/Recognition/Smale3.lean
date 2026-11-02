@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+import Mathlib.Geometry.Manifold.Algebra.Structures
 public import Mathlib.Tactic.NormNum.Parity
 public import Mathlib.Analysis.SpecialFunctions.Artanh
 public import Mathlib.Algebra.Ring.IsFormallyReal
