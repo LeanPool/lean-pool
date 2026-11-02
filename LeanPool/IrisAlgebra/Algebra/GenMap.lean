@@ -334,9 +334,6 @@ theorem GenMap.alter_valid {g : GenMap β} (Hb : ✓{n} b) (Hg : ✓{n} g) :
   · exact Hb
   · exact Hg k
 
-theorem GenMap.valid_exists_fresh {g : GenMap β} (_Hv : ✓{n} g) : ∃ a : Nat, g.car a = none :=
-  g.exists_fresh
-
 theorem GenMap.singleton_map_op (x : Nat) (y1 y2 : β) :
     (singleton x y1 : GenMap β) • singleton x y2 = singleton x (y1 • y2) := by
   apply GenMap.ext

@@ -459,14 +459,6 @@ theorem fmap_some_dist [OFE β] (f : α → β) {mx : Option α} {y : β} {n} :
     | some x => exact ⟨x, rfl, (some_dist_some.mp h).symm⟩
   · rintro ⟨x, rfl, hd⟩; exact some_dist_some.mpr hd.symm
 
-instance [OFE α] [Discrete α] : Discrete (Option α) where
-  discrete_0 {x y} H :=
-    match x, y with
-    | none, none => rfl
-    | some _, some _ => congrArg some (discrete_0 H)
-    | none, some _ => H.elim
-    | some _, none => H.elim
-
 instance Option.some.ne [OFE α] : OFE.NonExpansive (some : α → Option α) := ⟨fun _ _ _ => id⟩
 
 instance Option.some_is_discrete [OFE α] {e : α} [OFE.DiscreteE e] : OFE.DiscreteE (some e) where
@@ -1727,7 +1719,7 @@ theorem fixpoint_proper [COFE α] [Inhabited α] {f g : α → α} [Contractive 
 
 @[elab_as_elim]
 theorem OFE.ContractiveHom.fixpoint_ind [COFE α] [Inhabited α] (f : α -c> α)
-    (P : α → Prop) (HProper : ∀ A B : α, A = B → P A → P B) (x : α) (Hbase : P x)
+    (P : α → Prop) (x : α) (Hbase : P x)
     (Hind : ∀ x, P x → P (f x)) (Hlim : LimitPreserving P) :
     P f.fixpoint := by
   let chain : Chain α := by
@@ -1738,7 +1730,7 @@ theorem OFE.ContractiveHom.fixpoint_ind [COFE α] [Inhabited α] (f : α -c> α)
       cases i <;> simp only [Nat.le_zero_eq, Nat.add_eq_zero_iff, Nat.succ_ne_self, and_false,
           Nat.add_le_add_iff_right] at H
       exact Contractive.succ _ <| IH H
-  refine HProper _ _ (fixpoint_unique (f := f) (x := COFE.compl chain) ?_) ?_
+  refine Eq.mp (congrArg P (fixpoint_unique (f := f) (x := COFE.compl chain) ?_)) ?_
   · refine eq_dist_2 fun n => ?_
     apply COFE.conv_compl.trans
     refine .trans ?_ (f.ne.ne COFE.conv_compl).symm
@@ -1775,15 +1767,15 @@ theorem fixpointK_ne [COFE α] [Inhabited α] (k : Nat) (f g : α → α)
   fixpoint_dist (repeat_dist f g Hfg k)
 
 theorem fixpointK_proper [COFE α] [Inhabited α] (k : Nat) (f g : α → α)
-    [Contractive (Nat.repeat f k)] [Contractive (Nat.repeat g k)] [NonExpansive f]
+    [Contractive (Nat.repeat f k)] [Contractive (Nat.repeat g k)]
     (Hfg : ∀ z, f z = g z) : fixpointK k f = fixpointK k g :=
-  eq_dist.mpr fun _ => fixpointK_ne k f g fun z => (Hfg z).dist
+  funext Hfg ▸ rfl
 
 @[elab_as_elim]
 theorem fixpointK_ind [COFE α] [Inhabited α] (k : Nat) (f : α → α) [Contractive (Nat.repeat f k)]
-    (P : α → Prop) (HProper : ∀ A B : α, A = B → P A → P B) (x : α) (Hbase : P x)
+    (P : α → Prop) (x : α) (Hbase : P x)
     (Hind : ∀ x, P x → P (f x)) (Hlim : LimitPreserving P) : P (fixpointK k f) :=
-  OFE.ContractiveHom.fixpoint_ind (Nat.repeat f k).toContractiveHom P HProper x Hbase
+  OFE.ContractiveHom.fixpoint_ind (Nat.repeat f k).toContractiveHom P x Hbase
     (fun _ Hy => Nat.repeat_ind f Hind Hy k) Hlim
 
 end Fixpoint

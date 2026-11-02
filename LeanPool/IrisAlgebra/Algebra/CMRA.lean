@@ -1301,66 +1301,6 @@ instance ucmraMonoidOps {α : Type _} [UORA α] : Algebra.MonoidOps (op (α := �
 
 end ucmra
 
-section Leibniz
-
-theorem assoc_L {x y z : α} : x • (y • z) = (x • y) • z := assoc
-
-theorem comm_L {x y : α} : x • y = y • x := comm
-
-theorem pcore_op_left_L {x cx : α} (h : pcore x = some cx) : cx • x = x :=
-   pcore_op_left h
-
-theorem pcore_idem_L {x cx : α} (h : pcore x = some cx) : pcore cx = some cx :=
-  pcore_idem h
-
-theorem op_opM_assoc_L {x y : α} {mz} : (x • y) •? mz = x • (y •? mz) :=
-  op_opM_assoc _ _ _
-
-theorem pcore_op_right_L {x cx : α} (h : pcore x = some cx) : x • cx = x :=
-  pcore_op_right h
-
-theorem pcore_op_self_L {x cx : α} (h : pcore x = some cx) : cx • cx = cx :=
-  pcore_op_self h
-
-theorem core_id_dup_L {x : α} [CoreId x] : x • x = x :=
-  op_self x
-
-theorem op_core_L {x : α} [IsTotal α] : x • core x = x :=
-  op_core x
-
-theorem core_op_L {x : α} [IsTotal α] : core x • x = x :=
-  core_op x
-
-theorem core_idem_L {x : α} [IsTotal α] : core (core x) = core x :=
-  core_idem x
-
-theorem core_op_core_L {x : α} [IsTotal α] : core x • core x = core x :=
-  core_op_core
-
-theorem coreId_iff_core_eq_self {x : α} [IsTotal α] : CoreId x ↔ core x = x :=
-  coreId_iff_core_eqv_self
-
-theorem core_eq_self {x : α} [IsTotal α] [c : CoreId x] : core x = x :=
-  coreId_iff_core_eq_self.mp c
-
-end Leibniz
-
-section UORA
-
-variable {α : Type _} [UORA α]
-
-theorem ucmra_unit_valid : ✓ (unit : α) := unit_valid
-
-theorem ucmra_unit_left_id {x : α} : unit • x = x := unit_left_id
-
-theorem ucmra_pcore_unit : pcore (unit : α) = some unit := pcore_unit
-
-theorem unit_left_id_L {x : α} : unit • x = x := unit_left_id
-
-theorem unit_right_id_L {x : α} : x • unit = x := unit_right_id
-
-end UORA
-
 end ORA
 
 /-- A morphism between CMRAs is defined to be a non-expansive function which
