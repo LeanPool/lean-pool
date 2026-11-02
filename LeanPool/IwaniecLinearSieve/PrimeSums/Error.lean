@@ -9,6 +9,7 @@ module
 public import LeanPool.IwaniecLinearSieve.Vendor.PrimeNumberTheoremAnd.StrongPNT
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 
 /-!
 # The de la Vallée Poussin error term
