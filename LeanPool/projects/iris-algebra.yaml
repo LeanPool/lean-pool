@@ -1,0 +1,78 @@
+slug: iris-algebra
+title: Ordered resource algebras and the Iris recursive domain model
+summary: Constructs the algebraic core of the Iris proposition model from complete step-indexed
+  spaces, ordered resource algebras, finite-support ghost maps, and monotone predicates. Proves
+  guarded fixed-point unfolding and uniqueness, solves contractive mixed-variance domain equations,
+  and constructs mutually inverse folding and unfolding maps for the recursive proposition model.
+  Includes the October 2026 ordered-resource generalization and reusable morphism, product, optional-resource,
+  and frame-preserving update infrastructure. The import is the mathematical dependency closure
+  of IProp; it does not include the proof mode, HeapLang, program logics, or claims about their
+  soundness.
+branch: program semantics
+entry_module: LeanPool.IrisAlgebra
+authors:
+- The Iris-Lean Contributors
+contributors:
+- Mario Carneiro
+- Sebastian Graf
+- Sergei Stepanenko
+- Markus de Medeiros
+- Zongyuan Liu
+- Puming Liu
+- Janine Lohse
+- Сухарик (@suhr)
+source:
+  title: Iris in Lean and the ordered resource algebra extension
+  arxiv: '2609.24252'
+  url: https://github.com/leanprover-community/iris-lean
+  github_repo: leanprover-community/iris-lean
+  commit: 81bc35088ba67d465db008f5261a9b341eb6cf6c
+  announcement: https://leanprover.zulipchat.com/#narrow/channel/579630-Project-announcements/near/626551839
+  announcement_date: '2026-09-24T08:53:06Z'
+  material_completion: https://github.com/leanprover-community/iris-lean/commit/81bc35088ba67d465db008f5261a9b341eb6cf6c
+  material_completion_date: '2026-10-14T14:22:42Z'
+  original_copyright_notices:
+  - Copyright (c) The Iris-Lean Contributors
+  - Copyright (c) 2025 Сухарик. All rights reserved.
+  - Copyright (c) 2025 Mario Carneiro. All rights reserved.
+  - Copyright (c) 2026 Zongyuan Liu. All rights reserved.
+  - Copyright (c) 2025 Markus de Medeiros. All rights reserved.
+  - Copyright (c) 2025. All rights reserved.
+  - Copyright (c) 2023 Mario Carneiro. All rights reserved.
+  - Copyright (c) 2026 Markus de Medeiros. All rights reserved.
+license: Apache-2.0
+status: verified
+provenance: human
+main_declarations:
+- Iris.IProp.fold_unfold
+- Iris.IProp.unfold_fold
+main_results:
+- declaration: Iris.fixpoint_unfold
+  informal: Every contractive endomorphism of an inhabited complete ordered family of equivalences
+    has a constructed fixed point satisfying its unfolding equation.
+- declaration: Iris.fixpoint_unique
+  informal: Any fixed point of a contractive endomorphism of an inhabited complete ordered family
+    of equivalences equals the constructed fixed point.
+- declaration: Iris.COFE.OFunctor.Fix.fold_unfold
+  informal: For a contractive mixed-variance functor preserving complete step-indexed spaces,
+    with an inhabited value at the lifted unit space, folding after unfolding is the identity
+    on its constructed recursive domain.
+- declaration: Iris.COFE.OFunctor.Fix.unfold_fold
+  informal: Under the same functor, completeness, and inhabitation hypotheses, unfolding after
+    folding is the identity on the functor applied to the recursive domain.
+- declaration: Iris.IProp.fold_unfold
+  informal: For every family of contractive affine resource functors, folding after unfolding
+    is the identity on the associated monotone proposition model.
+- declaration: Iris.IProp.unfold_fold
+  informal: For every such family of resource functors, unfolding after folding is the identity
+    on the associated guarded recursive pre-proposition domain.
+tags:
+- program-semantics
+- separation-logic
+- resource-algebras
+- guarded-recursion
+- domain-equations
+msc:
+- 03B70
+- 68Q55
+- 68N30

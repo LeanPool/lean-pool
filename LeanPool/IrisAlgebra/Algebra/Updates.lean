@@ -1,0 +1,234 @@
+/-
+Copyright (c) 2025 Sukharik. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Sukharik (@suhr)
+-/
+module
+
+public import LeanPool.IrisAlgebra.Algebra.CMRA
+
+/-! Frame-preserving updates of ordered resources.
+
+Copyright (c) The Iris-Lean Contributors.
+-/
+
+@[expose] public section
+
+namespace Iris
+
+/-- A frame-preserving update to some resource satisfying a predicate. -/
+def UpdateP [ORA α] (x : α) (P : α → Prop) := ∀ n mz, ✓{n} (x •? mz) → ∃ y, P y ∧ ✓{n} (y •? mz)
+/-- Notation for a frame-preserving update satisfying a predicate. -/
+infixr:50 " ~~>: " => UpdateP
+
+/-- A frame-preserving update to a specified resource. -/
+def Update [ORA α] (x y : α) := ∀ n mz, ✓{n} (x •? mz) → ✓{n} (y •? mz)
+/-- Notation for a frame-preserving update to a specified resource. -/
+infixr:50 " ~~> " => Update
+
+section Updates
+open ORA
+
+variable [ORA α] [ORA β] (f : α → β) (g : β → α)
+
+theorem Update.of_updateP {x y : α} (h : x ~~>: (y = ·)) : x ~~> y :=
+  fun n mz v => let ⟨_, e, v⟩ := (h n mz v); e ▸ v
+
+theorem UpdateP.of_update {x y : α} (h : x ~~> y) : x ~~>: (y = ·) :=
+  fun n mz v => ⟨y, rfl, h n mz v⟩
+
+theorem UpdateP.id {P : α → Prop} {x} (h : P x) : x ~~>: P :=
+  fun _ _ v => ⟨x, h, v⟩
+
+@[refl]
+theorem Update.id {x : α} : x ~~> x := fun _ _ h => h
+
+theorem Update.trans {x y z : α} (uxy : x ~~> y) (uyz : y ~~> z) : x ~~> z :=
+  fun n mz v => uyz n mz (uxy n mz v)
+
+theorem UpdateP.trans {x : α} (ux : x ~~>: P) (upq : ∀ y, P y → y ~~>: Q) : x ~~>: Q :=
+  fun n mz v => let ⟨y, py, vy⟩ := ux n mz v; upq y py n mz vy
+
+theorem Update.transP {x y : α} (uxy : x ~~> y) (uyq : y ~~>: Q) : x ~~>: Q :=
+  fun n mz v => uyq n mz (uxy n mz v)
+
+theorem UpdateP.weaken {x : α} (uxp : x ~~>: P) (pq : ∀ y, P y → Q y) : x ~~>: Q :=
+  fun n mz v => let ⟨y, py, vy⟩ := uxp n mz v; ⟨y, pq y py, vy⟩
+
+theorem Update.exclusive {x y : α} [Exclusive x] (vy : ✓ y) : x ~~> y :=
+  fun _ _ P => none_of_excl_valid_op P ▸ vy.validN
+
+instance : Std.Refl (Update (α := α)) where
+  refl _ := Update.id
+
+instance : Trans Update Update Update (α := α) where
+  trans := Update.trans
+
+instance : Trans Update UpdateP UpdateP (α := α) where
+  trans := Update.transP
+
+theorem UpdateP.op {P Q R : α → Prop} {x y}
+    (uxp : x ~~>: P) (uyq : y ~~>: Q) (pqr : ∀ z w, P z → Q w → R (z • w)) : x • y ~~>: R := by
+  intro n mz v
+  have e₁ : (x • y) •? mz ≡{n}≡ y •? some (x •? mz) :=
+    (opM_left_dist mz op_commN).trans (op_opM_assoc_dist _ _ mz)
+  let ⟨w, pw, vw⟩ := uyq n (some (x •? mz)) (validN_ne e₁ v)
+  have e₂ : w •? some (x •? mz) ≡{n}≡ x •? some (w •? mz) := calc
+    w •? some (x •? mz) ≡{n}≡ (w • x) •? mz := (op_opM_assoc_dist w x mz).symm
+    _ ≡{n}≡ (x • w) •? mz := (opM_left_dist mz op_commN)
+    _ ≡{n}≡ x •? some (w •? mz) := op_opM_assoc_dist x w mz
+  let ⟨z, pz, vz⟩ := uxp n (some (w •? mz)) (validN_ne e₂ vw)
+  exact ⟨z • w, pqr z w pz pw, validN_ne (op_opM_assoc_dist z w mz).symm vz⟩
+
+theorem UpdateP.op' {P Q : α → Prop} {x y : α} (uxp : x ~~>: P) (uyq : y ~~>: Q) :
+    (x • y : α) ~~>: fun t ↦ ∃ z w, t = (z • w : α) ∧ P z ∧ Q w :=
+  .op uxp uyq fun z w pz qw => ⟨z, w, rfl, pz, qw⟩
+
+theorem Update.op {x₁ x₂ y₁ y₂ : α} (xy₁ : x₁ ~~> y₁) (xy₂ : x₂ ~~> y₂) : x₁ • x₂ ~~> y₁ • y₂ :=
+  .of_updateP <| .op (.of_update xy₁) (.of_update xy₂) fun _ _ ez ew => ez ▸ ew ▸ rfl
+
+theorem Update.op_l {x y : α} : x • y ~~> x := fun _ _ => validN_op_opM_left
+
+theorem Update.op_r {x y : α} : x • y ~~> y := fun _ _ => validN_op_opM_right
+
+theorem Update.ord {x y : α} (h : x ≼ₒ y) : y ~~> x :=
+  fun _ mz => (optionalOp_mono_left_ord mz h).validN
+
+theorem Update.included {x y : α} : x ≼ y → y ~~> x :=
+  fun ⟨_, ez⟩ => ez.symm ▸ Update.op_l
+
+theorem Update.valid0 {x y : α} : (✓{0} x → x ~~> y) → x ~~> y :=
+  fun h n mz v => h (valid0_of_validN (validN_opM v)) n mz v
+
+/-! ## Frame preserving updates for total and discete CMRAs -/
+theorem UpdateP.total [IsTotal α] :
+    x ~~>: P ↔ ∀ (n : Nat) (z : α), ✓{n} (x • z) → ∃ y, P y ∧ ✓{n} (y • z) where
+  mp uxp := fun n z v => uxp n (some z) v
+  mpr h := fun n mz v =>
+    match mz with
+    | none =>
+      let ⟨y, py, vy⟩ := h n (core x) (validN_ne (op_core_dist x).symm v)
+      ⟨y, py, validN_op_opM_left vy⟩
+    | some z => h n z v
+
+theorem Update.total [IsTotal α] : x ~~> y ↔ ∀ (n : Nat) (z : α), ✓{n} (x • z) → ✓{n} (y • z) where
+  mp uxy := fun n z v => uxy n (some z) v
+  mpr h := fun n mz v =>
+    match mz with
+    | none =>
+      validN_op_opM_left <| h n (core x) (validN_ne (op_core_dist x).symm v)
+    | some z => h n z v
+
+theorem UpdateP.discrete [Discrete α] :
+    x ~~>: P ↔ ∀ (mz : Option α), ✓ (x •? mz) → ∃ y, P y ∧ ✓ (y •? mz) where
+  mp uxp := fun mz v =>
+    let ⟨y, py, vy⟩ := uxp 0 mz (Valid.validN v)
+    ⟨y, py, discrete_valid vy⟩
+  mpr h := fun n mz v =>
+    let ⟨y, py, vy⟩ := h mz ((valid_iff_validN' n).mpr v)
+    ⟨y, py, Valid.validN vy⟩
+
+theorem Update.discrete [Discrete α] {x y : α} :
+    x ~~> y ↔ ∀ (mz : Option α), ✓ (x •? mz) → ✓ (y •? mz) where
+  mp uxp := fun mz v => discrete_valid <| uxp 0 mz (Valid.validN v)
+  mpr h := fun n mz v => Valid.validN <| h mz ((valid_iff_validN' n).mpr v)
+
+theorem UpdateP.discrete_total [Discrete α] [IsTotal α] :
+    x ~~>: P ↔ ∀ (z : α), ✓ (x • z) → ∃ y, P y ∧ ✓ (y • z) where
+  mp uxp := fun z vz =>
+    let ⟨y, py, vy⟩ := UpdateP.total.mp uxp 0 z (Valid.validN vz)
+    ⟨y, py, discrete_valid vy⟩
+  mpr h :=
+    UpdateP.total.mpr fun n z v =>
+      let ⟨y, py, vy⟩ := h z ((valid_iff_validN' n).mpr v)
+      ⟨y, py, Valid.validN vy⟩
+
+theorem Update.discrete_total [Discrete α] [IsTotal α] :
+    x ~~> y ↔ ∀ (z : α), ✓ (x • z) → ✓ (y • z) where
+  mp uxp := fun z vz =>
+    discrete_valid <| Update.total.mp uxp 0 z (Valid.validN vz)
+  mpr h := Update.total.mpr fun n z v => (h z ((valid_iff_validN' n).mpr v)).validN
+
+-- (** * Transport *)
+-- `cmra_transport` itself is ignored (see `CMRA.lean`): equality `A = B` between CMRAs is
+-- transported by `transpAp`, so these update lemmas are subsumed by rewriting along the
+-- equality and using the plain `updateP` API.
+
+/-! ## Isomorphism -/
+theorem UpdateP.iso
+    (gf : ∀ x, g (f x) = x)
+    (g_op : ∀ y1 y2, g (y1 • y2) = g y1 • g y2)
+    (g_validN : ∀ n y, ✓{n} (g y) ↔ ✓{n} y)
+    (uyp : y ~~>: P)
+    (pq : ∀ y', P y' → Q (g y')) :
+    g y ~~>: Q := by
+  intro n mz v
+  have : ✓{n} y •? Option.map f mz :=
+    match mz with
+    | none => (g_validN n _).mp v
+    | some z =>
+      have : g y • z = g (y • f z) := by rw [g_op, gf]
+      (g_validN n _).mp (validN_ne this.dist v)
+  have ⟨x, px, vx⟩ := uyp n (mz.map f) this
+  have : g (x •? Option.map f mz) = g x •? mz :=
+    match mz with
+    | none => rfl
+    | some z => by simp only [Option.map_some, optionalOp, g_op, gf]
+  exact ⟨g x, pq x px, validN_ne this.dist ((g_validN n _).mpr vx)⟩
+
+theorem UpdateP.iso'
+    (gf : ∀ x, g (f x) = x)
+    (g_op : ∀ y1 y2, g (y1 • y2) = g y1 • g y2)
+    (g_validN : ∀ n y, ✓{n} (g y) ↔ ✓{n} y)
+    (uyp : y ~~>: P) :
+    g y ~~>: fun x ↦ ∃ y, x = g y ∧ P y :=
+  .iso f g gf g_op g_validN uyp fun z pz => ⟨z, rfl, pz⟩
+
+/-! ## Lift -/
+theorem Update.lift_updateP (x y : β)
+    (H : ∀ P, x ~~>: P → g x ~~>: fun a' ↦ ∃ b', a' = g b' ∧ P b')
+    (uxy : x ~~> y) : g x ~~> g y :=
+  .of_updateP fun n mz v =>
+    have ⟨z, hz, vz⟩ := H _ (.of_update uxy) n mz v
+    have hz : z = g y := by simp only [exists_eq_right'] at hz ⊢; exact hz
+    ⟨z, hz.symm, vz⟩
+
+/-! ## Product -/
+theorem UpdateP.prod {P : α → Prop} {Q : β → Prop} {R : α × β → Prop} {x : α × β}
+    (uxp : x.fst ~~>: P) (uxq : x.snd ~~>: Q) (pq : ∀ a b, P a → Q b → R (a, b)) :
+    x ~~>: R := by
+  intro n mz v
+  match mz with
+  | none =>
+    have ⟨y₁, py, vy₁⟩ := uxp n none v.1
+    have ⟨y₂, qy, vy₂⟩ := uxq n none v.2
+    exact ⟨(y₁, y₂), pq y₁ y₂ py qy, ⟨vy₁, vy₂⟩⟩
+  | some z =>
+    have ⟨y₁, py, vy₁⟩ := uxp n (some z.fst) v.1
+    have ⟨y₂, qy, vy₂⟩ := uxq n (some z.snd) v.2
+    exact ⟨(y₁, y₂), pq y₁ y₂ py qy, ⟨vy₁, vy₂⟩⟩
+
+theorem UpdateP.prod' (P : α → Prop) (Q : β → Prop) (x : α × β)
+    (uxp : x.fst ~~>: P) (uxq : x.snd ~~>: Q) : x ~~>: fun y ↦ P (y.fst) ∧ Q (y.snd) :=
+  .prod uxp uxq fun _ _ px qy => ⟨px, qy⟩
+
+theorem Update.prod (x : α × β) (uxy₁ : x.fst ~~> y.fst) (uxy₂ : x.snd ~~> y.snd) : x ~~> y :=
+  .of_updateP <| .prod (.of_update uxy₁) (.of_update uxy₂) fun _ _ ya yb => Prod.ext ya yb
+
+/-! ## Option -/
+theorem UpdateP.option {P : α → Prop} {Q : Option α → Prop} {x : α}
+    (uxp : x ~~>: P) (pq : ∀ y, P y → Q (some y)) : some x ~~>: Q := by
+  intro n mz v
+  match mz with
+  | none | some none => let ⟨w, pw, vw⟩ := uxp n none v; exact ⟨w, pq w pw, vw⟩
+  | some (some z) => let ⟨w, pw, vw⟩ := uxp n (some z) v; exact ⟨w, pq w pw, vw⟩
+
+theorem UpdateP.option' (P : α → Prop) (x : α) (uxp : x ~~>: P) : some x ~~>: Option.rec False P :=
+  .option uxp fun _ py => py
+
+theorem Update.option (x y : α) (uxy : x ~~> y) : some x ~~> some y :=
+  .of_updateP <| .option (.of_update uxy) fun _ => congrArg some
+
+end Updates
+
+end Iris
