@@ -133,7 +133,7 @@ theorem oneStep_normalizedGradient_half_zerothOrder [NeZero d]
           4 * (1 / 2 : ℝ) ^ (-(d : ℝ) / 2) * unitCubeDirichletPoincareExplicit d *
             (d : ℝ) * r * normalizedL2On W g)
       convert hadd using 1
-      all_goals first | rfl | ring
+      all_goals ring
 
 end
 

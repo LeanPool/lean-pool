@@ -553,7 +553,7 @@ theorem exists_oddReflection_weakSolution_chain
       have hWmeas : MeasurableSet (ballSector x₀ r S sigma) :=
         (isOpen_partialReflectedBallSector x₀ r S sigma ∅).measurableSet
       refine ⟨v, a, zeroExtend (ballSector x₀ r S sigma) g, hameas, hcontrast,
-        (memLp_indicator_iff_restrict hWmeas).2 hgL2, ?_, hflux, ?_,
+        (memLp_indicator_iff_restrict hWmeas.nullMeasurableSet).2 hgL2, ?_, hflux, ?_,
         fun y _hy => rfl, ?_, hzt⟩
       · have hgGlobal : ∀ᵐ y ∂(volume : Measure (Vec d)),
             y ∈ ballSector x₀ r S sigma → |g y| ≤ M :=
@@ -639,7 +639,7 @@ theorem exists_oddReflection_weakSolution_chain
             i (x₀ i)
       have hZL2 : MemLp (zeroExtend (partialReflectedBallSector x₀ r S sigma T) h) 2
           (volume : Measure (Vec d)) :=
-        (memLp_indicator_iff_restrict hPTmeas).2 (hhL2.restrict _)
+        (memLp_indicator_iff_restrict hPTmeas.nullMeasurableSet).2 (hhL2.restrict _)
       have hZrL2 : MemLp (fun y => zeroExtend
           (partialReflectedBallSector x₀ r S sigma T) h
             (coordFaceReflection (x₀ i) i y)) 2 (volume : Measure (Vec d)) :=
@@ -653,7 +653,7 @@ theorem exists_oddReflection_weakSolution_chain
           (volume : Measure (Vec d)) := by
         intro k
         rw [zeroExtendGrad_apply_coord]
-        exact (memLp_indicator_iff_restrict hPTmeas).2 (hbflux k)
+        exact (memLp_indicator_iff_restrict hPTmeas.nullMeasurableSet).2 (hbflux k)
       have hOddFluxL2 : ∀ j : Fin d, MemLp (fun y => oddFaceExtendGrad (x₀ i) i
           (zeroExtendGrad (partialReflectedBallSector x₀ r S sigma T)
             (fun z => matVecMul (b z) (w.grad z))) y j) 2
@@ -689,7 +689,7 @@ theorem exists_oddReflection_weakSolution_chain
           hsymmB hbase
       · have hZ : MemLp (zeroExtend (partialReflectedBallSector x₀ r S sigma T) h) 2
             (volume : Measure (Vec d)) :=
-          (memLp_indicator_iff_restrict hPTmeas).2 (hhL2.restrict _)
+          (memLp_indicator_iff_restrict hPTmeas.nullMeasurableSet).2 (hhL2.restrict _)
         have hZr : MemLp (fun y => zeroExtend
             (partialReflectedBallSector x₀ r S sigma T) h
               (coordFaceReflection (x₀ i) i y)) 2 (volume : Measure (Vec d)) :=

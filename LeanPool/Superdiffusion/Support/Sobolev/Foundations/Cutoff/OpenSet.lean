@@ -7,6 +7,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 module
 
 public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
+public import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 
 /-!
 # OpenSet

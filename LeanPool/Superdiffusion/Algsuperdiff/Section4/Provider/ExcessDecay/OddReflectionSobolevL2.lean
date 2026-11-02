@@ -391,7 +391,7 @@ private theorem measurable_windowFoldSign (x : Vec d) (m k : ℤ) :
 /-- The fold does not charge null sets of the window: it is quasi measure
 preserving from the reflected window to the window. -/
 private theorem quasiMeasurePreserving_windowFold (x : Vec d) {m k : ℤ} (hkm : k < m) :
-    Measure.QuasiMeasurePreserving (windowFold x m k)
+    QuasiMeasurePreserving (windowFold x m k)
       (volume.restrict (reflectedWindow x m k))
       (volume.restrict (truncatedWindow x m k)) := by
   have hmeas : Measurable (windowFold x m k) := (continuous_windowFold x m k).measurable
