@@ -19,6 +19,7 @@ public import Mathlib.RingTheory.Localization.AtPrime.Basic
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Data.Finsupp.Encodable
 import Mathlib.GroupTheory.Complement
+import Mathlib.RingTheory.HopkinsLevitzki
 import Mathlib.RingTheory.KrullDimension.Polynomial
 
 /-!
