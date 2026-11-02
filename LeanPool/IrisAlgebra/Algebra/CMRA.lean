@@ -205,10 +205,6 @@ export Validity (Valid ValidN validN_ne valid_iff_validN validN_succ)
 export IsTotal (total)
 
 /-! ## Op -/
-theorem comm' {x y : α} : x • y = y • x := comm
-
-theorem assoc' {x y z : α} : x • (y • z) = (x • y) • z := assoc
-
 theorem op_right_dist (x : α) {y z : α} (e : y ≡{n}≡ z) : x • y ≡{n}≡ x • z :=
   op_ne.ne e
 theorem _root_.Iris.OFE.Dist.op_r {x y z : α} : y ≡{n}≡ z → x • y ≡{n}≡ x • z := op_right_dist _
@@ -311,7 +307,7 @@ theorem op_monoN_left {n x y} (z : α) (h : x ≼{n} y) : x • z ≼{n} y • z
   (op_commN.incN op_commN).1 (op_monoN_right z h)
 
 theorem op_mono_left {x y} (z : α) (h : x ≼ y) : x • z ≼ y • z := by
-  rw [comm' (x := x) (y := z), comm' (x := y) (y := z)]; exact op_mono_right z h
+  rw [Op.comm (x := x) (y := z), Op.comm (x := y) (y := z)]; exact op_mono_right z h
 
 theorem op_monoN {n} {x x' y y' : α} (hx : x ≼{n} x') (hy : y ≼{n} y') :
     x • y ≼{n} x' • y' :=
@@ -413,27 +409,6 @@ class IdFree (x : α) where
   id_free0_r y : ✓{0} x → ¬x • y ≡{0}≡ x
 export IdFree (id_free0_r)
 
-theorem pcore_l {x cx : α} (e : pcore x = some cx) : cx • x = x := pcore_op_left e
-
-theorem pcore_idemp {x cx : α} (e : pcore x = some cx) : pcore cx = some cx := pcore_idem e
-
-/-- A dependent-pair form of the resource decomposition operation. -/
-def extend' {n} {x y₁ y₂ : α} (v : ✓{n} x) (e : x ≡{n}≡ y₁ • y₂) :
-    Σ' z₁ z₂, x = (z₁ • z₂ : α) ∧ z₁ ≡{n}≡ y₁ ∧ z₂ ≡{n}≡ y₂ :=
-  let ⟨z₁, z₂, hx, hz, hw⟩ := extend (y₁ := y₁) (y₂ := y₂) v e
-  ⟨z₁, z₂, hx, hz, hw⟩
-
-theorem validN_op_l {n} {x y : α} : ✓{n} (x • y) → ✓{n} x := validN_op_left
-
-theorem valid_validN {x : α} : ✓ x ↔ ∀ n, ✓{n} x := valid_iff_validN
-
-theorem op_ne' {x : α} : NonExpansive (x • ·) := op_ne
-
-theorem pcore_ne' {n} {x y : α} {cx} (h : x ≡{n}≡ y) (e : pcore x = some cx) :
-    ∃ cy, pcore y = some cy ∧ cx ≡{n}≡ cy := pcore_ne h e
-
-theorem validN_ne' {n} {x y : α} (h : x ≡{n}≡ y) : ✓{n} x → ✓{n} y := validN_ne h
-
 theorem opM_ne_right {n} {x : α} {y₁ y₂ : Option α} (h : y₁ ≡{n}≡ y₂) : x •? y₁ ≡{n}≡ x •? y₂ :=
   match y₁, y₂, h with
   | none, none, _ => .rfl
@@ -467,12 +442,12 @@ theorem validN_of_lt {n n'} {x : α} (lt : n' < n) : ✓{n} x → ✓{n'} x :=
 theorem valid0_of_validN {n} {x : α} : ✓{n} x → ✓{0} x := validN_of_le (Nat.zero_le n)
 
 theorem validN_op_right {n} {x y : α} : ✓{n} (x • y) → ✓{n} y :=
-  fun v => validN_op_left (comm' (x := x) (y := y) ▸ v)
+  fun v => validN_op_left (Op.comm (x := x) (y := y) ▸ v)
 
 theorem valid_op_right (x y : α) : ✓ (x • y) → ✓ y := valid_mapN fun _ => validN_op_right
 
 theorem valid_op_left {x y : α} : ✓ (x • y) → ✓ x :=
-  fun v => valid_op_right y x (comm' (x := x) (y := y) ▸ v)
+  fun v => valid_op_right y x (Op.comm (x := x) (y := y) ▸ v)
 
 theorem validN_opM {x : α} {my : Option α} : ✓{n} (x •? my) → ✓{n} x := match my with
   | none => id | some _ => validN_op_left
@@ -496,18 +471,11 @@ theorem validN_op_opM_right {mz : Option α} (h : ✓{n} (x • y : α) •? mz)
 instance cmra_op_ne2 : NonExpansive₂ (op (α := α)) where
   ne _ _ _ e₁ _ _ e₂ := e₁.op e₂
 
-theorem pcore_op_left' {x : α} {cx} (e : pcore x = some cx) : cx • x = x := pcore_l e
-
-theorem pcore_op_right {x : α} {cx} (e : pcore x = some cx) : x • cx = x := comm'.trans (pcore_l e)
-
-theorem pcore_op_right' {x : α} {cx} (e : pcore x = some cx) : x • cx = x := pcore_op_right e
-
-theorem pcore_idem' {x : α} {cx} (e : pcore x = some cx) : pcore cx = some cx := pcore_idemp e
+theorem pcore_op_right {x : α} {cx} (e : pcore x = some cx) : x • cx = x :=
+  Op.comm.trans (pcore_op_left e)
 
 theorem pcore_op_self {x : α} {cx} (e : pcore x = some cx) : cx • cx = cx :=
-  pcore_op_right' (pcore_idem e)
-
-theorem pcore_op_self' {x : α} {cx} (e : pcore x = some cx) : cx • cx = cx := pcore_op_self e
+  pcore_op_right (pcore_idem e)
 
 theorem pcore_validN {n} {x : α} {cx} (e : pcore x = some cx) (v : ✓{n} x) : ✓{n} cx :=
   validN_op_right ((pcore_op_right e).symm ▸ v)
@@ -515,7 +483,7 @@ theorem pcore_validN {n} {x : α} {cx} (e : pcore x = some cx) (v : ✓{n} x) : 
 theorem pcore_valid {x : α} {cx} (e : pcore x = some cx) : ✓ x → ✓ cx :=
   valid_mapN fun _ => pcore_validN e
 
-theorem op_self (x : α) [CoreId x] : x • x = x := pcore_op_self' CoreId.core_id
+theorem op_self (x : α) [CoreId x] : x • x = x := pcore_op_self CoreId.core_id
 
 theorem CoreId.of_pcore_eq_some {x y : α} (e : pcore x = some y) : CoreId y where
   core_id := pcore_idem e
@@ -525,13 +493,13 @@ theorem not_valid_exclN_op_left {n} {x : α} [Exclusive x] {y} : ¬✓{n} (x •
   n.recOn (Exclusive.exclusive0_l _) fun _ ih => ih ∘ validN_succ
 
 theorem not_valid_exclN_op_right {n} {x : α} [Exclusive x] {y} : ¬✓{n} (y • x) :=
-  fun v => not_valid_exclN_op_left (comm' (x := y) (y := x) ▸ v)
+  fun v => not_valid_exclN_op_left (Op.comm (x := y) (y := x) ▸ v)
 
 theorem not_valid_excl_op_left {x : α} [Exclusive x] {y} : ¬✓ (x • y) :=
   fun v => Exclusive.exclusive0_l _ v.validN
 
 theorem not_excl_op_right {x : α} [Exclusive x] {y} : ¬✓ (y • x) :=
-  fun v => not_valid_excl_op_left (comm' (x := y) (y := x) ▸ v)
+  fun v => not_valid_excl_op_left (Op.comm (x := y) (y := x) ▸ v)
 
 theorem none_of_excl_valid_op {n} {x : α} [Exclusive x] {my} : ✓{n} (x •? my) → my = none := by
   cases my <;> simp [optionalOp, not_valid_exclN_op_left]
@@ -543,7 +511,7 @@ variable [IsTotal α]
 
 theorem op_core (x : α) : x • core x = x := pcore_op_right (pcore_eq_core x)
 
-theorem core_op (x : α) : core x • x = x := comm'.trans (op_core x)
+theorem core_op (x : α) : core x • x = x := Op.comm.trans (op_core x)
 
 theorem op_core_dist (x : α) : x • core x ≡{n}≡ x := Dist.of_eq (op_core x)
 theorem core_op_dist (x : α) : core x • x ≡{n}≡ x := Dist.of_eq (core_op x)
@@ -611,10 +579,10 @@ theorem validN_of_inc {n} {x y : α} : x ≼ y → ✓{n} y → ✓{n} x
 theorem pcore_inc_self {x : α} {cx} (e : pcore x = some cx) : cx ≼ x := ⟨x, (pcore_op_left e).symm⟩
 
 theorem op_core_right_of_inc {x y : α} [CoreId x] : x ≼ y → x • y = y
-  | ⟨z, hz⟩ => hz ▸ assoc'.trans (congrArg (· • z) (op_self x))
+  | ⟨z, hz⟩ => hz ▸ Op.assoc.trans (congrArg (· • z) (op_self x))
 
 theorem op_core_left_of_inc {x y : α} [CoreId x] (le : x ≼ y) : y • x = y :=
-  comm'.trans (op_core_right_of_inc le)
+  Op.comm.trans (op_core_right_of_inc le)
 
 theorem included_dist_l {n} {x1 x2 x1' : α} :
     x1 ≼ x2 → x1' ≡{n}≡ x1 → ∃ x2', x1' ≼ x2' ∧ x2' ≡{n}≡ x2
@@ -724,10 +692,6 @@ theorem pcore_mono {x y cx : α} :
     have ⟨z, hz⟩ := pcore_op_mono e _
     let ⟨t, ht, et⟩ := OFE.equiv_some ((congrArg pcore hw).trans hz)
     ⟨t, ht, z, et⟩
-
-theorem pcore_mono' {x y : α} {cx} (le : x ≼ y) (e : pcore x = some cx) :
-    ∃ cy, pcore y = some cy ∧ cx ≼ cy :=
-  pcore_mono le e
 
 theorem pcore_monoN' {n} {x y : α} {cx} :
     x ≼{n} y → pcore x ≡{n}≡ some cx → ∃ cy, pcore y = some cy ∧ cx ≼{n} cy
@@ -976,10 +940,6 @@ theorem validN_of_ord {n} {x y : α} (h : x ≼ₒ y) : ✓{n} y → ✓{n} x :=
   validN_of_ordN (ordN_of_ord n h)
 theorem _root_.Iris.Ordered.Order.validN {n} {x y : α} : x ≼ₒ y → ✓{n} y → ✓{n} x := validN_of_ord
 
-theorem pcore_mono_ord' {x y : α} {cx} (le : x ≼ₒ y) (e : pcore x = some cx) :
-    ∃ cy, pcore y = some cy ∧ cx ≼ₒ cy :=
-  pcore_mono_ord le e
-
 theorem pcore_monoN_ord' {n} {x y : α} {cx} (h : x ≼ₒ{n} y) (e : pcore x ≡{n}≡ some cx) :
     ∃ cy, pcore y = some cy ∧ cx ≼ₒ{n} cy :=
   let ⟨_, hw, ew⟩ := OFE.dist_some e
@@ -992,16 +952,12 @@ theorem pcore_mono [OrdInc α] {x y cx : α} :
     let ⟨cy, hcy, o⟩ := pcore_order_op e z
     ⟨cy, hz ▸ hcy, OrdInc.ord_inc o⟩
 
-theorem pcore_mono' [OrdInc α] {x y : α} {cx} (le : x ≼ y) (e : pcore x = some cx) :
-    ∃ cy, pcore y = some cy ∧ cx ≼ cy :=
-  pcore_mono le e
-
 theorem pcore_monoN' [OrdInc α] {n} {x y : α} {cx} :
     x ≼{n} y → pcore x ≡{n}≡ some cx → ∃ cy, pcore y = some cy ∧ cx ≼{n} cy
   | ⟨z, hz⟩, e =>
     let ⟨_, hw, ew⟩ := OFE.dist_some e
     let ⟨_, ht, o⟩ := pcore_order_op hw z
-    let ⟨r, hr, er⟩ := pcore_ne' hz.symm ht
+    let ⟨r, hr, er⟩ := pcore_ne hz.symm ht
     ⟨r, hr, incN_ne ew.symm er (incN_of_inc n (OrdInc.ord_inc o))⟩
 
 theorem pcore_op_mono [OrdInc α] {x cx : α} (e : pcore x = some cx) (y : α) :
@@ -1014,7 +970,7 @@ theorem op_monoN_right_ord {n x y} (z : α) (h : x ≼ₒ{n} y) : z • x ≼ₒ
   (op_commN.ordN op_commN).1 (op_monoN_left_ord z h)
 
 theorem op_mono_right_ord {x y} (z : α) (h : x ≼ₒ y) : z • x ≼ₒ z • y := by
-  rw [comm' (x := z) (y := x), comm' (x := z) (y := y)]; exact op_mono_left_ord z h
+  rw [Op.comm (x := z) (y := x), Op.comm (x := z) (y := y)]; exact op_mono_left_ord z h
 
 theorem op_monoN_ord {n} {x x' y y' : α} (hx : x ≼ₒ{n} x') (hy : y ≼ₒ{n} y') :
     x • y ≼ₒ{n} x' • y' :=
@@ -1086,7 +1042,7 @@ instance op (x y : α) [Increasing x] [Increasing y] : Increasing (x • y) wher
   increasing z := calc
     z ≼ₒ y • z := Increasing.increasing z
     _ ≼ₒ x • (y • z) := Increasing.increasing _
-    _ = (x • y) • z := assoc'
+    _ = (x • y) • z := Op.assoc
 
 end Increasing
 
@@ -1132,7 +1088,7 @@ section increasing
 
 theorem ord_op_right (x y : α) [Increasing x] : y ≼ₒ x • y := Increasing.increasing y
 theorem ord_op_left (x y : α) [Increasing y] : x ≼ₒ x • y :=
-  comm' (x := y) (y := x) ▸ ord_op_right y x
+  Op.comm (x := y) (y := x) ▸ ord_op_right y x
 theorem ordN_op_left (n) (x y : α) [Increasing y] : x ≼ₒ{n} x • y := (ord_op_left x y).ordN
 theorem ordN_op_right (n) (x y : α) [Increasing x] : y ≼ₒ{n} x • y := (ord_op_right x y).ordN
 
@@ -1204,13 +1160,13 @@ theorem id_freeN_r {n n'} {x : α} [IdFree x] {y} (v : ✓{n} x) : ¬(x • y �
   id_free0_r _ (validN_of_le (Nat.zero_le _) v) |>.imp (·.le (Nat.zero_le _))
 
 theorem id_freeN_l {n n'} {x : α} [IdFree x] {y} (v : ✓{n} x) : ¬(y • x ≡{n'}≡ x) :=
-  id_freeN_r v ∘ comm'.dist.trans
+  id_freeN_r v ∘ Op.comm.dist.trans
 
 theorem id_free_r {x : α} [IdFree x] {y} (v : ✓ x) : ¬(x • y = x) :=
   fun h => id_free0_r y (valid_iff_validN.mp v 0) h.dist
 
 theorem id_free_l {x : α} [IdFree x] {y} (v : ✓ x) : ¬(y • x = x) :=
-  id_free_r v ∘ comm'.trans
+  id_free_r v ∘ Op.comm.trans
 
 theorem discrete_id_free {x : α} [Discrete α] (H : ∀ y, ✓ x → ¬(x • y = x)) : IdFree x where
   id_free0_r y v h := H y (Discrete.discrete_valid v) (Discrete.discrete_0 h)
@@ -1220,7 +1176,7 @@ instance idFree_op_r {x y : α} [IdFree y] [Cancelable x] : IdFree (x • y) whe
     id_free0_r z (validN_op_right v) (cancelableN v (op_assocN.trans h).symm).symm
 
 instance idFree_op_l {x y : α} [IdFree x] [Cancelable y] : IdFree (x • y) := by
-  rw [comm']; exact inferInstance
+  rw [Op.comm]; exact inferInstance
 
 instance exclusive_idFree {x : α} [Exclusive x] : IdFree x where
   id_free0_r z v h := exclusive0_l z ((validN_dist_iff h.symm).mp v)
@@ -1235,9 +1191,9 @@ theorem unit_validN {n} : ✓{n} (unit : α) := valid_iff_validN.mp (unit_valid)
 
 theorem unit_left_id_dist {n} (x : α) : unit • x ≡{n}≡ x := unit_left_id.dist
 
-theorem unit_right_id {x : α} : x • unit = x := comm'.trans unit_left_id
+theorem unit_right_id {x : α} : x • unit = x := Op.comm.trans unit_left_id
 
-theorem unit_right_id_dist (x : α) : x • unit ≡{n}≡ x := comm'.dist.trans (unit_left_id_dist x)
+theorem unit_right_id_dist (x : α) : x • unit ≡{n}≡ x := Op.comm.dist.trans (unit_left_id_dist x)
 
 theorem incN_unit {n} {x : α} : unit ≼{n} x := ⟨x, unit_left_id.symm.dist⟩
 
@@ -2153,7 +2109,7 @@ theorem eq_none_of_op_eq_none_right {x y : Option α} (h : x • y = none) : y =
   | some _, some _ => simp [op] at h
 
 theorem op_some_opM_assoc {x y : α} {mz : Option α} : (x • y) •? mz = x •? (some y • mz) :=
-  match mz with | none => rfl | some _ => assoc'.symm
+  match mz with | none => rfl | some _ => Op.assoc.symm
 
 theorem some_op_opM {a : α} {ma : Option α} : some a • ma = some (a •? ma) := by
   rcases ma with ⟨_|_⟩ <;> simp [optionalOp, op]

@@ -154,9 +154,6 @@ theorem Contractive.succ [OFE α] [OFE β] (f : α → β) [Contractive f] {n x 
 instance ne_of_contractive [OFE α] [OFE β] (f : α → β) [Contractive f] : NonExpansive f where
   ne := fun _ _ _ h => Contractive.distLater_dist (Dist.distLater h)
 
-theorem Contractive.dist_later_dist [OFE α] [OFE β] (f : α → β) [Contractive f] {n x y}
-    (h : DistLater n x y) : f x ≡{n}≡ f y := Contractive.distLater_dist h
-
 /-- Pre-composing a non-expansive function preserves `DistLater`. -/
 theorem ne_dist_later [OFE α] [OFE β] (f : α → β) [NonExpansive f] {n x y}
     (h : DistLater n x y) : DistLater n (f x) (f y) := fun m hm => NonExpansive.ne (h m hm)
@@ -821,9 +818,6 @@ theorem Sigma.equiv_eq {P : α → Type _} [∀ x, OFE (P x)] {x1 x2 : Sigma P} 
 
 theorem Sigma.dist_eq {P : α → Type _} [∀ x, OFE (P x)] {n} {x1 x2 : Sigma P} :
     (x1 ≡{n}≡ x2) ↔ ∃ heq : x1.fst = x2.fst, heq ▸ x1.snd ≡{n}≡ x2.snd := Iff.rfl
-
-theorem Sigma.dist_proj1 {P : α → Type _} [∀ x, OFE (P x)] {n} {x y : Sigma P}
-    (h : x ≡{n}≡ y) : x.fst = y.fst := h.1
 
 theorem Sigma.equiv_proj1 {P : α → Type _} {x y : Sigma P}
     (h : x = y) : x.fst = y.fst := congrArg Sigma.fst h
@@ -1634,15 +1628,13 @@ theorem LimitPreserving.impl' [COFE α] (P1 P2 : α → Prop)
     LimitPreserving (fun x => P1 x → P2 x) :=
   LimitPreserving.impl P1 P2 (fun h => (HP1 h).mp) Hcompl
 
-theorem LimitPreserving.equiv [COFE α] [COFE β] (f g : α -n> β) :
+theorem LimitPreserving.equiv [COFE α] [OFE β] (f g : α -n> β) :
     LimitPreserving (fun x => f x = g x) where
   compl := by
     intro c Hfg
     refine eq_dist_2 fun n => ?_
-    apply (COFE.compl_map _ _).symm.dist.trans
-    apply (COFE.conv_compl' (Nat.le_refl n)).trans
-    apply (Hfg _).dist.trans
-    exact g.ne.ne COFE.conv_compl.symm
+    exact (f.ne.ne (COFE.conv_compl (c := c))).trans
+      ((Hfg n).dist.trans (g.ne.ne COFE.conv_compl.symm))
 
 theorem LimitPreserving.ext {α} [COFE α] {P Q : α -> Prop} (he : ∀ {x}, (P x ↔ Q x))
     (hp : LimitPreserving P) : LimitPreserving Q where
@@ -1802,14 +1794,14 @@ instance ne₂_of_contractive [OFE α] [OFE β] [OFE γ] (fB : α -c> β -c> γ)
     apply fB.ne.ne Hx
 
 /-- The fixed point in the second variable for a given first argument. -/
-def fixpointAB [COFE α] [COFE β] [Inhabited β] (fB : α -c> β -c> β) (x : α) : β := by
+def fixpointAB [OFE α] [COFE β] [Inhabited β] (fB : α -c> β -c> β) (x : α) : β := by
   let con_hom : β -c> β := {
     f := fB x,
     contractive := ⟨fB.f x |>.contractive.distLater_dist⟩
   }
   exact con_hom.fixpoint
 
-theorem fixpointAB_contractive [COFE α] [COFE β] [Inhabited β] (fB : α -c> β -c> β) :
+theorem fixpointAB_contractive [OFE α] [COFE β] [Inhabited β] (fB : α -c> β -c> β) :
     Contractive (fixpointAB fB) where
   distLater_dist {n _ _} Dl := by
     apply ContractiveHom.fixpoint_ne.ne
@@ -1817,11 +1809,11 @@ theorem fixpointAB_contractive [COFE α] [COFE β] [Inhabited β] (fB : α -c> �
     exact Dl
 
 /-- Substitute the second-variable fixed point into the first component. -/
-def fixpointAA [COFE α] [COFE β] [Inhabited β] (fA : α -c> β -n> α)
+def fixpointAA [OFE α] [COFE β] [Inhabited β] (fA : α -c> β -n> α)
     (fB : α -c> β -c> β) (x : α) : α :=
   fA x (fixpointAB fB x)
 
-theorem fixpointAA_contractive [COFE α] [COFE β] [Inhabited β]
+theorem fixpointAA_contractive [OFE α] [COFE β] [Inhabited β]
     (fA : α -c> β -n> α) (fB : α -c> β -c> β) : Contractive (fixpointAA fA fB) where
   distLater_dist {_ _ x₂} Dl := by
     refine .trans ?_ ((fA.f x₂).ne.ne ((fixpointAB_contractive fB).distLater_dist Dl))
