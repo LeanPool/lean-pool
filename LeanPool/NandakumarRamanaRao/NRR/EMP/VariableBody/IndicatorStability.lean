@@ -7,6 +7,10 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.HalfspaceCoefficients
+import LeanPool.NandakumarRamanaRao.NRR.BodySpace.BoundaryNull
+import Mathlib.CategoryTheory.Countable
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.HalfSpace
 
 /-!

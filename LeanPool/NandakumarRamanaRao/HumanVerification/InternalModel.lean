@@ -9,7 +9,7 @@ module
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.MeasureTheory.Measure.Hausdorff
 public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Basic
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarPerimeter
 public import LeanPool.NandakumarRamanaRao.NRR.Partition.ConvexPartition
 public import LeanPool.NandakumarRamanaRao.NRR.FairPartition.Predicates

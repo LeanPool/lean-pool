@@ -7,6 +7,10 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.ModelSites
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Children
+import LeanPool.NandakumarRamanaRao.NRR.TestMap.EquivarianceCore
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Equivariance of variable-body children

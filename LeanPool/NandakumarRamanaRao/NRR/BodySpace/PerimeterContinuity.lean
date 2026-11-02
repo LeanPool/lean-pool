@@ -6,9 +6,9 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.SupportWidthContinuity
 public import LeanPool.NandakumarRamanaRao.NRR.AreaPerimeter
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.PositiveArea
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.SupportWidthContinuity
 
 /-!
 # `NRR.BodySpace` — perimeter continuity for positive lower area

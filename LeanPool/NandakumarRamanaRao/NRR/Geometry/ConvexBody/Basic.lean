@@ -8,8 +8,9 @@ module
 
 public import Mathlib.Analysis.Convex.Basic
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic
-public import Mathlib.Topology.Closure
+public import Mathlib.Topology.Defs.Filter
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Topology.Closure
 
 /-!
 # `NRR.Geometry.ConvexBody` — bundled compact convex bodies with nonempty interior
@@ -54,9 +55,8 @@ never collide because that namespace is not opened by the modules that use Mathl
 
 ## Import policy
 
-Following the library-wide policy fixed in `AI_CONTEXT.md`, this file
-uses the whole-library `import Mathlib`. The concrete dependencies are lightweight
-(`Convex`, `IsCompact`, `interior`, `Set` membership/extensionality).
+The mathematical dependencies are convexity over `ℝ` and basic topology.
+Tactic extensions are imported explicitly rather than through `Mathlib.Tactic`.
 -/
 
 @[expose] public section

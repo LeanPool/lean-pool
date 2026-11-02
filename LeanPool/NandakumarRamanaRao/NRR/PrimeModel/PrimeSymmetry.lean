@@ -6,6 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
+public import Mathlib.GroupTheory.SpecificGroups.Alternating
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.CoordinateDecomposition
 /-!
 # Prime symmetry subgroup

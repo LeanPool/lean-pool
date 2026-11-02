@@ -6,10 +6,15 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.HalfspaceCut
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarCircle
+public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import LeanPool.NandakumarRamanaRao.NRR.HalfSpace
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
+public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.HalfSpaceCutArea
 public import LeanPool.NandakumarRamanaRao.NRR.HalfSpaceCutAreaContinuity
 

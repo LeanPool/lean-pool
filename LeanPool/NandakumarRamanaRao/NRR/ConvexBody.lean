@@ -7,9 +7,9 @@ module
 
 
 public import Mathlib.Analysis.Convex.Body
-public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
-public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Interior
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarCircle
+public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.Interior
 
 /-!
 # `NRR.ConvexBody` — public convex‑body API (unified over the geometry layer)

@@ -6,9 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Radial boundary points of a planar convex body

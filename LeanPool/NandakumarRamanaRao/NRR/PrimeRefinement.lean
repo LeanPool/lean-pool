@@ -13,6 +13,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.IndexedPartition
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.Iteration
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.FlexibleCore
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.FlexibleIteration
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.PrimeRefinement` — prime refinement after the Fox--Neuwirth separator

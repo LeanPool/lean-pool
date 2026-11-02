@@ -9,6 +9,8 @@ module
 public import LeanPool.NandakumarRamanaRao.NRR.Partition.ConvexPartition
 public import LeanPool.NandakumarRamanaRao.NRR.AreaPerimeter
 public import LeanPool.NandakumarRamanaRao.NRR.Representation.ZeroSum
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
 
 /-!
 # `NRR.Partition.PerimeterVector` — perimeter vector of a convex partition

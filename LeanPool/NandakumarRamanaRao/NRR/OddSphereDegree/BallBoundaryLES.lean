@@ -6,11 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.ReducedToUnreducedSphereTopHomology
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SingularHomologyHomotopyInvariance
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.Basic
 public import Mathlib.Topology.Homotopy.Contractible
-public import Mathlib.Analysis.Convex.Contractible
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.HomotopyToChainHomotopy
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SingularHomologyFunctorAPI
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SingularHomologyHomotopyInvariance
+import Mathlib.Analysis.Convex.Contractible
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.ReducedToUnreducedSphereTopHomology
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.Basic
 
 /-!
 # Ball--boundary long-exact-sequence route for sphere homology

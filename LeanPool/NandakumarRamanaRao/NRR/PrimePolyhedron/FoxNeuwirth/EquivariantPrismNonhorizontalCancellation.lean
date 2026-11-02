@@ -6,11 +6,21 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.EquivariantPrismGlobalCancellation
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.AffineInternalSwapFace
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.AffineLastFaceIdentity
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricFiniteCancellation
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.PermSignAdjacentSwap
+import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.EquivariantPrismSubdivisionMargin
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RefinedChartCarrierEquivariant
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricBoundaryCancellation
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricFiniteCancellation
 /-!
 # Cancellation of the nonhorizontal refined-prism boundary
 
@@ -1060,7 +1070,8 @@ theorem staircaseFacet_sum_decomposition
     _ = _ := by
       rw [Fintype.sum_sum_type, Fintype.sum_sum_type,
         Fintype.sum_sum_type, Fintype.sum_sum_type, Fintype.sum_prod_type]
-      simp? [staircaseFacetUnclassify]
+      simp only [Finset.univ_unique, PUnit.default_eq_unit, staircaseFacetUnclassify,
+        Finset.sum_const, Finset.card_singleton, one_smul, Fin.castSucc_succ]
       have hs :
           (∑ r : Fin (n + 1), ∑ h : Fin n,
             F (if r.1 ≤ h.1 then (Fin.succ h, r.castSucc)

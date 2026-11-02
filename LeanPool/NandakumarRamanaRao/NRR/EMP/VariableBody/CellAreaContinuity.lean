@@ -6,9 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Basic
+import LeanPool.NandakumarRamanaRao.NRR.BodySpace.AreaContinuity
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.IndicatorStability
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # `NRR.EMP.VariableBody.CellAreaContinuity` — joint continuity of cell area
@@ -130,6 +135,10 @@ theorem continuous_cellArea_compactFamily
     continuous_fst.prodMk
       ((sites.continuous.comp (continuous_fst.comp continuous_snd)).prodMk
         (continuous_snd.comp continuous_snd))
-  exact (continuous_cellArea hA i).comp hmap
+  exact Continuous.comp
+    (g := fun z : BodySpace K A × Config n × (Fin n → ℝ) =>
+      cellArea hA z.1 z.2.1 z.2.2 i)
+    (f := fun z : BodySpace K A × X × (Fin n → ℝ) => (z.1, sites z.2.1, z.2.2))
+    (continuous_cellArea hA i) hmap
 
 end NRR.EMP.VariableBody
