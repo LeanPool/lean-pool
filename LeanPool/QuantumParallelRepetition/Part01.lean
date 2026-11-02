@@ -5,15 +5,22 @@ Authors: OpenAI, Dean Cureton
 -/
 module
 
-public import Mathlib.Algebra.Order.Archimedean.Real.Hom
+public import Mathlib.Analysis.CStarAlgebra.Matrix
 public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
-public import Mathlib.Analysis.InnerProductSpace.StarOrder
-public import Mathlib.Analysis.Matrix.Order
-public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-public import Mathlib.LinearAlgebra.FreeModule.PID
-public import Mathlib.MeasureTheory.Function.L2Space
-public import Mathlib.MeasureTheory.SpecificCodomains.Pi
-public import Mathlib.Tactic.NormNum.RealSqrt
+public import Mathlib.Analysis.InnerProductSpace.Positive
+public import Mathlib.Analysis.Matrix.HermitianFunctionalCalculus
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
+public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
+
+public import Mathlib.Tactic.NormNum.RealSqrt -- shake: keep
+
+import Mathlib.Algebra.Order.Archimedean.Real.Hom
+import Mathlib.Analysis.Matrix.Order
+import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.MeasureTheory.SpecificCodomains.Pi
 
 /-! # Quantum parallel repetition, part 01 -/
 
@@ -359,7 +366,7 @@ theorem quadraticExpectation_sub_le
   have h_expand :
       ⟪z, W z⟫_ℂ - ⟪w, W w⟫_ℂ =
         ⟪z - w, W z⟫_ℂ + ⟪w, W (z - w)⟫_ℂ := by
-    simp only [CStarModule.inner_sub_left, map_sub, CStarModule.inner_sub_right,
+    simp only [CStarModule.inner_sub_left, map_sub W, CStarModule.inner_sub_right,
       sub_add_sub_cancel]
   have hz := norm_le_of_operator_contraction W hW z
   have hdiff := norm_le_of_operator_contraction W hW (z - w)
@@ -376,9 +383,10 @@ theorem quadraticExpectation_sub_le
       norm_add_le _ _
     _ ≤ ‖z - w‖ * ‖W z‖ + ‖w‖ * ‖W (z - w)‖ :=
       add_le_add (norm_inner_le_norm _ _) (norm_inner_le_norm _ _)
-    _ ≤ ‖z - w‖ * ‖z‖ + ‖w‖ * ‖z - w‖ := by
-      gcongr
-    _ = (‖z‖ + ‖w‖) * ‖z - w‖ := by ring
+    _ ≤ ‖z - w‖ * ‖z‖ + ‖w‖ * ‖z - w‖ :=
+      add_le_add (mul_le_mul_of_nonneg_left hz (norm_nonneg _))
+        (mul_le_mul_of_nonneg_left hdiff (norm_nonneg _))
+    _ = (‖z‖ + ‖w‖) * ‖z - w‖ := by rw [add_mul, mul_comm ‖z‖]
 
 theorem weighted_real_cauchy
     {ι : Type*} [Fintype ι]
@@ -1524,27 +1532,37 @@ section
 open MeasureTheory Filter Set
 open scoped BigOperators Topology
 
+private theorem scalarResolventPurification_hasDerivAt
+    {z x : ℝ} (hz : 0 < z) (hx : 0 ≤ x) :
+    HasDerivAt (fun t : ℝ => -(z ^ 2) / (z + t))
+      ((z / (z + x)) ^ 2) x := by
+  have hden : z + x ≠ 0 := ne_of_gt (add_pos_of_pos_of_nonneg hz hx)
+  have hd := ((hasDerivAt_const x (-(z ^ 2))).div
+    ((hasDerivAt_const x z).add (hasDerivAt_id x)) hden)
+  have hfun :
+      (fun t : ℝ => -(z ^ 2) / (z + t)) =
+        (fun _t : ℝ => -(z ^ 2)) / ((fun _t : ℝ => z) + id) := by
+    funext t
+    rfl
+  rw [hfun]
+  simpa only [div_pow, Pi.add_apply, id_eq, zero_mul, zero_add, mul_one,
+    sub_neg_eq_add] using hd
+
+private theorem scalarResolventPurification_tendsto_zero (z : ℝ) :
+    Tendsto (fun t : ℝ => -(z ^ 2) / (z + t)) atTop (𝓝 (0 : ℝ)) := by
+  have hden : Tendsto (fun t : ℝ => t + z) atTop atTop :=
+    tendsto_atTop_add_const_right atTop z tendsto_id
+  have hzero : Tendsto (fun t : ℝ => -(z ^ 2) / (t + z))
+      atTop (𝓝 (0 : ℝ)) := tendsto_const_nhds.div_atTop hden
+  simpa only [add_comm] using hzero
+
 theorem scalar_resolvent_purification_integrable_of_pos
     {z : ℝ} (hz : 0 < z) :
     IntegrableOn (fun s : ℝ => (z / (z + s)) ^ 2) (Ioi 0) := by
-  have hpower :
-      IntegrableOn (fun s : ℝ => (s + z) ^ (-2 : ℝ)) (Ioi 0) := by
-    exact integrableOn_add_rpow_Ioi_of_lt
-      (a := (-2 : ℝ)) (c := (0 : ℝ)) (m := z)
-      (by norm_num) (by linarith only [hz])
-  have hscaled :
-      IntegrableOn (fun s : ℝ => z ^ 2 * (s + z) ^ (-2 : ℝ))
-        (Ioi 0) :=
-    hpower.const_mul (z ^ 2)
-  refine hscaled.congr_fun (fun s hs => ?_) measurableSet_Ioi
-  have hspos : 0 < s + z := by
-    have : 0 < s := hs
-    linarith only [hz, this]
-  change z ^ 2 * (s + z) ^ (-2 : ℝ) = (z / (z + s)) ^ 2
-  rw [show (-2 : ℝ) = -(2 : ℝ) by norm_num,
-    Real.rpow_neg hspos.le, Real.rpow_two]
-  rw [div_pow]
-  simp only [add_comm, div_eq_mul_inv]
+  exact integrableOn_Ioi_deriv_of_nonneg'
+    (fun x hx => scalarResolventPurification_hasDerivAt hz hx)
+    (fun x _ => sq_nonneg (z / (z + x)))
+    (scalarResolventPurification_tendsto_zero z)
 
 theorem scalar_resolvent_purification_integrable
     {z : ℝ} (hz : 0 ≤ z) :
@@ -1561,36 +1579,10 @@ theorem scalar_resolvent_purification_integral
   rcases hz.eq_or_lt with rfl | hzpos
   · simp only [zero_add, zero_div, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
       integral_zero]
-  · have hderiv :
-        ∀ x ∈ Ici (0 : ℝ),
-          HasDerivAt (fun t : ℝ => -(z ^ 2) / (z + t))
-            ((z / (z + x)) ^ 2) x := by
-      intro x hx
-      have hden : z + x ≠ 0 := by
-        have hx_nonneg : 0 ≤ x := hx
-        exact ne_of_gt (by linarith only [hzpos, hx_nonneg])
-      have hd := ((hasDerivAt_const x (-(z ^ 2))).div
-        ((hasDerivAt_const x z).add (hasDerivAt_id x)) hden)
-      have hfun :
-          (fun t : ℝ => -(z ^ 2) / (z + t)) =
-            (fun _t : ℝ => -(z ^ 2)) /
-              ((fun _t : ℝ => z) + id) := by
-        funext t
-        rfl
-      rw [hfun]
-      simpa only [div_pow, Pi.add_apply, id_eq, zero_mul, zero_add, mul_one,
-        sub_neg_eq_add] using hd
-    have hlimit :
-        Tendsto (fun t : ℝ => -(z ^ 2) / (z + t))
-          atTop (𝓝 (0 : ℝ)) := by
-      have hden : Tendsto (fun t : ℝ => t + z) atTop atTop :=
-        tendsto_atTop_add_const_right atTop z tendsto_id
-      have hzero : Tendsto (fun t : ℝ => -(z ^ 2) / (t + z))
-          atTop (𝓝 (0 : ℝ)) :=
-        tendsto_const_nhds.div_atTop hden
-      simpa only [add_comm] using hzero
-    have hftc := integral_Ioi_of_hasDerivAt_of_tendsto'
-      hderiv (scalar_resolvent_purification_integrable_of_pos hzpos) hlimit
+  · have hftc := integral_Ioi_of_hasDerivAt_of_tendsto'
+      (fun x hx => scalarResolventPurification_hasDerivAt hzpos hx)
+      (scalar_resolvent_purification_integrable_of_pos hzpos)
+      (scalarResolventPurification_tendsto_zero z)
     calc
       (∫ s in Ioi (0 : ℝ), (z / (z + s)) ^ 2) =
           (0 : ℝ) - (-(z ^ 2) / (z + 0)) := hftc
@@ -1772,23 +1764,15 @@ private theorem spectralPurificationFilter_gram
     apply Matrix.isHermitian_diagonal_iff.mpr
     intro i
     change star ((eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ) = _
-    simp only [Complex.ofReal_div, Complex.ofReal_add, star_div₀, RCLike.star_def,
-      Complex.conj_ofReal, star_add]
+    simp only [RCLike.star_def, Complex.conj_ofReal]
   have hDstar : star D = D := by
     simpa only [Matrix.star_eq_conjTranspose] using hDhermitian.eq
   have hDsquare : D * D = diagonalPurificationGram eigenvalue s := by
-    dsimp [D]
-    rw [Matrix.diagonal_mul_diagonal]
-    ext i j
-    by_cases h : i = j
-    · subst j
-      simp only [Complex.ofReal_div, Complex.ofReal_add, Matrix.diagonal_apply_eq,
-        diagonalPurificationGram, pow_two, Complex.ofReal_mul]
-    · simp only [Complex.ofReal_div, Complex.ofReal_add, ne_eq, h, not_false_eq_true,
-        Matrix.diagonal_apply_ne, diagonalPurificationGram, Complex.ofReal_pow]
+    simp only [D, diagonalPurificationGram, Matrix.diagonal_mul_diagonal,
+      pow_two, Complex.ofReal_mul]
   change star (e D) * e D = e (diagonalPurificationGram eigenvalue s)
   calc
-    star (e D) * e D = e (star D) * e D := by rw [map_star]
+    star (e D) * e D = e (star D) * e D := by rw [map_star e]
     _ = e (star D * D) := (map_mul e (star D) D).symm
     _ = e (diagonalPurificationGram eigenvalue s) := by
       rw [hDstar, hDsquare]
@@ -1964,10 +1948,10 @@ theorem alice_mixed_history_pairing
   apply Finset.sum_congr rfl
   intro x _
   unfold conditionalBobAverage
-  rw [map_sum, Finset.mul_sum]
+  rw [map_sum (pair (H x)), Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro y _
-  rw [map_smul]
+  rw [LinearMap.map_smul]
   simp only [smul_eq_mul]
   rw [← mul_assoc, G.marginalX_mul_conditionalYGivenX x y]
 
@@ -1992,9 +1976,7 @@ theorem bob_mixed_history_pairing
         apply Finset.sum_congr rfl
         intro y _
         unfold conditionalAliceAverage
-        rw [map_sum]
-        simp only [LinearMap.sum_apply, map_smul,
-          LinearMap.smul_apply, smul_eq_mul]
+        simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
         rw [Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro x _
@@ -2029,7 +2011,7 @@ theorem alice_reveal_increment
   rw [← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
   intro y _
-  rw [map_sub]
+  rw [map_sub pair]
   simp only [LinearMap.sub_apply]
   ring
 
@@ -2195,7 +2177,7 @@ theorem spectralSupportFunctional_mul
   let e := Unitary.conjStarAlgAut ℂ (Matrix d d ℂ)
     hF.isHermitian.eigenvectorUnitary
   change e _ * e _ = e _
-  rw [← map_mul, Matrix.diagonal_mul_diagonal]
+  rw [← map_mul e, Matrix.diagonal_mul_diagonal]
   congr 1
   funext i
   push_cast
@@ -2242,7 +2224,7 @@ theorem spectralSupportFunctional_isHermitian
     simpa only [Matrix.star_eq_conjTranspose] using hD.eq
   change Matrix.conjTranspose (e D) = e D
   simpa only [Matrix.star_eq_conjTranspose] using
-    (show star (e D) = e D by rw [← map_star, hDstar])
+    (show star (e D) = e D by rw [← map_star e, hDstar])
 
 /-- Apply reciprocal eigenvalues to a positive matrix, with zero on its kernel. -/
 def spectralSupportInverse
@@ -3677,7 +3659,7 @@ theorem spectralPurificationFilter_mul_shift
     rw [mul_smul_comm, mul_one, smul_mul_assoc]
     simp only [SetLike.coe_mem, Unitary.mul_star_self_of_mem]
   change e T * (F + s • (1 : Matrix d d ℂ)) = F
-  rw [hFspec, ← hscalar, ← map_add, ← map_mul, hproduct]
+  rw [hFspec, ← hscalar, ← map_add e, ← map_mul e, hproduct]
 
 theorem spectralPurificationFilter_eq_resolvent
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -3728,8 +3710,7 @@ theorem spectralPurificationFilter_square_contraction
     apply Matrix.isHermitian_diagonal_iff.mpr
     intro i
     change star ((eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ) = _
-    simp only [Complex.ofReal_div, Complex.ofReal_add, star_div₀, RCLike.star_def,
-      Complex.conj_ofReal, star_add]
+    simp only [RCLike.star_def, Complex.conj_ofReal]
   have hDstar : star D = D := by
     simpa only [Matrix.star_eq_conjTranspose] using hDhermitian.eq
   have hdiag : (D - D * D).PosSemidef := by
@@ -3750,7 +3731,7 @@ theorem spectralPurificationFilter_square_contraction
     exact Complex.nonneg_iff.mpr
       ⟨sub_nonneg.mpr (mul_le_of_le_one_right hnonneg hle), rfl⟩
   change (e D - star (e D) * e D).PosSemidef
-  rw [← map_star, hDstar, ← map_mul, ← map_sub]
+  rw [← map_star e, hDstar, ← map_mul e, ← map_sub e]
   change ((U : Matrix d d ℂ) * (D - D * D) *
     star (U : Matrix d d ℂ)).PosSemidef
   simpa only [Matrix.star_eq_conjTranspose] using
@@ -5179,7 +5160,7 @@ private theorem leftSpectralBornWeight_sum
         (positiveMatrixSpectralAtom F hF i) G) =
       bornTracePairing ρ.matrix
         (∑ i : dA, positiveMatrixSpectralAtom F hF i) G := by
-          simp only [map_sum, LinearMap.sum_apply]
+          simp only [LinearMap.map_sum₂]
     _ = bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ) G := by
       rw [positiveMatrixSpectralAtom_sum]
 
@@ -5568,13 +5549,13 @@ theorem spectralAtom_mul
   by_cases hij : i = j
   · subst j
     simp only [ite_true]
-    rw [← map_mul, Matrix.diagonal_mul_diagonal]
+    rw [← map_mul e, Matrix.diagonal_mul_diagonal]
     congr 1
     ext k l
     simp only [Matrix.diagonal_apply, Pi.single_apply]
     split_ifs <;> simp_all
   · simp only [hij, ite_false]
-    rw [← map_mul, Matrix.diagonal_mul_diagonal, ← map_zero e]
+    rw [← map_mul e, Matrix.diagonal_mul_diagonal, ← map_zero e]
     congr 1
     ext k l
     by_cases hik : k = i
@@ -6600,6 +6581,22 @@ theorem localUnitaryAction_matrix_mem_unitary {n : ℕ}
         Matrix.unitaryGroup (Fin n × Fin n) ℂ := by
   exact Matrix.kronecker_mem_unitary U.property V.property
 
+/-- A matrix with identity Gram matrix preserves the self inner product. -/
+theorem matrix_mulVec_inner_self_of_gram
+    {d : Type*} [Fintype d] [DecidableEq d]
+    (K : Matrix d d ℂ) (gram : K.conjTranspose * K = 1)
+    (z : EuclideanSpace ℂ d) :
+    inner ℂ (toLp 2 (K.mulVec (ofLp z))) (toLp 2 (K.mulVec (ofLp z))) =
+      (‖z‖ : ℂ) ^ 2 := by
+  calc
+    _ = inner ℂ z z := by
+      change dotProduct (K.mulVec (ofLp z)) (star (K.mulVec (ofLp z))) =
+        dotProduct (ofLp z) (star (ofLp z))
+      rw [dotProduct_comm (K.mulVec (ofLp z)), Matrix.star_mulVec, Matrix.dotProduct_mulVec,
+        Matrix.vecMul_vecMul, gram, Matrix.vecMul_one]
+      exact dotProduct_comm _ _
+    _ = _ := inner_self_eq_norm_sq_to_K z
+
 theorem localUnitaryAction_norm {n : ℕ}
     (U V : Matrix.unitaryGroup (Fin n) ℂ)
     (ψ : EuclideanSpace ℂ (Fin n × Fin n)) :
@@ -6613,11 +6610,9 @@ theorem localUnitaryAction_norm {n : ℕ}
     simpa only [Matrix.star_eq_conjTranspose] using (Matrix.mem_unitaryGroup_iff'.mp hM)
   apply (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp
   change ‖toLp 2 (M.mulVec (ofLp ψ))‖ ^ 2 = ‖ψ‖ ^ 2
-  rw [rectangularMatrix_norm_sq, gram]
-  change (inner ℂ ψ (Matrix.toEuclideanCLM
-    (n := Fin n × Fin n) (𝕜 := ℂ) (1 : Matrix _ _ ℂ) ψ)).re = ‖ψ‖ ^ 2
-  simp only [map_one, one_apply_eq_self, inner_self_eq_norm_sq_to_K,
-    Complex.coe_algebraMap, ← Complex.ofReal_pow, Complex.ofReal_re]
+  simpa only [inner_self_eq_norm_sq_to_K, Complex.coe_algebraMap,
+    ← Complex.ofReal_pow, Complex.ofReal_re] using
+    congrArg Complex.re (matrix_mulVec_inner_self_of_gram M gram ψ)
 
 theorem unitary_row_norm_sq_sum
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -6895,12 +6890,12 @@ theorem schmidtVector_spectralEnergy_le
     fun i j => unitaryBasisOverlap V Y i j
   have hLrow : ∀ i, (∑ j : Fin d, ‖L i j‖ ^ 2) = 1 := by
     intro i
-    simpa [L] using
+    simpa only [L, norm_star] using
       unitary_row_norm_sq_sum
         (unitaryBasisOverlap U X) i
   have hLcol : ∀ j, (∑ i : Fin d, ‖L i j‖ ^ 2) = 1 := by
     intro j
-    simpa [L] using
+    simpa only [L, norm_star] using
       unitary_col_norm_sq_sum
         (unitaryBasisOverlap U X) j
   have hRrow : ∀ i, (∑ j : Fin d, ‖R i j‖ ^ 2) = 1 := by
@@ -6923,7 +6918,7 @@ theorem schmidtVector_spectralEnergy_le
       (fun i j => unitaryBasisOverlap V Y i j)]
     simpa only [unitaryBasisOverlap_apply] using
       schmidtVector_inner σ μ U V X Y
-  simpa [L] using
+  simpa only [L, norm_star] using
     twoSidedSchmidtSpectralEnergy_le
       (schmidtVector σ U V)
       (schmidtVector μ X Y)

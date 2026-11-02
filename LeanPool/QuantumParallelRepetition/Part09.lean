@@ -1840,6 +1840,19 @@ theorem unconditionalSelectedCopy_coherentPhaseConstantWork_norm_sq
       congr 1
       rw [EuclideanSpace.norm_sq_eq, Fintype.sum_prod_type]
 
+/-- A constant work state's norm factors into the history and work norms. -/
+theorem unconditionalSelectedCopy_coherentPhaseConstantWork_norm
+    {H : Type*} [Fintype H] {B m : ℕ}
+    (phases : 0 < B)
+    (history : EuclideanSpace ℂ (H × H))
+    (work : EuclideanSpace ℂ (Fin m × Fin m)) :
+    ‖dSVDensityRationalPublicBucketCoherentPhaseSigmaState
+        B history (fun _ _ _ => work)‖ = ‖history‖ * ‖work‖ := by
+  apply (sq_eq_sq₀ (norm_nonneg _)
+    (mul_nonneg (norm_nonneg _) (norm_nonneg _))).mp
+  simpa only [mul_pow] using
+    unconditionalSelectedCopy_coherentPhaseConstantWork_norm_sq phases history work
+
 private theorem unconditionalSelectedCopy_conjugateAcceptedTarget_norm_sq
     {d N B m : ℕ} (phases : 0 < B)
     (grid : 0 < N) (harmonic : 0 < m)
@@ -4157,16 +4170,16 @@ private theorem unconditionalActualPhysicalMixedAcceptedSpectralGauge_stage
     (Equiv.sum_comp finProdFinEquiv f).symm
   rw [unconditionalPhysicalAcceptedCoherentStage_apply
     width grid ξ ζ φ ψ i j k l a b]
-  simp only [Matrix.mulVec, dotProduct, Matrix.kroneckerMap_apply,
-    Fintype.sum_prod_type, Fintype.sum_sigma]
-  simp_rw [reindex_packed]
-  simp only [Fintype.sum_prod_type]
-  simp_rw [unconditionalActualPhysicalMixedAcceptedSpectralGauge_apply]
-  simp only [
-    unconditionalActualPhysicalMixedAcceptedRawStage,
-    Equiv.symm_apply_apply, ite_mul, mul_ite, zero_mul, mul_zero,
-    mul_one]
-  simp only [sum_ite_irrel, sum_ite_eq, mem_univ, ↓reduceIte, sum_const_zero]
+  conv_lhs =>
+    simp only [Matrix.mulVec, dotProduct, Matrix.kroneckerMap_apply,
+      Fintype.sum_prod_type, Fintype.sum_sigma]
+    simp only [reindex_packed]
+    simp only [Fintype.sum_prod_type]
+    simp only [unconditionalActualPhysicalMixedAcceptedSpectralGauge_apply
+      (B := B) (N := N) (d := d) (m := m)]
+    simp only [unconditionalActualPhysicalMixedAcceptedRawStage,
+      Equiv.symm_apply_apply, ite_mul, mul_ite, zero_mul, mul_zero, mul_one]
+    simp only [sum_ite_irrel, sum_ite_eq, mem_univ, ↓reduceIte, sum_const_zero]
   let summand :
       DSVUniformDensityThresholdLocalIndex N d →
         DSVUniformDensityThresholdLocalIndex N d → ℂ :=
@@ -4179,8 +4192,9 @@ private theorem unconditionalActualPhysicalMixedAcceptedSpectralGauge_stage
         Matrix (DSVUniformDensityThresholdLocalIndex N d)
           (DSVUniformDensityThresholdLocalIndex N d) ℂ) ⟨l, j⟩ y *
       dSVDensityRationalPhysicalAcceptedOutcome w N ξ ζ (x, y)
-  simp only [dSVDensityRationalCanonicalPrefixSpectralOutcome,
-    mulVec, dotProduct, kroneckerMap_apply, Fintype.sum_prod_type]
+  conv_rhs =>
+    simp only [dSVDensityRationalCanonicalPrefixSpectralOutcome,
+      mulVec, dotProduct, kroneckerMap_apply, Fintype.sum_prod_type]
   change _ = ePRState B (φ, ψ) *
     (∑ x, ∑ y, summand x y) * embezzlementState m (a, b)
   calc
@@ -6173,9 +6187,9 @@ theorem unconditionalActualSelectedBranchLocalAction_norm
         (unconditionalMixedConjugateSelectedBranchUnitary
           (τ := τ) U V).property)
   have squared : ‖toLp 2 (M.mulVec (ofLp z))‖ ^ 2 = ‖z‖ ^ 2 := by
-    rw [rectangularMatrix_norm_sq, gram]
-    simp only [quadraticExpectation, map_one, one_apply_eq_self, inner_self_eq_norm_sq_to_K,
-      coe_algebraMap, ← ofReal_pow, ofReal_re]
+    simpa only [inner_self_eq_norm_sq_to_K, Complex.coe_algebraMap,
+      ← Complex.ofReal_pow, Complex.ofReal_re] using
+      congrArg Complex.re (matrix_mulVec_inner_self_of_gram M gram z)
   change ‖toLp 2 (M.mulVec (ofLp z))‖ = ‖z‖
   exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp squared
 
@@ -6748,9 +6762,14 @@ private theorem unconditionalActualFairSourceBaseSupportedBorn
                 G n S D 1 a₀ b₀ h.2.1 h.2.2.1)))
           (unconditionalConjugatePureVector
             (exactSourceTuplePsi G n S D h)) := by
-              congr 2
-              exact unconditionalActualFairSourceWinningEffect_reindex
-                G n S D a₀ b₀ h.2.1 h.2.2.1
+              let d := Fintype.card (ExactGlobalHistoryLocalIndex G n S D)
+              exact congrArg
+                (fun M : Matrix (Fin d × Fin d) (Fin d × Fin d) ℂ =>
+                  quadraticExpectation
+                    (Matrix.toEuclideanCLM (n := Fin d × Fin d) (𝕜 := ℂ) M)
+                    (unconditionalConjugatePureVector (exactSourceTuplePsi G n S D h)))
+                (unconditionalActualFairSourceWinningEffect_reindex
+                  G n S D a₀ b₀ h.2.1 h.2.2.1)
     _ = quadraticExpectation
           (Matrix.toEuclideanCLM
             (n :=
@@ -6929,40 +6948,14 @@ private theorem unconditionalActualFairSourceOuterBorn_of_base
     (fun _ _ _ => embezzlementState (N * m))
   let retained := integratorActualC485NormalizedDiagonalWork
     (B := P) (N := N) width schedule ξ ζ j
-  have selected_born :
-      quadraticExpectation
-        (Matrix.toEuclideanCLM
-          (n :=
-            UnconditionalSelectedCopyLocalIndex P d N m ×
-            UnconditionalSelectedCopyLocalIndex P d N m)
-          (𝕜 := ℂ)
-          (directDSVActualLocalPOVMWinningEffect G
-            (integratorActualC485SelectedAlicePOVM
-              G n S D a₀ P N m x)
-            (integratorActualC485SelectedBobPOVM
-              G n S D b₀ P N m y) x y))
-        stage = value :=
+  have selected_born :=
     unconditionalActualFairSourceSelectedBorn_of_base
       G n S D a₀ b₀ phases grid harmonic x y ψ value base_born
   have stage_unit : ‖stage‖ = 1 := by
-    calc
-      ‖stage‖ =
-          ‖LinearIsometryEquiv.piLpCongrLeft 2 ℂ ℂ
-            (directDSVActualBilateralRetainedIndexEquiv
-              (physical8SelectedGlobalTargetWorkEquiv P N d m)
-              (physical8SelectedGlobalTargetWorkEquiv P N d m))
-            stage‖ := by rw [LinearIsometryEquiv.norm_map]
-      _ = ‖unconditionalMatchedVerifierTensor
-            (unconditionalConjugatePureVector ψ)
-            (unconditionalActualFairSourcePhaseHarmonicWork
-              P (N * m))‖ := by
-              rw [unconditionalActualFairSourcePhaseHarmonicStage_sourceProduct]
-      _ = 1 := by
-            rw [unconditionalMatchedVerifierTensor_norm,
-              unconditionalConjugatePureVector_norm, ψ_unit,
-              unconditionalActualFairSourcePhaseHarmonicWork_norm
-                phases (Nat.mul_pos grid harmonic)]
-            norm_num
+    dsimp only [stage]
+    rw [unconditionalSelectedCopy_coherentPhaseConstantWork_norm phases,
+      unconditionalConjugatePureVector_norm, ψ_unit,
+      embezzlementState_norm (N * m) (Nat.mul_pos grid harmonic), mul_one]
   change
     quadraticExpectation
       (Matrix.toEuclideanCLM
