@@ -17,7 +17,7 @@ public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 public import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 public import Mathlib.Analysis.Matrix.PosDef
 public import Mathlib.MeasureTheory.Integral.Pi
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import Mathlib.Topology.UniformSpace.Uniformizable
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Basic
 public import LeanPool.NashEmbedding.NashEmbedding.Torus.Basic

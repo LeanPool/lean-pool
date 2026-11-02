@@ -47,9 +47,9 @@ lemma LoadRule.voc {ress} (lr : LoadRule (~'χ) ress) : lfovocFin ress ⊆ χ.vo
       negUnload, Formula.voc.eq_3] at *
     · rcases x_in_V with ⟨f, f_in_fs, x_in⟩
       specialize unfvoc f_in_fs
-      aesop
+      aesop (rule_sets := [-default])
     · simp [pairUnload] at unfvoc
-      rcases x_in_V with ⟨f, f_in_fs, x_in⟩|_ <;> aesop
+      rcases x_in_V with ⟨f, f_in_fs, x_in⟩|_ <;> aesop (rule_sets := [-default])
   case dia' α φ notAtom =>
     have unfvoc := @unfoldDiamond_voc x α φ
     rw [← unfoldDiamondLoaded'_eq α φ] at unfvoc
@@ -64,9 +64,9 @@ lemma LoadRule.voc {ress} (lr : LoadRule (~'χ) ress) : lfovocFin ress ⊆ χ.vo
       negUnload, Formula.voc.eq_3] at *
     · rcases x_in_V with ⟨f, f_in_fs, x_in⟩
       specialize unfvoc f_in_fs
-      aesop
+      aesop (rule_sets := [-default])
     · simp [pairUnload] at unfvoc
-      rcases x_in_V with ⟨f, f_in_fs, x_in⟩|_ <;> aesop
+      rcases x_in_V with ⟨f, f_in_fs, x_in⟩|_ <;> aesop (rule_sets := [-default])
 
 theorem localRule_does_not_increase_vocab_L {Cond B}
     (rule : LocalRule Cond B) :
@@ -83,10 +83,10 @@ theorem localRule_does_not_increase_vocab_L {Cond B}
       Finset.sup_image, Function.id_comp, Finset.mem_sup] at *
     rcases x_in_res with ⟨ψ, ψ_in, x_in_voc_ψ⟩
     cases orule
-    case nCo => aesop
+    case nCo => aesop (rule_sets := [-default])
     case box α φ α_notAt => have := unfoldBox_voc_fin L_in ψ_in x_in_voc_ψ; simp_all
     case dia => have := unfoldDiamond_voc_fin L_in ψ_in x_in_voc_ψ; simp_all
-    all_goals aesop
+    all_goals aesop (rule_sets := [-default])
   case loadedL ress χ lrule B_def =>
     subst B_def
     simp only [Finset.mem_image, Prod.exists] at res_in_B
@@ -109,7 +109,7 @@ theorem localRule_does_not_increase_vocab_L {Cond B}
       · simpa [Olf.L, onlfvoc] using h
   -- other cases are all trivial (as in Bml)
   all_goals
-    aesop
+    aesop (rule_sets := [-default])
 
 theorem localRule_does_not_increase_vocab_R {Cond} (rule : LocalRule Cond B) :
     ∀ res ∈ B, res.right.pdlFvoc ⊆ Cond.right.pdlFvoc := by
@@ -125,10 +125,10 @@ theorem localRule_does_not_increase_vocab_R {Cond} (rule : LocalRule Cond B) :
       Finset.sup_image, Function.id_comp, Finset.mem_sup] at *
     rcases x_in_res with ⟨ψ, ψ_in, x_in_voc_ψ⟩
     cases orule
-    case nCo => aesop
+    case nCo => aesop (rule_sets := [-default])
     case box α φ α_notAt => have := unfoldBox_voc_fin L_in ψ_in x_in_voc_ψ; simp_all
     case dia => have := unfoldDiamond_voc_fin L_in ψ_in x_in_voc_ψ; simp_all
-    all_goals aesop
+    all_goals aesop (rule_sets := [-default])
   case loadedR ress χ lrule B_def =>
     subst B_def
     simp only [Finset.mem_image, Prod.exists] at res_in_B
@@ -151,7 +151,7 @@ theorem localRule_does_not_increase_vocab_R {Cond} (rule : LocalRule Cond B) :
       · simpa [Olf.R, onlfvoc] using h
   -- other cases are all trivial (as in Bml)
   all_goals
-    aesop
+    aesop (rule_sets := [-default])
 
 theorem localRuleApp_does_not_increase_jvoc (lra : LocalRuleApp) :
     ∀ Y ∈ lra.C, jvoc Y ⊆ jvoc lra.X := by

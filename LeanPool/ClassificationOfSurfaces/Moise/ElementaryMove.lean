@@ -88,7 +88,7 @@ theorem diamondFan_affineIndependent {a : ℝ} (ha0 : -2 < a) (ha2 : a < 2)
         simp only [diamondFanPosition_apply_zero, diamondFanPosition_apply_four,
           diamondFanPosition_apply_two, planePoint_apply_zero, planePoint_apply_one,
           PiLp.sub_apply]
-        linarith
+        linarith only [ha2]
       convert h using 1; funext i; fin_cases i <;> rfl
     · ext v
       fin_cases v <;> simp
@@ -99,7 +99,7 @@ theorem diamondFan_affineIndependent {a : ℝ} (ha0 : -2 < a) (ha2 : a < 2)
         simp only [diamondFanPosition_apply_one, diamondFanPosition_apply_two,
           diamondFanPosition_apply_four, planePoint_apply_zero, planePoint_apply_one,
           PiLp.sub_apply]
-        linarith
+        linarith only [ha2]
       convert h using 1; funext i; fin_cases i <;> rfl
     · ext v
       fin_cases v <;> simp
@@ -293,7 +293,7 @@ theorem diamondFan_left_union {a : ℝ} (ha0 : -2 < a) (ha1 : a < 2) :
     convexHull ℝ (diamondFanPosition a '' (({0, 4, 2} : Finset (Fin 5)) : Set _)) ∪
         convexHull ℝ (diamondFanPosition a '' (({0, 3, 4} : Finset (Fin 5)) : Set _)) =
       diamondLeftRegion := by
-  have hc0 : 0 < (2 - a) / 4 := by linarith
+  have hc0 : 0 < (2 - a) / 4 := by linarith only [ha1]
   have hc1 : (2 - a) / 4 < 1 := by linarith
   have hsplit := triangle_edge_split_union
     ![planePoint 0 2, planePoint 0 (-2), planePoint (-1) 0]
@@ -321,7 +321,7 @@ theorem diamondFan_right_union {a : ℝ} (ha0 : -2 < a) (ha1 : a < 2) :
     convexHull ℝ (diamondFanPosition a '' (({1, 2, 4} : Finset (Fin 5)) : Set _)) ∪
         convexHull ℝ (diamondFanPosition a '' (({1, 4, 3} : Finset (Fin 5)) : Set _)) =
       diamondRightRegion := by
-  have hc0 : 0 < (2 - a) / 4 := by linarith
+  have hc0 : 0 < (2 - a) / 4 := by linarith only [ha1]
   have hc1 : (2 - a) / 4 < 1 := by linarith
   have hsplit := triangle_edge_split_union
     ![planePoint 0 2, planePoint 0 (-2), planePoint 1 0]

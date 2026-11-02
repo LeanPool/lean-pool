@@ -9,10 +9,6 @@ public import LeanPool.ClassificationOfSurfaces.WeightedCircle
 public import LeanPool.ClassificationOfSurfaces.PolygonCellRadial
 import Mathlib.Analysis.Convex.GaugeRescale
 import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # A square model for polygon cells
@@ -1581,22 +1577,23 @@ theorem finalOldArcLocal_re_eq_one_iff_endpoint
     have hpi : 2 * Real.pi ≠ 0 := by positivity
     have heq :
         s.1 = (l : ℝ) + (t : ℝ) + (k : ℝ) * (l + 1) := by
-      field_simp [hnpos.ne'] at hk
-      nlinarith [Real.pi_pos]
+      field_simp [hnpos.ne', hpi] at hk
+      ring_nf at hk ⊢
+      exact hk
     have hkUpper : (k : ℝ) ≤ 0 := by
-      nlinarith [s.2.2, t.property.1, hnpos]
+      nlinarith only [heq, s.2.2, t.property.1, hnpos]
     have hkLower : (-1 : ℝ) ≤ k := by
-      nlinarith [s.2.1, t.property.2, hnpos]
+      nlinarith only [heq, s.2.1, t.property.2, hnpos]
     have hkUpperInt : k ≤ 0 := by exact_mod_cast hkUpper
     have hkLowerInt : (-1 : ℤ) ≤ k := by exact_mod_cast hkLower
     have hkCases : k = -1 ∨ k = 0 := by omega
     rcases hkCases with rfl | rfl
     · left
       norm_num at heq
-      nlinarith [s.2.1, t.property.2]
+      linarith only [heq, s.2.1, t.property.2]
     · right
       norm_num at heq
-      exact_mod_cast (by nlinarith [s.2.2, t.property.1] :
+      exact_mod_cast (by linarith only [heq, s.2.2, t.property.1] :
         s.1 = (l : ℝ))
   · intro hs
     rcases hs with hs | hs
@@ -1741,22 +1738,23 @@ theorem firstOldArcLocal_re_eq_one_iff_endpoint
     have hpi : 2 * Real.pi ≠ 0 := by positivity
     have heq :
         1 + s.1 = (t : ℝ) + (k : ℝ) * (r + 1) := by
-      field_simp [hnpos.ne'] at hk
-      nlinarith [Real.pi_pos]
+      field_simp [hnpos.ne', hpi] at hk
+      ring_nf at hk ⊢
+      exact hk
     have hkUpper : (k : ℝ) ≤ 1 := by
-      nlinarith [s.2.2, t.property.1, hnpos]
+      nlinarith only [heq, s.2.2, t.property.1, hnpos]
     have hkLower : (0 : ℝ) ≤ k := by
-      nlinarith [s.2.1, t.property.2, hnpos]
+      nlinarith only [heq, s.2.1, t.property.2, hnpos]
     have hkUpperInt : k ≤ 1 := by exact_mod_cast hkUpper
     have hkLowerInt : (0 : ℤ) ≤ k := by exact_mod_cast hkLower
     have hkCases : k = 0 ∨ k = 1 := by omega
     rcases hkCases with rfl | rfl
     · left
       norm_num at heq
-      nlinarith [s.2.1, t.property.2]
+      linarith only [heq, s.2.1, t.property.2]
     · right
       norm_num at heq
-      exact_mod_cast (by nlinarith [s.2.2, t.property.1] :
+      exact_mod_cast (by linarith only [heq, s.2.2, t.property.1] :
         s.1 = (r : ℝ))
   · intro hs
     rcases hs with hs | hs

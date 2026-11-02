@@ -47,11 +47,13 @@ private lemma mul_modform_ne_zero_of_coeff_one {k₁ k₂ : ℤ}
   intro h
   have hcoeff : (qExpansion 1 (f.mul g)).coeff 0 = 1 := by
     have := qExpansion_mul_coeff 1 k₁ k₂ f g
-    simp_all
+    simp_all only [PowerSeries.coeff_zero_eq_constantCoeff, Nat.cast_one, FunLike.coe_zero,
+      map_mul, mul_one]
   have hcoe : (⇑(f.mul g) : ℍ → ℂ) = 0 := by rw [h]; ext z; simp only [zero_apply, Pi.zero_apply]
   rw [show qExpansion 1 (f.mul g) = qExpansion 1 (0 : ℍ → ℂ) from
     congr_arg (qExpansion 1) hcoe, qExpansion_zero] at hcoeff
-  simp_all
+  simp_all only [PowerSeries.coeff_zero_eq_constantCoeff, PowerSeries.constantCoeff_zero,
+    zero_ne_one]
 
 private lemma mul_Delta_map_eq_DirectSum_mul (n : ℕ) (_hn : 12 ≤ n)
     (h : ModularForm Γ(1) (↑n - 12)) :

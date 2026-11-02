@@ -82,7 +82,10 @@ theorem tendsto_cpv_of_continuousOn_zero_integral
         simp only [cauchyPrincipalValueIntegrandOn]
         have h_not_in' := h_not_in ht_in
         by_cases hS0_empty : S0 = ∅
-        · simp_all
+        · simp_all only [Finset.notMem_empty, ne_eq, IsEmpty.forall_iff, implies_true,
+          eventually_true,
+              not_true_eq_false, false_and, exists_const, ↓reduceIte,
+                tendsto_const_nhds_iff]
         · have hS0_ne : S0.Nonempty := Finset.nonempty_of_ne_empty hS0_empty
           let δ := S0.inf' hS0_ne (fun s => ‖γ.toFun t - s‖)
           have hδ_pos : 0 < δ :=

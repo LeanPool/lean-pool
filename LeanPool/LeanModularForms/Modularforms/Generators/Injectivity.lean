@@ -283,8 +283,19 @@ private lemma mvpoly_support_after_reduction {σ R : Type*} [CommRing R] [Decida
     · exact absurd (hxd ▸ hx) hd_not
     · exact Finset.mem_union_left _ (Finset.mem_erase.mpr ⟨hxd, hp⟩)
   · rcases Finset.mem_union.mp (MvPolynomial.support_sub σ _ _ hdelta) with h1 | h2
-    · simp_all
-    · simp_all
+    · simp_all only [ne_eq, AddMonoidAlgebra.coeff_sub, Finsupp.coe_sub, Pi.sub_apply,
+      MvPolynomial.coeff_monomial,
+          ↓reduceIte, sub_sub_cancel, ite_eq_right_iff, MvPolynomial.mem_support_iff, ite_self,
+            sub_zero, sub_self,
+          not_true_eq_false, not_false_eq_true, not_imp, Finset.union_singleton,
+            Finset.mem_insert, Finset.mem_erase,
+          false_and, or_false, imp_false]
+    · simp_all only [ne_eq, AddMonoidAlgebra.coeff_sub, Finsupp.coe_sub, Pi.sub_apply,
+      MvPolynomial.coeff_monomial,
+          ↓reduceIte, sub_sub_cancel, ite_eq_right_iff, MvPolynomial.mem_support_iff, ite_self,
+            sub_zero, sub_self,
+          not_true_eq_false, not_false_eq_true, not_imp, Finset.union_singleton,
+            Finset.mem_insert, Finset.mem_erase, true_or]
 
 private lemma whomog_poly_Delta_decomp {n : ℕ} (hn12 : 12 ≤ n)
     (p : MvPolynomial (Fin 2) ℂ)
@@ -368,7 +379,7 @@ private lemma reduced_poly_is_scalar {n : ℕ} (_hn12 : 12 ≤ n)
   have hw2 := hr (MvPolynomial.mem_support_iff.mp hd₂)
   have h46_1 := weight_eq_4a_6b d₁; rw [hw1] at h46_1
   have h46_2 := weight_eq_4a_6b d₂; rw [hw2] at h46_2
-  have heq : d₁ 0 * 4 + d₁ 1 * 6 = d₂ 0 * 4 + d₂ 1 * 6 := by linarith
+  have heq : d₁ 0 * 4 + d₁ 1 * 6 = d₂ 0 * 4 + d₂ 1 * 6 := by linarith only [h46_1, h46_2]
   obtain ⟨hd0, hd1⟩ := unique_small_weight_soln (hr_red d₁ hd₁) (hr_red d₂ hd₂) heq
   ext i; fin_cases i <;> assumption
 

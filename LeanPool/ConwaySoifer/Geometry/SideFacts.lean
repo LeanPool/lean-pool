@@ -7,7 +7,12 @@ module
 
 public import LeanPool.ConwaySoifer.Geometry.AcrossFacts
 public import LeanPool.ConwaySoifer.Geometry.ReceiverFacts
-import Mathlib.Tactic
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Ring
 
 /-! Shared geometric facts for both small-case proofs; no certificate evaluations. -/
 

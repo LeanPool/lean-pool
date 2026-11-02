@@ -4,16 +4,18 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.PeriodFamily.PeriodPoint
+public import LeanPool.HopfProblem.Foundations.Core2
+import all Mathlib.Topology.Homotopy.Lifting
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.HomologyTheory.FirstHurewicz3
 public import LeanPool.HopfProblem.Recognition.Smale2
-import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
-import all LeanPool.HopfProblem.Lattice.Core1
+import LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
+import LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
 import all LeanPool.HopfProblem.HomologyTheory.FirstHurewicz3
-import all LeanPool.HopfProblem.Recognition.Smale2
 
 /-!
 # Hopf problem: period family · period domain
@@ -24,10 +26,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 

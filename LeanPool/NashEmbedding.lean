@@ -6,6 +6,8 @@ Authors: David Wiygul
 module
 
 
+-- Preserve the entry point's tactic re-exports for downstream users.
+public import Mathlib.Tactic -- shake: keep
 public import LeanPool.NashEmbedding.NashEmbedding
 public import LeanPool.NashEmbedding.NashEmbedding.Compact.AmbientMetric
 public import LeanPool.NashEmbedding.NashEmbedding.Compact.Main

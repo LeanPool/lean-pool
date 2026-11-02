@@ -236,7 +236,7 @@ private theorem dSVDensityRationalPureFlagBorn_partition_zero_succ
     alice bob z
   rw [dSVDensityRationalPureMatchedFlagBorn_zero_succ
     alice bob z] at actual
-  linarith
+  linarith only [actual]
 
 private theorem dSVDensityRationalPureFlagBorn_normalized_partition_zero_succ
     {A C : Type*} [Fintype A] [Fintype C]
@@ -566,7 +566,7 @@ theorem
   have stages :=
     dSVDensityRationalHeterogeneousPhysicalStopped_mass_partition
       grid dimension width schedule ξ ζ
-  linarith
+  linarith only [physical, stages]
 
 end
 
@@ -613,7 +613,7 @@ theorem
         embezzlementState n
           ((finProdFinEquiv.symm q.1).2,
             (finProdFinEquiv.symm q.2).2))
-  ring
+  ac_rfl
 
 theorem
     dSVDensityRationalMixedCanonicalPrefixPhysicalRawHarmonicTensor_eq
@@ -1089,7 +1089,7 @@ theorem dSVDensityRationalPublicShiftedBucketMismatch_sum_le
               (((x + phase.val) / B : ℕ) : ℝ) + 1 ≤
                 (((y + phase.val) / B : ℕ) : ℝ) := by
             exact_mod_cast Nat.succ_le_of_lt strictly
-          linarith
+          linarith only [cast_bound]
       _ = (y : ℝ) - (x : ℝ) := by
         rw [Finset.sum_sub_distrib,
           dSVDensityRationalPublicShiftedQuotient_real_sum
@@ -1209,11 +1209,11 @@ theorem dSVDensityRationalPublicLogRankFineLabel_abs_sub_le
   · have lower := neg_le_abs
       ((Q : ℝ) * Real.log ((max 1 r.val : ℕ) : ℝ) -
         (Q : ℝ) * Real.log ((max 1 s.val : ℕ) : ℝ))
-    linarith [first.2, second.1]
+    linarith only [first, second, lower]
   · have upper := le_abs_self
       ((Q : ℝ) * Real.log ((max 1 r.val : ℕ) : ℝ) -
         (Q : ℝ) * Real.log ((max 1 s.val : ℕ) : ℝ))
-    linarith [first.1, second.2]
+    linarith only [first, second, upper]
 
 private theorem
     dSVDensityRationalPublicLogRankPhaseWeightedCrossing_min_le
@@ -1270,7 +1270,7 @@ private theorem
           min (r.val : ℝ) (s.val : ℝ) / (B : ℝ) := by
       have scaled := mul_le_mul_of_nonneg_left logarithmic
         (div_nonneg (Nat.cast_nonneg Q) positive_real.le)
-      linarith
+      linarith only [scaled]
 
 end
 
@@ -1389,7 +1389,7 @@ theorem
         (representative.val : ℝ) <
       Real.exp (((B : ℝ) + 1) / (Q : ℝ)) - 1
   rw [sub_div, div_self positive_representative.ne']
-  linarith
+  linarith only [ratio]
 
 theorem
     dSVDensityRationalPublicLogRankBucketRepresentative_relative_abs_lt
@@ -1455,7 +1455,8 @@ private theorem dSVDensityRationalPublicLogRankPhaseWeightedCrossing_le_one
       apply Finset.sum_le_sum
       intro phase _
       split_ifs <;>
-        simp [dSVDensityRationalPublicLogRankPhaseWeight]
+        simp only [dSVDensityRationalPublicLogRankPhaseWeight, one_div, mul_zero, inv_nonneg,
+          Nat.cast_nonneg, mul_one, Std.le_refl]
     _ = 1 :=
       dSVDensityRationalPublicLogRankPhaseWeight_sum positive
 
@@ -1474,9 +1475,6 @@ private theorem
       Q B r s
   let m : ℝ := min (r.val : ℝ) (s.val : ℝ)
   let t : ℝ := |(r.val : ℝ) - (s.val : ℝ)|
-  have nonnegative : 0 ≤ x :=
-    dSVDensityRationalPublicLogRankPhaseWeightedCrossing_nonneg
-      Q B r s
   have probability : x ≤ 1 :=
     dSVDensityRationalPublicLogRankPhaseWeightedCrossing_le_one
       positive Q r s
@@ -1501,7 +1499,7 @@ private theorem
     at main
   change (r.val : ℝ) * x ≤
     ((Q : ℝ) / (B : ℝ) + 1) * t + m / (B : ℝ)
-  linarith
+  linarith only [extra, main]
 
 private theorem
     exists_proofDSVDensityRationalPublicBucketPhysicalQuantitativeMixedPrefixCleanup_sq
@@ -1614,7 +1612,7 @@ private theorem
             (if bucket phase r = bucket phase s
               then (0 : ℝ) else 1) := by
             dsimp [base]
-            linarith
+            linarith only [variation]
   have averaged :
       (∑ phase : Fin B,
         dSVDensityRationalPublicLogRankPhaseWeight B phase *
@@ -1683,7 +1681,7 @@ private theorem
     at crossing
   dsimp [bucket] at averaged
   dsimp [base] at averaged
-  linarith
+  linarith only [averaged, crossing]
 
 private def dSVDensityRationalHeterogeneousCommonStopSpectralAtomWeight
     {d : ℕ} (N : ℕ)
@@ -1826,7 +1824,7 @@ private theorem finitePhaseWeightedDoubleSum_exchange
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro phase _
-      ring
+      ac_rfl
 
 private theorem finiteDoubleSum_mul_add
     {I J : Type*} [Fintype I] [Fintype J]
@@ -1841,12 +1839,12 @@ private theorem finiteDoubleSum_mul_add
     intro i _
     apply Finset.sum_congr rfl
     intro j _
-    ring
+    ac_rfl
   · apply Finset.sum_congr rfl
     intro i _
     apply Finset.sum_congr rfl
     intro j _
-    ring
+    ac_rfl
 
 theorem
     exists_proofDSVDensityRationalHeterogeneousCommonStopSpectralGaugeContinuity_sq
@@ -1968,7 +1966,7 @@ theorem
             16 * (Real.exp (((B : ℝ) + 1) / (Q : ℝ)) - 1)) *
               alice i +
           8 * (alice i / (B : ℝ)) := by
-        linarith [min_bound]
+        linarith only [min_bound]
       _ = Kgap * gap i j + Kmass * alice i := by
         dsimp [Kmass]
         ring
@@ -2150,7 +2148,7 @@ private theorem
       0 ≤ Real.exp (((B : ℝ) + 1) / (Q : ℝ)) - 1 := by
     have exponential := Real.add_one_le_exp
       (((B : ℝ) + 1) / (Q : ℝ))
-    linarith
+    linarith only [exponent_nonnegative, exponential]
   have Kmass_nonnegative : 0 ≤ Kmass := by
     dsimp [Kmass]
     positivity
@@ -2226,8 +2224,7 @@ private theorem
     _ ≤ Kgap *
         dSVDensityRationalHeterogeneousPhysicalStoppedAsynchronousMass
           N width schedule ξ ζ + Kmass := by
-      linarith [mul_nonneg Kmass_nonnegative
-        (sub_nonneg.mpr diagonal_budget)]
+      linarith only [grid, dimension, mul_nonneg Kmass_nonnegative (sub_nonneg.mpr diagonal_budget)]
 
 /-- The joint failure vector at a stage preceding the stopping position. -/
 def dSVDensityRationalHeterogeneousStoppedCommonPrefixFailureCopy
@@ -2402,7 +2399,7 @@ theorem unconditionalPublicBucket_exp_sub_one_le
     (show (1 - u) + u = (1 : ℝ) by ring)
   simp only [smul_eq_mul, mul_zero, zero_add, mul_one,
     Real.exp_zero] at chord
-  linarith
+  linarith only [chord]
 
 private def unconditionalPublicBucketLoss
     (B Q : ℕ) (asynchronous precision : ℝ) : ℝ :=
@@ -2439,7 +2436,7 @@ private theorem exists_proofUnconditionalPublicBucketBalance
     (div_le_iff₀ positive).mp lower
   have inverse_bound : 1 / (B : ℝ) ≤ t / 2 := by
     apply (div_le_iff₀ B_real_positive).mpr
-    linarith
+    linarith only [product_lower]
   have ceiling_upper : (B : ℝ) < 2 / t + 1 := by
     exact Nat.ceil_lt_add_one (by positivity : (0 : ℝ) ≤ 2 / t)
   have product_upper : (B : ℝ) * t < 2 + t := by
@@ -2449,7 +2446,7 @@ private theorem exists_proofUnconditionalPublicBucketBalance
       _ = 2 + t := by field_simp
   have B_upper : (B : ℝ) ≤ 3 / t := by
     apply (le_div_iff₀ positive).mpr
-    linarith
+    linarith only [bounded, product_upper]
   have ratio_eq : (Q : ℝ) / (B : ℝ) = (B : ℝ) := by
     dsimp [Q]
     push_cast
@@ -2465,7 +2462,7 @@ private theorem exists_proofUnconditionalPublicBucketBalance
     have Q_real : (Q : ℝ) = (B : ℝ) ^ 2 := by
       simp only [Nat.cast_pow, Q]
     rw [Q_real]
-    linarith
+    linarith only [B_at_least_one, multiply]
   have width_nonnegative :
       0 ≤ ((B : ℝ) + 1) / (Q : ℝ) := by positivity
   have exponential_bound :
@@ -2478,7 +2475,7 @@ private theorem exists_proofUnconditionalPublicBucketBalance
           width_nonnegative (width_bound.trans bounded)
       _ ≤ (Real.exp 1 - 1) * t := by
         have coefficient : 0 ≤ Real.exp 1 - 1 := by
-          linarith [Real.add_one_le_exp (1 : ℝ)]
+          linarith only [Real.add_one_le_exp (1 : ℝ)]
         exact mul_le_mul_of_nonneg_left width_bound coefficient
   refine ⟨B, Q, B_positive, Q_positive, inverse_bound,
     ratio_bound, width_bound, exponential_bound, ?_⟩
@@ -2505,7 +2502,7 @@ private theorem exists_proofUnconditionalPublicBucketBalance
         (by norm_num : (0 : ℝ) ≤ 10)
     have ten_piece : (10 : ℝ) ≤ 10 / t := by
       calc
-        (10 : ℝ) = 10 * 1 := by ring
+        (10 : ℝ) = 10 * 1 := by ac_rfl
         _ ≤ 10 * (1 / t) := ten_scaled
         _ = 10 / t := by ring
     have ratio_piece :
@@ -2517,11 +2514,8 @@ private theorem exists_proofUnconditionalPublicBucketBalance
       10 + 8 * ((Q : ℝ) / (B : ℝ)) ≤
           10 / t + 24 / t := add_le_add ten_piece ratio_piece
       _ = 34 / t := by ring
-  have exponential_scaled :=
-    mul_le_mul_of_nonneg_left exponential_bound
-      (by norm_num : (0 : ℝ) ≤ 16)
   unfold unconditionalPublicBucketLoss
-  linarith
+  linarith only [exponential_bound, reciprocal, ratio_cost]
 
 theorem exists_proofUnconditionalStoppedCommonPrefixBalancedHazard
     {d N : ℕ} (grid : 0 < N) (dimension : 0 < d)
@@ -2686,7 +2680,7 @@ theorem unconditionalPrefactor_balancedHazard_sqrt_le
           Real.sqrt a := by rw [coefficient_square, fourth_square]
   have quotient : (34 / Real.sqrt a) * a = 34 * Real.sqrt a := by
     field_simp [ne_of_gt root_positive]
-    linarith [root_square]
+    linarith only [root_square]
   apply Real.sqrt_le_iff.mpr
   constructor
   · positivity
@@ -2699,7 +2693,7 @@ theorem unconditionalPrefactor_balancedHazard_sqrt_le
         (mul_nonneg (Real.sqrt_nonneg _)
           (Real.rpow_nonneg positive.le _))
         rho_nonnegative
-    linarith [product_square]
+    linarith only [product_square, cross_nonnegative]
 
 theorem unconditionalPrefactor_smallHazard_twelfthRoot_le
     {eta alpha : ℝ}
@@ -2724,13 +2718,11 @@ theorem unconditionalPrefactor_smallHazard_twelfthRoot_le
   have a_positive : 0 < a := by
     dsimp [a]
     have := Real.sqrt_nonneg eta
-    linarith
+    linarith only [alpha_third_positive, this]
   have eta_root_square : (Real.sqrt eta) ^ 2 = eta :=
     Real.sq_sqrt eta_nonnegative
   have eta_bounded : eta ≤ 1 := by
-    have eta_root_bounded : Real.sqrt eta ≤ 1 := by
-      linarith [Real.sqrt_nonneg eta, alpha_third_positive]
-    nlinarith [Real.sqrt_nonneg eta]
+    nlinarith only [small, alpha_third_positive, eta_root_square, Real.sqrt_nonneg eta]
   have rho_nonnegative : 0 ≤ rho := by
     dsimp [rho]
     exact Real.rpow_nonneg alpha_positive.le _
@@ -2755,11 +2747,9 @@ theorem unconditionalPrefactor_smallHazard_twelfthRoot_le
         (eta ^ (1 / 12 : ℝ) + rho)
   change a ^ (1 / 4 : ℝ) ≤
     4 * eta ^ (1 / 12 : ℝ) + rho at quarter
-  linarith [mul_nonneg coefficient_root_nonnegative
-    (sub_nonneg.mpr quarter),
-    mul_nonneg coefficient_root_nonnegative rho_nonnegative,
-    mul_nonneg (show 0 ≤ (2 : ℝ) by norm_num)
-      eta_twelfth_nonnegative]
+  linarith only [eta_twelfth_nonnegative, balanced,
+    mul_nonneg coefficient_root_nonnegative (sub_nonneg.mpr quarter),
+    mul_nonneg coefficient_root_nonnegative rho_nonnegative]
 
 theorem unconditionalPrefactor_largeVerifier_twelfthRoot_le
     {eta alpha : ℝ}
@@ -2769,8 +2759,6 @@ theorem unconditionalPrefactor_largeVerifier_twelfthRoot_le
     (large : 1 < 64 * Real.sqrt eta + alpha ^ (1 / 3 : ℝ)) :
     (2 : ℝ) ≤
       128 * (eta ^ (1 / 12 : ℝ) + alpha ^ (1 / 12 : ℝ)) := by
-  have eta_root_nonnegative : 0 ≤ eta ^ (1 / 12 : ℝ) :=
-    Real.rpow_nonneg eta_nonnegative _
   have alpha_root_nonnegative : 0 ≤ alpha ^ (1 / 12 : ℝ) :=
     Real.rpow_nonneg alpha_positive.le _
   by_cases eta_bounded : eta ≤ 1
@@ -2787,11 +2775,11 @@ theorem unconditionalPrefactor_largeVerifier_twelfthRoot_le
         alpha_positive.le alpha_bounded
         (by norm_num : (0 : ℝ) ≤ 1 / 12)
         (by norm_num : (1 / 12 : ℝ) ≤ 1 / 3)
-    linarith
+    linarith only [large, alpha_root_nonnegative, eta_root_compare, alpha_root_compare]
   · have eta_large : 1 ≤ eta := (lt_of_not_ge eta_bounded).le
     have eta_root_large : 1 ≤ eta ^ (1 / 12 : ℝ) :=
       Real.one_le_rpow eta_large (by norm_num : (0 : ℝ) ≤ 1 / 12)
-    linarith
+    linarith only [alpha_root_nonnegative, eta_root_large]
 
 end
 
@@ -2836,7 +2824,7 @@ theorem unconditionalExactSourceScalarClipping
   intro ξ
   exact
     (dSVDensityRationalCanonicalAcceptedTarget_distance_sq_le
-      (by linarith) grid ξ).trans scalar
+      (by linarith only [width]) grid ξ).trans scalar
 
 end
 
@@ -3049,7 +3037,7 @@ theorem exactLocallySampleableJA_rounded_totalVariation_le
     _ = gamma := by
       rw [← Finset.sum_mul,
         localQuestionWeight_sum G n D remaining]
-      ring
+      ac_rfl
 
 theorem exactLocallySampleableJB_rounded_totalVariation_le
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -3108,7 +3096,7 @@ theorem exactLocallySampleableJB_rounded_totalVariation_le
     _ = gamma := by
       rw [← Finset.sum_mul,
         localQuestionWeight_sum G n D remaining]
-      ring
+      ac_rfl
 
 theorem exactLocallySampleableRounded_pair_totalVariation
     (G : Game X Y A B) (n : ℕ) (D : Finset (Fin n))
@@ -3236,7 +3224,7 @@ theorem exactLocallySampleablePermutationMismatch_le_two_tv
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro c _
-      ring
+      ac_rfl
     _ = 2 * finiteTotalVariation
         (exactLocallySampleableJARounded
           G n D denominator numerator)
@@ -3819,7 +3807,7 @@ private theorem finiteProductMarginal_relativeEntropy_le
       hp (finiteIndependentProductWeight_nonneg
         marginal hm_nonnegative)
   change (∑ i : ι, finiteRelativeEntropy (marginal i) (q i)) ≤ _
-  linarith
+  linarith only [hnonnegative]
 
 end
 
@@ -3884,7 +3872,7 @@ theorem exactIndependentCoordinateQuestion_marginal
           rw [Finset.sum_mul]
           apply Finset.sum_congr rfl
           intro seed _
-          split_ifs <;> simp
+          split_ifs <;> simp only [zero_mul]
     _ = (1 / (Fintype.card M : ℝ)) * coordinateMass := by
       rw [exactSeedWeight_coordinate_marginal i]
 
@@ -3909,7 +3897,7 @@ theorem strategyAliceQuestionPrior_marginal
   intro y _
   simp_rw [← Finset.mul_sum]
   rw [S.outcomeProbability_normalized x y]
-  ring
+  ac_rfl
 
 theorem strategyBobQuestionPrior_marginal
     (G : Game X Y A B) (S : Strategy G) (y : Y) :
@@ -3932,7 +3920,7 @@ theorem strategyBobQuestionPrior_marginal
   intro x _
   simp_rw [← Finset.mul_sum]
   rw [S.outcomeProbability_normalized x y]
-  ring
+  ac_rfl
 
 private theorem repeatedAliceQuestionPrior_product
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -5208,7 +5196,7 @@ theorem finiteSupportedConditionalHistoryReferenceFirstMarginal_eq
         field_simp [hqi]
     _ = jointFirstMarginal (jointConditional p i) r := by
       rw [← Finset.mul_sum, reference_normalized i supported r]
-      ring
+      ac_rfl
 
 theorem finiteSupportedConditionalHistoryReferenceConditional_eq
     {I R V : Type*} [Fintype R] [Fintype V]
@@ -6242,6 +6230,14 @@ theorem exactConditionedAnswerFlag_eq_of_history
       (fun r : ExactHistoryFlag X Y A B D => r.bobAnswer)
       same_history
 
+private theorem finitePrefixMask_attach_flag
+    {C F V : Type*} {m : ℕ}
+    (default : V) (marker : Fin (m + 1))
+    (point : C × (Fin m → V)) (flag : F) :
+    finitePrefixMask default marker ((point.1, flag), point.2) =
+      (((finitePrefixMask default marker point).1, flag),
+        (finitePrefixMask default marker point).2) := rfl
+
 theorem exactReverseAliceMarkedHistoryContext_eq_of_history
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n)) (default : Y)
@@ -6259,52 +6255,12 @@ theorem exactReverseAliceMarkedHistoryContext_eq_of_history
         G n S D default seed outcome' := by
   have hmask := exactReverseAliceMaskedProjection_eq_of_history
     (X := X) (Y := Y) (A := A) (B := B)
-    D default (seed, outcome) (seed, outcome')
-    same_history same_question
+    D default (seed, outcome) (seed, outcome') same_history same_question
   have hflag := exactConditionedAnswerFlag_eq_of_history
     G n S D (seed, outcome) (seed, outcome') same_history
-  have hfixed :
-      (exactReverseAliceSourceProjection
-        (X := X) (Y := Y) (A := A) (B := B)
-        D (exactReverseLeftSide seed) (seed, outcome)).1 =
-      (exactReverseAliceSourceProjection
-        (X := X) (Y := Y) (A := A) (B := B)
-        D (exactReverseLeftSide seed) (seed, outcome')).1 := by
-    have h := congrArg
-      (fun t :
-        ExactReverseAliceFixedInformation X Y D
-          (exactReverseLeftSide seed) ×
-            (Fin (exactReverseLeftSide seed).card → Y) =>
-        t.1) hmask
-    simpa only [finitePrefixMask] using h
-  have hprefix :
-      (finitePrefixMask default
-        ((exactReverseAliceContext seed).sideRank
-          ⟨seed.coordinate,
-            exactReverseLeftSide_coordinate_mem seed⟩).castSucc
-        (exactReverseAliceSourceProjection
-          (X := X) (Y := Y) (A := A) (B := B)
-          D (exactReverseLeftSide seed) (seed, outcome))).2 =
-      (finitePrefixMask default
-        ((exactReverseAliceContext seed).sideRank
-          ⟨seed.coordinate,
-            exactReverseLeftSide_coordinate_mem seed⟩).castSucc
-        (exactReverseAliceSourceProjection
-          (X := X) (Y := Y) (A := A) (B := B)
-          D (exactReverseLeftSide seed) (seed, outcome'))).2 := by
-    exact congrArg
-      (fun t :
-        ExactReverseAliceFixedInformation X Y D
-          (exactReverseLeftSide seed) ×
-            (Fin (exactReverseLeftSide seed).card → Y) =>
-        t.2) hmask
   unfold exactReverseAliceMarkedHistoryContext
-  dsimp
-  apply Prod.ext
-  · apply Prod.ext
-    · exact hfixed
-    · exact hflag
-  · exact hprefix
+  dsimp only
+  rw [finitePrefixMask_attach_flag, finitePrefixMask_attach_flag, hmask, hflag]
 
 theorem exactReverseBobMarkedHistoryContext_eq_of_history
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -6323,52 +6279,12 @@ theorem exactReverseBobMarkedHistoryContext_eq_of_history
         G n S D default seed outcome' := by
   have hmask := exactReverseBobMaskedProjection_eq_of_history
     (X := X) (Y := Y) (A := A) (B := B)
-    D default (seed, outcome) (seed, outcome')
-    same_history same_question
+    D default (seed, outcome) (seed, outcome') same_history same_question
   have hflag := exactConditionedAnswerFlag_eq_of_history
     G n S D (seed, outcome) (seed, outcome') same_history
-  have hfixed :
-      (exactReverseBobSourceProjection
-        (X := X) (Y := Y) (A := A) (B := B)
-        D (exactReverseRightSide seed) (seed, outcome)).1 =
-      (exactReverseBobSourceProjection
-        (X := X) (Y := Y) (A := A) (B := B)
-        D (exactReverseRightSide seed) (seed, outcome')).1 := by
-    have h := congrArg
-      (fun t :
-        ExactReverseBobFixedInformation X Y D
-          (exactReverseRightSide seed) ×
-            (Fin (exactReverseRightSide seed).card → X) =>
-        t.1) hmask
-    simpa only [finitePrefixMask] using h
-  have hprefix :
-      (finitePrefixMask default
-        ((exactReverseBobContext seed).sideRank
-          ⟨seed.coordinate,
-            exactReverseRightSide_coordinate_mem seed⟩).castSucc
-        (exactReverseBobSourceProjection
-          (X := X) (Y := Y) (A := A) (B := B)
-          D (exactReverseRightSide seed) (seed, outcome))).2 =
-      (finitePrefixMask default
-        ((exactReverseBobContext seed).sideRank
-          ⟨seed.coordinate,
-            exactReverseRightSide_coordinate_mem seed⟩).castSucc
-        (exactReverseBobSourceProjection
-          (X := X) (Y := Y) (A := A) (B := B)
-          D (exactReverseRightSide seed) (seed, outcome'))).2 := by
-    exact congrArg
-      (fun t :
-        ExactReverseBobFixedInformation X Y D
-          (exactReverseRightSide seed) ×
-            (Fin (exactReverseRightSide seed).card → X) =>
-        t.2) hmask
   unfold exactReverseBobMarkedHistoryContext
-  dsimp
-  apply Prod.ext
-  · apply Prod.ext
-    · exact hfixed
-    · exact hflag
-  · exact hprefix
+  dsimp only
+  rw [finitePrefixMask_attach_flag, finitePrefixMask_attach_flag, hmask, hflag]
 
 theorem exactReverseAlice_history_of_marked_context
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -6906,7 +6822,7 @@ theorem reweightedSeedPrefixPrior_as_flagged_pushforward
         groupedMass projection
           (reweightedSeedPriorEventLaw seedLaw G n S).weight
           (t.1.1, t.2) := by
-            ring
+            ac_rfl
     _ = groupedMass
         (fun q : ConditionedAnswerFlag A B D ×
             (K × ExactOutcome X Y A B n) =>
@@ -7044,29 +6960,7 @@ theorem finiteGroupedExpectation_eq_atom_sum
     (code : Ω → C) (mass : Ω → ℝ) (value : C → ℝ) :
     (∑ target : C, groupedMass code mass target * value target) =
       ∑ outcome : Ω, mass outcome * value (code outcome) := by
-  classical
-  unfold groupedMass
-  calc
-    (∑ target : C,
-      (∑ outcome ∈
-        (Finset.univ.filter fun outcome : Ω =>
-          code outcome = target), mass outcome) * value target) =
-      ∑ target : C,
-        ∑ outcome ∈
-          (Finset.univ.filter fun outcome : Ω =>
-            code outcome = target),
-          mass outcome * value (code outcome) := by
-        apply Finset.sum_congr rfl
-        intro target _
-        rw [Finset.sum_mul]
-        apply Finset.sum_congr rfl
-        intro outcome houtcome
-        have hcode : code outcome = target :=
-          (Finset.mem_filter.mp houtcome).2
-        rw [hcode]
-    _ = ∑ outcome : Ω, mass outcome * value (code outcome) :=
-      Finset.sum_fiberwise Finset.univ code
-        (fun outcome => mass outcome * value (code outcome))
+  exact groupedMass_expectation code mass value
 
 theorem jointFirstMarginal_groupedContextNext
     {Ω C V : Type*} [Fintype Ω] [Fintype V]

@@ -12,16 +12,10 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.Order.CompletePartialOrder
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Metrizable.Urysohn
-import Std.Tactic.BVDecide.Normalize.Prop
 public import LeanPool.InfiniteConnesRigidity.CarryAndCrossedProduct
 import Mathlib.Analysis.InnerProductSpace.Reproducing
 import Mathlib.Analysis.Matrix.Order
-import Mathlib.Topology.Algebra.LinearMapCompletion
 
 /-!
 # Spectral methods and property (T)
@@ -35,6 +29,16 @@ noncomputable section
 attribute [local instance low] instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent
 
 namespace ConnesRigidity
+
+/-- Express displacement of a normalized vector without repeated scalar-norm elaboration. -/
+public theorem norm_normalized_displacement {W : Type*} [NormedAddCommGroup W] [NormedSpace ℂ W]
+    (T : W →L[ℂ] W) (z : W) :
+    ‖T (((‖z‖ : ℂ)⁻¹) • z) - ((‖z‖ : ℂ)⁻¹) • z‖ =
+      ‖T z - z‖ / ‖z‖ := by
+  rw [map_smul, ← smul_sub, norm_smul, norm_inv, Complex.norm_real,
+    Real.norm_of_nonneg (norm_nonneg z), div_eq_mul_inv, mul_comm]
+
+
 section
 
 open ConnesRigidity MeasureTheory
@@ -146,31 +150,17 @@ private theorem crossedMultiplier_mem_vonNeumannClosure_of_base_commutation
     (f : crossedCoefficient X) :
     crossedMultiplier X f ∈
       vonNeumannClosure (crossedCharacterGeneratorSet X χ) := by
-  change
-    crossedMultiplier X f ∈ StarSubalgebra.centralizer ℂ
-      (↑(StarSubalgebra.centralizer ℂ
-        (crossedCharacterGeneratorSet X χ)) :
-          Set (crossedHilbert X →L[ℂ] crossedHilbert X))
-  rw [StarSubalgebra.mem_centralizer_iff]
-  intro T hT
-  have hcomm :
-      ∀ S : crossedHilbert X →L[ℂ] crossedHilbert X,
-        S ∈ StarSubalgebra.centralizer ℂ
-          (crossedCharacterGeneratorSet X χ) →
-          Commute S (crossedMultiplier X f) := by
-    intro S hS
-    apply (commute_crossedMultiplier_iff_blocks X S f).2
-    intro q k
-    apply hbase (crossedOperatorBlock X S q k)
-    intro i
-    apply crossedOperatorBlock_commute_of_commute_fiberwise X S
-      (crossedBaseMultiplier X (χ i))
-    have hi := (StarSubalgebra.mem_centralizer_iff ℂ).1 hS
-      (crossedMultiplier X (χ i))
-      (Or.inl ⟨i, rfl⟩)
-    exact hi.1.symm
-  exact ⟨(hcomm T hT).eq,
-    (hcomm (star T) (star_mem hT)).eq⟩
+  apply mem_vonNeumannClosure_of_commute
+  intro S hS
+  apply (commute_crossedMultiplier_iff_blocks X S f).2
+  intro q k
+  apply hbase (crossedOperatorBlock X S q k)
+  intro i
+  apply crossedOperatorBlock_commute_of_commute_fiberwise X S
+    (crossedBaseMultiplier X (χ i))
+  have hi := (StarSubalgebra.mem_centralizer_iff ℂ).1 hS
+    (crossedMultiplier X (χ i)) (Or.inl ⟨i, rfl⟩)
+  exact hi.1.symm
 
 section ContinuousCharacters
 
@@ -335,46 +325,17 @@ private theorem crossed_character_vonNeumannClosure_eq_full_of_multipliers
         vonNeumannClosure (crossedCharacterGeneratorSet A χ)) :
     vonNeumannClosure (crossedCharacterGeneratorSet A χ) =
       (crossedProductModel A).algebra := by
-  let S : Set (crossedHilbert A →L[ℂ] crossedHilbert A) :=
-    crossedCharacterGeneratorSet A χ
-  let G : Set (crossedHilbert A →L[ℂ] crossedHilbert A) :=
-    crossedGeneratorSet A
-  have hsub : S ⊆ G := by
-    rintro T (⟨i, rfl⟩ | ⟨k, rfl⟩)
+  change vonNeumannClosure (crossedCharacterGeneratorSet A χ) =
+    vonNeumannClosure (crossedGeneratorSet A)
+  apply vonNeumannClosure_eq_of_generators
+  · rintro T (⟨i, rfl⟩ | ⟨k, rfl⟩)
     · exact Or.inl ⟨χ i, rfl⟩
     · exact Or.inr ⟨k, rfl⟩
-  have hcommutants :
-      StarSubalgebra.centralizer ℂ S =
-        StarSubalgebra.centralizer ℂ G := by
-    apply StarSubalgebra.ext
-    intro T
-    constructor
-    · intro hT
-      rw [StarSubalgebra.mem_centralizer_iff]
-      intro R hR
-      rcases hR with ⟨f, rfl⟩ | ⟨k, rfl⟩
-      · have hf : crossedMultiplier A f ∈
-            vonNeumannClosure S := hχ f
-        have hforward :=
-          (StarSubalgebra.mem_centralizer_iff ℂ).1 hf T hT
-        have hstar :=
-          (StarSubalgebra.mem_centralizer_iff ℂ).1
-            (star_mem hf) T hT
-        exact ⟨hforward.1.symm, hstar.1.symm⟩
-      · exact (StarSubalgebra.mem_centralizer_iff ℂ).1 hT _
-          (Or.inr ⟨k, rfl⟩)
-    · intro hT
-      exact StarSubalgebra.centralizer_le ℂ S G hsub hT
-  apply VonNeumannAlgebra.ext
-  intro T
-  change
-    T ∈ StarSubalgebra.centralizer ℂ
-      (StarSubalgebra.centralizer ℂ S :
-        Set (crossedHilbert A →L[ℂ] crossedHilbert A)) ↔
-      T ∈ StarSubalgebra.centralizer ℂ
-        (StarSubalgebra.centralizer ℂ G :
-          Set (crossedHilbert A →L[ℂ] crossedHilbert A))
-  rw [hcommutants]
+  · rintro T (⟨f, rfl⟩ | ⟨k, rfl⟩)
+    · exact hχ f
+    · exact StarAlgebra.adjoin_le_centralizer_centralizer ℂ _
+        (StarAlgebra.subset_adjoin ℂ _ (Or.inr ⟨k, rfl⟩))
+
 
 end CrossedClosureEquality
 
@@ -1223,10 +1184,7 @@ private theorem quotientProjection_error_lt_of_spectralGap
   have hwnorm_formula :
       ‖(π (E.splitting h) : V →L[ℂ] V) w - w‖ =
         ‖(π (E.splitting h) : V →L[ℂ] V) z - z‖ / ‖z‖ := by
-    dsimp [w]
-    rw [map_smul, ← smul_sub, norm_smul, norm_inv,
-      Complex.norm_real, Real.norm_of_nonneg (norm_nonneg _)]
-    simp only [div_eq_mul_inv, mul_comm]
+    exact norm_normalized_displacement (π (E.splitting h) : V →L[ℂ] V) z
   rw [hwnorm_formula] at hgap
   have hzpos : 0 < ‖z‖ := norm_pos_iff.mpr hz
   have hgap' : κ * ‖z‖ ≤
@@ -4088,7 +4046,7 @@ theorem IsMinimizingAffinePair.normalizer_fixed_of_no_linear_invariants
     intro k
     have hfixed := affineLinearRepresentation_sub_fixed
       hmin.fixed_right hy₂ k
-    simpa [v, hdisp] using hfixed
+    simpa only [v, hdisp, map_sub] using hfixed
   have hvzero : v = 0 :=
     hno v (affineLinear_invariant_of_sup_eq_top α K₁ K₂ hgen v hv₁ hv₂)
   have hleft : α g x₁ = x₁ := by
@@ -4405,7 +4363,8 @@ private theorem canonicalKernelVector_inner {I : Type u}
   simp only [canonicalKernelVector]
   rw [UniformSpace.Completion.inner_coe, preKernel_inner_single]
   have hscalar : (scalarOperatorKernel K j i) 1 = K j i := by
-    simp [scalarOperatorKernel, ContinuousLinearMap.toSpanSingleton_apply]
+    simp only [scalarOperatorKernel, ContinuousLinearMap.toSpanSingleton_apply, smul_eq_mul,
+      one_mul]
   simp only [star_one, mul_one, RCLike.inner_apply, one_mul, hscalar]
   exact hK.isHermitian.apply i j
 
@@ -4421,8 +4380,8 @@ private theorem preKernel_single_scalar_inner {I : Type u}
   | add f g hf hg => simp only [inner_add_right, hf, hg]
   | single j d =>
       rw [preKernel_inner_single, preKernel_inner_single]
-      simp [scalarOperatorKernel,
-        ContinuousLinearMap.toSpanSingleton_apply]
+      simp only [scalarOperatorKernel, ContinuousLinearMap.toSpanSingleton_apply, RCLike.star_def,
+        smul_eq_mul, RCLike.inner_apply, map_mul, star_mul', one_mul]
       ring
 
 /-- A pre-kernel basis vector is a scalar multiple of its canonical kernel vector. -/
@@ -4436,7 +4395,8 @@ private theorem coe_single_eq_smul_canonicalKernelVector {I : Type u}
   refine UniformSpace.Completion.denseRange_coe.eq_of_inner_left ℂ fun f ↦ ?_
   rw [UniformSpace.Completion.inner_coe,
     UniformSpace.Completion.inner_coe]
-  simpa [smul_eq_mul] using preKernel_single_scalar_inner K i z c f
+  simpa only [smul_eq_mul, Finsupp.smul_single, mul_one, Finsupp.single_mul] using
+    preKernel_single_scalar_inner K i z c f
 
 /-- The index action sends each canonical vector to the corresponding translated vector. -/
 private theorem actionKernelUnitaryRepresentation_canonicalKernelVector
@@ -5445,8 +5405,9 @@ theorem exists_marked_affine_ultralimit
     have heq (n : ℕ) :
         markedAffinePairDisplacement (α n) (x n) (y n) p =
           markedAffinePairDisplacement (α n) (x n) (y n) p' := by
-      simp [p, p', markedAffinePairDisplacement,
-        markedAffineOrbitPoint, hx n k]
+      simp only [p, p', markedAffinePairDisplacement, markedAffineOrbitPoint, hx n k,
+        markedOrbitAction_apply, mul_one, ↓reduceIte, map_one, Bool.false_eq_true,
+        AffineIsometryEquiv.coe_one, id_eq]
     exact tendsto_nhds_unique (hconv p q)
       (by simpa only [heq] using hconv p' q)
   · intro k
@@ -5460,8 +5421,9 @@ theorem exists_marked_affine_ultralimit
     have heq (n : ℕ) :
         markedAffinePairDisplacement (α n) (x n) (y n) p =
           markedAffinePairDisplacement (α n) (x n) (y n) p' := by
-      simp [p, p', markedAffinePairDisplacement,
-        markedAffineOrbitPoint, hy n k]
+      simp only [p, p', markedAffinePairDisplacement, markedAffineOrbitPoint, hy n k,
+        markedOrbitAction_apply, mul_one, Bool.false_eq_true, ↓reduceIte, map_one,
+        AffineIsometryEquiv.coe_one, id_eq, sub_self]
     exact tendsto_nhds_unique (hconv p q)
       (by simpa only [heq] using hconv p' q)
   · let p : (G × Bool) × (G × Bool) :=
@@ -5473,8 +5435,9 @@ theorem exists_marked_affine_ultralimit
             R.realization.vector p⟫_ℂ) := by
       have h := hconv p p
       rw [← R.realization.gram p p] at h
-      simpa [p, markedAffinePairDisplacement,
-        markedAffineOrbitPoint] using h
+      simpa only [p, markedAffinePairDisplacement, markedAffineOrbitPoint,
+        inner_self_eq_norm_sq_to_K, Complex.coe_algebraMap, map_one, ↓reduceIte,
+        AffineIsometryEquiv.coe_one, id_eq, Bool.false_eq_true] using h
     rw [markedPairPoint_sub L R hadd]
     exact norm_eq_of_gram_and_tendsto_norm
       (Filter.hyperfilter ℕ)
@@ -6722,7 +6685,11 @@ private theorem columnShear_mul_castSucc (s : Fin 3 → IntegralPolynomial)
       Matrix.transvection (2 : Fin 4) 3 (s 2) * g.val.val :
         Matrix (Fin 4) (Fin 4) IntegralPolynomial)) i.castSucc j = _
   fin_cases i <;>
-    simp [Matrix.transvection, Matrix.mul_apply, Fin.sum_univ_four]
+    simp only [Matrix.transvection, Matrix.mul_apply, Fin.sum_univ_four, transvection,
+      Fin.isValue, Fin.zero_eta, Fin.castSucc_zero, Matrix.add_apply, one_apply_eq, Fin.reduceEq,
+      and_false, not_false_eq_true, single_apply_of_ne, add_zero, one_ne_zero, false_and, one_mul,
+      ne_eq, zero_ne_one, one_apply_ne, zero_mul, single_apply_same, zero_add, mul_zero, mul_one,
+      Fin.mk_one, Fin.castSucc_one, Fin.reduceFinMk, Fin.reduceCastSucc]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem columnShear_mul_last (s : Fin 3 → IntegralPolynomial)
@@ -6773,8 +6740,10 @@ private theorem mul_rowShear_castSucc (s : Fin 3 → IntegralPolynomial)
         Matrix (Fin 4) (Fin 4) IntegralPolynomial)) i j.castSucc = _
   simp only [← mul_assoc]
   fin_cases j <;>
-    simp [Matrix.mul_transvection_apply_same,
-      Matrix.mul_transvection_apply_of_ne, mul_comm]
+    simp only [Matrix.mul_transvection_apply_same, Matrix.mul_transvection_apply_of_ne, mul_comm,
+      Fin.isValue, Fin.zero_eta, Fin.castSucc_zero, ne_eq, Fin.reduceEq, not_false_eq_true,
+      mul_transvection_apply_of_ne, zero_ne_one, mul_transvection_apply_same, Fin.mk_one,
+      Fin.castSucc_one, one_ne_zero, Fin.reduceFinMk, Fin.reduceCastSucc]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem mul_rowShear_last (s : Fin 3 → IntegralPolynomial)
@@ -6849,21 +6818,21 @@ private theorem cornulierBoundedFactorization_of_stableRange
               cornulierRowShear rcoeff : integralElementaryGroup).val :
             Matrix (Fin 4) (Fin 4) IntegralPolynomial) 0 3 = 0
         rw [mul_rowShear_last]
-        simpa [lcoeff, hg₂last] using
+        simpa only [lcoeff, hg₂last, Fin.isValue, Fin.castSucc_zero, mul_one, add_neg_cancel] using
           (columnShear_mul_castSucc lcoeff g₂ (0 : Fin 3) 3)
       · change
           (((cornulierColumnShear lcoeff * g₂) *
               cornulierRowShear rcoeff : integralElementaryGroup).val :
             Matrix (Fin 4) (Fin 4) IntegralPolynomial) 1 3 = 0
         rw [mul_rowShear_last]
-        simpa [lcoeff, hg₂last] using
+        simpa only [lcoeff, hg₂last, Fin.isValue, Fin.castSucc_one, mul_one, add_neg_cancel] using
           (columnShear_mul_castSucc lcoeff g₂ (1 : Fin 3) 3)
       · change
           (((cornulierColumnShear lcoeff * g₂) *
               cornulierRowShear rcoeff : integralElementaryGroup).val :
             Matrix (Fin 4) (Fin 4) IntegralPolynomial) 2 3 = 0
         rw [mul_rowShear_last]
-        simpa [lcoeff, hg₂last] using
+        simpa only [lcoeff, hg₂last, Fin.isValue, Fin.reduceCastSucc, mul_one, add_neg_cancel] using
           (columnShear_mul_castSucc lcoeff g₂ (2 : Fin 3) 3)
       · change
           (((cornulierColumnShear lcoeff * g₂) *
@@ -6881,7 +6850,8 @@ private theorem cornulierBoundedFactorization_of_stableRange
           (cornulierColumnShear lcoeff * g₂) 3 (0 : Fin 3)
         have hzero := columnShear_mul_last lcoeff g₂ (0 : Fin 4)
         have hlast := columnShear_mul_last lcoeff g₂ (3 : Fin 4)
-        simpa [hzero, hlast, rcoeff, hg₂last] using hrow
+        simpa only [hzero, hlast, rcoeff, hg₂last, Fin.isValue, Fin.castSucc_zero, mul_neg,
+          one_mul, add_neg_cancel] using hrow
       · change
           (((cornulierColumnShear lcoeff * g₂) *
               cornulierRowShear rcoeff : integralElementaryGroup).val :
@@ -6890,7 +6860,8 @@ private theorem cornulierBoundedFactorization_of_stableRange
           (cornulierColumnShear lcoeff * g₂) 3 (1 : Fin 3)
         have hzero := columnShear_mul_last lcoeff g₂ (1 : Fin 4)
         have hlast := columnShear_mul_last lcoeff g₂ (3 : Fin 4)
-        simpa [hzero, hlast, rcoeff, hg₂last] using hrow
+        simpa only [hzero, hlast, rcoeff, hg₂last, Fin.isValue, Fin.castSucc_one, mul_neg,
+          one_mul, add_neg_cancel] using hrow
       · change
           (((cornulierColumnShear lcoeff * g₂) *
               cornulierRowShear rcoeff : integralElementaryGroup).val :
@@ -6899,7 +6870,8 @@ private theorem cornulierBoundedFactorization_of_stableRange
           (cornulierColumnShear lcoeff * g₂) 3 (2 : Fin 3)
         have hzero := columnShear_mul_last lcoeff g₂ (2 : Fin 4)
         have hlast := columnShear_mul_last lcoeff g₂ (3 : Fin 4)
-        simpa [hzero, hlast, rcoeff, hg₂last] using hrow
+        simpa only [hzero, hlast, rcoeff, hg₂last, Fin.isValue, Fin.reduceCastSucc, mul_neg,
+          one_mul, add_neg_cancel] using hrow
       · change
           (((cornulierColumnShear lcoeff * g₂) *
               cornulierRowShear rcoeff : integralElementaryGroup).val :
@@ -7196,6 +7168,7 @@ theorem HasUniformRelativeKazhdanDisplacement.map
   rintro ⟨_, ⟨g, hg, rfl⟩⟩
   exact hN ⟨g, hg⟩
 
+
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem uniformRelativeKazhdanDisplacement_of_pair
     {G : CountableDiscreteGroup.{u}} (N : Subgroup G) [N.Normal]
@@ -7233,10 +7206,7 @@ private theorem uniformRelativeKazhdanDisplacement_of_pair
             ‖(π g : W →L[ℂ] W) z - z‖ / ‖z‖ := by
         change ‖(π g : W →L[ℂ] W)
           (((‖z‖ : ℂ)⁻¹) • z) - ((‖z‖ : ℂ)⁻¹) • z‖ = _
-        rw [map_smul, ← smul_sub]
-        rw [norm_smul, norm_inv, Complex.norm_real,
-          Real.norm_of_nonneg (norm_nonneg z)]
-        simp only [div_eq_mul_inv, mul_comm]
+        exact norm_normalized_displacement (π g : W →L[ℂ] W) z
       rw [hwformula]
       apply (div_lt_iff₀ (norm_pos_iff.mpr hz)).2
       have hsmallg := hsmall g hg
@@ -7260,6 +7230,59 @@ private theorem uniformRelativeKazhdanDisplacement_of_pair
     _ ≤ ‖(π (n : G) : W →L[ℂ] W) z‖ + ‖z‖ := norm_sub_le _ _
     _ = 2 * ‖z‖ := by rw [Unitary.norm_map]; ring
     _ < ε := by linarith
+
+/-- A relative Kazhdan pair bounds the component orthogonal to its fixed subspace. -/
+public theorem relativeKazhdanPair_orthogonalResidual_norm_lt
+    {G : CountableDiscreteGroup.{u}} (N : Subgroup G) [N.Normal]
+    {F : Finset G} {κ δ : ℝ}
+    (hpair : IsRelativeKazhdanPair G N F κ) (hδ : 0 < δ)
+    (W : Type u) [NormedAddCommGroup W] [InnerProductSpace ℂ W] [CompleteSpace W]
+    (π : UnitaryRepresentation G W) (ξ : W)
+    (hsmall : ∀ g ∈ F, ‖(π g : W →L[ℂ] W) ξ - ξ‖ < δ) :
+    ‖ξ - (normalFixedSubmodule N π).starProjection ξ‖ < δ / κ := by
+  let M : Submodule ℂ W := normalFixedSubmodule N π
+  let z : W := ξ - M.starProjection ξ
+  have hκ : 0 < κ := hpair.1
+  change ‖z‖ < δ / κ
+  by_contra hnot
+  have hzlower : δ / κ ≤ ‖z‖ := le_of_not_gt hnot
+  have hz : z ≠ 0 := by
+    intro hzero
+    rw [hzero, norm_zero] at hzlower
+    exact (not_le_of_gt (div_pos hδ hκ)) hzlower
+  have hzmem : z ∈ Mᗮ :=
+    Submodule.sub_starProjection_mem_orthogonal ξ
+  let w : Mᗮ :=
+    ⟨((‖z‖ : ℂ)⁻¹) • z, (Mᗮ).smul_mem _ hzmem⟩
+  have hwnorm : ‖w‖ = 1 := norm_smul_inv_norm hz
+  have hwsmall :
+      ∀ g ∈ F,
+        ‖(normalFixedOrthogonalRepresentation N π g :
+          Mᗮ →L[ℂ] Mᗮ) w - w‖ < κ := by
+    intro g hg
+    have hcontract :
+        ‖(π g : W →L[ℂ] W) z - z‖ ≤
+          ‖(π g : W →L[ℂ] W) ξ - ξ‖ :=
+      normalFixed_orthogonalResidual_displacement_le N π g ξ
+    have hwformula :
+        ‖(normalFixedOrthogonalRepresentation N π g :
+            Mᗮ →L[ℂ] Mᗮ) w - w‖ =
+          ‖(π g : W →L[ℂ] W) z - z‖ / ‖z‖ := by
+      change ‖(π g : W →L[ℂ] W)
+        (((‖z‖ : ℂ)⁻¹) • z) - ((‖z‖ : ℂ)⁻¹) • z‖ = _
+      exact norm_normalized_displacement (π g : W →L[ℂ] W) z
+    rw [hwformula]
+    apply (div_lt_iff₀ (norm_pos_iff.mpr hz)).2
+    have hgsmall : ‖(π g : W →L[ℂ] W) ξ - ξ‖ < δ := by
+      exact hsmall g hg
+    have hδbound : δ ≤ κ * ‖z‖ :=
+      by simpa only [mul_comm] using (div_le_iff₀ hκ).mp hzlower
+    exact lt_of_lt_of_le (lt_of_le_of_lt hcontract hgsmall) hδbound
+  obtain ⟨η, hη, hηfixed⟩ := hpair.2
+    Mᗮ inferInstance inferInstance inferInstance
+    (normalFixedOrthogonalRepresentation N π) w hwnorm hwsmall
+  exact hη (normalFixedOrthogonalRepresentation_no_fixed N π η hηfixed)
+
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[expose]
@@ -7824,7 +7847,7 @@ private theorem hasAffineGaussianRealization
     change representation g
       (CornulierUltralimit.canonicalKernelVector K (1 : G)) =
         CornulierUltralimit.canonicalKernelVector K g
-    simpa [ρ] using
+    simpa only [ρ, MonoidHom.coe_mk, OneHom.coe_mk, Equiv.coe_mulLeft, mul_one] using
       CornulierUltralimit.actionKernelUnitaryRepresentation_canonicalKernelVector
         K ρ hinv g (1 : G)
   rw [haction]
@@ -7835,7 +7858,7 @@ private theorem hasAffineGaussianRealization
   change 1 ^ 2 - 2 *
       (Real.exp (-t * ‖α g x - α (1 : G) x‖ ^ 2) : ℂ).re +
       1 ^ 2 = 2 * (1 - Real.exp (-(t * ‖α g x - x‖ ^ 2)))
-  have hxone : α (1 : G) x = x := by simp
+  have hxone : α (1 : G) x = x := by simp only [map_one, AffineIsometryEquiv.coe_one, id_eq]
   rw [hxone]
   simp only [Complex.ofReal_re, one_pow]
   rw [neg_mul]
@@ -8049,7 +8072,8 @@ private theorem rankTwoColumnBlock_add (v w : Fin 2 → A) :
       rankTwoColumnBlock v + rankTwoColumnBlock w := by
   ext i j
   by_cases hj : j = (1 : Fin 2) <;>
-    simp [rankTwoColumnBlock, hj]
+    simp only [rankTwoColumnBlock, hj, Fin.isValue, ↓reduceIte, Pi.add_apply, Matrix.add_apply,
+      add_zero]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[simp]
@@ -8155,11 +8179,20 @@ private theorem rankTwoParabolicSpecialLinear_inl
     (SemidirectProduct.inl (Multiplicative.ofAdd v) :
       ElementaryRankTwoSemidirect A) i j = _
   rw [Matrix.SpecialLinearGroup.coe_mul]
-  fin_cases i <;> fin_cases j <;>
-    simp [rankTwoParabolicMatrix,
-      rankTwoColumnBlock, Matrix.reindex_apply, Matrix.fromBlocks,
-      Matrix.SpecialLinearGroup.transvection_coe, Matrix.mul_apply,
-      Fin.sum_univ_four, Matrix.one_apply, Matrix.single_apply]
+  revert i j
+  refine matrix_four_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+    simp only [rankTwoParabolicMatrix, rankTwoColumnBlock, Matrix.reindex_apply,
+      Matrix.fromBlocks, Matrix.SpecialLinearGroup.transvection_coe, Matrix.mul_apply,
+      Fin.sum_univ_four, Matrix.one_apply, Matrix.single_apply, Nat.reduceAdd, fromBlocks,
+      SemidirectProduct.right_inl, OneMemClass.coe_one, SpecialLinearGroup.coe_one,
+      SemidirectProduct.left_inl, toAdd_ofAdd, Fin.isValue, reindex_apply, submatrix_apply,
+      finTwoPlusTwo_symm_zero, of_apply, Sum.elim_inl,
+      SpecialLinearGroup.transvection_coe, Matrix.add_apply, single_apply, true_and, Fin.reduceEq,
+      and_false, add_zero, mul_ite, mul_one, mul_zero,
+      Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte, finTwoPlusTwo_symm_one, zero_ne_one,
+      finTwoPlusTwo_symm_two, Sum.elim_inr, finTwoPlusTwo_symm_three, and_true,
+      one_ne_zero, zero_add, zero_mul, false_and, ite_mul, one_mul, Finset.sum_ite_eq,
+      Matrix.zero_apply]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[simp]
@@ -8177,16 +8210,20 @@ private theorem rankTwoParabolicSpecialLinear_inr_root
     (SemidirectProduct.inr (elementaryRankTwoRoot hij a) :
       ElementaryRankTwoSemidirect A) k l = _
   fin_cases i <;> fin_cases j <;>
-    fin_cases k <;> fin_cases l <;>
-    simp_all only [rankTwoParabolicMatrix, Nat.reduceAdd, fromBlocks, elementaryRankTwoRoot,
-      Fin.zero_eta, Fin.isValue, SemidirectProduct.right_inr,
-      SpecialLinearGroup.transvection_coe, SemidirectProduct.left_inr, toAdd_one,
-      rankTwoColumnBlock_zero, reindex_apply, submatrix_apply, finTwoPlusTwo_symm_zero, of_apply,
-      Sum.elim_inl, Matrix.add_apply, one_apply_eq, single_apply_same, Fin.reduceCastAdd,
-      Fin.mk_one, finTwoPlusTwo_symm_one, ne_eq, zero_ne_one, not_false_eq_true, one_apply_ne,
-      and_false, single_apply_of_ne, add_zero, Fin.reduceFinMk, finTwoPlusTwo_symm_two,
-      Sum.elim_inr, Matrix.zero_apply, Fin.reduceEq, finTwoPlusTwo_symm_three, one_ne_zero,
-      and_true, and_self, zero_add]
+    first
+    | exact (hij rfl).elim
+    | revert k l
+      refine matrix_four_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
+        simp only [rankTwoParabolicMatrix, Nat.reduceAdd, fromBlocks, elementaryRankTwoRoot,
+          Fin.zero_eta, Fin.isValue, SemidirectProduct.right_inr,
+          SpecialLinearGroup.transvection_coe, SemidirectProduct.left_inr, toAdd_one,
+          rankTwoColumnBlock_zero, reindex_apply, submatrix_apply,
+          finTwoPlusTwo_symm_zero, of_apply,
+          Sum.elim_inl, Matrix.add_apply, one_apply_eq, single_apply_same, Fin.reduceCastAdd,
+          Fin.mk_one, finTwoPlusTwo_symm_one, ne_eq, zero_ne_one, not_false_eq_true, one_apply_ne,
+          and_false, single_apply_of_ne, add_zero, finTwoPlusTwo_symm_two,
+          Sum.elim_inr, Matrix.zero_apply, Fin.reduceEq, finTwoPlusTwo_symm_three, one_ne_zero,
+          and_true, and_self, zero_add]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem rankTwoParabolicSpecialLinear_inr_mem_integral

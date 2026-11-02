@@ -201,7 +201,7 @@ private lemma heckeSlash_slash (k : ℤ) (D : HeckeCoset (GLPair 2)) (f : ℍ �
     (g : GL (Fin 2) ℚ) : (heckeSlash k D f) ∣[k] g =
     ∑ i : decompQuot (GLPair 2) (HeckeCoset.rep D), (f ∣[k] tRep D i) ∣[k] g := by
   simp only [heckeSlash]
-  simp_all
+  simp_all only [SlashAction.sum_slash]
 
 /-- Left multiplication by a transposed H-element preserves the slash action
     under Γ-invariance: `f ∣[k] (hᵀ * g) = f ∣[k] g` when `h ∈ H`. -/

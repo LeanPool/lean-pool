@@ -164,4 +164,6 @@ lemma eta_equality : {z : ℂ | 0 < z.im}.EqOn ((η ∘ (fun z : ℂ => -1/z)))
     simpa [ModularForm.eta] using (ModularForm.eta_ne_zero (z := (Complex.I : ℂ)) (by simp))
   have hcd := (mul_eq_right₀ he).mp h3.symm
   rw [mul_eq_one_iff_inv_eq₀ hz, inv_eq_iff_eq_inv] at hcd
-  simp_all
+  simp_all only [ne_eq, inv_eq_zero, mem_ofPred_eq, comp_apply, Pi.smul_apply, Pi.mul_apply,
+    smul_eq_mul,
+      Complex.I_im, zero_lt_one, not_false_eq_true, inv_mul_cancel₀, one_mul]

@@ -4,16 +4,20 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.GroupTheory.SemidirectProduct
+import all Mathlib.Topology.Homotopy.Lifting
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Pi1.ThreefoldOverlapMappingTorus2
 public import LeanPool.HopfProblem.HomologyOfX.ThreefoldHomology2
-import all LeanPool.HopfProblem.Foundations.Core1
+import LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology2
-import all LeanPool.HopfProblem.Foundations.Core2
+import LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
 import all LeanPool.HopfProblem.Foundations.Core3
 import all LeanPool.HopfProblem.HomologyTheory.FirstHurewicz3
@@ -40,7 +44,7 @@ import all LeanPool.HopfProblem.Uniformization.SpecialPeriods8
 import all LeanPool.HopfProblem.Threefold.SpecialPeriods9
 import all LeanPool.HopfProblem.Toric.DiagonalQuotient2
 import all LeanPool.HopfProblem.Foundations.SplitGroupExtension
-import all LeanPool.HopfProblem.Uniformization.CuspUniformization4
+import LeanPool.HopfProblem.Uniformization.CuspUniformization4
 import all LeanPool.HopfProblem.HomologyOfX.ThreefoldHomology2
 import all LeanPool.HopfProblem.Pi1.ThreefoldOverlapMappingTorus2
 
@@ -53,10 +57,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace UpperHalfPlane
 
 universe u v
 

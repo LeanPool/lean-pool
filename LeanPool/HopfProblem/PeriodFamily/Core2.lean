@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.Foundations.Core2
+public import Mathlib.Geometry.Manifold.IsManifold.Basic
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology8
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
@@ -15,7 +17,6 @@ import all LeanPool.HopfProblem.Uniformization.SpecialPeriods2
 import all LeanPool.HopfProblem.PeriodFamily.Core1
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods6
 import all LeanPool.HopfProblem.Toric.DiagonalQuotient1
-import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology8
 
 /-!
 # Hopf problem: period family · core 2
@@ -26,10 +27,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace UpperHalfPlane
 
 universe u v
 

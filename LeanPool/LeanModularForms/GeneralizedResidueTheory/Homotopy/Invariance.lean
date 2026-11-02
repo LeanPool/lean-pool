@@ -324,7 +324,7 @@ theorem windingNumber_eq_of_piecewise_homotopic
     apply windingNumber_integer_of_piecewise_closed_avoiding (fun t => H (t, s)) a b z₀ P hab
     · exact hH_closed s hs
     · exact hH_cont.comp (continuous_id.prodMk continuous_const) |>.continuousOn
-    · simp_all
+    · simp_all only [mem_Icc, and_imp, ne_eq, mem_Ioo, not_false_eq_true, implies_true]
     · intro p₁ p₂ hp₁p₂ hpiece h_sub
       convert (hH_deriv_cont p₁ p₂ hp₁p₂ hpiece h_sub).comp
         (continuous_id.prodMk continuous_const).continuousOn

@@ -204,21 +204,21 @@ private lemma residue_sum_norm_le_singular_bound {S0 : Finset ℂ} {f : ℂ → 
             _ = ‖s - z‖ := by ring_nf
             _ = ‖z - s‖ := norm_sub_rev _ _
         by_cases hε_small' : ε ≤ δ / 2
-        · calc δ / 2 ≤ δ - ε := by linarith
-            _ ≤ ‖s - s₀‖ - ‖z - s₀‖ := by linarith [h_sep, hs₀_near]
+        · calc δ / 2 ≤ δ - ε := by linarith only [hε_small']
+            _ ≤ ‖s - s₀‖ - ‖z - s₀‖ := by linarith only [hs₀_near, h_sep]
             _ ≤ ‖z - s‖ := h_tri
-        · push Not at hε_small'; linarith [h_inc]
+        · push Not at hε_small'; linarith only [h_inc, hε_small']
     have hMc_nonneg : 0 ≤ Mc := le_trans (norm_nonneg _) (hMc s hs)
     calc ‖residueSimplePole f s / (z - s)‖
         = ‖residueSimplePole f s‖ / ‖z - s‖ := norm_div _ _
       _ ≤ Mc / ‖z - s‖ := div_le_div_of_nonneg_right (hMc s hs) (norm_nonneg _)
-      _ ≤ Mc / (δ / 2) := div_le_div_of_nonneg_left hMc_nonneg (by linarith) h_dist
+      _ ≤ Mc / (δ / 2) := div_le_div_of_nonneg_left hMc_nonneg (by linarith only [hδ_pos]) h_dist
       _ = 2 * Mc / δ := by ring
   · simp only [h_inc, ↓reduceIte, norm_zero]
     refine div_nonneg (mul_nonneg ?_ ?_) ?_
-    · linarith
+    · linarith only []
     · exact le_trans (norm_nonneg _) (hMc s₀ hs₀)
-    · linarith
+    · linarith only [hδ_pos]
 
 private lemma norm_A_int_bound_some_near (S0 : Finset ℂ) (f : ℂ → ℂ) (γ : PiecewiseC1Immersion)
     (Mc Mγ' δ : ℝ) (hδ_pos : 0 < δ)
@@ -251,15 +251,15 @@ private lemma norm_A_int_bound_some_near (S0 : Finset ℂ) (f : ℂ → ℂ) (γ
           Finset.sum_le_sum (residue_sum_norm_le_singular_bound hδ_pos hMc hδ_sep hs₀ hs₀_near)
       _ = singularBound := by simp only [Finset.sum_const]; ring
   have h_sb_nonneg : 0 ≤ singularBound :=
-    div_nonneg (mul_nonneg (mul_nonneg (by linarith) (Nat.cast_nonneg _))
-      (le_trans (norm_nonneg _) (hMc s₀ hs₀))) (by linarith)
+    div_nonneg (mul_nonneg (mul_nonneg (by linarith only []) (Nat.cast_nonneg _))
+      (le_trans (norm_nonneg _) (hMc s₀ hs₀))) (by linarith only [hδ_pos])
   calc ‖(∑ s ∈ S0, if ‖γ.toFun t - s‖ > ε
           then residueSimplePole f s / (γ.toFun t - s) else 0) * deriv γ.toFun t‖
       ≤ singularBound * Mγ' :=
         (norm_mul_le _ _).trans (mul_le_mul h_sum_bound h_γ'_bound (norm_nonneg _) h_sb_nonneg)
     _ ≤ max 0 singularBound * max 0 Mγ' := by
         have h0_le_Mγ' : 0 ≤ Mγ' := le_trans (norm_nonneg _) h_γ'_bound
-        simp_all
+        simp_all only [mem_Icc, and_imp, ne_eq, sup_of_le_right, gt_iff_lt, Std.le_refl]
     _ ≤ B := hB
 
 private lemma A_int_norm_bound (S0 : Finset ℂ) (f g_reg : ℂ → ℂ) (γ : PiecewiseC1Immersion)
@@ -313,7 +313,7 @@ private lemma A_int_aEStronglyMeasurable (S0 : Finset ℂ) (f g_reg : ℂ → �
     · push Not at h_near
       have h_not_in_S0 : γ.toFun t ∉ (S0 : Set ℂ) := by
         intro h_in; have := h_near (γ.toFun t) h_in
-        simp only [sub_self, norm_zero] at this; linarith
+        simp only [sub_self, norm_zero] at this; linarith only [hε, this]
       rw [hg_decomp (γ.toFun t) h_not_in_S0]
   have h_meas1 := aEStronglyMeasurable_pv_integrand_decomposed S0
     (residueSimplePole f) hε hg_cont hγ_cont hγ'_off_P

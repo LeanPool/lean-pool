@@ -297,7 +297,7 @@ lemma abs_apply_le_sqrt_dotProduct_self (x : n → ℝ) (i : n) :
 
 lemma dotProduct_mulVec_eq_sum (A : Matrix n n ℝ) (u w : n → ℝ) :
     u ⬝ᵥ A *ᵥ w = ∑ x, ∑ y, u x * A x y * w y := by
-  simp [dotProduct, Matrix.mulVec, Finset.mul_sum, mul_assoc]
+  simp only [dotProduct, Matrix.mulVec, Finset.mul_sum, mul_assoc]
 
 variable [DecidableEq n]
 
@@ -345,7 +345,8 @@ theorem l2_opNorm_le_of_forall_dotProduct (A : Matrix n n ℝ) {c : ℝ}
   · rw [← h0]
     positivity
   · rw [habs, hww] at key
-    nlinarith [key, h0, Real.sqrt_nonneg (y ⬝ᵥ y)]
+    rw [mul_right_comm c s] at key
+    exact (mul_le_mul_iff_left₀ h0).mp key
 
 /-- Every entry is bounded by the L2 operator norm. -/
 theorem abs_entry_le_l2_opNorm (A : Matrix n n ℝ) (x y : n) : |A x y| ≤ ‖A‖ := by
@@ -595,7 +596,7 @@ lemma norm_le_of_feasible (h1 : IsAdvMatrix f Γ)
       Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ =>
         abs_apply_le_one_of_feasible h1 h2 x y
     _ = (Fintype.card (ι → σ) : ℝ) ^ 2 := by
-      simp [Finset.sum_const, Finset.card_univ, pow_two]
+      simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one, pow_two]
 
 lemma bddAbove_advPM_set (f : (ι → σ) → O) :
     BddAbove {r : ℝ | ∃ Γ, IsAdvMatrix f Γ ∧ (∀ i, ‖Γ ⊙ advD i‖ ≤ 1) ∧
@@ -681,9 +682,7 @@ lemma pairMatrix_isHermitian (x y : ι → σ) :
 lemma single_one_mulVec (a b : ι → σ) (u : (ι → σ) → ℝ) :
     Matrix.single a b (1 : ℝ) *ᵥ u = fun w => if a = w then u b else 0 := by
   funext w
-  by_cases haw : a = w
-  · simp [Matrix.mulVec, dotProduct, Matrix.single_apply, haw]
-  · simp [Matrix.mulVec, dotProduct, haw]
+  simp only [Matrix.single_mulVec, one_mul, Function.update_apply, Pi.zero_apply, eq_comm]
 
 lemma pairMatrix_mulVec (x y : ι → σ) (u : (ι → σ) → ℝ) :
     pairMatrix x y *ᵥ u
@@ -919,13 +918,12 @@ lemma mulVec_brestrict {M : Matrix U U ℝ} {χ : U → Bool}
     by_cases hv : χ v = b
     · rw [ite_eq_left hv, hM u v (hu.trans hv.symm), zero_mul]
     · rw [ite_eq_right hv]
-  · have hu' : χ u = !b := by cases hcu : χ u <;> cases b <;> simp_all
+  · have hu' : χ u = !b := Bool.eq_not_of_ne hu
     rw [ite_eq_left hu']
     refine Finset.sum_congr rfl fun v _ => ?_
     by_cases hv : χ v = b
     · rw [ite_eq_left hv]
-    · have hv' : χ v = χ u := by
-        cases hcv : χ v <;> cases hcu : χ u <;> cases b <;> simp_all
+    · have hv' : χ v = χ u := (Bool.eq_not_of_ne hv).trans hu'.symm
       rw [ite_eq_right hv, hM u v hv'.symm, zero_mul]
 
 lemma mulVec_brestrict_eigen {M : Matrix U U ℝ} {χ : U → Bool}
@@ -3064,8 +3062,8 @@ lemma hat_guarded_row_sumGen {g : (Y) → Bool}
         by_cases h : g u = b
         · rw [ite_eq_left h]
         · rw [ite_eq_right h]
-          have hgg : g u = g u₀ := by
-            cases hgu : g u <;> cases hgu0 : g u₀ <;> cases b <;> simp_all
+          have hgg : g u = g u₀ :=
+            (Bool.eq_not_of_ne h).trans (Bool.eq_not_of_ne h0).symm
           rw [hN.apply_eq_zero hgg.symm, zero_mul]
       rw [Finset.sum_congr rfl fun u _ => hall u]
       have hcf := congrFun hv u₀
@@ -3901,7 +3899,7 @@ lemma norm_le_of_feasibleOn (hdet : ∀ x y, read x = read y → f x = f y)
       Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ =>
         abs_apply_le_one_of_feasibleOn hdet h1 h2 x y
     _ = (Fintype.card X : ℝ) ^ 2 := by
-      simp [Finset.sum_const, Finset.card_univ, pow_two]
+      simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one, pow_two]
 
 omit [DecidableEq ι] [Fintype ι] in
 lemma bddAbove_advPMOn_set (hdet : ∀ x y, read x = read y → f x = f y) :
@@ -4684,7 +4682,7 @@ theorem lt_advPMOn_of_certificate {read : X → ι → σ} {f : X → Bool}
       l2_opNorm_hadamard_dualTargetOn_le f _
     have h2 : ‖(2 : ℝ)⁻¹‖ = (2 : ℝ)⁻¹ := by norm_num
     rw [h2]
-    nlinarith [hnorm i, norm_nonneg ((Γ' ⊙ advDOn read i) ⊙ dualTargetOn f)]
+    linarith only [h1, hnorm i]
   set R := Real.sqrt (∑ x, p x) with hR
   have hR0 : 0 < R := Real.sqrt_pos.mpr hsum
   have hRR : R * R = ∑ x, p x := Real.mul_self_sqrt hsum.le
@@ -4713,7 +4711,7 @@ theorem lt_advPMOn_of_certificate {read : X → ι → σ} {f : X → Bool}
     field_simp
   have hlt : c < a ⬝ᵥ Γ'' *ᵥ a := by
     rw [hval, lt_div_iff₀ (by positivity)]
-    linarith [hobj]
+    linarith only [hobj]
   have hbound : a ⬝ᵥ Γ'' *ᵥ a ≤ ‖Γ''‖ := by
     have := abs_dotProduct_mulVec_le Γ'' a a
     rw [haa, Real.sqrt_one] at this
@@ -5245,7 +5243,7 @@ theorem exists_dualPairOn_of_advPMOn_lt {read : X → ι → σ} {f : X → Bool
     have hexp : κ * ((∑ x, s x * s x) + ∑ x, t x * t x)
         = κ * (∑ x, s x * s x) + κ * (∑ x, t x * t x) := by ring
     rw [hexp] at h
-    linarith
+    linarith only [h]
   have hquadabs : ∀ (i : ι) (s t : X → ℝ),
       |s ⬝ᵥ (Ξ ⊙ advDOn read i) *ᵥ t|
         ≤ (∑ x, P false x * (s x * s x)) + ∑ x, P true x * (t x * t x) := by
@@ -5261,7 +5259,7 @@ theorem exists_dualPairOn_of_advPMOn_lt {read : X → ι → σ} {f : X → Bool
         = ∑ x, P false x * (s x * s x) :=
       Finset.sum_congr rfl fun x _ => by ring
     rw [hneg, hsq] at h2
-    exact abs_le.mpr ⟨by linarith, by linarith⟩
+    exact abs_le.mpr ⟨by linarith only [h2], h1⟩
   -- the weights are strictly positive
   have hsingle_ne : ∀ x : X, (Pi.single x (1 : ℝ) : X → ℝ) ≠ 0 := by
     intro x h
@@ -5279,7 +5277,7 @@ theorem exists_dualPairOn_of_advPMOn_lt {read : X → ι → σ} {f : X → Bool
         simp only [Pi.zero_apply, mul_zero, Finset.sum_const_zero, add_zero,
           hz, zero_add] at h
         rw [hP]
-        linarith
+        linarith only [h]
     | true =>
         have h := hQbound (concVecOn i₀ 0 (Pi.single x 1))
           (concVecOn_ne_zero_right (hsingle_ne x))
@@ -5289,7 +5287,7 @@ theorem exists_dualPairOn_of_advPMOn_lt {read : X → ι → σ} {f : X → Bool
         simp only [Pi.zero_apply, mul_zero, Finset.sum_const_zero, zero_add,
           hz] at h
         rw [hP]
-        linarith
+        linarith only [h]
   -- the objective hypothesis of the certificate
   have hcorner := hbox _ (dualCornerOn_mem (f := f) hc0.le)
   have hcornerval : φ (dualCornerOn f c)
@@ -5322,7 +5320,7 @@ theorem exists_dualPairOn_of_advPMOn_lt {read : X → ι → σ} {f : X → Bool
       rw [← hkappa, hTdef]
       ring
     rw [hLHS]
-    linarith
+    linarith only [hcorner, huv]
   exact absurd
     (lt_advPMOn_of_certificate_two hdet (hPpos false) (hPpos true) hquadabs hobj)
     (not_lt.mpr hc.le)
@@ -6810,8 +6808,9 @@ lemma sqrt_card_le_norm_starMatrix {S : Finset (ι → σ)} {c : ι → σ}
     ring
   have h2k : Real.sqrt (2 * k) * Real.sqrt (2 * k) = 2 * k :=
     Real.mul_self_sqrt (by positivity)
-  rw [habs] at h
-  nlinarith [h, h2k, hkpos, Real.sqrt_nonneg k]
+  rw [habs, mul_assoc ‖starMatrix S c‖, h2k,
+    mul_comm ‖starMatrix S c‖ (2 * k)] at h
+  exact le_of_mul_le_mul_left h (mul_pos (by norm_num) hkpos)
 
 theorem norm_starMatrix {S : Finset (ι → σ)} {c : ι → σ} (hc : c ∉ S)
     (hS : S.Nonempty) : ‖starMatrix S c‖ = Real.sqrt (S.card : ℝ) :=
@@ -6994,8 +6993,9 @@ lemma sqrt_starWeight_le_norm_wStarMatrix {S : Finset (ι → σ)}
     ring
   have h2W : Real.sqrt (2 * W) * Real.sqrt (2 * W) = 2 * W :=
     Real.mul_self_sqrt (by positivity)
-  rw [habs] at h
-  nlinarith [h, h2W, hW, Real.sqrt_nonneg W]
+  rw [habs, mul_assoc ‖wStarMatrix S c w‖, h2W,
+    mul_comm ‖wStarMatrix S c w‖ (2 * W)] at h
+  exact le_of_mul_le_mul_left h (mul_pos (by norm_num) hW)
 
 theorem norm_wStarMatrix {S : Finset (ι → σ)} {c : ι → σ} (hc : c ∉ S)
     {w : (ι → σ) → ℝ} (hW : 0 < starWeight S w) :
@@ -7308,10 +7308,7 @@ noncomputable def orNDual [Nonempty ι] : DualPair Unit (orN : (ι → Bool) →
 omit [DecidableEq ι] in
 lemma orNDual_isCostLe [Nonempty ι] :
     (orNDual (ι := ι)).IsCostLe (Real.sqrt (Fintype.card ι : ℝ)) := by
-  have hδ : orNDelta ι ≠ 0 := orNDelta_ne_zero
   have hn : (0:ℝ) < (Fintype.card ι : ℝ) := by exact_mod_cast Fintype.card_pos
-  have hs : Real.sqrt (Fintype.card ι : ℝ) * Real.sqrt (Fintype.card ι : ℝ)
-      = (Fintype.card ι : ℝ) := Real.mul_self_sqrt hn.le
   have key : ∀ x : ι → Bool,
       (∑ i : ι, ∑ _k : Unit, orNDualVec x i * orNDualVec x i)
         ≤ Real.sqrt (Fintype.card ι : ℝ) := by
@@ -7347,16 +7344,13 @@ lemma orNDual_isCostLe [Nonempty ι] :
           ((1 / ((supportCard x : ℝ) * orNDelta ι)) *
             (1 / ((supportCard x : ℝ) * orNDelta ι)))
           = Real.sqrt (Fintype.card ι : ℝ) / (supportCard x : ℝ) := by
-        rw [orNDelta] at *
+        rw [div_mul_div_comm, one_mul, mul_mul_mul_comm, orNDelta_sq]
         field_simp
-        nlinarith [hs, Real.sq_sqrt (Real.sqrt_nonneg (Fintype.card ι : ℝ)),
-          Real.sqrt_nonneg (Fintype.card ι : ℝ),
-          Real.mul_self_sqrt (Real.sqrt_nonneg (Fintype.card ι : ℝ))]
       rw [hval]
       have hone : (1:ℝ) ≤ (supportCard x : ℝ) := by
         exact_mod_cast supportCard_pos hx
       rw [div_le_iff₀ hpos]
-      nlinarith [Real.sqrt_nonneg (Fintype.card ι : ℝ), hone]
+      exact le_mul_of_one_le_right (Real.sqrt_nonneg _) hone
   exact ⟨key, key⟩
 
 omit [DecidableEq ι] in

@@ -7,7 +7,9 @@ module
 
 public import LeanPool.ConwaySoifer.Geometry.TriangleHalfspaces
 public import Mathlib.Data.Fintype.Lattice
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # Owners

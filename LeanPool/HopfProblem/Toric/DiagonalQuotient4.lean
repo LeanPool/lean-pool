@@ -4,14 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.AlgebraicTopology.FundamentalGroupoid.FundamentalGroup
 
-public import LeanPool.HopfProblem.Prelude
-import Mathlib.AlgebraicTopology.FundamentalGroupoid.InducedMaps
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Pi1.TwistGroup
 import all LeanPool.HopfProblem.Toric.DiagonalQuotient1
 import all LeanPool.HopfProblem.Toric.DiagonalQuotient2
 import all LeanPool.HopfProblem.Foundations.SplitGroupExtension
-import all LeanPool.HopfProblem.Pi1.TwistGroup
 
 /-!
 # Hopf problem: toric · diagonal quotient 4
@@ -22,10 +22,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -43,9 +41,8 @@ theorem DiagonalQuotient.fundamentalGroup_basepointChange_of_homotopy {F E : Typ
     (v : FundamentalGroup F c) :
     FundamentalGroup.fundamentalGroupMulEquivOfPath (H.evalAt c) (FundamentalGroup.map f₀ c v) =
       FundamentalGroup.map f₁ c v := by
-  obtain ⟨⟨p⟩⟩ := v
+  obtain ⟨p, rfl⟩ := Path.Homotopic.Quotient.mk_surjective v
   rw [fundamentalGroup_basepoint_change_apply]
-  apply CategoryTheory.End.ext
   change
     (Path.Homotopic.Quotient.mk (H.evalAt c)).symm.trans
         ((Path.Homotopic.Quotient.mk (p.map f₀.continuous)).trans

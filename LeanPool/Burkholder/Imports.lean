@@ -12,4 +12,5 @@ public import LeanPool.Burkholder.Majorants.Definitions
 public import LeanPool.Burkholder.Majorants.MajorantPEq2
 public import LeanPool.Burkholder.Majorants.MajorantPG2
 public import LeanPool.Burkholder.Majorants.MajorantPL2
+public import LeanPool.Burkholder.Majorants.PowerCalculus
 public import LeanPool.Burkholder.MartingaleTransforms

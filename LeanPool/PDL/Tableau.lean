@@ -40,7 +40,7 @@ theorem proj : g ∈ projection A X ↔ (⌈·A⌉g) ∈ X :=
   case cons =>
     simp only [projection, formProjection, beq_iff_eq, List.map_cons, List.mem_cons]
     rw [List.reduceOption_mem_iff]
-    aesop
+    aesop (rule_sets := [-default])
 
 /-- Collect the continuations of matching atomic boxes in a formula finset. -/
 def _root_.Finset.pdlProjection : Nat → Finset Formula → Finset Formula
@@ -136,7 +136,7 @@ lemma LoadedPathRepeat.ext {Hist X} (lprA lprB : LoadedPathRepeat Hist X) :
     lprA.1 = lprB.1 → lprA = lprB := by
   rcases lprA with ⟨a, ha⟩
   rcases lprB with ⟨b, hb⟩
-  grind
+  grind only []
 
 instance {Hist X} : DecidableEq (LoadedPathRepeat Hist X) := Subtype.instDecidableEq
 

@@ -6,6 +6,7 @@ Authors: OpenAI, Sidharth Hariharan, Gareth Ma, Dean Cureton
 
 module
 
+import all LeanPool.SpherePacking.RadialConstruction
 public import LeanPool.SpherePacking.PackingBound
 import all LeanPool.SpherePacking.PackingBound
 public import LeanPool.SpherePacking.Foundations

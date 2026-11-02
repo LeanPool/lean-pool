@@ -583,7 +583,7 @@ lemma stepOfL_ne_nil (C : LoadedCluster tab) {Δ : Sequent}
   have := stepOf_ne_nil C h
   unfold stepOfL
   simp
-  grind
+  grind only []
 
 /-! ### Uniformity
 
@@ -632,7 +632,7 @@ lemma mem_fineCLplus_of_child (C : LoadedCluster tab) {f g : FinePathIn tab}
     exact Or.inl h
   · unfold fineCLplus
     simp_all [fineExits]
-    grind
+    grind only []
 
 /-- The right component of a fine node of `C⁺` is in `Λ₂[C⁺]`. -/
 lemma mem_lambdaTwoPlus_of_mem_fineCLplus (C : LoadedCluster tab) {f : FinePathIn tab}
@@ -649,7 +649,7 @@ lemma lambdaTwo_subset_lambdaTwoPlus (C : LoadedCluster tab) :
   apply C.mem_lambdaTwoPlus_of_mem_fineCLplus
   unfold fineCLplus fineExits
   simp
-  grind
+  grind only []
 
 /-- The labels given by `stepOf` are in `Λ₂[C⁺]`. This is the invariant needed in Def 9.8:
 a node of `Q` is labelled with an element of `Λ₂[C⁺]`, and it is a leaf exactly when it is
@@ -719,7 +719,7 @@ lemma LoadedCluster.thetaOf_left (C : LoadedCluster tab) (θ : FinePathIn tab �
     simp only [evaluate, thetaOf, Finset.disEval, Finset.mem_image, exists_exists_and_eq_and,
       not_exists, not_and] at h1 ⊢
     intro hcon
-    grind
+    grind only []
   · exact hw _ (Finset.mem_union_right _ hmem)
 
 open HasSat in

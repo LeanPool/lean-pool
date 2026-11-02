@@ -7,10 +7,6 @@ module
 
 public import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite1Dimd.Definitions
 import LeanPool.PhaseRetrieval.DimdPoly.Internal.Hermite1Dimd.ProductBasisAndAnnuli
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Tactic.NormNum.Parity
 
 /-! # DegreeBookkeeping -/
@@ -337,7 +333,7 @@ theorem highFrequencyThreshold
     unfold degreeThreshold at hj
     omega
   have hM_bound : 2 * M + 1 ≤ x := by
-    have h1 : 2 * M + 1 ≤ 120 * d * (2 * M + 1) := by nlinarith
+    have h1 : 2 * M + 1 ≤ 120 * d * (2 * M + 1) := by nlinarith only [hd]
     exact le_trans h1 hx_ge
   have hR_bound : 2 * R + 1 ≤ 3 * x := by
     dsimp [x]

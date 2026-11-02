@@ -21,7 +21,7 @@ public import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 public import Mathlib.Geometry.Manifold.Sheaf.Basic
 public import Mathlib.Geometry.Manifold.VectorBundle.Riemannian
 public import Mathlib.Geometry.Manifold.VectorField.Pullback
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 
 /-!
 # The ambient metric along an immersion

@@ -45,7 +45,7 @@ private lemma not_diffAt_at_two (s : ℝ) (hs0 : s ≠ 0) :
       rw [show ((↑(Real.pi / 3) : ℂ) + ((↑(2 : ℝ) : ℂ) - ↑(1 : ℝ)) * (↑(Real.pi / 6) : ℂ)) =
           ↑(Real.pi / 2) from by push_cast; ring]
       exact exp_pi_div_two_eq_I
-    simp_all
+    simp_all only [ne_eq, ofReal_div, ofReal_ofNat, ofReal_one]
   have h_chord_left :
       HasDerivAt (fun t' : ℝ => chordSegment rho' iPoint (t' - 1)) (iPoint - rho') (2 : ℝ) :=
     hasDerivAt_chordSegment_shift rho' iPoint 1 2
@@ -78,7 +78,9 @@ private lemma not_diffAt_at_two (s : ℝ) (hs0 : s ≠ 0) :
           Complex.exp (((Real.pi : ℝ) / 2 + (t' - 2) * ((Real.pi : ℝ) / 6)) * I))
         (((Real.pi : ℝ) / 6) * I * I) (2 : ℝ) := by
     have h_raw := hasDerivAt_arc_exp (Real.pi / 2) (Real.pi / 6) 2 2
-    simp_all
+    simp_all only [ne_eq, real_smul, ofReal_sub, ofReal_one, ofReal_div, ofReal_ofNat, sub_self,
+      zero_mul,
+        add_zero, exp_pi_div_two_mul_I]
   have h_chord_right :
       HasDerivAt (fun t' : ℝ => chordSegment iPoint rho (t' - 2)) (rho - iPoint) (2 : ℝ) :=
     hasDerivAt_chordSegment_shift iPoint rho 2 2
@@ -104,7 +106,7 @@ private lemma not_diffAt_at_two (s : ℝ) (hs0 : s ≠ 0) :
         simp [chordSegment]
     have h_at_t'r : fdBoundaryToPolygonHomotopy (t', s) = g_right t' := by
       simp only [fdBoundaryToPolygonHomotopy,
-        not_le.mpr (show (1 : ℝ) < t' by linarith [ht'.1]), not_le.mpr ht'.1, ite_false,
+        not_le.mpr (show (1 : ℝ) < t' by linarith only [ht', ht'.1]), not_le.mpr ht'.1, ite_false,
         le_of_lt ht'.2, ite_true]
       congr 1; congr 1; congr 1; ring
     rw [h_at_t'r, h_at_2r]
@@ -112,7 +114,9 @@ private lemma not_diffAt_at_two (s : ℝ) (hs0 : s ≠ 0) :
   have h_eq_right := tendsto_nhds_unique (h_slope_inner.mono_left (nhdsGT_le_nhdsNE 2)) h_right_val
   rw [h_eq_left] at h_eq_right
   have h_pts_eq : iPoint - rho' = rho - iPoint := by
-    simp_all
+    simp_all only [ne_eq, real_smul, ofReal_sub, ofReal_one, add_right_inj, mul_eq_mul_left_iff,
+      ofReal_eq_zero,
+        or_false]
   have h_im_left : Complex.im (iPoint - rho') = 1 - Real.sqrt 3 / 2 := by
     simp only [iPoint, rho']
     simp [Complex.add_im, Complex.sub_im, Complex.mul_im, Complex.ofReal_im, Complex.ofReal_re,
@@ -124,7 +128,7 @@ private lemma not_diffAt_at_two (s : ℝ) (hs0 : s ≠ 0) :
       Complex.one_im]
   have h_im_eq := congr_arg Complex.im h_pts_eq
   rw [h_im_left, h_im_right] at h_im_eq
-  nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+  nlinarith only [h_im_eq, Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
 
 /-- The derivative-norm bound at the corner `t = 2`, `s = 0` (the homotopy is smooth there). -/
 private lemma deriv_bound_at_two_zero :
@@ -150,11 +154,11 @@ private lemma deriv_bound_at_two_zero :
     convert h_raw using 2 <;> push_cast <;> ring
   rw [h_deriv.deriv]
   have h_exp_norm : ‖Complex.exp ((Real.pi / 2) * I)‖ = 1 := by
-    simp_all
+    simp_all only [exp_pi_div_two_mul_I, norm_I]
   rw [norm_mul, norm_mul, h_exp_norm, Complex.norm_I, mul_one, mul_one,
     show (Real.pi / 6 : ℂ) = ((Real.pi / 6 : ℝ) : ℂ) from by push_cast; ring, Complex.norm_real,
     Real.norm_eq_abs, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 6)]
-  have := Real.pi_le_four; linarith
+  have := Real.pi_le_four; linarith only [this]
 
 lemma fdBoundaryToPolygonHomotopy_deriv_bound :
     ∃ M : ℝ, ∀ t ∈ Icc 0 5, ∀ s ∈ Icc (0 : ℝ) 1,
@@ -213,7 +217,8 @@ lemma fdBoundaryToPolygonHomotopy_deriv_bound :
                 filter_upwards [eventually_gt_nhds ht4'.1, eventually_lt_nhds ht4'.2]
                   with t' ht3' ht4''
                 simp only [fdBoundaryToPolygonHomotopy,
-                  not_le.mpr (by linarith : 1 < t'), not_le.mpr (by linarith : 2 < t'),
+                  not_le.mpr (by linarith only [ht3', ht4''] : 1 < t'), not_le.mpr (by
+                    linarith only [ht3', ht4''] : 2 < t'),
                   not_le.mpr ht3', le_of_lt ht4'', ite_false, ite_true]
               rw [heq.deriv_eq]; exact norm_deriv_H_seg4_le t s
           · by_cases h4' : t = 4
@@ -225,8 +230,9 @@ lemma fdBoundaryToPolygonHomotopy_deriv_bound :
                   (fun t' : ℝ => ((↑t' : ℂ) - 9/2) + (HHeight : ℂ) * I) := by
                 filter_upwards [eventually_gt_nhds ht5'] with t' ht4'
                 simp only [fdBoundaryToPolygonHomotopy,
-                  not_le.mpr (by linarith : 1 < t'), not_le.mpr (by linarith : 2 < t'),
-                  not_le.mpr (by linarith : 3 < t'), not_le.mpr ht4', ite_false]
+                  not_le.mpr (by linarith only [ht4'] : 1 < t'), not_le.mpr (by
+                    linarith only [ht4'] : 2 < t'),
+                  not_le.mpr (by linarith only [ht4'] : 3 < t'), not_le.mpr ht4', ite_false]
               rw [heq.deriv_eq]; exact norm_deriv_H_seg5_le t s
   · simp only [deriv_zero_of_not_differentiableAt hd, norm_zero]; norm_num
 

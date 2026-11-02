@@ -335,7 +335,7 @@ theorem unfoldDiamondContent α ψ :
     use τ
   · -- φ is made from some δ from Dset α
     have := Dset_mem_sequence α in_D
-    aesop
+    aesop (rule_sets := [-default])
 
 theorem unfoldDiamond_voc {x α φ} {L} (L_in : L ∈ unfoldDiamond α φ) {ψ} (ψ_in : ψ ∈ L)
     (x_in_voc_ψ : x ∈ ψ.voc) : x ∈ α.voc ∨ x ∈ φ.voc := by
@@ -401,7 +401,7 @@ theorem guardToStarDiamond (x : Nat)
     simp only [vDash.SemImplies, Formula.or, evaluatePoint, evaluate] at u_2
     rw [← @or_iff_not_and_not] at u_2
     specialize repl_imp_rho W M u
-    aesop
+    aesop (rule_sets := [-default])
   -- It remains to show the goal using claim.
   intro w hyp
   simp only [Formula.or, List.mem_singleton, forall_eq, evaluate, relate, not_forall,
@@ -419,7 +419,7 @@ theorem guardToStarDiamond (x : Nat)
 
 private theorem helper : ∀ (p : List Formula × List Program → Formula) X,
         (∃ f ∈ List.map p X, evaluate M w f)
-      ↔ (∃ Fδ ∈ X, evaluate M w (p Fδ)) := by aesop
+      ↔ (∃ Fδ ∈ X, evaluate M w (p Fδ)) := by aesop (rule_sets := [-default])
 
 /-- A model of the unfolded diamond-star formula reaches a counterexample to the box. -/
 private theorem localDiamondTruth_star_reverse (β : Program) (ψ : Formula)
@@ -447,7 +447,7 @@ private theorem localDiamondTruth_star_reverse (β : Program) (ψ : Formula)
       or_false, evaluate, forall_eq, relate, not_forall]
     use w
   case inr hyp =>
-    have : ∃ γ, δ = γ ++ [∗β] ∧ γ ≠ [] ∧ (Fs,γ) ∈ Dset β := by aesop
+    have : ∃ γ, δ = γ ++ [∗β] ∧ γ ≠ [] ∧ (Fs,γ) ∈ Dset β := by aesop (rule_sets := [-default])
     rcases this with ⟨γ, ⟨δ_def, _, Fγ_in⟩⟩
     subst δ_def
     simp only [Yset, List.mem_union_iff, List.mem_singleton] at w_Con

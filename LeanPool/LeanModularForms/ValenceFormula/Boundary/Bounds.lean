@@ -43,54 +43,61 @@ lemma fdBoundary_H_eq_seg2_H {t : ℝ} (H : ℝ)
 lemma fdBoundary_H_eq_seg3_H {t : ℝ} (H : ℝ)
     (ht2 : 2 < t) (ht3 : t ≤ 3) :
     fdBoundaryH H t = fdBoundarySeg3H t := by
-  simp only [fdBoundaryH, show ¬t ≤ 1 from not_le.mpr (by linarith),
+  simp only [fdBoundaryH, show ¬t ≤ 1 from not_le.mpr (by linarith only [ht2]),
     show ¬t ≤ 2 from not_le.mpr ht2, ht3, ite_true, ite_false,
     fdBoundarySeg3H, fdBoundarySeg3]
 
 lemma fdBoundary_H_eq_seg4_H {H t : ℝ}
     (ht3 : 3 < t) (ht4 : t ≤ 4) :
     fdBoundaryH H t = fdBoundarySeg4H H t := by
-  simp only [fdBoundaryH, show ¬t ≤ 1 from not_le.mpr (by linarith),
-    show ¬t ≤ 2 from not_le.mpr (by linarith), show ¬t ≤ 3 from not_le.mpr ht3,
+  simp only [fdBoundaryH, show ¬t ≤ 1 from not_le.mpr (by linarith only [ht3]),
+    show ¬t ≤ 2 from not_le.mpr (by linarith only [ht3]), show ¬t ≤ 3 from not_le.mpr ht3,
     ht4, ite_true, ite_false, fdBoundarySeg4H]
 
 lemma fdBoundary_H_eq_seg5_H {H t : ℝ} (ht4 : 4 < t) :
     fdBoundaryH H t = fdBoundarySeg5H H t := by
-  simp only [fdBoundaryH, show ¬t ≤ 1 from not_le.mpr (by linarith),
-    show ¬t ≤ 2 from not_le.mpr (by linarith), show ¬t ≤ 3 from not_le.mpr (by linarith),
+  simp only [fdBoundaryH, show ¬t ≤ 1 from not_le.mpr (by linarith only [ht4]),
+    show ¬t ≤ 2 from not_le.mpr (by linarith only [ht4]), show ¬t ≤ 3 from not_le.mpr (by
+      linarith only [ht4]),
     show ¬t ≤ 4 from not_le.mpr ht4, ite_false, fdBoundarySeg5H]
 
 private lemma seg2_angle_in_range {t : ℝ} (ht1 : 1 ≤ t) (ht2 : t ≤ 2) :
     Real.pi / 3 ≤ Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3) ∧
     Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3) ≤ 2 * Real.pi / 3 := by
   have hpi := Real.pi_pos; constructor
-  · nlinarith [mul_nonneg (show (0 : ℝ) ≤ t - 1 by linarith)
-      (show (0 : ℝ) ≤ Real.pi / 6 by linarith)]
-  · nlinarith [mul_le_mul_of_nonneg_right (show t - 1 ≤ 1 by linarith)
+  · nlinarith only [ht1, hpi,
+    mul_nonneg (show (0 : ℝ) ≤ t - 1 by linarith) (show (0 : ℝ) ≤ Real.pi / 6 by linarith)]
+  · nlinarith only [ht2, hpi,
+    mul_le_mul_of_nonneg_right (show t - 1 ≤ 1 by linarith)
       (show (0 : ℝ) ≤ Real.pi / 6 by linarith)]
 
 private lemma seg3_angle_in_range {t : ℝ} (ht2 : 2 ≤ t) (ht3 : t ≤ 3) :
     Real.pi / 3 ≤ Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2) ∧
     Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2) ≤ 2 * Real.pi / 3 := by
   have hpi := Real.pi_pos
-  have h_nonneg : 0 ≤ (t - 2) * (2 * Real.pi / 3 - Real.pi / 2) := by nlinarith
+  have h_nonneg : 0 ≤ (t - 2) * (2 * Real.pi / 3 - Real.pi / 2) := by nlinarith only [ht2, hpi]
   constructor
-  · nlinarith
-  · nlinarith [mul_le_mul_of_nonneg_right (show t - 2 ≤ 1 by linarith)
+  · nlinarith only [hpi, h_nonneg]
+  · nlinarith only [ht3, hpi,
+    mul_le_mul_of_nonneg_right (show t - 2 ≤ 1 by linarith)
       (show (0 : ℝ) ≤ Real.pi / 6 by linarith)]
 
 private lemma sin_pos_of_angle_in_range {θ : ℝ} (h1 : Real.pi / 3 ≤ θ)
     (h2 : θ ≤ 2 * Real.pi / 3) : 0 < Real.sin θ :=
-  ArcCalculus.sin_pos_of_mem_Ioo_zero_pi ⟨by linarith [Real.pi_pos], by linarith [Real.pi_pos]⟩
+  ArcCalculus.sin_pos_of_mem_Ioo_zero_pi ⟨by linarith only [h1, Real.pi_pos], by
+    linarith only [h2, Real.pi_pos]⟩
 
 private lemma sin_ge_sqrt3_div_2_of_angle_in_range {θ : ℝ} (h1 : Real.pi / 3 ≤ θ)
     (h2 : θ ≤ 2 * Real.pi / 3) : Real.sqrt 3 / 2 ≤ Real.sin θ := by
   have hpi := Real.pi_pos
   rw [show Real.sqrt 3 / 2 = Real.sin (Real.pi / 3) from Real.sin_pi_div_three.symm]
   by_cases h : θ ≤ Real.pi / 2
-  · exact Real.sin_le_sin_of_le_of_le_pi_div_two (by linarith) h h1
+  · exact Real.sin_le_sin_of_le_of_le_pi_div_two (by linarith only [hpi]) h h1
   · push Not at h; rw [show Real.sin θ = Real.sin (Real.pi - θ) from (Real.sin_pi_sub θ).symm]
-    exact Real.sin_le_sin_of_le_of_le_pi_div_two (by linarith) (by linarith) (by linarith)
+    exact Real.sin_le_sin_of_le_of_le_pi_div_two (by linarith only [h2, h])
+        (by linarith only [h])
+        (by
+      linarith only [h2])
 
 private lemma abs_cos_le_half_of_angle_in_range {θ : ℝ} (h1 : Real.pi / 3 ≤ θ)
     (h2 : θ ≤ 2 * Real.pi / 3) : |Real.cos θ| ≤ 1 / 2 :=
@@ -237,20 +244,21 @@ lemma fdBoundary_eq_seg2 {t : ℝ} (ht1 : 1 < t) (ht2 : t ≤ 2) :
 
 lemma fdBoundary_eq_seg3 {t : ℝ} (ht2 : 2 < t) (ht3 : t ≤ 3) :
     fdBoundary t = fdBoundarySeg3 t := by
-  simp only [fdBoundary, show ¬t ≤ 1 from not_le.mpr (by linarith),
+  simp only [fdBoundary, show ¬t ≤ 1 from not_le.mpr (by linarith only [ht2]),
     show ¬t ≤ 2 from not_le.mpr ht2, ht3, ite_true, ite_false,
     fdBoundarySeg3]
 
 lemma fdBoundary_eq_seg4 {t : ℝ} (ht3 : 3 < t) (ht4 : t ≤ 4) :
     fdBoundary t = fdBoundarySeg4 t := by
-  simp only [fdBoundary, show ¬t ≤ 1 from not_le.mpr (by linarith),
-    show ¬t ≤ 2 from not_le.mpr (by linarith), show ¬t ≤ 3 from not_le.mpr ht3,
+  simp only [fdBoundary, show ¬t ≤ 1 from not_le.mpr (by linarith only [ht3]),
+    show ¬t ≤ 2 from not_le.mpr (by linarith only [ht3]), show ¬t ≤ 3 from not_le.mpr ht3,
     ht4, ite_true, ite_false, fdBoundarySeg4]
 
 lemma fdBoundary_eq_seg5 {t : ℝ} (ht4 : 4 < t) :
     fdBoundary t = fdBoundarySeg5 t := by
-  simp only [fdBoundary, show ¬t ≤ 1 from not_le.mpr (by linarith),
-    show ¬t ≤ 2 from not_le.mpr (by linarith), show ¬t ≤ 3 from not_le.mpr (by linarith),
+  simp only [fdBoundary, show ¬t ≤ 1 from not_le.mpr (by linarith only [ht4]),
+    show ¬t ≤ 2 from not_le.mpr (by linarith only [ht4]), show ¬t ≤ 3 from not_le.mpr (by
+      linarith only [ht4]),
     show ¬t ≤ 4 from not_le.mpr ht4, ite_false, fdBoundarySeg5]
 
 theorem fdBoundary_continuous : Continuous fdBoundary := by

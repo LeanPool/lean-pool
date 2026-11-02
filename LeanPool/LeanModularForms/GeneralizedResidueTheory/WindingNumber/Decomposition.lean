@@ -46,8 +46,8 @@ private lemma no_endpoint_crossing_of_unique_interior
     (honly : ∀ t ∈ Icc γ.a γ.b, γ.toFun t = z₀ → t = t₀) :
     γ.toFun γ.a ≠ z₀ ∧ γ.toFun γ.b ≠ z₀ := by
   constructor
-  · intro h; have := honly γ.a (left_mem_Icc.mpr γ.hab.le) h; linarith [ht₀.1]
-  · intro h; have := honly γ.b (right_mem_Icc.mpr γ.hab.le) h; linarith [ht₀.2]
+  · intro h; have := honly γ.a (left_mem_Icc.mpr γ.hab.le) h; linarith only [ht₀, this, ht₀.1]
+  · intro h; have := honly γ.b (right_mem_Icc.mpr γ.hab.le) h; linarith only [ht₀, this, ht₀.2]
 
 /-- CPV of `(z - z₀)⁻¹` exists when there is a unique crossing at `t₀`. -/
 private lemma cpv_exists_of_unique_crossing
@@ -192,7 +192,7 @@ theorem generalizedWindingNumber_eq_neg_angleContribution_single
       -((angleAtCrossing γ t₀ ht₀ : ℂ) /
         (2 * Real.pi)) := by
   have := generalizedWindingNumber_eq_external_sub_angle γ z₀ t₀ ht₀
-  simp_all
+  simp_all only [mem_Icc, and_imp, Std.le_refl, zero_sub]
 
 /-- At a smooth crossing with zero external winding, contribution is -1/2. -/
 theorem generalizedWindingNumber_eq_neg_half_smooth_crossing

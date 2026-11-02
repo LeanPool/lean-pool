@@ -55,7 +55,7 @@ theorem harmonicNumber_log_upper (n : ℕ) :
 theorem harmonicNumber_pos {n : ℕ} (hn : 0 < n) :
     0 < harmonicNumber n := by
   have hnreal : 0 < (n : ℝ) := by exact_mod_cast hn
-  exact (Real.log_pos (by linarith : (1 : ℝ) < (n : ℝ) + 1)).trans_le
+  exact (Real.log_pos (by linarith only [hnreal] : (1 : ℝ) < (n : ℝ) + 1)).trans_le
     (harmonicNumber_log_lower n)
 
 theorem harmonicNumber_mul_le_add
@@ -65,7 +65,7 @@ theorem harmonicNumber_mul_le_add
   have hdreal : 0 < (d : ℝ) := by exact_mod_cast hd
   have hnreal : 0 < (n : ℝ) := by exact_mod_cast hn
   have hlogn : Real.log (n : ℝ) ≤ harmonicNumber n := by
-    exact (Real.log_le_log hnreal (by linarith :
+    exact (Real.log_le_log hnreal (by linarith only [] :
       (n : ℝ) ≤ (n : ℝ) + 1)).trans
       (harmonicNumber_log_lower n)
   calc
@@ -75,7 +75,7 @@ theorem harmonicNumber_mul_le_add
     _ = 1 + (Real.log (d : ℝ) + Real.log (n : ℝ)) := by
       rw [Nat.cast_mul, Real.log_mul hdreal.ne' hnreal.ne']
     _ ≤ harmonicNumber n + (1 + Real.log (d : ℝ)) := by
-      linarith
+      linarith only [hlogn]
 
 theorem exists_proofHarmonicNumber_gt (bound : ℝ) :
     ∃ n : ℕ, bound < harmonicNumber n := by
@@ -83,7 +83,7 @@ theorem exists_proofHarmonicNumber_gt (bound : ℝ) :
   have hpositive : 0 < (n : ℝ) + 1 := by positivity
   have hlog : bound < Real.log ((n : ℝ) + 1) := by
     apply (Real.lt_log_iff_exp_lt hpositive).mpr
-    exact lt_trans hn (by linarith)
+    exact lt_trans hn (by linarith only [])
   exact ⟨n, hlog.trans_le (harmonicNumber_log_lower n)⟩
 
 theorem exists_proofHarmonicNumber_ratio_ge
@@ -174,7 +174,8 @@ theorem ePRState_norm (m : ℕ) (hm : 0 < m) :
     simp_rw [hterm]
     simp only [sum_ite_eq, mem_univ, ↓reduceIte, sum_const, card_univ, Fintype.card_fin,
       nsmul_eq_mul, ne_eq, hmreal.ne', not_false_eq_true, mul_inv_cancel₀]
-  nlinarith [norm_nonneg (ePRState m)]
+  exact (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp (by
+    simpa only [one_pow] using hsquare)
 
 theorem permutationMatrix_mem_unitary
     {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -281,8 +282,7 @@ theorem harmonicSchmidtFiber_count_sq_le
         mul_nonneg hx (Real.sqrt_nonneg _)
       have hs :
           (x * Real.sqrt ((j.val : ℝ) + 1)) ^ 2 ≤ a ^ 2 := by
-        linarith [mul_nonneg (sub_nonneg.mpr hscaled)
-          (add_nonneg ha hnonneg)]
+        linarith only [mul_nonneg (sub_nonneg.mpr hscaled) (add_nonneg ha hnonneg)]
       rw [mul_pow, Real.sq_sqrt hjpositive.le] at hs
       linarith
     have hcardreal : (S.card : ℝ) ≤ (j.val : ℝ) + 1 := by
@@ -444,12 +444,11 @@ private theorem descendingHarmonicSchmidtAmplitude_le_harmonic
   have hsquare :
       (x * Real.sqrt ((k.val : ℝ) + 1)) ^ 2 ≤ 1 := by
     rw [mul_pow, Real.sq_sqrt hrank.le]
-    linarith
+    linarith only [hrankbound]
   have hnonneg :
       0 ≤ x * Real.sqrt ((k.val : ℝ) + 1) :=
     mul_nonneg hx hsqrt.le
-  nlinarith [sq_nonneg
-    (x * Real.sqrt ((k.val : ℝ) + 1) + 1)]
+  nlinarith only [hsquare, hnonneg]
 
 private def diagonalSchmidtUnitVector
     {d : ℕ} (σ : Fin d → ℝ)
@@ -657,10 +656,9 @@ private theorem universalCatalystOverlap_eq_sum
           intro k _
           rw [harmonicSchmidtPermutationAction_diagonal,
             diagonalSchmidtTensorTarget_diagonal]
-          simp only [ofReal_inv, real_smul, mul_comm, RCLike.inner_apply, map_mul, map_inv₀,
-            conj_ofReal, mul_left_comm, mul_assoc, mul_re, inv_re, ofReal_re, normSq_ofReal,
-            div_self_mul_self', inv_im, ofReal_im, neg_zero, zero_div, mul_zero, sub_zero, mul_im,
-            zero_mul, add_zero, universalCatalystOverlapTerm]
+          simp only [real_smul, RCLike.inner_apply, conj_ofReal,
+            ← ofReal_mul, ofReal_re, universalCatalystOverlapTerm]
+          ac_rfl
 
 private theorem universalCatalystOverlapTerm_lower
     {d n : ℕ} (σ : Fin d → ℝ)
@@ -700,7 +698,7 @@ private theorem universalCatalystOverlapTerm_lower
     _ = universalCatalystOverlapTerm
       (n := n) σ k := by
         dsimp [c, a, h, universalCatalystOverlapTerm]
-        ring
+        ac_rfl
 
 private theorem universalDiagonalCatalystOverlap_lower
     {d n : ℕ} (hd : 0 < d) (hn : 0 < n)
@@ -908,7 +906,7 @@ private theorem harmonicTargetLift_diagonal_action_apply
         rw [Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro k _
-        ring
+        ac_rfl
 
 private theorem harmonicTargetLift_diagonal_action
     {d n : ℕ}
@@ -1016,11 +1014,9 @@ private theorem universalDiagonalCatalystOverlap_of_harmonic_ratio
       rawEmbezzlementState_norm_sq,
       rawEmbezzlementState_norm_sq]
   have hgoalnonneg : 0 ≤ 1 - δ := sub_nonneg.mpr hδone
-  have hgoalsquare : (1 - δ) ^ 2 ≤ 1 - δ := by
-    linarith [mul_nonneg hδ hgoalnonneg]
   have hqbound : 1 - δ ≤ q := by
     rw [← hqsquare] at hratio
-    nlinarith [sq_nonneg (q + (1 - δ))]
+    nlinarith only [hratio, hδ, hq]
   exact hqbound.trans
     (universalDiagonalCatalystOverlap_lower
       hd hn σ hσ hunit)
@@ -1092,11 +1088,11 @@ theorem exists_proofUniversalHarmonicCatalyst
     (n := n) ξ σ hunit U V hξ
   have hdeltaeps : 2 * δ ≤ ε ^ 2 := by
     have hmin : δ ≤ ε ^ 2 / 2 := min_le_left _ _
-    linarith
+    linarith only [hmin]
   have hsqrt : Real.sqrt (2 * δ) ≤ ε := by
     have hsq : (Real.sqrt (2 * δ)) ^ 2 = 2 * δ :=
       Real.sq_sqrt (by positivity)
-    nlinarith [Real.sqrt_nonneg (2 * δ)]
+    nlinarith only [hdeltaeps, hsq, hε, Real.sqrt_nonneg (2 * δ)]
   calc
     ‖localUnitaryAction (LU * P) (LV * P)
       (embezzlementState (d * n)) -
@@ -1263,7 +1259,7 @@ theorem spectralPartitionPOVM_weighted_trace_deficit_eq_mismatch
               rw [Finset.mul_sum]
               apply Finset.sum_congr rfl
               intro j _
-              split_ifs <;> simp
+              split_ifs <;> simp only [mul_one, mul_zero]
       _ = ∑ j : d, ∑ k : κ,
           if binG j = k then τ k ^ 2 else 0 :=
             Finset.sum_comm
@@ -1356,7 +1352,7 @@ theorem spectralPartitionPOVM_weighted_trace_deficit_eq_mismatch
   rw [← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
   intro j _
-  split_ifs <;> simp [w]
+  split_ifs <;> simp only [sub_self, w, sub_zero]
 
 end
 
@@ -1423,12 +1419,12 @@ theorem finiteUniformGrid_interval_card_le
       (Finset.mem_filter.mp last_mem).2.2
     have spread :
         ((last.val : ℝ) - (first.val : ℝ)) * step ≤ hi - lo := by
-      linarith
+      linarith only [first_lower, last_upper]
     have scaled :
         (last.val : ℝ) - (first.val : ℝ) ≤
           (hi - lo) / step :=
       (le_div_iff₀ positive).2 spread
-    linarith
+    linarith only [real_cardinal, scaled]
   · have empty : selected = ∅ :=
       Finset.not_nonempty_iff_eq_empty.mp present
     rw [empty, Finset.card_empty, Nat.cast_zero]
@@ -1573,7 +1569,7 @@ theorem targetSpectralAtomOverlap_eq_basis_norm_sq
     apply Finset.sum_congr rfl
     intro b _
     simp only [starRingEnd_apply, star_star]
-    ring
+    ac_rfl
   unfold spectralAtomOverlap
   rw [cross]
   have coeff :
@@ -1972,7 +1968,9 @@ theorem dSVCanonicalFailurePrefix_norm_sq
         else 0 := by
     by_cases same : i = j
     · subst j
-      by_cases before : i.val < r.val <;> simp [before]
+      by_cases before : i.val < r.val <;> simp only [before, and_self, ↓reduceIte, norm_one,
+                                            one_pow, and_false, norm_zero, ne_eq,
+                                            OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow]
     · simp only [same, false_and, ↓reduceIte, norm_zero, ne_eq, OfNat.ofNat_ne_zero,
         not_false_eq_true, zero_pow]
   simp_rw [atom]
@@ -2124,7 +2122,7 @@ theorem dSVMixedProjectorSuccessLoss_le_square
       0 ≤ (Matrix.trace R).re - (Matrix.trace (P * R)).re := by
     simpa only [sub_nonneg, Matrix.sub_mul, one_mul, trace_sub, sub_re] using remainder
   rw [square]
-  linarith
+  linarith only [rest]
 
 theorem dSVWeightedMixedProjectorSuccessLoss_le_square
     {κ d : Type*} [Fintype κ] [Fintype d]
@@ -2277,7 +2275,7 @@ theorem dSVRationalSoftPass_mem_unit
   constructor
   · exact div_nonneg nonnegative denominator.le
   · apply (div_le_iff₀ denominator).mpr
-    linarith
+    linarith only [positive]
 
 theorem dSVRationalSoftPass_sub
     {t a b : ℝ} (positive : 0 < t)
@@ -2286,8 +2284,6 @@ theorem dSVRationalSoftPass_sub
         dSVRationalSoftPass t b =
       t * (a - b) / ((a + t) * (b + t)) := by
   unfold dSVRationalSoftPass
-  have da : a + t ≠ 0 := by linarith
-  have db : b + t ≠ 0 := by linarith
   field_simp
   ring
 
@@ -2297,15 +2293,15 @@ theorem dSVRationalSoftPass_lipschitz
     |dSVRationalSoftPass t a -
         dSVRationalSoftPass t b| ≤ |a - b| / t := by
   have denominator : 0 < (a + t) * (b + t) :=
-    mul_pos (by linarith) (by linarith)
+    mul_pos (by linarith only [positive, ha]) (by linarith only [positive, hb])
   rw [dSVRationalSoftPass_sub positive ha hb,
     abs_div, abs_mul, abs_of_pos positive, abs_of_pos denominator]
   apply (div_le_iff₀ denominator).mpr
   rw [div_mul_eq_mul_div]
   apply (le_div_iff₀ positive).mpr
   have wide : t ^ 2 ≤ (a + t) * (b + t) := by
-    nlinarith [mul_nonneg ha hb]
-  linarith [mul_le_mul_of_nonneg_left wide (abs_nonneg (a - b))]
+    nlinarith only [mul_nonneg ha hb, positive, ha, hb]
+  linarith only [mul_le_mul_of_nonneg_left wide (abs_nonneg (a - b))]
 
 end
 
@@ -2327,7 +2323,7 @@ theorem dSVAdaptiveSoft_sqrt_sub_sq_le_abs
     linarith [mul_nonneg sa (sub_nonneg.mpr roots)]
   · rw [abs_of_nonneg (sub_nonneg.mpr ordered)]
     have roots := Real.sqrt_le_sqrt ordered
-    linarith [mul_nonneg sb (sub_nonneg.mpr roots)]
+    linarith only [square_a, square_b, mul_nonneg sb (sub_nonneg.mpr roots)]
 
 end
 
@@ -2443,7 +2439,7 @@ theorem dSVHeterogeneousRealStopping_escape_budget
         dSVHeterogeneousRealPrefix continuation k *
           (1 - continuation k) := by
     apply mul_le_mul_of_nonneg_left
-    · linarith [escape_bound k]
+    · linarith only [escape_bound k]
     · exact dSVHeterogeneousRealPrefix_nonneg
         continuation continuation_nonnegative k
   calc
@@ -2459,7 +2455,7 @@ theorem dSVHeterogeneousRealStopping_escape_budget
     _ ≤ 1 := by
       have := dSVHeterogeneousRealPrefix_nonneg
         continuation continuation_nonnegative N
-      linarith
+      linarith only [this]
 
 end
 
@@ -2727,7 +2723,7 @@ private theorem dSVUniformDensitySchmidtSumMass_le_four
     intro j _
     ring
   rw [split, left, right]
-  linarith
+  linarith only [cross]
 
 private theorem dSVUniformDensitySpectralAtomDiscrepancy_le
     {d : ℕ} (ξ ζ : BipartiteUnitVector d) :
@@ -2765,7 +2761,7 @@ private theorem dSVUniformDensitySpectralAtomDiscrepancy_le
         (σ i - μ j) * (σ i + μ j) := by ring
     rw [factor, abs_mul, abs_of_nonneg sum_nonnegative]
     dsimp [weight, f, g, F, G, hF, hG, σ, μ]
-    ring
+    ac_rfl
   have exact_energy :
       (∑ ij : Fin d × Fin d, weight ij * f ij ^ 2) =
         targetCanonicalSpectralEnergy ξ ζ := by
@@ -2778,7 +2774,7 @@ private theorem dSVUniformDensitySpectralAtomDiscrepancy_le
     apply Finset.sum_congr rfl
     intro j _
     rw [sq_abs]
-    ring
+    ac_rfl
   have exact_mass :
       (∑ ij : Fin d × Fin d, weight ij * g ij ^ 2) =
         dSVUniformDensitySchmidtSumMass ξ ζ := by
@@ -2789,7 +2785,7 @@ private theorem dSVUniformDensitySpectralAtomDiscrepancy_le
     apply Finset.sum_congr rfl
     intro j _
     dsimp [weight, g, F, G, hF, hG, σ, μ]
-    ring
+    ac_rfl
   rw [exact_l1, exact_energy, exact_mass] at cauchy
   have target_energy := targetCanonicalSpectralEnergy_le ξ ζ
   have sum_mass := dSVUniformDensitySchmidtSumMass_le_four ξ ζ
@@ -2801,13 +2797,13 @@ private theorem dSVUniformDensitySpectralAtomDiscrepancy_le
     · positivity
     · have square_two : Real.sqrt (2 : ℝ) ^ 2 = 2 :=
         Real.sq_sqrt (by norm_num)
-      nlinarith [sq_nonneg ‖ξ.val - ζ.val‖]
+      nlinarith only [target_energy, square_two]
   have second :
       Real.sqrt (dSVUniformDensitySchmidtSumMass ξ ζ) ≤ 2 := by
     apply Real.sqrt_le_iff.mpr
     constructor
     · norm_num
-    · linarith
+    · linarith only [sum_mass]
   calc
     _ ≤ Real.sqrt (targetCanonicalSpectralEnergy ξ ζ) *
         Real.sqrt (dSVUniformDensitySchmidtSumMass ξ ζ) :=
@@ -2815,7 +2811,7 @@ private theorem dSVUniformDensitySpectralAtomDiscrepancy_le
     _ ≤ (Real.sqrt 2 * ‖ξ.val - ζ.val‖) * 2 :=
       mul_le_mul first second
         (Real.sqrt_nonneg _) (by positivity)
-    _ = 2 * Real.sqrt 2 * ‖ξ.val - ζ.val‖ := by ring
+    _ = 2 * Real.sqrt 2 * ‖ξ.val - ζ.val‖ := by ac_rfl
 
 end
 
@@ -3218,8 +3214,6 @@ private theorem sharedPermutation_disagreement_probability_le_two_mul_tv
         rank left right hleft hright
     _ = 2 * markedTotalVariation left right := by
       unfold markedTotalVariation
-      have hcard : (left.card : ℝ) ≠ 0 := by
-        exact_mod_cast (Finset.card_ne_zero.mpr hleft)
       field_simp
 
 section RationalMarks
@@ -3374,7 +3368,7 @@ theorem centered_log_lower_of_one_le {x : ℝ} (hx : 1 ≤ x) :
     exact div_nonneg (sub_nonneg.mpr hx) hden.le
   have ht1 : t < 1 := by
     apply (div_lt_one hden).mpr
-    linarith
+    linarith only []
   have hratio : (1 + t) / (1 - t) = x := by
     dsimp [t]
     field_simp
@@ -3387,7 +3381,7 @@ theorem centered_log_lower_of_one_le {x : ℝ} (hx : 1 ≤ x) :
   dsimp [t] at hseries
   calc
     2 * (x - 1) / (x + 1) = 2 * ((x - 1) / (x + 1)) := by ring
-    _ ≤ Real.log x := by linarith
+    _ ≤ Real.log x := by linarith only [hseries]
 
 theorem centered_log_upper_of_le_one
     {x : ℝ} (hx0 : 0 < x) (hx1 : x ≤ 1) :
@@ -3403,7 +3397,7 @@ theorem centered_log_upper_of_le_one
     ring
   rw [hratio, Real.log_div (by norm_num : (1 : ℝ) ≠ 0) hx0.ne',
     Real.log_one] at h
-  linarith
+  linarith only [h]
 
 private def pinskerScalarGap (x : ℝ) : ℝ :=
   InformationTheory.klFun x - 3 * (x - 1) ^ 2 / (2 * (x + 2))
@@ -3436,9 +3430,9 @@ private theorem hasDerivAt_pinskerScalarGap {x : ℝ} (hx : 0 < x) :
 theorem pinsker_rational_coefficient_le {x : ℝ} (hx : 0 < x) :
     3 * (x + 5) / (2 * (x + 2) ^ 2) ≤ 2 / (x + 1) := by
   have hleft : 0 < 2 * (x + 2) ^ 2 := by positivity
-  have hright : 0 < x + 1 := by linarith
+  have hright : 0 < x + 1 := by linarith only [hx]
   apply (div_le_div_iff₀ hleft hright).mpr
-  linarith [sq_nonneg (x - 1)]
+  linarith only [sq_nonneg (x - 1)]
 
 theorem pinskerScalarGap_derivative_nonneg
     {x : ℝ} (hx : 1 ≤ x) :
@@ -3457,7 +3451,7 @@ theorem pinskerScalarGap_derivative_nonneg
       _ ≤ (x - 1) * (2 / (x + 1)) := hscaled
       _ = 2 * (x - 1) / (x + 1) := by ring
   have hlog := centered_log_lower_of_one_le hx
-  linarith
+  linarith only [hrational, hlog]
 
 theorem pinskerScalarGap_derivative_nonpos
     {x : ℝ} (hx0 : 0 < x) (hx1 : x ≤ 1) :
@@ -3474,7 +3468,7 @@ theorem pinskerScalarGap_derivative_nonpos
       _ ≤ (x - 1) * (3 * (x + 5) / (2 * (x + 2) ^ 2)) := hscaled
       _ = 3 * (x - 1) * (x + 5) / (2 * (x + 2) ^ 2) := by ring
   have hlog := centered_log_upper_of_le_one hx0 hx1
-  linarith
+  linarith only [hrational, hlog]
 
 private theorem pinskerScalarGap_nonneg {x : ℝ} (hx : 0 ≤ x) :
     0 ≤ pinskerScalarGap x := by
@@ -3489,7 +3483,7 @@ private theorem pinskerScalarGap_nonneg {x : ℝ} (hx : 0 ≤ x) :
       intro y hy
       have hypos : 0 < y := by
         have hyone := (Set.mem_Icc.mp hy).1
-        linarith
+        linarith only [hyone]
       exact (hasDerivAt_pinskerScalarGap hypos).continuousAt.continuousWithinAt
     have hmonotone : MonotoneOn pinskerScalarGap (Set.Icc 1 x) := by
       apply monotoneOn_of_hasDerivWithinAt_nonneg
@@ -3498,7 +3492,7 @@ private theorem pinskerScalarGap_nonneg {x : ℝ} (hx : 0 ≤ x) :
         have hymem : y ∈ Set.Icc (1 : ℝ) x := interior_subset hy
         have hypos : 0 < y := by
           have hyone := (Set.mem_Icc.mp hymem).1
-          linarith
+          linarith only [hyone]
         exact (hasDerivAt_pinskerScalarGap hypos).hasDerivWithinAt
       · intro y hy
         have hymem : y ∈ Set.Icc (1 : ℝ) x := interior_subset hy
@@ -3645,11 +3639,8 @@ theorem finite_pinsker
       _ = 2 * finiteRelativeEntropy p q := by
         unfold finiteRelativeEntropy
         rw [Finset.mul_sum]
-  have hmain :
-      (∑ i, |p i - q i|) ^ 2 ≤ 2 * finiteRelativeEntropy p q :=
-    hcauchy.trans hsum
   unfold finiteTotalVariation
-  linarith
+  linarith only [hcauchy, hsum]
 
 theorem sum_over_positive_reference_support
     {ι : Type*} [Fintype ι]
@@ -3833,7 +3824,7 @@ private theorem distributionFloorProbability_error_lt
         (denominator : ℝ)) * (denominator : ℝ) =
       p i * (denominator : ℝ) - Nat.floor (p i * (denominator : ℝ)) := by
         field_simp
-    _ < 1 := by linarith
+    _ < 1 := by linarith only [hupper]
 
 omit [DecidableEq ι] in
 theorem distributionFloorNumerator_sum_le
@@ -3880,8 +3871,6 @@ private theorem distributionFloorResidual_probability_eq_sum
       ∑ i, (p i - distributionFloorProbability denominator p i) := by
   have hfloor := distributionFloorNumerator_sum_le
     denominator p hp normalized
-  have hden : (denominator : ℝ) ≠ 0 := by
-    exact_mod_cast (Nat.ne_of_gt positive)
   unfold distributionFloorResidual distributionFloorProbability
   rw [Nat.cast_sub hfloor, Nat.cast_sum, Finset.sum_sub_distrib,
     normalized, ← Finset.sum_div]
@@ -4422,7 +4411,7 @@ private theorem rationalMarked_markedTotalVariation_eq
           2 * ∑ i : ι, (min (left i) (right i) : ℝ) := by
     have hLreal : (L.card : ℝ) = denominator := by exact_mod_cast hL
     have hRreal : (R.card : ℝ) = denominator := by exact_mod_cast hR
-    linarith
+    linarith only [hI, hunion, hleft_difference, hright_difference, hLreal, hRreal]
   have hpointwise : ∀ i : ι,
       |(left i : ℝ) / denominator -
         (right i : ℝ) / denominator| =
@@ -4584,9 +4573,7 @@ private theorem dSVUniformLeftDensityConjugateSwapVector_norm
         ∑ i : Fin d, ∑ j : Fin d, ‖z (i, j)‖ ^ 2
     simp_rw [norm_star]
     rw [Finset.sum_comm]
-  nlinarith [norm_nonneg
-    (dSVUniformLeftDensityConjugateSwapVector z),
-    norm_nonneg z]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp squares
 
 private theorem dSVUniformLeftDensityConjugateSwapVector_distance
     {d : ℕ} (z w : EuclideanSpace ℂ (Fin d × Fin d)) :
@@ -4706,8 +4693,6 @@ theorem dSVUniformDensityThresholdGrid_apply
     {N : ℕ} (positive : 0 < N) (k : Fin N) :
     dSVUniformDensityThresholdGrid N k =
       ((k.val : ℝ) + 1) / (N : ℝ) := by
-  have nonzero : (N : ℝ) ≠ 0 := by
-    exact_mod_cast (Nat.ne_of_gt positive)
   unfold dSVUniformDensityThresholdGrid
     finiteUniformThresholdGrid
   field_simp
@@ -4799,7 +4784,7 @@ theorem dSVUniformDensityThresholdMismatch_le
       |alice - bob| + 1 / (N : ℝ) := by
   classical
   have window :
-      (1 / (N : ℝ)) < 1 + 1 / (N : ℝ) := by linarith
+      (1 / (N : ℝ)) < 1 + 1 / (N : ℝ) := by linarith only []
   calc
     dSVUniformDensityThresholdMismatch N alice bob ≤
       finiteUniformThresholdCrossing
@@ -5005,9 +4990,9 @@ theorem normalizeOrDefault_sub_le
               rw [hsplit]
               exact norm_add_le _ _
         _ = ‖u - v‖ + |‖v‖ - ‖u‖| := by rw [hsecond]
-        _ ≤ 2 * ‖u - v‖ := by linarith
+        _ ≤ 2 * ‖u - v‖ := by linarith only [hreverse]
     change ‖u₀ - v₀‖ ≤ 2 * ‖u - v‖ / ‖u‖
-    exact (le_div_iff₀ hupos).mpr (by linarith)
+    exact (le_div_iff₀ hupos).mpr (by linarith only [hbound])
 
 end
 
@@ -5041,7 +5026,7 @@ theorem dSVCanonicalFailurePrefix_eq_zero_of_rank_zero
     simpa only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, pow_eq_zero_iff, norm_eq_zero,
       zero, CharP.cast_eq_zero] using dSVCanonicalFailurePrefix_norm_sq rank
   have normzero : ‖dSVCanonicalFailurePrefix rank‖ = 0 := by
-    nlinarith [norm_nonneg (dSVCanonicalFailurePrefix rank)]
+    exact sq_eq_zero_iff.mp squared
   exact norm_eq_zero.mp normzero
 
 theorem dSVCanonicalFailurePrefix_norm_eq_sqrt
@@ -5050,8 +5035,7 @@ theorem dSVCanonicalFailurePrefix_norm_eq_sqrt
       Real.sqrt (rank.val : ℝ) := by
   have squared := dSVCanonicalFailurePrefix_norm_sq rank
   have root := Real.sq_sqrt (by positivity : 0 ≤ (rank.val : ℝ))
-  nlinarith [norm_nonneg (dSVCanonicalFailurePrefix rank),
-    Real.sqrt_nonneg (rank.val : ℝ)]
+  exact (sq_eq_sq₀ (norm_nonneg _) (Real.sqrt_nonneg _)).mp (squared.trans root.symm)
 
 end
 
@@ -5379,10 +5363,10 @@ theorem dSVUniformDensityCompletePureHistory_raw_norm
       _ = (((N * d) ^ (L + 1) : ℕ) : ℝ) := by
           rw [hsquare]
           push_cast
-          ring
+          ac_rfl
   change ‖whole‖ = ‖single‖ ^ (L + 1)
-  nlinarith [norm_nonneg whole,
-    pow_nonneg (norm_nonneg single) (L + 1)]
+  exact (sq_eq_sq₀ (norm_nonneg whole) (pow_nonneg (norm_nonneg single) _)).mp
+    (hwhole.trans hpower.symm)
 
 theorem dSVUniformDensityCompletePureHistory_zeroFlag_apply
     (N d L : ℕ)
@@ -5791,11 +5775,10 @@ theorem finitePurificationMatrix_gram_apply
     F M positive hM a r i
   let v := ensemblePurificationSubspaceEntry
     F M positive hM a r j
-  have hisometry := b.repr.inner_map_map u v
   change (∑ k, star (b.repr u k) * b.repr v k) =
     inner ℂ u v
-  rw [← hisometry, EuclideanSpace.inner_eq_star_dotProduct]
-  simp only [RCLike.star_def, mul_comm, dotProduct, Pi.star_apply]
+  simpa only [OrthonormalBasis.repr_apply_apply, RCLike.star_def, inner_conj_symm]
+    using b.sum_inner_mul_inner u v
 
 theorem ensemblePurificationSubspaceEntry_inner_eq_integral
     {ι d : Type*} [Fintype d] [DecidableEq d]
@@ -5932,14 +5915,13 @@ private theorem finitePurificationMatrix_difference_gram_apply
     F M positive hM a r j
   let v₀ := meanPurificationSubspaceEntry
     F M positive hM r j
-  have hisometry := b.repr.inner_map_map (u - u₀) (v - v₀)
   change
     (∑ k, star (b.repr u k - b.repr u₀ k) *
       (b.repr v k - b.repr v₀ k)) =
       inner ℂ (u - u₀) (v - v₀)
-  rw [← hisometry, EuclideanSpace.inner_eq_star_dotProduct]
-  simp only [star_sub, RCLike.star_def, mul_comm, dotProduct, map_sub, PiLp.sub_apply,
-    WithLp.ofLp_sub, Pi.star_apply, Pi.sub_apply]
+  simpa only [OrthonormalBasis.repr_apply_apply, inner_sub_left, inner_sub_right,
+    star_sub, RCLike.star_def, inner_conj_symm]
+    using b.sum_inner_mul_inner (u - u₀) (v - v₀)
 
 private theorem purificationSubspaceEntry_difference_inner_eq_integral
     {ι d : Type*} [Fintype d] [DecidableEq d]
@@ -6223,7 +6205,8 @@ theorem strategyPurificationVector_norm
                 (Matrix.trace S.state.matrix).re
             rw [spectralSupportSqrt_sq]
       _ = 1 := by rw [S.state.trace_one]; norm_num
-  nlinarith [norm_nonneg (strategyPurificationVector S)]
+  exact (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp (by
+    simpa only [one_pow] using h_sq)
 
 theorem reindexedMatrixQuadratic
     {d e : Type*} [Fintype d] [Fintype e]
@@ -6452,8 +6435,7 @@ theorem dSVUniformDensityMixedProtocolLocalAction_norm
     simp only [quadraticExpectation, map_one, one_apply_eq_self, inner_self_eq_norm_sq_to_K,
       coe_algebraMap, ← ofReal_pow, ofReal_re]
   change ‖toLp 2 (M.mulVec (ofLp z))‖ = ‖z‖
-  nlinarith [norm_nonneg (toLp 2 (M.mulVec (ofLp z))),
-    norm_nonneg z]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp squared
 
 end
 
@@ -7052,14 +7034,13 @@ theorem dSVUniformDensityGridPrefix_density_sub_lt
         (N : ℝ) =
       a * (N : ℝ) - (Nat.floor (a * (N : ℝ)) : ℝ) := by
         field_simp
-    _ < 1 := by linarith
+    _ < 1 := by linarith only [floor]
 
 theorem dSVUniformDensityGridPrefix_density_sub_le
     {N : ℕ} (positive : 0 < N)
     {a : ℝ} (nonnegative : 0 ≤ a) (bounded : a ≤ 1) :
     a - 1 / (N : ℝ) ≤ dSVUniformDensityGridPrefix N a := by
-  linarith [dSVUniformDensityGridPrefix_density_sub_lt
-    positive nonnegative bounded]
+  linarith only [dSVUniformDensityGridPrefix_density_sub_lt positive nonnegative bounded]
 
 /-- The total probability mass of DSV density rational left projective diagonal. -/
 def dSVDensityRationalLeftProjectiveDiagonalMass
@@ -7093,9 +7074,9 @@ theorem dSVRationalSoftPass_ge_density_div_width_add_one
     a / (w + 1) ≤ dSVRationalSoftPass w a := by
   unfold dSVRationalSoftPass
   have denominator : 0 < a + w := by linarith
-  have wider : 0 < w + 1 := by linarith
+  have wider : 0 < w + 1 := by linarith only [width]
   apply (div_le_div_iff₀ wider denominator).mpr
-  nlinarith
+  nlinarith only [nonnegative, bounded]
 
 theorem dSVDensityRationalLeftProjectiveDiagonalMass_lower
     {d N : ℕ} {w : ℝ} (width : 0 < w) (grid : 0 < N)

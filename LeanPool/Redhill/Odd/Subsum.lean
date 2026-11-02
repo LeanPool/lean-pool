@@ -152,7 +152,7 @@ lemma natAbs_le_redEmb1_reduced {b₁ b₂ : SignType} (h : b₁ ≠ b₂) (hx :
   refine (tsub_le_tsub ?_ ?_).trans Int.sub_le_add_natAbs
   · simp only [Int.natAbs_mul, Int.natAbs_pow, Int.reduceAbs,
       Int.natAbs_add_of_nonneg (sq_nonneg _) zero_le_one]
-    have : 1 ≤ (b₂ - b₁ : ℤ).natAbs := by cases b₁ <;> cases b₂ <;> simp_all
+    have : 1 ≤ (b₂ - b₁ : ℤ).natAbs := SignType.one_le_natAbs_intCast_sub h.symm
     rw [← mul_assoc]
     apply mul_le_mul' (by lia)
     calc
@@ -196,7 +196,11 @@ lemma isSubsumBlock_redEmb1 (hx : Y n F ≤ x.natAbs) :
       Y n F ≤ (b₁ * (x - 1) ^ 5 + b₂ * (10 * (x ^ 2 + 1) ^ 2) + b₃ * -(x + 1) ^ 5).natAbs by
     apply this
     contrapose! ncb
-    exact ⟨b 0, fun i ↦ by fin_cases i <;> tauto⟩
+    refine ⟨b 0, fun i ↦ ?_⟩
+    fin_cases i
+    · rfl
+    · exact ncb.1.symm
+    · exact ncb.2.symm
   exact fun h ↦ Y_le_natAbs_redEmb1 h hx
 
 lemma tupReduce_tup {c₁ : n + 2 = n + 5 - #(univ.map redEmb1)} :

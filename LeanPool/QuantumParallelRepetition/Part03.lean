@@ -280,10 +280,6 @@ theorem dSVDensityRationalPhysicalDiagonalBornSuccess_eq
         grid dimension w ξ =
       dSVDensityRationalLeftProjectiveDiagonalMass w N ξ /
         (d : ℝ) := by
-  have d_nonzero : (d : ℝ) ≠ 0 := by
-    exact_mod_cast (Nat.ne_of_gt dimension)
-  have n_nonzero : (N : ℝ) ≠ 0 := by
-    exact_mod_cast (Nat.ne_of_gt grid)
   unfold dSVDensityRationalPhysicalDiagonalBornSuccess
     dSVDensityRationalPhysicalGlobalPOVM
   rw [dSVUniformDensityThresholdShared_diagonalBorn_eq
@@ -318,10 +314,6 @@ theorem dSVDensityRationalPhysicalProjectorCrossHazard_eq
     dSVDensityRationalPhysicalProjectorCrossHazard N w ξ ζ =
       dSVDensityRationalLeftProjectiveThresholdAtomMismatch
         w N ξ ζ / (d : ℝ) := by
-  have d_nonzero : (d : ℝ) ≠ 0 := by
-    exact_mod_cast (Nat.ne_of_gt dimension)
-  have n_nonzero : (N : ℝ) ≠ 0 := by
-    exact_mod_cast (Nat.ne_of_gt grid)
   unfold dSVDensityRationalPhysicalProjectorCrossHazard
   calc
     (∑ k : Fin N,
@@ -613,18 +605,18 @@ theorem dSVDensityRationalGridPrefix_nonneg
 theorem dSVDensityRationalSoftPass_rescaled_le_density
     {w a : ℝ} (width : 0 < w) (nonnegative : 0 ≤ a) :
     w * dSVRationalSoftPass w a ≤ a := by
-  have denominator : 0 < a + w := by linarith
+  have denominator : 0 < a + w := by linarith only [width, nonnegative]
   unfold dSVRationalSoftPass
   calc
     w * (a / (a + w)) = w * a / (a + w) := by ring
     _ ≤ a := (div_le_iff₀ denominator).mpr (by
-      linarith [sq_nonneg a])
+      linarith only [sq_nonneg a])
 
 theorem dSVDensityRationalSoftPass_density_defect_le
     {w a : ℝ} (width : 0 < w)
     (nonnegative : 0 ≤ a) (bounded : a ≤ 1) :
     a - w * dSVRationalSoftPass w a ≤ a / w := by
-  have denominator : 0 < a + w := by linarith
+  have denominator : 0 < a + w := by linarith only [width, nonnegative]
   calc
     a - w * dSVRationalSoftPass w a =
         a ^ 2 / (a + w) := by
@@ -633,8 +625,8 @@ theorem dSVDensityRationalSoftPass_density_defect_le
       ring
     _ ≤ a / w := by
       apply (div_le_div_iff₀ denominator width).mpr
-      linarith [mul_nonneg (mul_nonneg nonnegative width.le)
-        (sub_nonneg.mpr bounded), sq_nonneg a]
+      linarith only [mul_nonneg (mul_nonneg nonnegative width.le) (sub_nonneg.mpr bounded),
+        sq_nonneg a]
 
 theorem dSVDensityRationalGrid_rescaled_le_density
     {N : ℕ} {w a : ℝ} (width : 0 < w) (grid : 0 < N)
@@ -831,9 +823,7 @@ theorem dSVDensityRationalCanonicalAcceptedTarget_distance_le
     dSVDensityRationalCanonicalAcceptedTarget_distance_sq_le
       width grid ξ
   have exact_sqrt := Real.sq_sqrt nonnegative
-  nlinarith [norm_nonneg
-    (ξ.val - dSVDensityRationalCanonicalAcceptedTarget w N ξ),
-    Real.sqrt_nonneg (1 / w + (d : ℝ) * w / (N : ℝ))]
+  nlinarith only [squared, exact_sqrt, Real.sqrt_nonneg (1 / w + (d : ℝ) * w / (N : ℝ))]
 
 theorem dSVDensityRationalCanonicalAcceptedTarget_ne_zero
     {d N : ℕ} {w : ℝ} (width : 0 < w) (grid : 0 < N)
@@ -848,7 +838,7 @@ theorem dSVDensityRationalCanonicalAcceptedTarget_ne_zero
   have lower :=
     dSVDensityRationalLeftProjectiveDiagonalMass_lower
       width grid ξ
-  nlinarith
+  nlinarith only [actual, width, fine, lower]
 
 /-- Normalize the canonical accepted target vector. -/
 def dSVDensityRationalCanonicalNormalizedTarget
@@ -897,7 +887,7 @@ private theorem dSVDensityRationalCanonicalNormalizedTarget_distance_le
       norm_add_le _ _
     _ ≤ 2 * ‖ξ.val - v‖ := by
       rw [movement]
-      linarith
+      linarith only [reverse]
     _ ≤ 2 * Real.sqrt (1 / w + (d : ℝ) * w / (N : ℝ)) := by
       gcongr
       exact dSVDensityRationalCanonicalAcceptedTarget_distance_le
@@ -937,14 +927,13 @@ theorem dSVDensityRationalLargeWidthDiagonalMass_half
     (ξ : BipartiteUnitVector d) :
     1 / (2 * (w + 1)) ≤
       dSVDensityRationalLeftProjectiveDiagonalMass w N ξ := by
-  have denominator : 0 < w + 1 := by linarith
   have arithmetic :
       1 / (2 * (w + 1)) ≤ 1 / (w + 1) - (d : ℝ) / N := by
     have identity :
         1 / (w + 1) - 1 / (2 * (w + 1)) =
           1 / (2 * (w + 1)) := by
       field_simp; ring
-    linarith
+    linarith only [fine, identity]
   exact arithmetic.trans
     (dSVDensityRationalLeftProjectiveDiagonalMass_lower
       width grid ξ)
@@ -1002,7 +991,7 @@ theorem
   have floor_scaled : 1 ≤ 2 * (w + 1) * M := by
     have denominator : 0 < 2 * (w + 1) := by positivity
     have crossed := (div_le_iff₀ denominator).mp mass_floor
-    linarith
+    linarith only [crossed]
   change
     dSVDensityRationalLeftProjectiveThresholdAtomMismatch
       w N ξ ζ ≤ (2 * (w + 1) * D) * M
@@ -1012,7 +1001,7 @@ theorem
     _ ≤ D * (2 * (w + 1) * M) := by
       linarith [mul_nonneg defect_nonnegative
         (show 0 ≤ 2 * (w + 1) * M - 1 by linarith)]
-    _ = (2 * (w + 1) * D) * M := by ring
+    _ = (2 * (w + 1) * D) * M := by ac_rfl
 
 theorem
     dSVDensityRationalLargeWidthRelativeMismatch_le_targetDistance
@@ -1032,7 +1021,7 @@ theorem
   have denominator : 0 < w := width
   have ratio : (w + 1) / w ≤ 2 := by
     apply (div_le_iff₀ denominator).mpr
-    linarith
+    linarith only [large]
   calc
     dSVDensityRationalLeftProjectiveThresholdAtomMismatch
         w N ξ ζ /
@@ -1076,10 +1065,10 @@ theorem dSVDensityRationalLargeWidth_exists_fine_grid
   have crossed := (div_lt_iff₀ denominator).mp large
   have small : (d : ℝ) / N < ε / (2 * (w + 1)) := by
     apply (div_lt_iff₀ real_grid).mpr
-    linarith
+    linarith only [crossed]
   have positive : 0 < 2 * (w + 1) := by positivity
   have scaled := (lt_div_iff₀ positive).mp small
-  linarith
+  linarith only [scaled]
 
 theorem dSVDensityRationalLargeWidth_exists_sourceUniformParameters
     (d : ℕ) (dimension : 0 < d)
@@ -1107,16 +1096,16 @@ theorem dSVDensityRationalLargeWidth_exists_sourceUniformParameters
   have fine : (d : ℝ) / N ≤ 1 / (2 * (w + 1)) := by
     have denominator : 0 < 2 * (w + 1) := by positivity
     apply (le_div_iff₀ denominator).mpr
-    linarith
+    linarith only [small, budget]
   have inverse : 1 / w = ε := by
     dsimp [w]
     field_simp
   have rounding : 1 / w + w * ((d : ℝ) / N) ≤ 3 * ε / 2 := by
     have grid_cost : w * ((d : ℝ) / N) ≤ ε / 2 := by
       have weight : 0 ≤ (d : ℝ) / N := by positivity
-      linarith
+      linarith only [budget, weight]
     rw [inverse]
-    linarith
+    linarith only [grid_cost]
   refine ⟨w, N, large, grid, budget, rounding, ?_, ?_⟩
   · intro ξ
     exact dSVDensityRationalLargeWidthDiagonalMass_pos
@@ -1764,7 +1753,7 @@ private theorem dSVDensityRationalMixedSpectralAtomBlock_trace_eq
   intro i _
   apply Finset.sum_congr rfl
   intro j _
-  split_ifs <;> simp [spectralAtomOverlap]
+  split_ifs <;> simp only [spectralAtomOverlap, trace_zero, zero_re]
 
 end
 
@@ -1996,7 +1985,7 @@ theorem dSVDensityRationalMixedAcceptedPrefix_norm_sq
             rw [Finset.mul_sum]
             apply Finset.sum_congr rfl
             intro k _
-            split_ifs <;> simp
+            split_ifs <;> simp only [mul_one, mul_zero]
         _ = _ := by rw [counted]
 
 /--
@@ -2403,10 +2392,7 @@ theorem tensorEmbezzlementTarget_sub_norm
       ← EuclideanSpace.norm_sq_eq, ← EuclideanSpace.norm_sq_eq,
       embezzlementState_norm n positive]
     ring
-  nlinarith [norm_nonneg
-    (tensorEmbezzlementTarget (n := n) ξ -
-      tensorEmbezzlementTarget (n := n) ζ),
-    norm_nonneg (ξ.val - ζ.val)]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp squares
 
 end
 
@@ -2670,17 +2656,10 @@ theorem dSVDensityRationalPublicBucketLocalHarmonicCleanup_sq
               (Nat.mul_pos dimension positive)]
           norm_num
     simp only [ite_eq_right same, mul_one]
-    nlinarith [
-      norm_nonneg
-        (localUnitaryAction
-            (A (phase, bucket phase r))
-            (B (phase, bucket phase s))
-            (tensorEmbezzlementTarget (n := n) (work r)) -
-          embezzlementState (N * n)),
-      sq_nonneg ε,
-      sq_nonneg
-        ‖(work r).val -
-          (work (representative phase (bucket phase r))).val‖]
+    nlinarith only [bound, precision,
+      norm_nonneg (localUnitaryAction
+        (A (phase, bucket phase r)) (B (phase, bucket phase s))
+        (tensorEmbezzlementTarget (n := n) (work r)) - embezzlementState (N * n))]
 
 theorem dSVDensityRationalPublicBucketCanonicalPrefixCleanup_sq
     {Ω I : Type*} [DecidableEq I] {N : ℕ} (grid : 0 < N)
@@ -3083,10 +3062,10 @@ theorem dSVDensityRationalPublicLogRankBucket_log_sub_lt
       (Real.log ((max 1 s.val : ℕ) : ℝ)) with ordered | ordered
   · rw [abs_of_nonpos (sub_nonpos.mpr ordered)]
     have integer_order := (abs_lt.mp bucket_bounds).1
-    linarith [rank_bounds.1, other_bounds.2]
+    linarith only [rank_bounds, other_bounds, integer_order]
   · rw [abs_of_nonneg (sub_nonneg.mpr ordered)]
     have integer_order := (abs_lt.mp bucket_bounds).2
-    linarith [rank_bounds.2, other_bounds.1]
+    linarith only [rank_bounds, other_bounds, integer_order]
 
 /-- The nonzero ranks assigned to the given logarithmic bucket and public phase. -/
 def dSVDensityRationalPublicLogRankBucketFiber
@@ -3777,8 +3756,7 @@ private theorem dSVDensityRationalPublicLogPhasePureSource_norm
       dSVUniformDensityThresholdWholeHistorySharedState_norm
         grid dimension L]
     norm_num
-  nlinarith [norm_nonneg
-    (dSVDensityRationalPublicLogPhasePureSource B N d L)]
+  nlinarith only [squared, norm_nonneg (dSVDensityRationalPublicLogPhasePureSource B N d L)]
 
 /-- Adjoin the harmonic embezzlement state to the public-phase history source. -/
 def dSVDensityRationalPublicLogPhaseHarmonicPureSource
@@ -3826,9 +3804,8 @@ private theorem dSVDensityRationalPublicLogPhaseHarmonicPureSource_norm
         phases grid dimension,
       embezzlementState_norm m harmonic]
     norm_num
-  nlinarith [norm_nonneg
-    (dSVDensityRationalPublicLogPhaseHarmonicPureSource
-      B N d L m)]
+  nlinarith only [squared,
+    norm_nonneg (dSVDensityRationalPublicLogPhaseHarmonicPureSource B N d L m)]
 
 /-- The public-phase label paired with the residual whole-history catalyst index. -/
 abbrev DSVDensityRationalPublicLogPhaseCatalystIndex
@@ -4669,9 +4646,8 @@ theorem
   have stage (k : ℕ) :
       success k + asynchronous k = 1 - continuation k := by
     dsimp [continuation, success, asynchronous]
-    linarith [
-      dSVDensityRationalHeterogeneousPhysicalStage_partition
-        grid dimension width schedule ξ ζ k]
+    linarith only [
+      dSVDensityRationalHeterogeneousPhysicalStage_partition grid dimension width schedule ξ ζ k]
   have escape :=
     dSVHeterogeneousRealStopping_escape_identity
       continuation L
@@ -4849,7 +4825,7 @@ private theorem
             N width schedule ξ ζ k * x)
         (dSVDensityRationalHeterogeneousPhysicalStageAsynchronous_eq_escape_mul_ratio
           N width schedule ξ ζ k)
-    _ = _ := by ring
+    _ = _ := by ac_rfl
 
 theorem
     dSVDensityRationalHeterogeneousPhysicalStageDiagonalSuccess_lower
@@ -4979,7 +4955,7 @@ private theorem
         2 * (W + 1) * ((d : ℝ) / N) := by
       have scale := upper (schedule k)
       have grid_cost : 0 ≤ (d : ℝ) / N := by positivity
-      linarith [mul_nonneg grid_cost (sub_nonneg.mpr scale)]
+      linarith only [mul_nonneg grid_cost (sub_nonneg.mpr scale)]
 
 theorem dSVDensityRationalHeterogeneousPhysicalStoppedEscape_budget
     {d S L N : ℕ} (grid : 0 < N) (dimension : 0 < d)
@@ -5011,7 +4987,7 @@ theorem dSVDensityRationalHeterogeneousPhysicalStoppedEscape_budget
       dSVDensityRationalHeterogeneousPhysicalStage_partition
         grid dimension width schedule ξ ζ k
     dsimp [continuation, escape]
-    linarith
+    linarith only [actual]
   simpa only [dSVDensityRationalHeterogeneousPhysicalSurvival, ge_iff_le]
     using dSVHeterogeneousRealStopping_escape_budget
       continuation escape continuation_nonnegative stage L
@@ -5102,8 +5078,7 @@ theorem
               N width schedule ξ ζ k)) * bound := by
       rw [Finset.sum_mul]
     _ ≤ bound := by
-      linarith [mul_nonneg bound_nonnegative
-        (sub_nonneg.mpr escape_budget)]
+      linarith only [mul_nonneg bound_nonnegative (sub_nonneg.mpr escape_budget)]
 
 /-- The error rate associated with DSV density rational heterogeneous physical uniform escape. -/
 def dSVDensityRationalHeterogeneousPhysicalUniformEscapeRate
@@ -5133,7 +5108,7 @@ theorem
     positivity
   unfold dSVDensityRationalHeterogeneousPhysicalUniformEscapeRate
   apply (div_le_div_iff₀ denominator (by norm_num : (0 : ℝ) < 2)).mpr
-  linarith [mul_nonneg W_nonnegative real_dimension.le]
+  linarith only [dimension_one, mul_nonneg W_nonnegative real_dimension.le]
 
 theorem
     dSVDensityRationalHeterogeneousPhysicalStageDiagonalSuccess_ge_uniform
@@ -5164,8 +5139,7 @@ theorem
         d W = 1 / (2 * (W + 1) * (d : ℝ)) := rfl
     _ ≤ 1 / (2 * (width (schedule k) + 1) * (d : ℝ)) := by
       apply (div_le_div_iff₀ wide_positive stage_positive).mpr
-      linarith [mul_nonneg real_dimension.le
-        (sub_nonneg.mpr width_bound)]
+      linarith only [mul_nonneg real_dimension.le (sub_nonneg.mpr width_bound)]
     _ ≤ dSVDensityRationalPhysicalDiagonalBornSuccess
         grid dimension (width (schedule k)) ξ :=
       dSVDensityRationalHeterogeneousPhysicalStageDiagonalSuccess_lower
@@ -5476,7 +5450,7 @@ private theorem rightSpectralBornWeight_moment
         apply Finset.sum_congr rfl
         intro i _
         unfold rightSpectralBornWeight
-        ring
+        ac_rfl
     _ = bornTracePairing ρ.matrix F G := h.symm
 
 private theorem rightSpectralBornWeight_entropy
@@ -5508,7 +5482,7 @@ private theorem rightSpectralBornWeight_entropy
       apply Finset.sum_congr rfl
       intro i _
       unfold rightSpectralBornWeight
-      ring
+      ac_rfl
 
 private theorem rightSpectralBornWeight_negEntropy
     {dA dB : Type*}
@@ -5547,7 +5521,7 @@ theorem bornTracePairing_le_one_one
       bornTracePairing ρ.matrix F (1 : Matrix dB dB ℂ) := by
     simp only [map_sub, LinearMap.sub_apply]
   rw [hdiff, bornTracePairing_one_one] at hpositive
-  linarith
+  linarith only [hpositive]
 
 theorem matrixLogEntropy_born_lower_bound_right
     {dA dB : Type*}
@@ -5851,7 +5825,7 @@ theorem bornTracePairing_contractions_le_one
     simp only [map_sub, LinearMap.sub_apply]
   rw [hdiff] at hpositive
   have hone := bornTracePairing_one_le_one ρ G hGcomplement
-  linarith
+  linarith only [hpositive, hone]
 
 theorem fullHistoryAtomBornMass_le_one
     (G : Game X Y A B) (n : ℕ)
@@ -5901,7 +5875,7 @@ theorem fullHistoryAtomCountingWeight_sum_le
         nsmul_eq_mul, Nat.cast_pow, fullHistoryAnswerCount, mul_sum, mul_assoc]
     _ = fullHistoryAnswerCount (A := A) (B := B) D := by
       rw [fullHistoryWeight_sum G D L]
-      ring
+      ac_rfl
 
 theorem fullHistoryAtomBornMass_sum
     (G : Game X Y A B) (n : ℕ)
@@ -6003,9 +5977,9 @@ theorem fullHistoryAliceEntropyPotential_lower_bound
       (fullHistoryBobFilter G n S D L h β)
       (fullHistoryBobFilter_posSemidef G n S D L h β)
       (fullHistoryBobFilter_complement_posSemidef G n S D L h β)
-    linarith [mul_le_mul_of_nonneg_left hlocal hw]
+    linarith only [mul_le_mul_of_nonneg_left hlocal hw]
   have hscalar := fullHistoryAtomEntropy_le G n S D L hL hp
-  linarith
+  linarith only [hpoint, hscalar]
 
 end
 
@@ -6361,7 +6335,7 @@ theorem fullCoordinateOldHistory_weight
   rw [fullHistoryRemaining_prod_split D L i hiD hiL]
   simp_rw [hold]
   simp only [univ_eq_attach, fullCoordinateOldHistory, ↓reduceDIte]
-  ring
+  ac_rfl
 
 theorem fullCoordinateNewHistory_weight
     (G : Game X Y A B) {n : ℕ}
@@ -6392,7 +6366,7 @@ theorem fullCoordinateNewHistory_weight
   rw [finsetSubtype_prod_insert L i hiL]
   simp_rw [hnew]
   simp only [univ_eq_attach, fullCoordinateNewHistory, ↓reduceDIte]
-  ring
+  ac_rfl
 
 end CoordinateWeights
 
@@ -6432,14 +6406,13 @@ theorem finitePurificationMatrix_pair_difference_gram_apply
   let u₀ := ensemblePurificationSubspaceEntry F M positive hM b r i
   let v := ensemblePurificationSubspaceEntry F M positive hM a r j
   let v₀ := ensemblePurificationSubspaceEntry F M positive hM b r j
-  have hisometry := basis.repr.inner_map_map (u - u₀) (v - v₀)
   change
     (∑ k, star (basis.repr u k - basis.repr u₀ k) *
       (basis.repr v k - basis.repr v₀ k)) =
       inner ℂ (u - u₀) (v - v₀)
-  rw [← hisometry, EuclideanSpace.inner_eq_star_dotProduct]
-  simp only [star_sub, RCLike.star_def, mul_comm, dotProduct, map_sub, PiLp.sub_apply,
-    WithLp.ofLp_sub, Pi.star_apply, Pi.sub_apply]
+  simpa only [OrthonormalBasis.repr_apply_apply, inner_sub_left, inner_sub_right,
+    star_sub, RCLike.star_def, inner_conj_symm]
+    using basis.sum_inner_mul_inner (u - u₀) (v - v₀)
 
 theorem ensemblePurificationSubspaceEntry_pair_difference_inner_eq_integral
     {ι d : Type*} [Fintype d] [DecidableEq d]
@@ -7325,7 +7298,7 @@ theorem fullCoordinateWeightedOldSum
       intro y _
       rw [fullCoordinateOldHistory_weight G D L i hiD hiL r y,
         fullCoordinateOldHistory_winIndicator_eq G D L i r y α β]
-      ring
+      ac_rfl
 
 theorem fullCoordinateWeightedNewSum
     (G : Game X Y A B) {n : ℕ}
@@ -7379,7 +7352,7 @@ theorem fullCoordinateWeightedNewSum
       intro x _
       rw [fullCoordinateNewHistory_weight G D L i hiL r x,
         fullCoordinateNewHistory_winIndicator_eq G D L i r x α β]
-      ring
+      ac_rfl
 
 /-- The information increment contributed by full coordinate alice total entropy. -/
 def fullCoordinateAliceTotalEntropyIncrement

@@ -74,7 +74,7 @@ def posOf (H : History) (X : Sequent) : ProverPos H X ⊕ BuilderPos H X :=
 lemma posOf_eq_inr_then_lpr {H X p} :
     posOf H X = Sum.inr p → ∃ lpr, p = .lpr lpr := by
   unfold posOf
-  grind
+  grind only []
 
 /-! ## Moves -/
 
@@ -206,7 +206,7 @@ private theorem theMoves_loaded_forward {H : History} {next : GamePos}
   dsimp only
   unfold theMoves at mv
   rcases χ with (⟨⟨χ⟩⟩|⟨⟨χ⟩⟩) <;> rcases χ with ⟨δ,φ|χ⟩ <;> cases δ <;> simp_all
-  all_goals grind
+  all_goals grind only []
 
 /-- Characterization of `theMoves`. -/
 lemma theMoves_iff {H X} {p : ProverPos H X ⊕ BuilderPos H X} {next : GamePos} :
@@ -363,7 +363,7 @@ lemma no_moves_of_rep {H X pos} (h : rep H X ∧ X.isFree) :
   push Not at hyp
   rcases hyp with ⟨p, p_in⟩
   unfold theMoves at p_in
-  rcases X with ⟨L,R,_|o⟩ <;> rcases pos with (_|_|_)|(_|_) <;> aesop
+  rcases X with ⟨L,R,_|o⟩ <;> rcases pos with (_|_|_)|(_|_) <;> aesop (rule_sets := [-default])
 
 /-- The finite set given by `theMoves` indeed agrees with the relation `move`.
 Other direction is `mem_theMoves_of_move`. -/
@@ -451,7 +451,7 @@ lemma move_of_mem_theMoves {pos next} :
           simp [loadMulti, LoadFormula.boxes]
       · constructor; apply Move.prPdl; apply PdlRule.modR rfl rfl
     all_goals
-      grind
+      grind only []
   · subst mv
     exact ⟨Move.prLocTab⟩
   · subst mv
@@ -494,7 +494,7 @@ lemma mem_theMoves_of_move {pos next} :
           use a, AnyFormula.normal ψ
           simp only [AnyFormula.normal.injEq, exists_eq_left', reduceCtorEq, false_and,
             exists_false, LoadFormula.unload, false_or, true_and]
-          aesop
+          aesop (rule_sets := [-default])
         all_goals
           absurd bas
           rintro ⟨bas, nclos⟩
@@ -529,7 +529,7 @@ lemma mem_theMoves_of_move {pos next} :
           use a, AnyFormula.normal ψ
           simp only [AnyFormula.normal.injEq, exists_eq_left', reduceCtorEq, false_and,
             exists_false, LoadFormula.unload, false_or, true_and]
-          aesop
+          aesop (rule_sets := [-default])
         all_goals
           absurd bas
           rintro ⟨bas, nclos⟩
@@ -560,22 +560,22 @@ lemma mem_theMoves_of_move {pos next} :
       left
       use a, ξ
       simp only [true_and]
-      cases ξ <;> grind
+      cases ξ <;> grind only []
     case some.modR =>
-    · grind -- sus that this works but did not in `modL` case?!
+    · grind only [] -- sus that this works but did not in `modL` case?!
   case prLocTab nbas nrep =>
-    grind
+    grind only []
   case buEnd Y ltX nbas Y_in nrep =>
-    grind
+    grind only []
 
 lemma move.hist {Hist next pos} (mov : move ⟨Hist, X, pos⟩ next) :
       (∃ newPos, next = ⟨Hist, X, newPos⟩) -- this is for the annoying `prLocTab` case;-)
     ∨ (∃ Y newPos, next = ⟨X :: Hist, Y, newPos⟩)  := by
   rcases mov with ⟨mov⟩
   cases mov
-  case prPdl => right; grind
-  case prLocTab => left; grind
-  case buEnd => right; grind
+  case prPdl => right; grind only []
+  case prLocTab => left; grind only []
+  case buEnd => right; grind only []
 
 lemma move.hist_suffix {Hist next pos} (mov : move ⟨Hist, X, pos⟩ next) : Hist <:+ next.1 := by
   have := move.hist mov
@@ -610,10 +610,10 @@ lemma move.trans_hist {pX pY} (movt : Relation.TransGen move pX pY) :
       simp_all
     · cases Y_def
       simp
-      aesop
+      aesop (rule_sets := [-default])
     · cases HXP_eq
       simp at *
-      aesop
+      aesop (rule_sets := [-default])
     · cases Y_def
       simp only [] at *
       rcases pX with ⟨X, H, p⟩
@@ -950,7 +950,7 @@ lemma move_then_not_flprep {H X next} {p : (ProverPos H X ⊕ BuilderPos H X)} :
     move ⟨H, X, p⟩ next → ¬ flprep H X := by
   simp only [move, Nonempty.forall]
   intro next_p hyp
-  cases next_p <;> grind
+  cases next_p <;> grind only []
 
 /-- Helper lemma for `matchesFinite`: if a property of natural numbers holds arbitrarily late,
 then we can enumerate witnesses for it with gaps of at least two. -/
@@ -1349,7 +1349,7 @@ theorem gameP_general Hist (X : Sequent) (sP : Strategy tableauGame Prover) (pos
         all_goals
           -- non-atomic program is impossible, X would not have been basic then
           exfalso
-          grind
+          grind only []
       · -- COPY PASTA only changed L to R
         rcases χ with ⟨α, (ψ : AnyFormula)⟩
         cases α
@@ -1377,7 +1377,7 @@ theorem gameP_general Hist (X : Sequent) (sP : Strategy tableauGame Prover) (pos
         all_goals
           -- non-atomic program is impossible, X would not have been basic then
           exfalso
-          grind
+          grind only []
     case nbas nrep X_nbas =>
       -- not basic, Prover must move to the uniform local tableau
       -- COPY PASTA from bas case ...

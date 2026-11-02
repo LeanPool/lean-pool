@@ -9,7 +9,9 @@ public import LeanPool.ConwaySoifer.Geometry.CornerCap
 public import LeanPool.ConwaySoifer.Geometry.Normal
 public import LeanPool.ConwaySoifer.Geometry.Oblique
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # The area budget with corner help and the bound `s < 11/25`

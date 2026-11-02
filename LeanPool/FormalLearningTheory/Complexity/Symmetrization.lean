@@ -1483,8 +1483,9 @@ private lemma growth_exp_le_delta_large_v {X : Type u}
     have hgf_cast : (↑(GrowthFunction X C (2 * m)) : ℝ) ≤ (2 : ℝ) ^ (2 * m) := by
       exact_mod_cast hgf_trivial
     rw [ht_def]
-    nlinarith [hgf_cast, hexp_le, Real.exp_pos (-(↑m * ε ^ 2 / 8)),
-      show 0 < ↑((v + 1).factorial) / t ^ (v + 1) by positivity]
+    exact mul_le_mul
+      (mul_le_mul_of_nonneg_left hgf_cast (by norm_num)) hexp_le
+      (Real.exp_pos (-(↑m * ε ^ 2 / 8))).le (by positivity)
   suffices hchain2 : 4 * (2 : ℝ) ^ (2 * m) * ↑((v + 1).factorial) ≤ δ * t ^ (v + 1) by
     have ht_pow_pos := pow_pos ht_pos (v + 1)
     have hdiv : 4 * (2 : ℝ) ^ (2 * m) * ↑((v + 1).factorial) / t ^ (v + 1) ≤ δ := by
@@ -1521,7 +1522,11 @@ private lemma growth_exp_le_delta_large_v {X : Type u}
   rw [div_le_div_iff_of_pos_right (pow_pos (by norm_num : (0:ℝ) < 8) (v + 1))]
   have hstep1 : 4 * (2 : ℝ) ^ (2 * m) * ↑((v + 1).factorial) * (8 : ℝ) ^ (v + 1) ≤
       (16 : ℝ) ^ (v + 1) * (↑v + 1) ^ (v + 1) := by
-    nlinarith [h_pow_bound, hfact_le, pow_pos (show (0:ℝ) < 16 by norm_num) (v + 1)]
+    calc 4 * (2 : ℝ) ^ (2 * m) * ↑((v + 1).factorial) * (8 : ℝ) ^ (v + 1)
+        = (4 * (2 : ℝ) ^ (2 * m) * (8 : ℝ) ^ (v + 1)) * ↑((v + 1).factorial) := by
+          ring
+      _ ≤ (16 : ℝ) ^ (v + 1) * (↑v + 1) ^ (v + 1) :=
+        mul_le_mul h_pow_bound hfact_le (Nat.cast_nonneg _) (by positivity)
   have hstep2 : (16 : ℝ) ^ (v + 1) * (↑v + 1) ^ (v + 1) ≤
       (16 * Real.exp 1 * (↑v + 1)) ^ (v + 1) * ↑m ^ v := by
     rw [mul_pow, mul_pow]
@@ -1529,7 +1534,12 @@ private lemma growth_exp_le_delta_large_v {X : Type u}
       one_le_mul_of_one_le_of_one_le hexp_pow_ge_1 hm_pow_ge_1
     have h16pos := pow_pos (show (0:ℝ) < 16 by norm_num) (v + 1)
     have hv1pos := pow_pos hv1_pos (v + 1)
-    nlinarith [mul_le_mul_of_nonneg_left h1 (mul_nonneg (le_of_lt h16pos) (le_of_lt hv1pos))]
+    calc (16 : ℝ) ^ (v + 1) * (↑v + 1) ^ (v + 1)
+        ≤ ((16 : ℝ) ^ (v + 1) * (↑v + 1) ^ (v + 1)) *
+            (Real.exp 1 ^ (v + 1) * ↑m ^ v) :=
+          le_mul_of_one_le_right (mul_nonneg h16pos.le hv1pos.le) h1
+      _ = (16 : ℝ) ^ (v + 1) * Real.exp 1 ^ (v + 1) *
+          (↑v + 1) ^ (v + 1) * ↑m ^ v := by ring
   have hstep3 : (16 * Real.exp 1 * (↑v + 1)) ^ (v + 1) * ↑m ^ v ≤
       δ * ↑m ^ (v + 1) * (ε ^ 2) ^ (v + 1) := by
     have hmul : ↑m ^ v * (16 * Real.exp 1 * (↑v + 1)) ^ (v + 1) ≤
@@ -1607,8 +1617,10 @@ theorem growth_exp_le_delta {X : Type u}
         le_trans (by linarith) (mul_le_mul_of_nonneg_left hv_pow_ge_1 (Real.exp_pos 1).le)
       have hkey : 2 * ↑((v + 1).factorial) ≤
           Real.exp 1 * ↑v ^ v * (↑v + 1) ^ (v + 1) := by
-        nlinarith [hfact_le, h_2_le_ev, Nat.cast_nonneg (α := ℝ) ((v + 1).factorial),
-          pow_pos hv1_pos (v + 1)]
+        calc 2 * (↑((v + 1).factorial) : ℝ) ≤ 2 * (↑v + 1) ^ (v + 1) :=
+              mul_le_mul_of_nonneg_left hfact_le (by norm_num)
+          _ ≤ Real.exp 1 * ↑v ^ v * (↑v + 1) ^ (v + 1) :=
+              mul_le_mul_of_nonneg_right h_2_le_ev (pow_nonneg hv1_pos.le _)
       have hKeps : K * ε ^ 2 * ↑v ^ (v + 1) = 16 * Real.exp 1 * ↑v ^ v := by
         have : K * (↑v * ε ^ 2) = 16 * Real.exp 1 := by
           rw [hK_def]
@@ -1617,7 +1629,9 @@ theorem growth_exp_le_delta {X : Type u}
             = K * (↑v * ε ^ 2) * ↑v ^ v := by rw [pow_succ]; ring
           _ = 16 * Real.exp 1 * ↑v ^ v := by rw [this]
       have hstepA : 32 * ↑((v + 1).factorial) ≤
-          K * ε ^ 2 * ↑v ^ (v + 1) * (↑v + 1) ^ (v + 1) := by nlinarith [hkey, hKeps]
+          K * ε ^ 2 * ↑v ^ (v + 1) * (↑v + 1) ^ (v + 1) := by
+        rw [hKeps]
+        linarith only [hkey]
       have hstepB : K * ε ^ 2 * ↑v ^ (v + 1) * (↑v + 1) ^ (v + 1) * K ^ v ≤
           ε ^ 2 * (↑m * δ) := by
         have : K * ε ^ 2 * ↑v ^ (v + 1) * (↑v + 1) ^ (v + 1) * K ^ v =
@@ -1652,7 +1666,7 @@ theorem growth_exp_le_delta {X : Type u}
   · -- Part 2: 2 * log 2 ≤ m * ε²
     have hlog2_le_1 : Real.log 2 ≤ 1 := by
       rw [Real.log_le_iff_le_exp (by norm_num : (0 : ℝ) < 2)]; linarith
-    suffices h : 2 ≤ ↑m * ε ^ 2 by nlinarith
+    suffices h : 2 ≤ ↑m * ε ^ 2 by linarith only [h, hlog2_le_1]
     by_cases hcase : ε ^ 2 ≤ 16 * Real.exp 1 * (↑v + 1)
     · have hbase_ge_1 : 1 ≤ 16 * Real.exp 1 * (↑v + 1) / ε ^ 2 := by
         rw [le_div_iff₀ hε2]; linarith
@@ -1662,7 +1676,17 @@ theorem growth_exp_le_delta {X : Type u}
       have : 16 * Real.exp 1 * (↑v + 1) / ε ^ 2 ≤ ↑m * δ := by linarith [hm_delta]
       have : 16 * Real.exp 1 * (↑v + 1) ≤ ↑m * δ * ε ^ 2 := by
         rwa [div_le_iff₀ hε2] at this
-      nlinarith
+      have hconstant : (2 : ℝ) ≤ 16 * Real.exp 1 * (↑v + 1) := by
+        calc (2 : ℝ) ≤ 16 * 2 * 2 := by norm_num
+          _ ≤ 16 * Real.exp 1 * (↑v + 1) :=
+            mul_le_mul (mul_le_mul_of_nonneg_left he_ge_2 (by norm_num))
+              hv1_ge_2 (by norm_num) (by positivity)
+      have hscaled : (↑m : ℝ) * δ * ε ^ 2 ≤ ↑m * ε ^ 2 := by
+        calc (↑m : ℝ) * δ * ε ^ 2 = (↑m * ε ^ 2) * δ := by ring
+          _ ≤ (↑m * ε ^ 2) * 1 :=
+            mul_le_mul_of_nonneg_left hδ1.le (by positivity)
+          _ = ↑m * ε ^ 2 := mul_one _
+      exact hconstant.trans (this.trans hscaled)
     · push Not at hcase
       have hm_ge_1 : (1 : ℝ) ≤ ↑m := Nat.one_le_cast.mpr hm
       have hbase_ge_two : (2 : ℝ) ≤ 16 * Real.exp 1 * (↑v + 1) := by

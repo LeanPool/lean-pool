@@ -1116,11 +1116,18 @@ noncomputable def fanFaceMap (f : M.FanFace) :
     intro p _
     rw [M.fanVertex_mem_faceCarrier f p.2 v hv, mul_zero]
 
+/-- Coordinates of a marked fan map without unfolding its realization certificates. -/
+theorem fanFaceMap_val (f : M.FanFace)
+    (x : stdSimplex ℝ {p // p ∈ M.fanFaceVertices f}) :
+    (M.fanFaceMap f x).1 = (fun v ↦ ∑ p, x p * p.1.1 v) := by
+  simp only [fanFaceMap]
+
 theorem fanFaceMap_mem_faceCarrier (f : M.FanFace)
     (x : stdSimplex ℝ {p // p ∈ M.fanFaceVertices f}) :
     M.fanFaceMap f x ∈ K.faceCarrier f.1.1 := by
   classical
   intro v hv
+  rw [M.fanFaceMap_val]
   change (∑ p, x p * p.1.1 v) = 0
   apply Finset.sum_eq_zero
   intro p _
@@ -1132,6 +1139,7 @@ theorem fanFaceMap_vertex (f : M.FanFace)
   classical
   apply Subtype.ext
   funext v
+  rw [M.fanFaceMap_val]
   change (∑ q, (stdSimplex.vertex p :
       stdSimplex ℝ {p // p ∈ M.fanFaceVertices f}) q * q.1.1 v) = p.1.1 v
   rw [Finset.sum_eq_single p]
@@ -1220,27 +1228,12 @@ theorem affineIndependent_fanVertex_val (f : M.FanFace) :
 
 theorem fanFaceMap_injective (f : M.FanFace) :
     Function.Injective (M.fanFaceMap f) := by
-  classical
   intro x y hxy
-  have hval : (M.fanFaceMap f x).1 = (M.fanFaceMap f y).1 :=
-    congrArg Subtype.val hxy
-  change (fun v ↦ ∑ p, x p * p.1.1 v) =
-    (fun v ↦ ∑ p, y p * p.1.1 v) at hval
-  let source :=
-    fun p : {p // p ∈ M.fanFaceVertices f} ↦ p.1.1
-  have hcomb : Finset.univ.affineCombination ℝ source x =
-      Finset.univ.affineCombination ℝ source y := by
-    rw [Finset.univ.affineCombination_eq_linear_combination source x x.2.2,
-      Finset.univ.affineCombination_eq_linear_combination source y y.2.2]
-    funext v
-    simpa only [source, Finset.sum_apply, Pi.smul_apply, smul_eq_mul] using
-      congrFun hval v
-  have hweights :=
-    ((M.affineIndependent_fanVertex_val f).affineCombination_eq_iff_eq
-      x.2.2 y.2.2).mp hcomb
-  apply Subtype.ext
-  funext p
-  exact hweights p (Finset.mem_univ p)
+  apply simplex_eq_of_weighted_sum_eq_of_affineIndependent
+    (fun p : {p // p ∈ M.fanFaceVertices f} ↦ p.1.1)
+    (M.affineIndependent_fanVertex_val f)
+  exact (M.fanFaceMap_val f x).symm.trans
+    ((congrArg Subtype.val hxy).trans (M.fanFaceMap_val f y))
 
 theorem continuous_fanFaceMap (f : M.FanFace) :
     Continuous (M.fanFaceMap f) := by
@@ -1343,7 +1336,7 @@ theorem fanFaceMap_simplexLineMap (f : M.FanFace)
         (M.fanFaceMap f y).1 r.1 := by
   classical
   funext v
-  simp only [fanFaceMap, fanSimplexLineMap,
+  simp only [fanFaceMap_val, fanSimplexLineMap,
     AffineMap.lineMap_apply_module, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   change (∑ p, (((1 - r.1) • x.1 + r.1 • y.1) p) * p.1.1 v) =
     (1 - r.1) * ∑ p, x p * p.1.1 v +
@@ -1396,6 +1389,7 @@ theorem fanFaceMap_mem_baseEdge_of_center_eq_zero
       (M.edgeIntervalSecond_mem_edgeMarks
         (K.faceEdge f.1 f.2.1) f.2.2)).2
   intro v hv
+  rw [M.fanFaceMap_val]
   change (∑ z, x z * z.1.1 v) = 0
   rw [M.fanVertex_univ f, Finset.sum_insert hcNot,
     Finset.sum_insert hpNot, Finset.sum_singleton]
@@ -1441,6 +1435,7 @@ theorem edgeParameterValue_fanFaceMap_of_center_eq_zero
     M.fanFaceMap_mem_baseEdge_of_center_eq_zero f x hxCenter
   rw [M.edgeParameterValue_eq e hmapEdge,
     K.edgeParameter_eq_secondCoordinate]
+  rw [M.fanFaceMap_val]
   change (∑ z, x z * z.1.1 (K.edgeSecond e)) =
     x p * M.edgeParameterValue e p.1 +
       x q * M.edgeParameterValue e q.1
@@ -1742,10 +1737,12 @@ theorem fanFaceMap_eq_lineMap_normalizedBase (f : M.FanFace)
   have hpNot : p ∉ ({q} : Finset _) := by
     simp [p, q, M.fanFirstVertex_ne_second f]
   funext v
+  rw [M.fanFaceMap_val]
   change (∑ r, x r * r.1.1 v) = _
   rw [M.fanVertex_univ f, Finset.sum_insert hcNot,
     Finset.sum_insert hpNot, Finset.sum_singleton,
     AffineMap.lineMap_apply_module]
+  rw [M.fanFaceMap_val]
   change x c * c.1.1 v + (x p * p.1.1 v + x q * q.1.1 v) =
     (1 - d) * (K.faceCenter f.1).1 v +
       d * (∑ r, M.fanNormalizedBasePoint f x hxCenter r * r.1.1 v)
@@ -1772,6 +1769,7 @@ theorem fanFaceMap_opposite (f : M.FanFace)
   classical
   let c := M.fanCenterVertex f
   let opposite := K.faceVertex f.1 (f.2.1 + 2)
+  rw [M.fanFaceMap_val]
   change (∑ p, x p * p.1.1 opposite) = x c / 3
   rw [Finset.sum_eq_single c]
   · have hc : c.1.1 opposite = 1 / 3 := by
@@ -1840,6 +1838,7 @@ theorem fanFaceMap_faceVertex_lower_bound (f : M.FanFace)
     Finset.single_le_sum
       (fun p _ ↦ mul_nonneg (x.2.1 p) (p.1.2.1.1 _))
       (Finset.mem_univ c)
+  rw [M.fanFaceMap_val]
   change x c / 3 ≤
     ∑ p, x p * p.1.1 (K.faceVertex f.1 i)
   rw [hcValue] at hterm
@@ -2946,6 +2945,8 @@ theorem globalFanFaceMap_val_eq_fanBarycentricAffine
         (extendFaceCoordinates (M.globalFanFaceVertices f) x) := by
   classical
   funext k
+  change (M.fanFaceMap f (M.fanRelabelSimplex f x)).1 k = _
+  rw [M.fanFaceMap_val]
   change (∑ p : {p // p ∈ M.fanFaceVertices f},
       M.fanRelabelSimplex f x p * p.1.1 k) =
     M.fanBarycentricAffine
@@ -2998,6 +2999,7 @@ theorem fanFaceMap_eq_of_extendedCoordinates_eq
     M.fanFaceMap f x = M.fanFaceMap g y := by
   apply Subtype.ext
   funext v
+  rw [M.fanFaceMap_val, M.fanFaceMap_val]
   change (∑ p, x p * p.1.1 v) = ∑ p, y p * p.1.1 v
   exact sum_extendFaceCoordinates_eq_of_eq x y hxy (fun p ↦ p.1 v)
 

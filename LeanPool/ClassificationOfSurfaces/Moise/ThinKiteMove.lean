@@ -209,7 +209,7 @@ theorem thinKitePatch_subset_leftCone {δ : ℝ} (hδ : 0 ≤ δ) {p : Plane}
   have hs : thinKiteScale δ = (1 + 2 * δ) / 4 := rfl
   constructor
   · simp only [thinKiteMap, planePoint_apply_zero]
-    linarith
+    linarith only [hLL, hUL]
   · constructor
     · simp only [thinKiteMap, planePoint_apply_zero, planePoint_apply_one]
       rw [hs]
@@ -308,7 +308,7 @@ theorem exists_leftBase_openSegment_mem_kiteTriangle {q : Plane}
       · have htd : t * (dx + dy) < 1 := by
           dsimp [t]
           field_simp
-          nlinarith
+          linarith only []
         linarith
       · nlinarith [mul_nonneg ht.le (sub_nonneg.mpr hyx)]
       · exact mul_nonneg ht.le hy0
@@ -360,7 +360,7 @@ theorem exists_rightBase_openSegment_mem_kiteTriangle {q : Plane}
       · have htd : t * (dx + dy) < 1 := by
           dsimp [t]
           field_simp
-          nlinarith
+          linarith only []
         linarith
       · exact mul_nonneg ht.le hy0
     · simp [w]
@@ -410,6 +410,20 @@ theorem rightBase_direction_outside_kiteTriangle {q : Plane}
   have hpRight := havoid ⟨hpSegment.1, hpTriangle⟩
   exact hpSegment.2 (by simpa using hpRight)
 
+/-- The left base vertex is fixed by every thin-kite transport. -/
+private theorem thinKitePatch_leftBase_mem (δ : ℝ) :
+    planePoint (-1) 0 ∈ thinKitePatch δ := by
+  exact ⟨planePoint (-1) 0, Or.inl <|
+    subset_convexHull ℝ _ ⟨2, rfl⟩, by
+      simp [thinKiteMap, planePoint]⟩
+
+/-- The right base vertex is fixed by every thin-kite transport. -/
+private theorem thinKitePatch_rightBase_mem (δ : ℝ) :
+    planePoint 1 0 ∈ thinKitePatch δ := by
+  exact ⟨planePoint 1 0, Or.inr <|
+    subset_convexHull ℝ _ ⟨2, rfl⟩, by
+      simp [thinKiteMap, planePoint]⟩
+
 /-- A segment leaving the left base vertex outside the triangle misses every sufficiently thin
 kite except at that vertex. -/
 theorem exists_thinKitePatch_inter_leftSegment_eq_singleton {q : Plane}
@@ -423,7 +437,7 @@ theorem exists_thinKitePatch_inter_leftSegment_eq_singleton {q : Plane}
     apply Set.Subset.antisymm
     · rintro p ⟨hpPatch, hpSegment⟩
       by_cases hpLeft : p = planePoint (-1) 0
-      · simp [hpLeft]
+      · simp only [hpLeft, Set.mem_singleton_iff]
       rw [segment_eq_image_lineMap] at hpSegment
       obtain ⟨t, ht, rfl⟩ := hpSegment
       have htne : t ≠ 0 := by
@@ -434,30 +448,30 @@ theorem exists_thinKitePatch_inter_leftSegment_eq_singleton {q : Plane}
       have hcone := thinKitePatch_subset_leftCone hδ.le hpPatch
       have hcoord0 :
           (AffineMap.lineMap (planePoint (-1) 0) q t) 0 + 1 = t * (q 0 + 1) := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_zero, smul_eq_mul]
         ring
       have hdx0 : q 0 + 1 = 0 := by
         rw [hcoord0] at hcone
-        nlinarith
+        nlinarith only [htpos, hx, hcone.1]
       have hcoord1 :
           (AffineMap.lineMap (planePoint (-1) 0) q t) 1 = t * q 1 := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_one, smul_eq_mul, mul_zero, zero_add]
       rw [hcoord0, hdx0, mul_zero] at hcone
       rw [hcoord1] at hcone
-      have hdy0 : q 1 = 0 := by nlinarith
+      have hdy0 : q 1 = 0 := by nlinarith only [htpos, hcone]
       exfalso
       apply hq
       apply plane_ext
       · simp only [planePoint_apply_zero]
-        linarith
+        linarith only [hdx0]
       · simpa [planePoint] using hdy0
     · intro p hp
       rw [Set.mem_singleton_iff] at hp
       subst p
       refine ⟨?_, left_mem_segment ℝ _ _⟩
-      exact ⟨planePoint (-1) 0, Or.inl <|
-        subset_convexHull ℝ _ ⟨2, rfl⟩, by
-          simp [thinKiteMap, planePoint]⟩
+      exact thinKitePatch_leftBase_mem δ
   · let ε := -q 1 / (q 0 + 1)
     have hε : 0 < ε := by
       dsimp [ε]
@@ -466,7 +480,7 @@ theorem exists_thinKitePatch_inter_leftSegment_eq_singleton {q : Plane}
     apply Set.Subset.antisymm
     · rintro p ⟨hpPatch, hpSegment⟩
       by_cases hpLeft : p = planePoint (-1) 0
-      · simp [hpLeft]
+      · simp only [hpLeft, Set.mem_singleton_iff]
       rw [segment_eq_image_lineMap] at hpSegment
       obtain ⟨t, ht, rfl⟩ := hpSegment
       have htne : t ≠ 0 := by
@@ -477,24 +491,24 @@ theorem exists_thinKitePatch_inter_leftSegment_eq_singleton {q : Plane}
       have hcone := thinKitePatch_subset_leftCone hδ.le hpPatch
       have hcoord0 :
           (AffineMap.lineMap (planePoint (-1) 0) q t) 0 + 1 = t * (q 0 + 1) := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_zero, smul_eq_mul]
         ring
       have hcoord1 :
           (AffineMap.lineMap (planePoint (-1) 0) q t) 1 = t * q 1 := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_one, smul_eq_mul, mul_zero, zero_add]
       rw [hcoord0, hcoord1] at hcone
       have hmargin : δ * (q 0 + 1) < -q 1 := by
         dsimp [ε] at hδε
         exact (lt_div_iff₀ hx).mp hδε
       exfalso
-      nlinarith
+      nlinarith only [htpos, hmargin, hcone]
     · intro p hp
       rw [Set.mem_singleton_iff] at hp
       subst p
       refine ⟨?_, left_mem_segment ℝ _ _⟩
-      exact ⟨planePoint (-1) 0, Or.inl <|
-        subset_convexHull ℝ _ ⟨2, rfl⟩, by
-          simp [thinKiteMap, planePoint]⟩
+      exact thinKitePatch_leftBase_mem δ
   · let ε := q 1 / (q 0 + 1) - 1
     have hε : 0 < ε := by
       dsimp [ε]
@@ -504,7 +518,7 @@ theorem exists_thinKitePatch_inter_leftSegment_eq_singleton {q : Plane}
     apply Set.Subset.antisymm
     · rintro p ⟨hpPatch, hpSegment⟩
       by_cases hpLeft : p = planePoint (-1) 0
-      · simp [hpLeft]
+      · simp only [hpLeft, Set.mem_singleton_iff]
       rw [segment_eq_image_lineMap] at hpSegment
       obtain ⟨t, ht, rfl⟩ := hpSegment
       have htne : t ≠ 0 := by
@@ -515,26 +529,26 @@ theorem exists_thinKitePatch_inter_leftSegment_eq_singleton {q : Plane}
       have hcone := thinKitePatch_subset_leftCone hδ.le hpPatch
       have hcoord0 :
           (AffineMap.lineMap (planePoint (-1) 0) q t) 0 + 1 = t * (q 0 + 1) := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_zero, smul_eq_mul]
         ring
       have hcoord1 :
           (AffineMap.lineMap (planePoint (-1) 0) q t) 1 = t * q 1 := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_one, smul_eq_mul, mul_zero, zero_add]
       rw [hcoord0, hcoord1] at hcone
       have hmargin : (1 + δ) * (q 0 + 1) < q 1 := by
         dsimp [ε] at hδε
         rw [lt_sub_iff_add_lt] at hδε
         have := (lt_div_iff₀ hx).mp hδε
-        nlinarith
+        simpa only [add_comm] using this
       exfalso
-      nlinarith
+      nlinarith only [htpos, hmargin, hcone]
     · intro p hp
       rw [Set.mem_singleton_iff] at hp
       subst p
       refine ⟨?_, left_mem_segment ℝ _ _⟩
-      exact ⟨planePoint (-1) 0, Or.inl <|
-        subset_convexHull ℝ _ ⟨2, rfl⟩, by
-          simp [thinKiteMap, planePoint]⟩
+      exact thinKitePatch_leftBase_mem δ
 
 /-- A segment leaving the right base vertex outside the triangle misses every sufficiently thin
 kite except at that vertex. -/
@@ -549,7 +563,7 @@ theorem exists_thinKitePatch_inter_rightSegment_eq_singleton {q : Plane}
     apply Set.Subset.antisymm
     · rintro p ⟨hpPatch, hpSegment⟩
       by_cases hpRight : p = planePoint 1 0
-      · simp [hpRight]
+      · simp only [hpRight, Set.mem_singleton_iff]
       rw [segment_eq_image_lineMap] at hpSegment
       obtain ⟨t, ht, rfl⟩ := hpSegment
       have htne : t ≠ 0 := by
@@ -560,30 +574,30 @@ theorem exists_thinKitePatch_inter_rightSegment_eq_singleton {q : Plane}
       have hcone := thinKitePatch_subset_rightCone hδ.le hpPatch
       have hcoord0 :
           1 - (AffineMap.lineMap (planePoint 1 0) q t) 0 = t * (1 - q 0) := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_zero, smul_eq_mul]
         ring
       have hdx0 : 1 - q 0 = 0 := by
         rw [hcoord0] at hcone
-        nlinarith
+        nlinarith only [htpos, hx, hcone.1]
       have hcoord1 :
           (AffineMap.lineMap (planePoint 1 0) q t) 1 = t * q 1 := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_one, smul_eq_mul, mul_zero, zero_add]
       rw [hcoord0, hdx0, mul_zero] at hcone
       rw [hcoord1] at hcone
-      have hdy0 : q 1 = 0 := by nlinarith
+      have hdy0 : q 1 = 0 := by nlinarith only [htpos, hcone]
       exfalso
       apply hq
       apply plane_ext
       · simp only [planePoint_apply_zero]
-        linarith
+        linarith only [hdx0]
       · simpa [planePoint] using hdy0
     · intro p hp
       rw [Set.mem_singleton_iff] at hp
       subst p
       refine ⟨?_, left_mem_segment ℝ _ _⟩
-      exact ⟨planePoint 1 0, Or.inr <|
-        subset_convexHull ℝ _ ⟨2, rfl⟩, by
-          simp [thinKiteMap, planePoint]⟩
+      exact thinKitePatch_rightBase_mem δ
   · let ε := -q 1 / (1 - q 0)
     have hε : 0 < ε := by
       dsimp [ε]
@@ -592,7 +606,7 @@ theorem exists_thinKitePatch_inter_rightSegment_eq_singleton {q : Plane}
     apply Set.Subset.antisymm
     · rintro p ⟨hpPatch, hpSegment⟩
       by_cases hpRight : p = planePoint 1 0
-      · simp [hpRight]
+      · simp only [hpRight, Set.mem_singleton_iff]
       rw [segment_eq_image_lineMap] at hpSegment
       obtain ⟨t, ht, rfl⟩ := hpSegment
       have htne : t ≠ 0 := by
@@ -603,24 +617,24 @@ theorem exists_thinKitePatch_inter_rightSegment_eq_singleton {q : Plane}
       have hcone := thinKitePatch_subset_rightCone hδ.le hpPatch
       have hcoord0 :
           1 - (AffineMap.lineMap (planePoint 1 0) q t) 0 = t * (1 - q 0) := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_zero, smul_eq_mul]
         ring
       have hcoord1 :
           (AffineMap.lineMap (planePoint 1 0) q t) 1 = t * q 1 := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_one, smul_eq_mul, mul_zero, zero_add]
       rw [hcoord0, hcoord1] at hcone
       have hmargin : δ * (1 - q 0) < -q 1 := by
         dsimp [ε] at hδε
         exact (lt_div_iff₀ hx).mp hδε
       exfalso
-      nlinarith
+      nlinarith only [htpos, hmargin, hcone]
     · intro p hp
       rw [Set.mem_singleton_iff] at hp
       subst p
       refine ⟨?_, left_mem_segment ℝ _ _⟩
-      exact ⟨planePoint 1 0, Or.inr <|
-        subset_convexHull ℝ _ ⟨2, rfl⟩, by
-          simp [thinKiteMap, planePoint]⟩
+      exact thinKitePatch_rightBase_mem δ
   · let ε := q 1 / (1 - q 0) - 1
     have hε : 0 < ε := by
       dsimp [ε]
@@ -630,7 +644,7 @@ theorem exists_thinKitePatch_inter_rightSegment_eq_singleton {q : Plane}
     apply Set.Subset.antisymm
     · rintro p ⟨hpPatch, hpSegment⟩
       by_cases hpRight : p = planePoint 1 0
-      · simp [hpRight]
+      · simp only [hpRight, Set.mem_singleton_iff]
       rw [segment_eq_image_lineMap] at hpSegment
       obtain ⟨t, ht, rfl⟩ := hpSegment
       have htne : t ≠ 0 := by
@@ -641,26 +655,26 @@ theorem exists_thinKitePatch_inter_rightSegment_eq_singleton {q : Plane}
       have hcone := thinKitePatch_subset_rightCone hδ.le hpPatch
       have hcoord0 :
           1 - (AffineMap.lineMap (planePoint 1 0) q t) 0 = t * (1 - q 0) := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_zero, smul_eq_mul]
         ring
       have hcoord1 :
           (AffineMap.lineMap (planePoint 1 0) q t) 1 = t * q 1 := by
-        simp [AffineMap.lineMap_apply_module, planePoint]
+        simp only [AffineMap.lineMap_apply_module, PiLp.add_apply,
+          PiLp.smul_apply, planePoint_apply_one, smul_eq_mul, mul_zero, zero_add]
       rw [hcoord0, hcoord1] at hcone
       have hmargin : (1 + δ) * (1 - q 0) < q 1 := by
         dsimp [ε] at hδε
         rw [lt_sub_iff_add_lt] at hδε
         have := (lt_div_iff₀ hx).mp hδε
-        nlinarith
+        simpa only [add_comm] using this
       exfalso
-      nlinarith
+      nlinarith only [htpos, hmargin, hcone]
     · intro p hp
       rw [Set.mem_singleton_iff] at hp
       subst p
       refine ⟨?_, left_mem_segment ℝ _ _⟩
-      exact ⟨planePoint 1 0, Or.inr <|
-        subset_convexHull ℝ _ ⟨2, rfl⟩, by
-          simp [thinKiteMap, planePoint]⟩
+      exact thinKitePatch_rightBase_mem δ
 
 theorem thinKiteMap_zero_mem_triangle {q : Plane} (hq : q ∈ diamondPatch) :
     thinKiteMap 0 q ∈ convexHull ℝ (Set.range kiteTrianglePosition) := by
@@ -825,12 +839,12 @@ theorem thinKiteSource_lower {δ : ℝ} (hδ : 0 < δ) : -2 < thinKiteSource δ 
 theorem thinKiteSource_upper {δ : ℝ} (hδ : 0 < δ) : thinKiteSource δ < 2 := by
   have hd : 0 < 1 + 2 * δ := by positivity
   rw [thinKiteSource, div_lt_iff₀ hd]
-  nlinarith
+  linarith only [hd]
 
 theorem thinKiteTarget_lower {δ : ℝ} (hδ : 0 < δ) : -2 < thinKiteTarget δ := by
   have hd : 0 < 1 + 2 * δ := by positivity
   rw [thinKiteTarget, lt_div_iff₀ hd]
-  nlinarith
+  linarith only [hd]
 
 theorem thinKiteTarget_upper {δ : ℝ} (hδ : 0 < δ) : thinKiteTarget δ < 2 := by
   have hd : 0 < 1 + 2 * δ := by positivity

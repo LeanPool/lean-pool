@@ -246,7 +246,7 @@ theorem voc_nf (σ : Var → Formula) (ι : QFormula Var) :
   | and ι1 ι2 IH1 IH2 =>
       rw [mem_voc_nf] at IH1 IH2 ⊢
       simp only [Spl, List.mem_append, subst_and, Formula.voc, Finset.mem_union]
-      grind
+      grind only []
   | boxes as ι IH =>
       rw [mem_voc_nf] at IH ⊢
       simp only [Spl, List.mem_map, subst_boxes, Formula.voc_boxes, Finset.mem_union]

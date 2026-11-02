@@ -50,7 +50,7 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
   have hδ_pos : 0 < δ := by positivity
   have h_dyadic_lt : ∀ n : ℕ, δ / 2 ^ n < δ_P1 := fun n =>
     calc δ / 2 ^ n ≤ δ := div_le_self hδ_pos.le (one_le_pow₀ (by norm_num : (1 : ℝ) ≤ 2))
-      _ < δ_P1 := by simp only [δ]; linarith
+      _ < δ_P1 := by simp only [δ]; linarith only [hδ_P1_pos]
   let I : ℝ → ℂ := fun ε => ∫ t in a..b,
     if ε < ‖γ t - γ t₀‖ then (γ t - γ t₀)⁻¹ * deriv γ t else 0
   have h_step : ∀ n, ‖I (δ / 2 ^ (n + 1)) - I (δ / 2 ^ n)‖ ≤ K * δ / 2 ^ n := fun n => by
@@ -58,7 +58,7 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
     have h_le : δ / 2 ^ (n + 1) ≤ δ / 2 ^ n :=
       div_le_div_of_nonneg_left hδ_pos.le (by positivity)
         (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) (Nat.le_succ n))
-    have h_ratio : δ / 2 ^ n ≤ 2 * (δ / 2 ^ (n + 1)) := by rw [pow_succ]; ring_nf; linarith
+    have h_ratio : δ / 2 ^ n ≤ 2 * (δ / 2 ^ (n + 1)) := by rw [pow_succ]; ring_nf; linarith only []
     have h_bound := h_step_uniform (δ / 2 ^ n) (δ / 2 ^ (n + 1)) hε₂_pos h_le h_ratio
       (h_dyadic_lt n)
     calc ‖I (δ / 2 ^ (n + 1)) - I (δ / 2 ^ n)‖
@@ -74,7 +74,7 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
   rw [Metric.tendsto_nhdsWithin_nhds]
   intro η hη_pos
   rw [Metric.tendsto_atTop] at h_limit_tendsto
-  obtain ⟨N₁, hN₁⟩ := h_limit_tendsto (η / 2) (by linarith)
+  obtain ⟨N₁, hN₁⟩ := h_limit_tendsto (η / 2) (by linarith only [hη_pos])
   have h_pow_unbounded : ∃ N₂ : ℕ, K * δ / 2 ^ N₂ < η / 4 := by
     have : Tendsto (fun n : ℕ => K * δ / 2 ^ n) atTop (𝓝 0) := by
       have h_tendsto_pow : Tendsto (fun n : ℕ => (2 : ℝ) ^ n) atTop atTop :=
@@ -83,7 +83,7 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
         simp_rw [one_div]; exact tendsto_inv_atTop_zero.comp h_tendsto_pow
       convert Tendsto.const_mul (K * δ) h_tendsto_inv using 1 <;> [ext n; skip] <;> ring
     rw [Metric.tendsto_atTop] at this
-    obtain ⟨N₂, hN₂⟩ := this (η / 4) (by linarith)
+    obtain ⟨N₂, hN₂⟩ := this (η / 4) (by linarith only [hη_pos])
     refine ⟨N₂, ?_⟩
     specialize hN₂ N₂ le_rfl
     rw [Real.dist_eq, sub_zero,
@@ -110,11 +110,11 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
         have h_div_ge : δ / 2 ^ (M + 1) ≥ δ / 2 ^ N :=
           div_le_div_of_nonneg_left hδ_pos.le (by positivity)
             (pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) h_lt)
-        linarith
+        linarith only [hε_lt_dyadic, hM_lower, h_div_ge]
       have h_first_piece : ‖I ε - I (δ / 2 ^ M)‖ ≤ K * δ / 2 ^ M := by
         have h_ratio_M : δ / 2 ^ M ≤ 2 * ε := by
           have : δ / 2 ^ M = 2 * (δ / 2 ^ (M + 1)) := by rw [pow_succ]; ring
-          linarith
+          linarith only [hM_lower, this]
         have h_bound := h_step_uniform (δ / 2 ^ M) ε hε_pos' hM_upper h_ratio_M (h_dyadic_lt M)
         calc ‖I ε - I (δ / 2 ^ M)‖
             ≤ K * (δ / 2 ^ M) := h_bound
@@ -124,7 +124,7 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
         have hKδN_nonneg : 0 ≤ K * δ / 2 ^ N := by positivity
         calc ‖I ε - I (δ / 2 ^ N)‖
             ≤ K * δ / 2 ^ N := h_first_piece
-          _ ≤ K * δ / 2 ^ N + K * δ / 2 ^ N := by linarith
+          _ ≤ K * δ / 2 ^ N + K * δ / 2 ^ N := by linarith only [hKδN_nonneg]
           _ = 2 * K * δ / 2 ^ N := by ring
       · have hM_gt_N : M > N := Nat.lt_of_le_of_ne hM_ge_N (Ne.symm hMN)
         have h_tri_inner : ‖I ε - I (δ / 2 ^ N)‖ ≤
@@ -142,9 +142,10 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
         calc ‖I ε - I (δ / 2 ^ N)‖
             ≤ ‖I ε - I (δ / 2 ^ M)‖ + ‖I (δ / 2 ^ M) - I (δ / 2 ^ N)‖ := h_tri_inner
           _ ≤ K * δ / 2 ^ M + (2 * K * δ / 2 ^ N - 2 * K * δ / 2 ^ M) := by
-              linarith [h_first_piece, h_sum_bound]
+              linarith only [h_first_piece, h_sum_bound]
           _ = 2 * K * δ / 2 ^ N - K * δ / 2 ^ M := by ring
-          _ ≤ 2 * K * δ / 2 ^ N := by linarith [show (0 : ℝ) ≤ K * δ / 2 ^ M from by positivity]
+          _ ≤ 2 * K * δ / 2 ^ N := by
+            linarith only [hK_pos, hδ_P1_pos, show (0 : ℝ) ≤ K * δ / 2 ^ M from by positivity]
     have hN_ge_N₂ : N ≥ N₂ := le_max_right _ _
     have h_pow_le : (2 : ℝ) ^ N₂ ≤ 2 ^ N :=
       pow_le_pow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hN_ge_N₂
@@ -157,9 +158,9 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
       exact mul_lt_mul_of_pos_left h_Kδ_bound (by norm_num : (0 : ℝ) < 2)
     calc dist (I ε) limit_dyadic
         ≤ dist (I ε) (I (δ / 2 ^ N)) + dist (I (δ / 2 ^ N)) limit_dyadic := h_tri
-      _ ≤ 2 * K * δ / 2 ^ N + dist (I (δ / 2 ^ N)) limit_dyadic := by linarith
-      _ < 2 * K * δ / 2 ^ N + η / 2 := by linarith
-      _ < η / 2 + η / 2 := by linarith
+      _ ≤ 2 * K * δ / 2 ^ N + dist (I (δ / 2 ^ N)) limit_dyadic := by linarith only [h_first]
+      _ < 2 * K * δ / 2 ^ N + η / 2 := by linarith only [h_second]
+      _ < η / 2 + η / 2 := by linarith only [h_first_small]
       _ = η := by ring
 
 lemma measurableSet_norm_gt_of_continuousOn {f : ℝ → ℂ} {s : Set ℝ}
@@ -283,7 +284,7 @@ lemma arc_angle_injective {t t' : ℝ}
       exact this
     exact_mod_cast Complex.ofReal_injective (mul_right_cancel₀ I_ne_zero h2)
   have h_diff_small : |Real.pi * (1 + t) / 6 - Real.pi * (1 + t') / 6| < Real.pi := by
-    rw [abs_lt]; constructor <;> nlinarith [Real.pi_pos, ht.1, ht.2, ht'.1, ht'.2]
+    rw [abs_lt]; constructor <;> nlinarith only [ht, ht', Real.pi_pos, ht.1, ht.2, ht'.1, ht'.2]
   have hn0 : n = 0 := by
     by_contra h_ne
     have h1 : |(n : ℝ)| ≥ 1 := by exact_mod_cast Int.one_le_abs h_ne
@@ -291,9 +292,9 @@ lemma arc_angle_injective {t t' : ℝ}
       rw [abs_mul, abs_of_pos (by positivity : 0 < 2 * Real.pi)]
       exact le_mul_of_one_le_right (by positivity) h1
     have h3 : |2 * Real.pi * (n : ℝ)| < Real.pi := by rwa [h_vals] at h_diff_small
-    linarith [Real.pi_pos]
+    linarith only [h2, h3, Real.pi_pos]
   rw [hn0] at h_vals; simp only [Int.cast_zero, mul_zero] at h_vals
-  nlinarith [Real.pi_ne_zero, Real.pi_pos]
+  nlinarith only [h_vals, Real.pi_ne_zero, Real.pi_pos]
 
 /-- CPV trivially exists when the curve avoids `z₀` on `[a, b]`. -/
 lemma cpv_avoidance (f : ℂ → ℂ) (γ : ℝ → ℂ) (a b : ℝ) (z₀ : ℂ)

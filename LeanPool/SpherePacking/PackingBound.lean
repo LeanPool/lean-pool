@@ -6,7 +6,12 @@ Authors: OpenAI, Sidharth Hariharan, Gareth Ma, Dean Cureton
 
 module
 
-import all LeanPool.SpherePacking.RadialConstruction
+-- The packing bound is independent of the saddle construction.
+import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
+import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Order.CompletePartialOrder
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 import Mathlib.Algebra.Module.ZLattice.Covolume
@@ -15,12 +20,12 @@ import Mathlib.Algebra.Order.Archimedean.Real.Hom
 import Mathlib.Analysis.Fourier.AddCircleMulti
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.RCLike.Inner
+import Mathlib.LinearAlgebra.BilinearForm.DualLattice
+import Mathlib.Topology.Instances.ENat
 import Mathlib.Data.Finset.Functor
 import Mathlib.Dynamics.Ergodic.Action.Regular
-import Mathlib.LinearAlgebra.BilinearForm.DualLattice
 import Mathlib.Topology.Connected.Separation
-import Mathlib.Topology.Instances.ENat
-import Mathlib.Topology.Separation.CompletelyRegular
+import Mathlib.Topology.Separation.Lemmas
 
 /-!
 # PackingBound
@@ -1600,8 +1605,8 @@ private lemma translated_ball_subset_translated_region {Λ : Submodule ℤ (Eucl
       (- (g : EuclideanSpace ℝ (Fin d))) +ᵥ y ∈
         (- (g : EuclideanSpace ℝ (Fin d))) +ᵥ ball (g +ᵥ x) r :=
     Set.mem_vadd_set.2 ⟨y, by simpa only [Submodule.vadd_def, vadd_eq_add, mem_ball] using! hy, rfl⟩
-  simpa only [Submodule.vadd_def, NegMemClass.coe_neg, vadd_eq_add, mem_ball, gt_iff_lt,
-    Metric.vadd_ball, neg_add_cancel_left] using! this
+  simpa only [Submodule.vadd_def, NegMemClass.coe_neg, vadd_eq_add, mem_ball, gt_iff_lt, vadd_ball,
+    neg_add_cancel_left] using! this
 
 private noncomputable def replicate_to_periodic_packing
     (S : SpherePacking d)

@@ -16,8 +16,6 @@ Authors: Susanna Bertolini, Jaume de Dios Pont
 module
 
 public import LeanPool.PhaseRetrieval.Constant.Internal.Definitions
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Data.Nat.Factorial.DoubleFactorial
 import Mathlib.Tactic.NormNum.Parity
 
 /-! # LocalCircleEstimate -/
@@ -243,11 +241,11 @@ private lemma equal_l2_masses {L : ℕ} (_hL : 1 ≤ L) {E : Finset ℕ}
       Integrable (fun t => (P t).im ^ 2) AddCircle.haarAddCircle := by
     rw [hP]; exact (Complex.continuous_im.comp (P_continuous b)).pow 2
       |>.integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace _)
-  linarith [integral_sub h_re_int h_im_int ▸ h_re_zero]
+  linarith only [integral_sub h_re_int h_im_int ▸ h_re_zero]
 
 /-! ### Pointwise bound: rho(w)² ≥ w.re²/2 - ‖w‖⁴ -/
 
--- The nonlinear `rho` estimate is discharged by a large `nlinarith` certificate.
+-- A sum-of-squares identity controls the nonlinear remainder in the `rho` estimate.
 private lemma rho_sq_lower_bound (w : ℂ) (hw : ‖w‖ ≤ 1 / 4) :
     (rho w) ^ 2 ≥ w.re ^ 2 / 2 - ‖w‖ ^ 4 := by
   unfold rho; rw [sq_abs]
@@ -263,33 +261,48 @@ private lemma rho_sq_lower_bound (w : ℂ) (hw : ‖w‖ ≤ 1 / 4) :
   have hs_le : u ^ 2 + v ^ 2 ≤ 1 / 16 := by
     rw [← hw_sq]
     exact le_trans
-      (sq_le_sq' (by linarith [norm_nonneg w]) hw) (by norm_num)
+      (sq_le_sq' (by linarith only [norm_nonneg w]) hw) (by norm_num)
   set s := u ^ 2 + v ^ 2
   have hA_sq :
       (2 + 2 * u + s - u ^ 2 / 2 + s ^ 2) ^ 2 ≥
         4 * ((1 + u) ^ 2 + v ^ 2) := by
-    nlinarith [sq_nonneg (2 * u + u ^ 2 / 2 + v ^ 2 +
-        (u ^ 2 + v ^ 2) ^ 2),
-      sq_nonneg u, sq_nonneg v, sq_nonneg (u * v),
-      sq_nonneg (u ^ 2 + v ^ 2 - u),
-      sq_nonneg (u + v ^ 2),
-      sq_nonneg (u ^ 2 - v ^ 2)]
+    set t := u ^ 2 / 2 + v ^ 2 + s ^ 2
+    have hs : 0 ≤ s := add_nonneg (sq_nonneg u) (sq_nonneg v)
+    have hs_sq : s ^ 2 ≤ s := by
+      simpa only [sq, mul_one] using
+        mul_le_mul_of_nonneg_left (show s ≤ 1 by linarith only [hs_le]) hs
+    have ht : 0 ≤ t := by dsimp [t]; positivity
+    have ht_le : t ≤ 2 * s := by
+      dsimp [t]
+      have hu : u ^ 2 / 2 + v ^ 2 ≤ s := by dsimp [s]; linarith only [sq_nonneg u]
+      linarith only [hu, hs_sq]
+    have hdiff : 0 ≤ (2 * s - t) * (2 * s + t) :=
+      mul_nonneg (sub_nonneg.mpr ht_le) (by positivity)
+    have hidentity :
+        (2 + 2 * u + s - u ^ 2 / 2 + s ^ 2) ^ 2 -
+            4 * ((1 + u) ^ 2 + v ^ 2) =
+          2 * (u + t) ^ 2 + (2 * s - t) * (2 * s + t) := by
+      dsimp [s, t]
+      ring
+    have hnonneg : 0 ≤ (2 + 2 * u + s - u ^ 2 / 2 + s ^ 2) ^ 2 -
+        4 * ((1 + u) ^ 2 + v ^ 2) := by
+      rw [hidentity]
+      positivity
+    linarith only [hnonneg]
   have hA_nn : 0 ≤ 2 + 2 * u + s - u ^ 2 / 2 + s ^ 2 := by
-    have : u ^ 2 ≤ s := by simp [s]; nlinarith [sq_nonneg v]
-    nlinarith
+    have hidentity : 2 + 2 * u + s - u ^ 2 / 2 + s ^ 2 =
+        (u + 2) ^ 2 / 2 + v ^ 2 + s ^ 2 := by dsimp [s]; ring
+    rw [hidentity]
+    positivity
   have h2r :
       2 * r ≤ 2 + 2 * u + s - u ^ 2 / 2 + s ^ 2 := by
-    by_contra h_neg; push Not at h_neg
-    have h1 :
-        (2 * r) ^ 2 >
-          (2 + 2 * u + s - u ^ 2 / 2 + s ^ 2) ^ 2 :=
-      sq_lt_sq' (by linarith) h_neg
-    rw [show (2 * r) ^ 2 = 4 * r ^ 2 from by ring, hr_sq] at h1
-    linarith
+    apply (sq_le_sq₀ (by positivity) hA_nn).mp
+    linarith only [hr_sq, hA_sq]
   have hw4 : ‖w‖ ^ 4 = s ^ 2 := by
     have : ‖w‖ ^ 4 = (‖w‖ ^ 2) ^ 2 := by ring
     rw [this, hw_sq]
-  rw [hw4]; nlinarith [sq_nonneg (r - 1)]
+  rw [hw4]
+  linarith only [hr_sq, h2r, show s = u ^ 2 + v ^ 2 from rfl]
 
 /-! ### ∫ ‖P‖⁴ bound -/
 
@@ -308,8 +321,8 @@ private lemma integral_norm_pow4_le {P : AddCircle T → ℂ}
             (HasCompactSupport.of_compactSpace _)).const_mul _
         · intro t
           have : ‖P t‖ ^ 2 ≤ M ^ 2 :=
-            sq_le_sq' (by linarith [norm_nonneg (P t)]) (hM t)
-          nlinarith [sq_nonneg (‖P t‖)]
+            sq_le_sq' (by linarith only [_hM_nn, norm_nonneg (P t)]) (hM t)
+          nlinarith only [this, sq_nonneg (‖P t‖)]
     _ = M ^ 2 * ∫ t, ‖P t‖ ^ 2 ∂AddCircle.haarAddCircle :=
         integral_const_mul _ _
 
@@ -363,7 +376,7 @@ private lemma small_amplitude {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
     simp_all
   have h_re_half :
       ∫ t : AddCircle T, (P t).re ^ 2 ∂AddCircle.haarAddCircle =
-        cns / 2 := by linarith
+        cns / 2 := by linarith only [h_re_eq_im, h_cns_split]
   -- Step 4: ∫ ‖P‖⁴ ≤ (1/4)² · cns
   have h_norm4 :
       ∫ t : AddCircle T, ‖P t‖ ^ 4 ∂AddCircle.haarAddCircle ≤
@@ -385,7 +398,7 @@ private lemma small_amplitude {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
     simp_rw [div_eq_mul_inv]; exact integral_mul_const 2⁻¹ _
   rw [h_integral_sub, h_div, h_re_half] at h_lower
   -- cns/2/2 - ∫ ‖P‖⁴ ≥ cns/4 - cns/16 = 3cns/16
-  linarith
+  linarith only [h_lower, h_norm4]
 
 /-! ### ∫ ‖1+P‖² = 1 + circleNormSq P -/
 
@@ -434,7 +447,7 @@ private lemma integral_one_plus_P_sq {E : Finset ℕ}
     · exact h_split
     · rw [integral_const_mul, h_re_P, mul_zero, add_zero]
       simp [integral_const]
-  unfold circleNormSq; linarith
+  unfold circleNormSq; linarith only [h_diff]
 
 /-! ### Integral Cauchy-Schwarz for real-valued functions -/
 
@@ -477,7 +490,7 @@ private lemma integral_cauchy_schwarz {α : Type*} [MeasurableSpace α]
           ext x; simp [Pi.add_apply]]
         exact integral_add (hf2.const_mul _) (hfg.const_mul _)
       rw [h_step1, h_step2, hI1, hI2]; ring
-    linarith
+    linarith only [h0, h_eq]
   -- Non-negative quadratic ⟹ discriminant ≤ 0 ⟹ B² ≤ AC
   -- Case A = 0: quad at t=1 gives 0 ≤ -2B+C, at t=-1 gives 0 ≤ 2B+C, so |B| ≤ C/2.
   -- Also A=0 ⟹ AC=0, need B²≤0, i.e. B=0.
@@ -526,7 +539,7 @@ private lemma large_amplitude {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
       rw [← hsq]
       exact (sq_lt_sq₀ (by positivity) (Real.sqrt_nonneg _)).mpr hx
     rw [div_pow, one_pow, mul_pow, hsqL] at h_sq_ineq
-    linarith
+    linarith only [h_sq_ineq]
   -- Step 1: Pointwise identity rho(w)·(‖1+w‖+1) = |‖1+w‖²-1|
   have h_rho_factor : ∀ w : ℂ,
       rho w * (‖(1 : ℂ) + w‖ + 1) = |‖(1 : ℂ) + w‖ ^ 2 - 1| := by
@@ -581,7 +594,7 @@ private lemma large_amplitude {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
       ∂AddCircle.haarAddCircle ≤ 2 * cns + 4 := by
     have h_pw : ∀ t : AddCircle T,
         (‖(1 : ℂ) + P t‖ + 1) ^ 2 ≤
-        2 * ‖(1 : ℂ) + P t‖ ^ 2 + 2 := by intro t; nlinarith [sq_nonneg (‖(1 : ℂ) + P t‖ - 1)]
+        2 * ‖(1 : ℂ) + P t‖ ^ 2 + 2 := by intro t; linarith only [sq_nonneg (‖(1 : ℂ) + P t‖ - 1)]
     calc ∫ t, (‖(1 : ℂ) + P t‖ + 1) ^ 2 ∂AddCircle.haarAddCircle
         ≤ ∫ t, (2 * ‖(1 : ℂ) + P t‖ ^ 2 + 2) ∂AddCircle.haarAddCircle :=
           integral_mono
@@ -607,7 +620,10 @@ private lemma large_amplitude {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
     calc cns ^ 2
         ≤ (∫ t : AddCircle T,
           rho (P t) * (‖(1 : ℂ) + P t‖ + 1)
-            ∂AddCircle.haarAddCircle) ^ 2 := sq_le_sq' (by nlinarith) h_cns_le
+            ∂AddCircle.haarAddCircle) ^ 2 := sq_le_sq' (by
+              linarith only [
+                hcns_nn, h_cns_le
+              ]) h_cns_le
       _ ≤ y * ∫ t, (‖(1 : ℂ) + P t‖ + 1) ^ 2 ∂AddCircle.haarAddCircle := h_cs
       _ ≤ y * (2 * cns + 4) := mul_le_mul_of_nonneg_left h_g_sq_bound hy_nn
   -- Step 7: y ≥ cns / (144L)
@@ -620,14 +636,14 @@ private lemma large_amplitude {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
   have hL_ge : (1 : ℝ) ≤ (↑L : ℝ) := Nat.one_le_cast.mpr hL
   have h_key : 2 * cns + 4 ≤ 144 * ↑L * cns := by
     -- (144L-2)·cns > (144L-2)/(16L) ≥ 142/16 > 4
-    have h142 : (0 : ℝ) < 144 * ↑L - 2 := by nlinarith
+    have h142 : (0 : ℝ) < 144 * ↑L - 2 := by linarith only [hL_pos, hL_ge]
     have h1 : (144 * ↑L - 2) * cns > (144 * ↑L - 2) * (1 / (16 * ↑L)) :=
       mul_lt_mul_of_pos_left h_cns_lower h142
     have h2 : (144 * (↑L : ℝ) - 2) * (1 / (16 * ↑L)) ≥ 142 / 16 := by
       rw [ge_iff_le, mul_one_div, div_le_div_iff₀ (by norm_num : (0 : ℝ) < 16) (by positivity)]
-      nlinarith
-    nlinarith
-  nlinarith [sq_nonneg cns]
+      linarith only [hL_ge]
+    linarith only [h1, h2]
+  nlinarith only [hcns_nn, h_cns_sq_le, h_key, sq_nonneg cns]
 
 /-! ### Theorem 3.1 (Main statement) -/
 
@@ -644,7 +660,7 @@ theorem local_circle_estimate {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
     have hL_real : (1 : ℝ) ≤ (L : ℝ) := Nat.one_le_cast.mpr hL
     nlinarith [mul_le_mul_of_nonneg_left (by linarith : (3 : ℝ) / 16 * circleNormSq P ≤
       ∫ t, rho (P t) ^ 2 ∂AddCircle.haarAddCircle)
-      (show (0 : ℝ) ≤ 144 * L from by nlinarith)]
+      (show (0 : ℝ) ≤ 144 * L from by linarith)]
   · push Not at hx
     have h := large_amplitude hL hE hE_pos b P hP hx
     have hL_pos : (0 : ℝ) < (L : ℝ) := Nat.cast_pos.mpr (by omega)

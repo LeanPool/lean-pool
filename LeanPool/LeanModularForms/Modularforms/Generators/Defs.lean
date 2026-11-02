@@ -61,7 +61,13 @@ theorem levelOne_odd_weight_eq_zero {k : ℤ} (hk : Odd k)
   have hdenom : denom (Matrix.SpecialLinearGroup.toGL
       ((Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ)) (-1 : SL(2, ℤ)))) ↑z = -1 := by
     rw [ModularGroup.denom_apply]
-    simp_all
+    simp_all only [SlashInvariantForm.toFun_eq_coe, toSlashInvariantForm_coe,
+        Matrix.SpecialLinearGroup.coe_int_neg, map_one, zpow_neg, Fin.isValue,
+          Matrix.SpecialLinearGroup.coe_neg,
+        Matrix.SpecialLinearGroup.coe_one, Matrix.neg_apply, ne_eq, one_ne_zero,
+          not_false_eq_true, Matrix.one_apply_ne,
+        neg_zero, Int.cast_zero, zero_mul, Matrix.one_apply_eq, Int.reduceNeg, Int.cast_neg,
+          Int.cast_one, zero_add]
   rw [hdenom, zpow_neg, hk.neg_one_zpow, inv_neg, inv_one] at hmod
   simp only [SlashInvariantForm.toFun_eq_coe, ModularForm.toSlashInvariantForm_coe] at hmod
   simp only [_root_.zero_apply]

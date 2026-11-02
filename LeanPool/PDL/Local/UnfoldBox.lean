@@ -76,10 +76,10 @@ theorem signature_iff {W} {M : KripkeModel W} {w : W} :
   · intro w_ℓ τ τ_in
     cases em (ℓ ⟨τ, τ_in⟩)
     · specialize w_ℓ τ τ τ_in
-      aesop
+      aesop (rule_sets := [-default])
     · specialize w_ℓ (~τ) τ τ_in
-      aesop
-  · aesop
+      aesop (rule_sets := [-default])
+  · aesop (rule_sets := [-default])
 
 -- Now come two out of the three facts about test profiles and signatures.
 
@@ -97,7 +97,7 @@ theorem top_equiv_disj_TP : ∀ α, tautology (dis ((allTP α).map (signature α
     forall_exists_index]
     intro f τ τ_in def_f
     subst def_f
-    aesop
+    aesop (rule_sets := [-default])
 
 /-- This is currently unused. -/
 theorem signature_contradiction_of_neq_TPs {ℓ ℓ' : TP α} :
@@ -151,16 +151,16 @@ lemma F_sub_testsOfProgram_map_neg (α : Program) (ℓ : TP α) :
   case sequence α β =>
     have IHα := F_sub_testsOfProgram_map_neg α
     have IHβ := F_sub_testsOfProgram_map_neg β
-    grind
+    grind only [= List.subset_def, = List.mem_union_iff, = List.mem_append]
   case union α β =>
     have IHα := F_sub_testsOfProgram_map_neg α
     have IHβ := F_sub_testsOfProgram_map_neg β
-    grind
+    grind only [= List.subset_def, = List.mem_union_iff, = List.mem_append]
   case star α =>
     have IHα := F_sub_testsOfProgram_map_neg α
-    grind
+    grind only []
   case test =>
-    split <;> grind
+    split <;> grind only [= List.subset_def, = List.mem_cons]
 
 /-- The residual program sequences produced by box unfolding under a test profile. -/
 def P : (α : Program) →  (ℓ : TP α) → List (List Program)
@@ -401,8 +401,9 @@ theorem boxHelperTermination α (ℓ : TP α) :
         use a
         subst δ'_def
         simp at *
-        grind
-      · rcases IH.2 with ⟨a, ⟨δ1n, δ'_def⟩, ⟨_, δ'_sub⟩⟩ <;> simp_all [subprograms] <;> grind
+        grind only [= List.subset_def, =_ List.cons_append, = List.mem_append, = List.mem_cons]
+      · rcases IH.2 with ⟨a, ⟨δ1n, δ'_def⟩, ⟨_, δ'_sub⟩⟩ <;> simp_all [subprograms] <;>
+        grind only [→ List.mem_of_mem_erase, = List.subset_def, = List.mem_append]
     · by_cases [] ∈ P α ℓ
       · simp_all only [true_and, subprograms, List.cons_append, List.nil_append, List.mem_cons,
         reduceCtorEq, List.mem_append, false_or, List.erase_cons_head]
@@ -427,16 +428,18 @@ theorem boxHelperTermination α (ℓ : TP α) :
           cases IH
           subst_eqs
           simp_all [subprograms]
-          aesop
+          aesop (rule_sets := [-default])
         · rw [Program.isStar_iff] at *
           rename _ => hyp
           rcases hyp with ⟨γ, α_def⟩
           specialize IH γ
           simp_all
-          rcases IH with ⟨a, δ1n, δ'_def⟩ <;> simp_all [subprograms]; grind
+          rcases IH with ⟨a, δ1n, δ'_def⟩ <;> simp_all [subprograms];
+            grind only [= List.subset_def, = List.mem_append, = List.mem_cons,
+              ← List.not_mem_nil]
         · cases IH
           simp_all [subprograms]
-          grind
+          grind only [→ List.mem_of_mem_erase, = List.subset_def, = List.mem_append]
       · simp_all
   case union α β =>
     cases δ_in
@@ -455,7 +458,8 @@ theorem boxHelperTermination α (ℓ : TP α) :
         simp_all
         have IH := boxHelperTermination (∗γ) ℓ δ δ_in
         simp [subprograms] at *
-        grind
+        grind only [=_ List.cons_append, = List.subset_def, = List.mem_cons, = List.mem_append,
+          ← List.not_mem_nil]
       case neg hyp1 hyp2 =>
         rcases hyp1 with ⟨a, α_def⟩
         subst α_def
@@ -463,7 +467,8 @@ theorem boxHelperTermination α (ℓ : TP α) :
         simp_all [Program.isAtomic_iff, Program.isStar_iff, subprograms]
       · have IH := boxHelperTermination (α) ℓ δ δ_in
         simp_all [Program.isAtomic_iff, Program.isStar_iff]
-        grind
+        grind only [= List.mem_erase_of_ne, = List.subset_def, = List.mem_append,
+          → List.mem_of_mem_erase]
     case inr δ_in =>
       by_cases β.isAtomic <;> by_cases β.isStar <;>
         simp_all only [Program.isAtomic_iff, Program.isStar_iff, subprograms, List.cons_append,
@@ -479,7 +484,7 @@ theorem boxHelperTermination α (ℓ : TP α) :
         simp_all
         have IH := boxHelperTermination (∗γ) ℓ δ δ_in
         simp [subprograms] at *
-        grind
+        grind only [= List.subset_def, = List.mem_append, = List.mem_cons, ← List.not_mem_nil]
       case neg hyp1 hyp2 =>
         rcases hyp1 with ⟨a, β_def⟩
         subst β_def
@@ -487,7 +492,8 @@ theorem boxHelperTermination α (ℓ : TP α) :
         simp_all [Program.isAtomic_iff, Program.isStar_iff, subprograms]
       · have IH := boxHelperTermination (β) ℓ δ δ_in
         simp_all [Program.isAtomic_iff, Program.isStar_iff]
-        grind
+        grind only [= List.mem_erase_of_ne, = List.subset_def, = List.mem_append,
+          → List.mem_of_mem_erase]
   case star β =>
     rcases δ_in with _|hyp
     · left; assumption
@@ -525,7 +531,7 @@ theorem boxHelperTermination α (ℓ : TP α) :
       · rcases IH with ⟨a, δ1n, δ'_def, a_in, δ'_sub⟩
         use a
         simp_all [subprograms]
-        grind
+        grind only [= List.mem_erase_of_ne, = List.subset_def, → List.mem_of_mem_erase]
 
 /-- Proven from `boxHelperTermination`. -/
 theorem PgoesDown : γ ∈ δ → δ ∈ P α ℓ →
@@ -536,7 +542,7 @@ theorem PgoesDown : γ ∈ δ → δ ∈ P α ℓ →
   intro γ_in δ_in
   have bht := boxHelperTermination α ℓ δ δ_in; clear δ_in
   by_cases α.isAtomic
-  case pos α_atom => grind
+  case pos α_atom => grind only [= List.mem_cons, ← List.not_mem_nil]
   case neg α_not_atom =>
     by_cases α.isStar
     case pos α_star =>
@@ -546,7 +552,7 @@ theorem PgoesDown : γ ∈ δ → δ ∈ P α ℓ →
         and_self, IsEmpty.forall_iff, ne_eq, List.mem_erase_of_ne, true_and, Program.star.injEq,
         forall_eq', and_false, ↓reduceIte, lengthOfProgram]
       rcases bht with _|⟨a, δ1n, δ_def, a_in, δ1n_sub⟩
-      · exfalso; grind
+      · exfalso; grind only [← List.not_mem_nil]
       · subst δ_def
         simp_all only [subprograms, List.cons_append, List.nil_append, List.mem_cons,
           reduceCtorEq, false_or, List.erase_cons_head, List.mem_append, List.not_mem_nil,
@@ -561,7 +567,7 @@ theorem PgoesDown : γ ∈ δ → δ ∈ P α ℓ →
       rcases bht with ⟨h1,h2,bht⟩; clear h1 h2
       specialize bht ⟨α_not_atom, α_not_star⟩
       have := @length_lt_of_mem_subprograms_erase α
-      grind
+      grind only [← List.not_mem_nil, = List.subset_def]
 
 /-- Where formulas in the unfolding can come from.
 The article also says `φ ∈ fischerLadner [⌈α⌉ψ]` which we prove later in `unfoldBox_in_FL`. -/
@@ -642,7 +648,7 @@ theorem unfoldBoxContent α ψ :
           right
           use δ1n
           simp
-          grind
+          grind only [= List.subset_def, = List.mem_append]
       case star β =>
         rcases bht with _ | ⟨a, δ1n, δ_def, a_in, δ_sub⟩
         · subst_eqs; simp
@@ -651,7 +657,7 @@ theorem unfoldBoxContent α ψ :
             Formula.box.injEq, Program.atom_prog.injEq, ↓existsAndEq, true_and]
           right
           use δ1n ++ [∗β]
-          grind
+          grind only [= List.subset_def, = List.mem_append, = List.mem_cons, ← List.not_mem_nil]
 
 theorem unfoldBox_voc {x α φ} {L} (L_in : L ∈ unfoldBox α φ) {ψ} (ψ_in : ψ ∈ L)
     (x_in_voc_ψ : x ∈ ψ.voc) : x ∈ α.voc ∨ x ∈ φ.voc := by
@@ -693,7 +699,7 @@ theorem boxHelperTP α (ℓ : TP α) :
   refine ⟨?_, ?_, ?_⟩
   · intro τ τ_in
     have := F_mem_iff_neg α ℓ (~τ)
-    aesop
+    aesop (rule_sets := [-default])
   · intro W M w
     simp only [evaluate, conEval, signature, List.mem_map, List.mem_attach, true_and,
       Subtype.exists, forall_exists_index, and_iff_right_iff_imp]
@@ -703,22 +709,22 @@ theorem boxHelperTP α (ℓ : TP α) :
     clear this
     rcases φ_in with ⟨τ, τ_in, φ_def, not_ℓ_τ⟩
     specialize w_ℓ φ τ
-    aesop
+    aesop (rule_sets := [-default])
   · intro ψ W M w
     simp only [evaluate, Bset, conEval, List.mem_append, List.mem_map, forall_exists_index,
       and_imp, forall_apply_eq_imp_iff₂, and_congr_left_iff]
     intro w_sign
     constructor
     · intro lhs δ δ_in
-      aesop
+      aesop (rule_sets := [-default])
     · rintro rhs φ (φ_in_F | ⟨δ,δ_in,def_φ⟩)
       · rw [F_mem_iff_neg α ℓ φ] at φ_in_F
         rcases φ_in_F with ⟨τ, τ_in, φ_def, not_ℓ_τ⟩
         subst φ_def
         simp_all [signature, conEval]
         specialize w_sign (~τ) τ
-        aesop
-      · aesop
+        aesop (rule_sets := [-default])
+      · aesop (rule_sets := [-default])
 
 theorem guardToStar (x : Nat) β χ0 χ1 ρ ψ
     (x_notin_beta : Sum.inl x ∉ β.voc)
@@ -843,7 +849,7 @@ theorem localBoxTruth_connector γ ψ :
       constructor
       · assumption
       · simp_all [signature, conEval]
-        aesop
+        aesop (rule_sets := [-default])
     simp_all
 
 /-- A box-star expansion implies every compatible test-profile expansion. -/
@@ -951,14 +957,14 @@ private theorem boxStar_forward (β : Program) (ψ : Formula)
       rintro f (f_in_F| ⟨δ, δ_in, def_f⟩)
       · simp only [F_mem_iff_neg, exists_and_left] at f_in_F
         unfold ℓ' at f_in_F
-        aesop
+        aesop (rule_sets := [-default])
       · subst def_f
         specialize step ℓ' W M w
         simp only [List.mem_singleton, forall_eq] at step
         rw [conEval] at step
         simp only [evaluate, relate, signature, conEval, List.mem_map, List.mem_attach, true_and,
           Subtype.exists, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂] at step
-        apply step <;> aesop
+        apply step <;> aesop (rule_sets := [-default])
   intro ℓ W M w
   simp only [List.mem_singleton, forall_eq]
   intro hyp
@@ -1064,7 +1070,7 @@ private theorem boxStar_backward (β : Program) (ψ : Formula)
           intro f δ δ_in _ def_f
           apply w_Xβ
           right
-          aesop
+          aesop (rule_sets := [-default])
       · right -- choose χ1
         unfold χ1 T1 φ'
         simp only [ne_eq, decide_not, disEval, List.mem_map, List.mem_filter,
@@ -1075,7 +1081,7 @@ private theorem boxStar_backward (β : Program) (ψ : Formula)
         intro f δ δ_in _ def_f
         apply w_Xβ
         right
-        aesop
+        aesop (rule_sets := [-default])
     · rintro (⟨w_c, w_χ0⟩ | w_χ1)
       · unfold χ0 T0 φ' at w_χ0
         simp only [ne_eq, decide_not, disEval, List.mem_map, List.mem_filter, decide_eq_true_eq,
@@ -1085,7 +1091,7 @@ private theorem boxStar_backward (β : Program) (ψ : Formula)
         use ℓ
         simp_all only [true_and]
         rintro φ (φ_in_Fβ | ⟨δ, δ_in, def_φ⟩)
-        · aesop
+        · aesop (rule_sets := [-default])
         · subst def_φ
           cases em (δ = [])
           · simp_all
@@ -1153,7 +1159,7 @@ private theorem boxStar_backward (β : Program) (ψ : Formula)
           specialize left_to_right W M
           simp [evalBoxes] at left_to_right w_Xℓ
           simp [evalBoxes]
-          aesop
+          aesop (rule_sets := [-default])
     case inr empty_not_in_Pβ =>
       right
       -- exactly the same as inl case!
@@ -1189,7 +1195,7 @@ private theorem boxStar_backward (β : Program) (ψ : Formula)
           specialize left_to_right W M
           simp [evalBoxes] at left_to_right w_Xℓ
           simp [evalBoxes]
-          aesop
+          aesop (rule_sets := [-default])
   · -- ρ ⊨ ψ
     unfold ρ
     simp only [Bset, P, List.cons_union, List.nil_union, List.mem_map, List.mem_filter,
@@ -1215,13 +1221,17 @@ private theorem boxUnion_profile (α β : Program) (ψ : Formula) (ℓ : TP (α�
   simp only [evaluate, and_congr_left_iff, relate] at *
   intro w_sign_ℓ
   specialize IHα ?_
-  · simp_all [signature, conEval, testsOfProgram]
+  · clear IHα IHβ
+    simp_all [signature, conEval, testsOfProgram]
   specialize IHβ ?_
-  · simp_all [signature, conEval, testsOfProgram]
+  · clear IHα IHβ
+    simp_all [signature, conEval, testsOfProgram]
   -- rewrite using semantics of union and the two IH:
   have : (∀ (v : W), relate M α w v ∨ relate M β w v → evaluate M v ψ)
       ↔ ((∀ (v : W), relate M α w v → evaluate M v ψ)
-       ∧ (∀ (v : W), relate M β w v → evaluate M v ψ)) := by aesop
+       ∧ (∀ (v : W), relate M β w v → evaluate M v ψ)) := by
+    clear IHα IHβ w_sign_ℓ
+    aesop (rule_sets := [-default])
   rw [this, IHα, IHβ]
   clear this IHα IHβ
   -- signature is true, so we can add it for free:
@@ -1303,14 +1313,16 @@ private theorem boxSequence_profile (α β : Program) (ψ : Formula) (ℓ : TP (
   simp only [evaluate, relate, forall_exists_index, and_imp, and_congr_left_iff] at *
   intro w_sign_ℓ
   specialize IHα ?_
-  · simp_all [signature, conEval, testsOfProgram]
+  · clear IHα IHβ
+    simp_all [signature, conEval, testsOfProgram]
   specialize IHβ ?_
-  · simp_all [signature, conEval, testsOfProgram]
+  · clear IHα IHβ
+    simp_all [signature, conEval, testsOfProgram]
   -- only rewriting with IHα here, but not yet IHβ
   have : (∀ (v x : W), relate M α w x → relate M β x v → evaluate M v ψ)
         ↔ ∀ (v : W), relate M α w v → ∀ (v_1 : W), relate M β v v_1 → evaluate M v_1 ψ := by
-    clear IHα IHβ
-    aesop
+    clear IHα IHβ w_sign_ℓ
+    aesop (rule_sets := [-default])
   rw [this, IHα]
   clear this IHα
   constructor
@@ -1336,12 +1348,13 @@ private theorem boxSequence_profile (α β : Program) (ψ : Formula) (ℓ : TP (
       rcases δ_from_Pα with ⟨δ_α, bla, def_δ⟩
       use δ_α
       subst def_δ
+      clear IHβ w_sign_ℓ
       simp_all [boxes_append]
     · subst def_φ
       cases em ([] ∈ P α ℓ)
       · simp_all only [true_and]
         apply IHβ.1 ?_ (⌈⌈δ⌉⌉ψ) <;> clear IHβ
-        · right; aesop
+        · right; aesop (rule_sets := [-default])
         · have := lhs (⌈β⌉ψ)
           simp only [evaluate] at this; apply this; clear this -- sounds like daft punk ;-)
           right

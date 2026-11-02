@@ -11,10 +11,6 @@ public import LeanPool.ClassificationOfSurfaces.Representatives
 import LeanPool.ClassificationOfSurfaces.FiniteCyclicCanonicalRealization
 import LeanPool.ClassificationOfSurfaces.FiniteCyclicSphereRealization
 import LeanPool.ClassificationOfSurfaces.FiniteCyclicTerminalNormalization
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Faithful normal-form classification

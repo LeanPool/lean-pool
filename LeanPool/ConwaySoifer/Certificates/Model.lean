@@ -7,7 +7,6 @@ module
 
 public import LeanPool.ConwaySoifer.Certificates.Checker
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
 
 /-!
 # Certificate data and the initial necessary model

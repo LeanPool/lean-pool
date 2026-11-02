@@ -207,7 +207,7 @@ theorem fin_sum_successive_sub
   rw [Finset.sum_sub_distrib]
   have hfirst := Fin.sum_univ_succ f
   have hlast := Fin.sum_univ_castSucc f
-  linarith
+  linarith only [hfirst, hlast]
 
 section ActualEntropyBudgets
 
@@ -296,7 +296,7 @@ private theorem sourcePermutationAliceEntropyIncrement_sum_le
     G n S D (Finset.univ \ D)
   have hfirst := fullHistoryAliceEntropyPotential_lower_bound
     G n S D ∅ (Finset.empty_subset _) hp
-  linarith
+  linarith only [hlast, hfirst]
 
 private def sourceUniformPermutationAverage
     {n : ℕ} (D : Finset (Fin n))
@@ -603,7 +603,7 @@ theorem exactUniform_sum_mul
     (∑ _t : T,
       value * (1 / (Fintype.card T : ℝ))) = value := by
   rw [← Finset.mul_sum, exactUniform_sum positive]
-  ring
+  ac_rfl
 
 theorem exactPrefixUniform_sum_mul
     (m : ℕ) (value : ℝ) :
@@ -766,7 +766,7 @@ theorem commonFinitePurification_weighted_left_variation_le
               finitePurificationMatrix F anchor positive hanchor meanIndex)))
         (KB.conjTranspose * KB) at hnonneg
   rw [hsum] at hnonneg
-  linarith
+  linarith only [positive, hanchor, hnonneg]
 
 theorem commonFinitePurification_weighted_right_variation_le
     {X Y A B ι κ eA : Type*}
@@ -828,7 +828,7 @@ theorem commonFinitePurification_weighted_right_variation_le
     intro b _
     rw [finiteLocalPurificationVector_sub_right_norm_sq]
   rw [map_sub, hsum] at hnonneg
-  linarith
+  linarith only [positive, hanchor, hnonneg]
 
 end
 
@@ -2074,8 +2074,7 @@ theorem exactPaddedVector_norm
     simp only [exactPaddedVector, EuclideanSpace.norm_sq_eq, Fintype.sum_prod_type,
       Fintype.sum_sum_type, univ_unique, PUnit.default_eq_unit, norm_zero, ne_eq,
       OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, sum_const_zero, zero_add, add_zero]
-  nlinarith [norm_nonneg (exactPaddedVector G n S D r z),
-    norm_nonneg z]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hsquare
 
 theorem exactPaddedVector_sub
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -2372,8 +2371,8 @@ theorem exactFiberQuestionWeight_rectangle
       D seed history y ys <;>
     by_cases hb' : exactBobQuestionCompatible
       D seed history y ys' <;>
-    simp [exactFiberQuestionWeight,
-      ha, ha', hb, hb']
+    simp only [exactFiberQuestionWeight, ha, hb, and_self, ↓reduceIte, Game.repeat_questionWeight,
+      ha', hb', and_false, mul_zero, zero_mul, and_true]
   simpa only [Game.repeat_questionWeight] using
     (exactQuestionWeight_rectangle
       G n D seed history x y xs xs' ys ys'
@@ -2597,7 +2596,7 @@ theorem arbitrarily_large_witness_of_not_hasExponentialBound
           rw [← Real.exp_add]
           congr 1
           ring
-    linarith [hv n]
+    linarith only [hn, h_lower, hv n]
   refine ⟨n, hN, ?_⟩
   have h_prefactor : 1 ≤ Real.exp (c * (N : ℝ)) :=
     Real.one_le_exp (mul_nonneg hc.le (Nat.cast_nonneg _))
@@ -2691,7 +2690,7 @@ theorem expectation_le_add_totalVariation
           ring
     _ ≤ (∑ i, q i * f i) +
           ∑ i, U * max (p i - q i) 0 := by
-      linarith
+      linarith only [hsum]
     _ = (∑ i, q i * f i) +
           U * finiteTotalVariation p q := by
       rw [← Finset.mul_sum, hpositive]
@@ -2709,7 +2708,7 @@ theorem winning_expectation_transfer
     q p win hq hp (1 : ℝ) hzero hone
   rw [← finiteTotalVariation_comm p q] at h
   norm_num at h ⊢
-  linarith
+  linarith only [h]
 
 end
 
@@ -2906,8 +2905,7 @@ theorem matched_payoff_discard_le
     simp only [Bool.not_eq_true] at hi
     simp only [hi, Bool.false_eq_true, ↓reduceIte, mul_one, mul_zero, tsub_le_iff_right, zero_add,
       ge_iff_le]
-    linarith [mul_nonneg (nonnegative i)
-      (sub_nonneg.mpr hone)]
+    linarith only [mul_nonneg (nonnegative i) (sub_nonneg.mpr hone)]
 
 end
 
@@ -2964,7 +2962,7 @@ theorem source_equation_twenty_one
             _ = _ := by
               rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
               ring
-    _ ≤ 32 * η := by linarith
+    _ ≤ 32 * η := by linarith only [hgamma, hphi]
 
 theorem weighted_rpow_mean_le
     {ι : Type*} [Fintype ι]
@@ -3197,7 +3195,7 @@ private theorem fullCoordinateInsertedHistory_weight
   simp_rw [hpair]
   simp only [fullCoordinateInsertedHistory, fullCoordinateAnswerExtension, ↓reduceDIte,
     univ_eq_attach]
-  ring
+  ac_rfl
 
 private theorem conditionedAliceEffect_insert_eq_coordinate
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -3376,7 +3374,7 @@ theorem exists_repeatedStrategy_of_lt_entangledValue
     have hzero : repeatedEntangledValue G n = 0 := by
       change sSup values = 0
       rw [heq, Real.sSup_empty]
-    linarith
+    linarith only [hr, hvalue, hzero]
   have hs : r < sSup values := by
     exact hvalue
   obtain ⟨v, ⟨S, hS⟩, hv⟩ := exists_lt_of_lt_csSup hnonempty hs
@@ -3429,19 +3427,19 @@ theorem greedy_terminal_of_log_cost
     (1 - η) ^ T < θ := by
   have hbase : 1 - η ≤ Real.exp (-η) := by
     have h := Real.add_one_le_exp (-η)
-    linarith
+    linarith only [h]
   have hpow :
       (1 - η) ^ T ≤ Real.exp (-η) ^ T :=
     pow_le_pow_left₀ (sub_nonneg.mpr hη_one) hbase T
   have hlog : -η * (T : ℝ) < Real.log θ := by
     rw [one_div, Real.log_inv] at hcost
-    linarith
+    linarith only [hcost]
   calc
     (1 - η) ^ T ≤ Real.exp (-η) ^ T := hpow
     _ = Real.exp (-η * (T : ℝ)) := by
       rw [← Real.exp_nat_mul]
       congr 1
-      ring
+      ac_rfl
     _ < θ := (Real.exp_lt_exp.mpr hlog).trans_eq
       (Real.exp_log hθ)
 
@@ -3465,7 +3463,6 @@ theorem sourceRate_mul_lt_divisorStopping
   have hcast :
       (n : ℝ) < 2 * ((n / q : ℕ) : ℝ) * (q : ℝ) := by
     exact_mod_cast divisorStopping_nat_bound hq hqn
-  have hqreal : 0 < (q : ℝ) := by exact_mod_cast hq
   have hT : 0 < ((n / q : ℕ) : ℝ) := by
     exact_mod_cast ((Nat.le_div_iff_mul_le hq).2 (by simpa only [one_mul] using hqn) :
       1 ≤ n / q)
@@ -3481,7 +3478,7 @@ theorem sourceRate_mul_lt_divisorStopping
     _ < η * ((n / q : ℕ) : ℝ) := by
       have hpositive : 0 < η * ((n / q : ℕ) : ℝ) :=
         mul_pos hη hT
-      linarith
+      linarith only [hpositive]
 
 theorem repeatedStrategy_exists_divisor_greedy_conditioning
     (G : Game X Y A B) (n : ℕ)
@@ -3517,7 +3514,7 @@ theorem repeatedStrategy_exists_divisor_greedy_conditioning
           Real.log S.winProbability :=
       (Real.lt_log_iff_exp_lt hθ).mpr hwitness
     rw [one_div, Real.log_inv]
-    linarith
+    linarith only [hlog']
   have hterminal :
       (1 - η) ^ (n / q) < S.winProbability := by
     apply greedy_terminal_of_log_cost hθ hη_one
@@ -3712,7 +3709,7 @@ theorem uniformRemainingFailure_lt_of_failure_sum
   rw [← Finset.sum_div]
   apply (div_lt_iff₀ hmreal).mpr
   apply (div_lt_iff₀ hp).mpr
-  linarith
+  linarith only [hfailure]
 
 end FiniteSamples
 
@@ -3954,10 +3951,7 @@ theorem bornWeighted_normalized_distance
       (le_div_iff₀ hu_pos).mp hdist
     have hsquare := mul_self_le_mul_self
       (mul_nonneg (norm_nonneg _) (norm_nonneg u)) hscaled
-    linarith [sq_nonneg
-      (‖normalizeOrDefault fallback u -
-        normalizeOrDefault fallback v‖ * ‖u‖),
-      sq_nonneg (‖u - v‖)]
+    linarith only [hsquare]
 
 end ActualPurificationHistories
 
@@ -4034,7 +4028,7 @@ private theorem fullCoordinateInsertedHistory_winIndicator_eq
         G.predicate (r.aliceConditioned j) (r.bobConditioned j)
           (α j) (β j) = true then (1 : ℝ) else 0) *
       (if G.predicate x y a b = true then (1 : ℝ) else 0)
-  split_ifs with hall hD hi <;> aesop
+  simp only [hiff, ite_and, ite_mul, one_mul, zero_mul]
 
 private def fullCoordinateInsertedHiddenAliceEquiv
     {X : Type*} {n : ℕ}
@@ -4439,7 +4433,7 @@ private theorem fullCoordinateWeightedInsertedSum
       rw [fullCoordinateInsertedHistory_weight G D L i hiD r x y]
       rw [fullCoordinateInsertedHistory_winIndicator_eq
         G D L i hiD r x y α a β b]
-      ring
+      ac_rfl
 
 private def fullCoordinateAcceptedPostselectedMass
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -4635,7 +4629,7 @@ private theorem sourceHistoryAcceptedMass_eq_uniform
       rw [Finset.sum_mul]
       apply Finset.sum_congr rfl
       intro k _
-      ring
+      ac_rfl
 
 theorem sourceHistoryAcceptedMass_eq_remaining_average
     (G : Game X Y A B) (n : ℕ)
@@ -4722,7 +4716,7 @@ theorem sourceHistoryAcceptedMass_gt_of_greedy
         (strategyEventLaw (G.repeat n) S)
         (repeatedCoordinateWin G n) D i) <
       ((Finset.univ \ D).card : ℝ) * (η * p) at hgreedy
-  linarith [hgreedy, hfails]
+  linarith only [hfails, hgreedy]
 
 end
 
@@ -4786,8 +4780,7 @@ theorem taggedTensorVector_norm
         simp only [hB, ↓reduceDIte, norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
           zero_pow, sum_const_zero]
       _ = _ := by simp only [↓reduceDIte]
-  nlinarith [norm_nonneg (taggedTensorVector r z),
-    norm_nonneg z]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hsquare
 
 omit [Fintype R] [∀ r, Fintype (ι r)] in
 theorem taggedTensorVector_sub
@@ -4799,7 +4792,7 @@ theorem taggedTensorVector_sub
   rcases q with ⟨a, b⟩
   rcases a with a | ⟨rA, a⟩ <;> rcases b with b | ⟨rB, b⟩ <;>
     simp only [taggedTensorVector, PiLp.sub_apply, sub_zero]
-  split_ifs <;> simp
+  split_ifs <;> simp only [sub_self]
 
 end TaggedTensorBlocks
 
@@ -4818,7 +4811,7 @@ theorem martingaleRate_nonneg
       G n S D π k)
   have hbudget := aliceMartingaleEntropyBudget
     G n S D hm hp
-  nlinarith
+  nlinarith only [hnonnegative, hbudget, hp]
 
 end
 
@@ -5029,7 +5022,7 @@ theorem conditionedEventDistribution_relativeEntropy
     _ = Real.log (1 / law.eventMass event) := by
       rw [← Finset.sum_mul,
         conditionedEventDistribution_sum law event positive]
-      ring
+      ac_rfl
 
 theorem conditionedEventDistribution_projection_relativeEntropy_le
     {Ω κ : Type*} [Fintype Ω] [Fintype κ]
@@ -5165,10 +5158,10 @@ theorem finiteRelativeEntropy_uniform_le_log_card
         rw [hratio]
         apply mul_le_mul_of_nonneg_left _ (nonnegative z)
         apply Real.log_le_log (mul_pos hp hcardpos)
-        nlinarith
+        nlinarith only [hpone]
     _ = Real.log (Fintype.card Z : ℝ) := by
       rw [← Finset.sum_mul, normalized]
-      ring
+      ac_rfl
 
 /-- The uniform flag reference construction used in the quantum parallel-repetition argument. -/
 def uniformFlagReference
@@ -5209,7 +5202,7 @@ theorem uniformFlagReference_firstMarginal
   change
     (∑ z : Z, prior ω * finiteUniformWeight Z) = prior ω
   rw [← Finset.mul_sum, finiteUniformWeight_sum positive]
-  ring
+  ac_rfl
 
 theorem uniformFlagReference_conditional
     {Ω Z : Type*} [Fintype Z]
@@ -5313,7 +5306,7 @@ theorem uniformFlagRelativeEntropy_le
         · exact positive
     _ = Real.log (Fintype.card Z : ℝ) := by
       rw [← Finset.sum_mul, hmarginal_normalized]
-      ring
+      ac_rfl
 
 theorem finiteRelativeEntropy_nonneg
     {Ω : Type*} [Fintype Ω]
@@ -5526,7 +5519,7 @@ theorem reversePartition_relativeEntropy_budget
               (2 * cost / (Fintype.card M : ℝ)) := by ring
     _ = 2 * cost / (Fintype.card M : ℝ) := by
       rw [← Finset.sum_mul, fairPartitionWeight_sum (α := M)]
-      ring
+      ac_rfl
 
 end
 
@@ -5615,7 +5608,7 @@ theorem conditionedAnswerFlag_log_card
       postselectionLogCost G n S D =
         -Real.log (repeatedPostselectionMass G n S D) := by
     simp only [postselectionLogCost, one_div, Real.log_inv]
-  linarith
+  linarith only [hcost, hsplit, hpost]
 
 end
 
@@ -6499,7 +6492,7 @@ private theorem exactFiber_born_of_rank_one
     (fun z : ℝ => z *
       bornTracePairing S.state.matrix (EA xs) (EB ys)) hrank
   field_simp [nonzero]
-  linarith [hborn]
+  linarith only [hborn]
 
 private theorem exactJointQuestionFilter_born
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -6885,8 +6878,8 @@ theorem exactFiberQuestionWeight_aliceMixed_rectangle
       D seed history y ys <;>
     by_cases hb' : exactBobQuestionCompatible
       D seed history y' ys' <;>
-    simp [exactFiberQuestionWeight,
-      ha, ha', hb, hb']
+    simp only [exactFiberQuestionWeight, ha, hb, and_self, ↓reduceIte, Game.repeat_questionWeight,
+      ha', hb', and_false, mul_zero, zero_mul, and_true]
   simpa only [Game.repeat_questionWeight] using
     (exactQuestionWeight_aliceMixed_rectangle
       G n D seed history x y y' xs xs' ys ys'
@@ -6992,8 +6985,8 @@ theorem exactFiberQuestionWeight_bobMixed_rectangle
       D seed history y ys <;>
     by_cases hb' : exactBobQuestionCompatible
       D seed history y ys' <;>
-    simp [exactFiberQuestionWeight,
-      ha, ha', hb, hb']
+    simp only [exactFiberQuestionWeight, ha, hb, and_self, ↓reduceIte, Game.repeat_questionWeight,
+      ha', hb', and_false, mul_zero, zero_mul, and_true]
   simpa only [Game.repeat_questionWeight] using
     (exactQuestionWeight_bobMixed_rectangle
       G n D seed history x x' y xs xs' ys ys'
@@ -7322,7 +7315,7 @@ private theorem exactAliceConditionalMatrix_eq_joint
             G n D seed history x) • E xs) := by
       apply Finset.sum_congr rfl
       intro ys _
-      split_ifs <;> simp
+      split_ifs <;> simp only [zero_div, zero_smul]
     _ = ((∑ ys : Fin n → Y,
         if exactRevealCode D seed (xs, ys) = history ∧
           xs seed.coordinate.val = x
@@ -7405,7 +7398,7 @@ private theorem exactBobConditionalMatrix_eq_joint
             G n D seed history y) • E ys) := by
       apply Finset.sum_congr rfl
       intro xs _
-      split_ifs <;> simp
+      split_ifs <;> simp only [zero_div, zero_smul]
     _ = ((∑ xs : Fin n → X,
         if exactRevealCode D seed (xs, ys) = history ∧
           ys seed.coordinate.val = y

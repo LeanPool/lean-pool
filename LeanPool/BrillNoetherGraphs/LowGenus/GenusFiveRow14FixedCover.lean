@@ -9,6 +9,7 @@ module
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveClosedCover
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveCoreAtlas
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveRow14CoverReceipts
+import LeanPool.BrillNoetherGraphs.LowGenus.CompactCellTreeLookup
 
 /-! **Independent generated check.** The main row-14 proof is the readable
 `GenusFiveRow14` construction via `ConfigurationBananaTail`; this module gives
@@ -3485,12 +3486,21 @@ def treePart0 : CompactCellTree :=
                 (.absurd 62)))
         (.absurd 63))
 
+private theorem treePart0_check_chunked :
+    treePart0.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart0_check :
     treePart0.check splitForms farkasReceipts cells
       (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart0_check_chunked
 
 /-- Subtree splitting on `length[5] - length[10]` in the row-14 length cone, with leaves
 selecting cells 4, 5, 6, 7 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3510,13 +3520,23 @@ def treePart1 : CompactCellTree :=
                 (.absurd 85)))
         (.absurd 86))
 
+private theorem treePart1_check_chunked :
+    treePart1.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart1_check :
     treePart1.check splitForms farkasReceipts cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart1_check_chunked
 
 /-- Subtree splitting on `length[8] - length[11]` in the row-14 length cone, with leaves
 selecting cells 0, 8, 9, 10, 11, 12, 13 and Farkas receipts excluding inconsistent sign
@@ -3560,8 +3580,8 @@ def treePart2 : CompactCellTree :=
                         (.absurd 156))))
             (.absurd 157)))
 
-theorem treePart2_check :
-    treePart2.check splitForms farkasReceipts cells
+private theorem treePart2_check_chunked :
+    treePart2.checkLookup splitForms farkasReceiptLookup cells
       (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
       1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0,
       0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
@@ -3569,10 +3589,31 @@ theorem treePart2_check :
       0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) = true := by
   decide +kernel
 
+theorem treePart2_check :
+    treePart2.check splitForms farkasReceipts cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [aff [0,
+      0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart2_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 158 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart3 : CompactCellTree :=
   .absurd 158
+
+private theorem treePart3_check_chunked :
+    treePart3.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, -1, -1, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
 
 theorem treePart3_check :
     treePart3.check splitForms farkasReceipts cells
@@ -3582,7 +3623,9 @@ theorem treePart3_check :
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, -1, -1, 0,
       0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart3_check_chunked
 
 /-- Subtree splitting on `length[2] - length[3]` in the row-14 length cone, with leaves
 selecting cells 14, 15, 16, 17, 18, 19 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3627,6 +3670,16 @@ def treePart4 : CompactCellTree :=
                 (.absurd 188)))
         (.absurd 189))
 
+private theorem treePart4_check_chunked :
+    treePart4.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart4_check :
     treePart4.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
@@ -3635,7 +3688,9 @@ theorem treePart4_check :
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart4_check_chunked
 
 /-- Subtree splitting on `length[1] - length[7]` in the row-14 length cone, with leaves
 selecting cells 20, 21, 22, 23, 24, 25, 26, 27 and Farkas receipts excluding inconsistent sign
@@ -3680,12 +3735,21 @@ def treePart5 : CompactCellTree :=
             (.absurd 202))
         (.absurd 203))
 
+private theorem treePart5_check_chunked :
+    treePart5.checkLookup splitForms farkasReceiptLookup cells
+      ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation
+      (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart5_check :
     treePart5.check splitForms farkasReceipts cells
       ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation
       (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart5_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cells 2, 3, 28, 29 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3707,13 +3771,23 @@ def treePart6 : CompactCellTree :=
                 (.absurd 62)))
         (.absurd 63))
 
+private theorem treePart6_check_chunked :
+    treePart6.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0]]) = true := by
+  decide +kernel
+
 theorem treePart6_check :
     treePart6.check splitForms farkasReceipts cells
       (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart6_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cells 6, 7, 30, 31 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3733,18 +3807,37 @@ def treePart7 : CompactCellTree :=
                 (.absurd 85)))
         (.absurd 86))
 
-theorem treePart7_check :
-    treePart7.check splitForms farkasReceipts cells
+private theorem treePart7_check_chunked :
+    treePart7.checkLookup splitForms farkasReceiptLookup cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
   decide +kernel
 
+theorem treePart7_check :
+    treePart7.check splitForms farkasReceipts cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart7_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 204 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart8 : CompactCellTree :=
   .absurd 204
+
+private theorem treePart8_check_chunked :
+    treePart8.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
 
 theorem treePart8_check :
     treePart8.check splitForms farkasReceipts cells
@@ -3753,7 +3846,9 @@ theorem treePart8_check :
       ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
       0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
       0, 0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart8_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cells 14, 15, 16, 17, 32, 33, 34, 35 and Farkas receipts excluding inconsistent sign
@@ -3797,6 +3892,16 @@ def treePart9 : CompactCellTree :=
                 (.absurd 188)))
         (.absurd 209))
 
+private theorem treePart9_check_chunked :
+    treePart9.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [aff
+      [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart9_check :
     treePart9.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
@@ -3805,7 +3910,9 @@ theorem treePart9_check :
       0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [aff
       [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart9_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cells 15, 17, 18, 19, 33, 35, 36, 37 and Farkas receipts excluding inconsistent sign
@@ -3849,6 +3956,16 @@ def treePart10 : CompactCellTree :=
                 (.absurd 188)))
         (.absurd 209))
 
+private theorem treePart10_check_chunked :
+    treePart10.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart10_check :
     treePart10.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
@@ -3857,7 +3974,9 @@ theorem treePart10_check :
       0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart10_check_chunked
 
 /-- Subtree splitting on `length[1] - length[7]` in the row-14 length cone, with leaves
 selecting cells 22, 23, 26, 27, 38, 39, 40, 41 and Farkas receipts excluding inconsistent sign
@@ -3902,12 +4021,21 @@ def treePart11 : CompactCellTree :=
             (.absurd 202))
         (.absurd 203))
 
+private theorem treePart11_check_chunked :
+    treePart11.checkLookup splitForms farkasReceiptLookup cells
+      ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart11_check :
     treePart11.check splitForms farkasReceipts cells
       ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart11_check_chunked
 
 /-- Subtree splitting on `length[4] - length[10]` in the row-14 length cone, with leaves
 selecting cells 42, 43, 44 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3924,13 +4052,23 @@ def treePart12 : CompactCellTree :=
             (.cell 43 [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 37, 36, 34, 41, 39])
             (.absurd 210)))
 
+private theorem treePart12_check_chunked :
+    treePart12.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff [0,
+      0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]]) ++
+      [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+      0]]) = true := by
+  decide +kernel
+
 theorem treePart12_check :
     treePart12.check splitForms farkasReceipts cells
       (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff [0,
       0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]]) ++
       [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
       0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart12_check_chunked
 
 /-- Subtree splitting on `length[4] - length[10]` in the row-14 length cone, with leaves
 selecting cells 45, 46, 47 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3947,18 +4085,37 @@ def treePart13 : CompactCellTree :=
             (.cell 46 [42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 59, 58, 64, 65, 57])
             (.absurd 211)))
 
-theorem treePart13_check :
-    treePart13.check splitForms farkasReceipts cells
+private theorem treePart13_check_chunked :
+    treePart13.checkLookup splitForms farkasReceiptLookup cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]])
       ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
   decide +kernel
 
+theorem treePart13_check :
+    treePart13.check splitForms farkasReceipts cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart13_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 204 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart14 : CompactCellTree :=
   .absurd 204
+
+private theorem treePart14_check_chunked :
+    treePart14.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+      0, 0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
 
 theorem treePart14_check :
     treePart14.check splitForms farkasReceipts cells
@@ -3967,7 +4124,9 @@ theorem treePart14_check :
       ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
       0, 0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart14_check_chunked
 
 /-- Subtree splitting on `length[2] - length[3]` in the row-14 length cone, with leaves
 selecting cells 48, 49, 50, 51, 52, 53 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4006,6 +4165,16 @@ def treePart15 : CompactCellTree :=
                     (.absurd 156))))
         (.absurd 216))
 
+private theorem treePart15_check_chunked :
+    treePart15.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff
+      [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart15_check :
     treePart15.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4014,7 +4183,9 @@ theorem treePart15_check :
       0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff
       [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart15_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[1] + length[2] + length[6]` in the row-14 length
 cone, with leaves selecting cells 51, 52, 53, 54, 55, 56 and Farkas receipts excluding
@@ -4054,6 +4225,16 @@ def treePart16 : CompactCellTree :=
                     (.absurd 156))))
         (.absurd 216))
 
+private theorem treePart16_check_chunked :
+    treePart16.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart16_check :
     treePart16.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4062,7 +4243,9 @@ theorem treePart16_check :
       0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart16_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 24, 26, 40, 57, 58, 59 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4101,12 +4284,21 @@ def treePart17 : CompactCellTree :=
             (.absurd 202))
         (.absurd 203))
 
+private theorem treePart17_check_chunked :
+    treePart17.checkLookup splitForms farkasReceiptLookup cells
+      ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff [0,
+      0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart17_check :
     treePart17.check splitForms farkasReceipts cells
       ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff [0,
       0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart17_check_chunked
 
 /-- Subtree splitting on `- length[8] + length[9]` in the row-14 length cone, with leaves
 selecting cells 60, 61, 62, 63, 64, 65 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4138,6 +4330,15 @@ def treePart18 : CompactCellTree :=
                             (.absurd 230)))))))
     (.absurd 231)
 
+private theorem treePart18_check_chunked :
+    treePart18.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff
+      [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) = true := by
+  decide +kernel
+
 theorem treePart18_check :
     treePart18.check splitForms farkasReceipts cells
       (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4145,7 +4346,9 @@ theorem treePart18_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff
       [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart18_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cell 66 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4157,6 +4360,16 @@ def treePart19 : CompactCellTree :=
         (.absurd 233))
     (.absurd 234)
 
+private theorem treePart19_check_chunked :
+    treePart19.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, -1, -1, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart19_check :
     treePart19.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4165,7 +4378,9 @@ theorem treePart19_check :
       0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, -1, -1, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart19_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cell 67 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4177,6 +4392,17 @@ def treePart20 : CompactCellTree :=
         (.absurd 236))
     (.absurd 237)
 
+private theorem treePart20_check_chunked :
+    treePart20.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart20_check :
     treePart20.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4186,7 +4412,9 @@ theorem treePart20_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart20_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cell 68 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4198,6 +4426,18 @@ def treePart21 : CompactCellTree :=
         (.absurd 239))
     (.absurd 240)
 
+private theorem treePart21_check_chunked :
+    treePart21.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
+      (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart21_check :
     treePart21.check splitForms farkasReceipts cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
@@ -4208,7 +4448,9 @@ theorem treePart21_check :
       [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart21_check_chunked
 
 /-- Subtree splitting on `length[0] - length[1] - length[3] - length[6]` in the row-14 length
 cone, with leaves selecting cells 69, 70, 71 and Farkas receipts excluding inconsistent sign
@@ -4246,6 +4488,18 @@ def treePart22 : CompactCellTree :=
                 (.absurd 266))
             (.absurd 156)))
 
+private theorem treePart22_check_chunked :
+    treePart22.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
+      (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart22_check :
     treePart22.check splitForms farkasReceipts cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
@@ -4256,7 +4510,9 @@ theorem treePart22_check :
       [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart22_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 25, 41, 72, 73 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4285,6 +4541,15 @@ def treePart23 : CompactCellTree :=
                 (.absurd 233))
             (.absurd 270)))
 
+private theorem treePart23_check_chunked :
+    treePart23.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0,
+      0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart23_check :
     treePart23.check splitForms farkasReceipts cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4292,7 +4557,9 @@ theorem treePart23_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0,
       0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart23_check_chunked
 
 /-- Subtree splitting on `- length[8] + length[9]` in the row-14 length cone, with leaves
 selecting cells 74, 75, 76, 77, 78, 79 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4324,6 +4591,15 @@ def treePart24 : CompactCellTree :=
                             (.absurd 230)))))))
     (.absurd 231)
 
+private theorem treePart24_check_chunked :
+    treePart24.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart24_check :
     treePart24.check splitForms farkasReceipts cells
       (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4331,7 +4607,9 @@ theorem treePart24_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart24_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[10]` in the row-14 length cone, with leaves
 selecting cell 66 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4343,6 +4621,16 @@ def treePart25 : CompactCellTree :=
         (.absurd 233))
     (.absurd 234)
 
+private theorem treePart25_check_chunked :
+    treePart25.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
+      0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart25_check :
     treePart25.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4351,7 +4639,9 @@ theorem treePart25_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
       0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart25_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[10]` in the row-14 length cone, with leaves
 selecting cell 67 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4363,6 +4653,17 @@ def treePart26 : CompactCellTree :=
         (.absurd 236))
     (.absurd 237)
 
+private theorem treePart26_check_chunked :
+    treePart26.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0,
+      -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart26_check :
     treePart26.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4372,7 +4673,9 @@ theorem treePart26_check :
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
       0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0,
       -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart26_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[10]` in the row-14 length cone, with leaves
 selecting cell 68 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4384,6 +4687,18 @@ def treePart27 : CompactCellTree :=
         (.absurd 239))
     (.absurd 240)
 
+private theorem treePart27_check_chunked :
+    treePart27.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
+      (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart27_check :
     treePart27.check splitForms farkasReceipts cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
@@ -4394,7 +4709,9 @@ theorem treePart27_check :
       0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart27_check_chunked
 
 /-- Subtree splitting on `length[0] - length[1] - length[3] - length[6]` in the row-14 length
 cone, with leaves selecting cells 69, 70, 71 and Farkas receipts excluding inconsistent sign
@@ -4432,6 +4749,18 @@ def treePart28 : CompactCellTree :=
                 (.absurd 266))
             (.absurd 156)))
 
+private theorem treePart28_check_chunked :
+    treePart28.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
+      (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart28_check :
     treePart28.check splitForms farkasReceipts cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
@@ -4442,7 +4771,9 @@ theorem treePart28_check :
       0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart28_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 27, 41, 73, 80 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4471,6 +4802,15 @@ def treePart29 : CompactCellTree :=
                 (.absurd 233))
             (.absurd 270)))
 
+private theorem treePart29_check_chunked :
+    treePart29.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart29_check :
     treePart29.check splitForms farkasReceipts cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4478,7 +4818,9 @@ theorem treePart29_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart29_check_chunked
 
 /-- Subtree splitting on `- length[8] + length[9]` in the row-14 length cone, with leaves
 selecting cells 62, 63, 64, 65, 81 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4506,6 +4848,15 @@ def treePart30 : CompactCellTree :=
                         (.absurd 156))))))
     (.absurd 231)
 
+private theorem treePart30_check_chunked :
+    treePart30.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
+      0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) = true := by
+  decide +kernel
+
 theorem treePart30_check :
     treePart30.check splitForms farkasReceipts cells
       (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4513,7 +4864,9 @@ theorem treePart30_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
       0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart30_check_chunked
 
 /-- Subtree splitting on `length[4] - length[5]` in the row-14 length cone, with leaves
 selecting cell 82 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4524,6 +4877,16 @@ def treePart31 : CompactCellTree :=
         (.absurd 233))
     (.absurd 234)
 
+private theorem treePart31_check_chunked :
+    treePart31.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
+      0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart31_check :
     treePart31.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4532,7 +4895,9 @@ theorem treePart31_check :
       0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
       0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart31_check_chunked
 
 /-- Subtree splitting on `length[4] - length[5]` in the row-14 length cone, with leaves
 selecting cell 76 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4544,6 +4909,17 @@ def treePart32 : CompactCellTree :=
         (.absurd 236))
     (.absurd 237)
 
+private theorem treePart32_check_chunked :
+    treePart32.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
+      0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart32_check :
     treePart32.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4553,7 +4929,9 @@ theorem treePart32_check :
       0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart32_check_chunked
 
 /-- Subtree splitting on `length[0] - length[1] - length[3] - length[6]` in the row-14 length
 cone, with leaves selecting cells 77, 78, 79 and Farkas receipts excluding inconsistent sign
@@ -4591,6 +4969,17 @@ def treePart33 : CompactCellTree :=
                 (.absurd 243))
             (.absurd 130)))
 
+private theorem treePart33_check_chunked :
+    treePart33.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
+      0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart33_check :
     treePart33.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4600,7 +4989,9 @@ theorem treePart33_check :
       0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart33_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 25, 27, 83, 84 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4633,6 +5024,15 @@ def treePart34 : CompactCellTree :=
             (.absurd 279))
         (.absurd 280))
 
+private theorem treePart34_check_chunked :
+    treePart34.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart34_check :
     treePart34.check splitForms farkasReceipts cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4640,7 +5040,9 @@ theorem treePart34_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 1,
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart34_check_chunked
 
 /-- Subtree splitting on `- length[8] + length[9]` in the row-14 length cone, with leaves
 selecting cells 68, 69, 70, 71, 85 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4668,6 +5070,16 @@ def treePart35 : CompactCellTree :=
                         (.absurd 156))))))
     (.absurd 231)
 
+private theorem treePart35_check_chunked :
+    treePart35.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) = true
+      := by
+  decide +kernel
+
 theorem treePart35_check :
     treePart35.check splitForms farkasReceipts cells
       (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4676,7 +5088,9 @@ theorem treePart35_check :
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) = true
       := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart35_check_chunked
 
 /-- Subtree splitting on `- length[5] + length[10]` in the row-14 length cone, with leaves
 selecting cell 82 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4687,6 +5101,16 @@ def treePart36 : CompactCellTree :=
         (.absurd 233))
     (.absurd 234)
 
+private theorem treePart36_check_chunked :
+    treePart36.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
+      0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart36_check :
     treePart36.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4695,7 +5119,9 @@ theorem treePart36_check :
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
       0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart36_check_chunked
 
 /-- Subtree splitting on `- length[5] + length[10]` in the row-14 length cone, with leaves
 selecting cell 76 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4707,6 +5133,17 @@ def treePart37 : CompactCellTree :=
         (.absurd 236))
     (.absurd 237)
 
+private theorem treePart37_check_chunked :
+    treePart37.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
+      0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart37_check :
     treePart37.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4716,7 +5153,9 @@ theorem treePart37_check :
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
       0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart37_check_chunked
 
 /-- Subtree splitting on `length[0] - length[1] - length[3] - length[6]` in the row-14 length
 cone, with leaves selecting cells 77, 78, 79 and Farkas receipts excluding inconsistent sign
@@ -4754,6 +5193,17 @@ def treePart38 : CompactCellTree :=
                 (.absurd 243))
             (.absurd 130)))
 
+private theorem treePart38_check_chunked :
+    treePart38.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
+      0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart38_check :
     treePart38.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4763,7 +5213,9 @@ theorem treePart38_check :
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
       0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart38_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 27, 41, 84, 86 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4796,6 +5248,15 @@ def treePart39 : CompactCellTree :=
             (.absurd 279))
         (.absurd 280))
 
+private theorem treePart39_check_chunked :
+    treePart39.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart39_check :
     treePart39.check splitForms farkasReceipts cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4803,7 +5264,9 @@ theorem treePart39_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart39_check_chunked
 
 /-- Subtree splitting on `length[0] - length[7]` in the row-14 length cone, with leaves
 selecting cells 87, 88, 89, 90, 91, 92, 93 and Farkas receipts excluding inconsistent sign
@@ -4841,13 +5304,23 @@ def treePart40 : CompactCellTree :=
                 (.absurd 279))
             (.absurd 280)))
 
+private theorem treePart40_check_chunked :
+    treePart40.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1,
+      0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart40_check :
     treePart40.check splitForms farkasReceipts cells
       (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
       ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1,
       0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart40_check_chunked
 
 /-- Subtree splitting on `length[0] - length[7]` in the row-14 length cone, with leaves
 selecting cells 1, 5, 11, 12, 13, 21, 25 and Farkas receipts excluding inconsistent sign
@@ -4894,13 +5367,23 @@ def treePart41 : CompactCellTree :=
                 (.absurd 279))
             (.absurd 280)))
 
+private theorem treePart41_check_chunked :
+    treePart41.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0,
+      0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart41_check :
     treePart41.check splitForms farkasReceipts cells
       (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
       ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0,
       0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart41_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cells 29, 94 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4914,13 +5397,23 @@ def treePart42 : CompactCellTree :=
             (.absurd 62)))
     (.absurd 292)
 
+private theorem treePart42_check_chunked :
+    treePart42.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart42_check :
     treePart42.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
       ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
       0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart42_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[1] + length[7]` in the row-14 length cone, with
 leaves selecting cells 94, 95, 96, 97, 98 and Farkas receipts excluding inconsistent sign
@@ -4947,6 +5440,16 @@ def treePart43 : CompactCellTree :=
                       148, 150, 147, 152, 161, 155, 165, 153])
                     (.absurd 156)))))
 
+private theorem treePart43_check_chunked :
+    treePart43.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0,
+      0, 1, -1, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart43_check :
     treePart43.check splitForms farkasReceipts cells
       ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
@@ -4955,7 +5458,9 @@ theorem treePart43_check :
       0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
       0, 0])]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0,
       0, 1, -1, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart43_check_chunked
 
 /-- Subtree splitting on `- length[8] + length[11]` in the row-14 length cone, with leaves
 selecting cells 29, 31, 34, 35, 37 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4983,8 +5488,8 @@ def treePart44 : CompactCellTree :=
                         (.absurd 230))))))
     (.absurd 62)
 
-theorem treePart44_check :
-    treePart44.check splitForms farkasReceipts cells
+private theorem treePart44_check_chunked :
+    treePart44.checkLookup splitForms farkasReceiptLookup cells
       ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
       ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
@@ -4993,10 +5498,32 @@ theorem treePart44_check :
       0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
   decide +kernel
 
+theorem treePart44_check :
+    treePart44.check splitForms farkasReceipts cells
+      ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0,
+      0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart44_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 292 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart45 : CompactCellTree :=
   .absurd 292
+
+private theorem treePart45_check_chunked :
+    treePart45.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0])]) = true :=
+      by
+  decide +kernel
 
 theorem treePart45_check :
     treePart45.check splitForms farkasReceipts cells
@@ -5006,7 +5533,9 @@ theorem treePart45_check :
       0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
       0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0])]) = true :=
       by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart45_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 41, 99, 100, 101 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5035,13 +5564,23 @@ def treePart46 : CompactCellTree :=
         (.absurd 292))
     (.absurd 203)
 
+private theorem treePart46_check_chunked :
+    treePart46.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart46_check :
     treePart46.check splitForms farkasReceipts cells
       (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
       ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart46_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[7]` in the row-14 length cone, with leaves
 selecting cells 102, 103, 104, 105, 106 and Farkas receipts excluding inconsistent sign
@@ -5070,13 +5609,23 @@ def treePart47 : CompactCellTree :=
                           121, 122, 128, 123, 273, 126, 129, 125, 127])
                         (.absurd 130))))))
 
+private theorem treePart47_check_chunked :
+    treePart47.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0,
+      0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart47_check :
     treePart47.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
       0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0,
       0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart47_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[10]` in the row-14 length cone, with leaves
 selecting cells 94, 95, 96, 97, 98 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5106,6 +5655,15 @@ def treePart48 : CompactCellTree :=
                             (.absurd 156)))))))
     (.absurd 63)
 
+private theorem treePart48_check_chunked :
+    treePart48.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0,
+      0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0,
+      0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart48_check :
     treePart48.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
@@ -5113,7 +5671,9 @@ theorem treePart48_check :
       0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0,
       0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0,
       0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart48_check_chunked
 
 /-- Subtree splitting on `length[4] - length[5]` in the row-14 length cone, with leaves
 selecting cells 3, 29 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5124,6 +5684,15 @@ def treePart49 : CompactCellTree :=
         (.cell 29 [42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 59, 58, 61, 57, 60, 56])
         (.absurd 201))
 
+private theorem treePart49_check_chunked :
+    treePart49.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 1]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart49_check :
     treePart49.check splitForms farkasReceipts cells
       (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
@@ -5131,7 +5700,9 @@ theorem treePart49_check :
       0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
       0, 0, 0, 0, -1, 0, 0, 1]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart49_check_chunked
 
 /-- Subtree splitting on `length[4] - length[5]` in the row-14 length cone, with leaves
 selecting cells 7, 31 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5142,6 +5713,16 @@ def treePart50 : CompactCellTree :=
         (.cell 31 [66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 83, 82, 194, 84, 80])
         (.absurd 209))
 
+private theorem treePart50_check_chunked :
+    treePart50.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 1]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart50_check :
     treePart50.check splitForms farkasReceipts cells
       ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
@@ -5150,7 +5731,9 @@ theorem treePart50_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
       0, 0, 0, 0, -1, 0, 0, 1]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart50_check_chunked
 
 /-- Subtree splitting on `- length[0] - length[1] + length[7]` in the row-14 length cone, with
 leaves selecting cells 16, 17, 19, 34, 35, 37 and Farkas receipts excluding inconsistent sign
@@ -5194,8 +5777,8 @@ def treePart51 : CompactCellTree :=
                         (.absurd 300)))
                 (.absurd 301))))
 
-theorem treePart51_check :
-    treePart51.check splitForms farkasReceipts cells
+private theorem treePart51_check_chunked :
+    treePart51.checkLookup splitForms farkasReceiptLookup cells
       ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
       0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
@@ -5204,10 +5787,31 @@ theorem treePart51_check :
       0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
   decide +kernel
 
+theorem treePart51_check :
+    treePart51.check splitForms farkasReceipts cells
+      ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 1]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart51_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 302 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart52 : CompactCellTree :=
   .absurd 302
+
+private theorem treePart52_check_chunked :
+    treePart52.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1])]) = true := by
+  decide +kernel
 
 theorem treePart52_check :
     treePart52.check splitForms farkasReceipts cells
@@ -5216,7 +5820,9 @@ theorem treePart52_check :
       0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart52_check_chunked
 
 /-- Subtree splitting on `length[1] - length[7]` in the row-14 length cone, with leaves
 selecting cells 100, 107, 108, 109 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5240,13 +5846,23 @@ def treePart53 : CompactCellTree :=
             (.absurd 305))
         (.absurd 306))
 
+private theorem treePart53_check_chunked :
+    treePart53.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart53_check :
     treePart53.check splitForms farkasReceipts cells
       (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
       0, 0, 0, 0, -1, 0])]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart53_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 27, 41, 101, 110 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5279,13 +5895,23 @@ def treePart54 : CompactCellTree :=
                 (.absurd 309))))
     (.absurd 310)
 
+private theorem treePart54_check_chunked :
+    treePart54.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart54_check :
     treePart54.check splitForms farkasReceipts cells
       (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
       0, 0, 0, 0, -1, 0])]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0,
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart54_check_chunked
 
 /-- Subtree splitting on `length[0] - length[6]` in the row-14 length cone, with leaves
 selecting cells 93, 111, 112, 113, 114, 115, 116, 117 and Farkas receipts excluding inconsistent
@@ -5322,6 +5948,15 @@ def treePart55 : CompactCellTree :=
         (.cell 93 [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 304, 34, 39, 32, 41, 37,
           284]))
 
+private theorem treePart55_check_chunked :
+    treePart55.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true
+      := by
+  decide +kernel
+
 theorem treePart55_check :
     treePart55.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5329,7 +5964,9 @@ theorem treePart55_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0,
       0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true
       := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart55_check_chunked
 
 /-- Subtree splitting on `length[0] - length[6]` in the row-14 length cone, with leaves
 selecting cells 93, 112, 113, 114, 115, 116, 117 and Farkas receipts excluding inconsistent sign
@@ -5364,6 +6001,15 @@ def treePart56 : CompactCellTree :=
               80, 81])
             (.absurd 296)))
 
+private theorem treePart56_check_chunked :
+    treePart56.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart56_check :
     treePart56.check splitForms farkasReceipts cells
       (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5371,7 +6017,9 @@ theorem treePart56_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0,
       0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0,
       1, 0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart56_check_chunked
 
 /-- Subtree splitting on `length[0] - length[6]` in the row-14 length cone, with leaves
 selecting cells 113, 114, 115, 116, 118 and Farkas receipts excluding inconsistent sign
@@ -5400,6 +6048,16 @@ def treePart57 : CompactCellTree :=
                         (.absurd 156))))))
     (.absurd 280)
 
+private theorem treePart57_check_chunked :
+    treePart57.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) =
+      true := by
+  decide +kernel
+
 theorem treePart57_check :
     treePart57.check splitForms farkasReceipts cells
       (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5408,7 +6066,9 @@ theorem treePart57_check :
       0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0,
       1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) =
       true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart57_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 119, 120, 121, 122, 123 and Farkas receipts excluding inconsistent sign
@@ -5448,6 +6108,15 @@ def treePart58 : CompactCellTree :=
                             (.absurd 325))
                         (.absurd 130))))))
 
+private theorem treePart58_check_chunked :
+    treePart58.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart58_check :
     treePart58.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5455,7 +6124,9 @@ theorem treePart58_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart58_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 109, 124 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5474,6 +6145,15 @@ def treePart59 : CompactCellTree :=
             (.absurd 279))
         (.absurd 280))
 
+private theorem treePart59_check_chunked :
+    treePart59.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart59_check :
     treePart59.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5481,7 +6161,9 @@ theorem treePart59_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart59_check_chunked
 
 /-- Subtree splitting on `length[0] - length[6]` in the row-14 length cone, with leaves
 selecting cells 25, 60, 61, 62, 63, 64, 65, 72 and Farkas receipts excluding inconsistent sign
@@ -5524,6 +6206,15 @@ def treePart60 : CompactCellTree :=
               282])
             (.absurd 331)))
 
+private theorem treePart60_check_chunked :
+    treePart60.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart60_check :
     treePart60.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5531,7 +6222,9 @@ theorem treePart60_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1,
       0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart60_check_chunked
 
 /-- Subtree splitting on `length[0] - length[6]` in the row-14 length cone, with leaves
 selecting cells 25, 62, 63, 64, 65, 81, 83 and Farkas receipts excluding inconsistent sign
@@ -5574,6 +6267,15 @@ def treePart61 : CompactCellTree :=
                 (.absurd 335))
             (.absurd 309)))
 
+private theorem treePart61_check_chunked :
+    treePart61.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1,
+      -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart61_check :
     treePart61.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5581,7 +6283,9 @@ theorem treePart61_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1,
       -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart61_check_chunked
 
 /-- Subtree splitting on `length[4] - length[5]` in the row-14 length cone, with leaves
 selecting cells 76, 77, 78, 79, 82 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5614,6 +6318,15 @@ def treePart62 : CompactCellTree :=
         (.absurd 329))
     (.absurd 336)
 
+private theorem treePart62_check_chunked :
+    treePart62.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart62_check :
     treePart62.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5621,7 +6334,9 @@ theorem treePart62_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart62_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 27, 84 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5644,6 +6359,15 @@ def treePart63 : CompactCellTree :=
             (.absurd 279))
         (.absurd 280))
 
+private theorem treePart63_check_chunked :
+    treePart63.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart63_check :
     treePart63.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5651,7 +6375,9 @@ theorem treePart63_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart63_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 125, 126, 127, 128, 129 and Farkas receipts excluding inconsistent sign
@@ -5679,6 +6405,15 @@ def treePart64 : CompactCellTree :=
                           121, 122, 273, 123, 128, 126, 129, 214, 127])
                         (.absurd 130))))))
 
+private theorem treePart64_check_chunked :
+    treePart64.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart64_check :
     treePart64.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5686,7 +6421,9 @@ theorem treePart64_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++ [aff [0, 0,
       0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart64_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 68, 69, 70, 71, 85 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5725,6 +6462,15 @@ def treePart65 : CompactCellTree :=
                             (.absurd 340))
                         (.absurd 130))))))
 
+private theorem treePart65_check_chunked :
+    treePart65.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart65_check :
     treePart65.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5732,7 +6478,9 @@ theorem treePart65_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart65_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 119, 120, 121, 122, 123 and Farkas receipts excluding inconsistent sign
@@ -5761,6 +6509,16 @@ def treePart66 : CompactCellTree :=
                           147, 148, 223, 162, 150, 161, 155, 165, 153])
                         (.absurd 156))))))
 
+private theorem treePart66_check_chunked :
+    treePart66.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart66_check :
     treePart66.check splitForms farkasReceipts cells
       (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5769,7 +6527,9 @@ theorem treePart66_check :
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0,
       1, -1, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart66_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 76, 77, 78, 79, 82 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5808,8 +6568,8 @@ def treePart67 : CompactCellTree :=
                             (.absurd 345))
                         (.absurd 156))))))
 
-theorem treePart67_check :
-    treePart67.check splitForms farkasReceipts cells
+private theorem treePart67_check_chunked :
+    treePart67.checkLookup splitForms farkasReceiptLookup cells
       (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
@@ -5818,10 +6578,31 @@ theorem treePart67_check :
       0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
   decide +kernel
 
+theorem treePart67_check :
+    treePart67.check splitForms farkasReceipts cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0]]) ++ [AffineForm.violation (aff [0, 0,
+      0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart67_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 346 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart68 : CompactCellTree :=
   .absurd 346
+
+private theorem treePart68_check_chunked :
+    treePart68.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0])]) = true := by
+  decide +kernel
 
 theorem treePart68_check :
     treePart68.check splitForms farkasReceipts cells
@@ -5830,7 +6611,9 @@ theorem treePart68_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0,
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart68_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 27, 41, 84, 86, 100, 109, 124, 130 and Farkas receipts excluding inconsistent
@@ -5875,13 +6658,23 @@ def treePart69 : CompactCellTree :=
             (.absurd 202))
         (.absurd 203))
 
+private theorem treePart69_check_chunked :
+    treePart69.checkLookup splitForms farkasReceiptLookup cells
+      ((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart69_check :
     treePart69.check splitForms farkasReceipts cells
       ((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart69_check_chunked
 
 /-- The complete compact decision tree for row 14 on the length cone, assembling 70 subtrees
 whose cell and Farkas certificates are replayed by the cover checker. -/

@@ -7,7 +7,14 @@ module
 
 public import LeanPool.ConwaySoifer.SevenTriangles.Geometry.Area
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # The 120-degree wedge and the area-loss lemma

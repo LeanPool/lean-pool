@@ -11,7 +11,13 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.LinearAlgebra.Basis.Fin
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 Lebesgue area in triangular coordinates. Physical area is sqrt(3)/2 times

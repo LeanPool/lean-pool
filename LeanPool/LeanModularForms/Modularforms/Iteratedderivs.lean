@@ -37,7 +37,9 @@ theorem aut_iter_deriv (d : ℤ) (k : ℕ) :
   intro x hx
   induction k generalizing x with
   | zero =>
-    simp_all
+    simp_all only [mem_ofPred_eq, one_div, iteratedDerivWithin_zero, pow_zero,
+      Nat.factorial_zero, Nat.cast_one,
+        mul_one, zero_add, pow_one, one_mul]
   | succ k IH =>
     rw [iteratedDerivWithin_succ]
     simp only [one_div, Nat.cast_succ, Nat.factorial, Nat.cast_mul]
@@ -79,8 +81,8 @@ theorem aut_iter_deriv (d : ℤ) (k : ℕ) :
           apply pow_ne_zero (k + 1) (upper_ne_int ⟨x, hx⟩ d)
       · apply IsOpen.uniqueDiffWithinAt _ hx
         refine isOpen_lt ?_ ?_
-        · fun_prop
-        · fun_prop
+        · exact continuous_const
+        · exact continuous_im
     rw [←H]
     apply derivWithin_congr
     · norm_cast at *
@@ -89,7 +91,7 @@ theorem aut_iter_deriv (d : ℤ) (k : ℕ) :
         Nat.cast_one, Int.cast_add] at *
       intro r hr
       apply IH hr
-    simp_all
+    simp_all only [mem_ofPred_eq, one_div]
 
 theorem aut_iter_deriv' (d : ℤ) (k : ℕ) :
     EqOn (iteratedDerivWithin k (fun z : ℂ => 1 / (z - d)) {z : ℂ | 0 < z.im})
@@ -119,7 +121,7 @@ theorem iter_div_aut_add (d : ℤ) (k : ℕ) :
   rw [iteratedDerivWithin_add hx ?_]
   · have h2 := aut_iter_deriv d k hx
     have h3 := aut_iter_deriv' d k hx
-    simp_all
+    simp_all only [mem_ofPred_eq, one_div]
   · have h4 := aut_contDiffOn d k
     simp only [one_div] at h4
     apply h4
@@ -128,7 +130,9 @@ theorem iter_div_aut_add (d : ℤ) (k : ℕ) :
     simp only [Int.cast_neg, sub_neg_eq_add, one_div] at h5
     apply h5
     exact hx
-  · exact IsOpen.uniqueDiffOn (isOpen_lt (by fun_prop) (by fun_prop))
+  · exact IsOpen.uniqueDiffOn (isOpen_lt (by
+    exact continuous_const) (by
+    exact continuous_im))
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜] {F : Type*}
   [NormedAddCommGroup F] [NormedSpace 𝕜 F] (n : ℕ) (f : 𝕜 → F) (s : Set 𝕜) (x : 𝕜)
@@ -141,5 +145,7 @@ theorem exp_iter_deriv_within (n m : ℕ) :
            {z : ℂ | 0 < z.im})
       (fun t => (2 * ↑π * Complex.I * m) ^ n * Complex.exp (2 * ↑π * Complex.I * m * t))
       {z : ℂ | 0 < z.im} := by
-  apply EqOn.trans (iteratedDerivWithin_of_isOpen (isOpen_lt (by fun_prop) (by fun_prop)))
+  apply EqOn.trans (iteratedDerivWithin_of_isOpen (isOpen_lt (by
+    exact continuous_const) (by
+    exact continuous_im)))
   exact fun x _ => congr_fun (iteratedDeriv_cexp_const_mul ..) x

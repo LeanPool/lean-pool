@@ -7,6 +7,7 @@ Authors: Boris Alexeev
 module
 
 public import LeanPool.HopfProblem.MainTheorem.Core3
+public import LeanPool.HopfProblem.Prelude
 
 /-!
 # A complex structure on the six-sphere
