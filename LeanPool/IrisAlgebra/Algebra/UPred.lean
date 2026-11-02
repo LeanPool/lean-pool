@@ -26,47 +26,50 @@ https://leanprover.zulipchat.com/#narrow/channel/490604-iris-lean/topic/Bi-entai
 -/
 /-- A resource together with its validity at one step index. -/
 @[ext]
-structure ValidAt (M : Type _) [UORA M] (n : Nat) where
+structure ValidAt (M : Type _) [OFE M] [Validity M] (n : Nat) where
   /-- The underlying valid resource. -/
   val : M
   property : ✓{n} val
 
-instance {M : Type _} [UORA M] {n : Nat} : CoeOut (ValidAt M n) M where
+instance {M : Type _} [OFE M] [Validity M] {n : Nat} : CoeOut (ValidAt M n) M where
   coe := (·.val)
 
 /-- View a valid resource at an earlier step index. -/
-def ValidAt.le {M : Type _} [UORA M] {n m : Nat} (Hle : m ≤ n) : ValidAt M n → ValidAt M m :=
+def ValidAt.le {M : Type _} [OFE M] [Validity M] {n m : Nat} (Hle : m ≤ n) :
+    ValidAt M n → ValidAt M m :=
   fun v => ⟨v.val, validN_of_le Hle v.property⟩
 
 @[simp]
-theorem ValidAt.le_val {M : Type _} [UORA M] {n m : Nat} {Hle : m ≤ n} {v : ValidAt M n} :
+theorem ValidAt.le_val {M : Type _} [OFE M] [Validity M] {n m : Nat}
+    {Hle : m ≤ n} {v : ValidAt M n} :
   (v.le Hle).val = v.val := by rfl
 
 @[simp]
-theorem ValidAt.le_rfl {M : Type _} [UORA M] {n : Nat} {Hle : n ≤ n} {v : ValidAt M n} :
+theorem ValidAt.le_rfl {M : Type _} [OFE M] [Validity M] {n : Nat} {Hle : n ≤ n} {v : ValidAt M n} :
   v.le Hle = v := by rfl
 
 /-- The data of a UPred object is an indexed proposition over M (Bundled version) -/
 @[ext]
-structure UPred (M : Type _) [UORA M] where
+structure UPred (M : Type _) [OFE M] [Validity M] [Ordered M] where
   /-- The proposition asserted at a step index and valid resource. -/
   holds : (n : Nat) → ValidAt M n → Prop
   mono {n1 n2} {x1 : ValidAt M n1} {x2 : ValidAt M n2} :
     holds n1 x1 → (x1 : M) ≼ₒ{n2} (x2 : M) → (Hle : n2 ≤ n1) → holds n2 x2
 
 /-- Evaluate a predicate with validity supplied as a separate proof. -/
-def UPred.holdsUnpacked {M : Type _} [UORA M] (P : UPred M) (n : Nat) (x : M) (Hx : ✓{n} x) :
-    Prop :=
+def UPred.holdsUnpacked {M : Type _} [OFE M] [Validity M] [Ordered M]
+    (P : UPred M) (n : Nat) (x : M) (Hx : ✓{n} x) : Prop :=
   P.holds n ⟨x, Hx⟩
 
-theorem UPred.mono_unpacked {M : Type _} [UORA M] (P : UPred M) {n1 n2 : Nat} {x1 x2 : M}
+theorem UPred.mono_unpacked {M : Type _} [OFE M] [Validity M] [Ordered M]
+    (P : UPred M) {n1 n2 : Nat} {x1 x2 : M}
     (Hx1 : ✓{n1} x1) (Hx2 : ✓{n2} x2) (HP : P.holdsUnpacked n1 x1 Hx1) (Hxle : x1 ≼ₒ{n2} x2)
     (Hle : n2 ≤ n1) : P.holdsUnpacked n2 x2 Hx2 :=
   P.mono HP Hxle Hle
 
 /-- The definition of UPred is equivalent to separately proving pointwise down-closure,
 non-expansivity, and monotonicity. -/
-theorem uPred_alt {M : Type _} [UORA M] (P : Nat → M → Prop) :
+theorem uPred_alt {M : Type _} [OFE M] [Ordered M] [OrderRefl M] (P : Nat → M → Prop) :
     (∀ {n1 n2} {x1 x2 : M}, P n1 x1 → x1 ≼ₒ{n1} x2 → n2 ≤ n1 → P n2 x2) ↔
     ((∀ {x : M} {n1 n2}, n2 ≤ n1 → P n1 x → P n2 x) ∧
      (∀ {n} {x1 x2 : M}, x1 ≡{n}≡ x2 → ∀ m, m ≤ n → (P m x1 ↔ P m x2)) ∧
@@ -81,14 +84,16 @@ theorem uPred_alt {M : Type _} [UORA M] (P : Nat → M → Prop) :
   · refine fun ⟨Hdc, _, Hmono⟩ n1 n2 x1 x2 HP Hinc Hle => ?_
     exact Hmono (ordN_of_ordN_le Hle Hinc) n2 (Nat.le_refl _) (Hdc Hle HP)
 
-instance [UORA M] : Inhabited (UPred M) := ⟨fun _ _ => True, fun _ _ _ => ⟨⟩⟩
+instance [OFE M] [Validity M] [Ordered M] : Inhabited (UPred M) :=
+  ⟨fun _ _ => True, fun _ _ _ => ⟨⟩⟩
 
-instance [UORA M] : CoeFun (UPred M) (fun _ => (n : Nat) → ValidAt M n → Prop) where
+instance [OFE M] [Validity M] [Ordered M] :
+    CoeFun (UPred M) (fun _ => (n : Nat) → ValidAt M n → Prop) where
   coe x := x.holds
 
 section UPred
 
-variable [UORA M]
+variable [OFE M] [Validity M] [Ordered M]
 
 open UPred
 
@@ -105,16 +110,16 @@ instance : OFE (UPred M) where
   dist_lt Hdist Hlt _ _ Hle Hvalid :=
     Hdist _ _ (Nat.le_trans Hle (Nat.le_of_succ_le Hlt)) Hvalid
 
-theorem uPred_ne {P : UPred M} {n} {m₁ m₂ : ValidAt M n} (H : (m₁ : M) ≡{n}≡ (m₂ : M)) : P n m₁ ↔
-    P n m₂ :=
+theorem uPred_ne [OrderRefl M] {P : UPred M} {n} {m₁ m₂ : ValidAt M n}
+    (H : (m₁ : M) ≡{n}≡ (m₂ : M)) : P n m₁ ↔ P n m₂ :=
   ⟨fun H' => P.mono H' H.to_ordN .refl, fun H' => P.mono H' H.symm.to_ordN .refl⟩
 
-theorem uPred_holds_ne {P Q : UPred M} {n₁ n₂} {x : M}
+theorem uPred_holds_ne [OrderRefl M] {P Q : UPred M} {n₁ n₂} {x : M}
     (HPQ : P ≡{n₂}≡ Q) (Hn : n₂ ≤ n₁) (Hx : ✓{n₂} x) (Hx' : ✓{n₁} x) (HQ : Q n₁ ⟨x, Hx'⟩) : P n₂
         ⟨x, Hx⟩ :=
   (HPQ _ _ .refl Hx).mpr (Q.mono HQ .rfl Hn)
 
-instance : IsCOFE (UPred M) where
+instance [OrderRefl M] : IsCOFE (UPred M) where
   compl c := {
     holds n x := ∀ n', (Hle : n' ≤ n) → (c n') n' (x.le Hle)
     mono {n1 n2 x1 x2 HP Hx12 Hn12 n3 Hn23} := by
@@ -132,7 +137,7 @@ abbrev UPredOF (F : (∀ (α : Type _) (β : Type _), [Iris.COFE α] → [Iris.C
   fun A B _ _ => UPred (F B A)
 
 /-- Pull a monotone step-indexed predicate back along a resource morphism. -/
-def uPredMap [UORA α] [UORA β] (f : β -C> α) : UPred α -n> UPred β := by
+def uPredMap [ORA α] [ORA β] (f : β -C> α) : UPred α -n> UPred β := by
   refine ⟨fun P => ⟨fun n x => P n ⟨(f x.val), f.validN x.property⟩, ?_⟩, ⟨?_⟩⟩
   · intro n1 n2 x1 x2 HP Hm Hn
     exact P.mono HP (f.monoN_ord Hm) Hn

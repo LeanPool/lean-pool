@@ -19,19 +19,21 @@ Copyright (c) The Iris-Lean Contributors.
 namespace Iris
 
 /-- A frame-preserving update to some resource satisfying a predicate. -/
-def UpdateP [ORA α] (x : α) (P : α → Prop) := ∀ n mz, ✓{n} (x •? mz) → ∃ y, P y ∧ ✓{n} (y •? mz)
+def UpdateP [OFE α] [Op α] [Validity α] (x : α) (P : α → Prop) :=
+  ∀ n mz, ✓{n} (x •? mz) → ∃ y, P y ∧ ✓{n} (y •? mz)
 /-- Notation for a frame-preserving update satisfying a predicate. -/
 infixr:50 " ~~>: " => UpdateP
 
 /-- A frame-preserving update to a specified resource. -/
-def Update [ORA α] (x y : α) := ∀ n mz, ✓{n} (x •? mz) → ✓{n} (y •? mz)
+def Update [OFE α] [Op α] [Validity α] (x y : α) := ∀ n mz, ✓{n} (x •? mz) → ✓{n} (y •? mz)
 /-- Notation for a frame-preserving update to a specified resource. -/
 infixr:50 " ~~> " => Update
 
 section Updates
 open ORA
 
-variable [ORA α] [ORA β] (f : α → β) (g : β → α)
+section PrimitiveUpdates
+variable [OFE α] [Op α] [Validity α] [OFE β] [Op β] [Validity β] (f : α → β) (g : β → α)
 
 theorem Update.of_updateP {x y : α} (h : x ~~>: (y = ·)) : x ~~> y :=
   fun n mz v => let ⟨_, e, v⟩ := (h n mz v); e ▸ v
@@ -89,6 +91,49 @@ theorem UpdateP.op' {P Q : α → Prop} {x y : α} (uxp : x ~~>: P) (uyq : y ~~>
 theorem Update.op {x₁ x₂ y₁ y₂ : α} (xy₁ : x₁ ~~> y₁) (xy₂ : x₂ ~~> y₂) : x₁ • x₂ ~~> y₁ • y₂ :=
   .of_updateP <| .op (.of_update xy₁) (.of_update xy₂) fun _ _ ez ew => ez ▸ ew ▸ rfl
 
+/-! ## Isomorphism -/
+theorem UpdateP.iso
+    (gf : ∀ x, g (f x) = x)
+    (g_op : ∀ y1 y2, g (y1 • y2) = g y1 • g y2)
+    (g_validN : ∀ n y, ✓{n} (g y) ↔ ✓{n} y)
+    (uyp : y ~~>: P)
+    (pq : ∀ y', P y' → Q (g y')) :
+    g y ~~>: Q := by
+  intro n mz v
+  have : ✓{n} y •? Option.map f mz :=
+    match mz with
+    | none => (g_validN n _).mp v
+    | some z =>
+      have : g y • z = g (y • f z) := by rw [g_op, gf]
+      (g_validN n _).mp (validN_ne this.dist v)
+  have ⟨x, px, vx⟩ := uyp n (mz.map f) this
+  have : g (x •? Option.map f mz) = g x •? mz :=
+    match mz with
+    | none => rfl
+    | some z => by simp only [Option.map_some, optionalOp, g_op, gf]
+  exact ⟨g x, pq x px, validN_ne this.dist ((g_validN n _).mpr vx)⟩
+
+theorem UpdateP.iso'
+    (gf : ∀ x, g (f x) = x)
+    (g_op : ∀ y1 y2, g (y1 • y2) = g y1 • g y2)
+    (g_validN : ∀ n y, ✓{n} (g y) ↔ ✓{n} y)
+    (uyp : y ~~>: P) :
+    g y ~~>: fun x ↦ ∃ y, x = g y ∧ P y :=
+  .iso f g gf g_op g_validN uyp fun z pz => ⟨z, rfl, pz⟩
+
+/-! ## Lift -/
+theorem Update.lift_updateP (x y : β)
+    (H : ∀ P, x ~~>: P → g x ~~>: fun a' ↦ ∃ b', a' = g b' ∧ P b')
+    (uxy : x ~~> y) : g x ~~> g y :=
+  .of_updateP fun n mz v =>
+    have ⟨z, hz, vz⟩ := H _ (.of_update uxy) n mz v
+    have hz : z = g y := by simp only [exists_eq_right'] at hz ⊢; exact hz
+    ⟨z, hz.symm, vz⟩
+
+end PrimitiveUpdates
+
+variable [ORA α] [ORA β]
+
 theorem Update.op_l {x y : α} : x • y ~~> x := fun _ _ => validN_op_opM_left
 
 theorem Update.op_r {x y : α} : x • y ~~> y := fun _ _ => validN_op_opM_right
@@ -102,7 +147,7 @@ theorem Update.included {x y : α} : x ≼ y → y ~~> x :=
 theorem Update.valid0 {x y : α} : (✓{0} x → x ~~> y) → x ~~> y :=
   fun h n mz v => h (valid0_of_validN (validN_opM v)) n mz v
 
-/-! ## Frame preserving updates for total and discete CMRAs -/
+/-! ## Frame preserving updates for total and discrete CMRAs -/
 theorem UpdateP.total [IsTotal α] :
     x ~~>: P ↔ ∀ (n : Nat) (z : α), ✓{n} (x • z) → ∃ y, P y ∧ ✓{n} (y • z) where
   mp uxp := fun n z v => uxp n (some z) v
@@ -155,45 +200,6 @@ theorem Update.discrete_total [Discrete α] [IsTotal α] :
 -- `cmra_transport` itself is ignored (see `CMRA.lean`): equality `A = B` between CMRAs is
 -- transported by `transpAp`, so these update lemmas are subsumed by rewriting along the
 -- equality and using the plain `updateP` API.
-
-/-! ## Isomorphism -/
-theorem UpdateP.iso
-    (gf : ∀ x, g (f x) = x)
-    (g_op : ∀ y1 y2, g (y1 • y2) = g y1 • g y2)
-    (g_validN : ∀ n y, ✓{n} (g y) ↔ ✓{n} y)
-    (uyp : y ~~>: P)
-    (pq : ∀ y', P y' → Q (g y')) :
-    g y ~~>: Q := by
-  intro n mz v
-  have : ✓{n} y •? Option.map f mz :=
-    match mz with
-    | none => (g_validN n _).mp v
-    | some z =>
-      have : g y • z = g (y • f z) := by rw [g_op, gf]
-      (g_validN n _).mp (validN_ne this.dist v)
-  have ⟨x, px, vx⟩ := uyp n (mz.map f) this
-  have : g (x •? Option.map f mz) = g x •? mz :=
-    match mz with
-    | none => rfl
-    | some z => by simp only [Option.map_some, optionalOp, g_op, gf]
-  exact ⟨g x, pq x px, validN_ne this.dist ((g_validN n _).mpr vx)⟩
-
-theorem UpdateP.iso'
-    (gf : ∀ x, g (f x) = x)
-    (g_op : ∀ y1 y2, g (y1 • y2) = g y1 • g y2)
-    (g_validN : ∀ n y, ✓{n} (g y) ↔ ✓{n} y)
-    (uyp : y ~~>: P) :
-    g y ~~>: fun x ↦ ∃ y, x = g y ∧ P y :=
-  .iso f g gf g_op g_validN uyp fun z pz => ⟨z, rfl, pz⟩
-
-/-! ## Lift -/
-theorem Update.lift_updateP (x y : β)
-    (H : ∀ P, x ~~>: P → g x ~~>: fun a' ↦ ∃ b', a' = g b' ∧ P b')
-    (uxy : x ~~> y) : g x ~~> g y :=
-  .of_updateP fun n mz v =>
-    have ⟨z, hz, vz⟩ := H _ (.of_update uxy) n mz v
-    have hz : z = g y := by simp only [exists_eq_right'] at hz ⊢; exact hz
-    ⟨z, hz.symm, vz⟩
 
 /-! ## Product -/
 theorem UpdateP.prod {P : α → Prop} {Q : β → Prop} {R : α × β → Prop} {x : α × β}
