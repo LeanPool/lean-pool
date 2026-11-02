@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jason Davies
 -/
 
+-- Modified for Lean Pool integration and compatibility maintenance.
+
 module
 
 public import LeanPool.NairTenenbaum.Results.SmoothFamilyTheorem
