@@ -229,6 +229,36 @@ theorem valid0_of_validN {n} {x : α} : ✓{n} x → ✓{0} x := validN_of_le (N
 
 end Validity
 
+section CoreProperties
+variable [PCore α]
+
+/-- A resource equal to its own partial core. -/
+class CoreId (x : α) where
+  core_id : pcore x = some x
+export CoreId (core_id)
+
+end CoreProperties
+
+section ResourceProperties
+variable [Op α] [Validity α]
+
+/-- A resource that cannot be composed validly with any further resource. -/
+class Exclusive (x : α) where
+  exclusive0_l y : ¬✓{0} x • y
+export Exclusive (exclusive0_l)
+
+/-- A resource cancellable from valid compositions at each step index. -/
+class Cancelable (x : α) where
+  cancelableN : ✓{n} x • y → x • y ≡{n}≡ x • z → y ≡{n}≡ z
+export Cancelable (cancelableN)
+
+/-- A valid resource that cannot absorb a right factor at index zero. -/
+class IdFree (x : α) where
+  id_free0_r y : ✓{0} x → ¬x • y ≡{0}≡ x
+export IdFree (id_free0_r)
+
+end ResourceProperties
+
 variable [Op α]
 
 /-! ## Op -/
@@ -360,6 +390,29 @@ theorem op_mono {x x' y y' : α} (hx : x ≼ x') (hy : y ≼ y') :
   ord_trans := inc_trans
   ordN_of_ord n h := incN_of_inc n h
 
+theorem included_dist_l {n} {x1 x2 x1' : α} :
+    x1 ≼ x2 → x1' ≡{n}≡ x1 → ∃ x2', x1' ≼ x2' ∧ x2' ≡{n}≡ x2
+  | ⟨y, hy⟩, e => ⟨x1' • y, inc_op_left x1' y, e.op_l.trans hy.symm.dist⟩
+
+theorem incN_map {β : Type _} [OFE β] [Op β] (f : α → β) [NonExpansive f]
+    (hop : ∀ x y, f (x • y) = f x • f y) {n} {x y : α} : x ≼{n} y → f x ≼{n} f y
+  | ⟨z, hz⟩ => ⟨f z, (NonExpansive.ne hz).trans (hop x z).dist⟩
+
+theorem inc_map {β : Type _} [OFE β] [Op β] (f : α → β)
+    (hop : ∀ x y, f (x • y) = f x • f y) {x y : α} : x ≼ y → f x ≼ f y
+  | ⟨z, hz⟩ => ⟨f z, (congrArg f hz).trans (hop x z)⟩
+
+theorem inc_iff_incN [OFE.Discrete α] (n) {x y : α} : x ≼ y ↔ x ≼{n} y :=
+  ⟨incN_of_inc _, fun ⟨z, hz⟩ => ⟨z, discrete hz⟩⟩
+
+theorem inc_0_iff_incN [OFE.Discrete α] (n) {x y : α} : x ≼{0} y ↔ x ≼{n} y :=
+  ⟨fun ⟨z, hz⟩ => ⟨z, (discrete hz).dist⟩, inc0_of_incN⟩
+
+theorem inc_of_inc0 [OFE.Discrete α] {x y : α} : x ≼{0} y → x ≼ y := (inc_iff_incN 0).mpr
+
+theorem discrete_inc_r {x y : α} [HD : DiscreteE y] : x ≼{0} y → x ≼ y
+  | ⟨z, hz⟩ => ⟨z, HD.discrete hz⟩
+
 section pcore
 variable [PCore α]
 
@@ -421,26 +474,6 @@ class ORA (α : Type _) extends OFE α, Op α, PCore α, Validity α, Ordered α
 
 namespace ORA
 variable [ORA α]
-
-/-- A resource equal to its own partial core. -/
-class CoreId (x : α) where
-  core_id : pcore x = some x
-export CoreId (core_id)
-
-/-- A resource that cannot be composed validly with any further resource. -/
-class Exclusive (x : α) where
-  exclusive0_l y : ¬✓{0} x • y
-export Exclusive (exclusive0_l)
-
-/-- A resource cancellable from valid compositions at each step index. -/
-class Cancelable (x : α) where
-  cancelableN : ✓{n} x • y → x • y ≡{n}≡ x • z → y ≡{n}≡ z
-export Cancelable (cancelableN)
-
-/-- A valid resource that cannot absorb a right factor at index zero. -/
-class IdFree (x : α) where
-  id_free0_r y : ✓{0} x → ¬x • y ≡{0}≡ x
-export IdFree (id_free0_r)
 
 /-! ## Validity -/
 
@@ -584,10 +617,6 @@ theorem op_core_right_of_inc {x y : α} [CoreId x] : x ≼ y → x • y = y
 theorem op_core_left_of_inc {x y : α} [CoreId x] (le : x ≼ y) : y • x = y :=
   Op.comm.trans (op_core_right_of_inc le)
 
-theorem included_dist_l {n} {x1 x2 x1' : α} :
-    x1 ≼ x2 → x1' ≡{n}≡ x1 → ∃ x2', x1' ≼ x2' ∧ x2' ≡{n}≡ x2
-  | ⟨y, hy⟩, e => ⟨x1' • y, inc_op_left x1' y, e.op_l.trans hy.symm.dist⟩
-
 theorem not_valid_of_exclN_inc {n} {x : α} [Exclusive x] {y} : x ≼{n} y → ¬✓{n} y
   | ⟨_, hz⟩, v => not_valid_exclN_op_left (validN_ne hz v)
 
@@ -599,14 +628,6 @@ theorem incN_extend {n} {x y : α} (v : ✓{n} y) :
   | ⟨_, hw⟩ =>
     let ⟨z₁, z₂, hy, hz₁, _⟩ := extend v hw
     ⟨z₁, ⟨z₂, hy.dist⟩, hz₁⟩
-
-theorem incN_map {β : Type _} [ORA β] (f : α → β) [NonExpansive f]
-    (hop : ∀ x y, f (x • y) = f x • f y) {n} {x y : α} : x ≼{n} y → f x ≼{n} f y
-  | ⟨z, hz⟩ => ⟨f z, (NonExpansive.ne hz).trans (hop x z).dist⟩
-
-theorem inc_map {β : Type _} [ORA β] (f : α → β)
-    (hop : ∀ x y, f (x • y) = f x • f y) {x y : α} : x ≼ y → f x ≼ f y
-  | ⟨z, hz⟩ => ⟨f z, (congrArg f hz).trans (hop x z)⟩
 
 section total
 variable [IsTotal α]
@@ -624,22 +645,11 @@ end total
 
 section discrete
 
-theorem inc_iff_incN [OFE.Discrete α] (n) {x y : α} : x ≼ y ↔ x ≼{n} y :=
-  ⟨incN_of_inc _, fun ⟨z, hz⟩ => ⟨z, discrete hz⟩⟩
-
-theorem inc_0_iff_incN [OFE.Discrete α] (n) {x y : α} : x ≼{0} y ↔ x ≼{n} y :=
-  ⟨fun ⟨z, hz⟩ => ⟨z, (discrete hz).dist⟩, inc0_of_incN⟩
-
-theorem inc_of_inc0 [OFE.Discrete α] {x y : α} : x ≼{0} y → x ≼ y := (inc_iff_incN 0).mpr
-
 theorem discrete_inc_l {x y : α} [HD : DiscreteE x] (Hv : ✓{0} y) (Hle : x ≼{0} y) :
     x ≼ y :=
   have ⟨_, hz⟩ := Hle
   let ⟨_, t, wt, wx, _⟩ := extend Hv hz
   ⟨t, wt.trans (congrArg (· • t) (HD.discrete wx.symm).symm)⟩
-
-theorem discrete_inc_r {x y : α} [HD : DiscreteE y] : x ≼{0} y → x ≼ y
-  | ⟨z, hz⟩ => ⟨z, HD.discrete hz⟩
 
 end discrete
 
@@ -690,8 +700,7 @@ theorem pcore_mono {x y cx : α} :
     x ≼ y → pcore x = some cx → ∃ cy, pcore y = some cy ∧ cx ≼ cy
   | ⟨_, hw⟩, e =>
     have ⟨z, hz⟩ := pcore_op_mono e _
-    let ⟨t, ht, et⟩ := OFE.equiv_some ((congrArg pcore hw).trans hz)
-    ⟨t, ht, z, et⟩
+    ⟨cx • z, (congrArg pcore hw).trans hz, z, rfl⟩
 
 theorem pcore_monoN' {n} {x y : α} {cx} :
     x ≼{n} y → pcore x ≡{n}≡ some cx → ∃ cy, pcore y = some cy ∧ cx ≼{n} cy
@@ -1969,7 +1978,7 @@ instance cmraOption : ORA (Option α) where
     apply validN_op_left
   pcore_op_left {x cx} := by
     rcases x, cx with ⟨_|_, _|_⟩ <;> simp_all only [pcore, optionCore, Option.bind_none, op,
-        optionOp, imp_self, Option.some.injEq, not_none_eqv_some, not_some_eqv_none, implies_true,
+        optionOp, imp_self, Option.some.injEq, reduceCtorEq, implies_true,
         Option.bind_some]
     intro h; exact pcore_op_left h
   extend {n} := by
@@ -2324,8 +2333,8 @@ theorem incN_iff {n} {ma mb : Option α} :
       ma = none ∨ ∃ a b, ma = some a ∧ mb = some b ∧ (a ≡{n}≡ b ∨ a ≼{n} b) := by
   refine ⟨fun ⟨mc, Hmc⟩ => ?_, ?_⟩
   · rcases ma, mb, mc with ⟨_|_, _|_, _|_⟩ <;> simp_all only [op, optionOp, Dist.refl,
-      not_none_eqv_some, false_and, and_self, exists_false, or_false, not_none_dist_some,
-      not_some_dist_none, some_dist_some, Option.some.injEq, not_some_eqv_none, exists_and_left,
+      reduceCtorEq, false_and, and_self, exists_false, or_false, not_none_dist_some,
+      not_some_dist_none, some_dist_some, Option.some.injEq, exists_and_left,
       exists_eq_left', false_or]
     · exact .inl Hmc.symm
     · exact .inr ⟨_, Hmc⟩
@@ -2444,7 +2453,7 @@ theorem valid_of_inc_valid {a b : α} (Hv : ✓ a) (Hinc : some b ≼ some a) : 
   valid_of_inc (α := Option α) Hinc Hv
 
 theorem some_inc_some_iff_opM {a b : α} : some a ≼ some b ↔ ∃ mc, b = a •? mc := by
-  simp only [inc_iff, not_some_eqv_none, Option.some.injEq, exists_and_left, exists_eq_left',
+  simp only [inc_iff, reduceCtorEq, Option.some.injEq, exists_and_left, exists_eq_left',
       false_or]
   constructor
   · rintro (Heqv | ⟨mc', Hinc⟩)
@@ -2456,7 +2465,7 @@ theorem some_inc_some_iff_opM {a b : α} : some a ≼ some b ↔ ∃ mc, b = a �
 
 theorem some_incN_some_iff_opM {n} {a b : α} :
     some a ≼{n} some b ↔ ∃ mc, b ≡{n}≡ a •? mc := by
-  simp only [incN_iff, not_some_eqv_none, Option.some.injEq, exists_and_left, exists_eq_left',
+  simp only [incN_iff, reduceCtorEq, Option.some.injEq, exists_and_left, exists_eq_left',
       false_or]
   constructor
   · rintro (H|H)
@@ -2586,8 +2595,8 @@ abbrev Order (x y : α × β) := x.fst ≼ₒ y.fst ∧ x.snd ≼ₒ y.snd
 def raOp : Op (α × β) where
   op := op
   op_ne.ne _ _ _ h := dist_prod_ext (Dist.op_r <| dist_fst h) (Dist.op_r <| dist_snd h)
-  assoc := equiv_prod_ext assoc assoc
-  comm := equiv_prod_ext comm comm
+  assoc := Prod.ext assoc assoc
+  comm := Prod.ext comm comm
 
 /-- The partial core on resource pairs. -/
 @[reducible]
@@ -2605,12 +2614,12 @@ def raPCore : PCore (α × β) where
   pcore_idem {x cx} h := by
     have ⟨cx₁, hcx₁, this⟩ := Option.bind_eq_some_iff.mp h
     have ⟨cx₂, hcx₂, hcx⟩ := Option.bind_eq_some_iff.mp this
-    have ⟨a, ha, ea⟩ := equiv_some (pcore_idem hcx₁)
-    have ⟨b, hb, eb⟩ := equiv_some (pcore_idem hcx₂)
-    have g : (a, b) = (cx₁, cx₂) := equiv_prod_ext ea eb
+    have ha : PCore.pcore cx₁ = some cx₁ := PCore.pcore_idem hcx₁
+    have hb : PCore.pcore cx₂ = some cx₂ := PCore.pcore_idem hcx₂
     rw [Option.some.inj hcx.symm]
-    simp only [ha, hb, pcore]
-    exact congrArg some g
+    simp only [pcore]
+    rw [ha, hb]
+    rfl
 
 /-- Validity on resource pairs. -/
 @[reducible]
@@ -2663,11 +2672,11 @@ instance cmraProd : ORA (α × β) where
   pcore_op_left h :=
     let ⟨_, ha, ho⟩ := Option.bind_eq_some_iff.mp h
     let ⟨_, hb, hh⟩ := Option.bind_eq_some_iff.mp ho
-    (Option.some.inj hh) ▸ (equiv_prod_ext (pcore_op_left ha) (pcore_op_left hb))
+    (Option.some.inj hh) ▸ (Prod.ext (pcore_op_left ha) (pcore_op_left hb))
   extend := fun ⟨vx₁, vx₂⟩ e =>
     let ⟨z₁, w₁, hx₁, hz₁, hw₁⟩ := extend vx₁ (OFE.dist_fst e)
     let ⟨z₂, w₂, hx₂, hz₂, hw₂⟩ := extend vx₂ (OFE.dist_snd e)
-    ⟨(z₁, z₂), (w₁, w₂), equiv_prod_ext hx₁ hx₂, ⟨hz₁, hz₂⟩, ⟨hw₁, hw₂⟩⟩
+    ⟨(z₁, z₂), (w₁, w₂), Prod.ext hx₁ hx₂, ⟨hz₁, hz₂⟩, ⟨hw₁, hw₂⟩⟩
   toOrdered := raOrdered
   op_monoN_left_ord z h := ⟨op_monoN_left_ord z.1 h.1, op_monoN_left_ord z.2 h.2⟩
   op_mono_left_ord z h := ⟨op_mono_left_ord z.1 h.1, op_mono_left_ord z.2 h.2⟩
@@ -2955,7 +2964,7 @@ def Prod.mapC (f : A -C> A') (g : B -C> B') : A × B -C> A' × B' where
       cases _ : ORA.pcore (f.f x.fst) <;>
       cases _ : ORA.pcore (g.f x.snd) <;>
       simp_all
-  op x y := equiv_prod_ext (f.op x.fst y.fst) (g.op x.snd y.snd)
+  op x y := Prod.ext (f.op x.fst y.fst) (g.op x.snd y.snd)
   monoN_ord h := ⟨f.monoN_ord h.1, g.monoN_ord h.2⟩
   mono_ord h := ⟨f.mono_ord h.1, g.mono_ord h.2⟩
   increasing h :=
@@ -2971,9 +2980,9 @@ instance instRFunctorProdOF [RFunctor F1] [RFunctor F2] : RFunctor (ProdOF F1 F2
   map f g := Prod.mapC (map f g) (map f g)
   map_ne.ne _ _ _ Hx _ _ Hy _ :=
     Prod.map_ne (fun _ => map_ne.ne Hx Hy _) (fun _ => map_ne.ne Hx Hy _)
-  map_id _ := equiv_prod_ext (map_id _) (map_id _)
+  map_id _ := Prod.ext (map_id _) (map_id _)
   map_comp _ _ _ _ _ :=
-    equiv_prod_ext (map_comp _ _ _ _ _) (map_comp _ _ _ _ _)
+    Prod.ext (map_comp _ _ _ _ _) (map_comp _ _ _ _ _)
 
 instance instRFunctorAffineProdOF [RFunctor F1] [RFunctor F2] [RFunctorAffine F1]
     [RFunctorAffine F2] : RFunctorAffine (ProdOF F1 F2) where
@@ -2990,9 +2999,9 @@ instance instURFunctorProdOF [URFunctor F1] [URFunctor F2] : URFunctor (ProdOF F
   map f g := Prod.mapC (URFunctor.map f g) (URFunctor.map f g)
   map_ne.ne _ _ _ Hx _ _ Hy _ :=
     Prod.map_ne (fun _ => URFunctor.map_ne.ne Hx Hy _) (fun _ => URFunctor.map_ne.ne Hx Hy _)
-  map_id _ := equiv_prod_ext (URFunctor.map_id _) (URFunctor.map_id _)
+  map_id _ := Prod.ext (URFunctor.map_id _) (URFunctor.map_id _)
   map_comp _ _ _ _ _ :=
-    equiv_prod_ext (URFunctor.map_comp _ _ _ _ _) (URFunctor.map_comp _ _ _ _ _)
+    Prod.ext (URFunctor.map_comp _ _ _ _ _) (URFunctor.map_comp _ _ _ _ _)
 
 instance instURFunctorContractiveProdOF
     [URFunctorContractive F1] [URFunctorContractive F2] :

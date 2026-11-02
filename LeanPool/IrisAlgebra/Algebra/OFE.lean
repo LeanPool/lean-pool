@@ -233,61 +233,11 @@ https://leanprover.zulipchat.com/#narrow/channel/490604-iris-lean/topic/Evaluati
     dist_lt := fun {n x y m} h hlt' => by
       induction x, y using Quotient.ind₂ with | _ a b => exact hlt h hlt' }
 
-namespace ofQuotient
-
-variable {X : Type u} {s : Setoid X}
-
-/-- Form an equivalence class in the quotient equivalence space. -/
-@[reducible] def mk (s : Setoid X) (x : X) : Quotient s := Quotient.mk s x
-
-@[elab_as_elim] theorem ind {motive : Quotient s → Prop}
-    (mk : ∀ x : X, motive (mk s x)) (q : Quotient s) : motive q :=
-  Quotient.ind mk q
-
-@[elab_as_elim] theorem ind₂ {motive : Quotient s → Quotient s → Prop}
-    (mk : ∀ x y : X, motive (mk s x) (mk s y)) (x y : Quotient s) : motive x y :=
-  Quotient.ind₂ mk x y
-
-@[elab_as_elim] theorem ind₃ {motive : Quotient s → Quotient s → Quotient s → Prop}
-    (mk : ∀ x y z : X, motive (mk s x) (mk s y) (mk s z)) (x y z : Quotient s) :
-    motive x y z :=
-  ind₂ (fun x y => Quotient.ind (mk x y)) x y z
-
-theorem sound {x y : X} (h : s.r x y) : mk s x = mk s y := Quotient.sound h
-
-theorem exact {x y : X} (h : mk s x = mk s y) : s.r x y := Quotient.exact h
-
-theorem mk_eq {x y : X} : mk s x = mk s y ↔ s.r x y := ⟨exact, sound⟩
-
-/-- Lift a class-invariant function from a quotient equivalence space. -/
-@[reducible] def lift {β : Sort v} (f : X → β)
-    (resp : ∀ x y, s.r x y → f x = f y) : Quotient s → β := Quotient.lift f resp
-
-@[simp] theorem lift_mk {β : Sort v} (f : X → β) (resp) (x : X) :
-    lift (s := s) f resp (mk s x) = f x := rfl
-
-/-- Lift a binary class-invariant function from quotient equivalence spaces. -/
-@[reducible] def lift₂ {β : Sort v} (f : X → X → β)
-    (resp : ∀ a b c d, s.r a c → s.r b d → f a b = f c d) :
-    Quotient s → Quotient s → β := Quotient.lift₂ f resp
-
-@[simp] theorem lift₂_mk {β : Sort v} (f : X → X → β) (resp) (x y : X) :
-    lift₂ (s := s) f resp (mk s x) (mk s y) = f x y := rfl
-
-/-- Map a relation-preserving function between quotient equivalence spaces. -/
-@[reducible] def map {X' : Type u'} {s' : Setoid X'} (f : X → X')
-    (hf : ∀ x y, s.r x y → s'.r (f x) (f y)) : Quotient s → Quotient s' :=
-  Quotient.lift (fun x => mk s' (f x)) (fun _ _ h => sound (hf _ _ h))
-
-@[simp] theorem map_mk {X' : Type u'} {s' : Setoid X'} (f : X → X') (hf) (x : X) :
-    map (s := s) (s' := s') f hf (mk s x) = mk s' (f x) := rfl
-
-theorem dist_mk {dist : Nat → X → X → Prop} {heqv : ∀ {n}, Equivalence (dist n)}
+theorem ofQuotient.dist_mk {X : Type u} {s : Setoid X} {dist : Nat → X → X → Prop}
+    {heqv : ∀ {n}, Equivalence (dist n)}
     {hlt : ∀ {n m} {x y : X}, dist n x y → m < n → dist m x y}
     {hs : ∀ x y : X, s.r x y ↔ ∀ n, dist n x y} {n} {x y : X} :
-    (ofQuotient dist heqv hlt hs).Dist n (mk s x) (mk s y) ↔ dist n x y := Iff.rfl
-
-end ofQuotient
+    (ofQuotient dist heqv hlt hs).Dist n (Quotient.mk s x) (Quotient.mk s y) ↔ dist n x y := Iff.rfl
 
 /-- A morphism between OFEs, written `α -n> β`, is defined to be a function that is
 non-expansive. -/
@@ -406,18 +356,10 @@ instance [OFE α] [OFE.Discrete α] : OFE.Discrete (Option α) where
     | some _, none => e.elim
     | some _, some _ => congrArg some (discrete_0 e)
 
-@[simp] theorem not_some_eqv_none {x : α} : ¬some x = none := Option.some_ne_none x
-@[simp] theorem not_none_eqv_some {x : α} : ¬none = some x := fun h => Option.some_ne_none
-    x h.symm
-
 @[simp]
 theorem some_dist_some [OFE α] {n} {x y : α} : (some x ≡{n}≡ some y) ↔ x ≡{n}≡ y := .rfl
 @[simp] theorem not_some_dist_none [OFE α] {n} {x : α} : ¬some x ≡{n}≡ none := id
 @[simp] theorem not_none_dist_some [OFE α] {n} {x : α} : ¬none ≡{n}≡ some x := id
-
-theorem equiv_some {o : Option α} {y : α} (e : o = some y) :
-    ∃ z, o = some z ∧ z = y := ⟨y, e, rfl⟩
-
 
 theorem dist_none [OFE α] {o : Option α} : o ≡{n}≡ none ↔ o = none :=
   ⟨fun h => by cases o with | none => rfl | some _ => exact h.elim, (· ▸ .rfl)⟩
@@ -497,12 +439,6 @@ theorem Option.bind_dist [OFE β] {x : Option α} {f g : α → Option β} (H : 
   | some _ => H _
   | none => .rfl
 
-theorem Option.bind_equiv {x : Option α} {f g : α → Option β} (H : ∀ x, f x = g x)
-    : Option.bind x f = Option.bind x g :=
-  match x with
-  | some _ => H _
-  | none => rfl
-
 /-- A pointwise family of ordered equivalence structures. -/
 abbrev OFEFun {α : Type _} (β : α → Type _) := ∀ a, OFE (β a)
 
@@ -529,10 +465,6 @@ instance [OFE α] [OFE β] : OFE (α -n> β) where
 instance ofe_mor_car_ne [OFE α] [OFE β] :
     NonExpansive₂ (fun (f : α -n> β) (x : α) => f x) where
   ne _ _ _ hf _ _ hx := dist_eqv.trans (hf _) (NonExpansive.ne hx)
-
-theorem ofe_mor_car_proper [OFE α] [OFE β] ⦃f g : α -n> β⦄ (hfg : f = g)
-    ⦃x y : α⦄ (hxy : x = y) : f x = g y := by
-  subst hfg; subst hxy; rfl
 
 instance [OFE α] [OFE β] [Inhabited β] : Inhabited (α -n> β) where
   default := { f := Function.const α default, ne := const_ne }
@@ -594,11 +526,6 @@ instance [OFE α] [OFE β] : OFE (α × β) where
   }
   eq_dist' {_ _} := by rw [Prod.ext_iff]; simp only [eq_dist, forall_and]
   dist_lt h1 h2 := ⟨dist_lt h1.1 h2, dist_lt h1.2 h2⟩
-
-theorem equiv_fst {x y : α × β} (h : x = y) : x.fst = y.fst := congrArg Prod.fst h
-theorem equiv_snd {x y : α × β} (h : x = y) : x.snd = y.snd := congrArg Prod.snd h
-theorem equiv_prod_ext {x₁ x₂ : α} {y₁ y₂ : β}
-    (ex : x₁ = x₂) (ey : y₁ = y₂) : (x₁, y₁) = (x₂, y₂) := by subst ex; subst ey; rfl
 
 theorem dist_fst {n} [OFE α] [OFE β] {x y : α × β} (h : x ≡{n}≡ y) : x.fst ≡{n}≡ y.fst := h.left
 theorem dist_snd {n} [OFE α] [OFE β] {x y : α × β} (h : x ≡{n}≡ y) : x.snd ≡{n}≡ y.snd := h.right
@@ -662,11 +589,6 @@ instance instDiscreteProd [OFE α] [OFE β] [Discrete α] [Discrete β] : Discre
   discrete_0 H := Prod.ext (discrete_0 H.1) (discrete_0 H.2)
 
 section sum
-
-theorem equiv_inl {x y : α} (h : x = y) : (.inl x : α ⊕ β) = .inl y := congrArg Sum.inl h
-theorem equiv_inr {x y : β} (h : x = y) : (.inr x : α ⊕ β) = .inr y := congrArg Sum.inr h
-theorem equiv_ext_left {x y : α} (h : (.inl x : α ⊕ β) = .inl y) : x = y := Sum.inl.inj h
-theorem equiv_ext_right {x y : β} (h : (.inr x : α ⊕ β) = .inr y) : x = y := Sum.inr.inj h
 
 variable [OFE α] [OFE β]
 
@@ -739,8 +661,8 @@ theorem discreteE_inr {a : β} (Ha : DiscreteE a) : DiscreteE (.inr a : α ⊕ �
 
 instance instDiscreteSum [Discrete α] [Discrete β] : Discrete (α ⊕ β) where
   discrete_0 {x y} := match x, y with
-    | .inl _, .inl _ => (equiv_inl <| discrete_0 (α := α) <| dist_ext_left ·)
-    | .inr _, .inr _ => (equiv_inr <| discrete_0 (α := β) <| dist_ext_right ·)
+    | .inl _, .inl _ => (congrArg Sum.inl <| discrete_0 (α := α) <| dist_ext_left ·)
+    | .inr _, .inr _ => (congrArg Sum.inr <| discrete_0 (α := β) <| dist_ext_right ·)
     | .inl _, .inr _ => (False.elim ·)
     | .inr _, .inl _ => (False.elim ·)
 
@@ -809,17 +731,8 @@ instance instDiscreteSigma {P : α → Type _} [∀ x, OFE (P x)] [∀ x, Discre
   discrete_0 {x y} H := match x, y, H with
     | ⟨x, xH⟩, ⟨y, yH⟩, ⟨heq, H⟩ => by simp only at heq; subst heq; exact congrArg _ (discrete_0 H)
 
-theorem Sigma.equiv_eq_alt {P : α → Type _} {x1 x2 : Sigma P} :
-    x1 = x2 ↔ ∃ heq : x1.fst = x2.fst, heq ▸ x1.snd = x2.snd := by
-  refine ⟨fun h => h ▸ ⟨rfl, rfl⟩, fun ⟨heq, h⟩ => ?_⟩
-  obtain ⟨x1f, x1s⟩ := x1; obtain ⟨x2f, x2s⟩ := x2
-  simp only at heq; subst heq; simp only at h; subst h; rfl
-
 theorem Sigma.dist_eq {P : α → Type _} [∀ x, OFE (P x)] {n} {x1 x2 : Sigma P} :
     (x1 ≡{n}≡ x2) ↔ ∃ heq : x1.fst = x2.fst, heq ▸ x1.snd ≡{n}≡ x2.snd := Iff.rfl
-
-theorem Sigma.equiv_proj1 {P : α → Type _} {x y : Sigma P}
-    (h : x = y) : x.fst = y.fst := congrArg Sigma.fst h
 
 instance Sigma.fst_ne {P : α → Type _} [OFE α] [∀ x, OFE (P x)] :
     NonExpansive (Sigma.fst : Sigma P → α) where
@@ -836,17 +749,9 @@ theorem Sigma.dist_fst {P : α → Type _} [∀ x, OFE (P x)] {n} {x y : Sigma P
 theorem Sigma.dist_snd {P : α → Type _} [∀ x, OFE (P x)] {n} {x y : Sigma P}
     (h : x ≡{n}≡ y) : Sigma.dist_fst h ▸ x.snd ≡{n}≡ y.snd := h.2
 
-theorem Sigma.equiv_snd {P : α → Type _} {x y : Sigma P}
-    (h : x = y) : congrArg Sigma.fst h ▸ x.snd = y.snd := by
-  subst h; rfl
-
 theorem Sigma.mk_dist {P : α → Type _} [∀ x, OFE (P x)] {n} {i1 i2 : α} {v1 : P i1} {v2 : P i2}
     (heq : i1 = i2) (h : heq ▸ v1 ≡{n}≡ v2) : Sigma.mk i1 v1 ≡{n}≡ Sigma.mk i2 v2 :=
   ⟨heq, h⟩
-
-theorem Sigma.mk_equiv {P : α → Type _} {i1 i2 : α} {v1 : P i1} {v2 : P i2}
-    (heq : i1 = i2) (h : heq ▸ v1 = v2) : Sigma.mk i1 v1 = Sigma.mk i2 v2 := by
-  subst heq; subst h; rfl
 
 instance Sigma.mk_ne {P : α → Type _} [∀ x, OFE (P x)] (a : α) :
     NonExpansive (Sigma.mk a : P a → Sigma P) where
@@ -1291,9 +1196,6 @@ theorem Option.map_ne [OFE β] {f g : α → β} {x y : Option α} {n} :
     | none => exact hxy.elim
     | some b => exact hf a b hxy
 
-theorem Option.map_forall₂ {α β : Type _} (f : α → β)
-    {o1 o2 : Option α} (h : o1 = o2) : o1.map f = o2.map f := congrArg (Option.map f) h
-
 instance optionMap_ne [OFE β] : NonExpansive (optionMap (α := α) (β := β)) where
   ne _ f _ h o :=
     Option.map_ne (fun _ _ hab => dist_eqv.trans (f.ne.ne hab) (h _)) (dist_eqv.refl o)
@@ -1405,8 +1307,8 @@ instance instOFunctorProdOF [OFunctor F1] [OFunctor F2] : OFunctor (ProdOF F1 F2
   ofe := inferInstance
   map f g := Prod.mapO (map f g) (map f g)
   map_ne.ne _ _ _ Hx _ _ Hy _ := ⟨map_ne.ne Hx Hy _, map_ne.ne Hx Hy _⟩
-  map_id _ := equiv_prod_ext (map_id _) (map_id _)
-  map_comp _ _ _ _ _ := equiv_prod_ext (map_comp _ _ _ _ _) (map_comp _ _ _ _ _)
+  map_id _ := Prod.ext (map_id _) (map_id _)
+  map_comp _ _ _ _ _ := Prod.ext (map_comp _ _ _ _ _) (map_comp _ _ _ _ _)
 
 open OFunctorContractive in
 instance instOFunctorContractiveProdOF [OFunctorContractive F1] [OFunctorContractive F2] :
@@ -1432,8 +1334,8 @@ omit [OFE A] [OFE A'] [OFE B] [OFE B'] in
 theorem Sum.map_ext {f f' : A → A'} {g g' : B → B'} (Hf : ∀ a, f a = f' a)
     (Hg : ∀ a, g a = g' a) : Sum.map f g x = Sum.map f' g' x :=
     match x with
-    | .inl _ => equiv_inl (Hf _)
-    | .inr _ => equiv_inr (Hg _)
+    | .inl _ => congrArg Sum.inl (Hf _)
+    | .inr _ => congrArg Sum.inr (Hg _)
 
 omit [OFE A] [OFE B] in
 theorem Sum.map_ne {f f' : A → A'} {g g' : B → B'} (Hf : ∀ a, f a ≡{n}≡ f' a)
@@ -1463,11 +1365,11 @@ instance instOFunctorSumOF [OFunctor F1] [OFunctor F2] : OFunctor (SumOF F1 F2) 
     | .inl _ => dist_inl (map_ne.ne Hx Hy _)
     | .inr _ => dist_inr (map_ne.ne Hx Hy _)
   map_id x := match x with
-    | .inl _ => equiv_inl (map_id _)
-    | .inr _ => equiv_inr (map_id _)
+    | .inl _ => congrArg Sum.inl (map_id _)
+    | .inr _ => congrArg Sum.inr (map_id _)
   map_comp _ _ _ _ x := match x with
-    | .inl _ => equiv_inl (map_comp _ _ _ _ _)
-    | .inr _ => equiv_inr (map_comp _ _ _ _ _)
+    | .inl _ => congrArg Sum.inl (map_comp _ _ _ _ _)
+    | .inr _ => congrArg Sum.inr (map_comp _ _ _ _ _)
 
 open OFunctorContractive in
 instance instOFunctorContractiveSumOF [OFunctorContractive F1] [OFunctorContractive F2] :
