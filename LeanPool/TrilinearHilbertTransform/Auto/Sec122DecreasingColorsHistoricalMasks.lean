@@ -227,6 +227,7 @@ theorem admLevel_mono {A A' : AdmState V} (hA : A.WF) (h : A.Le A') {z : V} (hz 
   have h2 : A.X.card ≤ A'.X.card := Finset.card_le_card h.2.1
   exact cohortLevel_mono (by omega) (by omega)
 
+omit [DecidableEq V] in
 theorem admFrozen_eq {A A' : AdmState V} (hA : A.WF) (hA' : A'.WF) (h : A.Le A') {z : V}
     (hz : z ∈ A.X) (hl : admLevel A z = admLevel A' z) : admFrozen A z = admFrozen A' z := by
   have hpre : cohortPrefix (A.pos z) (admLevel A z) ≤ A.X.card := by

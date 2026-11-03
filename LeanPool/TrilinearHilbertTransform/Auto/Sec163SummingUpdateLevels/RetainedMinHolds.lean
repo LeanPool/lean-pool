@@ -2505,7 +2505,7 @@ bounded trilinear operator on `L³`. -/
 theorem tht_main :
     ∃ C : ℝ, 0 ≤ C ∧
       (∀ f₁ f₂ f₃ : SchwartzMap ℝ ℂ,
-        (∀ x, Filter.Tendsto (TrilinearHT.T_trunc ![⇑f₁, ⇑f₂, ⇑f₃] x)
+        (∀ x, Filter.Tendsto (TrilinearHT.truncatedTransform ![⇑f₁, ⇑f₂, ⇑f₃] x)
           (nhdsWithin 0 (Set.Ioi 0)) (nhds (TrilinearHT.T ![⇑f₁, ⇑f₂, ⇑f₃] x))) ∧
         MemLp (TrilinearHT.T ![⇑f₁, ⇑f₂, ⇑f₃]) 1 volume ∧
         ∫⁻ x, ‖TrilinearHT.T ![⇑f₁, ⇑f₂, ⇑f₃] x‖ₑ ≤

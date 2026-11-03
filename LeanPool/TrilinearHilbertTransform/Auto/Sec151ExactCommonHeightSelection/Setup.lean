@@ -905,7 +905,7 @@ is the convergent sum over the trial counts `n` of the sums over the assignments
 failed trials to first failing roles, the words `w` of failed heights and the final heights `h`,
 with weight `|H|^{-(n+1)}`, of the sums over the tuples in the product masks. -/
 theorem first_success_masked {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [CompleteSpace E] {κ : Fin m₀ → Type*} (T : ∀ j, Finset (κ j)) (H : Finset ℕ)
+    {κ : Fin m₀ → Type*} (T : ∀ j, Finset (κ j)) (H : Finset ℕ)
     (good : ∀ j, ℕ → κ j → Prop) (F : (∀ j, κ j) → E)
     (hp : ∀ r ∈ Fintype.piFinset T, (H.filter fun h => ∀ j, good j h (r j)).Nonempty) :
     HasSum (fun n : ℕ => ∑ a : Fin n → Fin m₀, ∑ w ∈ Fintype.piFinset (fun _ : Fin n => H),

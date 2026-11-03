@@ -271,6 +271,19 @@ theorem cellColumn_restrict_descendant {V : Type*} [Fintype V] (D : ColumnTreeDa
   · rw [Set.indicator_of_mem hy, Set.indicator_of_mem hy, h2, Set.indicator_of_mem (hcd hy)]
   · rw [Set.indicator_of_notMem hy, Set.indicator_of_notMem hy]
 
+private theorem linearMapPreservesSpanRange {R E ι κ : Type*} [Semiring R]
+    [AddCommMonoid E] [Module R E] (f : E →ₗ[R] E) (v : ι → E) (w : κ → E)
+    (reindex : ι → κ) (hmap : ∀ i, f (v i) = w (reindex i)) {x : E}
+    (hx : x ∈ Submodule.span R (Set.range v)) : f x ∈ Submodule.span R (Set.range w) := by
+  have hsub : Submodule.span R (Set.range v) ≤
+      (Submodule.span R (Set.range w)).comap f := by
+    apply Submodule.span_le.mpr
+    rintro _ ⟨i, rfl⟩
+    change f (v i) ∈ Submodule.span R (Set.range w)
+    rw [hmap i]
+    exact Submodule.subset_span (Set.mem_range_self _)
+  exact hsub hx
+
 /-- Blueprint `column-data`, lines 480–483: restriction to a descendant
 preserves the range of old constant-coefficient column combinations. -/
 theorem cellColumnRange_restrict_descendant {V : Type*} [Fintype V] (D : ColumnTreeData V)
@@ -279,15 +292,12 @@ theorem cellColumnRange_restrict_descendant {V : Type*} [Fintype V] (D : ColumnT
     {z : ColumnL2 V} (hz : z ∈ cellColumnRange D A hd) :
     columnL2Restriction (dyadicGridCell D.grid c.1 c.2)
       (dyadicGridCell_measurable D.grid c.1 c.2) z ∈ cellColumnRange D A hc := by
-  let R := columnL2Restriction (dyadicGridCell D.grid c.1 c.2)
-    (dyadicGridCell_measurable D.grid c.1 c.2) (V := V)
-  have hsub : cellColumnRange D A hd ≤ (cellColumnRange D A hc).comap R.toLinearMap := by
-    apply Submodule.span_le.mpr
-    rintro _ ⟨v, rfl⟩
-    change R (cellColumnLp D A hd v) ∈ cellColumnRange D A hc
-    rw [show R (cellColumnLp D A hd v) = _ from cellColumn_restrict_descendant D A hc hd hcd v]
-    exact Submodule.subset_span (Set.mem_range_self _)
-  exact hsub hz
+  exact linearMapPreservesSpanRange
+    (columnL2Restriction (dyadicGridCell D.grid c.1 c.2)
+      (dyadicGridCell_measurable D.grid c.1 c.2)).toLinearMap
+    (cellColumnLp D A hd) (cellColumnLp D A hc)
+    (fun v => ⟨v, A.inherited c hc d hd hcd v.property⟩)
+    (cellColumn_restrict_descendant D A hc hd hcd) hz
 
 /-- Every vector in a cell's column range is fixed by restriction to that
 cell, making the zero extension in the source projection explicit. -/

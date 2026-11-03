@@ -892,7 +892,7 @@ theorem pd_catalog_budget (κ : LocalKernelClass) (d' Dc J1 Ds Cr : ℕ) {H B : 
         nlinarith only [hem', Real.exp_pos B]
 
 /-- The cell-summed form of `predictor_cell_bound`. -/
-theorem predictor_sum_bound {τ π : Type*} [Countable τ] [Countable π] [DecidableEq τ]
+theorem predictor_sum_bound {τ π : Type*} [DecidableEq τ]
     [DecidableEq π] (S : Finset (ℤ × ℤ)) (len : ℤ × ℤ → ℝ) (hlen : ∀ I, 0 ≤ len I)
     (cf : τ → ℂ) (hcs : Summable (fun q => ‖cf q‖)) (LF : ℤ × ℤ → ℂ) (sepQ : ℤ × ℤ → τ → ℂ)
     (MQ : ℤ × ℤ → ℝ) (hsepQ : ∀ I ∈ S, ∀ q, ‖sepQ I q‖ ≤ MQ I)

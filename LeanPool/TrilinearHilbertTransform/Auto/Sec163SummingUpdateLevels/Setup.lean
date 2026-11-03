@@ -20,10 +20,10 @@ Formalization of blueprint Section 16, "Normalized absorption and the operator e
 (`sec:completion`), subsection 3, "Summing the update levels" (lines 2893-3012) of
 `blueprint/formalization_blueprint.tex`.
 
-The operator is the human-written `TrilinearHT.T` (with truncations `TrilinearHT.T_trunc`) of
+The operator is the human-written `TrilinearHT.T` (with truncations `TrilinearHT.truncatedTransform`) of
 `TrilinearHT/Defs.lean`, `T(f)(x) = p.v. ∫ Π_i f_i(x + (i+1)t) dt/t`. The substitution `t ↦ -t`
 turns it into minus the blueprint's `p.v. ∫ f₁(x - t) f₂(x - 2t) f₃(x - 3t) dt/t`
-(`T_trunc_eq_neg`, `T_eq_neg_integral`); the sign is irrelevant for every norm bound.
+(`truncatedTransform_eq_neg`, `T_eq_neg_integral`); the sign is irrelevant for every norm bound.
 -/
 
 @[expose] public section
@@ -239,14 +239,14 @@ theorem three_term_telescope {R : Type*} [CommRing R] (a₁ a₂ a₃ b₁ b₂ 
 
 /-! ### Pointwise principal value on Schwartz inputs (blueprint lines 2984-2992) -/
 
-/-- The truncation `TrilinearHT.T_trunc` in the blueprint's reflected form
+/-- The truncation `TrilinearHT.truncatedTransform` in the blueprint's reflected form
 `-∫_{|t| > ε} f₀(x - t) f₁(x - 2t) f₂(x - 3t) dt/t` (substitution `t ↦ -t`). -/
-theorem T_trunc_eq_neg (f : Fin 3 → ℝ → ℂ) (x ε : ℝ) :
-    TrilinearHT.T_trunc f x ε =
+theorem truncatedTransform_eq_neg (f : Fin 3 → ℝ → ℂ) (x ε : ℝ) :
+    TrilinearHT.truncatedTransform f x ε =
       -∫ t in {t : ℝ | ε < |t|}, f 0 (x - t) * f 1 (x - 2 * t) * f 2 (x - 3 * t) / t := by
   have hmeas : MeasurableSet {t : ℝ | ε < |t|} :=
     measurableSet_lt measurable_const continuous_abs.measurable
-  rw [TrilinearHT.T_trunc, ← integral_neg, ← integral_indicator hmeas,
+  rw [TrilinearHT.truncatedTransform, ← integral_neg, ← integral_indicator hmeas,
     ← integral_indicator hmeas, ← integral_neg_eq_self]
   congr 1
   funext t
@@ -403,14 +403,14 @@ theorem progression_truncated_tendsto (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x 
   rw [hsplit ε hε, setIntegral_indicator measurableSet_Ioi,
     Set.inter_eq_right.mpr (Set.Ioi_subset_Ioi (le_of_lt hε))]
 
-/-- Blueprint `thm:main`, lines 2989-2992, for `TrilinearHT.T_trunc`: on Schwartz inputs the
+/-- Blueprint `thm:main`, lines 2989-2992, for `TrilinearHT.truncatedTransform`: on Schwartz inputs the
 truncations converge to minus the odd-part integral of the blueprint's progression product. -/
-theorem T_trunc_tendsto_neg_integral (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x : ℝ) :
-    Filter.Tendsto (TrilinearHT.T_trunc ![⇑f₁, ⇑f₂, ⇑f₃] x) (nhdsWithin 0 (Set.Ioi 0))
+theorem truncatedTransform_tendsto_neg_integral (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x : ℝ) :
+    Filter.Tendsto (TrilinearHT.truncatedTransform ![⇑f₁, ⇑f₂, ⇑f₃] x) (nhdsWithin 0 (Set.Ioi 0))
       (nhds (-∫ t in Set.Ioi 0, (f₁ (x - t) * f₂ (x - 2 * t) * f₃ (x - 3 * t) -
         f₁ (x - -t) * f₂ (x - 2 * -t) * f₃ (x - 3 * -t)) / t)) := by
   refine (progression_truncated_tendsto f₁ f₂ f₃ x).neg.congr fun ε => ?_
-  rw [T_trunc_eq_neg]
+  rw [truncatedTransform_eq_neg]
   rfl
 
 /-- On Schwartz inputs `TrilinearHT.T` is minus the absolutely convergent odd-part integral
@@ -419,15 +419,15 @@ theorem T_eq_neg_integral (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x : ℝ) :
     TrilinearHT.T ![⇑f₁, ⇑f₂, ⇑f₃] x =
       -∫ t in Set.Ioi 0, (f₁ (x - t) * f₂ (x - 2 * t) * f₃ (x - 3 * t) -
         f₁ (x - -t) * f₂ (x - 2 * -t) * f₃ (x - 3 * -t)) / t :=
-  (T_trunc_tendsto_neg_integral f₁ f₂ f₃ x).limUnder_eq
+  (truncatedTransform_tendsto_neg_integral f₁ f₂ f₃ x).limUnder_eq
 
 /-- Blueprint `thm:main`, lines 2989-2992: for Schwartz `f₁, f₂, f₃` the truncations
-`TrilinearHT.T_trunc` converge to `TrilinearHT.T` at every real `x`. -/
-theorem tendsto_T_trunc_three (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x : ℝ) :
-    Filter.Tendsto (TrilinearHT.T_trunc ![⇑f₁, ⇑f₂, ⇑f₃] x) (nhdsWithin 0 (Set.Ioi 0))
+`TrilinearHT.truncatedTransform` converge to `TrilinearHT.T` at every real `x`. -/
+theorem tendsto_truncatedTransform_three (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x : ℝ) :
+    Filter.Tendsto (TrilinearHT.truncatedTransform ![⇑f₁, ⇑f₂, ⇑f₃] x) (nhdsWithin 0 (Set.Ioi 0))
       (nhds (TrilinearHT.T ![⇑f₁, ⇑f₂, ⇑f₃] x)) := by
   rw [T_eq_neg_integral]
-  exact T_trunc_tendsto_neg_integral f₁ f₂ f₃ x
+  exact truncatedTransform_tendsto_neg_integral f₁ f₂ f₃ x
 
 /-- A triple of Schwartz functions, coerced to functions, as a vector literal. -/
 theorem schwartz_triple_eq_vecCons (f : Fin 3 → SchwartzMap ℝ ℂ) :
@@ -437,12 +437,12 @@ theorem schwartz_triple_eq_vecCons (f : Fin 3 → SchwartzMap ℝ ℂ) :
 
 open scoped SchwartzMap Topology in
 /-- Blueprint `thm:main`, lines 2989-2992: for Schwartz functions `f` the principal value limit
-defining `TrilinearHT.T` exists at every real `x`: `T_trunc f x ε → T f x` as `ε → 0⁺`. -/
-theorem tendsto_T_trunc (f : Fin 3 → 𝓢(ℝ, ℂ)) (x : ℝ) :
-    Filter.Tendsto (TrilinearHT.T_trunc (fun i ↦ f i) x) (𝓝[>] 0)
+defining `TrilinearHT.T` exists at every real `x`: `truncatedTransform f x ε → T f x` as `ε → 0⁺`. -/
+theorem tendsto_truncatedTransform (f : Fin 3 → 𝓢(ℝ, ℂ)) (x : ℝ) :
+    Filter.Tendsto (TrilinearHT.truncatedTransform (fun i ↦ f i) x) (𝓝[>] 0)
       (𝓝 (TrilinearHT.T (fun i ↦ f i) x)) := by
   rw [schwartz_triple_eq_vecCons]
-  exact tendsto_T_trunc_three (f 0) (f 1) (f 2) x
+  exact tendsto_truncatedTransform_three (f 0) (f 1) (f 2) x
 
 section TrilinearExtension
 variable {𝕜 E V W : Type*} [NontriviallyNormedField 𝕜] [AddCommGroup E] [Module 𝕜 E]
@@ -4214,7 +4214,7 @@ theorem tht_main_of_uniform
       ∀ N, finiteDepthConstant κ q N ≤ Cst) :
     ∃ C : ℝ, 0 ≤ C ∧
       (∀ f₁ f₂ f₃ : SchwartzMap ℝ ℂ,
-        (∀ x, Filter.Tendsto (TrilinearHT.T_trunc ![⇑f₁, ⇑f₂, ⇑f₃] x)
+        (∀ x, Filter.Tendsto (TrilinearHT.truncatedTransform ![⇑f₁, ⇑f₂, ⇑f₃] x)
           (nhdsWithin 0 (Set.Ioi 0)) (nhds (TrilinearHT.T ![⇑f₁, ⇑f₂, ⇑f₃] x))) ∧
         MemLp (TrilinearHT.T ![⇑f₁, ⇑f₂, ⇑f₃]) 1 volume ∧
         ∫⁻ x, ‖TrilinearHT.T ![⇑f₁, ⇑f₂, ⇑f₃] x‖ₑ ≤
@@ -4286,7 +4286,7 @@ theorem tht_main_of_uniform
     rw [ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_ofReal hC]
     ring
   obtain ⟨T', hT'eq, hT'b, hT'u⟩ := schwartz_L3_unique_extension T hC hTb
-  refine ⟨C, hC, fun f₁ f₂ f₃ => ⟨fun x => tendsto_T_trunc_three f₁ f₂ f₃ x,
+  refine ⟨C, hC, fun f₁ f₂ f₃ => ⟨fun x => tendsto_truncatedTransform_three f₁ f₂ f₃ x,
     hmem f₁ f₂ f₃, hbound f₁ f₂ f₃⟩, T', fun f₁ f₂ f₃ => ?_, hT'b, fun S hS => ?_⟩
   · rw [hT'eq, hT]
     exact MemLp.coeFn_toLp _

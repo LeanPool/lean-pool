@@ -2588,7 +2588,7 @@ theorem realLp_norm_sq_integral {α : Type*} [MeasurableSpace α]
 /-- Transfer a pointwise finite-family bound to its L2 sum. The square
 function has squared L2 norm exactly equal to the sum of the individual energies. -/
 theorem finite_L2_sum_norm_bound {α E ι : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     (μ : Measure α) (S : Finset ι) (g : ι → Lp E 2 μ)
     (M : α → ℝ) (hM : MemLp M 2 μ) (hM0 : ∀ x, 0 ≤ M x)
     (c L : ℝ) (hc : 0 ≤ c) (hL : 0 ≤ L)
@@ -2650,7 +2650,7 @@ theorem finite_L2_sum_norm_bound {α E ι : Type*} [MeasurableSpace α]
 line 565. Support, pointwise amplitude bounds and projection moment identities
 are explicit hypotheses; no size of the entire root family appears in the bound. -/
 theorem dyadic_stopped_moment_energy {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℂ E] [CompleteSpace E]
+    [InnerProductSpace ℂ E]
     (grid : RealDyadicGrid) (root : ℤ × ℤ) (N : ℕ) (a : ℤ × ℤ → ℝ)
     (ha : ∀ c ∈ dyadicFiniteTree grid root N, 0 ≤ a c)
     (z : Lp E 2 (volume : Measure ℝ)) (g : (ℤ × ℤ) → Lp E 2 (volume : Measure ℝ))
@@ -3018,7 +3018,7 @@ theorem dyadicAnchorGeneration_jump_ancestors {E : Type*} [NormedAddCommGroup E]
 /-- A uniform norm lower bound on a finite disjoint dyadic family charges
 its total length to the L2 energy of the same function. -/
 theorem dyadic_disjoint_mass_le_L2_energy {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℂ E] [CompleteSpace E] (G : RealDyadicGrid) (C : Finset (ℤ × ℤ))
+    [InnerProductSpace ℂ E] (G : RealDyadicGrid) (C : Finset (ℤ × ℤ))
     (hdis : (C : Set (ℤ × ℤ)).PairwiseDisjoint (fun c => dyadicGridCell G c.1 c.2))
     (z : Lp E 2 (volume : Measure ℝ)) (δ : ℝ) (hδ : 0 ≤ δ)
     (hbound : ∀ᵐ x ∂volume, ∀ c ∈ C, x ∈ dyadicGridCell G c.1 c.2 → δ ≤ ‖z x‖) :
@@ -3059,7 +3059,7 @@ theorem dyadic_disjoint_mass_le_L2_energy {E : Type*} [NormedAddCommGroup E]
 /-- Integrating every transition lower bound over the same disjoint
 restart roots gives the factor `T` in the source restart budget. -/
 theorem dyadic_jump_mass_le_energy {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℂ E] [CompleteSpace E] (G : RealDyadicGrid) (C : Finset (ℤ × ℤ))
+    [InnerProductSpace ℂ E] (G : RealDyadicGrid) (C : Finset (ℤ × ℤ))
     (hdis : (C : Set (ℤ × ℤ)).PairwiseDisjoint (fun c => dyadicGridCell G c.1 c.2))
     (T : ℕ) (u : Fin T → Lp E 2 (volume : Measure ℝ)) (δ : ℝ) (hδ : 0 ≤ δ)
     (hbound : ∀ n, ∀ᵐ x ∂volume, ∀ c ∈ C, x ∈ dyadicGridCell G c.1 c.2 → δ ≤ ‖u n x‖) :

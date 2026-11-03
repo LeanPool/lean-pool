@@ -4120,6 +4120,7 @@ end GlobalHistories
 
 /-! ### Catalog tests on fixed vector bases: the helper closure (lines 1815-1831) -/
 
+/-- Column-valued catalog test with residual and historical high-slot filters. -/
 structure VTest (Tg : Type*) (Mc : ℕ) where
   /-- Residual slot of the column-valued catalog test. -/
   t : Fin 4
