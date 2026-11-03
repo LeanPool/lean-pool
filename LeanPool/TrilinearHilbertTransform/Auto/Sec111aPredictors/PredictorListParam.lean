@@ -380,8 +380,7 @@ private def PredictorListParamConclusion15Statement : Prop :=
 
 open scoped Classical in
 private def PredictorListParamConclusion17Statement : Prop :=
-  ∀ (c₀ : ℕ)
-    (κ : LocalKernelClass)
+  ∀ (κ : LocalKernelClass)
     (c₁ : ℕ)
     (Ds : ℕ)
     (Cr : ℕ)
@@ -544,8 +543,7 @@ private def PredictorListParamConclusion17Statement : Prop :=
 
 open scoped Classical in
 private def PredictorListParamStage1Statement : Prop :=
-  ∀ (c₀ : ℕ)
-    (κ : LocalKernelClass)
+  ∀ (κ : LocalKernelClass)
     (c₁ : ℕ)
     (Ds : ℕ)
     (Cr : ℕ)
@@ -902,7 +900,7 @@ private theorem predictor_list_param_conclusion_15 : PredictorListParamConclusio
 private theorem predictor_list_param_conclusion_17 : PredictorListParamConclusion17Statement := by
   classical
   -- the error bound
-  intro c₀ κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb φt
+  intro κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb φt
     size hexpS hbdd hsize1 hcs Es hcomp htail hcsum hEs T₀ hT₀1 Qs R hnotR H₀ hH₀1 hcompR M₀ δ hδ
     A4 ret hret E E1 hE1d lamf Mf σf coeff hprops K₀ P Bσ Mset σset lamℓ νℓ coefℓ hcoefℓ G J S hSJ
     w hw Fa Fb za zb Ka Kb hKa hKb hza hzb hEa hEb hzam hzbm hza2 hzb2 f hfa hfi hfk hfb
@@ -1104,7 +1102,7 @@ private theorem predictor_list_param_conclusion_17 : PredictorListParamConclusio
 
 private theorem predictor_list_param_stage_1 : PredictorListParamStage1Statement := by
   classical
-  intro c₀ κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb φt
+  intro κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb φt
     size hexpS hbdd hsize1 hcs Es hcomp htail hcsum hEs T₀ hT₀ hT₀1 Qs hQscard R hR hnotR H₀ hH₀1
     hcompR M₀ δ hδ A4 ret hret E hE E1 hE1d lamf Mf σf coeff hprops K₀ hK₀
   let P : Finset (ℕ × (Fin (d + e + (d + e)) → ℤ)) :=
@@ -1150,7 +1148,7 @@ private theorem predictor_list_param_stage_1 : PredictorListParamStage1Statement
       exact (hprops ℓ.1 r hq hr hrt).2.2.1
     · exact absurd rfl hne
   · expose_names
-    exact @predictor_list_param_conclusion_17 c₀ κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b
+    exact @predictor_list_param_conclusion_17 κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b
       h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb φt size hexpS hbdd hsize1 hcs hcomp htail
       hcsum hEs hT₀1 Qs hnotR hH₀1 hcompR hδ hret hE1d lamf Mf σf coeff hprops hcoefℓ
 
@@ -1305,7 +1303,7 @@ theorem predictor_list_param (c₀ : ℕ) (hc : 1 ≤ c₀) (κ : LocalKernelCla
     Fintype.piFinset (fun _ => Fintype.piFinset (fun _ => boundedRationalEnumeration ⌊E⌋₊))
     with hMset
   expose_names
-  exact @predictor_list_param_stage_1 c₀ κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3
+  exact @predictor_list_param_stage_1 κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3
       h4 h5 h6 hH1 τ hτc cf φa φb φt size hexpS hbdd hsize1 hcs hcomp htail hcsum hEs hT₀
       hT₀1 Qs hQscard hR hnotR hH₀1 hcompR hδ hret hE hE1d lamf Mf σf coeff hprops hK₀ hBσ
       hMset

@@ -803,11 +803,6 @@ theorem band_block {P : ℕ} (Qs : Finset ℕ) (Eq : ℕ → E →L[ℂ] E) (At 
 
 end BandBlock
 
-namespace ActiveSetup
-variable {κ' : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ' c₀)
-
-
-end ActiveSetup
 
 section RestrictCommute
 variable {V : Type*} [Fintype V]
