@@ -24,8 +24,8 @@ Formalization of blueprint Section 16, "Normalized absorption and the operator e
 (`sec:completion`), subsection 3, "Summing the update levels" (lines 2893-3012) of
 `blueprint/formalization_blueprint.tex`.
 
-The operator is the human-written `TrilinearHT.T` (with truncations `TrilinearHT.truncatedTransform`) of
-`TrilinearHT/Defs.lean`, `T(f)(x) = p.v. ∫ Π_i f_i(x + (i+1)t) dt/t`. The substitution `t ↦ -t`
+The operator is the human-written `TrilinearHT.T` (with truncations
+`TrilinearHT.truncatedTransform`) of `TrilinearHT/Defs.lean`, `T(f)(x) = p.v. ∫ Π_i f_i(x + (i+1)t) dt/t`. The substitution `t ↦ -t`
 turns it into minus the blueprint's `p.v. ∫ f₁(x - t) f₂(x - 2t) f₃(x - 3t) dt/t`
 (`truncatedTransform_eq_neg`, `T_eq_neg_integral`); the sign is irrelevant for every norm bound.
 -/
@@ -407,8 +407,8 @@ theorem progression_truncated_tendsto (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x 
   rw [hsplit ε hε, setIntegral_indicator measurableSet_Ioi,
     Set.inter_eq_right.mpr (Set.Ioi_subset_Ioi (le_of_lt hε))]
 
-/-- Blueprint `thm:main`, lines 2989-2992, for `TrilinearHT.truncatedTransform`: on Schwartz inputs the
-truncations converge to minus the odd-part integral of the blueprint's progression product. -/
+/-- Blueprint `thm:main`, lines 2989-2992, for `TrilinearHT.truncatedTransform`:
+on Schwartz inputs the truncations converge to minus the odd-part integral of the blueprint's progression product. -/
 theorem truncatedTransform_tendsto_neg_integral (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x : ℝ) :
     Filter.Tendsto (TrilinearHT.truncatedTransform ![⇑f₁, ⇑f₂, ⇑f₃] x) (nhdsWithin 0 (Set.Ioi 0))
       (nhds (-∫ t in Set.Ioi 0, (f₁ (x - t) * f₂ (x - 2 * t) * f₃ (x - 3 * t) -
@@ -441,7 +441,8 @@ theorem schwartz_triple_eq_vecCons (f : Fin 3 → SchwartzMap ℝ ℂ) :
 
 open scoped SchwartzMap Topology in
 /-- Blueprint `thm:main`, lines 2989-2992: for Schwartz functions `f` the principal value limit
-defining `TrilinearHT.T` exists at every real `x`: `truncatedTransform f x ε → T f x` as `ε → 0⁺`. -/
+defining `TrilinearHT.T` exists at every real `x`:
+`truncatedTransform f x ε → T f x` as `ε → 0⁺`. -/
 theorem tendsto_truncatedTransform (f : Fin 3 → 𝓢(ℝ, ℂ)) (x : ℝ) :
     Filter.Tendsto (TrilinearHT.truncatedTransform (fun i ↦ f i) x) (𝓝[>] 0)
       (𝓝 (TrilinearHT.T (fun i ↦ f i) x)) := by
