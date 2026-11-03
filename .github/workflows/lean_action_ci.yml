@@ -199,6 +199,13 @@ jobs:
           plan=$(CHANGED_FILES_PATH="$changed_files" DIFF_AVAILABLE="$diff_available" \
                  COLD="$cold" FORCE_FULL="$FORCE_FULL" \
                  python3 scripts/ci/plan-build-shards.py)
+          # Main cannot read merge-queue caches, so after a toolchain bump it
+          # would rebuild the whole pool again; restore the queue's build instead.
+          if [ "$EVENT_NAME" = push ] && [ "$cold" = true ] && [ "$FORCE_FULL" != true ] \
+             && PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore-queue \
+                  --repository "$REPOSITORY" --head "$GITHUB_SHA" --check; then
+            plan='{"mode":"single","matrix":{"include":[{"shard":"00","projects":""}]}}'
+          fi
           reuse_run_id=""
           previous_head=""
           if [ "$EVENT_NAME" = "pull_request" ] && [ "$FORCE_FULL" != "true" ] && [ "$minimal_build" != true ]; then
@@ -301,8 +308,18 @@ jobs:
             exit 1
           fi
 
+      - name: Restore the merge queue's full build
+        id: queue-full-build
+        if: github.event_name == 'push' && steps.cache.outputs.cache-matched-key == ''
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore-queue
+          --head "$GITHUB_SHA"
+
       - name: Reuse compiled projects from merged PRs
-        if: github.event_name == 'push' && steps.cache.outputs.cache-hit != 'true'
+        if: github.event_name == 'push' && steps.cache.outputs.cache-hit != 'true' && steps.queue-full-build.outcome != 'success'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
@@ -355,8 +372,9 @@ jobs:
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
       # only its own projects; the verifier overlays them on the main cache.
+      # A cold merge-queue build publishes it too, for main to restore.
       - name: Package build for documentation
-        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true') || (github.event_name == 'merge_group' && steps.cache.outputs.cache-matched-key == '')
         env:
           BUILD_EVENT: ${{ github.event_name }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -369,7 +387,7 @@ jobs:
           fi
 
       - name: Share build with documentation
-        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true') || (github.event_name == 'merge_group' && steps.cache.outputs.cache-matched-key == '')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
@@ -743,8 +761,9 @@ jobs:
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
       # only its own projects; the verifier overlays them on the main cache.
+      # A cold merge-queue build publishes it too, for main to restore.
       - name: Package build for documentation
-        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true') || (github.event_name == 'merge_group' && steps.cache.outputs.cache-matched-key == '')
         env:
           BUILD_EVENT: ${{ github.event_name }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -757,7 +776,7 @@ jobs:
           fi
 
       - name: Share build with documentation
-        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true')
+        if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && needs.plan.outputs.minimal_build == 'true') || (github.event_name == 'merge_group' && steps.cache.outputs.cache-matched-key == '')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: lean-pool-build
