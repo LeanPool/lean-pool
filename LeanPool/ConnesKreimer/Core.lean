@@ -2218,7 +2218,7 @@ theorem _root_.CK.star_identity (p N : ℕ) (w : Hab k)
     rw [WithConv.ofConv_smul, LinearMap.smul_apply]
   have hDcoeff : ∀ m, m ≤ N → D.coeff m = 0 := by
     intro m hm
-    have : IsAddTorsionFree k := IsAddTorsionFree.of_module_rat k
+    have : HasUniqueDiv k := .of_module_rat k
     rw [hD, Polynomial.coeff_sub, Polynomial.coeff_C_mul, hPL,
         PowerSeries.polyPL_coeff (A := k) p N m hm, hPR, PR_coeff (k := k) N m hm,
         nsmul_eq_mul]

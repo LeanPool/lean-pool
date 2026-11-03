@@ -903,7 +903,7 @@ theorem weakly_harmonic_interior_smooth
   let g : Vec3 → ℝ := U.indicator h
   have hgmem : MemLp g (ENNReal.ofReal (3 / 2 : ℝ)) volume := by
     dsimp [g]
-    exact (memLp_indicator_iff_restrict hUmeas).2 hmem
+    exact (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 hmem
   let ε : ℕ → ℝ := fun n => ρ / (12 * ((n : ℝ) + 1))
   have hεpos : ∀ n, 0 < ε n := fun n => approximation_scale_pos hρ n
   have hεle : ∀ n, ε n ≤ ρ / 12 := fun n => approximation_scale_le hρ n
@@ -1021,7 +1021,7 @@ theorem weakly_harmonic_interior_smooth
       lpNorm h (ENNReal.ofReal (3 / 2 : ℝ)) (volume.restrict U) := by
     dsimp [g]
     rw [← MeasureTheory.toReal_eLpNorm, ← MeasureTheory.toReal_eLpNorm,
-      eLpNorm_indicator_eq_eLpNorm_restrict hUmeas]
+      eLpNorm_indicator_eq_eLpNorm_restrict hUmeas.nullMeasurableSet]
   have hg_h_ae : g =ᵐ[volume.restrict U] h := by
     filter_upwards [ae_restrict_mem hUmeas] with y hy
     simp [g, hy]

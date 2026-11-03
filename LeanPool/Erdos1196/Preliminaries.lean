@@ -8,7 +8,10 @@ module
 public import LeanPool.Erdos1196.Basic
 import LeanPool.Erdos1196.PreliminariesMertens
 import LeanPool.Erdos1196.PreliminariesTailAux
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.MeasureTheory.Function.Floor
+import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
 import Mathlib.NumberTheory.Chebyshev
 
 /-!
@@ -710,7 +713,9 @@ lemma tailEstimate :
           (MeasureTheory.volume.restrict (Set.Ioi (y : ℝ))) := by
       have hE_meas :
           AEStronglyMeasurable E (MeasureTheory.volume.restrict (Set.Ioi (y : ℝ))) := by
-        measurability
+        have hfloor : Measurable (fun t : ℝ => mertensPartialSum ⌊t⌋₊) :=
+          (measurable_of_countable mertensPartialSum).comp Nat.measurable_floor
+        exact ((hfloor.sub_const _).sub (Real.measurable_log.sub_const _)).aestronglyMeasurable
       exact ((aestronglyMeasurable_tailKernelDerivFactor hm hy).mul hE_meas).congr hderivE_dom.symm
     rw [IntegrableOn] at hmajor ⊢
     exact Integrable.mono' hmajor hmeas hderivE_bound

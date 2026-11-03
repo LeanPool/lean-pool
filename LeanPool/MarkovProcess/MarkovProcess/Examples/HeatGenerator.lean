@@ -90,7 +90,7 @@ theorem abs_sub_taylor_two_le (hf : ContDiff ℝ 2 f) (x h C : ℝ)
       exact hp.mul_const _
     have hsum := ((h1.sub_const (f x)).sub h2).sub h3
     convert hsum using 1
-    all_goals first | rfl | ring
+    all_goals ring
   have hGderiv : ∀ s : ℝ, HasDerivAt G (h ^ 2 * (iteratedDeriv 2 f (x + s * h) - c)) s := by
     intro s
     have h1 := (hddf (x + s * h)).hasDerivAt.comp s (hinner s)
@@ -99,7 +99,7 @@ theorem abs_sub_taylor_two_le (hf : ContDiff ℝ 2 f) (x h C : ℝ)
       simpa using (hasDerivAt_id s).mul_const (h ^ 2 * c)
     have hsum := ((h1.const_mul h).sub_const (h * deriv f x)).sub h2
     convert hsum using 1
-    all_goals first | rfl | ring
+    all_goals ring
   have hCnn : 0 ≤ C := by
     have h0 := hC 0 (by norm_num)
     rw [zero_mul, add_zero, ← hcdef, sub_self, abs_zero] at h0

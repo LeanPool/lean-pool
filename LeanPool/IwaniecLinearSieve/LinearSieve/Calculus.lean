@@ -10,6 +10,7 @@ public import LeanPool.IwaniecLinearSieve.LinearSieve.Defs
 public import LeanPool.IwaniecLinearSieve.SieveFunctions.LemmaFive
 import LeanPool.IwaniecLinearSieve.SieveFunctions.Defs
 import LeanPool.IwaniecLinearSieve.SieveMajorants.Properties
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Order.CompletePartialOrder
 import Std.Tactic.BVDecide.Normalize.Bool

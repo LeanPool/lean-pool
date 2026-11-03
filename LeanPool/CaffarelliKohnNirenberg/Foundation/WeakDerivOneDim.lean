@@ -5,6 +5,8 @@ Authors: Scott Armstrong, Vlad Vicol
 -/
 module
 
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.LebesgueDifferentiationThm
+
 public import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 public import Mathlib.MeasureTheory.Function.L2Space
@@ -588,7 +590,7 @@ theorem abs_sq_le_time_integral_sq_of_continuous_weakDeriv {τ : ℝ} (hτ : 0 <
     hτ ht₀U hfLoc hgLoc hweak (hfcont.mono Ioo_subset_Ico_self)
   let gExt := U.indicator g
   have hgExtLp : MemLp gExt 2 volume := by
-    rw [memLp_indicator_iff_restrict isOpen_Ioo.measurableSet]
+    rw [memLp_indicator_iff_restrict isOpen_Ioo.measurableSet.nullMeasurableSet]
     exact hgL2
   have hgExtInt : Integrable gExt volume := by
     have hgIntU : IntegrableOn g U volume :=

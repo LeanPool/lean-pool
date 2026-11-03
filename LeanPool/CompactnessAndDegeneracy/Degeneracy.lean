@@ -12,6 +12,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Extremal.Basic
 import LeanPool.CompactnessAndDegeneracy.Compactness
 import all Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 import Mathlib.Analysis.SpecialFunctions.Log.Base
+import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.InformationTheory.Hamming
 import Mathlib.Probability.Distributions.SetBernoulli
 

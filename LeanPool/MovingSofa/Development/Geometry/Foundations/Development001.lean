@@ -40,6 +40,7 @@ public import Mathlib.Analysis.Normed.Module.Basic
 public import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.Analysis.SpecialFunctions.Complex.Arg
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+public import Mathlib.Analysis.SpecialFunctions.PolarCoord
 public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Angle
@@ -52,7 +53,6 @@ public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Analysis.SpecificLimits.Normed
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fin.Basic
-public import Mathlib.Data.Fin.SuccPredOrder
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Data.List.MinMax
@@ -60,6 +60,7 @@ public import Mathlib.Geometry.Euclidean.Angle.Oriented.Rotation
 public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
+public import Mathlib.MeasureTheory.Constructions.HaarToSphere
 public import Mathlib.MeasureTheory.Function.AbsolutelyContinuous
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
@@ -85,6 +86,7 @@ public import Mathlib.MeasureTheory.VectorMeasure.WithDensity
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.Hom.Set
+public import Mathlib.Order.SuccPred.Fin
 public import Mathlib.Order.SuccPred.IntervalSucc
 public import Mathlib.Order.SuccPred.LinearLocallyFinite
 public import Mathlib.Tactic
@@ -114,7 +116,7 @@ public import Mathlib.Topology.Order.IntermediateValue
 public import Mathlib.Topology.Order.LeftRightNhds
 public import Mathlib.Topology.Order.MonotoneContinuity
 public import Mathlib.Topology.Order.ProjIcc
-public import Mathlib.Topology.Separation.Lemmas
+public import Mathlib.Topology.Separation.CompletelyRegular
 public import Mathlib.Topology.Sequences
 public import Mathlib.Topology.UniformSpace.Compact
 
@@ -948,7 +950,7 @@ theorem integrableOn_inv_norm_ball (S : ℝ) :
   rw [indicator_ball_inv_norm_eq,
     MeasureTheory.integrable_fun_norm_addHaar volume (f := invNormCutoff S)]
   refine IntegrableOn.congr_fun_ae ?_ (radial_invNormCutoff_ae S).symm
-  rw [integrableOn_indicator_iff measurableSet_Iio, Set.Iio_inter_Ioi]
+  rw [integrableOn_indicator_iff measurableSet_Iio.nullMeasurableSet, Set.Iio_inter_Ioi]
   exact integrableOn_const (by simp)
 
 /-- The integral of inverse distance from zero over a complex disk centred at zero. -/

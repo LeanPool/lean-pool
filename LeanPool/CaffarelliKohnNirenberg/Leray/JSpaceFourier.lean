@@ -270,7 +270,7 @@ private theorem cutoffSchwartzGradient_toLp_tendsto (ψ : 𝓢(Vec3, ℝ)) :
       MemLp (fun x : Vec3 => ‖((CKN.euclideanBall (0 : Vec3) (r n))ᶜ.indicator grad) x‖ +
         (32 / r n) * |ψ x|) (2 : ℝ≥0∞) volume := by
     exact ((schwartzGradient_memLp ψ).indicator
-      (CKN.measurableSet_euclideanBall 0 (r n)).compl).norm.add
+      (CKN.measurableSet_euclideanBall 0 (r n)).compl.nullMeasurableSet).norm.add
       ((ψ.memLp (2 : ℝ≥0∞) volume).norm.const_mul _)
   have hψabs := schwartz_abs_eLpNorm ψ
   have hmajorBound (n : ℕ) :
@@ -290,7 +290,7 @@ private theorem cutoffSchwartzGradient_toLp_tendsto (ψ : 𝓢(Vec3, ℝ)) :
         have htailLp : MemLp ((CKN.euclideanBall (0 : Vec3) (r n))ᶜ.indicator grad)
             (2 : ℝ≥0∞) volume :=
           (schwartzGradient_memLp ψ).indicator
-            (CKN.measurableSet_euclideanBall 0 (r n)).compl
+            (CKN.measurableSet_euclideanBall 0 (r n)).compl.nullMeasurableSet
         rw [eLpNorm_norm _ htailLp.aestronglyMeasurable]
         rw [hscale, eLpNorm_const_smul, hψabs]
   have hmajorTendsto : Tendsto

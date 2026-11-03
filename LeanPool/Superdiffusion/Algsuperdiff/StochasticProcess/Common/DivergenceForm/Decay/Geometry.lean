@@ -174,7 +174,7 @@ theorem contDiff_radialPhase (hdelta : 0 < delta) :
     have hcoord : ContDiff ℝ (⊤ : ℕ∞)
         (fun y : Vec d => ∑ i : Fin d, (y i - z i) ^ 2) := by
       exact ContDiff.sum fun i _ =>
-        (((contDiff_apply ℝ ℝ i).sub contDiff_const).pow 2)
+        (((contDiff_apply ℝ (fun _ ↦ ℝ) i).sub contDiff_const).pow 2)
     have hshape : (fun y : Vec d => ∑ i : Fin d, (y i - z i) ^ 2) =
         fun y => radialSq z delta y - delta ^ 2 := by
       funext y

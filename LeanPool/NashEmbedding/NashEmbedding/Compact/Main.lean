@@ -13,6 +13,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
   — at the request of David Wiygul
 -/
 public import LeanPool.NashEmbedding.Tactics
+public import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 public import Mathlib.Geometry.Manifold.Riemannian.Basic
 public import LeanPool.NashEmbedding.NashEmbedding.Torus.Main
 public import LeanPool.NashEmbedding.NashEmbedding.Compact.WhitneyExtension

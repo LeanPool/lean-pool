@@ -357,7 +357,7 @@ theorem exists_splitTraceCornerInitialPolynomial_gcd_factorization
   let : NeZero q := ⟨hq.ne'⟩
   let : NeZero (q : K) := ⟨by simpa [q] using hgChar⟩
   obtain ⟨a, ha⟩ := IsAlgClosed.exists_pow_nat_eq gamma hq
-  obtain ⟨zeta, hzeta⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot K q
+  obtain ⟨zeta, hzeta⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot K q
   have hqd : q ∣ d := Nat.gcd_dvd_left d e
   have hqe : q ∣ e := Nat.gcd_dvd_right d e
   have hdEq : q * (d / q) = d := Nat.mul_div_cancel' hqd

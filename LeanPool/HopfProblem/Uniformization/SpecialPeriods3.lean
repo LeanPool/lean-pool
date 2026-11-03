@@ -11,6 +11,7 @@ public import Mathlib.Geometry.Manifold.LocalDiffeomorph
 public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Foundations.TwoAffineCharts
 public import LeanPool.HopfProblem.Uniformization.SpecialPeriods2
+import Mathlib.Topology.Algebra.Group.DiscontinuousSubgroup
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.Foundations.Core3
 import all LeanPool.HopfProblem.Elliptic.Core1

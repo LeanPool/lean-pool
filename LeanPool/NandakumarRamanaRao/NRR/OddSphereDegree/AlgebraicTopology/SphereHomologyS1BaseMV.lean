@@ -10,6 +10,7 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SingularH0PathConnected
 import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnLowDimensional
 import Mathlib.Algebra.Category.FGModuleCat.Colimits
+import Mathlib.Algebra.Category.ModuleCat.Products
 import Mathlib.Algebra.Category.ModuleCat.Projective
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
@@ -23,7 +24,7 @@ import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Measurability.Init
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.Lemmas
+import Mathlib.Topology.Separation.CompletelyRegular
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.MayerVietoris
 /-!
 # Mayer–Vietoris base case: `H₁(S¹; ℤ) ≅ ℤ`

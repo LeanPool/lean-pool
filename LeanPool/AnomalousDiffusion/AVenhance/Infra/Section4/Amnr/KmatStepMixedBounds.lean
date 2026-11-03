@@ -34,7 +34,7 @@ theorem amnr_Kmat_mixed_bound_of_step_size {β C₀ κm κprev : ℝ}
   have hQ : 0 ≤ amnrKmatStepConstant β C₀ := by unfold amnrKmatStepConstant; positivity
   have hτ := AVenhance.Infra.Cutoff.tauP_pos I.one_lt_beta I.beta_lt I.two_pow_seven_le (m := m)
   have hf : ContDiff ℝ (AVenhance.Nstar β) (fun t => I.Kmat κm m t i j) :=
-    (contDiff_apply ℝ ℝ j).comp ((contDiff_apply ℝ (Fin 2 → ℝ) i).comp
+    (contDiff_apply ℝ (fun _ => ℝ) j).comp ((contDiff_apply ℝ (fun _ => Fin 2 → ℝ) i).comp
       (Section3.Kmat_contDiff I hm hκm))
   rw [amnrWord_timeOnly_mixed hf α r (by omega), amnrMixedWord_weight]
   by_cases hα : α = []

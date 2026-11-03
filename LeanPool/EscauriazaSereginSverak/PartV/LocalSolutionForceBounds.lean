@@ -43,7 +43,7 @@ theorem forcedHeat_congr_ae {G G' : Fin 3 → Fin 3 → ParabolicPoint → ℝ}
   unfold kernelResponse
   apply integral_congr_ae
   let z' : Vec3 × ℝ := z
-  have hmp : Measure.QuasiMeasurePreserving (fun p : Vec3 × ℝ => z' - p) volume volume :=
+  have hmp : QuasiMeasurePreserving (fun p : Vec3 × ℝ => z' - p) volume volume :=
     quasiMeasurePreserving_sub_left volume z'
   have hj : ∀ j : Fin 3, (fun p : Vec3 × ℝ => G i j (z' - p)) =ᵐ[volume]
       fun p : Vec3 × ℝ => G' i j (z' - p) :=

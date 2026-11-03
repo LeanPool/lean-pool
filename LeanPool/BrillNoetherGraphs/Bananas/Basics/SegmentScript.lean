@@ -193,7 +193,6 @@ theorem segSlope_diff (hlo : lo < target) (hhi : target < hi) (k : ℕ)
           have e3 : (k - lo = hi - lo - (target - lo)) ↔
               (k = lo + hi - target) := by omega
           simp only [e1, e2, e3]
-          try ring
         · have hkh : k = hi := by omega
           rw [ite_eq_right (by omega : ¬ (lo ≤ k ∧ k < hi))]
           rw [ite_eq_right (by omega : ¬ (k - lo < hi - lo))] at hdiv

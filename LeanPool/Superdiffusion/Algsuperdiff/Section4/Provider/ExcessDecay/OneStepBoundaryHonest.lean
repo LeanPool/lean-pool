@@ -306,7 +306,7 @@ theorem excessDecay_oneStep_boundary_datumSplit_core (hd : d ≠ 0) {m n : ℤ}
   -- the localized competitor: `V` cut off to `U_2`, where all four windows live
   have hWmem : MemLp (Set.indicator (truncatedWindow x m (n - 2)) V) 2
       (volume.restrict (truncatedWindow x m n)) :=
-    ((memLp_indicator_iff_restrict hmeas2).2 hVU).restrict _
+    ((memLp_indicator_iff_restrict hmeas2.nullMeasurableSet).2 hVU).restrict _
   have hWeq : Set.EqOn (Set.indicator (truncatedWindow x m (n - 2)) V) V
       (truncatedWindow x m (n - 2)) :=
     fun y hy => Set.indicator_of_mem hy _

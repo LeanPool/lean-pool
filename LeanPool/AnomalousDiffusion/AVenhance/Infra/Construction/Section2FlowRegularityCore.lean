@@ -339,7 +339,7 @@ theorem section2_material_jacobian_time_diff
       (fun p : (ℝ × ℝ) × Vec 2 =>
         constructionComposedFlowJacobian hseq m p.1.1 p.1.2 p.2
           (basisVec j) i) := by
-    exact (contDiff_apply ℝ ℝ i).comp (hComp.clm_apply contDiff_const)
+    exact (contDiff_apply ℝ (fun _ => ℝ) i).comp (hComp.clm_apply contDiff_const)
   have hmap : ContDiff ℝ (⊤ : ℕ∞)
       (fun r : ℝ => ((s, r), x)) := by fun_prop
   have h := hentry.comp hmap
@@ -706,7 +706,7 @@ private theorem composed_flow_jacobian_conclusion1 :
     have hcolumn : ContDiff ℝ (⊤ : ℕ∞)
         (fun x : Vec 2 => fderiv ℝ disp x (FaaDiBruno.coordinateVector 2 j)) :=
       hdispSmooth.fderiv_right (by simp) |>.clm_apply contDiff_const
-    exact (contDiff_apply ℝ ℝ i).comp hcolumn
+    exact (contDiff_apply ℝ (fun _ => ℝ) i).comp hcolumn
   have hDfinite : ContDiff ℝ n (FaaDiBruno.spatialGradientMatrix disp) :=
     hD.of_le (by simp)
   have hpaper' : FaaDiBruno.snorm (FaaDiBruno.spatialGradientMatrix disp) n Rpaper ≤
@@ -1028,7 +1028,7 @@ theorem Section2FlowRegularityCore.section2_flow_jacobian_from_current_induction
     have hcolumn : ContDiff ℝ (⊤ : ℕ∞)
         (fun x : Vec 2 => fderiv ℝ f x (FaaDiBruno.coordinateVector 2 j)) :=
       hFderiv.clm_apply contDiff_const
-    exact (contDiff_apply ℝ ℝ i).comp hcolumn
+    exact (contDiff_apply ℝ (fun _ => ℝ) i).comp hcolumn
   have hpaper' : FaaDiBruno.snorm
       (FaaDiBruno.spatialGradientMatrix f) n Rpaper ≤ ENNReal.ofReal 12 := by
     simpa [f, XShift, X, constructionFlow, Rpaper] using hpaper

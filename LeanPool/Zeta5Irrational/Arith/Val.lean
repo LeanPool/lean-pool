@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linarith

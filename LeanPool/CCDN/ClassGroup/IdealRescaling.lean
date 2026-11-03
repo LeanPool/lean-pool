@@ -55,7 +55,7 @@ theorem rescale_integral_ideal_square (I : (Ideal R)⁰) {α : R} (hα : α ≠ 
     rw [hJ]
     dsimp only [F]
     rw [mul_pow, ← coeIdeal_pow, hIα, coeIdeal_span_singleton,
-      spanSingleton_pow, spanSingleton_mul_spanSingleton, mul_comm]
+      ← map_pow (spanSingleton R⁰), ← map_mul (spanSingleton R⁰), mul_comm]
   have hβmem : algebraMap R K α * κ ^ 2 ∈ (1 : FractionalIdeal R⁰ K) := by
     have hsle : (J : FractionalIdeal R⁰ K) ^ 2 ≤ 1 := by
       rw [← coeIdeal_pow]

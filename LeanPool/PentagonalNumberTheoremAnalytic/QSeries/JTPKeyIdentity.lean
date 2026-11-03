@@ -185,7 +185,7 @@ theorem keySum_sub_keySum_succ {q : ℂ} (hq : ‖q‖ < 1) (k : ℕ) :
           norm_num
           exact ne_of_lt <| pow_lt_one₀ (by positivity) hq (by positivity)
       convert mul_div_mul_right _ _ hne using 1
-      first | rfl | ring_nf
+      ring_nf
       rw [show 1 + m + k = m + k + 1 by ring, qPochhammer_succ]
       ring
     have hsum1 := summable_pow_mul_one_sub_pow_div_qPochhammer hq k
@@ -194,7 +194,7 @@ theorem keySum_sub_keySum_succ {q : ℂ} (hq : ‖q‖ < 1) (k : ℕ) :
       have h : Summable fun m : ℕ =>
           q ^ (m * (m + k + 1)) / (qPochhammer q q m * qPochhammer q q (m + k + 1)) := by
         exact summable_keySummand hq (k + 1)
-      (convert h.mul_left (-q ^ (k + 1)) using 2; first | rfl | ring_nf)
+      (convert h.mul_left (-q ^ (k + 1)) using 2; ring_nf)
     convert congr_arg₂ (· + ·) h_split
       (show ∑' m : ℕ, -(q ^ (m * (m + k)) * q ^ (m + k + 1)) /
           (qPochhammer q q m * qPochhammer q q (m + k + 1)) = -q ^ (k + 1) * keySum q (k + 1)
@@ -239,7 +239,7 @@ theorem keySum_eq_one_div_qPochhammerInf_self {q : ℂ} (hq : ‖q‖ < 1) (k : 
             ‖q‖ ^ (k + n + 1) * ‖keySum q (k + n + 1) - keySum q (k + n + 2)‖ := by
           rw [keySum_sub_keySum_succ hq (k + n), norm_mul, norm_pow, norm_sub_rev]
         convert le_trans ih (mul_le_mul_of_nonneg_left h_induction_step <| by positivity) using 1
-        all_goals first | rfl | ring_nf
+        all_goals ring_nf
         rw [show (2 + n * 3 + n * k * 2 + n ^ 2 + k * 2) / 2 =
           n + k + (n + n * k * 2 + n ^ 2) / 2 + 1 from
             Nat.div_eq_of_eq_mul_left zero_lt_two <| by
@@ -298,8 +298,7 @@ theorem hasSum_pow_choose_two_nonneg {q : ℂ} (hq : ‖q‖ < 1) (k : ℕ) :
     exact ⟨fun h => h.tsum_eq, fun h => h ▸ (summable_keySummand hq k).hasSum⟩
   have h_scaled : HasSum (fun m : ℕ => q ^ (k.choose 2 + m * (m + k)) * qPochhammerInf q q /
       (qPochhammer q q (m + k) * qPochhammer q q m)) (q ^ k.choose 2) := by
-    convert h_base.mul_left (q ^ k.choose 2 * qPochhammerInf q q) using 1 <;>
-      first | rfl | ring_nf
+    convert h_base.mul_left (q ^ k.choose 2 * qPochhammerInf q q) using 1 <;> ring_nf
     · ac_rfl
     · rw [mul_assoc, mul_inv_cancel₀ (qPochhammerInf_ne_zero hq hq), mul_one]
   have h_sum : HasSum (fun m : ℕ =>
@@ -322,7 +321,7 @@ theorem hasSum_pow_choose_two_neg {q : ℂ} (hq : ‖q‖ < 1) (l : ℕ) :
       q ^ (n.choose 2 + (n + (l + 1)).choose 2 + (n + (l + 1))) * qPochhammerInf q q /
         (qPochhammer q q n * qPochhammer q q (n + (l + 1)))) (q ^ (l + 2).choose 2) := by
     convert HasSum.mul_left (q ^ (l + 2).choose 2 * qPochhammerInf q q)
-      (summable_keySummand hq (l + 1)).hasSum using 1 <;> try rfl
+      (summable_keySummand hq (l + 1)).hasSum using 1
     · ext n
       rw [keySummand, Nat.choose_two_add_choose_two']
       ring

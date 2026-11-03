@@ -217,7 +217,7 @@ theorem intervalIntegral_comp_add_left_of_periodic {E : Type*} [NormedAddCommGro
 theorem rotZ_intervalIntegral (ψ : ℝ) (F : ℝ → Vec3) (a b : ℝ) :
     rotZ ψ (∫ φ in a..b, F φ) = ∫ φ in a..b, rotZ ψ (F φ) := by
   have key : ∀ s : Set ℝ, rotZ ψ (∫ φ in s, F φ) = ∫ φ in s, rotZ ψ (F φ) := fun s =>
-    ((rotZEquiv ψ).toContinuousLinearMap.integral_comp_comm' (rotZEquiv ψ).antilipschitz F).symm
+    ((rotZEquiv ψ).toContinuousLinearMap.integral_comp_comm' (rotZEquiv ψ).antilipschitzWith F).symm
   simp only [intervalIntegral, rotZ_sub_vec, key]
 
 /-- A field fixed by every rotation is its own angular mean. -/

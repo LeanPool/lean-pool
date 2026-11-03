@@ -59,7 +59,8 @@ theorem pvSlabPressure_memLp {σ r : ℝ} (hr : 1 < r) {W : ParabolicPoint → V
     (hWr : ∀ i j, MemLp (pvSlabTensor σ W W i j) (ENNReal.ofReal r) volume) :
     MemLp (pvSlabPressure σ W) (ENNReal.ofReal r) volume :=
   (memLp_congr_ae (pvSlabPressure_ae_eq_indicator hr hW2 hWr)).2
-    ((CKN.Leray.rieszPressureSpaceTime_memLp r hr _ hWr).indicator (pvSlab_measurableSet σ))
+    ((CKN.Leray.rieszPressureSpaceTime_memLp r hr _ hWr).indicator
+      (pvSlab_measurableSet σ).nullMeasurableSet)
 
 /-- The cut-off pressure is Lipschitz with respect to the tensor, at any exponent
 `r > 1` at which both tensors are integrable. -/
@@ -84,7 +85,7 @@ theorem pvSlabPressure_sub_eLpNorm_le {σ r : ℝ} (hr : 1 < r) {U V : Parabolic
     · rfl
     · exact sub_zero 0
   rw [eLpNorm_congr_ae hae]
-  exact (eLpNorm_indicator_le _ (pvSlab_measurableSet σ)).trans
+  exact (eLpNorm_indicator_le _ (pvSlab_measurableSet σ).nullMeasurableSet).trans
     (rieszPressureSpaceTime_sub_eLpNorm_le r hr _ _ hUr hVr)
 
 /-- The difference of two quadratic tensors is bounded by the distance of the

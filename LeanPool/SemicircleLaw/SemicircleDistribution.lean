@@ -10,6 +10,7 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.MeasureTheory.Measure.Haar.Unique
 
 /-!

@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.FlatPrimitive
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SmoothParameterIntegral
 import LeanPool.NavierStokesAndEuler.NavierStokes.FlatKernelBounds
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals

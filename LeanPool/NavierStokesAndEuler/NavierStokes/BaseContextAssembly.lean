@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.LocalRankDefect
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 public import LeanPool.NavierStokesAndEuler.NavierStokes.PhysicalResidualTZ
 public import LeanPool.NavierStokesAndEuler.NavierStokes.PrimaryTargetBounds
 public import LeanPool.NavierStokesAndEuler.NavierStokes.BaseRadialJets

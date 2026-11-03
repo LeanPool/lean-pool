@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.ComparatorEvolutionIdentification
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 public import LeanPool.NavierStokesAndEuler.Euler.ClassicalBridge
 import LeanPool.NavierStokesAndEuler.Euler.CompactProjectedEulerLaw
 import LeanPool.NavierStokesAndEuler.Euler.CompactVorticityTimeUpgrade

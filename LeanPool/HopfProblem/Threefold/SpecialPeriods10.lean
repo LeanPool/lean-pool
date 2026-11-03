@@ -108,7 +108,7 @@ private theorem
       Bool.eq_false_iff.mpr h
     simp only [clockwiseRegularMeridian, hn, Bool.false_eq_true, ↓reduceIte]
     rw [FundamentalGroup.inv_def]
-    exact Path.Homotopic.Quotient.mk_symm _
+    exact CategoryTheory.End.ext (Path.Homotopic.Quotient.mk_symm _)
 
 private def SpecialPeriods.EllipticAttachingMeridians.LinearizationControl.analyticMeridianSquare
     {f : ℂ → ℂ} (D : SpecialPeriods.EllipticAttachingMeridians.LinearizationControl f) (b : Bool)
@@ -397,7 +397,7 @@ theorem SpecialPeriods.EllipticAttachingMeridians.homotopic_conjugate_map_eq {X 
       (FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk K))⁻¹ *
           FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk q) *
         FundamentalGroup.fromPath (Path.Homotopic.Quotient.mk K) :=
-    Path.Homotopic.Quotient.eq.mpr h
+    CategoryTheory.End.ext (Path.Homotopic.Quotient.eq.mpr h)
   rw [hclass, map_mul, map_mul, map_inv]
   exact (hcomm _ _).inv_mul_cancel
 
@@ -999,8 +999,9 @@ private theorem SpecialPeriods.Threefold.stageRegularInclusion_insert_fundamenta
     (FundamentalGroup.map (previousStageInclusion s i) (stageRegularInclusion s x)).comp
         (FundamentalGroup.map (stageRegularInclusion s) x) =
       FundamentalGroup.map (stageRegularInclusion (Insert.insert i s)) x := by
-  ext γ
-  obtain ⟨p⟩ := γ
+  ext γ : 1
+  obtain ⟨⟨p⟩⟩ := γ
+  apply CategoryTheory.End.ext
   apply congrArg Path.Homotopic.Quotient.mk
   ext t
   rfl
@@ -1034,8 +1035,9 @@ private theorem SpecialPeriods.Threefold.regularLiftedInclusion_fundamentalGroup
     (fullStageFundamentalGroupEquiv (stageRegularInclusion Finset.univ x)).toMonoidHom.comp
         (FundamentalGroup.map (stageRegularInclusion Finset.univ) x) =
       FundamentalGroup.map regularLiftedInclusion x := by
-    ext γ
-    obtain ⟨p⟩ := γ
+    ext γ : 1
+    obtain ⟨⟨p⟩⟩ := γ
+    apply CategoryTheory.End.ext
     apply congrArg Path.Homotopic.Quotient.mk
     ext t
     rfl
@@ -1402,8 +1404,9 @@ private theorem SpecialPeriods.Threefold.ellipticPuncturedPiece_fundamentalGroup
             ((ellipticPuncturedPieceHomeomorph j).symm x)).comp
         (homeomorphFundamentalGroupEquiv (ellipticPuncturedPieceHomeomorph j).symm
             x).toMonoidHom := by
-  ext γ
-  obtain ⟨p⟩ := γ
+  ext γ : 1
+  obtain ⟨⟨p⟩⟩ := γ
+  apply CategoryTheory.End.ext
   apply congrArg Path.Homotopic.Quotient.mk
   ext t
   rfl
@@ -1943,7 +1946,8 @@ private theorem
         (fibreToOverlap s x) (FundamentalGroup.map (fibreToOverlap s) x γ) =
       homeomorphFundamentalGroupEquiv fillingHomeomorph x.val
         (FundamentalGroup.map ⟨Subtype.val, continuous_subtype_val⟩ x γ) := by
-  obtain ⟨p⟩ := γ
+  obtain ⟨⟨p⟩⟩ := γ
+  apply CategoryTheory.End.ext
   apply congrArg Path.Homotopic.Quotient.mk
   ext t
   rfl
@@ -2018,8 +2022,9 @@ private theorem SpecialPeriods.Threefold.regularFamilyInclusionMap_fundamentalGr
     (FundamentalGroup.map regularLiftedInclusion (e x)).comp
         (homeomorphFundamentalGroupEquiv e x).toMonoidHom =
       FundamentalGroup.map regularFamilyInclusionMap x := by
-    ext γ
-    obtain ⟨p⟩ := γ
+    ext γ : 1
+    obtain ⟨⟨p⟩⟩ := γ
+    apply CategoryTheory.End.ext
     apply congrArg Path.Homotopic.Quotient.mk
     ext t
     rfl

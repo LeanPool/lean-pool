@@ -164,7 +164,7 @@ theorem scalarHom_indScalarUnit
     [HasFiniteColimits C]
     (ψ : ℂ ≃+* End (𝟙_ C)) (c : ℂ) :
     scalarHom (indScalarUnit ψ) c =
-      Functor.LaxMonoidal.ε (indOf (C := C)) ≫ indOf.map (ψ c) ≫
+      Functor.LaxMonoidal.ε (indOf (C := C)) ≫ indOf.map (ψ c).asHom ≫
         Functor.OplaxMonoidal.η (indOf (C := C)) := by
   rw [indOf_oplax_η]
   rfl
@@ -234,8 +234,8 @@ theorem permAlg_indOf_conj_scalarUnit
     {n : ℕ} (x : SymGroupAlgebra n) :
     letI := linearOfScalarUnit ψ
     letI := linearOfScalarUnit (indScalarUnit ψ)
-    permAlg (indOf.obj X) n x ≫ (indOfPowIso X n).hom =
-      (indOfPowIso X n).hom ≫ indOf.map (permAlg X n x) := by
+    (permAlg (indOf.obj X) n x).asHom ≫ (indOfPowIso X n).hom =
+      (indOfPowIso X n).hom ≫ indOf.map (permAlg X n x).asHom := by
   let := linearOfScalarUnit ψ
   let := linearOfScalarUnit (indScalarUnit ψ)
   have := indOf_additive (C := C)
@@ -244,15 +244,15 @@ theorem permAlg_indOf_conj_scalarUnit
     rw [MonoidAlgebra.of_apply, permAlg_single, permAlg_single]
     exact indOfPowIso_permMor X n σ
   | add p q hp hq =>
-    rw [map_add, map_add]
+    rw [map_add, map_add, End.add_asHom, End.add_asHom]
     exact (sum_pass hp hq).trans
       (congrArg (fun m => (indOfPowIso X n).hom ≫ m)
         (Functor.map_add (F := indOf (C := C))).symm)
   | smul c p hp =>
-    rw [map_smul, map_smul]
+    rw [map_smul, map_smul, End.smul_asHom, End.smul_asHom]
     exact (scale_pass c hp).trans
       (congrArg (fun m => (indOfPowIso X n).hom ≫ m)
-        (indOf_map_scalarSmul ψ c (permAlg X n p)).symm)
+        (indOf_map_scalarSmul ψ c (permAlg X n p).asHom).symm)
 
 /-- **Schur vanishing transports along the embedding `C ⥤ Ind C`**:
 with the ℂ-linear structures induced on `C` and on `Ind C` by one
@@ -269,31 +269,33 @@ theorem schurKilled_indOf {C : Type v} [SmallCategory C] [MonoidalCategory C]
       SchurKilled P X μ) := by
   let := linearOfScalarUnit ψ
   let := linearOfScalarUnit (indScalarUnit ψ)
-  have hconj : permAlg (indOf.obj X) μ.card (P.e μ) =
+  have hconj : (permAlg (indOf.obj X) μ.card (P.e μ)).asHom =
       (indOfPowIso X μ.card).hom ≫
-        indOf.map (permAlg X μ.card (P.e μ)) ≫
+        indOf.map (permAlg X μ.card (P.e μ)).asHom ≫
         (indOfPowIso X μ.card).inv := by
     rw [← reassoc_of% permAlg_indOf_conj_scalarUnit ψ X (P.e μ),
       Iso.hom_inv_id, Category.comp_id]
   have hdown : SchurKilled P X μ ↔
-      permAlg X μ.card (P.e μ) =
+      (permAlg X μ.card (P.e μ)).asHom =
         (0 : tensorPow C X μ.card ⟶ tensorPow C X μ.card) :=
-    Iff.rfl
+    ⟨fun h => congrArg End.asHom h, fun h => End.ext h⟩
   constructor
   · intro h0
-    have h0' : permAlg (indOf.obj X) μ.card (P.e μ) =
+    have h0' : (permAlg (indOf.obj X) μ.card (P.e μ)).asHom =
         (0 : tensorPow (Ind C) (indOf.obj X) μ.card ⟶
-          tensorPow (Ind C) (indOf.obj X) μ.card) := h0
+          tensorPow (Ind C) (indOf.obj X) μ.card) := congrArg End.asHom h0
     rw [hconj] at h0'
     have h1 := (indOfPowIso X μ.card).inv ≫= h0' =≫
       (indOfPowIso X μ.card).hom
-    have h2 : indOf.map (permAlg X μ.card (P.e μ)) = 0 := by
+    have h2 : indOf.map (permAlg X μ.card (P.e μ)).asHom = 0 := by
       simpa using h1
     exact hdown.mpr ((indOf_map_eq_zero_iff _).mp h2)
   · intro h0
-    change permAlg (indOf.obj X) μ.card (P.e μ) = 0
+    apply End.ext
+    rw [End.zero_asHom]
+    change (permAlg (indOf.obj X) μ.card (P.e μ)).asHom = 0
     rw [hconj,
-      (indOf_map_eq_zero_iff (permAlg X μ.card (P.e μ))).mpr
+      (indOf_map_eq_zero_iff (permAlg X μ.card (P.e μ)).asHom).mpr
         (hdown.mp h0),
       Limits.zero_comp, Limits.comp_zero]
 

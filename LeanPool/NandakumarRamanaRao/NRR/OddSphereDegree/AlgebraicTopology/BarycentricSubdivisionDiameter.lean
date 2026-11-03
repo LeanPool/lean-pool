@@ -10,7 +10,7 @@ public import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Normed.Module.Convex
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Measurability.Init
 import Mathlib.Tactic.ReduceModChar
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex

@@ -32,6 +32,17 @@ namespace LeanPool.SingleCopyStabilizer.FiniteProbability
 
 open scoped BigOperators
 
+/-- The uniform probability mass function on a nonempty finite type. -/
+def uniformPMF (α : Type*) [Fintype α] [Nonempty α] : PMF α :=
+  PMF.ofFintype (fun _ => (Fintype.card α : ENNReal)⁻¹) (by
+    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+    exact ENNReal.mul_inv_cancel (by exact_mod_cast Fintype.card_ne_zero)
+      (ENNReal.natCast_ne_top _))
+
+@[simp]
+theorem uniformPMF_apply {α : Type*} [Fintype α] [Nonempty α] (a : α) :
+    uniformPMF α a = (Fintype.card α : ENNReal)⁻¹ := rfl
+
 section Collision
 
 variable {A : Type*} [Fintype A]
@@ -113,12 +124,12 @@ omit [DecidableEq G] in
 /-- The probability-mass-function pushforward of the uniform ordered-pair
 distribution under subtraction is exactly the uniform distribution on `G`. -/
 theorem uniform_difference_pmf :
-    (PMF.uniformOfFintype (G × G)).map (fun xy => xy.1 - xy.2) =
-      PMF.uniformOfFintype G := by
+    (uniformPMF (G × G)).map (fun xy => xy.1 - xy.2) =
+      uniformPMF G := by
   classical
   ext u
   rw [PMF.map_apply]
-  simp only [PMF.uniformOfFintype_apply, tsum_fintype]
+  simp only [uniformPMF_apply, tsum_fintype]
   rw [← Finset.sum_filter]
   have hcount : (Finset.univ.filter fun xy : G × G => u = xy.1 - xy.2).card =
       Fintype.card G := by

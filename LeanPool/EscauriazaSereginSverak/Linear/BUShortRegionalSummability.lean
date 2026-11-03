@@ -46,7 +46,7 @@ theorem bu_short_integrable_on_region_of_cell_bounds
   have hInt (k : ℕ) (m : Fin 3 → ℤ) (ell : Fin 2048) :
       IntegrableOn (S.indicator F)
         (buShortShiftedDyadicCell (k + 1 : ℤ) m ell) volume :=
-    (integrableOn_indicator_iff hSmeas).mpr (by
+    (integrableOn_indicator_iff hSmeas.nullMeasurableSet).mpr (by
       simpa only [Set.inter_comm] using hCellInt k m ell)
   have hBound (k : ℕ) (m : Fin 3 → ℤ) (ell : Fin 2048) :
       (∫ z in buShortShiftedDyadicCell (k + 1 : ℤ) m ell,
@@ -61,7 +61,7 @@ theorem bu_short_integrable_on_region_of_cell_bounds
     (S.indicator F) hInt hBound
   have hRegion : IntegrableOn F
       (S ∩ (Set.univ ×ˢ Ioo (1 / 2 : ℝ) 1 : Set ParabolicPoint))
-      volume := (integrableOn_indicator_iff hSmeas).mp hSlab
+      volume := (integrableOn_indicator_iff hSmeas.nullMeasurableSet).mp hSlab
   simpa only [Set.inter_eq_left.mpr hSsub] using hRegion
 
 end ESS

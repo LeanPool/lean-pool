@@ -9,6 +9,7 @@ module
 public import LeanPool.PFR.ForMathlib.Entropy.RuzsaDist
 import LeanPool.PFR.EntropyPFR
 import LeanPool.ZhangYeungInequality.PFR.Mathlib.Probability.Independence.Basic
+import Mathlib.Algebra.Group.Pointwise.Set.Card
 import Mathlib.Algebra.Module.ZMod
 import Mathlib.Combinatorics.Additive.RuzsaCovering
 

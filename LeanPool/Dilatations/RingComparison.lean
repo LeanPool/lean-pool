@@ -258,14 +258,16 @@ noncomputable def descToLoc : A'[M] →ₐ[A'] Localization (genSubmonoid M) :=
 `LocalizationFunctor (centerOfMulticenter M)`. -/
 def toLocEnd : A' →* CategoryTheory.End
     ((LocalizationFunctor (centerOfMulticenter M)).obj (CategoryTheory.SingleObj.star A')) where
-  toFun a := (LocalizationFunctor (centerOfMulticenter M)).map
-    (a : CategoryTheory.SingleObj.star A' ⟶ CategoryTheory.SingleObj.star A')
+  toFun a := .of ((LocalizationFunctor (centerOfMulticenter M)).map
+    (a : CategoryTheory.SingleObj.star A' ⟶ CategoryTheory.SingleObj.star A'))
   map_one' := by
+    apply CategoryTheory.End.ext
     change (LocalizationFunctor (centerOfMulticenter M)).map
         (𝟙 (CategoryTheory.SingleObj.star A')) =
       𝟙 ((LocalizationFunctor (centerOfMulticenter M)).obj (CategoryTheory.SingleObj.star A'))
     rw [CategoryTheory.Functor.map_id]
   map_mul' a b := by
+    apply CategoryTheory.End.ext
     change (LocalizationFunctor (centerOfMulticenter M)).map
         ((a * b : A') : CategoryTheory.SingleObj.star A' ⟶ CategoryTheory.SingleObj.star A') =
       (LocalizationFunctor (centerOfMulticenter M)).map
@@ -280,7 +282,7 @@ lemma toLocEnd_inverts_gen : ∀ y : genSubmonoid M, IsUnit (toLocEnd M (y : A')
   | mem x hx =>
     obtain ⟨i, rfl⟩ := hx
     rw [CategoryTheory.isUnit_iff_isIso]
-    change CategoryTheory.IsIso (toLocEnd M (M.elem i))
+    change CategoryTheory.IsIso (toLocEnd M (M.elem i)).asHom
     exact CategoryTheory.MorphismProperty.Q_inverts (CenterMorphismProperty (centerOfMulticenter M))
       (M.elem i : CategoryTheory.SingleObj.star A' ⟶ CategoryTheory.SingleObj.star A')
       ⟨Finsupp.single i 1, by
@@ -290,8 +292,8 @@ lemma toLocEnd_inverts_gen : ∀ y : genSubmonoid M, IsUnit (toLocEnd M (y : A')
             Σ X Y : CategoryTheory.SingleObj A', X ⟶ Y)) heq⟩
   | one =>
     rw [CategoryTheory.isUnit_iff_isIso]
-    change CategoryTheory.IsIso (toLocEnd M (1 : A'))
-    rw [map_one, CategoryTheory.End.one_def]
+    change CategoryTheory.IsIso (toLocEnd M (1 : A')).asHom
+    rw [map_one, CategoryTheory.End.one_asHom]
     infer_instance
   | mul x y _ _ hx hy => rw [map_mul]; exact hx.mul hy
 
@@ -315,23 +317,25 @@ in the raw localization's endomorphism monoid — it commutes with everything. P
 composition, containing every generator-image and every formal inverse, is everything. -/
 lemma genImage_central (a : A') :
     ∀ ⦃X Y : (CenterMorphismProperty (centerOfMulticenter M)).Localization⦄ (v : X ⟶ Y),
-      (toLocEnd M a) ≫ v = v ≫ (toLocEnd M a) := by
+      (toLocEnd M a).asHom ≫ v = v ≫ (toLocEnd M a).asHom := by
   let P : CategoryTheory.MorphismProperty
       (CenterMorphismProperty (centerOfMulticenter M)).Localization :=
-    fun _ _ v => (toLocEnd M a) ≫ v = v ≫ (toLocEnd M a)
+    fun _ _ v => (toLocEnd M a).asHom ≫ v = v ≫ (toLocEnd M a).asHom
   have : P.IsStableUnderComposition := ⟨fun _ _ hf hg => commutesComp hf hg⟩
   have hP : P = ⊤ := by
     apply Localization.Construction.morphismProperty_eq_top P
     · intro X Y f
-      change toLocEnd M a ≫ toLocEnd M (f : A') = toLocEnd M (f : A') ≫ toLocEnd M a
-      rw [← CategoryTheory.End.mul_def, ← CategoryTheory.End.mul_def, ← map_mul, ← map_mul,
+      change (toLocEnd M a).asHom ≫ (toLocEnd M (f : A')).asHom =
+        (toLocEnd M (f : A')).asHom ≫ (toLocEnd M a).asHom
+      rw [← CategoryTheory.End.mul_asHom, ← CategoryTheory.End.mul_asHom, ← map_mul, ← map_mul,
         mul_comm]
     · intro X Y w hw
-      change toLocEnd M a ≫ (Localization.Construction.wIso w hw).inv =
-        (Localization.Construction.wIso w hw).inv ≫ toLocEnd M a
+      change (toLocEnd M a).asHom ≫ (Localization.Construction.wIso w hw).inv =
+        (Localization.Construction.wIso w hw).inv ≫ (toLocEnd M a).asHom
       apply commutesInv (Localization.Construction.wIso w hw)
-      change toLocEnd M a ≫ toLocEnd M (w : A') = toLocEnd M (w : A') ≫ toLocEnd M a
-      rw [← CategoryTheory.End.mul_def, ← CategoryTheory.End.mul_def, ← map_mul, ← map_mul,
+      change (toLocEnd M a).asHom ≫ (toLocEnd M (w : A')).asHom =
+        (toLocEnd M (w : A')).asHom ≫ (toLocEnd M a).asHom
+      rw [← CategoryTheory.End.mul_asHom, ← CategoryTheory.End.mul_asHom, ← map_mul, ← map_mul,
         mul_comm]
   intro X Y v
   simpa only [← hP] using CategoryTheory.MorphismProperty.top_apply v
@@ -359,12 +363,12 @@ lemma isoObj_eq_localizationPoint :
 noncomputable def castEndomorphism ⦃X Y : (CenterMorphismProperty (centerOfMulticenter
     M)).Localization⦄
     (u : X ⟶ Y) : CategoryTheory.End (localizationPoint M) :=
-  CategoryTheory.eqToHom (isoObj_eq_localizationPoint M X).symm ≫ u ≫
-    CategoryTheory.eqToHom (isoObj_eq_localizationPoint M Y)
+  .of (CategoryTheory.eqToHom (isoObj_eq_localizationPoint M X).symm ≫ u ≫
+    CategoryTheory.eqToHom (isoObj_eq_localizationPoint M Y))
 
 private lemma castE_comp ⦃X Y Z : (CenterMorphismProperty (centerOfMulticenter M)).Localization⦄
-    (f : X ⟶ Y) (g : Y ⟶ Z) : castEndomorphism M (f ≫ g) = castEndomorphism M f ≫
-      castEndomorphism M g := by
+    (f : X ⟶ Y) (g : Y ⟶ Z) : (castEndomorphism M (f ≫ g)).asHom =
+      (castEndomorphism M f).asHom ≫ (castEndomorphism M g).asHom := by
   change CategoryTheory.eqToHom _ ≫ (f ≫ g) ≫ CategoryTheory.eqToHom _ =
     (CategoryTheory.eqToHom _ ≫ f ≫ CategoryTheory.eqToHom _) ≫
       (CategoryTheory.eqToHom _ ≫ g ≫ CategoryTheory.eqToHom _)
@@ -372,8 +376,9 @@ private lemma castE_comp ⦃X Y Z : (CenterMorphismProperty (centerOfMulticenter
     CategoryTheory.Category.id_comp]
 
 private lemma castE_eq_self (u : CategoryTheory.End (localizationPoint M)) : castEndomorphism
-    M u = u := by
-  change CategoryTheory.eqToHom _ ≫ u ≫ CategoryTheory.eqToHom _ = u
+    M u.asHom = u := by
+  apply CategoryTheory.End.ext
+  change CategoryTheory.eqToHom _ ≫ u.asHom ≫ CategoryTheory.eqToHom _ = u.asHom
   simp only [CategoryTheory.eqToHom_refl, CategoryTheory.Category.id_comp,
     CategoryTheory.Category.comp_id]
 
@@ -382,36 +387,40 @@ private lemma castE_eq_self (u : CategoryTheory.End (localizationPoint M)) : cas
 are central by `genImage_central`, and formal inverses of central elements are central too. -/
 lemma allCentral (v : CategoryTheory.End (localizationPoint M)) :
     ∀ ⦃X Y : (CenterMorphismProperty (centerOfMulticenter M)).Localization⦄ (u : X ⟶ Y),
-      castEndomorphism M u ≫ v = v ≫ castEndomorphism M u := by
+      (castEndomorphism M u).asHom ≫ v.asHom = v.asHom ≫ (castEndomorphism M u).asHom := by
   let P : CategoryTheory.MorphismProperty
       (CenterMorphismProperty (centerOfMulticenter M)).Localization :=
-    fun _ _ u => castEndomorphism M u ≫ v = v ≫ castEndomorphism M u
+    fun _ _ u => (castEndomorphism M u).asHom ≫ v.asHom =
+      v.asHom ≫ (castEndomorphism M u).asHom
   have hcomp : ∀ {X Y Z} (f : X ⟶ Y) (g : Y ⟶ Z), P f → P g → P (f ≫ g) := by
     intro X Y Z f g hf hg
-    change castEndomorphism M (f ≫ g) ≫ v = v ≫ castEndomorphism M (f ≫ g)
+    change (castEndomorphism M (f ≫ g)).asHom ≫ v.asHom =
+      v.asHom ≫ (castEndomorphism M (f ≫ g)).asHom
     rw [castE_comp, CategoryTheory.Category.assoc, hg, ← CategoryTheory.Category.assoc, hf,
       CategoryTheory.Category.assoc]
   have : P.IsStableUnderComposition := ⟨hcomp⟩
   have hP : P = ⊤ := by
     apply Localization.Construction.morphismProperty_eq_top P
     · intro X Y f
-      change castEndomorphism M ((LocalizationFunctor (centerOfMulticenter M)).map f) ≫ v =
-        v ≫ castEndomorphism M ((LocalizationFunctor (centerOfMulticenter M)).map f)
+      change (castEndomorphism M ((LocalizationFunctor (centerOfMulticenter M)).map f)).asHom ≫
+        v.asHom = v.asHom ≫
+          (castEndomorphism M ((LocalizationFunctor (centerOfMulticenter M)).map f)).asHom
       obtain rfl : X = CategoryTheory.SingleObj.star A' := Subsingleton.elim _ _
       obtain rfl : Y = CategoryTheory.SingleObj.star A' := Subsingleton.elim _ _
-      rw [castE_eq_self]
-      exact genImage_central M (f : A') v
+      simp only [castEndomorphism, CategoryTheory.eqToHom_refl, CategoryTheory.Category.id_comp,
+        CategoryTheory.Category.comp_id]
+      exact genImage_central M (f : A') v.asHom
     · intro X Y w hw
       obtain rfl : X = CategoryTheory.SingleObj.star A' := Subsingleton.elim _ _
       obtain rfl : Y = CategoryTheory.SingleObj.star A' := Subsingleton.elim _ _
-      change castEndomorphism M (Localization.Construction.wIso w hw).inv ≫ v =
-        v ≫ castEndomorphism M (Localization.Construction.wIso w hw).inv
-      erw [castE_eq_self]
+      change (castEndomorphism M (Localization.Construction.wIso w hw).inv).asHom ≫ v.asHom =
+        v.asHom ≫ (castEndomorphism M (Localization.Construction.wIso w hw).inv).asHom
+      simp only [castEndomorphism]
       apply Eq.symm
       apply commutesInv (Localization.Construction.wIso w hw)
-      change v ≫ (LocalizationFunctor (centerOfMulticenter M)).map w =
-        (LocalizationFunctor (centerOfMulticenter M)).map w ≫ v
-      exact (genImage_central M (w : A') v).symm
+      change v.asHom ≫ (LocalizationFunctor (centerOfMulticenter M)).map w =
+        (LocalizationFunctor (centerOfMulticenter M)).map w ≫ v.asHom
+      exact (genImage_central M (w : A') v.asHom).symm
   intro X Y u
   simpa only [← hP] using CategoryTheory.MorphismProperty.top_apply u
 
@@ -420,8 +429,9 @@ what makes `LocEndLift` (a monoid-localization universal-property construction) 
 noncomputable instance commEnd : CommMonoid (CategoryTheory.End (localizationPoint M)) where
   __ := CategoryTheory.End.monoid
   mul_comm u v := by
-    change v ≫ u = u ≫ v
-    have h := allCentral M v u
+    apply CategoryTheory.End.ext
+    change v.asHom ≫ u.asHom = u.asHom ≫ v.asHom
+    have h := allCentral M v u.asHom
     rw [castE_eq_self] at h
     exact h.symm
 
@@ -452,9 +462,10 @@ theorem toDilatationFunctor_comp_kappaFunctor :
   refine CategoryTheory.Functor.hext (fun _ => rfl) ?_
   intro X Y a
   refine heq_of_eq ?_
-  change kappaHom M ((toDilatationFunctor M).map a) =
+  change (kappaHom M ((toDilatationFunctor M).map a)).asHom =
       (LocalizationFunctor (centerOfMulticenter M)).map a
-  change kappaHom M (algebraMap A' A'[M] a) = toLocEnd M a
+  change (kappaHom M (algebraMap A' A'[M] a)).asHom = (toLocEnd M a).asHom
+  apply congrArg CategoryTheory.End.asHom
   change (LocEndLift M) ((descToLoc M) (algebraMap A' A'[M] a)) = toLocEnd M a
   rw [AlgHom.commutes]
   exact (IsLocalization.toLocalizationMap (genSubmonoid M)
@@ -521,7 +532,7 @@ theorem Phi51_full : (Phi51 M).Full := by
       simpa [toDilatationFunctor, CategoryTheory.SingleObj.mapHom,
         CategoryTheory.Functor.comp_map, centerOfMulticenter] using! h
     rw [hspec1, hspec2] at hmap
-    rw [← CategoryTheory.End.mul_def] at hmap
+    rw [CategoryTheory.SingleObj.comp_as_mul] at hmap
     have hnzd : algebraMap A' A'[M] (M.elem ^ ν) ∈ nonZeroDivisors A'[M] :=
       Multicenter.Dilatation.nonzerodiv_image (M := M) ν
     exact (mul_cancel_left_mem_nonZeroDivisors hnzd).mp
@@ -539,23 +550,24 @@ noncomputable def Phi51Equiv :
       ((CatToDila (centerOfMulticenter M)).obj (CategoryTheory.SingleObj.star A')) ≃ A'[M] := by
   haveI := Phi51_faithful M
   haveI := Phi51_full M
-  exact Equiv.ofBijective (Phi51 M).map
-    ⟨fun _ _ h => (Phi51 M).map_injective h, fun a => (Phi51 M).map_surjective a⟩
+  exact CategoryTheory.End.homEquiv.trans (Equiv.ofBijective (Phi51 M).map
+    ⟨fun _ _ h => (Phi51 M).map_injective h, fun a => (Phi51 M).map_surjective a⟩)
 
 lemma Phi51Equiv_apply (x : CategoryTheory.End
     ((CatToDila (centerOfMulticenter M)).obj (CategoryTheory.SingleObj.star A'))) :
-    Phi51Equiv M x = (Phi51 M).map x := rfl
+    Phi51Equiv M x = (Phi51 M).map x.asHom := rfl
 
 lemma Phi51Equiv_one : Phi51Equiv M 1 = 1 := by
-  change (Phi51 M).map (1 : CategoryTheory.End _) = (1 : A'[M])
-  rw [CategoryTheory.End.one_def, CategoryTheory.Functor.map_id,
+  change (Phi51 M).map (1 : CategoryTheory.End _).asHom = (1 : A'[M])
+  rw [CategoryTheory.End.one_asHom, CategoryTheory.Functor.map_id,
     CategoryTheory.SingleObj.id_as_one]
 
 lemma Phi51Equiv_mul (x y : CategoryTheory.End
     ((CatToDila (centerOfMulticenter M)).obj (CategoryTheory.SingleObj.star A'))) :
     Phi51Equiv M (x * y) = Phi51Equiv M x * Phi51Equiv M y := by
   simp only [Phi51Equiv_apply]
-  rw [CategoryTheory.End.mul_def, CategoryTheory.Functor.map_comp, CategoryTheory.End.mul_def]
+  rw [CategoryTheory.End.mul_asHom, CategoryTheory.Functor.map_comp,
+    CategoryTheory.SingleObj.comp_as_mul]
 
 /-- The inverse of `Phi51Equiv`, as a `MonoidHom` — the data needed to build `Psi51`. -/
 noncomputable def psi51Hom : A'[M] →* CategoryTheory.End
@@ -592,8 +604,8 @@ theorem Phi51_comp_Psi51 : Phi51 M ⋙ Psi51 M = 𝟭 (Dila (centerOfMulticenter
   subst hX0
   subst hY0
   change (Psi51 M).map ((Phi51 M).map f) = f
-  change psi51Hom M (Phi51Equiv M f) = f
-  change (Phi51Equiv M).symm (Phi51Equiv M f) = f
+  change (psi51Hom M (Phi51Equiv M (.of f))).asHom = f
+  change ((Phi51Equiv M).symm (Phi51Equiv M (.of f))).asHom = f
   rw [Equiv.symm_apply_apply]
 
 theorem Psi51_comp_Phi51 : Psi51 M ⋙ Phi51 M = 𝟭 (CategoryTheory.SingleObj A'[M]) := by

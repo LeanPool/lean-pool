@@ -758,7 +758,8 @@ theorem ae_restrict_sourceOpenCube_exists_local_goodSet_frechetGradient_diffWith
         hfiniteStatement hn hbounded hconvex
   have hGae : ∀ᵐ x ∂(volume.restrict (sourceOpenCube n 1)), x ∈ G := by
     rw [ae_iff]
-    rw [Measure.restrict_apply_eq_zero' (isOpen_sourceOpenCube (n := n) 1).measurableSet]
+    rw [Measure.restrict_apply_eq_zero'
+      (isOpen_sourceOpenCube (n := n) 1).measurableSet.nullMeasurableSet]
     have hset :
         {x : SourceCubeSpace n | ¬ x ∈ G} ∩ sourceOpenCube n 1 =
           sourceOpenCube n 1 \ G := by
@@ -812,7 +813,8 @@ theorem ae_restrict_sourceOpenCube_exists_goodSet_frechetGradient_diffWithin
         hfiniteStatement hn hbounded hconvex
   have hGae : ∀ᵐ x ∂(volume.restrict (sourceOpenCube n 1)), x ∈ G := by
     rw [ae_iff]
-    rw [Measure.restrict_apply_eq_zero' (isOpen_sourceOpenCube (n := n) 1).measurableSet]
+    rw [Measure.restrict_apply_eq_zero'
+      (isOpen_sourceOpenCube (n := n) 1).measurableSet.nullMeasurableSet]
     have hset :
         {x : SourceCubeSpace n | ¬ x ∈ G} ∩ sourceOpenCube n 1 =
           sourceOpenCube n 1 \ G := by

@@ -134,7 +134,7 @@ private theorem cubeProjection_memLp_on_normalizedCubeMeasure {d : ℕ}
     exact ne_of_lt (lt_of_le_of_lt hS_le hUniv_lt)
   simpa [Set.indicator] using!
     (MeasureTheory.memLp_indicator_const (μ := normalizedCubeMeasure R)
-      (p := p) (s := cubeSet S) (hs := measurableSet_cubeSet S)
+      (p := p) (s := cubeSet S) (hs := (measurableSet_cubeSet S).nullMeasurableSet)
       (c := cubeAverage S f) (Or.inr hS_ne_top))
 
 private theorem cubeProjection_dualLocalMemLpGlobal_two {d : ℕ}

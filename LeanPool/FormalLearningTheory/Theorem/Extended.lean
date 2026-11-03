@@ -962,9 +962,7 @@ theorem advice_elimination (X : Type u) [MeasurableSpace X]
     have h_snd : (Nat.unpair (Nat.pair m₁ m₂)).2 = m₂ := by simp [Nat.unpair_pair]
     convert h_combined using 10
     all_goals first
-    | simp only [Nat.unpair_pair]
     | (exact (Fin.heq_fun_iff h_fst).mpr (fun i => rfl))
-    | (exact (Fin.heq_fun_iff h_snd).mpr (fun i => rfl))
     | (congr 1 <;> (first
         | (ext a; congr 1; exact (Fin.heq_fun_iff h_fst).mpr (fun i => rfl))
         | (exact (Fin.heq_fun_iff h_snd).mpr (fun j => rfl))))

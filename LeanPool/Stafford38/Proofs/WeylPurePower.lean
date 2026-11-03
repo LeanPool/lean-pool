@@ -9,7 +9,7 @@ module
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Algebra.Polynomial.RingDivision
 public import Mathlib.Algebra.Ring.GeomSum
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.RingTheory.Coprime.Lemmas
 public import Mathlib.RingTheory.Nilpotent.Defs
 public import Mathlib.Tactic

@@ -8,6 +8,7 @@ module
 public import LeanPool.PolylogIntegrals.Lemmas.Dilog
 public import LeanPool.PolylogIntegrals.Lemmas.LogTrig
 public import LeanPool.PolylogIntegrals.Lemmas.Series
+public import Mathlib.Analysis.SpecialFunctions.Integrability.Basic
 public import Mathlib.MeasureTheory.Integral.Prod
 
 /-!

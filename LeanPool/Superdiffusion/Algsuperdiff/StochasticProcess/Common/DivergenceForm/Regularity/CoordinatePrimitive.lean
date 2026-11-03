@@ -58,7 +58,7 @@ theorem contDiff_one_coordinatePrimitive (f : Vec d → ℝ)
     have ht : ContDiff ℝ 1 (fun q : (Vec d × ℝ) × Vec d ↦ q.1.2) :=
       contDiff_snd.comp contDiff_fst
     have hyi : ContDiff ℝ 1 (fun q : (Vec d × ℝ) × Vec d ↦ q.2 i) :=
-      (contDiff_apply ℝ ℝ i).comp contDiff_snd
+      (contDiff_apply ℝ (fun _ ↦ ℝ) i).comp contDiff_snd
     have harg : ContDiff ℝ 1 (fun q : (Vec d × ℝ) × Vec d ↦
         Function.update q.2 i (z + q.1.2 * (q.2 i - z))) := by
       rw [contDiff_pi]
@@ -69,7 +69,7 @@ theorem contDiff_one_coordinatePrimitive (f : Vec d → ℝ)
         simp only [Function.update_self]
         exact contDiff_const.add (ht.mul (hyi.sub contDiff_const))
       · simp only [Function.update_of_ne hji]
-        exact (contDiff_apply ℝ ℝ j).comp contDiff_snd
+        exact (contDiff_apply ℝ (fun _ ↦ ℝ) j).comp contDiff_snd
     exact (hyi.sub contDiff_const).mul (hf.comp harg)
   have hF : Continuous (Function.uncurry F) := by
     exact hfamily.continuous.comp (continuous_id.prodMk continuous_fst)

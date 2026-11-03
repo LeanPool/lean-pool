@@ -31,11 +31,11 @@ standard embeddings (compatibility with `symCast`).
 ## Implementation notes
 
 `skeinEnd` is defined as `CategoryTheory.End (SkeinObj.mk n)`, which
-is definitionally `HomSpace f.val (n + n)`.  This lives in `Type 1`
+has underlying morphism space `HomSpace f.val (n + n)`.  This lives in `Type 1`
 (since `Fragment` contains `Type`-valued fields); the universe
 polymorphism of `PermTower` accommodates this.
 
-The monoid-hom direction uses `End.mul_def : x * y = y ≫ x`, so the
+The monoid-hom direction uses `End.mul_asHom` to reverse composition, so the
 map `σ ↦ [permFragment σ]` is a genuine `MonoidHom` from
 `Perm (Fin n)` to `End (SkeinObj.mk n)` by `permFragmentCompose`.
 -/
@@ -51,7 +51,7 @@ variable {R : ℕ} (f : EdgeRankParameter R)
 /-! ### The endomorphism algebra -/
 
 /-- The endomorphism ℂ-algebra of the `n`-strand object of the skein
-category.  Definitionally `HomSpace f.val (n + n)`. -/
+category, with underlying morphisms in `HomSpace f.val (n + n)`. -/
 noncomputable def skeinEnd (n : ℕ) : Type 1 :=
   End (SkeinObj.mk (f := f) n)
 
@@ -77,11 +77,11 @@ noncomputable instance skeinEndModule (n : ℕ) : Module ℂ (skeinEnd f n) :=
 /-- The class of a permutation fragment in the endomorphism algebra. -/
 noncomputable def permClass (n : ℕ) (σ : Equiv.Perm (Fin n)) :
     skeinEnd f n :=
-  HomSpace.ofFragment f.val (permFragment σ)
+  End.of (HomSpace.ofFragment f.val (permFragment σ))
 
 /-- The map `σ ↦ [permFragment σ]` is a monoid homomorphism.
 Identity: `permFragment 1 = strandBundle n` is the categorical
-identity.  Multiplication: `End.mul_def` reverses composition
+identity.  Multiplication: `End.mul_asHom` reverses composition
 order, and `permFragmentCompose τ σ` gives
 `(permFragment τ).compose (permFragment σ) ≃ permFragment (σ * τ)`,
 so `[P_σ] * [P_τ] = [P_τ] ≫ [P_σ] = [compose P_τ P_σ] = [P_{σ*τ}]`. -/
@@ -89,12 +89,14 @@ noncomputable def permToEnd (n : ℕ) :
     Equiv.Perm (Fin n) →* skeinEnd f n where
   toFun σ := permClass f n σ
   map_one' := by
+    apply End.ext
     change HomSpace.ofFragment f.val (permFragment 1) =
       HomSpace.ofFragment f.val (strandBundle n)
     rw [permFragment_one]
   map_mul' σ τ := by
+    apply End.ext
     -- Goal: permClass f n (σ * τ) = permClass f n σ * permClass f n τ
-    -- End multiplication: x * y = y ≫ x (definitional)
+    -- Underlying End multiplication reverses composition.
     -- So RHS = (permClass τ) ≫ (permClass σ) = comp (permClass τ) (permClass σ)
     --        = ofFragment (compose (permFragment τ) (permFragment σ))
     --        = ofFragment (permFragment (σ * τ))
@@ -135,8 +137,10 @@ noncomputable instance homSpace_finite (t : ℕ) :
 
 /-- The skein endomorphism algebra at level `n` is finite-dimensional. -/
 noncomputable instance skeinEnd_finite (n : ℕ) :
-    Module.Finite ℂ (skeinEnd f n) :=
-  homSpace_finite f (n + n)
+    Module.Finite ℂ (skeinEnd f n) := by
+  have : Module.Finite ℂ (SkeinObj.mk (f := f) n ⟶ SkeinObj.mk (f := f) n) :=
+    homSpace_finite f (n + n)
+  exact Module.Finite.equiv (End.linearEquiv (R := ℂ)).symm
 
 /-- The finrank of a Hom space is at most `R ^ t`. -/
 theorem homSpace_finrank_le (t : ℕ) :
@@ -150,6 +154,9 @@ theorem homSpace_finrank_le (t : ℕ) :
 Uses `HomSpace.rank_le` at arity `n + n` and the identity `n + n = 2 * n`. -/
 theorem skeinEnd_finrank_le (n : ℕ) :
     Module.finrank ℂ (skeinEnd f n) ≤ R ^ (2 * n) := by
+  change Module.finrank ℂ (End (SkeinObj.mk (f := f) n)) ≤ R ^ (2 * n)
+  rw [LinearEquiv.finrank_eq (End.linearEquiv (R := ℂ)
+    (X := SkeinObj.mk (f := f) n))]
   change Module.finrank ℂ (HomSpace f.val (n + n)) ≤ R ^ (2 * n)
   rw [show n + n = 2 * n from by omega]
   exact homSpace_finrank_le f (2 * n)
@@ -230,11 +237,14 @@ noncomputable def permFragmentExtendEquiv {m k : ℕ}
 by identity strands agrees with tensoring. -/
 theorem permClass_extend (m k : ℕ) (σ : Equiv.Perm (Fin m))
     (h : m ≤ m + k) :
-    HomSpace.tensor f m m k k (permClass f m σ)
+    HomSpace.tensor f m m k k (permClass f m σ).asHom
         (HomSpace.ofFragment f.val (strandBundle k)) =
-      permClass f (m + k)
-        (σ.viaEmbedding (Fin.castLEEmb h)) := by
-  unfold permClass
+      (permClass f (m + k)
+        (σ.viaEmbedding (Fin.castLEEmb h))).asHom := by
+  change HomSpace.tensor f m m k k
+    (HomSpace.ofFragment f.val (permFragment σ))
+    (HomSpace.ofFragment f.val (strandBundle k)) =
+    HomSpace.ofFragment f.val (permFragment (σ.viaEmbedding (Fin.castLEEmb h)))
   rw [HomSpace.tensor_ofFragment]
   exact HomSpace.ofFragment_congr f (permFragmentExtendEquiv σ h)
 
@@ -251,8 +261,10 @@ theorem skeinRep_compat {m n : ℕ} (h : m ≤ n) (x : SymGroupAlgebra m)
   -- Factor: skeinRep (m+k) ∘ symCast = L ∘ skeinRep m on generators,
   -- hence on all elements by linearity.
   suffices hfact : ∀ y : SymGroupAlgebra m,
-      skeinRep f (m + k) (symCast _ y) = L (skeinRep f m y) by
-    exact (hfact x).trans ((congrArg L hx).trans (map_zero L))
+      (skeinRep f (m + k) (symCast _ y)).asHom = L (skeinRep f m y).asHom by
+    apply End.ext
+    exact (hfact x).trans
+      ((congrArg L (congrArg End.asHom hx)).trans (map_zero L))
   intro y
   apply MonoidAlgebra.induction_on y
   · intro σ
@@ -263,14 +275,21 @@ theorem skeinRep_compat {m n : ℕ} (h : m ≤ n) (x : SymGroupAlgebra m)
         MonoidAlgebra.single _ 1
       exact MonoidAlgebra.mapDomain_single
     conv_lhs => rw [hsym, skeinRep_of]
-    exact ((congrArg L (skeinRep_of f m σ)).trans (permClass_extend f m k σ
-      h)).symm
+    exact ((congrArg (fun z : skeinEnd f m => L z.asHom)
+      (skeinRep_of f m σ)).trans (permClass_extend f m k σ h)).symm
   · intro y₁ y₂ ih₁ ih₂
-    simp only [map_add, ih₁, ih₂]
-    exact (map_add L _ _).symm
+    simp only [map_add]
+    change ((skeinRep f (m + k) (symCast h y₁)).asHom +
+      (skeinRep f (m + k) (symCast h y₂)).asHom) =
+      L ((skeinRep f m y₁).asHom + (skeinRep f m y₂).asHom)
+    rw [ih₁, ih₂, map_add]
+    rfl
   · intro c z ih
-    simp only [map_smul, ih]
-    exact (map_smul L c _).symm
+    simp only [map_smul]
+    change c • (skeinRep f (m + k) (symCast h z)).asHom =
+      L (c • (skeinRep f m z).asHom)
+    rw [ih, map_smul]
+    rfl
 
 /-! ### The tower instance -/
 

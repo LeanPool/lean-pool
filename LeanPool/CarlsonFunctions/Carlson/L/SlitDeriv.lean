@@ -9,6 +9,7 @@ module
 
 public import LeanPool.CarlsonFunctions.Carlson.L.SlitRelations
 public import LeanPool.CarlsonFunctions.Carlson.L.Deriv
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-!
 # Node derivatives and translations on the slit domain

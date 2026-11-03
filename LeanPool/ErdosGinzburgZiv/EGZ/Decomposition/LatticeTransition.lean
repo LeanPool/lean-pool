@@ -33,7 +33,7 @@ theorem existsUnique_lift (C : IntegerLatticeChart T)
     intro q
     rw [C.linear_range_eq, ← direction_affineSpan]
     have h := (affineSpan ℤ (T : Set (IntCoord n))).vsub_mem_direction (hg q) (hg 0)
-    simpa only [← g.linearMap_vsub, vsub_eq_sub, sub_zero] using h
+    simpa only [← g.linear_apply_vsub, vsub_eq_sub, sub_zero] using h
   let E := LinearEquiv.ofInjective C.map.linear (C.map.linear_injective_iff.mpr C.injective)
   let L : IntCoord k →ₗ[ℤ] IntCoord C.rank :=
     E.symm.toLinearMap.comp (g.linear.codRestrict (LinearMap.range C.map.linear) hlin)

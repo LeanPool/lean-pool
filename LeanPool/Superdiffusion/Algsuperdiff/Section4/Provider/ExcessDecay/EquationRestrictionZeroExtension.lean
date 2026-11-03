@@ -156,7 +156,7 @@ theorem h10_fderiv_approx_sub_zeroExtensionGrad {V : Set (Vec d)}
 theorem memL2On_h10ZeroExtension {V W : Set (Vec d)} (phi : H10Function V)
     (hV : MeasurableSet V) : MemL2On W (h10ZeroExtension phi) := by
   have hglob : MemLp (h10ZeroExtension phi) 2 volume :=
-    (MeasureTheory.memLp_indicator_iff_restrict hV).2 phi.toH1Function.memL2
+    (MeasureTheory.memLp_indicator_iff_restrict hV.nullMeasurableSet).2 phi.toH1Function.memL2
   exact hglob.restrict W
 
 theorem gradMemL2On_h10ZeroExtensionGrad {V W : Set (Vec d)}
@@ -165,7 +165,7 @@ theorem gradMemL2On_h10ZeroExtensionGrad {V W : Set (Vec d)}
   intro i
   have hglob : MemLp (fun x => h10ZeroExtensionGrad phi x i) 2 volume := by
     rw [h10ZeroExtensionGrad_coord phi i]
-    exact (MeasureTheory.memLp_indicator_iff_restrict hV).2
+    exact (MeasureTheory.memLp_indicator_iff_restrict hV.nullMeasurableSet).2
       (phi.toH1Function.gradMemL2 i)
   exact hglob.restrict W
 
@@ -190,7 +190,7 @@ theorem hasWeakGradientOn_h10ZeroExtension {V W : Set (Vec d)} (phi : H10Functio
         (phi.approx_smooth n) (phi.approx_hasCompactSupport n)) i
   · refine phi.tendsto_approx.congr fun n => ?_
     rw [h10_approx_sub_zeroExtension phi n,
-      MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV,
+      MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV.nullMeasurableSet,
       Measure.restrict_restrict_of_subset hVW]
   · refine (phi.tendsto_approx_grad i).congr fun n => ?_
     rw [show (fun x => euclideanGradient (phi.approx n) x i -
@@ -198,7 +198,7 @@ theorem hasWeakGradientOn_h10ZeroExtension {V W : Set (Vec d)} (phi : H10Functio
         fun x => (fderiv ℝ (phi.approx n) x) (basisVec i) -
           h10ZeroExtensionGrad phi x i from rfl,
       h10_fderiv_approx_sub_zeroExtensionGrad phi n i,
-      MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV,
+      MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV.nullMeasurableSet,
       Measure.restrict_restrict_of_subset hVW]
 
 /-! ## 5. The extension as an `H¹₀` function of the superset -/
@@ -225,7 +225,7 @@ def h10ExtendToSuperset {V W : Set (Vec d)} (phi : H10Function V)
         eLpNorm (fun x => phi.approx n x - h10ZeroExtension phi x) 2
           (volume.restrict W)
     rw [h10_approx_sub_zeroExtension phi n,
-      MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV,
+      MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV.nullMeasurableSet,
       Measure.restrict_restrict_of_subset hVW]
   tendsto_approx_grad := fun i => by
     refine (phi.tendsto_approx_grad i).congr fun n => ?_
@@ -234,7 +234,7 @@ def h10ExtendToSuperset {V W : Set (Vec d)} (phi : H10Function V)
         eLpNorm (fun x => (fderiv ℝ (phi.approx n) x) (basisVec i) -
             h10ZeroExtensionGrad phi x i) 2 (volume.restrict W)
     rw [h10_fderiv_approx_sub_zeroExtensionGrad phi n i,
-      MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV,
+      MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hV.nullMeasurableSet,
       Measure.restrict_restrict_of_subset hVW]
 
 @[simp] theorem h10ExtendToSuperset_toFun {V W : Set (Vec d)} (phi : H10Function V)

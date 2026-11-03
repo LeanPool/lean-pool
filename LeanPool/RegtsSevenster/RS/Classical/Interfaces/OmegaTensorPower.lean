@@ -157,25 +157,27 @@ noncomputable def omegaPow (n : ℕ) :
 via `e : X ≅ Y`. -/
 def isoConj {C : Type*} [Category C] {X Y : C} (e : X ≅ Y)
     (f : End Y) : End X :=
-  e.hom ≫ f ≫ e.inv
+  .of (e.hom ≫ f.asHom ≫ e.inv)
 
 /-- Conjugation by an isomorphism, unfolded. -/
 @[simp]
 theorem isoConj_unfold {C : Type*} [Category C] {X Y : C}
     (e : X ≅ Y) (f : End Y) :
-    isoConj e f = e.hom ≫ f ≫ e.inv := rfl
+    isoConj e f = End.of (e.hom ≫ f.asHom ≫ e.inv) := rfl
 
 /-- It preserves the identity. -/
 theorem isoConj_one {C : Type*} [Category C] {X Y : C}
     (e : X ≅ Y) :
-    isoConj e (𝟙 Y) = 𝟙 X := by
-  simp only [isoConj, id_comp, e.hom_inv_id]
+    isoConj e 1 = 1 := by
+  apply End.ext
+  simp only [isoConj, End.one_asHom, id_comp, e.hom_inv_id]
 
 /-- And composition. -/
 theorem isoConj_mul {C : Type*} [Category C]
     {X Y : C} (e : X ≅ Y) (f g : End Y) :
-    isoConj e (f ≫ g) =
-      isoConj e f ≫ isoConj e g := by
+    isoConj e (End.of (f.asHom ≫ g.asHom)) =
+      End.of ((isoConj e f).asHom ≫ (isoConj e g).asHom) := by
+  apply End.ext
   simp only [isoConj, assoc]
   rw [← assoc e.inv e.hom, e.inv_hom_id, id_comp]
 
@@ -183,6 +185,7 @@ theorem isoConj_mul {C : Type*} [Category C]
 theorem isoConj_zero {C : Type*} [Category C] [Preadditive C]
     {X Y : C} (e : X ≅ Y) :
     isoConj e (0 : End Y) = 0 := by
+  apply End.ext
   change e.hom ≫ (0 : Y ⟶ Y) ≫ e.inv = 0
   simp
 
@@ -190,34 +193,37 @@ theorem isoConj_zero {C : Type*} [Category C] [Preadditive C]
 theorem isoConj_add {C : Type*} [Category C] [Preadditive C]
     {X Y : C} (e : X ≅ Y) (f g : End Y) :
     isoConj e (f + g) = isoConj e f + isoConj e g := by
-  change e.hom ≫ (f + g) ≫ e.inv =
-    e.hom ≫ f ≫ e.inv + e.hom ≫ g ≫ e.inv
-  have h1 : (f + g) ≫ e.inv = f ≫ e.inv + g ≫ e.inv :=
-    map_add (Preadditive.rightComp Y e.inv) f g
+  apply End.ext
+  change e.hom ≫ (f.asHom + g.asHom) ≫ e.inv =
+    e.hom ≫ f.asHom ≫ e.inv + e.hom ≫ g.asHom ≫ e.inv
+  have h1 : (f.asHom + g.asHom) ≫ e.inv = f.asHom ≫ e.inv + g.asHom ≫ e.inv :=
+    map_add (Preadditive.rightComp Y e.inv) f.asHom g.asHom
   rw [h1]
-  exact map_add (Preadditive.leftComp X e.hom) (f ≫ e.inv) (g ≫ e.inv)
+  exact map_add (Preadditive.leftComp X e.hom) (f.asHom ≫ e.inv) (g.asHom ≫ e.inv)
 
 /-- Conjugation by an iso preserves scalar multiplication. -/
 theorem isoConj_smul {C : Type*} [Category C] [Preadditive C]
     [Linear ℂ C] {X Y : C} (e : X ≅ Y)
     (r : ℂ) (f : End Y) :
     isoConj e (r • f) = r • isoConj e f := by
-  change e.hom ≫ (r • f) ≫ e.inv = r • (e.hom ≫ f ≫ e.inv)
-  have h1 : (r • f) ≫ e.inv = r • (f ≫ e.inv) :=
-    Linear.smul_comp _ _ _ r f e.inv
+  apply End.ext
+  change e.hom ≫ (r • f.asHom) ≫ e.inv = r • (e.hom ≫ f.asHom ≫ e.inv)
+  have h1 : (r • f.asHom) ≫ e.inv = r • (f.asHom ≫ e.inv) :=
+    Linear.smul_comp _ _ _ r f.asHom e.inv
   rw [h1]
-  exact Linear.comp_smul _ _ _ e.hom r (f ≫ e.inv)
+  exact Linear.comp_smul _ _ _ e.hom r (f.asHom ≫ e.inv)
 
 /-- Conjugation by an iso is injective. -/
 theorem isoConj_injective {C : Type*} [Category C]
     {X Y : C}
     (e : X ≅ Y) : Function.Injective (isoConj e) := by
-  intro f g (h : e.hom ≫ f ≫ e.inv = e.hom ≫ g ≫ e.inv)
-  have h2 : e.inv ≫ (e.hom ≫ f ≫ e.inv) ≫ e.hom =
-      e.inv ≫ (e.hom ≫ g ≫ e.inv) ≫ e.hom := by rw [h]
-  simp only [Iso.inv_hom_id_assoc, Category.assoc, Iso.inv_hom_id,
-    Category.comp_id] at h2
-  exact h2
+  intro f g h
+  apply End.ext
+  have h := congrArg End.asHom h
+  change e.hom ≫ f.asHom ≫ e.inv = e.hom ≫ g.asHom ≫ e.inv at h
+  have h2 := e.inv ≫= h =≫ e.hom
+  simpa only [Iso.inv_hom_id_assoc, Category.assoc, Iso.inv_hom_id,
+    Category.comp_id] using h2
 
 /-- Conjugation by an iso preserves zero iff:
 `isoConj e f = 0 ↔ f = 0`. -/
@@ -243,20 +249,15 @@ noncomputable def superPermAction (n : ℕ) :
       (omegaSkeinRep f P n x)
     map_one' := by rw [map_one]; exact isoConj_one _
     map_mul' := fun x y => by
-      rw [map_mul]; exact isoConj_mul _ _ _
+      rw [map_mul]
+      exact isoConj_mul _ (omegaSkeinRep f P n y) (omegaSkeinRep f P n x)
     map_zero' := by rw [map_zero]; exact isoConj_zero _
     map_add' := fun x y => by
       rw [map_add]; exact isoConj_add _ _ _
     commutes' := fun r => by
       simp only [Algebra.algebraMap_eq_smul_one, map_smul,
         map_one]
-      -- Goal: isoConj e (r • 1) = r • 1
-      -- where 1 : End Y = 𝟙 Y
-      have h1 : (1 : End (P.ω.obj (SkeinObj.mk n))) =
-        𝟙 (P.ω.obj (SkeinObj.mk n)) := rfl
-      have h2 : (1 : End (superPow (strandImage f P) n)) =
-        𝟙 (superPow (strandImage f P) n) := rfl
-      rw [h1, isoConj_smul, isoConj_one, h2]
+      rw [isoConj_smul, isoConj_one]
   }
 
 /-- **Zero equivalence**: the transported action kills an element
@@ -283,7 +284,7 @@ theorem superPermAction_perm (n : ℕ)
     superPermAction f P n
       (MonoidAlgebra.of ℂ (Equiv.Perm (Fin n)) σ) =
       isoConj (omegaPow f P n)
-        (P.ω.map (permClass f n σ)) := by
+        (End.of (P.ω.map (permClass f n σ).asHom)) := by
   let := P.additive
   let := P.linear
   change isoConj (omegaPow f P n)

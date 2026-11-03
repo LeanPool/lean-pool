@@ -44,7 +44,7 @@ theorem exists_standard_auxiliary_of_zero_determinants {n N t M : ℕ}
     by_contra hn
     have he : r = N := by omega
     subst r
-    have hunit := Matrix.linearIndependent_rows_iff_isUnit.mp hli
+    have hunit := Matrix.linearIndependent_row_iff_isUnit.mp hli
     have hnonzero := (Matrix.isUnit_iff_isUnit_det _).mp hunit |>.ne_zero
     apply hnonzero
     have hd := congrArg (Int.castRingHom ℚ) (hdet a)

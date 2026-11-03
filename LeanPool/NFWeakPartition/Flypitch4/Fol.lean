@@ -484,7 +484,6 @@ lemma lift_at_subst_term_large :
     simp only [liftTermAt, substTerm, substRealize]
     split_ifs with h1 h2 h3 h4 h5 <;>
       first
-      | rfl
       | omega
       | (simp [liftTermAt]; omega)
       | (rw [← lift_term2_medium s n₂ (by omega)])

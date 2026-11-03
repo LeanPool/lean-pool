@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.SetOr
 public import Mathlib.Data.Finset.MulAntidiagonal
 
 import LeanPool.ConwayRefinement.CombinatorialGames.NatOrdinal.Pow
-import Mathlib.Data.Sum.Order
+import Mathlib.Order.Sum.Order
 import Mathlib.Order.Hom.Lex
 import Mathlib.SetTheory.Ordinal.Principal
 

@@ -502,7 +502,7 @@ theorem weakContL3_momentumTerms_integrable
   have hderiv (i j : Fin 3) : Continuous
       (fun x : Vec3 => spatialDeriv (fun y => ψ y i) j x) := by
     have hcomponent : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec3 => ψ y i) :=
-      (contDiff_apply ℝ ℝ i).comp hψsmooth
+      (contDiff_apply ℝ (fun _ => ℝ) i).comp hψsmooth
     exact (CKN.contDiff_spatialDeriv_smooth hcomponent j).continuous
   have hderiv_bound (i j : Fin 3) : ∃ C : ℝ, ∀ x : Vec3,
       ‖spatialDeriv (fun y => ψ y i) j x‖ ≤ C := by
@@ -642,7 +642,7 @@ theorem weakContL3_momentum_gives_productWeak
     ring
   have hψcomponent (i : Fin 3) :
       ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => weakContL3CutoffTest χ φ x i) :=
-    (contDiff_apply ℝ ℝ i).comp hψsmooth
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hψsmooth
   have htime (i : Fin 3) (z : ParabolicPoint) :
       timePartial (fun y : ParabolicPoint => Φ y i) z =
         weakContL3CutoffTest χ φ z.1 i * deriv η z.2 := by

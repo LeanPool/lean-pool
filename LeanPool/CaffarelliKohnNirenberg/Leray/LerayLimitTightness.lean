@@ -64,7 +64,7 @@ theorem lerayLimit_eLpNorm_tendsto_of_local_and_uniform_tails
       eLpNorm ((K m).indicator (F n - G)) 2 μ =
           eLpNorm (F n - G) 2 (μ.restrict (K m)) :=
         eLpNorm_indicator_eq_eLpNorm_restrict (p := 2) (μ := μ)
-          (f := F n - G) (s := K m) (hK m)
+          (f := F n - G) (s := K m) (hK m).nullMeasurableSet
       _ ≤ η := hn
   have htailSubFun : ((K m)ᶜ).indicator (F n - G) =
       ((K m)ᶜ).indicator (F n) - ((K m)ᶜ).indicator G := by

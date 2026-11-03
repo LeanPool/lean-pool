@@ -10,7 +10,7 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology
 import Mathlib.Tactic.Positivity.Finset -- shake: keep
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.AffineSubdivisionDeterminant
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Measurability.Init

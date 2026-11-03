@@ -218,7 +218,7 @@ theorem aeLocallyUniformlyEllipticField_corridorReg {ℓ : ℝ} {σ : Vec d}
       by_cases hxU : x ∈ U <;> by_cases hxS : x ∈ corridorSet ℓ σ <;>
         simp [Set.piecewise, restrictCoeffField, corridorField, hxU, hxS]
     rw [corridorReg_toFun, hEq]
-    refine AEStronglyMeasurable.piecewise (measurableSet_corridorSet ℓ σ) ?_ ?_
+    refine AEStronglyMeasurable.piecewise (measurableSet_corridorSet ℓ σ).nullMeasurableSet ?_ ?_
     · have hb1 :
           (fun x : Vec d => restrictCoeffField U (fun _ => (1 : Mat d)) x i j)
             = U.indicator (fun _ => (1 : Mat d) i j) := by

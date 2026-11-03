@@ -462,7 +462,7 @@ lemma pentagon
   split_ifs <;>
     first
       | (exfalso; omega)
-      | (refine congrArg _ (Fin.ext ?_); simp <;> omega)
+      | (refine congrArg _ (Fin.ext ?_); simp; all_goals omega)
 
 
 omit [Preorder V] in
@@ -505,13 +505,11 @@ lemma leftUnitor_naturality
   split_ifs <;>
     first
       | (exfalso; omega)
-      | (congr 1;
-          first
-            | exact Fin.ext (by rfl)
-            | (refine congrFun (congrArg _ (funext fun t' => Wires.ext fun k => ?_)) t
-               simp only [Stream'.map, Stream'.get, Wires.get_cast,
-                 Wires.get_cast_vector, Wires.get_drop]
-               all_goals (refine congrArg _ (Fin.ext ?_); simp)))
+      | (congr 1
+         refine congrFun (congrArg _ (funext fun t' => Wires.ext fun k => ?_)) t
+         simp only [Stream'.map, Stream'.get, Wires.get_cast,
+           Wires.get_cast_vector, Wires.get_drop]
+         all_goals (refine congrArg _ (Fin.ext ?_); simp))
 
 lemma rightUnitor_naturality
     {X Y : SequentialCircuitCategory V G}
@@ -529,13 +527,11 @@ lemma rightUnitor_naturality
     Wires.get_cast_vector,
     Wires.get_append_wires_vector,
     Wires.get_drop]
-  (split_ifs;
-    congr 1;
-      first
-        | exact Fin.ext (by rfl)
-        | (refine congrFun (congrArg _ (funext fun t' => Wires.ext fun k => ?_)) t
-           simp only [Stream'.map, Stream'.get, Wires.get_cast,
-             Wires.get_cast_vector, Wires.get_take]))
+  split_ifs
+  congr 1
+  refine congrFun (congrArg _ (funext fun t' => Wires.ext fun k => ?_)) t
+  simp only [Stream'.map, Stream'.get, Wires.get_cast,
+    Wires.get_cast_vector, Wires.get_take]
 
 open MonoidalCategory
 
@@ -643,7 +639,7 @@ lemma braiding_hom_inv_id
   split_ifs <;>
     first
       | (exfalso; omega)
-      | (refine congrArg _ (Fin.ext ?_); simp <;> omega)
+      | (refine congrArg _ (Fin.ext ?_); simp; all_goals omega)
 
 /-- The braiding isomorphism of the symmetric monoidal structure. -/
 @[inline]
@@ -677,7 +673,7 @@ lemma braiding_naturality_left
       | (refine congrArg _ (Fin.ext ?_); simp)
       | (congr 1 <;>
           first
-            | exact Fin.ext (by simp; try omega)
+            | exact Fin.ext (by simp)
             | (refine congrFun (congrArg _ (funext fun t' => Wires.ext fun k => ?_)) t
                simp only [Stream'.map, Stream'.get,
                  Wires.get_cast_vector, Wires.get_append_vector,
@@ -712,7 +708,7 @@ lemma braiding_naturality_right
       | (refine congrArg _ (Fin.ext ?_); simp)
       | (congr 1 <;>
           first
-            | exact Fin.ext (by simp; try omega)
+            | exact Fin.ext (by simp)
             | (refine congrFun (congrArg _ (funext fun t' => Wires.ext fun k => ?_)) t
                simp only [Stream'.map, Stream'.get,
                  Wires.get_cast_vector, Wires.get_append_vector,
@@ -813,7 +809,7 @@ lemma hexagon_forward
   split_ifs <;>
     first
       | (exfalso; omega)
-      | (refine congrArg _ (Fin.ext ?_); simp <;> omega)
+      | (refine congrArg _ (Fin.ext ?_); simp; all_goals omega)
 
 omit [Preorder V] in
 lemma tensorObj_size_eq_reverse

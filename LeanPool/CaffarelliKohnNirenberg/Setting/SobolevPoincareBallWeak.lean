@@ -543,11 +543,11 @@ theorem sobolevPoincare_L6_ball_weak_inner
   have hclosed_subset := @sobolevPoincare_L6_ball_weak_inner_hclosed_subset_1 x₀ r s hr hs hsr
     hsqrt hsqrtε
   have huExt : MemLp (U.indicator u.toFun) 2 (volume : Measure (Vec 3)) := by
-    exact (memLp_indicator_iff_restrict hUmeas).2 u.memL2
+    exact (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 u.memL2
   have hgExt (i : Fin 3) :
       MemLp (U.indicator (fun x => u.grad x i)) 2
         (volume : Measure (Vec 3)) := by
-    exact (memLp_indicator_iff_restrict hUmeas).2 (u.grad_memL2 i)
+    exact (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 (u.grad_memL2 i)
   have hweakExt (i : Fin 3) := @sobolevPoincare_L6_ball_weak_inner_hweakExt_2 x₀ r u hUmeas i
   let v : ℕ → Vec 3 → ℝ := fun n =>
     mollify (U.indicator u.toFun) (ε n) (hε_pos n)
@@ -909,12 +909,12 @@ theorem sobolevPoincare_L6_ball_weak
       refine ⟨?_⟩
       simpa [Measure.restrict_apply_univ, hBnmeas n] using
         (measure_mono (hBn_sub_B n)).trans_lt hBfinite
-    apply (memLp_indicator_iff_restrict (hBnmeas n)).2
+    apply (memLp_indicator_iff_restrict (hBnmeas n).nullMeasurableSet).2
     exact (huB.mono_measure
       (Measure.restrict_mono_set volume (hBn_sub_B n))).sub
       (memLp_const (μ := volume.restrict (Bn n)) _)
   have hF0mem : MemLp F₀ 2 (volume : Measure (Vec 3)) := by
-    apply (memLp_indicator_iff_restrict hBmeas).2
+    apply (memLp_indicator_iff_restrict hBmeas.nullMeasurableSet).2
     exact huB.sub (memLp_const (μ := μB) _)
   have hFae := @sobolevPoincare_L6_ball_weak_hFae_3 x₀ r hr u hs_pos hs_tendsto hBn_sub_B havg
   have hleft : eLpNorm F₀ 6 volume ≤
@@ -934,7 +934,7 @@ theorem sobolevPoincare_L6_ball_weak
             (fun x => u.toFun x -
               average (volume.restrict (Bn n)) u.toFun) := by
         simp [F, lpNormOn,
-          eLpNorm_indicator_eq_eLpNorm_restrict (hBnmeas n)]
+          eLpNorm_indicator_eq_eLpNorm_restrict (hBnmeas n).nullMeasurableSet]
       _ ≤ sobolevPoincareL6Constant * weakGradientLpNormOn 2 (Bn n) u.grad := by
         simpa [lpNormOn, weakGradientLpNormOn] using hinner
       _ ≤ sobolevPoincareL6Constant * weakGradientLpNormOn 2 B u.grad := by
@@ -948,7 +948,7 @@ theorem sobolevPoincare_L6_ball_weak
   have hF0norm : eLpNorm F₀ 6 volume =
       lpNormOn 6 B (fun x => u.toFun x - average μB u.toFun) := by
     simp [F₀, lpNormOn,
-      eLpNorm_indicator_eq_eLpNorm_restrict hBmeas]
+      eLpNorm_indicator_eq_eLpNorm_restrict hBmeas.nullMeasurableSet]
   rw [hF0norm] at hleft
   simpa [B, μB, lpNormOn, weakGradientLpNormOn] using hleft.trans hlim
 

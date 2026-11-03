@@ -104,7 +104,7 @@ theorem pvSlabTensor_eLpNorm_le {σ : ℝ} {U V : ParabolicPoint → Vec3} {p r 
       eLpNorm U p (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 σ))) *
         eLpNorm V p (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 σ))) := by
   unfold pvSlabTensor
-  rw [eLpNorm_indicator_eq_eLpNorm_restrict (pvSlab_measurableSet σ)]
+  rw [eLpNorm_indicator_eq_eLpNorm_restrict (pvSlab_measurableSet σ).nullMeasurableSet]
   have hb : Continuous (Function.uncurry fun (u v : Vec3) => u i * v j) :=
     ((continuous_apply i).comp continuous_fst).mul ((continuous_apply j).comp continuous_snd)
   have h := eLpNorm_le_eLpNorm_mul_eLpNorm_of_norm (p := p) (q := p) (r := r)

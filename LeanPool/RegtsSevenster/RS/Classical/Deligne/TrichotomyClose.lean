@@ -57,8 +57,8 @@ theorem isZero_of_isZero_symPowOne
   have h0 : symPowIdem A X 1 = 0 :=
     (symPowIdem_eq_zero_iff A X 1).mpr h
   rw [show symPowIdem A X 1 =
-      modPowAlg A X 1 (symmetriser 1) from rfl,
-    symmetriser_one, map_one] at h0
+      (modPowAlg A X 1 (symmetriser 1)).asHom from rfl,
+    symmetriser_one, map_one, End.one_asHom] at h0
   have hm : IsZero (modPow A X 1) := by
     rw [Limits.IsZero.iff_id_eq_zero]
     exact h0
@@ -73,8 +73,8 @@ theorem isZero_of_isZero_altPow_one
   have h0 : altPowIdem A X 1 = 0 :=
     (altPowIdem_eq_zero_iff A X 1).mpr h
   rw [show altPowIdem A X 1 =
-      modPowAlg A X 1 (antisymmetriser 1) from rfl,
-    antisymmetriser_one, map_one] at h0
+      (modPowAlg A X 1 (antisymmetriser 1)).asHom from rfl,
+    antisymmetriser_one, map_one, End.one_asHom] at h0
   have hm : IsZero (modPow A X 1) := by
     rw [Limits.IsZero.iff_id_eq_zero]
     exact h0
@@ -106,8 +106,8 @@ theorem isZero_of_isZero_altPow_zero
   have h0 : altPowIdem A X 0 = 0 :=
     (altPowIdem_eq_zero_iff A X 0).mpr h
   rw [show altPowIdem A X 0 =
-      modPowAlg A X 0 (antisymmetriser 0) from rfl,
-    antisymmetriser_zero, map_one] at h0
+      (modPowAlg A X 0 (antisymmetriser 0)).asHom from rfl,
+    antisymmetriser_zero, map_one, End.one_asHom] at h0
   have hm : IsZero (modPow A X 0) := by
     rw [Limits.IsZero.iff_id_eq_zero]
     exact h0
