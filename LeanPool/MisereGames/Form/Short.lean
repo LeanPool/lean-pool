@@ -78,7 +78,9 @@ protected theorem subposition {x y : G} (hx : IsShort x) (h : Subposition y x) :
   | single h => exact Short.isOption hx h
   | tail IH h => have hx' := Short.isOption hx h; exact Short.subposition hx' IH
 termination_by x
-decreasing_by form_wf
+decreasing_by
+  subst_vars
+  exact MisereGames.Moves.Subposition.of_isOption h
 
 alias _root_.Moves.IsOption.subposition := Short.subposition
 
