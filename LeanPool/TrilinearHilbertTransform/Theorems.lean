@@ -13,7 +13,7 @@ public import LeanPool.TrilinearHilbertTransform.Defs
 public import Mathlib.Analysis.Distribution.SchwartzSpace.Basic
 public import Mathlib.MeasureTheory.Function.LpSeminorm.Defs
 
-import LeanPool.TrilinearHilbertTransform.Auto.Sec163SummingUpdateLevels
+public import LeanPool.TrilinearHilbertTransform.Auto.Sec163SummingUpdateLevels
 
 /-!
 # Boundedness of the trilinear Hilbert transform
