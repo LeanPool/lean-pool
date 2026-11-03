@@ -8,6 +8,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.Chudnovsky
 public import LeanPool.Chudnovsky.Basic
+public import LeanPool.Chudnovsky.BernoulliValues
 public import LeanPool.Chudnovsky.Chudnovsky
 public import LeanPool.Chudnovsky.Clausen
 public import LeanPool.Chudnovsky.Coefficients
@@ -20,6 +21,7 @@ public import LeanPool.Chudnovsky.Lattices
 public import LeanPool.Chudnovsky.Liouville
 public import LeanPool.Chudnovsky.MainTheorem
 public import LeanPool.Chudnovsky.Numerics
+public import LeanPool.Chudnovsky.Periodicity
 public import LeanPool.Chudnovsky.PicardFuchs
 public import LeanPool.Chudnovsky.Quasiperiods
 public import LeanPool.Chudnovsky.Ramanujan

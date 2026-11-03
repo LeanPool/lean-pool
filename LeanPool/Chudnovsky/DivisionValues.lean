@@ -1736,11 +1736,9 @@ private lemma E_natDegree : E.natDegree = 6 := by
 
 private lemma E_leadingCoeff : E.leadingCoeff = 16 := by
   have hq : (X ^ 3 - C h2 * X - C h3 : Coeff[X]).Monic := by
-    have h : (X ^ 3 - C h2 * X - C h3 : Coeff[X])
-        = X ^ (2 + 1) - (C h2 * X + C h3) := by ring
-    rw [h]
-    refine Polynomial.monic_X_pow_sub ?_
-    compute_degree!
+    rw [sub_sub]
+    exact Polynomial.monic_X_pow_sub
+      (Polynomial.degree_linear_le.trans_lt (by norm_num))
   rw [E, Polynomial.leadingCoeff_mul, Polynomial.leadingCoeff_pow, hq.leadingCoeff, one_pow,
     mul_one]
   rw [show (16 : Coeff[X]) = Polynomial.C (16 : Coeff) from (map_ofNat Polynomial.C 16).symm,
@@ -2208,10 +2206,13 @@ theorem Fm_two {z : ℂ} (hz : z ∉ L.lattice) :
     ring
   have hσdiff : Differentiable ℂ L.weierstrassSigma := L.differentiable_weierstrassSigma
   have hHdiff : DifferentiableAt ℂ H z := by
-    have h1 : DifferentiableAt ℂ (fun v : ℂ => L.weierstrassSigma (z + v)) z := by fun_prop
-    have h2 : DifferentiableAt ℂ (fun v : ℂ => Q (z - v)) z := by fun_prop
+    have h1 : DifferentiableAt ℂ (fun v : ℂ => L.weierstrassSigma (z + v)) z :=
+      (hσdiff.comp ((differentiable_const _).add differentiable_id)).differentiableAt
+    have h2 : DifferentiableAt ℂ (fun v : ℂ => Q (z - v)) z :=
+      (hQdiff.comp ((differentiable_const _).sub differentiable_id)).differentiableAt
     have h3 : DifferentiableAt ℂ
-        (fun v : ℂ => L.weierstrassSigma z ^ 2 * L.weierstrassSigma v ^ 2) z := by fun_prop
+        (fun v : ℂ => L.weierstrassSigma z ^ 2 * L.weierstrassSigma v ^ 2) z :=
+      ((differentiable_const _).mul (hσdiff.pow 2)).differentiableAt
     exact (h1.mul h2).div h3
       (mul_ne_zero (pow_ne_zero 2 hσz) (pow_ne_zero 2 hσz))
   have hψ : HasDerivAt (fun v => (z - v) * H v) (-H z) z := by
@@ -2958,33 +2959,17 @@ private lemma isIntegral_of_Pc_root (m l : ℕ) (hl : l ≠ 0)
 private lemma isIntegral_of_cubic_root {x : ℂ}
     (hx : 4 * (x ^ 3 - L.g₂ / 4 * x - L.g₃ / 4) = 0) :
     IsIntegral (Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ)) x := by
-  refine ⟨Polynomial.X ^ 3
-      - Polynomial.C (⟨L.g₂ / 4, Algebra.subset_adjoin (by simp)⟩ :
-          (Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ))) * Polynomial.X
-      - Polynomial.C (⟨L.g₃ / 4, Algebra.subset_adjoin (by simp)⟩ :
-          (Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ))), ?_, ?_⟩
-  · have h : (Polynomial.X ^ 3
-        - Polynomial.C (⟨L.g₂ / 4, Algebra.subset_adjoin (by simp)⟩ :
-            (Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ))) * Polynomial.X
-        - Polynomial.C (⟨L.g₃ / 4, Algebra.subset_adjoin (by simp)⟩ :
-            (Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ))))
-        = Polynomial.X ^ (2 + 1)
-          - (Polynomial.C (⟨L.g₂ / 4, Algebra.subset_adjoin (by simp)⟩ :
-              (Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ))) * Polynomial.X
-            + Polynomial.C (⟨L.g₃ / 4, Algebra.subset_adjoin (by simp)⟩ :
-              (Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ)))) := by
-      ring
-    rw [h]
-    refine Polynomial.monic_X_pow_sub ?_
-    compute_degree!
-  · simp only [Polynomial.eval₂_sub, Polynomial.eval₂_mul, Polynomial.eval₂_pow,
-      Polynomial.eval₂_X, Polynomial.eval₂_C]
-    have hc2 : algebraMap (Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ)) ℂ
-        ⟨L.g₂ / 4, Algebra.subset_adjoin (by simp)⟩ = L.g₂ / 4 := rfl
-    have hc3 : algebraMap (Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ)) ℂ
-        ⟨L.g₃ / 4, Algebra.subset_adjoin (by simp)⟩ = L.g₃ / 4 := rfl
-    rw [hc2, hc3]
-    linear_combination hx / 4
+  let R := Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ)
+  let a : R := ⟨L.g₂ / 4, Algebra.subset_adjoin (by simp)⟩
+  let b : R := ⟨L.g₃ / 4, Algebra.subset_adjoin (by simp)⟩
+  refine ⟨Polynomial.X ^ 3 - (Polynomial.C a * Polynomial.X + Polynomial.C b), ?_, ?_⟩
+  · exact Polynomial.monic_X_pow_sub
+      (Polynomial.degree_linear_le.trans_lt (by norm_num))
+  · simp only [Polynomial.eval₂_sub, Polynomial.eval₂_add, Polynomial.eval₂_mul,
+      Polynomial.eval₂_pow, Polynomial.eval₂_X, Polynomial.eval₂_C]
+    change x ^ 3 - (L.g₂ / 4 * x + L.g₃ / 4) = 0
+    have hzero := (mul_eq_zero.mp hx).resolve_left (by norm_num : (4 : ℂ) ≠ 0)
+    simpa only [sub_sub] using hzero
 
 /-- The evaluation of the Baker product at a division value vanishes. -/
 private lemma eval_baker_zero (m : ℕ) [NeZero m] {v : Fin m × Fin m} (hv : v ≠ 0) :
