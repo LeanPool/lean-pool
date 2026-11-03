@@ -169,28 +169,6 @@ theorem norm_exp_mul_exp_sub_exp_add_le_commutator (A B : 𝔸) :
   calc ‖exp A * exp B - exp (A + B)‖ ≤ c * 1 ^ 2 / 2 := hfence
     _ = ‖A * B - B * A‖ / 2 * Real.exp (‖A‖ + ‖B‖) := by rw [hc]; ring
 
-omit [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [NormOneClass 𝔸] in
-/-- **Telescoping**: for `‖S‖, ‖T‖ ≤ C`, `‖Sⁿ⁺¹ − Tⁿ⁺¹‖ ≤ (n + 1) Cⁿ ‖S − T‖`. -/
-theorem norm_pow_succ_sub_pow_succ_le {S T : 𝔸} {C : ℝ} (hS : ‖S‖ ≤ C) (hT : ‖T‖ ≤ C)
-    (n : ℕ) : ‖S ^ (n + 1) - T ^ (n + 1)‖ ≤ (n + 1) * C ^ n * ‖S - T‖ := by
-  have hC0 : 0 ≤ C := (norm_nonneg _).trans hS
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    have hdecomp : S ^ (n + 1 + 1) - T ^ (n + 1 + 1)
-        = (S ^ (n + 1) - T ^ (n + 1)) * S + T ^ (n + 1) * (S - T) := by
-      rw [pow_succ S (n + 1), pow_succ T (n + 1), sub_mul, mul_sub]
-      abel
-    have hTn : ‖T ^ (n + 1)‖ ≤ C ^ (n + 1) :=
-      (norm_pow_le' T (Nat.succ_pos n)).trans (pow_le_pow_left₀ (norm_nonneg _) hT _)
-    calc ‖S ^ (n + 1 + 1) - T ^ (n + 1 + 1)‖
-        ≤ ‖S ^ (n + 1) - T ^ (n + 1)‖ * ‖S‖ + ‖T ^ (n + 1)‖ * ‖S - T‖ := by
-          rw [hdecomp]
-          exact (norm_add_le _ _).trans (add_le_add (norm_mul_le _ _) (norm_mul_le _ _))
-      _ ≤ ((n + 1) * C ^ n * ‖S - T‖) * C + C ^ (n + 1) * ‖S - T‖ := by
-          gcongr
-      _ = ((n + 1 : ℕ) + 1) * C ^ (n + 1) * ‖S - T‖ := by push_cast; ring
-
 /-- **The Lie–Trotter product formula with commutator scaling.** For `n ≥ 1`,
 `‖(exp (A/n) · exp (B/n))ⁿ − exp (A + B)‖ ≤ ‖AB − BA‖ / (2n) · e^{‖A‖ + ‖B‖}`. -/
 theorem norm_trotter_sub_le_commutator (A B : 𝔸) (n : ℕ) (hn : 1 ≤ n) :

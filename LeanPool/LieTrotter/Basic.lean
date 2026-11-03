@@ -162,46 +162,47 @@ theorem norm_exp_mul_exp_sub_exp_add_le (X Y : 𝔸) :
     _ ≤ (a + b) ^ 2 * (3 + (a + b)) * Real.exp (a + b) :=
         mul_le_mul_of_nonneg_right hpoly hepos.le
 
-omit [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] in
+omit [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [NormOneClass 𝔸] in
+/-- **Telescoping**: for `‖S‖, ‖T‖ ≤ C`, `‖Sⁿ⁺¹ − Tⁿ⁺¹‖ ≤ (n + 1) Cⁿ ‖S − T‖`. -/
+theorem norm_pow_succ_sub_pow_succ_le {S T : 𝔸} {C : ℝ} (hS : ‖S‖ ≤ C) (hT : ‖T‖ ≤ C)
+    (n : ℕ) : ‖S ^ (n + 1) - T ^ (n + 1)‖ ≤ (n + 1) * C ^ n * ‖S - T‖ := by
+  have hC0 : 0 ≤ C := (norm_nonneg _).trans hS
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    have hdecomp : S ^ (n + 1 + 1) - T ^ (n + 1 + 1)
+        = (S ^ (n + 1) - T ^ (n + 1)) * S + T ^ (n + 1) * (S - T) := by
+      rw [pow_succ S (n + 1), pow_succ T (n + 1), sub_mul, mul_sub]
+      abel
+    have hTn : ‖T ^ (n + 1)‖ ≤ C ^ (n + 1) :=
+      (norm_pow_le' T (Nat.succ_pos n)).trans (pow_le_pow_left₀ (norm_nonneg _) hT _)
+    calc ‖S ^ (n + 1 + 1) - T ^ (n + 1 + 1)‖
+        ≤ ‖S ^ (n + 1) - T ^ (n + 1)‖ * ‖S‖ + ‖T ^ (n + 1)‖ * ‖S - T‖ := by
+          rw [hdecomp]
+          exact (norm_add_le _ _).trans (add_le_add (norm_mul_le _ _) (norm_mul_le _ _))
+      _ ≤ ((n + 1) * C ^ n * ‖S - T‖) * C + C ^ (n + 1) * ‖S - T‖ := by
+          gcongr
+      _ = ((n + 1 : ℕ) + 1) * C ^ (n + 1) * ‖S - T‖ := by push_cast; ring
+
+omit [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] [NormOneClass 𝔸] in
 /-- **Growth-controlled telescoping**: for `‖S‖, ‖T‖ ≤ C` with `1 ≤ C`,
 `‖Sⁿ − Tⁿ‖ ≤ n · Cⁿ · ‖S − T‖`. -/
 theorem norm_pow_sub_pow_le_of_norm_le {S T : 𝔸} {C : ℝ} (hC : 1 ≤ C)
     (hS : ‖S‖ ≤ C) (hT : ‖T‖ ≤ C) (n : ℕ) :
     ‖S ^ n - T ^ n‖ ≤ n * C ^ n * ‖S - T‖ := by
-  have hC0 : 0 ≤ C := le_trans zero_le_one hC
-  induction n with
+  have hC0 : 0 ≤ C := zero_le_one.trans hC
+  cases n with
   | zero => simp
-  | succ n ih =>
-    have hdecomp : S ^ (n + 1) - T ^ (n + 1)
-        = (S ^ n - T ^ n) * S + T ^ n * (S - T) := by
-      rw [pow_succ, pow_succ, sub_mul, mul_sub]
-      abel
-    have hTn : ‖T ^ n‖ ≤ C ^ n := by
-      rcases Nat.eq_zero_or_pos n with h0 | hpos
-      · subst h0; simp
-      · exact le_trans (norm_pow_le' T hpos) (by gcongr)
-    have h1 : ‖S ^ (n + 1) - T ^ (n + 1)‖
-        ≤ ‖S ^ n - T ^ n‖ * ‖S‖ + ‖T ^ n‖ * ‖S - T‖ := by
-      rw [hdecomp]
-      exact (norm_add_le _ _).trans
-        (add_le_add (norm_mul_le _ _) (norm_mul_le _ _))
-    have h2 : ‖S ^ n - T ^ n‖ * ‖S‖ ≤ (n * C ^ n * ‖S - T‖) * C :=
-      mul_le_mul ih hS (norm_nonneg _) (by positivity)
-    have h3 : ‖T ^ n‖ * ‖S - T‖ ≤ C ^ n * ‖S - T‖ :=
-      mul_le_mul_of_nonneg_right hTn (norm_nonneg _)
-    have hCn : C ^ n ≤ C ^ (n + 1) := by
-      calc C ^ n = C ^ n * 1 := by ring
-        _ ≤ C ^ n * C := by gcongr
-        _ = C ^ (n + 1) := by ring
-    calc ‖S ^ (n + 1) - T ^ (n + 1)‖
-        ≤ (n * C ^ n * ‖S - T‖) * C + C ^ n * ‖S - T‖ := by
-          refine le_trans h1 (add_le_add h2 h3)
-      _ = n * (C ^ n * C) * ‖S - T‖ + C ^ n * ‖S - T‖ := by ring
-      _ ≤ n * C ^ (n + 1) * ‖S - T‖ + C ^ (n + 1) * ‖S - T‖ := by
-          rw [show C ^ n * C = C ^ (n + 1) from by ring]
-          gcongr
-      _ = ((n : ℝ) + 1) * C ^ (n + 1) * ‖S - T‖ := by ring
-      _ = ((n + 1 : ℕ) : ℝ) * C ^ (n + 1) * ‖S - T‖ := by push_cast; ring
+  | succ n =>
+    have hpower : C ^ n ≤ C ^ (n + 1) := by
+      calc C ^ n = C ^ n * 1 := (mul_one _).symm
+        _ ≤ C ^ n * C := mul_le_mul_of_nonneg_left hC (pow_nonneg hC0 n)
+        _ = C ^ (n + 1) := (pow_succ C n).symm
+    push_cast
+    exact (norm_pow_succ_sub_pow_succ_le hS hT n).trans
+      (mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hpower (show (0 : ℝ) ≤ n + 1 by positivity))
+        (norm_nonneg _))
 
 omit [NormOneClass 𝔸] in
 /-- `exp x ^ n = exp (n • x)`, by induction from `exp_add_of_commute`. (Mathlib's `exp_nsmul`
