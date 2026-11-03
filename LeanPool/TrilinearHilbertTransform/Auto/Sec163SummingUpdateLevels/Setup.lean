@@ -25,7 +25,8 @@ Formalization of blueprint Section 16, "Normalized absorption and the operator e
 `blueprint/formalization_blueprint.tex`.
 
 The operator is the human-written `TrilinearHT.T` (with truncations
-`TrilinearHT.truncatedTransform`) of `TrilinearHT/Defs.lean`, `T(f)(x) = p.v. ∫ Π_i f_i(x + (i+1)t) dt/t`. The substitution `t ↦ -t`
+`TrilinearHT.truncatedTransform`) of `TrilinearHT/Defs.lean`,
+`T(f)(x) = p.v. ∫ Π_i f_i(x + (i+1)t) dt/t`. The substitution `t ↦ -t`
 turns it into minus the blueprint's `p.v. ∫ f₁(x - t) f₂(x - 2t) f₃(x - 3t) dt/t`
 (`truncatedTransform_eq_neg`, `T_eq_neg_integral`); the sign is irrelevant for every norm bound.
 -/
@@ -408,7 +409,8 @@ theorem progression_truncated_tendsto (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x 
     Set.inter_eq_right.mpr (Set.Ioi_subset_Ioi (le_of_lt hε))]
 
 /-- Blueprint `thm:main`, lines 2989-2992, for `TrilinearHT.truncatedTransform`:
-on Schwartz inputs the truncations converge to minus the odd-part integral of the blueprint's progression product. -/
+on Schwartz inputs the truncations converge to minus the odd-part integral
+of the blueprint's progression product. -/
 theorem truncatedTransform_tendsto_neg_integral (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x : ℝ) :
     Filter.Tendsto (TrilinearHT.truncatedTransform ![⇑f₁, ⇑f₂, ⇑f₃] x) (nhdsWithin 0 (Set.Ioi 0))
       (nhds (-∫ t in Set.Ioi 0, (f₁ (x - t) * f₂ (x - 2 * t) * f₃ (x - 3 * t) -
