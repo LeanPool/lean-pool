@@ -269,70 +269,15 @@ theorem cell_min_leaves {ιc σ : Type*} (cells : Finset ιc) (wt : ιc → ℝ)
         · rw [min_eq_left h']; exact (min_le_left _ _).trans (by linarith)
         · rw [min_eq_right h']; exact (min_le_right _ _).trans hle
 
-/-- The data of the localization at one search leaf and one cell: the leaf inputs `x`, the
-expanded outer primal in slot `u`, the third slot `t`, the current groups with their filters,
-and the test bounds of `leaf_localization`. -/
-structure LeafLocalData (V : Type*) [AddCommGroup V] [Module ℂ V]
-    (Λ : MultilinearMap ℂ (fun _ : Fin 4 => V) ℂ) (x : Fin 4 → V) where
-  /-- Index type for atoms in the expanded outer input. -/
-  ι : Type
-  /-- Index type for current groups at the search leaf. -/
-  γ : Type
-  /-- Slot whose input is expanded into outer atoms. -/
-  u : Fin 4
-  /-- Third slot tested against the current group filters. -/
-  t : Fin 4
-  /-- First remaining slot in the leaf-localization expansion. -/
-  p : Fin 4
-  /-- Second remaining slot in the leaf-localization expansion. -/
-  q : Fin 4
-  hut : u ≠ t
-  hup : u ≠ p
-  huq : u ≠ q
-  htp : t ≠ p
-  htq : t ≠ q
-  hpq : p ≠ q
-  /-- Finite atom family expanding the outer input. -/
-  S : Finset ι
-  /-- Coefficient of each outer atom. -/
-  a : ι → ℂ
-  /-- Vector represented by each outer atom. -/
-  φ : ι → V
-  hx : x u = ∑ v ∈ S, a v • φ v
-  /-- Finite family of current groups at the search leaf. -/
-  Gs : Finset γ
-  /-- Current group of an atom, or none when it belongs to an old group. -/
-  grp : ι → Option γ
-  /-- Group-dependent linear filter in each input slot. -/
-  L : γ → Fin 4 → V →ₗ[ℂ] V
-  /-- Bound for terms involving atoms outside the current groups. -/
-  εo : ℝ
-  /-- Bound for mismatch between an atom and its own current-group filter. -/
-  εm : ℝ
-  /-- Bound for interaction with a different current group's filter. -/
-  εs : ℝ
-  /-- Bound for the remaining residual terms in leaf localization. -/
-  εr : ℝ
-  hεo : 0 ≤ εo
-  hεm : 0 ≤ εm
-  hεs : 0 ≤ εs
-  hold : ∀ v ∈ S, grp v = none →
-    ‖Λ (Function.update (Function.update x u (φ v)) t (x t))‖ ≤ εo ∧
-    ∀ G ∈ Gs, ‖Λ (Function.update (Function.update x u (φ v)) t (L G t (x t)))‖ ≤ εo
-  hcur : ∀ v ∈ S, ∀ G₀, grp v = some G₀ → G₀ ∈ Gs ∧
-    ‖Λ (Function.update (Function.update x u (φ v)) t (x t - L G₀ t (x t)))‖ ≤ εm ∧
-    ∀ G ∈ Gs, G ≠ G₀ →
-      ‖Λ (Function.update (Function.update x u (φ v)) t (L G t (x t)))‖ ≤ εs
-  hres : ∀ G ∈ Gs, ∀ i, ‖Λ (leafResiduals L x u t p q G i)‖ ≤ εr
-
 section CertifiedVariation
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
 /-! ### Certified variation (lem:variation) -/
 
-/-- Synthesis bound dual to a Bessel row family. -/
-theorem synthesis_le_of_bessel {κ : Type*} (s : Finset κ) (R : κ → H →L[ℂ] H) {c : ℝ}
-    (hc : 0 ≤ c) (hB : ∀ h, ∑ k ∈ s, ‖R k h‖ ^ 2 ≤ c * ‖h‖ ^ 2) (x : κ → H) :
+/-- Synthesis bound dual to a Bessel row family into a second Hilbert space. -/
+theorem synthesis_le_of_bessel' {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℂ F]
+    [CompleteSpace F] {κ : Type*} (s : Finset κ) (R : κ → H →L[ℂ] F) {c : ℝ}
+    (hc : 0 ≤ c) (hB : ∀ h, ∑ k ∈ s, ‖R k h‖ ^ 2 ≤ c * ‖h‖ ^ 2) (x : κ → F) :
     ‖∑ k ∈ s, ContinuousLinearMap.adjoint (R k) (x k)‖ ^ 2 ≤
       c * ∑ k ∈ s, ‖x k‖ ^ 2 := by
   set S := ∑ k ∈ s, ContinuousLinearMap.adjoint (R k) (x k)
@@ -361,6 +306,13 @@ theorem synthesis_le_of_bessel {κ : Type*} (s : Finset κ) (R : κ → H →L[�
           pow_le_pow_left₀ (norm_nonneg _) h3 2
       _ = c * ∑ k ∈ s, ‖x k‖ ^ 2 := by
           rw [mul_pow, Real.sq_sqrt hX0, Real.sq_sqrt hc]; ring
+
+/-- Synthesis bound dual to a Bessel row family. -/
+theorem synthesis_le_of_bessel {κ : Type*} (s : Finset κ) (R : κ → H →L[ℂ] H) {c : ℝ}
+    (hc : 0 ≤ c) (hB : ∀ h, ∑ k ∈ s, ‖R k h‖ ^ 2 ≤ c * ‖h‖ ^ 2) (x : κ → H) :
+    ‖∑ k ∈ s, ContinuousLinearMap.adjoint (R k) (x k)‖ ^ 2 ≤
+      c * ∑ k ∈ s, ‖x k‖ ^ 2 := by
+  exact synthesis_le_of_bessel' s R hc hB x
 
 /-- Blueprint lem:variation, line 1867: rows that are Bessel within each group and whose
 adjoint outputs over the groups satisfy the almost-orthogonality `eq:whole-ranges`
@@ -570,34 +522,6 @@ theorem norm_layerOp_apply_le (Cum : ℕ → H →L[ℂ] H) (h1 : ∀ m x, ‖Cu
     · exact (h1 _ _).trans ih
 
 end Contractions
-
-/-! ### The leaf of an attempt (blueprint prop:localize, lines 1848-1856) -/
-
-/-- The data of the filters of an attempt at one cell: slot catalogs, the number `P` of pads,
-the ranks and pad masks of the cumulative splits `m` and of the ball levels `j` of each group,
-and the bases of the four slots. -/
-structure LeafFilters (Tg γ : Type*) where
-  /-- Dyadic grid in which the search-leaf filters are evaluated. -/
-  G : RealDyadicGrid
-  /-- Cell on which the search-leaf filters are evaluated. -/
-  I : ℤ × ℤ
-  /-- Number of finite catalog labels in the column space. -/
-  Mc : ℕ
-  /-- Catalog columns available in each input slot. -/
-  cat : Fin 4 → List (CatCol Tg)
-  /-- Positive number of rank steps allocated to each filter level. -/
-  P : ℕ
-  hP : 0 < P
-  /-- Rank cutoff used by each catalog-filter step. -/
-  rkC : ℕ → ℕ
-  /-- Tag mask used by each catalog-filter step and color. -/
-  cm : ℕ → ℕ → Tg → Prop
-  /-- Rank cutoff used by each current-group filter step. -/
-  rkB : ℕ → ℕ
-  /-- Group-dependent tag mask used by each filter step and color. -/
-  bm : γ → ℕ → ℕ → Tg → Prop
-  /-- Column L² input in each of the four slots. -/
-  g : Fin 4 → Lp ℂ 2 (volume : Measure ℝ)
 
 /-- A default search leaf. -/
 def dfltLeaf : SearchLeaf := ⟨0, 0, 0, none, fun _ => []⟩

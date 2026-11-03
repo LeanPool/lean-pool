@@ -674,14 +674,6 @@ termination_by xs ys => xs.length + ys.length
 
 end RankMerge2
 
-namespace VTest
-variable {Tg : Type*} {Mc : ℕ}
-
-/-! ### Helper tests on transfer histories (blueprint lines 1812-1817, 2236-2238, 2253) -/
-
-
-end VTest
-
 namespace ActiveSetup
 
 namespace AttemptParams

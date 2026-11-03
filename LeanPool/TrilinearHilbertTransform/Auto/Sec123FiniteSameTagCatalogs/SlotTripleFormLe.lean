@@ -3477,27 +3477,6 @@ structure CatCol (Tg : Type*) where
 
 /-! ### Catalog tests at a cell and their closure (blueprint lines 1809-1831) -/
 
-/-- A named catalog test (blueprint eq:catalog-test, lines 1809-1815): the residual slot `t`,
-the target rank and tag mask, a history of at most `m` catalog filters (ranks, masks and
-complement flags) and the base. -/
-structure CatTest (Tg : Type*) where
-  /-- Residual slot tested by the catalog test. -/
-  t : Fin 4
-  /-- Rank cutoff for the residual-slot projection. -/
-  r : ℕ
-  /-- Tag mask selecting the residual-slot projection. -/
-  M : Tg → Prop
-  /-- Number of historical high-slot projections in the test. -/
-  m : ℕ
-  /-- Rank cutoff for each historical high-slot projection. -/
-  hr : ℕ → ℕ
-  /-- Tag mask for each historical high-slot projection. -/
-  hM : ℕ → Tg → Prop
-  /-- Boolean choices specifying the historical projection factors. -/
-  θ : ℕ → Bool
-  /-- L² function supplying the residual-slot test input. -/
-  g : Lp ℂ 2 (volume : Measure ℝ)
-
 /-- Integrals against the normalized measure of a cell are averages over the cell. -/
 theorem integral_normalized_cell (G : RealDyadicGrid) (I : ℤ × ℤ) (f : ℝ → ℂ) :
     ∫ y, f y ∂(normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) =
@@ -4121,27 +4100,6 @@ noncomputable def globHist (Ψ : ColumnDepthFamily V) {P : ℕ}
   layerOp (fun m => opAvg fun p => (Ψ.withMask (Am m p)).proj h) ls
 
 end GlobalHistories
-
-/-! ### Catalog tests on fixed vector bases: the helper closure (lines 1815-1831) -/
-
-/-- Column-valued catalog test with residual and historical high-slot filters. -/
-structure VTest (Tg : Type*) (Mc : ℕ) where
-  /-- Residual slot of the column-valued catalog test. -/
-  t : Fin 4
-  /-- Rank cutoff for the residual-slot column projection. -/
-  r : ℕ
-  /-- Tag mask of the residual-slot column projection. -/
-  M : Tg → Prop
-  /-- Number of historical high-slot projection factors. -/
-  m : ℕ
-  /-- Rank cutoff for each historical projection factor. -/
-  hr : ℕ → ℕ
-  /-- Tag mask for each historical projection factor. -/
-  hM : ℕ → Tg → Prop
-  /-- Boolean choices specifying the historical column-projection factors. -/
-  θ : ℕ → Bool
-  /-- Column L² input used by the column-valued catalog test. -/
-  base : ColumnL2 (Fin Mc)
 
 end TrilinearHT.Auto
 

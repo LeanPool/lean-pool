@@ -1404,39 +1404,6 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteS
 
 /-! ### Joint Bessel bounds for rows with group-dependent targets (lines 2068-2072) -/
 
-/-- Synthesis bound dual to a Bessel row family into a second Hilbert space. -/
-theorem synthesis_le_of_bessel' {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℂ F]
-    [CompleteSpace F] {κ : Type*} (s : Finset κ) (R : κ → H →L[ℂ] F) {c : ℝ}
-    (hc : 0 ≤ c) (hB : ∀ h, ∑ k ∈ s, ‖R k h‖ ^ 2 ≤ c * ‖h‖ ^ 2) (x : κ → F) :
-    ‖∑ k ∈ s, ContinuousLinearMap.adjoint (R k) (x k)‖ ^ 2 ≤
-      c * ∑ k ∈ s, ‖x k‖ ^ 2 := by
-  set S := ∑ k ∈ s, ContinuousLinearMap.adjoint (R k) (x k)
-  have hS : ‖S‖ ^ 2 = RCLike.re (inner ℂ S S) := by
-    rw [inner_self_eq_norm_sq_to_K, ← RCLike.ofReal_pow, RCLike.ofReal_re]
-  have hinner : inner ℂ S S = ∑ k ∈ s, inner ℂ (x k) (R k S) := by
-    simp only [S, sum_inner, ContinuousLinearMap.adjoint_inner_left]
-  have hle : ‖S‖ ^ 2 ≤ Real.sqrt (∑ k ∈ s, ‖x k‖ ^ 2) * Real.sqrt (∑ k ∈ s, ‖R k S‖ ^ 2) := by
-    rw [hS, hinner, map_sum]
-    calc ∑ k ∈ s, RCLike.re (inner ℂ (x k) (R k S)) ≤ ∑ k ∈ s, ‖x k‖ * ‖R k S‖ :=
-          Finset.sum_le_sum fun k _ => (RCLike.re_le_norm _).trans (norm_inner_le_norm _ _)
-      _ ≤ _ := Real.sum_mul_le_sqrt_mul_sqrt s _ _
-  have h2 := hB S
-  have hX0 : 0 ≤ ∑ k ∈ s, ‖x k‖ ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
-  have hle2 : ‖S‖ ^ 2 ≤ Real.sqrt (∑ k ∈ s, ‖x k‖ ^ 2) * (Real.sqrt c * ‖S‖) := by
-    refine hle.trans (mul_le_mul_of_nonneg_left ?_ (Real.sqrt_nonneg _))
-    rw [← Real.sqrt_sq (norm_nonneg S), ← Real.sqrt_mul hc]
-    exact Real.sqrt_le_sqrt h2
-  rcases eq_or_lt_of_le (norm_nonneg S) with h0 | hpos
-  · rw [← h0]; simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow]; positivity
-  · have h3 : ‖S‖ ≤ Real.sqrt (∑ k ∈ s, ‖x k‖ ^ 2) * Real.sqrt c := by
-      have h4 : ‖S‖ * ‖S‖ ≤ (Real.sqrt (∑ k ∈ s, ‖x k‖ ^ 2) * Real.sqrt c) * ‖S‖ := by
-        have := hle2; rw [sq] at this; linarith [this]
-      exact le_of_mul_le_mul_right h4 hpos
-    calc ‖S‖ ^ 2 ≤ (Real.sqrt (∑ k ∈ s, ‖x k‖ ^ 2) * Real.sqrt c) ^ 2 :=
-          pow_le_pow_left₀ (norm_nonneg _) h3 2
-      _ = c * ∑ k ∈ s, ‖x k‖ ^ 2 := by
-          rw [mul_pow, Real.sq_sqrt hX0, Real.sq_sqrt hc]; ring
-
 /-- Blueprint lines 2068-2072: rows `R_{G,k} : H → F_G` that are Bessel with constant `c` within
 each group `G`, and whose adjoint outputs `S_G = Σ_k R_{G,k}^* R_{G,k} h` satisfy the whole-range
 almost orthogonality `‖Σ_G S_G‖² ≤ C Σ_G ‖S_G‖²`, have joint squared sum at most `C c ‖h‖²`. -/
