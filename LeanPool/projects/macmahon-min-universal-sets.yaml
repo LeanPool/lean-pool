@@ -1,0 +1,62 @@
+slug: macmahon-min-universal-sets
+title: The ten minimum universal collections of MacMahon cubes
+summary: >-
+  Classifies all minimum universal inventories of six-coloured MacMahon cubes.
+  A universal inventory can build a two-by-two-by-two model of every cube variety,
+  with matching exterior faces and eight distinct physical copies. The minimum
+  inventory size is twelve, exactly ten labelled inventories attain it, and they
+  are precisely the two-triangle collections in Conway's tableau. Natural-number
+  multiplicities are allowed; every minimum inventory has no repeated variety.
+  The tableau has zero diagonal; its thirty off-diagonal entries are the varieties.
+  The development also verifies all proper signed-axis rotations, the thirty
+  varieties, all six-colour face assignments, and the equivalence of corner
+  matching with physical face matching. This resolves Johnson and Roldán's
+  Conjectures 4 and 8 (arXiv:2407.13208v1), with a stronger multiset conclusion.
+branch: combinatorics
+entry_module: LeanPool.MacMahon
+authors:
+- Jason Davies
+source:
+  url: https://github.com/jasondavies/macmahon-min-universal-sets/tree/d8856c97e43e6fa66383c81b8ac4f5bd1c285bc8
+  github_repo: jasondavies/macmahon-min-universal-sets
+  commit: d8856c97e43e6fa66383c81b8ac4f5bd1c285bc8
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- MacMahon.minimum_size
+- MacMahon.physical_exactly_ten
+main_results:
+- declaration: MacMahon.minimum_size
+  informal: Twelve is the attained minimum size of a universal physical inventory.
+- declaration: MacMahon.physical_minimum
+  informal: Every universal physical inventory has at least twelve cubes.
+- declaration: MacMahon.physical_exactly_ten
+  informal: Exactly ten labelled universal physical inventories have size twelve.
+- declaration: MacMahon.physical_iff_two_triangles
+  informal: >-
+    An inventory of twelve cubes is physically universal exactly when its Conway
+    tableau is the two disjoint triangles of a partition of the six labels into
+    two triples, with one copy of each directed edge.
+- declaration: MacMahon.physical_minimum_has_no_repeats
+  informal: Every variety has multiplicity at most one in a minimum universal inventory.
+- declaration: MacMahon.proper_rotation_iff
+  informal: The rotation table contains precisely all proper signed-axis rotations.
+- declaration: MacMahon.exposed_face_rule
+  informal: The outward faces at each of the eight positions obey the coordinate sign rule.
+- declaration: MacMahon.face_colours_valid
+  informal: Every off-diagonal tableau entry assigns the six distinct nonzero colours.
+- declaration: MacMahon.face_assignment_coverage
+  informal: Every assignment of six distinct nonzero colours is a rotated tableau variety.
+- declaration: MacMahon.face_assignment_unique
+  informal: The variety and proper rotation representing a face assignment are unique.
+tags:
+- combinatorics
+- coloured-cubes
+- classification
+- finite-geometry
+msc:
+- 05A15
+- 05C70
+- 68V15
+- 00A08
