@@ -3041,29 +3041,31 @@ theorem ColumnDepthFamily.proj_vanish (Ψ : ColumnDepthFamily V) (h : ℤ) (z : 
       ((Ψ.partition h).subset c.2) z)] with y hy h1 hyr
   rw [h1, Finset.sum_eq_zero fun c _ => hy c hyr]
 
-/-- A column function vanishing off the root splits orthogonally over a depth partition. -/
-theorem ColumnDepthFamily.norm_sq_partition (Ψ : ColumnDepthFamily V) (h : ℤ) (v : ColumnL2 V)
+/-- A column function (of any label type) vanishing off the root of a depth family splits
+orthogonally over its depth partition. -/
+theorem ColumnDepthFamily.norm_sq_partition' {W : Type*} [Fintype W]
+    (Ψ : ColumnDepthFamily V) (h : ℤ) (v : ColumnL2 W)
     (hv : ∀ᵐ y ∂volume, y ∉ dyadicGridCell Ψ.D.grid Ψ.D.root.1 Ψ.D.root.2 →
-      (v : ℝ → ColumnHilbert V) y = 0) :
+      (v : ℝ → ColumnHilbert W) y = 0) :
     ‖v‖ ^ 2 = ∑ Q : {Q // Q ∈ (Ψ.partition h).cells},
       ‖columnL2Restriction (dyadicGridCell Ψ.D.grid Q.1.1 Q.1.2)
         (dyadicGridCell_measurable Ψ.D.grid Q.1.1 Q.1.2) v‖ ^ 2 := by
   classical
   set π := Ψ.partition h
-  set! w : (ℤ × ℤ) → ColumnL2 V := fun Q => columnL2Restriction (dyadicGridCell Ψ.D.grid Q.1 Q.2)
+  set! w : (ℤ × ℤ) → ColumnL2 W := fun Q => columnL2Restriction (dyadicGridCell Ψ.D.grid Q.1 Q.2)
     (dyadicGridCell_measurable Ψ.D.grid Q.1 Q.2) v
   have hw : ∀ Q, ∀ᵐ y ∂volume, y ∉ dyadicGridCell Ψ.D.grid Q.1 Q.2 →
-      (w Q : ℝ → ColumnHilbert V) y = 0 := by
+      (w Q : ℝ → ColumnHilbert W) y = 0 := by
     intro Q
     filter_upwards [columnL2Indicator_coeFn _ (dyadicGridCell_measurable Ψ.D.grid Q.1 Q.2) v]
       with y hy hyQ
     change (columnL2Indicator _ (dyadicGridCell_measurable Ψ.D.grid Q.1 Q.2) v :
-      ℝ → ColumnHilbert V) y = 0
+      ℝ → ColumnHilbert W) y = 0
     rw [hy, Set.indicator_of_notMem hyQ]
   have hsum : v = ∑ Q ∈ π.cells, w Q := by
     refine Lp.ext ?_
-    have hall : ∀ᵐ y ∂volume, ∀ Q ∈ π.cells, (w Q : ℝ → ColumnHilbert V) y =
-        (dyadicGridCell Ψ.D.grid Q.1 Q.2).indicator (v : ℝ → ColumnHilbert V) y := by
+    have hall : ∀ᵐ y ∂volume, ∀ Q ∈ π.cells, (w Q : ℝ → ColumnHilbert W) y =
+        (dyadicGridCell Ψ.D.grid Q.1 Q.2).indicator (v : ℝ → ColumnHilbert W) y := by
       rw [Filter.eventually_all_finset]
       intro Q _
       exact columnL2Indicator_coeFn _ (dyadicGridCell_measurable Ψ.D.grid Q.1 Q.2) v
@@ -3076,6 +3078,15 @@ theorem ColumnDepthFamily.norm_sq_partition (Ψ : ColumnDepthFamily V) (h : ℤ)
   rw [columnL2_norm_sq_sum_disjoint π.cells w (fun Q => dyadicGridCell Ψ.D.grid Q.1 Q.2)
     π.disjoint hw]
   exact (Finset.sum_coe_sort π.cells (fun Q => ‖w Q‖ ^ 2)).symm
+
+/-- A column function vanishing off the root splits orthogonally over a depth partition. -/
+theorem ColumnDepthFamily.norm_sq_partition (Ψ : ColumnDepthFamily V) (h : ℤ) (v : ColumnL2 V)
+    (hv : ∀ᵐ y ∂volume, y ∉ dyadicGridCell Ψ.D.grid Ψ.D.root.1 Ψ.D.root.2 →
+      (v : ℝ → ColumnHilbert V) y = 0) :
+    ‖v‖ ^ 2 = ∑ Q : {Q // Q ∈ (Ψ.partition h).cells},
+      ‖columnL2Restriction (dyadicGridCell Ψ.D.grid Q.1.1 Q.1.2)
+        (dyadicGridCell_measurable Ψ.D.grid Q.1.1 Q.1.2) v‖ ^ 2 := by
+  exact Ψ.norm_sq_partition' h v hv
 
 end DepthBlocks2
 
@@ -3304,43 +3315,6 @@ theorem cells_pairwiseDisjoint_of_depth (Gd : RealDyadicGrid) (S : Finset (ℤ �
 
 section DepthLocality2
 variable {V W : Type*} [Fintype V] [Fintype W]
-
-/-- A column function (of any label type) vanishing off the root of a depth family splits
-orthogonally over its depth partition. -/
-theorem ColumnDepthFamily.norm_sq_partition' (Ψ : ColumnDepthFamily V) (h : ℤ) (v : ColumnL2 W)
-    (hv : ∀ᵐ y ∂volume, y ∉ dyadicGridCell Ψ.D.grid Ψ.D.root.1 Ψ.D.root.2 →
-      (v : ℝ → ColumnHilbert W) y = 0) :
-    ‖v‖ ^ 2 = ∑ Q : {Q // Q ∈ (Ψ.partition h).cells},
-      ‖columnL2Restriction (dyadicGridCell Ψ.D.grid Q.1.1 Q.1.2)
-        (dyadicGridCell_measurable Ψ.D.grid Q.1.1 Q.1.2) v‖ ^ 2 := by
-  classical
-  set π := Ψ.partition h
-  set! w : (ℤ × ℤ) → ColumnL2 W := fun Q => columnL2Restriction (dyadicGridCell Ψ.D.grid Q.1 Q.2)
-    (dyadicGridCell_measurable Ψ.D.grid Q.1 Q.2) v
-  have hw : ∀ Q, ∀ᵐ y ∂volume, y ∉ dyadicGridCell Ψ.D.grid Q.1 Q.2 →
-      (w Q : ℝ → ColumnHilbert W) y = 0 := by
-    intro Q
-    filter_upwards [columnL2Indicator_coeFn _ (dyadicGridCell_measurable Ψ.D.grid Q.1 Q.2) v]
-      with y hy hyQ
-    change (columnL2Indicator _ (dyadicGridCell_measurable Ψ.D.grid Q.1 Q.2) v :
-      ℝ → ColumnHilbert W) y = 0
-    rw [hy, Set.indicator_of_notMem hyQ]
-  have hsum : v = ∑ Q ∈ π.cells, w Q := by
-    refine Lp.ext ?_
-    have hall : ∀ᵐ y ∂volume, ∀ Q ∈ π.cells, (w Q : ℝ → ColumnHilbert W) y =
-        (dyadicGridCell Ψ.D.grid Q.1 Q.2).indicator (v : ℝ → ColumnHilbert W) y := by
-      rw [Filter.eventually_all_finset]
-      intro Q _
-      exact columnL2Indicator_coeFn _ (dyadicGridCell_measurable Ψ.D.grid Q.1 Q.2) v
-    filter_upwards [hall, hv, Lp.coeFn_fun_finsetSum π.cells w] with y h1 h2 h3
-    rw [h3, Finset.sum_congr rfl h1, ← Finset.indicator_biUnion_apply _ _ π.disjoint, π.cover]
-    by_cases hy : y ∈ dyadicGridCell Ψ.D.grid Ψ.D.root.1 Ψ.D.root.2
-    · rw [Set.indicator_of_mem hy]
-    · rw [Set.indicator_of_notMem hy, h2 hy]
-  conv_lhs => rw [hsum]
-  rw [columnL2_norm_sq_sum_disjoint π.cells w (fun Q => dyadicGridCell Ψ.D.grid Q.1 Q.2)
-    π.disjoint hw]
-  exact (Finset.sum_coe_sort π.cells (fun Q => ‖w Q‖ ^ 2)).symm
 
 /-- Rows whose outputs vanish off the root of a depth family and which commute with the
 restrictions to its depth-`h` cells split orthogonally over that partition (the hypothesis of

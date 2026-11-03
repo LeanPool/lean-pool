@@ -28,21 +28,7 @@ open scoped Classical in
 private def LeafEstimateHstabStatement : Prop :=
   ∀ (κ : LocalKernelClass)
     (c₀ : ℕ)
-    (_ : ℕ)
     (Dm0 : ℕ)
-    (_ : ℝ)
-    (_ : ℕ)
-    (_ : ℕ)
-    (_ : ℝ)
-    (_ : ℝ)
-    (_ : ℝ)
-    (_ : ℝ)
-    (_ : ℕ)
-    (_ : ℕ)
-    (_ : ℕ)
-    (_ : ℕ)
-    (_ : ℕ)
-    (_ : ℕ)
     (A : ActiveSetup κ c₀)
     (bf : A.BasicFamilies)
     (p : Fin (3 : ℕ))
@@ -136,7 +122,6 @@ private def LeafEstimateHstabStatement : Prop :=
     (_ : ∀ (l : Fin (4 : ℕ)) (G : bf.Grp), (1 : ℝ) ≤ (Ms l G).Bσ),
   ∀ G ∈ gset, (D.withQ0 (qG G)).Stab
 
-
 open scoped Classical in
 private def LeafEstimateConclusion88Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -147,8 +132,6 @@ private def LeafEstimateConclusion88Statement : Prop :=
     (bf : A.BasicFamilies)
     (k : ℕ)
     (η₀ : ℝ)
-    (E : ℝ)
-    (_ : A.SubRootProps η₀ E)
     (q : ℝ)
     (hq2 : (2 : ℝ) < q)
     (hq3 : q < (3 : ℝ))
@@ -238,7 +221,6 @@ private def LeafEstimateConclusion88Statement : Prop :=
     leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
     hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
 
-
 open scoped Classical in
 private def LeafEstimateStage8Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -288,7 +270,6 @@ private def LeafEstimateStage8Statement : Prop :=
     (k : ℕ)
     (η₀ : ℝ)
     (E : ℝ)
-    (_ : A.SubRootProps η₀ E)
     (_ : A.S = (2 : ℝ))
     (_ : A.η = (4 : ℝ) * η₀)
     (_ : (0 : ℝ) < η₀)
@@ -538,7 +519,6 @@ private def LeafEstimateStage8Statement : Prop :=
     (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
     leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
     hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
-
 
 open scoped Classical in
 private def LeafEstimateStage7Statement : Prop :=
@@ -862,7 +842,6 @@ private def LeafEstimateStage7Statement : Prop :=
     (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
     leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
     hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
-
 
 open scoped Classical in
 private def LeafEstimateStage6Statement : Prop :=
@@ -1259,7 +1238,6 @@ private def LeafEstimateStage6Statement : Prop :=
     (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
     leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
     hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
-
 
 open scoped Classical in
 private def LeafEstimateStage5Statement : Prop :=
@@ -1660,7 +1638,6 @@ private def LeafEstimateStage5Statement : Prop :=
     leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
     hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
 
-
 open scoped Classical in
 private def LeafEstimateStage4Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -2012,7 +1989,6 @@ private def LeafEstimateStage4Statement : Prop :=
     leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
     hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
 
-
 open scoped Classical in
 private def LeafEstimateStage3Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -2332,7 +2308,6 @@ private def LeafEstimateStage3Statement : Prop :=
     leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
     hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
 
-
 open scoped Classical in
 private def LeafEstimateStage2Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -2584,7 +2559,6 @@ private def LeafEstimateStage2Statement : Prop :=
     leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
     hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
 
-
 open scoped Classical in
 private def LeafEstimateStage1Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -2791,14 +2765,11 @@ private def LeafEstimateStage1Statement : Prop :=
     leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
     hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
 
-
-
-
 private theorem leaf_estimate_hstab : LeafEstimateHstabStatement := by
   classical
-  intro κ c₀ cc Dm0 Msch Cg g cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl A bf p AD d s δ kD fp dB Nl hNl0 Hm
-    S hSd hSV hd2 hD2 hB2 hQ1 hK1 Lf ks S0 gs gset hlenMc mbs Ms hnotg hsch' hA6 qG hqG1 hD0 BN
-    hPH hNq hBσG c cf D₀ hcat hhT hmbb hmbT mb' D
+  intro κ c₀ Dm0 A bf p AD d s δ kD fp dB Nl hNl0 Hm S hSd hSV hd2 hD2 hB2 hQ1 hK1 Lf ks S0 gs
+    gset hlenMc mbs Ms hnotg hsch' hA6 qG hqG1 hD0 BN hPH hNq hBσG c cf D₀ hcat hhT hmbb hmbT mb'
+    D
   let B₀ : (D₀.toLeafQ qG).BallData gset :=
     { hT := fun l e he => (AD.hT l e he).2.2
       htag := AD.htag
@@ -2860,13 +2831,11 @@ private theorem leaf_estimate_hstab : LeafEstimateHstabStatement := by
       exact hD0.le
 -- the first tops in the form of the leaf bound
 
-
-
 private theorem leaf_estimate_conclusion_88 : LeafEstimateConclusion88Statement := by
   classical
-  intro κ c₀ cc Cl A bf k η₀ E hsub q hq2 hq3 Nd p AD d s δ ρ kD hρ1 fp Nl hNl0 S hK1 Lf ks S0 gs
-    gset hlenMc mbs Ms hA6 qG c Cut hCutl cf D₀ hcat hmbb hmbT mb' D hrankH hroleD S1 hRl0 C C₂ S₂
-    hη0 hBd cs hcs hno hnoF
+  intro κ c₀ cc Cl A bf k η₀ q hq2 hq3 Nd p AD d s δ ρ kD hρ1 fp Nl hNl0 S hK1 Lf ks S0 gs gset
+    hlenMc mbs Ms hA6 qG c Cut hCutl cf D₀ hcat hmbb hmbT mb' D hrankH hroleD S1 hRl0 C C₂ S₂ hη0
+    hBd cs hcs hno hnoF
   have! hsub : cs ⊆ ((S1.filter (fun I => ¬ ∃ e ∈ C,
       dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2)).filter
       (fun I => ¬ ∃ e ∈ C₂, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2)) := by
@@ -2914,17 +2883,15 @@ private theorem leaf_estimate_conclusion_88 : LeafEstimateConclusion88Statement 
   rw [D₀.toLeafQ_out_appendCat hcat mb' hrankH hroleD qG l G I]
   rfl
 
-
-
 private theorem leaf_estimate_stage_8 : LeafEstimateStage8Statement := by
   classical
   intro κ c₀ cc hcc Dm0 Msch hMsch Cg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A bf k
-    η₀ E hsub hS2 hη hη₀ q hq2 hq3 Nd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb hkF fp dB Nl hkB hcb hNl0
-    Hm S hSd hSDm hSV hd2 hD2 hB2 hQ1 hK1 Lf ks S0 gs gset hlenMc mbs Ms L hA6 qG Vl0 U MV hMV ε
-    hεdef Ts hNl4 c Cut hCutl cf D₀ hcat hmbb hmbT mb' D hrankH hroleD S1 hS1c Nb hNb hRl0 hVl00
-    Os hOs Cjg hCjg Γa hΓadef Γb hΓbdef ΓU hΓUdef Ee hEe0 hEeb hdB1 Gq hVl0 Mt hMt Iw C C₂ hC hlen
-    hC₂ hlen₂ hdBk hEk hρk hkD hk2 u hu hVle hlD Λ hK hlogH hΛ0 hΛ hE0 hVl0nn TT hUdef hT0 T2v S₂
-    hsum hexpD ι Qe hcEsum
+    η₀ E hS2 hη hη₀ q hq2 hq3 Nd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb hkF fp dB Nl hkB hcb hNl0 Hm S
+    hSd hSDm hSV hd2 hD2 hB2 hQ1 hK1 Lf ks S0 gs gset hlenMc mbs Ms L hA6 qG Vl0 U MV hMV ε hεdef
+    Ts hNl4 c Cut hCutl cf D₀ hcat hmbb hmbT mb' D hrankH hroleD S1 hS1c Nb hNb hRl0 hVl00 Os hOs
+    Cjg hCjg Γa hΓadef Γb hΓbdef ΓU hΓUdef Ee hEe0 hEeb hdB1 Gq hVl0 Mt hMt Iw C C₂ hC hlen hC₂
+    hlen₂ hdBk hEk hρk hkD hk2 u hu hVle hlD Λ hK hlogH hΛ0 hΛ hE0 hVl0nn TT hUdef hT0 T2v S₂ hsum
+    hexpD ι Qe hcEsum
   set! G0e := Real.exp ((4096 * (cc + 1) * (1024 * (cc + 1) + cc + 7) + cc ^ 2 + 3) *
     (1 + Real.log (2 * (k : ℝ))) ^ 2) with hG0e
   have! hG0e1 : 1 ≤ G0e := Real.one_le_exp (by positivity)
@@ -3044,10 +3011,8 @@ private theorem leaf_estimate_stage_8 : LeafEstimateStage8Statement := by
     · exact hlen₂.trans (by have := hRl0; nlinarith only [this, hρ])
     all_goals exact hcut _
   · expose_names
-    exact @leaf_estimate_conclusion_88 κ c₀ cc Cl A bf k η₀ E hsub q hq2 hq3 Nd p AD d s δ ρ kD
-      hρ1 hNl0 S hK1 hlenMc Ms hA6 c Cut hCutl hcat hmbb hmbT hrankH hroleD hRl0 C C₂ hη0 hBd
-
-
+    exact @leaf_estimate_conclusion_88 κ c₀ cc Cl A bf k η₀ q hq2 hq3 Nd p AD d s δ ρ kD hρ1 hNl0
+      S hK1 hlenMc Ms hA6 c Cut hCutl hcat hmbb hmbT hrankH hroleD hRl0 C C₂ hη0 hBd
 
 private theorem leaf_estimate_stage_7 : LeafEstimateStage7Statement := by
   classical
@@ -3174,13 +3139,11 @@ private theorem leaf_estimate_stage_7 : LeafEstimateStage7Statement := by
   -- the near bands
   expose_names
   exact @leaf_estimate_stage_8 κ c₀ cc hcc Dm0 Msch hMsch Cg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1
-    t3 Cb Cl hconst A bf k η₀ E hsub hS2 hη hη₀ q hq2 hq3 Nd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb hkF
-    hkB hcb hNl0 S hSd hSDm hSV hd2 hD2 hB2 hQ1 hK1 hlenMc Ms L hA6 Vl0 U MV hMV ε hεdef hNl4 c
-    Cut hCutl hcat hmbb hmbT hrankH hroleD hS1c hNb hRl0 hVl00 hOs hCjg hΓadef hΓbdef hΓUdef Ee
-    hEe0 hEeb hdB1 hVl0 hMt C C₂ hC hlen hC₂ hlen₂ hdBk hEk hρk hkD hk2 u hu hVle hlD hK hlogH hΛ0
-    hΛ hE0 hVl0nn hUdef hT0 hsum hexpD hcEsum
-
-
+      t3 Cb Cl hconst A bf k η₀ E hS2 hη hη₀ q hq2 hq3 Nd p AD d s δ ρ kD hδ hδ8 hρ hρ1
+      hkb hkF hkB hcb hNl0 S hSd hSDm hSV hd2 hD2 hB2 hQ1 hK1 hlenMc Ms L hA6 Vl0 U MV hMV
+      ε hεdef hNl4 c Cut hCutl hcat hmbb hmbT hrankH hroleD hS1c hNb hRl0 hVl00 hOs hCjg
+      hΓadef hΓbdef hΓUdef Ee hEe0 hEeb hdB1 hVl0 hMt C C₂ hC hlen hC₂ hlen₂ hdBk hEk hρk
+      hkD hk2 u hu hVle hlD hK hlogH hΛ0 hΛ hE0 hVl0nn hUdef hT0 hsum hexpD hcEsum
 
 private theorem leaf_estimate_stage_6 : LeafEstimateStage6Statement := by
   classical
@@ -3335,8 +3298,6 @@ private theorem leaf_estimate_stage_6 : LeafEstimateStage6Statement := by
     hdB1 hcD hVl0 hMt C C₂ hC hlen hC₂ hlen₂ hUs hsum hdBk hHedk hEk hρk hkD hk2 hCΛ heΛ hP1 u hu
     hu1 hku hNlexp hVle hmsG
 
-
-
 private theorem leaf_estimate_stage_5 : LeafEstimateStage5Statement := by
   classical
   intro κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A
@@ -3391,9 +3352,8 @@ private theorem leaf_estimate_stage_5 : LeafEstimateStage5Statement := by
   have! hBσ1 : ∀ l G, 1 ≤ (Ms l G).Bσ := fun l G => (Ms l G).one_le_Bσ
   have! hstab : ∀ G ∈ gset, (D.withQ0 (qG G)).Stab := by
     expose_names
-    exact @leaf_estimate_hstab κ c₀ cc Dm0 Msch Cg g cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl A bf p AD d s
-      δ kD hNl0 S hSd hSV hd2 hD2 hB2 hQ1 hK1 hlenMc Ms hnotg hsch' hA6 hqG1 hD0 hPH hNq hBσG c
-      hcat hhT hmbb hmbT htagH hBσ1
+    exact @leaf_estimate_hstab κ c₀ Dm0 A bf p AD d s δ kD hNl0 S hSd hSV hd2 hD2 hB2 hQ1 hK1
+      hlenMc Ms hnotg hsch' hA6 hqG1 hD0 hPH hNq hBσG c hcat hhT hmbb hmbT htagH hBσ1
   have! hcD : ∀ j (G : {G // G ∈ gset}), D.c j G.1 = c j G := fun j G => dite_eq_left G.2
   set! Gq : ℝ := Real.exp ((6144 * (cc + 1) * (1024 * (cc + 1) + cc + 7) + 4) *
     (1 + Real.log (2 * (k : ℝ))) ^ 2) with hGq
@@ -3453,8 +3413,6 @@ private theorem leaf_estimate_stage_5 : LeafEstimateStage5Statement := by
     hpassD hhpassD hτr hτH' hτ0 hNlD hNHD hτ₂ hτ₂1 hτ₂' hHed₂ hNb hKN hRl0 hVl00 hOs hCjg hΓadef
     hΓa hΓbdef hΓb hΓUdef hΓU hrepD Ee hEe0 hEeb hEeD' hMD' hdB1 hprin hstab hcD hVE hVl0 hGq hMt
     hTopD hUD hUT hIw12 hGc
-
-
 
 private theorem leaf_estimate_stage_4 : LeafEstimateStage4Statement := by
   classical
@@ -3603,8 +3561,6 @@ private theorem leaf_estimate_stage_4 : LeafEstimateStage4Statement := by
     hτH' hτ0 hNlD hNHD hτ₂ hτ₂1 hτ₂' hHed₂ hNb hKN hRl0 hVl00 hOs hCjg hΓadef hΓa hΓbdef hΓb
     hΓUdef hΓU hrepD Ee hEe0 hEeb hEeD' hMD'
 
-
-
 private theorem leaf_estimate_stage_3 : LeafEstimateStage3Statement := by
   classical
   intro κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A
@@ -3751,8 +3707,6 @@ private theorem leaf_estimate_stage_3 : LeafEstimateStage3Statement := by
     Rr hRr Cut hCutl hTop hgE hcat hhT hTmpl hmbb hmbT hrankH hroleD htagH hS1S0 hS1c hbk hIB
     hpassD hhpassD hτr hτH' hτ0 hNlD
 
-
-
 private theorem leaf_estimate_stage_2 : LeafEstimateStage2Statement := by
   classical
   intro κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A
@@ -3882,8 +3836,6 @@ private theorem leaf_estimate_stage_2 : LeafEstimateStage2Statement := by
     Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThrD hThrM hThrC hTsdef
     hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hPH hNl4 hNq hpathG hBσG hstar hLsl c hcrep hcB
     hVE Rr hRr Cut hCutl hTop hgE hmainR
-
-
 
 private theorem leaf_estimate_stage_1 : LeafEstimateStage1Statement := by
   classical
@@ -4015,7 +3967,6 @@ private theorem leaf_estimate_stage_1 : LeafEstimateStage1Statement := by
     hd2 hdD hD2 hB2 hQ1 hbox hlogH hK hK1 hLf hS0T hS0c hcu hlenMc hNlab Ms L hexp hnotg herrW hDS
     hsch' hA6 hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThr0
     hThrD hThrM hThrC hTsdef hTs0 hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hεM hδcG hcolG hPH
-
 
 open Classical in
 /-- Blueprint lines 2838-2851 on one leaf of the guarded search of an attempt (stages: schedule,

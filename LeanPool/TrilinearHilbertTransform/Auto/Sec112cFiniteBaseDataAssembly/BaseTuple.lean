@@ -136,15 +136,12 @@ private def BaseTupleHbpackStatement : Prop :=
   ∑ R' : ↥Bs, dyadicGridLength G (AB (↑R' : ℤ × ℤ) R'.property).R.1 ≤ (9 : ℝ) *
     dyadicGridLength G J.1
 
-
 open scoped Classical in
 private def BaseTupleHcardsStatement : Prop :=
   ∀ (c₂ : ℕ)
     (cp : ℕ)
     (Wp : ℝ)
-    (_ : ℕ)
     (C₁ : ℕ)
-    (_ : ℕ)
     (G : RealDyadicGrid)
     (J : ℤ × ℤ)
     (N : ℕ)
@@ -157,8 +154,6 @@ private def BaseTupleHcardsStatement : Prop :=
     (Mt : ℕ)
     (_ : ∀ ℓ ≤ t, M ℓ ≤ Mt)
     (Bp : ℝ)
-    (_ : ℕ)
-    (_ : ℕ)
     (Ma : ℕ)
     (Mb : ℕ),
   let H : ℝ :=
@@ -202,7 +197,6 @@ private def BaseTupleHcardsStatement : Prop :=
     Mt ∧ Fintype.card (Xgb R hRT).Λ ≤ Mt ∧ Fintype.card (Xi R hRT).Λ * Fintype.card
     (Xk R hRT).Λ * ⌊D⌋₊ + Ma ≤ Wa ∧ Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R
     hRT).Λ * ⌊D⌋₊ + Mb ≤ Wb
-
 
 open scoped Classical in
 private def BaseTupleHslotsStatement : Prop :=
@@ -284,7 +278,6 @@ private def BaseTupleHslotsStatement : Prop :=
     k (f sa - (Xga (Rf I) (hRtree I hI).left).val I) ((Xi (Rf I) (hRtree I
     hI).left).val I) ((Xk (Rf I) (hRtree I hI).left).val I) (f sb - (Xgb (Rf I)
     (hRtree I hI).left).val I) = stagTuple f g u t I
-
 
 open scoped Classical in
 private def BaseTupleConclusion39Statement : Prop :=
@@ -503,7 +496,6 @@ private def BaseTupleConclusion39Statement : Prop :=
     dyadicGridLength G (Atot p).R.1) ∧ (Atot p).HasColumnRep (1 : ℝ) ∧ (Atot
     p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))
 
-
 open scoped Classical in
 private def BaseTupleConclusion40Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -720,7 +712,6 @@ private def BaseTupleConclusion40Statement : Prop :=
     (dyadicGridLength G I.1) (w I) (stagTuple f g u t I)‖ ≤ ∑ p : ι, ∑ I ∈ (Atot
     p).cells, dyadicGridLength G I.1 * ‖(Atot p).Hf I ((Atot p).Y I)‖ + E * ((91 / 3 :
     ℝ) * dyadicGridLength G J.1)
-
 
 open scoped Classical in
 private def BaseTupleStage5Statement : Prop :=
@@ -1023,7 +1014,6 @@ private def BaseTupleStage5Statement : Prop :=
     : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E *
     ((91 / 3 : ℝ) * dyadicGridLength G J.1)
 
-
 open scoped Classical in
 private def BaseTupleStage4Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -1310,7 +1300,6 @@ private def BaseTupleStage4Statement : Prop :=
     : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E *
     ((91 / 3 : ℝ) * dyadicGridLength G J.1)
 
-
 open scoped Classical in
 private def BaseTupleStage3Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -1557,7 +1546,6 @@ private def BaseTupleStage3Statement : Prop :=
     ‖localProgressionForm (dyadicGridLength G I.1) (w I) (stagTuple f g u t I)‖ ≤ ∑ p
     : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E *
     ((91 / 3 : ℝ) * dyadicGridLength G J.1)
-
 
 open scoped Classical in
 private def BaseTupleStage2Statement : Prop :=
@@ -1864,7 +1852,6 @@ private def BaseTupleStage2Statement : Prop :=
     : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E *
     ((91 / 3 : ℝ) * dyadicGridLength G J.1)
 
-
 open scoped Classical in
 private def BaseTupleStage1Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -2123,9 +2110,6 @@ private def BaseTupleStage1Statement : Prop :=
     : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E *
     ((91 / 3 : ℝ) * dyadicGridLength G J.1)
 
-
-
-
 private theorem baseTuple_hbpack : BaseTupleHbpackStatement := by
   classical
   intro κ c₂ cp Wp c₁ C₁ c₂a Ca Cqa G J N w f Bf seg u t hut Hc η₀ Bp ε K₀ ka kb H D i k sa sb la
@@ -2161,12 +2145,10 @@ private theorem baseTuple_hbpack : BaseTupleHbpackStatement := by
   linarith
 -- all active setups
 
-
-
 private theorem baseTuple_hcards : BaseTupleHcardsStatement := by
   classical
-  intro c₂ cp Wp c₁ C₁ c₂a G J N Bf M u t hut Hc Mt hMt Bp ka kb Ma Mb H D Wa Wb sa sb la hla2 lb
-    hlb2 hHl X Y hYcard hu4 ht4 Xi Xk Xga Xgb R hRT
+  intro c₂ cp Wp C₁ G J N Bf M u t hut Hc Mt hMt Bp Ma Mb H D Wa Wb sa sb la hla2 lb hlb2 hHl X Y
+    hYcard hu4 ht4 Xi Xk Xga Xgb R hRT
   have hci : Fintype.card (Xi R hRT).Λ ≤ 2 * Mt := by
     by_cases hu4' : u ≤ 4
     · have e : Xi R hRT = Y u hut.le R hRT := by simp only [Xi, hu4', ↓reduceIte]
@@ -2200,8 +2182,6 @@ private theorem baseTuple_hcards : BaseTupleHcardsStatement := by
   have hWb : Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R hRT).Λ * ⌊D⌋₊ + Mb ≤ Wb :=
     Nat.add_le_add_right (Nat.mul_le_mul_right _ (Nat.mul_le_mul hci hck)) _
   exact ⟨hci, hck, hcga, hcgb, hWa, hWb⟩
-
-
 
 private theorem baseTuple_hslots : BaseTupleHslotsStatement := by
   classical
@@ -2246,8 +2226,6 @@ private theorem baseTuple_hslots : BaseTupleHslotsStatement := by
     · simp only [stagTuple, ← hi_def, ← hk_def, ← hlb_def, hbi, hbk, ↓reduceIte, h1,
         Pi.sub_apply, Xgb, LowList.empty_val, Pi.zero_apply]
 -- the low arguments are the tuple entries
-
-
 
 private theorem baseTuple_conclusion_39 : BaseTupleConclusion39Statement := by
   classical
@@ -2347,8 +2325,6 @@ private theorem baseTuple_conclusion_39 : BaseTupleConclusion39Statement := by
         linarith only [hSp]) heb
     push_cast at k1 k2 ⊢
     linarith only [k1, k2]
-
-
 
 private theorem baseTuple_conclusion_40 : BaseTupleConclusion40Statement := by
   classical
@@ -2475,8 +2451,6 @@ private theorem baseTuple_conclusion_40 : BaseTupleConclusion40Statement := by
           mul_le_mul_of_nonneg_left (by have := dyadicGridLength_pos G J.1; linarith) hE0
         linarith
 
-
-
 private theorem baseTuple_stage_5 : BaseTupleStage5Statement := by
   classical
   intro κ c₂ cp Wp hdefc c₁ C₁ c₂a Ca q hq Cqa G J N w hw f hfm hfq Bf kk M roots seg n a g cnt
@@ -2581,8 +2555,6 @@ private theorem baseTuple_stage_5 : BaseTupleStage5Statement := by
     exact @baseTuple_conclusion_40 κ c₂ cp Wp c₁ C₁ c₂a Ca q Cqa G J N w f Bf kk M roots seg n a g
       cnt atm hfit u t hut Hc Mt hMt η₀ Bp ε K₀ ka kb Ma Mb sa sb hla2 hlb2 hLne hRtree hRsT hHl
       hH1 X hu4 ht4 hslots P A hPA hcellsT hcards hpack hBot_def hQ hslotsB AB hAB
-
-
 
 private theorem baseTuple_stage_4 : BaseTupleStage4Statement := by
   classical
@@ -2725,8 +2697,6 @@ private theorem baseTuple_stage_4 : BaseTupleStage4Statement := by
     ht4L hslots z hzt hzt4 z0 hz0ae hz0R hzaB hzbB P A hPA hRsumT hcellsT hcards hpack hBot_def
     hBot hanc hRb hRbu hBsT hQ hR'Q hTc hTB hslotsB hvY' hzga' hzgb' hriB
 
-
-
 private theorem baseTuple_stage_3 : BaseTupleStage3Statement := by
   classical
   intro κ c₂ cp Wp hdefc c₁ C₁ c₂a Ca q hq Cqa G J N w hw f hfm hfq Bf kk M roots seg n a g cnt
@@ -2781,8 +2751,8 @@ private theorem baseTuple_stage_3 : BaseTupleStage3Statement := by
       Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R hRT).Λ * ⌊D⌋₊ + Ma ≤ Wa ∧
       Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R hRT).Λ * ⌊D⌋₊ + Mb ≤ Wb := by
     expose_names
-    exact @baseTuple_hcards c₂ cp Wp c₁ C₁ c₂a G J N Bf M u t hut Hc Mt hMt Bp ka kb Ma Mb sa sb
-      hla2 hlb2 hHl X hYcard hu4 ht4
+    exact @baseTuple_hcards c₂ cp Wp C₁ G J N Bf M u t hut Hc Mt hMt Bp Ma Mb sa sb hla2 hlb2 hHl
+      X hYcard hu4 ht4
   have hpack : ∑ x : ιt, dyadicGridLength G (A' x).R.1 ≤ 64 / 3 * dyadicGridLength G J.1 := by
     calc ∑ x : ιt, dyadicGridLength G (A' x).R.1
         = ∑ R : Rs, ∑ p : P R.1 R.2, dyadicGridLength G (A R.1 R.2 p).R.1 :=
@@ -2833,8 +2803,6 @@ private theorem baseTuple_stage_3 : BaseTupleStage3Statement := by
     hpos sa sb hab hai hak hbi hbk hla2 hlb2 hLne hsegd hRtree hRsT hHl hH1 hWpH X hYval hu4 ht4
     huL hu4L htL ht4L hlaL hlbL hcellR hslots hgav hgbv z hz2 hzu hzu4 hzt hzt4 z0 hz0ae hz0R hzaB
     hzbB P A hPA hRsumT hcellsT hcards hpack hBot_def hBot hanc hRb
-
-
 
 private theorem baseTuple_stage_2 : BaseTupleStage2Statement := by
   classical
@@ -3020,8 +2988,6 @@ private theorem baseTuple_stage_2 : BaseTupleStage2Statement := by
     hYcard hu4 ht4 huL hu4L htL ht4L hlaL hlbL hcellR hslots hgav hgbv z hz2 hzu hzu4 hzt hzt4 z0
     hz0ae hz0R hzaB hzbB hbase
 
-
-
 private theorem baseTuple_stage_1 : BaseTupleStage1Statement := by
   classical
   intro κ c₂ cp Wp hdefc c₁ C₁ c₂a Ca q hq Cqa hfr' G J N w hw f hfm hfq Bf kk M roots seg n a g
@@ -3143,7 +3109,6 @@ private theorem baseTuple_stage_1 : BaseTupleStage1Statement := by
     hε1 hka hkb hMa hMb hpos sa sb hab hai hak hbi hbk hla2 hla hlb2 hlb hL_def hLne hsegd hRtree
     hRsT hHl hH1 hWpH X hYval hYcard hu4 ht4 huL hu4L htL ht4L hlaL hlbL hcellR hslots hXiv hXkv
     hfitL2 hgav hgbv z hz1 hz2 hzR hzB hBfH hzBd hcXi hcXk hcXga hcXgb hzu hzu4 hzt
-
 
 /-- Blueprint prop:base for one tuple `eq:base-tuple` of the levels `u < t`: the first-level
 roots refine the segments of the six fits entering the tuple; on each, `baseFirstRoot` gives
@@ -3544,8 +3509,6 @@ theorem final_err_aux {U e TU X : ℝ} (hU : 1 ≤ U) (he : 0 ≤ e) (hTU : 0 �
   have k5 : 4 * U ^ 2 * ((10 * e * U + TU) * (22 * U)) = 880 * e * U ^ 4 + 88 * U ^ 3 * TU := by
     ring
   linarith
-
-
 
 end TrilinearHT.Auto
 end

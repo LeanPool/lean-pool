@@ -191,7 +191,6 @@ private def LeafFinalStage4Statement : Prop :=
     ℝ) * (R * (cM4 + cM3)) + cE) ≤ leafBnd Cl kD P k cc η η₀ τ₃ δ (finiteDepthConstant
     κ q Nd) (nbCM κ hq2 hq3 + nbCUM κ hq2 hq3) q R
 
-
 open scoped Classical in
 private def LeafFinalStage3Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -199,7 +198,6 @@ private def LeafFinalStage3Statement : Prop :=
     (hq2 : (2 : ℝ) < q)
     (hq3 : q < (3 : ℝ))
     (Nd : ℕ)
-    (_ : ℕ)
     (Msch : ℝ)
     (g : ℕ)
     (cT : ℝ)
@@ -211,7 +209,6 @@ private def LeafFinalStage3Statement : Prop :=
     (ce2 : ℝ)
     (cQ : ℝ)
     (CΛ : ℕ)
-    (_ : ℕ)
     (_ : ℕ)
     (Cb : ℕ)
     (Cl : ℕ)
@@ -252,20 +249,9 @@ private def LeafFinalStage3Statement : Prop :=
     (Vl0 : ℝ)
     (TT : ℝ)
     (_ : (0 : ℝ) ≤ TT)
-    (_ : TT ≤ (10 : ℝ) ^ (14 : ℕ) * ((1 : ℝ) + localFormUniformConstant κ) ^ (2 : ℕ) * (↑((2
-      : ℕ) ^ famFuel) : ℝ) ^ (4 : ℕ) * ((1 : ℝ) + (↑((2 : ℕ) * famFuel + (2 : ℕ)) : ℝ))
-      ^ (2 : ℕ) * ((1 : ℝ) + (↑S.K : ℝ)) ^ (2 : ℕ) * (Real.exp (((4096 : ℝ) * ((↑cc : ℝ)
-      + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (↑cc :
-      ℝ) ^ (2 : ℕ) + (3 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + E
-      + Vl0 + (1 : ℝ)) / ρ)
     (U : ℝ)
     (MV : ℝ)
     (ε : ℝ)
-    (T2v : ℝ)
-    (_ : T2v ≤ (4 : ℝ) * ((↑S.K : ℝ) * ((20 : ℝ) * Real.exp (((4096 : ℝ) * ((↑cc : ℝ) + (1 :
-      ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (↑cc : ℝ) ^ (2
-      : ℕ) + (3 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (32 : ℝ))
-      + (↑S.K : ℝ) * Vl0) / ρ)
     (cB : ℝ)
     (eB : ℝ)
     (cM4 : ℝ)
@@ -388,7 +374,6 @@ private def LeafFinalStage3Statement : Prop :=
     ℝ) * (R * (cM4 + cM3)) + cE) ≤ leafBnd Cl kD P k cc η η₀ τ₃ δ (finiteDepthConstant
     κ q Nd) (nbCM κ hq2 hq3 + nbCUM κ hq2 hq3) q R
 
-
 open scoped Classical in
 private def LeafFinalStage2Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -396,7 +381,6 @@ private def LeafFinalStage2Statement : Prop :=
     (hq2 : (2 : ℝ) < q)
     (hq3 : q < (3 : ℝ))
     (Nd : ℕ)
-    (_ : ℕ)
     (Msch : ℝ)
     (g : ℕ)
     (cT : ℝ)
@@ -408,7 +392,6 @@ private def LeafFinalStage2Statement : Prop :=
     (ce2 : ℝ)
     (cQ : ℝ)
     (CΛ : ℕ)
-    (_ : ℕ)
     (_ : ℕ)
     (Cb : ℕ)
     (Cl : ℕ)
@@ -465,12 +448,6 @@ private def LeafFinalStage2Statement : Prop :=
       ℕ)))
     (TT : ℝ)
     (_ : (0 : ℝ) ≤ TT)
-    (_ : TT ≤ (10 : ℝ) ^ (14 : ℕ) * ((1 : ℝ) + localFormUniformConstant κ) ^ (2 : ℕ) * (↑((2
-      : ℕ) ^ famFuel) : ℝ) ^ (4 : ℕ) * ((1 : ℝ) + (↑((2 : ℕ) * famFuel + (2 : ℕ)) : ℝ))
-      ^ (2 : ℕ) * ((1 : ℝ) + (↑S.K : ℝ)) ^ (2 : ℕ) * (Real.exp (((4096 : ℝ) * ((↑cc : ℝ)
-      + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (↑cc :
-      ℝ) ^ (2 : ℕ) + (3 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + E
-      + Vl0 + (1 : ℝ)) / ρ)
     (U : ℝ)
     (_ : U = max ((2 : ℝ) * (cb + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √TT)
     (MV : ℝ)
@@ -484,11 +461,6 @@ private def LeafFinalStage2Statement : Prop :=
       (S.Jstar + (1 : ℕ)) ×ˢ (Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ
       Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ))) ×ˢ dyThr ε U S.Dstar).card :
       ℝ) / ρ)
-    (T2v : ℝ)
-    (_ : T2v ≤ (4 : ℝ) * ((↑S.K : ℝ) * ((20 : ℝ) * Real.exp (((4096 : ℝ) * ((↑cc : ℝ) + (1 :
-      ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (↑cc : ℝ) ^ (2
-      : ℕ) + (3 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (32 : ℝ))
-      + (↑S.K : ℝ) * Vl0) / ρ)
     (cB : ℝ)
     (eB : ℝ)
     (cM4 : ℝ)
@@ -620,7 +592,6 @@ private def LeafFinalStage2Statement : Prop :=
     ℝ) * (R * (cM4 + cM3)) + cE) ≤ leafBnd Cl kD P k cc η η₀ τ₃ δ (finiteDepthConstant
     κ q Nd) (nbCM κ hq2 hq3 + nbCUM κ hq2 hq3) q R
 
-
 open scoped Classical in
 private def LeafFinalStage1Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -640,7 +611,6 @@ private def LeafFinalStage1Statement : Prop :=
     (ce2 : ℝ)
     (cQ : ℝ)
     (CΛ : ℕ)
-    (_ : ℕ)
     (_ : ℕ)
     (Cb : ℕ)
     (Cl : ℕ)
@@ -846,9 +816,6 @@ private def LeafFinalStage1Statement : Prop :=
     ℝ) * (R * (cM4 + cM3)) + cE) ≤ leafBnd Cl kD P k cc η η₀ τ₃ δ (finiteDepthConstant
     κ q Nd) (nbCM κ hq2 hq3 + nbCUM κ hq2 hq3) q R
 
-
-
-
 private theorem leaf_final_stage_4 : LeafFinalStage4Statement := by
   classical
   intro κ q hq2 hq3 Nd Msch g cT cMc cm ce ce2 cQ CΛ t3 Cb Cl k cc hcc kD P hP Mp V famFuel E ρ δ
@@ -971,16 +938,14 @@ private theorem leaf_final_stage_4 : LeafFinalStage4Statement := by
   refine le_trans (add_le_add (add_le_add hM hNEAR) hErr) (le_of_eq ?_)
   ring
 
-
-
 private theorem leaf_final_stage_3 : LeafFinalStage3Statement := by
   classical
-  intro κ q hq2 hq3 Nd Cg Msch g cT cL cK cMc cm ce ce2 cQ CΛ eΛ t3 Cb Cl k cc hcc hk2 kD P hP Nl
-    Mp V famFuel hkF dB hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ hρ1 hρk hη0 hη₀ hτ₃ S hK1 hSd hSDm Iw Vl0
-    TT hT0 hTTle U MV ε T2v hT2le cB eB cM4 cM3 nearS Γ Os hOs hΓle hnearS cE Ee fc hfc hcT hcMc
-    hcm hce hce2 hcQ hk1 hR0 hCb20n hMCb2 hgr hClb u hu hu1 B hBdef hBB1 X hX hX0 G hGdef hG1
-    hexpG hG0G hkcc1 hD1 hmaxNl hDm2 hKB hLpB hJmB hVl00 hT hcBd hcBd0 heBd heBd0 hcT1 Gq hGqG
-    hVl0 hGq hcMtot E1 hE1 hE11 hMpE hVE1 hME ι Qe hcEsum hMVc hQeMV
+  intro κ q hq2 hq3 Nd Msch g cT cL cK cMc cm ce ce2 cQ CΛ t3 Cb Cl k cc hcc hk2 kD P hP Nl Mp V
+    famFuel hkF dB hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ hρ1 hρk hη0 hη₀ hτ₃ S hK1 hSd hSDm Iw Vl0 TT
+    hT0 U MV ε cB eB cM4 cM3 nearS Γ Os hOs hΓle hnearS cE Ee fc hfc hcT hcMc hcm hce hce2 hcQ hk1
+    hR0 hCb20n hMCb2 hgr hClb u hu hu1 B hBdef hBB1 X hX hX0 G hGdef hG1 hexpG hG0G hkcc1 hD1
+    hmaxNl hDm2 hKB hLpB hJmB hVl00 hT hcBd hcBd0 heBd heBd0 hcT1 Gq hGqG hVl0 hGq hcMtot E1 hE1
+    hE11 hMpE hVE1 hME ι Qe hcEsum hMVc hQeMV
   have! hL00 := localFormUniformConstant_nonneg κ
   have! hcT0 : 0 ≤ cT := by rw [hcT]; positivity
   have! hcMcn : 0 ≤ cMc :=
@@ -1029,7 +994,7 @@ private theorem leaf_final_stage_3 : LeafFinalStage3Statement := by
     leaf_final_hCjg1 k cc famFuel hCjg
   set! G0e := Real.exp ((4096 * (cc + 1) * (1024 * (cc + 1) + cc + 7) + cc ^ 2 + 3) *
     (1 + Real.log (2 * (k : ℝ))) ^ 2) with hG0e
-  rewrite [← hG0e] at hTTle hT2le hG0G hΓle
+  rewrite [← hG0e] at hG0G hΓle
   have! hG0e1 : 1 ≤ G0e := Real.one_le_exp (by positivity)
   set! W := G0e + Vl0 + E + 1 with hWdef
   rewrite [← hWdef] at hΓle
@@ -1098,18 +1063,16 @@ private theorem leaf_final_stage_3 : LeafFinalStage3Statement := by
     hkcc1 hLpB hJmB hT hcBd hcBd0 heBd heBd0 hcT1 hcMtot hME ι hcEsum hMVc hQeMV hL00 hcT0 hcMcn
     hcmn hcen hce2n hNb hCjg1 hΓle hW1 hYn0 hQkdef hcQ0 hQk hnearS heq' hKb hK0' hKp hlamb
 
-
-
 private theorem leaf_final_stage_2 : LeafFinalStage2Statement := by
   classical
-  intro κ q hq2 hq3 Nd Cg Msch g cT cL cK cMc cm ce ce2 cQ CΛ eΛ t3 Cb Cl k cc hcc hk2 kD P hP cb
-    Nl Mp V hcb hNl4 famFuel hkF dB hdB1 hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ hρ1 hρk hδ hδ8 hη0 hη₀
-    hτ₃ hRl0 S hD2 hH2 hK1 hSd hSDm hexpD Iw hIw Vl0 hVl0 TT hT0 hTTle U hUdef MV hMV ε hεdef Mt
-    hMt T2v hT2le cB eB cM4 cM3 hcM4 hcM3 nearS Γ Os hOs hΓle hnearS cE hcEsum Ee hEe0 hEeb fc hfc
-    hcT hcK hcMc hcm hce hce2 hcQ hk1 hR0 hCb20n hMCb2 hgr hClb u hu hu1 B hBdef hBB2 hBB1 X hX
-    hX0 G hGdef hG1 hexpG hG0G hGqG hNl0 hcbexp hNlexp hMpexp hVexp hkcc1 hD0 hD1 hmaxNl hDm2 hKB
-    hJB hlHB hlDB hdmB hIwB hLpB hJmB hVl00 hVl0B hT hρ1' hcBd hcBd0 heBd heBd0 hU16 hU0 hMV0 hε0
-    hThrC hcT1 hL0' hLB hcL0
+  intro κ q hq2 hq3 Nd Msch g cT cL cK cMc cm ce ce2 cQ CΛ t3 Cb Cl k cc hcc hk2 kD P hP cb Nl Mp
+    V hcb hNl4 famFuel hkF dB hdB1 hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ hρ1 hρk hδ hδ8 hη0 hη₀ hτ₃ hRl0
+    S hD2 hH2 hK1 hSd hSDm hexpD Iw hIw Vl0 hVl0 TT hT0 U hUdef MV hMV ε hεdef Mt hMt cB eB cM4
+    cM3 hcM4 hcM3 nearS Γ Os hOs hΓle hnearS cE hcEsum Ee hEe0 hEeb fc hfc hcT hcK hcMc hcm hce
+    hce2 hcQ hk1 hR0 hCb20n hMCb2 hgr hClb u hu hu1 B hBdef hBB2 hBB1 X hX hX0 G hGdef hG1 hexpG
+    hG0G hGqG hNl0 hcbexp hNlexp hMpexp hVexp hkcc1 hD0 hD1 hmaxNl hDm2 hKB hJB hlHB hlDB hdmB
+    hIwB hLpB hJmB hVl00 hVl0B hT hρ1' hcBd hcBd0 heBd heBd0 hU16 hU0 hMV0 hε0 hThrC hcT1 hL0' hLB
+    hcL0
   set! Gq := Real.exp ((6144 * (cc + 1) * (1024 * (cc + 1) + cc + 7) + 4) *
     (1 + Real.log (2 * (k : ℝ))) ^ 2) with hGq
   rewrite [← hGq] at hVl0 hMt hGqG
@@ -1222,21 +1185,20 @@ private theorem leaf_final_stage_2 : LeafFinalStage2Statement := by
       hE1 hE11 hcbE hDinv ι hιD hQe hMVE hε4 hε3 hE14 hιU hsTT
   -- nonnegativity of the constants
   expose_names
-  exact @leaf_final_stage_3 κ q hq2 hq3 Nd Cg Msch g cT cL cK cMc cm ce ce2 cQ CΛ eΛ t3 Cb Cl k cc
-    hcc hk2 kD P hP Nl Mp V famFuel hkF dB hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ hρ1 hρk hη0 hη₀ hτ₃ S
-    hK1 hSd hSDm Iw Vl0 TT hT0 hTTle U MV ε T2v hT2le cB eB cM4 cM3 nearS Γ Os hOs hΓle hnearS cE
-    Ee fc hfc hcT hcMc hcm hce hce2 hcQ hk1 hR0 hCb20n hMCb2 hgr hClb u hu hu1 B hBdef hBB1 X hX
-    hX0 G hGdef hG1 hexpG hG0G hkcc1 hD1 hmaxNl hDm2 hKB hLpB hJmB hVl00 hT hcBd hcBd0 heBd heBd0
-    hcT1 hGqG hVl0 hGq hcMtot E1 hE1 hE11 hMpE hVE1 hME ι hcEsum hMVc hQeMV
-
-
+  exact @leaf_final_stage_3 κ q hq2 hq3 Nd Msch g cT cL cK cMc cm ce ce2 cQ CΛ t3 Cb Cl k cc hcc
+      hk2 kD P hP Nl Mp V famFuel hkF dB hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ hρ1 hρk hη0 hη₀
+      hτ₃ S hK1 hSd hSDm Iw Vl0 TT hT0 U MV ε cB eB cM4 cM3 nearS Γ Os hOs hΓle hnearS cE
+      Ee fc hfc hcT hcMc hcm hce hce2 hcQ hk1 hR0 hCb20n hMCb2 hgr hClb u hu hu1 B hBdef
+      hBB1 X hX hX0 G hGdef hG1 hexpG hG0G hkcc1 hD1 hmaxNl hDm2 hKB hLpB hJmB hVl00 hT
+      hcBd hcBd0 heBd heBd0 hcT1 hGqG hVl0 hGq hcMtot E1 hE1 hE11 hMpE hVE1 hME ι hcEsum
+      hMVc hQeMV
 
 private theorem leaf_final_stage_1 : LeafFinalStage1Statement := by
   classical
-  intro κ q hq2 hq3 Nd Cg Msch g cT cL cK cMc cm ce ce2 cQ CΛ eΛ t3 Cb Cl k cc hcc hk2 kD P hP cb
-    Nl Mp V hcb hNl4 hkb famFuel hkF dB hdB1 hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ hρ1 hρk hδ hδ8 hη0
-    hη₀ hτ₃ hRl0 S hD2 hH2 hK1 hSd hSDm hexpD Iw hIw Vl0 hVl0 TT hT0 hTTle U hUdef MV hMV ε hεdef
-    Mt hMt T2v hT2le B0 cB eB hB0 hcBdef heBdef cM4 cM3 hcM4 hcM3 nearS Γ Os hOs hΓle hnearS cE
+  intro κ q hq2 hq3 Nd Cg Msch g cT cL cK cMc cm ce ce2 cQ CΛ t3 Cb Cl k cc hcc hk2 kD P hP cb Nl
+    Mp V hcb hNl4 hkb famFuel hkF dB hdB1 hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ hρ1 hρk hδ hδ8 hη0 hη₀
+    hτ₃ hRl0 S hD2 hH2 hK1 hSd hSDm hexpD Iw hIw Vl0 hVl0 TT hT0 hTTle U hUdef MV hMV ε hεdef Mt
+    hMt T2v hT2le B0 cB eB hB0 hcBdef heBdef cM4 cM3 hcM4 hcM3 nearS Γ Os hOs hΓle hnearS cE
     hcEsum Ee hEe0 hEeb fc hfc hcT hcL hcK hcMc hcm hce hce2 hcQ hk1 hR0 hCb20n hccCb hCgCb hMCb2
     h3Cb hgr hClb hkcc0 u hlD hu hu1 B hBdef hpowB hCb20 hBB2 hBB1 hkcc X hX hX0 hX4 G hGdef hG1
     hexpG hG0G hGqG hNl0 hcbexp hNlexp hMpexp hVexp hkcc1 hD0 hD1 hlD0 hmaxNl hDm2 hKB hJB hlHB
@@ -1353,15 +1315,14 @@ private theorem leaf_final_stage_1 : LeafFinalStage1Statement := by
   have! hcL0 : 0 ≤ cL :=
     leaf_final_hcL0 g cT cL hcL hcT1
   expose_names
-  exact @leaf_final_stage_2 κ q hq2 hq3 Nd Cg Msch g cT cL cK cMc cm ce ce2 cQ CΛ eΛ t3 Cb Cl k cc
-    hcc hk2 kD P hP cb Nl Mp V hcb hNl4 famFuel hkF dB hdB1 hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ hρ1
-    hρk hδ hδ8 hη0 hη₀ hτ₃ hRl0 S hD2 hH2 hK1 hSd hSDm hexpD Iw hIw Vl0 hVl0 TT hT0 hTTle U hUdef
-    MV hMV ε hεdef Mt hMt T2v hT2le cB eB cM4 cM3 hcM4 hcM3 nearS Γ Os hOs hΓle hnearS cE hcEsum
-    Ee hEe0 hEeb fc hfc hcT hcK hcMc hcm hce hce2 hcQ hk1 hR0 hCb20n hMCb2 hgr hClb u hu hu1 B
-    hBdef hBB2 hBB1 X hX hX0 G hGdef hG1 hexpG hG0G hGqG hNl0 hcbexp hNlexp hMpexp hVexp hkcc1 hD0
-    hD1 hmaxNl hDm2 hKB hJB hlHB hlDB hdmB hIwB hLpB hJmB hVl00 hVl0B hT hρ1' hcBd hcBd0 heBd
-    heBd0 hU16 hU0 hMV0 hε0 hThrC hcT1 hL0' hLB hcL0
-
+  exact @leaf_final_stage_2 κ q hq2 hq3 Nd Msch g cT cL cK cMc cm ce ce2 cQ CΛ t3 Cb Cl k cc hcc
+      hk2 kD P hP cb Nl Mp V hcb hNl4 famFuel hkF dB hdB1 hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ
+      hρ1 hρk hδ hδ8 hη0 hη₀ hτ₃ hRl0 S hD2 hH2 hK1 hSd hSDm hexpD Iw hIw Vl0 hVl0 TT hT0
+      U hUdef MV hMV ε hεdef Mt hMt cB eB cM4 cM3 hcM4 hcM3 nearS Γ Os hOs hΓle hnearS cE
+      hcEsum Ee hEe0 hEeb fc hfc hcT hcK hcMc hcm hce hce2 hcQ hk1 hR0 hCb20n hMCb2 hgr
+      hClb u hu hu1 B hBdef hBB2 hBB1 X hX hX0 G hGdef hG1 hexpG hG0G hGqG hNl0 hcbexp
+      hNlexp hMpexp hVexp hkcc1 hD0 hD1 hmaxNl hDm2 hKB hJB hlHB hlDB hdmB hIwB hLpB hJmB
+      hVl00 hVl0B hT hρ1' hcBd hcBd0 heBd heBd0 hU16 hU0 hMV0 hε0 hThrC hcT1 hL0' hLB hcL0
 
 /-- The arithmetic of the explicit leaf bound (`eq:before-absorption` on one leaf): the right side
 of `leaf_bound` (in the shape of `leaf_raw_le`), with the side caps, core bounds, near bands, core
@@ -1574,14 +1535,14 @@ theorem leaf_final (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (hq3 : q < 3)
     hlD.trans (hpowB _ _ (Nat.cast_nonneg _)
       (by exact_mod_cast (show Cg ≤ Cb by omega)) (by omega))
   expose_names
-  exact @leaf_final_stage_1 κ q hq2 hq3 Nd Cg Msch g cT cL cK cMc cm ce ce2 cQ CΛ eΛ t3 Cb Cl k cc
-    hcc hk2 kD P hP cb Nl Mp V hcb hNl4 hkb famFuel hkF dB hdB1 hdBk E ρ δ η η₀ τ₃ R hE0 hEk hρ
-    hρ1 hρk hδ hδ8 hη0 hη₀ hτ₃ hRl0 S hD2 hH2 hK1 hSd hSDm hexpD Iw hIw Vl0 hVl0 TT hT0 hTTle U
-    hUdef MV hMV ε hεdef Mt hMt T2v hT2le B0 cB eB hB0 hcBdef heBdef cM4 cM3 hcM4 hcM3 nearS Γ Os
-    hOs hΓle hnearS cE hcEsum Ee hEe0 hEeb fc hfc hcT hcL hcK hcMc hcm hce hce2 hcQ hk1 hR0 hCb20n
-    hccCb hCgCb hMCb2 h3Cb hgr hClb hkcc0 u hlD hu hu1 B hBdef hpowB hCb20 hBB2 hBB1 hkcc X hX hX0
-    hX4 G hGdef hG1 hexpG hG0G hGqG hNl0 hcbexp hNlexp hMpexp hVexp hkcc1 hD0 hD1 hlD0 hmaxNl hDm2
-    hKB hJB hlHB hlDB
+  exact @leaf_final_stage_1 κ q hq2 hq3 Nd Cg Msch g cT cL cK cMc cm ce ce2 cQ CΛ t3 Cb Cl k cc
+      hcc hk2 kD P hP cb Nl Mp V hcb hNl4 hkb famFuel hkF dB hdB1 hdBk E ρ δ η η₀ τ₃ R hE0
+      hEk hρ hρ1 hρk hδ hδ8 hη0 hη₀ hτ₃ hRl0 S hD2 hH2 hK1 hSd hSDm hexpD Iw hIw Vl0 hVl0
+      TT hT0 hTTle U hUdef MV hMV ε hεdef Mt hMt T2v hT2le B0 cB eB hB0 hcBdef heBdef cM4
+      cM3 hcM4 hcM3 nearS Γ Os hOs hΓle hnearS cE hcEsum Ee hEe0 hEeb fc hfc hcT hcL hcK
+      hcMc hcm hce hce2 hcQ hk1 hR0 hCb20n hccCb hCgCb hMCb2 h3Cb hgr hClb hkcc0 u hlD hu
+      hu1 B hBdef hpowB hCb20 hBB2 hBB1 hkcc X hX hX0 hX4 G hGdef hG1 hexpG hG0G hGqG hNl0
+      hcbexp hNlexp hMpexp hVexp hkcc1 hD0 hD1 hlD0 hmaxNl hDm2 hKB hJB hlHB hlDB
 
 namespace ActiveSetup.BasicFamilies
 variable {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} (bf : A.BasicFamilies)
@@ -2675,8 +2636,6 @@ theorem leaf_estimate_hcoreE :
         (8 * entryCU κ 3 1 * 2 ^ (1 + 4) * 12 ^ 3 * ε * U ^ 3 * (S.Dstar ^ 3 * (Iw + 1))))) =
       (gs I).card * Qe := by rw [hQe]; ring
   linarith only [e1, e2, e3]
-
-
 
 end ActiveSetup.BasicFamilies
 end TrilinearHT.Auto

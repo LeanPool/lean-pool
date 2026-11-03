@@ -55,8 +55,6 @@ private def ThreeCoreNorefSideHfarallStatement : Prop :=
       (h - D.SP.Δ)) : ℝ)))
     (nn : (j : Fin (4 : ℕ)) → ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K I.1
       - (4 : ℤ) * (↑D.S.K : ℤ)))) → Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℤ)
-    (_ : IsProbabilityMeasure (normalizedIntervalMeasure (dyadicGridLeft A.G I.1 I.2)
-      (dyadicGridLength A.G I.1)))
     (_ : ∀ (j : Fin (4 : ℕ)), ∀ k ∈ sideOptF l Fsel j, ∀ (i : Fin (D.Ms (0 : Fin (4 : ℕ))
       G).zc.dim), |(↑(sideOptN nn j k i) : ℝ)| ≤ D.S.Dstar * D.S.Eh (h - D.SP.Δ))
     (_ : (6 : ℝ) ≤ D.S.A0)
@@ -75,7 +73,6 @@ private def ThreeCoreNorefSideHfarallStatement : Prop :=
     ((6 : ℕ) ^ (h - D.SP.Δ)) (D.S.Q0 * (6 : ℕ) ^ (h - D.SP.Δ)) (sideOptN nn) x i) : ℝ)
     * ((D.Ms (0 : Fin (4 : ℕ)) G).zc.θ i / ((↑D.S.Q0 : ℝ) * (↑((6 : ℕ) ^ (h - D.SP.Δ))
     : ℝ)))))|
-
 
 open scoped Classical in
 private def ThreeCoreNorefSideConclusion9Statement : Prop :=
@@ -203,7 +200,6 @@ private def ThreeCoreNorefSideConclusion9Statement : Prop :=
                 ‖augPhys X y‖) *
             ((12 : ℝ) * (kerC κ' J * ((4 : ℝ) / D.U0) ^ (J - (2 : ℕ))))))
 
-
 open scoped Classical in
 private def ThreeCoreNorefSideStage1Statement : Prop :=
   ∀ (κ' : LocalKernelClass)
@@ -303,8 +299,6 @@ private def ThreeCoreNorefSideStage1Statement : Prop :=
     (_ : Measurable (augPhys X))
     (_ : MemLp (augPhys X) (2 : ℝ≥0∞) (volume.restrict (Set.Ioc (dyadicGridLeft A.G I.1 I.2)
       (dyadicGridLeft A.G I.1 I.2 + dyadicGridLength A.G I.1))))
-    (_ : IsProbabilityMeasure (normalizedIntervalMeasure (dyadicGridLeft A.G I.1 I.2)
-      (dyadicGridLength A.G I.1)))
     (_ : Integrable (fun (zz : ℝ × ℝ) => A.w I zz * ∏ j : Fin (4 : ℕ), fv j
       (realProgressionCoordinate j zz)) volume)
     (_ : ∀ (ρ'' : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℝ), Integrable (fun (zz : ℝ × ℝ) =>
@@ -368,13 +362,9 @@ private def ThreeCoreNorefSideStage1Statement : Prop :=
                 ‖augPhys X y‖) *
             ((12 : ℝ) * (kerC κ' J * ((4 : ℝ) / D.U0) ^ (J - (2 : ℕ))))))
 
-
-
-
 private theorem three_core_noref_side_hfarall : ThreeCoreNorefSideHfarallStatement := by
   classical
-  intro κ' c₀ A bf fp D hD hQ I G Kt hQB h l Fsel a xs hnoref hr hDp hξ nn this hnn hA6 hBA hγT x
-    hx
+  intro κ' c₀ A bf fp D hD hQ I G Kt hQB h l Fsel a xs hnoref hr hDp hξ nn hnn hA6 hBA hγT x hx
   by_contra hlt
   push Not at hlt
   have hb := fun i => expP_fullBox D.S hA6 hBA hD hQ hQB (sideOptF l Fsel) (sideOptN nn) hnn x
@@ -404,8 +394,6 @@ private theorem three_core_noref_side_hfarall : ThreeCoreNorefSideHfarallStateme
     exact this
   rw [hnoref] at hmem
   exact Finset.notMem_empty _ hmem
-
-
 
 private theorem three_core_noref_side_conclusion_9 : ThreeCoreNorefSideConclusion9Statement := by
   classical
@@ -503,13 +491,11 @@ private theorem three_core_noref_side_conclusion_9 : ThreeCoreNorefSideConclusio
   exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left
     (mul_le_mul_of_nonneg_right hQW (Real.sqrt_nonneg _)) hc) (by norm_num)
 
-
-
 private theorem three_core_noref_side_stage_1 : ThreeCoreNorefSideStage1Statement := by
   classical
   intro κ' c₀ A bf fp D hD hQ I hI G δ hδ hdδ hδ8 hδc hcl hQC Cm hCm0 hCm δ'' hδ'' Kt hQB J hJ h l
     Fsel a xs hxs hnoref X Aw hAw hr hw hDp hQ0 hη hξ ρ' n' f hfa hfb hind ρc hρc hρcj nn hnnj fv
-    hfvl hfvj cα hcα hFj hXm hL2X this hfi hfiρ cc0 hcc0 hccN hccT hnn hA6 hBA hγT
+    hfvl hfvj cα hcα hFj hXm hL2X hfi hfiρ cc0 hcc0 hccN hccT hnn hA6 hBA hγT
   have hfarall : ∀ x ∈ frequencyBox ((D.Ms 0 G).zc.dim + (D.Ms 0 G).zc.dim) (2 ^ (Kt + 1)) ×ˢ
       Fintype.piFinset (fun j => frequencyBox (D.Ms 0 G).zc.dim (2 ^ (Kt + 1)) ×ˢ
         sideOptF l Fsel j),
@@ -522,7 +508,7 @@ private theorem three_core_noref_side_stage_1 : ThreeCoreNorefSideStage1Statemen
             ((D.Ms 0 G).zc.θ i / (D.S.Q0 * (6 ^ (h - D.SP.Δ) : ℕ)))))| := by
     expose_names
     exact @three_core_noref_side_hfarall κ' c₀ A bf fp D hD hQ I G Kt hQB h l Fsel a xs hnoref hr
-      hDp hξ nn this hnn hA6 hBA hγT
+      hDp hξ nn hnn hA6 hBA hγT
   have hU4 : 4 ≤ D.U0 := by
     unfold U0
     calc (4 : ℝ) = 2 ^ 2 := by norm_num
@@ -547,7 +533,6 @@ private theorem three_core_noref_side_stage_1 : ThreeCoreNorefSideStage1Statemen
   · rw [hfvj j hj, hFj j hj, Finset.sum_map]
     simp only [Function.Embedding.some_apply, sideOptC, Option.elim, hcα]
     exact hfb j hj y hy
-
 
 open Classical in
 /-- Blueprint lines 2540 and 2562-2567 on a leaf cell of the side states (three cores, side role
@@ -727,9 +712,9 @@ theorem three_core_noref_side {Cj CA CT CK : ℕ} {δs W : ℝ} (hV : D.S.Valid 
     ring
   expose_names
   exact @three_core_noref_side_stage_1 κ' c₀ A bf fp D hD hQ I hI G δ hδ hdδ hδ8 hδc hcl hQC Cm
-    hCm0 hCm δ'' hδ'' Kt hQB J hJ h l Fsel a xs hxs hnoref X Aw hAw hr hw hDp hQ0 hη hξ ρ' n' f
-    hfa hfb hind ρc hρc hρcj nn hnnj fv hfvl hfvj cα hcα hFj hXm hL2X this hfi hfiρ cc0 hcc0 hccN
-    hccT hnn hA6 hBA hγT
+      hCm0 hCm δ'' hδ'' Kt hQB J hJ h l Fsel a xs hxs hnoref X Aw hAw hr hw hDp hQ0 hη hξ
+      ρ' n' f hfa hfb hind ρc hρc hρcj nn hnnj fv hfvl hfvj cα hcα hFj hXm hL2X hfi hfiρ
+      cc0 hcc0 hccN hccT hnn hA6 hBA hγT
 
 end SideInput
 
@@ -890,8 +875,6 @@ theorem window_root_le (z : ChartTag) (l : Fin 4) (X : ColumnL2 (bf.Lab ⊕ Fin 
             dyadicGridLength A.G I.1, ‖augPhys X y‖ ^ 2) ∂offsetMeasure z.dim :=
         integral_mono hwe.1 (integrable_const _) fun ρ' => hwe.2 ρ'
     _ = _ := by simp
-
-
 
 end SideInput
 end ActiveSetup.BasicFamilies.FamParams

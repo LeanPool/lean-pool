@@ -33,7 +33,6 @@ private def RetainedNumericExpErrorBoundStatement : Prop :=
     (b : ℕ)
     (m : ℕ)
     (c₃ : ℕ)
-    (_ : ℕ)
     (cc : ℕ)
     (Cl : ℕ)
     (_ : (0 : ℝ) ≤ L₄)
@@ -91,12 +90,9 @@ private def RetainedNumericExpErrorBoundStatement : Prop :=
     (16 : ℝ))) ≤ rexp ((-2 : ℝ) * u ^ θ₀) ^ min ((1 / 1200 : ℝ) / (2 : ℝ)) (α / (4 :
     ℝ))
 
-
-
-
 private theorem retained_numeric_exp_error_bound : RetainedNumericExpErrorBoundStatement := by
   classical
-  intro L₄ α θ₀ Ca b m c₃ c cc Cl hL₄ hα hCa hm1 AL a₁ s hClr D k hk1 u hu0 d21a d21b d21c d21d Y
+  intro L₄ α θ₀ Ca b m c₃ cc Cl hL₄ hα hCa hm1 AL a₁ s hClr D k hk1 u hu0 d21a d21b d21c d21d Y
     hYdef hub1 hF hθu hθ0 PL hPL1 hPLu G hGCl kD hkD hkDCl hupow hua₁ hexpd
   -- the errors
   set! A' : ℝ := 4 * AL * Cl * D * 2 ^ Cl with hA'
@@ -239,7 +235,6 @@ private theorem retained_numeric_exp_error_bound : RetainedNumericExpErrorBoundS
       4 * (6000 ^ 30 * Y ^ 30 + 1) * (Cl * Real.exp (-u)) := by ring
   rw [e]
   linarith only [hT1, hT2, hT3, hT4, hsum, hη]
-
 
 /-- The exponential standing bounds of the retained-attempt estimate at accuracy `k` (blueprint
 lines 2870-2888: `P = ⌈η₀^{-α}⌉` dominates every fixed power of `k` and of the unit
@@ -389,8 +384,9 @@ theorem retained_numeric_exp {L₄ lW α θ₀ Ca : ℝ} {b m c₃ c cc Cl : ℕ
       _ = _ := e
       _ ≤ _ := d20
   · expose_names
-    exact @retained_numeric_exp_error_bound L₄ α θ₀ Ca b m c₃ c cc Cl hL₄ hα hCa hm1 hClr k hk1
-      hu0 d21a d21b d21c d21d hYdef hub1 hF hθu hθ0 hPL1 hPLu hGCl hkD hkDCl hupow hua₁ hexpd
+    exact @retained_numeric_exp_error_bound L₄ α θ₀ Ca b m c₃ cc Cl hL₄ hα hCa hm1 hClr k hk1 hu0
+      d21a d21b d21c d21d hYdef hub1 hF hθu hθ0 hPL1 hPLu hGCl hkD hkDCl hupow hua₁
+      hexpd
 end
 
 /-- The final absorption on one root (blueprint lines 2851-2888, from `eq:before-absorption` to
@@ -720,8 +716,6 @@ theorem Hf_z_eq_zero_of_isEmpty_vtx (A : ActiveSetup κ c₀) (bf : A.BasicFamil
   simp only [this, MeasureTheory.integral_zero, mul_zero]
 
 end ActiveSetup
-
-
 
 end TrilinearHT.Auto
 end

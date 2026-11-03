@@ -94,8 +94,6 @@ private def BaseRootHsubrootStatement : Prop :=
     (_ : (0 : ℝ) ≤ η₀)
     (c' : ℕ)
     (H' : ℝ)
-    (_ : c₁ ≤ c')
-    (_ : c₂ ≤ c')
     (Bd : ℝ)
     (cB : ℕ)
     (HB : ℝ)
@@ -187,7 +185,6 @@ private def BaseRootHsubrootStatement : Prop :=
     (_ : Pa.budget ≤ XB)
     (_ : Pb.budget ≤ XB),
   A.SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))
-
 
 open scoped Classical in
 private def BaseRootStage2Statement : Prop :=
@@ -298,8 +295,6 @@ private def BaseRootStage2Statement : Prop :=
       kb c₂ Bb).tree.st I).2) δb)
     (c' : ℕ)
     (H' : ℝ)
-    (_ : c₁ ≤ c')
-    (_ : c₂ ≤ c')
     (Bd : ℝ)
     (cB : ℕ)
     (HB : ℝ)
@@ -476,7 +471,6 @@ private def BaseRootStage2Statement : Prop :=
     R.1) ∧ ∑ I ∈ T, dyadicGridLength G I.1 * ‖A.Hf I (A.z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ *
     ((↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G R.1) ∧ A.HasColumnRep (1 : ℝ) ∧
     A.SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))
-
 
 open scoped Classical in
 private def BaseRootStage1Statement : Prop :=
@@ -716,16 +710,12 @@ private def BaseRootStage1Statement : Prop :=
     ((↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G R.1) ∧ A.HasColumnRep (1 : ℝ) ∧
     A.SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))
 
-
-
-
 private theorem baseRoot_hsubroot : BaseRootHsubrootStatement := by
   classical
   intro κ G J N c₀ c₁ H Xi Xk a i k b Bp D pkga pkgb ε hε0 hε1 hai hak hab hik hib hkb K₀ Ma Mb f
-    w q ka kb c₂ Ba Bb hSa hSb hw Ka Kb R Xga Xgb zga zgb T hT hTH η₀ hη₀ c' H' hc₁ hc₂ Bd cB HB
-    hri hrk hrga hrgb hcB hHB Sa Sb Pa Pb hTtree Ya Yb hUaT hUbT hYam hYbm hUa hUb hUa' hUb'
-    hsmall hdefc hlowc hPac' hPbc' hDc hPac hPbc hsub A hUa_eq hUb_eq hU0 hRJ hcell XB hBdX hPaX
-    hPbX R' hR'
+    w q ka kb c₂ Ba Bb hSa hSb hw Ka Kb R Xga Xgb zga zgb T hT hTH η₀ hη₀ c' H' Bd cB HB hri hrk
+    hrga hrgb hcB hHB Sa Sb Pa Pb hTtree Ya Yb hUaT hUbT hYam hYbm hUa hUb hUa' hUb' hsmall hdefc
+    hlowc hPac' hPbc' hDc hPac hPbc hsub A hUa_eq hUb_eq hU0 hRJ hcell XB hBdX hPaX hPbX R' hR'
   change dyadicGridCell G R'.1 R'.2 ⊆ dyadicGridCell G R.1 R.2 at hR'
   have hR'pos := dyadicGridLength_pos G R'.1
   change (∀ l, ∑ I ∈ T with dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R'.1 R'.2,
@@ -880,17 +870,15 @@ private theorem baseRoot_hsubroot : BaseRootHsubrootStatement := by
       rw [← hPgb I, h2 hyI]
       exact congrArg (· - Xgb.val I y) (h1 hyI).symm
 
-
-
 private theorem baseRoot_stage_2 : BaseRootStage2Statement := by
   classical
   intro κ G J N c₀ c₁ H Xi Xk a i k b Bp D pkga pkgb ε hε0 hε1 hai hak hab hik hib hkb hD1 K₀ Ma
     Mb f w q ka kb c₂ Ba Bb hSa hSb hw Ka Kb hKa hKb R hR Xga Xgb zga zgb Cga Cgb hCga hCgb hzga
-    hzgb T hT hTH hq hfm hfq hLi hLk η₀ δa δb hη₀ hδa hδb hpairs hsa hsb c' H' hc₁ hc₂ Bd cB HB
-    hri hrk hrga hrgb hcB hHB Sa Sb Ea Eb S₀ Sp Pa hPa_def Pb hPb_def hTtree hS₀ Ya hYa_def Yb
-    hYb_def hHBa hHBb hUaT hUbT hUaN hUbN hYam hYbm hUa hUb hUa' hUb' hcard hYaS hYbS hlowpair
-    hsmall hdefc hlowc hPac' hPbc' hDc hwa hwb hPac hPbc hsub A hA hY hUa_eq hUb_eq hz3 hU0 hRJ
-    hcell XB hXB hsq0 hBdX hPaX
+    hzgb T hT hTH hq hfm hfq hLi hLk η₀ δa δb hη₀ hδa hδb hpairs hsa hsb c' H' Bd cB HB hri hrk
+    hrga hrgb hcB hHB Sa Sb Ea Eb S₀ Sp Pa hPa_def Pb hPb_def hTtree hS₀ Ya hYa_def Yb hYb_def
+    hHBa hHBb hUaT hUbT hUaN hUbN hYam hYbm hUa hUb hUa' hUb' hcard hYaS hYbS hlowpair hsmall
+    hdefc hlowc hPac' hPbc' hDc hwa hwb hPac hPbc hsub A hA hY hUa_eq hUb_eq hz3 hU0 hRJ hcell XB
+    hXB hsq0 hBdX hPaX
   have hPbX : Pb.budget ≤ XB := by
     refine (Pb.budget_le hε0 hwb).trans ?_
     rw [← Real.sqrt_inv, hXB]
@@ -901,10 +889,10 @@ private theorem baseRoot_stage_2 : BaseRootStage2Statement := by
   have hsubroot : A.SubRootProps η₀ ((K₀ : ℝ) ^ 2) := by
     expose_names
     exact @baseRoot_hsubroot κ G J N c₀ c₁ H Xi Xk a i k b Bp D pkga pkgb ε hε0 hε1 hai hak hab
-      hik hib hkb K₀ Ma Mb f w q ka kb c₂ Ba Bb hSa hSb hw Ka Kb R Xga Xgb zga zgb T hT hTH η₀ hη₀
-      c' H' hc₁ hc₂ Bd cB HB hri hrk hrga hrgb hcB hHB hTtree hUaT hUbT hYam hYbm hUa hUb hUa'
-      hUb' hsmall hdefc hlowc hPac' hPbc' hDc hPac hPbc hsub hUa_eq hUb_eq hU0 hRJ hcell hBdX hPaX
-      hPbX
+      hik hib hkb K₀ Ma Mb f w q ka kb c₂ Ba Bb hSa hSb hw Ka Kb R Xga Xgb zga zgb T hT
+      hTH η₀ hη₀ c' H' Bd cB HB hri hrk hrga hrgb hcB hHB hTtree hUaT hUbT hYam hYbm hUa
+      hUb hUa' hUb' hsmall hdefc hlowc hPac' hPbc' hDc hPac hPbc hsub hUa_eq hUb_eq hU0
+      hRJ hcell hBdX hPaX hPbX
   have hRpos := dyadicGridLength_pos G R.1
   have hfilt : T.filter (fun I => dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1 R.2) = T :=
     Finset.filter_true_of_mem hsub
@@ -960,8 +948,6 @@ private theorem baseRoot_stage_2 : BaseRootStage2Statement := by
     · rw [slots4_i hai]; exact ENNReal.toReal_le_of_le_ofReal (by norm_num) (hLi I hI)
     · rw [slots4_k hak hik]; exact ENNReal.toReal_le_of_le_ofReal (by norm_num) (hLk I hI)
     · rw [slots4_b hab hib hkb]; exact ENNReal.toReal_le_of_le_ofReal (by norm_num) (hYbS I hI)
-
-
 
 private theorem baseRoot_stage_1 : BaseRootStage1Statement := by
   classical
@@ -1086,13 +1072,12 @@ private theorem baseRoot_stage_1 : BaseRootStage1Statement := by
     nlinarith only [mul_le_mul_of_nonneg_right hs hsq0, hDc]
   expose_names
   exact @baseRoot_stage_2 κ G J N c₀ c₁ H Xi Xk a i k b Bp D pkga pkgb ε hε0 hε1 hai hak hab hik
-    hib hkb hD1 K₀ Ma Mb f w q ka kb c₂ Ba Bb hSa hSb hw Ka Kb hKa hKb R hR Xga Xgb zga zgb Cga
-    Cgb hCga hCgb hzga hzgb T hT hTH hq hfm hfq hLi hLk η₀ δa δb hη₀ hδa hδb hpairs hsa hsb c' H'
-    hc₁ hc₂ Bd cB HB hri hrk hrga hrgb hcB hHB hPa_def hPb_def hTtree hS₀ hYa_def hYb_def hHBa
-    hHBb hUaT hUbT hUaN hUbN hYam hYbm hUa hUb hUa' hUb' hcard hYaS hYbS hlowpair hsmall hdefc
-    hlowc hPac' hPbc' hDc hwa hwb hPac hPbc hsub hA hY hUa_eq hUb_eq hz3 hU0 hRJ hcell hXB hsq0
-    hBdX hPaX
-
+      hib hkb hD1 K₀ Ma Mb f w q ka kb c₂ Ba Bb hSa hSb hw Ka Kb hKa hKb R hR Xga Xgb zga
+      zgb Cga Cgb hCga hCgb hzga hzgb T hT hTH hq hfm hfq hLi hLk η₀ δa δb hη₀ hδa hδb
+      hpairs hsa hsb c' H' Bd cB HB hri hrk hrga hrgb hcB hHB hPa_def hPb_def hTtree hS₀
+      hYa_def hYb_def hHBa hHBb hUaT hUbT hUaN hUbN hYam hYbm hUa hUb hUa' hUb' hcard hYaS
+      hYbS hlowpair hsmall hdefc hlowc hPac' hPbc' hDc hwa hwb hPac hPbc hsub hA hY hUa_eq
+      hUb_eq hz3 hU0 hRJ hcell hXB hsq0 hBdX hPaX
 
 /-- Blueprint prop:base (one root): on the cells `T` of a pair of accurate-fit segments below a
 common root `R`, the replaced tuple `eq:Y` is packaged as an active setup: the replacement error of
@@ -2591,8 +2576,6 @@ theorem sum_length_below_le {G : RealDyadicGrid} {R R' : ℤ × ℤ} {K₀ : ℕ
           dyadicGridLength G I.1 :=
         Finset.sum_le_sum_of_subset_of_nonneg hsub fun I _ _ => (dyadicGridLength_pos G I.1).le
     _ ≤ K₀ * dyadicGridLength G R'.1 := sum_bottom_length_le G R' N' K₀
-
-
 
 end TrilinearHT.Auto
 end

@@ -305,7 +305,7 @@ theorem delay_part_zero (κ : LocalKernelClass) {G : RealDyadicGrid} {J : ℤ ×
     intro I hI
     have := cell_isFiniteMeasure G I.1 I.2
     exact (Δ.D_memLp I hI _).integrable one_le_two
-  have h := linear_phase_scale_sum_rows G κ id S w hw hab (fun _ => 0) hinj
+  have h := linear_phase_scale_sum_rows G κ id S w hw hab (fun _ => 0)
     (ψa := fun _ => 1) measurable_const hψbm (fun _ => le_of_eq norm_one) hψb
     (za := fun I => Δ.D (I.1 + K₀)) (zb := zb) hKa0 hKb zero_le_one hNb0
     (fun I => Δ.D_meas _) hzbm hzai hzbi hM hxrow hyrow
@@ -528,7 +528,7 @@ theorem delay_linear_depth (κ : LocalKernelClass) {G : RealDyadicGrid} {J : ℤ
     intro I hI
     have := cell_isFiniteMeasure G I.1 I.2
     exact (Δ.D_memLp I (hS' hI) _).integrable one_le_two
-  have h := linear_phase_scale_sum_rows G κ id S' w hw hab (fun _ => γ) hinj
+  have h := linear_phase_scale_sum_rows G κ id S' w hw hab (fun _ => γ)
     (ψa := fun _ => 1) measurable_const hψbm (fun _ => le_of_eq norm_one) hψb
     (za := fun I => Δ.D (I.1 + K₀)) (zb := zb) hKa0 hKb zero_le_one hNb0
     (fun I => Δ.D_meas _) hzbm hzai hzbi hM hxrow hyrow

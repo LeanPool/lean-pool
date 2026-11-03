@@ -26,7 +26,6 @@ open scoped FourierTransform
 open scoped Classical in
 private def ProgressionSeparationConclusion12Statement : Prop :=
   ∀ (c₀ : ℕ)
-    (_ : (1 : ℕ) ≤ c₀)
     (ψ : ℝ → ℝ)
     (Kψ : ℕ)
     (_ : (1 : ℕ) ≤ Kψ)
@@ -35,7 +34,6 @@ private def ProgressionSeparationConclusion12Statement : Prop :=
     (hψ0 : ∀ (x : ℝ), (2 : ℝ) ≤ |x| → ψ x = (0 : ℝ))
     (_ : ∀ (i : ℕ) (x : ℝ), |iteratedDeriv i ψ x| ≤ ((↑Kψ : ℝ) * ((↑i : ℝ) + (1 : ℝ))) ^ (Kψ
       * (i + (1 : ℕ))))
-    (_ : ℕ)
     (Da : ℕ)
     (_ : (1 : ℕ) ≤ Da),
   let K : ℝ :=
@@ -92,14 +90,11 @@ private def ProgressionSeparationConclusion12Statement : Prop :=
     + d + d) → ℤ)) × (↥Ki' × ↥Kb') × (Fin (e + e + e) → ℤ)) => sepPairChartT A A' hψ
     hψ0 i k a b q.1.2 q.2.2) q)
 
-
-
-
 private theorem progressionSeparation_conclusion_12 : ProgressionSeparationConclusion12Statement
   := by
   classical
-  intro c₀ hc ψ Kψ hKψ hψ hψ1' hψ0 hψd Kρ Da hDa K hK0 Dc d e H A A' hA hA' i k a b hi hk ha hb X
-    Ki Kb Ki' Kb' hH1 hX1 Dm hDm q
+  intro c₀ ψ Kψ hKψ hψ hψ1' hψ0 hψd Da hDa K hK0 Dc d e H A A' hA hA' i k a b hi hk ha hb X Ki Kb
+    Ki' Kb' hH1 hX1 Dm hDm q
   have hsz : 1 ≤ max (1 + frequencyLength q.1.2) (1 + frequencyLength q.2.2) := by
     have := frequencyLength_nonneg q.1.2
     exact le_trans (by linarith) (le_max_left _ _)
@@ -161,7 +156,6 @@ private theorem progressionSeparation_conclusion_12 : ProgressionSeparationConcl
               rw [pow_one]; nlinarith only [hX1]
           _ ≤ Real.exp (Dm * X ^ Dm) := exp_poly_le hX1 (by omega) (by
               rw [hDm]; push_cast; linarith)
-
 
 /-- Blueprint lem:separation (Declaration separation, line 1413,
 `THT.Chart.progressionSeparation`): two atoms in distinct slots `i, k` have an exact
@@ -280,8 +274,8 @@ theorem progressionSeparation (c₀ : ℕ) (hc : 1 ≤ c₀) :
       _ = 2 * (EA * EA) / T ^ 100 := by ring
       _ ≤ Real.exp (Dm * X ^ Dm) / T ^ 100 := div_le_div_of_nonneg_right hEA3 hT0.le
   · expose_names
-    exact @progressionSeparation_conclusion_12 c₀ hc ψ Kψ hKψ hψ hψ1' hψ0 hψd Kρ Da hDa hK0 d e H
-      A A' hA hA' i k a b hi hk ha hb hH1 hX1 hDm
+    exact @progressionSeparation_conclusion_12 c₀ ψ Kψ hKψ hψ hψ1' hψ0 hψd Da hDa hK0 d e H A A'
+      hA hA' i k a b hi hk ha hb hH1 hX1 hDm
   · intro T hT
     have hH7 : 7 ≤ H := by
       have he := Real.exp_one_gt_d9

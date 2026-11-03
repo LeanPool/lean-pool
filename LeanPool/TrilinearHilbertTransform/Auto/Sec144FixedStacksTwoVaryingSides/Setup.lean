@@ -430,25 +430,32 @@ theorem posIoc_disjoint {k q q' : ℕ} (hqq : q ≠ q') :
 namespace ActiveSetup
 variable {κ' : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ' c₀)
 
+/-- The ancestors at the right end of the position `q` of level `k` (block offset `bo`) of the
+cells of `U'` selecting it. -/
+noncomputable def posEc (U' : Finset (ℤ × ℤ)) (off : ℤ × ℤ → ℕ) (k bo q : ℕ) :
+    Finset (ℤ × ℤ) :=
+  (U'.filter fun I => off I / 2 ^ (k + 1) = q).image
+    fun I => ancAt A.G I (A.R.1 + ((bo + (q * 2 ^ (k + 1) + 2 ^ k) : ℕ) : ℤ))
+
 open Classical in
-/-- Blueprint lines 2408-2411 (`eq:stack-energy` for the positions of one level below the base):
-if the side values of block `β` have the jumps of a family `Z_g` of variation capacity `B`, the
-glued position stacks of a level `k < N` over the uses of all groups and blocks have total square
-at most `B` (the positions of one level are disjoint depth intervals, also across the blocks). -/
-theorem posStack_energy (hanc : A.AncClosed) {γ : Type*} {V : Type*} [Fintype V]
+/-- Blueprint lines 2408-2411 (`eq:stack-energy` for the positions of one level below the base,
+on the ancestors at the right ends): if the family `Z_g` has variation capacity `B`, the jumps of
+`Z_g` over the positions of a level `k < N` used by the cells of all groups and blocks, restricted
+to the ancestors at the right ends of the cells selecting them, have total square at most `B`. -/
+theorem posAnc_energy (hanc : A.AncClosed) {γ : Type*} {V : Type*} [Fintype V]
     (Gs : Finset γ) (Z : γ → ℤ → ColumnL2 V) (ok : γ → ℤ × ℤ → Prop) {B : ℝ}
     (hcap : A.VarCap Gs Z ok B) {K N : ℕ} (k : Fin (N + 1)) (hk : (k : ℕ) ≠ N)
     (Bs : Finset ℕ) (U : γ → ℕ → Finset (ℤ × ℤ)) (off : ℤ × ℤ → ℕ)
     (hU : ∀ g β, ∀ I ∈ U g β, I ∈ A.cells ∧ I.1 = A.R.1 + (K * β + off I : ℕ) ∧ off I < K)
     (hok : ∀ g ∈ Gs, ∀ β, ∀ I ∈ U g β, ∀ J ∈ A.cells,
-      dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G J.1 J.2 → ok g J)
-    (Sb : γ → ℕ → ℤ → ColumnL2 V)
-    (hSb : ∀ g β h h', Sb g β h - Sb g β h' = Z g h - Z g h') :
+      dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G J.1 J.2 → ok g J) :
     ∑ g ∈ Gs, ∑ β ∈ Bs, ∑ q ∈ ((U g β).filter fun I => posAct N k (off I)).image
         (fun I => off I / 2 ^ ((k : ℕ) + 1)),
-      ‖gluedStack A.G ((U g β).filter fun I => posAct N k (off I))
-        (fun I => off I / 2 ^ ((k : ℕ) + 1))
-        (fun q => posVal (fun n => Sb g β (A.R.1 + (K * β + n : ℕ))) N k q) q‖ ^ 2 ≤ B := by
+      ‖columnL2Restriction (⋃ J ∈ A.posEc ((U g β).filter fun I => posAct N k (off I)) off k
+          (K * β) q, dyadicGridCell A.G J.1 J.2)
+        (Finset.measurableSet_biUnion _ fun J _ => dyadicGridCell_measurable A.G J.1 J.2)
+        (Z g (A.R.1 + ((K * β + (q * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ))) : ℕ)) -
+          Z g (A.R.1 + ((K * β + q * 2 ^ ((k : ℕ) + 1)) : ℕ)))‖ ^ 2 ≤ B := by
   set! U' : γ → ℕ → Finset (ℤ × ℤ) := fun g β => (U g β).filter fun I => posAct N k (off I)
   set sel : ℤ × ℤ → ℕ := fun I => off I / 2 ^ ((k : ℕ) + 1)
   set! S : Finset (ℕ × ℕ) := Gs.biUnion fun g => Bs.biUnion fun β =>
@@ -532,31 +539,27 @@ theorem posStack_energy (hanc : A.AncClosed) {γ : Type*} {V : Type*} [Fintype V
     (Finset.measurableSet_biUnion _ fun J _ => dyadicGridCell_measurable A.G J.1 J.2)
     (Z g (A.R.1 + t i) - Z g (A.R.1 + r i))‖ ^ 2
   have hterm : ∀ β (hβ : β ∈ Bs), ∀ q (hq : q ∈ (U' g β).image sel),
-      ‖gluedStack A.G (U' g β) sel
-        (fun q => posVal (fun n => Sb g β (A.R.1 + (K * β + n : ℕ))) N k q) q‖ ^ 2 ≤
+      ‖columnL2Restriction (⋃ J ∈ A.posEc (U' g β) off k (K * β) q, dyadicGridCell A.G J.1 J.2)
+        (Finset.measurableSet_biUnion _ fun J _ => dyadicGridCell_measurable A.G J.1 J.2)
+        (Z g (A.R.1 + ((K * β + (q * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ))) : ℕ)) -
+          Z g (A.R.1 + ((K * β + q * 2 ^ ((k : ℕ) + 1)) : ℕ)))‖ ^ 2 =
       F ⟨(β, q), hmemS g hg β hβ q hq⟩ := by
     intro β hβ q hq
-    have hsub := selUnion_sub_anc A.G (U' g β) sel
-      (fun q => A.R.1 + ((K * β + (q * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ)) : ℕ) : ℤ))
-      (fun I hI => hdle g β _ I hI rfl) q
-    refine (gluedStack_norm_sq_le A.G _ _ _ q (Finset.measurableSet_biUnion
-      (Ec g ⟨(β, q), hmemS g hg β hβ q hq⟩) fun J _ =>
-        dyadicGridCell_measurable A.G J.1 J.2) ?_).trans (le_of_eq ?_)
-    · refine hsub.trans (le_of_eq ?_)
-      simp only [Ec, hg, ite_true]
-      rfl
-    · simp only [F, posVal, hk, ite_false, hSb]
-      rfl
+    simp only [F, Ec, hg, ite_true]
+    rfl
   set! F' : ℕ × ℕ → ℝ := fun x => if h : x ∈ S then F ⟨x, h⟩ else 0
   have hF'0 : ∀ x, 0 ≤ F' x := fun x => by
     simp only [F']
     split_ifs <;> positivity
-  calc ∑ β ∈ Bs, ∑ q ∈ (U' g β).image sel, ‖gluedStack A.G (U' g β) sel
-        (fun q => posVal (fun n => Sb g β (A.R.1 + (K * β + n : ℕ))) N k q) q‖ ^ 2
+  calc ∑ β ∈ Bs, ∑ q ∈ (U' g β).image sel,
+        ‖columnL2Restriction (⋃ J ∈ A.posEc (U' g β) off k (K * β) q, dyadicGridCell A.G J.1 J.2)
+          (Finset.measurableSet_biUnion _ fun J _ => dyadicGridCell_measurable A.G J.1 J.2)
+          (Z g (A.R.1 + ((K * β + (q * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ))) : ℕ)) -
+            Z g (A.R.1 + ((K * β + q * 2 ^ ((k : ℕ) + 1)) : ℕ)))‖ ^ 2
       ≤ ∑ β ∈ Bs, ∑ q ∈ (U' g β).image sel, F' (β, q) := by
         refine Finset.sum_le_sum fun β hβ => Finset.sum_le_sum fun q hq => ?_
         simp only [F', hmemS g hg β hβ q hq, dite_true]
-        exact hterm β hβ q hq
+        exact le_of_eq (hterm β hβ q hq)
     _ = ∑ x ∈ Bs.biUnion (fun β => ((U' g β).image sel).image fun q => (β, q)), F' x := by
         rw [Finset.sum_biUnion]
         · refine Finset.sum_congr rfl fun β _ => ?_
@@ -577,6 +580,47 @@ theorem posStack_energy (hanc : A.AncClosed) {γ : Type*} {V : Type*} [Fintype V
         rw [← Finset.sum_attach S, Finset.univ_eq_attach]
         refine Finset.sum_congr rfl fun i _ => ?_
         simp only [F', i.2, dite_true]
+
+
+open Classical in
+/-- Blueprint lines 2408-2411 (`eq:stack-energy` for the positions of one level below the base):
+if the side values of block `β` have the jumps of a family `Z_g` of variation capacity `B`, the
+glued position stacks of a level `k < N` over the uses of all groups and blocks have total square
+at most `B` (the positions of one level are disjoint depth intervals, also across the blocks). -/
+theorem posStack_energy (hanc : A.AncClosed) {γ : Type*} {V : Type*} [Fintype V]
+    (Gs : Finset γ) (Z : γ → ℤ → ColumnL2 V) (ok : γ → ℤ × ℤ → Prop) {B : ℝ}
+    (hcap : A.VarCap Gs Z ok B) {K N : ℕ} (k : Fin (N + 1)) (hk : (k : ℕ) ≠ N)
+    (Bs : Finset ℕ) (U : γ → ℕ → Finset (ℤ × ℤ)) (off : ℤ × ℤ → ℕ)
+    (hU : ∀ g β, ∀ I ∈ U g β, I ∈ A.cells ∧ I.1 = A.R.1 + (K * β + off I : ℕ) ∧ off I < K)
+    (hok : ∀ g ∈ Gs, ∀ β, ∀ I ∈ U g β, ∀ J ∈ A.cells,
+      dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G J.1 J.2 → ok g J)
+    (Sb : γ → ℕ → ℤ → ColumnL2 V)
+    (hSb : ∀ g β h h', Sb g β h - Sb g β h' = Z g h - Z g h') :
+    ∑ g ∈ Gs, ∑ β ∈ Bs, ∑ q ∈ ((U g β).filter fun I => posAct N k (off I)).image
+        (fun I => off I / 2 ^ ((k : ℕ) + 1)),
+      ‖gluedStack A.G ((U g β).filter fun I => posAct N k (off I))
+        (fun I => off I / 2 ^ ((k : ℕ) + 1))
+        (fun q => posVal (fun n => Sb g β (A.R.1 + (K * β + n : ℕ))) N k q) q‖ ^ 2 ≤ B := by
+  classical
+  set! U' : γ → ℕ → Finset (ℤ × ℤ) := fun g β => (U g β).filter fun I => posAct N k (off I)
+  set sel : ℤ × ℤ → ℕ := fun I => off I / 2 ^ ((k : ℕ) + 1)
+  refine le_trans ?_ (A.posAnc_energy hanc Gs Z ok hcap k hk Bs U off hU hok)
+  refine Finset.sum_le_sum fun g _ => Finset.sum_le_sum fun β _ =>
+    Finset.sum_le_sum fun q _ => ?_
+  have hdle : ∀ I ∈ U' g β,
+      A.R.1 + ((K * β + (sel I * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ)) : ℕ) : ℤ) ≤ I.1 := by
+    intro I hI
+    have h1 := posEnd_le hk (Finset.mem_filter.mp hI).2
+    rw [(hU g β I (Finset.mem_filter.mp hI).1).2.1]
+    apply Int.add_le_add_left
+    exact_mod_cast Nat.add_le_add_left h1 (K * β)
+  have hsub := selUnion_sub_anc A.G (U' g β) sel
+    (fun q => A.R.1 + ((K * β + (q * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ)) : ℕ) : ℤ)) hdle q
+  refine (gluedStack_norm_sq_le A.G (U' g β) sel _ q
+    (Finset.measurableSet_biUnion (A.posEc (U' g β) off k (K * β) q)
+      fun J _ => dyadicGridCell_measurable A.G J.1 J.2) hsub).trans (le_of_eq ?_)
+  simp only [posVal, hk, ite_false, hSb]
+  rfl
 
 end ActiveSetup
 
@@ -762,156 +806,6 @@ end BandBlock
 namespace ActiveSetup
 variable {κ' : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ' c₀)
 
-/-- The ancestors at the right end of the position `q` of level `k` (block offset `bo`) of the
-cells of `U'` selecting it. -/
-noncomputable def posEc (U' : Finset (ℤ × ℤ)) (off : ℤ × ℤ → ℕ) (k bo q : ℕ) :
-    Finset (ℤ × ℤ) :=
-  (U'.filter fun I => off I / 2 ^ (k + 1) = q).image
-    fun I => ancAt A.G I (A.R.1 + ((bo + (q * 2 ^ (k + 1) + 2 ^ k) : ℕ) : ℤ))
-
-open Classical in
-/-- Blueprint lines 2408-2411 (`eq:stack-energy` for the positions of one level below the base,
-on the ancestors at the right ends): if the family `Z_g` has variation capacity `B`, the jumps of
-`Z_g` over the positions of a level `k < N` used by the cells of all groups and blocks, restricted
-to the ancestors at the right ends of the cells selecting them, have total square at most `B`. -/
-theorem posAnc_energy (hanc : A.AncClosed) {γ : Type*} {V : Type*} [Fintype V]
-    (Gs : Finset γ) (Z : γ → ℤ → ColumnL2 V) (ok : γ → ℤ × ℤ → Prop) {B : ℝ}
-    (hcap : A.VarCap Gs Z ok B) {K N : ℕ} (k : Fin (N + 1)) (hk : (k : ℕ) ≠ N)
-    (Bs : Finset ℕ) (U : γ → ℕ → Finset (ℤ × ℤ)) (off : ℤ × ℤ → ℕ)
-    (hU : ∀ g β, ∀ I ∈ U g β, I ∈ A.cells ∧ I.1 = A.R.1 + (K * β + off I : ℕ) ∧ off I < K)
-    (hok : ∀ g ∈ Gs, ∀ β, ∀ I ∈ U g β, ∀ J ∈ A.cells,
-      dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G J.1 J.2 → ok g J) :
-    ∑ g ∈ Gs, ∑ β ∈ Bs, ∑ q ∈ ((U g β).filter fun I => posAct N k (off I)).image
-        (fun I => off I / 2 ^ ((k : ℕ) + 1)),
-      ‖columnL2Restriction (⋃ J ∈ A.posEc ((U g β).filter fun I => posAct N k (off I)) off k
-          (K * β) q, dyadicGridCell A.G J.1 J.2)
-        (Finset.measurableSet_biUnion _ fun J _ => dyadicGridCell_measurable A.G J.1 J.2)
-        (Z g (A.R.1 + ((K * β + (q * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ))) : ℕ)) -
-          Z g (A.R.1 + ((K * β + q * 2 ^ ((k : ℕ) + 1)) : ℕ)))‖ ^ 2 ≤ B := by
-  set! U' : γ → ℕ → Finset (ℤ × ℤ) := fun g β => (U g β).filter fun I => posAct N k (off I)
-  set sel : ℤ × ℤ → ℕ := fun I => off I / 2 ^ ((k : ℕ) + 1)
-  set! S : Finset (ℕ × ℕ) := Gs.biUnion fun g => Bs.biUnion fun β =>
-    ((U' g β).image sel).image fun q => (β, q)
-  have hmemS : ∀ g ∈ Gs, ∀ β ∈ Bs, ∀ q ∈ (U' g β).image sel, (β, q) ∈ S := fun g hg β hβ q hq =>
-    Finset.mem_biUnion.mpr ⟨g, hg, Finset.mem_biUnion.mpr ⟨β, hβ, Finset.mem_image_of_mem _ hq⟩⟩
-  -- every used position ends before its uses
-  have huse : ∀ g β, ∀ I ∈ U' g β,
-      sel I * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ) ≤ off I := fun g β I hI =>
-    posEnd_le hk (Finset.mem_filter.mp hI).2
-  have hS : ∀ x ∈ S, ∃ g, ∃ I ∈ U g x.1,
-      x.2 * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ) ≤ off I := by
-    intro x hx
-    obtain ⟨g, -, hg⟩ := Finset.mem_biUnion.mp hx
-    obtain ⟨β, -, hβ⟩ := Finset.mem_biUnion.mp hg
-    obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hβ
-    obtain ⟨I, hI, rfl⟩ := Finset.mem_image.mp hq
-    exact ⟨g, I, (Finset.mem_filter.mp hI).1, huse g β I hI⟩
-  let ι := {x : ℕ × ℕ // x ∈ S}
-  let r : ι → ℕ := fun x => K * x.1.1 + x.1.2 * 2 ^ ((k : ℕ) + 1)
-  let t : ι → ℕ := fun x => K * x.1.1 + (x.1.2 * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ))
-  have hrt : ∀ i, r i ≤ t i := fun i => Nat.add_le_add_left (Nat.le_add_right _ _) _
-  have hdis : ∀ i i', i ≠ i' → Disjoint (Finset.Ioc (r i) (t i)) (Finset.Ioc (r i') (t i')) := by
-    intro i i' hii
-    obtain ⟨g, I, hI, hIt⟩ := hS i.1 i.2
-    obtain ⟨g', I', hI', hIt'⟩ := hS i'.1 i'.2
-    have hK1 := (hU g _ I hI).2.2
-    have hK2 := (hU g' _ I' hI').2.2
-    rw [Finset.disjoint_left]
-    intro x hx hx'
-    simp only [Finset.mem_Ioc, r, t] at hx hx'
-    by_cases hβ : i.1.1 = i'.1.1
-    · have hq : i.1.2 ≠ i'.1.2 := fun h => hii (Subtype.ext (Prod.ext hβ h))
-      have h0 := Finset.disjoint_left.mp (posIoc_disjoint (k := (k : ℕ)) hq)
-        (show x - K * i.1.1 ∈ Finset.Ioc _ _ from Finset.mem_Ioc.mpr ⟨by omega, by omega⟩)
-      rw [← hβ] at hx'
-      exact h0 (Finset.mem_Ioc.mpr ⟨by omega, by omega⟩)
-    · rcases Nat.lt_or_gt_of_ne hβ with h | h
-      · have : K * i.1.1 + K ≤ K * i'.1.1 := by nlinarith only [h]
-        omega
-      · have : K * i'.1.1 + K ≤ K * i.1.1 := by nlinarith only [h]
-        omega
-  have htd : ∀ i, t i ≤ A.treeDepth := by
-    intro i
-    obtain ⟨g, I, hI, hIt⟩ := hS i.1 i.2
-    obtain ⟨hIc, hIdep, -⟩ := hU g _ I hI
-    have := ((dyadicFiniteTree_mem_iff A.G A.R I A.treeDepth).mp (A.cells_mem_tree hIc)).2
-    simp only [t]
-    omega
-  let Ec : γ → ι → Finset (ℤ × ℤ) := fun g i => if g ∈ Gs then
-    ((U' g i.1.1).filter fun I => sel I = i.1.2).image fun I => ancAt A.G I (A.R.1 + t i)
-    else ∅
-  have hdle : ∀ g (β q : ℕ), ∀ I ∈ U' g β, sel I = q →
-      A.R.1 + ((K * β + (q * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ)) : ℕ) : ℤ) ≤ I.1 := by
-    intro g β q I hI hq
-    have h1 := huse g β I hI
-    rw [hq] at h1
-    rw [(hU g β I (Finset.mem_filter.mp hI).1).2.1]
-    push_cast
-    have : ((q * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ) : ℕ) : ℤ) ≤ (off I : ℤ) := by exact_mod_cast h1
-    push_cast at this
-    linarith
-  have hEc : ∀ g i, ∀ J ∈ Ec g i, J ∈ A.cells ∧ J.1 = A.R.1 + t i ∧ ok g J := by
-    intro g i J hJ
-    simp only [Ec] at hJ
-    split_ifs at hJ with hg
-    · obtain ⟨I, hI, rfl⟩ := Finset.mem_image.mp hJ
-      obtain ⟨hIU', hIq⟩ := Finset.mem_filter.mp hI
-      have hIc := (hU g _ I (Finset.mem_filter.mp hIU').1).1
-      have hd := hdle g i.1.1 i.1.2 I hIU' hIq
-      have hsub := subset_ancAt A.G I hd
-      have hR1 : A.R.1 ≤ A.R.1 + (t i : ℤ) := by omega
-      have hJc : ancAt A.G I (A.R.1 + t i) ∈ A.cells :=
-        hanc I hIc _ hsub (ancAt_subset (A.sub I hIc) hR1)
-      exact ⟨hJc, rfl, hok g hg _ I (Finset.mem_filter.mp hIU').1 _ hJc hsub⟩
-    · simp at hJ
-  have hcap' := hcap r t hrt hdis htd Ec hEc
-  refine le_trans ?_ hcap'
-  refine Finset.sum_le_sum fun g hg => ?_
-  set F : ι → ℝ := fun i => ‖columnL2Restriction (⋃ J ∈ Ec g i, dyadicGridCell A.G J.1 J.2)
-    (Finset.measurableSet_biUnion _ fun J _ => dyadicGridCell_measurable A.G J.1 J.2)
-    (Z g (A.R.1 + t i) - Z g (A.R.1 + r i))‖ ^ 2
-  have hterm : ∀ β (hβ : β ∈ Bs), ∀ q (hq : q ∈ (U' g β).image sel),
-      ‖columnL2Restriction (⋃ J ∈ A.posEc (U' g β) off k (K * β) q, dyadicGridCell A.G J.1 J.2)
-        (Finset.measurableSet_biUnion _ fun J _ => dyadicGridCell_measurable A.G J.1 J.2)
-        (Z g (A.R.1 + ((K * β + (q * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ))) : ℕ)) -
-          Z g (A.R.1 + ((K * β + q * 2 ^ ((k : ℕ) + 1)) : ℕ)))‖ ^ 2 =
-      F ⟨(β, q), hmemS g hg β hβ q hq⟩ := by
-    intro β hβ q hq
-    simp only [F, Ec, hg, ite_true]
-    rfl
-  set! F' : ℕ × ℕ → ℝ := fun x => if h : x ∈ S then F ⟨x, h⟩ else 0
-  have hF'0 : ∀ x, 0 ≤ F' x := fun x => by
-    simp only [F']
-    split_ifs <;> positivity
-  calc ∑ β ∈ Bs, ∑ q ∈ (U' g β).image sel,
-        ‖columnL2Restriction (⋃ J ∈ A.posEc (U' g β) off k (K * β) q, dyadicGridCell A.G J.1 J.2)
-          (Finset.measurableSet_biUnion _ fun J _ => dyadicGridCell_measurable A.G J.1 J.2)
-          (Z g (A.R.1 + ((K * β + (q * 2 ^ ((k : ℕ) + 1) + 2 ^ (k : ℕ))) : ℕ)) -
-            Z g (A.R.1 + ((K * β + q * 2 ^ ((k : ℕ) + 1)) : ℕ)))‖ ^ 2
-      ≤ ∑ β ∈ Bs, ∑ q ∈ (U' g β).image sel, F' (β, q) := by
-        refine Finset.sum_le_sum fun β hβ => Finset.sum_le_sum fun q hq => ?_
-        simp only [F', hmemS g hg β hβ q hq, dite_true]
-        exact le_of_eq (hterm β hβ q hq)
-    _ = ∑ x ∈ Bs.biUnion (fun β => ((U' g β).image sel).image fun q => (β, q)), F' x := by
-        rw [Finset.sum_biUnion]
-        · refine Finset.sum_congr rfl fun β _ => ?_
-          rw [Finset.sum_image fun q _ q' _ h => (Prod.ext_iff.mp h).2]
-        · intro β _ β' _ hββ
-          simp only [Function.onFun]
-          rw [Finset.disjoint_left]
-          intro x hx hx'
-          obtain ⟨q, -, rfl⟩ := Finset.mem_image.mp hx
-          obtain ⟨q', -, h⟩ := Finset.mem_image.mp hx'
-          exact hββ (Prod.ext_iff.mp h).1.symm
-    _ ≤ ∑ x ∈ S, F' x := by
-        refine Finset.sum_le_sum_of_subset_of_nonneg (fun x hx => ?_) fun x _ _ => hF'0 x
-        obtain ⟨β, hβ, hx⟩ := Finset.mem_biUnion.mp hx
-        obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hx
-        exact hmemS g hg β hβ q hq
-    _ = ∑ i : ι, F i := by
-        rw [← Finset.sum_attach S, Finset.univ_eq_attach]
-        refine Finset.sum_congr rfl fun i _ => ?_
-        simp only [F', i.2, dite_true]
 
 end ActiveSetup
 

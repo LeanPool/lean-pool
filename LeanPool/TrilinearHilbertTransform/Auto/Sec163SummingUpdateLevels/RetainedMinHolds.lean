@@ -68,7 +68,6 @@ private def RetainedMinHoldsNh3Statement : Prop :=
     ℕ) * Real.exp (((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) ^ Cl ≤ (↑P :
     ℝ) ^ (1 / 8 : ℝ)
 
-
 open scoped Classical in
 private def RetainedMinHoldsNB6Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -182,13 +181,11 @@ private def RetainedMinHoldsNB6Statement : Prop :=
   Real.log ((2 : ℝ) * ((8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * AD.n
     (AD.fp.Lc + (5 : ℕ)))) ≤ (↑k : ℝ) ^ cc
 
-
 open scoped Classical in
 private def RetainedMinHoldsNB12Statement : Prop :=
   ∀ (κ : LocalKernelClass)
     (c' : ℕ)
     (Cb : ℕ)
-    (_ : ℝ)
     (_ : (1 : ℕ) ≤ c')
     (Dst : ℕ)
     (hst : SameTagBound κ (max c' ((2 : ℕ) * tagKρ)) Dst)
@@ -308,7 +305,6 @@ private def RetainedMinHoldsNB12Statement : Prop :=
       hHedτ₂ := nHedτ₂.trans hHedge, hHedτ' := nHedτ'.trans hHedge }
   Real.log AD.fp.Hed ≤ (↑k : ℝ) ^ cc
 
-
 open scoped Classical in
 private def RetainedMinHoldsNh4Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -392,7 +388,6 @@ private def RetainedMinHoldsNh4Statement : Prop :=
     ((↑Cl : ℝ) * (↑k : ℝ) ^ cc) * (√δ + Real.exp (-kD))) + (↑Cl : ℝ) * Real.exp (-(↑k
     : ℝ))) + (↑Mp : ℝ) * W ≤ η₀ ^ min ((1 / 1200 : ℝ) / (2 : ℝ)) ((1 / 1200 : ℝ) / ((4
     : ℝ) * ((↑Cl : ℝ) + (1 : ℝ) + (1 : ℝ))) / (4 : ℝ))
-
 
 open scoped Classical in
 private def RetainedMinHoldsStage4Statement : Prop :=
@@ -653,7 +648,6 @@ private def RetainedMinHoldsStage4Statement : Prop :=
     dyadicGridCell B.G I.1 I.2 ⊆ dyadicGridCell B.G c.1 c.2} with (B.active δa) I,
     dyadicGridLength B.G I.1 * min B.η ‖B.Hf I (B.z p.castSucc I)‖ ≤ Cfin * η₀ ^ cs *
     ((1 : ℝ) + finiteDepthConstant κ q N) * dyadicGridLength B.G B.R.1
-
 
 open scoped Classical in
 private def RetainedMinHoldsStage3Statement : Prop :=
@@ -931,7 +925,6 @@ private def RetainedMinHoldsStage3Statement : Prop :=
     dyadicGridLength B.G I.1 * min B.η ‖B.Hf I (B.z p.castSucc I)‖ ≤ Cfin * η₀ ^ cs *
     ((1 : ℝ) + finiteDepthConstant κ q N) * dyadicGridLength B.G B.R.1
 
-
 open scoped Classical in
 private def RetainedMinHoldsStage2Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -1179,7 +1172,6 @@ private def RetainedMinHoldsStage2Statement : Prop :=
     dyadicGridLength B.G I.1 * min B.η ‖B.Hf I (B.z p.castSucc I)‖ ≤ Cfin * η₀ ^ cs *
     ((1 : ℝ) + finiteDepthConstant κ q N) * dyadicGridLength B.G B.R.1
 
-
 open scoped Classical in
 private def RetainedMinHoldsStage1Statement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -1413,7 +1405,6 @@ private def RetainedMinHoldsStage1Statement : Prop :=
     dyadicGridCell B.G I.1 I.2 ⊆ dyadicGridCell B.G c.1 c.2} with (B.active δa) I,
     dyadicGridLength B.G I.1 * min B.η ‖B.Hf I (B.z p.castSucc I)‖ ≤ Cfin * η₀ ^ cs *
     ((1 : ℝ) + finiteDepthConstant κ q N) * dyadicGridLength B.G B.R.1
-
 
 private theorem retainedMin_holds_nHedτ₂
     (κ : LocalKernelClass)
@@ -1765,9 +1756,6 @@ private theorem retainedMin_holds_hcbY
   have h1' : A.colBudget ≤ 2 + Fintype.card B.L * (1 + B.Dc + Mpad) := h1
   linarith only [h1', h21, h22, h23, h3, h4]
 
-
-
-
 private theorem retainedMin_holds_nh3 : RetainedMinHoldsNh3Statement := by
   classical
   intro κ c' Cb θ₀ b Cl hCl1 α Mpad L₄ hMpad0 hL₄0 k B p hk3 η₀ A bf Y x5 P hPlo hPup hP1 fp hexpd
@@ -1798,8 +1786,6 @@ private theorem retainedMin_holds_nh3 : RetainedMinHoldsNh3Statement := by
           Real.exp ((1 + Real.log (2 * (k : ℝ))) ^ 2) ^ Cl := by gcongr
     _ ≤ _ := x5
     _ ≤ _ := hP8
-
-
 
 private theorem retainedMin_holds_nB6 : RetainedMinHoldsNB6Statement := by
   classical
@@ -1835,12 +1821,10 @@ private theorem retainedMin_holds_nB6 : RetainedMinHoldsNB6Statement := by
   rw [Real.log_mul (by norm_num) (Real.exp_pos _).ne', Real.log_exp] at h2
   exact h2.trans p10
 
-
-
 private theorem retainedMin_holds_nB12 : RetainedMinHoldsNB12Statement := by
   classical
-  intro κ c' Cb θ₀ hc' Dst hst Ca b m c₃ c C k₀ Dg a₀ cc Cl K₀ Mpad L₄ lW cH hMpad0 K k B p hk3 δa
-    A bf hk1 Y hV hHsB Tc hTcA Mp hMp1 hmultTc τ₃ hτ₃def hτ0 hτ1 fp cat Kt n Tmax hLc hmH hMc hHed
+  intro κ c' Cb hc' Dst hst Ca b m c₃ c C k₀ Dg a₀ cc Cl K₀ Mpad L₄ lW cH hMpad0 K k B p hk3 δa A
+    bf hk1 Y hV hHsB Tc hTcA Mp hMp1 hmultTc τ₃ hτ₃def hτ0 hτ1 fp cat Kt n Tmax hLc hmH hMc hHed
     hcolr hKh hn0 hgrow hcapH hcats hn4 hnle hkC0 hkm0 hY0 hHs2 hbase hl6 nHedV nHedτ₂ nHedτ'
     hHedge AD
   have! hHedp : 0 < fp.Hed := lt_of_lt_of_le (Real.exp_pos _) hHedge
@@ -1874,8 +1858,6 @@ private theorem retainedMin_holds_nB12 : RetainedMinHoldsNB12Statement := by
     rw [hlτ]
     refine hbase _ (by linarith only [hHs2, hlog0, hkc₃]) ?_
     linarith only [hHsB, hlog, hY0, hkC0, hkm0, hl6]
-
-
 
 private theorem retainedMin_holds_nh4 : RetainedMinHoldsNh4Statement := by
   classical
@@ -1931,8 +1913,6 @@ private theorem retainedMin_holds_nh4 : RetainedMinHoldsNh4Statement := by
           (9 * (Real.exp (Y + 3) + 1) * τ₃ * 16)) := by
         rw [add_assoc (Real.exp (2 * α * (k : ℝ) ^ θ₀)) 1 1, one_add_one_eq_two]
     _ ≤ _ := x6
-
-
 
 private theorem retainedMin_holds_stage_4 : RetainedMinHoldsStage4Statement := by
   classical
@@ -2039,8 +2019,6 @@ private theorem retainedMin_holds_stage_4 : RetainedMinHoldsStage4Statement := b
         (dyadicGridLength A.G A.R.1) + Mp * W * dyadicGridLength A.G A.R.1 := by ring
     _ ≤ _ := hfin
 
-
-
 private theorem retainedMin_holds_stage_3 : RetainedMinHoldsStage3Statement := by
   classical
   intro κ c' Cb θ₀ hc' Dst hst Ca b m hmult c₃ c C k₀ Dg a₀ cc hccdef hcc1 Cl K₀ hCl1 hleaf q hq2
@@ -2101,9 +2079,10 @@ private theorem retainedMin_holds_stage_3 : RetainedMinHoldsStage3Statement := b
   have! nB11 : (A.dBnd : ℝ) ≤ (k : ℝ) ^ cc := by linarith only [hdB, p13]
   have! nB12 : Real.log AD.fp.Hed ≤ (k : ℝ) ^ cc := by
     expose_names
-    exact @retainedMin_holds_nB12 κ c' Cb θ₀ hc' Dst hst Ca C k₀ Cl K₀ Mpad hMpad0 K k B p hk3 bf
-      hk1 hV hHsB hTcA hMp1 hmultTc hτ₃def hτ0 hτ1 fp cat Kt n Tmax hLc hmH hMc hHed hcolr hKh hn0
-      hgrow hcapH hcats hn4 hnle hkC0 hkm0 hY0 hHs2 hbase hl6 nHedV nHedτ₂ nHedτ' hHedge
+    exact @retainedMin_holds_nB12 κ c' Cb hc' Dst hst Ca C k₀ Cl K₀ Mpad hMpad0 K k B p hk3 bf hk1
+      hV hHsB hTcA hMp1 hmultTc hτ₃def hτ0 hτ1 fp cat Kt n Tmax hLc hmH hMc hHed hcolr
+      hKh hn0 hgrow hcapH hcats hn4 hnle hkC0 hkm0 hY0 hHs2 hbase hl6 nHedV nHedτ₂
+      nHedτ' hHedge
   expose_names
   exact @retainedMin_holds_stage_4 κ c' Cb θ₀ hc' Dst hst Ca hmult C k₀ hccdef Cl K₀ hCl1 hleaf q
     hq2 hq3 hq hcs hCq0 Mpad hMpad hMpad0 hL₄0 K k N d₀ B hwin p hk3 hK₀k hanc hS2 hcol hpairs hη
@@ -2111,8 +2090,6 @@ private theorem retainedMin_holds_stage_3 : RetainedMinHoldsStage3Statement := b
     hτ1 hPlo hPup hP1 hMpup fp cat Kt n Tmax hfpP hLc hmH hMc hHed hcolr hKh hn0 hgrow hcapH hcats
     hloc hexpd nHedV nHedτ₂ nHedτ' hHedge x3 x4 x6 hδdef hρdef hkcc0 hkDk nδ8 ndδ nδN nρ0 h2F nρ1
     nkD nB6 nB7 nB8 nB9 nB10 nB11 nB12
-
-
 
 private theorem retainedMin_holds_stage_2 : RetainedMinHoldsStage2Statement := by
   classical
@@ -2239,8 +2216,6 @@ private theorem retainedMin_holds_stage_2 : RetainedMinHoldsStage2Statement := b
     hHs2 hbase hl6 nHedV nHedτ₂ nHedτ' hHedge x3 x4 x6 hδdef hρdef hkcc1 hkcc0 hkDk nδ8 hdB ndδ
     nδN nρ0 h2F
 
-
-
 private theorem retainedMin_holds_stage_1 : RetainedMinHoldsStage1Statement := by
   classical
   intro κ c' Cb θ₀ hc' Dst hst Ca hCa b m hmult c₃ c C k₀ hatt Dg a₀ cc hccdef hcc1 Cl K₀ hCl1
@@ -2365,7 +2340,6 @@ private theorem retainedMin_holds_stage_1 : RetainedMinHoldsStage1Statement := b
     hY1 hcbY hV hLcB hfuelB hmaxB hHsB hcb2 hTc hTcA hMp1 hMpA hmultTc x6 hτ₃def hτ0 hτ1 hPlo hPup
     hP1 nA4 hMpup fp cat Kt n Tmax hfpP hLc hmH hHmax hMc hHed hcolr hKh hn0 hgrow hcapH hcats
     hloc hnpos hn4 hnle hsqle
-
 
 open Classical in
 /-- Blueprint lines 2838-2888 on one root (prop:normalized, `eq:before-absorption` and the choice

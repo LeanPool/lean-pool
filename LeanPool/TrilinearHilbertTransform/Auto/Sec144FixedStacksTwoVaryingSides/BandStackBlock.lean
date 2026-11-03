@@ -39,16 +39,7 @@ private def BandStackBlockHlocStatement.{u_1} : Prop :=
     (Ug : Finset (ℤ × ℤ))
     (off : ℤ × ℤ → ℕ)
     (_ : ∀ (J : ℤ × ℤ), ∀ m < K, J.1 = A.R.1 + (↑(K * β + m) : ℤ) → off J = m)
-    (Ah : ℕ → ℤ → ↥(ColumnL2 V) →L[ℂ] ↥(ColumnL2 V))
-    (Cj : ℝ)
-    (_ : ∀ (n : ℕ) {ι : Type} [Fintype ι] (r t : ι → ℕ), (∀ (i : ι), r i ≤ t i) → (∀ (i i' :
-      ι), i ≠ i' → Disjoint (Finset.Ioc (r i) (t i)) (Finset.Ioc (r i') (t i'))) → ∀ (Ec
-      : ι → Finset (ℤ × ℤ)), (∀ (i : ι), ∀ J ∈ Ec i, J ∈ A.cells) → ∀ (x : ↥(ColumnL2
-      V)), ∑ i : ι, ‖(columnL2Restriction (⋃ J ∈ Ec i, dyadicGridCell A.G J.1 J.2)
-      (Finset.measurableSet_biUnion (Ec i) fun (J : ℤ × ℤ) (_ : J ∈ Ec i) =>
-      dyadicGridCell_measurable A.G J.1 J.2) : ↥(ColumnL2 V) → ↥(ColumnL2 V)) ((Ah n
-      (A.R.1 + (↑(t i) : ℤ)) - Ah n (A.R.1 + (↑(r i) : ℤ)) : ↥(ColumnL2 V) → ↥(ColumnL2
-      V)) x)‖ ^ (2 : ℕ) ≤ Cj * ‖x‖ ^ (2 : ℕ)),
+    (Ah : ℕ → ℤ → ↥(ColumnL2 V) →L[ℂ] ↥(ColumnL2 V)),
   let U' : Finset (ℤ × ℤ) :=
     {I ∈ Ug | posAct N k (off I)}
   let sel : ℤ × ℤ → ℕ :=
@@ -97,7 +88,6 @@ private def BandStackBlockHlocStatement.{u_1} : Prop :=
     ↥(ColumnL2 V)) (Y q k')) = (Eq q : ↥(ColumnL2 V) → ↥(ColumnL2 V)) ((At q n - Ar q
     n : ↥(ColumnL2 V) → ↥(ColumnL2 V)) (X k' (π k' q)))
 
-
 open scoped Classical in
 private def BandStackBlockStage1Statement.{u_1} : Prop :=
   ∀ (κ' : LocalKernelClass)
@@ -118,14 +108,6 @@ private def BandStackBlockStage1Statement.{u_1} : Prop :=
     (Ah : ℕ → ℤ → ↥(ColumnL2 V) →L[ℂ] ↥(ColumnL2 V))
     (Cj : ℝ)
     (_ : (0 : ℝ) ≤ Cj)
-    (_ : ∀ (n : ℕ) {ι : Type} [Fintype ι] (r t : ι → ℕ), (∀ (i : ι), r i ≤ t i) → (∀ (i i' :
-      ι), i ≠ i' → Disjoint (Finset.Ioc (r i) (t i)) (Finset.Ioc (r i') (t i'))) → ∀ (Ec
-      : ι → Finset (ℤ × ℤ)), (∀ (i : ι), ∀ J ∈ Ec i, J ∈ A.cells) → ∀ (x : ↥(ColumnL2
-      V)), ∑ i : ι, ‖(columnL2Restriction (⋃ J ∈ Ec i, dyadicGridCell A.G J.1 J.2)
-      (Finset.measurableSet_biUnion (Ec i) fun (J : ℤ × ℤ) (_ : J ∈ Ec i) =>
-      dyadicGridCell_measurable A.G J.1 J.2) : ↥(ColumnL2 V) → ↥(ColumnL2 V)) ((Ah n
-      (A.R.1 + (↑(t i) : ℤ)) - Ah n (A.R.1 + (↑(r i) : ℤ)) : ↥(ColumnL2 V) → ↥(ColumnL2
-      V)) x)‖ ^ (2 : ℕ) ≤ Cj * ‖x‖ ^ (2 : ℕ))
     (Wg : ↥(ColumnL2 V))
     (Sa : ℤ → ↥(ColumnL2 V)),
   let U' : Finset (ℤ × ℤ) :=
@@ -202,13 +184,10 @@ private def BandStackBlockStage1Statement.{u_1} : Prop :=
     + (1 : ℕ)) + (2 : ℕ) ^ (↑k' : ℕ))) : ℤ)) - Zg (A.R.1 + (↑(K * β + q' * (2 : ℕ) ^
     ((↑k' : ℕ) + (1 : ℕ))) : ℤ)))‖ ^ (2 : ℕ)))
 
-
-
-
 private theorem bandStack_block_hloc : BandStackBlockHlocStatement := by
   classical
-  intro κ' c₀ A V inst Zg K N k β Ug off hoff Ah Cj hJ U' sel Qs hQs dt dr hIdep hdrt hcellt Eq At
-    Ar hcommT hN Y π Lf X k' q hq hb n
+  intro κ' c₀ A V inst Zg K N k β Ug off hoff Ah U' sel Qs hQs dt dr hIdep hdrt hcellt Eq At Ar
+    hcommT hN Y π Lf X k' q hq hb n
   have hlt := hQs q hq
   have hpos := posInt_le hb
   simp only [Y, hb, ite_true, X]
@@ -258,11 +237,9 @@ private theorem bandStack_block_hloc : BandStackBlockHlocStatement := by
       exact ((hdrt q).trans h1).trans (hN I hI)
 -- the used inner positions are inner positions of the pseudo-uses
 
-
-
 private theorem bandStack_block_stage_1 : BandStackBlockStage1Statement := by
   classical
-  intro κ' c₀ A V inst Zg K N k hk β Ug off hoff P Ah Cj hCj hJ Wg Sa U' sel Qs hQs db hSa dt dr
+  intro κ' c₀ A V inst Zg K N k hk β Ug off hoff P Ah Cj hCj Wg Sa U' sel Qs hQs db hSa dt dr
     hIdep hdrt hcellt Eq At Ar hcomm' hJ' hbes' hcommT hN Wr hW Y hY
   set! π : ℕ → ℕ → ℕ := fun k' q => q * 2 ^ ((k : ℕ) + 1) / 2 ^ (k' + 1)
   set! Lf : ℕ → Finset (ℤ × ℤ) := fun k' =>
@@ -275,8 +252,8 @@ private theorem bandStack_block_stage_1 : BandStackBlockStage1Statement := by
   have hloc : ∀ k', ∀ q ∈ Qs, (q * 2 ^ ((k : ℕ) + 1)).testBit k' = true → ∀ n,
       Eq q ((At q n - Ar q n) (Y q k')) = Eq q ((At q n - Ar q n) (X k' (π k' q))) := by
     expose_names
-    exact @bandStack_block_hloc κ' c₀ A V inst Zg K N k β Ug off hoff Ah Cj hJ hQs hIdep hdrt
-      hcellt hcommT hN
+    exact @bandStack_block_hloc κ' c₀ A V inst Zg K N k β Ug off hoff Ah hQs hIdep hdrt hcellt
+      hcommT hN
   have hinner : ∀ k', ∀ q ∈ Qs, (q * 2 ^ ((k : ℕ) + 1)).testBit k' = true →
       π k' q ∈ (Lf k').image fun J => off J / 2 ^ (k' + 1) := by
     intro k' q hq hb
@@ -341,7 +318,6 @@ private theorem bandStack_block_stage_1 : BandStackBlockStage1Statement := by
             (le_of_eq ?_)
           simp only [X]
           rw [hf]
-
 
 open Classical in
 /-- `band_block` for the uses of one group in one block, with the ancestor unions of the
@@ -503,8 +479,8 @@ theorem bandStack_block (hanc : A.AncClosed) {V : Type*} [Fintype V] (Zg : ℤ �
     rw [h]
     abel
   expose_names
-  exact @bandStack_block_stage_1 κ' c₀ A V inst Zg K N k hk β Ug off hoff P Ah Cj hCj hJ Wg Sa hQs
-    hSa hIdep hdrt hcellt hcomm' hJ' hbes' hcommT hN hW hY
+  exact @bandStack_block_stage_1 κ' c₀ A V inst Zg K N k hk β Ug off hoff P Ah Cj hCj Wg Sa hQs
+      hSa hIdep hdrt hcellt hcomm' hJ' hbes' hcommT hN hW hY
 
 open Classical in
 /-- Blueprint lines 2408-2423 (`eq:stack-energy` for the banded transferred side, one level

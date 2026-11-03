@@ -50,7 +50,6 @@ private def ThreeCorePrincipalConclusion4Statement : Prop :=
     (_ : (1 : ℕ) ≤ D.S.Q0)
     (_ : D.SP = D.S.sideParams δs)
     (_ : D.Stab)
-    (_ : D.S.Dstar ^ (600 : ℕ) ≤ (2 : ℝ) ^ D.S.K)
     (I : ℤ × ℤ)
     (_ : I ∈ A.cells)
     (G : bf.Grp)
@@ -104,12 +103,9 @@ private def ThreeCorePrincipalConclusion4Statement : Prop :=
     (D.toLeaf.sv l G I) J Aw Iw * ∏ j : Fin (4 : ℕ), if j = l then (1 : ℝ) else (6 :
     ℝ) * D.clsSize G I j (p j)
 
-
-
-
 private theorem three_core_principal_conclusion_4 : ThreeCorePrincipalConclusion4Statement := by
   classical
-  intro κ' c₀ A bf fp D Cj CA CT CK δs W hV hCA hCT hd2 hD hB hQ hSP hstab hK I hI G J hDg Kf hKf
+  intro κ' c₀ A bf fp D Cj CA CT CK δs W hV hCA hCT hd2 hD hB hQ hSP hstab I hI G J hDg Kf hKf
     hQBf hεw hcard hΛ hJ hδs hδ16 hδJ l anc hanc xs hxs Aw Iw H hρ0 hdimj hδcj hσl hσk htor n a
   -- the moments over the words and final heights
   have hZ : 0 ≤ ∑ h ∈ H, (H.card : ℝ)⁻¹ *
@@ -227,7 +223,6 @@ private theorem three_core_principal_conclusion_4 : ThreeCorePrincipalConclusion
             D.clsSize G I j (p j) ^ 2 := mul_nonneg (pow_nonneg hρ0 _) (sq_nonneg _)
         refine h2.trans ?_
         nlinarith only [h0]
-
 
 open Classical in
 /-- Blueprint lines 2463-2582 for the three-core pattern with side role `l` on a leaf cell of the
@@ -371,8 +366,8 @@ theorem three_core_principal {Cj CA CT CK : ℕ} {δs W : ℝ} (hV : D.S.Valid C
     split_ifs <;> ring
   · expose_names
     exact @three_core_principal_conclusion_4 κ' c₀ A bf fp D Cj CA CT CK δs W hV hCA hCT hd2 hD hB
-      hQ hSP hstab hK I hI G J hDg Kf hKf hQBf hεw hcard hΛ hJ hδs hδ16 hδJ l anc hanc xs hxs Aw
-      Iw hρ0 hdimj hδcj hσl hσk htor n a
+      hQ hSP hstab I hI G J hDg Kf hKf hQBf hεw hcard hΛ hJ hδs hδ16 hδJ l anc hanc xs
+      hxs Aw Iw hρ0 hdimj hδcj hσl hσk htor n a
 end SideInput
 
 end ActiveSetup.BasicFamilies.FamParams

@@ -32,7 +32,6 @@ private def NormalizedAbsorptionOfActiveFinalStage1Statement : Prop :=
     (c' : ℕ)
     (Cb : ℕ)
     (_ : (2 : ℕ) ≤ Aa)
-    (_ : (1 : ℕ) ≤ c')
     (q : ℝ)
     (cs : ℝ)
     (Cfin : ℝ)
@@ -182,15 +181,12 @@ private def NormalizedAbsorptionOfActiveFinalStage1Statement : Prop :=
   finiteDepthNumerator D ≤ (A + c * finiteDepthConstant κ q N) * dyadicGridLength G
     root.1
 
-
-
-
 private theorem normalizedAbsorption_of_activeFinal_stage_1 :
   NormalizedAbsorptionOfActiveFinalStage1Statement := by
   classical
-  intro κ c₂ Cc Aa θ₀ c' Cb hAa hc' q cs Cfin hCfin K hK Ct Ca Cr htot c Cq K₁ hstep K₃ K₄ k₁
-    hk₁K₁ hk₁K hk₁2 kk hkk E η₁ Φ Init hInit_def hE1 hη₁0 hInit0 A₀c hA₀c bn hbn_def bc hbc_def
-    hbn0 hbc0 hsum_bn hsum_bc htsum_bc A hA_def N D root G hsub f hnorm hCN1 hroot0 I₀ hI₀
+  intro κ c₂ Cc Aa θ₀ c' Cb hAa q cs Cfin hCfin K hK Ct Ca Cr htot c Cq K₁ hstep K₃ K₄ k₁ hk₁K₁
+    hk₁K hk₁2 kk hkk E η₁ Φ Init hInit_def hE1 hη₁0 hInit0 A₀c hA₀c bn hbn_def bc hbc_def hbn0
+    hbc0 hsum_bn hsum_bc htsum_bc A hA_def N D root G hsub f hnorm hCN1 hroot0 I₀ hI₀
   set! N' : ℕ := (D.firstDepth + N - root.1).toNat with hN'_def
   have hmemT : ∀ I ∈ D.cells, I ∈ dyadicFiniteTree G root N' := fun I hI => by
     refine (dyadicFiniteTree_mem_iff G root I N').mpr ⟨hsub I hI, ?_⟩
@@ -386,7 +382,6 @@ private theorem normalizedAbsorption_of_activeFinal_stage_1 :
     _ ≤ 55 * (A₀c * JJ) + (JJ * ∑' t : ℕ, (t : ℝ) * bn t + JJ * CN * c) := by linarith only [hc']
     _ = (A + c * CN) * JJ := by simp only [hA_def]; ring
 
-
 open Classical in
 /-- Blueprint prop:normalized (lines 2827-2904) from `eq:active-final`: the base reduction
 (`activeCellReduction`, every level), the depth-independent initial levels
@@ -505,10 +500,10 @@ theorem normalizedAbsorption_of_activeFinal (κ : LocalKernelClass) (hAF : Activ
   obtain ⟨I₀, hI₀⟩ := Finset.nonempty_iff_ne_empty.mpr hDe
   -- the finite tree below the root containing the used cells
   expose_names
-  exact @normalizedAbsorption_of_activeFinal_stage_1 κ c₂ Cc Aa θ₀ c' Cb hAa hc' q cs Cfin hCfin K
-    hK Ct Ca Cr htot c Cq K₁ hstep K₃ K₄ hk₁K₁ hk₁K hk₁2 hkk hInit_def hE1 hη₁0 hInit0 hA₀c
-    hbn_def hbc_def hbn0 hbc0 hsum_bn hsum_bc htsum_bc hA_def N D root hsub hnorm hCN1 hroot0 I₀
-    hI₀
+  exact @normalizedAbsorption_of_activeFinal_stage_1 κ c₂ Cc Aa θ₀ c' Cb hAa q cs Cfin hCfin K hK
+      Ct Ca Cr htot c Cq K₁ hstep K₃ K₄ hk₁K₁ hk₁K hk₁2 hkk hInit_def hE1 hη₁0 hInit0 hA₀c
+      hbn_def hbc_def hbn0 hbc0 hsum_bn hsum_bc htsum_bc hA_def N D root hsub hnorm hCN1
+      hroot0 I₀ hI₀
 
 /-- Blueprint thm:uniform-local from `eq:active-final`: every admissible class has `q ∈ (2, 3)`
 with `sup_N C_N(q) < ∞`. -/
@@ -1239,8 +1234,6 @@ theorem mul_exp_neg_le {X t u : ℝ} (h : 4 * X * Real.exp u ≤ Real.exp t) :
         field_simp
     _ ≤ 1 / (4 * Real.exp u) := div_le_div_of_nonneg_right h2 h3.le
     _ = (Real.exp u)⁻¹ / 4 := by field_simp
-
-
 
 end
 end TrilinearHT.Auto

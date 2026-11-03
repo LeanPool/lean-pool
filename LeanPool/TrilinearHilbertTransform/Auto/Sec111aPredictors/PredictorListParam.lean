@@ -24,8 +24,7 @@ open scoped FourierTransform ComplexConjugate
 
 open scoped Classical in
 private def PredictorListParamConclusion13Statement : Prop :=
-  ∀ (c₀ : ℕ)
-    (_ : (1 : ℕ) ≤ c₀)
+  ∀
     (κ : LocalKernelClass)
     (Ds : ℕ)
     (Cr : ℕ)
@@ -65,7 +64,6 @@ private def PredictorListParamConclusion13Statement : Prop :=
     Fintype.piFinset fun (_ : Fin (d + e)) => boundedRationalEnumeration ⌊Bσ⌋₊
   ∀ (_ : σset = Fintype.piFinset fun (_ : Fin (d + e)) => boundedRationalEnumeration ⌊Bσ⌋₊),
   (↑(R ×ˢ Mset ×ˢ σset).card : ℝ) ≤ pdCard κ (d + e) Dc (DJ (1 : ℕ)) Ds Cr H B
-
 
 open scoped Classical in
 private def PredictorListParamCatalogTailBoundStatement : Prop :=
@@ -188,7 +186,6 @@ private def PredictorListParamCatalogTailBoundStatement : Prop :=
     + e + (d + e)) → ℤ)), if p ∈ P then (0 : ℝ) else ‖coeffI I q p‖ * ‖sepP I q p‖) ≤
     Real.exp (-B) / (3 : ℝ) * (Ka * Kb * Na * Nb)
 
-
 open scoped Classical in
 private def PredictorListParamCatalogRegroupingStatement : Prop :=
   ∀ (κ : LocalKernelClass)
@@ -305,11 +302,9 @@ private def PredictorListParamCatalogRegroupingStatement : Prop :=
     ‖localProgressionForm (len I) (w I) (f I) - ∑ q ∈ R, if ret q (len I) then (4 : ℂ)
     * cf q * ∑ p ∈ P, coeffI I q p * sepP I q p else (0 : ℂ)‖
 
-
 open scoped Classical in
 private def PredictorListParamConclusion15Statement : Prop :=
-  ∀ (c₀ : ℕ)
-    (_ : (1 : ℕ) ≤ c₀)
+  ∀
     (κ : LocalKernelClass)
     (Ds : ℕ)
     (Cr : ℕ)
@@ -383,11 +378,9 @@ private def PredictorListParamConclusion15Statement : Prop :=
       ℓ.1 * ∑ p ∈ P with σf ℓ.1 r p = ℓ.2.2, coeff ℓ.1 r p else (0 : ℂ)),
   ∀ (r : ℝ), ∑ ℓ ∈ R ×ˢ Mset ×ˢ σset, ‖coefℓ ℓ r‖ ≤ (4 : ℝ) * Es * E
 
-
 open scoped Classical in
 private def PredictorListParamConclusion17Statement : Prop :=
   ∀ (c₀ : ℕ)
-    (_ : (1 : ℕ) ≤ c₀)
     (κ : LocalKernelClass)
     (c₁ : ℕ)
     (Ds : ℕ)
@@ -549,11 +542,9 @@ private def PredictorListParamConclusion17Statement : Prop :=
     ℓ)) ℓ) y‖ ≤ Real.exp (-B) * Ka * Kb * √(∫ (y : ℝ) in dyadicGridCell G J.1 J.2, ‖Fa
     y‖ ^ (2 : ℕ)) * √(∫ (y : ℝ) in dyadicGridCell G J.1 J.2, ‖Fb y‖ ^ (2 : ℕ))
 
-
 open scoped Classical in
 private def PredictorListParamStage1Statement : Prop :=
   ∀ (c₀ : ℕ)
-    (_ : (1 : ℕ) ≤ c₀)
     (κ : LocalKernelClass)
     (c₁ : ℕ)
     (Ds : ℕ)
@@ -708,13 +699,10 @@ private def PredictorListParamStage1Statement : Prop :=
     ℓ) y‖ ≤ Real.exp (-B) * Ka * Kb * √(∫ (y : ℝ) in dyadicGridCell G J.1 J.2, ‖Fa y‖
     ^ (2 : ℕ)) * √(∫ (y : ℝ) in dyadicGridCell G J.1 J.2, ‖Fb y‖ ^ (2 : ℕ))
 
-
-
-
 private theorem predictor_list_param_conclusion_13 : PredictorListParamConclusion13Statement := by
   classical
-  intro c₀ hc κ Ds Cr Dc DJ d e H B τ size T₀ hT₀ hT₀1 Qs hQscard R hR E hE K₀ hK₀ Bσ hBσ Mset
-    hMset σset hσset
+  intro κ Ds Cr Dc DJ d e H B τ size T₀ hT₀ hT₀1 Qs hQscard R hR E hE K₀ hK₀ Bσ hBσ Mset hMset
+    σset hσset
   -- the size of the list
   have hE1' : 1 ≤ E := one_le_pdE Dc Ds Cr H B
   have hfE : 1 ≤ ⌊E⌋₊ := Nat.le_floor (by exact_mod_cast hE1')
@@ -748,8 +736,6 @@ private theorem predictor_list_param_conclusion_13 : PredictorListParamConclusio
         ((3 * (⌊E⌋₊ : ℝ) ^ 2) ^ ((d + e) * (d + e)) * (3 * (⌊Bσ⌋₊ : ℝ) ^ 2) ^ (d + e)) := by
         gcongr
     _ = _ := by ring
-
-
 
 private theorem predictor_list_param_catalog_tail_bound :
   PredictorListParamCatalogTailBoundStatement := by
@@ -791,8 +777,6 @@ private theorem predictor_list_param_catalog_tail_bound :
     _ = (4 * Es * W) * (Ka * Kb * Na * Nb) := by ring
     _ ≤ _ := mul_le_mul_of_nonneg_right
         (pd_catalog_budget κ (d + e) Dc (DJ 1) Ds Cr (B := B) hH1) hK
-
-
 
 private theorem predictor_list_param_catalog_regrouping :
   PredictorListParamCatalogRegroupingStatement := by
@@ -846,13 +830,11 @@ private theorem predictor_list_param_catalog_regrouping :
   have hq : ℓ.1 ∈ R := (Finset.mem_product.mp hℓ).1
   simp only [hcoefℓ, hq, hr0, true_and]
 
-
-
 private theorem predictor_list_param_conclusion_15 : PredictorListParamConclusion15Statement := by
   classical
   -- the coefficient norm
-  intro c₀ hc κ Ds Cr Dc DJ d e H B τ cf φt size hcs Es hcsum hEs T₀ Qs R M₀ δ A4 ret E hE E1 lamf
-    Mf σf coeff hprops K₀ P Bσ Mset σset coefℓ hcoefℓ r
+  intro κ Ds Cr Dc DJ d e H B τ cf φt size hcs Es hcsum hEs T₀ Qs R M₀ δ A4 ret E hE E1 lamf Mf σf
+    coeff hprops K₀ P Bσ Mset σset coefℓ hcoefℓ r
   have hinner : ∀ q ∈ R, ∑ x ∈ Mset ×ˢ σset, ‖coefℓ (q, x) r‖ ≤ 4 * ‖cf q‖ * E := by
     intro q hq
     by_cases hc : 0 < r ∧ ret q r
@@ -917,15 +899,13 @@ private theorem predictor_list_param_conclusion_15 : PredictorListParamConclusio
           hcsum) (by have := one_le_pdE Dc Ds Cr H B; positivity)
     _ = 4 * pdEs Ds H * pdE Dc Ds Cr H B := by rw [hE, hEs]; ring
 
-
-
 private theorem predictor_list_param_conclusion_17 : PredictorListParamConclusion17Statement := by
   classical
   -- the error bound
-  intro c₀ hc κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb
-    φt size hexpS hbdd hsize1 hcs Es hcomp htail hcsum hEs T₀ hT₀1 Qs R hnotR H₀ hH₀1 hcompR M₀ δ
-    hδ A4 ret hret E E1 hE1d lamf Mf σf coeff hprops K₀ P Bσ Mset σset lamℓ νℓ coefℓ hcoefℓ G J S
-    hSJ w hw Fa Fb za zb Ka Kb hKa hKb hza hzb hEa hEb hzam hzbm hza2 hzb2 f hfa hfi hfk hfb
+  intro c₀ κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb φt
+    size hexpS hbdd hsize1 hcs Es hcomp htail hcsum hEs T₀ hT₀1 Qs R hnotR H₀ hH₀1 hcompR M₀ δ hδ
+    A4 ret hret E E1 hE1d lamf Mf σf coeff hprops K₀ P Bσ Mset σset lamℓ νℓ coefℓ hcoefℓ G J S hSJ
+    w hw Fa Fb za zb Ka Kb hKa hKb hza hzb hEa hEb hzam hzbm hza2 hzb2 f hfa hfi hfk hfb
   have := hτc
   have hde : 1 ≤ d + e := by omega
   set! len : ℤ × ℤ → ℝ := fun I => dyadicGridLength G I.1 with hlen
@@ -1122,13 +1102,11 @@ private theorem predictor_list_param_conclusion_17 : PredictorListParamConclusio
   refine (add_le_add (add_le_add hT1 hT2) hT3).trans (le_of_eq ?_)
   ring
 
-
-
 private theorem predictor_list_param_stage_1 : PredictorListParamStage1Statement := by
   classical
-  intro c₀ hc κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb
-    φt size hexpS hbdd hsize1 hcs Es hcomp htail hcsum hEs T₀ hT₀ hT₀1 Qs hQscard R hR hnotR H₀
-    hH₀1 hcompR M₀ δ hδ A4 ret hret E hE E1 hE1d lamf Mf σf coeff hprops K₀ hK₀
+  intro c₀ κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb φt
+    size hexpS hbdd hsize1 hcs Es hcomp htail hcsum hEs T₀ hT₀ hT₀1 Qs hQscard R hR hnotR H₀ hH₀1
+    hcompR M₀ δ hδ A4 ret hret E hE E1 hE1d lamf Mf σf coeff hprops K₀ hK₀
   let P : Finset (ℕ × (Fin (d + e + (d + e)) → ℤ)) :=
     Finset.range ⌊E⌋₊ ×ˢ frequencyTruncationSet (d + e + (d + e)) K₀
   intro Bσ hBσ Mset hMset
@@ -1148,8 +1126,8 @@ private theorem predictor_list_param_stage_1 : PredictorListParamStage1Statement
     R ×ˢ (Mset ×ˢ σset), fun ℓ => modulateQuadraticChart (φa ℓ.1) (-νℓ ℓ),
     fun ℓ => modulateQuadraticChart (φb ℓ.1) (νℓ ℓ), lamℓ, coefℓ, ?_, ?_, ?_, ?_, ?_⟩
   · expose_names
-    exact @predictor_list_param_conclusion_13 c₀ hc κ Ds Cr Dc DJ d e H B τ size hT₀ hT₀1 Qs
-      hQscard hR hE hK₀ hBσ hMset hσset
+    exact @predictor_list_param_conclusion_13 κ Ds Cr Dc DJ d e H B τ size hT₀ hT₀1 Qs hQscard hR
+      hE hK₀ hBσ hMset hσset
   · -- bounded atoms of controlled complexity
     intro ℓ hℓ
     have hq : ℓ.1 ∈ R := (Finset.mem_product.mp hℓ).1
@@ -1158,8 +1136,8 @@ private theorem predictor_list_param_stage_1 : PredictorListParamStage1Statement
       modulateQuadraticChart_complexity (hcompR ℓ.1 hq).2.1 _,
       modulateQuadraticChart_complexity (hcompR ℓ.1 hq).2.2 _⟩
   · expose_names
-    exact @predictor_list_param_conclusion_15 c₀ hc κ Ds Cr Dc DJ d e H B τ cf φt size hcs hcsum
-      hEs Qs hE lamf Mf σf coeff hprops hcoefℓ
+    exact @predictor_list_param_conclusion_15 κ Ds Cr Dc DJ d e H B τ cf φt size hcs hcsum hEs Qs
+      hE lamf Mf σf coeff hprops hcoefℓ
   · -- quadratic size of the used terms
     intro ℓ r hne
     simp only [hcoefℓ] at hne
@@ -1172,10 +1150,9 @@ private theorem predictor_list_param_stage_1 : PredictorListParamStage1Statement
       exact (hprops ℓ.1 r hq hr hrt).2.2.1
     · exact absurd rfl hne
   · expose_names
-    exact @predictor_list_param_conclusion_17 c₀ hc κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k
-      b h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb φt size hexpS hbdd hsize1 hcs hcomp htail hcsum hEs
-      hT₀1 Qs hnotR hH₀1 hcompR hδ hret hE1d lamf Mf σf coeff hprops hcoefℓ
-
+    exact @predictor_list_param_conclusion_17 c₀ κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b
+      h1 h2 h3 h4 h5 h6 hH1 τ hτc cf φa φb φt size hexpS hbdd hsize1 hcs hcomp htail
+      hcsum hEs hT₀1 Qs hnotR hH₀1 hcompR hδ hret hE1d lamf Mf σf coeff hprops hcoefℓ
 
 /-- Blueprint lem:predictors, `eq:predictors` with explicit parameters: the product of two
 fixed bounded atoms in slots `i, k` of the local form is replaced by a finite list of terms
@@ -1328,9 +1305,10 @@ theorem predictor_list_param (c₀ : ℕ) (hc : 1 ≤ c₀) (κ : LocalKernelCla
     Fintype.piFinset (fun _ => Fintype.piFinset (fun _ => boundedRationalEnumeration ⌊E⌋₊))
     with hMset
   expose_names
-  exact @predictor_list_param_stage_1 c₀ hc κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2
-    h3 h4 h5 h6 hH1 τ hτc cf φa φb φt size hexpS hbdd hsize1 hcs hcomp htail hcsum hEs hT₀ hT₀1 Qs
-    hQscard hR hnotR hH₀1 hcompR hδ hret hE hE1d lamf Mf σf coeff hprops hK₀ hBσ hMset
+  exact @predictor_list_param_stage_1 c₀ κ c₁ Ds Cr hCr Dc DJ d e H B A A' hd he a i k b h1 h2 h3
+      h4 h5 h6 hH1 τ hτc cf φa φb φt size hexpS hbdd hsize1 hcs hcomp htail hcsum hEs hT₀
+      hT₀1 Qs hQscard hR hnotR hH₀1 hcompR hδ hret hE hE1d lamf Mf σf coeff hprops hK₀ hBσ
+      hMset
 
 /-! ### The quasipolynomial size of the predictor budget -/
 

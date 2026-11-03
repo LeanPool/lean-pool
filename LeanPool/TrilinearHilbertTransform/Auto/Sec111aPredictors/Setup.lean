@@ -2042,7 +2042,6 @@ theorem linear_phase_scale_sum_rows (G : RealDyadicGrid) (κ : LocalKernelClass)
     (hw : ∀ I ∈ S, IsAdmissibleLocalKernel κ (dyadicGridLeft G (cell I).1 (cell I).2)
       (dyadicGridLength G (cell I).1) (w I))
     {a b : Fin 4} (hab : a ≠ b) (γ : ι → ℝ)
-    (hinj : Set.InjOn (fun I => (cell I, γ I / ((b : ℝ) - (a : ℝ)))) S)
     {ψa ψb : ℝ → ℂ} (hψam : Measurable ψa) (hψbm : Measurable ψb)
     (hψa : ∀ y, ‖ψa y‖ ≤ 1) (hψb : ∀ y, ‖ψb y‖ ≤ 1)
     {za zb : ℤ × ℤ → ℝ → ℂ} {Ka Kb Na Nb : ℝ} (hKa : 0 ≤ Ka) (hKb : 0 ≤ Kb)
@@ -2066,7 +2065,6 @@ theorem linear_phase_scale_sum_rows (G : RealDyadicGrid) (κ : LocalKernelClass)
         (fun y => ψb y * zb (cell I) y)‖ ≤
       linearScaleConst κ * M * Ka * Kb * Na * Nb := by
   classical
-  clear hinj
   have hM0 : 0 ≤ M := (Finset.sum_nonneg fun p _ => bumpMultiplier_nonneg _).trans (hM 0)
   have hLn : ∀ v : Fin 2 → ℤ, 0 ≤ frequencyLength v := frequencyLength_nonneg
   obtain ⟨E, hE⟩ : ∃ E, E = kernelPointEnvelope κ 7 := ⟨_, rfl⟩
@@ -2251,7 +2249,7 @@ theorem linear_phase_scale_sum (G : RealDyadicGrid) (κ : LocalKernelClass) (J :
         Real.sqrt (∫ y in dyadicGridCell G J.1 J.2, ‖Fa y‖ ^ 2) *
         Real.sqrt (∫ y in dyadicGridCell G J.1 J.2, ‖Fb y‖ ^ 2) := by
   classical
-  refine linear_phase_scale_sum_rows G κ cell S w hw hab γ hinj hψam hψbm hψa hψb
+  refine linear_phase_scale_sum_rows G κ cell S w hw hab γ hψam hψbm hψa hψb
     hKa hKb (Real.sqrt_nonneg _) (Real.sqrt_nonneg _) hzam hzbm hzai hzbi hM ?_ ?_
   · intro v
     have hAa : ∀ I ∈ S, 2 * (kernelPlateau κ).K *
@@ -2270,8 +2268,9 @@ theorem linear_phase_scale_sum (G : RealDyadicGrid) (κ : LocalKernelClass) (J :
       (fun I => slotPairFreqA a b (dyadicGridLength G (cell I).1) v)
       (fun I => -(γ I / ((b : ℝ) - (a : ℝ)))) hinjA hψam hψa
       (two_le_charWaveConst κ (frequencyLength_nonneg v)) hAa hMa) hSJ
-    simpa only [Real.sq_sqrt (setIntegral_nonneg (dyadicGridCell_measurable G J.1 J.2)
-      fun _ _ => by positivity)] using h
+    rw [Real.sq_sqrt (setIntegral_nonneg (dyadicGridCell_measurable G J.1 J.2)
+      fun _ _ => by positivity)]
+    simpa only [waveRowFamily] using h
   · intro v
     have hAb : ∀ I ∈ S, 2 * (kernelPlateau κ).K *
         (1 + 6 * Real.pi * (dyadicGridLength G (cell I).1 *
@@ -2284,8 +2283,9 @@ theorem linear_phase_scale_sum (G : RealDyadicGrid) (κ : LocalKernelClass) (J :
       (fun I => slotPairFreqB a b (dyadicGridLength G (cell I).1) v)
       (fun I => γ I / ((b : ℝ) - (a : ℝ))) hinj hψbm hψb
       (two_le_charWaveConst κ (frequencyLength_nonneg v)) hAb hM) hSJ
-    simpa only [Real.sq_sqrt (setIntegral_nonneg (dyadicGridCell_measurable G J.1 J.2)
-      fun _ _ => by positivity)] using h
+    rw [Real.sq_sqrt (setIntegral_nonneg (dyadicGridCell_measurable G J.1 J.2)
+      fun _ _ => by positivity)]
+    simpa only [waveRowFamily] using h
 
 /-- A `1`-separated finite set of real numbers in `[-β, β]` has at most `2β + 2` points. -/
 theorem card_le_of_one_separated {ι : Type*} (s : Finset ι) (t : ι → ℝ) {β : ℝ} (hβ : 0 ≤ β)
