@@ -100,10 +100,14 @@ variable {V : Type} [Fintype V] {Tg : Type*}
 availability at the cells and the vertex (tag) of an available label at a cell (blueprint
 lines 1676-1680, 1805). -/
 structure OrigCols (V : Type) [Fintype V] (Tg : Type*) where
+  /-- Scalar function carried by each original column label. -/
   scalar : V → ℝ → ℂ
+  /-- Positive private-coordinate weight of each original column. -/
   weight : V → ℝ
   weight_pos : ∀ v, 0 < weight v
+  /-- Availability of each original column label at a dyadic cell. -/
   avail : ℤ × ℤ → V → Prop
+  /-- Cell-dependent chart tag of each original column. -/
   tag : ℤ × ℤ → V → Tg
 
 variable (G : RealDyadicGrid) (Mc : ℕ) (O : OrigCols V Tg)
@@ -399,13 +403,21 @@ end MainTests
 complement flags) and its base, a fixed augmented vector (a basic `B`, a basic side `U`, or for
 the helper rank a fixed vector-valued base). -/
 structure MainTest (Tg : Type*) (V : Type) [Fintype V] (Mc : ℕ) where
+  /-- Residual slot selected by the main catalog test. -/
   t : Fin 4
+  /-- Rank cutoff of the residual-slot main projection. -/
   r : ℕ
+  /-- Tag mask of the residual-slot main projection. -/
   M : Tg → Prop
+  /-- Number of historical high-slot factors in the main test. -/
   m : ℕ
+  /-- Rank cutoff for each historical main-test factor. -/
   hr : ℕ → ℕ
+  /-- Tag mask for each historical main-test factor. -/
   hM : ℕ → Tg → Prop
+  /-- Boolean choices specifying the historical main-test projection factors. -/
   θ : ℕ → Bool
+  /-- Column L² input containing original labels and finite catalog labels. -/
   base : ColumnL2 (V ⊕ Fin Mc)
 
 namespace MainTest
@@ -494,6 +506,7 @@ variable {κ : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ c₀)
 column budgets and charts, representing `B_l = P_{l,0} - P_{l,1}` on the cells of the setup
 (blueprint prop:base, lines 1607 and 1613). -/
 structure BasicFamilies where
+  /-- The two basic projection systems representing each of the four slots. -/
   P : Fin 4 → Fin 2 → BasicProjection A.G A.R 1
   budget : ∀ l j, (P l j).Ψ.D.budget ≤ A.colBudget
   charts : ∀ l j, (P l j).HasChartsOn ↑A.cells c₀ A.H
@@ -850,14 +863,22 @@ history bound, with all needed neighbor enlargements of the pads below `H_max` (
 1808). -/
 structure ActiveSetup.BasicFamilies.FamParams {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀}
     (bf : A.BasicFamilies) where
+  /-- Rational-height budget for edges between basic-family chart tags. -/
   Hed : ℝ
+  /-- Maximum graph radius used by the basic-family tag masks. -/
   Hmax : ℕ
+  /-- Primary coloring choices for basic-family labels in each round. -/
   ωp : Fin A.fcd0 → bf.Vtx → Fin (A.fcd0 + 1)
+  /-- High coloring choices for basic-family labels in each round. -/
   ωh : Fin A.fcd0 → bf.Vtx → Fin (A.fcd0 + 1)
+  /-- Positive number of search steps allocated to each basic-family level. -/
   P : ℕ
   hP : 0 < P
+  /-- Base catalog rank for the basic-family search. -/
   Lc : ℕ
+  /-- Number of main column labels available to the basic-family tests. -/
   Mc : ℕ
+  /-- Maximum number of historical factors in a basic-family test. -/
   mH : ℕ
   pads_le : 20 * P * (Lc + 1) + 31 * P + 2 ≤ Hmax
 

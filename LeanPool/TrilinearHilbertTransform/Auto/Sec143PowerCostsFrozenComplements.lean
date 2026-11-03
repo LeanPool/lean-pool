@@ -719,16 +719,24 @@ variable {κ' : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ' c₀}
 catalog, the helper rank, the leaf, its split, the slot `u` (a basic `U` side or a slot not used
 as a helper side) and the column representations of the slots. -/
 structure TTData (ap : A.AttemptParams) where
+  /-- Catalog of chart columns in each slot of the two-side estimate. -/
   cat : Fin 4 → List (CatCol A.Vtx)
+  /-- Helper catalog used for the two-side estimate. -/
   hcat : List (CatCol A.Vtx)
   hR : A.R ∈ A.cells
   hbc : ∀ l, ∀ x ∈ cat l, x.birth ∈ A.cells
   hbh : ∀ x ∈ hcat, x.birth ∈ A.cells
+  /-- Rank assigned to the helper catalog. -/
   rH : ℕ
+  /-- Index of the fixed search leaf. -/
   s : ℕ
+  /-- Core-side-error split of the fixed search leaf. -/
   D : ap.LeafSplit
+  /-- Distinguished slot carrying a basic side or excluded from the helper sides. -/
   u : Fin 4
+  /-- First family of basic projections representing the slots. -/
   P₁ : Fin 4 → BasicProjection A.G A.R 1
+  /-- Second family of basic projections representing the slots. -/
   P₂ : Fin 4 → BasicProjection A.G A.R 1
 
 end AttemptParams

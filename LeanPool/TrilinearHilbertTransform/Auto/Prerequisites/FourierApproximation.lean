@@ -215,7 +215,9 @@ theorem norm_fourierCoeff_le_of_periodic_derivative_bound
 
 noncomputable section TorusFourier
 
-local instance : MeasureSpace UnitAddCircle := ⟨AddCircle.haarAddCircle⟩
+/-- Normalized Haar measure used for the torus Fourier integral. -/
+local instance unitAddCircleFourierMeasureSpace : MeasureSpace UnitAddCircle :=
+  ⟨AddCircle.haarAddCircle⟩
 
 local instance : IsProbabilityMeasure (volume : Measure UnitAddCircle) :=
   inferInstanceAs (IsProbabilityMeasure AddCircle.haarAddCircle)
@@ -940,7 +942,9 @@ open MeasureTheory
 The torus results above are transported to `ℤⁿ`-periodic functions on `ℝⁿ`.
 Used in lem:chartfourier, lines 1361–1377. -/
 
-noncomputable local instance : MeasureSpace UnitAddCircle := ⟨AddCircle.haarAddCircle⟩
+/-- Normalized Haar measure used to transfer periodic functions to the torus. -/
+noncomputable local instance unitAddCirclePeriodicMeasureSpace : MeasureSpace UnitAddCircle :=
+  ⟨AddCircle.haarAddCircle⟩
 
 local instance : IsProbabilityMeasure (volume : Measure UnitAddCircle) :=
   inferInstanceAs (IsProbabilityMeasure AddCircle.haarAddCircle)

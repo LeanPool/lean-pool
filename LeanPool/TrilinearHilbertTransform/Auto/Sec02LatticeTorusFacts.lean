@@ -238,6 +238,7 @@ abbrev StandardTorus (d : ℕ) := Fin d → AddCircle (1 : ℝ)
 noncomputable def torusEvaluation {d : ℕ} (x : StandardTorus d) :
     (Fin d → ℤ) →ₗ[ℤ] AddCircle (1 : ℝ) := (Pi.basisFun ℤ (Fin d)).constr ℤ x
 
+/-- Pair an integer character with a point of the standard torus. -/
 noncomputable def torusPairing {d : ℕ} (n : Fin d → ℤ) (x : StandardTorus d) :
     AddCircle (1 : ℝ) := torusEvaluation x n
 
@@ -245,6 +246,7 @@ theorem torusPairing_eq_sum {d : ℕ} (n : Fin d → ℤ) (x : StandardTorus d) 
     torusPairing n x = ∑ i, n i • x i := by
   simp [torusPairing, torusEvaluation, Module.Basis.constr_apply_fintype]
 
+/-- Integer-linear character pairing on the standard torus. -/
 noncomputable def torusPairingMap {d : ℕ} (n : Fin d → ℤ) :
     StandardTorus d →ₗ[ℤ] AddCircle (1 : ℝ) where
   toFun := torusPairing n
@@ -321,6 +323,7 @@ def coordinateTorus (d r : ℕ) : Submodule ℤ (StandardTorus d) where
   add_mem' hx hy i hi := by simp [hx i hi, hy i hi]
   smul_mem' a x hx i hi := by simp [hx i hi]
 
+/-- Identify the coordinate subtorus with its unrestricted tail coordinates. -/
 noncomputable def coordinateTorusTailEquiv (d r : ℕ) :
     coordinateTorus d r ≃ₗ[ℤ] ({i : Fin d // r ≤ i.val} → AddCircle (1 : ℝ)) where
   toFun x i := x.val i.val
@@ -358,12 +361,14 @@ theorem continuous_coordinateTorusTailEquiv_symm (d r : ℕ) :
       (continuous_const : Continuous (fun _ : {i : Fin d // r ≤ i.val} → AddCircle (1 : ℝ) =>
         (0 : AddCircle (1 : ℝ))))
 
+/-- Homeomorphism identifying the coordinate subtorus with its tail coordinates. -/
 noncomputable def coordinateTorusTailHomeomorph (d r : ℕ) :
     coordinateTorus d r ≃ₜ ({i : Fin d // r ≤ i.val} → AddCircle (1 : ℝ)) where
   toEquiv := (coordinateTorusTailEquiv d r).toEquiv
   continuous_toFun := continuous_coordinateTorusTailEquiv d r
   continuous_invFun := continuous_coordinateTorusTailEquiv_symm d r
 
+/-- Identify a lattice annihilator with a coordinate subtorus using the chosen integer basis. -/
 noncomputable def torusAnnihilatorCoordinateEquiv {d r : ℕ}
     (L : Submodule ℤ (Fin d → ℤ)) (b : Module.Basis (Fin d) ℤ (Fin d → ℤ))
     (hb : Submodule.span ℤ (b '' {i | i.val < r}) = L) :
@@ -378,6 +383,7 @@ noncomputable def torusAnnihilatorCoordinateEquiv {d r : ℕ}
   map_add' x y := Subtype.ext ((torusBasisEquiv b).map_add x y)
   map_smul' a x := Subtype.ext ((torusBasisEquiv b).map_smul a x)
 
+/-- Topological identification of a lattice annihilator with its coordinate subtorus. -/
 noncomputable def torusAnnihilatorCoordinateHomeomorph {d r : ℕ}
     (L : Submodule ℤ (Fin d → ℤ)) (b : Module.Basis (Fin d) ℤ (Fin d → ℤ))
     (hb : Submodule.span ℤ (b '' {i | i.val < r}) = L) :

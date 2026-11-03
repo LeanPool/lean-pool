@@ -1707,6 +1707,7 @@ theorem mixedENorm_rpow_scale {X Ω : Type*} [MeasurableSpace X] [MeasurableSpac
     show p / a / (s / a) = p / s by field_simp,
     show 1 / (p / a) = 1 / p * a by field_simp]
 
+/-- Upper mixed-norm maximal-function constant obtained from the dual estimate. -/
 def fsUpperConst (n : ℕ) (p s : ℝ) : ℝ≥0∞ :=
   fsDualConst n (p / s) (fsKwPow n s) ^ (1 / p)
 

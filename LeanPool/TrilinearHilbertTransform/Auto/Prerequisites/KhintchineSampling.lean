@@ -352,6 +352,7 @@ theorem rademacherMean_mono {ι : Type*} (s : Finset ι)
 
 /-! Finite uniform expectations used in sampling symmetrization. -/
 
+/-- Uniform average of a function on a finite type. -/
 noncomputable def uniformMean {A E : Type*} [Fintype A] [AddCommMonoid E]
     [Module ℝ E] (f : A → E) : E := (Fintype.card A : ℝ)⁻¹ • ∑ a, f a
 
@@ -1130,6 +1131,7 @@ theorem sampling_almost_periods_iterated {G : Type*} [AddCommGroup G] [Fintype G
 
 /-! Probability-normalized Fourier analysis on finite cyclic groups. -/
 
+/-- Probability-normalized discrete Fourier transform on a cyclic group. -/
 noncomputable def finiteFourier {q : ℕ} [NeZero q] (f : ZMod q → ℂ) (ξ : ZMod q) : ℂ :=
   (q : ℂ)⁻¹ * ZMod.dft f ξ
 

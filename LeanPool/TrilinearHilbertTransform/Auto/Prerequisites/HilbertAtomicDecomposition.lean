@@ -87,6 +87,7 @@ theorem seminorm_bound_of_closedBall {E : Type*} [AddCommGroup E] [Module ℂ E]
     field_simp at hh'
     nlinarith only [hh', hpx]
 
+/-- Real convex hull of zero and complex multiples of atoms with coefficient norm at most `M`. -/
 noncomputable def complexAtomicHull {E : Type*} [AddCommGroup E] [Module ℂ E]
     [Module ℝ E] (M : ℝ) (A : Set E) : Set E :=
   convexHull ℝ ({0} ∪ {z | ∃ a ∈ A, ∃ c : ℂ, ‖c‖ ≤ M ∧ z = c • a})
@@ -100,6 +101,7 @@ theorem complexAtomicHull_single {E : Type*} [AddCommGroup E] [Module ℂ E]
     (hc : ‖c‖ ≤ M) : c • a ∈ complexAtomicHull M A :=
   subset_convexHull ℝ _ (Or.inr ⟨a, ha, c, hc, rfl⟩)
 
+/-- Atomic convex hull enlarged by closed balls of the two seminorms. -/
 noncomputable def atomicSeminormSum {E : Type*} [AddCommGroup E] [Module ℂ E]
     [Module ℝ E] (M σ : ℝ) (A : Set E) (p q : Seminorm ℂ E) : Set E :=
   complexAtomicHull M A + p.closedBall 0 σ + q.closedBall 0 σ
@@ -164,6 +166,7 @@ theorem atomicSeminormSum_separation {E : Type*} [NormedAddCommGroup E]
 
 section ProbabilityL2
 variable {X : Type*} [MeasurableSpace X] (μ : Measure X) [IsProbabilityMeasure μ]
+/-- Integral of the norm of an L² representative, used for the L¹ control seminorm. -/
 noncomputable def probabilityL2L1Norm (f : Lp ℂ 2 μ) : ℝ := ∫ x, ‖f x‖ ∂μ
 omit [IsProbabilityMeasure μ] in
 theorem probabilityL2L1Norm_eq (f : Lp ℂ 2 μ) :
@@ -188,6 +191,7 @@ theorem probabilityL2L1Norm_smul (c : ℂ) (f : Lp ℂ 2 μ) :
   apply integral_congr_ae
   filter_upwards [Lp.coeFn_smul c f] with x hx
   rw [hx, Pi.smul_apply, norm_smul]
+/-- Seminorm on L² induced by the integral of the pointwise norm. -/
 noncomputable def probabilityL2L1Seminorm : Seminorm ℂ (Lp ℂ 2 μ) :=
   Seminorm.of (probabilityL2L1Norm μ) (probabilityL2L1Norm_add μ)
     (probabilityL2L1Norm_smul μ)

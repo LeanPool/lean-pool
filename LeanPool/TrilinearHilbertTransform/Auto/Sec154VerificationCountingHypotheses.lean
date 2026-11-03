@@ -489,7 +489,7 @@ theorem sideWindow_disjoint {d : ℕ} (ζ : Fin d → ℝ) {l i : Fin 4} (hil : 
 label at one scale have pairwise disjoint side windows, and each has averaged window energy
 `E_ρ Σ_{k ∈ W_t} F_ρ(k) ≥ σ²`, where for every offset `ρ` the window sums are bounded by the
 normalized energy `G_ρ` (Parseval), then `|Tr| σ² ≤ E_ρ G_ρ`; this is `w_s σ²`. -/
-theorem side_incidence_le {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+theorem side_incidence_le {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     {τ : Type*} (Tr : Finset τ) (W : τ → Finset ℤ)
     (hdis : ∀ t ∈ Tr, ∀ t' ∈ Tr, t ≠ t' → Disjoint (W t) (W t')) (F : Ω → ℤ → ℝ)
     (hFi : ∀ k, Integrable (fun ρ => F ρ k) P) (G : Ω → ℝ)

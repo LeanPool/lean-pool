@@ -31,7 +31,7 @@ open scoped FourierTransform ComplexConjugate ENNReal
 /-- Adding a vector `u` to a closed range `U` increases the projection energy of `z` by at least
 `|⟨u, z - P_U z⟩|² / ‖u‖²` (blueprint §11.2, line 1577: "squared energy gain"). -/
 theorem starProjection_sup_span_gain {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
-    [CompleteSpace E] (U : Submodule ℂ E) [FiniteDimensional ℂ U] (u z : E) :
+     (U : Submodule ℂ E) [FiniteDimensional ℂ U] (u z : E) :
     ‖(U ⊔ Submodule.span ℂ {u}).starProjection z‖ ^ 2 ≥
       ‖U.starProjection z‖ ^ 2 + ‖inner ℂ u (z - U.starProjection z)‖ ^ 2 / ‖u‖ ^ 2 := by
   set! W := U ⊔ Submodule.span ℂ {u} with hW
@@ -69,15 +69,15 @@ theorem starProjection_sup_span_gain {E : Type*} [NormedAddCommGroup E] [InnerPr
 /-! ### Fit columns with private weight one -/
 
 /-- The value `(φ(y), e_v)` of a fit column. -/
-noncomputable def fitColumnValue {V : Type*} [Fintype V] [DecidableEq V] (φ : ℝ → ℂ) (v : V)
+noncomputable def fitColumnValue {V : Type*} [DecidableEq V] (φ : ℝ → ℂ) (v : V)
     (y : ℝ) : ColumnHilbert V :=
   φ y • EuclideanSpace.single none (1 : ℂ) + EuclideanSpace.single (some v) (1 : ℂ)
 
-theorem fitColumnValue_none {V : Type*} [Fintype V] [DecidableEq V] (φ : ℝ → ℂ) (v : V)
+theorem fitColumnValue_none {V : Type*} [DecidableEq V] (φ : ℝ → ℂ) (v : V)
     (y : ℝ) : fitColumnValue φ v y none = φ y := by
   simp [fitColumnValue]
 
-theorem fitColumnValue_some {V : Type*} [Fintype V] [DecidableEq V] (φ : ℝ → ℂ) (v w : V)
+theorem fitColumnValue_some {V : Type*} [DecidableEq V] (φ : ℝ → ℂ) (v w : V)
     (y : ℝ) : fitColumnValue φ v y (some w) = if w = v then 1 else 0 := by
   by_cases h : w = v <;> simp [fitColumnValue, h]
 
@@ -90,9 +90,10 @@ theorem norm_fitColumnValue_le {V : Type*} [Fintype V] [DecidableEq V] {φ : ℝ
   linarith only [norm_add_le (φ y • EuclideanSpace.single (none : Option V) (1 : ℂ))
     (EuclideanSpace.single (some v) (1 : ℂ)), h1, h2]
 
-theorem measurable_fitColumnValue {V : Type*} [Fintype V] [DecidableEq V] {φ : ℝ → ℂ}
-    (hφ : Measurable φ) (v : V) : Measurable (fitColumnValue φ v) :=
-  (hφ.smul measurable_const).add measurable_const
+theorem measurable_fitColumnValue {V : Type*} [Finite V] [DecidableEq V] {φ : ℝ → ℂ}
+    (hφ : Measurable φ) (v : V) : Measurable (fitColumnValue φ v) := by
+  let : Fintype V := Fintype.ofFinite V
+  exact (hφ.smul measurable_const).add measurable_const
 
 /-- The predicate on fit data: a measurable set of finite measure and a bounded measurable atom. -/
 def FitAdmissible (s : Set ℝ) (φ : ℝ → ℂ) : Prop :=
@@ -485,7 +486,7 @@ theorem fitEnergy_gain {M : ℕ} {s : Set ℝ} (f : Lp ℂ 2 (volume : Measure �
 
 /-- A range inside the orthogonal sum of two ranges has at most their total projection energy. -/
 theorem starProjection_energy_le_of_le_sup {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℂ E] [CompleteSpace E] {K U₁ U₂ : Submodule ℂ E}
+    [InnerProductSpace ℂ E] {K U₁ U₂ : Submodule ℂ E}
     [FiniteDimensional ℂ K] [FiniteDimensional ℂ U₁] [FiniteDimensional ℂ U₂]
     (hK : K ≤ U₁ ⊔ U₂) (h12 : U₁ ⟂ U₂) (z : E) :
     ‖K.starProjection z‖ ^ 2 ≤ ‖U₁.starProjection z‖ ^ 2 + ‖U₂.starProjection z‖ ^ 2 := by
@@ -837,7 +838,6 @@ theorem fitEnergy_generation_le (R : ℤ × ℤ) (d : ℕ) (st : ℤ × ℤ → 
 end FitEnergy
 
 /-! ### Coefficients of the fit projection -/
-
 theorem columnHilbert_sum_apply {V : Type*} {ι : Type*} (s : Finset ι)
     (x : ι → ColumnHilbert V) (o : Option V) : (∑ i ∈ s, x i) o = ∑ i ∈ s, x i o := by
   induction s using Finset.cons_induction with
@@ -1061,7 +1061,6 @@ theorem setIntegral_fitPhys_sq_le (M : ℕ) {s : Set ℝ} (hs : MeasurableSet s)
   linarith
 
 /-! ### The adaptive-fit oracle -/
-
 theorem eLpNorm_normalized_le_of_integral {a r : ℝ} (hr : 0 < r) {g : ℝ → ℂ}
     (hg : MemLp g 2 (volume.restrict (Set.Ico a (a + r)))) {C : ℝ} (hC : 0 ≤ C)
     (h : ∫ y in Set.Ico a (a + r), ‖g y‖ ^ 2 ≤ C ^ 2 * r) :
@@ -1154,16 +1153,27 @@ theorem kernelHull_of_not_formSmall {G : RealDyadicGrid} {J : ℤ × ℤ} {N : �
 
 /-- The data of one adaptive-fit construction. -/
 structure FitSetup where
+  /-- Dyadic grid used for the adaptive-fit construction. -/
   G : RealDyadicGrid
+  /-- Root cell on which the adaptive-fit input is normalized. -/
   J : ℤ × ℤ
+  /-- Number of dyadic generations available below the root. -/
   N : ℕ
+  /-- Maximum number of fit columns available to an attempt. -/
   M : ℕ
+  /-- Scalar input to be approximated by the adaptive fit. -/
   f : ℝ → ℂ
+  /-- Local kernels assigned to the dyadic cells. -/
   w : ℤ × ℤ → ℝ × ℝ → ℂ
+  /-- Position of the input in the four-linear local form. -/
   j : Fin 4
+  /-- Integrability exponent used in the residual-smallness test. -/
   q : ℝ
+  /-- Accuracy parameter giving the residual threshold `exp (-k)`. -/
   k : ℕ
+  /-- Complexity exponent supplied to the fit oracle. -/
   c₂ : ℕ
+  /-- Complexity budget supplied to the fit oracle. -/
   B : ℝ
 
 namespace FitSetup
@@ -1362,7 +1372,6 @@ theorem Hyp.oracle (h : S.Hyp) : FitOracle S.G S.M S.P S.O S.input S.B⁻¹ := b
 end FitSetup
 
 /-! ### Ancestor chains, inherited lists and counts -/
-
 theorem dyadicGridCell_subset_of_common_point (G : RealDyadicGrid) {c d : ℤ × ℤ} {x : ℝ}
     (hxc : x ∈ dyadicGridCell G c.1 c.2) (hxd : x ∈ dyadicGridCell G d.1 d.2)
     (hdc : d.1 ≤ c.1) : dyadicGridCell G c.1 c.2 ⊆ dyadicGridCell G d.1 d.2 := by
@@ -1900,7 +1909,6 @@ theorem Hyp.g_norm_le (h : S.Hyp) {u : ℤ × ℤ} (hu : u ∈ dyadicFiniteTree 
 end FitSetup
 
 /-! ### Packaging the adaptive fit as column tree data -/
-
 theorem fitGreedy_inv_all {M : ℕ} {P : (ℕ → ℝ → ℂ) → ℕ → Prop}
     {O : (ℕ → ℝ → ℂ) → ℕ → ℝ → ℂ} (Good : (ℝ → ℂ) → Prop) (hO : ∀ a n, Good (O a n))
     (st : (ℕ → ℝ → ℂ) × ℕ) (h : ∀ i, Good (st.1 i)) :
@@ -2170,7 +2178,6 @@ section CurrentOpponent
 variable {V : Type*} [Fintype V]
 
 /-! ### Current projections: cellwise identification and depth energy -/
-
 theorem ColumnDepthFamily.anc_self (Ψ : ColumnDepthFamily V) {I : ℤ × ℤ} (hI : I.1 ≤ Ψ.N) :
     Ψ.anc I = I := by
   unfold ColumnDepthFamily.anc
@@ -2496,13 +2503,21 @@ def stagPos (t : ℕ) : Fin 4 := ⟨t % 4, Nat.mod_lt _ (by norm_num)⟩
 `t ≥ 1` a bounded projection of the input in position `t mod 4` with residual smallness
 `e^{-k_t}`; the accuracies grow fast enough to dominate the supremum bounds. -/
 structure StaggerCell (κ : LocalKernelClass) where
+  /-- Left endpoint of the cell undergoing staggered updates. -/
   a₀ : ℝ
+  /-- Positive length of the cell undergoing staggered updates. -/
   r : ℝ
+  /-- Admissible local kernel on the update cell. -/
   w : ℝ × ℝ → ℂ
+  /-- Integrability exponent for the normalized input functions. -/
   q : ℝ
+  /-- The four input functions before staggered projection updates. -/
   f : Fin 4 → ℝ → ℂ
+  /-- Projected approximation selected at each update level. -/
   g : ℕ → ℝ → ℂ
+  /-- Accuracy exponent controlling the residual at each update level. -/
   k : ℕ → ℝ
+  /-- Pointwise norm bound for each projected approximation. -/
   S : ℕ → ℝ
   r_pos : 0 < r
   adm : IsAdmissibleLocalKernel κ a₀ r w
@@ -3061,7 +3076,6 @@ theorem expansion (T : ℕ) :
   exact h
 
 /-! #### Sizes and remainders -/
-
 theorem f_L2 (p : Fin 4) : eLpNorm (C.f p) 2 C.μ ≤ 1 := by
   have : IsProbabilityMeasure C.μ := normalizedIntervalMeasure_probability C.a₀ C.r_pos
   refine le_trans (eLpNorm_le_eLpNorm_of_exponent_le ?_) (C.f_norm p)
@@ -3541,12 +3555,19 @@ end ColRange2
 inherited along each attempt (`fitState`), with integrated insertion mass at most `A |K|` on every
 attempt root `K` (blueprint sec:reduction, lines 429-451; §11.2, line 1577). -/
 structure GreedyTree where
+  /-- Dyadic grid supporting the greedy attempts and restarts. -/
   G : RealDyadicGrid
+  /-- Initial root cell for the greedy construction. -/
   J : ℤ × ℤ
+  /-- Number of dyadic generations below the initial root. -/
   N : ℕ
+  /-- Maximum number of insertions available in one greedy state. -/
   M : ℕ
+  /-- Predicate deciding when an insertion attempt stops. -/
   P : ℤ × ℤ → (ℕ → ℝ → ℂ) → ℕ → Prop
+  /-- Oracle producing a new atom when the stopping predicate fails. -/
   O : ℤ × ℤ → (ℕ → ℝ → ℂ) → ℕ → ℝ → ℂ
+  /-- Integrated insertion-mass bound per unit length of an attempt root. -/
   A : ℝ
 
 namespace GreedyTree

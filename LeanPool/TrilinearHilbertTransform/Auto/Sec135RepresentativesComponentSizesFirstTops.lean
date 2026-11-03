@@ -2388,6 +2388,7 @@ open Classical in
 nodes `(b, J, m)` (one good mode per successful CURRENT component of a pre-cell) with the
 hypotheses and conclusions of `typed_representatives`, the blocks being `K`-spaced. -/
 structure RepClass (Δ h : ℕ) where
+  /-- Finite family of nodes in the representative class at the fixed height. -/
   Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md)
   hNd : ∀ c ∈ Nd, c.2.1.1 = c.1 - 2 * S.K
   halive : ∀ c ∈ Nd, c.2.2 ∈ Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K))
@@ -2396,6 +2397,7 @@ structure RepClass (Δ h : ℕ) where
   hstab : ∀ c ∈ Nd, ∀ z z', Ms.goodP S SP c.1 h ((Ms.blockComps S hA c.1 c.2.1).π z) →
     (Ms.blockComps S hA c.1 c.2.1).π z' = (Ms.blockComps S hA c.1 c.2.1).π z →
     z' ∈ (Ms.blockComps S hA c.1 c.2.1).F h z → z' ∈ (Ms.blockComps S hA c.1 c.2.1).E (h - Δ) z
+  /-- Common binary logarithm of the predecessor-component primary-label count. -/
   k1 : ℕ
   htype1 : ∀ c (hc : c ∈ Nd), Nat.log 2 ((Ms.blockComps S hA c.1 c.2.1).labels
     ((Ms.blockComps S hA c.1 c.2.1).E (h - Δ) ⟨c.2.2, halive c hc⟩)).card = k1
@@ -2403,6 +2405,7 @@ structure RepClass (Δ h : ℕ) where
     c ≠ c' → (⟨c'.2.2, by rw [h1, h2]; exact halive c' hc'⟩ :
       Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K))) ∉
       (Ms.blockComps S hA c.1 c.2.1).F h ⟨c.2.2, halive c hc⟩
+  /-- Chosen predecessor mode representing each node in the class. -/
   rep : ℤ × (ℤ × ℤ) × Ms.Md → Ms.Md
   hrep : ∀ c, rep c ∈ Ms.predOfMode S hA Δ h c
   hinh : ∀ c c', nodeLt3 (Gd := Gd) Ms Nd c c' →

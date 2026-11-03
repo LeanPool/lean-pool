@@ -28,11 +28,17 @@ open scoped FourierTransform ComplexConjugate ENNReal
 /-- The data of the coloring (blueprint lines 1714-1728): graph distances, the parameters
 `d₀, b₁, b₂` and the primary and high delay arrays (one per round), with values in `[0, d₀]`. -/
 structure ColorSetup (V : Type*) where
+  /-- Depth-dependent distance used to compare chart labels. -/
   dist : DepthDistance V
+  /-- Number of coloring rounds and bound for each delay value. -/
   d0 : ℕ
+  /-- Distance scale dividing graph distances in the primary score. -/
   b1 : ℕ
+  /-- Distance scale dividing graph distances in the high score. -/
   b2 : ℕ
+  /-- Primary delay assigned to each label in each round. -/
   Dp : Fin d0 → V → ℕ
+  /-- High delay assigned to each label in each round. -/
   Dh : Fin d0 → V → ℕ
   Dp_le : ∀ ρ v, Dp ρ v ≤ d0
   Dh_le : ∀ ρ v, Dh ρ v ≤ d0
@@ -490,12 +496,18 @@ end ColorSetup
 virtual top level (where lists are empty), depths and present lists with admission positions;
 lists extend along every path. -/
 structure AdmTree (V : Type*) where
+  /-- Cell type of the abstract tree of admissible states. -/
   Cell : Type*
+  /-- Parent cell in the admissible-state tree. -/
   par : Cell → Cell
+  /-- Natural-number height above the top of the tree. -/
   ht : Cell → ℕ
   ht_par : ∀ I, 0 < ht I → ht (par I) + 1 = ht I
+  /-- Integer depth associated with each tree cell. -/
   depth : Cell → ℤ
+  /-- Finite set of labels present at each tree cell. -/
   X : Cell → Finset V
+  /-- Position of each label in the finite list at a tree cell. -/
   pos : Cell → V → ℕ
   X_top : ∀ I, ht I = 0 → X I = ∅
   le_par : ∀ I, AdmState.Le ⟨depth (par I), X (par I), pos (par I)⟩ ⟨depth I, X I, pos I⟩
@@ -3049,7 +3061,7 @@ theorem pow_65_66_le {D : ℕ} (hD : 1 ≤ D) :
   linarith
 
 /-- The explicit failure bound of `delays_exist`. -/
-noncomputable def failBound {V : Type*} [DecidableEq V] (dist : DepthDistance V)
+noncomputable def failBound {V : Type*} (dist : DepthDistance V)
     (Nv d0 b1 b2 : ℕ) : ℝ :=
   ((Nv : ℝ) * (Nv * (d0 + 7) + 1) + Nv *
     ((ColorSetup.ofArrays dist d0 b1 b2 (ColorSetup.zeroArr d0)
@@ -3058,9 +3070,10 @@ noncomputable def failBound {V : Type*} [DecidableEq V] (dist : DepthDistance V)
 
 /-- The failure bound tends to zero: with `d₀ = ⌈1000 log 2D⌉` and at most `D` vertices it is at
 most `100 · 2001⁷ / D` (blueprint line 1732: the union bound tends to zero as `D` grows). -/
-theorem failBound_le {V : Type*} [DecidableEq V] (dist : DepthDistance V) (b1 b2 : ℕ)
+theorem failBound_le {V : Type*} (dist : DepthDistance V) (b1 b2 : ℕ)
     {Nv D : ℕ} (hD : 1 ≤ D) (hV : Nv ≤ D) :
     failBound dist Nv (colorDegree D) b1 b2 ≤ 100 * 2001 ^ 7 / D := by
+  classical
   have hlogV : Nat.log 2 Nv ≤ Nat.log 2 D := Nat.log_mono_right hV
   set d := colorDegree D
   set K := ColorSetup.ofArrays dist d b1 b2 (ColorSetup.zeroArr d) (ColorSetup.zeroArr d)

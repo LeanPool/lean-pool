@@ -590,6 +590,7 @@ contributes the constant one and is bounded by its essential supremum. -/
 noncomputable def interpolationMoment (p : ℝ≥0∞) (f : Y → ℝ≥0∞) : Y → ℝ≥0∞ :=
   fun y => if p = ∞ then 1 else f y ^ p.toReal
 
+/-- The essential-supremum factor used at the infinite interpolation endpoint. -/
 noncomputable def interpolationInfinityFactor [MeasurableSpace Y]
     (ν : Measure Y) (p : ℝ≥0∞) (f : Y → ℝ≥0∞) : ℝ≥0∞ :=
   if p = ∞ then eLpNorm f ∞ ν else 1
@@ -848,8 +849,10 @@ theorem localProgressionForm_enorm_le {a r : ℝ} (hr : 0 < r)
 
 /-- Fixed constants defining the admissible kernel class, blueprint line 371. -/
 structure LocalKernelClass where
+  /-- Positive margin in the admissible local-kernel estimates. -/
   margin : ℝ
   margin_pos : 0 < margin
+  /-- Constant controlling all orders of local-kernel derivatives. -/
   derivativeConstant : ℝ
   one_le_derivativeConstant : 1 ≤ derivativeConstant
 
@@ -872,6 +875,7 @@ structure IsAdmissibleLocalKernel (κ : LocalKernelClass) (a r : ℝ)
       (κ.derivativeConstant * ((m + n : ℕ) + 2)) ^
         (κ.derivativeConstant * ((m + n : ℕ) + 2))
 
+/-- Uniform pointwise bound supplied by the zeroth-order kernel estimate. -/
 noncomputable def localKernelSupBound (κ : LocalKernelClass) : ℝ :=
   (κ.derivativeConstant * 2) ^ (κ.derivativeConstant * 2)
 
@@ -899,13 +903,18 @@ noncomputable def scalarMaximalQ (q : ℝ) (f : ℝ → ℂ) (x : ℝ) : ℝ≥0
 dyadic grid, a finite collection in at most `N` consecutive depths, an admissible
 kernel at every selected cell, and compactly supported measurable `Lq` inputs. -/
 structure FiniteDepthLocalData (κ : LocalKernelClass) (q : ℝ) (N : ℕ) where
+  /-- Dyadic grid supporting the finite-depth local form. -/
   grid : RealDyadicGrid
+  /-- Finite collection of dyadic cells used in the local form. -/
   cells : Finset (ℤ × ℤ)
+  /-- First permitted depth in the finite-depth window. -/
   firstDepth : ℤ
   depths : ∀ c ∈ cells, firstDepth ≤ c.1 ∧ c.1 < firstDepth + N
+  /-- Local kernel assigned to each dyadic cell. -/
   kernel : (ℤ × ℤ) → ℝ × ℝ → ℂ
   admissible : ∀ c ∈ cells, IsAdmissibleLocalKernel κ
     (dyadicGridLeft grid c.1 c.2) (dyadicGridLength grid c.1) (kernel c)
+  /-- The four measurable, compactly supported inputs to the local form. -/
   input : Fin 4 → ℝ → ℂ
   measurable_input : ∀ i, Measurable (input i)
   memLp_input : ∀ i, MemLp (input i) (ENNReal.ofReal q) volume

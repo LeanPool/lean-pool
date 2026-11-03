@@ -42,18 +42,22 @@ open scoped ENNReal
 /-- A real dyadic grid as in blueprint line 364. Each level is a translated
 interval partition; the alignment condition makes each coarse boundary a fine boundary. -/
 structure RealDyadicGrid where
+  /-- Positive length of a cell at depth zero. -/
   baseLength : ℝ
   baseLength_pos : 0 < baseLength
+  /-- Left endpoint of the coordinate origin at each depth. -/
   origin : ℤ → ℝ
   alignment : ∀ s : ℤ, ∃ k : ℤ, origin s = origin (s + 1) +
     (k : ℝ) * (baseLength * (2 : ℝ) ^ (-(s + 1)))
 
+/-- Cell length at integer depth `s` in the grid `G`. -/
 noncomputable def dyadicGridLength (G : RealDyadicGrid) (s : ℤ) : ℝ :=
   G.baseLength * (2 : ℝ) ^ (-s)
 
 theorem dyadicGridLength_pos (G : RealDyadicGrid) (s : ℤ) : 0 < dyadicGridLength G s :=
   mul_pos G.baseLength_pos (zpow_pos (by norm_num) _)
 
+/-- Left endpoint of the cell at depth `s` and integer position `m`. -/
 noncomputable def dyadicGridLeft (G : RealDyadicGrid) (s m : ℤ) : ℝ :=
   G.origin s + (m : ℝ) * dyadicGridLength G s
 
@@ -378,6 +382,7 @@ noncomputable def dyadicAncestorSum (G : RealDyadicGrid) (S : Finset (ℤ × ℤ
   ∑ d ∈ S.filter (fun d => dyadicGridCell G c.1 c.2 ⊆ dyadicGridCell G d.1 d.2), a d
 
 open scoped Classical in
+/-- Cells whose cumulative ancestor weight exceeds the stopping threshold. -/
 noncomputable def dyadicBadCells (G : RealDyadicGrid) (S : Finset (ℤ × ℤ))
     (a : ℤ × ℤ → ℝ) (T : ℝ) : Finset (ℤ × ℤ) :=
   S.filter (fun c => T < dyadicAncestorSum G S a c)
@@ -389,6 +394,7 @@ noncomputable def dyadicFirstCrossings (G : RealDyadicGrid) (S : Finset (ℤ × 
   maximalDyadicCells G (dyadicBadCells G S a T)
 
 open scoped Classical in
+/-- Cells whose cumulative ancestor weight remains within the stopping threshold. -/
 noncomputable def dyadicRetainedCells (G : RealDyadicGrid) (S : Finset (ℤ × ℤ))
     (a : ℤ × ℤ → ℝ) (T : ℝ) : Finset (ℤ × ℤ) :=
   S.filter (fun c => dyadicAncestorSum G S a c ≤ T)
@@ -439,6 +445,7 @@ theorem dyadicFirstCrossings_pairwiseDisjoint (G : RealDyadicGrid) (S : Finset (
       (fun c => dyadicGridCell G c.1 c.2) :=
   maximalDyadicCells_pairwiseDisjoint G _
 
+/-- Sum of cell lengths multiplied by their assigned weights. -/
 noncomputable def dyadicWeightedMass (G : RealDyadicGrid) (S : Finset (ℤ × ℤ))
     (a : ℤ × ℤ → ℝ) : ℝ := ∑ c ∈ S, dyadicGridLength G c.1 * a c
 
@@ -2444,11 +2451,13 @@ theorem dyadicSizeRoots_path_separation (G : RealDyadicGrid) (root : ℤ × ℤ)
   · exact Or.inl (dyadicSizeRoots_nested_doubling G root N a ha hc hd hdc hne.symm)
 
 open scoped Classical in
+/-- Size-stopping roots containing `x` with weight below `T`. -/
 noncomputable def dyadicSmallSizeRoots (G : RealDyadicGrid) (root : ℤ × ℤ) (N : ℕ)
     (a : ℤ × ℤ → ℝ) (x T : ℝ) : Finset (ℤ × ℤ) :=
   (dyadicSizeRoots G root N a).filter (fun K => x ∈ dyadicGridCell G K.1 K.2 ∧ a K < T)
 
 open scoped Classical in
+/-- Size-stopping roots containing `x` with weight at least `T`. -/
 noncomputable def dyadicLargeSizeRoots (G : RealDyadicGrid) (root : ℤ × ℤ) (N : ℕ)
     (a : ℤ × ℤ → ℝ) (x T : ℝ) : Finset (ℤ × ℤ) :=
   (dyadicSizeRoots G root N a).filter (fun K => x ∈ dyadicGridCell G K.1 K.2 ∧ T ≤ a K)
@@ -2559,7 +2568,7 @@ theorem dyadic_stopped_values_sum_bound (grid : RealDyadicGrid) (root : ℤ × �
   exact add_le_add hsmall hlarge
 
 theorem complexLp_norm_sq_integral {α E : Type*} [MeasurableSpace α]
-    [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
+    [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     (μ : Measure α) (z : Lp E 2 μ) : ‖z‖ ^ 2 = ∫ x, ‖z x‖ ^ 2 ∂μ := by
   calc
     ‖z‖ ^ 2 = RCLike.re (inner ℂ z z) := (inner_self_eq_norm_sq (𝕜 := ℂ) z).symm

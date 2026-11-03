@@ -215,13 +215,16 @@ noncomputable def graphBohrWeight {q : ℕ} [NeZero q] (b : ℝ → ℝ)
   ∏ s ∈ S, b ((AddCircle.equivIco (1 : ℝ) (-(1 / 2))
     (ZMod.toAddCircle (s * x)) : ℝ) / r)
 
+/-- Uniform mass of the smoothed graph Bohr weight. -/
 noncomputable def graphBohrMass {q : ℕ} [NeZero q] (b : ℝ → ℝ)
     (S : Finset (ZMod q)) (r : ℝ) : ℝ := 𝔼 x, graphBohrWeight b S r x
 
+/-- Graph Bohr weight divided by its uniform mass. -/
 noncomputable def graphBohrMeasure {q : ℕ} [NeZero q] (b : ℝ → ℝ)
     (S : Finset (ZMod q)) (r : ℝ) (x : ZMod q) : ℝ :=
   graphBohrWeight b S r x / graphBohrMass b S r
 
+/-- Largest character distance among the frequencies in `S`. -/
 noncomputable def graphBohrNorm {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (x : ZMod q) : ℝ :=
   (S.sup (fun s => ‖ZMod.toAddCircle (s * x)‖₊) : ℝ≥0)
 
@@ -464,6 +467,7 @@ theorem graphLocalizedSquare_expansion {q : ℕ} [NeZero q]
 def graphAlternating {q : ℕ} (M : ZMod q → ZMod q) (u v : ZMod q) : ZMod q :=
   M u * v - M v * u
 
+/-- Circle-valued alternating phase associated with the local frequency map. -/
 noncomputable def graphAlternatingPhase {q : ℕ} [NeZero q]
     (M : ZMod q → ZMod q) (u v : ZMod q) : UnitAddCircle :=
   ZMod.toAddCircle (graphAlternating M u v)
@@ -672,6 +676,7 @@ noncomputable def graphSymmetryFixedCorrelation {q : ℕ} [NeZero q]
     (μ : ZMod q → ℝ) (M : ZMod q → ZMod q) (a b : ZMod q → ℂ) (z : ZMod q) : ℂ :=
   𝔼 u, 𝔼 v, (μ u : ℂ) * (μ v : ℂ) * graphSymmetryKernel M a b z u v
 
+/-- Outer-weighted average of the fixed-shift graph-symmetry correlation. -/
 noncomputable def graphSymmetryWeightedCorrelation {q : ℕ} [NeZero q]
     (w μ : ZMod q → ℝ) (M : ZMod q → ZMod q) (a b : ZMod q → ℂ) : ℂ :=
   𝔼 z, (w z : ℂ) * graphSymmetryFixedCorrelation μ M a b z
@@ -3739,6 +3744,7 @@ theorem gevrey_derivative_bound_mono (f : ℝ → ℝ) {K L : ℕ} (hK : 1 ≤ K
     _ ≤ ((L : ℝ) * (i + 1 : ℝ)) ^ (K * (i + 1)) := by gcongr
     _ ≤ _ := pow_le_pow_right₀ (by nlinarith) (Nat.mul_le_mul_right _ hKL)
 
+/-- Multiply a quadratic chart by a linear modulation of frequency `b`. -/
 noncomputable def modulateQuadraticChart {d : ℕ} (A : QuadraticChartData d) (b : ℝ) :
     QuadraticChartData d := { A with linear := A.linear + b }
 
@@ -3846,6 +3852,7 @@ noncomputable abbrev bohrLiftLattice {q : ℕ} [NeZero q]
     (S : Finset (ZMod q)) (hS : 1 ∈ S) : Submodule ℤ (EuclideanSpace ℝ S) :=
   cyclicLiftLattice q (fun s : S => (s.val.val : ℤ)) ⟨1, hS⟩
 
+/-- Project the integer Bohr-lift lattice onto its underlying cyclic group. -/
 noncomputable def bohrLiftProjection {q : ℕ} [NeZero q]
     (S : Finset (ZMod q)) (hS : 1 ∈ S) : bohrLiftLattice S hS →+ ZMod q :=
   cyclicLiftProjection q (fun s : S => (s.val.val : ℤ)) ⟨1, hS⟩
@@ -4583,7 +4590,7 @@ theorem cyclic_character_of_real_phase {q : ℕ} [NeZero q] (x : ZMod q) (t : �
   change ZMod.stdAddChar x = (AddCircle.toCircle (t : UnitAddCircle) : ℂ) at hc
   simpa only [AddCircle.toCircle_apply_mk, div_one, Real.fourierChar_apply'] using hc
 
-theorem local_chart_radius_lt_half {q : ℕ} [NeZero q]
+theorem local_chart_radius_lt_half {q : ℕ}
     (S : Finset (ZMod q)) (hS : 1 ∈ S) {r ρ : ℝ} (hr : 0 < r) (hρ : 0 < ρ)
     (hρ1 : ρ < 1) (hsmall : r ≤ latticeBoxRadius S.card * ρ / (2 * Real.sqrt S.card)) :
     r < 1 / 2 := by

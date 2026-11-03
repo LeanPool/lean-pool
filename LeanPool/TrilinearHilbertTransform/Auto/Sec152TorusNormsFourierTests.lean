@@ -5080,52 +5080,67 @@ count and curvature bounds of the mode systems, the Fourier truncation parameter
 `B_p` (`eq:frequency-box`), the reference threshold `U₀` and the multiplier bound `W`, with the
 parameter relations used by `four_core_class_bound` at every final height `h' ≤ J*`. -/
 structure CellCoreData (I : ℤ × ℤ) (G : A.Grp) where
+  /-- Common curvature tag of the mode systems on the core cell. -/
   z : ChartTag
   hz : ∀ j, (D.Ms j G).zc = z
+  /-- Common branch-core fraction of the mode systems. -/
   δ : ℝ
   hδc : ∀ j, (D.Ms j G).δc = δ
   hcl : ∀ j, (D.Ms j G).cl = slotCoeff j
   hρ : ∀ j k, (D.Ms j G).ρ k ∈ Set.Icc (0 : ℝ) 1
+  /-- Uniform bound for the number of modes whose cells contain a point. -/
   Bc : ℝ
+  /-- Uniform bound for the mode-system quadratic phase budgets. -/
   Λ : ℝ
   hcount : ∀ j y, ((Finset.univ.filter fun m => y ∈ dyadicGridCell A.G
     ((D.Ms j G).cellOf m).1 ((D.Ms j G).cellOf m).2).card : ℝ) ≤ Bc
   hΛ : ∀ j, (D.Ms j G).Λ ≤ Λ
   hΛ0 : 0 ≤ Λ
   hd : 1 ≤ z.dim
+  /-- Positive secondary core cutoff used in the torus tests. -/
   δ'' : ℝ
   hδ : 0 < δ
   hδ'' : 0 < δ''
   hQ0 : 0 < D.S.Q0
   hQ : ∀ a b, ∃ k : ℤ, (D.S.Q0 : ℝ) * (z.C a b : ℝ) = k
+  /-- Uniform absolute-value bound for entries of the common rational matrix. -/
   Cm : ℝ
   hCm0 : 0 ≤ Cm
   hCm : ∀ a b, |(z.C a b : ℝ)| ≤ Cm
+  /-- Dyadic Fourier truncation depth used in the core-cell approximation. -/
   Kt : ℕ
+  /-- Rational-height bound for the core-cell frequency-gap condition. -/
   Hh : ℕ
   hH : 1 ≤ Hh
+  /-- Small-frequency threshold in the rational evaluation gap condition. -/
   ε : ℝ
+  /-- Large-frequency threshold separating the small and large rational evaluations. -/
   Λg : ℝ
   hε : 0 ≤ ε
   hgap : ∀ q : Fin z.dim → ℚ, vecHeight q ≤ Hh → |ratEval z.θ q| ≤ ε ∨ Λg ≤ |ratEval z.θ q|
   hsmall : (3 * Hh ^ 2 : ℝ) ^ z.dim * (z.dim.factorial * Hh ^ (z.dim ^ 2 + z.dim)) * ε < Λg
+  /-- Uniform bound for the live-mode count times the height-dependent witness budget. -/
   Nb : ℝ
   hNb0 : 0 ≤ Nb
   hNb : ∀ h' ≤ D.SP.Jst, ∀ j,
     (Fintype.card ((D.Ms j G).alive (D.decCell I)) : ℝ) * D.S.Eh h' ≤ Nb
+  /-- Additional frequency budget in the core-cell rational-height estimate. -/
   Bp : ℝ
   hHb : ∀ h' ≤ D.SP.Jst, ((6 ^ h' : ℕ) : ℝ) * ((2 ^ (Kt + 1) : ℕ) : ℝ) +
     12 * (((D.S.Q0 * 6 ^ h' : ℕ) : ℝ) * ((2 ^ (Kt + 1) : ℕ) : ℝ) + Nb) + Bp ≤ Hh
+  /-- Positive lower frequency-gap scale after subtracting the approximation budget. -/
   U₀ : ℝ
   hU₀ : 0 < U₀
   hHU : ∀ h' ≤ D.SP.Jst,
     1 ≤ dyadicGridLength A.G I.1 * Λg / (D.S.Q0 * ((6 ^ h' : ℕ) : ℝ)) - U₀
+  /-- Nonnegative torus remainder bound used in the core-cell Fourier tests. -/
   W : ℝ
   hW : 0 ≤ W
   hRb : ∀ h' ≤ D.SP.Jst, ∀ (cm : (Fin (z.dim + z.dim) → ℤ) → ℂ), (∀ v, ‖cm v‖ ≤ 1) →
     ∀ u v : StandardTorus z.dim, ‖∑ q ∈ frequencyBox (z.dim + z.dim) (2 ^ (Kt + 1)), cm q *
       (torusCharacter (((6 ^ h' : ℕ) : ℤ) • fun a => q (Fin.castAdd z.dim a)) u *
         torusCharacter (((6 ^ h' : ℕ) : ℤ) • fun a => q (Fin.natAdd z.dim a)) v)‖ ≤ W
+  /-- Integer parameter of the core-cell kernel truncation estimate. -/
   Jk : ℕ
 
 end LeafSplit

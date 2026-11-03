@@ -47,27 +47,28 @@ noncomputable abbrev ColumnL2 (V : Type*) [Fintype V] :=
 
 open scoped Classical in
 /-- The augmented column `(φᵥ(y), sqrt(εᵥ) eᵥ)` from blueprint line 473. -/
-noncomputable def privateColumnValue {V : Type*} [Fintype V]
+noncomputable def privateColumnValue {V : Type*}
     (φ : V → ℝ → ℂ) (ε : V → ℝ) (v : V) (y : ℝ) : ColumnHilbert V :=
   φ v y • EuclideanSpace.single none (1 : ℂ) +
     (Real.sqrt (ε v) : ℂ) • EuclideanSpace.single (some v) (1 : ℂ)
 
-theorem privateColumnValue_physical {V : Type*} [Fintype V]
+theorem privateColumnValue_physical {V : Type*}
     (φ : V → ℝ → ℂ) (ε : V → ℝ) (v : V) (y : ℝ) :
     privateColumnValue φ ε v y none = φ v y := by
   classical
   simp [privateColumnValue]
 
 open scoped Classical in
-theorem privateColumnValue_private {V : Type*} [Fintype V]
+theorem privateColumnValue_private {V : Type*}
     (φ : V → ℝ → ℂ) (ε : V → ℝ) (v w : V) (y : ℝ) :
     privateColumnValue φ ε v y (some w) = if w = v then (Real.sqrt (ε v) : ℂ) else 0 := by
   classical
   by_cases hw : w = v <;> simp [privateColumnValue, hw]
 
-theorem privateColumnValue_measurable {V : Type*} [Fintype V]
+theorem privateColumnValue_measurable {V : Type*} [Finite V]
     (φ : V → ℝ → ℂ) (ε : V → ℝ) (v : V) (hφ : Measurable (φ v)) :
     Measurable (privateColumnValue φ ε v) := by
+  let : Fintype V := Fintype.ofFinite V
   exact (hφ.smul measurable_const).add measurable_const
 
 open scoped Classical in
@@ -75,16 +76,23 @@ open scoped Classical in
 470–483. The budget counts available labels at each point, without bounding
 the total number of labels on disjoint branches. -/
 structure ColumnTreeData (V : Type*) [Fintype V] where
+  /-- Dyadic grid underlying the column tree. -/
   grid : RealDyadicGrid
+  /-- Finite collection of cells carrying the column tree. -/
   cells : Finset (ℤ × ℤ)
+  /-- Root cell containing every cell of the tree. -/
   root : ℤ × ℤ
   below_root : ∀ c ∈ cells, dyadicGridCell grid c.1 c.2 ⊆ dyadicGridCell grid root.1 root.2
+  /-- Birth cell assigned to each column label. -/
   birth : V → ℤ × ℤ
   birth_mem : ∀ v, birth v ∈ cells
+  /-- Scalar function represented by each column. -/
   scalar : V → ℝ → ℂ
   scalar_measurable : ∀ v, Measurable (scalar v)
+  /-- Positive normalization weight assigned to each column label. -/
   privateWeight : V → ℝ
   privateWeight_pos : ∀ v, 0 < privateWeight v
+  /-- Uniform budget controlling normalized columns and their private weights. -/
   budget : ℝ
   two_le_budget : 2 ≤ budget
   private_lower : ∀ v, budget⁻¹ ≤ Real.sqrt (privateWeight v)
@@ -97,6 +105,7 @@ structure ColumnTreeData (V : Type*) [Fintype V] where
 /-- A fixed inherited mask: available birth cells contain the decision
 cell, and every old label remains available on each descendant in the tree. -/
 structure InheritedColumnMask {V : Type*} [Fintype V] (D : ColumnTreeData V) where
+  /-- Available column labels at each cell, inherited from its ancestors. -/
   labels : (ℤ × ℤ) → Finset V
   available : ∀ c ∈ D.cells, ∀ v ∈ labels c,
     dyadicGridCell D.grid c.1 c.2 ⊆ dyadicGridCell D.grid (D.birth v).1 (D.birth v).2
@@ -336,6 +345,7 @@ theorem cellColumnRange_inner_eq_zero_of_disjoint {V : Type*} [Fintype V]
 /-- A finite stopping partition of the source root, using cells of the
 fixed column tree. Half-open cells make the disjoint cover exact. -/
 structure ColumnStoppingPartition {V : Type*} [Fintype V] (D : ColumnTreeData V) where
+  /-- Disjoint stopping cells covering the original column-tree region. -/
   cells : Finset (ℤ × ℤ)
   subset : cells ⊆ D.cells
   disjoint : Set.PairwiseDisjoint (cells : Set (ℤ × ℤ))
@@ -541,9 +551,12 @@ The square-sum bound and exact input-cell equation remain explicit data
 when later constructions assemble and compose row families. -/
 structure ColumnRowFamily {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (ι F : Type*) [Fintype ι] [NormedAddCommGroup F] [NormedSpace ℂ F] where
+  /-- Decision cell at which each row is localized. -/
   decision : ι → ℤ × ℤ
   decision_mem : ∀ i, decision i ∈ D.cells
+  /-- Continuous linear operator associated with each row. -/
   row : ι → ColumnL2 V →L[ℂ] F
+  /-- Uniform square-sum bound for the row operators. -/
   bound : ℝ
   bound_nonneg : 0 ≤ bound
   square_sum : ∀ z, ∑ i, ‖row i z‖ ^ 2 ≤ bound ^ 2 * ‖z‖ ^ 2
@@ -1231,6 +1244,7 @@ theorem extendedColumnLabels_eq {V : Type*} [Fintype V] (D : ColumnTreeData V)
     exact Finset.mem_biUnion.mpr ⟨c, Finset.mem_filter.mpr ⟨hc, Set.Subset.rfl⟩, hv⟩
 
 open scoped Classical in
+/-- Extend an inherited mask to an enlarged cell collection. -/
 noncomputable def extendedColumnMask {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) (S : Finset (ℤ × ℤ)) (hDS : D.cells ⊆ S)
     (hS : ∀ c ∈ S, dyadicGridCell D.grid c.1 c.2 ⊆ dyadicGridCell D.grid D.root.1 D.root.2) :
@@ -1317,6 +1331,7 @@ noncomputable def completedColumnTree {V : Type*} [Fintype V] (D : ColumnTreeDat
     (columnCompletion_contains D)
     (fun c hc => ((dyadicFiniteTree_mem_iff D.grid D.root c (columnCompletionDepth D)).mp hc).1)
 
+/-- Inherited mask on the completed finite dyadic tree. -/
 noncomputable def completedColumnMask {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) : InheritedColumnMask (completedColumnTree D) :=
   extendedColumnMask D A _ (columnCompletion_contains D)
@@ -1328,6 +1343,7 @@ theorem completedColumnMask_projection_eq {V : Type*} [Fintype V] (D : ColumnTre
       (columnCompletion_contains D hc) = cellColumnProjection D A hc :=
   extendedColumnMask_projection_eq D A _ (columnCompletion_contains D) _ hc
 
+/-- The original row operators viewed on the completed column tree. -/
 noncomputable def completedColumnRows {V ι F : Type*} [Fintype V] [Fintype ι]
     [NormedAddCommGroup F] [NormedSpace ℂ F] (D : ColumnTreeData V)
     (B : ColumnRowFamily D ι F) : ColumnRowFamily (completedColumnTree D) ι F :=
@@ -1350,14 +1366,17 @@ theorem columnInput_norm_integrableOn {V : Type*} [Fintype V] (D : ColumnTreeDat
     z (by norm_num : (1 : ENNReal) ≤ 2)
     (by rw [dyadicGridCell_volume]; exact ENNReal.ofReal_ne_top)).norm
 
+/-- Size-stopping roots for the cell averages of the column input. -/
 noncomputable def columnSizeRoots {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (z : ColumnL2 V) : Finset (ℤ × ℤ) :=
   dyadicSizeRoots D.grid D.root (columnCompletionDepth D) (columnCellAverage D z)
 
+/-- Cells in the size segment beginning at the stopping root `K`. -/
 noncomputable def columnSizeSegment {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (z : ColumnL2 V) (K : ℤ × ℤ) : Finset (ℤ × ℤ) :=
   dyadicSizeSegment D.grid (completedColumnTree D).cells (columnCellAverage D z) K
 
+/-- Cuts delimiting the size segment beginning at `K`. -/
 noncomputable def columnSizeCuts {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (z : ColumnL2 V) (K : ℤ × ℤ) : Finset (ℤ × ℤ) :=
   dyadicSizeSegmentCuts D.grid D.root (columnCompletionDepth D) (columnCellAverage D z) K
@@ -1458,6 +1477,7 @@ instance cutColumnRange_finiteDimensional {V : Type*} [Fintype V] (D : ColumnTre
   unfold cutColumnRange
   infer_instance
 
+/-- Orthogonal projection onto the column range retained after the specified cuts. -/
 noncomputable def cutColumnProjection {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) (C : Finset (ℤ × ℤ)) (hC : C ⊆ D.cells) :
     ColumnL2 V →L[ℂ] ColumnL2 V :=
@@ -1494,6 +1514,7 @@ theorem cutColumnProjection_eq_sum {V : Type*} [Fintype V] (D : ColumnTreeData V
         (Submodule.starProjection_comp_starProjection_of_le hle)
 
 open scoped Classical in
+/-- Ancestor mask restricted to the size segment beginning at `K`. -/
 noncomputable def columnSegmentMask {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) (z : ColumnL2 V) (K : ℤ × ℤ) :
     InheritedColumnMask (completedColumnTree D) :=
@@ -1839,6 +1860,7 @@ theorem columnMomentFamily_of_mem {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) (z : ColumnL2 V) {K : ℤ × ℤ} (hK : K ∈ columnSizeRoots D z) :
     columnMomentFamily D A z K = columnMomentRepresentative D A z hK := dite_eq_left hK
 
+/-- Sum of squared moment-family norms over the size-stopping roots. -/
 noncomputable def columnMomentEnergy {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) (z : ColumnL2 V) : ℝ :=
   ∑ K ∈ columnSizeRoots D z, ‖columnMomentFamily D A z K‖ ^ 2
@@ -3063,6 +3085,7 @@ theorem birthColumn_memLp {V : Type*} [Fintype V] (D : ColumnTreeData V) (v : V)
       (D.scalar_measurable v)).aestronglyMeasurable
     D.budget (D.column_bound v)
 
+/-- Birth column represented as an element of the column L² space. -/
 noncomputable def birthColumnLp {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (v : V) : ColumnL2 V := MemLp.toLp _ (birthColumn_memLp D v)
 
@@ -3710,10 +3733,12 @@ theorem columnSpatialCompression {V ι F : Type*} [Fintype V] [Fintype ι]
       ring
     simpa only [he] using h
 
+/-- Base logarithmic budget for compressing moments of order `m`. -/
 noncomputable def columnCompressionBase {V : Type*} [Fintype V]
     (D : ColumnTreeData V) (m : ℕ) : ℝ :=
   512 * ((m : ℝ) + 1) ^ 512 * Real.log (2 * D.budget)
 
+/-- Moment-compression bound obtained by raising the base budget to its prescribed power. -/
 noncomputable def columnCompressionBound {V : Type*} [Fintype V]
     (D : ColumnTreeData V) (m : ℕ) : ℝ := columnCompressionBase D m ^ (512 * (m + 1))
 

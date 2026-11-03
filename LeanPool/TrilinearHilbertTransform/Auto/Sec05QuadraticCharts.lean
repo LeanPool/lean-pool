@@ -54,10 +54,15 @@ theorem coordinateWordDerivative_zero {d : ℕ} (χ : (Fin d → ℝ) → ℂ)
 /-- The data in the source quadratic chart formula. Smoothness means
 `C-infinity`, and imposes no analyticity assumption on the compact cutoff. -/
 structure QuadraticChartData (d : ℕ) where
+  /-- Horizontal direction used to sample the chart amplitude. -/
   horizontal : Fin d → ℝ
+  /-- Coefficient of the scalar quadratic phase. -/
   quadratic : ℝ
+  /-- Coefficient of the scalar linear phase. -/
   linear : ℝ
+  /-- Rational matrix defining the chart's bilinear lattice phase. -/
   matrix : Matrix (Fin d) (Fin d) ℚ
+  /-- Smooth compactly supported amplitude of the chart. -/
   amplitude : (Fin d → ℝ) → ℂ
   smooth : ContDiff ℝ (⊤ : ℕ∞) amplitude
   compact : HasCompactSupport amplitude
@@ -66,13 +71,16 @@ structure QuadraticChartData (d : ℕ) where
 noncomputable def chartMatrixPhase {d : ℕ} (C : Matrix (Fin d) (Fin d) ℚ)
     (z w : Fin d → ℝ) : ℝ := ∑ i, ∑ j, z i * (C i j : ℝ) * w j
 
+/-- Horizontal position of the chart at the real parameter `y`. -/
 noncomputable def chartHorizontalPosition {d : ℕ} (A : QuadraticChartData d) (y : ℝ) :
     Fin d → ℝ := fun i => A.horizontal i * y
 
+/-- Horizontal position after subtracting the integer lattice point `n`. -/
 noncomputable def chartLatticeRemainder {d : ℕ} (A : QuadraticChartData d)
     (y : ℝ) (n : Fin d → ℤ) : Fin d → ℝ :=
   fun i => A.horizontal i * y - (n i : ℝ)
 
+/-- Amplitude and bilinear phase contributed by the lattice point `n`. -/
 noncomputable def quadraticChartLatticeSummand {d : ℕ} (A : QuadraticChartData d)
     (y : ℝ) (n : Fin d → ℤ) : ℂ :=
   A.amplitude (chartLatticeRemainder A y n) *
@@ -917,6 +925,7 @@ noncomputable def chartTranslationConstant {d : ℕ} (A : QuadraticChartData d)
     (t : ℝ) (m : Fin d → ℤ) (a : Fin d → ℝ) : ℝ :=
   A.quadratic * t ^ 2 + A.linear * t + chartMatrixPhase A.matrix (fun i => (m i : ℝ)) a
 
+/-- Linear phase coefficient after translating the chart by `t` and the lattice offset `m`. -/
 noncomputable def chartTranslationLinear {d : ℕ} (A : QuadraticChartData d)
     (t : ℝ) (m : Fin d → ℤ) (a : Fin d → ℝ) : ℝ :=
   A.linear + 2 * A.quadratic * t + chartMatrixPhase A.matrix A.horizontal a +
@@ -1282,11 +1291,16 @@ theorem quadraticChart_affine_closure {d c₀ : ℕ} {H : ℝ}
 one, two or three real variables; the same formula is meaningful in every
 finite dimension. Real horizontal and ordinary phase matrices are unrestricted. -/
 structure MultivariableQuadraticChartData (k d : ℕ) where
+  /-- Matrix of horizontal directions for the multivariable chart. -/
   horizontal : Matrix (Fin d) (Fin k) ℝ
+  /-- Symmetric matrix defining the quadratic phase in the input variables. -/
   quadratic : Matrix (Fin k) (Fin k) ℝ
   symmetric : quadratic.IsSymm
+  /-- Linear phase coefficients in the input variables. -/
   linear : Fin k → ℝ
+  /-- Rational matrix defining the multivariable chart's lattice phase. -/
   matrix : Matrix (Fin d) (Fin d) ℚ
+  /-- Smooth compactly supported amplitude of the multivariable chart. -/
   amplitude : (Fin d → ℝ) → ℂ
   smooth : ContDiff ℝ (⊤ : ℕ∞) amplitude
   compact : HasCompactSupport amplitude

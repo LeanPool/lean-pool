@@ -560,8 +560,11 @@ with primary labels `π`, abstracting the two graphs of `eq:PRE` and `eq:CURRENT
 contain their mode and are determined by any member, PRE refines CURRENT, and both increase with
 height. -/
 structure ModeComponents (Mode P : Type*) [DecidableEq Mode] [DecidableEq P] where
+  /-- Predecessor graph component of a mode at each height. -/
   E : ℕ → Mode → Finset Mode
+  /-- Current graph component of a mode at each height. -/
   F : ℕ → Mode → Finset Mode
+  /-- Primary label associated with each mode. -/
   π : Mode → P
   E_self : ∀ h m, m ∈ E h m
   E_comp : ∀ h m x, x ∈ E h m → E h x = E h m

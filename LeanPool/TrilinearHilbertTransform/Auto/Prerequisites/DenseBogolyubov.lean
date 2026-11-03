@@ -214,12 +214,15 @@ theorem bogolyubovBaseFunction_eq_double_average {G : Type*} [AddCommGroup G]
 /-- The source's real exponent, logarithmic number of iterations and tolerance. -/
 noncomputable def bogolyubovExponent (α : ℝ) : ℝ := max 2 (Real.log (1 / α))
 
+/-- Number of density-increment steps allowed at density `α`. -/
 noncomputable def bogolyubovIterations (α : ℝ) : ℕ :=
   ⌈10 + Real.log (1 / α) / Real.log 2⌉₊
 
+/-- Accuracy used in each Bogolyubov sampling step. -/
 noncomputable def bogolyubovTolerance (α : ℝ) : ℝ :=
   (1000 * Real.exp 1 * bogolyubovIterations α)⁻¹
 
+/-- Sample size required by the Bogolyubov accuracy and exponent budgets. -/
 noncomputable def bogolyubovSampleSize (α : ℝ) : ℕ :=
   ⌈64 * bogolyubovExponent α / bogolyubovTolerance α ^ 2⌉₊
 

@@ -447,6 +447,7 @@ theorem successiveMinimum_attained_fullLattice {E : Type*} [NormedAddCommGroup E
   have h := successiveMinimum_attained hK b hj hjb
   simpa only [b, Module.Basis.ofZLatticeBasis_span] using h
 
+/-- Coordinate cube with every Euclidean coordinate between minus one and one. -/
 def euclideanCoordinateCube (d : ℕ) : Set (EuclideanSpace ℝ (Fin d)) :=
   WithLp.toLp 2 '' Set.Icc (fun _ : Fin d => (-1 : ℝ)) (fun _ => 1)
 
@@ -488,6 +489,7 @@ theorem euclideanCoordinateCube_zero_interior (d : ℕ) :
   exact mem_interior_iff_mem_nhds.mpr
     (Filter.mem_of_superset (Metric.ball_mem_nhds 0 (by norm_num : (0 : ℝ) < 1)) hs)
 
+/-- Minkowski sum of the scaled image cube and the ambient coordinate cube. -/
 noncomputable def shortReturnBody {d k : ℕ}
     (V : EuclideanSpace ℝ (Fin k) →L[ℝ] EuclideanSpace ℝ (Fin d)) (P : ℝ) :
     Set (EuclideanSpace ℝ (Fin d)) :=
@@ -631,6 +633,7 @@ theorem scaled_shortReturnBody_gives_return {d k : ℕ}
   have hm := mul_le_mul_of_nonneg_left hwn hP.le
   nlinarith only [hhn, hm]
 
+/-- Integer span of the standard Euclidean coordinate basis. -/
 noncomputable def coordinateIntegerLattice (d : ℕ) : Submodule ℤ (EuclideanSpace ℝ (Fin d)) :=
   Submodule.span ℤ (Set.range (EuclideanSpace.basisFun (Fin d) ℝ).toBasis)
 
@@ -660,6 +663,7 @@ theorem bilinear_vanishes_on_span {E : Type*} [AddCommGroup E] [Module ℝ E]
     Submodule.span_le.mpr (fun y hy => hl y hy hx)
   exact fun y hy => hr hy
 
+/-- Real span of integer lattice points inside the scaled short-return body. -/
 noncomputable def shortReturnLatticeSpan {d k : ℕ}
     (V : EuclideanSpace ℝ (Fin k) →L[ℝ] EuclideanSpace ℝ (Fin d)) (P s : ℝ) :
     Submodule ℝ (EuclideanSpace ℝ (Fin d)) :=
@@ -738,6 +742,7 @@ theorem shortReturnLatticeSpan_isotropic {d k : ℕ}
     EuclideanSpace.inner_eq_star_dotProduct, star_trivial] at ht
   exact ht
 
+/-- Real span of lattice points in the dilation `b • K`. -/
 noncomputable def latticeBodySpan {E : Type*} [AddCommGroup E] [Module ℝ E]
     (K : Set E) (L : Submodule ℤ E) (b : ℝ) : Submodule ℝ E :=
   Submodule.span ℝ ((L : Set E) ∩ b • K)

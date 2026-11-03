@@ -2201,6 +2201,7 @@ theorem rational_frequency_tiny_sum {d u : ℕ} {B ε : ℝ} (hB : 2 ≤ B)
 open Matrix
 open scoped Matrix
 
+/-- Return frequency determined by the quadratic matrix, return directions and lattice offset. -/
 noncomputable def quadraticReturnFrequency {d k : ℕ}
     (C : Matrix (Fin d) (Fin d) ℝ) (V : Matrix (Fin d) (Fin k) ℝ)
     (Λ : Matrix (Fin k) (Fin k) ℝ) (h : Fin k → ℝ) (m : Fin d → ℝ) : Fin k → ℝ :=
@@ -2430,12 +2431,15 @@ theorem real_matrix_mul_entry_eq_row_inner {r n k : ℕ}
     Matrix.toEuclideanLin, EuclideanSpace.basisFun_apply, Matrix.mulVec,
     dotProduct, Matrix.mul_apply, Pi.single_apply, mul_comm]
 
+/-- Symmetric part of a real matrix. -/
 noncomputable def realSymmetricPart {d : ℕ} (C : Matrix (Fin d) (Fin d) ℝ) :
     Matrix (Fin d) (Fin d) ℝ := (1 / 2 : ℝ) • (C + C.transpose)
 
+/-- Skew-symmetric part of a real matrix. -/
 noncomputable def realSkewPart {d : ℕ} (C : Matrix (Fin d) (Fin d) ℝ) :
     Matrix (Fin d) (Fin d) ℝ := (1 / 2 : ℝ) • (C - C.transpose)
 
+/-- Quadratic matrix remaining after the return-coordinate change. -/
 noncomputable def effectiveReturnQuadratic {d k : ℕ} (C : Matrix (Fin d) (Fin d) ℝ)
     (Λ : Matrix (Fin k) (Fin k) ℝ) (V F S : Matrix (Fin d) (Fin k) ℝ) :
     Matrix (Fin k) (Fin k) ℝ :=

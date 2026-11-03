@@ -1,0 +1,4337 @@
+/-
+Copyright (c) 2026 Joris Roos. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Claude
+-/
+module
+
+public import LeanPool.TrilinearHilbertTransform.Auto.Sec123FiniteSameTagCatalogs.Setup
+
+/-!
+# Trilinear Hilbert transform: slotTriple_form_le
+-/
+
+@[expose] public section
+
+section
+namespace TrilinearHT.Auto
+open MeasureTheory Metric
+open scoped FourierTransform ComplexConjugate ENNReal
+
+open scoped Classical in
+private def SlotTripleFormLeHptStatement : Prop :=
+  ∀ (a₀ : ℝ)
+    (r : ℝ)
+    (_ : (0 : ℝ) < r)
+    (w : ℝ × ℝ → ℂ)
+    (j : Fin (4 : ℕ))
+    (a : Fin (4 : ℕ))
+    (b : Fin (4 : ℕ))
+    (G : ℝ → ℂ)
+    (Fa : ℝ → ℂ)
+    (Fb : ℝ → ℂ),
+  let I : Set ℝ :=
+    Set.Icc a₀ (a₀ + r)
+  let Gg : ℝ → ℂ :=
+    I.indicator G
+  let Ga : ℝ → ℂ :=
+    I.indicator Fa
+  ∀ (_ : Ga = I.indicator Fa),
+  let Gb : ℝ → ℂ :=
+    I.indicator Fb
+  ∀ (_ : Gb = I.indicator Fb),
+  let ar : ℝ :=
+    (↑(↑a : ℕ) : ℝ)
+  let br : ℝ :=
+    (↑(↑b : ℕ) : ℝ)
+  let jr : ℝ :=
+    (↑(↑j : ℕ) : ℝ)
+  let Tr : ℝ × ℝ → ℂ :=
+    fun (z : ℝ × ℝ) => Ga (z.1 + ar * z.2) * Gb (z.1 + br * z.2) * Gg (z.1 + jr * z.2)
+  let c : (Fin (2 : ℕ) → ℤ) → ℂ :=
+    periodicFourierCoeff (cubePeriodization (kernelUnitRescale a₀ r w) (16 : ℝ))
+  let c₀ : ℝ :=
+    a₀ + r / (2 : ℝ)
+  ∀ (_ : ∀ (x t : ℝ), |x - c₀| ≤ (8 : ℝ) * r → |t| ≤ (8 : ℝ) * r → HasSum (fun (v : Fin (2 :
+      ℕ) → ℤ) => c v * (↑((𝐞 : ℝ → Circle) ((↑(v (0 : Fin (2 : ℕ))) : ℝ) * ((x - c₀) / r
+      / (16 : ℝ)) + (↑(v (1 : Fin (2 : ℕ))) : ℝ) * (t / r / (16 : ℝ)))) : ℂ)) (w (x, t)))
+    (_ : c₀ = a₀ + r / (2 : ℝ)),
+  let E : (Fin (2 : ℕ) → ℤ) → ℝ × ℝ → ℂ :=
+    fun (v : Fin (2 : ℕ) → ℤ) (z : ℝ × ℝ) => (↑((𝐞 : ℝ → Circle) ((↑(v (0 : Fin (2 :
+      ℕ))) : ℝ) * ((z.1 - c₀) / r / (16 : ℝ)) + (↑(v (1 : Fin (2 : ℕ))) : ℝ) * (z.2 / r
+      / (16 : ℝ)))) : ℂ)
+  ∀ (_ : E = fun (v : Fin (2 : ℕ) → ℤ) (z : ℝ × ℝ) => (↑((𝐞 : ℝ → Circle) ((↑(v (0 : Fin (2 :
+      ℕ))) : ℝ) * ((z.1 - c₀) / r / (16 : ℝ)) + (↑(v (1 : Fin (2 : ℕ))) : ℝ) * (z.2 / r
+      / (16 : ℝ)))) : ℂ))
+    (_ : (1 : ℝ) ≤ |(↑(↑b : ℕ) : ℝ) - (↑(↑a : ℕ) : ℝ)|)
+    (_ : |ar| ≤ (3 : ℝ)),
+  ∀ (z : ℝ × ℝ), HasSum (fun (v : Fin (2 : ℕ) → ℤ) => c v * (E v z * Tr z)) (w z * Tr
+    z)
+
+
+open scoped Classical in
+private def SlotTripleFormLeHtermStatement : Prop :=
+  ∀ (a₀ : ℝ)
+    (r : ℝ)
+    (_ : (0 : ℝ) < r)
+    (j : Fin (4 : ℕ))
+    (a : Fin (4 : ℕ))
+    (b : Fin (4 : ℕ))
+    (G : ℝ → ℂ)
+    (Fa : ℝ → ℂ)
+    (Fb : ℝ → ℂ)
+    (M : ℝ),
+  let I : Set ℝ :=
+    Set.Icc a₀ (a₀ + r)
+  let Gg : ℝ → ℂ :=
+    I.indicator G
+  let Ga : ℝ → ℂ :=
+    I.indicator Fa
+  let Gb : ℝ → ℂ :=
+    I.indicator Fb
+  ∀ (_ : Measurable Ga)
+    (_ : Measurable Gb)
+    (_ : MemLp Ga (2 : ℝ≥0∞) volume)
+    (_ : MemLp Gb (2 : ℝ≥0∞) volume)
+    (_ : Integrable Gg volume)
+    (_ : Integrable Ga volume)
+    (_ : Integrable Gb volume),
+  let ar : ℝ :=
+    (↑(↑a : ℕ) : ℝ)
+  let br : ℝ :=
+    (↑(↑b : ℕ) : ℝ)
+  let jr : ℝ :=
+    (↑(↑j : ℕ) : ℝ)
+  ∀ (_ : ar ≠ br)
+    (_ : jr ≠ ar)
+    (_ : jr ≠ br),
+  let Tr : ℝ × ℝ → ℂ :=
+    fun (z : ℝ × ℝ) => Ga (z.1 + ar * z.2) * Gb (z.1 + br * z.2) * Gg (z.1 + jr * z.2)
+  ∀ (_ : Tr = fun (z : ℝ × ℝ) => Ga (z.1 + ar * z.2) * Gb (z.1 + br * z.2) * Gg (z.1 + jr *
+      z.2)),
+  let c₀ : ℝ :=
+    a₀ + r / (2 : ℝ)
+  let E : (Fin (2 : ℕ) → ℤ) → ℝ × ℝ → ℂ :=
+    fun (v : Fin (2 : ℕ) → ℤ) (z : ℝ × ℝ) => (↑((𝐞 : ℝ → Circle) ((↑(v (0 : Fin (2 :
+      ℕ))) : ℝ) * ((z.1 - c₀) / r / (16 : ℝ)) + (↑(v (1 : Fin (2 : ℕ))) : ℝ) * (z.2 / r
+      / (16 : ℝ)))) : ℂ)
+  ∀ (_ : E = fun (v : Fin (2 : ℕ) → ℤ) (z : ℝ × ℝ) => (↑((𝐞 : ℝ → Circle) ((↑(v (0 : Fin (2 :
+      ℕ))) : ℝ) * ((z.1 - c₀) / r / (16 : ℝ)) + (↑(v (1 : Fin (2 : ℕ))) : ℝ) * (z.2 / r
+      / (16 : ℝ)))) : ℂ))
+    (_ : Continuous fun (t : ℝ) => (↑((𝐞 : ℝ → Circle) t) : ℂ)),
+  let Sa : ℝ :=
+    √(∫ (x : ℝ), ‖Ga x‖ ^ (2 : ℕ))
+  let Sb : ℝ :=
+    √(∫ (x : ℝ), ‖Gb x‖ ^ (2 : ℕ))
+  ∀ (_ : ∀ (ξ : ℝ), ‖𝓕 Gg ξ‖ ≤ M)
+    (_ : have ar := (↑(↑a : ℕ) : ℝ);
+    have br := (↑(↑b : ℕ) : ℝ);
+    have jr := (↑(↑j : ℕ) : ℝ);
+    |slotAlpha ar br jr * slotBeta ar br jr * (br - ar)|⁻¹ * √|slotAlpha ar br jr| *
+      √|slotBeta ar br jr| ≤ (3 : ℝ))
+    (v : Fin (2 : ℕ) → ℤ),
+  ‖∫ (z : ℝ × ℝ), E v z * Tr z‖ ≤ (3 : ℝ) * M * Sa * Sb
+
+
+open scoped Classical in
+private def SlotTripleFormLeStage1Statement : Prop :=
+  ∀ (κ : LocalKernelClass)
+    (a₀ : ℝ)
+    (r : ℝ)
+    (_ : (0 : ℝ) < r)
+    (w : ℝ × ℝ → ℂ)
+    (j : Fin (4 : ℕ))
+    (a : Fin (4 : ℕ))
+    (b : Fin (4 : ℕ))
+    (_ : a ≠ b)
+    (_ : j ≠ a)
+    (_ : j ≠ b)
+    (G : ℝ → ℂ)
+    (Fa : ℝ → ℂ)
+    (Fb : ℝ → ℂ)
+    (M : ℝ),
+  let I : Set ℝ :=
+    Set.Icc a₀ (a₀ + r)
+  ∀ (_ : ∀ (ξ : ℝ), ‖∫ (y : ℝ) in I, (↑((𝐞 : ℝ → Circle) (-(y * ξ))) : ℂ) * G y‖ ≤ M)
+    (_ : MeasurableSet I),
+  let Gg : ℝ → ℂ :=
+    I.indicator G
+  ∀ (_ : Gg = I.indicator G),
+  let Ga : ℝ → ℂ :=
+    I.indicator Fa
+  ∀ (_ : Ga = I.indicator Fa),
+  let Gb : ℝ → ℂ :=
+    I.indicator Fb
+  ∀ (_ : Gb = I.indicator Fb)
+    (_ : Measurable Ga)
+    (_ : Measurable Gb)
+    (_ : MemLp Ga (2 : ℝ≥0∞) volume)
+    (_ : MemLp Gb (2 : ℝ≥0∞) volume)
+    (_ : Integrable Gg volume)
+    (_ : Integrable Ga volume)
+    (_ : Integrable Gb volume)
+    (_ : ∀ (F : ℝ → ℂ), ∫ (x : ℝ), ‖I.indicator F x‖ ^ (2 : ℕ) = ∫ (x : ℝ) in I, ‖F x‖ ^ (2 :
+      ℕ)),
+  let ar : ℝ :=
+    (↑(↑a : ℕ) : ℝ)
+  let br : ℝ :=
+    (↑(↑b : ℕ) : ℝ)
+  let jr : ℝ :=
+    (↑(↑j : ℕ) : ℝ)
+  ∀ (_ : ar ≠ br)
+    (_ : jr ≠ ar)
+    (_ : jr ≠ br),
+  let Tr : ℝ × ℝ → ℂ :=
+    fun (z : ℝ × ℝ) => Ga (z.1 + ar * z.2) * Gb (z.1 + br * z.2) * Gg (z.1 + jr * z.2)
+  ∀ (_ : Tr = fun (z : ℝ × ℝ) => Ga (z.1 + ar * z.2) * Gb (z.1 + br * z.2) * Gg (z.1 + jr *
+      z.2)),
+  let c : (Fin (2 : ℕ) → ℤ) → ℂ :=
+    periodicFourierCoeff (cubePeriodization (kernelUnitRescale a₀ r w) (16 : ℝ))
+  ∀ (_ : Summable fun (v : Fin (2 : ℕ) → ℤ) => ‖c v‖)
+    (_ : ∑' (v : Fin (2 : ℕ) → ℤ), ‖c v‖ ≤ kernelFourierConst κ),
+  let c₀ : ℝ :=
+    a₀ + r / (2 : ℝ)
+  let E : (Fin (2 : ℕ) → ℤ) → ℝ × ℝ → ℂ :=
+    fun (v : Fin (2 : ℕ) → ℤ) (z : ℝ × ℝ) => (↑((𝐞 : ℝ → Circle) ((↑(v (0 : Fin (2 :
+      ℕ))) : ℝ) * ((z.1 - c₀) / r / (16 : ℝ)) + (↑(v (1 : Fin (2 : ℕ))) : ℝ) * (z.2 / r
+      / (16 : ℝ)))) : ℂ)
+  ∀ (_ : E = fun (v : Fin (2 : ℕ) → ℤ) (z : ℝ × ℝ) => (↑((𝐞 : ℝ → Circle) ((↑(v (0 : Fin (2 :
+      ℕ))) : ℝ) * ((z.1 - c₀) / r / (16 : ℝ)) + (↑(v (1 : Fin (2 : ℕ))) : ℝ) * (z.2 / r
+      / (16 : ℝ)))) : ℂ))
+    (_ : ∀ (z : ℝ × ℝ), HasSum (fun (v : Fin (2 : ℕ) → ℤ) => c v * (E v z * Tr z)) (w z * Tr
+      z))
+    (_ : Continuous fun (t : ℝ) => (↑((𝐞 : ℝ → Circle) t) : ℂ))
+    (_ : ∀ (v : Fin (2 : ℕ) → ℤ), Integrable (fun (z : ℝ × ℝ) => E v z * Tr z) volume),
+  let P : ℝ :=
+    ∫ (z : ℝ × ℝ), ‖Tr z‖
+  ∀ (_ : ∀ (v : Fin (2 : ℕ) → ℤ), ∫ (z : ℝ × ℝ), ‖c v * (E v z * Tr z)‖ ≤ ‖c v‖ * P),
+  ‖(↑r : ℂ)⁻¹ ^ (2 : ℕ) * ∫ (z : ℝ × ℝ), w z * (Ga (z.1 + ar * z.2) * Gb (z.1 + br *
+    z.2) * Gg (z.1 + jr * z.2))‖ ≤ kernelFourierConst κ * ((3 : ℝ) * (M / r)) * √(r⁻¹
+    * ∫ (x : ℝ) in I, ‖Fa x‖ ^ (2 : ℕ)) * √(r⁻¹ * ∫ (x : ℝ) in I, ‖Fb x‖ ^ (2 : ℕ))
+
+
+
+
+private theorem slotTriple_form_le_hpt : SlotTripleFormLeHptStatement := by
+  classical
+  intro a₀ r hr w j a b G Fa Fb I Gg Ga hGa Gb hGb ar br jr Tr c c₀ hexp hc₀ E hE hab1 har3 z
+  by_cases h0 : Tr z = 0
+  · simp [h0]
+  have h0' : Ga (z.1 + ar * z.2) * Gb (z.1 + br * z.2) ≠ 0 := left_ne_zero_of_mul h0
+  have ha : z.1 + ar * z.2 ∈ I := by
+    by_contra h; apply h0'; simp [hGa, Set.indicator_of_notMem h]
+  have hb : z.1 + br * z.2 ∈ I := by
+    by_contra h; apply h0'; simp [hGb, Set.indicator_of_notMem h]
+  have ht : |z.2| ≤ r := by
+    have hd : |(br - ar) * z.2| ≤ r := by
+      have : (br - ar) * z.2 = (z.1 + br * z.2) - (z.1 + ar * z.2) := by ring
+      rw [this, abs_le]; constructor <;> linarith [ha.1, ha.2, hb.1, hb.2]
+    rw [abs_mul] at hd
+    calc |z.2| = 1 * |z.2| := (one_mul _).symm
+      _ ≤ |br - ar| * |z.2| := mul_le_mul_of_nonneg_right hab1 (abs_nonneg _)
+      _ ≤ r := hd
+  have hx : |z.1 - c₀| ≤ 8 * r := by
+    have h1 : |ar * z.2| ≤ 3 * r := by
+      rw [abs_mul]; exact mul_le_mul har3 ht (abs_nonneg _) (by norm_num)
+    have : z.1 - c₀ = (z.1 + ar * z.2 - c₀) - ar * z.2 := by ring
+    rw [this]
+    have h2 : |z.1 + ar * z.2 - c₀| ≤ r := by
+      rw [abs_le, hc₀]; constructor <;> linarith [ha.1, ha.2]
+    calc _ ≤ |z.1 + ar * z.2 - c₀| + |ar * z.2| := abs_sub _ _
+      _ ≤ r + 3 * r := add_le_add h2 h1
+      _ ≤ 8 * r := by linarith
+  have h := (hexp z.1 z.2 hx (by linarith)).mul_right (Tr z)
+  convert h using 1
+  funext v; simp only [hE]; ring
+-- integrability and interchange
+
+
+
+private theorem slotTriple_form_le_hterm : SlotTripleFormLeHtermStatement := by
+  classical
+  intro a₀ r hr j a b G Fa Fb M I Gg Ga Gb hGam hGbm hGa2 hGb2 hGg1 hGa1 hGb1 ar br jr hab' hja'
+    hjb' Tr hTr c₀ E hE hchm Sa Sb hM' hcst v
+  set! μb : ℝ := ((v 1 : ℝ) / (16 * r) - ar * ((v 0 : ℝ) / (16 * r))) / (br - ar) with hμb
+  set! μa : ℝ := (v 0 : ℝ) / (16 * r) - μb with hμa
+  set! A' : ℝ → ℂ := fun y => (Real.fourierChar (μa * y) : ℂ) * Ga y with hA'
+  set! B' : ℝ → ℂ := fun y => (Real.fourierChar (μb * y) : ℂ) * Gb y with hB'
+  have hA'm : Measurable A' := (hchm.measurable.comp (measurable_const.mul measurable_id)).mul
+      hGam
+  have hB'm : Measurable B' := (hchm.measurable.comp (measurable_const.mul measurable_id)).mul
+      hGbm
+  have hA'n : ∀ y, ‖A' y‖ = ‖Ga y‖ := fun y => by simp [hA']
+  have hB'n : ∀ y, ‖B' y‖ = ‖Gb y‖ := fun y => by simp [hB']
+  have hA'1 : Integrable A' := hGa1.mono hA'm.aestronglyMeasurable
+    (Filter.Eventually.of_forall fun y => (hA'n y).le)
+  have hA'2 : MemLp A' 2 := hGa2.of_le hA'm.aestronglyMeasurable
+    (Filter.Eventually.of_forall fun y => (hA'n y).le)
+  have hB'1 : Integrable B' := hGb1.mono hB'm.aestronglyMeasurable
+    (Filter.Eventually.of_forall fun y => (hB'n y).le)
+  have hB'2 : MemLp B' 2 := hGb2.of_le hB'm.aestronglyMeasurable
+    (Filter.Eventually.of_forall fun y => (hB'n y).le)
+  have hba : br - ar ≠ 0 := sub_ne_zero.mpr (Ne.symm hab')
+  have hEe : ∀ z : ℝ × ℝ, E v z * Tr z =
+      (Real.fourierChar (-((v 0 : ℝ) * c₀ / (16 * r))) : ℂ) *
+        (A' (z.1 + ar * z.2) * B' (z.1 + br * z.2) * Gg (z.1 + jr * z.2)) := by
+    intro z
+    simp only [hE, hTr, hA', hB']
+    have hph : (Real.fourierChar ((v 0 : ℝ) * ((z.1 - c₀) / r / 16) +
+        (v 1 : ℝ) * (z.2 / r / 16)) : ℂ) =
+        (Real.fourierChar (-((v 0 : ℝ) * c₀ / (16 * r))) : ℂ) *
+          (Real.fourierChar (μa * (z.1 + ar * z.2)) : ℂ) *
+          (Real.fourierChar (μb * (z.1 + br * z.2)) : ℂ) := by
+      rw [← Circle.coe_mul, ← Circle.coe_mul, ← AddChar.map_add_eq_mul,
+        ← AddChar.map_add_eq_mul]
+      congr 2
+      rw [hμa, hμb]; field_simp; ring
+    rw [hph]; ring
+  simp_rw [hEe]
+  rw [integral_const_mul, norm_mul, Circle.norm_coe, one_mul]
+  have h := slotTriple_norm_le hab' hja' hjb' hA'm hB'm hA'1 hA'2 hB'1 hB'2 hGg1 hM'
+  have hn1 : ∫ x, ‖A' x‖ ^ 2 = ∫ x, ‖Ga x‖ ^ 2 := by simp_rw [hA'n]
+  have hn2 : ∫ x, ‖B' x‖ ^ 2 = ∫ x, ‖Gb x‖ ^ 2 := by simp_rw [hB'n]
+  rw [hn1, hn2] at h
+  have hM0 : 0 ≤ M := (norm_nonneg _).trans (hM' 0)
+  have hSa0 : 0 ≤ Sa := Real.sqrt_nonneg _
+  have hSb0 : 0 ≤ Sb := Real.sqrt_nonneg _
+  rw [Real.sqrt_mul (abs_nonneg _), Real.sqrt_mul (abs_nonneg _)] at h
+  refine h.trans ?_
+  have hc3 : |slotAlpha ar br jr * slotBeta ar br jr * (br - ar)|⁻¹ *
+      Real.sqrt |slotAlpha ar br jr| * Real.sqrt |slotBeta ar br jr| ≤ 3 := hcst
+  calc _ = (|slotAlpha ar br jr * slotBeta ar br jr * (br - ar)|⁻¹ *
+        Real.sqrt |slotAlpha ar br jr| * Real.sqrt |slotBeta ar br jr|) * M * Sa * Sb := by
+        ring
+    _ ≤ 3 * M * Sa * Sb := by gcongr
+
+
+
+private theorem slotTriple_form_le_stage_1 : SlotTripleFormLeStage1Statement := by
+  classical
+  intro κ a₀ r hr w j a b hab hja hjb G Fa Fb M I hM hIm Gg hGg Ga hGa Gb hGb hGam hGbm hGa2 hGb2
+    hGg1 hGa1 hGb1 hsq ar br jr hab' hja' hjb' Tr hTr c hcs hct c₀ E hE hpt hchm hΨi P hΨn
+  have hsumm : Summable (fun v => ∫ z, ‖c v * (E v z * Tr z)‖) :=
+    Summable.of_nonneg_of_le (fun v => integral_nonneg fun _ => norm_nonneg _) hΨn
+      (hcs.mul_right P)
+  have hint : ∫ z : ℝ × ℝ, w z * Tr z = ∑' v, c v * ∫ z, E v z * Tr z := by
+    have h := integral_tsum_of_summable_integral_norm (fun v => (hΨi v).const_mul (c v)) hsumm
+    simp_rw [integral_const_mul] at h
+    rw [h]
+    congr 1; funext z; exact (hpt z).tsum_eq.symm
+  -- each term is a modulated slot triple
+  set! Sa := Real.sqrt (∫ x, ‖Ga x‖ ^ 2) with hSa
+  set! Sb := Real.sqrt (∫ x, ‖Gb x‖ ^ 2) with hSb
+  have hM' : ∀ ξ, ‖𝓕 Gg ξ‖ ≤ M := by
+    intro ξ
+    rw [Real.fourier_real_eq]
+    have : ∫ v, (Real.fourierChar (-(v * ξ)) : ℂ) • Gg v =
+        ∫ y in I, (Real.fourierChar (-(y * ξ)) : ℂ) * G y := by
+      rw [← integral_indicator hIm]
+      congr 1; funext y
+      by_cases hy : y ∈ I
+      · simp [hGg, Set.indicator_of_mem hy]
+      · simp [hGg, Set.indicator_of_notMem hy]
+    change ‖∫ v, (Real.fourierChar (-(v * ξ)) : ℂ) • Gg v‖ ≤ M
+    rw [this]; exact hM ξ
+  have hcst := slotConst_le hab hja hjb
+  have hterm (v : Fin 2 → ℤ) : ‖∫ z, E v z * Tr z‖ ≤ 3 * M * Sa * Sb := by
+    expose_names
+    exact @slotTriple_form_le_hterm a₀ r hr j a b G Fa Fb M hGam hGbm hGa2 hGb2 hGg1 hGa1 hGb1
+      hab' hja' hjb' hTr hE hchm hM' hcst v
+  have hM0 : 0 ≤ M := (norm_nonneg _).trans (hM' 0)
+  have hK0 : 0 ≤ 3 * M * Sa * Sb := by positivity
+  have hsum2 : Summable (fun v => ‖c v * ∫ z, E v z * Tr z‖) :=
+    Summable.of_nonneg_of_le (fun _ => norm_nonneg _)
+      (fun v => by rw [norm_mul]; exact mul_le_mul_of_nonneg_left (hterm v) (norm_nonneg _))
+      (hcs.mul_right _)
+  have hbound : ‖∑' v, c v * ∫ z, E v z * Tr z‖ ≤ kernelFourierConst κ * (3 * M * Sa * Sb) := by
+    calc ‖∑' v, c v * ∫ z, E v z * Tr z‖ ≤ ∑' v, ‖c v * ∫ z, E v z * Tr z‖ :=
+          norm_tsum_le_tsum_norm hsum2
+      _ ≤ ∑' v, ‖c v‖ * (3 * M * Sa * Sb) :=
+          hsum2.tsum_le_tsum (fun v => by
+            rw [norm_mul]; exact mul_le_mul_of_nonneg_left (hterm v) (norm_nonneg _))
+            (hcs.mul_right _)
+      _ = (∑' v, ‖c v‖) * (3 * M * Sa * Sb) := tsum_mul_right
+      _ ≤ _ := mul_le_mul_of_nonneg_right hct hK0
+  rw [hint, norm_mul, norm_pow, norm_inv, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hr]
+  have hSa' : Real.sqrt (r⁻¹ * ∫ x in I, ‖Fa x‖ ^ 2) = Real.sqrt r⁻¹ * Sa := by
+    rw [Real.sqrt_mul (inv_nonneg.mpr hr.le), hSa, hGa, hsq]
+  have hSb' : Real.sqrt (r⁻¹ * ∫ x in I, ‖Fb x‖ ^ 2) = Real.sqrt r⁻¹ * Sb := by
+    rw [Real.sqrt_mul (inv_nonneg.mpr hr.le), hSb, hGb, hsq]
+  rw [hSa', hSb']
+  have hrr : Real.sqrt r⁻¹ * Real.sqrt r⁻¹ = r⁻¹ := Real.mul_self_sqrt (inv_nonneg.mpr hr.le)
+  calc r⁻¹ ^ 2 * ‖∑' v, c v * ∫ z, E v z * Tr z‖ ≤
+      r⁻¹ ^ 2 * (kernelFourierConst κ * (3 * M * Sa * Sb)) :=
+        mul_le_mul_of_nonneg_left hbound (by positivity)
+    _ = kernelFourierConst κ * (3 * (M / r)) * (Real.sqrt r⁻¹ * Sa) *
+          (Real.sqrt r⁻¹ * Sb) := by
+        have : kernelFourierConst κ * (3 * (M / r)) * (Real.sqrt r⁻¹ * Sa) *
+            (Real.sqrt r⁻¹ * Sb) =
+            kernelFourierConst κ * (3 * (M / r)) * (Real.sqrt r⁻¹ * Real.sqrt r⁻¹) * Sa * Sb := by
+          ring
+        rw [this, hrr]
+        field_simp
+
+
+/-- Blueprint same-tag, line 1813 (one term): a single-scale form with an `L²` input `G` in the
+slot `j` and two spectators in the slots `a, b` is bounded by `3 C_κ` times the Fourier supremum
+`M/r ≥ sup_ξ |r⁻¹ ∫_I G e(-ξ y)|` of `G` and the normalized `L²(I)` norms of the spectators. -/
+theorem slotTriple_form_le {κ : LocalKernelClass} {a₀ r : ℝ} (hr : 0 < r) {w : ℝ × ℝ → ℂ}
+    (hw : IsAdmissibleLocalKernel κ a₀ r w) {j a b : Fin 4} (hab : a ≠ b) (hja : j ≠ a)
+    (hjb : j ≠ b) {G Fa Fb : ℝ → ℂ} (hGm : Measurable G) (hFam : Measurable Fa)
+    (hFbm : Measurable Fb) (hG2 : MemLp G 2 (volume.restrict (Set.Icc a₀ (a₀ + r))))
+    (hFa2 : MemLp Fa 2 (volume.restrict (Set.Icc a₀ (a₀ + r))))
+    (hFb2 : MemLp Fb 2 (volume.restrict (Set.Icc a₀ (a₀ + r)))) {M : ℝ}
+    (hM : ∀ ξ, ‖∫ y in Set.Icc a₀ (a₀ + r), (Real.fourierChar (-(y * ξ)) : ℂ) * G y‖ ≤ M) :
+    ‖(r : ℂ)⁻¹ ^ 2 * ∫ z : ℝ × ℝ, w z * G (realProgressionCoordinate j z) *
+        Fa (realProgressionCoordinate a z) * Fb (realProgressionCoordinate b z)‖ ≤
+      kernelFourierConst κ * (3 * (M / r)) *
+        Real.sqrt (r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖Fa x‖ ^ 2) *
+        Real.sqrt (r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖Fb x‖ ^ 2) := by
+  set I := Set.Icc a₀ (a₀ + r) with hI
+  have hIm : MeasurableSet I := measurableSet_Icc
+  set Gg := I.indicator G with hGg
+  set Ga := I.indicator Fa with hGa
+  set! Gb := I.indicator Fb with hGb
+  have hGgm : Measurable Gg := hGm.indicator hIm
+  have hGam : Measurable Ga := hFam.indicator hIm
+  have hGbm : Measurable Gb := hFbm.indicator hIm
+  have hGg2 : MemLp Gg 2 := (memLp_indicator_iff_restrict hIm).mpr hG2
+  have hGa2 : MemLp Ga 2 := (memLp_indicator_iff_restrict hIm).mpr hFa2
+  have hGb2 : MemLp Gb 2 := (memLp_indicator_iff_restrict hIm).mpr hFb2
+  have hGg1 : Integrable Gg := (integrable_indicator_iff hIm).mpr (hG2.integrable one_le_two)
+  have hGa1 : Integrable Ga := (integrable_indicator_iff hIm).mpr (hFa2.integrable one_le_two)
+  have hGb1 : Integrable Gb := (integrable_indicator_iff hIm).mpr (hFb2.integrable one_le_two)
+  have hsq (F : ℝ → ℂ) : ∫ x, ‖I.indicator F x‖ ^ 2 = ∫ x in I, ‖F x‖ ^ 2 := by
+    rw [← integral_indicator hIm]
+    congr 1; funext x
+    by_cases hx : x ∈ I
+    · simp [Set.indicator_of_mem hx]
+    · simp [Set.indicator_of_notMem hx]
+  set! ar : ℝ := ((a : ℕ) : ℝ) with har
+  set! br : ℝ := ((b : ℕ) : ℝ) with hbr
+  set! jr : ℝ := ((j : ℕ) : ℝ) with hjr
+  have hab' : ar ≠ br := by
+    intro h; have := fin4_slot_sep hab; rw [← hbr, ← har, h, sub_self, abs_zero] at this
+    norm_num at this
+  have hja' : jr ≠ ar := by
+    intro h; have := fin4_slot_sep hja; rw [← har, ← hjr, h, sub_self, abs_zero] at this
+    norm_num at this
+  have hjb' : jr ≠ br := by
+    intro h; have := fin4_slot_sep hjb; rw [← hbr, ← hjr, h, sub_self, abs_zero] at this
+    norm_num at this
+  have hcoord (l : Fin 4) (z : ℝ × ℝ) :
+      realProgressionCoordinate l z = z.1 + ((l : ℕ) : ℝ) * z.2 := rfl
+  -- restrict the inputs to the cell
+  have hrestr : ∀ z : ℝ × ℝ, w z * G (realProgressionCoordinate j z) *
+      Fa (realProgressionCoordinate a z) * Fb (realProgressionCoordinate b z) =
+      w z * (Ga (z.1 + ar * z.2) * Gb (z.1 + br * z.2) * Gg (z.1 + jr * z.2)) := by
+    intro z
+    by_cases hz : w z = 0
+    · simp [hz]
+    have hmem (l : Fin 4) : realProgressionCoordinate l z ∈ I := by
+      have h := hw.support z hz l
+      have hm := mul_nonneg κ.margin_pos.le hr.le
+      exact ⟨by linarith [h.1], by linarith [h.2]⟩
+    rw [hGa, hGb, hGg, ← hcoord a, ← hcoord b, ← hcoord j, Set.indicator_of_mem (hmem a),
+      Set.indicator_of_mem (hmem b), Set.indicator_of_mem (hmem j)]
+    ring
+  simp_rw [hrestr]
+  set! Tr : ℝ × ℝ → ℂ := fun z => Ga (z.1 + ar * z.2) * Gb (z.1 + br * z.2) * Gg (z.1 + jr * z.2)
+    with hTr
+  have hTri : Integrable Tr :=
+    slotTriple_integrable hab' hja' hjb' hGam hGbm hGgm hGa2 hGb2 hGg1
+  have hTrnorm : Integrable (fun z => ‖Tr z‖) := hTri.norm
+  -- the kernel expansion
+  obtain ⟨hcs, hct, hexp⟩ := admissibleKernel_fourier_expansion hr hw
+  set c := periodicFourierCoeff (cubePeriodization (kernelUnitRescale a₀ r w) 16) with hc
+  set c₀ := a₀ + r / 2 with hc₀
+  set! E : (Fin 2 → ℤ) → ℝ × ℝ → ℂ := fun v z =>
+    (Real.fourierChar ((v 0 : ℝ) * ((z.1 - c₀) / r / 16) + (v 1 : ℝ) * (z.2 / r / 16)) : ℂ)
+    with hE
+  have hab1 := fin4_slot_sep hab
+  have har3 : |ar| ≤ 3 := by
+    rw [har, abs_of_nonneg (Nat.cast_nonneg _)]
+    have := a.isLt; exact_mod_cast (by omega : (a : ℕ) ≤ 3)
+  have hpt : ∀ z : ℝ × ℝ, HasSum (fun v => c v * (E v z * Tr z)) (w z * Tr z) := by
+    expose_names
+    exact @slotTriple_form_le_hpt a₀ r hr w j a b G Fa Fb hGa hGb hexp hc₀ hE hab1 har3
+  have hchm : Continuous (fun t : ℝ => (Real.fourierChar t : ℂ)) :=
+    continuous_subtype_val.comp Real.continuous_fourierChar
+  have hEm (v : Fin 2 → ℤ) : Measurable (E v) := hchm.measurable.comp (by fun_prop)
+  have hE1 (v : Fin 2 → ℤ) (z : ℝ × ℝ) : ‖E v z‖ ≤ 1 := by simp [hE]
+  have hΨi (v : Fin 2 → ℤ) : Integrable (fun z => E v z * Tr z) := by
+    have := hTri.bdd_mul (c := 1) (hEm v).aestronglyMeasurable
+      (Filter.Eventually.of_forall (hE1 v))
+    exact this
+  set! P := ∫ z : ℝ × ℝ, ‖Tr z‖ with hP
+  have hΨn (v : Fin 2 → ℤ) : ∫ z, ‖c v * (E v z * Tr z)‖ ≤ ‖c v‖ * P := by
+    rw [hP, ← integral_const_mul]
+    apply integral_mono_of_nonneg (Filter.Eventually.of_forall fun _ => norm_nonneg _)
+      (hTrnorm.const_mul _)
+    refine Filter.Eventually.of_forall fun z => ?_
+    simp only [norm_mul]
+    exact mul_le_mul_of_nonneg_left (mul_le_of_le_one_left (norm_nonneg _) (hE1 v z))
+      (norm_nonneg _)
+  expose_names
+  exact @slotTriple_form_le_stage_1 κ a₀ r hr w j a b hab hja hjb G Fa Fb M hM hIm hGg hGa hGb
+    hGam hGbm hGa2 hGb2 hGg1 hGa1 hGb1 hsq hab' hja' hjb' hTr hcs hct hE hpt hchm hΨi hΨn
+
+/-! ### Exact carry indicators by discrete Fourier sums -/
+
+theorem fourierChar_int (z : ℤ) : (Real.fourierChar (z : ℝ) : ℂ) = 1 := by
+  rw [Real.fourierChar_apply]
+  have : (2 * Real.pi * (z : ℝ) : ℂ) * Complex.I = (z : ℂ) * (2 * Real.pi * Complex.I) := by
+    push_cast; ring
+  rw [show ((2 * Real.pi * (z : ℝ) : ℝ) : ℂ) * Complex.I = (z : ℂ) * (2 * Real.pi * Complex.I) by
+    push_cast; ring]
+  exact Complex.exp_int_mul_two_pi_mul_I z
+
+/-- One-dimensional orthogonality of the characters of `ℤ/P`. -/
+theorem sum_fourierChar_div {P : ℕ} (hP : 0 < P) {z : ℤ} (hz : |z| < P) :
+    ∑ s ∈ Finset.range P, (Real.fourierChar ((s : ℝ) * z / P) : ℂ) =
+      if z = 0 then (P : ℂ) else 0 := by
+  set ζ : ℂ := (Real.fourierChar ((z : ℝ) / P) : ℂ)
+  have hpow (s : ℕ) : (Real.fourierChar ((s : ℝ) * z / P) : ℂ) = ζ ^ s := by
+    rw [show (s : ℝ) * z / P = s • ((z : ℝ) / P) by rw [nsmul_eq_mul]; ring,
+      AddChar.map_nsmul_eq_pow]
+    simp [ζ]
+  simp_rw [hpow]
+  split_ifs with h0
+  · subst h0
+    simp [ζ]
+  · have hP' : (P : ℝ) ≠ 0 := by exact_mod_cast hP.ne'
+    have hζP : ζ ^ P = 1 := by
+      rw [← hpow P, show (P : ℝ) * z / P = (z : ℝ) by field_simp]
+      exact fourierChar_int z
+    have hζ1 : ζ ≠ 1 := by
+      intro h1
+      simp only [ζ] at h1
+      rw [Real.fourierChar_apply] at h1
+      obtain ⟨n, hn⟩ := Complex.exp_eq_one_iff.mp h1
+      have hπ : (2 * Real.pi * Complex.I) ≠ 0 := by
+        simp [Real.pi_ne_zero, Complex.I_ne_zero]
+      set q : ℝ := (z : ℝ) / P with hq
+      have h2 : (q : ℂ) = ((n : ℝ) : ℂ) := by
+        have : (((2 * Real.pi * q : ℝ) : ℂ) * Complex.I) = (q : ℂ) * (2 * Real.pi * Complex.I) := by
+          push_cast; ring
+        rw [this] at hn
+        push_cast
+        exact mul_right_cancel₀ hπ hn
+      have h3 : (z : ℝ) = n * P := by
+        have h4 : q = n := by exact_mod_cast h2
+        rw [hq, div_eq_iff hP'] at h4
+        exact h4
+      have h5 : z = n * P := by exact_mod_cast h3
+      have : n = 0 := by
+        by_contra hn0
+        have h6 : (P : ℤ) ≤ |z| := by
+          rw [h5, abs_mul]
+          have : (1 : ℤ) ≤ |n| := Int.one_le_abs hn0
+          have hP0 : (0 : ℤ) ≤ (P : ℤ) := by positivity
+          rw [abs_of_nonneg hP0]; nlinarith
+        omega
+      exact h0 (by rw [h5, this, zero_mul])
+    rw [geom_sum_eq hζ1, hζP, sub_self, zero_div]
+
+theorem fourierChar_sum {ι : Type*} (s : Finset ι) (f : ι → ℝ) :
+    (Real.fourierChar (∑ l ∈ s, f l) : ℂ) = ∏ l ∈ s, (Real.fourierChar (f l) : ℂ) := by
+  simp only [Real.fourierChar_apply]
+  rw [← Complex.exp_sum]
+  congr 1
+  push_cast
+  rw [Finset.mul_sum, Finset.sum_mul]
+
+/-- The box of residues `{0, …, P-1}ᵈ`. -/
+def residueBox (d P : ℕ) : Finset (Fin d → ℕ) := Fintype.piFinset fun _ => Finset.range P
+
+/-- Multidimensional orthogonality of the characters of `(ℤ/P)ᵈ`. -/
+theorem sum_residueBox_fourierChar {d P : ℕ} (hP : 0 < P) {z : Fin d → ℤ}
+    (hz : ∀ l, |z l| < P) :
+    ∑ s ∈ residueBox d P, (Real.fourierChar (∑ l, (s l : ℝ) * z l / P) : ℂ) =
+      if z = 0 then (P : ℂ) ^ d else 0 := by
+  simp_rw [fourierChar_sum]
+  rw [residueBox, ← Finset.prod_univ_sum (t := fun _ => Finset.range P)
+    (f := fun l j => (Real.fourierChar ((j : ℝ) * z l / P) : ℂ))]
+  simp_rw [sum_fourierChar_div hP (hz _)]
+  split_ifs with h0
+  · simp [h0]
+  · obtain ⟨l, hl⟩ : ∃ l, z l ≠ 0 := by
+      by_contra hc; push Not at hc; exact h0 (funext hc)
+    exact Finset.prod_eq_zero (Finset.mem_univ l) (by simp [hl])
+
+/-- The exact carry indicator: summing the residue characters over a box of
+candidate carries recovers the value at the actual carry. -/
+theorem carry_collapse {d K P : ℕ} (hP : 2 * K < P) {k : Fin d → ℤ}
+    (hk : k ∈ slowValueBox d K) (F : (Fin d → ℤ) → ℂ) :
+    ∑ k' ∈ slowValueBox d K, ∑ s ∈ residueBox d P,
+      ((P : ℂ) ^ d)⁻¹ * (Real.fourierChar (∑ l, (s l : ℝ) * (k l - k' l : ℤ) / P) : ℂ) *
+        F k' = F k := by
+  have hP0 : 0 < P := by omega
+  have hPd : (P : ℂ) ^ d ≠ 0 := pow_ne_zero _ (by exact_mod_cast hP0.ne')
+  rw [Finset.sum_eq_single k]
+  · simp_rw [← Finset.sum_mul, ← Finset.mul_sum]
+    rw [sum_residueBox_fourierChar hP0 (fun l => by
+      rw [sub_self, abs_zero]; exact_mod_cast hP0)]
+    have : (fun l => k l - k l) = 0 := by funext l; simp
+    rw [ite_eq_left this, inv_mul_cancel₀ hPd, one_mul]
+  · intro k' hk' hne
+    simp_rw [← Finset.sum_mul, ← Finset.mul_sum]
+    have hb : ∀ l, |k l - k' l| < P := by
+      intro l
+      have h1 := (mem_slowValueBox.mp hk) l
+      have h2 := (mem_slowValueBox.mp hk') l
+      have : |k l - k' l| ≤ |k l| + |k' l| := abs_sub _ _
+      omega
+    rw [sum_residueBox_fourierChar hP0 hb]
+    have : (fun l => k l - k' l) ≠ 0 := by
+      intro h; apply hne; funext l; have := congrFun h l; simp at this; linarith
+    simp [this]
+  · intro h; exact absurd hk h
+
+/-! ### Slot bookkeeping and the four-slot phase identity -/
+
+/-- The base partner of a source slot `i`: an adjacent slot `p = i ± 1`. -/
+def tagPartner : Fin 4 → Fin 4 := ![1, 2, 3, 2]
+
+/-- The two remaining slots, after the source slot and its partner. -/
+def tagThird : Fin 4 → Fin 4 := ![2, 0, 0, 0]
+
+/-- Fourth slot complementary to a tag's distinguished and spectator slots. -/
+def tagFourth : Fin 4 → Fin 4 := ![3, 3, 1, 1]
+
+/-- The interpolation weight `e_l = (l - i)(p - i)`: the slot positions satisfy
+`l = i + e_l (p - i)`, since `(p - i)² = 1`. -/
+def tagWeight (i l : Fin 4) : ℤ := ((l : ℤ) - i) * ((tagPartner i : ℤ) - i)
+
+theorem tagSlots_distinct (i : Fin 4) :
+    tagPartner i ≠ i ∧ tagThird i ≠ i ∧ tagFourth i ≠ i ∧ tagThird i ≠ tagPartner i ∧
+      tagFourth i ≠ tagPartner i ∧ tagThird i ≠ tagFourth i := by
+  fin_cases i <;> decide
+
+theorem tagWeight_self (i : Fin 4) : tagWeight i i = 0 := by simp [tagWeight]
+
+theorem tagWeight_partner (i : Fin 4) : tagWeight i (tagPartner i) = 1 := by
+  fin_cases i <;> decide
+
+theorem tagWeight_abs_le (i l : Fin 4) : |tagWeight i l| ≤ 3 ∧ |1 - tagWeight i l| ≤ 4 := by
+  fin_cases i <;> fin_cases l <;> decide
+
+/-- The lifts `u_l = θ y_l` are affine in the slot: `u_l = u_i + e_l (u_p - u_i)`. -/
+theorem tag_slot_affine (i l : Fin 4) (x t : ℝ) :
+    x + ((l : ℕ) : ℝ) * t = x + ((i : ℕ) : ℝ) * t +
+      (tagWeight i l : ℝ) * ((x + ((tagPartner i : ℕ) : ℝ) * t) - (x + ((i : ℕ) : ℝ) * t)) := by
+  fin_cases i <;> fin_cases l <;> simp [tagWeight, tagPartner] <;> ring
+
+/-- The third differences of quadratic polynomials vanish: `Σ c_l l^u = 0`, `u ≤ 2`. -/
+theorem slotCoeff_quadratic (A B D : ℝ) :
+    ∑ l : Fin 4, (slotCoeff l : ℝ) * (A + B * ((l : ℕ) : ℝ) + D * ((l : ℕ) : ℝ) ^ 2) = 0 := by
+  simp [Fin.sum_univ_four, slotCoeff]
+  ring
+
+/-- Blueprint §12.3, line 1806: the four-slot phase identity. With lifts
+`D_l = D_i + e_l (D_p - D_i) - k_l`, the quadratic and lattice phases of all four slots
+cancel up to the linear carry phase. -/
+theorem tag_phase_identity {d : ℕ} (C : Matrix (Fin d) (Fin d) ℚ) (θ : Fin d → ℝ)
+    (lam x t : ℝ) (i : Fin 4) (Di Dp : Fin d → ℝ) (k : Fin 4 → Fin d → ℝ) :
+    ∑ l : Fin 4, (slotCoeff l : ℝ) * (lam * (x + ((l : ℕ) : ℝ) * t) ^ 2 +
+      chartMatrixPhase C (fun a => θ a * (x + ((l : ℕ) : ℝ) * t))
+        (fun b => Di b + (tagWeight i l : ℝ) * (Dp b - Di b) - k l b)) =
+      -∑ l : Fin 4, (slotCoeff l : ℝ) *
+        chartMatrixPhase C (fun a => θ a * (x + ((l : ℕ) : ℝ) * t)) (k l) := by
+  have hw : ∀ l : Fin 4, (tagWeight i l : ℝ) =
+      (((l : ℕ) : ℝ) - ((i : ℕ) : ℝ)) * (((tagPartner i : ℕ) : ℝ) - ((i : ℕ) : ℝ)) := by
+    intro l; simp [tagWeight]
+  have key : ∀ a b : Fin d, ∑ l : Fin 4, (slotCoeff l : ℝ) *
+      (θ a * (x + ((l : ℕ) : ℝ) * t) * (C a b : ℝ) *
+        (Di b + (tagWeight i l : ℝ) * (Dp b - Di b))) = 0 := by
+    intro a b
+    have h := slotCoeff_quadratic
+      (θ a * (C a b : ℝ) * (x * Di b - x * ((i : ℕ) : ℝ) * (((tagPartner i : ℕ) : ℝ) -
+        ((i : ℕ) : ℝ)) * (Dp b - Di b)))
+      (θ a * (C a b : ℝ) * (t * Di b + (x - t * ((i : ℕ) : ℝ)) *
+        (((tagPartner i : ℕ) : ℝ) - ((i : ℕ) : ℝ)) * (Dp b - Di b)))
+      (θ a * (C a b : ℝ) * t * (((tagPartner i : ℕ) : ℝ) - ((i : ℕ) : ℝ)) * (Dp b - Di b))
+    rw [← h]
+    apply Finset.sum_congr rfl
+    intro l _
+    rw [hw l]
+    ring
+  have hq := slotCoeff_quadratic (lam * x ^ 2) (2 * lam * x * t) (lam * t ^ 2)
+  have hsplit : ∀ l : Fin 4, chartMatrixPhase C (fun a => θ a * (x + ((l : ℕ) : ℝ) * t))
+      (fun b => Di b + (tagWeight i l : ℝ) * (Dp b - Di b) - k l b) =
+      ∑ a, ∑ b, θ a * (x + ((l : ℕ) : ℝ) * t) * (C a b : ℝ) *
+        (Di b + (tagWeight i l : ℝ) * (Dp b - Di b)) -
+      chartMatrixPhase C (fun a => θ a * (x + ((l : ℕ) : ℝ) * t)) (k l) := by
+    intro l
+    simp only [chartMatrixPhase]
+    rw [← Finset.sum_sub_distrib]
+    apply Finset.sum_congr rfl; intro a _
+    rw [← Finset.sum_sub_distrib]
+    apply Finset.sum_congr rfl; intro b _
+    ring
+  simp_rw [hsplit]
+  have e1 : ∀ l : Fin 4, (slotCoeff l : ℝ) * (lam * (x + ((l : ℕ) : ℝ) * t) ^ 2 +
+      (∑ a, ∑ b, θ a * (x + ((l : ℕ) : ℝ) * t) * (C a b : ℝ) *
+        (Di b + (tagWeight i l : ℝ) * (Dp b - Di b)) -
+      chartMatrixPhase C (fun a => θ a * (x + ((l : ℕ) : ℝ) * t)) (k l))) =
+      (slotCoeff l : ℝ) * (lam * x ^ 2 + 2 * lam * x * t * ((l : ℕ) : ℝ) +
+        lam * t ^ 2 * ((l : ℕ) : ℝ) ^ 2) +
+      ∑ a, ∑ b, (slotCoeff l : ℝ) * (θ a * (x + ((l : ℕ) : ℝ) * t) * (C a b : ℝ) *
+        (Di b + (tagWeight i l : ℝ) * (Dp b - Di b))) -
+      (slotCoeff l : ℝ) * chartMatrixPhase C (fun a => θ a * (x + ((l : ℕ) : ℝ) * t)) (k l) := by
+    intro l
+    have hc : ∑ a, ∑ b, (slotCoeff l : ℝ) * (θ a * (x + ((l : ℕ) : ℝ) * t) * (C a b : ℝ) *
+        (Di b + (tagWeight i l : ℝ) * (Dp b - Di b))) =
+        (slotCoeff l : ℝ) * ∑ a, ∑ b, θ a * (x + ((l : ℕ) : ℝ) * t) * (C a b : ℝ) *
+          (Di b + (tagWeight i l : ℝ) * (Dp b - Di b)) := by
+      simp_rw [Finset.mul_sum]
+    rw [hc]
+    ring
+  simp_rw [e1]
+  rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, hq, Finset.sum_comm]
+  simp_rw [fun a => Finset.sum_comm (γ := Fin 4) (s := Finset.univ) (t := Finset.univ)
+    (f := fun l b => (slotCoeff l : ℝ) * (θ a * (x + ((l : ℕ) : ℝ) * t) * (C a b : ℝ) *
+      (Di b + (tagWeight i l : ℝ) * (Dp b - Di b))))]
+  simp [key]
+
+/-! ### Template amplitudes and the factor charts -/
+
+theorem gevreyPartition_smooth : ContDiff ℝ (⊤ : ℕ∞) gevreyPartition :=
+  contDiff_infty.mpr gevreyPartition_contDiff
+
+theorem gevreyPartition_far {x : ℝ} (hx : 2 ≤ |x|) : gevreyPartition x = 0 := by
+  rcases le_abs'.mp hx with h | h
+  · exact gevreyPartition_zero_left (by linarith)
+  · exact gevreyPartition_zero_right (by linarith)
+
+theorem gevreyPartition_ne_zero_abs {x : ℝ} (hx : gevreyPartition x ≠ 0) : |x| ≤ 3 / 4 := by
+  by_contra h
+  push Not at h
+  rcases lt_abs.mp h with h | h
+  · exact hx (gevreyPartition_zero_right h.le)
+  · exact hx (gevreyPartition_zero_left (by linarith))
+
+/-- The template amplitude `ρ(w) e(Rᵀw/P)` with the tensor Gevrey partition `ρ`. -/
+noncomputable def tagAmp {d : ℕ} (P : ℕ) (R : Fin d → ℤ) : (Fin d → ℝ) → ℂ :=
+  modulatedCutoff gevreyPartition 1 P R
+
+theorem tagAmp_smooth {d : ℕ} (P : ℕ) (R : Fin d → ℤ) : ContDiff ℝ (⊤ : ℕ∞) (tagAmp P R) :=
+  modulatedCutoff_smooth gevreyPartition_smooth _ _ _
+
+theorem tagAmp_hasCompactSupport {d : ℕ} (P : ℕ) (R : Fin d → ℤ) :
+    HasCompactSupport (tagAmp P R) :=
+  modulatedCutoff_hasCompactSupport (fun _ hx => gevreyPartition_far hx) one_pos _ _
+
+/-- The tensor partition, as a complex function. -/
+noncomputable def tagPart {d : ℕ} (w : Fin d → ℝ) : ℂ := tensorCutoff gevreyPartition 1 w
+
+theorem tagAmp_eq {d : ℕ} (P : ℕ) (R : Fin d → ℤ) (w : Fin d → ℝ) :
+    tagAmp P R w = tagPart w * (Real.fourierChar (∑ l, (R l : ℝ) * (w l / P)) : ℂ) := rfl
+
+theorem tagPart_ne_zero {d : ℕ} {w : Fin d → ℝ} (hw : tagPart w ≠ 0) (l : Fin d) :
+    |w l| ≤ 3 / 4 := by
+  have h : gevreyPartition (w l / 1) ≠ 0 := by
+    intro h0; apply hw
+    exact Finset.prod_eq_zero (Finset.mem_univ l) (by rw [h0]; simp)
+  rw [div_one] at h
+  exact gevreyPartition_ne_zero_abs h
+
+theorem tagPart_nonneg_norm {d : ℕ} (w : Fin d → ℝ) : ‖tagPart w‖ = ∏ l, gevreyPartition (w l) := by
+  rw [tagPart, tensorCutoff, norm_prod]
+  apply Finset.prod_congr rfl; intro l _
+  rw [div_one, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (gevreyPartition_nonneg _)]
+
+/-- The tensor partition of unity on a lattice box. -/
+theorem tagPart_box_sum {d : ℕ} (u : Fin d → ℝ) :
+    ∑ m ∈ chartLatticeBox 1 u, tagPart (u - fun l => (m l : ℝ)) = 1 := by
+  have h := chartCoordinateProduct_periodization gevreyPartition gevreyPartition_hasCompactSupport
+    gevreyPartition_tsum u
+  have he : ∀ m : Fin d → ℤ, tagPart (u - fun l => (m l : ℝ)) =
+      chartCoordinateProduct gevreyPartition (fun i => u i - (m i : ℝ)) := by
+    intro m; simp [tagPart, tensorCutoff, chartCoordinateProduct]
+  simp_rw [he]
+  rw [← h, tsum_eq_sum]
+  intro m hm
+  by_contra hne
+  apply hm
+  apply mem_chartLatticeBox_of_bound
+  intro l
+  have h1 : tagPart (u - fun l => (m l : ℝ)) ≠ 0 := by rw [he]; exact hne
+  have := tagPart_ne_zero h1 l
+  simp only [Pi.sub_apply] at this
+  linarith
+
+/-- A partition sum is bounded by one. -/
+theorem tagPart_box_norm_sum {d : ℕ} (u : Fin d → ℝ) :
+    ∑ m ∈ chartLatticeBox 1 u, ‖tagPart (u - fun l => (m l : ℝ))‖ = 1 := by
+  have h := tagPart_box_sum u
+  have hre : ∀ m : Fin d → ℤ, ‖tagPart (u - fun l => (m l : ℝ))‖ =
+      (tagPart (u - fun l => (m l : ℝ))).re := by
+    intro m
+    rw [tagPart_nonneg_norm]
+    simp only [tagPart, tensorCutoff, div_one]
+    rw [← Complex.ofReal_prod, Complex.ofReal_re]
+  simp_rw [hre]
+  rw [← Complex.re_sum, h, Complex.one_re]
+
+/-- The quadratic chart with the given data (horizontal `θ`, quadratic `q`, linear `β`,
+matrix `M`) and amplitude. -/
+theorem quadraticChartAtom_mk_box {d : ℕ} (θ : Fin d → ℝ) (q β : ℝ)
+    (M : Matrix (Fin d) (Fin d) ℚ) {G : (Fin d → ℝ) → ℂ} (hG : ContDiff ℝ (⊤ : ℕ∞) G)
+    (hGc : HasCompactSupport G) (hGs : ∀ w, G w ≠ 0 → ∀ l, |w l| ≤ 1) (y : ℝ) :
+    quadraticChartAtom (mkQuadraticChart θ q β M G hG hGc) y =
+      (Real.fourierChar (q * y ^ 2 + β * y) : ℂ) *
+        ∑ n ∈ chartLatticeBox 1 (fun l => θ l * y),
+          G ((fun l => θ l * y) - fun l => (n l : ℝ)) *
+            (Real.fourierChar (chartMatrixPhase M (fun l => θ l * y)
+              ((fun l => θ l * y) - fun l => (n l : ℝ))) : ℂ) := by
+  rw [quadraticChartAtom, tsum_eq_sum (s := chartLatticeBox 1 (fun l => θ l * y))]
+  · rfl
+  · intro n hn
+    exact quadraticChartSummand_eq_zero_off_box _ hGs y hn
+
+theorem fc_add (a b : ℝ) :
+    (Real.fourierChar (a + b) : ℂ) = Real.fourierChar a * Real.fourierChar b := by
+  rw [AddChar.map_add_eq_mul, Circle.coe_mul]
+
+theorem chartMatrixPhase_lineLeft {d : ℕ} (C : Matrix (Fin d) (Fin d) ℚ) (θ : Fin d → ℝ) (y : ℝ)
+    (w : Fin d → ℝ) :
+    chartMatrixPhase C (fun a => θ a * y) w = y * chartMatrixPhase C θ w := by
+  simp only [chartMatrixPhase, Finset.mul_sum]
+  apply Finset.sum_congr rfl; intro a _
+  apply Finset.sum_congr rfl; intro b _
+  ring
+
+theorem chartMatrixPhase_intSmul {d : ℕ} (C : Matrix (Fin d) (Fin d) ℚ) (c : ℤ)
+    (z w : Fin d → ℝ) :
+    chartMatrixPhase ((c : ℚ) • C) z w = (c : ℝ) * chartMatrixPhase C z w := by
+  simp only [chartMatrixPhase, Finset.mul_sum, Matrix.smul_apply, smul_eq_mul]
+  apply Finset.sum_congr rfl; intro a _
+  apply Finset.sum_congr rfl; intro b _
+  push_cast; ring
+
+theorem chartMatrixPhase_zero_matrix {d : ℕ} (z w : Fin d → ℝ) :
+    chartMatrixPhase (0 : Matrix (Fin d) (Fin d) ℚ) z w = 0 := by
+  simp [chartMatrixPhase]
+
+section TagFactors
+variable {d : ℕ}
+
+/-- The slot-`l` factor chart of the same-tag expansion: the tag phase with multiplier
+`-c_l`, the template amplitude `ρ(w) e(Rᵀw/9)`, and the linear carry phase
+`-c_l (θᵀ C k) y`. -/
+noncomputable def tagFactorChart (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam : ℝ)
+    (l : Fin 4) (k R : Fin d → ℤ) : QuadraticChartData d :=
+  mkQuadraticChart θ (-(slotCoeff l : ℝ) * lam)
+    (-(slotCoeff l : ℝ) * chartMatrixPhase C θ (fun a => (k a : ℝ)))
+    (((-slotCoeff l : ℤ) : ℚ) • C) (tagAmp 9 R) (tagAmp_smooth 9 R) (tagAmp_hasCompactSupport 9 R)
+
+/-- The demodulated source amplitude `χ(w) e(σᵀw/9)`. -/
+noncomputable def tagSourceAmp (χ : (Fin d → ℝ) → ℂ) (σ : Fin d → ℤ) (w : Fin d → ℝ) : ℂ :=
+  χ w * (Real.fourierChar (∑ l, (σ l : ℝ) * (w l / 9)) : ℂ)
+
+theorem tagSourceAmp_smooth {χ : (Fin d → ℝ) → ℂ} (hχ : ContDiff ℝ (⊤ : ℕ∞) χ)
+    (σ : Fin d → ℤ) : ContDiff ℝ (⊤ : ℕ∞) (tagSourceAmp χ σ) := by
+  have h : tagSourceAmp χ σ = fun w => χ w *
+      (Real.fourierChar (modulationFunctional 9 σ w + 0) : ℂ) := by
+    funext w; rw [tagSourceAmp, add_zero, modulationFunctional_apply]
+  rw [h]
+  exact hχ.mul (chart_fourierChar_smooth.comp
+    ((modulationFunctional 9 σ).contDiff.add contDiff_const))
+
+theorem tagSourceAmp_hasCompactSupport {χ : (Fin d → ℝ) → ℂ} (hχc : HasCompactSupport χ)
+    (σ : Fin d → ℤ) : HasCompactSupport (tagSourceAmp χ σ) :=
+  hχc.mul_right
+
+/-- The source-slot factor: a zero-matrix chart carrying the demodulated source and the
+source linear modulation. -/
+noncomputable def tagSourceChart (θ : Fin d → ℝ) (μ : ℝ) {χ : (Fin d → ℝ) → ℂ}
+    (hχ : ContDiff ℝ (⊤ : ℕ∞) χ) (hχc : HasCompactSupport χ) (σ : Fin d → ℤ) :
+    QuadraticChartData d :=
+  mkQuadraticChart θ 0 μ 0 (tagSourceAmp χ σ) (tagSourceAmp_smooth hχ σ)
+    (tagSourceAmp_hasCompactSupport hχc σ)
+
+/-- The source-slot frequency `σ = (1-e₃)s₃ + (1-e₄)s₄`. -/
+def tagSigma (i : Fin 4) (s₃ s₄ : Fin d → ℕ) : Fin d → ℤ := fun a =>
+  (1 - tagWeight i (tagThird i)) * s₃ a + (1 - tagWeight i (tagFourth i)) * s₄ a
+
+/-- The partner frequency `τ = e₃ s₃ + e₄ s₄`. -/
+def tagTau (i : Fin 4) (s₃ s₄ : Fin d → ℕ) : Fin d → ℤ := fun a =>
+  tagWeight i (tagThird i) * s₃ a + tagWeight i (tagFourth i) * s₄ a
+
+end TagFactors
+
+theorem tag_sum_four (i : Fin 4) (f : Fin 4 → ℝ) :
+    ∑ l, f l = f i + f (tagPartner i) + f (tagThird i) + f (tagFourth i) := by
+  fin_cases i <;> simp [Fin.sum_univ_four, tagPartner, tagThird, tagFourth] <;> ring
+
+section TagTuple
+variable {d : ℕ}
+
+/-- The lift `u - n` of the point `θ y` with respect to the lattice point `n`. -/
+noncomputable def tagLift (θ : Fin d → ℝ) (y : ℝ) (n : Fin d → ℤ) : Fin d → ℝ :=
+  (fun a => θ a * y) - fun a => (n a : ℝ)
+
+/-- One term of the same-tag expansion at a lattice tuple `(n, m_p, m₃, m₄)`, carries
+`k₃, k₄` and residues `s₃, s₄`: the product of the four factor-chart summands. -/
+noncomputable def tagTerm (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam μ : ℝ)
+    (i : Fin 4) (χ : (Fin d → ℝ) → ℂ) (x t : ℝ) (n mp m₃ m₄ k₃ : Fin d → ℤ) (s₃ : Fin d → ℕ)
+    (k₄ : Fin d → ℤ) (s₄ : Fin d → ℕ) : ℂ :=
+  ((9 : ℂ) ^ d)⁻¹ * ((9 : ℂ) ^ d)⁻¹ *
+    (Real.fourierChar (-(∑ a, (s₃ a : ℝ) * (k₃ a : ℝ) / 9 + ∑ a, (s₄ a : ℝ) * (k₄ a : ℝ) / 9)) :
+        ℂ) *
+    (((Real.fourierChar (0 * (x + ((i : ℕ) : ℝ) * t) ^ 2 + μ * (x + ((i : ℕ) : ℝ) * t)) : ℂ) *
+        (tagSourceAmp χ (tagSigma i s₃ s₄) (tagLift θ (x + ((i : ℕ) : ℝ) * t) n) *
+          (Real.fourierChar (chartMatrixPhase (0 : Matrix (Fin d) (Fin d) ℚ)
+            (fun a => θ a * (x + ((i : ℕ) : ℝ) * t))
+            (tagLift θ (x + ((i : ℕ) : ℝ) * t) n)) : ℂ))) *
+      ((Real.fourierChar (-(slotCoeff (tagPartner i) : ℝ) * lam *
+            (x + ((tagPartner i : ℕ) : ℝ) * t) ^ 2 +
+          -(slotCoeff (tagPartner i) : ℝ) * chartMatrixPhase C θ (fun a => ((0 : Fin d → ℤ) a :
+              ℝ)) *
+            (x + ((tagPartner i : ℕ) : ℝ) * t)) : ℂ) *
+        (tagAmp 9 (tagTau i s₃ s₄) (tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp) *
+          (Real.fourierChar (chartMatrixPhase (((-slotCoeff (tagPartner i) : ℤ) : ℚ) • C)
+            (fun a => θ a * (x + ((tagPartner i : ℕ) : ℝ) * t))
+            (tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp)) : ℂ))) *
+      ((Real.fourierChar (-(slotCoeff (tagThird i) : ℝ) * lam *
+            (x + ((tagThird i : ℕ) : ℝ) * t) ^ 2 +
+          -(slotCoeff (tagThird i) : ℝ) * chartMatrixPhase C θ (fun a => (k₃ a : ℝ)) *
+            (x + ((tagThird i : ℕ) : ℝ) * t)) : ℂ) *
+        (tagAmp 9 (fun a => -(s₃ a : ℤ)) (tagLift θ (x + ((tagThird i : ℕ) : ℝ) * t) m₃) *
+          (Real.fourierChar (chartMatrixPhase (((-slotCoeff (tagThird i) : ℤ) : ℚ) • C)
+            (fun a => θ a * (x + ((tagThird i : ℕ) : ℝ) * t))
+            (tagLift θ (x + ((tagThird i : ℕ) : ℝ) * t) m₃)) : ℂ))) *
+      ((Real.fourierChar (-(slotCoeff (tagFourth i) : ℝ) * lam *
+            (x + ((tagFourth i : ℕ) : ℝ) * t) ^ 2 +
+          -(slotCoeff (tagFourth i) : ℝ) * chartMatrixPhase C θ (fun a => (k₄ a : ℝ)) *
+            (x + ((tagFourth i : ℕ) : ℝ) * t)) : ℂ) *
+        (tagAmp 9 (fun a => -(s₄ a : ℤ)) (tagLift θ (x + ((tagFourth i : ℕ) : ℝ) * t) m₄) *
+          (Real.fourierChar (chartMatrixPhase (((-slotCoeff (tagFourth i) : ℤ) : ℚ) • C)
+            (fun a => θ a * (x + ((tagFourth i : ℕ) : ℝ) * t))
+            (tagLift θ (x + ((tagFourth i : ℕ) : ℝ) * t) m₄)) : ℂ))))
+
+end TagTuple
+
+section TagTupleFactor
+variable {d : ℕ}
+
+/-- The carry `k_l = m_l - n - e_l (m_p - n)` of slot `l`. -/
+def tagCarry (i l : Fin 4) (n mp m : Fin d → ℤ) : Fin d → ℤ := fun a =>
+  m a - n a - tagWeight i l * (mp a - n a)
+
+theorem tagCarry_lift (θ : Fin d → ℝ) (i l : Fin 4) (x t : ℝ) (n mp m : Fin d → ℤ) (a : Fin d) :
+    (tagCarry i l n mp m a : ℝ) =
+      (1 - (tagWeight i l : ℝ)) * tagLift θ (x + ((i : ℕ) : ℝ) * t) n a +
+        (tagWeight i l : ℝ) * tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp a -
+        tagLift θ (x + ((l : ℕ) : ℝ) * t) m a := by
+  have h := tag_slot_affine i l x t
+  simp only [tagCarry, tagLift, Pi.sub_apply]
+  push_cast
+  rw [h]
+  ring
+
+/-- The transferred phase: the source linear phase and the tag phases of the three other
+slots, with the linear carry phases of the candidate carries `κ₃, κ₄`. -/
+noncomputable def tagPhiArg (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam μ : ℝ)
+    (i : Fin 4) (x t : ℝ) (mp m₃ m₄ κ₃ κ₄ : Fin d → ℤ) : ℝ :=
+  μ * (x + ((i : ℕ) : ℝ) * t) +
+    -(slotCoeff (tagPartner i) : ℝ) * (lam * (x + ((tagPartner i : ℕ) : ℝ) * t) ^ 2 +
+      chartMatrixPhase C (fun a => θ a * (x + ((tagPartner i : ℕ) : ℝ) * t))
+        (tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp)) +
+    (-(slotCoeff (tagThird i) : ℝ) * (lam * (x + ((tagThird i : ℕ) : ℝ) * t) ^ 2 +
+      chartMatrixPhase C (fun a => θ a * (x + ((tagThird i : ℕ) : ℝ) * t))
+        (tagLift θ (x + ((tagThird i : ℕ) : ℝ) * t) m₃)) -
+      (slotCoeff (tagThird i) : ℝ) * chartMatrixPhase C (fun a => θ a * (x + ((tagThird i : ℕ) :
+          ℝ) * t))
+        (fun a => (κ₃ a : ℝ))) +
+    (-(slotCoeff (tagFourth i) : ℝ) * (lam * (x + ((tagFourth i : ℕ) : ℝ) * t) ^ 2 +
+      chartMatrixPhase C (fun a => θ a * (x + ((tagFourth i : ℕ) : ℝ) * t))
+        (tagLift θ (x + ((tagFourth i : ℕ) : ℝ) * t) m₄)) -
+      (slotCoeff (tagFourth i) : ℝ) * chartMatrixPhase C (fun a => θ a * (x + ((tagFourth i : ℕ) :
+          ℝ) * t))
+        (fun a => (κ₄ a : ℝ)))
+
+/-- The residue characters recombine into the carry characters. -/
+theorem tag_residue_args (θ : Fin d → ℝ) (i : Fin 4) (x t : ℝ) (n mp m₃ m₄ k₃ k₄ : Fin d → ℤ)
+    (s₃ s₄ : Fin d → ℕ) :
+    -(∑ a, (s₃ a : ℝ) * (k₃ a : ℝ) / 9 + ∑ a, (s₄ a : ℝ) * (k₄ a : ℝ) / 9) +
+      ∑ a, (tagSigma i s₃ s₄ a : ℝ) * (tagLift θ (x + ((i : ℕ) : ℝ) * t) n a / 9) +
+      ∑ a, (tagTau i s₃ s₄ a : ℝ) * (tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp a / 9) +
+      ∑ a, ((-(s₃ a : ℤ) : ℤ) : ℝ) * (tagLift θ (x + ((tagThird i : ℕ) : ℝ) * t) m₃ a / 9) +
+      ∑ a, ((-(s₄ a : ℤ) : ℤ) : ℝ) * (tagLift θ (x + ((tagFourth i : ℕ) : ℝ) * t) m₄ a / 9) =
+    ∑ a, (s₃ a : ℝ) * ((tagCarry i (tagThird i) n mp m₃ a : ℝ) - (k₃ a : ℝ)) / 9 +
+      ∑ a, (s₄ a : ℝ) * ((tagCarry i (tagFourth i) n mp m₄ a : ℝ) - (k₄ a : ℝ)) / 9 := by
+  rw [neg_add, ← Finset.sum_neg_distrib, ← Finset.sum_neg_distrib]
+  simp only [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro a _
+  rw [tagCarry_lift θ i (tagThird i) x t, tagCarry_lift θ i (tagFourth i) x t]
+  simp only [tagSigma, tagTau]
+  push_cast
+  ring
+
+end TagTupleFactor
+
+section TagTupleFactor2
+variable {d : ℕ}
+
+theorem chartMatrixPhase_zero_vec {d : ℕ} (C : Matrix (Fin d) (Fin d) ℚ) (θ : Fin d → ℝ) :
+    chartMatrixPhase C θ (fun a => ((0 : Fin d → ℤ) a : ℝ)) = 0 := by
+  simp [chartMatrixPhase]
+
+/-- Blueprint §12.3, lines 1806-1808: one term of the expansion factors into the lattice
+amplitudes, the two carry characters and the transferred phase. -/
+theorem tagTerm_factor (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam μ : ℝ)
+    (i : Fin 4) (χ : (Fin d → ℝ) → ℂ) (x t : ℝ) (n mp m₃ m₄ k₃ : Fin d → ℤ)
+    (s₃ : Fin d → ℕ) (k₄ : Fin d → ℤ) (s₄ : Fin d → ℕ) :
+    tagTerm θ C lam μ i χ x t n mp m₃ m₄ k₃ s₃ k₄ s₄ =
+      (χ (tagLift θ (x + ((i : ℕ) : ℝ) * t) n) *
+        tagPart (tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp) *
+        tagPart (tagLift θ (x + ((tagThird i : ℕ) : ℝ) * t) m₃) *
+        tagPart (tagLift θ (x + ((tagFourth i : ℕ) : ℝ) * t) m₄)) *
+      ((((9 : ℂ) ^ d)⁻¹ * (Real.fourierChar (∑ a, (s₃ a : ℝ) *
+          ((tagCarry i (tagThird i) n mp m₃ a : ℝ) - (k₃ a : ℝ)) / 9) : ℂ)) *
+        (((9 : ℂ) ^ d)⁻¹ * (Real.fourierChar (∑ a, (s₄ a : ℝ) *
+          ((tagCarry i (tagFourth i) n mp m₄ a : ℝ) - (k₄ a : ℝ)) / 9) : ℂ))) *
+      (Real.fourierChar (tagPhiArg θ C lam μ i x t mp m₃ m₄ k₃ k₄) : ℂ) := by
+  simp only [tagTerm, tagSourceAmp, tagAmp_eq, Nat.cast_ofNat]
+  set yi := x + ((i : ℕ) : ℝ) * t
+  set yp := x + ((tagPartner i : ℕ) : ℝ) * t
+  set y₃ := x + ((tagThird i : ℕ) : ℝ) * t
+  set y₄ := x + ((tagFourth i : ℕ) : ℝ) * t
+  set K := -(∑ a, (s₃ a : ℝ) * (k₃ a : ℝ) / 9 + ∑ a, (s₄ a : ℝ) * (k₄ a : ℝ) / 9)
+  set S1 := ∑ a, (tagSigma i s₃ s₄ a : ℝ) * (tagLift θ yi n a / 9)
+  set S2 := ∑ a, (tagTau i s₃ s₄ a : ℝ) * (tagLift θ yp mp a / 9)
+  set S3 := ∑ a, ((-(s₃ a : ℤ) : ℤ) : ℝ) * (tagLift θ y₃ m₃ a / 9)
+  set S4 := ∑ a, ((-(s₄ a : ℤ) : ℤ) : ℝ) * (tagLift θ y₄ m₄ a / 9)
+  set Z0 := chartMatrixPhase (0 : Matrix (Fin d) (Fin d) ℚ) (fun a => θ a * yi) (tagLift θ yi n)
+  set Pq := -(slotCoeff (tagPartner i) : ℝ) * lam * yp ^ 2
+  set Pl := -(slotCoeff (tagPartner i) : ℝ) * chartMatrixPhase C θ (fun a => ((0 : Fin d → ℤ) a :
+      ℝ)) * yp
+  set Pc := chartMatrixPhase (((-slotCoeff (tagPartner i) : ℤ) : ℚ) • C) (fun a => θ a * yp)
+    (tagLift θ yp mp)
+  set Tq3 := -(slotCoeff (tagThird i) : ℝ) * lam * y₃ ^ 2
+  set Tl3 := -(slotCoeff (tagThird i) : ℝ) * chartMatrixPhase C θ (fun a => (k₃ a : ℝ)) * y₃
+  set Tc3 := chartMatrixPhase (((-slotCoeff (tagThird i) : ℤ) : ℚ) • C) (fun a => θ a * y₃)
+    (tagLift θ y₃ m₃)
+  set Tq4 := -(slotCoeff (tagFourth i) : ℝ) * lam * y₄ ^ 2
+  set Tl4 := -(slotCoeff (tagFourth i) : ℝ) * chartMatrixPhase C θ (fun a => (k₄ a : ℝ)) * y₄
+  set Tc4 := chartMatrixPhase (((-slotCoeff (tagFourth i) : ℤ) : ℚ) • C) (fun a => θ a * y₄)
+    (tagLift θ y₄ m₄)
+  set X₃ := ∑ a, (s₃ a : ℝ) * ((tagCarry i (tagThird i) n mp m₃ a : ℝ) - (k₃ a : ℝ)) / 9
+  set X₄ := ∑ a, (s₄ a : ℝ) * ((tagCarry i (tagFourth i) n mp m₄ a : ℝ) - (k₄ a : ℝ)) / 9
+  set Φ := tagPhiArg θ C lam μ i x t mp m₃ m₄ k₃ k₄
+  have hZ : K + 0 * yi ^ 2 + μ * yi + S1 + Z0 + Pq + Pl + S2 + Pc + Tq3 + Tl3 + S3 + Tc3 +
+      Tq4 + Tl4 + S4 + Tc4 = X₃ + X₄ + Φ := by
+    have hres := tag_residue_args θ i x t n mp m₃ m₄ k₃ k₄ s₃ s₄
+    have h0 : Z0 = 0 := chartMatrixPhase_zero_matrix _ _
+    have hPl : Pl = 0 := by simp only [Pl, chartMatrixPhase_zero_vec, mul_zero, zero_mul]
+    have hPc : Pc = -(slotCoeff (tagPartner i) : ℝ) *
+        chartMatrixPhase C (fun a => θ a * yp) (tagLift θ yp mp) := by
+      simp only [Pc, chartMatrixPhase_intSmul]; push_cast; ring
+    have hTc3 : Tc3 = -(slotCoeff (tagThird i) : ℝ) *
+        chartMatrixPhase C (fun a => θ a * y₃) (tagLift θ y₃ m₃) := by
+      simp only [Tc3, chartMatrixPhase_intSmul]; push_cast; ring
+    have hTc4 : Tc4 = -(slotCoeff (tagFourth i) : ℝ) *
+        chartMatrixPhase C (fun a => θ a * y₄) (tagLift θ y₄ m₄) := by
+      simp only [Tc4, chartMatrixPhase_intSmul]; push_cast; ring
+    have hl3 := chartMatrixPhase_lineLeft C θ y₃ (fun a => (k₃ a : ℝ))
+    have hl4 := chartMatrixPhase_lineLeft C θ y₄ (fun a => (k₄ a : ℝ))
+    simp only [Φ, tagPhiArg]
+    rw [h0, hPl, hPc, hTc3, hTc4, hl3, hl4]
+    simp only [Tl3, Tl4, Pq, Tq3, Tq4]
+    linear_combination hres
+  calc _ =
+      (χ (tagLift θ yi n) * tagPart (tagLift θ yp mp) * tagPart (tagLift θ y₃ m₃) *
+        tagPart (tagLift θ y₄ m₄)) * (((9 : ℂ) ^ d)⁻¹ * ((9 : ℂ) ^ d)⁻¹) *
+        (Real.fourierChar (K + 0 * yi ^ 2 + μ * yi + S1 + Z0 + Pq + Pl + S2 + Pc + Tq3 + Tl3 +
+          S3 + Tc3 + Tq4 + Tl4 + S4 + Tc4) : ℂ) := by
+        simp only [fc_add]
+        ring
+    _ = _ := by
+        rw [hZ, fc_add, fc_add]
+        ring
+
+end TagTupleFactor2
+
+section TagTupleSum
+variable {d : ℕ}
+
+theorem tagWeight_abs_sum (i l : Fin 4) : |1 - tagWeight i l| + |tagWeight i l| ≤ 5 := by
+  fin_cases i <;> fin_cases l <;> decide
+
+/-- The exact carry indicator with candidate carries in `[-4,4]ᵈ` and residues mod `9`. -/
+theorem tag_collapse {κ : Fin d → ℤ} (hκ : κ ∈ slowValueBox d 4) (F : (Fin d → ℤ) → ℂ) :
+    ∑ k ∈ slowValueBox d 4, ∑ s ∈ residueBox d 9, ((9 : ℂ) ^ d)⁻¹ *
+      (Real.fourierChar (∑ a, (s a : ℝ) * ((κ a : ℝ) - (k a : ℝ)) / 9) : ℂ) * F k = F κ := by
+  have h := carry_collapse (d := d) (K := 4) (P := 9) (by norm_num) hκ F
+  rw [← h]
+  apply Finset.sum_congr rfl; intro k _
+  apply Finset.sum_congr rfl; intro s _
+  push_cast
+  ring_nf
+
+/-- The carry of a contributing tuple lies in the carry box. -/
+theorem tagCarry_mem (θ : Fin d → ℝ) (i l : Fin 4) (x t : ℝ) (n mp m : Fin d → ℤ)
+    (hi : ∀ a, |tagLift θ (x + ((i : ℕ) : ℝ) * t) n a| ≤ 3 / 4)
+    (hp : ∀ a, |tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp a| ≤ 3 / 4)
+    (hl : ∀ a, |tagLift θ (x + ((l : ℕ) : ℝ) * t) m a| ≤ 3 / 4) :
+    tagCarry i l n mp m ∈ slowValueBox d 4 := by
+  rw [mem_slowValueBox]
+  intro a
+  have h := tagCarry_lift θ i l x t n mp m a
+  have hw := tagWeight_abs_sum i l
+  have hw' : |1 - (tagWeight i l : ℝ)| + |(tagWeight i l : ℝ)| ≤ 5 := by exact_mod_cast hw
+  have hb : |(tagCarry i l n mp m a : ℝ)| < 5 := by
+    rw [h]
+    calc _ ≤ |(1 - (tagWeight i l : ℝ)) * tagLift θ (x + ((i : ℕ) : ℝ) * t) n a| +
+          |(tagWeight i l : ℝ) * tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp a| +
+          |tagLift θ (x + ((l : ℕ) : ℝ) * t) m a| := (abs_sub _ _).trans (add_le_add (abs_add_le _
+              _) le_rfl)
+      _ ≤ |1 - (tagWeight i l : ℝ)| * (3 / 4) + |(tagWeight i l : ℝ)| * (3 / 4) + 3 / 4 := by
+          rw [abs_mul, abs_mul]
+          gcongr
+          · exact hi a
+          · exact hp a
+          · exact hl a
+      _ < 5 := by nlinarith [abs_nonneg (1 - (tagWeight i l : ℝ)), abs_nonneg (tagWeight i l : ℝ)]
+  have : |tagCarry i l n mp m a| < 5 := by exact_mod_cast hb
+  omega
+
+/-- Blueprint §12.3, line 1806: the transferred phase at the actual carries is the source
+phase. -/
+theorem tag_phi_identity (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam μ : ℝ)
+    (i : Fin 4) (x t : ℝ) (n mp m₃ m₄ : Fin d → ℤ) :
+    tagPhiArg θ C lam μ i x t mp m₃ m₄ (tagCarry i (tagThird i) n mp m₃)
+        (tagCarry i (tagFourth i) n mp m₄) =
+      (slotCoeff i : ℝ) * lam * (x + ((i : ℕ) : ℝ) * t) ^ 2 + μ * (x + ((i : ℕ) : ℝ) * t) +
+        (slotCoeff i : ℝ) * chartMatrixPhase C (fun a => θ a * (x + ((i : ℕ) : ℝ) * t))
+          (tagLift θ (x + ((i : ℕ) : ℝ) * t) n) := by
+  obtain ⟨h1, h2, h3, h4, h5, h6⟩ := tagSlots_distinct i
+  set Di := tagLift θ (x + ((i : ℕ) : ℝ) * t) n
+  set Dp := tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp
+  set κ₃ := tagCarry i (tagThird i) n mp m₃
+  set κ₄ := tagCarry i (tagFourth i) n mp m₄
+  set k : Fin 4 → Fin d → ℝ := fun l => if l = tagThird i then (fun a => (κ₃ a : ℝ))
+    else if l = tagFourth i then (fun a => (κ₄ a : ℝ)) else 0 with hk
+  have hid := tag_phase_identity C θ lam x t i Di Dp k
+  rw [tag_sum_four i, tag_sum_four i] at hid
+  have ki : k i = 0 := by simp [hk, Ne.symm h2, Ne.symm h3]
+  have kp : k (tagPartner i) = 0 := by simp [hk, Ne.symm h4, Ne.symm h5]
+  have k3 : k (tagThird i) = fun a => (κ₃ a : ℝ) := by simp [hk]
+  have k4 : k (tagFourth i) = fun a => (κ₄ a : ℝ) := by simp [hk, Ne.symm h6]
+  have Di_eq : (fun b => Di b + (tagWeight i i : ℝ) * (Dp b - Di b) - k i b) = Di := by
+    funext b; rw [ki, tagWeight_self]; simp
+  have Dp_eq : (fun b => Di b + (tagWeight i (tagPartner i) : ℝ) * (Dp b - Di b) -
+      k (tagPartner i) b) = Dp := by
+    funext b; rw [kp, tagWeight_partner]; simp
+  have D3_eq : (fun b => Di b + (tagWeight i (tagThird i) : ℝ) * (Dp b - Di b) -
+      k (tagThird i) b) = tagLift θ (x + ((tagThird i : ℕ) : ℝ) * t) m₃ := by
+    funext b; rw [k3]
+    have := tagCarry_lift θ i (tagThird i) x t n mp m₃ b
+    simp only at this ⊢
+    rw [this]; ring
+  have D4_eq : (fun b => Di b + (tagWeight i (tagFourth i) : ℝ) * (Dp b - Di b) -
+      k (tagFourth i) b) = tagLift θ (x + ((tagFourth i : ℕ) : ℝ) * t) m₄ := by
+    funext b; rw [k4]
+    have := tagCarry_lift θ i (tagFourth i) x t n mp m₄ b
+    simp only at this ⊢
+    rw [this]; ring
+  rw [Di_eq, Dp_eq, D3_eq, D4_eq, ki, kp, k3, k4] at hid
+  have z0 : ∀ y : ℝ, chartMatrixPhase C (fun a => θ a * y) (0 : Fin d → ℝ) = 0 := by
+    intro y; simp [chartMatrixPhase]
+  rw [z0, z0] at hid
+  simp only [tagPhiArg]
+  linear_combination (-1 : ℝ) * hid
+
+end TagTupleSum
+
+section TagTupleSum2
+variable {d : ℕ}
+
+/-- Blueprint §12.3, lines 1806-1808: at one lattice tuple, the sum over candidate carries
+and residues of the factor terms is the source term times the three partition values. -/
+theorem tag_tuple_sum (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam μ : ℝ)
+    (i : Fin 4) {χ : (Fin d → ℝ) → ℂ} (hχs : ∀ w, χ w ≠ 0 → ∀ a, |w a| ≤ 3 / 4) (x t : ℝ)
+    (n mp m₃ m₄ : Fin d → ℤ) :
+    ∑ k₃ ∈ slowValueBox d 4, ∑ s₃ ∈ residueBox d 9, ∑ k₄ ∈ slowValueBox d 4,
+      ∑ s₄ ∈ residueBox d 9, tagTerm θ C lam μ i χ x t n mp m₃ m₄ k₃ s₃ k₄ s₄ =
+    (Real.fourierChar ((slotCoeff i : ℝ) * lam * (x + ((i : ℕ) : ℝ) * t) ^ 2 +
+        μ * (x + ((i : ℕ) : ℝ) * t)) : ℂ) *
+      (χ (tagLift θ (x + ((i : ℕ) : ℝ) * t) n) *
+        (Real.fourierChar (chartMatrixPhase ((slotCoeff i : ℚ) • C)
+          (fun a => θ a * (x + ((i : ℕ) : ℝ) * t)) (tagLift θ (x + ((i : ℕ) : ℝ) * t) n)) : ℂ)) *
+      tagPart (tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp) *
+      tagPart (tagLift θ (x + ((tagThird i : ℕ) : ℝ) * t) m₃) *
+      tagPart (tagLift θ (x + ((tagFourth i : ℕ) : ℝ) * t) m₄) := by
+  simp_rw [tagTerm_factor]
+  set Di := tagLift θ (x + ((i : ℕ) : ℝ) * t) n
+  set Dp := tagLift θ (x + ((tagPartner i : ℕ) : ℝ) * t) mp
+  set D₃ := tagLift θ (x + ((tagThird i : ℕ) : ℝ) * t) m₃
+  set D₄ := tagLift θ (x + ((tagFourth i : ℕ) : ℝ) * t) m₄
+  set A := χ Di * tagPart Dp * tagPart D₃ * tagPart D₄ with hAdef
+  set κ₃ := tagCarry i (tagThird i) n mp m₃
+  set κ₄ := tagCarry i (tagFourth i) n mp m₄
+  have hc := chartMatrixPhase_intSmul C (slotCoeff i) (fun a => θ a * (x + ((i : ℕ) : ℝ) * t)) Di
+  by_cases hA : A = 0
+  · have hR : ∀ e₁ e₂ : ℂ, e₁ * (χ Di * e₂) * tagPart Dp * tagPart D₃ * tagPart D₄ =
+        A * (e₁ * e₂) := fun e₁ e₂ => by rw [hAdef]; ring
+    rw [hR, hA]
+    simp
+  have hχ : χ Di ≠ 0 := by
+    intro h; apply hA; rw [hAdef, h]; ring
+  have hp : tagPart Dp ≠ 0 := by
+    intro h; apply hA; rw [hAdef, h]; ring
+  have h3 : tagPart D₃ ≠ 0 := by
+    intro h; apply hA; rw [hAdef, h]; ring
+  have h4 : tagPart D₄ ≠ 0 := by
+    intro h; apply hA; rw [hAdef, h]; ring
+  have hκ₃ : κ₃ ∈ slowValueBox d 4 :=
+    tagCarry_mem θ i (tagThird i) x t n mp m₃ (hχs _ hχ) (tagPart_ne_zero hp)
+      (tagPart_ne_zero h3)
+  have hκ₄ : κ₄ ∈ slowValueBox d 4 :=
+    tagCarry_mem θ i (tagFourth i) x t n mp m₄ (hχs _ hχ) (tagPart_ne_zero hp)
+      (tagPart_ne_zero h4)
+  have inner : ∀ (k₃ : Fin d → ℤ) (s₃ : Fin d → ℕ), ∑ k₄ ∈ slowValueBox d 4, ∑ s₄ ∈ residueBox d 9,
+      A * ((((9 : ℂ) ^ d)⁻¹ * (Real.fourierChar (∑ a, (s₃ a : ℝ) *
+          ((κ₃ a : ℝ) - (k₃ a : ℝ)) / 9) : ℂ)) *
+        (((9 : ℂ) ^ d)⁻¹ * (Real.fourierChar (∑ a, (s₄ a : ℝ) *
+          ((κ₄ a : ℝ) - (k₄ a : ℝ)) / 9) : ℂ))) *
+      (Real.fourierChar (tagPhiArg θ C lam μ i x t mp m₃ m₄ k₃ k₄) : ℂ) =
+      ((9 : ℂ) ^ d)⁻¹ * (Real.fourierChar (∑ a, (s₃ a : ℝ) * ((κ₃ a : ℝ) - (k₃ a : ℝ)) / 9) : ℂ) *
+        (A * (Real.fourierChar (tagPhiArg θ C lam μ i x t mp m₃ m₄ k₃ κ₄) : ℂ)) := by
+    intro k₃ s₃
+    rw [← tag_collapse hκ₄ (fun k₄ => ((9 : ℂ) ^ d)⁻¹ *
+      (Real.fourierChar (∑ a, (s₃ a : ℝ) * ((κ₃ a : ℝ) - (k₃ a : ℝ)) / 9) : ℂ) *
+        (A * (Real.fourierChar (tagPhiArg θ C lam μ i x t mp m₃ m₄ k₃ k₄) : ℂ)))]
+    apply Finset.sum_congr rfl; intro k₄ _
+    apply Finset.sum_congr rfl; intro s₄ _
+    ring
+  simp_rw [inner]
+  rw [tag_collapse hκ₃ (fun k₃ => A * (Real.fourierChar
+    (tagPhiArg θ C lam μ i x t mp m₃ m₄ k₃ κ₄) : ℂ))]
+  rw [tag_phi_identity, fc_add, hc]
+  rw [hAdef]
+  ring
+
+end TagTupleSum2
+
+theorem sum_swap44 {α₁ α₂ α₃ α₄ β₁ β₂ β₃ β₄ M : Type*} [AddCommMonoid M]
+    (A₁ : Finset α₁) (A₂ : Finset α₂) (A₃ : Finset α₃) (A₄ : Finset α₄)
+    (B₁ : Finset β₁) (B₂ : Finset β₂) (B₃ : Finset β₃) (B₄ : Finset β₄)
+    (f : α₁ → α₂ → α₃ → α₄ → β₁ → β₂ → β₃ → β₄ → M) :
+    ∑ a₁ ∈ A₁, ∑ a₂ ∈ A₂, ∑ a₃ ∈ A₃, ∑ a₄ ∈ A₄, ∑ b₁ ∈ B₁, ∑ b₂ ∈ B₂, ∑ b₃ ∈ B₃,
+      ∑ b₄ ∈ B₄, f a₁ a₂ a₃ a₄ b₁ b₂ b₃ b₄ =
+    ∑ b₁ ∈ B₁, ∑ b₂ ∈ B₂, ∑ b₃ ∈ B₃, ∑ b₄ ∈ B₄, ∑ a₁ ∈ A₁, ∑ a₂ ∈ A₂, ∑ a₃ ∈ A₃,
+      ∑ a₄ ∈ A₄, f a₁ a₂ a₃ a₄ b₁ b₂ b₃ b₄ := by
+  have kA : ∀ g : α₁ → α₂ → α₃ → α₄ → M, ∑ a₁ ∈ A₁, ∑ a₂ ∈ A₂, ∑ a₃ ∈ A₃, ∑ a₄ ∈ A₄,
+      g a₁ a₂ a₃ a₄ = ∑ p ∈ A₁ ×ˢ (A₂ ×ˢ (A₃ ×ˢ A₄)), g p.1 p.2.1 p.2.2.1 p.2.2.2 := by
+    intro g; simp only [Finset.sum_product]
+  have kB : ∀ g : β₁ → β₂ → β₃ → β₄ → M, ∑ b₁ ∈ B₁, ∑ b₂ ∈ B₂, ∑ b₃ ∈ B₃, ∑ b₄ ∈ B₄,
+      g b₁ b₂ b₃ b₄ = ∑ q ∈ B₁ ×ˢ (B₂ ×ˢ (B₃ ×ˢ B₄)), g q.1 q.2.1 q.2.2.1 q.2.2.2 := by
+    intro g; simp only [Finset.sum_product]
+  rw [kA (fun a₁ a₂ a₃ a₄ => ∑ b₁ ∈ B₁, ∑ b₂ ∈ B₂, ∑ b₃ ∈ B₃, ∑ b₄ ∈ B₄,
+    f a₁ a₂ a₃ a₄ b₁ b₂ b₃ b₄)]
+  rw [kB (fun b₁ b₂ b₃ b₄ => ∑ a₁ ∈ A₁, ∑ a₂ ∈ A₂, ∑ a₃ ∈ A₃, ∑ a₄ ∈ A₄,
+    f a₁ a₂ a₃ a₄ b₁ b₂ b₃ b₄)]
+  simp_rw [kA, kB]
+  exact Finset.sum_comm
+
+theorem sum_distrib4 {α₁ α₂ α₃ α₄ : Type*} (A₁ : Finset α₁) (A₂ : Finset α₂)
+    (A₃ : Finset α₃) (A₄ : Finset α₄) (c e₁ e₂ e₃ e₄ : ℂ) (f₁ : α₁ → ℂ) (f₂ : α₂ → ℂ)
+    (f₃ : α₃ → ℂ) (f₄ : α₄ → ℂ) :
+    c * ((e₁ * ∑ a ∈ A₁, f₁ a) * (e₂ * ∑ a ∈ A₂, f₂ a) * (e₃ * ∑ a ∈ A₃, f₃ a) *
+      (e₄ * ∑ a ∈ A₄, f₄ a)) =
+    ∑ a₄ ∈ A₄, ∑ a₃ ∈ A₃, ∑ a₂ ∈ A₂, ∑ a₁ ∈ A₁,
+      c * ((e₁ * f₁ a₁) * (e₂ * f₂ a₂) * (e₃ * f₃ a₃) * (e₄ * f₄ a₄)) := by
+  simp only [Finset.mul_sum, Finset.sum_mul]
+
+section TagTransfer
+variable {d : ℕ}
+
+theorem tagAmp_support {P : ℕ} {R : Fin d → ℤ} {w : Fin d → ℝ} (hw : tagAmp P R w ≠ 0)
+    (a : Fin d) : |w a| ≤ 1 := by
+  rw [tagAmp_eq] at hw
+  exact (tagPart_ne_zero (left_ne_zero_of_mul hw) a).trans (by norm_num)
+
+/-- Blueprint §12.3, lines 1800-1810: the exact phase-transfer expansion of a unit source
+chart of a tag in slot `i`. It is a finite sum, over bounded carries and residues mod `9`, of
+products of a zero-matrix source factor in slot `i` and same-tag factor charts in the other
+three slots. -/
+theorem tag_transfer_pointwise (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam μ : ℝ)
+    (i : Fin 4) {χ : (Fin d → ℝ) → ℂ} (hχ : ContDiff ℝ (⊤ : ℕ∞) χ) (hχc : HasCompactSupport χ)
+    (hχs : ∀ w, χ w ≠ 0 → ∀ a, |w a| ≤ 3 / 4) (x t : ℝ) :
+    quadraticChartAtom (mkQuadraticChart θ ((slotCoeff i : ℝ) * lam) μ ((slotCoeff i : ℚ) • C)
+        χ hχ hχc) (x + ((i : ℕ) : ℝ) * t) =
+      ∑ k₃ ∈ slowValueBox d 4, ∑ s₃ ∈ residueBox d 9, ∑ k₄ ∈ slowValueBox d 4,
+        ∑ s₄ ∈ residueBox d 9,
+          ((9 : ℂ) ^ d)⁻¹ * ((9 : ℂ) ^ d)⁻¹ *
+            (Real.fourierChar (-(∑ a, (s₃ a : ℝ) * (k₃ a : ℝ) / 9 +
+              ∑ a, (s₄ a : ℝ) * (k₄ a : ℝ) / 9)) : ℂ) *
+          (quadraticChartAtom (tagSourceChart θ μ hχ hχc (tagSigma i s₃ s₄))
+              (x + ((i : ℕ) : ℝ) * t) *
+            quadraticChartAtom (tagFactorChart θ C lam (tagPartner i) 0 (tagTau i s₃ s₄))
+              (x + ((tagPartner i : ℕ) : ℝ) * t) *
+            quadraticChartAtom (tagFactorChart θ C lam (tagThird i) k₃ (fun a => -(s₃ a : ℤ)))
+              (x + ((tagThird i : ℕ) : ℝ) * t) *
+            quadraticChartAtom (tagFactorChart θ C lam (tagFourth i) k₄ (fun a => -(s₄ a : ℤ)))
+              (x + ((tagFourth i : ℕ) : ℝ) * t)) := by
+  have hsrc : ∀ σ : Fin d → ℤ, ∀ w, tagSourceAmp χ σ w ≠ 0 → ∀ a, |w a| ≤ 1 := by
+    intro σ w hw a
+    exact (hχs w (left_ne_zero_of_mul hw) a).trans (by norm_num)
+  have hχ1 : ∀ w, χ w ≠ 0 → ∀ a, |w a| ≤ 1 := fun w hw a => (hχs w hw a).trans (by norm_num)
+  simp only [tagSourceChart, tagFactorChart]
+  simp only [quadraticChartAtom_mk_box _ _ _ _ _ _ (hsrc _),
+    quadraticChartAtom_mk_box _ _ _ _ _ _ (fun w hw a => tagAmp_support hw a),
+    quadraticChartAtom_mk_box _ _ _ _ _ _ hχ1]
+  simp only [sum_distrib4]
+  set yi := x + ((i : ℕ) : ℝ) * t
+  set yp := x + ((tagPartner i : ℕ) : ℝ) * t
+  set y₃ := x + ((tagThird i : ℕ) : ℝ) * t
+  set y₄ := x + ((tagFourth i : ℕ) : ℝ) * t
+  rw [sum_swap44]
+  have hLHS : ∀ (e : ℂ) (f : (Fin d → ℤ) → ℂ), e * ∑ n ∈ chartLatticeBox 1 (fun a => θ a * yi), f
+      n =
+      ∑ m₄ ∈ chartLatticeBox 1 (fun a => θ a * y₄), ∑ m₃ ∈ chartLatticeBox 1 (fun a => θ a * y₃),
+        ∑ mp ∈ chartLatticeBox 1 (fun a => θ a * yp), ∑ n ∈ chartLatticeBox 1 (fun a => θ a * yi),
+          e * f n * tagPart (tagLift θ yp mp) * tagPart (tagLift θ y₃ m₃) *
+            tagPart (tagLift θ y₄ m₄) := by
+    intro e f
+    have h1 := tagPart_box_sum (fun a => θ a * yp)
+    have h2 := tagPart_box_sum (fun a => θ a * y₃)
+    have h3 := tagPart_box_sum (fun a => θ a * y₄)
+    simp only [tagLift]
+    rw [← mul_one (e * _), ← h1, ← mul_one (_ * ∑ mp ∈ _, _), ← h2,
+      ← mul_one (_ * ∑ m₃ ∈ _, _), ← h3]
+    simp only [Finset.mul_sum, Finset.sum_mul]
+  rw [hLHS]
+  apply Finset.sum_congr rfl; intro m₄ _
+  apply Finset.sum_congr rfl; intro m₃ _
+  apply Finset.sum_congr rfl; intro mp _
+  apply Finset.sum_congr rfl; intro n _
+  exact (tag_tuple_sum θ C lam μ i hχs x t n mp m₃ m₄).symm
+
+end TagTransfer
+
+section TagPieces
+variable {d : ℕ}
+
+theorem tagPart_tsum (v : Fin d → ℝ) : ∑' q : Fin d → ℤ, tagPart (v - fun a => (q a : ℝ)) = 1 := by
+  rw [← tagPart_box_sum v, tsum_eq_sum]
+  intro q hq
+  by_contra hne
+  apply hq
+  apply mem_chartLatticeBox_of_bound
+  intro a
+  have := tagPart_ne_zero hne a
+  simp only [Pi.sub_apply] at this
+  linarith
+
+/-- The partition sums to one over any box containing the relevant lattice points. -/
+theorem tagPart_slowBox_sum {K : ℕ} {v : Fin d → ℝ} (hv : ∀ a, |v a| + 1 ≤ K) :
+    ∑ q ∈ slowValueBox d K, tagPart (v - fun a => (q a : ℝ)) = 1 := by
+  rw [← tagPart_tsum v, tsum_eq_sum]
+  intro q hq
+  by_contra hne
+  apply hq
+  rw [mem_slowValueBox]
+  intro a
+  have h1 := tagPart_ne_zero hne a
+  simp only [Pi.sub_apply] at h1
+  have h2 := hv a
+  have h3 : |(q a : ℝ)| ≤ K := by
+    have : |(q a : ℝ)| ≤ |v a| + |v a - q a| := by
+      calc |(q a : ℝ)| = |v a - (v a - q a)| := by ring_nf
+        _ ≤ |v a| + |v a - q a| := abs_sub _ _
+    linarith
+  exact_mod_cast h3
+
+/-- The unit piece `χ(w + q) ρ(w)` of a source amplitude. -/
+noncomputable def tagPiece (χ : (Fin d → ℝ) → ℂ) (q : Fin d → ℤ) (w : Fin d → ℝ) : ℂ :=
+  χ (w + fun a => (q a : ℝ)) * tagPart w
+
+theorem tagPart_smooth : ContDiff ℝ (⊤ : ℕ∞) (tagPart (d := d)) :=
+  tensorCutoff_smooth gevreyPartition_smooth 1
+
+theorem tagPiece_smooth {χ : (Fin d → ℝ) → ℂ} (hχ : ContDiff ℝ (⊤ : ℕ∞) χ) (q : Fin d → ℤ) :
+    ContDiff ℝ (⊤ : ℕ∞) (tagPiece χ q) :=
+  (hχ.comp (contDiff_id.add contDiff_const)).mul tagPart_smooth
+
+theorem tagPiece_support {χ : (Fin d → ℝ) → ℂ} {q : Fin d → ℤ} {w : Fin d → ℝ}
+    (hw : tagPiece χ q w ≠ 0) (a : Fin d) : |w a| ≤ 3 / 4 :=
+  tagPart_ne_zero (right_ne_zero_of_mul hw) a
+
+theorem tagPiece_hasCompactSupport (χ : (Fin d → ℝ) → ℂ) (q : Fin d → ℤ) :
+    HasCompactSupport (tagPiece χ q) := by
+  apply HasCompactSupport.intro (isCompact_Icc (a := fun _ : Fin d => -(3 / 4 : ℝ))
+    (b := fun _ => 3 / 4))
+  intro w hw
+  by_contra hne
+  apply hw
+  exact ⟨fun a => (abs_le.mp (tagPiece_support hne a)).1,
+    fun a => (abs_le.mp (tagPiece_support hne a)).2⟩
+
+/-- Blueprint §12.3: the source chart splits into unit pieces, each a chart of the same tag
+with amplitude supported in `[-3/4, 3/4]ᵈ` and an additional linear phase. -/
+theorem tag_unit_decomposition (A : QuadraticChartData d) {H : ℝ}
+    (hχs : ∀ w, A.amplitude w ≠ 0 → ∀ a, |w a| ≤ H) {K : ℕ} (hK : H + 1 ≤ K) (y : ℝ) :
+    quadraticChartAtom A y =
+      ∑ q ∈ slowValueBox d K, quadraticChartAtom (mkQuadraticChart A.horizontal A.quadratic
+        (A.linear + chartMatrixPhase A.matrix A.horizontal (fun a => (q a : ℝ))) A.matrix
+        (tagPiece A.amplitude q) (tagPiece_smooth A.smooth q)
+        (tagPiece_hasCompactSupport A.amplitude q)) y := by
+  set u : Fin d → ℝ := fun a => A.horizontal a * y with hu
+  set M := A.matrix
+  set χ := A.amplitude
+  have hsum (q : Fin d → ℤ) : Summable fun n : Fin d → ℤ =>
+      χ (u - fun a => (n a : ℝ)) * tagPart ((u - fun a => (n a : ℝ)) - fun a => (q a : ℝ)) *
+        (Real.fourierChar (chartMatrixPhase M u (u - fun a => (n a : ℝ))) : ℂ) := by
+    apply summable_of_hasFiniteSupport
+    apply (chartLatticeBox H u).finite_toSet.subset
+    intro n hn
+    by_contra hb
+    apply hn
+    have h0 : χ (u - fun a => (n a : ℝ)) = 0 := by
+      by_contra hne
+      exact hb (mem_chartLatticeBox_of_bound (hχs _ hne))
+    simp [h0]
+  have hatom : ∀ (B : QuadraticChartData d), B.horizontal = A.horizontal →
+      quadraticChartAtom B y = (Real.fourierChar (B.quadratic * y ^ 2 + B.linear * y) : ℂ) *
+        ∑' n : Fin d → ℤ, B.amplitude (u - fun a => (n a : ℝ)) *
+          (Real.fourierChar (chartMatrixPhase B.matrix u (u - fun a => (n a : ℝ))) : ℂ) := by
+    intro B hB
+    rw [quadraticChartAtom]
+    congr 1
+    apply tsum_congr; intro n
+    have h1 : chartLatticeRemainder B y n = u - fun a => (n a : ℝ) := by
+      funext a; simp [chartLatticeRemainder, hB, hu]
+    have h2 : chartHorizontalPosition B y = u := by
+      funext a; simp [chartHorizontalPosition, hB, hu]
+    rw [quadraticChartLatticeSummand, h1, h2]
+  rw [hatom A rfl]
+  have step1 : (∑' n : Fin d → ℤ, χ (u - fun a => (n a : ℝ)) *
+      (Real.fourierChar (chartMatrixPhase M u (u - fun a => (n a : ℝ))) : ℂ)) =
+      ∑' n : Fin d → ℤ, ∑ q ∈ slowValueBox d K,
+        χ (u - fun a => (n a : ℝ)) * tagPart ((u - fun a => (n a : ℝ)) - fun a => (q a : ℝ)) *
+          (Real.fourierChar (chartMatrixPhase M u (u - fun a => (n a : ℝ))) : ℂ) := by
+    apply tsum_congr; intro n
+    by_cases h0 : χ (u - fun a => (n a : ℝ)) = 0
+    · simp [h0]
+    · rw [← Finset.sum_mul, ← Finset.mul_sum, tagPart_slowBox_sum, mul_one]
+      intro a
+      have := hχs _ h0 a
+      linarith
+  rw [step1, Summable.tsum_finsetSum (fun q _ => hsum q), Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro q _
+  rw [hatom (mkQuadraticChart A.horizontal A.quadratic
+    (A.linear + chartMatrixPhase A.matrix A.horizontal (fun a => (q a : ℝ))) A.matrix
+    (tagPiece A.amplitude q) (tagPiece_smooth A.smooth q)
+    (tagPiece_hasCompactSupport A.amplitude q)) rfl]
+  simp only [mkQuadraticChart]
+  have hre : (∑' n : Fin d → ℤ, χ (u - fun a => (n a : ℝ)) *
+      tagPart ((u - fun a => (n a : ℝ)) - fun a => (q a : ℝ)) *
+        (Real.fourierChar (chartMatrixPhase M u (u - fun a => (n a : ℝ))) : ℂ)) =
+      (∑' n : Fin d → ℤ, tagPiece χ q (u - fun a => (n a : ℝ)) *
+        (Real.fourierChar (chartMatrixPhase M u (u - fun a => (n a : ℝ))) : ℂ)) *
+      (Real.fourierChar (y * chartMatrixPhase M A.horizontal (fun a => (q a : ℝ))) : ℂ) := by
+    rw [← tsum_mul_right, ← (Equiv.subRight q).tsum_eq]
+    apply tsum_congr; intro n
+    simp only [Equiv.subRight_apply, tagPiece]
+    have e1 : (u - fun a => ((n - q) a : ℝ)) = (u - fun a => (n a : ℝ)) + fun a => (q a : ℝ) := by
+      funext a; simp; ring
+    have e2 : ((u - fun a => (n a : ℝ)) + fun a => (q a : ℝ)) - (fun a => (q a : ℝ)) =
+        u - fun a => (n a : ℝ) := by
+      funext a; simp
+    have e3 : chartMatrixPhase M u (fun a => (q a : ℝ)) =
+        y * chartMatrixPhase M A.horizontal (fun a => (q a : ℝ)) := by
+      rw [hu]; exact chartMatrixPhase_lineLeft _ _ _ _
+    rw [e1, e2, chartMatrixPhase_add_right, fc_add, e3]
+    ring
+  rw [hre]
+  rw [show A.quadratic * y ^ 2 + (A.linear + chartMatrixPhase M A.horizontal
+      (fun a => (q a : ℝ))) * y =
+      (A.quadratic * y ^ 2 + A.linear * y) + y * chartMatrixPhase M A.horizontal
+        (fun a => (q a : ℝ)) by ring, fc_add (A.quadratic * y ^ 2 + A.linear * y)]
+  ring
+
+end TagPieces
+
+section LatticePer
+variable {d : ℕ}
+
+/-! ### Periodization of the demodulated source -/
+
+/-- The `ℤᵈ`-periodization `u ↦ Σₙ F(u - n)` of a compactly supported function. -/
+noncomputable def latticePer (F : (Fin d → ℝ) → ℂ) (u : Fin d → ℝ) : ℂ :=
+  ∑' n : Fin d → ℤ, F (u - fun a => (n a : ℝ))
+
+theorem latticePer_local {F : (Fin d → ℝ) → ℂ} {R : ℝ}
+    (hF : ∀ w, F w ≠ 0 → ∀ a, |w a| ≤ R) (u₀ u : Fin d → ℝ) (hu : dist u u₀ < 1) :
+    latticePer F u = ∑ n ∈ chartLatticeBox (R + 1) u₀, F (u - fun a => (n a : ℝ)) := by
+  rw [latticePer, tsum_eq_sum]
+  intro n hn
+  by_contra hne
+  apply hn
+  apply mem_chartLatticeBox_of_bound
+  intro a
+  have h1 := hF _ hne a
+  simp only [Pi.sub_apply] at h1
+  have h2 : |u a - u₀ a| < 1 := by
+    have := (dist_le_pi_dist u u₀ a).trans_lt hu
+    rwa [Real.dist_eq] at this
+  calc |u₀ a - (n a : ℝ)| = |(u a - n a) - (u a - u₀ a)| := by ring_nf
+    _ ≤ |u a - n a| + |u a - u₀ a| := abs_sub _ _
+    _ ≤ R + 1 := by linarith
+
+theorem latticePer_eventuallyEq {F : (Fin d → ℝ) → ℂ} {R : ℝ}
+    (hF : ∀ w, F w ≠ 0 → ∀ a, |w a| ≤ R) (u₀ : Fin d → ℝ) :
+    latticePer F =ᶠ[nhds u₀]
+      fun u => ∑ n ∈ chartLatticeBox (R + 1) u₀, F (u - fun a => (n a : ℝ)) := by
+  filter_upwards [Metric.ball_mem_nhds u₀ one_pos] with u hu
+  exact latticePer_local hF u₀ u hu
+
+theorem latticePer_smooth {F : (Fin d → ℝ) → ℂ} (hFs : ContDiff ℝ (⊤ : ℕ∞) F) {R : ℝ}
+    (hF : ∀ w, F w ≠ 0 → ∀ a, |w a| ≤ R) : ContDiff ℝ (⊤ : ℕ∞) (latticePer F) := by
+  rw [contDiff_iff_contDiffAt]
+  intro u₀
+  refine ContDiffAt.congr_of_eventuallyEq ?_ (latticePer_eventuallyEq hF u₀)
+  apply ContDiff.contDiffAt
+  apply ContDiff.sum; intro n _
+  exact hFs.comp (contDiff_id.sub contDiff_const)
+
+theorem latticePer_periodic (F : (Fin d → ℝ) → ℂ) (u : Fin d → ℝ) (j : Fin d → ℤ) :
+    latticePer F (u + fun a => (j a : ℝ)) = latticePer F u := by
+  rw [latticePer, latticePer, ← (Equiv.addRight j).tsum_eq]
+  apply tsum_congr; intro n
+  congr 1
+  funext a
+  simp only [Equiv.coe_addRight, Pi.add_apply, Pi.sub_apply, Int.cast_add]
+  ring
+
+theorem latticePer_iteratedFDeriv_le {F : (Fin d → ℝ) → ℂ} (hFs : ContDiff ℝ (⊤ : ℕ∞) F)
+    {R : ℝ} (hR : 0 ≤ R) (hF : ∀ w, F w ≠ 0 → ∀ a, |w a| ≤ R) (m : ℕ) {A : ℝ}
+    (hA : ∀ w, ‖iteratedFDeriv ℝ m F w‖ ≤ A) (u₀ : Fin d → ℝ) :
+    ‖iteratedFDeriv ℝ m (latticePer F) u₀‖ ≤ (2 * (R + 1) + 3) ^ d * A := by
+  have hev := latticePer_eventuallyEq hF u₀
+  rw [(Filter.EventuallyEq.iteratedFDeriv ℝ hev m).eq_of_nhds]
+  have hs (n : Fin d → ℤ) : ContDiff ℝ (⊤ : ℕ∞) (fun u => F (u - fun a => (n a : ℝ))) :=
+    hFs.comp (contDiff_id.sub contDiff_const)
+  rw [iteratedFDeriv_fun_sum_apply (fun n _ => ((hs n).of_le (by simp)).contDiffAt)]
+  have hA0 : 0 ≤ A := (norm_nonneg _).trans (hA 0)
+  calc _ ≤ ∑ n ∈ chartLatticeBox (R + 1) u₀,
+        ‖iteratedFDeriv ℝ m (fun u => F (u - fun a => (n a : ℝ))) u₀‖ := norm_sum_le _ _
+    _ ≤ ∑ _n ∈ chartLatticeBox (R + 1) u₀, A := by
+        apply Finset.sum_le_sum; intro n _
+        rw [iteratedFDeriv_comp_sub]
+        exact hA _
+    _ = ((chartLatticeBox (R + 1) u₀).card : ℝ) * A := by
+        rw [Finset.sum_const, nsmul_eq_mul]
+    _ ≤ _ := mul_le_mul_of_nonneg_right (chartLatticeBox_card_le (by linarith) u₀) hA0
+
+/-- Fourier series of the periodization with a summed coefficient bound. -/
+theorem latticePer_fourier (hd : 1 ≤ d) {F : (Fin d → ℝ) → ℂ} (hFs : ContDiff ℝ (⊤ : ℕ∞) F)
+    {R : ℝ} (hR : 0 ≤ R) (hF : ∀ w, F w ≠ 0 → ∀ a, |w a| ≤ R) {A : ℕ → ℝ}
+    (hA : ∀ m w, ‖iteratedFDeriv ℝ m F w‖ ≤ A m) :
+    (∀ u, HasSum (fun ν => periodicFourierCoeff (latticePer F) ν *
+        (Real.fourierChar (∑ a, (ν a : ℝ) * u a) : ℂ)) (latticePer F u)) ∧
+      Summable (fun ν => ‖periodicFourierCoeff (latticePer F) ν‖) ∧
+      (∑' ν, ‖periodicFourierCoeff (latticePer F) ν‖) ≤
+        (2 * (R + 1) + 3) ^ d * A 0 +
+          2 * (7 ^ d * ((2 * (R + 1) + 3) ^ d * A (d + 1)) * Real.sqrt d ^ (d + 1)) := by
+  set N := (2 * (R + 1) + 3) ^ d with hN
+  have hN0 : 0 ≤ N := by positivity
+  have hper : ∀ u (j : Fin d → ℤ), latticePer F (u + fun a => (j a : ℝ)) = latticePer F u :=
+    fun u j => latticePer_periodic F u j
+  have hsm := latticePer_smooth hFs hF
+  have hB : ∀ u, ‖latticePer F u‖ ≤ N * A 0 := by
+    intro u
+    have h := latticePer_iteratedFDeriv_le hFs hR hF 0 (hA 0) u
+    rwa [norm_iteratedFDeriv_zero] at h
+  have hexp (m : ℕ) (hm : d < m) := periodic_fourier_expansion_of_fderiv hd hm (latticePer F) hsm
+    hper (fun u => latticePer_iteratedFDeriv_le hFs hR hF m (hA m) u) hB
+  have hA0 : ∀ m, 0 ≤ A m := fun m => (norm_nonneg _).trans (hA m 0)
+  have h1 := hexp (d + 1) (by omega)
+  have henv := fourier_coeff_envelope_bounds (periodicFourierCoeff (latticePer F)) h1.2.1
+    (A := fun m => N * A m) (fun m => mul_nonneg hN0 (hA0 m)) h1.2.2.2
+    (fun m hm v hv => (hexp m hm).2.2.1 v hv)
+  exact ⟨h1.1, h1.2.1, henv.2.2⟩
+
+end LatticePer
+
+section TagPieceBounds
+variable {d : ℕ}
+
+/-- A fixed Gevrey constant of the lattice partition. -/
+noncomputable def tagKρ : ℕ := Classical.choose gevreyPartition_exists_derivative_bound
+
+theorem tagKρ_spec : 1 ≤ tagKρ ∧ ∀ (n : ℕ) (x : ℝ),
+    |iteratedDeriv n gevreyPartition x| ≤ ((tagKρ : ℝ) * ((n : ℝ) + 1)) ^ (tagKρ * (n + 1)) :=
+  Classical.choose_spec gevreyPartition_exists_derivative_bound
+
+theorem tagPart_geomBound (m : ℕ) (w : Fin d → ℝ) :
+    GeomBound (tagPart (d := d)) w 1 ((d : ℝ) * ((tagKρ : ℝ) * (m + 1 : ℝ)) ^ (2 * tagKρ)) m := by
+  have h := tensorCutoff_geomBound (d := d) gevreyPartition_smooth
+    (fun x => by rw [abs_of_nonneg (gevreyPartition_nonneg x)]; exact gevreyPartition_le_one x)
+    tagKρ_spec.1 (fun i x => by simpa using tagKρ_spec.2 i x) one_pos m w
+  have he : (tagPart (d := d)) = tensorCutoff gevreyPartition 1 := rfl
+  rw [he]
+  simpa using h
+
+/-- The derivative envelope of a demodulated unit piece. -/
+noncomputable def tagPieceEnv (d c₀ : ℕ) (H : ℝ) (S : ℝ) (m : ℕ) : ℝ :=
+  (H ^ (2 * c₀) * (m + 1 : ℝ) ^ c₀) *
+    ((H ^ (2 * c₀) * (m + 1 : ℝ) ^ c₀) + (d : ℝ) * ((tagKρ : ℝ) * (m + 1 : ℝ)) ^ (2 * tagKρ) +
+      (m + 1) * (2 * Real.pi) * S) ^ m
+
+theorem tagSourcePiece_deriv_le {c₀ : ℕ} {H : ℝ} {A : QuadraticChartData d}
+    (hA : QuadraticChartComplexity c₀ H A) (hc : 1 ≤ c₀) (q σ : Fin d → ℤ) (m : ℕ)
+    (w : Fin d → ℝ) :
+    ‖iteratedFDeriv ℝ m (tagSourceAmp (tagPiece A.amplitude q) σ) w‖ ≤
+      tagPieceEnv d c₀ H (∑ l, |(σ l : ℝ)| / 9) m := by
+  set Kχ := H ^ (2 * c₀) * (m + 1 : ℝ) ^ c₀ with hKχ
+  have hH1 : 1 ≤ H := by linarith [hA.lower, Real.add_one_le_exp (2 : ℝ)]
+  have hKχ0 : 0 ≤ Kχ := by positivity
+  set qv : Fin d → ℝ := fun a => (q a : ℝ)
+  have h1 : GeomBound (fun y => A.amplitude ((ContinuousLinearMap.id ℝ (Fin d → ℝ)) y + qv)) w Kχ
+      (‖ContinuousLinearMap.id ℝ (Fin d → ℝ)‖ * Kχ) m :=
+    GeomBound.comp_affine A.smooth _ qv (quadraticChartAmplitude_geomBound hA hc m _)
+  have h2 := tagPart_geomBound (d := d) m w
+  have h3 := GeomBound.fourierChar_affine (modulationFunctional 9 σ) 0 w m
+  have hs1 : ContDiff ℝ (⊤ : ℕ∞)
+      (fun y => A.amplitude ((ContinuousLinearMap.id ℝ (Fin d → ℝ)) y + qv)) :=
+    A.smooth.comp ((ContinuousLinearMap.id ℝ _).contDiff.add contDiff_const)
+  have hs3 : ContDiff ℝ (⊤ : ℕ∞) (fun y => (Real.fourierChar (modulationFunctional 9 σ y + 0) :
+      ℂ)) :=
+    chart_fourierChar_smooth.comp ((modulationFunctional 9 σ).contDiff.add contDiff_const)
+  have h12 := GeomBound.mul hs1 tagPart_smooth (by positivity) h1 h2
+  have h123 := GeomBound.mul (hs1.mul tagPart_smooth) hs3 (by positivity) h12 h3
+  have he : tagSourceAmp (tagPiece A.amplitude q) σ = fun y =>
+      A.amplitude ((ContinuousLinearMap.id ℝ (Fin d → ℝ)) y + qv) * tagPart y *
+        (Real.fourierChar (modulationFunctional 9 σ y + 0) : ℂ) := by
+    funext y
+    rw [tagSourceAmp, tagPiece, add_zero, modulationFunctional_apply]
+    rfl
+  rw [he]
+  have hid : ‖ContinuousLinearMap.id ℝ (Fin d → ℝ)‖ ≤ 1 := ContinuousLinearMap.norm_id_le
+  have hΛ := modulationFunctional_norm_le (by norm_num : (0 : ℝ) < 9) σ
+  refine (h123 m le_rfl).trans ?_
+  unfold tagPieceEnv
+  rw [mul_one, mul_one]
+  apply mul_le_mul_of_nonneg_left _ hKχ0
+  apply pow_le_pow_left₀ (by positivity)
+  have hm0 : (0 : ℝ) ≤ (m + 1) * (2 * Real.pi) := by positivity
+  have e1 : ‖ContinuousLinearMap.id ℝ (Fin d → ℝ)‖ * Kχ ≤ Kχ :=
+    (mul_le_mul_of_nonneg_right hid hKχ0).trans (by rw [one_mul])
+  have e2 : (m + 1 : ℝ) * (2 * Real.pi) * ‖modulationFunctional 9 σ‖ ≤
+      (m + 1) * (2 * Real.pi) * ∑ l, |(σ l : ℝ)| / 9 := mul_le_mul_of_nonneg_left hΛ hm0
+  have e3 : (d : ℝ) * ((((tagKρ : ℝ) * (m + 1 : ℝ)) ^ (2 * tagKρ))) =
+      (d : ℝ) * ((tagKρ : ℝ) * (m + 1 : ℝ)) ^ (2 * tagKρ) := rfl
+  linarith
+
+end TagPieceBounds
+
+section TagBudget
+
+/-- The source-piece Fourier mass is quasipolynomial in the chart complexity. -/
+theorem tagPieceEnv_budget (c₀ : ℕ) :
+    ∃ D : ℕ, 2 ≤ D ∧ ∀ {d : ℕ} {H S : ℝ}, Real.exp 2 ≤ H → (d : ℝ) ≤ Real.log H →
+      0 ≤ S → S ≤ 8 * d →
+      (2 * (3 / 4 + 1) + 3 : ℝ) ^ d * tagPieceEnv d c₀ H S 0 +
+          2 * (7 ^ d * ((2 * (3 / 4 + 1) + 3 : ℝ) ^ d * tagPieceEnv d c₀ H S (d + 1)) *
+            Real.sqrt d ^ (d + 1)) ≤
+        Real.exp (D * (1 + Real.log H) ^ D) := by
+  set Kρ := tagKρ
+  set eR : ℕ := 3 * c₀ + 4 * Kρ + 3 with heR
+  set c₁ : ℝ := (eR : ℝ) + 3 * c₀ + 10 with hc₁
+  set f : ℝ := (Kρ : ℝ) + 20 with hf
+  set c₂ : ℝ := Real.log f + 1 with hc₂
+  have hf1 : 20 ≤ f := by rw [hf]; have : (0 : ℝ) ≤ Kρ := Nat.cast_nonneg _; linarith
+  have hc₂0 : 0 ≤ c₂ := by
+    rw [hc₂]; have := Real.log_nonneg (by linarith : (1 : ℝ) ≤ f); linarith
+  have hc₁0 : 0 ≤ c₁ := by rw [hc₁]; positivity
+  refine ⟨⌈2 * c₁ * c₂⌉₊ + 2, by omega, ?_⟩
+  intro d H S hH hdH hS0 hS
+  set X := 1 + Real.log H with hX
+  have hH1 : 1 ≤ H := by linarith [Real.add_one_le_exp (2 : ℝ)]
+  have hH0 : 0 < H := by linarith
+  have hlogH2 : 2 ≤ Real.log H := by
+    rw [Real.le_log_iff_exp_le hH0]; exact hH
+  have hX1 : 1 ≤ X := by linarith
+  set W := f * H with hW
+  have hW20 : 20 ≤ W := hf1.trans (le_mul_of_one_le_right (by linarith) hH1)
+  have hW1 : 1 ≤ W := by linarith
+  have hHW : H ≤ W := le_mul_of_one_le_left hH0.le (by linarith)
+  have hlogW : Real.log W ≤ c₂ * X := by
+    rw [hW, Real.log_mul (by linarith) hH0.ne', hc₂]
+    have hlf := Real.log_nonneg (by linarith : (1 : ℝ) ≤ f)
+    have hlH := Real.log_nonneg hH1
+    have := mul_nonneg hlf hlH
+    calc Real.log f + Real.log H ≤ Real.log f + Real.log f * Real.log H + 1 + Real.log H := by
+          linarith
+      _ = (Real.log f + 1) * X := by rw [hX]; ring
+  have hlogle : Real.log H + 1 ≤ H := by
+    have := Real.log_le_sub_one_of_pos hH0; linarith
+  have hd0 : (0 : ℝ) ≤ d := Nat.cast_nonneg d
+  have hdW : (d : ℝ) + 2 ≤ W := by nlinarith only [hf, hdH, hlogle]
+  have hKρW : (Kρ : ℝ) ≤ W := by
+    have : (Kρ : ℝ) ≤ f := by rw [hf]; linarith
+    exact this.trans (le_mul_of_one_le_right (by linarith) hH1)
+  have henv : ∀ m : ℕ, m ≤ d + 1 → tagPieceEnv d c₀ H S m ≤ W ^ (3 * c₀ + (eR + 1) * m) := by
+    intro m hm
+    have hm1 : (m + 1 : ℝ) ≤ W := by
+      have : (m : ℝ) ≤ d + 1 := by exact_mod_cast hm
+      linarith
+    have hKχ : H ^ (2 * c₀) * (m + 1 : ℝ) ^ c₀ ≤ W ^ (3 * c₀) := by
+      calc H ^ (2 * c₀) * (m + 1 : ℝ) ^ c₀ ≤ W ^ (2 * c₀) * W ^ c₀ :=
+            mul_le_mul (pow_le_pow_left₀ hH0.le hHW _) (pow_le_pow_left₀ (by positivity) hm1 _)
+              (by positivity) (by positivity)
+        _ = W ^ (3 * c₀) := by rw [← pow_add]; ring_nf
+    have hT2 : (d : ℝ) * ((Kρ : ℝ) * (m + 1 : ℝ)) ^ (2 * Kρ) ≤ W ^ eR := by
+      have h1 : (Kρ : ℝ) * (m + 1 : ℝ) ≤ W ^ 2 := by
+        rw [sq]; exact mul_le_mul hKρW hm1 (by positivity) (by linarith)
+      calc (d : ℝ) * ((Kρ : ℝ) * (m + 1 : ℝ)) ^ (2 * Kρ) ≤ W * (W ^ 2) ^ (2 * Kρ) :=
+            mul_le_mul (by linarith) (pow_le_pow_left₀ (by positivity) h1 _) (by positivity)
+              (by linarith)
+        _ = W ^ (1 + 4 * Kρ) := by rw [← pow_mul, ← pow_succ']; ring_nf
+        _ ≤ W ^ eR := pow_le_pow_right₀ hW1 (by rw [heR]; omega)
+    have hT3 : (m + 1 : ℝ) * (2 * Real.pi) * S ≤ W ^ eR := by
+      have hpi : 2 * Real.pi ≤ W := by linarith [Real.pi_lt_d2]
+      have hSW : S ≤ W := by nlinarith only [hdH, hS, hlogle, hKρW]
+      calc (m + 1 : ℝ) * (2 * Real.pi) * S ≤ W * W * W := by
+            apply mul_le_mul (mul_le_mul hm1 hpi (by positivity) (by linarith)) hSW hS0
+              (by positivity)
+        _ = W ^ 3 := by ring
+        _ ≤ W ^ eR := pow_le_pow_right₀ hW1 (by rw [heR]; omega)
+    have hT1 : H ^ (2 * c₀) * (m + 1 : ℝ) ^ c₀ ≤ W ^ eR :=
+      hKχ.trans (pow_le_pow_right₀ hW1 (by rw [heR]; omega))
+    have hR : H ^ (2 * c₀) * (m + 1 : ℝ) ^ c₀ + (d : ℝ) * ((Kρ : ℝ) * (m + 1 : ℝ)) ^ (2 * Kρ) +
+        (m + 1) * (2 * Real.pi) * S ≤ W ^ (eR + 1) := by
+      rw [pow_succ]
+      have : 0 ≤ W ^ eR := by positivity
+      nlinarith only [hW20, hT2, hT3, hT1, this]
+    unfold tagPieceEnv
+    calc H ^ (2 * c₀) * (m + 1 : ℝ) ^ c₀ * (H ^ (2 * c₀) * (m + 1 : ℝ) ^ c₀ +
+          (d : ℝ) * ((tagKρ : ℝ) * (m + 1 : ℝ)) ^ (2 * tagKρ) + (m + 1) * (2 * Real.pi) * S) ^ m ≤
+        W ^ (3 * c₀) * (W ^ (eR + 1)) ^ m :=
+          mul_le_mul hKχ (pow_le_pow_left₀ (by positivity) hR m) (by positivity) (by positivity)
+      _ = W ^ (3 * c₀ + (eR + 1) * m) := by rw [← pow_mul, ← pow_add]
+  have hN : (2 * (3 / 4 + 1) + 3 : ℝ) ^ d ≤ W ^ d :=
+    pow_le_pow_left₀ (by norm_num) (by linarith) d
+  have h7 : (7 : ℝ) ^ d ≤ W ^ d := pow_le_pow_left₀ (by norm_num) (by linarith) d
+  have hsq : Real.sqrt d ^ (d + 1) ≤ W ^ (d + 1) := by
+    apply pow_le_pow_left₀ (Real.sqrt_nonneg _)
+    calc Real.sqrt d ≤ Real.sqrt (W ^ 2) := Real.sqrt_le_sqrt (by nlinarith only [hdH, hHW, hlogle])
+      _ = W := Real.sqrt_sq (by linarith)
+  set! E := 3 * d + 2 + 3 * c₀ + (eR + 1) * (d + 1) with hE
+  have hE0 : tagPieceEnv d c₀ H S 0 ≤ W ^ E :=
+    (henv 0 (by omega)).trans (pow_le_pow_right₀ hW1 (by rw [hE]; nlinarith only))
+  have hE1 := henv (d + 1) le_rfl
+  have hEnv0 : 0 ≤ tagPieceEnv d c₀ H S 0 := by unfold tagPieceEnv; positivity
+  have hEnv1 : 0 ≤ tagPieceEnv d c₀ H S (d + 1) := by unfold tagPieceEnv; positivity
+  have a1 : (2 * (3 / 4 + 1) + 3 : ℝ) ^ d * tagPieceEnv d c₀ H S 0 ≤ W ^ d * W ^ E :=
+    mul_le_mul hN hE0 hEnv0 (by positivity)
+  have a2 : 7 ^ d * ((2 * (3 / 4 + 1) + 3 : ℝ) ^ d * tagPieceEnv d c₀ H S (d + 1)) *
+      Real.sqrt d ^ (d + 1) ≤
+      W ^ d * (W ^ d * W ^ (3 * c₀ + (eR + 1) * (d + 1))) * W ^ (d + 1) := by
+    apply mul_le_mul (mul_le_mul h7 (mul_le_mul hN hE1 hEnv1 (by positivity)) (by positivity)
+      (by positivity)) hsq (by positivity) (by positivity)
+  have b1 : W ^ d * W ^ E ≤ W ^ (E + d + 1) := by
+    rw [← pow_add]; exact pow_le_pow_right₀ hW1 (by omega)
+  have b2 : W ^ d * (W ^ d * W ^ (3 * c₀ + (eR + 1) * (d + 1))) * W ^ (d + 1) ≤
+      W ^ (E + d + 1) := by
+    rw [← pow_add, ← pow_add, ← pow_add]
+    exact pow_le_pow_right₀ hW1 (by rw [hE]; nlinarith only)
+  have htot : (2 * (3 / 4 + 1) + 3 : ℝ) ^ d * tagPieceEnv d c₀ H S 0 +
+      2 * (7 ^ d * ((2 * (3 / 4 + 1) + 3 : ℝ) ^ d * tagPieceEnv d c₀ H S (d + 1)) *
+        Real.sqrt d ^ (d + 1)) ≤ W ^ (E + d + 1) * 3 := by
+    linarith [a2.trans b2]
+  have hE' : ((E + d + 1 + 2 : ℕ) : ℝ) ≤ c₁ * X := by
+    rw [hE, hc₁, hX, heR]
+    push_cast
+    have hdX : (d : ℝ) ≤ Real.log H := hdH
+    have hc0 : (0 : ℝ) ≤ c₀ := Nat.cast_nonneg _
+    have hK0 : (0 : ℝ) ≤ Kρ := Nat.cast_nonneg _
+    nlinarith only [hdH]
+  have hfin : W ^ (E + d + 1) * 3 ≤ W ^ (E + d + 1 + 2) := by
+    rw [pow_add _ (E + d + 1) 2]
+    have h3 : (3 : ℝ) ≤ W ^ 2 := by
+      have := le_self_pow₀ hW1 (by norm_num : (2 : ℕ) ≠ 0); linarith
+    exact mul_le_mul_of_nonneg_left h3 (by positivity)
+  calc _ ≤ W ^ (E + d + 1) * 3 := htot
+    _ ≤ W ^ (E + d + 1 + 2) := hfin
+    _ ≤ Real.exp (c₁ * c₂ * X ^ 2) := pow_le_exp_mul_sq hW1 hlogW hE'
+    _ ≤ Real.exp (((⌈2 * c₁ * c₂⌉₊ + 2 : ℕ) : ℝ) * X ^ (⌈2 * c₁ * c₂⌉₊ + 2)) :=
+        exp_poly_le hX1 (by omega) (by
+          push_cast
+          have := Nat.le_ceil (2 * c₁ * c₂)
+          have : 0 ≤ c₁ * c₂ := mul_nonneg hc₁0 hc₂0
+          linarith)
+
+end TagBudget
+
+/-! ### Same-tag templates -/
+
+theorem fc_conj (x : ℝ) : (starRingEnd ℂ) (Real.fourierChar x : ℂ) = Real.fourierChar (-x) := by
+  simp only [Real.fourierChar_apply, ← Complex.exp_conj, map_mul, Complex.conj_ofReal,
+    Complex.conj_I]
+  congr 1
+  push_cast
+  ring
+
+theorem fc_sub_int (x : ℝ) (n : ℤ) :
+    (Real.fourierChar (x - n) : ℂ) = Real.fourierChar x := by
+  rw [sub_eq_add_neg, fc_add, ← Int.cast_neg, fourierChar_int, mul_one]
+
+section TagTemplates
+variable {d : ℕ}
+
+/-- The same-tag template of slot `l` with residue `R ∈ {0,…,8}ᵈ`: the chart with the tag
+phase of slot multiplier `c_l` and amplitude `ρ(w) e(Rᵀw/9)` (blueprint line 1800). -/
+noncomputable def tagTemplateData (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam : ℝ)
+    (l : Fin 4) (R : Fin d → ℕ) : QuadraticChartData d :=
+  mkQuadraticChart θ ((slotCoeff l : ℝ) * lam) 0 ((slotCoeff l : ℚ) • C)
+    (tagAmp 9 (fun a => (R a : ℤ))) (tagAmp_smooth _ _) (tagAmp_hasCompactSupport _ _)
+
+/-- Every chart with a template amplitude is bounded by one. -/
+theorem tagAmpChart_norm_le (θ : Fin d → ℝ) (q β : ℝ) (M : Matrix (Fin d) (Fin d) ℚ)
+    (R : Fin d → ℤ) (y : ℝ) :
+    ‖quadraticChartAtom (mkQuadraticChart θ q β M (tagAmp 9 R) (tagAmp_smooth _ _)
+      (tagAmp_hasCompactSupport _ _)) y‖ ≤ 1 := by
+  rw [quadraticChartAtom_mk_box _ _ _ _ _ _ (fun w hw a => tagAmp_support hw a), norm_mul,
+    Circle.norm_coe, one_mul]
+  refine (norm_sum_le _ _).trans (le_of_eq ((Finset.sum_congr rfl ?_).trans
+    (tagPart_box_norm_sum (fun a => θ a * y))))
+  intro n _
+  rw [norm_mul, Circle.norm_coe, mul_one, tagAmp_eq, norm_mul, Circle.norm_coe, mul_one]
+
+theorem tagTemplate_norm_le (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam : ℝ)
+    (l : Fin 4) (R : Fin d → ℕ) (y : ℝ) :
+    ‖quadraticChartAtom (tagTemplateData θ C lam l R) y‖ ≤ 1 :=
+  tagAmpChart_norm_le θ _ _ _ _ y
+
+theorem tagFactor_norm_le (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam : ℝ)
+    (l : Fin 4) (k R : Fin d → ℤ) (y : ℝ) :
+    ‖quadraticChartAtom (tagFactorChart θ C lam l k R) y‖ ≤ 1 :=
+  tagAmpChart_norm_le θ _ _ _ _ y
+
+theorem tagPart_conj {d : ℕ} (w : Fin d → ℝ) : (starRingEnd ℂ) (tagPart w) = tagPart w := by
+  simp only [tagPart, tensorCutoff, map_prod, Complex.conj_ofReal]
+
+/-- Blueprint line 1809: a factor chart is a linear modulation of the conjugate of a template;
+only the residue of its frequency mod `9` enters. -/
+theorem tagFactor_eq_template (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam : ℝ)
+    (l : Fin 4) (k R' : Fin d → ℤ) :
+    ∃ r ∈ residueBox d 9, ∃ γ : ℝ, ∀ y : ℝ,
+      quadraticChartAtom (tagFactorChart θ C lam l k R') y =
+        (Real.fourierChar (γ * y) : ℂ) *
+          (starRingEnd ℂ) (quadraticChartAtom (tagTemplateData θ C lam l r) y) := by
+  set r : Fin d → ℕ := fun a => ((-R' a) % 9).toNat with hr
+  have hr9 : ∀ a, ((r a : ℕ) : ℤ) = (-R' a) % 9 := fun a => by
+    simp only [hr]; exact Int.toNat_of_nonneg (Int.emod_nonneg _ (by norm_num))
+  set Q : Fin d → ℤ := fun a => -((-R' a) / 9) with hQ
+  have hRQ : ∀ a, (R' a : ℝ) = 9 * (Q a : ℝ) - ((r a : ℕ) : ℝ) := by
+    intro a
+    have h' : R' a = 9 * Q a - ((r a : ℕ) : ℤ) := by rw [hr9]; simp only [hQ]; omega
+    exact_mod_cast h'
+  refine ⟨r, ?_, -(slotCoeff l : ℝ) * chartMatrixPhase C θ (fun a => (k a : ℝ)) +
+    ∑ a, (Q a : ℝ) * θ a, ?_⟩
+  · simp only [residueBox, Fintype.mem_piFinset, Finset.mem_range]
+    intro a
+    have h1 := Int.emod_lt_of_pos (-R' a) (by norm_num : (0 : ℤ) < 9)
+    have h2 := Int.emod_nonneg (-R' a) (by norm_num : (9 : ℤ) ≠ 0)
+    simp only [hr]; omega
+  intro y
+  simp only [tagFactorChart, tagTemplateData]
+  rw [quadraticChartAtom_mk_box _ _ _ _ _ _ (fun w hw a => tagAmp_support hw a),
+    quadraticChartAtom_mk_box _ _ _ _ _ _ (fun w hw a => tagAmp_support hw a)]
+  rw [map_mul (starRingEnd ℂ), map_sum (starRingEnd ℂ), Finset.mul_sum, Finset.mul_sum,
+    Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro n _
+  rw [tagAmp_eq, tagAmp_eq, map_mul (starRingEnd ℂ), map_mul (starRingEnd ℂ), tagPart_conj,
+    fc_conj, fc_conj, fc_conj]
+  rw [chartMatrixPhase_intSmul, chartMatrixPhase_intSmul]
+  set D : Fin d → ℝ := (fun a => θ a * y) - fun a => (n a : ℝ) with hD
+  have hsum : ∑ a, (R' a : ℝ) * (D a / (9 : ℕ)) =
+      (∑ a, (Q a : ℝ) * θ a) * y + -∑ a, ((r a : ℕ) : ℤ) * (D a / (9 : ℕ)) -
+        ((∑ a, Q a * n a : ℤ) : ℝ) := by
+    push_cast
+    rw [Finset.sum_mul, ← Finset.sum_neg_distrib, ← Finset.sum_add_distrib,
+      ← Finset.sum_sub_distrib]
+    apply Finset.sum_congr rfl
+    intro a _
+    rw [hRQ a, hD]
+    simp only [Pi.sub_apply]
+    ring
+  rw [hsum, fc_sub_int, fc_add ((∑ a, (Q a : ℝ) * θ a) * y)]
+  rw [show (-(slotCoeff l : ℝ) * chartMatrixPhase C θ (fun a => (k a : ℝ)) +
+      ∑ a, (Q a : ℝ) * θ a) * y = -(slotCoeff l : ℝ) * chartMatrixPhase C θ (fun a => (k a : ℝ)) *
+          y +
+      (∑ a, (Q a : ℝ) * θ a) * y by ring]
+  rw [show -((slotCoeff l : ℝ) * lam * y ^ 2 + 0 * y) = -(slotCoeff l : ℝ) * lam * y ^ 2 by ring]
+  rw [fc_add, fc_add]
+  simp only [Int.cast_neg, neg_mul]
+  ring
+
+end TagTemplates
+
+/-! ### One separated term of the same-tag expansion -/
+
+/-- A single-scale kernel against three `L²(I)` inputs in distinct slots is integrable. -/
+theorem kernelTriple_integrable {κ : LocalKernelClass} {a₀ r : ℝ} (hr : 0 < r)
+    {w : ℝ × ℝ → ℂ} (hw : IsAdmissibleLocalKernel κ a₀ r w) {j a b : Fin 4} (hab : a ≠ b)
+    (hja : j ≠ a) (hjb : j ≠ b) {G Fa Fb : ℝ → ℂ} (hGm : Measurable G) (hFam : Measurable Fa)
+    (hFbm : Measurable Fb) (hG2 : MemLp G 2 (volume.restrict (Set.Icc a₀ (a₀ + r))))
+    (hFa2 : MemLp Fa 2 (volume.restrict (Set.Icc a₀ (a₀ + r))))
+    (hFb2 : MemLp Fb 2 (volume.restrict (Set.Icc a₀ (a₀ + r)))) :
+    Integrable (fun z : ℝ × ℝ => w z * G (realProgressionCoordinate j z) *
+      Fa (realProgressionCoordinate a z) * Fb (realProgressionCoordinate b z)) := by
+  set I := Set.Icc a₀ (a₀ + r) with hI
+  have hIm : MeasurableSet I := measurableSet_Icc
+  set Gg := I.indicator G with hGg
+  set Ga := I.indicator Fa with hGa
+  set Gb := I.indicator Fb with hGb
+  have hGgm : Measurable Gg := hGm.indicator hIm
+  have hGam : Measurable Ga := hFam.indicator hIm
+  have hGbm : Measurable Gb := hFbm.indicator hIm
+  have hGa2 : MemLp Ga 2 := (memLp_indicator_iff_restrict hIm).mpr hFa2
+  have hGb2 : MemLp Gb 2 := (memLp_indicator_iff_restrict hIm).mpr hFb2
+  have hGg1 : Integrable Gg := (integrable_indicator_iff hIm).mpr (hG2.integrable one_le_two)
+  set! ar : ℝ := ((a : ℕ) : ℝ) with har
+  set! br : ℝ := ((b : ℕ) : ℝ) with hbr
+  set! jr : ℝ := ((j : ℕ) : ℝ) with hjr
+  have hab' : ar ≠ br := by
+    intro h; have := fin4_slot_sep hab; rw [← hbr, ← har, h, sub_self, abs_zero] at this
+    norm_num at this
+  have hja' : jr ≠ ar := by
+    intro h; have := fin4_slot_sep hja; rw [← har, ← hjr, h, sub_self, abs_zero] at this
+    norm_num at this
+  have hjb' : jr ≠ br := by
+    intro h; have := fin4_slot_sep hjb; rw [← hbr, ← hjr, h, sub_self, abs_zero] at this
+    norm_num at this
+  have hcoord (l : Fin 4) (z : ℝ × ℝ) :
+      realProgressionCoordinate l z = z.1 + ((l : ℕ) : ℝ) * z.2 := rfl
+  have hrestr : (fun z : ℝ × ℝ => w z * G (realProgressionCoordinate j z) *
+      Fa (realProgressionCoordinate a z) * Fb (realProgressionCoordinate b z)) =
+      fun z => w z * (Ga (z.1 + ar * z.2) * Gb (z.1 + br * z.2) * Gg (z.1 + jr * z.2)) := by
+    funext z
+    by_cases hz : w z = 0
+    · simp [hz]
+    have hmem (l : Fin 4) : realProgressionCoordinate l z ∈ I := by
+      have h := hw.support z hz l
+      have hm := mul_nonneg κ.margin_pos.le hr.le
+      exact ⟨by linarith [h.1], by linarith [h.2]⟩
+    rw [hGa, hGb, hGg, ← hcoord a, ← hcoord b, ← hcoord j, Set.indicator_of_mem (hmem a),
+      Set.indicator_of_mem (hmem b), Set.indicator_of_mem (hmem j)]
+    ring
+  rw [hrestr]
+  have hTri := slotTriple_integrable hab' hja' hjb' hGam hGbm hGgm hGa2 hGb2 hGg1
+  exact hTri.bdd_mul (c := localKernelSupBound κ) hw.smooth.continuous.aestronglyMeasurable
+    (Filter.Eventually.of_forall fun z => admissibleLocalKernel_norm_le hw z)
+
+/-- Blueprint §12.3, lines 1811-1815: one separated term. A factor `S(y_i)` with absolutely
+summable linear-phase expansion of mass `B` in the source slot only modulates the spectators,
+so the form is at most `3 C_κ B t` when the residual's Fourier moments on `I` are at most
+`r t` and the spectators are normalized. -/
+theorem tag_single_term_le {κ : LocalKernelClass} {a₀ r : ℝ} (hr : 0 < r) {w : ℝ × ℝ → ℂ}
+    (hw : IsAdmissibleLocalKernel κ a₀ r w) {i j a b : Fin 4} (hab : a ≠ b) (hja : j ≠ a)
+    (hjb : j ≠ b) {G Fa Fb : ℝ → ℂ} (hGm : Measurable G) (hFam : Measurable Fa)
+    (hFbm : Measurable Fb) (hG2 : MemLp G 2 (volume.restrict (Set.Icc a₀ (a₀ + r))))
+    (hFa2 : MemLp Fa 2 (volume.restrict (Set.Icc a₀ (a₀ + r))))
+    (hFb2 : MemLp Fb 2 (volume.restrict (Set.Icc a₀ (a₀ + r))))
+    (hFa1 : r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖Fa x‖ ^ 2 ≤ 1)
+    (hFb1 : r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖Fb x‖ ^ 2 ≤ 1) {t : ℝ}
+    (hM : ∀ ξ, ‖∫ y in Set.Icc a₀ (a₀ + r), (Real.fourierChar (-(y * ξ)) : ℂ) * G y‖ ≤ r * t)
+    {ι : Type*} [Countable ι] {c : ι → ℂ} {β : ι → ℝ} {S : ℝ → ℂ}
+    (hS : ∀ y, HasSum (fun ν => c ν * (Real.fourierChar (β ν * y) : ℂ)) (S y))
+    (hcs : Summable (fun ν => ‖c ν‖)) {B : ℝ} (hB : ∑' ν, ‖c ν‖ ≤ B) :
+    ‖(r : ℂ)⁻¹ ^ 2 * ∫ z : ℝ × ℝ, w z * S (realProgressionCoordinate i z) *
+        G (realProgressionCoordinate j z) * Fa (realProgressionCoordinate a z) *
+        Fb (realProgressionCoordinate b z)‖ ≤ kernelFourierConst κ * (3 * t) * B := by
+  have ht : 0 ≤ t := by
+    have h0 := (norm_nonneg _).trans (hM 0)
+    exact nonneg_of_mul_nonneg_right (by linarith) hr
+  have hK := kernelFourierConst_nonneg κ
+  have hchm : Continuous (fun s : ℝ => (Real.fourierChar s : ℂ)) :=
+    continuous_subtype_val.comp Real.continuous_fourierChar
+  have hT := kernelTriple_integrable hr hw hab hja hjb hGm hFam hFbm hG2 hFa2 hFb2
+  set! α := slotAlpha ((a : ℕ) : ℝ) ((b : ℕ) : ℝ) ((i : ℕ) : ℝ)
+  set! α' := slotBeta ((a : ℕ) : ℝ) ((b : ℕ) : ℝ) ((i : ℕ) : ℝ)
+  have hab' : ((a : ℕ) : ℝ) ≠ ((b : ℕ) : ℝ) := by
+    intro h; have := fin4_slot_sep hab; rw [h, sub_self, abs_zero] at this; norm_num at this
+  set! Ψ : ι → ℝ × ℝ → ℂ := fun ν z => w z * (Real.fourierChar (β ν * realProgressionCoordinate i
+      z) : ℂ) *
+    G (realProgressionCoordinate j z) * Fa (realProgressionCoordinate a z) *
+    Fb (realProgressionCoordinate b z) with hΨ
+  have hΨi (ν : ι) : Integrable (Ψ ν) := by
+    have hcz : Continuous (fun z : ℝ × ℝ =>
+        (Real.fourierChar (β ν * realProgressionCoordinate i z) : ℂ)) :=
+      hchm.comp (continuous_const.mul (continuous_realProgressionCoordinate i))
+    have h := hT.bdd_mul (c := 1) hcz.aestronglyMeasurable
+      (Filter.Eventually.of_forall fun z => by simp)
+    refine h.congr (Filter.Eventually.of_forall fun z => ?_)
+    simp only [hΨ]; ring
+  set! P := ∫ z, ‖w z * G (realProgressionCoordinate j z) * Fa (realProgressionCoordinate a z) *
+    Fb (realProgressionCoordinate b z)‖
+  have hΨn (ν : ι) : ∫ z, ‖c ν * Ψ ν z‖ = ‖c ν‖ * P := by
+    rw [← integral_const_mul]
+    congr 1; funext z
+    simp only [hΨ, norm_mul, Circle.norm_coe, mul_one]
+  have hsumm : Summable (fun ν => ∫ z, ‖c ν * Ψ ν z‖) := by
+    simp_rw [hΨn]; exact hcs.mul_right P
+  have hint : ∫ z : ℝ × ℝ, w z * S (realProgressionCoordinate i z) *
+      G (realProgressionCoordinate j z) * Fa (realProgressionCoordinate a z) *
+      Fb (realProgressionCoordinate b z) = ∑' ν, c ν * ∫ z, Ψ ν z := by
+    have h := integral_tsum_of_summable_integral_norm (fun ν => (hΨi ν).const_mul (c ν)) hsumm
+    simp_rw [integral_const_mul] at h
+    rw [h]
+    congr 1; funext z
+    have hz := ((hS (realProgressionCoordinate i z)).mul_left (w z)).mul_right
+      (G (realProgressionCoordinate j z) * Fa (realProgressionCoordinate a z) *
+        Fb (realProgressionCoordinate b z))
+    calc _ = w z * S (realProgressionCoordinate i z) * (G (realProgressionCoordinate j z) *
+          Fa (realProgressionCoordinate a z) * Fb (realProgressionCoordinate b z)) := by ring
+      _ = _ := hz.tsum_eq.symm
+      _ = _ := tsum_congr fun ν => by simp only [hΨ]; ring
+  -- each term is a one-term form with modulated spectators
+  have hterm (ν : ι) : ‖(r : ℂ)⁻¹ ^ 2 * ∫ z, Ψ ν z‖ ≤ kernelFourierConst κ * (3 * t) := by
+    set! A' : ℝ → ℂ := fun y => (Real.fourierChar (β ν * α * y) : ℂ) * Fa y
+    set! B' : ℝ → ℂ := fun y => (Real.fourierChar (β ν * α' * y) : ℂ) * Fb y
+    have hA'm : Measurable A' := (hchm.measurable.comp (measurable_const.mul measurable_id)).mul
+        hFam
+    have hB'm : Measurable B' := (hchm.measurable.comp (measurable_const.mul measurable_id)).mul
+        hFbm
+    have hA'n : ∀ y, ‖A' y‖ = ‖Fa y‖ := fun y => by simp [A']
+    have hB'n : ∀ y, ‖B' y‖ = ‖Fb y‖ := fun y => by simp [B']
+    have hA'2 : MemLp A' 2 (volume.restrict (Set.Icc a₀ (a₀ + r))) :=
+      hFa2.of_le hA'm.aestronglyMeasurable (Filter.Eventually.of_forall fun y => (hA'n y).le)
+    have hB'2 : MemLp B' 2 (volume.restrict (Set.Icc a₀ (a₀ + r))) :=
+      hFb2.of_le hB'm.aestronglyMeasurable (Filter.Eventually.of_forall fun y => (hB'n y).le)
+    have hΨe : ∀ z, Ψ ν z = w z * G (realProgressionCoordinate j z) *
+        A' (realProgressionCoordinate a z) * B' (realProgressionCoordinate b z) := by
+      intro z
+      have hc := slot_comb (a := ((a : ℕ) : ℝ)) (b := ((b : ℕ) : ℝ)) (j := ((i : ℕ) : ℝ)) hab' z.1
+          z.2
+      have hph : (Real.fourierChar (β ν * realProgressionCoordinate i z) : ℂ) =
+          (Real.fourierChar (β ν * α * realProgressionCoordinate a z) : ℂ) *
+            (Real.fourierChar (β ν * α' * realProgressionCoordinate b z) : ℂ) := by
+        rw [← fc_add]
+        congr 2
+        simp only [realProgressionCoordinate, α, α']
+        rw [← hc]; ring
+      simp only [hΨ, A', B', hph]; ring
+    simp_rw [hΨe]
+    have h := slotTriple_form_le hr hw hab hja hjb hGm hA'm hB'm hG2 hA'2 hB'2 hM
+    have hn1 : ∫ x in Set.Icc a₀ (a₀ + r), ‖A' x‖ ^ 2 = ∫ x in Set.Icc a₀ (a₀ + r), ‖Fa x‖ ^ 2 := by
+      simp_rw [hA'n]
+    have hn2 : ∫ x in Set.Icc a₀ (a₀ + r), ‖B' x‖ ^ 2 = ∫ x in Set.Icc a₀ (a₀ + r), ‖Fb x‖ ^ 2 := by
+      simp_rw [hB'n]
+    rw [hn1, hn2] at h
+    refine h.trans ?_
+    have hs1 : Real.sqrt (r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖Fa x‖ ^ 2) ≤ 1 :=
+      Real.sqrt_le_one.mpr hFa1
+    have hs2 : Real.sqrt (r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖Fb x‖ ^ 2) ≤ 1 :=
+      Real.sqrt_le_one.mpr hFb1
+    have hrt : r * t / r = t := by field_simp
+    rw [hrt]
+    have h0 : 0 ≤ kernelFourierConst κ * (3 * t) := by positivity
+    calc kernelFourierConst κ * (3 * t) * Real.sqrt (r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖Fa x‖ ^ 2) *
+          Real.sqrt (r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖Fb x‖ ^ 2) ≤
+        kernelFourierConst κ * (3 * t) * 1 * 1 := by gcongr
+      _ = _ := by ring
+  rw [hint]
+  rw [← tsum_mul_left]
+  have hs2 : Summable (fun ν => ‖(r : ℂ)⁻¹ ^ 2 * (c ν * ∫ z, Ψ ν z)‖) := by
+    refine Summable.of_nonneg_of_le (fun _ => norm_nonneg _) (fun ν => ?_)
+      (hcs.mul_right (kernelFourierConst κ * (3 * t)))
+    rw [show (r : ℂ)⁻¹ ^ 2 * (c ν * ∫ z, Ψ ν z) = c ν * ((r : ℂ)⁻¹ ^ 2 * ∫ z, Ψ ν z) by ring,
+      norm_mul]
+    exact mul_le_mul_of_nonneg_left (hterm ν) (norm_nonneg _)
+  calc _ ≤ ∑' ν, ‖(r : ℂ)⁻¹ ^ 2 * (c ν * ∫ z, Ψ ν z)‖ := norm_tsum_le_tsum_norm hs2
+    _ ≤ ∑' ν, ‖c ν‖ * (kernelFourierConst κ * (3 * t)) := by
+        refine hs2.tsum_le_tsum (fun ν => ?_) (hcs.mul_right _)
+        rw [show (r : ℂ)⁻¹ ^ 2 * (c ν * ∫ z, Ψ ν z) = c ν * ((r : ℂ)⁻¹ ^ 2 * ∫ z, Ψ ν z) by ring,
+          norm_mul]
+        exact mul_le_mul_of_nonneg_left (hterm ν) (norm_nonneg _)
+    _ = (∑' ν, ‖c ν‖) * (kernelFourierConst κ * (3 * t)) := tsum_mul_right
+    _ ≤ B * (kernelFourierConst κ * (3 * t)) :=
+        mul_le_mul_of_nonneg_right hB (by positivity)
+    _ = _ := by ring
+
+/-! ### Assembly helpers -/
+
+theorem integral_normalizedIntervalMeasure_eq {a₀ r : ℝ} (hr : 0 < r) (f : ℝ → ℂ) :
+    ∫ y, f y ∂(normalizedIntervalMeasure a₀ r) = (r : ℂ)⁻¹ * ∫ y in Set.Icc a₀ (a₀ + r), f y := by
+  rw [normalizedIntervalMeasure, integral_smul_measure, ENNReal.toReal_ofReal (inv_nonneg.mpr
+      hr.le)]
+  rw [Complex.real_smul]
+  push_cast
+  ring
+
+theorem normalized_sq_le_one {a₀ r : ℝ} (hr : 0 < r) {g : ℝ → ℂ}
+    (hg : eLpNorm g 2 (normalizedIntervalMeasure a₀ r) ≤ 1) :
+    MemLp g 2 (normalizedIntervalMeasure a₀ r) ∧
+      r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖g x‖ ^ 2 ≤ 1 := by
+  have hm : MemLp g 2 (normalizedIntervalMeasure a₀ r) := lt_of_le_of_lt hg ENNReal.one_lt_top
+  refine ⟨hm, ?_⟩
+  have h := eLpNorm_normalized_toReal_sq hr hm
+  rw [setIntegral_congr_set Ico_ae_eq_Icc] at h
+  rw [← h]
+  have h1 : (eLpNorm g 2 (normalizedIntervalMeasure a₀ r)).toReal ≤ 1 := by
+    have := ENNReal.toReal_mono ENNReal.one_ne_top hg
+    simpa using this
+  have h0 := ENNReal.toReal_nonneg (a := eLpNorm g 2 (normalizedIntervalMeasure a₀ r))
+  nlinarith
+
+/-- Modulating by a function bounded by one keeps a normalized `L²(I)` input normalized. -/
+theorem normalized_sq_mul_le {a₀ r : ℝ} (hr : 0 < r) {g T : ℝ → ℂ} (hgm : Measurable g)
+    (hTm : Measurable T) (hT : ∀ y, ‖T y‖ ≤ 1)
+    (hg2 : MemLp g 2 (volume.restrict (Set.Icc a₀ (a₀ + r))))
+    (hg : r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖g x‖ ^ 2 ≤ 1) :
+    MemLp (fun y => g y * T y) 2 (volume.restrict (Set.Icc a₀ (a₀ + r))) ∧
+      r⁻¹ * ∫ x in Set.Icc a₀ (a₀ + r), ‖g x * T x‖ ^ 2 ≤ 1 := by
+  have hle : ∀ y, ‖g y * T y‖ ≤ ‖g y‖ := fun y => by
+    rw [norm_mul]; exact mul_le_of_le_one_right (norm_nonneg _) (hT y)
+  have hm2 : MemLp (fun y => g y * T y) 2 (volume.restrict (Set.Icc a₀ (a₀ + r))) :=
+    hg2.of_le (hgm.mul hTm).aestronglyMeasurable (Filter.Eventually.of_forall hle)
+  refine ⟨hm2, le_trans ?_ hg⟩
+  apply mul_le_mul_of_nonneg_left _ (inv_nonneg.mpr hr.le)
+  apply integral_mono_of_nonneg (Filter.Eventually.of_forall fun _ => by positivity)
+    (hg2.integrable_norm_pow (by norm_num))
+  exact Filter.Eventually.of_forall fun y => pow_le_pow_left₀ (norm_nonneg _) (hle y) 2
+
+theorem prod_four_distinct {i j a b : Fin 4} (hij : i ≠ j)
+    (hia : i ≠ a) (hib : i ≠ b) (hja : j ≠ a) (hjb : j ≠ b) (hab : a ≠ b) (f : Fin 4 → ℂ) :
+    ∏ l, f l = f i * f j * f a * f b := by
+  fin_cases i <;> fin_cases j <;> fin_cases a <;> fin_cases b <;>
+    first | exact absurd rfl hij | exact absurd rfl hia | exact absurd rfl hib |
+      exact absurd rfl hja | exact absurd rfl hjb | exact absurd rfl hab |
+      simp only [Fin.prod_univ_four, Fin.reduceFinMk, Fin.isValue, mul_comm, mul_assoc,
+        mul_left_comm]
+
+theorem prod_four_tag (i : Fin 4) (f : Fin 4 → ℂ) :
+    ∏ l, f l = f i * f (tagPartner i) * f (tagThird i) * f (tagFourth i) := by
+  have h := tagSlots_distinct i
+  exact prod_four_distinct (Ne.symm h.1) (Ne.symm h.2.1) (Ne.symm h.2.2.1) (Ne.symm h.2.2.2.1)
+    (Ne.symm h.2.2.2.2.1) h.2.2.2.2.2 f
+
+section TagSourceExpansion
+variable {d : ℕ}
+
+theorem tagSource_atom_eq (θ : Fin d → ℝ) (μ : ℝ) {χ : (Fin d → ℝ) → ℂ}
+    (hχ : ContDiff ℝ (⊤ : ℕ∞) χ) (hχc : HasCompactSupport χ) (σ : Fin d → ℤ) (y : ℝ) :
+    quadraticChartAtom (tagSourceChart θ μ hχ hχc σ) y =
+      (Real.fourierChar (μ * y) : ℂ) * latticePer (tagSourceAmp χ σ) (fun a => θ a * y) := by
+  simp only [tagSourceChart, quadraticChartAtom, latticePer, mkQuadraticChart,
+    quadraticChartLatticeSummand,
+    chartMatrixPhase_zero_matrix, AddChar.map_zero_eq_one, Circle.coe_one, mul_one, zero_mul,
+    zero_add]
+  rfl
+
+/-- Blueprint line 1810: the demodulated source factor is an absolutely convergent sum of
+linear phases, with quasipolynomial coefficient mass. -/
+theorem tag_source_expansion (hd : 1 ≤ d) {c₀ : ℕ} {H : ℝ} {A : QuadraticChartData d}
+    (hA : QuadraticChartComplexity c₀ H A) (hc : 1 ≤ c₀) (θ : Fin d → ℝ) (μ : ℝ)
+    (q σ : Fin d → ℤ) :
+    ∃ (c : (Fin d → ℤ) → ℂ) (β : (Fin d → ℤ) → ℝ),
+      (∀ y, HasSum (fun ν => c ν * (Real.fourierChar (β ν * y) : ℂ))
+        (quadraticChartAtom (tagSourceChart θ μ (tagPiece_smooth A.smooth q)
+          (tagPiece_hasCompactSupport A.amplitude q) σ) y)) ∧
+      Summable (fun ν => ‖c ν‖) ∧
+      (∑' ν, ‖c ν‖) ≤ (2 * (3 / 4 + 1) + 3 : ℝ) ^ d * tagPieceEnv d c₀ H (∑ l, |(σ l : ℝ)| / 9) 0 +
+        2 * (7 ^ d * ((2 * (3 / 4 + 1) + 3 : ℝ) ^ d *
+          tagPieceEnv d c₀ H (∑ l, |(σ l : ℝ)| / 9) (d + 1)) * Real.sqrt d ^ (d + 1)) ∧
+      Continuous (quadraticChartAtom (tagSourceChart θ μ (tagPiece_smooth A.smooth q)
+          (tagPiece_hasCompactSupport A.amplitude q) σ)) := by
+  set F := tagSourceAmp (tagPiece A.amplitude q) σ
+  have hFs : ContDiff ℝ (⊤ : ℕ∞) F := tagSourceAmp_smooth (tagPiece_smooth A.smooth q) σ
+  have hFsupp : ∀ w, F w ≠ 0 → ∀ a, |w a| ≤ 3 / 4 :=
+    fun w hw a => tagPiece_support (left_ne_zero_of_mul hw) a
+  obtain ⟨hsum, hsumm, hmass⟩ := latticePer_fourier hd hFs (by norm_num) hFsupp
+    (fun m w => tagSourcePiece_deriv_le hA hc q σ m w)
+  refine ⟨periodicFourierCoeff (latticePer F), fun ν => μ + ∑ a, (ν a : ℝ) * θ a,
+    fun y => ?_, hsumm, hmass, ?_⟩
+  · rw [tagSource_atom_eq]
+    have h := (hsum (fun a => θ a * y)).mul_left (Real.fourierChar (μ * y) : ℂ)
+    convert h using 1
+    funext ν
+    rw [show (μ + ∑ a, (ν a : ℝ) * θ a) * y = μ * y + ∑ a, (ν a : ℝ) * (θ a * y) by
+      rw [add_mul, Finset.sum_mul]; congr 1; apply Finset.sum_congr rfl; intro a _; ring, fc_add]
+    ring
+  · have hc' : Continuous (fun y : ℝ => (Real.fourierChar (μ * y) : ℂ) *
+        latticePer F (fun a => θ a * y)) :=
+      ((continuous_subtype_val.comp Real.continuous_fourierChar).comp
+        (continuous_const.mul continuous_id)).mul
+        ((latticePer_smooth hFs hFsupp).continuous.comp
+          (continuous_pi fun a => continuous_const.mul continuous_id))
+    convert hc' using 1
+    funext y
+    exact tagSource_atom_eq θ μ _ _ σ y
+
+end TagSourceExpansion
+
+section TagAssembly
+variable {d : ℕ}
+
+/-! ### The same-tag template test (blueprint §12.3, line 1817) -/
+
+/-- The factor chart placed at slot `l ≠ i`. -/
+noncomputable def tagFactorAt (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam : ℝ)
+    (i : Fin 4) (k₃ : Fin d → ℤ) (s₃ : Fin d → ℕ) (k₄ : Fin d → ℤ) (s₄ : Fin d → ℕ)
+    (l : Fin 4) : QuadraticChartData d :=
+  if l = tagPartner i then tagFactorChart θ C lam l 0 (tagTau i s₃ s₄)
+  else if l = tagThird i then tagFactorChart θ C lam l k₃ (fun a => -(s₃ a : ℤ))
+  else tagFactorChart θ C lam l k₄ (fun a => -(s₄ a : ℤ))
+
+/-- The coefficient of one carry–residue term. -/
+noncomputable def tagCoef (k₃ : Fin d → ℤ) (s₃ : Fin d → ℕ) (k₄ : Fin d → ℤ)
+    (s₄ : Fin d → ℕ) : ℂ :=
+  ((9 : ℂ) ^ d)⁻¹ * ((9 : ℂ) ^ d)⁻¹ *
+    (Real.fourierChar (-(∑ a, (s₃ a : ℝ) * (k₃ a : ℝ) / 9 + ∑ a, (s₄ a : ℝ) * (k₄ a : ℝ) / 9)) : ℂ)
+
+theorem tagCoef_norm (k₃ : Fin d → ℤ) (s₃ : Fin d → ℕ) (k₄ : Fin d → ℤ) (s₄ : Fin d → ℕ) :
+    ‖tagCoef k₃ s₃ k₄ s₄‖ = ((9 : ℝ) ^ d)⁻¹ * ((9 : ℝ) ^ d)⁻¹ := by
+  rw [tagCoef, norm_mul, norm_mul, Circle.norm_coe, mul_one, norm_inv, norm_pow]
+  simp
+
+/-- The four-slot product with the factor charts of the three non-source slots. -/
+theorem tag_factor_product (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam : ℝ)
+    {i j a b : Fin 4} (hij : i ≠ j) (hia : i ≠ a) (hib : i ≠ b) (hja : j ≠ a) (hjb : j ≠ b)
+    (hab : a ≠ b) (k₃ : Fin d → ℤ) (s₃ : Fin d → ℕ) (k₄ : Fin d → ℤ) (s₄ : Fin d → ℕ)
+    (x t : ℝ) :
+    quadraticChartAtom (tagFactorChart θ C lam (tagPartner i) 0 (tagTau i s₃ s₄))
+        (x + ((tagPartner i : ℕ) : ℝ) * t) *
+      quadraticChartAtom (tagFactorChart θ C lam (tagThird i) k₃ (fun a => -(s₃ a : ℤ)))
+        (x + ((tagThird i : ℕ) : ℝ) * t) *
+      quadraticChartAtom (tagFactorChart θ C lam (tagFourth i) k₄ (fun a => -(s₄ a : ℤ)))
+        (x + ((tagFourth i : ℕ) : ℝ) * t) =
+    quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ j) (x + ((j : ℕ) : ℝ) * t) *
+      quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ a) (x + ((a : ℕ) : ℝ) * t) *
+      quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ b) (x + ((b : ℕ) : ℝ) * t) := by
+  obtain ⟨h1, h2, h3, h4, h5, h6⟩ := tagSlots_distinct i
+  set g : Fin 4 → ℂ := fun l => if l = i then 1 else
+    quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ l) (x + ((l : ℕ) : ℝ) * t) with hg
+  have e1 := prod_four_tag i g
+  have e2 := prod_four_distinct hij hia hib hja hjb hab g
+  rw [e1] at e2
+  have gi : g i = 1 := by simp [hg]
+  have gp : g (tagPartner i) = quadraticChartAtom (tagFactorChart θ C lam (tagPartner i) 0
+      (tagTau i s₃ s₄)) (x + ((tagPartner i : ℕ) : ℝ) * t) := by
+    simp [hg, h1, tagFactorAt]
+  have g3 : g (tagThird i) = quadraticChartAtom (tagFactorChart θ C lam (tagThird i) k₃
+      (fun a => -(s₃ a : ℤ))) (x + ((tagThird i : ℕ) : ℝ) * t) := by
+    simp [hg, h2, h4, tagFactorAt]
+  have g4 : g (tagFourth i) = quadraticChartAtom (tagFactorChart θ C lam (tagFourth i) k₄
+      (fun a => -(s₄ a : ℤ))) (x + ((tagFourth i : ℕ) : ℝ) * t) := by
+    simp [hg, h3, h5, Ne.symm h6, tagFactorAt]
+  have gj : g j = quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ j)
+      (x + ((j : ℕ) : ℝ) * t) := by simp [hg, Ne.symm hij]
+  have ga : g a = quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ a)
+      (x + ((a : ℕ) : ℝ) * t) := by simp [hg, Ne.symm hia]
+  have gb : g b = quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ b)
+      (x + ((b : ℕ) : ℝ) * t) := by simp [hg, Ne.symm hib]
+  rw [gi, gp, g3, g4, gj, ga, gb] at e2
+  simpa [one_mul, mul_assoc] using e2
+
+theorem tagSigma_abs_le (i : Fin 4) {s₃ s₄ : Fin d → ℕ} (h₃ : s₃ ∈ residueBox d 9)
+    (h₄ : s₄ ∈ residueBox d 9) (a : Fin d) : |(tagSigma i s₃ s₄ a : ℝ)| ≤ 64 := by
+  simp only [residueBox, Fintype.mem_piFinset, Finset.mem_range] at h₃ h₄
+  have w3 := (tagWeight_abs_le i (tagThird i)).2
+  have w4 := (tagWeight_abs_le i (tagFourth i)).2
+  have e3 : (s₃ a : ℤ) ≤ 8 := by have := h₃ a; omega
+  have e4 : (s₄ a : ℤ) ≤ 8 := by have := h₄ a; omega
+  have : |tagSigma i s₃ s₄ a| ≤ 64 := by
+    simp only [tagSigma]
+    calc |(1 - tagWeight i (tagThird i)) * (s₃ a : ℤ) + (1 - tagWeight i (tagFourth i)) * s₄ a|
+        ≤ |1 - tagWeight i (tagThird i)| * |(s₃ a : ℤ)| +
+          |1 - tagWeight i (tagFourth i)| * |(s₄ a : ℤ)| := by
+          rw [← abs_mul, ← abs_mul]; exact abs_add_le _ _
+      _ ≤ 4 * 8 + 4 * 8 := by
+          have a3 : |(s₃ a : ℤ)| ≤ 8 := by rw [abs_of_nonneg (by positivity)]; exact e3
+          have a4 : |(s₄ a : ℤ)| ≤ 8 := by rw [abs_of_nonneg (by positivity)]; exact e4
+          gcongr
+      _ = 64 := by norm_num
+  exact_mod_cast this
+
+theorem tagSigma_mass_le (i : Fin 4) {s₃ s₄ : Fin d → ℕ} (h₃ : s₃ ∈ residueBox d 9)
+    (h₄ : s₄ ∈ residueBox d 9) : ∑ l, |(tagSigma i s₃ s₄ l : ℝ)| / 9 ≤ 8 * d := by
+  calc ∑ l, |(tagSigma i s₃ s₄ l : ℝ)| / 9 ≤ ∑ _l : Fin d, (64 : ℝ) / 9 :=
+        Finset.sum_le_sum fun l _ => by
+          have := tagSigma_abs_le i h₃ h₄ l
+          linarith
+    _ = d * (64 / 9) := by simp
+    _ ≤ 8 * d := by have : (0 : ℝ) ≤ d := Nat.cast_nonneg d; nlinarith
+
+end TagAssembly
+
+section TagAssembly2
+variable {d : ℕ}
+
+/-- Blueprint §12.3, lines 1800-1810: the integrand of the form with a pure source column in
+slot `i` expands as a finite sum, over unit pieces, carries and residues, of products of a
+source factor in slot `i` and the inputs of the other slots modulated by same-tag factors. -/
+theorem tag_integrand_expansion {c₀ : ℕ} {H : ℝ} (A : QuadraticChartData d)
+    (hA : QuadraticChartComplexity c₀ H A) (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ)
+    (lam : ℝ) {i j a b : Fin 4} (hij : i ≠ j) (hia : i ≠ a) (hib : i ≠ b) (hja : j ≠ a)
+    (hjb : j ≠ b) (hab : a ≠ b) (hθ : A.horizontal = θ)
+    (hM : A.matrix = (slotCoeff i : ℚ) • C) (hq : A.quadratic = slotCoeff i * lam)
+    (z : Fin 4 → ℝ → ℂ) (hzi : z i = quadraticChartAtom A) (x t : ℝ) :
+    ∏ l, z l (x + ((l : ℕ) : ℝ) * t) =
+      ∑ q ∈ slowValueBox d (⌈H⌉₊ + 2), ∑ k₃ ∈ slowValueBox d 4, ∑ s₃ ∈ residueBox d 9,
+        ∑ k₄ ∈ slowValueBox d 4, ∑ s₄ ∈ residueBox d 9,
+          tagCoef k₃ s₃ k₄ s₄ *
+            (quadraticChartAtom (tagSourceChart θ
+                (A.linear + chartMatrixPhase ((slotCoeff i : ℚ) • C) θ (fun a => (q a : ℝ)))
+                (tagPiece_smooth A.smooth q) (tagPiece_hasCompactSupport A.amplitude q)
+                (tagSigma i s₃ s₄)) (x + ((i : ℕ) : ℝ) * t) *
+              ((z j (x + ((j : ℕ) : ℝ) * t) *
+                  quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ j)
+                    (x + ((j : ℕ) : ℝ) * t)) *
+                (z a (x + ((a : ℕ) : ℝ) * t) *
+                  quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ a)
+                    (x + ((a : ℕ) : ℝ) * t)) *
+                (z b (x + ((b : ℕ) : ℝ) * t) *
+                  quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ b)
+                    (x + ((b : ℕ) : ℝ) * t)))) := by
+  have hK : H + 1 ≤ ((⌈H⌉₊ + 2 : ℕ) : ℝ) := by
+    push_cast; have := Nat.le_ceil H; linarith
+  have hdec := tag_unit_decomposition A hA.support hK (x + ((i : ℕ) : ℝ) * t)
+  rw [hθ, hq, hM] at hdec
+  rw [prod_four_distinct hij hia hib hja hjb hab (fun l => z l (x + ((l : ℕ) : ℝ) * t))]
+  rw [hzi, hdec]
+  simp only [Finset.sum_mul]
+  apply Finset.sum_congr rfl; intro q _
+  rw [tag_transfer_pointwise θ C lam _ i (tagPiece_smooth A.smooth q)
+    (tagPiece_hasCompactSupport A.amplitude q) (fun w hw a => tagPiece_support hw a) x t]
+  simp only [Finset.sum_mul]
+  apply Finset.sum_congr rfl; intro k₃ _
+  apply Finset.sum_congr rfl; intro s₃ _
+  apply Finset.sum_congr rfl; intro k₄ _
+  apply Finset.sum_congr rfl; intro s₄ _
+  have hp := tag_factor_product θ C lam hij hia hib hja hjb hab k₃ s₃ k₄ s₄ x t
+  rw [tagCoef]
+  set S := quadraticChartAtom (tagSourceChart θ
+    (A.linear + chartMatrixPhase ((slotCoeff i : ℚ) • C) θ (fun a => (q a : ℝ)))
+    (tagPiece_smooth A.smooth q) (tagPiece_hasCompactSupport A.amplitude q)
+    (tagSigma i s₃ s₄)) (x + ((i : ℕ) : ℝ) * t)
+  calc _ = ((9 : ℂ) ^ d)⁻¹ * ((9 : ℂ) ^ d)⁻¹ *
+        (Real.fourierChar (-(∑ a, (s₃ a : ℝ) * (k₃ a : ℝ) / 9 +
+          ∑ a, (s₄ a : ℝ) * (k₄ a : ℝ) / 9)) : ℂ) * S *
+        (quadraticChartAtom (tagFactorChart θ C lam (tagPartner i) 0 (tagTau i s₃ s₄))
+            (x + ((tagPartner i : ℕ) : ℝ) * t) *
+          quadraticChartAtom (tagFactorChart θ C lam (tagThird i) k₃ (fun a => -(s₃ a : ℤ)))
+            (x + ((tagThird i : ℕ) : ℝ) * t) *
+          quadraticChartAtom (tagFactorChart θ C lam (tagFourth i) k₄ (fun a => -(s₄ a : ℤ)))
+            (x + ((tagFourth i : ℕ) : ℝ) * t)) *
+        z j (x + ((j : ℕ) : ℝ) * t) * z a (x + ((a : ℕ) : ℝ) * t) *
+        z b (x + ((b : ℕ) : ℝ) * t) := by ring
+    _ = _ := by rw [hp]; ring
+
+end TagAssembly2
+
+section TagFinal
+
+/-- The final constant `H₀` of the same-tag test is quasipolynomial. -/
+theorem sameTag_final_budget (κ : LocalKernelClass) (D₁ : ℕ) :
+    ∃ D : ℕ, 2 ≤ D ∧ ∀ {d : ℕ} {H : ℝ}, Real.exp 2 ≤ H → (d : ℝ) ≤ Real.log H →
+      2 * ((2 * ((⌈H⌉₊ + 2 : ℕ) : ℝ) + 1) ^ d * (81 : ℝ) ^ d *
+        (kernelFourierConst κ * 3 * Real.exp (D₁ * (1 + Real.log H) ^ D₁))) ≤
+        Real.exp (D * (1 + Real.log H) ^ D) := by
+  set c : ℝ := Real.log (6 * kernelFourierConst κ + 1) with hcdef
+  have hK0 := kernelFourierConst_nonneg κ
+  have hc0 : 0 ≤ c := Real.log_nonneg (by linarith)
+  refine ⟨⌈c⌉₊ + 7 + D₁ + 2, by omega, ?_⟩
+  intro d H hH hdH
+  set X := 1 + Real.log H with hX
+  have hH0 : 0 < H := lt_of_lt_of_le (Real.exp_pos 2) hH
+  have hlogH2 : 2 ≤ Real.log H := by rw [Real.le_log_iff_exp_le hH0]; exact hH
+  have hX1 : 1 ≤ X := by linarith
+  have hd0 : (0 : ℝ) ≤ d := Nat.cast_nonneg d
+  set D := ⌈c⌉₊ + 7 + D₁ + 2 with hD
+  -- the box count
+  have hbox : (2 * ((⌈H⌉₊ + 2 : ℕ) : ℝ) + 1) ^ d * (81 : ℝ) ^ d ≤ Real.exp (7 * X ^ 2) := by
+    have hce : ((⌈H⌉₊ : ℕ) : ℝ) ≤ H + 1 := (Nat.ceil_lt_add_one hH0.le).le
+    have hH1 : (1 : ℝ) ≤ H := by linarith [Real.add_one_le_exp (2 : ℝ)]
+    have h1 : 2 * ((⌈H⌉₊ + 2 : ℕ) : ℝ) + 1 ≤ 9 * H := by push_cast; linarith
+    have h2 : (2 * ((⌈H⌉₊ + 2 : ℕ) : ℝ) + 1) ^ d * (81 : ℝ) ^ d ≤ (729 * H) ^ d := by
+      rw [← mul_pow]
+      exact pow_le_pow_left₀ (by positivity) (by nlinarith) d
+    refine h2.trans ?_
+    rw [← Real.exp_log (pow_pos (by positivity : (0 : ℝ) < 729 * H) d), Real.log_pow,
+      Real.log_mul (by norm_num) hH0.ne']
+    apply Real.exp_le_exp.mpr
+    have h729 : Real.log 729 ≤ 7 := by
+      rw [Real.log_le_iff_le_exp (by norm_num)]
+      have := Real.add_one_le_exp 7
+      have h7 : Real.exp 7 = Real.exp 1 ^ 7 := by rw [← Real.exp_nat_mul]; norm_num
+      have he : (2.7 : ℝ) ≤ Real.exp 1 := by linarith [Real.exp_one_gt_d9]
+      rw [h7]
+      calc (729 : ℝ) ≤ 2.7 ^ 7 := by norm_num
+        _ ≤ Real.exp 1 ^ 7 := pow_le_pow_left₀ (by norm_num) he 7
+    have hlog0 : 0 ≤ Real.log H := by linarith
+    nlinarith only [hdH, h729]
+  have hcK : 2 * (kernelFourierConst κ * 3) ≤ Real.exp c := by
+    rw [hcdef, Real.exp_log (by linarith)]; linarith
+  have hXD : ∀ e : ℕ, e ≤ D → X ^ e ≤ X ^ D := fun e he => pow_le_pow_right₀ hX1 he
+  calc 2 * ((2 * ((⌈H⌉₊ + 2 : ℕ) : ℝ) + 1) ^ d * (81 : ℝ) ^ d *
+        (kernelFourierConst κ * 3 * Real.exp (D₁ * X ^ D₁))) =
+      (2 * (kernelFourierConst κ * 3)) * ((2 * ((⌈H⌉₊ + 2 : ℕ) : ℝ) + 1) ^ d * (81 : ℝ) ^ d) *
+        Real.exp (D₁ * X ^ D₁) := by ring
+    _ ≤ Real.exp c * Real.exp (7 * X ^ 2) * Real.exp (D₁ * X ^ D₁) := by
+        gcongr
+    _ = Real.exp (c + 7 * X ^ 2 + D₁ * X ^ D₁) := by rw [Real.exp_add, Real.exp_add]
+    _ ≤ Real.exp (D * X ^ D) := by
+        apply Real.exp_le_exp.mpr
+        have e1 : c ≤ (⌈c⌉₊ : ℝ) * X ^ D := by
+          have := Nat.le_ceil c
+          have : (1 : ℝ) ≤ X ^ D := one_le_pow₀ hX1
+          nlinarith
+        have e2 : 7 * X ^ 2 ≤ 7 * X ^ D := by
+          have := hXD 2 (by omega); linarith
+        have e3 : (D₁ : ℝ) * X ^ D₁ ≤ D₁ * X ^ D := by
+          have := hXD D₁ (by omega); exact mul_le_mul_of_nonneg_left this (Nat.cast_nonneg _)
+        have hDc : ((D : ℕ) : ℝ) = ⌈c⌉₊ + 7 + D₁ + 2 := by rw [hD]; push_cast; ring
+        rw [hDc]
+        have : 0 ≤ X ^ D := by positivity
+        nlinarith only [e1, e2, e3]
+
+theorem sum5_product {α β γ δ ε M : Type*} [AddCommMonoid M] (A : Finset α) (B : Finset β)
+    (C : Finset γ) (D : Finset δ) (E : Finset ε) (f : α → β → γ → δ → ε → M) :
+    ∑ a ∈ A, ∑ b ∈ B, ∑ c ∈ C, ∑ d ∈ D, ∑ e ∈ E, f a b c d e =
+      ∑ p ∈ A ×ˢ (B ×ˢ (C ×ˢ (D ×ˢ E))), f p.1 p.2.1 p.2.2.1 p.2.2.2.1 p.2.2.2.2 := by
+  simp only [Finset.sum_product]
+
+theorem residueBox_card (d P : ℕ) : (residueBox d P).card = P ^ d := by
+  simp [residueBox, Fintype.card_piFinset]
+
+theorem zero_mem_residueBox (d : ℕ) : (fun _ => 0) ∈ residueBox d 9 := by
+  simp [residueBox]
+
+theorem tagFactorAt_template {d : ℕ} (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam : ℝ)
+    (i : Fin 4) (k₃ : Fin d → ℤ) (s₃ : Fin d → ℕ) (k₄ : Fin d → ℤ) (s₄ : Fin d → ℕ)
+    (l : Fin 4) :
+    ∃ R ∈ residueBox d 9, ∃ γ : ℝ, ∀ y : ℝ,
+      quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ l) y =
+        (Real.fourierChar (γ * y) : ℂ) *
+          (starRingEnd ℂ) (quadraticChartAtom (tagTemplateData θ C lam l R) y) := by
+  unfold tagFactorAt
+  split_ifs
+  · exact tagFactor_eq_template θ C lam l 0 _
+  · exact tagFactor_eq_template θ C lam l k₃ _
+  · exact tagFactor_eq_template θ C lam l k₄ _
+
+theorem tagFactorAt_norm_le {d : ℕ} (θ : Fin d → ℝ) (C : Matrix (Fin d) (Fin d) ℚ) (lam : ℝ)
+    (i : Fin 4) (k₃ : Fin d → ℤ) (s₃ : Fin d → ℕ) (k₄ : Fin d → ℤ) (s₄ : Fin d → ℕ)
+    (l : Fin 4) (y : ℝ) : ‖quadraticChartAtom (tagFactorAt θ C lam i k₃ s₃ k₄ s₄ l) y‖ ≤ 1 := by
+  unfold tagFactorAt
+  split_ifs <;> exact tagFactor_norm_le θ C lam l _ _ y
+
+end TagFinal
+
+/-- Blueprint §12.3, `same-tag` (line 1817, `THT.Localization.sameTagTemplateTest`).
+For each tag `v` and slot `j` there is the fixed family of bounded templates
+`tagTemplateData v.θ v.C v.lam j R`, `R ∈ {0,…,8}ᵈ`, with this property: a pure source column of
+tag `v` in slot `i ≠ j` (a chart of complexity `H` with matrix `c_i C_v`, quadratic `c_i λ_v` and
+arbitrary linear modulation), against a residual `z_j ∈ L²` and two normalized `L²` spectators,
+has form norm at most `H₀` times the moment of the residual against some template with some
+linear modulation, where `H₀ = exp(D (1 + log H)^D)` is independent of the linear modulation. -/
+theorem sameTagTemplateTest (κ : LocalKernelClass) (c₀ : ℕ) (hc : 1 ≤ c₀) :
+    ∃ D : ℕ, 1 ≤ D ∧ ∀ (H : ℝ), Real.exp 2 ≤ H → ∀ (v : ChartTag), 1 ≤ v.dim →
+    ∀ {i j a b : Fin 4}, i ≠ j → i ≠ a → i ≠ b → j ≠ a → j ≠ b → a ≠ b →
+    ∀ (A : QuadraticChartData v.dim), QuadraticChartComplexity c₀ H A →
+    A.horizontal = v.θ → A.matrix = (slotCoeff i : ℚ) • v.C →
+    A.quadratic = slotCoeff i * v.lam →
+    ∀ {a₀ r : ℝ}, 0 < r → ∀ {w : ℝ × ℝ → ℂ}, IsAdmissibleLocalKernel κ a₀ r w →
+    ∀ (z : Fin 4 → ℝ → ℂ), z i = quadraticChartAtom A → Measurable (z j) →
+    Measurable (z a) → Measurable (z b) → MemLp (z j) 2 (normalizedIntervalMeasure a₀ r) →
+    eLpNorm (z a) 2 (normalizedIntervalMeasure a₀ r) ≤ 1 →
+    eLpNorm (z b) 2 (normalizedIntervalMeasure a₀ r) ≤ 1 →
+    ∃ R ∈ residueBox v.dim 9, ∃ γ : ℝ,
+      ‖localProgressionForm r w z‖ ≤ Real.exp (D * (1 + Real.log H) ^ D) *
+        ‖∫ y, z j y * (starRingEnd ℂ) (quadraticChartAtom (tagTemplateData v.θ v.C v.lam j R) y *
+          (Real.fourierChar (γ * y) : ℂ)) ∂(normalizedIntervalMeasure a₀ r)‖ := by
+  obtain ⟨D₁, hD₁, hbud⟩ := tagPieceEnv_budget c₀
+  obtain ⟨D, hD, hfin⟩ := sameTag_final_budget κ D₁
+  refine ⟨D, by omega, ?_⟩
+  intro H hH v hd i j a b hij hia hib hja hjb hab A hA hθ hM hq a₀ r hr w hw z hzi hzjm hzam
+    hzbm hzj2 hza hzb
+  set μ := normalizedIntervalMeasure a₀ r with hμ
+  set! I := Set.Icc a₀ (a₀ + r) with hI
+  set X := 1 + Real.log H with hX
+  set H₀ := Real.exp (D * X ^ D) with hH₀def
+  set F := localProgressionForm r w z with hF
+  have hH₀ : 0 < H₀ := Real.exp_pos _
+  by_contra hcon
+  push Not at hcon
+  set! t := ‖F‖ / H₀ with ht
+  have hmom : ∀ R ∈ residueBox v.dim 9, ∀ γ : ℝ,
+      ‖∫ y, z j y * (starRingEnd ℂ) (quadraticChartAtom (tagTemplateData v.θ v.C v.lam j R) y *
+        (Real.fourierChar (γ * y) : ℂ)) ∂μ‖ ≤ t := by
+    intro R hR γ
+    rw [ht, le_div_iff₀ hH₀]
+    have := hcon R hR γ
+    linarith
+  have hdH : (v.dim : ℝ) ≤ Real.log H := hA.dimension
+  set! B := Real.exp (D₁ * X ^ D₁) with hB
+  -- inputs on the cell
+  have hres : volume.restrict (Set.Ico a₀ (a₀ + r)) = volume.restrict I :=
+    Measure.restrict_congr_set Ico_ae_eq_Icc
+  have hzj2I : MemLp (z j) 2 (volume.restrict I) := by
+    have := memLp_restrict_of_normalized hr hzj2; rwa [hres] at this
+  obtain ⟨hza2, hza1⟩ := normalized_sq_le_one hr hza
+  obtain ⟨hzb2, hzb1⟩ := normalized_sq_le_one hr hzb
+  have hza2I : MemLp (z a) 2 (volume.restrict I) := by
+    have := memLp_restrict_of_normalized hr hza2; rwa [hres] at this
+  have hzb2I : MemLp (z b) 2 (volume.restrict I) := by
+    have := memLp_restrict_of_normalized hr hzb2; rwa [hres] at this
+  -- the bound for one term
+  have hterm : ∀ (q : Fin v.dim → ℤ) (k₃ : Fin v.dim → ℤ) (s₃ : Fin v.dim → ℕ) (k₄ : Fin v.dim → ℤ)
+      (s₄ : Fin v.dim → ℕ), s₃ ∈ residueBox v.dim 9 → s₄ ∈ residueBox v.dim 9 →
+      let S := quadraticChartAtom (tagSourceChart v.θ
+        (A.linear + chartMatrixPhase ((slotCoeff i : ℚ) • v.C) v.θ (fun a => (q a : ℝ)))
+        (tagPiece_smooth A.smooth q) (tagPiece_hasCompactSupport A.amplitude q)
+        (tagSigma i s₃ s₄))
+      let T := fun l => quadraticChartAtom (tagFactorAt v.θ v.C v.lam i k₃ s₃ k₄ s₄ l)
+      Integrable (fun p : ℝ × ℝ => w p * (tagCoef k₃ s₃ k₄ s₄ *
+        (S (realProgressionCoordinate i p) *
+          ((z j (realProgressionCoordinate j p) * T j (realProgressionCoordinate j p)) *
+            (z a (realProgressionCoordinate a p) * T a (realProgressionCoordinate a p)) *
+            (z b (realProgressionCoordinate b p) * T b (realProgressionCoordinate b p)))))) ∧
+      ‖(r : ℂ)⁻¹ ^ 2 * ∫ p : ℝ × ℝ, w p * (tagCoef k₃ s₃ k₄ s₄ *
+        (S (realProgressionCoordinate i p) *
+          ((z j (realProgressionCoordinate j p) * T j (realProgressionCoordinate j p)) *
+            (z a (realProgressionCoordinate a p) * T a (realProgressionCoordinate a p)) *
+            (z b (realProgressionCoordinate b p) * T b (realProgressionCoordinate b p)))))‖ ≤
+        ((9 : ℝ) ^ v.dim)⁻¹ * ((9 : ℝ) ^ v.dim)⁻¹ * (kernelFourierConst κ * (3 * t) * B) := by
+    intro q k₃ s₃ k₄ s₄ hs₃ hs₄ S T
+    obtain ⟨c, β, hS, hcs, hmass, hcont⟩ := tag_source_expansion hd hA hc v.θ
+      (A.linear + chartMatrixPhase ((slotCoeff i : ℚ) • v.C) v.θ (fun a => (q a : ℝ))) q
+      (tagSigma i s₃ s₄)
+    have hS' : ∀ y, HasSum (fun ν => c ν * (Real.fourierChar (β ν * y) : ℂ)) (S y) := by
+      intro y; simp only [S]; exact hS y
+    have hmassB : ∑' ν, ‖c ν‖ ≤ B :=
+      hmass.trans (hbud hH hdH (by positivity) (tagSigma_mass_le i hs₃ hs₄))
+    have hSb : ∀ y, ‖S y‖ ≤ B := by
+      intro y
+      rw [← (hS' y).tsum_eq]
+      refine (norm_tsum_le_tsum_norm ?_).trans ?_
+      · exact hcs.congr fun ν => by rw [norm_mul, Circle.norm_coe, mul_one]
+      · refine le_trans (le_of_eq ?_) hmassB
+        congr 1; funext ν; rw [norm_mul, Circle.norm_coe, mul_one]
+    have hTm : ∀ l, Measurable (T l) := fun l => quadraticChartAtom_measurable _
+    have hT1 : ∀ l y, ‖T l y‖ ≤ 1 := fun l y => tagFactorAt_norm_le v.θ v.C v.lam i k₃ s₃ k₄ s₄ l y
+    set! Gj : ℝ → ℂ := fun y => z j y * T j y
+    set! Ga : ℝ → ℂ := fun y => z a y * T a y
+    set! Gb : ℝ → ℂ := fun y => z b y * T b y
+    have hGjm : Measurable Gj := hzjm.mul (hTm j)
+    have hGam : Measurable Ga := hzam.mul (hTm a)
+    have hGbm : Measurable Gb := hzbm.mul (hTm b)
+    have hGj2 : MemLp Gj 2 (volume.restrict I) :=
+      hzj2I.of_le hGjm.aestronglyMeasurable (Filter.Eventually.of_forall fun y => by
+        simp only [Gj, norm_mul]; exact mul_le_of_le_one_right (norm_nonneg _) (hT1 j y))
+    obtain ⟨hGa2, hGa1⟩ := normalized_sq_mul_le hr hzam (hTm a) (hT1 a) hza2I hza1
+    obtain ⟨hGb2, hGb1⟩ := normalized_sq_mul_le hr hzbm (hTm b) (hT1 b) hzb2I hzb1
+    -- the residual moments
+    obtain ⟨R, hR, γ₀, hT⟩ := tagFactorAt_template v.θ v.C v.lam i k₃ s₃ k₄ s₄ j
+    have hM : ∀ ξ, ‖∫ y in I, (Real.fourierChar (-(y * ξ)) : ℂ) * Gj y‖ ≤ r * t := by
+      intro ξ
+      have h1 : ∫ y in I, (Real.fourierChar (-(y * ξ)) : ℂ) * Gj y =
+          (r : ℂ) * ∫ y, z j y * (starRingEnd ℂ) (quadraticChartAtom
+            (tagTemplateData v.θ v.C v.lam j R) y * (Real.fourierChar ((ξ - γ₀) * y) : ℂ)) ∂μ := by
+        rw [integral_normalizedIntervalMeasure_eq hr, ← mul_assoc,
+          mul_inv_cancel₀ (by exact_mod_cast hr.ne'), one_mul]
+        apply setIntegral_congr_fun measurableSet_Icc
+        intro y _
+        simp only [Gj, T]
+        rw [hT y, map_mul (starRingEnd ℂ), fc_conj]
+        rw [show -((ξ - γ₀) * y) = -(y * ξ) + γ₀ * y by ring, fc_add]
+        ring
+      rw [h1, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hr]
+      exact mul_le_mul_of_nonneg_left (hmom R hR _) hr.le
+    have hsingle := tag_single_term_le (i := i) hr hw hab hja hjb hGjm hGam hGbm hGj2 hGa2 hGb2 hGa1
+      hGb1 hM hS' hcs hmassB
+    have hint0 := kernelTriple_integrable hr hw hab hja hjb hGjm hGam hGbm hGj2 hGa2 hGb2
+    have hScont : Continuous S := by simp only [S]; exact hcont
+    have hint1 : Integrable (fun p : ℝ × ℝ => w p * S (realProgressionCoordinate i p) *
+        Gj (realProgressionCoordinate j p) * Ga (realProgressionCoordinate a p) *
+        Gb (realProgressionCoordinate b p)) := by
+      have h := hint0.bdd_mul (c := B)
+        (hScont.comp (continuous_realProgressionCoordinate i)).aestronglyMeasurable
+        (Filter.Eventually.of_forall fun p => hSb _)
+      refine h.congr (Filter.Eventually.of_forall fun p => ?_)
+      simp only [Function.comp]; ring
+    have heq : (fun p : ℝ × ℝ => w p * (tagCoef k₃ s₃ k₄ s₄ *
+        (S (realProgressionCoordinate i p) *
+          ((z j (realProgressionCoordinate j p) * T j (realProgressionCoordinate j p)) *
+            (z a (realProgressionCoordinate a p) * T a (realProgressionCoordinate a p)) *
+            (z b (realProgressionCoordinate b p) * T b (realProgressionCoordinate b p)))))) =
+        fun p => tagCoef k₃ s₃ k₄ s₄ * (w p * S (realProgressionCoordinate i p) *
+          Gj (realProgressionCoordinate j p) * Ga (realProgressionCoordinate a p) *
+          Gb (realProgressionCoordinate b p)) := by
+      funext p; simp only [Gj, Ga, Gb]; ring
+    refine ⟨?_, ?_⟩
+    · rw [heq]; exact hint1.const_mul _
+    · rw [heq, integral_const_mul,
+        show (r : ℂ)⁻¹ ^ 2 * (tagCoef k₃ s₃ k₄ s₄ * ∫ p : ℝ × ℝ, w p *
+          S (realProgressionCoordinate i p) * Gj (realProgressionCoordinate j p) *
+          Ga (realProgressionCoordinate a p) * Gb (realProgressionCoordinate b p)) =
+          tagCoef k₃ s₃ k₄ s₄ * ((r : ℂ)⁻¹ ^ 2 * ∫ p : ℝ × ℝ, w p *
+          S (realProgressionCoordinate i p) * Gj (realProgressionCoordinate j p) *
+          Ga (realProgressionCoordinate a p) * Gb (realProgressionCoordinate b p)) by ring,
+        norm_mul, tagCoef_norm]
+      exact mul_le_mul_of_nonneg_left hsingle (by positivity)
+  -- the full expansion
+  set! Tset := slowValueBox v.dim (⌈H⌉₊ + 2) ×ˢ (slowValueBox v.dim 4 ×ˢ (residueBox v.dim 9 ×ˢ
+    (slowValueBox v.dim 4 ×ˢ residueBox v.dim 9))) with hTset
+  set! g : (Fin v.dim → ℤ) × (Fin v.dim → ℤ) × (Fin v.dim → ℕ) × (Fin v.dim → ℤ) ×
+      (Fin v.dim → ℕ) → ℝ × ℝ → ℂ := fun τ p => w p * (tagCoef τ.2.1 τ.2.2.1 τ.2.2.2.1 τ.2.2.2.2 *
+      (quadraticChartAtom (tagSourceChart v.θ
+        (A.linear + chartMatrixPhase ((slotCoeff i : ℚ) • v.C) v.θ (fun a => (τ.1 a : ℝ)))
+        (tagPiece_smooth A.smooth τ.1) (tagPiece_hasCompactSupport A.amplitude τ.1)
+        (tagSigma i τ.2.2.1 τ.2.2.2.2)) (realProgressionCoordinate i p) *
+        ((z j (realProgressionCoordinate j p) * quadraticChartAtom
+            (tagFactorAt v.θ v.C v.lam i τ.2.1 τ.2.2.1 τ.2.2.2.1 τ.2.2.2.2 j)
+            (realProgressionCoordinate j p)) *
+          (z a (realProgressionCoordinate a p) * quadraticChartAtom
+            (tagFactorAt v.θ v.C v.lam i τ.2.1 τ.2.2.1 τ.2.2.2.1 τ.2.2.2.2 a)
+            (realProgressionCoordinate a p)) *
+          (z b (realProgressionCoordinate b p) * quadraticChartAtom
+            (tagFactorAt v.θ v.C v.lam i τ.2.1 τ.2.2.1 τ.2.2.2.1 τ.2.2.2.2 b)
+            (realProgressionCoordinate b p))))) with hg
+  have hexp : ∀ p : ℝ × ℝ, w p * ∏ l, z l (realProgressionCoordinate l p) =
+      ∑ τ ∈ Tset, g τ p := by
+    intro p
+    have h := tag_integrand_expansion A hA v.θ v.C v.lam hij hia hib hja hjb hab hθ hM hq z hzi
+      p.1 p.2
+    change w p * ∏ l, z l (p.1 + ((l : ℕ) : ℝ) * p.2) = _
+    rw [h]
+    simp only [Finset.mul_sum]
+    rw [sum5_product]
+    rfl
+  have hτ : ∀ τ ∈ Tset, Integrable (g τ) ∧ ‖(r : ℂ)⁻¹ ^ 2 * ∫ p, g τ p‖ ≤
+      ((9 : ℝ) ^ v.dim)⁻¹ * ((9 : ℝ) ^ v.dim)⁻¹ * (kernelFourierConst κ * (3 * t) * B) := by
+    intro τ hτ
+    simp only [hTset, Finset.mem_product] at hτ
+    exact hterm τ.1 τ.2.1 τ.2.2.1 τ.2.2.2.1 τ.2.2.2.2 hτ.2.2.1 hτ.2.2.2.2
+  have hFeq : F = ∑ τ ∈ Tset, (r : ℂ)⁻¹ ^ 2 * ∫ p, g τ p := by
+    rw [hF, localProgressionForm, ← Finset.mul_sum]
+    congr 1
+    rw [← integral_finsetSum _ (fun τ hτ' => (hτ τ hτ').1)]
+    congr 1
+    funext p
+    exact hexp p
+  have hcard : (Tset.card : ℝ) = (2 * ((⌈H⌉₊ + 2 : ℕ) : ℝ) + 1) ^ v.dim * (9 : ℝ) ^ v.dim *
+      (9 : ℝ) ^ v.dim * (9 : ℝ) ^ v.dim * (9 : ℝ) ^ v.dim := by
+    simp only [hTset, Finset.card_product, slowValueBox_card, residueBox_card]
+    push_cast
+    ring
+  have hbound : ‖F‖ ≤ (2 * ((⌈H⌉₊ + 2 : ℕ) : ℝ) + 1) ^ v.dim * (81 : ℝ) ^ v.dim *
+      (kernelFourierConst κ * 3 * B) * t := by
+    rw [hFeq]
+    refine (norm_sum_le _ _).trans ?_
+    refine (Finset.sum_le_sum fun τ hτ' => (hτ τ hτ').2).trans (le_of_eq ?_)
+    rw [Finset.sum_const, nsmul_eq_mul, hcard]
+    have h9 : (9 : ℝ) ^ v.dim ≠ 0 := pow_ne_zero _ (by norm_num)
+    have h81 : (81 : ℝ) ^ v.dim = (9 : ℝ) ^ v.dim * (9 : ℝ) ^ v.dim := by
+      rw [← mul_pow]; norm_num
+    rw [h81]
+    field_simp
+  have hfin' := hfin (d := v.dim) hH hdH
+  have hFle : ‖F‖ ≤ ‖F‖ / 2 := by
+    have ht0 : 0 ≤ t := div_nonneg (norm_nonneg _) hH₀.le
+    calc ‖F‖ ≤ (2 * ((⌈H⌉₊ + 2 : ℕ) : ℝ) + 1) ^ v.dim * (81 : ℝ) ^ v.dim *
+          (kernelFourierConst κ * 3 * B) * t := hbound
+      _ ≤ (H₀ / 2) * t := by
+          apply mul_le_mul_of_nonneg_right _ ht0
+          rw [le_div_iff₀ (by norm_num : (0 : ℝ) < 2)]
+          linarith [hfin']
+      _ = ‖F‖ / 2 := by rw [ht]; field_simp
+  have hF0 : ‖F‖ = 0 := by linarith [norm_nonneg F]
+  have := hcon (fun _ => 0) (zero_mem_residueBox v.dim) 0
+  rw [hF0] at this
+  have h0 := mul_nonneg hH₀.le (norm_nonneg (∫ y, z j y * (starRingEnd ℂ)
+    (quadraticChartAtom (tagTemplateData v.θ v.C v.lam j (fun _ => 0)) y *
+      (Real.fourierChar (0 * y) : ℂ)) ∂μ))
+  linarith
+
+/-- Blueprint line 1798: the templates are bounded pure columns of the tag in slot `j`, of a
+fixed complexity class (Gevrey order `2 Kρ`), so a source may itself be a template. -/
+theorem tagTemplate_column (v : ChartTag) (j : Fin 4) {R : Fin v.dim → ℕ}
+    (hR : R ∈ residueBox v.dim 9) {W : ℝ} (hW : Real.exp 2 ≤ W) (hdW : (v.dim : ℝ) ≤ Real.log W)
+    (hMW : ∀ a b, (chartRationalHeight (((slotCoeff j : ℚ) • v.C) a b) : ℝ) ≤ W)
+    (hBW : (v.dim : ℝ) * (tagKρ : ℝ) ^ (2 * tagKρ) + 2 * Real.pi * v.dim ≤ W) :
+    QuadraticChartComplexity (2 * tagKρ) W (tagTemplateData v.θ v.C v.lam j R) ∧
+      IsBoundedQuadraticChart (tagTemplateData v.θ v.C v.lam j R) ∧
+      (tagTemplateData v.θ v.C v.lam j R).horizontal = v.θ ∧
+      (tagTemplateData v.θ v.C v.lam j R).matrix = (slotCoeff j : ℚ) • v.C ∧
+      (tagTemplateData v.θ v.C v.lam j R).quadratic = slotCoeff j * v.lam := by
+  refine ⟨?_, fun y => tagTemplate_norm_le _ _ _ _ _ y, rfl, rfl, rfl⟩
+  have hR' : ∀ l, (R l : ℝ) ≤ 8 := by
+    intro l
+    simp only [residueBox, Fintype.mem_piFinset, Finset.mem_range] at hR
+    have := hR l
+    exact_mod_cast (by omega : R l ≤ 8)
+  have hsum : ∑ l, |((R l : ℤ) : ℝ)| / ((9 : ℕ) : ℝ) ≤ v.dim := by
+    calc ∑ l, |((R l : ℤ) : ℝ)| / ((9 : ℕ) : ℝ) ≤ ∑ _l : Fin v.dim, (1 : ℝ) :=
+          Finset.sum_le_sum fun l _ => by
+            rw [div_le_one (by norm_num)]
+            push_cast
+            rw [abs_of_nonneg (Nat.cast_nonneg _)]
+            linarith [hR' l]
+      _ = v.dim := by simp
+  exact modulatedChart_complexity gevreyPartition_smooth
+    (fun x => by rw [abs_of_nonneg (gevreyPartition_nonneg x)]; exact gevreyPartition_le_one x)
+    (fun _ hx => gevreyPartition_far hx) tagKρ_spec.1
+    (fun n x => by simpa using tagKρ_spec.2 n x) one_pos (by norm_num) _ v.θ _ 0 _ _ _ hW hdW
+    hMW (by linarith [Real.add_one_le_exp (2 : ℝ)]) (by
+      have hpi : 0 ≤ 2 * Real.pi := by positivity
+      calc (v.dim : ℝ) * (tagKρ : ℝ) ^ (2 * tagKρ) / 1 +
+            2 * Real.pi * ∑ l, |((R l : ℤ) : ℝ)| / ((9 : ℕ) : ℝ) ≤
+          (v.dim : ℝ) * (tagKρ : ℝ) ^ (2 * tagKρ) + 2 * Real.pi * v.dim := by
+            rw [div_one]; gcongr
+        _ ≤ W := hBW)
+
+section CatalogClosure
+variable {𝕜 H : Type*} [RCLike 𝕜] [NormedAddCommGroup H] [InnerProductSpace 𝕜 H]
+  [CompleteSpace H]
+
+/-! ### Catalog closure (lem:closure, blueprint lines 1819-1835) -/
+
+omit [CompleteSpace H] in
+/-- An ordered subproduct is the nested product of the layers with the omitted ones replaced
+by the identity. -/
+theorem operatorSubproduct_eq_nested (Q : ℕ → ℕ → H →L[𝕜] H) (σ : ℕ → Bool) (t m : ℕ) :
+    operatorSubproduct (fun l => Q l t) σ m =
+      nestedProjectionProduct (fun l s => if σ l then Q l s else ContinuousLinearMap.id 𝕜 H)
+        m t := by
+  induction m with
+  | zero => rfl
+  | succ m ih =>
+    simp only [operatorSubproduct, nestedProjectionProduct, ih]
+    split_ifs <;> rfl
+
+/-- Successive target increments over any set of insertion times are Bessel rows. -/
+theorem target_increments_bessel (P : ℕ → H →L[𝕜] H) (T : ℕ)
+    (hP : ∀ n ≤ T, IsStarProjection (P n))
+    (hnest : ∀ i ≤ T, ∀ j ≤ T, i ≤ j → (P i).comp (P j) = P i) (S : Finset ℕ)
+    (hS : ∀ n ∈ S, 1 ≤ n ∧ n ≤ T) (h : H) :
+    ∑ ν : S, ‖(P ν - P (ν - 1)) h‖ ^ 2 ≤ ‖h‖ ^ 2 := by
+  set g : ℕ → ℝ := fun n => ‖(P (n + 1) - P n) h‖ ^ 2
+  have h1 : ∑ ν : S, ‖(P ν - P (ν - 1)) h‖ ^ 2 = ∑ ν ∈ S, g (ν - 1) := by
+    rw [Finset.sum_coe_sort S (fun ν => ‖(P ν - P (ν - 1)) h‖ ^ 2)]
+    apply Finset.sum_congr rfl
+    intro ν hν
+    simp only [g]
+    rw [Nat.sub_add_cancel (hS ν hν).1]
+  have hinj : Set.InjOn (fun ν => ν - 1) S := by
+    intro x hx y hy hxy
+    have := (hS x hx).1; have := (hS y hy).1
+    simp only at hxy; omega
+  have h2 : ∑ ν ∈ S, g (ν - 1) = ∑ n ∈ S.image (fun ν => ν - 1), g n :=
+    (Finset.sum_image hinj).symm
+  have h3 : ∑ n ∈ S.image (fun ν => ν - 1), g n ≤ ∑ n ∈ Finset.range T, g n := by
+    apply Finset.sum_le_sum_of_subset_of_nonneg
+    · intro n hn
+      simp only [Finset.mem_image] at hn
+      obtain ⟨ν, hν, rfl⟩ := hn
+      have := hS ν hν
+      simp only [Finset.mem_range]; omega
+    · intro _ _ _; positivity
+  have h4 := projection_successive_differences_bessel P T hP hnest h
+  rw [Fin.sum_univ_eq_sum_range (fun n => ‖(P (n + 1) - P n) h‖ ^ 2) T] at h4
+  rw [h1, h2]
+  exact h3.trans h4
+
+/-- Blueprint lem:closure, lines 1825-1829: in a trial, every insertion whose test fails
+increases a nested target projection on the history value `X_{n-1}` (a product of `m` nested
+projections or complements at the old index, applied to the base) by at least `δ‖base‖`.
+By `eq:prefix` with the target increments as orthogonal rows, after expanding complements,
+the number of such insertions is at most `4^m L_T^{2m} δ⁻²`. A zero base cannot fail. -/
+theorem catalog_trial_count (T m : ℕ) (Q : ℕ → ℕ → H →L[𝕜] H)
+    (hQ : ∀ l < m, ∀ n ≤ T, IsStarProjection (Q l n))
+    (hQnest : ∀ l < m, ∀ i ≤ T, ∀ j ≤ T, i ≤ j → (Q l i).comp (Q l j) = Q l i)
+    (θ : ℕ → Bool) (P : ℕ → H →L[𝕜] H) (hP : ∀ n ≤ T, IsStarProjection (P n))
+    (hPnest : ∀ i ≤ T, ∀ j ≤ T, i ≤ j → (P i).comp (P j) = P i) (S : Finset ℕ)
+    (hS : ∀ n ∈ S, 1 ≤ n ∧ n ≤ T) (g : H) {δ : ℝ} (hδ : 0 < δ)
+    (hfail : ∀ n ∈ S, δ * ‖g‖ <
+      ‖(P n - P (n - 1)) (operatorComplementProduct (fun l => Q l (n - 1)) θ m g)‖) :
+    (S.card : ℝ) * δ ^ 2 ≤ 4 ^ m * projectionPrefixConstant T ^ (2 * m) := by
+  rcases S.eq_empty_or_nonempty with hSe | ⟨n₀, hn₀⟩
+  · simp only [hSe, Finset.card_empty, Nat.cast_zero, zero_mul]
+    exact mul_nonneg (by positivity)
+      (pow_nonneg (le_trans zero_le_one (projectionPrefixConstant_one_le T)) _)
+  have hg : 0 < ‖g‖ := by
+    by_contra h0
+    have h0' : g = 0 := norm_eq_zero.mp (le_antisymm (not_lt.mp h0) (norm_nonneg _))
+    have := hfail n₀ hn₀
+    rw [h0'] at this
+    simp at this
+  set L := projectionPrefixConstant T
+  have hL : 0 ≤ L := le_trans zero_le_one (projectionPrefixConstant_one_le T)
+  -- the row bound for the complement products
+  set! B : S → H →L[𝕜] H := fun ν => P ν - P (ν - 1)
+  have hB : ∀ h, ∑ ν, ‖B ν h‖ ^ 2 ≤ ‖h‖ ^ 2 :=
+    fun h => target_increments_bessel P T hP hPnest S hS h
+  have hsub : ∀ σ : ℕ → Bool, finiteRowNorm (fun ν : S =>
+      B ν (operatorSubproduct ((fun ν : S => fun l => Q l ((ν : ℕ) - 1)) ν) σ m g)) ≤
+      L ^ m * ‖g‖ := by
+    intro σ
+    have heq : ∀ ν : S, operatorSubproduct (fun l => Q l ((ν : ℕ) - 1)) σ m =
+        nestedProjectionProduct (fun l s => if σ l then Q l s else ContinuousLinearMap.id 𝕜 H)
+          m ((ν : ℕ) - 1) := fun ν => operatorSubproduct_eq_nested Q σ _ m
+    simp only [heq]
+    apply nestedProjectionProduct_prefix_rows _ T m
+    · intro l hl n hn
+      split_ifs
+      · exact hQ l hl n hn
+      · exact IsStarProjection.one (H →L[𝕜] H)
+    · intro l hl i hi j hj hij
+      split_ifs
+      · exact hQnest l hl i hi j hj hij
+      · rfl
+    · exact hB
+    · intro ν; have := hS ν ν.2; omega
+  have hrow := operatorComplementProduct_rows_bound (fun ν : S => fun l => Q l ((ν : ℕ) - 1)) θ m
+    g B (by positivity) hsub
+  have hsq : ∑ ν : S, ‖B ν (operatorComplementProduct (fun l => Q l ((ν : ℕ) - 1)) θ m g)‖ ^ 2 ≤
+      (2 ^ m * (L ^ m * ‖g‖)) ^ 2 := by
+    rw [← finiteRowNorm_sq]
+    exact pow_le_pow_left₀ (finiteRowNorm_nonneg _) hrow 2
+  have hlow : (S.card : ℝ) * (δ * ‖g‖) ^ 2 ≤
+      ∑ ν : S, ‖B ν (operatorComplementProduct (fun l => Q l ((ν : ℕ) - 1)) θ m g)‖ ^ 2 := by
+    have : ∀ ν : S, (δ * ‖g‖) ^ 2 ≤
+        ‖B ν (operatorComplementProduct (fun l => Q l ((ν : ℕ) - 1)) θ m g)‖ ^ 2 := fun ν =>
+      pow_le_pow_left₀ (by positivity) (hfail ν ν.2).le 2
+    calc (S.card : ℝ) * (δ * ‖g‖) ^ 2 = ∑ _ν : S, (δ * ‖g‖) ^ 2 := by
+          rw [Finset.sum_const, Finset.card_univ, Fintype.card_coe, nsmul_eq_mul]
+      _ ≤ _ := Finset.sum_le_sum fun ν _ => this ν
+  have hg2 : 0 < ‖g‖ ^ 2 := by positivity
+  have key : (S.card : ℝ) * δ ^ 2 * ‖g‖ ^ 2 ≤ 4 ^ m * L ^ (2 * m) * ‖g‖ ^ 2 := by
+    calc (S.card : ℝ) * δ ^ 2 * ‖g‖ ^ 2 = (S.card : ℝ) * (δ * ‖g‖) ^ 2 := by ring
+      _ ≤ _ := hlow.trans hsq
+      _ = 4 ^ m * L ^ (2 * m) * ‖g‖ ^ 2 := by
+          rw [mul_pow, mul_pow, ← pow_mul, ← pow_mul, show (4 : ℝ) ^ m = (2 ^ m) ^ 2 by
+            rw [← pow_mul, mul_comm, pow_mul]; norm_num]
+          ring
+  exact le_of_mul_le_mul_right key hg2
+
+end CatalogClosure
+
+section CatalogClosure2
+variable {𝕜 H : Type*} [RCLike 𝕜] [NormedAddCommGroup H] [InnerProductSpace 𝕜 H]
+  [CompleteSpace H]
+
+/-- Blueprint lem:closure, lines 1827-1829: with finitely many named histories and targets
+(witnesses `W`), the insertions of one rank number at most `|W| 4^m L_T^{2m} δ⁻²`; this counts
+histories and targets, not triggering source labels. -/
+theorem catalog_rank_count {W : Type*} [Fintype W] (T m : ℕ)
+    (Q : W → ℕ → ℕ → H →L[𝕜] H)
+    (hQ : ∀ w, ∀ l < m, ∀ n ≤ T, IsStarProjection (Q w l n))
+    (hQnest : ∀ w, ∀ l < m, ∀ i ≤ T, ∀ j ≤ T, i ≤ j → (Q w l i).comp (Q w l j) = Q w l i)
+    (θ : W → ℕ → Bool) (P : W → ℕ → H →L[𝕜] H) (hP : ∀ w, ∀ n ≤ T, IsStarProjection (P w n))
+    (hPnest : ∀ w, ∀ i ≤ T, ∀ j ≤ T, i ≤ j → (P w i).comp (P w j) = P w i)
+    (g : W → H) (S : Finset ℕ) (hS : ∀ n ∈ S, 1 ≤ n ∧ n ≤ T) (wit : ℕ → W) {δ : ℝ}
+    (hδ : 0 < δ)
+    (hfail : ∀ n ∈ S, δ * ‖g (wit n)‖ < ‖(P (wit n) n - P (wit n) (n - 1))
+      (operatorComplementProduct (fun l => Q (wit n) l (n - 1)) (θ (wit n)) m (g (wit n)))‖) :
+    (S.card : ℝ) * δ ^ 2 ≤ Fintype.card W * (4 ^ m * projectionPrefixConstant T ^ (2 * m)) := by
+  classical
+  rw [Finset.card_eq_sum_card_fiberwise (f := wit) (t := Finset.univ)
+    (fun _ _ => Finset.mem_univ _)]
+  push_cast
+  rw [Finset.sum_mul]
+  calc ∑ w, ((S.filter fun n => wit n = w).card : ℝ) * δ ^ 2 ≤
+      ∑ _w : W, 4 ^ m * projectionPrefixConstant T ^ (2 * m) := by
+        apply Finset.sum_le_sum
+        intro w _
+        apply catalog_trial_count T m (Q w) (hQ w) (hQnest w) (θ w) (P w) (hP w) (hPnest w)
+          _ (fun n hn => hS n (Finset.mem_filter.mp hn).1) (g w) hδ
+        intro n hn
+        have h := hfail n (Finset.mem_filter.mp hn).1
+        rw [(Finset.mem_filter.mp hn).2] at h
+        exact h
+    _ = _ := by rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+
+end CatalogClosure2
+
+section CatalogParameters
+
+/-- The rank-`r` path count `n_r = exp(r X^{C₂})` of the catalog closure. -/
+noncomputable def closureCount (C₂ : ℕ) (X : ℝ) (r : ℕ) : ℝ := Real.exp (r * X ^ C₂)
+
+theorem projectionPrefixConstant_le_log (T : ℕ) :
+    projectionPrefixConstant T ≤ 3 * Real.log (T + 1) + 2 := by
+  rw [projectionPrefixConstant_eq_ceil]
+  have hT : (1 : ℝ) ≤ T + 1 := by have := (Nat.cast_nonneg T : (0 : ℝ) ≤ T); linarith
+  have hlog0 : 0 ≤ Real.logb 2 (T + 1) := Real.logb_nonneg (by norm_num) hT
+  have h1 : (⌈Real.logb 2 (T + 1)⌉₊ : ℝ) ≤ Real.logb 2 (T + 1) + 1 :=
+    (Nat.ceil_lt_add_one hlog0).le
+  have h2 : Real.logb 2 (T + 1) ≤ 3 * Real.log (T + 1) := by
+    rw [Real.logb, div_le_iff₀ (Real.log_pos (by norm_num))]
+    have hl2 : (1 / 3 : ℝ) ≤ Real.log 2 := by
+      have := Real.log_two_gt_d9; linarith
+    have hl0 := Real.log_nonneg hT
+    nlinarith
+  linarith
+
+/-- Blueprint lem:closure, lines 1829-1831: with `n_r / n_{r-1} = exp(k^{C₂})` for a fixed
+sufficiently large `C₂`, the per-rank insertion bound `n_{r-1} K 4^m L_T^{2m}` stays below
+`n_r` for every trial of length `T ≤ n_{L+5}`, so no cap is attained, while
+`log n_{L+5} ≤ k^{c+C₂}` is polynomial. Here `k ≥ k₀`, `L + 5 ≤ k^c`, history length
+`m ≤ c (1 + log k)` and all other catalog factors `K ≤ exp(k^c)`. -/
+theorem closure_parameters (c : ℕ) :
+    ∃ C₂ : ℕ, ∃ k₀ : ℝ, 2 ≤ k₀ ∧ ∀ {X : ℝ}, k₀ ≤ X → ∀ {Lr m : ℕ} {K : ℝ},
+      (Lr : ℝ) ≤ X ^ c → (m : ℝ) ≤ c * (Real.log X + 1) → K ≤ Real.exp (X ^ c) →
+      ∀ T : ℕ, (T : ℝ) ≤ closureCount C₂ X Lr →
+        (∀ r : ℕ, closureCount C₂ X r * K * (4 ^ m * projectionPrefixConstant T ^ (2 * m)) <
+          closureCount C₂ X (r + 1)) ∧
+        Real.log (closureCount C₂ X Lr) ≤ X ^ (c + C₂) := by
+  refine ⟨c + 3, 8 * (c : ℝ) ^ 2 + 28 * c + 2, by
+    have : (0 : ℝ) ≤ 8 * (c : ℝ) ^ 2 + 28 * c := by positivity
+    linarith, ?_⟩
+  intro X hX Lr m K hLr hm hK T hT
+  have hX2 : 2 ≤ X := le_trans (by
+    have : (0 : ℝ) ≤ 8 * (c : ℝ) ^ 2 + 28 * c := by positivity
+    linarith) hX
+  have hX1 : 1 ≤ X := by linarith
+  have hX0 : 0 < X := by linarith
+  have hlogX0 : 0 ≤ Real.log X := Real.log_nonneg hX1
+  have hlogX : Real.log X ≤ X := (Real.log_le_sub_one_of_pos hX0).trans (by linarith)
+  have hc0 : (0 : ℝ) ≤ c := Nat.cast_nonneg c
+  have hm0 : (0 : ℝ) ≤ m := Nat.cast_nonneg m
+  set L := projectionPrefixConstant T with hLdef
+  have hL1 : 1 ≤ L := projectionPrefixConstant_one_le T
+  -- the size of the trial constant
+  have hXc1 : 1 ≤ X ^ c := one_le_pow₀ hX1
+  have hXC : X ^ c * X ^ (c + 3) = X ^ (c + (c + 3)) := by rw [← pow_add]
+  have hT1 : Real.log (T + 1) ≤ 1 + X ^ (c + (c + 3)) := by
+    have hTpos : (0 : ℝ) < T + 1 := by positivity
+    have h1 : (T : ℝ) + 1 ≤ 2 * closureCount (c + 3) X Lr := by
+      have := Real.one_le_exp (by positivity : (0 : ℝ) ≤ Lr * X ^ (c + 3))
+      unfold closureCount at hT ⊢; linarith
+    have h2 := Real.log_le_log hTpos h1
+    rw [closureCount, Real.log_mul (by norm_num) (Real.exp_pos _).ne', Real.log_exp] at h2
+    have hl2 : Real.log 2 ≤ 1 := by have := Real.log_two_lt_d9; linarith
+    have h3 : (Lr : ℝ) * X ^ (c + 3) ≤ X ^ (c + (c + 3)) := by
+      rw [← hXC]; exact mul_le_mul_of_nonneg_right hLr (by positivity)
+    linarith
+  have hLb : L ≤ 8 * X ^ (c + (c + 3)) := by
+    have := projectionPrefixConstant_le_log T
+    have h1 : 1 ≤ X ^ (c + (c + 3)) := one_le_pow₀ hX1
+    rw [← hLdef] at this
+    linarith
+  have hlogL : Real.log L ≤ 3 + (2 * c + 3) * X := by
+    have hLpos : 0 < L := by linarith
+    have h1 := Real.log_le_log hLpos hLb
+    rw [Real.log_mul (by norm_num) (by positivity), Real.log_pow] at h1
+    have hl6 : Real.log 8 ≤ 3 := by
+      rw [Real.log_le_iff_le_exp (by norm_num)]
+      have := Real.add_one_le_exp (3 : ℝ)
+      have h3 : Real.exp 3 = Real.exp 1 ^ 3 := by rw [← Real.exp_nat_mul]; norm_num
+      rw [h3]
+      have he : (2.7 : ℝ) ≤ Real.exp 1 := by linarith [Real.exp_one_gt_d9]
+      calc (8 : ℝ) ≤ 2.7 ^ 3 := by norm_num
+        _ ≤ Real.exp 1 ^ 3 := pow_le_pow_left₀ (by norm_num) he 3
+    push_cast at h1
+    nlinarith only [hlogX, hl6, h1]
+  have hlog4 : Real.log 4 ≤ 2 := by
+    rw [Real.log_le_iff_le_exp (by norm_num)]
+    have h2 : Real.exp 2 = Real.exp 1 ^ 2 := by rw [← Real.exp_nat_mul]; norm_num
+    rw [h2]
+    have he : (2.7 : ℝ) ≤ Real.exp 1 := by linarith [Real.exp_one_gt_d9]
+    calc (4 : ℝ) ≤ 2.7 ^ 2 := by norm_num
+      _ ≤ Real.exp 1 ^ 2 := pow_le_pow_left₀ (by norm_num) he 2
+  have hmX : (m : ℝ) ≤ 2 * c * X := by nlinarith only [hX, hm, hlogX]
+  -- the exponent estimate
+  have hexpo : X ^ c + m * Real.log 4 + 2 * m * Real.log L < X ^ (c + 3) := by
+    have e1 : (m : ℝ) * Real.log 4 ≤ 4 * c * X := by
+      nlinarith only [Real.log_nonneg (by norm_num : (1 : ℝ) ≤ 4), hX, hm, hlogX, hlog4]
+    have hlogL0 : 0 ≤ Real.log L := Real.log_nonneg hL1
+    have e2 : 2 * (m : ℝ) * Real.log L ≤ 4 * c * X * (3 + (2 * c + 3) * X) := by
+      have := mul_le_mul hmX hlogL (by positivity) (by positivity)
+      linarith
+    have e3 : 4 * (c : ℝ) * X + 4 * c * X * (3 + (2 * c + 3) * X) ≤
+        (8 * (c : ℝ) ^ 2 + 28 * c) * X ^ 2 := by nlinarith only [hX, hmX]
+    have e4 : X ^ (c + 3) ≥ X ^ c * ((8 * (c : ℝ) ^ 2 + 28 * c + 2) * X ^ 2) := by
+      rw [pow_add]
+      apply mul_le_mul_of_nonneg_left _ (by positivity)
+      calc (8 * (c : ℝ) ^ 2 + 28 * c + 2) * X ^ 2 ≤ X * X ^ 2 :=
+            mul_le_mul_of_nonneg_right hX (by positivity)
+        _ = X ^ 3 := by ring
+    have hX2' : 1 ≤ X ^ 2 := one_le_pow₀ hX1
+    have f1 : (8 * (c : ℝ) ^ 2 + 28 * c) * X ^ 2 ≤ X ^ c * ((8 * (c : ℝ) ^ 2 + 28 * c) * X ^ 2) :=
+      le_mul_of_one_le_left (by positivity) hXc1
+    have f2 : X ^ c < X ^ c * (2 * X ^ 2) := by
+      have : 0 < X ^ c := by positivity
+      nlinarith only [hXc1, hX2']
+    have f3 : X ^ c * ((8 * (c : ℝ) ^ 2 + 28 * c + 2) * X ^ 2) =
+        X ^ c * ((8 * (c : ℝ) ^ 2 + 28 * c) * X ^ 2) + X ^ c * (2 * X ^ 2) := by ring
+    linarith
+  constructor
+  · intro r
+    have hpos : 0 < 4 ^ m * L ^ (2 * m) := by positivity
+    have hK' : K * (4 ^ m * L ^ (2 * m)) < Real.exp (X ^ (c + 3)) := by
+      calc K * (4 ^ m * L ^ (2 * m)) ≤ Real.exp (X ^ c) * (4 ^ m * L ^ (2 * m)) :=
+            mul_le_mul_of_nonneg_right hK hpos.le
+        _ = Real.exp (X ^ c + m * Real.log 4 + 2 * m * Real.log L) := by
+            have h4 : Real.exp (m * Real.log 4) = 4 ^ m := by
+              rw [← Real.log_pow, Real.exp_log (by positivity)]
+            have hLm : Real.exp (2 * m * Real.log L) = L ^ (2 * m) := by
+              rw [show (2 * m * Real.log L) = ((2 * m : ℕ) : ℝ) * Real.log L by push_cast; ring,
+                ← Real.log_pow, Real.exp_log (by positivity)]
+            rw [Real.exp_add, Real.exp_add, h4, hLm]; ring
+        _ < Real.exp (X ^ (c + 3)) := Real.exp_lt_exp.mpr hexpo
+    unfold closureCount
+    rw [show ((r + 1 : ℕ) : ℝ) * X ^ (c + 3) = r * X ^ (c + 3) + X ^ (c + 3) by push_cast; ring,
+      Real.exp_add]
+    have := Real.exp_pos ((r : ℝ) * X ^ (c + 3))
+    calc Real.exp ((r : ℝ) * X ^ (c + 3)) * K * (4 ^ m * L ^ (2 * m)) =
+        Real.exp ((r : ℝ) * X ^ (c + 3)) * (K * (4 ^ m * L ^ (2 * m))) := by ring
+      _ < _ := mul_lt_mul_of_pos_left hK' this
+  · rw [closureCount, Real.log_exp, ← hXC]
+    exact mul_le_mul_of_nonneg_right hLr (by positivity)
+
+end CatalogParameters
+
+end TrilinearHT.Auto
+
+end
+
+section
+
+namespace TrilinearHT.Auto
+open MeasureTheory Metric
+open scoped FourierTransform ComplexConjugate ENNReal
+
+/-! ### Dimension padding of charts -/
+
+/-- Chart complexity is monotone in the Gevrey order. -/
+theorem quadraticChartComplexity_mono_order {d c₀ c₁ : ℕ} {H : ℝ} {A : QuadraticChartData d}
+    (hA : QuadraticChartComplexity c₀ H A) (hc : c₀ ≤ c₁) : QuadraticChartComplexity c₁ H A where
+  lower := hA.lower
+  dimension := hA.dimension
+  height := hA.height
+  support := hA.support
+  derivative := fun m word z => by
+    refine (hA.derivative m word z).trans ?_
+    have hH : 1 ≤ H := le_trans (by linarith [Real.add_one_le_exp (2 : ℝ)]) hA.lower
+    have hm : (1 : ℝ) ≤ m + 1 := by have := (Nat.cast_nonneg m : (0 : ℝ) ≤ m); linarith
+    apply mul_le_mul (pow_le_pow_right₀ hH (Nat.mul_le_mul_right _ hc))
+      (pow_le_pow_right₀ hm (Nat.mul_le_mul_right _ hc)) (by positivity) (by positivity)
+
+/-- Scaling the amplitude by a constant of modulus at most one keeps the complexity. -/
+theorem QuadraticChartComplexity.smul_amplitude {d c₀ : ℕ} {H : ℝ} {A : QuadraticChartData d}
+    (h : QuadraticChartComplexity c₀ H A) {a : ℂ} (ha : ‖a‖ ≤ 1) :
+    QuadraticChartComplexity c₀ H { A with
+      amplitude := a • A.amplitude
+      smooth := A.smooth.const_smul a
+      compact := A.compact.smul_left } where
+  lower := h.lower
+  dimension := h.dimension
+  height := h.height
+  support := fun z hz i => h.support z (fun h0 => hz (by simp [h0])) i
+  derivative := fun m word z => by
+    have e : coordinateWordDerivative m (a • A.amplitude) word z =
+        a • coordinateWordDerivative m A.amplitude word z := by
+      unfold coordinateWordDerivative
+      rw [iteratedFDeriv_const_smul_apply (A.smooth.contDiffAt.of_le (by exact_mod_cast le_top))]
+      rfl
+    change ‖coordinateWordDerivative m (a • A.amplitude) word z‖ ≤ _
+    rw [e, norm_smul]
+    calc ‖a‖ * ‖coordinateWordDerivative m A.amplitude word z‖ ≤
+        1 * ‖coordinateWordDerivative m A.amplitude word z‖ :=
+          mul_le_mul_of_nonneg_right ha (norm_nonneg _)
+      _ ≤ _ := by rw [one_mul]; exact h.derivative m word z
+
+/-- A zero-dimensional chart is a quadratic phase times its constant amplitude. -/
+theorem quadraticChartAtom_dim_zero (A : QuadraticChartData 0) (y : ℝ) :
+    quadraticChartAtom A y = (Real.fourierChar (A.quadratic * y ^ 2 + A.linear * y) : ℂ) *
+      A.amplitude (fun i => i.elim0) := by
+  unfold quadraticChartAtom
+  congr 1
+  have hs : ∀ n : Fin 0 → ℤ, quadraticChartLatticeSummand A y n =
+      A.amplitude (fun i => i.elim0) := by
+    intro n
+    unfold quadraticChartLatticeSummand
+    have h1 : chartLatticeRemainder A y n = fun i => i.elim0 := funext fun i => i.elim0
+    rw [h1]
+    simp [chartMatrixPhase]
+  rw [tsum_fintype]
+  simp only [hs, Finset.sum_const, Finset.card_univ, Fintype.card_unique, one_smul]
+
+theorem norm_amplitude_dim_zero_le {A : QuadraticChartData 0} (hb : IsBoundedQuadraticChart A) :
+    ‖A.amplitude (fun i => i.elim0)‖ ≤ 1 := by
+  have h := hb 0
+  rw [quadraticChartAtom_dim_zero, norm_mul, Circle.norm_coe, one_mul] at h
+  exact h
+
+/-- A bounded zero-dimensional chart is a bounded one-dimensional chart with zero frequency and
+matrix, the Gevrey partition as amplitude, and the same atom. -/
+theorem chart_pad (A : QuadraticChartData 0) (hb : IsBoundedQuadraticChart A) {W : ℝ}
+    (hW : Real.exp 2 ≤ W) (hBW : (tagKρ : ℝ) ^ (2 * tagKρ) ≤ W) :
+    ∃ B : QuadraticChartData 1, QuadraticChartComplexity (2 * tagKρ) W B ∧
+      IsBoundedQuadraticChart B ∧ quadraticChartAtom B = quadraticChartAtom A ∧
+      B.horizontal = 0 ∧ B.matrix = 0 ∧ B.quadratic = A.quadratic := by
+  set a₀ := A.amplitude (fun i => i.elim0)
+  have ha₀ : ‖a₀‖ ≤ 1 := norm_amplitude_dim_zero_le hb
+  have hW1 : 1 ≤ W := by linarith [Real.add_one_le_exp (2 : ℝ)]
+  have hlogW : (2 : ℝ) ≤ Real.log W := by
+    rw [Real.le_log_iff_exp_le (by linarith)]; exact hW
+  set base := mkQuadraticChart (fun _ : Fin 1 => (0 : ℝ)) A.quadratic A.linear 0
+    (modulatedCutoff gevreyPartition 1 9 (fun _ => 0))
+    (modulatedCutoff_smooth gevreyPartition_smooth _ _ _)
+    (modulatedCutoff_hasCompactSupport (fun _ hx => gevreyPartition_far hx) one_pos _ _)
+  have hbase : QuadraticChartComplexity (2 * tagKρ) W base := by
+    refine modulatedChart_complexity (r := 1) (L := 9) gevreyPartition_smooth
+      (fun x => by rw [abs_of_nonneg (gevreyPartition_nonneg x)]; exact gevreyPartition_le_one x)
+      (fun _ hx => gevreyPartition_far hx) tagKρ_spec.1
+      (fun n x => by simpa using tagKρ_spec.2 n x) one_pos (by norm_num) _ _ _ _ _ _ _ hW
+      (by push_cast; linarith) (fun i j => ?_) (by linarith [Real.add_one_le_exp (2 : ℝ)]) ?_
+    · simp [chartRationalHeight]; linarith
+    · simp only [Nat.cast_one, one_mul, div_one, Int.cast_zero, abs_zero, zero_div,
+        Finset.sum_const_zero, mul_zero, add_zero]
+      exact hBW
+  set B : QuadraticChartData 1 := { base with
+    amplitude := a₀ • base.amplitude
+    smooth := base.smooth.const_smul a₀
+    compact := base.compact.smul_left }
+  have hamp : ∀ w : Fin 1 → ℝ, B.amplitude w = a₀ * (gevreyPartition (w 0) : ℂ) := by
+    intro w
+    change a₀ • modulatedCutoff gevreyPartition 1 9 (fun _ => 0) w = _
+    simp [modulatedCutoff, tensorCutoff, smul_eq_mul]
+  have hatom : quadraticChartAtom B = quadraticChartAtom A := by
+    funext y
+    rw [quadraticChartAtom_dim_zero]
+    unfold quadraticChartAtom
+    congr 1
+    have hs : ∀ n : Fin 1 → ℤ, quadraticChartLatticeSummand B y n =
+        a₀ * (gevreyPartition (0 - (n 0 : ℝ)) : ℂ) := by
+      intro n
+      unfold quadraticChartLatticeSummand
+      rw [hamp]
+      simp [chartLatticeRemainder, chartMatrixPhase, B, base, mkQuadraticChart]
+    simp only [hs]
+    rw [tsum_mul_left]
+    have e : ∑' n : Fin 1 → ℤ, (gevreyPartition (0 - (n 0 : ℝ)) : ℂ) =
+        ∑' k : ℤ, (gevreyPartition (0 - (k : ℝ)) : ℂ) :=
+      (Equiv.funUnique (Fin 1) ℤ).tsum_eq (fun k => (gevreyPartition (0 - (k : ℝ)) : ℂ))
+    rw [e, ← Complex.ofReal_tsum, gevreyPartition_tsum, Complex.ofReal_one, mul_one]
+  refine ⟨B, hbase.smul_amplitude ha₀, fun y => ?_, hatom, rfl, rfl, rfl⟩
+  rw [hatom]; exact hb y
+
+namespace ActiveSetup
+variable {κ : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ c₀)
+
+/-! ### One attempt: vertices, tags and the tag graph of an active setup (lines 1677-1686) -/
+
+/-- The relative depth of the finite tree carrying the cells of the setup. -/
+noncomputable def treeDepth : ℕ := A.cells.sup fun I => (I.1 - A.R.1).toNat
+
+theorem cells_mem_tree {I : ℤ × ℤ} (hI : I ∈ A.cells) :
+    I ∈ dyadicFiniteTree A.G A.R A.treeDepth := by
+  rw [dyadicFiniteTree_mem_iff]
+  refine ⟨A.sub I hI, ?_⟩
+  have h1 : (I.1 - A.R.1).toNat ≤ A.treeDepth :=
+    Finset.le_sup (f := fun I : ℤ × ℤ => (I.1 - A.R.1).toNat) hI
+  have h2 := dyadicGridCell_depth_le_of_subset A.G I A.R (A.sub I hI)
+  omega
+
+/-- The vertices of the attempt: slot occurrences with their admission cells. -/
+abbrev Vtx := AdmVertex (G := A.G) (R := A.R) (N := A.treeDepth) (Λ := Fin 4 × A.L)
+
+/-- The height parameter of padded charts. -/
+noncomputable def padW : ℝ := max (Real.exp 2) ((tagKρ : ℝ) ^ (2 * tagKρ))
+
+theorem slotCoeff_ne_zero (l : Fin 4) : slotCoeff l ≠ 0 := by
+  fin_cases l <;> decide
+
+end ActiveSetup
+
+section AdmissionColoring
+variable {G : RealDyadicGrid} {R : ℤ × ℤ} {N : ℕ} {Λ : Type*} (av : ℤ × ℤ → Λ → Prop)
+
+/-! ### One attempt: decreasing colors on the admission tree (blueprint lines 1720-1734) -/
+
+/-- A cell of the finite tree contained in another one is its descendant in the admission
+tree. -/
+theorem admTree_anc [Fintype Λ] {I J : AdmCell G R N}
+    (h : dyadicGridCell G I.1.1 I.1.2 ⊆ dyadicGridCell G J.1.1 J.1.2) :
+    (admTree av).Anc (some J) (some I) := by
+  obtain ⟨k, hk⟩ : ∃ k : ℕ, (I.1.1 - J.1.1).toNat = k := ⟨_, rfl⟩
+  induction k generalizing I with
+  | zero =>
+    have hd := dyadicGridCell_depth_le_of_subset G I.1 J.1 h
+    have hIJ : I = J := Subtype.ext (anc_eq_of_depth subset_rfl h (by omega))
+    exact ⟨0, by rw [hIJ]; rfl⟩
+  | succ k ih =>
+    have hJR := admCell_depth_ge J
+    have hIR : I.1 ≠ R := by
+      intro hI
+      have : I.1.1 = R.1 := by rw [hI]
+      omega
+    have hIJ : I.1 ≠ J.1 := by
+      intro hI
+      have : I.1.1 = J.1.1 := by rw [hI]
+      omega
+    set P : AdmCell G R N := ⟨dyadicParent G I.1, admParent_mem I hIR⟩ with hP
+    have hPJ : dyadicGridCell G P.1.1 P.1.2 ⊆ dyadicGridCell G J.1.1 J.1.2 :=
+      dyadicParent_subset_of_subset G h hIJ
+    have hPk : (P.1.1 - J.1.1).toNat = k := by
+      simp only [hP, dyadicParent]; omega
+    obtain ⟨n, hn⟩ := ih hPJ hPk
+    have hpar : (admTree av).par (some I) = some P := by
+      change admPar (some I) = some P
+      simp only [admPar, hIR, ↓reduceDIte]
+      rfl
+    refine ⟨n + 1, ?_⟩
+    change (admTree av).par^[n] ((admTree av).par (some I)) = some J
+    rw [hpar]
+    exact hn
+
+/-- The point sets of the cells of the admission tree (the top carries no points). -/
+noncomputable def admCellSet : Option (AdmCell G R N) → Set ℝ
+  | none => ∅
+  | some I => dyadicGridCell G I.1.1 I.1.2
+
+theorem admCellSet_measurable (c : Option (AdmCell G R N)) : MeasurableSet (admCellSet c) := by
+  cases c with
+  | none => exact MeasurableSet.empty
+  | some I => exact dyadicGridCell_measurable G I.1.1 I.1.2
+
+theorem admCellSet_sub (c : Option (AdmCell G R N)) :
+    admCellSet c ⊆ dyadicGridCell G R.1 R.2 := by
+  cases c with
+  | none => exact Set.empty_subset _
+  | some I => exact admCell_sub I
+
+/-- Overlapping cells are nested in the admission tree. -/
+theorem admCellSet_nest [Fintype Λ] (c c' : Option (AdmCell G R N))
+    (h : (admCellSet c ∩ admCellSet c').Nonempty) :
+    (admTree av).Anc c c' ∨ (admTree av).Anc c' c := by
+  cases c with
+  | none => obtain ⟨x, hx, _⟩ := h; exact absurd hx (Set.notMem_empty x)
+  | some I =>
+    cases c' with
+    | none => obtain ⟨x, _, hx⟩ := h; exact absurd hx (Set.notMem_empty x)
+    | some J =>
+      obtain ⟨x, hxI, hxJ⟩ := h
+      rcases le_total I.1.1 J.1.1 with hle | hle
+      · rcases dyadicGridCell_nested_or_disjoint_of_le G hle I.1.2 J.1.2 with hd | hs
+        · exact absurd (Set.disjoint_left.mp hd hxI) (not_not.mpr hxJ)
+        · exact Or.inl (admTree_anc av hs)
+      · rcases dyadicGridCell_nested_or_disjoint_of_le G hle J.1.2 I.1.2 with hd | hs
+        · exact absurd (Set.disjoint_left.mp hd hxJ) (not_not.mpr hxI)
+        · exact Or.inr (admTree_anc av hs)
+
+end AdmissionColoring
+
+open Classical in
+/-- The conclusions of `monotoneColoring` for fixed delay arrays: failed cells of small total
+length, colors in `[1, L]` with `L ≤ d₀^{30}`, decreasing along paths, and equal colors carrying
+equal metadata. -/
+def IsMonotoneColoring {V : Type*} [DecidableEq V] (T : AdmTree V) (dist : DepthDistance V)
+    (D b1 b2 : ℕ) (S : Finset T.Cell) (cellSet : T.Cell → Set ℝ) (R : Set ℝ)
+    (ωp ωh : Fin (colorDegree D) → V → Fin (colorDegree D + 1)) : Prop :=
+  (volume (⋃ I ∈ S.filter (ColorSetup.FailAt T dist (colorDegree D) b1 b2 ωp ωh),
+      cellSet I)).toReal ≤ 100 * 2001 ^ 7 / D * (volume R).toReal ∧
+    (ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).numColors D ≤ colorDegree D ^ 30 ∧
+    (∀ I v, v ∈ T.X I →
+      1 ≤ (ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).color T D I v ∧
+      (ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).color T D I v ≤
+        (ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).numColors D) ∧
+    (∀ I v, v ∈ T.X (T.par I) →
+      (ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).color T D I v ≤
+      (ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).color T D (T.par I) v) ∧
+    (∀ I J v w, v ∈ T.X I → w ∈ T.X J →
+      (ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).color T D I v =
+        (ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).color T D J w →
+      (ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).metaKey
+        ((ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).colorData (T.st I) v) =
+      (ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).metaKey
+        ((ColorSetup.ofArrays dist (colorDegree D) b1 b2 ωp ωh).colorData (T.st J) w))
+
+section LocalClosure
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+  {Dt : Type*}
+
+/-! ### Local catalog closure at one cell (blueprint lem:closure, lines 1820-1831) -/
+
+/-- One-step nesting along insertions gives nesting along prefixes. -/
+theorem prefix_nest (P : List Dt → H →L[ℂ] H) (hP : ∀ s, IsStarProjection (P s))
+    (h1 : ∀ s d, (P s).comp (P (s ++ [d])) = P s) (s : List Dt) {i j : ℕ} (hij : i ≤ j) :
+    (P (s.take i)).comp (P (s.take j)) = P (s.take i) := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hij
+  induction k with
+  | zero => rw [Nat.add_zero]; exact (hP (s.take i)).isIdempotentElem.eq
+  | succ k ih =>
+    have ih' := ih (by omega)
+    by_cases hk : i + k < s.length
+    · have e : s.take (i + (k + 1)) = s.take (i + k) ++ [s[i + k]] := by
+        rw [show i + (k + 1) = i + k + 1 by omega, List.take_succ_eq_append_getElem hk]
+      rw [e]
+      calc (P (s.take i)).comp (P (s.take (i + k) ++ [s[i + k]]))
+          = ((P (s.take i)).comp (P (s.take (i + k)))).comp
+              (P (s.take (i + k) ++ [s[i + k]])) := by rw [ih']
+        _ = (P (s.take i)).comp ((P (s.take (i + k))).comp
+              (P (s.take (i + k) ++ [s[i + k]]))) := rfl
+        _ = P (s.take i) := by rw [h1, ih']
+    · have e : s.take (i + (k + 1)) = s.take (i + k) := by
+        rw [List.take_of_length_le (by omega), List.take_of_length_le (by omega)]
+      rw [e, ih']
+
+variable {W : Type*} [Fintype W]
+
+/-- Valid local insertion sequences: every insertion is justified by a test whose target
+projection grows by more than `δ_r ‖base‖` on the old history value (blueprint lines
+1823-1827). -/
+def LocalValid (rk : Dt → ℕ) (rkW : W → ℕ) (δ : ℕ → ℝ) (P : W → List Dt → H →L[ℂ] H)
+    (Q : W → ℕ → List Dt → H →L[ℂ] H) (θ : W → ℕ → Bool) (m : ℕ) (g : W → H)
+    (s : List Dt) : Prop :=
+  ∀ j (hj : j < s.length), ∃ w, rkW w = rk s[j] ∧
+    δ (rkW w) * ‖g w‖ < ‖(P w (s.take (j + 1)) - P w (s.take j))
+      (operatorComplementProduct (fun l => Q w l (s.take j)) (θ w) m (g w))‖
+
+variable {rk : Dt → ℕ} {rkW : W → ℕ} {δ : ℕ → ℝ} {P : W → List Dt → H →L[ℂ] H}
+  {Q : W → ℕ → List Dt → H →L[ℂ] H} {θ : W → ℕ → Bool} {m : ℕ} {g : W → H}
+
+omit [CompleteSpace H] [Fintype W] in
+theorem LocalValid.take {s : List Dt} (h : LocalValid rk rkW δ P Q θ m g s) (n : ℕ) :
+    LocalValid rk rkW δ P Q θ m g (s.take n) := by
+  intro j hj
+  have hjn : j < n := by rw [List.length_take] at hj; omega
+  have hjs : j < s.length := by rw [List.length_take] at hj; omega
+  obtain ⟨w, hw, hgain⟩ := h j hjs
+  refine ⟨w, by rw [hw, List.getElem_take], ?_⟩
+  rwa [List.take_take, List.take_take, min_eq_left (by omega : j + 1 ≤ n),
+    min_eq_left (by omega : j ≤ n)]
+
+omit [CompleteSpace H] [Fintype W] in
+theorem LocalValid.append {s : List Dt} (h : LocalValid rk rkW δ P Q θ m g s) {d : Dt} {w : W}
+    (hw : rkW w = rk d)
+    (hgain : δ (rkW w) * ‖g w‖ < ‖(P w (s ++ [d]) - P w s)
+      (operatorComplementProduct (fun l => Q w l s) (θ w) m (g w))‖) :
+    LocalValid rk rkW δ P Q θ m g (s ++ [d]) := by
+  intro j hj
+  rw [List.length_append, List.length_singleton] at hj
+  by_cases hjs : j < s.length
+  · obtain ⟨w', hw', hg'⟩ := h j hjs
+    refine ⟨w', by rw [hw', List.getElem_append_left hjs], ?_⟩
+    rwa [List.take_append_of_le_length (by omega), List.take_append_of_le_length (by omega)]
+  · have hj' : j = s.length := by omega
+    subst hj'
+    refine ⟨w, by rw [hw, List.getElem_append_right (le_refl _)]; simp, ?_⟩
+    rw [List.take_append_of_le_length le_rfl, List.take_length]
+    rw [show s.length + 1 = (s ++ [d]).length by simp, List.take_length]
+    exact hgain
+
+/-- The insertions of one rank in a valid sequence (blueprint lines 1827-1829). -/
+theorem LocalValid.rank_count (hP : ∀ w s, IsStarProjection (P w s))
+    (hP1 : ∀ w s d, (P w s).comp (P w (s ++ [d])) = P w s)
+    (hQ : ∀ w l, ∀ s, IsStarProjection (Q w l s))
+    (hQ1 : ∀ w l s d, (Q w l s).comp (Q w l (s ++ [d])) = Q w l s)
+    {s : List Dt} (h : LocalValid rk rkW δ P Q θ m g s) (r : ℕ) (hδ : 0 < δ r) :
+    (((Finset.range s.length).filter (fun j => ∃ hj : j < s.length, rk s[j] = r)).card : ℝ) *
+      δ r ^ 2 ≤ Fintype.card W * (4 ^ m * projectionPrefixConstant s.length ^ (2 * m)) := by
+  classical
+  set T := s.length
+  set S0 := (Finset.range T).filter (fun j => ∃ hj : j < T, rk s[j] = r)
+  set S := S0.image (· + 1)
+  have hcard : S.card = S0.card := Finset.card_image_of_injective _ (fun a b h => by omega)
+  have hex : ∀ n ∈ S, ∃ w : W, rkW w = r ∧
+      δ r * ‖g w‖ < ‖(P w (s.take n) - P w (s.take (n - 1)))
+        (operatorComplementProduct (fun l => Q w l (s.take (n - 1))) (θ w) m (g w))‖ := by
+    intro n hn
+    obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hn
+    obtain ⟨-, hjT, hr⟩ := Finset.mem_filter.mp hj
+    obtain ⟨w, hw, hg⟩ := h j hjT
+    refine ⟨w, hw.trans hr, ?_⟩
+    rw [← hw.trans hr]
+    simpa using hg
+  rcases S.eq_empty_or_nonempty with hSe | ⟨n₀, hn₀⟩
+  · rw [← hcard, hSe, Finset.card_empty, Nat.cast_zero, zero_mul]
+    exact mul_nonneg (Nat.cast_nonneg _) (mul_nonneg (by positivity)
+      (pow_nonneg (le_trans zero_le_one (projectionPrefixConstant_one_le _)) _))
+  obtain ⟨w₀, -⟩ := hex n₀ hn₀
+  let wit : ℕ → W := fun n => if hn : n ∈ S then Classical.choose (hex n hn) else w₀
+  have hwit : ∀ n (hn : n ∈ S), wit n = Classical.choose (hex n hn) := fun n hn => by
+    simp only [wit, hn, ↓reduceDIte]
+  have hS : ∀ n ∈ S, 1 ≤ n ∧ n ≤ T := by
+    intro n hn
+    obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hn
+    have := Finset.mem_range.mp (Finset.mem_filter.mp hj).1
+    omega
+  have key := catalog_rank_count (𝕜 := ℂ) T m (fun w l n => Q w l (s.take n))
+    (fun w l _ n _ => hQ w l (s.take n))
+    (fun w l _ i _ j _ hij => prefix_nest (Q w l) (hQ w l) (hQ1 w l) s hij) θ
+    (fun w n => P w (s.take n)) (fun w n _ => hP w (s.take n))
+    (fun w i _ j _ hij => prefix_nest (P w) (hP w) (hP1 w) s hij) g S hS wit hδ (by
+      intro n hn
+      rw [hwit n hn]
+      exact (Classical.choose_spec (hex n hn)).2)
+  rw [← hcard]
+  exact key
+
+/-- The cap argument (blueprint lines 1829-1831): if the rank counts allowed at the cap `T_max`
+sum to less than `T_max`, every valid sequence is shorter than `T_max`. -/
+theorem LocalValid.length_lt (hP : ∀ w s, IsStarProjection (P w s))
+    (hP1 : ∀ w s d, (P w s).comp (P w (s ++ [d])) = P w s)
+    (hQ : ∀ w l, ∀ s, IsStarProjection (Q w l s))
+    (hQ1 : ∀ w l s d, (Q w l s).comp (Q w l (s ++ [d])) = Q w l s)
+    (Rset : Finset ℕ) (hrk : ∀ d, rk d ∈ Rset) (hδ : ∀ r ∈ Rset, 0 < δ r) {Tmax : ℕ}
+    (hcap : ∑ r ∈ Rset, Fintype.card W * (4 ^ m * projectionPrefixConstant Tmax ^ (2 * m)) /
+      δ r ^ 2 < (Tmax : ℝ)) {s : List Dt} (h : LocalValid rk rkW δ P Q θ m g s) :
+    s.length < Tmax := by
+  classical
+  by_contra hlt
+  push Not at hlt
+  set! s' := s.take Tmax
+  have hs' : s'.length = Tmax := by simp [s', List.length_take, min_eq_left hlt]
+  have hv := h.take Tmax
+  set! f : ℕ → ℕ := fun j => if hj : j < s'.length then rk s'[j] else 0
+  have hmaps : ∀ j ∈ Finset.range s'.length, f j ∈ Rset := by
+    intro j hj
+    have hj' := Finset.mem_range.mp hj
+    simp only [f, hj', ↓reduceDIte]
+    exact hrk _
+  have hsum := Finset.card_eq_sum_card_fiberwise hmaps
+  have hfib : ∀ r, (Finset.range s'.length).filter (fun j => f j = r) =
+      (Finset.range s'.length).filter (fun j => ∃ hj : j < s'.length, rk s'[j] = r) := by
+    intro r
+    refine Finset.filter_congr fun j hj => ?_
+    have hj' := Finset.mem_range.mp hj
+    simp only [f, hj', ↓reduceDIte, exists_true_left]
+  have hL : 0 ≤ Fintype.card W * (4 ^ m * projectionPrefixConstant Tmax ^ (2 * m)) :=
+    mul_nonneg (Nat.cast_nonneg _) (mul_nonneg (by positivity)
+      (pow_nonneg (le_trans zero_le_one (projectionPrefixConstant_one_le _)) _))
+  have e0 : s'.length = ∑ r ∈ Rset, ((Finset.range s'.length).filter (fun j => f j = r)).card :=
+    (Finset.card_range _).symm.trans hsum
+  have e : projectionPrefixConstant s'.length = projectionPrefixConstant Tmax := by rw [hs']
+  have hle : (Tmax : ℝ) ≤ ∑ r ∈ Rset,
+      Fintype.card W * (4 ^ m * projectionPrefixConstant Tmax ^ (2 * m)) / δ r ^ 2 := by
+    calc (Tmax : ℝ) = (s'.length : ℝ) := by rw [hs']
+      _ = ((∑ r ∈ Rset, ((Finset.range s'.length).filter (fun j => f j = r)).card : ℕ) : ℝ) :=
+          congrArg Nat.cast e0
+      _ = ∑ r ∈ Rset, (((Finset.range s'.length).filter (fun j => f j = r)).card : ℝ) := by
+          push_cast; rfl
+      _ ≤ _ := by
+          refine Finset.sum_le_sum fun r hr => ?_
+          rw [hfib r, le_div_iff₀ (pow_pos (hδ r hr) 2)]
+          have hc := hv.rank_count hP hP1 hQ hQ1 r (hδ r hr)
+          rw [e] at hc
+          exact hc
+  linarith
+
+/-- Blueprint lem:closure (lines 1820-1831), local form: if every failed test at a valid state
+admits a justified insertion and the cap is not attained, some valid sequence passes all
+tests. -/
+theorem local_closure (hP : ∀ w s, IsStarProjection (P w s))
+    (hP1 : ∀ w s d, (P w s).comp (P w (s ++ [d])) = P w s)
+    (hQ : ∀ w l, ∀ s, IsStarProjection (Q w l s))
+    (hQ1 : ∀ w l s d, (Q w l s).comp (Q w l (s ++ [d])) = Q w l s)
+    (Rset : Finset ℕ) (hrk : ∀ d, rk d ∈ Rset) (hδ : ∀ r ∈ Rset, 0 < δ r) {Tmax : ℕ}
+    (hcap : ∑ r ∈ Rset, Fintype.card W * (4 ^ m * projectionPrefixConstant Tmax ^ (2 * m)) /
+      δ r ^ 2 < (Tmax : ℝ)) (Pass : W → List Dt → Prop)
+    (hgain : ∀ s, LocalValid rk rkW δ P Q θ m g s → ∀ w, ¬ Pass w s → ∃ d, rkW w = rk d ∧
+      δ (rkW w) * ‖g w‖ < ‖(P w (s ++ [d]) - P w s)
+        (operatorComplementProduct (fun l => Q w l s) (θ w) m (g w))‖) :
+    ∃ s, LocalValid rk rkW δ P Q θ m g s ∧ (∀ w, Pass w s) ∧ s.length < Tmax := by
+  classical
+  have hbd : ∀ s, LocalValid rk rkW δ P Q θ m g s → s.length < Tmax := fun s h =>
+    h.length_lt hP hP1 hQ hQ1 Rset hrk hδ hcap
+  set E : ℕ → Prop := fun n => ∃ s, LocalValid rk rkW δ P Q θ m g s ∧ s.length = n
+  have hE0 : E 0 := ⟨[], fun j hj => absurd hj (by simp), rfl⟩
+  set! n₀ := Nat.findGreatest E Tmax
+  obtain ⟨s, hs, hsl⟩ : E n₀ := Nat.findGreatest_spec (Nat.zero_le _) hE0
+  refine ⟨s, hs, fun w => ?_, hbd s hs⟩
+  by_contra hw
+  obtain ⟨d, hd, hgd⟩ := hgain s hs w hw
+  have hv := hs.append hd hgd
+  have hlen : (s ++ [d]).length = n₀ + 1 := by simp [hsl]
+  have hle : n₀ + 1 ≤ Tmax := by have := hbd _ hv; omega
+  have := Nat.le_findGreatest hle (show E (n₀ + 1) from ⟨_, hv, hlen⟩)
+  omega
+
+end LocalClosure
+
+/-! ### Catalog columns and their projections (blueprint lines 1805-1809) -/
+
+/-- A catalog column: a bounded measurable atom with its birth cell, rank and tag (private
+weight one). -/
+structure CatCol (Tg : Type*) where
+  /-- Bounded measurable scalar atom represented by the catalog column. -/
+  atom : ℝ → ℂ
+  meas : Measurable atom
+  bound : ∀ y, ‖atom y‖ ≤ 1
+  /-- Birth cell of the catalog column. -/
+  birth : ℤ × ℤ
+  /-- Rank assigned to the catalog column at its birth. -/
+  rank : ℕ
+  /-- Chart tag carried by the catalog column. -/
+  tag : Tg
+
+/-! ### Catalog tests at a cell and their closure (blueprint lines 1809-1831) -/
+
+/-- A named catalog test (blueprint eq:catalog-test, lines 1809-1815): the residual slot `t`,
+the target rank and tag mask, a history of at most `m` catalog filters (ranks, masks and
+complement flags) and the base. -/
+structure CatTest (Tg : Type*) where
+  /-- Residual slot tested by the catalog test. -/
+  t : Fin 4
+  /-- Rank cutoff for the residual-slot projection. -/
+  r : ℕ
+  /-- Tag mask selecting the residual-slot projection. -/
+  M : Tg → Prop
+  /-- Number of historical high-slot projections in the test. -/
+  m : ℕ
+  /-- Rank cutoff for each historical high-slot projection. -/
+  hr : ℕ → ℕ
+  /-- Tag mask for each historical high-slot projection. -/
+  hM : ℕ → Tg → Prop
+  /-- Boolean choices specifying the historical projection factors. -/
+  θ : ℕ → Bool
+  /-- L² function supplying the residual-slot test input. -/
+  g : Lp ℂ 2 (volume : Measure ℝ)
+
+/-- Integrals against the normalized measure of a cell are averages over the cell. -/
+theorem integral_normalized_cell (G : RealDyadicGrid) (I : ℤ × ℤ) (f : ℝ → ℂ) :
+    ∫ y, f y ∂(normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) =
+      (dyadicGridLength G I.1 : ℂ)⁻¹ * ∫ y in dyadicGridCell G I.1 I.2, f y := by
+  rw [integral_normalizedIntervalMeasure_eq (dyadicGridLength_pos G I.1)]
+  congr 1
+  exact setIntegral_congr_set Ico_ae_eq_Icc.symm
+
+/-- The template column `ρ(d) e(R·d/9) e(γ y)` of a tag in slot `t`, born at `I` with rank `r`
+(blueprint lines 1800-1803). -/
+noncomputable def templateCol {Tg : Type*} (v : ChartTag) (t : Fin 4) (R : Fin v.dim → ℕ)
+    (γ : ℝ) (I : ℤ × ℤ) (r : ℕ) (x : Tg) : CatCol Tg where
+  atom := fun y => quadraticChartAtom (tagTemplateData v.θ v.C v.lam t R) y *
+    (Real.fourierChar (γ * y) : ℂ)
+  meas := (quadraticChartAtom_measurable _).mul
+    ((continuous_subtype_val.comp (Real.continuous_fourierChar.comp
+      (continuous_const.mul continuous_id))).measurable)
+  bound := fun y => by
+    rw [norm_mul, Circle.norm_coe, mul_one]
+    exact tagTemplate_norm_le _ _ _ _ _ y
+  birth := I
+  rank := r
+  tag := x
+
+theorem projectionPrefixConstant_mono {T T' : ℕ} (h : T ≤ T') :
+    projectionPrefixConstant T ≤ projectionPrefixConstant T' := by
+  unfold projectionPrefixConstant
+  have : Nat.clog 2 (T + 1) ≤ Nat.clog 2 (T' + 1) := Nat.clog_mono_right 2 (by omega)
+  have : (Nat.clog 2 (T + 1) : ℝ) ≤ Nat.clog 2 (T' + 1) := by exact_mod_cast this
+  linarith
+
+section TreeClosure
+variable {G : RealDyadicGrid} {Tg : Type*} {Mc : ℕ}
+
+/-! ### The catalog over the tree (blueprint lines 1820-1831) -/
+
+theorem card_range_filter_getElem {α : Type*} (s : List α) (p : α → Prop) [DecidablePred p] :
+    ((Finset.range s.length).filter (fun j => ∃ hj : j < s.length, p s[j])).card =
+      (s.filter (fun d => decide (p d))).length := by
+  induction s using List.reverseRecOn with
+  | nil => simp
+  | append_singleton s d ih =>
+    rw [show Finset.range (s ++ [d]).length = insert s.length (Finset.range s.length) by
+      rw [List.length_append, List.length_singleton, Finset.range_add_one], Finset.filter_insert]
+    have hcongr : (Finset.range s.length).filter (fun j => ∃ hj : j < (s ++ [d]).length,
+        p (s ++ [d])[j]) =
+          (Finset.range s.length).filter (fun j => ∃ hj : j < s.length, p s[j]) := by
+      refine Finset.filter_congr fun j hj => ?_
+      have hjs := Finset.mem_range.mp hj
+      constructor
+      · rintro ⟨_, h⟩; exact ⟨hjs, by rwa [List.getElem_append_left hjs] at h⟩
+      · rintro ⟨_, h⟩; exact ⟨by simp; omega, by rwa [List.getElem_append_left hjs]⟩
+    have hlast : (s ++ [d])[s.length]'(by simp) = d := by simp
+    rw [hcongr]
+    by_cases hd : p d
+    · have hc : ∃ hj : s.length < (s ++ [d]).length, p (s ++ [d])[s.length] :=
+        ⟨by simp, by rw [hlast]; exact hd⟩
+      rw [ite_eq_left hc, Finset.card_insert_of_notMem (by simp), ih]
+      simp [List.filter_append, hd]
+    · have hc : ¬ ∃ hj : s.length < (s ++ [d]).length, p (s ++ [d])[s.length] := by
+        rintro ⟨_, h⟩; rw [hlast] at h; exact hd h
+      rw [ite_eq_right hc, ih]
+      simp [List.filter_append, hd]
+
+end TreeClosure
+
+/-- The conclusion of `sameTagTemplateTest` for a fixed exponent `D`. -/
+def SameTagBound (κ : LocalKernelClass) (c₀ D : ℕ) : Prop :=
+  ∀ (H : ℝ), Real.exp 2 ≤ H → ∀ (v : ChartTag), 1 ≤ v.dim →
+    ∀ {i j a b : Fin 4}, i ≠ j → i ≠ a → i ≠ b → j ≠ a → j ≠ b → a ≠ b →
+    ∀ (A : QuadraticChartData v.dim), QuadraticChartComplexity c₀ H A →
+    A.horizontal = v.θ → A.matrix = (slotCoeff i : ℚ) • v.C →
+    A.quadratic = slotCoeff i * v.lam →
+    ∀ {a₀ r : ℝ}, 0 < r → ∀ {w : ℝ × ℝ → ℂ}, IsAdmissibleLocalKernel κ a₀ r w →
+    ∀ (z : Fin 4 → ℝ → ℂ), z i = quadraticChartAtom A → Measurable (z j) →
+    Measurable (z a) → Measurable (z b) → MemLp (z j) 2 (normalizedIntervalMeasure a₀ r) →
+    eLpNorm (z a) 2 (normalizedIntervalMeasure a₀ r) ≤ 1 →
+    eLpNorm (z b) 2 (normalizedIntervalMeasure a₀ r) ≤ 1 →
+    ∃ R ∈ residueBox v.dim 9, ∃ γ : ℝ,
+      ‖localProgressionForm r w z‖ ≤ Real.exp (D * (1 + Real.log H) ^ D) *
+        ‖∫ y, z j y * (starRingEnd ℂ) (quadraticChartAtom
+          (tagTemplateData v.θ v.C v.lam j R) y * (Real.fourierChar (γ * y) : ℂ))
+            ∂(normalizedIntervalMeasure a₀ r)‖
+
+theorem sameTagBound_exists (κ : LocalKernelClass) (c₀ : ℕ) (hc : 1 ≤ c₀) :
+    ∃ D : ℕ, 1 ≤ D ∧ SameTagBound κ c₀ D :=
+  sameTagTemplateTest κ c₀ hc
+
+section CatalogExpansion
+variable {G : RealDyadicGrid} {Tg : Type*} {Mc : ℕ}
+
+/-! ### Expansion of catalog outputs into columns (blueprint lemma coeff, lines 488-497) -/
+
+/-- The atom of a label (zero beyond the catalog). -/
+noncomputable def catAtom (s : List (CatCol Tg)) (n : ℕ) : ℝ → ℂ :=
+  if h : n < s.length then (s[n]).atom else 0
+
+theorem catAtom_measurable (s : List (CatCol Tg)) (n : ℕ) : Measurable (catAtom s n) := by
+  unfold catAtom; split_ifs
+  · exact (s[n]).meas
+  · exact measurable_const
+
+theorem catAtom_bound (s : List (CatCol Tg)) (n : ℕ) (y : ℝ) : ‖catAtom s n y‖ ≤ 1 := by
+  unfold catAtom; split_ifs
+  · exact (s[n]).bound y
+  · simp
+
+end CatalogExpansion
+
+/-! ### Template columns are pure sources (blueprint lines 1798-1803) -/
+
+/-- Changing the linear modulation of a chart multiplies its atom by a character. -/
+theorem quadraticChartAtom_modulate {d : ℕ} (A : QuadraticChartData d) (γ : ℝ) (y : ℝ) :
+    quadraticChartAtom { A with linear := A.linear + γ } y =
+      quadraticChartAtom A y * (Real.fourierChar (γ * y) : ℂ) := by
+  unfold quadraticChartAtom
+  have e : A.quadratic * y ^ 2 + (A.linear + γ) * y = (A.quadratic * y ^ 2 + A.linear * y) +
+      γ * y := by ring
+  have hS : (∑' n : Fin d → ℤ, quadraticChartLatticeSummand
+      { A with linear := A.linear + γ } y n) =
+        ∑' n : Fin d → ℤ, quadraticChartLatticeSummand A y n :=
+    rfl
+  simp only [e, AddChar.map_add_eq_mul, Circle.coe_mul]
+  rw [hS]
+  ring
+
+/-- The complexity of a chart does not see its linear modulation. -/
+theorem QuadraticChartComplexity.modulate {d c₀ : ℕ} {H : ℝ} {A : QuadraticChartData d}
+    (h : QuadraticChartComplexity c₀ H A) (β : ℝ) :
+    QuadraticChartComplexity c₀ H { A with linear := β } :=
+  ⟨h.lower, h.dimension, h.height, h.support, h.derivative⟩
+
+/-- A template column is the atom of a pure chart of its tag in its slot, with arbitrary
+linear modulation and the template complexity. -/
+theorem templateCol_chart {Tg : Type*} (v : ChartTag) (t : Fin 4) {R : Fin v.dim → ℕ}
+    (hR : R ∈ residueBox v.dim 9) (γ : ℝ) (I : ℤ × ℤ) (r : ℕ) (x : Tg) {W : ℝ}
+    (hW : Real.exp 2 ≤ W) (hdW : (v.dim : ℝ) ≤ Real.log W)
+    (hMW : ∀ a b, (chartRationalHeight (((slotCoeff t : ℚ) • v.C) a b) : ℝ) ≤ W)
+    (hBW : (v.dim : ℝ) * (tagKρ : ℝ) ^ (2 * tagKρ) + 2 * Real.pi * v.dim ≤ W) :
+    ∃ A : QuadraticChartData v.dim, QuadraticChartComplexity (2 * tagKρ) W A ∧
+      A.horizontal = v.θ ∧ A.matrix = (slotCoeff t : ℚ) • v.C ∧
+      A.quadratic = slotCoeff t * v.lam ∧
+      (templateCol v t R γ I r x : CatCol Tg).atom = quadraticChartAtom A := by
+  obtain ⟨hc, -, hθ, hM, hq⟩ := tagTemplate_column v t hR hW hdW hMW hBW
+  set T := tagTemplateData v.θ v.C v.lam t R
+  refine ⟨{ T with linear := T.linear + γ }, hc.modulate _, hθ, hM, hq, ?_⟩
+  funext y
+  rw [quadraticChartAtom_modulate]
+  rfl
+
+namespace ColorSetup
+variable {V : Type*} [DecidableEq V] (K : ColorSetup V) (T : AdmTree V)
+
+/-! ### Cumulative masks (blueprint lines 1804-1807) -/
+
+/-- The cumulative mask `U_{m,h}(I)`: present vertices within graph distance `h` of a present
+vertex of color at most `m` (blueprint line 1806). -/
+def cumMask (Nv m h : ℕ) (I : T.Cell) : Set V :=
+  {b | b ∈ T.X I ∧ ∃ w ∈ T.X I, K.color T Nv I w ≤ m ∧ K.dist.d (T.depth I) w b ≤ h}
+
+variable {K T}
+
+/-- Neighbor closure at pad `h + 1` (blueprint line 1807). -/
+theorem cumMask_neighbor {Nv m h : ℕ} {I : T.Cell} {b b' : V} (hb : b ∈ K.cumMask T Nv m h I)
+    (hb' : b' ∈ T.X I) (hd : K.dist.d (T.depth I) b b' ≤ 1) :
+    b' ∈ K.cumMask T Nv m (h + 1) I := by
+  obtain ⟨-, w, hw, hc, hwb⟩ := hb
+  refine ⟨hb', w, hw, hc, ?_⟩
+  calc K.dist.d (T.depth I) w b' ≤ K.dist.d (T.depth I) w b + K.dist.d (T.depth I) b b' :=
+        K.dist.triangle _ _ _ _
+    _ ≤ h + 1 := add_le_add hwb hd
+    _ = ((h + 1 : ℕ) : ℕ∞) := by push_cast; rfl
+
+/-- Cumulative masks increase in depth (blueprint line 1807). -/
+theorem cumMask_par {Nv m h : ℕ} (hN : ∀ I, (T.X I).card ≤ Nv) (I : T.Cell) :
+    K.cumMask T Nv m h (T.par I) ⊆ K.cumMask T Nv m h I := by
+  rintro b ⟨hb, w, hw, hc, hd⟩
+  have hle := T.st_le_par I
+  refine ⟨hle.2.1 hb, w, hle.2.1 hw, (K.color_anti T hN hw).trans hc, ?_⟩
+  exact (K.dist.anti hle.1 w b).trans hd
+
+end ColorSetup
+
+section AveragedHistories
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+
+/-! ### Averaged histories (blueprint lines 1807, 1813: histories include every pad choice) -/
+
+/-- A complement product only depends on its first `m` layers. -/
+theorem operatorComplementProduct_congr {A B : ℕ → H →L[ℂ] H} (θ : ℕ → Bool) (m : ℕ)
+    (h : ∀ l < m, A l = B l) :
+    operatorComplementProduct A θ m = operatorComplementProduct B θ m := by
+  induction m with
+  | zero => rfl
+  | succ m ih =>
+    simp only [operatorComplementProduct]
+    rw [ih fun l hl => h l (by omega), h m (by omega)]
+
+/-- The uniform average of finitely many operators. -/
+noncomputable def opAvg {P : ℕ} (Q : Fin P → H →L[ℂ] H) : H →L[ℂ] H :=
+  (P : ℂ)⁻¹ • ∑ p, Q p
+
+theorem id_sub_opAvg {P : ℕ} (hP : 0 < P) (Q : Fin P → H →L[ℂ] H) :
+    ContinuousLinearMap.id ℂ H - opAvg Q = opAvg fun p => ContinuousLinearMap.id ℂ H - Q p := by
+  unfold opAvg
+  rw [Finset.sum_sub_distrib, smul_sub, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+    ← Nat.cast_smul_eq_nsmul ℂ, smul_smul, inv_mul_cancel₀ (by exact_mod_cast hP.ne'), one_smul]
+
+/-- The choice extension of a function on `Fin m`. -/
+def choiceExt {P m : ℕ} (hP : 0 < P) (c : Fin m → Fin P) (l : ℕ) : Fin P :=
+  if h : l < m then c ⟨l, h⟩ else ⟨0, hP⟩
+
+/-- A complement product of averaged layers is the average over all choice functions of the
+complement products of single layers. -/
+theorem complementProduct_opAvg {P : ℕ} (hP : 0 < P) (Q : ℕ → Fin P → H →L[ℂ] H)
+    (θ : ℕ → Bool) (m : ℕ) (z : H) :
+    operatorComplementProduct (fun l => opAvg (Q l)) θ m z =
+      ((P : ℂ) ^ m)⁻¹ • ∑ c : Fin m → Fin P,
+        operatorComplementProduct (fun l => Q l (choiceExt hP c l)) θ m z := by
+  induction m with
+  | zero =>
+    simp [operatorComplementProduct]
+  | succ m ih =>
+    have hP' : (P : ℂ) ≠ 0 := by exact_mod_cast hP.ne'
+    -- the last layer as an average
+    set F : (H →L[ℂ] H) → H →L[ℂ] H := fun X =>
+      if θ m then ContinuousLinearMap.id ℂ H - X else X with hF
+    have hlast : F (opAvg (Q m)) = opAvg fun p => F (Q m p) := by
+      simp only [hF]; split_ifs
+      · exact id_sub_opAvg hP (Q m)
+      · rfl
+    have hstep : ∀ (B : ℕ → H →L[ℂ] H) (w : H),
+        operatorComplementProduct B θ (m + 1) w = F (B m) (operatorComplementProduct B θ m w) :=
+      fun B w => rfl
+    rw [hstep, ih, hlast]
+    -- distribute the last average over the choices
+    simp only [opAvg, smul_apply, sum_apply, map_smul, map_sum]
+    rw [← (Fin.snocEquiv (fun _ : Fin (m + 1) => Fin P)).sum_comp]
+    rw [Fintype.sum_prod_type]
+    simp only [Finset.smul_sum, smul_smul]
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun c _ => ?_
+    rw [hstep]
+    have h1 : choiceExt hP ((Fin.snocEquiv fun _ : Fin (m + 1) => Fin P) (p, c)) m = p := by
+      simp [choiceExt, Fin.snocEquiv, Fin.snoc]
+    have h2 : operatorComplementProduct (fun l => Q l (choiceExt hP
+        ((Fin.snocEquiv fun _ : Fin (m + 1) => Fin P) (p, c)) l)) θ m =
+        operatorComplementProduct (fun l => Q l (choiceExt hP c l)) θ m := by
+      refine operatorComplementProduct_congr θ m fun l hl => ?_
+      have : choiceExt hP ((Fin.snocEquiv fun _ : Fin (m + 1) => Fin P) (p, c)) l =
+          choiceExt hP c l := by
+        simp only [choiceExt, Fin.snocEquiv, Equiv.coe_fn_mk, hl, show l < m + 1 by omega,
+          ↓reduceDIte]
+        rw [show (⟨l, _⟩ : Fin (m + 1)) = Fin.castSucc ⟨l, hl⟩ from rfl, Fin.snoc_castSucc]
+      rw [this]
+    simp only [h1, h2]
+    congr 1
+    rw [pow_succ, mul_inv]
+
+end AveragedHistories
+
+section GuardedSearch
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+
+/-! ### The guarded color search (blueprint prop:localize, lines 1848-1849) -/
+
+/-- The operator of a list of split layers `(m, residual?)`, applied in order. -/
+noncomputable def layerOp (Cum : ℕ → H →L[ℂ] H) (ls : List (ℕ × Bool)) : H →L[ℂ] H :=
+  ls.foldl (fun A x => (if x.2 then ContinuousLinearMap.id ℂ H - Cum x.1 else Cum x.1).comp A)
+    (ContinuousLinearMap.id ℂ H)
+
+theorem layerOp_nil (Cum : ℕ → H →L[ℂ] H) : layerOp Cum [] = ContinuousLinearMap.id ℂ H := rfl
+
+theorem layerOp_append (Cum : ℕ → H →L[ℂ] H) (ls : List (ℕ × Bool)) (x : ℕ × Bool) :
+    layerOp Cum (ls ++ [x]) =
+      (if x.2 then ContinuousLinearMap.id ℂ H - Cum x.1 else Cum x.1).comp (layerOp Cum ls) := by
+  simp [layerOp, List.foldl_append]
+
+end GuardedSearch
+
+section LayerHistories
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+
+/-! ### Enabling lemmas for the leaf bounds -/
+
+/-- A complement product only depends on its first `m` layers and flags. -/
+theorem operatorComplementProduct_congr₂ {A B : ℕ → H →L[ℂ] H} {θ θ' : ℕ → Bool} (m : ℕ)
+    (h : ∀ l < m, A l = B l ∧ θ l = θ' l) :
+    operatorComplementProduct A θ m = operatorComplementProduct B θ' m := by
+  induction m with
+  | zero => rfl
+  | succ m ih =>
+    simp only [operatorComplementProduct]
+    rw [ih fun l hl => h l (by omega), (h m (by omega)).1, (h m (by omega)).2]
+
+/-- The layer operator is the complement product of its layers. -/
+theorem layerOp_eq_complementProduct (Cum : ℕ → H →L[ℂ] H) (ls : List (ℕ × Bool)) :
+    layerOp Cum ls = operatorComplementProduct (fun l => Cum (ls.getD l (0, false)).1)
+      (fun l => (ls.getD l (0, false)).2) ls.length := by
+  induction ls using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton ls x ih =>
+    rw [layerOp_append, ih, List.length_append, List.length_singleton]
+    change _ = (if ((ls ++ [x]).getD ls.length (0, false)).2 then
+        ContinuousLinearMap.id ℂ H - Cum ((ls ++ [x]).getD ls.length (0, false)).1
+      else Cum ((ls ++ [x]).getD ls.length (0, false)).1).comp
+        (operatorComplementProduct (fun l => Cum ((ls ++ [x]).getD l (0, false)).1)
+          (fun l => ((ls ++ [x]).getD l (0, false)).2) ls.length)
+    have hx : (ls ++ [x]).getD ls.length (0, false) = x := by simp
+    rw [hx, operatorComplementProduct_congr₂
+      (B := fun l => Cum ((ls ++ [x]).getD l (0, false)).1)
+      (θ' := fun l => ((ls ++ [x]).getD l (0, false)).2) ls.length fun l hl => by
+        simp only [List.getD_append _ _ _ _ hl, and_self]]
+
+end LayerHistories
+
+section ResidualAverages
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+
+/-! ### Leaf inputs as averages of test residuals -/
+
+/-- Identity layers with unflagged complements beyond `n` do not change a complement product. -/
+theorem operatorComplementProduct_id_tail (A : ℕ → H →L[ℂ] H) (θ : ℕ → Bool) (n : ℕ)
+    (hA : ∀ l, n ≤ l → A l = ContinuousLinearMap.id ℂ H) (hθ : ∀ l, n ≤ l → θ l = false) :
+    ∀ k, operatorComplementProduct A θ (n + k) = operatorComplementProduct A θ n
+  | 0 => rfl
+  | k + 1 => by
+    rw [show n + (k + 1) = n + k + 1 by omega]
+    change (if θ (n + k) then ContinuousLinearMap.id ℂ H - A (n + k) else A (n + k)).comp
+      (operatorComplementProduct A θ (n + k)) = _
+    rw [hθ _ (by omega), hA _ (by omega), operatorComplementProduct_id_tail A θ n hA hθ k]
+    rfl
+
+end ResidualAverages
+
+/-! ### Square-summed coefficients of catalog combinations (blueprint line 1835) -/
+
+/-! ### Cell inputs as `L²` classes -/
+
+open scoped Classical in
+/-- The `L²` class of `1_I f` (zero if not square integrable). -/
+noncomputable def cellLp (G : RealDyadicGrid) (I : ℤ × ℤ) (f : ℝ → ℂ) :
+    Lp ℂ 2 (volume : Measure ℝ) :=
+  if h : MemLp ((dyadicGridCell G I.1 I.2).indicator f) 2 volume then h.toLp _ else 0
+
+namespace ActiveSetup
+variable {κ : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ c₀)
+
+/-- The groups of the attempt: a color with its complete color data. -/
+abbrev Grp := ℕ × (Option (Fin A.cd0 × A.Vtx × ℤ) × ℕ × (ℕ × ℕ) × Option (Fin A.cd0 × A.Vtx × ℤ))
+
+/-- The parameters of an attempt: the edge threshold, the pad bound, the delays, the number of
+pads, the number of colors, the search depth, the initial upper guard, the label capacity, the
+history bound and the slot inputs on the cells. -/
+structure AttemptParams where
+  /-- Rational-height budget for the curvature-graph edges. -/
+  Hed : ℝ
+  /-- Maximum graph radius used by the attempt's tag masks. -/
+  Hmax : ℕ
+  /-- Primary coloring choices for each round and chart label. -/
+  ωp : Fin A.cd0 → A.Vtx → Fin (A.cd0 + 1)
+  /-- High coloring choices for each round and chart label. -/
+  ωh : Fin A.cd0 → A.Vtx → Fin (A.cd0 + 1)
+  /-- Positive number of search steps allocated to each level. -/
+  P : ℕ
+  hP : 0 < P
+  /-- Base catalog rank for the attempt. -/
+  Lc : ℕ
+  /-- Fuel bounding the finite search tree. -/
+  fuel : ℕ
+  /-- Initial distinguished slot in the search attempt. -/
+  up₀ : Fin 4
+  /-- Number of column labels available to the catalog tests. -/
+  Mc : ℕ
+  /-- Maximum number of historical factors in a catalog test. -/
+  mH : ℕ
+  /-- Input tuple supplied to the attempt at each cell. -/
+  z : ℤ × ℤ → Fin 4 → ℝ → ℂ
+
+namespace AttemptParams
+variable {A} (ap : A.AttemptParams)
+
+/-- The inner history of a positive chain (outermost first) after removing its `k` outermost
+layers, as positive layers, innermost first. -/
+def chainHist (ch : List ℕ) (k : ℕ) : List (ℕ × Bool) :=
+  ((ch.drop k).reverse).map fun m => (m, false)
+
+end AttemptParams
+
+end ActiveSetup
+
+/-! ### Sources of an attempt: templates and vertex charts -/
+
+theorem rationalHeight_slotCoeff_ratio (t l : Fin 4) :
+    rationalHeight ((slotCoeff t : ℚ) * (slotCoeff l : ℚ)⁻¹) ≤ 3 := by
+  fin_cases t <;> fin_cases l <;> norm_num [slotCoeff, rationalHeight]
+
+namespace ActiveSetup
+variable {κ : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ c₀)
+
+/-- The chart height bound of vertex charts. -/
+noncomputable def Hm : ℝ := max A.H padW
+
+theorem exp_two_le_Hm : Real.exp 2 ≤ A.Hm :=
+  le_trans (le_max_left _ _) (le_max_right _ _)
+
+theorem one_le_Hm : 1 ≤ A.Hm := le_trans (by linarith [Real.add_one_le_exp (2 : ℝ)]) A.exp_two_le_Hm
+
+/-- The common source height: vertex charts and the templates of their tags in any slot. -/
+noncomputable def Hsrc : ℝ := ((tagKρ : ℝ) ^ (2 * tagKρ) + 20) * A.Hm ^ 2
+
+theorem Hm_le_Hsrc : A.Hm ≤ A.Hsrc := by
+  have h1 := A.one_le_Hm
+  have : A.Hm ≤ A.Hm ^ 2 := le_self_pow₀ h1 (by norm_num)
+  unfold Hsrc
+  have h0 : (0 : ℝ) ≤ (tagKρ : ℝ) ^ (2 * tagKρ) := by positivity
+  nlinarith
+
+theorem exp_two_le_Hsrc : Real.exp 2 ≤ A.Hsrc := A.exp_two_le_Hm.trans A.Hm_le_Hsrc
+
+/-- The common source Gevrey order. -/
+noncomputable def csrc (_A : ActiveSetup κ c₀) : ℕ := max c₀ (2 * tagKρ)
+
+/-! ### Separation of the current groups (blueprint lines 1851-1853) -/
+
+/-- The constant of the declaration graph at the common source order. -/
+noncomputable def Dg : ℕ := Classical.choose (curvatureGraph κ (A.csrc + 1) (by omega))
+
+variable {A}
+
+end ActiveSetup
+
+/-! ### Counting catalog labels (blueprint lem:closure, lines 1828-1831) -/
+
+theorem length_filter_cons {α : Type*} (q : α → Bool) (d : α) (s : List α) :
+    ((d :: s).filter q).length = (s.filter q).length + if q d then 1 else 0 := by
+  rw [List.filter_cons]; split <;> simp_all
+
+end TrilinearHT.Auto
+
+end
+
+section
+
+namespace TrilinearHT.Auto
+open MeasureTheory Metric
+open scoped FourierTransform ComplexConjugate ENNReal
+
+namespace ActiveSetup
+variable {κ : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ c₀)
+
+/-! ### Short tag paths (blueprint lem:graph, line 1704, used at first match, line 1903) -/
+
+end ActiveSetup
+
+/-- Averaging matrix identifying each pair of folded coordinates. -/
+noncomputable def diagAvgR (d : ℕ) : Matrix (Fin (d + d)) (Fin (d + d)) ℝ :=
+  fun i j => if foldIdx d i = foldIdx d j then 1 / 2 else 0
+
+section CatalogTree
+variable (G : RealDyadicGrid) {Tg : Type*} (T : Finset (ℤ × ℤ)) (root : ℤ × ℤ)
+
+/-! ### Catalog projections as column-tree projections (blueprint lines 470-483, 1805-1809) -/
+
+variable {G T root}
+
+end CatalogTree
+
+namespace ColorSetup
+variable {V : Type*} [DecidableEq V] {K : ColorSetup V} {T : AdmTree V}
+
+/-! ### The attempt masks grow in depth (blueprint lines 1748, 1807) -/
+
+/-- Cumulative masks grow along descent (iterated `cumMask_par`). -/
+theorem cumMask_anc {Nv m h : ℕ} (hN : ∀ I, (T.X I).card ≤ Nv) {I₀ I : T.Cell}
+    (hA : T.Anc I₀ I) : K.cumMask T Nv m h I₀ ⊆ K.cumMask T Nv m h I := by
+  obtain ⟨n, rfl⟩ := hA
+  induction n generalizing I with
+  | zero => exact subset_rfl
+  | succ n ih =>
+    rw [Function.iterate_succ_apply']
+    exact (cumMask_par hN _).trans ih
+
+/-- Ball masks grow along descent: present lists grow, historical centers persist and the
+graph distances decrease with depth. -/
+theorem mask_anc {Nv : ℕ}
+    {G : ℕ × (Option (Fin K.d0 × V × ℤ) × ℕ × (ℕ × ℕ) × Option (Fin K.d0 × V × ℤ))} {h : ℕ}
+    {I₀ I : T.Cell} (hA : T.Anc I₀ I) : K.mask T Nv G h I₀ ⊆ K.mask T Nv G h I := by
+  rintro b ⟨hb, I₁, h₁, v₀, hv₀, hg, ρ, z, g, m, l, n, ρ', a, g₂, hc, hl, ⟨k, hk, hkb⟩, h2, h3⟩
+  have hle := T.anc_le hA
+  have hdk : K.dist.d (T.depth I) z b ≤ k := hk ▸ K.dist.anti hle.1 z b
+  obtain ⟨k', hk'⟩ : ∃ k' : ℕ, K.dist.d (T.depth I) z b = k' :=
+    ⟨_, (ENat.natCast_toNat (ne_top_of_le_ne_top (by simp) hdk)).symm⟩
+  have hkk : k' ≤ k := by rw [hk'] at hdk; exact_mod_cast hdk
+  refine ⟨hle.2.1 hb, I₁, T.anc_trans h₁ hA, v₀, hv₀, hg, ρ, z, g, m, l, n, ρ', a, g₂, hc, hl,
+    ⟨k', hk', ?_⟩, h2, h3⟩
+  have : (k' : ℤ) ≤ k := by exact_mod_cast hkk
+  linarith
+
+end ColorSetup
+
+section AugModes
+variable {V : Type*} [Fintype V] [DecidableEq V]
+
+omit [DecidableEq V] in
+/-- The squared norm of an `L²` column function is the integral of its pointwise squared norm. -/
+theorem columnL2_norm_sq_eq (G : ColumnL2 V) :
+    ‖G‖ ^ 2 = ∫ y, ‖(G : ℝ → ColumnHilbert V) y‖ ^ 2 := by
+  have h := L2.inner_def (𝕜 := ℂ) G G
+  have h1 : (‖G‖ ^ 2 : ℝ) = RCLike.re (inner ℂ G G) := by
+    rw [inner_self_eq_norm_sq_to_K]; norm_cast
+  rw [h1, h, ← integral_re (L2.integrable_inner G G)]
+  refine integral_congr_ae (Filter.Eventually.of_forall fun y => ?_)
+  simp only
+  rw [inner_self_eq_norm_sq_to_K]; norm_cast
+
+end AugModes
+
+namespace ActiveSetup
+variable {κ : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ c₀)
+
+/-- The same-slot separation of the declaration graph at the common source order. -/
+theorem Dg_same : ∀ (H τ : ℝ), Real.exp 2 ≤ H → 0 < τ → τ ≤ 1 →
+    ∀ (v w : ChartTag) (c : ℤ), c ≠ 0 →
+    ∀ (B : QuadraticChartData v.dim) (B' : QuadraticChartData w.dim),
+    QuadraticChartComplexity (A.csrc + 1) H B → QuadraticChartComplexity (A.csrc + 1) H B' →
+    IsBoundedQuadraticChart B → IsBoundedQuadraticChart B' →
+    B.horizontal = v.θ → B.matrix = (c : ℚ) • v.C → B.quadratic = c * v.lam →
+    B'.horizontal = w.θ → B'.matrix = (c : ℚ) • w.C → B'.quadratic = c * w.lam →
+    ∀ (a₀ r : ℝ), 0 < r →
+    ¬ tagEdge (Real.exp (A.Dg * (1 + Real.log H + Real.log τ⁻¹) ^ A.Dg)) r v w →
+    ‖∫ y, quadraticChartAtom B y * star (quadraticChartAtom B' y)
+      ∂(normalizedIntervalMeasure a₀ r)‖ ≤ τ :=
+  (Classical.choose_spec (curvatureGraph κ (A.csrc + 1) (by omega))).2.1
+
+end ActiveSetup
+
+namespace ActiveSetup
+
+namespace AttemptParams
+variable {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} (ap : A.AttemptParams)
+
+/-- The catalog depths of a family of endpoint occurrences. -/
+noncomputable def occDepths {ι V : Type*} [Fintype ι] [Fintype V]
+    (occ : ι → V → Finset (ℤ × ℤ)) : Finset ℤ :=
+  Finset.univ.biUnion fun G => Finset.univ.biUnion fun v => (occ G v).image Prod.fst
+
+end AttemptParams
+
+end ActiveSetup
+
+/-! ### Catalog range outputs as group outputs (blueprint lines 1782-1784, 2071) -/
+
+end TrilinearHT.Auto
+
+end
+
+section
+
+namespace TrilinearHT.Auto
+open MeasureTheory Metric
+open scoped FourierTransform ComplexConjugate ENNReal
+
+section DeepestAncestor
+variable (G : RealDyadicGrid) (S : Finset (ℤ × ℤ))
+
+/-! ### Masks inherited from the deepest active ancestor (blueprint lines 1879-1890) -/
+
+/-- Two cells containing a common cell are nested according to their depths. -/
+theorem dyadicGridCell_subset_of_common {c d d' : ℤ × ℤ}
+    (hd : dyadicGridCell G c.1 c.2 ⊆ dyadicGridCell G d.1 d.2)
+    (hd' : dyadicGridCell G c.1 c.2 ⊆ dyadicGridCell G d'.1 d'.2) (hle : d'.1 ≤ d.1) :
+    dyadicGridCell G d.1 d.2 ⊆ dyadicGridCell G d'.1 d'.2 := by
+  rcases dyadicGridCell_nested_or_disjoint_of_le G hle d'.2 d.2 with hdis | hs
+  · exfalso
+    have hy := dyadicGridCell_left_mem G c.1 c.2
+    exact Set.disjoint_left.mp hdis (hd' hy) (hd hy)
+  · exact hs
+
+end DeepestAncestor
+
+section CatalogDepthFamily
+variable {G : RealDyadicGrid} {S : Finset (ℤ × ℤ)} {R : ℤ × ℤ} {Nd : ℕ} {Tg : Type*} {Mc : ℕ}
+
+/-! ### Nested depth projections of a catalog on the complete tree (blueprint lines 1879-1890) -/
+
+end CatalogDepthFamily
+
+namespace ActiveSetup
+
+namespace AttemptParams
+variable {κ' : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ' c₀} (ap : A.AttemptParams)
+
+/-! ### Whole endpoint ranges for vectors of catalog ranges (blueprint lines 1777-1789) -/
+
+end AttemptParams
+
+end ActiveSetup
+
+section DepthBlocks
+variable {V : Type*} [Fintype V]
+
+/-- The family with the same tree and depth range and another inherited mask. -/
+def ColumnDepthFamily.withMask (Ψ : ColumnDepthFamily V) (A : InheritedColumnMask Ψ.D) :
+    ColumnDepthFamily V where
+  D := Ψ.D
+  A := A
+  N := Ψ.N
+  root_le := Ψ.root_le
+  complete := Ψ.complete
+
+end DepthBlocks
+
+section GlobalHistories
+variable {V F : Type*} [Fintype V] [NormedAddCommGroup F] [NormedSpace ℂ F]
+
+/-- The global averaged history at the depth `h`: the layers of averaged depth projections. -/
+noncomputable def globHist (Ψ : ColumnDepthFamily V) {P : ℕ}
+    (Am : ℕ → Fin P → InheritedColumnMask Ψ.D) (ls : List (ℕ × Bool)) (h : ℤ) :
+    ColumnL2 V →L[ℂ] ColumnL2 V :=
+  layerOp (fun m => opAvg fun p => (Ψ.withMask (Am m p)).proj h) ls
+
+end GlobalHistories
+
+/-! ### Catalog tests on fixed vector bases: the helper closure (lines 1815-1831) -/
+
+structure VTest (Tg : Type*) (Mc : ℕ) where
+  /-- Residual slot of the column-valued catalog test. -/
+  t : Fin 4
+  /-- Rank cutoff for the residual-slot column projection. -/
+  r : ℕ
+  /-- Tag mask of the residual-slot column projection. -/
+  M : Tg → Prop
+  /-- Number of historical high-slot projection factors. -/
+  m : ℕ
+  /-- Rank cutoff for each historical projection factor. -/
+  hr : ℕ → ℕ
+  /-- Tag mask for each historical projection factor. -/
+  hM : ℕ → Tg → Prop
+  /-- Boolean choices specifying the historical column-projection factors. -/
+  θ : ℕ → Bool
+  /-- Column L² input used by the column-valued catalog test. -/
+  base : ColumnL2 (Fin Mc)
+
+end TrilinearHT.Auto
+
+end
+
+section
+
+namespace TrilinearHT.Auto
+open MeasureTheory Metric
+open scoped FourierTransform ComplexConjugate ENNReal
+
+section BasicInputs
+variable {V W : Type*} [Fintype V] [Fintype W]
+
+/-! ### Basic projections as inputs of the attempt histories (blueprint lines 1805, 1859) -/
+
+open scoped Classical in
+/-- The physical embedding between augmented column spaces: keep the physical coordinate and
+drop all private coordinates. -/
+noncomputable def physEmbed (V W : Type*) [Fintype V] [Fintype W] :
+    ColumnL2 V →L[ℂ] ColumnL2 W :=
+  ContinuousLinearMap.compLpL 2 volume
+    ((ContinuousLinearMap.toSpanSingleton ℂ (EuclideanSpace.single (none : Option W) (1 : ℂ))).comp
+      (EuclideanSpace.proj (none : Option V)))
+
+open scoped Classical in
+theorem physEmbed_coeFn (x : ColumnL2 V) :
+    (physEmbed V W x : ℝ → ColumnHilbert W) =ᵐ[volume]
+      fun y => (x : ℝ → ColumnHilbert V) y none •
+        EuclideanSpace.single (none : Option W) (1 : ℂ) := by
+  change (ContinuousLinearMap.compLp _ x : ℝ → ColumnHilbert W) =ᵐ[volume] _
+  filter_upwards [ContinuousLinearMap.coeFn_compLp
+    ((ContinuousLinearMap.toSpanSingleton ℂ (EuclideanSpace.single (none : Option W) (1 : ℂ))).comp
+      (EuclideanSpace.proj (none : Option V))) x] with y hy
+  rw [hy]
+  rfl
+
+end BasicInputs
+
+section BasicInputs2
+variable {V W : Type*} [Fintype V] [Fintype W]
+
+/-- The depth ancestor of a cell below the root lies in the depth partition of its depth. -/
+theorem ColumnDepthFamily.anc_mem_partition (Ψ : ColumnDepthFamily V) {I : ℤ × ℤ}
+    (hI : dyadicGridCell Ψ.D.grid I.1 I.2 ⊆ dyadicGridCell Ψ.D.grid Ψ.D.root.1 Ψ.D.root.2)
+    (hroot : Ψ.D.root.1 ≤ I.1) : Ψ.anc I ∈ (Ψ.partition I.1).cells := by
+  have hd : Ψ.depth I.1 = min I.1 Ψ.N := by
+    unfold ColumnDepthFamily.depth
+    exact max_eq_right (le_min hroot Ψ.root_le)
+  refine (Ψ.mem_partition I.1 (Ψ.anc I)).mpr ⟨by rw [hd]; rfl, ?_⟩
+  have hsub := Ψ.cell_sub_anc I
+  have hle : Ψ.D.root.1 ≤ (Ψ.anc I).1 := le_min hroot Ψ.root_le
+  rcases dyadicGridCell_nested_or_disjoint_of_le Ψ.D.grid hle Ψ.D.root.2 (Ψ.anc I).2 with
+    hdis | hs
+  · exfalso
+    have hy := dyadicGridCell_left_mem Ψ.D.grid I.1 I.2
+    exact Set.disjoint_left.mp hdis (hI hy) (hsub hy)
+  · exact hs
+
+end BasicInputs2
+
+section ComplementExpansion
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
+
+/-- The composition of a chain of layers, outermost first. -/
+def chainOp (Cum : ℕ → E →L[ℂ] E) : List ℕ → E →L[ℂ] E
+  | [] => ContinuousLinearMap.id ℂ E
+  | m :: ch => (Cum m).comp (chainOp Cum ch)
+
+end ComplementExpansion
+
+section ResidualPass
+variable {Tg : Type*}
+
+/-- A residual `R` in slot `t` passes at level `β` against the pure sources whose tag satisfies
+`M` (the common shape of main and helper tests, blueprint eq:catalog-test with spectators). -/
+def ResidPass (G : RealDyadicGrid) {V : Type} [Fintype V] (I : ℤ × ℤ) (c₀ : ℕ) (H : ℝ)
+    (tagOf : Tg → ChartTag) (wI : ℝ × ℝ → ℂ) (t : Fin 4) (M : Tg → Prop)
+    (R : ColumnL2 V) (β : ℝ) : Prop :=
+  ∀ x, M x → ∀ {u a b : Fin 4}, u ≠ t → u ≠ a → u ≠ b → t ≠ a → t ≠ b → a ≠ b →
+    ∀ A : QuadraticChartData (tagOf x).dim, QuadraticChartComplexity c₀ H A →
+      A.horizontal = (tagOf x).θ → A.matrix = (slotCoeff u : ℚ) • (tagOf x).C →
+      A.quadratic = slotCoeff u * (tagOf x).lam →
+    ∀ z : Fin 4 → ℝ → ℂ, z u = quadraticChartAtom A →
+      z t = (fun y => (R : ℝ → ColumnHilbert V) y none) →
+      Measurable (z a) → Measurable (z b) →
+      eLpNorm (z a) 2 (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2)
+        (dyadicGridLength G I.1)) ≤ 1 →
+      eLpNorm (z b) 2 (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2)
+        (dyadicGridLength G I.1)) ≤ 1 →
+      ‖localProgressionForm (dyadicGridLength G I.1) wI z‖ ≤ β
+
+end ResidualPass
+
+end TrilinearHT.Auto
+
+end
+
+section
+
+namespace TrilinearHT.Auto
+open MeasureTheory Metric
+open scoped FourierTransform ComplexConjugate ENNReal
+
+/-- The admissible kernel of a cell at unit scale, in the coordinates `(x, s)`. -/
+noncomputable def unitKernel (a₀ r : ℝ) (w : ℝ × ℝ → ℂ) (p : ℝ × ℝ) : ℂ :=
+  w (a₀ + r / 2 + r * p.1, r * p.2)
+
+/-- Cauchy-Schwarz for finite sums in square-root form. -/
+theorem sum_mul_le_sqrt_mul_sqrt' {κ : Type*} (s : Finset κ) (f g : κ → ℝ) :
+    ∑ i ∈ s, f i * g i ≤ Real.sqrt (∑ i ∈ s, f i ^ 2) * Real.sqrt (∑ i ∈ s, g i ^ 2) := by
+  have h := Finset.sum_mul_sq_le_sq_mul_sq s f g
+  rw [← Real.sqrt_mul (Finset.sum_nonneg fun i _ => sq_nonneg _)]
+  calc ∑ i ∈ s, f i * g i ≤ |∑ i ∈ s, f i * g i| := le_abs_self _
+    _ = Real.sqrt ((∑ i ∈ s, f i * g i) ^ 2) := (Real.sqrt_sq_eq_abs _).symm
+    _ ≤ _ := Real.sqrt_le_sqrt h
+
+namespace ActiveSetup
+
+namespace AttemptParams
+variable {κ' : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ' c₀} (ap : A.AttemptParams)
+
+/-! ### Unsuccessful groups and certificates of current groups (blueprint lines 1741-1747) -/
+
+end AttemptParams
+
+end ActiveSetup
+
+section CellPass
+variable {Tg : Type*} {G : RealDyadicGrid} {V : Type} [Fintype V] {I : ℤ × ℤ}
+  {κ : LocalKernelClass}
+  {wI : ℝ × ℝ → ℂ}
+
+/-! ### Passing residuals at the cell-form level and their averages (lines 1810-1811) -/
+
+/-- A residual `R` in slot `t` passes at level `β` at the cell-form level: against every pure
+source whose tag lies in the mask, in another slot, and two spectators of normalized sizes
+`S_a, S_b`, the cell form is at most `β S_a S_b` (blueprint eq:catalog-test). -/
+def CellPass (hwI : IsAdmissibleLocalKernel κ (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)
+    wI) (c₀ : ℕ) (H : ℝ) (tagOf : Tg → ChartTag) (t : Fin 4) (M : Tg → Prop)
+    (R : ColumnL2 V) (β : ℝ) : Prop :=
+  ∀ x, M x → ∀ {u a b : Fin 4}, u ≠ t → u ≠ a → u ≠ b → t ≠ a → t ≠ b → a ≠ b →
+    ∀ A : QuadraticChartData (tagOf x).dim, QuadraticChartComplexity c₀ H A →
+      A.horizontal = (tagOf x).θ → A.matrix = (slotCoeff u : ℚ) • (tagOf x).C →
+      A.quadratic = slotCoeff u * (tagOf x).lam →
+    ∀ X : Fin 4 → ColumnL2 V,
+      (∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 → augPhys (X u) y = quadraticChartAtom A y) →
+      X t = R → ∀ {Sa Sb : ℝ}, 0 < Sa → 0 < Sb →
+      eLpNorm (augPhys (X a)) 2 (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2)
+        (dyadicGridLength G I.1)) ≤ ENNReal.ofReal Sa →
+      eLpNorm (augPhys (X b)) 2 (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2)
+        (dyadicGridLength G I.1)) ≤ ENNReal.ofReal Sb →
+      ‖cellForm (dyadicGridLength_pos G I.1) hwI V X‖ ≤ β * Sa * Sb
+
+variable (hwI : IsAdmissibleLocalKernel κ (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) wI)
+
+end CellPass
+
+section FarHelper
+variable {Tg : Type*}
+
+/-! ### Far bands: the helper band above the complement band (blueprint lines 2253-2254) -/
+
+end FarHelper
+
+/-! ### Averaged chain histories pass the chain tests (blueprint lines 1810-1811, 2254) -/
+
+/-- A positive chain (outermost first) is the layered product of its positive history. -/
+theorem layerOp_chainHist {E : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℂ E]
+    (C : ℕ → E →L[ℂ] E) : ∀ (ch : List ℕ) (k : ℕ),
+      layerOp C (ActiveSetup.AttemptParams.chainHist ch k) = chainOp C (ch.drop k)
+  | [], k => by simp [ActiveSetup.AttemptParams.chainHist, layerOp_nil, chainOp]
+  | m :: ch, 0 => by
+    have ih := layerOp_chainHist C ch 0
+    simp only [ActiveSetup.AttemptParams.chainHist, List.drop_zero] at ih ⊢
+    rw [List.reverse_cons, List.map_append, List.map_singleton, layerOp_append, ih]
+    rfl
+  | m :: ch, k + 1 => by
+    rw [show ActiveSetup.AttemptParams.chainHist (m :: ch) (k + 1) =
+      ActiveSetup.AttemptParams.chainHist ch k from rfl, List.drop_succ_cons]
+    exact layerOp_chainHist C ch k
+
+end TrilinearHT.Auto
+
+end
+
+section
+
+namespace TrilinearHT.Auto
+open MeasureTheory Metric
+open scoped FourierTransform ComplexConjugate ENNReal
+
+/-! ### The helper catalog of an attempt (blueprint lines 1812-1817, 2236-2238) -/
+
+end TrilinearHT.Auto
+
+end

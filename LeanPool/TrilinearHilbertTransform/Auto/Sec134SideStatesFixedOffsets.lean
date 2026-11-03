@@ -295,12 +295,18 @@ variable {κ' : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ' c₀} (ap : 
 parameters, the mode systems of the slots and groups, the pre-cells of the blocks and the frozen
 coefficients, and the slots carrying a basic `U` (whole sides). -/
 structure LeafSplit where
+  /-- Numerical height and block schedule for the leaf split. -/
   S : ModeSchedule
   hA : 6 ≤ S.A0
+  /-- Side-event and coherence parameters for the leaf split. -/
   SP : SideParams
+  /-- Frozen mode system in each slot and group. -/
   Ms : Fin 4 → A.Grp → ModeSystem A.G ap.Mc
+  /-- Pre-cells assigned to each slot, group and block start. -/
   cells : Fin 4 → A.Grp → ℤ → Finset (ℤ × ℤ)
+  /-- Frozen coefficient of each mode on a pre-cell at a block start. -/
   c : ∀ l G, ℤ → ℤ × ℤ → (Ms l G).Md → ℂ
+  /-- Predicate selecting slots that carry a whole basic L² side. -/
   usl : Fin 4 → Prop
 
 namespace LeafSplit

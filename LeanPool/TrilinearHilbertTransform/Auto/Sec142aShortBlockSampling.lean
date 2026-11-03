@@ -1215,7 +1215,7 @@ theorem interval_centers_progression {δ c : ℝ} (hδ : 0 < δ) (hc : c < 1 / 7
 /-! ### Mixed Hölder and the block factor (lem:shortblock, blueprint lines 2357-2369) -/
 
 /-- The progression coordinate on the fast factor pushes `P ⊗ Haar(T₀²)` to `P ⊗ Haar(T₀)`. -/
-theorem lintegral_fastCoord_prod {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [SFinite P]
+theorem lintegral_fastCoord_prod {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω)
     (j : ℤ) {g : Ω × FastCircle → ℝ≥0∞} (hg : Measurable g) :
     ∫⁻ q, g (q.1, fastCoord j q.2) ∂(P.prod (fastHaar.prod fastHaar)) =
       ∫⁻ z, g z ∂(P.prod fastHaar) := by
@@ -1672,21 +1672,29 @@ theorem lintegral_slotLift (δ : ℝ) (hδ : 0 < δ) (f : Fin 4 → ℝ → ℂ)
 normalization: finitely many summation cells with admissible kernels, the sampling scale `δ`,
 random inputs `z^σ` with deterministic sizes `Z_j`, the inputs supported in `[lo, hi]`. -/
 structure BlockData (κ : LocalKernelClass) (Ω : Type*) [MeasurableSpace Ω] where
+  /-- Dyadic grid supporting the short-block local forms. -/
   grid : RealDyadicGrid
+  /-- Finite collection of cells in the short block. -/
   cells : Finset (ℤ × ℤ)
+  /-- Admissible local kernel assigned to each short-block cell. -/
   kernel : ℤ × ℤ → ℝ × ℝ → ℂ
   admissible : ∀ I ∈ cells, IsAdmissibleLocalKernel κ (dyadicGridLeft grid I.1 I.2)
     (dyadicGridLength grid I.1) (kernel I)
+  /-- Positive smoothing scale small relative to each cell length and kernel margin. -/
   δ : ℝ
   δ_pos : 0 < δ
   δ_small : ∀ I ∈ cells, 8 * δ ≤ κ.margin * dyadicGridLength grid I.1
   δ_le_len : ∀ I ∈ cells, 8 * δ ≤ dyadicGridLength grid I.1
+  /-- Measurable parameter-dependent input tuple for the block forms. -/
   z : Fin 4 → Ω → ℝ → ℂ
   z_meas : ∀ j, Measurable (Function.uncurry (z j))
+  /-- Nonnegative measurable envelopes controlling the parameter-dependent inputs. -/
   Z : Fin 4 → ℝ → ℝ
   Z_meas : ∀ j, Measurable (Z j)
   Z_nonneg : ∀ j y, 0 ≤ Z j y
+  /-- Left endpoint of the common compact support interval for the inputs. -/
   lo : ℝ
+  /-- Right endpoint of the common compact support interval for the inputs. -/
   hi : ℝ
   z_supp : ∀ j σ y, y ∉ Set.Icc lo hi → z j σ y = 0
 
@@ -1950,9 +1958,13 @@ summation cells in the `K` consecutive depths starting at `first`, and leaves in
 depth below; the leaves are disjoint cells inside the root covering it, and an internal cell
 meeting a leaf is strictly coarser. -/
 structure ShortBlockTree (G : RealDyadicGrid) (K : ℕ) where
+  /-- Root cell of the short-block tree. -/
   root : ℤ × ℤ
+  /-- First integer depth in the short block. -/
   first : ℤ
+  /-- Internal cells at which the short-block expansion continues. -/
   internal : Finset (ℤ × ℤ)
+  /-- Leaf cells at which the short-block expansion stops. -/
   leaves : Finset (ℤ × ℤ)
   internal_depth : ∀ I ∈ internal, first ≤ I.1 ∧ I.1 < first + K
   leaf_depth : ∀ L ∈ leaves, first ≤ L.1 ∧ L.1 ≤ first + K
@@ -1970,6 +1982,7 @@ variable {G : RealDyadicGrid} {K : ℕ} (T : ShortBlockTree G K)
 /-- Left endpoints and lengths of cells. -/
 noncomputable def cl (G : RealDyadicGrid) (c : ℤ × ℤ) : ℝ := dyadicGridLeft G c.1 c.2
 
+/-- Length of the dyadic cell indexed by `c`. -/
 noncomputable def cr (G : RealDyadicGrid) (c : ℤ × ℤ) : ℝ := dyadicGridLength G c.1
 
 theorem leafInterval_eq (c : ℤ × ℤ) :

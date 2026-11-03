@@ -305,10 +305,12 @@ theorem diagonalCubeIntegrand_translate {G : Type*} [AddCommGroup G] (j : ℕ)
 
 /-! Coordinate reflection for the Haar cube Cauchy–Schwarz inequality. -/
 
+/-- Restrict a cube-indexed family to the face with coordinate `i` fixed to `b`. -/
 def cubeFace {j : ℕ} {E : Type*} (i : Fin (j + 1)) (b : Bool)
     (f : (Fin (j + 1) → Bool) → E) : (Fin j → Bool) → E :=
   fun ω => f (Fin.insertNth i b ω)
 
+/-- Copy the face with coordinate `i` fixed to `b` onto the full cube. -/
 def cubeCopy {j : ℕ} {E : Type*} (i : Fin j) (b : Bool)
     (f : (Fin j → Bool) → E) : (Fin j → Bool) → E :=
   fun ω => f (Function.update ω i b)
@@ -579,6 +581,7 @@ theorem cubeAverage_three_cs {G : Type*} [AddCommGroup G] [MeasurableSpace G]
 theorem cubeConj_add (n : ℕ) (a b : ℂ) : cubeConj n (a + b) = cubeConj n a + cubeConj n b := by
   by_cases h : Even n <;> simp [cubeConj, h]
 
+/-- Choose either `f` or `g` independently at each cube vertex. -/
 def cubeChoice {G : Type*} {j : ℕ} (f g : G → ℂ)
     (σ : (Fin j → Bool) → Bool) : (Fin j → Bool) → G → ℂ :=
   fun ω => if σ ω then f else g
@@ -747,6 +750,7 @@ theorem gowersNorm_three_const_mul {G : Type*} [AddCommGroup G] [MeasurableSpace
 
 /-! Independent tetrahedral vertex coordinates for the cube `L²` estimate. -/
 
+/-- Measurable change from a base point and increments to independent vertex coordinates. -/
 def tetrahedronShear {G : Type*} [AddCommGroup G] [MeasurableSpace G]
     [MeasurableAdd₂ G] [MeasurableNeg G] (j : ℕ) :
     (G × (Fin j → G)) ≃ᵐ (G × (Fin j → G)) where
@@ -787,6 +791,7 @@ theorem integral_tetrahedron_product {G : Type*} [AddCommGroup G] [MeasurableSpa
   rw [hs, integral_prod_mul f (fun h : Fin j → G => ∏ i, g i (h i)),
     integral_fintype_prod_eq_prod]
 
+/-- Measure-coordinate involution exchanging opposite cube vertices. -/
 def cubeOpposite {G : Type*} [AddCommGroup G] [MeasurableSpace G]
     [MeasurableAdd₂ G] [MeasurableNeg G] (j : ℕ) :
     (G × (Fin j → G)) ≃ᵐ (G × (Fin j → G)) where
@@ -838,9 +843,11 @@ theorem integral_opposite_tetrahedron_product {G : Type*} [AddCommGroup G]
     ∏ i, g i (p.1 + (∑ k, p.2 k) + -p.2 i) ∂μ.prod (Measure.pi (fun _ => μ))) = _ at hs
   simpa only [← sub_eq_add_neg, integral_tetrahedron_product] using hs
 
+/-- The cube vertex with only coordinate `i` set to true. -/
 def cubeUnitVertex (i : Fin 3) : Fin 3 → Bool :=
   ![![true, false, false], ![false, true, false], ![false, false, true]] i
 
+/-- The cube vertex with only coordinate `i` set to false. -/
 def cubeCoUnitVertex (i : Fin 3) : Fin 3 → Bool :=
   ![![false, true, true], ![true, false, true], ![true, true, false]] i
 
@@ -924,6 +931,7 @@ theorem cubeIntegrand_three_integrable {G : Type*} [AddCommGroup G] [MeasurableS
   simp only [cubeIntegrand, norm_prod, norm_cubeConj]
   exact le_of_eq (cube_vertex_product_three (fun ω x => ‖f ω x‖) p.2 p.1)
 
+/-- Square root of the integral of the squared norm with respect to `μ`. -/
 noncomputable def haarL2Norm {G : Type*} [MeasurableSpace G] (μ : Measure G) (f : G → ℂ) : ℝ :=
   Real.sqrt (∫ x, ‖f x‖ ^ 2 ∂μ)
 
@@ -1112,12 +1120,13 @@ theorem cubeAverage_three_update_add {G : Type*} [AddCommGroup G] [MeasurableSpa
   exact integral_add (hi g hg hgl) (hi k hk hkl)
 
 theorem cubeAverage_three_update_smul {G : Type*} [AddCommGroup G] [MeasurableSpace G]
-    [MeasurableAdd₂ G] (μ : Measure G) (f : (Fin 3 → Bool) → G → ℂ)
+     (μ : Measure G) (f : (Fin 3 → Bool) → G → ℂ)
     (ω : Fin 3 → Bool) (r : ℝ) (g : G → ℂ) :
     cubeAverage μ 3 (Function.update f ω (r • g)) =
       r • cubeAverage μ 3 (Function.update f ω g) := by
   simp only [cubeAverage, cubeIntegrand_update_smul, integral_smul]
 
+/-- Cube average computed from the chosen representatives of eight L² classes. -/
 noncomputable def l2CubeAverage {G : Type*} [AddCommGroup G] [MeasurableSpace G]
     (μ : Measure G) (f : (Fin 3 → Bool) → Lp ℂ 2 μ) : ℂ :=
   cubeAverage μ 3 (fun ω => l2Representative μ (f ω))
@@ -1197,11 +1206,12 @@ instance finiteHaar_isProbabilityMeasure (G : Type*) [Fintype G] [Nonempty G]
   exact ENNReal.inv_mul_cancel (by positivity) (by simp)
 
 instance finiteHaar_isAddLeftInvariant (G : Type*) [AddGroup G] [Fintype G]
-    [MeasurableSpace G] [MeasurableSingletonClass G] [MeasurableAdd G] :
+    [MeasurableSpace G] [MeasurableAdd G] :
     (finiteHaar G).IsAddLeftInvariant := by
   unfold finiteHaar
   infer_instance
 
+/-- Normalized cell average on the first `L` cells of the cyclic group, extended by zero. -/
 noncomputable def cyclicCellAverage (L : ℕ) (g : ℝ → ℂ) (j : ZMod (16 * L + 1)) : ℂ :=
   if j.val < L then (L : ℂ) *
     ∫ x in (j.val : ℝ) / L..((j.val : ℝ) + 1) / L, g x else 0
@@ -1259,6 +1269,7 @@ theorem integer_cube_vertex_bounds {d : ℕ} {L x : ℤ} (hL : 0 ≤ L)
   simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul] at hlo hhi
   constructor <;> nlinarith
 
+/-- Integer lift of the increment from `x` to `x + h i` in the cyclic group. -/
 def cyclicCubeIntegerIncrement {L d : ℕ} (x : ZMod (16 * L + 1))
     (h : Fin d → ZMod (16 * L + 1)) (i : Fin d) : ℤ :=
   ((x + h i).val : ℤ) - (x.val : ℤ)
@@ -1319,7 +1330,7 @@ theorem cyclic_cube_supported_vertex_iff {L : ℕ} (x : ZMod (16 * L + 1))
       exact hvL
     exact_mod_cast hj
 
-noncomputable section CubeLatticeSampling
+section CubeLatticeSampling
 open Set
 variable {d : ℕ} {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
@@ -1332,10 +1343,11 @@ Copyright 2026 Joris Roos; original author Claude; Apache-2.0.
 It supplies the Banach-valued Riemann-sum step in blueprint lines 1187-1189. -/
 
 /-- The lattice point `x_h = h ⌊x/h⌋` (coordinatewise) for the mesh `h = 1/N` (node A04). -/
-def latticeFloor (N : ℕ) (x : Fin d → ℝ) : Fin d → ℝ := fun i => (⌊(N : ℝ) * x i⌋ : ℝ) / N
+noncomputable def latticeFloor (N : ℕ) (x : Fin d → ℝ) : Fin d → ℝ :=
+  fun i => (⌊(N : ℝ) * x i⌋ : ℝ) / N
 
 /-- The half-open lattice cube `hk + [0,h)^d` with `h = 1/N` (node A04). -/
-def latticeCube (N : ℕ) (k : Fin d → ℤ) : Set (Fin d → ℝ) :=
+noncomputable def latticeCube (N : ℕ) (k : Fin d → ℤ) : Set (Fin d → ℝ) :=
   Set.pi Set.univ fun i => Set.Ico ((k i : ℝ) / N) (((k i : ℝ) + 1) / N)
 
 lemma mem_latticeCube {N : ℕ} (hN : 0 < N) {k : Fin d → ℤ} {x : Fin d → ℝ} :
@@ -1516,7 +1528,7 @@ theorem finiteHaar_pi {I G : Type*} [Fintype I] [DecidableEq I] [Fintype G] [Non
   intro f
   rw [Measure.pi_singleton]
   simp [finiteHaar, ← ENNReal.inv_pow]
-
+/-- Diagonal cube integrand expressed in four independent real coordinates. -/
 noncomputable def realCubeKernel (g : ℝ → ℂ) (z : Fin 4 → ℝ) : ℂ :=
   diagonalCubeIntegrand 3 g (fun i => z i.succ) (z 0)
 
@@ -1589,7 +1601,7 @@ theorem cubeAverage_finiteHaar_eq_expect {G : Type*} [AddCommGroup G] [Fintype G
     cubeAverage (finiteHaar G) j f =
       𝔼 h : Fin j → G, 𝔼 x, cubeIntegrand f h x := by
   simp only [cubeAverage, finiteHaar_pi, integral_finiteHaar_expect]
-
+/-- Lift a cyclic base point and three increments to four integer coordinates. -/
 def cyclicCubeIntegerLift {L : ℕ}
     (p : ZMod (16 * L + 1) × (Fin 3 → ZMod (16 * L + 1))) : Fin 4 → ℤ :=
   Fin.cons (p.1.val : ℤ) (cyclicCubeIntegerIncrement p.1 p.2)
@@ -2307,7 +2319,7 @@ theorem integral_finiteHaar_real_expect {G : Type*} [Fintype G] [MeasurableSpace
     (∫ x, f x ∂finiteHaar G) = 𝔼 x, f x := by
   rw [finiteHaar, integral_smul_measure, integral_count, Fintype.expect_eq_sum_div_card]
   simp [ENNReal.toReal_inv, smul_eq_mul, div_eq_mul_inv, mul_comm]
-
+/-- Radial projection of a complex number onto the closed unit disk. -/
 noncomputable def unitDiskProjection (z : ℂ) : ℂ :=
   (max 1 ‖z‖)⁻¹ • z
 

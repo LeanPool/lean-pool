@@ -870,6 +870,7 @@ def graphEnergyTriples {G F : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G
   Finset.univ.filter (fun p => p.1 ∈ H ∧ p.1 + p.2.1 ∈ H ∧ p.2.2 ∈ H ∧
     p.2.2 + p.2.1 ∈ H ∧ ξ p.1 - ξ (p.1 + p.2.1) - ξ p.2.2 + ξ (p.2.2 + p.2.1) = 0)
 
+/-- Four graph points forming the additive-energy parallelogram parametrized by `p`. -/
 def graphEnergyQuad {G F : Type*} [AddCommGroup G] (ξ : G → F) (p : G × G × G) :
     ((G × F) × (G × F)) × (G × F) × (G × F) :=
   (((p.1, ξ p.1), (p.1 + p.2.1, ξ (p.1 + p.2.1))),
@@ -1416,7 +1417,7 @@ theorem local_graph_frequency_lift {G F : Type*} [AddCommGroup G] [DecidableEq G
 
 /-- In odd cyclic groups the unique graph frequency lift can be halved,
 retaining Freiman order two, local additivity, and all original graph differences. -/
-theorem cyclic_local_frequency_map {q : ℕ} [NeZero q] (hq : Odd q)
+theorem cyclic_local_frequency_map {q : ℕ} (hq : Odd q)
     (H : Finset (ZMod q)) (hH : H.Nonempty) (ξ : ZMod q → ZMod q)
     (B : Finset (ZMod q)) (hBzero : 0 ∈ B) (hB : B ⊆ 2 • H - 2 • H)
     (hgraph : Set.InjOn Prod.fst
@@ -2013,6 +2014,7 @@ theorem derivative_graph_small_difference {q : ℕ} [NeZero q]
 
 /-! ### Quantitative locally additive derivative frequency -/
 
+/-- Explicit universal loss in the local derivative-frequency estimate. -/
 noncomputable def localFrequencyDensityCost : ℝ := 10 ^ 14 * 65536 * (10 ^ 50) ^ 136
 
 /-- Blueprint `lem:local-frequency`, lines 865-893, with explicit universal constants. -/

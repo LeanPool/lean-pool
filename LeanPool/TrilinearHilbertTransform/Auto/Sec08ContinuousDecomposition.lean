@@ -258,6 +258,7 @@ theorem floor_cutoff_correlation_error {L : ℕ} (hL : 0 < L)
           linarith only [(hunit x).1])
     _ ≤ _ := endpoint_cutoff_integral_error η hη hunit hε hεh hone
 
+/-- Pull an interval function back to `[0,1)` and extend it by zero. -/
 noncomputable def normalizeIntervalFunction (a b : ℝ) (f : ℝ → ℂ) : ℝ → ℂ :=
   (Set.Ico (0 : ℝ) 1).indicator (fun x => f (a + (b - a) * x))
 
@@ -312,6 +313,7 @@ variable {G : Type*} [AddCommGroup G] [MeasurableSpace G]
   [MeasurableAdd₂ G] [MeasurableNeg G] (μ : Measure G) [IsProbabilityMeasure μ]
   [μ.IsAddLeftInvariant] [μ.IsNegInvariant]
 
+/-- Third Gowers norm on L² obtained from the continuous eight-vertex cube form. -/
 noncomputable def l2GowersThreeNorm (f : Lp ℂ 2 μ) : ℝ :=
   (l2CubeContinuous μ (fun _ => f)).re ^ ((8 : ℝ)⁻¹)
 
@@ -370,6 +372,7 @@ theorem l2GowersThreeNorm_smul (c : ℂ) (f : Lp ℂ 2 μ) :
       l2GowersThreeNorm_toLp μ a ha hal]
     exact gowersNorm_three_const_mul μ c a ha hM
 
+/-- The third Gowers norm packaged as a complex seminorm on L². -/
 noncomputable def l2GowersThreeSeminorm : Seminorm ℂ (Lp ℂ 2 μ) :=
   Seminorm.of (l2GowersThreeNorm μ) (l2GowersThreeNorm_add_le μ) (l2GowersThreeNorm_smul μ)
 
@@ -377,11 +380,13 @@ end L2GowersSeminorm
 
 /-! The interval-to-torus L² realization used by `lem:inverse`, line 1218. -/
 
+/-- Lebesgue measure restricted to the half-open unit interval. -/
 noncomputable def unitIntervalMeasure : Measure ℝ := volume.restrict (Set.Ico (0 : ℝ) 1)
 
 instance unitIntervalMeasure_probability : IsProbabilityMeasure unitIntervalMeasure where
   measure_univ := by simp [unitIntervalMeasure]
 
+/-- Chosen representative of a unit-interval L² class extended by zero. -/
 noncomputable def unitIntervalL2Extension (f : Lp ℂ 2 unitIntervalMeasure) : ℝ → ℂ :=
   (Set.Ico (0 : ℝ) 1).indicator (l2Representative unitIntervalMeasure f)
 
@@ -408,6 +413,7 @@ theorem unitIntervalL2Circle_memLp (f : Lp ℂ 2 unitIntervalMeasure) :
   ((unitIntervalL2Extension_memLp f).restrict
     (s := Set.Ioc (-8 : ℝ) (-8 + 16))).memLp_liftIoc.haarAddCircle
 
+/-- Embed a unit-interval L² class in the circle of length sixteen. -/
 noncomputable def unitIntervalL2Circle (f : Lp ℂ 2 unitIntervalMeasure) :
     Lp ℂ 2 (AddCircle.haarAddCircle : Measure (AddCircle (16 : ℝ))) :=
   (unitIntervalL2Circle_memLp f).toLp
@@ -456,6 +462,7 @@ theorem unitIntervalL2Circle_smul (c : ℂ) (f : Lp ℂ 2 unitIntervalMeasure) :
   have hh := circle_lift_ae_congr (unitIntervalL2Extension_smul c f)
   exact hh
 
+/-- Linear embedding of unit-interval L² classes into the circle L² space. -/
 noncomputable def unitIntervalL2CircleLinear :
     Lp ℂ 2 unitIntervalMeasure →ₗ[ℂ]
       Lp ℂ 2 (AddCircle.haarAddCircle : Measure (AddCircle (16 : ℝ))) where
@@ -500,6 +507,7 @@ theorem unitIntervalL2Circle_norm_le (f : Lp ℂ 2 unitIntervalMeasure) :
   have hs := unitIntervalL2Circle_norm_sq f
   nlinarith only [hs, norm_nonneg (unitIntervalL2Circle f), norm_nonneg f, sq_nonneg ‖f‖]
 
+/-- Gowers seminorm on the unit interval induced by its circle embedding. -/
 noncomputable def unitIntervalGowersSeminorm : Seminorm ℂ (Lp ℂ 2 unitIntervalMeasure) :=
   (l2GowersThreeSeminorm (AddCircle.haarAddCircle : Measure (AddCircle (16 : ℝ)))).comp
     unitIntervalL2CircleLinear
@@ -546,6 +554,7 @@ theorem l2_bounded_measurable_representative {X : Type*} [MeasurableSpace X]
     rw [Set.indicator_of_mem hxs]
     exact hx
 
+/-- Probability measure obtained by the affine image of the unit interval. -/
 noncomputable def intervalProbabilityMeasure (a b : ℝ) : Measure ℝ :=
   Measure.map (fun y => a + (b - a) * y) unitIntervalMeasure
 
@@ -560,11 +569,13 @@ instance intervalProbabilityMeasure_probability (a b : ℝ) :
     rw [intervalProbabilityMeasure, Measure.map_apply (by fun_prop) MeasurableSet.univ]
     simp
 
+/-- Isometric L² pullback along the affine parametrization of an interval. -/
 noncomputable def intervalL2Pullback (a b : ℝ) :
     Lp ℂ 2 (intervalProbabilityMeasure a b) →ₗᵢ[ℂ] Lp ℂ 2 unitIntervalMeasure :=
   Lp.compMeasurePreservingₗᵢ ℂ (fun y => a + (b - a) * y)
     (intervalAffine_measurePreserving a b)
 
+/-- Interval Gowers seminorm obtained by affine pullback to the unit interval. -/
 noncomputable def intervalL2GowersSeminorm (a b : ℝ) :
     Seminorm ℂ (Lp ℂ 2 (intervalProbabilityMeasure a b)) :=
   unitIntervalGowersSeminorm.comp (intervalL2Pullback a b).toLinearMap
@@ -677,6 +688,7 @@ theorem inverse_half_parameter_budget (C : ℕ) :
     _ ≤ (D : ℝ) * B ^ D :=
       mul_le_mul hcoef (pow_le_pow_right₀ hB hCD) (by positivity) (by positivity)
 
+/-- Chart with its scalar quadratic and linear coefficients replaced by fractional parts. -/
 noncomputable def fractionalPhaseQuadraticChart {d : ℕ} (A : QuadraticChartData d) :
     QuadraticChartData d :=
   { A with quadratic := Int.fract A.quadratic, linear := Int.fract A.linear }
@@ -733,6 +745,7 @@ theorem chart_horizontal_integer_reduction {d : ℕ} {H : ℝ} (hH : 0 ≤ H)
     push_cast
     ring
 
+/-- Chart after separating an integer part from its horizontal direction. -/
 noncomputable def integerHorizontalQuadraticChart {d : ℕ} (A : QuadraticChartData d)
     (m : Fin d → ℤ) (a : Fin d → ℝ) : QuadraticChartData d :=
   { A with
@@ -842,12 +855,15 @@ theorem quadraticChart_reduce_integer_parameters {d c₀ : ℕ} {H : ℝ}
   exact (fractionalPhaseQuadraticChart_atom_int _ n).trans
     (integerHorizontalQuadraticChart_atom_int A m a hoff hint n)
 
+/-- Phase increment controlling the extra coordinate in floor interpolation. -/
 noncomputable def floorChartAlpha {d : ℕ} (A : QuadraticChartData d) : ℝ :=
   2 * A.quadratic + chartMatrixPhase A.matrix A.horizontal A.horizontal
 
+/-- Two-coordinate rational matrix encoding the floor-interpolation cross term. -/
 def floorChartTailMatrix : Matrix (Fin 2) (Fin 2) ℚ :=
   fun i j => if i = 1 ∧ j = 0 then -1 else 0
 
+/-- Amplitude on the original coordinates and two added floor-interpolation coordinates. -/
 noncomputable def floorChartAmplitude {d : ℕ} (A : QuadraticChartData d)
     (η ρ : ℝ → ℂ) (z : Fin (d + 2) → ℝ) : ℂ :=
   let w := fun i : Fin d => z (Fin.castAdd 2 i)
@@ -921,6 +937,7 @@ theorem floorChartAmplitude_compact {d : ℕ} (A : QuadraticChartData d)
     · change |z (Fin.natAdd d (1 : Fin 2))| ≤ _
       linarith only [hrabs, hH, norm_nonneg A.horizontal]
 
+/-- Smooth chart realizing the floor-interpolated original atom in two extra dimensions. -/
 noncomputable def floorInterpolatedChart {d : ℕ} (A : QuadraticChartData d)
     (η ρ : ℝ → ℂ) (hηsm : ContDiff ℝ (⊤ : ℕ∞) η) (hρsm : ContDiff ℝ (⊤ : ℕ∞) ρ)
     (hη : ∀ x, η x ≠ 0 → x ∈ Set.Ioo (0 : ℝ) 1)
@@ -1255,6 +1272,7 @@ theorem four_factor_gevrey_budget {T : ℝ} (hT : 4 ≤ T) (a m : ℕ) (ha : 1 �
       · positivity
       · positivity
 
+/-- Continuous linear shear removing the added translation coordinate from the chart coordinates. -/
 noncomputable def floorChartShear {d : ℕ} (A : QuadraticChartData d) :
     (Fin (d + 2) → ℝ) →L[ℝ] (Fin d → ℝ) :=
   ContinuousLinearMap.pi fun i =>
@@ -1304,6 +1322,7 @@ theorem chart_cutoff_linear_geometric {d D c₀ : ℕ} {H T : ℝ}
       congr 1
       ring
 
+/-- Continuous linear contribution to the floor-interpolation phase. -/
 noncomputable def floorChartPhaseLinear {d : ℕ} (A : QuadraticChartData d) :
     (Fin (d + 2) → ℝ) →L[ℝ] ℝ :=
   -(chartMatrixLeftLinear A.matrix A.horizontal).comp
@@ -1311,6 +1330,7 @@ noncomputable def floorChartPhaseLinear {d : ℕ} (A : QuadraticChartData d) :
     (A.quadratic + chartMatrixPhase A.matrix A.horizontal A.horizontal) •
       ContinuousLinearMap.proj (Fin.natAdd d (0 : Fin 2))
 
+/-- Remaining linear phase carried by the added translation coordinate. -/
 noncomputable def floorChartPhaseTail {d : ℕ} (A : QuadraticChartData d) :
     (Fin (d + 2) → ℝ) →L[ℝ] ℝ :=
   (-A.linear) • ContinuousLinearMap.proj (Fin.natAdd d (0 : Fin 2))
@@ -1827,6 +1847,7 @@ theorem quadraticChartAtom_measurable {d : ℕ} (A : QuadraticChartData d) :
   · fun_prop
   · exact Measurable.tsum (fun n => (hc n).measurable)
 
+/-- Quasipolynomial budget for the inverse-theorem atomic decomposition. -/
 noncomputable def inverseDecompositionBudget (C : ℕ) (t : ℝ) : ℝ :=
   2 * (Real.exp 2 + Real.exp ((C : ℝ) * (1 + Real.log (4 * t ^ 2)) ^ C))
 
@@ -1923,46 +1944,58 @@ theorem quasipolynomialBound_logPower {f g : ℝ → ℝ}
           mul_le_mul_of_nonneg_left (hg t ht) (by positivity)
         _ = _ := by rw [pow_add]; ring
 
+/-- Budget for the alternating component in a short-return splitting. -/
 noncomputable def shortReturnAlternatingBudget (t : ℝ) : ℝ :=
   2 * logarithmicSize t ^ 2 * t
 
+/-- Radius budget for the short-return body. -/
 noncomputable def shortReturnRadiusBudget (t : ℝ) : ℝ :=
   t + 100 * (t + shortReturnAlternatingBudget t + 1)
 
+/-- Gap between successive scales in the short-return construction. -/
 noncomputable def shortReturnGapBudget (t : ℝ) : ℝ :=
   16 * (100 * (logarithmicSize t + 1)) ^ (10 * (logarithmicSize t + 1))
 
+/-- Initial scale budget in the short-return construction. -/
 noncomputable def shortReturnInitialScaleBudget (t : ℝ) : ℝ :=
   100 + 100 * t * (logarithmicSize t + 4) * shortReturnRadiusBudget t
 
+/-- Largest scale used by the short-return construction. -/
 noncomputable def shortReturnScaleBudget (t : ℝ) : ℝ :=
   shortReturnInitialScaleBudget t *
     shortReturnGapBudget t ^ (logarithmicSize t + 1)
 
+/-- Row budget determined by the short-return scale. -/
 noncomputable def shortReturnRowBudget (t : ℝ) : ℝ :=
   2 + shortReturnScaleBudget t
 
+/-- Budget for the projections used in short-return splitting. -/
 noncomputable def shortReturnProjectionBudget (t : ℝ) : ℝ :=
   (2 * shortReturnRowBudget t) ^ (8 * (logarithmicSize t + 1) ^ (4 : ℕ))
 
+/-- Gram-matrix budget for the short-return rows. -/
 noncomputable def shortReturnGramBudget (t : ℝ) : ℝ :=
   2 + logarithmicSize t * shortReturnRowBudget t ^ 2
 
+/-- Budget for the slowly varying component of a short return. -/
 noncomputable def shortReturnSlowBudget (t : ℝ) : ℝ :=
   2 + (logarithmicSize t ^ 2 * shortReturnRowBudget t) *
     (logarithmicSize t ^ 2 *
       (2 * shortReturnGramBudget t) ^ (2 * (logarithmicSize t + 1) ^ (4 : ℕ)) *
         (3 * logarithmicSize t * t * shortReturnRowBudget t))
 
+/-- Inverse time-scale budget for the short-return phase estimates. -/
 noncomputable def shortReturnTimeInverseBudget (t : ℝ) : ℝ :=
   (1 + 4 * shortReturnScaleBudget t) ^ logarithmicSize t * shortReturnScaleBudget t
 
+/-- Budget for the quadratic phase remaining after short-return splitting. -/
 noncomputable def shortReturnQuadraticBudget (t : ℝ) : ℝ :=
   9 * (t + 3 * logarithmicSize t * shortReturnSlowBudget t *
     shortReturnAlternatingBudget t * shortReturnSlowBudget t +
       3 * logarithmicSize t * shortReturnSlowBudget t * shortReturnAlternatingBudget t) *
     shortReturnTimeInverseBudget t
 
+/-- Combined projection, slow-component and quadratic budgets for short-return splitting. -/
 noncomputable def shortReturnSplittingBudget (t : ℝ) : ℝ :=
   2 + shortReturnProjectionBudget t + shortReturnSlowBudget t + shortReturnQuadraticBudget t
 

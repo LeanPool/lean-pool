@@ -395,6 +395,7 @@ theorem mixedENorm_realLine_comp {Ω : Type*} [MeasurableSpace Ω]
   exact hmp.lintegral_comp_emb realLineEquiv.toHomeomorph.measurableEmbedding
     (fun x : ℝ => (∫⁻ ω, u (x, ω) ^ s ∂ν) ^ (p / s))
 
+/-- Hardy–Littlewood maximal function in the real coordinate of a mixed-space input. -/
 noncomputable def realMixedMaximal {Ω E : Type*} [NormedAddCommGroup E]
     (f : ℝ × Ω → E) (z : ℝ × Ω) : ℝ≥0∞ :=
   hlMaximal volume (fun y => f (y, z.2)) z.1

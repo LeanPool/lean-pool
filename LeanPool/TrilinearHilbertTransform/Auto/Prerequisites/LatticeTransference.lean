@@ -358,7 +358,7 @@ theorem basisTailSpan_isCompl {E : Type*} [AddCommGroup E] [Module ℝ E] {n : �
 /-- The tail-span complement is linearly equivalent to the perpendicular space
 by orthogonal projection. -/
 noncomputable def basisTailOrthogonalEquiv {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] {n : ℕ}
+    [InnerProductSpace ℝ E] {n : ℕ}
     (b : Module.Basis (Fin (n + 1)) ℝ E) :
     basisTailSpan b ≃ₗ[ℝ] (Submodule.span ℝ {b 0})ᗮ :=
   ((Submodule.span ℝ {b 0}).quotientEquivOfIsCompl (basisTailSpan b)
@@ -460,6 +460,7 @@ theorem latticeLiftEquiv_projection {E : Type*} [NormedAddCommGroup E]
     (((projectedTailBasis b).restrictScalars ℤ).sum_repr x)
   simpa only [Submodule.coe_sum, Submodule.coe_smul, Module.Basis.restrictScalars_apply] using h
 
+/-- Identify a distinguished first coordinate and the remaining coordinates with `Fin (n+1)`. -/
 def headTailIndex (n : ℕ) : Fin 1 ⊕ Fin n ≃ Fin (n + 1) :=
   finSumFinEquiv.trans (finCongr (Nat.add_comm 1 n))
 
@@ -723,6 +724,7 @@ def integerUpperShear {M : Type*} [AddCommGroup M] (f : M →ₗ[ℤ] ℤ) :
     (f : M →ₗ[ℤ] ℤ) (a : ℤ) (x : M) : integerUpperShear f (a, x) = (a - f x, x) := by
   simp [integerUpperShear, sub_eq_add_neg]
 
+/-- Integer lattice-lift equivalence after an integral upper shear. -/
 noncomputable def shiftedLatticeLiftEquiv {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] {n : ℕ}
     (b : Module.Basis (Fin (n + 1)) ℝ E)
@@ -774,6 +776,7 @@ noncomputable def gramCoefficient {E : Type*} [NormedAddCommGroup E]
   inner ℝ (InnerProductSpace.gramSchmidt ℝ f i) (f j) /
     ‖InnerProductSpace.gramSchmidt ℝ f i‖ ^ 2
 
+/-- A basis whose earlier Gram–Schmidt coefficients have absolute value at most one half. -/
 def IsSizeReducedBasis {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] {n : ℕ} (b : Module.Basis (Fin n) ℝ E) : Prop :=
   ∀ i j, i < j → |gramCoefficient b i j| ≤ 1 / 2
@@ -796,6 +799,7 @@ theorem gramCoefficient_succ_of_projection {E : Type*} [NormedAddCommGroup E]
   rw [gramSchmidt_succ_of_projection f P hP g hg i, Submodule.norm_coe,
     ← Submodule.inner_orthogonalProjectionOnto_eq_of_mem_left, hg]
 
+/-- Nearest integer coefficient used to reduce a lifted basis vector along the first vector. -/
 noncomputable def roundedLiftShift {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] {n : ℕ}
     (b : Module.Basis (Fin (n + 1)) ℝ E)
@@ -1894,7 +1898,7 @@ theorem symmetricConvexBody_exists_basis_mem {E : Type*} [NormedAddCommGroup E]
 /-- Blueprint `lem:transference`, line 309: a maximum-determinant basis has
 all its vectors in the body and all coordinates of body points bounded by one. -/
 theorem symmetricConvexBody_maxDetBasis {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] [FiniteDimensional ℝ E] {K : Set E}
+    [NormedSpace ℝ E] {K : Set E}
     (hK : IsSymmetricConvexBody K) {n : ℕ} (b : Module.Basis (Fin n) ℝ E) :
     ∃ c : Module.Basis (Fin n) ℝ E, (∀ i, c i ∈ K) ∧
       (∀ v : Fin n → E, (∀ i, v i ∈ K) → |b.det v| ≤ |b.det c|) ∧
