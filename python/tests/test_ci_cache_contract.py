@@ -750,5 +750,20 @@ def test_cold_main_push_restores_the_merged_queue_build() -> None:
     assert names.index("Restore the merge queue's full build") < names.index(
         "Build project"
     )
+    assert "needs.plan.outputs.queue_build == 'true'" in restore["if"]
+    assert "queue_build=true" in plan["run"]
+    assert jobs["plan"]["outputs"]["queue_build"]
+    fallback = steps[
+        names.index("Rebuild in shards when the queue build is unavailable")
+    ]
+    assert fallback["if"] == "steps.queue-full-build.outcome == 'failure'"
+    assert "-f force_full=true" in fallback["run"]
+    assert "exit 1" in fallback["run"]
+    assert names.index("Restore the merge queue's full build") < names.index(
+        "Rebuild in shards when the queue build is unavailable"
+    )
+    assert names.index(
+        "Rebuild in shards when the queue build is unavailable"
+    ) < names.index("Build project")
     overlay = steps[names.index("Reuse compiled projects from merged PRs")]
     assert "steps.queue-full-build.outcome != 'success'" in overlay["if"]

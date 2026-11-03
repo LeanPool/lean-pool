@@ -95,6 +95,7 @@ jobs:
       matrix: ${{ steps.plan.outputs.matrix }}
       reuse_run_id: ${{ steps.plan.outputs.reuse_run_id }}
       previous_head: ${{ steps.plan.outputs.previous_head }}
+      queue_build: ${{ steps.plan.outputs.queue_build }}
     steps:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -201,11 +202,14 @@ jobs:
                  python3 scripts/ci/plan-build-shards.py)
           # Main cannot read merge-queue caches, so after a toolchain bump it
           # would rebuild the whole pool again; restore the queue's build instead.
+          queue_build=false
           if [ "$EVENT_NAME" = push ] && [ "$cold" = true ] && [ "$FORCE_FULL" != true ] \
              && PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore-queue \
                   --repository "$REPOSITORY" --head "$GITHUB_SHA" --check; then
             plan='{"mode":"single","matrix":{"include":[{"shard":"00","projects":""}]}}'
+            queue_build=true
           fi
+          echo "queue_build=$queue_build" >> "$GITHUB_OUTPUT"
           reuse_run_id=""
           previous_head=""
           if [ "$EVENT_NAME" = "pull_request" ] && [ "$FORCE_FULL" != "true" ] && [ "$minimal_build" != true ]; then
@@ -310,13 +314,25 @@ jobs:
 
       - name: Restore the merge queue's full build
         id: queue-full-build
-        if: github.event_name == 'push' && steps.cache.outputs.cache-matched-key == ''
+        if: needs.plan.outputs.queue_build == 'true' && steps.cache.outputs.cache-matched-key == ''
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: >-
           PYTHONPATH=python python3 -m lean_pool.ci_artifacts restore-queue
           --head "$GITHUB_SHA"
+
+      # The planner gave up the sharded plan for this restore; one job cannot
+      # rebuild the whole pool in time, so hand off to a sharded full rebuild.
+      - name: Rebuild in shards when the queue build is unavailable
+        if: steps.queue-full-build.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run lean_action_ci.yml --repo "$GITHUB_REPOSITORY" \
+            --ref "$GITHUB_REF_NAME" -f force_full=true
+          echo "::error::Could not restore the merge queue's build; started a sharded full rebuild instead."
+          exit 1
 
       - name: Reuse compiled projects from merged PRs
         if: github.event_name == 'push' && steps.cache.outputs.cache-hit != 'true' && steps.queue-full-build.outcome != 'success'
