@@ -15,6 +15,11 @@ noncomputable section
 
 namespace QuantumParallelRepetition
 
+section
+
+-- Do not expand the context-selection branches during later elaboration.
+attribute [local irreducible] exactReverseBobContextAt exactReverseAliceContextAt
+
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 
@@ -119,58 +124,15 @@ theorem exactAliceQuestionFilter_complement_posSemidef
     (1 - exactAliceQuestionFilter
       G n S D seed history answer x).PosSemidef := by
   classical
-  let w : ExactFullQuestion X Y n → ℝ := fun q =>
-    if exactRevealCode D seed q = history ∧
-      q.1 seed.coordinate.val = x then
-      exactPriorQuestionWeight G n q /
-        exactAliceQuestionMass G n D seed history x
-    else 0
-  let E : ExactFullQuestion X Y n →
-      Matrix S.Alice S.Alice ℂ := fun q =>
-    conditionedAliceEffect G n S D answer q.1
-  have weights_nonnegative (q : ExactFullQuestion X Y n) :
-      0 ≤ w q := by
-    dsimp [w]
-    split
-    · exact div_nonneg
-        (exactPriorQuestionWeight_nonneg G n q)
-        (exactAliceQuestionMass_nonneg G n D seed history x)
-    · exact le_rfl
-  have weights_sum : (∑ q, w q) ≤ 1 := by
-    change
-      (∑ q : ExactFullQuestion X Y n,
-        if exactRevealCode D seed q = history ∧
-          q.1 seed.coordinate.val = x then
-          exactPriorQuestionWeight G n q /
-            exactAliceQuestionMass G n D seed history x
-        else 0) ≤ 1
-    rw [exactAliceQuestionConditionalWeight_sum
-      G n D seed history x]
+  unfold exactAliceQuestionFilter
+  apply posSemidef_conditional_sum_complement
+  · intro q
+    exact div_nonneg (exactPriorQuestionWeight_nonneg G n q)
+      (exactAliceQuestionMass_nonneg G n D seed history x)
+  · rw [exactAliceQuestionConditionalWeight_sum G n D seed history x]
     split <;> norm_num
-  have filter_eq :
-      exactAliceQuestionFilter
-          G n S D seed history answer x =
-        ∑ q, w q • E q := by
-    unfold exactAliceQuestionFilter
-    apply Finset.sum_congr rfl
-    intro q _
-    dsimp [w, E]
-    split <;> simp only [zero_smul]
-  have split :
-      1 - (∑ q, w q • E q) =
-        (1 - (∑ q, w q)) •
-            (1 : Matrix S.Alice S.Alice ℂ) +
-          ∑ q, w q • (1 - E q) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
-  rw [filter_eq, split]
-  apply Matrix.PosSemidef.add
-  · exact Matrix.PosSemidef.one.smul (sub_nonneg.mpr weights_sum)
-  · apply Matrix.posSemidef_sum Finset.univ
-    intro q _
-    exact (conditionedAliceEffect_complement_positive
-      G n S D answer q.1).smul (weights_nonnegative q)
+  · intro q
+    exact conditionedAliceEffect_complement_positive G n S D answer q.1
 
 theorem exactBobQuestionFilter_complement_posSemidef
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -182,58 +144,15 @@ theorem exactBobQuestionFilter_complement_posSemidef
     (1 - exactBobQuestionFilter
       G n S D seed history answer y).PosSemidef := by
   classical
-  let w : ExactFullQuestion X Y n → ℝ := fun q =>
-    if exactRevealCode D seed q = history ∧
-      q.2 seed.coordinate.val = y then
-      exactPriorQuestionWeight G n q /
-        exactBobQuestionMass G n D seed history y
-    else 0
-  let E : ExactFullQuestion X Y n →
-      Matrix S.Bob S.Bob ℂ := fun q =>
-    conditionedBobEffect G n S D answer q.2
-  have weights_nonnegative (q : ExactFullQuestion X Y n) :
-      0 ≤ w q := by
-    dsimp [w]
-    split
-    · exact div_nonneg
-        (exactPriorQuestionWeight_nonneg G n q)
-        (exactBobQuestionMass_nonneg G n D seed history y)
-    · exact le_rfl
-  have weights_sum : (∑ q, w q) ≤ 1 := by
-    change
-      (∑ q : ExactFullQuestion X Y n,
-        if exactRevealCode D seed q = history ∧
-          q.2 seed.coordinate.val = y then
-          exactPriorQuestionWeight G n q /
-            exactBobQuestionMass G n D seed history y
-        else 0) ≤ 1
-    rw [exactBobQuestionConditionalWeight_sum
-      G n D seed history y]
+  unfold exactBobQuestionFilter
+  apply posSemidef_conditional_sum_complement
+  · intro q
+    exact div_nonneg (exactPriorQuestionWeight_nonneg G n q)
+      (exactBobQuestionMass_nonneg G n D seed history y)
+  · rw [exactBobQuestionConditionalWeight_sum G n D seed history y]
     split <;> norm_num
-  have filter_eq :
-      exactBobQuestionFilter
-          G n S D seed history answer y =
-        ∑ q, w q • E q := by
-    unfold exactBobQuestionFilter
-    apply Finset.sum_congr rfl
-    intro q _
-    dsimp [w, E]
-    split <;> simp only [zero_smul]
-  have split :
-      1 - (∑ q, w q • E q) =
-        (1 - (∑ q, w q)) •
-            (1 : Matrix S.Bob S.Bob ℂ) +
-          ∑ q, w q • (1 - E q) := by
-    simp_rw [smul_sub]
-    rw [Finset.sum_sub_distrib, ← Finset.sum_smul]
-    module
-  rw [filter_eq, split]
-  apply Matrix.PosSemidef.add
-  · exact Matrix.PosSemidef.one.smul (sub_nonneg.mpr weights_sum)
-  · apply Matrix.posSemidef_sum Finset.univ
-    intro q _
-    exact (conditionedBobEffect_complement_positive
-      G n S D answer q.2).smul (weights_nonnegative q)
+  · intro q
+    exact conditionedBobEffect_complement_positive G n S D answer q.2
 
 theorem exactAliceMeanFilter_complement_posSemidef
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -7142,6 +7061,8 @@ theorem
   apply Finset.sum_congr rfl
   intro j _
   ring
+
+end
 
 end
 

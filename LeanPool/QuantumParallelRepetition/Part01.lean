@@ -1422,6 +1422,14 @@ theorem noncommutative_resolvent_second_order
     _ = RM - RM * (F - M) * RM +
       RM * (F - M) * RF * (F - M) * RM := by noncomm_ring
 
+private theorem commuting_weight_second_order {R : Type*} [Ring R]
+    (weight mean difference inverse : R) (commutes : weight * mean = mean * weight) :
+    weight * (mean - mean * difference * mean +
+        mean * difference * inverse * difference * mean) =
+      weight * mean - mean * (weight * difference) * mean +
+        mean * (weight * (difference * inverse * difference)) * mean := by
+  simp only [mul_add, mul_sub, ← mul_assoc, commutes]
+
 theorem noncommutative_weighted_resolvent_second_order
     {ι R : Type*} [Fintype ι] [Ring R]
     (weight : ι → R) (F : ι → R) (M S : R)
@@ -1442,22 +1450,8 @@ theorem noncommutative_weighted_resolvent_second_order
           RM * (weight i * ((F i - M) * RF i * (F i - M))) * RM := by
     nth_rewrite 1 [noncommutative_resolvent_second_order
       (F i) M S (RF i) RM (hF_left i) (hF_right i) hM_left hM_right]
-    have hw := commute_mean i
-    calc
-      weight i *
-        (RM - RM * (F i - M) * RM +
-          RM * (F i - M) * RF i * (F i - M) * RM) =
-        weight i * RM -
-          (weight i * RM) * (F i - M) * RM +
-          (weight i * RM) * ((F i - M) * RF i * (F i - M)) * RM := by
-            noncomm_ring
-      _ = weight i * RM -
-          (RM * weight i) * (F i - M) * RM +
-          (RM * weight i) * ((F i - M) * RF i * (F i - M)) * RM := by
-            rw [hw]
-      _ = weight i * RM - RM * (weight i * (F i - M)) * RM +
-          RM * (weight i * ((F i - M) * RF i * (F i - M))) * RM := by
-            noncomm_ring
+    exact commuting_weight_second_order (weight i) RM (F i - M) (RF i)
+      (commute_mean i)
   calc
     (∑ i : ι, weight i * RF i) - RM =
         (∑ i : ι,
@@ -1587,8 +1581,8 @@ theorem scalar_resolvent_purification_integral
       (∫ s in Ioi (0 : ℝ), (z / (z + s)) ^ 2) =
           (0 : ℝ) - (-(z ^ 2) / (z + 0)) := hftc
       _ = z := by
-        field_simp
-        ring
+        simp only [add_zero, zero_sub, neg_div, neg_neg, pow_two,
+          mul_div_cancel_right₀ _ hzpos.ne']
 
 end
 
@@ -3624,8 +3618,7 @@ theorem spectralPurificationFilter_mul_shift
   have hden (i : d) : eigenvalue i + s ≠ 0 :=
     ne_of_gt (add_pos_of_nonneg_of_pos (heigenvalue i) hs)
   have hFspec : F = e D := by
-    simpa [D, eigenvalue, e, Function.comp_def] using
-      hF.isHermitian.spectral_theorem
+    exact hF.isHermitian.spectral_theorem
   have hshift_inner :
       D + s • (1 : Matrix d d ℂ) =
         Matrix.diagonal fun i => ((eigenvalue i + s : ℝ) : ℂ) := by
@@ -3789,28 +3782,15 @@ theorem bochner_integral_posSemidef
     (hf : Integrable f μ)
     (hpos : ∀ᵐ t ∂μ, (f t).PosSemidef) :
     (∫ t, f t ∂μ).PosSemidef := by
-  have hadjoint :
-      star (∫ t, f t ∂μ) = ∫ t, star (f t) ∂μ := by
-    exact (ContinuousLinearMap.integral_comp_comm
-      matrixAdjointCLM hf).symm
-  have hadjoint_ae : (fun t => star (f t)) =ᵐ[μ] f := by
-    filter_upwards [hpos] with t ht
-    simpa only [Matrix.star_eq_conjTranspose] using ht.isHermitian.eq
-  have hhermitian : (∫ t, f t ∂μ).IsHermitian := by
-    change star (∫ t, f t ∂μ) = ∫ t, f t ∂μ
-    exact hadjoint.trans (integral_congr_ae hadjoint_ae)
-  apply Matrix.PosSemidef.of_dotProduct_mulVec_nonneg hhermitian
-  intro x
-  have hcomm :
-      (∫ t, matrixQuadraticCLM x (f t) ∂μ) =
-        matrixQuadraticCLM x (∫ t, f t ∂μ) :=
-    ContinuousLinearMap.integral_comp_comm
-      (matrixQuadraticCLM x) hf
-  change 0 ≤ matrixQuadraticCLM x (∫ t, f t ∂μ)
-  rw [← hcomm]
-  apply integral_nonneg_of_ae
-  filter_upwards [hpos] with t ht
-  exact ht.dotProduct_mulVec_nonneg x
+  apply Matrix.nonneg_iff_posSemidef.mp
+  simpa only [integral_zero] using
+    (@MeasureTheory.integral_mono_ae α (Matrix d d ℂ)
+      Matrix.normedAddCommGroup Matrix.normedSpace _ μ
+      Matrix.instPartialOrder inferInstance inferInstance
+      (by exact (inferInstance : ClosedIciTopology (Matrix d d ℂ)))
+      (fun _ : α => (0 : Matrix d d ℂ)) f
+      (MeasureTheory.integrable_zero α (Matrix d d ℂ) μ) hf
+      (hpos.mono fun t ht => ht.nonneg))
 
 end
 
@@ -3910,25 +3890,26 @@ theorem spectralPurificationFilter_sub_gram
           ((F + s • (1 : Matrix d d ℂ))⁻¹ *
             (F + s • (1 : Matrix d d ℂ))⁻¹) *
           (F - M) * (M + s • (1 : Matrix d d ℂ))⁻¹) := by
-  let RF : Matrix d d ℂ := (F + s • (1 : Matrix d d ℂ))⁻¹
-  let RM : Matrix d d ℂ := (M + s • (1 : Matrix d d ℂ))⁻¹
-  let D : Matrix d d ℂ := F - M
-  have hRF : star RF = RF := by
-    simpa only [Matrix.star_eq_conjTranspose] using
-      (shifted_posSemidef_matrix_inverse_posSemidef hF hs).isHermitian.eq
-  have hRM : star RM = RM := by
-    simpa only [Matrix.star_eq_conjTranspose] using
-      (shifted_posSemidef_matrix_inverse_posSemidef hM hs).isHermitian.eq
-  have hD : star D = D := by
-    simpa only [Matrix.star_eq_conjTranspose] using
-      (hF.isHermitian.sub hM.isHermitian).eq
-  rw [spectralPurificationFilter_sub_resolvent F M hF hM hs]
-  change star (s • (RF * D * RM)) * (s • (RF * D * RM)) =
-    s ^ 2 • (RM * D * (RF * RF) * D * RM)
-  simp only [star_smul, star_trivial, star_mul, hRF, hRM, hD,
-    smul_mul_assoc, mul_smul_comm, smul_smul, pow_two]
-  congr 1
-  noncomm_ring
+  with_reducible
+    let RF : Matrix d d ℂ := (F + s • (1 : Matrix d d ℂ))⁻¹
+    let RM : Matrix d d ℂ := (M + s • (1 : Matrix d d ℂ))⁻¹
+    let D : Matrix d d ℂ := F - M
+    have hRF : star RF = RF := by
+      simpa only [Matrix.star_eq_conjTranspose] using
+        (shifted_posSemidef_matrix_inverse_posSemidef hF hs).isHermitian.eq
+    have hRM : star RM = RM := by
+      simpa only [Matrix.star_eq_conjTranspose] using
+        (shifted_posSemidef_matrix_inverse_posSemidef hM hs).isHermitian.eq
+    have hD : star D = D := by
+      simpa only [Matrix.star_eq_conjTranspose] using
+        (hF.isHermitian.sub hM.isHermitian).eq
+    rw [spectralPurificationFilter_sub_resolvent F M hF hM hs]
+    change star (s • (RF * D * RM)) * (s • (RF * D * RM)) =
+      s ^ 2 • (RM * D * (RF * RF) * D * RM)
+    simp only [star_smul, star_trivial, star_mul, hRF, hRM, hD,
+      smul_mul_assoc, mul_smul_comm, smul_smul, pow_two]
+    congr 1
+    noncomm_ring
 
 end
 
@@ -4271,9 +4252,7 @@ private theorem spectralEntropyKernel_eq_scalar_sub_filter
     ((eigenvalue i / (1 + s) -
       eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ)
   have hFspec : F = L D := by
-    simpa [L, U, D, eigenvalue, Function.comp_def,
-      Unitary.conjStarAlgAut_apply] using
-      hF.isHermitian.spectral_theorem
+    exact hF.isHermitian.spectral_theorem
   have hdiag : K = (1 / (1 + s) : ℝ) • D - G := by
     ext i j
     by_cases hij : i = j
@@ -5645,26 +5624,27 @@ theorem coherentBinaryJointOutcome_norm_sq
       (Matrix.trace
         ((pureDensityMatrix z hz).matrix *
           (P.effect a ⊗ₖ Q.effect b))).re := by
-  let K : Matrix (d × e) (d × e) ℂ :=
-    P.effect a ⊗ₖ Q.effect b
-  have hgram : K.conjTranspose * K = K := by
-    dsimp [K]
-    rw [Matrix.conjTranspose_kronecker,
-      (P.positive a).isHermitian.eq,
-      (Q.positive b).isHermitian.eq,
-      ← Matrix.mul_kronecker_mul,
-      hP a, hQ b]
-  calc
-    ‖coherentBinaryJointOutcome P Q z a b‖ ^ 2 =
-      quadraticExpectation
-        (Matrix.toEuclideanCLM (n := d × e) (𝕜 := ℂ)
-          (K.conjTranspose * K)) z :=
-        rectangularMatrix_norm_sq K z
-    _ = quadraticExpectation
-        (Matrix.toEuclideanCLM (n := d × e) (𝕜 := ℂ) K) z := by
-      rw [hgram]
-    _ = (Matrix.trace ((pureDensityMatrix z hz).matrix * K)).re :=
-      (pureDensityMatrix_trace_mul z hz K).symm
+  with_reducible
+    let K : Matrix (d × e) (d × e) ℂ :=
+      P.effect a ⊗ₖ Q.effect b
+    have hgram : K.conjTranspose * K = K := by
+      dsimp [K]
+      rw [Matrix.conjTranspose_kronecker,
+        (P.positive a).isHermitian.eq,
+        (Q.positive b).isHermitian.eq,
+        ← Matrix.mul_kronecker_mul,
+        hP a, hQ b]
+    calc
+      ‖coherentBinaryJointOutcome P Q z a b‖ ^ 2 =
+        quadraticExpectation
+          (Matrix.toEuclideanCLM (n := d × e) (𝕜 := ℂ)
+            (K.conjTranspose * K)) z :=
+          rectangularMatrix_norm_sq K z
+      _ = quadraticExpectation
+          (Matrix.toEuclideanCLM (n := d × e) (𝕜 := ℂ) K) z := by
+        rw [hgram]
+      _ = (Matrix.trace ((pureDensityMatrix z hz).matrix * K)).re :=
+        (pureDensityMatrix_trace_mul z hz K).symm
 
 /-- The state vector representing finite tensor. -/
 def finiteTensorVector
@@ -6817,42 +6797,43 @@ theorem schmidtVector_inner
               (X : Matrix (Fin d) (Fin d) ℂ)) i j) *
             (((V : Matrix (Fin d) (Fin d) ℂ).conjTranspose *
               (Y : Matrix (Fin d) (Fin d) ℂ)) i j) := by
-  classical
-  rw [schmidtVector_eq_vec σ U V,
-    schmidtVector_eq_vec μ X Y,
-    matrixVectorization_inner]
-  let S : Matrix (Fin d) (Fin d) ℂ :=
-    Matrix.diagonal fun i => (σ i : ℂ)
-  let T : Matrix (Fin d) (Fin d) ℂ :=
-    Matrix.diagonal fun i => (μ i : ℂ)
-  let A : Matrix (Fin d) (Fin d) ℂ := U
-  let B : Matrix (Fin d) (Fin d) ℂ := V
-  let C : Matrix (Fin d) (Fin d) ℂ := X
-  let D : Matrix (Fin d) (Fin d) ℂ := Y
-  change
-    Matrix.trace ((B * S * A.transpose).conjTranspose *
-      (D * T * C.transpose)) = _
-  calc
-    Matrix.trace ((B * S * A.transpose).conjTranspose *
-        (D * T * C.transpose)) =
-      Matrix.trace
-        (((B * S * A.transpose).conjTranspose *
-          (D * T)) * C.transpose) := by
-            congr 1
-            simp only [Matrix.mul_assoc, Matrix.conjTranspose_mul]
-    _ = Matrix.trace
-        (C.transpose *
-          ((B * S * A.transpose).conjTranspose * (D * T))) :=
-            Matrix.trace_mul_comm _ _
-    _ = Matrix.trace
-        ((A.conjTranspose * C).transpose * S *
-          (B.conjTranspose * D) * T) := by
-            congr 1
-            simp only [Matrix.mul_assoc, Matrix.conjTranspose_mul, Matrix.transpose_conjTranspose,
-              RCLike.star_def, Matrix.diagonal_conjTranspose, Pi.star_def, Complex.conj_ofReal,
-              Matrix.transpose_mul, Matrix.conjTranspose_transpose, S]
-    _ = _ := weightedSchmidtMatrixTrace
-      σ μ (A.conjTranspose * C) (B.conjTranspose * D)
+  with_reducible
+    classical
+    rw [schmidtVector_eq_vec σ U V,
+      schmidtVector_eq_vec μ X Y,
+      matrixVectorization_inner]
+    let S : Matrix (Fin d) (Fin d) ℂ :=
+      Matrix.diagonal fun i => (σ i : ℂ)
+    let T : Matrix (Fin d) (Fin d) ℂ :=
+      Matrix.diagonal fun i => (μ i : ℂ)
+    let A : Matrix (Fin d) (Fin d) ℂ := U
+    let B : Matrix (Fin d) (Fin d) ℂ := V
+    let C : Matrix (Fin d) (Fin d) ℂ := X
+    let D : Matrix (Fin d) (Fin d) ℂ := Y
+    change
+      Matrix.trace ((B * S * A.transpose).conjTranspose *
+        (D * T * C.transpose)) = _
+    calc
+      Matrix.trace ((B * S * A.transpose).conjTranspose *
+          (D * T * C.transpose)) =
+        Matrix.trace
+          (((B * S * A.transpose).conjTranspose *
+            (D * T)) * C.transpose) := by
+              congr 1
+              simp only [Matrix.mul_assoc, Matrix.conjTranspose_mul]
+      _ = Matrix.trace
+          (C.transpose *
+            ((B * S * A.transpose).conjTranspose * (D * T))) :=
+              Matrix.trace_mul_comm _ _
+      _ = Matrix.trace
+          ((A.conjTranspose * C).transpose * S *
+            (B.conjTranspose * D) * T) := by
+              congr 1
+              simp only [Matrix.mul_assoc, Matrix.conjTranspose_mul, Matrix.transpose_conjTranspose,
+                RCLike.star_def, Matrix.diagonal_conjTranspose, Pi.star_def, Complex.conj_ofReal,
+                Matrix.transpose_mul, Matrix.conjTranspose_transpose, S]
+      _ = _ := weightedSchmidtMatrixTrace
+        σ μ (A.conjTranspose * C) (B.conjTranspose * D)
 
 @[simp] theorem unitaryBasisOverlap_apply
     {d : Type*} [Fintype d] [DecidableEq d]

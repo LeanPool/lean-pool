@@ -744,21 +744,9 @@ theorem unconditionalMatchedVerifierEffect_tensor_complement
     (1 : Matrix (s × t) (s × t) ℂ) -
         (effect ⊗ₖ (1 : Matrix t t ℂ)) =
       (1 - effect) ⊗ₖ (1 : Matrix t t ℂ) := by
-  classical
-  ext ⟨i, k⟩ ⟨j, l⟩
-  by_cases same_target : i = j
-  · subst j
-    by_cases same_work : k = l
-    · subst l
-      simp only [Matrix.sub_apply, one_apply_eq, kroneckerMap_apply, mul_one]
-    · simp only [Matrix.sub_apply, ne_eq, Prod.mk.injEq, same_work, and_false, not_false_eq_true,
-        one_apply_ne, kroneckerMap_apply, mul_zero, sub_self, one_apply_eq]
-  · by_cases same_work : k = l
-    · subst l
-      simp only [Matrix.sub_apply, ne_eq, Prod.mk.injEq, same_target, and_true, not_false_eq_true,
-        one_apply_ne, kroneckerMap_apply, one_apply_eq, mul_one, zero_sub]
-    · simp only [Matrix.sub_apply, ne_eq, Prod.mk.injEq, same_target, same_work, and_self,
-        not_false_eq_true, one_apply_ne, kroneckerMap_apply, mul_zero, sub_self, zero_sub]
+  with_reducible
+    apply (sub_eq_iff_eq_add).mpr
+    rw [← Matrix.add_kronecker, sub_add_cancel, Matrix.one_kronecker_one]
 
 theorem unconditionalMatchedVerifierEffect_tensor_posSemidef
     {s t : Type*} [Finite s] [Finite t] [DecidableEq t]
@@ -1504,8 +1492,7 @@ theorem unconditionalConjugateBobBasisOverlap_sum
   have identity := congrArg
     (fun M : Matrix (Fin d) (Fin d) ℂ => M i b)
     (unconditionalConjugateBobBasisOverlapCancellation U V)
-  simpa only [unitaryBasisOverlap_apply, Matrix.mul_apply, conjTranspose_apply, RCLike.star_def,
-    transpose_apply, conjugateUnitary_apply] using identity
+  exact identity
 
 theorem unconditionalRationalMixedConjugateBobSpectral_sum
     {d : ℕ} (ξ ζ : BipartiteUnitVector d)
@@ -6226,18 +6213,19 @@ theorem unconditionalActualC485CleanDeviation_sq
           N width schedule ξ ζ j.val *
         dSVDensityRationalHeterogeneousCommonStopGaugeStageError
           Q (width (schedule j)) m ξ ζ A C := by
-  classical
-  rw [unconditionalActualC485CanonicalVector_eq_correctedIdeal
-    schedule ξ ζ j positive grid dimension fine]
-  unfold integratorActualC485CleanedVector
-  rw [unconditionalActualSelectedBranchLocalAction_sub,
-    unconditionalActualSelectedBranchLocalAction_norm]
-  exact unconditionalSelectedCopyMatchedBranch_deviation_sq
-    Q width schedule ξ ζ A C j
-    (unconditionalActualCanonicalRetainedPhaseTail
-      (S := S) (B := B) (N := N) (d := d) (L := L) j)
-    (integratorActualCanonicalRetainedPhaseTail_norm
-      phases grid dimension j)
+  with_reducible
+    classical
+    rw [unconditionalActualC485CanonicalVector_eq_correctedIdeal
+      schedule ξ ζ j positive grid dimension fine]
+    unfold integratorActualC485CleanedVector
+    rw [unconditionalActualSelectedBranchLocalAction_sub,
+      unconditionalActualSelectedBranchLocalAction_norm]
+    exact unconditionalSelectedCopyMatchedBranch_deviation_sq
+      Q width schedule ξ ζ A C j
+      (unconditionalActualCanonicalRetainedPhaseTail
+        (S := S) (B := B) (N := N) (d := d) (L := L) j)
+      (integratorActualCanonicalRetainedPhaseTail_norm
+        phases grid dimension j)
 
 theorem unconditionalActualC485CleanDeviation_eq_hazard
     {S B N d L m : ℕ}

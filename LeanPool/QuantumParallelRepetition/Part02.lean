@@ -21,6 +21,17 @@ import Mathlib.NumberTheory.Harmonic.Bounds
 
 noncomputable section
 
+section
+
+-- Prefer direct instances before speculative subgroup and rational-hom searches.
+attribute [local instance low] SubfieldClass.toSubringClass AddSubgroup.seminormedAddCommGroup
+attribute [local instance low] RingHomClass.toLinearMapClassRat RingHomClass.toLinearMapClassNNRat
+attribute [local instance low] Unitary.instCommGroupSubtypeMemSubmonoidUnitary
+attribute [local instance low] AddSubgroup.seminormedAddGroup AddSubgroup.normedAddGroup
+attribute [local instance low] AddSubgroup.normedAddCommGroup
+attribute [local instance low]
+  ClosedSubmodule.seminormedAddCommGroup ClosedSubmodule.normedAddCommGroup
+
 namespace QuantumParallelRepetition
 
 /-- The local matrix norm instance used while elaborating part two. -/
@@ -279,7 +290,7 @@ theorem harmonicSchmidtFiber_count_sq_le
     have hscaled :
         x * Real.sqrt ((j.val : ℝ) + 1) ≤ a := by
       apply (le_div_iff₀ hsqrtpositive).mp
-      simpa only [div_eq_mul_inv] using hjthreshold
+      exact hjthreshold
     have hsquares :
         ((j.val : ℝ) + 1) * x ^ 2 ≤ a ^ 2 := by
       have hnonneg : 0 ≤ x * Real.sqrt ((j.val : ℝ) + 1) :=
@@ -1584,8 +1595,7 @@ theorem targetSpectralAtomOverlap_eq_basis_norm_sq
       IsHermitian.eigenvectorUnitary_apply, RCLike.star_def, z, U, V]
   rw [coeff, ← Complex.normSq_eq_norm_sq]
   change (star z * z).re = Complex.normSq z
-  simpa only [RCLike.star_def, mul_re, conj_re, conj_im, neg_mul, sub_neg_eq_add, ofReal_re] using
-    (congrArg Complex.re
+  exact (congrArg Complex.re
       (@Complex.normSq_eq_conj_mul_self z)).symm
 
 end
@@ -3265,8 +3275,7 @@ theorem rationalMarked_fiber_card
       · intro copy _
         rfl
     _ = min denominator (numerator letter) := by
-      simpa only using
-        (Fin.card_filter_val_lt (n := denominator)
+      exact (Fin.card_filter_val_lt (n := denominator)
           (m := numerator letter))
 
 omit [DecidableEq β] in
@@ -3289,8 +3298,7 @@ theorem rationalMarked_card
         ∑ letter : β,
           ((rationalMarked denominator numerator).filter
             fun point => point.1 = letter).card := by
-      simpa only using
-        (Finset.card_eq_sum_card_fiberwise
+      exact (Finset.card_eq_sum_card_fiberwise
           (f := fun point : β × Fin denominator => point.1)
           (s := rationalMarked denominator numerator)
           (t := (Finset.univ : Finset β))
@@ -4085,8 +4093,7 @@ theorem finite_relative_entropy_data_processing
             absolute_continuity (lt_of_le_of_ne hreference (Ne.symm hzero))
     _ = ∑ i : ι,
         q i * InformationTheory.klFun (p i / q i) := by
-      simpa only [] using
-        (Finset.sum_fiberwise (Finset.univ : Finset ι) map
+      exact (Finset.sum_fiberwise (Finset.univ : Finset ι) map
           (fun i => q i * InformationTheory.klFun (p i / q i)))
 
 end CoarseGraining
@@ -4348,8 +4355,7 @@ theorem rationalMarked_inter_card
         ((rationalMarked denominator
           (fun i => min (left i) (right i))).filter
             fun point => point.1 = i).card := by
-      simpa only using
-        (Finset.card_eq_sum_card_fiberwise
+      exact (Finset.card_eq_sum_card_fiberwise
           (f := fun point : ι × Fin denominator => point.1)
           (s := rationalMarked denominator
             (fun i => min (left i) (right i)))
@@ -5158,8 +5164,7 @@ theorem finiteTensorLocalUnitaryMatrix_gram
       (U i).property
     have entry := congrArg
       (fun M : Matrix β β ℂ => M (p i) (q i)) gram
-    simpa only [RCLike.star_def, star_eq_conjTranspose, Matrix.mul_apply,
-      conjTranspose_apply] using entry
+    exact entry
   simp_rw [single]
   by_cases equal : p = q
   · subst q
@@ -5639,9 +5644,11 @@ private theorem spectralPurificationFilterEntryLp_eq_eigen_sum
       ∑ k : d, (coefficient k • generator k :
         Lp ℂ 2 (volume.restrict (Ioi (0 : ℝ)))) s
   simp_rw [hg]
-  simp only [Matrix.diagonal, ofReal_div, ofReal_add, Matrix.mul_apply, of_apply, mul_comm,
-    ite_mul, zero_mul, sum_ite_eq', Finset.mem_univ, ↓reduceIte, star_apply, RCLike.star_def,
-    mul_assoc, coefficient]
+  rw [Matrix.mul_apply]
+  simp only [Matrix.mul_diagonal, coefficient]
+  apply Finset.sum_congr rfl
+  intro k _
+  ac_rfl
 
 theorem ensemble_spectralPurificationFilterEntryLp_mem_common
     {ι d : Type*} [Fintype d] [DecidableEq d]
@@ -5778,18 +5785,12 @@ theorem finitePurificationMatrix_gram_apply
           (ensemblePurificationSubspaceEntry F M positive hM a r i)
           (ensemblePurificationSubspaceEntry F M positive hM a r j) := by
   classical
-  simp only [Matrix.mul_apply, Matrix.conjTranspose_apply,
-    finitePurificationMatrix, Fintype.sum_prod_type]
+  rw [Matrix.mul_apply, Fintype.sum_prod_type]
   apply Finset.sum_congr rfl
   intro r _
-  let b := commonPurificationOrthonormalBasis F M positive hM
-  let u := ensemblePurificationSubspaceEntry
-    F M positive hM a r i
-  let v := ensemblePurificationSubspaceEntry
-    F M positive hM a r j
-  change (∑ k, star (b.repr u k) * b.repr v k) =
-    inner ℂ u v
-  exact orthonormalBasis_repr_inner b u v
+  exact orthonormalBasis_repr_inner (commonPurificationOrthonormalBasis F M positive hM)
+      (ensemblePurificationSubspaceEntry F M positive hM a r i)
+      (ensemblePurificationSubspaceEntry F M positive hM a r j)
 
 theorem ensemblePurificationSubspaceEntry_inner_eq_integral
     {ι d : Type*} [Fintype d] [DecidableEq d]
@@ -5912,26 +5913,16 @@ private theorem finitePurificationMatrix_difference_gram_apply
           (ensemblePurificationSubspaceEntry F M positive hM a r j -
             meanPurificationSubspaceEntry F M positive hM r j) := by
   classical
-  simp only [Matrix.mul_apply, Matrix.conjTranspose_apply,
-    Matrix.sub_apply, finitePurificationMatrix,
-    meanFinitePurificationMatrix, Fintype.sum_prod_type]
+  rw [Matrix.mul_apply, Fintype.sum_prod_type]
   apply Finset.sum_congr rfl
   intro r _
-  let b := commonPurificationOrthonormalBasis F M positive hM
-  let u := ensemblePurificationSubspaceEntry
-    F M positive hM a r i
-  let u₀ := meanPurificationSubspaceEntry
-    F M positive hM r i
-  let v := ensemblePurificationSubspaceEntry
-    F M positive hM a r j
-  let v₀ := meanPurificationSubspaceEntry
-    F M positive hM r j
-  change
-    (∑ k, star (b.repr u k - b.repr u₀ k) *
-      (b.repr v k - b.repr v₀ k)) =
-      inner ℂ (u - u₀) (v - v₀)
-  simpa only [LinearIsometryEquiv.map_sub, PiLp.sub_apply] using
-    orthonormalBasis_repr_inner b (u - u₀) (v - v₀)
+  simpa only [Matrix.conjTranspose_apply, Matrix.sub_apply, finitePurificationMatrix,
+    meanFinitePurificationMatrix, LinearIsometryEquiv.map_sub, PiLp.sub_apply] using
+    orthonormalBasis_repr_inner (commonPurificationOrthonormalBasis F M positive hM)
+      (ensemblePurificationSubspaceEntry F M positive hM a r i -
+        meanPurificationSubspaceEntry F M positive hM r i)
+      (ensemblePurificationSubspaceEntry F M positive hM a r j -
+        meanPurificationSubspaceEntry F M positive hM r j)
 
 private theorem purificationSubspaceEntry_difference_inner_eq_integral
     {ι d : Type*} [Fintype d] [DecidableEq d]
@@ -6478,8 +6469,7 @@ theorem dSVUniformDensityPhysicalAsyncSigmaContinuation_norm
       ((Σ _ : ι, κ) × (Σ _ : ι, κ))) :
     ‖dSVUniformDensityPhysicalAsyncSigmaContinuation U V z‖ =
       ‖z‖ := by
-  simpa only [dSVUniformDensityPhysicalAsyncSigmaContinuation]
-    using dSVUniformDensityMixedProtocolLocalAction_norm
+  exact dSVUniformDensityMixedProtocolLocalAction_norm
       (coherentSharedRandomControlledUnitary U)
       (coherentSharedRandomControlledUnitary V) z
 
@@ -7150,5 +7140,7 @@ theorem dSVDensityRationalLeftProjectiveDiagonalMass_lower
 end
 
 end QuantumParallelRepetition
+
+end
 
 end

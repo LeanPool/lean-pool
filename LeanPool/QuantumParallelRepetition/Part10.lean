@@ -809,8 +809,7 @@ theorem unconditionalFairPhysicalFlaggedStoppingTransfer
       (∑ outcome, q outcome * flagPhysical outcome) =
         ∑ h : ExactLocallySampleableTuple X Y A B D,
           exactLocallySampleableLaw G n S D h * physical h := by
-    simpa only using
-      (exactSourceAliceFlagCoupling_expectation
+    exact (exactSourceAliceFlagCoupling_expectation
         G n S D remaining positive base denominator denominator_positive
         numerator rational_normalized support_preserving nonempty physical)
   have flagPhysical_nonnegative (outcome :
@@ -833,7 +832,7 @@ theorem unconditionalFairPhysicalFlaggedStoppingTransfer
   have mismatch' :
       (∑ outcome, p outcome * if matched outcome then 0 else 1) ≤
         4 * lam := by
-    simpa only [mul_ite, mul_zero, mul_one] using mismatch
+    exact mismatch
   have physical_transfer :
       1 - epsilon / 2 - 5 * lam -
           (bad + 4 * Real.sqrt deviation + 2 * Real.sqrt clipping) ≤
@@ -1479,8 +1478,7 @@ theorem unconditionalActualFairCleanedRow_eq_stoppedSuccess
   simp_rw [unconditionalActualFairCleanedVector_norm_sq
     phases grid dimension harmonic width width_positive schedule ξ ζ Q A C]
   unfold dSVDensityRationalHeterogeneousPhysicalStoppedSuccessMass
-  simpa only using
-    (Fin.sum_univ_eq_sum_range
+  exact (Fin.sum_univ_eq_sum_range
       (fun k : Nat =>
         dSVDensityRationalHeterogeneousPhysicalSurvival
             N width schedule ξ ζ k *
@@ -3386,11 +3384,12 @@ theorem unconditionalSourcePhysicalRounding_fairTargetEnergy
           (exactGlobalHistoryFinPhi
             G n S D h.2.2.2 h.2.2.1).val‖ ^ 2) ≤
       32 * martingaleRate G n S D := by
-  have distance := exactSourceStateDistanceBound_of_positive
-    G n S D remaining positive
-  simpa only [ge_iff_le, exactSourceTupleGamma, exactSourceTuplePhi] using
-    (exactSourceEquationTwentyOne_of_fifteen
-      G n S D positive (martingaleRate G n S D) distance)
+  with_reducible
+    have distance := exactSourceStateDistanceBound_of_positive
+      G n S D remaining positive
+    simpa only [ge_iff_le, exactSourceTupleGamma, exactSourceTuplePhi] using
+      (exactSourceEquationTwentyOne_of_fifteen
+        G n S D positive (martingaleRate G n S D) distance)
 
 theorem unconditionalSourcePhysicalRounding_exists_fairStoppingHazard
     {X Y A B : Type}
@@ -3486,7 +3485,7 @@ theorem unconditionalSourcePhysicalRounding_exists_fairStoppingHazard
       d dimension alpha alpha_positive alpha_bounded
   have precision_budget :
       2 * (w + 1) * ((d : ℝ) / N) ≤ delta := by
-    simpa [delta] using budget
+    exact budget
   have grid_fine :
       (d : ℝ) / (N : ℝ) < 1 / (w + 1) := by
     apply (lt_div_iff₀
@@ -3503,8 +3502,7 @@ theorem unconditionalSourcePhysicalRounding_exists_fairStoppingHazard
   have energy :
       (∑ h : ExactLocallySampleableTuple X Y A B D,
         law h * ‖(gamma h).val - (phi h).val‖ ^ 2) ≤ 32 * eta := by
-    simpa only using
-      unconditionalSourcePhysicalRounding_fairTargetEnergy
+    exact unconditionalSourcePhysicalRounding_fairTargetEnergy
         G n S D remaining positive
   obtain ⟨L, B', Q, m, horizon, phases, resolution, harmonic,
       UA, UB, _pointwise, _tail, asynchronous, terminal, hazard⟩ :=
