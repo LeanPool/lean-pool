@@ -5,6 +5,10 @@ Authors: Codex
 -/
 module
 
+/- Adapted for Lean Pool from roos-j/lean-trilinearht at
+7b4209609e6a7fb9d9935973ee8541495f943660. Imports, names, proof organization and
+Mathlib interfaces have been updated; original authorship is retained above. -/
+
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
