@@ -171,7 +171,7 @@ lemma randomVector_aemeasurable {μ : Measure Ω} {n : ℕ} {X : Fin n → Ω �
 omit [MeasurableSpace Ω] in
 lemma measure_map_prod_map_of_aemeasurable {α β γ δ : Type*}
     [MeasurableSpace α] [MeasurableSpace β] [MeasurableSpace γ] [MeasurableSpace δ]
-    {μ : Measure α} {ν : Measure β} [SFinite μ] [SFinite ν]
+    {μ : Measure α} {ν : Measure β} [SFinite ν]
     {f : α → γ} {g : β → δ} (hf : AEMeasurable f μ) (hg : AEMeasurable g ν) :
     (μ.map f).prod (ν.map g) =
       (μ.prod ν).map (fun p : α × β => (f p.1, g p.2)) := by

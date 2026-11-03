@@ -855,7 +855,7 @@ theorem LegacyTensor.aestronglyMeasurable_comp_snd {G : Ω → ℝ} (hG : AEStro
 
 omit [SFinite μ] [SFinite ν] in
 /-- A bounded measurable function of `ω`, viewed on `T × Ω`. -/
-theorem aestronglyMeasurable_comp_snd [SFinite μ] {G : Ω → ℝ}
+theorem aestronglyMeasurable_comp_snd {G : Ω → ℝ}
     (hG : AEStronglyMeasurable G μ) :
     AEStronglyMeasurable (fun p : T × Ω ↦ G p.2) (ν.prod μ) :=
   hG.comp_quasiMeasurePreserving Measure.quasiMeasurePreserving_snd

@@ -555,7 +555,7 @@ theorem stateCommonLaw_eq_insertionCommonLaw
   exact LikelihoodRatio.finiteSignedExpSumSourceMeasure_eq _
 
 theorem zPlusLaw_eq_conv_map_mul
-    (ν : Measure ℝ) [SFinite ν] (t : ℝ) :
+    (ν : Measure ℝ) (t : ℝ) :
     TransferStein.zPlusLaw ν t =
       ν ∗ Measure.map (fun x : ℝ ↦ t * x) (expMeasure 1) := by
   unfold TransferStein.zPlusLaw Measure.conv
@@ -577,7 +577,7 @@ theorem zPlusLaw_eq_conv_map_mul
     _ = _ := by rw [Measure.map_id]
 
 theorem zMinusLaw_eq_conv_map_neg_mul
-    (ν : Measure ℝ) [SFinite ν] (t : ℝ) :
+    (ν : Measure ℝ) (t : ℝ) :
     TransferStein.zMinusLaw ν t =
       ν ∗ Measure.map (fun x : ℝ ↦ -(t * x)) (expMeasure 1) := by
   unfold TransferStein.zMinusLaw Measure.conv

@@ -332,7 +332,7 @@ theorem aestronglyMeasurable_comparisonRHS {d : ℕ} {ε : ℝ} (hε : 0 < ε) {
 `a, b`. The shared step behind the parametrized interval integral, applied once with
 `a, b := (·.2.1), (·.2.2)` and once with the roles reversed. -/
 private theorem aestronglyMeasurable_setIntegral_Ioc {f : Vec m → ℝ → ℝ} {μx : Measure (Vec m)}
-    {μτ : Measure (ℝ × ℝ)} {μI : Measure ℝ} [SFinite μx] [SFinite μτ] [SFinite μI]
+    {μτ : Measure (ℝ × ℝ)} {μI : Measure ℝ} [SFinite μI]
     {a b : Vec m × ℝ × ℝ → ℝ} (ha : Measurable a) (hb : Measurable b)
     (hf : AEStronglyMeasurable (fun z : Vec m × ℝ => f z.1 z.2) (μx.prod μI)) :
     AEStronglyMeasurable (fun p : Vec m × ℝ × ℝ => ∫ s in Set.Ioc (a p) (b p), f p.1 s ∂μI)
@@ -372,7 +372,7 @@ Unfolds the interval integral as the difference of two one-sided set integrals
 (`aestronglyMeasurable_setIntegral_Ioc`, applied with the two endpoint roles swapped) and uses
 that `intervalIntegral` is definitionally exactly that difference. -/
 theorem aestronglyMeasurable_intervalIntegral {f : Vec m → ℝ → ℝ} {μx : Measure (Vec m)}
-    {μτ : Measure (ℝ × ℝ)} {μI : Measure ℝ} [SFinite μx] [SFinite μτ] [SFinite μI]
+    {μτ : Measure (ℝ × ℝ)} {μI : Measure ℝ} [SFinite μI]
     (hf : AEStronglyMeasurable (fun z : Vec m × ℝ => f z.1 z.2) (μx.prod μI)) :
     AEStronglyMeasurable (fun p : Vec m × ℝ × ℝ => ∫ s in p.2.1..p.2.2, f p.1 s ∂μI)
       (μx.prod μτ) := by

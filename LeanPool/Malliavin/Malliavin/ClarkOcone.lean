@@ -251,7 +251,7 @@ noncomputable def deterministicTimeEmbedding :
 
 omit [CompleteSpace W] [BorelSpace W] [SecondCountableTopology W] in
 /-- A deterministic time integrand is measurably predictable. -/
-theorem deterministicTimeEmbedding_aestronglyMeasurable [SecondCountableTopology W]
+theorem deterministicTimeEmbedding_aestronglyMeasurable
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›)
     (f : Lp ℝ 2 nonnegativeLebesgueMeasure) :
     AEStronglyMeasurable[𝓕.predictable]
@@ -274,7 +274,7 @@ noncomputable def deterministicPredictableEmbedding
   map_smul' c f := Subtype.ext (map_smul (deterministicTimeEmbedding (P := P)) c f)
   norm_map' f := (deterministicTimeEmbedding (P := P)).norm_map f
 
-omit [CompleteSpace W] [BorelSpace W] in
+omit [CompleteSpace W] [BorelSpace W] [SecondCountableTopology W] in
 /-- A deterministic predictable integrand represents the function `(t, ω) ↦ f t`. -/
 theorem deterministicPredictableEmbedding_coeFn
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›)
