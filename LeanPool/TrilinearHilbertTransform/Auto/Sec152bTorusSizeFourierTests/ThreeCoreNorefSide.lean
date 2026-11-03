@@ -124,8 +124,6 @@ private def ThreeCoreNorefSideConclusion9Statement : Prop :=
       I.1 - (4 : ℤ) * (↑D.S.K : ℤ))))), cα j x = D.c j G (A.blkStart D.S.K I.1) (D.preAt
       I) (↑x : (D.Ms j G).Md) * (↑((𝐞 : ℝ → Circle) ((D.Ms j G).phase (↑x : (D.Ms j
       G).Md) xs)) : ℂ))
-    (_ : ∀ (j : Fin (4 : ℕ)), j ≠ l → sideOptF l Fsel j = Finset.map Function.Embedding.some
-      (Fsel j))
     (cc0 : Fin (4 : ℕ) → (Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℤ) → ℂ)
     (_ : ∀ (j : Fin (4 : ℕ)) (w : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℝ), ‖cutoffP δ (ρc
       j) w - ∑ v ∈ frequencyBox (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim ((2 : ℕ) ^ (Kt + (1 :
@@ -398,7 +396,7 @@ private theorem three_core_noref_side_hfarall : ThreeCoreNorefSideHfarallStateme
 private theorem three_core_noref_side_conclusion_9 : ThreeCoreNorefSideConclusion9Statement := by
   classical
   intro κ' c₀ A bf fp D hQ I hI G δ hδ hδ8 Cm hCm0 δ'' hδ'' Kt J h l Fsel xs X Aw hr hw f hind ρc
-    nn fv hfvl hfvj cα hcα hFj cc0 hccT hU4 key
+    nn fv hfvl hfvj cα hcα cc0 hccT hU4 key
   have hΛc := @three_core_form κ' c₀ A bf fp D I hI G l Fsel X f fv hind hfvl hfvj
   obtain ⟨hsum1, hPS, hPN⟩ :=
     @three_core_coefficient_products κ' c₀ A bf fp D I G l Fsel xs cα hcα δ
@@ -479,7 +477,7 @@ private theorem three_core_noref_side_stage_1 : ThreeCoreNorefSideStage1Statemen
     hfarall hJ Aw hAw
   · expose_names
     exact @three_core_noref_side_conclusion_9 κ' c₀ A bf fp D hQ I hI G δ hδ hδ8 Cm hCm0 δ'' hδ''
-      Kt J h l Fsel xs X Aw hr hw f hind ρc nn fv hfvl hfvj cα hcα hFj cc0 hccT hU4 key
+      Kt J h l Fsel xs X Aw hr hw f hind ρc nn fv hfvl hfvj cα hcα cc0 hccT hU4 key
   · rw [hfvj j hj, hρcj j hj, hFj j hj, Finset.sum_map, Finset.sum_map]
     simp only [Function.Embedding.some_apply, sideOptC, sideOptN, Option.elim, hnnj j hj, hcα,
       hj, ↓reduceIte]
