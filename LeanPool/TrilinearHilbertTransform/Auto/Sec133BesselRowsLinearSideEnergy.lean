@@ -92,36 +92,42 @@ theorem mode_combination_cross_le {μ μ' : Type*} (M : Finset μ) (M' : Finset 
           (by positivity)) hεL
     _ = _ := by ring
 
-/-- Blueprint lines 2057-2058: almost-orthogonal synthesis. If `|⟨f_e, f_f⟩| ≤ η w_{ef} b_e b_f`
-for `e ≠ f`, with symmetric overlaps `w` of multiplicity `Σ_f w_{ef} ≤ D ℓ_e` and diagonal control
-`ℓ_e b_e² ≤ D² ‖f_e‖²`, then `‖Σ f_e‖² ≤ (1 + η D³) Σ ‖f_e‖²`. -/
-theorem almost_orthogonal_synthesis {κ : Type*} (s : Finset κ) (v : κ → H)
+/-- Symmetric overlap and diagonal bounds control the absolute synthesis energy error.
+The upper and lower almost-orthogonality estimates are its two order consequences. -/
+theorem almost_orthogonal_synthesis_error {κ : Type*} (s : Finset κ) (v : κ → H)
     (b ℓ : κ → ℝ) (w : κ → κ → ℝ) {D η : ℝ} (hη : 0 ≤ η) (hD : 0 ≤ D)
     (hw0 : ∀ e e', 0 ≤ w e e') (hws : ∀ e e', w e e' = w e' e)
     (hcross : ∀ e ∈ s, ∀ e' ∈ s, e ≠ e' → ‖inner ℂ (v e) (v e')‖ ≤ η * w e e' * b e * b e')
     (hmult : ∀ e ∈ s, ∑ e' ∈ s, w e e' ≤ D * ℓ e)
     (hdiag : ∀ e ∈ s, ℓ e * b e ^ 2 ≤ D ^ 2 * ‖v e‖ ^ 2) :
-    ‖∑ e ∈ s, v e‖ ^ 2 ≤ (1 + η * D ^ 3) * ∑ e ∈ s, ‖v e‖ ^ 2 := by
+    |‖∑ e ∈ s, v e‖ ^ 2 - ∑ e ∈ s, ‖v e‖ ^ 2| ≤
+      η * D ^ 3 * ∑ e ∈ s, ‖v e‖ ^ 2 := by
   classical
   have hexp : ‖∑ e ∈ s, v e‖ ^ 2 =
       ∑ e ∈ s, ∑ e' ∈ s, RCLike.re (inner ℂ (v e) (v e')) := by
     rw [@norm_sq_eq_re_inner ℂ, sum_inner]
     simp only [inner_sum, map_sum]
-  have hpt : ∀ e ∈ s, ∀ e' ∈ s, RCLike.re (inner ℂ (v e) (v e')) ≤
-      (if e = e' then ‖v e‖ ^ 2 else 0) + η * (w e e' * ((b e ^ 2 + b e' ^ 2) / 2)) := by
+  have hdiagSum : (∑ e ∈ s, ∑ e' ∈ s, if e = e' then ‖v e‖ ^ 2 else 0) =
+      ∑ e ∈ s, ‖v e‖ ^ 2 := by
+    simp only [Finset.sum_ite_eq]
+    exact Finset.sum_congr rfl fun e he => by simp only [he, ↓reduceIte]
+  have hpt : ∀ e ∈ s, ∀ e' ∈ s,
+      |RCLike.re (inner ℂ (v e) (v e')) - (if e = e' then ‖v e‖ ^ 2 else 0)| ≤
+        η * (w e e' * ((b e ^ 2 + b e' ^ 2) / 2)) := by
     intro e he e' he'
     have hw2 : 0 ≤ η * (w e e' * ((b e ^ 2 + b e' ^ 2) / 2)) := by
-      have := hw0 e e'; positivity
-    split_ifs with hee
-    · subst hee
-      rw [← @norm_sq_eq_re_inner ℂ]
-      linarith only [hw2]
-    · have h1 := (RCLike.re_le_norm (inner ℂ (v e) (v e'))).trans (hcross e he e' he' hee)
-      have h2 : b e * b e' ≤ (b e ^ 2 + b e' ^ 2) / 2 := by nlinarith [sq_nonneg (b e - b e')]
-      have h3 : η * w e e' * b e * b e' ≤ η * (w e e' * ((b e ^ 2 + b e' ^ 2) / 2)) := by
-        have := mul_le_mul_of_nonneg_left h2 (mul_nonneg hη (hw0 e e'))
-        linarith
-      linarith
+      have := hw0 e e'
+      positivity
+    by_cases hee : e = e'
+    · subst e'
+      rw [ite_eq_left rfl, ← @norm_sq_eq_re_inner ℂ, sub_self, abs_zero]
+      exact hw2
+    · rw [ite_eq_right hee, sub_zero]
+      refine (RCLike.abs_re_le_norm _).trans ((hcross e he e' he' hee).trans ?_)
+      have h2 : b e * b e' ≤ (b e ^ 2 + b e' ^ 2) / 2 := by
+        nlinarith only [sq_nonneg (b e - b e')]
+      have := mul_le_mul_of_nonneg_left h2 (mul_nonneg hη (hw0 e e'))
+      linarith only [this]
   have hsym : ∑ e ∈ s, ∑ e' ∈ s, w e e' * ((b e ^ 2 + b e' ^ 2) / 2) =
       ∑ e ∈ s, ∑ e' ∈ s, w e e' * b e ^ 2 := by
     have hswap : ∑ e ∈ s, ∑ e' ∈ s, w e e' * b e' ^ 2 = ∑ e ∈ s, ∑ e' ∈ s, w e e' * b e ^ 2 := by
@@ -146,18 +152,37 @@ theorem almost_orthogonal_synthesis {κ : Type*} (s : Finset κ) (v : κ → H)
       _ = D * (ℓ e * b e ^ 2) := by ring
       _ ≤ D * (D ^ 2 * ‖v e‖ ^ 2) := mul_le_mul_of_nonneg_left (hdiag e he) hD
       _ = D ^ 3 * ‖v e‖ ^ 2 := by ring
-  calc ‖∑ e ∈ s, v e‖ ^ 2 ≤ ∑ e ∈ s, ∑ e' ∈ s,
-        ((if e = e' then ‖v e‖ ^ 2 else 0) + η * (w e e' * ((b e ^ 2 + b e' ^ 2) / 2))) := by
-        rw [hexp]
-        exact Finset.sum_le_sum fun e he => Finset.sum_le_sum fun e' he' => hpt e he e' he'
-    _ = ∑ e ∈ s, ‖v e‖ ^ 2 + η * ∑ e ∈ s, ∑ e' ∈ s, w e e' * ((b e ^ 2 + b e' ^ 2) / 2) := by
-        simp only [Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.mul_sum]
-        congr 1
-        apply Finset.sum_congr rfl; intro e he
-        simp [he]
-    _ ≤ (1 + η * D ^ 3) * ∑ e ∈ s, ‖v e‖ ^ 2 := by
-        rw [hsym]
-        nlinarith [mul_le_mul_of_nonneg_left hmain hη]
+  calc |‖∑ e ∈ s, v e‖ ^ 2 - ∑ e ∈ s, ‖v e‖ ^ 2| =
+        |∑ e ∈ s, ∑ e' ∈ s,
+          (RCLike.re (inner ℂ (v e) (v e')) - (if e = e' then ‖v e‖ ^ 2 else 0))| := by
+          simp only [Finset.sum_sub_distrib]
+          rw [← hexp, hdiagSum]
+    _ ≤ ∑ e ∈ s, ∑ e' ∈ s,
+        |RCLike.re (inner ℂ (v e) (v e')) - (if e = e' then ‖v e‖ ^ 2 else 0)| := by
+          refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
+          exact Finset.sum_le_sum fun e _ => Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ e ∈ s, ∑ e' ∈ s, η * (w e e' * ((b e ^ 2 + b e' ^ 2) / 2)) :=
+          Finset.sum_le_sum fun e he => Finset.sum_le_sum fun e' he' => hpt e he e' he'
+    _ = η * ∑ e ∈ s, ∑ e' ∈ s, w e e' * ((b e ^ 2 + b e' ^ 2) / 2) := by
+          simp only [Finset.mul_sum]
+    _ ≤ η * (D ^ 3 * ∑ e ∈ s, ‖v e‖ ^ 2) := by
+          rw [hsym]
+          exact mul_le_mul_of_nonneg_left hmain hη
+    _ = η * D ^ 3 * ∑ e ∈ s, ‖v e‖ ^ 2 := by ring
+
+/-- Blueprint lines 2057-2058: almost-orthogonal synthesis. If `|⟨f_e, f_f⟩| ≤ η w_{ef} b_e b_f`
+for `e ≠ f`, with symmetric overlaps `w` of multiplicity `Σ_f w_{ef} ≤ D ℓ_e` and diagonal control
+`ℓ_e b_e² ≤ D² ‖f_e‖²`, then `‖Σ f_e‖² ≤ (1 + η D³) Σ ‖f_e‖²`. -/
+theorem almost_orthogonal_synthesis {κ : Type*} (s : Finset κ) (v : κ → H)
+    (b ℓ : κ → ℝ) (w : κ → κ → ℝ) {D η : ℝ} (hη : 0 ≤ η) (hD : 0 ≤ D)
+    (hw0 : ∀ e e', 0 ≤ w e e') (hws : ∀ e e', w e e' = w e' e)
+    (hcross : ∀ e ∈ s, ∀ e' ∈ s, e ≠ e' → ‖inner ℂ (v e) (v e')‖ ≤ η * w e e' * b e * b e')
+    (hmult : ∀ e ∈ s, ∑ e' ∈ s, w e e' ≤ D * ℓ e)
+    (hdiag : ∀ e ∈ s, ℓ e * b e ^ 2 ≤ D ^ 2 * ‖v e‖ ^ 2) :
+    ‖∑ e ∈ s, v e‖ ^ 2 ≤ (1 + η * D ^ 3) * ∑ e ∈ s, ‖v e‖ ^ 2 := by
+  have h := (abs_le.mp (almost_orthogonal_synthesis_error s v b ℓ w hη hD hw0 hws
+    hcross hmult hdiag)).2
+  nlinarith only [h]
 
 /-- Blueprint line 2057 ("by duality"): row outputs `g_e = P_e F` of orthogonal projections satisfy
 `Re⟨g_e, F⟩ = ‖g_e‖²`, so a synthesis bound `‖Σ g_e‖² ≤ C Σ ‖g_e‖²` gives
@@ -1153,24 +1178,22 @@ theorem proj_complement_le {μ : Type*} (E A : Finset μ) (Ψ : μ → H)
     have := le_of_mul_le_mul_left this hpos
     rwa [le_div_iff₀ hs] at this
 
-/-- Blueprint line 2116: on one cell the subtotals `T_j = Σ_{m ∈ E_j} β_m Ψ m` over disjoint
-components with mutual pairings at most `η L` are almost orthogonal:
-`‖Σ_j T_j‖² ≤ (1 + η D³) Σ_j ‖T_j‖²` when the number of components is at most `D`, the private
-coordinates give `ε L Σ|β|² ≤ ‖T_j‖²` and `|E_j| ≤ ε D²`. -/
-theorem subtotals_almost_orthogonal {μ ι : Type*} (s : Finset ι) (E : ι → Finset μ)
-    (Ψ : μ → H) (β : μ → ℂ) {η L ε D : ℝ} (hη : 0 ≤ η) (hL : 0 ≤ L) (hε : 0 < ε) (hD : 0 ≤ D)
+/-- Shared coefficient sizes give cross-pairing and diagonal bounds for finite subtotals. -/
+theorem subtotals_synthesis_bounds {μ ι : Type*} (s : Finset ι) (E : ι → Finset μ)
+    (Ψ : μ → H) (β : μ → ℂ) {η L ε D : ℝ} (hη : 0 ≤ η) (hL : 0 ≤ L) (hε : 0 < ε)
     (hpair : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → ∀ m ∈ E i, ∀ m' ∈ E j,
       ‖inner ℂ (Ψ m) (Ψ m')‖ ≤ η * L)
     (hpriv : ∀ i ∈ s, ε * L * ∑ m ∈ E i, ‖β m‖ ^ 2 ≤ ‖∑ m ∈ E i, β m • Ψ m‖ ^ 2)
-    (hnum : (s.card : ℝ) ≤ D) (hcard : ∀ i ∈ s, ((E i).card : ℝ) ≤ ε * D ^ 2) :
-    ‖∑ i ∈ s, ∑ m ∈ E i, β m • Ψ m‖ ^ 2 ≤
-      (1 + η * D ^ 3) * ∑ i ∈ s, ‖∑ m ∈ E i, β m • Ψ m‖ ^ 2 := by
+    (hcard : ∀ i ∈ s, ((E i).card : ℝ) ≤ ε * D ^ 2) :
+    ∃ b : ι → ℝ,
+      (∀ i ∈ s, ∀ j ∈ s, i ≠ j →
+        ‖inner ℂ (∑ m ∈ E i, β m • Ψ m) (∑ m ∈ E j, β m • Ψ m)‖ ≤ η * L * b i * b j) ∧
+      ∀ i ∈ s, L * b i ^ 2 ≤ D ^ 2 * ‖∑ m ∈ E i, β m • Ψ m‖ ^ 2 := by
   classical
   set b : ι → ℝ := fun i => Real.sqrt (E i).card * Real.sqrt (∑ m ∈ E i, ‖β m‖ ^ 2)
-  refine almost_orthogonal_synthesis s (fun i => ∑ m ∈ E i, β m • Ψ m) b (fun _ => L)
-    (fun _ _ => L) hη hD (fun _ _ => hL) (fun _ _ => rfl) (fun i hi j hj hij => ?_)
-    (fun i _ => ?_) (fun i hi => ?_)
-  · have hin : inner ℂ (∑ m ∈ E i, β m • Ψ m) (∑ m ∈ E j, β m • Ψ m) =
+  refine ⟨b, ?_, ?_⟩
+  · intro i hi j hj hij
+    have hin : inner ℂ (∑ m ∈ E i, β m • Ψ m) (∑ m ∈ E j, β m • Ψ m) =
         ∑ m ∈ E i, ∑ m' ∈ E j, (starRingEnd ℂ) (β m) * β m' * inner ℂ (Ψ m) (Ψ m') := by
       rw [sum_inner]
       refine Finset.sum_congr rfl fun m _ => ?_
@@ -1183,9 +1206,8 @@ theorem subtotals_almost_orthogonal {μ ι : Type*} (s : Finset ι) (E : ι → 
     simp only [RCLike.norm_conj] at h
     refine h.trans (le_of_eq ?_)
     simp only [b]
-  · rw [Finset.sum_const, nsmul_eq_mul]
-    exact mul_le_mul_of_nonneg_right hnum hL
-  · have h1 := hpriv i hi
+  · intro i hi
+    have h1 := hpriv i hi
     have hs0 : 0 ≤ ∑ m ∈ E i, ‖β m‖ ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
     have hb2 : b i ^ 2 = (E i).card * ∑ m ∈ E i, ‖β m‖ ^ 2 := by
       simp only [b]; rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg _), Real.sq_sqrt hs0]
@@ -1199,6 +1221,24 @@ theorem subtotals_almost_orthogonal {μ ι : Type*} (s : Finset ι) (E : ι → 
       _ ≤ ε * D ^ 2 * (‖∑ m ∈ E i, β m • Ψ m‖ ^ 2 / ε) :=
           mul_le_mul_of_nonneg_right (hcard i hi) (div_nonneg (sq_nonneg _) hε.le)
       _ = D ^ 2 * ‖∑ m ∈ E i, β m • Ψ m‖ ^ 2 := by field_simp
+
+/-- Blueprint line 2116: on one cell the subtotals `T_j = Σ_{m ∈ E_j} β_m Ψ m` over disjoint
+components with mutual pairings at most `η L` are almost orthogonal:
+`‖Σ_j T_j‖² ≤ (1 + η D³) Σ_j ‖T_j‖²` when the number of components is at most `D`, the private
+coordinates give `ε L Σ|β|² ≤ ‖T_j‖²` and `|E_j| ≤ ε D²`. -/
+theorem subtotals_almost_orthogonal {μ ι : Type*} (s : Finset ι) (E : ι → Finset μ)
+    (Ψ : μ → H) (β : μ → ℂ) {η L ε D : ℝ} (hη : 0 ≤ η) (hL : 0 ≤ L) (hε : 0 < ε) (hD : 0 ≤ D)
+    (hpair : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → ∀ m ∈ E i, ∀ m' ∈ E j,
+      ‖inner ℂ (Ψ m) (Ψ m')‖ ≤ η * L)
+    (hpriv : ∀ i ∈ s, ε * L * ∑ m ∈ E i, ‖β m‖ ^ 2 ≤ ‖∑ m ∈ E i, β m • Ψ m‖ ^ 2)
+    (hnum : (s.card : ℝ) ≤ D) (hcard : ∀ i ∈ s, ((E i).card : ℝ) ≤ ε * D ^ 2) :
+    ‖∑ i ∈ s, ∑ m ∈ E i, β m • Ψ m‖ ^ 2 ≤
+      (1 + η * D ^ 3) * ∑ i ∈ s, ‖∑ m ∈ E i, β m • Ψ m‖ ^ 2 := by
+  obtain ⟨b, hcross, hdiag⟩ := subtotals_synthesis_bounds s E Ψ β hη hL hε hpair hpriv hcard
+  refine almost_orthogonal_synthesis s (fun i => ∑ m ∈ E i, β m • Ψ m) b (fun _ => L)
+    (fun _ _ => L) hη hD (fun _ _ => hL) (fun _ _ => rfl) hcross (fun i _ => ?_) hdiag
+  rw [Finset.sum_const, nsmul_eq_mul]
+  exact mul_le_mul_of_nonneg_right hnum hL
 
 end Subtotals
 

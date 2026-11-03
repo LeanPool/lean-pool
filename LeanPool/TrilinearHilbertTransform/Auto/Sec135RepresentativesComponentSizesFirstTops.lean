@@ -356,65 +356,9 @@ theorem almost_orthogonal_synthesis_lower {κ : Type*} (s : Finset κ) (v : κ �
     (hmult : ∀ e ∈ s, ∑ e' ∈ s, w e e' ≤ D * ℓ e)
     (hdiag : ∀ e ∈ s, ℓ e * b e ^ 2 ≤ D ^ 2 * ‖v e‖ ^ 2) :
     (1 - η * D ^ 3) * ∑ e ∈ s, ‖v e‖ ^ 2 ≤ ‖∑ e ∈ s, v e‖ ^ 2 := by
-  classical
-  have hexp : ‖∑ e ∈ s, v e‖ ^ 2 =
-      ∑ e ∈ s, ∑ e' ∈ s, RCLike.re (inner ℂ (v e) (v e')) := by
-    rw [@norm_sq_eq_re_inner ℂ, sum_inner]
-    simp only [inner_sum, map_sum]
-  have hpt : ∀ e ∈ s, ∀ e' ∈ s,
-      (if e = e' then ‖v e‖ ^ 2 else 0) - η * (w e e' * ((b e ^ 2 + b e' ^ 2) / 2)) ≤
-        RCLike.re (inner ℂ (v e) (v e')) := by
-    intro e he e' he'
-    have hw2 : 0 ≤ η * (w e e' * ((b e ^ 2 + b e' ^ 2) / 2)) := by
-      have := hw0 e e'; positivity
-    split_ifs with hee
-    · subst hee
-      rw [← @norm_sq_eq_re_inner ℂ]
-      linarith
-    · have h1 := (neg_le_of_abs_le (RCLike.abs_re_le_norm (inner ℂ (v e) (v e')))).trans'
-        (neg_le_neg (hcross e he e' he' hee))
-      have h2 : b e * b e' ≤ (b e ^ 2 + b e' ^ 2) / 2 := by nlinarith [sq_nonneg (b e - b e')]
-      have h3 : η * w e e' * b e * b e' ≤ η * (w e e' * ((b e ^ 2 + b e' ^ 2) / 2)) := by
-        have := mul_le_mul_of_nonneg_left h2 (mul_nonneg hη (hw0 e e'))
-        linarith
-      linarith
-  have hsym : ∑ e ∈ s, ∑ e' ∈ s, w e e' * ((b e ^ 2 + b e' ^ 2) / 2) =
-      ∑ e ∈ s, ∑ e' ∈ s, w e e' * b e ^ 2 := by
-    have hswap : ∑ e ∈ s, ∑ e' ∈ s, w e e' * b e' ^ 2 = ∑ e ∈ s, ∑ e' ∈ s, w e e' * b e ^ 2 := by
-      rw [Finset.sum_comm]
-      apply Finset.sum_congr rfl; intro e _
-      apply Finset.sum_congr rfl; intro e' _
-      rw [hws]
-    have hsplit : ∑ e ∈ s, ∑ e' ∈ s, w e e' * ((b e ^ 2 + b e' ^ 2) / 2) =
-        (∑ e ∈ s, ∑ e' ∈ s, w e e' * b e ^ 2 + ∑ e ∈ s, ∑ e' ∈ s, w e e' * b e' ^ 2) / 2 := by
-      rw [← Finset.sum_add_distrib, Finset.sum_div]
-      apply Finset.sum_congr rfl; intro e _
-      rw [← Finset.sum_add_distrib, Finset.sum_div]
-      apply Finset.sum_congr rfl; intro e' _
-      ring
-    rw [hsplit, hswap]; ring
-  have hmain : ∑ e ∈ s, ∑ e' ∈ s, w e e' * b e ^ 2 ≤ D ^ 3 * ∑ e ∈ s, ‖v e‖ ^ 2 := by
-    rw [Finset.mul_sum]
-    apply Finset.sum_le_sum; intro e he
-    rw [← Finset.sum_mul]
-    calc (∑ e' ∈ s, w e e') * b e ^ 2 ≤ D * ℓ e * b e ^ 2 :=
-          mul_le_mul_of_nonneg_right (hmult e he) (sq_nonneg _)
-      _ = D * (ℓ e * b e ^ 2) := by ring
-      _ ≤ D * (D ^ 2 * ‖v e‖ ^ 2) := mul_le_mul_of_nonneg_left (hdiag e he) hD
-      _ = D ^ 3 * ‖v e‖ ^ 2 := by ring
-  calc (1 - η * D ^ 3) * ∑ e ∈ s, ‖v e‖ ^ 2 ≤
-      ∑ e ∈ s, ‖v e‖ ^ 2 - η * ∑ e ∈ s, ∑ e' ∈ s, w e e' * ((b e ^ 2 + b e' ^ 2) / 2) := by
-        rw [hsym]
-        nlinarith [mul_le_mul_of_nonneg_left hmain hη]
-    _ = ∑ e ∈ s, ∑ e' ∈ s,
-        ((if e = e' then ‖v e‖ ^ 2 else 0) - η * (w e e' * ((b e ^ 2 + b e' ^ 2) / 2))) := by
-        simp only [Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.mul_sum]
-        congr 1
-        apply Finset.sum_congr rfl; intro e he
-        simp [he]
-    _ ≤ ‖∑ e ∈ s, v e‖ ^ 2 := by
-        rw [hexp]
-        exact Finset.sum_le_sum fun e he => Finset.sum_le_sum fun e' he' => hpt e he e' he'
+  have h := (abs_le.mp (almost_orthogonal_synthesis_error s v b ℓ w hη hD hw0 hws
+    hcross hmult hdiag)).1
+  nlinarith only [h]
 
 /-- The lower half of `subtotals_almost_orthogonal`: subtotals over disjoint components with
 small mutual pairings satisfy `(1 - η D³) Σ_j ‖T_j‖² ≤ ‖Σ_j T_j‖²`. -/
@@ -426,40 +370,11 @@ theorem subtotals_almost_orthogonal_lower {μ ι : Type*} (s : Finset ι) (E : �
     (hnum : (s.card : ℝ) ≤ D) (hcard : ∀ i ∈ s, ((E i).card : ℝ) ≤ ε * D ^ 2) :
     (1 - η * D ^ 3) * ∑ i ∈ s, ‖∑ m ∈ E i, β m • Ψ m‖ ^ 2 ≤
       ‖∑ i ∈ s, ∑ m ∈ E i, β m • Ψ m‖ ^ 2 := by
-  classical
-  set b : ι → ℝ := fun i => Real.sqrt (E i).card * Real.sqrt (∑ m ∈ E i, ‖β m‖ ^ 2)
+  obtain ⟨b, hcross, hdiag⟩ := subtotals_synthesis_bounds s E Ψ β hη hL hε hpair hpriv hcard
   refine almost_orthogonal_synthesis_lower s (fun i => ∑ m ∈ E i, β m • Ψ m) b (fun _ => L)
-    (fun _ _ => L) hη hD (fun _ _ => hL) (fun _ _ => rfl) (fun i hi j hj hij => ?_)
-    (fun i _ => ?_) (fun i hi => ?_)
-  · have hin : inner ℂ (∑ m ∈ E i, β m • Ψ m) (∑ m ∈ E j, β m • Ψ m) =
-        ∑ m ∈ E i, ∑ m' ∈ E j, (starRingEnd ℂ) (β m) * β m' * inner ℂ (Ψ m) (Ψ m') := by
-      rw [sum_inner]
-      refine Finset.sum_congr rfl fun m _ => ?_
-      rw [inner_sum]
-      refine Finset.sum_congr rfl fun m' _ => ?_
-      rw [inner_smul_left, inner_smul_right]; ring
-    rw [hin]
-    have h := mode_combination_cross_le (E i) (E j) (fun m => (starRingEnd ℂ) (β m)) β
-      (fun m m' => inner ℂ (Ψ m) (Ψ m')) (mul_nonneg hη hL) (hpair i hi j hj hij)
-    simp only [RCLike.norm_conj] at h
-    refine h.trans (le_of_eq ?_)
-    simp only [b]
-  · rw [Finset.sum_const, nsmul_eq_mul]
-    exact mul_le_mul_of_nonneg_right hnum hL
-  · have h1 := hpriv i hi
-    have hs0 : 0 ≤ ∑ m ∈ E i, ‖β m‖ ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
-    have hb2 : b i ^ 2 = (E i).card * ∑ m ∈ E i, ‖β m‖ ^ 2 := by
-      simp only [b]; rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg _), Real.sq_sqrt hs0]
-    rw [hb2]
-    have hc0 : (0 : ℝ) ≤ (E i).card := Nat.cast_nonneg _
-    have h3 : L * ∑ m ∈ E i, ‖β m‖ ^ 2 ≤ ‖∑ m ∈ E i, β m • Ψ m‖ ^ 2 / ε := by
-      rw [le_div_iff₀ hε]; linarith
-    calc L * ((E i).card * ∑ m ∈ E i, ‖β m‖ ^ 2) =
-        (E i).card * (L * ∑ m ∈ E i, ‖β m‖ ^ 2) := by ring
-      _ ≤ (E i).card * (‖∑ m ∈ E i, β m • Ψ m‖ ^ 2 / ε) := mul_le_mul_of_nonneg_left h3 hc0
-      _ ≤ ε * D ^ 2 * (‖∑ m ∈ E i, β m • Ψ m‖ ^ 2 / ε) :=
-          mul_le_mul_of_nonneg_right (hcard i hi) (div_nonneg (sq_nonneg _) hε.le)
-      _ = D ^ 2 * ‖∑ m ∈ E i, β m • Ψ m‖ ^ 2 := by field_simp
+    (fun _ _ => L) hη hD (fun _ _ => hL) (fun _ _ => rfl) hcross (fun i _ => ?_) hdiag
+  rw [Finset.sum_const, nsmul_eq_mul]
+  exact mul_le_mul_of_nonneg_right hnum hL
 
 end LowerAlmostOrthogonal
 

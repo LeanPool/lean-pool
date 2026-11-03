@@ -1010,21 +1010,10 @@ variable {W : Type*} [Fintype W]
 /-- A residual `R` in slot `t` passes at level `β` on the cell `I` (blueprint eq:catalog-test):
 against every pure source whose tag lies in the mask, in another slot, and two arbitrary
 normalized `L²` spectators, the local form is at most `β`. -/
-def ResidOK {Tg : Type*} (G : RealDyadicGrid) (I : ℤ × ℤ) (c₀ : ℕ) (H : ℝ)
+abbrev ResidOK {Tg : Type*} (G : RealDyadicGrid) (I : ℤ × ℤ) (c₀ : ℕ) (H : ℝ)
     (tagOf : Tg → ChartTag) (wI : ℝ × ℝ → ℂ) (t : Fin 4) (M : Tg → Prop) (R : ColumnL2 W)
     (β : ℝ) : Prop :=
-  ∀ x, M x → ∀ {u a b : Fin 4}, u ≠ t → u ≠ a → u ≠ b → t ≠ a → t ≠ b → a ≠ b →
-    ∀ A : QuadraticChartData (tagOf x).dim, QuadraticChartComplexity c₀ H A →
-      A.horizontal = (tagOf x).θ → A.matrix = (slotCoeff u : ℚ) • (tagOf x).C →
-      A.quadratic = slotCoeff u * (tagOf x).lam →
-    ∀ z : Fin 4 → ℝ → ℂ, z u = quadraticChartAtom A →
-      z t = (fun y => (R : ℝ → ColumnHilbert W) y none) →
-      Measurable (z a) → Measurable (z b) →
-      eLpNorm (z a) 2 (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2)
-        (dyadicGridLength G I.1)) ≤ 1 →
-      eLpNorm (z b) 2 (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2)
-        (dyadicGridLength G I.1)) ≤ 1 →
-      ‖localProgressionForm (dyadicGridLength G I.1) wI z‖ ≤ β
+  ResidPass G I c₀ H tagOf wI t M R β
 
 /-- The physical coordinate of an average of column vectors is the average of their physical
 coordinates. -/

@@ -849,7 +849,7 @@ variable {Tg : Type*}
 
 /-- A passing residual bounds the cell form with a pure source of a tag in the mask in slot `u`,
 the residual in slot `t`, and two spectators of normalized sizes `S_a, S_b`. -/
-theorem ResidPass.form_le {G : RealDyadicGrid} {V : Type} [Fintype V] {I : ℤ × ℤ} {c₀ : ℕ} {H : ℝ}
+theorem ResidPass.form_le {G : RealDyadicGrid} {V : Type*} [Fintype V] {I : ℤ × ℤ} {c₀ : ℕ} {H : ℝ}
     {tagOf : Tg → ChartTag} {wI : ℝ × ℝ → ℂ} {t : Fin 4} {M : Tg → Prop}
     {R : ColumnL2 V} {β : ℝ} (hpass : ResidPass G I c₀ H tagOf wI t M R β)
     {κ : LocalKernelClass}
@@ -866,74 +866,9 @@ theorem ResidPass.form_le {G : RealDyadicGrid} {V : Type} [Fintype V] {I : ℤ �
       (dyadicGridLength G I.1)) ≤ ENNReal.ofReal Sa)
     (hXb : eLpNorm (augPhys (X b)) 2 (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2)
       (dyadicGridLength G I.1)) ≤ ENNReal.ofReal Sb) :
-    ‖cellForm (dyadicGridLength_pos G I.1) hwI V X‖ ≤ β * Sa * Sb := by
-  classical
-  set μ := normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)
-  have hcover : ∀ l : Fin 4, l = u ∨ l = t ∨ l = a ∨ l = b := fun l =>
-    fin4_cover_of_distinct u t a b l hut hua hub hta htb hab
-  set! z : Fin 4 → ℝ → ℂ := fun l => if l = u then quadraticChartAtom A
-    else if l = t then augPhys (X t) else if l = a then (Sa : ℂ)⁻¹ • augPhys (X a)
-    else (Sb : ℂ)⁻¹ • augPhys (X b) with hz
-  set! c : Fin 4 → ℂ := fun l => if l = a then (Sa : ℂ) else if l = b then (Sb : ℂ) else 1 with hc
-  have hzu : z u = quadraticChartAtom A := by simp [hz]
-  have hzt : z t = augPhys (X t) := by simp [hz, Ne.symm hut]
-  have hza : z a = (Sa : ℂ)⁻¹ • augPhys (X a) := by simp [hz, Ne.symm hua, Ne.symm hta]
-  have hzb : z b = (Sb : ℂ)⁻¹ • augPhys (X b) := by
-    simp [hz, Ne.symm hub, Ne.symm htb, Ne.symm hab]
-  have hscale : ∀ (S : ℝ) (f : ℝ → ℂ), 0 < S → eLpNorm f 2 μ ≤ ENNReal.ofReal S →
-      eLpNorm ((S : ℂ)⁻¹ • f) 2 μ ≤ 1 := by
-    intro S f hS hf
-    rw [eLpNorm_const_smul]
-    have hn : ‖((S : ℂ))⁻¹‖ₑ = ENNReal.ofReal S⁻¹ := by
-      rw [← ofReal_norm, norm_inv, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hS]
-    rw [hn]
-    calc ENNReal.ofReal S⁻¹ * eLpNorm f 2 μ ≤ ENNReal.ofReal S⁻¹ * ENNReal.ofReal S :=
-          by gcongr
-      _ = 1 := by
-          rw [← ENNReal.ofReal_mul (inv_pos.mpr hS).le, inv_mul_cancel₀ hS.ne', ENNReal.ofReal_one]
-  have hpass' := hpass x hx hut hua hub hta htb hab A hA hAθ hAM hAq z hzu
-    (by rw [hzt, hXt]; rfl)
-    (by rw [hza]; exact (columnPhys_measurable _).const_smul _)
-    (by rw [hzb]; exact (columnPhys_measurable _).const_smul _)
-    (by rw [hza]; exact hscale Sa _ hSa hXa)
-    (by rw [hzb]; exact hscale Sb _ hSb hXb)
-  have hform : cellForm (dyadicGridLength_pos G I.1) hwI V X =
-      (Sa * Sb : ℂ) * localProgressionForm (dyadicGridLength G I.1) wI z := by
-    rw [cellForm_apply]
-    have e : localProgressionForm (dyadicGridLength G I.1) wI (fun l => augPhys (X l)) =
-        localProgressionForm (dyadicGridLength G I.1) wI (fun l => c l • z l) := by
-      refine localProgressionForm_congr_cell hwI fun l => ?_
-      filter_upwards [hXu] with y hy hyI
-      rcases hcover l with rfl | rfl | rfl | rfl
-      · have h1 : c l = 1 := by simp only [hc, hua, hub, ↓reduceIte]
-        rw [Pi.smul_apply, h1, one_smul, hzu]
-        exact hy hyI
-      · have h1 : c l = 1 := by simp only [hc, hta, htb, ↓reduceIte]
-        rw [Pi.smul_apply, h1, one_smul, hzt]
-      · have h1 : c l = Sa := by simp only [hc, ↓reduceIte]
-        rw [Pi.smul_apply, h1, hza, Pi.smul_apply, smul_smul,
-          mul_inv_cancel₀ (by exact_mod_cast hSa.ne'), one_smul]
-      · have h1 : c l = Sb := by simp only [hc, Ne.symm hab, ↓reduceIte]
-        rw [Pi.smul_apply, h1, hzb, Pi.smul_apply, smul_smul,
-          mul_inv_cancel₀ (by exact_mod_cast hSb.ne'), one_smul]
-    rw [e, localProgressionForm_smul]
-    congr 1
-    have huniv : (Finset.univ : Finset (Fin 4)) = {u, t, a, b} := by
-      ext l
-      simp only [Finset.mem_univ, Finset.mem_insert, Finset.mem_singleton, true_iff]
-      exact hcover l
-    rw [huniv, Finset.prod_insert (by simp [hut, hua, hub]),
-      Finset.prod_insert (by simp [hta, htb]), Finset.prod_insert (by simp [hab]),
-      Finset.prod_singleton]
-    simp only [hc, hua, hub, hta, htb, Ne.symm hab, ↓reduceIte, one_mul]
-  rw [hform, norm_mul]
-  have hn : ‖((Sa * Sb : ℝ) : ℂ)‖ = Sa * Sb := by
-    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (mul_pos hSa hSb)]
-  push_cast at hn
-  rw [hn]
-  calc Sa * Sb * ‖localProgressionForm (dyadicGridLength G I.1) wI z‖ ≤ Sa * Sb * β :=
-        mul_le_mul_of_nonneg_left hpass' (by positivity)
-    _ = β * Sa * Sb := by ring
+    ‖cellForm (dyadicGridLength_pos G I.1) hwI V X‖ ≤ β * Sa * Sb :=
+  ResidOK.form_le hwI hpass hx hut hua hub hta htb hab A hA hAθ hAM hAq X hXu hXt
+    hSa hSb hXa hXb
 
 end ResidualPass
 

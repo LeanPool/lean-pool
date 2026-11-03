@@ -2930,23 +2930,14 @@ theorem mvSeparatedPhase (c₀ : ℕ) (hc : 1 ≤ c₀) (k : ℕ) (hk1 : 1 ≤ k
   obtain ⟨a, hexp, hsumm, htot, hJ⟩ := hrest A rfl hA hVs
   set! M := separatedPhaseMatrix A.matrix Q with hMdef
   have hΛe := effectiveReturnQuadratic_eq_mvEffQuad A Q
-  have hX0 : 0 ≤ 1 + Real.log H + Real.log B := by
-    have : 0 ≤ Real.log B := Real.log_nonneg (by linarith); linarith
-  have hXs : 1 + Real.log H + Real.log B ≤ (1 + Dw) * X ^ Dw := by
-    rw [hBdef, Real.log_exp]
-    have h1 : X ≤ X ^ Dw := le_self_pow₀ hX1 (by omega)
-    have h2 : 1 + Real.log H ≤ X := by simp only [X]; linarith
-    change 1 + Real.log H + (Dw : ℝ) * X ^ Dw ≤ (1 + Dw) * X ^ Dw
-    nlinarith only [hlogδ, h1]
-  have hcomp := exp_compose_budget (Ds := Ds) hX0 hXs
-  have hDsm : Real.exp (((Ds : ℝ) * (1 + Dw) ^ Ds) * X ^ (Dw * Ds)) ≤
-      Real.exp (Dm * X ^ Dm) :=
-    exp_poly_le hX1 hDm1 (by
-      rw [hDm]; push_cast
-      have : (0 : ℝ) ≤ Dw * Ds := by positivity
-      linarith)
+  have hHX : 1 + Real.log H ≤ X := by simp only [X]; linarith only [hlogδ]
+  have hbudget := exp_log_budget_le (Ds := Ds) (Dm := Dm) hH1 hX1 hDw hHX hDm1 (by
+    rw [hDm]; push_cast
+    have : (0 : ℝ) ≤ Dw * Ds := by positivity
+    linarith)
+  change Real.exp (Ds * (1 + Real.log H + Real.log B) ^ Ds) ≤ _ at hbudget
   have hmain : ∀ {y : ℝ}, y ≤ Real.exp (Ds * (1 + Real.log H + Real.log B) ^ Ds) →
-      y ≤ Real.exp (Dm * X ^ Dm) := fun h => (h.trans hcomp).trans hDsm
+      y ≤ Real.exp (Dm * X ^ Dm) := fun h => h.trans hbudget
   refine ⟨M, ?_, ?_, ι, hι, σ, hmain hcard, fun p i => (hσ p i).trans
     (mul_le_mul_of_nonneg_right (hmain le_rfl) (by
       have := frequencyLength_nonneg p.2; linarith)), a, ?_, hsumm, hmain htot, ?_⟩
@@ -2973,17 +2964,15 @@ theorem mvSeparatedPhase (c₀ : ℕ) (hc : 1 ≤ c₀) (k : ℕ) (hk1 : 1 ≤ k
     rw [hΛe] at h
     exact h
   · intro J
-    have hcompJ := exp_compose_budget (Ds := DJs J) hX0 hXs
-    have hJm : Real.exp (((DJs J : ℝ) * (1 + Dw) ^ DJs J) * X ^ (Dw * DJs J)) ≤
-        Real.exp (((DJs J * (1 + Dw) ^ DJs J + Dw * DJs J + 1 : ℕ) : ℝ) *
-          X ^ (DJs J * (1 + Dw) ^ DJs J + Dw * DJs J + 1)) :=
-      exp_poly_le hX1 (by omega) (by
+    have hbudgetJ := exp_log_budget_le (Ds := DJs J)
+      (Dm := DJs J * (1 + Dw) ^ DJs J + Dw * DJs J + 1) hH1 hX1 hDw hHX (by omega) (by
         push_cast
         have : (0 : ℝ) ≤ Dw * DJs J := by positivity
         linarith)
+    change Real.exp (DJs J * (1 + Real.log H + Real.log B) ^ DJs J) ≤ _ at hbudgetJ
     obtain ⟨hp, hs⟩ := hJ J
-    exact ⟨fun p => ((hp p).trans hcompJ).trans hJm,
-      fun T hT => ((hs T hT).trans hcompJ).trans hJm⟩
+    exact ⟨fun p => (hp p).trans hbudgetJ,
+      fun T hT => (hs T hT).trans hbudgetJ⟩
 
 /-! ### One-dimensional Fourier estimates for a kernel slice -/
 

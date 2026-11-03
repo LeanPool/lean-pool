@@ -676,23 +676,8 @@ theorem baseBottom (κ : LocalKernelClass) {G : RealDyadicGrid} {J : ℤ × ℤ}
     intro I hI Fa Fb hFa hFb hfa hfb
     have hp := hpairs I hI i k hik
     rw [slots4_i hai, slots4_k hak hik] at hp
-    set F := slots4 a i k Fa (Xi.val I) (Xk.val I) Fb with hF_def
-    have hFe : slotPair F i k (Xi.val I) (Xk.val I) = F := by
-      unfold slotPair
-      rw [show Xi.val I = F i from (slots4_i hai _ _ _ _).symm,
-        show Xk.val I = F k from (slots4_k hak hik _ _ _ _).symm,
-        Function.update_eq_self, Function.update_eq_self]
-    have hFm : ∀ l, Measurable (F l) := by
-      intro l
-      rcases fin_four_cover hai hak hab hik hib hkb l with rfl | rfl | rfl | rfl
-      · rw [hF_def, slots4_a]; exact hFa
-      · rw [hF_def, slots4_i hai]; exact Xi.val_measurable I
-      · rw [hF_def, slots4_k hak hik]; exact Xk.val_measurable I
-      · rw [hF_def, slots4_b hab hib hkb]; exact hFb
-    have := PairSmall.le_norm_mul hik hη₀ hp hFm hab hai hak hib.symm hkb.symm
-      (by rw [hF_def, slots4_a]; exact hfa) (by rw [hF_def, slots4_b hab hib hkb]; exact hfb)
-    rw [hFe, hF_def, slots4_a, slots4_b hab hib hkb] at this
-    exact this
+    exact PairSmall.slots4_le_norm_mul hai hak hab hik hib hkb hη₀ hp
+      (Xi.val_measurable I) (Xk.val_measurable I) Fa Fb hFa hFb hfa hfb
   have hsmall : ∀ I ∈ T, ‖localProgressionForm (dyadicGridLength G I.1) (w I)
       (slots4 a i k (Ya I) (Xi.val I) (Xk.val I) (Yb I))‖ ≤ 4 * η₀ := by
     intro I hI

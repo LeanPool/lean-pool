@@ -2695,6 +2695,50 @@ theorem hull_mult_le {γ : Type*} (Gs : Finset bf.Grp) (Cs : Finset γ) (Bs : Fi
         mul_le_mul_of_nonneg_left hcell (Nat.cast_nonneg _)
     _ = Cs.card * Mp * A.famVtxBound := by ring
 
+open Classical in
+/-- Near-band subfamilies inherit the active-cell multiplicity bound, uniformly over blocks. -/
+theorem near_use_multiplicity (K : ℕ) (hK : 1 ≤ K) {Ω : Type*}
+    (Os : Finset Ω) (Gs : Finset bf.Grp) (Bs : Finset ℕ) (k : ℕ)
+    (Act : Finset (ℤ × ℤ)) (U : bf.Grp → ℕ → Finset (ℤ × ℤ)) (off : ℤ × ℤ → ℕ)
+    (hdepth : ∀ g β, ∀ I ∈ U g β, I.1 = A.R.1 + ((K * β + off I : ℕ) : ℤ))
+    (hUact : ∀ g β, ∀ I ∈ U g β, I ∈ Act ∧ g ∈ fp.groupsAt I k) {Mp : ℝ}
+    (hMp : ∀ y, ((Act.filter fun (c : ℤ × ℤ) => y ∈ dyadicGridCell A.G c.1 c.2).card : ℝ) ≤ Mp)
+    (Ms : Finset (Ω × bf.Grp × ℕ)) (hMs : Ms ⊆ Os ×ˢ (Gs ×ˢ Bs))
+    (Um : Ω × bf.Grp × ℕ → Finset (ℤ × ℤ))
+    (hUm : ∀ m ∈ Ms, Um m ⊆ U m.2.1 m.2.2) :
+    ∀ y, ∑ m ∈ Ms, ((Um m).filter fun (c : ℤ × ℤ) => y ∈ dyadicGridCell A.G c.1 c.2).card ≤
+      Os.card * Mp * A.famVtxBound := by
+  classical
+  have hblk : ∀ (g : bf.Grp) (x : Unit) (β β' : ℕ), ∀ I ∈ (fun g (_ : Unit) β => U g β) g x β,
+      I ∈ (fun g (_ : Unit) β => U g β) g x β' → β = β' := by
+    intro g x β β' I hI hI'
+    have h1 := hdepth g β I hI
+    have h1' := hdepth g β' I hI'
+    have h3 : K * β + off I = K * β' + off I := by
+      have := h1.symm.trans h1'
+      exact_mod_cast add_left_cancel this
+    have h4 : K * β = K * β' := by omega
+    exact Nat.eq_of_mul_eq_mul_left (by omega) h4
+  intro y
+  have h1 := fp.hull_mult_le Gs ({()} : Finset Unit) Bs k Act (fun g _ β => U g β)
+    (fun g _ β I hI => hUact g β I hI) hblk hMp y
+  simp only [Finset.sum_singleton, Finset.card_singleton, Nat.cast_one, one_mul] at h1
+  push_cast
+  calc ∑ m ∈ Ms,
+      (((Um m).filter fun (c : ℤ × ℤ) => y ∈ dyadicGridCell A.G c.1 c.2).card : ℝ)
+      ≤ ∑ m ∈ Os ×ˢ (Gs ×ˢ Bs),
+          (((U m.2.1 m.2.2).filter fun (c : ℤ × ℤ) =>
+            y ∈ dyadicGridCell A.G c.1 c.2).card : ℝ) := by
+        refine (Finset.sum_le_sum fun m hm => ?_).trans
+          (Finset.sum_le_sum_of_subset_of_nonneg hMs fun _ _ _ => Nat.cast_nonneg _)
+        exact_mod_cast Finset.card_le_card (Finset.filter_subset_filter _ (hUm m hm))
+    _ = Os.card * ∑ g ∈ Gs, ∑ β ∈ Bs,
+          (((U g β).filter fun (c : ℤ × ℤ) => y ∈ dyadicGridCell A.G c.1 c.2).card : ℝ) := by
+        simp only [Finset.sum_product, Finset.sum_const, nsmul_eq_mul]
+    _ ≤ Os.card * (Mp * A.famVtxBound) := mul_le_mul_of_nonneg_left h1 (Nat.cast_nonneg _)
+    _ = Os.card * Mp * A.famVtxBound := by ring
+
+
 end ActiveSetup.BasicFamilies.FamParams
 
 end TrilinearHT.Auto
@@ -2708,6 +2752,7 @@ open MeasureTheory Metric
 open scoped FourierTransform ComplexConjugate ENNReal
 
 /-! ## Stack densities, use hulls and outer stack energies (blueprint lines 2410-2430) -/
+
 
 /-- A finite double sum of physical squares has integral at most the sum of the square norms. -/
 theorem lintegral_augPhys_sum_le {V : Type*} [Fintype V] {ι β : Type*} (s : Finset ι)
@@ -4092,35 +4137,8 @@ theorem near_band_actualM (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (hq3 :
     Wa hEWa Sa hSa Ms hMs Um hUm u hu
   have hWe := A.posStack_outer hanc Os Gs Zb okB hcapB hKN Bs U off hU
     (fun g hg β I hI J hJ hIJ => (hok g hg β I hI J hJ hIJ).2) Sb hSb hEWb Ms hMs Um hUm
-  -- the use multiplicity (blueprint line 2426)
-  have hblk : ∀ (g : bf.Grp) (x : Unit) (β β' : ℕ), ∀ I ∈ (fun g (_ : Unit) β => U g β) g x β,
-      I ∈ (fun g (_ : Unit) β => U g β) g x β' → β = β' := by
-    intro g x β β' I hI hI'
-    obtain ⟨-, h1, h2⟩ := hU g β I hI
-    obtain ⟨-, h1', h2'⟩ := hU g β' I hI'
-    have h3 : K * β + off I = K * β' + off I := by
-      have := h1.symm.trans h1'
-      exact_mod_cast add_left_cancel this
-    have h4 : K * β = K * β' := by omega
-    exact Nat.eq_of_mul_eq_mul_left (by omega) h4
-  have hmult : ∀ y, ∑ m ∈ Ms, ((Um m).filter fun c => y ∈ dyadicGridCell A.G c.1 c.2).card ≤
-      Os.card * Mp * A.famVtxBound := by
-    intro y
-    have h1 := fp.hull_mult_le Gs ({()} : Finset Unit) Bs k Act (fun g _ β => U g β)
-      (fun g _ β I hI => hUact g β I hI) hblk hMp y
-    simp only [Finset.sum_singleton, Finset.card_singleton, Nat.cast_one, one_mul] at h1
-    push_cast
-    calc ∑ m ∈ Ms, (((Um m).filter fun c => y ∈ dyadicGridCell A.G c.1 c.2).card : ℝ)
-        ≤ ∑ m ∈ Os ×ˢ (Gs ×ˢ Bs),
-            (((U m.2.1 m.2.2).filter fun c => y ∈ dyadicGridCell A.G c.1 c.2).card : ℝ) := by
-          refine (Finset.sum_le_sum fun m hm => ?_).trans
-            (Finset.sum_le_sum_of_subset_of_nonneg hMs fun _ _ _ => Nat.cast_nonneg _)
-          exact_mod_cast Finset.card_le_card (Finset.filter_subset_filter _ (hUm m hm))
-      _ = Os.card * ∑ g ∈ Gs, ∑ β ∈ Bs,
-            (((U g β).filter fun c => y ∈ dyadicGridCell A.G c.1 c.2).card : ℝ) := by
-          simp only [Finset.sum_product, Finset.sum_const, nsmul_eq_mul]
-      _ ≤ Os.card * (Mp * A.famVtxBound) := mul_le_mul_of_nonneg_left h1 (Nat.cast_nonneg _)
-      _ = Os.card * Mp * A.famVtxBound := by ring
+  have hmult := fp.near_use_multiplicity K hK Os Gs Bs k Act U off
+    (fun g β I hI => (hU g β I hI).2.1) hUact hMp Ms hMs Um hUm
   have hEA0 : 0 ≤ fp.stackEA Os sA mbA D N BA EWa :=
     le_trans (Finset.sum_nonneg fun m _ => Finset.sum_nonneg fun _ _ => Finset.sum_nonneg
       fun _ _ => Finset.sum_nonneg fun _ _ => by positivity) hXe

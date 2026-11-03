@@ -4176,7 +4176,7 @@ variable {Tg : Type*}
 
 /-- A residual `R` in slot `t` passes at level `β` against the pure sources whose tag satisfies
 `M` (the common shape of main and helper tests, blueprint eq:catalog-test with spectators). -/
-def ResidPass (G : RealDyadicGrid) {V : Type} [Fintype V] (I : ℤ × ℤ) (c₀ : ℕ) (H : ℝ)
+def ResidPass (G : RealDyadicGrid) {V : Type*} [Fintype V] (I : ℤ × ℤ) (c₀ : ℕ) (H : ℝ)
     (tagOf : Tg → ChartTag) (wI : ℝ × ℝ → ℂ) (t : Fin 4) (M : Tg → Prop)
     (R : ColumnL2 V) (β : ℝ) : Prop :=
   ∀ x, M x → ∀ {u a b : Fin 4}, u ≠ t → u ≠ a → u ≠ b → t ≠ a → t ≠ b → a ≠ b →

@@ -1968,6 +1968,23 @@ theorem exp_poly_le {X c : ℝ} (hX : 1 ≤ X) {e D : ℕ} (he : e ≤ D)
   apply Real.exp_le_exp.mpr
   exact mul_le_mul hcD (pow_le_pow_right₀ hX he) (by positivity) (by positivity)
 
+
+/-- Compose a logarithmic height bound with an exponential polynomial budget. -/
+theorem exp_log_budget_le {H X : ℝ} {Dw Ds Dm : ℕ}
+    (hH : 1 ≤ H) (hX : 1 ≤ X) (hDw : 1 ≤ Dw) (hHX : 1 + Real.log H ≤ X)
+    (hdegree : Dw * Ds ≤ Dm) (hcoefficient : (Ds : ℝ) * (1 + Dw) ^ Ds ≤ Dm) :
+    Real.exp (Ds * (1 + Real.log H + Real.log (Real.exp ((Dw : ℝ) * X ^ Dw))) ^ Ds) ≤
+      Real.exp (Dm * X ^ Dm) := by
+  rw [Real.log_exp]
+  have hbase : 0 ≤ 1 + Real.log H + (Dw : ℝ) * X ^ Dw := by
+    have := Real.log_nonneg hH
+    positivity
+  have hscale : 1 + Real.log H + (Dw : ℝ) * X ^ Dw ≤ (1 + Dw) * X ^ Dw := by
+    have hself : X ≤ X ^ Dw := le_self_pow₀ hX (by omega)
+    nlinarith only [hHX, hself]
+  exact (exp_compose_budget (Ds := Ds) hbase hscale).trans
+    (exp_poly_le hX hdegree hcoefficient)
+
 /-- lem:chartfourier when `d = 0`: the expansion has one term. -/
 theorem chart_split_fourier_dim_zero {k : ℕ} (A : MultivariableQuadraticChartData k 0)
     (Q : Matrix (Fin 0) (Fin 0) ℚ) (z : Fin k → ℝ) :

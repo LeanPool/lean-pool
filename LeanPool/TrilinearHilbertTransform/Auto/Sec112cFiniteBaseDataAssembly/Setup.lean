@@ -31,6 +31,37 @@ namespace TrilinearHT.Auto
 open MeasureTheory Metric
 open scoped FourierTransform ComplexConjugate ENNReal
 
+
+/-- Pair smallness bounds a four-slot form by the exact sizes of its two spectators. -/
+theorem PairSmall.slots4_le_norm_mul {a₀ r : ℝ} {w : ℝ × ℝ → ℂ}
+    {a i k b : Fin 4} (hai : a ≠ i) (hak : a ≠ k) (hab : a ≠ b)
+    (hik : i ≠ k) (hib : i ≠ b) (hkb : k ≠ b) {η : ℝ} (hη : 0 ≤ η)
+    {Fi Fk : ℝ → ℂ} (hp : PairSmall a₀ r w i k Fi Fk η)
+    (hFi : Measurable Fi) (hFk : Measurable Fk) (Fa Fb : ℝ → ℂ)
+    (hFa : Measurable Fa) (hFb : Measurable Fb)
+    (hfa : eLpNorm Fa 2 (normalizedIntervalMeasure a₀ r) ≠ ⊤)
+    (hfb : eLpNorm Fb 2 (normalizedIntervalMeasure a₀ r) ≠ ⊤) :
+    ‖localProgressionForm r w (slots4 a i k Fa Fi Fk Fb)‖ ≤
+      (eLpNorm Fa 2 (normalizedIntervalMeasure a₀ r)).toReal *
+        (eLpNorm Fb 2 (normalizedIntervalMeasure a₀ r)).toReal * η := by
+  set F := slots4 a i k Fa Fi Fk Fb with hF_def
+  have hFe : slotPair F i k Fi Fk = F := by
+    unfold slotPair
+    rw [show Fi = F i from (slots4_i hai _ _ _ _).symm,
+      show Fk = F k from (slots4_k hak hik _ _ _ _).symm,
+      Function.update_eq_self, Function.update_eq_self]
+  have hFm : ∀ l, Measurable (F l) := by
+    intro l
+    rcases fin_four_cover hai hak hab hik hib hkb l with rfl | rfl | rfl | rfl
+    · rw [hF_def, slots4_a]; exact hFa
+    · rw [hF_def, slots4_i hai]; exact hFi
+    · rw [hF_def, slots4_k hak hik]; exact hFk
+    · rw [hF_def, slots4_b hab hib hkb]; exact hFb
+  have h := PairSmall.le_norm_mul hik hη hp hFm hab hai hak hib.symm hkb.symm
+    (by rw [hF_def, slots4_a]; exact hfa) (by rw [hF_def, slots4_b hab hib hkb]; exact hfb)
+  rw [hFe, hF_def, slots4_a, slots4_b hab hib hkb] at h
+  exact h
+
 /-- The input has finite normalized `L²` norm on every tree cell (only the root normalization is
 used). -/
 theorem AccSetup.Hyp.f_fin {S : AccSetup} (h : S.Hyp) {c : ℤ × ℤ}

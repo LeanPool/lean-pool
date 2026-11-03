@@ -766,6 +766,80 @@ noncomputable def Dpre (ω : Fin 4 × Fin 4 × ℕ × ℕ × ℕ × ℕ) : List 
 noncomputable def Dst (ω : Fin 4 × Fin 4 × ℕ × ℕ × ℕ × ℕ) : Bool × ℕ × Option ℕ :=
   (T.desc ω.1 ω.2.1 (T.tOf ω.1 ω.2.2.1) (T.tOf ω.2.1 ω.2.2.2.1)).getD ω.2.2.2.2.1 (true, 0, none)
 
+/-- Frozen spectator inputs indexed by the common near-band use data. -/
+noncomputable def nearSpectators (a : Fin 4) :
+    (Fin 4 × Fin 4 × ℕ × ℕ × ℕ × ℕ) × bf.Grp × ℕ → Fin 4 →
+      ColumnL2 (bf.Lab ⊕ Fin fp.Mc) := fun m =>
+    Function.update 0 (fSlot m.1.1 m.1.2.1 (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
+      (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1)
+      (fp.FfrM T.cat T.mbs a m.1.1 m.1.2.1 (fp.Lc + 5) m.2.1 (T.Lf.role m.1.1)
+        (T.Lf.role m.1.2.1) (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
+          (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1 (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ)))
+
+/-- Frozen helper bands indexed by the same near-band use data. -/
+noncomputable def nearBands (a : Fin 4) :
+    (Fin 4 × Fin 4 × ℕ × ℕ × ℕ × ℕ) × bf.Grp × ℕ → ℕ →
+      ColumnL2 (bf.Lab ⊕ Fin fp.Mc) :=
+    fun m p => fp.YfrM T.cat T.mbs a m.1.1 m.1.2.1 (fp.Lc + 5) m.2.1 (T.Lf.role m.1.1)
+      (T.Lf.role m.1.2.1) (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
+        (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1 m.1.2.2.2.2.2
+        (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ)) p
+
+/-- An unflagged near-band use supplies both normalized energy side conditions.
+This includes the zero spectator slots, so both near-band variants use the same proof. -/
+theorem near_use_averages {S : Finset (ℤ × ℤ)} {gs : ℤ × ℤ → Finset bf.Grp}
+    {C₀ : ℝ} {a b e : Fin 4}
+    {m : (Fin 4 × Fin 4 × ℕ × ℕ × ℕ × ℕ) × bf.Grp × ℕ} {I : ℤ × ℤ}
+    (hI : I ∈ T.nU S gs C₀ a b e m)
+    (hblock : A.blkStart T.K I.1 = A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ))
+    (J : ℤ × ℤ) (hJ : J ∈ A.cells)
+    (hsub : dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G J.1 J.2)
+    (hbJ : A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ) ≤ J.1) :
+    dyadicEnergyAverage A.G
+        (fun r => ENNReal.ofReal (∑ p ∈ fp.uoM m.1.2.2.2.2.2,
+          ‖augPhys (T.nearBands a m p) r‖ ^ 2)) J ≤ ENNReal.ofReal ((2 * C₀) ^ 2) ∧
+      ∀ j', dyadicEnergyAverage A.G (fun r => ‖augPhys (T.nearSpectators a m j') r‖ₑ ^ 2) J ≤
+        ENNReal.ofReal ((2 * C₀) ^ 2) := by
+  classical
+  have hu := (Finset.mem_filter.mp hI).2.2.2.2.2.2.2.2.2
+  have h := hu J hJ hsub (by rw [hblock]; exact hbJ)
+  unfold ActiveSetup.BasicFamilies.FamParams.SideLeafM.desc at h
+  rw [hblock] at h
+  constructor
+  · refine (energyAverage_band_le A.G (fp.uoM m.1.2.2.2.2.2) (T.nearBands a m) J).trans
+      (ENNReal.ofReal_le_ofReal ?_)
+    rw [div_le_iff₀ (dyadicGridLength_pos A.G J.1)]
+    exact h.1
+  · intro j'
+    refine (energyAverage_single_le A.G _ J).trans (ENNReal.ofReal_le_ofReal ?_)
+    rw [div_le_iff₀ (dyadicGridLength_pos A.G J.1)]
+    by_cases hjf : j' = fSlot m.1.1 m.1.2.1 (T.desc m.1.1 m.1.2.1
+      (T.tOf m.1.1 m.1.2.2.1) (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1
+    · rw [hjf]
+      simp only [nearSpectators, Function.update_self]
+      exact h.2
+    · simp only [nearSpectators, Function.update_of_ne hjf, Pi.zero_apply, map_zero, norm_zero]
+      rw [zero_pow two_ne_zero]
+      have := (dyadicGridLength_pos A.G J.1).le
+      positivity
+
+/-- Transport a leaf helper band to the global band operator on its physical side. -/
+theorem Xb_eq_gBandC (a c d : Fin 4) (G : bf.Grp) (t t' : List ℕ) (j : ℕ) (I : ℤ × ℤ)
+    (hau : T.u ≠ some a) (hj : j < (T.desc c d t t').length) (p : ℕ) :
+    T.Xb a c d G t t' j I p =
+      (fp.gBandC a (T.cat a) (T.mbs a) G (T.Lf.role c) (T.Lf.role d)
+          ((T.desc c d t t').getD j (true, 0, none)) ((T.desc c d t t').take j) (p + 1) I.1 -
+        fp.gBandC a (T.cat a) (T.mbs a) G (T.Lf.role c) (T.Lf.role d)
+          ((T.desc c d t t').getD j (true, 0, none)) ((T.desc c d t t').take j) p I.1)
+        (T.gside a G I.1) := by
+  obtain ⟨z, hz⟩ := T.gside_range a hau G I.1
+  have hz' : colRelabel (bf.rv fp.Mc (T.cat a)) z = T.gside a G I.1 := hz
+  unfold Xb
+  rw [← hz', fp.gStM_help_band T.cat T.mbs a c d G (T.Lf.role c) (T.Lf.role d)
+    (T.desc c d t t') hj I.1 (p + 1) z,
+    fp.gStM_help_band T.cat T.mbs a c d G (T.Lf.role c) (T.Lf.role d)
+      (T.desc c d t t') hj I.1 p z, sub_apply]
+
 open Classical in
 /-- Blueprint lines 2425-2443 (`eq:near-band`) for the slots `a, b` (basic, `a, b ≠ u`) and the
 banded complement slot `e` on the main columns: off one cut family of root fraction `ρ`, the
@@ -840,18 +914,8 @@ theorem near_tripleM {q : ℝ} (hq2 : 2 < q) (hq3 : q < 3) {a b e : Fin 4} (hab 
     have h := T.bk_offI (hRle I (hS hm.1))
     rw [hm.2.2.1] at h
     exact h.2.2
-  set! Fm : (Fin 4 × Fin 4 × ℕ × ℕ × ℕ × ℕ) × bf.Grp × ℕ → Fin 4 →
-      ColumnL2 (bf.Lab ⊕ Fin fp.Mc) := fun m =>
-    Function.update 0 (fSlot m.1.1 m.1.2.1 (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
-      (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1)
-      (fp.FfrM T.cat T.mbs a m.1.1 m.1.2.1 (fp.Lc + 5) m.2.1 (T.Lf.role m.1.1)
-        (T.Lf.role m.1.2.1) (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
-          (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1 (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ))) with hFm
-  set! Ym : (Fin 4 × Fin 4 × ℕ × ℕ × ℕ × ℕ) × bf.Grp × ℕ → ℕ → ColumnL2 (bf.Lab ⊕ Fin fp.Mc) :=
-    fun m p => fp.YfrM T.cat T.mbs a m.1.1 m.1.2.1 (fp.Lc + 5) m.2.1 (T.Lf.role m.1.1)
-      (T.Lf.role m.1.2.1) (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
-        (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1 m.1.2.2.2.2.2
-        (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ)) p with hYm
+  let Fm := T.nearSpectators a
+  let Ym := T.nearBands a
   have hspec := (Classical.choose_spec (near_band_criticalM κ' hq2 hq3)).2 A bf fp T.K Nd N hKNd
     T.hK hKN hanc (nOs Lp Jm) gset (Finset.range Bn) k Act U T.offI hoff hU hUact hMp hab hae hbe
     (T.cat a) (T.mbs a) (fun ω => T.Lf.role ω.1) (fun ω => T.Lf.role ω.2.1) T.Dst T.Dpre
@@ -871,31 +935,9 @@ theorem near_tripleM {q : ℝ} (hq2 : 2 < q) (hq3 : q < 3) {a b e : Fin 4} (hab 
     (by norm_num) hΓa hΓb
   rotate_left
   · intro m hm I hI J hJ hsub hbJ
-    have hu := (Finset.mem_filter.mp hI).2.2.2.2.2.2.2.2.2
-    have hblk := hbs m hm I hI
-    have h := (hu J hJ hsub (by rw [hblk]; exact hbJ)).1
-    unfold ActiveSetup.BasicFamilies.FamParams.SideLeafM.desc at h
-    rw [hblk] at h
-    refine (energyAverage_band_le A.G _ _ J).trans (ENNReal.ofReal_le_ofReal ?_)
-    rw [div_le_iff₀ (dyadicGridLength_pos A.G J.1)]
-    exact h
-  · intro m hm j' hja hjb hje I hI J hJ hsub hbJ
-    have hu := (Finset.mem_filter.mp hI).2.2.2.2.2.2.2.2.2
-    have hblk := hbs m hm I hI
-    have h := (hu J hJ hsub (by rw [hblk]; exact hbJ)).2
-    unfold ActiveSetup.BasicFamilies.FamParams.SideLeafM.desc at h
-    rw [hblk] at h
-    refine (energyAverage_single_le A.G _ J).trans (ENNReal.ofReal_le_ofReal ?_)
-    rw [div_le_iff₀ (dyadicGridLength_pos A.G J.1)]
-    by_cases hjf : j' = fSlot m.1.1 m.1.2.1 (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
-      (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1
-    · rw [hjf]
-      simp only [hFm, Function.update_self]
-      exact h
-    · simp only [hFm, Function.update_of_ne hjf, Pi.zero_apply, map_zero, norm_zero]
-      rw [zero_pow two_ne_zero]
-      have := (dyadicGridLength_pos A.G J.1).le
-      positivity
+    exact (T.near_use_averages hI (hbs m hm I hI) J hJ hsub hbJ).1
+  · intro m hm j' _ _ _ I hI J hJ hsub hbJ
+    exact (T.near_use_averages hI (hbs m hm I hI) J hJ hsub hbJ).2 j'
   obtain ⟨C, hCc, hlen, hsum⟩ := hspec
   refine ⟨C, hCc, hlen, le_trans (le_of_eq ?_) hsum⟩
   refine Finset.sum_congr rfl fun m hm => Finset.sum_congr rfl fun I hI => ?_
@@ -912,8 +954,6 @@ theorem near_tripleM {q : ℝ} (hq2 : 2 < q) (hq3 : q < 3) {a b e : Fin 4} (hab 
   set o := m.1.2.2.2.2.2
   obtain ⟨-, hac, had, hbc, hbd, hcd, -⟩ := hmem.2.2.2.1
   have heS : eSlot c d (T.desc c d t t') j = e := hmem.2.2.2.2.2.2.2.2.1
-  have hst : (fp.gStM T.cat T.mbs a c d (fp.Lc + 5) G (T.Lf.role c) (T.Lf.role d)
-      (T.desc c d t t') j I.1).1 = ((T.desc c d t t').getD j (true, 0, none)).1 := rfl
   -- the global side of `a` at the depth of the use
   have hga : T.gside a G I.1 = T.Z a G I.1 - T.Z a G (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ)) +
       T.Wb a G (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ)) := by
@@ -925,20 +965,8 @@ theorem near_tripleM {q : ℝ} (hq2 : 2 < q) (hq3 : q < 3) {a b e : Fin 4} (hab 
           T.Wb b G (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ))) := by
     rw [T.sv_eq b hbu G I hIc, ← ContinuousLinearMap.comp_apply (columnL2Restriction _ _),
       columnL2Restriction_idem, T.gside_eq b hbu G I.1, hblk]
-  obtain ⟨z, hz⟩ := T.gside_range a hau G I.1
-  have hz' : colRelabel (bf.rv fp.Mc (T.cat a)) z = T.gside a G I.1 := hz
-  have hband : ∀ p, T.Xb a c d G t t' j I p =
-      (fp.gBandC a (T.cat a) (T.mbs a) G (T.Lf.role c) (T.Lf.role d) (T.Dst m.1) (T.Dpre m.1)
-          (p + 1) I.1 -
-        fp.gBandC a (T.cat a) (T.mbs a) G (T.Lf.role c) (T.Lf.role d) (T.Dst m.1) (T.Dpre m.1)
-          p I.1) (T.Z a G I.1 - T.Z a G (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ)) +
-            T.Wb a G (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ))) := by
-    intro p
-    have hj : j < (T.desc c d t t').length := hmem.2.2.2.2.2.2.2.1
-    unfold Xb
-    rw [← hga, ← hz', fp.gStM_help_band T.cat T.mbs a c d G _ _ _ hj,
-      fp.gStM_help_band T.cat T.mbs a c d G _ _ _ hj, sub_apply]
-    rfl
+  have hband := T.Xb_eq_gBandC a c d G t t' j I hau hmem.2.2.2.2.2.2.2.1
+  rw [hga] at hband
   have he' : (if (fp.gStM T.cat T.mbs a c d (fp.Lc + 5) G (T.Lf.role c) (T.Lf.role d)
       (T.desc c d t t') j I.1).1 then c else d) = e := heS
   unfold nf nearFormM Ybk Fbk
@@ -1052,35 +1080,8 @@ theorem near_band_critical_UM (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (h
       r t hrt hdis (fun i => ⋃ J ∈ Ec i, dyadicGridCell A.G J.1 J.2)
       (fun i => Finset.measurableSet_biUnion _ fun J _ => dyadicGridCell_measurable A.G J.1 J.2) x)
     Wa hEWa Sa hSa Ms hMs Um hUm u hu
-  -- the use multiplicity (blueprint line 2426)
-  have hblk : ∀ (g : bf.Grp) (x : Unit) (β β' : ℕ), ∀ I ∈ (fun g (_ : Unit) β => U g β) g x β,
-      I ∈ (fun g (_ : Unit) β => U g β) g x β' → β = β' := by
-    intro g x β β' I hI hI'
-    obtain ⟨-, h1, h2⟩ := hU g β I hI
-    obtain ⟨-, h1', h2'⟩ := hU g β' I hI'
-    have h3 : K * β + off I = K * β' + off I := by
-      have := h1.symm.trans h1'
-      exact_mod_cast add_left_cancel this
-    have h4 : K * β = K * β' := by omega
-    exact Nat.eq_of_mul_eq_mul_left (by omega) h4
-  have hmult : ∀ y, ∑ m ∈ Ms, ((Um m).filter fun c => y ∈ dyadicGridCell A.G c.1 c.2).card ≤
-      Os.card * Mp * A.famVtxBound := by
-    intro y
-    have h1 := fp.hull_mult_le Gs ({()} : Finset Unit) Bs k Act (fun g _ β => U g β)
-      (fun g _ β I hI => hUact g β I hI) hblk hMp y
-    simp only [Finset.sum_singleton, Finset.card_singleton, Nat.cast_one, one_mul] at h1
-    push_cast
-    calc ∑ m ∈ Ms, (((Um m).filter fun c => y ∈ dyadicGridCell A.G c.1 c.2).card : ℝ)
-        ≤ ∑ m ∈ Os ×ˢ (Gs ×ˢ Bs),
-            (((U m.2.1 m.2.2).filter fun c => y ∈ dyadicGridCell A.G c.1 c.2).card : ℝ) := by
-          refine (Finset.sum_le_sum fun m hm => ?_).trans
-            (Finset.sum_le_sum_of_subset_of_nonneg hMs fun _ _ _ => Nat.cast_nonneg _)
-          exact_mod_cast Finset.card_le_card (Finset.filter_subset_filter _ (hUm m hm))
-      _ = Os.card * ∑ g ∈ Gs, ∑ β ∈ Bs,
-            (((U g β).filter fun c => y ∈ dyadicGridCell A.G c.1 c.2).card : ℝ) := by
-          simp only [Finset.sum_product, Finset.sum_const, nsmul_eq_mul]
-      _ ≤ Os.card * (Mp * A.famVtxBound) := mul_le_mul_of_nonneg_left h1 (Nat.cast_nonneg _)
-      _ = Os.card * Mp * A.famVtxBound := by ring
+  have hmult := fp.near_use_multiplicity K hK Os Gs Bs k Act U off
+    (fun g β I hI => (hU g β I hI).2.1) hUact hMp Ms hMs Um hUm
   have hEA0 : 0 ≤ fp.stackEA Os sA mbA D N BA EWa :=
     le_trans (Finset.sum_nonneg fun m _ => Finset.sum_nonneg fun _ _ => Finset.sum_nonneg
       fun _ _ => Finset.sum_nonneg fun _ _ => by positivity) hXe
@@ -1280,18 +1281,8 @@ theorem near_triple_UM {q : ℝ} (hq2 : 2 < q) (hq3 : q < 3) {a b e : Fin 4} (ha
     have h := T.bk_offI (hRle I (hS hm.1))
     rw [hm.2.2.1] at h
     exact h.2.2
-  set! Fm : (Fin 4 × Fin 4 × ℕ × ℕ × ℕ × ℕ) × bf.Grp × ℕ → Fin 4 →
-      ColumnL2 (bf.Lab ⊕ Fin fp.Mc) := fun m =>
-    Function.update 0 (fSlot m.1.1 m.1.2.1 (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
-      (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1)
-      (fp.FfrM T.cat T.mbs a m.1.1 m.1.2.1 (fp.Lc + 5) m.2.1 (T.Lf.role m.1.1)
-        (T.Lf.role m.1.2.1) (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
-          (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1 (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ))) with hFm
-  set! Ym : (Fin 4 × Fin 4 × ℕ × ℕ × ℕ × ℕ) × bf.Grp × ℕ → ℕ → ColumnL2 (bf.Lab ⊕ Fin fp.Mc) :=
-    fun m p => fp.YfrM T.cat T.mbs a m.1.1 m.1.2.1 (fp.Lc + 5) m.2.1 (T.Lf.role m.1.1)
-      (T.Lf.role m.1.2.1) (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
-        (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1 m.1.2.2.2.2.2
-        (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ)) p with hYm
+  let Fm := T.nearSpectators a
+  let Ym := T.nearBands a
   -- the `U` energy over all indices
   have hEUm : ∑ m ∈ Ms, ∑ I ∈ T.nU S gs C₀ a b e m, ‖columnL2Restriction
       (dyadicGridCell A.G I.1 I.2) (dyadicGridCell_measurable A.G I.1 I.2) (T.sv b m.2.1 I)‖ ^ 2 ≤
@@ -1355,31 +1346,9 @@ theorem near_triple_UM {q : ℝ} (hq2 : 2 < q) (hq3 : q < 3) {a b e : Fin 4} (ha
     (by norm_num) hΓa hΓb
   rotate_left
   · intro m hm I hI J hJ hsub hbJ
-    have hu := (Finset.mem_filter.mp hI).2.2.2.2.2.2.2.2.2
-    have hblk := hbs m hm I hI
-    have h := (hu J hJ hsub (by rw [hblk]; exact hbJ)).1
-    unfold ActiveSetup.BasicFamilies.FamParams.SideLeafM.desc at h
-    rw [hblk] at h
-    refine (energyAverage_band_le A.G _ _ J).trans (ENNReal.ofReal_le_ofReal ?_)
-    rw [div_le_iff₀ (dyadicGridLength_pos A.G J.1)]
-    exact h
-  · intro m hm j' hja hjb hje I hI J hJ hsub hbJ
-    have hu := (Finset.mem_filter.mp hI).2.2.2.2.2.2.2.2.2
-    have hblk := hbs m hm I hI
-    have h := (hu J hJ hsub (by rw [hblk]; exact hbJ)).2
-    unfold ActiveSetup.BasicFamilies.FamParams.SideLeafM.desc at h
-    rw [hblk] at h
-    refine (energyAverage_single_le A.G _ J).trans (ENNReal.ofReal_le_ofReal ?_)
-    rw [div_le_iff₀ (dyadicGridLength_pos A.G J.1)]
-    by_cases hjf : j' = fSlot m.1.1 m.1.2.1 (T.desc m.1.1 m.1.2.1 (T.tOf m.1.1 m.1.2.2.1)
-      (T.tOf m.1.2.1 m.1.2.2.2.1)) m.1.2.2.2.2.1
-    · rw [hjf]
-      simp only [hFm, Function.update_self]
-      exact h
-    · simp only [hFm, Function.update_of_ne hjf, Pi.zero_apply, map_zero, norm_zero]
-      rw [zero_pow two_ne_zero]
-      have := (dyadicGridLength_pos A.G J.1).le
-      positivity
+    exact (T.near_use_averages hI (hbs m hm I hI) J hJ hsub hbJ).1
+  · intro m hm j' _ _ _ I hI J hJ hsub hbJ
+    exact (T.near_use_averages hI (hbs m hm I hI) J hJ hsub hbJ).2 j'
   obtain ⟨C, hCc, hlen, hsum⟩ := hspec
   refine ⟨C, hCc, hlen, le_trans (le_of_eq ?_) hsum⟩
   refine Finset.sum_congr rfl fun m hm => Finset.sum_congr rfl fun I hI => ?_
@@ -1396,26 +1365,12 @@ theorem near_triple_UM {q : ℝ} (hq2 : 2 < q) (hq3 : q < 3) {a b e : Fin 4} (ha
   set o := m.1.2.2.2.2.2
   obtain ⟨-, hac, had, hbc, hbd, hcd, -⟩ := hmem.2.2.2.1
   have heS : eSlot c d (T.desc c d t t') j = e := hmem.2.2.2.2.2.2.2.2.1
-  have hst : (fp.gStM T.cat T.mbs a c d (fp.Lc + 5) G (T.Lf.role c) (T.Lf.role d)
-      (T.desc c d t t') j I.1).1 = ((T.desc c d t t').getD j (true, 0, none)).1 := rfl
   -- the global side of `a` at the depth of the use
   have hga : T.gside a G I.1 = T.Z a G I.1 - T.Z a G (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ)) +
       T.Wb a G (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ)) := by
     rw [T.gside_eq a hau G I.1, hblk]
-  obtain ⟨z, hz⟩ := T.gside_range a hau G I.1
-  have hz' : colRelabel (bf.rv fp.Mc (T.cat a)) z = T.gside a G I.1 := hz
-  have hband : ∀ p, T.Xb a c d G t t' j I p =
-      (fp.gBandC a (T.cat a) (T.mbs a) G (T.Lf.role c) (T.Lf.role d) (T.Dst m.1) (T.Dpre m.1)
-          (p + 1) I.1 -
-        fp.gBandC a (T.cat a) (T.mbs a) G (T.Lf.role c) (T.Lf.role d) (T.Dst m.1) (T.Dpre m.1)
-          p I.1) (T.Z a G I.1 - T.Z a G (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ)) +
-            T.Wb a G (A.R.1 + ((T.K * m.2.2 : ℕ) : ℤ))) := by
-    intro p
-    have hj : j < (T.desc c d t t').length := hmem.2.2.2.2.2.2.2.1
-    unfold Xb
-    rw [← hga, ← hz', fp.gStM_help_band T.cat T.mbs a c d G _ _ _ hj,
-      fp.gStM_help_band T.cat T.mbs a c d G _ _ _ hj, sub_apply]
-    rfl
+  have hband := T.Xb_eq_gBandC a c d G t t' j I hau hmem.2.2.2.2.2.2.2.1
+  rw [hga] at hband
   have he' : (if (fp.gStM T.cat T.mbs a c d (fp.Lc + 5) G (T.Lf.role c) (T.Lf.role d)
       (T.desc c d t t') j I.1).1 then c else d) = e := heS
   unfold nf nearFormM Ybk Fbk
