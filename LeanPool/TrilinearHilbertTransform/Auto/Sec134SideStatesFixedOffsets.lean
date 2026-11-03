@@ -778,6 +778,19 @@ noncomputable def sideState {n : ℕ} (Ms : ModeSystem A.G n) (l : Fin 4) (s : L
     fp.physMain (bf.Lab ⊕ Fin fp.Mc) (fp.frozenZ l s mb G j ls (b - 4 * S.K)) +
       fp.physMain Ms.Md (Ms.blockSide S hA SP b (fp.retainedV G b S.K) c)
 
+/-- A restricted side state splits into its rolling energy and its fixed block subtotal. -/
+theorem sideState_norm_sq_le {n : ℕ} (Ms : ModeSystem A.G n) (l : Fin 4)
+    (s : List (CatCol bf.Vtx)) (mb : bf.MainBudget s) (G : bf.Grp) (j : ℕ)
+    (ls : List (ℕ × Bool)) (S : ModeSchedule) (hA : 6 ≤ S.A0) (SP : SideParams)
+    (c : ℤ × ℤ → Ms.Md → ℂ) (b h : ℤ) (E : Set ℝ) (hE : MeasurableSet E) :
+    ‖columnL2Restriction E hE (fp.sideState Ms l s mb G j ls S hA SP c b h)‖ ^ 2 ≤
+      2 * ‖columnL2Restriction E hE (fp.basicOut l s mb G j ls h -
+        fp.frozenZ l s mb G j ls (b - 4 * S.K))‖ ^ 2 +
+      2 * ‖Ms.blockSide S hA SP b (fp.retainedV G b S.K) c‖ ^ 2 := by
+  unfold sideState
+  rw [← map_sub]
+  exact norm_sq_restrict_physEmbed_add E hE _ _
+
 open Classical in
 /-- Blueprint `eq:core-side-error` (line 2129): the physical error
 `E_{l,G,b} = (Z_{l,G,u_b})_phys - (ZTilde_{l,G,b})_phys` of a block. -/
@@ -1758,39 +1771,9 @@ theorem sideState_budget (l : Fin 4) (s : List (CatCol bf.Vtx))
           fp.frozenZ l s mb (grp G) j ls (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ) - 4 * S.K))‖ ^ 2 +
         2 * V G (S.K * (t / S.K)) := by
     intro t G
-    set! E := ⋃ I ∈ Ec G t, dyadicGridCell A.G I.1 I.2
-    have hE : MeasurableSet E :=
-      Finset.measurableSet_biUnion _ fun I _ => dyadicGridCell_measurable A.G I.1 I.2
-    set X := fp.basicOut l s mb (grp G) j ls (A.R.1 + t) -
-      fp.frozenZ l s mb (grp G) j ls (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ) - 4 * S.K)
-    set! Vb := (Ms G).blockSide (S.withQ0 (q G)) hA SP (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ))
-      (fp.retainedV (grp G) (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ)) S.K)
+    exact fp.sideState_norm_sq_le (Ms G) l s mb (grp G) j ls (S.withQ0 (q G)) hA SP
       (c G (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ)))
-    have e : fp.sideState (Ms G) l s mb (grp G) j ls (S.withQ0 (q G)) hA SP
-        (c G (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ)))
-        (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ)) (A.R.1 + t) =
-        fp.physMain (bf.Lab ⊕ Fin fp.Mc) X + fp.physMain (Ms G).Md Vb := by
-      unfold sideState
-      simp only [ModeSchedule.withQ0_K]
-      rw [map_sub]
-    have h1 : ‖columnL2Restriction E hE (fp.physMain (bf.Lab ⊕ Fin fp.Mc) X)‖ ≤
-        ‖columnL2Restriction E hE X‖ := by
-      rw [← physEmbed_restrict]; exact norm_physEmbed_apply_le _
-    have h2 : ‖columnL2Restriction E hE (fp.physMain (Ms G).Md Vb)‖ ≤ ‖Vb‖ := by
-      rw [← physEmbed_restrict]
-      refine (norm_physEmbed_apply_le _).trans ?_
-      have := columnL2Restriction_norm_sq_le E hE Vb
-      exact (pow_le_pow_iff_left₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).mp this
-    have hV' : V G (S.K * (t / S.K)) = ‖Vb‖ ^ 2 := by
-      simp only [V, Vb]
-    rw [e, map_add, hV']
-    have htri := norm_add_le (columnL2Restriction E hE (fp.physMain (bf.Lab ⊕ Fin fp.Mc) X))
-      (columnL2Restriction E hE (fp.physMain (Ms G).Md Vb))
-    have ha := norm_nonneg (columnL2Restriction E hE X)
-    have hb := norm_nonneg Vb
-    nlinarith only [sq_nonneg (‖columnL2Restriction E hE X‖ - ‖Vb‖),
-      norm_nonneg (columnL2Restriction E hE (fp.physMain (bf.Lab ⊕ Fin fp.Mc) X) +
-        columnL2Restriction E hE (fp.physMain (Ms G).Md Vb)), h1, h2, htri]
+      (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ)) (A.R.1 + t) _ _
   calc _ ≤ ∑ t ∈ Sd, ∑ G, (2 * ‖columnL2Restriction (⋃ I ∈ Ec G t, dyadicGridCell A.G I.1 I.2)
         (Finset.measurableSet_biUnion _ fun I _ => dyadicGridCell_measurable A.G I.1 I.2)
         (fp.basicOut l s mb (grp G) j ls (A.R.1 + t) -
@@ -1867,39 +1850,9 @@ theorem sideState_budget_blocks (l : Fin 4) (s : List (CatCol bf.Vtx))
           fp.frozenZ l s mb (grp G) j ls (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ) - 4 * S.K))‖ ^ 2 +
         2 * V G (S.K * (t / S.K)) := by
     intro t G
-    set! E := ⋃ I ∈ Ec G t, dyadicGridCell A.G I.1 I.2
-    have hE : MeasurableSet E :=
-      Finset.measurableSet_biUnion _ fun I _ => dyadicGridCell_measurable A.G I.1 I.2
-    set X := fp.basicOut l s mb (grp G) j ls (A.R.1 + t) -
-      fp.frozenZ l s mb (grp G) j ls (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ) - 4 * S.K)
-    set! Vb := (Ms G).blockSide (S.withQ0 (q G)) hA SP (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ))
-      (fp.retainedV (grp G) (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ)) S.K)
+    exact fp.sideState_norm_sq_le (Ms G) l s mb (grp G) j ls (S.withQ0 (q G)) hA SP
       (c G (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ)))
-    have e : fp.sideState (Ms G) l s mb (grp G) j ls (S.withQ0 (q G)) hA SP
-        (c G (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ)))
-        (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ)) (A.R.1 + t) =
-        fp.physMain (bf.Lab ⊕ Fin fp.Mc) X + fp.physMain (Ms G).Md Vb := by
-      unfold sideState
-      simp only [ModeSchedule.withQ0_K]
-      rw [map_sub]
-    have h1 : ‖columnL2Restriction E hE (fp.physMain (bf.Lab ⊕ Fin fp.Mc) X)‖ ≤
-        ‖columnL2Restriction E hE X‖ := by
-      rw [← physEmbed_restrict]; exact norm_physEmbed_apply_le _
-    have h2 : ‖columnL2Restriction E hE (fp.physMain (Ms G).Md Vb)‖ ≤ ‖Vb‖ := by
-      rw [← physEmbed_restrict]
-      refine (norm_physEmbed_apply_le _).trans ?_
-      have := columnL2Restriction_norm_sq_le E hE Vb
-      exact (pow_le_pow_iff_left₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).mp this
-    have hV' : V G (S.K * (t / S.K)) = ‖Vb‖ ^ 2 := by
-      simp only [V, Vb]
-    rw [e, map_add, hV']
-    have htri := norm_add_le (columnL2Restriction E hE (fp.physMain (bf.Lab ⊕ Fin fp.Mc) X))
-      (columnL2Restriction E hE (fp.physMain (Ms G).Md Vb))
-    have ha := norm_nonneg (columnL2Restriction E hE X)
-    have hb := norm_nonneg Vb
-    nlinarith only [sq_nonneg (‖columnL2Restriction E hE X‖ - ‖Vb‖),
-      norm_nonneg (columnL2Restriction E hE (fp.physMain (bf.Lab ⊕ Fin fp.Mc) X) +
-        columnL2Restriction E hE (fp.physMain (Ms G).Md Vb)), h1, h2, htri]
+      (A.R.1 + ((S.K * (t / S.K) : ℕ) : ℤ)) (A.R.1 + t) _ _
   calc _ ≤ ∑ t ∈ Sd, ∑ G, (2 * ‖columnL2Restriction (⋃ I ∈ Ec G t, dyadicGridCell A.G I.1 I.2)
         (Finset.measurableSet_biUnion _ fun I _ => dyadicGridCell_measurable A.G I.1 I.2)
         (fp.basicOut l s mb (grp G) j ls (A.R.1 + t) -

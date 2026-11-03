@@ -2780,6 +2780,29 @@ theorem columnL2Restriction_norm_sq_le {V : Type*} [Fintype V] (s : Set ℝ) (hs
   exact setIntegral_le_integral ((Lp.memLp g).integrable_norm_pow two_ne_zero)
     (Filter.Eventually.of_forall fun _ => sq_nonneg _)
 
+/-- Restricting a sum of physical embeddings costs twice the restricted first energy and
+twice the full second energy. This separates the rolling and fixed parts of a side state. -/
+theorem norm_sq_restrict_physEmbed_add {V W U : Type*} [Fintype V] [Fintype W] [Fintype U]
+    (s : Set ℝ) (hs : MeasurableSet s) (x : ColumnL2 V) (y : ColumnL2 W) :
+    ‖columnL2Restriction (V := U) s hs (physEmbed V U x + physEmbed W U y)‖ ^ 2 ≤
+      2 * ‖columnL2Restriction s hs x‖ ^ 2 + 2 * ‖y‖ ^ 2 := by
+  have h1 : ‖columnL2Restriction s hs (physEmbed V U x)‖ ≤
+      ‖columnL2Restriction s hs x‖ := by
+    rw [← physEmbed_restrict]
+    exact norm_physEmbed_apply_le _
+  have h2 : ‖columnL2Restriction s hs (physEmbed W U y)‖ ≤ ‖y‖ := by
+    rw [← physEmbed_restrict]
+    refine (norm_physEmbed_apply_le _).trans ?_
+    exact (pow_le_pow_iff_left₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).mp
+      (columnL2Restriction_norm_sq_le s hs y)
+  rw [map_add]
+  have htri := norm_add_le (columnL2Restriction s hs (physEmbed V U x))
+    (columnL2Restriction s hs (physEmbed W U y))
+  nlinarith only [sq_nonneg (‖columnL2Restriction s hs x‖ - ‖y‖),
+    norm_nonneg (columnL2Restriction s hs x), norm_nonneg y,
+    norm_nonneg (columnL2Restriction s hs (physEmbed V U x) +
+      columnL2Restriction s hs (physEmbed W U y)), h1, h2, htri]
+
 end TrilinearHT.Auto
 
 end

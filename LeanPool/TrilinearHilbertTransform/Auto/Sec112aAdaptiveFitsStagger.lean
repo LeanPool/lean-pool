@@ -1575,10 +1575,277 @@ theorem fitWeightedMass_le (f : Lp ℂ 2 (volume : Measure ℝ)) {ρ : ℝ} (hρ
 
 end FitTree
 
+/-! ### Greedy attempts with restarts on a finite tree -/
+
+/-- A greedy attempt structure: per-cell greedy insertion with predicate `P` and oracle `O`,
+inherited along each attempt (`fitState`), with integrated insertion mass at most `A |K|` on every
+attempt root `K` (blueprint sec:reduction, lines 429-451; §11.2, line 1577). -/
+structure GreedyTree where
+  /-- Dyadic grid supporting the greedy attempts and restarts. -/
+  G : RealDyadicGrid
+  /-- Initial root cell for the greedy construction. -/
+  J : ℤ × ℤ
+  /-- Number of dyadic generations below the initial root. -/
+  N : ℕ
+  /-- Maximum number of insertions available in one greedy state. -/
+  M : ℕ
+  /-- Predicate deciding when an insertion attempt stops. -/
+  P : ℤ × ℤ → (ℕ → ℝ → ℂ) → ℕ → Prop
+  /-- Oracle producing a new atom when the stopping predicate fails. -/
+  O : ℤ × ℤ → (ℕ → ℝ → ℂ) → ℕ → ℝ → ℂ
+  /-- Integrated insertion-mass bound per unit length of an attempt root. -/
+  A : ℝ
+
+namespace GreedyTree
+variable (S : GreedyTree)
+
+/-- The cell of an index. -/
+noncomputable abbrev cell (c : ℤ × ℤ) : Set ℝ := dyadicGridCell S.G c.1 c.2
+
+/-- The state of the attempt `d` generations below its root. -/
+noncomputable def state (d : ℕ) (c : ℤ × ℤ) : (ℕ → ℝ → ℂ) × ℕ := fitState S.G S.M S.P S.O d c
+
+/-- Insertion counts of the attempt rooted at `K`. -/
+noncomputable def newAt (K c : ℤ × ℤ) : ℝ := (fitNew S.G S.M S.P S.O (c.1 - K.1).toNat c : ℝ)
+
+/-- The first-crossing threshold `A / (1/4)`. -/
+noncomputable def T : ℝ := S.A / (1 / 4)
+
+/-- The finite tree below `K`. -/
+noncomputable def sub (K : ℤ × ℤ) : Finset (ℤ × ℤ) :=
+  dyadicFiniteTree S.G K (dyadicRemainingDepth S.J S.N K)
+
+/-- The roots of the next attempts below `K`: the first crossings of the path count. -/
+noncomputable def next (K : ℤ × ℤ) : Finset (ℤ × ℤ) :=
+  dyadicFirstCrossings S.G (S.sub K) (S.newAt K) S.T
+
+/-- Restart generations. -/
+noncomputable def gen : ℕ → Finset (ℤ × ℤ)
+  | 0 => {S.J}
+  | n + 1 => (gen n).biUnion S.next
+
+/-- All attempt roots. -/
+noncomputable def roots : Finset (ℤ × ℤ) := (Finset.range (S.N + 1)).biUnion S.gen
+
+/-- Hypotheses: nonnegative mass constant, the mass bound, and trivial stopping off the tree. -/
+structure Hyp : Prop where
+  A_nonneg : 0 ≤ S.A
+  mass : ∀ K ∈ dyadicFiniteTree S.G S.J S.N,
+    dyadicWeightedMass S.G (S.sub K) (S.newAt K) ≤ S.A * dyadicGridLength S.G K.1
+  escape : ∀ c a n, c ∉ dyadicFiniteTree S.G S.J S.N → S.P c a n
+
+variable {S}
+
+theorem newAt_nonneg (K c : ℤ × ℤ) : 0 ≤ S.newAt K c := Nat.cast_nonneg _
+
+theorem sub_mem_iff {K : ℤ × ℤ} (hK : K ∈ dyadicFiniteTree S.G S.J S.N) (c : ℤ × ℤ) :
+    c ∈ S.sub K ↔ c ∈ dyadicFiniteTree S.G S.J S.N ∧ S.cell c ⊆ S.cell K :=
+  dyadicFiniteTree_below_iff S.G S.J S.N hK c
+
+theorem cell_subset_of_tree {c : ℤ × ℤ} (hc : c ∈ dyadicFiniteTree S.G S.J S.N) :
+    S.cell c ⊆ S.cell S.J :=
+  ((dyadicFiniteTree_mem_iff S.G S.J c S.N).mp hc).1
+
+theorem Hyp.next_length_le (h : S.Hyp) {K : ℤ × ℤ} (hK : K ∈ dyadicFiniteTree S.G S.J S.N) :
+    dyadicRootLength S.G (S.next K) ≤ 1 / 4 * dyadicGridLength S.G K.1 :=
+  dyadicFirstCrossings_cost S.G (S.sub K) (S.newAt K) (fun c _ => newAt_nonneg K c) K
+    (fun c hc => ((dyadicFiniteTree_mem_iff S.G K c _).mp hc).1) (by norm_num) (by norm_num)
+    (h.mass K hK)
+
+theorem count_eq_ancestorSum {K c : ℤ × ℤ} (hc : c ∈ S.sub K) :
+    ((S.state (c.1 - K.1).toNat c).2 : ℝ) = dyadicAncestorSum S.G (S.sub K) (S.newAt K) c := by
+  have hm := (dyadicFiniteTree_mem_iff S.G K c _).mp hc
+  have hle := dyadicGridCell_depth_le_of_subset S.G c K hm.1
+  exact fitState_count_eq_ancestorSum S.G S.M S.P S.O K _ _ c hm.1 (by omega) (by omega)
+
+theorem Hyp.next_depth (h : S.Hyp) {K b : ℤ × ℤ} (hK : K ∈ dyadicFiniteTree S.G S.J S.N)
+    (hb : b ∈ S.next K) : K.1 < b.1 ∧ S.cell b ⊆ S.cell K := by
+  obtain ⟨hbS, hbad⟩ := dyadicFirstCrossings_mem S.G _ _ _ hb
+  have hbK := ((dyadicFiniteTree_mem_iff S.G K b _).mp hbS).1
+  refine ⟨dyadicGridCell_depth_lt_of_subset_ne S.G b K hbK ?_, hbK⟩
+  rintro rfl
+  have hKS : b ∈ S.sub b := dyadicFiniteTree_root_mem S.G b _
+  rw [← count_eq_ancestorSum hKS] at hbad
+  have hcnt : ((S.state (b.1 - b.1).toNat b).2 : ℝ) = S.newAt b b := by
+    simp only [sub_self, Int.toNat_zero, state, newAt, fitNew, fitInherited, Nat.sub_zero]
+  rw [hcnt] at hbad
+  have hmass := h.mass b hK
+  have hsingle : dyadicGridLength S.G b.1 * S.newAt b b ≤
+      dyadicWeightedMass S.G (S.sub b) (S.newAt b) :=
+    Finset.single_le_sum (f := fun c => dyadicGridLength S.G c.1 * S.newAt b c)
+      (fun c _ => mul_nonneg (dyadicGridLength_pos S.G c.1).le (newAt_nonneg b c)) hKS
+  have hL := dyadicGridLength_pos S.G b.1
+  have h4 : S.newAt b b ≤ S.A := by
+    by_contra hc
+    push Not at hc
+    nlinarith
+  have hT : S.T = 4 * S.A := by unfold T; ring
+  rw [hT] at hbad
+  linarith [h.A_nonneg]
+
+theorem Hyp.gen_mem (h : S.Hyp) (n : ℕ) {c : ℤ × ℤ} (hc : c ∈ S.gen n) :
+    c ∈ dyadicFiniteTree S.G S.J S.N ∧ S.J.1 + n ≤ c.1 := by
+  induction n generalizing c with
+  | zero =>
+    have : c = S.J := by simpa only [gen, Finset.mem_singleton] using hc
+    subst this
+    exact ⟨dyadicFiniteTree_root_mem _ _ _, by simp⟩
+  | succ n ih =>
+    obtain ⟨K, hK, hcK⟩ := Finset.mem_biUnion.mp hc
+    obtain ⟨hKT, hKd⟩ := ih hK
+    have hd := h.next_depth hKT hcK
+    have hcS := (dyadicFirstCrossings_mem S.G _ _ _ hcK).1
+    refine ⟨((sub_mem_iff hKT c).mp hcS).1, ?_⟩
+    push_cast
+    omega
+
+theorem Hyp.gen_length_le (h : S.Hyp) (n : ℕ) :
+    dyadicRootLength S.G (S.gen n) ≤ (1 / 4 : ℝ) ^ n * dyadicGridLength S.G S.J.1 := by
+  induction n with
+  | zero => simp [gen, dyadicRootLength]
+  | succ n ih =>
+    calc dyadicRootLength S.G (S.gen (n + 1))
+        ≤ ∑ K ∈ S.gen n, dyadicRootLength S.G (S.next K) :=
+          finite_union_weight_le _ _ _ fun c => (dyadicGridLength_pos S.G c.1).le
+      _ ≤ ∑ K ∈ S.gen n, 1 / 4 * dyadicGridLength S.G K.1 :=
+          Finset.sum_le_sum fun K hK => h.next_length_le (h.gen_mem n hK).1
+      _ = 1 / 4 * dyadicRootLength S.G (S.gen n) := by rw [dyadicRootLength, Finset.mul_sum]
+      _ ≤ 1 / 4 * ((1 / 4 : ℝ) ^ n * dyadicGridLength S.G S.J.1) := by gcongr
+      _ = _ := by ring
+
+/-- The restarted segments have total root length at most `4/3 |J|`. -/
+theorem Hyp.roots_length_le (h : S.Hyp) :
+    dyadicRootLength S.G S.roots ≤ 4 / 3 * dyadicGridLength S.G S.J.1 := by
+  have hL := dyadicGridLength_pos S.G S.J.1
+  calc dyadicRootLength S.G S.roots
+      ≤ ∑ n ∈ Finset.range (S.N + 1), dyadicRootLength S.G (S.gen n) :=
+        finite_union_weight_le _ _ _ fun c => (dyadicGridLength_pos S.G c.1).le
+    _ ≤ ∑ n ∈ Finset.range (S.N + 1), (1 / 4 : ℝ) ^ n * dyadicGridLength S.G S.J.1 :=
+        Finset.sum_le_sum fun n _ => h.gen_length_le n
+    _ = (∑ n ∈ Finset.Ico 0 (S.N + 1), (1 / 4 : ℝ) ^ n) * dyadicGridLength S.G S.J.1 := by
+        rw [Finset.sum_mul, Finset.range_eq_Ico]
+    _ ≤ ((1 / 4 : ℝ) ^ 0 / (1 - 1 / 4)) * dyadicGridLength S.G S.J.1 := by
+        gcongr
+        exact geom_sum_Ico_le_of_lt_one (by norm_num) (by norm_num)
+    _ = 4 / 3 * dyadicGridLength S.G S.J.1 := by norm_num
+
+theorem J_mem_roots : S.J ∈ S.roots :=
+  Finset.mem_biUnion.mpr ⟨0, Finset.mem_range.mpr (by omega), Finset.mem_singleton_self _⟩
+
+theorem Hyp.roots_mem (h : S.Hyp) {K : ℤ × ℤ} (hK : K ∈ S.roots) :
+    K ∈ dyadicFiniteTree S.G S.J S.N := by
+  obtain ⟨n, _, hn⟩ := Finset.mem_biUnion.mp hK
+  exact (h.gen_mem n hn).1
+
+theorem Hyp.roots_closed (h : S.Hyp) {K b : ℤ × ℤ} (hK : K ∈ S.roots) (hb : b ∈ S.next K) :
+    b ∈ S.roots := by
+  obtain ⟨n, _, hn⟩ := Finset.mem_biUnion.mp hK
+  have hbn : b ∈ S.gen (n + 1) := Finset.mem_biUnion.mpr ⟨K, hn, hb⟩
+  obtain ⟨hbT, hbd⟩ := h.gen_mem (n + 1) hbn
+  have hup := ((dyadicFiniteTree_mem_iff S.G S.J b S.N).mp hbT).2
+  exact Finset.mem_biUnion.mpr ⟨n + 1, Finset.mem_range.mpr (by push_cast at hbd; omega), hbn⟩
+
+theorem Hyp.segment_exists (h : S.Hyp) {u : ℤ × ℤ} (hu : u ∈ dyadicFiniteTree S.G S.J S.N) :
+    ∃ K ∈ S.roots, S.cell u ⊆ S.cell K ∧ (∀ b ∈ S.next K, ¬ S.cell u ⊆ S.cell b) ∧
+      ∀ L ∈ S.roots, S.cell u ⊆ S.cell L → L.1 ≤ K.1 := by
+  classical
+  let A := S.roots.filter (fun K : ℤ × ℤ => S.cell u ⊆ S.cell K)
+  have hA : A.Nonempty := ⟨S.J, Finset.mem_filter.mpr ⟨J_mem_roots, cell_subset_of_tree hu⟩⟩
+  obtain ⟨K, hK, hmax⟩ := A.exists_max_image (fun c => c.1) hA
+  obtain ⟨hKr, huK⟩ := Finset.mem_filter.mp hK
+  refine ⟨K, hKr, huK, fun b hb hub => ?_, fun L hL huL =>
+    hmax L (Finset.mem_filter.mpr ⟨hL, huL⟩)⟩
+  have hbr := h.roots_closed hKr hb
+  have hle := hmax b (Finset.mem_filter.mpr ⟨hbr, hub⟩)
+  have hlt := (h.next_depth (h.roots_mem hKr) hb).1
+  omega
+
+variable (S)
+
+open scoped Classical in
+/-- The root of the segment containing a tree cell: its deepest attempt root. -/
+noncomputable def seg (u : ℤ × ℤ) : ℤ × ℤ :=
+  if h : u ∈ dyadicFiniteTree S.G S.J S.N ∧ S.Hyp then Classical.choose (h.2.segment_exists h.1)
+  else u
+
+/-- The depth of a cell below its segment root. -/
+noncomputable def depthIn (u : ℤ × ℤ) : ℕ := (u.1 - (S.seg u).1).toNat
+
+/-- The final state at a cell. -/
+noncomputable def st (u : ℤ × ℤ) : (ℕ → ℝ → ℂ) × ℕ := S.state (S.depthIn u) u
+
+variable {S}
+
+theorem Hyp.seg_spec (h : S.Hyp) {u : ℤ × ℤ} (hu : u ∈ dyadicFiniteTree S.G S.J S.N) :
+    S.seg u ∈ S.roots ∧ S.cell u ⊆ S.cell (S.seg u) ∧
+      (∀ b ∈ S.next (S.seg u), ¬ S.cell u ⊆ S.cell b) ∧
+      ∀ L ∈ S.roots, S.cell u ⊆ S.cell L → L.1 ≤ (S.seg u).1 := by
+  have hc : u ∈ dyadicFiniteTree S.G S.J S.N ∧ S.Hyp := ⟨hu, h⟩
+  have e : S.seg u = Classical.choose (hc.2.segment_exists hc.1) := by
+    unfold seg; simp only [hc, and_self, ↓reduceDIte]
+  rw [e]
+  exact Classical.choose_spec (hc.2.segment_exists hc.1)
+
+/-- On every tree cell the greedy stopped below the cap, so the predicate holds. -/
+theorem Hyp.retained (h : S.Hyp) (hM : S.T < S.M) {u : ℤ × ℤ}
+    (hu : u ∈ dyadicFiniteTree S.G S.J S.N) :
+    (S.st u).2 < S.M ∧ S.P u (S.st u).1 (S.st u).2 := by
+  classical
+  obtain ⟨hKr, huK, hnext, _⟩ := h.seg_spec hu
+  have hKT := h.roots_mem hKr
+  have husub : u ∈ S.sub (S.seg u) := (sub_mem_iff hKT u).mpr ⟨hu, huK⟩
+  have hret : u ∈ dyadicRetainedCells S.G (S.sub (S.seg u)) (S.newAt (S.seg u)) S.T :=
+    (dyadicRetainedCells_iff S.G _ _ (fun c _ => newAt_nonneg _ c) S.T u).mpr
+      ⟨husub, fun ⟨b, hb, hub⟩ => hnext b hb hub⟩
+  have hle := (Finset.mem_filter.mp hret).2
+  rw [← count_eq_ancestorSum husub] at hle
+  have hlt : (S.st u).2 < S.M := by
+    have : ((S.st u).2 : ℝ) < S.M := lt_of_le_of_lt hle hM
+    exact_mod_cast this
+  refine ⟨hlt, ?_⟩
+  have hgr : S.st u = fitGreedy S.M (S.P u) (S.O u)
+      (fitInherited S.G S.M S.P S.O (S.depthIn u) u) := fitState_eq_greedy _ _ _ _ _ _
+  have hfin := fitGreedy_final (M := S.M) (P := S.P u) (O := S.O u)
+    (fitInherited S.G S.M S.P S.O (S.depthIn u) u) (fitInherited_count_le _ _ _ _ _ _)
+  rw [← hgr] at hfin
+  rcases hfin with hP | hcap
+  · exact hP
+  · omega
+
+end GreedyTree
+
+namespace GreedyTree
+variable {S : GreedyTree}
+
+/-! ### Tuple-specific accurate high fits -/
+
+/-- A cell between a tree cell and its segment root has the same segment root. -/
+theorem Hyp.seg_between (h : S.Hyp) {u v : ℤ × ℤ} (hu : u ∈ dyadicFiniteTree S.G S.J S.N)
+    (hv : v ∈ dyadicFiniteTree S.G S.J S.N) (huv : S.cell u ⊆ S.cell v)
+    (hvs : S.cell v ⊆ S.cell (S.seg u)) : S.seg v = S.seg u := by
+  obtain ⟨hr, hus, -, hmax⟩ := h.seg_spec hu
+  obtain ⟨hr', hvs', -, hmax'⟩ := h.seg_spec hv
+  have h1 := hmax' _ hr hvs
+  have h2 := hmax _ hr' (huv.trans hvs')
+  have hx := dyadicGridCell_left_mem S.G u.1 u.2
+  exact (dyadicGridCell_eq_of_common_point S.G (hus hx) (hvs' (huv hx)) (by omega)).symm
+
+end GreedyTree
+
 namespace FitSetup
 variable (S : FitSetup)
 
 /-! ### Restarts and segments of the adaptive fit -/
+
+/-- The adaptive fit is the general restart construction with insertion mass `4 B²`. -/
+noncomputable def toGreedyTree : GreedyTree where
+  G := S.G
+  J := S.J
+  N := S.N
+  M := S.M
+  P := S.P
+  O := S.O
+  A := 4 * S.B ^ 2
 
 /-- The state of the attempt `d` generations below its root. -/
 noncomputable def state (d : ℕ) (c : ℤ × ℤ) : (ℕ → ℝ → ℂ) × ℕ := fitState S.G S.M S.P S.O d c
@@ -1598,12 +1865,11 @@ noncomputable def next (K : ℤ × ℤ) : Finset (ℤ × ℤ) :=
   dyadicFirstCrossings S.G (S.sub K) (S.newAt K) S.T
 
 /-- Restart generations. -/
-noncomputable def gen : ℕ → Finset (ℤ × ℤ)
-  | 0 => {S.J}
-  | n + 1 => (gen n).biUnion S.next
+noncomputable def gen : ℕ → Finset (ℤ × ℤ) := S.toGreedyTree.gen
 
 /-- All attempt roots. -/
-noncomputable def roots : Finset (ℤ × ℤ) := (Finset.range (S.N + 1)).biUnion S.gen
+noncomputable def roots : Finset (ℤ × ℤ) :=
+  S.toGreedyTree.roots
 
 variable {S}
 
@@ -1650,123 +1916,57 @@ theorem Hyp.mass_le (h : S.Hyp) {K : ℤ × ℤ} (hK : K ∈ dyadicFiniteTree S.
   rw [h2]
   exact mul_le_mul_of_nonneg_left h1 (by positivity)
 
+/-- Analytic fit hypotheses supply the three hypotheses of the general restart theorem. -/
+theorem Hyp.toGreedyTree (h : S.Hyp) : S.toGreedyTree.Hyp where
+  A_nonneg := by dsimp [FitSetup.toGreedyTree]; positivity
+  mass := fun _ hK => h.mass_le hK
+  escape := fun _ _ _ hout => Or.inl hout
+
 /-- Blueprint §11.2, line 1577: the first stopped roots cost at most a quarter of the root. -/
 theorem Hyp.next_length_le (h : S.Hyp) {K : ℤ × ℤ} (hK : K ∈ dyadicFiniteTree S.G S.J S.N) :
     dyadicRootLength S.G (S.next K) ≤ 1 / 4 * dyadicGridLength S.G K.1 :=
-  dyadicFirstCrossings_cost S.G (S.sub K) (S.newAt K) (fun c _ => newAt_nonneg K c) K
-    (fun c hc => ((dyadicFiniteTree_mem_iff S.G K c _).mp hc).1) (by norm_num) (by norm_num)
-    (h.mass_le hK)
+  h.toGreedyTree.next_length_le hK
 
 /-- The count at a cell of the attempt at `K` equals its ancestor sum. -/
 theorem count_eq_ancestorSum {K c : ℤ × ℤ} (hc : c ∈ S.sub K) :
-    ((S.state (c.1 - K.1).toNat c).2 : ℝ) = dyadicAncestorSum S.G (S.sub K) (S.newAt K) c := by
-  have hm := (dyadicFiniteTree_mem_iff S.G K c _).mp hc
-  have hle := dyadicGridCell_depth_le_of_subset S.G c K hm.1
-  exact fitState_count_eq_ancestorSum S.G S.M S.P S.O K _ _ c hm.1 (by omega) (by omega)
+    ((S.state (c.1 - K.1).toNat c).2 : ℝ) = dyadicAncestorSum S.G (S.sub K) (S.newAt K) c :=
+  S.toGreedyTree.count_eq_ancestorSum hc
 
 /-- Next roots are strictly below their attempt root. -/
 theorem Hyp.next_depth (h : S.Hyp) {K b : ℤ × ℤ} (hK : K ∈ dyadicFiniteTree S.G S.J S.N)
-    (hb : b ∈ S.next K) : K.1 < b.1 ∧ S.cell b ⊆ S.cell K := by
-  obtain ⟨hbS, hbad⟩ := dyadicFirstCrossings_mem S.G _ _ _ hb
-  have hbK := ((dyadicFiniteTree_mem_iff S.G K b _).mp hbS).1
-  refine ⟨dyadicGridCell_depth_lt_of_subset_ne S.G b K hbK ?_, hbK⟩
-  rintro rfl
-  have hKS : b ∈ S.sub b := dyadicFiniteTree_root_mem S.G b _
-  rw [← count_eq_ancestorSum hKS] at hbad
-  have hcnt : ((S.state (b.1 - b.1).toNat b).2 : ℝ) = S.newAt b b := by
-    simp only [sub_self, Int.toNat_zero, state, newAt, fitNew, fitInherited, Nat.sub_zero]
-  rw [hcnt] at hbad
-  have hmass := h.mass_le hK
-  have hsingle : dyadicGridLength S.G b.1 * S.newAt b b ≤
-      dyadicWeightedMass S.G (S.sub b) (S.newAt b) :=
-    Finset.single_le_sum (f := fun c => dyadicGridLength S.G c.1 * S.newAt b c)
-      (fun c _ => mul_nonneg (dyadicGridLength_pos S.G c.1).le (newAt_nonneg b c)) hKS
-  have hL := dyadicGridLength_pos S.G b.1
-  have h4 : S.newAt b b ≤ 4 * S.B ^ 2 := by
-    by_contra hc
-    push Not at hc
-    nlinarith
-  rw [T_eq] at hbad
-  nlinarith [sq_nonneg S.B]
+    (hb : b ∈ S.next K) : K.1 < b.1 ∧ S.cell b ⊆ S.cell K :=
+  h.toGreedyTree.next_depth hK hb
 
 theorem Hyp.gen_mem (h : S.Hyp) (n : ℕ) {c : ℤ × ℤ} (hc : c ∈ S.gen n) :
-    c ∈ dyadicFiniteTree S.G S.J S.N ∧ S.J.1 + n ≤ c.1 := by
-  induction n generalizing c with
-  | zero =>
-    have : c = S.J := by simpa only [gen, Finset.mem_singleton] using hc
-    subst this
-    exact ⟨dyadicFiniteTree_root_mem _ _ _, by simp⟩
-  | succ n ih =>
-    obtain ⟨K, hK, hcK⟩ := Finset.mem_biUnion.mp hc
-    obtain ⟨hKT, hKd⟩ := ih hK
-    have hd := h.next_depth hKT hcK
-    have hcS := (dyadicFirstCrossings_mem S.G _ _ _ hcK).1
-    refine ⟨((sub_mem_iff hKT c).mp hcS).1, ?_⟩
-    push_cast
-    omega
+    c ∈ dyadicFiniteTree S.G S.J S.N ∧ S.J.1 + n ≤ c.1 :=
+  h.toGreedyTree.gen_mem n hc
 
 theorem Hyp.gen_length_le (h : S.Hyp) (n : ℕ) :
-    dyadicRootLength S.G (S.gen n) ≤ (1 / 4 : ℝ) ^ n * dyadicGridLength S.G S.J.1 := by
-  induction n with
-  | zero => simp [gen, dyadicRootLength]
-  | succ n ih =>
-    calc dyadicRootLength S.G (S.gen (n + 1))
-        ≤ ∑ K ∈ S.gen n, dyadicRootLength S.G (S.next K) :=
-          finite_union_weight_le _ _ _ fun c => (dyadicGridLength_pos S.G c.1).le
-      _ ≤ ∑ K ∈ S.gen n, 1 / 4 * dyadicGridLength S.G K.1 :=
-          Finset.sum_le_sum fun K hK => h.next_length_le (h.gen_mem n hK).1
-      _ = 1 / 4 * dyadicRootLength S.G (S.gen n) := by rw [dyadicRootLength, Finset.mul_sum]
-      _ ≤ 1 / 4 * ((1 / 4 : ℝ) ^ n * dyadicGridLength S.G S.J.1) := by gcongr
-      _ = _ := by ring
+    dyadicRootLength S.G (S.gen n) ≤ (1 / 4 : ℝ) ^ n * dyadicGridLength S.G S.J.1 :=
+  h.toGreedyTree.gen_length_le n
 
 /-- Blueprint §11.2, line 1577: the restarted segments have total root length at most
 `4/3 |J|`. -/
 theorem Hyp.roots_length_le (h : S.Hyp) :
-    dyadicRootLength S.G S.roots ≤ 4 / 3 * dyadicGridLength S.G S.J.1 := by
-  have hL := dyadicGridLength_pos S.G S.J.1
-  calc dyadicRootLength S.G S.roots
-      ≤ ∑ n ∈ Finset.range (S.N + 1), dyadicRootLength S.G (S.gen n) :=
-        finite_union_weight_le _ _ _ fun c => (dyadicGridLength_pos S.G c.1).le
-    _ ≤ ∑ n ∈ Finset.range (S.N + 1), (1 / 4 : ℝ) ^ n * dyadicGridLength S.G S.J.1 :=
-        Finset.sum_le_sum fun n _ => h.gen_length_le n
-    _ = (∑ n ∈ Finset.Ico 0 (S.N + 1), (1 / 4 : ℝ) ^ n) * dyadicGridLength S.G S.J.1 := by
-        rw [Finset.sum_mul, Finset.range_eq_Ico]
-    _ ≤ ((1 / 4 : ℝ) ^ 0 / (1 - 1 / 4)) * dyadicGridLength S.G S.J.1 := by
-        gcongr
-        exact geom_sum_Ico_le_of_lt_one (by norm_num) (by norm_num)
-    _ = 4 / 3 * dyadicGridLength S.G S.J.1 := by norm_num
+    dyadicRootLength S.G S.roots ≤ 4 / 3 * dyadicGridLength S.G S.J.1 :=
+  h.toGreedyTree.roots_length_le
 
 theorem J_mem_roots : S.J ∈ S.roots :=
-  Finset.mem_biUnion.mpr ⟨0, Finset.mem_range.mpr (by omega), Finset.mem_singleton_self _⟩
+  S.toGreedyTree.J_mem_roots
 
 theorem Hyp.roots_mem (h : S.Hyp) {K : ℤ × ℤ} (hK : K ∈ S.roots) :
-    K ∈ dyadicFiniteTree S.G S.J S.N := by
-  obtain ⟨n, _, hn⟩ := Finset.mem_biUnion.mp hK
-  exact (h.gen_mem n hn).1
+    K ∈ dyadicFiniteTree S.G S.J S.N :=
+  h.toGreedyTree.roots_mem hK
 
 theorem Hyp.roots_closed (h : S.Hyp) {K b : ℤ × ℤ} (hK : K ∈ S.roots) (hb : b ∈ S.next K) :
-    b ∈ S.roots := by
-  obtain ⟨n, _, hn⟩ := Finset.mem_biUnion.mp hK
-  have hbn : b ∈ S.gen (n + 1) := Finset.mem_biUnion.mpr ⟨K, hn, hb⟩
-  obtain ⟨hbT, hbd⟩ := h.gen_mem (n + 1) hbn
-  have hup := ((dyadicFiniteTree_mem_iff S.G S.J b S.N).mp hbT).2
-  exact Finset.mem_biUnion.mpr ⟨n + 1, Finset.mem_range.mpr (by push_cast at hbd; omega), hbn⟩
+    b ∈ S.roots :=
+  h.toGreedyTree.roots_closed hK hb
 
 /-- Every tree cell lies in the segment of its deepest root. -/
 theorem Hyp.segment_exists (h : S.Hyp) {u : ℤ × ℤ} (hu : u ∈ dyadicFiniteTree S.G S.J S.N) :
     ∃ K ∈ S.roots, S.cell u ⊆ S.cell K ∧ (∀ b ∈ S.next K, ¬ S.cell u ⊆ S.cell b) ∧
-      ∀ L ∈ S.roots, S.cell u ⊆ S.cell L → L.1 ≤ K.1 := by
-  classical
-  let A := S.roots.filter (fun K : ℤ × ℤ => S.cell u ⊆ S.cell K)
-  have hA : A.Nonempty := ⟨S.J, Finset.mem_filter.mpr ⟨J_mem_roots, cell_subset_of_tree hu⟩⟩
-  obtain ⟨K, hK, hmax⟩ := A.exists_max_image (fun c => c.1) hA
-  obtain ⟨hKr, huK⟩ := Finset.mem_filter.mp hK
-  refine ⟨K, hKr, huK, fun b hb hub => ?_, fun L hL huL =>
-    hmax L (Finset.mem_filter.mpr ⟨hL, huL⟩)⟩
-  have hbr := h.roots_closed hKr hb
-  have hle := hmax b (Finset.mem_filter.mpr ⟨hbr, hub⟩)
-  have hlt := (h.next_depth (h.roots_mem hKr) hb).1
-  omega
+      ∀ L ∈ S.roots, S.cell u ⊆ S.cell L → L.1 ≤ K.1 :=
+  h.toGreedyTree.segment_exists hu
 
 end FitSetup
 
@@ -1808,29 +2008,19 @@ theorem Hyp.retained (h : S.Hyp) (hM : S.T < S.M) {u : ℤ × ℤ}
     (S.st u).2 < S.M ∧
       FormSmall (dyadicGridLeft S.G u.1 u.2) (dyadicGridLength S.G u.1) (S.w u) S.j S.q
         (S.res u (S.st u).1 (S.st u).2) (Real.exp (-(S.k : ℝ))) := by
-  classical
-  obtain ⟨hKr, huK, hnext, _⟩ := h.seg_spec hu
-  have hKT := h.roots_mem hKr
-  have husub : u ∈ S.sub (S.seg u) := (sub_mem_iff hKT u).mpr ⟨hu, huK⟩
-  have hret : u ∈ dyadicRetainedCells S.G (S.sub (S.seg u)) (S.newAt (S.seg u)) S.T :=
-    (dyadicRetainedCells_iff S.G _ _ (fun c _ => newAt_nonneg _ c) S.T u).mpr
-      ⟨husub, fun ⟨b, hb, hub⟩ => hnext b hb hub⟩
-  have hle := (Finset.mem_filter.mp hret).2
-  rw [← count_eq_ancestorSum husub] at hle
-  have hlt : (S.st u).2 < S.M := by
-    have : ((S.st u).2 : ℝ) < S.M := lt_of_le_of_lt hle hM
-    exact_mod_cast this
-  refine ⟨hlt, ?_⟩
-  have hgr : S.st u = fitGreedy S.M (S.P u) (S.O u)
-      (fitInherited S.G S.M S.P S.O (S.depthIn u) u) := fitState_eq_greedy _ _ _ _ _ _
-  have hfin := fitGreedy_final (M := S.M) (P := S.P u) (O := S.O u)
-    (fitInherited S.G S.M S.P S.O (S.depthIn u) u) (fitInherited_count_le _ _ _ _ _ _)
-  rw [← hgr] at hfin
-  rcases hfin with hP | hcap
-  · rcases hP with hout | hsmall
-    · exact (hout hu).elim
-    · exact hsmall
-  · omega
+  have hseg : S.seg u = S.toGreedyTree.seg u := by
+    unfold seg GreedyTree.seg
+    rw [dite_eq_left ⟨hu, h⟩, dite_eq_left ⟨hu, h.toGreedyTree⟩]
+    rfl
+  have hst : S.st u = S.toGreedyTree.st u := by
+    unfold st depthIn GreedyTree.st GreedyTree.depthIn
+    rw [hseg]
+    rfl
+  have hret := h.toGreedyTree.retained hM hu
+  rw [← hst] at hret
+  rcases hret with ⟨hlt, hout | hsmall⟩
+  · exact (hout hu).elim
+  · exact ⟨hlt, hsmall⟩
 
 /-- Within a segment, deeper cells inherit the list of their ancestors. -/
 theorem Hyp.inherited (h : S.Hyp) {u u' : ℤ × ℤ} (hu : u ∈ dyadicFiniteTree S.G S.J S.N)
@@ -3553,262 +3743,7 @@ def ColData (sc : V → ℝ → ℂ) (wt : V → ℝ) : Prop :=
 
 end ColRange2
 
-/-! ### Greedy attempts with restarts on a finite tree -/
 
-/-- A greedy attempt structure: per-cell greedy insertion with predicate `P` and oracle `O`,
-inherited along each attempt (`fitState`), with integrated insertion mass at most `A |K|` on every
-attempt root `K` (blueprint sec:reduction, lines 429-451; §11.2, line 1577). -/
-structure GreedyTree where
-  /-- Dyadic grid supporting the greedy attempts and restarts. -/
-  G : RealDyadicGrid
-  /-- Initial root cell for the greedy construction. -/
-  J : ℤ × ℤ
-  /-- Number of dyadic generations below the initial root. -/
-  N : ℕ
-  /-- Maximum number of insertions available in one greedy state. -/
-  M : ℕ
-  /-- Predicate deciding when an insertion attempt stops. -/
-  P : ℤ × ℤ → (ℕ → ℝ → ℂ) → ℕ → Prop
-  /-- Oracle producing a new atom when the stopping predicate fails. -/
-  O : ℤ × ℤ → (ℕ → ℝ → ℂ) → ℕ → ℝ → ℂ
-  /-- Integrated insertion-mass bound per unit length of an attempt root. -/
-  A : ℝ
-
-namespace GreedyTree
-variable (S : GreedyTree)
-
-/-- The cell of an index. -/
-noncomputable abbrev cell (c : ℤ × ℤ) : Set ℝ := dyadicGridCell S.G c.1 c.2
-
-/-- The state of the attempt `d` generations below its root. -/
-noncomputable def state (d : ℕ) (c : ℤ × ℤ) : (ℕ → ℝ → ℂ) × ℕ := fitState S.G S.M S.P S.O d c
-
-/-- Insertion counts of the attempt rooted at `K`. -/
-noncomputable def newAt (K c : ℤ × ℤ) : ℝ := (fitNew S.G S.M S.P S.O (c.1 - K.1).toNat c : ℝ)
-
-/-- The first-crossing threshold `A / (1/4)`. -/
-noncomputable def T : ℝ := S.A / (1 / 4)
-
-/-- The finite tree below `K`. -/
-noncomputable def sub (K : ℤ × ℤ) : Finset (ℤ × ℤ) :=
-  dyadicFiniteTree S.G K (dyadicRemainingDepth S.J S.N K)
-
-/-- The roots of the next attempts below `K`: the first crossings of the path count. -/
-noncomputable def next (K : ℤ × ℤ) : Finset (ℤ × ℤ) :=
-  dyadicFirstCrossings S.G (S.sub K) (S.newAt K) S.T
-
-/-- Restart generations. -/
-noncomputable def gen : ℕ → Finset (ℤ × ℤ)
-  | 0 => {S.J}
-  | n + 1 => (gen n).biUnion S.next
-
-/-- All attempt roots. -/
-noncomputable def roots : Finset (ℤ × ℤ) := (Finset.range (S.N + 1)).biUnion S.gen
-
-/-- Hypotheses: nonnegative mass constant, the mass bound, and trivial stopping off the tree. -/
-structure Hyp : Prop where
-  A_nonneg : 0 ≤ S.A
-  mass : ∀ K ∈ dyadicFiniteTree S.G S.J S.N,
-    dyadicWeightedMass S.G (S.sub K) (S.newAt K) ≤ S.A * dyadicGridLength S.G K.1
-  escape : ∀ c a n, c ∉ dyadicFiniteTree S.G S.J S.N → S.P c a n
-
-variable {S}
-
-theorem newAt_nonneg (K c : ℤ × ℤ) : 0 ≤ S.newAt K c := Nat.cast_nonneg _
-
-theorem sub_mem_iff {K : ℤ × ℤ} (hK : K ∈ dyadicFiniteTree S.G S.J S.N) (c : ℤ × ℤ) :
-    c ∈ S.sub K ↔ c ∈ dyadicFiniteTree S.G S.J S.N ∧ S.cell c ⊆ S.cell K :=
-  dyadicFiniteTree_below_iff S.G S.J S.N hK c
-
-theorem cell_subset_of_tree {c : ℤ × ℤ} (hc : c ∈ dyadicFiniteTree S.G S.J S.N) :
-    S.cell c ⊆ S.cell S.J :=
-  ((dyadicFiniteTree_mem_iff S.G S.J c S.N).mp hc).1
-
-theorem Hyp.next_length_le (h : S.Hyp) {K : ℤ × ℤ} (hK : K ∈ dyadicFiniteTree S.G S.J S.N) :
-    dyadicRootLength S.G (S.next K) ≤ 1 / 4 * dyadicGridLength S.G K.1 :=
-  dyadicFirstCrossings_cost S.G (S.sub K) (S.newAt K) (fun c _ => newAt_nonneg K c) K
-    (fun c hc => ((dyadicFiniteTree_mem_iff S.G K c _).mp hc).1) (by norm_num) (by norm_num)
-    (h.mass K hK)
-
-theorem count_eq_ancestorSum {K c : ℤ × ℤ} (hc : c ∈ S.sub K) :
-    ((S.state (c.1 - K.1).toNat c).2 : ℝ) = dyadicAncestorSum S.G (S.sub K) (S.newAt K) c := by
-  have hm := (dyadicFiniteTree_mem_iff S.G K c _).mp hc
-  have hle := dyadicGridCell_depth_le_of_subset S.G c K hm.1
-  exact fitState_count_eq_ancestorSum S.G S.M S.P S.O K _ _ c hm.1 (by omega) (by omega)
-
-theorem Hyp.next_depth (h : S.Hyp) {K b : ℤ × ℤ} (hK : K ∈ dyadicFiniteTree S.G S.J S.N)
-    (hb : b ∈ S.next K) : K.1 < b.1 ∧ S.cell b ⊆ S.cell K := by
-  obtain ⟨hbS, hbad⟩ := dyadicFirstCrossings_mem S.G _ _ _ hb
-  have hbK := ((dyadicFiniteTree_mem_iff S.G K b _).mp hbS).1
-  refine ⟨dyadicGridCell_depth_lt_of_subset_ne S.G b K hbK ?_, hbK⟩
-  rintro rfl
-  have hKS : b ∈ S.sub b := dyadicFiniteTree_root_mem S.G b _
-  rw [← count_eq_ancestorSum hKS] at hbad
-  have hcnt : ((S.state (b.1 - b.1).toNat b).2 : ℝ) = S.newAt b b := by
-    simp only [sub_self, Int.toNat_zero, state, newAt, fitNew, fitInherited, Nat.sub_zero]
-  rw [hcnt] at hbad
-  have hmass := h.mass b hK
-  have hsingle : dyadicGridLength S.G b.1 * S.newAt b b ≤
-      dyadicWeightedMass S.G (S.sub b) (S.newAt b) :=
-    Finset.single_le_sum (f := fun c => dyadicGridLength S.G c.1 * S.newAt b c)
-      (fun c _ => mul_nonneg (dyadicGridLength_pos S.G c.1).le (newAt_nonneg b c)) hKS
-  have hL := dyadicGridLength_pos S.G b.1
-  have h4 : S.newAt b b ≤ S.A := by
-    by_contra hc
-    push Not at hc
-    nlinarith
-  have hT : S.T = 4 * S.A := by unfold T; ring
-  rw [hT] at hbad
-  linarith [h.A_nonneg]
-
-theorem Hyp.gen_mem (h : S.Hyp) (n : ℕ) {c : ℤ × ℤ} (hc : c ∈ S.gen n) :
-    c ∈ dyadicFiniteTree S.G S.J S.N ∧ S.J.1 + n ≤ c.1 := by
-  induction n generalizing c with
-  | zero =>
-    have : c = S.J := by simpa only [gen, Finset.mem_singleton] using hc
-    subst this
-    exact ⟨dyadicFiniteTree_root_mem _ _ _, by simp⟩
-  | succ n ih =>
-    obtain ⟨K, hK, hcK⟩ := Finset.mem_biUnion.mp hc
-    obtain ⟨hKT, hKd⟩ := ih hK
-    have hd := h.next_depth hKT hcK
-    have hcS := (dyadicFirstCrossings_mem S.G _ _ _ hcK).1
-    refine ⟨((sub_mem_iff hKT c).mp hcS).1, ?_⟩
-    push_cast
-    omega
-
-theorem Hyp.gen_length_le (h : S.Hyp) (n : ℕ) :
-    dyadicRootLength S.G (S.gen n) ≤ (1 / 4 : ℝ) ^ n * dyadicGridLength S.G S.J.1 := by
-  induction n with
-  | zero => simp [gen, dyadicRootLength]
-  | succ n ih =>
-    calc dyadicRootLength S.G (S.gen (n + 1))
-        ≤ ∑ K ∈ S.gen n, dyadicRootLength S.G (S.next K) :=
-          finite_union_weight_le _ _ _ fun c => (dyadicGridLength_pos S.G c.1).le
-      _ ≤ ∑ K ∈ S.gen n, 1 / 4 * dyadicGridLength S.G K.1 :=
-          Finset.sum_le_sum fun K hK => h.next_length_le (h.gen_mem n hK).1
-      _ = 1 / 4 * dyadicRootLength S.G (S.gen n) := by rw [dyadicRootLength, Finset.mul_sum]
-      _ ≤ 1 / 4 * ((1 / 4 : ℝ) ^ n * dyadicGridLength S.G S.J.1) := by gcongr
-      _ = _ := by ring
-
-/-- The restarted segments have total root length at most `4/3 |J|`. -/
-theorem Hyp.roots_length_le (h : S.Hyp) :
-    dyadicRootLength S.G S.roots ≤ 4 / 3 * dyadicGridLength S.G S.J.1 := by
-  have hL := dyadicGridLength_pos S.G S.J.1
-  calc dyadicRootLength S.G S.roots
-      ≤ ∑ n ∈ Finset.range (S.N + 1), dyadicRootLength S.G (S.gen n) :=
-        finite_union_weight_le _ _ _ fun c => (dyadicGridLength_pos S.G c.1).le
-    _ ≤ ∑ n ∈ Finset.range (S.N + 1), (1 / 4 : ℝ) ^ n * dyadicGridLength S.G S.J.1 :=
-        Finset.sum_le_sum fun n _ => h.gen_length_le n
-    _ = (∑ n ∈ Finset.Ico 0 (S.N + 1), (1 / 4 : ℝ) ^ n) * dyadicGridLength S.G S.J.1 := by
-        rw [Finset.sum_mul, Finset.range_eq_Ico]
-    _ ≤ ((1 / 4 : ℝ) ^ 0 / (1 - 1 / 4)) * dyadicGridLength S.G S.J.1 := by
-        gcongr
-        exact geom_sum_Ico_le_of_lt_one (by norm_num) (by norm_num)
-    _ = 4 / 3 * dyadicGridLength S.G S.J.1 := by norm_num
-
-theorem J_mem_roots : S.J ∈ S.roots :=
-  Finset.mem_biUnion.mpr ⟨0, Finset.mem_range.mpr (by omega), Finset.mem_singleton_self _⟩
-
-theorem Hyp.roots_mem (h : S.Hyp) {K : ℤ × ℤ} (hK : K ∈ S.roots) :
-    K ∈ dyadicFiniteTree S.G S.J S.N := by
-  obtain ⟨n, _, hn⟩ := Finset.mem_biUnion.mp hK
-  exact (h.gen_mem n hn).1
-
-theorem Hyp.roots_closed (h : S.Hyp) {K b : ℤ × ℤ} (hK : K ∈ S.roots) (hb : b ∈ S.next K) :
-    b ∈ S.roots := by
-  obtain ⟨n, _, hn⟩ := Finset.mem_biUnion.mp hK
-  have hbn : b ∈ S.gen (n + 1) := Finset.mem_biUnion.mpr ⟨K, hn, hb⟩
-  obtain ⟨hbT, hbd⟩ := h.gen_mem (n + 1) hbn
-  have hup := ((dyadicFiniteTree_mem_iff S.G S.J b S.N).mp hbT).2
-  exact Finset.mem_biUnion.mpr ⟨n + 1, Finset.mem_range.mpr (by push_cast at hbd; omega), hbn⟩
-
-theorem Hyp.segment_exists (h : S.Hyp) {u : ℤ × ℤ} (hu : u ∈ dyadicFiniteTree S.G S.J S.N) :
-    ∃ K ∈ S.roots, S.cell u ⊆ S.cell K ∧ (∀ b ∈ S.next K, ¬ S.cell u ⊆ S.cell b) ∧
-      ∀ L ∈ S.roots, S.cell u ⊆ S.cell L → L.1 ≤ K.1 := by
-  classical
-  let A := S.roots.filter (fun K : ℤ × ℤ => S.cell u ⊆ S.cell K)
-  have hA : A.Nonempty := ⟨S.J, Finset.mem_filter.mpr ⟨J_mem_roots, cell_subset_of_tree hu⟩⟩
-  obtain ⟨K, hK, hmax⟩ := A.exists_max_image (fun c => c.1) hA
-  obtain ⟨hKr, huK⟩ := Finset.mem_filter.mp hK
-  refine ⟨K, hKr, huK, fun b hb hub => ?_, fun L hL huL =>
-    hmax L (Finset.mem_filter.mpr ⟨hL, huL⟩)⟩
-  have hbr := h.roots_closed hKr hb
-  have hle := hmax b (Finset.mem_filter.mpr ⟨hbr, hub⟩)
-  have hlt := (h.next_depth (h.roots_mem hKr) hb).1
-  omega
-
-variable (S)
-
-open scoped Classical in
-/-- The root of the segment containing a tree cell: its deepest attempt root. -/
-noncomputable def seg (u : ℤ × ℤ) : ℤ × ℤ :=
-  if h : u ∈ dyadicFiniteTree S.G S.J S.N ∧ S.Hyp then Classical.choose (h.2.segment_exists h.1)
-  else u
-
-/-- The depth of a cell below its segment root. -/
-noncomputable def depthIn (u : ℤ × ℤ) : ℕ := (u.1 - (S.seg u).1).toNat
-
-/-- The final state at a cell. -/
-noncomputable def st (u : ℤ × ℤ) : (ℕ → ℝ → ℂ) × ℕ := S.state (S.depthIn u) u
-
-variable {S}
-
-theorem Hyp.seg_spec (h : S.Hyp) {u : ℤ × ℤ} (hu : u ∈ dyadicFiniteTree S.G S.J S.N) :
-    S.seg u ∈ S.roots ∧ S.cell u ⊆ S.cell (S.seg u) ∧
-      (∀ b ∈ S.next (S.seg u), ¬ S.cell u ⊆ S.cell b) ∧
-      ∀ L ∈ S.roots, S.cell u ⊆ S.cell L → L.1 ≤ (S.seg u).1 := by
-  have hc : u ∈ dyadicFiniteTree S.G S.J S.N ∧ S.Hyp := ⟨hu, h⟩
-  have e : S.seg u = Classical.choose (hc.2.segment_exists hc.1) := by
-    unfold seg; simp only [hc, and_self, ↓reduceDIte]
-  rw [e]
-  exact Classical.choose_spec (hc.2.segment_exists hc.1)
-
-/-- On every tree cell the greedy stopped below the cap, so the predicate holds. -/
-theorem Hyp.retained (h : S.Hyp) (hM : S.T < S.M) {u : ℤ × ℤ}
-    (hu : u ∈ dyadicFiniteTree S.G S.J S.N) :
-    (S.st u).2 < S.M ∧ S.P u (S.st u).1 (S.st u).2 := by
-  classical
-  obtain ⟨hKr, huK, hnext, _⟩ := h.seg_spec hu
-  have hKT := h.roots_mem hKr
-  have husub : u ∈ S.sub (S.seg u) := (sub_mem_iff hKT u).mpr ⟨hu, huK⟩
-  have hret : u ∈ dyadicRetainedCells S.G (S.sub (S.seg u)) (S.newAt (S.seg u)) S.T :=
-    (dyadicRetainedCells_iff S.G _ _ (fun c _ => newAt_nonneg _ c) S.T u).mpr
-      ⟨husub, fun ⟨b, hb, hub⟩ => hnext b hb hub⟩
-  have hle := (Finset.mem_filter.mp hret).2
-  rw [← count_eq_ancestorSum husub] at hle
-  have hlt : (S.st u).2 < S.M := by
-    have : ((S.st u).2 : ℝ) < S.M := lt_of_le_of_lt hle hM
-    exact_mod_cast this
-  refine ⟨hlt, ?_⟩
-  have hgr : S.st u = fitGreedy S.M (S.P u) (S.O u)
-      (fitInherited S.G S.M S.P S.O (S.depthIn u) u) := fitState_eq_greedy _ _ _ _ _ _
-  have hfin := fitGreedy_final (M := S.M) (P := S.P u) (O := S.O u)
-    (fitInherited S.G S.M S.P S.O (S.depthIn u) u) (fitInherited_count_le _ _ _ _ _ _)
-  rw [← hgr] at hfin
-  rcases hfin with hP | hcap
-  · exact hP
-  · omega
-
-end GreedyTree
-
-namespace GreedyTree
-variable {S : GreedyTree}
-
-/-! ### Tuple-specific accurate high fits -/
-
-/-- A cell between a tree cell and its segment root has the same segment root. -/
-theorem Hyp.seg_between (h : S.Hyp) {u v : ℤ × ℤ} (hu : u ∈ dyadicFiniteTree S.G S.J S.N)
-    (hv : v ∈ dyadicFiniteTree S.G S.J S.N) (huv : S.cell u ⊆ S.cell v)
-    (hvs : S.cell v ⊆ S.cell (S.seg u)) : S.seg v = S.seg u := by
-  obtain ⟨hr, hus, -, hmax⟩ := h.seg_spec hu
-  obtain ⟨hr', hvs', -, hmax'⟩ := h.seg_spec hv
-  have h1 := hmax' _ hr hvs
-  have h2 := hmax _ hr' (huv.trans hvs')
-  have hx := dyadicGridCell_left_mem S.G u.1 u.2
-  exact (dyadicGridCell_eq_of_common_point S.G (hus hx) (hvs' (huv hx)) (by omega)).symm
-
-end GreedyTree
 
 end TrilinearHT.Auto
 

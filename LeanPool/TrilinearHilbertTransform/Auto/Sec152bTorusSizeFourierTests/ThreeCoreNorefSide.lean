@@ -399,53 +399,9 @@ private theorem three_core_noref_side_conclusion_9 : ThreeCoreNorefSideConclusio
   classical
   intro κ' c₀ A bf fp D hQ I hI G δ hδ hδ8 Cm hCm0 δ'' hδ'' Kt J h l Fsel xs X Aw hr hw f hind ρc
     nn fv hfvl hfvj cα hcα hFj cc0 hccT hU4 key
-  -- the cell form is the local form of the transported inputs
-  have hΛc : fp.Λc I (Function.update (fun j => D.compSub j G I
-      ((Fsel j).map ⟨Subtype.val, Subtype.val_injective⟩)) l X) =
-      localProgressionForm (dyadicGridLength A.G I.1) (A.w I) fv := by
-    rw [fp.Λc_apply hI]
-    have e1 : ∀ j, augPhys (Function.update (fun j => D.compSub j G I
-        ((Fsel j).map ⟨Subtype.val, Subtype.val_injective⟩)) l X j) =ᵐ[volume]
-        Function.update (fun j => (Set.Ico (dyadicGridLeft A.G I.1 I.2)
-          (dyadicGridLeft A.G I.1 I.2 + dyadicGridLength A.G I.1)).indicator
-          (fun y => ∑ x ∈ Fsel j, D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1 *
-            (D.Ms j G).wave x.1 y)) l (augPhys X) j := fun j => by
-      rw [apply_update_augPhys]
-      by_cases hj : j = l
-      · rw [hj, Function.update_self, Function.update_self]
-      · rw [Function.update_of_ne hj, Function.update_of_ne hj]
-        refine (D.augPhys_compSub j G I _).trans (Filter.EventuallyEq.of_eq ?_)
-        congr 1
-        funext y
-        exact Finset.sum_map _ _ _
-    rw [localProgressionForm_congr_ae _ _ e1, ← form_indicator_cell hr hw fv,
-      ← form_indicator_cell hr hw (Function.update _ l (augPhys X))]
-    congr 1
-    funext j
-    by_cases hj : j = l
-    · rw [hj, Function.update_self, hfvl]
-    · rw [Function.update_of_ne hj, hfvj j hj, Set.indicator_indicator, Set.inter_self]
-      exact (hind j hj).symm
-  -- the coefficient sums with the side term `1`
-  have hsum1 : ∀ j, j ≠ l → ∑ k ∈ sideOptF l Fsel j, ‖sideOptC cα j k‖ =
-      ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1‖ := fun j hj => by
-    rw [hFj j hj, Finset.sum_map]
-    refine Finset.sum_congr rfl fun x _ => ?_
-    simp only [Function.Embedding.some_apply, sideOptC, Option.elim, hcα, norm_mul,
-      Circle.norm_coe, mul_one]
-  have hsuml : ∑ k ∈ sideOptF l Fsel l, ‖sideOptC cα l k‖ = 1 := by
-    simp [sideOptF, sideOptC]
-  have hPS : ∏ j, ∑ k ∈ sideOptF l Fsel j, ‖sideOptC cα j k‖ = ∏ j ∈ Finset.univ.erase l,
-      ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1‖ := by
-    rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ l), hsuml, one_mul]
-    exact Finset.prod_congr rfl fun j hj => hsum1 j (Finset.ne_of_mem_erase hj)
-  have hPN : ∏ j, (cutNorm (D.Ms 0 G).zc.dim δ * ∑ k ∈ sideOptF l Fsel j,
-      ‖sideOptC cα j k‖) = cutNorm (D.Ms 0 G).zc.dim δ * ∏ j ∈ Finset.univ.erase l,
-        (cutNorm (D.Ms 0 G).zc.dim δ *
-          ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1‖) := by
-    rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ l), hsuml, mul_one]
-    congr 1
-    exact Finset.prod_congr rfl fun j hj => by rw [hsum1 j (Finset.ne_of_mem_erase hj)]
+  have hΛc := @three_core_form κ' c₀ A bf fp D I hI G l Fsel X f fv hind hfvl hfvj
+  obtain ⟨hsum1, hPS, hPN⟩ :=
+    @three_core_coefficient_products κ' c₀ A bf fp D I G l Fsel xs cα hcα δ
   -- the truncated core torus sizes on the full torus
   have hG : ∀ j ∈ Finset.univ.erase l, (eLpNorm (fun u : torusAnnihilator
       (rationalIntegerIntersection (⊥ : Submodule ℚ (Fin (D.Ms 0 G).zc.dim → ℚ))) =>
@@ -609,95 +565,10 @@ theorem three_core_noref_side {Cj CA CT CK : ℕ} {δs W : ℝ} (hV : D.S.Valid 
   have hξ : ∀ i, (D.Ms 0 G).torusξ D.S (h - D.SP.Δ) i =
       (D.Ms 0 G).zc.θ i / (D.S.Q0 * (6 ^ (h - D.SP.Δ) : ℕ)) := fun i => by
     unfold ModeSystem.torusξ ModeSchedule.Lh; push_cast; ring
-  -- the core roles in the chart of role `0`
-  have hrole := fun j (hj : j ≠ l) => (D.Ms j G).role_four_input D.S (D.Ms 0 G).zc (hz j)
-    ((hδc j).symm ▸ hδ) hQ0 (h - D.SP.Δ) xs (Fsel j)
-    (fun x => D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1) (n j) Kt D.SP.Hn
-    (D.SP.Tt⁻¹ / dyadicGridLength A.G (A.blkStart D.S.K I.1 - 2 * D.S.K))
-    (a₀ := dyadicGridLeft A.G I.1 I.2) (r := dyadicGridLength A.G I.1) hη
-    (a j) (hform j hj)
-  choose ρ' n' f hρ'e hn'e hfm hfa hfb hind hnorm using hrole
-  obtain ⟨ρc, hρc, hρcj⟩ : ∃ ρc : Fin 4 → Fin (D.Ms 0 G).zc.dim → ℝ,
-      (∀ j k, ρc j k ∈ Set.Icc (0 : ℝ) 1) ∧ ∀ j (hj : j ≠ l), ρc j = ρ' j hj := by
-    refine ⟨fun j => if hj : j = l then fun _ => 0 else ρ' j hj, fun j k => ?_,
-      fun j hj => by simp only [hj, ↓reduceDIte]⟩
-    by_cases hj : j = l
-    · simp only [hj, ↓reduceDIte]; exact ⟨le_rfl, zero_le_one⟩
-    · simp only [hj, ↓reduceDIte]
-      obtain ⟨k', hk'⟩ := hρ'e j hj k
-      rw [hk']; exact hρ j k'
-  obtain ⟨nn, hnnj⟩ : ∃ nn : ∀ j, (D.Ms j G).alive (ancAt A.G (D.preAt I)
-      (A.blkStart D.S.K I.1 - 4 * D.S.K)) → Fin (D.Ms 0 G).zc.dim → ℤ,
-      ∀ j (hj : j ≠ l) x, nn j x = n' j hj x :=
-    ⟨fun j => if hj : j = l then fun _ _ => 0 else n' j hj, fun j hj x => by
-      simp only [hj, ↓reduceDIte]⟩
-  obtain ⟨fv, hfvl, hfvj⟩ : ∃ fv : Fin 4 → ℝ → ℂ, fv l = augPhys X ∧
-      ∀ j (hj : j ≠ l), fv j = f j hj :=
-    ⟨fun j => if hj : j = l then augPhys X else f j hj, by simp only [↓reduceDIte],
-      fun j hj => by simp only [hj, ↓reduceDIte]⟩
-  obtain ⟨cα, hcα⟩ : ∃ cα : ∀ j, (D.Ms j G).alive (ancAt A.G (D.preAt I)
-      (A.blkStart D.S.K I.1 - 4 * D.S.K)) → ℂ, ∀ j x,
-      cα j x = D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1 *
-        (Real.fourierChar ((D.Ms j G).phase x.1 xs) : ℂ) := ⟨_, fun _ _ => rfl⟩
-  have hFj : ∀ j, j ≠ l → sideOptF l Fsel j = (Fsel j).map Function.Embedding.some :=
-    fun j hj => by simp [sideOptF, hj]
-  -- the side and the integrability of the forms
-  have hXm : Measurable (augPhys X) := columnPhys_measurable X
-  have hL2X : MemLp (augPhys X) 2 (volume.restrict (Set.Ioc (dyadicGridLeft A.G I.1 I.2)
-      (dyadicGridLeft A.G I.1 I.2 + dyadicGridLength A.G I.1))) :=
-    (memLp_column_coord X none).restrict _
-  have := normalizedIntervalMeasure_probability (dyadicGridLeft A.G I.1 I.2) hr
-  have hXfin := (columnPhys_memLp_normalized X (dyadicGridLeft A.G I.1 I.2)
-    (dyadicGridLength A.G I.1)).eLpNorm_ne_top
-  have hcfin : ∀ j (hj : j ≠ l), eLpNorm (f j hj) 2 (normalizedIntervalMeasure
-      (dyadicGridLeft A.G I.1 I.2) (dyadicGridLength A.G I.1)) ≠ ⊤ := fun j hj =>
-    (MemLp.of_bound (hfm j hj).aestronglyMeasurable _ (by
-      unfold normalizedIntervalMeasure
-      exact Measure.ae_smul_measure (ae_restrict_of_forall_mem measurableSet_Icc
-        fun y hy => hfb j hj y hy) _)).eLpNorm_ne_top
-  have hfi : Integrable (fun zz : ℝ × ℝ => A.w I zz *
-      ∏ j, fv j (realProgressionCoordinate j zz)) := by
-    refine integrable_localProgression_two hr hw _ (fun j => ?_) fun j => ?_
-    · by_cases hj : j = l
-      · rw [hj, hfvl]; exact hXm
-      · rw [hfvj j hj]; exact hfm j hj
-    · by_cases hj : j = l
-      · rw [hj, hfvl]; exact hXfin
-      · rw [hfvj j hj]; exact hcfin j hj
-  have hfiρ : ∀ ρ'' : Fin (D.Ms 0 G).zc.dim → ℝ, Integrable (fun zz : ℝ × ℝ => A.w I zz *
-      ∏ j, Function.update fv l (fun y => (centerCut (D.Ms 0 G).zc δ ρ'' y : ℂ) * fv l y) j
-        (realProgressionCoordinate j zz)) := by
-    intro ρ''
-    have hcut : Measurable fun y => (centerCut (D.Ms 0 G).zc δ ρ'' y : ℂ) * augPhys X y :=
-      (Complex.measurable_ofReal.comp (centerCut_measurable _ δ ρ'')).mul hXm
-    refine integrable_localProgression_two hr hw _ (fun j => ?_) fun j => ?_
-    · by_cases hj : j = l
-      · rw [hj, Function.update_self, hfvl]; exact hcut
-      · rw [Function.update_of_ne hj, hfvj j hj]; exact hfm j hj
-    · by_cases hj : j = l
-      · rw [hj, Function.update_self, hfvl]
-        refine ne_top_of_le_ne_top hXfin (eLpNorm_mono hcut.aestronglyMeasurable fun y => ?_)
-        rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
-          abs_of_nonneg (centerCut_mem _ δ ρ'' y).1]
-        exact mul_le_of_le_one_left (norm_nonneg _) (centerCut_mem _ δ ρ'' y).2
-      · rw [Function.update_of_ne hj, hfvj j hj]; exact hcfin j hj
-  -- the truncations of the core cutoffs
-  have hcut := fun j => cutoffP_truncate_all hδ (ρc j) Kt
-  choose cc0 hcc0 hccN hccT using hcut
-  -- the cosets
-  have hnn : ∀ j, ∀ k ∈ sideOptF l Fsel j, ∀ i,
-      |(sideOptN nn j k i : ℝ)| ≤ D.S.Dstar * D.S.Eh (h - D.SP.Δ) := by
-    intro j k hk i
-    by_cases hj : j = l
-    · have hk' : k = none := by simpa [sideOptF, hj] using hk
-      subst hk'
-      simp only [sideOptN, Option.elim, Pi.zero_apply, Int.cast_zero, abs_zero]
-      exact mul_nonneg hDp.le hE0
-    · rw [hFj j hj, Finset.mem_map] at hk
-      obtain ⟨x, hx, rfl⟩ := hk
-      simp only [Function.Embedding.some_apply, sideOptN, Option.elim, hnnj j hj]
-      obtain ⟨k', hk'⟩ := hn'e j hj x i
-      rw [hk']; exact hn j hj x hx k'
+  obtain ⟨ρ', n', f, ρc, nn, fv, cα, cc0, hfa, hfb, hind, hnorm, hρc, hρcj, hnnj, hfvl, hfvj, hcα,
+    hFj, hXm, hL2X, hfi, hfiρ, hcc0, hccN, hccT, hnn⟩ :=
+    @three_core_inputs κ' c₀ A bf fp D I G hz δ hδ hδc hρ Kt h l Fsel n hn a xs hform X hr hw hDp
+      hQ0 hE0 hη
   -- no reference: every anchored expansion frequency is far
   have hA6 : 6 ≤ D.S.A0 := D.hA
   have hBA := hV.Bstar_le_A0 hCA hd2 hD hB

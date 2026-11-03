@@ -895,14 +895,14 @@ theorem floorChartAmplitude_smooth {d : ℕ} (A : QuadraticChartData d)
     unfold chartMatrixPhase
     fun_prop
 
-theorem floorChartAmplitude_compact {d : ℕ} (A : QuadraticChartData d)
-    (η ρ : ℝ → ℂ)
+theorem floorChartAmplitude_support_subset {d : ℕ} (A : QuadraticChartData d)
+    (η ρ : ℝ → ℂ) {H : ℝ} (hH : 0 < H)
+    (hA : ∀ z, A.amplitude z ≠ 0 → ∀ i, |z i| ≤ H)
     (hη : ∀ x, η x ≠ 0 → x ∈ Set.Ioo (0 : ℝ) 1)
     (hρ : ∀ x, ρ x ≠ 0 → x ∈ Set.Ioo (-1 : ℝ) 1) :
-    HasCompactSupport (floorChartAmplitude A η ρ) := by
-  obtain ⟨H, hH, hA⟩ := quadraticChartData_support_bound A
-  apply HasCompactSupport.of_support_subset_isCompact
-    (isCompact_closedBall 0 (H + ‖A.horizontal‖ + 1))
+    tsupport (floorChartAmplitude A η ρ) ⊆
+      Metric.closedBall 0 (H + ‖A.horizontal‖ + 1) := by
+  apply closure_minimal _ Metric.isClosed_closedBall
   intro z hz
   change floorChartAmplitude A η ρ z ≠ 0 at hz
   simp only [floorChartAmplitude, mul_ne_zero_iff] at hz
@@ -940,6 +940,16 @@ theorem floorChartAmplitude_compact {d : ℕ} (A : QuadraticChartData d)
       linarith only [hhabs, hH, norm_nonneg A.horizontal]
     · change |z (Fin.natAdd d (1 : Fin 2))| ≤ _
       linarith only [hrabs, hH, norm_nonneg A.horizontal]
+
+theorem floorChartAmplitude_compact {d : ℕ} (A : QuadraticChartData d)
+    (η ρ : ℝ → ℂ)
+    (hη : ∀ x, η x ≠ 0 → x ∈ Set.Ioo (0 : ℝ) 1)
+    (hρ : ∀ x, ρ x ≠ 0 → x ∈ Set.Ioo (-1 : ℝ) 1) :
+    HasCompactSupport (floorChartAmplitude A η ρ) := by
+  obtain ⟨H, hH, hA⟩ := quadraticChartData_support_bound A
+  exact HasCompactSupport.of_support_subset_isCompact
+    (isCompact_closedBall 0 (H + ‖A.horizontal‖ + 1))
+    ((subset_tsupport _).trans (floorChartAmplitude_support_subset A η ρ hH hA hη hρ))
 
 /-- Smooth chart realizing the floor-interpolated original atom in two extra dimensions. -/
 noncomputable def floorInterpolatedChart {d : ℕ} (A : QuadraticChartData d)
@@ -1430,51 +1440,6 @@ theorem floorChartAmplitude_derivative_local {d c₀ K : ℕ} {H T : ℝ}
     hfi (hcut η hη hηd h) (hcut ρ hρ hρd r) hpi).trans
       (four_factor_gevrey_budget (by linarith) a m (by dsimp [a]; omega))
 
-theorem floorChartAmplitude_support_subset {d : ℕ} (A : QuadraticChartData d)
-    (η ρ : ℝ → ℂ) {H : ℝ} (hH : 0 < H)
-    (hA : ∀ z, A.amplitude z ≠ 0 → ∀ i, |z i| ≤ H)
-    (hη : ∀ x, η x ≠ 0 → x ∈ Set.Ioo (0 : ℝ) 1)
-    (hρ : ∀ x, ρ x ≠ 0 → x ∈ Set.Ioo (-1 : ℝ) 1) :
-    tsupport (floorChartAmplitude A η ρ) ⊆
-      Metric.closedBall 0 (H + ‖A.horizontal‖ + 1) := by
-  apply closure_minimal _ Metric.isClosed_closedBall
-  intro z hz
-  change floorChartAmplitude A η ρ z ≠ 0 at hz
-  simp only [floorChartAmplitude, mul_ne_zero_iff] at hz
-  rcases hz with ⟨⟨⟨ha, hh⟩, hr⟩, _⟩
-  have hh' := hη _ hh
-  have hr' := hρ _ hr
-  have hhabs : |z (Fin.natAdd d (0 : Fin 2))| ≤ 1 := by
-    rw [abs_le]
-    constructor <;> linarith [hh'.1, hh'.2]
-  have hrabs : |z (Fin.natAdd d (1 : Fin 2))| ≤ 1 :=
-    (abs_lt.mpr hr').le
-  rw [Metric.mem_closedBall, dist_zero_right]
-  apply (pi_norm_le_iff_of_nonneg (by positivity : 0 ≤ H + ‖A.horizontal‖ + 1)).mpr
-  intro i
-  refine Fin.addCases (fun j => ?_) (fun j => ?_) i
-  · have hu : |A.horizontal j| ≤ ‖A.horizontal‖ := by
-      simpa only [Real.norm_eq_abs] using norm_le_pi_norm A.horizontal j
-    calc
-      ‖z (Fin.castAdd 2 j)‖ =
-          |(z (Fin.castAdd 2 j) - A.horizontal j * z (Fin.natAdd d (0 : Fin 2))) +
-            A.horizontal j * z (Fin.natAdd d (0 : Fin 2))| := by
-        rw [Real.norm_eq_abs]
-        congr 1
-        ring
-      _ ≤ |z (Fin.castAdd 2 j) - A.horizontal j * z (Fin.natAdd d (0 : Fin 2))| +
-          |A.horizontal j| * |z (Fin.natAdd d (0 : Fin 2))| := by
-        simpa only [abs_mul] using abs_add_le
-          (z (Fin.castAdd 2 j) - A.horizontal j * z (Fin.natAdd d (0 : Fin 2)))
-          (A.horizontal j * z (Fin.natAdd d (0 : Fin 2)))
-      _ ≤ H + ‖A.horizontal‖ * 1 :=
-        add_le_add (hA _ ha j) (mul_le_mul hu hhabs (abs_nonneg _) (norm_nonneg _))
-      _ ≤ _ := by linarith
-  · fin_cases j
-    · change |z (Fin.natAdd d (0 : Fin 2))| ≤ _
-      linarith only [hhabs, hH, norm_nonneg A.horizontal]
-    · change |z (Fin.natAdd d (1 : Fin 2))| ≤ _
-      linarith only [hrabs, hH, norm_nonneg A.horizontal]
 
 theorem floorChartAmplitude_derivative_bound {d c₀ K : ℕ} {H T : ℝ}
     {A : QuadraticChartData d} (hA : QuadraticChartComplexity c₀ H A) (hc : 1 ≤ c₀)

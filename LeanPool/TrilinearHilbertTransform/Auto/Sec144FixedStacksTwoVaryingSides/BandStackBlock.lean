@@ -1065,14 +1065,6 @@ namespace TrilinearHT.Auto
 open MeasureTheory Metric
 open scoped FourierTransform ComplexConjugate ENNReal
 
-namespace ActiveSetup
-
-namespace AttemptParams
-
-namespace TTData
-variable {κ' : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ' c₀} {ap : A.AttemptParams}
-  (T : ap.TTData)
-
 /-- Distinct blocks give disjoint depth intervals of a fixed offset `n < K`. -/
 theorem block_ioc_disjoint {K n : ℕ} (hn : n < K) {β β' : ℕ} (hne : β ≠ β') :
     Disjoint (Finset.Ioc (K * β) (K * β + n)) (Finset.Ioc (K * β') (K * β' + n)) := by
@@ -1085,11 +1077,6 @@ theorem block_ioc_disjoint {K n : ℕ} (hn : n < K) {β β' : ℕ} (hne : β ≠
   · have : K * (β' + 1) ≤ K * β := Nat.mul_le_mul_left K h
     nlinarith
 
-end TTData
-
-end AttemptParams
-
-end ActiveSetup
 
 end TrilinearHT.Auto
 

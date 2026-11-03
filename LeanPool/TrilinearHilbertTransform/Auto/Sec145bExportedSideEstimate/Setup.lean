@@ -2262,7 +2262,7 @@ theorem frz_varcap {γ V : Type*} [Fintype V] (Gs : Finset γ) (Z : γ → ℤ �
         exact dyadicGridCell_pairwiseDisjoint A.G I'.1 hne2
     have hcap' := hcap (ι := ι) (fun β => T.K * (β.1 : ℕ)) (fun β => T.K * (β.1 : ℕ) + n)
       (fun _ => Nat.le_add_right _ _)
-      (fun i i' hne => ActiveSetup.AttemptParams.TTData.block_ioc_disjoint hn
+      (fun i i' hne => block_ioc_disjoint hn
         (fun h => hne (Subtype.ext (Fin.ext h))))
       (fun β => β.2) Ec (fun g β J hJ => ⟨(hSc' g J (Finset.mem_filter.mp hJ).1).1,
         (hdep g β J hJ).1, (hSc' g J (Finset.mem_filter.mp hJ).1).2⟩)

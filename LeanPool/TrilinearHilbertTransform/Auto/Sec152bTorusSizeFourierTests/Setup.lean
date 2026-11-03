@@ -3634,6 +3634,342 @@ theorem mem_threeWin (hD : 0 ≤ D.S.Dstar) {G : bf.Grp} {I : ℤ × ℤ} {xs : 
 
 
 
+
+/-- Prepare the three core roles in a common chart, with bounded offset frequencies,
+integrable physical products and simultaneous cutoff truncations. Both reference and
+nonreference estimates consume the same evidence. -/
+theorem three_core_inputs
+    (κ' : LocalKernelClass)
+    (c₀ : ℕ)
+    (A : ActiveSetup κ' c₀)
+    (bf : A.BasicFamilies)
+    (fp : bf.FamParams)
+    (D : fp.SideInput)
+    (I : ℤ × ℤ)
+    (G : bf.Grp)
+    (hz : ∀ (j : Fin (4 : ℕ)), (D.Ms j G).zc = (D.Ms (0 : Fin (4 : ℕ)) G).zc)
+    (δ : ℝ)
+    (hδ : (0 : ℝ) < δ)
+    (hδc : ∀ (j : Fin (4 : ℕ)), (D.Ms j G).δc = δ)
+    (hρ : ∀ (j : Fin (4 : ℕ)) (k : Fin (D.Ms j G).zc.dim), (D.Ms j G).ρ k ∈ Set.Icc (0 : ℝ) (1 :
+      ℝ))
+    (Kt : ℕ)
+    (h : ℕ)
+    (l : Fin (4 : ℕ))
+    (Fsel : (j : Fin (4 : ℕ)) → Finset ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K
+      I.1 - (4 : ℤ) * (↑D.S.K : ℤ)))))
+    (n : (j : Fin (4 : ℕ)) → ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K I.1 - (4
+      : ℤ) * (↑D.S.K : ℤ)))) → Fin (D.Ms j G).zc.dim → ℤ)
+    (hn : ∀ (j : Fin (4 : ℕ)), j ≠ l → ∀ x ∈ Fsel j, ∀ (i : Fin (D.Ms j G).zc.dim), |(↑(n j x i) :
+      ℝ)| ≤ D.S.Dstar * D.S.Eh (h - D.SP.Δ))
+    (a : Fin (4 : ℕ) → ℝ)
+    (xs : ℝ)
+    (hform : ∀ (j : Fin (4 : ℕ)), j ≠ l → ∀ y ∈ dyadicGridCell A.G I.1 I.2, ‖∑ x ∈ Fsel j, D.c j G
+      (A.blkStart D.S.K I.1) (D.preAt I) (↑x : (D.Ms j G).Md) * (D.Ms j G).wave (↑x : (D.Ms j
+      G).Md) y - (↑((𝐞 : ℝ → Circle) ((↑(D.Ms j G).cl : ℝ) * centerPhase (D.Ms j G).zc (D.Ms j
+      G).ρ y)) : ℂ) * (↑((𝐞 : ℝ → Circle) (a j * (y - xs))) : ℂ) * (D.Ms j G).torusG D.S (h -
+      D.SP.Δ) xs (Fsel j) (fun (x : ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K
+      I.1 - (4 : ℤ) * (↑D.S.K : ℤ))))) => D.c j G (A.blkStart D.S.K I.1) (D.preAt I) (↑x : (D.Ms j
+      G).Md)) (n j) fun (i : Fin (D.Ms j G).zc.dim) => (D.Ms j G).torusξ D.S (h - D.SP.Δ) i * (y -
+      xs)‖ ≤ (D.S.Dstar ^ (150 : ℕ))⁻¹ * ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I)
+      (↑x : (D.Ms j G).Md)‖)
+    (X : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)))
+    (hr : (0 : ℝ) < dyadicGridLength A.G I.1)
+    (hw : IsAdmissibleLocalKernel κ' (dyadicGridLeft A.G I.1 I.2) (dyadicGridLength A.G I.1) (A.w
+      I))
+    (hDp : (0 : ℝ) < D.S.Dstar)
+    (hQ0 : (0 : ℕ) < D.S.Q0)
+    (hE0 : (0 : ℝ) ≤ D.S.Eh (h - D.SP.Δ))
+    (hη : (0 : ℝ) ≤ (D.S.Dstar ^ (150 : ℕ))⁻¹)
+    : ∃
+    (ρ' : (j : Fin (4 : ℕ)) → j ≠ l → Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℝ)
+    (n' : (j : Fin (4 : ℕ)) → j ≠ l → ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K
+      I.1 - (4 : ℤ) * (↑D.S.K : ℤ)))) → Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℤ)
+    (f : (j : Fin (4 : ℕ)) → j ≠ l → ℝ → ℂ)
+    (ρc : Fin (4 : ℕ) → Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℝ)
+    (nn : (j : Fin (4 : ℕ)) → ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K I.1 - (4
+      : ℤ) * (↑D.S.K : ℤ)))) → Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℤ)
+    (fv : Fin (4 : ℕ) → ℝ → ℂ)
+    (cα : (j : Fin (4 : ℕ)) → ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K I.1 - (4
+      : ℤ) * (↑D.S.K : ℤ)))) → ℂ)
+    (cc0 : Fin (4 : ℕ) → (Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℤ) → ℂ),
+    (∀ (j : Fin (4 : ℕ)) (hj : j ≠ l), ∀ y ∈ Set.Icc (dyadicGridLeft A.G I.1 I.2) (dyadicGridLeft
+      A.G I.1 I.2 + dyadicGridLength A.G I.1), ‖f j hj y - (↑(centerCut (D.Ms (0 : Fin (4 : ℕ))
+      G).zc (D.Ms j G).δc (ρ' j hj) y) : ℂ) * (↑((𝐞 : ℝ → Circle) ((↑(D.Ms j G).cl : ℝ) *
+      centerPhase (D.Ms (0 : Fin (4 : ℕ)) G).zc (ρ' j hj) y)) : ℂ) * ((↑((𝐞 : ℝ → Circle) (a j *
+      (y - xs))) : ℂ) * ∑ x ∈ Fsel j, D.c j G (A.blkStart D.S.K I.1) (D.preAt I) (↑x : (D.Ms j
+      G).Md) * (↑((𝐞 : ℝ → Circle) ((D.Ms j G).phase (↑x : (D.Ms j G).Md) xs)) : ℂ) *
+      torusCharacter (n' j hj x) (torusMk fun (i : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim) => (D.Ms
+      (0 : Fin (4 : ℕ)) G).zc.θ i / ((↑D.S.Q0 : ℝ) * (↑((6 : ℕ) ^ (h - D.SP.Δ)) : ℝ)) * (y -
+      xs)))‖ ≤ (D.S.Dstar ^ (150 : ℕ))⁻¹ * ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt
+      I) (↑x : (D.Ms j G).Md) * (↑((𝐞 : ℝ → Circle) ((D.Ms j G).phase (↑x : (D.Ms j G).Md) xs)) :
+      ℂ)‖) ∧
+    (∀ (j : Fin (4 : ℕ)) (hj : j ≠ l), ∀ y ∈ Set.Icc (dyadicGridLeft A.G I.1 I.2) (dyadicGridLeft
+      A.G I.1 I.2 + dyadicGridLength A.G I.1), ‖f j hj y‖ ≤ ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart
+      D.S.K I.1) (D.preAt I) (↑x : (D.Ms j G).Md) * (↑((𝐞 : ℝ → Circle) ((D.Ms j G).phase (↑x :
+      (D.Ms j G).Md) xs)) : ℂ)‖) ∧
+    (∀ (j : Fin (4 : ℕ)) (hj : j ≠ l), (Set.Ico (dyadicGridLeft A.G I.1 I.2) (dyadicGridLeft A.G
+      I.1 I.2 + dyadicGridLength A.G I.1)).indicator (f j hj) = (Set.Ico (dyadicGridLeft A.G I.1
+      I.2) (dyadicGridLeft A.G I.1 I.2 + dyadicGridLength A.G I.1)).indicator fun (y : ℝ) => ∑ x ∈
+      Fsel j, D.c j G (A.blkStart D.S.K I.1) (D.preAt I) (↑x : (D.Ms j G).Md) * (D.Ms j G).wave
+      (↑x : (D.Ms j G).Md) y) ∧
+    (∀ (j : Fin (4 : ℕ)) (hj : j ≠ l) (cc0 : (Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℤ) → ℂ), (∀
+      (w : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℝ), ‖cutoffP (D.Ms j G).δc (ρ' j hj) w - ∑ v ∈
+      frequencyBox (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim ((2 : ℕ) ^ (Kt + (1 : ℕ))), cc0 v * (↑((𝐞 : ℝ
+      → Circle) (∑ i : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim, (↑(v i) : ℝ) * w i)) : ℂ)‖ ≤ cutTail
+      (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim (D.Ms j G).δc Kt) → (eLpNorm (fun (u : ↥(torusAnnihilator
+      (rationalIntegerIntersection (tinySpan (fun (i : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim) =>
+      (D.Ms (0 : Fin (4 : ℕ)) G).zc.θ i / (↑D.S.Q0 : ℝ)) D.SP.Hn (D.SP.Tt⁻¹ / dyadicGridLength A.G
+      (A.blkStart D.S.K I.1 - (2 : ℤ) * (↑D.S.K : ℤ))))))) => ∑ p ∈ frequencyBox (D.Ms (0 : Fin (4
+      : ℕ)) G).zc.dim ((2 : ℕ) ^ (Kt + (1 : ℕ))) ×ˢ Fsel j, cc0 p.1 * (↑((𝐞 : ℝ → Circle) (∑ i :
+      Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim, (↑(p.1 i) : ℝ) * ((D.Ms (0 : Fin (4 : ℕ)) G).zc.θ i *
+      xs))) : ℂ) * (D.c j G (A.blkStart D.S.K I.1) (D.preAt I) (↑p.2 : (D.Ms j G).Md) * (↑((𝐞 : ℝ
+      → Circle) ((D.Ms j G).phase (↑p.2 : (D.Ms j G).Md) xs)) : ℂ)) * torusCharacter ((↑(D.S.Q0 *
+      (6 : ℕ) ^ (h - D.SP.Δ)) : ℤ) • p.1 + n' j hj p.2) (↑u : StandardTorus (D.Ms (0 : Fin (4 :
+      ℕ)) G).zc.dim)) (2 : ℝ≥0∞) (torusAnnihilatorHaar (rationalIntegerIntersection (tinySpan (fun
+      (i : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim) => (D.Ms (0 : Fin (4 : ℕ)) G).zc.θ i / (↑D.S.Q0
+      : ℝ)) D.SP.Hn (D.SP.Tt⁻¹ / dyadicGridLength A.G (A.blkStart D.S.K I.1 - (2 : ℤ) * (↑D.S.K :
+      ℤ))))))).toReal ≤ (eLpNorm (fun (u : ↥(torusAnnihilator (rationalIntegerIntersection
+      (tinySpan (fun (i : Fin (D.Ms j G).zc.dim) => (D.Ms j G).zc.θ i / (↑D.S.Q0 : ℝ)) D.SP.Hn
+      (D.SP.Tt⁻¹ / dyadicGridLength A.G (A.blkStart D.S.K I.1 - (2 : ℤ) * (↑D.S.K : ℤ))))))) =>
+      (D.Ms j G).torusGT D.S (h - D.SP.Δ) xs (Fsel j) (fun (x : ↥((D.Ms j G).alive (ancAt A.G
+      (D.preAt I) (A.blkStart D.S.K I.1 - (4 : ℤ) * (↑D.S.K : ℤ))))) => D.c j G (A.blkStart D.S.K
+      I.1) (D.preAt I) (↑x : (D.Ms j G).Md)) (n j) (↑u : StandardTorus (D.Ms j G).zc.dim)) (2 :
+      ℝ≥0∞) (torusAnnihilatorHaar (rationalIntegerIntersection (tinySpan (fun (i : Fin (D.Ms j
+      G).zc.dim) => (D.Ms j G).zc.θ i / (↑D.S.Q0 : ℝ)) D.SP.Hn (D.SP.Tt⁻¹ / dyadicGridLength A.G
+      (A.blkStart D.S.K I.1 - (2 : ℤ) * (↑D.S.K : ℤ))))))).toReal + cutTail (D.Ms (0 : Fin (4 :
+      ℕ)) G).zc.dim (D.Ms j G).δc Kt * ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I)
+      (↑x : (D.Ms j G).Md)‖) ∧
+    (∀ (j : Fin (4 : ℕ)) (k : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim), ρc j k ∈ Set.Icc (0 : ℝ) (1
+      : ℝ)) ∧
+    (∀ (j : Fin (4 : ℕ)) (hj : j ≠ l), ρc j = ρ' j hj) ∧
+    (∀ (j : Fin (4 : ℕ)) (hj : j ≠ l) (x : ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart
+      D.S.K I.1 - (4 : ℤ) * (↑D.S.K : ℤ))))), nn j x = n' j hj x) ∧
+    (fv l = augPhys X) ∧
+    (∀ (j : Fin (4 : ℕ)) (hj : j ≠ l), fv j = f j hj) ∧
+    (∀ (j : Fin (4 : ℕ)) (x : ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K I.1 - (4
+      : ℤ) * (↑D.S.K : ℤ))))), cα j x = D.c j G (A.blkStart D.S.K I.1) (D.preAt I) (↑x : (D.Ms j
+      G).Md) * (↑((𝐞 : ℝ → Circle) ((D.Ms j G).phase (↑x : (D.Ms j G).Md) xs)) : ℂ)) ∧
+    (∀ (j : Fin (4 : ℕ)), j ≠ l → sideOptF l Fsel j = Finset.map Function.Embedding.some (Fsel j))
+      ∧
+    (Measurable (augPhys X)) ∧
+    (MemLp (augPhys X) (2 : ℝ≥0∞) (volume.restrict (Set.Ioc (dyadicGridLeft A.G I.1 I.2)
+      (dyadicGridLeft A.G I.1 I.2 + dyadicGridLength A.G I.1)))) ∧
+    (Integrable (fun (zz : ℝ × ℝ) => A.w I zz * ∏ j : Fin (4 : ℕ), fv j (realProgressionCoordinate
+      j zz)) volume) ∧
+    (∀ (ρ'' : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℝ), Integrable (fun (zz : ℝ × ℝ) => A.w I zz
+      * ∏ j : Fin (4 : ℕ), Function.update fv l (fun (y : ℝ) => (↑(centerCut (D.Ms (0 : Fin (4 :
+      ℕ)) G).zc δ ρ'' y) : ℂ) * fv l y) j (realProgressionCoordinate j zz)) volume) ∧
+    (∀ (j : Fin (4 : ℕ)) (v : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℤ), ‖cc0 j v‖ ≤ (1 : ℝ)) ∧
+    (∀ (j : Fin (4 : ℕ)) (s : Finset (Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℤ)), ∑ v ∈ s, ‖cc0 j
+      v‖ ≤ cutNorm (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim δ) ∧
+    (∀ (j : Fin (4 : ℕ)) (w : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim → ℝ), ‖cutoffP δ (ρc j) w - ∑
+      v ∈ frequencyBox (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim ((2 : ℕ) ^ (Kt + (1 : ℕ))), cc0 j v *
+      (↑((𝐞 : ℝ → Circle) (∑ i : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim, (↑(v i) : ℝ) * w i)) : ℂ)‖
+      ≤ cutTail (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim δ Kt) ∧
+    (∀ (j : Fin (4 : ℕ)), ∀ k ∈ sideOptF l Fsel j, ∀ (i : Fin (D.Ms (0 : Fin (4 : ℕ)) G).zc.dim),
+      |(↑(sideOptN nn j k i) : ℝ)| ≤ D.S.Dstar * D.S.Eh (h - D.SP.Δ)) := by
+  classical
+  -- the core roles in the chart of role `0`
+  have hrole := fun j (hj : j ≠ l) => (D.Ms j G).role_four_input D.S (D.Ms 0 G).zc (hz j)
+    ((hδc j).symm ▸ hδ) hQ0 (h - D.SP.Δ) xs (Fsel j)
+    (fun x => D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1) (n j) Kt D.SP.Hn
+    (D.SP.Tt⁻¹ / dyadicGridLength A.G (A.blkStart D.S.K I.1 - 2 * D.S.K))
+    (a₀ := dyadicGridLeft A.G I.1 I.2) (r := dyadicGridLength A.G I.1) hη
+    (a j) (hform j hj)
+  choose ρ' n' f hρ'e hn'e hfm hfa hfb hind hnorm using hrole
+  obtain ⟨ρc, hρc, hρcj⟩ : ∃ ρc : Fin 4 → Fin (D.Ms 0 G).zc.dim → ℝ,
+      (∀ j k, ρc j k ∈ Set.Icc (0 : ℝ) 1) ∧ ∀ j (hj : j ≠ l), ρc j = ρ' j hj := by
+    refine ⟨fun j => if hj : j = l then fun _ => 0 else ρ' j hj, fun j k => ?_,
+      fun j hj => by simp only [hj, ↓reduceDIte]⟩
+    by_cases hj : j = l
+    · simp only [hj, ↓reduceDIte]; exact ⟨le_rfl, zero_le_one⟩
+    · simp only [hj, ↓reduceDIte]
+      obtain ⟨k', hk'⟩ := hρ'e j hj k
+      rw [hk']; exact hρ j k'
+  obtain ⟨nn, hnnj⟩ : ∃ nn : ∀ j, (D.Ms j G).alive (ancAt A.G (D.preAt I)
+      (A.blkStart D.S.K I.1 - 4 * D.S.K)) → Fin (D.Ms 0 G).zc.dim → ℤ,
+      ∀ j (hj : j ≠ l) x, nn j x = n' j hj x :=
+    ⟨fun j => if hj : j = l then fun _ _ => 0 else n' j hj, fun j hj x => by
+      simp only [hj, ↓reduceDIte]⟩
+  obtain ⟨fv, hfvl, hfvj⟩ : ∃ fv : Fin 4 → ℝ → ℂ, fv l = augPhys X ∧
+      ∀ j (hj : j ≠ l), fv j = f j hj :=
+    ⟨fun j => if hj : j = l then augPhys X else f j hj, by simp only [↓reduceDIte],
+      fun j hj => by simp only [hj, ↓reduceDIte]⟩
+  obtain ⟨cα, hcα⟩ : ∃ cα : ∀ j, (D.Ms j G).alive (ancAt A.G (D.preAt I)
+      (A.blkStart D.S.K I.1 - 4 * D.S.K)) → ℂ, ∀ j x,
+      cα j x = D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1 *
+        (Real.fourierChar ((D.Ms j G).phase x.1 xs) : ℂ) := ⟨_, fun _ _ => rfl⟩
+  have hFj : ∀ j, j ≠ l → sideOptF l Fsel j = (Fsel j).map Function.Embedding.some :=
+    fun j hj => by simp [sideOptF, hj]
+  -- the side and the integrability of the forms
+  have hXm : Measurable (augPhys X) := columnPhys_measurable X
+  have hL2X : MemLp (augPhys X) 2 (volume.restrict (Set.Ioc (dyadicGridLeft A.G I.1 I.2)
+      (dyadicGridLeft A.G I.1 I.2 + dyadicGridLength A.G I.1))) :=
+    (memLp_column_coord X none).restrict _
+  have := normalizedIntervalMeasure_probability (dyadicGridLeft A.G I.1 I.2) hr
+  have hXfin := (columnPhys_memLp_normalized X (dyadicGridLeft A.G I.1 I.2)
+    (dyadicGridLength A.G I.1)).eLpNorm_ne_top
+  have hcfin : ∀ j (hj : j ≠ l), eLpNorm (f j hj) 2 (normalizedIntervalMeasure
+      (dyadicGridLeft A.G I.1 I.2) (dyadicGridLength A.G I.1)) ≠ ⊤ := fun j hj =>
+    (MemLp.of_bound (hfm j hj).aestronglyMeasurable _ (by
+      unfold normalizedIntervalMeasure
+      exact Measure.ae_smul_measure (ae_restrict_of_forall_mem measurableSet_Icc
+        fun y hy => hfb j hj y hy) _)).eLpNorm_ne_top
+  have hfi : Integrable (fun zz : ℝ × ℝ => A.w I zz *
+      ∏ j, fv j (realProgressionCoordinate j zz)) := by
+    refine integrable_localProgression_two hr hw _ (fun j => ?_) fun j => ?_
+    · by_cases hj : j = l
+      · rw [hj, hfvl]; exact hXm
+      · rw [hfvj j hj]; exact hfm j hj
+    · by_cases hj : j = l
+      · rw [hj, hfvl]; exact hXfin
+      · rw [hfvj j hj]; exact hcfin j hj
+  have hfiρ : ∀ ρ'' : Fin (D.Ms 0 G).zc.dim → ℝ, Integrable (fun zz : ℝ × ℝ => A.w I zz *
+      ∏ j, Function.update fv l (fun y => (centerCut (D.Ms 0 G).zc δ ρ'' y : ℂ) * fv l y) j
+        (realProgressionCoordinate j zz)) := by
+    intro ρ''
+    have hcut : Measurable fun y => (centerCut (D.Ms 0 G).zc δ ρ'' y : ℂ) * augPhys X y :=
+      (Complex.measurable_ofReal.comp (centerCut_measurable _ δ ρ'')).mul hXm
+    refine integrable_localProgression_two hr hw _ (fun j => ?_) fun j => ?_
+    · by_cases hj : j = l
+      · rw [hj, Function.update_self, hfvl]; exact hcut
+      · rw [Function.update_of_ne hj, hfvj j hj]; exact hfm j hj
+    · by_cases hj : j = l
+      · rw [hj, Function.update_self, hfvl]
+        refine ne_top_of_le_ne_top hXfin (eLpNorm_mono hcut.aestronglyMeasurable fun y => ?_)
+        rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
+          abs_of_nonneg (centerCut_mem _ δ ρ'' y).1]
+        exact mul_le_of_le_one_left (norm_nonneg _) (centerCut_mem _ δ ρ'' y).2
+      · rw [Function.update_of_ne hj, hfvj j hj]; exact hcfin j hj
+  -- the truncations of the core cutoffs
+  have hcut := fun j => cutoffP_truncate_all hδ (ρc j) Kt
+  choose cc0 hcc0 hccN hccT using hcut
+  -- the cosets
+  have hnn : ∀ j, ∀ k ∈ sideOptF l Fsel j, ∀ i,
+      |(sideOptN nn j k i : ℝ)| ≤ D.S.Dstar * D.S.Eh (h - D.SP.Δ) := by
+    intro j k hk i
+    by_cases hj : j = l
+    · have hk' : k = none := by simpa [sideOptF, hj] using hk
+      subst hk'
+      simp only [sideOptN, Option.elim, Pi.zero_apply, Int.cast_zero, abs_zero]
+      exact mul_nonneg hDp.le hE0
+    · rw [hFj j hj, Finset.mem_map] at hk
+      obtain ⟨x, hx, rfl⟩ := hk
+      simp only [Function.Embedding.some_apply, sideOptN, Option.elim, hnnj j hj]
+      obtain ⟨k', hk'⟩ := hn'e j hj x i
+      rw [hk']; exact hn j hj x hx k'
+  exact ⟨ρ', n', f, ρc, nn, fv, cα, cc0, hfa, hfb, hind, hnorm, hρc, hρcj, hnnj, hfvl, hfvj, hcα,
+    hFj, hXm, hL2X, hfi, hfiρ, hcc0, hccN, hccT, hnn⟩
+
+
+/-- The cell form agrees with the common-chart physical inputs. -/
+theorem three_core_form
+    (κ' : LocalKernelClass)
+    (c₀ : ℕ)
+    (A : ActiveSetup κ' c₀)
+    (bf : A.BasicFamilies)
+    (fp : bf.FamParams)
+    (D : fp.SideInput)
+    (I : ℤ × ℤ)
+    (hI : I ∈ A.cells)
+    (G : bf.Grp)
+    (l : Fin (4 : ℕ))
+    (Fsel : (j : Fin (4 : ℕ)) → Finset ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K
+      I.1 - (4 : ℤ) * (↑D.S.K : ℤ)))))
+    (X : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)))
+    (f : (j : Fin (4 : ℕ)) → j ≠ l → ℝ → ℂ)
+    (fv : Fin (4 : ℕ) → ℝ → ℂ)
+    (hind : ∀ (j : Fin (4 : ℕ)) (hj : j ≠ l), (Set.Ico (dyadicGridLeft A.G I.1 I.2)
+      (dyadicGridLeft A.G I.1 I.2 + dyadicGridLength A.G I.1)).indicator (f j hj) = (Set.Ico
+      (dyadicGridLeft A.G I.1 I.2) (dyadicGridLeft A.G I.1 I.2 + dyadicGridLength A.G
+      I.1)).indicator fun (y : ℝ) => ∑ x ∈ Fsel j, D.c j G (A.blkStart D.S.K I.1) (D.preAt I) (↑x
+      : (D.Ms j G).Md) * (D.Ms j G).wave (↑x : (D.Ms j G).Md) y)
+    (hfvl : fv l = augPhys X)
+    (hfvj : ∀ (j : Fin (4 : ℕ)) (hj : j ≠ l), fv j = f j hj)
+    : fp.Λc I (Function.update (fun j => D.compSub j G I ((Fsel j).map ⟨Subtype.val,
+      Subtype.val_injective⟩)) l X) = localProgressionForm (dyadicGridLength A.G I.1) (A.w I) fv
+      := by
+  have hr := dyadicGridLength_pos A.G I.1
+  have hw := A.adm I hI
+  rw [fp.Λc_apply hI]
+  have e1 : ∀ j, augPhys (Function.update (fun j => D.compSub j G I
+      ((Fsel j).map ⟨Subtype.val, Subtype.val_injective⟩)) l X j) =ᵐ[volume]
+      Function.update (fun j => (Set.Ico (dyadicGridLeft A.G I.1 I.2)
+        (dyadicGridLeft A.G I.1 I.2 + dyadicGridLength A.G I.1)).indicator
+        (fun y => ∑ x ∈ Fsel j, D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1 *
+          (D.Ms j G).wave x.1 y)) l (augPhys X) j := fun j => by
+    rw [apply_update_augPhys]
+    by_cases hj : j = l
+    · rw [hj, Function.update_self, Function.update_self]
+    · rw [Function.update_of_ne hj, Function.update_of_ne hj]
+      refine (D.augPhys_compSub j G I _).trans (Filter.EventuallyEq.of_eq ?_)
+      congr 1
+      funext y
+      exact Finset.sum_map _ _ _
+  rw [localProgressionForm_congr_ae _ _ e1, ← form_indicator_cell hr hw fv,
+    ← form_indicator_cell hr hw (Function.update _ l (augPhys X))]
+  congr 1
+  funext j
+  by_cases hj : j = l
+  · rw [hj, Function.update_self, hfvl]
+  · rw [Function.update_of_ne hj, hfvj j hj, Set.indicator_indicator, Set.inter_self]
+    exact (hind j hj).symm
+
+/-- The distinguished side contributes one to both coefficient products. -/
+theorem three_core_coefficient_products
+    (κ' : LocalKernelClass)
+    (c₀ : ℕ)
+    (A : ActiveSetup κ' c₀)
+    (bf : A.BasicFamilies)
+    (fp : bf.FamParams)
+    (D : fp.SideInput)
+    (I : ℤ × ℤ)
+    (G : bf.Grp)
+    (l : Fin (4 : ℕ))
+    (Fsel : (j : Fin (4 : ℕ)) → Finset ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K
+      I.1 - (4 : ℤ) * (↑D.S.K : ℤ)))))
+    (xs : ℝ)
+    (cα : (j : Fin (4 : ℕ)) → ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K I.1 - (4
+      : ℤ) * (↑D.S.K : ℤ)))) → ℂ)
+    (hcα : ∀ (j : Fin (4 : ℕ)) (x : ↥((D.Ms j G).alive (ancAt A.G (D.preAt I) (A.blkStart D.S.K
+      I.1 - (4 : ℤ) * (↑D.S.K : ℤ))))), cα j x = D.c j G (A.blkStart D.S.K I.1) (D.preAt I) (↑x :
+      (D.Ms j G).Md) * (↑((𝐞 : ℝ → Circle) ((D.Ms j G).phase (↑x : (D.Ms j G).Md) xs)) : ℂ))
+    (δ : ℝ)
+    : (∀ j, j ≠ l → ∑ k ∈ sideOptF l Fsel j, ‖sideOptC cα j k‖ =
+        ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1‖) ∧
+      (∏ j, ∑ k ∈ sideOptF l Fsel j, ‖sideOptC cα j k‖ =
+        ∏ j ∈ Finset.univ.erase l,
+          ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1‖) ∧
+      (∏ j, (cutNorm (D.Ms 0 G).zc.dim δ * ∑ k ∈ sideOptF l Fsel j,
+          ‖sideOptC cα j k‖) = cutNorm (D.Ms 0 G).zc.dim δ * ∏ j ∈ Finset.univ.erase l,
+          (cutNorm (D.Ms 0 G).zc.dim δ *
+            ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1‖)) := by
+  classical
+  have hFj : ∀ j, j ≠ l → sideOptF l Fsel j = (Fsel j).map Function.Embedding.some :=
+    fun j hj => by simp [sideOptF, hj]
+  -- the coefficient sums with the side term `1`
+  have hsum1 : ∀ j, j ≠ l → ∑ k ∈ sideOptF l Fsel j, ‖sideOptC cα j k‖ =
+      ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1‖ := fun j hj => by
+    rw [hFj j hj, Finset.sum_map]
+    refine Finset.sum_congr rfl fun x _ => ?_
+    simp only [Function.Embedding.some_apply, sideOptC, Option.elim, hcα, norm_mul,
+      Circle.norm_coe, mul_one]
+  have hsuml : ∑ k ∈ sideOptF l Fsel l, ‖sideOptC cα l k‖ = 1 := by
+    simp [sideOptF, sideOptC]
+  have hPS : ∏ j, ∑ k ∈ sideOptF l Fsel j, ‖sideOptC cα j k‖ = ∏ j ∈ Finset.univ.erase l,
+      ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1‖ := by
+    rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ l), hsuml, one_mul]
+    exact Finset.prod_congr rfl fun j hj => hsum1 j (Finset.ne_of_mem_erase hj)
+  have hPN : ∏ j, (cutNorm (D.Ms 0 G).zc.dim δ * ∑ k ∈ sideOptF l Fsel j,
+      ‖sideOptC cα j k‖) = cutNorm (D.Ms 0 G).zc.dim δ * ∏ j ∈ Finset.univ.erase l,
+        (cutNorm (D.Ms 0 G).zc.dim δ *
+          ∑ x ∈ Fsel j, ‖D.c j G (A.blkStart D.S.K I.1) (D.preAt I) x.1‖) := by
+    rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ l), hsuml, mul_one]
+    congr 1
+    exact Finset.prod_congr rfl fun j hj => by rw [hsum1 j (Finset.ne_of_mem_erase hj)]
+  exact ⟨hsum1, hPS, hPN⟩
+
 end SideInput
 end ActiveSetup.BasicFamilies.FamParams
 end TrilinearHT.Auto

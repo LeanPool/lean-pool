@@ -5088,26 +5088,26 @@ theorem localProgressionForm_triple_le {κ : LocalKernelClass} {a₀ r : ℝ} (h
     _ ≤ _ := this
 
 open scoped Classical in
-/-- Blueprint eq:triple-tail for a finite collection of dyadic cells: the cells through `y`
-whose triple, a fixed chart triple near the path, has transpose norm at most `δ` contribute at
-most `δ poly(log H, log δ⁻¹)`. -/
-theorem cells_tripleTail (κ : LocalKernelClass) (c₀ : ℕ) (hc : 1 ≤ c₀) :
-    ∃ (C : ℕ) (Cr : ℝ), 0 ≤ Cr ∧ ∀ {d : Fin 3 → ℕ} (G : RealDyadicGrid) (cells : Finset (ℤ × ℤ))
-      (w : ℤ × ℤ → ℝ × ℝ → ℂ),
-      (∀ I ∈ cells, IsAdmissibleLocalKernel κ (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)
-        (w I)) →
-      ∀ (H δ y : ℝ) (B : (i : Fin 3) → QuadraticChartData (d i)),
-      (∀ i, QuadraticChartComplexity c₀ H (B i)) → (∀ i, IsBoundedQuadraticChart (B i)) →
-      0 < δ → δ ≤ 1 → ∀ (m : Fin 4) (Φ : ℤ × ℤ → Fin 4 → ℝ → ℂ),
-      (∀ I ∈ cells, y ∈ dyadicGridCell G I.1 I.2 → ∀ i, ∀ x ∈ dyadicGridCell G I.1 I.2,
-        Φ I (m.succAbove i) x = quadraticChartAtom (B i) (x - y)) →
-      ∑ I ∈ cells with y ∈ dyadicGridCell G I.1 I.2 ∧
-          transposeNorm (dyadicGridLength G I.1) (w I) m (Φ I) ≤ δ,
-        transposeNorm (dyadicGridLength G I.1) (w I) m (Φ I) ≤
-        δ * Cr * (Real.log H + Real.log δ⁻¹ + 1) ^ C := by
-  obtain ⟨C, Cr, hCr, htail⟩ := tripleTail κ c₀ hc
-  refine ⟨C, Cr, hCr, ?_⟩
-  intro d G cells w hw H δ y B hB hBb hδ hδ1 m Φ hΦ
+/-- Reindex the cells through one point by depth and transport their chart triples.
+The identity applies to every filtered weighted sum, including tails and counts. -/
+theorem cells_triple_reindex (κ : LocalKernelClass) {d : Fin 3 → ℕ}
+    (G : RealDyadicGrid) (cells : Finset (ℤ × ℤ)) (w : ℤ × ℤ → ℝ × ℝ → ℂ)
+    (hw : ∀ I ∈ cells, IsAdmissibleLocalKernel κ (dyadicGridLeft G I.1 I.2)
+      (dyadicGridLength G I.1) (w I))
+    (y : ℝ) (B : (i : Fin 3) → QuadraticChartData (d i))
+    (hBb : ∀ i, IsBoundedQuadraticChart (B i)) (m : Fin 4) (Φ : ℤ × ℤ → Fin 4 → ℝ → ℂ)
+    (hΦ : ∀ I ∈ cells, y ∈ dyadicGridCell G I.1 I.2 → ∀ i,
+      ∀ x ∈ dyadicGridCell G I.1 I.2, Φ I (m.succAbove i) x = quadraticChartAtom (B i) (x - y)) :
+    ∃ (T : Finset ℤ) (a : ℤ → ℝ) (w' : ℤ → ℝ × ℝ → ℂ) (φ : Fin 4 → ℝ → ℂ),
+      (∀ i, φ (m.succAbove i) = fun x => quadraticChartAtom (B i) (x - y)) ∧
+      (∀ n ∈ T, IsAdmissibleLocalKernel κ (a n) (G.baseLength * (2 : ℝ) ^ (-n)) (w' n)) ∧
+      (∀ n ∈ T, y ∈ Set.Icc (a n) (a n + G.baseLength * (2 : ℝ) ^ (-n))) ∧
+      ∀ (P : ℝ → Prop) (F : ℝ → ℝ),
+        ∑ I ∈ cells with y ∈ dyadicGridCell G I.1 I.2 ∧
+            P (transposeNorm (dyadicGridLength G I.1) (w I) m (Φ I)),
+          F (transposeNorm (dyadicGridLength G I.1) (w I) m (Φ I)) =
+        ∑ n ∈ T with P (tripleNorm (w' n) φ m y (G.baseLength * (2 : ℝ) ^ (-n))),
+          F (tripleNorm (w' n) φ m y (G.baseLength * (2 : ℝ) ^ (-n))) := by
   classical
   set A : ℤ × ℤ → ℝ := fun I => transposeNorm (dyadicGridLength G I.1) (w I) m (Φ I) with hAdef
   set S := cells.filter fun I => y ∈ dyadicGridCell G I.1 I.2 with hS
@@ -5174,22 +5174,46 @@ theorem cells_tripleTail (κ : LocalKernelClass) (c₀ : ℕ) (hc : 1 ≤ c₀) 
     have hx' : x ∈ dyadicGridCell G (cellAt n).1 (cellAt n).2 := by
       rw [hfst]; simpa only [dyadicGridCell, ha, hlen] using hx
     exact hΦ _ hcm hy i x hx'
-  have hmain := htail H G.baseLength δ y B φ m hB (fun i u => by rw [hφs]; simp)
+  refine ⟨T, a, w', φ, hφs, hadm, hyn, ?_⟩
+  intro P F
+  change (∑ I ∈ cells with y ∈ dyadicGridCell G I.1 I.2 ∧ P (A I), F (A I)) = _
+  rw [Finset.sum_filter, Finset.sum_filter, hT, Finset.sum_image hinj]
+  rw [show (∑ I ∈ cells, if y ∈ dyadicGridCell G I.1 I.2 ∧ P (A I) then F (A I) else 0) =
+      ∑ I ∈ S, if P (A I) then F (A I) else 0 by
+    rw [hS, Finset.sum_filter]
+    refine Finset.sum_congr rfl fun I _ => ?_
+    by_cases hy : y ∈ dyadicGridCell G I.1 I.2 <;> simp [hy]]
+  refine Finset.sum_congr rfl fun I hI => ?_
+  have hn : I.1 ∈ T := Finset.mem_image_of_mem _ hI
+  rw [← hAn I.1 hn, hcell_eq I hI]
+
+open scoped Classical in
+/-- Blueprint eq:triple-tail for a finite collection of dyadic cells: the cells through `y`
+whose triple, a fixed chart triple near the path, has transpose norm at most `δ` contribute at
+most `δ poly(log H, log δ⁻¹)`. -/
+theorem cells_tripleTail (κ : LocalKernelClass) (c₀ : ℕ) (hc : 1 ≤ c₀) :
+    ∃ (C : ℕ) (Cr : ℝ), 0 ≤ Cr ∧ ∀ {d : Fin 3 → ℕ} (G : RealDyadicGrid) (cells : Finset (ℤ × ℤ))
+      (w : ℤ × ℤ → ℝ × ℝ → ℂ),
+      (∀ I ∈ cells, IsAdmissibleLocalKernel κ (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)
+        (w I)) →
+      ∀ (H δ y : ℝ) (B : (i : Fin 3) → QuadraticChartData (d i)),
+      (∀ i, QuadraticChartComplexity c₀ H (B i)) → (∀ i, IsBoundedQuadraticChart (B i)) →
+      0 < δ → δ ≤ 1 → ∀ (m : Fin 4) (Φ : ℤ × ℤ → Fin 4 → ℝ → ℂ),
+      (∀ I ∈ cells, y ∈ dyadicGridCell G I.1 I.2 → ∀ i, ∀ x ∈ dyadicGridCell G I.1 I.2,
+        Φ I (m.succAbove i) x = quadraticChartAtom (B i) (x - y)) →
+      ∑ I ∈ cells with y ∈ dyadicGridCell G I.1 I.2 ∧
+          transposeNorm (dyadicGridLength G I.1) (w I) m (Φ I) ≤ δ,
+        transposeNorm (dyadicGridLength G I.1) (w I) m (Φ I) ≤
+        δ * Cr * (Real.log H + Real.log δ⁻¹ + 1) ^ C := by
+  obtain ⟨C, Cr, hCr, htail⟩ := tripleTail κ c₀ hc
+  refine ⟨C, Cr, hCr, ?_⟩
+  intro d G cells w hw H δ y B hB hBb hδ hδ1 m Φ hΦ
+  obtain ⟨T, a, w', φ, hφs, hadm, hyn, hsum⟩ :=
+    cells_triple_reindex κ G cells w hw y B hBb m Φ hΦ
+  have heq := hsum (fun t => t ≤ δ) (fun t => t)
+  rw [heq]
+  exact htail H G.baseLength δ y B φ m hB (fun i u => by rw [hφs]; simp)
     G.baseLength_pos hδ hδ1 a w' T hadm hyn
-  have hsum : ∑ I ∈ cells with y ∈ dyadicGridCell G I.1 I.2 ∧ A I ≤ δ, A I =
-      ∑ n ∈ T with tripleNorm (w' n) φ m y (G.baseLength * (2 : ℝ) ^ (-n)) ≤ δ,
-        tripleNorm (w' n) φ m y (G.baseLength * (2 : ℝ) ^ (-n)) := by
-    rw [Finset.sum_filter, Finset.sum_filter, hT, Finset.sum_image hinj]
-    rw [show (∑ I ∈ cells, if y ∈ dyadicGridCell G I.1 I.2 ∧ A I ≤ δ then A I else 0) =
-        ∑ I ∈ S, if A I ≤ δ then A I else 0 by
-      rw [hS, Finset.sum_filter]
-      refine Finset.sum_congr rfl fun I _ => ?_
-      by_cases hy : y ∈ dyadicGridCell G I.1 I.2 <;> simp [hy]]
-    refine Finset.sum_congr rfl fun I hI => ?_
-    have hn : I.1 ∈ T := Finset.mem_image_of_mem _ hI
-    rw [← hAn I.1 hn, hcell_eq I hI]
-  rw [hsum]
-  exact hmain
 
 open scoped Classical in
 /-- Blueprint prop:base, line 1655: the cells through `y` whose triple, a fixed chart triple
@@ -5211,90 +5235,15 @@ theorem cells_tripleCount (κ : LocalKernelClass) (c₀ : ℕ) (hc : 1 ≤ c₀)
   refine ⟨C, hC, ?_⟩
   intro d G cells w hw H δ y B hB hBb hδ hδ1 m Φ hΦ
   classical
-  set A : ℤ × ℤ → ℝ := fun I => transposeNorm (dyadicGridLength G I.1) (w I) m (Φ I) with hAdef
-  set S := cells.filter fun I => y ∈ dyadicGridCell G I.1 I.2 with hS
-  have hinj : Set.InjOn Prod.fst (S : Set (ℤ × ℤ)) := by
-    intro I hI J hJ hIJ
-    have hI' := (Finset.mem_filter.mp hI).2
-    have hJ' := (Finset.mem_filter.mp hJ).2
-    exact dyadicGridCell_eq_of_common_point G hI' hJ' hIJ.symm
-  set T := S.image Prod.fst with hT
-  set! cellAt : ℤ → ℤ × ℤ := fun n => if h : ∃ I ∈ S, I.1 = n then h.choose else (n, 0)
-    with hcellAt
-  have hcell_mem : ∀ n ∈ T, cellAt n ∈ S ∧ (cellAt n).1 = n := by
-    intro n hn
-    obtain ⟨I, hI, rfl⟩ := Finset.mem_image.mp hn
-    have h : ∃ J ∈ S, J.1 = I.1 := ⟨I, hI, rfl⟩
-    simp only [hcellAt, h, ↓reduceDIte]
-    exact h.choose_spec
-  have hcell_eq : ∀ I ∈ S, cellAt I.1 = I := by
-    intro I hI
-    have := hcell_mem I.1 (Finset.mem_image_of_mem _ hI)
-    exact hinj this.1 hI this.2
-  set! φ : Fin 4 → ℝ → ℂ := Fin.insertNth m 0 (fun i x => quadraticChartAtom (B i) (x - y))
-    with hφ
-  have hφs : ∀ i, φ (m.succAbove i) = fun x => quadraticChartAtom (B i) (x - y) := fun i =>
-    Fin.insertNth_apply_succAbove (α := fun _ => ℝ → ℂ) m 0 _ i
-  have hφm : ∀ j, Measurable (φ j) := by
-    intro j
-    by_cases hj : j = m
-    · subst hj; simp only [hφ, Fin.insertNth_apply_same]; exact measurable_const
-    · obtain ⟨i, rfl⟩ := Fin.exists_succAbove_eq hj
-      rw [hφs]; exact (quadraticChartAtom_measurable _).comp (measurable_id.sub_const _)
-  have hφb : ∀ j, j ≠ m → ∀ x, ‖φ j x‖ ≤ 1 := by
-    intro j hj x
-    obtain ⟨i, rfl⟩ := Fin.exists_succAbove_eq hj
-    rw [hφs]; exact hBb i _
-  set! a : ℤ → ℝ := fun n => dyadicGridLeft G n (cellAt n).2 with ha
-  set! w' : ℤ → ℝ × ℝ → ℂ := fun n => w (cellAt n) with hw'
-  have hlen : ∀ n : ℤ, dyadicGridLength G n = G.baseLength * (2 : ℝ) ^ (-n) := fun n => rfl
-  have hadm : ∀ n ∈ T, IsAdmissibleLocalKernel κ (a n) (G.baseLength * (2 : ℝ) ^ (-n)) (w' n) := by
-    intro n hn
-    obtain ⟨hmem, hfst⟩ := hcell_mem n hn
-    have h := hw _ (Finset.mem_filter.mp hmem).1
-    rw [hfst] at h
-    simpa only [ha, hw', hlen] using h
-  have hyn : ∀ n ∈ T, y ∈ Set.Icc (a n) (a n + G.baseLength * (2 : ℝ) ^ (-n)) := by
-    intro n hn
-    obtain ⟨hmem, hfst⟩ := hcell_mem n hn
-    have h := (Finset.mem_filter.mp hmem).2
-    rw [hfst] at h
-    exact Set.Ico_subset_Icc_self (by simpa only [ha, hlen, dyadicGridCell] using h)
-  have hAn : ∀ n ∈ T, A (cellAt n) =
-      tripleNorm (w' n) φ m y (G.baseLength * (2 : ℝ) ^ (-n)) := by
-    intro n hn
-    obtain ⟨hmem, hfst⟩ := hcell_mem n hn
-    have hy := (Finset.mem_filter.mp hmem).2
-    have hcm := (Finset.mem_filter.mp hmem).1
-    have hpos : 0 < G.baseLength * (2 : ℝ) ^ (-n) := by have := G.baseLength_pos; positivity
-    rw [tripleNorm_eq_transposeNorm hpos (hadm n hn) m hφm zero_le_one hφb y]
-    simp only [hAdef, hw']
-    rw [hfst, hlen]
-    refine transposeNorm_congr hpos (hadm n hn) m fun j hj x hx => ?_
-    obtain ⟨i, rfl⟩ := Fin.exists_succAbove_eq hj
-    rw [hφs]
-    have hx' : x ∈ dyadicGridCell G (cellAt n).1 (cellAt n).2 := by
-      rw [hfst]; simpa only [dyadicGridCell, ha, hlen] using hx
-    exact hΦ _ hcm hy i x hx'
-  set! T' := T.filter fun n => δ < tripleNorm (w' n) φ m y (G.baseLength * (2 : ℝ) ^ (-n))
-    with hT'
+  obtain ⟨T, a, w', φ, hφs, hadm, hyn, hsum⟩ :=
+    cells_triple_reindex κ G cells w hw y B hBb m Φ hΦ
+  let T' := T.filter fun n => δ < tripleNorm (w' n) φ m y (G.baseLength * (2 : ℝ) ^ (-n))
   have hmain := hcnt H G.baseLength δ y B φ m hB (fun i u => by rw [hφs]; simp)
     G.baseLength_pos hδ hδ1 a w' T' (fun n hn => hadm n (Finset.mem_filter.mp hn).1)
     (fun n hn => hyn n (Finset.mem_filter.mp hn).1) (fun n hn => (Finset.mem_filter.mp hn).2)
-  refine le_trans (le_of_eq ?_) hmain
-  have hcard : (cells.filter fun I => y ∈ dyadicGridCell G I.1 I.2 ∧ δ < A I).card =
-      T'.card := by
-    have h1 : (cells.filter fun I => y ∈ dyadicGridCell G I.1 I.2 ∧ δ < A I) =
-        S.filter fun I => δ < A I := by
-      rw [hS, Finset.filter_filter]
-    rw [h1, hT', hT, Finset.filter_image]
-    rw [Finset.card_image_of_injOn (fun I hI J hJ h => hinj (Finset.mem_filter.mp hI).1
-      (Finset.mem_filter.mp hJ).1 h)]
-    congr 1
-    refine Finset.filter_congr fun I hI => ?_
-    have hn : I.1 ∈ T := Finset.mem_image_of_mem _ hI
-    rw [← hAn I.1 hn, hcell_eq I hI]
-  rw [hcard]
+  have hcard := hsum (fun t => δ < t) (fun _ => 1)
+  simp only [Finset.sum_const, nsmul_eq_mul, mul_one] at hcard
+  exact hcard.trans_le hmain
 
 namespace AccSetup
 
