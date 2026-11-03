@@ -6,10 +6,11 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RouteBMixedFaceIncidence
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.FiniteSimplex
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RouteBCanonicalCoordinateSplit
-public import Mathlib.Topology.Maps.Proper.Basic
-public import Mathlib.MeasureTheory.Measure.Prod
 /-!
 # Route B: measurability of the complete mixed-face bad set
 

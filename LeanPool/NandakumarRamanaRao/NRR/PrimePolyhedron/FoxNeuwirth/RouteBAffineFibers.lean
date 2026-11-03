@@ -7,7 +7,10 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RouteBMixedFaceIncidence
-public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 /-!
 # Route B, Step 4: one-coordinate affine fibers
 

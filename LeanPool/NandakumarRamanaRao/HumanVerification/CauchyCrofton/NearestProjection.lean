@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.Basic
-public import Mathlib.Analysis.InnerProductSpace.Projection.Minimal
+import Mathlib.Tactic.ReduceModChar
 
 /-! # Nearest Projection -/
 

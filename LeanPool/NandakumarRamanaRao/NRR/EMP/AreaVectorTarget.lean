@@ -6,9 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeights
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 
 /-!
 # `NRR.EMP.AreaVectorTarget` — area vector into the fixed total‑mass hyperplane

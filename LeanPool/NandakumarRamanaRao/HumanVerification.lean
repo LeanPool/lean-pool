@@ -13,6 +13,10 @@ public import LeanPool.NandakumarRamanaRao.HumanVerification.EqualAreaEqualPerim
 public import LeanPool.NandakumarRamanaRao.HumanVerification.InternalModel
 public import LeanPool.NandakumarRamanaRao.HumanVerification.Main
 public import LeanPool.NandakumarRamanaRao.HumanVerification.Transfer
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.MeasureTheory.Covering.Besicovitch
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Supporting modules for Equal-area and equal-perimeter convex partitions. -/
 

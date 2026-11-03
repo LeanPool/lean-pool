@@ -6,10 +6,14 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.QuantumParallelRepetition.Part01
+public import Mathlib.Analysis.Matrix.Order -- shake: keep
 public import Mathlib.Analysis.Normed.Module.Normalize
 public import Mathlib.InformationTheory.KullbackLeibler.KLFun
 public import Mathlib.LinearAlgebra.Matrix.Permutation
-public import Mathlib.NumberTheory.Harmonic.Bounds
+public import Mathlib.MeasureTheory.Function.L2Space
+public import Mathlib.MeasureTheory.SpecificCodomains.Pi -- shake: keep
+public import Mathlib.NumberTheory.Harmonic.Defs
+import Mathlib.NumberTheory.Harmonic.Bounds
 
 /-! # Quantum parallel repetition, part 02 -/
 
@@ -284,7 +288,7 @@ theorem harmonicSchmidtFiber_count_sq_le
           (x * Real.sqrt ((j.val : ℝ) + 1)) ^ 2 ≤ a ^ 2 := by
         linarith only [mul_nonneg (sub_nonneg.mpr hscaled) (add_nonneg ha hnonneg)]
       rw [mul_pow, Real.sq_sqrt hjpositive.le] at hs
-      linarith
+      simpa only [mul_comm] using hs
     have hcardreal : (S.card : ℝ) ≤ (j.val : ℝ) + 1 := by
       exact_mod_cast hcard
     exact (mul_le_mul_of_nonneg_right hcardreal (sq_nonneg x)).trans
@@ -3438,7 +3442,7 @@ theorem pinskerScalarGap_derivative_nonneg
     {x : ℝ} (hx : 1 ≤ x) :
     0 ≤ Real.log x -
       3 * (x - 1) * (x + 5) / (2 * (x + 2) ^ 2) := by
-  have hx0 : 0 < x := by linarith
+  have hx0 : 0 < x := lt_of_lt_of_le zero_lt_one hx
   have hcoefficient := pinsker_rational_coefficient_le hx0
   have hscaled := mul_le_mul_of_nonneg_left
     hcoefficient (sub_nonneg.mpr hx)
@@ -3451,7 +3455,7 @@ theorem pinskerScalarGap_derivative_nonneg
       _ ≤ (x - 1) * (2 / (x + 1)) := hscaled
       _ = 2 * (x - 1) / (x + 1) := by ring
   have hlog := centered_log_lower_of_one_le hx
-  linarith only [hrational, hlog]
+  exact sub_nonneg.mpr (hrational.trans hlog)
 
 theorem pinskerScalarGap_derivative_nonpos
     {x : ℝ} (hx0 : 0 < x) (hx1 : x ≤ 1) :
@@ -3468,7 +3472,7 @@ theorem pinskerScalarGap_derivative_nonpos
       _ ≤ (x - 1) * (3 * (x + 5) / (2 * (x + 2) ^ 2)) := hscaled
       _ = 3 * (x - 1) * (x + 5) / (2 * (x + 2) ^ 2) := by ring
   have hlog := centered_log_upper_of_le_one hx0 hx1
-  linarith only [hrational, hlog]
+  exact sub_nonpos.mpr (hlog.trans hrational)
 
 private theorem pinskerScalarGap_nonneg {x : ℝ} (hx : 0 ≤ x) :
     0 ≤ pinskerScalarGap x := by
@@ -5754,6 +5758,14 @@ open scoped BigOperators Topology ComplexOrder MatrixOrder
 
 attribute [local instance] Matrix.normedAddCommGroup Matrix.normedSpace
 
+/-- Orthonormal coordinates preserve inner products as finite conjugate sums. -/
+theorem orthonormalBasis_repr_inner {H k : Type*} [NormedAddCommGroup H]
+    [InnerProductSpace ℂ H] [Fintype k]
+    (b : OrthonormalBasis k ℂ H) (u v : H) :
+    (∑ i, star (b.repr u i) * b.repr v i) = inner ℂ u v := by
+  simpa only [EuclideanSpace.inner_eq_star_dotProduct, dotProduct, Pi.star_apply, mul_comm]
+    using b.repr.inner_map_map u v
+
 theorem finitePurificationMatrix_gram_apply
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
     (F : ι → Matrix d d ℂ) (M : Matrix d d ℂ)
@@ -5777,8 +5789,7 @@ theorem finitePurificationMatrix_gram_apply
     F M positive hM a r j
   change (∑ k, star (b.repr u k) * b.repr v k) =
     inner ℂ u v
-  simpa only [OrthonormalBasis.repr_apply_apply, RCLike.star_def, inner_conj_symm]
-    using b.sum_inner_mul_inner u v
+  exact orthonormalBasis_repr_inner b u v
 
 theorem ensemblePurificationSubspaceEntry_inner_eq_integral
     {ι d : Type*} [Fintype d] [DecidableEq d]
@@ -5919,9 +5930,8 @@ private theorem finitePurificationMatrix_difference_gram_apply
     (∑ k, star (b.repr u k - b.repr u₀ k) *
       (b.repr v k - b.repr v₀ k)) =
       inner ℂ (u - u₀) (v - v₀)
-  simpa only [OrthonormalBasis.repr_apply_apply, inner_sub_left, inner_sub_right,
-    star_sub, RCLike.star_def, inner_conj_symm]
-    using b.sum_inner_mul_inner (u - u₀) (v - v₀)
+  simpa only [LinearIsometryEquiv.map_sub, PiLp.sub_apply] using
+    orthonormalBasis_repr_inner b (u - u₀) (v - v₀)
 
 private theorem purificationSubspaceEntry_difference_inner_eq_integral
     {ι d : Type*} [Fintype d] [DecidableEq d]

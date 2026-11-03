@@ -991,7 +991,7 @@ theorem
   have floor_scaled : 1 ≤ 2 * (w + 1) * M := by
     have denominator : 0 < 2 * (w + 1) := by positivity
     have crossed := (div_le_iff₀ denominator).mp mass_floor
-    linarith only [crossed]
+    simpa only [mul_comm] using crossed
   change
     dSVDensityRationalLeftProjectiveThresholdAtomMismatch
       w N ξ ζ ≤ (2 * (w + 1) * D) * M
@@ -999,8 +999,8 @@ theorem
     dSVDensityRationalLeftProjectiveThresholdAtomMismatch
         w N ξ ζ ≤ D := actual
     _ ≤ D * (2 * (w + 1) * M) := by
-      linarith [mul_nonneg defect_nonnegative
-        (show 0 ≤ 2 * (w + 1) * M - 1 by linarith)]
+      simpa only [mul_one] using
+        mul_le_mul_of_nonneg_left floor_scaled defect_nonnegative
     _ = (2 * (w + 1) * D) * M := by ac_rfl
 
 theorem
@@ -2625,7 +2625,7 @@ theorem dSVDensityRationalPublicBucketLocalHarmonicCleanup_sq
               (work (representative phase (bucket phase r))).val‖ + ε := by
       simpa only [same] using stable
     simp only [ite_eq_left same, mul_zero, add_zero]
-    nlinarith [
+    nlinarith only [actual, precision,
       norm_nonneg
         (localUnitaryAction
             (A (phase, bucket phase r))
@@ -5438,7 +5438,7 @@ private theorem rightSpectralBornWeight_moment
         (cfc_id' ℝ G hG.isHermitian).symm
       _ = _ := positiveMatrix_cfc_spectral_sum G hG (fun z : ℝ => z)
   have h := congrArg (bornTracePairing ρ.matrix F) hspectral
-  simp only [map_sum, map_smul, smul_eq_mul] at h
+  simp only [map_sum, LinearMap.map_smul, smul_eq_mul] at h
   calc
     (∑ i : dB,
       rightSpectralBornWeight ρ F G hG i *
@@ -5469,7 +5469,7 @@ private theorem rightSpectralBornWeight_entropy
   have hspectral := positiveMatrix_cfc_spectral_sum G hG
     (fun z : ℝ => z * Real.log z)
   have h := congrArg (bornTracePairing ρ.matrix F) hspectral
-  simp only [map_sum, map_smul, smul_eq_mul] at h
+  simp only [map_sum, LinearMap.map_smul, smul_eq_mul] at h
   calc
     bornTracePairing ρ.matrix F
         (cfc (fun z : ℝ => z * Real.log z) G) =
@@ -5519,7 +5519,7 @@ theorem bornTracePairing_le_one_one
       bornTracePairing ρ.matrix
         (1 : Matrix dA dA ℂ) (1 : Matrix dB dB ℂ) -
       bornTracePairing ρ.matrix F (1 : Matrix dB dB ℂ) := by
-    simp only [map_sub, LinearMap.sub_apply]
+    simp only [map_sub (bornTracePairing ρ.matrix), LinearMap.sub_apply]
   rw [hdiff, bornTracePairing_one_one] at hpositive
   linarith only [hpositive]
 
@@ -5715,7 +5715,8 @@ theorem fullHistoryWeight_sum
       (∑ y : Rsub → Y,
         ∏ i : Rsub, G.marginalY (y i)) := by
       simp_rw [← Finset.mul_sum, ← Finset.sum_mul]
-      congr 1
+      apply congrArg (fun mass : ℝ => mass *
+        (∑ y : Rsub → Y, ∏ i : Rsub, G.marginalY (y i)))
       simp_rw [← Finset.mul_sum]
       rw [← Finset.sum_mul]
     _ = 1 := by rw [hD, hL, hR]; norm_num
@@ -5822,7 +5823,7 @@ theorem bornTracePairing_contractions_le_one
   have hdiff : bornTracePairing ρ.matrix (1 - F) G =
       bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ) G -
         bornTracePairing ρ.matrix F G := by
-    simp only [map_sub, LinearMap.sub_apply]
+    simp only [map_sub (bornTracePairing ρ.matrix), LinearMap.sub_apply]
   rw [hdiff] at hpositive
   have hone := bornTracePairing_one_le_one ρ G hGcomplement
   linarith only [hpositive, hone]
@@ -6410,9 +6411,8 @@ theorem finitePurificationMatrix_pair_difference_gram_apply
     (∑ k, star (basis.repr u k - basis.repr u₀ k) *
       (basis.repr v k - basis.repr v₀ k)) =
       inner ℂ (u - u₀) (v - v₀)
-  simpa only [OrthonormalBasis.repr_apply_apply, inner_sub_left, inner_sub_right,
-    star_sub, RCLike.star_def, inner_conj_symm]
-    using basis.sum_inner_mul_inner (u - u₀) (v - v₀)
+  simpa only [LinearIsometryEquiv.map_sub, PiLp.sub_apply] using
+    orthonormalBasis_repr_inner basis (u - u₀) (v - v₀)
 
 theorem ensemblePurificationSubspaceEntry_pair_difference_inner_eq_integral
     {ι d : Type*} [Fintype d] [DecidableEq d]

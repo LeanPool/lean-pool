@@ -7,8 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RouteBSelectedVectorBlock
-public import Mathlib.MeasureTheory.Constructions.Pi
-public import Mathlib.Logic.Equiv.Set
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Route B: canonical split of the selected local vector block

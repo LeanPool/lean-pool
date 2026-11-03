@@ -6,10 +6,16 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.PolygonCauchy
-public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.PolygonApproximation
-public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.HausdorffMonotonicity
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCroftonStatement
+public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.Basic
+public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.HausdorffMonotonicity
+public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.PolygonApproximation
+public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.PolygonCauchy
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.MeasureTheory.Covering.Besicovitch
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The Cauchy–Crofton bridge
