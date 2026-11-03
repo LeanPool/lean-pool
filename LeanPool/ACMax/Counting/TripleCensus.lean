@@ -9,7 +9,6 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Ring.Nat
 public import Mathlib.Data.Nat.Cast.Order.Basic
-public import Mathlib.Tactic.Push
 
 /-!
 # A six-column three-group census

@@ -6,7 +6,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 module
 
 public import LeanPool.ACMax.AHL.NBWalkCount
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Operations
 public import Mathlib.Algebra.Order.Chebyshev
 
 /-!

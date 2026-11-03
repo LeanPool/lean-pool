@@ -250,7 +250,8 @@ theorem algConn_le_two_of_sparse_cut [Nonempty V]
       Nat.cast_nonneg _
     have hsum0 : (0 : ℝ) ≤ (S.card : ℝ) + (Sᶜ.card : ℝ) := by linarith
     rw [hVn] at hcutR
-    nlinarith [mul_le_mul_of_nonneg_left hcutR hsum0, hcS, hcSc, hEc]
+    convert mul_le_mul_of_nonneg_left hcutR
+      (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hsum0) using 1 <;> ring
 
 /-! ## Handshake identities for the quotient data -/
 
