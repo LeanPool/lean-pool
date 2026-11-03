@@ -36,12 +36,16 @@ def discarded_runs(
 
 def branch_exists(repository: str, branch: str) -> bool:
     """Report a branch as missing only on a definite 404, never on other errors."""
-    result = subprocess.run(
-        ["gh", "api", f"repos/{repository}/git/ref/heads/{branch}"],
-        capture_output=True,
-        text=True,
-        timeout=60,
-    )
+    try:
+        result = subprocess.run(
+            ["gh", "api", f"repos/{repository}/git/ref/heads/{branch}"],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+    except subprocess.TimeoutExpired:
+        LOGGER.warning("Timed out looking up %s; keeping its run", branch)
+        return True
     if result.returncode == 0:
         return True
     if "HTTP 404" in result.stderr:
@@ -75,20 +79,37 @@ def queue_runs(repository: str) -> list[dict[str, Any]]:
 
 
 def cancel_discarded(repository: str, current_run_id: int) -> list[int]:
-    """Cancel every discarded queue run and return the cancelled run IDs."""
-    cancelled = discarded_runs(
+    """Request cancellation of discarded runs and return accepted request IDs."""
+    discarded = discarded_runs(
         queue_runs(repository),
         current_run_id,
         lambda branch: branch_exists(repository, branch),
     )
-    for run_id in cancelled:
-        LOGGER.info("Cancelling run %s: its merge group was discarded", run_id)
-        subprocess.run(
-            ["gh", "run", "cancel", str(run_id), "--repo", repository],
-            check=False,
-            timeout=60,
+    accepted: list[int] = []
+    for run_id in discarded:
+        try:
+            result = subprocess.run(
+                ["gh", "run", "cancel", str(run_id), "--repo", repository],
+                check=False,
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+        except subprocess.TimeoutExpired:
+            LOGGER.warning("Timed out requesting cancellation of run %s", run_id)
+            continue
+        if result.returncode != 0:
+            LOGGER.warning(
+                "Could not request cancellation of run %s: %s",
+                run_id,
+                result.stderr.strip(),
+            )
+            continue
+        LOGGER.info(
+            "Requested cancellation of run %s: its merge group was discarded", run_id
         )
-    return cancelled
+        accepted.append(run_id)
+    return accepted
 
 
 def main() -> None:
