@@ -5,7 +5,12 @@ Authors: Codex
 -/
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Algebra.Ring.IsFormallyReal
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Analysis.Fourier.ZMod
+public import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Khintchine inequality and empirical sampling
@@ -34,7 +39,7 @@ proof is adapted from ../lean-variationalsw as attributed below.
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter Polynomial MeasureTheory
 open scoped Topology BigOperators ENNReal ComplexConjugate
 
@@ -1220,6 +1225,6 @@ theorem finiteFourier_convolution {q : ℕ} [NeZero q] (f g : ZMod q → ℂ) (�
     rw [finiteAverage_const_mul, ← finiteFourier_eq_average, finiteFourier_translate]
   simp only [hi, finiteAverage_mul_const, ← finiteFourier_eq_average]
 
-end Auto
+end TrilinearHT.Auto
 
 end

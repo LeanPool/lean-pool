@@ -5,7 +5,10 @@ Authors: Claude
 -/
 module
 
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.DyadicStopping
+public import LeanPool.TrilinearHilbertTransform.Auto.Sec01Foundations
 public import LeanPool.TrilinearHilbertTransform.Auto.Sec02LatticeTorusFacts
+public import Mathlib.Analysis.Convex.KreinMilman
 
 /-!
 # Section 3: Local forms, finite constants, and stopping
@@ -20,7 +23,7 @@ Formalization of blueprint Section 3, "Local forms, finite constants, and stoppi
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter
 open scoped Topology
 open Polynomial MeasureTheory
@@ -1179,6 +1182,6 @@ theorem finiteDepthConstant_least {κ : LocalKernelClass} {q : ℝ} {N : ℕ}
       ENNReal.toReal_ofReal (finiteDepthNumerator_nonneg D),
       ENNReal.toReal_ofReal (le_trans zero_le_one hc)] using h
 
-end Auto
+end TrilinearHT.Auto
 
 end

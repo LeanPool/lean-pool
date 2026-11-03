@@ -5,7 +5,11 @@ Authors: Claude
 -/
 module
 
-public import LeanPool.TrilinearHilbertTransform.Auto.Sec04ColumnProjections
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.RationalLinearAlgebra
+public import LeanPool.TrilinearHilbertTransform.Auto.Sec01Foundations
+public import Mathlib.Analysis.Calculus.ContDiff.Bounds
+public import Mathlib.Analysis.Fourier.FourierTransformDeriv
+public import Mathlib.Analysis.Real.Pi.Bounds
 
 /-!
 # Section 5: Quadratic chart definitions and closure
@@ -20,7 +24,7 @@ Formalization of blueprint Section 5, "Quadratic chart definitions and closure"
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter Polynomial MeasureTheory AddCircle
 open scoped Topology ComplexConjugate FourierTransform ENNReal BigOperators
 
@@ -1372,6 +1376,6 @@ def chartSkewPart {d : ℕ} (C : Matrix (Fin d) (Fin d) ℚ) :
 
 /-! ### Several-variable lattice finiteness -/
 
-end Auto
+end TrilinearHT.Auto
 
 end

@@ -5,7 +5,18 @@ Authors: Codex
 -/
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Algebra.Ring.IsFormallyReal
+public import Mathlib.Analysis.CStarAlgebra.Matrix
+public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import Mathlib.Data.Int.Star
+public import Mathlib.Data.Rat.Star
+public import Mathlib.LinearAlgebra.Matrix.AbsoluteValue
+public import Mathlib.LinearAlgebra.Matrix.Rank
+public import Mathlib.NumberTheory.NumberField.Basic
+public import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra
 
 /-!
 # Quantitative rational linear algebra
@@ -35,7 +46,7 @@ denominator and determinant machinery (`lem:height`, lines 603–619).
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 
 /-- Blueprint `lem:rational-linear`: height is the maximum of the absolute
 reduced numerator and the positive reduced denominator. -/
@@ -2662,6 +2673,6 @@ theorem effectiveReturnQuadratic_norm_of_coordinate_returns {d k : ℕ}
   exact effectiveReturnQuadratic_apply_bound C Λ V F S hV hmat h.ofLp m.ofLp
     hdelta hS hA hh hdn hΩ
 
-end Auto
+end TrilinearHT.Auto
 
 end

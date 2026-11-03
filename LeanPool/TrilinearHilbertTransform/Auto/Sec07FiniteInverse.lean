@@ -5,6 +5,11 @@ Authors: Claude
 -/
 module
 
+public import Mathlib.Algebra.FiniteSupport.Basic
+
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.GevreyCutoffs
+public import LeanPool.TrilinearHilbertTransform.Auto.Sec02LatticeTorusFacts
+public import LeanPool.TrilinearHilbertTransform.Auto.Sec05QuadraticCharts
 public import LeanPool.TrilinearHilbertTransform.Auto.Sec06FiniteAdditive
 
 /-!
@@ -20,7 +25,7 @@ Formalization of blueprint Section 7, "A finite inverse theorem with a complete 
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter Polynomial MeasureTheory
 open scoped Topology BigOperators ENNReal ComplexConjugate
 open scoped Pointwise
@@ -147,13 +152,13 @@ theorem finite_weighted_trilinear_extract {q : ℕ} [NeZero q]
   rw [← hval, norm_mul, Complex.norm_real, Real.norm_of_nonneg hβ.le]
   nlinarith only [mul_le_mul_of_nonneg_left hη' hβ.le]
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open scoped BigOperators NNReal
 
 theorem cyclicBohrMeasure_mean_one {q : ℕ} [NeZero q] (b : ℝ → ℝ)
@@ -168,13 +173,13 @@ theorem cyclicBohrMeasure_nonneg {q : ℕ} [NeZero q] (b : ℝ → ℝ)
     (hβ : 0 < cyclicBohrMass b S r) (x : ZMod q) : 0 ≤ cyclicBohrMeasure b S r x :=
   div_nonneg (cyclicBohrWeight_nonneg b hb S r x) hβ.le
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open scoped BigOperators Pointwise NNReal
 open scoped ComplexConjugate
 
@@ -2669,13 +2674,13 @@ theorem graph_local_inverse_log_budget (d D : ℕ) {P ρ t r ζ β C K : ℝ}
     (Real.log_nonneg ((one_le_div hr).mpr hr1)) hd hZ hDT'
     (hV.trans (by linarith)) hBlog hGlog
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter MeasureTheory
 open scoped Topology ENNReal
 open scoped Pointwise
@@ -2912,13 +2917,13 @@ theorem latticeBoxRadius_pos {n : ℕ} (hn : 0 < n) : 0 < latticeBoxRadius n := 
   have : (0 : ℝ) < n := by exact_mod_cast hn
   positivity
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter Polynomial MeasureTheory AddCircle
 open scoped Topology ComplexConjugate FourierTransform ENNReal BigOperators
 
@@ -3816,13 +3821,13 @@ theorem uniform_translated_chart_budget (n : ℕ) (R : ℝ)
   apply Real.exp_le_exp.mpr
   exact (pow_le_pow_right₀ hP1 (le_max_right _ _)).trans hcommon
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter
 open scoped Topology
 open Polynomial MeasureTheory
@@ -5198,6 +5203,6 @@ theorem finite_inverse :
     (fun x => (hunit x).1) (fun x => (hunit x).2)
     (fun x hx => hplateau x (abs_le.mp hx)) houtside k hk hderiv
 
-end Auto
+end TrilinearHT.Auto
 
 end

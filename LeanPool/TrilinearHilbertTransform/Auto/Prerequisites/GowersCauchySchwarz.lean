@@ -5,8 +5,14 @@ Authors: Codex
 -/
 module
 
-public import Mathlib
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.KhintchineSampling
+public import Mathlib.Analysis.Fourier.AddCircle
+public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+public import Mathlib.Data.Int.Star
+public import Mathlib.Data.Rat.Star
+public import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Topology.Instances.ZMod
+public import Mathlib.Topology.UniformSpace.Uniformizable
 
 /-!
 # Gowers-Cauchy-Schwarz and cube continuity
@@ -32,7 +38,7 @@ vertex coordinates, built from Mathlib Haar integration and Holder.
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter MeasureTheory
 open scoped Topology BigOperators ENNReal ComplexConjugate
 
@@ -2511,6 +2517,6 @@ theorem cyclic_cell_cube_limit_haar_bounded (g : ℝ → ℂ) (hg : Measurable g
   change dist _ (cubeAverage μ 3 (fun _ => fg)) < ε
   linarith only [ht1, ht2, hd, hc', hp, hε]
 
-end Auto
+end TrilinearHT.Auto
 
 end

@@ -5,7 +5,11 @@ Authors: Claude
 -/
 module
 
-public import LeanPool.TrilinearHilbertTransform.Auto.Sec05QuadraticCharts
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.BalogSzemerediGowers
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.DenseBogolyubov
+public import LeanPool.TrilinearHilbertTransform.Auto.Sec01Foundations
+public import Mathlib.Combinatorics.Additive.PluenneckeRuzsa
+public import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!
 # Section 6: Finite additive arguments for the inverse theorem
@@ -20,7 +24,7 @@ Formalization of blueprint Section 6, "Finite additive arguments for the inverse
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open scoped BigOperators NNReal
 
 /-! ### Separating a finite set of nonzero cyclic frequencies -/
@@ -661,13 +665,13 @@ theorem unit_cutoff_hasCompactSupport (b : ℝ → ℝ) (hsupp : ∀ a, 1 ≤ |a
     exact ha (hsupp a (le_of_not_gt hn))
   exact ⟨(abs_lt.mp hlt).1.le, (abs_lt.mp hlt).2.le⟩
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter MeasureTheory
 open scoped Topology BigOperators ENNReal ComplexConjugate
 
@@ -834,13 +838,13 @@ theorem gowersNorm_le_one {G : Type*} [AddCommGroup G] [MeasurableSpace G]
     (by positivity : 0 ≤ (((2 ^ j : ℕ) : ℝ)⁻¹))
   simpa only [gowersNorm, Real.one_rpow] using hr
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open scoped BigOperators Pointwise NNReal
 
 /-! ### Function graphs and character energy
@@ -1534,13 +1538,13 @@ theorem log_inverse_le_of_power_density {α δ C : ℝ} (hα : 0 < α)
 noncomputable def localSymmetryInnerRadius (C : ℝ) (d : ℕ) (r ζ : ℝ) : ℝ :=
   r * min 1 (ζ ^ 2) / (1000 * (C + 1) * (d + 1))
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter
 open scoped Topology
 open Polynomial MeasureTheory
@@ -2083,6 +2087,6 @@ theorem locally_additive_derivative_frequency {q : ℕ} [NeZero q] (hq : Odd q)
       rw [mul_pow]
       nlinarith only [pow_nonneg (by linarith : 0 ≤ 1 + Real.log (1 / δ)) 4]
 
-end Auto
+end TrilinearHT.Auto
 
 end

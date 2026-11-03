@@ -5,10 +5,10 @@ Authors: Codex
 -/
 module
 
-public import Mathlib
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.GowersCauchySchwarz
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.ChangSpectrum
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.DenseBogolyubov
+public import Mathlib.Algebra.CharP.Defs
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Combinatorics.Additive.Energy
+public import Mathlib.Tactic.Positivity
 
 /-!
 # Balog-Szemeredi-Gowers and dense bipartite paths
@@ -36,7 +36,7 @@ is the standard additive-energy quantity used by the consuming theorem.
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open scoped BigOperators Pointwise NNReal
 
 /-- Neighborhood in the first part of a finite bipartite relation. -/
@@ -790,6 +790,6 @@ theorem balog_szemeredi_gowers {G : Type*} [AddCommGroup G] [DecidableEq G]
       gcongr
       norm_num
 
-end Auto
+end TrilinearHT.Auto
 
 end

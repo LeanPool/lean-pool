@@ -5,9 +5,10 @@ Authors: Codex
 -/
 module
 
-public import Mathlib
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.KhintchineSampling
 public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.ChangSpectrum
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.KhintchineSampling
+public import Mathlib.Analysis.Complex.ExponentialBounds
+public import Mathlib.Analysis.Real.Pi.Bounds
 
 /-!
 # The quasipolynomial dense Bogolyubov theorem
@@ -25,7 +26,7 @@ spectrum prerequisites. Reference: blueprint `lem:dense-Bohr`, lines 786-820.
 
 @[expose] public section
 
-namespace Auto
+namespace TrilinearHT.Auto
 
 open scoped BigOperators Pointwise ComplexConjugate
 
@@ -919,4 +920,4 @@ theorem bogolyubov_radius_log_bound {α : ℝ} (hα : 0 < α) (hα1 : α ≤ 1) 
   norm_num at hh hc ⊢
   nlinarith
 
-end Auto
+end TrilinearHT.Auto

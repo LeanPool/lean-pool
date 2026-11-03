@@ -5,8 +5,23 @@ Authors: Codex
 -/
 module
 
-public import Mathlib
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.RationalLinearAlgebra
+public import Mathlib.Algebra.Module.StablyFree.Basic
+public import Mathlib.Algebra.Module.ZLattice.Basic
+public import Mathlib.Algebra.Order.Archimedean.Real.Hom
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Algebra.Ring.IsFormallyReal
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Analysis.InnerProductSpace.GramSchmidtOrtho
+public import Mathlib.Analysis.InnerProductSpace.ProdL2
+public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+public import Mathlib.Analysis.Normed.Module.Dual
+public import Mathlib.LinearAlgebra.BilinearForm.DualLattice
+public import Mathlib.LinearAlgebra.Unimodular
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.RingTheory.Etale.Weakly
+public import Mathlib.RingTheory.Flat.TorsionFree
+public import Mathlib.RingTheory.RegularLocalRing.Defs
+public import Mathlib.RingTheory.TotallySplit
 
 /-!
 # Lattice transference via reduced bases
@@ -39,7 +54,7 @@ is proved here, rather than imported from those modules.
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter MeasureTheory
 open scoped Topology ENNReal
 
@@ -2201,6 +2216,6 @@ theorem transference_constant_bound {n : ℕ} (hn : 0 < n) :
     _ = (100 * (n : ℝ)) ^ (n + 1) := by rw [pow_succ]; ring
     _ ≤ _ := pow_le_pow_right₀ hbase (by omega)
 
-end Auto
+end TrilinearHT.Auto
 
 end

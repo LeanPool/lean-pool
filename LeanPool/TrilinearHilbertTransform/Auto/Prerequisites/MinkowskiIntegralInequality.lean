@@ -5,7 +5,12 @@ Authors: Claude
 -/
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+public import Mathlib.MeasureTheory.Integral.MeanInequalities
+public import Mathlib.MeasureTheory.Measure.Prod
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Tactic.Positivity
 
 /-!
 # Minkowski's integral inequality
@@ -31,7 +36,7 @@ The statement and all definitions depend only on Mathlib.
 
 @[expose] public section
 
-namespace Auto
+namespace TrilinearHT.Auto
 
 open MeasureTheory
 open scoped ENNReal
@@ -175,4 +180,4 @@ theorem lintegral_minkowski {α β : Type*} [MeasurableSpace α] [MeasurableSpac
   rw [← ENNReal.rpow_inv_le_iff hp0, ← one_div]
   exact minkowski_truncated hp hf (hGm n) (hGF n) (hGfin n)
 
-end Auto
+end TrilinearHT.Auto

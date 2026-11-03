@@ -5,21 +5,10 @@ Authors: Claude
 -/
 module
 
-public import Mathlib
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.RationalLinearAlgebra
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.FourierApproximation
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.GevreyCutoffs
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.KhintchineSampling
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.ChangSpectrum
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.DenseBogolyubov
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.GowersCauchySchwarz
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.BalogSzemerediGowers
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.HilbertAtomicDecomposition
 public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.FeffermanStein
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.LatticeTransference
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.DyadicStopping
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.RademacherMenshov
-public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.MinkowskiIntegralInequality
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.GowersCauchySchwarz
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.KhintchineSampling
+public import LeanPool.TrilinearHilbertTransform.Auto.ProofTools
 
 /-!
 # Section 1: Foundations, conventions, and proof interfaces
@@ -30,35 +19,18 @@ Formalization of blueprint Section 1, "Foundations, conventions, and proof inter
 (`sec:foundations`, lines 53-253) of `blueprint/formalization_blueprint.tex`.
 -/
 
-public meta section
-
-/-- `have! h : T := v` (or `have! h := v`) adds the hypothesis `h : T` proved by `v` as a plain
-local hypothesis. Unlike `have`, the proof `v` does not stay in the local context as the value
-of `h`, and unlike `obtain h : T := v`, nothing is generalized in the goal. Both matter in very
-long tactic proofs: every nested `by` block instantiates the whole local context (including the
-values of earlier `have`s), and `obtain` traverses the goal at every step. -/
-syntax (name := haveBang) "have! " ident (" : " term)? " := " term : tactic
-
-macro_rules
-  | `(tactic| have! $h:ident : $t := $v) =>
-    `(tactic| refine no_implicit_lambda% ((fun ($h : $t) => ?_) ($v)))
-  | `(tactic| have! $h:ident := $v) =>
-    `(tactic| refine no_implicit_lambda% ((fun $h => ?_) ($v)))
-
-end
-
 @[expose] public section
 
-namespace Auto
+namespace TrilinearHT.Auto
 
 /-- The period `16` of the Gowers-norm circle is positive. -/
 instance fact_zero_lt_sixteen : Fact (0 < (16 : ℝ)) := ⟨by norm_num⟩
 
-end Auto
+end TrilinearHT.Auto
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter Polynomial MeasureTheory AddCircle
 open scoped Topology ComplexConjugate FourierTransform ENNReal BigOperators
 
@@ -174,13 +146,13 @@ theorem quasipolynomialBound_rpow {f : ℝ → ℝ} (hf : QuasipolynomialBound f
         pow_nonneg (by linarith [one_le_logarithmicSize ht]) _
       nlinarith
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter
 open scoped Topology
 open Polynomial MeasureTheory
@@ -591,6 +563,6 @@ theorem oneMixedNorm (p q : ℝ) (hq2 : 2 < q) (hq3 : q < 3) (hpq : q < p) :
       mul_le_mul_right (hC ν f hf) D
     _ = _ := (mul_assoc _ _ _).symm
 
-end Auto
+end TrilinearHT.Auto
 
 end

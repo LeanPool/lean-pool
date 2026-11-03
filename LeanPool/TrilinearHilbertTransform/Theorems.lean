@@ -9,7 +9,7 @@ public import LeanPool.TrilinearHilbertTransform.Defs
 public import Mathlib.Analysis.Distribution.SchwartzSpace.Basic
 public import Mathlib.MeasureTheory.Function.LpSeminorm.Defs
 
-import LeanPool.TrilinearHilbertTransform.Auto.Sec16_3SummingUpdateLevels
+import LeanPool.TrilinearHilbertTransform.Auto.Sec163SummingUpdateLevels
 
 /-!
 # Boundedness of the trilinear Hilbert transform
@@ -29,7 +29,7 @@ open MeasureTheory SchwartzMap Topology Filter
 theorem trilinear_ht_bound :
     ∃ C : ℝ, ∀ f : Fin 3 → 𝓢(ℝ, ℂ),
       eLpNorm (T (fun i ↦ f i)) 1 ≤ (ENNReal.ofReal C) * ∏ i, eLpNorm (f i) 3 :=
-  Auto.trilinear_ht_bound
+  TrilinearHT.Auto.trilinear_ht_bound
 
 end TrilinearHT
 

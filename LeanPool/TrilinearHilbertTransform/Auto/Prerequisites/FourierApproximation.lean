@@ -5,7 +5,13 @@ Authors: Codex, Claude
 -/
 module
 
-public import Mathlib
+public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
+public import Mathlib.Analysis.Fourier.AddCircleMulti
+public import Mathlib.Analysis.Fourier.LpSpace
+public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+public import Mathlib.MeasureTheory.Measure.RegularityCompacts
+public import Mathlib.Order.CompletePartialOrder
+public import Mathlib.Topology.UniformSpace.Uniformizable
 
 /-!
 # Quantitative Fourier approximation on finite-dimensional tori
@@ -46,7 +52,7 @@ Chapter I, Theorem 2.3).
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter Polynomial MeasureTheory
 open scoped Topology
 open AddCircle
@@ -669,9 +675,9 @@ theorem mem_frequencyTruncationSet {d K : ℕ} {n : Fin d → ℤ} :
 
 end TorusFourier
 
-end Auto
+end TrilinearHT.Auto
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter Polynomial MeasureTheory
 open scoped Topology
 open AddCircle
@@ -1145,6 +1151,6 @@ theorem periodic_fourier_expansion_of_fderiv {n m : ℕ} (hn : 1 ≤ n) (hm : n 
 
 end PeriodicFourier
 
-end Auto
+end TrilinearHT.Auto
 
 end

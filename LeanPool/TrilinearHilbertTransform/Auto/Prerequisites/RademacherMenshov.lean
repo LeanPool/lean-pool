@@ -5,7 +5,13 @@ Authors: Codex
 -/
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Algebra.Ring.IsFormallyReal
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import Mathlib.Data.Int.Star
+public import Mathlib.Tactic.Positivity
 
 /-!
 # Rademacher–Menshov estimates and nested projection products
@@ -33,7 +39,7 @@ The explicit logarithmic horizon and numerical restart bounds implement
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open scoped BigOperators
 
 /-- The Hilbertian norm of a finite family of outputs, also for normed outputs. -/
@@ -904,6 +910,6 @@ theorem operatorComplementProduct_rows_bound {ι F : Type*} [Fintype ι]
 
 end OperatorComplements
 
-end Auto
+end TrilinearHT.Auto
 
 end

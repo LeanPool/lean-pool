@@ -5,7 +5,17 @@ Authors: Codex
 -/
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
+public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+public import Mathlib.Combinatorics.Additive.Randomisation
+public import Mathlib.Combinatorics.Pigeonhole
+public import Mathlib.Data.Rat.Star
+public import Mathlib.RingTheory.Etale.Weakly
+public import Mathlib.RingTheory.Flat.TorsionFree
+public import Mathlib.RingTheory.TotallySplit
 
 /-!
 # Chang's spectrum theorem and finite Bohr sets
@@ -23,7 +33,7 @@ Riesz-product randomisation identities. The reference is blueprint
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open scoped BigOperators NNReal
 
 /-- The source Bohr condition, expressed through the quotient-circle norm. -/
@@ -451,6 +461,6 @@ theorem cyclicBohrSet_card_lower {q : ℕ} [NeZero q] (S : Finset (ZMod q))
     finiteBohrSet_card_lower
       (fun s : S => ZMod.toAddCircle.comp (AddMonoidHom.mulLeft (s : ZMod q))) hρ hρhalf
 
-end Auto
+end TrilinearHT.Auto
 
 end

@@ -5,7 +5,9 @@ Authors: Claude, Codex
 -/
 module
 
-public import Mathlib
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.Analysis.SpecialFunctions.Pow.Integral
+public import Mathlib.Order.CompletePartialOrder
 
 /-!
 # The Fefferman–Stein maximal inequality
@@ -31,7 +33,7 @@ Journal of Mathematics 93 (1971), 107–115, https://doi.org/10.2307/2373450.
 -/
 
 @[expose] public section
-namespace Auto.ClassicalMaximal
+namespace TrilinearHT.Auto.ClassicalMaximal
 
 open MeasureTheory Set Filter Topology
 open scoped ENNReal NNReal
@@ -515,9 +517,9 @@ end Interpolation
 
 end
 
-end Auto.ClassicalMaximal
+end TrilinearHT.Auto.ClassicalMaximal
 
-namespace Auto.ClassicalMaximal
+namespace TrilinearHT.Auto.ClassicalMaximal
 
 open MeasureTheory Metric Set Filter Topology
 open scoped ENNReal NNReal
@@ -981,9 +983,9 @@ end General
 
 end
 
-end Auto.ClassicalMaximal
+end TrilinearHT.Auto.ClassicalMaximal
 
-namespace Auto.ClassicalMaximal
+namespace TrilinearHT.Auto.ClassicalMaximal
 
 open MeasureTheory Metric Set Filter Topology
 open scoped ENNReal NNReal
@@ -1227,9 +1229,9 @@ theorem fs_weighted_rpow {q : ℝ} (hq : 1 < q) {w : EuclideanSpace ℝ (Fin n) 
 end Weighted
 
 end
-end Auto.ClassicalMaximal
+end TrilinearHT.Auto.ClassicalMaximal
 
-namespace Auto.ClassicalMaximal
+namespace TrilinearHT.Auto.ClassicalMaximal
 
 open MeasureTheory Metric Set Filter Topology
 open scoped ENNReal NNReal
@@ -1874,4 +1876,4 @@ theorem feffermanStein_mixed {n : ℕ} {Ω E : Type*} [MeasurableSpace Ω]
   · have hps : p < s := lt_of_le_of_ne (not_lt.mp hsp) heq
     exact fs_mixedENorm_of_gt ν (by linarith) (by linarith) hps hf
 end
-end Auto.ClassicalMaximal
+end TrilinearHT.Auto.ClassicalMaximal

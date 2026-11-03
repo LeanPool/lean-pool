@@ -5,7 +5,11 @@ Authors: Claude
 -/
 module
 
-public import LeanPool.TrilinearHilbertTransform.Auto.Sec01Foundations
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.LatticeTransference
+public import Mathlib.Analysis.Fourier.AddCircle
+public import Mathlib.MeasureTheory.Measure.Haar.Unique
+public import Mathlib.Topology.Algebra.ProperAction.Basic
+public import Mathlib.Topology.Separation.CompletelyRegular
 
 /-!
 # Section 2: Elementary lattice and torus facts
@@ -20,7 +24,7 @@ Formalization of blueprint Section 2, "Elementary lattice and torus facts" (`sec
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter MeasureTheory
 open scoped Topology ENNReal
 open scoped Pointwise
@@ -213,20 +217,19 @@ theorem smallBallCoefficientBox {E : Type*} [NormedAddCommGroup E]
     exact hv.2
   · simpa only [Metric.mem_closedBall, dist_zero_right] using hv.1
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter
 open scoped Topology
 open Polynomial MeasureTheory
 open AddCircle
 open scoped ComplexConjugate FourierTransform
 open scoped ENNReal
-open ClassicalMaximal
 
 /-- The standard real torus used in blueprint `lem:torus-annihilator`. -/
 abbrev StandardTorus (d : ℕ) := Fin d → AddCircle (1 : ℝ)
@@ -581,6 +584,6 @@ theorem rationalAnnihilator_progression_measurePreserving {d : ℕ}
   saturatedAnnihilator_progression_measurePreserving _
     (rationalIntegerIntersection_saturated V) hij l
 
-end Auto
+end TrilinearHT.Auto
 
 end

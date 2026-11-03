@@ -5,7 +5,8 @@ Authors: Claude
 -/
 module
 
-public import LeanPool.TrilinearHilbertTransform.Auto.Sec09_2ChartFourierSeparation
+public import LeanPool.TrilinearHilbertTransform.Auto.Sec092ChartFourierSeparation
+public import Mathlib.MeasureTheory.Function.UniformIntegrable
 
 /-!
 # Section 10: Detection from a local form
@@ -20,7 +21,7 @@ Formalization of blueprint Section 10, "Detection from a local form" (`sec:detec
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter MeasureTheory
 open scoped Topology BigOperators ENNReal ComplexConjugate
 open scoped BigOperators
@@ -42,13 +43,13 @@ theorem unitIntervalGowersSeminorm_continuous : Continuous unitIntervalGowersSem
     (AddCircle.haarAddCircle : Measure (AddCircle (16 : ℝ)))).comp
       unitIntervalL2CircleContinuous.continuous
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open MeasureTheory Metric
 open scoped FourierTransform ComplexConjugate
 
@@ -3984,6 +3985,6 @@ theorem detectResidual (κ : LocalKernelClass) :
   refine ⟨d'', Φ, quadraticChartComplexity_mono hΦc hE, hΦb, ?_⟩
   exact (inv_anti₀ (Real.exp_pos _) hE).trans hΦm
 
-end Auto
+end TrilinearHT.Auto
 
 end

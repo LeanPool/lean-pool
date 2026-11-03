@@ -5,7 +5,16 @@ Authors: Claude
 -/
 module
 
-public import LeanPool.TrilinearHilbertTransform.Auto.Sec03LocalFormsFiniteConstants
+public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
+
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.DyadicStopping
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.RademacherMenshov
+public import Mathlib.RingTheory.Coalgebra.IsFrobenius
+public import Mathlib.RingTheory.Flat.TorsionFree
+public import Mathlib.RingTheory.HopfAlgebra.Basic
+public import Mathlib.RingTheory.SimpleRing.Principal
+public import Mathlib.Tactic.NormNum.RealSqrt
+public import Mathlib.Topology.Separation.CompletelyRegular
 
 /-!
 # Section 4: Column projections and bounded-height frequencies
@@ -20,14 +29,13 @@ Formalization of blueprint Section 4, "Column projections and bounded-height fre
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter
 open scoped Topology
 open Polynomial MeasureTheory
 open AddCircle
-open scoped ComplexConjugate FourierTransform
+open scoped ComplexConjugate
 open scoped ENNReal
-open ClassicalMaximal
 
 /-- The source Hilbert space has one physical coordinate and one distinct
 private coordinate for each label (`column-data`, lines 470–474). -/
@@ -703,7 +711,6 @@ noncomputable def cellColumnGram {V : Type*} [Fintype V] (D : ColumnTreeData V)
   (((dyadicGridLength D.grid c.1)⁻¹ : ℝ) : ℂ) •
     (cellColumnSynthesis D A hc).adjoint.comp (cellColumnSynthesis D A hc)
 
-set_option backward.isDefEq.respectTransparency false in
 theorem cellColumnGram_inner {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) {c : ℤ × ℤ} (hc : c ∈ D.cells)
     (a b : CellCoefficients D A c) :
@@ -729,24 +736,21 @@ theorem cellColumnSynthesis_inner_integral {V : Type*} [Fintype V] (D : ColumnTr
   rw [ha, hb]
   by_cases hy : y ∈ dyadicGridCell D.grid c.1 c.2 <;> simp [hy]
 
-set_option backward.isDefEq.respectTransparency false in
 theorem cellColumnSynthesis_norm_sq_integral {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) {c : ℤ × ℤ} (hc : c ∈ D.cells)
     (a : CellCoefficients D A c) :
     ‖cellColumnSynthesis D A hc a‖ ^ 2 =
       ∫ y in dyadicGridCell D.grid c.1 c.2, ‖columnCombination D A c a y‖ ^ 2 := by
-  apply Complex.ofReal_injective
   calc
-    _ = inner ℂ (cellColumnSynthesis D A hc a) (cellColumnSynthesis D A hc a) := by
-      simp only [inner_self_eq_norm_sq_to_K, Complex.ofReal_pow]
-      rfl
-    _ = _ := cellColumnSynthesis_inner_integral D A hc a a
+    ‖cellColumnSynthesis D A hc a‖ ^ 2 =
+        ∫ y, ‖(cellColumnSynthesis D A hc a) y‖ ^ 2 :=
+      complexLp_norm_sq_integral volume (cellColumnSynthesis D A hc a)
     _ = _ := by
-      rw [← integral_complex_ofReal]
+      rw [← integral_indicator (dyadicGridCell_measurable D.grid c.1 c.2)]
       apply integral_congr_ae
-      exact ae_of_all _ (fun y => by
-        simp only [inner_self_eq_norm_sq_to_K, Complex.ofReal_pow]
-        rfl)
+      filter_upwards [cellColumnSynthesis_coeFn D A hc a] with y hy
+      rw [hy]
+      by_cases hmem : y ∈ dyadicGridCell D.grid c.1 c.2 <;> simp [hmem]
 
 theorem columnCombination_memLp {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) {c : ℤ × ℤ} (hc : c ∈ D.cells)
@@ -775,7 +779,6 @@ theorem cellColumnSynthesis_lower_sq {V : Type*} [Fintype V] (D : ColumnTreeData
   simpa only [integral_const, Measure.real, Measure.restrict_apply_univ, dyadicGridCell_volume,
     ENNReal.toReal_ofReal (dyadicGridLength_pos D.grid c.1).le, smul_eq_mul] using h
 
-set_option backward.isDefEq.respectTransparency false in
 /-- Coercivity of the averaged Gram form, with the source constant `D⁻²`. -/
 theorem cellColumnGram_coercive {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) {c : ℤ × ℤ} (hc : c ∈ D.cells)
@@ -822,7 +825,6 @@ noncomputable def cellColumnGramEquiv {V : Type*} [Fintype V] (D : ColumnTreeDat
       LinearMap.injective_iff_surjective.mp
         (cellColumnGram_injective D A hc)⟩).toContinuousLinearEquiv
 
-set_option backward.isDefEq.respectTransparency false in
 theorem cellColumnGramEquiv_symm_norm_le {V : Type*} [Fintype V] (D : ColumnTreeData V)
     (A : InheritedColumnMask D) {c : ℤ × ℤ} (hc : c ∈ D.cells) :
     ‖(cellColumnGramEquiv D A hc).symm.toContinuousLinearMap‖ ≤ D.budget ^ 2 := by
@@ -1754,21 +1756,9 @@ theorem columnMomentRepresentative_preserves_projection {V : Type*} [Fintype V]
   rw [← completedColumnMask_projection_eq D A hu]
   exact columnMomentRepresentative_preserves_completed D A z hK hsegment
 
-set_option backward.isDefEq.respectTransparency false in
 theorem columnInput_norm_sq_integral {V : Type*} [Fintype V] (z : ColumnL2 V) :
     ‖z‖ ^ 2 = ∫ y, ‖z y‖ ^ 2 := by
-  apply Complex.ofReal_injective
-  calc
-    _ = inner ℂ z z := by
-      simp only [inner_self_eq_norm_sq_to_K, Complex.ofReal_pow]
-      rfl
-    _ = ∫ y, inner ℂ (z y) (z y) := MeasureTheory.L2.inner_def z z
-    _ = _ := by
-      rw [← integral_complex_ofReal]
-      apply integral_congr_ae
-      exact ae_of_all _ (fun y => by
-        simp only [inner_self_eq_norm_sq_to_K, Complex.ofReal_pow]
-        rfl)
+  exact complexLp_norm_sq_integral volume z
 
 /-- The finite dyadic maximal function used in the source stopping-energy
 estimate, on the same completed tree as the moment representatives. -/
@@ -3876,6 +3866,6 @@ theorem columnSpatialCompression_complements {V ι F : Type*} [Fintype V] [Finty
     _ = ((2 : ℝ) ^ m * columnCompressionBound D m) * ‖z‖ := (mul_assoc _ _ _).symm
     _ ≤ _ := mul_le_mul_of_nonneg_right hproduct (norm_nonneg z)
 
-end Auto
+end TrilinearHT.Auto
 
 end

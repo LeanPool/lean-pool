@@ -5,7 +5,10 @@ Authors: Claude
 -/
 module
 
+public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.HilbertAtomicDecomposition
 public import LeanPool.TrilinearHilbertTransform.Auto.Sec07FiniteInverse
+public import Mathlib.MeasureTheory.Function.Floor
+public import Mathlib.MeasureTheory.Measure.RegularityCompacts
 
 /-!
 # Section 8: Continuous witnesses and a bounded decomposition
@@ -20,7 +23,7 @@ Formalization of blueprint Section 8, "Continuous witnesses and a bounded decomp
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter MeasureTheory
 open scoped Topology BigOperators ENNReal ComplexConjugate
 
@@ -623,13 +626,13 @@ theorem intervalL2_inner_correlation {a b : ℝ} (hab : a < b) {f φ : ℝ → �
   rw [he, integral_intervalProbabilityMeasure hab, norm_smul, Real.norm_eq_abs,
     abs_of_pos (inv_pos.mpr (sub_pos.mpr hab))]
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter Polynomial MeasureTheory AddCircle
 open scoped Topology ComplexConjugate FourierTransform ENNReal BigOperators
 
@@ -2105,13 +2108,13 @@ theorem quasipolynomialBound_nonneg {f : ℝ → ℝ} (hf : QuasipolynomialBound
   obtain ⟨C, hC, d, hd, hf⟩ := hf
   exact (hf t ht).1
 
-end Auto
+end TrilinearHT.Auto
 
 end
 
 section
 
-namespace Auto
+namespace TrilinearHT.Auto
 open Filter
 open scoped Topology
 open Polynomial MeasureTheory
@@ -2393,6 +2396,6 @@ theorem continuous_decomposition :
     linarith only [hp]
   · simpa only [inverseDecompositionBudget_at_reciprocal] using hc
 
-end Auto
+end TrilinearHT.Auto
 
 end

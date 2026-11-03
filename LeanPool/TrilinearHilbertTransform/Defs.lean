@@ -27,7 +27,7 @@ def T_trunc (f : Fin 3 → ℝ → ℂ) (x : ℝ) (ε : ℝ) : ℂ :=
 /-- Trilinear Hilbert transform.
 
 **Note:** The (trivial) fact that the principal value limit exists when `f` are Schwartz functions
-is proved as the automatically generated lemma `Auto.tendsto_T_trunc`.
+is proved as the automatically generated lemma `TrilinearHT.Auto.tendsto_T_trunc`.
 -/
 def T (f : Fin 3 → ℝ → ℂ) (x : ℝ) : ℂ := limUnder (𝓝[>] 0) (T_trunc f x)
 

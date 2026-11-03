@@ -28,7 +28,7 @@ main_results:
     There is an absolute real constant C such that the L¹ norm of the
     principal-value integral of f₁(x+t) f₂(x+2t) f₃(x+3t)/t is at most
     C times the product of the L³ norms, for all complex Schwartz functions.
-- declaration: Auto.tht_main
+- declaration: TrilinearHT.Auto.tht_main
   informal: >-
     The truncations converge pointwise for Schwartz inputs, and the transform
     has a unique bounded complex trilinear extension from three copies of L³

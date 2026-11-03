@@ -5,7 +5,13 @@ Authors: Codex
 -/
 module
 
-public import Mathlib
+public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
+public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import Mathlib.CategoryTheory.Countable
+public import Mathlib.MeasureTheory.Function.L2Space
+public import Mathlib.MeasureTheory.Integral.Layercake
+public import Mathlib.Order.CompletePartialOrder
 
 /-!
 # Dyadic stopping and logarithmic hull maxima
@@ -28,7 +34,7 @@ inequality and the layer-cake formula.
 
 @[expose] public section
 
-namespace Auto
+namespace TrilinearHT.Auto
 
 open MeasureTheory Filter
 open scoped ENNReal
@@ -2552,22 +2558,16 @@ theorem dyadic_stopped_values_sum_bound (grid : RealDyadicGrid) (root : ℤ × �
   rw [hsplit]
   exact add_le_add hsmall hlarge
 
-set_option backward.isDefEq.respectTransparency false in
 theorem complexLp_norm_sq_integral {α E : Type*} [MeasurableSpace α]
     [NormedAddCommGroup E] [InnerProductSpace ℂ E] [CompleteSpace E]
     (μ : Measure α) (z : Lp E 2 μ) : ‖z‖ ^ 2 = ∫ x, ‖z x‖ ^ 2 ∂μ := by
-  apply Complex.ofReal_injective
   calc
-    _ = inner ℂ z z := by
-      simp only [inner_self_eq_norm_sq_to_K, Complex.ofReal_pow]
-      rfl
-    _ = ∫ x, inner ℂ (z x) (z x) ∂μ := MeasureTheory.L2.inner_def z z
-    _ = _ := by
-      rw [← integral_complex_ofReal]
-      apply integral_congr_ae
-      exact ae_of_all _ (fun x => by
-        simp only [inner_self_eq_norm_sq_to_K, Complex.ofReal_pow]
-        rfl)
+    ‖z‖ ^ 2 = RCLike.re (inner ℂ z z) := (inner_self_eq_norm_sq (𝕜 := ℂ) z).symm
+    _ = RCLike.re (∫ x, inner ℂ (z x) (z x) ∂μ) :=
+      congrArg RCLike.re (MeasureTheory.L2.inner_def z z)
+    _ = ∫ x, RCLike.re (inner ℂ (z x) (z x)) ∂μ :=
+      (integral_re (MeasureTheory.L2.integrable_inner (𝕜 := ℂ) z z)).symm
+    _ = ∫ x, ‖z x‖ ^ 2 ∂μ := by simp only [inner_self_eq_norm_sq]
 
 theorem realLp_norm_sq_integral {α : Type*} [MeasurableSpace α]
     (μ : Measure α) (z : Lp ℝ 2 μ) : ‖z‖ ^ 2 = ∫ x, z x ^ 2 ∂μ := by
@@ -3083,4 +3083,4 @@ theorem restart_weight_packing {α : Type*} [DecidableEq α] (root : α)
       _ = _ := (Finset.mul_sum ..).symm
   exact restart_total_length _ (fun _ => Finset.sum_nonneg (fun c _ => hw c)) hρ hρ1 hz hs
 
-end Auto
+end TrilinearHT.Auto

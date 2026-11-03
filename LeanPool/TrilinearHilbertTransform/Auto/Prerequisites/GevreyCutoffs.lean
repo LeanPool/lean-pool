@@ -5,7 +5,14 @@ Authors: Codex
 -/
 module
 
-public import Mathlib
+public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
+public import Mathlib.Data.Int.Star
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import Mathlib.Topology.UniformSpace.Uniformizable
 
 /-!
 # Quantitative Gevrey cutoffs and partitions of unity
@@ -26,7 +33,7 @@ The derivative recurrence and its quantitative majorants are proved here.
 
 @[expose] public section
 
-namespace Auto
+namespace TrilinearHT.Auto
 
 open Filter
 open scoped Topology
@@ -803,4 +810,4 @@ theorem exists_uniform_gevrey_endpoint_cutoffs :
   exact fun n x => gevrey_endpoint_cutoff_uniform_derivative hB (by dsimp [B]; linarith)
     hε (by linarith only [hεh]) n x
 
-end Auto
+end TrilinearHT.Auto
