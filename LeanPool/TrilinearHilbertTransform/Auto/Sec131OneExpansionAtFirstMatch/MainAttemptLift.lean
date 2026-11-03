@@ -2367,7 +2367,7 @@ theorem gaugeTail_mono {δ : ℝ} (hδ : 0 < δ) (hδ1 : δ ≤ 1) {d d' : ℕ} 
   · have := gaugeTail_nonneg d' hδ
     unfold gaugeTail at this
     simp only [CharP.cast_eq_zero, zero_mul, mul_zero, zero_add, pow_one, Real.sqrt_zero]
-    linarith
+    exact this
   · have hdr : (d : ℝ) ≤ d' := by exact_mod_cast hdd
     have hd1 : (1 : ℝ) ≤ d := by exact_mod_cast hdp
     have hX : (8 * (((d + 1 : ℕ) : ℝ) + 1)) ≤ 8 * (((d' + 1 : ℕ) : ℝ) + 1) := by
@@ -2380,17 +2380,22 @@ theorem gaugeTail_mono {δ : ℝ} (hδ : 0 < δ) (hδ1 : δ ≤ 1) {d d' : ℕ} 
     have hKK : bumpConst * (8 * (((d + 1 : ℕ) : ℝ) + 1)) ^ 32 * (2 / δ) ≤
         bumpConst * (8 * (((d' + 1 : ℕ) : ℝ) + 1)) ^ 32 * (2 / δ) := by gcongr
     have hb1 : 1 ≤ 2 * ((d : ℝ) * (2 * (bumpConst * (8 * (((d + 1 : ℕ) : ℝ) + 1)) ^ 32 *
-        (2 / δ)))) := by nlinarith only [hd1, hK1]
+        (2 / δ)))) :=
+      one_le_mul_of_one_le_of_one_le (by norm_num)
+        (one_le_mul_of_one_le_of_one_le hd1
+          (one_le_mul_of_one_le_of_one_le (by norm_num) hK1))
     have hbb : 2 * ((d : ℝ) * (2 * (bumpConst * (8 * (((d + 1 : ℕ) : ℝ) + 1)) ^ 32 *
         (2 / δ)))) ≤ 2 * ((d' : ℝ) * (2 * (bumpConst * (8 * (((d' + 1 : ℕ) : ℝ) + 1)) ^ 32 *
         (2 / δ)))) := by
-      have := mul_le_mul hdr hKK (by linarith) (by linarith)
-      nlinarith only [hdr, hK1, hKK]
+      exact mul_le_mul_of_nonneg_left
+        (mul_le_mul hdr (mul_le_mul_of_nonneg_left hKK (by norm_num))
+          (mul_nonneg (by norm_num) (zero_le_one.trans hK1)) (Nat.cast_nonneg _))
+        (by norm_num)
     have hs1 : 1 ≤ Real.sqrt d := by rw [Real.one_le_sqrt]; exact hd1
     have hss : Real.sqrt d ≤ Real.sqrt d' := Real.sqrt_le_sqrt hdr
     refine mul_le_mul (mul_le_mul (pow_le_pow_right₀ (by norm_num) hdd)
-      ((pow_le_pow_left₀ (by linarith only [hb1]) hbb _).trans
-        (pow_le_pow_right₀ (by linarith only [hb1, hbb]) (by omega)))
+      ((pow_le_pow_left₀ (zero_le_one.trans hb1) hbb _).trans
+        (pow_le_pow_right₀ (hb1.trans hbb) (by omega)))
       (by positivity) (by positivity))
       ((pow_le_pow_left₀ (by positivity) hss _).trans
         (pow_le_pow_right₀ (hs1.trans hss) (by omega))) (by positivity) (by positivity)
