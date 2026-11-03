@@ -18,7 +18,8 @@ import Mathlib.Data.Nat.Dist
 import Mathlib.Data.Finset.CastCard
 import Mathlib.Dynamics.FixedPoints.Topology
 import Mathlib.RepresentationTheory.Invariants
-import Mathlib.Topology.Algebra.LinearMapCompletion
+-- Retain the instance environment used by the finite-field basis.
+import Mathlib.Topology.Algebra.LinearMapCompletion -- shake: keep
 
 /-!
 # Spectral and finite-model estimates for the non-sofic group construction
@@ -48,7 +49,8 @@ theorem three_pair_sum_norm_sq (a b c : H) :
       RCLike.re (inner ℂ c a) = RCLike.re (inner ℂ a c) := by
     exact @inner_re_symm ℂ H _ _ _ c a
   simp only [@norm_add_sq ℂ H, inner_add_left, map_add]
-  nlinarith
+  rw [hca]
+  ring
 
 omit [InnerProductSpace ℂ H] in
 private theorem norm_add_three_sq_le_three_mul (a b c : H) :
@@ -60,7 +62,7 @@ private theorem norm_add_three_sq_le_three_mul (a b c : H) :
   have hsquare :
       ‖a + b + c‖ ^ 2 ≤ (‖a‖ + ‖b‖ + ‖c‖) ^ 2 :=
     (sq_le_sq₀ (norm_nonneg _) (by positivity)).mpr htriangle
-  nlinarith [sq_nonneg (‖a‖ - ‖b‖),
+  linarith only [hsquare, sq_nonneg (‖a‖ - ‖b‖),
     sq_nonneg (‖b‖ - ‖c‖), sq_nonneg (‖c‖ - ‖a‖)]
 
 private theorem three_pairwise_residual_spectral_gap
@@ -70,7 +72,7 @@ private theorem three_pairwise_residual_spectral_gap
     (hca : (1 - ε) * (‖c‖ ^ 2 + ‖a‖ ^ 2) ≤ ‖c + a‖ ^ 2) :
     (1 - 2 * ε) * (‖a‖ ^ 2 + ‖b‖ ^ 2 + ‖c‖ ^ 2) ≤
       ‖a + b + c‖ ^ 2 := by
-  nlinarith [three_pair_sum_norm_sq a b c]
+  linarith only [hab, hbc, hca, three_pair_sum_norm_sq a b c]
 
 end ThreeProjectionSumOfSquares
 
@@ -107,7 +109,8 @@ private theorem inner_sq_le_of_orthogonal_two_sector
       8 * (‖inner ℂ a₀ b₀‖ + ‖inner ℂ a₁ b₁‖) ^ 2 ≤
         (‖a₀‖ ^ 2 + ‖a₁‖ ^ 2) *
           (‖b₀‖ ^ 2 + ‖b₁‖ ^ 2) := by
-    nlinarith [sq_nonneg (‖a₀‖ * ‖b₁‖ - ‖a₁‖ * ‖b₀‖)]
+    linarith only [h₀, h₁, hcross,
+      sq_nonneg (‖a₀‖ * ‖b₁‖ - ‖a₁‖ * ‖b₀‖)]
   have hinner :
       inner ℂ (a₀ + a₁) (b₀ + b₁) =
         inner ℂ a₀ b₀ + inner ℂ a₁ b₁ := by
@@ -129,7 +132,7 @@ private theorem inner_sq_le_of_orthogonal_two_sector
     rw [norm_add_sq (𝕜 := ℂ), hb]
     simp only [RCLike.re_to_complex, Complex.zero_re, mul_zero, add_zero]
   rw [ha', hb']
-  nlinarith
+  exact (mul_le_mul_of_nonneg_left hnormsq (by norm_num : (0 : ℝ) ≤ 8)).trans hscalar
 
 private theorem inner_sq_le_of_finite_orthogonal_sector_splitting
     {ι : Type*} [Finite ι]
@@ -244,24 +247,7 @@ private theorem ejStarProjection_re_inner (W : Submodule ℂ H)
     [W.HasOrthogonalProjection] (x : H) :
     RCLike.re (inner ℂ (W.starProjection x) x) =
       ‖W.starProjection x‖ ^ 2 := by
-  have hidem : W.starProjection (W.starProjection x) =
-      W.starProjection x :=
-    Submodule.starProjection_eq_self_iff.mpr
-      (Submodule.starProjection_apply_mem W x)
-  have hinner :
-      inner ℂ (W.starProjection x) x =
-        inner ℂ (W.starProjection x) (W.starProjection x) := by
-    calc
-      inner ℂ (W.starProjection x) x =
-          inner ℂ x (W.starProjection x) :=
-        Submodule.inner_starProjection_left_eq_right W x x
-      _ = inner ℂ x (W.starProjection (W.starProjection x)) :=
-        congrArg (inner ℂ x) hidem.symm
-      _ = inner ℂ (W.starProjection x) (W.starProjection x) :=
-        (Submodule.inner_starProjection_left_eq_right W x
-          (W.starProjection x)).symm
-  rw [hinner]
-  exact (norm_sq_eq_re_inner _).symm
+  exact W.re_inner_starProjection_eq_normSq x
 
 private def ejResidualProjection (V : Submodule ℂ H)
     [V.HasOrthogonalProjection] : H →L[ℂ] H :=
@@ -291,24 +277,7 @@ private theorem ejResidualProjection_re_inner (V : Submodule ℂ H)
     [V.HasOrthogonalProjection] (x : H) :
     RCLike.re (inner ℂ (ejResidualProjection V x) x) =
       ‖ejResidualProjection V x‖ ^ 2 := by
-  have hinner :
-      inner ℂ (ejResidualProjection V x) x =
-        inner ℂ (ejResidualProjection V x)
-          (ejResidualProjection V x) := by
-    calc
-      inner ℂ (ejResidualProjection V x) x =
-          inner ℂ x (ejResidualProjection V x) :=
-        ejResidualProjection_inner V x x
-      _ = inner ℂ x
-          (ejResidualProjection V (ejResidualProjection V x)) :=
-        congrArg (inner ℂ x)
-          (ejResidualProjection_idempotent V x).symm
-      _ = inner ℂ (ejResidualProjection V x)
-          (ejResidualProjection V x) :=
-        (ejResidualProjection_inner V x
-          (ejResidualProjection V x)).symm
-  rw [hinner]
-  exact (norm_sq_eq_re_inner _).symm
+  exact ejStarProjection_re_inner Vᗮ x
 
 variable (V : Fin 3 → Submodule ℂ H)
   [∀ i, (V i).HasOrthogonalProjection]
@@ -343,7 +312,7 @@ private theorem ejThreeProjectionAverage_apply (x : H) :
 private theorem ejThreeResidualEnergy_nonneg (x : H) :
     0 ≤ ejThreeResidualEnergy V x := by
   unfold ejThreeResidualEnergy
-  positivity
+  exact add_nonneg (add_nonneg (sq_nonneg _) (sq_nonneg _)) (sq_nonneg _)
 
 private theorem ejThreeResidualEnergy_eq_re_inner (x : H) :
     ejThreeResidualEnergy V x =
@@ -357,10 +326,9 @@ private theorem ejThreeResidualEnergy_eq_re_inner (x : H) :
 private theorem ejThreeResidualMap_norm_sq_le (x : H) :
     ‖ejThreeResidualMap V x‖ ^ 2 ≤
       3 * ejThreeResidualEnergy V x := by
-  simpa only [ejThreeResidualMap_apply, Fin.isValue, ejResidualProjection_apply,
-    ejThreeResidualEnergy] using
-    norm_add_three_sq_le_three_mul (ejResidualProjection (V 0) x) (ejResidualProjection (V 1) x)
-      (ejResidualProjection (V 2) x)
+  exact norm_add_three_sq_le_three_mul
+    (ejResidualProjection (V 0) x) (ejResidualProjection (V 1) x)
+    (ejResidualProjection (V 2) x)
 
 private theorem ejResidualProjection_norm_le (i : Fin 3) (x : H) :
     ‖ejResidualProjection (V i) x‖ ≤ ‖x‖ :=
@@ -453,7 +421,7 @@ private theorem ejThreeResidualEnergy_average (x : H) :
     ejResidualProjection_average_norm_sq (V 1),
     ejResidualProjection_average_norm_sq (V 2)]
   have hcross := ejThreeResidual_cross_re_inner V x
-  nlinarith
+  linarith only [hcross]
 
 private theorem ejThreeResidualMap_spectral_gap (x : H) (ε : ℝ)
     (h01 : (1 - ε) *
@@ -488,7 +456,7 @@ private theorem ejThreeResidualEnergy_average_le
   rw [ejThreeResidualEnergy_average]
   have hupper := ejThreeResidualEnergy_le_three_norm_sq V
     (ejThreeResidualMap V x)
-  nlinarith
+  linarith only [hupper, hgap]
 
 private theorem ejStarProjection_mem_inf_orthogonal
     (U V : Submodule ℂ H) [U.HasOrthogonalProjection]
@@ -531,7 +499,7 @@ private theorem ejTwoProjection_norm_sq_sum_le_of_angle
       ‖u + v‖ ^ 2 ≤
         (1 + c) * (‖u‖ ^ 2 + ‖v‖ ^ 2) := by
     rw [norm_add_sq (𝕜 := ℂ)]
-    nlinarith [mul_nonneg hc (sq_nonneg (‖u‖ - ‖v‖))]
+    linarith only [hre, mul_nonneg hc (sq_nonneg (‖u‖ - ‖v‖))]
   have huinner :
       (inner ℂ (U.starProjection w) w).re =
         ‖U.starProjection w‖ ^ 2 := by
@@ -607,7 +575,7 @@ private theorem ejTwoResidualEnergy_ge_of_angle
       ‖ejResidualProjection V w‖ ^ 2 at hV
   have hsum :=
     ejTwoProjection_norm_sq_sum_le_of_angle U V c hc hangle w hw
-  nlinarith
+  linarith only [hU, hV, hsum]
 
 private theorem ejTwoResidual_sum_re_inner
     (U V : Submodule ℂ H)
@@ -617,21 +585,8 @@ private theorem ejTwoResidual_sum_re_inner
       (ejResidualProjection U w + ejResidualProjection V w) w) =
         ‖ejResidualProjection U w‖ ^ 2 +
           ‖ejResidualProjection V w‖ ^ 2 := by
-  have hU :
-      (inner ℂ (ejResidualProjection U w) w).re =
-        ‖ejResidualProjection U w‖ ^ 2 := by
-    change RCLike.re (inner ℂ (ejResidualProjection U w) w) = _
-    exact ejResidualProjection_re_inner U w
-  have hV :
-      (inner ℂ (ejResidualProjection V w) w).re =
-        ‖ejResidualProjection V w‖ ^ 2 := by
-    change RCLike.re (inner ℂ (ejResidualProjection V w) w) = _
-    exact ejResidualProjection_re_inner V w
-  change
-    (inner ℂ
-      (ejResidualProjection U w + ejResidualProjection V w) w).re = _
-  simp only [inner_add_left, Complex.add_re]
-  rw [hU, hV]
+  rw [inner_add_left, map_add, ejResidualProjection_re_inner,
+    ejResidualProjection_re_inner]
 
 private theorem ejTwoResidual_spectral_gap_of_angle
     (U V : Submodule ℂ H)
@@ -722,7 +677,7 @@ private theorem ejThreeProjectionAverage_dist_sq_le (x : H) :
       ejThreeResidualEnergy V x / 3 := by
   rw [ejThreeProjectionAverage_dist_sq]
   have h := ejThreeResidualMap_norm_sq_le V x
-  nlinarith
+  linarith only [h]
 
 private theorem ejThreeResidualEnergy_iterate_le
     (δ : ℝ) (hδ : δ ≤ 3)
@@ -848,7 +803,7 @@ private theorem ejThreeProjectionAverage_iterate_dist_le_of_pair_angles
         (1 - (1 - 2 * c) / 6) ^ n := by
   have hc' : c ≤ 1 := by linarith
   apply ejThreeProjectionAverage_iterate_dist_le_geometric V
-    (1 - 2 * c) (by linarith)
+    (1 - 2 * c) (by linarith only [hc])
   intro y
   exact ejThreeResidual_spectral_gap_of_pair_angles
     V c hc hc' hangle y
@@ -867,7 +822,7 @@ private theorem ejThreeResidualEnergy_sqrt_div_three_le
   apply Real.sqrt_le_iff.mpr
   refine ⟨hT, ?_⟩
   unfold ejThreeResidualEnergy
-  nlinarith
+  linarith only [h₀, h₁, h₂]
 
 private theorem ejThreeProjectionAverage_fixed_iff_residualMap_eq_zero (x : H) :
     ejThreeProjectionAverage V x = x ↔
@@ -896,13 +851,16 @@ private theorem ejThreeResidualEnergy_eq_zero_iff (x : H) :
     fin_cases i
     · change ejResidualProjection (V 0) x = 0
       apply norm_eq_zero.mp
-      nlinarith [norm_nonneg (ejResidualProjection (V 0) x)]
+      apply sq_eq_zero_iff.mp
+      linarith only [h, h₀, h₁, h₂]
     · change ejResidualProjection (V 1) x = 0
       apply norm_eq_zero.mp
-      nlinarith [norm_nonneg (ejResidualProjection (V 1) x)]
+      apply sq_eq_zero_iff.mp
+      linarith only [h, h₀, h₁, h₂]
     · change ejResidualProjection (V 2) x = 0
       apply norm_eq_zero.mp
-      nlinarith [norm_nonneg (ejResidualProjection (V 2) x)]
+      apply sq_eq_zero_iff.mp
+      linarith only [h, h₀, h₁, h₂]
   · intro h
     unfold ejThreeResidualEnergy
     simp only [Fin.isValue, h 0, norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
@@ -1136,7 +1094,7 @@ private theorem hasPropertyT_of_geometric_finite_averaging
       _ < (1 - q) / 2 := by
         dsimp [δ]
         have hpos : 0 < (1 - q) := sub_pos.mpr hq1
-        have hc : (S.card : ℝ) < (S.card : ℝ) + 1 := by linarith
+        have hc : (S.card : ℝ) < (S.card : ℝ) + 1 := by linarith only []
         have hcpos : 0 < (S.card : ℝ) + 1 := by positivity
         rw [show (2 * (↑S.card + 1) : ℝ) =
           2 * ((S.card : ℝ) + 1) by norm_cast]
@@ -1158,8 +1116,8 @@ private theorem hasPropertyT_of_geometric_finite_averaging
     rw [hone] at hdist
     have hden : 0 < 1 - q := sub_pos.mpr hq1
     have hlt : C / (1 - q) < 1 / 2 :=
-      (div_lt_iff₀ hden).mpr (by nlinarith [hhalf])
-    linarith
+      (div_lt_iff₀ hden).mpr (by linarith only [hhalf])
+    linarith only [hdist, hlt]
   exact ⟨η, hηne, hfixed η hηfixed⟩
 
 private def threeFiniteSubgroupGenerators
@@ -1249,7 +1207,6 @@ private theorem norm_inner_le_inv_sqrt_eight_of_sq
     (h : 8 * ‖inner ℂ a b‖ ^ 2 ≤ ‖a‖ ^ 2 * ‖b‖ ^ 2) :
     ‖inner ℂ a b‖ ≤
       (Real.sqrt (8 : ℝ))⁻¹ * ‖a‖ * ‖b‖ := by
-  have hsqrt : 0 < Real.sqrt (8 : ℝ) := by positivity
   have hsquare : Real.sqrt (8 : ℝ) ^ 2 = 8 :=
     Real.sq_sqrt (by norm_num)
   have hsq :
@@ -1259,10 +1216,10 @@ private theorem norm_inner_le_inv_sqrt_eight_of_sq
       ‖inner ℂ a b‖ ^ 2 ≤
           (‖a‖ ^ 2 * ‖b‖ ^ 2) / 8 := by
             apply (le_div_iff₀ (show (0 : ℝ) < 8 by norm_num)).mpr
-            nlinarith
+            linarith only [h]
       _ = ((Real.sqrt (8 : ℝ))⁻¹ * ‖a‖ * ‖b‖) ^ 2 := by
         field_simp
-        nlinarith
+        nlinarith only [h, hsquare]
   exact (sq_le_sq₀ (norm_nonneg _) (by positivity)).mp hsq
 
 private theorem hasPropertyT_of_three_finite_subgroups_friedrichs_angle
@@ -1292,7 +1249,7 @@ private theorem hasPropertyT_of_three_finite_subgroups_friedrichs_angle
     linarith
   have hqnonneg : 0 ≤ q := by
     dsimp [q]
-    linarith
+    linarith only [hc]
   apply hasPropertyT_of_three_finite_subgroups_geometric K hgen q hq
   intro H _ _ _ π
   let V : Fin 3 → Submodule ℂ H :=
@@ -2464,6 +2421,64 @@ private theorem inner_eq_zero_of_finite_subgroupAverage_pair_orthogonal
 
 end FiniteSubgroupAveraging
 
+/-- Keep projection algebra abstract before specializing to matrix root subgroups. -/
+private theorem fixed_submodule_inner_square_bound_of_central_sectors
+    {G H ι : Type*} [Group G] [NormedAddCommGroup H]
+    [InnerProductSpace ℂ H] [CompleteSpace H] [Finite ι]
+    (π : UnitaryRepresentation G H) (X Y : Subgroup G) (Z : ι → Subgroup G)
+    (hcentral : ∀ i (z : Z i) (g : (X ⊔ Y : Subgroup G)), Commute (z : G) (g : G))
+    (hcommute : ∀ i j (z : Z i) (w : Z j), Commute (z : G) (w : G))
+    (hsector : ∀ i (x y : H), x ∈ unitaryFixedSubmodule π X →
+      x ∈ (unitaryFixedSubmodule π (Z i))ᗮ → y ∈ unitaryFixedSubmodule π Y →
+      8 * ‖inner ℂ x y‖ ^ 2 ≤ ‖x‖ ^ 2 * ‖y‖ ^ 2)
+    (hterminal : ∀ (x y : H),
+      x ∈ unitaryFixedSubmodule π X ⊓
+        (unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y)ᗮ →
+      y ∈ unitaryFixedSubmodule π Y ⊓
+        (unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y)ᗮ →
+      (∀ i, x ∈ unitaryFixedSubmodule π (Z i)) →
+      (∀ i, y ∈ unitaryFixedSubmodule π (Z i)) → inner ℂ x y = 0)
+    {a b : H} (ha : a ∈ unitaryFixedSubmodule π X)
+    (hb : b ∈ unitaryFixedSubmodule π Y)
+    (haQ : a ∈ (unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y)ᗮ)
+    (hbQ : b ∈ (unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y)ᗮ) :
+    8 * ‖inner ℂ a b‖ ^ 2 ≤ ‖a‖ ^ 2 * ‖b‖ ^ 2 := by
+  classical
+  let Q := unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y
+  let U := unitaryFixedSubmodule π X ⊓ Qᗮ
+  let V := unitaryFixedSubmodule π Y ⊓ Qᗮ
+  let F (i : ι) := unitaryFixedSubmodule π (Z i)
+  let (i : ι) : CompleteSpace (F i) := unitaryFixedSubmodule_completeSpace π (Z i)
+  refine inner_sq_le_of_finite_orthogonal_sector_splitting
+    F U V ?_ ?_ ?_ ?_ hterminal a b ⟨ha, haQ⟩ ⟨hb, hbQ⟩
+  · intro i x hx
+    refine ⟨?_, ?_⟩
+    · exact unitaryFixedSubmodule_starProjection_mem_of_commute π (Z i) X
+        (fun z g => hcentral i z ⟨g.val, Subgroup.mem_sup_left g.property⟩) hx.1
+    · have hq : x ∈ (unitaryFixedSubmodule π (X ⊔ Y))ᗮ := by
+        rw [unitaryFixedSubmodule_sup]
+        exact hx.2
+      have hp := unitaryFixedSubmodule_starProjection_mem_orthogonal_of_commute
+        π (Z i) (X ⊔ Y) (hcentral i) hq
+      rw [unitaryFixedSubmodule_sup] at hp
+      exact hp
+  · intro i x hx
+    refine ⟨?_, ?_⟩
+    · exact unitaryFixedSubmodule_starProjection_mem_of_commute π (Z i) Y
+        (fun z g => hcentral i z ⟨g.val, Subgroup.mem_sup_right g.property⟩) hx.1
+    · have hq : x ∈ (unitaryFixedSubmodule π (X ⊔ Y))ᗮ := by
+        rw [unitaryFixedSubmodule_sup]
+        exact hx.2
+      have hp := unitaryFixedSubmodule_starProjection_mem_orthogonal_of_commute
+        π (Z i) (X ⊔ Y) (hcentral i) hq
+      rw [unitaryFixedSubmodule_sup] at hp
+      exact hp
+  · intro i j x hx
+    exact unitaryFixedSubmodule_starProjection_mem_of_commute
+      π (Z i) (Z j) (hcommute i j) hx
+  · intro i x y hx hy hxZ _
+    exact hsector i x y hx.1 hxZ hy.1
+
 private theorem finiteOuterBlockRootSubgroups_pair_inner_sq_le
     {R : Type*} [Ring R] [Algebra (ZMod 2) R]
     {H : Type v₁} [NormedAddCommGroup H]
@@ -2497,14 +2512,7 @@ private theorem finiteOuterBlockRootSubgroups_pair_inner_sq_le
     finiteOuterBlockProductCentralRootSubgroup W i k hik B
   let Q : Submodule ℂ H :=
     unitaryFixedSubmodule π X ⊓ unitaryFixedSubmodule π Y
-  let U : Submodule ℂ H := unitaryFixedSubmodule π X ⊓ Qᗮ
-  let V : Submodule ℂ H := unitaryFixedSubmodule π Y ⊓ Qᗮ
-  let F (B : Matrix (Fin 3) (Fin 3) W) :=
-    unitaryFixedSubmodule π (Z B)
   let : Finite X := finite_finiteOuterBlockRootSubgroup W i j hij
-  let : Fintype X := Fintype.ofFinite X
-  let (B : Matrix (Fin 3) (Fin 3) W) : CompleteSpace (F B) :=
-    unitaryFixedSubmodule_completeSpace π (Z B)
   have hpairCentral (B : Matrix (Fin 3) (Fin 3) W) :
       ∀ z : Z B, ∀ g :
         (X ⊔ Y : Subgroup
@@ -2521,53 +2529,13 @@ private theorem finiteOuterBlockRootSubgroups_pair_inner_sq_le
       (g : elementaryGroup (Fin 3) (Matrix (Fin 3) (Fin 3) R)) *
       (z : elementaryGroup (Fin 3) (Matrix (Fin 3) (Fin 3) R))
     exact hg z z.property
-  refine inner_sq_le_of_finite_orthogonal_sector_splitting
-    F U V ?_ ?_ ?_ ?_ ?_ a b ⟨ha, haQ⟩ ⟨hb, hbQ⟩
-  · intro B x hx
-    change (unitaryFixedSubmodule π (Z B)).starProjection x ∈
-      unitaryFixedSubmodule π X ⊓ Qᗮ
-    refine ⟨?_, ?_⟩
-    · exact unitaryFixedSubmodule_starProjection_mem_of_commute
-        π (Z B) X
-        (fun z x =>
-          (finiteOuterBlockProductCentralRoot_commute_left
-            W i j k hij hik B x z x.property z.property).symm)
-        hx.1
-    · have hq : x ∈ (unitaryFixedSubmodule π (X ⊔ Y))ᗮ := by
-        rw [unitaryFixedSubmodule_sup]
-        exact hx.2
-      have hp := unitaryFixedSubmodule_starProjection_mem_orthogonal_of_commute
-        π (Z B) (X ⊔ Y) (hpairCentral B) hq
-      rw [unitaryFixedSubmodule_sup] at hp
-      exact hp
-  · intro B x hx
-    change (unitaryFixedSubmodule π (Z B)).starProjection x ∈
-      unitaryFixedSubmodule π Y ⊓ Qᗮ
-    refine ⟨?_, ?_⟩
-    · exact unitaryFixedSubmodule_starProjection_mem_of_commute
-        π (Z B) Y
-        (fun z y =>
-          (finiteOuterBlockProductCentralRoot_commute_right
-            W i j k hjk hik B y z y.property z.property).symm)
-        hx.1
-    · have hq : x ∈ (unitaryFixedSubmodule π (X ⊔ Y))ᗮ := by
-        rw [unitaryFixedSubmodule_sup]
-        exact hx.2
-      have hp := unitaryFixedSubmodule_starProjection_mem_orthogonal_of_commute
-        π (Z B) (X ⊔ Y) (hpairCentral B) hq
-      rw [unitaryFixedSubmodule_sup] at hp
-      exact hp
-  · intro B C x hx
-    change (unitaryFixedSubmodule π (Z B)).starProjection x ∈
-      unitaryFixedSubmodule π (Z C)
-    exact unitaryFixedSubmodule_starProjection_mem_of_commute
-      π (Z B) (Z C)
-      (fun z w => finiteOuterBlockProductCentralRoots_commute
-        W i k hik B C z w z.property w.property)
-      hx
-  · intro B x y hx hy hxZ _
-    exact finiteOuterBlockProductCentral_centerComplement_inner_sq_le
-      W i j k hij hjk hik B π hx.1 hxZ hy.1
+  refine fixed_submodule_inner_square_bound_of_central_sectors π X Y Z
+    hpairCentral
+    (fun B C z w => finiteOuterBlockProductCentralRoots_commute
+      W i k hik B C z w z.property w.property)
+    (fun B x y hx hxZ hy => finiteOuterBlockProductCentral_centerComplement_inner_sq_le
+      W i j k hij hjk hik B π hx hxZ hy)
+    ?_ ha hb haQ hbQ
   · intro x y hx hy _ hyF
     apply inner_eq_zero_of_finite_subgroupAverage_pair_orthogonal
       π X Y x y
@@ -3884,7 +3852,7 @@ private theorem excess_mass_le_of_diagonal_variation
       (permutationVariation σ (fun x => f x - 1) : ℝ) ≤
         2 * (B : ℝ) := by
     exact_mod_cast htotal
-  linarith
+  linarith only [hcoarea, htotal_real]
 
 private theorem zero_mass_le_of_diagonal_variation
     {V ι : Type*} [Fintype V] [Fintype ι] [DecidableEq V]
@@ -3915,7 +3883,7 @@ private theorem zero_mass_le_of_diagonal_variation
         (Finset.univ.filter fun x : V => f x = 0).card := by
     simp only [Finset.sum_boole, Nat.cast_id]
   rw [hsum] at hcoarea
-  linarith
+  linarith only [hcoarea, htotal_real]
 
 private theorem first_excess_mass_le_diagonalBoundary
     {V ι : Type*} [Fintype V] [Fintype ι] [DecidableEq V]
@@ -4285,7 +4253,7 @@ private theorem matchedFiberEdges_relation_loss_bound
       ring
     _ ≤ 4 * (boundary
           (fun i => (σ i).prodCongr (σ i)) U : ℝ) := by
-      linarith
+      linarith only [hrow', hcol']
 
 private theorem matchedFiberEdges_vertex_loss_bound
     {V ι : Type*} [Fintype V] [Fintype ι] [DecidableEq V]
@@ -4342,7 +4310,7 @@ private theorem matchedFiberEdges_vertex_loss_bound
       ring
     _ ≤ 4 * (boundary
           (fun i => (σ i).prodCongr (σ i)) U : ℝ) := by
-      linarith
+      linarith only [hzero, hrow', hcol']
 
 private theorem exists_permutation_extending_matchedFiberEdges
     {V : Type*} [DecidableEq V] (U : Finset (V × V)) :
@@ -4564,7 +4532,7 @@ private theorem exists_boundary_controlled_permutation_repair
             ((U \ matchedFiberEdges U).card : ℝ)) ≤
         8 * (boundary
           (fun i => (σ i).prodCongr (σ i)) U : ℝ) := by
-    nlinarith
+    linarith only [hvertex, hrelation]
   have hdnonneg : (0 : ℝ) ≤ Fintype.card ι := by
     positivity
   have hscaled := mul_le_mul_of_nonneg_left hsum hdnonneg
@@ -4581,7 +4549,7 @@ private theorem exists_boundary_controlled_permutation_repair
     _ ≤ (h + 8 * (Fintype.card ι : ℝ)) *
           (boundary
             (fun i => (σ i).prodCongr (σ i)) U : ℝ) := by
-      nlinarith
+      linarith only [hscaled]
 
 private theorem permutationDistance_eq_card_permutationGraph_sdiff
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -4684,7 +4652,7 @@ private theorem exists_boundary_controlled_permutation_repair_close_to_reference
     σ U h hpositive hexp hfirst hsecond
   refine ⟨q, ?_, hdefect⟩
   have hscaled := mul_le_mul_of_nonneg_left hdistance_real hpositive.le
-  nlinarith
+  linarith only [hvertex, hscaled]
 
 private theorem hasAlmostCentralizerImprovement_of_expanding_diagonal_cuts
     {V ι : Type*} [Fintype V] [Fintype ι] [DecidableEq V]
@@ -4720,16 +4688,14 @@ private theorem hasAlmostCentralizerImprovement_of_expanding_diagonal_cuts
   have hdefect_real :
       (permutationCommutationDefect σ q : ℝ) ≤
         (tolerance : ℝ) := by
-    nlinarith
+    nlinarith only [hpositive, hcutdefect, hqdefect]
   have hdefect :
       permutationCommutationDefect σ q ≤ tolerance := by
     exact_mod_cast hdefect_real
-  have hscaled := mul_le_mul_of_nonneg_left hqdistance
-    (show (0 : ℝ) ≤ 5 by norm_num)
   have hdistance_real :
       (5 : ℝ) * (permutationDistance q p : ℝ) ≤
         (Fintype.card V : ℝ) := by
-    nlinarith
+    nlinarith only [hpositive, hcutdistance, hqdistance]
   have hdistance :
       5 * permutationDistance q p ≤ Fintype.card V := by
     exact_mod_cast hdistance_real
@@ -6359,13 +6325,15 @@ private theorem norm_add_le_two_sub_sq_div_four
     (sq_le_sq₀ (mul_nonneg hδ (norm_nonneg x))
       (norm_nonneg (x - y))).mpr hseparated
   have hδsq : δ ^ 2 ≤ 4 := by
-    nlinarith [sq_nonneg (2 - δ), sq_nonneg δ]
+    calc
+      δ ^ 2 ≤ 2 ^ 2 := pow_le_pow_left₀ hδ hδtwo 2
+      _ = 4 := by norm_num
   have htarget : 0 ≤ (2 - δ ^ 2 / 4) * ‖x‖ :=
-    mul_nonneg (by nlinarith) (norm_nonneg x)
+    mul_nonneg (by linarith only [hδsq]) (norm_nonneg x)
   have hadd :
       ‖x + y‖ ^ 2 ≤ ((2 - δ ^ 2 / 4) * ‖x‖) ^ 2 := by
     rw [hnorm] at hpar
-    nlinarith [sq_nonneg (δ ^ 2 * ‖x‖)]
+    linarith only [hpar, hsq, sq_nonneg (δ ^ 2 * ‖x‖)]
   exact (sq_le_sq₀ (norm_nonneg (x + y)) htarget).mp hadd
 
 omit [InnerProductSpace ℂ H] in
@@ -7412,7 +7380,7 @@ private theorem modelSeparationBad_density_tendsto_zero
   simp only [modelSeparationBad, normalizedHamming,
     Fintype.card_fin]
   field_simp
-  linarith
+  linarith only [hreal]
 
 private def finiteMultiplicationBad {G : Type*} [Group G]
     (M : PermutationModel G) (F : Finset G) :
@@ -8710,11 +8678,11 @@ private theorem exists_expanding_residual_finpartition
             _ ≤ (boundary σ R : ℝ) +
                   2 * (boundary σ U : ℝ) +
                     4 * α * ((R \ C).card : ℝ) := by
-                  linarith
+                  linarith only [hsplit]
             _ ≤ (boundary σ R : ℝ) +
                   4 * α * (C.card : ℝ) +
                     4 * α * ((R \ C).card : ℝ) := by
-                  linarith
+                  linarith only [hUcost]
             _ = (boundary σ R : ℝ) +
                   4 * α * (R.card : ℝ) := by
                   linear_combination (4 * α) * hcard
@@ -8775,7 +8743,7 @@ private theorem exists_expanding_clean_finpartition
                 (boundary σ B : ℝ) ≤
                   (Fintype.card ι : ℝ) * (B.card : ℝ) := by
               exact_mod_cast hdegree
-            linarith
+            linarith only [hdegreeReal]
 
 private noncomputable def completeCleanFinpartition
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -8942,7 +8910,7 @@ private theorem exists_expanding_full_finpartition
             add_le_add hQbudget hbad
       _ ≤ 2 * (Fintype.card ι : ℝ) * (B.card : ℝ) +
           4 * α * (Fintype.card V : ℝ) := by
-            nlinarith
+            linarith only [hscaled]
 
 public
 theorem exists_expanding_full_finpartition_sequence
@@ -9712,8 +9680,6 @@ theorem completedRestriction_mul_of_not_mem_sourceCompletionBad
     completedRestriction (p (j * k)) Z z =
       (completedRestriction (p j) Z * completedRestriction (p k) Z) z := by
   have hg := sourceCompletionBad_good σ p F Z z z.property hz
-  have hjT :=
-    CompressionCriterion.mem_productTrackedTable hj
   have hkT :=
     CompressionCriterion.mem_productTrackedTable hk
   have hjkT :=

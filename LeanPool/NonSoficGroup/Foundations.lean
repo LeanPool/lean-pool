@@ -16,40 +16,20 @@ public import Mathlib.InformationTheory.Hamming
 public import Mathlib.LinearAlgebra.Matrix.Reindex
 public import Mathlib.Order.Partition.Finpartition
 public import Mathlib.RingTheory.FiniteType
+import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Group.MinimalAxioms
-import Mathlib.Algebra.Order.Floor.Extended
-import Mathlib.Algebra.Order.Interval.Basic
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Data.Finsupp.Encodable
-import Mathlib.Data.NNRat.Floor
-import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Data.Set.FiniteExhaustion
 import Mathlib.LinearAlgebra.Matrix.Unique
-import Mathlib.NumberTheory.Chebyshev
+import Mathlib.MeasureTheory.Function.Floor
+import Mathlib.MeasureTheory.Integral.Average
+import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.Order.CompletePartialOrder
-import Mathlib.RingTheory.PiTensorProduct
-import Mathlib.RingTheory.Radical.NatInt
 import Mathlib.RingTheory.TotallySplit
 import Mathlib.SetTheory.Cardinal.Free
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.NormNum.Irrational
-import Mathlib.Tactic.NormNum.IsCoprime
-import Mathlib.Tactic.NormNum.IsSquare
-import Mathlib.Tactic.NormNum.LegendreSymbol
-import Mathlib.Tactic.NormNum.ModEq
-import Mathlib.Tactic.NormNum.NatFib
-import Mathlib.Tactic.NormNum.NatLog
-import Mathlib.Tactic.NormNum.NatSqrt
-import Mathlib.Tactic.NormNum.Ordinal
-import Mathlib.Tactic.NormNum.Parity
-import Mathlib.Tactic.NormNum.Prime
-import Mathlib.Tactic.NormNum.RealSqrt
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Mathlib.Topology.Separation.CompletelyRegular
-import Mathlib.Topology.Sheaves.Init
-import Std.Tactic.BVDecide.Normalize.Prop
+import Mathlib.FieldTheory.Finite.GaloisField
+-- Retain the freeness instance used by the existing finite-field basis type.
+import Mathlib.LinearAlgebra.FreeModule.PID -- shake: keep
 
 /-!
 # Foundations for the non-sofic group construction
@@ -138,7 +118,7 @@ public
 theorem normalizedHamming_nonneg {Y : Type*} [Fintype Y] [DecidableEq Y]
     (p q : Equiv.Perm Y) : 0 ≤ normalizedHamming p q := by
   unfold normalizedHamming
-  positivity
+  exact div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
 
 public
 theorem normalizedHamming_triangle {Y : Type*} [Fintype Y] [DecidableEq Y]
@@ -911,14 +891,14 @@ private theorem hamming_dichotomy_of_expansion {V ι : Type*}
         (Fintype.card V : ℝ) -
           hammingDist (fun x => c x) (fun x => c' x) =
             (agreementSet c c').card := by
-      linarith [hcard']
+      linarith only [hcard']
     simpa only [hident, Nat.cast_add, ge_iff_le] using hcut
   · left
     rw [min_eq_right (le_of_not_ge hhalf)] at hcut
     have hident :
         (Fintype.card V : ℝ) - (agreementSet c c').card =
           hammingDist (fun x => c x) (fun x => c' x) := by
-      linarith [hcard']
+      linarith only [hcard']
     simpa only [Nat.cast_add, ge_iff_le, hident] using hcut
 
 /-- Internal interface connecting the split non-sofic proof modules. -/
@@ -988,8 +968,6 @@ private theorem maximal_bad_cut_induced_lower {V ι : Type*}
     ell * (E.card : ℝ) ≤ (inducedBoundary σ B E : ℝ) := by
   classical
   by_contra h
-  have hE : (inducedBoundary σ B E : ℝ) < ell * (E.card : ℝ) :=
-    lt_of_not_ge h
   have hcut : (boundary σ (B ∪ E) : ℝ) ≤
       (boundary σ B : ℝ) + (inducedBoundary σ B E : ℝ) := by
     exact_mod_cast boundary_union_le σ B E
@@ -997,7 +975,7 @@ private theorem maximal_bad_cut_induced_lower {V ι : Type*}
     exact_mod_cast Finset.card_union_of_disjoint hdisj
   have hbad : (boundary σ (B ∪ E) : ℝ) < ell * ((B ∪ E).card : ℝ) := by
     rw [hcard]
-    nlinarith
+    linarith only [hB, h, hcut]
   have hsize := hmax (B ∪ E) hhalf hbad
   have hepos : 0 < E.card := Finset.card_pos.mpr hne
   have hnat := Finset.card_union_of_disjoint hdisj
@@ -1009,7 +987,7 @@ private theorem bad_cut_card_bound {γ ell a : ℝ} {N b q : ℕ}
     (hbad : (q : ℝ) ≤ ell * (b : ℝ)) :
     (b : ℝ) ≤ a * (N : ℝ) / (γ - ell) := by
   apply (le_div_iff₀ (sub_pos.mpr hgap)).2
-  nlinarith
+  linarith only [hadd, hbad]
 
 private theorem large_cut_lower {γ ell a d N b e q : ℝ}
     (hgap : ell < γ) (hd : 0 ≤ d) (hN : 0 ≤ N)
@@ -1019,11 +997,11 @@ private theorem large_cut_lower {γ ell a d N b e q : ℝ}
     (hcut : γ * e - a * N - d * b ≤ q) :
     ell * e ≤ q := by
   have hδ : 0 < γ - ell := sub_pos.mpr hgap
-  have hδd : 0 ≤ (γ - ell) + d := by linarith
+  have hδd : 0 ≤ (γ - ell) + d := by linarith only [hgap, hd]
   have hscaledDeleted := mul_le_mul_of_nonneg_left hdeleted hδd
   have hscaledSmall := mul_le_mul_of_nonneg_right hsmall hN
   have hscaledLarge := mul_lt_mul_of_pos_left hlarge hδ
-  nlinarith
+  nlinarith only [hgap, hcut, hscaledDeleted, hscaledSmall, hscaledLarge]
 
 private theorem prune_permutation_multigraph {V ι : Type*}
     [Fintype V] [Fintype ι] [DecidableEq V]
@@ -1053,19 +1031,19 @@ private theorem prune_permutation_multigraph {V ι : Type*}
       (B.card : ℝ) ≤ (Fintype.card V : ℝ) - (B.card : ℝ) := by
     have hcast : 2 * (B.card : ℝ) ≤ (Fintype.card V : ℝ) := by
       exact_mod_cast hBhalf
-    linarith
+    linarith only [hcast]
   have haddB := hadd B
   rw [min_eq_left hBhalfReal] at haddB
   have hdeleted :
       (γ - ell) * (B.card : ℝ) ≤ a * (Fintype.card V : ℝ) := by
-    linarith
+    linarith only [hB, haddB]
   have hEhalfNat : 2 * E.card ≤ Fintype.card V :=
     hEhalf.trans (Nat.sub_le _ _)
   have hEhalfReal :
       (E.card : ℝ) ≤ (Fintype.card V : ℝ) - (E.card : ℝ) := by
     have hcast : 2 * (E.card : ℝ) ≤ (Fintype.card V : ℝ) := by
       exact_mod_cast hEhalfNat
-    linarith
+    linarith only [hcast]
   have haddE := hadd E
   rw [min_eq_left hEhalfReal] at haddE
   have hremoval :
@@ -1076,7 +1054,7 @@ private theorem prune_permutation_multigraph {V ι : Type*}
       γ * (E.card : ℝ) - a * (Fintype.card V : ℝ) -
         (Fintype.card ι : ℝ) * (B.card : ℝ) ≤
         (inducedBoundary σ B E : ℝ) := by
-    linarith
+    linarith only [haddE, hremoval]
   have hcard := Finset.card_union_of_disjoint hdisj
   have hlargeNat : Fintype.card V < 2 * (B.card + E.card) := by
     simpa only [hcard] using Nat.lt_of_not_ge hunion
@@ -1085,7 +1063,7 @@ private theorem prune_permutation_multigraph {V ι : Type*}
     exact_mod_cast hlargeNat
   have hlarge :
       (Fintype.card V : ℝ) / 2 - (B.card : ℝ) < (E.card : ℝ) := by
-    linarith
+    linarith only [hlargeCast]
   exact large_cut_lower hgap (Nat.cast_nonneg _) (Nat.cast_nonneg _)
     hdeleted hsmall hlarge hcut
 
@@ -1152,7 +1130,7 @@ theorem exists_pruned_expander {V ι : Type*}
         (B.card : ℝ) ≤ (Fintype.card V : ℝ) - (B.card : ℝ) := by
       have hcast : 2 * (B.card : ℝ) ≤ (Fintype.card V : ℝ) := by
         exact_mod_cast hhalf
-      linarith
+      linarith only [hcast]
     have hlow := hadd B
     rw [min_eq_left hhalfReal] at hlow
     exact bad_cut_card_bound hgap hlow hB
@@ -1478,7 +1456,7 @@ private theorem permutation_squared_increment_le_twice_decreasing
         (fun x : α => d x < 0) (fun x => |d x|)
   have habs_total : (∑ x, |d x|) = -2 * B.sum d := by
     rw [← habs_split, habs_bad, habs_good]
-    linarith
+    linarith only [hsplit]
   have hbad : -(B.sum d) ≤ (B.card : ℝ) := by
     calc
       -(B.sum d) = B.sum (fun x => -d x) := by
@@ -1493,10 +1471,10 @@ private theorem permutation_squared_increment_le_twice_decreasing
     intro x _
     by_cases h : 0 ≤ d x
     · rw [abs_of_nonneg h]
-      nlinarith [hupper x]
+      nlinarith only [h, hupper x]
     · have hneg : d x < 0 := lt_of_not_ge h
       rw [abs_of_neg hneg]
-      nlinarith [hlower x]
+      nlinarith only [h, hlower x]
   rw [habs_total] at hsquare
   have hfinal : (∑ x, d x ^ 2) ≤ 2 * (B.card : ℝ) := by
     linarith
@@ -1685,7 +1663,7 @@ theorem retained_bad_density_tendsto_zero
     exact_mod_cast (hU n).card_pos
   have hmass : ((V n).card : ℝ) ≤ 2 * (U n).card := by
     have h := (le_div_iff₀ hv).1 hn
-    linarith
+    linarith only [h]
   have hbadcard :
       ((U n ∩ B n).card : ℝ) ≤ (V n ∩ B n).card := by
     exact_mod_cast Finset.card_le_card
@@ -4167,9 +4145,7 @@ theorem componentVertexMidrank_le_one {V : Type*}
       exact_mod_cast hcard
     unfold componentVertexMidrank
     apply (div_le_one hc).2
-    have heq : 0 ≤ ((C.filter fun z => b z = b x).card : ℝ) := by
-      positivity
-    linarith
+    linarith only [hcard']
 
 private theorem componentVertexMidrank_mono {V : Type*}
     (C : Finset V) (b : V → ℤ) {x y : V}
@@ -4203,13 +4179,13 @@ private theorem componentVertexMidrank_mono {V : Type*}
             ((C.filter fun z => b z = b x).card : ℝ) ≤
               ((C.filter fun z => b z < b y).card : ℝ) := by
         exact_mod_cast hcard
-      have hex : 0 ≤ ((C.filter fun z => b z = b x).card : ℝ) := by
-        positivity
-      have hey : 0 ≤ ((C.filter fun z => b z = b y).card : ℝ) := by
-        positivity
+      have hex : 0 ≤ ((C.filter fun z => b z = b x).card : ℝ) :=
+        Nat.cast_nonneg _
+      have hey : 0 ≤ ((C.filter fun z => b z = b y).card : ℝ) :=
+        Nat.cast_nonneg _
       unfold componentVertexMidrank
       apply (div_le_div_iff_of_pos_right hc).2
-      linarith
+      linarith only [hcard', hex, hey]
 
 /-- Internal interface connecting the split non-sofic proof modules. -/
 public
@@ -5381,10 +5357,10 @@ private theorem shifted_floor_drop_subset_two_intervals
   rcases hcases with hcase | hcase
   · left
     rw [hcase] at hv' hu'
-    exact ⟨by linarith, by linarith⟩
+    exact ⟨by linarith only [hu'], by linarith only [hv']⟩
   · right
     rw [hcase] at hv' hu'
-    exact ⟨by linarith, by linarith⟩
+    exact ⟨by linarith only [hu'], by linarith only [hv']⟩
 
 private theorem measurableSet_shifted_floor_drop (u v H : ℝ) :
     MeasurableSet
@@ -5566,7 +5542,6 @@ private theorem shifted_floor_drop_volume_bound_sharp
   let k : ℤ := ⌊u / H⌋
   let c : ℝ := (((k + 1 : ℤ) : ℝ) * H - u)
   let d : ℝ := u - v
-  have hd : 0 ≤ d := sub_nonneg.mpr hvu
   have hklo : (k : ℝ) ≤ u / H := by
     dsimp [k]
     exact Int.floor_le _
@@ -5575,14 +5550,10 @@ private theorem shifted_floor_drop_volume_bound_sharp
     exact Int.lt_floor_add_one _
   have hklo' : (k : ℝ) * H ≤ u := (le_div_iff₀ hH).mp hklo
   have hkhi' : u < ((k : ℝ) + 1) * H := (div_lt_iff₀ hH).mp hkhi
-  have hc0 : 0 ≤ c := by
-    dsimp [c]
-    push_cast
-    linarith
   have hcH : c ≤ H := by
     dsimp [c]
     push_cast
-    linarith
+    linarith only [hklo']
   let A : Set ℝ := Set.Ico 0 (max 0 (c - H + d))
   let B : Set ℝ := Set.Ico c (min H (c + d))
   have hsubset :
@@ -5598,7 +5569,7 @@ private theorem shifted_floor_drop_volume_bound_sharp
       · have hupper := hleft.2
         dsimp [c, d]
         push_cast
-        linarith
+        linarith only [hupper]
       · exact le_max_right _ _
     · right
       change r ∈ Set.Ico c (min H (c + d))
@@ -5609,7 +5580,7 @@ private theorem shifted_floor_drop_volume_bound_sharp
       · have hupper := hright.2
         dsimp [c, d]
         push_cast at hupper ⊢
-        linarith
+        linarith only [hupper]
   have hA : MeasureTheory.volume A =
       ENNReal.ofReal (max 0 (c - H + d)) := by
     dsimp [A]
@@ -5621,13 +5592,13 @@ private theorem shifted_floor_drop_volume_bound_sharp
   have hA0 : 0 ≤ max 0 (c - H + d) := le_max_left _ _
   have hB0 : 0 ≤ min H (c + d) - c := by
     apply sub_nonneg.mpr
-    exact le_min hcH (by linarith)
+    exact le_min hcH (by linarith only [hvu])
   have hlength : max 0 (c - H + d) + (min H (c + d) - c) = d := by
     by_cases hshort : d ≤ H - c
-    · rw [max_eq_left (by linarith), min_eq_right (by linarith)]
+    · rw [max_eq_left (by linarith only [hshort]), min_eq_right (by linarith only [hshort])]
       ring
     · have hlong : H - c < d := lt_of_not_ge hshort
-      rw [max_eq_right (by linarith), min_eq_left (by linarith)]
+      rw [max_eq_right (by linarith only [hshort]), min_eq_left (by linarith only [hshort])]
       ring
   calc
     MeasureTheory.volume
@@ -5707,7 +5678,7 @@ private theorem exists_common_rank_offset_one_sided_sharp
     intro i hi
     by_cases hle : v i ≤ u i
     · rw [min_eq_left hle]
-      linarith [hone i]
+      linarith only [hone i]
     · rw [min_eq_right (le_of_not_ge hle), sub_self]
       exact hdelta i
   calc
@@ -5762,12 +5733,12 @@ private theorem abs_log_one_sub_le_two_mul
     |Real.log (1 - eta)| ≤ 2 * eta := by
   have hfactor : 0 < 1 - eta := by linarith
   have hlog : Real.log (1 - eta) ≤ 0 :=
-    Real.log_nonpos hfactor.le (by linarith)
+    Real.log_nonpos hfactor.le (by linarith only [heta0])
   rw [abs_of_nonpos hlog]
   have hlower := Real.one_sub_inv_le_log_of_pos hfactor
   have hratio : eta / (1 - eta) ≤ 2 * eta := by
     apply (div_le_iff₀ hfactor).2
-    nlinarith [mul_nonneg heta0 (by linarith : 0 ≤ 1 - 2 * eta)]
+    linarith only [heta0, hetaHalf, mul_nonneg heta0 (by linarith : 0 ≤ 1 - 2 * eta)]
   have hidentity : (1 - eta)⁻¹ - 1 = eta / (1 - eta) := by
     field_simp
     ring
@@ -6357,7 +6328,7 @@ theorem matchedRetainedSupport_cover_density_tendsto_one
     have hden : ((U n).card : ℝ) ≠ 0 := by
       exact_mod_cast (hU n).card_pos.ne'
     field_simp
-    linarith
+    linarith only [hreal]
   have hlimit : Tendsto
       (fun n =>
         (1 : ℝ) - (((U n \ matchedRetainedSupport (R n)).card : ℝ) /
@@ -6598,7 +6569,7 @@ theorem matchedRetained_bad_density_tendsto_zero
   have hmass :
       ((U n).card : ℝ) ≤ 2 * (matchedRetainedSupport (R n)).card := by
     have h := (le_div_iff₀ hucard).1 hn
-    linarith
+    linarith only [h]
   have hbadcard :
       ((matchedRetainedSupport (R n) ∩ B n).card : ℝ) ≤
         (U n ∩ B n).card := by
@@ -7780,7 +7751,7 @@ private theorem partitionVertexMidrank_permutation_energy_le
         ((partitionWordCrossing P p).card : ℝ) +
           ((rankDecreasingVertices Finset.univ b p).card : ℝ) := by
     exact_mod_cast hcard
-  nlinarith
+  linarith only [hbase, hcast]
 
 private theorem sum_partitionVertexMidrank_permutation_energy_le
     {V ι : Type*} [Fintype V] [DecidableEq V]
@@ -8305,7 +8276,7 @@ private theorem almostCentralizerGap_of_expansion {V ι : Type*}
       mul_pos hpositive (sub_pos.mpr hlarge')
     change h * (permutationDistance p.permutation q.permutation : ℝ) ≤ _
       at hnear
-    nlinarith
+    linarith only [hsmall, hdef, hpos, hnear]
   · right
     by_contra hnot
     have hlarge :
@@ -8321,7 +8292,7 @@ private theorem almostCentralizerGap_of_expansion {V ι : Type*}
       mul_nonneg hpositive.le (sub_nonneg.mpr hlarge')
     change h * ((Fintype.card V : ℝ) -
       permutationDistance p.permutation q.permutation) ≤ _ at hfar
-    nlinarith
+    linarith only [hsmall, hdef, hpos, hfar]
 
 private def almostCentralizerSetoid {V ι : Type*}
     [Fintype V] [Fintype ι] [DecidableEq V]
@@ -8887,7 +8858,7 @@ private theorem exists_positive_antitone_slow_vanishing_threshold
       _ ≤ d n + q n := le_add_of_nonneg_right (hq_pos n).le
       _ = eta n * eta n := by
         dsimp [eta]
-        nlinarith [Real.sq_sqrt (add_nonneg (hd_nonneg n) (hq_pos n).le)]
+        linarith only [hd_nonneg, hq_pos, Real.sq_sqrt (add_nonneg (hd_nonneg n) (hq_pos n).le)]
   refine ⟨eta, heta_pos, heta_antitone, heta_zero, ?_⟩
   exact squeeze_zero (fun n => div_nonneg (he_nonneg n) (heta_pos n).le)
     hratio_bound heta_zero
@@ -8917,7 +8888,7 @@ theorem exists_positive_antitone_slow_overlap_scales
   have hquot (n : ℕ) : eta n / H n = H n := by
     dsimp [H]
     apply (div_eq_iff (Real.sqrt_pos.2 (heta_pos n)).ne').2
-    nlinarith [Real.sq_sqrt (heta_pos n).le]
+    exact (Real.mul_self_sqrt (heta_pos n).le).symm
   have hquot_zero : Tendsto (fun n => eta n / H n) atTop (nhds 0) := by
     have hfun : (fun n => eta n / H n) = H := funext hquot
     rw [hfun]
