@@ -8,6 +8,11 @@ module
 
 public import LeanPool.PDL.Interpolation.FinePath
 public import LeanPool.PDL.Interpolation.Local
+public import LeanPool.PDL.Flip
+public import LeanPool.PDL.KeepRight
+
+import Mathlib.Algebra.Order.Ring.Nat
+import LeanPool.PDL.Star
 
 /-! # Loaded Clusters (start of Section 9)
 

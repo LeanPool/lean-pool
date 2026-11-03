@@ -8,12 +8,16 @@ module
 
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Finset.Functor
-public import LeanPool.PDL.Interpolation.Uniformity
+public import LeanPool.PDL.Interpolation.UniformityCore
 
 public import LeanPool.PDL.General.Game
 public import LeanPool.PDL.Local.AllLocalTab
 public import LeanPool.PDL.Completeness.Modelgraphs
 public import LeanPool.PDL.StayingInFL
+
+import Mathlib.Algebra.Order.Ring.Nat
+import Mathlib.Algebra.Order.BigOperators.Group.List
+import Mathlib.Data.Nat.SuccPred
 
 /-! # The Tableau Game (Section 6.2) -/
 

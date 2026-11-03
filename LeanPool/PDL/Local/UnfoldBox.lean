@@ -8,8 +8,8 @@ module
 
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.List.Sublists
-public import Mathlib.Tactic.Linarith
 
+public import LeanPool.PDL.General.NaturalBounds
 public import LeanPool.PDL.Substitution
 public import LeanPool.PDL.Star
 
@@ -253,21 +253,21 @@ theorem F_goes_down : φ ∈ F α ℓ → lengthOfFormula φ < lengthOfProgram �
     cases φ_in
     case inl φ_in_Fα =>
       have IHα := F_goes_down φ_in_Fα
-      linarith
+      exact NaturalBounds.lt_sum_left IHα.le
     case inr φ_in_Fβ =>
       have IHβ := F_goes_down φ_in_Fβ
-      linarith
+      exact NaturalBounds.lt_sum_right IHβ.le
   case union α β =>
     cases φ_in
     case inl φ_in_Fα =>
       have IHα := F_goes_down φ_in_Fα
-      linarith
+      exact NaturalBounds.lt_sum_left IHα.le
     case inr φ_in_Fβ =>
       have IHβ := F_goes_down φ_in_Fβ
-      linarith
+      exact NaturalBounds.lt_sum_right IHβ.le
   case star α =>
     have IHα := F_goes_down φ_in
-    linarith
+    exact NaturalBounds.lt_one_add IHα.le
   case test τ =>
     cases em (ℓ ⟨τ, by simp [testsOfProgram]⟩)
     · simp_all

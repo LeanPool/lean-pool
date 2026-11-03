@@ -7,11 +7,17 @@ Authors: PDL formalization contributors (see project card)
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.CharZero.Defs
+public import Mathlib.Algebra.GroupWithZero.Nat
 public import Mathlib.Algebra.Order.BigOperators.Group.List
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Multiset.DershowitzManna
 
 public import LeanPool.PDL.Local.Rules
+
+import Mathlib.Tactic.Linarith.Frontend -- shake: keep
+import Mathlib.Tactic.NormNum.Eq -- shake: keep
+import Mathlib.Tactic.NormNum.Ineq -- shake: keep
 
 /-! # Local Tableaux (Section 3) -/
 
@@ -62,17 +68,21 @@ theorem testsOfProgram_sizeOf_lt α : ∀ τ ∈ testsOfProgram α, sizeOf τ < 
       Program.test.sizeOf_spec] at *
   case sequence α β =>
     rcases τ_in with τ_in | τ_in
-    · have := testsOfProgram_sizeOf_lt α _ τ_in; linarith
-    · have := testsOfProgram_sizeOf_lt β _ τ_in; linarith
+    · have := testsOfProgram_sizeOf_lt α _ τ_in
+      exact NaturalBounds.lt_sum_left (Nat.le_of_lt this)
+    · have := testsOfProgram_sizeOf_lt β _ τ_in
+      exact NaturalBounds.lt_sum_right (Nat.le_of_lt this)
   case union α β =>
     rcases τ_in with τ_in | τ_in
-    · have := testsOfProgram_sizeOf_lt α _ τ_in; linarith
-    · have := testsOfProgram_sizeOf_lt β _ τ_in; linarith
+    · have := testsOfProgram_sizeOf_lt α _ τ_in
+      exact NaturalBounds.lt_sum_left (Nat.le_of_lt this)
+    · have := testsOfProgram_sizeOf_lt β _ τ_in
+      exact NaturalBounds.lt_sum_right (Nat.le_of_lt this)
   case star β =>
-    have := testsOfProgram_sizeOf_lt β _ τ_in; linarith
+    have := testsOfProgram_sizeOf_lt β _ τ_in; exact NaturalBounds.lt_one_add (Nat.le_of_lt this)
   case test τ =>
     subst_eqs
-    linarith
+    exact NaturalBounds.lt_one_add (Nat.le_refl _)
 
 open LocalTableau
 

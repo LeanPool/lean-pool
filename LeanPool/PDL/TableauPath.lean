@@ -12,6 +12,10 @@ public import Mathlib.Tactic.DepRewrite
 
 public import LeanPool.PDL.Tableau
 
+import Mathlib.Tactic.Linarith.Frontend -- shake: keep
+import Mathlib.Tactic.NormNum.Eq -- shake: keep
+import Mathlib.Tactic.NormNum.Ineq -- shake: keep
+
 /-! # Navigating through tableaux with PathIn
 
 To define relations between nodes in a tableau we need to represent the whole
