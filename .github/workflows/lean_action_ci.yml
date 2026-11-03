@@ -483,10 +483,7 @@ jobs:
 
       # actions/cache only warns when a save fails; a missing main cache makes
       # every later run rebuild from an older one, so fail loudly instead.
-      # Then drop the superseded copy at once: two build copies plus the
-      # dependency cache exceed the 10 GB repository limit, and GitHub's
-      # eviction could otherwise drop the dependency or docs caches.
-      - name: Verify and prune pool build cache
+      - name: Verify pool build cache
         if: always() && steps.save-build.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -498,7 +495,6 @@ jobs:
             echo "::error::Pool build cache $KEY was not saved; later runs will rebuild from a stale cache."
             exit 1
           fi
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune --repository "$GITHUB_REPOSITORY" --key "$KEY"
 
   shard:
     needs: plan
@@ -875,10 +871,7 @@ jobs:
 
       # actions/cache only warns when a save fails; a missing main cache makes
       # every later run rebuild from an older one, so fail loudly instead.
-      # Then drop the superseded copy at once: two build copies plus the
-      # dependency cache exceed the 10 GB repository limit, and GitHub's
-      # eviction could otherwise drop the dependency or docs caches.
-      - name: Verify and prune pool build cache
+      - name: Verify pool build cache
         if: always() && steps.save-build.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -890,7 +883,6 @@ jobs:
             echo "::error::Pool build cache $KEY was not saved; later runs will rebuild from a stale cache."
             exit 1
           fi
-          PYTHONPATH=python python3 -m lean_pool.ci_cache prune --repository "$GITHUB_REPOSITORY" --key "$KEY"
 
   # Reuse the prior green project's compiled modules and current main's cache.
   # A missing artifact falls back to the full validation sequence in this job.
