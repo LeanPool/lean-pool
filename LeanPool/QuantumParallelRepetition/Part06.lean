@@ -3160,12 +3160,13 @@ private theorem exactReverseAlicePrefixXMask_succ
       insert (context.sideRank.symm marker).val.val
         (exactReverseAlicePrefixXMask D side context
           marker.val) := by
-  classical
-  unfold exactReverseAlicePrefixXMask
-  rw [exactReverseContextQuestionPrefix_succ]
-  ext j
-  simp only [Finset.mem_union, Finset.mem_insert]
-  tauto
+  with_reducible_and_instances
+    classical
+    unfold exactReverseAlicePrefixXMask
+    rw [exactReverseContextQuestionPrefix_succ]
+    ext j
+    simp only [Finset.mem_union, Finset.mem_insert]
+    tauto
 
 private theorem exactReverseBobPrefixYMask_succ
     {n : ℕ} (D : Finset (Fin n))
@@ -3178,12 +3179,13 @@ private theorem exactReverseBobPrefixYMask_succ
       insert (context.sideRank.symm marker).val.val
         (exactReverseBobPrefixYMask D side context
           marker.val) := by
-  classical
-  unfold exactReverseBobPrefixYMask
-  rw [exactReverseContextQuestionPrefix_succ]
-  ext j
-  simp only [Finset.mem_union, Finset.mem_insert]
-  tauto
+  with_reducible_and_instances
+    classical
+    unfold exactReverseBobPrefixYMask
+    rw [exactReverseContextQuestionPrefix_succ]
+    ext j
+    simp only [Finset.mem_union, Finset.mem_insert]
+    tauto
 
 private theorem exactReverseAliceLowQuestionPotential_eq_alignedPrefix
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
