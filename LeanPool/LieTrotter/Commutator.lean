@@ -9,6 +9,8 @@ public import LeanPool.LieTrotter.Basic
 public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Analysis.Calculus.Deriv.Pow
 
+import Mathlib.Analysis.Calculus.Deriv.Comp
+
 /-!
 # The commutator-scaling error bound
 
