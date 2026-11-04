@@ -9,14 +9,8 @@ public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
 import Mathlib.Analysis.Complex.Liouville
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 import Mathlib.Analysis.Meromorphic.NormalForm
-import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
 
 /-!
 # Elliptic functions and the Liouville theorems
@@ -34,8 +28,8 @@ Statements from chapter 1 of Milla (arXiv:1809.00533v6, file `060_ElliptFunct.te
   agree up to a nonzero constant factor.
 
 All statements in this file are fully proved (no `sorry`s). The second Liouville theorem is
-proved via a self-contained parallelogram residue theorem built from Mathlib's rectangle
-Cauchy--Goursat primitives.
+proved via a self-contained parallelogram residue theorem using the fundamental theorem of
+calculus and Fubini's theorem.
 -/
 
 @[expose] public section
@@ -210,7 +204,7 @@ lemma residue_logDeriv_eq_order {f : ℂ → ℂ} {c : ℂ} (hf : MeromorphicAt 
     rw [hstep]
     have hmul : (fun z ↦ (z - c) ^ n • g z) = fun z ↦ (z - c) ^ n * g z := by
       ext z; rw [smul_eq_mul]
-    have hbase : DifferentiableAt ℂ (fun z : ℂ ↦ z - c) z := by fun_prop
+    have hbase : DifferentiableAt ℂ (fun z : ℂ ↦ z - c) z := differentiableAt_id.sub_const c
     have hmulLog : logDeriv (fun z ↦ (z - c) ^ n * g z) z
         = logDeriv (fun z ↦ (z - c) ^ n) z + logDeriv g z :=
       logDeriv_mul (f := fun z ↦ (z - c) ^ n) (g := g) z (zpow_ne_zero n hzc') hgz
@@ -410,6 +404,10 @@ private lemma mem_boundarySet_of_edge {L : PeriodPair} {v : ℂ} :
     fun t ht => Or.inl (Or.inr ⟨t, ht, rfl⟩),
     fun t ht => Or.inr ⟨t, ht, rfl⟩⟩
 
+private lemma continuous_edge (p ω : ℂ) :
+    Continuous (fun t : ℝ ↦ p + (t : ℂ) * ω) :=
+  continuous_const.add (Complex.continuous_ofReal.mul continuous_const)
+
 /-- **Loop integral of a derivative vanishes**: if `F` is a primitive of `f` on the boundary of
 the parallelogram, then the boundary integral of `f` is zero (fundamental theorem of calculus
 along each edge, then telescoping around the closed loop). -/
@@ -421,8 +419,7 @@ private lemma boundaryIntegral_eq_zero_of_primitive {L : PeriodPair} {f F : ℂ 
   have hcont : ∀ (p ω : ℂ), (∀ t ∈ Set.Icc (0 : ℝ) 1, p + (t : ℂ) * ω ∈ L.boundarySet v) →
       ContinuousOn (fun t : ℝ ↦ f (p + (t : ℂ) * ω)) (Set.Icc 0 1) := by
     intro p ω hmem
-    apply hc.comp _ hmem
-    fun_prop
+    exact hc.comp (continuous_edge p ω).continuousOn hmem
   have E1 := integral_edge_eq_sub (fun t ht => hF _ (he₁ t ht)) (hcont _ _ he₁)
   have E2 := integral_edge_eq_sub (fun t ht => hF _ (he₂ t ht)) (hcont _ _ he₂)
   have E3 := integral_edge_eq_sub (fun t ht => hF _ (he₃ t ht)) (hcont _ _ he₃)
@@ -482,12 +479,12 @@ private lemma boundaryIntegral_add {L : PeriodPair} {f g : ℂ → ℂ} {v : ℂ
         MeasureTheory.volume 0 1 := by
       apply ContinuousOn.intervalIntegrable
       rw [Set.uIcc_of_le zero_le_one]
-      exact (hf.comp (by fun_prop) hmem).mul continuousOn_const
+      exact (hf.comp (continuous_edge p ω).continuousOn hmem).mul continuousOn_const
     have hig : IntervalIntegrable (fun t : ℝ ↦ g (p + (t : ℂ) * ω) * ω)
         MeasureTheory.volume 0 1 := by
       apply ContinuousOn.intervalIntegrable
       rw [Set.uIcc_of_le zero_le_one]
-      exact (hg.comp (by fun_prop) hmem).mul continuousOn_const
+      exact (hg.comp (continuous_edge p ω).continuousOn hmem).mul continuousOn_const
     rw [← intervalIntegral.integral_add hif hig]
     apply intervalIntegral.integral_congr
     intro t _
@@ -725,7 +722,7 @@ private lemma edge_inv_im {c p ω : ℂ} (hne : ∀ t ∈ Set.Icc (0 : ℝ) 1, p
         * ∫ t in (0 : ℝ)..1, (Complex.normSq (p + (t : ℂ) * ω - c))⁻¹ := by
   have hcont : ContinuousOn (fun t : ℝ ↦ (p + (t : ℂ) * ω - c)⁻¹ * ω) (Set.Icc 0 1) := by
     apply ContinuousOn.mul _ continuousOn_const
-    exact ContinuousOn.inv₀ (by fun_prop) hne
+    exact ContinuousOn.inv₀ ((continuous_edge p ω).sub continuous_const).continuousOn hne
   have hint : IntervalIntegrable (fun t : ℝ ↦ (p + (t : ℂ) * ω - c)⁻¹ * ω)
       MeasureTheory.volume 0 1 := by
     apply ContinuousOn.intervalIntegrable
@@ -793,7 +790,8 @@ private lemma boundaryIntegral_sub_inv_ne_zero {L : PeriodPair} {v c : ℂ} {a b
     apply intervalIntegral.intervalIntegral_pos_of_pos_on
     · apply ContinuousOn.intervalIntegrable
       rw [Set.uIcc_of_le zero_le_one]
-      apply ContinuousOn.inv₀ (by fun_prop)
+      apply ContinuousOn.inv₀ (Complex.continuous_normSq.comp
+        ((continuous_edge p ω).sub continuous_const)).continuousOn
       intro t ht
       exact Complex.normSq_pos.mpr (hne t ht) |>.ne'
     · intro t ht
@@ -931,199 +929,107 @@ private lemma intervalIntegral_conj_comp {g gc : ℂ → ℂ}
     intervalIntegral.integral_congr (fun x _ => hgc (p x))
   rw [hc, intervalIntegral_conj, h]
 
+/-- Fubini's theorem for a continuous function on the closed unit square. -/
+private lemma integral_unitSquare_swap {d : ℝ × ℝ → ℂ}
+    (hd : ContinuousOn d (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 1)) :
+    (∫ s in (0 : ℝ)..1, ∫ t in (0 : ℝ)..1, d (s, t)) =
+      ∫ t in (0 : ℝ)..1, ∫ s in (0 : ℝ)..1, d (s, t) := by
+  simp only [intervalIntegral.integral_of_le zero_le_one]
+  apply MeasureTheory.integral_integral_swap
+  rw [MeasureTheory.Measure.prod_restrict, ← MeasureTheory.Measure.volume_eq_prod]
+  exact (hd.integrableOn_compact (isCompact_Icc.prod isCompact_Icc)).mono_set
+    (fun p hp => ⟨⟨hp.1.1.le, hp.1.2⟩, ⟨hp.2.1.le, hp.2.2⟩⟩)
+
 /-- **Cauchy's theorem for a parallelogram.** If `f` is holomorphic on an open set containing
 the closed parallelogram, its boundary integral vanishes.
 
-Mathlib only has the Cauchy–Goursat theorem for axis-parallel rectangles; we pull the
-parallelogram back to the unit square along the real-affine map
-`T u = v + u.re·ω₁ + u.im·ω₂` and apply Mathlib's *real* rectangle formula
-(`Complex.integral_boundary_rect_of_hasFDerivAt_real_off_countable`, which computes the boundary
-integral as the area integral of the `∂/∂zbar`-term) to both `f ∘ T` and `conj ∘ f ∘ T`. Since
-`T` is not holomorphic the individual `∂/∂zbar`-terms do not vanish, but both are constant complex
-multiples of the single area integral `M = ∫∫ f'(T u)`, and the parallelogram boundary integral
-is the linear combination of the two identities in which `M` cancels. -/
+The fundamental theorem of calculus expresses the differences between opposite edge integrals
+as iterated integrals of `f'`. Fubini identifies these area integrals, and their contributions
+to the oriented boundary cancel. -/
 private lemma boundaryIntegral_eq_zero_of_differentiableOn {L : PeriodPair} {f : ℂ → ℂ} {v : ℂ}
     {U : Set ℂ} (hU : IsOpen U) (hf : DifferentiableOn ℂ f U)
     (hsub : ∀ s ∈ Set.Icc (0 : ℝ) 1, ∀ t ∈ Set.Icc (0 : ℝ) 1,
       v + (s : ℂ) * L.ω₁ + (t : ℂ) * L.ω₂ ∈ U) :
     L.boundaryIntegral f v = 0 := by
-  have hfa : AnalyticOnNhd ℂ f U := hf.analyticOnNhd hU
-  have hd_cont : ContinuousOn (deriv f) U := hfa.deriv.continuousOn
-  -- the affine pullback map and its (constant) real derivative
-  set Tlin : ℂ →L[ℝ] ℂ := Complex.reCLM.smulRight L.ω₁ + Complex.imCLM.smulRight L.ω₂
-    with hTlin
-  have hTlin_apply : ∀ u : ℂ, Tlin u = (u.re : ℂ) * L.ω₁ + (u.im : ℂ) * L.ω₂ := by
-    intro u
-    simp [hTlin, Complex.real_smul]
-  set T : ℂ → ℂ := fun u ↦ v + (u.re : ℂ) * L.ω₁ + (u.im : ℂ) * L.ω₂ with hT
-  have hTcont : Continuous T := by fun_prop
-  have hTFDeriv : ∀ u : ℂ, HasFDerivAt T Tlin u := by
-    intro u
-    have heq : T = fun u ↦ v + Tlin u := by
-      funext w
-      rw [hTlin_apply]
-      simp [hT]
-      ring
-    rw [heq]
-    exact Tlin.hasFDerivAt.const_add v
-  set g : ℂ → ℂ := fun u ↦ f (T u) with hg
-  set d : ℂ → ℂ := fun u ↦ deriv f (T u) with hd
-  set g' : ℂ → ℂ →L[ℝ] ℂ :=
-    fun u ↦ ((ContinuousLinearMap.toSpanSingleton ℂ (d u)).restrictScalars ℝ).comp Tlin with hg'
-  have hg'1 : ∀ u : ℂ, g' u 1 = L.ω₁ * d u := by
-    intro u
-    simp [hg', hTlin_apply, ContinuousLinearMap.toSpanSingleton_apply, smul_eq_mul, mul_comm]
-  have hg'I : ∀ u : ℂ, g' u Complex.I = L.ω₂ * d u := by
-    intro u
-    simp [hg', hTlin_apply, ContinuousLinearMap.toSpanSingleton_apply, smul_eq_mul, mul_comm]
-  -- membership of the closed square image
-  have hmemT : ∀ u : ℂ, u.re ∈ Set.Icc (0 : ℝ) 1 → u.im ∈ Set.Icc (0 : ℝ) 1 → T u ∈ U :=
-    fun u h1 h2 => hsub u.re h1 u.im h2
-  -- differentiability of the pullback
-  have hgFDeriv : ∀ u : ℂ, u.re ∈ Set.Icc (0 : ℝ) 1 → u.im ∈ Set.Icc (0 : ℝ) 1 →
-      HasFDerivAt g (g' u) u := by
-    intro u h1 h2
-    have hmem : T u ∈ U := hmemT u h1 h2
-    have hdf : HasDerivAt f (d u) (T u) :=
-      (hf.differentiableAt (hU.mem_nhds hmem)).hasDerivAt
-    have hdF := (hdf.hasFDerivAt.restrictScalars ℝ).comp u (hTFDeriv u)
-    have hcomp : (f ∘ T) = g := rfl
-    rw [hcomp] at hdF
-    exact hdF
-  -- continuity of the pullback and of the area integrand
-  have hgc : ∀ u : ℂ, u.re ∈ Set.Icc (0 : ℝ) 1 → u.im ∈ Set.Icc (0 : ℝ) 1 →
-      ContinuousWithinAt g (Set.Icc (0:ℝ) 1 ×ℂ Set.Icc (0:ℝ) 1) u := by
-    intro u h1 h2
-    have : ContinuousAt f (T u) :=
-      (hfa (T u) (hmemT u h1 h2)).continuousAt
-    exact (this.comp hTcont.continuousAt).continuousWithinAt
-  -- endpoints of the unit square as a "rectangle" in Mathlib's sense
-  have hre0 : (0 : ℂ).re = 0 := rfl
-  have him0 : (0 : ℂ).im = 0 := rfl
-  have hre1 : (1 + Complex.I).re = 1 := by simp
-  have him1 : (1 + Complex.I).im = 1 := by simp
-  have hsq : Set.uIcc ((0 : ℂ).re) ((1 + Complex.I).re) ×ℂ
-      Set.uIcc ((0 : ℂ).im) ((1 + Complex.I).im)
-      = Set.Icc (0 : ℝ) 1 ×ℂ Set.Icc (0 : ℝ) 1 := by
-    rw [hre0, him0, hre1, him1, Set.uIcc_of_le zero_le_one]
-  have hIoo : Set.Ioo (min (0 : ℂ).re (1 + Complex.I).re) (max (0 : ℂ).re (1 + Complex.I).re) ×ℂ
-      Set.Ioo (min (0 : ℂ).im (1 + Complex.I).im) (max (0 : ℂ).im (1 + Complex.I).im)
-      = Set.Ioo (0 : ℝ) 1 ×ℂ Set.Ioo (0 : ℝ) 1 := by
-    rw [hre0, him0, hre1, him1, min_eq_left zero_le_one, max_eq_right zero_le_one]
-  -- hypotheses of the rectangle formula, for `g`
-  have Hc₁ : ContinuousOn g (Set.Icc (0 : ℝ) 1 ×ℂ Set.Icc (0 : ℝ) 1) := by
-    intro u hu
-    rw [Complex.mem_reProdIm] at hu
-    exact hgc u hu.1 hu.2
-  have Hd₁ : ∀ u ∈ (Set.Ioo (0 : ℝ) 1 ×ℂ Set.Ioo (0 : ℝ) 1) \ (∅ : Set ℂ),
-      HasFDerivAt g (g' u) u := by
-    intro u hu
-    rw [Set.sdiff_empty, Complex.mem_reProdIm] at hu
-    exact hgFDeriv u (Set.mem_Icc_of_Ioo hu.1) (Set.mem_Icc_of_Ioo hu.2)
-  have hd_contSq : ContinuousOn d (Set.Icc (0 : ℝ) 1 ×ℂ Set.Icc (0 : ℝ) 1) := by
-    intro u hu
-    rw [Complex.mem_reProdIm] at hu
-    exact ((hd_cont (T u) (hmemT u hu.1 hu.2)).continuousAt
-      (hU.mem_nhds (hmemT u hu.1 hu.2))).comp hTcont.continuousAt |>.continuousWithinAt
-  have Hi₁ : MeasureTheory.IntegrableOn (fun u ↦ Complex.I • g' u 1 - g' u Complex.I)
-      (Set.Icc (0 : ℝ) 1 ×ℂ Set.Icc (0 : ℝ) 1) :=
-    integrableOn_diff_apply hg'1 hg'I hd_contSq
-  -- hypotheses for the conjugated pullback
-  set gc : ℂ → ℂ := fun u ↦ (starRingEnd ℂ) (g u) with hgcdef
-  set gc' : ℂ → ℂ →L[ℝ] ℂ :=
-    fun u ↦ (Complex.conjCLE.toContinuousLinearMap).comp (g' u) with hgc'
-  have hgc'1 : ∀ u : ℂ, gc' u 1 = (starRingEnd ℂ) (L.ω₁ * d u) := by
-    intro u
-    simp [hgc', hg'1]
-  have hgc'I : ∀ u : ℂ, gc' u Complex.I = (starRingEnd ℂ) (L.ω₂ * d u) := by
-    intro u
-    simp [hgc', hg'I]
-  have Hc₂ : ContinuousOn gc (Set.Icc (0 : ℝ) 1 ×ℂ Set.Icc (0 : ℝ) 1) :=
-    Complex.continuous_conj.comp_continuousOn Hc₁
-  have Hd₂ : ∀ u ∈ (Set.Ioo (0 : ℝ) 1 ×ℂ Set.Ioo (0 : ℝ) 1) \ (∅ : Set ℂ),
-      HasFDerivAt gc (gc' u) u := by
-    intro u hu
-    exact (Complex.conjCLE.toContinuousLinearMap.hasFDerivAt).comp u (Hd₁ u hu)
-  have Hi₂ : MeasureTheory.IntegrableOn (fun u ↦ Complex.I • gc' u 1 - gc' u Complex.I)
-      (Set.Icc (0 : ℝ) 1 ×ℂ Set.Icc (0 : ℝ) 1) :=
-    integrableOn_diff_apply (c₁ := (starRingEnd ℂ) L.ω₁) (c₂ := (starRingEnd ℂ) L.ω₂)
-      (d := fun u ↦ (starRingEnd ℂ) (d u))
-      (fun u => by rw [hgc'1]; exact map_mul _ _ _)
-      (fun u => by rw [hgc'I]; exact map_mul _ _ _)
-      (Complex.continuous_conj.comp_continuousOn hd_contSq)
-  -- the two rectangle identities
-  have Heq₁ := Complex.integral_boundary_rect_of_hasFDerivAt_real_off_countable g g'
-    0 (1 + Complex.I) ∅ Set.countable_empty
-    (by rw [hsq]; exact Hc₁) (by rw [hIoo]; exact Hd₁) (by rw [hsq]; exact Hi₁)
-  have Heq₂ := Complex.integral_boundary_rect_of_hasFDerivAt_real_off_countable gc gc'
-    0 (1 + Complex.I) ∅ Set.countable_empty
-    (by rw [hsq]; exact Hc₂) (by rw [hIoo]; exact Hd₂) (by rw [hsq]; exact Hi₂)
-  simp only [hre0, him0, hre1, him1, Complex.ofReal_zero, Complex.ofReal_one, zero_mul,
-    one_mul, add_zero, zero_add, smul_eq_mul] at Heq₁ Heq₂
-  -- convert the pullback edge integrals to parallelogram edge integrals
-  set M : ℂ := ∫ x in (0 : ℝ)..1, ∫ y in (0 : ℝ)..1, d (↑x + ↑y * Complex.I) with hM
-  have hsimp : ∀ (x : ℝ) (w : ℂ), g (↑x + w) = f (v + (↑x + w.re) * L.ω₁ + ↑w.im * L.ω₂) := by
-    intro x w
-    simp [hg, hT]
-  have hB : (∫ x in (0 : ℝ)..1, g ↑x) = ∫ t in (0 : ℝ)..1, f (v + ↑t * L.ω₁) := by
+  have hd : ContinuousOn (deriv f) U := (hf.analyticOnNhd hU).deriv.continuousOn
+  let D (s t : ℝ) := deriv f (v + (s : ℂ) * L.ω₁ + (t : ℂ) * L.ω₂)
+  have rows (g : ℂ → ℂ) (hg : ContinuousOn g U) (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+      ContinuousOn (fun s : ℝ => g (v + (s : ℂ) * L.ω₁ + (t : ℂ) * L.ω₂))
+        (Set.Icc (0 : ℝ) 1) :=
+    hg.comp ((PeriodPair.continuous_edge v L.ω₁).add continuous_const).continuousOn
+      (fun s hs => hsub s hs t ht)
+  have columns (g : ℂ → ℂ) (hg : ContinuousOn g U) (s : ℝ)
+      (hs : s ∈ Set.Icc (0 : ℝ) 1) :
+      ContinuousOn (fun t : ℝ => g (v + (s : ℂ) * L.ω₁ + (t : ℂ) * L.ω₂))
+        (Set.Icc (0 : ℝ) 1) :=
+    hg.comp (PeriodPair.continuous_edge (v + (s : ℂ) * L.ω₁) L.ω₂).continuousOn
+      (fun t ht => hsub s hs t ht)
+  have hD : ContinuousOn (fun p : ℝ × ℝ => D p.1 p.2)
+      (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 1) :=
+    hd.comp ((continuous_const.add
+      ((Complex.continuous_ofReal.comp continuous_fst).mul continuous_const)).add
+      ((Complex.continuous_ofReal.comp continuous_snd).mul continuous_const)).continuousOn
+      (fun p hp => hsub p.1 hp.1 p.2 hp.2)
+  have rowIntegrable (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+      IntervalIntegrable (fun s : ℝ => f (v + (s : ℂ) * L.ω₁ + (t : ℂ) * L.ω₂))
+        MeasureTheory.volume 0 1 := by
+    apply ContinuousOn.intervalIntegrable
+    rw [Set.uIcc_of_le zero_le_one]
+    exact rows f hf.continuousOn t ht
+  have columnIntegrable (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
+      IntervalIntegrable (fun t : ℝ => f (v + (s : ℂ) * L.ω₁ + (t : ℂ) * L.ω₂))
+        MeasureTheory.volume 0 1 := by
+    apply ContinuousOn.intervalIntegrable
+    rw [Set.uIcc_of_le zero_le_one]
+    exact columns f hf.continuousOn s hs
+  have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) 1 := ⟨le_rfl, zero_le_one⟩
+  have h1 : (1 : ℝ) ∈ Set.Icc (0 : ℝ) 1 := ⟨zero_le_one, le_rfl⟩
+  have hr0 := rowIntegrable 0 h0
+  have hr1 := rowIntegrable 1 h1
+  have hc0 := columnIntegrable 0 h0
+  have hc1 := columnIntegrable 1 h1
+  simp only [Complex.ofReal_zero, Complex.ofReal_one, zero_mul, one_mul, add_zero]
+    at hr0 hr1 hc0 hc1
+  have vertical : ((∫ s in (0 : ℝ)..1, f (v + (s : ℂ) * L.ω₁ + L.ω₂))
+      - (∫ s in (0 : ℝ)..1, f (v + (s : ℂ) * L.ω₁))) =
+      (∫ s in (0 : ℝ)..1, ∫ t in (0 : ℝ)..1, D s t) * L.ω₂ := by
+    rw [← intervalIntegral.integral_sub hr1 hr0]
+    calc
+      _ = ∫ s in (0 : ℝ)..1, ∫ t in (0 : ℝ)..1, D s t * L.ω₂ := by
+        apply intervalIntegral.integral_congr
+        intro s hs
+        rw [Set.uIcc_of_le zero_le_one] at hs
+        exact (PeriodPair.integral_edge_eq_sub
+          (fun t ht => (hf.differentiableAt (hU.mem_nhds (hsub s hs t ht))).hasDerivAt)
+          (columns (deriv f) hd s hs)).symm
+      _ = _ := by simp only [intervalIntegral.integral_mul_const]
+  have horizontal : ((∫ t in (0 : ℝ)..1, f (v + L.ω₁ + (t : ℂ) * L.ω₂))
+      - (∫ t in (0 : ℝ)..1, f (v + (t : ℂ) * L.ω₂))) =
+      (∫ s in (0 : ℝ)..1, ∫ t in (0 : ℝ)..1, D s t) * L.ω₁ := by
+    rw [← intervalIntegral.integral_sub hc1 hc0]
+    calc
+      _ = ∫ t in (0 : ℝ)..1, ∫ s in (0 : ℝ)..1, D s t * L.ω₁ := by
+        apply intervalIntegral.integral_congr
+        intro t ht
+        rw [Set.uIcc_of_le zero_le_one] at ht
+        have edge := PeriodPair.integral_edge_eq_sub (p := v + (t : ℂ) * L.ω₂) (ω := L.ω₁)
+          (fun s hs => (hf.differentiableAt (hU.mem_nhds (by
+            simpa only [add_right_comm v] using hsub s hs t ht))).hasDerivAt)
+          (by simpa only [add_right_comm v] using rows (deriv f) hd t ht)
+        simpa only [D, add_right_comm v] using edge.symm
+      _ = (∫ t in (0 : ℝ)..1, ∫ s in (0 : ℝ)..1, D s t) * L.ω₁ := by
+        simp only [intervalIntegral.integral_mul_const]
+      _ = _ := by rw [← integral_unitSquare_swap hD]
+  have top : (∫ s in (0 : ℝ)..1, f (v + L.ω₂ + (s : ℂ) * L.ω₁)) =
+      ∫ s in (0 : ℝ)..1, f (v + (s : ℂ) * L.ω₁ + L.ω₂) := by
     apply intervalIntegral.integral_congr
-    intro t _
-    change g ↑t = f (v + ↑t * L.ω₁)
-    simp [hg, hT]
-  have hTop : (∫ x in (0 : ℝ)..1, g (↑x + Complex.I))
-      = ∫ t in (0 : ℝ)..1, f (v + L.ω₂ + ↑t * L.ω₁) := by
-    apply intervalIntegral.integral_congr
-    intro t _
-    change g (↑t + Complex.I) = f (v + L.ω₂ + ↑t * L.ω₁)
-    simp [hg, hT]
-    congr 1
-    ring
-  have hR : (∫ y in (0 : ℝ)..1, g (1 + ↑y * Complex.I))
-      = ∫ t in (0 : ℝ)..1, f (v + L.ω₁ + ↑t * L.ω₂) := by
-    apply intervalIntegral.integral_congr
-    intro t _
-    change g (1 + ↑t * Complex.I) = f (v + L.ω₁ + ↑t * L.ω₂)
-    simp [hg, hT]
-  have hL : (∫ y in (0 : ℝ)..1, g (↑y * Complex.I))
-      = ∫ t in (0 : ℝ)..1, f (v + ↑t * L.ω₂) := by
-    apply intervalIntegral.integral_congr
-    intro t _
-    change g (↑t * Complex.I) = f (v + ↑t * L.ω₂)
-    simp [hg, hT]
-  have hRHS₁ : (∫ x in (0 : ℝ)..1, ∫ y in (0 : ℝ)..1,
-      Complex.I * g' (↑x + ↑y * Complex.I) 1 - g' (↑x + ↑y * Complex.I) Complex.I)
-      = (Complex.I * L.ω₁ - L.ω₂) * M := by
-    rw [hM]; exact double_integral_diff_apply hg'1 hg'I
-  have hRHS₂ : (∫ x in (0 : ℝ)..1, ∫ y in (0 : ℝ)..1,
-      Complex.I * gc' (↑x + ↑y * Complex.I) 1 - gc' (↑x + ↑y * Complex.I) Complex.I)
-      = (starRingEnd ℂ) ((-(Complex.I * L.ω₁) - L.ω₂) * M) :=
-    double_integral_conj_apply hM hgc'1 hgc'I
-  -- conjugated edge conversions
-  have hgcpt : ∀ z, gc z = (starRingEnd ℂ) (g z) := fun z => congrFun hgcdef z
-  have hBc : (∫ x in (0 : ℝ)..1, gc ↑x)
-      = (starRingEnd ℂ) (∫ t in (0 : ℝ)..1, f (v + ↑t * L.ω₁)) :=
-    intervalIntegral_conj_comp hgcpt hB
-  have hTopc : (∫ x in (0 : ℝ)..1, gc (↑x + Complex.I))
-      = (starRingEnd ℂ) (∫ t in (0 : ℝ)..1, f (v + L.ω₂ + ↑t * L.ω₁)) :=
-    intervalIntegral_conj_comp hgcpt hTop
-  have hRc : (∫ y in (0 : ℝ)..1, gc (1 + ↑y * Complex.I))
-      = (starRingEnd ℂ) (∫ t in (0 : ℝ)..1, f (v + L.ω₁ + ↑t * L.ω₂)) :=
-    intervalIntegral_conj_comp hgcpt hR
-  have hLc : (∫ y in (0 : ℝ)..1, gc (↑y * Complex.I))
-      = (starRingEnd ℂ) (∫ t in (0 : ℝ)..1, f (v + ↑t * L.ω₂)) :=
-    intervalIntegral_conj_comp hgcpt hL
-  rw [hB, hTop, hR, hL, hRHS₁] at Heq₁
-  rw [hBc, hTopc, hRc, hLc, hRHS₂] at Heq₂
-  have Heq₂' := congrArg (starRingEnd ℂ) Heq₂
-  simp only [map_sub, map_add, map_mul, Complex.conj_conj, Complex.conj_I] at Heq₂'
-  -- assemble the boundary integral and eliminate the area term
-  rw [boundaryIntegral, intervalIntegral.integral_mul_const, intervalIntegral.integral_mul_const,
-    intervalIntegral.integral_mul_const, intervalIntegral.integral_mul_const]
-  linear_combination ((L.ω₁ - Complex.I * L.ω₂) / 2) * Heq₁
-    + ((L.ω₁ + Complex.I * L.ω₂) / 2) * Heq₂'
-    + ((∫ t in (0 : ℝ)..1, f (v + L.ω₁ + ↑t * L.ω₂)) * L.ω₂
-        - (∫ t in (0 : ℝ)..1, f (v + ↑t * L.ω₂)) * L.ω₂
-        - L.ω₁ * L.ω₂ * M) * Complex.I_mul_I
+    intro s _
+    exact congrArg f (add_right_comm v L.ω₂ ((s : ℂ) * L.ω₁))
+  rw [PeriodPair.boundaryIntegral, intervalIntegral.integral_mul_const,
+    intervalIntegral.integral_mul_const, intervalIntegral.integral_mul_const,
+    intervalIntegral.integral_mul_const, top]
+  linear_combination -L.ω₁ * vertical + L.ω₂ * horizontal
+
 
 /-- `dslope` of a function analytic at a point is analytic there. -/
 private lemma analyticAt_dslope_self {g : ℂ → ℂ} {c : ℂ} (hg : AnalyticAt ℂ g c) :
@@ -1304,7 +1210,7 @@ private lemma analyticAt_sub_zpow (c : ℂ) (n : ℤ) {z : ℂ} (hzc : z ≠ c) 
   have hd : DifferentiableOn ℂ (fun w ↦ (w - c) ^ n) {c}ᶜ := by
     intro w hw
     apply DifferentiableAt.differentiableWithinAt
-    have hbase : DifferentiableAt ℂ (fun w : ℂ ↦ w - c) w := by fun_prop
+    have hbase : DifferentiableAt ℂ (fun w : ℂ ↦ w - c) w := differentiableAt_id.sub_const c
     exact hbase.zpow (Or.inl (sub_ne_zero.2 (by simpa using hw)))
   exact hd.analyticOnNhd isOpen_compl_singleton z (by simpa using hzc)
 
@@ -1314,7 +1220,7 @@ private lemma analyticAt_sub_inv (c : ℂ) {z : ℂ} (hzc : z ≠ c) :
   have hd : DifferentiableOn ℂ (fun w ↦ (w - c)⁻¹) {c}ᶜ := by
     intro w hw
     apply DifferentiableAt.differentiableWithinAt
-    have hbase : DifferentiableAt ℂ (fun w : ℂ ↦ w - c) w := by fun_prop
+    have hbase : DifferentiableAt ℂ (fun w : ℂ ↦ w - c) w := differentiableAt_id.sub_const c
     exact hbase.inv (sub_ne_zero.2 (by simpa using hw))
   exact hd.analyticOnNhd isOpen_compl_singleton z (by simpa using hzc)
 

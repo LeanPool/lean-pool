@@ -6,7 +6,7 @@ Authors: Xuanji Li
 module
 
 public import LeanPool.Chudnovsky.SingularModuli.ModularPolynomialQ
-import LeanPool.Chudnovsky.Ramanujan
+import LeanPool.Chudnovsky.Periodicity
 import Mathlib.Algebra.GCDMonoid.IntegrallyClosed
 import Mathlib.Geometry.Manifold.MFDeriv.NormedSpace
 
