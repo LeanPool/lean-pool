@@ -7,7 +7,9 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.SupportFan
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-! Explicit real support fans for the handwritten geometric point set.
 The polynomial decompositions are proved by `ring`; their signs by `positivity`.

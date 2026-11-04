@@ -11,9 +11,6 @@ public import LeanPool.ClassificationOfSurfaces.TriangleCell
 public import LeanPool.ClassificationOfSurfaces.Moise.IntrinsicCellwiseExtension
 import LeanPool.ClassificationOfSurfaces.Moise.IntrinsicMidpointSubdivision
 import LeanPool.ClassificationOfSurfaces.StrongVertexStar
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Faithful polygonal realization of a geometric triangulation

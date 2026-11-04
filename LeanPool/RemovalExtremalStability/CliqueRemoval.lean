@@ -9,6 +9,9 @@ public import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
 public import Mathlib.Tactic
 public import LeanPool.RemovalExtremalStability.CliqueCounting
 
+import Mathlib.Combinatorics.SimpleGraph.DegreeSum
+import Mathlib.Data.Finset.CastCard
+
 /-!
 
 Adapted from [jtraverso/turan-stability](https://github.com/jtraverso/turan-stability/blob/3eb99033cc931add291781f77b7446dcba8f5f9d/StabilityLib/CliqueRemoval.lean) (Palomar-registered source).

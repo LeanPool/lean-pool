@@ -53,14 +53,10 @@ theorem X_pow_sub_C_irreducible_of_sqrt_neg_one
       apply hn
       simp [hnZero]
     rw [mul_comm]
-    apply X_pow_mul_sub_C_irreducible
-      (X_pow_sub_C_irreducible_of_prime hp (ha p hp (dvd_mul_right _ _)))
-    intro E _ _ x hx
-    have hxIntegral : IsIntegral K x := not_not.mp fun h => by
-      simpa only [degree_zero, degree_X_pow_sub_C hp.pos,
-        WithBot.natCast_ne_bot] using congr_arg degree (hx.symm.trans (dite_eq_right h))
-    let iE : ↥(IntermediateField.adjoin K {x}) :=
-      algebraMap K (↥(IntermediateField.adjoin K {x})) i
+    have hirred := X_pow_sub_C_irreducible_of_prime hp (ha p hp (dvd_mul_right _ _))
+    apply X_pow_mul_sub_C_irreducible hirred
+    let : Fact (Irreducible (X ^ p - C a)) := ⟨hirred⟩
+    let iE : AdjoinRoot (X ^ p - C a) := algebraMap K _ i
     have hiE : iE ^ 2 = -1 := by
       dsimp [iE]
       rw [← map_pow, hi, map_neg, map_one]
@@ -68,17 +64,15 @@ theorem X_pow_sub_C_irreducible_of_sqrt_neg_one
     intro q hq hqn b hb
     by_cases hpTwo : p = 2
     · have hnormNeg : (Algebra.norm K b) ^ q = -a := by
-        rw [← map_pow, hb, ← adjoin.powerBasis_gen hxIntegral,
-          Algebra.PowerBasis.norm_gen_eq_coeff_zero_minpoly]
-        simp [minpoly_gen, hx, hpTwo]
+        rw [← map_pow, hb, norm_root_X_pow_sub_C hp.ne_zero]
+        simp [hpTwo]
       obtain ⟨c, hc⟩ := exists_primePowerRootOfNegOne i hi q hq
       apply ha q hq (dvd_mul_of_dvd_right hqn p) (c * Algebra.norm K b)
       rw [mul_pow, hc, hnormNeg]
       simp
     · apply ha q hq (dvd_mul_of_dvd_right hqn p) (Algebra.norm K b)
-      rw [← map_pow, hb, ← adjoin.powerBasis_gen hxIntegral,
-        Algebra.PowerBasis.norm_gen_eq_coeff_zero_minpoly]
-      simp [minpoly_gen, hx, hp.ne_zero.symm, (hp.odd_of_ne_two hpTwo).neg_pow]
+      rw [← map_pow, hb, norm_root_X_pow_sub_C hp.ne_zero]
+      simp [(hp.odd_of_ne_two hpTwo).neg_pow]
 
 /-- The first trace-curve Kummer polynomial is irreducible for every positive exponent once
 the constant field contains a square root of `-1`. -/

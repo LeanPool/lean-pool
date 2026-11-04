@@ -4,10 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import LeanPool.HopfProblem.Uniformization.SpecialPeriods1
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Uniformization.SpecialPeriods7
-import all LeanPool.HopfProblem.Foundations.Core1
+import LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
@@ -16,7 +17,6 @@ import all LeanPool.HopfProblem.PeriodFamily.HolomorphicPeriodMap1
 import all LeanPool.HopfProblem.Elliptic.Core1
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods1
 import all LeanPool.HopfProblem.Elliptic.Core2
-import all LeanPool.HopfProblem.Uniformization.SpecialPeriods7
 
 /-!
 # Hopf problem: elliptic · core 3
@@ -27,10 +27,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -229,10 +227,10 @@ private theorem Elliptic.Equivariant.Data.linearLift_holomorphic {j : Elliptic.K
   have hμ := D.periods.holomorphic_mu.comp hf
   have hτ0 : ∀ x : SpecialPeriods.Disc × ComplexPlane₂, (D.periods.point x.1).val.τ ≠ 0 :=
     fun x => (D.periods.point x.1).val.τ_ne_zero (D.periods.point x.1).property.1
-  have h₀ := (contMDiff_pi_space.mp hs) 0
-  have h₁ := (contMDiff_pi_space.mp hs) 1
+  have h₀ := (contMDiff_pi_module_iff.mp hs) 0
+  have h₁ := (contMDiff_pi_module_iff.mp hs) 1
   cases j
-  · apply contMDiff_pi_space.mpr
+  · apply contMDiff_pi_module_iff.mpr
     intro i
     fin_cases i
     · convert (((contMDiff_const (c := (-1 : ℂ))).div₀ hτ hτ0).mul h₀) using 1
@@ -243,7 +241,7 @@ private theorem Elliptic.Equivariant.Data.linearLift_holomorphic {j : Elliptic.K
       funext x
       simp [Elliptic.linearMatrix, PeriodPoint.R₁, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
         Function.comp_def]
-  · apply contMDiff_pi_space.mpr
+  · apply contMDiff_pi_module_iff.mpr
     intro i
     fin_cases i
     · convert (((contMDiff_const (c := (1 : ℂ))).div₀ hτ hτ0).mul h₀) using 1

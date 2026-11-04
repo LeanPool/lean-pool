@@ -38,7 +38,8 @@ noncomputable def unitScalarEquiv
     [Category.{v} C] [Preadditive C] [Linear ℂ C] [MonoidalCategory C]
     (h : HasScalarUnit C) :
     ℂ ≃ₐ[ℂ] End (𝟙_ C) :=
-  AlgEquiv.ofBijective (Algebra.ofId ℂ (End (𝟙_ C))) h
+  AlgEquiv.ofBijective (Algebra.ofId ℂ (End (𝟙_ C)))
+    (End.homEquiv.symm.bijective.comp h)
 
 /-- **The scalar named by an endomorphism of the unit.** -/
 noncomputable def unitScalar
@@ -65,7 +66,7 @@ theorem scalarTrace_comp_comm
     [RigidCategory C]
     (h : HasScalarUnit C) {X Y : C}
     (f : X ⟶ Y) (g : Y ⟶ X) :
-    scalarTrace h X (f ≫ g) = scalarTrace h Y (g ≫ f) := by
+    scalarTrace h X (End.of (f ≫ g)) = scalarTrace h Y (End.of (g ≫ f)) := by
   change unitScalar h (catTrace (f ≫ g)) = unitScalar h (catTrace (g ≫ f))
   rw [catTrace_comp_comm]
 

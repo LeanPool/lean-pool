@@ -166,7 +166,7 @@ theorem harmonicComparison_normalizedEnergy_zerothOrder [NeZero d]
     exact Real.sqrt_pos.2 hW
   apply (mul_le_mul_iff_of_pos_left hspos).mp
   convert hraw using 1
-  all_goals first | rfl | ring
+  all_goals ring
 
 end
 

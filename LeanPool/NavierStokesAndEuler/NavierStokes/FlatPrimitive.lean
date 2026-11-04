@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.FlatCutoff
+import Mathlib.Analysis.Calculus.Deriv.Inv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.Calculus.LHopital
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus

@@ -9,6 +9,7 @@ module
 public import LeanPool.ViscositySolutionTheory.AleksandrovDifferentiability.Analysis.RockafellarCluster.Exposed
 public import Mathlib.Analysis.Convex.Caratheodory
 public import Mathlib.Analysis.Convex.KreinMilman
+public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
 /-!
 Ported for Lean Pool: imports relocated and code adapted to Lean/Mathlib v4.34.0.

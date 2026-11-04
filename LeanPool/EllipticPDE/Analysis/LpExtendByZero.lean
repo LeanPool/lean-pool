@@ -41,7 +41,7 @@ variable {α : Type*} [MeasurableSpace α] {μ : Measure α} {p : ℝ≥0∞} {s
 /-- The indicator of a class on the restricted measure is `p`-integrable for the full measure. -/
 theorem memLp_indicator_extend (hs : MeasurableSet s) (f : Lp ℝ p (μ.restrict s)) :
     MemLp (s.indicator (f : α → ℝ)) p μ := by
-  rw [memLp_iff, eLpNorm_indicator_eq_eLpNorm_restrict hs]
+  rw [memLp_iff, eLpNorm_indicator_eq_eLpNorm_restrict hs.nullMeasurableSet]
   exact Lp.memLp f
 
 variable [Fact (1 ≤ p)]
@@ -81,7 +81,7 @@ noncomputable def lpExtendByZero (hs : MeasurableSet s) :
     · rw [Set.indicator_of_notMem hxs, Set.indicator_of_notMem hxs, smul_zero]
   norm_map' f := by
     change ‖(memLp_indicator_extend hs f).toLp (s.indicator (f : α → ℝ))‖ = ‖f‖
-    rw [Lp.norm_toLp, eLpNorm_indicator_eq_eLpNorm_restrict hs, Lp.norm_def]
+    rw [Lp.norm_toLp, eLpNorm_indicator_eq_eLpNorm_restrict hs.nullMeasurableSet, Lp.norm_def]
 
 /-- The extension by zero is represented almost everywhere by the indicator of `s`. -/
 @[simp] theorem coeFn_lpExtendByZero (hs : MeasurableSet s) (f : Lp ℝ p (μ.restrict s)) :

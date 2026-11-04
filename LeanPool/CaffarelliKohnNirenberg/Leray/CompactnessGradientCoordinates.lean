@@ -90,7 +90,7 @@ theorem weak_gradient_coordinate_integrals_on_subrectangle
   have hρrestrict : ρK.restrict S = ρΩ := by
     rw [hρK, Measure.restrict_restrict_of_subset hSK, hρΩ]
   have htest : MemLp (S.indicator w) 2 ρK := by
-    rw [memLp_indicator_iff_restrict hS]
+    rw [memLp_indicator_iff_restrict hS.nullMeasurableSet]
     rwa [hρrestrict]
   have hInt (H : Vec3 × ℝ → ℝ) :
       (∫ z, H z * S.indicator w z ∂ρK) =

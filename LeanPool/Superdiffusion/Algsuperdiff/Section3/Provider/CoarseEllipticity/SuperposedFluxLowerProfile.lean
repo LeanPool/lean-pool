@@ -685,7 +685,7 @@ theorem bfaLaneScale_sharp_le_exp_profile (hd : 2 ≤ d) (M : ABKModel d)
     exact superposedFluxSharpConst_le_profile hd M m k hE hgamma20 hbeta9 hk₀
   have hX0 : 0 ≤ X := by
     dsimp only [X]
-    positivity
+    exact mul_nonneg (sq_nonneg _) (inv_nonneg.mpr M.shellPrefix.gamma_pos.le)
   have hXgamma : X ≤ M.gamma⁻¹ := by
     dsimp only [X]
     exact mul_le_of_le_one_left (inv_nonneg.mpr M.shellPrefix.gamma_pos.le)

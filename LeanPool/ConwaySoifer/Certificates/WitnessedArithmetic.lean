@@ -6,7 +6,10 @@ Authors: Vladislav Kuznetsov, Lean Pool contributors
 module
 
 public import LeanPool.ConwaySoifer.Certificates.CheckerSound
-import Mathlib.Tactic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
 
 /-! Explicit arithmetic witnesses avoid re-running proposal searches in the kernel. -/
 

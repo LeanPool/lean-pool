@@ -4,16 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.CuspFibre.CuspBoundaryTopVanishing
 public import LeanPool.HopfProblem.MainTheorem.SixSphereCube2
 import all LeanPool.HopfProblem.HomologyTheory.SingularMayerVietoris
 import all LeanPool.HopfProblem.TorusHomology.PeriodTorusHigherHomology1
 import all LeanPool.HopfProblem.Recognition.Smale1
-import all LeanPool.HopfProblem.HomologyTheory.SphereHomology1
+import LeanPool.HopfProblem.HomologyTheory.SphereHomology1
 import all LeanPool.HopfProblem.HomologyTheory.SphereHomology2
-import all LeanPool.HopfProblem.HomologyTheory.SphereHomology3
+import LeanPool.HopfProblem.HomologyTheory.SphereHomology3
 import all LeanPool.HopfProblem.HomologyTheory.FirstHurewicz2
 import all LeanPool.HopfProblem.Hurewicz.SecondHurewicz
 import all LeanPool.HopfProblem.HomologyTheory.FirstHurewicz3
@@ -29,8 +30,6 @@ import all LeanPool.HopfProblem.Recognition.Smale10
 import all LeanPool.HopfProblem.Recognition.Smale11
 import all LeanPool.HopfProblem.Hurewicz.HigherHurewicz1
 import all LeanPool.HopfProblem.Hurewicz.HigherHurewicz2
-import all LeanPool.HopfProblem.CuspFibre.CuspBoundaryTopVanishing
-import all LeanPool.HopfProblem.MainTheorem.SixSphereCube2
 
 /-!
 # Hopf problem: recognition · smale 12
@@ -41,10 +40,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -958,6 +955,7 @@ private theorem Smale.SpherePoint.overlapCountMark_linear (n : ℕ) {N : Type} [
       _
   rw [LinearEquiv.symm_apply_apply]
 
+attribute [local instance high] NeZero.one in
 private theorem Smale.SpherePoint.countMark_of_connecting (n : ℕ) {N : Type} [NormedAddCommGroup N]
     [NormedSpace ℝ N] [FiniteDimensional ℝ N] (j : (ℝ × N) ≃L[ℝ] EuclideanSpace ℝ (Fin (n + 3)))
     (B : EuclideanSpace ℝ (Fin (n + 2)) ≃L[ℝ] N)

@@ -66,7 +66,7 @@ theorem not_linearIndependent_of_wedge_eq_zero {u v : ActionSpace} (h : wedge u 
     ¬LinearIndependent ℝ ![u, v] := by
   intro huv
   let A : Matrix (Fin 2) (Fin 2) ℝ := ![u, v]
-  have hunit : IsUnit A := Matrix.linearIndependent_rows_iff_isUnit.mp huv
+  have hunit : IsUnit A := Matrix.linearIndependent_row_iff_isUnit.mp huv
   have hdetUnit : IsUnit A.det := A.isUnit_iff_isUnit_det.mp hunit
   apply hdetUnit.ne_zero
   rw [Matrix.det_fin_two]

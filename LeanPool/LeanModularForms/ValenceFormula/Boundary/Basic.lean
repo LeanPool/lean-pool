@@ -36,10 +36,10 @@ noncomputable section
 def heightCutoff : ℝ := Real.sqrt 3 / 2 + 1
 
 lemma one_lt_heightCutoff : 1 < heightCutoff := by
-  unfold heightCutoff; linarith [Real.sqrt_pos_of_pos (show (3 : ℝ) > 0 by norm_num)]
+  unfold heightCutoff; linarith only [Real.sqrt_pos_of_pos (show (3 : ℝ) > 0 by norm_num)]
 
 lemma sqrt3_div2_lt_heightCutoff :
-    Real.sqrt 3 / 2 < heightCutoff := by unfold heightCutoff; linarith
+    Real.sqrt 3 / 2 < heightCutoff := by unfold heightCutoff; linarith only []
 
 /-- Segment 1: right vertical from (1/2 + H·i) down to ρ+1. -/
 def fdBoundarySeg1 : ℝ → ℂ := fun t =>
@@ -289,7 +289,7 @@ private lemma fdBoundary_H_inner234_cont (H : ℝ) : Continuous (fdBoundary_H_in
   apply Continuous.if_le fdBoundary_H_seg23b_cont
     (fdBoundary_H_inner34_cont H) continuous_id continuous_const
   intro t ht; simp only [id] at ht
-  have : t = 3 := by linarith
+  have : t = 3 := by linarith only [ht]
   subst this; unfold fdBoundary_H_inner34
   simp only [show (3 : ℝ) ≤ 4 from by norm_num, ite_true]
   have h : (↑Real.pi / 2 + (↑(3 : ℝ) - 2) * (2 * ↑Real.pi / 3 - ↑Real.pi / 2)) * I =
@@ -308,12 +308,14 @@ private lemma fdBoundary_H_inner1234_cont (H : ℝ) : Continuous (fdBoundary_H_i
   apply Continuous.if_le fdBoundary_H_seg23_cont
     (fdBoundary_H_inner234_cont H) continuous_id continuous_const
   intro t ht; simp only [id] at ht
-  have : t = 2 := by linarith
+  have : t = 2 := by linarith only [ht]
   subst this; unfold fdBoundary_H_inner234
   simp only [show (2 : ℝ) ≤ 3 from by norm_num, ite_true]
   have h1 : (↑Real.pi / 3 + (↑(2 : ℝ) - 1) * (↑Real.pi / 2 - ↑Real.pi / 3)) * I =
       ↑(Real.pi / 2) * I := by push_cast; ring
-  simp_all
+  simp_all only [ofReal_ofNat, ofReal_div, mul_eq_mul_right_iff, I_ne_zero, or_false,
+    exp_pi_div_two_mul_I,
+      sub_self, zero_mul, add_zero]
 
 private lemma fdBoundary_H_eq_layered (H : ℝ) (t : ℝ) :
     fdBoundaryH H t =
@@ -331,7 +333,7 @@ theorem fdBoundary_H_continuous (H : ℝ) :
   apply Continuous.if_le (fdBoundary_H_seg1_cont H) (fdBoundary_H_inner1234_cont H)
     continuous_id continuous_const
   intro t ht; simp only [id] at ht
-  have : t = 1 := by linarith
+  have : t = 1 := by linarith only [ht]
   subst this; unfold fdBoundary_H_inner1234
   simp only [show (1 : ℝ) ≤ 2 from by norm_num, ite_true]
   have h : (↑Real.pi / 3 + (↑(1 : ℝ) - 1) * (↑Real.pi / 2 - ↑Real.pi / 3)) * I =

@@ -6,6 +6,7 @@ Authors: Bastiaan J Braams
 module
 
 public import Mathlib.RingTheory.Finiteness.Ideal
+public import Mathlib.RingTheory.Ideal.BigOperators
 public import Mathlib.RingTheory.Noetherian.Basic
 public import Mathlib.RingTheory.Polynomial.UniqueFactorization
 public import LeanPool.SeveralComplexVariables.SeveralComplexVariables.AnalyticGerm.CoordinateChange

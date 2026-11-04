@@ -115,7 +115,7 @@ theorem eLpNorm_zeroExtend_eq {V : Set (Vec d)} (hV : MeasurableSet V)
     (f : Vec d → ℝ) (A : Set (Vec d)) :
     eLpNorm (zeroExtend V f) 2 (volume.restrict A) =
       eLpNorm f 2 (volume.restrict (A ∩ V)) := by
-  rw [zeroExtend, eLpNorm_indicator_eq_eLpNorm_restrict hV,
+  rw [zeroExtend, eLpNorm_indicator_eq_eLpNorm_restrict hV.nullMeasurableSet,
     Measure.restrict_restrict hV, Set.inter_comm V A]
 
 /-- The `L²` norm of a coordinate of the zero-extended gradient over `A` is the
@@ -124,7 +124,7 @@ theorem eLpNorm_zeroExtendGrad_eq {V : Set (Vec d)} (hV : MeasurableSet V)
     (G : Vec d → Vec d) (A : Set (Vec d)) (i : Fin d) :
     eLpNorm (fun y => zeroExtendGrad V G y i) 2 (volume.restrict A) =
       eLpNorm (fun y => G y i) 2 (volume.restrict (A ∩ V)) := by
-  rw [zeroExtendGrad_apply_coord, eLpNorm_indicator_eq_eLpNorm_restrict hV,
+  rw [zeroExtendGrad_apply_coord, eLpNorm_indicator_eq_eLpNorm_restrict hV.nullMeasurableSet,
     Measure.restrict_restrict hV, Set.inter_comm V A]
 
 /-! ## 2. The slab: three translates cover the box -/

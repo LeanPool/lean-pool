@@ -2415,75 +2415,75 @@ theorem localRefinementTriangles_monochromatic (t : M.Triangle) :
   split_ifs with h01 h02 h12 h02' h12' h12''
   · rcases signs_of_two_crossings h01 h02 with h | h
     · apply M.strictPattern_monochromatic_positive
-      · simpa using h.1.le
-      · simpa using h.2.1.le
-      · simpa using h.2.2.le
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 1 h01
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 2 h02
+      · exact h.1.le
+      · exact h.2.1.le
+      · exact h.2.2.le
+      · exact M.localCutVertex_apply_eq_zero f t 0 1 h01
+      · exact M.localCutVertex_apply_eq_zero f t 0 2 h02
     · apply M.strictPattern_monochromatic_negative
-      · simpa using h.1.le
-      · simpa using h.2.1.le
-      · simpa using h.2.2.le
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 1 h01
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 2 h02
+      · exact h.1.le
+      · exact h.2.1.le
+      · exact h.2.2.le
+      · exact M.localCutVertex_apply_eq_zero f t 0 1 h01
+      · exact M.localCutVertex_apply_eq_zero f t 0 2 h02
   · have h10 : f (M.position (M.orderedVertex t 1)) *
         f (M.position (M.orderedVertex t 0)) < 0 := by simpa [mul_comm] using h01
     rcases signs_of_two_crossings h10 h12 with h | h
     · apply M.strictPattern_monochromatic_positive
-      · simpa using h.1.le
-      · simpa using h.2.1.le
-      · simpa using h.2.2.le
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 1 h01
-      · simpa using M.localCutVertex_apply_eq_zero f t 1 2 h12
+      · exact h.1.le
+      · exact h.2.1.le
+      · exact h.2.2.le
+      · exact M.localCutVertex_apply_eq_zero f t 0 1 h01
+      · exact M.localCutVertex_apply_eq_zero f t 1 2 h12
     · apply M.strictPattern_monochromatic_negative
-      · simpa using h.1.le
-      · simpa using h.2.1.le
-      · simpa using h.2.2.le
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 1 h01
-      · simpa using M.localCutVertex_apply_eq_zero f t 1 2 h12
+      · exact h.1.le
+      · exact h.2.1.le
+      · exact h.2.2.le
+      · exact M.localCutVertex_apply_eq_zero f t 0 1 h01
+      · exact M.localCutVertex_apply_eq_zero f t 1 2 h12
   · have hz := third_eq_zero_of_one_crossing h01 h02 h12
     rcases mul_neg_iff.mp h01 with h | h
     · apply M.edgePattern_monochromatic_positive
-      · simpa using h.1.le
-      · simpa using h.2.le
-      · simpa using hz
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 1 h01
+      · exact h.1.le
+      · exact h.2.le
+      · exact hz
+      · exact M.localCutVertex_apply_eq_zero f t 0 1 h01
     · apply M.edgePattern_monochromatic_negative
-      · simpa using h.1.le
-      · simpa using h.2.le
-      · simpa using hz
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 1 h01
+      · exact h.1.le
+      · exact h.2.le
+      · exact hz
+      · exact M.localCutVertex_apply_eq_zero f t 0 1 h01
   · have h20 : f (M.position (M.orderedVertex t 2)) *
         f (M.position (M.orderedVertex t 0)) < 0 := by simpa [mul_comm] using h02'
     have h21 : f (M.position (M.orderedVertex t 2)) *
         f (M.position (M.orderedVertex t 1)) < 0 := by simpa [mul_comm] using h12'
     rcases signs_of_two_crossings h20 h21 with h | h
     · apply M.strictPattern_monochromatic_positive
-      · simpa using h.1.le
-      · simpa using h.2.1.le
-      · simpa using h.2.2.le
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 2 h02'
-      · simpa using M.localCutVertex_apply_eq_zero f t 1 2 h12'
+      · exact h.1.le
+      · exact h.2.1.le
+      · exact h.2.2.le
+      · exact M.localCutVertex_apply_eq_zero f t 0 2 h02'
+      · exact M.localCutVertex_apply_eq_zero f t 1 2 h12'
     · apply M.strictPattern_monochromatic_negative
-      · simpa using h.1.le
-      · simpa using h.2.1.le
-      · simpa using h.2.2.le
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 2 h02'
-      · simpa using M.localCutVertex_apply_eq_zero f t 1 2 h12'
+      · exact h.1.le
+      · exact h.2.1.le
+      · exact h.2.2.le
+      · exact M.localCutVertex_apply_eq_zero f t 0 2 h02'
+      · exact M.localCutVertex_apply_eq_zero f t 1 2 h12'
   · have h21 : ¬ f (M.position (M.orderedVertex t 2)) *
         f (M.position (M.orderedVertex t 1)) < 0 := by simpa [mul_comm] using h12'
     have hz := third_eq_zero_of_one_crossing h02' h01 h21
     rcases mul_neg_iff.mp h02' with h | h
     · apply M.edgePattern_monochromatic_positive
-      · simpa using h.1.le
-      · simpa using h.2.le
-      · simpa using hz
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 2 h02'
+      · exact h.1.le
+      · exact h.2.le
+      · exact hz
+      · exact M.localCutVertex_apply_eq_zero f t 0 2 h02'
     · apply M.edgePattern_monochromatic_negative
-      · simpa using h.1.le
-      · simpa using h.2.le
-      · simpa using hz
-      · simpa using M.localCutVertex_apply_eq_zero f t 0 2 h02'
+      · exact h.1.le
+      · exact h.2.le
+      · exact hz
+      · exact M.localCutVertex_apply_eq_zero f t 0 2 h02'
   · have h21 : f (M.position (M.orderedVertex t 2)) *
         f (M.position (M.orderedVertex t 1)) < 0 := by simpa [mul_comm] using h12''
     have h10 : ¬ f (M.position (M.orderedVertex t 1)) *
@@ -2493,15 +2493,15 @@ theorem localRefinementTriangles_monochromatic (t : M.Triangle) :
     have hz := third_eq_zero_of_one_crossing h12'' h10 h20
     rcases mul_neg_iff.mp h12'' with h | h
     · apply M.edgePattern_monochromatic_positive
-      · simpa using h.1.le
-      · simpa using h.2.le
-      · simpa using hz
-      · simpa using M.localCutVertex_apply_eq_zero f t 1 2 h12''
+      · exact h.1.le
+      · exact h.2.le
+      · exact hz
+      · exact M.localCutVertex_apply_eq_zero f t 1 2 h12''
     · apply M.edgePattern_monochromatic_negative
-      · simpa using h.1.le
-      · simpa using h.2.le
-      · simpa using hz
-      · simpa using M.localCutVertex_apply_eq_zero f t 1 2 h12''
+      · exact h.1.le
+      · exact h.2.le
+      · exact hz
+      · exact M.localCutVertex_apply_eq_zero f t 1 2 h12''
   · have hsign := same_closed_side_of_pairwise_products
         (not_lt.mp h01) (not_lt.mp h02') (not_lt.mp h12'')
     intro s hs
@@ -2512,16 +2512,16 @@ theorem localRefinementTriangles_monochromatic (t : M.Triangle) :
       intro x hx
       simp only [Finset.mem_insert, Finset.mem_singleton] at hx
       rcases hx with rfl | rfl | rfl
-      · simpa using h.1
-      · simpa using h.2.1
-      · simpa using h.2.2
+      · exact h.1
+      · exact h.2.1
+      · exact h.2.2
     · right
       intro x hx
       simp only [Finset.mem_insert, Finset.mem_singleton] at hx
       rcases hx with rfl | rfl | rfl
-      · simpa using h.1
-      · simpa using h.2.1
-      · simpa using h.2.2
+      · exact h.1
+      · exact h.2.1
+      · exact h.2.2
 
 /-- View a mesh whose vertex type is identified with the refined vertex pool as a family of
 triangles on that fixed pool. -/

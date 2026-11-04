@@ -324,7 +324,7 @@ theorem superposedFluxRateCompatible_allParameterGates_of_profileAuxiliaryMaxGat
       0 < superposedFluxLocalExponent M bfaProfileB
         (superposedFluxRateEps M) (superposedFluxRateBeta M) := by
     rw [hlocalEq]
-    positivity
+    exact mul_pos (by norm_num) M.shellPrefix.gamma_pos
   have htau : (1 - sigma) / 2 ≤
       bfaTau (bfaProfileSigma sigma)
         (superposedFluxLocalExponent M bfaProfileB

@@ -1,0 +1,34 @@
+slug: single-copy-stabilizer-learning
+title: Exact adaptive single-copy stabilizer learning
+summary: Exact recovery of pure qubit stabilizer states from adaptive single-copy measurements, with
+  explicit confidence, copy and elementary gate upper bounds.
+branch: quantum information
+entry_module: LeanPool.SingleCopyStabilizer
+authors:
+- Antonio Anna Mele
+source:
+  arxiv: '2610.02031'
+  github_repo: AntMele/single-copy-stabilizer-learning-lean
+license: MIT
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.SingleCopyStabilizer.ExactLearningTheorem.exact_learning
+main_results:
+- declaration: LeanPool.SingleCopyStabilizer.ExactLearningTheorem.exact_learning
+  informal: For every normalized pure qubit stabilizer state and failure parameter 0 < delta <= 1,
+    the physical learner returns a finite circuit and readout that decode to the input up to global
+    phase with probability at least 1 - delta. Every supported execution uses exactly 2T + 1 copies
+    and at most (n + 1)T^2 elementary gate applications at the stated round budget T.
+- declaration: LeanPool.SingleCopyStabilizer.ExactLearningTheorem.exact_learning_copy_bound_linear
+  informal: For n >= 1, every supported output at the confidence budget consumes fewer than 136(n
+    + log(1 / delta)) input copies.
+tags:
+- quantum-computing
+- stabilizer-states
+- quantum-learning
+- probability
+msc:
+- 81P68
+- 68Q32
+- 81P45

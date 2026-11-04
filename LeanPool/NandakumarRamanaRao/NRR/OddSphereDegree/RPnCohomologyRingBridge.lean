@@ -7,8 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnCohomologyRingModel
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnTopClassAlphaPower
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.InducedOnRPCohomology
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnTopClassAlphaPower
 
 /-!
 # Bridge from RP singular cohomology to the truncated polynomial model

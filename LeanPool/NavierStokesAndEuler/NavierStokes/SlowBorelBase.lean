@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SpatialBorelExtension
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SlowExpansionResidual
 public import LeanPool.NavierStokesAndEuler.NavierStokes.PhysicalCoordinateBounds
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ProfileHistories

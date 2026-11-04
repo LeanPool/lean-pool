@@ -197,7 +197,7 @@ theorem ResToImagAxis.Pos.pow {F : ℍ → ℂ} (hF : ResToImagAxis.Pos F) (n : 
 @[fun_prop]
 theorem ResToImagAxis.EventuallyPos.from_pos {F : ℍ → ℂ} (hF : ResToImagAxis.Pos F) :
     ResToImagAxis.EventuallyPos F :=
-  ⟨hF.1, 1, one_pos, fun t ht ↦ hF.2 t (by linarith)⟩
+  ⟨hF.1, 1, one_pos, fun t ht ↦ hF.2 t (by linarith only [ht])⟩
 
 @[fun_prop]
 theorem ResToImagAxis.EventuallyPos.one :
@@ -370,7 +370,7 @@ lemma isBigO_atImInfty_of_fourier_shift
       rexp (-(2 * π) * (↑m + ↑n₀) * z.im) ≤
         rexp (-(2 * π * c) * m) * rexp (-(2 * π * c) * n₀) := by
     rw [← Real.exp_add, Real.exp_le_exp]
-    have _ : (↑m + ↑n₀) * z.im ≥ (↑m + ↑n₀) * c := by nlinarith
+    have _ : (↑m + ↑n₀) * z.im ≥ (↑m + ↑n₀) * c := by nlinarith only [hz]
     nlinarith [Real.pi_pos, (Nat.cast_nonneg m : (0 : ℝ) ≤ m),
       (Nat.cast_nonneg n₀ : (0 : ℝ) ≤ n₀), z.im_pos]
   -- Summability of norms
@@ -398,8 +398,8 @@ lemma isBigO_atImInfty_of_fourier_shift
           rw [← Real.exp_add]; ring_nf
         have hexp_m : rexp (-(2 * π) * m * z.im) ≤ rexp (-(2 * π * c) * m) := by
           rw [Real.exp_le_exp]
-          have key : (m : ℝ) * z.im ≥ m * c := by nlinarith
-          nlinarith [Real.pi_pos, (Nat.cast_nonneg m : (0 : ℝ) ≤ m), z.im_pos]
+          have key : (m : ℝ) * z.im ≥ m * c := by nlinarith only [hz]
+          nlinarith only [key, Real.pi_pos, (Nat.cast_nonneg m : (0 : ℝ) ≤ m), z.im_pos]
         calc ‖a m‖ * rexp (-(2 * π) * (↑m + ↑n₀) * z.im)
             = ‖a m‖ * rexp (-(2 * π) * m * z.im) * rexp (-(2 * π) * n₀ * z.im) := by
               rw [hsplit]; ring
@@ -444,4 +444,5 @@ lemma tendsto_resToImagAxis_of_tendsto_atImInfty {F : ℍ → ℂ} {c : ℂ}
   refine ⟨max A 1, fun t ht ↦ ?_⟩
   have ht_pos : 0 < t := lt_of_lt_of_le one_pos (le_of_max_le_right ht)
   simp only [Function.resToImagAxis, ResToImagAxis, ht_pos, ↓reduceDIte]
-  simp_all
+  simp_all only [gt_iff_lt, ge_iff_le, sup_le_iff, mk_im, mul_im, Complex.I_re, ofReal_im, mul_zero,
+      Complex.I_im, ofReal_re, one_mul, zero_add]

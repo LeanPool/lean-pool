@@ -9,7 +9,6 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import LeanPool.LeanModularForms.HeckeRIngs.AbstractHeckeRing.Basic
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.ConditionallyCompleteOrder
 import Mathlib.Topology.Algebra.InfiniteSum.Order
 import Mathlib.Topology.MetricSpace.Bounded
 
@@ -145,8 +144,8 @@ private lemma gamma_decompose (d : ℤ) (gamma : Matrix (Fin n) (Fin n) ℤ)
     gamma = 1 + d • Matrix.of fun i j => (gamma i j - (1 : Matrix _ _ ℤ) i j) / d := by
   ext i j; simp only [Matrix.add_apply, Matrix.one_apply, Matrix.smul_apply, smul_eq_mul,
     Matrix.of_apply, Matrix.one_apply] at *
-  nlinarith [mul_comm ((gamma i j - if i = j then 1 else 0) / d) d,
-             Int.ediv_mul_cancel (hgamma i j)]
+  nlinarith only [hgamma, mul_comm ((gamma i j - if i = j then 1 else 0) / d) d,
+    Int.ediv_mul_cancel (hgamma i j)]
 
 /-- If `d | (γ - I)` entry-wise, then `d | (adj(A) * γ * A)` entry-wise.
     Key: `adj(A) * (I + dM) * A = d·I + d·(adj(A)·M·A)`. -/

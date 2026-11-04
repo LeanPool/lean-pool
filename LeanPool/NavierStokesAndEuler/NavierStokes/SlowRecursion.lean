@@ -1219,12 +1219,12 @@ theorem omegaDivX_smooth_extension_at_axis (h : ℝ) (U v : ℕ → InnerProfile
 
 theorem partialX_analytic {v : InnerProfile} {w : InnerPoint}
     (hv : AnalyticAt ℝ v w) : AnalyticAt ℝ (partialX v) w :=
-  ((ContinuousLinearMap.apply ℝ ℝ (E := InnerPoint) ((1, 0) : InnerPoint)).analyticAt _).comp
+  ((ContinuousLinearMap.apply ℝ ℝ (E' := InnerPoint) ((1, 0) : InnerPoint)).analyticAt _).comp
     hv.fderiv
 
 theorem partialEta_analytic {v : InnerProfile} {w : InnerPoint}
     (hv : AnalyticAt ℝ v w) : AnalyticAt ℝ (partialEta v) w :=
-  ((ContinuousLinearMap.apply ℝ ℝ (E := InnerPoint) ((0, 1) : InnerPoint)).analyticAt _).comp
+  ((ContinuousLinearMap.apply ℝ ℝ (E' := InnerPoint) ((0, 1) : InnerPoint)).analyticAt _).comp
     hv.fderiv
 
 theorem T_analytic (h b : ℝ) {v : InnerProfile} {w : InnerPoint}

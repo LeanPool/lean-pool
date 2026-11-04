@@ -11,9 +11,10 @@ public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.Basic
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Analysis.PSeriesComplex
 import LeanPool.LeanModularForms.Modularforms.Delta
 import LeanPool.LeanModularForms.Modularforms.SummableLems
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Topology.Separation.CompletelyRegular
 
 /-! # Eisensteinqexpansions -/
@@ -216,7 +217,7 @@ theorem q_exp_iden_2 (k : ℕ) (hk : 3 ≤ k) (hk2 : Even k) (z : ℍ) :
 lemma EQ0 (k : ℕ) (z : ℍ) : ∑' (x : Fin 2 → ℤ),
     1 / (x 0 * (z : ℂ) + x 1) ^ ↑k = ∑' x : ℤ × ℤ, 1 / ((x.1 : ℂ) * z + x.2) ^ k := by
   rw [← (piFinTwoEquiv fun _ => ℤ).tsum_eq]
-  simp_all
+  simp_all only [Fin.isValue, one_div, piFinTwoEquiv_apply]
 
 lemma EQ1 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) (z : ℍ) : ∑' (x : Fin 2 → ℤ),
     1 / (x 0 * (z : ℂ) + x 1) ^ ↑k = 2 * riemannZeta ↑k +
@@ -321,7 +322,7 @@ lemma EQ2 (k : ℕ) (hk : 3 ≤ (k : ℤ)) (z : ℍ) : ∑' (x : Fin 2 → ℤ),
     1 / ((c.1 0) * (z : ℂ) + (c.1 1)) ^ k := by
   have := EQ22 k hk z
   simp_rw [eisSummand] at this
-  simp_all
+  simp_all only [Nat.ofNat_le_cast, Fin.isValue, zpow_neg, zpow_natCast, one_div]
 
 
 /-This result is already proven in the modular forms repo and being PRed (slowly) into mathlib, so

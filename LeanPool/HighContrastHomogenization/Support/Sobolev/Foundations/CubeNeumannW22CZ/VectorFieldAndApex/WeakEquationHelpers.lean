@@ -65,7 +65,7 @@ private theorem integral_pairing_tendsto_of_square_integrable_convergence
         MeasureTheory.AEStronglyMeasurable (diff n) μ :=
       (hdiff_mem n).aestronglyMeasurable
     simpa [diff] using
-      (MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+      (MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm
         (μ := μ) (p := (2 : ENNReal)) (q := (2 : ENNReal))
         (r := (1 : ENNReal)) (fun a b : ℝ => a * b) 1 continuous_mul
         hf_meas hdiff_meas

@@ -133,7 +133,7 @@ theorem comp_eq_zero_of_chain
   have hz : End.asHom (f ^ N) = 0 :=
     (cancel_epi ((⊤ : Subobject X).arrow)).mp
       (by rw [hN, comp_zero])
-  exact hz
+  exact End.ext hz
 
 /-- **A shifted idempotent is zero.**  Under the hypotheses of
 `comp_eq_zero_of_chain`, an idempotent `f` (with respect to the

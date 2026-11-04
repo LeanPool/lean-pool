@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TerminalStress
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricHeatTail
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ProfileHistories
 import LeanPool.NavierStokesAndEuler.NavierStokes.TailCone
@@ -1304,7 +1305,8 @@ theorem terminal_tilt_bound {C h t z r R Y Λ : ℝ} {f : ℝ → ℝ}
       _ ≤ _ := div_le_div_of_nonneg_left
         (mul_nonneg hr.le (TerminalStress.heatAmplitude_pos hC (by
             linarith only [hh]) ht (hr.trans_le hrR)).le)
-        (by positivity) (mul_le_mul_of_nonneg_left (timeDenominator_le_q hh hh1 ht) (by norm_num))
+        (mul_pos (by norm_num) hQ)
+        (mul_le_mul_of_nonneg_left (timeDenominator_le_q hh hh1 ht) (by norm_num))
   have hS : 0 < S := (mul_pos (div_pos (mul_pos (mul_pos hr hbpos) hK) (by
       positivity)) hE).trans_le hlow
   refine ⟨hS, ?_⟩

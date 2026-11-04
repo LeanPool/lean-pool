@@ -185,7 +185,7 @@ theorem map_ballChartInv_volume_restrict (x₀ : Vec d) {r : ℝ} (hr : 0 < r) :
 /-- The chart is quasi measure preserving, so a.e. statements on
 `euclideanBall x₀ r` pull back to the unit ball. -/
 theorem quasiMeasurePreserving_ballChart (x₀ : Vec d) {r : ℝ} (hr : 0 < r) :
-    Measure.QuasiMeasurePreserving (ballChart (d := d) x₀ r)
+    QuasiMeasurePreserving (ballChart (d := d) x₀ r)
       (volume.restrict (smallContrastUnitBall d))
       (volume.restrict (euclideanBall x₀ r)) := by
   refine ⟨(measurableEmbedding_ballChart (d := d) x₀ hr).measurable, ?_⟩
@@ -195,7 +195,7 @@ theorem quasiMeasurePreserving_ballChart (x₀ : Vec d) {r : ℝ} (hr : 0 < r) :
 /-- The inverse chart is quasi measure preserving, so a.e. statements on the
 unit ball push forward to `euclideanBall x₀ r`. -/
 theorem quasiMeasurePreserving_ballChartInv (x₀ : Vec d) {r : ℝ} (hr : 0 < r) :
-    Measure.QuasiMeasurePreserving (ballChartInv (d := d) x₀ r)
+    QuasiMeasurePreserving (ballChartInv (d := d) x₀ r)
       (volume.restrict (euclideanBall x₀ r))
       (volume.restrict (smallContrastUnitBall d)) := by
   refine ⟨(continuous_ballChartInv (d := d) x₀ r).measurable, ?_⟩

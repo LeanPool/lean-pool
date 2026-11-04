@@ -179,7 +179,7 @@ private theorem oppositeOrderPieceSum_smul_comm
     (x : QuotientOrderReesModule k I) :
     r • (a • x) = a • (r • x) := by
   induction r using DirectSum.induction_on with
-  | zero => simp
+  | zero => simp only [zero_smul, smul_zero]
   | of M y =>
       induction x using DirectSum.induction_on with
       | zero => simp
@@ -525,7 +525,8 @@ theorem quotientOrderReesTwoJetCAct_sq_eq_zero
   have hc : MulOpposite.op (orderReesTwoJetParameter (n := n) k) *
       MulOpposite.op (orderReesTwoJetParameter (n := n) k) = 0 := by
     apply MulOpposite.unop_injective
-    simpa [pow_two] using orderReesTwoJetParameter_sq (n := n) k
+    simpa only [MulOpposite.unop_mul, MulOpposite.unop_op, MulOpposite.unop_zero,
+      pow_two] using orderReesTwoJetParameter_sq (n := n) k
   rw [hc, zero_smul]
 
 /-- Exactness of the square-zero parameter on the module two-jet. -/
@@ -676,7 +677,9 @@ private theorem source_specialization_compatible_directSum
   | zero => simp
   | of M y =>
       induction x using DirectSum.induction_on with
-      | zero => simp
+      | zero =>
+          rw [(quotientOrderReesModuleOrderReesOpModule k I).smul_zero]
+          simp only [map_zero, smul_zero]
       | of N q =>
           let yp : Stafford38.WeylFiltration.orderPiece k n M :=
             ⟨y.val.unop,
@@ -704,10 +707,10 @@ private theorem source_specialization_compatible_directSum
                 OrderAssociatedGradedModule k I)
           exact source_specialization_compatible_of_of k I q yp
       | add x y hx hy =>
-          simpa [smul_add, map_add] using
+          simpa only [smul_add, map_add] using
             congrArg₂ (fun p q => p + q) hx hy
   | add s t hs ht =>
-      simpa [map_add, add_smul] using
+      simpa only [map_add, MulOpposite.unop_add, add_smul] using
         congrArg₂ (fun p q => p + q) hs ht
 
 /-- The source order-Rees action specializes to the symbol-ring action on

@@ -120,7 +120,6 @@ theorem sixfoldProduct_le_rank {T : Tensor K X Y Z} {r : ℕ}
     _ ≤ (r : ℝ) * r * r * r * r * r := by
       gcongr <;> first
         | exact χ.nonneg _
-        | exact h0
         | exact h1
         | exact h2
         | exact h3

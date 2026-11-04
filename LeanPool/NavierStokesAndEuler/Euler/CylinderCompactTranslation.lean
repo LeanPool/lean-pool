@@ -104,7 +104,8 @@ theorem increment_bound (A : CompactField P V) :
         ‖A.field (x+coveringMap P a)-A.field x‖ ≤ M x*‖a‖ := by
   obtain ⟨C,hC,hb⟩ := A.derivative_bound
   obtain ⟨K,hK,hsub,hshift⟩ := A.translation_support
-  refine ⟨K.indicator (fun _ => C),memLp_indicator_const 2 hK.isClosed.measurableSet C
+  refine ⟨K.indicator (fun _ => C),
+    memLp_indicator_const 2 hK.isClosed.measurableSet.nullMeasurableSet C
     (Or.inr hK.measure_ne_top),fun x => Set.indicator_nonneg (fun _ _ => hC) x,?_⟩
   intro a ha x
   by_cases hx : x ∈ K

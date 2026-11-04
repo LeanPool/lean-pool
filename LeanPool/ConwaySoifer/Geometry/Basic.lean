@@ -8,7 +8,11 @@ module
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.Ring
 
 /-!
 The point `(a, b)` represents `(a+b/2, sqrt(3)*b/2)` in the Euclidean plane.

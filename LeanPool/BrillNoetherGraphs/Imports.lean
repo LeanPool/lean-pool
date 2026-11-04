@@ -226,6 +226,7 @@ public import LeanPool.BrillNoetherGraphs.LowGenus
 public import LeanPool.BrillNoetherGraphs.LowGenus.AtanasovRanganathanExistence
 public import LeanPool.BrillNoetherGraphs.LowGenus.AtanasovRanganathanProgram
 public import LeanPool.BrillNoetherGraphs.LowGenus.ClosedConstructionTail
+public import LeanPool.BrillNoetherGraphs.LowGenus.CompactCellTreeLookup
 public import LeanPool.BrillNoetherGraphs.LowGenus.ConfigurationBananaDoubleChip
 public import LeanPool.BrillNoetherGraphs.LowGenus.ConfigurationBananaTail
 public import LeanPool.BrillNoetherGraphs.LowGenus.ConfigurationChippedTriangle
@@ -357,6 +358,7 @@ public import LeanPool.BrillNoetherGraphs.Utilities.Foundations.AcyclicOrientati
 public import LeanPool.BrillNoetherGraphs.Utilities.Foundations.BlockSlopeRounding
 public import LeanPool.BrillNoetherGraphs.Utilities.Foundations.BrillNoetherRank
 public import LeanPool.BrillNoetherGraphs.Utilities.Foundations.CanonicalSlackPair
+public import LeanPool.BrillNoetherGraphs.Utilities.Foundations.ChunkedLookup
 public import LeanPool.BrillNoetherGraphs.Utilities.Foundations.CommonOffsetRounding
 public import LeanPool.BrillNoetherGraphs.Utilities.Foundations.ConvexIntegerRounding
 public import LeanPool.BrillNoetherGraphs.Utilities.Foundations.Duality
@@ -508,6 +510,7 @@ public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.DoubledAnchorChe
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.ExplicitPotential
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.ExplicitPotentialRankOne
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.GraphIsoLaplacianEquiv
+public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.IndexedClosedCheck
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.IteratedSplitRefinement
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.LaplacianEquiv
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.LaplacianEquivSeparator

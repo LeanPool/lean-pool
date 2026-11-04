@@ -43,7 +43,7 @@ theorem iteratedDeriv_cos_mul (a c : ℝ) (k : ℕ) :
 
 theorem contDiff_cosDatum (c a : ℝ) :
     ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec 2 => c * Real.cos (a * x 0)) := by
-  have h0 : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec 2 => x 0) := contDiff_apply ℝ ℝ 0
+  have h0 : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec 2 => x 0) := contDiff_apply ℝ (fun _ => ℝ) 0
   exact contDiff_const.mul (Real.contDiff_cos.comp (contDiff_const.mul h0))
 
 theorem iteratedFDeriv_cosDatum (c a : ℝ) (k : ℕ) (x : Vec 2) (m : Fin k → Vec 2) :

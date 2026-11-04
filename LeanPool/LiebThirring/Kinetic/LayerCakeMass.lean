@@ -49,7 +49,7 @@ theorem lintegral_highFourierField (h : Lp H 2 (volume : Measure Position))
     _ = _ := by
       apply lintegral_congr_ae
       filter_upwards [((Lp.memLp (Lp.fourierTransformₗᵢ Position H h)).indicator
-        (measurableSet_lowMomentumRegion E).compl).coeFn_toLp] with ξ hξ
+        (measurableSet_lowMomentumRegion E).compl.nullMeasurableSet).coeFn_toLp] with ξ hξ
       change highFrequencyClass h E ξ = _ at hξ
       rw [hξ]
       by_cases hc : E < fourierKineticMultiplier ξ

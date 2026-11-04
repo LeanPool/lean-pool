@@ -40,7 +40,7 @@ lemma contDiffAt_one_deriv_of_contDiffAt_two
     ContDiffAt ℝ 1 (deriv γ) t₀ := by
   have h_apply := (show ContDiffAt ℝ (1 + 1) γ t₀ from hγ_C2).fderiv_right_succ.clm_apply
     (contDiffAt_const (c := (1 : ℝ)))
-  simp_all
+  simp_all only [fderiv_eq_smul_deriv, one_smul]
 
 /-- Lipschitz-type bound on `deriv γ` deviation from C². -/
 lemma deriv_deviation_bound_of_C2
@@ -87,9 +87,9 @@ lemma quadratic_approx_of_contDiffAt_two
       simp only [add_sub_cancel_left, abs_of_pos h_half]; exact h_half
     have h := h_deriv_dev (t₀ + δ₁ / 2)
       (by simp only [add_sub_cancel_left, abs_of_pos h_half]; exact half_lt_self hδ₁_pos)
-    linarith [norm_nonneg (deriv γ (t₀ + δ₁ / 2) - L),
+    linarith only [hM_neg, h_abs, h, norm_nonneg (deriv γ (t₀ + δ₁ / 2) - L),
       mul_neg_of_neg_of_pos hM_neg h_abs]
-  have hK_pos : 0 < K := by linarith
+  have hK_pos : 0 < K := by linarith only [hM_nonneg]
   use K, δ, hδ_pos, hK_pos
   intro t ht
   by_cases ht_eq : t = t₀
@@ -154,7 +154,7 @@ lemma quadratic_approx_of_contDiffAt_two
       = ‖h t‖ := by rw [h_eq]
     _ ≤ M * |t - t₀| * |t - t₀| := h_bound
     _ = M * |t - t₀| ^ 2 := by ring
-    _ ≤ K * |t - t₀| ^ 2 := by nlinarith [sq_nonneg |t - t₀|]
+    _ ≤ K * |t - t₀| ^ 2 := by nlinarith only [sq_nonneg |t - t₀|]
 
 /-- Bounded slope deviation from C² smoothness. -/
 lemma bounded_slope_deviation_of_contDiffAt_two
@@ -224,7 +224,7 @@ lemma numerator_quadratic_bound
         K₁ * |t - t₀| ^ 2 :=
         add_le_add h1 h2
     _ = (K₁ + K₂) * |t - t₀| ^ 2 := by ring
-    _ ≤ (K₁ + K₂ + 1) * |t - t₀| ^ 2 := by nlinarith [sq_nonneg |t - t₀|]
+    _ ≤ (K₁ + K₂ + 1) * |t - t₀| ^ 2 := by nlinarith only [sq_nonneg |t - t₀|]
 
 /-- Bounded remainder from C² smoothness. -/
 lemma remainder_bounded_of_C2

@@ -9,6 +9,7 @@ public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Classical.PeriodicCalc
 public import LeanPool.AnomalousDiffusion.AVenhance.Statements.Section4.IsClassicalSol
 public import Mathlib.Analysis.Calculus.ParametricIntegral
 public import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-! Shared positive-time calculus and differentiation of periodic quadratic energy. -/
 

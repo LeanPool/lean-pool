@@ -83,13 +83,13 @@ theorem mollifySlice_sub_eq_intervalIntegral_ae_prod {d : ℕ} {I : Set ℝ} (hI
     rw [heq2]; exact hq.1
   have hmoll : AEStronglyMeasurable (fun z : Vec m × ℝ => mollifySlice m ε q z) (μx.prod μI) :=
     aestronglyMeasurable_mollifySlice hqmeas
-  have hproj2 : Measure.QuasiMeasurePreserving (fun p : Vec m × ℝ × ℝ => (p.1, p.2.2))
+  have hproj2 : QuasiMeasurePreserving (fun p : Vec m × ℝ × ℝ => (p.1, p.2.2))
       (μx.prod (μI.prod μI)) (μx.prod μI) :=
-    QuasiMeasurePreserving.prodMap (Measure.QuasiMeasurePreserving.id μx)
+    QuasiMeasurePreserving.prodMap (QuasiMeasurePreserving.id μx)
       Measure.quasiMeasurePreserving_snd
-  have hproj1 : Measure.QuasiMeasurePreserving (fun p : Vec m × ℝ × ℝ => (p.1, p.2.1))
+  have hproj1 : QuasiMeasurePreserving (fun p : Vec m × ℝ × ℝ => (p.1, p.2.1))
       (μx.prod (μI.prod μI)) (μx.prod μI) :=
-    QuasiMeasurePreserving.prodMap (Measure.QuasiMeasurePreserving.id μx)
+    QuasiMeasurePreserving.prodMap (QuasiMeasurePreserving.id μx)
       Measure.quasiMeasurePreserving_fst
   have hf : AEStronglyMeasurable f (μx.prod (μI.prod μI)) :=
     (hmoll.comp_quasiMeasurePreserving hproj2).sub (hmoll.comp_quasiMeasurePreserving hproj1)

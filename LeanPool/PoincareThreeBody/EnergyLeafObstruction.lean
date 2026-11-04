@@ -7,6 +7,8 @@ module
 
 public import LeanPool.PoincareThreeBody.DelaunaySection
 import LeanPool.PoincareThreeBody.CollisionBandAnalyticContinuation
+import Mathlib.Analysis.Analytic.Constructions
+import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan

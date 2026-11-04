@@ -64,13 +64,13 @@ private lemma singular_cutoff_intervalIntegrable
   · rw [ite_eq_left hcond, norm_inv, Complex.norm_real, Real.norm_eq_abs]
     have h_t_ne : t ≠ t₀ := by
       intro heq; subst heq
-      simp only [sub_self, norm_zero] at hcond; linarith [hcond.1]
+      simp only [sub_self, norm_zero] at hcond; linarith only [hε₂_pos, hcond, hcond.1]
     have h_abs_pos : 0 < |t - t₀| := abs_pos.mpr (sub_ne_zero.mpr h_t_ne)
     have h_lt_δ_up : |t - t₀| < δ_up := h_loc t ht_Icc hcond.2
     have h_up := h_upper t h_abs_pos h_lt_δ_up
     have h_t_lower : ε₂ / (2 * ‖L‖) < |t - t₀| := by
       rw [div_lt_iff₀ (by positivity : 0 < 2 * ‖L‖)]
-      linarith [hcond.1]
+      linarith only [hcond, h_up, hcond.1]
     calc |t - t₀|⁻¹
         ≤ (ε₂ / (2 * ‖L‖))⁻¹ := inv_anti₀ (by positivity) (le_of_lt h_t_lower)
       _ = 2 * ‖L‖ / ε₂ := by rw [inv_div]
@@ -97,7 +97,8 @@ private lemma annulus_cutoff_intervalIntegrable
   · rw [ite_eq_left h₂]
     by_cases h₁ : ε₁ < ‖γ t - γ t₀‖
     · rw [ite_eq_left h₁, sub_self, ite_eq_right (fun h => absurd h₁ (not_lt.mpr h.2))]
-    · simp_all
+    · simp_all only [not_lt, and_self, ↓reduceIte, sub_eq_self, ite_eq_right_iff, isEmpty_Prop,
+      IsEmpty.forall_iff]
   · rw [ite_eq_right h₂, zero_sub]
     by_cases h₁ : ε₁ < ‖γ t - γ t₀‖
     · exact absurd (lt_of_le_of_lt hε₂_le h₁) h₂
@@ -125,7 +126,7 @@ private lemma annulus_integral_split
     by_cases hcond : ε₂ < ‖γ t - γ t₀‖ ∧ ‖γ t - γ t₀‖ ≤ ε₁
     · rw [ite_eq_left hcond, ite_eq_left hcond, ite_eq_left hcond]; ring
     · rw [ite_eq_right hcond, ite_eq_right hcond, ite_eq_right hcond, add_zero]
-  simp_all
+  simp_all only [ofReal_sub, intervalIntegral.integral_add]
 
 /-- Uniform step bound with epsilon-independent constant. -/
 lemma pv_step_bound_ratio_two_uniform
@@ -186,10 +187,10 @@ lemma pv_step_bound_ratio_two_uniform
     have hε₁_lt_ρ : ε₁ < ρ := by
       calc ε₁ < δ := hε₁_lt
         _ ≤ ρ / 2 := min_le_right _ _
-        _ < ρ := by linarith
+        _ < ρ := by linarith only [hρ_pos]
     by_contra h_not_lt
     push Not at h_not_lt
-    linarith [h_far_bound t ht h_not_lt]
+    linarith only [h_far_bound, ht, hγ_le, hε₁_lt_ρ, h_not_lt, h_far_bound t ht h_not_lt]
   have hI_int₂ :=
     cutoff_integrand_intervalIntegrable hat₀ hL
       hγ_meas hγ_cont_deriv ε₂ hε₂_pos

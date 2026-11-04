@@ -337,8 +337,8 @@ theorem convex_combination_approx (hn : 0 < n)
   have hgC_smooth : ∀ i j, ContDiff ℝ ∞ (gC i j) := by
     intro i j
     have h_entry : ContDiff ℝ ∞ (fun x : (Fin n → ℝ) => g x i j) :=
-      ((contDiff_apply ℝ ℝ j).comp
-        ((contDiff_apply ℝ (Fin n → ℝ) i).comp hg.smoothPeriodic.smooth))
+      ((contDiff_apply ℝ (fun _ => ℝ) j).comp
+        ((contDiff_apply ℝ (fun _ => Fin n → ℝ) i).comp hg.smoothPeriodic.smooth))
     exact Complex.ofRealCLM.contDiff.comp h_entry
   have hgC_periodic : ∀ i j, IsPeriodic2Pi (gC i j) := by
     intro i j x k
@@ -426,8 +426,8 @@ theorem convex_combination_approx (hn : 0 < n)
   · intro i j
     apply smooth_periodic_memSobolevDistrib hn
     · have h_g_entry : ContDiff ℝ ∞ (fun x : (Fin n → ℝ) => g x i j) :=
-        ((contDiff_apply ℝ ℝ j).comp
-          ((contDiff_apply ℝ (Fin n → ℝ) i).comp hg.smoothPeriodic.smooth))
+        ((contDiff_apply ℝ (fun _ => ℝ) j).comp
+          ((contDiff_apply ℝ (fun _ => Fin n → ℝ) i).comp hg.smoothPeriodic.smooth))
       have h_sum : ContDiff ℝ ∞
           (fun x : (Fin n → ℝ) => ∑ k : Fin n → Fin M, f k x * B k i j) := by
         apply ContDiff.sum
@@ -460,8 +460,8 @@ theorem convex_combination_approx (hn : 0 < n)
                 - integrationEmbed n (gC i j)) := by
       intro i j
       have hg_ij_smooth : ContDiff ℝ ∞ (fun x : (Fin n → ℝ) => g x i j) :=
-        ((contDiff_apply ℝ ℝ j).comp
-          ((contDiff_apply ℝ (Fin n → ℝ) i).comp hg.smoothPeriodic.smooth))
+        ((contDiff_apply ℝ (fun _ => ℝ) j).comp
+          ((contDiff_apply ℝ (fun _ => Fin n → ℝ) i).comp hg.smoothPeriodic.smooth))
       have hg_ij_per : IsPeriodic2Pi (fun x : (Fin n → ℝ) => g x i j) := by
         intro x kk
         change g (x + periodicShift n kk) i j = g x i j

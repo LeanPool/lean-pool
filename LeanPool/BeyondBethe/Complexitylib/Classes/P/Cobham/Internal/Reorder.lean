@@ -162,7 +162,7 @@ def reorderTM : TM 0 where
         cases iHead <;>
           exact ⟨by first | exact fun _ => rfl | exact idleDir_right_of_start,
             fun _ => idleDir_right_of_start,
-            by first | exact fun _ => rfl | exact idleDir_right_of_start⟩
+            idleDir_right_of_start⟩
     | .rdecBf =>
         cases iHead <;>
           exact ⟨by first | exact fun _ => rfl | exact idleDir_right_of_start,

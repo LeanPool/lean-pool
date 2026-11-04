@@ -161,7 +161,7 @@ theorem generalizedResidueTheorem (U : Set ℂ) (hU : IsOpen U)
       generalizedWindingNumber' γ.toFun γ.a γ.b s * residueAt f s := by
     have hL_eq : L = cauchyPrincipalValueOn S0 f_res γ.toFun γ.a γ.b :=
       (hL.limUnder_eq).symm
-    simp_all
+    simp_all only [gt_iff_lt, ne_eq, Set.mem_Icc, and_imp, implies_true]
   rw [← h_limit_eq]
   have hPV_res_tendsto : Tendsto (fun ε => ∫ t in γ.a..γ.b,
       cauchyPrincipalValueIntegrandOn S0
@@ -270,7 +270,7 @@ theorem generalizedResidueTheorem_simplePoles (U : Set ℂ) (hU : IsOpen U)
       2 * Real.pi * I * ∑ s ∈ S0,
         generalizedWindingNumber' γ.toFun γ.a γ.b s *
           residueSimplePole f s := by
-    simp_all
+    simp_all only [gt_iff_lt, ne_eq, Set.mem_Icc, and_imp, implies_true]
   have hCancel : Tendsto
       (fun ε =>
         (∫ t in γ.a..γ.b, cauchyPrincipalValueIntegrandOn S0 f γ.toFun ε t) -

@@ -254,7 +254,7 @@ theorem pv_integrand_seg3 (r : ℝ) (hr : 0 < r) (α : ℝ) (t : ℝ) (ht : t �
 /-- The integral of `1/t` from `epsilon` to `1` is `-log(epsilon)`. -/
 theorem integral_seg1_eq_neg_log (ε : ℝ) (hε : 0 < ε) (_hε1 : ε < 1) :
     ∫ t in ε..1, (t : ℝ)⁻¹ = -Real.log ε := by
-  simp_all
+  simp_all only [zero_lt_one, integral_inv_of_pos, one_div, Real.log_inv]
 
 /-- The integral of `-1/(3-t)` from `2` to `3-epsilon` is `log(epsilon)`. -/
 theorem integral_seg3_eq_log (ε : ℝ) (hε : 0 < ε) (_hε1 : ε < 1) :
@@ -265,7 +265,9 @@ theorem integral_seg3_eq_log (ε : ℝ) (hε : 0 < ε) (_hε1 : ε < 1) :
       (a := (2 : ℝ)) (b := 3 - ε)
     rw [this]
     congr 1 <;> ring
-  simp_all
+  simp_all only [intervalIntegral.integral_comp_sub_left, sub_sub_cancel, zero_lt_one,
+    integral_inv_of_pos,
+      one_div, Real.log_inv, neg_neg]
 
 /-- On segment 1, the norm of the sector curve is `t * r`. -/
 theorem sectorCurve_norm_seg1 (r : ℝ) (hr : 0 < r) (α : ℝ) (t : ℝ) (ht : t ∈ Icc 0 1) :
@@ -277,7 +279,7 @@ theorem sectorCurve_norm_seg1 (r : ℝ) (hr : 0 < r) (α : ℝ) (t : ℝ) (ht : 
 theorem sectorCurve_norm_seg3' (r : ℝ) (hr : 0 < r) (α : ℝ) (t : ℝ) (ht : t ∈ Icc 2 3) :
     ‖sectorCurve r α t‖ = (3 - t) * r := by
   rw [sectorCurve_seg3 r α t ht, norm_mul, Complex.norm_exp_I_mul_ofReal, mul_one,
-    Complex.norm_of_nonneg (mul_nonneg (by linarith [ht.2]) (le_of_lt hr))]
+    Complex.norm_of_nonneg (mul_nonneg (by linarith only [ht, ht.2]) (le_of_lt hr))]
 
 /-- The logarithmic integrals from segments 1 and 3 cancel. -/
 theorem log_cancellation (r : ℝ) (hr : 0 < r) (ε : ℝ) (hε : 0 < ε) (hεr : ε < r) :
@@ -294,7 +296,8 @@ theorem log_cancellation (r : ℝ) (hr : 0 < r) (ε : ℝ) (hε : 0 < ε) (hεr 
       have := intervalIntegral.integral_comp_sub_left (fun u => u⁻¹) (3 : ℝ)
         (a := (2 : ℝ)) (b := 3 - ε / r)
       rw [this]; congr 1 <;> ring
-    simp_all
+    simp_all only [div_pos_iff_of_pos_left, zero_lt_one, integral_inv_of_pos, one_div, inv_div,
+        intervalIntegral.integral_comp_sub_left, sub_sub_cancel, neg_neg]
   have h1c : ∫ t in (ε / r)..(1 : ℝ), (↑(t⁻¹) : ℂ) = ↑(-(Real.log (ε / r))) := by
     rw [← h1, intervalIntegral.integral_ofReal]
   have h2c : ∫ t in (2 : ℝ)..(3 - ε / r), (-(↑((3 - t)⁻¹)) : ℂ) =
@@ -332,12 +335,12 @@ private theorem pv_cutoff_F_integrable_3delta_3 (r : ℝ) (hr : 0 < r) (α : ℝ
   have hδ : 0 < δ := div_pos hε hr
   have hδ1 : δ < 1 := by rwa [div_lt_one hr]
   apply (intervalIntegrable_const (c := (0 : ℂ))).congr
-  intro t ht; rw [Set.uIoc_of_le (by linarith : 3 - δ ≤ 3)] at ht
+  intro t ht; rw [Set.uIoc_of_le (by linarith only [hδ] : 3 - δ ≤ 3)] at ht
   dsimp only [F]; simp only [sub_zero]; rw [ite_eq_right (not_lt.mpr _)]
-  have h2 : 2 ≤ t := by linarith [ht.1]
+  have h2 : 2 ≤ t := by linarith only [hδ1, ht, ht.1]
   rw [sectorCurve_norm_seg3' r hr α t ⟨h2, ht.2⟩]
-  have : (3 - t) * r ≤ δ * r := mul_le_mul_of_nonneg_right (by linarith [ht.1]) hr.le
-  linarith [show δ * r = ε from by rw [hδ_def]; field_simp]
+  have : (3 - t) * r ≤ δ * r := mul_le_mul_of_nonneg_right (by linarith only [ht, ht.1]) hr.le
+  linarith only [hr, hε, hδ_def, this, show δ * r = ε from by rw [hδ_def]; field_simp]
 
 private theorem pv_cutoff_F_integrable_delta_1 (r : ℝ) (hr : 0 < r) (α : ℝ) (ε : ℝ)
     (hε : 0 < ε) (hεr : ε < r) :
@@ -488,7 +491,7 @@ private theorem pv_sector_cutoff_composed_integrabilities (r : ℝ) (hr : 0 < r)
   have hFint_02 := intervalIntegrable_union_adjacent (by norm_num) (by norm_num)
     hFint_01 hFint_12
   exact ⟨hFint_01, hFint_02,
-    intervalIntegrable_union_adjacent (by norm_num) (by linarith) hFint_02 hFint_2_3δ⟩
+    intervalIntegrable_union_adjacent (by norm_num) (by linarith only [hδ1]) hFint_02 hFint_2_3δ⟩
 
 private theorem pv_cutoff_integral_seg1_eq_inv (r : ℝ) (hr : 0 < r) (α : ℝ) (ε : ℝ)
     (hε : 0 < ε) (hεr : ε < r) :
@@ -596,16 +599,16 @@ theorem pv_sector_cutoff_eq (r : ℝ) (hr : 0 < r) (α : ℝ)
       rw [Set.uIcc_of_le (le_of_lt hδ)] at ht
       dsimp only [F]; simp only [sub_zero]; rw [ite_eq_right (not_lt.mpr _)]
       rw [sectorCurve_norm_seg1 r hr α t ⟨ht.1, le_trans ht.2 (le_of_lt hδ1)⟩]
-      calc t * r ≤ δ * r := by nlinarith [ht.2]
+      calc t * r ≤ δ * r := by nlinarith only [hr, ht, ht.2]
         _ = ε := by rw [hδ_def]; field_simp]
     exact intervalIntegral.integral_zero
   have hI5 : ∫ t in (3 - δ)..(3 : ℝ), F t = 0 := by
     rw [show ∫ t in (3 - δ)..(3 : ℝ), F t = ∫ t in (3 - δ)..(3 : ℝ), (0 : ℂ) from by
       apply intervalIntegral.integral_congr; intro t ht
-      rw [Set.uIcc_of_le (by linarith : 3 - δ ≤ 3)] at ht
+      rw [Set.uIcc_of_le (by linarith only [hδ] : 3 - δ ≤ 3)] at ht
       dsimp only [F]; simp only [sub_zero]; rw [ite_eq_right (not_lt.mpr _)]
-      rw [sectorCurve_norm_seg3' r hr α t ⟨by linarith [ht.1], ht.2⟩]
-      calc (3 - t) * r ≤ δ * r := by nlinarith [ht.1]
+      rw [sectorCurve_norm_seg3' r hr α t ⟨by linarith only [hδ1, ht, ht.1], ht.2⟩]
+      calc (3 - t) * r ≤ δ * r := by nlinarith only [hr, ht, ht.1]
         _ = ε := by rw [hδ_def]; field_simp]
     exact intervalIntegral.integral_zero
   have hI2 := pv_cutoff_integral_seg1_eq_inv r hr α ε hε hεr

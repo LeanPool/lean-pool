@@ -6,6 +6,8 @@ Authors: Arseniy Akopyan
 module
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.ExplicitAffineRelativeCollarComposeDescribed
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 
 /-!

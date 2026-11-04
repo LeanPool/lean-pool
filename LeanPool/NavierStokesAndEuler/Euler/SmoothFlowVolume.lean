@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.SmoothFlowJacobian
+import Mathlib.Analysis.Calculus.Deriv.Comp
 import LeanPool.NavierStokesAndEuler.Euler.Foundations.DeformationVolume
 public import LeanPool.NavierStokesAndEuler.Euler.LinearFundamentalPath
 public import Mathlib.LinearAlgebra.Trace

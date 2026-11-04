@@ -162,7 +162,8 @@ private theorem setupValue_le_inputBase (spec : Spec) (index : ℕ)
     rcases hfixed with rfl | rfl | rfl | rfl | rfl | rfl
     all_goals have hinitial := spec.initial_lt
     all_goals simp [setupValue, stateReg, pointerReg, oneReg, twoReg, transitionBaseReg,
-      acceptBaseReg, inputBase, acceptBase, transitionBase] <;> omega
+      acceptBaseReg, inputBase, acceptBase, transitionBase]
+    all_goals omega
   · obtain ⟨offset, hoffset, rfl⟩ := List.mem_range'.mp htable
     unfold setupValue
     split_ifs with hs hp ho ht htr ha htableLt

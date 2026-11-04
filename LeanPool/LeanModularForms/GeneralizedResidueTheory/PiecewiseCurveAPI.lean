@@ -85,7 +85,7 @@ theorem sortedPartition_head (γ : PiecewiseC1Curve) :
   have hne := sortedPartition_nonempty γ
   have h_a_mem : γ.a ∈ γ.sortedPartition :=
     (mem_sortedPartition γ γ.a).mpr γ.endpoints_in_partition.1
-  linarith [(sortedPartition_mem_Icc γ _ (List.head_mem hne)).1,
+  linarith only [hne, h_a_mem, (sortedPartition_mem_Icc γ _ (List.head_mem hne)).1,
     (sortedPartition_sorted γ).rel_head h_a_mem]
 
 /-- Helper: in a sorted list, every element is ≤ the last element. -/
@@ -112,7 +112,7 @@ theorem sortedPartition_last (γ : PiecewiseC1Curve) :
   have hne := sortedPartition_nonempty γ
   have h_b_mem : γ.b ∈ γ.sortedPartition :=
     (mem_sortedPartition γ γ.b).mpr γ.endpoints_in_partition.2
-  linarith [(sortedPartition_mem_Icc γ _ (List.getLast_mem hne)).2,
+  linarith only [hne, h_b_mem, (sortedPartition_mem_Icc γ _ (List.getLast_mem hne)).2,
     (sortedPartition_sorted γ).rel_getLast h_b_mem]
 
 /-! ### Consecutive pairs cover `[a, b]` -/

@@ -6,6 +6,7 @@ Authors: Qian Tang
 module
 public import LeanPool.Zeta32.Analytic.Energy.Defs
 public import LeanPool.Zeta32.Fstar.Rho
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 /-! Regularity of the comparison density `rhoA a` on `(-a, a)` (the proof notes (8′),
 "density near 0"): `rhoA a t = fc a |t| − log|t|/(6π)` with `fc` continuous (Fstar/Rho.lean), hence

@@ -7,6 +7,7 @@ module
 
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Flow.FiniteSpatialJet
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Flow.LinearGlobalExistence
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-! Global recursive jet flows, built by solving each new derivative level as
 a linear equation along the preceding jet trajectory. -/

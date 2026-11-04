@@ -15,6 +15,9 @@ import LeanPool.SardMoreira.LinearAlgebra
 import LeanPool.SardMoreira.OuterMeasureDeriv
 import LeanPool.SardMoreira.WithRPowDist
 import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.Calculus.ContDiff.Comp
+import Mathlib.MeasureTheory.Covering.BesicovitchVectorSpace
+import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 import Mathlib.Topology.Separation.CompletelyRegular
 
 /-!

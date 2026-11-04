@@ -124,7 +124,11 @@ lemma fdPolygon_deriv_ne_at_t1 : (-I : ℂ) ≠ (iPoint - rho') := by
   simp only [rho', iPoint]
   intro heq
   have h_lhs : (-I : ℂ).re = 0 := by simp only [Complex.neg_re, Complex.I_re, neg_zero]
-  simp_all
+  simp_all only [one_div, sub_re, I_re, add_re, inv_re, re_ofNat, normSq_ofNat,
+    div_self_mul_self', mul_re,
+      div_ofNat_re, ofReal_re, mul_zero, div_ofNat_im, ofReal_im, zero_div, I_im, mul_one,
+        sub_self, add_zero, zero_sub,
+      neg_eq_zero, inv_eq_zero, OfNat.ofNat_ne_zero]
 
 lemma fdPolygon_deriv_ne_at_t2 : (iPoint - rho' : ℂ) ≠ (rho - iPoint) := by
   simp only [rho', iPoint, rho]
@@ -132,8 +136,8 @@ lemma fdPolygon_deriv_ne_at_t2 : (iPoint - rho' : ℂ) ≠ (rho - iPoint) := by
   have h_sqrt3_lt : Real.sqrt 3 / 2 < 1 := by
     have h2 : Real.sqrt 3 < 2 := by
       have : (Real.sqrt 3)^2 = 3 := Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)
-      nlinarith [Real.sqrt_nonneg 3]
-    linarith
+      nlinarith only [this, Real.sqrt_nonneg 3]
+    linarith only [h2]
   have h_sqrt3_re : (↑(Real.sqrt 3) / 2 : ℂ).re = Real.sqrt 3 / 2 := by
     simp only [Complex.div_ofNat_re, Complex.ofReal_re]
   have him : (I - (1/2 + ↑(Real.sqrt 3) / 2 * I)).im =
@@ -142,7 +146,7 @@ lemma fdPolygon_deriv_ne_at_t2 : (iPoint - rho' : ℂ) ≠ (rho - iPoint) := by
     Complex.div_ofNat_im, Complex.mul_im, Complex.I_re, mul_zero,
     Complex.ofReal_im, mul_one, add_zero, Complex.neg_im,
     zero_div, h_sqrt3_re] at him
-  linarith
+  linarith only [h_sqrt3_lt, him]
 
 lemma fdPolygon_deriv_ne_at_t3 : (rho - iPoint : ℂ) ≠ I := by
   simp only [rho, iPoint]
@@ -155,12 +159,12 @@ lemma fdPolygon_deriv_ne_at_t3 : (rho - iPoint : ℂ) ≠ I := by
     norm_num
   rw [heq] at h_lhs
   have h_rhs : (I : ℂ).re = 0 := Complex.I_re
-  rw [h_rhs] at h_lhs; linarith
+  rw [h_rhs] at h_lhs; linarith only [h_lhs]
 
 lemma fdPolygon_deriv_ne_at_t4 : (I : ℂ) ≠ (1 : ℂ) := by
   intro heq
   have h_lhs : (I : ℂ).im = 1 := Complex.I_im
-  simp_all
+  simp_all only [one_im, zero_ne_one]
 
 lemma slope_fdPolygon_at_t1_left (s : ℝ) (hs : s < 1) :
     slope fdPolygon 1 s =

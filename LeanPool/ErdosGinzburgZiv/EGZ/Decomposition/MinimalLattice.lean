@@ -227,13 +227,13 @@ theorem exists_uniform_integerLatticeChart_mod_injective (d K : ℕ) :
   have hvspan : v ∈ vectorSpan ℤ (S : Set (IntCoord n)) := by
     apply hB hp hBp n hn S hS
     rw [hv, ← C.linear_range_eq]
-    exact ⟨q - r, C.map.linearMap_vsub q r⟩
+    exact ⟨q - r, C.map.linear_apply_vsub q r⟩
   rw [← C.linear_range_eq] at hvspan
   obtain ⟨t, ht⟩ := hvspan
   have hdiff : (p : ℤ) • t = q - r := by
     apply C.map.linear_injective_iff.mpr C.injective
     rw [map_smul, ht, hv]
-    exact (C.map.linearMap_vsub q r).symm
+    exact (C.map.linear_apply_vsub q r).symm
   ext i
   have hi := congrFun hdiff i
   have hcast := congrArg (fun z : ℤ ↦ (z : ZMod p)) hi

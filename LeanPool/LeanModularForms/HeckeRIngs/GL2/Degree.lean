@@ -148,7 +148,9 @@ theorem deg_T_sum_prime_pow (k : ℕ) :
 /-- `deg(TSum(1)) = 1`, used as base case for deg_T_sum. -/
 private lemma deg_T_sum_one : deg (GLPair 2) (TSum 1) = 1 := by
   change deg (GLPair 2) (∑ a ∈ Nat.divisors 1, TAd a (1 / a)) = 1
-  simp_all
+  simp_all only [Nat.divisors_one, Finset.sum_singleton, Order.lt_one_iff, Nat.div_self,
+    T_ad_one_one,
+      deg_one_val]
 
 /-- Theorem 3.24(7): `deg(T(m)) = σ₁(m)`.
     By prime factorization + coprime multiplicativity + prime-power case. -/

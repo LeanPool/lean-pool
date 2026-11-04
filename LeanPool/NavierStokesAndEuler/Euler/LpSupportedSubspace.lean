@@ -35,12 +35,12 @@ variable {α V : Type*} [MeasurableSpace α] (μ : Measure α)
 
 /-- The actual measurable-set cutoff on a Bochner L² function. -/
 def cutoff (u : Lp V 2 μ) : Lp V 2 μ :=
-  ((Lp.memLp u).indicator hS).toLp (S.indicator u)
+  ((Lp.memLp u).indicator hS.nullMeasurableSet).toLp (S.indicator u)
 
 omit [InnerProductSpace ℝ V] in
 /-- Its representative is the literal indicator product. -/
 theorem cutoff_ae (u : Lp V 2 μ) : cutoff μ S hS u =ᵐ[μ] S.indicator u :=
-  ((Lp.memLp u).indicator hS).coeFn_toLp
+  ((Lp.memLp u).indicator hS.nullMeasurableSet).coeFn_toLp
 
 omit [InnerProductSpace ℝ V] in
 /-- Measurable-set projection is norm-decreasing. -/

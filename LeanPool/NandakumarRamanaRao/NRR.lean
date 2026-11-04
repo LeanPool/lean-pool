@@ -7,6 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.AAK.MainTheoremAffinePullback
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # NRR

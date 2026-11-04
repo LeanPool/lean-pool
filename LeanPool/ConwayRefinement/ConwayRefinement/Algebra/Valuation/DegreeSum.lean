@@ -6,6 +6,7 @@ Authors: Dan Abramov
 module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeInitialForm
+public import Mathlib.Algebra.Group.Subgroup.Finite
 
 import Mathlib.Tactic.Ring
 

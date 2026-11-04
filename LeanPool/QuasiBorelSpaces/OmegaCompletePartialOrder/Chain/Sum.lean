@@ -5,7 +5,7 @@ Authors: Anthony Vandikas, Kiarash Sotoudeh
 -/
 module
 
-public import Mathlib.Data.Sum.Order
+public import Mathlib.Order.Sum.Order
 public import Mathlib.Order.OmegaCompletePartialOrder
 
 

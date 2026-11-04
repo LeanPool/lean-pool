@@ -6,9 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionChainMap
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionHomotopyOperator
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricBoundaryChainMap
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
+import Mathlib.Topology.Algebra.InfiniteSum.Order
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionChainMap
 
 /-! # Barycentric Subdivision Homotopy Formula -/
 
@@ -240,10 +245,10 @@ theorem barycentricSubdivisionHomotopy_boundary_formula (R : Type) [CommRing R]
         have hf := f.hom.map_smul x (1 : R); have hg := g.hom.map_smul x (1 : R)
         simp only [smul_eq_mul, mul_one] at hf hg; rw [hf, hg, h]
       apply hval
-      erw [ModuleCat.hom_comp, LinearMap.comp_apply,
-           ModuleCat.hom_comp, LinearMap.comp_apply,
-           ModuleCat.hom_sub, LinearMap.sub_apply,
-           ModuleCat.hom_comp, LinearMap.comp_apply]
+      change (singularBoundary R X 0).hom
+          ((barycentricSubdivisionHomotopyLinearMap R X 0).hom (chainGenerator R X 0 σ)) =
+        chainGenerator R X 0 σ -
+          (barycentricSubdivisionLinearMap R X 0).hom (chainGenerator R X 0 σ)
       exact gen X σ
     have h2 := DFunLike.congr_fun (congrArg ModuleCat.Hom.hom key) c
     simpa [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_sub, LinearMap.sub_apply,
@@ -329,13 +334,13 @@ theorem barycentricSubdivisionHomotopy_boundary_formula (R : Type) [CommRing R]
         have hf := f.hom.map_smul x (1 : R); have hg := g.hom.map_smul x (1 : R)
         simp only [smul_eq_mul, mul_one] at hf hg; rw [hf, hg, h]
       apply hval
-      erw [ModuleCat.hom_add, LinearMap.add_apply,
-           ModuleCat.hom_comp, LinearMap.comp_apply,
-           ModuleCat.hom_comp, LinearMap.comp_apply,
-           ModuleCat.hom_comp, LinearMap.comp_apply,
-           ModuleCat.hom_comp, LinearMap.comp_apply,
-           ModuleCat.hom_sub, LinearMap.sub_apply,
-           ModuleCat.hom_comp, LinearMap.comp_apply]
+      change (singularBoundary R X (m + 1)).hom
+          ((barycentricSubdivisionHomotopyLinearMap R X (m + 1)).hom
+            (chainGenerator R X (m + 1) σ)) +
+          (barycentricSubdivisionHomotopyLinearMap R X m).hom
+            ((singularBoundary R X m).hom (chainGenerator R X (m + 1) σ)) =
+        chainGenerator R X (m + 1) σ -
+          (barycentricSubdivisionLinearMap R X (m + 1)).hom (chainGenerator R X (m + 1) σ)
       exact gen X σ
     have h2 := DFunLike.congr_fun (congrArg ModuleCat.Hom.hom key) c
     simpa [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_add, LinearMap.add_apply,

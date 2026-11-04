@@ -64,11 +64,11 @@ theorem tot_zero (V W : SuperVect) : tot (0 : V ⟶ W) = 0 := by
 
 /-- Forgetting the grading preserves the endomorphism algebra. -/
 def totAlgHom (V : SuperVect) : End V →ₐ[ℂ] Module.End ℂ (Tot V) where
-  toFun := tot
+  toFun f := tot f.asHom
   map_one' := tot_id V
-  map_mul' f g := tot_comp g f
+  map_mul' f g := tot_comp g.asHom f.asHom
   map_zero' := tot_zero V V
-  map_add' := tot_add
+  map_add' f g := tot_add f.asHom g.asHom
   commutes' c := by
     change tot (c • 𝟙 V) = c • LinearMap.id
     rw [tot_smul, tot_id]

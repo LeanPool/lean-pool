@@ -8,7 +8,6 @@ module
 public import LeanPool.ClassificationOfSurfaces.Moise.BrokenLine
 public import LeanPool.ClassificationOfSurfaces.Moise.PolygonalPolyhedron
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 
 /-!
 # Polygonal arcs from broken lines
@@ -928,34 +927,34 @@ theorem exists_face_on_segment (i : Fin B.n) {x : Plane}
               have hxlo : 0 < verticalLine a x := by
                 change 0 < x 0 - a 0
                 rw [hxcoord0]
-                nlinarith [ht.1, ht.2]
+                nlinarith only [ht.1, ht.2, hlt]
               have hxhi : verticalLine b x < 0 := by
                 change x 0 - b 0 < 0
                 rw [hxcoord0]
-                nlinarith [ht.1, ht.2]
+                nlinarith only [ht.1, ht.2, hlt]
               have hlo := M.nonneg_on_face_of_monochromatic_of_pos
                 (B.arrangementMesh_monochromatic_verticalLine i.castSucc) hs hxs hxlo v hv
               have hhi := M.nonpos_on_face_of_monochromatic_of_neg
                 (B.arrangementMesh_monochromatic_verticalLine i.succ) hs hxs hxhi v hv
               change 0 ≤ M.toPlaneComplex.position v 0 - a 0 at hlo
               change M.toPlaneComplex.position v 0 - b 0 ≤ 0 at hhi
-              constructor <;> linarith
+              constructor <;> linarith only [hlo, hhi]
             · rw [Set.uIcc_of_ge hgt.le, Set.mem_Icc]
               have hxhi : verticalLine a x < 0 := by
                 change x 0 - a 0 < 0
                 rw [hxcoord0]
-                nlinarith [ht.1, ht.2]
+                nlinarith only [ht.1, ht.2, hgt]
               have hxlo : 0 < verticalLine b x := by
                 change 0 < x 0 - b 0
                 rw [hxcoord0]
-                nlinarith [ht.1, ht.2]
+                nlinarith only [ht.1, ht.2, hgt]
               have hhi := M.nonpos_on_face_of_monochromatic_of_neg
                 (B.arrangementMesh_monochromatic_verticalLine i.castSucc) hs hxs hxhi v hv
               have hlo := M.nonneg_on_face_of_monochromatic_of_pos
                 (B.arrangementMesh_monochromatic_verticalLine i.succ) hs hxs hxlo v hv
               change M.toPlaneComplex.position v 0 - a 0 ≤ 0 at hhi
               change 0 ≤ M.toPlaneComplex.position v 0 - b 0 at hlo
-              constructor <;> linarith
+              constructor <;> linarith only [hlo, hhi]
         · by_cases h1 : a 1 = b 1
           · rw [h1, Set.uIcc_self]
             have h0 : a 0 ≠ b 0 := by
@@ -972,7 +971,7 @@ theorem exists_face_on_segment (i : Fin B.n) {x : Plane}
               rw [h1] at hvline
               ring_nf at hvline ⊢
               rw [h1]
-              linarith
+              linarith only [hvline]
             calc
               M.toPlaneComplex.position v 1 = a 1 := sub_eq_zero.mp
                 ((mul_eq_zero.mp hprod).resolve_left (sub_ne_zero.mpr h0.symm))
@@ -982,34 +981,34 @@ theorem exists_face_on_segment (i : Fin B.n) {x : Plane}
               have hxlo : 0 < horizontalLine a x := by
                 change 0 < x 1 - a 1
                 rw [hxcoord1]
-                nlinarith [ht.1, ht.2]
+                nlinarith only [ht.1, ht.2, hlt]
               have hxhi : horizontalLine b x < 0 := by
                 change x 1 - b 1 < 0
                 rw [hxcoord1]
-                nlinarith [ht.1, ht.2]
+                nlinarith only [ht.1, ht.2, hlt]
               have hlo := M.nonneg_on_face_of_monochromatic_of_pos
                 (B.arrangementMesh_monochromatic_horizontalLine i.castSucc) hs hxs hxlo v hv
               have hhi := M.nonpos_on_face_of_monochromatic_of_neg
                 (B.arrangementMesh_monochromatic_horizontalLine i.succ) hs hxs hxhi v hv
               change 0 ≤ M.toPlaneComplex.position v 1 - a 1 at hlo
               change M.toPlaneComplex.position v 1 - b 1 ≤ 0 at hhi
-              constructor <;> linarith
+              constructor <;> linarith only [hlo, hhi]
             · rw [Set.uIcc_of_ge hgt.le, Set.mem_Icc]
               have hxhi : horizontalLine a x < 0 := by
                 change x 1 - a 1 < 0
                 rw [hxcoord1]
-                nlinarith [ht.1, ht.2]
+                nlinarith only [ht.1, ht.2, hgt]
               have hxlo : 0 < horizontalLine b x := by
                 change 0 < x 1 - b 1
                 rw [hxcoord1]
-                nlinarith [ht.1, ht.2]
+                nlinarith only [ht.1, ht.2, hgt]
               have hhi := M.nonpos_on_face_of_monochromatic_of_neg
                 (B.arrangementMesh_monochromatic_horizontalLine i.castSucc) hs hxs hxhi v hv
               have hlo := M.nonneg_on_face_of_monochromatic_of_pos
                 (B.arrangementMesh_monochromatic_horizontalLine i.succ) hs hxs hxlo v hv
               change M.toPlaneComplex.position v 1 - a 1 ≤ 0 at hhi
               change 0 ≤ M.toPlaneComplex.position v 1 - b 1 at hlo
-              constructor <;> linarith
+              constructor <;> linarith only [hlo, hhi]
 
 /-- The common arrangement of a finite segment family resolves each requested member into faces
 contained in that member.  Keeping this theorem abstract in the family index prevents clients

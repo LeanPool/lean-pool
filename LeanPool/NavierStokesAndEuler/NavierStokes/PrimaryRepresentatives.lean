@@ -61,8 +61,8 @@ theorem position_smooth : ContDiff ℝ ∞ position := by
   · exact contDiff_snd.snd
 
 theorem slow_smooth : ContDiff ℝ ∞ slow :=
-  (contDiff_apply ℝ ℝ 0).prodMk
-    ((contDiff_apply ℝ ℝ 1).prodMk (contDiff_apply ℝ ℝ 2))
+  (contDiff_apply ℝ (fun _ => ℝ) 0).prodMk
+    ((contDiff_apply ℝ (fun _ => ℝ) 1).prodMk (contDiff_apply ℝ (fun _ => ℝ) 2))
 
 theorem norm_slow_sub_le {x y : Position} {c : ℝ}
     (h : ∀ j, |x j - y j| ≤ c) : ‖slow x - slow y‖ ≤ c := by

@@ -37,14 +37,14 @@ the strand over the right dual, and evaluate. -/
 def catTrace [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
     [RigidCategory C]
     {X : C} (f : X ⟶ X) : End (𝟙_ C) :=
-  η_ X Xᘁ ≫ f ▷ Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ
+  .of (η_ X Xᘁ ≫ f ▷ Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ)
 
 /-- The categorical dimension of an object: the closed loop obtained
 by crossing the coevaluation strand over the dual and evaluating. -/
 def catDim [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
     [RigidCategory C]
     (X : C) : End (𝟙_ C) :=
-  η_ X Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ
+  .of (η_ X Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ)
 
 /-- The trace of the identity is the categorical dimension. -/
 theorem catTrace_id [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
@@ -57,6 +57,7 @@ theorem catTrace_add [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
     [Preadditive C] [MonoidalPreadditive C] [RigidCategory C]
     {X : C} (f g : X ⟶ X) :
     catTrace (f + g) = catTrace f + catTrace g := by
+  apply End.ext
   change η_ X Xᘁ ≫ (f + g) ▷ Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ =
     (η_ X Xᘁ ≫ f ▷ Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ) +
       (η_ X Xᘁ ≫ g ▷ Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ)
@@ -69,6 +70,7 @@ theorem catTrace_smul
     [MonoidalLinear ℂ C] [RigidCategory C]
     {X : C} (a : ℂ) (f : X ⟶ X) :
     catTrace (a • f) = a • catTrace f := by
+  apply End.ext
   change η_ X Xᘁ ≫ (a • f) ▷ Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ =
     a • (η_ X Xᘁ ≫ f ▷ Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ)
   simp [MonoidalLinear.smul_whiskerRight]
@@ -81,6 +83,7 @@ theorem catTrace_comp_comm
     [RigidCategory C]
     {X Y : C} (f : X ⟶ Y) (g : Y ⟶ X) :
     catTrace (f ≫ g) = catTrace (g ≫ f) := by
+  apply End.ext
   change η_ X Xᘁ ≫ (f ≫ g) ▷ Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ =
     η_ Y Yᘁ ≫ (g ≫ f) ▷ Yᘁ ≫ (β_ Y Yᘁ).hom ≫ ε_ Y Yᘁ
   rw [comp_whiskerRight]
@@ -99,7 +102,8 @@ theorem catTrace_eq_loop
     [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
     [RigidCategory C]
     {X : C} (f : X ⟶ X) :
-    catTrace f = η_ X Xᘁ ≫ (β_ X Xᘁ).hom ≫ Xᘁ ◁ f ≫ ε_ X Xᘁ := by
+    catTrace f = End.of (η_ X Xᘁ ≫ (β_ X Xᘁ).hom ≫ Xᘁ ◁ f ≫ ε_ X Xᘁ) := by
+  apply End.ext
   change η_ X Xᘁ ≫ f ▷ Xᘁ ≫ (β_ X Xᘁ).hom ≫ ε_ X Xᘁ = _
   rw [braiding_naturality_left_assoc]
 
@@ -108,7 +112,7 @@ def pairTrace [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
     {X D : C} (p : ExactPairing X D) (f : X ⟶ X) :
     End (𝟙_ C) :=
   letI := p
-  η_ X D ≫ f ▷ D ≫ (β_ X D).hom ≫ ε_ X D
+  .of (η_ X D ≫ f ▷ D ≫ (β_ X D).hom ≫ ε_ X D)
 
 /-- The trace does not depend on the choice of exact pairing: the
 comparison morphism between two right duals carries one pairing's
@@ -127,6 +131,7 @@ theorem pairTrace_eq [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
         @coevaluation_comp_rightAdjointMate C _ _ X X ⟨D₂⟩ ⟨D₁⟩ (𝟙 X)
     · simpa using
         @rightAdjointMate_comp_evaluation C _ _ X X ⟨D₂⟩ ⟨D₁⟩ (𝟙 X)
+  apply End.ext
   change η_ X D₂ ≫ f ▷ D₂ ≫ (β_ X D₂).hom ≫ ε_ X D₂ =
     η_ X D₁ ≫ f ▷ D₁ ≫ (β_ X D₁).hom ≫ ε_ X D₁
   rw [← hA, assoc, whisker_exchange_assoc,
@@ -284,12 +289,13 @@ theorem catTrace_tensorHom
     [RigidCategory C]
     {X Y : C} (f : X ⟶ X) (g : Y ⟶ Y) :
     catTrace (f ⊗ₘ g) = catTrace f * catTrace g := by
-  rw [End.mul_def, catTrace_eq_pairTrace (f ⊗ₘ g),
+  apply End.ext
+  rw [End.mul_asHom, catTrace_eq_pairTrace (f ⊗ₘ g),
     pairTrace_eq (ExactPairing.tensor : ExactPairing (X ⊗ Y) (Yᘁ ⊗ Xᘁ))
       HasRightDual.exact (f ⊗ₘ g)]
   change η_ (X ⊗ Y) (Yᘁ ⊗ Xᘁ) ≫ (f ⊗ₘ g) ▷ (Yᘁ ⊗ Xᘁ) ≫
       (β_ (X ⊗ Y) (Yᘁ ⊗ Xᘁ)).hom ≫ ε_ (X ⊗ Y) (Yᘁ ⊗ Xᘁ) =
-    catTrace g ≫ catTrace f
+    (catTrace g).asHom ≫ (catTrace f).asHom
   obtain ⟨s, hs⟩ : ∃ s : 𝟙_ C ⟶ 𝟙_ C,
       η_ X Xᘁ ≫ (β_ X Xᘁ).hom ≫ Xᘁ ◁ f ≫ ε_ X Xᘁ = s := ⟨_, rfl⟩
   obtain ⟨t, ht⟩ : ∃ t : 𝟙_ C ⟶ 𝟙_ C,
@@ -362,7 +368,7 @@ theorem catTrace_tensorHom
       -- The outer loop closes on `g`, and the scalars compose.
     _ = (η_ Y Yᘁ ≫ (β_ Y Yᘁ).hom ≫ Yᘁ ◁ g ≫ ε_ Y Yᘁ) ≫ s := by
         monoidal
-    _ = catTrace g ≫ catTrace f := by
+    _ = (catTrace g).asHom ≫ (catTrace f).asHom := by
         rw [catTrace_eq_loop g, catTrace_eq_loop f, hs, ht]
 
 /-- **The dimension of the tensor unit is one.**  Computed against
@@ -374,7 +380,9 @@ theorem catDim_unit [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
   have h : catDim (𝟙_ C) = pairTrace exactPairingUnit (𝟙 (𝟙_ C)) := by
     rw [← catTrace_id, catTrace_eq_pairTrace]
     exact pairTrace_eq _ _ _
-  rw [h, End.one_def]
+  rw [h]
+  apply End.ext
+  rw [End.one_asHom]
   change (ρ_ (𝟙_ C)).inv ≫ (𝟙 (𝟙_ C) ▷ 𝟙_ C) ≫
     (β_ (𝟙_ C) (𝟙_ C)).hom ≫ (ρ_ (𝟙_ C)).hom = 𝟙 (𝟙_ C)
   rw [braiding_tensorUnit_left, MonoidalCategory.unitors_equal]
@@ -385,8 +393,8 @@ def catTraceLin [Category.{v} C] [MonoidalCategory C] [SymmetricCategory C]
     [Preadditive C] [Linear ℂ C] [MonoidalPreadditive C]
     [MonoidalLinear ℂ C] [RigidCategory C]
     (X : C) : End X →ₗ[ℂ] End (𝟙_ C) where
-  toFun := catTrace
-  map_add' := catTrace_add
-  map_smul' := catTrace_smul
+  toFun f := catTrace f.asHom
+  map_add' f g := catTrace_add f.asHom g.asHom
+  map_smul' c f := catTrace_smul c f.asHom
 
 end RS

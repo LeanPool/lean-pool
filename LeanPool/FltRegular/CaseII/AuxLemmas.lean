@@ -50,7 +50,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain
     | succ n' hn' IH =>
         rintro ⟨a, b, ha, hb, e⟩
         have e₀ := e
-        rw [div_eq_mul_inv, ← spanSingleton_mul_spanSingleton,
+        rw [div_eq_mul_inv, map_mul,
           ← one_div_spanSingleton, ← mul_div_assoc, mul_one, div_eq_iff,
           ← mul_div_right_comm, eq_div_iff hJ', ← coeIdeal_span_singleton,
           ← coeIdeal_span_singleton, ← coeIdeal_mul, ← coeIdeal_mul, coeIdeal_inj] at e
@@ -95,7 +95,7 @@ lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain
   obtain ⟨a, ha⟩ := h
   obtain ⟨s, t, rfl⟩ := IsLocalization.exists_mk'_eq R⁰ a
   by_cases h : s = 0
-  · rw [div_eq_iff hJ', h, IsLocalization.mk'_zero, spanSingleton_zero, zero_mul] at ha
+  · rw [div_eq_iff hJ', h, IsLocalization.mk'_zero, map_zero, zero_mul] at ha
     exact hI' ha
   obtain ⟨n, hn⟩ := FiniteMultiplicity.of_not_isUnit hx.not_isUnit h
   obtain ⟨m, hm⟩ :=

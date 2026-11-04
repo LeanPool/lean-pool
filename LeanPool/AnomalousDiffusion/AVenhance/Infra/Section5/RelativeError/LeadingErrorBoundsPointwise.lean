@@ -134,7 +134,7 @@ theorem xFlowHess_eq_iteratedFDeriv (hΦ : IsStreamSeq I Φ) (m : ℕ) (l : ℤ)
     xFlowHess I hΦ m l t z p j q =
       iteratedFDeriv ℝ 2 (fun y => I.xFlow hΦ m l t y p) z ![basisVec q, basisVec j] := by
   have hf : ContDiff ℝ ∞ (fun y => I.xFlow hΦ m l t y p) :=
-    (contDiff_apply ℝ ℝ p).comp (contDiff_xFlow_slice I hΦ m l t)
+    (contDiff_apply ℝ (fun _ => ℝ) p).comp (contDiff_xFlow_slice I hΦ m l t)
   unfold xFlowHess
   simp only [spaceGrad]
   exact fderiv_apply_const_eq hf z (basisVec q) (basisVec j)

@@ -96,9 +96,9 @@ private lemma uhp_norm_one_re_zero_eq_i (p : ℍ) (hn : ‖(p : ℂ)‖ = 1) (hr
   have h_nsq : Complex.normSq (p : ℂ) = 1 := by rw [Complex.normSq_eq_norm_sq, hn, one_pow]
   rw [Complex.normSq_apply, hr] at h_nsq
   have h_im : (p : ℂ).im = 1 := by
-    have h_prod : ((p : ℂ).im - 1) * ((p : ℂ).im + 1) = 0 := by nlinarith
+    have h_prod : ((p : ℂ).im - 1) * ((p : ℂ).im + 1) = 0 := by nlinarith only [h_nsq]
     rcases mul_eq_zero.mp h_prod with h | h
-    · linarith
+    · linarith only [h]
     · exact absurd h (ne_of_gt (add_pos p.2 one_pos))
   exact Complex.ext (hr.trans Complex.I_re.symm) (h_im.trans Complex.I_im.symm)
 

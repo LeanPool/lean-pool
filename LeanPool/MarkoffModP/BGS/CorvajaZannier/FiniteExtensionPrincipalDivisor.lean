@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import Mathlib.RingTheory.QuasiFinite.Basic
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteExtensionExhaustiveProductFormula
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.GlobalWronskianWeightedPlaceSum
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.InfinityInertiaDegree

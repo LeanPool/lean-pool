@@ -259,7 +259,7 @@ noncomputable def symmCoeffBilin (M : PotentialSolenoidalL2Data U)
     (z w : Space (U := U) (a := a) M hEll) :
     symmCoeffBilin (U := U) (a := a) M hEll z w =
       inner ℝ (hilbertSymmCoeffOperator hEll (field z)) (field w) := by
-  simp [symmCoeffBilin, symmCoeffFieldCLM, ContinuousLinearMap.bilinearComp_apply, field]
+  rfl
 
 theorem symmCoeffBilin_apply_eq_integral {M : PotentialSolenoidalL2Data U}
     {hEll : IsEllipticFieldOn lam Lam U a}

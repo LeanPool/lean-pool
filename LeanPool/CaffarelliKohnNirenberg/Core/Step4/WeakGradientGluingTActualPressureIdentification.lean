@@ -96,7 +96,7 @@ theorem raw_divergence_source_memLp_ae_of_sws
     convert h.ennrealOfReal using 1 <;> norm_num
   filter_upwards [centredSWS_slice_data hsol hρ hsub] with s hs
   intro j
-  apply (memLp_indicator_iff_restrict (vec3Ball_measurable _ _)).mpr
+  apply (memLp_indicator_iff_restrict (vec3Ball_measurable _ _).nullMeasurableSet).mpr
   have hp : MemLp (fun y => ∑ k, Du (y,s) j k * u (y,s) k)
       (ENNReal.ofReal (6/5 : ℝ)) (volume.restrict (vec3Ball z.1 ρ)) :=
     memLp_finsetSum' Finset.univ (fun k _ => ((hs.2.1.eval j).eval k).mul (hs.1.eval k))

@@ -6,7 +6,7 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Topology
 public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.ConvexClosed
 
 /-!

@@ -8,7 +8,6 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.Monodromy
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.InducedOnRPCohomology
-public import Mathlib.GroupTheory.Perm.Sign
 /-!
 # The canonical `ZMod 2` monodromy class of the double cover `S^n → RP n`
 

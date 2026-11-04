@@ -44,10 +44,10 @@ public theorem k4pair_edge_iff (G : SimpleGraph V) [DecidableRel G.Adj] {u v : V
         first
           | exact absurd rfl hxy
           | assumption
-          | (exact huv) | exact huv.symm
-          | exact huc | exact huc.symm | exact hud | exact hud.symm
-          | exact hvc | exact hvc.symm | exact hvd | exact hvd.symm
-          | exact hcd | exact hcd.symm
+          | exact huv.symm
+          | exact huc.symm | exact hud.symm
+          | exact hvc.symm | exact hvd.symm
+          | exact hcd.symm
     · have : u ≠ v := huv.ne
       have : u ≠ c := huc.ne
       have : u ≠ d := hud.ne

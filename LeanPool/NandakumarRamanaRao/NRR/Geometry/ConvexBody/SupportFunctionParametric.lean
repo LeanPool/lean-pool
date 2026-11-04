@@ -6,7 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.AffineOps
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunction
+public import Mathlib.Topology.MetricSpace.HausdorffDistance
+import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionBasic
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionContinuity
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # `NRR.Geometry.ConvexBody` — support-function continuity under body parameters

@@ -8,6 +8,9 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.BarredPermutation
 public import LeanPool.NandakumarRamanaRao.NRR.ConfigurationSpace
+public import Mathlib.Order.CompletePartialOrder
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Canonical configurations of barred permutations

@@ -47,7 +47,7 @@ private lemma hasDerivAt_remainder_bound
   simpa only [Real.norm_eq_abs] using h_bound
 
 private lemma norm_real_smul (x : ℝ) (L : ℂ) : ‖x • L‖ = |x| * ‖L‖ := by
-  simp_all
+  simp_all only [real_smul, Complex.norm_mul, norm_real, Real.norm_eq_abs]
 
 /-- The increment norm is within `M` of the linear part `|t - t₀| * ‖L‖`. -/
 private lemma abs_norm_gamma_sub_smul_le {γ : ℝ → ℂ} {t₀ : ℝ} {L : ℂ} {M : ℝ} {t : ℝ}
@@ -161,7 +161,7 @@ lemma gamma_lower_bound_of_hasDerivAt
       (‖L‖ / 2) (half_pos hLnorm_pos)
   refine ⟨δ, hδ_pos, fun t ht_pos ht_lt => ?_⟩
   have h := abs_le.mp (abs_norm_gamma_sub_smul_le (hδ_bound t ht_pos ht_lt))
-  nlinarith [h.1]
+  nlinarith only [h, h.1]
 
 /-- Upper bound on ‖γ t - γ t₀‖ from non-zero derivative.
 Uses `hasDerivAt_remainder_bound` + triangle inequality. -/
@@ -176,7 +176,7 @@ lemma gamma_upper_bound_of_hasDerivAt
     hasDerivAt_remainder_bound hγ_hasderiv ‖L‖ hLnorm_pos
   refine ⟨δ, hδ_pos, fun t ht_pos ht_lt => ?_⟩
   have h := abs_le.mp (abs_norm_gamma_sub_smul_le (hδ_bound t ht_pos ht_lt))
-  nlinarith [h.2]
+  nlinarith only [h, h.2]
 
 /-- If γ is continuous on [a,b] and injective at γ(t₀),
 then γ stays bounded away from γ(t₀) outside any
@@ -238,7 +238,7 @@ lemma t_lower_from_gamma_lower
   have h1 : εC < 2 * ‖L‖ * |t - t₀| := lt_of_lt_of_le h_gamma_lower (h_upper t ht_pos ht_lt)
   calc εC / (2 * ‖L‖)
       < (2 * ‖L‖ * |t - t₀|) / (2 * ‖L‖) :=
-        div_lt_div_of_pos_right h1 (by linarith [norm_pos_iff.mpr hL])
+        div_lt_div_of_pos_right h1 (by linarith only [hL, norm_pos_iff.mpr hL])
     _ = |t - t₀| := by field_simp
 
 /-- If γ is C² at t₀, then deriv γ is continuous at t₀. -/
@@ -253,7 +253,7 @@ lemma contAt_deriv_of_contDiffAt_two
   have h_cont_at_fderiv : ContinuousAt (fderiv ℝ γ) t₀ :=
     h_fderiv_cont.continuousAt (Metric.isOpen_ball.mem_nhds (Metric.mem_ball_self hε_pos))
   have h_deriv_eq : deriv γ = (fun t => fderiv ℝ γ t 1) := funext fun t => by
-    simp_all
+    simp_all only [gt_iff_lt, fderiv_eq_smul_deriv, one_smul]
   rw [h_deriv_eq]
   exact h_cont_at_fderiv.clm_apply continuousAt_const
 

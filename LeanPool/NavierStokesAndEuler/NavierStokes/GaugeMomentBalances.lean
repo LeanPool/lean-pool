@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.VariableGaugeMean
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.DefectIncrementBounds
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SignedStressPrimitive
 

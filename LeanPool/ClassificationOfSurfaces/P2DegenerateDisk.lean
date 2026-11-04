@@ -7,10 +7,6 @@ module
 
 public import LeanPool.ClassificationOfSurfaces.DiskSquare
 public import LeanPool.ClassificationOfSurfaces.SphereCarrierGeometry
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # The one-sided-degenerate P2 disk model
@@ -1183,12 +1179,14 @@ theorem exists_collarMap_eq_smul_teardropMap
   have hspos : 0 < s := hs0.lt_of_ne' (by
     simpa [s] using hheight)
   have hfactorLower : -1 ≤ 3 - 4 * a := by
-    nlinarith
+    linarith only [haOne]
   have hfactorUpper : 3 - 4 * a ≤ 1 := by
-    nlinarith
+    linarith only [haHalf]
   have hyBounds : -s ≤ y ∧ y ≤ s := by
     dsimp [y]
-    constructor <;> nlinarith
+    constructor
+    · simpa only [mul_neg_one] using mul_le_mul_of_nonneg_left hfactorLower hs0
+    · simpa only [mul_one] using mul_le_mul_of_nonneg_left hfactorUpper hs0
   have hySq : y ^ 2 ≤ s ^ 2 := by
     exact sq_le_sq' hyBounds.1 hyBounds.2
   let w : PolygonCell 2 :=
@@ -1200,16 +1198,16 @@ theorem exists_collarMap_eq_smul_teardropMap
         rw [Complex.normSq_apply]
         change
           upper.val.re * upper.val.re + y * y ≤ 1
-        nlinarith
+        nlinarith only [hupperSq, hySq]
       rw [Complex.normSq_eq_norm_sq] at hnormSq
-      nlinarith [norm_nonneg (Complex.mk upper.val.re y)]⟩
+      nlinarith only [hnormSq, norm_nonneg (Complex.mk upper.val.re y)]⟩
   have hwHeight : chordHeight w = s := by
     have hwSq := chordHeight_sq w
     have hupperSq := chordHeight_sq upper
     have hwre : w.val.re = upper.val.re := by rfl
     rw [hwre] at hwSq
     have hw0 := chordHeight_nonneg w
-    nlinarith
+    exact (sq_eq_sq₀ hw0 hs0).mp (hwSq.trans hupperSq.symm)
   have hwCircle : collarCirclePoint w = q := by
     rw [← hcircle]
     apply PolygonCell.ext

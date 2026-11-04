@@ -53,7 +53,7 @@ theorem memScalarL2_indicator_subset {V W : Set (Vec d)} (hV : MeasurableSet V)
     (hVW : V ⊆ W) {f : Vec d → ℝ} (hf : MemScalarL2 V f) :
     MemScalarL2 W (Set.indicator V f) := by
   change MeasureTheory.MemLp (Set.indicator V f) 2 (volumeMeasureOn W)
-  rw [MeasureTheory.memLp_indicator_iff_restrict hV]
+  rw [MeasureTheory.memLp_indicator_iff_restrict hV.nullMeasurableSet]
   rwa [volumeMeasureOn, MeasureTheory.Measure.restrict_restrict hV,
     Set.inter_eq_self_of_subset_left hVW]
 

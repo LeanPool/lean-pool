@@ -10,7 +10,6 @@ public import LeanPool.LeanModularForms.HeckeRIngs.AbstractHeckeRing.Degree
 import LeanPool.LeanModularForms.HeckeRIngs.GLn.SLnTransvection
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
-import Mathlib.Data.Int.ConditionallyCompleteOrder
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity.Finset
 import Mathlib.Topology.Algebra.InfiniteSum.Order
@@ -615,7 +614,7 @@ private lemma GLnQ_mem_SLnZ_of_coprime_scaling (C : GL (Fin n) ℚ)
         t * ((pb : ℚ) * (↑C : Matrix (Fin n) (Fin n) ℚ) i j) := by
       have hst_Q : (s : ℚ) * (pa : ℚ) + (t : ℚ) * (pb : ℚ) = 1 := by exact_mod_cast hst
       have := congr_arg (· * (↑C : Matrix (Fin n) (Fin n) ℚ) i j) hst_Q
-      simp only [add_mul, one_mul] at this; linarith
+      simp only [add_mul, one_mul] at this; linarith only [this]
     rw [h1, hza, hzb]; push_cast; ring
   set N : Matrix (Fin n) (Fin n) ℤ := Matrix.of fun i j => (h_int i j).choose
   have hN_eq : ∀ i j, (↑C : Matrix (Fin n) (Fin n) ℚ) i j = ((N i j : ℤ) : ℚ) :=
@@ -689,7 +688,7 @@ private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
         RingHom.mapMatrix_apply, Int.coe_castRingHom, algebraMap_int_eq,
         Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply] at h_entry
       have hbq_ne : (b q : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (hb q).ne'
-      field_simp at h_entry ⊢; linarith
+      field_simp at h_entry ⊢; linarith only [h_entry]
     rw [h_D_entry]
     have h_dvd : (b q : ℤ) ∣ ∏ k, (b k : ℤ) := Finset.dvd_prod_of_mem _ (Finset.mem_univ q)
     have hbq_ne : (b q : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (hb q).ne'

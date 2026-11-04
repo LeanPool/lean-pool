@@ -11,6 +11,7 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.Backports.SimplicialObjectChainHomotopy
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.Backports.SimplicialObjectHomotopy
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.Backports.StdSimplexOne
+import Mathlib.Algebra.Order.Algebra
 
 /-! Supporting modules for Equal-area and equal-perimeter convex partitions. -/
 

@@ -6,7 +6,8 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Geometry.Support
-import Mathlib.Tactic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
 
 /-! Geometric orientation fans. Every cone uses the same support triple at
 both endpoints. All inputs are propositions about real points, not Boolean

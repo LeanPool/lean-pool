@@ -161,9 +161,9 @@ private lemma unit_circle_im_eq_sqrt3_half (s : ℍ)
     (h_nsq : (s : ℂ).re * (s : ℂ).re + (s : ℂ).im * (s : ℂ).im = 1)
     (h_re_sq : (s : ℂ).re * (s : ℂ).re = 1 / 4) : (s : ℂ).im = Real.sqrt 3 / 2 := by
   have h_prod : ((s : ℂ).im - Real.sqrt 3 / 2) * ((s : ℂ).im + Real.sqrt 3 / 2) = 0 := by
-    nlinarith [Real.mul_self_sqrt (show (3 : ℝ) ≥ 0 by norm_num)]
+    nlinarith only [h_nsq, h_re_sq, Real.mul_self_sqrt (show (3 : ℝ) ≥ 0 by norm_num)]
   rcases mul_eq_zero.mp h_prod with h | h
-  · linarith
+  · linarith only [h]
   · exact absurd h (ne_of_gt (add_pos s.2 (by positivity)))
 
 private lemma unit_circle_re_neg_half_eq_rho (s : ℍ)
@@ -176,7 +176,7 @@ private lemma unit_circle_re_neg_half_eq_rho (s : ℍ)
     simp only [ellipticPointRho', UpperHalfPlane.coe_mk, add_re, add_im, neg_re, neg_im, one_re,
       one_im, div_ofNat_re, div_ofNat_im, mul_re, mul_im, ofReal_re, ofReal_im, I_re, I_im,
       mul_zero, mul_one, sub_zero, add_zero, zero_add, zero_div, neg_zero] <;>
-    linarith
+    linarith only [hs_re, h_im]
 
 private lemma unit_circle_re_pos_half_eq_rho_plus_one (s : ℍ)
     (hs_norm : ‖(s : ℂ)‖ = 1) (hs_re : (s : ℂ).re = 1 / 2) :
@@ -189,27 +189,28 @@ private lemma unit_circle_re_pos_half_eq_rho_plus_one (s : ℍ)
     simp only [ellipticPointRhoPlusOne', UpperHalfPlane.coe_mk, add_re, add_im, one_re, one_im,
       div_ofNat_re, div_ofNat_im, mul_re, mul_im, ofReal_re, ofReal_im, I_re, I_im, mul_zero,
       mul_one, sub_zero, add_zero, zero_add, zero_div] <;>
-    linarith
+    linarith only [hs_re, h_im]
 
 private lemma vert_edge_im_gt_sqrt3_half (s : ℍ) (hs_norm : ‖(s : ℂ)‖ > 1)
     (hs_abs_re : |(s : ℂ).re| = 1 / 2) : Real.sqrt 3 / 2 < (s : ℂ).im := by
   by_contra h_le; push Not at h_le
   have h_nsq_gt : Complex.normSq (s : ℂ) > 1 := by
-    rw [Complex.normSq_eq_norm_sq]; nlinarith [hs_norm, sq_nonneg (‖(s : ℂ)‖ - 1)]
+    rw [Complex.normSq_eq_norm_sq]; nlinarith only [hs_norm, sq_nonneg (‖(s : ℂ)‖ - 1)]
   have h_re_sq : (s : ℂ).re * (s : ℂ).re ≤ 1/4 := by
     rcases (abs_eq (by norm_num : (1 : ℝ)/2 ≥ 0)).mp hs_abs_re with h | h <;> rw [h] <;> norm_num
   have h_im_sq : (s : ℂ).im * (s : ℂ).im ≤ 3/4 := by
     have h3 := Real.mul_self_sqrt (show (3 : ℝ) ≥ 0 by norm_num)
-    nlinarith [mul_self_le_mul_self s.2.le h_le]
-  linarith [Complex.normSq_apply (s : ℂ)]
+    nlinarith only [h_le, h3, mul_self_le_mul_self s.2.le h_le]
+  linarith only [h_nsq_gt, h_re_sq, h_im_sq, Complex.normSq_apply (s : ℂ)]
 
 private lemma unit_circle_re_zero_eq_i (s : ℍ)
     (hs_norm : ‖(s : ℂ)‖ = 1) (hs_re : (s : ℂ).re = 0) : s = ellipticPointI' := by
   apply UpperHalfPlane.ext
   have h_nsq : Complex.normSq (s : ℂ) = 1 := by rw [Complex.normSq_eq_norm_sq, hs_norm, one_pow]
   rw [Complex.normSq_apply, hs_re, mul_zero, zero_add] at h_nsq
-  have h_le : (s : ℂ).im ≤ 1 := by nlinarith [mul_self_nonneg ((s : ℂ).im - 1), h_nsq]
-  have h_ge : 1 ≤ (s : ℂ).im := by nlinarith [mul_le_of_le_one_right s.2.le h_le, h_nsq]
+  have h_le : (s : ℂ).im ≤ 1 := by nlinarith only [h_nsq, mul_self_nonneg ((s : ℂ).im - 1)]
+  have h_ge : 1 ≤ (s : ℂ).im := by
+    nlinarith only [h_nsq, h_le, mul_le_of_le_one_right s.2.le h_le]
   apply Complex.ext
   · exact hs_re.trans Complex.I_re.symm
   · exact (le_antisymm h_le h_ge).trans Complex.I_im.symm
@@ -222,7 +223,7 @@ private theorem boundary_weight_auto
       ¬(‖(s : ℂ)‖ > 1 ∧ |(s : ℂ).re| < 1/2) →
       generalizedWindingNumber' (fdBoundaryH H) 0 5 (↑s : ℂ) = -1/2 := by
   set M := S.sum (fun s : UpperHalfPlane => (s : ℂ).im) with hM_def
-  refine ⟨max 2 (M + 1), by linarith [le_max_left (2 : ℝ) (M + 1)], ?_⟩
+  refine ⟨max 2 (M + 1), by linarith only [le_max_left (2 : ℝ) (M + 1)], ?_⟩
   intro H hH s hs hsi hsρ hsρ1 h_not_int
   have hs_fd := hS s hs
   have habs_re := hs_fd.2
@@ -231,26 +232,29 @@ private theorem boundary_weight_auto
   have hH_ge2 : (2 : ℝ) ≤ H := le_trans (le_max_left 2 (M + 1)) hH
   have h_im_lt_H : (s : ℂ).im < H := by
     have h1 : (s : ℂ).im ≤ M := Finset.single_le_sum (fun x _ => le_of_lt x.2) hs
-    linarith [le_max_right (2 : ℝ) (M + 1)]
+    linarith only [hH, h1, le_max_right (2 : ℝ) (M + 1)]
   have hH_sqrt : Real.sqrt 3 / 2 < H := by
-    nlinarith [Real.sq_sqrt (show (3 : ℝ) ≥ 0 by norm_num), sq_nonneg (Real.sqrt 3 - 2)]
+    nlinarith only [hH_ge2, Real.sq_sqrt (show (3 : ℝ) ≥ 0 by norm_num),
+      sq_nonneg (Real.sqrt 3 - 2)]
   rcases eq_or_lt_of_le hnorm_ge with h_eq | h_gt
   · have h_re_lt : |(s : ℂ).re| < 1/2 := by
       by_contra h_ge; push Not at h_ge
       have h_abs_eq : |(s : ℂ).re| = 1/2 := le_antisymm habs_re h_ge
       rcases abs_cases (s : ℂ).re with ⟨h_eq_abs, _⟩ | ⟨h_eq_abs, _⟩
-      · exact hsρ1 (unit_circle_re_pos_half_eq_rho_plus_one s h_eq.symm (by linarith))
-      · exact hsρ (unit_circle_re_neg_half_eq_rho s h_eq.symm (by linarith))
+      · exact hsρ1 (unit_circle_re_pos_half_eq_rho_plus_one s h_eq.symm (by
+        linarith only [h_ge, h_abs_eq, h_eq_abs]))
+      · exact hsρ (unit_circle_re_neg_half_eq_rho s h_eq.symm (by
+        linarith only [h_ge, h_abs_eq, h_eq_abs]))
     exact gWN_fdBoundary_H_eq_neg_half_of_unitArc
-      H (by linarith) (↑s) h_eq.symm h_re_lt s.2
+      H (by linarith only [hH_ge2]) (↑s) h_eq.symm h_re_lt s.2
   · have h_abs_eq : |(s : ℂ).re| = 1/2 := by
       by_contra h_ne; exact h_not_int ⟨h_gt, lt_of_le_of_ne habs_re h_ne⟩
     rcases abs_cases (s : ℂ).re with ⟨h_eq_abs, _⟩ | ⟨h_eq_abs, _⟩
     · exact gWN_fdBoundary_H_eq_neg_half_of_rightEdge
-        H hH_sqrt (↑s) (by linarith) h_gt
+        H hH_sqrt (↑s) (by linarith only [h_abs_eq, h_eq_abs]) h_gt
         (vert_edge_im_gt_sqrt3_half s h_gt h_abs_eq) h_im_lt_H
     · exact gWN_fdBoundary_H_eq_neg_half_of_leftEdge
-        H hH_sqrt (↑s) (by linarith) h_gt
+        H hH_sqrt (↑s) (by linarith only [h_abs_eq, h_eq_abs]) h_gt
         (vert_edge_im_gt_sqrt3_half s h_gt h_abs_eq) h_im_lt_H
 
 private lemma rho_singleton_sum_eq (S : Finset UpperHalfPlane)

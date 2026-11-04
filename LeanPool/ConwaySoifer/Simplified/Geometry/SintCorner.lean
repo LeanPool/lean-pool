@@ -7,7 +7,11 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.SideChains
 public import LeanPool.ConwaySoifer.Simplified.Geometry.ProfileWitness
-import Mathlib.Tactic
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # SintCorner
@@ -75,7 +79,7 @@ theorem Canonical.sint_corner_simplified (H : Canonical .Sint T r s) (hs : s ≤
     have e : sqDist (linePoint (vertex 0) upDir cS) (linePoint (vertex 0) (sideDirection 0 false)
         R0) =
         (cS + R0) ^ 2 := by
-      simp [linePoint, upDir, sideDirection, neighbor, vertex, sqDist]; try ring
+      simp [linePoint, upDir, sideDirection, neighbor, vertex, sqDist]
     rw [e] at hd
     by_contra hcon
     push Not at hcon

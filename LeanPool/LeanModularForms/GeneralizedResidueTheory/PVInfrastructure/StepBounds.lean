@@ -83,11 +83,11 @@ lemma remainder_integral_O_eps {r : ℝ → ℂ} {t₀ ε C : ℝ}
       ‖∫ t in (t₀ + ε)..(t₀ + 2 * ε), r t‖ ≤
         2 * C * ε := by
   have h_left := norm_integral_le_const_left (r := r) (t₀ := t₀)
-    (a := ε) (b := 2 * ε) (B := 2 * ε) hε_pos (by linarith) le_rfl hr_bound
+    (a := ε) (b := 2 * ε) (B := 2 * ε) hε_pos (by linarith only [hε_pos]) le_rfl hr_bound
   have h_right := norm_integral_le_const_right (r := r) (t₀ := t₀)
-    (a := ε) (b := 2 * ε) (B := 2 * ε) hε_pos (by linarith) le_rfl hr_bound
+    (a := ε) (b := 2 * ε) (B := 2 * ε) hε_pos (by linarith only [hε_pos]) le_rfl hr_bound
   rw [show 2 * ε - ε = ε by ring] at h_left h_right
-  linarith
+  linarith only [h_left, h_right]
 
 /-- Symmetric cancellation of 1/(t-t₀). -/
 lemma integral_inv_symm
@@ -110,7 +110,7 @@ lemma integral_inv_symm
     simp only [show 2 * t₀ - (t₀ + ε₂) = t₀ - ε₂ from by ring,
       show 2 * t₀ - (t₀ + ε₁) = t₀ - ε₁ from by ring,
       show ∀ x, 2 * t₀ - x - t₀ = -(x - t₀) from fun x => by ring, h_odd] at h1
-    simp_all
+    simp_all only [ofReal_neg, inv_neg, implies_true, ofReal_sub, intervalIntegral.integral_neg]
   rw [h_reflect, neg_add_cancel]
 
 /-- The base integral `∫ η/u` over `[c₁, c₂]` evaluates to `η log(c₂/c₁)`. -/
@@ -260,8 +260,9 @@ lemma step_bound_with_eta {r : ℝ → ℂ}
   calc ‖∫ t in (t₀ - ε)..(t₀ - ε / 2), r t‖ +
       ‖∫ t in (t₀ + ε / 2)..(t₀ + ε), r t‖
       ≤ 2 * η * Real.log (ε / (ε / 2)) :=
-        remainder_annulus_bound (by linarith) hε_pos (by linarith) hη_pos
-          (fun t ht_lo ht_hi => hr_bound t (by linarith) ht_hi.le)
+        remainder_annulus_bound (by linarith only [hε_pos]) hε_pos (by linarith only [hε_pos])
+          hη_pos
+          (fun t ht_lo ht_hi => hr_bound t (by linarith only [ht_lo, ht_hi]) ht_hi.le)
     _ = 2 * η * Real.log 2 := by rw [show ε / (ε / 2) = 2 from by field_simp]
 
 /-- Error bound extends to smaller scales. -/
@@ -507,7 +508,7 @@ lemma summableSubseqAux_tendsto_zero {γ : ℝ → ℂ}
   have h_squeeze : ∀ n, ε n ≤ ε 0 * (1 / 2) ^ n := fun n => by
     have h1 := summableSubseqAux_le_geometric hL hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos n
     have h2 : ε 0 / 2 ^ n = ε 0 * (1 / 2) ^ n := by rw [one_div, inv_pow, ← div_eq_mul_inv]
-    linarith
+    linarith only [hL, hγ_hasderiv, hγ_cont_deriv, h1, h2]
   have h_geom_tendsto :
       Tendsto (fun n => ε 0 * (1 / 2 : ℝ) ^ n)
         atTop (𝓝 0) := by
@@ -645,7 +646,8 @@ lemma remainder_step_bound {r : ℝ → ℂ}
   calc ‖∫ t in (t₀ - ε)..(t₀ - ε / 2), r t‖ +
       ‖∫ t in (t₀ + ε / 2)..(t₀ + ε), r t‖
       ≤ 2 * η * Real.log (ε / (ε / 2)) :=
-        remainder_annulus_bound (by linarith) hε_pos (by linarith) (by linarith) hr_bound
+        remainder_annulus_bound (by linarith only [hε_pos]) hε_pos (by linarith only [hε_pos]) (by
+          linarith only [_hη_pos]) hr_bound
     _ = 2 * η * Real.log 2 := by rw [show ε / (ε / 2) = 2 from by field_simp]
 
 /-- Remainder bounded ratio for annuli. -/
@@ -666,7 +668,7 @@ lemma remainder_bounded_ratio {r : ℝ → ℂ}
         remainder_annulus_bound hε₁_pos
           (lt_trans hε₁_pos hε₁₂) hε₁₂ hη_pos hr_bound
     _ ≤ 2 * η * Real.log K := by
-        nlinarith [Real.log_pos _hK,
+        nlinarith only [hε₁_pos, hε₁₂, hη_pos, h_ratio, Real.log_pos _hK,
           Real.log_le_log (div_pos (lt_trans hε₁_pos hε₁₂) hε₁_pos) h_ratio]
 
 /-- Dyadic step bound for remainder. -/
@@ -690,7 +692,7 @@ lemma remainder_dyadic_step {r : ℝ → ℂ}
   have h_lt : ε₀ / 2 ^ (n + 1) < ε₀ / 2 ^ n := by
     have h_pow_lt : (2 : ℝ) ^ n < 2 ^ (n + 1) := by
       have h : (2 : ℝ) ^ (n + 1) = 2 ^ n * 2 := by ring
-      rw [h]; linarith
+      rw [h]; linarith only [h_pow_pos]
     exact div_lt_div_of_pos_left hε₀_pos h_pow_pos
       h_pow_lt
   have h_ratio :
@@ -731,11 +733,15 @@ lemma pv_dyadic_step_O_eps {r : ℝ → ℂ}
     div_le_self hδ₀_pos.le
       (one_le_pow₀ (by norm_num : (1 : ℝ) ≤ 2))
   have h_left := norm_integral_le_const_left (r := r) (t₀ := t₀)
-    (a := ε_n / 2) (b := ε_n) (B := δ₀) hε_n_half_pos (by linarith) hε_n_le_δ₀ hr_bounded
+    (a :=
+      ε_n / 2) (b := ε_n) (B := δ₀) hε_n_half_pos (by linarith only
+        [hε_n_pos]) hε_n_le_δ₀ hr_bounded
   have h_right := norm_integral_le_const_right (r := r) (t₀ := t₀)
-    (a := ε_n / 2) (b := ε_n) (B := δ₀) hε_n_half_pos (by linarith) hε_n_le_δ₀ hr_bounded
+    (a :=
+      ε_n / 2) (b := ε_n) (B := δ₀) hε_n_half_pos (by linarith only
+        [hε_n_pos]) hε_n_le_δ₀ hr_bounded
   rw [show ε_n - ε_n / 2 = ε_n / 2 by ring] at h_left h_right
-  linarith
+  linarith only [h_left, h_right]
 
 /-- Dyadic sequence is Cauchy with bounded remainder. -/
 lemma cauchySeq_pv_dyadic {I : ℝ → ℂ} {δ₀ C : ℝ}
@@ -764,7 +770,7 @@ lemma t_bound_from_gamma_annulus
     |t - t₀| ≤ 2 * ε / ‖L‖ := by
   have hL_norm_pos : 0 < ‖L‖ := norm_pos_iff.mpr hL
   rw [le_div_iff₀ hL_norm_pos]
-  nlinarith [h_lower t ht_pos ht_lt, hγ_bound]
+  nlinarith only [h_lower, ht_pos, ht_lt, hγ_bound, h_lower t ht_pos ht_lt]
 
 /-- Integrand bound on γ-annulus. -/
 lemma integrand_bound_on_annulus
@@ -781,7 +787,7 @@ lemma integrand_bound_on_annulus
       |t - t₀|⁻¹ := by rw [norm_inv, Complex.norm_real, Real.norm_eq_abs]
   have h := norm_sub_norm_le ((γ t - γ t₀)⁻¹ * deriv γ t) (↑(t - t₀))⁻¹
   rw [h_inv_norm] at h
-  linarith [hr_bounded t ht_pos ht_lt]
+  linarith only [hr_bounded, ht_pos, ht_lt, h, hr_bounded t ht_pos ht_lt]
 
 /-- Annulus localization: γ-annulus points are local. -/
 lemma annulus_implies_t_local
@@ -792,7 +798,7 @@ lemma annulus_implies_t_local
     (t : ℝ) (ht_ab : t ∈ Set.Icc a b)
     (hγ_bound : ‖γ t - γ t₀‖ ≤ ε₁) :
     |t - t₀| < δ₀ ∧ |t - t₀| < δ₁ := by
-  simp_all
+  simp_all only [mem_Icc, lt_min_iff, and_imp, and_self]
 
 /-- Bracket ε between dyadic points: for ε ∈ (0, δ], find n with δ/2^(n+1) < ε ≤ δ/2^n. -/
 lemma exists_dyadic_bracket {δ ε : ℝ}

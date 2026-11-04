@@ -7,6 +7,11 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.CyclicPolygon
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # Polygonal approximation from inside
@@ -100,13 +105,13 @@ theorem mem_convexHull_triangle_of_norm_le {α γ t : ℝ} (hαt : α ≤ t) (ht
       exact hsle
     have hsa : s / a ≤ 1 := by
       rw [div_le_one hapos]
-      linarith
+      exact hsL.trans ha
     have hpt : s • circleVec t = (s / a) • (a • circleVec α) + (1 - s / a) • (0 : Point2) := by
       rw [ht, smul_zero, add_zero, smul_smul, div_mul_cancel₀ _ hapos.ne']
     rw [hpt]
     exact hconv hmemX hmem0 (by positivity) (by linarith) (by ring)
   · -- nondegenerate sector
-    have hδ : 0 < γ - α := by linarith
+    have hδ : 0 < γ - α := sub_pos.mpr hαγ
     have hsγα : 0 < Real.sin (γ - α) := Real.sin_pos_of_pos_of_lt_pi hδ hlt
     have hcos : 0 < Real.cos ((γ - α) / 2) := by
       apply Real.cos_pos_of_mem_Ioo
@@ -147,22 +152,26 @@ theorem mem_convexHull_triangle_of_norm_le {α γ t : ℝ} (hαt : α ≤ t) (ht
               + s * Real.sin (t - α) / (L * Real.sin (γ - α)) := by
           field_simp
         rw [this]
-        linarith
+        exact add_le_add e1 e2
       have hnum : s * (Real.sin (γ - t) + Real.sin (t - α))
           ≤ s * (2 * Real.sin ((γ - α) / 2)) := by
         rw [hsin_sum]
         have h1 : 2 * Real.sin ((γ - α) / 2) * Real.cos ((γ + α - 2 * t) / 2)
             ≤ 2 * Real.sin ((γ - α) / 2) := by
-          nlinarith [hhalfpos, hcosle]
+          simpa only [mul_one] using
+            mul_le_mul_of_nonneg_left hcosle (by positivity : 0 ≤ 2 * Real.sin ((γ - α) / 2))
         exact mul_le_mul_of_nonneg_left h1 hs
       have hfinal : s * (2 * Real.sin ((γ - α) / 2)) / (L * Real.sin (γ - α)) ≤ 1 := by
         rw [hsin_gap, div_le_one (by positivity)]
-        nlinarith [mul_le_mul_of_nonneg_right hsle
-          (by positivity : (0:ℝ) ≤ 2 * Real.sin ((γ - α) / 2))]
+        calc
+          s * (2 * Real.sin ((γ - α) / 2))
+              ≤ (L * Real.cos ((γ - α) / 2)) * (2 * Real.sin ((γ - α) / 2)) :=
+            mul_le_mul_of_nonneg_right hsle (by positivity)
+          _ = L * (2 * Real.sin ((γ - α) / 2) * Real.cos ((γ - α) / 2)) := by ring
       have hstep : s * (Real.sin (γ - t) + Real.sin (t - α)) / (L * Real.sin (γ - α))
           ≤ s * (2 * Real.sin ((γ - α) / 2)) / (L * Real.sin (γ - α)) := by
-        apply div_le_div_of_nonneg_right hnum (by positivity) |>.trans_eq rfl
-      linarith
+        exact div_le_div_of_nonneg_right hnum (by positivity)
+      exact hbound.trans (hstep.trans hfinal)
     -- the point is the corresponding combination
     have hpt : s • circleVec t = c1 • (a • circleVec α) + c2 • (b • circleVec γ) := by
       rw [smul_smul, smul_smul]

@@ -367,7 +367,6 @@ theorem exists_sep_masSubfield' : ∃ (a : D), IsMax (SubField.botAdjoin K D a) 
     convert congr(Subring.map CL.val.toRingHom $h)
     all_goals first
       | rfl
-      | exact (Subalgebra.center_toSubring K ↥CL).symm
       | · ext x
           simp only [Subalgebra.mem_toSubring, Subring.mem_map, Subring.mem_top,
             true_and, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Subalgebra.coe_val,

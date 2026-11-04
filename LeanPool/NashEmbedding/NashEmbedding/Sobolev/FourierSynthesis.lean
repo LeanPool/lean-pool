@@ -78,7 +78,6 @@ lemma norm_derivCoeff_le {k : ℕ} {α : Fin n → ℕ} (hα : multiDeg α ≤ k
         linarith only [hterm]
       convert pow_le_pow_left₀ ( norm_nonneg _ ) h_abs_term ( α j ) using 1
       all_goals (first
-        | rfl
         | (norm_num; done)
         | (rw [← Real.rpow_natCast _ (α j), ← Real.rpow_mul
               (add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _)];
@@ -115,7 +114,6 @@ lemma memSobolev_derivCoeff {s : ℝ} {k : ℕ} {α : Fin n → ℕ}
   convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) ( norm_derivCoeff_le hα
       a m ) 2 ) ( weight_nonneg s m ) using 1
   all_goals (first
-    | rfl
     | (ring!; done)
     | (rw [h_weight_split]; ring))
 
@@ -166,7 +164,6 @@ theorem fourierSynthesis_supBound {s : ℝ} {k : ℕ} {α : Fin n → ℕ}
       convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ )
           h_norm_derivCoeff_le 2 ) ( weight_nonneg s m ) using 1
       all_goals (first
-        | rfl
         | (ring; done)
         | (unfold weight
            rw [mul_pow, h_pow_sq_div, ← mul_assoc, ← Real.rpow_add hXp]))
@@ -182,7 +179,6 @@ theorem fourierSynthesis_supBound {s : ℝ} {k : ℕ} {α : Fin n → ℕ}
       Real.sqrt_le_sqrt <| mul_le_mul_of_nonneg_left h_norm_derivCoeff_le_sum <| tsum_nonneg fun
       _ => weight_nonneg _ _ using 1
   all_goals (first
-    | rfl
     | (unfold sobolevNormSq
        rw [← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow, ← Real.sqrt_mul (tsum_nonneg fun _ =>
            weight_nonneg _ _)]))

@@ -7,11 +7,7 @@ module
 
 public import LeanPool.ClassificationOfSurfaces.CellComplexQuotient
 public import LeanPool.ClassificationOfSurfaces.LeanEval.ChallengeDeps
-import Mathlib.Analysis.SpecialFunctions.Bernstein
 import Mathlib.Analysis.SpecialFunctions.Complex.Circle
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Carrier bridge to the Eval quotient representatives

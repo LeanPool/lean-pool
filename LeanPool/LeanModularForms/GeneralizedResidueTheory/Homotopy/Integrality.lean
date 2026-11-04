@@ -128,7 +128,8 @@ theorem ClosedCurvesHomotopicAvoiding.toPiecewise
     PiecewiseCurvesHomotopicAvoiding γ₀ γ₁ a b z₀ ∅ := by
   obtain ⟨H, hcont, hH0, hH1, hclosed, havoid, hdiff, hderiv_cont⟩ := h
   refine ⟨H, hcont, hH0, hH1, hclosed, havoid, ?_, ?_, ?_⟩
-  · simp_all
+  · simp_all only [mem_Icc, and_imp, ne_eq, mem_Ioo, Finset.notMem_empty, not_false_eq_true,
+    implies_true]
   · intro p₁ p₂ _hp _hvac _hI
     exact hderiv_cont.continuousOn.mono (Set.subset_univ _)
   · have hK : IsCompact (Set.Icc a b ×ˢ Set.Icc (0 : ℝ) 1) :=
@@ -175,9 +176,9 @@ lemma exists_ball_avoiding_finset {P : Finset ℝ} {t : ℝ} (ht : t ∉ P) :
     let d := Finset.inf' P hP_ne (fun p => |p - t|)
     have hd_pos : 0 < d := by
       rw [Finset.lt_inf'_iff]; exact fun p hp => abs_pos.mpr (sub_ne_zero.mpr (h_ne p hp))
-    exact ⟨d / 2, by linarith, fun x hx hxP => by
+    exact ⟨d / 2, by linarith only [hd_pos], fun x hx hxP => by
       have : d ≤ |x - t| := Finset.inf'_le (fun p => |p - t|) hxP
-      have : |x - t| < d := by rw [abs_lt]; constructor <;> linarith [hx.1, hx.2]
+      have : |x - t| < d := by rw [abs_lt]; constructor <;> linarith only [hd_pos, hx, hx.1, hx.2]
       linarith⟩
 
 private lemma bound_away_from_z₀
@@ -484,7 +485,9 @@ theorem exp_integral_eq_endpoint_ratio_piecewise
   have hGb' : (γ b - z₀) *
       Complex.exp (-(∫ s in a..b, deriv γ s / (γ s - z₀))) = γ a - z₀ := by
     have := hG_const b (right_mem_Icc.mpr hab.le)
-    simp_all
+    simp_all only [mem_Ioo, and_imp, mem_Icc, ne_eq, gt_iff_lt, intervalIntegral.integral_same,
+      neg_zero,
+        exp_zero, mul_one]
   have h_neg : Complex.exp (-(∫ t in a..b, deriv γ t / (γ t - z₀))) =
       (γ a - z₀) / (γ b - z₀) := by rw [eq_div_iff hne_b, mul_comm]; exact hGb'
   rw [show Complex.exp (∫ t in a..b, deriv γ t / (γ t - z₀)) =
@@ -505,7 +508,7 @@ theorem winding_integrand_bounded_of_uniform_avoidance
     intro heq
     have h := hδ_bound t ht s hs
     simp only [heq, norm_zero] at h
-    linarith
+    linarith only [hδ_pos, h]
   have h_inv_bound : ‖(H (t, s) - z₀)⁻¹‖ ≤ δ⁻¹ := by
     rw [norm_inv, inv_eq_one_div, inv_eq_one_div]
     exact one_div_le_one_div_of_le hδ_pos (hδ_bound t ht s hs)
@@ -586,7 +589,8 @@ private lemma exp_endpoint_ratio_from_gFunc
   have hGb' : (γ b - z₀) *
       Complex.exp (-(∫ s in a..b, deriv γ s / (γ s - z₀))) = γ a - z₀ := by
     have := hG_const b (right_mem_Icc.mpr hab.le)
-    simp_all
+    simp_all only [mem_Icc, ne_eq, and_imp, intervalIntegral.integral_same, neg_zero, exp_zero,
+      mul_one]
   have h_neg : Complex.exp (-(∫ t in a..b, deriv γ t / (γ t - z₀))) =
       (γ a - z₀) / (γ b - z₀) := by rw [eq_div_iff hne_b, mul_comm]; exact hGb'
   rw [show Complex.exp (∫ t in a..b, deriv γ t / (γ t - z₀)) =

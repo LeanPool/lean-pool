@@ -408,7 +408,7 @@ private lemma aesm_diff_single_multi_cpv_zpow
         ({t | ∀ s' ∈ S0, ε < ‖γ.toFun t - s'‖} ∩ Icc γ.a γ.b) from by
         ext x; simp only [mem_inter_iff, Set.mem_sdiff]; tauto]
     exact hSF_meas.diff (measurableSet_goodSet_Icc S0 γ ε)
-  apply ((AEStronglyMeasurable.piecewise hSG_meas
+  apply ((AEStronglyMeasurable.piecewise hSG_meas.nullMeasurableSet
     ((aesm_zpow_on_singleFar γ s m ε hε).mono_measure (Measure.restrict_mono hSG_sub le_rfl))
     (aestronglyMeasurable_const (β := ℂ) (b := 0))).mono_measure
       Measure.restrict_le_self).congr
@@ -530,7 +530,8 @@ private lemma multi_cutoff_zpow_intervalIntegrable
         (hγ'_meas.mono_measure (Measure.restrict_mono Set.inter_subset_right le_rfl))
     have h_zero_meas : AEStronglyMeasurable (fun _ : ℝ => (0 : ℂ))
         (volume.restrict (GoodSet ∩ Icc γ.a γ.b)ᶜ) := aestronglyMeasurable_const
-    have h_pw := AEStronglyMeasurable.piecewise hGoodSet_meas h_prod_meas h_zero_meas
+    have h_pw := AEStronglyMeasurable.piecewise hGoodSet_meas.nullMeasurableSet
+      h_prod_meas h_zero_meas
     exact (h_pw.mono_measure Measure.restrict_le_self).congr (by
       filter_upwards [ae_restrict_mem measurableSet_Icc] with t ht
       simp only [cauchyPrincipalValueIntegrandOn]
@@ -573,18 +574,19 @@ private lemma dct_bound_diff_cpv_zpow
     by_cases h_single_cut : ‖γ.toFun t - s‖ > ε
     · rw [ite_eq_left h_single_cut]; simp only [sub_zero]
       obtain ⟨s', hs', hs'_close⟩ := h_multi_cut
-      have hs'_ne : s' ≠ s := by intro heq; rw [heq] at hs'_close; linarith
+      have hs'_ne : s' ≠ s := by intro heq; rw [heq] at hs'_close; linarith only [h_single_cut,
+        hs'_close]
       have h_sep_s' : δ_sep ≤ ‖s - s'‖ :=
         hδ_sep_le s' (Finset.mem_erase.mpr ⟨hs'_ne, hs'⟩)
       have h_far : ‖γ.toFun t - s‖ ≥ δ_sep / 2 := by
         have h1 : ‖s - s'‖ ≤ ‖γ.toFun t - s‖ + ‖γ.toFun t - s'‖ := by
           rw [norm_sub_rev (γ.toFun t) s]
           exact norm_sub_le_norm_sub_add_norm_sub s (γ.toFun t) s'
-        linarith [hε2]
+        linarith only [h_single_cut, hs'_close, h_sep_s', h1, hε2]
       have ht_Icc : t ∈ Icc γ.a γ.b :=
         Ioc_subset_Icc_self (Set.uIoc_of_le γ.hab.le ▸ ht)
       exact zpow_deriv_norm_bound_of_dist_ge γ s m Mγ' hMγ' (δ_sep / 2)
-        (by linarith) t ht_Icc h_far
+        (by linarith only [hδ_pos]) t ht_Icc h_far
     · push Not at h_single_cut; rw [ite_eq_right (not_lt.mpr h_single_cut)]
       norm_num; positivity
   · rw [ite_eq_right h_multi_cut]
@@ -726,7 +728,7 @@ theorem multipoint_pv_zpow_tendsto_zero (S0 : Finset ℂ)
       (fun _ => (δ_sep / 2)⁻¹ ^ m * (|Mγ'| + 1))
       (by filter_upwards [self_mem_nhdsWithin] with ε (hε : (0 : ℝ) < ε)
           exact aesm_diff_single_multi_cpv_zpow S0 γ s m hs ε hε)
-      (by filter_upwards [Ioo_mem_nhdsGT (show (0 : ℝ) < δ_sep / 2 by linarith)]
+      (by filter_upwards [Ioo_mem_nhdsGT (show (0 : ℝ) < δ_sep / 2 by linarith only [hδ_pos])]
             with ε hε
           exact dct_bound_diff_cpv_zpow S0 γ s m hs hS0_single Mγ' hMγ'
             δ_sep hδ_pos hδ_sep_le ε hε)

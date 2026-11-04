@@ -49,7 +49,7 @@ lemma rho_norm : ‖rho‖ = 1 := by
     mul_im, add_zero]
   ring_nf
   have h : (Real.sqrt 3) ^ 2 = 3 :=
-    Real.sq_sqrt (by linarith : (0 : ℝ) ≤ 3)
+    Real.sq_sqrt (by linarith only [] : (0 : ℝ) ≤ 3)
   rw [h]; norm_num
 
 lemma rho'_norm : ‖rho'‖ = 1 := by
@@ -60,7 +60,7 @@ lemma rho'_norm : ‖rho'‖ = 1 := by
     mul_im, add_zero]
   ring_nf
   have h : (Real.sqrt 3) ^ 2 = 3 :=
-    Real.sq_sqrt (by linarith : (0 : ℝ) ≤ 3)
+    Real.sq_sqrt (by linarith only [] : (0 : ℝ) ≤ 3)
   rw [h]; norm_num
 
 lemma i_point_norm : ‖iPoint‖ = 1 := by simp only [iPoint, Complex.norm_I]
@@ -75,7 +75,7 @@ def chordSegment (z₁ z₂ : ℂ) : ℝ → ℂ :=
 lemma chordSegment_in_convex {z₁ z₂ : ℂ} {S : Set ℂ} (hS : Convex ℝ S) (hz₁ : z₁ ∈ S) (hz₂ : z₂ ∈ S)
     (t : ℝ) (ht : t ∈ Icc 0 1) :
     chordSegment z₁ z₂ t ∈ S :=
-  hS hz₁ hz₂ (by linarith [ht.2]) ht.1 (by ring)
+  hS hz₁ hz₂ (by linarith only [ht, ht.2]) ht.1 (by ring)
 
 lemma convex_closedBall_zero_one : Convex ℝ (closedBall (0 : ℂ) 1) := convex_closedBall 0 1
 
@@ -161,17 +161,17 @@ lemma exists_ball_in_polygon_interior (p : ℂ) (hp : ‖p‖ > 1) (hp_im : 0 < 
     ∃ ε > 0, ∀ z, ‖z - p‖ < ε → z.im > 0 ∧ ‖z‖ > 1 := by
   use min ((‖p‖ - 1)/2) (p.im/2)
   constructor
-  · exact lt_min (by linarith) (by linarith)
+  · exact lt_min (by linarith only [hp]) (by linarith only [hp_im])
   intro z hz
   have hz₁ : ‖z - p‖ < (‖p‖ - 1)/2 := lt_of_lt_of_le hz (min_le_left _ _)
   have hz₂ : ‖z - p‖ < p.im/2 := lt_of_lt_of_le hz (min_le_right _ _)
   have h_im_bound : |z.im - p.im| ≤ ‖z - p‖ := Complex.abs_im_le_norm (z - p)
   have h_norm_bound : |‖z‖ - ‖p‖| ≤ ‖z - p‖ := abs_norm_sub_norm_le z p
   constructor
-  · linarith [(abs_lt.mp (lt_of_le_of_lt h_im_bound hz₂)).1,
-              (abs_lt.mp (lt_of_le_of_lt h_im_bound hz₂)).2]
-  · linarith [(abs_lt.mp (lt_of_le_of_lt h_norm_bound hz₁)).1,
-              (abs_lt.mp (lt_of_le_of_lt h_norm_bound hz₁)).2]
+  · linarith only [hp_im, hz₂, h_im_bound, (abs_lt.mp (lt_of_le_of_lt h_im_bound hz₂)).1,
+    (abs_lt.mp (lt_of_le_of_lt h_im_bound hz₂)).2]
+  · linarith only [hp, hz₁, h_norm_bound, (abs_lt.mp (lt_of_le_of_lt h_norm_bound hz₁)).1,
+    (abs_lt.mp (lt_of_le_of_lt h_norm_bound hz₁)).2]
 
 lemma circleIntegral_winding (p : ℂ) (ε : ℝ) (hε : 0 < ε) :
     (∮ z in C(p, ε), (z - p)⁻¹) =
@@ -297,7 +297,7 @@ lemma norm_ge_abs_im (z : ℂ) : ‖z‖ ≥ |z.im| :=
 
 lemma H_height_gt_one : HHeight > 1 := by
   unfold HHeight
-  linarith [Real.sqrt_pos.mpr (by norm_num : (3 : ℝ) > 0)]
+  linarith only [Real.sqrt_pos.mpr (by norm_num : (3 : ℝ) > 0)]
 
 end RectHomotopyProof
 

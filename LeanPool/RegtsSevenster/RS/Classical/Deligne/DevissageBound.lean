@@ -51,24 +51,24 @@ theorem devissage_bound
     st.units + st.lines ≤ 2 * lam.card := by
   let := st.monObj
   let := st.comm
-  have h1 : (st.base ◁ (permAlg X lam.card (P.e lam) :
+  have h1 : (st.base ◁ ((permAlg X lam.card (P.e lam)).asHom :
       tensorPow D X lam.card ⟶ tensorPow D X lam.card)) = 0 := by
-    rw [show (permAlg X lam.card (P.e lam) :
+    rw [show ((permAlg X lam.card (P.e lam)).asHom :
         tensorPow D X lam.card ⟶ tensorPow D X lam.card) = 0
-      from hkill]
+      from congrArg End.asHom hkill]
     exact MonoidalPreadditive.whiskerLeft_zero
   have h2 : ModSchurKilled st.base (freeMod st.base X).X P lam :=
-    modPowAlg_eq_zero st.base X lam.card hcard (P.e lam) h1
+    End.ext (modPowAlg_eq_zero st.base X lam.card hcard (P.e lam) h1)
   obtain ⟨e⟩ := st.decomp
   have h3 : ModSchurKilled st.base
       (freeMod st.base (L.mix st.units st.lines)).X P lam :=
     ModSchurKilled.of_biprod_left st.base _ _ P
       (ModSchurKilled.of_modIso st.base e.symm P h2)
-  have h4 : (st.base ◁ (permAlg (L.mix st.units st.lines) lam.card
-      (P.e lam) : tensorPow D (L.mix st.units st.lines) lam.card ⟶
+  have h4 : (st.base ◁ ((permAlg (L.mix st.units st.lines) lam.card
+      (P.e lam)).asHom : tensorPow D (L.mix st.units st.lines) lam.card ⟶
         tensorPow D (L.mix st.units st.lines) lam.card)) = 0 :=
     whisker_permAlg_eq_zero st.base (L.mix st.units st.lines)
-      lam.card hcard (P.e lam) h3
+      lam.card hcard (P.e lam) (congrArg End.asHom h3)
   have hW : ∀ k : ℕ,
       𝟙 (st.base ⊗ tensorPow D L.obj k) ≠ 0 := fun k =>
     L.whisker_tensorPow_id_ne_zero st.unit_ne_zero k

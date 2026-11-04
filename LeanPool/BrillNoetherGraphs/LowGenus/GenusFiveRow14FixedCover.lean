@@ -9,6 +9,8 @@ module
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveClosedCover
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveCoreAtlas
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveRow14CoverReceipts
+import LeanPool.BrillNoetherGraphs.LowGenus.CompactCellTreeLookup
+import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.IndexedClosedCheck
 
 /-! **Independent generated check.** The main row-14 proof is the readable
 `GenusFiveRow14` construction via `ConfigurationBananaTail`; this module gives
@@ -275,6 +277,20 @@ def witnesses : List (AnchorWitness 12 8 12) :=
   witness9, witness10, witness11, witness12, witness13, witness14, witness15, witness16, witness17,
   witness18, witness19, witness20, witness21, witness22, witness23, witness24]
 
+
+/-! Anchor geometry does not depend on the cone; check each used pair once. -/
+
+/-- Witness indices used at each anchor by the generated closed-cover cells. -/
+private def witnessGeometryRows : List (List ℕ) :=
+  [[0], [1, 11, 12, 15, 21], [2, 6, 14], [0], [3, 5, 24], [0], [4, 7, 8, 9, 10, 13, 16, 17, 18,
+   19, 20, 22, 23], [0]]
+
+/-- Every used anchor/witness pair passes the original slope and endpoint checks. -/
+private theorem witnessGeometryChecked :
+    CertificateData.checkWitnessPool row14Core rowDivisor witnesses defaultWitness
+      witnessGeometryRows = true := by
+  decide +kernel
+
 /-- Closed-cover cell 0 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 3, 0, 4, 0]`; `cell0_check` verifies its
 explicit-potential certificate. -/
@@ -294,9 +310,19 @@ def cell0 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell0_check_indexed : cell0.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [0, 0, 19, 20, 0,
+     0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell0_check :
     cell0.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 3, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell0_check_indexed
 
 /-- Closed-cover cell 1 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 5, 0, 4, 0]`; `cell1_check` verifies its
@@ -317,9 +343,19 @@ def cell1 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell1_check_indexed : cell1.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0, 0,
+     19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell1_check :
     cell1.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 5, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell1_check_indexed
 
 /-- Closed-cover cell 2 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 3, 0, 4, 0]`; `cell2_check` verifies its
@@ -340,9 +376,19 @@ def cell2 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell2_check_indexed : cell2.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell2_check :
     cell2.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 3, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell2_check_indexed
 
 /-- Closed-cover cell 3 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 5, 0, 4, 0]`; `cell3_check` verifies its
@@ -363,9 +409,19 @@ def cell3 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell3_check_indexed : cell3.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell3_check :
     cell3.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 5, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell3_check_indexed
 
 /-- Closed-cover cell 4 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 3, 0, 7, 0]`; `cell4_check` verifies its
@@ -386,9 +442,19 @@ def cell4 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell4_check_indexed : cell4.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [0, 0, 13, 19, 0,
+     0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell4_check :
     cell4.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 3, 0, 7, 0] witnessGeometryChecked (by decide))
+      cell4_check_indexed
 
 /-- Closed-cover cell 5 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 5, 0, 7, 0]`; `cell5_check` verifies its
@@ -409,9 +475,19 @@ def cell5 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell5_check_indexed : cell5.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0, 0,
+     13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell5_check :
     cell5.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 5, 0, 7, 0] witnessGeometryChecked (by decide))
+      cell5_check_indexed
 
 /-- Closed-cover cell 6 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 3, 0, 7, 0]`; `cell6_check` verifies its
@@ -432,9 +508,19 @@ def cell6 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell6_check_indexed : cell6.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell6_check :
     cell6.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 3, 0, 7, 0] witnessGeometryChecked (by decide))
+      cell6_check_indexed
 
 /-- Closed-cover cell 7 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 5, 0, 7, 0]`; `cell7_check` verifies its
@@ -455,9 +541,19 @@ def cell7 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell7_check_indexed : cell7.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell7_check :
     cell7.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 5, 0, 7, 0] witnessGeometryChecked (by decide))
+      cell7_check_indexed
 
 /-- Closed-cover cell 8 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 3, 0, 8, 0]`; `cell8_check` verifies its
@@ -479,9 +575,19 @@ def cell8 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell8_check_indexed : cell8.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [19, 20, 0, 0, 21,
+     4, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell8_check :
     cell8.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 3, 0, 8, 0] witnessGeometryChecked (by decide))
+      cell8_check_indexed
 
 /-- Closed-cover cell 9 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 3, 0, 9, 0]`; `cell9_check` verifies its
@@ -503,9 +609,19 @@ def cell9 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell9_check_indexed : cell9.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [0, 0, 0, 0, 19,
+     20, 21, 20, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell9_check :
     cell9.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 3, 0, 9, 0] witnessGeometryChecked (by decide))
+      cell9_check_indexed
 
 /-- Closed-cover cell 10 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 3, 0, 10, 0]`; `cell10_check` verifies its
@@ -527,9 +643,19 @@ def cell10 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell10_check_indexed : cell10.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [19, 20, 0, 0, 0,
+     0, 21, 3, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell10_check :
     cell10.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 3, 0, 10, 0] witnessGeometryChecked (by decide))
+      cell10_check_indexed
 
 /-- Closed-cover cell 11 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 5, 0, 8, 0]`; `cell11_check` verifies its
@@ -551,9 +677,19 @@ def cell11 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell11_check_indexed : cell11.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [19, 20,
+     0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell11_check :
     cell11.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 5, 0, 8, 0] witnessGeometryChecked (by decide))
+      cell11_check_indexed
 
 /-- Closed-cover cell 12 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 5, 0, 10, 0]`; `cell12_check` verifies its
@@ -575,9 +711,19 @@ def cell12 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell12_check_indexed : cell12.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [19, 20,
+     0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell12_check :
     cell12.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 5, 0, 10, 0] witnessGeometryChecked (by decide))
+      cell12_check_indexed
 
 /-- Closed-cover cell 13 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 5, 0, 9, 0]`; `cell13_check` verifies its
@@ -599,9 +745,19 @@ def cell13 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell13_check_indexed : cell13.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0, 0, 0,
+     0, 19, 20, 21, 20, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell13_check :
     cell13.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 5, 0, 9, 0] witnessGeometryChecked (by decide))
+      cell13_check_indexed
 
 /-- Closed-cover cell 14 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 3, 0, 8, 0]`; `cell14_check` verifies its
@@ -623,9 +779,19 @@ def cell14 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell14_check_indexed : cell14.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell14_check :
     cell14.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 3, 0, 8, 0] witnessGeometryChecked (by decide))
+      cell14_check_indexed
 
 /-- Closed-cover cell 15 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 3, 0, 9, 0]`; `cell15_check` verifies its
@@ -647,9 +813,19 @@ def cell15 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell15_check_indexed : cell15.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell15_check :
     cell15.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 3, 0, 9, 0] witnessGeometryChecked (by decide))
+      cell15_check_indexed
 
 /-- Closed-cover cell 16 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 5, 0, 8, 0]`; `cell16_check` verifies its
@@ -671,9 +847,19 @@ def cell16 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell16_check_indexed : cell16.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell16_check :
     cell16.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 5, 0, 8, 0] witnessGeometryChecked (by decide))
+      cell16_check_indexed
 
 /-- Closed-cover cell 17 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 5, 0, 9, 0]`; `cell17_check` verifies its
@@ -695,9 +881,19 @@ def cell17 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell17_check_indexed : cell17.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell17_check :
     cell17.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 5, 0, 9, 0] witnessGeometryChecked (by decide))
+      cell17_check_indexed
 
 /-- Closed-cover cell 18 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 3, 0, 10, 0]`; `cell18_check` verifies its
@@ -719,9 +915,19 @@ def cell18 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell18_check_indexed : cell18.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell18_check :
     cell18.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 3, 0, 10, 0] witnessGeometryChecked (by decide))
+      cell18_check_indexed
 
 /-- Closed-cover cell 19 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 5, 0, 10, 0]`; `cell19_check` verifies its
@@ -743,9 +949,19 @@ def cell19 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell19_check_indexed : cell19.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell19_check :
     cell19.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 5, 0, 10, 0] witnessGeometryChecked (by decide))
+      cell19_check_indexed
 
 /-- Closed-cover cell 20 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 0, 3, 0, 4, 0]`; `cell20_check` verifies its
@@ -766,9 +982,19 @@ def cell20 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell20_check_indexed : cell20.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [0, 0, 19, 20, 0,
+     0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell20_check :
     cell20.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 0, 3, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell20_check_indexed
 
 /-- Closed-cover cell 21 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 0, 5, 0, 4, 0]`; `cell21_check` verifies its
@@ -789,9 +1015,19 @@ def cell21 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell21_check_indexed : cell21.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0, 0,
+     19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell21_check :
     cell21.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 0, 5, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell21_check_indexed
 
 /-- Closed-cover cell 22 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 6, 0, 3, 0, 4, 0]`; `cell22_check` verifies its
@@ -812,9 +1048,19 @@ def cell22 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell22_check_indexed : cell22.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell22_check :
     cell22.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 6, 0, 3, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell22_check_indexed
 
 /-- Closed-cover cell 23 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 6, 0, 5, 0, 4, 0]`; `cell23_check` verifies its
@@ -835,9 +1081,19 @@ def cell23 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell23_check_indexed : cell23.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell23_check :
     cell23.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 6, 0, 5, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell23_check_indexed
 
 /-- Closed-cover cell 24 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 12, 2, 0, 3, 0, 13, 0]`; `cell24_check` verifies its
@@ -858,9 +1114,19 @@ def cell24 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell24_check_indexed : cell24.certificate.checkClosedRows 4
+    [[], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 2, 2, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell24_check :
     cell24.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 12, 2, 0, 3, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell24_check_indexed
 
 /-- Closed-cover cell 25 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 12, 2, 0, 5, 0, 13, 0]`; `cell25_check` verifies its
@@ -881,9 +1147,19 @@ def cell25 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell25_check_indexed : cell25.certificate.checkClosedRows 4
+    [[], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 2, 2, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell25_check :
     cell25.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 12, 2, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell25_check_indexed
 
 /-- Closed-cover cell 26 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 12, 6, 0, 3, 0, 13, 0]`; `cell26_check` verifies its
@@ -904,9 +1180,19 @@ def cell26 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell26_check_indexed : cell26.certificate.checkClosedRows 4
+    [[], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 2, 2, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell26_check :
     cell26.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 12, 6, 0, 3, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell26_check_indexed
 
 /-- Closed-cover cell 27 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 12, 6, 0, 5, 0, 13, 0]`; `cell27_check` verifies its
@@ -927,9 +1213,19 @@ def cell27 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell27_check_indexed : cell27.certificate.checkClosedRows 4
+    [[], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 2, 2, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell27_check :
     cell27.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 12, 6, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell27_check_indexed
 
 /-- Closed-cover cell 28 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 3, 0, 4, 0]`; `cell28_check` verifies its
@@ -950,9 +1246,19 @@ def cell28 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell28_check_indexed : cell28.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell28_check :
     cell28.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 3, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell28_check_indexed
 
 /-- Closed-cover cell 29 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 5, 0, 4, 0]`; `cell29_check` verifies its
@@ -973,9 +1279,19 @@ def cell29 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell29_check_indexed : cell29.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell29_check :
     cell29.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 5, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell29_check_indexed
 
 /-- Closed-cover cell 30 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 3, 0, 7, 0]`; `cell30_check` verifies its
@@ -996,9 +1312,19 @@ def cell30 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell30_check_indexed : cell30.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell30_check :
     cell30.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 3, 0, 7, 0] witnessGeometryChecked (by decide))
+      cell30_check_indexed
 
 /-- Closed-cover cell 31 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 5, 0, 7, 0]`; `cell31_check` verifies its
@@ -1019,9 +1345,19 @@ def cell31 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell31_check_indexed : cell31.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell31_check :
     cell31.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 5, 0, 7, 0] witnessGeometryChecked (by decide))
+      cell31_check_indexed
 
 /-- Closed-cover cell 32 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 3, 0, 8, 0]`; `cell32_check` verifies its
@@ -1043,9 +1379,19 @@ def cell32 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell32_check_indexed : cell32.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell32_check :
     cell32.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 3, 0, 8, 0] witnessGeometryChecked (by decide))
+      cell32_check_indexed
 
 /-- Closed-cover cell 33 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 3, 0, 9, 0]`; `cell33_check` verifies its
@@ -1067,9 +1413,19 @@ def cell33 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell33_check_indexed : cell33.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell33_check :
     cell33.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 3, 0, 9, 0] witnessGeometryChecked (by decide))
+      cell33_check_indexed
 
 /-- Closed-cover cell 34 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 5, 0, 8, 0]`; `cell34_check` verifies its
@@ -1091,9 +1447,19 @@ def cell34 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell34_check_indexed : cell34.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell34_check :
     cell34.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 5, 0, 8, 0] witnessGeometryChecked (by decide))
+      cell34_check_indexed
 
 /-- Closed-cover cell 35 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 5, 0, 9, 0]`; `cell35_check` verifies its
@@ -1115,9 +1481,19 @@ def cell35 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell35_check_indexed : cell35.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell35_check :
     cell35.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 5, 0, 9, 0] witnessGeometryChecked (by decide))
+      cell35_check_indexed
 
 /-- Closed-cover cell 36 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 3, 0, 10, 0]`; `cell36_check` verifies its
@@ -1139,9 +1515,19 @@ def cell36 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell36_check_indexed : cell36.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell36_check :
     cell36.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 3, 0, 10, 0] witnessGeometryChecked (by decide))
+      cell36_check_indexed
 
 /-- Closed-cover cell 37 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 5, 0, 10, 0]`; `cell37_check` verifies its
@@ -1163,9 +1549,19 @@ def cell37 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell37_check_indexed : cell37.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell37_check :
     cell37.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 5, 0, 10, 0] witnessGeometryChecked (by decide))
+      cell37_check_indexed
 
 /-- Closed-cover cell 38 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 14, 0, 3, 0, 4, 0]`; `cell38_check` verifies its
@@ -1186,9 +1582,19 @@ def cell38 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell38_check_indexed : cell38.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12,
+     18], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell38_check :
     cell38.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 14, 0, 3, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell38_check_indexed
 
 /-- Closed-cover cell 39 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 14, 0, 5, 0, 4, 0]`; `cell39_check` verifies its
@@ -1209,9 +1615,19 @@ def cell39 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell39_check_indexed : cell39.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell39_check :
     cell39.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 14, 0, 5, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell39_check_indexed
 
 /-- Closed-cover cell 40 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 12, 14, 0, 3, 0, 13, 0]`; `cell40_check` verifies
@@ -1232,9 +1648,19 @@ def cell40 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell40_check_indexed : cell40.certificate.checkClosedRows 4
+    [[], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 2, 2, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell40_check :
     cell40.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 12, 14, 0, 3, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell40_check_indexed
 
 /-- Closed-cover cell 41 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 12, 14, 0, 5, 0, 13, 0]`; `cell41_check` verifies
@@ -1255,9 +1681,19 @@ def cell41 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell41_check_indexed : cell41.certificate.checkClosedRows 4
+    [[], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 2, 2, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell41_check :
     cell41.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 12, 14, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell41_check_indexed
 
 /-- Closed-cover cell 42 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 3, 0, 16, 0]`; `cell42_check` verifies its
@@ -1278,9 +1714,19 @@ def cell42 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell42_check_indexed : cell42.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [0, 0, 13, 19,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell42_check :
     cell42.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 3, 0, 16, 0] witnessGeometryChecked (by decide))
+      cell42_check_indexed
 
 /-- Closed-cover cell 43 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 3, 0, 16, 0]`; `cell43_check` verifies its
@@ -1301,9 +1747,19 @@ def cell43 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell43_check_indexed : cell43.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell43_check :
     cell43.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 3, 0, 16, 0] witnessGeometryChecked (by decide))
+      cell43_check_indexed
 
 /-- Closed-cover cell 44 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 3, 0, 16, 0]`; `cell44_check` verifies
@@ -1324,9 +1780,19 @@ def cell44 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell44_check_indexed : cell44.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell44_check :
     cell44.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 3, 0, 16, 0] witnessGeometryChecked (by decide))
+      cell44_check_indexed
 
 /-- Closed-cover cell 45 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 3, 0, 17, 0]`; `cell45_check` verifies its
@@ -1347,9 +1813,19 @@ def cell45 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell45_check_indexed : cell45.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [0, 0, 13, 19,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell45_check :
     cell45.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 3, 0, 17, 0] witnessGeometryChecked (by decide))
+      cell45_check_indexed
 
 /-- Closed-cover cell 46 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 3, 0, 17, 0]`; `cell46_check` verifies its
@@ -1370,9 +1846,19 @@ def cell46 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell46_check_indexed : cell46.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell46_check :
     cell46.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 3, 0, 17, 0] witnessGeometryChecked (by decide))
+      cell46_check_indexed
 
 /-- Closed-cover cell 47 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 3, 0, 17, 0]`; `cell47_check` verifies
@@ -1393,9 +1879,19 @@ def cell47 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell47_check_indexed : cell47.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell47_check :
     cell47.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 3, 0, 17, 0] witnessGeometryChecked (by decide))
+      cell47_check_indexed
 
 /-- Closed-cover cell 48 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 3, 0, 18, 0]`; `cell48_check` verifies its
@@ -1417,9 +1913,19 @@ def cell48 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell48_check_indexed : cell48.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [19, 20, 0, 0,
+     21, 4, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell48_check :
     cell48.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 3, 0, 18, 0] witnessGeometryChecked (by decide))
+      cell48_check_indexed
 
 /-- Closed-cover cell 49 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 3, 0, 18, 0]`; `cell49_check` verifies its
@@ -1441,9 +1947,19 @@ def cell49 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell49_check_indexed : cell49.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell49_check :
     cell49.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 3, 0, 18, 0] witnessGeometryChecked (by decide))
+      cell49_check_indexed
 
 /-- Closed-cover cell 50 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 3, 0, 18, 0]`; `cell50_check` verifies
@@ -1465,9 +1981,19 @@ def cell50 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell50_check_indexed : cell50.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell50_check :
     cell50.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 3, 0, 18, 0] witnessGeometryChecked (by decide))
+      cell50_check_indexed
 
 /-- Closed-cover cell 51 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 3, 0, 19, 0]`; `cell51_check` verifies its
@@ -1489,9 +2015,19 @@ def cell51 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell51_check_indexed : cell51.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [19, 20, 0, 0,
+     0, 0, 21, 3, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell51_check :
     cell51.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 3, 0, 19, 0] witnessGeometryChecked (by decide))
+      cell51_check_indexed
 
 /-- Closed-cover cell 52 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 3, 0, 19, 0]`; `cell52_check` verifies its
@@ -1513,9 +2049,19 @@ def cell52 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell52_check_indexed : cell52.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell52_check :
     cell52.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 3, 0, 19, 0] witnessGeometryChecked (by decide))
+      cell52_check_indexed
 
 /-- Closed-cover cell 53 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 3, 0, 19, 0]`; `cell53_check` verifies
@@ -1537,9 +2083,19 @@ def cell53 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell53_check_indexed : cell53.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell53_check :
     cell53.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 3, 0, 19, 0] witnessGeometryChecked (by decide))
+      cell53_check_indexed
 
 /-- Closed-cover cell 54 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 3, 0, 20, 0]`; `cell54_check` verifies its
@@ -1561,9 +2117,19 @@ def cell54 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell54_check_indexed : cell54.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [0, 0, 0, 0,
+     19, 20, 21, 20, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell54_check :
     cell54.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 3, 0, 20, 0] witnessGeometryChecked (by decide))
+      cell54_check_indexed
 
 /-- Closed-cover cell 55 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 3, 0, 20, 0]`; `cell55_check` verifies its
@@ -1585,9 +2151,19 @@ def cell55 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell55_check_indexed : cell55.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell55_check :
     cell55.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 3, 0, 20, 0] witnessGeometryChecked (by decide))
+      cell55_check_indexed
 
 /-- Closed-cover cell 56 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 3, 0, 20, 0]`; `cell56_check` verifies
@@ -1609,9 +2185,19 @@ def cell56 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell56_check_indexed : cell56.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell56_check :
     cell56.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 3, 0, 20, 0] witnessGeometryChecked (by decide))
+      cell56_check_indexed
 
 /-- Closed-cover cell 57 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 2, 0, 3, 0, 22, 0]`; `cell57_check` verifies its
@@ -1632,9 +2218,19 @@ def cell57 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, 1, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell57_check_indexed : cell57.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12, 12, 18], [], [0, 0, 19, 20,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell57_check :
     cell57.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 2, 0, 3, 0, 22, 0] witnessGeometryChecked (by decide))
+      cell57_check_indexed
 
 /-- Closed-cover cell 58 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 6, 0, 3, 0, 22, 0]`; `cell58_check` verifies its
@@ -1655,9 +2251,19 @@ def cell58 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, 1, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell58_check_indexed : cell58.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell58_check :
     cell58.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 6, 0, 3, 0, 22, 0] witnessGeometryChecked (by decide))
+      cell58_check_indexed
 
 /-- Closed-cover cell 59 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 14, 0, 3, 0, 22, 0]`; `cell59_check` verifies
@@ -1678,9 +2284,19 @@ def cell59 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, 1, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell59_check_indexed : cell59.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 12,
+     12, 18], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell59_check :
     cell59.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 14, 0, 3, 0, 22, 0] witnessGeometryChecked (by decide))
+      cell59_check_indexed
 
 /-- Closed-cover cell 60 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 5, 0, 23, 0]`; `cell60_check` verifies its
@@ -1702,9 +2318,19 @@ def cell60 : CoordinateCell row14Core :=
       aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell60_check_indexed : cell60.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 20, 21]] = true := by
+  decide +kernel
+
 theorem cell60_check :
     cell60.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 5, 0, 23, 0] witnessGeometryChecked (by decide))
+      cell60_check_indexed
 
 /-- Closed-cover cell 61 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 5, 0, 13, 0]`; `cell61_check` verifies its
@@ -1725,9 +2351,19 @@ def cell61 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell61_check_indexed : cell61.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell61_check :
     cell61.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell61_check_indexed
 
 /-- Closed-cover cell 62 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 5, 0, 17, 0]`; `cell62_check` verifies its
@@ -1748,9 +2384,19 @@ def cell62 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell62_check_indexed : cell62.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0,
+     0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell62_check :
     cell62.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 5, 0, 17, 0] witnessGeometryChecked (by decide))
+      cell62_check_indexed
 
 /-- Closed-cover cell 63 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 5, 0, 18, 0]`; `cell63_check` verifies its
@@ -1772,9 +2418,19 @@ def cell63 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell63_check_indexed : cell63.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [19,
+     20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell63_check :
     cell63.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 5, 0, 18, 0] witnessGeometryChecked (by decide))
+      cell63_check_indexed
 
 /-- Closed-cover cell 64 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 5, 0, 19, 0]`; `cell64_check` verifies its
@@ -1796,9 +2452,19 @@ def cell64 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell64_check_indexed : cell64.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [19,
+     20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell64_check :
     cell64.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 5, 0, 19, 0] witnessGeometryChecked (by decide))
+      cell64_check_indexed
 
 /-- Closed-cover cell 65 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 5, 0, 20, 0]`; `cell65_check` verifies its
@@ -1820,9 +2486,19 @@ def cell65 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell65_check_indexed : cell65.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0,
+     0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell65_check :
     cell65.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 5, 0, 20, 0] witnessGeometryChecked (by decide))
+      cell65_check_indexed
 
 /-- Closed-cover cell 66 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 5, 0, 23, 0]`; `cell66_check` verifies
@@ -1844,9 +2520,19 @@ def cell66 : CoordinateCell row14Core :=
       aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell66_check_indexed : cell66.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 20, 21]] = true := by
+  decide +kernel
+
 theorem cell66_check :
     cell66.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 5, 0, 23, 0] witnessGeometryChecked (by decide))
+      cell66_check_indexed
 
 /-- Closed-cover cell 67 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 5, 0, 13, 0]`; `cell67_check` verifies
@@ -1867,9 +2553,19 @@ def cell67 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell67_check_indexed : cell67.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell67_check :
     cell67.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell67_check_indexed
 
 /-- Closed-cover cell 68 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 5, 0, 17, 0]`; `cell68_check` verifies
@@ -1890,9 +2586,19 @@ def cell68 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell68_check_indexed : cell68.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell68_check :
     cell68.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 5, 0, 17, 0] witnessGeometryChecked (by decide))
+      cell68_check_indexed
 
 /-- Closed-cover cell 69 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 5, 0, 18, 0]`; `cell69_check` verifies
@@ -1914,9 +2620,19 @@ def cell69 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell69_check_indexed : cell69.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell69_check :
     cell69.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 5, 0, 18, 0] witnessGeometryChecked (by decide))
+      cell69_check_indexed
 
 /-- Closed-cover cell 70 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 5, 0, 19, 0]`; `cell70_check` verifies
@@ -1938,9 +2654,19 @@ def cell70 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell70_check_indexed : cell70.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell70_check :
     cell70.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 5, 0, 19, 0] witnessGeometryChecked (by decide))
+      cell70_check_indexed
 
 /-- Closed-cover cell 71 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 5, 0, 20, 0]`; `cell71_check` verifies
@@ -1962,9 +2688,19 @@ def cell71 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell71_check_indexed : cell71.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell71_check :
     cell71.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 5, 0, 20, 0] witnessGeometryChecked (by decide))
+      cell71_check_indexed
 
 /-- Closed-cover cell 72 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 2, 0, 5, 0, 13, 0]`; `cell72_check` verifies its
@@ -1985,9 +2721,19 @@ def cell72 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell72_check_indexed : cell72.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0,
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell72_check :
     cell72.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 2, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell72_check_indexed
 
 /-- Closed-cover cell 73 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 14, 0, 5, 0, 13, 0]`; `cell73_check` verifies
@@ -2008,9 +2754,19 @@ def cell73 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell73_check_indexed : cell73.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell73_check :
     cell73.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 14, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell73_check_indexed
 
 /-- Closed-cover cell 74 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 5, 0, 23, 0]`; `cell74_check` verifies its
@@ -2032,9 +2788,19 @@ def cell74 : CoordinateCell row14Core :=
       aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell74_check_indexed : cell74.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 20, 21]] = true := by
+  decide +kernel
+
 theorem cell74_check :
     cell74.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 5, 0, 23, 0] witnessGeometryChecked (by decide))
+      cell74_check_indexed
 
 /-- Closed-cover cell 75 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 5, 0, 13, 0]`; `cell75_check` verifies its
@@ -2055,9 +2821,19 @@ def cell75 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell75_check_indexed : cell75.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell75_check :
     cell75.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell75_check_indexed
 
 /-- Closed-cover cell 76 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 5, 0, 17, 0]`; `cell76_check` verifies its
@@ -2078,9 +2854,19 @@ def cell76 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell76_check_indexed : cell76.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell76_check :
     cell76.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 5, 0, 17, 0] witnessGeometryChecked (by decide))
+      cell76_check_indexed
 
 /-- Closed-cover cell 77 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 5, 0, 18, 0]`; `cell77_check` verifies its
@@ -2102,9 +2888,19 @@ def cell77 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell77_check_indexed : cell77.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell77_check :
     cell77.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 5, 0, 18, 0] witnessGeometryChecked (by decide))
+      cell77_check_indexed
 
 /-- Closed-cover cell 78 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 5, 0, 19, 0]`; `cell78_check` verifies its
@@ -2126,9 +2922,19 @@ def cell78 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell78_check_indexed : cell78.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell78_check :
     cell78.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 5, 0, 19, 0] witnessGeometryChecked (by decide))
+      cell78_check_indexed
 
 /-- Closed-cover cell 79 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 5, 0, 20, 0]`; `cell79_check` verifies its
@@ -2150,9 +2956,19 @@ def cell79 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell79_check_indexed : cell79.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell79_check :
     cell79.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 5, 0, 20, 0] witnessGeometryChecked (by decide))
+      cell79_check_indexed
 
 /-- Closed-cover cell 80 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 6, 0, 5, 0, 13, 0]`; `cell80_check` verifies its
@@ -2173,9 +2989,19 @@ def cell80 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell80_check_indexed : cell80.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell80_check :
     cell80.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 6, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell80_check_indexed
 
 /-- Closed-cover cell 81 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 5, 0, 16, 0]`; `cell81_check` verifies its
@@ -2196,9 +3022,19 @@ def cell81 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell81_check_indexed : cell81.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0,
+     0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell81_check :
     cell81.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 5, 0, 16, 0] witnessGeometryChecked (by decide))
+      cell81_check_indexed
 
 /-- Closed-cover cell 82 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 5, 0, 16, 0]`; `cell82_check` verifies its
@@ -2219,9 +3055,19 @@ def cell82 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell82_check_indexed : cell82.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell82_check :
     cell82.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 5, 0, 16, 0] witnessGeometryChecked (by decide))
+      cell82_check_indexed
 
 /-- Closed-cover cell 83 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 2, 0, 5, 0, 22, 0]`; `cell83_check` verifies its
@@ -2242,9 +3088,19 @@ def cell83 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell83_check_indexed : cell83.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17, 0, 0, 18, 9], [], [0,
+     0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell83_check :
     cell83.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 2, 0, 5, 0, 22, 0] witnessGeometryChecked (by decide))
+      cell83_check_indexed
 
 /-- Closed-cover cell 84 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 6, 0, 5, 0, 22, 0]`; `cell84_check` verifies its
@@ -2265,9 +3121,19 @@ def cell84 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell84_check_indexed : cell84.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell84_check :
     cell84.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 6, 0, 5, 0, 22, 0] witnessGeometryChecked (by decide))
+      cell84_check_indexed
 
 /-- Closed-cover cell 85 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 5, 0, 16, 0]`; `cell85_check` verifies
@@ -2288,9 +3154,19 @@ def cell85 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell85_check_indexed : cell85.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell85_check :
     cell85.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 5, 0, 16, 0] witnessGeometryChecked (by decide))
+      cell85_check_indexed
 
 /-- Closed-cover cell 86 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 14, 0, 5, 0, 22, 0]`; `cell86_check` verifies
@@ -2311,9 +3187,19 @@ def cell86 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell86_check_indexed : cell86.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9,
+     17, 0, 0, 18, 9], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell86_check :
     cell86.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 14, 0, 5, 0, 22, 0] witnessGeometryChecked (by decide))
+      cell86_check_indexed
 
 /-- Closed-cover cell 87 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 24, 0, 4, 0]`; `cell87_check` verifies its
@@ -2334,9 +3220,19 @@ def cell87 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell87_check_indexed : cell87.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [], [0, 0,
+     19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell87_check :
     cell87.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 24, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell87_check_indexed
 
 /-- Closed-cover cell 88 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 24, 0, 7, 0]`; `cell88_check` verifies its
@@ -2357,9 +3253,19 @@ def cell88 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell88_check_indexed : cell88.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [], [0, 0,
+     13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell88_check :
     cell88.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 24, 0, 7, 0] witnessGeometryChecked (by decide))
+      cell88_check_indexed
 
 /-- Closed-cover cell 89 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 24, 0, 8, 0]`; `cell89_check` verifies its
@@ -2381,9 +3287,19 @@ def cell89 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell89_check_indexed : cell89.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [], [19,
+     20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell89_check :
     cell89.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 24, 0, 8, 0] witnessGeometryChecked (by decide))
+      cell89_check_indexed
 
 /-- Closed-cover cell 90 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 24, 0, 9, 0]`; `cell90_check` verifies its
@@ -2405,9 +3321,19 @@ def cell90 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell90_check_indexed : cell90.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [], [0, 0,
+     0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell90_check :
     cell90.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 24, 0, 9, 0] witnessGeometryChecked (by decide))
+      cell90_check_indexed
 
 /-- Closed-cover cell 91 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 2, 0, 24, 0, 10, 0]`; `cell91_check` verifies its
@@ -2429,9 +3355,19 @@ def cell91 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell91_check_indexed : cell91.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [], [19,
+     20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell91_check :
     cell91.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 2, 0, 24, 0, 10, 0] witnessGeometryChecked (by decide))
+      cell91_check_indexed
 
 /-- Closed-cover cell 92 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 2, 0, 24, 0, 4, 0]`; `cell92_check` verifies its
@@ -2452,9 +3388,19 @@ def cell92 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell92_check_indexed : cell92.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
+     [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [], [0, 0,
+     19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell92_check :
     cell92.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 2, 0, 24, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell92_check_indexed
 
 /-- Closed-cover cell 93 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 12, 2, 0, 24, 0, 13, 0]`; `cell93_check` verifies
@@ -2475,9 +3421,19 @@ def cell93 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell93_check_indexed : cell93.certificate.checkClosedRows 4
+    [[], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 2, 2, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [],
+     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell93_check :
     cell93.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 12, 2, 0, 24, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell93_check_indexed
 
 /-- Closed-cover cell 94 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 24, 0, 4, 0]`; `cell94_check` verifies its
@@ -2498,9 +3454,19 @@ def cell94 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell94_check_indexed : cell94.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell94_check :
     cell94.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 24, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell94_check_indexed
 
 /-- Closed-cover cell 95 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 24, 0, 7, 0]`; `cell95_check` verifies its
@@ -2521,9 +3487,19 @@ def cell95 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell95_check_indexed : cell95.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell95_check :
     cell95.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 24, 0, 7, 0] witnessGeometryChecked (by decide))
+      cell95_check_indexed
 
 /-- Closed-cover cell 96 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 24, 0, 8, 0]`; `cell96_check` verifies its
@@ -2545,9 +3521,19 @@ def cell96 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell96_check_indexed : cell96.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell96_check :
     cell96.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 24, 0, 8, 0] witnessGeometryChecked (by decide))
+      cell96_check_indexed
 
 /-- Closed-cover cell 97 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 24, 0, 9, 0]`; `cell97_check` verifies its
@@ -2569,9 +3555,19 @@ def cell97 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell97_check_indexed : cell97.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell97_check :
     cell97.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 24, 0, 9, 0] witnessGeometryChecked (by decide))
+      cell97_check_indexed
 
 /-- Closed-cover cell 98 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 14, 0, 24, 0, 10, 0]`; `cell98_check` verifies
@@ -2593,9 +3589,19 @@ def cell98 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell98_check_indexed : cell98.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell98_check :
     cell98.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 14, 0, 24, 0, 10, 0] witnessGeometryChecked (by decide))
+      cell98_check_indexed
 
 /-- Closed-cover cell 99 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 14, 0, 24, 0, 13, 0]`; `cell99_check` verifies
@@ -2616,9 +3622,19 @@ def cell99 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell99_check_indexed : cell99.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell99_check :
     cell99.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 14, 0, 24, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell99_check_indexed
 
 /-- Closed-cover cell 100 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 12, 14, 0, 24, 0, 13, 0]`; `cell100_check` verifies
@@ -2639,9 +3655,19 @@ def cell100 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell100_check_indexed : cell100.certificate.checkClosedRows 4
+    [[], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 2, 2, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell100_check :
     cell100.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 12, 14, 0, 24, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell100_check_indexed
 
 /-- Closed-cover cell 101 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 14, 0, 5, 0, 13, 0]`; `cell101_check` verifies
@@ -2662,9 +3688,19 @@ def cell101 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell101_check_indexed : cell101.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell101_check :
     cell101.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 14, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell101_check_indexed
 
 /-- Closed-cover cell 102 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 24, 0, 4, 0]`; `cell102_check` verifies its
@@ -2685,9 +3721,19 @@ def cell102 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell102_check_indexed : cell102.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell102_check :
     cell102.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 24, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell102_check_indexed
 
 /-- Closed-cover cell 103 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 24, 0, 7, 0]`; `cell103_check` verifies its
@@ -2708,9 +3754,19 @@ def cell103 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell103_check_indexed : cell103.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell103_check :
     cell103.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 24, 0, 7, 0] witnessGeometryChecked (by decide))
+      cell103_check_indexed
 
 /-- Closed-cover cell 104 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 24, 0, 8, 0]`; `cell104_check` verifies its
@@ -2732,9 +3788,19 @@ def cell104 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell104_check_indexed : cell104.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell104_check :
     cell104.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 24, 0, 8, 0] witnessGeometryChecked (by decide))
+      cell104_check_indexed
 
 /-- Closed-cover cell 105 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 24, 0, 9, 0]`; `cell105_check` verifies its
@@ -2756,9 +3822,19 @@ def cell105 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell105_check_indexed : cell105.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell105_check :
     cell105.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 24, 0, 9, 0] witnessGeometryChecked (by decide))
+      cell105_check_indexed
 
 /-- Closed-cover cell 106 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 1, 6, 0, 24, 0, 10, 0]`; `cell106_check` verifies
@@ -2780,9 +3856,19 @@ def cell106 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell106_check_indexed : cell106.certificate.checkClosedRows 4
+    [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell106_check :
     cell106.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 1, 6, 0, 24, 0, 10, 0] witnessGeometryChecked (by decide))
+      cell106_check_indexed
 
 /-- Closed-cover cell 107 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 6, 0, 24, 0, 4, 0]`; `cell107_check` verifies
@@ -2803,9 +3889,19 @@ def cell107 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell107_check_indexed : cell107.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell107_check :
     cell107.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 6, 0, 24, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell107_check_indexed
 
 /-- Closed-cover cell 108 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 14, 0, 24, 0, 4, 0]`; `cell108_check` verifies
@@ -2826,9 +3922,19 @@ def cell108 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell108_check_indexed : cell108.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15, 0, 0,
+     0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0,
+     0, 0, 18, 10], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8]] = true := by
+  decide +kernel
+
 theorem cell108_check :
     cell108.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 14, 0, 24, 0, 4, 0] witnessGeometryChecked (by decide))
+      cell108_check_indexed
 
 /-- Closed-cover cell 109 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 12, 6, 0, 24, 0, 13, 0]`; `cell109_check` verifies
@@ -2849,9 +3955,19 @@ def cell109 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell109_check_indexed : cell109.certificate.checkClosedRows 4
+    [[], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 2, 2, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell109_check :
     cell109.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 12, 6, 0, 24, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell109_check_indexed
 
 /-- Closed-cover cell 110 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 11, 6, 0, 5, 0, 13, 0]`; `cell110_check` verifies
@@ -2872,9 +3988,19 @@ def cell110 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell110_check_indexed : cell110.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0, 0, 0,
+     0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 17,
+     0, 0, 18, 9], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell110_check :
     cell110.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 11, 6, 0, 5, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell110_check_indexed
 
 /-- Closed-cover cell 111 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 24, 0, 23, 0]`; `cell111_check` verifies
@@ -2896,9 +4022,19 @@ def cell111 : CoordinateCell row14Core :=
       aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell111_check_indexed : cell111.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [],
+     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 20, 21]] = true := by
+  decide +kernel
+
 theorem cell111_check :
     cell111.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 24, 0, 23, 0] witnessGeometryChecked (by decide))
+      cell111_check_indexed
 
 /-- Closed-cover cell 112 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 24, 0, 13, 0]`; `cell112_check` verifies
@@ -2919,9 +4055,19 @@ def cell112 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell112_check_indexed : cell112.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [],
+     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell112_check :
     cell112.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 24, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell112_check_indexed
 
 /-- Closed-cover cell 113 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 24, 0, 17, 0]`; `cell113_check` verifies
@@ -2942,9 +4088,19 @@ def cell113 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell113_check_indexed : cell113.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [],
+     [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell113_check :
     cell113.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 24, 0, 17, 0] witnessGeometryChecked (by decide))
+      cell113_check_indexed
 
 /-- Closed-cover cell 114 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 24, 0, 18, 0]`; `cell114_check` verifies
@@ -2966,9 +4122,19 @@ def cell114 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell114_check_indexed : cell114.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [],
+     [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell114_check :
     cell114.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 24, 0, 18, 0] witnessGeometryChecked (by decide))
+      cell114_check_indexed
 
 /-- Closed-cover cell 115 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 24, 0, 19, 0]`; `cell115_check` verifies
@@ -2990,9 +4156,19 @@ def cell115 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell115_check_indexed : cell115.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [],
+     [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell115_check :
     cell115.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 24, 0, 19, 0] witnessGeometryChecked (by decide))
+      cell115_check_indexed
 
 /-- Closed-cover cell 116 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 24, 0, 20, 0]`; `cell116_check` verifies
@@ -3014,9 +4190,19 @@ def cell116 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell116_check_indexed : cell116.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [],
+     [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell116_check :
     cell116.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 24, 0, 20, 0] witnessGeometryChecked (by decide))
+      cell116_check_indexed
 
 /-- Closed-cover cell 117 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 2, 0, 24, 0, 13, 0]`; `cell117_check` verifies
@@ -3037,9 +4223,19 @@ def cell117 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
+private theorem cell117_check_indexed : cell117.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [],
+     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 1, 1, 20]] = true := by
+  decide +kernel
+
 theorem cell117_check :
     cell117.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 2, 0, 24, 0, 13, 0] witnessGeometryChecked (by decide))
+      cell117_check_indexed
 
 /-- Closed-cover cell 118 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 2, 0, 24, 0, 16, 0]`; `cell118_check` verifies
@@ -3060,9 +4256,19 @@ def cell118 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell118_check_indexed : cell118.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11,
+     16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10, 0, 0, 0, 0, 18, 10], [],
+     [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell118_check :
     cell118.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 2, 0, 24, 0, 16, 0] witnessGeometryChecked (by decide))
+      cell118_check_indexed
 
 /-- Closed-cover cell 119 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 24, 0, 16, 0]`; `cell119_check` verifies
@@ -3083,9 +4289,19 @@ def cell119 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell119_check_indexed : cell119.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell119_check :
     cell119.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 24, 0, 16, 0] witnessGeometryChecked (by decide))
+      cell119_check_indexed
 
 /-- Closed-cover cell 120 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 24, 0, 17, 0]`; `cell120_check` verifies
@@ -3106,9 +4322,19 @@ def cell120 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell120_check_indexed : cell120.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell120_check :
     cell120.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 24, 0, 17, 0] witnessGeometryChecked (by decide))
+      cell120_check_indexed
 
 /-- Closed-cover cell 121 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 24, 0, 18, 0]`; `cell121_check` verifies
@@ -3130,9 +4356,19 @@ def cell121 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell121_check_indexed : cell121.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell121_check :
     cell121.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 24, 0, 18, 0] witnessGeometryChecked (by decide))
+      cell121_check_indexed
 
 /-- Closed-cover cell 122 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 24, 0, 19, 0]`; `cell122_check` verifies
@@ -3154,9 +4390,19 @@ def cell122 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell122_check_indexed : cell122.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell122_check :
     cell122.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 24, 0, 19, 0] witnessGeometryChecked (by decide))
+      cell122_check_indexed
 
 /-- Closed-cover cell 123 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 6, 0, 24, 0, 20, 0]`; `cell123_check` verifies
@@ -3178,9 +4424,19 @@ def cell123 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell123_check_indexed : cell123.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell123_check :
     cell123.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 6, 0, 24, 0, 20, 0] witnessGeometryChecked (by decide))
+      cell123_check_indexed
 
 /-- Closed-cover cell 124 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 6, 0, 24, 0, 22, 0]`; `cell124_check` verifies
@@ -3201,9 +4457,19 @@ def cell124 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell124_check_indexed : cell124.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 15, 6, 0, 0,
+     0, 0, 0, 0, 0, 0, 0, 0, 6, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell124_check :
     cell124.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 6, 0, 24, 0, 22, 0] witnessGeometryChecked (by decide))
+      cell124_check_indexed
 
 /-- Closed-cover cell 125 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 24, 0, 16, 0]`; `cell125_check` verifies
@@ -3224,9 +4490,19 @@ def cell125 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell125_check_indexed : cell125.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell125_check :
     cell125.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 24, 0, 16, 0] witnessGeometryChecked (by decide))
+      cell125_check_indexed
 
 /-- Closed-cover cell 126 for the fixed row-14 divisor, with 19 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 24, 0, 17, 0]`; `cell126_check` verifies
@@ -3247,9 +4523,19 @@ def cell126 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell126_check_indexed : cell126.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [0, 0, 13, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell126_check :
     cell126.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 24, 0, 17, 0] witnessGeometryChecked (by decide))
+      cell126_check_indexed
 
 /-- Closed-cover cell 127 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 24, 0, 18, 0]`; `cell127_check` verifies
@@ -3271,9 +4557,19 @@ def cell127 : CoordinateCell row14Core :=
       aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell127_check_indexed : cell127.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [19, 20, 0, 0, 21, 4, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell127_check :
     cell127.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 24, 0, 18, 0] witnessGeometryChecked (by decide))
+      cell127_check_indexed
 
 /-- Closed-cover cell 128 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 24, 0, 19, 0]`; `cell128_check` verifies
@@ -3295,9 +4591,19 @@ def cell128 : CoordinateCell row14Core :=
       aff [0, 1, -1, -1, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
       aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0]] }
 
+private theorem cell128_check_indexed : cell128.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [19, 20, 0, 0, 0, 0, 21, 3, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell128_check :
     cell128.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 24, 0, 19, 0] witnessGeometryChecked (by decide))
+      cell128_check_indexed
 
 /-- Closed-cover cell 129 for the fixed row-14 divisor, with 21 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 15, 14, 0, 24, 0, 20, 0]`; `cell129_check` verifies
@@ -3319,9 +4625,19 @@ def cell129 : CoordinateCell row14Core :=
       aff [0, -1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0], aff [0, 1, -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0],
       aff [0, -1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell129_check_indexed : cell129.certificate.checkClosedRows 4
+    [[], [13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [0, 0, 0, 0, 19, 20, 21, 20, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell129_check :
     cell129.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 15, 14, 0, 24, 0, 20, 0] witnessGeometryChecked (by decide))
+      cell129_check_indexed
 
 /-- Closed-cover cell 130 for the fixed row-14 divisor, with 20 affine cone constraints. Anchors
 zero through seven use witness indices `[0, 21, 14, 0, 24, 0, 22, 0]`; `cell130_check` verifies
@@ -3342,9 +4658,19 @@ def cell130 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1],
       aff [0, 1, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]] }
 
+private theorem cell130_check_indexed : cell130.certificate.checkClosedRows 4
+    [[], [0, 0, 13, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 15,
+     0, 0, 0, 0, 0, 0, 0, 0, 5, 16], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 10,
+     0, 0, 0, 0, 18, 10], [], [0, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 14]] = true := by
+  decide +kernel
+
 theorem cell130_check :
     cell130.certificate.checkClosed 4 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_sound _ _ _
+      (CertificateData.checkWitnessSelection row14Core rowDivisor witnesses defaultWitness
+        witnessGeometryRows [0, 21, 14, 0, 24, 0, 22, 0] witnessGeometryChecked (by decide))
+      cell130_check_indexed
 
 /-- The 131 row-14 closed-cover cells in global index order, covering the full cone of
 nonnegative edge lengths. -/
@@ -3485,12 +4811,21 @@ def treePart0 : CompactCellTree :=
                 (.absurd 62)))
         (.absurd 63))
 
+private theorem treePart0_check_chunked :
+    treePart0.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart0_check :
     treePart0.check splitForms farkasReceipts cells
       (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart0_check_chunked
 
 /-- Subtree splitting on `length[5] - length[10]` in the row-14 length cone, with leaves
 selecting cells 4, 5, 6, 7 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3510,13 +4845,23 @@ def treePart1 : CompactCellTree :=
                 (.absurd 85)))
         (.absurd 86))
 
+private theorem treePart1_check_chunked :
+    treePart1.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart1_check :
     treePart1.check splitForms farkasReceipts cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart1_check_chunked
 
 /-- Subtree splitting on `length[8] - length[11]` in the row-14 length cone, with leaves
 selecting cells 0, 8, 9, 10, 11, 12, 13 and Farkas receipts excluding inconsistent sign
@@ -3560,8 +4905,8 @@ def treePart2 : CompactCellTree :=
                         (.absurd 156))))
             (.absurd 157)))
 
-theorem treePart2_check :
-    treePart2.check splitForms farkasReceipts cells
+private theorem treePart2_check_chunked :
+    treePart2.checkLookup splitForms farkasReceiptLookup cells
       (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
       1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0,
       0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
@@ -3569,10 +4914,31 @@ theorem treePart2_check :
       0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) = true := by
   decide +kernel
 
+theorem treePart2_check :
+    treePart2.check splitForms farkasReceipts cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [aff [0,
+      0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart2_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 158 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart3 : CompactCellTree :=
   .absurd 158
+
+private theorem treePart3_check_chunked :
+    treePart3.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, -1, -1, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
 
 theorem treePart3_check :
     treePart3.check splitForms farkasReceipts cells
@@ -3582,7 +4948,9 @@ theorem treePart3_check :
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, -1, -1, 0,
       0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart3_check_chunked
 
 /-- Subtree splitting on `length[2] - length[3]` in the row-14 length cone, with leaves
 selecting cells 14, 15, 16, 17, 18, 19 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3627,6 +4995,16 @@ def treePart4 : CompactCellTree :=
                 (.absurd 188)))
         (.absurd 189))
 
+private theorem treePart4_check_chunked :
+    treePart4.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart4_check :
     treePart4.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
@@ -3635,7 +5013,9 @@ theorem treePart4_check :
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart4_check_chunked
 
 /-- Subtree splitting on `length[1] - length[7]` in the row-14 length cone, with leaves
 selecting cells 20, 21, 22, 23, 24, 25, 26, 27 and Farkas receipts excluding inconsistent sign
@@ -3680,12 +5060,21 @@ def treePart5 : CompactCellTree :=
             (.absurd 202))
         (.absurd 203))
 
+private theorem treePart5_check_chunked :
+    treePart5.checkLookup splitForms farkasReceiptLookup cells
+      ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation
+      (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart5_check :
     treePart5.check splitForms farkasReceipts cells
       ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation
       (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart5_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cells 2, 3, 28, 29 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3707,13 +5096,23 @@ def treePart6 : CompactCellTree :=
                 (.absurd 62)))
         (.absurd 63))
 
+private theorem treePart6_check_chunked :
+    treePart6.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0]]) = true := by
+  decide +kernel
+
 theorem treePart6_check :
     treePart6.check splitForms farkasReceipts cells
       (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart6_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cells 6, 7, 30, 31 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3733,18 +5132,37 @@ def treePart7 : CompactCellTree :=
                 (.absurd 85)))
         (.absurd 86))
 
-theorem treePart7_check :
-    treePart7.check splitForms farkasReceipts cells
+private theorem treePart7_check_chunked :
+    treePart7.checkLookup splitForms farkasReceiptLookup cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
   decide +kernel
 
+theorem treePart7_check :
+    treePart7.check splitForms farkasReceipts cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart7_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 204 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart8 : CompactCellTree :=
   .absurd 204
+
+private theorem treePart8_check_chunked :
+    treePart8.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
 
 theorem treePart8_check :
     treePart8.check splitForms farkasReceipts cells
@@ -3753,7 +5171,9 @@ theorem treePart8_check :
       ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
       0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
       0, 0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart8_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cells 14, 15, 16, 17, 32, 33, 34, 35 and Farkas receipts excluding inconsistent sign
@@ -3797,6 +5217,16 @@ def treePart9 : CompactCellTree :=
                 (.absurd 188)))
         (.absurd 209))
 
+private theorem treePart9_check_chunked :
+    treePart9.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [aff
+      [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart9_check :
     treePart9.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
@@ -3805,7 +5235,9 @@ theorem treePart9_check :
       0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [aff
       [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart9_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cells 15, 17, 18, 19, 33, 35, 36, 37 and Farkas receipts excluding inconsistent sign
@@ -3849,6 +5281,16 @@ def treePart10 : CompactCellTree :=
                 (.absurd 188)))
         (.absurd 209))
 
+private theorem treePart10_check_chunked :
+    treePart10.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart10_check :
     treePart10.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0,
@@ -3857,7 +5299,9 @@ theorem treePart10_check :
       0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0,
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart10_check_chunked
 
 /-- Subtree splitting on `length[1] - length[7]` in the row-14 length cone, with leaves
 selecting cells 22, 23, 26, 27, 38, 39, 40, 41 and Farkas receipts excluding inconsistent sign
@@ -3902,12 +5346,21 @@ def treePart11 : CompactCellTree :=
             (.absurd 202))
         (.absurd 203))
 
+private theorem treePart11_check_chunked :
+    treePart11.checkLookup splitForms farkasReceiptLookup cells
+      ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
+      -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart11_check :
     treePart11.check splitForms farkasReceipts cells
       ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 1,
       -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart11_check_chunked
 
 /-- Subtree splitting on `length[4] - length[10]` in the row-14 length cone, with leaves
 selecting cells 42, 43, 44 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3924,13 +5377,23 @@ def treePart12 : CompactCellTree :=
             (.cell 43 [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 37, 36, 34, 41, 39])
             (.absurd 210)))
 
+private theorem treePart12_check_chunked :
+    treePart12.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff [0,
+      0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]]) ++
+      [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+      0]]) = true := by
+  decide +kernel
+
 theorem treePart12_check :
     treePart12.check splitForms farkasReceipts cells
       (((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff [0,
       0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]]) ++
       [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
       0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart12_check_chunked
 
 /-- Subtree splitting on `length[4] - length[10]` in the row-14 length cone, with leaves
 selecting cells 45, 46, 47 and Farkas receipts excluding inconsistent sign branches. -/
@@ -3947,18 +5410,37 @@ def treePart13 : CompactCellTree :=
             (.cell 46 [42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 59, 58, 64, 65, 57])
             (.absurd 211)))
 
-theorem treePart13_check :
-    treePart13.check splitForms farkasReceipts cells
+private theorem treePart13_check_chunked :
+    treePart13.checkLookup splitForms farkasReceiptLookup cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]])
       ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
   decide +kernel
 
+theorem treePart13_check :
+    treePart13.check splitForms farkasReceipts cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart13_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 204 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart14 : CompactCellTree :=
   .absurd 204
+
+private theorem treePart14_check_chunked :
+    treePart14.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+      0, 0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
 
 theorem treePart14_check :
     treePart14.check splitForms farkasReceipts cells
@@ -3967,7 +5449,9 @@ theorem treePart14_check :
       ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
       0, 0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart14_check_chunked
 
 /-- Subtree splitting on `length[2] - length[3]` in the row-14 length cone, with leaves
 selecting cells 48, 49, 50, 51, 52, 53 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4006,6 +5490,16 @@ def treePart15 : CompactCellTree :=
                     (.absurd 156))))
         (.absurd 216))
 
+private theorem treePart15_check_chunked :
+    treePart15.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff
+      [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart15_check :
     treePart15.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4014,7 +5508,9 @@ theorem treePart15_check :
       0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff
       [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart15_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[1] + length[2] + length[6]` in the row-14 length
 cone, with leaves selecting cells 51, 52, 53, 54, 55, 56 and Farkas receipts excluding
@@ -4054,6 +5550,16 @@ def treePart16 : CompactCellTree :=
                     (.absurd 156))))
         (.absurd 216))
 
+private theorem treePart16_check_chunked :
+    treePart16.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]])
+      ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart16_check :
     treePart16.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4062,7 +5568,9 @@ theorem treePart16_check :
       0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
       0, 0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 1, -1, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart16_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 24, 26, 40, 57, 58, 59 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4101,12 +5609,21 @@ def treePart17 : CompactCellTree :=
             (.absurd 202))
         (.absurd 203))
 
+private theorem treePart17_check_chunked :
+    treePart17.checkLookup splitForms farkasReceiptLookup cells
+      ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff [0,
+      0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart17_check :
     treePart17.check splitForms farkasReceipts cells
       ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff [0,
       0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1]]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart17_check_chunked
 
 /-- Subtree splitting on `- length[8] + length[9]` in the row-14 length cone, with leaves
 selecting cells 60, 61, 62, 63, 64, 65 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4138,6 +5655,15 @@ def treePart18 : CompactCellTree :=
                             (.absurd 230)))))))
     (.absurd 231)
 
+private theorem treePart18_check_chunked :
+    treePart18.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff
+      [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) = true := by
+  decide +kernel
+
 theorem treePart18_check :
     treePart18.check splitForms farkasReceipts cells
       (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4145,7 +5671,9 @@ theorem treePart18_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff
       [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart18_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cell 66 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4157,6 +5685,16 @@ def treePart19 : CompactCellTree :=
         (.absurd 233))
     (.absurd 234)
 
+private theorem treePart19_check_chunked :
+    treePart19.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, -1, -1, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart19_check :
     treePart19.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4165,7 +5703,9 @@ theorem treePart19_check :
       0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, -1, -1, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart19_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cell 67 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4177,6 +5717,17 @@ def treePart20 : CompactCellTree :=
         (.absurd 236))
     (.absurd 237)
 
+private theorem treePart20_check_chunked :
+    treePart20.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart20_check :
     treePart20.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4186,7 +5737,9 @@ theorem treePart20_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart20_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cell 68 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4198,6 +5751,18 @@ def treePart21 : CompactCellTree :=
         (.absurd 239))
     (.absurd 240)
 
+private theorem treePart21_check_chunked :
+    treePart21.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
+      (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart21_check :
     treePart21.check splitForms farkasReceipts cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
@@ -4208,7 +5773,9 @@ theorem treePart21_check :
       [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart21_check_chunked
 
 /-- Subtree splitting on `length[0] - length[1] - length[3] - length[6]` in the row-14 length
 cone, with leaves selecting cells 69, 70, 71 and Farkas receipts excluding inconsistent sign
@@ -4246,6 +5813,18 @@ def treePart22 : CompactCellTree :=
                 (.absurd 266))
             (.absurd 156)))
 
+private theorem treePart22_check_chunked :
+    treePart22.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
+      (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart22_check :
     treePart22.check splitForms farkasReceipts cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
@@ -4256,7 +5835,9 @@ theorem treePart22_check :
       [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart22_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 25, 41, 72, 73 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4285,6 +5866,15 @@ def treePart23 : CompactCellTree :=
                 (.absurd 233))
             (.absurd 270)))
 
+private theorem treePart23_check_chunked :
+    treePart23.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0,
+      0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart23_check :
     treePart23.check splitForms farkasReceipts cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4292,7 +5882,9 @@ theorem treePart23_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0,
       0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0,
       0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart23_check_chunked
 
 /-- Subtree splitting on `- length[8] + length[9]` in the row-14 length cone, with leaves
 selecting cells 74, 75, 76, 77, 78, 79 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4324,6 +5916,15 @@ def treePart24 : CompactCellTree :=
                             (.absurd 230)))))))
     (.absurd 231)
 
+private theorem treePart24_check_chunked :
+    treePart24.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart24_check :
     treePart24.check splitForms farkasReceipts cells
       (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4331,7 +5932,9 @@ theorem treePart24_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart24_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[10]` in the row-14 length cone, with leaves
 selecting cell 66 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4343,6 +5946,16 @@ def treePart25 : CompactCellTree :=
         (.absurd 233))
     (.absurd 234)
 
+private theorem treePart25_check_chunked :
+    treePart25.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
+      0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart25_check :
     treePart25.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4351,7 +5964,9 @@ theorem treePart25_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
       0])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart25_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[10]` in the row-14 length cone, with leaves
 selecting cell 67 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4363,6 +5978,17 @@ def treePart26 : CompactCellTree :=
         (.absurd 236))
     (.absurd 237)
 
+private theorem treePart26_check_chunked :
+    treePart26.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0,
+      -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart26_check :
     treePart26.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4372,7 +5998,9 @@ theorem treePart26_check :
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
       0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0,
       -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart26_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[10]` in the row-14 length cone, with leaves
 selecting cell 68 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4384,6 +6012,18 @@ def treePart27 : CompactCellTree :=
         (.absurd 239))
     (.absurd 240)
 
+private theorem treePart27_check_chunked :
+    treePart27.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
+      (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart27_check :
     treePart27.check splitForms farkasReceipts cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
@@ -4394,7 +6034,9 @@ theorem treePart27_check :
       0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart27_check_chunked
 
 /-- Subtree splitting on `length[0] - length[1] - length[3] - length[6]` in the row-14 length
 cone, with leaves selecting cells 69, 70, 71 and Farkas receipts excluding inconsistent sign
@@ -4432,6 +6074,18 @@ def treePart28 : CompactCellTree :=
                 (.absurd 266))
             (.absurd 156)))
 
+private theorem treePart28_check_chunked :
+    treePart28.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
+      (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart28_check :
     treePart28.check splitForms farkasReceipts cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation
@@ -4442,7 +6096,9 @@ theorem treePart28_check :
       0])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart28_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 27, 41, 73, 80 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4471,6 +6127,15 @@ def treePart29 : CompactCellTree :=
                 (.absurd 233))
             (.absurd 270)))
 
+private theorem treePart29_check_chunked :
+    treePart29.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart29_check :
     treePart29.check splitForms farkasReceipts cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4478,7 +6143,9 @@ theorem treePart29_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart29_check_chunked
 
 /-- Subtree splitting on `- length[8] + length[9]` in the row-14 length cone, with leaves
 selecting cells 62, 63, 64, 65, 81 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4506,6 +6173,15 @@ def treePart30 : CompactCellTree :=
                         (.absurd 156))))))
     (.absurd 231)
 
+private theorem treePart30_check_chunked :
+    treePart30.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
+      0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) = true := by
+  decide +kernel
+
 theorem treePart30_check :
     treePart30.check splitForms farkasReceipts cells
       (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4513,7 +6189,9 @@ theorem treePart30_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
       0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart30_check_chunked
 
 /-- Subtree splitting on `length[4] - length[5]` in the row-14 length cone, with leaves
 selecting cell 82 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4524,6 +6202,16 @@ def treePart31 : CompactCellTree :=
         (.absurd 233))
     (.absurd 234)
 
+private theorem treePart31_check_chunked :
+    treePart31.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
+      0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart31_check :
     treePart31.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4532,7 +6220,9 @@ theorem treePart31_check :
       0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
       0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart31_check_chunked
 
 /-- Subtree splitting on `length[4] - length[5]` in the row-14 length cone, with leaves
 selecting cell 76 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4544,6 +6234,17 @@ def treePart32 : CompactCellTree :=
         (.absurd 236))
     (.absurd 237)
 
+private theorem treePart32_check_chunked :
+    treePart32.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
+      0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
+      0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart32_check :
     treePart32.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4553,7 +6254,9 @@ theorem treePart32_check :
       0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++ [aff [0, -1, 1, 0,
       0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart32_check_chunked
 
 /-- Subtree splitting on `length[0] - length[1] - length[3] - length[6]` in the row-14 length
 cone, with leaves selecting cells 77, 78, 79 and Farkas receipts excluding inconsistent sign
@@ -4591,6 +6294,17 @@ def treePart33 : CompactCellTree :=
                 (.absurd 243))
             (.absurd 130)))
 
+private theorem treePart33_check_chunked :
+    treePart33.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 1, 0, 0, 0, 0, 0, -1, 0,
+      0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart33_check :
     treePart33.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4600,7 +6314,9 @@ theorem treePart33_check :
       0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart33_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 25, 27, 83, 84 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4633,6 +6349,15 @@ def treePart34 : CompactCellTree :=
             (.absurd 279))
         (.absurd 280))
 
+private theorem treePart34_check_chunked :
+    treePart34.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart34_check :
     treePart34.check splitForms farkasReceipts cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4640,7 +6365,9 @@ theorem treePart34_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 1,
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart34_check_chunked
 
 /-- Subtree splitting on `- length[8] + length[9]` in the row-14 length cone, with leaves
 selecting cells 68, 69, 70, 71, 85 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4668,6 +6395,16 @@ def treePart35 : CompactCellTree :=
                         (.absurd 156))))))
     (.absurd 231)
 
+private theorem treePart35_check_chunked :
+    treePart35.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) = true
+      := by
+  decide +kernel
+
 theorem treePart35_check :
     treePart35.check splitForms farkasReceipts cells
       (((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4676,7 +6413,9 @@ theorem treePart35_check :
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) = true
       := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart35_check_chunked
 
 /-- Subtree splitting on `- length[5] + length[10]` in the row-14 length cone, with leaves
 selecting cell 82 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4687,6 +6426,16 @@ def treePart36 : CompactCellTree :=
         (.absurd 233))
     (.absurd 234)
 
+private theorem treePart36_check_chunked :
+    treePart36.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
+      0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart36_check :
     treePart36.check splitForms farkasReceipts cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4695,7 +6444,9 @@ theorem treePart36_check :
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
       0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart36_check_chunked
 
 /-- Subtree splitting on `- length[5] + length[10]` in the row-14 length cone, with leaves
 selecting cell 76 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4707,6 +6458,17 @@ def treePart37 : CompactCellTree :=
         (.absurd 236))
     (.absurd 237)
 
+private theorem treePart37_check_chunked :
+    treePart37.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
+      0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart37_check :
     treePart37.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4716,7 +6478,9 @@ theorem treePart37_check :
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
       0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart37_check_chunked
 
 /-- Subtree splitting on `length[0] - length[1] - length[3] - length[6]` in the row-14 length
 cone, with leaves selecting cells 77, 78, 79 and Farkas receipts excluding inconsistent sign
@@ -4754,6 +6518,17 @@ def treePart38 : CompactCellTree :=
                 (.absurd 243))
             (.absurd 130)))
 
+private theorem treePart38_check_chunked :
+    treePart38.checkLookup splitForms farkasReceiptLookup cells
+      (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
+      0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart38_check :
     treePart38.check splitForms farkasReceipts cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4763,7 +6538,9 @@ theorem treePart38_check :
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0,
       0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart38_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 27, 41, 84, 86 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4796,6 +6573,15 @@ def treePart39 : CompactCellTree :=
             (.absurd 279))
         (.absurd 280))
 
+private theorem treePart39_check_chunked :
+    treePart39.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0,
+      0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart39_check :
     treePart39.check splitForms farkasReceipts cells
       ((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1]]) ++ [AffineForm.violation (aff
@@ -4803,7 +6589,9 @@ theorem treePart39_check :
       0, 0, 0, 1, 0, 0, -1])]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart39_check_chunked
 
 /-- Subtree splitting on `length[0] - length[7]` in the row-14 length cone, with leaves
 selecting cells 87, 88, 89, 90, 91, 92, 93 and Farkas receipts excluding inconsistent sign
@@ -4841,13 +6629,23 @@ def treePart40 : CompactCellTree :=
                 (.absurd 279))
             (.absurd 280)))
 
+private theorem treePart40_check_chunked :
+    treePart40.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1,
+      0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart40_check :
     treePart40.check splitForms farkasReceipts cells
       (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
       ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1,
       0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart40_check_chunked
 
 /-- Subtree splitting on `length[0] - length[7]` in the row-14 length cone, with leaves
 selecting cells 1, 5, 11, 12, 13, 21, 25 and Farkas receipts excluding inconsistent sign
@@ -4894,13 +6692,23 @@ def treePart41 : CompactCellTree :=
                 (.absurd 279))
             (.absurd 280)))
 
+private theorem treePart41_check_chunked :
+    treePart41.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0,
+      0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart41_check :
     treePart41.check splitForms farkasReceipts cells
       (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
       ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0,
       0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart41_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[5]` in the row-14 length cone, with leaves
 selecting cells 29, 94 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4914,13 +6722,23 @@ def treePart42 : CompactCellTree :=
             (.absurd 62)))
     (.absurd 292)
 
+private theorem treePart42_check_chunked :
+    treePart42.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart42_check :
     treePart42.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
       ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
       0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart42_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[1] + length[7]` in the row-14 length cone, with
 leaves selecting cells 94, 95, 96, 97, 98 and Farkas receipts excluding inconsistent sign
@@ -4947,6 +6765,16 @@ def treePart43 : CompactCellTree :=
                       148, 150, 147, 152, 161, 155, 165, 153])
                     (.absurd 156)))))
 
+private theorem treePart43_check_chunked :
+    treePart43.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0,
+      0, 1, -1, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart43_check :
     treePart43.check splitForms farkasReceipts cells
       ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
@@ -4955,7 +6783,9 @@ theorem treePart43_check :
       0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
       0, 0])]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0,
       0, 1, -1, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart43_check_chunked
 
 /-- Subtree splitting on `- length[8] + length[11]` in the row-14 length cone, with leaves
 selecting cells 29, 31, 34, 35, 37 and Farkas receipts excluding inconsistent sign branches. -/
@@ -4983,8 +6813,8 @@ def treePart44 : CompactCellTree :=
                         (.absurd 230))))))
     (.absurd 62)
 
-theorem treePart44_check :
-    treePart44.check splitForms farkasReceipts cells
+private theorem treePart44_check_chunked :
+    treePart44.checkLookup splitForms farkasReceiptLookup cells
       ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
       ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
@@ -4993,10 +6823,32 @@ theorem treePart44_check :
       0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
   decide +kernel
 
+theorem treePart44_check :
+    treePart44.check splitForms farkasReceipts cells
+      ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0,
+      0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart44_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 292 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart45 : CompactCellTree :=
   .absurd 292
+
+private theorem treePart45_check_chunked :
+    treePart45.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+      0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0])]) = true :=
+      by
+  decide +kernel
 
 theorem treePart45_check :
     treePart45.check splitForms farkasReceipts cells
@@ -5006,7 +6858,9 @@ theorem treePart45_check :
       0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
       0, 0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0])]) = true :=
       by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart45_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 41, 99, 100, 101 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5035,13 +6889,23 @@ def treePart46 : CompactCellTree :=
         (.absurd 292))
     (.absurd 203)
 
+private theorem treePart46_check_chunked :
+    treePart46.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
+      ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart46_check :
     treePart46.check splitForms farkasReceipts cells
       (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]])
       ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart46_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[7]` in the row-14 length cone, with leaves
 selecting cells 102, 103, 104, 105, 106 and Farkas receipts excluding inconsistent sign
@@ -5070,13 +6934,23 @@ def treePart47 : CompactCellTree :=
                           121, 122, 128, 123, 273, 126, 129, 125, 127])
                         (.absurd 130))))))
 
+private theorem treePart47_check_chunked :
+    treePart47.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0,
+      0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart47_check :
     treePart47.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
       0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0,
       0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart47_check_chunked
 
 /-- Subtree splitting on `- length[4] + length[10]` in the row-14 length cone, with leaves
 selecting cells 94, 95, 96, 97, 98 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5106,6 +6980,15 @@ def treePart48 : CompactCellTree :=
                             (.absurd 156)))))))
     (.absurd 63)
 
+private theorem treePart48_check_chunked :
+    treePart48.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0,
+      0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0,
+      0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart48_check :
     treePart48.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
@@ -5113,7 +6996,9 @@ theorem treePart48_check :
       0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0,
       0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0,
       0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart48_check_chunked
 
 /-- Subtree splitting on `length[4] - length[5]` in the row-14 length cone, with leaves
 selecting cells 3, 29 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5124,6 +7009,15 @@ def treePart49 : CompactCellTree :=
         (.cell 29 [42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 59, 58, 61, 57, 60, 56])
         (.absurd 201))
 
+private theorem treePart49_check_chunked :
+    treePart49.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 1]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart49_check :
     treePart49.check splitForms farkasReceipts cells
       (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
@@ -5131,7 +7025,9 @@ theorem treePart49_check :
       0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
       0, 0, 0, 0, -1, 0, 0, 1]]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart49_check_chunked
 
 /-- Subtree splitting on `length[4] - length[5]` in the row-14 length cone, with leaves
 selecting cells 7, 31 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5142,6 +7038,16 @@ def treePart50 : CompactCellTree :=
         (.cell 31 [66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 83, 82, 194, 84, 80])
         (.absurd 209))
 
+private theorem treePart50_check_chunked :
+    treePart50.checkLookup splitForms farkasReceiptLookup cells
+      ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 1]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart50_check :
     treePart50.check splitForms farkasReceipts cells
       ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
@@ -5150,7 +7056,9 @@ theorem treePart50_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
       0, 0, 0, 0, -1, 0, 0, 1]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
       0])]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart50_check_chunked
 
 /-- Subtree splitting on `- length[0] - length[1] + length[7]` in the row-14 length cone, with
 leaves selecting cells 16, 17, 19, 34, 35, 37 and Farkas receipts excluding inconsistent sign
@@ -5194,8 +7102,8 @@ def treePart51 : CompactCellTree :=
                         (.absurd 300)))
                 (.absurd 301))))
 
-theorem treePart51_check :
-    treePart51.check splitForms farkasReceipts cells
+private theorem treePart51_check_chunked :
+    treePart51.checkLookup splitForms farkasReceiptLookup cells
       ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
       0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
@@ -5204,10 +7112,31 @@ theorem treePart51_check :
       0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
   decide +kernel
 
+theorem treePart51_check :
+    treePart51.check splitForms farkasReceipts cells
+      ((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      0, 0, 0, 0, -1, 0, 0, 1]]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart51_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 302 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart52 : CompactCellTree :=
   .absurd 302
+
+private theorem treePart52_check_chunked :
+    treePart52.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1])]) = true := by
+  decide +kernel
 
 theorem treePart52_check :
     treePart52.check splitForms farkasReceipts cells
@@ -5216,7 +7145,9 @@ theorem treePart52_check :
       0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 1])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart52_check_chunked
 
 /-- Subtree splitting on `length[1] - length[7]` in the row-14 length cone, with leaves
 selecting cells 100, 107, 108, 109 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5240,13 +7171,23 @@ def treePart53 : CompactCellTree :=
             (.absurd 305))
         (.absurd 306))
 
+private theorem treePart53_check_chunked :
+    treePart53.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart53_check :
     treePart53.check splitForms farkasReceipts cells
       (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
       0, 0, 0, 0, -1, 0])]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart53_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 27, 41, 101, 110 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5279,13 +7220,23 @@ def treePart54 : CompactCellTree :=
                 (.absurd 309))))
     (.absurd 310)
 
+private theorem treePart54_check_chunked :
+    treePart54.checkLookup splitForms farkasReceiptLookup cells
+      (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
+      [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0, -1, 0])]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart54_check :
     treePart54.check splitForms farkasReceipts cells
       (((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++ [aff
       [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1,
       0, 0, 0, 0, -1, 0])]) ++ [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0,
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart54_check_chunked
 
 /-- Subtree splitting on `length[0] - length[6]` in the row-14 length cone, with leaves
 selecting cells 93, 111, 112, 113, 114, 115, 116, 117 and Farkas receipts excluding inconsistent
@@ -5322,6 +7273,15 @@ def treePart55 : CompactCellTree :=
         (.cell 93 [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 36, 304, 34, 39, 32, 41, 37,
           284]))
 
+private theorem treePart55_check_chunked :
+    treePart55.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true
+      := by
+  decide +kernel
+
 theorem treePart55_check :
     treePart55.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5329,7 +7289,9 @@ theorem treePart55_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0,
       0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true
       := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart55_check_chunked
 
 /-- Subtree splitting on `length[0] - length[6]` in the row-14 length cone, with leaves
 selecting cells 93, 112, 113, 114, 115, 116, 117 and Farkas receipts excluding inconsistent sign
@@ -5364,6 +7326,15 @@ def treePart56 : CompactCellTree :=
               80, 81])
             (.absurd 296)))
 
+private theorem treePart56_check_chunked :
+    treePart56.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart56_check :
     treePart56.check splitForms farkasReceipts cells
       (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5371,7 +7342,9 @@ theorem treePart56_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0,
       0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0,
       1, 0, 0, 0, 0])]) ++ [aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart56_check_chunked
 
 /-- Subtree splitting on `length[0] - length[6]` in the row-14 length cone, with leaves
 selecting cells 113, 114, 115, 116, 118 and Farkas receipts excluding inconsistent sign
@@ -5400,6 +7373,16 @@ def treePart57 : CompactCellTree :=
                         (.absurd 156))))))
     (.absurd 280)
 
+private theorem treePart57_check_chunked :
+    treePart57.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) =
+      true := by
+  decide +kernel
+
 theorem treePart57_check :
     treePart57.check splitForms farkasReceipts cells
       (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5408,7 +7391,9 @@ theorem treePart57_check :
       0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1, -1, 0, 0, 0, 0, 0,
       1, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) =
       true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart57_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 119, 120, 121, 122, 123 and Farkas receipts excluding inconsistent sign
@@ -5448,6 +7433,15 @@ def treePart58 : CompactCellTree :=
                             (.absurd 325))
                         (.absurd 130))))))
 
+private theorem treePart58_check_chunked :
+    treePart58.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart58_check :
     treePart58.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5455,7 +7449,9 @@ theorem treePart58_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart58_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 109, 124 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5474,6 +7470,15 @@ def treePart59 : CompactCellTree :=
             (.absurd 279))
         (.absurd 280))
 
+private theorem treePart59_check_chunked :
+    treePart59.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart59_check :
     treePart59.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5481,7 +7486,9 @@ theorem treePart59_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart59_check_chunked
 
 /-- Subtree splitting on `length[0] - length[6]` in the row-14 length cone, with leaves
 selecting cells 25, 60, 61, 62, 63, 64, 65, 72 and Farkas receipts excluding inconsistent sign
@@ -5524,6 +7531,15 @@ def treePart60 : CompactCellTree :=
               282])
             (.absurd 331)))
 
+private theorem treePart60_check_chunked :
+    treePart60.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1,
+      0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart60_check :
     treePart60.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5531,7 +7547,9 @@ theorem treePart60_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [aff [0, -1, -1, 0, 0, 0, 0, 0, 1,
       0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart60_check_chunked
 
 /-- Subtree splitting on `length[0] - length[6]` in the row-14 length cone, with leaves
 selecting cells 25, 62, 63, 64, 65, 81, 83 and Farkas receipts excluding inconsistent sign
@@ -5574,6 +7592,15 @@ def treePart61 : CompactCellTree :=
                 (.absurd 335))
             (.absurd 309)))
 
+private theorem treePart61_check_chunked :
+    treePart61.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1,
+      -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart61_check :
     treePart61.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5581,7 +7608,9 @@ theorem treePart61_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, -1,
       -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart61_check_chunked
 
 /-- Subtree splitting on `length[4] - length[5]` in the row-14 length cone, with leaves
 selecting cells 76, 77, 78, 79, 82 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5614,6 +7643,15 @@ def treePart62 : CompactCellTree :=
         (.absurd 329))
     (.absurd 336)
 
+private theorem treePart62_check_chunked :
+    treePart62.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
+      0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart62_check :
     treePart62.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5621,7 +7659,9 @@ theorem treePart62_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1,
       0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart62_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 27, 84 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5644,6 +7684,15 @@ def treePart63 : CompactCellTree :=
             (.absurd 279))
         (.absurd 280))
 
+private theorem treePart63_check_chunked :
+    treePart63.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
+      1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart63_check :
     treePart63.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5651,7 +7700,9 @@ theorem treePart63_check :
       1, 0, 0, 0, 0, 0, -1, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0,
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart63_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 125, 126, 127, 128, 129 and Farkas receipts excluding inconsistent sign
@@ -5679,6 +7730,15 @@ def treePart64 : CompactCellTree :=
                           121, 122, 273, 123, 128, 126, 129, 214, 127])
                         (.absurd 130))))))
 
+private theorem treePart64_check_chunked :
+    treePart64.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++ [aff [0, 0,
+      0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart64_check :
     treePart64.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5686,7 +7746,9 @@ theorem treePart64_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++ [aff [0, 0,
       0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart64_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 68, 69, 70, 71, 85 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5725,6 +7787,15 @@ def treePart65 : CompactCellTree :=
                             (.absurd 340))
                         (.absurd 130))))))
 
+private theorem treePart65_check_chunked :
+    treePart65.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart65_check :
     treePart65.check splitForms farkasReceipts cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5732,7 +7803,9 @@ theorem treePart65_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart65_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 119, 120, 121, 122, 123 and Farkas receipts excluding inconsistent sign
@@ -5761,6 +7834,16 @@ def treePart66 : CompactCellTree :=
                           147, 148, 223, 162, 150, 161, 155, 165, 153])
                         (.absurd 156))))))
 
+private theorem treePart66_check_chunked :
+    treePart66.checkLookup splitForms farkasReceiptLookup cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, -1, 0, 0]]) = true := by
+  decide +kernel
+
 theorem treePart66_check :
     treePart66.check splitForms farkasReceipts cells
       (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
@@ -5769,7 +7852,9 @@ theorem treePart66_check :
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0,
       0])]) ++ [aff [0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0, 0,
       1, -1, 0, 0]]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart66_check_chunked
 
 /-- Subtree splitting on `- length[0] + length[6]` in the row-14 length cone, with leaves
 selecting cells 76, 77, 78, 79, 82 and Farkas receipts excluding inconsistent sign branches. -/
@@ -5808,8 +7893,8 @@ def treePart67 : CompactCellTree :=
                             (.absurd 345))
                         (.absurd 156))))))
 
-theorem treePart67_check :
-    treePart67.check splitForms farkasReceipts cells
+private theorem treePart67_check_chunked :
+    treePart67.checkLookup splitForms farkasReceiptLookup cells
       (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
@@ -5818,10 +7903,31 @@ theorem treePart67_check :
       0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
   decide +kernel
 
+theorem treePart67_check :
+    treePart67.check splitForms farkasReceipts cells
+      (((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0,
+      0])]) ++ [aff [0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0]]) ++ [AffineForm.violation (aff [0, 0,
+      0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0])]) = true := by
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart67_check_chunked
+
 /-- Contradiction leaf using Farkas receipt 346 to exclude the accumulated affine constraints in
 this row-14 branch. -/
 def treePart68 : CompactCellTree :=
   .absurd 346
+
+private theorem treePart68_check_chunked :
+    treePart68.checkLookup splitForms farkasReceiptLookup cells
+      ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
+      0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0,
+      0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0])]) = true := by
+  decide +kernel
 
 theorem treePart68_check :
     treePart68.check splitForms farkasReceipts cells
@@ -5830,7 +7936,9 @@ theorem treePart68_check :
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++ [aff [0, 1, 0, 0, 0,
       0, 0, -1, 0, 0, 0, 0, 0]]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0,
       0])]) ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart68_check_chunked
 
 /-- Subtree splitting on `length[1] - length[6]` in the row-14 length cone, with leaves
 selecting cells 27, 41, 84, 86, 100, 109, 124, 130 and Farkas receipts excluding inconsistent
@@ -5875,13 +7983,23 @@ def treePart69 : CompactCellTree :=
             (.absurd 202))
         (.absurd 203))
 
+private theorem treePart69_check_chunked :
+    treePart69.checkLookup splitForms farkasReceiptLookup cells
+      ((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
+      [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
+      [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
+  decide +kernel
+
 theorem treePart69_check :
     treePart69.check splitForms farkasReceipts cells
       ((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0])]) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (CompactCellTree.checkLookup_eq_check _ _ _ _
+      farkasReceiptLookup_eq_getD _ _).symm.trans treePart69_check_chunked
 
 /-- The complete compact decision tree for row 14 on the length cone, assembling 70 subtrees
 whose cell and Farkas certificates are replayed by the cover checker. -/
