@@ -37,7 +37,8 @@ theorem eLpNorm_le_eLpNorm_mul_rpow_measure_of_support {G : Vec3 → ℝ} {s : S
   have hind : s.indicator G = G :=
     Set.indicator_eq_self.2 (Function.support_subset_iff'.2 hzero)
   have hp : eLpNorm G p volume = eLpNorm G p (volume.restrict s) := by
-    have h1 := eLpNorm_indicator_eq_eLpNorm_restrict (f := G) (p := p) (μ := volume) hs
+    have h1 := eLpNorm_indicator_eq_eLpNorm_restrict
+      (f := G) (p := p) (μ := volume) hs.nullMeasurableSet
     rwa [hind] at h1
   rw [hp]
   calc eLpNorm G p (volume.restrict s)

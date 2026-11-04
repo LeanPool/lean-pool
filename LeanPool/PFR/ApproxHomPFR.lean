@@ -19,6 +19,7 @@ import LeanPool.PFR.HomPFR
 import LeanPool.PFR.Main
 import LeanPool.PFR.Mathlib.Data.Finset.Basic
 import LeanPool.PFR.RhoFunctional
+import Mathlib.Algebra.Group.Pointwise.Set.Card
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Data.FunLike.Fintype
 import Mathlib.Data.Int.Lemmas

@@ -21,6 +21,7 @@ public import LeanPool.ACMax.Band.KillSharp
 public import LeanPool.ACMax.Band.Rows
 public import LeanPool.ACMax.Band.Subset
 public import LeanPool.ACMax.Band.Sum
+public import LeanPool.ACMax.Counting.Arithmetic
 public import LeanPool.ACMax.Counting.Cherry
 public import LeanPool.ACMax.Counting.CherryMShape
 public import LeanPool.ACMax.Counting.CompactCell

@@ -72,7 +72,7 @@ private theorem affine_congruence_evaluation_det_eq_zero {n s M : ℕ} (hs : 0 <
   have hrows : LinearIndependent ℚ
       ((Matrix.of fun i j => eval (x i) (G j)).map ((↑) : ℤ → ℚ)).row := by
     rw [hmat]
-    apply Matrix.linearIndependent_rows_iff_isUnit.mpr
+    apply Matrix.linearIndependent_row_iff_isUnit.mpr
     apply (Matrix.isUnit_iff_isUnit_det _).mpr
     apply isUnit_iff_ne_zero.mpr
     change ((Int.castRingHom ℚ).mapMatrix (evaluationMatrix mon x)).det ≠ 0

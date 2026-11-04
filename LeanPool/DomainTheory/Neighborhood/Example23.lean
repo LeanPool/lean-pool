@@ -8,8 +8,6 @@ module
 public import LeanPool.DomainTheory.Neighborhood.Approximable
 public import LeanPool.DomainTheory.Neighborhood.Example12
 public import LeanPool.DomainTheory.Neighborhood.ExampleB
-public import Mathlib.Tactic.ToAdditive
-import Mathlib.Data.Finset.Attr
 import Mathlib.Tactic.Attr.Core
 import Mathlib.Tactic.SetLike
 
@@ -106,7 +104,7 @@ every extension `σ ++ t` keeps that value. This is the engine of monotonicity f
 theorem scan_append {σ : Str} {b : Bool} (h : scan σ = some b) (t : Str) :
     scan (σ ++ t) = some b := by
   induction σ generalizing b with
-  | nil => simp at h
+  | nil => simp only [scan_nil, reduceCtorEq] at h
   | cons c σ₀ ih =>
     cases c with
     | true => simp only [scan_true] at h ⊢; exact h
@@ -114,7 +112,7 @@ theorem scan_append {σ : Str} {b : Bool} (h : scan σ = some b) (t : Str) :
       simp only [List.cons_append, scan_false] at h ⊢
       rw [Option.map_eq_some_iff] at h
       obtain ⟨a, ha, rfl⟩ := h
-      simp_all
+      simp_all only [Option.some.injEq, forall_eq', Option.map_some]
 
 /-- **Monotonicity of the parity value.** A longer prefix `σ <+: σ'` yields a
 (weakly) more defined
@@ -125,7 +123,7 @@ theorem valElt_scan_mono {σ σ' : Str} (h : σ <+: σ') :
     valElt (scan σ) ≤ valElt (scan σ') := by
   obtain ⟨t, rfl⟩ := h
   cases hσ : scan σ with
-  | none => simpa [valElt, hσ] using botElt_le _
+  | none => simpa only [valElt] using botElt_le _
   | some b => rw [scan_append hσ t]
 
 /-- **Example 2.3 — the parity mapping `f : B → T`.** `X f Y` iff `X` is the cone

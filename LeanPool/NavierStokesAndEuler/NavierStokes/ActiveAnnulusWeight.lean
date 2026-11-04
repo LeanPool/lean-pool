@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ActivationCone
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TerminalEdgeFactor
 import LeanPool.NavierStokesAndEuler.NavierStokes.EdgeWeightJets
 import LeanPool.NavierStokesAndEuler.NavierStokes.UniformCone

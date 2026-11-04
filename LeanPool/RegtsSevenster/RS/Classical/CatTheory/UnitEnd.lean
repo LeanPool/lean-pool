@@ -68,7 +68,7 @@ theorem unit_comp_comm [Category.{v} C] [MonoidalCategory C]
 instance endUnitCommMonoid
     [Category.{v} C] [MonoidalCategory C] : CommMonoid (End (𝟙_ C)) :=
   { (inferInstance : Monoid (End (𝟙_ C))) with
-    mul_comm := fun f g => unit_comp_comm g f }
+    mul_comm := fun f g => End.ext (unit_comp_comm g.asHom f.asHom) }
 
 /-- The unit braids trivially with itself. -/
 theorem braiding_unit_self [Category.{v} C] [MonoidalCategory C]

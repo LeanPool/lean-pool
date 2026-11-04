@@ -2878,7 +2878,7 @@ theorem sharpRoundFor_of_two_gamma_le_eps (r : ℕ) (hr2 : 2 ≤ r) (γ ε θ α
     have hDp : (Δn : ℝ) * p = γ / (r : ℝ) := by rw [hpdef]; field_simp
     constructor
     · have hmloeq : mlo = (δn : ℝ) - (δn : ℝ) * S * γ := by
-        rw [hmlodef, hSdef, hDp]; field_simp; try ring
+        rw [hmlodef, hSdef, hDp]; field_simp
       have h1 : (δn : ℝ) * S * γ ≤ S * γ * Δ := by
         have h := mul_le_mul_of_nonneg_left hdnΔ (mul_nonneg hSnn hγ0.le)
         linarith only [h]
@@ -2913,10 +2913,10 @@ theorem sharpRoundFor_of_two_gamma_le_eps (r : ℕ) (hr2 : 2 ≤ r) (γ ε θ α
           hδ_le_dn hdn_lt hLpos hLu
       clear_value c d
       have hDropT : S * γ * (δ - lo) * δ * (1 - γ) / Δ = S * γ * ((δ - lo) * c) := by
-        rw [hcdef]; field_simp; try ring
+        rw [hcdef]; field_simp
       have hDropO : ((δn : ℝ) - lo) * (((r : ℝ) - 1) * (δn : ℝ) * (p * L))
           = S * γ * (((δn : ℝ) - lo) * d) := by
-        rw [hddef, hSdef, hpdef]; field_simp; try ring
+        rw [hddef, hSdef, hpdef]; field_simp
       have hErrle : Err ≤ Δ * γ ^ 2 + (r : ℝ) * (κn : ℝ) * γ :=
         sharp_bonferroni_error_le hR2 (Nat.cast_nonneg _) (Nat.cast_nonneg _) hp0 hpγ hDn_le
           hErrdef

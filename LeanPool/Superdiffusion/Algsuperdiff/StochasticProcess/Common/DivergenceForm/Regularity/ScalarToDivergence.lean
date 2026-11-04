@@ -9,6 +9,7 @@ module
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.Regularity.CoordinatePrimitive
 public import LeanPool.Superdiffusion.Algsuperdiff.StochasticProcess.Common.DivergenceForm.ScalarWeakSolution
 public import LeanPool.HighContrastHomogenization.Support.Deterministic.ConstantCoefficientDirichletBesov.Basic
+public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import LeanPool.HighContrastHomogenization.Support.PDE.DirichletRHS
 
 /-!

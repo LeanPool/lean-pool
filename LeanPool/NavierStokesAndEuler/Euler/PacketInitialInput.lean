@@ -1127,7 +1127,8 @@ theorem geometry_initial_bounds (ξ : U) (hs : tsupport EulerSpatialCutoffs.inne
         X^EulerPacketInitialAmplitude.degree*Real.exp (-x/8)) *
         (EulerPacketInitialCost.sourceConstant s*X^EulerPacketInitialCost.sourcePower s) := by
       exact mul_le_mul_of_nonneg_right
-        (mul_le_mul_of_nonneg_left ha (by positivity)) (by positivity)
+        (mul_le_mul_of_nonneg_left ha
+          (mul_nonneg (pow_nonneg hell s) (pow_nonneg hk0 s))) (by positivity)
     _ = _ := by rw [pow_add]; ring
 
 end EulerParentPacketFrames.LabelData

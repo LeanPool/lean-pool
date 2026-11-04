@@ -8,12 +8,6 @@ module
 public import LeanPool.DomainTheory.Neighborhood.Example43
 public import LeanPool.DomainTheory.Neighborhood.Exercise326
 public import LeanPool.DomainTheory.Neighborhood.Theorem41
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Theorem 5.6 (Scott 1981, PRG-19, §5) — recursive functions are λ-definable
@@ -347,7 +341,7 @@ theorem muMap_eq_least {m n₀ : ℕ}
     (hpos : ∀ i < n₀, ∃ j, f.toElementMap (pair (natElem i) (natElem m)) = natElem (j + 1)) :
     (muMap f).toElementMap (natElem m) = natElem n₀ := by
   rw [muMap_natElem]
-  have hclimb := muRec_climb f m n₀ 0 (by simpa using hpos)
+  have hclimb := muRec_climb f m n₀ 0 (by simpa only [Nat.zero_add] using hpos)
   rw [show (zeroElt : N.Element) = natElem 0 from rfl, hclimb, Nat.zero_add]
   exact muRec_found f hzero
 

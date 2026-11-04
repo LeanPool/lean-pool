@@ -6,9 +6,9 @@ Authors: Dan Abramov
 module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.CombinatorialGames.Support.OmnificFiniteDegree
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Sum.Order
+public import Mathlib.Order.Sum.Order
 public import Mathlib.SetTheory.Ordinal.Arithmetic
 public import Mathlib.SetTheory.Ordinal.Exponential
 

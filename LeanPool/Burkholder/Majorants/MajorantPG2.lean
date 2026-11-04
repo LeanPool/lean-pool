@@ -6,6 +6,7 @@ Authors: Daniel Smania
 module
 
 public import LeanPool.Burkholder.Majorants.Definitions
+import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import Mathlib.Topology.Algebra.Module.ModuleTopology

@@ -616,7 +616,7 @@ theorem regEquicontinuity_mollified_velocity_tenThirds_bound
         S.indicator (fun z : Vec3 × ℝ => u (z.1, z.2) j) := by
       funext z
       by_cases hz : z ∈ S <;> simp [Ubar, Set.indicator, hz]
-    rw [hcomp, memLp_indicator_iff_restrict hSmeas]
+    rw [hcomp, memLp_indicator_iff_restrict hSmeas.nullMeasurableSet]
     exact hpos
   have hUbarBound (j : Fin 3) :
       eLpNorm (fun z : Vec3 × ℝ => Ubar z j) q volume ≤ ENNReal.ofReal BU := by
@@ -626,7 +626,7 @@ theorem regEquicontinuity_mollified_velocity_tenThirds_bound
         S.indicator (fun z : Vec3 × ℝ => u (z.1, z.2) j) := by
       funext z
       by_cases hz : z ∈ S <;> simp [Ubar, Set.indicator, hz]
-    rw [hcomp, eLpNorm_indicator_eq_eLpNorm_restrict hSmeas]
+    rw [hcomp, eLpNorm_indicator_eq_eLpNorm_restrict hSmeas.nullMeasurableSet]
     exact hpos
   have hUprodPow (j : Fin 3) :
       eLpNorm (fun z : Vec3 × ℝ => Ubar z j) q
@@ -699,7 +699,7 @@ theorem regEquicontinuity_mollified_velocity_tenThirds_bound
       rw [hPositiveTimeMeasure]
       change eLpNorm (fun z : Vec3 × ℝ => J z i)
         q ((volume : Measure (Vec3 × ℝ)).restrict S) ≤ _
-      rw [← eLpNorm_indicator_eq_eLpNorm_restrict hSmeas]
+      rw [← eLpNorm_indicator_eq_eLpNorm_restrict hSmeas.nullMeasurableSet]
       have hcomp : (fun z : Vec3 × ℝ => Jbar z i) =
           S.indicator (fun z : Vec3 × ℝ => J z i) := by
         funext z
@@ -717,7 +717,7 @@ theorem regEquicontinuity_mollified_velocity_tenThirds_bound
     rw [hPositiveTimeMeasure]
     change eLpNorm (fun z : Vec3 × ℝ => J z i)
       q ((volume : Measure (Vec3 × ℝ)).restrict S) ≤ _
-    rw [← eLpNorm_indicator_eq_eLpNorm_restrict hSmeas]
+    rw [← eLpNorm_indicator_eq_eLpNorm_restrict hSmeas.nullMeasurableSet]
     have hcomp : (fun z : Vec3 × ℝ => Jbar z i) =
         S.indicator (fun z : Vec3 × ℝ => J z i) := by
       funext z

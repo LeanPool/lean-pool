@@ -90,7 +90,9 @@ theorem birthday_lt_of_subposition {x y : G} (hy : Subposition y x) :
   | single h => exact birthday_lt_of_isOption h
   | tail IH h => exact (birthday_lt_of_subposition IH).trans (birthday_lt_of_isOption h)
 termination_by x
-decreasing_by form_wf
+decreasing_by
+  subst_vars
+  exact MisereGames.Moves.Subposition.of_isOption h
 
 @[simp]
 theorem birthday_neg (x : G) : birthday (-x) = birthday x := by
@@ -122,7 +124,11 @@ theorem birthday_add (g h : G) : birthday (g + h) = birthday g + birthday h := b
       apply ha.trans
       first | exact add_le_add_left hz' _ | exact add_le_add_right hz' _
 termination_by (g, h)
-decreasing_by form_wf
+decreasing_by
+  all_goals
+    first
+    | exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+    | exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
 
 theorem birthday_add_lt_left {g' g h : G} (hlt : birthday g' < birthday g) :
     birthday g' + birthday h < birthday g + birthday h := by

@@ -8,7 +8,7 @@ module
 
 public import LeanPool.GapCVP.Part08
 public import Mathlib.Algebra.Order.Floor.Semifield
-public import Mathlib.Data.Int.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import Mathlib.RingTheory.Flat.TorsionFree
 public import Mathlib.RingTheory.Henselian

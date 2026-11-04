@@ -70,6 +70,8 @@ private theorem exists_divisibleHull_mk (x : DivisibleHull G) :
 /-- Localizing a continuum-sized torsion-free group by the positive integers does not change its
 cardinality. -/
 theorem mk_divisibleHull (hcard : #G = 𝔠) : #(DivisibleHull G) = 𝔠 := by
+  have : HasUniqueDiv G :=
+    ⟨fun _ hn a b h ↦ (AddCommute.all a b).eq_of_nsmul_eq_nsmul hn h⟩
   apply le_antisymm
   · refine (OreLocalization.cardinalMk_le_max (nonZeroDivisors ℕ) G).trans ?_
     rw [hcard]
@@ -118,6 +120,8 @@ theorem denominator_smul_basis (hcard : #G = 𝔠)
     (i : TriangularPreprocess.ContinuumIndex) :
     ((basisDenominator (G := G) hcard i : ℕ) : ℚ) • continuumBasis hcard i =
       (basisNumerator (G := G) hcard i : DivisibleHull G) := by
+  have : HasUniqueDiv G :=
+    ⟨fun _ hn a b h ↦ (AddCommute.all a b).eq_of_nsmul_eq_nsmul hn h⟩
   rw [← basisFraction hcard i, Nat.cast_smul_eq_nsmul,
     DivisibleHull.nsmul_mk, DivisibleHull.mk_eq_mk_iff_smul_eq_smul]
   simp
@@ -143,8 +147,10 @@ def canonicalEmbedding (hcard : #G = 𝔠) :
     (DivisibleHull.coeAddMonoidHom G)
 
 theorem canonicalEmbedding_injective (hcard : #G = 𝔠) :
-    Function.Injective (canonicalEmbedding hcard) :=
-  (integralBasis hcard).repr.injective.comp DivisibleHull.coe_injective
+    Function.Injective (canonicalEmbedding hcard) := by
+  have : HasUniqueDiv G :=
+    ⟨fun _ hn a b h ↦ (AddCommute.all a b).eq_of_nsmul_eq_nsmul hn h⟩
+  exact (integralBasis hcard).repr.injective.comp DivisibleHull.coe_injective
 
 theorem canonicalEmbedding_basisNumerator (hcard : #G = 𝔠)
     (i : TriangularPreprocess.ContinuumIndex) :

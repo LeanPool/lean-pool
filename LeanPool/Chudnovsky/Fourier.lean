@@ -8,6 +8,7 @@ module
 public import LeanPool.Chudnovsky.Lattices
 import LeanPool.Chudnovsky.BernoulliValues
 import LeanPool.Chudnovsky.Liouville
+import Mathlib.Analysis.Normed.Module.Connected
 
 /-!
 # Fourier expansions: the lattice ↔ modular-forms bridge

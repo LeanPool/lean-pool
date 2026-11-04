@@ -380,7 +380,7 @@ theorem ynode_cover (φ : Formula n m)
       · rintro (h | h) <;>
           (rcases hwheel_form ij with hf | hf <;>
             (rw [hf] at h; simp only [negT, posT, Sum.inl.injEq, Sum.inr.injEq,
-              Prod.mk.injEq, reduceCtorEq] at h <;> try exact Prod.ext h.1 h.2))
+              Prod.mk.injEq, reduceCtorEq] at h; try exact Prod.ext h.1 h.2))
       · rintro rfl
         rcases hwheel_form (i0, j0) with hf | hf <;> rw [hf]
         · right; rfl

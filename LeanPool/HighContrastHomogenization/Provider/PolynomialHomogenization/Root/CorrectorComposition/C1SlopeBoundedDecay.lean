@@ -117,7 +117,8 @@ private theorem comparison_error_le_energy_of_slope_bound
       Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ)) * euclideanNorm e ≤
           Cabs * Real.rpow 3 (-eta * ((m - q : ℕ) : ℝ)) *
             (2 * K * Book.Ch03.h1EnergyNormOnCube
-              (originCube d (m : ℤ)) a u.toH1) := by gcongr
+              (originCube d (m : ℤ)) a u.toH1) :=
+        mul_le_mul_of_nonneg_left heNorm (mul_nonneg hCabs.le hrate)
       _ = (2 * K * Cabs * Real.rpow 3
             (-eta * ((m - q : ℕ) : ℝ))) *
           Book.Ch03.h1EnergyNormOnCube

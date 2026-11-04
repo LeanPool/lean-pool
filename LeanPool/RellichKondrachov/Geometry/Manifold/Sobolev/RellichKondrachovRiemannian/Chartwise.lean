@@ -752,7 +752,8 @@ omit [T2Space M] in
       rw [← heChart_uK]
       exact Lp.extendByZeroₗᵢ_ae_eq hKm uK
     have hzK : ((z : E →₂[μchart] ℝ) : E → ℝ) =ᵐ[μchart.restrict K] uK :=
-      Filter.EventuallyEq.trans (ae_restrict_of_ae hz) (indicator_ae_eq_restrict hKm)
+      Filter.EventuallyEq.trans (ae_restrict_of_ae hz)
+        (indicator_ae_eq_restrict hKm.nullMeasurableSet)
     exact Lp.ext (hzK.symm.trans
       (Lp.changeMeasureL_coeFn_ae_eq (μ := μchart) (ν := μchart.restrict K) (E := ℝ)
         (p := (2 : ℝ≥0∞)) (c := (1 : ℝ≥0∞)) (by simp)

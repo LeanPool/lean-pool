@@ -100,7 +100,7 @@ recall HilbertBasis.mkOfOrthogonalEqBot {ι : Type u_1} {𝕜 : Type u_2}
 recall MeasureTheory.memLp_indicator_iff_restrict {α : Type u_1}
     {m0 : MeasurableSpace α} {p : ENNReal} {μ : Measure α} {ε : Type u_7}
     [TopologicalSpace ε] [ESeminormedAddMonoid ε] {s : Set α} {f : α → ε}
-    (hs : MeasurableSet s) : MemLp (s.indicator f) p μ ↔ MemLp f p (μ.restrict s)
+    (hs : NullMeasurableSet s μ) : MemLp (s.indicator f) p μ ↔ MemLp f p (μ.restrict s)
 
 universe u₁ u₂ u₃ u₄ u₅
 
@@ -759,7 +759,7 @@ private lemma symmetrize_factorial_indicator_on_simplex
 private lemma memLp_zeroExtension (n : ℕ) (g : SimplexKernel n) :
     MemLp ((simplex ℝ≥0 n).indicator (fun t ↦ g t)) (2 : ℝ≥0∞)
       (iteratedKernelMeasure n) := by
-  rw [memLp_indicator_iff_restrict (measurableSet_simplex n)]
+  rw [memLp_indicator_iff_restrict (measurableSet_simplex n).nullMeasurableSet]
   exact Lp.memLp g
 
 private noncomputable def zeroExtendSimplex (n : ℕ) (g : SimplexKernel n) :

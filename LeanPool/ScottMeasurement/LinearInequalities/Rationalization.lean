@@ -97,7 +97,7 @@ theorem exists_pos_rational_relation (x : I → S → ℝ)
     simpa [eS, f, Pi.single_apply, ha, Algebra.smul_def, smul_eq_mul, mul_comm] using hs
   have hexact :=
     Module.Flat.lTensor_exact ℝ (LinearMap.exact_subtype_ker_map f)
-  rw [← LinearMap.baseChange_eq_ltensor] at hexact
+  rw [← LinearMap.baseChange_eq_lTensor] at hexact
   obtain ⟨t, ht⟩ := (hexact (eI.symm c)).mp hbase
   obtain ⟨k, r, v, rfl⟩ := TensorProduct.exists_sum_tmul_eq t
   let U : Set (Fin k → ℝ) :=

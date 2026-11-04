@@ -150,9 +150,9 @@ theorem mBlock_wf (m n p : ℕ) : Fragment.PairsWF (mBlock m n p) := by
   intro k _ j _ hkj x hxj hxk
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hxj hxk
   rcases hxj with rfl | rfl <;> rcases hxk with h | h <;>
-    (simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
-      reduceCtorEq] at h <;>
-     exact hkj (Fin.ext (by omega)).symm)
+    simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
+      reduceCtorEq] at h
+  all_goals exact hkj (Fin.ext (by omega)).symm
 
 /-- The `p`-block is well-formed. -/
 theorem pBlock_wf (m n p : ℕ) : Fragment.PairsWF (pBlock m n p) := by
@@ -164,9 +164,9 @@ theorem pBlock_wf (m n p : ℕ) : Fragment.PairsWF (pBlock m n p) := by
   intro k _ j _ hkj x hxj hxk
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hxj hxk
   rcases hxj with rfl | rfl <;> rcases hxk with h | h <;>
-    (simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
-      reduceCtorEq] at h <;>
-     exact hkj (Fin.ext (by omega)).symm)
+    simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
+      reduceCtorEq] at h
+  all_goals exact hkj (Fin.ext (by omega)).symm
 
 /-- The `n`-block is well-formed. -/
 theorem nBlock_wf (m n p : ℕ) : Fragment.PairsWF (nBlock m n p) := by
@@ -178,9 +178,9 @@ theorem nBlock_wf (m n p : ℕ) : Fragment.PairsWF (nBlock m n p) := by
   intro k _ j _ hkj x hxj hxk
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hxj hxk
   rcases hxj with rfl | rfl <;> rcases hxk with h | h <;>
-    (simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
-      reduceCtorEq] at h <;>
-     exact hkj (Fin.ext (by omega)).symm)
+    simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
+      reduceCtorEq] at h
+  all_goals exact hkj (Fin.ext (by omega)).symm
 
 /-- The `n`-block and `p`-block glue disjoint labels. -/
 theorem nBlock_pBlock_disjoint (m n p : ℕ) :
@@ -195,8 +195,9 @@ theorem nBlock_pBlock_disjoint (m n p : ℕ) :
   have hl := l.isLt
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hx₁ hy₂
   rcases hx₁ with rfl | rfl <;> rcases hy₂ with h | h <;>
-    (simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
-      reduceCtorEq] at h <;> omega)
+    simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
+      reduceCtorEq] at h
+  omega
 
 /-- The `n`-block and `m`-block glue disjoint labels. -/
 theorem nBlock_mBlock_disjoint (m n p : ℕ) :
@@ -211,8 +212,9 @@ theorem nBlock_mBlock_disjoint (m n p : ℕ) :
   have hi := i.isLt
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hx₁ hy₂
   rcases hx₁ with rfl | rfl <;> rcases hy₂ with h | h <;>
-    (simp only [Sum.inl.injEq, Fin.mk.injEq,
-      reduceCtorEq] at h <;> omega)
+    simp only [Sum.inl.injEq, Fin.mk.injEq,
+      reduceCtorEq] at h
+  omega
 
 /-- The `p`-block and `m`-block glue disjoint labels. -/
 theorem pBlock_mBlock_disjoint (m n p : ℕ) :
@@ -227,8 +229,9 @@ theorem pBlock_mBlock_disjoint (m n p : ℕ) :
   have hi := i.isLt
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hx₁ hy₂
   rcases hx₁ with rfl | rfl <;> rcases hy₂ with h | h <;>
-    (simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
-      reduceCtorEq] at h <;> omega)
+    simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
+      reduceCtorEq] at h
+  omega
 
 /-- The combined block list of the left association is
 well-formed. -/
@@ -537,9 +540,9 @@ theorem hkPairs_wf (m n p : ℕ) :
   intro k _ j _ hkj x hxj hxk
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hxj hxk
   rcases hxj with rfl | rfl <;> rcases hxk with h | h <;>
-    (simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
-      reduceCtorEq] at h <;>
-     exact hkj (Fin.ext (by omega)).symm)
+    simp only [Sum.inl.injEq, Sum.inr.injEq, Fin.mk.injEq,
+      reduceCtorEq] at h
+  all_goals exact hkj (Fin.ext (by omega)).symm
 
 /-- The transpose-pullback of the rotated interface is the
 `K`-first pair list (generalized over the index list). -/

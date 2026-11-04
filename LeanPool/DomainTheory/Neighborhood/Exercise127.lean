@@ -7,12 +7,9 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise118
 public import Mathlib.Basic.Finite.Defs
-import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Data.Set.Finite.Range
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
+
+import Mathlib.Tactic.Set -- shake: keep
 
 /-!
 # Exercise 1.27 (Scott 1981, PRG-19, §1) — bounded sets and least upper bounds
@@ -98,7 +95,7 @@ def pairSeq (U W : Set α) : ℕ → Set α := fun i => if i = 0 then U else W
 theorem interUpTo_pairSeq (U W : Set α) :
     V.interUpTo (pairSeq U W) 2 = V.master ∩ U ∩ W := by
   simp only [interUpTo_succ, interUpTo_zero, pairSeq]
-  norm_num
+  rfl
 
 /-- **Exercise 1.27 — "boundedness is for elements what consistency is for
 neighbourhoods".**

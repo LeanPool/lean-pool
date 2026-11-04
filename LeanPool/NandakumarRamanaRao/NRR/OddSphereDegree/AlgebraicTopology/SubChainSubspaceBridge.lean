@@ -9,6 +9,7 @@ module
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionHomotopyOperator
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.HomotopyToChainHomotopy
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SubordinateChains
+public import Mathlib.CategoryTheory.Limits.MonoCoprod
 public import Mathlib.Topology.Homotopy.Contractible
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionHomotopyFormula
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.BallBoundaryLES

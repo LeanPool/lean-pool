@@ -5,10 +5,7 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import LeanPool.ACMax.Counting.CompactLedgers
 public import LeanPool.ACMax.Counting.SigmaCloud
-public import LeanPool.ACMax.Counting.CompactCell
-public import LeanPool.ACMax.Counting.DoubleStar
 
 /-!
 # The master X-bound assembly

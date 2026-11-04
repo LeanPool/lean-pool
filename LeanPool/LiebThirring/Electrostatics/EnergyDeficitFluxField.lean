@@ -9,6 +9,8 @@ module
 -- Imports adapted for Lean Pool.
 
 public import LeanPool.LiebThirring.Electrostatics.EnergyDeficitFluxCutoff
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.FDeriv.Pow
 
 /-!
 # The inverse-square field and its divergence

@@ -5,6 +5,8 @@ Authors: Scott Armstrong, Vlad Vicol
 -/
 module
 
+public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+
 public import LeanPool.CaffarelliKohnNirenberg.Foundation.Sobolev.Poincare.KernelSegment
 public import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap

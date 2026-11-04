@@ -485,7 +485,7 @@ theorem weakly_harmonic_interior_representative_ae
   let g : Vec3 → ℝ := U.indicator h
   have hgmem : MemLp g (ENNReal.ofReal (3 / 2 : ℝ)) volume := by
     dsimp [g]
-    exact (memLp_indicator_iff_restrict hUmeas).2 hmem
+    exact (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 hmem
   let ε : ℕ → ℝ := fun n => ρ / (12 * ((n : ℝ) + 1))
   have hεpos : ∀ n, 0 < ε n := by
     intro n

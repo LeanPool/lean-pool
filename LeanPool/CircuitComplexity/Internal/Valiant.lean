@@ -7,6 +7,7 @@ module
 
 public import LeanPool.CircuitComplexity.Digraph.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+import Batteries.Data.Nat.Bitwise.Lemmas
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.Ring.Nat
 import Mathlib.Algebra.Order.Sub.Basic

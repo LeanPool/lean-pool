@@ -7,6 +7,7 @@ module
 
 public import LeanPool.SingleCopyStabilizer.StabilizerState
 public import LeanPool.SingleCopyStabilizer.ExactLearning
+public import LeanPool.SingleCopyStabilizer.FiniteProbability
 
 
 /-! The exact round's actual two-copy Born measurements and independent
@@ -31,17 +32,17 @@ def labels (S : PureStabilizerState ι) : ExactLearning.State ι :=
 an independent fair correction bit. -/
 def outcomePMF (S : PureStabilizerState ι) : PMF (ExactLearning.Outcome ι) :=
   (bornDifferencePMF S.amplitude S.normalized).bind fun u =>
-    (PMF.uniformOfFintype (ZMod 2)).map fun b => (u, b)
+    (FiniteProbability.uniformPMF (ZMod 2)).map fun b => (u, b)
 
 omit [DecidableEq ι] in
 theorem correction_map_apply (u : Bits ι) (o : ExactLearning.Outcome ι) :
-    ((PMF.uniformOfFintype (ZMod 2)).map fun b => (u, b)) o =
+    ((FiniteProbability.uniformPMF (ZMod 2)).map fun b => (u, b)) o =
       if u = o.1 then (1 / 2 : ENNReal) else 0 := by
   classical
   rcases o with ⟨x, c⟩
   by_cases hu : u = x
   · subst u
-    simp [PMF.map_apply, tsum_fintype, PMF.uniformOfFintype_apply]
+    simp [PMF.map_apply, tsum_fintype, FiniteProbability.uniformPMF_apply]
   · simp [PMF.map_apply, tsum_fintype, hu, Ne.symm hu]
 
 theorem outcomePMF_apply (S : PureStabilizerState ι) (o : ExactLearning.Outcome ι) :

@@ -86,7 +86,7 @@ theorem zoomOmega_pde (lam h zc : ℝ) (hlam : 0 < lam)
   have hu : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) unitCylinder := hsol.1
   have huD : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => u z) D := hu.mono hsub
   have hrad : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => z.1 0) D :=
-    ((contDiff_apply ℝ ℝ (0 : Fin 3)).comp contDiff_fst).contDiffOn
+    ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) (0 : Fin 3)).comp contDiff_fst).contDiffOn
   have hazi : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => azimuthalVorticity u z) D :=
     (contDiffOn_azimuthalVorticity hu).mono hsub
   have hOmegaTop : ContDiffOn ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => potentialVorticity u z) D :=

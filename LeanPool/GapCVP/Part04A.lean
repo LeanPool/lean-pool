@@ -131,7 +131,9 @@ def littleEndianNaturalFold :
   | current, true :: first, true :: second =>
       littleEndianNaturalFold current first second
 termination_by _ first second => first.length + second.length
-decreasing_by all_goals simp_wf <;> omega
+decreasing_by
+  all_goals simp_wf
+  all_goals omega
 
 /-- GapCVP reduction support. -/
 def littleEndianNaturalOrdering

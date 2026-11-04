@@ -288,7 +288,7 @@ private theorem memLp_smooth_mul_zeroExtend {U : Set Vec3} (hU : IsOpen U)
   have hmul : MemLp (fun x => χ x * f x) 2 (volume.restrict U) :=
     localSobolev_bounded_mul_memLp hf hχ.aestronglyMeasurable hL
   have hglob : MemLp (U.indicator (fun x => χ x * f x)) 2 volume :=
-    (memLp_indicator_iff_restrict hU.measurableSet).2 hmul
+    (memLp_indicator_iff_restrict hU.measurableSet.nullMeasurableSet).2 hmul
   have heq : U.indicator (fun x => χ x * f x) = fun x => χ x * f x := by
     funext x
     by_cases hx : x ∈ U

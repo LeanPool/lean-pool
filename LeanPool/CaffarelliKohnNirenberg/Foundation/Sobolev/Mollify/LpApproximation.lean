@@ -283,7 +283,7 @@ theorem tendsto_eLpNorm_restrict_mollify_sub_zero
   have huS : MemLp u p (volume.restrict S) :=
     hu.mono_measure (Measure.restrict_mono hS_sub_U (le_refl volume))
   have hg : MemLp (S.indicator u) p volume :=
-    (memLp_indicator_iff_restrict hS_meas).2 huS
+    (memLp_indicator_iff_restrict hS_meas.nullMeasurableSet).2 huS
   have hglobal := tendsto_eLpNorm_sub_zero_mollify hp hp_top hg hε hε_pos
   have h_eq : ∀ y ∈ S, u y = S.indicator u y := by
     intro y hy

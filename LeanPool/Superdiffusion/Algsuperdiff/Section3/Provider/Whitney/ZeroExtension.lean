@@ -69,20 +69,20 @@ theorem eLpNorm_two_restrict_eq_of_zero_outside {U V : Set (Vec d)} (hV : Measur
     eLpNorm h 2 (volume.restrict U)
         = eLpNorm (V.indicator h) 2 (volume.restrict U) := by rw [hind]
     _ = eLpNorm h 2 ((volume.restrict U).restrict V) :=
-        eLpNorm_indicator_eq_eLpNorm_restrict hV
+        eLpNorm_indicator_eq_eLpNorm_restrict hV.nullMeasurableSet
     _ = eLpNorm h 2 (volume.restrict V) := by
         rw [Measure.restrict_restrict hV, Set.inter_eq_self_of_subset_left hVU]
 
 /-- Extension by zero preserves scalar `L²` membership across an inclusion. -/
 theorem memL2On_indicator_of_subset {U V : Set (Vec d)} (hV : MeasurableSet V) (hVU : V ⊆ U)
     {h : Vec d → ℝ} (hh : MemL2On V h) : MemL2On U (V.indicator h) := by
-  refine (memLp_indicator_iff_restrict hV).2 ?_
+  refine (memLp_indicator_iff_restrict hV.nullMeasurableSet).2 ?_
   rwa [Measure.restrict_restrict hV, Set.inter_eq_self_of_subset_left hVU]
 
 /-- Extension by zero preserves vector `L²` membership across an inclusion. -/
 theorem memVectorL2_indicator_of_subset {U V : Set (Vec d)} (hV : MeasurableSet V) (hVU : V ⊆ U)
     {f : Vec d → Vec d} (hf : MemVectorL2 V f) : MemVectorL2 U (V.indicator f) := by
-  refine (memLp_indicator_iff_restrict hV).2 ?_
+  refine (memLp_indicator_iff_restrict hV.nullMeasurableSet).2 ?_
   rwa [Measure.restrict_restrict hV, Set.inter_eq_self_of_subset_left hVU]
 
 /-- Coordinates of a vector indicator are indicators of the coordinates. -/

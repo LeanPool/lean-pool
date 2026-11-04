@@ -11,6 +11,7 @@ public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 import all LeanPool.EhrhartVolumeInequality.Variation
 import Mathlib.Analysis.Matrix.Order
 import Mathlib.Analysis.SpecialFunctions.PolarCoord
+import Mathlib.Geometry.Manifold.PartitionOfUnity
 
 /-!
 # Ehrhart volume inequality: FourierAnalysis

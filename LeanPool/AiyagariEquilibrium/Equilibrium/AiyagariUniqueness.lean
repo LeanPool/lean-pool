@@ -331,7 +331,7 @@ theorem exists_log_cap_corner {R : ℝ} (hβ : 0 < (P.discount : ℝ)) (hR : 0 <
   have hcorn : β * R * (P.income z₀ + R * a₀) < P.minIncome := by
     rw [hmin]
     have hkey : β * R * (R * A) = P.minIncome * (1 - β * R) / 2 := by
-      rw [hAdef]; field_simp; try ring
+      rw [hAdef]; field_simp
     have hmono : β * R * (R * a₀) ≤ β * R * (R * A) :=
       mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left ha₀A hR.le) (by positivity)
     have : β * R * (P.minIncome + R * a₀) = β * R * P.minIncome + β * R * (R * a₀) := by ring

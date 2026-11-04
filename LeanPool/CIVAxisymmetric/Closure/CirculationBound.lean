@@ -214,9 +214,9 @@ theorem exists_bound_circulation_slice (u : ParabolicPoint → Vec3)
     exact lt_of_le_of_lt hy' hR1
   have hcirc1 : ContDiffOn ℝ 1 (fun w : Vec3 × ℝ => circulation u w) unitCylinder := by
     have h0 : ContDiffOn ℝ 1 (fun w : Vec3 × ℝ => w.1 0) unitCylinder :=
-      ((contDiff_apply ℝ ℝ 0).comp contDiff_fst).contDiffOn
+      ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 0).comp contDiff_fst).contDiffOn
     have h1 : ContDiffOn ℝ 1 (fun w : Vec3 × ℝ => w.1 1) unitCylinder :=
-      ((contDiff_apply ℝ ℝ 1).comp contDiff_fst).contDiffOn
+      ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 1).comp contDiff_fst).contDiffOn
     exact (h0.mul (contDiffOn_component hu1 1)).sub (h1.mul (contDiffOn_component hu1 0))
   have hcont : ContinuousOn (fun y : Vec3 => circulation u (y, τ))
       (closure (vec3Ball (0 : Vec3) Rstar)) :=

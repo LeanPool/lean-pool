@@ -304,14 +304,10 @@ theorem _root_.MisereGames.GameForm.miserePlayerOutcome_right_isEnd_left_NN {g h
             rwa [add_comm] at this
 termination_by Form.birthday g + Form.birthday h
 decreasing_by
-  all_goals
-    first
-      | exact birthday_add_lt_left (birthday_lt_of_mem_moves (by assumption))
-      | exact birthday_add_lt_right (birthday_lt_of_mem_moves (by assumption))
-      | exact birthday_add_lt_right
-          (lt_trans
-            (birthday_lt_of_mem_moves (by assumption))
-            (birthday_lt_of_mem_moves (by assumption)))
+  exact birthday_add_lt_right
+    (lt_trans
+      (birthday_lt_of_mem_moves (by assumption))
+      (birthday_lt_of_mem_moves (by assumption)))
 
 /--
 This is the mirror of [Davies, Miller, Milley (Lemma 4.7 on p.

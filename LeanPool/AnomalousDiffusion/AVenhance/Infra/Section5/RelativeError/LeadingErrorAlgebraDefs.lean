@@ -151,7 +151,7 @@ theorem gradMatrix_chiTilde_eq (hΦ : IsStreamSeq I Φ) (m : ℕ) (κm : ℝ) (k
   have hf : HasFDerivAt (fun w => I.chiMK κm m k t w j)
       (fderiv ℝ (fun w => I.chiMK κm m k t w j) (I.xFlowInv hΦ m (lIdx β I.Λ m k) t x))
       (I.xFlowInv hΦ m (lIdx β I.Λ m k) t x) :=
-    (((contDiff_apply ℝ ℝ j).comp (contDiff_chiMK I κm m k t)).differentiable (by simp)
+    (((contDiff_apply ℝ (fun _ => ℝ) j).comp (contDiff_chiMK I κm m k t)).differentiable (by simp)
         _).hasFDerivAt
   have h := spaceGrad_comp_eq_gradMatrix_mul hf hY i
   simpa [gradMatrix, Matrix.mul_apply, Ingredients.chiTilde] using h
@@ -167,7 +167,7 @@ theorem spaceGrad_G_component (hΦ : IsStreamSeq I Φ) (m : ℕ) (T : ℝ → Ve
   have hXs := contDiff_xFlow_slice I hΦ m l t
   have hYs := contDiff_xFlowInv_slice I hΦ m l t
   have hXp (p : Fin 2) : ContDiff ℝ ∞ (fun u => I.xFlow hΦ m l t u p) :=
-    (contDiff_apply ℝ ℝ p).comp hXs
+    (contDiff_apply ℝ (fun _ => ℝ) p).comp hXs
   -- the entries of the pulled-back gradient
   have hfun : (fun y => G I hΦ m T l t y j) = fun y => ∑ p : Fin 2,
       spaceGrad (fun u => I.xFlow hΦ m l t u p) (I.xFlowInv hΦ m l t y) j *

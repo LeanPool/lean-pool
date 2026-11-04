@@ -7,8 +7,8 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrderType
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.Degree
-public import Mathlib.Data.Prod.Lex
-public import Mathlib.Data.Sum.Order
+public import Mathlib.Order.Prod.Lex.Basic
+public import Mathlib.Order.Sum.Order
 
 import Mathlib.Data.Finsupp.Basic
 import Mathlib.Data.Finsupp.Single

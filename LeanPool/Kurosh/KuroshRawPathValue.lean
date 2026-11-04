@@ -51,22 +51,22 @@ theorem Internal.coverPathValue_rawTree {ι : Type v}
               rw [ih]
               have hloop := quotientEdgeLoop_tree_pos G H f he
               have hloop' :
-                  quotientEdgeLoop G H (coverBaseEdge G H f).2.2 = 𝟙 _ := by
-                change quotientEdgeLoop G H f = 𝟙 _
+                  quotientEdgeLoop G H (coverBaseEdge G H f).2.2 = 1 := by
+                change quotientEdgeLoop G H f = 1
                 exact hloop
               simp only [coverEdgeLetter]
               rw [hloop']
-              simpa using (treeKuroshFreeInclusion G H).map_one
+              simp
           | inr f =>
               rw [coverPathValue_neg G H (rawTreePathMap G H p) f]
               rw [ih]
               have hloop := quotientEdgeLoop_tree_neg G H f he
               have hloop' :
-                  quotientEdgeLoop G H (coverBaseEdge G H f).2.2 = 𝟙 _ := by
-                change quotientEdgeLoop G H f = 𝟙 _
+                  quotientEdgeLoop G H (coverBaseEdge G H f).2.2 = 1 := by
+                change quotientEdgeLoop G H f = 1
                 exact hloop
               simp only [coverEdgeLetter]
               rw [hloop']
-              simpa using (treeKuroshFreeInclusion G H).map_one
+              simp
 
 end GraphCoveringTheory.Kurosh

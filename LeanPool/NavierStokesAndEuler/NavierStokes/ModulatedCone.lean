@@ -107,7 +107,7 @@ theorem stockMap_smooth (h : ℝ) : ContDiffOn ℝ ∞ (stockMap h) (stockDomain
   have hxc : ContDiffAt ℝ ∞ (fun q : StockArgument => q.1.1) q := contDiffAt_fst.fst
   have hη : ContDiffAt ℝ ∞ (fun q : StockArgument => q.1.2) q := contDiffAt_fst.snd
   have hz (i : Fin 12) : ContDiffAt ℝ ∞ (fun q : StockArgument => q.2 i) q :=
-    ((contDiff_apply ℝ ℝ i).comp contDiff_snd).contDiffAt
+    ((contDiff_apply ℝ (fun _ => ℝ) i).comp contDiff_snd).contDiffAt
   have hd : ContDiffAt ℝ ∞ (fun q : StockArgument => NaturalAxisData.d q.1.2) q :=
     contDiffAt_const.sub (hη.pow 2)
   have hLc : ContDiffAt ℝ ∞ (fun q : StockArgument => NaturalAxisData.L h q.1.2) q :=

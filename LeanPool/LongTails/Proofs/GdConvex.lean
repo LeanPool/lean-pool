@@ -9,6 +9,7 @@ public import LeanPool.LongTails.Algorithms.Gd
 public import LeanPool.LongTails.Proofs.Execution
 public import LeanPool.LongTails.Setups.SmoothAndConvex
 public import Mathlib.Analysis.Calculus.MeanValue
+public import Mathlib.Analysis.Calculus.Deriv.Comp
 public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Convex.Deriv
 public import Mathlib.Tactic.Convert

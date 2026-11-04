@@ -142,7 +142,7 @@ theorem norm_iteratedFDeriv_two_coord_sub_const_sq_le {d : ℕ}
     ‖iteratedFDeriv ℝ 2 (fun y : Vec d => (y i - c i) ^ 2) x‖ ≤ 2 := by
   let g : Vec d → ℝ := fun y => y i - c i
   have hg : ContDiff ℝ (2 : ℕ) g := by
-    simpa [g] using ((contDiff_apply ℝ ℝ i).sub contDiff_const)
+    simpa [g] using ((contDiff_apply ℝ (fun _ => ℝ) i).sub contDiff_const)
   have hmul := norm_iteratedFDeriv_mul_le (𝕜 := ℝ) (A := ℝ) hg hg x le_rfl
   have hzero : ‖iteratedFDeriv ℝ 2 g x‖ = 0 := by
     rw [iteratedFDeriv_two_coord_sub_const_eq_zero, Pi.zero_apply, norm_zero]
@@ -206,7 +206,7 @@ theorem norm_iteratedFDeriv_two_euclideanSqDist_le {d : ℕ}
             simp
             ring
   · intro i _hi
-    exact (((contDiff_apply ℝ ℝ i).sub contDiff_const).pow 2)
+    exact (((contDiff_apply ℝ (fun _ => ℝ) i).sub contDiff_const).pow 2)
 
 /-- Coordinate-direction derivative of Euclidean squared distance on `Vec d`. -/
 theorem fderiv_euclideanSqDist_apply_basisVec {d : ℕ}

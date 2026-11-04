@@ -112,13 +112,13 @@ theorem blowupLimitAssemblyPressure_riesz_tendsto
   have hAJ : ∀ L, A L ⊆ Set.univ ×ˢ J := fun L z hz => ⟨mem_univ _, hz.2⟩
   have hBJ : ∀ L, B L ⊆ Set.univ ×ˢ J := fun L z hz => ⟨mem_univ _, hz.2⟩
   have hFA : ∀ k L, P (fun i j => (A L).indicator (Fk k i j)) :=
-    fun k L i j => (hF k i j).indicator (hAm L)
+    fun k L i j => (hF k i j).indicator (hAm L).nullMeasurableSet
   have hFB : ∀ k L, P (fun i j => (B L).indicator (Fk k i j)) :=
-    fun k L i j => (hF k i j).indicator (hBm L)
+    fun k L i j => (hF k i j).indicator (hBm L).nullMeasurableSet
   have hGA : ∀ L, P (fun i j => (A L).indicator (G i j)) :=
-    fun L i j => (hG i j).indicator (hAm L)
+    fun L i j => (hG i j).indicator (hAm L).nullMeasurableSet
   have hGB : ∀ L, P (fun i j => (B L).indicator (G i j)) :=
-    fun L i j => (hG i j).indicator (hBm L)
+    fun L i j => (hG i j).indicator (hBm L).nullMeasurableSet
   let p : ℕ → Lp ℝ (ENNReal.ofReal (3 / 2 : ℝ)) μC := fun k => toE (Fk k) (hF k)
   let q : Lp ℝ (ENNReal.ofReal (3 / 2 : ℝ)) μC := toE G hG
   let near : ℕ → ℕ → Lp ℝ (ENNReal.ofReal (3 / 2 : ℝ)) μC :=
