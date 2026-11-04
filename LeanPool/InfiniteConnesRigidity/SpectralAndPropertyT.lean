@@ -10,8 +10,6 @@ public import Mathlib.Analysis.CStarAlgebra.GelfandDuality
 public import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.Order.CompletePartialOrder
-import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Topology.Metrizable.Urysohn
 public import LeanPool.InfiniteConnesRigidity.CarryAndCrossedProduct
 import Mathlib.Analysis.InnerProductSpace.Reproducing
@@ -26,7 +24,7 @@ noncomputable section
 -- `instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent` applies to `F = ZMod 2` and, winning instance
 -- search for `AddCommGroup F`, yields an `AddCommMonoid F` that does not match the one carried by
 -- `Module F F`; that breaks `AddCommGroup (X × Y)` and everything built on it.
-attribute [local instance low] instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent
+attribute [-instance] instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent
 
 namespace ConnesRigidity
 
@@ -71,12 +69,41 @@ private theorem crossedFiberwiseOperator_single
     crossedFiberwiseOperator (K := K) A (lp.single 2 k ξ) =
       lp.single 2 k (A ξ) := by
   classical
-  ext q
+  ext q : 2
   simp only [crossedFiberwiseOperator_apply, lp.single_apply]
   by_cases h : k = q
   · subst q
     simp only [Pi.single_eq_same]
   · simp only [ne_eq, h, not_false_eq_true, Pi.single_eq_of_ne', map_zero]
+
+/-- Commutation with a fiberwise operator is determined by its matrix blocks. -/
+private theorem commute_lp_operator_iff_blocks
+    {K H : Type*} [DecidableEq K] [NormedAddCommGroup H] [NormedSpace ℂ H]
+    (T B : lp (fun _ : K => H) 2 →L[ℂ] lp (fun _ : K => H) 2)
+    (A : H →L[ℂ] H)
+    (hsingle : ∀ k ξ, B (lp.single 2 k ξ) = lp.single 2 k (A ξ))
+    (heval : ∀ ξ q, B ξ q = A (ξ q)) :
+    (∀ q k : K, Commute
+      ((lp.evalCLM ℂ (fun _ : K => H) 2 q).comp
+        (T.comp (lp.singleContinuousLinearMap ℂ (fun _ : K => H) 2 k))) A) ↔
+      Commute T B := by
+  constructor
+  · intro hT
+    apply lp.ext_continuousLinearMap (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)
+    intro k
+    apply ContinuousLinearMap.ext
+    intro ξ
+    apply Subtype.ext
+    funext q
+    change T (B (lp.single 2 k ξ)) q = B (T (lp.single 2 k ξ)) q
+    rw [hsingle, heval]
+    exact DFunLike.congr_fun (hT q k).eq ξ
+  · intro hT q k
+    apply ContinuousLinearMap.ext
+    intro ξ
+    change T (lp.single 2 k (A ξ)) q = A (T (lp.single 2 k ξ) q)
+    rw [← hsingle, ← heval]
+    exact congrArg (fun f => f q) (DFunLike.congr_fun hT.eq (lp.single 2 k ξ))
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem crossedOperatorBlock_commute_of_commute_fiberwise
@@ -86,13 +113,9 @@ private theorem crossedOperatorBlock_commute_of_commute_fiberwise
     (hT : Commute T (crossedFiberwiseOperator (K := K) A))
     (q k : K) :
     Commute (crossedOperatorBlock X T q k) A := by
-  apply ContinuousLinearMap.ext
-  intro ξ
-  change T (lp.single 2 k (A ξ)) q = A (T (lp.single 2 k ξ) q)
-  rw [← crossedFiberwiseOperator_single A k ξ]
-  have hcomm := DFunLike.congr_fun hT.eq (lp.single 2 k ξ)
-  exact congrFun (congrArg ((↑) : crossedHilbert X →
-    (K → crossedBaseHilbert X)) hcomm) q
+  exact (commute_lp_operator_iff_blocks (K := K) (H := crossedBaseHilbert X)
+    T (crossedFiberwiseOperator (K := K) A) A
+    (crossedFiberwiseOperator_single A) (fun _ _ => rfl)).mpr hT q k
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem commute_crossedFiberwiseOperator_of_blocks
@@ -101,18 +124,9 @@ private theorem commute_crossedFiberwiseOperator_of_blocks
     (A : crossedBaseHilbert X →L[ℂ] crossedBaseHilbert X)
     (hT : ∀ q k : K, Commute (crossedOperatorBlock X T q k) A) :
     Commute T (crossedFiberwiseOperator (K := K) A) := by
-  apply lp.ext_continuousLinearMap
-    (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)
-  intro k
-  apply ContinuousLinearMap.ext
-  intro ξ
-  apply Subtype.ext
-  funext q
-  change
-    T ((crossedFiberwiseOperator (K := K) A) (lp.single 2 k ξ)) q =
-      A (T (lp.single 2 k ξ) q)
-  rw [crossedFiberwiseOperator_single]
-  exact DFunLike.congr_fun (hT q k).eq ξ
+  exact (commute_lp_operator_iff_blocks (K := K) (H := crossedBaseHilbert X)
+    T (crossedFiberwiseOperator (K := K) A) A
+    (crossedFiberwiseOperator_single A) (fun _ _ => rfl)).mp hT
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem commute_crossedMultiplier_iff_blocks
@@ -212,23 +226,13 @@ private theorem carryCharacterCoefficient_eq_continuousToLp
     (n : ℕ) (η : E n) :
     carryCharacterCoefficient n η =
       ContinuousMap.toLp ⊤ (carryHaar n) ℂ (carryComplexCharacter n η) := by
-  apply Lp.ext
-  filter_upwards [
-    carryCharacterCoefficient_apply_ae n η,
-    ContinuousMap.coeFn_toLp (p := ⊤) (𝕜 := ℂ)
-      (carryHaar n) (carryComplexCharacter n η)] with z hcoeff hcontinuous
-  exact hcoeff.trans hcontinuous.symm
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem splitCharacterCoefficient_eq_continuousToLp (d : D) :
     splitCharacterCoefficient d =
       ContinuousMap.toLp ⊤ productHaar ℂ (splitComplexCharacter d) := by
-  apply Lp.ext
-  filter_upwards [
-    splitCharacterCoefficient_apply_ae d,
-    ContinuousMap.coeFn_toLp (p := ⊤) (𝕜 := ℂ)
-      productHaar (splitComplexCharacter d)] with z hcoeff hcontinuous
-  exact hcoeff.trans hcontinuous.symm
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem carryCharacterCoefficient_eq_crossedContinuousCharacterCoefficient
@@ -453,7 +457,7 @@ def dualCharacterAction
 private theorem dualCharacterAction_trivial
     (action : H →* Multiplicative (AddAut A)) (h : H) :
     dualCharacterAction action h (1 : DiscreteCharacterSpace A) = 1 := by
-  ext a
+  ext a : 1
   rfl
 
 variable [MeasurableSpace (DiscreteCharacterSpace A)]
@@ -578,7 +582,9 @@ private theorem exists_positive_spectral_atom
   have hdet := hdetection (spectral.measure ξ)
     (spectral.measure_invariant ξ)
   simp_rw [spectral.energy_eq] at hdet
-  nlinarith
+  have h := hdet.trans_lt hsmall
+  rw [mul_sub, mul_one] at h
+  exact (mul_pos_iff_of_pos_left hc).mp ((sub_lt_self_iff c).mp h)
 
 omit [BorelSpace (DiscreteCharacterSpace A)] in
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -1166,7 +1172,7 @@ private theorem quotientProjection_error_lt_of_spectralGap
   have hz : z ≠ 0 := by
     intro hzzero
     simp only [hzzero, norm_zero] at hzlower
-    linarith
+    linarith only [hθ, hzlower]
   let w : V := ((‖z‖ : ℂ)⁻¹) • z
   have hwmem : w ∈ Mᗮ := (Mᗮ).smul_mem _ hzmem
   have hwnorm : ‖w‖ = 1 := norm_smul_inv_norm hz
@@ -1192,7 +1198,8 @@ private theorem quotientProjection_error_lt_of_spectralGap
     (le_div_iff₀ hzpos).mp hgap
   rw [hdisplacement] at hgap'
   have hsmall := hξ h hh
-  nlinarith
+  exact (not_lt_of_ge (mul_le_mul_of_nonneg_left hzlower hκ.le))
+    (hgap'.trans_lt hsmall)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem quotientFixedApproximation_of_uniform
@@ -1237,7 +1244,7 @@ private theorem quotientFixedApproximation_of_uniform
     _ < ε := by
       rw [← mul_div_assoc, div_lt_iff₀ hdenominator]
       dsimp [denominator]
-      linarith
+      linarith only [hε]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem quotientFixedUnitVector_uniform
@@ -1271,7 +1278,7 @@ private theorem quotientFixedUnitVector_uniform
   have hpclose : ‖p - ξ‖ < 1 := by
     rw [norm_sub_rev]
     have hθquarter : θ ≤ 1 / 4 := min_le_right _ _
-    linarith
+    linarith only [herr, hθquarter]
   have hp : p ≠ 0 :=
     ne_zero_of_distance_lt_one_of_unit ξ p hξunit hpclose
   let x : QuotientFixedUnitVector E V π :=
@@ -1293,7 +1300,7 @@ private theorem quotientFixedUnitVector_uniform
     exact herr
   change ‖(π g : V →L[ℂ] V) (normalizedVector p) -
     normalizedVector p‖ < ε
-  linarith
+  linarith only [hτ, hξg, hxg, hτθ, hθε, hpξ]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem quotientFixedApproximation
@@ -2050,7 +2057,7 @@ private theorem spectralFiniteAverageTest_eq_sub_energy {ι : Type*}
       (1 / 2 : ℝ) •
         ∑ i ∈ s, ∑ j ∈ s,
           (w i * w j) • spectralEnergyTest (a i - a j) := by
-  ext χ
+  ext χ : 1
   have hvariance := weighted_norm_sq_eq_sub_pairwise_dist_sq_of_constant_norm
     s w (fun i ↦ (((χ (Multiplicative.ofAdd (a i)) : Circle) : ℂ))) 1 hw
       (fun i _ ↦ Circle.norm_coe _)
@@ -2160,7 +2167,10 @@ private theorem trivialCharacterProjection_ne_zero_of_atom_pos_of_orbitApproxima
   have hzatom : ‖z‖ < (Φ.measure x.vector).real {1} :=
     lt_of_lt_of_le hsmall (min_le_right _ _)
   have hznorm : 0 ≤ ‖z‖ := norm_nonneg _
-  linarith [mul_nonneg hznorm (sub_nonneg.mpr (le_of_lt hzone))]
+  have hsquare : ‖z‖ ^ 2 ≤ ‖z‖ := by
+    rw [pow_two]
+    exact mul_le_of_le_one_right hznorm hzone.le
+  exact (not_lt_of_ge hbound) (hsquare.trans_lt hzatom)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem positive_atom_invariant_of_orbitApproximation
@@ -2262,17 +2272,8 @@ private theorem spectralOperatorGenerators_commute
     (hT : T ∈ spectralOperatorGenerators E π) : S * T = T * S := by
   obtain ⟨a, rfl⟩ := hS
   obtain ⟨b, rfl⟩ := hT
-  have hkernel :
-      E.inclusion (Multiplicative.ofAdd a) *
-        E.inclusion (Multiplicative.ofAdd b) =
-      E.inclusion (Multiplicative.ofAdd b) *
-        E.inclusion (Multiplicative.ofAdd a) := by
-    rw [← E.inclusion.map_mul, ← E.inclusion.map_mul]
-    congr 1
-    exact mul_comm _ _
-  simpa only [map_mul, Submonoid.coe_mul] using congrArg
-    (fun U : unitary (V →L[ℂ] V) ↦ (U : V →L[ℂ] V))
-    (congrArg π hkernel)
+  exact ((((Commute.all (Multiplicative.ofAdd a) (Multiplicative.ofAdd b)).map
+    E.inclusion).map π).map (unitary (V →L[ℂ] V)).subtype).eq
 
 omit [TopologicalSpace A] [DiscreteTopology A] in
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -2474,7 +2475,7 @@ private theorem jointFunctionalCalculus_characterEvaluation
       (gelfandStarTransform (spectralOperatorAlgebra E π))
         (spectralKernelOperator E π a)
   rw [StarAlgEquiv.apply_symm_apply]
-  ext φ
+  ext φ : 1
   rfl
 
 end
@@ -2498,30 +2499,17 @@ private theorem inverseGelfand_naturality
     (f : C(X, ℂ)) :
     α ((gelfandStarTransform B).symm (f.comp p)) =
       (gelfandStarTransform B).symm ((f.comp d).comp p) := by
-  apply (gelfandStarTransform B).injective
-  ext φ
-  change
-    (WeakDual.CharacterSpace.compContinuousMap α φ)
-        ((gelfandStarTransform B).symm (f.comp p)) =
-      φ ((gelfandStarTransform B).symm ((f.comp d).comp p))
-  have hleft := congrArg
-    (fun F : C(WeakDual.characterSpace ℂ B, ℂ) ↦
-      F (WeakDual.CharacterSpace.compContinuousMap α φ))
-    ((gelfandStarTransform B).apply_symm_apply (f.comp p))
-  have hright := congrArg
-    (fun F : C(WeakDual.characterSpace ℂ B, ℂ) ↦ F φ)
-    ((gelfandStarTransform B).apply_symm_apply ((f.comp d).comp p))
-  change
-    (WeakDual.CharacterSpace.compContinuousMap α φ)
-        ((gelfandStarTransform B).symm (f.comp p)) =
-      f (p (WeakDual.CharacterSpace.compContinuousMap α φ)) at hleft
-  change
-    φ ((gelfandStarTransform B).symm ((f.comp d).comp p)) =
-      f (d (p φ)) at hright
-  calc
-    _ = f (p (WeakDual.CharacterSpace.compContinuousMap α φ)) := hleft
-    _ = f (d (p φ)) := congrArg f (hp φ)
-    _ = _ := hright.symm
+  apply EquivLike.injective (gelfandStarTransform B)
+  rw [StarAlgEquiv.apply_symm_apply]
+  change ((gelfandStarTransform B).toStarAlgHom.comp α)
+    ((gelfandStarTransform B).symm (f.comp p)) = _
+  rw [gelfandStarTransform_naturality]
+  change ((gelfandStarTransform B)
+    ((gelfandStarTransform B).symm (f.comp p))).comp
+      (WeakDual.CharacterSpace.compContinuousMap α) = _
+  rw [StarAlgEquiv.apply_symm_apply]
+  ext φ : 1
+  exact congrArg f (hp φ)
 
 end
 
@@ -2758,19 +2746,17 @@ private theorem quotientOperatorConjugation_generators_image
     (π : UnitaryRepresentation G V) (h : H) :
     quotientOperatorConjugation E π h '' spectralOperatorGenerators E π =
       spectralOperatorGenerators E π := by
-  apply Set.Subset.antisymm
-  · rintro _ ⟨_, ⟨a, rfl⟩, rfl⟩
-    exact ⟨(Multiplicative.toAdd (E.action h)) a,
-      (quotientOperatorConjugation_kernel E π h a).symm⟩
-  · rintro _ ⟨a, rfl⟩
-    let b : A := (Multiplicative.toAdd (E.action h⁻¹)) a
-    refine ⟨(π (E.inclusion (Multiplicative.ofAdd b)) : V →L[ℂ] V),
-      ⟨b, rfl⟩, ?_⟩
-    rw [quotientOperatorConjugation_kernel]
-    congr 3
-    change (Multiplicative.toAdd (E.action h * E.action h⁻¹)) a = a
-    rw [← MonoidHom.map_mul]
-    simp only [mul_inv_cancel, map_one, toAdd_one, AddAut.zero_apply]
+  unfold spectralOperatorGenerators
+  rw [← Set.range_comp']
+  have hmap :
+      (fun a : A => quotientOperatorConjugation E π h
+        (π (E.inclusion (Multiplicative.ofAdd a)) : V →L[ℂ] V)) =
+      (fun a : A => (π (E.inclusion (Multiplicative.ofAdd
+        ((Multiplicative.toAdd (E.action h)) a))) : V →L[ℂ] V)) :=
+    funext (quotientOperatorConjugation_kernel E π h)
+  rw [hmap]
+  exact (Multiplicative.toAdd (E.action h)).surjective.range_comp
+    (fun a : A => (π (E.inclusion (Multiplicative.ofAdd a)) : V →L[ℂ] V))
 
 omit [TopologicalSpace A] [DiscreteTopology A] in
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -2781,11 +2767,8 @@ private theorem quotientOperatorConjugation_mem
     quotientOperatorConjugation E π h T ∈ spectralOperatorAlgebra E π := by
   let F : (V →L[ℂ] V) →⋆ₐ[ℂ] (V →L[ℂ] V) :=
     (quotientOperatorConjugation E π h).toStarAlgHom
-  have hcontinuous : Continuous F := by
-    change Continuous (fun T : V →L[ℂ] V ↦
-      (π (E.splitting h) : V →L[ℂ] V) * T *
-        star (π (E.splitting h) : V →L[ℂ] V))
-    fun_prop
+  have hcontinuous : Continuous F :=
+    (StarAlgEquiv.isometry (quotientOperatorConjugation E π h)).continuous
   have hadjoin :
       (StarAlgebra.adjoin ℂ (spectralOperatorGenerators E π)).map F =
         StarAlgebra.adjoin ℂ (spectralOperatorGenerators E π) := by
@@ -2920,15 +2903,13 @@ private theorem jointFunctionalCalculus_quotient_covariance
       inv_inv] using spectralCharacter_quotientConjugation E π h⁻¹ φ
   have hnaturality := inverseGelfand_naturality α
     (spectralCharacterMap E π) d hp f
-  change
-    (((gelfandStarTransform (spectralOperatorAlgebra E π)).symm
-      ((f.comp d).comp (spectralCharacterMap E π)) :
-      spectralOperatorAlgebra E π) : V →L[ℂ] V) = _
-  rw [← hnaturality]
-  change
-    quotientOperatorConjugation E π h⁻¹
-      ((jointFunctionalCalculus E π f : spectralOperatorAlgebra E π) :
-        V →L[ℂ] V) = _
+  have hcoe := congrArg
+    (fun T : spectralOperatorAlgebra E π => (T : V →L[ℂ] V)) hnaturality
+  change quotientOperatorConjugation E π h⁻¹
+    ((jointFunctionalCalculus E π f : spectralOperatorAlgebra E π) : V →L[ℂ] V) =
+      ((jointFunctionalCalculus E π (f.comp d) : spectralOperatorAlgebra E π) : V →L[ℂ] V)
+    at hcoe
+  refine hcoe.symm.trans ?_
   rw [quotientOperatorConjugation_apply, map_inv, map_inv]
   rw [← Unitary.star_eq_inv, Unitary.coe_star, star_star]
 
@@ -2966,7 +2947,7 @@ private theorem characterRealComplexification_add
     (f g : C_c(X, ℝ)) :
     characterRealComplexification (f + g) =
       characterRealComplexification f + characterRealComplexification g := by
-  ext y
+  ext y : 1
   simp only [characterRealComplexification, CompactlySupportedContinuousMap.coe_add, Pi.add_apply,
     Complex.ofReal_add, ContinuousMap.coe_mk, ContinuousMap.add_apply]
 
@@ -2976,7 +2957,7 @@ private theorem characterRealComplexification_smul
     (r : ℝ) (f : C_c(X, ℝ)) :
     characterRealComplexification (r • f) =
       (r : ℂ) • characterRealComplexification f := by
-  ext y
+  ext y : 1
   simp only [characterRealComplexification, CompactlySupportedContinuousMap.coe_smul, Pi.smul_apply,
     smul_eq_mul, Complex.ofReal_mul, ContinuousMap.coe_mk, ContinuousMap.coe_smul]
 
@@ -2994,7 +2975,7 @@ private theorem characterRealComplexification_eq_star_mul_sqrt
     characterRealComplexification f =
       star (characterRealComplexification (characterRealSqrt f)) *
         characterRealComplexification (characterRealSqrt f) := by
-  ext y
+  ext y : 1
   simp only [characterRealComplexification, ContinuousMap.coe_mk, characterRealSqrt,
     CompactlySupportedContinuousMap.coe_mk, ContinuousMap.mul_apply, ContinuousMap.star_apply,
     RCLike.star_def, Complex.conj_ofReal, ← Complex.ofReal_mul, Complex.ofReal_inj]
@@ -3063,7 +3044,7 @@ private theorem characterVectorFunctional_one
     characterVectorFunctional calculus x f = ‖x‖ ^ 2 := by
   have hcomplex : characterRealComplexification f =
       (1 : C(X, ℂ)) := by
-    ext y
+    ext y : 1
     simp only [characterRealComplexification, ContinuousMap.coe_mk, hf y, Complex.ofReal_one,
       ContinuousMap.one_apply]
   change positiveVectorState x
@@ -3080,7 +3061,7 @@ private theorem characterVectorFunctional_energy_of_operator
   change positiveVectorState x
     (calculus (characterRealComplexification f)) = ‖T x - x‖ ^ 2
   rw [hf, positiveVectorState_star_mul_self]
-  simp only [sub_apply, one_apply_eq_self]
+  rfl
 
 section PontryaginCharacter
 
@@ -3094,7 +3075,7 @@ private theorem characterEnergy_complexification
         ((χ (Multiplicative.ofAdd a) : Circle) : ℂ)) :
     characterRealComplexification (spectralEnergyTest a) =
       star (evaluation - 1) * (evaluation - 1) := by
-  ext χ
+  ext χ : 1
   change
     ((‖((χ (Multiplicative.ofAdd a) : Circle) : ℂ) - 1‖ ^ 2 : ℝ) : ℂ) =
       star (evaluation χ - 1) * (evaluation χ - 1)
@@ -3215,7 +3196,7 @@ private theorem jointCharacterFunctional_pullback_of_operatorCovariance
         (characterRealComplexification f).comp
           ⟨dualCharacterHomeomorph E.action h,
             (dualCharacterHomeomorph E.action h).continuous⟩ := by
-    ext χ
+    ext χ : 1
     rfl
   change positiveVectorState x
     (jointFunctionalCalculusOperator E π
@@ -3349,11 +3330,11 @@ private theorem spectralOrbit_norm_minimizer_fixed
     have hcomm : @inner ℝ W _ (U y) y = @inner ℝ W _ y (U y) :=
       real_inner_comm _ _
     rw [hcomm]
-    linarith
+    linarith only [hinner]
   have hupper := real_inner_le_norm (U y) y
   rw [hUnorm] at hupper
   have heq : @inner ℝ W _ (U y) y = ‖y‖ ^ 2 := by
-    linarith
+    linarith only [hlower, hupper]
   apply eq_of_norm_le_re_inner_eq_norm_sq (𝕜 := ℝ)
   · exact le_of_eq (hUnorm y)
   · simpa only [RCLike.re_to_real] using heq
@@ -3717,7 +3698,7 @@ theorem spectralLargeDisplacement_measureReal_mul_sq_le_energy
       {χ : DiscreteCharacterSpace A |
         r ^ 2 ≤ ‖((χ (Multiplicative.ofAdd a) : Circle) : ℂ) - 1‖ ^ 2} =
       spectralLargeDisplacementSet a r := by
-    ext χ
+    ext χ : 1
     change (r ^ 2 ≤ ‖((χ (Multiplicative.ofAdd a) : Circle) : ℂ) - 1‖ ^ 2) ↔ _
     exact (sq_le_sq₀ hr (norm_nonneg _))
   rwa [hset] at hmarkov
@@ -3748,7 +3729,7 @@ private theorem abs_measureReal_inter_sub_inter_le
         |(μ.real s - μ.real t) -
           (μ.real (s \ U) - μ.real (t \ U))| := by
       congr 1
-      linarith
+      linarith only [hsdecomp, htdecomp]
     _ ≤ |μ.real s - μ.real t| +
           |μ.real (s \ U) - μ.real (t \ U)| := abs_sub _ _
     _ ≤ |μ.real s - μ.real t| + μ.real Uᶜ := by linarith
@@ -3906,16 +3887,11 @@ private theorem eq_of_norm_eq_and_midpoint_norm_ge
   have hmid' : 2 * d ≤ ‖x + y‖ := by
     rw [midpoint_eq_smul_add, norm_smul] at hmid
     norm_num at hmid ⊢
-    linarith
-  have hpar := parallelogram_law_with_norm ℂ x y
-  rw [hx, hy] at hpar
-  have hzero : ‖x - y‖ = 0 := by
-    have hd : 0 ≤ d := hx ▸ norm_nonneg x
-    have hsquare : (2 * d) ^ 2 ≤ ‖x + y‖ ^ 2 :=
-      (sq_le_sq₀ (by positivity) (norm_nonneg _)).mpr hmid'
-    have hnonneg : 0 ≤ ‖x - y‖ := norm_nonneg _
-    nlinarith [sq_nonneg ‖x - y‖]
-  exact sub_eq_zero.mp (norm_eq_zero.mp hzero)
+    linarith only [hmid]
+  let : InnerProductSpace ℝ V := InnerProductSpace.rclikeToReal ℂ V
+  apply eq_of_norm_eq_of_norm_add_eq (hx.trans hy.symm)
+  apply le_antisymm (norm_add_le x y)
+  simpa only [hx, hy, ← two_mul] using hmid'
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -4015,7 +3991,7 @@ theorem IsMinimizingAffinePair.sub_eq_normalizer_sub
     ‖α g x₁ - α g x₂‖ =
         ‖(α g).linearIsometryEquiv (x₁ - x₂)‖ := by
       congr 1
-      simpa only [vsub_eq_sub] using ((α g).map_vsub x₁ x₂).symm
+      exact ((α g).map_vsub x₁ x₂).symm
     _ = ‖x₁ - x₂‖ := (α g).linearIsometryEquiv.norm_map _
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -4514,8 +4490,6 @@ private theorem unitaryCocycleAffineAction_linearIsometryEquiv
     (hb : ∀ g h : G, b (g * h) = b g + π g (b h))
     (g : G) :
     (unitaryCocycleAffineAction π b hb g).linearIsometryEquiv = π g := by
-  apply LinearIsometryEquiv.ext
-  intro x
   rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -4624,6 +4598,11 @@ private theorem inner_finsupp_sum_self
   simp only [inner_smul_left, inner_smul_right, RCLike.star_def]
   ring
 
+/-- Use the complex projection explicitly when rewriting real parts of inner products. -/
+private theorem complex_re_inner_self {W : Type*} [NormedAddCommGroup W]
+    [InnerProductSpace ℂ W] (x : W) : (inner ℂ x x).re = ‖x‖ ^ 2 :=
+  (norm_sq_eq_re_inner (𝕜 := ℂ) x).symm
+
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem tendsto_norm_sq_finsupp_sum_of_gram
     {N I H : Type*} {V : N → Type*}
@@ -4658,20 +4637,8 @@ private theorem tendsto_norm_sq_finsupp_sum_of_gram
         (𝓝 ⟪c.sum (fun i a => a • w i),
           c.sum (fun i a => a • w i)⟫_ℂ) := by
     simpa only [inner_finsupp_sum_self] using hquadratic
-  have hreal := (Complex.continuous_re.tendsto _).comp hinner
-  change Tendsto
-    (fun n => (⟪c.sum (fun i a => a • v n i),
-      c.sum (fun i a => a • v n i)⟫_ℂ).re)
-    l
-    (𝓝 (⟪c.sum (fun i a => a • w i),
-      c.sum (fun i a => a • w i)⟫_ℂ).re) at hreal
-  convert hreal using 1
-  · funext n
-    exact norm_sq_eq_re_inner (𝕜 := ℂ)
-      (c.sum (fun i a => a • v n i))
-  · congr 1
-    exact norm_sq_eq_re_inner (𝕜 := ℂ)
-      (c.sum (fun i a => a • w i))
+  simpa only [Function.comp_def, complex_re_inner_self] using
+    (Complex.continuous_re.tendsto _).comp hinner
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -4691,13 +4658,7 @@ theorem tendsto_norm_finsupp_sum_of_gram
     (Real.continuous_sqrt.tendsto
       (‖c.sum (fun i a => a • w i)‖ ^ 2)).comp
         (tendsto_norm_sq_finsupp_sum_of_gram l v w hgram c)
-  convert hroot using 1
-  · funext n
-    exact (Real.sqrt_sq
-      (norm_nonneg (c.sum (fun i a => a • v n i)))).symm
-  · congr 1
-    rw [Real.sqrt_sq
-      (norm_nonneg (c.sum (fun i a => a • w i)))]
+  simpa only [Function.comp_def, Real.sqrt_sq_eq_abs, abs_norm] using hroot
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[expose]
@@ -4992,7 +4953,7 @@ theorem AffineUniformGeneratorDisplacement.no_global_fixed
   obtain ⟨s, _, hs⟩ := h z
   have hzero : (1 : ℝ) ≤ 0 := by
     simpa only [hz s, sub_self, norm_zero] using hs
-  linarith
+  linarith only [hzero]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -5253,7 +5214,7 @@ theorem affineUniformGeneratorDisplacement_of_dense
   obtain ⟨s, hs, hmove⟩ := hlower w hwT
   have hsmall : ‖α s w - w‖ < (1 : ℝ) := by
     exact (Set.mem_iInter₂.mp hwU) s hs
-  linarith
+  linarith only [hmove, hsmall]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem exists_marked_affine_pair_kernel
@@ -5301,14 +5262,8 @@ private theorem tendsto_norm_sq_of_gram
     (hgram : Tendsto (fun n => ⟪v n, v n⟫_ℂ)
       l (𝓝 ⟪w, w⟫_ℂ)) :
     Tendsto (fun n => ‖v n‖ ^ 2) l (𝓝 (‖w‖ ^ 2)) := by
-  have hreal := (Complex.continuous_re.tendsto _).comp hgram
-  change Tendsto (fun n => (⟪v n, v n⟫_ℂ).re)
-    l (𝓝 (⟪w, w⟫_ℂ).re) at hreal
-  convert hreal using 1
-  · funext n
-    exact norm_sq_eq_re_inner (𝕜 := ℂ) (v n)
-  · congr 1
-    exact norm_sq_eq_re_inner (𝕜 := ℂ) w
+  simpa only [Function.comp_def, complex_re_inner_self] using
+    (Complex.continuous_re.tendsto _).comp hgram
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem norm_eq_of_gram_and_tendsto_norm
@@ -5327,7 +5282,7 @@ private theorem norm_eq_of_gram_and_tendsto_norm
       (tendsto_norm_sq_of_gram l v w hgram) (hnorm.pow 2)
   have hd : 0 ≤ d :=
     ge_of_tendsto hnorm (Eventually.of_forall fun n => norm_nonneg (v n))
-  nlinarith [norm_nonneg w]
+  exact (sq_eq_sq₀ (norm_nonneg w) hd).mp hsquare
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem realization_vector_eq_of_kernel_rows
@@ -5609,7 +5564,7 @@ private theorem normalFixedSubmodule_isClosed
     IsClosed (normalFixedSubmodule N π : Set H) := by
   have hset : (normalFixedSubmodule N π : Set H) =
       ⋂ n : N, {x : H | (π (n : G) : H →L[ℂ] H) x = x} := by
-    ext x
+    ext x : 1
     simp only [SetLike.mem_coe, mem_normalFixedSubmodule, Subtype.forall, Set.mem_iInter,
       Set.mem_ofPred_eq]
   rw [hset]
@@ -5850,7 +5805,7 @@ private theorem hilbert_midpoint_sq_parallelogram
   have hp := parallelogram_law_with_norm ℂ (x - z) (y - z)
   rw [hsum, hsub, norm_smul] at hp
   norm_num at hp
-  linarith
+  linarith only [hp]
 
 omit [CompleteSpace V] in
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -5905,7 +5860,7 @@ private theorem hilbert_near_circumcenter_dist_sq_le
     ‖x - y‖ ^ 2 ≤ 2 * ε + 2 * η := by
   have hmid := hilbertCircumradiusSq_le S
     (hilbertSquaredEnclosingRadii_midpoint hSne hx hy)
-  linarith
+  linarith only [hmid]
 
 omit [CompleteSpace V] in
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -5971,7 +5926,7 @@ private theorem exists_hilbert_circumcenter
   have hlimit := hleft.sub hright
   have hnonpos : ‖p - z‖ ^ 2 - hilbertCircumradiusSq S ≤ 0 :=
     le_of_tendsto' hlimit (fun n => sub_nonpos.mpr (hc n z hz))
-  linarith
+  linarith only [hnonpos]
 
 omit [CompleteSpace V] in
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -5983,9 +5938,9 @@ private theorem hilbert_circumcenter_unique
     x = y := by
   have hdist := hilbert_near_circumcenter_dist_sq_le
     hSne (ε := 0) (η := 0) (by simpa only [add_zero] using hx) (by simpa only [add_zero] using hy)
-  have hnorm : ‖x - y‖ = 0 := by
-    nlinarith [sq_nonneg ‖x - y‖, norm_nonneg (x - y)]
-  exact sub_eq_zero.mp (norm_eq_zero.mp hnorm)
+  have hnorm : ‖x - y‖ ^ 2 = 0 :=
+    le_antisymm (by simpa only [mul_zero, add_zero] using hdist) (sq_nonneg _)
+  exact sub_eq_zero.mp (norm_eq_zero.mp (sq_eq_zero_iff.mp hnorm))
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private def hilbertCircumcenter
@@ -6043,7 +5998,7 @@ private theorem affineSubgroupOrbit_image
     (x : V) (n : N) :
     α (n : G) '' affineSubgroupOrbit α N x =
       affineSubgroupOrbit α N x := by
-  ext z
+  ext z : 1
   constructor
   · rintro ⟨_, ⟨k, rfl⟩, rfl⟩
     refine ⟨n * k, ?_⟩
@@ -6906,7 +6861,7 @@ theorem rankTwo_transvection_smul_single
     (Matrix.SpecialLinearGroup.transvection hij a) •
         (Pi.single j b : Fin 2 → A) =
       Pi.single j b + Pi.single i (a * b) := by
-  ext k
+  ext k : 1
   simp only [Matrix.SpecialLinearGroup.smul_def, SpecialLinearGroup.transvection_coe,
     smul_eq_mulVec, mulVec_single, Pi.smul_apply, col_apply, Matrix.add_apply, Matrix.one_apply,
     eq_comm, single_apply, and_true, smul_add, smul_ite, MulOpposite.smul_eq_mul_unop,
@@ -7188,7 +7143,7 @@ private theorem uniformRelativeKazhdanDisplacement_of_pair
     have hz : z ≠ 0 := by
       intro hzero
       rw [hzero, norm_zero] at hzlower
-      linarith
+      linarith only [hε, hzlower]
     let w : Mᗮ := ⟨((‖z‖ : ℂ)⁻¹) • z, (Mᗮ).smul_mem _ hzmem⟩
     have hwnorm : ‖w‖ = 1 := norm_smul_inv_norm hz
     have hwsmall :
@@ -7403,7 +7358,7 @@ universe u
 private theorem gaussian_defect_le_parameter (u : ℝ) :
     1 - Real.exp (-u) ≤ u := by
   have h := Real.add_one_le_exp (-u)
-  linarith
+  linarith only [h]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem gaussian_parameter_lt_one_of_displacement
@@ -7411,16 +7366,17 @@ private theorem gaussian_parameter_lt_one_of_displacement
     (hd : 0 ≤ d) (hdlt : d < 1)
     (hsq : d ^ 2 = 2 * (1 - Real.exp (-(t * r ^ 2)))) :
     t * r ^ 2 < 1 := by
-  have hdsq : d ^ 2 < 1 := by nlinarith
+  have hdsq : d ^ 2 < 1 := by
+    simpa only [one_pow] using (sq_lt_sq₀ hd zero_le_one).mpr hdlt
   have hexpneg : (2 : ℝ)⁻¹ < Real.exp (-(t * r ^ 2)) := by
     norm_num
-    linarith
+    linarith only [hsq, hdsq]
   have hexp : Real.exp (t * r ^ 2) < 2 := by
     apply (inv_lt_inv₀ (by norm_num : (0 : ℝ) < 2)
       (Real.exp_pos (t * r ^ 2))).mp
     simpa only [Real.exp_neg] using hexpneg
   have hlower := Real.add_one_le_exp (t * r ^ 2)
-  linarith
+  linarith only [hexp, hlower]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem gaussian_affine_displacement_le
@@ -7432,7 +7388,7 @@ private theorem gaussian_affine_displacement_le
   have hlt := gaussian_parameter_lt_one_of_displacement hd hdlt hsq
   apply le_of_lt
   apply (lt_div_iff₀ ht).mpr
-  linarith
+  linarith only [hlt]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private def HasAffineGaussianRealization
@@ -7492,7 +7448,7 @@ private theorem gaussian_relativeAffineFixedPoint_of_uniform
             (fun h _ => sq_nonneg ‖α h x - x‖) hg
         _ ≤ B := by
           dsimp [B]
-          linarith
+          linarith only []
     have hsquare :
         ‖(π g : W →L[ℂ] W) ξ - ξ‖ ^ 2 < δ ^ 2 := by
       calc
@@ -7502,14 +7458,15 @@ private theorem gaussian_relativeAffineFixedPoint_of_uniform
         _ ≤ 2 * (t * ‖α g x - x‖ ^ 2) := by
           have h := gaussian_defect_le_parameter
             (t * ‖α g x - x‖ ^ 2)
-          linarith
+          linarith only [h]
         _ ≤ 2 * t * B := by
-          nlinarith
+          simpa only [mul_assoc] using
+            mul_le_mul_of_nonneg_left hentry (mul_nonneg zero_le_two ht.le)
         _ = δ ^ 2 / 2 := by
           dsimp [t]
           field_simp
           ring
-        _ < δ ^ 2 := by linarith [sq_pos_of_pos hδ]
+        _ < δ ^ 2 := half_lt_self (sq_pos_of_pos hδ)
     exact (sq_lt_sq₀ (norm_nonneg _) (le_of_lt hδ)).mp hsquare
   have hN := hF W inferInstance inferInstance inferInstance π ξ hξ hfinite
   apply affine_subgroup_fixedPoint_of_bounded_orbit α N x
@@ -7531,18 +7488,7 @@ open scoped BigOperators ComplexOrder Matrix Topology
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem constantOneKernel_posSemidef {I : Type*} :
     Matrix.PosSemidef (fun (_ _ : I) => (1 : ℂ)) := by
-  constructor
-  · apply Matrix.IsHermitian.ext
-    intro i j
-    simp only [star_one]
-  · intro c
-    convert (star_mul_self_nonneg
-      (∑ i ∈ c.support, c i) :
-        (0 : ℂ) ≤ star (∑ i ∈ c.support, c i) *
-          (∑ i ∈ c.support, c i)) using 1
-    simp only [Finsupp.sum, star_sum, Finset.sum_mul, Finset.mul_sum,
-      mul_one]
-    rw [Finset.sum_comm]
+  exact (Matrix.PosSemidef.one (n := Unit) (R := ℂ)).submatrix (fun _ : I => ())
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem schurProduct_posSemidef
@@ -7572,7 +7518,7 @@ private theorem entrywisePow_posSemidef
   | succ n ih =>
       have hproduct := schurProduct_posSemidef ih hA
       convert hproduct using 1
-      ext i j
+      ext i j : 1
       simp only [entrywisePow, pow_succ, Matrix.hadamard_apply]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -7600,32 +7546,9 @@ private theorem posSemidef_of_tendsto_entries
     (hA : ∀ n, (A n).PosSemidef)
     (hlim : ∀ i j, Tendsto (fun n => A n i j) l (𝓝 (B i j))) :
     B.PosSemidef := by
-  constructor
-  · apply Matrix.IsHermitian.ext
-    intro i j
-    apply tendsto_nhds_unique (hlim j i).star
-    have hfun :
-        (fun n => star (A n j i)) =
-          (fun n => A n i j) := by
-      funext n
-      exact (hA n).isHermitian.apply i j
-    rw [hfun]
-    exact hlim i j
-  · intro c
-    have hquadratic :
-        Tendsto
-          (fun n => c.sum fun i z => c.sum fun j w =>
-            star z * A n i j * w)
-          l
-          (𝓝 (c.sum fun i z => c.sum fun j w =>
-            star z * B i j * w)) := by
-      simpa only [Finsupp.sum] using
-        tendsto_finsetSum c.support (fun i _ =>
-          tendsto_finsetSum c.support (fun j _ =>
-            (tendsto_const_nhds.mul (hlim i j)).mul
-              tendsto_const_nhds))
-    exact ge_of_tendsto hquadratic
-      (Eventually.of_forall fun n => (hA n).2 c)
+  exact (Matrix.posSemidef_is_closed (n := I) (𝕜 := ℂ)).mem_of_tendsto
+    (tendsto_pi_nhds.mpr fun i => tendsto_pi_nhds.mpr fun j => hlim i j)
+    (Eventually.of_forall hA)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private def entrywiseExpPartial
@@ -7776,7 +7699,7 @@ private theorem gaussianKernel_posSemidef
   have hfactor : gaussianKernel v t =
       ((fun i j => Complex.exp (gaussianSymmetricGram v t i j)) :
         Matrix I I ℂ) ⊙ Matrix.gram ℂ (gaussianWeight v t) := by
-    ext i j
+    ext i j : 1
     exact gaussianKernel_factor v t i j
   rw [hfactor]
   exact hexp.hadamard hweight
@@ -7836,8 +7759,7 @@ private theorem hasAffineGaussianRealization
       change (gaussianKernel v t g g).re = 1
       rw [gaussianKernel_diag]
       norm_num
-    nlinarith [norm_nonneg
-      (CornulierUltralimit.canonicalKernelVector K g)]
+    exact (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp (by simpa only [one_pow] using hsq)
   refine ⟨W, inferInstance, inferInstance, inferInstance, π, ξ,
     hnorm 1, ?_⟩
   intro g
@@ -8006,7 +7928,7 @@ theorem HasUniformRelativeKazhdanDisplacement.sup_of_elementwise_commute
   intro k
   have hjoin := unitary_displacement_sup_lt_of_elementwise_commute
     π N₁ N₂ hcomm ξ (ε / 2) (ε / 2) hone htwo k
-  linarith
+  linarith only [hjoin]
 
 public
 theorem HasUniformRelativeKazhdanDisplacement.mono
@@ -8070,7 +7992,7 @@ def rankTwoColumnBlock (v : Fin 2 → A) : Matrix (Fin 2) (Fin 2) A :=
 private theorem rankTwoColumnBlock_add (v w : Fin 2 → A) :
     rankTwoColumnBlock (v + w) =
       rankTwoColumnBlock v + rankTwoColumnBlock w := by
-  ext i j
+  ext i j : 1
   by_cases hj : j = (1 : Fin 2) <;>
     simp only [rankTwoColumnBlock, hj, Fin.isValue, ↓reduceIte, Pi.add_apply, Matrix.add_apply,
       add_zero]
@@ -8079,7 +8001,7 @@ private theorem rankTwoColumnBlock_add (v w : Fin 2 → A) :
 @[simp]
 private theorem rankTwoColumnBlock_zero :
     rankTwoColumnBlock (0 : Fin 2 → A) = 0 := by
-  ext i j
+  ext i j : 1
   simp only [rankTwoColumnBlock, Fin.isValue, Pi.zero_apply, ite_self, Matrix.zero_apply]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -8088,7 +8010,7 @@ private theorem rankTwoColumnBlock_mul
     (g : Matrix.SpecialLinearGroup (Fin 2) A) (v : Fin 2 → A) :
     (g : Matrix (Fin 2) (Fin 2) A) * rankTwoColumnBlock v =
       rankTwoColumnBlock (g • v) := by
-  ext i j
+  ext i j : 1
   by_cases hj : j = (1 : Fin 2)
   · subst j
     simp only [Fin.isValue, Matrix.mul_apply, rankTwoColumnBlock, ↓reduceIte, Fin.sum_univ_two,
