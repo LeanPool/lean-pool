@@ -9,12 +9,7 @@ public import LeanPool.MetricCodes.Representation
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.RingTheory.Regular.RegularSequence
 public import Mathlib.RingTheory.MvPolynomial.MonomialOrder
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.RingTheory.MvPolynomial.Groebner
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Harmonic Young branching
@@ -332,7 +327,7 @@ theorem polarization_eq_zero_of_simpleRoots
       have hfirst : a.castSucc = i := Fin.ext rfl
       have hsecond : a.succ = j := by
         apply Fin.ext
-        simpa [a] using hstep.symm
+        simpa only [Fin.succ_mk, a] using hstep.symm
       simpa only [polarization_apply, hfirst, hsecond] using hsimple a
     · let k : Fin (r + 1) := ⟨i.val + 1, by omega⟩
       have hik : i < k := by
@@ -1006,8 +1001,7 @@ theorem tendsto_flooredCoordinates_ratio {I : Type*}
     Tendsto
       (fun n : ℕ => (flooredCoordinates a n i : ℝ) / (n : ℝ))
       atTop (𝓝 (a i)) := by
-  simpa only [flooredCoordinates, Function.comp_def] using
-    (tendsto_nat_floor_mul_div_atTop ha).comp (tendsto_natCast_atTop_atTop (R := ℝ))
+  exact Hamming.tendsto_longitudinal_ratio ha
 
 theorem tendsto_wallShift_div (r : ℕ) :
     Tendsto (fun n : ℕ => wallShift n r / (n : ℝ))
@@ -2181,7 +2175,7 @@ theorem matrix_irreducible {r m : ℕ}
     (matrix_pos_of_grid_adj a b n hpositive)
   let v : Vertex r m := fun _ => 0
   have hv : (v (0 : Fin (r + 1))).val < m := by
-    simpa [v] using hm
+    exact hm
   exact ⟨v, nextVertex v 0 hv, grid_adj_nextVertex v 0 hv⟩
 
 theorem eventually_matrix_irreducible {r m : ℕ}
@@ -2592,7 +2586,7 @@ theorem exists_boxWidth_eventually_actual_topEigenvalue_gt {r : ℕ}
     (fun i => lagrangeWeight a b i * spectralAtom (a i))
     (fun v i =>
       HigherHierarchy.RectangularVertices.tendsto_edgeWeight a b h v i)
-  simpa only [HigherHierarchy.Gamma] using hmargin
+  exact hmargin
 
 theorem trueGrid_matrix_eq_rectangular {r m : ℕ}
     (a : Fin (r + 1) → ℝ) (b : Fin r → ℝ) (n : ℕ) :
@@ -3274,8 +3268,7 @@ theorem liftChannel_adjoint_axis_ne
         ((coordinateInclusion (n := n) lam target).adjoint
           (x.val ⊗ₜ[ℝ]
             vertexInclusion (YoungVertex (n := n) lam) j v))) = 0
-  simp only [coordinateInclusion_adjoint_axis_ne lam target j h,
-    map_zero, map_zero]
+  simp only [coordinateInclusion_adjoint_axis_ne lam target j h, map_zero]
 
 /-- The lifted Young edge channel when its transition probability is positive, and zero
 otherwise. -/
@@ -4231,8 +4224,8 @@ theorem mem_ideal_smul_top_iff {R : Type*} [CommRing R]
     (I : Ideal R) (p : R) :
     p ∈ (I • (⊤ : Submodule R R) : Submodule R R) ↔ p ∈ I := by
   rw [Ideal.smul_top_eq_map]
-  simpa only using (show p ∈ Submodule.restrictScalars R (Ideal.map (algebraMap R R) I) ↔ p ∈ I
-    by simp)
+  exact (show p ∈ Submodule.restrictScalars R (Ideal.map (algebraMap R R) I) ↔ p ∈ I
+    by simp only [Algebra.algebraMap_self, Ideal.map_id, Submodule.restrictScalars_self])
 
 theorem gramQuadraticList_weaklyRegular_iff_saturation
     (r n : ℕ) :
@@ -4346,7 +4339,7 @@ theorem gramPivotExponent_support {r n : ℕ}
     (hn : 2 * r < n) (z : UpperGramPair r) :
     (gramPivotExponent hn z).support = gramPivotVariables hn z := by
   classical
-  simpa only [gramPivotExponent, gramPivotVariables, gramSummandExponent] using
+  exact
     gramSummandExponent_support z (gramPivot hn z)
 
 theorem gramPivotExponent_support_disjoint {r n : ℕ}
@@ -4884,10 +4877,10 @@ theorem mem_ofList_iff_exists_linearCombination
   constructor
   · rintro ⟨g, hg⟩
     refine ⟨g, ?_⟩
-    simpa only [Finsupp.linearCombination_apply, Finsupp.sum, smul_eq_mul] using hg
+    exact hg
   · rintro ⟨g, hg⟩
     refine ⟨g, ?_⟩
-    simpa only [Finsupp.sum, Finsupp.linearCombination_apply, smul_eq_mul] using hg
+    exact hg
 
 /-- The maximum monomial-order degree of the summands in a finitely supported polynomial
 representation. -/
@@ -4991,9 +4984,7 @@ theorem representationDegree_sum_lt
     representationDegree m b (∑ a ∈ s, g a) < d := by
   classical
   induction s using Finset.induction_on with
-  | empty => simpa only [representationDegree, Finset.sum_empty, Finsupp.support_zero,
-               Finsupp.coe_zero, Pi.zero_apply, mul_zero, MonomialOrder.degree_zero, map_zero,
-               Finset.sup_empty, MonomialOrder.bot_eq_zero] using hd
+  | empty => exact hd
   | @insert a s ha ih =>
       rw [Finset.sum_insert ha]
       exact lt_of_le_of_lt
@@ -5095,7 +5086,7 @@ theorem exists_topRepresentationIndex_of_ne_zero
   apply exists_topRepresentationIndex m b g
   intro hg
   subst g
-  exact hp (by simpa only [map_zero] using hrep.symm)
+  exact hp (by exact hrep.symm)
 
 theorem exists_degree_le_of_representationImprovement
     {σ K ι : Type*} [Field K]
@@ -5330,7 +5321,7 @@ theorem representationDegree_strip_top_leading_terms_lt
       m.toSyn (m.degree (b i)) +
           m.toSyn (m.degree (g i - m.leadingTerm (g i))) <
         m.toSyn (m.degree (b i)) + m.toSyn (m.degree (g i)) :=
-          by simpa only [add_lt_add_iff_left] using add_lt_add_right hsmall (m.toSyn (m.degree
+          by exact add_lt_add_right hsmall (m.toSyn (m.degree
             (b i)))
       _ = d := by
         rw [← map_add, ← m.degree_mul (hb i) hgi]
@@ -5430,7 +5421,7 @@ private theorem buchberger_correction_pair_lt
         have hscaled :
             m.toSyn (m.degree
               (Pij * ((m.leadingTerm (b j) - b j) * b i))) < d := by
-          simpa [hPij, hij, htopij] using hlt
+          simpa only [hPij, hij, ↓reduceIte, htopij] using hlt
         have hc0 : cij ≠ 0 := by
           intro hz
           simp only [hz, zero_smul, mul_zero, not_true_eq_false] at hzero
@@ -5507,7 +5498,7 @@ private theorem buchberger_correction_pair_lt
         have hscaled :
             m.toSyn (m.degree
               (Pij * ((b i - m.leadingTerm (b i)) * b j))) < d := by
-          simpa [hPij, hij, htopij] using hlt
+          simpa only [hPij, hij, ↓reduceIte, htopij] using hlt
         have hc0 : cij ≠ 0 := by
           intro hz
           simp only [hz, zero_smul, mul_zero, not_true_eq_false] at hzero
@@ -5676,7 +5667,7 @@ theorem buchberger_representation_improvement_of_monic
         (g - ∑ i ∈ B, Finsupp.single i (m.leadingTerm (g i))) < d :=
     representationDegree_strip_top_leading_terms_lt m b g B d hd hb hbound hB
   exact buchberger_representation_improvement m b hmonic hdisjoint g p hrep hbad
-    (by simpa only [B, d] using hresidual)
+    (by exact hresidual)
 
 theorem pairwise_coprime_monic_leadingDivisibility
     {σ K : Type*} [Field K]
@@ -5804,7 +5795,7 @@ theorem mem_ideal_smul_top_iff {R : Type*} [CommRing R]
     p ∈ (I • (⊤ : Submodule R R) : Submodule R R) ↔ p ∈ I := by
   rw [Ideal.smul_top_eq_map]
   simpa only using (show p ∈ Submodule.restrictScalars R (Ideal.map (algebraMap R R) I) ↔ p ∈ I
-    by simp)
+    by simp only [Algebra.algebraMap_self, Ideal.map_id, Submodule.restrictScalars_self])
 
 theorem mem_of_X_mul_mem_of_avoids_leading_support
     {σ K : Type*} [Field K]
@@ -6131,7 +6122,7 @@ theorem arbitraryRowAxialRaise_isHomogeneous
   simpa only [zero_add] using
     (MvPolynomial.isHomogeneous_C (Fin ((r + 1) * n)) (polarizationPathCoefficient lam row S)).mul
       (by
-        simpa [Nat.add_comm] using
+        simpa only [Nat.add_comm] using
           (MvPolynomial.isHomogeneous_X ℝ (variableIndex (polarizationPathStart row S) k)).mul
             (lowerPolarizationPath_isHomogeneous ((S.sort (· ≤ ·)) ++ [row]) p hp))
 
@@ -6233,7 +6224,7 @@ theorem rowEuler_axialCoordinate_lowerPolarizationPath
           (variableIndex (polarizationPathStart row S) k)) =
         if a = polarizationPathStart row S then
           MvPolynomial.X (variableIndex a k) else 0 := by
-    simpa only [polarization_self] using
+    exact
       polarization_X_euler a a (polarizationPathStart row S) k
   rw [rowEuler_mul, haxis,
     rowEuler_lowerPolarizationPath_append_singleton
@@ -6335,8 +6326,7 @@ theorem iteratedArbitraryRowAxialRaise_rowEuler
       (arbitraryRowPathWeight lam rows i : ℝ) •
         iteratedArbitraryRowAxialRaise lam k rows p := by
   induction rows generalizing lam p with
-  | nil => simpa only [iteratedArbitraryRowAxialRaise, LinearMap.id_coe, id_eq, rowEuler_apply,
-             arbitraryRowPathWeight] using hp i
+  | nil => exact hp i
   | cons row rows ih =>
       change
         rowEuler r n i
@@ -6557,7 +6547,7 @@ theorem sortedPolarizationPath_le_row
   · exact le_of_lt ((mem_precedingRows i row).mp
       (hsub ((Finset.mem_sort (· ≤ ·)).mp hi)))
   · have : i = row := by simpa only [List.mem_cons, List.not_mem_nil, or_false] using hi
-    simp [this]
+    simp only [this, Std.le_refl]
 
 theorem polarizationPathStart_le_row
     {r : ℕ} (row : Fin (r + 1))

@@ -6,10 +6,7 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.HarmonicAnalysis
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.RealSqrt -- shake: keep
 
 /-!
 # Spherical-code hierarchy
@@ -697,7 +694,7 @@ theorem exists_sphericalCode_card_eq_number_toNat
       C.points.card = (SpherePacking.sphericalCodeNumber n s).toNat := by
   obtain ⟨C, hC⟩ := SpherePacking.exists_maximal_sphericalCode hs
   refine ⟨C, ?_⟩
-  simpa only [ENat.toNat_natCast] using congrArg ENat.toNat hC
+  exact congrArg ENat.toNat hC
 
 theorem sphericalCodeNumber_toNat_lt_iff
     {n : ℕ} {s B : ℝ} (hs : s < 1) :
@@ -738,7 +735,7 @@ theorem exists_oneRow_certificate_better_than_levelZero
   have hgamma := MetricCodes.Spherical.eventually_Gamma_improvement ha
   have hentropy := MetricCodes.Spherical.eventually_sphericalEntropy_improvement ha
   have hclassical : MetricCodes.Gamma a 0 = spectralAtom a := by
-    simpa only [spectralAtom] using (MetricCodes.Spherical.Gamma_zero ha)
+    exact (MetricCodes.Spherical.Gamma_zero ha)
   have hslope := MetricCodes.Spherical.sphericalImprovementSlope_gt_one ha
   have hgood :
       ∀ᶠ b : ℝ in 𝓝[>] 0,
@@ -1041,7 +1038,7 @@ theorem sliceCost_nonneg {s t : ℝ}
   unfold sliceCost
   apply mul_nonneg (by norm_num)
   apply Real.logb_nonneg (by norm_num : (1 : ℝ) < 2)
-  exact (le_div_iff₀ (by linarith)).2 (by linarith)
+  exact (le_div_iff₀ (by linarith)).2 (by linarith only [hts])
 
 @[simp] theorem sliceCost_self {s : ℝ} (hs : s < 1) :
     sliceCost s s = 0 := by
@@ -1630,7 +1627,7 @@ theorem compensatedPhiPath_differentiableAt_zero {r : ℕ}
         (scaleCoordinate (compensatedScalingFactor a b 0) (a i)) := by
       rw [hvalue]
       exact (MetricCodes.Spherical.hasDerivAt_sphericalEntropy hai).differentiableAt
-    simpa only [Function.comp_def] using houter.comp 0 hinner
+    exact houter.comp 0 hinner
   · apply DifferentiableAt.fun_sum
     intro i _
     have hbi := h.stabilizer_pos i
@@ -1643,7 +1640,7 @@ theorem compensatedPhiPath_differentiableAt_zero {r : ℕ}
         (scaleCoordinate (compensatedScalingFactor a b 0) (b i)) := by
       rw [hvalue]
       exact (MetricCodes.Spherical.hasDerivAt_sphericalEntropy hbi).differentiableAt
-    simpa only [Function.comp_def] using houter.comp 0 hinner
+    exact houter.comp 0 hinner
 
 theorem eventually_sub_sphericalEntropy_lt_of_differentiable
     {f : ℝ → ℝ} (hf : DifferentiableAt ℝ f 0) :
@@ -1904,7 +1901,7 @@ def ScaledOpeningDerivative (η : ℝ) (f g : ℝ → ℝ) : Prop :=
 
 theorem ScaledOpeningDerivative.const (η k : ℝ) :
     ScaledOpeningDerivative η (fun _ : ℝ => k) (fun _ : ℝ => k) := by
-  refine ⟨rfl, 0, ?_, ?_⟩ <;> simpa using hasDerivAt_const (0 : ℝ) k
+  refine ⟨rfl, 0, ?_, ?_⟩ <;> simpa only [mul_zero] using hasDerivAt_const (0 : ℝ) k
 
 theorem ScaledOpeningDerivative.add {η : ℝ}
     {f g F G : ℝ → ℝ}
@@ -1973,7 +1970,7 @@ theorem ScaledOpeningDerivative.div {η : ℝ}
     (h' : ScaledOpeningDerivative η g G) (hne : G 0 ≠ 0) :
     ScaledOpeningDerivative η (fun t => f t / g t)
       (fun t => F t / G t) := by
-  simpa only [div_eq_mul_inv] using h.mul (h'.inv hne)
+  exact h.mul (h'.inv hne)
 
 theorem ScaledOpeningDerivative.sqrt {η : ℝ}
     {f F : ℝ → ℝ}
@@ -2047,7 +2044,7 @@ theorem ScaledOpeningDerivative.quadraticCoordinate {η : ℝ}
     ScaledOpeningDerivative η
       (fun t => ((f t) * (1 + (f t))))
       (fun t => ((F t) * (1 + (F t)))) := by
-  simpa only using h.mul ((ScaledOpeningDerivative.const η 1).add h)
+  exact h.mul ((ScaledOpeningDerivative.const η 1).add h)
 
 theorem ScaledOpeningDerivative.spectralAtom {η : ℝ}
     {f F : ℝ → ℝ} (h : ScaledOpeningDerivative η f F)
@@ -2062,7 +2059,7 @@ theorem ScaledOpeningDerivative.spectralAtom {η : ℝ}
   have hden := (ScaledOpeningDerivative.const η 1).add
     ((ScaledOpeningDerivative.const η 2).mul h)
   have hdenzero : 1 + 2 * F 0 ≠ 0 := by positivity
-  simpa only using (hquad.sqrt hqpos).div hden hdenzero
+  exact (hquad.sqrt hqpos).div hden hdenzero
 
 theorem lagrangeWeight_opening_scaledDerivative {r : ℕ}
     {a : Fin (r + 1) → ℝ} {b : Fin r → ℝ}
@@ -2354,7 +2351,7 @@ theorem eventually_Phi_opening_lt {r : ℕ}
   let i : Fin r := ⟨0, hr⟩
   have ha : 0 < a 0 := by
     have hi := (h.stabilizer_pos i).trans (h.2 i).1
-    simpa [i] using hi
+    exact hi
   have hlog : 0 < Real.logb 2 ((1 + a 0) / a 0) := by
     apply Real.logb_pos (by norm_num : (1 : ℝ) < 2)
     exact (lt_div_iff₀ ha).mpr (by linarith only [])
@@ -2490,7 +2487,7 @@ theorem exists_nextLevel_feasible_lt {r : ℕ} {s : ℝ}
     cases r with
     | zero =>
         rw [Gamma_zero] at hgap
-        have ha : a 0 = 0 := by simpa only [Fin.isValue, Fin.last_zero] using hzero
+        have ha : a 0 = 0 := by exact hzero
         simp only [spectralAtom, Fin.isValue, ha, add_zero, mul_one,
           Real.sqrt_zero, mul_zero, div_one] at hgap
         linarith only [hs, hgap]
@@ -2685,7 +2682,7 @@ theorem sliceCost_continuousOn {s : ℝ} (hs : s < 1) :
       (Set.Icc (0 : ℝ) s) := by
   intro t ht
   have harg : (1 - t) / (1 - s) ≠ 0 := by
-    exact (div_pos (by linarith [ht.2]) (by linarith)).ne'
+    exact (div_pos (by linarith [ht.2]) (by linarith only [hs])).ne'
   unfold MetricCodes.Spherical.SidelnikovLocalization.sliceCost Real.logb
   exact continuousWithinAt_const.mul
     ((((continuousWithinAt_const.sub continuousWithinAt_id).div_const (1 - s)).log harg).div_const
@@ -3135,7 +3132,7 @@ theorem compactifiedHierarchyCoordinate_mem_Ioc {u : ℝ} (hu : 0 ≤ u) :
     compactifiedHierarchyCoordinate u ∈ Set.Ioc (0 : ℝ) 1 := by
   constructor
   · exact inv_pos.mpr (by linarith only [hu])
-  · exact (inv_le_one₀ (by linarith)).2 (by linarith)
+  · exact (inv_le_one₀ (by linarith only [hu])).2 (by linarith only [hu])
 
 theorem compactifiedHierarchyCoordinate_mem_Icc {u : ℝ} (hu : 0 ≤ u) :
     compactifiedHierarchyCoordinate u ∈ Set.Icc (0 : ℝ) 1 :=
@@ -4059,7 +4056,7 @@ theorem levelRate_le_of_non_strict_spectral
       le_antisymm (le_of_not_gt hlast) h.1
     cases j with
     | zero =>
-        have ha0 : a 0 = 0 := by simpa only [Fin.isValue, Fin.last_zero] using hzero
+        have ha0 : a 0 = 0 := by exact hzero
         rw [Gamma_zero, ha0] at hboundary
         norm_num [spectralAtom] at hboundary
         linarith only [hs, hboundary]
@@ -4194,9 +4191,9 @@ theorem WeakInterlacing.tail {r : ℕ}
     (h : WeakInterlacing a b) :
     WeakInterlacing (Fin.tail a) (Fin.tail b) := by
   constructor
-  · simpa only [Fin.tail, Fin.succ_last, Nat.succ_eq_add_one] using h.1
+  · exact h.1
   · intro i
-    simpa only [Fin.tail, Fin.castSucc_succ] using h.2 i.succ
+    exact h.2 i.succ
 
 theorem WeakInterlacing.drop_second {r : ℕ}
     {a : Fin (r + 2) → ℝ} {b : Fin (r + 1) → ℝ}
@@ -4207,13 +4204,12 @@ theorem WeakInterlacing.drop_second {r : ℕ}
   cases r with
   | zero =>
       constructor
-      · simpa only [Nat.reduceAdd, Fin.isValue, Fin.last_zero,
-          Fin.cons_zero] using h.ambient_nonneg 0
+      · exact h.ambient_nonneg 0
       · intro i
         exact Fin.elim0 i
   | succ r =>
       constructor
-      · simpa only [Fin.cons_last, Fin.tail, Fin.succ_last, Nat.succ_eq_add_one] using h.1
+      · exact h.1
       · intro i
         induction i using Fin.cases with
         | zero =>
@@ -4224,7 +4220,7 @@ theorem WeakInterlacing.drop_second {r : ℕ}
             · change a (2 : Fin (r + 3)) ≤ b (1 : Fin (r + 2))
               exact (h.2 (1 : Fin (r + 2))).2
         | succ i =>
-            simpa only [Fin.tail, Fin.castSucc_succ, Fin.cons_succ] using h.2 i.succ.succ
+            exact h.2 i.succ.succ
 
 /-- The ratio of stabilizer and ambient products of shifted quadratic weights. -/
 def hierarchyStieltjesRatio {r : ℕ}
@@ -4307,7 +4303,7 @@ theorem hierarchyStieltjesRatio_drop_second_of_collision {r : ℕ}
   simp only [hierarchyStieltjesRatio, Fin.prod_univ_succ, Fin.cons_zero,
     Fin.cons_succ, Fin.tail]
   rw [hcollision]
-  simpa only [Fin.succ_zero_eq_one] using
+  exact
     cancel_common_quadratic_factor_metriccodes2_79e88af7 (t + ((a (1 : Fin (r + 2))) * (1 + (a
       (1 : Fin (r + 2))))))
       (∏ i : Fin r, (t + ((b i.succ) * (1 + (b i.succ))))) (t + ((a 0) * (1 + (a 0))))
@@ -4352,7 +4348,7 @@ private theorem exists_strict_residual_aux_metriccodes2_79e88af7 :
           obtain ⟨j, A, B, hj, hinter, htop, hphi, hratio⟩ :=
             ih a' b' hweak
           refine ⟨j, A, B, hj.trans (Nat.le_succ r), hinter, ?_, ?_, ?_⟩
-          · simpa [a'] using htop
+          · simpa only [Fin.cons_zero, a'] using htop
           · calc
               Phi A B = Phi a' b' := hphi
               _ = Phi a b :=
@@ -4815,9 +4811,9 @@ theorem exists_compactified_residual_of_closure_sequence
   have hbound : ∀ n, Phi (a n) (b n) ≤ R + 1 := by
     intro n
     refine (hPhi n).trans ?_
-    have hden : 0 < (n : ℝ) + 1 := by linarith
+    have hden : 0 < (n : ℝ) + 1 := by linarith only []
     have hfrac : 1 / ((n : ℝ) + 1) ≤ (1 : ℝ) :=
-      (div_le_one hden).2 (by linarith)
+      (div_le_one hden).2 (by linarith only [])
     linarith
   obtain ⟨L, A, B, ψ, hψ, hL, hA, hB, hAψ, hBψ,
       hweak, hlast, hLψ⟩ :=
@@ -4872,7 +4868,7 @@ theorem exists_compactified_residual_of_closure_sequence
       (fun n => b (φ n) i / a (φ n) i.castSucc)
       atTop (nhds (d i)) := by
     intro i
-    simpa [φ, aψ, bψ, Function.comp_apply] using hdχ i
+    simpa only [Function.comp_apply, φ, aψ, bψ] using hdχ i
   have hescape : ∀ i : Fin r, A i.castSucc = 0 →
       0 < d i ∧
         Tendsto (fun n => ((b (φ n) i) * (1 + (b (φ n) i))) /
@@ -4886,7 +4882,7 @@ theorem exists_compactified_residual_of_closure_sequence
         (hi ▸ hAφ i.castSucc)
     have hatop' : Tendsto (fun n => aψ (χ n) i.castSucc)
         atTop atTop := by
-      simpa [aψ, φ, Function.comp_apply] using hatop
+      simpa only [Function.comp_apply, aψ, φ] using hatop
     exact ⟨hdpos i hatop', by
       simpa only [Function.comp_apply, φ, bψ, aψ] using hdquadratic i hatop'⟩
   let c : ℝ := ∏ i ∈ Finset.univ.filter
@@ -5151,7 +5147,7 @@ theorem compactifiedEscapingRatioProduct_eq_filtered
     exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, i.isLt⟩
   · intro i₁ _ i₂ _ heq
     apply Fin.ext
-    simpa only [Fin.val_castAdd] using congrArg (fun z : Fin (k + j) => z.val) heq
+    exact congrArg (fun z : Fin (k + j) => z.val) heq
   · intro i hi
     have hik : i.val < k := (Finset.mem_filter.mp hi).2
     refine ⟨⟨i.val, hik⟩, Finset.mem_univ _, ?_⟩
@@ -5800,7 +5796,7 @@ theorem tendsto_stieltjesPhaseProduct_of_compactified_suffix
     have hindex : (i.castAdd j).castSucc = i.castAdd (j + 1) := by
       apply Fin.ext
       simp only [Fin.val_castSucc, Fin.val_castAdd]
-    simpa only [hindex] using hz
+    exact hz
   have hindexA (i : Fin (j + 1)) :
       compactifiedAmbientSuffix (rfl : k + j = k + j) A i =
         A (i.natAdd k) := by
@@ -5813,17 +5809,17 @@ theorem tendsto_stieltjesPhaseProduct_of_compactified_suffix
     congr 1
   have hpositiveA' : ∀ i : Fin (j + 1), 0 < A (i.natAdd k) := by
     intro i
-    simpa only [hindexA] using hpositiveA i
+    exact hpositiveA i
   have hpositiveB' : ∀ i : Fin j, 0 < B (i.natAdd k) := by
     intro i
-    simpa only [hindexB] using hpositiveB i
+    exact hpositiveB i
   have hratio' : ∀ t : ℝ, 0 < t →
       hierarchyStieltjesRatio
           (fun i : Fin (j + 1) => (A (i.natAdd k))⁻¹ - 1)
           (fun i : Fin j => (B (i.natAdd k))⁻¹ - 1) t =
         hierarchyStieltjesRatio A' B' t := by
     intro t ht
-    simpa only [hindexA, hindexB] using hratio t ht
+    exact hratio t ht
   have hlimit := tendsto_stieltjesPhaseProduct_of_compactified_prefix
     a b A B d A' B' h hA ha hb hd hzero' hpositiveA' hpositiveB'
     hratio' ht
@@ -6106,7 +6102,7 @@ theorem log_inv_lt_half_inv_sub_self {t : ℝ}
   have hx : 0 < x := by dsimp [x]; positivity
   have hx' : x < 1 := by
     dsimp [x]
-    exact (div_lt_one (by linarith)).mpr (by linarith)
+    exact (div_lt_one (by linarith only [ht])).mpr (by linarith)
   have hden : 0 < 1 - x ^ 2 := by nlinarith only [hx', hx]
   have hratio : (1 + x) / (1 - x) = 1 / t := by
     dsimp [x]
@@ -6144,7 +6140,7 @@ theorem lt_log_one_add_add_half_log_one_add_sq {t : ℝ}
   have hx : 0 ≤ x := by dsimp [x]; positivity
   have hx' : x < 1 := by
     dsimp [x]
-    exact (div_lt_one (by linarith)).mpr (by linarith)
+    exact (div_lt_one (by linarith only [ht])).mpr (by linarith only [])
   have hy : 0 ≤ y := by dsimp [y]; positivity
   have hy' : y < 1 := by
     dsimp [y]
@@ -6358,7 +6354,7 @@ theorem levelRate_zero_eq_classical_of_pos
   · let a : ℕ → ℝ := fun n =>
       MetricCodes.classicalThreshold s + 1 / ((n : ℝ) + 1)
     have ha : Tendsto a atTop (nhds (MetricCodes.classicalThreshold s)) := by
-      simpa [a] using
+      simpa only [one_div, add_zero, a] using
         (tendsto_const_nhds.add
           (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)))
     have hentropy : Tendsto
@@ -6672,7 +6668,7 @@ theorem exists_variationalRate_boundary_minimizer
       ∀ t : ℝ, MetricCodes.classicalThreshold s < t →
         oneRowBoundaryObjective s a ≤ oneRowBoundaryObjective s t := by
   apply exists_variationalRate_boundary_minimizer_of_boundary_limit hs hs'
-  simpa only [oneRowBoundaryObjective, one_div, neg_mul] using
+  exact
     (CompactificationEntropy.tendsto_entropy_sub_boundaryDegree hs')
 
 theorem levelRate_one_lt_variationalRate
@@ -7181,7 +7177,7 @@ theorem variationalRate_lowerSemicontinuousOn_Icc
       (Set.Icc (0 : ℝ) s) := by
   apply variationalRate_lowerSemicontinuousOn_Icc_of_jointEscape hs hs'
   intro u a t ht ht' hu ha
-  simpa only [oneRowBoundaryObjective, one_div, neg_mul] using
+  exact
     (CompactificationEntropy.tendsto_entropy_sub_boundaryDegree_of_tendsto ht ht' hu ha)
 
 end
@@ -7241,7 +7237,7 @@ theorem exists_strict_hierarchy_refinement_of_closed
       le_antisymm (le_of_not_gt hlast) hinterlacing.1
     cases r with
     | zero =>
-        have ha0 : a 0 = 0 := by simpa only [Fin.isValue, Fin.last_zero] using hzero
+        have ha0 : a 0 = 0 := by exact hzero
         have hgamma : Gamma a b = 0 := by
           rw [Gamma_zero, ha0]
           norm_num [spectralAtom]
@@ -7294,7 +7290,7 @@ theorem sphericalCodeRate_le_of_eventually_exponential
   have hpoint : ∀ᶠ n : ℕ in atTop, w n ≤ R := by
     filter_upwards [hbound, eventually_gt_atTop (0 : ℕ)] with n hn hnpos
     by_cases hzero : (SpherePacking.sphericalCodeNumber n s).toNat = 0
-    · simpa [w, hzero] using hR
+    · simpa only [hzero, CharP.cast_eq_zero, Real.logb_zero, zero_div, w] using hR
     · have hcard :
           0 < ((SpherePacking.sphericalCodeNumber n s).toNat : ℝ) := by
         exact_mod_cast Nat.pos_of_ne_zero hzero

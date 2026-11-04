@@ -7,10 +7,7 @@ module
 
 public import LeanPool.MetricCodes.Rigidity
 public import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.LinearAlgebra.Eigenspace.Minpoly
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Canonical spectral decomposition
@@ -82,8 +79,7 @@ theorem exists_jointRootKernel_mem_of_vector_wordKills
   classical
   induction N generalizing v with
   | zero =>
-      exact False.elim (hvzero (by simpa only [rootOperatorWord_nil, LinearMap.id_coe,
-                                     id_eq] using hwords [] rfl))
+      exact False.elim (hvzero (by exact hwords [] rfl))
   | succ N ih =>
       by_cases hkill : ∀ i : I, E i v = 0
       · exact ⟨v, hv, hvzero, hkill⟩
@@ -93,7 +89,7 @@ theorem exists_jointRootKernel_mem_of_vector_wordKills
         intro word hlength
         have hfull : (i :: word).length = N + 1 := by
           simp only [List.length_cons, hlength]
-        simpa only [rootOperatorWord_cons_apply] using
+        exact
           hwords (i :: word) hfull
 
 theorem exists_jointRootKernel_mem_of_wordKills
@@ -1107,9 +1103,8 @@ theorem rotationIntertwiner_ambientPositiveRoot_zero_of_signatures
         one_smul, zero_smul, add_zero, zero_add, add_assoc,
         Derivation.add_apply, Derivation.smul_apply]
         using hroot)
-  simpa only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.cons_zero,
-    Fin.cons_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
-    one_smul, zero_smul, add_zero, zero_add, add_assoc]
+  simpa only [add_assoc, Fin.sum_univ_succ, Matrix.cons_val_zero, one_smul, Matrix.cons_val_succ,
+      Fin.sum_univ_zero, add_zero, zero_smul]
     using h
 
 theorem rotationIntertwiner_ambientSumPositiveRoot_zero_of_signatures
@@ -1151,10 +1146,8 @@ theorem rotationIntertwiner_ambientSumPositiveRoot_zero_of_signatures
         zero_add, sub_eq_add_neg, add_assoc, Derivation.add_apply,
         neg_apply, LinearMap.neg_apply, Derivation.neg_apply,
         Derivation.smul_apply] using hroot)
-  simpa only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.cons_zero,
-    Fin.cons_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
-    one_smul, neg_one_smul, zero_smul, add_zero,
-    zero_add, sub_eq_add_neg, add_assoc] using h
+  simpa only [sub_eq_add_neg, add_assoc, Fin.sum_univ_succ, Matrix.cons_val_zero, one_smul,
+      Matrix.cons_val_succ, neg_one_smul, Fin.sum_univ_zero, add_zero, zero_smul] using h
 
 theorem rotationIntertwiner_ambientShortPositiveRoot_zero_of_signatures
     {r n : ℕ} (hn : 2 * (r + 1) ≤ n)
@@ -2986,7 +2979,7 @@ theorem signedAmbientCharacteristic_derivative_eval_pos {r : ℕ}
     Lagrange.eval_nodal_derivative_eval_node_eq
       (Finset.mem_univ (row, true)),
     Lagrange.eval_nodal]
-  simpa only [hnode] using signedNode_denominator_pos_eq_active L row
+  exact signedNode_denominator_pos_eq_active L row
 
 theorem signedAmbientCharacteristic_derivative_eval_neg {r : ℕ}
     (L : Fin (r + 1) → ℝ) (row : Fin (r + 1)) :
@@ -3004,7 +2997,7 @@ theorem signedAmbientCharacteristic_derivative_eval_neg {r : ℕ}
     Lagrange.eval_nodal_derivative_eval_node_eq
       (Finset.mem_univ (row, false)),
     Lagrange.eval_nodal]
-  simpa only [hnode] using signedNode_denominator_neg_eq_active L row
+  exact signedNode_denominator_neg_eq_active L row
 
 /-- The gt channel characteristic polynomial used in the spherical-code argument. -/
 def gtChannelCharacteristicPolynomial {r : ℕ}
@@ -4109,7 +4102,7 @@ theorem projectedCoordinateLower_sameAxisHarmonicRaise_eq_axisClebschGram
   simp only [LinearMap.comp_apply] at hraise
   simp only [LinearMap.comp_apply]
   rw [hraise]
-  simpa only [LinearMap.comp_apply] using hlower.symm
+  exact hlower.symm
 
 /-- The gt selected row clebsch range projector used in the spherical-code argument. -/
 def gtSelectedRowClebschRangeProjector {r n : ℕ}
@@ -5876,7 +5869,7 @@ theorem gtSignedEigenvectorSpan_gtRelativeCasimir_iterate_mem
     (gtRelativeCasimir (n := n) lam ^ k) v ∈
       gtSignedEigenvectorSpan (n := n) lam := by
   induction k with
-  | zero => simpa only [pow_zero, Module.End.one_apply] using hv
+  | zero => exact hv
   | succ k ih =>
       rw [pow_succ', Module.End.mul_eq_comp, LinearMap.comp_apply]
       exact gtSignedEigenvectorSpan_gtRelativeCasimir_mem lam _ ih
@@ -6125,7 +6118,7 @@ theorem orthogonalJacobiTrudiMatrix_lastRow_delta
       intro heq
       apply hj
       apply Fin.ext
-      simpa only [Fin.val_last] using heq
+      exact heq
     simp only [hval, ↓reduceIte, hj]
 
 theorem orthogonalTensorPieriNextColumn_last
@@ -6851,7 +6844,7 @@ theorem transportedPaddedPieriChannel_eigen_of_retained
   · have hsource : appendZeroWeight lam =
         raiseWeight
           (paddedPieriSource (appendZeroWeight lam) (Sum.inr row)) row.val := by
-      simpa only [paddedPieriSource_inr] using
+      exact
         (raiseWeight_loweredInternalYoungWeight (appendZeroWeight lam) row.val row.property.1).symm
     have hchannel := gtRelativeCasimir_lower_channel
       (appendZeroWeight lam)
@@ -7735,9 +7728,7 @@ theorem gtRelativeCasimir_eigen_inner_eq_zero
   rw [hu, hv] at hsym
   rw [real_inner_smul_left u v s,
     real_inner_smul_right u v t] at hsym
-  have hmul : (s - t) * ⟪u, v⟫_ℝ = 0 := by
-    nlinarith
-  exact (mul_eq_zero.mp hmul).resolve_left (sub_ne_zero.mpr hne)
+  exact (mul_eq_mul_right_iff.mp hsym).resolve_left hne
 
 end AllRankGTRelativeCasimirCompressedResolvent
 
@@ -8059,7 +8050,7 @@ theorem selectedSignedEigenspace_le_youngClebschLower_range
     have h := fullBranchSignature_interlaces_appendZeroWeight low
       (fullBranchOfInterlaces mu hfinite.2)
     rw [fullBranchOfInterlaces_signature_eq_appendZeroWeight mu hfinite.2] at h
-    simpa only [padded] using h
+    exact h
   have hpadFinite : FiniteInterlacing (n + 1) padded
       (appendZeroWeight mu) := ⟨hn, hpadInter⟩
   let F := physicalPaddedPieriChannel hn low hpadded

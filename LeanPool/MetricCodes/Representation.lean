@@ -11,12 +11,7 @@ import Mathlib.Algebra.MvPolynomial.CommRing
 import Mathlib.Algebra.MvPolynomial.Funext
 import Mathlib.Algebra.MvPolynomial.Monad
 import Mathlib.Algebra.Order.Antidiag.FinsuppEquiv
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Representation-theoretic foundations
@@ -589,7 +584,7 @@ theorem rowEuclideanEquiv_symm_apply
     (rowEuclideanEquiv r n).symm x (variableIndex i j) = x i j := by
   have h := congrArg (fun y : RowEuclideanSpace r n => y i j)
     ((rowEuclideanEquiv r n).apply_symm_apply x)
-  simpa only [rowEuclideanEquiv_apply] using h
+  exact h
 
 /-- Apply the same Euclidean isometry independently to every row of a flat coordinate vector. -/
 def blockIsometry {r n : ℕ}
@@ -1371,7 +1366,7 @@ theorem youngHomogeneousProjection_equivariant {r n : ℕ}
       polynomialAction U
         (polynomialAction U.symm (p : PolynomialSpace r n)) =
           (p : PolynomialSpace r n)
-    simpa only [LinearIsometryEquiv.symm_symm] using
+    exact
       polynomialAction_symm_apply_apply U.symm (p : PolynomialSpace r n)
   calc
     ⟪youngHomogeneousProjection lam
@@ -1612,7 +1607,7 @@ theorem pairFactor_pos {r n : ℕ}
     linarith
   · apply div_pos
     · have hden := sumDenominator_pos hn i j
-      linarith
+      linarith only [hden]
     · exact sumDenominator_pos hn i j
 
 theorem dimension_pos {r n : ℕ}
@@ -1676,7 +1671,7 @@ theorem rowFactor_update_succ_self {r n : ℕ}
   have hsmall : ((lam ell + rowTail ell).factorial : ℝ) ≠ 0 := by positivity
   have hsmalllin : (lam ell : ℝ) + (rowTail ell : ℝ) + 1 ≠ 0 := by
     have hl : 0 ≤ (lam ell : ℝ) := Nat.cast_nonneg _
-    linarith
+    linarith only []
   have hargbig :
       lam ell + 1 + tailLength n r ell =
         (lam ell + tailLength n r ell) + 1 := by omega
@@ -2095,7 +2090,7 @@ theorem tendsto_log_dimension_div
       rw [Real.log_prod fun j _ => hpair' i j]
       apply Finset.sum_congr rfl
       intro j _
-      split_ifs <;> simp
+      split_ifs <;> simp only [Real.log_one]
     unfold dimension
     rw [Real.log_mul hrowprod hpairprod,
       Real.log_prod fun i _ => hrow i,
@@ -2638,15 +2633,10 @@ theorem sqrt_dimension_mul_symmetric_edge (target source : I) :
       Real.sq_sqrt (mul_nonneg hpst hpts),
       mul_pow, Real.sq_sqrt ht]
     have hb := A.balance target source
-    nlinarith
-  nlinarith [Real.sqrt_nonneg (A.dimension source : ℝ),
-    Real.sqrt_nonneg
-      (A.probability source target * A.probability target source),
-    Real.sqrt_nonneg (A.dimension target : ℝ),
-    mul_nonneg hpts (Real.sqrt_nonneg (A.dimension target : ℝ)),
-    mul_nonneg (Real.sqrt_nonneg (A.dimension source : ℝ))
-      (Real.sqrt_nonneg
-        (A.probability source target * A.probability target source))]
+    linear_combination -A.probability target source * hb
+  exact (sq_eq_sq₀
+    (mul_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _))
+    (mul_nonneg hpts (Real.sqrt_nonneg _))).mp hsquare
 
 theorem weighted_eigenvector_equation (source : I) :
     (∑ target, A.probability target source * A.weight target) =
@@ -3254,8 +3244,7 @@ private theorem coordinateMatrix_adjoint_metriccodes2_851911c7 {U T : Type*}
     (f : U →ₗ[ℝ] T) :
     coordinateMatrix f.adjoint = (coordinateMatrix
       f)ᵀ := by
-  simpa only [coordinateMatrix,
-    Matrix.conjTranspose_eq_transpose_of_trivial] using
+  exact
     LinearMap.toMatrix_adjoint (euclideanBasis U)
       (euclideanBasis T) f
 
@@ -3790,7 +3779,7 @@ theorem rowPairingPolynomial_isHomogeneous {r n : ℕ}
   unfold rowPairingPolynomial
   apply MvPolynomial.IsHomogeneous.sum
   intro k _
-  simpa only [Nat.reduceAdd] using
+  exact
     (MvPolynomial.isHomogeneous_X ℝ (variableIndex i k)).mul (MvPolynomial.isHomogeneous_X ℝ
       (variableIndex j k))
 
@@ -3822,7 +3811,7 @@ theorem traceOperator_isHomogeneous {r n m : ℕ}
   rw [traceOperator_apply]
   apply MvPolynomial.IsHomogeneous.sum
   intro k _
-  simpa only [Nat.sub_sub, Nat.reduceAdd] using
+  exact
     (hp.pderiv (i := variableIndex j k)).pderiv (i := variableIndex i k)
 
 /-- The homogeneous row trace used in the spherical-code argument. -/
@@ -4434,8 +4423,7 @@ theorem simultaneousHarmonicProjection_rowWeight
         PolynomialSpace r n) := by
   have hhom : homogeneousPolarization r n m i i p = c • p := by
     apply Subtype.ext
-    simpa only [homogeneousPolarization_apply_coe, polarization_self, rowEuler_apply,
-      SetLike.val_smul] using hp
+    exact hp
   calc
     rowEuler r n i
         ((simultaneousHarmonicProjection r n m p).val :
@@ -4656,7 +4644,7 @@ theorem rowEuler_polarization_commutator {r n : ℕ}
   · subst i
     by_cases hja : j = a
     · subst j
-      simp
+      simp only [↓reduceIte, polarization_self, rowEuler_apply, add_sub_cancel_right]
     · have haj : a ≠ j := Ne.symm hja
       simp only [↓reduceIte, polarization_apply, hja, zero_add, haj, sub_zero]; abel
   · by_cases hja : j = a
@@ -4833,7 +4821,7 @@ def fullBranchOfInterlaces {r : ℕ}
       lam mu) (i : Fin r) :
     fullBranchSignature (fullBranchOfInterlaces mu h) i.castSucc =
       mu i := by
-  simp [fullBranchOfInterlaces, fullBranchSignature]
+  simp only [fullBranchSignature, fullBranchOfInterlaces, Fin.snoc_castSucc]
 
 @[simp] theorem fullBranchOfInterlaces_last {r : ℕ}
     {lam : Fin (r + 1) → ℕ}
@@ -4901,16 +4889,14 @@ theorem polynomialRealPart_ne_zero_or_polynomialImaginaryPart_ne_zero
   · right
     intro him
     have hi : (p.coeff d).im = 0 := by
-      simpa only [coeff_polynomialImaginaryPart, AddMonoidAlgebra.coeff_zero, Finsupp.coe_zero,
-        Pi.zero_apply] using
+      exact
         congrArg (fun q : MvPolynomial σ ℝ => q.coeff d) him
     apply hd
     apply Complex.ext <;> simp [hre, hi]
   · left
     intro hreal
     exact hre (by
-      simpa only [coeff_polynomialRealPart, AddMonoidAlgebra.coeff_zero, Finsupp.coe_zero,
-        Pi.zero_apply] using
+      exact
         congrArg (fun q : MvPolynomial σ ℝ => q.coeff d) hreal)
 
 theorem polynomialRealPart_pderiv {σ : Type*} (i : σ)
@@ -5257,12 +5243,8 @@ theorem pderiv_nullSubstitution {r m n : ℕ}
       simp only [map_add, hp, hq, mul_add, Finset.sum_add_distrib]
   | mul_X q z hq =>
       rcases z with ⟨h, j⟩
-      simp only [map_mul, nullSubstitution_X,
-        MvPolynomial.pderiv_mul, hq,
-        pderiv_nullRowLinearForm,
-        MvPolynomial.pderiv_X, Pi.single_apply,
-        Prod.mk.injEq, map_add, map_mul,
-        nullSubstitution_X]
+      simp only [map_mul, nullSubstitution_X, MvPolynomial.pderiv_mul, hq, pderiv_nullRowLinearForm,
+          MvPolynomial.pderiv_X, Pi.single_apply, Prod.mk.injEq, map_add]
       by_cases hrow : i = h
       · subst h
         simp_rw [mul_add]
@@ -5665,7 +5647,7 @@ theorem leadingMinor_isHomogeneous {r n : ℕ}
       (fun _ => 1)
       (fun i _ => isotropicVariable_isHomogeneous h
         (minorIndex k (π i)) (minorIndex k i)) using 1; simp
-  simpa only [map_intCast] using hprod.C_mul (((Equiv.Perm.sign π : ℤ) : ℂ))
+  exact hprod.C_mul (((Equiv.Perm.sign π : ℤ) : ℂ))
 
 theorem rowDerivation_leadingMinor_upper {r n : ℕ}
     (h : 2 * (r + 1) ≤ n)
@@ -5820,7 +5802,7 @@ theorem nullSubstitution_sourceLeadingMinor {r n : ℕ}
   apply congrArg Matrix.det
   apply Matrix.ext
   intro i j
-  simpa only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply] using
+  exact
     (nullSubstitution_X h (minorIndex k i) (minorIndex k j)).trans
       (isotropicVariable_eq_nullRowLinearForm h
         (minorIndex k i) (minorIndex k j)).symm
@@ -6638,7 +6620,7 @@ theorem ambientCartan_highestWeightPolynomial {r n : ℕ}
           ∑ k : Fin (r + 1), 2 * (if p ≤ k then e k else 0) := by
             apply Finset.sum_congr rfl
             intro k _
-            split_ifs <;> simp
+            split_ifs <;> simp only [mul_zero]
       _ = 2 * ∑ k : Fin (r + 1), if p ≤ k then e k else 0 := by
         rw [Finset.mul_sum]
   unfold highestWeightPolynomial
@@ -6728,7 +6710,7 @@ theorem FiniteInterlacing.ambientShift_succ_add_one_le {r n : ℕ}
   have hweight' : (lam m.succ : ℝ) ≤ lam m.castSucc := by exact_mod_cast hweight
   unfold ambientShift
   simp only [Fin.val_succ, Fin.val_castSucc, Nat.cast_add, Nat.cast_one]
-  linarith
+  linarith only [hweight']
 
 theorem FiniteInterlacing.ambientShift_strictAnti {r n : ℕ}
     {lam : Fin (r + 1) → ℕ} {mu : Fin r → ℕ}
@@ -6829,7 +6811,8 @@ theorem FiniteInterlacing.activeDenominator_ne_zero {r n : ℕ}
     have hpos := h.ambientShift_pos ℓ
     have hpos' := h.ambientShift_pos (ℓ.succAbove q)
     have hsame : ambientShift n lam ℓ =
-        ambientShift n lam (ℓ.succAbove q) := by nlinarith
+        ambientShift n lam (ℓ.succAbove q) :=
+      (sq_eq_sq₀ hpos.le hpos'.le).mp heq
     exact (Fin.ne_succAbove ℓ q)
       (h.ambientShift_strictAnti.injective hsame)
 
@@ -6853,12 +6836,13 @@ theorem FiniteInterlacing.plusFactor_nonneg {r n : ℕ}
     have hnum :
         (ambientShift n lam ℓ + 1 / 2) ^ 2 -
           stabilizerShift n mu m ^ 2 ≤ 0 := by
-      linarith [(sq_le_sq₀ hnonneg (h.stabilizerShift_pos m).le).2 hupper]
+      exact sub_nonpos.mpr ((sq_le_sq₀ hnonneg (h.stabilizerShift_pos m).le).2 hupper)
     have hlt : ambientShift n lam ℓ < ambientShift n lam m.castSucc :=
       h.ambientShift_strictAnti hm
     have hden : ambientShift n lam ℓ ^ 2 -
         ambientShift n lam m.castSucc ^ 2 < 0 := by
-      nlinarith [h.ambientShift_pos ℓ, h.ambientShift_pos m.castSucc]
+      exact sub_neg.mpr
+        ((sq_lt_sq₀ (h.ambientShift_pos ℓ).le (h.ambientShift_pos m.castSucc).le).2 hlt)
     exact div_nonneg_of_nonpos hnum hden.le
   · have hm' : ℓ ≤ m.castSucc := le_of_not_gt hm
     rw [Fin.succAbove_of_le_castSucc ℓ m hm']
@@ -6871,12 +6855,13 @@ theorem FiniteInterlacing.plusFactor_nonneg {r n : ℕ}
           stabilizerShift n mu m ^ 2 := by
       have hnonneg : 0 ≤ ambientShift n lam ℓ + 1 / 2 := by
         linarith [h.ambientShift_pos ℓ]
-      linarith [(sq_le_sq₀ (h.stabilizerShift_pos m).le hnonneg).2 hlower]
+      exact sub_nonneg.mpr ((sq_le_sq₀ (h.stabilizerShift_pos m).le hnonneg).2 hlower)
     have hlt : ambientShift n lam m.succ < ambientShift n lam ℓ :=
       h.ambientShift_strictAnti (Fin.le_castSucc_iff.mp hm')
     have hden : 0 ≤ ambientShift n lam ℓ ^ 2 -
         ambientShift n lam m.succ ^ 2 := by
-      nlinarith [h.ambientShift_pos ℓ, h.ambientShift_pos m.succ]
+      exact sub_nonneg.mpr
+        ((sq_le_sq₀ (h.ambientShift_pos m.succ).le (h.ambientShift_pos ℓ).le).2 hlt.le)
     exact div_nonneg hnum hden
 
 theorem FiniteInterlacing.minusFactor_nonneg {r n : ℕ}
@@ -6899,12 +6884,13 @@ theorem FiniteInterlacing.minusFactor_nonneg {r n : ℕ}
     have hnum :
         (ambientShift n lam ℓ - 1 / 2) ^ 2 -
           stabilizerShift n mu m ^ 2 ≤ 0 := by
-      linarith [(sq_le_sq₀ hhalf (h.stabilizerShift_pos m).le).2 hupper]
+      exact sub_nonpos.mpr ((sq_le_sq₀ hhalf (h.stabilizerShift_pos m).le).2 hupper)
     have hlt : ambientShift n lam ℓ < ambientShift n lam m.castSucc :=
       h.ambientShift_strictAnti hm
     have hden : ambientShift n lam ℓ ^ 2 -
         ambientShift n lam m.castSucc ^ 2 < 0 := by
-      nlinarith [h.ambientShift_pos ℓ, h.ambientShift_pos m.castSucc]
+      exact sub_neg.mpr
+        ((sq_lt_sq₀ (h.ambientShift_pos ℓ).le (h.ambientShift_pos m.castSucc).le).2 hlt)
     exact div_nonneg_of_nonpos hnum hden.le
   · have hm' : ℓ ≤ m.castSucc := le_of_not_gt hm
     rw [Fin.succAbove_of_le_castSucc ℓ m hm']
@@ -6915,12 +6901,13 @@ theorem FiniteInterlacing.minusFactor_nonneg {r n : ℕ}
     have hnum : 0 ≤
         (ambientShift n lam ℓ - 1 / 2) ^ 2 -
           stabilizerShift n mu m ^ 2 := by
-      linarith [(sq_le_sq₀ (h.stabilizerShift_pos m).le hhalf).2 hlower]
+      exact sub_nonneg.mpr ((sq_le_sq₀ (h.stabilizerShift_pos m).le hhalf).2 hlower)
     have hlt : ambientShift n lam m.succ < ambientShift n lam ℓ :=
       h.ambientShift_strictAnti (Fin.le_castSucc_iff.mp hm')
     have hden : 0 ≤ ambientShift n lam ℓ ^ 2 -
         ambientShift n lam m.succ ^ 2 := by
-      nlinarith [h.ambientShift_pos ℓ, h.ambientShift_pos m.succ]
+      exact sub_nonneg.mpr
+        ((sq_le_sq₀ (h.ambientShift_pos m.succ).le (h.ambientShift_pos ℓ).le).2 hlt.le)
     exact div_nonneg hnum hden
 
 theorem FiniteInterlacing.plusProbability_nonneg {r n : ℕ}
@@ -8218,7 +8205,7 @@ theorem rowEuler_pderiv_of_ne {r n : ℕ}
     rowEuler r n a (MvPolynomial.pderiv (variableIndex row j) p) =
       MvPolynomial.pderiv (variableIndex row j)
         (rowEuler r n a p) := by
-  simpa only [polarization_self] using
+  exact
     polarization_pderiv_of_ne a a row j hne p
 
 theorem rowEuler_pderiv_self {r n : ℕ}
@@ -8297,7 +8284,7 @@ theorem rowDerivative_fischer_inner_sum {r n : ℕ}
         (rowEuler r n row (p : PolynomialSpace r n))
         (q : PolynomialSpace r n) := by
       rw [rowEuler_apply]
-      simpa only using
+      exact
         (SpherePacking.Fischer.polynomialInner_sum_left ((r + 1) * n) Finset.univ
             (fun j : Fin n =>
               MvPolynomial.X (variableIndex row j) * MvPolynomial.pderiv (variableIndex row j)
@@ -8630,7 +8617,7 @@ theorem mem_jointHarmonicWeight_iff_gramOrthogonal
       (youngGramRadialIdeal r n).mul_mem_right
         (traceOperator r n i j (p : PolynomialSpace r n))
         (rowPairingPolynomial_mem_youngGramRadialIdeal i j)
-    simpa [youngMultihomogeneousFischerCore_inner, q] using hp q hq
+    simpa only [traceOperator_apply, youngMultihomogeneousFischerCore_inner, q] using hp q hq
 
 theorem finrank_jointHarmonicWeight_add_finrank_youngGramRadialWeight
     {r n : ℕ} (lam : Fin (r + 1) → ℕ) :

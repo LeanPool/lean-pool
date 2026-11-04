@@ -76,7 +76,7 @@ theorem operator_isSymmetric (A : Matrix I I ℝ)
   apply Matrix.IsHermitian.ext
   intro i j
   have h := congrArg (fun B : Matrix I I ℝ => B i j) hA
-  simpa only [star_trivial, Matrix.transpose_apply] using h
+  exact h
 
 theorem exists_topEigenvector (A : Matrix I I ℝ)
     (hA : Aᵀ = A) :
@@ -104,7 +104,7 @@ theorem coordinateAbs_norm (x : Space I) :
     apply Finset.sum_congr rfl
     intro i _
     simp only [coordinateAbs, sq_abs]
-  nlinarith [norm_nonneg (coordinateAbs x), norm_nonneg x]
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hsquare
 
 omit [Fintype I] [DecidableEq I] [Nonempty I] in
 theorem coordinateAbs_ne_zero {x : Space I} (hx : x ≠ 0) :
@@ -268,7 +268,7 @@ theorem eigenvector_pos_of_irreducible (A : Matrix I I ℝ)
   apply PiLp.ext
   intro j
   obtain ⟨p, _⟩ := hirreducible.connected i j
-  simpa only [PiLp.zero_apply] using
+  exact
     eigenvector_zero_of_positive_path A hirreducible.nonneg x hx eigenvalue heig p hzero
 
 theorem exists_positive_topEigenvector (A : Matrix I I ℝ)

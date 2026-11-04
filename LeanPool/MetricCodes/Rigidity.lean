@@ -6,9 +6,6 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.Weyl
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # All-rank harmonic rigidity
@@ -188,10 +185,8 @@ theorem actualExteriorRootCreation_contraction_contraction_cubic_anticommute
     actualExteriorRootContraction_anticommute (M := M) ε α
   rw [cubicExteriorExpansion_metriccodes2_a978fd60, hαζ, hβζ, hδγ, hεγ,
     hγζ, hδβ, hεβ, hδα, hεα]
-  split_ifs <;>
-    simp only [mul_one, mul_zero, zero_mul, sub_zero, zero_sub, add_zero,
-      zero_add, sub_self] <;>
-    ac_rfl
+  simp only [mul_ite, ite_mul, mul_one, mul_zero, zero_mul,
+    add_zero, sub_self, mul_assoc]
 
 end
 
@@ -762,10 +757,10 @@ theorem fullRootExteriorActionAtom_bracketAtom_anticommute
       if δ = γ then Cβ * Cα else 0 := by
     by_cases h : δ = γ
     · subst γ
-      simpa [C, J, Cβ, Cα, fullRootExteriorBracketAtom] using
+      simpa only [fullRootExteriorBracketAtom, ↓reduceIte, C, J, Cβ, Cα] using
         (actualExteriorRootContraction_creation_contraction_contraction_anticommute
           (M := PolynomialSpace r n) δ δ β α)
-    · simpa [h, C, J, Cβ, Cα, fullRootExteriorBracketAtom] using
+    · simpa only [fullRootExteriorBracketAtom, h, ↓reduceIte, C, J, Cβ, Cα] using
         (actualExteriorRootContraction_creation_contraction_contraction_anticommute
           (M := PolynomialSpace r n) δ γ β α)
   change
@@ -1583,7 +1578,7 @@ theorem fullRootExteriorAction_zeroExtension_of_card_ne
   unfold fullRootExteriorActionAtom
   simp only [Module.End.mul_apply, fullRootExteriorPolynomialAction_apply]
   by_cases hα : α ∈ S
-  · simp only [actualExteriorRootContraction_apply, hα, ↓reduceIte, map_zero, ]
+  · simp only [actualExteriorRootContraction_apply, hα, ↓reduceIte, map_zero]
   · have hcard : (insert α S).card ≠ k + 1 := by
       rw [Finset.card_insert_of_notMem hα]
       omega
@@ -1637,8 +1632,7 @@ theorem fullRootExteriorBracket_zeroExtension_of_card_ne
         (rootPolynomialChainZeroExtension r n (k + 1) f) S = 0 := by
   classical
   unfold fullRootExteriorBracket
-  simp only [LinearMap.sum_apply, Finset.sum_apply, apply_ite,
-    ]
+  simp only [LinearMap.sum_apply, Finset.sum_apply, apply_ite]
   apply Finset.sum_eq_zero
   intro α _
   apply Finset.sum_eq_zero
@@ -2580,7 +2574,7 @@ theorem sum_root_pairs_eq_ordered_add_reverse
   rw [← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro β _
-  split_ifs <;> simp
+  split_ifs <;> simp only [add_zero]
 
 theorem fullRootExteriorActionCoboundary_bracket_eq_neg_upperStructure
     (r n : ℕ) :
@@ -2868,14 +2862,13 @@ private theorem core_inner_comm_metriccodes2_16f8f8ca {V : Type*}
     [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V) (x y : V) :
     c.inner x y = c.inner y x := by
-  simpa only [Real.ringHom_apply] using c.conj_inner_symm y x
+  exact c.conj_inner_symm y x
 
 private theorem core_inner_add_right_metriccodes2_16f8f8ca {V : Type*}
     [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V) (x y z : V) :
     c.inner x (y + z) = c.inner x y + c.inner x z := by
-  rw [core_inner_comm_metriccodes2_16f8f8ca c x (y + z), c.add_left,
-    core_inner_comm_metriccodes2_16f8f8ca c y x, core_inner_comm_metriccodes2_16f8f8ca c z x]
+  exact InnerProductSpace.Core.inner_add_right x y z
 
 theorem fischerCore_injective_of_coercive_add_adjoint_squares
     {E F G : Type*}
@@ -2950,15 +2943,13 @@ private theorem ceFischerCore_inner_comm_metriccodes2_1a8ab4cc
     {V : Type*} [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V) (x y : V) :
     c.inner x y = c.inner y x := by
-  simpa only [Real.ringHom_apply] using c.conj_inner_symm y x
+  exact core_inner_comm_metriccodes2_16f8f8ca c x y
 
 private theorem ceFischerCore_add_right_metriccodes2_1a8ab4cc
     {V : Type*} [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V) (x y z : V) :
     c.inner x (y + z) = c.inner x y + c.inner x z := by
-  rw [ceFischerCore_inner_comm_metriccodes2_1a8ab4cc c x (y + z), c.add_left,
-    ceFischerCore_inner_comm_metriccodes2_1a8ab4cc c y x,
-    ceFischerCore_inner_comm_metriccodes2_1a8ab4cc c z x]
+  exact core_inner_add_right_metriccodes2_16f8f8ca c x y z
 
 theorem weightedChevalleyEilenberg_fischer_adjoint
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -3436,9 +3427,7 @@ theorem sourceMatrixTranspose_pderiv {m : ℕ}
     (i j : Fin m) (p : SourceMatrix m) :
     sourceMatrixTranspose m (MvPolynomial.pderiv (i, j) p) =
       MvPolynomial.pderiv (j, i) (sourceMatrixTranspose m p) := by
-  simpa only [sourceMatrixTranspose, MvPolynomial.renameEquiv_apply, Equiv.coe_prodComm,
-    Equiv.prodComm_apply,
-    Prod.swap_prod_mk] using (MvPolynomial.pderiv_rename (Equiv.prodComm (Fin m) (Fin
+  exact (MvPolynomial.pderiv_rename (Equiv.prodComm (Fin m) (Fin
       m)).injective (i, j) p).symm
 
 theorem sourceMatrixTranspose_columnRoot {m : ℕ}
@@ -4181,7 +4170,7 @@ theorem rowDerivation_upper_of_mem_fullYoungComplexPolynomialSpan
     rw [rowDerivation_polynomialComplexification,
       ((mem_harmonicYoungSubmodule lam p).mp hp).2.2.2 i j hij,
       map_zero]
-  · simp only [map_zero, ]
+  · simp only [map_zero]
   · intro p q _ _ hp hq
     rw [map_add, hp, hq, add_zero]
   · intro c p _ hp
@@ -4330,7 +4319,7 @@ theorem sourceColumnRoot_upper_of_positiveRootKernel
   have himage : nullSubstitution hn (sourceColumnRoot i j p) = 0 := by
     exact (smul_eq_zero.mp hroot).resolve_left (by norm_num)
   apply nullSubstitution_injective hn
-  simpa only [sourceColumnRoot_apply, map_sum, map_mul, nullSubstitution_X, map_zero] using himage
+  exact himage
 
 theorem sourceRowRoot_self_of_mem_fullYoungComplexPolynomialSpan
     {r n : ℕ} (hn : 2 * (r + 1) ≤ n)
@@ -5737,7 +5726,7 @@ private theorem pderiv_odd_conjugateIsotropicVariable_metriccodes2_3f70f505
     DeterminantVectors.variableIndex_eq_iff, eq_comm, evenCoordinate_ne_oddCoordinate, and_false,
     not_false_eq_true, Pi.single_eq_of_ne, Derivation.leibniz, Pi.single_apply, oddCoordinate_inj,
     smul_eq_mul, mul_ite, mul_one, mul_zero, MvPolynomial.derivation_C, add_zero, zero_sub]
-  split_ifs <;> simp
+  split_ifs <;> simp only [neg_zero]
 
 private theorem antiholomorphicDerivative_conjugateIsotropicVariable_metriccodes2_3f70f505
     {r n : ℕ} (h : 2 * (r + 1) ≤ n)
@@ -5848,8 +5837,7 @@ private theorem ambientPositiveRoot_apply_holomorphic_antiholomorphic_metriccode
         (isotropicVariable h a p * differenceHolomorphicDerivative_metriccodes2_3f70f505 h a q f -
           conjugateIsotropicVariable h a q *
             antiholomorphicDerivative h a p f) := by
-  rw [ambientPositiveRoot_apply]
-  rfl
+  exact ambientPositiveRoot_apply h p q f
 
 theorem ambientPositiveRoot_antiholomorphicDerivative_commutator_apply
     {r n : ℕ} (h : 2 * (r + 1) ≤ n)
@@ -6151,7 +6139,7 @@ theorem sum_ambientSumPositiveRoot_holomorphicDerivative_of_all_positive_root_hi
       (∑ q : Fin (r + 1), if p = q then (0 : ℂ) else 2) =
           ∑ q ∈ Finset.univ.erase p,
             (if p = q then (0 : ℂ) else 2) := by
-            simp
+            simp only [Finset.mem_univ, Finset.sum_erase_eq_sub, ↓reduceIte, sub_zero]
       _ = ∑ _q ∈ Finset.univ.erase p, (2 : ℂ) := by
             apply Finset.sum_congr rfl
             intro q hq
@@ -6597,8 +6585,7 @@ private theorem ambientPositiveRoot_apply_isotropicDerivatives_metriccodes2_4c40
         (isotropicVariable h a p * holomorphicDerivative h a q g -
           conjugateIsotropicVariable h a q *
             antiholomorphicDerivative h a p g) := by
-  rw [ambientPositiveRoot_apply]
-  rfl
+  exact ambientPositiveRoot_apply_holomorphic_antiholomorphic_metriccodes2_3f70f505 h p q g
 
 private theorem mixedIsotropicRemainder_eq_negative_root_actions_metriccodes2_4c407e12
     {r n : ℕ} (h : 2 * (r + 1) ≤ n)
@@ -7123,7 +7110,11 @@ theorem shortRootHighest_signedWeight_nonnegative
       (real_inner_self_nonneg : 0 ≤ ⟪x, x⟫_ℝ)
       (real_inner_self_nonneg : 0 ≤ ⟪y, y⟫_ℝ)
   have hmureal : (0 : ℝ) ≤ (mu : ℝ) := by
-    nlinarith
+    have hproduct : 0 ≤ (2 * (mu : ℝ)) * (⟪u, u⟫_ℝ + ⟪v, v⟫_ℝ) := by
+      rw [mul_add, hadj]
+      exact hnormnonneg
+    exact (mul_nonneg_iff_of_pos_left (by norm_num : (0 : ℝ) < 2)).mp
+      ((mul_nonneg_iff_of_pos_right hnormpos).mp hproduct)
   exact_mod_cast hmureal
 
 theorem positiveRootHighest_signedWeight_nonnegative
@@ -7554,7 +7545,7 @@ theorem sum_ambientSignedWeightComponent
         ambientSignedWeightSupport h f := by
       exact Finset.mem_image.mpr
         ⟨d, MvPolynomial.mem_support_iff.mpr hd, rfl⟩
-    simp [hweight]
+    simp only [Finset.sum_ite_eq, hweight, ↓reduceIte]
 
 end HigherHarmonicYoung.ArbitraryRankAmbientSignedWeightYoungPreservation
 

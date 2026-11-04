@@ -10,12 +10,9 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Orthogonality
 public import Mathlib.Probability.Distributions.Beta
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
 import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.RealSqrt -- shake: keep
 
 /-!
 # Strict rate improvements
@@ -671,7 +668,7 @@ theorem eventually_binaryEntropy_inward_improvement
           (MetricCodes.binaryEntropy a - MetricCodes.binaryEntropy (a - C * e)) < M := by
     have h := hslope.eventually (gt_mem_nhds hM)
     filter_upwards [h] with e he
-    simpa [f, smul_eq_mul] using he
+    simpa only [zero_add, mul_zero, sub_zero, sub_self, smul_eq_mul, f] using he
   have hloglim :
       Tendsto (fun e : ℝ => -Real.logb 2 e) (𝓝[>] 0) atTop := by
     simpa only [tendsto_neg_atTop_iff, Function.comp_def] using
@@ -2117,7 +2114,7 @@ theorem tendsto_complementWeight_ratio
       (fun n : ℕ =>
         ((n - shellWeight a n : ℕ) : ℝ) / (n : ℝ))
       atTop (nhds (1 - a)) := by
-  simpa only [shellWeight] using MetricCodes.Hamming.tendsto_complement_longitudinal_ratio ha ha'
+  exact MetricCodes.Hamming.tendsto_complement_longitudinal_ratio ha ha'
 
 theorem tendsto_johnsonJ1_ratio
     {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
@@ -3876,7 +3873,7 @@ section
 theorem sphericalEntropy_continuous : Continuous MetricCodes.sphericalEntropy := by
   have hplus :
       Continuous (fun u : ℝ => (1 + u) * Real.log (1 + u)) := by
-    simpa only [Function.comp_def, Pi.add_apply] using
+    exact
       (Real.continuous_mul_log.comp (continuous_const.add continuous_id : Continuous (fun u : ℝ
         => 1 + u)))
   have hnatural : Continuous
@@ -3912,7 +3909,7 @@ theorem hasDerivAt_sphericalEntropy {u : ℝ} (hu : 0 < u) :
     rw [Real.log_div (by linarith only [hu] : 1 + u ≠ 0) hu.ne']
     ring
   rw [hfun, hvalue]
-  simpa only [Function.comp_apply, Pi.sub_apply] using hderiv
+  exact hderiv
 
 theorem sphericalEntropy_strictMono :
     StrictMonoOn MetricCodes.sphericalEntropy (Set.Ici (0 : ℝ)) := by
@@ -4205,7 +4202,7 @@ theorem eventually_sphericalEntropy_improvement {a : ℝ} (ha : 0 < a) :
             MetricCodes.sphericalEntropy a) < M := by
     have h := hslope.eventually (gt_mem_nhds hM)
     filter_upwards [h] with b hb
-    simpa [f, sphericalImprovementPath, smul_eq_mul] using hb
+    simpa only [sphericalImprovementPath, zero_add, mul_zero, add_zero, smul_eq_mul, f] using hb
   have hloglim :
       Tendsto (fun b : ℝ => -Real.logb 2 b) (𝓝[>] 0) atTop := by
     simpa only [tendsto_neg_atTop_iff, Function.comp_def] using
@@ -4260,7 +4257,7 @@ theorem exists_strict_improving_spherical_feasible
         dsimp [a₀]
         exact classicalThreshold_spectral hs hs'
       linarith only [hgamma', hboundary]
-    · simpa only using hentropy'
+    · exact hentropy'
   obtain ⟨b, hb⟩ := hall.exists
   exact ⟨sphericalImprovementPath a₀ b, b, hb⟩
 

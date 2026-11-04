@@ -7,9 +7,6 @@ module
 
 public import LeanPool.MetricCodes.Interlacing
 import Mathlib.Algebra.MvPolynomial.Monad
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Highest-weight identities
@@ -2185,7 +2182,7 @@ theorem pivot_lt_diamondUpperSuffixNext
       (hU ((Finset.mem_sort (· ≤ ·)).mp hmem))).2
   · have hnexttarget : next = target := by simpa only [List.mem_cons, List.not_mem_nil,
                                              or_false] using hmem
-    simpa [next, hnexttarget] using hpivot
+    simpa only [hnexttarget, gt_iff_lt, next] using hpivot
 
 theorem sum_weightedDiamondPairResidual_eq_sum_spectralPrefix_suffix
     {r n : ℕ} (lam : Fin (r + 1) → ℕ) (hdom : Antitone lam)
@@ -2329,7 +2326,7 @@ theorem polarization_diamondPathOperator_pivot_sub
       ite_eq_right hstart_ne, zero_add,
       upperPolarizationPathCommutator_append_pivot
         pivot target hpt (S.sort (· ≤ ·)) hlistnon hlist]
-    simp [diamondPathOperator_apply, hstarts]
+    simp only [diamondPathOperator_apply, hstarts]
   · have hempty : S = ∅ := Finset.not_nonempty_iff_eq_empty.mp hnon
     subst S
     simp only [diamondPathOperator_apply, polarizationPathStart_empty,
@@ -3059,7 +3056,7 @@ theorem spectralPathOperator_succ_same_target_commute_of
       lam a.castSucc target target hpos hpos k z
   have hcross : (x - y) • (C * B - B * C) = A * D - B * C := by
     rw [hdelta]
-    simpa only [Module.End.mul_eq_comp, A, B, C, D] using
+    exact
       hrtt target a.castSucc hpos.le le_rfl w z
   have hstep := spectralStep_same_target_commute A B C D R x y
     hAB hCD hRA hRB hRC hRD hcross
@@ -3068,7 +3065,7 @@ theorem spectralPathOperator_succ_same_target_commute_of
   change
     (x • C - A.comp R).comp (y • D - B.comp R) =
       (y • D - B.comp R).comp (x • C - A.comp R)
-  simpa only [Module.End.mul_eq_comp, A, B, C, D, R, x, y, w, z, g] using hstep
+  exact hstep
 
 end ArbitraryRowSameAxisDiamondSpectralSelfCommuteStep
 
@@ -4525,7 +4522,9 @@ theorem complex_eigenpair_im_eq_zero_of_symmetric
         (real_inner_self_pos.mpr hvne) real_inner_self_nonneg
     · exact add_pos_of_nonneg_of_pos
         real_inner_self_nonneg (real_inner_self_pos.mpr hwne)
-  nlinarith
+  have hmul : b * (⟪v, v⟫_ℝ + ⟪w, w⟫_ℝ) = 0 := by
+    linear_combination -hsym
+  exact (mul_eq_zero.mp hmul).resolve_right hsum.ne'
 
 theorem symmetric_eq_smul_id_of_complex_cyclic_eigenvector
     {V I : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
@@ -4672,7 +4671,7 @@ theorem youngClebschRaise_scalar_eq_lower_dimension_ratio
       (Module.finrank ℝ (HarmonicYoungSpace (n := n) low) : ℝ) ≠ 0 := by
     exact_mod_cast (Nat.ne_of_gt hlow)
   apply (eq_div_iff hlowR).2
-  simpa only using htrace
+  exact htrace
 
 theorem youngClebschRaise_gram_rotation_intertwine
     {r n : ℕ} (high low : Fin (r + 1) → ℕ)
@@ -5457,7 +5456,7 @@ theorem belowDiagonalMass_upperRootTarget_add {m : ℕ}
     simp only [belowDiagonalWeight, tsub_self]
   rw [hweight]
   simp only [zero_mul, add_zero]
-  simpa only [belowDiagonalWeight] using belowDiagonalMass_sub_single_add d (j, i) hpositive
+  exact belowDiagonalMass_sub_single_add d (j, i) hpositive
 
 theorem belowDiagonalMass_upperRootSource_lt {m : ℕ}
     (d : Fin m × Fin m →₀ ℕ) (i j k : Fin m)
@@ -6003,7 +6002,7 @@ theorem pderiv_odd_conjugateIsotropicVariable {r n : ℕ}
     DeterminantVectors.variableIndex_eq_iff, eq_comm, evenCoordinate_ne_oddCoordinate, and_false,
     not_false_eq_true, Pi.single_eq_of_ne, Derivation.leibniz, Pi.single_apply, oddCoordinate_inj,
     smul_eq_mul, mul_ite, mul_one, mul_zero, MvPolynomial.derivation_C, add_zero, zero_sub]
-  split_ifs <;> simp
+  split_ifs <;> simp only [neg_zero]
 
 theorem ambientCartan_conjugateIsotropicVariable {r n : ℕ}
     (h : 2 * (r + 1) ≤ n)
@@ -6426,7 +6425,7 @@ theorem monomial_mem_weightedPolynomialFiltration {σ : Type*}
   intro e he
   rw [MvPolynomial.coeff_monomial] at he
   split_ifs at he with hed
-  · simp [hed]
+  · simp only [hed, Std.le_refl]
   · exact (he rfl).elim
 
 /-- The polynomial submodule supported on monomials of weighted degree strictly below `k`. -/
@@ -6592,7 +6591,7 @@ theorem finsupp_weight_le_degree_mul
   rw [Finset.sum_mul]
   apply Finset.sum_le_sum
   intro i hi
-  simpa only [smul_eq_mul] using Nat.mul_le_mul_left (d i) (hweight i)
+  exact Nat.mul_le_mul_left (d i) (hweight i)
 
 theorem homogeneous_mem_weightedPolynomialFiltration
     {σ : Type*} (weight : σ → ℕ) (bound m : ℕ)

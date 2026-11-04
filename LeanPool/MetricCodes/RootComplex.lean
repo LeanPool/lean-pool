@@ -11,9 +11,7 @@ public import Mathlib.Algebra.Polynomial.Homogenize
 public import Mathlib.LinearAlgebra.Vandermonde
 import Mathlib.Algebra.Lie.OfAssociative
 import Mathlib.Algebra.MvPolynomial.Monad
-import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Universal root complexes
@@ -976,7 +974,7 @@ theorem isotropicCoordinateDefectDerivation_eq_zero_of_maximalCartan
   rw [naturalDiagonalDerivation_one_of_homogeneous g hg,
     smul_smul] at hconj
   norm_num at hconj ⊢
-  simpa only using hconj
+  exact hconj
 
 theorem isotropicCoordinateDefect_eq_zero_of_mem_vars_of_maximalCartan
     {r n : ℕ} (h : 2 * (r + 1) ≤ n)
@@ -1030,7 +1028,7 @@ theorem maximalTotalAmbientCartan_mem_nullSubstitution_range
   have hfadjoin : f ∈ Algebra.adjoin ℂ
       (Set.range (fun ap : Fin (r + 1) × Fin (r + 1) =>
         isotropicVariable h ap.1 ap.2)) := by
-    simpa [g] using hadjoin
+    simpa only [AlgEquiv.apply_symm_apply, g] using hadjoin
   exact exists_nullSubstitution_of_mem_adjoin_isotropicVariable h f hfadjoin
 
 end HigherYoungMaximalCartanNullSubstitutionRange
@@ -1098,9 +1096,9 @@ theorem complexPolynomial_eq_of_real_imaginary
   apply MvPolynomial.ext
   intro d
   apply Complex.ext
-  · simpa only [coeff_polynomialRealPart] using congrArg (fun f : PolynomialSpace r n => f.coeff
+  · exact congrArg (fun f : PolynomialSpace r n => f.coeff
     d) hreal
-  · simpa only [coeff_polynomialImaginaryPart] using congrArg (fun f : PolynomialSpace r n =>
+  · exact congrArg (fun f : PolynomialSpace r n =>
     f.coeff d) himag
 
 theorem youngComplexPair_eq_zero_iff
@@ -1541,7 +1539,7 @@ theorem youngClebschRaise_arbitrary_inner_of_highestLine_and_cyclic
         (youngClebschRaise (n := n) high
           (loweredInternalYoungWeight high row)
           (loweredInternalYoungWeight_sum_add_one high row ha) row)) hhighest
-  simpa only [arbitraryRowRaisingGramScalar_eq_tensorGramScalar] using
+  exact
     youngClebschRaise_arbitrary_inner_of_dominantCyclicHighest high row
       ha hn hdomhigh hdomlow c hreal himaginary hcyclic p q
 
@@ -3464,7 +3462,7 @@ theorem finrank_youngGramRadialWeightQuotient_eq_fullGramKoszulCoefficient_of_re
     rw [← finrank_youngMultihomogeneousSubmodule] at hprefdim
     omega
   rw [hdim]
-  simpa [fullGramKoszulCoefficient, len] using hprefix
+  simpa only [fullGramKoszulCoefficient, gramPrefixPairFinset_length, len] using hprefix
 
 theorem finrank_jointHarmonicWeight_eq_fullGramKoszulCoefficient_of_recurrence
     {r n : ℕ}
@@ -3761,7 +3759,7 @@ theorem finiteFischerRootLaplacian_eq_zero_iff
     intro i
     apply (cW i).definite
     exact (Finset.sum_eq_zero_iff_of_nonneg
-      (fun j _ => by simpa only [RCLike.re_to_real] using (cW j).re_inner_nonneg (A j x))).mp
+      (fun j _ => by exact (cW j).re_inner_nonneg (A j x))).mp
       hsum i (Finset.mem_univ i)
   · intro h
     simp only [finiteFischerRootLaplacian, LinearMap.coe_sum, LinearMap.coe_comp, Finset.sum_apply,
@@ -4095,7 +4093,7 @@ theorem rootDegreeZeroPositiveCochain_eq_zero_iff_harmonicYoung
   constructor
   · intro hp α
     have h := congrFun hp α
-    simpa only [rootDegreeZeroPositiveCochain_apply, Pi.zero_apply] using h
+    exact h
   · intro hp
     funext α
     exact hp α
@@ -4729,7 +4727,7 @@ theorem rootSelectedExponent_sub_baseline {r : ℕ}
           ∑ α : PositiveRoot r, second α := by
     simpa only [add_comm] using (Finset.sum_sdiff (Finset.subset_univ S) (f := second))
   have hsecond : (∑ α : PositiveRoot r, second α) = i.val := by
-    simpa [second, Finset.sum_boole] using positiveRootSecond_card i
+    simpa only [Finset.sum_boole, Nat.cast_id, second] using positiveRootSecond_card i
   have hcharge : rootFamilyCharge S i =
       (∑ α ∈ S, (first α : ℤ)) -
         ∑ α ∈ S, (second α : ℤ) := by
@@ -4793,7 +4791,7 @@ theorem rootFamily_selectedMonomial {r : ℕ}
         MvPolynomial.monomial
           (∑ α ∈ Finset.univ \ S,
             Finsupp.single (positiveRootSecond α) 1) 1 := by
-    simpa only [MvPolynomial.X] using hsecond.symm
+    exact hsecond.symm
   have hfirst' :
       (∏ α ∈ S,
         (MvPolynomial.X (positiveRootFirst α) :
@@ -4801,9 +4799,9 @@ theorem rootFamily_selectedMonomial {r : ℕ}
         MvPolynomial.monomial
           (∑ α ∈ S,
             Finsupp.single (positiveRootFirst α) 1) 1 := by
-    simpa only [MvPolynomial.X] using hfirst.symm
+    exact hfirst.symm
   rw [hsecond', hfirst']
-  simp [rootSelectedExponent]
+  simp only [MvPolynomial.monomial_mul_monomial, mul_one, rootSelectedExponent]
 
 /-- The exponent vector whose coordinate at `i` is the value of the permutation at `i`. -/
 def rootPermutationExponent {r : ℕ}
