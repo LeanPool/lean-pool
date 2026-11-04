@@ -384,7 +384,7 @@ private theorem SpherePacking.volume_center_ball_union_eq_tsum
   intro ⟨x, hx⟩ ⟨y, hy⟩ h
   apply ball_disjoint_ball
   simp_rw [ne_eq, Subtype.mk.injEq] at h ⊢
-  linarith [S.distinct_centers_separation_bound x y hx.left hy.left h]
+  linarith only [S.distinct_centers_separation_bound x y hx.left hy.left h, hr', hx, hy, h]
 
 private theorem SpherePacking.center_count_in_ball_upper_bound (hd : 0 < d) (R : ℝ) :
     (S.centers ∩ ball 0 R).encard ≤
@@ -397,7 +397,7 @@ private theorem SpherePacking.center_count_in_ball_upper_bound (hd : 0 < d) (R :
     Measure.addHaar_ball_center, ENNReal.tsum_set_const] at h
   have : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
   rwa [← ENNReal.le_div_iff_mul_le] at h <;> left
-  · exact (euclidean_ball_volume_positive _ (by linarith [S.separation_pos])).ne.symm
+  · exact (euclidean_ball_volume_positive _ (by linarith only [S.separation_pos])).ne.symm
   · exact (euclidean_ball_volume_finite _).ne
 
 private theorem SpherePacking.center_count_in_ball_lower_bound (R : ℝ) :
@@ -424,7 +424,7 @@ private theorem SpherePacking.finite_centers_inside_ball (R : ℝ) :
       (ne_of_lt <|
         lt_of_le_of_lt (volume.mono Set.inter_subset_right)
           (EuclideanSpace.euclidean_ball_volume_finite _))
-      (euclidean_ball_volume_positive _ (by linarith [S.separation_pos])).ne.symm
+      (euclidean_ball_volume_positive _ (by linarith only [S.separation_pos])).ne.symm
 
 private theorem SpherePacking.local_density_lower_bound (hd : 0 < d) (R : ℝ) :
     S.densityInsideRadius R
@@ -435,7 +435,7 @@ private theorem SpherePacking.local_density_lower_bound (hd : 0 < d) (R : ℝ) :
   rw [densityInsideRadius, occupiedBallRegion]
   apply ENNReal.div_le_div_right
   exact (ENNReal.le_div_iff_mul_le
-    (Or.inl (euclidean_ball_volume_positive _ (by linarith [S.separation_pos])).ne.symm)
+    (Or.inl (euclidean_ball_volume_positive _ (by linarith only [S.separation_pos])).ne.symm)
     (Or.inl (euclidean_ball_volume_finite _).ne)).1 <|
       (by simpa only [Set.iUnion_coe_set,
         sub_add_cancel] using! (S.center_count_in_ball_upper_bound hd (R - S.separation / 2)))
@@ -449,7 +449,7 @@ private theorem SpherePacking.local_density_upper_bound (hd : 0 < d) (R : ℝ) :
   rw [densityInsideRadius, occupiedBallRegion]
   apply ENNReal.div_le_div_right
   exact (ENNReal.div_le_iff_le_mul
-    (Or.inl (euclidean_ball_volume_positive _ (by linarith [S.separation_pos])).ne.symm)
+    (Or.inl (euclidean_ball_volume_positive _ (by linarith only [S.separation_pos])).ne.symm)
     (Or.inl (euclidean_ball_volume_finite _).ne)).1 <|
       (by simpa only [Set.iUnion_coe_set, add_sub_cancel_right,
         ge_iff_le] using! (S.center_count_in_ball_lower_bound (R + S.separation / 2)))
@@ -697,8 +697,9 @@ private lemma finite_centers_in_bounded_region (hD_isBounded : IsBounded D) (hd 
       (c := volume (ball (0 : EuclideanSpace ℝ (Fin d)) (S.separation / 2)))
       (hc := by
         simpa only  using!
-          euclidean_ball_volume_positive (0 : EuclideanSpace ℝ (Fin d)) (by linarith
-            [S.separation_pos]))
+          euclidean_ball_volume_positive (0 : EuclideanSpace ℝ (Fin d)) (by linarith only [
+            S.separation_pos
+          ]))
       (h_measurable := fun _ _ => measurableSet_ball)
       (h_bounded := bounded_union_of_center_balls S D hD_isBounded)
       (h_volume := fun _ _ => by simp only [Measure.addHaar_ball_center, Std.le_refl])
@@ -863,7 +864,7 @@ private theorem PeriodicSpherePacking.card_centers_in_fundamental_region
     haveI := @Fintype.ofFinite _ <| finite_centers_in_bounded_region S D hD_isBounded hd
     (S.centers ∩ D).toFinset.card = S.centerOrbitCardinality := by
   rw [centerOrbitCardinality]
-  convert! Finset.card_eq_of_equiv_fintype ?_
+  convert Finset.card_eq_of_equiv_fintype ?_
   simpa only [mem_toFinset,
     mem_inter_iff] using! (S.centerOrbitEquivFundamentalRegion D hD_unique_covers).symm
 
@@ -873,7 +874,7 @@ private theorem PeriodicSpherePacking.encard_centers_in_fundamental_region
     (hd : 0 < d) :
     (S.centers ∩ D).encard = S.centerOrbitCardinality := by
   rw [← S.card_centers_in_fundamental_region D hD_isBounded hD_unique_covers hd]
-  convert! Set.encard_eq_coe_toFinset_card _
+  convert Set.encard_eq_coe_toFinset_card _
 
 private theorem PeriodicSpherePacking.card_centers_in_translated_region (hd : 0 < d)
     {ι : Type*} [Finite ι] (b : Basis ι ℤ S.lattice) (v : EuclideanSpace ℝ (Fin d)) :
@@ -889,7 +890,7 @@ private theorem PeriodicSpherePacking.encard_centers_in_translated_region (hd : 
     (S.centers ∩ (v +ᵥ fundamentalDomain (b.ofZLatticeBasis ℝ _))).encard =
       S.centerOrbitCardinality := by
   rw [← S.card_centers_in_translated_region hd b]
-  convert! Set.encard_eq_coe_toFinset_card _
+  convert Set.encard_eq_coe_toFinset_card _
 
 end centerOrbitCardinality
 
@@ -940,7 +941,7 @@ private theorem iUnion_lattice_inter_ball_sub_vadd_fundamentalDomain_subset_ball
     simpa only [mem_ball, dist_zero_right] using hx.2
   have hynorm : ‖y‖ ≤ L := hL y hy
   have hsum : ‖x + y‖ < R :=
-    lt_of_le_of_lt (norm_add_le x y) (by linarith)
+    lt_of_le_of_lt (norm_add_le x y) (by linarith only [hxnorm, hynorm])
   simpa only [vadd_eq_add, mem_ball, dist_zero_right, gt_iff_lt] using hsum
 
 private theorem fundamental_region_translates_disjoint
@@ -1300,7 +1301,7 @@ private theorem volume_ball_add_div_volume_ball_add_tendsto_one_of_nonneg
       simpa only [add_zero] using tendsto_const_nhds.add herror
     apply Tendsto.congr' (f₁ := fun R : ℝ => 1 + (C - C') / (R + C')) ?_ hsum
     filter_upwards [eventually_ge_atTop (1 : ℝ)] with R hR
-    have hden : R + C' ≠ 0 := ne_of_gt (by linarith)
+    have hden : R + C' ≠ 0 := ne_of_gt (by linarith only [hC', hR])
     field_simp; ring
   have hpow : Tendsto (fun R : ℝ => ((R + C) / (R + C')) ^ d) atTop (𝓝 1) := by
     simpa only [one_pow] using hratio.pow d
@@ -1329,8 +1330,8 @@ private theorem Filter.atTop_invariant_under_translation {β : Type*} {f : ℝ �
 private theorem volume_ball_add_div_volume_ball_add_tendsto_one {d : ℕ} {C C' : ℝ} (hd : 0 < d) :
     Tendsto (fun R ↦ volume (ball (0 : EuclideanSpace ℝ (Fin d)) (R + C))
       / volume (ball (0 : EuclideanSpace ℝ (Fin d)) (R + C'))) atTop (𝓝 1) := by
-  have hC₀ : 0 ≤ max (-C) (-C') + C := by linarith [le_max_left (-C) (-C')]
-  have hC'₀ : 0 ≤ max (-C) (-C') + C' := by linarith [le_max_right (-C) (-C')]
+  have hC₀ : 0 ≤ max (-C) (-C') + C := by linarith only [le_max_left (-C) (-C')]
+  have hC'₀ : 0 ≤ max (-C) (-C') + C' := by linarith only [le_max_right (-C) (-C')]
   refine (Filter.atTop_invariant_under_translation (f := fun R ↦
       volume (ball (0 : EuclideanSpace ℝ (Fin d)) (R + C)) /
         volume (ball (0 : EuclideanSpace ℝ (Fin d)) (R + C'))) (max (-C) (-C')) _).mpr ?_
@@ -1371,14 +1372,14 @@ private lemma PeriodicSpherePacking.local_packing_density_tends_to_formula
   · rw [show ∀ a : ENNReal, 𝓝 a = 𝓝 (a * 1) by intro; rw [mul_one]]
     apply ENNReal.Tendsto.const_mul
     · simp_rw [sub_sub, sub_eq_add_neg]
-      convert! volume_ball_add_div_volume_ball_add_tendsto_one hd (C := -(S.separation / 2 + L * 2))
+      convert volume_ball_add_div_volume_ball_add_tendsto_one hd (C := -(S.separation / 2 + L * 2))
       rw [add_zero]
     · left
       exact one_ne_zero
   · rw [show ∀ a : ENNReal, 𝓝 a = 𝓝 (a * 1) by intro; rw [mul_one]]
     apply ENNReal.Tendsto.const_mul
     · simp_rw [add_assoc]
-      convert! volume_ball_add_div_volume_ball_add_tendsto_one hd (C := S.separation / 2 + L * 2)
+      convert volume_ball_add_div_volume_ball_add_tendsto_one hd (C := S.separation / 2 + L * 2)
       rw [add_zero]
     · left
       exact one_ne_zero
@@ -1550,11 +1551,11 @@ private lemma metric_ball_subset_axis_cell {x : EuclideanSpace ℝ (Fin d)} {r L
   have hsub : |y i - x i| < r := coordinate_difference_small_inside_ball (d := d) hy i
   have hy0 : 0 ≤ y i := by
     have hx0 : 0 ≤ x i - r := sub_nonneg.mpr hxi.1
-    have : x i - r < y i := by linarith [(abs_lt.mp hsub).1]
+    have : x i - r < y i := by linarith only [(abs_lt.mp hsub).1, hsub]
     exact hx0.trans (le_of_lt this)
   have hyL : y i < L := by
-    have : y i < x i + r := by linarith [(abs_lt.mp hsub).2]
-    exact lt_of_lt_of_le this (by linarith [hxi.2])
+    have : y i < x i + r := by linarith only [(abs_lt.mp hsub).2, hsub]
+    exact lt_of_lt_of_le this (by linarith only [hxi.2, hxi])
   exact ⟨hy0, hyL⟩
 
 private lemma center_distance_bound_of_disjoint_regions {x y : EuclideanSpace ℝ (Fin d)} {r : ℝ}
@@ -1564,7 +1565,7 @@ private lemma center_distance_bound_of_disjoint_regions {x y : EuclideanSpace �
   by_contra hlt
   have hlt' : dist x y < 2 * r := lt_of_not_ge hlt
   let m : EuclideanSpace ℝ (Fin d) := midpoint ℝ x y
-  have hhalf : (1 / 2 : ℝ) * dist x y < r := by linarith
+  have hhalf : (1 / 2 : ℝ) * dist x y < r := by linarith only [hlt]
   have hmx : m ∈ ball x r := by
     simpa only [mem_ball, dist_comm, dist_left_midpoint,
       Real.norm_ofNat] using! (by simpa only [dist_midpoint_left, Real.norm_ofNat, one_div,
@@ -2208,7 +2209,7 @@ private lemma unit_inset_cell_subset_shifted_shell (L : ℝ) :
     WithLp.ofLp_neg, Pi.add_apply, Pi.neg_apply, neg_neg]
   exact fun i => by
     let hxi := hx' i
-    refine ⟨by linarith [hxi.1], by linarith [hxi.2]⟩
+    refine ⟨by linarith only [hxi.1, hxi], by linarith only [hxi.2, hxi]⟩
 
 private lemma axis_shell_volume_difference (L : ℝ) :
     volume (((uniformShellShift d (- (1 / 2 : ℝ))) +ᵥ insetAxisAlignedCell (d := d) (L + 1) 0) \
@@ -2400,9 +2401,9 @@ private lemma axis_shell_relative_cell_volume_tends_zero :
         (axis_shell_volume_ratio_tends_zero (d := d))
   refine hlimit.congr' ?_
   filter_upwards [eventually_gt_atTop (2 : ℝ)] with L hL
-  have hL0 : 0 < L := by linarith
-  have hLplus : 0 ≤ L + 1 := by linarith
-  have hLminus : 0 ≤ L - 2 := by linarith
+  have hL0 : 0 < L := by linear_combination hL
+  have hLplus : 0 ≤ L + 1 := by linear_combination hL
+  have hLminus : 0 ≤ L - 2 := by linear_combination hL
   rw [axis_shell_volume_power_formula, PeriodicConstant.axis_cell_volume_formula,
     ← ENNReal.ofReal_pow hLplus d, ← ENNReal.ofReal_pow hLminus d,
     ← ENNReal.ofReal_pow hL0.le d,
@@ -3279,7 +3280,7 @@ private lemma summable_restricted_lattice_translate_norms (K : TopologicalSpace.
         linarith only [hxnorm, hnorm_lt]
       have : (1 / 2 : ℝ) * ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ ≤ ‖(ℓ : (EuclideanSpace ℝ (Fin
         d)))‖ - ‖(x : (EuclideanSpace ℝ (Fin d)))‖ := by
-        linarith [le_of_lt hxlt]
+        linarith only [le_of_lt hxlt, hnorm_lt, hxnorm]
       have : (1 / 2 : ℝ) * ‖(ℓ : (EuclideanSpace ℝ (Fin d)))‖ ≤ ‖(ℓ : (EuclideanSpace ℝ (Fin
         d))) + x‖ := le_trans this hsub
       simpa only [one_div, ge_iff_le, add_comm] using! this
@@ -4212,7 +4213,7 @@ private theorem integer_lattice_poisson_identity (f : SchwartzMap (EuclideanSpac
         𝓕 (fun x : (EuclideanSpace ℝ (Fin d)) => g x) w =
           cC * 𝓕 (fun x : (EuclideanSpace ℝ (Fin d)) => f x) ((dualCoordinateTransport (d := d)
             L) w) := by
-      simpa [g, A, dualCoordinateTransport, detA, cC, Complex.real_smul] using!
+      simpa only [g, A, dualCoordinateTransport, detA, cC, Complex.real_smul] using!
         (SpherePacking.ForMathlib.Fourier.fourier_precompose_linear_equivalence
           (A := A) (f := fun x : (EuclideanSpace ℝ (Fin d)) => f x) w)
     have hexp (w : (EuclideanSpace ℝ (Fin d))) :
@@ -4336,7 +4337,7 @@ private theorem Continuous.nonnegative_integral_vanishes_iff_function_vanishes {
       hopen.measure_pos volume ⟨x, hx⟩
     have hpositive : 0 < ∫ v : E, f v :=
       (integral_pos_iff_support_of_nonneg hnn hf₂).2 hmeasure
-    linarith
+    linarith only [hzero, hpositive]
   · intro hzero
     simp only [hzero, Pi.zero_apply, integral_zero]
 
@@ -4496,7 +4497,7 @@ private lemma summable_norm_on_translated_integral_lattice (f : 𝓢(EuclideanSp
           ‖a + (ℓ : EuclideanSpace ℝ (Fin d))‖ := by
       simpa only [tsub_le_iff_right, add_comm, norm_neg, sub_neg_eq_add] using!
         (norm_sub_norm_le (ℓ : EuclideanSpace ℝ (Fin d)) (-a))
-    linarith
+    linarith only [hlarge, htriangle]
   have htranslatePositive :
       0 < ‖a + (ℓ : EuclideanSpace ℝ (Fin d))‖ :=
     (mul_pos (by norm_num : (0 : ℝ) < 1 / 2) hpositive).trans_le htranslate
@@ -5383,7 +5384,7 @@ private theorem packing_bound_geometric_estimate (hd : 0 < d) :
     (f := f) hCohnElkies₁ hP hD_isBounded hd hD_unique_covers
   rw [SpherePacking.CohnElkies.center_double_sum_eq_region_lattice_sum
     (f := f) (P := P) (D := D) hD_isBounded hD_unique_covers hd] at hbound
-  linarith [hgeom]
+  linarith only [hgeom, hD_isBounded, hd, hbound]
 
 include d f hP hne_zero hReal hRealFourier hCohnElkies₁ hCohnElkies₂ in
 omit hne_zero hReal hRealFourier hCohnElkies₁ hP [Nonempty ↑P.centers] in
@@ -5471,7 +5472,7 @@ private theorem packing_bound_spectral_estimate (hd : 0 < d) :
       P hd hD_isBounded]
   have hsum : (𝓕 f 0).re * N ^ 2 ≤ ∑' m, F m := by
     rw [hFsummable.tsum_eq_add_tsum_ite 0, horigin]
-    linarith
+    linarith only [htail]
   have hcovol : 0 ≤ ZLattice.covolume P.lattice volume := by
     rw [SchwartzMap.lattice_covolume_eq_coordinate_determinant]
     exact abs_nonneg _
