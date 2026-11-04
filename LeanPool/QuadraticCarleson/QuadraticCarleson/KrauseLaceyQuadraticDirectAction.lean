@@ -291,8 +291,8 @@ theorem memLp_two_offsetGroupedInput
             (I.centralThird.indicator
               ((smallestSelectedRegion S J).indicator f)) 2 volume :=
           (memLp_two_l0Infinity f).indicator
-            (measurableSet_smallestSelectedRegion S J) |>.indicator
-              I.measurableSet_centralThird
+            (measurableSet_smallestSelectedRegion S J).nullMeasurableSet |>.indicator
+              I.measurableSet_centralThird.nullMeasurableSet
         simpa [Finset.sum_insert, hJ] using hterm.add ih
   unfold offsetGroupedInput
   have hsum' : MemLp

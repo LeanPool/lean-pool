@@ -8,6 +8,8 @@ module
 public import LeanPool.OSforGFF.OS.Axioms
 public import LeanPool.OSforGFF.Measure.Construct
 import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.Calculus.ParametricIntegral
+import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.Data.Nat.Choose.Multinomial
 

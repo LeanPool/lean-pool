@@ -9,6 +9,8 @@ module
 public import LeanPool.NandakumarRamanaRao.NRR.AAK.MainTheoremAffinePullback
 public import LeanPool.NandakumarRamanaRao.NRR.AAK.SimplestRoute
 public import LeanPool.NandakumarRamanaRao.NRR.AAK.SimplestRouteS6Refined
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Supporting modules for Equal-area and equal-perimeter convex partitions. -/
 

@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.CompactParameterIntegral
+import Mathlib.Analysis.Calculus.FDeriv.WithLp
 public import LeanPool.NavierStokesAndEuler.Euler.Foundations.VectorCalculus
 public import LeanPool.NavierStokesAndEuler.ForMathlib.FiniteDimensionalBumps
 public import LeanPool.NavierStokesAndEuler.ForMathlib.SmoothCutoff

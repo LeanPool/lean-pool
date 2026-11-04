@@ -7,7 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RealProjectiveSpace
-public import Mathlib.Topology.Covering.Quotient
+public import Mathlib.Topology.Covering.Basic
+import Mathlib.Analysis.Normed.Module.Ball.Action
+import Mathlib.Topology.Covering.Quotient
 
 /-!
 # The antipodal quotient is a covering map

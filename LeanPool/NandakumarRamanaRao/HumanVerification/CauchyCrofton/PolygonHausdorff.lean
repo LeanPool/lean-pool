@@ -7,6 +7,8 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.HumanVerification.CauchyCrofton.CyclicPolygon
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Hausdorff perimeter of an inscribed cyclic polygon

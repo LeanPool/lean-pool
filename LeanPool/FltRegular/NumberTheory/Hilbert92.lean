@@ -9,6 +9,7 @@ module
 public import LeanPool.FltRegular.NumberTheory.SystemOfUnits
 public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 import Mathlib.GroupTheory.FiniteAbelian.Basic
+import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
 import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
 
 /-!
@@ -570,6 +571,10 @@ local instance : Module.Finite ℤ (Additive <| relativeUnitsWithGenerator p hp 
 local instance : Module.Finite ℤ G := Module.Finite.of_surjective
   (M := Additive (relativeUnitsWithGenerator p hp hKL σ hσ))
   (QuotientAddGroup.mk' _).toIntLinearMap (QuotientAddGroup.mk'_surjective _)
+
+local instance : HasUniqueDiv G where
+  nsmul_right_injective _ hn a b h :=
+    eq_of_nsmul_eq_nsmul_of_addCommute hn (add_comm a b) h
 
 /-- Arbitrary unit representatives lifting a system of units. -/
 noncomputable

@@ -14,6 +14,7 @@ The source repository records the original omission in `THIRD_PARTY.md`.
 
 module
 
+public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 public import Mathlib.Analysis.Fourier.RiemannLebesgueLemma
 public import Mathlib.Analysis.Normed.Group.Tannery
 public import Mathlib.Analysis.SumIntegralComparisons

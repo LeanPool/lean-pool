@@ -125,7 +125,6 @@ theorem andreief (f g : Fin n → ℝ → 𝕜) (hfg : ∀ i j, Integrable (fun 
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_perm, Fintype.card_fin, nsmul_eq_mul, hL]
   have : (n.factorial : 𝕜) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero n
   field_simp
-  try ring
 
 end Zeta5Irrational.AndreiefGeneral
 

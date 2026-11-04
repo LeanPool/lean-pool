@@ -6,6 +6,7 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.Partition.PerimeterVector
 public import LeanPool.NandakumarRamanaRao.NRR.FairPartition.Predicates
 
 /-!

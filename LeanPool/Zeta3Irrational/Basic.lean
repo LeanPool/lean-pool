@@ -11,10 +11,10 @@ public import Mathlib.NumberTheory.LSeries.RiemannZeta
 import LeanPool.Zeta3Irrational.Bound
 import LeanPool.Zeta3Irrational.Chebyshev
 import LeanPool.Zeta3Irrational.LinearForm
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Data.Int.Star
 import Mathlib.MeasureTheory.Function.AEEqOfIntegral
 import Mathlib.NumberTheory.LSeries.HurwitzZetaValues
 import Mathlib.RingTheory.DedekindDomain.Basic

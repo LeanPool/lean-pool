@@ -10,6 +10,7 @@ public import Mathlib.CategoryTheory.Abelian.GrothendieckCategory.HasExt
 public import Mathlib.CategoryTheory.Sites.SheafCohomology.Basic
 public import LeanPool.GrothendieckVanishing.ClosedImmersion
 import Mathlib.Algebra.Category.Grp.AB
+import Mathlib.Algebra.Category.Grp.Zero
 import Mathlib.Topology.Sheaves.Skyscraper
 
 /-!

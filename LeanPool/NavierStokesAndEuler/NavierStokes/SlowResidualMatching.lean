@@ -7,6 +7,8 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SlowRecursion
+import Mathlib.Analysis.Calculus.Deriv.Prod
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.LeadingStress
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SlowStressSupport
 public import LeanPool.NavierStokesAndEuler.NavierStokes.RenormalizedHeatMoment

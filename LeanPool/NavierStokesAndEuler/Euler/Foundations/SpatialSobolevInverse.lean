@@ -265,7 +265,8 @@ def add {n : ℕ} {f g : LiftL2 period}
   | .succ df Jd hJ, .succ dg Kd hK =>
     .succ (fun i => df i + dg i) (fun i => (Jd i).add (Kd i)) (fun i => by
       convert (hJ i).add (hK i) using 1
-      first | rfl | (funext t; simp only [map_add, Pi.add_apply]))
+      funext t
+      simp only [map_add, Pi.add_apply])
 
 /-- Subtraction preserves the actual strong derivatives recorded in a spatial jet. -/
 def sub {n : ℕ} {f g : LiftL2 period}
@@ -276,7 +277,8 @@ def sub {n : ℕ} {f g : LiftL2 period}
   | .succ df Jd hJ, .succ dg Kd hK =>
     .succ (fun i => df i - dg i) (fun i => (Jd i).sub (Kd i)) (fun i => by
       convert (hJ i).sub (hK i) using 1
-      first | rfl | (funext t; simp only [map_sub, Pi.sub_apply]))
+      funext t
+      simp only [map_sub, Pi.sub_apply])
 
 theorem add_norm_le {n : ℕ} {f g : LiftL2 period}
     (J : SpatialJet period directions n f) (K : SpatialJet period directions n g) :

@@ -6,8 +6,8 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import Mathlib.Topology.MetricSpace.HausdorffDistance
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # `NRR.Multivalued.Separator.Distance` — distance to a closed nonempty set

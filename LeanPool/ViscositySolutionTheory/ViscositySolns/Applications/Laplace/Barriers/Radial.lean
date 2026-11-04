@@ -5,6 +5,7 @@ Authors: William M. Feldman
 -/
 module
 
+public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import LeanPool.ViscositySolutionTheory.ViscositySolns.Applications.Laplace.Geometry
 public import LeanPool.ViscositySolutionTheory.ViscositySolns.Semijets.Calculus.QuadraticControl
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv

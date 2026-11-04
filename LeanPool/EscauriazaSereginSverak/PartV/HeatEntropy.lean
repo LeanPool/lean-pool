@@ -138,7 +138,7 @@ theorem heatRegTest_contDiff {η : ℝ} (hη : 0 < η) :
   change ContDiff ℝ (⊤ : ℕ∞)
     (fun v : Vec3 =>
       (heatRegSq η v ^ (1 / 2 : ℝ) - η) * v i)
-  exact (hroot.sub contDiff_const).mul (contDiff_apply ℝ ℝ i)
+  exact (hroot.sub contDiff_const).mul (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i)
 
 /-- The regularized entropy potential is smooth in the vector variable, as used
 in the energy argument for `lem:pv-heat-critical`. -/

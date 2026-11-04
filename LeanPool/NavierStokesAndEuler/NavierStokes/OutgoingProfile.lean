@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.CorrectedPulseAmplitude
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.SchedulePressure
 import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricRephase
 import LeanPool.NavierStokesAndEuler.NavierStokes.ReleaseMoments

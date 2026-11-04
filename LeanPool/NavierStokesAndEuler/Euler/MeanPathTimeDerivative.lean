@@ -167,7 +167,7 @@ theorem representative_hasDerivWithinAt (t : Icc (0 : ℝ) T) (x : Space) :
       (Icc (0 : ℝ) T) t := by
   have hd := (pointEvaluation 1 (x, 0)).hasFDerivAt.comp_hasDerivWithinAt (t : ℝ)
     (ordinarySobolev_hasDerivWithinAt T hT p q hder hp hq 3 t)
-  convert hd using 1 <;> try rfl
+  convert hd using 1
   · funext r
     exact (pointEvaluation_ordinary _ _ _).symm
   · exact (pointEvaluation_ordinary _ _ _).symm

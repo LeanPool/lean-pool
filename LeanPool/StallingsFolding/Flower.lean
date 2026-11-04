@@ -9,8 +9,8 @@ public import LeanPool.StallingsFolding.Folding
 public import Mathlib.Data.List.TakeDrop
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Sigma
-public import Mathlib.Data.Sigma.Order
-public import Mathlib.Data.Sum.Order
+public import Mathlib.Order.Sigma
+public import Mathlib.Order.Sum.Order
 
 /-!
 # The flower graph of a finite list of words

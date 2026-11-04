@@ -67,6 +67,25 @@ omit [FiniteDimensional (RatFunc K) L] in
 We select a prime of the finite integral closure lying above `(X)`. -/
 theorem finiteExtensionFinitePlace_nonempty :
     Nonempty (FiniteExtensionFinitePlace K L) := by
+  let : Module.IsTorsionFree K[X] L :=
+    Module.IsTorsionFree.trans_faithfulSMul K[X] (RatFunc K) L
+  have hinjective : Function.Injective (algebraMap K[X] L) := by
+    rw [IsScalarTower.algebraMap_eq K[X] (RatFunc K) L]
+    exact (algebraMap (RatFunc K) L).injective.comp
+      (IsFractionRing.injective K[X] (RatFunc K))
+  let : Algebra.IsAlgebraic K[X] L :=
+    IsFractionRing.comap_isAlgebraic_iff.mpr
+      (inferInstance : Algebra.IsAlgebraic (RatFunc K) L)
+  let : IsFractionRing (RatFuncFiniteIntegralClosure K L) L :=
+    IsIntegralClosure.isFractionRing_of_algebraic K[X]
+      (RatFuncFiniteIntegralClosure K L)
+      (fun x hx => hinjective (hx.trans (map_zero _).symm))
+  let : Module.IsTorsionFree K[X] (RatFuncFiniteIntegralClosure K L) :=
+    Function.Injective.moduleIsTorsionFree
+      (IsScalarTower.toAlgHom K[X] (RatFuncFiniteIntegralClosure K L) L)
+      (IsFractionRing.injective (RatFuncFiniteIntegralClosure K L) L)
+      (fun r x => (IsScalarTower.toAlgHom K[X]
+        (RatFuncFiniteIntegralClosure K L) L).toLinearMap.map_smul r x)
   let p : HeightOneSpectrum K[X] := Polynomial.idealX K
   obtain ⟨Q, hQprime, hQcomap⟩ :=
     Ideal.exists_ideal_over_prime_of_isIntegral_of_isDomain
@@ -76,7 +95,7 @@ theorem finiteExtensionFinitePlace_nonempty :
           (RingHom.mem_ker).mp hx
         have hxL : algebraMap K[X] L x = 0 := congrArg Subtype.val hxA
         have hx0 : x = 0 := by
-          exact FaithfulSMul.algebraMap_injective K[X] L (by simpa using hxL)
+          exact hinjective (by simpa only [map_zero] using hxL)
         subst x
         exact p.asIdeal.zero_mem)
   let P : p.asIdeal.primesOver (RatFuncFiniteIntegralClosure K L) :=

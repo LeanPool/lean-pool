@@ -9,6 +9,7 @@ module
 public import LeanPool.IwaniecLinearSieve.SieveFunctions.Series
 import LeanPool.IwaniecLinearSieve.SieveFunctions.Defs
 import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.Polynomial.Basic
 

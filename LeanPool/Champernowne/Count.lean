@@ -6,6 +6,7 @@ Authors: Arthur Champernowne
 module
 
 public import LeanPool.Champernowne.Defs
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Data.Finset.Powerset
 

@@ -8,6 +8,8 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.PartitionFromPowerDiagram
 public import LeanPool.NandakumarRamanaRao.NRR.Partition.PerimeterVector
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # `NRR.EMP.PowerPartitionPerimeter` — perimeter vector of the canonical power partition

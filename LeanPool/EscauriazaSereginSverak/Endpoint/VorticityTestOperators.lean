@@ -139,7 +139,7 @@ theorem vorticityTestCurl_laplacian_commute
       vorticityTestLaplacian (vorticityTestCurl ψ) z i := by
   have hcomp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun w : Vec3 × ℝ => ψ w k) :=
-    (contDiff_apply ℝ ℝ k).comp hψ
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) k).comp hψ
   have hlapComp (k : Fin 3) :
       (fun w : Vec3 × ℝ => vorticityTestLaplacian ψ w k) =
         vorticityScalarLaplacian (fun w => ψ w k) := by

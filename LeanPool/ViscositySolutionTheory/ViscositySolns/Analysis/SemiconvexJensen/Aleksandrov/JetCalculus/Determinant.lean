@@ -15,7 +15,7 @@ Ported for Lean Pool: imports relocated and code adapted to Lean/Mathlib v4.34.0
 
 @[expose] public noncomputable section
 
-open scoped ContDiff MatrixOrder Topology
+open scoped MatrixOrder Topology
 open scoped ENNReal
 
 open ContinuousLinearMap

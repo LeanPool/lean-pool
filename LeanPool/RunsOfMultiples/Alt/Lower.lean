@@ -129,8 +129,8 @@ lemma pw_injOn_smallExp (y e : ℕ) : Set.InjOn pw (smallExp y e : Set (ℕ →�
     intro f hf p hp
     rw [mem_coe, smallExp, mem_finsupp_iff] at hf
     exact (mem_small.1 (hf.1 hp)).1
-  rw [← Nat.prod_pow_factorization_eq_self (hpr f hf),
-    ← Nat.prod_pow_factorization_eq_self (hpr g hg)]
+  rw [← Nat.factorization_prod_pow_eq_self (hpr f hf),
+    ← Nat.factorization_prod_pow_eq_self (hpr g hg)]
   exact congrArg Nat.factorization h
 
 lemma pw_erase_one (f : ℕ →₀ ℕ) : pw f = pw (f.erase 1) := by
@@ -149,8 +149,8 @@ lemma pw_injOn_largeExp (y k : ℕ) : Set.InjOn pw (largeExp y k : Set (ℕ →�
     · exact absurd h1 hp.1
     · exact (mem_large.1 h1).1
   have he : f.erase 1 = g.erase 1 := by
-    rw [← Nat.prod_pow_factorization_eq_self (hpr f hf.2),
-      ← Nat.prod_pow_factorization_eq_self (hpr g hg.2)]
+    rw [← Nat.factorization_prod_pow_eq_self (hpr f hf.2),
+      ← Nat.factorization_prod_pow_eq_self (hpr g hg.2)]
     have := h
     rw [pw_erase_one f, pw_erase_one g] at this
     exact congrArg Nat.factorization this

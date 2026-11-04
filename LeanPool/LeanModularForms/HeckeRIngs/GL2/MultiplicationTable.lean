@@ -13,7 +13,7 @@ import LeanPool.LeanModularForms.HeckeRIngs.GLn.TransposeAntiInvolution
 import Mathlib.Analysis.Normed.Group.Basic
 import Mathlib.Data.EReal.Operations
 import Mathlib.Data.Finset.NatDivisors
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.Tactic.Positivity.Finset
 import Mathlib.Topology.Algebra.InfiniteSum.Order

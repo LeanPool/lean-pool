@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Topology.Algebra.Order.Floor
 public import LeanPool.NavierStokesAndEuler.Euler.Foundations.PacketGrowth
 import LeanPool.NavierStokesAndEuler.Euler.Foundations.PacketFrameStability
 import Mathlib.Algebra.Order.Ring.Star

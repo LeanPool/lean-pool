@@ -9,7 +9,7 @@ module
 public import LeanPool.LeanModularForms.Modularforms.Generators.Defs
 public import LeanPool.LeanModularForms.Modularforms.Generators.Surjectivity
 import LeanPool.LeanModularForms.Modularforms.QExpansionLems
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Algebra.MvPolynomial.CommRing
 
 /-!

@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import Mathlib.RingTheory.QuasiFinite.Basic
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteExtensionPrincipalDivisor
 public import LeanPool.MarkoffModP.BGS.HasseWeil.FixedPointAverage
 public import Mathlib.NumberTheory.RamificationInertia.Galois
@@ -343,20 +344,11 @@ contracted prime still lies above the distinguished infinity place. -/
 def infinityPlaceUnder
     (P : FiniteExtensionInfinityPlace K L) :
     FiniteExtensionInfinityPlace K M := by
-  let wL : HeightOneSpectrum (RatFuncInfinityIntegralClosure K L) :=
-    primeOverHeightOne (ratFuncInfinityPlace K) P
-  let wM : HeightOneSpectrum (RatFuncInfinityIntegralClosure K M) :=
-    HeightOneSpectrum.under (RatFuncInfinityIntegralClosure K M) wL
-  refine ⟨wM.asIdeal, wM.isPrime, ?_⟩
-  have hwM : wM.asIdeal =
-      wL.asIdeal.under (RatFuncInfinityIntegralClosure K M) := rfl
-  let : wL.asIdeal.LiesOver wM.asIdeal := by
-    rw [hwM]
-    infer_instance
-  let : wL.asIdeal.LiesOver (ratFuncInfinityPlace K).asIdeal := by
-    change P.1.LiesOver (ratFuncInfinityPlace K).asIdeal
-    infer_instance
-  exact Ideal.LiesOver.tower_bot wL.asIdeal wM.asIdeal
+  let : P.1.IsPrime := P.2.1
+  let : P.1.LiesOver (ratFuncInfinityPlace K).asIdeal := P.2.2
+  refine ⟨P.1.under (RatFuncInfinityIntegralClosure K M), inferInstance, ?_⟩
+  exact Ideal.LiesOver.tower_bot P.1
+    (P.1.under (RatFuncInfinityIntegralClosure K M))
     (ratFuncInfinityPlace K).asIdeal
 
 omit [DecidableEq K] [FiniteDimensional (RatFunc K) M] [Algebra.IsSeparable (RatFunc K) M]

@@ -128,7 +128,7 @@ theorem memLp_indicator_of_memL2 {U W : Set (Vec d)} (hU : MeasurableSet U)
     {f : Vec d → ℝ} (hf : MemLp f 2 (volume.restrict U)) :
     MemLp (Set.indicator U f) 2 (volume.restrict W) := by
   have h1 : MemLp (Set.indicator U f) 2 (volume : Measure (Vec d)) := by
-    have h := (memLp_indicator_iff_restrict hU (μ := (volume : Measure (Vec d)))
+    have h := (memLp_indicator_iff_restrict hU.nullMeasurableSet (μ := (volume : Measure (Vec d)))
       (p := 2) (f := f)).mpr hf
     exact h
   exact h1.restrict W

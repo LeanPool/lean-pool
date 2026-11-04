@@ -103,7 +103,7 @@ each core `k`, the two-field resampled observable
 `L ⊗ L`. -/
 theorem aestronglyMeasurable_phaseObservable_patchCore [NeZero d]
     {ℓ : ℝ} {σ : Vec d} {Θ : ℝ} {m : ℤ} (hℓ : 0 < ℓ) (hΘ : 1 ≤ Θ) (P : BlockVec d)
-    {L : Measure (RegCoeffField d)} [IsProbabilityMeasure L] (hLaw : ThetaEllipticLaw Θ L)
+    {L : Measure (RegCoeffField d)} (hLaw : ThetaEllipticLaw Θ L)
     (K : Finset (Fin d → ℤ))
     (hK : ∀ k : Fin d → ℤ,
       (coreBox ℓ σ k ∩ cubeSet (originCube d m)).Nonempty → k ∈ K)

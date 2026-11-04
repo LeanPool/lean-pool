@@ -23,6 +23,7 @@ public import LeanPool.MovingSofa.Development.Geometry.Applications.Development0
 
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development003
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development002
+public import Mathlib.Order.Monotone.Union
 
 
 

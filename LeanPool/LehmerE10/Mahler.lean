@@ -9,6 +9,7 @@ public import LeanPool.LehmerE10.Main
 public import Mathlib.Analysis.Polynomial.MahlerMeasure
 import LeanPool.LehmerE10.Kronecker
 import Mathlib.CategoryTheory.Category.Init
+import Mathlib.FieldTheory.Minpoly.Field
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.Tactic.NormNum.Prime
 

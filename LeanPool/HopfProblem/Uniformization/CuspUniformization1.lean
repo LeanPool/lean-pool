@@ -136,8 +136,8 @@ private theorem CuspUniformization.exponentialCoordinates_holomorphic (t : ℂ) 
   apply contDiff_pi.mpr
   intro i
   fin_cases i
-  · exact exponential_holomorphic.comp (contDiff_apply ℂ ℂ 0)
-  · exact exponential_holomorphic.comp (contDiff_apply ℂ ℂ 1)
+  · exact exponential_holomorphic.comp (contDiff_apply ℂ (fun _ => ℂ) 0)
+  · exact exponential_holomorphic.comp (contDiff_apply ℂ (fun _ => ℂ) 1)
   · exact contDiff_const
 
 private def CuspUniformization.exponentialPoint (t : ℂ) : ComplexPlane₂ → ToricSpace.Space :=
@@ -830,8 +830,8 @@ private theorem CuspUniformization.totalExponentialPoint_holomorphic :
     apply contDiff_pi.mpr
     intro i
     fin_cases i
-    · exact exponential_holomorphic.comp ((contDiff_apply ℂ ℂ 0).comp contDiff_snd)
-    · exact exponential_holomorphic.comp ((contDiff_apply ℂ ℂ 1).comp contDiff_snd)
+    · exact exponential_holomorphic.comp ((contDiff_apply ℂ (fun _ => ℂ) 0).comp contDiff_snd)
+    · exact exponential_holomorphic.comp ((contDiff_apply ℂ (fun _ => ℂ) 1).comp contDiff_snd)
     · exact exponential_holomorphic.comp contDiff_fst
   · intro p _
     exact
@@ -1313,8 +1313,8 @@ private theorem CuspUniformization.totalExponentialCoordinates_holomorphic :
   apply contDiff_pi.mpr
   intro i
   fin_cases i
-  · exact exponential_holomorphic.comp ((contDiff_apply ℂ ℂ 0).comp contDiff_snd)
-  · exact exponential_holomorphic.comp ((contDiff_apply ℂ ℂ 1).comp contDiff_snd)
+  · exact exponential_holomorphic.comp ((contDiff_apply ℂ (fun _ => ℂ) 0).comp contDiff_snd)
+  · exact exponential_holomorphic.comp ((contDiff_apply ℂ (fun _ => ℂ) 1).comp contDiff_snd)
   · exact exponential_holomorphic.comp contDiff_fst
 
 private def CuspUniformization.totalExponentialDerivative (p : LogModel) :

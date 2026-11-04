@@ -9,7 +9,7 @@ public import LeanPool.GKPCarry.BadCarryLanguage
 public import Mathlib.Data.Fintype.Vector
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 
 /-!
 # Counting deficient-carry ternary words

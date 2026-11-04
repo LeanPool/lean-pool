@@ -7,7 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionChainHomotopy
-public import Mathlib.Tactic
+import Mathlib.Analysis.Normed.Group.Basic
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Topology.Algebra.InfiniteSum.Order
 
 /-! # Barycentric Subdivision Iter -/
 

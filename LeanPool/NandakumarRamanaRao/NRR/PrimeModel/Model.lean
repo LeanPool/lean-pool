@@ -7,6 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.EquivariantMap
+public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.Actions
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Abstract compact prime configuration model

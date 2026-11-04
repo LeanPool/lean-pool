@@ -88,7 +88,7 @@ def sobolevConstOfLe (Ω : Set (EuclideanSpace ℝ (Fin d))) (q : ℝ≥0) : ℝ
 lemma eLpNorm_restrict_eq_of_tsupport_subset (hΩm : MeasurableSet Ω)
     {f : EuclideanSpace ℝ (Fin d) → ℝ} (hf : tsupport f ⊆ Ω) (p : ℝ≥0∞) :
     eLpNorm f p (volume.restrict Ω) = eLpNorm f p volume := by
-  rw [← eLpNorm_indicator_eq_eLpNorm_restrict hΩm]
+  rw [← eLpNorm_indicator_eq_eLpNorm_restrict hΩm.nullMeasurableSet]
   refine eLpNorm_congr_ae (EventuallyEq.of_eq (funext fun x => ?_))
   by_cases hx : x ∈ Ω
   · rw [Set.indicator_of_mem hx]

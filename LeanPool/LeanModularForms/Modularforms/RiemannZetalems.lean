@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+import Mathlib.Analysis.PSeriesComplex
 
 /-! # RiemannZetalems -/
 

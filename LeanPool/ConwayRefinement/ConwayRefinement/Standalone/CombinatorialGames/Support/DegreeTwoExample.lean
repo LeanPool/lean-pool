@@ -6,7 +6,7 @@ Authors: Dan Abramov
 module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.Standalone.CombinatorialGames.Support.OmnificIntegers
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.SetTheory.Ordinal.Arithmetic
 
 import all LeanPool.ConwayRefinement.CombinatorialGames.Surreal.HahnSeries.Basic

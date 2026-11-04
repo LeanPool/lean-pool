@@ -9,6 +9,7 @@ public import Mathlib.Analysis.CStarAlgebra.Classes
 
 public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Threefold.SpecialPeriods1
+import Mathlib.Geometry.Manifold.Algebra.Structures
 import LeanPool.HopfProblem.Foundations.Core1
 import all LeanPool.HopfProblem.Lattice.Core1
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint

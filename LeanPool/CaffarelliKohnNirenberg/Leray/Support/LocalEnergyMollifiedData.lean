@@ -105,7 +105,7 @@ theorem essLocal_mollifiedMomentumWeak_of_essLocalData
     exact hUfinite
   ⟩
   have hφi (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec3 × ℝ => φ y i) :=
-    (contDiff_apply ℝ ℝ i).comp hφ
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hφ
   have hpoint (z : Vec3 × ℝ) :
       mollifiedMomentumWeakIntegrand
         (fun y => U.indicator u y)

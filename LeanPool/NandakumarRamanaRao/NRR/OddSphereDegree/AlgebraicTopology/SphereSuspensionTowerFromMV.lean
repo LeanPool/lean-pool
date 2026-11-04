@@ -8,6 +8,9 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SphereHomologyS1BaseMV
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.SphereTopHomologyReduction
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Branch 1 assembly: the unconditional `SphereSuspensionTower`

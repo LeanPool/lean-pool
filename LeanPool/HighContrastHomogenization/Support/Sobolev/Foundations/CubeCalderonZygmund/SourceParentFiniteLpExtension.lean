@@ -139,7 +139,7 @@ theorem eLpNorm_sourceParentFiniteLpExtension
   rw [sourceParentFiniteLpExtension_toField,
     hilbertifyVecField_openParentDatumExtension,
     eLpNorm_indicator_eq_eLpNorm_restrict
-      (isOpen_openCubeSet _).measurableSet,
+      (isOpen_openCubeSet _).measurableSet.nullMeasurableSet,
     normalizedCubeMeasure_parent_restrict_source,
     eLpNorm_smul_measure_of_ne_top q.lt_top.ne (hilbertifyVecField h.toField) _
       h.euclideanMemLp.aestronglyMeasurable]
@@ -173,7 +173,7 @@ theorem eLpNorm_two_sourceParentFiniteLpExtension
   rw [sourceParentFiniteLpExtension_toField,
     hilbertifyVecField_openParentDatumExtension,
     eLpNorm_indicator_eq_eLpNorm_restrict
-      (isOpen_openCubeSet _).measurableSet,
+      (isOpen_openCubeSet _).measurableSet.nullMeasurableSet,
     normalizedCubeMeasure_parent_restrict_source,
     eLpNorm_smul_measure_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ ∞)
       (hilbertifyVecField h.toField) _ h.euclideanMemL2.aestronglyMeasurable]

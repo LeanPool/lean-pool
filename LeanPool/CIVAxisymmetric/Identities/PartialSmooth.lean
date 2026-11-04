@@ -154,7 +154,7 @@ theorem contDiffOn_componentFun {n : ℕ∞} {u : ParabolicPoint → Vec3}
     (hu : ContDiffOn ℝ n (fun z : Vec3 × ℝ => u z) unitCylinder) (i : Fin 3) :
     ContDiffOn ℝ n (fun z : Vec3 × ℝ => u z i) unitCylinder := by
   have h_proj : ContDiffOn ℝ n (fun v : Vec3 => v i) Set.univ :=
-    (contDiff_apply ℝ ℝ i).contDiffOn
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).contDiffOn
   exact h_proj.comp hu (by intro y hy; simp)
 
 end CIV

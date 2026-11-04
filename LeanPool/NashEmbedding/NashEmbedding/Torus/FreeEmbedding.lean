@@ -63,12 +63,12 @@ def freeEmb (n : ℕ) : (Fin n → ℝ) → (Fin (freeDim n) → ℝ) :=
 /-- Each component of `freeEmb₀` is smooth. -/
 lemma freeEmb₀_contDiff (n : ℕ) (k : FreeIdx n) : ContDiff ℝ ∞ (fun x => freeEmb₀ n x k) := by
   rcases k with i | i | p | p
-  · exact Real.contDiff_cos.comp (contDiff_apply (𝕜 := ℝ) (E := ℝ) i)
-  · exact Real.contDiff_sin.comp (contDiff_apply (𝕜 := ℝ) (E := ℝ) i)
+  · exact Real.contDiff_cos.comp (contDiff_apply ℝ (fun _ => ℝ) i)
+  · exact Real.contDiff_sin.comp (contDiff_apply ℝ (fun _ => ℝ) i)
   · exact Real.contDiff_cos.comp
-      ((contDiff_apply (𝕜 := ℝ) (E := ℝ) p.1.1).add (contDiff_apply (𝕜 := ℝ) (E := ℝ) p.1.2))
+      ((contDiff_apply ℝ (fun _ => ℝ) p.1.1).add (contDiff_apply ℝ (fun _ => ℝ) p.1.2))
   · exact Real.contDiff_sin.comp
-      ((contDiff_apply (𝕜 := ℝ) (E := ℝ) p.1.1).add (contDiff_apply (𝕜 := ℝ) (E := ℝ) p.1.2))
+      ((contDiff_apply ℝ (fun _ => ℝ) p.1.1).add (contDiff_apply ℝ (fun _ => ℝ) p.1.2))
 
 /-- Each component of `freeEmb₀` is `2πℤⁿ`-periodic. -/
 lemma freeEmb₀_periodic (n : ℕ) (k : FreeIdx n) : IsPeriodic2Pi (fun x => freeEmb₀ n x k) := by

@@ -5,6 +5,8 @@ Authors: Scott Armstrong, Vlad Vicol
 -/
 module
 
+public import Mathlib.Analysis.Normed.Affine.AddTorsor
+
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 public import Mathlib.MeasureTheory.Covering.BesicovitchVectorSpace
 public import Mathlib.Topology.MetricSpace.Cover

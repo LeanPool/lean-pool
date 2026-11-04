@@ -16,7 +16,7 @@ import LeanPool.LeanModularForms.Modularforms.QExpansionLems
 import LeanPool.LeanModularForms.Modularforms.SummableLems
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 
 /-! # Eisenstein -/
 

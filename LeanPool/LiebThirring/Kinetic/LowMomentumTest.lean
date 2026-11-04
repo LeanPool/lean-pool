@@ -65,7 +65,7 @@ theorem memLp_lowMomentumTestFourierFunction {q : ℕ} (E : ℝ) (hE : 0 ≤ E)
     MemLp (lowMomentumTestFourierFunction E x s) 2 (volume : Measure Position) := by
   have hc : MemLp ((lowMomentumRegion E).indicator
       (fun _ : Position => EuclideanSpace.single s (1 : ℂ))) 2 volume :=
-    memLp_indicator_const 2 (measurableSet_lowMomentumRegion E)
+    memLp_indicator_const 2 (measurableSet_lowMomentumRegion E).nullMeasurableSet
       (EuclideanSpace.single s (1 : ℂ)) (Or.inr (volume_lowMomentumRegion_ne_top E hE))
   exact hc.congr_norm (stronglyMeasurable_lowMomentumTestFourierFunction E x s).aestronglyMeasurable
     (Filter.Eventually.of_forall (fun ξ => (norm_lowMomentumTestFourierFunction E x ξ s).symm))

@@ -96,8 +96,6 @@ theorem hasDerivAt_anariRezaeiMergePsiAlong
     ring
   · dsimp [anariRezaeiMergePsiDerivative]
     rw [Real.log_div h1mx h1ms]
-    try simp only [Function.comp_apply, Pi.add_apply, Pi.sub_apply,
-      Pi.mul_apply, Pi.div_apply, id_eq]
     field_simp [h1px, h1ps, h1mx, h1ms]
     ring
 
@@ -290,8 +288,6 @@ theorem hasDerivAt_anariRezaeiMergeGapAlong
       Function.comp_apply, Pi.add_apply, Pi.sub_apply, Pi.div_apply, id_eq]
     ring
   · dsimp [anariRezaeiMergeGapDerivative]
-    try simp only [Function.comp_apply, Pi.add_apply, Pi.sub_apply,
-      Pi.div_apply, id_eq]
     field_simp [hxr.ne', hxC.ne', hst2.ne', hCt2.ne']
     ring
 

@@ -84,7 +84,8 @@ theorem vorticityTopZero_slice_pairing {Ω' : Set Vec3} (hfin : volume Ω' ≠ �
   have hDi : ∀ a b, Integrable (fun x => Du x a b) (volume.restrict Ω') := fun a b =>
     ((memLp_pi_iff.mp ((memLp_pi_iff.mp hDu) a)) b).integrable (by norm_num)
   set φc : Fin 3 → Vec3 → ℝ := fun c y => φ y c with hφcdef
-  have hφcs : ∀ c, ContDiff ℝ (⊤ : ℕ∞) (φc c) := fun c => (contDiff_apply ℝ ℝ c).comp hφ
+  have hφcs : ∀ c, ContDiff ℝ (⊤ : ℕ∞) (φc c) :=
+    fun c => (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) c).comp hφ
   have hφcsupp : ∀ c, tsupport (φc c) ⊆ tsupport φ := fun c =>
     vorticityTopZero_component_tsupport φ c
   have hφcc : ∀ c, HasCompactSupport (φc c) := fun c =>

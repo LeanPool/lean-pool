@@ -11,7 +11,7 @@ public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.BodyFunctor
 public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.PointedTrees
 public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.RestrictTree
 import LeanPool.AFormalizationOfBorelDeterminacyInLean.Game.GaleStewart
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Data.Set.Subset
 import Mathlib.Order.Lattice.Nat
