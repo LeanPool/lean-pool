@@ -322,7 +322,7 @@ theorem mem_rawSpan_orthogonal_iff {ι' : Type} (v : ι' → (H → ℂ)) (ψ : 
         obtain ⟨i, rfl⟩ := hx
         rw [← qInner_eq_euclidean]
         exact h i
-    | zero => simp
+    | zero => simp only [inner_zero_left]
     | add x y _ _ hx hy => rw [inner_add_left, hx, hy, add_zero]
     | smul c x _ hx => rw [inner_smul_left, hx, mul_zero]
 
@@ -360,6 +360,16 @@ theorem spanProj_mulVec_self {ι' : Type} (v : ι' → (H → ℂ)) (i : ι') :
 theorem spanRefl_mulVec_self {ι' : Type} (v : ι' → (H → ℂ)) (i : ι') :
     spanRefl v *ᵥ v i = v i :=
   subRefl_mulVec_of_mem _ (Submodule.subset_span ⟨i, rfl⟩)
+
+/-- The complementary span projector fixes exactly the vectors orthogonal to its generators. -/
+theorem spanProj_orthogonal_mulVec_eq_self_iff {ι' : Type} (v : ι' → (H → ℂ))
+    (ψ : H → ℂ) : subProj (rawSpan v)ᗮ *ᵥ ψ = ψ ↔ ∀ i, qInner (v i) ψ = 0 :=
+  (subProj_mulVec_eq_self_iff (rawSpan v)ᗮ ψ).trans (mem_rawSpan_orthogonal_iff v ψ)
+
+/-- A span projector kills a vector orthogonal to each generator. -/
+theorem spanProj_mulVec_eq_zero {ι' : Type} (v : ι' → (H → ℂ)) (ψ : H → ℂ)
+    (h : ∀ i, qInner (v i) ψ = 0) : spanProj v *ᵥ ψ = 0 :=
+  subProj_mulVec_of_mem_orthogonal _ ((mem_rawSpan_orthogonal_iff v ψ).mpr h)
 
 end QuantumQueryComplexity
 
@@ -478,7 +488,7 @@ lemma qInner_smul_mulVec (r : ℝ) (M : Matrix H H ℂ) (x : H → ℂ) :
   classical
   have hsm : (r • (M *ᵥ x) : H → ℂ) = ((r : ℂ)) • (M *ᵥ x) := by
     funext i
-    simp [Complex.real_smul]
+    simp only [Pi.smul_apply, Complex.real_smul, smul_eq_mul]
   rw [Matrix.smul_mulVec, hsm, qInner_smul_right]
 
 omit [DecidableEq H] in
@@ -505,26 +515,12 @@ lemma qInner_mul_proj {A P : Matrix H H ℂ} (hP : IsQProjector P)
   congr 1
   rw [Matrix.mulVec_mulVec, Matrix.mulVec_mulVec, ← hc, Matrix.mul_assoc, hP.2]
 
-/-- **A `cfc` of a nonnegative function has nonnegative quadratic form.**  Proved
-by writing `g = √g · √g`, so the matrix is `MᴴM`; no order theory is needed. -/
+open scoped MatrixOrder ComplexOrder in
+/-- A nonnegative function has a nonnegative functional-calculus quadratic form. -/
 lemma qInner_cfc_nonneg (a : Matrix H H ℂ) (g : ℝ → ℝ) (hg : ∀ l, 0 ≤ g l)
     (x : H → ℂ) : 0 ≤ (qInner x (cfc g a *ᵥ x)).re := by
-  set h : ℝ → ℝ := fun l => Real.sqrt (g l) with hhdef
-  have hfun : (fun l => h l * h l) = g := funext fun l => Real.mul_self_sqrt (hg l)
-  have hcfc : cfc g a = cfc h a * cfc h a := by
-    rw [← hfun, cfc_mul h h a (Matrix.finite_real_spectrum.continuousOn _)
-      (Matrix.finite_real_spectrum.continuousOn _)]
-  have hsa : (cfc h a)ᴴ = cfc h a := by
-    have hp : IsSelfAdjoint (cfc h a) := cfc_predicate h a
-    have hst : star (cfc h a) = cfc h a := hp
-    rwa [Matrix.star_eq_conjTranspose] at hst
-  have hkey : qInner x (cfc g a *ᵥ x) = (qNormSq (cfc h a *ᵥ x) : ℂ) := by
-    have e1 : qInner (cfc h a *ᵥ x) (cfc h a *ᵥ x)
-        = qInner x (cfc h a *ᵥ (cfc h a *ᵥ x)) := by
-      rw [qInner_mulVec_left, hsa]
-    rw [hcfc, ← Matrix.mulVec_mulVec, ← e1, qInner_self]
-  rw [hkey, Complex.ofReal_re]
-  exact qNormSq_nonneg _
+  have hpos : (cfc g a).PosSemidef := (cfc_nonneg (a := a) (fun l _ => hg l)).posSemidef
+  exact (RCLike.nonneg_iff.mp (hpos.dotProduct_mulVec_nonneg x)).1
 
 /-! ## The near-window bound -/
 
@@ -536,7 +532,7 @@ lemma chordGapFun_nonneg (Δ : ℝ) (l : ℝ) : 0 ≤ chordGapFun Δ l := by
   unfold chordGapFun chordMask
   by_cases h : l ≤ Δ ^ 2
   · rw [ite_eq_left h, mul_one]
-    linarith
+    exact sub_nonneg.mpr h
   · rw [ite_eq_right h, mul_zero]
 
 lemma chordSq_mul_chordNearProj (U : Matrix H H ℂ) (Δ : ℝ) :
@@ -585,7 +581,7 @@ theorem chordNear_bound_sq (U : Matrix H H ℂ) (Δ : ℝ) (x : H → ℂ) :
   simp only [qInner_add_mulVec, qInner_smul_mulVec, Complex.add_re] at hsum
   rw [Complex.re_ofReal_mul] at hsum
   rw [hL, hR]
-  linarith
+  linarith only [hsum, hgap]
 
 /-! ## Decomposition, and the fixed space
 
@@ -622,7 +618,7 @@ theorem qNormSq_chord_decomp (U : Matrix H H ℂ) (Δ : ℝ) (x : H → ℂ) :
       Complex.zero_re]
   have hadd := qNormSq_add (chordNearProj U Δ *ᵥ x) (chordFarProj U Δ *ᵥ x)
   rw [hsplit, horth] at hadd
-  linarith
+  linarith only [hadd]
 
 /-- If `g` vanishes at `0` then `cfc g a` kills the kernel of `a`.  Proved by
 factoring `g l = l · h l` — legitimate for *any* `g` here, since `h` need only
@@ -697,11 +693,11 @@ lemma chordFarGapFun_nonneg (Δ : ℝ) (l : ℝ) : 0 ≤ chordFarGapFun Δ l := 
   unfold chordFarGapFun chordMask
   by_cases h : l ≤ Δ ^ 2
   · rw [ite_eq_left h]
-    simp
+    simp only [sub_self, mul_zero, Std.le_refl]
   · rw [ite_eq_right h]
     have hlt : Δ ^ 2 < l := not_le.mp h
-    have : (0 : ℝ) ≤ l - Δ ^ 2 := by linarith
-    simpa using this
+    have : (0 : ℝ) ≤ l - Δ ^ 2 := by linarith only [h]
+    simpa only [sub_zero, mul_one, sub_nonneg, ge_iff_le] using this
 
 lemma chordSq_mul_chordFarProj (U : Matrix H H ℂ) (Δ : ℝ) :
     (Δ ^ 2 : ℝ) • chordFarProj U Δ + cfc (chordFarGapFun Δ) (chordSq U)
@@ -748,7 +744,7 @@ theorem chordFar_bound_sq (U : Matrix H H ℂ) (Δ : ℝ) (x : H → ℂ) :
   simp only [qInner_add_mulVec, qInner_smul_mulVec, Complex.add_re] at hsum
   rw [Complex.re_ofReal_mul] at hsum
   rw [hL, hR]
-  linarith
+  linarith only [hsum, hgap]
 
 /-! ## The effective spectral gap
 
@@ -839,13 +835,14 @@ lemma qNormSq_one_sub_pow_mulVec_le {U : Matrix H H ℂ}
     module
   have hneg : qNormSq ((-1 : ℂ) • (U ^ T *ᵥ x)) = qNormSq x := by
     rw [qNormSq_smul, qNormSq_mulVec hUT]
-    simp
+    simp only [Complex.normSq_neg, map_one, one_mul]
   have htri := sqrt_qNormSq_add_le x ((-1 : ℂ) • (U ^ T *ᵥ x))
   rw [hsplit, hneg] at htri
   have h0 : (0 : ℝ) ≤ qNormSq x := qNormSq_nonneg x
   have hsq := Real.sq_sqrt (qNormSq_nonneg ((1 - U ^ T) *ᵥ x))
   have hxsq := Real.sq_sqrt h0
-  nlinarith [Real.sqrt_nonneg (qNormSq ((1 - U ^ T) *ᵥ x)), Real.sqrt_nonneg (qNormSq x)]
+  have hbound := pow_le_pow_left₀ (Real.sqrt_nonneg _) htri 2
+  linarith only [hbound, hsq, hxsq]
 
 /-- The far projector commutes with the geometric sum, since it commutes with
 `U`. -/
@@ -1243,10 +1240,10 @@ theorem clockXorMat_mulVec_embedClock (j : ℕ) (c : Fin T) (b : Bool)
       · rw [ite_eq_right, ite_eq_right hb]
         intro hcon
         exact hb (by rw [← hcon]; cases b' <;> cases (decide (j ≤ (c' : ℕ))) <;> rfl)
-    · simp [hs]
+    · simp only [hs, and_false, ↓reduceIte]
   · have h0 : embedReg c ψ ((k, t, (c', w)) : QBasis ι σ (Fin T × W)) = 0 := by
       rw [embedReg_apply, ite_eq_right hc]
-    simp [h0]
+    simp only [h0, ite_self]
 
 /-! ## One round -/
 
@@ -1402,7 +1399,8 @@ theorem qNormSq_clockPack (f : Fin T → (QBasis ι σ W → ℂ)) :
     · rw [qInner_embedClock, ite_eq_left ⟨rfl, rfl⟩, qInner_self]
     · intro c' _ hc'
       rw [qInner_embedClock, ite_eq_right fun hcon => hc' hcon.1.symm]
-    · simp
+    · simp only [Finset.mem_univ, not_true_eq_false, qInner_self, Complex.ofReal_eq_zero,
+      IsEmpty.forall_iff]
   exact_mod_cast h
 
 /-! ## The uniform clock -/
@@ -1440,7 +1438,7 @@ lemma uniformClock_apply_eq_zero (T : ℕ) (ψ : QBasis ι σ W → ℂ)
       embedClock c false ψ ((k, t, (bb, s, (c', w)))
         : QBasis ι σ (ClockWork ι T W)) = 0 := by
     intro c
-    simp [embedClock, embedCtrl, embedReg_apply, h']
+    simp only [embedClock, embedCtrl, embedReg_apply, h', ite_self]
   rw [uniformClock, Pi.smul_apply, clockPack, Finset.sum_apply,
     Finset.sum_eq_zero fun c _ => hz c, smul_zero]
 
@@ -1707,7 +1705,7 @@ theorem qInner_clockPack (f g : Fin T → (QBasis ι σ W → ℂ)) :
   · rw [qInner_embedClock, ite_eq_left ⟨rfl, rfl⟩]
   · intro c' _ hc'
     rw [qInner_embedClock, ite_eq_right fun hcon => hc' hcon.1.symm]
-  · simp
+  · simp only [Finset.mem_univ, not_true_eq_false, IsEmpty.forall_iff]
 
 omit [DecidableEq W] [DecidableEq σ] in
 /-- **The uniform clock is an isometry** (for `0 < T`). -/
@@ -1751,7 +1749,8 @@ avoid positivity hypotheses. -/
 lemma uniformClock_zero (ψ : QBasis ι σ W → ℂ) :
     uniformClock 0 ψ = 0 := by
   rw [uniformClock, clockPack]
-  simp
+  simp only [CharP.cast_eq_zero, Real.sqrt_zero, Complex.ofReal_zero, _root_.inv_zero,
+    Finset.univ_eq_empty, Finset.sum_empty, smul_zero]
 
 end QuantumQueryComplexity
 
@@ -1871,7 +1870,7 @@ theorem qNormSq_clockPhaseRefl_add_le (R : QRoutine ι σ W) (T : ℕ)
     have hq := qNormSq_nonneg x
     have h0 : ((0 : ℕ) : ℝ) ^ 2 = 0 := by norm_num
     rw [h0, zero_mul, zero_mul]
-    linarith
+    exact mul_nonneg (by norm_num : (0 : ℝ) ≤ 16) hq
   have hU := R.run_mem_unitaryGroup a
   have hSu := (selectPowers R T).run_mem_unitaryGroup a
   -- the deviation is twice the averaged state, whose norm is the vector average
@@ -1887,7 +1886,7 @@ theorem qNormSq_clockPhaseRefl_add_le (R : QRoutine ι σ W) (T : ℕ)
   have hsupp := qNormSq_avg_pow_chordFar hU Δ T x
   have h2 : Complex.normSq (2 : ℂ) = 4 := by norm_num [Complex.normSq_apply]
   rw [h2]
-  nlinarith [hsupp]
+  linarith only [hsupp]
 
 /-- **Soundness of the detector**, in divided form:
 `‖D·u + u‖² ≤ 16/(T²Δ²)·‖x‖²`. -/
@@ -1959,7 +1958,7 @@ theorem le_qNormSq_chordFar_inputProj (v : ι' → (QBasis ι σ W → ℂ))
   have hdec := qNormSq_chord_decomp ((inputReflProduct v L hL).run a) Δ
     (inputProj v a *ᵥ w)
   have hnear := effective_chord_gap_sq_inputReflProduct v L hL a hw Δ
-  linarith
+  linarith only [hdec, hnear]
 
 /-- **The input detector reads `-1` on the far window**, multiplied out — and,
 like the bound it specializes, with no positivity hypothesis. -/
@@ -1986,7 +1985,8 @@ theorem qNormSq_clockPhaseRefl_add_le_div_inputReflProduct
         + uniformClock T (chordFarProj ((inputReflProduct v L hL).run a) Δ
             *ᵥ (inputProj v a *ᵥ w)))
       ≤ 16 / ((T : ℝ) ^ 2 * Δ ^ 2) * qNormSq (inputProj v a *ᵥ w) :=
-  qNormSq_clockPhaseRefl_add_le_div (inputReflProduct v L hL) hT a hΔ
+  qNormSq_clockPhaseRefl_add_le_div (ι := ι) (σ := σ) (W := W)
+    (inputReflProduct v L hL) hT a hΔ
     (inputProj v a *ᵥ w)
 
 end QuantumQueryComplexity
@@ -2081,11 +2081,9 @@ theorem inputProj_mulVec_eq_self_iff (v : ι' → (QBasis ι σ W → ℂ)) (a :
   · intro h
     have h2 := congrArg (fun ψ => oracleMat a *ᵥ ψ) h
     simp only [hO] at h2
-    exact (mem_rawSpan_orthogonal_iff v _).mp
-      ((subProj_mulVec_eq_self_iff _ _).mp h2)
+    exact (spanProj_orthogonal_mulVec_eq_self_iff v _).mp h2
   · intro h
-    rw [(subProj_mulVec_eq_self_iff _ _).mpr ((mem_rawSpan_orthogonal_iff v _).mpr h),
-      hO]
+    rw [(spanProj_orthogonal_mulVec_eq_self_iff v _).mpr h, hO]
 
 /-! ## The positive witness -/
 
@@ -2352,7 +2350,7 @@ def outVec {R : Type} [DecidableEq R] (r : R) : Option R → ℝ
 theorem commonVec_dotProduct_commonVec {R : Type} [Fintype R] :
     (commonVec (R := R)) ⬝ᵥ commonVec = 1 := by
   rw [dotProduct, Fintype.sum_option]
-  simp
+  simp only [commonVec_none, mul_one, commonVec_some, mul_zero, Finset.sum_const_zero, add_zero]
 
 /-- **The output vectors are orthonormal**: the pairing is the equality
 indicator. -/
@@ -2367,18 +2365,20 @@ theorem outVec_dotProduct_outVec {R : Type} [Fintype R] [DecidableEq R]
     · rw [ite_eq_left hs, ite_eq_left hs, one_mul, hs]
     · rw [ite_eq_right hs, ite_eq_right hs, zero_mul]
   rw [Finset.sum_congr rfl fun s _ => hterm s]
-  simp
+  simp only [outVec_none, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte, zero_add]
 
 /-- The common and output vectors are orthogonal. -/
 theorem commonVec_dotProduct_outVec {R : Type} [Fintype R] [DecidableEq R]
     (r : R) : commonVec ⬝ᵥ outVec r = 0 := by
   rw [dotProduct, Fintype.sum_option]
-  simp
+  simp only [commonVec_none, outVec_none, mul_zero, commonVec_some, outVec_some, mul_ite, mul_one,
+    ite_self, Finset.sum_const_zero, add_zero]
 
 theorem outVec_dotProduct_commonVec {R : Type} [Fintype R] [DecidableEq R]
     (r : R) : outVec r ⬝ᵥ commonVec = 0 := by
   rw [dotProduct, Fintype.sum_option]
-  simp
+  simp only [outVec_none, commonVec_none, mul_one, outVec_some, commonVec_some, mul_zero,
+    Finset.sum_const_zero, add_zero]
 
 omit [Fintype X] in
 /-- **`(t₊ + t₋)/√2` is exactly the common vector** — the `x`-dependence
@@ -2457,8 +2457,8 @@ lemma uTarget_add (t t' : Option R → ℝ) :
   classical
   funext b
   cases b with
-  | inl s => simp [uTarget]
-  | inr q => simp [uTarget]
+  | inl s => simp only [uTarget, Pi.add_apply, Complex.ofReal_add, Sum.elim_inl]
+  | inr q => simp only [uTarget, Pi.add_apply, Complex.ofReal_add, Sum.elim_inr, add_zero]
 
 omit [DecidableEq K] [DecidableEq R] [DecidableEq ι] [DecidableEq σ] [Fintype K] [Fintype R]
     [Fintype ι] [Fintype σ] in
@@ -2468,8 +2468,8 @@ lemma uTarget_sub (t t' : Option R → ℝ) :
   classical
   funext b
   cases b with
-  | inl s => simp [uTarget]
-  | inr q => simp [uTarget]
+  | inl s => simp only [uTarget, Pi.sub_apply, Complex.ofReal_sub, Sum.elim_inl]
+  | inr q => simp only [uTarget, Pi.sub_apply, Complex.ofReal_sub, Sum.elim_inr, sub_self]
 
 omit [DecidableEq K] [DecidableEq R] [DecidableEq ι] [DecidableEq σ] [Fintype K] [Fintype R]
     [Fintype ι] [Fintype σ] in
@@ -2481,8 +2481,9 @@ lemma uTarget_realSmul (r : ℝ) (t : Option R → ℝ) :
   classical
   funext b
   cases b with
-  | inl s => simp [uTarget]
-  | inr q => simp [uTarget]
+  | inl s => simp only [uTarget, Pi.smul_apply, smul_eq_mul, Complex.ofReal_mul, Sum.elim_inl]
+  | inr q => simp only [uTarget, Pi.smul_apply, smul_eq_mul, Complex.ofReal_mul, Sum.elim_inr,
+    mul_zero]
 
 /-- A real vector placed in the packet block `p`, zero elsewhere.  Every
 block carries its own flag coordinate, which is what keeps distinct blocks
@@ -2500,7 +2501,7 @@ theorem qInner_blockVec (p p' : ι × K) (w w' : Option σ → ℝ) :
   rw [qInner_def, Fintype.sum_sum_type]
   have hL : (∑ s : Option R, star (blockVec (R := R) p w (Sum.inl s))
       * blockVec (R := R) p' w' (Sum.inl s)) = 0 := by
-    simp [blockVec]
+    simp only [blockVec, Sum.elim_inl, star_zero, mul_zero, Finset.sum_const_zero]
   rw [hL, zero_add, Fintype.sum_prod_type]
   by_cases hb : p = p'
   · subst hb
@@ -2524,7 +2525,7 @@ theorem qInner_blockVec (p p' : ι × K) (w w' : Option σ → ℝ) :
       · rw [ite_eq_right hr]
         refine Finset.sum_eq_zero fun s _ => ?_
         simp only [blockVec, Sum.elim_inr, ite_eq_right hr]
-        simp
+        simp only [star_zero, mul_zero]
     rw [Finset.sum_congr rfl fun r _ => hterm r,
       Finset.sum_ite_eq' Finset.univ p (fun _ => ((w ⬝ᵥ w' : ℝ) : ℂ)),
       ite_eq_left (Finset.mem_univ _)]
@@ -2533,9 +2534,9 @@ theorem qInner_blockVec (p p' : ι × K) (w w' : Option σ → ℝ) :
     simp only [blockVec, Sum.elim_inr]
     by_cases hr : r = p
     · rw [ite_eq_left hr, ite_eq_right (fun h => hb (hr.symm.trans h))]
-      simp
+      simp only [RCLike.star_def, Complex.conj_ofReal, mul_zero]
     · rw [ite_eq_right hr]
-      simp
+      simp only [star_zero, mul_ite, zero_mul, mul_zero, ite_self]
 
 /-- `idleFlag_{i,k} + answer_{i,k,a}`: the oracle image of the tagged
 generator `g_{i,k} = idleFlag_{i,k} + activeBlank_{i,k}`. -/
@@ -2582,16 +2583,16 @@ summands. -/
     (w : Option σ → ℝ) :
     qInner (uTarget (ι := ι) (σ := σ) (K := K) t) (blockVec p w) = 0 := by
   classical
-  rw [qInner_def, Fintype.sum_sum_type]
-  simp [uTarget, blockVec]
+  rw [qInner_def]
+  refine Finset.sum_eq_zero fun b _ => ?_
+  cases b <;>
+    simp only [uTarget, blockVec, Sum.elim_inl, Sum.elim_inr, star_zero, zero_mul, mul_zero]
 
 omit [DecidableEq R] [DecidableEq σ] in
 @[simp] theorem qInner_blockVec_uTarget (p : ι × K) (w : Option σ → ℝ)
     (t : Option R → ℝ) :
     qInner (blockVec (R := R) p w) (uTarget t) = 0 := by
-  classical
-  rw [qInner_def, Fintype.sum_sum_type]
-  simp [uTarget, blockVec]
+  rw [← qInner_conj, qInner_uTarget_blockVec, star_zero]
 
 end Packets
 
@@ -2758,22 +2759,10 @@ omit [DecidableEq K] [DecidableEq R] [DecidableEq ι] [DecidableEq σ] in
     qInner (uTarget (ι := ι) (σ := σ) (K := K) t) (uTarget t')
       = ((t ⬝ᵥ t' : ℝ) : ℂ) := by
   classical
-  rw [qInner_def, Fintype.sum_sum_type]
-  have hR : (∑ p : (ι × K) × Option σ,
-      star (uTarget (R := R) (ι := ι) (σ := σ) (K := K) t
-          ((Sum.inr p : UBasis R ι σ K)))
-        * uTarget (ι := ι) (σ := σ) (K := K) t' (Sum.inr p)) = 0 := by
-    simp [uTarget]
-  rw [hR, add_zero]
-  have hL : ∀ s : Option R,
-      star (uTarget (R := R) (ι := ι) (σ := σ) (K := K) t
-          ((Sum.inl s : UBasis R ι σ K)))
-        * uTarget (ι := ι) (σ := σ) (K := K) t' (Sum.inl s)
-        = ((t s * t' s : ℝ) : ℂ) := by
-    intro s
-    simp only [uTarget, Sum.elim_inl]
-    rw [Complex.star_def, Complex.conj_ofReal, ← Complex.ofReal_mul]
-  rw [Finset.sum_congr rfl fun s _ => hL s, ← Complex.ofReal_sum, ← dotProduct]
+  simp only [qInner_def, Fintype.sum_sum_type, uTarget, Sum.elim_inl, Sum.elim_inr,
+    mul_zero, Finset.sum_const_zero, add_zero, Complex.star_def,
+    Complex.conj_ofReal, ← Complex.ofReal_mul, ← Complex.ofReal_sum]
+  rfl
 
 omit [DecidableEq R] [Fintype X] in
 @[simp] theorem qInner_packetV_uTarget (v : X → ι → K → ℝ)
@@ -2889,7 +2878,7 @@ lemma uEmb_injective : Function.Injective (uEmb (R := R) (ι := ι) (σ := σ)
     (K := K)) := by
   classical
   rintro (s | ⟨p, a⟩) (s' | ⟨p', a'⟩) h
-  · exact congrArg Sum.inl (by simpa [uEmb] using h)
+  · exact congrArg Sum.inl (by simpa only [uEmb, Prod.mk.injEq, Sum.inl.injEq, true_and] using h)
   · cases a' <;> simp [uEmb] at h
   · cases a <;> simp [uEmb] at h
   · cases a <;> cases a' <;> simp [uEmb] at h ⊢ <;> tauto
@@ -2937,7 +2926,7 @@ theorem qInner_uRealize (ψ φ : UBasis R ι σ K → ℂ) :
     rw [uRealize_eq_zero_of_forall_ne ψ (fun b hb => hq (by
       rw [Finset.mem_image]
       exact ⟨b, Finset.mem_univ b, hb⟩))]
-    simp
+    simp only [star_zero, zero_mul]
   rw [hsub, Finset.sum_image fun b _ b' _ hbb => uEmb_injective hbb]
   exact Finset.sum_congr rfl fun b _ => by rw [uRealize_uEmb, uRealize_uEmb]
 
@@ -2971,8 +2960,8 @@ lemma uRealize_add (ψ φ : UBasis R ι σ K → ℂ) :
     simp only [uRealize, Pi.add_apply] <;>
     first
       | rfl
-      | (split_ifs <;> simp)
-      | simp
+      | (split_ifs <;> simp only [add_zero])
+      | simp only [add_zero]
 
 omit [DecidableEq K] [DecidableEq R] [DecidableEq σ] [Fintype K] [Fintype R] [Fintype ι]
     [Fintype σ] in
@@ -2984,8 +2973,8 @@ lemma uRealize_sub (ψ φ : UBasis R ι σ K → ℂ) :
     simp only [uRealize, Pi.sub_apply] <;>
     first
       | rfl
-      | (split_ifs <;> simp)
-      | simp
+      | (split_ifs <;> simp only [sub_self])
+      | simp only [sub_self]
 
 omit [DecidableEq K] [DecidableEq R] [DecidableEq σ] [Fintype K] [Fintype R] [Fintype ι]
     [Fintype σ] in
@@ -2993,7 +2982,7 @@ lemma uRealize_sum {α : Type*} (s : Finset α) (F : α → (UBasis R ι σ K �
     uRealize (∑ a ∈ s, F a) = ∑ a ∈ s, uRealize (F a) := by
   classical
   induction s using Finset.induction with
-  | empty => simp [uRealize_zero]
+  | empty => simp only [Finset.sum_empty, uRealize_zero]
   | insert a s ha ih =>
       rw [Finset.sum_insert ha, Finset.sum_insert ha, uRealize_add, ih]
 
@@ -3007,8 +2996,8 @@ lemma uRealize_smul (c : ℂ) (ψ : UBasis R ι σ K → ℂ) :
     simp only [uRealize, Pi.smul_apply, smul_eq_mul] <;>
     first
       | rfl
-      | (split_ifs <;> simp)
-      | simp
+      | (split_ifs <;> simp only [mul_zero])
+      | simp only [mul_zero]
 
 end Realization
 
@@ -3057,19 +3046,25 @@ lemma uRealize_leftAtom (i : ι) (k : K) (c : σ) :
       cases x with
       | none =>
           cases w with
-          | inl s => simp [uRealize, leftAtom, blockVec, qBasis_apply]
+          | inl s => simp only [uRealize, leftAtom, blockVec, Sum.elim_inl, Pi.add_apply,
+            qBasis_apply, Prod.mk.injEq, reduceCtorEq, and_false, ↓reduceIte, and_self, add_zero]
           | inr p =>
               by_cases hp : p = (i, k)
               · subst hp
-                simp [uRealize, leftAtom, blockVec, qBasis_apply]
-              · simp [uRealize, leftAtom, blockVec, qBasis_apply, hp]
+                simp only [uRealize, leftAtom, blockVec, Sum.elim_inr, ↓reduceIte,
+                  uniformLeft_none, Complex.ofReal_one, Pi.add_apply, qBasis_apply, Prod.mk.injEq,
+                  reduceCtorEq, and_true, and_self, add_zero]
+              · simp only [uRealize, leftAtom, blockVec, Sum.elim_inr, hp, ↓reduceIte,
+                Pi.add_apply, qBasis_apply, Prod.mk.injEq, Sum.inr.injEq, and_false, reduceCtorEq,
+                and_self, add_zero]
       | some x => cases w <;> simp [uRealize, qBasis_apply]
   | some j =>
       cases x with
       | none => cases w <;> simp [uRealize, qBasis_apply]
       | some x =>
           cases w with
-          | inl s => simp [uRealize, qBasis_apply]
+          | inl s => simp only [uRealize, Pi.add_apply, qBasis_apply, Prod.mk.injEq, reduceCtorEq,
+            and_self, ↓reduceIte, Option.some.injEq, and_false, add_zero]
           | inr p =>
               by_cases hp : p = (i, k)
               · subst hp
@@ -3077,11 +3072,19 @@ lemma uRealize_leftAtom (i : ι) (k : K) (c : σ) :
                 · subst hj
                   by_cases hx : x = c
                   · subst hx
-                    simp [uRealize, leftAtom, blockVec, qBasis_apply]
-                  · simp [uRealize, leftAtom, blockVec, qBasis_apply, hx]
-                · simp [uRealize, qBasis_apply, hj,
-                    Ne.symm hj]
-              · simp [uRealize, leftAtom, blockVec, qBasis_apply, hp]
+                    simp only [uRealize, ↓reduceIte, leftAtom, blockVec, Sum.elim_inr,
+                      uniformLeft_some, Complex.ofReal_one, Pi.add_apply, qBasis_apply,
+                      Prod.mk.injEq, reduceCtorEq, and_true, and_self, zero_add]
+                  · simp only [uRealize, ↓reduceIte, leftAtom, blockVec, Sum.elim_inr,
+                    uniformLeft_some, hx, Complex.ofReal_zero, Pi.add_apply, qBasis_apply,
+                    Prod.mk.injEq, reduceCtorEq, and_true, and_self, Option.some.injEq, and_false,
+                    add_zero]
+                · simp only [uRealize, Ne.symm hj, ↓reduceIte, Pi.add_apply, qBasis_apply,
+                  Prod.mk.injEq, reduceCtorEq, and_true, and_self, Option.some.injEq, hj,
+                  false_and, add_zero]
+              · simp only [uRealize, leftAtom, blockVec, Sum.elim_inr, hp, ↓reduceIte, ite_self,
+                Pi.add_apply, qBasis_apply, Prod.mk.injEq, reduceCtorEq, Sum.inr.injEq, and_self,
+                Option.some.injEq, and_false, add_zero]
 
 /-- **The generator-specific transport identity.** -/
 theorem oracleMat_mulVec_uniformGen (a : ι → σ) (p : ι × K) :
@@ -3116,7 +3119,7 @@ theorem qInner_leftAtom_packetV_same {X : Type}
   rw [qInner_smul_right, leftAtom, qInner_blockVec]
   by_cases hq : (i, k) = q
   · rw [ite_eq_left hq, ← hq, uniform_dotProduct, ite_eq_left rfl]
-    simp
+    simp only [Complex.ofReal_zero, mul_zero]
   · rw [ite_eq_right hq, mul_zero]
 
 end Generator
@@ -3365,7 +3368,7 @@ theorem uniformPsi_eq_twoAlpha_smul_uniformW (P : DualPairOn read K f)
     {α : ℝ} (hα : α ≠ 0) (x : X) :
     uniformPsi (K := K) P α x = ((2 * α : ℝ) : ℂ) • uniformW P α x := by
   have h2 : (2 * α : ℝ) ≠ 0 := by
-    simp [hα]
+    simp only [ne_eq, mul_eq_zero, OfNat.ofNat_ne_zero, hα, or_self, not_false_eq_true]
   rw [uniformW, uniformPsi, smul_sub, smul_smul, ← Complex.ofReal_mul,
     mul_inv_cancel₀ h2]
   norm_num
@@ -3375,11 +3378,14 @@ theorem qInner_uniformW_uniformPhi (P : DualPairOn read K f) {α : ℝ}
     (hα : α ≠ 0) (y x : X) :
     qInner (uniformW (K := K) P α y) (uniformPhi P α x) = 0 := by
   have h2 : ((2 * α : ℝ) : ℂ) ≠ 0 := by
-    simp [hα]
+    simp only [Complex.ofReal_mul, Complex.ofReal_ofNat, ne_eq, mul_eq_zero, OfNat.ofNat_ne_zero,
+      Complex.ofReal_eq_zero, hα, or_self, not_false_eq_true]
   have h := qInner_uniformPsi_uniformPhi (K := K) P α y x
   rw [uniformPsi_eq_twoAlpha_smul_uniformW P hα, qInner_smul_left] at h
   rcases mul_eq_zero.mp h with h' | h'
-  · exact absurd (by simpa using h') h2
+  · exact absurd (by simpa only [Complex.ofReal_mul, Complex.ofReal_ofNat, mul_eq_zero,
+    OfNat.ofNat_ne_zero, Complex.ofReal_eq_zero, false_or, star_mul', star_ofNat, RCLike.star_def,
+    Complex.conj_ofReal] using h') h2
   · exact h'
 
 /-- The reversed pairing, by conjugation. -/
@@ -3405,8 +3411,7 @@ theorem uniformL_mulVec_uniformPhi (P : DualPairOn read K f) (α : ℝ) (x : X) 
 theorem uniformL_mulVec_uniformW (P : DualPairOn read K f) {α : ℝ}
     (hα : α ≠ 0) (x : X) :
     uniformL (K := K) P α *ᵥ uniformW P α x = 0 := by
-  refine subProj_mulVec_of_mem_orthogonal _ ?_
-  exact (mem_rawSpan_orthogonal_iff _ _).mpr fun y =>
+  refine spanProj_mulVec_eq_zero _ _ fun y =>
     qInner_uniformPhi_uniformW P hα y x
 
 /-! ### The exact norms
@@ -3444,7 +3449,8 @@ theorem qNormSq_uniformPhi_le (P : DualPairOn read K f) {c : ℝ}
   rw [qNormSq_uniformPhi]
   have hmass : (∑ p : ι × K, P.v x p.1 p.2 * P.v x p.1 p.2) ≤ c := by
     simpa only [Fintype.sum_prod_type] using hP.2 x
-  nlinarith [sq_nonneg α]
+  exact add_le_add (le_refl 1)
+    (mul_le_mul_of_nonneg_left hmass (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) (sq_nonneg α)))
 
 /-- `‖w_x‖² = 1 + (2α)⁻²·2·(the `u`-mass)` — valid for **every** `α`
 (at `α = 0` the inverse is `0`, so this reads `‖w‖² = 1`). -/
@@ -3667,10 +3673,10 @@ theorem realizedOut_apply_of_ne (f : X → O) (x : X)
         rw [uRealize_target]
         have hs : s ≠ some (rangeElem f x) := fun h => hq (by rw [h])
         cases s with
-        | none => simp [uTarget]
+        | none => simp only [uTarget, Sum.elim_inl, outVec_none, Complex.ofReal_zero]
         | some t =>
           have ht : t ≠ rangeElem f x := fun h => hs (by rw [h])
-          simp [uTarget, ht]
+          simp only [uTarget, Sum.elim_inl, outVec_some, ht, ↓reduceIte, Complex.ofReal_zero]
       | inr p => rfl
     | some a => cases w <;> rfl
   | some i =>
@@ -3679,7 +3685,7 @@ theorem realizedOut_apply_of_ne (f : X → O) (x : X)
     | some a =>
       cases w with
       | inl s => rfl
-      | inr p => simp [uRealize_answer, uTarget]
+      | inr p => simp only [uTarget, uRealize_answer, Sum.elim_inr, ite_self]
 
 end Scaled
 
@@ -3798,7 +3804,9 @@ theorem qInner_scState (α β : ℂ) (A B : ι → σ → K → ℂ) :
     qInner (scState α A) (scState β B)
       = star α * β + ∑ i : ι, ∑ s : σ, ∑ k : K, star (A i s k) * B i s k := by
   classical
-  simp [qInner_def, Fintype.sum_prod_type, Fintype.sum_option]
+  simp only [qInner_def, RCLike.star_def, Fintype.sum_prod_type, Fintype.sum_option,
+    scState_target, scState_idle_reg, map_zero, mul_zero, Finset.sum_const_zero, add_zero,
+    scState_idle_letter, scState_blank, scState_flag, scState_letter, zero_add]
 
 omit [DecidableEq K] [DecidableEq ι] [DecidableEq σ] in
 /-- **The squared norm of a state of this shape.** -/
@@ -3806,7 +3814,9 @@ theorem qNormSq_scState (α : ℂ) (A : ι → σ → K → ℂ) :
     qNormSq (scState α A)
       = Complex.normSq α + ∑ i : ι, ∑ s : σ, ∑ k : K, Complex.normSq (A i s k) := by
   classical
-  simp [qNormSq_def, Fintype.sum_prod_type, Fintype.sum_option]
+  simp only [qNormSq_def, Fintype.sum_prod_type, Fintype.sum_option, scState_target,
+    scState_idle_reg, map_zero, Finset.sum_const_zero, add_zero, scState_idle_letter,
+    scState_blank, scState_flag, scState_letter, zero_add]
 
 omit [DecidableEq K] [DecidableEq ι] [DecidableEq σ] [Fintype K] [Fintype ι] [Fintype σ] in
 lemma scState_add (α β : ℂ) (A B : ι → σ → K → ℂ) :
@@ -3832,7 +3842,8 @@ lemma qInner_qBasis_left {H : Type} [Fintype H] [DecidableEq H] (p : H) (ψ : H 
   · rw [qBasis_apply, ite_eq_left rfl, star_one, one_mul]
   · intro h _ hh
     rw [qBasis_apply, ite_eq_right hh, star_zero, zero_mul]
-  · simp
+  · simp only [Finset.mem_univ, not_true_eq_false, qBasis_apply, ↓reduceIte, star_one, one_mul,
+    IsEmpty.forall_iff]
 
 /-- **What the generators test.**  Pairing a generator against a state read
 through the oracle picks out the amplitude at a *true-answer* point. -/
@@ -3897,28 +3908,22 @@ theorem qInner_posWitness_negWitness (P : DualPairOn read K f) (x y : X) :
           * (if s = read y i then (P.v y i k : ℂ) else 0))
         = -(((if read x i = read y i then 0 else ∑ k, P.u x i k * P.v y i k : ℝ)) : ℂ) := by
     intro i
-    rw [Finset.sum_eq_single (read y i)]
-    · by_cases h : read x i = read y i
-      · rw [ite_eq_left h, Complex.ofReal_zero, neg_zero]
-        refine Finset.sum_eq_zero fun k _ => ?_
-        rw [ite_eq_left h.symm, star_zero, zero_mul]
-      · rw [ite_eq_right h, Complex.ofReal_sum]
-        rw [show -(∑ k : K, ((P.u x i k * P.v y i k : ℝ) : ℂ))
-              = ∑ k : K, -(((P.u x i k * P.v y i k : ℝ) : ℂ)) from by simp]
-        refine Finset.sum_congr rfl fun k _ => ?_
-        rw [ite_eq_right fun hcc => h hcc.symm, ite_eq_left rfl]
-        simp
-    · intro s _ hs
-      refine Finset.sum_eq_zero fun k _ => ?_
-      rw [ite_eq_right hs, mul_zero]
-    · simp
+    rw [Finset.sum_comm]
+    simp only [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+    by_cases h : read x i = read y i
+    · simp only [h, ite_true, star_zero, zero_mul, Finset.sum_const_zero,
+        Complex.ofReal_zero, neg_zero]
+    · simp only [h, Ne.symm h, ite_false, star_neg, Complex.star_def,
+        Complex.conj_ofReal, neg_mul, ← Complex.ofReal_mul]
+      rw [Finset.sum_neg_distrib, ← Complex.ofReal_sum]
   simp only [hterm]
   rw [show (∑ i : ι, -(((if read x i = read y i then 0
         else ∑ k, P.u x i k * P.v y i k : ℝ)) : ℂ))
       = -(∑ i : ι, (((if read x i = read y i then 0
-        else ∑ k, P.u x i k * P.v y i k : ℝ)) : ℂ)) from by simp]
+        else ∑ k, P.u x i k * P.v y i k : ℝ)) : ℂ)) from by simp only [Finset.sum_neg_distrib]]
   rw [← Complex.ofReal_sum, P.constraint x y]
   by_cases h : f x = f y <;> simp [h]
+
 
 /-! ## The positive contracts -/
 
@@ -3939,7 +3944,7 @@ noncomputable def scKer (P : DualPairOn read K f) (o : O) :
 
 omit [DecidableEq X] in
 theorem isQProjector_scKer (P : DualPairOn read K f) (o : O) :
-    IsQProjector (scKer read f P o) := isQProjector_subProj _
+    IsQProjector (scKer read f P o) := isQProjector_spanProj _
 
 omit [DecidableEq X] in
 /-- **The fixed subspace fixes the positive witnesses**, which is the second
@@ -3967,8 +3972,8 @@ the orthogonality supplied by the dual constraint. -/
 theorem scKer_mulVec_negWitness (P : DualPairOn read K f) {o : O} {y : X}
     (hy : f y ≠ o) : scKer read f P o *ᵥ negWitness read f P y = 0 := by
   classical
-  refine subProj_mulVec_of_mem_orthogonal _ ?_
-  rw [mem_rawSpan_orthogonal_iff]
+  refine spanProj_mulVec_eq_zero
+    (fun x : {x : X // f x = o} => posWitness read f P x.1) _ ?_
   rintro ⟨x, hx⟩
   rw [qInner_posWitness_negWitness, ite_eq_right]
   rw [hx]
@@ -4028,7 +4033,8 @@ theorem qInner_scTarget_posWitness (P : DualPairOn read K f) (x : X) :
     qInner scTarget (posWitness read f P x) = 1 := by
   classical
   rw [scTarget, posWitness, qInner_scState]
-  simp
+  simp only [star_one, mul_one, star_zero, mul_ite, mul_zero, mul_neg, zero_mul, neg_zero,
+    ite_self, Finset.sum_const_zero, add_zero]
 
 omit [DecidableEq K] [DecidableEq X] [DecidableEq ι] in
 /-- **The negative witness's norm is `1` plus the dual's `v`-mass.** -/
@@ -4046,7 +4052,8 @@ theorem qNormSq_negWitness (P : DualPairOn read K f) (y : X) :
         rw [ite_eq_left rfl, Complex.normSq_ofReal]
     · intro s _ hs
       exact Finset.sum_eq_zero fun k _ => by rw [ite_eq_right hs, Complex.normSq_zero]
-    · simp
+    · simp only [Finset.mem_univ, not_true_eq_false, ↓reduceIte, Complex.normSq_ofReal,
+      IsEmpty.forall_iff]
   simp only [hi]
   norm_num
 
@@ -4078,8 +4085,7 @@ theorem qNormSq_negWitness_le {c : ℝ} (P : DualPairOn read K f) (hP : P.IsCost
     (y : X) : qNormSq (negWitness read f P y) ≤ 1 + c := by
   classical
   rw [qNormSq_negWitness]
-  have := hP.2 y
-  linarith
+  exact add_le_add (le_refl 1) (hP.2 y)
 
 end QuantumQueryComplexity
 
@@ -4193,7 +4199,7 @@ omit [DecidableEq K] [DecidableEq ι] [DecidableEq σ] in
     qNormSq (scTarget : QBasis ι σ (Option K) → ℂ) = 1 := by
   classical
   rw [scTarget, qNormSq_scState]
-  simp
+  simp only [map_one, map_zero, Finset.sum_const_zero, add_zero]
 
 omit [DecidableEq K] [DecidableEq X] [DecidableEq ι] in
 /-- The positive witness is at least a unit vector. -/
@@ -4241,8 +4247,7 @@ theorem qNormSq_posWitness_le [Nonempty σ] {cu : ℝ} (P : DualPairOn read K f)
     have h1 : 1 ≤ Fintype.card σ := Fintype.card_pos_iff.mpr ‹Nonempty σ›
     have h2 : (1 : ℝ) ≤ (Fintype.card σ : ℝ) := by exact_mod_cast h1
     linarith
-  have := mul_le_mul_of_nonneg_left hcu hσ
-  linarith
+  exact add_le_add (le_refl 1) (mul_le_mul_of_nonneg_left hcu hσ)
 
 /-! ## The detector -/
 
@@ -4371,16 +4376,16 @@ theorem le_re_qInner_scDetector_of_eq [Nonempty σ] (P : DualPairOn read K f)
         _ ≤ N ^ 2 * Re := hkey'
         _ = N * (N * Re) := by ring
     have := le_of_mul_le_mul_left hh hN0
-    linarith
+    linarith only [this]
   have hRe1 : (0 : ℝ) ≤ Re + 1 := by
     by_contra hneg
     have hneg' : Re + 1 < 0 := lt_of_not_ge hneg
-    nlinarith [hstep1, hN0]
+    linarith only [hstep1, mul_neg_of_pos_of_neg hN0 hneg']
   have hstep2 : 2 ≤ (1 + ((Fintype.card σ : ℝ) - 1) * cu) * Re
       + (1 + ((Fintype.card σ : ℝ) - 1) * cu) := by
-    nlinarith [hstep1, mul_nonneg (sub_nonneg.mpr hNM) hRe1]
+    linarith only [hstep1, mul_nonneg (sub_nonneg.mpr hNM) hRe1]
   rw [sub_le_iff_le_add, div_le_iff₀ hM0]
-  linarith [hstep2]
+  linarith only [hstep2]
 
 omit [DecidableEq X] in
 /-- **The detector rejects a negative input**: for `f y ≠ o`,
@@ -4471,12 +4476,8 @@ theorem re_qInner_scDetector_le_of_ne (P : DualPairOn read K f) {o : O}
           (isQProjector_scKer read f P o)).run (read y)) Δ *ᵥ scTarget)))
       ≤ -(1 - Δ ^ 2 / 4 * (1 + cv)) := by
     rw [qNormSq_uniformClock hT]
-    linarith [hdec, hnear]
-  have hNn : (0 : ℝ) ≤ Real.sqrt (qNormSq (uniformClock T (chordNearProj
-        ((inputReflProduct scGen (scKer read f P o)
-          (isQProjector_scKer read f P o)).run (read y)) Δ *ᵥ scTarget))) :=
-    Real.sqrt_nonneg _
-  linarith [hkey, hN', hE', hF']
+    linarith only [hdec, hnear]
+  linarith only [hkey, hN', hE', hF']
 
 end QuantumQueryComplexity
 
@@ -4770,7 +4771,7 @@ theorem sqrt_qNormSq_uniformMinusError_le (P : DualPairOn read K f) {c : ℝ}
             rw [show Δ ^ 2 / 4 * (1 + c / (2 * α ^ 2))
                 = (Δ / 2) ^ 2 * (1 + c / (2 * α ^ 2)) from by ring,
               Real.sqrt_mul (by positivity), Real.sqrt_sq (by positivity)]
-    linarith [htri, hN]
+    linarith only [htri, hN]
   -- the far error: the divided detector bound, square-rooted
   have hfar : Real.sqrt (qNormSq ((uniformDetector P α T).run (read x)
           *ᵥ uniformClock T (uniformFar P α Δ x)
@@ -4796,7 +4797,7 @@ theorem sqrt_qNormSq_uniformMinusError_le (P : DualPairOn read K f) {c : ℝ}
         *ᵥ uniformClock T (uniformFar P α Δ x)
       + uniformClock T (uniformFar P α Δ x))
   rw [hsplit]
-  linarith [htotal, hnear, hfar]
+  linarith only [htotal, hnear, hfar]
 
 /-! ## The combined conversion error
 
@@ -4931,20 +4932,20 @@ noncomputable def uniformT (c : ℝ) : ℕ := ⌈(2048 : ℝ) * (1 + c)⌉₊
 
 lemma uniformAlpha_ne_zero {c : ℝ} (hc : 0 ≤ c) : uniformAlpha c ≠ 0 := by
   rw [uniformAlpha]
-  exact inv_ne_zero (ne_of_gt (Real.sqrt_pos.mpr (by linarith)))
+  exact inv_ne_zero (ne_of_gt (Real.sqrt_pos.mpr (by linarith only [hc])))
 
 lemma uniformAlpha_sq {c : ℝ} (hc : 0 ≤ c) :
     uniformAlpha c ^ 2 = (128 * (1 + c))⁻¹ := by
   rw [uniformAlpha, inv_pow,
-    Real.sq_sqrt (by linarith : (0 : ℝ) ≤ 128 * (1 + c))]
+    Real.sq_sqrt (by linarith only [hc] : (0 : ℝ) ≤ 128 * (1 + c))]
 
 lemma uniformDelta_pos {c : ℝ} (hc : 0 ≤ c) : 0 < uniformDelta c := by
   rw [uniformDelta]
-  exact inv_pos.mpr (by linarith)
+  exact inv_pos.mpr (by linarith only [hc])
 
 lemma uniformT_pos {c : ℝ} (hc : 0 ≤ c) : 0 < uniformT c := by
   rw [uniformT]
-  exact Nat.ceil_pos.mpr (by linarith)
+  exact Nat.ceil_pos.mpr (by linarith only [hc])
 
 /-- **The instantiated conversion bound**: at the chosen parameters the
 squared conversion distance is at most `1/16`, for every promise input. -/
@@ -4968,7 +4969,7 @@ theorem qNormSq_uniformConvError_le_sixteenth (P : DualPairOn read K f)
   have hval : 1 + c / (2 * uniformAlpha c ^ 2) ≤ 64 * (1 + c) ^ 2 := by
     rw [hαsq, show c / (2 * (128 * (1 + c))⁻¹) = 64 * c * (1 + c) from by
       rw [div_eq_mul_inv, mul_inv, inv_inv]; ring]
-    nlinarith only [hc]
+    linarith only [hc]
   have hsqrt : Real.sqrt (1 + c / (2 * uniformAlpha c ^ 2))
       ≤ 8 * (1 + c) := by
     calc Real.sqrt (1 + c / (2 * uniformAlpha c ^ 2))
@@ -5013,7 +5014,9 @@ theorem qNormSq_uniformConvError_le_sixteenth (P : DualPairOn read K f)
     div_nonneg (by norm_num) (le_trans (by norm_num) hTΔ)
   have hsq : (uniformDelta c * Real.sqrt (1 + c / (2 * uniformAlpha c ^ 2))
       + 4 / ((uniformT c : ℝ) * uniformDelta c)) ^ 2 ≤ 1 / 16 := by
-    nlinarith only [hnear, hfar, hn0, hf0]
+    calc _ ≤ ((1 : ℝ) / 8 + 1 / 8) ^ 2 :=
+          pow_le_pow_left₀ (add_nonneg hn0 hf0) (add_le_add hnear hfar) 2
+      _ = _ := by norm_num
   linarith only [h, h1, hsq]
 
 /-- **The detector at the chosen clock stays within the acceptance
@@ -5284,16 +5287,17 @@ theorem scAlg_computes [Nonempty σ] (P : DualPairOn read K f)
       have hRe := le_re_qInner_scDetector_of_eq read f P hfx hT (hcu x)
       have hb : 2 / (1 + ((Fintype.card σ : ℝ) - 1) * cu)
           = 2 * (1 / (1 + ((Fintype.card σ : ℝ) - 1) * cu)) := by ring
-      linarith [hRe, hpos, hb]
+      linarith only [hRe, hpos, hb]
   | false =>
       rw [hadTest_prob_false]
       have hRe := re_qInner_scDetector_le_of_ne read f P
-        (show f x ≠ true by simp [hfx]) hT hΔ (hcv x)
+        (show f x ≠ true by simp only [hfx, ne_eq, Bool.false_eq_true, not_false_eq_true
+          ]) hT hΔ (hcv x)
       have hb1 : Δ / 2 * Real.sqrt (1 + cv)
           = 2 * (Δ / 4 * Real.sqrt (1 + cv)) := by ring
       have hb2 : (4 : ℝ) / ((T : ℝ) * Δ) = 2 * (2 / ((T : ℝ) * Δ)) := by ring
       have hb3 : Δ ^ 2 / 4 * (1 + cv) = 2 * (Δ ^ 2 / 8 * (1 + cv)) := by ring
-      linarith [hRe, hneg, hb1, hb2, hb3]
+      linarith only [hRe, hneg, hb1, hb2, hb3]
 
 /-! ## The endgame: choosing the parameters
 
@@ -5429,7 +5433,7 @@ theorem exists_algorithm_of_dualPairOn {c : ℝ} (P : DualPairOn read K f)
         rw [mul_pow, mul_pow, Real.sq_sqrt hσ.le]
         norm_num
       rw [hB, ← hs]
-      nlinarith only [mul_nonneg (Real.sqrt_nonneg (Fintype.card σ : ℝ)) hc.le]
+      linarith only [mul_nonneg (Real.sqrt_nonneg (Fintype.card σ : ℝ)) hc.le]
     calc Real.sqrt B ≤ Real.sqrt ((1 + 4 * Real.sqrt (Fintype.card σ) * c) ^ 2) :=
         Real.sqrt_le_sqrt hsq
       _ = 1 + 4 * Real.sqrt (Fintype.card σ) * c := by
@@ -5451,7 +5455,7 @@ theorem qQueryOn_le_of_dualPairOn {c : ℝ} (P : DualPairOn read K f)
   obtain ⟨q, hq, hqle⟩ := exists_algorithm_of_dualPairOn read f P hP hc
   have h1 : qQueryOn read f (1 / 16) ≤ q := Nat.sInf_le hq
   have h2 : (qQueryOn read f (1 / 16) : ℝ) ≤ (q : ℝ) := by exact_mod_cast h1
-  linarith [h2, hqle]
+  exact h2.trans hqle
 
 end Endgame
 
@@ -5493,7 +5497,7 @@ theorem qQueryOn_le_of_hasDualOn_uniform [Nonempty O] {c : ℝ}
   obtain ⟨q, hq, hqle⟩ := exists_algorithm_of_dualPairOn_uniform P hP hc
   have h1 : qQueryOn read f (1 / 16) ≤ q := Nat.sInf_le hq
   have h2 : (qQueryOn read f (1 / 16) : ℝ) ≤ (q : ℝ) := by exact_mod_cast h1
-  linarith
+  exact h2.trans hqle
 
 /-- The bounded-error form, by error monotonicity. -/
 theorem qQueryOn_third_le_of_hasDualOn_uniform [Nonempty O] {c : ℝ}
@@ -5507,7 +5511,7 @@ theorem qQueryOn_third_le_of_hasDualOn_uniform [Nonempty O] {c : ℝ}
   have h1 : qQueryOn read f (1 / 3) ≤ q :=
     Nat.sInf_le (queryCounts_mono (by norm_num) hq)
   have h2 : (qQueryOn read f (1 / 3) : ℝ) ≤ (q : ℝ) := by exact_mod_cast h1
-  linarith
+  exact h2.trans hqle
 
 end QuantumQueryComplexity
 
