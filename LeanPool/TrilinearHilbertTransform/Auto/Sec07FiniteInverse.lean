@@ -213,24 +213,24 @@ theorem graphBohrSet_sub {q : ℕ} [NeZero q] (S : Finset (ZMod q))
     x - y ∈ graphBohrSet S (r + ρ) := by
   simpa only [sub_eq_add_neg] using graphBohrSet_add S hx (graphBohrSet_neg S hy)
 
-/-- Primitive centered-coordinate weight for the independently stated local graph model. -/
-noncomputable def graphBohrWeight {q : ℕ} [NeZero q] (b : ℝ → ℝ)
+/-- Smooth Bohr weight for the local graph model. -/
+noncomputable abbrev graphBohrWeight {q : ℕ} [NeZero q] (b : ℝ → ℝ)
     (S : Finset (ZMod q)) (r : ℝ) (x : ZMod q) : ℝ :=
-  ∏ s ∈ S, b ((AddCircle.equivIco (1 : ℝ) (-(1 / 2))
-    (ZMod.toAddCircle (s * x)) : ℝ) / r)
+  cyclicBohrWeight b S r x
 
 /-- Uniform mass of the smoothed graph Bohr weight. -/
-noncomputable def graphBohrMass {q : ℕ} [NeZero q] (b : ℝ → ℝ)
-    (S : Finset (ZMod q)) (r : ℝ) : ℝ := 𝔼 x, graphBohrWeight b S r x
+noncomputable abbrev graphBohrMass {q : ℕ} [NeZero q] (b : ℝ → ℝ)
+    (S : Finset (ZMod q)) (r : ℝ) : ℝ :=
+  cyclicBohrMass b S r
 
 /-- Graph Bohr weight divided by its uniform mass. -/
-noncomputable def graphBohrMeasure {q : ℕ} [NeZero q] (b : ℝ → ℝ)
+noncomputable abbrev graphBohrMeasure {q : ℕ} [NeZero q] (b : ℝ → ℝ)
     (S : Finset (ZMod q)) (r : ℝ) (x : ZMod q) : ℝ :=
-  graphBohrWeight b S r x / graphBohrMass b S r
+  cyclicBohrMeasure b S r x
 
 /-- Largest character distance among the frequencies in `S`. -/
-noncomputable def graphBohrNorm {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (x : ZMod q) : ℝ :=
-  (S.sup (fun s => ‖ZMod.toAddCircle (s * x)‖₊) : ℝ≥0)
+noncomputable abbrev graphBohrNorm {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (x : ZMod q) : ℝ :=
+  cyclicBohrNorm S x
 
 theorem graphBohrWeight_bounds {q : ℕ} [NeZero q] (b : ℝ → ℝ)
     (hb : ∀ x, 0 ≤ b x) (hb1 : ∀ x, b x ≤ 1)
@@ -305,7 +305,8 @@ theorem graphBohrMeasure_eq_zero_of_notMem {q : ℕ} [NeZero q] (b : ℝ → ℝ
     (hsupp : ∀ x, 1 ≤ |x| → b x = 0) (S : Finset (ZMod q))
     {r : ℝ} (hr : 0 < r) (x : ZMod q) (hx : x ∉ graphBohrSet S r) :
     graphBohrMeasure b S r x = 0 := by
-  rw [graphBohrMeasure, graphBohrWeight_eq_zero_of_notMem b hsupp S hr x hx, zero_div]
+  rw [graphBohrMeasure, cyclicBohrMeasure, cyclicBohrWeight_eq_zero_of_notMem b hsupp S hr x hx,
+    zero_div]
 
 theorem localSymmetryInnerRadius_domain {C r ζ ρ : ℝ} (hC : 0 ≤ C)
     (hr : 0 < r) (hζ : 0 < ζ) (d : ℕ) (hrρ : r ≤ ρ / 100) :
@@ -1092,13 +1093,9 @@ theorem graph_alternating_fourier_decay {q : ℕ} [NeZero q] (b : ℝ → ℝ)
     ‖(2 : ℕ) • graphAlternatingPhase M x z‖ ≤
       max (L : ℝ) 1 * S.card * graphBohrNorm S x / (r * graphBohrMass b S r * τ) := by
   let φ : ZMod q → UnitAddCircle := fun u => -(2 • graphAlternatingPhase M u z)
-  have hsets (s : ℝ) : cyclicBohrSet S s = graphBohrSet S s := by
-    ext u
-    rw [mem_cyclicBohrSet, mem_graphBohrSet]
   have hφ : ∀ u ∈ cyclicBohrSet S (3 * r), ∀ v ∈ cyclicBohrSet S (3 * r),
       u + v ∈ cyclicBohrSet S (3 * r) → φ (u + v) = φ u + φ v := by
     intro u hu v hv huv
-    rw [hsets] at hu hv huv
     have hm := graphBohrSet_mono (Finset.Subset.refl S) hρ
     have hM := hadd u (hm hu) v (hm hv) (hm huv)
     simp only [φ, graphAlternatingPhase_add_left M u v z hM, smul_add, neg_add]
@@ -1112,10 +1109,9 @@ theorem graph_alternating_fourier_decay {q : ℕ} [NeZero q] (b : ℝ → ℝ)
     rw [hp]
     rfl
   have h := cyclicBohrWeight_local_fourier_decay b hLip hb hb1 hbone hsupp S hr hrsmall
-    φ hφ hτ (by rw [he]; exact hcorr) x (by rw [hsets]; exact hx)
+    φ hφ hτ (by rw [he]; exact hcorr) x hx
   change ‖-(2 • graphAlternatingPhase M x z)‖ ≤ _ at h
-  simpa only [norm_neg, cyclicBohrNorm, graphBohrNorm, cyclicBohrMass,
-    graphBohrMass, cyclicBohrWeight, graphBohrWeight, circleCutoff, unitCircleCentered] using h
+  simpa only [norm_neg] using h
 
 /-- Additivity in the second slot of the alternating phase. -/
 lemma graphAlternatingPhase_add_right {q : ℕ} [NeZero q]
@@ -2470,7 +2466,7 @@ theorem graph_bohr_weighted_quadratic_correlation {q : ℕ} [NeZero q]
     intro u _
     apply Finset.expect_congr rfl
     intro t _
-    dsimp [w, β, B, C, A, graphBohrMeasure]
+    dsimp [w, β, B, C, A, graphBohrMeasure, cyclicBohrMeasure]
     ring
   obtain ⟨ξ, hξ⟩ := finite_weighted_trilinear_extract w
     (fun u => (graphBohrWeight_bounds cutoff hb0 hb1 S s u).1)
@@ -4848,7 +4844,7 @@ theorem bohr_initial_derivative_correlation {q : ℕ} [NeZero q]
   refine ⟨x₀, ξ₀, c, hc, ?_⟩
   rw [hdens] at hcl
   convert hcl using 1
-  dsimp [graphBohrMass]
+  dsimp [graphBohrMass, cyclicBohrMass]
   ring
 
 theorem bohr_initial_correlation_log {q : ℕ} [NeZero q]

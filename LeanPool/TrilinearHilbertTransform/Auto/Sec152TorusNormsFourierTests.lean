@@ -3040,6 +3040,12 @@ noncomputable def kerC (κ : LocalKernelClass) (J : ℕ) : ℝ :=
     (2 * 4 * (2 * Real.pi * 4 * (2 * (4 + 3 * 4) * (kernelDerivBound κ 0 +
       ((2 * Real.pi) ^ J)⁻¹ * kernelDerivBound κ J))))
 
+theorem kerC_nonneg' (κ : LocalKernelClass) (J : ℕ) : 0 ≤ kerC κ J := by
+  unfold kerC
+  have := kernelDerivBound_nonneg κ 0
+  have := kernelDerivBound_nonneg κ J
+  positivity
+
 theorem kerC_nonneg (hr : 0 < r) (hw : IsAdmissibleLocalKernel κ a₀ r w) (J : ℕ) :
     0 ≤ kerC κ J := by
   unfold kerC
@@ -4857,11 +4863,8 @@ noncomputable def fourMu (r A B : ℝ) : ℝ :=
 noncomputable def fourNu (r A B : ℝ) : ℝ := max 1 (max (r * |A|) (r * |B|))
 
 /-- The constant `C_J` of `fourK_mu_nu`. -/
-noncomputable def fourKC (κ : LocalKernelClass) (J : ℕ) : ℝ :=
-  2 * (2 * 4 * (2 * 4 * (kernelDerivBound κ 0 +
-    ((2 * Real.pi) ^ J)⁻¹ * kernelDerivBound κ J))) + (3 + 2) ^ J *
-    (2 * 4 * (2 * Real.pi * 4 * (2 * (4 + 3 * 4) * (kernelDerivBound κ 0 +
-      ((2 * Real.pi) ^ J)⁻¹ * kernelDerivBound κ J))))
+noncomputable abbrev fourKC (κ : LocalKernelClass) (J : ℕ) : ℝ :=
+  kerC κ J
 
 theorem fourMu_le_one (r A B : ℝ) : fourMu r A B ≤ 1 := min_le_left _ _
 
@@ -4877,11 +4880,7 @@ theorem fourK_discard {κ : LocalKernelClass} {a₀ r : ℝ} (hr : 0 < r) {w : �
   have h := fourK_mu_nu hr hw J x₀ A B
   change ‖fourK a₀ r w x₀ A B‖ * fourNu r A B ^ J ≤ fourKC κ J * fourMu r A B at h
   have hν := one_le_fourNu r A B
-  have hC : 0 ≤ fourKC κ J := by
-    have := kernelDerivBound_nonneg κ 0
-    have := kernelDerivBound_nonneg κ J
-    unfold fourKC
-    positivity
+  have hC : 0 ≤ fourKC κ J := kerC_nonneg' κ J
   have hνJ : fourNu r A B ≤ fourNu r A B ^ J := le_self_pow₀ hν (by omega)
   have hK0 := norm_nonneg (fourK a₀ r w x₀ A B)
   rcases hd with hd | hd

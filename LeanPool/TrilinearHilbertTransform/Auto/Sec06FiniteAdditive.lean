@@ -1269,14 +1269,13 @@ theorem cyclic_graph_refinement {q : ℕ} [NeZero q]
     (cyclic_graph_cube_no_vertical H H' ξ hsub g hsep hcube)
 
 /-- The cyclic Bohr domain used for the local graph model. -/
-noncomputable def graphBohrSet {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (ρ : ℝ) :
+noncomputable abbrev graphBohrSet {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (ρ : ℝ) :
     Finset (ZMod q) :=
-  Finset.univ.filter (fun u => ∀ s ∈ S, ‖ZMod.toAddCircle (s * u)‖ < ρ)
+  cyclicBohrSet S ρ
 
 theorem mem_graphBohrSet {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (ρ : ℝ) (u : ZMod q) :
-    u ∈ graphBohrSet S ρ ↔ ∀ s ∈ S, ‖ZMod.toAddCircle (s * u)‖ < ρ := by
-  classical
-  simp [graphBohrSet]
+    u ∈ graphBohrSet S ρ ↔ ∀ s ∈ S, ‖ZMod.toAddCircle (s * u)‖ < ρ :=
+  mem_cyclicBohrSet S ρ u
 
 theorem zero_mem_graphBohrSet {q : ℕ} [NeZero q] (S : Finset (ZMod q))
     {ρ : ℝ} (hρ : 0 < ρ) : (0 : ZMod q) ∈ graphBohrSet S ρ := by
@@ -1820,9 +1819,9 @@ noncomputable def derivativeGraphKernel {q : ℕ} (f : ZMod q → ℂ) (x k : ZM
   f (x + k) * conj (f x)
 
 /-- The selected character, extended by zero outside the selected derivative set. -/
-noncomputable def derivativeGraphCharacter {q : ℕ} [NeZero q]
+noncomputable abbrev derivativeGraphCharacter {q : ℕ} [NeZero q]
     (H : Finset (ZMod q)) (ξ : ZMod q → ZMod q) (h k : ZMod q) : ℂ :=
-  if h ∈ H then ZMod.stdAddChar (ξ h * k) else 0
+  graphPhase H ξ h k
 
 /-- The source's positive trilinear correlation quantity. -/
 noncomputable def derivativeGraphCorrelation {q : ℕ} [NeZero q]
@@ -1843,9 +1842,9 @@ theorem derivativeGraphCorrelation_eq {q : ℕ} [NeZero q]
       ((if h ∈ H then ‖finiteFourier (fun x => f (x + h) * conj (f x)) (ξ h)‖ ^ 2
         else 0 : ℝ) : ℂ) := by
     by_cases hh : h ∈ H
-    · simpa only [derivativeGraphCharacter, derivativeGraphKernel, hh, ite_true] using
+    · simpa only [derivativeGraphCharacter, graphPhase, derivativeGraphKernel, hh, ite_true] using
         derivative_correlation_square f h (ξ h)
-    · simp [derivativeGraphCharacter, hh, finiteAverage]
+    · simp [derivativeGraphCharacter, graphPhase, hh, finiteAverage]
   simp only [derivativeGraphCorrelation, hi]
   rw [← uniformMean_complex_eq]
   simp only [uniformMean, Complex.real_smul, Complex.ofReal_mul, Complex.ofReal_inv,

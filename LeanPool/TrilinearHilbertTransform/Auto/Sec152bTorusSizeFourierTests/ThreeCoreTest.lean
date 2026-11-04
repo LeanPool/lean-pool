@@ -988,10 +988,7 @@ theorem fourK_le_fourKC {κ : LocalKernelClass} {a₀ r : ℝ} (hr : 0 < r) {w :
     ‖fourK a₀ r w x₀ A B‖ ≤ fourKC κ 0 := by
   have h := fourK_mu_nu hr hw 0 x₀ A B
   change ‖fourK a₀ r w x₀ A B‖ * fourNu r A B ^ 0 ≤ fourKC κ 0 * fourMu r A B at h
-  have hC : 0 ≤ fourKC κ 0 := by
-    have := kernelDerivBound_nonneg κ 0
-    unfold fourKC
-    positivity
+  have hC : 0 ≤ fourKC κ 0 := kerC_nonneg' κ 0
   rw [pow_zero, mul_one] at h
   exact h.trans (mul_le_of_le_one_right hC (fourMu_le_one r A B))
 
@@ -1451,11 +1448,7 @@ theorem four_core_noref_side {Cj CA CT CK : ℕ} {δs W : ℝ} (hV : D.S.Valid C
     (fun j k => D.c j G (A.blkStart D.S.K I.1) (D.preAt I) k.1 *
       (Real.fourierChar ((D.Ms j G).phase k.1 xs) : ℂ))
   simp only [hnα] at key hsum
-  have hC1 : 0 ≤ fourKC κ' 1 := by
-    have := kernelDerivBound_nonneg κ' 0
-    have := kernelDerivBound_nonneg κ' 1
-    unfold fourKC
-    positivity
+  have hC1 : 0 ≤ fourKC κ' 1 := kerC_nonneg' κ' 1
   refine key.trans (add_le_add le_rfl (mul_le_mul_of_nonneg_left ((le_of_eq hsum).trans ?_)
     (mul_nonneg hC1 (inv_nonneg.mpr hU0.le))))
   simp_rw [norm_mul, Circle.norm_coe, mul_one]
@@ -1713,13 +1706,8 @@ theorem four_core_tuple_bound {Cj CA CT CK : ℕ} {δs W : ℝ} (hV : D.S.Valid 
   have hpow : ∀ k : ℕ, 100 ≤ k → (D.S.Dstar ^ k)⁻¹ ≤ (D.S.Dstar ^ 100)⁻¹ := fun k hk =>
     inv_anti₀ (by positivity) (pow_le_pow_right₀ hD1 hk)
   have hK := localKernelSupBound_nonneg κ'
-  have hC0 : 0 ≤ fourKC κ' 0 := by
-    have := kernelDerivBound_nonneg κ' 0
-    unfold fourKC; positivity
-  have hC1 : 0 ≤ fourKC κ' 1 := by
-    have := kernelDerivBound_nonneg κ' 0
-    have := kernelDerivBound_nonneg κ' 1
-    unfold fourKC; positivity
+  have hC0 : 0 ≤ fourKC κ' 0 := kerC_nonneg' κ' 0
+  have hC1 : 0 ≤ fourKC κ' 1 := kerC_nonneg' κ' 1
   have hnC : 0 ≤ Real.pi * kerC κ' 0 + 2 * (2 * 4 * (2 * 4 * (2 * Real.pi * 4 *
       kernelDerivBound κ' 0))) := by
     have := kerC_nonneg hr hw 0

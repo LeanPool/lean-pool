@@ -1476,11 +1476,8 @@ end ActiveSetup.BasicFamilies.FamParams
 noncomputable def fourBinVal (κ : LocalKernelClass) (J : ℕ) (c : ℝ × ℝ × (Fin 4 → ℝ)) : ℝ :=
   fourKC κ J * (2 * c.1) * (c.2.1 ^ J)⁻¹ * ∏ j, (6 * (2 * c.2.2 j))
 
-theorem fourKC_nonneg (κ : LocalKernelClass) (J : ℕ) : 0 ≤ fourKC κ J := by
-  have := kernelDerivBound_nonneg κ 0
-  have := kernelDerivBound_nonneg κ J
-  unfold fourKC
-  positivity
+theorem fourKC_nonneg (κ : LocalKernelClass) (J : ℕ) : 0 ≤ fourKC κ J :=
+  kerC_nonneg' κ J
 
 namespace ActiveSetup.BasicFamilies.FamParams
 variable {κ' : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ' c₀} {bf : A.BasicFamilies}

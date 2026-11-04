@@ -1087,961 +1087,917 @@ private structure BaseTupleContext where
           (hRtree I hI).left).val I) = stagTuple f g u t I
 
 open scoped Classical in
+private def BaseTupleConclusion
+    (κ : LocalKernelClass)
+    (c₂ : ℕ)
+    (cp : ℕ)
+    (c₁ : ℕ)
+    (c₂a : ℕ)
+    (Ca : ℕ)
+    (Cqa : ℝ)
+    (G : RealDyadicGrid)
+    (J : ℤ × ℤ)
+    (N : ℕ)
+    (w : ℤ × ℤ → ℝ × ℝ → ℂ)
+    (f : Fin 4 → ℝ → ℂ)
+    (g : ℕ → ℤ × ℤ → ℝ → ℂ)
+    (u : ℕ)
+    (t : ℕ)
+    (Mt : ℕ)
+    (η₀ : ℝ)
+    (ε : ℝ)
+    (K₀ : ℕ)
+    (ka : ℕ)
+    (kb : ℕ)
+    (D : ℝ)
+    (Wa : ℕ)
+    (Wb : ℕ)
+    (E : ℝ)
+    (S₀ : ℝ)
+    (Sp : ℝ) : Prop :=
+  ∃ (ι : Type) (_ : Fintype ι) (A : ι → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a)), ∑ p :
+    ι, dyadicGridLength G (A p).R.1 ≤ (91 / 3 : ℝ) * dyadicGridLength G J.1 ∧ (∀ (p p' : ι), ∀
+    I ∈ (A p).cells, I ∈ (A p').cells → p = p') ∧ (∀ (p : ι), (A p).cells ⊆ dyadicFiniteTree G
+    J N ∧ (∀ I ∈ (A p).cells, kernelHull G J N w I) ∧ (∀ I ∈ (A p).cells, ∀ (J' : ℤ × ℤ),
+    dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G J'.1 J'.2 ⊆
+    dyadicGridCell G (A p).R.1 (A p).R.2 → J' ∈ (A p).cells) ∧ (A p).G = G ∧ (A p).w = w ∧ (A
+    p).R ∈ dyadicFiniteTree G J N ∧ (A p).H = max D (max (fitBudget Cqa Ca ka) (fitBudget Cqa
+    Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A p).S = (2 : ℝ) ∧ (A p).η = (4 : ℝ) * η₀ ∧ Fintype.card (A
+    p).L ≤ (6 : ℕ) * Mt + Wa + Wb ∧ (∀ I ∈ (A p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' →
+    PairSmall (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A p).Y I s) ((A
+    p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * S₀) * (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb :
+    ℝ))) + ((1 : ℝ) + Sp) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀ (l : Fin (4 : ℕ)),
+    (eLpNorm ((A p).Y I l) (2 : ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 : ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑
+    I ∈ (A p).cells, dyadicGridLength G I.1 * (eLpNorm ((A p).U l I) (2 : ℝ≥0∞) ((A p).μ
+    I)).toReal ^ (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ ∑ I ∈ (A
+    p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀
+    : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ (A p).HasColumnRep (1 : ℝ) ∧ (A
+    p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))) ∧ ∑ I ∈ dyadicFiniteTree G J N, dyadicGridLength
+    G I.1 * ‖localProgressionForm (dyadicGridLength G I.1) (w I) (stagTuple f g u t I)‖ ≤ ∑ p
+    : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E * ((91 / 3 :
+    ℝ) * dyadicGridLength G J.1)
+
+open scoped Classical in
 private def BaseTupleStage5Statement (context : BaseTupleContext) : Prop := by
-  rcases context with ⟨κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw,
-    f, hfm, hfq, Bf, kk, M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt,
-    η₀, hη₀, hpair, hsz, Bp, ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak,
-    hbi, hbk, hla2, hlb2, hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL,
-    ht4L, hslots⟩
-  exact
-    let H : ℝ :=
-      (baseTupleHeight Wp Hc)
-    let D : ℝ :=
-      (baseTupleComplexityHeight C₁ Bp H)
-    let Wa : ℕ :=
-      (baseTupleWidth Mt Ma D)
-    let Wb : ℕ :=
-      (baseTupleWidth Mt Mb D)
-    let E : ℝ :=
-      (baseTupleErrorBudget κ Mt Bp ε K₀ D Wa Wb)
-    let S₀ : ℝ :=
-      (baseTupleNormalizedSize Mt)
-    let Sp : ℝ :=
-      (baseTupleSeparationScale ε K₀ Wa)
-    let i : Fin (4 : ℕ) :=
-      (baseTuplePosition u)
-    let k : Fin (4 : ℕ) :=
-      (baseTuplePosition t)
-    let la : ℕ :=
-      (baseTupleLastLevel t sa)
-    let lb : ℕ :=
-      (baseTupleLastLevel t sb)
-    let Lset : Finset ℕ :=
-      (baseTupleActiveLevels u t la lb)
-    let Rf : ℤ × ℤ → ℤ × ℤ :=
-      (baseTupleRootMap seg Lset hLne)
-    let Tup : Finset (ℤ × ℤ) :=
-      (baseTupleCells G J N w K₀)
-    let Rs : Finset (ℤ × ℤ) :=
-      (baseTupleRoots Rf Tup)
-    let Y : (ℓ : ℕ) → ℓ ≤ t → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂
-        cp) H :=
-      (baseTupleLowListFamily c₂ cp Wp G J N Bf t H hHl X)
-    let Xi : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleFirstLowList c₂ cp G J N u t hut H Y hu4)
-    let Xk : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleSecondLowList c₂ cp G J N t H Y ht4)
-    let Xga : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleOpponent c₂ cp G J N t H la hla2 Y)
-    let Xgb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleOpponent c₂ cp G J N t H lb hlb2 Y)
-    ∀ (z : ℕ → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
-    let BdR : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℝ :=
-      fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => (2 : ℝ) + (↑(Fintype.card (Xi R
-        hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R
-        hR).Λ) : ℝ)
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z t R hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬t ≤ (4 : ℕ) → IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (t - (4 : ℕ)) R
-        hR)),
-    ∀ (z0 : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) (I : ℤ × ℤ), ∀ᵐ (y : ℝ), z0 R hR I y
-        = (0 : ℂ)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z0 R hR)),
-    let za : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
-      fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ la then z la R hR
-        else z0 R hR
-    let zb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
-      fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ lb then z lb R hR
-        else z0 R hR
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (za R hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (zb R hR)),
-    ∀ (P : (R : ℤ × ℤ) → R ∈ Rs → Finset ((ℤ × ℤ) × ℤ × ℤ)),
-    ∀ (A : (R : ℤ × ℤ) → (hR : R ∈ Rs) → ↥(P R hR) → ActiveSetup κ (max (max c₁ (max c₂ cp))
-        c₂a)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs), ∑ p : ↥(P R hR), dyadicGridLength G (A R hR p).R.1 ≤ (8
-        / 3 : ℝ) * dyadicGridLength G R.1 ∧ (∀ I ∈ {I ∈ Tup | Rf I = R}, ∃ (p : ↥(P R
-        hR)), I ∈ (A R hR p).cells) ∧ (∀ (p p' : ↥(P R hR)), ∀ I ∈ (A R hR p).cells, I ∈
-        (A R hR p').cells → p = p') ∧ ∀ (p : ↥(P R hR)), (A R hR p).cells ⊆ {I ∈ Tup | Rf
-        I = R} ∧ (∀ I ∈ (A R hR p).cells, ∀ J' ∈ {I ∈ Tup | Rf I = R}, dyadicGridCell G
-        I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell
-        G (A R hR p).R.1 (A R hR p).R.2 → J' ∈ (A R hR p).cells) ∧ (A R hR p).G = G ∧ (A R
-        hR p).w = w ∧ (A R hR p).a = sa ∧ (A R hR p).b = sb ∧ (A R hR p).R ∈
-        dyadicFiniteTree G J N ∧ dyadicGridCell G (A R hR p).R.1 (A R hR p).R.2 ⊆
-        dyadicGridCell G R.1 R.2 ∧ (A R hR p).H = max (max H (Real.exp ((↑C₁ : ℝ) * ((1 :
-        ℝ) + Bp + Real.log H) ^ C₁))) (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧
-        (A R hR p).Dc = √ε⁻¹ ∧ (A R hR p).S = (2 : ℝ) ∧ (A R hR p).η = (4 : ℝ) * η₀ ∧
-        Fintype.card (A R hR p).L = Fintype.card (Xi R (hRsT R hR)).Λ + Fintype.card (Xk R
-        (hRsT R hR)).Λ + (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R
-        hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma +
-        Fintype.card (Xga R (hRsT R hR)).Λ) + (Fintype.card (Xi R (hRsT R hR)).Λ *
-        Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp +
-        Real.log H) ^ C₁))⌋₊ + Mb + Fintype.card (Xgb R (hRsT R hR)).Λ) ∧ ∑ I ∈ (A R hR
-        p).cells, dyadicGridLength G I.1 * ‖localProgressionForm (dyadicGridLength G I.1)
-        (w I) (slots4 sa i k (f sa - (Xga R (hRsT R hR)).val I) ((Xi R (hRsT R hR)).val I)
-        ((Xk R (hRsT R hR)).val I) (f sb - (Xgb R (hRsT R hR)).val I)) - (A R hR p).Hf I
-        ((A R hR p).Y I)‖ ≤ baseErr κ (Fintype.card (Xi R (hRsT R hR)).Λ) (Fintype.card
-        (Xk R (hRsT R hR)).Λ) (max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^
-        C₁))) Bp ε K₀ (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R
-        hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma)
-        (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H
-        (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Mb)
-        (fitOpponentConst (M la)) (fitOpponentConst (M lb)) * dyadicGridLength G (A R hR
-        p).R.1 ∧ (∀ I ∈ (A R hR p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A R hR p).Y I s)
-        ((A R hR p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * ((1 : ℝ) + (↑(Fintype.card (Xi R
-        (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card (Xk R (hRsT R hR)).Λ) : ℝ) +
-        (↑(Fintype.card (Xga R (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card (Xgb R (hRsT R
-        hR)).Λ) : ℝ))) * (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb : ℝ))) + ((1 : ℝ) +
-        ((↑(Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H
-        (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma) : ℝ) * √((2 : ℝ)
-        ^ K₀ / ε) + (1 : ℝ))) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A R hR p).cells, ∀ (l :
-        Fin (4 : ℕ)), (eLpNorm ((A R hR p).Y I l) (2 : ℝ≥0∞) ((A R hR p).μ I)).toReal ≤ (2
-        : ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A R hR p).cells, dyadicGridLength G I.1 *
-        (eLpNorm ((A R hR p).U l I) (2 : ℝ≥0∞) ((A R hR p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ :
-        ℝ) ^ (2 : ℕ) * dyadicGridLength G (A R hR p).R.1) ∧ ∑ I ∈ (A R hR p).cells,
-        dyadicGridLength G I.1 * ‖(A R hR p).Hf I ((A R hR p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀
-        * ((↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A R hR p).R.1) ∧ (A R hR
-        p).HasColumnRep (1 : ℝ) ∧ (A R hR p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))),
-    ∀ (_ : ∀ (T : Finset (ℤ × ℤ)), (∀ I ∈ T, I ∈ dyadicFiniteTree G J N) → ∑ R ∈ Finset.image
-        Rf T, dyadicGridLength G R.1 ≤ (8 : ℝ) * dyadicGridLength G J.1),
-    let ιt : Type :=
-      Σ R : Rs, (P R.1 R.2)
-    let A' : ιt → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a) :=
-      fun x => A x.1.1 x.1.2 x.2
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs) (p : ↥(P R hR)), ∀ I ∈ (A R hR p).cells, I ∈
-        dyadicFiniteTree G J N ∧ I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ Rf I = R ∧ kernelHull
-        G J N w I),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hRT : R ∈ dyadicFiniteTree G J N), Fintype.card (Xi R hRT).Λ ≤ (2 :
-        ℕ) * Mt ∧ Fintype.card (Xk R hRT).Λ ≤ (2 : ℕ) * Mt ∧ Fintype.card (Xga R hRT).Λ ≤
-        Mt ∧ Fintype.card (Xgb R hRT).Λ ≤ Mt ∧ Fintype.card (Xi R hRT).Λ * Fintype.card
-        (Xk R hRT).Λ * ⌊D⌋₊ + Ma ≤ Wa ∧ Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R
-        hRT).Λ * ⌊D⌋₊ + Mb ≤ Wb),
-    ∀ (_ : ∑ x : ιt, dyadicGridLength G (A' x).R.1 ≤ (64 / 3 : ℝ) * dyadicGridLength G J.1),
-    let d₀ : ℤ :=
-      J.1 + (↑N : ℤ) + (1 : ℤ) - (↑K₀ : ℤ)
-    let Bot : Finset (ℤ × ℤ) :=
-      {I ∈ dyadicFiniteTree G J N | ¬I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ kernelHull G J N w
-        I}
-    ∀ (_ : Bot = {I ∈ dyadicFiniteTree G J N | ¬I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ kernelHull G
-        J N w I}),
-    ∀ (_ : ∀ I ∈ Bot, I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ I.1 ∧ kernelHull G J N w I),
-    let anc : ℤ × ℤ → ℤ × ℤ :=
-      fun I => if h : d₀ ≤ I.1 then (d₀, Classical.choose (dyadicGridCell_ancestor G h
-        I.2)) else I
-    ∀ (_ : ∀ (I : ℤ × ℤ), d₀ ≤ I.1 → (anc I).1 = d₀ ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell
-        G (anc I).1 (anc I).2),
-    let Rb : ℤ × ℤ → ℤ × ℤ :=
-      fun (I : ℤ × ℤ) => if d₀ ≤ (Rf I).1 then Rf I else anc I
-    ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 → Rb I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ (Rb
-        I).1 ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G (Rb I).1 (Rb I).2 ∧
-        dyadicGridCell G (Rb I).1 (Rb I).2 ⊆ dyadicGridCell G (Rf I).1 (Rf I).2),
-    ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 → ∀ I' ∈ dyadicFiniteTree G J N,
-        dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G I'.1 I'.2 → dyadicGridCell G I'.1 I'.2
-        ⊆ dyadicGridCell G (Rb I).1 (Rb I).2 → Rb I' = Rb I),
-    let Bs : Finset (ℤ × ℤ) :=
-      Finset.image Rb Bot
-    ∀ (_ : ∀ R' ∈ Bs, R' ∈ dyadicFiniteTree G J N ∧ d₀ ≤ R'.1),
-    ∀ (hQ : ∀ R' ∈ Bs, Rf R' ∈ dyadicFiniteTree G J N),
-    ∀ (_ : ∀ R' ∈ Bs, R' ∈ dyadicFiniteTree G (Rf R') (dyadicRemainingDepth J N (Rf R'))),
-    ∀ (_ : ∀ R' ∈ Bs, ∀ I ∈ {I ∈ Bot | Rb I = R'}, I ∈ dyadicFiniteTree G J N ∧ kernelHull G J
-        N w I ∧ Rf I = Rf R' ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R'.1 R'.2 ∧ I.1
-        < R'.1 + (↑K₀ : ℤ)),
-    ∀ (_ : ∀ R' ∈ Bs, ∀ I ∈ {I ∈ Bot | Rb I = R'}, I ∈ dyadicFiniteTree G (Rf R')
-        (dyadicRemainingDepth J N (Rf R')) ∧ kernelHull G (Rf R') (dyadicRemainingDepth J
-        N (Rf R')) w I ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R'.1 R'.2 ∧ I.1 <
-        R'.1 + (↑K₀ : ℤ)),
-    ∀ (_ : ∀ (R' : ℤ × ℤ) (hR' : R' ∈ Bs), ∀ I ∈ {I ∈ Bot | Rb I = R'}, slots4 sa i k (f sa -
-        ((Xga (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I) (((Xi (Rf R') (hQ R'
-        hR')).reroot (hQ R' hR')).val I) (((Xk (Rf R') (hQ R' hR')).reroot (hQ R'
-        hR')).val I) (f sb - ((Xgb (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I) =
-        stagTuple f g u t I),
-    ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t), ℓ ∈ Lset → ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-        ∀ I ∈ dyadicFiniteTree G J N, kernelHull G J N w I → Rf I = R → ∀ᵐ (y : ℝ), y ∈
-        dyadicGridCell G I.1 I.2 → (Y ℓ hℓ R hR).val I y = z ℓ R hR I y),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J N,
-        kernelHull G J N w I → Rf I = R → ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → za R
-        hR I y = (Xga R hR).val I y),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J N,
-        kernelHull G J N w I → Rf I = R → ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → zb R
-        hR I y = (Xgb R hR).val I y),
-    ∀ (_ : ∀ (R' : ℤ × ℤ) (hR' : R' ∈ Bs), ∃ (z₁ : ℤ × ℤ → ℝ → ℂ) (z₂ : ℤ × ℤ → ℝ → ℂ),
-        IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R')) (1 : ℝ) (BdR (Rf R') (hQ R'
-        hR')) (max c₂ cp) H w z₁ ∧ IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R'))
-        (1 : ℝ) (BdR (Rf R') (hQ R' hR')) (max c₂ cp) H w z₂ ∧ ∀ I ∈ {I ∈ Bot | Rb I =
-        R'}, ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → ((Xi (Rf R') (hQ R' hR')).reroot
-        (hQ R' hR')).val I y = z₁ I y - z₂ I y),
-    ∃ (ι : Type) (_ : Fintype ι) (A : ι → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a)),
-      ∑ p : ι, dyadicGridLength G (A p).R.1 ≤ (91 / 3 : ℝ) * dyadicGridLength G J.1 ∧ (∀
-      (p p' : ι), ∀ I ∈ (A p).cells, I ∈ (A p').cells → p = p') ∧ (∀ (p : ι), (A
-      p).cells ⊆ dyadicFiniteTree G J N ∧ (∀ I ∈ (A p).cells, kernelHull G J N w I) ∧ (∀
-      I ∈ (A p).cells, ∀ (J' : ℤ × ℤ), dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G J'.1
-      J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G (A p).R.1 (A p).R.2 → J' ∈ (A
-      p).cells) ∧ (A p).G = G ∧ (A p).w = w ∧ (A p).R ∈ dyadicFiniteTree G J N ∧ (A p).H
-      = max D (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A
-      p).S = (2 : ℝ) ∧ (A p).η = (4 : ℝ) * η₀ ∧ Fintype.card (A p).L ≤ (6 : ℕ) * Mt + Wa
-      + Wb ∧ (∀ I ∈ (A p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
-      (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A p).Y I s) ((A
-      p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * S₀) * (Real.exp (-(↑ka : ℝ)) + Real.exp
-      (-(↑kb : ℝ))) + ((1 : ℝ) + Sp) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀
-      (l : Fin (4 : ℕ)), (eLpNorm ((A p).Y I l) (2 : ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 :
-      ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * (eLpNorm
-      ((A p).U l I) (2 : ℝ≥0∞) ((A p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) *
-      dyadicGridLength G (A p).R.1) ∧ ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A
-      p).Hf I ((A p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ : ℝ) ^ (2 : ℕ) *
-      dyadicGridLength G (A p).R.1) ∧ (A p).HasColumnRep (1 : ℝ) ∧ (A p).SubRootProps η₀
-      ((↑K₀ : ℝ) ^ (2 : ℕ))) ∧ ∑ I ∈ dyadicFiniteTree G J N, dyadicGridLength G I.1 *
-      ‖localProgressionForm (dyadicGridLength G I.1) (w I) (stagTuple f g u t I)‖ ≤ ∑ p
-      : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E *
-      ((91 / 3 : ℝ) * dyadicGridLength G J.1)
+  match context with
+  | {
+      κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw, f, hfm, hfq, Bf, kk,
+      M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt, η₀, hη₀, hpair, hsz, Bp,
+      ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak, hbi, hbk, hla2, hlb2,
+      hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL, ht4L, hslots,
+      ..
+    } =>
+    exact
+      let H : ℝ :=
+        (baseTupleHeight Wp Hc)
+      let D : ℝ :=
+        (baseTupleComplexityHeight C₁ Bp H)
+      let Wa : ℕ :=
+        (baseTupleWidth Mt Ma D)
+      let Wb : ℕ :=
+        (baseTupleWidth Mt Mb D)
+      let E : ℝ :=
+        (baseTupleErrorBudget κ Mt Bp ε K₀ D Wa Wb)
+      let S₀ : ℝ :=
+        (baseTupleNormalizedSize Mt)
+      let Sp : ℝ :=
+        (baseTupleSeparationScale ε K₀ Wa)
+      let i : Fin (4 : ℕ) :=
+        (baseTuplePosition u)
+      let k : Fin (4 : ℕ) :=
+        (baseTuplePosition t)
+      let la : ℕ :=
+        (baseTupleLastLevel t sa)
+      let lb : ℕ :=
+        (baseTupleLastLevel t sb)
+      let Lset : Finset ℕ :=
+        (baseTupleActiveLevels u t la lb)
+      let Rf : ℤ × ℤ → ℤ × ℤ :=
+        (baseTupleRootMap seg Lset hLne)
+      let Tup : Finset (ℤ × ℤ) :=
+        (baseTupleCells G J N w K₀)
+      let Rs : Finset (ℤ × ℤ) :=
+        (baseTupleRoots Rf Tup)
+      let Y : (ℓ : ℕ) → ℓ ≤ t → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂
+          cp) H :=
+        (baseTupleLowListFamily c₂ cp Wp G J N Bf t H hHl X)
+      let Xi : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleFirstLowList c₂ cp G J N u t hut H Y hu4)
+      let Xk : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleSecondLowList c₂ cp G J N t H Y ht4)
+      let Xga : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleOpponent c₂ cp G J N t H la hla2 Y)
+      let Xgb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleOpponent c₂ cp G J N t H lb hlb2 Y)
+      ∀ (z : ℕ → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
+      let BdR : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℝ :=
+        fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => (2 : ℝ) + (↑(Fintype.card (Xi R
+          hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R
+          hR).Λ) : ℝ)
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z t R hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬t ≤ (4 : ℕ) → IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (t - (4 : ℕ)) R
+          hR)),
+      ∀ (z0 : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) (I : ℤ × ℤ), ∀ᵐ (y : ℝ), z0 R hR I y
+          = (0 : ℂ)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z0 R hR)),
+      let za : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
+        fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ la then z la R hR
+          else z0 R hR
+      let zb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
+        fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ lb then z lb R hR
+          else z0 R hR
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (za R hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (zb R hR)),
+      ∀ (P : (R : ℤ × ℤ) → R ∈ Rs → Finset ((ℤ × ℤ) × ℤ × ℤ)),
+      ∀ (A : (R : ℤ × ℤ) → (hR : R ∈ Rs) → ↥(P R hR) → ActiveSetup κ (max (max c₁ (max c₂ cp))
+          c₂a)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs), ∑ p : ↥(P R hR), dyadicGridLength G (A R hR p).R.1 ≤ (8
+          / 3 : ℝ) * dyadicGridLength G R.1 ∧ (∀ I ∈ {I ∈ Tup | Rf I = R}, ∃ (p : ↥(P R
+          hR)), I ∈ (A R hR p).cells) ∧ (∀ (p p' : ↥(P R hR)), ∀ I ∈ (A R hR p).cells, I ∈
+          (A R hR p').cells → p = p') ∧ ∀ (p : ↥(P R hR)), (A R hR p).cells ⊆ {I ∈ Tup | Rf
+          I = R} ∧ (∀ I ∈ (A R hR p).cells, ∀ J' ∈ {I ∈ Tup | Rf I = R}, dyadicGridCell G
+          I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell
+          G (A R hR p).R.1 (A R hR p).R.2 → J' ∈ (A R hR p).cells) ∧ (A R hR p).G = G ∧ (A R
+          hR p).w = w ∧ (A R hR p).a = sa ∧ (A R hR p).b = sb ∧ (A R hR p).R ∈
+          dyadicFiniteTree G J N ∧ dyadicGridCell G (A R hR p).R.1 (A R hR p).R.2 ⊆
+          dyadicGridCell G R.1 R.2 ∧ (A R hR p).H = max (max H (Real.exp ((↑C₁ : ℝ) * ((1 :
+          ℝ) + Bp + Real.log H) ^ C₁))) (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧
+          (A R hR p).Dc = √ε⁻¹ ∧ (A R hR p).S = (2 : ℝ) ∧ (A R hR p).η = (4 : ℝ) * η₀ ∧
+          Fintype.card (A R hR p).L = Fintype.card (Xi R (hRsT R hR)).Λ + Fintype.card (Xk R
+          (hRsT R hR)).Λ + (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R
+          hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma +
+          Fintype.card (Xga R (hRsT R hR)).Λ) + (Fintype.card (Xi R (hRsT R hR)).Λ *
+          Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp +
+          Real.log H) ^ C₁))⌋₊ + Mb + Fintype.card (Xgb R (hRsT R hR)).Λ) ∧ ∑ I ∈ (A R hR
+          p).cells, dyadicGridLength G I.1 * ‖localProgressionForm (dyadicGridLength G I.1)
+          (w I) (slots4 sa i k (f sa - (Xga R (hRsT R hR)).val I) ((Xi R (hRsT R hR)).val I)
+          ((Xk R (hRsT R hR)).val I) (f sb - (Xgb R (hRsT R hR)).val I)) - (A R hR p).Hf I
+          ((A R hR p).Y I)‖ ≤ baseErr κ (Fintype.card (Xi R (hRsT R hR)).Λ) (Fintype.card
+          (Xk R (hRsT R hR)).Λ) (max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^
+          C₁))) Bp ε K₀ (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R
+          hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma)
+          (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H
+          (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Mb)
+          (fitOpponentConst (M la)) (fitOpponentConst (M lb)) * dyadicGridLength G (A R hR
+          p).R.1 ∧ (∀ I ∈ (A R hR p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A R hR p).Y I s)
+          ((A R hR p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * ((1 : ℝ) + (↑(Fintype.card (Xi R
+          (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card (Xk R (hRsT R hR)).Λ) : ℝ) +
+          (↑(Fintype.card (Xga R (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card (Xgb R (hRsT R
+          hR)).Λ) : ℝ))) * (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb : ℝ))) + ((1 : ℝ) +
+          ((↑(Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H
+          (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma) : ℝ) * √((2 : ℝ)
+          ^ K₀ / ε) + (1 : ℝ))) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A R hR p).cells, ∀ (l :
+          Fin (4 : ℕ)), (eLpNorm ((A R hR p).Y I l) (2 : ℝ≥0∞) ((A R hR p).μ I)).toReal ≤ (2
+          : ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A R hR p).cells, dyadicGridLength G I.1 *
+          (eLpNorm ((A R hR p).U l I) (2 : ℝ≥0∞) ((A R hR p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ :
+          ℝ) ^ (2 : ℕ) * dyadicGridLength G (A R hR p).R.1) ∧ ∑ I ∈ (A R hR p).cells,
+          dyadicGridLength G I.1 * ‖(A R hR p).Hf I ((A R hR p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀
+          * ((↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A R hR p).R.1) ∧ (A R hR
+          p).HasColumnRep (1 : ℝ) ∧ (A R hR p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))),
+      ∀ (_ : ∀ (T : Finset (ℤ × ℤ)), (∀ I ∈ T, I ∈ dyadicFiniteTree G J N) → ∑ R ∈ Finset.image
+          Rf T, dyadicGridLength G R.1 ≤ (8 : ℝ) * dyadicGridLength G J.1),
+      let ιt : Type :=
+        Σ R : Rs, (P R.1 R.2)
+      let A' : ιt → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a) :=
+        fun x => A x.1.1 x.1.2 x.2
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs) (p : ↥(P R hR)), ∀ I ∈ (A R hR p).cells, I ∈
+          dyadicFiniteTree G J N ∧ I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ Rf I = R ∧ kernelHull
+          G J N w I),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hRT : R ∈ dyadicFiniteTree G J N), Fintype.card (Xi R hRT).Λ ≤ (2 :
+          ℕ) * Mt ∧ Fintype.card (Xk R hRT).Λ ≤ (2 : ℕ) * Mt ∧ Fintype.card (Xga R hRT).Λ ≤
+          Mt ∧ Fintype.card (Xgb R hRT).Λ ≤ Mt ∧ Fintype.card (Xi R hRT).Λ * Fintype.card
+          (Xk R hRT).Λ * ⌊D⌋₊ + Ma ≤ Wa ∧ Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R
+          hRT).Λ * ⌊D⌋₊ + Mb ≤ Wb),
+      ∀ (_ : ∑ x : ιt, dyadicGridLength G (A' x).R.1 ≤ (64 / 3 : ℝ) * dyadicGridLength G J.1),
+      let d₀ : ℤ :=
+        J.1 + (↑N : ℤ) + (1 : ℤ) - (↑K₀ : ℤ)
+      let Bot : Finset (ℤ × ℤ) :=
+        {I ∈ dyadicFiniteTree G J N | ¬I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ kernelHull G J N w
+          I}
+      ∀ (_ : Bot = {I ∈ dyadicFiniteTree G J N | ¬I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ kernelHull G
+          J N w I}),
+      ∀ (_ : ∀ I ∈ Bot, I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ I.1 ∧ kernelHull G J N w I),
+      let anc : ℤ × ℤ → ℤ × ℤ :=
+        fun I => if h : d₀ ≤ I.1 then (d₀, Classical.choose (dyadicGridCell_ancestor G h
+          I.2)) else I
+      ∀ (_ : ∀ (I : ℤ × ℤ), d₀ ≤ I.1 → (anc I).1 = d₀ ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell
+          G (anc I).1 (anc I).2),
+      let Rb : ℤ × ℤ → ℤ × ℤ :=
+        fun (I : ℤ × ℤ) => if d₀ ≤ (Rf I).1 then Rf I else anc I
+      ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 → Rb I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ (Rb
+          I).1 ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G (Rb I).1 (Rb I).2 ∧
+          dyadicGridCell G (Rb I).1 (Rb I).2 ⊆ dyadicGridCell G (Rf I).1 (Rf I).2),
+      ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 → ∀ I' ∈ dyadicFiniteTree G J N,
+          dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G I'.1 I'.2 → dyadicGridCell G I'.1 I'.2
+          ⊆ dyadicGridCell G (Rb I).1 (Rb I).2 → Rb I' = Rb I),
+      let Bs : Finset (ℤ × ℤ) :=
+        Finset.image Rb Bot
+      ∀ (_ : ∀ R' ∈ Bs, R' ∈ dyadicFiniteTree G J N ∧ d₀ ≤ R'.1),
+      ∀ (hQ : ∀ R' ∈ Bs, Rf R' ∈ dyadicFiniteTree G J N),
+      ∀ (_ : ∀ R' ∈ Bs, R' ∈ dyadicFiniteTree G (Rf R') (dyadicRemainingDepth J N (Rf R'))),
+      ∀ (_ : ∀ R' ∈ Bs, ∀ I ∈ {I ∈ Bot | Rb I = R'}, I ∈ dyadicFiniteTree G J N ∧ kernelHull G J
+          N w I ∧ Rf I = Rf R' ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R'.1 R'.2 ∧ I.1
+          < R'.1 + (↑K₀ : ℤ)),
+      ∀ (_ : ∀ R' ∈ Bs, ∀ I ∈ {I ∈ Bot | Rb I = R'}, I ∈ dyadicFiniteTree G (Rf R')
+          (dyadicRemainingDepth J N (Rf R')) ∧ kernelHull G (Rf R') (dyadicRemainingDepth J
+          N (Rf R')) w I ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R'.1 R'.2 ∧ I.1 <
+          R'.1 + (↑K₀ : ℤ)),
+      ∀ (_ : ∀ (R' : ℤ × ℤ) (hR' : R' ∈ Bs), ∀ I ∈ {I ∈ Bot | Rb I = R'}, slots4 sa i k (f sa -
+          ((Xga (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I) (((Xi (Rf R') (hQ R'
+          hR')).reroot (hQ R' hR')).val I) (((Xk (Rf R') (hQ R' hR')).reroot (hQ R'
+          hR')).val I) (f sb - ((Xgb (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I) =
+          stagTuple f g u t I),
+      ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t), ℓ ∈ Lset → ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+          ∀ I ∈ dyadicFiniteTree G J N, kernelHull G J N w I → Rf I = R → ∀ᵐ (y : ℝ), y ∈
+          dyadicGridCell G I.1 I.2 → (Y ℓ hℓ R hR).val I y = z ℓ R hR I y),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J N,
+          kernelHull G J N w I → Rf I = R → ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → za R
+          hR I y = (Xga R hR).val I y),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J N,
+          kernelHull G J N w I → Rf I = R → ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → zb R
+          hR I y = (Xgb R hR).val I y),
+      ∀ (_ : ∀ (R' : ℤ × ℤ) (hR' : R' ∈ Bs), ∃ (z₁ : ℤ × ℤ → ℝ → ℂ) (z₂ : ℤ × ℤ → ℝ → ℂ),
+          IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R')) (1 : ℝ) (BdR (Rf R') (hQ R'
+          hR')) (max c₂ cp) H w z₁ ∧ IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R'))
+          (1 : ℝ) (BdR (Rf R') (hQ R' hR')) (max c₂ cp) H w z₂ ∧ ∀ I ∈ {I ∈ Bot | Rb I =
+          R'}, ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → ((Xi (Rf R') (hQ R' hR')).reroot
+          (hQ R' hR')).val I y = z₁ I y - z₂ I y),
+      BaseTupleConclusion κ c₂ cp c₁ c₂a Ca Cqa G J N w f g u t Mt η₀ ε K₀ ka kb D Wa Wb E S₀ Sp
 
 open scoped Classical in
 private def BaseTupleStage4Statement (context : BaseTupleContext) : Prop := by
-  rcases context with ⟨κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw,
-    f, hfm, hfq, Bf, kk, M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt,
-    η₀, hη₀, hpair, hsz, Bp, ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak,
-    hbi, hbk, hla2, hlb2, hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL,
-    ht4L, hslots⟩
-  exact
-    let H : ℝ :=
-      (baseTupleHeight Wp Hc)
-    let D : ℝ :=
-      (baseTupleComplexityHeight C₁ Bp H)
-    let Wa : ℕ :=
-      (baseTupleWidth Mt Ma D)
-    let Wb : ℕ :=
-      (baseTupleWidth Mt Mb D)
-    let E : ℝ :=
-      (baseTupleErrorBudget κ Mt Bp ε K₀ D Wa Wb)
-    let S₀ : ℝ :=
-      (baseTupleNormalizedSize Mt)
-    let Sp : ℝ :=
-      (baseTupleSeparationScale ε K₀ Wa)
-    let i : Fin (4 : ℕ) :=
-      (baseTuplePosition u)
-    let k : Fin (4 : ℕ) :=
-      (baseTuplePosition t)
-    let la : ℕ :=
-      (baseTupleLastLevel t sa)
-    let lb : ℕ :=
-      (baseTupleLastLevel t sb)
-    let Lset : Finset ℕ :=
-      (baseTupleActiveLevels u t la lb)
-    let Rf : ℤ × ℤ → ℤ × ℤ :=
-      (baseTupleRootMap seg Lset hLne)
-    let Tup : Finset (ℤ × ℤ) :=
-      (baseTupleCells G J N w K₀)
-    let Rs : Finset (ℤ × ℤ) :=
-      (baseTupleRoots Rf Tup)
-    let Y : (ℓ : ℕ) → ℓ ≤ t → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂
-        cp) H :=
-      (baseTupleLowListFamily c₂ cp Wp G J N Bf t H hHl X)
-    ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈
-        dyadicFiniteTree G J N, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1 R.2 → seg
-        ℓ I = seg ℓ R → kernelHull G J N w I → ∀ (y : ℝ), (Y ℓ hℓ R hR).val I y = g ℓ I y),
-    let Xi : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleFirstLowList c₂ cp G J N u t hut H Y hu4)
-    let Xk : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleSecondLowList c₂ cp G J N t H Y ht4)
-    let Xga : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleOpponent c₂ cp G J N t H la hla2 Y)
-    let Xgb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleOpponent c₂ cp G J N t H lb hlb2 Y)
-    ∀ (_ : u ∈ Lset),
-    ∀ (_ : u - (4 : ℕ) ∈ Lset),
-    ∀ (_ : la ∈ Lset),
-    ∀ (_ : lb ∈ Lset),
-    ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, ∀ ℓ ∈ Lset, seg ℓ I = seg ℓ (Rf I)),
-    ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xga (Rf I)
-        (hRtree I hI).left).val I = if (1 : ℕ) ≤ la then g la I else (0 : ℝ → ℂ)),
-    ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xgb (Rf I)
-        (hRtree I hI).left).val I = if (1 : ℕ) ≤ lb then g lb I else (0 : ℝ → ℂ)),
-    ∀ (z : ℕ → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
-    ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J
-        N, seg ℓ I = seg ℓ R → ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → z ℓ R hR I y = g
-        ℓ I y),
-    let BdR : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℝ :=
-      fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => (2 : ℝ) + (↑(Fintype.card (Xi R
-        hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R
-        hR).Λ) : ℝ)
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z u R hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬u ≤ (4 : ℕ) → IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (u - (4 : ℕ)) R
-        hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z t R hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬t ≤ (4 : ℕ) → IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (t - (4 : ℕ)) R
-        hR)),
-    ∀ (z0 : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) (I : ℤ × ℤ), ∀ᵐ (y : ℝ), z0 R hR I y
-        = (0 : ℂ)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z0 R hR)),
-    let za : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
-      fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ la then z la R hR
-        else z0 R hR
-    let zb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
-      fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ lb then z lb R hR
-        else z0 R hR
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (za R hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (zb R hR)),
-    ∀ (P : (R : ℤ × ℤ) → R ∈ Rs → Finset ((ℤ × ℤ) × ℤ × ℤ)),
-    ∀ (A : (R : ℤ × ℤ) → (hR : R ∈ Rs) → ↥(P R hR) → ActiveSetup κ (max (max c₁ (max c₂ cp))
-        c₂a)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs), ∑ p : ↥(P R hR), dyadicGridLength G (A R hR p).R.1 ≤ (8
-        / 3 : ℝ) * dyadicGridLength G R.1 ∧ (∀ I ∈ {I ∈ Tup | Rf I = R}, ∃ (p : ↥(P R
-        hR)), I ∈ (A R hR p).cells) ∧ (∀ (p p' : ↥(P R hR)), ∀ I ∈ (A R hR p).cells, I ∈
-        (A R hR p').cells → p = p') ∧ ∀ (p : ↥(P R hR)), (A R hR p).cells ⊆ {I ∈ Tup | Rf
-        I = R} ∧ (∀ I ∈ (A R hR p).cells, ∀ J' ∈ {I ∈ Tup | Rf I = R}, dyadicGridCell G
-        I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell
-        G (A R hR p).R.1 (A R hR p).R.2 → J' ∈ (A R hR p).cells) ∧ (A R hR p).G = G ∧ (A R
-        hR p).w = w ∧ (A R hR p).a = sa ∧ (A R hR p).b = sb ∧ (A R hR p).R ∈
-        dyadicFiniteTree G J N ∧ dyadicGridCell G (A R hR p).R.1 (A R hR p).R.2 ⊆
-        dyadicGridCell G R.1 R.2 ∧ (A R hR p).H = max (max H (Real.exp ((↑C₁ : ℝ) * ((1 :
-        ℝ) + Bp + Real.log H) ^ C₁))) (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧
-        (A R hR p).Dc = √ε⁻¹ ∧ (A R hR p).S = (2 : ℝ) ∧ (A R hR p).η = (4 : ℝ) * η₀ ∧
-        Fintype.card (A R hR p).L = Fintype.card (Xi R (hRsT R hR)).Λ + Fintype.card (Xk R
-        (hRsT R hR)).Λ + (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R
-        hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma +
-        Fintype.card (Xga R (hRsT R hR)).Λ) + (Fintype.card (Xi R (hRsT R hR)).Λ *
-        Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp +
-        Real.log H) ^ C₁))⌋₊ + Mb + Fintype.card (Xgb R (hRsT R hR)).Λ) ∧ ∑ I ∈ (A R hR
-        p).cells, dyadicGridLength G I.1 * ‖localProgressionForm (dyadicGridLength G I.1)
-        (w I) (slots4 sa i k (f sa - (Xga R (hRsT R hR)).val I) ((Xi R (hRsT R hR)).val I)
-        ((Xk R (hRsT R hR)).val I) (f sb - (Xgb R (hRsT R hR)).val I)) - (A R hR p).Hf I
-        ((A R hR p).Y I)‖ ≤ baseErr κ (Fintype.card (Xi R (hRsT R hR)).Λ) (Fintype.card
-        (Xk R (hRsT R hR)).Λ) (max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^
-        C₁))) Bp ε K₀ (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R
-        hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma)
-        (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H
-        (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Mb)
-        (fitOpponentConst (M la)) (fitOpponentConst (M lb)) * dyadicGridLength G (A R hR
-        p).R.1 ∧ (∀ I ∈ (A R hR p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A R hR p).Y I s)
-        ((A R hR p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * ((1 : ℝ) + (↑(Fintype.card (Xi R
-        (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card (Xk R (hRsT R hR)).Λ) : ℝ) +
-        (↑(Fintype.card (Xga R (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card (Xgb R (hRsT R
-        hR)).Λ) : ℝ))) * (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb : ℝ))) + ((1 : ℝ) +
-        ((↑(Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H
-        (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma) : ℝ) * √((2 : ℝ)
-        ^ K₀ / ε) + (1 : ℝ))) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A R hR p).cells, ∀ (l :
-        Fin (4 : ℕ)), (eLpNorm ((A R hR p).Y I l) (2 : ℝ≥0∞) ((A R hR p).μ I)).toReal ≤ (2
-        : ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A R hR p).cells, dyadicGridLength G I.1 *
-        (eLpNorm ((A R hR p).U l I) (2 : ℝ≥0∞) ((A R hR p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ :
-        ℝ) ^ (2 : ℕ) * dyadicGridLength G (A R hR p).R.1) ∧ ∑ I ∈ (A R hR p).cells,
-        dyadicGridLength G I.1 * ‖(A R hR p).Hf I ((A R hR p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀
-        * ((↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A R hR p).R.1) ∧ (A R hR
-        p).HasColumnRep (1 : ℝ) ∧ (A R hR p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))),
-    ∀ (_ : ∀ (T : Finset (ℤ × ℤ)), (∀ I ∈ T, I ∈ dyadicFiniteTree G J N) → ∑ R ∈ Finset.image
-        Rf T, dyadicGridLength G R.1 ≤ (8 : ℝ) * dyadicGridLength G J.1),
-    let ιt : Type :=
-      Σ R : Rs, (P R.1 R.2)
-    let A' : ιt → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a) :=
-      fun x => A x.1.1 x.1.2 x.2
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs) (p : ↥(P R hR)), ∀ I ∈ (A R hR p).cells, I ∈
-        dyadicFiniteTree G J N ∧ I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ Rf I = R ∧ kernelHull
-        G J N w I),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hRT : R ∈ dyadicFiniteTree G J N), Fintype.card (Xi R hRT).Λ ≤ (2 :
-        ℕ) * Mt ∧ Fintype.card (Xk R hRT).Λ ≤ (2 : ℕ) * Mt ∧ Fintype.card (Xga R hRT).Λ ≤
-        Mt ∧ Fintype.card (Xgb R hRT).Λ ≤ Mt ∧ Fintype.card (Xi R hRT).Λ * Fintype.card
-        (Xk R hRT).Λ * ⌊D⌋₊ + Ma ≤ Wa ∧ Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R
-        hRT).Λ * ⌊D⌋₊ + Mb ≤ Wb),
-    ∀ (_ : ∑ x : ιt, dyadicGridLength G (A' x).R.1 ≤ (64 / 3 : ℝ) * dyadicGridLength G J.1),
-    let d₀ : ℤ :=
-      J.1 + (↑N : ℤ) + (1 : ℤ) - (↑K₀ : ℤ)
-    let Bot : Finset (ℤ × ℤ) :=
-      {I ∈ dyadicFiniteTree G J N | ¬I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ kernelHull G J N w
-        I}
-    ∀ (_ : Bot = {I ∈ dyadicFiniteTree G J N | ¬I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ kernelHull G
-        J N w I}),
-    ∀ (_ : ∀ I ∈ Bot, I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ I.1 ∧ kernelHull G J N w I),
-    let anc : ℤ × ℤ → ℤ × ℤ :=
-      fun I => if h : d₀ ≤ I.1 then (d₀, Classical.choose (dyadicGridCell_ancestor G h
-        I.2)) else I
-    ∀ (_ : ∀ (I : ℤ × ℤ), d₀ ≤ I.1 → (anc I).1 = d₀ ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell
-        G (anc I).1 (anc I).2),
-    let Rb : ℤ × ℤ → ℤ × ℤ :=
-      fun (I : ℤ × ℤ) => if d₀ ≤ (Rf I).1 then Rf I else anc I
-    ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 → Rb I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ (Rb
-        I).1 ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G (Rb I).1 (Rb I).2 ∧
-        dyadicGridCell G (Rb I).1 (Rb I).2 ⊆ dyadicGridCell G (Rf I).1 (Rf I).2),
-    ∃ (ι : Type) (_ : Fintype ι) (A : ι → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a)),
-      ∑ p : ι, dyadicGridLength G (A p).R.1 ≤ (91 / 3 : ℝ) * dyadicGridLength G J.1 ∧ (∀
-      (p p' : ι), ∀ I ∈ (A p).cells, I ∈ (A p').cells → p = p') ∧ (∀ (p : ι), (A
-      p).cells ⊆ dyadicFiniteTree G J N ∧ (∀ I ∈ (A p).cells, kernelHull G J N w I) ∧ (∀
-      I ∈ (A p).cells, ∀ (J' : ℤ × ℤ), dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G J'.1
-      J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G (A p).R.1 (A p).R.2 → J' ∈ (A
-      p).cells) ∧ (A p).G = G ∧ (A p).w = w ∧ (A p).R ∈ dyadicFiniteTree G J N ∧ (A p).H
-      = max D (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A
-      p).S = (2 : ℝ) ∧ (A p).η = (4 : ℝ) * η₀ ∧ Fintype.card (A p).L ≤ (6 : ℕ) * Mt + Wa
-      + Wb ∧ (∀ I ∈ (A p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
-      (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A p).Y I s) ((A
-      p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * S₀) * (Real.exp (-(↑ka : ℝ)) + Real.exp
-      (-(↑kb : ℝ))) + ((1 : ℝ) + Sp) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀
-      (l : Fin (4 : ℕ)), (eLpNorm ((A p).Y I l) (2 : ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 :
-      ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * (eLpNorm
-      ((A p).U l I) (2 : ℝ≥0∞) ((A p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) *
-      dyadicGridLength G (A p).R.1) ∧ ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A
-      p).Hf I ((A p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ : ℝ) ^ (2 : ℕ) *
-      dyadicGridLength G (A p).R.1) ∧ (A p).HasColumnRep (1 : ℝ) ∧ (A p).SubRootProps η₀
-      ((↑K₀ : ℝ) ^ (2 : ℕ))) ∧ ∑ I ∈ dyadicFiniteTree G J N, dyadicGridLength G I.1 *
-      ‖localProgressionForm (dyadicGridLength G I.1) (w I) (stagTuple f g u t I)‖ ≤ ∑ p
-      : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E *
-      ((91 / 3 : ℝ) * dyadicGridLength G J.1)
+  match context with
+  | {
+      κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw, f, hfm, hfq, Bf, kk,
+      M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt, η₀, hη₀, hpair, hsz, Bp,
+      ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak, hbi, hbk, hla2, hlb2,
+      hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL, ht4L, hslots,
+      ..
+    } =>
+    exact
+      let H : ℝ :=
+        (baseTupleHeight Wp Hc)
+      let D : ℝ :=
+        (baseTupleComplexityHeight C₁ Bp H)
+      let Wa : ℕ :=
+        (baseTupleWidth Mt Ma D)
+      let Wb : ℕ :=
+        (baseTupleWidth Mt Mb D)
+      let E : ℝ :=
+        (baseTupleErrorBudget κ Mt Bp ε K₀ D Wa Wb)
+      let S₀ : ℝ :=
+        (baseTupleNormalizedSize Mt)
+      let Sp : ℝ :=
+        (baseTupleSeparationScale ε K₀ Wa)
+      let i : Fin (4 : ℕ) :=
+        (baseTuplePosition u)
+      let k : Fin (4 : ℕ) :=
+        (baseTuplePosition t)
+      let la : ℕ :=
+        (baseTupleLastLevel t sa)
+      let lb : ℕ :=
+        (baseTupleLastLevel t sb)
+      let Lset : Finset ℕ :=
+        (baseTupleActiveLevels u t la lb)
+      let Rf : ℤ × ℤ → ℤ × ℤ :=
+        (baseTupleRootMap seg Lset hLne)
+      let Tup : Finset (ℤ × ℤ) :=
+        (baseTupleCells G J N w K₀)
+      let Rs : Finset (ℤ × ℤ) :=
+        (baseTupleRoots Rf Tup)
+      let Y : (ℓ : ℕ) → ℓ ≤ t → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂
+          cp) H :=
+        (baseTupleLowListFamily c₂ cp Wp G J N Bf t H hHl X)
+      ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈
+          dyadicFiniteTree G J N, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1 R.2 → seg
+          ℓ I = seg ℓ R → kernelHull G J N w I → ∀ (y : ℝ), (Y ℓ hℓ R hR).val I y = g ℓ I y),
+      let Xi : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleFirstLowList c₂ cp G J N u t hut H Y hu4)
+      let Xk : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleSecondLowList c₂ cp G J N t H Y ht4)
+      let Xga : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleOpponent c₂ cp G J N t H la hla2 Y)
+      let Xgb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleOpponent c₂ cp G J N t H lb hlb2 Y)
+      ∀ (_ : u ∈ Lset),
+      ∀ (_ : u - (4 : ℕ) ∈ Lset),
+      ∀ (_ : la ∈ Lset),
+      ∀ (_ : lb ∈ Lset),
+      ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, ∀ ℓ ∈ Lset, seg ℓ I = seg ℓ (Rf I)),
+      ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xga (Rf I)
+          (hRtree I hI).left).val I = if (1 : ℕ) ≤ la then g la I else (0 : ℝ → ℂ)),
+      ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xgb (Rf I)
+          (hRtree I hI).left).val I = if (1 : ℕ) ≤ lb then g lb I else (0 : ℝ → ℂ)),
+      ∀ (z : ℕ → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
+      ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J
+          N, seg ℓ I = seg ℓ R → ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → z ℓ R hR I y = g
+          ℓ I y),
+      let BdR : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℝ :=
+        fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => (2 : ℝ) + (↑(Fintype.card (Xi R
+          hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R
+          hR).Λ) : ℝ)
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z u R hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬u ≤ (4 : ℕ) → IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (u - (4 : ℕ)) R
+          hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z t R hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬t ≤ (4 : ℕ) → IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (t - (4 : ℕ)) R
+          hR)),
+      ∀ (z0 : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) (I : ℤ × ℤ), ∀ᵐ (y : ℝ), z0 R hR I y
+          = (0 : ℂ)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z0 R hR)),
+      let za : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
+        fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ la then z la R hR
+          else z0 R hR
+      let zb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
+        fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ lb then z lb R hR
+          else z0 R hR
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (za R hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (zb R hR)),
+      ∀ (P : (R : ℤ × ℤ) → R ∈ Rs → Finset ((ℤ × ℤ) × ℤ × ℤ)),
+      ∀ (A : (R : ℤ × ℤ) → (hR : R ∈ Rs) → ↥(P R hR) → ActiveSetup κ (max (max c₁ (max c₂ cp))
+          c₂a)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs), ∑ p : ↥(P R hR), dyadicGridLength G (A R hR p).R.1 ≤ (8
+          / 3 : ℝ) * dyadicGridLength G R.1 ∧ (∀ I ∈ {I ∈ Tup | Rf I = R}, ∃ (p : ↥(P R
+          hR)), I ∈ (A R hR p).cells) ∧ (∀ (p p' : ↥(P R hR)), ∀ I ∈ (A R hR p).cells, I ∈
+          (A R hR p').cells → p = p') ∧ ∀ (p : ↥(P R hR)), (A R hR p).cells ⊆ {I ∈ Tup | Rf
+          I = R} ∧ (∀ I ∈ (A R hR p).cells, ∀ J' ∈ {I ∈ Tup | Rf I = R}, dyadicGridCell G
+          I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell
+          G (A R hR p).R.1 (A R hR p).R.2 → J' ∈ (A R hR p).cells) ∧ (A R hR p).G = G ∧ (A R
+          hR p).w = w ∧ (A R hR p).a = sa ∧ (A R hR p).b = sb ∧ (A R hR p).R ∈
+          dyadicFiniteTree G J N ∧ dyadicGridCell G (A R hR p).R.1 (A R hR p).R.2 ⊆
+          dyadicGridCell G R.1 R.2 ∧ (A R hR p).H = max (max H (Real.exp ((↑C₁ : ℝ) * ((1 :
+          ℝ) + Bp + Real.log H) ^ C₁))) (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧
+          (A R hR p).Dc = √ε⁻¹ ∧ (A R hR p).S = (2 : ℝ) ∧ (A R hR p).η = (4 : ℝ) * η₀ ∧
+          Fintype.card (A R hR p).L = Fintype.card (Xi R (hRsT R hR)).Λ + Fintype.card (Xk R
+          (hRsT R hR)).Λ + (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R
+          hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma +
+          Fintype.card (Xga R (hRsT R hR)).Λ) + (Fintype.card (Xi R (hRsT R hR)).Λ *
+          Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp +
+          Real.log H) ^ C₁))⌋₊ + Mb + Fintype.card (Xgb R (hRsT R hR)).Λ) ∧ ∑ I ∈ (A R hR
+          p).cells, dyadicGridLength G I.1 * ‖localProgressionForm (dyadicGridLength G I.1)
+          (w I) (slots4 sa i k (f sa - (Xga R (hRsT R hR)).val I) ((Xi R (hRsT R hR)).val I)
+          ((Xk R (hRsT R hR)).val I) (f sb - (Xgb R (hRsT R hR)).val I)) - (A R hR p).Hf I
+          ((A R hR p).Y I)‖ ≤ baseErr κ (Fintype.card (Xi R (hRsT R hR)).Λ) (Fintype.card
+          (Xk R (hRsT R hR)).Λ) (max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^
+          C₁))) Bp ε K₀ (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R
+          hR)).Λ * ⌊max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma)
+          (Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H
+          (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Mb)
+          (fitOpponentConst (M la)) (fitOpponentConst (M lb)) * dyadicGridLength G (A R hR
+          p).R.1 ∧ (∀ I ∈ (A R hR p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A R hR p).Y I s)
+          ((A R hR p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * ((1 : ℝ) + (↑(Fintype.card (Xi R
+          (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card (Xk R (hRsT R hR)).Λ) : ℝ) +
+          (↑(Fintype.card (Xga R (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card (Xgb R (hRsT R
+          hR)).Λ) : ℝ))) * (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb : ℝ))) + ((1 : ℝ) +
+          ((↑(Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ * ⌊max H
+          (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁))⌋₊ + Ma) : ℝ) * √((2 : ℝ)
+          ^ K₀ / ε) + (1 : ℝ))) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A R hR p).cells, ∀ (l :
+          Fin (4 : ℕ)), (eLpNorm ((A R hR p).Y I l) (2 : ℝ≥0∞) ((A R hR p).μ I)).toReal ≤ (2
+          : ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A R hR p).cells, dyadicGridLength G I.1 *
+          (eLpNorm ((A R hR p).U l I) (2 : ℝ≥0∞) ((A R hR p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ :
+          ℝ) ^ (2 : ℕ) * dyadicGridLength G (A R hR p).R.1) ∧ ∑ I ∈ (A R hR p).cells,
+          dyadicGridLength G I.1 * ‖(A R hR p).Hf I ((A R hR p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀
+          * ((↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A R hR p).R.1) ∧ (A R hR
+          p).HasColumnRep (1 : ℝ) ∧ (A R hR p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))),
+      ∀ (_ : ∀ (T : Finset (ℤ × ℤ)), (∀ I ∈ T, I ∈ dyadicFiniteTree G J N) → ∑ R ∈ Finset.image
+          Rf T, dyadicGridLength G R.1 ≤ (8 : ℝ) * dyadicGridLength G J.1),
+      let ιt : Type :=
+        Σ R : Rs, (P R.1 R.2)
+      let A' : ιt → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a) :=
+        fun x => A x.1.1 x.1.2 x.2
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs) (p : ↥(P R hR)), ∀ I ∈ (A R hR p).cells, I ∈
+          dyadicFiniteTree G J N ∧ I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ Rf I = R ∧ kernelHull
+          G J N w I),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hRT : R ∈ dyadicFiniteTree G J N), Fintype.card (Xi R hRT).Λ ≤ (2 :
+          ℕ) * Mt ∧ Fintype.card (Xk R hRT).Λ ≤ (2 : ℕ) * Mt ∧ Fintype.card (Xga R hRT).Λ ≤
+          Mt ∧ Fintype.card (Xgb R hRT).Λ ≤ Mt ∧ Fintype.card (Xi R hRT).Λ * Fintype.card
+          (Xk R hRT).Λ * ⌊D⌋₊ + Ma ≤ Wa ∧ Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R
+          hRT).Λ * ⌊D⌋₊ + Mb ≤ Wb),
+      ∀ (_ : ∑ x : ιt, dyadicGridLength G (A' x).R.1 ≤ (64 / 3 : ℝ) * dyadicGridLength G J.1),
+      let d₀ : ℤ :=
+        J.1 + (↑N : ℤ) + (1 : ℤ) - (↑K₀ : ℤ)
+      let Bot : Finset (ℤ × ℤ) :=
+        {I ∈ dyadicFiniteTree G J N | ¬I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ kernelHull G J N w
+          I}
+      ∀ (_ : Bot = {I ∈ dyadicFiniteTree G J N | ¬I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ kernelHull G
+          J N w I}),
+      ∀ (_ : ∀ I ∈ Bot, I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ I.1 ∧ kernelHull G J N w I),
+      let anc : ℤ × ℤ → ℤ × ℤ :=
+        fun I => if h : d₀ ≤ I.1 then (d₀, Classical.choose (dyadicGridCell_ancestor G h
+          I.2)) else I
+      ∀ (_ : ∀ (I : ℤ × ℤ), d₀ ≤ I.1 → (anc I).1 = d₀ ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell
+          G (anc I).1 (anc I).2),
+      let Rb : ℤ × ℤ → ℤ × ℤ :=
+        fun (I : ℤ × ℤ) => if d₀ ≤ (Rf I).1 then Rf I else anc I
+      ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 → Rb I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ (Rb
+          I).1 ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G (Rb I).1 (Rb I).2 ∧
+          dyadicGridCell G (Rb I).1 (Rb I).2 ⊆ dyadicGridCell G (Rf I).1 (Rf I).2),
+      BaseTupleConclusion κ c₂ cp c₁ c₂a Ca Cqa G J N w f g u t Mt η₀ ε K₀ ka kb D Wa Wb E S₀ Sp
 
 open scoped Classical in
 private def BaseTupleStage3Statement (context : BaseTupleContext) : Prop := by
-  rcases context with ⟨κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw,
-    f, hfm, hfq, Bf, kk, M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt,
-    η₀, hη₀, hpair, hsz, Bp, ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak,
-    hbi, hbk, hla2, hlb2, hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL,
-    ht4L, hslots⟩
-  exact
-    let H : ℝ :=
-      (baseTupleHeight Wp Hc)
-    let D : ℝ :=
-      (baseTupleComplexityHeight C₁ Bp H)
-    let Wa : ℕ :=
-      (baseTupleWidth Mt Ma D)
-    let Wb : ℕ :=
-      (baseTupleWidth Mt Mb D)
-    let E : ℝ :=
-      (baseTupleErrorBudget κ Mt Bp ε K₀ D Wa Wb)
-    let S₀ : ℝ :=
-      (baseTupleNormalizedSize Mt)
-    let Sp : ℝ :=
-      (baseTupleSeparationScale ε K₀ Wa)
-    let i : Fin (4 : ℕ) :=
-      (baseTuplePosition u)
-    let k : Fin (4 : ℕ) :=
-      (baseTuplePosition t)
-    let la : ℕ :=
-      (baseTupleLastLevel t sa)
-    let lb : ℕ :=
-      (baseTupleLastLevel t sb)
-    let Lset : Finset ℕ :=
-      (baseTupleActiveLevels u t la lb)
-    ∀ (_ : Lset = {u, u - (4 : ℕ), t, t - (4 : ℕ), la, lb}),
-    let Rf : ℤ × ℤ → ℤ × ℤ :=
-      (baseTupleRootMap seg Lset hLne)
-    let Tup : Finset (ℤ × ℤ) :=
-      (baseTupleCells G J N w K₀)
-    let Rs : Finset (ℤ × ℤ) :=
-      (baseTupleRoots Rf Tup)
-    let Y : (ℓ : ℕ) → ℓ ≤ t → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂
-        cp) H :=
-      (baseTupleLowListFamily c₂ cp Wp G J N Bf t H hHl X)
-    ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈
-        dyadicFiniteTree G J N, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1 R.2 → seg
-        ℓ I = seg ℓ R → kernelHull G J N w I → ∀ (y : ℝ), (Y ℓ hℓ R hR).val I y = g ℓ I y),
-    ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), Fintype.card
-        (Y ℓ hℓ R hR).Λ = M ℓ),
-    let Xi : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleFirstLowList c₂ cp G J N u t hut H Y hu4)
-    let Xk : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleSecondLowList c₂ cp G J N t H Y ht4)
-    let Xga : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleOpponent c₂ cp G J N t H la hla2 Y)
-    let Xgb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleOpponent c₂ cp G J N t H lb hlb2 Y)
-    ∀ (_ : u ∈ Lset),
-    ∀ (_ : u - (4 : ℕ) ∈ Lset),
-    ∀ (_ : la ∈ Lset),
-    ∀ (_ : lb ∈ Lset),
-    ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, ∀ ℓ ∈ Lset, seg ℓ I = seg ℓ (Rf I)),
-    ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xga (Rf I)
-        (hRtree I hI).left).val I = if (1 : ℕ) ≤ la then g la I else (0 : ℝ → ℂ)),
-    ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xgb (Rf I)
-        (hRtree I hI).left).val I = if (1 : ℕ) ≤ lb then g lb I else (0 : ℝ → ℂ)),
-    ∀ (z : ℕ → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
-    ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J
-        N, seg ℓ I = seg ℓ R → ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → z ℓ R hR I y = g
-        ℓ I y),
-    let BdR : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℝ :=
-      fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => (2 : ℝ) + (↑(Fintype.card (Xi R
-        hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R
-        hR).Λ) : ℝ)
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z u R hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬u ≤ (4 : ℕ) → IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (u - (4 : ℕ)) R
-        hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z t R hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬t ≤ (4 : ℕ) → IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (t - (4 : ℕ)) R
-        hR)),
-    ∀ (z0 : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) (I : ℤ × ℤ), ∀ᵐ (y : ℝ), z0 R hR I y
-        = (0 : ℂ)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z0 R hR)),
-    let za : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
-      fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ la then z la R hR
-        else z0 R hR
-    let zb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
-      fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ lb then z lb R hR
-        else z0 R hR
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (za R hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (zb R hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs),
-      have D := max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁));
-      have Wa := Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ *
-        ⌊D⌋₊ + Ma;
-      have Wb := Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ *
-        ⌊D⌋₊ + Mb;
-      have S₀ := (1 : ℝ) + (↑(Fintype.card (Xi R (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card
-        (Xk R (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card (Xga R (hRsT R hR)).Λ) : ℝ) +
-        (↑(Fintype.card (Xgb R (hRsT R hR)).Λ) : ℝ);
-      have Sp := (↑Wa : ℝ) * √((2 : ℝ) ^ K₀ / ε) + (1 : ℝ);
-      ∃ (P : Finset ((ℤ × ℤ) × ℤ × ℤ)) (A : ↥P → ActiveSetup κ (max (max c₁ (max c₂ cp))
-        c₂a)), ∑ p : ↥P, dyadicGridLength G (A p).R.1 ≤ (8 / 3 : ℝ) * dyadicGridLength G
-        R.1 ∧ (∀ I ∈ {I ∈ Tup | Rf I = R}, ∃ (p : ↥P), I ∈ (A p).cells) ∧ (∀ (p p' : ↥P),
-        ∀ I ∈ (A p).cells, I ∈ (A p').cells → p = p') ∧ ∀ (p : ↥P), (A p).cells ⊆ {I ∈ Tup
-        | Rf I = R} ∧ (∀ I ∈ (A p).cells, ∀ J' ∈ {I ∈ Tup | Rf I = R}, dyadicGridCell G
-        I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell
-        G (A p).R.1 (A p).R.2 → J' ∈ (A p).cells) ∧ (A p).G = G ∧ (A p).w = w ∧ (A p).a =
-        sa ∧ (A p).b = sb ∧ (A p).R ∈ dyadicFiniteTree G J N ∧ dyadicGridCell G (A p).R.1
-        (A p).R.2 ⊆ dyadicGridCell G R.1 R.2 ∧ (A p).H = max D (max (fitBudget Cqa Ca ka)
-        (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A p).S = (2 : ℝ) ∧ (A p).η = (4 : ℝ) *
-        η₀ ∧ Fintype.card (A p).L = Fintype.card (Xi R (hRsT R hR)).Λ + Fintype.card (Xk R
-        (hRsT R hR)).Λ + (Wa + Fintype.card (Xga R (hRsT R hR)).Λ) + (Wb + Fintype.card
-        (Xgb R (hRsT R hR)).Λ) ∧ ∑ I ∈ (A p).cells, dyadicGridLength G I.1 *
-        ‖localProgressionForm (dyadicGridLength G I.1) (w I) (slots4 sa i k (f sa - (Xga R
-        (hRsT R hR)).val I) ((Xi R (hRsT R hR)).val I) ((Xk R (hRsT R hR)).val I) (f sb -
-        (Xgb R (hRsT R hR)).val I)) - (A p).Hf I ((A p).Y I)‖ ≤ baseErr κ (Fintype.card
-        (Xi R (hRsT R hR)).Λ) (Fintype.card (Xk R (hRsT R hR)).Λ) D Bp ε K₀ Wa Wb
-        (fitOpponentConst (M la)) (fitOpponentConst (M lb)) * dyadicGridLength G (A p).R.1
-        ∧ (∀ I ∈ (A p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft G
-        I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A p).Y I s) ((A p).Y I s') (η₀ +
-        ((2 : ℝ) + (2 : ℝ) * S₀) * (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb : ℝ))) + ((1 :
-        ℝ) + Sp) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀ (l : Fin (4 : ℕ)),
-        (eLpNorm ((A p).Y I l) (2 : ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 : ℝ)) ∧ (∀ (l : Fin (4
-        : ℕ)), ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * (eLpNorm ((A p).U l I) (2 :
-        ℝ≥0∞) ((A p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A
-        p).R.1) ∧ ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).z (3 :
-        Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ (A
-        p).HasColumnRep (1 : ℝ) ∧ (A p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))),
-    ∃ (ι : Type) (_ : Fintype ι) (A : ι → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a)),
-      ∑ p : ι, dyadicGridLength G (A p).R.1 ≤ (91 / 3 : ℝ) * dyadicGridLength G J.1 ∧ (∀
-      (p p' : ι), ∀ I ∈ (A p).cells, I ∈ (A p').cells → p = p') ∧ (∀ (p : ι), (A
-      p).cells ⊆ dyadicFiniteTree G J N ∧ (∀ I ∈ (A p).cells, kernelHull G J N w I) ∧ (∀
-      I ∈ (A p).cells, ∀ (J' : ℤ × ℤ), dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G J'.1
-      J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G (A p).R.1 (A p).R.2 → J' ∈ (A
-      p).cells) ∧ (A p).G = G ∧ (A p).w = w ∧ (A p).R ∈ dyadicFiniteTree G J N ∧ (A p).H
-      = max D (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A
-      p).S = (2 : ℝ) ∧ (A p).η = (4 : ℝ) * η₀ ∧ Fintype.card (A p).L ≤ (6 : ℕ) * Mt + Wa
-      + Wb ∧ (∀ I ∈ (A p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
-      (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A p).Y I s) ((A
-      p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * S₀) * (Real.exp (-(↑ka : ℝ)) + Real.exp
-      (-(↑kb : ℝ))) + ((1 : ℝ) + Sp) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀
-      (l : Fin (4 : ℕ)), (eLpNorm ((A p).Y I l) (2 : ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 :
-      ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * (eLpNorm
-      ((A p).U l I) (2 : ℝ≥0∞) ((A p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) *
-      dyadicGridLength G (A p).R.1) ∧ ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A
-      p).Hf I ((A p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ : ℝ) ^ (2 : ℕ) *
-      dyadicGridLength G (A p).R.1) ∧ (A p).HasColumnRep (1 : ℝ) ∧ (A p).SubRootProps η₀
-      ((↑K₀ : ℝ) ^ (2 : ℕ))) ∧ ∑ I ∈ dyadicFiniteTree G J N, dyadicGridLength G I.1 *
-      ‖localProgressionForm (dyadicGridLength G I.1) (w I) (stagTuple f g u t I)‖ ≤ ∑ p
-      : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E *
-      ((91 / 3 : ℝ) * dyadicGridLength G J.1)
+  match context with
+  | {
+      κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw, f, hfm, hfq, Bf, kk,
+      M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt, η₀, hη₀, hpair, hsz, Bp,
+      ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak, hbi, hbk, hla2, hlb2,
+      hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL, ht4L, hslots,
+      ..
+    } =>
+    exact
+      let H : ℝ :=
+        (baseTupleHeight Wp Hc)
+      let D : ℝ :=
+        (baseTupleComplexityHeight C₁ Bp H)
+      let Wa : ℕ :=
+        (baseTupleWidth Mt Ma D)
+      let Wb : ℕ :=
+        (baseTupleWidth Mt Mb D)
+      let E : ℝ :=
+        (baseTupleErrorBudget κ Mt Bp ε K₀ D Wa Wb)
+      let S₀ : ℝ :=
+        (baseTupleNormalizedSize Mt)
+      let Sp : ℝ :=
+        (baseTupleSeparationScale ε K₀ Wa)
+      let i : Fin (4 : ℕ) :=
+        (baseTuplePosition u)
+      let k : Fin (4 : ℕ) :=
+        (baseTuplePosition t)
+      let la : ℕ :=
+        (baseTupleLastLevel t sa)
+      let lb : ℕ :=
+        (baseTupleLastLevel t sb)
+      let Lset : Finset ℕ :=
+        (baseTupleActiveLevels u t la lb)
+      ∀ (_ : Lset = {u, u - (4 : ℕ), t, t - (4 : ℕ), la, lb}),
+      let Rf : ℤ × ℤ → ℤ × ℤ :=
+        (baseTupleRootMap seg Lset hLne)
+      let Tup : Finset (ℤ × ℤ) :=
+        (baseTupleCells G J N w K₀)
+      let Rs : Finset (ℤ × ℤ) :=
+        (baseTupleRoots Rf Tup)
+      let Y : (ℓ : ℕ) → ℓ ≤ t → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂
+          cp) H :=
+        (baseTupleLowListFamily c₂ cp Wp G J N Bf t H hHl X)
+      ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈
+          dyadicFiniteTree G J N, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1 R.2 → seg
+          ℓ I = seg ℓ R → kernelHull G J N w I → ∀ (y : ℝ), (Y ℓ hℓ R hR).val I y = g ℓ I y),
+      ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), Fintype.card
+          (Y ℓ hℓ R hR).Λ = M ℓ),
+      let Xi : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleFirstLowList c₂ cp G J N u t hut H Y hu4)
+      let Xk : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleSecondLowList c₂ cp G J N t H Y ht4)
+      let Xga : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleOpponent c₂ cp G J N t H la hla2 Y)
+      let Xgb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleOpponent c₂ cp G J N t H lb hlb2 Y)
+      ∀ (_ : u ∈ Lset),
+      ∀ (_ : u - (4 : ℕ) ∈ Lset),
+      ∀ (_ : la ∈ Lset),
+      ∀ (_ : lb ∈ Lset),
+      ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, ∀ ℓ ∈ Lset, seg ℓ I = seg ℓ (Rf I)),
+      ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xga (Rf I)
+          (hRtree I hI).left).val I = if (1 : ℕ) ≤ la then g la I else (0 : ℝ → ℂ)),
+      ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xgb (Rf I)
+          (hRtree I hI).left).val I = if (1 : ℕ) ≤ lb then g lb I else (0 : ℝ → ℂ)),
+      ∀ (z : ℕ → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
+      ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J
+          N, seg ℓ I = seg ℓ R → ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → z ℓ R hR I y = g
+          ℓ I y),
+      let BdR : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℝ :=
+        fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => (2 : ℝ) + (↑(Fintype.card (Xi R
+          hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R
+          hR).Λ) : ℝ)
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z u R hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬u ≤ (4 : ℕ) → IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (u - (4 : ℕ)) R
+          hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z t R hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬t ≤ (4 : ℕ) → IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (t - (4 : ℕ)) R
+          hR)),
+      ∀ (z0 : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) (I : ℤ × ℤ), ∀ᵐ (y : ℝ), z0 R hR I y
+          = (0 : ℂ)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z0 R hR)),
+      let za : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
+        fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ la then z la R hR
+          else z0 R hR
+      let zb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ :=
+        fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => if (1 : ℕ) ≤ lb then z lb R hR
+          else z0 R hR
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (za R hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (zb R hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs),
+        have D := max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁));
+        have Wa := Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ *
+          ⌊D⌋₊ + Ma;
+        have Wb := Fintype.card (Xi R (hRsT R hR)).Λ * Fintype.card (Xk R (hRsT R hR)).Λ *
+          ⌊D⌋₊ + Mb;
+        have S₀ := (1 : ℝ) + (↑(Fintype.card (Xi R (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card
+          (Xk R (hRsT R hR)).Λ) : ℝ) + (↑(Fintype.card (Xga R (hRsT R hR)).Λ) : ℝ) +
+          (↑(Fintype.card (Xgb R (hRsT R hR)).Λ) : ℝ);
+        have Sp := (↑Wa : ℝ) * √((2 : ℝ) ^ K₀ / ε) + (1 : ℝ);
+        ∃ (P : Finset ((ℤ × ℤ) × ℤ × ℤ)) (A : ↥P → ActiveSetup κ (max (max c₁ (max c₂ cp))
+          c₂a)), ∑ p : ↥P, dyadicGridLength G (A p).R.1 ≤ (8 / 3 : ℝ) * dyadicGridLength G
+          R.1 ∧ (∀ I ∈ {I ∈ Tup | Rf I = R}, ∃ (p : ↥P), I ∈ (A p).cells) ∧ (∀ (p p' : ↥P),
+          ∀ I ∈ (A p).cells, I ∈ (A p').cells → p = p') ∧ ∀ (p : ↥P), (A p).cells ⊆ {I ∈ Tup
+          | Rf I = R} ∧ (∀ I ∈ (A p).cells, ∀ J' ∈ {I ∈ Tup | Rf I = R}, dyadicGridCell G
+          I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell
+          G (A p).R.1 (A p).R.2 → J' ∈ (A p).cells) ∧ (A p).G = G ∧ (A p).w = w ∧ (A p).a =
+          sa ∧ (A p).b = sb ∧ (A p).R ∈ dyadicFiniteTree G J N ∧ dyadicGridCell G (A p).R.1
+          (A p).R.2 ⊆ dyadicGridCell G R.1 R.2 ∧ (A p).H = max D (max (fitBudget Cqa Ca ka)
+          (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A p).S = (2 : ℝ) ∧ (A p).η = (4 : ℝ) *
+          η₀ ∧ Fintype.card (A p).L = Fintype.card (Xi R (hRsT R hR)).Λ + Fintype.card (Xk R
+          (hRsT R hR)).Λ + (Wa + Fintype.card (Xga R (hRsT R hR)).Λ) + (Wb + Fintype.card
+          (Xgb R (hRsT R hR)).Λ) ∧ ∑ I ∈ (A p).cells, dyadicGridLength G I.1 *
+          ‖localProgressionForm (dyadicGridLength G I.1) (w I) (slots4 sa i k (f sa - (Xga R
+          (hRsT R hR)).val I) ((Xi R (hRsT R hR)).val I) ((Xk R (hRsT R hR)).val I) (f sb -
+          (Xgb R (hRsT R hR)).val I)) - (A p).Hf I ((A p).Y I)‖ ≤ baseErr κ (Fintype.card
+          (Xi R (hRsT R hR)).Λ) (Fintype.card (Xk R (hRsT R hR)).Λ) D Bp ε K₀ Wa Wb
+          (fitOpponentConst (M la)) (fitOpponentConst (M lb)) * dyadicGridLength G (A p).R.1
+          ∧ (∀ I ∈ (A p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft G
+          I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A p).Y I s) ((A p).Y I s') (η₀ +
+          ((2 : ℝ) + (2 : ℝ) * S₀) * (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb : ℝ))) + ((1 :
+          ℝ) + Sp) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀ (l : Fin (4 : ℕ)),
+          (eLpNorm ((A p).Y I l) (2 : ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 : ℝ)) ∧ (∀ (l : Fin (4
+          : ℕ)), ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * (eLpNorm ((A p).U l I) (2 :
+          ℝ≥0∞) ((A p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A
+          p).R.1) ∧ ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).z (3 :
+          Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ (A
+          p).HasColumnRep (1 : ℝ) ∧ (A p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))),
+      BaseTupleConclusion κ c₂ cp c₁ c₂a Ca Cqa G J N w f g u t Mt η₀ ε K₀ ka kb D Wa Wb E S₀ Sp
 
 open scoped Classical in
 private def BaseTupleStage2Statement (context : BaseTupleContext) : Prop := by
-  rcases context with ⟨κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw,
-    f, hfm, hfq, Bf, kk, M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt,
-    η₀, hη₀, hpair, hsz, Bp, ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak,
-    hbi, hbk, hla2, hlb2, hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL,
-    ht4L, hslots⟩
-  exact
-    ∀ (_ : ∀ {G : RealDyadicGrid} {J : ℤ × ℤ} {N : ℕ} {H : ℝ} {R : ℤ × ℤ}, R ∈ dyadicFiniteTree
-        G J N → (1 : ℝ) ≤ H → ∀ {a i k b : Fin (4 : ℕ)}, a ≠ i → a ≠ k → a ≠ b → i ≠ k → i
-        ≠ b → k ≠ b → ∀ (w : ℤ × ℤ → ℝ × ℝ → ℂ), (∀ (I : ℤ × ℤ), IsAdmissibleLocalKernel κ
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I)) → ∀ (f : Fin (4 : ℕ) →
-        ℝ → ℂ), (∀ (l : Fin (4 : ℕ)), Measurable (f l)) → (∀ (l : Fin (4 : ℕ)), ∀ I ∈
-        dyadicFiniteTree G J N, kernelHull G J N w I → eLpNorm (f l) (ENNReal.ofReal q)
-        (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤
-        (1 : ℝ≥0∞)) → ∀ (Xi Xk Xga Xgb : LowList G J N R (max c₂ cp) H), (∃ (d : ℕ) (Φ :
-        QuadraticChartData d), (1 : ℕ) ≤ d ∧ QuadraticChartComplexity (max c₂ cp) H Φ ∧
-        IsBoundedQuadraticChart Φ) → ∀ (zga zgb : ℤ × ℤ → ℝ → ℂ) {Cga Cgb : ℝ}, (0 : ℝ) ≤
-        Cga → (0 : ℝ) ≤ Cgb → ((∀ (I : ℤ × ℤ), Measurable (zga I) ∧ MemLp (zga I) (2 :
-        ℝ≥0∞) (volume.restrict (dyadicGridCell G I.1 I.2))) ∧ ∀ J' ∈ dyadicFiniteTree G J
-        N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 → IsAdmissibleOpponent G
-        J' (f a) zga Cga ∧ HasDepthEnergy G J' (f a) zga (1 : ℝ)) → ((∀ (I : ℤ × ℤ),
-        Measurable (zgb I) ∧ MemLp (zgb I) (2 : ℝ≥0∞) (volume.restrict (dyadicGridCell G
-        I.1 I.2))) ∧ ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆
-        dyadicGridCell G R.1 R.2 → IsAdmissibleOpponent G J' (f b) zgb Cgb ∧
-        HasDepthEnergy G J' (f b) zgb (1 : ℝ)) → ∀ (K₀ : ℕ) (Tc : Finset (ℤ × ℤ)), (∀ I ∈
-        Tc, I ∈ dyadicFiniteTree G J N ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1
-        R.2 ∧ I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ (∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2
-        → zga I y = Xga.val I y) ∧ ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → zgb I y =
-        Xgb.val I y) → (∀ I ∈ Tc, kernelHull G J N w I) → ∀ {Bd : ℝ}, (∃ (z₁ : ℤ × ℤ → ℝ →
-        ℂ) (z₂ : ℤ × ℤ → ℝ → ℂ), IsBasicOn G R (dyadicRemainingDepth J N R) (1 : ℝ) Bd
-        (max c₂ cp) H w z₁ ∧ IsBasicOn G R (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂
-        cp) H w z₂ ∧ ∀ I ∈ Tc, ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → Xi.val I y = z₁
-        I y - z₂ I y) → (∃ (z₁ : ℤ × ℤ → ℝ → ℂ) (z₂ : ℤ × ℤ → ℝ → ℂ), IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w z₁ ∧ IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w z₂ ∧ ∀ I ∈ Tc, ∀ᵐ (y : ℝ),
-        y ∈ dyadicGridCell G I.1 I.2 → Xk.val I y = z₁ I y - z₂ I y) → IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w zga → IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w zgb → Bd ≤ (2 : ℝ) +
-        (↑(Fintype.card Xi.Λ + Fintype.card Xk.Λ + Fintype.card Xga.Λ + Fintype.card
-        Xgb.Λ) : ℝ) → (∀ I ∈ Tc, eLpNorm (Xi.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (2 : ℝ)) →
-        (∀ I ∈ Tc, eLpNorm (Xk.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (2 : ℝ)) →
-        (∀ I ∈ Tc, eLpNorm (Xga.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (1 : ℝ)) →
-        (∀ I ∈ Tc, eLpNorm (Xgb.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (1 : ℝ)) → ∀
-        {η₀ : ℝ}, (0 : ℝ) ≤ η₀ → (∀ I ∈ Tc, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' (slots4 a i k (f a
-        - Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val I) s) (slots4 a i k (f a -
-        Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val I) s') η₀) → ∀ (Bp ε : ℝ) (ka kb
-        Ma Mb : ℕ), (1 : ℝ) ≤ Bp → (0 : ℝ) < ε → ε ≤ (1 : ℝ) → (1 : ℕ) ≤ ka → (1 : ℕ) ≤ kb
-        → (16 : ℝ) * fitBudget Cqa Ca ka ^ (2 : ℕ) < (↑Ma : ℝ) → (16 : ℝ) * fitBudget Cqa
-        Ca kb ^ (2 : ℕ) < (↑Mb : ℝ) →
-      have D := max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁));
-      have Wa := Fintype.card Xi.Λ * Fintype.card Xk.Λ * ⌊D⌋₊ + Ma;
-      have Wb := Fintype.card Xi.Λ * Fintype.card Xk.Λ * ⌊D⌋₊ + Mb;
-      have S₀ := (1 : ℝ) + (↑(Fintype.card Xi.Λ) : ℝ) + (↑(Fintype.card Xk.Λ) : ℝ) +
-        (↑(Fintype.card Xga.Λ) : ℝ) + (↑(Fintype.card Xgb.Λ) : ℝ);
-      have Sp := (↑Wa : ℝ) * √((2 : ℝ) ^ K₀ / ε) + (1 : ℝ);
-      ∃ (P : Finset ((ℤ × ℤ) × ℤ × ℤ)) (A : ↥P → ActiveSetup κ (max (max c₁ (max c₂ cp))
-        c₂a)), ∑ p : ↥P, dyadicGridLength G (A p).R.1 ≤ (8 / 3 : ℝ) * dyadicGridLength G
-        R.1 ∧ (∀ I ∈ Tc, ∃ (p : ↥P), I ∈ (A p).cells) ∧ (∀ (p p' : ↥P), ∀ I ∈ (A p).cells,
-        I ∈ (A p').cells → p = p') ∧ ∀ (p : ↥P), (A p).cells ⊆ Tc ∧ (∀ I ∈ (A p).cells, ∀
-        J' ∈ Tc, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G
-        J'.1 J'.2 ⊆ dyadicGridCell G (A p).R.1 (A p).R.2 → J' ∈ (A p).cells) ∧ (A p).G = G
-        ∧ (A p).w = w ∧ (A p).a = a ∧ (A p).b = b ∧ (A p).R ∈ dyadicFiniteTree G J N ∧
-        dyadicGridCell G (A p).R.1 (A p).R.2 ⊆ dyadicGridCell G R.1 R.2 ∧ (A p).H = max D
-        (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A p).S = (2
-        : ℝ) ∧ (A p).η = (4 : ℝ) * η₀ ∧ Fintype.card (A p).L = Fintype.card Xi.Λ +
-        Fintype.card Xk.Λ + (Wa + Fintype.card Xga.Λ) + (Wb + Fintype.card Xgb.Λ) ∧ ∑ I ∈
-        (A p).cells, dyadicGridLength G I.1 * ‖localProgressionForm (dyadicGridLength G
-        I.1) (w I) (slots4 a i k (f a - Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val
-        I)) - (A p).Hf I ((A p).Y I)‖ ≤ baseErr κ (Fintype.card Xi.Λ) (Fintype.card Xk.Λ)
-        D Bp ε K₀ Wa Wb Cga Cgb * dyadicGridLength G (A p).R.1 ∧ (∀ I ∈ (A p).cells, ∀ (s
-        s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft G I.1 I.2) (dyadicGridLength
-        G I.1) (w I) s s' ((A p).Y I s) ((A p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * S₀) *
-        (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb : ℝ))) + ((1 : ℝ) + Sp) * Real.exp (-(↑kb
-        : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀ (l : Fin (4 : ℕ)), (eLpNorm ((A p).Y I l) (2 :
-        ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 : ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A p).cells,
-        dyadicGridLength G I.1 * (eLpNorm ((A p).U l I) (2 : ℝ≥0∞) ((A p).μ I)).toReal ^
-        (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ ∑ I ∈ (A p).cells,
-        dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ :
-        ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ (A p).HasColumnRep (1 : ℝ) ∧ (A
-        p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))),
-    ∀ (_ : (1 : ℝ) ≤ Bp),
-    ∀ (_ : (1 : ℕ) ≤ ka),
-    ∀ (_ : (1 : ℕ) ≤ kb),
-    ∀ (_ : (16 : ℝ) * fitBudget Cqa Ca ka ^ (2 : ℕ) < (↑Ma : ℝ)),
-    ∀ (_ : (16 : ℝ) * fitBudget Cqa Ca kb ^ (2 : ℕ) < (↑Mb : ℝ)),
-    let H : ℝ :=
-      (baseTupleHeight Wp Hc)
-    let D : ℝ :=
-      (baseTupleComplexityHeight C₁ Bp H)
-    let Wa : ℕ :=
-      (baseTupleWidth Mt Ma D)
-    let Wb : ℕ :=
-      (baseTupleWidth Mt Mb D)
-    let E : ℝ :=
-      (baseTupleErrorBudget κ Mt Bp ε K₀ D Wa Wb)
-    let S₀ : ℝ :=
-      (baseTupleNormalizedSize Mt)
-    let Sp : ℝ :=
-      (baseTupleSeparationScale ε K₀ Wa)
-    let i : Fin (4 : ℕ) :=
-      (baseTuplePosition u)
-    let k : Fin (4 : ℕ) :=
-      (baseTuplePosition t)
-    let la : ℕ :=
-      (baseTupleLastLevel t sa)
-    ∀ (_ : (1 : ℕ) ≤ la → stagPos la = sa),
-    let lb : ℕ :=
-      (baseTupleLastLevel t sb)
-    ∀ (_ : (1 : ℕ) ≤ lb → stagPos lb = sb),
-    let Lset : Finset ℕ :=
-      (baseTupleActiveLevels u t la lb)
-    ∀ (_ : Lset = {u, u - (4 : ℕ), t, t - (4 : ℕ), la, lb}),
-    let Rf : ℤ × ℤ → ℤ × ℤ :=
-      (baseTupleRootMap seg Lset hLne)
-    let Tup : Finset (ℤ × ℤ) :=
-      (baseTupleCells G J N w K₀)
-    let Rs : Finset (ℤ × ℤ) :=
-      (baseTupleRoots Rf Tup)
-    let Y : (ℓ : ℕ) → ℓ ≤ t → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂
-        cp) H :=
-      (baseTupleLowListFamily c₂ cp Wp G J N Bf t H hHl X)
-    ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈
-        dyadicFiniteTree G J N, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1 R.2 → seg
-        ℓ I = seg ℓ R → kernelHull G J N w I → ∀ (y : ℝ), (Y ℓ hℓ R hR).val I y = g ℓ I y),
-    ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), Fintype.card
-        (Y ℓ hℓ R hR).Λ = M ℓ),
-    let Xi : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleFirstLowList c₂ cp G J N u t hut H Y hu4)
-    let Xk : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleSecondLowList c₂ cp G J N t H Y ht4)
-    let Xga : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleOpponent c₂ cp G J N t H la hla2 Y)
-    let Xgb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleOpponent c₂ cp G J N t H lb hlb2 Y)
-    ∀ (_ : u ∈ Lset),
-    ∀ (_ : u - (4 : ℕ) ∈ Lset),
-    ∀ (_ : la ∈ Lset),
-    ∀ (_ : lb ∈ Lset),
-    ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, ∀ ℓ ∈ Lset, seg ℓ I = seg ℓ (Rf I)),
-    ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xi (Rf I)
-        (hRtree I hI).left).val I = stagTuple f g u t I i),
-    ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xk (Rf I)
-        (hRtree I hI).left).val I = stagTuple f g u t I k),
-    ∀ (_ : ∀ (ℓ : ℕ), ∀ I ∈ dyadicFiniteTree G J N, kernelHull G J N w I → eLpNorm (g ℓ I) (2 :
-        ℝ≥0∞) (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G
-        I.1)) ≤ ENNReal.ofReal (1 : ℝ)),
-    ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xga (Rf I)
-        (hRtree I hI).left).val I = if (1 : ℕ) ≤ la then g la I else (0 : ℝ → ℂ)),
-    ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xgb (Rf I)
-        (hRtree I hI).left).val I = if (1 : ℕ) ≤ lb then g lb I else (0 : ℝ → ℂ)),
-    ∀ (z : ℕ → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
-    ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) (I : ℤ × ℤ), Measurable (z ℓ
-        R hR I) ∧ MemLp (z ℓ R hR I) (2 : ℝ≥0∞) (volume.restrict (dyadicGridCell G I.1
-        I.2))),
-    ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J
-        N, seg ℓ I = seg ℓ R → ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → z ℓ R hR I y = g
-        ℓ I y),
-    ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ J' ∈ dyadicFiniteTree G J
-        N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 → IsAdmissibleOpponent G
-        J' (f (stagPos ℓ)) (z ℓ R hR) (fitOpponentConst (M ℓ)) ∧ HasDepthEnergy G J' (f
-        (stagPos ℓ)) (z ℓ R hR) (1 : ℝ)),
-    ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) (max (2 : ℝ) (↑(M ℓ) : ℝ)) c₂ (Bf ℓ) w (z ℓ R
-        hR)),
-    ∀ (_ : ∀ ℓ ≤ t, Bf ℓ ≤ H),
-    let BdR : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℝ :=
-      fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => (2 : ℝ) + (↑(Fintype.card (Xi R
-        hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R
-        hR).Λ) : ℝ)
-    ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), M ℓ ≤ Fintype.card (Xi R
-        hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R
-        hR).Λ → max (2 : ℝ) (↑(M ℓ) : ℝ) ≤ BdR R hR),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), M u ≤ Fintype.card (Xi R hR).Λ ∧
-        (¬u ≤ (4 : ℕ) → M (u - (4 : ℕ)) ≤ Fintype.card (Xi R hR).Λ)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), M t ≤ Fintype.card (Xk R hR).Λ ∧
-        (¬t ≤ (4 : ℕ) → M (t - (4 : ℕ)) ≤ Fintype.card (Xk R hR).Λ)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), (1 : ℕ) ≤ la → M la ≤ Fintype.card
-        (Xga R hR).Λ),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), (1 : ℕ) ≤ lb → M lb ≤ Fintype.card
-        (Xgb R hR).Λ),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z u R hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬u ≤ (4 : ℕ) → IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (u - (4 : ℕ)) R
-        hR)),
-    ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
-        J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z t R hR)),
-    ∃ (ι : Type) (_ : Fintype ι) (A : ι → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a)),
-      ∑ p : ι, dyadicGridLength G (A p).R.1 ≤ (91 / 3 : ℝ) * dyadicGridLength G J.1 ∧ (∀
-      (p p' : ι), ∀ I ∈ (A p).cells, I ∈ (A p').cells → p = p') ∧ (∀ (p : ι), (A
-      p).cells ⊆ dyadicFiniteTree G J N ∧ (∀ I ∈ (A p).cells, kernelHull G J N w I) ∧ (∀
-      I ∈ (A p).cells, ∀ (J' : ℤ × ℤ), dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G J'.1
-      J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G (A p).R.1 (A p).R.2 → J' ∈ (A
-      p).cells) ∧ (A p).G = G ∧ (A p).w = w ∧ (A p).R ∈ dyadicFiniteTree G J N ∧ (A p).H
-      = max D (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A
-      p).S = (2 : ℝ) ∧ (A p).η = (4 : ℝ) * η₀ ∧ Fintype.card (A p).L ≤ (6 : ℕ) * Mt + Wa
-      + Wb ∧ (∀ I ∈ (A p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
-      (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A p).Y I s) ((A
-      p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * S₀) * (Real.exp (-(↑ka : ℝ)) + Real.exp
-      (-(↑kb : ℝ))) + ((1 : ℝ) + Sp) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀
-      (l : Fin (4 : ℕ)), (eLpNorm ((A p).Y I l) (2 : ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 :
-      ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * (eLpNorm
-      ((A p).U l I) (2 : ℝ≥0∞) ((A p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) *
-      dyadicGridLength G (A p).R.1) ∧ ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A
-      p).Hf I ((A p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ : ℝ) ^ (2 : ℕ) *
-      dyadicGridLength G (A p).R.1) ∧ (A p).HasColumnRep (1 : ℝ) ∧ (A p).SubRootProps η₀
-      ((↑K₀ : ℝ) ^ (2 : ℕ))) ∧ ∑ I ∈ dyadicFiniteTree G J N, dyadicGridLength G I.1 *
-      ‖localProgressionForm (dyadicGridLength G I.1) (w I) (stagTuple f g u t I)‖ ≤ ∑ p
-      : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E *
-      ((91 / 3 : ℝ) * dyadicGridLength G J.1)
+  match context with
+  | {
+      κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw, f, hfm, hfq, Bf, kk,
+      M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt, η₀, hη₀, hpair, hsz, Bp,
+      ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak, hbi, hbk, hla2, hlb2,
+      hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL, ht4L, hslots,
+      ..
+    } =>
+    exact
+      ∀ (_ : ∀ {G : RealDyadicGrid} {J : ℤ × ℤ} {N : ℕ} {H : ℝ} {R : ℤ × ℤ}, R ∈ dyadicFiniteTree
+          G J N → (1 : ℝ) ≤ H → ∀ {a i k b : Fin (4 : ℕ)}, a ≠ i → a ≠ k → a ≠ b → i ≠ k → i
+          ≠ b → k ≠ b → ∀ (w : ℤ × ℤ → ℝ × ℝ → ℂ), (∀ (I : ℤ × ℤ), IsAdmissibleLocalKernel κ
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I)) → ∀ (f : Fin (4 : ℕ) →
+          ℝ → ℂ), (∀ (l : Fin (4 : ℕ)), Measurable (f l)) → (∀ (l : Fin (4 : ℕ)), ∀ I ∈
+          dyadicFiniteTree G J N, kernelHull G J N w I → eLpNorm (f l) (ENNReal.ofReal q)
+          (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤
+          (1 : ℝ≥0∞)) → ∀ (Xi Xk Xga Xgb : LowList G J N R (max c₂ cp) H), (∃ (d : ℕ) (Φ :
+          QuadraticChartData d), (1 : ℕ) ≤ d ∧ QuadraticChartComplexity (max c₂ cp) H Φ ∧
+          IsBoundedQuadraticChart Φ) → ∀ (zga zgb : ℤ × ℤ → ℝ → ℂ) {Cga Cgb : ℝ}, (0 : ℝ) ≤
+          Cga → (0 : ℝ) ≤ Cgb → ((∀ (I : ℤ × ℤ), Measurable (zga I) ∧ MemLp (zga I) (2 :
+          ℝ≥0∞) (volume.restrict (dyadicGridCell G I.1 I.2))) ∧ ∀ J' ∈ dyadicFiniteTree G J
+          N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 → IsAdmissibleOpponent G
+          J' (f a) zga Cga ∧ HasDepthEnergy G J' (f a) zga (1 : ℝ)) → ((∀ (I : ℤ × ℤ),
+          Measurable (zgb I) ∧ MemLp (zgb I) (2 : ℝ≥0∞) (volume.restrict (dyadicGridCell G
+          I.1 I.2))) ∧ ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆
+          dyadicGridCell G R.1 R.2 → IsAdmissibleOpponent G J' (f b) zgb Cgb ∧
+          HasDepthEnergy G J' (f b) zgb (1 : ℝ)) → ∀ (K₀ : ℕ) (Tc : Finset (ℤ × ℤ)), (∀ I ∈
+          Tc, I ∈ dyadicFiniteTree G J N ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1
+          R.2 ∧ I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ (∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2
+          → zga I y = Xga.val I y) ∧ ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → zgb I y =
+          Xgb.val I y) → (∀ I ∈ Tc, kernelHull G J N w I) → ∀ {Bd : ℝ}, (∃ (z₁ : ℤ × ℤ → ℝ →
+          ℂ) (z₂ : ℤ × ℤ → ℝ → ℂ), IsBasicOn G R (dyadicRemainingDepth J N R) (1 : ℝ) Bd
+          (max c₂ cp) H w z₁ ∧ IsBasicOn G R (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂
+          cp) H w z₂ ∧ ∀ I ∈ Tc, ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → Xi.val I y = z₁
+          I y - z₂ I y) → (∃ (z₁ : ℤ × ℤ → ℝ → ℂ) (z₂ : ℤ × ℤ → ℝ → ℂ), IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w z₁ ∧ IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w z₂ ∧ ∀ I ∈ Tc, ∀ᵐ (y : ℝ),
+          y ∈ dyadicGridCell G I.1 I.2 → Xk.val I y = z₁ I y - z₂ I y) → IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w zga → IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w zgb → Bd ≤ (2 : ℝ) +
+          (↑(Fintype.card Xi.Λ + Fintype.card Xk.Λ + Fintype.card Xga.Λ + Fintype.card
+          Xgb.Λ) : ℝ) → (∀ I ∈ Tc, eLpNorm (Xi.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (2 : ℝ)) →
+          (∀ I ∈ Tc, eLpNorm (Xk.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (2 : ℝ)) →
+          (∀ I ∈ Tc, eLpNorm (Xga.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (1 : ℝ)) →
+          (∀ I ∈ Tc, eLpNorm (Xgb.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (1 : ℝ)) → ∀
+          {η₀ : ℝ}, (0 : ℝ) ≤ η₀ → (∀ I ∈ Tc, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' (slots4 a i k (f a
+          - Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val I) s) (slots4 a i k (f a -
+          Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val I) s') η₀) → ∀ (Bp ε : ℝ) (ka kb
+          Ma Mb : ℕ), (1 : ℝ) ≤ Bp → (0 : ℝ) < ε → ε ≤ (1 : ℝ) → (1 : ℕ) ≤ ka → (1 : ℕ) ≤ kb
+          → (16 : ℝ) * fitBudget Cqa Ca ka ^ (2 : ℕ) < (↑Ma : ℝ) → (16 : ℝ) * fitBudget Cqa
+          Ca kb ^ (2 : ℕ) < (↑Mb : ℝ) →
+        have D := max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁));
+        have Wa := Fintype.card Xi.Λ * Fintype.card Xk.Λ * ⌊D⌋₊ + Ma;
+        have Wb := Fintype.card Xi.Λ * Fintype.card Xk.Λ * ⌊D⌋₊ + Mb;
+        have S₀ := (1 : ℝ) + (↑(Fintype.card Xi.Λ) : ℝ) + (↑(Fintype.card Xk.Λ) : ℝ) +
+          (↑(Fintype.card Xga.Λ) : ℝ) + (↑(Fintype.card Xgb.Λ) : ℝ);
+        have Sp := (↑Wa : ℝ) * √((2 : ℝ) ^ K₀ / ε) + (1 : ℝ);
+        ∃ (P : Finset ((ℤ × ℤ) × ℤ × ℤ)) (A : ↥P → ActiveSetup κ (max (max c₁ (max c₂ cp))
+          c₂a)), ∑ p : ↥P, dyadicGridLength G (A p).R.1 ≤ (8 / 3 : ℝ) * dyadicGridLength G
+          R.1 ∧ (∀ I ∈ Tc, ∃ (p : ↥P), I ∈ (A p).cells) ∧ (∀ (p p' : ↥P), ∀ I ∈ (A p).cells,
+          I ∈ (A p').cells → p = p') ∧ ∀ (p : ↥P), (A p).cells ⊆ Tc ∧ (∀ I ∈ (A p).cells, ∀
+          J' ∈ Tc, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G
+          J'.1 J'.2 ⊆ dyadicGridCell G (A p).R.1 (A p).R.2 → J' ∈ (A p).cells) ∧ (A p).G = G
+          ∧ (A p).w = w ∧ (A p).a = a ∧ (A p).b = b ∧ (A p).R ∈ dyadicFiniteTree G J N ∧
+          dyadicGridCell G (A p).R.1 (A p).R.2 ⊆ dyadicGridCell G R.1 R.2 ∧ (A p).H = max D
+          (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A p).S = (2
+          : ℝ) ∧ (A p).η = (4 : ℝ) * η₀ ∧ Fintype.card (A p).L = Fintype.card Xi.Λ +
+          Fintype.card Xk.Λ + (Wa + Fintype.card Xga.Λ) + (Wb + Fintype.card Xgb.Λ) ∧ ∑ I ∈
+          (A p).cells, dyadicGridLength G I.1 * ‖localProgressionForm (dyadicGridLength G
+          I.1) (w I) (slots4 a i k (f a - Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val
+          I)) - (A p).Hf I ((A p).Y I)‖ ≤ baseErr κ (Fintype.card Xi.Λ) (Fintype.card Xk.Λ)
+          D Bp ε K₀ Wa Wb Cga Cgb * dyadicGridLength G (A p).R.1 ∧ (∀ I ∈ (A p).cells, ∀ (s
+          s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft G I.1 I.2) (dyadicGridLength
+          G I.1) (w I) s s' ((A p).Y I s) ((A p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * S₀) *
+          (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb : ℝ))) + ((1 : ℝ) + Sp) * Real.exp (-(↑kb
+          : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀ (l : Fin (4 : ℕ)), (eLpNorm ((A p).Y I l) (2 :
+          ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 : ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A p).cells,
+          dyadicGridLength G I.1 * (eLpNorm ((A p).U l I) (2 : ℝ≥0∞) ((A p).μ I)).toReal ^
+          (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ ∑ I ∈ (A p).cells,
+          dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ :
+          ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ (A p).HasColumnRep (1 : ℝ) ∧ (A
+          p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))),
+      ∀ (_ : (1 : ℝ) ≤ Bp),
+      ∀ (_ : (1 : ℕ) ≤ ka),
+      ∀ (_ : (1 : ℕ) ≤ kb),
+      ∀ (_ : (16 : ℝ) * fitBudget Cqa Ca ka ^ (2 : ℕ) < (↑Ma : ℝ)),
+      ∀ (_ : (16 : ℝ) * fitBudget Cqa Ca kb ^ (2 : ℕ) < (↑Mb : ℝ)),
+      let H : ℝ :=
+        (baseTupleHeight Wp Hc)
+      let D : ℝ :=
+        (baseTupleComplexityHeight C₁ Bp H)
+      let Wa : ℕ :=
+        (baseTupleWidth Mt Ma D)
+      let Wb : ℕ :=
+        (baseTupleWidth Mt Mb D)
+      let E : ℝ :=
+        (baseTupleErrorBudget κ Mt Bp ε K₀ D Wa Wb)
+      let S₀ : ℝ :=
+        (baseTupleNormalizedSize Mt)
+      let Sp : ℝ :=
+        (baseTupleSeparationScale ε K₀ Wa)
+      let i : Fin (4 : ℕ) :=
+        (baseTuplePosition u)
+      let k : Fin (4 : ℕ) :=
+        (baseTuplePosition t)
+      let la : ℕ :=
+        (baseTupleLastLevel t sa)
+      ∀ (_ : (1 : ℕ) ≤ la → stagPos la = sa),
+      let lb : ℕ :=
+        (baseTupleLastLevel t sb)
+      ∀ (_ : (1 : ℕ) ≤ lb → stagPos lb = sb),
+      let Lset : Finset ℕ :=
+        (baseTupleActiveLevels u t la lb)
+      ∀ (_ : Lset = {u, u - (4 : ℕ), t, t - (4 : ℕ), la, lb}),
+      let Rf : ℤ × ℤ → ℤ × ℤ :=
+        (baseTupleRootMap seg Lset hLne)
+      let Tup : Finset (ℤ × ℤ) :=
+        (baseTupleCells G J N w K₀)
+      let Rs : Finset (ℤ × ℤ) :=
+        (baseTupleRoots Rf Tup)
+      let Y : (ℓ : ℕ) → ℓ ≤ t → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂
+          cp) H :=
+        (baseTupleLowListFamily c₂ cp Wp G J N Bf t H hHl X)
+      ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈
+          dyadicFiniteTree G J N, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1 R.2 → seg
+          ℓ I = seg ℓ R → kernelHull G J N w I → ∀ (y : ℝ), (Y ℓ hℓ R hR).val I y = g ℓ I y),
+      ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), Fintype.card
+          (Y ℓ hℓ R hR).Λ = M ℓ),
+      let Xi : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleFirstLowList c₂ cp G J N u t hut H Y hu4)
+      let Xk : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleSecondLowList c₂ cp G J N t H Y ht4)
+      let Xga : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleOpponent c₂ cp G J N t H la hla2 Y)
+      let Xgb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleOpponent c₂ cp G J N t H lb hlb2 Y)
+      ∀ (_ : u ∈ Lset),
+      ∀ (_ : u - (4 : ℕ) ∈ Lset),
+      ∀ (_ : la ∈ Lset),
+      ∀ (_ : lb ∈ Lset),
+      ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, ∀ ℓ ∈ Lset, seg ℓ I = seg ℓ (Rf I)),
+      ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xi (Rf I)
+          (hRtree I hI).left).val I = stagTuple f g u t I i),
+      ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xk (Rf I)
+          (hRtree I hI).left).val I = stagTuple f g u t I k),
+      ∀ (_ : ∀ (ℓ : ℕ), ∀ I ∈ dyadicFiniteTree G J N, kernelHull G J N w I → eLpNorm (g ℓ I) (2 :
+          ℝ≥0∞) (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G
+          I.1)) ≤ ENNReal.ofReal (1 : ℝ)),
+      ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xga (Rf I)
+          (hRtree I hI).left).val I = if (1 : ℕ) ≤ la then g la I else (0 : ℝ → ℂ)),
+      ∀ (_ : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I → (Xgb (Rf I)
+          (hRtree I hI).left).val I = if (1 : ℕ) ≤ lb then g lb I else (0 : ℝ → ℂ)),
+      ∀ (z : ℕ → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ),
+      ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) (I : ℤ × ℤ), Measurable (z ℓ
+          R hR I) ∧ MemLp (z ℓ R hR I) (2 : ℝ≥0∞) (volume.restrict (dyadicGridCell G I.1
+          I.2))),
+      ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J
+          N, seg ℓ I = seg ℓ R → ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → z ℓ R hR I y = g
+          ℓ I y),
+      ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ J' ∈ dyadicFiniteTree G J
+          N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 → IsAdmissibleOpponent G
+          J' (f (stagPos ℓ)) (z ℓ R hR) (fitOpponentConst (M ℓ)) ∧ HasDepthEnergy G J' (f
+          (stagPos ℓ)) (z ℓ R hR) (1 : ℝ)),
+      ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) (max (2 : ℝ) (↑(M ℓ) : ℝ)) c₂ (Bf ℓ) w (z ℓ R
+          hR)),
+      ∀ (_ : ∀ ℓ ≤ t, Bf ℓ ≤ H),
+      let BdR : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → ℝ :=
+        fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => (2 : ℝ) + (↑(Fintype.card (Xi R
+          hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R
+          hR).Λ) : ℝ)
+      ∀ (_ : ∀ (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), M ℓ ≤ Fintype.card (Xi R
+          hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R
+          hR).Λ → max (2 : ℝ) (↑(M ℓ) : ℝ) ≤ BdR R hR),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), M u ≤ Fintype.card (Xi R hR).Λ ∧
+          (¬u ≤ (4 : ℕ) → M (u - (4 : ℕ)) ≤ Fintype.card (Xi R hR).Λ)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), M t ≤ Fintype.card (Xk R hR).Λ ∧
+          (¬t ≤ (4 : ℕ) → M (t - (4 : ℕ)) ≤ Fintype.card (Xk R hR).Λ)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), (1 : ℕ) ≤ la → M la ≤ Fintype.card
+          (Xga R hR).Λ),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), (1 : ℕ) ≤ lb → M lb ≤ Fintype.card
+          (Xgb R hR).Λ),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z u R hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬u ≤ (4 : ℕ) → IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z (u - (4 : ℕ)) R
+          hR)),
+      ∀ (_ : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), IsBasicOn G R (dyadicRemainingDepth
+          J N R) (1 : ℝ) (BdR R hR) (max c₂ cp) H w (z t R hR)),
+      BaseTupleConclusion κ c₂ cp c₁ c₂a Ca Cqa G J N w f g u t Mt η₀ ε K₀ ka kb D Wa Wb E S₀ Sp
 
 open scoped Classical in
 private def BaseTupleStage1Statement (context : BaseTupleContext) : Prop := by
-  rcases context with ⟨κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw,
-    f, hfm, hfq, Bf, kk, M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt,
-    η₀, hη₀, hpair, hsz, Bp, ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak,
-    hbi, hbk, hla2, hlb2, hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL,
-    ht4L, hslots⟩
-  exact
-    ∀ (_ : ∀ {G : RealDyadicGrid} {J : ℤ × ℤ} {N : ℕ} {H : ℝ} {R : ℤ × ℤ}, R ∈ dyadicFiniteTree
-        G J N → (1 : ℝ) ≤ H → ∀ {a i k b : Fin (4 : ℕ)}, a ≠ i → a ≠ k → a ≠ b → i ≠ k → i
-        ≠ b → k ≠ b → ∀ (w : ℤ × ℤ → ℝ × ℝ → ℂ), (∀ (I : ℤ × ℤ), IsAdmissibleLocalKernel κ
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I)) → ∀ (f : Fin (4 : ℕ) →
-        ℝ → ℂ), (∀ (l : Fin (4 : ℕ)), Measurable (f l)) → (∀ (l : Fin (4 : ℕ)), ∀ I ∈
-        dyadicFiniteTree G J N, kernelHull G J N w I → eLpNorm (f l) (ENNReal.ofReal q)
-        (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤
-        (1 : ℝ≥0∞)) → ∀ (Xi Xk Xga Xgb : LowList G J N R (max c₂ cp) H), (∃ (d : ℕ) (Φ :
-        QuadraticChartData d), (1 : ℕ) ≤ d ∧ QuadraticChartComplexity (max c₂ cp) H Φ ∧
-        IsBoundedQuadraticChart Φ) → ∀ (zga zgb : ℤ × ℤ → ℝ → ℂ) {Cga Cgb : ℝ}, (0 : ℝ) ≤
-        Cga → (0 : ℝ) ≤ Cgb → ((∀ (I : ℤ × ℤ), Measurable (zga I) ∧ MemLp (zga I) (2 :
-        ℝ≥0∞) (volume.restrict (dyadicGridCell G I.1 I.2))) ∧ ∀ J' ∈ dyadicFiniteTree G J
-        N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 → IsAdmissibleOpponent G
-        J' (f a) zga Cga ∧ HasDepthEnergy G J' (f a) zga (1 : ℝ)) → ((∀ (I : ℤ × ℤ),
-        Measurable (zgb I) ∧ MemLp (zgb I) (2 : ℝ≥0∞) (volume.restrict (dyadicGridCell G
-        I.1 I.2))) ∧ ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆
-        dyadicGridCell G R.1 R.2 → IsAdmissibleOpponent G J' (f b) zgb Cgb ∧
-        HasDepthEnergy G J' (f b) zgb (1 : ℝ)) → ∀ (K₀ : ℕ) (Tc : Finset (ℤ × ℤ)), (∀ I ∈
-        Tc, I ∈ dyadicFiniteTree G J N ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1
-        R.2 ∧ I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ (∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2
-        → zga I y = Xga.val I y) ∧ ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → zgb I y =
-        Xgb.val I y) → (∀ I ∈ Tc, kernelHull G J N w I) → ∀ {Bd : ℝ}, (∃ (z₁ : ℤ × ℤ → ℝ →
-        ℂ) (z₂ : ℤ × ℤ → ℝ → ℂ), IsBasicOn G R (dyadicRemainingDepth J N R) (1 : ℝ) Bd
-        (max c₂ cp) H w z₁ ∧ IsBasicOn G R (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂
-        cp) H w z₂ ∧ ∀ I ∈ Tc, ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → Xi.val I y = z₁
-        I y - z₂ I y) → (∃ (z₁ : ℤ × ℤ → ℝ → ℂ) (z₂ : ℤ × ℤ → ℝ → ℂ), IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w z₁ ∧ IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w z₂ ∧ ∀ I ∈ Tc, ∀ᵐ (y : ℝ),
-        y ∈ dyadicGridCell G I.1 I.2 → Xk.val I y = z₁ I y - z₂ I y) → IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w zga → IsBasicOn G R
-        (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w zgb → Bd ≤ (2 : ℝ) +
-        (↑(Fintype.card Xi.Λ + Fintype.card Xk.Λ + Fintype.card Xga.Λ + Fintype.card
-        Xgb.Λ) : ℝ) → (∀ I ∈ Tc, eLpNorm (Xi.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (2 : ℝ)) →
-        (∀ I ∈ Tc, eLpNorm (Xk.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (2 : ℝ)) →
-        (∀ I ∈ Tc, eLpNorm (Xga.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (1 : ℝ)) →
-        (∀ I ∈ Tc, eLpNorm (Xgb.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (1 : ℝ)) → ∀
-        {η₀ : ℝ}, (0 : ℝ) ≤ η₀ → (∀ I ∈ Tc, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
-        (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' (slots4 a i k (f a
-        - Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val I) s) (slots4 a i k (f a -
-        Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val I) s') η₀) → ∀ (Bp ε : ℝ) (ka kb
-        Ma Mb : ℕ), (1 : ℝ) ≤ Bp → (0 : ℝ) < ε → ε ≤ (1 : ℝ) → (1 : ℕ) ≤ ka → (1 : ℕ) ≤ kb
-        → (16 : ℝ) * fitBudget Cqa Ca ka ^ (2 : ℕ) < (↑Ma : ℝ) → (16 : ℝ) * fitBudget Cqa
-        Ca kb ^ (2 : ℕ) < (↑Mb : ℝ) →
-      have D := max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁));
-      have Wa := Fintype.card Xi.Λ * Fintype.card Xk.Λ * ⌊D⌋₊ + Ma;
-      have Wb := Fintype.card Xi.Λ * Fintype.card Xk.Λ * ⌊D⌋₊ + Mb;
-      have S₀ := (1 : ℝ) + (↑(Fintype.card Xi.Λ) : ℝ) + (↑(Fintype.card Xk.Λ) : ℝ) +
-        (↑(Fintype.card Xga.Λ) : ℝ) + (↑(Fintype.card Xgb.Λ) : ℝ);
-      have Sp := (↑Wa : ℝ) * √((2 : ℝ) ^ K₀ / ε) + (1 : ℝ);
-      ∃ (P : Finset ((ℤ × ℤ) × ℤ × ℤ)) (A : ↥P → ActiveSetup κ (max (max c₁ (max c₂ cp))
-        c₂a)), ∑ p : ↥P, dyadicGridLength G (A p).R.1 ≤ (8 / 3 : ℝ) * dyadicGridLength G
-        R.1 ∧ (∀ I ∈ Tc, ∃ (p : ↥P), I ∈ (A p).cells) ∧ (∀ (p p' : ↥P), ∀ I ∈ (A p).cells,
-        I ∈ (A p').cells → p = p') ∧ ∀ (p : ↥P), (A p).cells ⊆ Tc ∧ (∀ I ∈ (A p).cells, ∀
-        J' ∈ Tc, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G
-        J'.1 J'.2 ⊆ dyadicGridCell G (A p).R.1 (A p).R.2 → J' ∈ (A p).cells) ∧ (A p).G = G
-        ∧ (A p).w = w ∧ (A p).a = a ∧ (A p).b = b ∧ (A p).R ∈ dyadicFiniteTree G J N ∧
-        dyadicGridCell G (A p).R.1 (A p).R.2 ⊆ dyadicGridCell G R.1 R.2 ∧ (A p).H = max D
-        (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A p).S = (2
-        : ℝ) ∧ (A p).η = (4 : ℝ) * η₀ ∧ Fintype.card (A p).L = Fintype.card Xi.Λ +
-        Fintype.card Xk.Λ + (Wa + Fintype.card Xga.Λ) + (Wb + Fintype.card Xgb.Λ) ∧ ∑ I ∈
-        (A p).cells, dyadicGridLength G I.1 * ‖localProgressionForm (dyadicGridLength G
-        I.1) (w I) (slots4 a i k (f a - Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val
-        I)) - (A p).Hf I ((A p).Y I)‖ ≤ baseErr κ (Fintype.card Xi.Λ) (Fintype.card Xk.Λ)
-        D Bp ε K₀ Wa Wb Cga Cgb * dyadicGridLength G (A p).R.1 ∧ (∀ I ∈ (A p).cells, ∀ (s
-        s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft G I.1 I.2) (dyadicGridLength
-        G I.1) (w I) s s' ((A p).Y I s) ((A p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * S₀) *
-        (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb : ℝ))) + ((1 : ℝ) + Sp) * Real.exp (-(↑kb
-        : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀ (l : Fin (4 : ℕ)), (eLpNorm ((A p).Y I l) (2 :
-        ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 : ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A p).cells,
-        dyadicGridLength G I.1 * (eLpNorm ((A p).U l I) (2 : ℝ≥0∞) ((A p).μ I)).toReal ^
-        (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ ∑ I ∈ (A p).cells,
-        dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ :
-        ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ (A p).HasColumnRep (1 : ℝ) ∧ (A
-        p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))),
-    ∀ (_ : (1 : ℝ) ≤ Bp),
-    ∀ (_ : (1 : ℕ) ≤ ka),
-    ∀ (_ : (1 : ℕ) ≤ kb),
-    ∀ (_ : (16 : ℝ) * fitBudget Cqa Ca ka ^ (2 : ℕ) < (↑Ma : ℝ)),
-    ∀ (_ : (16 : ℝ) * fitBudget Cqa Ca kb ^ (2 : ℕ) < (↑Mb : ℝ)),
-    let H : ℝ :=
-      (baseTupleHeight Wp Hc)
-    let D : ℝ :=
-      (baseTupleComplexityHeight C₁ Bp H)
-    let Wa : ℕ :=
-      (baseTupleWidth Mt Ma D)
-    let Wb : ℕ :=
-      (baseTupleWidth Mt Mb D)
-    let E : ℝ :=
-      (baseTupleErrorBudget κ Mt Bp ε K₀ D Wa Wb)
-    let S₀ : ℝ :=
-      (baseTupleNormalizedSize Mt)
-    let Sp : ℝ :=
-      (baseTupleSeparationScale ε K₀ Wa)
-    let i : Fin (4 : ℕ) :=
-      (baseTuplePosition u)
-    let k : Fin (4 : ℕ) :=
-      (baseTuplePosition t)
-    let la : ℕ :=
-      (baseTupleLastLevel t sa)
-    ∀ (_ : (1 : ℕ) ≤ la → stagPos la = sa),
-    let lb : ℕ :=
-      (baseTupleLastLevel t sb)
-    ∀ (_ : (1 : ℕ) ≤ lb → stagPos lb = sb),
-    let Lset : Finset ℕ :=
-      (baseTupleActiveLevels u t la lb)
-    ∀ (_ : Lset = {u, u - (4 : ℕ), t, t - (4 : ℕ), la, lb}),
-    let Rf : ℤ × ℤ → ℤ × ℤ :=
-      (baseTupleRootMap seg Lset hLne)
-    let Tup : Finset (ℤ × ℤ) :=
-      (baseTupleCells G J N w K₀)
-    let Rs : Finset (ℤ × ℤ) :=
-      (baseTupleRoots Rf Tup)
-    ∀ (_ : (1 : ℝ) ≤ Wp),
-    let Y : (ℓ : ℕ) → ℓ ≤ t → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂
-        cp) H :=
-      (baseTupleLowListFamily c₂ cp Wp G J N Bf t H hHl X)
-    ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈
-        dyadicFiniteTree G J N, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1 R.2 → seg
-        ℓ I = seg ℓ R → kernelHull G J N w I → ∀ (y : ℝ), (Y ℓ hℓ R hR).val I y = g ℓ I y),
-    ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), Fintype.card
-        (Y ℓ hℓ R hR).Λ = M ℓ),
-    let Xi : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleFirstLowList c₂ cp G J N u t hut H Y hu4)
-    let Xk : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleSecondLowList c₂ cp G J N t H Y ht4)
-    let Xga : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleOpponent c₂ cp G J N t H la hla2 Y)
-    let Xgb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
-      (baseTupleOpponent c₂ cp G J N t H lb hlb2 Y)
-    ∀ (_ : u ∈ Lset),
-    ∀ (_ : u - (4 : ℕ) ∈ Lset),
-    ∀ (_ : la ∈ Lset),
-    ∀ (_ : lb ∈ Lset),
-    ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, ∀ ℓ ∈ Lset, seg ℓ I = seg ℓ (Rf I)),
-    ∃ (ι : Type) (_ : Fintype ι) (A : ι → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a)),
-      ∑ p : ι, dyadicGridLength G (A p).R.1 ≤ (91 / 3 : ℝ) * dyadicGridLength G J.1 ∧ (∀
-      (p p' : ι), ∀ I ∈ (A p).cells, I ∈ (A p').cells → p = p') ∧ (∀ (p : ι), (A
-      p).cells ⊆ dyadicFiniteTree G J N ∧ (∀ I ∈ (A p).cells, kernelHull G J N w I) ∧ (∀
-      I ∈ (A p).cells, ∀ (J' : ℤ × ℤ), dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G J'.1
-      J'.2 → dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G (A p).R.1 (A p).R.2 → J' ∈ (A
-      p).cells) ∧ (A p).G = G ∧ (A p).w = w ∧ (A p).R ∈ dyadicFiniteTree G J N ∧ (A p).H
-      = max D (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A
-      p).S = (2 : ℝ) ∧ (A p).η = (4 : ℝ) * η₀ ∧ Fintype.card (A p).L ≤ (6 : ℕ) * Mt + Wa
-      + Wb ∧ (∀ I ∈ (A p).cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
-      (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' ((A p).Y I s) ((A
-      p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * S₀) * (Real.exp (-(↑ka : ℝ)) + Real.exp
-      (-(↑kb : ℝ))) + ((1 : ℝ) + Sp) * Real.exp (-(↑kb : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀
-      (l : Fin (4 : ℕ)), (eLpNorm ((A p).Y I l) (2 : ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 :
-      ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * (eLpNorm
-      ((A p).U l I) (2 : ℝ≥0∞) ((A p).μ I)).toReal ^ (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) *
-      dyadicGridLength G (A p).R.1) ∧ ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A
-      p).Hf I ((A p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ : ℝ) ^ (2 : ℕ) *
-      dyadicGridLength G (A p).R.1) ∧ (A p).HasColumnRep (1 : ℝ) ∧ (A p).SubRootProps η₀
-      ((↑K₀ : ℝ) ^ (2 : ℕ))) ∧ ∑ I ∈ dyadicFiniteTree G J N, dyadicGridLength G I.1 *
-      ‖localProgressionForm (dyadicGridLength G I.1) (w I) (stagTuple f g u t I)‖ ≤ ∑ p
-      : ι, ∑ I ∈ (A p).cells, dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).Y I)‖ + E *
-      ((91 / 3 : ℝ) * dyadicGridLength G J.1)
+  match context with
+  | {
+      κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw, f, hfm, hfq, Bf, kk,
+      M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt, η₀, hη₀, hpair, hsz, Bp,
+      ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak, hbi, hbk, hla2, hlb2,
+      hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL, ht4L, hslots,
+      ..
+    } =>
+    exact
+      ∀ (_ : ∀ {G : RealDyadicGrid} {J : ℤ × ℤ} {N : ℕ} {H : ℝ} {R : ℤ × ℤ}, R ∈ dyadicFiniteTree
+          G J N → (1 : ℝ) ≤ H → ∀ {a i k b : Fin (4 : ℕ)}, a ≠ i → a ≠ k → a ≠ b → i ≠ k → i
+          ≠ b → k ≠ b → ∀ (w : ℤ × ℤ → ℝ × ℝ → ℂ), (∀ (I : ℤ × ℤ), IsAdmissibleLocalKernel κ
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I)) → ∀ (f : Fin (4 : ℕ) →
+          ℝ → ℂ), (∀ (l : Fin (4 : ℕ)), Measurable (f l)) → (∀ (l : Fin (4 : ℕ)), ∀ I ∈
+          dyadicFiniteTree G J N, kernelHull G J N w I → eLpNorm (f l) (ENNReal.ofReal q)
+          (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤
+          (1 : ℝ≥0∞)) → ∀ (Xi Xk Xga Xgb : LowList G J N R (max c₂ cp) H), (∃ (d : ℕ) (Φ :
+          QuadraticChartData d), (1 : ℕ) ≤ d ∧ QuadraticChartComplexity (max c₂ cp) H Φ ∧
+          IsBoundedQuadraticChart Φ) → ∀ (zga zgb : ℤ × ℤ → ℝ → ℂ) {Cga Cgb : ℝ}, (0 : ℝ) ≤
+          Cga → (0 : ℝ) ≤ Cgb → ((∀ (I : ℤ × ℤ), Measurable (zga I) ∧ MemLp (zga I) (2 :
+          ℝ≥0∞) (volume.restrict (dyadicGridCell G I.1 I.2))) ∧ ∀ J' ∈ dyadicFiniteTree G J
+          N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 → IsAdmissibleOpponent G
+          J' (f a) zga Cga ∧ HasDepthEnergy G J' (f a) zga (1 : ℝ)) → ((∀ (I : ℤ × ℤ),
+          Measurable (zgb I) ∧ MemLp (zgb I) (2 : ℝ≥0∞) (volume.restrict (dyadicGridCell G
+          I.1 I.2))) ∧ ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆
+          dyadicGridCell G R.1 R.2 → IsAdmissibleOpponent G J' (f b) zgb Cgb ∧
+          HasDepthEnergy G J' (f b) zgb (1 : ℝ)) → ∀ (K₀ : ℕ) (Tc : Finset (ℤ × ℤ)), (∀ I ∈
+          Tc, I ∈ dyadicFiniteTree G J N ∧ dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1
+          R.2 ∧ I.1 + (↑K₀ : ℤ) ≤ J.1 + (↑N : ℤ) ∧ (∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2
+          → zga I y = Xga.val I y) ∧ ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → zgb I y =
+          Xgb.val I y) → (∀ I ∈ Tc, kernelHull G J N w I) → ∀ {Bd : ℝ}, (∃ (z₁ : ℤ × ℤ → ℝ →
+          ℂ) (z₂ : ℤ × ℤ → ℝ → ℂ), IsBasicOn G R (dyadicRemainingDepth J N R) (1 : ℝ) Bd
+          (max c₂ cp) H w z₁ ∧ IsBasicOn G R (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂
+          cp) H w z₂ ∧ ∀ I ∈ Tc, ∀ᵐ (y : ℝ), y ∈ dyadicGridCell G I.1 I.2 → Xi.val I y = z₁
+          I y - z₂ I y) → (∃ (z₁ : ℤ × ℤ → ℝ → ℂ) (z₂ : ℤ × ℤ → ℝ → ℂ), IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w z₁ ∧ IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w z₂ ∧ ∀ I ∈ Tc, ∀ᵐ (y : ℝ),
+          y ∈ dyadicGridCell G I.1 I.2 → Xk.val I y = z₁ I y - z₂ I y) → IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w zga → IsBasicOn G R
+          (dyadicRemainingDepth J N R) (1 : ℝ) Bd (max c₂ cp) H w zgb → Bd ≤ (2 : ℝ) +
+          (↑(Fintype.card Xi.Λ + Fintype.card Xk.Λ + Fintype.card Xga.Λ + Fintype.card
+          Xgb.Λ) : ℝ) → (∀ I ∈ Tc, eLpNorm (Xi.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (2 : ℝ)) →
+          (∀ I ∈ Tc, eLpNorm (Xk.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (2 : ℝ)) →
+          (∀ I ∈ Tc, eLpNorm (Xga.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (1 : ℝ)) →
+          (∀ I ∈ Tc, eLpNorm (Xgb.val I) (2 : ℝ≥0∞) (normalizedIntervalMeasure
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal (1 : ℝ)) → ∀
+          {η₀ : ℝ}, (0 : ℝ) ≤ η₀ → (∀ I ∈ Tc, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall
+          (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1) (w I) s s' (slots4 a i k (f a
+          - Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val I) s) (slots4 a i k (f a -
+          Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val I) s') η₀) → ∀ (Bp ε : ℝ) (ka kb
+          Ma Mb : ℕ), (1 : ℝ) ≤ Bp → (0 : ℝ) < ε → ε ≤ (1 : ℝ) → (1 : ℕ) ≤ ka → (1 : ℕ) ≤ kb
+          → (16 : ℝ) * fitBudget Cqa Ca ka ^ (2 : ℕ) < (↑Ma : ℝ) → (16 : ℝ) * fitBudget Cqa
+          Ca kb ^ (2 : ℕ) < (↑Mb : ℝ) →
+        have D := max H (Real.exp ((↑C₁ : ℝ) * ((1 : ℝ) + Bp + Real.log H) ^ C₁));
+        have Wa := Fintype.card Xi.Λ * Fintype.card Xk.Λ * ⌊D⌋₊ + Ma;
+        have Wb := Fintype.card Xi.Λ * Fintype.card Xk.Λ * ⌊D⌋₊ + Mb;
+        have S₀ := (1 : ℝ) + (↑(Fintype.card Xi.Λ) : ℝ) + (↑(Fintype.card Xk.Λ) : ℝ) +
+          (↑(Fintype.card Xga.Λ) : ℝ) + (↑(Fintype.card Xgb.Λ) : ℝ);
+        have Sp := (↑Wa : ℝ) * √((2 : ℝ) ^ K₀ / ε) + (1 : ℝ);
+        ∃ (P : Finset ((ℤ × ℤ) × ℤ × ℤ)) (A : ↥P → ActiveSetup κ (max (max c₁ (max c₂ cp))
+          c₂a)), ∑ p : ↥P, dyadicGridLength G (A p).R.1 ≤ (8 / 3 : ℝ) * dyadicGridLength G
+          R.1 ∧ (∀ I ∈ Tc, ∃ (p : ↥P), I ∈ (A p).cells) ∧ (∀ (p p' : ↥P), ∀ I ∈ (A p).cells,
+          I ∈ (A p').cells → p = p') ∧ ∀ (p : ↥P), (A p).cells ⊆ Tc ∧ (∀ I ∈ (A p).cells, ∀
+          J' ∈ Tc, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G J'.1 J'.2 → dyadicGridCell G
+          J'.1 J'.2 ⊆ dyadicGridCell G (A p).R.1 (A p).R.2 → J' ∈ (A p).cells) ∧ (A p).G = G
+          ∧ (A p).w = w ∧ (A p).a = a ∧ (A p).b = b ∧ (A p).R ∈ dyadicFiniteTree G J N ∧
+          dyadicGridCell G (A p).R.1 (A p).R.2 ⊆ dyadicGridCell G R.1 R.2 ∧ (A p).H = max D
+          (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) ∧ (A p).Dc = √ε⁻¹ ∧ (A p).S = (2
+          : ℝ) ∧ (A p).η = (4 : ℝ) * η₀ ∧ Fintype.card (A p).L = Fintype.card Xi.Λ +
+          Fintype.card Xk.Λ + (Wa + Fintype.card Xga.Λ) + (Wb + Fintype.card Xgb.Λ) ∧ ∑ I ∈
+          (A p).cells, dyadicGridLength G I.1 * ‖localProgressionForm (dyadicGridLength G
+          I.1) (w I) (slots4 a i k (f a - Xga.val I) (Xi.val I) (Xk.val I) (f b - Xgb.val
+          I)) - (A p).Hf I ((A p).Y I)‖ ≤ baseErr κ (Fintype.card Xi.Λ) (Fintype.card Xk.Λ)
+          D Bp ε K₀ Wa Wb Cga Cgb * dyadicGridLength G (A p).R.1 ∧ (∀ I ∈ (A p).cells, ∀ (s
+          s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft G I.1 I.2) (dyadicGridLength
+          G I.1) (w I) s s' ((A p).Y I s) ((A p).Y I s') (η₀ + ((2 : ℝ) + (2 : ℝ) * S₀) *
+          (Real.exp (-(↑ka : ℝ)) + Real.exp (-(↑kb : ℝ))) + ((1 : ℝ) + Sp) * Real.exp (-(↑kb
+          : ℝ)))) ∧ (∀ I ∈ (A p).cells, ∀ (l : Fin (4 : ℕ)), (eLpNorm ((A p).Y I l) (2 :
+          ℝ≥0∞) ((A p).μ I)).toReal ≤ (2 : ℝ)) ∧ (∀ (l : Fin (4 : ℕ)), ∑ I ∈ (A p).cells,
+          dyadicGridLength G I.1 * (eLpNorm ((A p).U l I) (2 : ℝ≥0∞) ((A p).μ I)).toReal ^
+          (2 : ℕ) ≤ (↑K₀ : ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ ∑ I ∈ (A p).cells,
+          dyadicGridLength G I.1 * ‖(A p).Hf I ((A p).z (3 : Fin (4 : ℕ)) I)‖ ≤ η₀ * ((↑K₀ :
+          ℝ) ^ (2 : ℕ) * dyadicGridLength G (A p).R.1) ∧ (A p).HasColumnRep (1 : ℝ) ∧ (A
+          p).SubRootProps η₀ ((↑K₀ : ℝ) ^ (2 : ℕ))),
+      ∀ (_ : (1 : ℝ) ≤ Bp),
+      ∀ (_ : (1 : ℕ) ≤ ka),
+      ∀ (_ : (1 : ℕ) ≤ kb),
+      ∀ (_ : (16 : ℝ) * fitBudget Cqa Ca ka ^ (2 : ℕ) < (↑Ma : ℝ)),
+      ∀ (_ : (16 : ℝ) * fitBudget Cqa Ca kb ^ (2 : ℕ) < (↑Mb : ℝ)),
+      let H : ℝ :=
+        (baseTupleHeight Wp Hc)
+      let D : ℝ :=
+        (baseTupleComplexityHeight C₁ Bp H)
+      let Wa : ℕ :=
+        (baseTupleWidth Mt Ma D)
+      let Wb : ℕ :=
+        (baseTupleWidth Mt Mb D)
+      let E : ℝ :=
+        (baseTupleErrorBudget κ Mt Bp ε K₀ D Wa Wb)
+      let S₀ : ℝ :=
+        (baseTupleNormalizedSize Mt)
+      let Sp : ℝ :=
+        (baseTupleSeparationScale ε K₀ Wa)
+      let i : Fin (4 : ℕ) :=
+        (baseTuplePosition u)
+      let k : Fin (4 : ℕ) :=
+        (baseTuplePosition t)
+      let la : ℕ :=
+        (baseTupleLastLevel t sa)
+      ∀ (_ : (1 : ℕ) ≤ la → stagPos la = sa),
+      let lb : ℕ :=
+        (baseTupleLastLevel t sb)
+      ∀ (_ : (1 : ℕ) ≤ lb → stagPos lb = sb),
+      let Lset : Finset ℕ :=
+        (baseTupleActiveLevels u t la lb)
+      ∀ (_ : Lset = {u, u - (4 : ℕ), t, t - (4 : ℕ), la, lb}),
+      let Rf : ℤ × ℤ → ℤ × ℤ :=
+        (baseTupleRootMap seg Lset hLne)
+      let Tup : Finset (ℤ × ℤ) :=
+        (baseTupleCells G J N w K₀)
+      let Rs : Finset (ℤ × ℤ) :=
+        (baseTupleRoots Rf Tup)
+      ∀ (_ : (1 : ℝ) ≤ Wp),
+      let Y : (ℓ : ℕ) → ℓ ≤ t → (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂
+          cp) H :=
+        (baseTupleLowListFamily c₂ cp Wp G J N Bf t H hHl X)
+      ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈
+          dyadicFiniteTree G J N, dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R.1 R.2 → seg
+          ℓ I = seg ℓ R → kernelHull G J N w I → ∀ (y : ℝ), (Y ℓ hℓ R hR).val I y = g ℓ I y),
+      ∀ (_ : ∀ (ℓ : ℕ) (hℓ : ℓ ≤ t) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), Fintype.card
+          (Y ℓ hℓ R hR).Λ = M ℓ),
+      let Xi : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleFirstLowList c₂ cp G J N u t hut H Y hu4)
+      let Xk : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleSecondLowList c₂ cp G J N t H Y ht4)
+      let Xga : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleOpponent c₂ cp G J N t H la hla2 Y)
+      let Xgb : (R : ℤ × ℤ) → R ∈ dyadicFiniteTree G J N → LowList G J N R (max c₂ cp) H :=
+        (baseTupleOpponent c₂ cp G J N t H lb hlb2 Y)
+      ∀ (_ : u ∈ Lset),
+      ∀ (_ : u - (4 : ℕ) ∈ Lset),
+      ∀ (_ : la ∈ Lset),
+      ∀ (_ : lb ∈ Lset),
+      ∀ (_ : ∀ I ∈ dyadicFiniteTree G J N, ∀ ℓ ∈ Lset, seg ℓ I = seg ℓ (Rf I)),
+      BaseTupleConclusion κ c₂ cp c₁ c₂a Ca Cqa G J N w f g u t Mt η₀ ε K₀ ka kb D Wa Wb E S₀ Sp
 
 private theorem baseTuple_hbpack : BaseTupleHbpackStatement := by
   classical
@@ -2387,708 +2343,734 @@ private theorem baseTuple_conclusion_40 : BaseTupleConclusion40Statement := by
 private theorem baseTuple_stage_5 (context : BaseTupleContext) :
     BaseTupleStage5Statement context := by
   classical
-  rcases context with ⟨κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw,
-    f, hfm, hfq, Bf, kk, M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt,
-    η₀, hη₀, hpair, hsz, Bp, ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak,
-    hbi, hbk, hla2, hlb2, hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL,
-    ht4L, hslots⟩
-  dsimp (config := { zeta := false, zetaUnused := false }) only [BaseTupleStage5Statement,
-    baseTupleHeight, baseTupleComplexityHeight, baseTupleWidth, baseTupleErrorBudget,
-    baseTupleNormalizedSize, baseTupleSeparationScale, baseTuplePosition,
-    baseTupleLastLevel, baseTupleActiveLevels, baseTupleRootMap, baseTupleCells,
-    baseTupleRoots, baseTupleLowListFamily, baseTupleFirstLowList, baseTupleSecondLowList,
-    baseTupleOpponent] at *
-  intro H D Wa Wb E S₀ Sp i k la lb Lset Rf Tup Rs Y Xi Xk Xga Xgb z BdR hzt hzt4 z0 hz0ae hz0R za
-    zb hzaB hzbB P A hPA hRsumT ιt A' hcellsT hcards hpack d₀ Bot hBot_def hBot anc hanc Rb hRb hRbu
-    Bs hBsT hQ hR'Q hTc hTB hslotsB hvY' hzga' hzgb' hriB
-  have hrkB : ∀ R' (hR' : R' ∈ Bs), ∃ z₁ z₂,
-      IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R')) 1 (BdR (Rf R') (hQ R' hR'))
-        (max c₂ cp) H w z₁ ∧
-      IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R')) 1 (BdR (Rf R') (hQ R' hR'))
-        (max c₂ cp) H w z₂ ∧
-      ∀ I ∈ Bot.filter (fun I => Rb I = R'), ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 →
-        ((Xk (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I y = z₁ I y - z₂ I y := by
-    intro R' hR'
-    have hQT := hQ R' hR'
-    by_cases ht4' : t ≤ 4
-    · refine ⟨z t (Rf R') hQT, z0 (Rf R') hQT, hzt _ _, hz0R _ _, fun I hI => ?_⟩
-      obtain ⟨hIt, hIH, hRfI, -, -⟩ := hTc R' hR' I hI
-      filter_upwards [hvY' t le_rfl htL (Rf R') hQT I hIt hIH hRfI, hz0ae (Rf R') hQT I] with
-        y hy h0 hyI
-      rw [LowList.reroot_val, h0, sub_zero, ← hy hyI]
-      simp only [Xk, baseTupleSecondLowList, ht4', ↓reduceIte]
-    · refine ⟨z t (Rf R') hQT, z (t - 4) (Rf R') hQT, hzt _ _, hzt4 _ _ ht4', fun I hI => ?_⟩
-      obtain ⟨hIt, hIH, hRfI, -, -⟩ := hTc R' hR' I hI
-      filter_upwards [hvY' t le_rfl htL (Rf R') hQT I hIt hIH hRfI,
-        hvY' (t - 4) ht4 ht4L (Rf R') hQT I hIt hIH hRfI] with y h1 h2 hyI
-      rw [LowList.reroot_val, ← h1 hyI, ← h2 hyI]
-      simp only [Xk, baseTupleSecondLowList, ht4', ↓reduceIte, LowList.sub_val]
-  have hcc : max c₂ cp ≤ max (max c₁ (max c₂ cp)) c₂a :=
-    le_trans (le_max_right c₁ _) (le_max_left _ _)
-  have hHH' : H ≤ max D (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) :=
-    le_trans (le_max_left _ _) (le_max_left _ _)
-  have hdef₀' : ∃ (d : ℕ) (Φ : QuadraticChartData d), QuadraticChartComplexity (max c₂ cp) H Φ ∧
-      IsBoundedQuadraticChart Φ := by
-    obtain ⟨d, Φ, -, h1, h2⟩ := hdefc _ H (le_max_right _ _) hWpH
-    exact ⟨d, Φ, h1, h2⟩
-  have hbotS : ∀ (R' : ℤ × ℤ) (hR' : R' ∈ Bs), _ := fun R' hR' =>
-    baseBottom κ ((Xi (Rf R') (hQ R' hR')).reroot (hQ R' hR'))
-      ((Xk (Rf R') (hQ R' hR')).reroot (hQ R' hR'))
-      ((Xga (Rf R') (hQ R' hR')).reroot (hQ R' hR'))
-      ((Xgb (Rf R') (hQ R' hR')).reroot (hQ R' hR'))
-      hai hak hab hpos hbi.symm hbk.symm K₀ f hfm w hw (hR'Q R' hR')
-      (Bot.filter (fun I => Rb I = R')) (hTB R' hR')
-      (fun l I hI => eLpNorm_two_le_of_q (dyadicGridLength_pos G I.1) hq.le
-        (hfq l I (hTc R' hR' I hI).1 (Or.inr (hTc R' hR' I hI).2.1)))
-      (fun I hI l => by
-        rw [hslotsB R' hR' I hI]
-        exact hsz I (hTc R' hR' I hI).1 (hTc R' hR' I hI).2.1 l)
-      hη₀
-      (fun I hI s s' hss => by
-        rw [hslotsB R' hR' I hI]
-        exact hpair I (hTc R' hR' I hI).1 (hTc R' hR' I hI).2.1 s s' hss)
-      (c' := max (max c₁ (max c₂ cp)) c₂a)
-      (H' := max D (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)))
-      hcc hHH' hdef₀' hε0 hε1 (hriB R' hR') (hrkB R' hR')
-      (za (Rf R') (hQ R' hR')) (zb (Rf R') (hQ R' hR'))
-      (hzaB (Rf R') (hQ R' hR')) (hzbB (Rf R') (hQ R' hR')) le_rfl hcc hHH'
-      (fun I hI => hzga' (Rf R') (hQ R' hR') I (hTc R' hR' I hI).1 (hTc R' hR' I hI).2.1
-        (hTc R' hR' I hI).2.2.1)
-      (fun I hI => hzgb' (Rf R') (hQ R' hR') I (hTc R' hR' I hI).1 (hTc R' hR' I hI).2.1
-        (hTc R' hR' I hI).2.2.1)
-  choose AB hAB using hbotS
-  have hBc : ∀ R' (hR' : R' ∈ Bs), ∀ I ∈ (AB R' hR').cells,
-      I ∈ Bot.filter (fun I => Rb I = R') := fun R' hR' I hI => by
-    rw [← (hAB R' hR').2.2.1]; exact hI
-  -- the fresh roots have total length at most `9 |J|`
-  have hbpack : ∑ R' : Bs, dyadicGridLength G (AB R'.1 R'.2).R.1 ≤
-      9 * dyadicGridLength G J.1 := by
-    expose_names
-    exact @baseTuple_hbpack κ c₂ cp Wp c₁ C₁ c₂a Ca Cqa G J N w f Bf seg u t hut Hc η₀ Bp ε K₀ ka
-      kb sa sb hla2 hlb2 hLne hHl X hu4 ht4 hRsumT hBot hanc hRb hQ AB hAB
-  let ι := ιt ⊕ Bs
-  let Atot : ι → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a) :=
-    Sum.elim A' fun R' => AB R'.1 R'.2
-  refine ⟨ι, inferInstance, Atot, ?_, ?_, ?_, ?_⟩
-  · rw [Fintype.sum_sum_type]
-    dsimp only [Atot, Sum.elim_inl, Sum.elim_inr]
-    linarith
-  · -- disjointness
-    rintro (⟨⟨R, hR⟩, p⟩ | ⟨R₁, hR₁⟩) (⟨⟨R', hR'⟩, p'⟩ | ⟨R₂, hR₂⟩) I hx hx'
-    · have e1 := (hcellsT R hR p I hx).2.2.1
-      have e2 := (hcellsT R' hR' p' I hx').2.2.1
-      obtain rfl : R = R' := e1.symm.trans e2
-      have := (hPA R hR).2.2.1 p p' I hx hx'
-      subst this
-      rfl
-    · exact absurd (hcellsT R hR p I hx).2.1
-        (Finset.mem_filter.mp (Finset.mem_filter.mp (hBc R₂ hR₂ I hx')).1).2.1
-    · exact absurd (hcellsT R' hR' p' I hx').2.1
-        (Finset.mem_filter.mp (Finset.mem_filter.mp (hBc R₁ hR₁ I hx)).1).2.1
-    · have h1 := (Finset.mem_filter.mp (hBc R₁ hR₁ I hx)).2
-      have h2 := (Finset.mem_filter.mp (hBc R₂ hR₂ I hx')).2
-      obtain rfl : R₁ = R₂ := h1.symm.trans h2
-      rfl
-  · expose_names
-    exact @baseTuple_conclusion_39 κ c₂ cp Wp c₁ C₁ c₂a Ca Cqa G J N w f Bf M seg u t hut Hc Mt η₀
-      Bp ε K₀ ka kb Ma Mb hε0 sa sb hla2 hlb2 hLne hsegd hRtree hRsT hHl X hu4 ht4 P A hPA hcellsT
-      hcards hBot hanc hRbu hBsT hQ hTc AB hAB
-  · expose_names
-    exact @baseTuple_conclusion_40 κ c₂ cp Wp c₁ C₁ c₂a Ca q Cqa G J N w f Bf kk M roots seg n a g
-      cnt atm hfit u t hut Hc Mt hMt η₀ Bp ε K₀ ka kb Ma Mb sa sb hla2 hlb2 hLne hRtree hRsT hHl
-      hH1 X hu4 ht4 hslots P A hPA hcellsT hcards hpack hBot_def hQ hslotsB AB hAB
+  match context with
+  | {
+      κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw, f, hfm, hfq, Bf, kk,
+      M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt, η₀, hη₀, hpair, hsz, Bp,
+      ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak, hbi, hbk, hla2, hlb2,
+      hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL, ht4L, hslots,
+      ..
+    } =>
+    dsimp (config := { zeta := false, zetaUnused := false }) only [BaseTupleStage5Statement,
+      BaseTupleConclusion, baseTupleHeight, baseTupleComplexityHeight, baseTupleWidth,
+      baseTupleErrorBudget, baseTupleNormalizedSize, baseTupleSeparationScale,
+      baseTuplePosition, baseTupleLastLevel, baseTupleActiveLevels, baseTupleRootMap,
+      baseTupleCells, baseTupleRoots, baseTupleLowListFamily, baseTupleFirstLowList,
+      baseTupleSecondLowList, baseTupleOpponent] at *
+    intro H D Wa Wb E S₀ Sp i k la lb Lset Rf Tup Rs Y Xi Xk Xga Xgb z BdR hzt hzt4 z0 hz0ae hz0R za
+      zb hzaB hzbB P A hPA hRsumT ιt A' hcellsT hcards hpack d₀ Bot hBot_def hBot anc hanc Rb hRb
+        hRbu
+      Bs hBsT hQ hR'Q hTc hTB hslotsB hvY' hzga' hzgb' hriB
+    have hrkB : ∀ R' (hR' : R' ∈ Bs), ∃ z₁ z₂,
+        IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R')) 1 (BdR (Rf R') (hQ R' hR'))
+          (max c₂ cp) H w z₁ ∧
+        IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R')) 1 (BdR (Rf R') (hQ R' hR'))
+          (max c₂ cp) H w z₂ ∧
+        ∀ I ∈ Bot.filter (fun I => Rb I = R'), ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 →
+          ((Xk (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I y = z₁ I y - z₂ I y := by
+      intro R' hR'
+      have hQT := hQ R' hR'
+      by_cases ht4' : t ≤ 4
+      · refine ⟨z t (Rf R') hQT, z0 (Rf R') hQT, hzt _ _, hz0R _ _, fun I hI => ?_⟩
+        obtain ⟨hIt, hIH, hRfI, -, -⟩ := hTc R' hR' I hI
+        filter_upwards [hvY' t le_rfl htL (Rf R') hQT I hIt hIH hRfI, hz0ae (Rf R') hQT I] with
+          y hy h0 hyI
+        rw [LowList.reroot_val, h0, sub_zero, ← hy hyI]
+        simp only [Xk, baseTupleSecondLowList, ht4', ↓reduceIte]
+      · refine ⟨z t (Rf R') hQT, z (t - 4) (Rf R') hQT, hzt _ _, hzt4 _ _ ht4', fun I hI => ?_⟩
+        obtain ⟨hIt, hIH, hRfI, -, -⟩ := hTc R' hR' I hI
+        filter_upwards [hvY' t le_rfl htL (Rf R') hQT I hIt hIH hRfI,
+          hvY' (t - 4) ht4 ht4L (Rf R') hQT I hIt hIH hRfI] with y h1 h2 hyI
+        rw [LowList.reroot_val, ← h1 hyI, ← h2 hyI]
+        simp only [Xk, baseTupleSecondLowList, ht4', ↓reduceIte, LowList.sub_val]
+    have hcc : max c₂ cp ≤ max (max c₁ (max c₂ cp)) c₂a :=
+      le_trans (le_max_right c₁ _) (le_max_left _ _)
+    have hHH' : H ≤ max D (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)) :=
+      le_trans (le_max_left _ _) (le_max_left _ _)
+    have hdef₀' : ∃ (d : ℕ) (Φ : QuadraticChartData d), QuadraticChartComplexity (max c₂ cp) H Φ ∧
+        IsBoundedQuadraticChart Φ := by
+      obtain ⟨d, Φ, -, h1, h2⟩ := hdefc _ H (le_max_right _ _) hWpH
+      exact ⟨d, Φ, h1, h2⟩
+    have hbotS : ∀ (R' : ℤ × ℤ) (hR' : R' ∈ Bs), _ := fun R' hR' =>
+      baseBottom κ ((Xi (Rf R') (hQ R' hR')).reroot (hQ R' hR'))
+        ((Xk (Rf R') (hQ R' hR')).reroot (hQ R' hR'))
+        ((Xga (Rf R') (hQ R' hR')).reroot (hQ R' hR'))
+        ((Xgb (Rf R') (hQ R' hR')).reroot (hQ R' hR'))
+        hai hak hab hpos hbi.symm hbk.symm K₀ f hfm w hw (hR'Q R' hR')
+        (Bot.filter (fun I => Rb I = R')) (hTB R' hR')
+        (fun l I hI => eLpNorm_two_le_of_q (dyadicGridLength_pos G I.1) hq.le
+          (hfq l I (hTc R' hR' I hI).1 (Or.inr (hTc R' hR' I hI).2.1)))
+        (fun I hI l => by
+          rw [hslotsB R' hR' I hI]
+          exact hsz I (hTc R' hR' I hI).1 (hTc R' hR' I hI).2.1 l)
+        hη₀
+        (fun I hI s s' hss => by
+          rw [hslotsB R' hR' I hI]
+          exact hpair I (hTc R' hR' I hI).1 (hTc R' hR' I hI).2.1 s s' hss)
+        (c' := max (max c₁ (max c₂ cp)) c₂a)
+        (H' := max D (max (fitBudget Cqa Ca ka) (fitBudget Cqa Ca kb)))
+        hcc hHH' hdef₀' hε0 hε1 (hriB R' hR') (hrkB R' hR')
+        (za (Rf R') (hQ R' hR')) (zb (Rf R') (hQ R' hR'))
+        (hzaB (Rf R') (hQ R' hR')) (hzbB (Rf R') (hQ R' hR')) le_rfl hcc hHH'
+        (fun I hI => hzga' (Rf R') (hQ R' hR') I (hTc R' hR' I hI).1 (hTc R' hR' I hI).2.1
+          (hTc R' hR' I hI).2.2.1)
+        (fun I hI => hzgb' (Rf R') (hQ R' hR') I (hTc R' hR' I hI).1 (hTc R' hR' I hI).2.1
+          (hTc R' hR' I hI).2.2.1)
+    choose AB hAB using hbotS
+    have hBc : ∀ R' (hR' : R' ∈ Bs), ∀ I ∈ (AB R' hR').cells,
+        I ∈ Bot.filter (fun I => Rb I = R') := fun R' hR' I hI => by
+      rw [← (hAB R' hR').2.2.1]; exact hI
+    -- the fresh roots have total length at most `9 |J|`
+    have hbpack : ∑ R' : Bs, dyadicGridLength G (AB R'.1 R'.2).R.1 ≤
+        9 * dyadicGridLength G J.1 := by
+      expose_names
+      exact @baseTuple_hbpack κ c₂ cp Wp c₁ C₁ c₂a Ca Cqa G J N w f Bf seg u t hut Hc η₀ Bp ε K₀ ka
+        kb sa sb hla2 hlb2 hLne hHl X hu4 ht4 hRsumT hBot hanc hRb hQ AB hAB
+    let ι := ιt ⊕ Bs
+    let Atot : ι → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a) :=
+      Sum.elim A' fun R' => AB R'.1 R'.2
+    refine ⟨ι, inferInstance, Atot, ?_, ?_, ?_, ?_⟩
+    · rw [Fintype.sum_sum_type]
+      dsimp only [Atot, Sum.elim_inl, Sum.elim_inr]
+      linarith
+    · -- disjointness
+      rintro (⟨⟨R, hR⟩, p⟩ | ⟨R₁, hR₁⟩) (⟨⟨R', hR'⟩, p'⟩ | ⟨R₂, hR₂⟩) I hx hx'
+      · have e1 := (hcellsT R hR p I hx).2.2.1
+        have e2 := (hcellsT R' hR' p' I hx').2.2.1
+        obtain rfl : R = R' := e1.symm.trans e2
+        have := (hPA R hR).2.2.1 p p' I hx hx'
+        subst this
+        rfl
+      · exact absurd (hcellsT R hR p I hx).2.1
+          (Finset.mem_filter.mp (Finset.mem_filter.mp (hBc R₂ hR₂ I hx')).1).2.1
+      · exact absurd (hcellsT R' hR' p' I hx').2.1
+          (Finset.mem_filter.mp (Finset.mem_filter.mp (hBc R₁ hR₁ I hx)).1).2.1
+      · have h1 := (Finset.mem_filter.mp (hBc R₁ hR₁ I hx)).2
+        have h2 := (Finset.mem_filter.mp (hBc R₂ hR₂ I hx')).2
+        obtain rfl : R₁ = R₂ := h1.symm.trans h2
+        rfl
+    · expose_names
+      exact @baseTuple_conclusion_39 κ c₂ cp Wp c₁ C₁ c₂a Ca Cqa G J N w f Bf M seg u t hut Hc Mt η₀
+        Bp ε K₀ ka kb Ma Mb hε0 sa sb hla2 hlb2 hLne hsegd hRtree hRsT hHl X hu4 ht4 P A hPA hcellsT
+        hcards hBot hanc hRbu hBsT hQ hTc AB hAB
+    · expose_names
+      exact @baseTuple_conclusion_40 κ c₂ cp Wp c₁ C₁ c₂a Ca q Cqa G J N w f Bf kk M roots seg n a g
+        cnt atm hfit u t hut Hc Mt hMt η₀ Bp ε K₀ ka kb Ma Mb sa sb hla2 hlb2 hLne hRtree hRsT hHl
+        hH1 X hu4 ht4 hslots P A hPA hcellsT hcards hpack hBot_def hQ hslotsB AB hAB
 
 private theorem baseTuple_stage_4 (context : BaseTupleContext) :
     BaseTupleStage4Statement context := by
   classical
-  let commonContext := context
-  rcases context with ⟨κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw,
-    f, hfm, hfq, Bf, kk, M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt,
-    η₀, hη₀, hpair, hsz, Bp, ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak,
-    hbi, hbk, hla2, hlb2, hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL,
-    ht4L, hslots⟩
-  dsimp (config := { zeta := false, zetaUnused := false }) only [BaseTupleStage4Statement,
-    baseTupleHeight, baseTupleComplexityHeight, baseTupleWidth, baseTupleErrorBudget,
-    baseTupleNormalizedSize, baseTupleSeparationScale, baseTuplePosition,
-    baseTupleLastLevel, baseTupleActiveLevels, baseTupleRootMap, baseTupleCells,
-    baseTupleRoots, baseTupleLowListFamily, baseTupleFirstLowList, baseTupleSecondLowList,
-    baseTupleOpponent] at *
-  intro H D Wa Wb E S₀ Sp i k la lb Lset Rf Tup Rs Y hYval Xi Xk Xga Xgb huL hu4L hlaL hlbL hcellR
-    hgav hgbv z hz2 BdR hzu hzu4 hzt hzt4 z0 hz0ae hz0R za zb hzaB hzbB P A hPA hRsumT ιt A' hcellsT
-    hcards hpack d₀ Bot hBot_def hBot anc hanc Rb hRb
-  have hRbRf : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 → Rf (Rb I) = Rf I := fun I hI hdI => by
-    obtain ⟨hRbT, -, hIRb, hRbRf⟩ := hRb I hI hdI
-    exact firstRoot_between (hL := hLne) hsegd hI hRbT hIRb hRbRf
-  have hRbu : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 → ∀ I' ∈ dyadicFiniteTree G J N,
-      dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G I'.1 I'.2 →
-      dyadicGridCell G I'.1 I'.2 ⊆ dyadicGridCell G (Rb I).1 (Rb I).2 → Rb I' = Rb I := by
-    intro I hI hdI I' hI' hII' hI'Rb
-    obtain ⟨-, hdRb, -, hRbRf'⟩ := hRb I hI hdI
-    have hdI' : d₀ ≤ I'.1 := hdRb.trans (dyadicGridCell_depth_le_of_subset G I' (Rb I) hI'Rb)
-    have he : Rf I' = Rf I :=
-      firstRoot_between (hL := hLne) hsegd hI hI' hII' (hI'Rb.trans hRbRf')
-    by_cases hd : d₀ ≤ (Rf I).1
-    · have e1 : Rb I = Rf I := by simp only [Rb, hd, ↓reduceIte]
-      have e2 : Rb I' = Rf I' := by simp only [Rb, he, hd, ↓reduceIte]
-      rw [e1, e2, he]
-    · have e1 : Rb I = anc I := by simp only [Rb, hd, ↓reduceIte]
-      have e2 : Rb I' = anc I' := by simp only [Rb, he, hd, ↓reduceIte]
-      rw [e1] at hI'Rb ⊢
-      rw [e2]
-      obtain ⟨ha1, ha2⟩ := hanc I' hdI'
-      obtain ⟨hb1, -⟩ := hanc I hdI
-      have hx := dyadicGridCell_left_mem G I'.1 I'.2
-      exact (dyadicGridCell_eq_of_common_point G (hI'Rb hx) (ha2 hx) (by omega)).symm
-  set! Bs := Bot.image Rb with hBs_def
-  have hBsT : ∀ R' ∈ Bs, R' ∈ dyadicFiniteTree G J N ∧ d₀ ≤ R'.1 := fun R' hR' => by
-    obtain ⟨I, hI, rfl⟩ := Finset.mem_image.mp hR'
-    obtain ⟨hIt, hdI, -⟩ := hBot I hI
-    exact ⟨(hRb I hIt hdI).1, (hRb I hIt hdI).2.1⟩
-  have hQ : ∀ R' ∈ Bs, Rf R' ∈ dyadicFiniteTree G J N := fun R' hR' =>
-    (hRtree R' (hBsT R' hR').1).1
-  have hR'Q : ∀ R' ∈ Bs, R' ∈ dyadicFiniteTree G (Rf R') (dyadicRemainingDepth J N (Rf R')) :=
-    fun R' hR' => (dyadicFiniteTree_below_iff G J N (hQ R' hR') R').mpr
-      ⟨(hBsT R' hR').1, (hRtree R' (hBsT R' hR').1).2⟩
-  have hTc : ∀ R' ∈ Bs, ∀ I ∈ Bot.filter (fun I => Rb I = R'), I ∈ dyadicFiniteTree G J N ∧
-      kernelHull G J N w I ∧ Rf I = Rf R' ∧
-      dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R'.1 R'.2 ∧ I.1 < R'.1 + K₀ := by
-    intro R' _ I hI
-    obtain ⟨hIB, hIR⟩ := Finset.mem_filter.mp hI
-    obtain ⟨hIt, hdI, hIH⟩ := hBot I hIB
-    obtain ⟨-, hdRb, hIRb, -⟩ := hRb I hIt hdI
-    rw [hIR] at hdRb hIRb
-    refine ⟨hIt, hIH, ?_, hIRb, ?_⟩
-    · rw [← hIR]; exact (hRbRf I hIt hdI).symm
-    · have := ((dyadicFiniteTree_mem_iff G J I N).mp hIt).2; omega
-  have hTB : ∀ R' (hR' : R' ∈ Bs), ∀ I ∈ Bot.filter (fun I => Rb I = R'),
-      I ∈ dyadicFiniteTree G (Rf R') (dyadicRemainingDepth J N (Rf R')) ∧
-      kernelHull G (Rf R') (dyadicRemainingDepth J N (Rf R')) w I ∧
-      dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R'.1 R'.2 ∧ I.1 < R'.1 + K₀ := by
-    intro R' hR' I hI
-    obtain ⟨hIt, hIH, -, hIR', hd⟩ := hTc R' hR' I hI
-    have hIQ : dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G (Rf R').1 (Rf R').2 :=
-      hIR'.trans (hRtree R' (hBsT R' hR').1).2
-    exact ⟨(dyadicFiniteTree_below_iff G J N (hQ R' hR') I).mpr ⟨hIt, hIQ⟩,
-      (kernelHull_below_iff (hQ R' hR') hIQ).mpr hIH, hIR', hd⟩
-  -- the tuple on the bottom cells, read from the low lists of their first-level roots
-  have hslots' : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I →
-      ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), Rf I = R →
-      slots4 sa i k (f sa - (Xga R hR).val I) ((Xi R hR).val I) ((Xk R hR).val I)
-        (f sb - (Xgb R hR).val I) = stagTuple f g u t I := by
-    intro I hI hIH R hR hRI
-    subst hRI
-    exact hslots I hI hIH
-  have hslotsB : ∀ R' (hR' : R' ∈ Bs), ∀ I ∈ Bot.filter (fun I => Rb I = R'),
-      slots4 sa i k (f sa - ((Xga (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I)
-        (((Xi (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I)
-        (((Xk (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I)
-        (f sb - ((Xgb (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I) = stagTuple f g u t I := by
-    intro R' hR' I hI
-    obtain ⟨hIt, hIH, hRfI, -, -⟩ := hTc R' hR' I hI
-    exact hslots' I hIt hIH (Rf R') (hQ R' hR') hRfI
-  have hvY' : ∀ ℓ (hℓ : ℓ ≤ t), ℓ ∈ Lset → ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      ∀ I ∈ dyadicFiniteTree G J N, kernelHull G J N w I → Rf I = R →
-      ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 → (Y ℓ hℓ R hR).val I y = z ℓ R hR I y := by
-    intro ℓ hℓ hℓL R hR I hIt hIH hRI
-    subst hRI
-    filter_upwards [hz2 ℓ (Rf I) hR I hIt (hcellR I hIt ℓ hℓL)] with y hy hyI
-    rw [hy hyI]
-    exact hYval ℓ hℓ _ _ I hIt (hRtree I hIt).2 (hcellR I hIt ℓ hℓL) hIH y
-  have hzga' : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J N,
-      kernelHull G J N w I → Rf I = R →
-      ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 → za R hR I y = (Xga R hR).val I y := by
-    intro R hR I hIt hIH hRI
-    subst hRI
-    rw [hgav I hIt hIH]
-    by_cases h1 : 1 ≤ la
-    · simp only [za, h1, ↓reduceIte]
-      filter_upwards [hz2 la (Rf I) hR I hIt (hcellR I hIt la hlaL)] with y hy hyI
-      rw [hy hyI]
-    · simp only [za, h1, ↓reduceIte]
-      filter_upwards [hz0ae (Rf I) hR I] with y hy _
-      rw [hy, Pi.zero_apply]
-  have hzgb' : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J N,
-      kernelHull G J N w I → Rf I = R →
-      ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 → zb R hR I y = (Xgb R hR).val I y := by
-    intro R hR I hIt hIH hRI
-    subst hRI
-    rw [hgbv I hIt hIH]
-    by_cases h1 : 1 ≤ lb
-    · simp only [zb, h1, ↓reduceIte]
-      filter_upwards [hz2 lb (Rf I) hR I hIt (hcellR I hIt lb hlbL)] with y hy hyI
-      rw [hy hyI]
-    · simp only [zb, h1, ↓reduceIte]
-      filter_upwards [hz0ae (Rf I) hR I] with y hy _
-      rw [hy, Pi.zero_apply]
-  have hriB : ∀ R' (hR' : R' ∈ Bs), ∃ z₁ z₂,
-      IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R')) 1 (BdR (Rf R') (hQ R' hR'))
-        (max c₂ cp) H w z₁ ∧
-      IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R')) 1 (BdR (Rf R') (hQ R' hR'))
-        (max c₂ cp) H w z₂ ∧
-      ∀ I ∈ Bot.filter (fun I => Rb I = R'), ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 →
-        ((Xi (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I y = z₁ I y - z₂ I y := by
-    intro R' hR'
-    have hQT := hQ R' hR'
-    by_cases hu4' : u ≤ 4
-    · obtain ⟨z₀, hz₀, hz₀0⟩ := (hzu (Rf R') hQT).zero zero_le_one
-      refine ⟨z u (Rf R') hQT, z₀, hzu _ _, hz₀, fun I hI => ?_⟩
+  match context with
+  | matchedContext@contextEquality:{
+      κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw, f, hfm, hfq, Bf, kk,
+      M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt, η₀, hη₀, hpair, hsz, Bp,
+      ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak, hbi, hbk, hla2, hlb2,
+      hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL, ht4L, hslots,
+      ..
+    } =>
+    let commonContext := matchedContext
+    subst matchedContext
+    dsimp (config := { zeta := false, zetaUnused := false }) only [BaseTupleStage4Statement,
+      BaseTupleConclusion, baseTupleHeight, baseTupleComplexityHeight, baseTupleWidth,
+      baseTupleErrorBudget, baseTupleNormalizedSize, baseTupleSeparationScale,
+      baseTuplePosition, baseTupleLastLevel, baseTupleActiveLevels, baseTupleRootMap,
+      baseTupleCells, baseTupleRoots, baseTupleLowListFamily, baseTupleFirstLowList,
+      baseTupleSecondLowList, baseTupleOpponent] at *
+    intro H D Wa Wb E S₀ Sp i k la lb Lset Rf Tup Rs Y hYval Xi Xk Xga Xgb huL hu4L hlaL hlbL hcellR
+      hgav hgbv z hz2 BdR hzu hzu4 hzt hzt4 z0 hz0ae hz0R za zb hzaB hzbB P A hPA hRsumT ιt A'
+        hcellsT
+      hcards hpack d₀ Bot hBot_def hBot anc hanc Rb hRb
+    have hRbRf : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 → Rf (Rb I) = Rf I := fun I hI hdI => by
+      obtain ⟨hRbT, -, hIRb, hRbRf⟩ := hRb I hI hdI
+      exact firstRoot_between (hL := hLne) hsegd hI hRbT hIRb hRbRf
+    have hRbu : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 → ∀ I' ∈ dyadicFiniteTree G J N,
+        dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G I'.1 I'.2 →
+        dyadicGridCell G I'.1 I'.2 ⊆ dyadicGridCell G (Rb I).1 (Rb I).2 → Rb I' = Rb I := by
+      intro I hI hdI I' hI' hII' hI'Rb
+      obtain ⟨-, hdRb, -, hRbRf'⟩ := hRb I hI hdI
+      have hdI' : d₀ ≤ I'.1 := hdRb.trans (dyadicGridCell_depth_le_of_subset G I' (Rb I) hI'Rb)
+      have he : Rf I' = Rf I :=
+        firstRoot_between (hL := hLne) hsegd hI hI' hII' (hI'Rb.trans hRbRf')
+      by_cases hd : d₀ ≤ (Rf I).1
+      · have e1 : Rb I = Rf I := by simp only [Rb, hd, ↓reduceIte]
+        have e2 : Rb I' = Rf I' := by simp only [Rb, he, hd, ↓reduceIte]
+        rw [e1, e2, he]
+      · have e1 : Rb I = anc I := by simp only [Rb, hd, ↓reduceIte]
+        have e2 : Rb I' = anc I' := by simp only [Rb, he, hd, ↓reduceIte]
+        rw [e1] at hI'Rb ⊢
+        rw [e2]
+        obtain ⟨ha1, ha2⟩ := hanc I' hdI'
+        obtain ⟨hb1, -⟩ := hanc I hdI
+        have hx := dyadicGridCell_left_mem G I'.1 I'.2
+        exact (dyadicGridCell_eq_of_common_point G (hI'Rb hx) (ha2 hx) (by omega)).symm
+    set! Bs := Bot.image Rb with hBs_def
+    have hBsT : ∀ R' ∈ Bs, R' ∈ dyadicFiniteTree G J N ∧ d₀ ≤ R'.1 := fun R' hR' => by
+      obtain ⟨I, hI, rfl⟩ := Finset.mem_image.mp hR'
+      obtain ⟨hIt, hdI, -⟩ := hBot I hI
+      exact ⟨(hRb I hIt hdI).1, (hRb I hIt hdI).2.1⟩
+    have hQ : ∀ R' ∈ Bs, Rf R' ∈ dyadicFiniteTree G J N := fun R' hR' =>
+      (hRtree R' (hBsT R' hR').1).1
+    have hR'Q : ∀ R' ∈ Bs, R' ∈ dyadicFiniteTree G (Rf R') (dyadicRemainingDepth J N (Rf R')) :=
+      fun R' hR' => (dyadicFiniteTree_below_iff G J N (hQ R' hR') R').mpr
+        ⟨(hBsT R' hR').1, (hRtree R' (hBsT R' hR').1).2⟩
+    have hTc : ∀ R' ∈ Bs, ∀ I ∈ Bot.filter (fun I => Rb I = R'), I ∈ dyadicFiniteTree G J N ∧
+        kernelHull G J N w I ∧ Rf I = Rf R' ∧
+        dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R'.1 R'.2 ∧ I.1 < R'.1 + K₀ := by
+      intro R' _ I hI
+      obtain ⟨hIB, hIR⟩ := Finset.mem_filter.mp hI
+      obtain ⟨hIt, hdI, hIH⟩ := hBot I hIB
+      obtain ⟨-, hdRb, hIRb, -⟩ := hRb I hIt hdI
+      rw [hIR] at hdRb hIRb
+      refine ⟨hIt, hIH, ?_, hIRb, ?_⟩
+      · rw [← hIR]; exact (hRbRf I hIt hdI).symm
+      · have := ((dyadicFiniteTree_mem_iff G J I N).mp hIt).2; omega
+    have hTB : ∀ R' (hR' : R' ∈ Bs), ∀ I ∈ Bot.filter (fun I => Rb I = R'),
+        I ∈ dyadicFiniteTree G (Rf R') (dyadicRemainingDepth J N (Rf R')) ∧
+        kernelHull G (Rf R') (dyadicRemainingDepth J N (Rf R')) w I ∧
+        dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G R'.1 R'.2 ∧ I.1 < R'.1 + K₀ := by
+      intro R' hR' I hI
+      obtain ⟨hIt, hIH, -, hIR', hd⟩ := hTc R' hR' I hI
+      have hIQ : dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G (Rf R').1 (Rf R').2 :=
+        hIR'.trans (hRtree R' (hBsT R' hR').1).2
+      exact ⟨(dyadicFiniteTree_below_iff G J N (hQ R' hR') I).mpr ⟨hIt, hIQ⟩,
+        (kernelHull_below_iff (hQ R' hR') hIQ).mpr hIH, hIR', hd⟩
+    -- the tuple on the bottom cells, read from the low lists of their first-level roots
+    have hslots' : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I →
+        ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), Rf I = R →
+        slots4 sa i k (f sa - (Xga R hR).val I) ((Xi R hR).val I) ((Xk R hR).val I)
+          (f sb - (Xgb R hR).val I) = stagTuple f g u t I := by
+      intro I hI hIH R hR hRI
+      subst hRI
+      exact hslots I hI hIH
+    have hslotsB : ∀ R' (hR' : R' ∈ Bs), ∀ I ∈ Bot.filter (fun I => Rb I = R'),
+        slots4 sa i k (f sa - ((Xga (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I)
+          (((Xi (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I)
+          (((Xk (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I)
+          (f sb - ((Xgb (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I) = stagTuple f g u t I := by
+      intro R' hR' I hI
       obtain ⟨hIt, hIH, hRfI, -, -⟩ := hTc R' hR' I hI
-      filter_upwards [hvY' u hut.le huL (Rf R') hQT I hIt hIH hRfI, hz₀0 I] with y hy h0 hyI
-      rw [LowList.reroot_val, h0, sub_zero, ← hy hyI]
-      simp only [Xi, baseTupleFirstLowList, hu4', ↓reduceIte]
-    · refine ⟨z u (Rf R') hQT, z (u - 4) (Rf R') hQT, hzu _ _, hzu4 _ _ hu4', fun I hI => ?_⟩
-      obtain ⟨hIt, hIH, hRfI, -, -⟩ := hTc R' hR' I hI
-      filter_upwards [hvY' u hut.le huL (Rf R') hQT I hIt hIH hRfI,
-        hvY' (u - 4) hu4 hu4L (Rf R') hQT I hIt hIH hRfI] with y h1 h2 hyI
-      rw [LowList.reroot_val, ← h1 hyI, ← h2 hyI]
-      simp only [Xi, baseTupleFirstLowList, hu4', ↓reduceIte, LowList.sub_val]
-  expose_names
-  exact @baseTuple_stage_5
-    commonContext
-    z hzt hzt4 z0 hz0ae hz0R hzaB hzbB P A hPA hRsumT hcellsT hcards hpack hBot_def hBot hanc
-    hRb hRbu hBsT hQ hR'Q hTc hTB hslotsB hvY' hzga' hzgb' hriB
+      exact hslots' I hIt hIH (Rf R') (hQ R' hR') hRfI
+    have hvY' : ∀ ℓ (hℓ : ℓ ≤ t), ℓ ∈ Lset → ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        ∀ I ∈ dyadicFiniteTree G J N, kernelHull G J N w I → Rf I = R →
+        ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 → (Y ℓ hℓ R hR).val I y = z ℓ R hR I y := by
+      intro ℓ hℓ hℓL R hR I hIt hIH hRI
+      subst hRI
+      filter_upwards [hz2 ℓ (Rf I) hR I hIt (hcellR I hIt ℓ hℓL)] with y hy hyI
+      rw [hy hyI]
+      exact hYval ℓ hℓ _ _ I hIt (hRtree I hIt).2 (hcellR I hIt ℓ hℓL) hIH y
+    have hzga' : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J N,
+        kernelHull G J N w I → Rf I = R →
+        ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 → za R hR I y = (Xga R hR).val I y := by
+      intro R hR I hIt hIH hRI
+      subst hRI
+      rw [hgav I hIt hIH]
+      by_cases h1 : 1 ≤ la
+      · simp only [za, h1, ↓reduceIte]
+        filter_upwards [hz2 la (Rf I) hR I hIt (hcellR I hIt la hlaL)] with y hy hyI
+        rw [hy hyI]
+      · simp only [za, h1, ↓reduceIte]
+        filter_upwards [hz0ae (Rf I) hR I] with y hy _
+        rw [hy, Pi.zero_apply]
+    have hzgb' : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ∀ I ∈ dyadicFiniteTree G J N,
+        kernelHull G J N w I → Rf I = R →
+        ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 → zb R hR I y = (Xgb R hR).val I y := by
+      intro R hR I hIt hIH hRI
+      subst hRI
+      rw [hgbv I hIt hIH]
+      by_cases h1 : 1 ≤ lb
+      · simp only [zb, h1, ↓reduceIte]
+        filter_upwards [hz2 lb (Rf I) hR I hIt (hcellR I hIt lb hlbL)] with y hy hyI
+        rw [hy hyI]
+      · simp only [zb, h1, ↓reduceIte]
+        filter_upwards [hz0ae (Rf I) hR I] with y hy _
+        rw [hy, Pi.zero_apply]
+    have hriB : ∀ R' (hR' : R' ∈ Bs), ∃ z₁ z₂,
+        IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R')) 1 (BdR (Rf R') (hQ R' hR'))
+          (max c₂ cp) H w z₁ ∧
+        IsBasicOn G (Rf R') (dyadicRemainingDepth J N (Rf R')) 1 (BdR (Rf R') (hQ R' hR'))
+          (max c₂ cp) H w z₂ ∧
+        ∀ I ∈ Bot.filter (fun I => Rb I = R'), ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 →
+          ((Xi (Rf R') (hQ R' hR')).reroot (hQ R' hR')).val I y = z₁ I y - z₂ I y := by
+      intro R' hR'
+      have hQT := hQ R' hR'
+      by_cases hu4' : u ≤ 4
+      · obtain ⟨z₀, hz₀, hz₀0⟩ := (hzu (Rf R') hQT).zero zero_le_one
+        refine ⟨z u (Rf R') hQT, z₀, hzu _ _, hz₀, fun I hI => ?_⟩
+        obtain ⟨hIt, hIH, hRfI, -, -⟩ := hTc R' hR' I hI
+        filter_upwards [hvY' u hut.le huL (Rf R') hQT I hIt hIH hRfI, hz₀0 I] with y hy h0 hyI
+        rw [LowList.reroot_val, h0, sub_zero, ← hy hyI]
+        simp only [Xi, baseTupleFirstLowList, hu4', ↓reduceIte]
+      · refine ⟨z u (Rf R') hQT, z (u - 4) (Rf R') hQT, hzu _ _, hzu4 _ _ hu4', fun I hI => ?_⟩
+        obtain ⟨hIt, hIH, hRfI, -, -⟩ := hTc R' hR' I hI
+        filter_upwards [hvY' u hut.le huL (Rf R') hQT I hIt hIH hRfI,
+          hvY' (u - 4) hu4 hu4L (Rf R') hQT I hIt hIH hRfI] with y h1 h2 hyI
+        rw [LowList.reroot_val, ← h1 hyI, ← h2 hyI]
+        simp only [Xi, baseTupleFirstLowList, hu4', ↓reduceIte, LowList.sub_val]
+    expose_names
+    exact @baseTuple_stage_5
+      commonContext
+      z hzt hzt4 z0 hz0ae hz0R hzaB hzbB P A hPA hRsumT hcellsT hcards hpack hBot_def hBot hanc
+      hRb hRbu hBsT hQ hR'Q hTc hTB hslotsB hvY' hzga' hzgb' hriB
 
 private theorem baseTuple_stage_3 (context : BaseTupleContext) :
     BaseTupleStage3Statement context := by
   classical
-  let commonContext := context
-  rcases context with ⟨κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw,
-    f, hfm, hfq, Bf, kk, M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt,
-    η₀, hη₀, hpair, hsz, Bp, ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak,
-    hbi, hbk, hla2, hlb2, hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL,
-    ht4L, hslots⟩
-  dsimp (config := { zeta := false, zetaUnused := false }) only [BaseTupleStage3Statement,
-    baseTupleHeight, baseTupleComplexityHeight, baseTupleWidth, baseTupleErrorBudget,
-    baseTupleNormalizedSize, baseTupleSeparationScale, baseTuplePosition,
-    baseTupleLastLevel, baseTupleActiveLevels, baseTupleRootMap, baseTupleCells,
-    baseTupleRoots, baseTupleLowListFamily, baseTupleFirstLowList, baseTupleSecondLowList,
-    baseTupleOpponent] at *
-  intro H D Wa Wb E S₀ Sp i k la lb Lset hL_def Rf Tup Rs Y hYval hYcard Xi Xk Xga Xgb huL hu4L hlaL
-    hlbL hcellR hgav hgbv z hz2 BdR hzu hzu4 hzt hzt4 z0 hz0ae hz0R za zb hzaB hzbB hbase
-  dsimp only at hbase
-  choose P A hPA using hbase
-  -- the length of the first-level roots
-  have hLcard : Lset.card ≤ 6 := by
-    have c1 := Finset.card_insert_le u ({u - 4, t, t - 4, la, lb} : Finset ℕ)
-    have c2 := Finset.card_insert_le (u - 4) ({t, t - 4, la, lb} : Finset ℕ)
-    have c3 := Finset.card_insert_le t ({t - 4, la, lb} : Finset ℕ)
-    have c4 := Finset.card_insert_le (t - 4) ({la, lb} : Finset ℕ)
-    have c5 := Finset.card_insert_le la ({lb} : Finset ℕ)
-    rw [Finset.card_singleton] at c5
-    simp only [hL_def]
-    omega
-  have hRsumT : ∀ T : Finset (ℤ × ℤ), (∀ I ∈ T, I ∈ dyadicFiniteTree G J N) →
-      ∑ R ∈ T.image Rf, dyadicGridLength G R.1 ≤ 8 * dyadicGridLength G J.1 := by
-    intro T hT
-    have h1 := sum_firstRoot_le (hL := hLne) roots
-      (fun ℓ _ I hI => ((hfit ℓ).1.2.2.2.2 I hI).1) T hT
-    have h2 := finite_union_weight_le Lset roots (fun c => dyadicGridLength G c.1)
-      (fun c => (dyadicGridLength_pos G c.1).le)
-    have h3 : ∑ ℓ ∈ Lset, ∑ c ∈ roots ℓ, dyadicGridLength G c.1 ≤
-        ∑ _ℓ ∈ Lset, 4 / 3 * dyadicGridLength G J.1 :=
-      Finset.sum_le_sum fun ℓ _ => (hfit ℓ).1.2.2.2.1
-    rw [Finset.sum_const, nsmul_eq_mul] at h3
-    have h4 : (Lset.card : ℝ) * (4 / 3 * dyadicGridLength G J.1) ≤
-        6 * (4 / 3 * dyadicGridLength G J.1) :=
-      mul_le_mul_of_nonneg_right (by exact_mod_cast hLcard)
-        (by have := dyadicGridLength_pos G J.1; positivity)
-    unfold dyadicRootLength at h1
-    linarith
-  have hRsum : ∑ R ∈ Rs, dyadicGridLength G R.1 ≤ 8 * dyadicGridLength G J.1 :=
-    hRsumT Tup fun I hI => (Finset.mem_filter.mp hI).1
-  -- the index of the active setups above the last `K₀` levels
-  let ιt := Σ R : Rs, (P R.1 R.2)
-  let A' : ιt → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a) := fun x => A x.1.1 x.1.2 x.2
-  have hcellsT : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs) (p : P R hR) (I : ℤ × ℤ), I ∈ (A R hR p).cells →
-      I ∈ dyadicFiniteTree G J N ∧ I.1 + K₀ ≤ J.1 + N ∧ Rf I = R ∧ kernelHull G J N w I :=
-    fun R hR p I hI => by
-    have h := ((hPA R hR).2.2.2 p).1 hI
-    obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp h
-    exact ⟨(Finset.mem_filter.mp hIT).1, (Finset.mem_filter.mp hIT).2.1, hRI,
-      (Finset.mem_filter.mp hIT).2.2⟩
-  have hcards : ∀ (R : ℤ × ℤ) (hRT : R ∈ dyadicFiniteTree G J N),
-      Fintype.card (Xi R hRT).Λ ≤ 2 * Mt ∧ Fintype.card (Xk R hRT).Λ ≤ 2 * Mt ∧
-      Fintype.card (Xga R hRT).Λ ≤ Mt ∧ Fintype.card (Xgb R hRT).Λ ≤ Mt ∧
-      Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R hRT).Λ * ⌊D⌋₊ + Ma ≤ Wa ∧
-      Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R hRT).Λ * ⌊D⌋₊ + Mb ≤ Wb := by
+  match context with
+  | matchedContext@contextEquality:{
+      κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw, f, hfm, hfq, Bf, kk,
+      M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt, η₀, hη₀, hpair, hsz, Bp,
+      ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak, hbi, hbk, hla2, hlb2,
+      hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL, ht4L, hslots,
+      ..
+    } =>
+    let commonContext := matchedContext
+    subst matchedContext
+    dsimp (config := { zeta := false, zetaUnused := false }) only [BaseTupleStage3Statement,
+      BaseTupleConclusion, baseTupleHeight, baseTupleComplexityHeight, baseTupleWidth,
+      baseTupleErrorBudget, baseTupleNormalizedSize, baseTupleSeparationScale,
+      baseTuplePosition, baseTupleLastLevel, baseTupleActiveLevels, baseTupleRootMap,
+      baseTupleCells, baseTupleRoots, baseTupleLowListFamily, baseTupleFirstLowList,
+      baseTupleSecondLowList, baseTupleOpponent] at *
+    intro H D Wa Wb E S₀ Sp i k la lb Lset hL_def Rf Tup Rs Y hYval hYcard Xi Xk Xga Xgb huL hu4L
+      hlaL
+      hlbL hcellR hgav hgbv z hz2 BdR hzu hzu4 hzt hzt4 z0 hz0ae hz0R za zb hzaB hzbB hbase
+    dsimp only at hbase
+    choose P A hPA using hbase
+    -- the length of the first-level roots
+    have hLcard : Lset.card ≤ 6 := by
+      have c1 := Finset.card_insert_le u ({u - 4, t, t - 4, la, lb} : Finset ℕ)
+      have c2 := Finset.card_insert_le (u - 4) ({t, t - 4, la, lb} : Finset ℕ)
+      have c3 := Finset.card_insert_le t ({t - 4, la, lb} : Finset ℕ)
+      have c4 := Finset.card_insert_le (t - 4) ({la, lb} : Finset ℕ)
+      have c5 := Finset.card_insert_le la ({lb} : Finset ℕ)
+      rw [Finset.card_singleton] at c5
+      simp only [hL_def]
+      omega
+    have hRsumT : ∀ T : Finset (ℤ × ℤ), (∀ I ∈ T, I ∈ dyadicFiniteTree G J N) →
+        ∑ R ∈ T.image Rf, dyadicGridLength G R.1 ≤ 8 * dyadicGridLength G J.1 := by
+      intro T hT
+      have h1 := sum_firstRoot_le (hL := hLne) roots
+        (fun ℓ _ I hI => ((hfit ℓ).1.2.2.2.2 I hI).1) T hT
+      have h2 := finite_union_weight_le Lset roots (fun c => dyadicGridLength G c.1)
+        (fun c => (dyadicGridLength_pos G c.1).le)
+      have h3 : ∑ ℓ ∈ Lset, ∑ c ∈ roots ℓ, dyadicGridLength G c.1 ≤
+          ∑ _ℓ ∈ Lset, 4 / 3 * dyadicGridLength G J.1 :=
+        Finset.sum_le_sum fun ℓ _ => (hfit ℓ).1.2.2.2.1
+      rw [Finset.sum_const, nsmul_eq_mul] at h3
+      have h4 : (Lset.card : ℝ) * (4 / 3 * dyadicGridLength G J.1) ≤
+          6 * (4 / 3 * dyadicGridLength G J.1) :=
+        mul_le_mul_of_nonneg_right (by exact_mod_cast hLcard)
+          (by have := dyadicGridLength_pos G J.1; positivity)
+      unfold dyadicRootLength at h1
+      linarith
+    have hRsum : ∑ R ∈ Rs, dyadicGridLength G R.1 ≤ 8 * dyadicGridLength G J.1 :=
+      hRsumT Tup fun I hI => (Finset.mem_filter.mp hI).1
+    -- the index of the active setups above the last `K₀` levels
+    let ιt := Σ R : Rs, (P R.1 R.2)
+    let A' : ιt → ActiveSetup κ (max (max c₁ (max c₂ cp)) c₂a) := fun x => A x.1.1 x.1.2 x.2
+    have hcellsT : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs) (p : P R hR) (I : ℤ × ℤ), I ∈ (A R hR p).cells →
+        I ∈ dyadicFiniteTree G J N ∧ I.1 + K₀ ≤ J.1 + N ∧ Rf I = R ∧ kernelHull G J N w I :=
+      fun R hR p I hI => by
+      have h := ((hPA R hR).2.2.2 p).1 hI
+      obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp h
+      exact ⟨(Finset.mem_filter.mp hIT).1, (Finset.mem_filter.mp hIT).2.1, hRI,
+        (Finset.mem_filter.mp hIT).2.2⟩
+    have hcards : ∀ (R : ℤ × ℤ) (hRT : R ∈ dyadicFiniteTree G J N),
+        Fintype.card (Xi R hRT).Λ ≤ 2 * Mt ∧ Fintype.card (Xk R hRT).Λ ≤ 2 * Mt ∧
+        Fintype.card (Xga R hRT).Λ ≤ Mt ∧ Fintype.card (Xgb R hRT).Λ ≤ Mt ∧
+        Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R hRT).Λ * ⌊D⌋₊ + Ma ≤ Wa ∧
+        Fintype.card (Xi R hRT).Λ * Fintype.card (Xk R hRT).Λ * ⌊D⌋₊ + Mb ≤ Wb := by
+      expose_names
+      exact @baseTuple_hcards c₂ cp Wp C₁ G J N Bf M u t hut Hc Mt hMt Bp Ma Mb sa sb hla2 hlb2 hHl
+        X hYcard hu4 ht4
+    have hpack : ∑ x : ιt, dyadicGridLength G (A' x).R.1 ≤ 64 / 3 * dyadicGridLength G J.1 := by
+      calc ∑ x : ιt, dyadicGridLength G (A' x).R.1
+          = ∑ R : Rs, ∑ p : P R.1 R.2, dyadicGridLength G (A R.1 R.2 p).R.1 :=
+            Fintype.sum_sigma _
+        _ ≤ ∑ R : Rs, 8 / 3 * dyadicGridLength G R.1.1 :=
+            Finset.sum_le_sum fun R _ => (hPA R.1 R.2).1
+        _ = 8 / 3 * ∑ R ∈ Rs, dyadicGridLength G R.1 := by
+            rw [← Finset.mul_sum, Finset.sum_coe_sort Rs (fun R => dyadicGridLength G R.1)]
+        _ ≤ 8 / 3 * (8 * dyadicGridLength G J.1) := by linarith
+        _ = 64 / 3 * dyadicGridLength G J.1 := by ring
+    -- the last `K₀` levels: fresh roots at depth `max d₀ (first-level root)`
+    set! d₀ : ℤ := J.1 + N + 1 - K₀ with hd₀
+    set! Bot := (dyadicFiniteTree G J N).filter
+      (fun I => ¬ (I.1 + K₀ ≤ J.1 + N) ∧ kernelHull G J N w I) with hBot_def
+    have hBot : ∀ I ∈ Bot, I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ I.1 ∧ kernelHull G J N w I :=
+      fun I hI => by
+        obtain ⟨hIt, hIK, hIH⟩ := Finset.mem_filter.mp hI
+        exact ⟨hIt, by omega, hIH⟩
+    let anc : ℤ × ℤ → ℤ × ℤ := fun I =>
+      if h : d₀ ≤ I.1 then (d₀, Classical.choose (dyadicGridCell_ancestor G h I.2)) else I
+    have hanc : ∀ I : ℤ × ℤ, d₀ ≤ I.1 → (anc I).1 = d₀ ∧
+        dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G (anc I).1 (anc I).2 := fun I h => by
+      refine ⟨by simp only [anc, h, ↓reduceDIte], ?_⟩
+      simp only [anc, h, ↓reduceDIte]
+      exact Classical.choose_spec (dyadicGridCell_ancestor G h I.2)
+    let Rb : ℤ × ℤ → ℤ × ℤ := fun I => if d₀ ≤ (Rf I).1 then Rf I else anc I
+    have hRb : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 →
+        Rb I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ (Rb I).1 ∧
+        dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G (Rb I).1 (Rb I).2 ∧
+        dyadicGridCell G (Rb I).1 (Rb I).2 ⊆ dyadicGridCell G (Rf I).1 (Rf I).2 := by
+      intro I hI hdI
+      obtain ⟨hRfT, hIRf⟩ := hRtree I hI
+      have hx := dyadicGridCell_left_mem G I.1 I.2
+      by_cases hd : d₀ ≤ (Rf I).1
+      · have e : Rb I = Rf I := by simp only [Rb, hd, ↓reduceIte]
+        rw [e]
+        exact ⟨hRfT, hd, hIRf, subset_rfl⟩
+      · have e : Rb I = anc I := by simp only [Rb, hd, ↓reduceIte]
+        rw [e]
+        obtain ⟨ha1, ha2⟩ := hanc I hdI
+        have hsub : dyadicGridCell G (anc I).1 (anc I).2 ⊆ dyadicGridCell G (Rf I).1 (Rf I).2 :=
+          dyadicGridCell_subset_of_common_point G (ha2 hx) (hIRf hx) (by omega)
+        exact ⟨dyadicFiniteTree_ancestor_mem G J I (anc I) N hI ha2
+          (hsub.trans ((dyadicFiniteTree_mem_iff G J (Rf I) N).mp hRfT).1), by omega, ha2, hsub⟩
     expose_names
-    exact @baseTuple_hcards c₂ cp Wp C₁ G J N Bf M u t hut Hc Mt hMt Bp Ma Mb sa sb hla2 hlb2 hHl
-      X hYcard hu4 ht4
-  have hpack : ∑ x : ιt, dyadicGridLength G (A' x).R.1 ≤ 64 / 3 * dyadicGridLength G J.1 := by
-    calc ∑ x : ιt, dyadicGridLength G (A' x).R.1
-        = ∑ R : Rs, ∑ p : P R.1 R.2, dyadicGridLength G (A R.1 R.2 p).R.1 :=
-          Fintype.sum_sigma _
-      _ ≤ ∑ R : Rs, 8 / 3 * dyadicGridLength G R.1.1 :=
-          Finset.sum_le_sum fun R _ => (hPA R.1 R.2).1
-      _ = 8 / 3 * ∑ R ∈ Rs, dyadicGridLength G R.1 := by
-          rw [← Finset.mul_sum, Finset.sum_coe_sort Rs (fun R => dyadicGridLength G R.1)]
-      _ ≤ 8 / 3 * (8 * dyadicGridLength G J.1) := by linarith
-      _ = 64 / 3 * dyadicGridLength G J.1 := by ring
-  -- the last `K₀` levels: fresh roots at depth `max d₀ (first-level root)`
-  set! d₀ : ℤ := J.1 + N + 1 - K₀ with hd₀
-  set! Bot := (dyadicFiniteTree G J N).filter
-    (fun I => ¬ (I.1 + K₀ ≤ J.1 + N) ∧ kernelHull G J N w I) with hBot_def
-  have hBot : ∀ I ∈ Bot, I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ I.1 ∧ kernelHull G J N w I :=
-    fun I hI => by
-      obtain ⟨hIt, hIK, hIH⟩ := Finset.mem_filter.mp hI
-      exact ⟨hIt, by omega, hIH⟩
-  let anc : ℤ × ℤ → ℤ × ℤ := fun I =>
-    if h : d₀ ≤ I.1 then (d₀, Classical.choose (dyadicGridCell_ancestor G h I.2)) else I
-  have hanc : ∀ I : ℤ × ℤ, d₀ ≤ I.1 → (anc I).1 = d₀ ∧
-      dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G (anc I).1 (anc I).2 := fun I h => by
-    refine ⟨by simp only [anc, h, ↓reduceDIte], ?_⟩
-    simp only [anc, h, ↓reduceDIte]
-    exact Classical.choose_spec (dyadicGridCell_ancestor G h I.2)
-  let Rb : ℤ × ℤ → ℤ × ℤ := fun I => if d₀ ≤ (Rf I).1 then Rf I else anc I
-  have hRb : ∀ I ∈ dyadicFiniteTree G J N, d₀ ≤ I.1 →
-      Rb I ∈ dyadicFiniteTree G J N ∧ d₀ ≤ (Rb I).1 ∧
-      dyadicGridCell G I.1 I.2 ⊆ dyadicGridCell G (Rb I).1 (Rb I).2 ∧
-      dyadicGridCell G (Rb I).1 (Rb I).2 ⊆ dyadicGridCell G (Rf I).1 (Rf I).2 := by
-    intro I hI hdI
-    obtain ⟨hRfT, hIRf⟩ := hRtree I hI
-    have hx := dyadicGridCell_left_mem G I.1 I.2
-    by_cases hd : d₀ ≤ (Rf I).1
-    · have e : Rb I = Rf I := by simp only [Rb, hd, ↓reduceIte]
-      rw [e]
-      exact ⟨hRfT, hd, hIRf, subset_rfl⟩
-    · have e : Rb I = anc I := by simp only [Rb, hd, ↓reduceIte]
-      rw [e]
-      obtain ⟨ha1, ha2⟩ := hanc I hdI
-      have hsub : dyadicGridCell G (anc I).1 (anc I).2 ⊆ dyadicGridCell G (Rf I).1 (Rf I).2 :=
-        dyadicGridCell_subset_of_common_point G (ha2 hx) (hIRf hx) (by omega)
-      exact ⟨dyadicFiniteTree_ancestor_mem G J I (anc I) N hI ha2
-        (hsub.trans ((dyadicFiniteTree_mem_iff G J (Rf I) N).mp hRfT).1), by omega, ha2, hsub⟩
-  expose_names
-  exact @baseTuple_stage_4
-    commonContext
-    hYval huL hu4L hlaL hlbL hcellR hgav hgbv z hz2 hzu hzu4 hzt hzt4 z0 hz0ae hz0R hzaB hzbB P
-    A hPA hRsumT hcellsT hcards hpack hBot_def hBot hanc hRb
+    exact @baseTuple_stage_4
+      commonContext
+      hYval huL hu4L hlaL hlbL hcellR hgav hgbv z hz2 hzu hzu4 hzt hzt4 z0 hz0ae hz0R hzaB hzbB P
+      A hPA hRsumT hcellsT hcards hpack hBot_def hBot hanc hRb
 
 private theorem baseTuple_stage_2 (context : BaseTupleContext) :
     BaseTupleStage2Statement context := by
   classical
-  let commonContext := context
-  rcases context with ⟨κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw,
-    f, hfm, hfq, Bf, kk, M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt,
-    η₀, hη₀, hpair, hsz, Bp, ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak,
-    hbi, hbk, hla2, hlb2, hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL,
-    ht4L, hslots⟩
-  dsimp (config := { zeta := false, zetaUnused := false }) only [BaseTupleStage2Statement,
-    baseTupleHeight, baseTupleComplexityHeight, baseTupleWidth, baseTupleErrorBudget,
-    baseTupleNormalizedSize, baseTupleSeparationScale, baseTuplePosition,
-    baseTupleLastLevel, baseTupleActiveLevels, baseTupleRootMap, baseTupleCells,
-    baseTupleRoots, baseTupleLowListFamily, baseTupleFirstLowList, baseTupleSecondLowList,
-    baseTupleOpponent] at *
-  intro hfr' hBp hka hkb hMa hMb H D Wa Wb E S₀ Sp i k la hla lb hlb Lset hL_def Rf Tup Rs Y hYval
-    hYcard Xi Xk Xga Xgb huL hu4L hlaL hlbL hcellR hXiv hXkv hfitL2 hgav hgbv z hz1 hz2 hzR hzB hBfH
-    BdR hzBd hcXi hcXk hcXga hcXgb hzu hzu4 hzt
-  have hzt4 : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬ t ≤ 4 →
-      IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (z (t - 4) R hR) :=
-    fun R hR h => ((hzB (t - 4) R hR).mono_budget
-      (hzBd (t - 4) R hR (by have := (hcXk R hR).2 h; omega))).mono_chart (le_max_left _ _)
-        (hBfH (t - 4) ht4)
-  have hvY : ∀ ℓ (hℓ : ℓ ≤ t), ℓ ∈ Lset → ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      ∀ I ∈ Tup.filter (fun I => Rf I = R), ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 →
-        (Y ℓ hℓ R hR).val I y = z ℓ R hR I y := by
-    intro ℓ hℓ hℓL R hR I hI
-    obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
-    have hIt := (Finset.mem_filter.mp hIT).1
-    have hIH := (Finset.mem_filter.mp hIT).2.2
-    subst hRI
-    filter_upwards [hz2 ℓ (Rf I) hR I hIt (hcellR I hIt ℓ hℓL)] with y hy hyI
-    rw [hy hyI]
-    exact hYval ℓ hℓ _ _ I hIt (hRtree I hIt).2 (hcellR I hIt ℓ hℓL) hIH y
-  -- the base data on each first-level root
-  -- the opponents of the two remaining slots (zero before their first update)
-  have hz0 := fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => (hzB u R hR).zero zero_le_one
-  choose z0 hz0B hz0ae using hz0
-  have hz0R : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (z0 R hR) :=
-    fun R hR => ((hz0B R hR).mono_budget (hzBd u R hR (by have := (hcXi R hR).1; omega))).mono_chart
-      (le_max_left _ _) (hBfH u hut.le)
-  let za : ∀ R, R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ := fun R hR =>
-    if 1 ≤ la then z la R hR else z0 R hR
-  let zb : ∀ R, R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ := fun R hR =>
-    if 1 ≤ lb then z lb R hR else z0 R hR
-  have hz0O : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) (F : ℝ → ℂ) (K : ℝ),
-      (∀ I, Measurable (z0 R hR I) ∧
-        MemLp (z0 R hR I) 2 (volume.restrict (dyadicGridCell G I.1 I.2))) ∧
-      ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 →
-        IsAdmissibleOpponent G J' F (z0 R hR) K ∧ HasDepthEnergy G J' F (z0 R hR) 1 :=
-    fun R hR F K => ⟨fun I => ⟨(hz0B R hR).measurable I,
-      MemLp.ae_eq (show (0 : ℝ → ℂ) =ᵐ[volume.restrict (dyadicGridCell G I.1 I.2)] z0 R hR I
-        from (ae_restrict_of_ae (hz0ae R hR I)).mono fun y hy => hy.symm) MemLp.zero⟩,
-      fun J' _ _ => ⟨isAdmissibleOpponent_of_ae_zero (hz0ae R hR) K,
-        hasDepthEnergy_of_ae_zero (hz0ae R hR)⟩⟩
-  have hzaO : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      (∀ I, Measurable (za R hR I) ∧
-        MemLp (za R hR I) 2 (volume.restrict (dyadicGridCell G I.1 I.2))) ∧
-      ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 →
-        IsAdmissibleOpponent G J' (f sa) (za R hR) (fitOpponentConst (M la)) ∧
-          HasDepthEnergy G J' (f sa) (za R hR) 1 := fun R hR => by
-    by_cases h1 : 1 ≤ la
-    · simp only [za, h1, ↓reduceIte]
-      exact ⟨hz1 la R _, fun J' hJ' hJ'R => (hla h1) ▸ hzR la R _ J' hJ' hJ'R⟩
-    · simp only [za, h1, ↓reduceIte]
-      exact hz0O R hR _ _
-  have hzbO : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      (∀ I, Measurable (zb R hR I) ∧
-        MemLp (zb R hR I) 2 (volume.restrict (dyadicGridCell G I.1 I.2))) ∧
-      ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 →
-        IsAdmissibleOpponent G J' (f sb) (zb R hR) (fitOpponentConst (M lb)) ∧
-          HasDepthEnergy G J' (f sb) (zb R hR) 1 := fun R hR => by
-    by_cases h1 : 1 ≤ lb
-    · simp only [zb, h1, ↓reduceIte]
-      exact ⟨hz1 lb R _, fun J' hJ' hJ'R => (hlb h1) ▸ hzR lb R _ J' hJ' hJ'R⟩
-    · simp only [zb, h1, ↓reduceIte]
-      exact hz0O R hR _ _
-  have hzaB : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (za R hR) :=
-    fun R hR => by
-    by_cases h1 : 1 ≤ la
-    · simp only [za, h1, ↓reduceIte]
-      exact ((hzB la R hR).mono_budget (hzBd la R hR (by have := hcXga R hR h1; omega))).mono_chart
-        (le_max_left _ _) (hBfH la hla2.le)
-    · simp only [za, h1, ↓reduceIte]; exact hz0R R hR
-  have hzbB : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (zb R hR) :=
-    fun R hR => by
-    by_cases h1 : 1 ≤ lb
-    · simp only [zb, h1, ↓reduceIte]
-      exact ((hzB lb R hR).mono_budget (hzBd lb R hR (by have := hcXgb R hR h1; omega))).mono_chart
-        (le_max_left _ _) (hBfH lb hlb2.le)
-    · simp only [zb, h1, ↓reduceIte]; exact hz0R R hR
-  have hbase : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs), _ := fun R hR =>
-    hfr' (hRsT R hR) hH1 hai hak hab hpos hbi.symm hbk.symm w hw f hfm
-      (fun l I hI hIH => hfq l I hI (Or.inr hIH)) (Xi R (hRsT R hR))
-      (Xk R (hRsT R hR)) (Xga R (hRsT R hR)) (Xgb R (hRsT R hR))
-      (hdefc _ H (le_max_right _ _) hWpH) (za R (hRsT R hR)) (zb R (hRsT R hR))
-      (fitOpponentConst_nonneg (M la)) (fitOpponentConst_nonneg (M lb))
-      (hzaO R (hRsT R hR)) (hzbO R (hRsT R hR)) K₀
-      (Tup.filter (fun I => Rf I = R)) (fun I hI => by
-        obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
-        obtain ⟨hIt, hIK, hIH⟩ := Finset.mem_filter.mp hIT
-        subst hRI
-        refine ⟨hIt, (hRtree I hIt).2, hIK, ?_, ?_⟩
-        · rw [hgav I hIt hIH]
-          by_cases h1 : 1 ≤ la
-          · simp only [za, h1, ↓reduceIte]
-            filter_upwards [hz2 la (Rf I) _ I hIt (hcellR I hIt la hlaL)] with y hy hyI
-            rw [hy hyI]
-          · simp only [za, h1, ↓reduceIte]
-            filter_upwards [hz0ae (Rf I) (hRsT (Rf I) hR) I] with y hy _
-            rw [hy, Pi.zero_apply]
-        · rw [hgbv I hIt hIH]
-          by_cases h1 : 1 ≤ lb
-          · simp only [zb, h1, ↓reduceIte]
-            filter_upwards [hz2 lb (Rf I) _ I hIt (hcellR I hIt lb hlbL)] with y hy hyI
-            rw [hy hyI]
-          · simp only [zb, h1, ↓reduceIte]
-            filter_upwards [hz0ae (Rf I) (hRsT (Rf I) hR) I] with y hy _
-            rw [hy, Pi.zero_apply])
-      (fun I hI => ((Finset.mem_filter.mp (Finset.mem_filter.mp hI).1).2).2)
-      (by
-        by_cases hu4' : u ≤ 4
-        · obtain ⟨z₀, hz₀, hz₀0⟩ := (hzu R (hRsT R hR)).zero zero_le_one
-          refine ⟨z u R (hRsT R hR), z₀, hzu R _, hz₀, fun I hI => ?_⟩
-          filter_upwards [hvY u hut.le huL R (hRsT R hR) I hI, hz₀0 I] with y hy h0 hyI
-          rw [h0, sub_zero, ← hy hyI]
-          simp only [Xi, baseTupleFirstLowList, hu4', ↓reduceIte]
-        · refine ⟨z u R (hRsT R hR), z (u - 4) R (hRsT R hR), hzu R _, hzu4 R _ hu4',
-            fun I hI => ?_⟩
-          filter_upwards [hvY u hut.le huL R (hRsT R hR) I hI,
-            hvY (u - 4) hu4 hu4L R (hRsT R hR) I hI] with y h1 h2 hyI
-          rw [← h1 hyI, ← h2 hyI]
-          simp only [Xi, baseTupleFirstLowList, hu4', ↓reduceIte, LowList.sub_val])
-      (by
-        by_cases ht4' : t ≤ 4
-        · refine ⟨z t R (hRsT R hR), z0 R (hRsT R hR), hzt R _, hz0R R _, fun I hI => ?_⟩
-          filter_upwards [hvY t le_rfl htL R (hRsT R hR) I hI, hz0ae R (hRsT R hR) I] with
-            y hy h0 hyI
-          rw [h0, sub_zero, ← hy hyI]
-          simp only [Xk, baseTupleSecondLowList, ht4', ↓reduceIte]
-        · refine ⟨z t R (hRsT R hR), z (t - 4) R (hRsT R hR), hzt R _, hzt4 R _ ht4',
-            fun I hI => ?_⟩
-          filter_upwards [hvY t le_rfl htL R (hRsT R hR) I hI,
-            hvY (t - 4) ht4 ht4L R (hRsT R hR) I hI] with y h1 h2 hyI
-          rw [← h1 hyI, ← h2 hyI]
-          simp only [Xk, baseTupleSecondLowList, ht4', ↓reduceIte, LowList.sub_val])
-      (hzaB R (hRsT R hR)) (hzbB R (hRsT R hR)) le_rfl
-      (fun I hI => by
-        obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
-        have hIt := (Finset.mem_filter.mp hIT).1
-        have hIH := (Finset.mem_filter.mp hIT).2.2
-        subst hRI
-        rw [hXiv I hIt hIH]; exact hsz I hIt hIH i)
-      (fun I hI => by
-        obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
-        have hIt := (Finset.mem_filter.mp hIT).1
-        have hIH := (Finset.mem_filter.mp hIT).2.2
-        subst hRI
-        rw [hXkv I hIt hIH]; exact hsz I hIt hIH k)
-      (fun I hI => by
-        obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
-        have hIt := (Finset.mem_filter.mp hIT).1
-        have hIH := (Finset.mem_filter.mp hIT).2.2
-        subst hRI
-        rw [hgav I hIt hIH]
-        split_ifs
-        · exact hfitL2 la I hIt hIH
-        · simp)
-      (fun I hI => by
-        obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
-        have hIt := (Finset.mem_filter.mp hIT).1
-        have hIH := (Finset.mem_filter.mp hIT).2.2
-        subst hRI
-        rw [hgbv I hIt hIH]
-        split_ifs
-        · exact hfitL2 lb I hIt hIH
-        · simp)
-      hη₀ (fun I hI s s' hss => by
-        obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
-        have hIt := (Finset.mem_filter.mp hIT).1
-        have hIH := (Finset.mem_filter.mp hIT).2.2
-        subst hRI
-        rw [hslots I hIt hIH]; exact hpair I hIt hIH s s' hss)
-      Bp ε ka kb Ma Mb hBp hε0 hε1 hka hkb hMa hMb
-  expose_names
-  exact @baseTuple_stage_3
-    commonContext
-    hL_def hYval hYcard huL hu4L hlaL hlbL hcellR hgav hgbv z hz2 hzu hzu4 hzt hzt4 z0 hz0ae
-    hz0R hzaB hzbB hbase
+  match context with
+  | matchedContext@contextEquality:{
+      κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw, f, hfm, hfq, Bf, kk,
+      M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt, η₀, hη₀, hpair, hsz, Bp,
+      ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak, hbi, hbk, hla2, hlb2,
+      hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL, ht4L, hslots,
+      ..
+    } =>
+    let commonContext := matchedContext
+    subst matchedContext
+    dsimp (config := { zeta := false, zetaUnused := false }) only [BaseTupleStage2Statement,
+      BaseTupleConclusion, baseTupleHeight, baseTupleComplexityHeight, baseTupleWidth,
+      baseTupleErrorBudget, baseTupleNormalizedSize, baseTupleSeparationScale,
+      baseTuplePosition, baseTupleLastLevel, baseTupleActiveLevels, baseTupleRootMap,
+      baseTupleCells, baseTupleRoots, baseTupleLowListFamily, baseTupleFirstLowList,
+      baseTupleSecondLowList, baseTupleOpponent] at *
+    intro hfr' hBp hka hkb hMa hMb H D Wa Wb E S₀ Sp i k la hla lb hlb Lset hL_def Rf Tup Rs Y hYval
+      hYcard Xi Xk Xga Xgb huL hu4L hlaL hlbL hcellR hXiv hXkv hfitL2 hgav hgbv z hz1 hz2 hzR hzB
+        hBfH
+      BdR hzBd hcXi hcXk hcXga hcXgb hzu hzu4 hzt
+    have hzt4 : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬ t ≤ 4 →
+        IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (z (t - 4) R hR) :=
+      fun R hR h => ((hzB (t - 4) R hR).mono_budget
+        (hzBd (t - 4) R hR (by have := (hcXk R hR).2 h; omega))).mono_chart (le_max_left _ _)
+          (hBfH (t - 4) ht4)
+    have hvY : ∀ ℓ (hℓ : ℓ ≤ t), ℓ ∈ Lset → ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        ∀ I ∈ Tup.filter (fun I => Rf I = R), ∀ᵐ y ∂volume, y ∈ dyadicGridCell G I.1 I.2 →
+          (Y ℓ hℓ R hR).val I y = z ℓ R hR I y := by
+      intro ℓ hℓ hℓL R hR I hI
+      obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
+      have hIt := (Finset.mem_filter.mp hIT).1
+      have hIH := (Finset.mem_filter.mp hIT).2.2
+      subst hRI
+      filter_upwards [hz2 ℓ (Rf I) hR I hIt (hcellR I hIt ℓ hℓL)] with y hy hyI
+      rw [hy hyI]
+      exact hYval ℓ hℓ _ _ I hIt (hRtree I hIt).2 (hcellR I hIt ℓ hℓL) hIH y
+    -- the base data on each first-level root
+    -- the opponents of the two remaining slots (zero before their first update)
+    have hz0 := fun (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) => (hzB u R hR).zero zero_le_one
+    choose z0 hz0B hz0ae using hz0
+    have hz0R : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (z0 R hR) :=
+      fun R hR => ((hz0B R hR).mono_budget
+        (hzBd u R hR (by have := (hcXi R hR).1; omega))).mono_chart
+        (le_max_left _ _) (hBfH u hut.le)
+    let za : ∀ R, R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ := fun R hR =>
+      if 1 ≤ la then z la R hR else z0 R hR
+    let zb : ∀ R, R ∈ dyadicFiniteTree G J N → ℤ × ℤ → ℝ → ℂ := fun R hR =>
+      if 1 ≤ lb then z lb R hR else z0 R hR
+    have hz0O : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) (F : ℝ → ℂ) (K : ℝ),
+        (∀ I, Measurable (z0 R hR I) ∧
+          MemLp (z0 R hR I) 2 (volume.restrict (dyadicGridCell G I.1 I.2))) ∧
+        ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 →
+          IsAdmissibleOpponent G J' F (z0 R hR) K ∧ HasDepthEnergy G J' F (z0 R hR) 1 :=
+      fun R hR F K => ⟨fun I => ⟨(hz0B R hR).measurable I,
+        MemLp.ae_eq (show (0 : ℝ → ℂ) =ᵐ[volume.restrict (dyadicGridCell G I.1 I.2)] z0 R hR I
+          from (ae_restrict_of_ae (hz0ae R hR I)).mono fun y hy => hy.symm) MemLp.zero⟩,
+        fun J' _ _ => ⟨isAdmissibleOpponent_of_ae_zero (hz0ae R hR) K,
+          hasDepthEnergy_of_ae_zero (hz0ae R hR)⟩⟩
+    have hzaO : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        (∀ I, Measurable (za R hR I) ∧
+          MemLp (za R hR I) 2 (volume.restrict (dyadicGridCell G I.1 I.2))) ∧
+        ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 →
+          IsAdmissibleOpponent G J' (f sa) (za R hR) (fitOpponentConst (M la)) ∧
+            HasDepthEnergy G J' (f sa) (za R hR) 1 := fun R hR => by
+      by_cases h1 : 1 ≤ la
+      · simp only [za, h1, ↓reduceIte]
+        exact ⟨hz1 la R _, fun J' hJ' hJ'R => (hla h1) ▸ hzR la R _ J' hJ' hJ'R⟩
+      · simp only [za, h1, ↓reduceIte]
+        exact hz0O R hR _ _
+    have hzbO : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        (∀ I, Measurable (zb R hR I) ∧
+          MemLp (zb R hR I) 2 (volume.restrict (dyadicGridCell G I.1 I.2))) ∧
+        ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 →
+          IsAdmissibleOpponent G J' (f sb) (zb R hR) (fitOpponentConst (M lb)) ∧
+            HasDepthEnergy G J' (f sb) (zb R hR) 1 := fun R hR => by
+      by_cases h1 : 1 ≤ lb
+      · simp only [zb, h1, ↓reduceIte]
+        exact ⟨hz1 lb R _, fun J' hJ' hJ'R => (hlb h1) ▸ hzR lb R _ J' hJ' hJ'R⟩
+      · simp only [zb, h1, ↓reduceIte]
+        exact hz0O R hR _ _
+    have hzaB : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (za R hR) :=
+      fun R hR => by
+      by_cases h1 : 1 ≤ la
+      · simp only [za, h1, ↓reduceIte]
+        exact ((hzB la R hR).mono_budget
+          (hzBd la R hR (by have := hcXga R hR h1; omega))).mono_chart
+          (le_max_left _ _) (hBfH la hla2.le)
+      · simp only [za, h1, ↓reduceIte]; exact hz0R R hR
+    have hzbB : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (zb R hR) :=
+      fun R hR => by
+      by_cases h1 : 1 ≤ lb
+      · simp only [zb, h1, ↓reduceIte]
+        exact ((hzB lb R hR).mono_budget
+          (hzBd lb R hR (by have := hcXgb R hR h1; omega))).mono_chart
+          (le_max_left _ _) (hBfH lb hlb2.le)
+      · simp only [zb, h1, ↓reduceIte]; exact hz0R R hR
+    have hbase : ∀ (R : ℤ × ℤ) (hR : R ∈ Rs), _ := fun R hR =>
+      hfr' (hRsT R hR) hH1 hai hak hab hpos hbi.symm hbk.symm w hw f hfm
+        (fun l I hI hIH => hfq l I hI (Or.inr hIH)) (Xi R (hRsT R hR))
+        (Xk R (hRsT R hR)) (Xga R (hRsT R hR)) (Xgb R (hRsT R hR))
+        (hdefc _ H (le_max_right _ _) hWpH) (za R (hRsT R hR)) (zb R (hRsT R hR))
+        (fitOpponentConst_nonneg (M la)) (fitOpponentConst_nonneg (M lb))
+        (hzaO R (hRsT R hR)) (hzbO R (hRsT R hR)) K₀
+        (Tup.filter (fun I => Rf I = R)) (fun I hI => by
+          obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
+          obtain ⟨hIt, hIK, hIH⟩ := Finset.mem_filter.mp hIT
+          subst hRI
+          refine ⟨hIt, (hRtree I hIt).2, hIK, ?_, ?_⟩
+          · rw [hgav I hIt hIH]
+            by_cases h1 : 1 ≤ la
+            · simp only [za, h1, ↓reduceIte]
+              filter_upwards [hz2 la (Rf I) _ I hIt (hcellR I hIt la hlaL)] with y hy hyI
+              rw [hy hyI]
+            · simp only [za, h1, ↓reduceIte]
+              filter_upwards [hz0ae (Rf I) (hRsT (Rf I) hR) I] with y hy _
+              rw [hy, Pi.zero_apply]
+          · rw [hgbv I hIt hIH]
+            by_cases h1 : 1 ≤ lb
+            · simp only [zb, h1, ↓reduceIte]
+              filter_upwards [hz2 lb (Rf I) _ I hIt (hcellR I hIt lb hlbL)] with y hy hyI
+              rw [hy hyI]
+            · simp only [zb, h1, ↓reduceIte]
+              filter_upwards [hz0ae (Rf I) (hRsT (Rf I) hR) I] with y hy _
+              rw [hy, Pi.zero_apply])
+        (fun I hI => ((Finset.mem_filter.mp (Finset.mem_filter.mp hI).1).2).2)
+        (by
+          by_cases hu4' : u ≤ 4
+          · obtain ⟨z₀, hz₀, hz₀0⟩ := (hzu R (hRsT R hR)).zero zero_le_one
+            refine ⟨z u R (hRsT R hR), z₀, hzu R _, hz₀, fun I hI => ?_⟩
+            filter_upwards [hvY u hut.le huL R (hRsT R hR) I hI, hz₀0 I] with y hy h0 hyI
+            rw [h0, sub_zero, ← hy hyI]
+            simp only [Xi, baseTupleFirstLowList, hu4', ↓reduceIte]
+          · refine ⟨z u R (hRsT R hR), z (u - 4) R (hRsT R hR), hzu R _, hzu4 R _ hu4',
+              fun I hI => ?_⟩
+            filter_upwards [hvY u hut.le huL R (hRsT R hR) I hI,
+              hvY (u - 4) hu4 hu4L R (hRsT R hR) I hI] with y h1 h2 hyI
+            rw [← h1 hyI, ← h2 hyI]
+            simp only [Xi, baseTupleFirstLowList, hu4', ↓reduceIte, LowList.sub_val])
+        (by
+          by_cases ht4' : t ≤ 4
+          · refine ⟨z t R (hRsT R hR), z0 R (hRsT R hR), hzt R _, hz0R R _, fun I hI => ?_⟩
+            filter_upwards [hvY t le_rfl htL R (hRsT R hR) I hI, hz0ae R (hRsT R hR) I] with
+              y hy h0 hyI
+            rw [h0, sub_zero, ← hy hyI]
+            simp only [Xk, baseTupleSecondLowList, ht4', ↓reduceIte]
+          · refine ⟨z t R (hRsT R hR), z (t - 4) R (hRsT R hR), hzt R _, hzt4 R _ ht4',
+              fun I hI => ?_⟩
+            filter_upwards [hvY t le_rfl htL R (hRsT R hR) I hI,
+              hvY (t - 4) ht4 ht4L R (hRsT R hR) I hI] with y h1 h2 hyI
+            rw [← h1 hyI, ← h2 hyI]
+            simp only [Xk, baseTupleSecondLowList, ht4', ↓reduceIte, LowList.sub_val])
+        (hzaB R (hRsT R hR)) (hzbB R (hRsT R hR)) le_rfl
+        (fun I hI => by
+          obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
+          have hIt := (Finset.mem_filter.mp hIT).1
+          have hIH := (Finset.mem_filter.mp hIT).2.2
+          subst hRI
+          rw [hXiv I hIt hIH]; exact hsz I hIt hIH i)
+        (fun I hI => by
+          obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
+          have hIt := (Finset.mem_filter.mp hIT).1
+          have hIH := (Finset.mem_filter.mp hIT).2.2
+          subst hRI
+          rw [hXkv I hIt hIH]; exact hsz I hIt hIH k)
+        (fun I hI => by
+          obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
+          have hIt := (Finset.mem_filter.mp hIT).1
+          have hIH := (Finset.mem_filter.mp hIT).2.2
+          subst hRI
+          rw [hgav I hIt hIH]
+          split_ifs
+          · exact hfitL2 la I hIt hIH
+          · simp)
+        (fun I hI => by
+          obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
+          have hIt := (Finset.mem_filter.mp hIT).1
+          have hIH := (Finset.mem_filter.mp hIT).2.2
+          subst hRI
+          rw [hgbv I hIt hIH]
+          split_ifs
+          · exact hfitL2 lb I hIt hIH
+          · simp)
+        hη₀ (fun I hI s s' hss => by
+          obtain ⟨hIT, hRI⟩ := Finset.mem_filter.mp hI
+          have hIt := (Finset.mem_filter.mp hIT).1
+          have hIH := (Finset.mem_filter.mp hIT).2.2
+          subst hRI
+          rw [hslots I hIt hIH]; exact hpair I hIt hIH s s' hss)
+        Bp ε ka kb Ma Mb hBp hε0 hε1 hka hkb hMa hMb
+    expose_names
+    exact @baseTuple_stage_3
+      commonContext
+      hL_def hYval hYcard huL hu4L hlaL hlbL hcellR hgav hgbv z hz2 hzu hzu4 hzt hzt4 z0 hz0ae
+      hz0R hzaB hzbB hbase
 
 private theorem baseTuple_stage_1 (context : BaseTupleContext) :
     BaseTupleStage1Statement context := by
   classical
-  let commonContext := context
-  rcases context with ⟨κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw,
-    f, hfm, hfq, Bf, kk, M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt,
-    η₀, hη₀, hpair, hsz, Bp, ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak,
-    hbi, hbk, hla2, hlb2, hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL,
-    ht4L, hslots⟩
-  dsimp (config := { zeta := false, zetaUnused := false }) only [BaseTupleStage1Statement,
-    baseTupleHeight, baseTupleComplexityHeight, baseTupleWidth, baseTupleErrorBudget,
-    baseTupleNormalizedSize, baseTupleSeparationScale, baseTuplePosition,
-    baseTupleLastLevel, baseTupleActiveLevels, baseTupleRootMap, baseTupleCells,
-    baseTupleRoots, baseTupleLowListFamily, baseTupleFirstLowList, baseTupleSecondLowList,
-    baseTupleOpponent] at *
-  intro hfr' hBp hka hkb hMa hMb H D Wa Wb E S₀ Sp i k la hla lb hlb Lset hL_def Rf Tup Rs hWp1 Y
-    hYval hYcard Xi Xk Xga Xgb huL hu4L hlaL hlbL hcellR
-  have hXiv : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I →
-      (Xi (Rf I) (hRtree I hI).1).val I = stagTuple f g u t I i := fun I hI hIH => by
-    have := congrFun (hslots I hI hIH) i
-    rwa [slots4_i hai] at this
-  have hXkv : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I →
-      (Xk (Rf I) (hRtree I hI).1).val I = stagTuple f g u t I k := fun I hI hIH => by
-    have := congrFun (hslots I hI hIH) k
-    rwa [slots4_k hak hpos] at this
-  have hfitL2 : ∀ ℓ, ∀ I ∈ dyadicFiniteTree G J N, kernelHull G J N w I → eLpNorm (g ℓ I) 2
-      (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤
-        ENNReal.ofReal 1 := fun ℓ I hI hIH => by
-    obtain ⟨-, -, -, -, -, -, hm, hb, hL, -⟩ := ((hfit ℓ).1.2.2.2.2 I hI)
-    rw [ENNReal.ofReal_one]
-    exact eLpNorm_fit_le hm (hb hIH) (hL hIH)
-  have hgav : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I →
-      (Xga (Rf I) (hRtree I hI).1).val I = if 1 ≤ la then g la I else 0 := fun I hI hIH => by
-    by_cases h1 : 1 ≤ la
-    · simp only [Xga, baseTupleOpponent, h1, ↓reduceIte]
-      exact funext fun y =>
-        hYval la hla2.le _ _ I hI (hRtree I hI).2 (hcellR I hI la hlaL) hIH y
-    · simp only [Xga, baseTupleOpponent, h1, ↓reduceIte, LowList.empty_val]
-  have hgbv : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I →
-      (Xgb (Rf I) (hRtree I hI).1).val I = if 1 ≤ lb then g lb I else 0 := fun I hI hIH => by
-    by_cases h1 : 1 ≤ lb
-    · simp only [Xgb, baseTupleOpponent, h1, ↓reduceIte]
-      exact funext fun y =>
-        hYval lb hlb2.le _ _ I hI (hRtree I hI).2 (hcellR I hI lb hlbL) hIH y
-    · simp only [Xgb, baseTupleOpponent, h1, ↓reduceIte, LowList.empty_val]
-  -- the fit opponents
-  have hopp := fun (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) =>
-    (hfit ℓ).2.2 (seg ℓ R) ((hfit ℓ).1.2.2.2.2 R hR).1
-  choose z hz1 hz2 hz3 using hopp
-  have hzR : ∀ ℓ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 →
-        IsAdmissibleOpponent G J' (f (stagPos ℓ)) (z ℓ R hR) (fitOpponentConst (M ℓ)) ∧
-          HasDepthEnergy G J' (f (stagPos ℓ)) (z ℓ R hR) 1 := fun ℓ R hR J' hJ' hJ'R =>
-    (hz3 ℓ R hR).1 J' hJ' (hJ'R.trans ((hfit ℓ).1.2.2.2.2 R hR).2.1)
-  -- the fit opponents as basic families below each first-level root
-  have hzB : ∀ ℓ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      IsBasicOn G R (dyadicRemainingDepth J N R) 1 (max 2 (M ℓ : ℝ)) c₂ (Bf ℓ) w (z ℓ R hR) :=
-    fun ℓ R hR => isBasicOn_of_current hq.le (fun I hI hIH => hfq (stagPos ℓ) I hI (Or.inr hIH))
-      hR ((hfit ℓ).1.2.2.2.2 R hR).2.1 (hz3 ℓ R hR).2
-  have hBfH : ∀ ℓ ≤ t, Bf ℓ ≤ H := fun ℓ hℓ => by
-    have h1 : 1 ≤ max (Bf ℓ) Wp := le_trans hWp1 (le_max_right _ _)
-    calc Bf ℓ ≤ max (Bf ℓ) Wp := le_max_left _ _
-      _ = max (Bf ℓ) Wp ^ 1 := (pow_one _).symm
-      _ ≤ max (Bf ℓ) Wp ^ 6 := pow_le_pow_right₀ h1 (by norm_num)
-      _ ≤ H := hHl ℓ hℓ
-  -- the column budgets of the fit opponents below a first-level root
-  let BdR : ∀ R, R ∈ dyadicFiniteTree G J N → ℝ := fun R hR =>
-    2 + ((Fintype.card (Xi R hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ +
-      Fintype.card (Xgb R hR).Λ : ℕ) : ℝ)
-  have hzBd : ∀ ℓ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      M ℓ ≤ Fintype.card (Xi R hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ +
-        Fintype.card (Xgb R hR).Λ → max 2 (M ℓ : ℝ) ≤ BdR R hR := by
-    intro ℓ R hR h
-    have h' : (M ℓ : ℝ) ≤ ((Fintype.card (Xi R hR).Λ + Fintype.card (Xk R hR).Λ +
-        Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R hR).Λ : ℕ) : ℝ) := by exact_mod_cast h
-    have h0 : (0 : ℝ) ≤ ((Fintype.card (Xi R hR).Λ + Fintype.card (Xk R hR).Λ +
-        Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R hR).Λ : ℕ) : ℝ) := Nat.cast_nonneg _
-    exact max_le (by simp only [BdR]; linarith) (by simp only [BdR]; linarith)
-  have hcXi : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      M u ≤ Fintype.card (Xi R hR).Λ ∧ (¬ u ≤ 4 → M (u - 4) ≤ Fintype.card (Xi R hR).Λ) := by
-    intro R hR
-    by_cases hu4' : u ≤ 4
-    · have e : Xi R hR = Y u hut.le R hR := by simp only [Xi, baseTupleFirstLowList, hu4',
-      ↓reduceIte]
-      rw [e, hYcard u hut.le R hR]
-      exact ⟨le_rfl, fun h => absurd hu4' h⟩
-    · have e : Xi R hR = (Y u hut.le R hR).sub (Y (u - 4) hu4 R hR) := by
-        simp only [Xi, baseTupleFirstLowList, hu4', ↓reduceIte]
-      rw [e, LowList.sub_card, hYcard u hut.le R hR, hYcard (u - 4) hu4 R hR]
-      exact ⟨by omega, fun _ => by omega⟩
-  have hcXk : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      M t ≤ Fintype.card (Xk R hR).Λ ∧ (¬ t ≤ 4 → M (t - 4) ≤ Fintype.card (Xk R hR).Λ) := by
-    intro R hR
-    by_cases ht4' : t ≤ 4
-    · have e : Xk R hR = Y t le_rfl R hR := by simp only [Xk, baseTupleSecondLowList, ht4',
-      ↓reduceIte]
-      rw [e, hYcard t le_rfl R hR]
-      exact ⟨le_rfl, fun h => absurd ht4' h⟩
-    · have e : Xk R hR = (Y t le_rfl R hR).sub (Y (t - 4) ht4 R hR) := by
-        simp only [Xk, baseTupleSecondLowList, ht4', ↓reduceIte]
-      rw [e, LowList.sub_card, hYcard t le_rfl R hR, hYcard (t - 4) ht4 R hR]
-      exact ⟨by omega, fun _ => by omega⟩
-  have hcXga : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), 1 ≤ la →
-      M la ≤ Fintype.card (Xga R hR).Λ := by
-    intro R hR h1
-    have e : Xga R hR = Y la hla2.le R hR := by simp only [Xga, baseTupleOpponent, h1, ↓reduceIte]
-    rw [e, hYcard la hla2.le R hR]
-  have hcXgb : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), 1 ≤ lb →
-      M lb ≤ Fintype.card (Xgb R hR).Λ := by
-    intro R hR h1
-    have e : Xgb R hR = Y lb hlb2.le R hR := by simp only [Xgb, baseTupleOpponent, h1, ↓reduceIte]
-    rw [e, hYcard lb hlb2.le R hR]
-  have hzu : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (z u R hR) :=
-    fun R hR => ((hzB u R hR).mono_budget
-      (hzBd u R hR (by have := (hcXi R hR).1; omega))).mono_chart (le_max_left _ _)
-        (hBfH u hut.le)
-  have hzu4 : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬ u ≤ 4 →
-      IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (z (u - 4) R hR) :=
-    fun R hR h => ((hzB (u - 4) R hR).mono_budget
-      (hzBd (u - 4) R hR (by have := (hcXi R hR).2 h; omega))).mono_chart (le_max_left _ _)
-        (hBfH (u - 4) hu4)
-  have hzt : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
-      IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (z t R hR) :=
-    fun R hR => ((hzB t R hR).mono_budget
-      (hzBd t R hR (by have := (hcXk R hR).1; omega))).mono_chart (le_max_left _ _)
-        (hBfH t le_rfl)
-  expose_names
-  exact @baseTuple_stage_2
-    commonContext
-    hfr' hBp hka hkb hMa hMb hla hlb hL_def hYval hYcard huL hu4L hlaL hlbL hcellR hXiv hXkv
-    hfitL2 hgav hgbv z hz1 hz2 hzR hzB hBfH hzBd hcXi hcXk hcXga hcXgb hzu hzu4 hzt
+  match context with
+  | matchedContext@contextEquality:{
+      κ, c₂, cp, Wp, hdefc, c₁, C₁, c₂a, Ca, q, hq, Cqa, G, J, N, w, hw, f, hfm, hfq, Bf, kk,
+      M, roots, seg, n, a, g, cnt, atm, hfit, u, t, hut, Hc, Mt, hMt, η₀, hη₀, hpair, hsz, Bp,
+      ε, K₀, ka, kb, Ma, Mb, hε0, hε1, hpos, sa, sb, hab, hai, hak, hbi, hbk, hla2, hlb2,
+      hLne, hsegd, hRtree, hRsT, hHl, hH1, hWpH, X, hu4, ht4, htL, ht4L, hslots,
+      ..
+    } =>
+    let commonContext := matchedContext
+    subst matchedContext
+    dsimp (config := { zeta := false, zetaUnused := false }) only [BaseTupleStage1Statement,
+      BaseTupleConclusion, baseTupleHeight, baseTupleComplexityHeight, baseTupleWidth,
+      baseTupleErrorBudget, baseTupleNormalizedSize, baseTupleSeparationScale,
+      baseTuplePosition, baseTupleLastLevel, baseTupleActiveLevels, baseTupleRootMap,
+      baseTupleCells, baseTupleRoots, baseTupleLowListFamily, baseTupleFirstLowList,
+      baseTupleSecondLowList, baseTupleOpponent] at *
+    intro hfr' hBp hka hkb hMa hMb H D Wa Wb E S₀ Sp i k la hla lb hlb Lset hL_def Rf Tup Rs hWp1 Y
+      hYval hYcard Xi Xk Xga Xgb huL hu4L hlaL hlbL hcellR
+    have hXiv : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I →
+        (Xi (Rf I) (hRtree I hI).1).val I = stagTuple f g u t I i := fun I hI hIH => by
+      have := congrFun (hslots I hI hIH) i
+      rwa [slots4_i hai] at this
+    have hXkv : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I →
+        (Xk (Rf I) (hRtree I hI).1).val I = stagTuple f g u t I k := fun I hI hIH => by
+      have := congrFun (hslots I hI hIH) k
+      rwa [slots4_k hak hpos] at this
+    have hfitL2 : ∀ ℓ, ∀ I ∈ dyadicFiniteTree G J N, kernelHull G J N w I → eLpNorm (g ℓ I) 2
+        (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤
+          ENNReal.ofReal 1 := fun ℓ I hI hIH => by
+      obtain ⟨-, -, -, -, -, -, hm, hb, hL, -⟩ := ((hfit ℓ).1.2.2.2.2 I hI)
+      rw [ENNReal.ofReal_one]
+      exact eLpNorm_fit_le hm (hb hIH) (hL hIH)
+    have hgav : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I →
+        (Xga (Rf I) (hRtree I hI).1).val I = if 1 ≤ la then g la I else 0 := fun I hI hIH => by
+      by_cases h1 : 1 ≤ la
+      · simp only [Xga, baseTupleOpponent, h1, ↓reduceIte]
+        exact funext fun y =>
+          hYval la hla2.le _ _ I hI (hRtree I hI).2 (hcellR I hI la hlaL) hIH y
+      · simp only [Xga, baseTupleOpponent, h1, ↓reduceIte, LowList.empty_val]
+    have hgbv : ∀ (I : ℤ × ℤ) (hI : I ∈ dyadicFiniteTree G J N), kernelHull G J N w I →
+        (Xgb (Rf I) (hRtree I hI).1).val I = if 1 ≤ lb then g lb I else 0 := fun I hI hIH => by
+      by_cases h1 : 1 ≤ lb
+      · simp only [Xgb, baseTupleOpponent, h1, ↓reduceIte]
+        exact funext fun y =>
+          hYval lb hlb2.le _ _ I hI (hRtree I hI).2 (hcellR I hI lb hlbL) hIH y
+      · simp only [Xgb, baseTupleOpponent, h1, ↓reduceIte, LowList.empty_val]
+    -- the fit opponents
+    have hopp := fun (ℓ : ℕ) (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) =>
+      (hfit ℓ).2.2 (seg ℓ R) ((hfit ℓ).1.2.2.2.2 R hR).1
+    choose z hz1 hz2 hz3 using hopp
+    have hzR : ∀ ℓ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        ∀ J' ∈ dyadicFiniteTree G J N, dyadicGridCell G J'.1 J'.2 ⊆ dyadicGridCell G R.1 R.2 →
+          IsAdmissibleOpponent G J' (f (stagPos ℓ)) (z ℓ R hR) (fitOpponentConst (M ℓ)) ∧
+            HasDepthEnergy G J' (f (stagPos ℓ)) (z ℓ R hR) 1 := fun ℓ R hR J' hJ' hJ'R =>
+      (hz3 ℓ R hR).1 J' hJ' (hJ'R.trans ((hfit ℓ).1.2.2.2.2 R hR).2.1)
+    -- the fit opponents as basic families below each first-level root
+    have hzB : ∀ ℓ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        IsBasicOn G R (dyadicRemainingDepth J N R) 1 (max 2 (M ℓ : ℝ)) c₂ (Bf ℓ) w (z ℓ R hR) :=
+      fun ℓ R hR => isBasicOn_of_current hq.le (fun I hI hIH => hfq (stagPos ℓ) I hI (Or.inr hIH))
+        hR ((hfit ℓ).1.2.2.2.2 R hR).2.1 (hz3 ℓ R hR).2
+    have hBfH : ∀ ℓ ≤ t, Bf ℓ ≤ H := fun ℓ hℓ => by
+      have h1 : 1 ≤ max (Bf ℓ) Wp := le_trans hWp1 (le_max_right _ _)
+      calc Bf ℓ ≤ max (Bf ℓ) Wp := le_max_left _ _
+        _ = max (Bf ℓ) Wp ^ 1 := (pow_one _).symm
+        _ ≤ max (Bf ℓ) Wp ^ 6 := pow_le_pow_right₀ h1 (by norm_num)
+        _ ≤ H := hHl ℓ hℓ
+    -- the column budgets of the fit opponents below a first-level root
+    let BdR : ∀ R, R ∈ dyadicFiniteTree G J N → ℝ := fun R hR =>
+      2 + ((Fintype.card (Xi R hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ +
+        Fintype.card (Xgb R hR).Λ : ℕ) : ℝ)
+    have hzBd : ∀ ℓ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        M ℓ ≤ Fintype.card (Xi R hR).Λ + Fintype.card (Xk R hR).Λ + Fintype.card (Xga R hR).Λ +
+          Fintype.card (Xgb R hR).Λ → max 2 (M ℓ : ℝ) ≤ BdR R hR := by
+      intro ℓ R hR h
+      have h' : (M ℓ : ℝ) ≤ ((Fintype.card (Xi R hR).Λ + Fintype.card (Xk R hR).Λ +
+          Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R hR).Λ : ℕ) : ℝ) := by exact_mod_cast h
+      have h0 : (0 : ℝ) ≤ ((Fintype.card (Xi R hR).Λ + Fintype.card (Xk R hR).Λ +
+          Fintype.card (Xga R hR).Λ + Fintype.card (Xgb R hR).Λ : ℕ) : ℝ) := Nat.cast_nonneg _
+      exact max_le (by simp only [BdR]; linarith) (by simp only [BdR]; linarith)
+    have hcXi : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        M u ≤ Fintype.card (Xi R hR).Λ ∧ (¬ u ≤ 4 → M (u - 4) ≤ Fintype.card (Xi R hR).Λ) := by
+      intro R hR
+      by_cases hu4' : u ≤ 4
+      · have e : Xi R hR = Y u hut.le R hR := by simp only [Xi, baseTupleFirstLowList, hu4',
+        ↓reduceIte]
+        rw [e, hYcard u hut.le R hR]
+        exact ⟨le_rfl, fun h => absurd hu4' h⟩
+      · have e : Xi R hR = (Y u hut.le R hR).sub (Y (u - 4) hu4 R hR) := by
+          simp only [Xi, baseTupleFirstLowList, hu4', ↓reduceIte]
+        rw [e, LowList.sub_card, hYcard u hut.le R hR, hYcard (u - 4) hu4 R hR]
+        exact ⟨by omega, fun _ => by omega⟩
+    have hcXk : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        M t ≤ Fintype.card (Xk R hR).Λ ∧ (¬ t ≤ 4 → M (t - 4) ≤ Fintype.card (Xk R hR).Λ) := by
+      intro R hR
+      by_cases ht4' : t ≤ 4
+      · have e : Xk R hR = Y t le_rfl R hR := by simp only [Xk, baseTupleSecondLowList, ht4',
+        ↓reduceIte]
+        rw [e, hYcard t le_rfl R hR]
+        exact ⟨le_rfl, fun h => absurd ht4' h⟩
+      · have e : Xk R hR = (Y t le_rfl R hR).sub (Y (t - 4) ht4 R hR) := by
+          simp only [Xk, baseTupleSecondLowList, ht4', ↓reduceIte]
+        rw [e, LowList.sub_card, hYcard t le_rfl R hR, hYcard (t - 4) ht4 R hR]
+        exact ⟨by omega, fun _ => by omega⟩
+    have hcXga : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), 1 ≤ la →
+        M la ≤ Fintype.card (Xga R hR).Λ := by
+      intro R hR h1
+      have e : Xga R hR = Y la hla2.le R hR := by simp only [Xga, baseTupleOpponent, h1, ↓reduceIte]
+      rw [e, hYcard la hla2.le R hR]
+    have hcXgb : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), 1 ≤ lb →
+        M lb ≤ Fintype.card (Xgb R hR).Λ := by
+      intro R hR h1
+      have e : Xgb R hR = Y lb hlb2.le R hR := by simp only [Xgb, baseTupleOpponent, h1, ↓reduceIte]
+      rw [e, hYcard lb hlb2.le R hR]
+    have hzu : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (z u R hR) :=
+      fun R hR => ((hzB u R hR).mono_budget
+        (hzBd u R hR (by have := (hcXi R hR).1; omega))).mono_chart (le_max_left _ _)
+          (hBfH u hut.le)
+    have hzu4 : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N), ¬ u ≤ 4 →
+        IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (z (u - 4) R hR) :=
+      fun R hR h => ((hzB (u - 4) R hR).mono_budget
+        (hzBd (u - 4) R hR (by have := (hcXi R hR).2 h; omega))).mono_chart (le_max_left _ _)
+          (hBfH (u - 4) hu4)
+    have hzt : ∀ (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N),
+        IsBasicOn G R (dyadicRemainingDepth J N R) 1 (BdR R hR) (max c₂ cp) H w (z t R hR) :=
+      fun R hR => ((hzB t R hR).mono_budget
+        (hzBd t R hR (by have := (hcXk R hR).1; omega))).mono_chart (le_max_left _ _)
+          (hBfH t le_rfl)
+    expose_names
+    exact @baseTuple_stage_2
+      commonContext
+      hfr' hBp hka hkb hMa hMb hla hlb hL_def hYval hYcard huL hu4L hlaL hlbL hcellR hXiv hXkv
+      hfitL2 hgav hgbv z hz1 hz2 hzR hzB hBfH hzBd hcXi hcXk hcXga hcXgb hzu hzu4 hzt
 
 /-- Blueprint prop:base for one tuple `eq:base-tuple` of the levels `u < t`: the first-level
 roots refine the segments of the six fits entering the tuple; on each, `baseFirstRoot` gives

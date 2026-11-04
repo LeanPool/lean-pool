@@ -968,12 +968,12 @@ end Commute
 /-! ### Compression of the outer main ball projection (blueprint lines 2068-2070) -/
 
 /-- The one-factor compression constant of `columnSpatialCompression`. -/
-noncomputable def compression1 {V : Type*} [Fintype V] (D : ColumnTreeData V) : ℝ :=
-  (512 * ((1 : ℕ) + 1 : ℝ) ^ 512 * Real.log (2 * D.budget)) ^ (512 * (1 + 1))
+noncomputable abbrev compression1 {V : Type*} [Fintype V] (D : ColumnTreeData V) : ℝ :=
+  compressionOneConst D
 
 theorem compression1_nonneg {V : Type*} [Fintype V] (D : ColumnTreeData V) :
     0 ≤ compression1 D := by
-  unfold compression1; have := columnBudget_log_one_le D; positivity
+  unfold compression1 compressionOneConst; have := columnBudget_log_one_le D; positivity
 
 /-- Blueprint lines 2068-2070 (`lem:compression` with one factor): rows `Q_k` local to decision
 cells `u_k` and Bessel with constant `c` remain Bessel after inserting the inherited projection at

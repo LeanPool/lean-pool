@@ -478,15 +478,15 @@ theorem bogolyubovFourier_parseval {q : ℕ} [NeZero q] (f : ZMod q → ℂ) :
     Complex.ofReal_re, Complex.re_sum] using h
 
 /-- The probability density of a finite subset, relative to normalized counting measure. -/
-noncomputable def bogolyubovDensity {G : Type*} [Fintype G] [DecidableEq G]
+noncomputable abbrev bogolyubovDensity {G : Type*} [Fintype G] [DecidableEq G]
     (A : Finset G) (x : G) : ℂ :=
-  if x ∈ A then (Fintype.card G : ℂ) / A.card else 0
+  finiteSetDensity A x
 
 theorem bogolyubovFourier_density {q : ℕ} [NeZero q]
     (A : Finset (ZMod q)) (ξ : ZMod q) :
     bogolyubovFourier (bogolyubovDensity A) ξ =
       𝔼 a ∈ A, ZMod.stdAddChar (-(ξ * a)) := by
-  simp only [bogolyubovFourier, bogolyubovDensity, Finset.expect_eq_sum_div_card,
+  simp only [bogolyubovFourier, bogolyubovDensity, finiteSetDensity, Finset.expect_eq_sum_div_card,
     Finset.card_univ, ZMod.card, ite_mul, zero_mul]
   rw [Finset.sum_ite_mem, ← Finset.mul_sum]
   simp only [Finset.univ_inter]
@@ -500,7 +500,7 @@ theorem bogolyubov_character_mass {q : ℕ} [NeZero q]
       (q : ℝ) / A.card := by
   simp_rw [← bogolyubovFourier_density]
   rw [← bogolyubovFourier_parseval]
-  simp only [Fintype.expect_eq_sum_div_card, bogolyubovDensity,
+  simp only [Fintype.expect_eq_sum_div_card, bogolyubovDensity, finiteSetDensity,
     apply_ite (norm : ℂ → ℝ), norm_div, Complex.norm_natCast, norm_zero,
     ite_pow, zero_pow (by decide : 2 ≠ 0), ZMod.card]
   rw [Finset.sum_ite_mem]

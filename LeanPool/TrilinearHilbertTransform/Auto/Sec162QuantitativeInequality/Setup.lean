@@ -31,12 +31,6 @@ namespace TrilinearHT.Auto
 open MeasureTheory Metric
 open scoped FourierTransform ComplexConjugate ENNReal
 
-theorem kerC_nonneg' (κ : LocalKernelClass) (J : ℕ) : 0 ≤ kerC κ J := by
-  unfold kerC
-  have := kernelDerivBound_nonneg κ 0
-  have := kernelDerivBound_nonneg κ J
-  positivity
-
 theorem fourErrC_nonneg (κ : LocalKernelClass) (J : ℕ) : 0 ≤ fourErrC κ J := by
   unfold fourErrC
   have := localKernelSupBound_nonneg κ
