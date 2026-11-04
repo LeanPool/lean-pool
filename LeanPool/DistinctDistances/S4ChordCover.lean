@@ -217,13 +217,16 @@ theorem Setting.chordHolds_of_cover {n : ℕ} (S : Setting n) {lo hi T : ℚ}
 
 meta section
 
+/-- Split a chord-cell line into nonempty space-delimited fields. -/
 def splitCellWords (line : String) : List String :=
   (line.splitOn " ").filter (· ≠ "")
 
+/-- Construct an integer literal using `Int.ofNat` or `Int.negSucc`. -/
 def integerExpression (z : Int) : Expr :=
   if 0 ≤ z then mkApp (Lean.mkConst ``Int.ofNat) (mkRawNatLit z.toNat)
   else mkApp (Lean.mkConst ``Int.negSucc) (mkRawNatLit (z.natAbs - 1))
 
+/-- Construct `mkRat z d` for a signed chord-certificate entry. -/
 def signedRationalExpression (z : Int) (d : Nat) : Expr :=
   mkApp2 (Lean.mkConst ``mkRat) (integerExpression z) (mkRawNatLit d)
 

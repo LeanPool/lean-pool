@@ -49,6 +49,7 @@ machinery went with them; only the live primitives survive here.
 
 @[expose] public section
 
+/-- The Euclidean plane over the real numbers. -/
 scoped[EuclideanGeometry] notation "ℝ²" => EuclideanSpace ℝ (Fin 2)
 
 /-! ## `Set.Triplewise` (verbatim: `FormalConjecturesForMathlib/Data/Set/Triplewise.lean`) -/

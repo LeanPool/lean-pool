@@ -42,25 +42,31 @@ noncomputable def LTree.get {α : Type} (t : LTree α) : Nat → α :=
 
 meta section
 
+/-- A natural-number literal for a certificate entry. -/
 def naturalExpression (n : Nat) : Expr := mkRawNatLit n
 
+/-- The rational constructor term `mkRat n d` for a nonnegative entry. -/
 def rationalExpression (n d : Nat) : Expr :=
   mkApp2 (Lean.mkConst ``mkRat) (mkApp (Lean.mkConst ``Int.ofNat) (naturalExpression n))
     (naturalExpression d)
 
+/-- Split one certificate line into its nonempty space-delimited fields. -/
 def splitWords (line : String) : List String :=
   (line.splitOn " ").filter (· ≠ "")
 
+/-- Parse the nonempty lines of a certificate literal into fields. -/
 def splitNonemptyLines (s : String) : List (List String) :=
   ((s.splitOn "\n").map splitWords).filter (· ≠ [])
 
+/-- Read a natural-number field from the generated certificate format. -/
 def parseNatural (w : String) : Nat := w.toNat!
 
 /-- The tree with `xs[i]` at the path of the binary digits of `i` (lowest first); `xs` is
 padded to a power of two with its last entry. -/
 def lowBitExpressionTree (ty : Expr) (xs : Array Expr) : Expr :=
   let leafE (a : Expr) : Expr := mkApp2 (Lean.mkConst ``LTree.leaf) ty a
-  let rec go (ys : Array Expr) : Expr :=
+  let rec /-- Split a power-of-two array by successive low index bits. -/
+      go (ys : Array Expr) : Expr :=
     if ys.size ≤ 1 then leafE ys[0]!
     else
       let ev := (Array.range (ys.size / 2)).map (fun i ↦ ys[2 * i]!)
@@ -75,16 +81,20 @@ def lowBitExpressionTree (ty : Expr) (xs : Array Expr) : Expr :=
     while ys.size < sz do ys := ys.push ys[ys.size - 1]!
     return go ys
 
+/-- The constructor term for a pair with the supplied component types. -/
 def productExpression (α β : Expr) (a b : Expr) : Expr :=
   mkApp4 (Lean.mkConst ``Prod.mk [Level.zero, Level.zero]) α β a b
 
+/-- The product type of two certificate component types. -/
 def productType (α β : Expr) : Expr := mkApp2 (Lean.mkConst ``Prod [Level.zero, Level.zero]) α β
 
+/-- Elaborate rational pairs into a low-bit-indexed tree. -/
 elab "s4_qtree% " s:str : term => do
   let xs := (splitNonemptyLines s.getString).toArray.map fun ws ↦
     rationalExpression (parseNatural ws[0]!) (parseNatural ws[1]!)
   return lowBitExpressionTree (Lean.mkConst ``Rat) xs
 
+/-- Elaborate triples of natural numbers into a low-bit-indexed tree. -/
 elab "s4_ntree3% " s:str : term => do
   let nat := Lean.mkConst ``Nat
   let xs := (splitNonemptyLines s.getString).toArray.map fun ws ↦
@@ -93,6 +103,7 @@ elab "s4_ntree3% " s:str : term => do
         (naturalExpression (parseNatural ws[2]!)))
   return lowBitExpressionTree (productType nat (productType nat nat)) xs
 
+/-- Elaborate triples of rational numbers into a low-bit-indexed tree. -/
 elab "s4_ctree% " s:str : term => do
   let q := Lean.mkConst ``Rat
   let xs := (splitNonemptyLines s.getString).toArray.map fun ws ↦
@@ -126,6 +137,7 @@ def tagConstructor : String → Option (Name × Nat)
   | "casehi" => some (``Tag.casehi, 0)
   | _ => none
 
+/-- Combine a nonempty array interval into a balanced constructor tree. -/
 def balancedExpressionTree (node : Expr → Expr → Expr) (xs : Array Expr) (lo hi : Nat) :
     Expr :=
   if hi - lo ≤ 1 then xs[lo]!
@@ -135,6 +147,7 @@ def balancedExpressionTree (node : Expr → Expr → Expr) (xs : Array Expr) (lo
 termination_by hi - lo
 decreasing_by all_goals omega
 
+/-- Elaborate weighted geometric row tags into a balanced certificate tree. -/
 elab "s4_rows% " s:str : term => do
   let tagT := Lean.mkConst ``Tag
   let mut leaves : Array Expr := #[]
