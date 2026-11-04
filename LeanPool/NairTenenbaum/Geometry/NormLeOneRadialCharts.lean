@@ -68,10 +68,13 @@ theorem contDiff_normRegionRadialChart (σ : {w : InfinitePlace K // IsReal w} �
       fun_prop
     · simp only [normRegionUnitCoordinates, hw, ↓reduceIte]
       fun_prop
+  have hparameter : ContDiff ℝ ⊤ (fun v : NormRegionParameter K → ℝ => v (Sum.inl w₀)) :=
+    contDiff_pi.mp contDiff_id _
   have hr : ContDiff ℝ ⊤ (fun v : NormRegionParameter K → ℝ =>
       v (Sum.inl w₀) • expMapBasis (normRegionUnitCoordinates K v)) := by
-    exact (contDiff_apply ℝ ℝ (Sum.inl w₀)).smul
-        ((contDiff_expMapBasis K).comp hu)
+    exact hparameter.smul ((contDiff_expMapBasis K).comp hu)
+  have hprojection (w : InfinitePlace K) : ContDiff ℝ ⊤ (fun u : realSpace K => u w) :=
+    contDiff_pi.mp contDiff_id _
   apply ContDiff.prodMk
   · apply contDiff_pi.mpr
     intro w
@@ -79,14 +82,14 @@ theorem contDiff_normRegionRadialChart (σ : {w : InfinitePlace K // IsReal w} �
       if σ w then (v (Sum.inl w₀) • expMapBasis (normRegionUnitCoordinates K v)) w
       else -(v (Sum.inl w₀) • expMapBasis (normRegionUnitCoordinates K v)) w)
     cases hσ : σ w <;> simp only [Bool.false_eq_true, ↓reduceIte]
-    · exact ((contDiff_apply ℝ ℝ w.1).comp hr).neg
-    · exact (contDiff_apply ℝ ℝ w.1).comp hr
+    · exact ((hprojection w.1).comp hr).neg
+    · exact (hprojection w.1).comp hr
   · apply contDiff_pi.mpr
     intro w
     change ContDiff ℝ ⊤ (fun v : NormRegionParameter K → ℝ =>
       (((v (Sum.inl w₀) • expMapBasis (normRegionUnitCoordinates K v)) w : ℝ) : ℂ) *
         Complex.exp (((2 * v (Sum.inr w) - 1) * Real.pi : ℝ) * Complex.I))
-    have hcoord := (contDiff_apply ℝ ℝ w.1).comp hr
+    have hcoord := (hprojection w.1).comp hr
     have hangle : ContDiff ℝ ⊤ (fun v : NormRegionParameter K → ℝ =>
         (2 * v (Sum.inr w) - 1) * Real.pi) := by fun_prop
     exact (Complex.ofRealCLM.contDiff.comp hcoord).mul

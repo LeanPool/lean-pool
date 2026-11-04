@@ -9,7 +9,6 @@ module
 
 public import LeanPool.NairTenenbaum.Arithmetic.CongruenceCount
 public import LeanPool.NairTenenbaum.Polynomials.PolynomialSystem
-public import Mathlib.Data.Int.Star
 
 /-! # Complete residue blocks inside real short intervals -/
 

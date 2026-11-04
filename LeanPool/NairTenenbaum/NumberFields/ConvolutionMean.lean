@@ -11,7 +11,6 @@ public import LeanPool.NairTenenbaum.Arithmetic.Arithmetic
 public import Mathlib.Algebra.Order.Floor.Semifield
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Analysis.Normed.Group.Tannery
-public import Mathlib.Data.Int.Star
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 public import Mathlib.Topology.GDelta.MetrizableSpace
 

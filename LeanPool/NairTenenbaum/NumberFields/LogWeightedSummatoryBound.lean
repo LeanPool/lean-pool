@@ -9,6 +9,8 @@ module
 
 public import LeanPool.NairTenenbaum.Arithmetic.SummatoryAbel
 
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+
 /-! # Logarithmically weighted sums under a power-saving mean estimate -/
 
 @[expose] public section

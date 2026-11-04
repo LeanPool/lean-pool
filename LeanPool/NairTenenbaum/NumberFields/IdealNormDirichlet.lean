@@ -11,6 +11,8 @@ public import LeanPool.NairTenenbaum.Arithmetic.Arithmetic
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.NumberTheory.NumberField.DedekindZeta
 
+import Mathlib.Algebra.BigOperators.Ring.Nat
+
 /-! # The real Dirichlet series of ideal norms
 
 This module connects the nonnegative real series needed for comparisons with

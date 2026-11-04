@@ -9,7 +9,6 @@ module
 
 public import LeanPool.NairTenenbaum.Polynomials.DiscriminantBezout
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Int.Star
 public import Mathlib.Data.Nat.Prime.Int
 
 /-! # Root counts at primes dividing the discriminant

@@ -10,7 +10,6 @@ module
 public import LeanPool.NairTenenbaum.Polynomials.RootCount
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Data.Int.CardIntervalMod
-public import Mathlib.Data.Rat.Star
 
 /-! # Congruence counts in intervals
 

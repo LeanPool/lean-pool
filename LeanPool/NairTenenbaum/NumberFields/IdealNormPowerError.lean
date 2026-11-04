@@ -11,6 +11,8 @@ public import LeanPool.NairTenenbaum.NumberFields.IdealClassPowerError
 public import LeanPool.NairTenenbaum.NumberFields.IdealNormMean
 public import LeanPool.NairTenenbaum.NumberFields.PowerErrorMean
 
+import Mathlib.Algebra.BigOperators.Ring.Nat
+
 /-! # The quantitative ideal-counting estimate
 
 Summing the power-saving counts over the finite class group gives a linear
