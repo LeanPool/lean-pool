@@ -447,14 +447,6 @@ private lemma sum_farEquidistantTriples_pair_le {p : Config n} (hp : Function.In
 
 /-! ### Far points and the palette -/
 
-/-- The distance between distinct indices is an ordered distance value. A copy of the private
-`dist_mem_orderedDistanceValues_of_ne` of `Esgk.ApexPairCount`. -/
-private theorem dist_mem_orderedDistanceValues_of_index_ne {p : Config n} {a b : Fin n}
-    (h : a ≠ b) : dist (p a) (p b) ∈ OrderedDistanceValues p := by
-  rw [OrderedDistanceValues, Finset.mem_image]
-  exact ⟨(a, b), Finset.mem_filter.mpr
-    ⟨Finset.mem_product.mpr ⟨Finset.mem_univ _, Finset.mem_univ _⟩, h⟩, rfl⟩
-
 /-- Far points and the palette above a threshold. With the degree cap three, a point `p w` sees
 at most `3(D - R(T))` other points at squared distance more than `T`: each such point lies at
 one of the `D - R(T)` palette values `r` with `r² > T`, at most three per value. -/
@@ -472,7 +464,7 @@ theorem card_sq_far_le_three_mul_far_palette {p : Config n}
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hq
     rw [Finset.mem_biUnion]
     refine ⟨dist (p w) (p q), Finset.mem_filter.mpr
-      ⟨dist_mem_orderedDistanceValues_of_index_ne hq.1, not_le.mpr hq.2⟩, ?_⟩
+      ⟨dist_mem_orderedDistanceValues_of_ne hq.1, not_le.mpr hq.2⟩, ?_⟩
     rw [DistanceOutNeighborsAtValue, Finset.mem_filter]
     exact ⟨Finset.mem_univ _, hq.1, rfl⟩
   have h1 := (Finset.card_le_card hsub).trans Finset.card_biUnion_le
@@ -538,9 +530,9 @@ private lemma three_mul_card_apex_pairs_le {p : Config n} {ρ Λ : ℝ}
     rw [hT, Finset.mem_filter]
     exact ⟨fun h ↦ h.2, fun h ↦ ⟨Finset.mem_univ _, h⟩⟩
   have hmapsS : ∀ ab ∈ S, dist (p z) (p ab.1) ∈ OrderedDistanceValues p := fun ab hab ↦
-    dist_mem_orderedDistanceValues_of_index_ne (hS ab hab).2.1
+    dist_mem_orderedDistanceValues_of_ne (hS ab hab).2.1
   have hmapsT : ∀ q ∈ T, dist (p z) (p q) ∈ OrderedDistanceValues p := fun q hq ↦
-    dist_mem_orderedDistanceValues_of_index_ne ((hmemT q).mp hq).1
+    dist_mem_orderedDistanceValues_of_ne ((hmemT q).mp hq).1
   rw [Finset.card_eq_sum_card_fiberwise hmapsS, Finset.card_eq_sum_card_fiberwise hmapsT,
     Finset.mul_sum, Finset.mul_sum]
   refine Finset.sum_le_sum fun r _ ↦ ?_
@@ -660,22 +652,6 @@ theorem card_apexBandTriples_le_window {p : Config n} {c : Point} {ρ σ Λ Elo 
   linarith
 
 /-! ### Row AB1 -/
-
-/-- An irreflexive relation on indices is counted on ordered distinct pairs row by row. A copy
-of the private `card_offDiag_filter_eq_sum_rows` of `Esgk.ApexWindowPairCount`. -/
-private lemma card_offDiag_filter_eq_sum_rows (R : Fin n → Fin n → Prop) [DecidableRel R]
-    (hirr : ∀ a, ¬R a a) :
-    ((Finset.univ : Finset (Fin n)).offDiag.filter (fun ab ↦ R ab.1 ab.2)).card =
-      ∑ a, ((Finset.univ : Finset (Fin n)).filter (fun q ↦ R a q)).card := by
-  have heq : (Finset.univ : Finset (Fin n)).offDiag.filter (fun ab ↦ R ab.1 ab.2) =
-      (Finset.univ : Finset (Fin n × Fin n)).filter (fun ab ↦ R ab.1 ab.2) := by
-    ext ab
-    simp only [Finset.mem_filter, Finset.mem_offDiag, Finset.mem_univ, true_and]
-    refine ⟨fun h ↦ h.2, fun h ↦ ⟨fun he ↦ hirr ab.2 ?_, h⟩⟩
-    rw [he] at h
-    exact h
-  rw [heq, Finset.card_filter, Fintype.sum_prod_type]
-  simp only [Finset.card_filter]
 
 /-- For a squared threshold `T ≥ 0`, the ordered pairs of distinct indices farther than `T`
 number `n² - n - P(T)`. -/

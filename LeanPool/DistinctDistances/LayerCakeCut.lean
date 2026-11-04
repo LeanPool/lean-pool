@@ -40,32 +40,6 @@ open scoped RealInnerProductSpace
 
 variable {n : ℕ}
 
-/-- Twice a centred inner product, in terms of squared distances. A copy of the private
-`two_mul_inner_sub_center` of `Esgk.CentroidFunctionalBounds`. -/
-private lemma two_mul_inner_sub_center' (u w c : Point) :
-    2 * ⟪u - c, w - c⟫ = dist u c ^ 2 + dist w c ^ 2 - dist u w ^ 2 := by
-  have h := norm_sub_sq_real (u - c) (w - c)
-  rw [sub_sub_sub_cancel_right, ← dist_eq_norm, ← dist_eq_norm, ← dist_eq_norm] at h
-  linarith
-
-/-- The unit-direction centroid functional about `p z`, scaled by `ρ‖p z - c‖`: the values
-`ρ‖p z - c‖ + ⟪p q - c, p z - c⟫` are nonnegative and sum to `nρ‖p z - c‖`. A copy of the
-private `unit_direction_functional` of `Esgk.CentroidFunctionalBounds`. -/
-private lemma unit_direction_functional' {p : Config n} {c : Point} {ρ : ℝ}
-    (hsum : ∑ i, (p i - c) = 0) (hρ : 0 < ρ) (hhi : ∀ i, dist (p i) c ^ 2 ≤ ρ ^ 2)
-    (z : Fin n) :
-    (∀ q, 0 ≤ ρ * ‖p z - c‖ + ⟪p q - c, p z - c⟫) ∧
-      ∑ q, (ρ * ‖p z - c‖ + ⟪p q - c, p z - c⟫) = n * (ρ * ‖p z - c‖) := by
-  constructor
-  · intro q
-    have hq : ‖p q - c‖ ≤ ρ := by
-      rw [← dist_eq_norm]; exact (abs_le_of_sq_le_sq' (hhi q) hρ.le).2
-    have h1 := (abs_le.mp (abs_real_inner_le_norm (p q - c) (p z - c))).1
-    have h2 := mul_le_mul_of_nonneg_right hq (norm_nonneg (p z - c))
-    linarith
-  · rw [Finset.sum_add_distrib, ← sum_inner, hsum, inner_zero_left, Finset.sum_const,
-      Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, add_zero]
-
 /-- Lemma K at one point: in the annulus `σ²ρ² ≤ dist · c² ≤ ρ²` about the centroid `c`, with
 `0 < σ`, `Σ_q max(0, (2σ² + 2σ)ρ² - |p z - p q|²) ≤ 2σnρ²`. Pointwise,
 `‖p z - c‖ · max(0, (2σ² + 2σ)ρ² - |p z - p q|²) ≤ 2σρ (ρ‖p z - c‖ + ⟪p q - c, p z - c⟫)`, and
@@ -76,7 +50,7 @@ private lemma sum_max_sub_sq_dist_le_two_mul {p : Config n} {c : Point} {ρ σ :
     (hhi : ∀ i, dist (p i) c ^ 2 ≤ ρ ^ 2) (z : Fin n) :
     ∑ q, max 0 ((2 * σ ^ 2 + 2 * σ) * ρ ^ 2 - dist (p z) (p q) ^ 2) ≤
       2 * σ * n * ρ ^ 2 := by
-  obtain ⟨hf0, hfsum⟩ := unit_direction_functional' hsum hρ hhi z
+  obtain ⟨hf0, hfsum⟩ := unit_direction_functional hsum hρ hhi z
   have hAd : ‖p z - c‖ = dist (p z) c := (dist_eq_norm _ _).symm
   set A := ‖p z - c‖ with hA
   have hσρ : σ * ρ ≤ A := by
@@ -90,7 +64,7 @@ private lemma sum_max_sub_sq_dist_le_two_mul {p : Config n} {c : Point} {ρ σ :
     · rw [max_eq_left hneg, mul_zero]
       exact mul_nonneg (by positivity) (hf0 q)
     · rw [max_eq_right hpos]
-      have hin := two_mul_inner_sub_center' (p q) (p z) c
+      have hin := two_mul_inner_sub_center (p q) (p z) c
       rw [← hAd, dist_comm (p q) (p z)] at hin
       have k1 : 0 ≤ σ * ρ * (A - σ * ρ) ^ 2 := mul_nonneg hσρ0 (sq_nonneg _)
       have k2 : 0 ≤ dist (p z) (p q) ^ 2 * (A - σ * ρ) :=

@@ -405,4 +405,29 @@ theorem thin_annulus_close_pair_density {p : Config n}
   rw [hid]
   nlinarith
 
+/-- A saturated incidence carries an increasing pair below `t` whenever every
+indexed triple on its circle has a pair below `t`. -/
+lemma saturated_incidence_increasing_pair_of_triple {p : Config n} {t : ℝ}
+    {ir : Fin n × ℝ} (hir : ir ∈ SaturatedDistanceIncidences p)
+    (htriple : ∀ f : Fin 3 → Fin n, (∀ i, dist (p ir.1) (p (f i)) = ir.2) →
+      ∃ i j : Fin 3, i ≠ j ∧ dist (p (f i)) (p (f j)) ^ 2 ≤ t) :
+    ∃ a b, a ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
+      b ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
+      a < b ∧ dist (p a) (p b) ^ 2 ≤ t := by
+  classical
+  have hc := (Finset.mem_filter.mp hir).2
+  obtain ⟨a, b, c, hab, hac, hbc, hs⟩ := Finset.card_eq_three.mp hc
+  let f : Fin 3 → Fin n := ![a, b, c]
+  have hf : Function.Injective f := by
+    intro i j hij
+    fin_cases i <;> fin_cases j <;> simp_all [f]
+  have hmem (i : Fin 3) : f i ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 := by
+    rw [hs]; fin_cases i <;> simp [f]
+  have hd (i : Fin 3) : dist (p ir.1) (p (f i)) = ir.2 :=
+    (Finset.mem_filter.mp (hmem i)).2.2
+  obtain ⟨i, j, hij, hclose⟩ := htriple f hd
+  rcases lt_or_gt_of_ne (hf.ne hij) with hlt | hgt
+  · exact ⟨f i, f j, hmem i, hmem j, hlt, hclose⟩
+  · exact ⟨f j, f i, hmem j, hmem i, hgt, by simpa [dist_comm] using hclose⟩
+
 end Esgk

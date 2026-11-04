@@ -123,7 +123,7 @@ theorem three_mul_palette_sub_le_closedBall_sq_card_sub_one {p : Config n} (hn :
 
 /-- For `t ≥ 0`, the ordered close pairs are counted by the closed balls about the
 points, each without its center. -/
-private lemma orderedClosePairs_card_eq_sum_closedBall_sq (p : Config n) {t : ℝ}
+lemma orderedClosePairs_card_eq_sum_closedBall_sq (p : Config n) {t : ℝ}
     (ht : 0 ≤ t) :
     ((OrderedClosePairs p t).card : ℝ) =
       ∑ j, ((((Finset.univ : Finset (Fin n)).filter
@@ -137,7 +137,7 @@ private lemma orderedClosePairs_card_eq_sum_closedBall_sq (p : Config n) {t : �
 /-- At one apex `i`, the ordered close pairs on the circles about `i` over the
 palette are ordered close pairs with `i` as an equidistant witness; the circles
 for distinct radii are disjoint. -/
-private lemma sum_circle_closePairs_le_apex (p : Config n) (t : ℝ) (i : Fin n) :
+lemma sum_circle_closePairs_le_apex (p : Config n) (t : ℝ) (i : Fin n) :
     ∑ r ∈ OrderedDistanceValues p,
         ((DistanceOutNeighborsAtValue p i r).offDiag.filter
           (fun ab ↦ dist (p ab.1) (p ab.2) ^ 2 ≤ t)).card ≤
@@ -176,7 +176,7 @@ private lemma sum_circle_closePairs_le_apex (p : Config n) (t : ℝ) (i : Fin n)
 ordered close pair has at most two equidistant witnesses, so the ordered close
 pairs on the circles about all apexes number at most twice the ordered close
 pairs. -/
-private lemma sum_sum_circle_closePairs_le {p : Config n} (hp : Function.Injective p)
+lemma sum_sum_circle_closePairs_le {p : Config n} (hp : Function.Injective p)
     (hgp3 : NonTrilinear (Config.toFinset p : Set Point)) (t : ℝ) :
     ∑ i, ∑ r ∈ OrderedDistanceValues p,
         (((DistanceOutNeighborsAtValue p i r).offDiag.filter
@@ -207,7 +207,7 @@ private lemma sum_sum_circle_closePairs_le {p : Config n} (hp : Function.Injecti
 
 /-- On a circle of squared radius at most `t/4` about a point, every two points are
 within squared distance `t`. -/
-private lemma circle_offDiag_filter_eq_of_sq_le {p : Config n} {t r : ℝ}
+lemma circle_offDiag_filter_eq_of_sq_le {p : Config n} {t r : ℝ}
     (hr : r ^ 2 ≤ t / 4) (i : Fin n) :
     (DistanceOutNeighborsAtValue p i r).offDiag.filter
         (fun ab ↦ dist (p ab.1) (p ab.2) ^ 2 ≤ t) =

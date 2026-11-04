@@ -22,6 +22,7 @@ public import LeanPool.DistinctDistances.CentroidFunctionalBounds
 public import LeanPool.DistinctDistances.ChordBoxBound
 public import LeanPool.DistinctDistances.ChordRadiusBound
 public import LeanPool.DistinctDistances.ClosePairRowStability
+public import LeanPool.DistinctDistances.DiscreteLayerCake
 public import LeanPool.DistinctDistances.DistanceDeficiencyPositive
 public import LeanPool.DistinctDistances.DistanceDesign
 public import LeanPool.DistinctDistances.DistanceMultiplicityDefectBudget

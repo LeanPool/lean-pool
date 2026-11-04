@@ -78,18 +78,14 @@ private lemma sum_closedBall_sq_card_sub_one_le_orderedClosePairs (p : Config n)
   linarith
 
 /-- For a threshold `t ≥ 0`, `Σ_j (N_j(t) - 1)` is the number of ordered close pairs.
-(The private `orderedClosePairs_card_eq_sum_closedBall_sq` of `Esgk.PalettePairCounting`,
+(The public `orderedClosePairs_card_eq_sum_closedBall_sq` of `Esgk.PalettePairCounting`,
 stated in the other direction.) -/
 private lemma sum_closedBall_sq_card_sub_one_eq_orderedClosePairs (p : Config n) {t : ℝ}
     (ht : 0 ≤ t) :
     ∑ j, ((((Finset.univ : Finset (Fin n)).filter
         (fun q ↦ dist (p j) (p q) ^ 2 ≤ t)).card : ℝ) - 1) =
-      ((OrderedClosePairs p t).card : ℝ) := by
-  rw [orderedClosePairs_card_eq_sum_row, Nat.cast_sum]
-  refine Finset.sum_congr rfl fun j _ ↦ ?_
-  rw [closedBall_sq_card_eq_closePairRow_card_add_one p ht j]
-  push_cast
-  ring
+      ((OrderedClosePairs p t).card : ℝ) :=
+  (orderedClosePairs_card_eq_sum_closedBall_sq p ht).symm
 
 /-- Membership in the index-level witness set. -/
 private lemma mem_indexedEquidistantWitnesses {p : Config n} {i j x : Fin n} :

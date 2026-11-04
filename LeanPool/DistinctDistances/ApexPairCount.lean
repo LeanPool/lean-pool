@@ -75,7 +75,7 @@ private theorem ne_of_radius_pred {p : Config n} {G : ℝ → Prop} (hG0 : ¬G 0
   exact hG0 h
 
 /-- The distance between distinct indices is an ordered distance value. -/
-private theorem dist_mem_orderedDistanceValues_of_ne {p : Config n} {a b : Fin n}
+theorem dist_mem_orderedDistanceValues_of_ne {p : Config n} {a b : Fin n}
     (h : a ≠ b) : dist (p a) (p b) ∈ OrderedDistanceValues p := by
   rw [OrderedDistanceValues, Finset.mem_image]
   exact ⟨(a, b), Finset.mem_filter.mpr
@@ -227,5 +227,20 @@ theorem farOrderedPairs_card_le_of_apex {p : Config n} (hp : Function.Injective 
     rw [farOrderedPairs_card_eq_sum hs, Nat.cast_sum]
   rw [hrow] at h
   linarith
+
+/-- Count an irreflexive relation on ordered distinct pairs row by row. -/
+lemma card_offDiag_filter_eq_sum_rows (R : Fin n → Fin n → Prop) [DecidableRel R]
+    (hirr : ∀ a, ¬R a a) :
+    ((Finset.univ : Finset (Fin n)).offDiag.filter (fun ab ↦ R ab.1 ab.2)).card =
+      ∑ a, ((Finset.univ : Finset (Fin n)).filter (fun q ↦ R a q)).card := by
+  have heq : (Finset.univ : Finset (Fin n)).offDiag.filter (fun ab ↦ R ab.1 ab.2) =
+      (Finset.univ : Finset (Fin n × Fin n)).filter (fun ab ↦ R ab.1 ab.2) := by
+    ext ab
+    simp only [Finset.mem_filter, Finset.mem_offDiag, Finset.mem_univ, true_and]
+    refine ⟨fun h ↦ h.2, fun h ↦ ⟨fun he ↦ hirr ab.2 ?_, h⟩⟩
+    rw [he] at h
+    exact h
+  rw [heq, Finset.card_filter, Fintype.sum_prod_type]
+  simp only [Finset.card_filter]
 
 end Esgk

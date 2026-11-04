@@ -128,7 +128,7 @@ lemma same_side_chord_sq_le_of_sq_le {X Y X' Y' r γ : ℝ}
 /-- The orthonormal frame with the apex `p` at `(‖p‖, 0)`: coordinates `u, v` of
 three points, with their squared norms, mutual squared distances, and squared
 distances to the apex. -/
-private lemma exists_apex_frame (p : Point) (q : Fin 3 → Point) (ha0 : ‖p‖ ≠ 0) :
+lemma exists_apex_frame (p : Point) (q : Fin 3 → Point) (ha0 : ‖p‖ ≠ 0) :
     ∃ u v : Fin 3 → ℝ, (∀ i, u i ^ 2 + v i ^ 2 = ‖q i‖ ^ 2) ∧
       (∀ i j, (u i - u j) ^ 2 + (v i - v j) ^ 2 = dist (q i) (q j) ^ 2) ∧
       ∀ i, (u i - ‖p‖) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by

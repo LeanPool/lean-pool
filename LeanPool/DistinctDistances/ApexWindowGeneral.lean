@@ -147,24 +147,6 @@ private lemma false_of_three_pairwise_sq_far_on_circle {c z a b d : Point} {ρ �
 
 /-! ### Lemma A'': the averaged apex-window row -/
 
-/-- An irreflexive relation on indices is counted on ordered distinct pairs
-row by row. A copy of the private `card_offDiag_filter_eq_sum_rows` of
-`Esgk.ApexWindowPairCount` (itself a copy of the private `card_offDiag_filter_eq_sum` of
-`Esgk.UnitFunctionalConstantGain`). -/
-private lemma card_offDiag_filter_eq_sum_rows' (R : Fin n → Fin n → Prop) [DecidableRel R]
-    (hirr : ∀ a, ¬R a a) :
-    ((Finset.univ : Finset (Fin n)).offDiag.filter (fun ab ↦ R ab.1 ab.2)).card =
-      ∑ a, ((Finset.univ : Finset (Fin n)).filter (fun q ↦ R a q)).card := by
-  have heq : (Finset.univ : Finset (Fin n)).offDiag.filter (fun ab ↦ R ab.1 ab.2) =
-      (Finset.univ : Finset (Fin n × Fin n)).filter (fun ab ↦ R ab.1 ab.2) := by
-    ext ab
-    simp only [Finset.mem_filter, Finset.mem_offDiag, Finset.mem_univ, true_and]
-    refine ⟨fun h ↦ h.2, fun h ↦ ⟨fun he ↦ hirr ab.2 ?_, h⟩⟩
-    rw [he] at h
-    exact h
-  rw [heq, Finset.card_filter, Fintype.sum_prod_type]
-  simp only [Finset.card_filter]
-
 /-- Averaged apex-window row (Lemma A'' of the S2 file at a general far threshold `λ`; the S2
 row `−2𝒜(λ) − (4/3)𝒜(h) + (4/3)𝒜(w) − 6𝔡 − 4ε ≤ −4` times `3n²`). Let the points lie in the
 annulus `σ²ρ² ≤ |p_i - c|² ≤ ρ²` with `0 < σ`, with no three collinear and the degree cap
@@ -217,7 +199,7 @@ theorem six_mul_far_pairs_le_apex_window_general {p : Config n} {c : Point}
       exact ⟨by linarith, by linarith⟩)
     (fun z a b d hzab hzad _ hab hbd had ↦ false_of_three_pairwise_sq_far_on_circle hρ hσ hL0
       (hloσ z) (hloσ a) (hloσ b) (hloσ d) (hhi a) (hhi b) (hhi d) hzab hzad hab hbd had)
-  have hrow := card_offDiag_filter_eq_sum_rows'
+  have hrow := card_offDiag_filter_eq_sum_rows
     (fun a b ↦ l * ρ ^ 2 < dist (p a) (p b) ^ 2) hirr
   rw [hrow] at hant
   push_cast at hant

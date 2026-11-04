@@ -402,45 +402,6 @@ private lemma window_mem_box {σ A R a0 a1 r0 r1 Llo Lhi w : ℝ} (ha0 : 0 < a0)
           div_le_div_of_nonneg_left (by linarith) hD0 hD0D
       _ ≤ w := (div_le_iff₀ hD0).mpr hw
 
-/-- The orthonormal frame with the apex `p` at `(‖p‖, 0)`: coordinates `u, v` of
-three points, with their squared norms, mutual squared distances, and squared
-distances to the apex. (A copy of the private `exists_apex_frame` of
-`Esgk.RefinedClosePairGeometry`.) -/
-private lemma apex_frame_exists (p : Point) (q : Fin 3 → Point) (ha0 : ‖p‖ ≠ 0) :
-    ∃ u v : Fin 3 → ℝ, (∀ i, u i ^ 2 + v i ^ 2 = ‖q i‖ ^ 2) ∧
-      (∀ i j, (u i - u j) ^ 2 + (v i - v j) ^ 2 = dist (q i) (q j) ^ 2) ∧
-      ∀ i, (u i - ‖p‖) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by
-  set a := ‖p‖ with ha
-  have hpa : p 0 ^ 2 + p 1 ^ 2 = a ^ 2 := (point_norm_sq_coordinates p).symm
-  let u : Fin 3 → ℝ := fun i ↦ (p 0 * q i 0 + p 1 * q i 1) / a
-  let v : Fin 3 → ℝ := fun i ↦ (-p 1 * q i 0 + p 0 * q i 1) / a
-  have hnorm (i : Fin 3) : u i ^ 2 + v i ^ 2 = ‖q i‖ ^ 2 := by
-    rw [point_norm_sq_coordinates]
-    dsimp [u, v]
-    field_simp [ha0]
-    calc
-      _ = (p 0 ^ 2 + p 1 ^ 2) * (q i 0 ^ 2 + q i 1 ^ 2) := by ring
-      _ = _ := by rw [hpa]
-  have hdist (i j : Fin 3) :
-      (u i - u j) ^ 2 + (v i - v j) ^ 2 = dist (q i) (q j) ^ 2 := by
-    rw [point_dist_sq_coordinates]
-    dsimp [u, v]
-    field_simp [ha0]
-    calc
-      _ = (p 0 ^ 2 + p 1 ^ 2) *
-          ((q i 0 - q j 0) ^ 2 + (q i 1 - q j 1) ^ 2) := by ring
-      _ = _ := by rw [hpa]
-  have hapex (i : Fin 3) : (u i - a) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by
-    have hu : a * u i = p 0 * q i 0 + p 1 * q i 1 := by
-      dsimp [u]; field_simp [ha0]
-    calc
-      _ = a ^ 2 - 2 * (a * u i) + (u i ^ 2 + v i ^ 2) := by ring
-      _ = _ := by
-        rw [hnorm, hu, point_norm_sq_coordinates, point_dist_sq_coordinates,
-          point_norm_sq_coordinates]
-        nlinarith [hpa]
-  exact ⟨u, v, hnorm, hdist, hapex⟩
-
 /-- Lemma C′ in the unit annulus `σ² ≤ ‖·‖² ≤ 1` about the origin, arbitrary planar frame. -/
 private lemma unit_exists_dist_sq_le_of_mem_chord_box (p : Point) (q : Fin 3 → Point)
     {σ a0 a1 r0 r1 Llo Lhi w β : ℝ} (ha0 : 0 < a0) (hr0 : 0 < r0)
@@ -459,7 +420,7 @@ private lemma unit_exists_dist_sq_le_of_mem_chord_box (p : Point) (q : Fin 3 →
   have hA : 0 < ‖p‖ := ha0.trans_le hpa0
   have hR : 0 < dist p (q 0) := hr0.trans_le hpr0
   have hσ1 : σ ^ 2 ≤ 1 := (hlo 0).trans (hhi 0)
-  obtain ⟨u, v, hnorm, hdist, hapex⟩ := apex_frame_exists p q hA.ne'
+  obtain ⟨u, v, hnorm, hdist, hapex⟩ := exists_apex_frame p q hA.ne'
   set A := ‖p‖
   set R := dist p (q 0)
   have hRk (k : Fin 3) : (u k - A) ^ 2 + v k ^ 2 = R ^ 2 := by rw [hapex k, heq k 0]

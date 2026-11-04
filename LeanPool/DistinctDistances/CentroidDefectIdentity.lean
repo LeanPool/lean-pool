@@ -5,6 +5,7 @@ Authors: Adam McKenna
 -/
 module
 
+public import LeanPool.DistinctDistances.DiscreteLayerCake
 public import LeanPool.DistinctDistances.ThinAnnulus
 public import LeanPool.DistinctDistances.PalettePairCounting
 public import Mathlib.Tactic.FieldSimp
@@ -62,24 +63,6 @@ variable {n : ℕ}
 
 /-! ### Telescoping -/
 
-/-- Telescoping: for `τ` nondecreasing on `0, …, k`, the increments `τ (i+1) - τ i` over the
-indices `i < k` with `x ≤ τ i` sum to at most `max 0 (τ k - x)`. This is a copy of the private
-`sum_ite_increment_le_max_of_monotone` of `Esgk/SecondMomentLowerSum.lean`. -/
-private lemma sum_ite_increment_le_max_of_monotone {k : ℕ} (τ : ℕ → ℝ)
-    (hτ : ∀ i < k, τ i ≤ τ (i + 1)) (x : ℝ) :
-    ∑ i ∈ Finset.range k, (if x ≤ τ i then τ (i + 1) - τ i else 0) ≤ max 0 (τ k - x) := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [Finset.sum_range_succ]
-    have ih' := ih (fun i hi ↦ hτ i (by omega))
-    have hk := hτ k (by omega)
-    split_ifs with hx
-    · rw [max_eq_right (by linarith)] at ih'
-      linarith [le_max_right 0 (τ (k + 1) - x)]
-    · rw [max_eq_left (by linarith)] at ih'
-      linarith [le_max_left 0 (τ (k + 1) - x)]
-
 /-- Upper telescoping: for `y` nondecreasing on `0, …, k` with `y 0 ≥ 0` and `x ≥ 0`, the
 value `y 0` when `x ≤ y 0`, plus the increments `y (i+1) - y i` over the indices `i < k` with
 `x ≤ y (i+1)`, sum to at least `max 0 (y k - x)`. -/
@@ -115,7 +98,7 @@ private lemma mul_sum_lower_indicator_le {k : ℕ} (τ : ℕ → ℝ)
     (hx : x ≤ 4 * c) :
     c * ∑ i ∈ Finset.range k, (τ (i + 1) - τ i) * (if x ≤ τ i * c then 1 else 0) ≤
       4 * c - x := by
-  have h := sum_ite_increment_le_max_of_monotone (fun i ↦ τ i * c)
+  have h := sum_ite_increment_le_max (fun i ↦ τ i * c)
     (fun i hi ↦ mul_le_mul_of_nonneg_right (hτ i hi) hc) x
   have hkc : τ k * c ≤ 4 * c := mul_le_mul_of_nonneg_right hτk hc
   have hmax : max 0 (τ k * c - x) ≤ 4 * c - x := max_le (by linarith) (by linarith)

@@ -61,112 +61,6 @@ open EuclideanGeometry
 
 variable {n : ℕ}
 
-/-- For `t ≥ 0`, the ordered close pairs are counted by the closed balls about the
-points, each without its center. (A copy of the private
-`orderedClosePairs_card_eq_sum_closedBall_sq` of `Esgk.PalettePairCounting`.) -/
-private lemma card_orderedClosePairs_eq_sum_closedBall_sq_sub_one (p : Config n)
-    {t : ℝ} (ht : 0 ≤ t) :
-    ((OrderedClosePairs p t).card : ℝ) =
-      ∑ j, ((((Finset.univ : Finset (Fin n)).filter
-        (fun q ↦ dist (p j) (p q) ^ 2 ≤ t)).card : ℝ) - 1) := by
-  rw [orderedClosePairs_card_eq_sum_row, Nat.cast_sum]
-  apply Finset.sum_congr rfl
-  intro j _
-  rw [closedBall_sq_card_eq_closePairRow_card_add_one p ht j, Nat.cast_add, Nat.cast_one,
-    add_sub_cancel_right]
-
-/-- At one apex `i`, the ordered close pairs on the circles about `i` over the
-palette are ordered close pairs with `i` as an equidistant witness; the circles
-for distinct radii are disjoint. (A copy of the private
-`sum_circle_closePairs_le_apex` of `Esgk.PalettePairCounting`.) -/
-private lemma sum_circle_closePairs_le_witnessed_closePairs (p : Config n) (t : ℝ)
-    (i : Fin n) :
-    ∑ r ∈ OrderedDistanceValues p,
-        ((DistanceOutNeighborsAtValue p i r).offDiag.filter
-          (fun ab ↦ dist (p ab.1) (p ab.2) ^ 2 ≤ t)).card ≤
-      ((OrderedClosePairs p t).filter
-        (fun ab ↦ dist (p i) (p ab.1) = dist (p i) (p ab.2))).card := by
-  classical
-  set X := (OrderedClosePairs p t).filter
-    (fun ab ↦ i ≠ ab.1 ∧ dist (p i) (p ab.1) = dist (p i) (p ab.2)) with hX
-  have hmaps : ∀ ab ∈ X, dist (p i) (p ab.1) ∈ OrderedDistanceValues p := by
-    intro ab hab
-    have h := (Finset.mem_filter.mp hab).2.1
-    rw [OrderedDistanceValues, Finset.mem_image]
-    exact ⟨(i, ab.1), Finset.mem_filter.mpr
-      ⟨Finset.mem_product.mpr ⟨Finset.mem_univ _, Finset.mem_univ _⟩, h⟩, rfl⟩
-  have hXle : X.card ≤ ((OrderedClosePairs p t).filter
-      (fun ab ↦ dist (p i) (p ab.1) = dist (p i) (p ab.2))).card := by
-    apply Finset.card_le_card
-    intro ab hab
-    obtain ⟨h1, -, h2⟩ := Finset.mem_filter.mp hab
-    exact Finset.mem_filter.mpr ⟨h1, h2⟩
-  refine le_trans ?_ hXle
-  rw [Finset.card_eq_sum_card_fiberwise hmaps]
-  apply Finset.sum_le_sum
-  intro r _
-  apply Finset.card_le_card
-  intro ab hab
-  obtain ⟨hab, hclose⟩ := Finset.mem_filter.mp hab
-  obtain ⟨ha, hb, hne⟩ := Finset.mem_offDiag.mp hab
-  obtain ⟨-, hia, hda⟩ := Finset.mem_filter.mp ha
-  obtain ⟨-, -, hdb⟩ := Finset.mem_filter.mp hb
-  refine Finset.mem_filter.mpr ⟨Finset.mem_filter.mpr ⟨?_, hia, hda.trans hdb.symm⟩, hda⟩
-  exact Finset.mem_filter.mpr
-    ⟨Finset.mem_offDiag.mpr ⟨Finset.mem_univ _, Finset.mem_univ _, hne⟩, hclose⟩
-
-/-- Under no three collinear points, every ordered close pair has at most two
-equidistant witnesses, so the ordered close pairs on the circles about all apexes
-number at most twice the ordered close pairs. (A copy of the private
-`sum_sum_circle_closePairs_le` of `Esgk.PalettePairCounting`.) -/
-private lemma sum_sum_circle_closePairs_le_two_mul_closePairs {p : Config n}
-    (hp : Function.Injective p) (hgp3 : NonTrilinear (Config.toFinset p : Set Point))
-    (t : ℝ) :
-    ∑ i, ∑ r ∈ OrderedDistanceValues p,
-        (((DistanceOutNeighborsAtValue p i r).offDiag.filter
-          (fun ab ↦ dist (p ab.1) (p ab.2) ^ 2 ≤ t)).card : ℝ) ≤
-      2 * ((OrderedClosePairs p t).card : ℝ) := by
-  classical
-  have hswap : ∑ i, ((OrderedClosePairs p t).filter
-        (fun ab ↦ dist (p i) (p ab.1) = dist (p i) (p ab.2))).card =
-      ∑ ab ∈ OrderedClosePairs p t, (IndexedEquidistantWitnesses p ab.1 ab.2).card := by
-    simp only [IndexedEquidistantWitnesses, Finset.card_filter]
-    exact Finset.sum_comm
-  have hnat : ∑ i, ∑ r ∈ OrderedDistanceValues p,
-        ((DistanceOutNeighborsAtValue p i r).offDiag.filter
-          (fun ab ↦ dist (p ab.1) (p ab.2) ^ 2 ≤ t)).card ≤
-      2 * (OrderedClosePairs p t).card := by
-    calc ∑ i, ∑ r ∈ OrderedDistanceValues p,
-          ((DistanceOutNeighborsAtValue p i r).offDiag.filter
-            (fun ab ↦ dist (p ab.1) (p ab.2) ^ 2 ≤ t)).card ≤
-        ∑ i, ((OrderedClosePairs p t).filter
-          (fun ab ↦ dist (p i) (p ab.1) = dist (p i) (p ab.2))).card :=
-          Finset.sum_le_sum fun i _ ↦ sum_circle_closePairs_le_witnessed_closePairs p t i
-      _ = ∑ ab ∈ OrderedClosePairs p t, (IndexedEquidistantWitnesses p ab.1 ab.2).card := hswap
-      _ ≤ ∑ _ab ∈ OrderedClosePairs p t, 2 :=
-          Finset.sum_le_sum fun ab hab ↦ indexedEquidistantWitnesses_card_le_two_of_nonTrilinear
-            hp hgp3 (Finset.mem_offDiag.mp (Finset.mem_filter.mp hab).1).2.2
-      _ = 2 * (OrderedClosePairs p t).card := by rw [Finset.sum_const, smul_eq_mul, mul_comm]
-  exact_mod_cast hnat
-
-/-- On a circle of squared radius at most `t/4` about a point, every two points are
-within squared distance `t`. (A copy of the private
-`circle_offDiag_filter_eq_of_sq_le` of `Esgk.PalettePairCounting`.) -/
-private lemma circle_closePairs_eq_offDiag_of_sq_le {p : Config n} {t r : ℝ}
-    (hr : r ^ 2 ≤ t / 4) (i : Fin n) :
-    (DistanceOutNeighborsAtValue p i r).offDiag.filter
-        (fun ab ↦ dist (p ab.1) (p ab.2) ^ 2 ≤ t) =
-      (DistanceOutNeighborsAtValue p i r).offDiag := by
-  apply Finset.filter_true_of_mem
-  intro ab hab
-  obtain ⟨ha, hb, -⟩ := Finset.mem_offDiag.mp hab
-  have hda := (Finset.mem_filter.mp ha).2.2
-  have hdb := (Finset.mem_filter.mp hb).2.2
-  have htri := dist_triangle (p ab.1) (p i) (p ab.2)
-  rw [dist_comm (p ab.1) (p i), hda, hdb] at htri
-  have h0 := dist_nonneg (x := p ab.1) (y := p ab.2)
-  nlinarith [pow_le_pow_left₀ h0 htri 2]
-
 /-- The three charges as arithmetic. Let `k ≤ 3` be the number of points on a circle and
 `c ≥ 0` its ordered close-pair count; let `A` (short radius) imply `B` (radius within the
 cut). If `A` gives `c = k(k - 1)` and a saturated circle with `B` but not `A` gives `c ≥ 2`,
@@ -217,7 +111,7 @@ private lemma circle_closePairs_charges {p : Config n}
   refine circle_charges_of_cases (hcap i r) (Nat.cast_nonneg _) (fun h ↦ h.trans huv)
     (fun hru ↦ ?_) (fun hru hrv h3 ↦ ?_)
   · have hrt : r ^ 2 ≤ t / 4 := by linarith
-    rw [circle_closePairs_eq_offDiag_of_sq_le hrt i, Finset.offDiag_card,
+    rw [circle_offDiag_filter_eq_of_sq_le hrt i, Finset.offDiag_card,
       Nat.cast_sub (Nat.le_mul_self _), Nat.cast_mul]
     ring
   · have hsat : (i, r) ∈ SaturatedDistanceIncidences p :=
@@ -258,8 +152,8 @@ private lemma sum_sum_charge_le {p : Config n} (hp : Function.Injective p)
     ∑ i, ∑ r ∈ OrderedDistanceValues p, g i r ≤
       ∑ j, ((((Finset.univ : Finset (Fin n)).filter
         (fun q ↦ dist (p j) (p q) ^ 2 ≤ t)).card : ℝ) - 1) := by
-  have hup := sum_sum_circle_closePairs_le_two_mul_closePairs hp hgp3 t
-  rw [card_orderedClosePairs_eq_sum_closedBall_sq_sub_one p ht] at hup
+  have hup := sum_sum_circle_closePairs_le hp hgp3 t
+  rw [orderedClosePairs_card_eq_sum_closedBall_sq p ht] at hup
   have hlow : ∑ i, ∑ r ∈ OrderedDistanceValues p, 2 * g i r ≤
       ∑ i, ∑ r ∈ OrderedDistanceValues p,
         (((DistanceOutNeighborsAtValue p i r).offDiag.filter

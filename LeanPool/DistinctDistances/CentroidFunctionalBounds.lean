@@ -5,6 +5,7 @@ Authors: Adam McKenna
 -/
 module
 
+public import LeanPool.DistinctDistances.DiscreteLayerCake
 public import LeanPool.DistinctDistances.AnnulusClusterGeometry
 public import Mathlib.Tactic.IntervalCases
 public import Mathlib.Tactic.Linarith
@@ -106,7 +107,7 @@ private lemma mem_configClosedBall_iff {p : Config n} {i j : Fin n} {t : ℝ} :
   simp [ConfigClosedBall]
 
 /-- Twice a centred inner product, in terms of squared distances. -/
-private lemma two_mul_inner_sub_center (u w c : Point) :
+lemma two_mul_inner_sub_center (u w c : Point) :
     2 * ⟪u - c, w - c⟫ = dist u c ^ 2 + dist w c ^ 2 - dist u w ^ 2 := by
   have h := norm_sub_sq_real (u - c) (w - c)
   rw [sub_sub_sub_cancel_right, ← dist_eq_norm, ← dist_eq_norm, ← dist_eq_norm] at h
@@ -114,7 +115,7 @@ private lemma two_mul_inner_sub_center (u w c : Point) :
 
 /-- The unit-direction centroid functional about `p z`, scaled by `ρ‖p z - c‖`: the values
 `ρ‖p z - c‖ + ⟪p q - c, p z - c⟫` are nonnegative and sum to `nρ‖p z - c‖`. -/
-private lemma unit_direction_functional {p : Config n} {c : Point} {ρ : ℝ}
+lemma unit_direction_functional {p : Config n} {c : Point} {ρ : ℝ}
     (hsum : ∑ i, (p i - c) = 0) (hρ : 0 < ρ) (hhi : ∀ i, dist (p i) c ^ 2 ≤ ρ ^ 2)
     (z : Fin n) :
     (∀ q, 0 ≤ ρ * ‖p z - c‖ + ⟪p q - c, p z - c⟫) ∧
@@ -224,23 +225,6 @@ theorem centroid_layer_cake_le {p : Config n} {c : Point} {ρ σ a : ℝ}
   linarith
 
 /-! ### The discrete layer cake -/
-
-/-- Telescoping: for `τ` nondecreasing on `0, …, k`, the increments `τ (i+1) - τ i` over the
-indices `i < k` with `x ≤ τ i` sum to at most `max 0 (τ k - x)`. -/
-private lemma sum_ite_increment_le_max {k : ℕ} (τ : ℕ → ℝ) (hτ : ∀ i < k, τ i ≤ τ (i + 1))
-    (x : ℝ) :
-    ∑ i ∈ Finset.range k, (if x ≤ τ i then τ (i + 1) - τ i else 0) ≤ max 0 (τ k - x) := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [Finset.sum_range_succ]
-    have ih' := ih (fun i hi ↦ hτ i (by omega))
-    have hk := hτ k (by omega)
-    split_ifs with hx
-    · rw [max_eq_right (by linarith)] at ih'
-      linarith [le_max_right 0 (τ (k + 1) - x)]
-    · rw [max_eq_left (by linarith)] at ih'
-      linarith [le_max_left 0 (τ (k + 1) - x)]
 
 /-- The discrete layer cake: for squared radii `τ 0 ≤ τ 1 ≤ … ≤ τ k` and reals `ν i` bounded
 by the number of points at squared distance at most `τ i` from `p z`,

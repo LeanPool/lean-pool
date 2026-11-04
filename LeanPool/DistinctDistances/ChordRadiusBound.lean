@@ -51,45 +51,6 @@ open EuclideanGeometry
 
 variable {n : ℕ}
 
-/-- The orthonormal frame with the apex `p` at `(‖p‖, 0)`: coordinates `u, v` of
-three points, with their squared norms, mutual squared distances, and squared
-distances to the apex. (A copy of the private `exists_apex_frame` of
-`Esgk.RefinedClosePairGeometry`.) -/
-private lemma exists_apex_frame_coordinates (p : Point) (q : Fin 3 → Point) (ha0 : ‖p‖ ≠ 0) :
-    ∃ u v : Fin 3 → ℝ, (∀ i, u i ^ 2 + v i ^ 2 = ‖q i‖ ^ 2) ∧
-      (∀ i j, (u i - u j) ^ 2 + (v i - v j) ^ 2 = dist (q i) (q j) ^ 2) ∧
-      ∀ i, (u i - ‖p‖) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by
-  set a := ‖p‖ with ha
-  have hpa : p 0 ^ 2 + p 1 ^ 2 = a ^ 2 := (point_norm_sq_coordinates p).symm
-  let u : Fin 3 → ℝ := fun i ↦ (p 0 * q i 0 + p 1 * q i 1) / a
-  let v : Fin 3 → ℝ := fun i ↦ (-p 1 * q i 0 + p 0 * q i 1) / a
-  have hnorm (i : Fin 3) : u i ^ 2 + v i ^ 2 = ‖q i‖ ^ 2 := by
-    rw [point_norm_sq_coordinates]
-    dsimp [u, v]
-    field_simp [ha0]
-    calc
-      _ = (p 0 ^ 2 + p 1 ^ 2) * (q i 0 ^ 2 + q i 1 ^ 2) := by ring
-      _ = _ := by rw [hpa]
-  have hdist (i j : Fin 3) :
-      (u i - u j) ^ 2 + (v i - v j) ^ 2 = dist (q i) (q j) ^ 2 := by
-    rw [point_dist_sq_coordinates]
-    dsimp [u, v]
-    field_simp [ha0]
-    calc
-      _ = (p 0 ^ 2 + p 1 ^ 2) *
-          ((q i 0 - q j 0) ^ 2 + (q i 1 - q j 1) ^ 2) := by ring
-      _ = _ := by rw [hpa]
-  have hapex (i : Fin 3) : (u i - a) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by
-    have hu : a * u i = p 0 * q i 0 + p 1 * q i 1 := by
-      dsimp [u]; field_simp [ha0]
-    calc
-      _ = a ^ 2 - 2 * (a * u i) + (u i ^ 2 + v i ^ 2) := by ring
-      _ = _ := by
-        rw [hnorm, hu, point_norm_sq_coordinates, point_dist_sq_coordinates,
-          point_norm_sq_coordinates]
-        nlinarith [hpa]
-  exact ⟨u, v, hnorm, hdist, hapex⟩
-
 /-- The radius form of the same-side chord bound, unscaled. Let the apex `p` and three
 points `q i` lie in the annulus `σ²ρ² ≤ |x - c|²`, `|q i - c|² ≤ ρ²`, all three at distance
 `r` from `p`. Then two of them satisfy `|p - c| · |q i - q j|² ≤ r (1 - σ²) ρ²`. -/
@@ -109,7 +70,7 @@ private lemma exists_pair_mul_chord_sq_le (c p : Point) (q : Fin 3 → Point) {�
     rw [hPn]
     exact (abs_le_of_sq_le_sq' (by rw [mul_pow]; exact hp) dist_nonneg).2
   have ha0 : 0 < ‖P‖ := hσρ.trans_le hσa
-  obtain ⟨u, v, hnorm, hdist, hapex⟩ := exists_apex_frame_coordinates P Q ha0.ne'
+  obtain ⟨u, v, hnorm, hdist, hapex⟩ := exists_apex_frame P Q ha0.ne'
   obtain ⟨i, j, hij, hside⟩ := three_has_same_transverse_side v
   refine ⟨i, j, hij, ?_⟩
   rw [← hPn, ← hQQ]
@@ -190,32 +151,6 @@ theorem annular_equidistant_triple_close_pair_of_radius (c p : Point) (q : Fin 3
     have hsq := pow_le_pow_left₀ dist_nonneg htri 2
     have hv : 4 * v * ρ ^ 2 ≤ t * ρ ^ 2 := mul_le_mul_of_nonneg_right hc hρ2
     nlinarith
-
-/-- A saturated incidence carries an increasing pair below `t` whenever every
-indexed triple on its circle has a pair below `t`. (A copy of the private
-`saturated_incidence_pair_of_triple'` of `Esgk.ShortChainConstantGain`.) -/
-private lemma saturated_incidence_increasing_pair_of_triple {p : Config n} {t : ℝ}
-    {ir : Fin n × ℝ} (hir : ir ∈ SaturatedDistanceIncidences p)
-    (htriple : ∀ f : Fin 3 → Fin n, (∀ i, dist (p ir.1) (p (f i)) = ir.2) →
-      ∃ i j : Fin 3, i ≠ j ∧ dist (p (f i)) (p (f j)) ^ 2 ≤ t) :
-    ∃ a b, a ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
-      b ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
-      a < b ∧ dist (p a) (p b) ^ 2 ≤ t := by
-  classical
-  have hc := (Finset.mem_filter.mp hir).2
-  obtain ⟨a, b, c, hab, hac, hbc, hs⟩ := Finset.card_eq_three.mp hc
-  let f : Fin 3 → Fin n := ![a, b, c]
-  have hf : Function.Injective f := by
-    intro i j hij
-    fin_cases i <;> fin_cases j <;> simp_all [f]
-  have hmem (i : Fin 3) : f i ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 := by
-    rw [hs]; fin_cases i <;> simp [f]
-  have hd (i : Fin 3) : dist (p ir.1) (p (f i)) = ir.2 :=
-    (Finset.mem_filter.mp (hmem i)).2.2
-  obtain ⟨i, j, hij, hclose⟩ := htriple f hd
-  rcases lt_or_gt_of_ne (hf.ne hij) with hlt | hgt
-  · exact ⟨f i, f j, hmem i, hmem j, hlt, hclose⟩
-  · exact ⟨f j, f i, hmem j, hmem i, hgt, by simpa [dist_comm] using hclose⟩
 
 /-- **The radius form of Step L0 on saturated circles.** Let the configuration lie in the
 annulus `σ²ρ² ≤ |p i - c|² ≤ ρ²` (`0 < σ`, `0 < ρ`). If one of
