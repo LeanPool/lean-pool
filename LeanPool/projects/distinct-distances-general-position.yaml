@@ -1,0 +1,42 @@
+slug: distinct-distances-general-position
+title: An explicit improvement to the planar distinct-distance bound in general position
+summary: >-
+  Proves that an injectively indexed configuration of n at least 10000 planar points,
+  with no three collinear and no four concyclic, determines more than (1/3 + 1/40)n
+  distinct distances. The argument combines distance multiplicity and energy bounds,
+  a thin annulus about the centroid, geometric constraints on close pairs and
+  equidistant witnesses, and a kernel-checked rational certificate covering 60 cases.
+  Reusable infrastructure includes an exact packed Farkas certificate checker with
+  a general soundness theorem, annular geometry, and distance-counting identities.
+branch: discrete geometry
+entry_module: LeanPool.DistinctDistances
+authors:
+- Adam McKenna
+source:
+  title: "Distinct distances in general position: an explicit improvement of the bound n/3"
+  authors:
+  - Adam McKenna
+  doi: 10.5281/zenodo.23680960
+  url: https://github.com/mysticflounder/distinct-distances-general-position
+  github_repo: mysticflounder/distinct-distances-general-position
+  commit: 091530ea585b132a0c893910a9a367a00660659a
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Esgk.numDistances_gt_one_third_add_kappa_image_gap
+main_results:
+- declaration: Esgk.numDistances_gt_one_third_add_kappa_image_gap
+  informal: >-
+    Every injective configuration of n at least 10000 points in the Euclidean plane,
+    with no three points collinear and no four points concyclic, has strictly more
+    than (1/3 + 1/40)n distinct distances between distinct points.
+tags:
+- discrete-geometry
+- distinct-distances
+- computational-certificates
+- farkas-lemma
+msc:
+- 52C10
+- 51K05
+- 68V20
