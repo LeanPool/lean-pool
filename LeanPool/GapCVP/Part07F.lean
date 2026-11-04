@@ -6,7 +6,7 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part07E
+public import LeanPool.GapCVP.Part07E -- shake: keep
 
 /-! # GapCVP proof, part 07, continuation 06 -/
 

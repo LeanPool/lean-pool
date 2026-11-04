@@ -6,7 +6,9 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part08A
+public import LeanPool.GapCVP.Part08A -- shake: keep
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # GapCVP proof, part 08, continuation 02 -/
 

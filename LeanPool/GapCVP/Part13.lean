@@ -6,7 +6,13 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part12
+public import LeanPool.GapCVP.Part11B
+public import LeanPool.GapCVP.Part12C
+import LeanPool.GapCVP.Part12D
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.CategoryTheory.Category.Init
+import Mathlib.Data.Nat.Bitwise
 
 /-! # GapCVP proof, part 13 -/
 
@@ -5603,8 +5609,7 @@ theorem paperVariableArityExplicitBinaryRowWordCount_eq_fourFamily
       gridCount = physGridCard formula := by
     change Fintype.card
       (ExplicitGridPoint length source) = _
-    simpa [length, source,
-      paperVariableAritySourceFormula_variableCount] using
+    simpa only [Fintype.card_coe, paperVariableAritySourceFormula_variableCount] using
       sourceFormulaGrid_card_eq_fieldWordCount length source
   have field_valid :
       fieldCount =
@@ -5612,8 +5617,7 @@ theorem paperVariableArityExplicitBinaryRowWordCount_eq_fourFamily
     change Fintype.card
       (GapCVP.Factor400BinaryConstructiveSourcePlaces.sourceFormulaField
         length source) = _
-    simpa [length, source] using
-      GapCVP.Core.sourceFiniteField_card
+    exact GapCVP.Core.sourceFiniteField_card
         (GapCVP.Core.sourceSizeParameter_ge_one_hundred length source)
   have shifted_valid :
       Fintype.card
@@ -5633,7 +5637,7 @@ theorem paperVariableArityExplicitBinaryRowWordCount_eq_fourFamily
               Fin (explicitMomentBudget length source + 1)) =
           paperShiftedFamilyTagCount
             formula (explicitMomentBudget length source) := by
-            simpa [source] using
+            simpa only [Fintype.card_fin] using
               (Fintype.card_congr
                 (paperShiftedFamilyWordOrder formula
                   (explicitMomentBudget length source))).symm
@@ -5675,9 +5679,10 @@ theorem paperVariableArityExplicitBinaryRowWordCount_eq_fourFamily
             Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
             Fintype.card_fin]
           rw [shifted_valid, table_valid]
-          simp [source,
-            gridCount, fieldCount, degree, momentCount,
-            explicitMomentBudget]
+          simp only [source, Fintype.card_coe, Fintype.card_unique, Nat.cast_id,
+            List.length_map, List.length_attach,
+            GapCVP.SourcePreprocessingSemantics.paperSourceNormalizedClauses,
+            gridCount, fieldCount, degree, momentCount, explicitMomentBudget]
           ring
     _ = paperVariableArityPhysicalFormulaRowCount formula := by
       rw [grid_valid, field_valid]
@@ -6541,23 +6546,27 @@ theorem physicalWordBinaryCheckCoefficient
             encodingLength formula row).2.1 column)
         (physicalWordDecodedRow
           encodingLength formula row).2.2 := by
-  rw [paperVariableArityPhysicalWordBinarySystem_check_apply]
-  change
-    binaryFieldParityMatrix
+  refine (paperVariableArityPhysicalWordBinarySystem_check_apply
+    encodingLength formula row column).trans ?_
+  refine (binaryFieldParityMatrix_apply_basisCoordinate
       (GapCVP.Factor400BinaryConstructiveSourcePlaces.sourceFormulaFieldBasis
           encodingLength (srcFormula formula))
       (sourceFormulaPhysicalFamilyFieldMatrix
         encodingLength (srcFormula formula)
         (physicalWordDecodedRow
           encodingLength formula row).1)
-      ((physicalWordDecodedRow
-        encodingLength formula row).2.1,
-       (physicalWordDecodedRow
-        encodingLength formula row).2.2)
+      (physicalWordDecodedRow encodingLength formula row).2.1
+      (physicalWordDecodedRow encodingLength formula row).2.2
       (physicalColumnPermutation
-        encodingLength formula column) = _
-  rw [binaryFieldParityMatrix_apply_basisCoordinate]
-  rw [← paperVariableArityPhysicalWordFamilyFieldCoefficient_eq_matrix]
+        encodingLength formula column)).trans ?_
+  exact congrArg
+    (fun value =>
+      (GapCVP.Factor400BinaryConstructiveSourcePlaces.sourceFormulaFieldBasis
+        encodingLength (srcFormula formula)).equivFun value
+        (physicalWordDecodedRow encodingLength formula row).2.2)
+    (paperVariableArityPhysicalWordFamilyFieldCoefficient_eq_matrix
+      encodingLength formula (physicalWordDecodedRow encodingLength formula row).1
+      (physicalWordDecodedRow encodingLength formula row).2.1 column).symm
 
 private theorem paperVariableArityPhysicalWordBinaryRightHandSideCoefficient
     (encodingLength : ℕ) (formula : ThreeCNF)
