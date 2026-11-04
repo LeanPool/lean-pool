@@ -106,11 +106,11 @@ lemma qInner_conj (ψ φ : H → ℂ) : star (qInner ψ φ) = qInner φ ψ := by
 
 omit [DecidableEq H] in
 @[simp] lemma qInner_zero_left (φ : H → ℂ) : qInner (0 : H → ℂ) φ = 0 := by
-  simp [qInner_def]
+  simp only [qInner_def, Pi.zero_apply, star_zero, zero_mul, Finset.sum_const_zero]
 
 omit [DecidableEq H] in
 @[simp] lemma qInner_zero_right (ψ : H → ℂ) : qInner ψ (0 : H → ℂ) = 0 := by
-  simp [qInner_def]
+  simp only [qInner_def, RCLike.star_def, Pi.zero_apply, mul_zero, Finset.sum_const_zero]
 
 omit [DecidableEq H] in
 lemma qInner_add_right (ψ φ χ : H → ℂ) :
@@ -166,7 +166,8 @@ lemma qInner_sum_left {α : Type*} (s : Finset α) (F : α → (H → ℂ)) (φ 
   exact Finset.sum_comm
 
 omit [DecidableEq H] in
-@[simp] lemma qNormSq_zero : qNormSq (0 : H → ℂ) = 0 := by simp [qNormSq_def]
+@[simp] lemma qNormSq_zero : qNormSq (0 : H → ℂ) = 0 := by simp only [qNormSq_def, Pi.zero_apply,
+  map_zero, Finset.sum_const_zero]
 
 omit [DecidableEq H] in
 lemma qNormSq_smul (c : ℂ) (ψ : H → ℂ) :
@@ -187,7 +188,7 @@ lemma qNormSq_add (ψ φ : H → ℂ) :
     ring
   have h2 : (qInner φ ψ).re = (qInner ψ φ).re := by
     rw [← qInner_conj ψ φ]
-    simp
+    simp only [RCLike.star_def, Complex.conj_re]
   have h3 := congrArg Complex.re h
   rw [qInner_self, qInner_self, qInner_self] at h3
   simp only [Complex.add_re, Complex.ofReal_re] at h3
@@ -202,9 +203,9 @@ lemma qNormSq_eq_zero_iff {ψ : H → ℂ} : qNormSq ψ = 0 ↔ ψ = 0 := by
     funext k
     have := (Finset.sum_eq_zero_iff_of_nonneg
       (fun h _ => Complex.normSq_nonneg (ψ h))).mp h k (Finset.mem_univ k)
-    simpa using Complex.normSq_eq_zero.mp this
+    simpa only [Pi.zero_apply] using Complex.normSq_eq_zero.mp this
   · rintro rfl
-    simp
+    simp only [qNormSq_zero]
 
 /-! ## The Euclidean bridge
 
@@ -263,10 +264,11 @@ omit [Fintype H] in
 
 @[simp] lemma qNormSq_qBasis (h : H) : qNormSq (qBasis h) = 1 := by
   rw [qNormSq_def, Finset.sum_eq_single h]
-  · simp
+  · simp only [qBasis_apply, ↓reduceIte, map_one]
   · intro b _ hb
-    simp [hb]
-  · simp
+    simp only [qBasis_apply, hb, ↓reduceIte, map_zero]
+  · simp only [Finset.mem_univ, not_true_eq_false, qBasis_apply, ↓reduceIte, map_one, one_ne_zero,
+    imp_self]
 
 lemma isQState_qBasis (h : H) : IsQState (qBasis h) := qNormSq_qBasis h
 
@@ -334,13 +336,13 @@ lemma qPerm_mulVec_qBasis (e : Equiv.Perm H) (p : H) :
   funext k
   rw [qPerm_mulVec_apply, qBasis_apply, qBasis_apply]
   by_cases h : k = e p
-  · simp [h]
+  · simp only [h, Equiv.symm_apply_apply, ↓reduceIte]
   · have h' : ¬ (e.symm k = p) := fun hk => h (by rw [← hk, Equiv.apply_symm_apply])
-    simp [h, h']
+    simp only [h', ↓reduceIte, h]
 
 omit [Fintype H] in
 @[simp] lemma qPerm_one : qPerm (1 : Equiv.Perm H) = 1 := by
-  simp [qPerm]
+  simp only [qPerm, inv_one, permMatrix_one]
 
 lemma qPerm_mul (e f : Equiv.Perm H) : qPerm (e * f) = qPerm e * qPerm f := by
   rw [qPerm, qPerm, qPerm, _root_.mul_inv_rev, Matrix.permMatrix_mul]
@@ -349,7 +351,7 @@ lemma qPerm_mem_unitaryGroup (e : Equiv.Perm H) :
     qPerm e ∈ Matrix.unitaryGroup H ℂ := by
   rw [Matrix.mem_unitaryGroup_iff', Matrix.star_eq_conjTranspose, qPerm,
     Matrix.conjTranspose_permMatrix, inv_inv, ← Matrix.permMatrix_mul]
-  simp
+  simp only [inv_mul_cancel, permMatrix_one]
 
 /-- An involutive permutation gives a self-inverse unitary: query = unquery. -/
 lemma qPerm_mul_self_of_involutive {e : Equiv.Perm H} (he : Function.Involutive e) :
@@ -502,7 +504,7 @@ lemma sum_prod_majority_le {k t : ℕ} {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε �
       rw [← Finset.prod_const]
       refine Finset.prod_le_prod₀ (fun j _ => hp0 j _) fun j hj => ?_
       have hne : y j ≠ b j := by
-        simpa [hS] using (Finset.mem_filter.mp hj).2
+        simpa only [ne_eq] using (Finset.mem_filter.mp hj).2
       have hval : y j = !(b j) := by
         exact Bool.eq_not_of_ne hne
       rw [hval]
@@ -523,7 +525,7 @@ lemma sum_prod_majority_le {k t : ℕ} {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε �
       ≤ ∑ _y ∈ Finset.univ.filter (fun y : Fin k → Bool =>
           t ≤ (Finset.univ.filter (fun j => y j ≠ b j)).card), ε ^ t := by
         refine Finset.sum_le_sum fun y hy => ?_
-        exact hterm y (by simpa using (Finset.mem_filter.mp hy).2)
+        exact hterm y (by simpa only [ne_eq] using (Finset.mem_filter.mp hy).2)
     _ ≤ ∑ _y : Fin k → Bool, ε ^ t := by
         refine Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
           fun _ _ _ => pow_nonneg hε0 t
@@ -671,7 +673,7 @@ private lemma neg_le_re_qInner (ψ φ : H → ℂ) :
   have h1 := Complex.abs_re_le_norm (qInner ψ φ)
   have h2 := qInner_norm_le ψ φ
   have := abs_le.mp (h1.trans h2)
-  linarith [this.1]
+  exact this.1
 
 omit [DecidableEq H] in
 /-- `Re z ≤ ‖ψ‖‖φ‖` for an inner product `z = ⟪ψ, φ⟫`. -/
@@ -681,7 +683,7 @@ private lemma re_qInner_le (ψ φ : H → ℂ) :
   have h1 := Complex.abs_re_le_norm (qInner ψ φ)
   have h2 := qInner_norm_le ψ φ
   have := abs_le.mp (h1.trans h2)
-  linarith [this.2]
+  exact this.2
 
 /-- **The fidelity lower bound.**  A unitary that fixes `φ` satisfies, on every
 `ψ`, `Re⟪ψ, Uψ⟫ ≥ 2|⟪φ,ψ⟫|²/‖φ‖² − ‖ψ‖²` — multiplied out by `‖φ‖⁴`, so no
@@ -859,10 +861,11 @@ lemma qProb_nonneg (p : H → O) (ψ : H → ℂ) (o : O) : 0 ≤ qProb p ψ o :
 @[simp] lemma qProb_qBasis (p : H → O) (h : H) (o : O) :
     qProb p (qBasis h) o = if p h = o then 1 else 0 := by
   rw [qProb, Finset.sum_eq_single h]
-  · simp
+  · simp only [qBasis_apply, ↓reduceIte, map_one]
   · intro b _ hb
-    simp [hb]
-  · simp
+    simp only [qBasis_apply, hb, ↓reduceIte, map_zero, ite_self]
+  · simp only [Finset.mem_univ, not_true_eq_false, qBasis_apply, ↓reduceIte, map_one,
+    ite_eq_right_iff, one_ne_zero, imp_false, IsEmpty.forall_iff]
 
 /-! ## The distance-to-success bridge
 
@@ -895,7 +898,7 @@ lemma qNormSq_sub_qRestrict_le (p : H → O) (o : O) (ψ : H → ℂ)
     simp only [sub_self, Complex.normSq_zero]
     exact Complex.normSq_nonneg _
   · have hφh : φ h = 0 := by rw [← hφ, qRestrict, ite_eq_right hh]
-    simp [Pi.sub_apply, qRestrict, hh, hφh]
+    simp only [Pi.sub_apply, qRestrict, hh, ↓reduceIte, sub_zero, hφh, Std.le_refl]
 
 omit [DecidableEq H] in
 /-- **The distance-to-success bridge**, output-cardinality-free: a state
@@ -918,7 +921,7 @@ lemma sum_qProb (p : H → O) (ψ : H → ℂ) : ∑ o, qProb p ψ o = qNormSq �
   simp only [qProb, qNormSq_def]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun h _ => ?_
-  simp
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
 
 omit [DecidableEq H] in
 /-- On a state the outcome probabilities sum to one. -/
@@ -983,10 +986,10 @@ lemma sum_qRestrict (p : H → O) (ψ : H → ℂ) : ∑ o, qRestrict p o ψ = �
   funext h
   rw [Finset.sum_apply]
   rw [Finset.sum_eq_single (p h)]
-  · simp [qRestrict]
+  · simp only [qRestrict, ↓reduceIte]
   · intro b _ hb
-    simp [qRestrict, Ne.symm hb]
-  · simp
+    simp only [qRestrict, Ne.symm hb, ↓reduceIte]
+  · simp only [Finset.mem_univ, not_true_eq_false, IsEmpty.forall_iff]
 
 omit [DecidableEq H] in
 /-- **The inner product decomposes over the outcomes.**  This is the form the
@@ -1022,8 +1025,8 @@ lemma qInner_qRestrict_of_ne (p : H → O) {a b : O} (hab : a ≠ b) (ψ φ : H 
   rw [qRestrict, qRestrict]
   by_cases ha : p h = a
   · have hb : ¬ p h = b := by rw [ha]; exact hab
-    simp [hb]
-  · simp [ha]
+    simp only [RCLike.star_def, hb, ↓reduceIte, mul_zero]
+  · simp only [ha, ↓reduceIte, star_zero, mul_ite, zero_mul, mul_zero, ite_self]
 
 end QuantumQueryComplexity
 
@@ -1113,14 +1116,14 @@ lemma oracleMap_snd_of_fst_none {a : ι → σ} {p : QBasis ι σ W}
     (h : p.1 = none) : (oracleMap a p).2.1 = p.2.1 := by
   obtain ⟨(_ | i), t, w⟩ := p
   · rfl
-  · exact absurd h (by simp)
+  · exact absurd h (by simp only [reduceCtorEq, not_false_eq_true])
 
 omit [DecidableEq W] [DecidableEq ι] [Fintype W] [Fintype ι] [Fintype σ] in
 lemma oracleMap_snd_of_fst_some {a : ι → σ} {p : QBasis ι σ W} {i : ι}
     (h : p.1 = some i) :
     (oracleMap a p).2.1 = Equiv.swap none (some (a i)) p.2.1 := by
   obtain ⟨(_ | j), t, w⟩ := p
-  · exact absurd h (by simp)
+  · exact absurd h (by simp only [reduceCtorEq, not_false_eq_true])
   · have hj : j = i := Option.some_injective _ h
     subst hj
     rfl
@@ -1128,14 +1131,14 @@ lemma oracleMap_snd_of_fst_some {a : ι → σ} {p : QBasis ι σ W} {i : ι}
 omit [DecidableEq W] [DecidableEq ι] [Fintype W] [Fintype ι] [Fintype σ] in
 lemma oracleMap_blank (a : ι → σ) (i : ι) (w : W) :
     oracleMap a ((some i, none, w) : QBasis ι σ W) = (some i, some (a i), w) := by
-  simp
+  simp only [oracleMap_some, Equiv.swap_apply_left]
 
 omit [DecidableEq W] [DecidableEq ι] [Fintype W] [Fintype ι] [Fintype σ] in
 lemma oracleMap_involutive (a : ι → σ) :
     Function.Involutive (oracleMap (W := W) a) := by
   rintro ⟨(_ | i), t, w⟩
   · rfl
-  · simp
+  · simp only [oracleMap_some, Equiv.swap_apply_self]
 
 /-- The oracle as a permutation of the basis. -/
 def oraclePerm (a : ι → σ) : Equiv.Perm (QBasis ι σ W) :=
@@ -1189,7 +1192,7 @@ theorem oracleMat_mulVec_congr {a b : ι → σ} (ψ : QBasis ι σ W → ℂ)
     {p : QBasis ι σ W} (hp : ∀ i, p.1 = some i → a i = b i) :
     (oracleMat a *ᵥ ψ) p = (oracleMat b *ᵥ ψ) p := by
   obtain ⟨(_ | i), t, w⟩ := p
-  · simp
+  · simp only [oracleMat_mulVec_apply_none]
   · rw [oracleMat_mulVec_apply_some, oracleMat_mulVec_apply_some, hp i rfl]
 
 lemma oracleMat_mulVec_qBasis (a : ι → σ) (p : QBasis ι σ W) :
@@ -1341,7 +1344,7 @@ theorem computesWithErrorOn_const (read : X → ι → σ) (c : O) {f : X → O}
     ComputesWithErrorOn (constAlg ι σ c) 0 read f ε := by
   intro x
   have h : (constAlg ι σ c).prob (read x) 0 (f x) = 1 := by
-    simp [QAlg.prob, constAlg, hf x]
+    simp only [QAlg.prob, constAlg, QAlg.state_zero, one_mulVec, hf x, qProb_qBasis, ↓reduceIte]
   rw [h]
   linarith
 
@@ -1361,7 +1364,8 @@ theorem computesWithErrorOn_proj (read : X → ι → σ) (i : ι) {ε : ℝ} (h
     ComputesWithErrorOn (projAlg σ i) 1 read (fun x => some (read x i)) ε := by
   intro x
   have h : (projAlg σ i).prob (read x) 1 (some (read x i)) = 1 := by
-    simp [QAlg.prob, projAlg, oracleMat_mulVec_qBasis]
+    simp only [QAlg.prob, projAlg, QAlg.state_succ, QAlg.state_zero, one_mulVec,
+      oracleMat_mulVec_qBasis, oracleMap_some, Equiv.swap_apply_left, qProb_qBasis, ↓reduceIte]
   rw [h]
   linarith
 
@@ -1411,7 +1415,8 @@ lemma matrix_ext_of_mulVec_qBasis {H : Type} [Fintype H] [DecidableEq H]
     {M N : Matrix H H ℂ} (h : ∀ r, M *ᵥ qBasis r = N *ᵥ qBasis r) : M = N := by
   ext p q
   have hpq := congrFun (h q) p
-  simpa [Matrix.mulVec, dotProduct, qBasis_apply, Finset.sum_ite_eq'] using hpq
+  simpa only [mulVec, dotProduct, qBasis_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
+    Finset.mem_univ, ↓reduceIte] using hpq
 
 /-- The extended basis, split as (rest, extra register). -/
 def regEquiv : QBasis ι σ (V × W) ≃ QBasis ι σ W × V where
@@ -1602,7 +1607,7 @@ lemma embedReg_sum {α : Type*} (v : V) (s : Finset α)
   by_cases h : p.2.2.1 = v
   · simp only [ite_eq_left h]
     exact Finset.sum_congr rfl fun i _ => by rw [embedReg_apply, ite_eq_left h]
-  · simp [h, embedReg_apply]
+  · simp only [h, ↓reduceIte, embedReg_apply, Finset.sum_const_zero]
 
 omit [DecidableEq W] [DecidableEq ι] [DecidableEq σ] in
 /-- **Distinct register values give orthogonal sectors**, and the embedding
@@ -1619,7 +1624,8 @@ theorem qInner_embedReg (v v' : V) (ψ φ : QBasis ι σ W → ℂ) :
     · rw [embedReg_regEquiv_symm, embedReg_regEquiv_symm, ite_eq_left rfl, ite_eq_left rfl]
     · intro u _ hu
       rw [embedReg_regEquiv_symm, ite_eq_right hu, star_zero, zero_mul]
-    · simp
+    · simp only [Finset.mem_univ, not_true_eq_false, regEquiv_symm_apply, RCLike.star_def,
+      mul_eq_zero, map_eq_zero, IsEmpty.forall_iff]
   · rw [ite_eq_right h]
     refine Finset.sum_eq_zero fun s _ => Finset.sum_eq_zero fun u _ => ?_
     rw [embedReg_regEquiv_symm, embedReg_regEquiv_symm]
@@ -1742,7 +1748,7 @@ lemma qBasis_eq_embedReg (r : QBasis ι σ (V × W)) :
   · subst h
     by_cases hk : k = k' <;> by_cases ht : t = t' <;> by_cases hw : w = w' <;>
       simp [hk, ht, hw]
-  · simp [h]
+  · simp only [h, false_and, and_false, ↓reduceIte]
 
 omit [Fintype W] [Fintype ι] [Fintype σ] in
 omit [Fintype V] in
@@ -2202,6 +2208,12 @@ lemma comp_runUpto_add (R S : QRoutine ι σ W) (a : ι → σ) (k : ℕ) :
 theorem comp_run (R S : QRoutine ι σ W) (a : ι → σ) :
     (R.comp S).run a = S.run a * R.run a :=
   comp_runUpto_add R S a S.len
+
+/-- Sequencing acts on a state without expanding the product of operators. -/
+theorem comp_run_mulVec (R S : QRoutine ι σ W) (a : ι → σ)
+    (ψ : QBasis ι σ W → ℂ) :
+    (R.comp S).run a *ᵥ ψ = S.run a *ᵥ (R.run a *ᵥ ψ) := by
+  rw [comp_run, Matrix.mulVec_mulVec]
 
 /-! ## Padding by two
 
@@ -2756,7 +2768,7 @@ lemma parkMat_mulVec_embed_true (ψ : QBasis ι σ W → ℂ) :
   obtain ⟨k, t, b, s, w⟩ := p
   cases b
   · rw [parkMap_false, embedCtrl_apply, embedCtrl_apply]
-    simp
+    simp only [Bool.false_eq_true, false_and, ↓reduceIte]
   · rw [parkMap_true]
 
 lemma oracleMat_mulVec_embedCtrl (a : ι → σ) (b : Bool) (ψ : QBasis ι σ W → ℂ) :
@@ -3020,6 +3032,13 @@ theorem QRoutine.kronLift_runUpto_splitVec
       rw [QRoutine.runUpto_succ, ← Matrix.mulVec_mulVec,
         ← Matrix.mulVec_mulVec]
 
+/-- The full lifted run preserves the environment factor of a split state. -/
+theorem QRoutine.kronLift_run_splitVec
+    {e : QBasis ι σ W' ≃ QBasis ι σ W × D} (he : OracleCompat e)
+    (R : QRoutine ι σ W) (a : ι → σ) (φ : QBasis ι σ W → ℂ) (ξ : D → ℂ) :
+    (R.kronLift e).run a *ᵥ splitVec e φ ξ = splitVec e (R.run a *ᵥ φ) ξ :=
+  QRoutine.kronLift_runUpto_splitVec he R a R.len φ ξ
+
 end Routine
 
 end QuantumQueryComplexity
@@ -3191,7 +3210,7 @@ omit [DecidableEq W] [DecidableEq σ] [Fintype W] [Fintype ι] [Fintype σ] in
 lemma idxSwapMap_involutive (u v : Option ι) :
     Function.Involutive (idxSwapMap (σ := σ) (W := W) u v) := by
   rintro ⟨k, r⟩
-  simp [idxSwapMap]
+  simp only [idxSwapMap, Equiv.swap_apply_self]
 
 /-- The index-register transposition, as a permutation of the basis. -/
 def idxSwapPerm (u v : Option ι) : Equiv.Perm (QBasis ι σ W) :=
@@ -3214,7 +3233,7 @@ omit [DecidableEq σ] [Fintype ι] [Fintype σ] in
 lemma slotSwapMap_involutive (j : ι) :
     Function.Involutive (slotSwapMap (ι := ι) (σ := σ) j) := by
   rintro ⟨k, t, w⟩
-  simp [slotSwapMap, Function.update_idem]
+  simp only [slotSwapMap, Function.update_self, Function.update_idem, Function.update_eq_self]
 
 /-- The slot swap at an *optional* index: at `none` there is nothing to store, so
 the algorithm idles.  This is what lets one formula describe every step. -/
@@ -3263,7 +3282,7 @@ lemma equivFin_of_idxAt {t : ℕ} {j : ι} (h : idxAt ι t = some j) :
     have hj : j = (Fintype.equivFin ι).symm ⟨t, ht⟩ := (Option.some_injective _ h).symm
     rw [hj, Equiv.apply_symm_apply]
   · rw [idxAt, dite_eq_right ht] at h
-    exact absurd h (by simp)
+    exact absurd h (by simp only [reduceCtorEq, not_false_eq_true])
 
 /-! ## The record -/
 
@@ -3278,7 +3297,7 @@ lemma recAt_apply (a : ι → σ) (t : ℕ) (i : ι) :
 omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
 lemma recAt_zero (a : ι → σ) : recAt a 0 = fun _ => none := by
   funext i
-  simp [recAt_apply]
+  simp only [recAt_apply, not_lt_zero, ↓reduceIte]
 
 omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
 /-- Once every index has been read the record is complete. -/
@@ -3371,7 +3390,7 @@ theorem readAllAlg_state (dec : QRec ι σ → O) (a : ι → σ) (t : ℕ) :
 theorem readAllAlg_prob (dec : QRec ι σ → O) [DecidableEq O] (a : ι → σ) :
     (readAllAlg dec).prob a (Fintype.card ι) (dec fun i => some (a i)) = 1 := by
   rw [QAlg.prob, readAllAlg_state, recAt_of_card_le a le_rfl, qProb_qBasis]
-  simp
+  simp only [readAllAlg_readout, ↓reduceIte]
 
 /-! ## Every observationally determined problem is exactly solvable -/
 
@@ -3518,13 +3537,15 @@ theorem uniform_dotProduct (a b : σ) :
     simp only [uniformLeft_some, uniformRight_some]
     by_cases hxa : x = a
     · subst hxa
-      simp
-    · simp [hxa]
+      simp only [↓reduceIte, mul_ite, mul_neg, mul_one, mul_zero]
+    · simp only [hxa, ↓reduceIte, mul_ite, mul_neg, mul_one, neg_zero, mul_zero, ite_self]
   rw [Finset.sum_congr rfl fun x _ => hterm x]
   by_cases hab : a = b
   · subst hab
-    simp
-  · simp [hab]
+    simp only [uniformLeft_none, uniformRight_none, mul_one, ↓reduceIte, Finset.sum_ite_eq',
+      Finset.mem_univ, add_neg_cancel]
+  · simp only [uniformLeft_none, uniformRight_none, mul_one, hab, ↓reduceIte,
+    Finset.sum_const_zero, add_zero]
 
 /-- **Both squared norms are `2`** — equivalently both norms are `√2` —
 independently of the alphabet size. -/
@@ -3537,7 +3558,7 @@ theorem uniformLeft_normSq (a : σ) : uniformLeft a ⬝ᵥ uniformLeft a = 2 := 
     simp only [uniformLeft_some]
     by_cases hxa : x = a <;> simp [hxa]
   rw [Finset.sum_congr rfl fun x _ => hterm x]
-  simp
+  simp only [uniformLeft_none, mul_one, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
   norm_num
 
 theorem uniformRight_normSq (b : σ) :
@@ -3550,7 +3571,7 @@ theorem uniformRight_normSq (b : σ) :
     simp only [uniformRight_some]
     by_cases hxb : x = b <;> simp [hxb]
   rw [Finset.sum_congr rfl fun x _ => hterm x]
-  simp
+  simp only [uniformRight_none, mul_one, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
   norm_num
 
 /-- The factorization in the form the dual constraint consumes: the pairing
@@ -3713,7 +3734,7 @@ lemma isQState_hadInit {u : QBasis ι σ W → ℂ} (hu : IsQState u) :
   classical
   rw [IsQState, hadInit, qNormSq_smul, normSq_hadS, qNormSq_add,
     qNormSq_embedCtrl, qNormSq_embedCtrl, qInner_embedCtrl,
-    ite_eq_right (by simp : ¬(false = true)), hu]
+    ite_eq_right (by simp only [Bool.false_eq_true, not_false_eq_true] : ¬(false = true)), hu]
   norm_num
 
 /-- **The Hadamard test of `R` on `u`**: controlled-`R` between two Hadamards
@@ -3764,8 +3785,11 @@ lemma qProb_hadReadout_true (a : ℂ) (χ₁ χ₂ : QBasis ι σ W → ℂ) :
     funext p
     rw [qRestrict]
     cases hb : p.2.2.1 with
-    | false => simp [hb, embedCtrl_apply]
-    | true => simp [hb, embedCtrl_apply]
+    | false => simp only [Bool.not_false, ↓reduceIte, Pi.smul_apply, Pi.add_apply,
+      embedCtrl_apply, hb, true_and, Bool.false_eq_true, false_and, add_zero, smul_eq_mul,
+      mul_ite, mul_zero]
+    | true => simp only [Bool.not_true, Bool.false_eq_true, ↓reduceIte, Pi.smul_apply,
+      embedCtrl_apply, hb, Bool.true_eq_false, false_and, smul_eq_mul, mul_zero]
   rw [hres, qNormSq_smul, qNormSq_embedCtrl]
 
 omit [DecidableEq W] [DecidableEq σ] in
@@ -3781,8 +3805,10 @@ lemma qProb_hadReadout_false (a : ℂ) (χ₁ χ₂ : QBasis ι σ W → ℂ) :
     funext p
     rw [qRestrict]
     cases hb : p.2.2.1 with
-    | false => simp [hb, embedCtrl_apply]
-    | true => simp [hb, embedCtrl_apply]
+    | false => simp only [Bool.not_false, Bool.true_eq_false, ↓reduceIte, Pi.smul_apply,
+      embedCtrl_apply, hb, Bool.false_eq_true, false_and, smul_eq_mul, mul_zero]
+    | true => simp only [Bool.not_true, ↓reduceIte, Pi.smul_apply, Pi.add_apply, embedCtrl_apply,
+      hb, Bool.true_eq_false, false_and, true_and, zero_add, smul_eq_mul, mul_ite, mul_zero]
   rw [hres, qNormSq_smul, qNormSq_embedCtrl]
 
 private lemma normSq_hadS_sq : Complex.normSq (hadS * hadS) = 4⁻¹ := by
@@ -3967,9 +3993,9 @@ def blankReg : Option ι × Option σ → ℂ :=
 lemma sum_normSq_blankReg :
     (∑ q : Option ι × Option σ, Complex.normSq (blankReg q)) = 1 := by
   rw [Finset.sum_eq_single ((none, none) : Option ι × Option σ)]
-  · simp [blankReg]
+  · simp only [blankReg, ↓reduceIte, map_one]
   · intro q _ hq
-    simp [blankReg, hq]
+    simp only [blankReg, hq, ↓reduceIte, map_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -4094,27 +4120,11 @@ theorem pairRoutine_run_prodState (R₁ : QRoutine ι σ W₁)
     (ψ₁ : QBasis ι σ W₁ → ℂ) (ψ₂ : QBasis ι σ W₂ → ℂ) :
     (pairRoutine R₁ R₂).run a *ᵥ prodState χ ψ₁ ψ₂
       = prodState χ (R₁.run a *ᵥ ψ₁) (R₂.run a *ᵥ ψ₂) := by
-  have hrun : (pairRoutine R₁ R₂).run a
-      = pairSwap₂Mat * ((R₂.kronLift pairEquiv₂).run a * (pairSwap₂Mat
-          * (pairSwap₁Mat * ((R₁.kronLift pairEquiv₁).run a
-            * pairSwap₁Mat)))) := by
-    rw [pairRoutine, QRoutine.comp_run, QRoutine.comp_run, QRoutine.comp_run,
-      QRoutine.comp_run, QRoutine.comp_run, QRoutine.ofUnitary_run,
-      QRoutine.ofUnitary_run]
-    simp only [Matrix.mul_assoc]
-  rw [hrun, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec,
-    ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec, ← Matrix.mulVec_mulVec,
-    pairSwap₁_mulVec_prodState]
-  rw [show (R₁.kronLift pairEquiv₁).run a
-      = (R₁.kronLift pairEquiv₁).runUpto a R₁.len from rfl,
-    QRoutine.kronLift_runUpto_splitVec oracleCompat_pairEquiv₁,
-    show R₁.runUpto a R₁.len = R₁.run a from rfl,
-    pairSwap₁_mulVec_splitVec, pairSwap₂_mulVec_prodState]
-  rw [show (R₂.kronLift pairEquiv₂).run a
-      = (R₂.kronLift pairEquiv₂).runUpto a R₂.len from rfl,
-    QRoutine.kronLift_runUpto_splitVec oracleCompat_pairEquiv₂,
-    show R₂.runUpto a R₂.len = R₂.run a from rfl,
-    pairSwap₂_mulVec_splitVec]
+  simp only [pairRoutine, QRoutine.comp_run_mulVec, QRoutine.ofUnitary_run,
+    pairSwap₁_mulVec_prodState, pairSwap₁_mulVec_splitVec,
+    pairSwap₂_mulVec_prodState, pairSwap₂_mulVec_splitVec,
+    QRoutine.kronLift_run_splitVec oracleCompat_pairEquiv₁,
+    QRoutine.kronLift_run_splitVec oracleCompat_pairEquiv₂]
 
 /-! ## The joint measurement factorizes -/
 
@@ -4264,7 +4274,7 @@ theorem Realizes.map [Fintype O] {read : X → ι → σ} {q : ℕ} {P : X → O
     refine Finset.sum_congr rfl fun h _ => ?_
     rw [Finset.sum_filter]
     rw [Finset.sum_eq_single (A.readout h)]
-    · by_cases hg : g (A.readout h) = o <;> simp [hg]
+    · by_cases hg : g (A.readout h) = o <;> simp only [hg, ↓reduceIte]
     · intro b _ hb
       by_cases hg : g b = o <;> simp [hg, Ne.symm hb]
     · intro hmem
@@ -4376,7 +4386,7 @@ lemma xorOracleMap_involutive (a : ι → Bool) :
     Function.Involutive (xorOracleMap (W := W) a) := by
   rintro ⟨(_ | i), t, w⟩
   · rfl
-  · simp [optXor_optXor]
+  · simp only [xorOracleMap_some, optXor_optXor]
 
 /-- The XOR oracle as a permutation of the basis. -/
 def xorOraclePerm (a : ι → Bool) : Equiv.Perm (QBasis ι Bool W) :=
@@ -4539,7 +4549,7 @@ lemma realizes_zero_rec (read : X → ι → σ) :
   intro x o
   have ho : o = fun j : Fin 0 => j.elim0 := funext fun j => j.elim0
   subst ho
-  simp [QAlg.prob, constAlg]
+  simp only [QAlg.prob, constAlg, QAlg.state_zero, one_mulVec, qProb_qBasis, ↓reduceIte]
 
 
 /-- **The `k`-fold product realization over any decidable output type**: costs
@@ -4554,8 +4564,9 @@ theorem Realizes.foldRec {read : X → ι → σ} :
   induction k with
   | zero =>
       intro q P _
-      rw [show (∑ j : Fin 0, q j) = 0 from by simp]
-      exact (realizes_zero_rec read).congr fun x y => by simp
+      rw [show (∑ j : Fin 0, q j) = 0 from by simp only [Finset.univ_eq_empty, Finset.sum_empty]]
+      exact (realizes_zero_rec read).congr fun x y => by simp only [Finset.univ_eq_empty,
+        Finset.prod_empty]
   | succ k ih =>
       intro q P h
       have hfold := ih (fun j => q j.succ) (fun j => P j.succ)
@@ -4602,7 +4613,9 @@ totals. -/
 lemma sum_pattern_prod {k : ℕ} (p : Bool → ℝ) :
     (∑ y : Fin k → Bool, ∏ j, p (y j)) = (∑ b, p b) ^ k := by
   induction k with
-  | zero => simp
+  | zero => simp only [Finset.univ_unique, Finset.univ_eq_empty, Finset.prod_empty,
+    Finset.sum_const, Finset.card_singleton, one_smul, Fintype.univ_bool, Finset.mem_singleton,
+    Bool.true_eq_false, not_false_eq_true, Finset.sum_insert, Finset.sum_singleton, pow_zero]
   | succ k ih =>
       rw [← Equiv.sum_comp (finConsEquiv k)
         (fun y => ∏ j, p (y j)), Fintype.sum_prod_type]
@@ -4612,7 +4625,7 @@ lemma sum_pattern_prod {k : ℕ} (p : Bool → ℝ) :
           Finset.sum_congr rfl fun t _ => ?_
         rw [show (finConsEquiv k (b, t)) = Fin.cons b t from rfl,
           Fin.prod_univ_succ]
-        simp]
+        simp only [Fin.cons_zero, Fin.cons_succ]]
       rw [show (∑ b, ∑ t : Fin k → Bool, p b * ∏ j, p (t j))
           = ∑ b, p b * ∑ t : Fin k → Bool, ∏ j, p (t j) from
         Finset.sum_congr rfl fun b _ => by rw [Finset.mul_sum]]
@@ -4733,24 +4746,23 @@ lemma one_sub_sum_le_prod {k : ℕ} (p e : Fin k → ℝ)
     (h : ∀ j, 1 - e j ≤ p j) :
     1 - (∑ j, e j) ≤ ∏ j, p j := by
   induction k with
-  | zero => simp
+  | zero => simp only [Finset.univ_eq_empty, Finset.sum_empty, sub_zero, Finset.prod_empty,
+    Std.le_refl]
   | succ k ih =>
       have htail := ih (fun j => p j.succ) (fun j => e j.succ)
         (fun j => hp0 j.succ) (fun j => hp1 j.succ) (fun j => he0 j.succ)
         (fun j => h j.succ)
       have hS0 : (0 : ℝ) ≤ ∑ j : Fin k, e j.succ :=
         Finset.sum_nonneg fun j _ => he0 j.succ
-      have hT0 : (0 : ℝ) ≤ ∏ j : Fin k, p j.succ :=
-        Finset.prod_nonneg fun j _ => hp0 j.succ
       rw [Fin.sum_univ_succ, Fin.prod_univ_succ]
-      rcases le_or_gt (1 - ∑ j : Fin k, e j.succ) 0 with hneg | hpos
-      · have h1 : 1 - (e 0 + ∑ j : Fin k, e j.succ) ≤ 0 := by
-          linarith [he0 0]
-        exact le_trans h1 (mul_nonneg (hp0 0) hT0)
-      · have h1 : p 0 * (1 - ∑ j : Fin k, e j.succ)
-            ≤ p 0 * ∏ j : Fin k, p j.succ :=
+      calc 1 - (e 0 + ∑ j : Fin k, e j.succ)
+          = (1 - e 0) - ∑ j : Fin k, e j.succ := by ring
+        _ ≤ p 0 - ∑ j : Fin k, e j.succ := sub_le_sub_right (h 0) _
+        _ ≤ p 0 - p 0 * ∑ j : Fin k, e j.succ :=
+          sub_le_sub_left (mul_le_of_le_one_left hS0 (hp1 0)) _
+        _ = p 0 * (1 - ∑ j : Fin k, e j.succ) := by ring
+        _ ≤ p 0 * ∏ j : Fin k, p j.succ :=
           mul_le_mul_of_nonneg_left htail (hp0 0)
-        nlinarith [h 0, he0 0, hp1 0]
 
 omit [Fintype X] in
 /-- **The tuple compiler**: `B` Boolean algorithms joined into one computing
@@ -4890,7 +4902,7 @@ omit [DecidableEq W] [DecidableEq ι] [Fintype W] [Fintype ι] in
 lemma xorIntoMap_involutive :
     Function.Involutive (xorIntoMap (ι := ι) (W := W)) := by
   rintro ⟨idx, s, t, w⟩
-  simp [optXor_optXor]
+  simp only [xorIntoMap_apply, optXor_optXor]
 
 /-- On an active index with answer `some v`: swap `⊥ ↔ some v` in the
 ancilla.  Controlled on the index being active, so the idle sector is exactly
@@ -5043,7 +5055,8 @@ theorem transGadget_xorRun (a : ι → Bool) (ψ : QBasis ι Bool W → ℂ) :
       simp [embedReg_apply, oracleMat_mulVec_apply]
   · rcases v with _ | c
     · -- blank ancilla: the XOR oracle fixes it, both sides vanish
-      simp [embedReg_apply, optXor]
+      simp only [swapAncMap_apply, xorOracleMap_some, optXor, ctrlSwapMap_blank, embedReg_apply,
+        reduceCtorEq, ↓reduceIte]
     · -- clean ancilla `some false`: the simulated transposition;
       -- dirty `some true`: stays dirty, both sides vanish
       cases hai : a i <;> rcases c with _ | _ <;>
@@ -5185,7 +5198,7 @@ lemma qRestrict_stripReadout_embedReg (r : QBasis ι σ W → O) (v : V) (o : O)
   rw [qRestrict, embedReg_apply, embedReg_apply, qRestrict, stripReadout]
   by_cases hv : p.2.2.1 = v <;>
     by_cases hr : r (p.1, p.2.1, p.2.2.2) = o <;>
-    simp [hv, hr]
+    simp only [hr, ↓reduceIte, hv]
 
 omit [DecidableEq W] [DecidableEq ι] [DecidableEq σ] in
 /-- **Measuring through the ancilla changes nothing.** -/

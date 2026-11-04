@@ -62,7 +62,8 @@ lemma qInner_re (ψ φ : H → ℂ) :
   classical
   rw [qInner_def, Complex.re_sum]
   refine Finset.sum_congr rfl fun h _ => ?_
-  simp [Complex.mul_re]
+  simp only [RCLike.star_def, Complex.mul_re, Complex.conj_re, Complex.conj_im, neg_mul,
+    sub_neg_eq_add]
 
 omit [DecidableEq H] in
 /-- The squared norm, expanded over the basis. -/
@@ -80,7 +81,7 @@ lemma qNormSq_real_smul (c : ℝ) (ψ : H → ℂ) :
   rw [qNormSq_def, qNormSq_def, Finset.mul_sum]
   refine Finset.sum_congr rfl fun h _ => ?_
   rw [Pi.smul_apply, smul_eq_mul, Complex.normSq_mul]
-  simp [Complex.normSq_ofReal, sq]
+  simp only [Complex.normSq_ofReal, sq]
 
 /-! ## The bridge -/
 
@@ -141,7 +142,8 @@ private lemma sqrt_mul_add_sqrt_mul_le {A B C D : ℝ} (hA : 0 ≤ A) (hB : 0 �
       ≤ Real.sqrt (A + C) * Real.sqrt (B + D) := by
   have h := Real.sum_sqrt_mul_sqrt_le (f := ![A, C]) (g := ![B, D]) Finset.univ
     (fun i => by fin_cases i <;> simpa) (fun i => by fin_cases i <;> simpa)
-  simpa [Fin.sum_univ_two] using h
+  simpa only [ge_iff_le, Nat.succ_eq_add_one, Nat.reduceAdd, Fin.sum_univ_two, Fin.isValue,
+    cons_val_zero, cons_val_one, cons_val_fin_one] using h
 
 omit [DecidableEq H] in
 /-- **The bridge.**  A real matrix contracted against complex vector families is
@@ -168,8 +170,12 @@ theorem abs_sum_gram_re_le :
           + ‖Γ‖ * Real.sqrt ((imAt u h) ⬝ᵥ (imAt u h))
             * Real.sqrt ((imAt v h) ⬝ᵥ (imAt v h)) :=
       (abs_add_le _ _).trans (add_le_add h1 h2)
-    have hΓ : 0 ≤ ‖Γ‖ := norm_nonneg _
-    nlinarith [h3, h4, hΓ]
+    calc _ ≤ ‖Γ‖ * (Real.sqrt ((reAt u h) ⬝ᵥ (reAt u h))
+          * Real.sqrt ((reAt v h) ⬝ᵥ (reAt v h))
+          + Real.sqrt ((imAt u h) ⬝ᵥ (imAt u h))
+          * Real.sqrt ((imAt v h) ⬝ᵥ (imAt v h))) := by
+            simpa only [mul_add, mul_assoc] using h4
+      _ ≤ _ := mul_le_mul_of_nonneg_left h3 (norm_nonneg Γ)
   -- sum over the basis
   calc |∑ x, ∑ y, Γ x y * (qInner (u x) (v y)).re|
       = |∑ h, ((reAt u h) ⬝ᵥ Γ *ᵥ (reAt v h) + (imAt u h) ⬝ᵥ Γ *ᵥ (imAt v h))| := by
@@ -356,7 +362,8 @@ lemma oracleMat_mulVec_qRestrict_none (a : ι → σ) (ψ : QBasis ι σ W → �
     oracleMap_fst]
   obtain ⟨(_ | i), t, w⟩ := p
   · rw [ite_eq_left rfl, ite_eq_left rfl, oracleMap_none]
-  · rw [ite_eq_right (by simp), ite_eq_right (by simp)]
+  · rw [ite_eq_right (by simp only [reduceCtorEq, not_false_eq_true
+    ]), ite_eq_right (by simp only [reduceCtorEq, not_false_eq_true])]
 
 /-- On the sector `some i` the oracle depends on the input only through its
 `i`-th letter. -/
@@ -688,7 +695,7 @@ theorem abs_progress_output_le {Γ : Matrix X X ℝ} {f : X → O}
   have hsplit : ∀ x, ψ x = A x + B x := by
     intro x
     rw [hB]
-    simp
+    simp only [add_sub_cancel]
   -- the four norms
   have hnormA : ∀ x, qNormSq (A x) = qProb p (ψ x) (f x) := by
     intro x
@@ -702,14 +709,14 @@ theorem abs_progress_output_le {Γ : Matrix X X ℝ} {f : X → O}
       _ ≤ ∑ x, δ x ^ 2 * 1 :=
           Finset.sum_le_sum fun x _ =>
             mul_le_mul_of_nonneg_left (qProb_le_one (hψ x) p (f x)) (sq_nonneg _)
-      _ = 1 := by simpa using hδ
+      _ = 1 := by simpa only [mul_one] using hδ
   have hsumA' : ∑ y, qNormSq (qScale δ' A y) ≤ 1 := by
     calc ∑ y, qNormSq (qScale δ' A y) = ∑ y, δ' y ^ 2 * qProb p (ψ y) (f y) := by
           exact Finset.sum_congr rfl fun y _ => by rw [qNormSq_qScale, hnormA y]
       _ ≤ ∑ y, δ' y ^ 2 * 1 :=
           Finset.sum_le_sum fun y _ =>
             mul_le_mul_of_nonneg_left (qProb_le_one (hψ y) p (f y)) (sq_nonneg _)
-      _ = 1 := by simpa using hδ'
+      _ = 1 := by simpa only [mul_one] using hδ'
   have hsumB : ∑ x, qNormSq (qScale δ B x) ≤ ε := by
     calc ∑ x, qNormSq (qScale δ B x) = ∑ x, δ x ^ 2 * (1 - qProb p (ψ x) (f x)) := by
           exact Finset.sum_congr rfl fun x _ => by rw [qNormSq_qScale, hnormB x]
@@ -734,7 +741,7 @@ theorem abs_progress_output_le {Γ : Matrix X X ℝ} {f : X → O}
         rw [qInner_qRestrict_of_ne p hf]
         ring
       rw [this]
-      simp
+      simp only [Complex.zero_re, mul_zero]
   -- expand and bound the three remaining terms
   have hexp : progress Γ δ δ' ψ
       = gramForm Γ (qScale δ A) (qScale δ' B) + gramForm Γ (qScale δ B) (qScale δ' A)
@@ -899,7 +906,7 @@ lemma abs_algProgress_sub_zero_le {Γ : Matrix X X ℝ} {δ δ' : X → ℝ}
     |algProgress Γ δ δ' A read q - algProgress Γ δ δ' A read 0| ≤ 2 * q := by
   classical
   induction q with
-  | zero => simp
+  | zero => simp only [sub_self, abs_zero, CharP.cast_eq_zero, mul_zero, Std.le_refl]
   | succ t ih =>
       have h1 := abs_algProgress_succ_sub_le A hfeas hδ hδ' t
       have h2 : |algProgress Γ δ δ' A read (t + 1) - algProgress Γ δ δ' A read 0|
@@ -1131,7 +1138,7 @@ private lemma poly_step {e s s' : ℝ} (hs0 : 0 ≤ s) (hs'0 : 0 ≤ s')
   have hs'2 : s' ^ 2 ≤ e ^ 2 := pow_le_pow_left₀ hs'0 hs'e 2
   have hs2 : s ^ 2 ≤ e ^ 2 := pow_le_pow_left₀ hs0 hse 2
   have hes : e * s ≤ e ^ 2 := by
-    nlinarith [mul_nonneg he0 (sub_nonneg.mpr hse)]
+    linarith only [mul_nonneg he0 (sub_nonneg.mpr hse)]
   have h1 : (0 : ℝ) ≤ 1 - 2 * s' ^ 2 := by linarith
   have h2 : (0 : ℝ) ≤ 2 - e ^ 2 - e * s - s ^ 2 - s' ^ 2 := by linarith
   have hbracket : (0 : ℝ)
@@ -1141,7 +1148,7 @@ private lemma poly_step {e s s' : ℝ} (hs0 : 0 ≤ s) (hs'0 : 0 ≤ s')
       = (e - s) * ((e + s) * (1 - 2 * s' ^ 2)
           + s' * (2 - e ^ 2 - e * s - s ^ 2 - s' ^ 2)) := by ring
   have hnn := mul_nonneg (sub_nonneg.mpr hse) hbracket
-  linarith [hfact, hnn]
+  linarith only [hfact, hnn]
 
 private lemma poly_bound {e s s' : ℝ} (hs0 : 0 ≤ s) (hs'0 : 0 ≤ s')
     (hse : s ≤ e) (hs'e : s' ≤ e) (he : e ^ 2 ≤ 1 / 2) :
@@ -1241,7 +1248,7 @@ theorem abs_progress_output_le_bool {Γ : Matrix X X ℝ} {f : X → Bool}
   have hsplit : ∀ x, ψ x = A x + B x := by
     intro x
     rw [hB]
-    simp
+    simp only [add_sub_cancel]
   -- the Boolean structure: the error part announces the complement
   have hBres : ∀ x, B x = qRestrict p (!(f x)) (ψ x) := by
     intro x
@@ -1302,7 +1309,7 @@ theorem abs_progress_output_le_bool {Γ : Matrix X X ℝ} {f : X → Bool}
         rw [qInner_qRestrict_of_ne p hf]
         ring
       rw [h0]
-      simp
+      simp only [Complex.zero_re, mul_zero]
   have hBB : gramForm Γ (qScale δ B) (qScale δ' B) = 0 := by
     refine Finset.sum_eq_zero fun x _ => Finset.sum_eq_zero fun y _ => ?_
     by_cases hf : f x = f y
@@ -1311,13 +1318,13 @@ theorem abs_progress_output_le_bool {Γ : Matrix X X ℝ} {f : X → Bool}
         intro hcon
         apply hf
         have h2 := congrArg (fun b => !b) hcon
-        simpa using h2
+        simpa only [Bool.not_not] using h2
       have h0 : qInner (qScale δ B x) (qScale δ' B y) = 0 := by
         rw [qScale_apply, qScale_apply, qInner_smul_left, qInner_smul_right,
           hBres x, hBres y, qInner_qRestrict_of_ne p hne]
         ring
       rw [h0]
-      simp
+      simp only [Complex.zero_re, mul_zero]
   -- only the two cross terms survive
   have hexp : progress Γ δ δ' ψ
       = gramForm Γ (qScale δ A) (qScale δ' B)
@@ -1344,7 +1351,7 @@ theorem abs_progress_output_le_bool {Γ : Matrix X X ℝ} {f : X → Bool}
   have habs := abs_add_le (gramForm Γ (qScale δ A) (qScale δ' B))
     (gramForm Γ (qScale δ B) (qScale δ' A))
   rw [hexp]
-  linarith [hb1, hb2, hmul, habs]
+  linarith only [hb1, hb2, hmul, habs]
 
 end QuantumQueryComplexity
 
@@ -1427,13 +1434,7 @@ theorem mul_advPMOn_le_qQueryOn_of_error_third {read : X → ι → σ}
   have hcoef : (1 / 36 : ℝ)
       ≤ (1 - 2 * Real.sqrt ((1 : ℝ) / 3 * (1 - 1 / 3))) / 2 := by
     linarith [hs]
-  rcases le_or_gt 0 (advPMOn read f) with hadv | hadv
-  · calc (1 / 36 : ℝ) * advPMOn read f
-        ≤ (1 - 2 * Real.sqrt ((1 : ℝ) / 3 * (1 - 1 / 3))) / 2 * advPMOn read f :=
-          mul_le_mul_of_nonneg_right hcoef hadv
-      _ ≤ (qQueryOn read f (1 / 3) : ℝ) := h
-  · have hq : (0 : ℝ) ≤ (qQueryOn read f (1 / 3) : ℝ) := Nat.cast_nonneg _
-    nlinarith
+  exact (mul_le_mul_of_nonneg_right hcoef (advPMOn_nonneg hdet)).trans h
 
 end QuantumQueryComplexity
 
@@ -1623,7 +1624,7 @@ theorem amplify_plurality {read : X → ι → σ} {f : X → O} {q : ℕ} {ε :
     exact sum_prod_tail_le (fun _ o => A.prob (read x) q o) (fun _ => f x)
       (fun _ o => A.prob_nonneg _ _ _) (fun _ => le_of_eq (A.sum_prob _ _))
       (fun _ => hwrongprob)
-  linarith [hsplitsum, hwrongmass]
+  linarith only [hsplitsum, hwrongmass]
 
 /-! ## The `43`-run endpoints -/
 
@@ -1787,7 +1788,7 @@ theorem boundedErrorQQuery_le_advPM (f : (ι → Bool) → Bool) :
     qQueryOn_mono (by norm_num) hne
   have hmono' : (boundedErrorQQuery f : ℝ) ≤ (qQuery f (1 / 16) : ℝ) := by
     exact_mod_cast hmono
-  linarith [hmono', qQuery_sixteenth_le_advPM f]
+  exact hmono'.trans (qQuery_sixteenth_le_advPM f)
 
 /-- **The conventional-error lower bound** for total Boolean functions:
 `(1/36)·ADV±(f) ≤ Q_{1/3}(f)`, via the sharp Boolean output condition — no
@@ -1867,7 +1868,8 @@ theorem qQueryOn_le_advPMOn_bool_sixteenth [Nonempty σ] (read : X → ι → σ
     rw [h0, Nat.cast_zero]
     have hA0 := advPMOn_nonneg hdet
     have hs0 : (0 : ℝ) ≤ Real.sqrt (Fintype.card σ) := Real.sqrt_nonneg _
-    nlinarith
+    exact mul_nonneg (by norm_num : (0 : ℝ) ≤ 8192)
+      (add_nonneg zero_le_one (mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 8) hs0) hA0))
   · simp only [not_forall] at hconst
     obtain ⟨x, y, hxy⟩ := hconst
     have hhalf := half_le_advPMOn hdet hxy
@@ -1878,7 +1880,7 @@ theorem qQueryOn_le_advPMOn_bool_sixteenth [Nonempty σ] (read : X → ι → σ
           * (2 * advPMOn read f))
         = 8192 * (1 + 8 * Real.sqrt (Fintype.card σ) * advPMOn read f) := by
       ring
-    linarith [hup, hb.le, hb.ge]
+    exact hup.trans_eq hb
 
 /-- **The promise-Boolean characterization at fixed error `1/16`**
 : for any read-determined Boolean promise problem on a
@@ -1910,7 +1912,7 @@ theorem qQueryOn_le_mul_advPMOn_bool_sixteenth [Nonempty σ] (read : X → ι �
   have hprod : (1 : ℝ) * (1 / 2)
       ≤ Real.sqrt (Fintype.card σ) * advPMOn read f :=
     mul_le_mul hs1 hhalf (by norm_num) (Real.sqrt_nonneg _)
-  linarith [hup, hprod]
+  linarith only [hup, hprod]
 
 /-- **The promise-Boolean characterization at bounded error `1/3`**: the
 lower half is the sharp promise-native Boolean bound, the upper half is error
@@ -2008,7 +2010,13 @@ theorem qQueryOn_le_advPMOn_finiteOutput_sixteenth {O : Type} [Fintype O]
         rw [show ((1 : ℝ) / 4) = ((2 : ℝ) * 2)⁻¹ from by norm_num,
           inv_pow, mul_pow]
       have hkey : 16 * (B : ℝ) ≤ (2 : ℝ) ^ t * (2 : ℝ) ^ t := by
-        nlinarith [hpow', hBpos']
+        have hB0 : (0 : ℝ) ≤ B := Nat.cast_nonneg _
+        have hlarge : 0 ≤ 9 * (B : ℝ) - 16 := by linarith only [hBpos']
+        calc 16 * (B : ℝ) ≤ (3 * (B : ℝ)) ^ 2 := by
+              linarith only [mul_nonneg hB0 hlarge]
+          _ ≤ ((2 : ℝ) ^ t) ^ 2 :=
+            pow_le_pow_left₀ (mul_nonneg (by norm_num) hB0) hpow' 2
+          _ = _ := pow_two _
       rw [h4, mul_inv_le_iff₀ (by positivity)]
       linarith
   have hA3 : ComputesWithErrorOn A' (∑ i, 2 * t *
@@ -2025,7 +2033,7 @@ theorem qQueryOn_le_advPMOn_finiteOutput_sixteenth {O : Type} [Fintype O]
     have h2 : advPMOn read (fun x => encBit (f x) i) ≤ advPMOn read f :=
       advPMOn_comp_le hdet (fun o => encBit o i)
     have h3 : (0 : ℝ) ≤ 8 * Real.sqrt (Fintype.card σ) := by positivity
-    nlinarith [mul_le_mul_of_nonneg_left h2 h3]
+    linarith only [h1, mul_le_mul_of_nonneg_left h2 h3]
   have hcast : ((∑ i : Fin B, 2 * t *
       qQueryOn read (fun x => encBit (f x) i) (1 / 16) : ℕ) : ℝ)
       ≤ (B : ℝ) * (2 * t)
@@ -2037,9 +2045,7 @@ theorem qQueryOn_le_advPMOn_finiteOutput_sixteenth {O : Type} [Fintype O]
             * (8192 * (1 + 8 * Real.sqrt (Fintype.card σ)
               * advPMOn read f)) := by
           refine Finset.sum_le_sum fun i _ => ?_
-          have := hq0 i
-          have ht0 : (0 : ℝ) ≤ 2 * t := by positivity
-          nlinarith
+          exact mul_le_mul_of_nonneg_left (hq0 i) (by positivity)
       _ = (B : ℝ) * (2 * t)
             * (8192 * (1 + 8 * Real.sqrt (Fintype.card σ)
               * advPMOn read f)) := by
@@ -2072,7 +2078,7 @@ theorem qQueryOn_le_advPMOn_finiteOutput {O : Type} [Fintype O]
     qQueryOn_mono (by norm_num) (queryCounts_nonempty hdet (by norm_num))
   have hmono' : ((qQueryOn read f (1 / 3) : ℕ) : ℝ)
       ≤ ((qQueryOn read f (1 / 16) : ℕ) : ℝ) := by exact_mod_cast hmono
-  linarith
+  exact hmono'.trans h16
 
 /-- **The finite-output characterization** (the reserved unsuffixed name):
 the promise adversary bound characterizes fixed-error quantum query
@@ -2148,7 +2154,7 @@ theorem qQueryOn_le_mul_advPMOn_finiteOutput_sixteenth {O : Type} [Fintype O]
     have hscalar : 8192 * (1 + 8 * Real.sqrt (Fintype.card σ)
           * advPMOn read f)
         ≤ 2 ^ 17 * (Real.sqrt (Fintype.card σ) * advPMOn read f) := by
-      nlinarith [hprod]
+      linarith only [hprod]
     have hBt0 : (0 : ℝ)
         ≤ 2 * (encBits O : ℝ) * (Nat.clog 2 (3 * encBits O) : ℝ) := by
       positivity
@@ -2174,7 +2180,7 @@ theorem qQueryOn_le_mul_advPMOn_finiteOutput {O : Type} [Fintype O]
     qQueryOn_mono (by norm_num) (queryCounts_nonempty hdet (by norm_num))
   have hmono' : ((qQueryOn read f (1 / 3) : ℕ) : ℝ)
       ≤ ((qQueryOn read f (1 / 16) : ℕ) : ℝ) := by exact_mod_cast hmono
-  linarith
+  exact hmono'.trans h16
 
 /-- **The finite-output characterization at `1/3`, multiplicative**
  the plurality-amplified lower bound paired with the

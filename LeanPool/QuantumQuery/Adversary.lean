@@ -103,7 +103,7 @@ lemma diag_eq_zero (h : IsAdvMatrix f Γ) (x : ι → σ) : Γ x x = 0 :=
 omit [DecidableEq ι] [DecidableEq σ] [Fintype ι] [Fintype σ] in
 lemma smul (h : IsAdvMatrix f Γ) (c : ℝ) : IsAdvMatrix f (c • Γ) :=
   ⟨h.1.smul (star_trivial c), fun x y hxy => by
-    simp [Matrix.smul_apply, h.2 x y hxy]⟩
+    simp only [Matrix.smul_apply, h.2 x y hxy, smul_eq_mul, mul_zero]⟩
 
 end IsAdvMatrix
 
@@ -218,7 +218,7 @@ noncomputable def wt (p : A → Bool) (x : ι → A) (i : ι) : ℝ :=
 
 omit [LinearOrder A] [Nonempty ι] in
 lemma wt_eq_zero (x : ι → A) {i : ι} (h : p (x i) = false) : wt p x i = 0 := by
-  simp [wt, h]
+  simp only [wt, h, Bool.false_eq_true, ↓reduceIte, zero_div]
 
 /-- The normalised indicator sums to `1` whenever the cut holds at the
 maximum. -/
@@ -281,17 +281,17 @@ lemma norm_toLp_eq (x : n → ℝ) :
     ‖(WithLp.toLp 2 x : EuclideanSpace ℝ n)‖ = Real.sqrt (x ⬝ᵥ x) := by
   rw [EuclideanSpace.norm_eq]
   congr 1
-  simp [dotProduct, Real.norm_eq_abs, sq]
+  simp only [Real.norm_eq_abs, sq, abs_mul_abs_self, dotProduct]
 
 lemma inner_toLp (x y : n → ℝ) :
     ⟪(WithLp.toLp 2 x : EuclideanSpace ℝ n), WithLp.toLp 2 y⟫ = x ⬝ᵥ y := by
-  simp [PiLp.inner_apply, RCLike.inner_apply, dotProduct, mul_comm]
+  simp only [PiLp.inner_apply, RCLike.inner_apply, conj_trivial, mul_comm, dotProduct]
 
 lemma abs_apply_le_sqrt_dotProduct_self (x : n → ℝ) (i : n) :
     |x i| ≤ Real.sqrt (x ⬝ᵥ x) := by
   rw [← Real.sqrt_sq_eq_abs]
   refine Real.sqrt_le_sqrt ?_
-  simpa [sq, dotProduct] using
+  simpa only [sq, dotProduct] using
     Finset.single_le_sum (f := fun j => x j * x j)
       (fun j _ => mul_self_nonneg (x j)) (Finset.mem_univ i)
 
@@ -318,6 +318,55 @@ theorem abs_dotProduct_mulVec_le (A : Matrix n n ℝ) (x y : n → ℝ) :
           (norm_nonneg _)
     _ = ‖A‖ * Real.sqrt (x ⬝ᵥ x) * Real.sqrt (y ⬝ᵥ y) := by
         rw [← Matrix.cstar_norm_def, norm_toLp_eq, norm_toLp_eq]; ring
+
+/-- Cauchy–Schwarz for a finite family of bounded bilinear forms. -/
+lemma abs_sum_dotProduct_mulVec_le {κ : Type*} [Fintype κ]
+    (M : κ → Matrix n n ℝ) (u v : κ → n → ℝ) {c a b : ℝ}
+    (hc : 0 ≤ c) (hM : ∀ k, ‖M k‖ ≤ c)
+    (hu : ∑ k, u k ⬝ᵥ u k ≤ a) (hv : ∑ k, v k ⬝ᵥ v k ≤ b) :
+    |∑ k, u k ⬝ᵥ M k *ᵥ v k| ≤ c * Real.sqrt a * Real.sqrt b := by
+  calc |∑ k, u k ⬝ᵥ M k *ᵥ v k|
+      ≤ ∑ k, |u k ⬝ᵥ M k *ᵥ v k| := Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ k, c * (Real.sqrt (u k ⬝ᵥ u k) * Real.sqrt (v k ⬝ᵥ v k)) := by
+        refine Finset.sum_le_sum fun k _ => ?_
+        rw [← mul_assoc]
+        exact (abs_dotProduct_mulVec_le (M k) (u k) (v k)).trans
+          (mul_le_mul_of_nonneg_right
+            (mul_le_mul_of_nonneg_right (hM k) (Real.sqrt_nonneg _))
+            (Real.sqrt_nonneg _))
+    _ = c * ∑ k, Real.sqrt (u k ⬝ᵥ u k) * Real.sqrt (v k ⬝ᵥ v k) :=
+        (Finset.mul_sum _ _ _).symm
+    _ ≤ c * (Real.sqrt (∑ k, u k ⬝ᵥ u k) * Real.sqrt (∑ k, v k ⬝ᵥ v k)) :=
+        mul_le_mul_of_nonneg_left
+          (Real.sum_sqrt_mul_sqrt_le Finset.univ
+            (fun k => dotProduct_self_nonneg (u k))
+            (fun k => dotProduct_self_nonneg (v k))) hc
+    _ ≤ c * (Real.sqrt a * Real.sqrt b) := mul_le_mul_of_nonneg_left
+        (mul_le_mul (Real.sqrt_le_sqrt hu) (Real.sqrt_le_sqrt hv)
+          (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)) hc
+    _ = c * Real.sqrt a * Real.sqrt b := (mul_assoc _ _ _).symm
+
+/-- A two-coordinate Cauchy–Schwarz bound with a shared positive weight. -/
+lemma abs_cross_le_of_weighted_sq {k a b c d s t : ℝ} (hk : 0 < k) (hs : 0 ≤ s)
+    (hx : a ^ 2 + k * b ^ 2 ≤ k * s) (hy : k * d ^ 2 + c ^ 2 ≤ k * t) :
+    |a * d + b * c| ≤ Real.sqrt k * Real.sqrt s * Real.sqrt t := by
+  have hcross : k * (a * d + b * c) ^ 2
+      ≤ (a ^ 2 + k * b ^ 2) * (k * d ^ 2 + c ^ 2) := by
+    linarith only [sq_nonneg (a * c - k * (b * d))]
+  have hsq : (a * d + b * c) ^ 2 ≤ k * s * t := by
+    refine le_of_mul_le_mul_left ?_ hk
+    calc k * (a * d + b * c) ^ 2
+        ≤ (a ^ 2 + k * b ^ 2) * (k * d ^ 2 + c ^ 2) := hcross
+      _ ≤ (k * s) * (k * t) := mul_le_mul hx hy
+        (add_nonneg (mul_nonneg hk.le (sq_nonneg d)) (sq_nonneg c))
+        (mul_nonneg hk.le hs)
+      _ = k * (k * s * t) := by ring
+  calc |a * d + b * c| = Real.sqrt ((a * d + b * c) ^ 2) :=
+      (Real.sqrt_sq_eq_abs _).symm
+    _ ≤ Real.sqrt (k * s * t) := Real.sqrt_le_sqrt hsq
+    _ = Real.sqrt k * Real.sqrt s * Real.sqrt t := by
+      rw [Real.sqrt_mul (mul_nonneg hk.le hs), Real.sqrt_mul hk.le]
+
 
 /-- Converse of the master bilinear bound. -/
 theorem l2_opNorm_le_of_forall_dotProduct (A : Matrix n n ℝ) {c : ℝ}
@@ -350,15 +399,10 @@ theorem l2_opNorm_le_of_forall_dotProduct (A : Matrix n n ℝ) {c : ℝ}
 
 /-- Every entry is bounded by the L2 operator norm. -/
 theorem abs_entry_le_l2_opNorm (A : Matrix n n ℝ) (x y : n) : |A x y| ≤ ‖A‖ := by
-  have h := abs_dotProduct_mulVec_le A (Pi.single x 1) (Pi.single y 1)
-  have h1 : (Pi.single x 1 : n → ℝ) ⬝ᵥ A *ᵥ Pi.single y 1 = A x y := by
-    simp [single_dotProduct]
-  have h2 : (Pi.single x 1 : n → ℝ) ⬝ᵥ Pi.single x 1 = 1 := by
-    simp
-  have h3 : (Pi.single y 1 : n → ℝ) ⬝ᵥ Pi.single y 1 = 1 := by
-    simp
-  rw [h1, h2, h3, Real.sqrt_one] at h
-  simpa using h
+  simpa only [single_dotProduct, Matrix.mulVec_single, dotProduct_single,
+    Pi.single_eq_same, op_smul_eq_smul, one_smul, Matrix.col_apply,
+    mul_one, one_mul, Real.sqrt_one] using
+    abs_dotProduct_mulVec_le A (Pi.single x 1) (Pi.single y 1)
 
 /-- Crude norm bound: the L2 operator norm is at most the sum of the absolute
 values of the entries. -/
@@ -394,7 +438,7 @@ theorem abs_eigenvalue_le_norm {A : Matrix n n ℝ} {v : n → ℝ} {θ : ℝ}
   have h := abs_dotProduct_mulVec_le A v v
   rw [hv] at h
   have hsmul : v ⬝ᵥ (θ • v) = θ * (v ⬝ᵥ v) := by
-    simp [dotProduct_smul, smul_eq_mul]
+    simp only [dotProduct_smul, smul_eq_mul]
   rw [hsmul, abs_mul, abs_of_nonneg (dotProduct_self_nonneg v)] at h
   have hvv : 0 < v ⬝ᵥ v := by
     rcases (dotProduct_self_nonneg v).lt_or_eq with h' | h'
@@ -421,7 +465,7 @@ theorem l2_opNorm_submatrix_le {m : Type*} [Fintype m] [DecidableEq m]
     rw [← Equiv.sum_comp e
       (fun b => x (e.symm (e p)) * A (e p) b * y (e.symm b))]
     refine Finset.sum_congr rfl fun q _ => ?_
-    simp [Matrix.submatrix_apply]
+    simp only [submatrix_apply, Equiv.symm_apply_apply]
   rw [hbil, ← hdot x, ← hdot y]
   exact abs_dotProduct_mulVec_le _ _ _
 
@@ -450,7 +494,7 @@ theorem norm_eq_norm_eigenvalues {A : Matrix n n ℝ} (hA : A.IsHermitian) :
 theorem abs_eigenvalues_le_norm {A : Matrix n n ℝ} (hA : A.IsHermitian)
     (j : n) : |hA.eigenvalues j| ≤ ‖A‖ := by
   rw [norm_eq_norm_eigenvalues hA]
-  simpa [Real.norm_eq_abs] using norm_le_pi_norm hA.eigenvalues j
+  simpa only [Real.norm_eq_abs] using norm_le_pi_norm hA.eigenvalues j
 
 theorem exists_abs_eigenvalues_eq_norm [Nonempty n] {A : Matrix n n ℝ}
     (hA : A.IsHermitian) : ∃ j, |hA.eigenvalues j| = ‖A‖ := by
@@ -458,7 +502,7 @@ theorem exists_abs_eigenvalues_eq_norm [Nonempty n] {A : Matrix n n ℝ}
     Finset.univ_nonempty (fun i => ‖hA.eigenvalues i‖₊)
   refine ⟨j, ?_⟩
   rw [norm_eq_norm_eigenvalues hA, Pi.norm_def, hj]
-  simp [Real.norm_eq_abs]
+  simp only [coe_nnnorm, Real.norm_eq_abs]
 
 theorem norm_le_of_forall_abs_eigenvalues_le {A : Matrix n n ℝ}
     (hA : A.IsHermitian) {B : ℝ} (hB : 0 ≤ B)
@@ -572,7 +616,7 @@ lemma advPM_set_nonempty (f : (ι → σ) → O) :
     {r : ℝ | ∃ Γ, IsAdvMatrix f Γ ∧ (∀ i, ‖Γ ⊙ advD i‖ ≤ 1) ∧
       r = ‖Γ‖}.Nonempty :=
   ⟨‖(0 : Matrix (ι → σ) (ι → σ) ℝ)‖, 0, isAdvMatrix_zero f,
-    fun i => by simp, rfl⟩
+    fun i => by simp only [zero_hadamard, norm_zero, zero_le_one], rfl⟩
 
 /-- All entries of a feasible matrix are bounded by `1` in absolute value:
 off-diagonal entries embed into some `Γ ⊙ advD i`, and entries with
@@ -580,7 +624,7 @@ off-diagonal entries embed into some `Γ ⊙ advD i`, and entries with
 lemma abs_apply_le_one_of_feasible (h1 : IsAdvMatrix f Γ)
     (h2 : ∀ i, ‖Γ ⊙ advD i‖ ≤ 1) (x y : ι → σ) : |Γ x y| ≤ 1 := by
   by_cases hf : f x = f y
-  · simp [h1.apply_eq_zero hf]
+  · simp only [h1.apply_eq_zero hf, abs_zero, zero_le_one]
   · have hxy : x ≠ y := fun h => hf (by rw [h])
     obtain ⟨i, hi⟩ := Function.ne_iff.mp hxy
     have h3 := abs_entry_le_l2_opNorm (Γ ⊙ advD i) x y
@@ -611,7 +655,9 @@ theorem le_advPM (h1 : IsAdvMatrix f Γ) (h2 : ∀ i, ‖Γ ⊙ advD i‖ ≤ 1)
   le_csSup (bddAbove_advPM_set f) ⟨Γ, h1, h2, rfl⟩
 
 theorem advPM_nonneg (f : (ι → σ) → O) : 0 ≤ advPM f := by
-  simpa using le_advPM (isAdvMatrix_zero f) fun i => by simp
+  simpa only [norm_zero] using
+    le_advPM (isAdvMatrix_zero f) fun i => by
+      simp only [zero_hadamard, norm_zero, zero_le_one]
 
 theorem advPM_le {c : ℝ}
     (hc : ∀ Γ, IsAdvMatrix f Γ → (∀ i, ‖Γ ⊙ advD i‖ ≤ 1) → ‖Γ‖ ≤ c) :
@@ -646,7 +692,7 @@ theorem norm_div_le_advPM (h1 : IsAdvMatrix f Γ) {c : ℝ}
 theorem adv_le_advPM (f : (ι → σ) → O) : adv f ≤ advPM f := by
   refine csSup_le ?_ ?_
   · exact ⟨‖(0 : Matrix (ι → σ) (ι → σ) ℝ)‖, 0, isAdvMatrix_zero f,
-      fun i => by simp, fun x y => le_rfl, rfl⟩
+      fun i => by simp only [zero_hadamard, norm_zero, zero_le_one], fun x y => le_rfl, rfl⟩
   · rintro r ⟨Γ, h1, h2, -, rfl⟩
     exact le_advPM h1 h2
 
@@ -657,7 +703,7 @@ theorem advPM_eq_zero_of_forall_eq (h : ∀ x y, f x = f y) : advPM f = 0 :=
         ext x y
         rw [Matrix.zero_apply]
         exact hΓ.apply_eq_zero (h x y)
-      simp [hΓ0])
+      simp only [hΓ0, norm_zero, Std.le_refl])
     (advPM_nonneg f)
 
 /-! ## The elementary two-entry witness -/
@@ -693,7 +739,7 @@ lemma pairMatrix_mulVec (x y : ι → σ) (u : (ι → σ) → ℝ) :
 omit [DecidableEq ι] [Fintype σ] in
 lemma pairMatrix_apply_eq_zero {x y a b : ι → σ} (h1 : ¬(x = a ∧ y = b))
     (h2 : ¬(y = a ∧ x = b)) : pairMatrix x y a b = 0 := by
-  simp [pairMatrix, h1, h2]
+  simp only [pairMatrix, Matrix.add_apply, h1, not_false_eq_true, single_apply_of_ne, h2, add_zero]
 
 omit [DecidableEq ι] [Fintype σ] in
 /-- Masking a pair matrix by a difference matrix either leaves it alone or
@@ -725,90 +771,33 @@ lemma pairMatrix_hadamard_advD (x y : ι → σ) (i : ι) :
 
 lemma norm_pairMatrix {x y : ι → σ} (hxy : x ≠ y) : ‖pairMatrix x y‖ = 1 := by
   classical
-  -- `norm_le_of_eigenvector_family` needs `[Nonempty (ι → σ)]`; the hypothesis
-  -- `x` supplies the witness, so no `[Nonempty σ]` instance is required.
-  have : Nonempty (ι → σ) := ⟨x⟩
-  have hmul : ∀ u : (ι → σ) → ℝ, pairMatrix x y *ᵥ u
-      = fun w => (if x = w then u y else 0) + if y = w then u x else 0 := by
-    intro u
-    rw [pairMatrix, Matrix.add_mulVec, single_one_mulVec, single_one_mulVec]
-    rfl
+  have hcoord (w : (ι → σ) → ℝ) : (w x) ^ 2 + (w y) ^ 2 ≤ w ⬝ᵥ w := by
+    have h : (∑ z ∈ ({x, y} : Finset (ι → σ)), w z * w z)
+        ≤ ∑ z : ι → σ, w z * w z :=
+      Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
+        fun z _ _ => mul_self_nonneg (w z)
+    simpa only [Finset.sum_pair hxy, pow_two, dotProduct] using h
   refine le_antisymm ?_ ?_
-  · set v : (ι → σ) → (ι → σ) → ℝ := fun z =>
-      if z = x then Pi.single x 1 + Pi.single y 1
-      else if z = y then Pi.single x 1 - Pi.single y 1
-      else Pi.single z 1 with hv
-    set μ : (ι → σ) → ℝ := fun z =>
-      if z = x then 1 else if z = y then -1 else 0 with hμ
-    have hvx : v x = Pi.single x 1 + Pi.single y 1 := by rw [hv]; simp
-    have hvy : v y = Pi.single x 1 - Pi.single y 1 := by
-      rw [hv]; simp [Ne.symm hxy]
-    have hvz : ∀ z, z ≠ x → z ≠ y → v z = Pi.single z 1 := by
-      intro z h1 h2; rw [hv]; simp [h1, h2]
-    have hμx : μ x = 1 := by rw [hμ]; simp
-    have hμy : μ y = -1 := by rw [hμ]; simp [Ne.symm hxy]
-    have hμz : ∀ z, z ≠ x → z ≠ y → μ z = 0 := by
-      intro z h1 h2; rw [hμ]; simp [h1, h2]
-    refine norm_le_of_eigenvector_family (pairMatrix_isHermitian x y) v μ
-      zero_le_one ?_ ?_ ?_
-    · intro z
-      by_cases hzx : z = x
-      · rw [hzx, hvx, hμx, hmul]
-        funext w
-        simp only [Pi.add_apply, Pi.smul_apply, Pi.single_apply, smul_eq_mul, one_mul]
-        by_cases hwx : w = x <;> by_cases hwy : w = y
-        · exact absurd (hwx.symm.trans hwy) hxy
-        · simp [hwx, hxy, Ne.symm hxy]
-        · simp [hwy, hxy, Ne.symm hxy]
-        · simp [hwx, hwy, Ne.symm hwx, Ne.symm hwy]
-      · by_cases hzy : z = y
-        · rw [hzy, hvy, hμy, hmul]
-          funext w
-          simp only [Pi.sub_apply, Pi.smul_apply, Pi.single_apply, smul_eq_mul]
-          by_cases hwx : w = x <;> by_cases hwy : w = y
-          · exact absurd (hwx.symm.trans hwy) hxy
-          · simp [hwx, hxy, Ne.symm hxy]
-          · simp [hwy, hxy, Ne.symm hxy]
-          · simp [hwx, hwy, Ne.symm hwx, Ne.symm hwy]
-        · rw [hvz z hzx hzy, hμz z hzx hzy, hmul]
-          funext w
-          simp [Pi.single_apply, Ne.symm hzx, Ne.symm hzy]
-    · rw [eq_top_iff, ← (Pi.basisFun ℝ (ι → σ)).span_eq]
-      refine Submodule.span_le.mpr ?_
-      rintro _ ⟨z, rfl⟩
-      rw [Pi.basisFun_apply]
-      by_cases hzx : z = x
-      · rw [hzx]
-        have hx2 : (Pi.single x 1 : (ι → σ) → ℝ)
-            = (2⁻¹ : ℝ) • (v x + v y) := by
-          rw [hvx, hvy]
-          funext w
-          simp only [Pi.smul_apply, Pi.add_apply, Pi.sub_apply, smul_eq_mul]
-          ring
-        rw [hx2]
-        exact Submodule.smul_mem _ _ (Submodule.add_mem _
-          (Submodule.subset_span ⟨x, rfl⟩) (Submodule.subset_span ⟨y, rfl⟩))
-      · by_cases hzy : z = y
-        · rw [hzy]
-          have hy2 : (Pi.single y 1 : (ι → σ) → ℝ)
-              = (2⁻¹ : ℝ) • (v x - v y) := by
-            rw [hvx, hvy]
-            funext w
-            simp only [Pi.smul_apply, Pi.add_apply, Pi.sub_apply, smul_eq_mul]
-            ring
-          rw [hy2]
-          exact Submodule.smul_mem _ _ (Submodule.sub_mem _
-            (Submodule.subset_span ⟨x, rfl⟩) (Submodule.subset_span ⟨y, rfl⟩))
-        · rw [← hvz z hzx hzy]
-          exact Submodule.subset_span ⟨z, rfl⟩
-    · intro z
-      simp only [hμ]
-      split_ifs <;> norm_num
+  · refine l2_opNorm_le_of_forall_dotProduct _ zero_le_one fun u v => ?_
+    have hpair : u ⬝ᵥ pairMatrix x y *ᵥ v = u x * v y + u y * v x := by
+      simp only [pairMatrix, Matrix.add_mulVec, dotProduct_add,
+        Matrix.single_mulVec, one_mul]
+      change u ⬝ᵥ Pi.single x (v y) + u ⬝ᵥ Pi.single y (v x) = _
+      rw [dotProduct_single, dotProduct_single]
+    rw [hpair]
+    have hbound := abs_cross_le_of_weighted_sq (k := 1)
+      (a := u x) (b := u y) (c := v x) (d := v y) zero_lt_one
+      (dotProduct_self_nonneg u)
+      (by simpa only [one_mul] using hcoord u)
+      (by simpa only [one_mul, add_comm] using hcoord v)
+    simpa only [Real.sqrt_one, one_mul] using hbound
   · have h := abs_entry_le_l2_opNorm (pairMatrix x y) x y
     have hval : pairMatrix x y x y = 1 := by
-      simp [pairMatrix, Ne.symm hxy]
+      simp only [pairMatrix, Matrix.add_apply, single_apply_same, Ne.symm hxy,
+        false_and, not_false_eq_true, single_apply_of_ne, add_zero]
     rw [hval] at h
-    simpa using h
+    simpa only [abs_one] using h
+
 
 theorem one_le_advPM {x y : ι → σ} (hf : f x ≠ f y) : 1 ≤ advPM f := by
   have hxy : x ≠ y := fun h => hf (by rw [h])
@@ -821,7 +810,8 @@ theorem one_le_advPM {x y : ι → σ} (hf : f x ≠ f y) : 1 ≤ advPM f := by
     · by_cases h2 : y = a ∧ x = b
       · obtain ⟨rfl, rfl⟩ := h2
         exact absurd hab.symm hf
-      · simp [pairMatrix, h1, h2]
+      · simp only [pairMatrix, Matrix.add_apply, h1, not_false_eq_true, single_apply_of_ne, h2,
+        add_zero]
   have hfeas : ∀ i, ‖pairMatrix x y ⊙ advD i‖ ≤ 1 := by
     intro i
     by_cases hi : x i = y i
@@ -835,7 +825,8 @@ theorem one_le_advPM {x y : ι → σ} (hf : f x ≠ f y) : 1 ≤ advPM f := by
           · obtain ⟨rfl, rfl⟩ := h2
             rw [ite_eq_left hi.symm, mul_zero]
           · have hz : pairMatrix x y a b = 0 := by
-              simp [pairMatrix, h1, h2]
+              simp only [pairMatrix, Matrix.add_apply, h1, not_false_eq_true, single_apply_of_ne,
+                h2, add_zero]
             rw [hz, zero_mul]
       rw [h0, norm_zero]
       exact zero_le_one
@@ -849,7 +840,8 @@ theorem one_le_advPM {x y : ι → σ} (hf : f x ≠ f y) : 1 ≤ advPM f := by
           · obtain ⟨rfl, rfl⟩ := h2
             rw [ite_eq_right (fun h => hi h.symm), mul_one]
           · have hz : pairMatrix x y a b = 0 := by
-              simp [pairMatrix, h1, h2]
+              simp only [pairMatrix, Matrix.add_apply, h1, not_false_eq_true, single_apply_of_ne,
+                h2, add_zero]
             rw [hz, zero_mul]
       rw [h1, norm_pairMatrix hxy]
   have h := le_advPM hadv hfeas
@@ -1025,7 +1017,12 @@ lemma posSemidef_boolPair {R lam : ℝ} (h : |lam| ≤ R) :
     rcases abs_le.mp h with ⟨h1, h2⟩
     simp only [Matrix.mulVec, dotProduct, Fintype.sum_bool, Matrix.of_apply]
     norm_num
-    nlinarith [sq_nonneg (x true + x false), sq_nonneg (x true - x false)]
+    have hplus : 0 ≤ R + lam := by linarith only [h1]
+    have hminus : 0 ≤ R - lam := sub_nonneg.mpr h2
+    have hsum := add_nonneg
+      (mul_nonneg hplus (sq_nonneg (x true + x false)))
+      (mul_nonneg hminus (sq_nonneg (x true - x false)))
+    linarith only [hsum]
 
 variable [DecidableEq n]
 
@@ -1038,7 +1035,7 @@ theorem norm_hadamard_posSemidef_le (X : Matrix n n ℝ) {P : Matrix n n ℝ}
   have hPab : ∀ a b, P a b = ∑ k, gv k a * gv k b := by
     intro a b
     rw [hgv]
-    simp [Matrix.sum_apply, Matrix.vecMulVec_apply]
+    simp only [star_trivial, Matrix.sum_apply, vecMulVec_apply]
   refine l2_opNorm_le_of_forall_dotProduct _ (mul_nonneg hd (norm_nonneg X))
     fun x y => ?_
   -- Step 1: expand the bilinear form along the Gram decomposition.
@@ -1081,37 +1078,17 @@ theorem norm_hadamard_posSemidef_le (X : Matrix n n ℝ) {P : Matrix n n ℝ}
       _ = d * (z ⬝ᵥ z) := by
         rw [← Finset.sum_mul, mul_comm]
         rfl
-  -- Steps 2–4: triangle inequality, the master bound per `k`, and
-  -- Cauchy–Schwarz over `k`.
   calc |∑ k, xk k ⬝ᵥ X *ᵥ yk k|
-      ≤ ∑ k, |xk k ⬝ᵥ X *ᵥ yk k| := Finset.abs_sum_le_sum_abs _ _
-    _ ≤ ∑ k, ‖X‖ * (Real.sqrt (xk k ⬝ᵥ xk k) * Real.sqrt (yk k ⬝ᵥ yk k)) := by
-        refine Finset.sum_le_sum fun k _ => ?_
-        have := abs_dotProduct_mulVec_le X (xk k) (yk k)
-        calc |xk k ⬝ᵥ X *ᵥ yk k|
-            ≤ ‖X‖ * Real.sqrt (xk k ⬝ᵥ xk k) * Real.sqrt (yk k ⬝ᵥ yk k) := this
-          _ = ‖X‖ * (Real.sqrt (xk k ⬝ᵥ xk k) * Real.sqrt (yk k ⬝ᵥ yk k)) :=
-              mul_assoc _ _ _
-    _ = ‖X‖ * ∑ k, Real.sqrt (xk k ⬝ᵥ xk k) * Real.sqrt (yk k ⬝ᵥ yk k) :=
-        (Finset.mul_sum _ _ _).symm
-    _ ≤ ‖X‖ * (Real.sqrt (∑ k, xk k ⬝ᵥ xk k) * Real.sqrt (∑ k, yk k ⬝ᵥ yk k)) := by
-        refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg X)
-        have hcs := Real.sum_mul_le_sqrt_mul_sqrt Finset.univ
-          (fun k => Real.sqrt (xk k ⬝ᵥ xk k)) (fun k => Real.sqrt (yk k ⬝ᵥ yk k))
-        simpa [Real.sq_sqrt (dotProduct_self_nonneg _)] using hcs
-    _ ≤ ‖X‖ * (Real.sqrt (d * (x ⬝ᵥ x)) * Real.sqrt (d * (y ⬝ᵥ y))) := by
-        refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg X)
-        exact mul_le_mul (Real.sqrt_le_sqrt (hlen x xk fun k a => rfl))
-          (Real.sqrt_le_sqrt (hlen y yk fun k a => rfl)) (Real.sqrt_nonneg _)
-          (Real.sqrt_nonneg _)
+      ≤ ‖X‖ * Real.sqrt (d * (x ⬝ᵥ x)) * Real.sqrt (d * (y ⬝ᵥ y)) :=
+        abs_sum_dotProduct_mulVec_le (fun _ => X) xk yk (norm_nonneg X)
+          (fun _ => le_rfl) (hlen x xk fun _ _ => rfl) (hlen y yk fun _ _ => rfl)
     _ = d * ‖X‖ * Real.sqrt (x ⬝ᵥ x) * Real.sqrt (y ⬝ᵥ y) := by
         rw [Real.sqrt_mul hd, Real.sqrt_mul hd]
-        rw [show Real.sqrt d * Real.sqrt (x ⬝ᵥ x) *
-            (Real.sqrt d * Real.sqrt (y ⬝ᵥ y))
-            = Real.sqrt d * Real.sqrt d *
-              (Real.sqrt (x ⬝ᵥ x) * Real.sqrt (y ⬝ᵥ y)) from by ring,
-          Real.mul_self_sqrt hd]
-        ring
+        calc ‖X‖ * (Real.sqrt d * Real.sqrt (x ⬝ᵥ x)) *
+              (Real.sqrt d * Real.sqrt (y ⬝ᵥ y))
+            = (Real.sqrt d * Real.sqrt d) *
+                (‖X‖ * Real.sqrt (x ⬝ᵥ x) * Real.sqrt (y ⬝ᵥ y)) := by ring
+          _ = _ := by rw [Real.mul_self_sqrt hd]; ring
 
 /-- `M + ‖M‖ • 1` is positive semidefinite for symmetric `M`
 (BL Lemma 18). -/
@@ -1125,7 +1102,8 @@ theorem posSemidef_add_norm_smul_one {M : Matrix n n ℝ} (hM : M.IsHermitian) :
   have h2 := Real.mul_self_sqrt (dotProduct_self_nonneg x)
   have h3 := neg_abs_le (x ⬝ᵥ M *ᵥ x)
   rw [smul_eq_mul]
-  nlinarith [Real.sqrt_nonneg (x ⬝ᵥ x), norm_nonneg M]
+  rw [mul_assoc, h2] at h1
+  linarith only [h1, h3]
 
 end QuantumQueryComplexity
 
@@ -1171,7 +1149,7 @@ open Matrix
 lemma isHermitian_apply_symm {n : Type*} {A : Matrix n n ℝ}
     (hA : A.IsHermitian) (a b : n) : A a b = A b a := by
   conv_lhs => rw [← hA.eq]
-  simp [Matrix.conjTranspose_apply]
+  simp only [conjTranspose_apply, star_trivial]
 
 /-! ## The hat matrix -/
 
@@ -1182,7 +1160,8 @@ noncomputable def hat {n : Type*} [Fintype n] [DecidableEq n]
 
 lemma hat_apply {n : Type*} [Fintype n] [DecidableEq n] (N : Matrix n n ℝ)
     (u v : n) : hat N u v = N u v + ‖N‖ * (if u = v then 1 else 0) := by
-  simp [hat, Matrix.one_apply]
+  simp only [hat, Matrix.add_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, mul_ite,
+    mul_one, mul_zero]
 
 lemma hat_isHermitian {n : Type*} [Fintype n] [DecidableEq n]
     {N : Matrix n n ℝ} (hN : N.IsHermitian) : (hat N).IsHermitian :=
@@ -1452,56 +1431,19 @@ lemma key_bound {K : Type*} [Fintype K]
     |∑ p : ι × K, (fun x => a x * U x p.1 p.2) ⬝ᵥ
         M p.1 *ᵥ (fun y => b y * V y p.1 p.2)|
       ≤ c * Real.sqrt (a ⬝ᵥ a) * Real.sqrt (b ⬝ᵥ b) := by
-  classical
   calc |∑ p : ι × K, (fun x => a x * U x p.1 p.2) ⬝ᵥ
           M p.1 *ᵥ (fun y => b y * V y p.1 p.2)|
-      ≤ ∑ p : ι × K, |(fun x => a x * U x p.1 p.2) ⬝ᵥ
-          M p.1 *ᵥ (fun y => b y * V y p.1 p.2)| :=
-        Finset.abs_sum_le_sum_abs _ _
-    _ ≤ ∑ p : ι × K,
-          Real.sqrt ((fun x => a x * U x p.1 p.2) ⬝ᵥ
-            (fun x => a x * U x p.1 p.2)) *
-          Real.sqrt ((fun y => b y * V y p.1 p.2) ⬝ᵥ
-            (fun y => b y * V y p.1 p.2)) := by
-        refine Finset.sum_le_sum fun p _ => ?_
-        refine (abs_dotProduct_mulVec_le _ _ _).trans ?_
-        have h1 : ‖M p.1‖ * Real.sqrt ((fun x => a x * U x p.1 p.2) ⬝ᵥ
-              (fun x => a x * U x p.1 p.2))
-            ≤ 1 * Real.sqrt ((fun x => a x * U x p.1 p.2) ⬝ᵥ
-              (fun x => a x * U x p.1 p.2)) :=
-          mul_le_mul_of_nonneg_right (hM p.1) (Real.sqrt_nonneg _)
-        calc ‖M p.1‖ * Real.sqrt ((fun x => a x * U x p.1 p.2) ⬝ᵥ
-              (fun x => a x * U x p.1 p.2)) *
-              Real.sqrt ((fun y => b y * V y p.1 p.2) ⬝ᵥ
-                (fun y => b y * V y p.1 p.2))
-            ≤ 1 * Real.sqrt ((fun x => a x * U x p.1 p.2) ⬝ᵥ
-                (fun x => a x * U x p.1 p.2)) *
-              Real.sqrt ((fun y => b y * V y p.1 p.2) ⬝ᵥ
-                (fun y => b y * V y p.1 p.2)) :=
-              mul_le_mul_of_nonneg_right h1 (Real.sqrt_nonneg _)
-          _ = _ := by ring
-    _ ≤ Real.sqrt (∑ p : ι × K, (fun x => a x * U x p.1 p.2) ⬝ᵥ
-            (fun x => a x * U x p.1 p.2)) *
-          Real.sqrt (∑ p : ι × K, (fun y => b y * V y p.1 p.2) ⬝ᵥ
-            (fun y => b y * V y p.1 p.2)) := by
-        have hcs := Real.sum_mul_le_sqrt_mul_sqrt Finset.univ
-          (fun p : ι × K => Real.sqrt ((fun x => a x * U x p.1 p.2) ⬝ᵥ
-            (fun x => a x * U x p.1 p.2)))
-          (fun p : ι × K => Real.sqrt ((fun y => b y * V y p.1 p.2) ⬝ᵥ
-            (fun y => b y * V y p.1 p.2)))
-        simpa [Real.sq_sqrt (dotProduct_self_nonneg _)] using hcs
-    _ ≤ Real.sqrt (c * (a ⬝ᵥ a)) * Real.sqrt (c * (b ⬝ᵥ b)) :=
-        mul_le_mul (Real.sqrt_le_sqrt (sum_reweight_le a U hU))
-          (Real.sqrt_le_sqrt (sum_reweight_le b V hV))
-          (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
+      ≤ 1 * Real.sqrt (c * (a ⬝ᵥ a)) * Real.sqrt (c * (b ⬝ᵥ b)) :=
+        abs_sum_dotProduct_mulVec_le (fun p : ι × K => M p.1)
+          (fun p x => a x * U x p.1 p.2) (fun p y => b y * V y p.1 p.2)
+          zero_le_one (fun p => hM p.1) (sum_reweight_le a U hU) (sum_reweight_le b V hV)
     _ = c * Real.sqrt (a ⬝ᵥ a) * Real.sqrt (b ⬝ᵥ b) := by
-        rw [Real.sqrt_mul hc, Real.sqrt_mul hc]
-        rw [show Real.sqrt c * Real.sqrt (a ⬝ᵥ a) *
-            (Real.sqrt c * Real.sqrt (b ⬝ᵥ b))
-            = Real.sqrt c * Real.sqrt c *
-              (Real.sqrt (a ⬝ᵥ a) * Real.sqrt (b ⬝ᵥ b)) from by ring,
-          Real.mul_self_sqrt hc]
-        ring
+        rw [one_mul, Real.sqrt_mul hc, Real.sqrt_mul hc]
+        calc Real.sqrt c * Real.sqrt (a ⬝ᵥ a) *
+              (Real.sqrt c * Real.sqrt (b ⬝ᵥ b))
+            = (Real.sqrt c * Real.sqrt c) *
+                (Real.sqrt (a ⬝ᵥ a) * Real.sqrt (b ⬝ᵥ b)) := by ring
+          _ = _ := by rw [Real.mul_self_sqrt hc]; ring
 
 /-- **Weak duality**: every feasible dual solution of cost at most `c` bounds
 the adversary bound by `c`. -/
@@ -1565,7 +1507,8 @@ omit [DecidableEq ι] in
 lemma diffCard_ne_zero {x y : ι → Bool} (h : x ≠ y) : diffCard x y ≠ 0 := by
   rw [diffCard, Finset.card_ne_zero]
   obtain ⟨i, hi⟩ := Function.ne_iff.mp h
-  exact ⟨i, by simp [hi]⟩
+  exact ⟨i, by simp only [ne_eq, Finset.mem_filter, Finset.mem_univ, hi, not_false_eq_true,
+    and_self]⟩
 
 omit [DecidableEq ι] in
 lemma sum_ite_diff_const (x y : ι → Bool) (C : ℝ) :
@@ -1632,7 +1575,7 @@ lemma trivialDual_isCostLe (g : (ι → Bool) → Bool) :
     rw [Finset.sum_congr rfl fun i (_ : i ∈ Finset.univ) => hk i,
       Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
     have := Nat.cast_nonneg (α := ℝ) (Fintype.card (ι → Bool))
-    linarith
+    linarith only []
   · intro y
     change (∑ i : ι, ∑ k : ι → Bool,
       (if g k = g y then (0:ℝ) else if k i = y i then 0
@@ -1647,7 +1590,7 @@ lemma trivialDual_isCostLe (g : (ι → Bool) → Bool) :
             else (diffCard k y : ℝ)⁻¹)) ≤ 1 := by
       intro k
       by_cases hgk : g k = g y
-      · simp [hgk]
+      · simp only [hgk, ↓reduceIte, mul_zero, Finset.sum_const_zero, zero_le_one]
       · have hky : k ≠ y := fun h => hgk (by rw [h])
         have hN : (diffCard k y : ℝ) ≠ 0 :=
           Nat.cast_ne_zero.mpr (diffCard_ne_zero hky)
@@ -1670,7 +1613,7 @@ lemma trivialDual_isCostLe (g : (ι → Bool) → Bool) :
           rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
       _ ≤ (Fintype.card ι : ℝ) + (Fintype.card (ι → Bool) : ℝ) := by
           have := Nat.cast_nonneg (α := ℝ) (Fintype.card ι)
-          linarith
+          linarith only []
 
 /-! ## The dual value -/
 
@@ -1840,14 +1783,13 @@ lemma posSemidef_prod_lift {ι E κ : Type*}
   classical
   let := Fintype.ofFinite E
   induction s using Finset.induction_on with
-  | empty => simpa using posSemidef_allOnes (n := E)
+  | empty => simpa only [Finset.prod_empty] using posSemidef_allOnes (n := E)
   | @insert j s hj ih =>
       have heq : (Matrix.of fun a b : E => ∏ i ∈ insert j s, F i (e i a) (e i b))
           = ((F j).submatrix (e j) (e j)) ⊙
             (Matrix.of fun a b : E => ∏ i ∈ s, F i (e i a) (e i b)) := by
         ext a b
-        simp [Finset.prod_insert hj, Matrix.hadamard_apply,
-          Matrix.submatrix_apply]
+        simp only [Finset.prod_insert hj, of_apply, hadamard_apply, submatrix_apply]
       rw [heq]
       exact ((hF j).submatrix _).hadamard ih
 
@@ -2040,8 +1982,8 @@ lemma advPMOn_set_nonempty (read : X → ι → σ) (f : X → O) :
       ∧ r = ‖Γ‖}.Nonempty := by
   refine ⟨0, 0, isAdvMatrixOn_zero f, fun i => ?_, ?_⟩
   · rw [Matrix.zero_hadamard]
-    simp
-  · simp
+    simp only [norm_zero, zero_le_one]
+  · simp only [norm_zero]
 
 omit [DecidableEq ι] [Fintype ι] in
 theorem advPMOn_le {read : X → ι → σ} {f : X → O} {c : ℝ}
@@ -2258,12 +2200,12 @@ omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
 lemma gramCostOn_add (G H : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ)
     (b : Bool) (x : X) :
     gramCostOn (G + H) b x = gramCostOn G b x + gramCostOn H b x := by
-  simp [gramCostOn, Finset.sum_add_distrib]
+  simp only [gramCostOn, Matrix.add_apply, Finset.sum_add_distrib]
 
 omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
 lemma gramCostOn_smul (c : ℝ) (G : Matrix (GramIdxOn X ι) (GramIdxOn X ι) ℝ)
     (b : Bool) (x : X) : gramCostOn (c • G) b x = c * gramCostOn G b x := by
-  simp [gramCostOn, Finset.mul_sum]
+  simp only [gramCostOn, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
 
 omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
 /-- A positive semidefinite Gram matrix has nonnegative costs. -/
@@ -2279,32 +2221,22 @@ lemma gramROn_vecMulVec (read : X → ι → σ) (w : GramIdxOn X ι → ℝ)
     gramROn read (vecMulVec w w) x y
       = ∑ i, if read x i = read y i then 0
           else w (x, i, false) * w (y, i, true) := by
-  simp [gramROn, vecMulVec_apply]
+  simp only [gramROn, vecMulVec_apply, of_apply]
 
 omit [DecidableEq X] [DecidableEq ι] [Fintype X] in
 @[simp] lemma gramCostOn_vecMulVec (w : GramIdxOn X ι → ℝ) (b : Bool)
     (x : X) :
     gramCostOn (vecMulVec w w) b x = ∑ i, w (x, i, b) * w (x, i, b) := by
-  simp [gramCostOn, vecMulVec_apply]
+  simp only [gramCostOn, vecMulVec_apply]
 
 omit [DecidableEq X] [DecidableEq ι] in
 lemma trace_vecMulVec_on (w : GramIdxOn X ι → ℝ) :
-    (vecMulVec w w).trace = ∑ z, w z * w z := by
-  simp [Matrix.trace, vecMulVec_apply]
+    (vecMulVec w w).trace = ∑ z, w z * w z := rfl
 
 omit [DecidableEq X] [DecidableEq ι] [Fintype X] [Fintype ι] in
 lemma posSemidef_vecMulVec_self_on (w : GramIdxOn X ι → ℝ) [Finite X] [Finite ι] :
     (vecMulVec w w).PosSemidef := by
-  classical
-  let := Fintype.ofFinite X
-  let := Fintype.ofFinite ι
-  have h : vecMulVec w w
-      = (Matrix.of fun (z : GramIdxOn X ι) (_ : Unit) => w z) *
-        (Matrix.of fun (z : GramIdxOn X ι) (_ : Unit) => w z)ᴴ := by
-    ext z z'
-    simp [Matrix.mul_apply, vecMulVec_apply]
-  rw [h]
-  exact Matrix.posSemidef_self_mul_conjTranspose _
+  simpa only [star_trivial] using Matrix.posSemidef_vecMulVec_self_star w
 
 /-! ## From a Gram matrix to a dual solution -/
 
@@ -2322,7 +2254,7 @@ theorem exists_dualPairOn_of_gram
   have hentry : ∀ z z' : GramIdxOn X ι, G z z' = ∑ k, w k z * w k z' := by
     intro z z'
     rw [hw]
-    simp [Matrix.sum_apply, vecMulVec_apply]
+    simp only [star_trivial, Matrix.sum_apply, vecMulVec_apply]
   refine ⟨m, { u := fun x i k => w k (x, i, false)
                v := fun x i k => w k (x, i, true)
                constraint := ?_ }, ?_, ?_⟩
@@ -2332,7 +2264,7 @@ theorem exists_dualPairOn_of_gram
     rw [← this]
     exact Finset.sum_congr rfl fun i _ => by
       by_cases h : read x i = read y i
-      · simp [h]
+      · simp only [h, ↓reduceIte]
       · simp only [ite_eq_right h]
         exact (hentry (x, i, false) (y, i, true)).symm
   · intro x
@@ -2466,7 +2398,8 @@ lemma trace_eq_sum_gramCost (G : Matrix (GramIdx ι σ) (GramIdx ι σ) ℝ) :
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [Fintype.sum_prod_type, gramCost, gramCost, gramCostOn, gramCostOn,
     ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl fun i _ => by simp [add_comm]
+  exact Finset.sum_congr rfl fun i _ => by simp only [Fintype.univ_bool, Finset.mem_singleton,
+    Bool.true_eq_false, not_false_eq_true, Finset.sum_insert, Finset.sum_singleton, add_comm]
 
 omit [DecidableEq ι] [DecidableEq σ] [Fintype σ] in
 /-- A positive semidefinite Gram matrix has nonnegative costs. -/
@@ -2517,7 +2450,7 @@ def gramOfDual (P : DualPair K g) :
 omit [DecidableEq ι] [Fintype σ] in
 lemma gramOfDual_apply (P : DualPair K g) (z w : GramIdx ι σ) :
     gramOfDual P z w = ∑ k, dualVec P z k * dualVec P w k := by
-  simp [gramOfDual, Matrix.mul_apply]
+  simp only [gramOfDual, conjTranspose_eq_transpose_of_trivial, Matrix.mul_apply, transpose_apply]
 
 omit [DecidableEq ι] [Fintype σ] in
 lemma gramOfDual_posSemidef (P : DualPair K g) [Finite σ] : (gramOfDual P).PosSemidef := by
@@ -2532,7 +2465,7 @@ lemma gramR_gramOfDual (P : DualPair K g) : gramR (gramOfDual P) = dualTarget g 
   rw [gramR_apply, dualTarget_apply, ← P.constraint x y]
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases h : x i = y i
-  · simp [h]
+  · simp only [h, ↓reduceIte]
   · simp only [ite_eq_right h]
     exact gramOfDual_apply P (x, i, false) (y, i, true)
 
@@ -2643,7 +2576,7 @@ lemma spread_mul_spread {e : κ → ι} (he : Function.Injective e) (i : ι)
   · obtain ⟨j₀, hj⟩ := h
     rw [spread_eq_of_mem he hj, spread_eq_of_mem he hj, spread_eq_of_mem he hj]
   · push Not at h
-    simp [spread_eq_zero h]
+    simp only [spread_eq_zero h, mul_zero]
 
 omit [DecidableEq κ] in
 /-- Summing a spread family over `ι` recovers the sum over `κ`. -/
@@ -3269,7 +3202,7 @@ the eigenvalues are nonnegative, so the largest is at most their sum. -/
 lemma norm_le_trace_of_posSemidef {G : Matrix n n ℝ} (hG : G.PosSemidef) :
     ‖G‖ ≤ G.trace := by
   have htr : G.trace = ∑ i, hG.1.eigenvalues i := by
-    simpa using hG.1.trace_eq_sum_eigenvalues
+    simpa only [RCLike.ofReal_real_eq_id, id_eq] using hG.1.trace_eq_sum_eigenvalues
   refine norm_le_of_forall_abs_eigenvalues_le hG.1 ?_ fun j => ?_
   · rw [htr]
     exact Finset.sum_nonneg fun i _ => hG.eigenvalues_nonneg i
@@ -3281,13 +3214,15 @@ end PsdNorm
 /-- The squared norm of a standard coordinate vector. -/
 lemma sum_sq_single {n : Type*} [Fintype n] [DecidableEq n] (x : n) :
     (∑ y, (Pi.single x (1 : ℝ) : n → ℝ) y * (Pi.single x (1 : ℝ) : n → ℝ) y) = 1 := by
-  simp [Pi.single_apply]
+  simp only [Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
+    ↓reduceIte]
 
 /-- A diagonal quadratic form evaluated on a standard coordinate vector. -/
 lemma sum_weight_sq_single {n : Type*} [Fintype n] [DecidableEq n] (a : n → ℝ) (x : n) :
     (∑ y, a y * ((Pi.single x (1 : ℝ) : n → ℝ) y
       * (Pi.single x (1 : ℝ) : n → ℝ) y)) = a x := by
-  simp [Pi.single_apply]
+  simp only [Pi.single_apply, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
+    ↓reduceIte]
 
 /-- A linear functional bounded on a trace ball has the corresponding homogeneous
 bound in every nonzero rank-one direction. -/
@@ -3301,7 +3236,7 @@ lemma rankOne_lt_of_trace_bound {n : Type*} [Fintype n]
       Finset.sum_nonneg fun _ _ => mul_self_nonneg _
     rcases hnn.lt_or_eq with h | h
     · exact h
-    · exact absurd (dotProduct_self_eq_zero.mp (by simpa [dotProduct] using h.symm)) hw
+    · exact absurd (dotProduct_self_eq_zero.mp (by simpa only [dotProduct] using h.symm)) hw
   let a : ℝ := Real.sqrt (T / ∑ z, w z * w z)
   have ha : a * a = T / ∑ z, w z * w z := Real.mul_self_sqrt (by positivity)
   have hnorm : (∑ z, (a * w z) * (a * w z)) = T := by
@@ -3446,15 +3381,15 @@ lemma isClosed_psdBallOn (T : ℝ) : IsClosed (psdBallOn X ι T) := by
     constructor
     · rintro ⟨hG, hT⟩
       refine ⟨fun z z' => ?_, fun v => ?_, hT⟩
-      · simpa using congrFun₂ hG.1 z z'
-      · simpa using hG.dotProduct_mulVec_nonneg v
+      · exact congrFun₂ hG.1 z z'
+      · exact hG.dotProduct_mulVec_nonneg v
     · rintro ⟨hherm, hquad, hT⟩
       have hH : G.IsHermitian := by
         change Gᴴ = G
         ext z z'
-        simpa [Matrix.conjTranspose_apply] using hherm z z'
+        exact hherm z z'
       refine ⟨Matrix.PosSemidef.of_dotProduct_mulVec_nonneg hH fun v => ?_, hT⟩
-      · simpa using hquad v
+      · exact hquad v
   rw [hset]
   refine IsClosed.inter (isClosed_iInter fun z => isClosed_iInter fun z' => ?_)
     (IsClosed.inter (isClosed_iInter fun v => ?_) ?_)
@@ -3504,11 +3439,8 @@ omit [Fintype σ] in
 omit [DecidableEq X] [DecidableEq ι] in
 lemma zero_mem_gramImageOn {read : X → ι → σ} {T : ℝ} (hT : 0 ≤ T) :
     (0 : DualOmegaOn X → ℝ) ∈ gramImageOn read T := by
-  refine ⟨0, ⟨Matrix.PosSemidef.zero, by simpa using hT⟩, ?_⟩
-  funext z
-  rcases z with ⟨x, y⟩ | ⟨x, b⟩
-  · simp [gramROn]
-  · simp [gramCostOn]
+  refine ⟨0, ⟨Matrix.PosSemidef.zero, by simpa only [Matrix.trace_zero] using hT⟩, ?_⟩
+  exact (gramLOnₗ read).map_zero
 
 omit [Fintype σ] in
 omit [DecidableEq X] [DecidableEq ι] in
@@ -3537,7 +3469,11 @@ lemma convex_dualBoxOn (f : X → Bool) (c : ℝ) : Convex ℝ (dualBoxOn f c) :
     · have := (hz2 q).1
       have := (hz2' q).1
       positivity
-    · nlinarith [(hz2 q).2, (hz2' q).2, (hz2 q).1, (hz2' q).1]
+    · calc a * z (Sum.inr q) + b * z' (Sum.inr q)
+          ≤ a * c + b * c := add_le_add
+            (mul_le_mul_of_nonneg_left (hz2 q).2 ha)
+            (mul_le_mul_of_nonneg_left (hz2' q).2 hb)
+        _ = c := by rw [← add_mul, hab, one_mul]
 
 omit [DecidableEq X] [Fintype X] in
 lemma isClosed_dualBoxOn (f : X → Bool) (c : ℝ) : IsClosed (dualBoxOn f c) := by
@@ -3701,11 +3637,7 @@ lemma dualCorner_mem {g : (ι → σ) → Bool} {c : ℝ} (hc : 0 ≤ c) :
 values on the standard basis. -/
 lemma apply_eq_sum_single {α : Type*} [Fintype α] [DecidableEq α]
     (φ : (α → ℝ) →L[ℝ] ℝ) (z : α → ℝ) : φ z = ∑ a, z a * φ (Pi.single a 1) := by
-  have hz : z = ∑ a, z a • (Pi.single a 1 : α → ℝ) := by
-    rw [← Finset.univ_sum_single z]
-    exact Finset.sum_congr rfl fun a _ => by
-      funext b
-      by_cases h : a = b <;> simp [Pi.single_apply, h]
+  have hz : z = ∑ a, z a • (Pi.single a 1 : α → ℝ) := pi_eq_sum_univ' z
   conv_lhs => rw [hz]
   rw [map_sum]
   exact Finset.sum_congr rfl fun a _ => by rw [map_smul, smul_eq_mul]
@@ -3881,7 +3813,7 @@ lemma abs_apply_le_one_of_feasibleOn
     (h2 : ∀ i, ‖Γ ⊙ advDOn read i‖ ≤ 1) (x y : X) : |Γ x y| ≤ 1 := by
   classical
   by_cases hf : f x = f y
-  · simp [h1.2 x y hf]
+  · simp only [h1.2 x y hf, abs_zero, zero_le_one]
   · have hxy : read x ≠ read y := fun h => hf (hdet x y h)
     obtain ⟨i, hi⟩ := Function.ne_iff.mp hxy
     have h3 := abs_entry_le_l2_opNorm (Γ ⊙ advDOn read i) x y
@@ -3922,8 +3854,8 @@ omit [DecidableEq ι] [Fintype ι] in
 theorem advPMOn_nonneg (hdet : ∀ x y, read x = read y → f x = f y) :
     0 ≤ advPMOn read f := by
   classical
-  simpa using le_advPMOn (Γ := (0 : Matrix X X ℝ)) hdet (isAdvMatrixOn_zero f)
-    fun i => by simp
+  simpa only [norm_zero] using le_advPMOn (Γ := (0 : Matrix X X ℝ)) hdet (isAdvMatrixOn_zero f)
+    fun i => by simp only [zero_hadamard, norm_zero, zero_le_one]
 
 omit [DecidableEq X] [Fintype X] in
 lemma IsAdvMatrixOn.smul (h : IsAdvMatrixOn f Γ) (c : ℝ) :
@@ -4073,7 +4005,7 @@ lemma tensor_orthonormalE (e : Z ≃ (α → Y)) {v' : α → Y → Y → ℝ}
   rw [Finset.prod_congr rfl fun i _ => hij i]
   by_cases hcc : c = c'
   · rw [ite_eq_left hcc, hcc]
-    simp
+    simp only [↓reduceIte, Finset.prod_const_one]
   · obtain ⟨i, hi⟩ := Function.ne_iff.mp hcc
     rw [ite_eq_right hcc, Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)]
 
@@ -4143,7 +4075,7 @@ lemma span_tensorVecE_top (e : Z ≃ (α → Y)) {g : α → Y → Bool}
       = φ (fun _ => 1) := by
     funext x
     change _ = tensorVecE e g (fun i => v' i (c i)) (fun _ => 1) x
-    simp [tensorVecE_apply]
+    simp only [sliceE_apply, tensorVecE_apply, one_mul]
   rw [hPTeq]
   refine Submodule.span_mono ?_ h2
   rintro _ ⟨_, ⟨j, rfl⟩, rfl⟩
@@ -4597,8 +4529,7 @@ lemma l2_opNorm_hadamard_dualTargetOn_le (f : X → Bool)
   rw [hconj] at this
   have h2 : ‖(2 : ℝ)⁻¹‖ = (2 : ℝ)⁻¹ := by norm_num
   rw [h2]
-  nlinarith [norm_nonneg M,
-    norm_nonneg (M - Matrix.diagonal s * M * Matrix.diagonal s)]
+  linarith only [this]
 
 end Mask
 
@@ -4974,9 +4905,9 @@ lemma gramCostOn_concVecOn_false (i₀ : ι) (s t : X → ℝ) (x : X) :
       = s x * s x := by
   classical
   rw [gramCostOn_vecMulVec, Finset.sum_eq_single i₀]
-  · simp [concVecOn]
+  · simp only [concVecOn, ↓reduceIte, Bool.false_eq_true]
   · intro i _ hi
-    simp [concVecOn, hi]
+    simp only [concVecOn, hi, ↓reduceIte, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ i₀) h
 
@@ -4986,9 +4917,9 @@ lemma gramCostOn_concVecOn_true (i₀ : ι) (s t : X → ℝ) (x : X) :
       = t x * t x := by
   classical
   rw [gramCostOn_vecMulVec, Finset.sum_eq_single i₀]
-  · simp [concVecOn]
+  · simp only [concVecOn, ↓reduceIte]
   · intro i _ hi
-    simp [concVecOn, hi]
+    simp only [concVecOn, hi, ↓reduceIte, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ i₀) h
 
@@ -4999,10 +4930,12 @@ lemma sum_sq_concVecOn (i₀ : ι) (s t : X → ℝ) :
   rw [Fintype.sum_prod_type, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [Fintype.sum_prod_type, Finset.sum_eq_single i₀]
-  · simp [concVecOn]
+  · simp only [Fintype.univ_bool, concVecOn, ↓reduceIte, mul_ite, ite_mul, Finset.mem_singleton,
+    Bool.true_eq_false, not_false_eq_true, Finset.sum_insert, Finset.sum_singleton,
+    Bool.false_eq_true]
     ring
   · intro i _ hi
-    simp [concVecOn, hi]
+    simp only [Fintype.univ_bool, concVecOn, hi, ↓reduceIte, mul_zero, Finset.sum_const_zero]
   · intro h
     exact absurd (Finset.mem_univ i₀) h
 
@@ -5012,7 +4945,7 @@ lemma concVecOn_ne_zero_left {i₀ : ι} {s t : X → ℝ} (hs : s ≠ 0) :
   intro h
   refine hs (funext fun x => ?_)
   have := congrFun h (x, i₀, false)
-  simpa [concVecOn] using this
+  simpa only [Pi.zero_apply, concVecOn, ↓reduceIte, Bool.false_eq_true] using this
 
 omit [DecidableEq X] [Fintype X] [Fintype ι] in
 lemma concVecOn_ne_zero_right {i₀ : ι} {s t : X → ℝ} (ht : t ≠ 0) :
@@ -5020,7 +4953,7 @@ lemma concVecOn_ne_zero_right {i₀ : ι} {s t : X → ℝ} (ht : t ≠ 0) :
   intro h
   refine ht (funext fun x => ?_)
   have := congrFun h (x, i₀, true)
-  simpa [concVecOn] using this
+  simpa only [Pi.zero_apply, concVecOn, ↓reduceIte] using this
 
 /-! ## Symmetrising a two-weight certificate -/
 
@@ -5044,7 +4977,7 @@ theorem lt_advPMOn_of_certificate_two {read : X → ι → σ} {f : X → Bool}
   have hD : ∀ (i : ι) (x y : X),
       (advDOn read i) y x = advDOn read i x y := by
     intro i x y
-    simp [advDOn, eq_comm]
+    simp only [advDOn, of_apply, eq_comm]
   have hswap : ∀ (i : ι) (s t : X → ℝ),
       s ⬝ᵥ (Ξ' ⊙ advDOn read i) *ᵥ t
         = (s ⬝ᵥ (Ξ ⊙ advDOn read i) *ᵥ t) / 2
@@ -5353,7 +5286,8 @@ lemma pairMatrixOn_isHermitian (x y : X) : (pairMatrixOn x y).IsHermitian := by
 omit [Fintype X] in
 lemma pairMatrixOn_apply_self {x y : X} (hxy : x ≠ y) :
     pairMatrixOn x y x y = 1 := by
-  simp [pairMatrixOn, Ne.symm hxy]
+  simp only [pairMatrixOn, Matrix.add_apply, single_apply_same, Ne.symm hxy, false_and,
+    not_false_eq_true, single_apply_of_ne, add_zero]
 
 lemma sum_abs_pairMatrixOn {x y : X} (hxy : x ≠ y) :
     (∑ a, ∑ b, |pairMatrixOn x y a b|) = 2 := by
@@ -5365,17 +5299,17 @@ lemma sum_abs_pairMatrixOn {x y : X} (hxy : x ≠ y) :
       Matrix.single_apply]
     by_cases h1 : x = a ∧ y = b
     · obtain ⟨rfl, rfl⟩ := h1
-      simp [hxy, Ne.symm hxy]
+      simp only [and_self, ↓reduceIte, Ne.symm hxy, hxy, add_zero, abs_one]
     · by_cases h2 : y = a ∧ x = b
       · obtain ⟨rfl, rfl⟩ := h2
-        simp [hxy, Ne.symm hxy]
-      · simp [h1, h2]
+        simp only [hxy, Ne.symm hxy, and_self, ↓reduceIte, zero_add, abs_one]
+      · simp only [h1, ↓reduceIte, h2, add_zero, abs_zero]
   have hone : ∀ (x' y' : X), (∑ a, ∑ b,
       (if x' = a ∧ y' = b then (1 : ℝ) else 0)) = 1 := by
     intro x' y'
     rw [Finset.sum_eq_single x']
     · rw [Finset.sum_eq_single y']
-      · simp
+      · simp only [and_self, ↓reduceIte]
       · intro b _ hb
         exact ite_eq_right fun hcon => hb hcon.2.symm
       · intro h
@@ -5412,7 +5346,8 @@ theorem half_le_advPMOn {read : X → ι → σ} {f : X → O}
     · by_cases h2 : y = a ∧ x = b
       · obtain ⟨rfl, rfl⟩ := h2
         exact absurd hab.symm hf
-      · simp [pairMatrixOn, h1, h2]
+      · simp only [pairMatrixOn, Matrix.add_apply, h1, not_false_eq_true, single_apply_of_ne, h2,
+        add_zero]
   have hadv : IsAdvMatrixOn f ((2⁻¹ : ℝ) • pairMatrixOn x y) :=
     hpair.smul (2⁻¹ : ℝ)
   have hfeas : ∀ i, ‖((2⁻¹ : ℝ) • pairMatrixOn x y) ⊙ advDOn read i‖ ≤ 1 := by
@@ -5431,7 +5366,7 @@ theorem half_le_advPMOn {read : X → ι → σ} {f : X → O}
     rw [hsmul, norm_smul]
     have h2 : ‖(2⁻¹ : ℝ)‖ = (2⁻¹ : ℝ) := by norm_num
     rw [h2]
-    nlinarith [hmasked, norm_nonneg (pairMatrixOn x y ⊙ advDOn read i)]
+    linarith only [hmasked]
   have hle := le_advPMOn hdet hadv hfeas
   have hentry := abs_entry_le_l2_opNorm ((2⁻¹ : ℝ) • pairMatrixOn x y) x y
   rw [Matrix.smul_apply, pairMatrixOn_apply_self hxy, smul_eq_mul,
@@ -5499,6 +5434,32 @@ lemma isAdvMatrix_compose {f : (α → Bool) → Bool}
   intro x y hxy
   rw [compose_apply, hf.apply_eq_zero hxy, zero_mul]
 
+/-- The masked composition estimate for a family of inner witnesses. -/
+lemma norm_compose_mask_family_le {g : α → (β → Bool) → Bool}
+    {Γf : Matrix (α → Bool) (α → Bool) ℝ}
+    {M : α → Matrix (β → Bool) (β → Bool) ℝ}
+    (hf : Γf.IsHermitian) (hM : ∀ i, IsAdvMatrix (g i) (M i)) (p : α) (q : β) :
+    ‖compose g Γf M ⊙ advD (p, q)‖ ≤ ‖Γf ⊙ advD p‖ *
+      (‖M p ⊙ advD q‖ * ∏ i ∈ Finset.univ.erase p, ‖M i‖) := by
+  rw [compose_hadamard_advD g Γf M hM p q]
+  have hshape : ∀ i, IsAdvMatrix (g i)
+      (Function.update M p (M p ⊙ advD q) i) := by
+    intro i
+    by_cases hip : i = p
+    · subst hip
+      rw [Function.update_self]
+      exact (hM i).hadamard_advD q
+    · rw [Function.update_of_ne hip]
+      exact hM i
+  have hprod : ∏ i, ‖Function.update M p (M p ⊙ advD q) i‖
+      = ‖M p ⊙ advD q‖ * ∏ i ∈ Finset.univ.erase p, ‖M i‖ := by
+    rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ p), Function.update_self]
+    apply congrArg (‖M p ⊙ advD q‖ * ·)
+    exact Finset.prod_congr rfl fun i hi => by
+      rw [Function.update_of_ne (Finset.ne_of_mem_erase hi)]
+  simpa only [hprod] using
+    norm_compose_le (hf.hadamard (advD_isHermitian p)) hshape
+
 /-- The masked norm bound for the composed witness (T1). -/
 lemma norm_compose_mask {g : (β → Bool) → Bool}
     {Γf : Matrix (α → Bool) (α → Bool) ℝ}
@@ -5507,25 +5468,79 @@ lemma norm_compose_mask {g : (β → Bool) → Bool}
     ‖compose (constFam g) Γf (fun _ => Γg) ⊙ advD (p, q)‖
       ≤ ‖Γf ⊙ advD p‖ *
         (‖Γg ⊙ advD q‖ * ‖Γg‖ ^ (Fintype.card α - 1)) := by
-  rw [compose_hadamard_advD (constFam g) Γf (fun _ => Γg) (fun _ => hg) p q]
-  have hshape : ∀ i, IsAdvMatrix (constFam g i)
-      (Function.update (fun _ : α => Γg) p (Γg ⊙ advD q) i) := by
-    intro i
-    by_cases hip : i = p
-    · rw [hip, Function.update_self]
-      exact hg.hadamard_advD q
-    · rw [Function.update_of_ne hip]
-      exact hg
-  refine (norm_compose_le (hf.hadamard (advD_isHermitian p)) hshape).trans ?_
-  have hprod : ∏ i, ‖Function.update (fun _ : α => Γg) p (Γg ⊙ advD q) i‖
-      = ‖Γg ⊙ advD q‖ * ‖Γg‖ ^ (Fintype.card α - 1) := by
-    rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ p), Function.update_self]
-    congr 1
-    rw [Finset.prod_congr rfl fun i hi => by
-      rw [Function.update_of_ne (Finset.ne_of_mem_erase hi)],
-      Finset.prod_const, Finset.card_erase_of_mem (Finset.mem_univ p),
-      Finset.card_univ]
-  rw [hprod]
+  simpa only [Finset.prod_const, Finset.card_erase_of_mem (Finset.mem_univ p),
+    Finset.card_univ] using
+    norm_compose_mask_family_le (g := constFam g) (M := fun _ => Γg)
+      hf (fun _ => hg) p q
+
+
+/-!
+# The weighted composition lower bound
+
+The composition machinery now allows a *different* inner function in each
+block (`compose g Γf M` with `g : α → (β → Bool) → Bool`), which is what the
+cost/weighted version of the adversary composition theorem needs.
+
+`advPM_composeFunFam_ge` is the general weighted statement: if the outer
+witness `Γf` satisfies
+
+  `‖Γf ⊙ D_p‖ · V ≤ ‖Γf‖ · ‖M p‖`  for every outer coordinate `p`,
+
+— i.e. `Γf` certifies the value `V` for `f` *with costs* `‖M p‖` — and each
+inner witness `M i` is feasible, then `ADV±(f ∘ (g_1, …, g_k)) ≥ V`.
+
+This is HLŠ Theorem 13 (`ADV±_α(h) ≥ ADV±_β(f)` with `β_i = ADV±(g_i)`) in
+witness form: the cost vector enters as the norms `‖M p‖` of the inner
+witnesses, so no separate `ADV±_α` definition is needed.
+-/
+
+/-- **The weighted composition lower bound.** -/
+theorem advPM_composeFunFam_ge {f : (α → Bool) → Bool}
+    {g : α → (β → Bool) → Bool}
+    {Γf : Matrix (α → Bool) (α → Bool) ℝ}
+    {M : α → Matrix (β → Bool) (β → Bool) ℝ}
+    (hf : IsAdvMatrix f Γf) (hM : ∀ i, IsAdvMatrix (g i) (M i))
+    (hMfeas : ∀ i q, ‖M i ⊙ advD q‖ ≤ 1) (hMpos : ∀ i, 0 < ‖M i‖)
+    {V : ℝ} (hVpos : 0 < V) (hΓfpos : 0 < ‖Γf‖)
+    (hV : ∀ p, ‖Γf ⊙ advD p‖ * V ≤ ‖Γf‖ * ‖M p‖) :
+    V ≤ advPM (composeFunFam f g) := by
+  classical
+  have hCpos : 0 < ∏ i, ‖M i‖ := Finset.prod_pos fun i _ => hMpos i
+  have hcpos : 0 < ‖Γf‖ * (∏ i, ‖M i‖) / V := by positivity
+  have hΓh : IsAdvMatrix (composeFunFam f g) (compose g Γf M) :=
+    isAdvMatrix_compose hf hM
+  have hmask : ∀ ℓ : α × β,
+      ‖compose g Γf M ⊙ advD ℓ‖ ≤ ‖Γf‖ * (∏ i, ‖M i‖) / V := by
+    rintro ⟨p, q⟩
+    refine (norm_compose_mask_family_le hf.isHermitian hM p q).trans ?_
+    have herase : (∏ i ∈ Finset.univ.erase p, ‖M i‖) * ‖M p‖
+        = ∏ i, ‖M i‖ := by
+      rw [mul_comm]
+      exact Finset.mul_prod_erase Finset.univ (fun i => ‖M i‖)
+        (Finset.mem_univ p)
+    have hepos : 0 < ∏ i ∈ Finset.univ.erase p, ‖M i‖ :=
+      Finset.prod_pos fun i _ => hMpos i
+    -- `‖Γf ⊙ D_p‖ * (‖M p ⊙ D_q‖ * ∏_{i≠p}) ≤ ‖Γf‖ * ∏ / V`
+    rw [le_div_iff₀ hVpos]
+    calc ‖Γf ⊙ advD p‖ * (‖M p ⊙ advD q‖ *
+          ∏ i ∈ Finset.univ.erase p, ‖M i‖) * V
+        ≤ ‖Γf ⊙ advD p‖ * (1 * ∏ i ∈ Finset.univ.erase p, ‖M i‖) * V := by
+          have h1 : ‖M p ⊙ advD q‖ * ∏ i ∈ Finset.univ.erase p, ‖M i‖
+              ≤ 1 * ∏ i ∈ Finset.univ.erase p, ‖M i‖ :=
+            mul_le_mul_of_nonneg_right (hMfeas p q) hepos.le
+          exact mul_le_mul_of_nonneg_right
+            (mul_le_mul_of_nonneg_left h1 (norm_nonneg _)) hVpos.le
+      _ = (‖Γf ⊙ advD p‖ * V) * ∏ i ∈ Finset.univ.erase p, ‖M i‖ := by ring
+      _ ≤ (‖Γf‖ * ‖M p‖) * ∏ i ∈ Finset.univ.erase p, ‖M i‖ :=
+          mul_le_mul_of_nonneg_right (hV p) hepos.le
+      _ = ‖Γf‖ * ∏ i, ‖M i‖ := by rw [← herase]; ring
+  have hnorm : ‖compose g Γf M‖ = ‖Γf‖ * ∏ i, ‖M i‖ :=
+    norm_compose hf.isHermitian hM
+  have h := norm_div_le_advPM hΓh hmask hcpos
+  rw [hnorm] at h
+  have hsimp : ‖Γf‖ * (∏ i, ‖M i‖) / (‖Γf‖ * (∏ i, ‖M i‖) / V) = V :=
+    div_div_cancel₀ (mul_pos hΓfpos hCpos).ne'
+  rwa [hsimp] at h
 
 /-- **The composition theorem** (HLŠ Theorem 13, uniform unit-cost case;
 BL Theorem 1, `≥` direction): `ADV±(f) * ADV±(g) ≤ ADV±(f ∘ gᵏ)`. -/
@@ -5543,53 +5558,10 @@ theorem advPM_mul_le_advPM_composeFun (f : (α → Bool) → Bool)
     rcases eq_or_lt_of_le (norm_nonneg Γg) with hg0 | hΓgpos
     · rw [← hg0, mul_zero]
       exact advPM_nonneg _
-    -- a nonzero adversary matrix for f forces α to be inhabited
-    have hα : Nonempty α := by
-      have hΓf0 : Γf ≠ 0 := by
-        intro h0
-        rw [h0, norm_zero] at hΓfpos
-        exact lt_irrefl 0 hΓfpos
-      have hentry : ∃ x y, Γf x y ≠ 0 := by
-        by_contra hc
-        push Not at hc
-        exact hΓf0 (Matrix.ext fun x y => by
-          rw [hc x y, Matrix.zero_apply])
-      obtain ⟨x, y, hxy⟩ := hentry
-      have hfxy : f x ≠ f y := fun h => hxy (hf1.apply_eq_zero h)
-      have hxyne : x ≠ y := fun h => hfxy (by rw [h])
-      obtain ⟨i, -⟩ := Function.ne_iff.mp hxyne
-      exact ⟨i⟩
-    have := hα
-    have hk : Fintype.card α - 1 + 1 = Fintype.card α :=
-      Nat.succ_pred_eq_of_pos Fintype.card_pos
-    -- the composed witness
-    have hΓh_adv : IsAdvMatrix (composeFun f g)
-        (compose (constFam g) Γf fun _ => Γg) :=
-      isAdvMatrix_compose hf1 fun _ => hg1
-    have hmask : ∀ ℓ : α × β,
-        ‖compose (constFam g) Γf (fun _ => Γg) ⊙ advD ℓ‖
-          ≤ ‖Γg‖ ^ (Fintype.card α - 1) := by
-      rintro ⟨p, q⟩
-      refine (norm_compose_mask hf1.isHermitian hg1 p q).trans ?_
-      calc ‖Γf ⊙ advD p‖ * (‖Γg ⊙ advD q‖ * ‖Γg‖ ^ (Fintype.card α - 1))
-          ≤ 1 * (1 * ‖Γg‖ ^ (Fintype.card α - 1)) :=
-            mul_le_mul (hf2 p)
-              (mul_le_mul (hg2 q) le_rfl (by positivity) zero_le_one)
-              (by positivity) zero_le_one
-        _ = ‖Γg‖ ^ (Fintype.card α - 1) := by ring
-    have hfinal := norm_div_le_advPM hΓh_adv hmask (pow_pos hΓgpos _)
-    have hlow : ‖Γf‖ * ‖Γg‖
-        ≤ ‖compose (constFam g) Γf (fun _ => Γg)‖ / ‖Γg‖ ^ (Fintype.card α - 1) := by
-      rw [le_div_iff₀ (pow_pos hΓgpos _)]
-      calc ‖Γf‖ * ‖Γg‖ * ‖Γg‖ ^ (Fintype.card α - 1)
-          = ‖Γf‖ * (‖Γg‖ * ‖Γg‖ ^ (Fintype.card α - 1)) := mul_assoc _ _ _
-        _ = ‖Γf‖ * ‖Γg‖ ^ (Fintype.card α - 1 + 1) := by rw [← pow_succ']
-        _ = ‖Γf‖ * ‖Γg‖ ^ (Fintype.card α) := by rw [hk]
-        _ ≤ ‖compose (constFam g) Γf (fun _ => Γg)‖ := by
-            have h := le_norm_compose (g := constFam g) hf1.isHermitian fun _ : α => hg1
-            rw [Finset.prod_const, Finset.card_univ] at h
-            exact h
-    exact hlow.trans hfinal
+    exact advPM_composeFunFam_ge (g := constFam g) (M := fun _ => Γg)
+      hf1 (fun _ => hg1) (fun _ => hg2) (fun _ => hΓgpos)
+      (mul_pos hΓfpos hΓgpos) hΓfpos fun p =>
+        mul_le_of_le_one_left (mul_nonneg (norm_nonneg Γf) (norm_nonneg Γg)) (hf2 p)
   -- two supremum passes
   rcases eq_or_lt_of_le (advPM_nonneg g) with hg0 | hg0
   · rw [← hg0, mul_zero]
@@ -5839,9 +5811,10 @@ theorem advDual_composeFun_le (f : (α → Bool) → Bool)
       ((advDual f + δ) * (advDual g + δ)) :=
     DualPair.compose_isCostLe hP₁ (fun _ => hP₂) (by linarith)
   have hle := advDual_le_of_dualPair
-    (P₁.compose (g := constFam g) (fun _ => P₂)) (by nlinarith) hcost
+    (P₁.compose (g := constFam g) (fun _ => P₂))
+    (mul_nonneg (add_nonneg hA hδpos.le) (add_nonneg hB hδpos.le)) hcost
   refine hle.trans ?_
-  nlinarith [mul_le_of_le_one_right hδpos.le hδ1]
+  linarith only [hδε, mul_le_of_le_one_right hδpos.le hδ1]
 
 /-- **The composition upper bound**, unconditional: the adversary bound of a
 composed function is at most the product of the *dual* values. -/
@@ -5902,107 +5875,6 @@ theorem HasAdvValue.compose {g : (β → Bool) → Bool} {a b : ℝ}
 end QuantumQueryComplexity
 
 end SourceDualCompose
-
-section SourceWeighted
-
-/-!
-# The weighted composition lower bound
-
-The composition machinery now allows a *different* inner function in each
-block (`compose g Γf M` with `g : α → (β → Bool) → Bool`), which is what the
-cost/weighted version of the adversary composition theorem needs.
-
-`advPM_composeFunFam_ge` is the general weighted statement: if the outer
-witness `Γf` satisfies
-
-  `‖Γf ⊙ D_p‖ · V ≤ ‖Γf‖ · ‖M p‖`  for every outer coordinate `p`,
-
-— i.e. `Γf` certifies the value `V` for `f` *with costs* `‖M p‖` — and each
-inner witness `M i` is feasible, then `ADV±(f ∘ (g_1, …, g_k)) ≥ V`.
-
-This is HLŠ Theorem 13 (`ADV±_α(h) ≥ ADV±_β(f)` with `β_i = ADV±(g_i)`) in
-witness form: the cost vector enters as the norms `‖M p‖` of the inner
-witnesses, so no separate `ADV±_α` definition is needed.
--/
-
-
-namespace QuantumQueryComplexity
-
-open scoped Matrix Matrix.Norms.L2Operator
-open Matrix
-
-variable {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
-
-/-- **The weighted composition lower bound.** -/
-theorem advPM_composeFunFam_ge {f : (α → Bool) → Bool}
-    {g : α → (β → Bool) → Bool}
-    {Γf : Matrix (α → Bool) (α → Bool) ℝ}
-    {M : α → Matrix (β → Bool) (β → Bool) ℝ}
-    (hf : IsAdvMatrix f Γf) (hM : ∀ i, IsAdvMatrix (g i) (M i))
-    (hMfeas : ∀ i q, ‖M i ⊙ advD q‖ ≤ 1) (hMpos : ∀ i, 0 < ‖M i‖)
-    {V : ℝ} (hVpos : 0 < V) (hΓfpos : 0 < ‖Γf‖)
-    (hV : ∀ p, ‖Γf ⊙ advD p‖ * V ≤ ‖Γf‖ * ‖M p‖) :
-    V ≤ advPM (composeFunFam f g) := by
-  classical
-  have hCpos : 0 < ∏ i, ‖M i‖ := Finset.prod_pos fun i _ => hMpos i
-  have hcpos : 0 < ‖Γf‖ * (∏ i, ‖M i‖) / V := by positivity
-  have hΓh : IsAdvMatrix (composeFunFam f g) (compose g Γf M) :=
-    isAdvMatrix_compose hf hM
-  have hmask : ∀ ℓ : α × β,
-      ‖compose g Γf M ⊙ advD ℓ‖ ≤ ‖Γf‖ * (∏ i, ‖M i‖) / V := by
-    rintro ⟨p, q⟩
-    rw [compose_hadamard_advD g Γf M hM p q]
-    have hshape : ∀ i, IsAdvMatrix (g i)
-        (Function.update M p (M p ⊙ advD q) i) := by
-      intro i
-      by_cases hip : i = p
-      · subst hip
-        rw [Function.update_self]
-        exact (hM i).hadamard_advD q
-      · rw [Function.update_of_ne hip]
-        exact hM i
-    refine (norm_compose_le
-      (hf.isHermitian.hadamard (advD_isHermitian p)) hshape).trans ?_
-    -- split the product at `p`
-    have hprod : ∏ i, ‖Function.update M p (M p ⊙ advD q) i‖
-        = ‖M p ⊙ advD q‖ * ∏ i ∈ Finset.univ.erase p, ‖M i‖ := by
-      rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ p), Function.update_self]
-      apply congrArg (‖M p ⊙ advD q‖ * ·)
-      exact Finset.prod_congr rfl fun i hi => by
-        rw [Function.update_of_ne (Finset.ne_of_mem_erase hi)]
-    have herase : (∏ i ∈ Finset.univ.erase p, ‖M i‖) * ‖M p‖
-        = ∏ i, ‖M i‖ := by
-      rw [mul_comm]
-      exact Finset.mul_prod_erase Finset.univ (fun i => ‖M i‖)
-        (Finset.mem_univ p)
-    have hepos : 0 < ∏ i ∈ Finset.univ.erase p, ‖M i‖ :=
-      Finset.prod_pos fun i _ => hMpos i
-    rw [hprod]
-    -- `‖Γf ⊙ D_p‖ * (‖M p ⊙ D_q‖ * ∏_{i≠p}) ≤ ‖Γf‖ * ∏ / V`
-    rw [le_div_iff₀ hVpos]
-    calc ‖Γf ⊙ advD p‖ * (‖M p ⊙ advD q‖ *
-          ∏ i ∈ Finset.univ.erase p, ‖M i‖) * V
-        ≤ ‖Γf ⊙ advD p‖ * (1 * ∏ i ∈ Finset.univ.erase p, ‖M i‖) * V := by
-          have h1 : ‖M p ⊙ advD q‖ * ∏ i ∈ Finset.univ.erase p, ‖M i‖
-              ≤ 1 * ∏ i ∈ Finset.univ.erase p, ‖M i‖ :=
-            mul_le_mul_of_nonneg_right (hMfeas p q) hepos.le
-          exact mul_le_mul_of_nonneg_right
-            (mul_le_mul_of_nonneg_left h1 (norm_nonneg _)) hVpos.le
-      _ = (‖Γf ⊙ advD p‖ * V) * ∏ i ∈ Finset.univ.erase p, ‖M i‖ := by ring
-      _ ≤ (‖Γf‖ * ‖M p‖) * ∏ i ∈ Finset.univ.erase p, ‖M i‖ :=
-          mul_le_mul_of_nonneg_right (hV p) hepos.le
-      _ = ‖Γf‖ * ∏ i, ‖M i‖ := by rw [← herase]; ring
-  have hnorm : ‖compose g Γf M‖ = ‖Γf‖ * ∏ i, ‖M i‖ :=
-    norm_compose hf.isHermitian hM
-  have h := norm_div_le_advPM hΓh hmask hcpos
-  rw [hnorm] at h
-  have hsimp : ‖Γf‖ * (∏ i, ‖M i‖) / (‖Γf‖ * (∏ i, ‖M i‖) / V) = V := by
-    field_simp
-  rwa [hsimp] at h
-
-end QuantumQueryComplexity
-
-end SourceWeighted
 
 section SourceAndOr
 
@@ -6080,37 +5952,20 @@ lemma and2Gamma_bilinear (x y : (Fin 2 → Bool) → ℝ) :
   norm_num +decide
   ring
 
+
 lemma norm_and2Gamma_le : ‖and2Gamma‖ ≤ Real.sqrt 2 := by
   refine l2_opNorm_le_of_forall_dotProduct _ (Real.sqrt_nonneg 2) fun x y => ?_
   rw [and2Gamma_bilinear]
   have hx := dotProduct_fin2Bool x x
   have hy := dotProduct_fin2Bool y y
-  have hcs : ((x i01 + x i10) * y i11 + x i11 * (y i01 + y i10)) ^ 2
-      ≤ ((x i01 + x i10) ^ 2 / 2 + (x i11) ^ 2) *
-        (2 * (y i11) ^ 2 + (y i01 + y i10) ^ 2) := by
-    nlinarith only [sq_nonneg ((x i01 + x i10) * (y i01 + y i10) - 2 * x i11 * y i11)]
   have hX : (x i01 + x i10) ^ 2 / 2 + (x i11) ^ 2 ≤ x ⬝ᵥ x := by
     rw [hx]
-    nlinarith only [sq_nonneg (x i01 - x i10), sq_nonneg (x i00)]
+    linarith only [sq_nonneg (x i01 - x i10), sq_nonneg (x i00)]
   have hY : 2 * (y i11) ^ 2 + (y i01 + y i10) ^ 2 ≤ 2 * (y ⬝ᵥ y) := by
     rw [hy]
-    nlinarith only [sq_nonneg (y i01 - y i10), sq_nonneg (y i00)]
-  have hsq : ((x i01 + x i10) * y i11 + x i11 * (y i01 + y i10)) ^ 2
-      ≤ 2 * (x ⬝ᵥ x) * (y ⬝ᵥ y) := by
-    calc ((x i01 + x i10) * y i11 + x i11 * (y i01 + y i10)) ^ 2
-        ≤ ((x i01 + x i10) ^ 2 / 2 + (x i11) ^ 2) *
-          (2 * (y i11) ^ 2 + (y i01 + y i10) ^ 2) := hcs
-      _ ≤ (x ⬝ᵥ x) * (2 * (y ⬝ᵥ y)) :=
-          mul_le_mul hX hY (by positivity) (dotProduct_self_nonneg x)
-      _ = 2 * (x ⬝ᵥ x) * (y ⬝ᵥ y) := by ring
-  calc |(x i01 + x i10) * y i11 + x i11 * (y i01 + y i10)|
-      = Real.sqrt (((x i01 + x i10) * y i11 + x i11 * (y i01 + y i10)) ^ 2) :=
-        (Real.sqrt_sq_eq_abs _).symm
-    _ ≤ Real.sqrt (2 * (x ⬝ᵥ x) * (y ⬝ᵥ y)) := Real.sqrt_le_sqrt hsq
-    _ = Real.sqrt 2 * Real.sqrt (x ⬝ᵥ x) * Real.sqrt (y ⬝ᵥ y) := by
-        rw [Real.sqrt_mul
-            (mul_nonneg (by norm_num) (dotProduct_self_nonneg x)),
-          Real.sqrt_mul (by norm_num : (0:ℝ) ≤ 2)]
+    linarith only [sq_nonneg (y i01 - y i10), sq_nonneg (y i00)]
+  exact abs_cross_le_of_weighted_sq (by norm_num : (0 : ℝ) < 2)
+    (dotProduct_self_nonneg x) (by linarith only [hX]) hY
 
 /-- The top eigenvector of the star matrix. -/
 noncomputable def and2Vec : (Fin 2 → Bool) → ℝ :=
@@ -6136,7 +5991,7 @@ lemma sqrt_two_le_norm_and2Gamma : Real.sqrt 2 ≤ ‖and2Gamma‖ := by
     rw [abs_of_nonneg (by positivity)]
     ring
   rw [habs] at h
-  linarith
+  linarith only [h]
 
 lemma norm_and2Gamma : ‖and2Gamma‖ = Real.sqrt 2 :=
   le_antisymm norm_and2Gamma_le sqrt_two_le_norm_and2Gamma
@@ -6147,16 +6002,20 @@ lemma and2Gamma_isAdvMatrix : IsAdvMatrix and2 and2Gamma := by
   rw [and2Gamma, Matrix.add_apply]
   have h1 : ¬(i01 = x ∧ i11 = y) := by
     rintro ⟨rfl, rfl⟩
-    exact absurd hxy (by simp [and2])
+    exact absurd hxy (by simp only [and2, Fin.isValue, cons_val_zero, cons_val_one,
+      cons_val_fin_one, Bool.and_true, Bool.and_self, Bool.false_eq_true, not_false_eq_true])
   have h2 : ¬(i11 = x ∧ i01 = y) := by
     rintro ⟨rfl, rfl⟩
-    exact absurd hxy (by simp [and2])
+    exact absurd hxy (by simp only [and2, Fin.isValue, cons_val_zero, cons_val_one,
+      cons_val_fin_one, Bool.and_self, Bool.and_true, Bool.true_eq_false, not_false_eq_true])
   have h3 : ¬(i10 = x ∧ i11 = y) := by
     rintro ⟨rfl, rfl⟩
-    exact absurd hxy (by simp [and2])
+    exact absurd hxy (by simp only [and2, Fin.isValue, cons_val_zero, cons_val_one,
+      cons_val_fin_one, Bool.and_false, Bool.and_self, Bool.false_eq_true, not_false_eq_true])
   have h4 : ¬(i11 = x ∧ i10 = y) := by
     rintro ⟨rfl, rfl⟩
-    exact absurd hxy (by simp [and2])
+    exact absurd hxy (by simp only [and2, Fin.isValue, cons_val_zero, cons_val_one,
+      cons_val_fin_one, Bool.and_self, Bool.and_false, Bool.true_eq_false, not_false_eq_true])
   rw [pairMatrix_apply_eq_zero h1 h2, pairMatrix_apply_eq_zero h3 h4, add_zero]
 
 lemma and2Gamma_hadamard_zero : and2Gamma ⊙ advD 0 = pairMatrix i01 i11 := by
@@ -6241,10 +6100,21 @@ lemma and2Dual_isCostLe : and2Dual.IsCostLe (Real.sqrt 2) := by
     intro x
     rw [Fin.sum_univ_two]
     rcases fin2Bool_cases x with rfl | rfl | rfl | rfl
-    · simpa [and2DualVec] using and2Delta_cost
-    · simpa [and2DualVec] using le_of_eq and2Beta_sq
-    · simpa [and2DualVec] using le_of_eq and2Beta_sq
-    · simpa [and2DualVec] using le_of_eq and2Alpha_cost
+    · simpa only [Finset.univ_unique, PUnit.default_eq_unit, and2DualVec, Fin.isValue,
+      cons_val_zero, cons_val_one, cons_val_fin_one, Bool.and_self, Bool.false_eq_true,
+      ↓reduceIte, Bool.or_self, Finset.sum_const, Finset.card_singleton, one_smul
+      ] using and2Delta_cost
+    · simpa only [Finset.univ_unique, PUnit.default_eq_unit, and2DualVec, Fin.isValue,
+      cons_val_zero, cons_val_one, cons_val_fin_one, Bool.and_true, Bool.false_eq_true,
+      ↓reduceIte, Bool.or_true, Finset.sum_const, Finset.card_singleton, one_smul, mul_zero,
+      Finset.sum_const_zero, add_zero] using le_of_eq and2Beta_sq
+    · simpa only [Finset.univ_unique, PUnit.default_eq_unit, and2DualVec, Fin.isValue,
+      cons_val_zero, cons_val_one, cons_val_fin_one, Bool.and_false, Bool.false_eq_true,
+      ↓reduceIte, Bool.or_false, mul_zero, Finset.sum_const_zero, Finset.sum_const,
+      Finset.card_singleton, one_smul, zero_add] using le_of_eq and2Beta_sq
+    · simpa only [Finset.univ_unique, PUnit.default_eq_unit, and2DualVec, Fin.isValue,
+      cons_val_zero, cons_val_one, cons_val_fin_one, Bool.and_self, ↓reduceIte, Finset.sum_const,
+      Finset.card_singleton, one_smul] using le_of_eq and2Alpha_cost
   exact ⟨key, key⟩
 
 theorem advDual_and2_le : advDual and2 ≤ Real.sqrt 2 :=
@@ -6279,7 +6149,7 @@ theorem advPM_not (f : (ι → Bool) → Bool) :
     advPM_le fun Γ h1 h2 => le_advPM (isAdvMatrix_not.mp h1) h2
   refine le_antisymm (key f) ?_
   have h := key (fun x => !(f x))
-  simpa using h
+  simpa only [ge_iff_le, Bool.not_not] using h
 
 /-- Transport of a dual solution along output negation. -/
 def DualPair.notFun {K : Type*} [Fintype K] {f : (ι → Bool) → Bool}
@@ -6304,7 +6174,7 @@ theorem advDual_not (f : (ι → Bool) → Bool) :
     exact advDual_le_of_dualPair P.notFun hc ⟨hP.1, hP.2⟩
   refine le_antisymm (key f) ?_
   have h := key (fun x => !(f x))
-  simpa using h
+  simpa only [ge_iff_le, Bool.not_not] using h
 
 /-- Negating every input bit. -/
 def flipAll : (ι → Bool) ≃ (ι → Bool) where
@@ -6319,7 +6189,7 @@ lemma flipAll_apply (x : ι → Bool) (i : ι) : flipAll x i = !(x i) := rfl
 omit [DecidableEq ι] [Fintype ι] in
 lemma flipAll_coord_iff (x y : ι → Bool) (i : ι) :
     (flipAll x i = flipAll y i) ↔ (x i = y i) := by
-  simp [flipAll_apply]
+  simp only [flipAll_apply, Bool.not_eq_eq_eq_not, Bool.not_not]
 
 omit [DecidableEq ι] [Fintype ι] in
 lemma isAdvMatrix_comp_flipAll {f : (ι → Bool) → Bool}
@@ -6358,7 +6228,7 @@ theorem advPM_comp_flipAll (f : (ι → Bool) → Bool) :
         exact (isHermitian_apply_symm h1.1 _ _).symm
       · refine h1.2 _ _ ?_
         change g (flipAll (flipAll x)) = g (flipAll (flipAll y))
-        simpa [flipAll] using hxy
+        simpa only [flipAll, Equiv.coe_fn_mk, Bool.not_not] using hxy
     have hfeas : ∀ i, ‖(Γ.submatrix flipAll flipAll) ⊙ advD i‖ ≤ 1 := by
       intro i
       rw [submatrix_flipAll_hadamard, l2_opNorm_submatrix_equiv]
@@ -6371,7 +6241,7 @@ theorem advPM_comp_flipAll (f : (ι → Bool) → Bool) :
     funext x
     congr 1
     funext i
-    simp [flipAll]
+    simp only [flipAll, Equiv.coe_fn_mk, Bool.not_not]
   rwa [hff] at h
 
 /-- Transport of a dual solution along input negation. -/
@@ -6404,7 +6274,7 @@ theorem advDual_comp_flipAll (f : (ι → Bool) → Bool) :
     funext x
     congr 1
     funext i
-    simp [flipAll]
+    simp only [flipAll, Equiv.coe_fn_mk, Bool.not_not]
   rwa [hff] at h
 
 theorem HasAdvValue.not {f : (ι → Bool) → Bool} {c : ℝ} (h : HasAdvValue f c) :
@@ -6425,7 +6295,7 @@ def or2 : (Fin 2 → Bool) → Bool := fun x => x 0 || x 1
 
 lemma or2_eq : or2 = fun x => !(and2 (flipAll x)) := by
   funext x
-  simp [or2, and2, flipAll]
+  simp only [or2, Fin.isValue, and2, flipAll, Equiv.coe_fn_mk, Bool.not_and, Bool.not_not]
 
 /-- **`ADV±(OR₂) = √2`, with a matching dual certificate.** -/
 theorem hasAdvValue_or2 : HasAdvValue or2 (Real.sqrt 2) := by
@@ -6485,9 +6355,9 @@ lemma gramCost_concVec_false (i₀ : ι) (s t : (ι → σ) → ℝ) (x : ι →
     gramCost (vecMulVec (concVec i₀ s t) (concVec i₀ s t)) false x = s x * s x := by
   classical
   rw [gramCost_vecMulVec, Finset.sum_eq_single i₀]
-  · simp [concVec]
+  · simp only [concVec, ↓reduceIte, Bool.false_eq_true]
   · intro i _ hi
-    simp [concVec, hi]
+    simp only [concVec, hi, ↓reduceIte, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ i₀) h
 
@@ -6496,9 +6366,9 @@ lemma gramCost_concVec_true (i₀ : ι) (s t : (ι → σ) → ℝ) (x : ι → 
     gramCost (vecMulVec (concVec i₀ s t) (concVec i₀ s t)) true x = t x * t x := by
   classical
   rw [gramCost_vecMulVec, Finset.sum_eq_single i₀]
-  · simp [concVec]
+  · simp only [concVec, ↓reduceIte]
   · intro i _ hi
-    simp [concVec, hi]
+    simp only [concVec, hi, ↓reduceIte, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ i₀) h
 
@@ -6509,10 +6379,12 @@ lemma sum_sq_concVec (i₀ : ι) (s t : (ι → σ) → ℝ) :
   rw [Fintype.sum_prod_type, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [Fintype.sum_prod_type, Finset.sum_eq_single i₀]
-  · simp [concVec]
+  · simp only [Fintype.univ_bool, concVec, ↓reduceIte, mul_ite, ite_mul, Finset.mem_singleton,
+    Bool.true_eq_false, not_false_eq_true, Finset.sum_insert, Finset.sum_singleton,
+    Bool.false_eq_true]
     ring
   · intro i _ hi
-    simp [concVec, hi]
+    simp only [Fintype.univ_bool, concVec, hi, ↓reduceIte, mul_zero, Finset.sum_const_zero]
   · intro h
     exact absurd (Finset.mem_univ i₀) h
 
@@ -6522,7 +6394,7 @@ lemma concVec_ne_zero_left {i₀ : ι} {s t : (ι → σ) → ℝ} (hs : s ≠ 0
   intro h
   refine hs (funext fun x => ?_)
   have := congrFun h (x, i₀, false)
-  simpa [concVec] using this
+  simpa only [Pi.zero_apply, concVec, ↓reduceIte, Bool.false_eq_true] using this
 
 omit [DecidableEq σ] [Fintype ι] [Fintype σ] in
 lemma concVec_ne_zero_right {i₀ : ι} {s t : (ι → σ) → ℝ} (ht : t ≠ 0) :
@@ -6530,7 +6402,7 @@ lemma concVec_ne_zero_right {i₀ : ι} {s t : (ι → σ) → ℝ} (ht : t ≠ 
   intro h
   refine ht (funext fun x => ?_)
   have := congrFun h (x, i₀, true)
-  simpa [concVec] using this
+  simpa only [Pi.zero_apply, concVec, ↓reduceIte] using this
 
 /-! ## Symmetrising a two-weight certificate -/
 
@@ -6659,7 +6531,7 @@ lemma sum_hadamard {α : Type*} (S : Finset α)
     (D : Matrix (ι → σ) (ι → σ) ℝ) :
     (∑ a ∈ S, M a) ⊙ D = ∑ a ∈ S, (M a ⊙ D) := by
   ext x y
-  simp [Matrix.hadamard_apply, Matrix.sum_apply, Finset.sum_mul]
+  simp only [hadamard_apply, Matrix.sum_apply, Finset.sum_mul]
 
 lemma sum_ite_const {α : Type*} [Fintype α] (p : α → Prop) [DecidablePred p]
     (C : ℝ) :
@@ -6688,8 +6560,8 @@ lemma starMatrix_mulVec_apply (S : Finset (ι → σ)) (c : ι → σ)
   rw [Finset.sum_add_distrib, Finset.sum_ite_eq' S w fun _ => y c]
   congr 1
   by_cases hc : c = w
-  · simp [hc]
-  · simp [hc]
+  · simp only [hc, ↓reduceIte]
+  · simp only [hc, ↓reduceIte, Finset.sum_const_zero]
 
 lemma starMatrix_bilinear {S : Finset (ι → σ)} {c : ι → σ}
     (x y : (ι → σ) → ℝ) :
@@ -6701,14 +6573,16 @@ lemma starMatrix_bilinear {S : Finset (ι → σ)} {c : ι → σ}
   congr 1
   · rw [show (∑ w : ι → σ, x w * if w ∈ S then y c else 0)
         = ∑ w : ι → σ, if w ∈ S then x w * y c else 0 from
-      Finset.sum_congr rfl fun w _ => by by_cases h : w ∈ S <;> simp [h]]
+      Finset.sum_congr rfl fun w _ => by by_cases h : w ∈ S <;> simp only [h, ↓reduceIte,
+        mul_zero]]
     rw [← Finset.sum_filter, Finset.filter_mem_eq_inter, Finset.univ_inter,
       ← Finset.sum_mul]
   · rw [show (∑ w : ι → σ, x w * if c = w then ∑ z ∈ S, y z else 0)
         = ∑ w : ι → σ, if c = w then x w * ∑ z ∈ S, y z else 0 from
-      Finset.sum_congr rfl fun w _ => by by_cases h : c = w <;> simp [h]]
+      Finset.sum_congr rfl fun w _ => by by_cases h : c = w <;> simp only [h, ↓reduceIte,
+        mul_zero]]
     rw [Finset.sum_ite_eq Finset.univ c fun w => x w * ∑ z ∈ S, y z]
-    simp
+    simp only [Finset.mem_univ, ↓reduceIte]
 
 omit [DecidableEq σ] in
 /-- Splitting off the centre and the leaves from a sum over all inputs. -/
@@ -6727,48 +6601,24 @@ lemma sum_sq_ge {S : Finset (ι → σ)} {c : ι → σ} (hc : c ∉ S)
 lemma norm_starMatrix_le {S : Finset (ι → σ)} {c : ι → σ} (hc : c ∉ S) :
     ‖starMatrix S c‖ ≤ Real.sqrt (S.card : ℝ) := by
   rcases S.eq_empty_or_nonempty with rfl | hS
-  · simp [starMatrix]
+  · simp only [starMatrix, Finset.sum_empty, norm_zero, Finset.card_empty, CharP.cast_eq_zero,
+    Real.sqrt_zero, Std.le_refl]
   refine l2_opNorm_le_of_forall_dotProduct _ (Real.sqrt_nonneg _) fun x y => ?_
   rw [starMatrix_bilinear]
   have hkpos : (0:ℝ) < (S.card : ℝ) := by exact_mod_cast Finset.card_pos.mpr hS
   have hCSx : (∑ w ∈ S, x w) ^ 2 ≤ (S.card : ℝ) * ∑ w ∈ S, x w * x w := by
     have h := Finset.sum_mul_sq_le_sq_mul_sq S (fun _ => (1:ℝ)) x
-    simpa [Finset.sum_const, sq] using h
+    simpa only [sq, ge_iff_le, one_mul, one_pow, Finset.sum_const, nsmul_eq_mul, mul_one] using h
   have hCSy : (∑ z ∈ S, y z) ^ 2 ≤ (S.card : ℝ) * ∑ z ∈ S, y z * y z := by
     have h := Finset.sum_mul_sq_le_sq_mul_sq S (fun _ => (1:ℝ)) y
-    simpa [Finset.sum_const, sq] using h
+    simpa only [sq, ge_iff_le, one_mul, one_pow, Finset.sum_const, nsmul_eq_mul, mul_one] using h
   have hx := sum_sq_ge hc x
   have hy := sum_sq_ge hc y
   have h2 : (∑ w ∈ S, x w) ^ 2 + (S.card : ℝ) * (x c) ^ 2
-      ≤ (S.card : ℝ) * (x ⬝ᵥ x) := by nlinarith only [hCSx, hx, hkpos.le]
+      ≤ (S.card : ℝ) * (x ⬝ᵥ x) := by linarith only [hCSx, mul_le_mul_of_nonneg_left hx hkpos.le]
   have h3 : (S.card : ℝ) * (y c) ^ 2 + (∑ z ∈ S, y z) ^ 2
-      ≤ (S.card : ℝ) * (y ⬝ᵥ y) := by nlinarith only [hCSy, hy, hkpos.le]
-  have h1 : (S.card : ℝ) *
-        ((∑ w ∈ S, x w) * y c + x c * ∑ z ∈ S, y z) ^ 2
-      ≤ ((∑ w ∈ S, x w) ^ 2 + (S.card : ℝ) * (x c) ^ 2) *
-        ((S.card : ℝ) * (y c) ^ 2 + (∑ z ∈ S, y z) ^ 2) := by
-    nlinarith only [sq_nonneg ((∑ w ∈ S, x w) * (∑ z ∈ S, y z)
-      - (S.card : ℝ) * (x c * y c))]
-  have hprod : ((∑ w ∈ S, x w) ^ 2 + (S.card : ℝ) * (x c) ^ 2) *
-        ((S.card : ℝ) * (y c) ^ 2 + (∑ z ∈ S, y z) ^ 2)
-      ≤ ((S.card : ℝ) * (x ⬝ᵥ x)) * ((S.card : ℝ) * (y ⬝ᵥ y)) :=
-    mul_le_mul h2 h3 (by positivity)
-      (mul_nonneg hkpos.le (dotProduct_self_nonneg x))
-  have hchain : (S.card : ℝ) *
-        ((∑ w ∈ S, x w) * y c + x c * ∑ z ∈ S, y z) ^ 2
-      ≤ (S.card : ℝ) * ((S.card : ℝ) * (x ⬝ᵥ x) * (y ⬝ᵥ y)) :=
-    h1.trans (hprod.trans (le_of_eq (by ring)))
-  have hsq : ((∑ w ∈ S, x w) * y c + x c * ∑ z ∈ S, y z) ^ 2
-      ≤ (S.card : ℝ) * (x ⬝ᵥ x) * (y ⬝ᵥ y) :=
-    le_of_mul_le_mul_left hchain hkpos
-  calc |(∑ w ∈ S, x w) * y c + x c * ∑ z ∈ S, y z|
-      = Real.sqrt (((∑ w ∈ S, x w) * y c + x c * ∑ z ∈ S, y z) ^ 2) :=
-        (Real.sqrt_sq_eq_abs _).symm
-    _ ≤ Real.sqrt ((S.card : ℝ) * (x ⬝ᵥ x) * (y ⬝ᵥ y)) := Real.sqrt_le_sqrt hsq
-    _ = Real.sqrt (S.card : ℝ) * Real.sqrt (x ⬝ᵥ x) * Real.sqrt (y ⬝ᵥ y) := by
-        rw [Real.sqrt_mul
-            (mul_nonneg hkpos.le (dotProduct_self_nonneg x)),
-          Real.sqrt_mul hkpos.le]
+      ≤ (S.card : ℝ) * (y ⬝ᵥ y) := by linarith only [hCSy, mul_le_mul_of_nonneg_left hy hkpos.le]
+  exact abs_cross_le_of_weighted_sq hkpos (dotProduct_self_nonneg x) h2 h3
 
 /-- The top eigenvector of a star matrix. -/
 noncomputable def starVec (S : Finset (ι → σ)) (c : ι → σ) :
@@ -6875,8 +6725,8 @@ lemma wStarMatrix_mulVec_apply (S : Finset (ι → σ)) (c : ι → σ)
   rw [Finset.sum_ite_eq' S v fun z => w z * y c]
   congr 1
   by_cases hcv : c = v
-  · simp [hcv]
-  · simp [hcv]
+  · simp only [hcv, ↓reduceIte]
+  · simp only [hcv, ↓reduceIte, Finset.sum_const_zero]
 
 lemma wStarMatrix_bilinear {S : Finset (ι → σ)} {c : ι → σ}
     (w : (ι → σ) → ℝ) (x y : (ι → σ) → ℝ) :
@@ -6889,14 +6739,15 @@ lemma wStarMatrix_bilinear {S : Finset (ι → σ)} {c : ι → σ}
   · rw [show (∑ v : ι → σ, x v * if v ∈ S then w v * y c else 0)
         = ∑ v : ι → σ, if v ∈ S then (w v * x v) * y c else 0 from
       Finset.sum_congr rfl fun v _ => by
-        by_cases h : v ∈ S <;> simp [h]; ring]
+        by_cases h : v ∈ S <;> simp only [h, ↓reduceIte, mul_zero]; ring]
     rw [← Finset.sum_filter, Finset.filter_mem_eq_inter, Finset.univ_inter,
       ← Finset.sum_mul]
   · rw [show (∑ v : ι → σ, x v * if c = v then ∑ z ∈ S, w z * y z else 0)
         = ∑ v : ι → σ, if c = v then x v * ∑ z ∈ S, w z * y z else 0 from
-      Finset.sum_congr rfl fun v _ => by by_cases h : c = v <;> simp [h]]
+      Finset.sum_congr rfl fun v _ => by by_cases h : c = v <;> simp only [h, ↓reduceIte,
+        mul_zero]]
     rw [Finset.sum_ite_eq Finset.univ c fun v => x v * ∑ z ∈ S, w z * y z]
-    simp
+    simp only [Finset.mem_univ, ↓reduceIte]
 
 lemma norm_wStarMatrix_le {S : Finset (ι → σ)} {c : ι → σ} (hc : c ∉ S)
     (w : (ι → σ) → ℝ) :
@@ -6915,45 +6766,18 @@ lemma norm_wStarMatrix_le {S : Finset (ι → σ)} {c : ι → σ} (hc : c ∉ S
   have hCSx : (∑ z ∈ S, w z * x z) ^ 2
       ≤ starWeight S w * ∑ z ∈ S, x z * x z := by
     have h := Finset.sum_mul_sq_le_sq_mul_sq S w x
-    simpa [starWeight, sq] using h
+    simpa only [sq, starWeight, ge_iff_le] using h
   have hCSy : (∑ z ∈ S, w z * y z) ^ 2
       ≤ starWeight S w * ∑ z ∈ S, y z * y z := by
     have h := Finset.sum_mul_sq_le_sq_mul_sq S w y
-    simpa [starWeight, sq] using h
+    simpa only [sq, starWeight, ge_iff_le] using h
   have hx := sum_sq_ge hc x
   have hy := sum_sq_ge hc y
   have h2 : (∑ z ∈ S, w z * x z) ^ 2 + starWeight S w * (x c) ^ 2
-      ≤ starWeight S w * (x ⬝ᵥ x) := by nlinarith only [hCSx, hx, hWpos.le]
+      ≤ starWeight S w * (x ⬝ᵥ x) := by linarith only [hCSx, mul_le_mul_of_nonneg_left hx hWpos.le]
   have h3 : starWeight S w * (y c) ^ 2 + (∑ z ∈ S, w z * y z) ^ 2
-      ≤ starWeight S w * (y ⬝ᵥ y) := by nlinarith only [hCSy, hy, hWpos.le]
-  have h1 : starWeight S w *
-        ((∑ z ∈ S, w z * x z) * y c + x c * ∑ z ∈ S, w z * y z) ^ 2
-      ≤ ((∑ z ∈ S, w z * x z) ^ 2 + starWeight S w * (x c) ^ 2) *
-        (starWeight S w * (y c) ^ 2 + (∑ z ∈ S, w z * y z) ^ 2) := by
-    nlinarith only [sq_nonneg ((∑ z ∈ S, w z * x z) * (∑ z ∈ S, w z * y z)
-      - starWeight S w * (x c * y c))]
-  have hprod : ((∑ z ∈ S, w z * x z) ^ 2 + starWeight S w * (x c) ^ 2) *
-        (starWeight S w * (y c) ^ 2 + (∑ z ∈ S, w z * y z) ^ 2)
-      ≤ (starWeight S w * (x ⬝ᵥ x)) * (starWeight S w * (y ⬝ᵥ y)) :=
-    mul_le_mul h2 h3 (by positivity)
-      (mul_nonneg hWpos.le (dotProduct_self_nonneg x))
-  have hchain : starWeight S w *
-        ((∑ z ∈ S, w z * x z) * y c + x c * ∑ z ∈ S, w z * y z) ^ 2
-      ≤ starWeight S w * (starWeight S w * (x ⬝ᵥ x) * (y ⬝ᵥ y)) :=
-    h1.trans (hprod.trans (le_of_eq (by ring)))
-  have hsq : ((∑ z ∈ S, w z * x z) * y c + x c * ∑ z ∈ S, w z * y z) ^ 2
-      ≤ starWeight S w * (x ⬝ᵥ x) * (y ⬝ᵥ y) :=
-    le_of_mul_le_mul_left hchain hWpos
-  calc |(∑ z ∈ S, w z * x z) * y c + x c * ∑ z ∈ S, w z * y z|
-      = Real.sqrt (((∑ z ∈ S, w z * x z) * y c
-          + x c * ∑ z ∈ S, w z * y z) ^ 2) := (Real.sqrt_sq_eq_abs _).symm
-    _ ≤ Real.sqrt (starWeight S w * (x ⬝ᵥ x) * (y ⬝ᵥ y)) :=
-        Real.sqrt_le_sqrt hsq
-    _ = Real.sqrt (starWeight S w) * Real.sqrt (x ⬝ᵥ x) *
-          Real.sqrt (y ⬝ᵥ y) := by
-        rw [Real.sqrt_mul
-            (mul_nonneg hWpos.le (dotProduct_self_nonneg x)),
-          Real.sqrt_mul hWpos.le]
+      ≤ starWeight S w * (y ⬝ᵥ y) := by linarith only [hCSy, mul_le_mul_of_nonneg_left hy hWpos.le]
+  exact abs_cross_le_of_weighted_sq hWpos (dotProduct_self_nonneg x) h2 h3
 
 /-- The top eigenvector of a weighted star matrix. -/
 noncomputable def wStarVec (S : Finset (ι → σ)) (c : ι → σ)
@@ -7097,20 +6921,20 @@ lemma orN_zeroVec : orN (zeroVec : ι → Bool) = false := by
 lemma orN_unitVec (i : ι) : orN (unitVec i) = true :=
   orN_eq_true_iff.mpr fun h => by
     have := congrFun h i
-    simp at this
+    simp only [unitVec_apply, decide_true, zeroVec_apply, Bool.true_eq_false] at this
 
 omit [Fintype ι] in
 lemma unitVec_injective : Function.Injective (unitVec : ι → (ι → Bool)) := by
   intro i j h
   have := congrFun h i
-  simpa using this.symm
+  simpa only [unitVec_apply, decide_true, decide_eq_true_eq] using this.symm
 
 /-- The leaf set of the `OR` star matrix. -/
 noncomputable def unitSet : Finset (ι → Bool) := Finset.univ.image unitVec
 
 lemma mem_unitSet {z : ι → Bool} : z ∈ (unitSet : Finset (ι → Bool)) ↔
     ∃ i, unitVec i = z := by
-  simp [unitSet]
+  simp only [unitSet, Finset.mem_image, Finset.mem_univ, true_and]
 
 lemma card_unitSet : (unitSet : Finset (ι → Bool)).card = Fintype.card ι := by
   rw [unitSet, Finset.card_image_of_injective Finset.univ unitVec_injective,
@@ -7120,7 +6944,7 @@ lemma zeroVec_notMem_unitSet : (zeroVec : ι → Bool) ∉ unitSet := by
   rw [mem_unitSet]
   rintro ⟨i, hi⟩
   have := congrFun hi i
-  simp at this
+  simp only [unitVec_apply, decide_true, zeroVec_apply, Bool.true_eq_false] at this
 
 /-! ## The primal witness -/
 
@@ -7144,14 +6968,14 @@ lemma unitSet_filter (j : ι) :
   refine Finset.eq_singleton_iff_unique_mem.mpr ⟨?_, ?_⟩
   · refine Finset.mem_filter.mpr ⟨mem_unitSet.mpr ⟨j, rfl⟩, ?_⟩
     rw [zeroVec_apply, unitVec_apply]
-    simp
+    simp only [decide_true, Bool.true_eq_false, not_false_eq_true]
   · intro z hz
     obtain ⟨hzu, hzj⟩ := Finset.mem_filter.mp hz
     obtain ⟨i, rfl⟩ := mem_unitSet.mp hzu
     rw [zeroVec_apply, unitVec_apply] at hzj
     have hij : j = i := by
       by_contra hne
-      exact hzj (by simp [hne])
+      exact hzj (by simp only [hne, decide_false])
     rw [hij]
 
 lemma orN_feasible (j : ι) :
@@ -7160,14 +6984,15 @@ lemma orN_feasible (j : ι) :
     norm_pairMatrix]
   intro h
   have := congrFun h j
-  simp at this
+  simp only [unitVec_apply, decide_true, zeroVec_apply, Bool.true_eq_false] at this
 
 theorem sqrt_card_le_advPM_orN :
     Real.sqrt (Fintype.card ι : ℝ) ≤ advPM (orN : (ι → Bool) → Bool) := by
   rcases isEmpty_or_nonempty ι with hι | hι
   · have : Fintype.card ι = 0 := Fintype.card_eq_zero
     rw [this]
-    simpa using advPM_nonneg (orN : (ι → Bool) → Bool)
+    simpa only [CharP.cast_eq_zero, Real.sqrt_zero, ge_iff_le
+      ] using advPM_nonneg (orN : (ι → Bool) → Bool)
   · have hne : (unitSet : Finset (ι → Bool)).Nonempty := by
       obtain ⟨i⟩ := hι
       exact ⟨unitVec i, mem_unitSet.mpr ⟨i, rfl⟩⟩
@@ -7186,7 +7011,9 @@ lemma supportCard_pos {x : ι → Bool} (hx : x ≠ zeroVec) : 0 < supportCard x
   rw [supportCard, Finset.card_pos]
   by_contra h
   rw [Finset.not_nonempty_iff_eq_empty, Finset.filter_eq_empty_iff] at h
-  exact hx (funext fun i => by simpa using h (Finset.mem_univ i))
+  apply hx
+  funext i
+  simpa only [zeroVec_apply, Bool.not_eq_true] using h (Finset.mem_univ i)
 
 /-- `δ = n^(-1/4)`. -/
 noncomputable def orNDelta (ι : Type*) [Fintype ι] : ℝ :=
@@ -7222,7 +7049,7 @@ lemma card_mul_orNDelta_sq [Nonempty ι] :
   have hsp : (0:ℝ) < Real.sqrt (Fintype.card ι : ℝ) := Real.sqrt_pos.mpr hpos
   rw [orNDelta_sq]
   field_simp
-  linarith [hs]
+  linarith only [hs]
 
 /-- The one-dimensional dual weights for `OR_n`. -/
 noncomputable def orNDualVec (x : ι → Bool) (i : ι) : ℝ :=
@@ -7318,7 +7145,8 @@ lemma orNDual_isCostLe [Nonempty ι] :
       have : (∑ i : ι, ∑ _k : Unit,
           orNDualVec (zeroVec : ι → Bool) i * orNDualVec zeroVec i)
           = (Fintype.card ι : ℝ) * (orNDelta ι * orNDelta ι) := by
-        simp [orNDualVec, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+        simp only [Finset.univ_unique, PUnit.default_eq_unit, orNDualVec, ↓reduceIte,
+          Finset.sum_const, Finset.card_singleton, one_smul, Finset.card_univ, nsmul_eq_mul]
       rw [this, card_mul_orNDelta_sq]
     · have hpos : (0:ℝ) < (supportCard x : ℝ) := by
         exact_mod_cast supportCard_pos hx
@@ -7330,10 +7158,12 @@ lemma orNDual_isCostLe [Nonempty ι] :
         intro i
         by_cases hxi : x i = true
         · rw [ite_eq_left hxi]
-          simp [orNDualVec, hx, hxi]
+          simp only [Finset.univ_unique, PUnit.default_eq_unit, orNDualVec, hx, ↓reduceIte, hxi,
+            one_div, _root_.mul_inv_rev, Finset.sum_const, Finset.card_singleton, one_smul]
         · simp only [Bool.not_eq_true] at hxi
-          rw [ite_eq_right (by simp [hxi])]
-          simp [orNDualVec, hx, hxi]
+          rw [ite_eq_right (by simp only [hxi, Bool.false_eq_true, not_false_eq_true])]
+          simp only [Finset.univ_unique, PUnit.default_eq_unit, orNDualVec, hx, ↓reduceIte, hxi,
+            Bool.false_eq_true, mul_zero, Finset.sum_const_zero]
       rw [Finset.sum_congr rfl fun i (_ : i ∈ Finset.univ) => hstep i,
         sum_ite_const]
       have hcard : ((Finset.univ.filter fun i : ι => x i = true).card : ℝ)
@@ -7371,16 +7201,26 @@ theorem hasAdvValue_orN :
       rw [hx, hy]
     refine ⟨?_, ?_⟩
     · rw [hcard]
-      simpa using advPM_eq_zero_of_forall_eq hconst
+      simpa only [CharP.cast_eq_zero, Real.sqrt_zero] using advPM_eq_zero_of_forall_eq hconst
     · refine le_antisymm ?_ ?_
       · refine advDual_le_of_dualPair
           (K := Unit) ⟨fun _ _ _ => 0, fun _ _ _ => 0, fun x y => ?_⟩
-          (by rw [hcard]; simp) ⟨fun x => by rw [hcard]; simp, fun x => by
-            rw [hcard]; simp⟩
+          (by rw [hcard]; simp only [CharP.cast_eq_zero, Real.sqrt_zero, Std.le_refl])
+          ⟨fun x => by
+            rw [hcard]
+            simp only [Finset.univ_eq_empty, Finset.univ_unique, PUnit.default_eq_unit,
+              mul_zero, Finset.sum_const_zero, CharP.cast_eq_zero, Real.sqrt_zero, Std.le_refl],
+            fun x => by
+              rw [hcard]
+              simp only [Finset.univ_eq_empty, Finset.univ_unique, PUnit.default_eq_unit,
+                mul_zero, Finset.sum_const_zero, CharP.cast_eq_zero, Real.sqrt_zero,
+                Std.le_refl]⟩
         rw [ite_eq_left (hconst x y)]
-        exact Finset.sum_eq_zero fun i _ => by simp
+        exact Finset.sum_eq_zero fun i _ => by simp only [Finset.univ_unique,
+          PUnit.default_eq_unit, mul_zero, Finset.sum_const_zero, ite_self]
       · rw [hcard]
-        simpa using advDual_nonneg (orN : (ι → Bool) → Bool)
+        simpa only [CharP.cast_eq_zero, Real.sqrt_zero
+          ] using advDual_nonneg (orN : (ι → Bool) → Bool)
   · exact hasAdvValue_of_le sqrt_card_le_advPM_orN advDual_orN_le
 
 /-! ## The `n`-bit AND function -/
@@ -7403,7 +7243,7 @@ lemma andN_eq : (andN : (ι → Bool) → Bool) = fun x => !(orN (flipAll x)) :=
       refine h fun i => ?_
       have hi := hc i
       rw [flipAll_apply] at hi
-      simpa using hi
+      simpa only [ne_eq, Bool.not_eq_eq_eq_not, Bool.not_true, Bool.not_eq_false] using hi
     rw [decide_eq_false h, decide_eq_true hex, Bool.not_true]
 
 /-- **`ADV±(AND_n) = √n`, with a matching dual certificate.** -/
@@ -7448,9 +7288,9 @@ def wOf (c : ι → ℝ) (z : ι → Bool) : ℝ := ∑ i, if z i then c i else 
 
 lemma wOf_unitVec (c : ι → ℝ) (i : ι) : wOf c (unitVec i) = c i := by
   rw [wOf, Finset.sum_eq_single i]
-  · simp
+  · simp only [unitVec_apply, decide_true, ↓reduceIte]
   · intro j _ hj
-    simp [unitVec_apply, hj]
+    simp only [unitVec_apply, hj, decide_false, Bool.false_eq_true, ↓reduceIte]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -7494,7 +7334,7 @@ theorem norm_orWStar_hadamard (c : ι → ℝ) (j : ι) :
     norm_pairMatrix, mul_one]
   intro h
   have := congrFun h j
-  simp at this
+  simp only [unitVec_apply, decide_true, zeroVec_apply, Bool.true_eq_false] at this
 
 /-- **The weighted `OR`-composition lower bound.**  Composing `OR_k` with
 inner functions certified by witnesses `M i` gives at least
@@ -7643,7 +7483,7 @@ lemma exists_true_of_ne_zeroVec {x : ι → Bool} (hx : x ≠ zeroVec) :
   classical
   by_contra h
   push Not at h
-  exact hx (funext fun p => by simpa using h p)
+  exact hx (funext fun p => by simpa only [zeroVec_apply, ne_eq, Bool.not_eq_true] using h p)
 
 omit [DecidableEq ι] in
 lemma orWSqrtSupp_pos (hc : ∀ i, 0 < c i) {x : ι → Bool}
@@ -8154,7 +7994,8 @@ def psiVec (b : O) : Option O → ℝ :=
 lemma sum_phiVec_mul_psiVec (a b : O) :
     (∑ t : Option O, phiVec a t * psiVec b t) = if a = b then 0 else 1 := by
   rw [Fintype.sum_option]
-  have hnone : phiVec a none * psiVec b none = 1 := by simp [phiVec, psiVec]
+  have hnone : phiVec a none * psiVec b none = 1 := by simp only [phiVec, ↓reduceIte, psiVec,
+    mul_one]
   have hsome : ∀ c : O, phiVec a (some c) * psiVec b (some c)
       = if c = a then (if c = b then (-1 : ℝ) else 0) else 0 := by
     intro c
@@ -9070,7 +8911,8 @@ omit [DecidableEq A] [DecidableEq ι] [Fintype A] [Nonempty ι] in
 lemma runBefore_le {rk : ι → Fin (Fintype.card ι)} {x : ι → A} {i : ι}
     {b : WithBot A} (h : ∀ j, rk j < rk i → (x j : WithBot A) ≤ b) :
     runBefore rk x i ≤ b :=
-  Finset.sup_le fun j hj => h j (by simpa [beforeSet] using hj)
+  Finset.sup_le fun j hj => h j (by simpa only [beforeSet, Finset.mem_filter, Finset.mem_univ,
+    true_and] using hj)
 
 omit [DecidableEq A] [DecidableEq ι] [Fintype A] [Nonempty ι] in
 lemma le_runAfter (rk : ι → Fin (Fintype.card ι)) (x : ι → A) (i : ι) :
@@ -9086,7 +8928,8 @@ lemma runBefore_eq_sup_runAfter (rk : ι → Fin (Fintype.card ι)) (x : ι → 
   classical
   refine le_antisymm (Finset.sup_le fun j hj => ?_) (Finset.sup_le fun j hj => ?_)
   · exact le_trans (le_runAfter rk x j) (Finset.le_sup hj)
-  · have hj' : rk j < rk i := by simpa [beforeSet] using hj
+  · have hj' : rk j < rk i := by simpa only [beforeSet, Finset.mem_filter, Finset.mem_univ,
+    true_and] using hj
     refine sup_le (runBefore_le fun j' hj'' => ?_) (le_runBefore hj')
     exact le_runBefore (lt_trans hj'' hj')
 
@@ -9099,7 +8942,7 @@ lemma runBefore_congr {rk : ι → Fin (Fintype.card ι)} {x y : ι → A} {i : 
   classical
   rw [runBefore_eq_sup_runAfter, runBefore_eq_sup_runAfter]
   refine Finset.sup_congr rfl fun j hj => ?_
-  exact h j (by simpa [beforeSet] using hj)
+  exact h j (by simpa only [beforeSet, Finset.mem_filter, Finset.mem_univ, true_and] using hj)
 
 end Sup
 
@@ -9216,7 +9059,8 @@ def domSet (x : ι → A) (t s : Fin (Fintype.card ι)) : Finset (Order ι) :=
 lemma mem_domSet {x : ι → A} {t s : Fin (Fintype.card ι)} {e : Order ι} :
     e ∈ domSet x t s ↔ ∀ s' : Fin (Fintype.card ι), s' ≤ t → s' ≠ s →
       x (e.symm s') < x (e.symm s) := by
-  simp [domSet]
+  rw [domSet]
+  exact Finset.mem_filter.trans (and_iff_right (Finset.mem_univ e))
 
 /-- A strict dominator is unique, so the sets are pairwise disjoint. -/
 lemma domSet_disjoint (x : ι → A) (t : Fin (Fintype.card ι))
@@ -9300,12 +9144,13 @@ lemma card_domSet_mul_le (x : ι → A) (t : Fin (Fintype.card ι)) :
 omit [DecidableEq ι] in
 lemma isRecord_eq_true_iff (x : ι → A) (e : Order ι) (i : ι) :
     isRecord (⇑e) x i = true ↔ ∀ j : ι, e j < e i → x j < x i := by
-  rw [isRecord, decide_eq_true_iff, runBefore, Finset.sup_lt_iff (by simp)]
+  rw [isRecord, decide_eq_true_iff, runBefore,
+    Finset.sup_lt_iff (by simp only [WithBot.bot_lt_coe])]
   constructor
   · intro h j hj
-    exact_mod_cast h j (Finset.mem_filter.2 ⟨Finset.mem_univ _, hj⟩)
+    exact WithBot.coe_lt_coe.mp (h j (Finset.mem_filter.mpr ⟨Finset.mem_univ j, hj⟩))
   · intro h j hj
-    exact_mod_cast h j (by simpa [beforeSet] using hj)
+    exact WithBot.coe_lt_coe.mpr (h j (Finset.mem_filter.mp hj).2)
 
 /-- **The record event is exactly the top dominance set.** -/
 lemma isRecord_iff_mem_domSet (x : ι → A) (e : Order ι)
@@ -9384,8 +9229,7 @@ lemma inv_sqrt_le_two_mul_sub (t : ℕ) :
     Real.mul_self_sqrt (by positivity)
   have hbpos : 0 < Real.sqrt ((t : ℝ) + 1) := Real.sqrt_pos.mpr (by positivity)
   rw [inv_le_iff_one_le_mul₀ hbpos]
-  nlinarith [sq_nonneg (Real.sqrt ((t : ℝ) + 1) - Real.sqrt t),
-    Real.sqrt_nonneg ((t : ℝ) + 1), Real.sqrt_nonneg (t : ℝ)]
+  linarith only [ha, hb, sq_nonneg (Real.sqrt ((t : ℝ) + 1) - Real.sqrt t)]
 
 /-- `∑_{t < n} 1/√(t+1) ≤ 2√n`, by telescoping. -/
 lemma sum_inv_sqrt_le (n : ℕ) :
@@ -9399,12 +9243,38 @@ lemma sum_inv_sqrt_le (n : ℕ) :
         simp only [hcast]
         rw [← Finset.mul_sum,
           Finset.sum_range_sub fun t : ℕ => Real.sqrt ((t : ℕ) : ℝ)]
-        simp
+        simp only [CharP.cast_eq_zero, Real.sqrt_zero, sub_zero]
 
 lemma sum_inv_sqrt_fin_le (n : ℕ) :
     (∑ t : Fin n, (Real.sqrt ((t : ℕ) + 1))⁻¹) ≤ 2 * Real.sqrt n := by
   rw [Fin.sum_univ_eq_sum_range fun t : ℕ => (Real.sqrt ((t : ℝ) + 1))⁻¹]
   exact_mod_cast sum_inv_sqrt_le n
+
+/-- Averaging a per-time inverse-square-root cost gives a square-root total cost. -/
+lemma average_scan_cost_le {E : Type*} [Fintype E] [Nonempty E] {n : ℕ}
+    (a : E → Fin n → ℝ) {C : ℝ} (hC : 0 ≤ C)
+    (h : ∀ t, (∑ e, a e t) ≤ (Fintype.card E : ℝ) *
+      (C * (Real.sqrt ((t : ℕ) + 1))⁻¹)) :
+    (Fintype.card E : ℝ)⁻¹ * (∑ e, 4 * ∑ t, a e t)
+      ≤ 8 * C * Real.sqrt n := by
+  have hN : (0 : ℝ) < Fintype.card E := Nat.cast_pos.mpr Fintype.card_pos
+  have havg : (Fintype.card E : ℝ)⁻¹ * (∑ e, ∑ t, a e t)
+      ≤ C * ∑ t : Fin n, (Real.sqrt ((t : ℕ) + 1))⁻¹ := by
+    rw [Finset.sum_comm]
+    calc _ ≤ (Fintype.card E : ℝ)⁻¹ *
+          (∑ t : Fin n, (Fintype.card E : ℝ) *
+            (C * (Real.sqrt ((t : ℕ) + 1))⁻¹)) :=
+          mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun t _ => h t)
+            (inv_nonneg.mpr hN.le)
+      _ = _ := by
+        rw [← Finset.mul_sum, ← Finset.mul_sum, inv_mul_cancel_left₀ hN.ne']
+  rw [← Finset.mul_sum]
+  calc _ = 4 * ((Fintype.card E : ℝ)⁻¹ * (∑ e, ∑ t, a e t)) := by ring
+    _ ≤ 4 * (C * ∑ t : Fin n, (Real.sqrt ((t : ℕ) + 1))⁻¹) :=
+        mul_le_mul_of_nonneg_left havg (by norm_num)
+    _ ≤ 4 * (C * (2 * Real.sqrt n)) := mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_left (sum_inv_sqrt_fin_le n) hC) (by norm_num)
+    _ = 8 * C * Real.sqrt n := by ring
 
 /-! ## The weights -/
 
@@ -9500,7 +9370,10 @@ lemma sum_orders_v_le (x : ι → A) (t : Fin (Fintype.card ι)) :
             else (Real.sqrt ((t : ℕ) + 1))⁻¹) + (Real.sqrt ((t : ℕ) + 1))⁻¹) := by
     intro e
     have hnn : (0 : ℝ) ≤ (Real.sqrt ((t : ℕ) + 1))⁻¹ := by positivity
-    split_ifs <;> linarith
+    split_ifs
+    · exact le_of_eq (add_comm _ _)
+    · rw [add_zero]
+      exact le_add_of_nonneg_right hnn
   calc (∑ e : Order ι, ((Real.sqrt ((t : ℕ) + 1))⁻¹
         + if isRecord (⇑e) x (e.symm t) then Real.sqrt ((t : ℕ) + 1) else 0))
       ≤ ∑ e : Order ι, ((if isRecord (⇑e) x (e.symm t) then Real.sqrt ((t : ℕ) + 1)
@@ -9536,8 +9409,6 @@ theorem exists_maxMap_dual_isCostLe (m : σ → A) :
       P.IsCostLe (24 * Real.sqrt (Fintype.card ι)) := by
   classical
   have : Nonempty (Order ι) := ⟨Fintype.equivFin ι⟩
-  set N : ℝ := (Fintype.card (Order ι) : ℝ) with hNdef
-  have hNpos : (0 : ℝ) < N := by rw [hNdef, Nat.cast_pos]; exact Fintype.card_pos
   set P : Order ι → DualPair (ScanDim ι A (WithBot A))
       (fun x : ι → σ => maxFun fun j => m (x j)) :=
     fun e => (maxScanMap m (⇑e) e.injective).dual (scanWeight e) (scanWeight_pos e)
@@ -9560,38 +9431,15 @@ theorem exists_maxMap_dual_isCostLe (m : σ → A) :
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Equiv.symm_apply_apply]
       exact scanWeight_inv e (fun j => m (x j)) i
-    have hstep : (∑ e : Order ι, ∑ i : ι, ∑ k : ScanDim ι A (WithBot A),
-        (P e).u x i k * (P e).u x i k) ≤ N * (24 * Real.sqrt (Fintype.card ι)) := by
-      calc (∑ e : Order ι, ∑ i : ι, ∑ k : ScanDim ι A (WithBot A),
-            (P e).u x i k * (P e).u x i k)
-          = ∑ e : Order ι, 4 * ∑ t : Fin (Fintype.card ι),
-              (if isRecord (⇑e) (fun j => m (x j)) (e.symm t) then
-                  Real.sqrt ((t : ℕ) + 1)
-                else (Real.sqrt ((t : ℕ) + 1))⁻¹) :=
-            Finset.sum_congr rfl fun e _ => hmass e
-        _ = 4 * ∑ t : Fin (Fintype.card ι), ∑ e : Order ι,
-              (if isRecord (⇑e) (fun j => m (x j)) (e.symm t) then
-                  Real.sqrt ((t : ℕ) + 1)
-                else (Real.sqrt ((t : ℕ) + 1))⁻¹) := by
-            rw [← Finset.mul_sum, Finset.sum_comm]
-        _ ≤ 4 * ∑ t : Fin (Fintype.card ι), N * (2 * (Real.sqrt ((t : ℕ) + 1))⁻¹) := by
-            gcongr with t
-            exact sum_orders_u_le (fun j => m (x j)) t
-        _ = 4 * (N * 2 * ∑ t : Fin (Fintype.card ι), (Real.sqrt ((t : ℕ) + 1))⁻¹) := by
-            congr 1
-            rw [Finset.mul_sum]
-            exact Finset.sum_congr rfl fun t _ => by ring
-        _ ≤ 4 * (N * 2 * (2 * Real.sqrt (Fintype.card ι))) :=
-            mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left
-              (sum_inv_sqrt_fin_le (Fintype.card ι)) (by positivity)) (by norm_num)
-        _ ≤ N * (24 * Real.sqrt (Fintype.card ι)) := by
-            have : (0:ℝ) ≤ N * Real.sqrt (Fintype.card ι) := by positivity
-            nlinarith [this]
-    calc N⁻¹ * (∑ e : Order ι, ∑ i : ι, ∑ k : ScanDim ι A (WithBot A),
-          (P e).u x i k * (P e).u x i k)
-        ≤ N⁻¹ * (N * (24 * Real.sqrt (Fintype.card ι))) := by
-          exact mul_le_mul_of_nonneg_left hstep (by positivity)
-      _ = 24 * Real.sqrt (Fintype.card ι) := by field_simp
+    have hbound := average_scan_cost_le (E := Order ι)
+      (fun (e : Order ι) (t : Fin (Fintype.card ι)) =>
+        if isRecord (⇑e) (fun j => m (x j)) (e.symm t) then
+          Real.sqrt ((t : ℕ) + 1) else (Real.sqrt ((t : ℕ) + 1))⁻¹)
+      (C := 2) (by norm_num) (sum_orders_u_le (fun j => m (x j)))
+    have hconstant : 8 * (2 : ℝ) * Real.sqrt (Fintype.card ι)
+        ≤ 24 * Real.sqrt (Fintype.card ι) :=
+      mul_le_mul_of_nonneg_right (by norm_num) (Real.sqrt_nonneg _)
+    simpa only [hmass] using hbound.trans hconstant
   · -- the `v` side
     have hmass : ∀ e : Order ι,
         (∑ i : ι, ∑ k : ScanDim ι A (WithBot A), (P e).v y i k * (P e).v y i k)
@@ -9608,36 +9456,14 @@ theorem exists_maxMap_dual_isCostLe (m : σ → A) :
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Equiv.symm_apply_apply]
       exact scanWeight_v e (fun j => m (y j)) i
-    have hstep : (∑ e : Order ι, ∑ i : ι, ∑ k : ScanDim ι A (WithBot A),
-        (P e).v y i k * (P e).v y i k) ≤ N * (24 * Real.sqrt (Fintype.card ι)) := by
-      calc (∑ e : Order ι, ∑ i : ι, ∑ k : ScanDim ι A (WithBot A),
-            (P e).v y i k * (P e).v y i k)
-          = ∑ e : Order ι, 4 * ∑ t : Fin (Fintype.card ι),
-              ((Real.sqrt ((t : ℕ) + 1))⁻¹
-                + if isRecord (⇑e) (fun j => m (y j)) (e.symm t) then
-                    Real.sqrt ((t : ℕ) + 1) else 0) :=
-            Finset.sum_congr rfl fun e _ => hmass e
-        _ = 4 * ∑ t : Fin (Fintype.card ι), ∑ e : Order ι,
-              ((Real.sqrt ((t : ℕ) + 1))⁻¹
-                + if isRecord (⇑e) (fun j => m (y j)) (e.symm t) then
-                    Real.sqrt ((t : ℕ) + 1) else 0) := by
-            rw [← Finset.mul_sum, Finset.sum_comm]
-        _ ≤ 4 * ∑ t : Fin (Fintype.card ι), N * (3 * (Real.sqrt ((t : ℕ) + 1))⁻¹) := by
-            gcongr with t
-            exact sum_orders_v_le (fun j => m (y j)) t
-        _ = 4 * (N * 3 * ∑ t : Fin (Fintype.card ι), (Real.sqrt ((t : ℕ) + 1))⁻¹) := by
-            congr 1
-            rw [Finset.mul_sum]
-            exact Finset.sum_congr rfl fun t _ => by ring
-        _ ≤ 4 * (N * 3 * (2 * Real.sqrt (Fintype.card ι))) :=
-            mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left
-              (sum_inv_sqrt_fin_le (Fintype.card ι)) (by positivity)) (by norm_num)
-        _ = N * (24 * Real.sqrt (Fintype.card ι)) := by ring
-    calc N⁻¹ * (∑ e : Order ι, ∑ i : ι, ∑ k : ScanDim ι A (WithBot A),
-          (P e).v y i k * (P e).v y i k)
-        ≤ N⁻¹ * (N * (24 * Real.sqrt (Fintype.card ι))) := by
-          exact mul_le_mul_of_nonneg_left hstep (by positivity)
-      _ = 24 * Real.sqrt (Fintype.card ι) := by field_simp
+    have hbound := average_scan_cost_le (E := Order ι)
+      (fun (e : Order ι) (t : Fin (Fintype.card ι)) =>
+        (Real.sqrt ((t : ℕ) + 1))⁻¹ +
+          if isRecord (⇑e) (fun j => m (y j)) (e.symm t) then
+            Real.sqrt ((t : ℕ) + 1) else 0)
+      (C := 3) (by norm_num) (sum_orders_v_le (fun j => m (y j)))
+    simpa only [hmass, show (8 : ℝ) * 3 = 24 by norm_num] using hbound
+
 
 /-- The maximum of the input itself: the value map is the identity. -/
 theorem exists_maxFun_dual_isCostLe :
@@ -9773,7 +9599,7 @@ omit [DecidableEq ι] [Fintype σ] in
 lemma DualPair.isCostLe_of_isWeightedCostLe_one {K : Type} [Fintype K]
     {P : DualPair K f} {V : ℝ} (h : P.IsWeightedCostLe (fun _ => 1) V) :
     P.IsCostLe V :=
-  ⟨fun x => by simpa using h.1 x, fun x => by simpa using h.2 x⟩
+  ⟨fun x => by simpa only [one_mul] using h.1 x, fun x => by simpa only [one_mul] using h.2 x⟩
 
 /-! ## Transport -/
 
@@ -10097,7 +9923,8 @@ theorem HasDual.postcomp {V O' : Type} [DecidableEq V] [DecidableEq O']
   have hcomb := HasDual.combine' (ι := ι) (σ := σ) (Pi := Unit) (V := V)
     (O' := O') (fun z : Unit → V => H (z ())) (g := fun _ => f)
     (c := fun _ => c) fun _ => h
-  simpa using hcomb
+  simpa only [Finset.univ_unique, PUnit.default_eq_unit, Finset.sum_const, Finset.card_singleton,
+    one_smul] using hcomb
 
 omit [DecidableEq ι] [Fintype σ] in
 /-- **A joint may be collapsed onto anything it determines**, within the same
@@ -10146,7 +9973,7 @@ theorem hasDual_ofCoord (i₀ : ι) (m : σ → O) [Finite σ] :
     (fun z : Unit → σ => m (z ()))).pullback he
   have h2 : HasDual (fun x : ι → σ => m (x i₀)) (2 * (Fintype.card Unit : ℝ)) :=
     h.ofEq fun _ => rfl
-  simpa using h2
+  simpa only [Fintype.card_unique, Nat.cast_one, mul_one] using h2
 
 /-- **A finite supremum, as a maximum over a nonempty index.**  Padding the index
 set with a `none` carrying `⊥` makes an empty supremum legal, so no nonemptiness
@@ -10329,7 +10156,8 @@ def const (read : X → ι → σ) (f : X → O) (hf : ∀ x y, f x = f y) :
 omit [DecidableEq X] [DecidableEq ι] in
 lemma const_isCostLe {read : X → ι → σ} {f : X → O} (hf : ∀ x y, f x = f y) :
     (const read f hf).IsCostLe 0 := by
-  constructor <;> intro x <;> simp [const]
+  constructor <;> intro x <;> simp only [Finset.univ_eq_empty, const, mul_zero,
+    Finset.sum_const_zero, Std.le_refl]
 
 end DualPairOn
 
