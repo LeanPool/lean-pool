@@ -7,6 +7,7 @@ module
 
 public import LeanPool.PLAcceleratedNesterovLean.MorseBott.Defs
 import Mathlib.Analysis.Calculus.ContDiff.Comp
+import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.LocalExtr.Basic
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.InnerProductSpace.Dual

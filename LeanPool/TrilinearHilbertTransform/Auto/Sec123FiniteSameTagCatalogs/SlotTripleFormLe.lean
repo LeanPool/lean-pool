@@ -399,9 +399,9 @@ theorem slotTriple_form_le {κ : LocalKernelClass} {a₀ r : ℝ} (hr : 0 < r) {
   have hGgm : Measurable Gg := hGm.indicator hIm
   have hGam : Measurable Ga := hFam.indicator hIm
   have hGbm : Measurable Gb := hFbm.indicator hIm
-  have hGg2 : MemLp Gg 2 := (memLp_indicator_iff_restrict hIm).mpr hG2
-  have hGa2 : MemLp Ga 2 := (memLp_indicator_iff_restrict hIm).mpr hFa2
-  have hGb2 : MemLp Gb 2 := (memLp_indicator_iff_restrict hIm).mpr hFb2
+  have hGg2 : MemLp Gg 2 := (memLp_indicator_iff_restrict hIm.nullMeasurableSet).mpr hG2
+  have hGa2 : MemLp Ga 2 := (memLp_indicator_iff_restrict hIm.nullMeasurableSet).mpr hFa2
+  have hGb2 : MemLp Gb 2 := (memLp_indicator_iff_restrict hIm.nullMeasurableSet).mpr hFb2
   have hGg1 : Integrable Gg := (integrable_indicator_iff hIm).mpr (hG2.integrable one_le_two)
   have hGa1 : Integrable Ga := (integrable_indicator_iff hIm).mpr (hFa2.integrable one_le_two)
   have hGb1 : Integrable Gb := (integrable_indicator_iff hIm).mpr (hFb2.integrable one_le_two)
@@ -1900,8 +1900,8 @@ theorem kernelTriple_integrable {κ : LocalKernelClass} {a₀ r : ℝ} (hr : 0 <
   have hGgm : Measurable Gg := hGm.indicator hIm
   have hGam : Measurable Ga := hFam.indicator hIm
   have hGbm : Measurable Gb := hFbm.indicator hIm
-  have hGa2 : MemLp Ga 2 := (memLp_indicator_iff_restrict hIm).mpr hFa2
-  have hGb2 : MemLp Gb 2 := (memLp_indicator_iff_restrict hIm).mpr hFb2
+  have hGa2 : MemLp Ga 2 := (memLp_indicator_iff_restrict hIm.nullMeasurableSet).mpr hFa2
+  have hGb2 : MemLp Gb 2 := (memLp_indicator_iff_restrict hIm.nullMeasurableSet).mpr hFb2
   have hGg1 : Integrable Gg := (integrable_indicator_iff hIm).mpr (hG2.integrable one_le_two)
   set! ar : ℝ := ((a : ℕ) : ℝ) with har
   set! br : ℝ := ((b : ℕ) : ℝ) with hbr

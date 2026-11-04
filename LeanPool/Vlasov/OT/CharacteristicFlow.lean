@@ -8,6 +8,7 @@ module
 public import LeanPool.Vlasov.OT.CharacteristicConstruction
 import all LeanPool.Vlasov.OT.CharacteristicConstruction
 import Mathlib.Algebra.Order.Field.GeomSum
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.ParametricIntegral
 
 /-!

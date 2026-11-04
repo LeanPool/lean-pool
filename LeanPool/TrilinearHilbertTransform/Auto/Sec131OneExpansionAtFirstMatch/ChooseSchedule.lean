@@ -1322,7 +1322,7 @@ theorem augMode_memLp {J : Set ℝ} (hJ : MeasurableSet J) (hJf : volume J ≠ �
     (hψ : Measurable ψ) (hψb : ∀ y, ‖ψ y‖ ≤ 1) (ε : ℝ) (m : V) :
     MemLp (augMode J ψ ε m) 2 volume := by
   have : IsFiniteMeasure (volume.restrict J) := isFiniteMeasure_restrict.mpr hJf
-  refine (memLp_indicator_iff_restrict hJ).mpr ?_
+  refine (memLp_indicator_iff_restrict hJ.nullMeasurableSet).mpr ?_
   refine MemLp.of_bound (((hψ.smul_const _).add measurable_const).aestronglyMeasurable)
     (1 + Real.sqrt ε) (Filter.Eventually.of_forall fun y => ?_)
   refine (norm_add_le _ _).trans (add_le_add ?_ ?_)

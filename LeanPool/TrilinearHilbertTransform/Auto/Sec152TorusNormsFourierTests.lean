@@ -10,6 +10,7 @@ module
 Mathlib interfaces have been updated; original authorship is retained above. -/
 
 public import LeanPool.TrilinearHilbertTransform.Auto.Sec151ExactCommonHeightSelection
+public import Mathlib.Analysis.PSeries
 public import Mathlib.NumberTheory.ZetaValues
 
 /-!

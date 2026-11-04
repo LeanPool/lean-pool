@@ -10,11 +10,11 @@ module
 Mathlib interfaces have been updated; original authorship is retained above. -/
 
 public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Algebra.Ring.IsFormallyReal
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
-public import Mathlib.Data.Int.Star
 public import Mathlib.Tactic.Positivity
 
 /-!

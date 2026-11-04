@@ -718,7 +718,6 @@ private theorem merge_step_glue [Category.{v} A] [MonoidalCategory A]
           ((α_ P U M).inv ▷ W) ≫ (c' ▷ W) ≫ (E ▷ W) := by
         rw [hih, MonoidalCategory.comp_whiskerRight,
           MonoidalCategory.comp_whiskerRight]
-        try simp only [Category.assoc]
     _ = ((P ◁ (α_ U M W).inv) ≫ (α_ P (U ⊗ M) W).inv ≫
           ((α_ P U M).inv ▷ W)) ≫ (c' ▷ W) ≫ (E ▷ W) := by
         simp only [Category.assoc]

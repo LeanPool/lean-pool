@@ -7,6 +7,7 @@ module
 
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.KyFan
 public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.UnitarilyInvariantSeminorm
+public import Mathlib.Analysis.Matrix.Hermitian
 
 
 /-!

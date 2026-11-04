@@ -20,6 +20,7 @@ public import Mathlib.Analysis.InnerProductSpace.ProdL2
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Mathlib.Analysis.Normed.Module.Dual
 public import Mathlib.LinearAlgebra.BilinearForm.DualLattice
+public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.LinearAlgebra.Unimodular
 public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.RingTheory.Etale.Weakly

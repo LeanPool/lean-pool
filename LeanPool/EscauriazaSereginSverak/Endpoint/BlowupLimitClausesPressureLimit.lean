@@ -105,7 +105,7 @@ private theorem blowupLimitClausesPressure_velocity_Lthree_of_slice_bounds
         hMᵤ.ne)).ne
   have hres : MemLp vm 3 (volume.restrict ((Set.univ : Set Vec3) ×ˢ J)) :=
     memLp_iff.2 (hbound.trans_lt hfin)
-  exact ⟨hvmSlice, ((memLp_indicator_iff_restrict hSm).2 hres).ae_eq hind.symm⟩
+  exact ⟨hvmSlice, ((memLp_indicator_iff_restrict hSm.nullMeasurableSet).2 hres).ae_eq hind.symm⟩
 
 /-- The pressure-limit step of `prop:blowup-limit`, clause (c), for the
 assembled whole-space pressure of the limit: the rescaled fixed Riesz

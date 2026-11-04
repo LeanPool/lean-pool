@@ -7,6 +7,7 @@ Authors: Robert Kirkby
 module
 public import LeanPool.AiyagariEquilibrium.Models.IncomeFluctuation
 public import LeanPool.AiyagariEquilibrium.Analysis.RelativeRiskAversion
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 /-!
 # CRRA utility, and where it fits

@@ -13,7 +13,9 @@ import LeanPool.IwaniecLinearSieve.Vendor.PrimeNumberTheoremAnd.Auxiliary
 import LeanPool.IwaniecLinearSieve.Vendor.PrimeNumberTheoremAnd.EulerMaclaurin
 import LeanPool.MooreBound.PrimeNumberTheoremAnd.Fourier
 import LeanPool.MooreBound.PrimeNumberTheoremAnd.Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.PSeriesComplex
 import Mathlib.MeasureTheory.Function.Floor
+import Mathlib.MeasureTheory.Integral.Asymptotics
 import Mathlib.MeasureTheory.Order.Group.Lattice
 import Mathlib.NumberTheory.Harmonic.Bounds
 import Mathlib.NumberTheory.LSeries.Nonvanishing

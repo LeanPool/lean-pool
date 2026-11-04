@@ -408,7 +408,7 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zero_add, markX, ite_self, add_zero, contribForm, heightLB, one_ne_zero,
       tailContribution_same, hH3, lbCoeff, add_left_inj, Fin.mk_one, headContribution_same,
       Fin.reduceFinMk, hT3, tsub_pos_iff_lt, hH2, hT2]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, ↓reduceIte, not_le, tsub_lt_self_iff, zero_le,
     add_zero, Int.reduceAdd, left_eq_add, zero_add])
@@ -551,7 +551,7 @@ theorem rbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zero_add, markX, ite_self, add_zero, contribForm, heightRB, tailContribution_same, hH3,
       headContribution_same, rbCoeff, Fin.mk_one, one_ne_zero, Fin.reduceFinMk, hT3, hH2, hT2,
       add_left_inj]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, ↓reduceIte, not_le, tsub_lt_self_iff, zero_le,
     add_zero, not_lt, nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false,

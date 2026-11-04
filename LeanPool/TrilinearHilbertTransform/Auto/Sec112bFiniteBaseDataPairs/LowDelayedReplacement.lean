@@ -833,7 +833,7 @@ theorem norm_privateColumnValue_le_two {sc : V → ℝ → ℂ} {wt : V → ℝ}
 theorem ColOK.memLp {s : Set ℝ} {sc : V → ℝ → ℂ} {wt : V → ℝ} {v : V} (h : ColOK s sc wt v) :
     MemLp (s.indicator (privateColumnValue sc wt v)) 2 volume := by
   obtain ⟨hs, hsv, hm, hb, hw0, hw1⟩ := h
-  refine (memLp_indicator_iff_restrict hs).mpr ?_
+  refine (memLp_indicator_iff_restrict hs.nullMeasurableSet).mpr ?_
   have : IsFiniteMeasure (volume.restrict s) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact hsv⟩
   exact MemLp.of_bound (privateColumnValue_measurable sc wt v hm).aestronglyMeasurable 2
@@ -1460,7 +1460,7 @@ namespace AccSetup
 variable {S : AccSetup}
 
 theorem Hyp.memLp (h : S.Hyp) : MemLp ((S.cell S.J).indicator S.f) 2 volume := by
-  refine (memLp_indicator_iff_restrict (dyadicGridCell_measurable _ _ _)).mpr ?_
+  refine (memLp_indicator_iff_restrict (dyadicGridCell_measurable _ _ _).nullMeasurableSet).mpr ?_
   exact memLp_Ico_of_normalized (dyadicGridLength_pos S.G S.J.1)
     (ne_top_of_le_ne_top ENNReal.one_ne_top h.f_norm_root)
 

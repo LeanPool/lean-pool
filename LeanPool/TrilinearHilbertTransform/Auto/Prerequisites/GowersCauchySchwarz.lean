@@ -9,10 +9,10 @@ module
 7b4209609e6a7fb9d9935973ee8541495f943660. Imports, names, proof organization and
 Mathlib interfaces have been updated; original authorship is retained above. -/
 
+public import Mathlib.Algebra.Order.Star.Int
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.Analysis.Fourier.AddCircle
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-public import Mathlib.Data.Int.Star
-public import Mathlib.Data.Rat.Star
 public import Mathlib.MeasureTheory.Integral.Pi
 public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.Topology.Instances.ZMod

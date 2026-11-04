@@ -11,6 +11,7 @@ Mathlib interfaces have been updated; original authorship is retained above. -/
 
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+public import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
 public import Mathlib.MeasureTheory.Integral.MeanInequalities
 public import Mathlib.MeasureTheory.Measure.Prod
 public import Mathlib.Order.CompletePartialOrder

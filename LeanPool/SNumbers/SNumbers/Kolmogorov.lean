@@ -358,7 +358,7 @@ private lemma one_le_norm_mkQL_of_proper {X : Type u} [NormedAddCommGroup X]
     [NormedSpace 𝕜 X] {V : Submodule 𝕜 X} [FiniteDimensional 𝕜 V] (hV_ne_top : V ≠ ⊤) :
     (1 : ℝ) ≤ ‖V.mkQL‖ := by
   have hV_closed : IsClosed (V : Set X) := V.closed_of_finiteDimensional
-  have hV_exists : ∃ x : X, x ∉ V := SetLike.exists_not_mem_of_ne_top V hV_ne_top
+  have hV_exists : ∃ x : X, x ∉ V := SetLike.exists_notMem_of_ne_top V hV_ne_top
   -- Limit `r → 1`: enough to show `1 ≤ ‖V.mkQL‖ + ε` for every `ε > 0`. The
   -- `ε ≥ 1` case is trivial (RHS ≥ 0 + 1); for `ε ∈ (0, 1)` we run Riesz at
   -- level `1 − ε`.

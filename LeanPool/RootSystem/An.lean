@@ -257,7 +257,8 @@ theorem pairing_eq_two_iff_eq {n : ℕ} [NeZero n] (J K : SignedInterval n) :
     obtain ⟨Ki, Kj, Kh, Kε⟩ := K
     cases Jε <;> cases Kε <;> simp +decide [SignedInterval.sign] at h ⊢
     all_goals
-      split_ifs at h <;> simp_all +decide <;> omega
+      split_ifs at h <;> simp_all +decide
+    all_goals omega
   · intro h
     subst K
     exact pairing_self J

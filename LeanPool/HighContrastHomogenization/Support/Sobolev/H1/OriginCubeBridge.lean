@@ -317,7 +317,7 @@ noncomputable def coordOnOpenCubeSetOriginCube {d : ℕ} {n : ℤ} (i : Fin d) :
         (U := U)
         (i := j)
         (f := fun x : Vec d => x i)
-        (hf := contDiff_apply (𝕜 := ℝ) (n := (1 : ℕ∞)) (E := ℝ) i)) using 2
+        (hf := contDiff_apply (𝕜 := ℝ) (n := (1 : ℕ∞)) (fun _ => ℝ) i)) using 2
     rename_i x
     let π : Vec d →L[ℝ] ℝ := ContinuousLinearMap.proj i
     have hproj :

@@ -107,7 +107,7 @@ theorem fitColumn_memLp {V : Type*} [Fintype V] [DecidableEq V] {s : Set ℝ} {�
     (h : FitAdmissible s φ) (v : V) :
     MemLp (s.indicator (fitColumnValue φ v)) 2 volume := by
   obtain ⟨hs, hsv, hφm, hφ⟩ := h
-  refine (memLp_indicator_iff_restrict hs).mpr ?_
+  refine (memLp_indicator_iff_restrict hs.nullMeasurableSet).mpr ?_
   have : IsFiniteMeasure (volume.restrict s) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact hsv⟩
   exact MemLp.of_bound (measurable_fitColumnValue hφm v).aestronglyMeasurable 2
@@ -1235,7 +1235,7 @@ theorem tree_cell_subset {c : ℤ × ℤ} (hc : c ∈ dyadicFiniteTree S.G S.J S
   ((dyadicFiniteTree_mem_iff S.G S.J c S.N).mp hc).1
 
 theorem Hyp.memLp (h : S.Hyp) : MemLp ((S.cell S.J).indicator S.f) 2 volume := by
-  refine (memLp_indicator_iff_restrict (dyadicGridCell_measurable _ _ _)).mpr ?_
+  refine (memLp_indicator_iff_restrict (dyadicGridCell_measurable _ _ _).nullMeasurableSet).mpr ?_
   exact memLp_Ico_of_normalized (dyadicGridLength_pos S.G S.J.1)
     (ne_top_of_le_ne_top ENNReal.one_ne_top
       h.f_norm_root)
@@ -3609,7 +3609,7 @@ noncomputable def family (R : ℤ × ℤ) (hR : R ∈ dyadicFiniteTree G J N) :
 theorem column_memLp (c : ℤ × ℤ) (v : V) :
     MemLp ((dyadicGridCell G c.1 c.2).indicator (privateColumnValue (P.scalarAt c) P.weight v))
       2 volume := by
-  refine (memLp_indicator_iff_restrict (dyadicGridCell_measurable G c.1 c.2)).mpr
+  refine (memLp_indicator_iff_restrict (dyadicGridCell_measurable G c.1 c.2).nullMeasurableSet).mpr
     ?_
   have := cell_isFiniteMeasure G c.1 c.2
   refine MemLp.of_bound (privateColumnValue_measurable _ _ v (P.scalar_meas c
@@ -3699,7 +3699,7 @@ theorem ColumnDepthFamily.delayed_admissible (Ψ : ColumnDepthFamily V)
   have hroll : IsAdmissibleOpponent Ψ.D.grid Ψ.D.root (f : ℝ → ℂ) roll K₀ := by
     refine isAdmissibleOpponent_squareEnergy _ _ roll (fun I => ?_) fun S hS => ?_
     · exact (memLp_indicator_iff_restrict
-        (dyadicGridCell_measurable _ _ _)).mpr (hrm I)
+        (dyadicGridCell_measurable _ _ _).nullMeasurableSet).mpr (hrm I)
     · have hr := Ψ.rolling_energy Z K₀ S hS
       rw [integral_physical_sq] at hr
       refine le_trans (Finset.sum_le_sum fun I _ => ?_) hr

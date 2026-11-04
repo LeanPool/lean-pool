@@ -64,7 +64,7 @@ theorem deterministicTimeEmbedding_eq_tensor (g : Lp ℝ 2 nonnegativeLebesgueMe
   rw [h3]
   simp only [Function.comp_apply, Function.const_apply, mul_one]
 
-omit [CompleteSpace W] [BorelSpace W] in
+omit [CompleteSpace W] [BorelSpace W] [SecondCountableTopology W] in
 /-- The predictable projection fixes deterministic integrands. -/
 theorem predictableProjection_deterministic (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›)
     (g : Lp ℝ 2 nonnegativeLebesgueMeasure) :

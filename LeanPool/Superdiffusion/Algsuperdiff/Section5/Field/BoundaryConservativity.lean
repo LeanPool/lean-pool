@@ -371,7 +371,7 @@ private theorem boundaryConservativity_estimate1 :
       _ = _ := by ring
   convert mul_le_mul_of_nonneg_right
     (mul_le_mul_of_nonneg_left hmain hleft0) hrpow3 using 1
-  all_goals first | rfl | ring
+  all_goals ring
 
 /-- The analytic boundary defect for the stream coefficient tends pointwise
 to zero along the cubic exhaustion. -/

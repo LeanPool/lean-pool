@@ -3118,7 +3118,7 @@ theorem gBall_cell_rep (l : Fin 4) (s : List (CatCol bf.Vtx)) (mb : bf.MainBudge
         (mainScalar fp.Mc (bf.origCols l) s) (mainWeight fp.Mc (bf.origCols l)) Φ)) 2 volume := by
       intro Φ hΦ
       have h := (bf.mainLabel_memLp l s a (fp.brank j)
-        (mainLabelsM_subset _ _ _ _ _ hΦ)).indicator hmU
+        (mainLabelsM_subset _ _ _ _ _ hΦ)).indicator hmU.nullMeasurableSet
       rwa [Set.indicator_indicator, Set.inter_eq_left.mpr hUa] at h
     have hproj : ∀ p : Fin fp.P, colRelabel (bf.rv fp.Mc s) (columnL2Restriction cU hmU
         (((bf.mainBase fp.Mc s mb).withMask (fp.ballMaskT l s mb G j p)).proj u z)) ∈ M := by
@@ -3304,7 +3304,7 @@ theorem frozen_endpoint {Md : Type} [Fintype Md] (l : Fin 4) (s : List (CatCol b
         (mainScalar fp.Mc (bf.origCols l) s) (mainWeight fp.Mc (bf.origCols l)) Φ)) 2 volume := by
       intro Φ hΦ
       have h := (bf.mainLabel_memLp l s a (fp.brank j)
-        (mainLabelsM_subset _ _ _ _ _ hΦ)).indicator hmU
+        (mainLabelsM_subset _ _ _ _ _ hΦ)).indicator hmU.nullMeasurableSet
       rwa [Set.indicator_indicator, Set.inter_eq_left.mpr hUa] at h
     obtain ⟨cS, hcS⟩ : ∃ cS : bf.Lab ⊕ Fin fp.Mc → ℂ,
         cS = fun Φ => if Φ ∈ S then c Φ else 0 := ⟨_, rfl⟩

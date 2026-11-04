@@ -8,7 +8,7 @@ module
 public import LeanPool.MisereGames.Misere.PFree
 public import LeanPool.MisereGames.Misere.TippingPoints
 import Mathlib.Algebra.Ring.Int.Defs
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 
 /-!
 Misere combinatorial games.

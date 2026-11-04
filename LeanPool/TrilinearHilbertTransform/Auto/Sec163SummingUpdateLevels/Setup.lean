@@ -3648,7 +3648,7 @@ theorem pv_form_bound {ω φ : ℝ → ℝ} (hω : ContDiff ℝ (⊤ : ℕ∞) �
       intro i
       have : IsFiniteMeasure (volume.restrict (Set.Icc (-S n) (S n))) :=
         isFiniteMeasure_restrict.mpr (by simp)
-      exact (memLp_indicator_iff_restrict measurableSet_Icc).mpr
+      exact (memLp_indicator_iff_restrict measurableSet_Icc.nullMeasurableSet).mpr
         (MemLp.of_bound (hfm i).aestronglyMeasurable Mf
           (Filter.Eventually.of_forall (hfb i)))
     have hftc : ∀ i, HasCompactSupport (ft n i) := fun i =>

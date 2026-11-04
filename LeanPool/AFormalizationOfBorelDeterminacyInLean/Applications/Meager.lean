@@ -186,7 +186,7 @@ lemma residual_le_openDense : residual X ≤ openDenseFilter := by
   unfold openDenseFilter
   rw [openDenseFilterBasis.hasBasis.ge_iff]
   exact fun _ h ↦ residual_of_dense_open h.1 h.2
-lemma isMeagre_iff_eq_countable_union_isNowhereDense {s : Set X} :
+lemma Descriptive.isMeagre_iff_eq_countable_union_isNowhereDense {s : Set X} :
     IsMeagre s ↔ ∃ S : Set (Set X), (∀ t ∈ S, IsNowhereDense t) ∧ S.Countable ∧ s = ⋃₀ S := by
   rw [isMeagre_iff_countable_union_isNowhereDense]; constructor
   · intro ⟨S, h1, h2, h3⟩
@@ -199,7 +199,7 @@ lemma isMeagre_iff_eq_countable_union_isNowhereDense {s : Set X} :
     exact ⟨S, h1, h2, subset_rfl⟩
 lemma IsMeagre.eq_countable_union_isNowhereDense (h : IsMeagre A) :
   ∃ f : ℕ → {t : Set X | IsNowhereDense t}, A = ⋃ n, f n := by
-  rw [isMeagre_iff_eq_countable_union_isNowhereDense] at h
+  rw [Descriptive.isMeagre_iff_eq_countable_union_isNowhereDense] at h
   obtain ⟨S, h1, h2, rfl⟩ := h
   by_cases hS : S.Nonempty
   · rw [Set.countable_iff_exists_surjective hS] at h2
@@ -215,7 +215,7 @@ lemma IsMeagre.interior [BaireSpace X] {U : Set X} (hU : IsMeagre U) : interior 
   simpa only [Set.compl_empty, ← closure_compl, ← dense_iff_closure_eq]
     using dense_of_mem_residual hU
 lemma isMeagre_image (hf : IsInducing f) (h : IsMeagre A) : IsMeagre (f '' A) := by
-  rw [isMeagre_iff_eq_countable_union_isNowhereDense] at *
+  rw [Descriptive.isMeagre_iff_eq_countable_union_isNowhereDense] at *
   obtain ⟨S, h1, h2, h3⟩ := h
   use (fun s ↦ f '' s) '' S
   constructor

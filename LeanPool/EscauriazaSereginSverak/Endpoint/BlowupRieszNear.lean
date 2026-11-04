@@ -177,7 +177,7 @@ theorem blowup_rieszPressureSpaceTime_near_tendsto
     rw [hcoeff]
     change MemLp (C.indicator (fun z => v k z i * v k z j))
       (3 / 2 : ℝ≥0∞) volume
-    rw [memLp_indicator_iff_restrict hC]
+    rw [memLp_indicator_iff_restrict hC.nullMeasurableSet]
     convert (hcomp (v k) (hv k) i).mul (hcomp (v k) (hv k) j) using 1
     exact this
   have hG : ∀ i j, MemLp (G i j)
@@ -186,7 +186,7 @@ theorem blowup_rieszPressureSpaceTime_near_tendsto
     rw [hcoeff]
     change MemLp (C.indicator (fun z => u z i * u z j))
       (3 / 2 : ℝ≥0∞) volume
-    rw [memLp_indicator_iff_restrict hC]
+    rw [memLp_indicator_iff_restrict hC.nullMeasurableSet]
     convert (hcomp u hu i).mul (hcomp u hu j) using 1
     exact this
   have htensor (i j : Fin 3) : Tendsto
@@ -203,7 +203,7 @@ theorem blowup_rieszPressureSpaceTime_near_tendsto
       · simp only [F, G, Set.indicator_of_notMem hz, sub_self]
     convert h using 1
     ext k
-    rw [heq k, hcoeff, eLpNorm_indicator_eq_eLpNorm_restrict hC]
+    rw [heq k, hcoeff, eLpNorm_indicator_eq_eLpNorm_restrict hC.nullMeasurableSet]
   exact ⟨hF, hG,
     blowup_rieszPressureSpaceTime_tendsto_of_tensor F G hF hG htensor⟩
 

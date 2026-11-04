@@ -1090,7 +1090,7 @@ theorem integrable_progression_four {G : Fin 4 → ℝ → ℂ} (hG : ∀ j, Mea
     · rw [Set.indicator_of_mem hy]
     · rw [Set.indicator_of_notMem hy]; by_contra h; exact hy (hsupp j y h)
   have hL2 (j : Fin 4) : MemLp (G j) 2 := by
-    rw [hset j, memLp_indicator_iff_restrict measurableSet_Ico]
+    rw [hset j, memLp_indicator_iff_restrict measurableSet_Ico.nullMeasurableSet]
     exact MemLp.of_bound (hG j).aestronglyMeasurable M (Filter.Eventually.of_forall (hGb j))
   have hL1 (j : Fin 4) : Integrable (G j) := by
     rw [hset j, integrable_indicator_iff measurableSet_Ico]
@@ -1520,7 +1520,7 @@ theorem tendsto_eLpNorm_truncateNorm {μ : Measure ℝ} {f : ℝ → ℂ} (hfm :
     Filter.Tendsto (fun n : ℕ => eLpNorm (f - truncateNorm n f) 2 μ) Filter.atTop (nhds 0) := by
   rw [ENNReal.tendsto_atTop_zero]
   intro ε hε
-  obtain ⟨M, hM⟩ := hf.eLpNorm_indicator_norm_ge_le hfm.stronglyMeasurable hε
+  obtain ⟨M, hM⟩ := hf.eLpNorm_indicator_norm_ge_le hε
   refine ⟨⌈M⌉₊, fun n hn => le_trans (eLpNorm_mono
     (hfm.sub (truncateNorm_measurable hfm n)).aestronglyMeasurable fun y => ?_) hM⟩
   simp only [Pi.sub_apply, truncateNorm]
@@ -1578,7 +1578,7 @@ theorem memLp_normalized_indicator {a₀ r : ℝ} {g : ℝ → ℂ}
     (hg : MemLp g 2 (volume.restrict (Set.Ico a₀ (a₀ + r)))) :
     MemLp ((Set.Ico a₀ (a₀ + r)).indicator g) 2 (normalizedIntervalMeasure a₀ r) := by
   have h : MemLp ((Set.Ico a₀ (a₀ + r)).indicator g) 2 volume :=
-    (memLp_indicator_iff_restrict measurableSet_Ico).mpr hg
+    (memLp_indicator_iff_restrict measurableSet_Ico.nullMeasurableSet).mpr hg
   exact (h.restrict (Set.Icc a₀ (a₀ + r))).smul_measure ENNReal.ofReal_ne_top
 
 theorem eLpNorm_top_indicator_le {a₀ r : ℝ} {g : ℝ → ℂ} (hgm : Measurable g) {M : ℝ}
@@ -1938,7 +1938,7 @@ theorem integrable_localProgression_two {κ : LocalKernelClass} {a₀ r : ℝ} (
   integrable_localProgression hr hw f hf (fun _ => 2) (fun _ => by norm_num)
     (by norm_num [Fin.sum_univ_succ])
     (fun j => ne_top_of_le_ne_top (hfin j)
-      (eLpNorm_indicator_le _ measurableSet_Ico))
+      (eLpNorm_indicator_le _ measurableSet_Ico.nullMeasurableSet))
 
 /-- `eq:absolute` with exponents assigned to four distinct slots. -/
 theorem localProgressionForm_enorm_le_slots {κ : LocalKernelClass} {a₀ r : ℝ} (hr : 0 < r)

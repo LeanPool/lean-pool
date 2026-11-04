@@ -47,9 +47,9 @@ theorem contDiffOn_circulation (u : ParabolicPoint → Vec3)
     (hu2 : ContDiffOn ℝ 2 (fun w : Vec3 × ℝ => u w) unitCylinder) :
     ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => circulation u z) unitCylinder := by
   have h0 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => z.1 0) unitCylinder :=
-    ((contDiff_apply ℝ ℝ 0).comp contDiff_fst).contDiffOn
+    ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 0).comp contDiff_fst).contDiffOn
   have h1 : ContDiffOn ℝ 2 (fun z : Vec3 × ℝ => z.1 1) unitCylinder :=
-    ((contDiff_apply ℝ ℝ 1).comp contDiff_fst).contDiffOn
+    ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 1).comp contDiff_fst).contDiffOn
   exact (h0.mul (contDiffOn_component hu2 1)).sub (h1.mul (contDiffOn_component hu2 0))
 
 /-- The spatial slice of the circulation at a fixed time is `C²` on the unit ball. -/
@@ -65,9 +65,9 @@ theorem differentiableAt_circulation_slice (u : ParabolicPoint → Vec3)
     (hz : z ∈ unitCylinder) :
     DifferentiableAt ℝ (fun y : Vec3 => circulation u (y, z.2)) z.1 := by
   have h0 : ContDiffOn ℝ 1 (fun w : Vec3 × ℝ => w.1 0) unitCylinder :=
-    ((contDiff_apply ℝ ℝ 0).comp contDiff_fst).contDiffOn
+    ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 0).comp contDiff_fst).contDiffOn
   have h1 : ContDiffOn ℝ 1 (fun w : Vec3 × ℝ => w.1 1) unitCylinder :=
-    ((contDiff_apply ℝ ℝ 1).comp contDiff_fst).contDiffOn
+    ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) 1).comp contDiff_fst).contDiffOn
   have hcirc : ContDiffOn ℝ 1 (fun w : Vec3 × ℝ => circulation u w) unitCylinder :=
     (h0.mul (contDiffOn_component hu1 1)).sub (h1.mul (contDiffOn_component hu1 0))
   exact ((contDiffOn_spatialSlice hcirc hz.2).differentiableOn one_ne_zero).differentiableAt

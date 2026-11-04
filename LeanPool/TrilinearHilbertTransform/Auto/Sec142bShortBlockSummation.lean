@@ -4776,7 +4776,7 @@ theorem ae_memLp_root (hL : T.LeafBound z) (P : Measure Ω) [IsProbabilityMeasur
     exact (((hzσ j).enorm.pow_const _).lintegral_prod_right').pow_const _
   filter_upwards [ae_lt_top (hm0.pow_const (4 : ℝ)) hlt.ne] with σ hσ
   rw [memLp_iff, eLpNorm_indicator_eq_eLpNorm_restrict
-    (dyadicGridCell_measurable G _ _)]
+    (dyadicGridCell_measurable G _ _).nullMeasurableSet]
   by_contra hc
   rw [not_lt, top_le_iff] at hc
   rw [hc, ENNReal.top_rpow_of_pos (by norm_num)] at hσ

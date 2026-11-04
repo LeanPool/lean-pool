@@ -152,7 +152,7 @@ theorem blowupLimitAssembly_slice_Lthree_of_local_convergence
     have : (N₀ : ℝ) ≤ N := by exact_mod_cast hN
     exact ⟨by linarith only [hN₀, this], htneg⟩
   simp only [g]
-  rw [eLpNorm_indicator_eq_eLpNorm_restrict (isOpen_vec3Ball _ _).measurableSet]
+  rw [eLpNorm_indicator_eq_eLpNorm_restrict (isOpen_vec3Ball _ _).measurableSet.nullMeasurableSet]
   exact ht N htN
 
 end ESS

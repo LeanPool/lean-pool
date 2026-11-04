@@ -132,7 +132,7 @@ private lemma contDiff_q : ContDiff ℝ (⊤ : ℕ∞) q := by
   unfold q
   apply ContDiff.sum
   intro i hi
-  exact (contDiff_apply ℝ ℝ i).pow 2
+  exact (contDiff_apply ℝ (fun _ => ℝ) i).pow 2
 
 private lemma contDiffAt_newtonianKernel {z : Vec3} (hz : z ≠ 0) :
     ContDiffAt ℝ (2 : ℕ) newtonianKernel z := by

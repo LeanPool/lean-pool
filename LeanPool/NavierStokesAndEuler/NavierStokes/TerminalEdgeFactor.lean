@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TerminalStress
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.HeatProfileExtension
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ConeAlgebra
 import LeanPool.NavierStokesAndEuler.NavierStokes.EdgeWeightJets

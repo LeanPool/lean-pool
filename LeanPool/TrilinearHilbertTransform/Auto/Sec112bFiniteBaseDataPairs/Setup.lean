@@ -452,7 +452,7 @@ theorem predictorDelay_group (κ : LocalKernelClass) {d e : ℕ} {A : QuadraticC
   have hfm : Measurable (f : ℝ → ℂ) := (Lp.stronglyMeasurable f).measurable
   have hadm₁ : IsAdmissibleOpponent G J' (f : ℝ → ℂ) za₁ 1 :=
     isAdmissibleOpponent_fixed G J' ((memLp_indicator_iff_restrict
-      (dyadicGridCell_measurable G J'.1 J'.2)).mpr ((Lp.memLp f).restrict _))
+      (dyadicGridCell_measurable G J'.1 J'.2).nullMeasurableSet).mpr ((Lp.memLp f).restrict _))
   have hdep₁ : HasDepthEnergy G J' (f : ℝ → ℂ) za₁ 1 :=
     hasDepthEnergy_fixed G J' ((Lp.memLp f).integrable_norm_pow two_ne_zero).integrableOn
   have hadm₂ : IsAdmissibleOpponent G J' (f : ℝ → ℂ) za₂ Kd :=

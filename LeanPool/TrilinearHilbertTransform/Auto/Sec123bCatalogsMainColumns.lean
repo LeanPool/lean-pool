@@ -64,7 +64,7 @@ theorem norm_privateColumnValue_le (φ : W → ℝ → ℂ) (ε : W → ℝ) (x 
 theorem wColumn_memLp {s : Set ℝ} (hs : MeasurableSet s) (hsv : volume s < ⊤) {φ : W → ℝ → ℂ}
     (ε : W → ℝ) {x : W} (hφ : Measurable (φ x)) {C : ℝ} (hC : ∀ y ∈ s, ‖φ x y‖ ≤ C) :
     MemLp (s.indicator (privateColumnValue φ ε x)) 2 volume := by
-  refine (memLp_indicator_iff_restrict hs).mpr ?_
+  refine (memLp_indicator_iff_restrict hs.nullMeasurableSet).mpr ?_
   have : IsFiniteMeasure (volume.restrict s) :=
     ⟨by rw [Measure.restrict_apply_univ]; exact hsv⟩
   refine MemLp.of_bound (privateColumnValue_measurable φ ε x hφ).aestronglyMeasurable

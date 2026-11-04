@@ -7,6 +7,8 @@ module
 
 public import LeanPool.Odlyzko.DedekindZeta.Coefficients
 
+import Mathlib.Algebra.BigOperators.Ring.Nat
+
 /-! TODO: Add doc-string. -/
 
 @[expose] public section

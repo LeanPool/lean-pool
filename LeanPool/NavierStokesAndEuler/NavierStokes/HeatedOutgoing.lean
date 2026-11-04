@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricTerminalCompensation
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import LeanPool.NavierStokesAndEuler.NavierStokes.HeatProfileExtension
 import LeanPool.NavierStokesAndEuler.NavierStokes.ParametricRephase
 public import LeanPool.NavierStokesAndEuler.NavierStokes.OutgoingProfile
@@ -1358,7 +1359,7 @@ theorem freeLogE_contDiff (F : Profile) (XR : ℝ) (hXR : 0 < XR) :
           by
     apply ContDiff.sum
     intro j _
-    exact ((contDiff_apply ℝ ℝ j).comp contDiff_fst.fst).mul
+    exact ((contDiff_apply ℝ (fun _ => ℝ) j).comp contDiff_fst.fst).mul
       ((TerminalCompensation.bump_contDiff compensationPatch j).comp
         (contDiff_snd.exp.div_const _))
   exact he.add (((OutgoingDilation.shapedPatchAmplitude_contDiff F).comp contDiff_fst.snd).mul hc)

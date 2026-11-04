@@ -119,7 +119,7 @@ theorem exists_det_submatrix_ne_zero_of_linearIndependent_row
   have hcol : LinearIndependent F (A.submatrix id (c ∘ e.symm)).col :=
     hli.comp e.symm e.symm.injective
   rw [← isUnit_iff_ne_zero, ← isUnit_iff_isUnit_det]
-  exact linearIndependent_cols_iff_isUnit.mp hcol
+  exact linearIndependent_col_iff_isUnit.mp hcol
 
 /-- Every rank lower bound is witnessed by a nonzero minor with distinct rows
 and distinct columns, without any finiteness requirement on the rows. -/

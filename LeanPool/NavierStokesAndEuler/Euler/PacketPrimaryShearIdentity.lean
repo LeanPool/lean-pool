@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.CylinderEndpointLabels
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.Euler.PacketNormalizedPrimary
 public import LeanPool.NavierStokesAndEuler.Euler.PacketTerminalInitialData
 public import LeanPool.NavierStokesAndEuler.Euler.TransversePacketPrimaryField

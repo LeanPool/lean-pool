@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.R3.ProblemStatement
+import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.ParametricIntegral
 

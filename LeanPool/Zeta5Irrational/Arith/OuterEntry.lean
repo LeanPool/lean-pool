@@ -9,8 +9,8 @@ module
 import Mathlib.RingTheory.Int.Basic
 
 public import LeanPool.Zeta5Irrational.Arith.TEntry
-import Mathlib.Data.Int.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linarith

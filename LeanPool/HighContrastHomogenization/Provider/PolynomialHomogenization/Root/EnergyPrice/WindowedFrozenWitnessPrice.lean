@@ -160,9 +160,8 @@ theorem exists_windowedDirichletCubeEnergyNormBound (d : ℕ) [NeZero d] :
     exact add_nonneg (Real.sqrt_nonneg _)
       (scaleNormalizedPositiveBesovVectorSeminormTwo_nonneg_of_forceBesovRegularity
         hboundary)
-  have hprefNonneg : 0 ≤ C * Real.rpow s (-(1 / 2 : ℝ)) := by
-    have := Real.rpow_nonneg hs.le (-(1 / 2 : ℝ))
-    positivity
+  have hprefNonneg : 0 ≤ C * Real.rpow s (-(1 / 2 : ℝ)) :=
+    mul_nonneg hCpos.le (Real.rpow_nonneg hs.le _)
   refine hbase.trans ?_
   exact mul_le_mul_of_nonneg_right
     (mul_le_mul_of_nonneg_left

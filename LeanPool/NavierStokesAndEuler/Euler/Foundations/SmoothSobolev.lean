@@ -340,7 +340,7 @@ omit [CompleteSpace F] in
 theorem coordinateDerivative_tensor_bound (j : ℕ) (i : Fin 3) (f : Domain 3 → F)
     (hf : ContDiff ℝ ∞ f) (x : Domain 3) :
     ‖iteratedFDeriv ℝ j (coordinateDerivative i f) x‖ ≤ ‖iteratedFDeriv ℝ (j+1) f x‖ := by
-  let L := ContinuousLinearMap.apply (E := Domain 3) ℝ F (EuclideanSpace.single i 1)
+  let L := ContinuousLinearMap.apply (E' := Domain 3) ℝ F (EuclideanSpace.single i 1)
   have hL : ‖L‖ ≤ 1 := by
     apply L.opNorm_le_bound (by norm_num)
     intro A

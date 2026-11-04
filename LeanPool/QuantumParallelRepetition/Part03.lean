@@ -19,8 +19,8 @@ namespace QuantumParallelRepetition
 noncomputable local instance matrixComplexContinuousENormPartThree
     {m n : Type*} [Fintype m] [Fintype n] :
     ContinuousENorm (Matrix m n ℂ) :=
-  @SeminormedAddGroup.toContinuousENorm (Matrix m n ℂ)
-    (Matrix.normedAddCommGroup.toSeminormedAddCommGroup.toSeminormedAddGroup)
+  (@SeminormedAddGroup.toESeminormedAddMonoid (Matrix m n ℂ)
+    Matrix.normedAddCommGroup.toSeminormedAddCommGroup.toSeminormedAddGroup).toContinuousENorm
 
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset

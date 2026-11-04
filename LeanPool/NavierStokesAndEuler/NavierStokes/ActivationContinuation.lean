@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.ActivationCone
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.TransitionRamp
 import LeanPool.NavierStokesAndEuler.NavierStokes.UniformCone
 public import LeanPool.NavierStokesAndEuler.NavierStokes.NaturalEntrance

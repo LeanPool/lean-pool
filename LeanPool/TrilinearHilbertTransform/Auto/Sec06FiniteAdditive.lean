@@ -13,6 +13,7 @@ public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.BalogSzemere
 public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.DenseBogolyubov
 public import LeanPool.TrilinearHilbertTransform.Auto.Sec01Foundations
 public import Mathlib.Combinatorics.Additive.PluenneckeRuzsa
+public import Mathlib.Combinatorics.Enumerative.DoubleCounting
 public import Mathlib.RingTheory.SimpleRing.Principal
 
 /-!

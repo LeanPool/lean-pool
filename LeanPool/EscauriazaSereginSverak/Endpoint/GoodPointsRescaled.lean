@@ -102,7 +102,7 @@ private theorem goodPointRescaleHomeomorph_map_symm
 private theorem goodPointRescaleQuasiMeasurePreserving_symm
     (x₀ : Vec3) (t₀ r : ℝ) (hr : 0 < r)
     (N : Set ParabolicPoint) (hN : MeasurableSet N) :
-    Measure.QuasiMeasurePreserving (goodPointRescaleHomeomorph x₀ t₀ r hr).symm
+    QuasiMeasurePreserving (goodPointRescaleHomeomorph x₀ t₀ r hr).symm
       (volume.restrict
         ((goodPointRescaleHomeomorph x₀ t₀ r hr).symm ⁻¹' N))
       (volume.restrict N) := by

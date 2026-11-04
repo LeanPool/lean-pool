@@ -12,6 +12,7 @@ import LeanPool.BruhatTits.Lattice.Quotient
 import LeanPool.BruhatTits.Utils.GLSubmoduleAction
 import LeanPool.BruhatTits.Utils.List
 import LeanPool.BruhatTits.Utils.ValuationRings
+import all Batteries.Data.List.Basic
 import Mathlib.Data.List.Enum
 
 /-!

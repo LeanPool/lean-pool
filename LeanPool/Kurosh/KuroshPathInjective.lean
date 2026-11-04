@@ -103,7 +103,9 @@ theorem Internal.rawFreeGroupoid_hom_subsingleton {ι : Type v}
   intro f g
   have hroot : p ≫ f ≫ Groupoid.inv q =
       p ≫ g ≫ Groupoid.inv q := by
-    exact @Subsingleton.elim _ (Internal.rawFreeGroupoid_end_subsingleton G) _ _
+    exact congrArg End.asHom
+      (@Subsingleton.elim _ (Internal.rawFreeGroupoid_end_subsingleton G)
+        (.of _) (.of _))
   have hcancel := congrArg
     (fun z => Groupoid.inv p ≫ z ≫ q) hroot
   simpa [Category.assoc] using hcancel

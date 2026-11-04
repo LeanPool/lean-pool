@@ -1877,7 +1877,7 @@ private theorem CuspNegation.permute_involutive : Function.Involutive permute :=
   simp [permute]
 
 private theorem CuspNegation.permute_holomorphic : ContDiff ℂ ω permute :=
-  contDiff_pi.mpr fun j => contDiff_apply ℂ ℂ j.rev
+  contDiff_pi.mpr fun j => contDiff_apply ℂ (fun _ => ℂ) j.rev
 
 private theorem CuspNegation.time_permute (z : ToricCharts.CoordinateSpace 3) :
     ToricFan.Triangle.time (permute z) = ToricFan.Triangle.time z := by

@@ -53,7 +53,7 @@ theorem deriv_logOf_mul {h : A⟦X⟧} (hh : constantCoeff h = 1) :
 
 /-- **Logarithm of a product** at the power-series level:
 `logOf (f · g) = logOf f + logOf g` for `f`, `g` with constant term `1`. -/
-theorem logOf_mul [IsAddTorsionFree A] {f g : A⟦X⟧}
+theorem logOf_mul {f g : A⟦X⟧}
     (hf : constantCoeff f = 1) (hg : constantCoeff g = 1) :
     logOf (f * g) = logOf f + logOf g := by
   have hfg : constantCoeff (f * g) = 1 := by rw [map_mul, hf, hg, one_mul]
@@ -64,6 +64,7 @@ theorem logOf_mul [IsAddTorsionFree A] {f g : A⟦X⟧}
     obtain ⟨U, hU⟩ := hfgU
     have h2 : P * (f * g) * ↑U⁻¹ = Q * (f * g) * ↑U⁻¹ := by rw [h]
     rwa [← hU, mul_assoc, mul_assoc, U.mul_inv, mul_one, mul_one] at h2
+  have : HasUniqueDiv A := .of_module_rat A
   apply derivative.ext
   · -- derivatives agree
     apply hcancel
@@ -80,14 +81,14 @@ theorem logOf_mul [IsAddTorsionFree A] {f g : A⟦X⟧}
 
 /-- `logOf 1 = 0`. -/
 @[simp]
-theorem logOf_one [IsAddTorsionFree A] : logOf (1 : A⟦X⟧) = 0 := by
+theorem logOf_one : logOf (1 : A⟦X⟧) = 0 := by
   have h := logOf_mul (A := A) (f := 1) (g := 1) (by simp) (by simp)
   simp_all
 
 /-- **Logarithm of a power**: `logOf (f ^ n) = n • logOf f` for `f` with constant term `1`.
 This is the eigen-relation engine: at `f = id` in the convolution algebra,
 `logOf (Ψⁱ) = i · logOf id`. -/
-theorem logOf_pow [IsAddTorsionFree A] {f : A⟦X⟧} (hf : constantCoeff f = 1) (n : ℕ) :
+theorem logOf_pow {f : A⟦X⟧} (hf : constantCoeff f = 1) (n : ℕ) :
     logOf (f ^ n) = n • logOf f := by
   induction n with
   | zero => simp
@@ -107,7 +108,7 @@ the log series, substituted at `(1+X)^p − 1`, has `m`-th coefficient `p · c�
 (`cₘ = coeff m (log A)`). This is what transports to the convolution algebra (evaluate `X ↦ J`,
 the per-degree-nilpotent augmentation) to give the Adams eigen-relation
 `Ψᵖ ∘ e⁽¹⁾ = p · e⁽¹⁾`. -/
-theorem coeff_logTrunc_pow [IsAddTorsionFree A] (p N m : ℕ) (hm : m ≤ N) :
+theorem coeff_logTrunc_pow (p N m : ℕ) (hm : m ≤ N) :
     coeff m (∑ j ∈ Finset.range (N + 1),
         coeff j (log A) • ((1 + X : A⟦X⟧) ^ p - 1) ^ j)
       = p • coeff m (log A) := by
@@ -133,7 +134,7 @@ theorem coeff_logTrunc_pow [IsAddTorsionFree A] (p N m : ℕ) (hm : m ≤ N) :
 /-- **Polynomial form of `coeff_logTrunc_pow`** (Poly↔PowerSeries bridge). For evaluating at
 a per-degree-nilpotent ring element, such as the convolution `J = id − u∘ε`, via
 `Polynomial.eval₂`. -/
-theorem polyPL_coeff [IsAddTorsionFree A] (p N m : ℕ) (hm : m ≤ N) :
+theorem polyPL_coeff (p N m : ℕ) (hm : m ≤ N) :
     (∑ j ∈ Finset.range (N + 1),
         Polynomial.C (coeff j (log A)) * ((1 + Polynomial.X) ^ p - 1) ^ j).coeff m
       = p • coeff m (log A) := by

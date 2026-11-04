@@ -38,7 +38,7 @@ noncomputable def poincareSobolevL1VectorConstant : ℝ :=
 
 private theorem contDiff_coord {u : Vec3 → Vec3} (hu : ContDiff ℝ 1 u) (i : Fin 3) :
     ContDiff ℝ 1 (fun x => u x i) := by
-  exact contDiff_apply ℝ ℝ i |>.comp hu
+  exact contDiff_apply ℝ (fun _ => ℝ) i |>.comp hu
 
 private theorem vec3_square_eq_sum {v : Vec3} :
     (vec3EuclideanNorm v) ^ 2 = ∑ i : Fin 3, v i ^ 2 := by

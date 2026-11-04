@@ -2133,7 +2133,7 @@ theorem dyadicRealMax_memLp (G : RealDyadicGrid) (S : Finset (ℤ × ℤ))
       (∑ c ∈ S, dyadicCellAverage G f c) (Filter.Eventually.of_forall (fun x => by
         rw [Real.norm_of_nonneg (dyadicRealMax_nonneg G S f x)]
         exact dyadicRealMax_le_sum G S f hf hi x))
-  have hind := (memLp_indicator_iff_restrict hR).mpr hm
+  have hind := (memLp_indicator_iff_restrict hR.nullMeasurableSet).mpr hm
   have heq : R.indicator (dyadicRealMax G S f) = dyadicRealMax G S f := by
     ext x
     by_cases hx : x ∈ R

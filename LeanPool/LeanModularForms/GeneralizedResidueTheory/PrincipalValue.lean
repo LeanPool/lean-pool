@@ -129,20 +129,14 @@ private theorem aEStronglyMeasurable_pv_integrand
   let S := {t | ε < ‖γ t - z₀‖}
   have hS_meas : MeasurableSet (S ∩ Icc a b) :=
     measurableSet_pv_support γ a b z₀ ε hγ
-  refine ((AEStronglyMeasurable.piecewise hS_meas
+  refine ((AEStronglyMeasurable.piecewise hS_meas.nullMeasurableSet
     ((continuousOn_pv_base f γ a b z₀ ε hf hγ hγ').aestronglyMeasurable hS_meas)
     (aestronglyMeasurable_const :
       AEStronglyMeasurable (fun _ : ℝ => (0 : ℂ))
         (volume.restrict (S ∩ Icc a b)ᶜ))).mono_measure
     Measure.restrict_le_self).congr ?_
   filter_upwards [ae_restrict_mem isClosed_Icc.measurableSet] with t ht
-  simp only [piecewise]
-  by_cases ht_S : t ∈ S
-  · simp only [show t ∈ S ∩ Icc a b from ⟨ht_S, ht⟩,
-      ↓reduceIte, show ε < ‖γ t - z₀‖ from ht_S, ↓reduceIte]
-  · simp only [show t ∉ S ∩ Icc a b from fun h => ht_S h.1,
-      ↓reduceIte, show ¬(ε < ‖γ t - z₀‖) from ht_S,
-      ↓reduceIte]
+  simp only [piecewise, S, mem_inter_iff, mem_ofPred_eq, ht, and_true]
 
 theorem cauchyPrincipalValueIntegrand_integrable
     (f : ℂ → ℂ) (γ : ℝ → ℂ) (a b : ℝ) (z₀ : ℂ)

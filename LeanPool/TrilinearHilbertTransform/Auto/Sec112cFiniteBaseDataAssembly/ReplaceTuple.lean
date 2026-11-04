@@ -525,9 +525,9 @@ theorem replaceTuple (hai : a ≠ i) (hak : a ≠ k) (hab : a ≠ b) (hik : i �
     exact memLp_restrict_of_normalized hrJ
       (lt_top_iff_ne_top.mpr (ne_top_of_le_ne_top ENNReal.one_ne_top hN))
   have hFaL : MemLp Fa 2 volume :=
-    (memLp_indicator_iff_restrict (dyadicGridCell_measurable _ _ _)).mpr hfaJ
+    (memLp_indicator_iff_restrict (dyadicGridCell_measurable _ _ _).nullMeasurableSet).mpr hfaJ
   have hFbL : MemLp Fb 2 volume :=
-    (memLp_indicator_iff_restrict (dyadicGridCell_measurable _ _ _)).mpr hfbJ
+    (memLp_indicator_iff_restrict (dyadicGridCell_measurable _ _ _).nullMeasurableSet).mpr hfbJ
   have hFam : Measurable Fa := hfam.indicator (dyadicGridCell_measurable _ _ _)
   have hFbm : Measurable Fb := hfbm.indicator (dyadicGridCell_measurable _ _ _)
   have henergy : ∀ (l : ℝ → ℂ) (J' : ℤ × ℤ), J' ∈ dyadicFiniteTree G J N →
@@ -550,7 +550,7 @@ theorem replaceTuple (hai : a ≠ i) (hak : a ≠ k) (hab : a ≠ b) (hik : i �
     obtain ⟨h1, h2⟩ := hzgb.2 J' hJ' hJ'R
     have hE := henergy (f b) J' hJ'
     have hfix := isAdmissibleOpponent_fixed G J' (F := Fb)
-      (hFbL.indicator (dyadicGridCell_measurable _ _ _))
+      (hFbL.indicator (dyadicGridCell_measurable _ _ _).nullMeasurableSet)
     have hfixE := hasDepthEnergy_fixed G J' (F := Fb)
       ((hFbL.integrable_norm_pow two_ne_zero).integrableOn)
     have hfit := (isAdmissibleOpponent_congr h1 (fun _ _ => rfl) hE).neg

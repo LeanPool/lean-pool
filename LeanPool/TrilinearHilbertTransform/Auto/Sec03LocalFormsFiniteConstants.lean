@@ -578,7 +578,7 @@ theorem quasiMeasurePreserving_of_positive_bound {X Y : Type*}
     {P : X → Y} (hP : Measurable P) (C : ℝ≥0∞)
     (hbound : ∀ f : Y → ℝ≥0∞, Measurable f →
       (∫⁻ x, f (P x) ∂μ) ≤ C * ∫⁻ y, f y ∂ν) :
-    Measure.QuasiMeasurePreserving P μ ν := by
+    QuasiMeasurePreserving P μ ν := by
   refine ⟨hP, Measure.absolutelyContinuous_of_le_smul (c := C) ?_⟩
   apply Measure.le_iff.mpr
   intro s hs

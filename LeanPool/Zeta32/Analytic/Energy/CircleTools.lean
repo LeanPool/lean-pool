@@ -182,7 +182,7 @@ lemma circle_fiber_null (c w : ℂ) (r a b : ℝ) (hr : r ≠ 0) :
   have h := (Set.countable_singleton w).preimage_circleMap c hr
   simpa using! h.measure_zero (volume.restrict (Ioc a b))
 
-lemma pair_collision_null (f g : ℝ → ℂ) (μ ν : Measure ℝ) [SFinite ν]
+lemma pair_collision_null (f g : ℝ → ℂ) (μ ν : Measure ℝ)
     (hf : Continuous f) (hg : Continuous g)
     (hnull : ∀ w : ℂ, ν {t : ℝ | g t = w} = 0) :
     (μ.prod ν) {p : ℝ × ℝ | f p.1 = g p.2} = 0 := by

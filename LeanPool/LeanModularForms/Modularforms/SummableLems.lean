@@ -16,7 +16,7 @@ import LeanPool.LeanModularForms.Modularforms.Iteratedderivs
 import LeanPool.LeanModularForms.Modularforms.Upperhalfplane
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Cotangent
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.NumberTheory.TsumDivisorsAntidiagonal
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.Topology.Separation.CompletelyRegular

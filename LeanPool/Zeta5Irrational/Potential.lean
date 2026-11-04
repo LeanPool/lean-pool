@@ -132,7 +132,6 @@ lemma hasDerivAt_Φ {y : ℝ} (hy : 0 < y) : HasDerivAt Φ (2 * Pfun y) y := by
   have h := (((h1.sub h2).sub_const (2 : ℝ)).add_const (12 * (3 / 40 : ℝ))).add h5
   refine (h.congr_of_eventuallyEq (Filter.Eventually.of_forall fun x => ?_)).congr_deriv ?_
   · simp only [Φ, Pi.add_apply, Pi.sub_apply, Pi.mul_apply, id]
-    try ring
   · unfold Pfun
     have hne1 : (1 : ℝ) + y ^ 2 ≠ 0 := by positivity
     have hne2 : y ^ 2 + (3 / 40 : ℝ) ^ 2 ≠ 0 := by positivity

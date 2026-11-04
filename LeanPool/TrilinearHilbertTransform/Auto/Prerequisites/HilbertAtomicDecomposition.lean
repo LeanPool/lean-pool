@@ -208,7 +208,7 @@ theorem probabilityL2L1_dual_ae_bound (h : Lp ℂ 2 μ) {σ : ℝ} (hσ : 0 < σ
   have hle : (fun x => σ * ‖h x‖ ^ 2) ≤ᵐ[μ] fun x => ‖h x‖ := by
     apply ae_le_of_forall_setIntegral_le (hi2.const_mul σ) hi
     intro s hs _
-    let hu := (Lp.memLp h).indicator hs
+    let hu := (Lp.memLp h).indicator hs.nullMeasurableSet
     let u := hu.toLp (s.indicator h)
     have hue : (u : X → ℂ) =ᵐ[μ] s.indicator h := MemLp.coeFn_toLp hu
     have hL1 : probabilityL2L1Norm μ u = ∫ x in s, ‖h x‖ ∂μ := by

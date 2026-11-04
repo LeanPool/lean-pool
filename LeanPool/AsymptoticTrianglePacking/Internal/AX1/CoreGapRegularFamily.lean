@@ -30,6 +30,7 @@ Colourings are an awkward object to construct; what a regularity argument actual
 Must be sorry-free and axiom-clean `[propext, Classical.choice, Quot.sound]`.
 -/
 public import LeanPool.AsymptoticTrianglePacking.Internal.AX1.CoreGapAX1
+public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 public import Mathlib.Combinatorics.SimpleGraph.Triangle.Removal
 
 

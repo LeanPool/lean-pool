@@ -1872,8 +1872,8 @@ theorem separated_form_le {κ : LocalKernelClass} {a₀ r : ℝ} (hr : 0 < r) {w
   set Gb := I.indicator Fb with hGb
   have hGam : Measurable Ga := hFam.indicator hIm
   have hGbm : Measurable Gb := hFbm.indicator hIm
-  have hGa2 : MemLp Ga 2 := (memLp_indicator_iff_restrict hIm).mpr hFa2
-  have hGb2 : MemLp Gb 2 := (memLp_indicator_iff_restrict hIm).mpr hFb2
+  have hGa2 : MemLp Ga 2 := (memLp_indicator_iff_restrict hIm.nullMeasurableSet).mpr hFa2
+  have hGb2 : MemLp Gb 2 := (memLp_indicator_iff_restrict hIm.nullMeasurableSet).mpr hFb2
   have hGa1 : Integrable Ga := (integrable_indicator_iff hIm).mpr (hFa2.integrable one_le_two)
   have hGb1 : Integrable Gb := (integrable_indicator_iff hIm).mpr (hFb2.integrable one_le_two)
   have hGas : ∀ y, Ga y ≠ 0 → y ∈ I := fun y hy => by

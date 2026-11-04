@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.ExactLiftedJointDifferentiability
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.Euler.TransversePacketPiolaData
 
 /-! The actual pointwise equation of the exact packet, expressed with the

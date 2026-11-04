@@ -582,7 +582,7 @@ theorem memLp_cell_indicator {G : RealDyadicGrid} {I : ℤ × ℤ} {f : ℝ → 
       one_smul] at h
   have hres' : MemLp f 2 (volume.restrict (dyadicGridCell G I.1 I.2)) :=
     hres.mono_measure (Measure.restrict_mono Set.Ico_subset_Icc_self le_rfl)
-  exact (memLp_indicator_iff_restrict (dyadicGridCell_measurable _ _ _)).mpr hres'
+  exact (memLp_indicator_iff_restrict (dyadicGridCell_measurable _ _ _).nullMeasurableSet).mpr hres'
 
 theorem cellLp_ae {G : RealDyadicGrid} {I : ℤ × ℤ} {f : ℝ → ℂ}
     (hf : MemLp f 2 (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2)

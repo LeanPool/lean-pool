@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.Analysis.Real.Sqrt

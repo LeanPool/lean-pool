@@ -396,7 +396,7 @@ noncomputable def unitIntervalL2Extension (f : Lp ℂ 2 unitIntervalMeasure) : �
 
 theorem unitIntervalL2Extension_memLp (f : Lp ℂ 2 unitIntervalMeasure) :
     MemLp (unitIntervalL2Extension f) 2 volume :=
-  (memLp_indicator_iff_restrict measurableSet_Ico).mpr
+  (memLp_indicator_iff_restrict measurableSet_Ico.nullMeasurableSet).mpr
     (l2Representative_memLp unitIntervalMeasure f)
 
 theorem circle_lift_ae_congr {f g : ℝ → ℂ} (hfg : f =ᵐ[volume] g) :
@@ -889,8 +889,8 @@ theorem floorChartAmplitude_smooth {d : ℕ} (A : QuadraticChartData d)
         apply contDiff_pi.mpr
         intro i
         fun_prop
-      · exact hη.comp (contDiff_apply ℝ ℝ (Fin.natAdd d (0 : Fin 2)))
-    · exact hρ.comp (contDiff_apply ℝ ℝ (Fin.natAdd d (1 : Fin 2)))
+      · exact hη.comp (contDiff_apply ℝ (fun _ => ℝ) (Fin.natAdd d (0 : Fin 2)))
+    · exact hρ.comp (contDiff_apply ℝ (fun _ => ℝ) (Fin.natAdd d (1 : Fin 2)))
   · apply chart_fourierChar_smooth.comp
     unfold chartMatrixPhase
     fun_prop
@@ -1392,11 +1392,11 @@ theorem floorChartAmplitude_derivative_local {d c₀ K : ℕ} {H T : ℝ}
     mul_le_mul (pow_le_pow_right₀ hT1 hu) (pow_le_pow_right₀ hm1 hw)
       (by positivity) (by positivity)
   have hf : ContDiff ℝ (⊤ : ℕ∞) f := A.smooth.comp (floorChartShear A).contDiff
-  have hg : ContDiff ℝ (⊤ : ℕ∞) g := hη.comp (contDiff_apply ℝ ℝ h)
-  have hb : ContDiff ℝ (⊤ : ℕ∞) b := hρ.comp (contDiff_apply ℝ ℝ r)
+  have hg : ContDiff ℝ (⊤ : ℕ∞) g := hη.comp (contDiff_apply ℝ (fun _ => ℝ) h)
+  have hb : ContDiff ℝ (⊤ : ℕ∞) b := hρ.comp (contDiff_apply ℝ (fun _ => ℝ) r)
   have hp : ContDiff ℝ (⊤ : ℕ∞) p :=
     chart_fourierChar_smooth.comp
-      (((contDiff_apply ℝ ℝ h).mul (floorChartPhaseLinear A).contDiff).add
+      (((contDiff_apply ℝ (fun _ => ℝ) h).mul (floorChartPhaseLinear A).contDiff).add
         (floorChartPhaseTail A).contDiff)
   have hfi (i : ℕ) (hi : i ≤ m) : ‖iteratedFDeriv ℝ i f z‖ ≤ R ^ (i + 1) :=
     (chart_cutoff_linear_geometric hA hc hHT (floorChartShear A) hS m i hi z).trans

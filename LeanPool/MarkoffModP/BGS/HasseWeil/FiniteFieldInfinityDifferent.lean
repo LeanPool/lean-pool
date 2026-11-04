@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import Mathlib.RingTheory.Localization.Finiteness
 public import LeanPool.MarkoffModP.BGS.HasseWeil.RatFuncInfinityLocalization
 public import LeanPool.MarkoffModP.BGS.HasseWeil.ConstantFieldInfinityBase
 public import LeanPool.MarkoffModP.BGS.HasseWeil.FiniteFieldPolynomialDifferent

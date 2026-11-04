@@ -248,7 +248,7 @@ theorem aemeasurable_step3DisplayAt [NeZero d] (M : ABKModel d) (C : ℝ) (m : �
 /-- Whole-sequence negation is quasi measure preserving for the cutoff-sample
 law: it is measurable and preserves the law exactly. -/
 theorem quasiMeasurePreserving_negateCutoffSample (M : ABKModel d) :
-    Measure.QuasiMeasurePreserving (Cutoff.negateCutoffSample (d := d))
+    QuasiMeasurePreserving (Cutoff.negateCutoffSample (d := d))
       (Cutoff.cutoffSampleLaw M).toMeasure (Cutoff.cutoffSampleLaw M).toMeasure := by
   refine ⟨Cutoff.measurable_negateCutoffSample, ?_⟩
   rw [Cutoff.map_negateCutoffSample_cutoffSampleLaw]

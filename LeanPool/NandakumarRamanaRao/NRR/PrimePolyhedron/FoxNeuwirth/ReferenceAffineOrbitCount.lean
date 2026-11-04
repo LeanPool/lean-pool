@@ -12,7 +12,7 @@ import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.MaximalFlagE
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Basify
 import Mathlib.Tactic.ENatToNat
 import Mathlib.Tactic.Polynomial.Basic

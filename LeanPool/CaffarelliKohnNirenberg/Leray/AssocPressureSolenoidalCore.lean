@@ -49,7 +49,7 @@ theorem associatedPressureSpatialProfile_memLp
   have hrto : (ENNReal.ofReal r).toReal = r := ENNReal.toReal_ofReal hr.le
   have htime : MemLp (K.indicator (fun _ : ℝ => (1 : ℝ)))
       (ENNReal.ofReal r) (volume : Measure ℝ) :=
-    memLp_indicator_const (ENNReal.ofReal r) hK.measurableSet (1 : ℝ)
+    memLp_indicator_const (ENNReal.ofReal r) hK.measurableSet.nullMeasurableSet (1 : ℝ)
       (Or.inr hK.measure_lt_top.ne)
   let b : Vec3 → ℝ := fun x => (1 + ‖x‖) ^ (-m)
   have hspace : MemLp b (ENNReal.ofReal r) (volume : Measure Vec3) := by
@@ -418,9 +418,9 @@ private theorem spatial_curl_eq_of_second_partials
     CKN.spatialPartialProd (fun w => associatedPressureTestCurl B w i) j z =
       CKN.spatialPartialProd (fun w => associatedPressureTestCurl A w i) j z := by
   have hAcomp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun w => A w k) :=
-    (contDiff_apply ℝ ℝ k).comp hA
+    (contDiff_apply ℝ (fun _ => ℝ) k).comp hA
   have hBcomp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun w => B w k) :=
-    (contDiff_apply ℝ ℝ k).comp hB
+    (contDiff_apply ℝ (fun _ => ℝ) k).comp hB
   have hsub {f g : Vec3 × ℝ → ℝ}
       (hf : ContDiff ℝ (⊤ : ℕ∞) f) (hg : ContDiff ℝ (⊤ : ℕ∞) g) :
       CKN.spatialPartialProd (fun w => f w - g w) j z =
@@ -631,11 +631,11 @@ theorem associatedPressureHelmholtzCutoffCurl_spatial_eventually_eq
       hφ m).1
   have hAcomp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun w : Vec3 × ℝ => associatedPressureHelmholtzVectorPotential φ w k) :=
-    (contDiff_apply ℝ ℝ k).comp hA
+    (contDiff_apply ℝ (fun _ => ℝ) k).comp hA
   have hcutComp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun w : Vec3 × ℝ =>
         associatedPressureHelmholtzCutoffVectorPotential φ n w k) :=
-    (contDiff_apply ℝ ℝ k).comp (hcut n)
+    (contDiff_apply ℝ (fun _ => ℝ) k).comp (hcut n)
   have hdouble (k l : Fin 3) :
       CKN.spatialPartialProd
           (CKN.spatialPartialProd

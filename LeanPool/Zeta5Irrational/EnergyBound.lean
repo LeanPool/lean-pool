@@ -14,6 +14,7 @@ import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Tactic.ENatToNat
 public import LeanPool.Zeta5Irrational.Energy

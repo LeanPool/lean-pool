@@ -6,6 +6,7 @@ Authors: Robert Kirkby
 
 module
 public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 public import Mathlib.Analysis.MeanInequalitiesPow
 
 /-!

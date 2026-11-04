@@ -8,7 +8,7 @@ module
 public import LeanPool.Erdos865.Defs
 import LeanPool.Erdos865.Folding
 import Mathlib.Data.Finset.Max
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Tactic.Linarith.Frontend
 import Mathlib.Tactic.NormNum.Abs

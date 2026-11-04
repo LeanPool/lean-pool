@@ -10,11 +10,11 @@ module
 Mathlib interfaces have been updated; original authorship is retained above. -/
 
 public import Mathlib.Algebra.Order.Ring.Star
+public import Mathlib.Algebra.Order.Star.Int
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Calculus.Deriv.MeanValue
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
-public import Mathlib.Data.Int.Star
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.Topology.UniformSpace.Uniformizable
 

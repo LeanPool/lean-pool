@@ -5,7 +5,7 @@ Authors: Nathan Pflueger
 -/
 module
 
-public import Mathlib.Data.Int.LeastGreatest
+public import Mathlib.Order.Int.LeastGreatest
 
 public import LeanPool.DemazureProduct.SlipFace
 public import Mathlib.Data.Set.Card

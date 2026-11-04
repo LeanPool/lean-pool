@@ -7,6 +7,7 @@ module
 
 public import LeanPool.MarkovProcess.MarkovProcess.FiniteTime.FiniteProductCoordinateNormalForm
 public import Mathlib.MeasureTheory.Integral.CompactlySupported
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
 
 /-!
 # Measurability and integrability of finite-product tests

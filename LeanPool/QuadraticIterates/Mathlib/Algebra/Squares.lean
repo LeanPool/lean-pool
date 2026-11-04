@@ -9,8 +9,8 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.RingTheory.Coprime.Basic
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.NumberTheory.SumTwoSquares
 import Mathlib.RingTheory.Int.Basic
 

@@ -2031,7 +2031,7 @@ theorem cellRow_memLp {G : RealDyadicGrid} {ι : Type} (R : CellRowFamily G ι) 
     · rw [Set.indicator_of_mem hy]
     · rw [Set.indicator_of_notMem hy, R.local_support i y hy]
   rw [← heq]
-  refine (memLp_indicator_iff_restrict hs).mpr ?_
+  refine (memLp_indicator_iff_restrict hs.nullMeasurableSet).mpr ?_
   have := cell_isFiniteMeasure G (R.cell i).1 (R.cell i).2
   exact MemLp.of_bound (R.measurable i).aestronglyMeasurable C (Filter.Eventually.of_forall hC)
 

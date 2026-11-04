@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+import Mathlib.Geometry.Manifold.Algebra.Structures
 public import Mathlib.Tactic.NormNum.Parity
 public import Mathlib.Analysis.SpecialFunctions.Artanh
 public import Mathlib.Algebra.Ring.IsFormallyReal
@@ -12,6 +13,7 @@ import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Recognition.Smale2
 public import LeanPool.HopfProblem.Uniformization.SpecialPeriods1
+import Mathlib.Topology.Algebra.Module.Equiv.Submodule
 import all LeanPool.HopfProblem.Foundations.LineBundleTransport
 import all LeanPool.HopfProblem.Recognition.Smale1
 import all LeanPool.HopfProblem.Recognition.Smale2

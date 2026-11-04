@@ -173,10 +173,10 @@ private def symplecticReindexEquiv (ℓ' : ℕ) :
   right_inv x := by
     rcases x with k | j
     · dsimp only []
-      split_ifs <;> (dsimp only [] at *; try split_ifs) <;>
-        first | rfl | (simp only [Sum.inl.injEq, Fin.ext_iff]; omega) | omega
+      split_ifs <;> (dsimp only [] at *) <;>
+        first | (simp only [Sum.inl.injEq, Fin.ext_iff]; omega) | omega
     · dsimp only []
-      split_ifs <;> (rw [Fin.val_mk] at *; try split_ifs) <;>
+      split_ifs <;> (rw [Fin.val_mk] at *) <;>
         first | rfl | (simp only [Sum.inr.injEq, Fin.ext_iff]; omega) | omega
 
 /-- **Symplectic standard basis**: a finite-dimensional complex vector
@@ -280,7 +280,7 @@ theorem exists_symplectic_basis {V : Type} [AddCommGroup V] [Module ℂ V]
       rw [hM ki, hM kj]
       split_ifs at hival hjval ⊢ <;>
         simp only [hAlt.self_eq_zero, hBvw, hBwv] <;>
-        first | rfl | (exfalso; omega)
+        first | (exfalso; omega)
     · -- ═══════ Case 2: i in U, j in complement ═══════
       rw [hbV_inl ki, hbV_inr kj, hBUP (bU ki) (g kj)]
       have hival : i.val = if ki.val = 0 then 0 else ℓ' + 1 := by

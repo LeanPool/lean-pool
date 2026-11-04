@@ -739,13 +739,13 @@ theorem sepPartition_smooth {d : ℕ} : ContDiff ℝ (⊤ : ℕ∞) (sepPartitio
   chartCoordinateProduct_smooth (contDiff_infty.mpr gevreyPartition_contDiff)
 
 theorem tripleFst_contDiff {d : ℕ} : ContDiff ℝ (⊤ : ℕ∞) (tripleFst (d := d) (α := ℝ)) := by
-  apply contDiff_pi.mpr; intro l; exact contDiff_apply ℝ ℝ _
+  apply contDiff_pi.mpr; intro l; exact contDiff_apply ℝ (fun _ => ℝ) _
 
 theorem tripleSnd_contDiff {d : ℕ} : ContDiff ℝ (⊤ : ℕ∞) (tripleSnd (d := d) (α := ℝ)) := by
-  apply contDiff_pi.mpr; intro l; exact contDiff_apply ℝ ℝ _
+  apply contDiff_pi.mpr; intro l; exact contDiff_apply ℝ (fun _ => ℝ) _
 
 theorem tripleThd_contDiff {d : ℕ} : ContDiff ℝ (⊤ : ℕ∞) (tripleThd (d := d) (α := ℝ)) := by
-  apply contDiff_pi.mpr; intro l; exact contDiff_apply ℝ ℝ _
+  apply contDiff_pi.mpr; intro l; exact contDiff_apply ℝ (fun _ => ℝ) _
 
 theorem sepCoupledVec_smooth {d : ℕ} {χ : (Fin d → ℝ) → ℂ} (hχ : ContDiff ℝ (⊤ : ℕ∞) χ)
     {ψ : ℝ → ℝ} (hψ : ContDiff ℝ (⊤ : ℕ∞) ψ) (i a b : ℤ) (ki kb : Fin d → ℤ) :
