@@ -976,32 +976,7 @@ theorem all_eq_two_of_sum_eq_two_mul_card
     (hle : ∀ a ∈ s, w a ≤ 2)
     (hsum : ∑ a ∈ s, w a = 2 * s.card) :
     ∀ a ∈ s, w a = 2 := by
-  classical
-  intro a ha
-  have hle_all : ∑ x ∈ s, w x ≤ ∑ _x ∈ s, 2 := by
-    exact Finset.sum_le_sum hle
-  have hsum_two : ∑ _x ∈ s, 2 = 2 * s.card := by
-    simp [Finset.sum_const, mul_comm]
-  by_contra hne
-  have hlt_a : w a < 2 := Nat.lt_of_le_of_ne (hle a ha) hne
-  have hpoint :
-      ∑ x ∈ s, w x < ∑ x ∈ s, (if x = a then 2 else w x) := by
-    refine Finset.sum_lt_sum ?_ ?_
-    · intro x hx
-      by_cases hxa : x = a
-      · subst hxa
-        simp [Nat.le_of_lt hlt_a]
-      · simp [hxa]
-    · exact ⟨a, ha, by simp [hlt_a]⟩
-  have hif_le : ∑ x ∈ s, (if x = a then 2 else w x) ≤ ∑ _x ∈ s, 2 := by
-    refine Finset.sum_le_sum ?_
-    intro x hx
-    by_cases hxa : x = a
-    · simp [hxa]
-    · simp [hxa, hle x hx]
-  have hstrict : ∑ x ∈ s, w x < ∑ _x ∈ s, 2 := lt_of_lt_of_le hpoint hif_le
-  rw [hsum, hsum_two] at hstrict
-  exact (lt_irrefl (2 * s.card)) hstrict
+  exact all_eq_cap_of_sum_eq_cap_mul_card s w 2 hle hsum
 
 /-- If the witness map sends each pair to its two-witness set, then
 two-regularity plus injectivity makes the witness map a bijection whenever the

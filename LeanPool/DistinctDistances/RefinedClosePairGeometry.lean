@@ -125,44 +125,6 @@ lemma same_side_chord_sq_le_of_sq_le {X Y X' Y' r γ : ℝ}
       exact le_of_mul_le_mul_right hm hpos
     nlinarith
 
-/-- The orthonormal frame with the apex `p` at `(‖p‖, 0)`: coordinates `u, v` of
-three points, with their squared norms, mutual squared distances, and squared
-distances to the apex. -/
-lemma exists_apex_frame (p : Point) (q : Fin 3 → Point) (ha0 : ‖p‖ ≠ 0) :
-    ∃ u v : Fin 3 → ℝ, (∀ i, u i ^ 2 + v i ^ 2 = ‖q i‖ ^ 2) ∧
-      (∀ i j, (u i - u j) ^ 2 + (v i - v j) ^ 2 = dist (q i) (q j) ^ 2) ∧
-      ∀ i, (u i - ‖p‖) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by
-  set a := ‖p‖ with ha
-  have hpa : p 0 ^ 2 + p 1 ^ 2 = a ^ 2 := (point_norm_sq_coordinates p).symm
-  let u : Fin 3 → ℝ := fun i ↦ (p 0 * q i 0 + p 1 * q i 1) / a
-  let v : Fin 3 → ℝ := fun i ↦ (-p 1 * q i 0 + p 0 * q i 1) / a
-  have hnorm (i : Fin 3) : u i ^ 2 + v i ^ 2 = ‖q i‖ ^ 2 := by
-    rw [point_norm_sq_coordinates]
-    dsimp [u, v]
-    field_simp [ha0]
-    calc
-      _ = (p 0 ^ 2 + p 1 ^ 2) * (q i 0 ^ 2 + q i 1 ^ 2) := by ring
-      _ = _ := by rw [hpa]
-  have hdist (i j : Fin 3) :
-      (u i - u j) ^ 2 + (v i - v j) ^ 2 = dist (q i) (q j) ^ 2 := by
-    rw [point_dist_sq_coordinates]
-    dsimp [u, v]
-    field_simp [ha0]
-    calc
-      _ = (p 0 ^ 2 + p 1 ^ 2) *
-          ((q i 0 - q j 0) ^ 2 + (q i 1 - q j 1) ^ 2) := by ring
-      _ = _ := by rw [hpa]
-  have hapex (i : Fin 3) : (u i - a) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by
-    have hu : a * u i = p 0 * q i 0 + p 1 * q i 1 := by
-      dsimp [u]; field_simp [ha0]
-    calc
-      _ = a ^ 2 - 2 * (a * u i) + (u i ^ 2 + v i ^ 2) := by ring
-      _ = _ := by
-        rw [hnorm, hu, point_norm_sq_coordinates, point_dist_sq_coordinates,
-          point_norm_sq_coordinates]
-        nlinarith [hpa]
-  exact ⟨u, v, hnorm, hdist, hapex⟩
-
 /-- Step L0 in the unit annulus, arbitrary planar frame: three points of the annulus
 `1 - x ≤ ‖·‖² ≤ 1` equidistant from an apex `p` of the annulus contain a pair of
 squared distance at most `t`, provided `0 < σ`, `σ² ≤ 1 - x` and `x(σ + 1) ≤ σ t`.

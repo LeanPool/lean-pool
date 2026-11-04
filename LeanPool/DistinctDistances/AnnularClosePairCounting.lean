@@ -46,16 +46,14 @@ lemma point_norm_sq_coordinates (p : Point) :
   rw [EuclideanSpace.real_norm_sq_eq]
   simp [Fin.sum_univ_two]
 
-/-- The merged coordinate lemma in an arbitrary planar frame. -/
-theorem annular_equidistant_triple_close_pair (p : Point) (q : Fin 3 → Point)
-    {x : ℝ} (hx : 0 ≤ x) (hx34 : x ≤ 3 / 4)
-    (hp : 1 - x ≤ ‖p‖ ^ 2)
-    (hlo : ∀ i, 1 - x ≤ ‖q i‖ ^ 2) (hhi : ∀ i, ‖q i‖ ^ 2 ≤ 1)
-    (heq : ∀ i j, dist p (q i) = dist p (q j)) :
-    ∃ i j : Fin 3, i ≠ j ∧ dist (q i) (q j) ^ 2 ≤ 4 * x := by
-  let a := ‖p‖
-  have ha : 1 / 2 ≤ a := by dsimp [a]; nlinarith [norm_nonneg p]
-  have ha0 : a ≠ 0 := by linarith
+/-- The orthonormal frame with the apex `p` at `(‖p‖, 0)`: coordinates `u, v` of
+three points, with their squared norms, mutual squared distances, and squared
+distances to the apex. -/
+lemma exists_apex_frame (p : Point) (q : Fin 3 → Point) (ha0 : ‖p‖ ≠ 0) :
+    ∃ u v : Fin 3 → ℝ, (∀ i, u i ^ 2 + v i ^ 2 = ‖q i‖ ^ 2) ∧
+      (∀ i j, (u i - u j) ^ 2 + (v i - v j) ^ 2 = dist (q i) (q j) ^ 2) ∧
+      ∀ i, (u i - ‖p‖) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by
+  set a := ‖p‖ with ha
   have hpa : p 0 ^ 2 + p 1 ^ 2 = a ^ 2 := (point_norm_sq_coordinates p).symm
   let u : Fin 3 → ℝ := fun i ↦ (p 0 * q i 0 + p 1 * q i 1) / a
   let v : Fin 3 → ℝ := fun i ↦ (-p 1 * q i 0 + p 0 * q i 1) / a
@@ -75,7 +73,7 @@ theorem annular_equidistant_triple_close_pair (p : Point) (q : Fin 3 → Point)
       _ = (p 0 ^ 2 + p 1 ^ 2) *
           ((q i 0 - q j 0) ^ 2 + (q i 1 - q j 1) ^ 2) := by ring
       _ = _ := by rw [hpa]
-  have hapex (i : Fin 3) : (a - u i) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by
+  have hapex (i : Fin 3) : (u i - a) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by
     have hu : a * u i = p 0 * q i 0 + p 1 * q i 1 := by
       dsimp [u]; field_simp [ha0]
     calc
@@ -84,10 +82,27 @@ theorem annular_equidistant_triple_close_pair (p : Point) (q : Fin 3 → Point)
         rw [hnorm, hu, point_norm_sq_coordinates, point_dist_sq_coordinates,
           point_norm_sq_coordinates]
         nlinarith [hpa]
+  exact ⟨u, v, hnorm, hdist, hapex⟩
+
+/-- The merged coordinate lemma in an arbitrary planar frame. -/
+theorem annular_equidistant_triple_close_pair (p : Point) (q : Fin 3 → Point)
+    {x : ℝ} (hx : 0 ≤ x) (hx34 : x ≤ 3 / 4)
+    (hp : 1 - x ≤ ‖p‖ ^ 2)
+    (hlo : ∀ i, 1 - x ≤ ‖q i‖ ^ 2) (hhi : ∀ i, ‖q i‖ ^ 2 ≤ 1)
+    (heq : ∀ i j, dist p (q i) = dist p (q j)) :
+    ∃ i j : Fin 3, i ≠ j ∧ dist (q i) (q j) ^ 2 ≤ 4 * x := by
+  let a := ‖p‖
+  have ha : 1 / 2 ≤ a := by dsimp [a]; nlinarith [norm_nonneg p]
+  have ha0 : a ≠ 0 := by linarith
+  obtain ⟨u, v, hnorm, hdist, hapex⟩ := exists_apex_frame p q ha0
+  have hapex' (i : Fin 3) : (a - u i) ^ 2 + v i ^ 2 = dist p (q i) ^ 2 := by
+    calc
+      (a - u i) ^ 2 + v i ^ 2 = (u i - a) ^ 2 + v i ^ 2 := by ring
+      _ = dist p (q i) ^ 2 := hapex i
   obtain ⟨i, j, hij, hclose⟩ := annular_three_equidistant_has_close_pair u v ha hx
     (by linarith) (fun i ↦ by rw [hnorm]; exact hlo i)
     (fun i ↦ by rw [hnorm]; exact hhi i)
-    (fun i j ↦ by rw [hapex, hapex, heq i j])
+    (fun i j ↦ by rw [hapex', hapex', heq i j])
   exact ⟨i, j, hij, by rwa [hdist] at hclose⟩
 
 /-- Translation and positive scaling of the arbitrary-frame close-pair lemma.
@@ -120,6 +135,31 @@ theorem scaled_annular_equidistant_triple_close_pair
 noncomputable def SaturatedDistanceIncidences (p : Config n) : Finset (Fin n × ℝ) :=
   (Finset.univ.product (OrderedDistanceValues p)).filter
     (fun ir ↦ (DistanceOutNeighborsAtValue p ir.1 ir.2).card = 3)
+
+/-- A saturated incidence carries an increasing pair below `t` whenever every
+indexed triple on its circle has a pair below `t`. -/
+lemma saturated_incidence_increasing_pair_of_triple {p : Config n} {t : ℝ}
+    {ir : Fin n × ℝ} (hir : ir ∈ SaturatedDistanceIncidences p)
+    (htriple : ∀ f : Fin 3 → Fin n, (∀ i, dist (p ir.1) (p (f i)) = ir.2) →
+      ∃ i j : Fin 3, i ≠ j ∧ dist (p (f i)) (p (f j)) ^ 2 ≤ t) :
+    ∃ a b, a ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
+      b ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
+      a < b ∧ dist (p a) (p b) ^ 2 ≤ t := by
+  classical
+  have hc := (Finset.mem_filter.mp hir).2
+  obtain ⟨a, b, c, hab, hac, hbc, hs⟩ := Finset.card_eq_three.mp hc
+  let f : Fin 3 → Fin n := ![a, b, c]
+  have hf : Function.Injective f := by
+    intro i j hij
+    fin_cases i <;> fin_cases j <;> simp_all [f]
+  have hmem (i : Fin 3) : f i ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 := by
+    rw [hs]; fin_cases i <;> simp [f]
+  have hd (i : Fin 3) : dist (p ir.1) (p (f i)) = ir.2 :=
+    (Finset.mem_filter.mp (hmem i)).2.2
+  obtain ⟨i, j, hij, hclose⟩ := htriple f hd
+  rcases lt_or_gt_of_ne (hf.ne hij) with hlt | hgt
+  · exact ⟨f i, f j, hmem i, hmem j, hlt, hclose⟩
+  · exact ⟨f j, f i, hmem j, hmem i, hgt, by simpa [dist_comm] using hclose⟩
 
 /-- Ordered distinct pairs below an inclusive squared-distance threshold. -/
 noncomputable def OrderedClosePairs (p : Config n) (t : ℝ) : Finset (Fin n × Fin n) :=
@@ -217,28 +257,10 @@ lemma saturated_incidence_has_close_pair {p : Config n} {x : ℝ}
     ∃ a b, a ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
       b ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
       a < b ∧ dist (p a) (p b) ^ 2 ≤ 4 * x := by
-  classical
-  have hc := (Finset.mem_filter.mp hir).2
-  obtain ⟨a, b, c, hab, hac, hbc, hs⟩ := Finset.card_eq_three.mp hc
-  let q : Fin 3 → Point := ![p a, p b, p c]
-  let f : Fin 3 → Fin n := ![a, b, c]
-  have hf : Function.Injective f := by
-    intro i j hij
-    fin_cases i <;> fin_cases j <;> simp_all [f]
-  have hmem (i : Fin 3) : f i ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 := by
-    rw [hs]; fin_cases i <;> simp [f]
-  have hq (i : Fin 3) : q i = p (f i) := by fin_cases i <;> rfl
-  have hd (i : Fin 3) : dist (p ir.1) (q i) = ir.2 := by
-    rw [hq]
-    exact (Finset.mem_filter.mp (hmem i)).2.2
-  obtain ⟨i, j, hij, hclose⟩ := annular_equidistant_triple_close_pair
-    (p ir.1) q hx hx34 (hlo ir.1)
-    (fun i ↦ by rw [hq]; exact hlo _) (fun i ↦ by rw [hq]; exact hhi _)
-    (fun i j ↦ (hd i).trans (hd j).symm)
-  rw [hq, hq] at hclose
-  rcases lt_or_gt_of_ne (hf.ne hij) with hlt | hgt
-  · exact ⟨f i, f j, hmem i, hmem j, hlt, hclose⟩
-  · exact ⟨f j, f i, hmem j, hmem i, hgt, by simpa [dist_comm] using hclose⟩
+  exact saturated_incidence_increasing_pair_of_triple hir fun f hd ↦
+    annular_equidistant_triple_close_pair (p ir.1) (fun i ↦ p (f i)) hx hx34 (hlo ir.1)
+      (fun i ↦ hlo (f i)) (fun i ↦ hhi (f i))
+      (fun i j ↦ (hd i).trans (hd j).symm)
 
 /-- Charging one increasing-index pair per saturated incidence loses at most
 two apexes per pair. GP3 is the only geometric assumption in this count. -/
@@ -323,28 +345,10 @@ lemma saturated_incidence_has_close_pair_of_scaled_annulus
     ∃ a b, a ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
       b ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
       a < b ∧ dist (p a) (p b) ^ 2 ≤ 4 * x * ρ ^ 2 := by
-  classical
-  have hc := (Finset.mem_filter.mp hir).2
-  obtain ⟨a, b, c', hab, hac, hbc, hs⟩ := Finset.card_eq_three.mp hc
-  let q : Fin 3 → Point := ![p a, p b, p c']
-  let f : Fin 3 → Fin n := ![a, b, c']
-  have hf : Function.Injective f := by
-    intro i j hij
-    fin_cases i <;> fin_cases j <;> simp_all [f]
-  have hmem (i : Fin 3) : f i ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 := by
-    rw [hs]; fin_cases i <;> simp [f]
-  have hq (i : Fin 3) : q i = p (f i) := by fin_cases i <;> rfl
-  have hd (i : Fin 3) : dist (p ir.1) (q i) = ir.2 := by
-    rw [hq]
-    exact (Finset.mem_filter.mp (hmem i)).2.2
-  obtain ⟨i, j, hij, hclose⟩ := scaled_annular_equidistant_triple_close_pair
-    c (p ir.1) q hρ hx hx34 (hlo ir.1)
-    (fun i ↦ by rw [hq]; exact hlo _) (fun i ↦ by rw [hq]; exact hhi _)
-    (fun i j ↦ (hd i).trans (hd j).symm)
-  rw [hq, hq] at hclose
-  rcases lt_or_gt_of_ne (hf.ne hij) with hlt | hgt
-  · exact ⟨f i, f j, hmem i, hmem j, hlt, hclose⟩
-  · exact ⟨f j, f i, hmem j, hmem i, hgt, by simpa [dist_comm] using hclose⟩
+  exact saturated_incidence_increasing_pair_of_triple hir fun f hd ↦
+    scaled_annular_equidistant_triple_close_pair c (p ir.1) (fun i ↦ p (f i)) hρ hx hx34
+      (hlo ir.1) (fun i ↦ hlo (f i)) (fun i ↦ hhi (f i))
+      (fun i j ↦ (hd i).trans (hd j).symm)
 
 /-- The complete finite bridge from the merged annulus theorem and few
 distinct distances. GP3 is explicit and separate from raw GP4. -/
@@ -404,30 +408,5 @@ theorem thin_annulus_close_pair_density {p : Config n}
     field_simp; ring
   rw [hid]
   nlinarith
-
-/-- A saturated incidence carries an increasing pair below `t` whenever every
-indexed triple on its circle has a pair below `t`. -/
-lemma saturated_incidence_increasing_pair_of_triple {p : Config n} {t : ℝ}
-    {ir : Fin n × ℝ} (hir : ir ∈ SaturatedDistanceIncidences p)
-    (htriple : ∀ f : Fin 3 → Fin n, (∀ i, dist (p ir.1) (p (f i)) = ir.2) →
-      ∃ i j : Fin 3, i ≠ j ∧ dist (p (f i)) (p (f j)) ^ 2 ≤ t) :
-    ∃ a b, a ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
-      b ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 ∧
-      a < b ∧ dist (p a) (p b) ^ 2 ≤ t := by
-  classical
-  have hc := (Finset.mem_filter.mp hir).2
-  obtain ⟨a, b, c, hab, hac, hbc, hs⟩ := Finset.card_eq_three.mp hc
-  let f : Fin 3 → Fin n := ![a, b, c]
-  have hf : Function.Injective f := by
-    intro i j hij
-    fin_cases i <;> fin_cases j <;> simp_all [f]
-  have hmem (i : Fin 3) : f i ∈ DistanceOutNeighborsAtValue p ir.1 ir.2 := by
-    rw [hs]; fin_cases i <;> simp [f]
-  have hd (i : Fin 3) : dist (p ir.1) (p (f i)) = ir.2 :=
-    (Finset.mem_filter.mp (hmem i)).2.2
-  obtain ⟨i, j, hij, hclose⟩ := htriple f hd
-  rcases lt_or_gt_of_ne (hf.ne hij) with hlt | hgt
-  · exact ⟨f i, f j, hmem i, hmem j, hlt, hclose⟩
-  · exact ⟨f j, f i, hmem j, hmem i, hgt, by simpa [dist_comm] using hclose⟩
 
 end Esgk
