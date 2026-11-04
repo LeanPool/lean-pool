@@ -8,6 +8,7 @@ module
 
 public import LeanPool.CIVAxisymmetric.Reduction.AxisDeriv
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Analysis.Calculus.FDeriv.CompCLM
 
 /-!
 # Iterated FDeriv Tuples

@@ -13,7 +13,7 @@ import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Conjneg
 import Mathlib.Algebra.Star.Module
 import Mathlib.Analysis.Complex.Order
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Positivity.Finset
 
 /-!

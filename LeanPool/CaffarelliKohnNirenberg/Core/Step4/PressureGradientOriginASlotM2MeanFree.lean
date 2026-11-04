@@ -150,13 +150,13 @@ theorem originASlot_meanFree_clipped_slice_bound
       rw [hvol x rr hrr.le]
       refine mul_le_mul' le_rfl ?_
       refine (eLpNorm_mono_measure _ Measure.restrict_le_self).trans ?_
-      rw [hslice, eLpNorm_indicator_eq_eLpNorm_restrict hBm]
+      rw [hslice, eLpNorm_indicator_eq_eLpNorm_restrict hBm.nullMeasurableSet]
       exact h6
     · rw [min_eq_right hle]
       have h1 : eLpNorm (fun y => G (y, t)) 2 (volume.restrict (vec3Ball x rr)) ≤
           eLpNorm W 2 (volume.restrict (vec3Ball z.1 ρ)) := by
         refine (eLpNorm_mono_measure _ Measure.restrict_le_self).trans ?_
-        rw [hslice, eLpNorm_indicator_eq_eLpNorm_restrict hBm]
+        rw [hslice, eLpNorm_indicator_eq_eLpNorm_restrict hBm.nullMeasurableSet]
       refine h1.trans ?_
       refine (hholder W (vec3Ball z.1 ρ) hWm).trans ?_
       rw [hvol z.1 ρ hρ.le]

@@ -14,6 +14,7 @@ import LeanPool.PFR.Main
 import LeanPool.PFR.Mathlib.MeasureTheory.Group.Arithmetic
 import LeanPool.ZhangYeungInequality.PFR.Mathlib.Probability.Independence.Basic
 import Mathlib.Algebra.Group.Pointwise.Finset.BigOperators
+import Mathlib.Algebra.Group.Pointwise.Set.Card
 import Mathlib.Combinatorics.Additive.RuzsaCovering
 import Mathlib.Data.SetLike.Fintype
 

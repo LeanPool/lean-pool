@@ -92,7 +92,7 @@ theorem eLpNorm_le_rpow_mul_rpow {r s q : ℝ≥0∞} (hr : r ≠ 0) (hr' : r �
     rw [← Real.rpow_add' (norm_nonneg _) (by nlinarith)]
     ring_nf
   -- Hölder against that pair.
-  have hHolder := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm (μ := μ) (p := ea) (q := eb) (r := 1)
+  have hHolder := eLpNorm_le_eLpNorm_mul_eLpNorm (μ := μ) (p := ea) (q := eb) (r := 1)
     (f := fun x => ‖f x‖ ^ (q.toReal * θ)) (g := fun x => ‖f x‖ ^ (q.toReal * (1 - θ)))
     (fun u v => u * v) 1 (continuous_fst.mul continuous_snd) hg hh
     (Filter.Eventually.of_forall (fun x => by

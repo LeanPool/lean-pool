@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.CantorBendixsonRank
 import Mathlib.Order.WellFounded
+import Mathlib.Tactic.Abel
 import Mathlib.Topology.Order.MonotoneContinuity
 
 /-!

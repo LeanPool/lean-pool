@@ -8,6 +8,7 @@ module
 
 public import LeanPool.ScottMeasurement.Probability.Infinite.HahnBanach
 public import Mathlib.Analysis.Normed.Module.Dual
+public import Mathlib.Topology.Algebra.InfiniteSum.Module
 
 /-!
 # A generalized Kelley cover

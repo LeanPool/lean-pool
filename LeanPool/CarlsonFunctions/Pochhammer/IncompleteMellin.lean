@@ -319,7 +319,7 @@ theorem locallyIntegrableOn_indicator_Ioc {a : ℝ} {K : ℝ → ℂ}
     (hK : ContinuousOn K (Icc 0 a)) :
     LocallyIntegrableOn (Set.indicator (Ioc (0 : ℝ) a) K) (Ioi 0) := by
   have hint : IntegrableOn (Set.indicator (Ioc (0 : ℝ) a) K) (Ioi 0) := by
-    rw [integrableOn_indicator_iff measurableSet_Ioc,
+    rw [integrableOn_indicator_iff measurableSet_Ioc.nullMeasurableSet,
       inter_eq_left.mpr Ioc_subset_Ioi_self]
     exact (hK.integrableOn_compact isCompact_Icc).mono_set Ioc_subset_Icc_self
   exact hint.locallyIntegrableOn

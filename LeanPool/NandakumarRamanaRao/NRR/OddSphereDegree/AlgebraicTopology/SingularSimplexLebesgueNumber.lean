@@ -7,7 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallSimplices
-public import Mathlib.Tactic
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # A Lebesgue number for a singular simplex against an open cover

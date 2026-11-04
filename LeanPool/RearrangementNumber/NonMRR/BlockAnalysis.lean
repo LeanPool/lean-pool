@@ -10,6 +10,7 @@ Copyright (c) 2026 Vinicius de Oliveira Rodrigues.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 
+public import Mathlib.Analysis.Normed.Group.Continuity
 public import Mathlib.Analysis.Normed.Group.Tannery
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Order

@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.CorrectionInitialization
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 public import LeanPool.NavierStokesAndEuler.NavierStokes.GaugeStateCoherence
 import LeanPool.NavierStokesAndEuler.NavierStokes.TemporalStateCoherence
 

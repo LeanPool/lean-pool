@@ -81,10 +81,7 @@ theorem matrixPairing_affineMap_sub {n : ℕ} {R : Type*} [CommRing R]
         ∑ i, ∑ j, G (Fin.last n) j.castSucc * Y i j := by
     exact Finset.sum_comm
   rw [hcolZ, hcolY]
-  repeat' first
-    | rw [Finset.sum_add_distrib]
-    | rw [Finset.sum_sub_distrib]
-    | rw [Finset.sum_neg_distrib]
+  repeat' rw [Finset.sum_sub_distrib]
   have hupperBlock :
       (∑ i, ∑ j,
           (G i.castSucc j.castSucc * Z i j -

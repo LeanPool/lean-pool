@@ -391,13 +391,13 @@ theorem contDiff_cubeFaceReflectionCellFoldMap {d : ℕ}
   intro i
   by_cases h0 : choice i = 0
   · simpa [cubeFaceReflectionCellFoldMap, h0] using
-      (contDiff_const.sub (contDiff_apply ℝ ℝ i) :
+      (contDiff_const.sub (contDiff_apply ℝ (fun _ => ℝ) i) :
         ContDiff ℝ (⊤ : ℕ∞) fun x : Vec d => (2 * cubeLowerFaceCoord Q i) - x i)
   · by_cases h1 : choice i = 1
     · simpa [cubeFaceReflectionCellFoldMap, h0, h1] using
-        (contDiff_apply ℝ ℝ i : ContDiff ℝ (⊤ : ℕ∞) fun x : Vec d => x i)
+        (contDiff_apply ℝ (fun _ => ℝ) i : ContDiff ℝ (⊤ : ℕ∞) fun x : Vec d => x i)
     · simpa [cubeFaceReflectionCellFoldMap, h0, h1] using
-        (contDiff_const.sub (contDiff_apply ℝ ℝ i) :
+        (contDiff_const.sub (contDiff_apply ℝ (fun _ => ℝ) i) :
           ContDiff ℝ (⊤ : ℕ∞) fun x : Vec d => (2 * cubeUpperFaceCoord Q i) - x i)
 
 /-- Smoothness of a compact-test function is preserved by precomposition with

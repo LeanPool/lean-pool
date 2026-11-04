@@ -11,6 +11,7 @@ import LeanPool.JacobianDiffgeo.CanonicalForms.Existence
 import LeanPool.JacobianDiffgeo.Finiteness.H1Finite
 import LeanPool.JacobianDiffgeo.LaurentTail.Comparison
 import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.LinearAlgebra.FreeModule.Finite.Matrix
 import Mathlib.MeasureTheory.Covering.Besicovitch
 

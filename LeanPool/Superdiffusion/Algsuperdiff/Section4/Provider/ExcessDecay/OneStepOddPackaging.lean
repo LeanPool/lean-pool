@@ -180,7 +180,7 @@ theorem hasWeakGradientOn_oddFaceExtend_of_localizedZeroTrace {U : Set (Vec d)}
   set Z : Vec d → ℝ := zeroExtend (faceHalf U i a σ) v.toFun with hZdef
   -- global and reflected `L²` data of the zero extensions
   have hZ2 : MemLp Z 2 (volume : Measure (Vec d)) :=
-    (memLp_indicator_iff_restrict hHmeas).2 v.memL2
+    (memLp_indicator_iff_restrict hHmeas.nullMeasurableSet).2 v.memL2
   have hZr2 : MemLp (fun y => Z (coordFaceReflection a i y)) 2
       (volume : Measure (Vec d)) :=
     hZ2.comp_measurePreserving (measurePreserving_coordFaceReflection a i)
@@ -188,7 +188,7 @@ theorem hasWeakGradientOn_oddFaceExtend_of_localizedZeroTrace {U : Set (Vec d)}
       2 (volume : Measure (Vec d)) := by
     intro l
     rw [zeroExtendGrad_apply_coord]
-    exact (memLp_indicator_iff_restrict hHmeas).2 (v.gradMemL2 l)
+    exact (memLp_indicator_iff_restrict hHmeas.nullMeasurableSet).2 (v.gradMemL2 l)
   have hZGr2 : ∀ l : Fin d,
       MemLp (fun y => zeroExtendGrad (faceHalf U i a σ) v.grad
         (coordFaceReflection a i y) l) 2 (volume : Measure (Vec d)) := fun l =>
@@ -389,7 +389,7 @@ theorem exists_h1Function_oddFaceExtend {U : Set (Vec d)}
     (isOpen_faceHalf hU.isOpen i a σ).measurableSet
   have hZ2 : MemLp (zeroExtend (faceHalf U i a σ) v.toFun) 2
       (volume : Measure (Vec d)) :=
-    (memLp_indicator_iff_restrict hHmeas).2 v.memL2
+    (memLp_indicator_iff_restrict hHmeas.nullMeasurableSet).2 v.memL2
   have hZr2 : MemLp (fun y => zeroExtend (faceHalf U i a σ) v.toFun
       (coordFaceReflection a i y)) 2 (volume : Measure (Vec d)) :=
     hZ2.comp_measurePreserving (measurePreserving_coordFaceReflection a i)
@@ -398,7 +398,7 @@ theorem exists_h1Function_oddFaceExtend {U : Set (Vec d)}
         (volume : Measure (Vec d)) := by
     intro l
     rw [zeroExtendGrad_apply_coord]
-    exact (memLp_indicator_iff_restrict hHmeas).2 (v.gradMemL2 l)
+    exact (memLp_indicator_iff_restrict hHmeas.nullMeasurableSet).2 (v.gradMemL2 l)
   have hmemL2 : MemL2On U (oddFaceExtend a i (zeroExtend (faceHalf U i a σ) v.toFun)) := by
     have h := (hZ2.restrict U).sub (hZr2.restrict U)
     exact h

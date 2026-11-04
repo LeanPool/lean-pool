@@ -71,16 +71,16 @@ noncomputable instance matLinear :
 noncomputable def matTrace (M : Mat_ (Karoubi (SkeinObj f))) :
     End M →ₗ[ℂ] ℂ where
   toFun φ := ∑ i : M.ι,
-    HomSpace.traceMap f.val (M.X i).X.arity (φ i i).f
+    HomSpace.traceMap f.val (M.X i).X.arity (φ.asHom i i).f
   map_add' φ ψ := by
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [show ((φ + ψ) i i).f = (φ i i).f + (ψ i i).f from rfl,
+    rw [show ((φ + ψ).asHom i i).f = (φ.asHom i i).f + (ψ.asHom i i).f from rfl,
       map_add]
   map_smul' c φ := by
     rw [RingHom.id_apply, Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [show ((c • φ) i i).f = c • (φ i i).f from rfl,
+    rw [show ((c • φ).asHom i i).f = c • (φ.asHom i i).f from rfl,
       map_smul, smul_eq_mul]
 
 /-- Karoubi-level mixed cyclicity. -/
@@ -93,7 +93,7 @@ private theorem karoubi_trace_comm
 /-- **Cyclicity of the diagonal trace.** -/
 theorem matTrace_comp_comm {M N : Mat_ (Karoubi (SkeinObj f))}
     (α : M ⟶ N) (β : N ⟶ M) :
-    matTrace f M (α ≫ β) = matTrace f N (β ≫ α) := by
+    matTrace f M (End.of (α ≫ β)) = matTrace f N (End.of (β ≫ α)) := by
   change (∑ i : M.ι, HomSpace.traceMap f.val (M.X i).X.arity
       ((α ≫ β) i i).f) =
     ∑ j : N.ι, HomSpace.traceMap f.val (N.X j).X.arity
@@ -150,43 +150,43 @@ entry's closure trace. -/
 private theorem matTrace_matSingle_mul
     {M : Mat_ (Karoubi (SkeinObj f))} (i j : M.ι)
     (b : M.X j ⟶ M.X i) (φ : End M) :
-    matTrace f M ((show End M from matSingle f j i b) * φ) =
+    matTrace f M ((End.of (matSingle f j i b)) * φ) =
       HomSpace.traceMap f.val (M.X i).X.arity
-        ((φ i j).f ≫ b.f) := by
+        ((φ.asHom i j).f ≫ b.f) := by
   classical
   change (∑ k : M.ι, HomSpace.traceMap f.val (M.X k).X.arity
-      ((φ ≫ matSingle f j i b) k k).f) = _
+      ((φ.asHom ≫ matSingle f j i b) k k).f) = _
   rw [Finset.sum_eq_single i
     (fun k _ hk => by
-      rw [show ((φ ≫ matSingle f j i b) k k).f =
-        ((∑ l : M.ι, φ k l ≫ matSingle f j i b l k :
+      rw [show ((φ.asHom ≫ matSingle f j i b) k k).f =
+        ((∑ l : M.ι, φ.asHom k l ≫ matSingle f j i b l k :
           M.X k ⟶ M.X k)).f from rfl]
-      rw [show (((∑ l : M.ι, φ k l ≫ matSingle f j i b l k :
+      rw [show (((∑ l : M.ι, φ.asHom k l ≫ matSingle f j i b l k :
           M.X k ⟶ M.X k))).f =
-        ∑ l : M.ι, ((φ k l ≫ matSingle f j i b l k :
+        ∑ l : M.ι, ((φ.asHom k l ≫ matSingle f j i b l k :
           M.X k ⟶ M.X k)).f from map_sum (karoubiHomAddHom _ _) _ _]
       rw [Finset.sum_eq_zero, map_zero]
       intro l _
       rw [show matSingle f j i b l k = 0 from
         dite_eq_right (fun h => hk h.2)]
-      rw [show ((φ k l ≫ (0 : M.X l ⟶ M.X k) :
+      rw [show ((φ.asHom k l ≫ (0 : M.X l ⟶ M.X k) :
         M.X k ⟶ M.X k)).f = 0 from by
           rw [Limits.comp_zero]
           rfl])
     (fun h => absurd (Finset.mem_univ i) h)]
-  rw [show ((φ ≫ matSingle f j i b) i i).f =
-    ((∑ l : M.ι, φ i l ≫ matSingle f j i b l i :
+  rw [show ((φ.asHom ≫ matSingle f j i b) i i).f =
+    ((∑ l : M.ι, φ.asHom i l ≫ matSingle f j i b l i :
       M.X i ⟶ M.X i)).f from rfl]
-  rw [show (((∑ l : M.ι, φ i l ≫ matSingle f j i b l i :
+  rw [show (((∑ l : M.ι, φ.asHom i l ≫ matSingle f j i b l i :
       M.X i ⟶ M.X i))).f =
-    ∑ l : M.ι, ((φ i l ≫ matSingle f j i b l i :
+    ∑ l : M.ι, ((φ.asHom i l ≫ matSingle f j i b l i :
       M.X i ⟶ M.X i)).f from map_sum (karoubiHomAddHom _ _) _ _]
   rw [map_sum]
   rw [Finset.sum_eq_single j
     (fun l _ hl => by
       rw [show matSingle f j i b l i = 0 from
         dite_eq_right (fun h => hl h.1)]
-      rw [show ((φ i l ≫ (0 : M.X l ⟶ M.X i) :
+      rw [show ((φ.asHom i l ≫ (0 : M.X l ⟶ M.X i) :
         M.X i ⟶ M.X i)).f = 0 from by
           rw [Limits.comp_zero]
           rfl]
@@ -204,12 +204,13 @@ theorem matEnd_eq_zero_of_traces_vanish
     {M : Mat_ (Karoubi (SkeinObj f))} (φ : End M)
     (hφ : ∀ ψ : End M, matTrace f M (ψ * φ) = 0) :
     φ = 0 := by
+  apply End.ext
   apply Mat_.hom_ext
   intro i j
-  change φ i j = 0
-  apply karoubiHom_eq_zero_of_traces_vanish f (φ i j)
+  change φ.asHom i j = 0
+  apply karoubiHom_eq_zero_of_traces_vanish f (φ.asHom i j)
   intro b
-  have h := hφ (show End M from matSingle f j i b)
+  have h := hφ (End.of (matSingle f j i b))
   rw [matTrace_matSingle_mul] at h
   exact h
 
@@ -250,7 +251,8 @@ finite-dimensional — the standing hypothesis of the trace
 criterion. -/
 noncomputable instance matEndFinite
     (M : Mat_ (Karoubi (SkeinObj f))) :
-    FiniteDimensional ℂ (End M) :=
-  matHomFinite f M M
+    FiniteDimensional ℂ (End M) := by
+  have := matHomFinite f M M
+  exact Module.Finite.equiv (End.linearEquiv (R := ℂ)).symm
 
 end RS

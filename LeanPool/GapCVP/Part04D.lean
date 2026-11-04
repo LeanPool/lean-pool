@@ -1041,9 +1041,7 @@ theorem boundedFold_drain_finish
       · subst stack
         simp only [boundedFoldStacks, ↓reduceDIte, cast_eq, dite_eq_right_iff]
         intro h
-        first
-        | exact boundedFold_cast_nil (congrArg computer.tm.Γ h)
-        | exact boundedFold_cast_nil (congrArg computer.tm.Γ h.symm)
+        exact boundedFold_cast_nil (congrArg computer.tm.Γ h.symm)
       · by_cases hout : stack = computer.tm.k₁
         · subst stack
           simp only [boundedFoldStacks, ↓reduceDIte, cast_eq, hin]

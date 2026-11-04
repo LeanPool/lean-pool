@@ -810,11 +810,11 @@ theorem sq_le_inv_one_sub_mul_add_of_sq_le_add_bilinear_term
   have hU :
       D * U * G ≤ η * U ^ 2 + η⁻¹ * (((D / 2) * G) ^ 2) := by
     convert (two_mul_le_add_mul_sq (a := U) (b := (D / 2) * G) (ε := η) hη) using 1
-    all_goals (first | rfl | ring)
+    ring
   have hW :
       D * W * G ≤ η * W ^ 2 + η⁻¹ * (((D / 2) * G) ^ 2) := by
     convert (two_mul_le_add_mul_sq (a := W) (b := (D / 2) * G) (ε := η) hη) using 1
-    all_goals (first | rfl | ring)
+    ring
   have hstep :
       (1 - η) * W ^ 2 ≤ A + η * U ^ 2 + 2 * η⁻¹ * (((D / 2) * G) ^ 2) := by
     linarith
@@ -832,11 +832,11 @@ theorem add_bilinear_term_le_add_eta_sq_add_invEta_sq
   have hU :
       D * U * G ≤ η * U ^ 2 + η⁻¹ * (((D / 2) * G) ^ 2) := by
     convert (two_mul_le_add_mul_sq (a := U) (b := (D / 2) * G) (ε := η) hη) using 1
-    all_goals (first | rfl | ring)
+    ring
   have hW :
       D * W * G ≤ η * W ^ 2 + η⁻¹ * (((D / 2) * G) ^ 2) := by
     convert (two_mul_le_add_mul_sq (a := W) (b := (D / 2) * G) (ε := η) hη) using 1
-    all_goals (first | rfl | ring)
+    ring
   have hsplit : D * (U + W) * G = D * U * G + D * W * G := by
     ring
   rw [hsplit]

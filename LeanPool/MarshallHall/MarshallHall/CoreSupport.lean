@@ -123,6 +123,7 @@ theorem retractBasisElement_inv {X K : Type u} [Group K]
 private theorem loopOfHom_id
     {T : WideSubquiver (Symmetrify (IsFreeGroupoid.Generators G))} [Arborescence T]
     (a : G) : IsFreeGroupoid.SpanningTree.loopOfHom T (𝟙 a) = 1 := by
+  ext : 1
   simp [IsFreeGroupoid.SpanningTree.loopOfHom]
 
 private theorem retractBasisElement_of_mem {X K : Type u} [Group K]
@@ -136,6 +137,7 @@ theorem loopOfHom_comp {T : WideSubquiver (Symmetrify (IsFreeGroupoid.Generators
     IsFreeGroupoid.SpanningTree.loopOfHom T (p ≫ q) =
       IsFreeGroupoid.SpanningTree.loopOfHom T q *
         IsFreeGroupoid.SpanningTree.loopOfHom T p := by
+  ext : 1
   simp [IsFreeGroupoid.SpanningTree.loopOfHom, Category.assoc]
 
 theorem loopOfHom_inv {T : WideSubquiver (Symmetrify (IsFreeGroupoid.Generators G))}
@@ -143,8 +145,8 @@ theorem loopOfHom_inv {T : WideSubquiver (Symmetrify (IsFreeGroupoid.Generators 
       IsFreeGroupoid.SpanningTree.loopOfHom T (inv p) =
       (IsFreeGroupoid.SpanningTree.loopOfHom T p)⁻¹ := by
   apply (eq_inv_iff_mul_eq_one).2
-  simp [IsFreeGroupoid.SpanningTree.loopOfHom, CategoryTheory.End.mul_def,
-    Category.assoc]
+  ext : 1
+  simp [IsFreeGroupoid.SpanningTree.loopOfHom, Category.assoc]
 
 private theorem retract_loop_comp
     {T : WideSubquiver (Symmetrify (IsFreeGroupoid.Generators G))} [Arborescence T]

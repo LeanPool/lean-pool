@@ -10,6 +10,7 @@ import pytest
 from lean_pool.quality import (
     _axiom_audit_missing,
     _axiom_audit_resolved,
+    _card_is_current,
     _Declaration,
     _parse_axiom_output,
     _parse_declarations,
@@ -584,6 +585,48 @@ _PROJECT_FIXTURE = {
     "tags": ["test"],
     "msc": ["00A35"],
 }
+
+
+def test_project_card_keeps_short_declarations_on_one_line() -> None:
+    """Short headline lists retain their existing generated representation."""
+    assert "\nMain declarations: `hello`\n" in _project_card(_PROJECT_FIXTURE)
+
+
+def test_project_card_wraps_main_declarations(tmp_path: Path) -> None:
+    """Long headline lists wrap intact identifiers and remain current on rewrite."""
+    declarations = [f"Example.result_{index}_" + "x" * 60 for index in range(3)]
+    project = {**_PROJECT_FIXTURE, "main_declarations": declarations}
+    card = _project_card(project)
+    lines = card.splitlines()
+    start = next(
+        i for i, line in enumerate(lines) if line.startswith("Main declarations:")
+    )
+    end = next(i for i, line in enumerate(lines) if line.startswith("Tags:"))
+    headlines = lines[start:end]
+    assert len(headlines) > 1
+    assert all(len(line) <= 100 for line in headlines)
+    assert all(line.startswith("  ") for line in headlines[1:])
+    assert " ".join(line.strip() for line in headlines) == (
+        "Main declarations: " + ", ".join(f"`{name}`" for name in declarations)
+    )
+
+    entry = tmp_path / "MyProj.lean"
+    attribution = "/-!\n## Attribution\nRetain this separate docstring.\n-/\n"
+    entry.write_text(f"{HEADER}\nimport LeanPool.Basic\n\n{attribution}")
+    _write_project_card(entry, card)
+    generated = entry.read_text()
+    assert _card_is_current(generated, card)
+    assert attribution in generated
+    assert not _card_is_current(generated.replace(declarations[0], "different"), card)
+    _write_project_card(entry, card)
+    assert entry.read_text() == generated
+
+
+def test_project_card_does_not_split_overlong_identifiers() -> None:
+    """An unsplittable identifier is preserved rather than producing a broken link."""
+    declaration = "Example." + "x" * 110
+    card = _project_card({**_PROJECT_FIXTURE, "main_declarations": [declaration]})
+    assert f"`{declaration}`" in card
 
 
 def test_write_project_card_inserts_card_after_imports(tmp_path: Path) -> None:

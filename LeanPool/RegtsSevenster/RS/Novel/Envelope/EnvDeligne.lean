@@ -56,7 +56,7 @@ theorem env_finDimHom : HasFinDimHom (Env f) :=
 endomorphism. -/
 noncomputable def unitExtract (x : End (𝟙_ (Env f))) :
     HomSpace f.val 0 :=
-  ((x.f PUnit.unit PUnit.unit).f :
+  ((x.asHom.f PUnit.unit PUnit.unit).f :
     SkeinObj.mk (f := f) 0 ⟶ SkeinObj.mk 0)
 
 /-- The unit's endomorphisms inject into the arity-zero hom
@@ -64,6 +64,7 @@ space. -/
 theorem unitExtract_injective :
     Function.Injective (unitExtract f) := by
   intro x y h
+  apply End.ext
   apply Karoubi.hom_ext
   apply Mat_.hom_ext
   intro i j
@@ -75,7 +76,7 @@ theorem unitExtract_injective :
 normalization keeps nonzero — so the unit endomorphisms are the
 scalars. -/
 theorem unitExtract_id :
-    unitExtract f (𝟙 (𝟙_ (Env f))) =
+    unitExtract f 1 =
       HomSpace.ofFragment f.val (strandBundle 0) := by
   change ((Karoubi.Hom.f (𝟙 (𝟙_ (Env f))) PUnit.unit
     PUnit.unit).f : SkeinObj.mk (f := f) 0 ⟶ SkeinObj.mk 0) =
@@ -96,8 +97,9 @@ theorem env_endOne : HasScalarUnit (Env f) := by
   constructor
   · -- injective
     intro c d h
-    have h2 : c • unitExtract f (𝟙 (𝟙_ (Env f))) =
-        d • unitExtract f (𝟙 (𝟙_ (Env f))) := congrArg (unitExtract f) h
+    have h2 : c • unitExtract f 1 =
+        d • unitExtract f 1 :=
+      congrArg (fun z : 𝟙_ (Env f) ⟶ 𝟙_ (Env f) => unitExtract f (End.of z)) h
     rw [unitExtract_id, unit_id_eq_emptyClass] at h2
     by_contra hne
     have hsub : (c - d) • emptyClass f.val = 0 := by
@@ -107,10 +109,11 @@ theorem env_endOne : HasScalarUnit (Env f) := by
     · exact emptyClass_ne_zero f hz
   · -- surjective
     intro x
-    obtain ⟨c, hc⟩ := homSpace_zero_spanned f (unitExtract f x)
+    obtain ⟨c, hc⟩ := homSpace_zero_spanned f (unitExtract f (End.of x))
     refine ⟨c, ?_⟩
+    suffices h : End.of (c • 𝟙 (𝟙_ (Env f))) = End.of x from congrArg End.asHom h
     apply unitExtract_injective f
-    change c • unitExtract f (𝟙 (𝟙_ (Env f))) = unitExtract f x
+    change c • unitExtract f 1 = unitExtract f (End.of x)
     rw [unitExtract_id, unit_id_eq_emptyClass]
     exact hc.symm
 

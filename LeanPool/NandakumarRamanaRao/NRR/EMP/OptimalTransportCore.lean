@@ -6,12 +6,13 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
-public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeights
-public import LeanPool.NandakumarRamanaRao.NRR.EMP.NormalizedAreaDeviation
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.EqualAreaWeightCoercivity
 public import LeanPool.NandakumarRamanaRao.NRR.Topology.OutwardFieldZero
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.ConvexBody
+public import LeanPool.NandakumarRamanaRao.NRR.EMP.NormalizedAreaDeviation
 
 /-!
 # `NRR.EMP.OptimalTransportCore` — the isolated optimal‑transport core

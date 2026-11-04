@@ -246,7 +246,7 @@ public theorem _root_.SmoothBumpCovering.exists_extension [T2Space M] [CompactSp
   refine ⟨fun y => ∑ i, θ (y i).2 • G i ((y i).2⁻¹ • (y i).1), ?_, ?_⟩
   · refine ContDiff.sum fun i _ => ?_
     exact (contDiff_cutoff_smul_rescale hθ hθ0 (hGsmooth i)).comp
-      (contDiff_apply ℝ (E × ℝ) i)
+      (contDiff_apply ℝ (fun _ => E × ℝ) i)
   · intro x
     have hterm : ∀ i : ι,
         θ (f.embeddingPiTangent x i).2 •

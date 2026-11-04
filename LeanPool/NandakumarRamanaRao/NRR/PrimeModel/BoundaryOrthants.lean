@@ -7,6 +7,9 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.ChildTestMap
+public import Mathlib.Order.CompletePartialOrder
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Endpoint orthants

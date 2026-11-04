@@ -11,6 +11,7 @@ public import Mathlib.Algebra.Module.Prod
 public import Mathlib.Algebra.Module.Submodule.Defs
 import LeanPool.PFR.Mathlib.LinearAlgebra.Basis.VectorSpace
 import LeanPool.PFR.RhoFunctional
+import Mathlib.Algebra.Group.Pointwise.Set.Card
 
 /-!
 # The homomorphism form of PFR

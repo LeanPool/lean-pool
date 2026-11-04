@@ -275,7 +275,7 @@ theorem globalEnergyClass_rescale {R : ℝ} (hR0 : 0 < R) (hR1 : R ≤ 1)
     have hM : ∀ᵐ s ∂(volume.restrict (Ioo (-1 : ℝ) 0)), E (R ^ 2 * s) ≤ M := by
       have hae := ENNReal.ae_le_essSup (μ := volume.restrict (Ioo (-1 : ℝ) 0)) E
       rw [ae_restrict_iff' measurableSet_Ioo] at hae ⊢
-      have hq : Measure.QuasiMeasurePreserving (fun s : ℝ => R ^ 2 • s) volume volume :=
+      have hq : QuasiMeasurePreserving (fun s : ℝ => R ^ 2 • s) volume volume :=
         Measure.quasiMeasurePreserving_smul volume hR2.ne'
       filter_upwards [hq.ae hae] with s hs hsI
       refine hs ?_

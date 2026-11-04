@@ -90,7 +90,7 @@ example := (@ZFSet.OmnificCode.value_surjective :
 
 /- Properness of the code class and of its distinct numerical values. -/
 example := (@ZFSet.omnificGameCodes_ne_ofSet :
-  ∀ s : ZFSet.{u}, ZFSet.omnificGameCodes ≠ Class.ofSet s)
+  ∀ s : ZFSet.{u}, ZFSet.omnificGameCodes ≠ (s : ZFClass.{u}))
 example := (@ZFSet.Surreal.OmnificInteger.not_small :
   ¬Small.{u} ZFSet.Surreal.OmnificInteger.{u})
 

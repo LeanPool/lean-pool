@@ -187,7 +187,7 @@ private theorem pairing_formula_continuous {τ : ℝ}
   set ind : ℝ → ℝ := fun s => (Ioo 0 τ).indicator (fun _ => (1 : ℝ)) s with hinddef
   have hindL (i j : Fin 3) :
       MemLp (fun s => M i j * ind s) (ENNReal.ofReal (5 / 3)) volume :=
-    (memLp_indicator_const _ measurableSet_Ioo (1 : ℝ)
+    (memLp_indicator_const _ measurableSet_Ioo.nullMeasurableSet (1 : ℝ)
       (Or.inr (by rw [Real.volume_Ioo]; exact ENNReal.ofReal_ne_top))).const_mul (M i j)
   set bound : Vec3 × ℝ → ℝ := fun q => ∑ i : Fin 3, ∑ j : Fin 3,
     ‖G i j q * (M i j * ind q.2 * (1 + ‖q.1‖) ^ (-3 : ℝ))‖ with hbounddef

@@ -54,7 +54,6 @@ theorem IsP4Free.sum (hG : G.IsP4Free) (hH : H.IsP4Free) : (G ⊕g H).IsP4Free :
   rintro (a | a) (b | b) (c | c) (d | d) hab hbc hcd hac had hbd <;>
     simp only [sum_adj] at *
   all_goals first
-    | contradiction
     | exact hG a b c d hab hbc hcd hac had hbd
     | exact hH a b c d hab hbc hcd hac had hbd
 

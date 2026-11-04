@@ -7,6 +7,7 @@ module
 
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.FaaDiBruno.TransportCharacteristicJets
 public import Mathlib.Analysis.Normed.Lp.PiLp
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-! # Transport High Order
 

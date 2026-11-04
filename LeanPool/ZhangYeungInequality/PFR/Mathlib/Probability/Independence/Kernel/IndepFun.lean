@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Probability.Independence.Kernel.IndepFun
 import Mathlib.Data.Finset.Pairwise
+import Mathlib.MeasureTheory.MeasurableSpace.Pi
 
 /-!
 # LeanPool.ZhangYeungInequality.PFR.Mathlib.Probability.Independence.Kernel.IndepFun

@@ -41,7 +41,7 @@ private theorem memLp_indicator_of_memLpOn {d : ℕ} {U : Set (Vec d)}
     {p : ℝ≥0∞} {f : Vec d → ℝ} (hU : MeasurableSet U)
     (hf : MemLp f p (volume.restrict U)) :
     MemLp (Set.indicator U f) p volume := by
-  exact (MeasureTheory.memLp_indicator_iff_restrict hU).2 hf
+  exact (MeasureTheory.memLp_indicator_iff_restrict hU.nullMeasurableSet).2 hf
 
 /-- The literal zero extension of the value representative of an `H¹₀`
 function. -/
@@ -168,7 +168,7 @@ theorem hasWeakGradientOn_univ_zeroExtension {d : ℕ} {U : Set (Vec d)}
         atTop (nhds 0) := by
       refine u.tendsto_approx.congr (fun n => ?_)
       rw [u.approx_sub_zeroExtension_eq_indicator_sub_zeroExtensionGraph n,
-        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU]
+        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet]
     simpa only [Measure.restrict_univ] using! htend
   · intro i
     have htend : Tendsto
@@ -177,7 +177,7 @@ theorem hasWeakGradientOn_univ_zeroExtension {d : ℕ} {U : Set (Vec d)}
           2 volume) atTop (nhds 0) := by
       refine (u.tendsto_approx_grad i).congr (fun n => ?_)
       rw [u.fderiv_approx_sub_zeroExtensionGrad_eq_indicator_sub n i,
-        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU]
+        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet]
     simpa only [Measure.restrict_univ] using! htend
 
 /-- An `H¹₀` function on a measurable set is canonically transported to every
@@ -206,13 +206,13 @@ def extendByZeroToOpenSuperset {d : ℕ} {U V : Set (Vec d)}
     tendsto_approx := by
       refine u.tendsto_approx.congr (fun n => ?_)
       rw [u.approx_sub_zeroExtension_eq_indicator_sub_zeroExtensionGraph n,
-        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU,
+        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet,
         Measure.restrict_restrict_of_subset hUV]
     tendsto_approx_grad := by
       intro i
       refine (u.tendsto_approx_grad i).congr (fun n => ?_)
       rw [u.fderiv_approx_sub_zeroExtensionGrad_eq_indicator_sub n i,
-        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU,
+        MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet,
         Measure.restrict_restrict_of_subset hUV] }
 
 @[simp] theorem extendByZeroToOpenSuperset_toFun {d : ℕ} {U V : Set (Vec d)}

@@ -8,9 +8,9 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionOperator
 public import Mathlib.GroupTheory.Perm.Fin
-public import Mathlib.GroupTheory.Perm.Sign
-public import Mathlib.Order.Fin.Basic
-public import Mathlib.Tactic
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # Last-face sign identity for barycentric subdivision

@@ -39,7 +39,7 @@ variable {d : ℕ}
 
 private theorem quasiMeasurePreserving_matVecMul
     (q : Mat d) (hq : IsUnit q.det) :
-    Measure.QuasiMeasurePreserving (matVecMul q) volume volume := by
+    MeasureTheory.QuasiMeasurePreserving (matVecMul q) volume volume := by
   refine ⟨(continuous_matVecMul q).measurable, ?_⟩
   have hmap := Real.map_matrix_volume_pi_eq_smul_volume_pi (M := q) hq.ne_zero
   change Measure.map (Matrix.toLin' q) volume ≪ volume

@@ -849,9 +849,9 @@ theorem modPowMul_alg
     [Linear ℂ D] [MonoidalLinear ℂ D]
     (m n : ℕ) (x : SymGroupAlgebra m)
     (y : SymGroupAlgebra n) :
-    ((modPowAlg A X m x : End _) ⊗ₘ (modPowAlg A X n y : End _)) ≫
+    ((modPowAlg A X m x).asHom ⊗ₘ (modPowAlg A X n y).asHom) ≫
         modPowMul A X m n =
-      modPowMul A X m n ≫ modPowAlg A X (m + n) (blockAlgEmbed x y) := by
+      modPowMul A X m n ≫ (modPowAlg A X (m + n) (blockAlgEmbed x y)).asHom := by
   induction x using MonoidAlgebra.induction_on with
   | of σ =>
     induction y using MonoidAlgebra.induction_on with
@@ -864,16 +864,16 @@ theorem modPowMul_alg
         modPowAlg_single, modPowAlg_single]
       exact modPowMul_perm A X m n σ τ
     | add y₁ y₂ hy₁ hy₂ =>
-      rw [blockAlgEmbed_add_snd, map_add, map_add]
+      rw [blockAlgEmbed_add_snd, map_add, map_add, End.add_asHom, End.add_asHom]
       exact tensor_add_glue hy₁ hy₂
     | smul r y' hy =>
-      rw [blockAlgEmbed_smul_snd, map_smul, map_smul]
+      rw [blockAlgEmbed_smul_snd, map_smul, map_smul, End.smul_asHom, End.smul_asHom]
       exact tensor_smul_glue r hy
   | add x₁ x₂ hx₁ hx₂ =>
-    rw [blockAlgEmbed_add_fst, map_add, map_add]
+    rw [blockAlgEmbed_add_fst, map_add, map_add, End.add_asHom, End.add_asHom]
     exact add_tensor_glue hx₁ hx₂
   | smul r x' hx =>
-    rw [blockAlgEmbed_smul_fst, map_smul, map_smul]
+    rw [blockAlgEmbed_smul_fst, map_smul, map_smul, End.smul_asHom, End.smul_asHom]
     exact smul_tensor_glue r hx
 
 end Equivariance
@@ -936,12 +936,12 @@ theorem modPowAlg_absorb
     [HasCoequalizers D] [Linear ℂ D]
     {N : ℕ} (z : SymGroupAlgebra N)
     (hz : symmetriser N * z = symmetriser N) :
-    (modPowAlg A X N z : End _) ≫ symPowπ A X N = symPowπ A X N := by
-  have h2 : (modPowAlg A X N z : End _) ≫ symPowIdem A X N =
+    (modPowAlg A X N z).asHom ≫ symPowπ A X N = symPowπ A X N := by
+  have h2 : (modPowAlg A X N z).asHom ≫ symPowIdem A X N =
       symPowIdem A X N := by
     have h3 := congrArg (modPowAlg A X N) hz
     rw [map_mul] at h3
-    exact h3
+    exact congrArg End.asHom h3
   conv_lhs => rw [← symPowIdem_π A X N, ← Category.assoc, h2]
   rw [symPowIdem_π]
 
@@ -979,8 +979,8 @@ theorem symPowπ_tensor_symMul
       modPowMul A X m n ≫ symPowπ A X (m + n) := by
   have h1 : (symPowIdem A X m ⊗ₘ symPowIdem A X n) ≫
       modPowMul A X m n =
-      modPowMul A X m n ≫ modPowAlg A X (m + n)
-        (blockAlgEmbed (symmetriser m) (symmetriser n)) :=
+      modPowMul A X m n ≫ (modPowAlg A X (m + n)
+        (blockAlgEmbed (symmetriser m) (symmetriser n))).asHom :=
     modPowMul_alg A X m n (symmetriser m) (symmetriser n)
   rw [symMul, ← Category.assoc, tensorHom_comp_tensorHom,
     symPowπ_symPowσ, symPowπ_symPowσ, reassoc_of% h1,
@@ -1251,11 +1251,11 @@ theorem symMul_zero_left
   have hD : (𝟙 (modPow A X 0) ⊗ₘ symPowIdem A X n) ≫
       modPowMul A X 0 n =
         modPowMul A X 0 n ≫
-          modPowAlg A X (0 + n) (blockAlgEmbed 1 (symmetriser n)) := by
+          (modPowAlg A X (0 + n) (blockAlgEmbed 1 (symmetriser n))).asHom := by
     have h := modPowMul_alg A X 0 n 1 (symmetriser n)
-    rwa [map_one] at h
-  have hE : modPowAlg A X (0 + n)
-        (blockAlgEmbed 1 (symmetriser n)) ≫ symPowπ A X (0 + n) =
+    rwa [map_one, End.one_asHom] at h
+  have hE : (modPowAlg A X (0 + n)
+        (blockAlgEmbed 1 (symmetriser n))).asHom ≫ symPowπ A X (0 + n) =
       symPowπ A X (0 + n) :=
     modPowAlg_absorb A X _
       (by rw [blockAlgEmbed_one_left, symmetriser_mul_mapDomain])

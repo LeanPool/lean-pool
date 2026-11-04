@@ -111,7 +111,7 @@ theorem response_production_identity {g : Fin 3 → Fin 3 → Vec3 × ℝ → �
   have hZs : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec3 => fun k => U k (y, t)) :=
     contDiff_pi.2 fun k => (hU k).comp hsl
   have hf (i : Fin 3) : ContDiff ℝ 1 (f i) :=
-    (contDiff_apply ℝ ℝ i).comp (hT.comp (hZs.of_le (by simp)))
+    (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp (hT.comp (hZs.of_le (by simp)))
   have hk (i j : Fin 3) : ContDiff ℝ 1 (k i j) :=
     ((contDiff_fderiv_apply_const (hU i) (e j, 0)).comp hsl).of_le (by simp)
   have hs (i j : Fin 3) : ContDiff ℝ 1 (s i j) := ((hg i j).comp hsl).of_le (by simp)

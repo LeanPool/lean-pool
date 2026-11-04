@@ -11,7 +11,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.NonpositiveC
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.TruncationIntegerPartPrimal
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Domain
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrderType
-import Mathlib.Data.Prod.Lex
+import Mathlib.Order.Prod.Lex.Basic
 import Mathlib.SetTheory.Ordinal.Arithmetic
 
 /-!

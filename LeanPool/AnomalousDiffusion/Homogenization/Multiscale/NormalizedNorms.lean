@@ -226,7 +226,7 @@ theorem cubeLpNorm_mul_le_mul_cubeLpNorm_of_holderConjugate {d : ℕ}
         1 * MeasureTheory.eLpNorm f p (normalizedCubeMeasure Q) *
           MeasureTheory.eLpNorm g q (normalizedCubeMeasure Q) := by
     simpa using
-      (MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm (fun a b => a * b) 1
+      (MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm (fun a b => a * b) 1
         continuous_mul hf.aestronglyMeasurable hg.aestronglyMeasurable
         (Filter.Eventually.of_forall fun x => by
           simp))

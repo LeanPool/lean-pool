@@ -88,7 +88,7 @@ theorem memLp_ofVec_gridDualDepthTest (Q : TriadicCube d) (j : ℕ)
     funext fun x => ofVec_gridDualDepthTest_eq Q j v x
   rw [hfun]
   refine memLp_finsetSum _ fun R _ => ?_
-  exact MemLp.indicator (measurableSet_cubeSet R) (memLp_const _)
+  exact MemLp.indicator (measurableSet_cubeSet R).nullMeasurableSet (memLp_const _)
 
 /-! ## 2. The flat half, with the cell-side weight kept -/
 

@@ -5,7 +5,7 @@ Authors: AgreeToDisagree contributors
 -/
 module
 
-public import Mathlib.Data.Setoid.Partition
+public import Mathlib.Order.Setoid.Partition
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 import Mathlib.MeasureTheory.Measure.Typeclasses.SFinite
 

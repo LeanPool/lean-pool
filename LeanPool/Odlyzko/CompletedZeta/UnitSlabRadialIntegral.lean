@@ -7,6 +7,8 @@ module
 
 public import LeanPool.Odlyzko.CompletedZeta.UnitSlabRadial
 
+import Mathlib.MeasureTheory.Integral.Pi
+
 /-! TODO: Add doc-string. -/
 
 @[expose] public section

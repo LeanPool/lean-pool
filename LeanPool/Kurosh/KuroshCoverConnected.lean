@@ -41,8 +41,9 @@ theorem Internal.coverFreeFactorLoopPath {ι : Type v}
   let z : KuroshFreePart G H := x⁻¹
   obtain ⟨q, hq⟩ := Internal.coverFreePath_exists G H
     (a := rawBassSerreOrbitRoot G H)
-    (b := rawBassSerreOrbitRoot G H) z
+    (b := rawBassSerreOrbitRoot G H) z.asHom
   have hloop : coverPathFreeLoop G H q = x⁻¹ := by
+    apply End.ext
     unfold coverPathFreeLoop
     rw [coverQuotientTreePathHom_root]
     simp only [Groupoid.inv_eq_inv]

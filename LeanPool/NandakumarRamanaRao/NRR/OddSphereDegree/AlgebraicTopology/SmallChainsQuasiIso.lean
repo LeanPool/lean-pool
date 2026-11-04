@@ -6,9 +6,10 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallChainsHomologySurjectivity
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallChainsHomologyInjectivity
+import Mathlib.Data.EReal.Inv
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # The small-simplices theorem: small chains include as a quasi-isomorphism

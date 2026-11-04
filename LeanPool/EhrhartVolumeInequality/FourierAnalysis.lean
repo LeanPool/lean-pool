@@ -12,6 +12,7 @@ import all LeanPool.EhrhartVolumeInequality.Variation
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.Analysis.SpecialFunctions.PolarCoord
+import Mathlib.Geometry.Manifold.PartitionOfUnity
 
 /-!
 # Ehrhart volume inequality: FourierAnalysis

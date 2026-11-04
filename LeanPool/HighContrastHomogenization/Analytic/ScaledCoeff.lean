@@ -51,7 +51,7 @@ variable {d : ℕ}
 /-- A nonzero scalar dilation of `ℝ^d` is quasi measure preserving for the
 Lebesgue measure. -/
 theorem quasiMeasurePreserving_smul_vec {c : ℝ} (hc : c ≠ 0) :
-    Measure.QuasiMeasurePreserving (fun x : Vec d => c • x) volume volume :=
+    MeasureTheory.QuasiMeasurePreserving (fun x : Vec d => c • x) volume volume :=
   Measure.quasiMeasurePreserving_smul volume hc
 
 /-- The rescaled field is a.e. strongly measurable, so it can be fed to the

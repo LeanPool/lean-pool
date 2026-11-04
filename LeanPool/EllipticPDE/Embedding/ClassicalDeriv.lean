@@ -8,6 +8,7 @@ Authors: Alejandro Soto Franco
 module
 
 public import LeanPool.EllipticPDE.Embedding.Morrey
+public import Mathlib.Analysis.Calculus.UniformLimitsDeriv
 
 
 /-!

@@ -60,7 +60,8 @@ lemma damped_step {f : E → ℝ} {g : E → E} {M A a γ : ℝ}
       a • (u - z) + (A + a) • (y - w) := by
     dsimp [y]
     match_scalars
-    all_goals field_simp [hAa.ne'] <;> ring
+    all_goals field_simp [hAa.ne']
+    all_goals ring
   have hi := congrArg (fun v => ⟪g w, v⟫) hid
   simp only [inner_add_right, inner_smul_right] at hi
   have hneg (v₁ v₂ : E) : ⟪g w, v₁ - v₂⟫ = -⟪g w, v₂ - v₁⟫ := by

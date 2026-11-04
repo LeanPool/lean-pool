@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import Mathlib.RingTheory.QuasiFinite.Basic
 public import LeanPool.MarkoffModP.BGS.CorvajaZannier.FiniteExtensionPrincipalDivisor
 
 /-!

@@ -38,7 +38,7 @@ chosen identification `e : Hₙ(Sⁿ; ℤ) ≅ ℤ`. The raw `Sphere n` degree i
 special case `g = toTopCatSphereSelfMap f` (see `degreeOfIso_eq_degreeOfIsoTop`). -/
 def degreeOfIsoTop {n : ℕ} (e : SphereTopHomologyIso n)
     (g : TopCat.sphere.{0} n ⟶ TopCat.sphere.{0} n) : ℤ :=
-  degreeRingHomOfIso _ e ((singularHomologyℤ n).map g)
+  degreeRingHomOfIso _ e (.of ((singularHomologyℤ n).map g))
 
 /-- The degree of the identity morphism is `1`. -/
 @[simp]
@@ -74,7 +74,8 @@ theorem degreeOfIsoTop_well_defined {n : ℕ} (e e' : SphereTopHomologyIso n)
   have key :
       (degreeRingEquivOfIso _ e).toRingHom.comp (degreeRingEquivOfIso _ e').symm.toRingHom
         = RingHom.id ℤ := Subsingleton.elim _ _
-  have h := RingHom.ext_iff.mp key (degreeRingEquivOfIso _ e' ((singularHomologyℤ n).map g))
+  have h := RingHom.ext_iff.mp key
+    (degreeRingEquivOfIso _ e' (.of ((singularHomologyℤ n).map g)))
   rw [RingHom.comp_apply, RingHom.id_apply, RingEquiv.toRingHom_eq_coe,
     RingEquiv.toRingHom_eq_coe, RingEquiv.coe_toRingHom, RingEquiv.coe_toRingHom,
     RingEquiv.symm_apply_apply, degreeRingEquivOfIso_apply,
@@ -112,6 +113,7 @@ theorem inducedOnTopHomology_const {n : ℕ} (hn : n ≠ 0) (c : Sphere n) :
     (singularHomologyℤ_punit_isZero hn).eq_zero_of_src _
   rw [inducedOnTopHomology, hfac, (singularHomologyℤ n).map_comp, hpt,
     Limits.comp_zero]
+  rfl
 
 /-- **Degree of a one-point map is `0`** for `n ≥ 1`. -/
 theorem degreeOfIso_const {n : ℕ} (e : SphereTopHomologyIso n) (hn : n ≠ 0)

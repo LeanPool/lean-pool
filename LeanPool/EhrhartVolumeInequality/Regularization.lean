@@ -15,6 +15,7 @@ import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Continuity
 import Mathlib.Analysis.Calculus.DerivativeTest
 import Mathlib.Analysis.Convex.Integral
 import Mathlib.Analysis.Matrix.Order
+import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 import all Mathlib.MeasureTheory.Function.LpSpace.Basic
 
 /-!
@@ -3993,7 +3994,7 @@ private theorem contDiff_momentBodyStrictRadialPotential
   apply ContDiff.sum
   intro i _
   exact contDiff_momentStrictRadialCoordinate.comp
-    (contDiff_const.mul (contDiff_apply ℝ ℝ i))
+    (contDiff_const.mul (contDiff_apply ℝ (fun _ : Fin n => ℝ) i))
 
 private theorem momentBodyStrictRadialPotential_sum_abs_lower
     {n : ℕ} (K : CenteredBody n)

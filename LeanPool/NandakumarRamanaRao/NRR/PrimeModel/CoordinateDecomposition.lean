@@ -7,6 +7,12 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.ZeroSumAlgebra
+import Mathlib.Algebra.Order.Archimedean.Real.Hom
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 /-! # Mean/deviation decomposition -/
 
 @[expose] public section

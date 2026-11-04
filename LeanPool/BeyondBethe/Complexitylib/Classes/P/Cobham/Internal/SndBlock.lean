@@ -88,17 +88,17 @@ def sndBlockTM : TM 0 where
         cases iHead <;>
           exact ⟨by first | exact fun _ => rfl | exact idleDir_right_of_start,
             fun _ => idleDir_right_of_start,
-            by first | exact fun _ => rfl | exact idleDir_right_of_start⟩
+            idleDir_right_of_start⟩
     | .scanBfalse =>
         cases iHead <;>
           exact ⟨by first | exact fun _ => rfl | exact idleDir_right_of_start,
             fun _ => idleDir_right_of_start,
-            by first | exact fun _ => rfl | exact idleDir_right_of_start⟩
+            idleDir_right_of_start⟩
     | .scanBtrue =>
         cases iHead <;>
           exact ⟨by first | exact fun _ => rfl | exact idleDir_right_of_start,
             fun _ => idleDir_right_of_start,
-            by first | exact fun _ => rfl | exact idleDir_right_of_start⟩
+            idleDir_right_of_start⟩
     | .emit =>
         dsimp only []
         split

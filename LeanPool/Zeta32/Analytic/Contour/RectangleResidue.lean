@@ -17,6 +17,7 @@ commit cad38f70f5a649a40dbb3b334055a8e9aff69af5.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+public import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 
 /-!
 # Residue theorem for rectangular contours
