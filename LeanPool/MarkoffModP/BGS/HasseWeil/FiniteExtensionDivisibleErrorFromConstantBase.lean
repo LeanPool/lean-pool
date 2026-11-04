@@ -74,7 +74,8 @@ theorem finiteExtensionClosedPlace_divisibleEvenError_bound_of_constantBase
     have h := exactConstantExtensionClosedPlaceExtensionCount_eq
       K C F hExact (2 * H * n)
     convert h using 1
-    all_goals congr 1 <;> ring
+    all_goals congr 1
+    ring
   have hcard : Nat.card C = Nat.card K ^ Module.finrank K C :=
     Module.natCard_eq_pow_finrank
   have hcenter :

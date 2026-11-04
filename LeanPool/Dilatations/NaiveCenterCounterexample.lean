@@ -360,7 +360,7 @@ lemma PhiNaive_map_fraction (X' : CategoryTheory.SingleObj (Polynomial ℤ)) (m 
     simpa [toDilatationFunctor, CategoryTheory.SingleObj.mapHom,
       CategoryTheory.Functor.comp_map] using h
   rw [hspec1, hspec2] at hmap
-  rw [← CategoryTheory.End.mul_def] at hmap
+  rw [CategoryTheory.SingleObj.comp_as_mul] at hmap
   have hnzd : algebraMap (Polynomial ℤ) (Polynomial ℤ)[CEx] (centerNaive.mor ()) ∈
       nonZeroDivisors (Polynomial ℤ)[CEx] := Multicenter.Dilatation.nonzerodiv_image_single CEx ()
   exact (mul_cancel_left_mem_nonZeroDivisors hnzd).mp

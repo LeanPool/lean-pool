@@ -68,7 +68,7 @@ theorem forcedLerayLimit_productPressure_eLpNorm_fiveThirds_le
     (fun i => hv.eval i) (fun j => hw.eval j)
   have hF53 : ∀ i j, MemLp (F i j) (ENNReal.ofReal (5 / 3 : ℝ)) volume := by
     intro i j
-    rw [memLp_indicator_iff_restrict hS]
+    rw [memLp_indicator_iff_restrict hS.nullMeasurableSet]
     exact (hv' i).mul (hw' j)
   have hagree := rieszPressureSpaceTime_ae_eq_of_memLp_common (3 / 2 : ℝ) (by norm_num)
     (5 / 3 : ℝ) (by norm_num) F hF32 hF53
@@ -83,7 +83,7 @@ theorem forcedLerayLimit_productPressure_eLpNorm_fiveThirds_le
           ((volume : Measure (Vec3 × ℝ)).restrict S) *
         eLpNorm (fun z => w z j) (ENNReal.ofReal (10 / 3 : ℝ))
           ((volume : Measure (Vec3 × ℝ)).restrict S) := by
-    rw [eLpNorm_indicator_eq_eLpNorm_restrict hS]
+    rw [eLpNorm_indicator_eq_eLpNorm_restrict hS.nullMeasurableSet]
     exact eLpNorm_smul_le_mul_eLpNorm (φ := fun z => v z i) (f := fun z => w z j)
       (hv' i).aestronglyMeasurable (hw' j).aestronglyMeasurable
   have hfin (i j : Fin 3) : eLpNorm (F i j) (ENNReal.ofReal (5 / 3 : ℝ)) volume ≠ ⊤ :=

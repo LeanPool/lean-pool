@@ -8,6 +8,8 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunction
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.SupportFunctionBasic
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.ReduceModChar
 
 /-!
 # `NRR.Geometry.ConvexBody` — the width function

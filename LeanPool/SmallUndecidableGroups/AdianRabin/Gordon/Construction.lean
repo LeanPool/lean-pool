@@ -10,7 +10,8 @@ public import LeanPool.SmallUndecidableGroups.AdianRabin.Gordon.RightBasis
 public import LeanPool.SmallUndecidableGroups.Presentation
 public import Mathlib.GroupTheory.Abelianization.Defs
 public import Mathlib.GroupTheory.OrderOfElement
-public import Mathlib.GroupTheory.SpecificGroups.Cyclic.Basic
+public import Mathlib.GroupTheory.SpecificGroups.Cyclic.Subgroup
+public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.Group
 
 /-!

@@ -68,7 +68,8 @@ private theorem permHighEquiv_eq_outMapEquiv {t : ℕ}
 /-- **Bridge lemma**: `permClass f n σ = bundleMapClass f σ`. -/
 theorem permClass_eq_bundleMapClass (n : ℕ)
     (σ : Equiv.Perm (Fin n)) :
-    permClass f n σ = bundleMapClass f σ := by
+    permClass f n σ = End.of (bundleMapClass f σ) := by
+  apply End.ext
   change HomSpace.ofFragment f.val (permFragment σ) =
     HomSpace.ofFragment f.val (bundleMap σ)
   exact HomSpace.ofFragment_congr f
@@ -97,15 +98,15 @@ theorem permClass_sumCongr (a b : ℕ) (σ : Equiv.Perm (Fin a))
     (τ : Equiv.Perm (Fin b)) :
     permClass f (a + b)
       (finSumFinEquiv.permCongr (Equiv.sumCongr σ τ)) =
-    (MonoidalCategoryStruct.tensorHom
+    End.of (MonoidalCategoryStruct.tensorHom
         (X₁ := SkeinObj.mk a) (Y₁ := SkeinObj.mk a)
         (X₂ := SkeinObj.mk b) (Y₂ := SkeinObj.mk b)
-        (permClass f a σ) (permClass f b τ) :
-      End (SkeinObj.mk (a + b))) := by
+        (permClass f a σ).asHom (permClass f b τ).asHom) := by
+  apply End.ext
   rw [permClass_eq_bundleMapClass,
     permCongr_sumCongr_eq_tensorMapEquiv]
   change bundleMapClass f (tensorMapEquiv σ τ) =
-    HomSpace.tensor f a a b b (permClass f a σ) (permClass f b τ)
+    HomSpace.tensor f a a b b (permClass f a σ).asHom (permClass f b τ).asHom
   rw [permClass_eq_bundleMapClass, permClass_eq_bundleMapClass]
   exact (bundleMapClass_tensor f σ τ).symm
 

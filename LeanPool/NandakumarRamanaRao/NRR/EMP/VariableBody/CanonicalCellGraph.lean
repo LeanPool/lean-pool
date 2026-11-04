@@ -8,6 +8,11 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.CanonicalCell
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.HalfspaceCoefficients
+import LeanPool.NandakumarRamanaRao.NRR.BodySpace.MembershipStability
+import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.NormalizedWeightContinuity
+import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 /-!
 # `NRR.EMP.VariableBody.CanonicalCellGraph` — one-sided closedness of the cell graph
 

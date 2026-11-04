@@ -14,7 +14,8 @@ public import LeanPool.Zeta5Irrational.Growth.InnerSum
 public import LeanPool.Zeta5Irrational.Growth.OuterPrime
 public import LeanPool.Zeta5Irrational.Constants
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum.Ineq
 import Mathlib.Tactic.NormNum.Inv

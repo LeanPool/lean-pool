@@ -13,6 +13,7 @@ import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Threefold.SpecialPeriods5
 public import LeanPool.HopfProblem.CuspFibre.CuspCentralHomology1
+import Mathlib.Analysis.SpecialFunctions.PolarCoord
 import LeanPool.HopfProblem.Uniformization.HolomorphicCousin
 import all LeanPool.HopfProblem.Foundations.Core2
 import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint

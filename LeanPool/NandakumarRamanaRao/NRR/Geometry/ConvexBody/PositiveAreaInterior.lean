@@ -6,9 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Analysis.Normed.Affine.AddTorsorBases
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarCircle
+public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import LeanPool.NandakumarRamanaRao.NRR.HalfSpace
+import Mathlib.Analysis.Normed.Affine.AddTorsorBases
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
 /-!
 # `NRR.Geometry.ConvexBody` — positive area implies nonempty interior
 

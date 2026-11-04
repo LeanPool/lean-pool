@@ -128,7 +128,7 @@ theorem blowupLimitClauses_pressure_zero_of_velocity_zero
     · rw [Set.indicator_of_notMem hzS]
       rfl
   have hP0 := blowupLimitAssemblyPressure_rieszPressure_ae_zero
-    (fun i j => (hG m i j).indicator hS) htensor0
+    (fun i j => (hG m i j).indicator hS.nullMeasurableSet) htensor0
   filter_upwards [hwin, ae_restrict_of_ae hloc, ae_restrict_of_ae hP0,
     ae_restrict_mem hS] with z hz hzl hz0 hzS
   have hzl' := hzl

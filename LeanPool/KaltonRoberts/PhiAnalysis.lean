@@ -18,6 +18,7 @@ import LeanPool.KaltonRoberts.LogBounds
 import LeanPool.KaltonRoberts.PhiDeriv
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Data.Sym.Sym2.Init
 import Mathlib.Tactic.NormNum.GCD

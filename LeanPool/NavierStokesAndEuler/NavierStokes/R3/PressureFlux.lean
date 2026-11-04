@@ -2580,7 +2580,7 @@ theorem norm_holder_pair_le {f : Space → ℝ} {g : Space → ℂ}
   have he : eLpNorm (fun x => (f x : ℂ) * g x) 1 volume ≤
       eLpNorm (fun x => (f x : ℂ)) (6 / 5) volume * eLpNorm g 6 volume := by
     simpa only [ENNReal.coe_one, one_mul] using
-      eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+      eLpNorm_le_eLpNorm_mul_eLpNorm
         (fun a b : ℂ => a * b) 1 continuous_mul
         hfc.aestronglyMeasurable hg.aestronglyMeasurable
         (Eventually.of_forall fun x => by simp [nnnorm_mul])

@@ -253,7 +253,7 @@ lemma enorm_translateL2_sub_toL2_le (a : E) (f : ↥(C1c (E := E))) :
       have hf' :
           (fun x => (toL2 (μ := μ) (E := E) f : E → ℝ) (x + a)) =ᵐ[μ] fun x => f.1 (x + a) := by
         exact
-          (Measure.QuasiMeasurePreserving.ae_eq_comp
+          (QuasiMeasurePreserving.ae_eq_comp
             (MeasureTheory.measurePreserving_add_right μ a).quasiMeasurePreserving hf)
       exact (translateL2_ae_eq (μ := μ) (F := ℝ) a (toL2 (μ := μ) (E := E) f)).trans hf'
     have h₂ : (toL2 (μ := μ) (E := E) f : E → ℝ) =ᵐ[μ] fun x => f.1 x :=

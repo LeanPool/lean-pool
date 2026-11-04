@@ -57,7 +57,7 @@ theorem contDiff_ansatzPairing (hΦ : IsStreamSeq I Φ) (m : ℕ) (κm : ℝ) (T
   have hG := contDiff_G I hΦ m T (lIdx β I.Λ m k) hTt
   unfold ansatzPairing vecDot
   exact ContDiff.sum fun j _ =>
-    ((contDiff_apply ℝ ℝ j).comp hχ).mul ((contDiff_apply ℝ ℝ j).comp hG)
+    ((contDiff_apply ℝ (fun _ => ℝ) j).comp hχ).mul ((contDiff_apply ℝ (fun _ => ℝ) j).comp hG)
 
 /-- Gradient of the `k`-th pairing: the `(∇ΧTilde) G` part and the Hessian part. -/
 theorem spaceGrad_ansatzPairing (hΦ : IsStreamSeq I Φ) (m : ℕ) (κm : ℝ) (T : ℝ → Vec 2 → ℝ)

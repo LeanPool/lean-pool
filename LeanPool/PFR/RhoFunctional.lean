@@ -22,6 +22,7 @@ import LeanPool.ZhangYeungInequality.PFR.Mathlib.MeasureTheory.Measure.Prod
 import LeanPool.ZhangYeungInequality.PFR.Mathlib.Probability.ConditionalProbability
 import LeanPool.ZhangYeungInequality.PFR.Mathlib.Probability.Independence.Basic
 import LeanPool.ZhangYeungInequality.PFR.Mathlib.Probability.UniformOn
+import Mathlib.Algebra.Group.Pointwise.Set.Card
 import Mathlib.Algebra.Module.ZMod
 import Mathlib.Combinatorics.Additive.RuzsaCovering
 import Mathlib.MeasureTheory.Measure.FiniteMeasureProd
@@ -420,7 +421,7 @@ private lemma rhoMinus_continuous_aux3 (hA : A.Nonempty) {μ : ProbabilityMeasur
     · intro g hg h'g
       rw [← neg_mul, neg_mul_comm]
       have T := neg_nonneg.2 (m_nonpos g)
-      positivity
+      exact mul_nonneg measureReal_nonneg T
     · exact Finset.filter_subset _ _
     · exact Finset.card_le_univ _
   _ = KL[id; μ' # Prod.fst + Prod.snd; ν.prod (uniformOn A)] + δ * (1 + C * Fintype.card G) := by

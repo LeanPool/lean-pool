@@ -520,7 +520,7 @@ variable {g : ℝ → ℝ}
 
 theorem contDiff_oneCoord (hg : ContDiff ℝ 1 g) :
     ContDiff ℝ 1 (fun y : Fin 1 → ℝ ↦ g (y 0)) :=
-  hg.comp (contDiff_apply ℝ ℝ 0)
+  hg.comp (contDiff_apply ℝ (fun _ : Fin 1 ↦ ℝ) 0)
 
 theorem abs_oneCoord_le {C c : ℝ} (hC : 0 ≤ C) (hc : 0 ≤ c)
     (hg : ∀ x, |g x| ≤ C * Real.exp (c * |x|)) (y : Fin 1 → ℝ) :
@@ -1034,7 +1034,7 @@ section TwoCoord
 def mulCoord (y : Fin 2 → ℝ) : ℝ := y 0 * y 1
 
 theorem contDiff_mulCoord : ContDiff ℝ 1 mulCoord :=
-  (contDiff_apply ℝ ℝ 0).mul (contDiff_apply ℝ ℝ 1)
+  (contDiff_apply ℝ (fun _ : Fin 2 ↦ ℝ) 0).mul (contDiff_apply ℝ (fun _ : Fin 2 ↦ ℝ) 1)
 
 theorem fderiv_mulCoord (y : Fin 2 → ℝ) :
     fderiv ℝ mulCoord y = y 1 • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 2 ↦ ℝ) 0 +

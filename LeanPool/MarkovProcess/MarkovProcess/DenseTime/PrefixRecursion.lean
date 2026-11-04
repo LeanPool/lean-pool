@@ -52,7 +52,7 @@ private theorem step_transport {X H Z Y T : Type*}
         change (Kernel.id ×ₖ η ∘ₖ κ).map (g ∘ Prod.map E.symm id) = _
         rw [hcompat]
       all_goals first | exact hg | fun_prop
-  all_goals first | exact hg | fun_prop
+  all_goals fun_prop
 
 private theorem prod_comp_prod_map_prodAssoc {X A B : Type*}
     [MeasurableSpace X] [MeasurableSpace A] [MeasurableSpace B]

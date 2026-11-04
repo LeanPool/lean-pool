@@ -8,7 +8,7 @@ module
 
 public import Mathlib.AlgebraicTopology.SingularHomology.Basic
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
-public import Mathlib.Algebra.Category.ModuleCat.Colimits
+public import Mathlib.Algebra.Category.ModuleCat.Colimits -- shake: keep
 
 /-!
 # Chain-homotopy implies equality on singular homology

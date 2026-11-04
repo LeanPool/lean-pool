@@ -7,6 +7,7 @@ module
 
 public import LeanPool.RellichKondrachov.Geometry.Manifold.Sobolev.ChartMeasure
 public import LeanPool.RellichKondrachov.Geometry.Manifold.Sobolev.LocalizationH2
+import Mathlib.Geometry.Manifold.Algebra.Structures
 
 /-!
 # `RellichKondrachov.Geometry.Manifold.Sobolev.H2`

@@ -234,7 +234,7 @@ theorem tendsto_eLpNorm_fderiv_convexApproxSmoothing_apply_basisVec_sub_zero_of_
             symm
             simpa [μ] using
               (MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict
-                (μ := MeasureTheory.volume) (p := p) (f := f n) hU_meas)
+                (μ := MeasureTheory.volume) (p := p) (f := f n) hU_meas.nullMeasurableSet)
       _ ≤ ENNReal.ofReal δ * MeasureTheory.volume U ^ (1 / p.toReal) := hnorm_indicator
       _ = ENNReal.ofReal δ * μ Set.univ ^ (1 / p.toReal) := by
             simp [μ]
@@ -359,7 +359,7 @@ theorem tendsto_eLpNorm_sub_zero_convexApproxSmoothing_of_continuous
             symm
             simpa [μ] using
               (MeasureTheory.eLpNorm_indicator_eq_eLpNorm_restrict
-                (μ := MeasureTheory.volume) (p := p) (f := f n) hU_meas)
+                (μ := MeasureTheory.volume) (p := p) (f := f n) hU_meas.nullMeasurableSet)
       _ ≤ ENNReal.ofReal δ * MeasureTheory.volume U ^ (1 / p.toReal) := hnorm_indicator
       _ = ENNReal.ofReal δ * μ Set.univ ^ (1 / p.toReal) := by
             simp [μ]

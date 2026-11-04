@@ -312,7 +312,8 @@ theorem forcedLerayLimit_globalGradient_outputs
         (forcedLerayLimitGradient_eLpNorm_le_of_lintegral G hGmeas B hGslab)
       exact eLpNorm_norm _ hGmeas
   -- the truncated tests
-  have hwK : ∀ m, MemLp ((K m).indicator w) 2 μ := fun m => hw.indicator (hKmeas m)
+  have hwK : ∀ m, MemLp ((K m).indicator w) 2 μ :=
+    fun m => hw.indicator (hKmeas m).nullMeasurableSet
   have htail : Tendsto (fun m => eLpNorm ((K m).indicator w - w) 2 μ) atTop (𝓝 0) := by
     have hdiff : ∀ m, (K m).indicator w - w = -((K m)ᶜ.indicator w) := by
       intro m

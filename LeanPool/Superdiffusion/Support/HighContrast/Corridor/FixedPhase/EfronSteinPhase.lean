@@ -196,7 +196,7 @@ observable: a.e. on the product it equals the fixed-phase observable of the
 two-field core surgery. -/
 theorem clampedPhaseObservableR_update_ae [NeZero d]
     {ℓ : ℝ} {σ : Vec d} {Θ : ℝ} {m : ℤ} (hℓ : 0 < ℓ) (hΘ : 1 ≤ Θ) (P : BlockVec d)
-    {L : Measure (RegCoeffField d)} [IsProbabilityMeasure L]
+    {L : Measure (RegCoeffField d)}
     (hL : ThetaEllipticLaw Θ L)
     (K : Finset (Fin d → ℤ))
     (hK : ∀ k : Fin d → ℤ,

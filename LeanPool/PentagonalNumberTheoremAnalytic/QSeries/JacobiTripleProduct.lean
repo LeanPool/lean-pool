@@ -156,7 +156,7 @@ theorem jacobiBilateral_mul_eq_div {q z : ℂ} (hq : ‖q‖ < 1) (hq' : q ≠ 0
             ring_nf
           · have := summable_inv_pow_mul_pow_choose_two (z := z) hq
             rw [← summable_nat_add_iff 1]
-            (convert this using 2; try rfl)
+            convert this using 2
             norm_num [Nat.choose_succ_succ, pow_succ']
             ring
         · refine Summable.of_norm ?_
@@ -222,7 +222,7 @@ theorem tsum_euler_second_eq_one_add_mul {q z : ℂ} (hq : ‖q‖ < 1) :
       · aesop
       · rw [← summable_nat_add_iff 1]
         convert Summable.mul_left z
-          ((summable_euler_second' hq).comp_injective Nat.cast_injective) using 2 <;> try rfl
+          ((summable_euler_second' hq).comp_injective Nat.cast_injective) using 2
         aesop
     · exact summable_euler_second' hq
     · exact summable_euler_second' hq

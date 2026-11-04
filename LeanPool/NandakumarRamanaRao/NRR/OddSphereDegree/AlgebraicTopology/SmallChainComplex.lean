@@ -8,6 +8,7 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallChains
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionChainMap
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # The small-chain complex and its inclusion into singular chains

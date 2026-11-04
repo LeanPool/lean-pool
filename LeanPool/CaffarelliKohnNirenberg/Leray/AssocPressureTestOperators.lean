@@ -83,7 +83,7 @@ theorem associatedPressureTestCurl_mem_spaceTimeTestFunction
     associatedPressureTestCurl φ ∈ CKN.spaceTimeTestFunction (V := Vec3) Ω I := by
   rcases hφ with ⟨hφsmooth, hφcompact, hφsupport⟩
   have hcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => φ z i) :=
-    (contDiff_apply ℝ ℝ i).comp hφsmooth
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hφsmooth
   have hpartSmooth (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun z : Vec3 × ℝ => associatedPressureTestPartial (fun w => φ w i) j z) :=
     associatedPressureTestPartial_smooth (hcomp i) j
@@ -131,7 +131,7 @@ theorem associatedPressureTestCurl_contDiff
     {φ : Vec3 × ℝ → Vec3} (hφ : ContDiff ℝ (⊤ : ℕ∞) φ) :
     ContDiff ℝ (⊤ : ℕ∞) (associatedPressureTestCurl φ) := by
   have hcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun z : Vec3 × ℝ => φ z i) :=
-    (contDiff_apply ℝ ℝ i).comp hφ
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hφ
   have hpartSmooth (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun z : Vec3 × ℝ => associatedPressureTestPartial (fun w => φ w i) j z) :=
     associatedPressureTestPartial_smooth (hcomp i) j
@@ -182,7 +182,7 @@ theorem associatedPressureTestCurl_divergence
     ∑ i : Fin 3, associatedPressureTestPartial
       (fun w : Vec3 × ℝ => associatedPressureTestCurl φ w i) i z = 0 := by
   have hcomp (i : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec3 × ℝ => φ w i) :=
-    (contDiff_apply ℝ ℝ i).comp hφ
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hφ
   have hpartSmooth (i j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun w : Vec3 × ℝ => associatedPressureTestPartial (fun x => φ x i) j w) :=
     associatedPressureTestPartial_smooth (hcomp i) j
@@ -239,7 +239,7 @@ theorem associatedPressureTestCurl_timePartial
         (fun w : Vec3 × ℝ => fun k => associatedPressureTestTimePartial
           (fun y => φ y k) w) z i := by
   have hcomp (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec3 × ℝ => φ w k) :=
-    (contDiff_apply ℝ ℝ k).comp hφ
+    (contDiff_apply ℝ (fun _ => ℝ) k).comp hφ
   have hderiv (k l : Fin 3) (w : Vec3 × ℝ) :
       associatedPressureTestTimePartial
         (fun y => associatedPressureTestPartial (fun x => φ x k) l y) w =

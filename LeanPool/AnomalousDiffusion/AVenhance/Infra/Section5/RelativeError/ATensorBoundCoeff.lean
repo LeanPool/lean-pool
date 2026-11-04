@@ -297,7 +297,7 @@ theorem uni_temperatureCoefficient_mixed_of_step_size {β C C₀ : ℝ} (I : AVe
     amnr_previous_velocity_contDiff I hΦ hm (AVenhance.Nstar β)
   have hKentry (a p : Fin 2) : ContDiff ℝ (AVenhance.Nstar β)
       (fun y : AmnrSpace => I.Kmat κm m y.1 a p) :=
-    ((contDiff_apply ℝ ℝ p).comp ((contDiff_apply ℝ (Fin 2 → ℝ) a).comp
+    ((contDiff_apply ℝ (fun _ => ℝ) p).comp ((contDiff_apply ℝ (fun _ => Fin 2 → ℝ) a).comp
       (Section3.Kmat_contDiff I hm hκm))).comp contDiff_fst
   have hKbound (a p : Fin 2) (v : List (Option (Fin 2)))
       (hv : v.Sublist w) (y : AmnrSpace) :

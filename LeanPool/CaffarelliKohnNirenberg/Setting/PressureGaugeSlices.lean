@@ -527,7 +527,7 @@ theorem gauge_divergence_pairing
   classical
   obtain ⟨hφd, hφc, hφΩ⟩ := hφ
   have hcomp : ∀ i : Fin 3, ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec3 × ℝ => φ w i) := fun i =>
-    (contDiff_apply ℝ ℝ i).comp hφd
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hφd
   have hcompsupp : ∀ i : Fin 3, tsupport (fun w : Vec3 × ℝ => φ w i) ⊆ tsupport φ := by
     intro i
     refine tsupport_component_subset (ι := Fin 3) φ i ?_

@@ -101,7 +101,7 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNormTwo {W : Set (Vec d)}
   have hbound : ∀ᵐ x ∂μ, ‖(f n x - g x) * h x‖₊ ≤ 1 * ‖f n x - g x‖₊ * ‖h x‖₊ :=
     Eventually.of_forall fun x => by rw [nnnorm_mul]; simp
   have hHolder : eLpNorm (fun x => (f n x - g x) * h x) 1 μ ≤ B n := by
-    have hh' := eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+    have hh' := eLpNorm_le_eLpNorm_mul_eLpNorm
       (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)) (r := 1)
       (fun x y => x * y) 1 continuous_mul ((hf n).sub hg).aestronglyMeasurable
       hh.aestronglyMeasurable hbound

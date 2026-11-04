@@ -7,6 +7,7 @@ Authors: QudeLeap Team
 module
 
 public import LeanPool.LeanQuantumAlg.Primitives.QKernel.DiscreteLogConcept
+public import Mathlib.Algebra.Group.TypeTags.Finite
 /-!
 # Quantum-kernel learning advantage (Liu, Arunachalam, Temme 2021)
 

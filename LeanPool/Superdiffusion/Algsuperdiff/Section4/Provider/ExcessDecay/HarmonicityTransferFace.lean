@@ -164,7 +164,7 @@ theorem isWeaklyHarmonicOn_of_oddFaceExtendGrad {U : Set (Vec d)}
         (volume : Measure (Vec d)) := by
     intro j
     rw [zeroExtendGrad_apply_coord]
-    exact (memLp_indicator_iff_restrict hHmeas).2 (v.gradMemL2 j)
+    exact (memLp_indicator_iff_restrict hHmeas.nullMeasurableSet).2 (v.gradMemL2 j)
   have hGrL2 : ∀ j : Fin d,
       MemLp (fun y => zeroExtendGrad (faceHalf U i a σ) v.grad
         (coordFaceReflection a i y) j) 2 (volume : Measure (Vec d)) := fun j =>

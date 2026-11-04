@@ -233,7 +233,7 @@ theorem slice_selected_gradient_hV_of_centred_tensor_source
         sourceMorreyCutoffVCentredTensor η dη
           (fun y => u (y, s)) (fun y a j => Du (y, s) a j) (c s) x i))
         (ENNReal.ofReal (6 / 5 : ℝ)) volume :=
-      (memLp_indicator_iff_restrict hUmeas).2 (hs i)
+      (memLp_indicator_iff_restrict hUmeas.nullMeasurableSet).2 (hs i)
     have heq : (fun x => sourceMorreyCutoffVCentredTensor η dη
         (fun y => u (y, s)) (fun y a j => Du (y, s) a j) (c s) x i) =
         U.indicator (fun x => sourceMorreyCutoffVCentredTensor η dη

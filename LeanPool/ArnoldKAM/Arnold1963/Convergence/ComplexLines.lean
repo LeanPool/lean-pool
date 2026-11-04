@@ -7,6 +7,7 @@ Authors: Bingqi Yu
 module
 
 public import LeanPool.ArnoldKAM.Arnold1963.Convergence.Limit
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 public import Mathlib.Analysis.Complex.LocallyUniformLimit
 
 /-!

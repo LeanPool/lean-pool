@@ -127,9 +127,9 @@ theorem axisCube_eq_translateSet_smul_openCubeSet_originCube_zero {d : ℕ}
     norm_num at hlo hhi ⊢
     constructor
     · convert hlo using 1
-      all_goals first | rfl | ring
+      ring
     · convert hhi using 1
-      all_goals first | rfl | ring
+      ring
   · have hxi := hx i
     norm_num at hxi ⊢
     have hlo : (-(1 / 2 : ℝ)) < (x i - (z i + L / 2)) / L := by

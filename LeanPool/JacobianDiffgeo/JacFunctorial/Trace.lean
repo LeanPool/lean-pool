@@ -13,6 +13,7 @@ import LeanPool.JacobianDiffgeo.JacFunctorial.Density
 import LeanPool.JacobianDiffgeo.JacFunctorial.Pullback
 import LeanPool.JacobianDiffgeo.MeromorphicTrace.FunctionTrace
 import LeanPool.JacobianDiffgeo.Surface.Identity
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Combinatorics.Matroid.Init
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 

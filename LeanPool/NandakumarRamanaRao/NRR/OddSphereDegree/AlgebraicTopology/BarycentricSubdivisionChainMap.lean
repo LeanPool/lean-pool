@@ -6,8 +6,10 @@ Authors: Arseniy Akopyan
 module
 
 
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionOperator
+public import Mathlib.Combinatorics.Quiver.ReflQuiver
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricBoundaryChainMap
-public import Mathlib.Tactic
+import Mathlib.Tactic.Measurability.Init
 
 /-!
 # Barycentric subdivision as a chain map

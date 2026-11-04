@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.OrdinaryHelmholtzField
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 public import LeanPool.NavierStokesAndEuler.Euler.SolutionDefinitions
 public import LeanPool.NavierStokesAndEuler.Euler.MeanHarmonicDecomposition
 import LeanPool.NavierStokesAndEuler.Euler.MeanWeakHarmonicScaling

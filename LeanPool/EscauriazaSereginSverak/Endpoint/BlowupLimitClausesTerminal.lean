@@ -49,7 +49,7 @@ theorem blowupLimitClauses_tendsto_zero_of_unit_balls
     intro k
     have hind : eLpNorm (f k) 2 (volume.restrict C) =
         eLpNorm (C.indicator (f k)) 2 volume :=
-      (eLpNorm_indicator_eq_eLpNorm_restrict hC.measurableSet).symm
+      (eLpNorm_indicator_eq_eLpNorm_restrict hC.measurableSet.nullMeasurableSet).symm
     rw [hind]
     calc
       eLpNorm (C.indicator (f k)) 2 volume ≤
@@ -80,7 +80,8 @@ theorem blowupLimitClauses_tendsto_zero_of_unit_balls
         apply Finset.sum_congr rfl
         intro c _
         rw [eLpNorm_norm _ ((hfm k).indicator (isOpen_vec3Ball c 1).measurableSet),
-          eLpNorm_indicator_eq_eLpNorm_restrict (isOpen_vec3Ball c 1).measurableSet]
+          eLpNorm_indicator_eq_eLpNorm_restrict
+            (isOpen_vec3Ball c 1).measurableSet.nullMeasurableSet]
   have hsum : Tendsto (fun k => ∑ c ∈ t, eLpNorm (f k) 2 (volume.restrict (vec3Ball c 1)))
       atTop (𝓝 0) := by
     have h := tendsto_finsetSum t (fun c _ => hf c)

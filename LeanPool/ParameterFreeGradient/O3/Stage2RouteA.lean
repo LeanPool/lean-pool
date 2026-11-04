@@ -7,6 +7,7 @@ module
 
 
 public import Mathlib.Analysis.Calculus.Deriv.Abs
+public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 public import LeanPool.ParameterFreeGradient.O3.Stage2RouteC
 public import LeanPool.ParameterFreeGradient.O3.Stage2RouteD
 

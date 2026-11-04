@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import Mathlib.RingTheory.QuasiFinite.Basic
 public import LeanPool.MarkoffModP.BGS.HasseWeil.FunctionFieldNormalClosure
 public import LeanPool.MarkoffModP.BGS.HasseWeil.OnePointLeadingCoefficient
 public import Mathlib.FieldTheory.Finite.GaloisField

@@ -146,7 +146,7 @@ theorem coeFn_diffQuot_mul_coeff {Ω : Set (EuclideanSpace ℝ (Fin d))} (hΩm :
       =ᵐ[volume] fun x =>
         A.a (x + hshift k h) i j * (diffQuot k h (extendL2 hΩm g) x)
           + ((A.a (x + hshift k h) i j - A.a x i j) / h) * (extendL2 hΩm g x) := by
-  have hqmp : MeasureTheory.Measure.QuasiMeasurePreserving (· + hshift k h) volume volume :=
+  have hqmp : MeasureTheory.QuasiMeasurePreserving (· + hshift k h) volume volume :=
     (measurePreserving_add_right volume (hshift k h)).quasiMeasurePreserving
   have hact_shift :
       (fun x => (extendL2 hΩm (A.actL i j g) : EuclideanSpace ℝ (Fin d) → ℝ)

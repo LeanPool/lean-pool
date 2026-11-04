@@ -15,7 +15,7 @@ import LeanPool.MatchingLogic.EntryIII.Conclusion
 import LeanPool.MatchingLogic.EntryIII.MCSAlpha
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.Ring.Nat
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Tactic.FinCases
 
 /-!

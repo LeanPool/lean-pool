@@ -43,15 +43,13 @@ public noncomputable section
 
 namespace Berarducci
 
-variable {K : Type v} [Field K] [CharZero K]
+variable {K : Type v} [Field K]
 
-omit [CharZero K] in
 /-- The structure map `K_fin → K((ℝ^{≤0}))` is the subring inclusion. -/
 theorem algebraMap_finiteSupportRing_apply (c : Berarducci.FiniteSupportRing (K := K)) :
     algebraMap (Berarducci.FiniteSupportRing (K := K)) (Nonpositive ℝ K) c =
       (c : Nonpositive ℝ K) := (rfl)
 
-omit [CharZero K] in
 /-- A nonzero finite-support series has degree zero, stated for the structure map
 `K_fin → K((ℝ^{≤0}))`. -/
 theorem degreeValuation_algebraMap_eq_zero (c : Berarducci.FiniteSupportRing (K := K))
@@ -59,6 +57,8 @@ theorem degreeValuation_algebraMap_eq_zero (c : Berarducci.FiniteSupportRing (K 
     degreeValuation K (algebraMap (Berarducci.FiniteSupportRing (K := K)) (Nonpositive ℝ K) c) =
       0 :=
   degreeValuation_finiteSupport_eq_zero c hc
+
+variable [CharZero K]
 
 /-- The right tensor factor gives `P̂ ⊗_K K_fin` its canonical `K_fin`-algebra structure. -/
 instance principalSubringTensorFiniteSupportAlgebra :

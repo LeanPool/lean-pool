@@ -6,8 +6,9 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.BodySpace
 public import LeanPool.NandakumarRamanaRao.NRR.ConfigurationSpace
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace.Basic
+public import LeanPool.NandakumarRamanaRao.NRR.BodySpace
 
 /-!
 # Convex-body interface for variable-body power partitions

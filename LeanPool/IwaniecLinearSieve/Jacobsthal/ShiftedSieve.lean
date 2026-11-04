@@ -10,7 +10,7 @@ public import LeanPool.IwaniecLinearSieve.Rosser
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Data.Int.CardIntervalMod
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Order.Interval.Finset.Box
 import Mathlib.Tactic.Polynomial.Basic

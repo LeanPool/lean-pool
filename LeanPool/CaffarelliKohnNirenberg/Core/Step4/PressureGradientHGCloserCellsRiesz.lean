@@ -57,7 +57,8 @@ theorem pressure_riesz_component_indicator_add_ae
     by_cases hx : x ∈ A <;> simp [hx]
   have h := lpExtensionRepresentative_add_ae (by norm_num)
     (rieszSecondGradientExtensionInput (rieszSecondL2Input i j)
-      (rieszSecondL2_weak_type i j)) (hG.indicator hA) (hG.indicator hA.compl)
+      (rieszSecondL2_weak_type i j))
+    (hG.indicator hA.nullMeasurableSet) (hG.indicator hA.compl.nullMeasurableSet)
   rw [← heq] at h
   exact h
 

@@ -9,6 +9,7 @@ module
 public import LeanPool.Stafford38.Stafford38.Geometry.CanonicalNonconstantFiniteGradientProduction
 public import LeanPool.Stafford38.Stafford38.Geometry.GenericPointKaehlerConormal
 public import LeanPool.Stafford38.Stafford38.Geometry.RetainedPlaceConormalTransport
+public import Mathlib.RingTheory.Ideal.MinimalPrime.Noetherian
 
 
 /-!

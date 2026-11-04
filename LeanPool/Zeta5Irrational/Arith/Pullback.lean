@@ -10,7 +10,7 @@ public import LeanPool.Zeta5Irrational.Arith.PoleFun
 public import LeanPool.Zeta5Irrational.Degree
 import LeanPool.Zeta5Irrational.PartialFractions
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Order.Interval.Finset.Box
 import Mathlib.RingTheory.PiTensorProduct
 import Mathlib.Tactic.ENatToNat

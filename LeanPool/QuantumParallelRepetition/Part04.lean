@@ -6,7 +6,7 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.QuantumParallelRepetition.Part03
-public import Mathlib.Analysis.Convex.SpecificFunctions.Pow
+import Mathlib.Analysis.Convex.SpecificFunctions.Pow
 
 /-! # Quantum parallel repetition, part 04 -/
 
@@ -745,12 +745,11 @@ theorem commonFinitePurification_weighted_left_variation_le
               (finitePurificationMatrix F anchor positive hanchor (choose a)) KB -
             finiteLocalPurificationVector S
               (finitePurificationMatrix F anchor positive hanchor meanIndex) KB‖ ^ 2 := by
-    simp only [map_sum, LinearMap.sum_apply, map_smul,
-      LinearMap.smul_apply, smul_eq_mul]
+    simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
     apply Finset.sum_congr rfl
     intro a _
     rw [finiteLocalPurificationVector_sub_left_norm_sq]
-  rw [map_sub] at hnonneg
+  rw [map_sub (bornTracePairing S.state.matrix)] at hnonneg
   change
     0 ≤
       bornTracePairing S.state.matrix
@@ -823,11 +822,11 @@ theorem commonFinitePurification_weighted_right_variation_le
               (finitePurificationMatrix F anchor positive hanchor (choose b)) -
             finiteLocalPurificationVector S KA
               (finitePurificationMatrix F anchor positive hanchor meanIndex)‖ ^ 2 := by
-    simp only [map_sum, map_smul, smul_eq_mul]
+    simp only [map_sum, LinearMap.map_smul, smul_eq_mul]
     apply Finset.sum_congr rfl
     intro b _
     rw [finiteLocalPurificationVector_sub_right_norm_sq]
-  rw [map_sub, hsum] at hnonneg
+  rw [map_sub (bornTracePairing S.state.matrix (KA.conjTranspose * KA)), hsum] at hnonneg
   linarith only [positive, hanchor, hnonneg]
 
 end
@@ -2086,12 +2085,9 @@ theorem exactPaddedVector_sub
     exactPaddedVector G n S D r (u - v) =
       exactPaddedVector G n S D r u -
         exactPaddedVector G n S D r v := by
-  classical
   ext q
-  rcases q with ⟨a, b⟩
-  rcases a with a | (a | a) <;>
-    rcases b with b | (b | b) <;>
-    simp only [exactPaddedVector, PiLp.sub_apply, sub_zero]
+  simp only [exactPaddedVector, PiLp.sub_apply]
+  split <;> simp only [sub_zero]
 
 /-- The exact padded default construction used in the quantum parallel-repetition argument. -/
 def exactPaddedDefault
@@ -2877,7 +2873,7 @@ theorem source_equation_twenty_nine_contradiction
     unfold entangledValue
     exact le_csSup (winProbabilities_bddAbove G) ⟨S, rfl⟩
   unfold roundedWinningLowerBound at hbound
-  linarith
+  linarith only [hbound, hsup, herror]
 
 end
 
@@ -4545,7 +4541,8 @@ theorem sourceHistoryQuadraticExpectation_matrix_sum
       ∑ i : I,
         quadraticExpectation
           (Matrix.toEuclideanCLM (n := d) (𝕜 := ℂ) (M i)) z := by
-  simp only [quadraticExpectation, map_sum, _root_.sum_apply, CStarModule.inner_sum_right, re_sum]
+  simp only [quadraticExpectation, map_sum (Matrix.toEuclideanCLM (n := d) (𝕜 := ℂ)),
+    _root_.sum_apply, CStarModule.inner_sum_right, re_sum]
 
 end
 

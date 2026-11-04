@@ -8,6 +8,7 @@ module
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Construction.StreamVelocityConstants
 
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Construction.TimeIncrement.FlowBounds
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-! # Recursion
 

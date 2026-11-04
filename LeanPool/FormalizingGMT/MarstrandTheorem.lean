@@ -6,6 +6,7 @@ Authors: FormalizingGMT contributors
 module
 
 public import LeanPool.FormalizingGMT.TangentMeasures.TangentMeasures
+public import Mathlib.Analysis.Calculus.Deriv.MeanValue
 public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 public import Mathlib.MeasureTheory.Function.L2Space
 

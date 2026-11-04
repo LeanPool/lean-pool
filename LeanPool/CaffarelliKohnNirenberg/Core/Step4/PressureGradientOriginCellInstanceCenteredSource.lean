@@ -38,7 +38,7 @@ private theorem eLpNorm_mul_two_three_le
       rw [Real.holderTriple_iff]
       norm_num
     exact h.ennrealOfReal
-  have h := MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+  have h := MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm
     (μ := μ) (f := f) (g := g)
     (p := ENNReal.ofReal (2 : ℝ)) (q := ENNReal.ofReal (3 : ℝ))
     (r := ENNReal.ofReal (6 / 5 : ℝ)) (b := fun a b : ℝ => a * b)
@@ -60,7 +60,7 @@ private theorem eLpNorm_mul_three_three_le
       rw [Real.holderTriple_iff]
       norm_num
     exact h.ennrealOfReal
-  have h := MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm_of_nnnorm
+  have h := MeasureTheory.eLpNorm_le_eLpNorm_mul_eLpNorm
     (μ := μ) (f := f) (g := g)
     (p := ENNReal.ofReal (3 : ℝ)) (q := ENNReal.ofReal (3 : ℝ))
     (r := ENNReal.ofReal (3 / 2 : ℝ)) (b := fun a b : ℝ => a * b)

@@ -26,6 +26,7 @@ import Mathlib.Data.NNRat.Floor
 import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.Data.Set.FiniteExhaustion
 import Mathlib.LinearAlgebra.Matrix.Unique
+import Mathlib.MeasureTheory.Function.Floor
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.PiTensorProduct
