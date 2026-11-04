@@ -2862,7 +2862,7 @@ private theorem core_inner_comm_metriccodes2_16f8f8ca {V : Type*}
     [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V) (x y : V) :
     c.inner x y = c.inner y x := by
-  exact c.conj_inner_symm y x
+  simpa only [Real.ringHom_apply] using c.conj_inner_symm y x
 
 private theorem core_inner_add_right_metriccodes2_16f8f8ca {V : Type*}
     [AddCommGroup V] [Module ℝ V]
@@ -3427,7 +3427,9 @@ theorem sourceMatrixTranspose_pderiv {m : ℕ}
     (i j : Fin m) (p : SourceMatrix m) :
     sourceMatrixTranspose m (MvPolynomial.pderiv (i, j) p) =
       MvPolynomial.pderiv (j, i) (sourceMatrixTranspose m p) := by
-  exact (MvPolynomial.pderiv_rename (Equiv.prodComm (Fin m) (Fin
+  simpa only [sourceMatrixTranspose, MvPolynomial.renameEquiv_apply, Equiv.coe_prodComm,
+    Equiv.prodComm_apply,
+    Prod.swap_prod_mk] using (MvPolynomial.pderiv_rename (Equiv.prodComm (Fin m) (Fin
       m)).injective (i, j) p).symm
 
 theorem sourceMatrixTranspose_columnRoot {m : ℕ}
@@ -4319,7 +4321,7 @@ theorem sourceColumnRoot_upper_of_positiveRootKernel
   have himage : nullSubstitution hn (sourceColumnRoot i j p) = 0 := by
     exact (smul_eq_zero.mp hroot).resolve_left (by norm_num)
   apply nullSubstitution_injective hn
-  exact himage
+  simpa only [sourceColumnRoot_apply, map_sum, map_mul, nullSubstitution_X, map_zero] using himage
 
 theorem sourceRowRoot_self_of_mem_fullYoungComplexPolynomialSpan
     {r n : ℕ} (hn : 2 * (r + 1) ≤ n)

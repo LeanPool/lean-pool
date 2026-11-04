@@ -2114,7 +2114,7 @@ theorem tendsto_complementWeight_ratio
       (fun n : ℕ =>
         ((n - shellWeight a n : ℕ) : ℝ) / (n : ℝ))
       atTop (nhds (1 - a)) := by
-  exact MetricCodes.Hamming.tendsto_complement_longitudinal_ratio ha ha'
+  simpa only [shellWeight] using MetricCodes.Hamming.tendsto_complement_longitudinal_ratio ha ha'
 
 theorem tendsto_johnsonJ1_ratio
     {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
@@ -3873,7 +3873,7 @@ section
 theorem sphericalEntropy_continuous : Continuous MetricCodes.sphericalEntropy := by
   have hplus :
       Continuous (fun u : ℝ => (1 + u) * Real.log (1 + u)) := by
-    exact
+    simpa only [Function.comp_def, Pi.add_apply] using
       (Real.continuous_mul_log.comp (continuous_const.add continuous_id : Continuous (fun u : ℝ
         => 1 + u)))
   have hnatural : Continuous
@@ -3909,7 +3909,7 @@ theorem hasDerivAt_sphericalEntropy {u : ℝ} (hu : 0 < u) :
     rw [Real.log_div (by linarith only [hu] : 1 + u ≠ 0) hu.ne']
     ring
   rw [hfun, hvalue]
-  exact hderiv
+  simpa only [Function.comp_apply, Pi.sub_apply] using hderiv
 
 theorem sphericalEntropy_strictMono :
     StrictMonoOn MetricCodes.sphericalEntropy (Set.Ici (0 : ℝ)) := by
@@ -4257,7 +4257,7 @@ theorem exists_strict_improving_spherical_feasible
         dsimp [a₀]
         exact classicalThreshold_spectral hs hs'
       linarith only [hgamma', hboundary]
-    · exact hentropy'
+    · simpa only using hentropy'
   obtain ⟨b, hb⟩ := hall.exists
   exact ⟨sphericalImprovementPath a₀ b, b, hb⟩
 

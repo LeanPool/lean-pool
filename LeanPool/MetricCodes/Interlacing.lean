@@ -1957,13 +1957,13 @@ theorem dominantAxialSchedule_tail
   have h := hlegal (row :: pref) suff (by
     simp only [List.cons_append]
     rw [← heq])
-  exact h
+  simpa only [arbitraryRowPathWeight] using h
 
 theorem dominantAxialSchedule_initial
     {r : ℕ} (lam : Fin (r + 1) → ℕ)
     (rows : List (Fin (r + 1)))
     (hlegal : DominantAxialSchedule lam rows) : Antitone lam := by
-  exact hlegal [] rows rfl
+  simpa only [arbitraryRowPathWeight] using hlegal [] rows rfl
 
 theorem iteratedArbitraryRowAxialRaise_polarization_of_dominantSchedule
     {r n : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -1979,7 +1979,7 @@ theorem iteratedArbitraryRowAxialRaise_polarization_of_dominantSchedule
       (iteratedArbitraryRowAxialRaise lam k rows p) = 0 := by
   induction rows generalizing lam p with
   | nil =>
-      exact
+      simpa only [iteratedArbitraryRowAxialRaise, LinearMap.id_coe, id_eq, polarization_apply] using
         hhighest a b hab
   | cons row rows ih =>
       have hdom : Antitone lam :=
@@ -5324,7 +5324,7 @@ theorem boxSignature_interlaces {r m n : ℕ}
     (i : BoxIndex (r + 1) m) :
     Interlaces (boxSignature (m := m) a n i) (Weyl.flooredWeight b n) := by
   intro j
-  exact
+  simpa only [Weyl.flooredWeight, boxSignature, flooredCoordinates] using
     (hstable ((Fintype.equivFin (RectangularVertices.Vertex (r + 1) m)).symm i)).2 j
 
 theorem boxVertex_eq_nextVertex_of_signature_raise {r m n : ℕ}

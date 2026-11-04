@@ -958,14 +958,14 @@ def coordinateSumEquiv {n w : ℕ} (x : JohnsonSphere n w) :
     (x : JohnsonSphere n w) (i : SupportCoordinates x) :
     (coordinateSumEquiv x).symm (i : Fin n) = Sum.inl i := by
   have hi : coordinateSumEquiv x (Sum.inl i) = (i : Fin n) := rfl
-  exact
+  simpa only [hi] using
     (coordinateSumEquiv x).symm_apply_apply (Sum.inl i)
 
 @[simp] theorem coordinateSumEquiv_symm_complement {n w : ℕ}
     (x : JohnsonSphere n w) (i : ComplementCoordinates x) :
     (coordinateSumEquiv x).symm (i : Fin n) = Sum.inr i := by
   have hi : coordinateSumEquiv x (Sum.inr i) = (i : Fin n) := rfl
-  exact
+  simpa only [hi] using
     (coordinateSumEquiv x).symm_apply_apply (Sum.inr i)
 
 /-- The equivalence splitting a finite coordinate set into its support and complement parts. -/
@@ -2042,7 +2042,7 @@ theorem globalHarmonicVector_inner {n j : ℕ}
   rw [PiLp.inner_apply]
   simp only [Real.inner_apply]
   symm
-  exact
+  simpa only [Boolean.layerRestrict, Boolean.layerDot] using
     MetricCodes.Boolean.dot_eq_layerDot_of_level f g hf.1 hg.1
 
 theorem AdmissibleDegrees.window_degree_half
@@ -2612,7 +2612,7 @@ theorem johnsonLowerRaise_of_harmonic {n j : ℕ}
     MetricCodes.Boolean.lower (MetricCodes.Boolean.raise f) =
       johnsonHarmonicGap n j • f := by
   funext S
-  exact
+  simpa only [johnsonHarmonicGap, Pi.smul_apply, smul_eq_mul] using
     MetricCodes.Boolean.lower_raise_of_harmonic f hf S
 
 theorem johnsonLowerDoubleRaiseLowerAt_of_harmonic {n j : ℕ}
@@ -3662,7 +3662,7 @@ theorem johnsonLowerUpperRaw_orthogonal {n j : ℕ}
   apply Finset.sum_eq_zero
   intro a _
   have hf' : MetricCodes.Boolean.IsHarmonic ((j + 1) + 1) f := by
-    exact hf
+    simpa only [Nat.add_assoc, Nat.reduceAdd] using hf
   have hdown := johnsonLowerAt_harmonic f hf' a
   have hglobal := johnsonDotHarmonicRaise
     (MetricCodes.Boolean.lowerAt a f) g hdown

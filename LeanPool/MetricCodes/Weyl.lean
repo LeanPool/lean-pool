@@ -519,7 +519,7 @@ private theorem actionFischerCore_inner_comm_metriccodes2_209634ef
     {V : Type*} [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V) (p q : V) :
     c.inner p q = c.inner q p := by
-  exact c.conj_inner_symm q p
+  simpa only [Real.ringHom_apply] using c.conj_inner_symm q p
 
 private theorem actionFischerCore_zero_left_metriccodes2_209634ef
     {V : Type*} [AddCommGroup V] [Module ℝ V]
@@ -548,7 +548,7 @@ private theorem actionFischerCore_sum_left_metriccodes2_209634ef
     | empty => simp only [Finset.sum_empty, actionFischerCore_zero_left_metriccodes2_209634ef]
     | @insert i s hi ih =>
       simp only [Finset.sum_insert hi, c.add_left, ih]
-  exact h Finset.univ
+  simpa only using h Finset.univ
 
 private theorem actionFischerCore_sum_right_metriccodes2_209634ef
     {ι V : Type*} [Fintype ι]
@@ -567,7 +567,7 @@ private theorem actionFischerCore_smul_left_metriccodes2_209634ef
     (c : InnerProductSpace.Core ℝ V)
     (a : ℝ) (p q : V) :
     c.inner (a • p) q = a * c.inner p q := by
-  exact c.smul_left p q a
+  simpa only [Real.ringHom_apply] using c.smul_left p q a
 
 private theorem actionFischerCore_smul_right_metriccodes2_209634ef
     {V : Type*} [AddCommGroup V] [Module ℝ V]
@@ -2686,7 +2686,7 @@ theorem det_rowScaled_shiftedSquare_evaluation_eq
     have hscaled_eq :
         Matrix.det (fun i j : Fin (r + 1) =>
           scaleZero i * (p j).eval (U i)) = 1 := by
-      exact hzero
+      simpa only using hzero
     rw [hscaled_eq]
     norm_num
   have hE : E ≠ 0 :=
@@ -2695,7 +2695,7 @@ theorem det_rowScaled_shiftedSquare_evaluation_eq
   have hQ : Q ≠ 0 := by
     exact Finset.prod_ne_zero_iff.mpr fun i _ => hscaleZero i
   have hQE : Q * E = 1 := by
-    exact (det_rowScaled_polynomial_evaluation scaleZero U p).symm.trans hzero
+    simpa only using (det_rowScaled_polynomial_evaluation scaleZero U p).symm.trans hzero
   have hDE : D / E = R := by
     exact det_shiftedSquare_evaluation_div_zero_of_degree_le
       hn lam p hdegree hE
@@ -2802,7 +2802,7 @@ theorem orthogonalJacobiTrudiDimension_eq_weyl_of_row_evaluation
         (p j).eval (shiftedSquare n zeroWeight i)) = 1 := by
     calc
       _ = (orthogonalJacobiTrudiDimension n zeroWeight : ℝ) :=
-        (hdet zeroWeight (by exact hentryZero)).symm
+        (hdet zeroWeight (by simpa only [zeroWeight] using hentryZero)).symm
       _ = 1 := by rw [orthogonalJacobiTrudiDimension_zero]; norm_num
   calc
     (orthogonalJacobiTrudiDimension n lam : ℝ) =
@@ -2817,13 +2817,13 @@ theorem orthogonalJacobiTrudiDimension_eq_weyl_of_row_evaluation
       det_rowScaled_shiftedSquare_evaluation_eq hn lam p hdegree
         (orthogonalRowScale n lam) (orthogonalRowScale n zeroWeight)
         (by intro i; exact orthogonalRowScale_zero_ne_zero hn i)
-        (by exact hzero)
+        (by simpa only [zeroWeight] using hzero)
     _ = Weyl.dimension n lam :=
       rowRatio_mul_pairProduct_eq_weyl_dimension lam
         (orthogonalRowScale n lam)
         (orthogonalRowScale n zeroWeight)
         (fun i => by
-          exact orthogonalRowScale_div_zero_eq_rowFactor hn lam i)
+          simpa only [zeroWeight] using orthogonalRowScale_div_zero_eq_rowFactor hn lam i)
 
 theorem orthogonalJacobiTrudiMatrix_reflected_commonDenominator_real
     {r n : ℕ} (hn : 2 * r + 4 ≤ n)
@@ -4413,7 +4413,7 @@ theorem includedDescendingPositiveRootFischerLaplacian_energy
             (lowerRootWeight (rootWedgeWeight lam S) α.val)).inner
               (includedDescendingPositiveRootOperator n lam S α p)
               (includedDescendingPositiveRootOperator n lam S α p) := by
-  exact
+  simpa only [includedDescendingPositiveRootFischerLaplacian] using
     (finiteFischerRootLaplacian_energy
     (jointHarmonicWeightFischerCore n (rootWedgeWeight lam S))
     (fun α : IncludedDescendingPositiveRoot lam S =>
@@ -4709,7 +4709,7 @@ theorem includedNondescendingPositiveRootFischerLaplacian_energy
             (lowerRootWeight (rootWedgeWeight lam S) α.val)).inner
               (includedNondescendingPositiveRootOperator n lam S α p)
               (includedNondescendingPositiveRootOperator n lam S α p) := by
-  exact
+  simpa only [includedNondescendingPositiveRootFischerLaplacian] using
     (finiteFischerRootLaplacian_energy
     (jointHarmonicWeightFischerCore n (rootWedgeWeight lam S))
     (fun α : IncludedNondescendingPositiveRoot lam S =>
@@ -4746,7 +4746,7 @@ theorem excludedActivePositiveRootFischerLaplacian_energy
               ⟨α.val, α.property.2⟩)).inner
                 (excludedActivePositiveRootOperator n lam S α p)
                 (excludedActivePositiveRootOperator n lam S α p) := by
-  exact
+  simpa only [excludedActivePositiveRootFischerLaplacian] using
     (finiteFischerRootLaplacian_energy
     (jointHarmonicWeightFischerCore n (rootWedgeWeight lam S))
     (fun α : ExcludedActivePositiveRoot lam S =>
@@ -6256,7 +6256,7 @@ theorem rootPolynomialActionCoboundaryDifferentialIncidence_swap
     have hins : ∀ i,
         0 ≤ signedRootWeight lam
           (insert β (rootAdmissibleErase lam S α hα herase).val.val) i := by
-      exact hadm
+      simpa only [rootAdmissibleErase_val] using hadm
     have hswap :
         rootAdmissibleInsert lam
           (rootAdmissibleErase lam S α hα herase) β hβ' hins =
@@ -6662,7 +6662,7 @@ private theorem bracketFischerCore_sum_left_metriccodes2_9c41043c
     | empty => simp only [Finset.sum_empty, bracketFischerCore_zero_left_metriccodes2_9c41043c]
     | @insert i s hi ih =>
       simp only [Finset.sum_insert hi, c.add_left, ih]
-  exact h Finset.univ
+  simpa only using h Finset.univ
 
 private theorem bracketFischerCore_sum_right_metriccodes2_9c41043c
     {ι V : Type*} [Fintype ι]

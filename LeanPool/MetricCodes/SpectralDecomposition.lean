@@ -79,7 +79,8 @@ theorem exists_jointRootKernel_mem_of_vector_wordKills
   classical
   induction N generalizing v with
   | zero =>
-      exact False.elim (hvzero (by exact hwords [] rfl))
+      exact False.elim (hvzero (by simpa only [rootOperatorWord_nil, LinearMap.id_coe,
+                                     id_eq] using hwords [] rfl))
   | succ N ih =>
       by_cases hkill : ∀ i : I, E i v = 0
       · exact ⟨v, hv, hvzero, hkill⟩
@@ -89,7 +90,7 @@ theorem exists_jointRootKernel_mem_of_vector_wordKills
         intro word hlength
         have hfull : (i :: word).length = N + 1 := by
           simp only [List.length_cons, hlength]
-        exact
+        simpa only [rootOperatorWord_cons_apply] using
           hwords (i :: word) hfull
 
 theorem exists_jointRootKernel_mem_of_wordKills
@@ -2979,7 +2980,7 @@ theorem signedAmbientCharacteristic_derivative_eval_pos {r : ℕ}
     Lagrange.eval_nodal_derivative_eval_node_eq
       (Finset.mem_univ (row, true)),
     Lagrange.eval_nodal]
-  exact signedNode_denominator_pos_eq_active L row
+  simpa only [hnode] using signedNode_denominator_pos_eq_active L row
 
 theorem signedAmbientCharacteristic_derivative_eval_neg {r : ℕ}
     (L : Fin (r + 1) → ℝ) (row : Fin (r + 1)) :
@@ -2997,7 +2998,7 @@ theorem signedAmbientCharacteristic_derivative_eval_neg {r : ℕ}
     Lagrange.eval_nodal_derivative_eval_node_eq
       (Finset.mem_univ (row, false)),
     Lagrange.eval_nodal]
-  exact signedNode_denominator_neg_eq_active L row
+  simpa only [hnode] using signedNode_denominator_neg_eq_active L row
 
 /-- The gt channel characteristic polynomial used in the spherical-code argument. -/
 def gtChannelCharacteristicPolynomial {r : ℕ}
@@ -4102,7 +4103,7 @@ theorem projectedCoordinateLower_sameAxisHarmonicRaise_eq_axisClebschGram
   simp only [LinearMap.comp_apply] at hraise
   simp only [LinearMap.comp_apply]
   rw [hraise]
-  exact hlower.symm
+  simpa only [LinearMap.comp_apply] using hlower.symm
 
 /-- The gt selected row clebsch range projector used in the spherical-code argument. -/
 def gtSelectedRowClebschRangeProjector {r n : ℕ}
@@ -5869,7 +5870,7 @@ theorem gtSignedEigenvectorSpan_gtRelativeCasimir_iterate_mem
     (gtRelativeCasimir (n := n) lam ^ k) v ∈
       gtSignedEigenvectorSpan (n := n) lam := by
   induction k with
-  | zero => exact hv
+  | zero => simpa only [pow_zero, Module.End.one_apply] using hv
   | succ k ih =>
       rw [pow_succ', Module.End.mul_eq_comp, LinearMap.comp_apply]
       exact gtSignedEigenvectorSpan_gtRelativeCasimir_mem lam _ ih
@@ -6118,7 +6119,7 @@ theorem orthogonalJacobiTrudiMatrix_lastRow_delta
       intro heq
       apply hj
       apply Fin.ext
-      exact heq
+      simpa only [Fin.val_last] using heq
     simp only [hval, ↓reduceIte, hj]
 
 theorem orthogonalTensorPieriNextColumn_last
@@ -6844,7 +6845,7 @@ theorem transportedPaddedPieriChannel_eigen_of_retained
   · have hsource : appendZeroWeight lam =
         raiseWeight
           (paddedPieriSource (appendZeroWeight lam) (Sum.inr row)) row.val := by
-      exact
+      simpa only [paddedPieriSource_inr] using
         (raiseWeight_loweredInternalYoungWeight (appendZeroWeight lam) row.val row.property.1).symm
     have hchannel := gtRelativeCasimir_lower_channel
       (appendZeroWeight lam)
@@ -8050,7 +8051,7 @@ theorem selectedSignedEigenspace_le_youngClebschLower_range
     have h := fullBranchSignature_interlaces_appendZeroWeight low
       (fullBranchOfInterlaces mu hfinite.2)
     rw [fullBranchOfInterlaces_signature_eq_appendZeroWeight mu hfinite.2] at h
-    exact h
+    simpa only [padded] using h
   have hpadFinite : FiniteInterlacing (n + 1) padded
       (appendZeroWeight mu) := ⟨hn, hpadInter⟩
   let F := physicalPaddedPieriChannel hn low hpadded

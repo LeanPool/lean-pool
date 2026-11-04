@@ -408,7 +408,7 @@ theorem finiteHilbertSchmidtKernel_three_channel
             ⟪R x (basis i), R y (basis i)⟫_ℝ) := by
       apply Finset.sum_congr rfl
       intro i hi
-      exact
+      simpa only [LinearMap.add_apply, LinearMap.smul_apply] using
         orthogonal_three_channel_inner
           (fun z => P z (basis i))
           (fun z => M z (basis i))
@@ -759,7 +759,8 @@ theorem directionalDerivative_mul
     directionalDerivative n x (p * q) =
         p * directionalDerivative n x q +
           q * directionalDerivative n x p := by
-            exact h
+            simpa only [directionalDerivative_apply, Derivation.leibniz, smul_eq_mul,
+              smul_add] using h
     _ = directionalDerivative n x p * q +
           p * directionalDerivative n x q := by
             ac_rfl
@@ -850,7 +851,7 @@ theorem axisPolynomial_isHomogeneous
   unfold axisPolynomial
   apply MvPolynomial.IsHomogeneous.sum Finset.univ _ 1
   intro i hi
-  exact
+  simpa only [zero_add] using
     (MvPolynomial.isHomogeneous_C (Fin n) (x i)).mul (MvPolynomial.isHomogeneous_X ℝ i)
 
 theorem polynomialLaplacian_axisPolynomial
@@ -1225,7 +1226,7 @@ theorem polynomialInner_radial_laplacian (n : ℕ)
           rw [Finset.sum_mul]
     _ = ∑ i : Fin n,
         polynomialInner n (MvPolynomial.X i ^ 2 * p) q := by
-          exact polynomialInner_sum_left n Finset.univ (fun i : Fin n =>
+          simpa only using polynomialInner_sum_left n Finset.univ (fun i : Fin n =>
             MvPolynomial.X i ^ 2 * p) q
     _ = ∑ i : Fin n,
         polynomialInner n p
@@ -1237,7 +1238,7 @@ theorem polynomialInner_radial_laplacian (n : ℕ)
     _ = polynomialInner n p
         (∑ i : Fin n,
           MvPolynomial.pderiv i (MvPolynomial.pderiv i q)) := by
-          exact
+          simpa only using
             (polynomialInner_sum_right n p Finset.univ (fun i : Fin n => MvPolynomial.pderiv i
               (MvPolynomial.pderiv i q))).symm
 
@@ -1267,7 +1268,7 @@ theorem polynomialInner_axis_directional (n : ℕ)
         polynomialInner n
           (MvPolynomial.C (x i) *
             (MvPolynomial.X i * p)) q := by
-          exact
+          simpa only using
             polynomialInner_sum_left n Finset.univ (fun i : Fin n => MvPolynomial.C (x i) *
               (MvPolynomial.X i * p)) q
     _ = ∑ i : Fin n,
@@ -1280,7 +1281,7 @@ theorem polynomialInner_axis_directional (n : ℕ)
     _ = polynomialInner n p
         (∑ i : Fin n,
           x i • MvPolynomial.pderiv i q) := by
-          exact
+          simpa only using
             (polynomialInner_sum_right n p Finset.univ (fun i : Fin n => x i •
               MvPolynomial.pderiv i q)).symm
 
@@ -3496,7 +3497,7 @@ theorem matrix_hermitian (n k L : ℕ) : (matrix n k L).IsHermitian := by
   have h := congrArg
     (fun A : Matrix (Index k L) (Index k L) ℝ => A i j)
     (Gegenbauer.jacobiMatrix_symmetric n k L)
-  exact h
+  simpa only [matrix, star_trivial, Matrix.transpose_apply] using h
 
 /-- The operator used in the spherical-code argument. -/
 def operator (n k L : ℕ) : Space k L →ₗ[ℝ] Space k L :=
@@ -3676,7 +3677,7 @@ open SpherePacking.NumericalCertificate
 theorem tendsto_floored_ratio {a : ℝ} (ha : 0 ≤ a) :
     Tendsto (fun n : ℕ => (⌊a * (n : ℝ)⌋₊ : ℝ) / (n : ℝ))
       atTop (nhds a) := by
-  exact
+  simpa only [Function.comp_def] using
     (tendsto_nat_floor_mul_div_atTop ha).comp (tendsto_natCast_atTop_atTop (R := ℝ))
 
 /-- The normalized coefficient used in the spherical-code argument. -/
@@ -4017,7 +4018,7 @@ theorem isometric_mixed_kernel_eq_overlap
   rw [finiteHilbertSchmidtKernel_eq_trace,
     finiteHilbertSchmidtKernel_eq_trace]
   simp only [LinearMap.adjoint_comp, LinearMap.adjoint_adjoint]
-  exact
+  simpa only [LinearMap.comp_assoc] using
     (LinearMap.trace_comp_comm' ((f x).toLinearMap ∘ₗ ((f x).adjoint ∘ₗ (f y).toLinearMap)) (f
       y).adjoint).symm
 
@@ -4992,7 +4993,8 @@ theorem solidHarmonicAxisLift_succ_apply
       simp only [zero_add, solidHarmonicAxisLift_one_apply, MvPolynomial.C_sub, CharP.cast_eq_zero,
         mul_zero, solidHarmonicAxisLift_zero_apply, zero_mul, MvPolynomial.C_0, zero_tsub, sub_zero]
   | succ r =>
-      exact
+      simpa only [Nat.cast_add, Nat.cast_one,
+        Nat.add_sub_cancel] using
         solidHarmonicAxisLift_succ_succ_apply n k r x p
 
 theorem solidHarmonicAxisLift_harmonic_and_directional
@@ -5664,7 +5666,7 @@ theorem nonnegative_eigenvector_zero_propagates
         0 ≤ Gegenbauer.jacobiMatrix n k L p i * v i := by
     intro i _
     apply mul_nonneg
-    · exact Perron.matrix_entry_nonneg hn k L p i
+    · simpa only [Jacobi.matrix] using Perron.matrix_entry_nonneg hn k L p i
     · exact hnonnegative i
   have hterm : Gegenbauer.jacobiMatrix n k L p q * v q = 0 :=
     (Finset.sum_eq_zero_iff_of_nonneg hterms).mp hcoordinate
@@ -7494,7 +7496,7 @@ theorem harmonicGradient_inner
           MvPolynomial.X j *
             MvPolynomial.pderiv j
               (q : MvPolynomial (Fin n) ℝ)) := by
-          exact
+          simpa only using
             (SpherePacking.Fischer.polynomialInner_sum_right n (p : MvPolynomial (Fin n) ℝ)
               Finset.univ
                 (fun j : Fin n => MvPolynomial.X j * MvPolynomial.pderiv j (q : MvPolynomial
@@ -8090,7 +8092,7 @@ theorem harmonicCoGradient_inner
             ((harmonicCoordinateRaising n m j q :
               HarmonicSpace n (m + 1)) :
                 MvPolynomial (Fin n) ℝ)) := by
-          exact
+          simpa only using
             (SpherePacking.Fischer.polynomialInner_sum_right n (p : MvPolynomial (Fin n) ℝ)
               Finset.univ
                 (fun j : Fin n =>

@@ -974,7 +974,7 @@ theorem isotropicCoordinateDefectDerivation_eq_zero_of_maximalCartan
   rw [naturalDiagonalDerivation_one_of_homogeneous g hg,
     smul_smul] at hconj
   norm_num at hconj ⊢
-  exact hconj
+  simpa only using hconj
 
 theorem isotropicCoordinateDefect_eq_zero_of_mem_vars_of_maximalCartan
     {r n : ℕ} (h : 2 * (r + 1) ≤ n)
@@ -1096,9 +1096,9 @@ theorem complexPolynomial_eq_of_real_imaginary
   apply MvPolynomial.ext
   intro d
   apply Complex.ext
-  · exact congrArg (fun f : PolynomialSpace r n => f.coeff
+  · simpa only [coeff_polynomialRealPart] using congrArg (fun f : PolynomialSpace r n => f.coeff
     d) hreal
-  · exact congrArg (fun f : PolynomialSpace r n =>
+  · simpa only [coeff_polynomialImaginaryPart] using congrArg (fun f : PolynomialSpace r n =>
     f.coeff d) himag
 
 theorem youngComplexPair_eq_zero_iff
@@ -1539,7 +1539,7 @@ theorem youngClebschRaise_arbitrary_inner_of_highestLine_and_cyclic
         (youngClebschRaise (n := n) high
           (loweredInternalYoungWeight high row)
           (loweredInternalYoungWeight_sum_add_one high row ha) row)) hhighest
-  exact
+  simpa only [arbitraryRowRaisingGramScalar_eq_tensorGramScalar] using
     youngClebschRaise_arbitrary_inner_of_dominantCyclicHighest high row
       ha hn hdomhigh hdomlow c hreal himaginary hcyclic p q
 
@@ -3759,7 +3759,7 @@ theorem finiteFischerRootLaplacian_eq_zero_iff
     intro i
     apply (cW i).definite
     exact (Finset.sum_eq_zero_iff_of_nonneg
-      (fun j _ => by exact (cW j).re_inner_nonneg (A j x))).mp
+      (fun j _ => by simpa only [RCLike.re_to_real] using (cW j).re_inner_nonneg (A j x))).mp
       hsum i (Finset.mem_univ i)
   · intro h
     simp only [finiteFischerRootLaplacian, LinearMap.coe_sum, LinearMap.coe_comp, Finset.sum_apply,
@@ -4093,7 +4093,7 @@ theorem rootDegreeZeroPositiveCochain_eq_zero_iff_harmonicYoung
   constructor
   · intro hp α
     have h := congrFun hp α
-    exact h
+    simpa only [rootDegreeZeroPositiveCochain_apply, Pi.zero_apply] using h
   · intro hp
     funext α
     exact hp α
@@ -4791,7 +4791,7 @@ theorem rootFamily_selectedMonomial {r : ℕ}
         MvPolynomial.monomial
           (∑ α ∈ Finset.univ \ S,
             Finsupp.single (positiveRootSecond α) 1) 1 := by
-    exact hsecond.symm
+    simpa only [MvPolynomial.X] using hsecond.symm
   have hfirst' :
       (∏ α ∈ S,
         (MvPolynomial.X (positiveRootFirst α) :
@@ -4799,7 +4799,7 @@ theorem rootFamily_selectedMonomial {r : ℕ}
         MvPolynomial.monomial
           (∑ α ∈ S,
             Finsupp.single (positiveRootFirst α) 1) 1 := by
-    exact hfirst.symm
+    simpa only [MvPolynomial.X] using hfirst.symm
   rw [hsecond', hfirst']
   simp only [MvPolynomial.monomial_mul_monomial, mul_one, rootSelectedExponent]
 

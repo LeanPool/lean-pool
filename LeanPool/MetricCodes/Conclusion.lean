@@ -2490,7 +2490,7 @@ theorem appendedFullBranchPieriLower_paddedPhysicalStabilizerTensor_inner_eq_zer
     (appendedFullBranchPieriLower_adjoint_paddedPhysicalStabilizerTensor_eq_zero
       lam mu hmu B hB hdominant hsource hn nu) p
   have hz : C.adjoint (A p) = 0 := by
-    exact hzero
+    simpa only [LinearMap.comp_apply, LinearMap.zero_apply] using hzero
   change ⟪A p, C q⟫_ℝ = 0
   calc
     ⟪A p, C q⟫_ℝ = ⟪C.adjoint (A p), q⟫_ℝ :=
@@ -6088,10 +6088,10 @@ theorem linearIsometry_projection_mem_range_of_adjoint_coordinate_mem
   obtain ⟨x, hx⟩ := hBF ⟨p, rfl⟩
   have hself := LinearMap.congr_fun F.adjoint_comp_self' x
   have hself' : F.toLinearMap.adjoint (F.toLinearMap x) = x := by
-    exact hself
+    simpa only [LinearMap.comp_apply, LinearMap.id_apply] using hself
   have hcoord : F.toLinearMap.adjoint (B p) =
       F.toLinearMap.adjoint v := by
-    exact hp
+    simpa only [LinearMap.comp_apply] using hp
   change F.toLinearMap (F.toLinearMap.adjoint v) ∈ LinearMap.range B
   refine ⟨p, ?_⟩
   calc
@@ -6845,7 +6845,8 @@ theorem gtAxisCompressedCharacteristicMinor_eval_actualPhysicalNode_eq_zero
       (gtActualPhysicalColumn_adjoint_row_metriccodes2_f07ed3eb lam mu
         (canonicalGelfandTsetlinAxisTensor lam mu h hgram)
         B.toLinearMap node K hcolumn) x
-    exact hrow
+    simpa only [LinearMap.comp_apply, LinearMap.add_apply,
+      LinearMap.smul_apply] using hrow
 
 end AllRankGTValidTransverseMinorRoots
 

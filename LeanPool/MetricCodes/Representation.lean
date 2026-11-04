@@ -584,7 +584,7 @@ theorem rowEuclideanEquiv_symm_apply
     (rowEuclideanEquiv r n).symm x (variableIndex i j) = x i j := by
   have h := congrArg (fun y : RowEuclideanSpace r n => y i j)
     ((rowEuclideanEquiv r n).apply_symm_apply x)
-  exact h
+  simpa only [rowEuclideanEquiv_apply] using h
 
 /-- Apply the same Euclidean isometry independently to every row of a flat coordinate vector. -/
 def blockIsometry {r n : ℕ}
@@ -1366,7 +1366,7 @@ theorem youngHomogeneousProjection_equivariant {r n : ℕ}
       polynomialAction U
         (polynomialAction U.symm (p : PolynomialSpace r n)) =
           (p : PolynomialSpace r n)
-    exact
+    simpa only [LinearIsometryEquiv.symm_symm] using
       polynomialAction_symm_apply_apply U.symm (p : PolynomialSpace r n)
   calc
     ⟪youngHomogeneousProjection lam
@@ -3244,7 +3244,8 @@ private theorem coordinateMatrix_adjoint_metriccodes2_851911c7 {U T : Type*}
     (f : U →ₗ[ℝ] T) :
     coordinateMatrix f.adjoint = (coordinateMatrix
       f)ᵀ := by
-  exact
+  simpa only [coordinateMatrix,
+    Matrix.conjTranspose_eq_transpose_of_trivial] using
     LinearMap.toMatrix_adjoint (euclideanBasis U)
       (euclideanBasis T) f
 
@@ -3779,7 +3780,7 @@ theorem rowPairingPolynomial_isHomogeneous {r n : ℕ}
   unfold rowPairingPolynomial
   apply MvPolynomial.IsHomogeneous.sum
   intro k _
-  exact
+  simpa only [Nat.reduceAdd] using
     (MvPolynomial.isHomogeneous_X ℝ (variableIndex i k)).mul (MvPolynomial.isHomogeneous_X ℝ
       (variableIndex j k))
 
@@ -3811,7 +3812,7 @@ theorem traceOperator_isHomogeneous {r n m : ℕ}
   rw [traceOperator_apply]
   apply MvPolynomial.IsHomogeneous.sum
   intro k _
-  exact
+  simpa only [Nat.sub_sub, Nat.reduceAdd] using
     (hp.pderiv (i := variableIndex j k)).pderiv (i := variableIndex i k)
 
 /-- The homogeneous row trace used in the spherical-code argument. -/
@@ -4423,7 +4424,8 @@ theorem simultaneousHarmonicProjection_rowWeight
         PolynomialSpace r n) := by
   have hhom : homogeneousPolarization r n m i i p = c • p := by
     apply Subtype.ext
-    exact hp
+    simpa only [homogeneousPolarization_apply_coe, polarization_self, rowEuler_apply,
+      SetLike.val_smul] using hp
   calc
     rowEuler r n i
         ((simultaneousHarmonicProjection r n m p).val :
@@ -4889,14 +4891,16 @@ theorem polynomialRealPart_ne_zero_or_polynomialImaginaryPart_ne_zero
   · right
     intro him
     have hi : (p.coeff d).im = 0 := by
-      exact
+      simpa only [coeff_polynomialImaginaryPart, AddMonoidAlgebra.coeff_zero, Finsupp.coe_zero,
+        Pi.zero_apply] using
         congrArg (fun q : MvPolynomial σ ℝ => q.coeff d) him
     apply hd
     apply Complex.ext <;> simp [hre, hi]
   · left
     intro hreal
     exact hre (by
-      exact
+      simpa only [coeff_polynomialRealPart, AddMonoidAlgebra.coeff_zero, Finsupp.coe_zero,
+        Pi.zero_apply] using
         congrArg (fun q : MvPolynomial σ ℝ => q.coeff d) hreal)
 
 theorem polynomialRealPart_pderiv {σ : Type*} (i : σ)
@@ -5647,7 +5651,7 @@ theorem leadingMinor_isHomogeneous {r n : ℕ}
       (fun _ => 1)
       (fun i _ => isotropicVariable_isHomogeneous h
         (minorIndex k (π i)) (minorIndex k i)) using 1; simp
-  exact hprod.C_mul (((Equiv.Perm.sign π : ℤ) : ℂ))
+  simpa only [map_intCast] using hprod.C_mul (((Equiv.Perm.sign π : ℤ) : ℂ))
 
 theorem rowDerivation_leadingMinor_upper {r n : ℕ}
     (h : 2 * (r + 1) ≤ n)
@@ -5802,7 +5806,7 @@ theorem nullSubstitution_sourceLeadingMinor {r n : ℕ}
   apply congrArg Matrix.det
   apply Matrix.ext
   intro i j
-  exact
+  simpa only [AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.of_apply] using
     (nullSubstitution_X h (minorIndex k i) (minorIndex k j)).trans
       (isotropicVariable_eq_nullRowLinearForm h
         (minorIndex k i) (minorIndex k j)).symm
@@ -8205,7 +8209,7 @@ theorem rowEuler_pderiv_of_ne {r n : ℕ}
     rowEuler r n a (MvPolynomial.pderiv (variableIndex row j) p) =
       MvPolynomial.pderiv (variableIndex row j)
         (rowEuler r n a p) := by
-  exact
+  simpa only [polarization_self] using
     polarization_pderiv_of_ne a a row j hne p
 
 theorem rowEuler_pderiv_self {r n : ℕ}
@@ -8284,7 +8288,7 @@ theorem rowDerivative_fischer_inner_sum {r n : ℕ}
         (rowEuler r n row (p : PolynomialSpace r n))
         (q : PolynomialSpace r n) := by
       rw [rowEuler_apply]
-      exact
+      simpa only using
         (SpherePacking.Fischer.polynomialInner_sum_left ((r + 1) * n) Finset.univ
             (fun j : Fin n =>
               MvPolynomial.X (variableIndex row j) * MvPolynomial.pderiv (variableIndex row j)

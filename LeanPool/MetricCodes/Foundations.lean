@@ -627,7 +627,7 @@ theorem IsLevel.raised {k : ℕ} {f : Function n}
       change IsLevel k f
       exact hf
   | succ r ih =>
-      exact ih.raise
+      simpa only [raised_succ, Nat.add_assoc] using ih.raise
 
 /-- The harmonic coefficient used in the binary-code argument. -/
 def harmonicCoefficient (n k r : ℕ) : ℝ :=
@@ -883,7 +883,7 @@ theorem sum_symmetric (P : ProjectionFamily X D d)
   apply Finset.sum_congr rfl
   intro x _
   have h := congrFun (congrFun (P.symmetric x) i) j
-  exact h
+  simpa only [Matrix.transpose_apply] using h
 
 theorem sum_overlap_eq_trace_mul_sum (P : ProjectionFamily X D d)
     (C : Finset X) :
@@ -1433,7 +1433,7 @@ theorem layerUp_injective {k : ℕ} (hk : 2 * k < n) :
   have hrestrict :
       layerRestrict (k + 1) (raise (layerExtend f)) =
         layerRestrict (k + 1) (raise (layerExtend g)) := by
-    exact hfg
+    simpa only [layerUp_apply] using hfg
   have hfull : raise (layerExtend f) = raise (layerExtend g) := by
     calc
       raise (layerExtend f) =
@@ -1514,7 +1514,7 @@ theorem layerUp_matrix_rank {k : ℕ} (hk : 2 * k < n) :
   have hlin :
       (LinearMap.toMatrix' (layerUp n k)).mulVecLin =
         layerUp n k := by
-    exact
+    simpa only [Matrix.toLin'_apply'] using
       Matrix.toLin'_toMatrix' (layerUp n k)
   change
     Module.finrank ℝ
@@ -1544,7 +1544,7 @@ theorem layerDown_surjective {k : ℕ} (hk : 2 * k < n) :
   have hlin :
       (LinearMap.toMatrix' (layerDown n k)).mulVecLin =
         layerDown n k := by
-    exact
+    simpa only [Matrix.toLin'_apply'] using
       Matrix.toLin'_toMatrix' (layerDown n k)
   calc
     Module.finrank ℝ (LinearMap.range (layerDown n k)) =
@@ -1929,7 +1929,8 @@ theorem harmonicBasisFunction_isHarmonic
   have hcoef : WithLp.ofLp b.val = g := by
     have h := congrArg
       (fun z : EuclideanLayer n k => WithLp.ofLp z) heq.symm
-    exact h
+    simpa only [LinearEquiv.coe_coe, WithLp.linearEquiv_symm_apply, AddEquiv.toEquiv_eq_coe,
+      Equiv.invFun_as_coe, AddEquiv.coe_toEquiv_symm, WithLp.addEquiv_symm_apply] using h
   change IsHarmonic k (layerExtend (WithLp.ofLp b.val))
   apply (mem_harmonicLayer_iff (WithLp.ofLp b.val)).mp
   rw [hcoef]
@@ -2236,7 +2237,7 @@ theorem hammingFibreMatrix_transpose_mul
               (Fin (MetricCodes.hammingFibreDimension n k)) ℝ => M p q)
           (hammingWindowFibreMatrix_transpose_mul
             hk hkL hLn v hunit hv x)
-        exact h
+        simpa only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply] using h
 
 /-- The hamming projection family used in the binary-code argument. -/
 def hammingProjectionFamily
@@ -2289,7 +2290,7 @@ theorem sum_sign_mul_eq_hammingDist
           (∑ a : Fin n,
             if x a ≠ y a then (1 : ℝ) else 0) =
               (MetricCodes.hammingDist x y : ℝ) := by
-        exact
+        simpa only [MetricCodes.hammingDist, _root_.hammingDist] using
           (Finset.sum_boole (R := ℝ)
             (fun a : Fin n => x a ≠ y a)
             (Finset.univ : Finset (Fin n)))
@@ -2499,9 +2500,9 @@ theorem matrixAxisResidual_gram
   let Gy : Matrix (κ × Fin D) (Fin D) ℝ :=
     B * P.projection y
   have haxisx : Bᵀ * Lx = c • P.projection x := by
-    exact haxis x
+    simpa only [Lx] using haxis x
   have haxisy : Bᵀ * Ly = c • P.projection y := by
-    exact haxis y
+    simpa only [Ly] using haxis y
   have hleft : Lxᵀ * B = c • P.projection x := by
     calc
       Lxᵀ * B = (Bᵀ * Lx)ᵀ := by
@@ -3083,7 +3084,7 @@ theorem hammingAdjacentChannel_restricted_coordinateDot
   unfold coordinateDot
   apply Finset.sum_congr rfl
   intro a _
-  exact
+  simpa only [layerDot, layerRestrict] using
     (dot_eq_layerDot_of_level (hammingAdjacentChannel n k L target source f a)
         (hammingAdjacentChannel n k L target other g a) (hammingAdjacentChannel_isLevel n k L
           target source f hf a)
@@ -3753,7 +3754,7 @@ theorem hammingAdjacentChannel_restricted_axisDot
   unfold coordinateDot
   apply Finset.sum_congr rfl
   intro a _
-  exact
+  simpa only [hammingAxisTensor, layerDot, layerRestrict, Pi.smul_apply, smul_eq_mul] using
     (dot_eq_layerDot_of_level (hammingAdjacentChannel n k L target source f a)
       (hammingAxisTensor x g a)
         (hammingAdjacentChannel_isLevel n k L target source f hf a) (hg.smul (hammingAxis x
@@ -4122,7 +4123,7 @@ theorem hammingDist_eq_two_mul_of_binaryWeight_eq {n : ℕ}
     (x y : BinaryWord n) (hweight : binaryWeight x = binaryWeight y) :
     hammingDist x y = 2 * (wordSupport x \ wordSupport y).card := by
   have hcard : (wordSupport x).card = (wordSupport y).card := by
-    exact hweight
+    simpa only [binaryWeight_eq_card_wordSupport] using hweight
   have hdiff :
       (wordSupport x \ wordSupport y).card =
         (wordSupport y \ wordSupport x).card :=
@@ -4195,7 +4196,7 @@ theorem weightShell_eq_image (n w : ℕ) :
     refine Finset.mem_image.mpr
       ⟨wordSupport x, Finset.mem_powersetCard.mpr ⟨Finset.subset_univ _, ?_⟩,
         wordOfSupport_wordSupport x⟩
-    exact hw
+    simpa only [binaryWeight_eq_card_wordSupport] using hw
   · intro hx
     obtain ⟨s, hs, rfl⟩ := Finset.mem_image.mp hx
     apply (mem_weightShell _).mpr
@@ -4226,7 +4227,7 @@ theorem hammingSphere_eq_image {n : ℕ} (x : BinaryWord n) (r : ℕ) :
     refine Finset.mem_image.mpr
       ⟨binaryTranslate x y, (mem_weightShell _).mpr ?_,
         binaryTranslate_involutive x y⟩
-    exact hd
+    simpa only [binaryWeight_binaryTranslate] using hd
   · intro hy
     obtain ⟨z, hz, rfl⟩ := Finset.mem_image.mp hy
     apply (mem_hammingSphere _ _).mpr
@@ -4724,7 +4725,7 @@ theorem matrix_hermitian (n k L : ℕ) : (matrix n k L).IsHermitian := by
   have h := congrArg
     (fun A : Matrix (Index k L) (Index k L) ℝ => A i j)
     (MetricCodes.hammingJacobiMatrix_symmetric n k L)
-  exact h
+  simpa only [matrix, star_trivial, Matrix.transpose_apply] using h
 
 /-- The operator used in the binary-code argument. -/
 def operator (n k L : ℕ) : Space k L →ₗ[ℝ] Space k L :=
@@ -5299,7 +5300,7 @@ theorem eventually_hammingGamma_improvement {a : ℝ}
         (a * (1 - a)) *
           (improvementPath a b * (1 - improvementPath a b)) =
         b * spectralMarginPolynomial a (improvementSlope a) b := by
-    exact spectralMarginPolynomial_factor a (improvementSlope a) b
+    simpa only [improvementPath] using spectralMarginPolynomial_factor a (improvementSlope a) b
   have hmargin :
       0 < ((improvementPath a b - b) *
         (1 - improvementPath a b - b)) ^ 2 -
@@ -5484,7 +5485,7 @@ def transverseDegree (b : ℝ) (n : ℕ) : ℕ :=
 theorem tendsto_longitudinal_ratio {a : ℝ} (ha : 0 ≤ a) :
     Tendsto (fun n : ℕ => (longitudinalDegree a n : ℝ) / (n : ℝ))
       atTop (nhds a) := by
-  exact
+  simpa only [longitudinalDegree, Function.comp_def] using
     (tendsto_nat_floor_mul_div_atTop ha).comp (tendsto_natCast_atTop_atTop (R := ℝ))
 
 theorem tendsto_transverse_ratio {b : ℝ} (hb : 0 ≤ b) :
@@ -6069,7 +6070,7 @@ theorem longitudinalDegree_le_half {a : ℝ}
       have h := mul_le_mul_of_nonneg_right ha (Nat.cast_nonneg n)
       linarith only [h]
     _ = n / 2 := by
-      exact (Nat.floor_div_eq_div (K := ℝ) n 2)
+      simpa only [Nat.cast_ofNat] using (Nat.floor_div_eq_div (K := ℝ) n 2)
 
 theorem choose_le_ambientDimension (n k L : ℕ) (hkL : k ≤ L) :
     n.choose L ≤ ambientDimension n k L := by
@@ -6400,7 +6401,7 @@ theorem tendsto_ceil_distance_ratio {δ : ℝ} (hδ : 0 ≤ δ) :
     Tendsto
       (fun n : ℕ => (Nat.ceil (δ * (n : ℝ)) : ℝ) / (n : ℝ))
       atTop (nhds δ) := by
-  exact
+  simpa only [Function.comp_def] using
     (tendsto_nat_ceil_mul_div_atTop hδ).comp (tendsto_natCast_atTop_atTop (R := ℝ))
 
 theorem tendsto_threshold_ceil {δ : ℝ} (hδ : 0 ≤ δ) :
@@ -7329,7 +7330,7 @@ theorem matrix_hermitian (n w p q L : ℕ) :
   have h := congrArg
     (fun A : Matrix (Index p q L) (Index p q L) ℝ => A i j)
     (MetricCodes.johnsonJacobiMatrix_symmetric n w p q L)
-  exact h
+  simpa only [matrix, star_trivial, Matrix.transpose_apply] using h
 
 /-- The operator used in the Johnson-code argument. -/
 def operator (n w p q L : ℕ) : Space p q L →ₗ[ℝ] Space p q L :=
@@ -8411,7 +8412,7 @@ theorem spectralLimit_zero_fibre_boundary {α u : ℝ}
     dsimp [s, z]
     rw [one_sub_centered_square, Real.sq_sqrt hvariance.le]
   have hradical : Real.sqrt (1 - z ^ 2) = 2 * s := by
-    exact sqrt_one_sub_centeredDegree_sq hu (lt_trans hua ha)
+    simpa only using sqrt_one_sub_centeredDegree_sq hu (lt_trans hua ha)
   have hsig : (1 - 2 * 0 - 2 * 0 : ℝ) = 1 := by
     norm_num
   have heta : centeredEta α 0 0 = (1 - 2 * α) := by

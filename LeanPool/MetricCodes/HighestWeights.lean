@@ -3056,7 +3056,7 @@ theorem spectralPathOperator_succ_same_target_commute_of
       lam a.castSucc target target hpos hpos k z
   have hcross : (x - y) • (C * B - B * C) = A * D - B * C := by
     rw [hdelta]
-    exact
+    simpa only [Module.End.mul_eq_comp, A, B, C, D] using
       hrtt target a.castSucc hpos.le le_rfl w z
   have hstep := spectralStep_same_target_commute A B C D R x y
     hAB hCD hRA hRB hRC hRD hcross
@@ -3065,7 +3065,7 @@ theorem spectralPathOperator_succ_same_target_commute_of
   change
     (x • C - A.comp R).comp (y • D - B.comp R) =
       (y • D - B.comp R).comp (x • C - A.comp R)
-  exact hstep
+  simpa only [Module.End.mul_eq_comp, A, B, C, D, R, x, y, w, z, g] using hstep
 
 end ArbitraryRowSameAxisDiamondSpectralSelfCommuteStep
 
@@ -4671,7 +4671,7 @@ theorem youngClebschRaise_scalar_eq_lower_dimension_ratio
       (Module.finrank ℝ (HarmonicYoungSpace (n := n) low) : ℝ) ≠ 0 := by
     exact_mod_cast (Nat.ne_of_gt hlow)
   apply (eq_div_iff hlowR).2
-  exact htrace
+  simpa only using htrace
 
 theorem youngClebschRaise_gram_rotation_intertwine
     {r n : ℕ} (high low : Fin (r + 1) → ℕ)
@@ -5456,7 +5456,7 @@ theorem belowDiagonalMass_upperRootTarget_add {m : ℕ}
     simp only [belowDiagonalWeight, tsub_self]
   rw [hweight]
   simp only [zero_mul, add_zero]
-  exact belowDiagonalMass_sub_single_add d (j, i) hpositive
+  simpa only [belowDiagonalWeight] using belowDiagonalMass_sub_single_add d (j, i) hpositive
 
 theorem belowDiagonalMass_upperRootSource_lt {m : ℕ}
     (d : Fin m × Fin m →₀ ℕ) (i j k : Fin m)
@@ -6591,7 +6591,7 @@ theorem finsupp_weight_le_degree_mul
   rw [Finset.sum_mul]
   apply Finset.sum_le_sum
   intro i hi
-  exact Nat.mul_le_mul_left (d i) (hweight i)
+  simpa only [smul_eq_mul] using Nat.mul_le_mul_left (d i) (hweight i)
 
 theorem homogeneous_mem_weightedPolynomialFiltration
     {σ : Type*} (weight : σ → ℕ) (bound m : ℕ)
