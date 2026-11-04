@@ -6,7 +6,7 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part07E -- shake: keep
+public import LeanPool.GapCVP.Part06D -- shake: keep
 
 /-! # GapCVP proof, part 07, continuation 06 -/
 
@@ -23,20 +23,6 @@ namespace GapCVP
 open GapCVP.TraceGolf (oneStep rebound)
 
 namespace CNFFiveFamilyForbiddenWholeClauseExactSourceTM
-
-open Computability Turing GapCVP.BinaryEncoding GapCVP.SourceUniformTuringTM
-
-open GapCVP.CLStructuralPrefixWriter GapCVP.CNFFlatSourceGridDescriptorTM
-
-open GapCVP.CNFFlatPhysicalBinaryAppendTM
-
-open GapCVP.SourceFourFamilyInterpolationMembershipPredicateTM
-
-open GapCVP.CNFFiveFamilyFlatCandidateGenerationTM
-
-open GapCVP.CNFFiveFamilyForbiddenWholeClauseWorkerTM
-
-open GapCVP.CNFFiveFamilyForbiddenWholeClauseSourceCert
 
 end CNFFiveFamilyForbiddenWholeClauseExactSourceTM
 
@@ -311,9 +297,7 @@ open GapCVP.CNFFlatPhysicalBinaryAppendTM GapCVP.CNFFiveFamilyFlatCandidateGener
 open GapCVP.CNFFiveFamilyFlatIndexedCatalogueTM GapCVP.CNFFiveFamilyFlatIndexedRankArithmeticTM
 open GapCVP.CNFFiveFamilyFlatRowMajorCatalogueTM
 open GapCVP.CNFFiveFamilyFlatRowMajorAtLeastClauseWorkerTM
-open GapCVP.CNFFiveFamilyFlatRowMajorAtMostClauseWorkerTM
 open GapCVP.CNFFiveFamilyFlatAcceptanceClauseFoldTM
-open GapCVP.CNFFiveFamilyPackedInitialCellDecoderTM
 open GapCVP.CNFFiveFamilyForbiddenWholeClauseExactSourceTM
 open GapCVP.CNFFiveFamilyIndependentAnchoredFamilyStreamTM
 

@@ -6,7 +6,7 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part08A -- shake: keep
+public import LeanPool.GapCVP.Part07D -- shake: keep
 import Mathlib.Combinatorics.Matroid.Init
 import Mathlib.Tactic.Positivity.Finset
 
@@ -42,9 +42,7 @@ open GapCVP.CNFFiveFamilyPackedInitialCellDecoderTM
 
 open GapCVP.CNFFiveFamilyForbiddenWindowCoordinateTM
 
-open GapCVP.CNFFiveFamilyForbiddenWholeClauseValidity
 
-open GapCVP.CNFFiveFamilyIndependentFiveFamilyBundledCatalogueTM
 
 end CNFFiveFamilyIndependentFiveFamilyCatalogueSourceValidity
 

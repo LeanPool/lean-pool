@@ -6,7 +6,6 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part11B
 public import LeanPool.GapCVP.Part12C
 import LeanPool.GapCVP.Part12D
 import Mathlib.Algebra.Order.Floor.Semifield
