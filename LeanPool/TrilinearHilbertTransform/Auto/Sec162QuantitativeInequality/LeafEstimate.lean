@@ -222,2548 +222,2217 @@ private def LeafEstimateConclusion88Statement : Prop :=
     hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
 
 open scoped Classical in
-private def LeafEstimateStage8Statement : Prop :=
-  ∀ (κ : LocalKernelClass)
+private noncomputable abbrev leafEstimateParameters
+    (κ : LocalKernelClass)
     (c₀ : ℕ)
-    (cc : ℕ)
-    (_ : (1 : ℕ) ≤ cc)
-    (Dm0 : ℕ)
-    (Msch : ℝ)
-    (_ : (0 : ℝ) < Msch)
-    (Cg : ℕ)
-    (g : ℕ)
-    (cT : ℝ)
-    (cL : ℝ)
-    (cK : ℝ)
-    (cMc : ℝ)
-    (cm : ℝ)
-    (ce : ℝ)
-    (ce2 : ℝ)
-    (cQ : ℝ)
-    (CΛ : ℕ)
-    (eΛ : ℕ)
-    (CM1 : ℕ)
-    (t3 : ℕ)
-    (Cb : ℕ)
-    (Cl : ℕ)
-    (_ : g = (8192 : ℕ) * (cc + (1 : ℕ)) * ((1024 : ℕ) * (cc + (1 : ℕ)) + cc + (7 : ℕ)) + cc
-      ^ (2 : ℕ) + (8 : ℕ) ∧ cT = (10 : ℝ) ^ (22 : ℕ) * ((1 : ℝ) +
-      localFormUniformConstant κ) ^ (2 : ℕ) ∧ cL = (159 : ℝ) + (32 : ℝ) * (↑g : ℝ) + (8
-      : ℝ) * Real.log cT ∧ cK = ((1 : ℝ) + (7 : ℝ) * (10 : ℝ) ^ (9 : ℕ) + cT) * (cL + (2
-      : ℝ)) ∧ cMc = (C4c κ + (4 : ℝ) * C3c κ) * cL ^ (4 : ℕ) * cK ^ (2 : ℕ) ∧ cm =
-      (196608 : ℝ) * cT + (83 : ℝ) * ((1 : ℝ) + (81 : ℝ) * localFormUniformConstant κ *
-      ((30000 : ℝ) + √cT)) * ((1 : ℝ) + cT) ^ (3 : ℕ) + cMc ∧ ce = (6642 : ℝ) *
-      localFormUniformConstant κ * ((60000 : ℝ) + √cT) ^ (3 : ℕ) * (288 : ℝ) + (9 : ℝ) *
-      ((16 : ℝ) * fourErrC κ (3 : ℕ) + (648 : ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) + (324 :
-      ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) * √cT) ∧ ce2 = K1c * ((2 : ℝ) * fourKC κ (3 : ℕ)
-      * (12 : ℝ) ^ (4 : ℕ)) + (4 : ℝ) * (K1c * ((8 : ℝ) * entryCU κ (3 : ℕ) (1 : ℕ) * (2
-      : ℝ) ^ ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ))) * (501 : ℝ) ∧ cQ = (65536 : ℝ) *
-      ((8 : ℝ) + (80 : ℝ) * (9 : ℝ) ^ cc * (↑cc : ℝ)) * ((80 : ℝ) * (9 : ℝ) ^ cc * (↑cc
-      : ℝ)) * ((4 : ℝ) * (↑cc : ℝ) ^ (2 : ℕ)) * ((17 : ℝ) * (10 : ℝ) ^ (7 : ℕ)) ∧ CΛ =
-      (2 : ℕ) * Cg + (12 : ℕ) ∧ eΛ = Cg + (3 : ℕ) * cc ∧ CM1 = (⌈Msch⌉₊ + (1 : ℕ)) * CΛ
-      ^ (16 : ℕ) ∧ t3 = (3 : ℕ) ^ cc ∧ Cb = CM1 + (501 : ℕ) * Cg + t3 + (2 : ℕ) * cc +
-      (20 : ℕ) + (16 : ℕ) * eΛ ∧ Cl = ⌈cm * (↑Cb : ℝ) ^ (59 : ℕ) + ce * (↑Cb : ℝ) ^ (18
-      : ℕ) + ce2 + (3 : ℝ) * (10 : ℝ) ^ (11 : ℕ) * cQ⌉₊ + (59 : ℕ) * Cb + (4 : ℕ) * g +
-      (8 : ℕ) * cc + (8 : ℕ))
     (A : ActiveSetup κ c₀)
     (bf : A.BasicFamilies)
-    (k : ℕ)
-    (η₀ : ℝ)
-    (E : ℝ)
-    (_ : A.S = (2 : ℝ))
-    (_ : A.η = (4 : ℝ) * η₀)
-    (_ : (0 : ℝ) < η₀)
-    (q : ℝ)
-    (hq2 : (2 : ℝ) < q)
-    (hq3 : q < (3 : ℝ))
-    (Nd : ℕ)
     (p : Fin (3 : ℕ))
-    (AD : bf.AttemptData p)
-    (d : bf.Vtx)
-    (s : ℕ)
-    (δ : ℝ)
-    (ρ : ℝ)
-    (kD : ℝ)
-    (_ : (0 : ℝ) < δ)
-    (_ : δ ≤ (1 / 8 : ℝ))
-    (_ : (0 : ℝ) < ρ)
-    (_ : ρ < (1 : ℝ))
-    (_ : Real.log ((2 : ℝ) * A.colBudget) ≤ (↑k : ℝ) ^ cc)
-    (_ : (↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) + (1 : ℝ))),
-  let fp : bf.FamParams :=
-    AD.fp
-  let dB : ℕ :=
-    A.dBnd
-  let Nl : ℝ :=
-    AD.n (fp.Lc + (5 : ℕ))
-  ∀ (_ : Real.log ((2 : ℝ) * ((8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl)) ≤ (↑k :
-      ℝ) ^ cc)
-    (_ : (2 : ℝ) ≤ A.colBudget)
-    (hNl0 : (0 : ℝ) ≤ Nl),
-  let Hm : ℝ :=
-    max (max A.Hsrc (Real.exp (↑dB : ℝ))) (max ((5832 : ℝ) * max A.H padW ^ (4 : ℕ))
-      ((↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) / δ))))
-  ∀ (S : ModeSchedule)
-    (_ : S.dmax = (2 : ℕ) * dB + (2 : ℕ))
-    (_ : S.Dm = max (2 : ℝ) Nl)
-    (_ : S.Valid (340 : ℕ) (5 : ℕ) (4 : ℕ) (600 : ℕ) (1 / 1024 : ℝ) (packetW S.dmax S.H))
-    (_ : (2 : ℕ) ≤ S.dmax)
-    (_ : (2 : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Bstar)
-    (_ : (1 : ℕ) ≤ S.Q0)
-    (hK1 : (1 : ℕ) ≤ S.K),
-  let Lf : SearchLeaf :=
-    leafAt A.famFuel fp.Lc (A.basicSlot p) s
-  let ks : ℕ :=
-    Lf.k
-  let S0 : Finset (ℤ × ℤ) :=
-    {I ∈ AD.Tc | ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G
-      c.1 c.2}
-  let gs : ℤ × ℤ → Finset bf.Grp :=
-    fun (I : ℤ × ℤ) => fp.groupsAt I ks
-  let gset : Finset bf.Grp :=
-    S0.biUnion gs
-  ∀ (hlenMc : ∀ (l : Fin (4 : ℕ)), (AD.cat l).length ≤ fp.Mc),
-  let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
-    fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
-      (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
-      le_rfl)
-  ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc)))
-    (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md)
-    (hA6 : (6 : ℝ) ≤ S.A0),
-  let qG : bf.Grp → ℕ :=
-    fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
-  ∀ (Vl0 : ℝ)
-    (U : ℝ)
-    (MV : ℝ)
-    (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ))
-    (ε : ℝ)
-    (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹),
-  let Ts : Finset (ℕ × ℕ) :=
-    Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
-      ⌊S.Dstar⌋₊ + (1 : ℕ))
-  ∀ (_ : (4 : ℝ) ≤ Nl)
-    (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ)
-    (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ))
-    (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1),
-  let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
-    fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
-      _ => (0 : ℂ)
-  let D₀ : fp.SideInput :=
-    { cat := AD.cat, mbs := mbs, Lf := Lf, u := A.uslot p, S := S, hA := hA6,
-      SP := S.sideParams (1 / 1024 : ℝ), hK := hK1,
-      n := Fintype.card (bf.Lab ⊕ Fin fp.Mc), Ms := Ms, c := cf }
-  ∀ (hcat : Fin (4 : ℕ) → List (CatCol bf.Vtx))
-    (hmbb : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ AD.cat l ++ hcat l, e.birth ∈ A.cells)
-    (hmbT : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (8 : ℝ) * A.colBudget + (↑(bf.tmplPath (AD.cat l ++
-      hcat l) y) : ℝ) ≤ (8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl),
-  let mb' : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l ++ hcat l) :=
-    fun l =>
-        { hb := hmbb l, B := 8 * A.colBudget + (1 + AD.Mp) * Nl, hTp := hmbT l }
-  let D : fp.SideInput :=
-    D₀.appendCat hcat mb'
-  ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, fp.hrank ≤ e.rank)
-    (_ : ∀ (l : Fin (4 : ℕ)), D₀.Lf.role l ≤ (4 : ℕ)),
-  let S1 : Finset (ℤ × ℤ) :=
-    {I ∈ S0 | ∀ (j : Fin (4 : ℕ)), ∀ e ∈ Cut j, ¬dyadicGridCell A.G I.1 I.2 ⊆
-      dyadicGridCell A.G e.1 e.2}
-  ∀ (_ : S1 ⊆ A.cells),
-  let Nb : ℕ :=
-    Nat.log (2 : ℕ) S.K + (1 : ℕ)
-  ∀ (_ : Nb = Nat.log (2 : ℕ) S.K + (1 : ℕ))
-    (_ : (0 : ℝ) < dyadicGridLength A.G A.R.1)
-    (_ : (0 : ℝ) ≤ Vl0),
-  let Os : Finset (Fin (4 : ℕ) × Fin (4 : ℕ) × ℕ × ℕ × ℕ × ℕ) :=
-    FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))
-  ∀ (_ : Os = FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))),
-  let Cjg : ℝ :=
-    ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 : ℝ) *
-      ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc :
-      ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))
-  ∀ (_ : Cjg = ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 :
-      ℝ) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) +
-      (↑cc : ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))),
-  let Γa : Fin (4 : ℕ) → ℝ :=
-    fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) * FamParams.capV A
-      cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) +
-      (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ))))) +
-      FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
-  ∀ (_ : Γa = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) *
-      FamParams.capV A cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc
-      (↑k : ℝ) Vl0) + (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc
-      (↑k : ℝ))))) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength
-      A.G A.R.1),
-  let Γb : Fin (4 : ℕ) → ℝ :=
-    fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ)
-      + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
-  ∀ (_ : Γb = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k
-      : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1),
-  let ΓU : ℝ :=
-    (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
-      dyadicGridLength A.G A.R.1
-  ∀ (_ : ΓU = (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
-      dyadicGridLength A.G A.R.1)
-    (Ee : ℝ)
-    (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D₀.withQ0 (qG G)).errAt L l G I‖ ^ (2 :
-      ℕ) ≤ Ee)
-    (_ : Ee ≤ ((8 : ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget
-      ^ (2 : ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) *
-      dyadicGridLength A.G A.R.1)
-    (_ : (1 : ℕ) ≤ dB),
-  let Gq : ℝ :=
-    Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ))
-      + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2
-      : ℕ))
-  ∀ (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
-      1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Gq + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ))),
-  let Mt : ℝ :=
-    (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range (S.Jstar +
-      (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ
-  ∀ (_ : Mt = (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range
-      (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ),
-  let Iw : ℕ :=
-    ⌊Real.logb (2 : ℝ) (S.Dstar ^ (250 : ℕ))⌋₊
-  ∀ (C : Finset (ℤ × ℤ))
-    (C₂ : Finset (ℤ × ℤ))
-    (_ : C ⊆ A.cells)
-    (_ : dyadicRootLength A.G (maximalDyadicCells A.G C) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G
-      A.R.1)
-    (_ : C₂ ⊆ S1)
-    (_ : dyadicRootLength A.G C₂ ≤ ρ * dyadicGridLength A.G A.R.1)
-    (_ : (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc)
-    (_ : E ≤ (↑k : ℝ) ^ cc)
-    (_ : ρ⁻¹ ≤ (↑k : ℝ) ^ cc)
-    (_ : (↑k : ℝ) ^ cc ≤ kD)
-    (_ : (2 : ℝ) ≤ (↑k : ℝ))
-    (u : ℝ)
-    (_ : u = kD * (↑fp.P : ℝ))
-    (_ : (↑A.famVtxBound : ℝ) ≤ (8 : ℝ) * A.colBudget + (1 : ℝ))
-    (_ : Real.log S.Dstar ≤ (↑Cg : ℝ) * u ^ Cg),
-  let Λ : ℝ :=
-    (↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB Hm δ Nl kD δ) +
-      Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl) + Real.log
-      (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)
-  ∀ (_ : (↑S.K : ℝ) ≤ Msch * Λ ^ (16 : ℕ))
-    (_ : Real.log S.H ≤ Msch * Λ ^ (12 : ℕ))
-    (_ : (0 : ℝ) ≤ Λ)
-    (_ : Λ ≤ (↑CΛ : ℝ) * u ^ eΛ)
-    (_ : (0 : ℝ) ≤ E)
-    (_ : ∀ (l : Fin (4 : ℕ)), (0 : ℝ) ≤ (fun (_ : Fin (4 : ℕ)) => Vl0) l ∧ (fun (_ : Fin (4 :
-      ℕ)) => Vl0) l ≤ Vl0),
-  let TT : ℝ :=
-    TsideF A fp.P S.K (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))
-      (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ
-  ∀ (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √TT)
-    (_ : (0 : ℝ) ≤ TT),
-  let T2v : ℝ :=
-    D.T2 cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ
-  let S₂ : Finset (ℤ × ℤ) :=
-    {I ∈ {I ∈ S1 | ¬∃ e ∈ C, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2} |
-      ¬∃ e ∈ C₂, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2}
-  ∀ (_ : ∑ I ∈ S₂, dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ gs I, (fp.Λc I : (Fin (4 : ℕ) →
-      ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (D.toLeafQ qG).out
-      l G I‖ ≤ (6 : ℝ) * (256 : ℝ) * ((2 : ℝ) ^ A.famFuel) ^ (2 : ℕ) * ((2 : ℝ) * η₀ +
-      fp.farC A.famFuel AD.τ₃ (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
-      A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ *
-      dyadicGridLength A.G A.R.1 + (6 : ℝ) * ∑ a : Fin (4 : ℕ), ∑ b : Fin (4 : ℕ), ∑ e :
-      Fin (4 : ℕ), (D.toLeafQ qG).nearBnd hq2 hq3 Nd Nb ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
-      A.famFuel + (2 : ℕ)) (↑AD.Mp : ℝ) ((2 : ℝ) * √(1 : ℝ)) (ρ / (64 : ℝ)) Γa Γb ΓU a b
-      e + A.η ^ ((1 : ℝ) - ((1 : ℝ) - (1 / 1200 : ℝ))) * (D.Tside qG ((2 : ℕ) ^
-      A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
-      : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^
-      A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
-      : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^
-      A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
-      : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * dyadicGridLength A.G
-      A.R.1) + (82 : ℝ) * ((81 : ℝ) * (localFormUniformConstant κ * (coreBd (max ((2 :
-      ℝ) * √(1 : ℝ)) A.S) T2v + errBd (max ((2 : ℝ) * √(1 : ℝ)) A.S) T2v + √(D.Tside qG
-      ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun
-      (_ : Fin (4 : ℕ)) => Vl0) ρ)) ^ (3 : ℕ)) * (√((4 : ℝ) * ((↑(AD.Mp * A.famVtxBound)
-      : ℝ) * dyadicGridLength A.G A.R.1)) * √Ee)) + (82 : ℝ) * (A.η ^ ((1 : ℝ) - ((1 :
-      ℝ) - (1 / 1200 : ℝ))) * ((81 : ℝ) * localFormUniformConstant κ * max (coreBd (max
-      ((2 : ℝ) * √(1 : ℝ)) A.S) T2v) √(D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
-      A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) ^
-      ((1 : ℝ) - (1 / 1200 : ℝ)) * (D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
-      A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1
-      : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
-      A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1
-      : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
-      A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1
-      : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * dyadicGridLength A.G A.R.1)) + (A.η ^ (1 /
-      1200 : ℝ) * (dyadicGridLength A.G A.R.1 * (D.coreM4 (3 : ℕ) U ε (max (max (1 : ℝ)
-      Mt) (D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc
-      (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) + ∑ l : Fin (4 : ℕ), D.coreM3 (3 : ℕ)
-      (1 : ℕ) Iw U ε (max (max (1 : ℝ) Mt) (D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
-      A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) l))
-      + ∑ I ∈ S₂, dyadicGridLength A.G I.1 * D.coreE qG gs (3 : ℕ) (1 : ℕ) Iw U ε I))
-    (_ : Real.exp kD ≤ S.Dstar),
-  let ι : ℝ :=
-    (S.Dstar ^ (100 : ℕ))⁻¹ * S.Dstar ^ (10 : ℕ)
-  let Qe : ℝ :=
-    (16 : ℝ) * fourErrC κ (3 : ℕ) * ι + K1c * ((2 : ℝ) * fourKC κ (3 : ℕ) * (12 : ℝ) ^
-      (4 : ℕ) * ε * U ^ (3 : ℕ) * S.Dstar ^ (4 : ℕ)) + (4 : ℝ) * ((81 : ℝ) * threeErrC κ
-      (3 : ℕ) (1 : ℕ) * ι * U + K1c * ((8 : ℝ) * entryCU κ (3 : ℕ) (1 : ℕ) * (2 : ℝ) ^
-      ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ) * ε * U ^ (3 : ℕ) * (S.Dstar ^ (3 : ℕ) *
-      ((↑Iw : ℝ) + (1 : ℝ)))))
-  ∀ (_ : ∑ I ∈ S₂, dyadicGridLength A.G I.1 * D.coreE qG gs (3 : ℕ) (1 : ℕ) Iw U ε I ≤ Qe *
-      ((↑(AD.Mp * A.famVtxBound) : ℝ) * dyadicGridLength A.G A.R.1)),
-  ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
-    dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
-    ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
-    ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
-    dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
-    ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
-    dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
-    ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
-    l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
-    (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
-    leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
-    hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+    (AD : bf.AttemptData p) :
+    bf.FamParams :=
+  AD.fp
 
 open scoped Classical in
-private def LeafEstimateStage7Statement : Prop :=
-  ∀ (κ : LocalKernelClass)
+private noncomputable abbrev leafEstimateDimensionBound
+    (κ : LocalKernelClass)
     (c₀ : ℕ)
-    (cc : ℕ)
-    (_ : (1 : ℕ) ≤ cc)
-    (Dm0 : ℕ)
-    (Msch : ℝ)
-    (_ : (0 : ℝ) < Msch)
-    (Cg : ℕ)
-    (g : ℕ)
-    (cT : ℝ)
-    (cL : ℝ)
-    (cK : ℝ)
-    (cMc : ℝ)
-    (cm : ℝ)
-    (ce : ℝ)
-    (ce2 : ℝ)
-    (cQ : ℝ)
-    (CΛ : ℕ)
-    (eΛ : ℕ)
-    (CM1 : ℕ)
-    (t3 : ℕ)
-    (Cb : ℕ)
-    (Cl : ℕ)
-    (_ : g = (8192 : ℕ) * (cc + (1 : ℕ)) * ((1024 : ℕ) * (cc + (1 : ℕ)) + cc + (7 : ℕ)) + cc
-      ^ (2 : ℕ) + (8 : ℕ) ∧ cT = (10 : ℝ) ^ (22 : ℕ) * ((1 : ℝ) +
-      localFormUniformConstant κ) ^ (2 : ℕ) ∧ cL = (159 : ℝ) + (32 : ℝ) * (↑g : ℝ) + (8
-      : ℝ) * Real.log cT ∧ cK = ((1 : ℝ) + (7 : ℝ) * (10 : ℝ) ^ (9 : ℕ) + cT) * (cL + (2
-      : ℝ)) ∧ cMc = (C4c κ + (4 : ℝ) * C3c κ) * cL ^ (4 : ℕ) * cK ^ (2 : ℕ) ∧ cm =
-      (196608 : ℝ) * cT + (83 : ℝ) * ((1 : ℝ) + (81 : ℝ) * localFormUniformConstant κ *
-      ((30000 : ℝ) + √cT)) * ((1 : ℝ) + cT) ^ (3 : ℕ) + cMc ∧ ce = (6642 : ℝ) *
-      localFormUniformConstant κ * ((60000 : ℝ) + √cT) ^ (3 : ℕ) * (288 : ℝ) + (9 : ℝ) *
-      ((16 : ℝ) * fourErrC κ (3 : ℕ) + (648 : ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) + (324 :
-      ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) * √cT) ∧ ce2 = K1c * ((2 : ℝ) * fourKC κ (3 : ℕ)
-      * (12 : ℝ) ^ (4 : ℕ)) + (4 : ℝ) * (K1c * ((8 : ℝ) * entryCU κ (3 : ℕ) (1 : ℕ) * (2
-      : ℝ) ^ ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ))) * (501 : ℝ) ∧ cQ = (65536 : ℝ) *
-      ((8 : ℝ) + (80 : ℝ) * (9 : ℝ) ^ cc * (↑cc : ℝ)) * ((80 : ℝ) * (9 : ℝ) ^ cc * (↑cc
-      : ℝ)) * ((4 : ℝ) * (↑cc : ℝ) ^ (2 : ℕ)) * ((17 : ℝ) * (10 : ℝ) ^ (7 : ℕ)) ∧ CΛ =
-      (2 : ℕ) * Cg + (12 : ℕ) ∧ eΛ = Cg + (3 : ℕ) * cc ∧ CM1 = (⌈Msch⌉₊ + (1 : ℕ)) * CΛ
-      ^ (16 : ℕ) ∧ t3 = (3 : ℕ) ^ cc ∧ Cb = CM1 + (501 : ℕ) * Cg + t3 + (2 : ℕ) * cc +
-      (20 : ℕ) + (16 : ℕ) * eΛ ∧ Cl = ⌈cm * (↑Cb : ℝ) ^ (59 : ℕ) + ce * (↑Cb : ℝ) ^ (18
-      : ℕ) + ce2 + (3 : ℝ) * (10 : ℝ) ^ (11 : ℕ) * cQ⌉₊ + (59 : ℕ) * Cb + (4 : ℕ) * g +
-      (8 : ℕ) * cc + (8 : ℕ))
-    (A : ActiveSetup κ c₀)
-    (bf : A.BasicFamilies)
-    (k : ℕ)
-    (η₀ : ℝ)
-    (E : ℝ)
-    (_ : A.SubRootProps η₀ E)
-    (_ : A.S = (2 : ℝ))
-    (_ : A.η = (4 : ℝ) * η₀)
-    (_ : (0 : ℝ) < η₀)
-    (_ : A.cells.Nonempty)
-    (q : ℝ)
-    (hq2 : (2 : ℝ) < q)
-    (hq3 : q < (3 : ℝ))
-    (Nd : ℕ)
-    (p : Fin (3 : ℕ))
-    (AD : bf.AttemptData p)
-    (d : bf.Vtx)
-    (s : ℕ)
-    (δ : ℝ)
-    (ρ : ℝ)
-    (kD : ℝ)
-    (_ : (0 : ℝ) < δ)
-    (_ : δ ≤ (1 / 8 : ℝ))
-    (_ : (0 : ℝ) < ρ)
-    (_ : ρ < (1 : ℝ))
-    (_ : Real.log ((2 : ℝ) * A.colBudget) ≤ (↑k : ℝ) ^ cc)
-    (_ : (↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) + (1 : ℝ)))
-    (_ : (1 : ℝ) ≤ (↑k : ℝ)),
-  let fp : bf.FamParams :=
-    AD.fp
-  let dB : ℕ :=
-    A.dBnd
-  let Nl : ℝ :=
-    AD.n (fp.Lc + (5 : ℕ))
-  ∀ (_ : Real.log ((2 : ℝ) * ((8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl)) ≤ (↑k :
-      ℝ) ^ cc)
-    (_ : (2 : ℝ) ≤ A.colBudget)
-    (hNl0 : (0 : ℝ) ≤ Nl),
-  let Hm : ℝ :=
-    max (max A.Hsrc (Real.exp (↑dB : ℝ))) (max ((5832 : ℝ) * max A.H padW ^ (4 : ℕ))
-      ((↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) / δ))))
-  ∀ (_ : (1 : ℝ) ≤ Hm)
-    (S : ModeSchedule)
-    (_ : S.dmax = (2 : ℕ) * dB + (2 : ℕ))
-    (_ : S.Dm = max (2 : ℝ) Nl)
-    (_ : S.Valid (340 : ℕ) (5 : ℕ) (4 : ℕ) (600 : ℕ) (1 / 1024 : ℝ) (packetW S.dmax S.H))
-    (_ : (2 : ℕ) ≤ S.dmax)
-    (_ : (2 : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Bstar)
-    (_ : (1 : ℕ) ≤ S.Q0)
-    (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
-      dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
-      Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ))
-    (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
-      Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
-      + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ))
-    (hK1 : (1 : ℕ) ≤ S.K),
-  let Lf : SearchLeaf :=
-    leafAt A.famFuel fp.Lc (A.basicSlot p) s
-  let ks : ℕ :=
-    Lf.k
-  let S0 : Finset (ℤ × ℤ) :=
-    {I ∈ AD.Tc | ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G
-      c.1 c.2}
-  let gs : ℤ × ℤ → Finset bf.Grp :=
-    fun (I : ℤ × ℤ) => fp.groupsAt I ks
-  let gset : Finset bf.Grp :=
-    S0.biUnion gs
-  ∀ (hlenMc : ∀ (l : Fin (4 : ℕ)), (AD.cat l).length ≤ fp.Mc),
-  let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
-    fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
-      (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
-      le_rfl)
-  ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc)))
-    (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md)
-    (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
-      G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
-      / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
-      (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
-      V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
-      G).alive V)).card : ℝ) ≤ Nl)
-    (hA6 : (6 : ℝ) ≤ S.A0),
-  let qG : bf.Grp → ℕ :=
-    fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
-  ∀ (Vl0 : ℝ)
-    (U : ℝ)
-    (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
-      (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
-      : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ))
-    (_ : (0 : ℝ) < S.Dstar)
-    (_ : (1 : ℝ) ≤ S.Dstar)
-    (_ : (16 : ℝ) ≤ U)
-    (MV : ℝ)
-    (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ))
-    (ε : ℝ)
-    (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹)
-    (_ : (0 : ℝ) < ε),
-  let Ts : Finset (ℕ × ℕ) :=
-    Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
-      ⌊S.Dstar⌋₊ + (1 : ℕ))
-  ∀ (_ : (4 : ℝ) ≤ Nl)
-    (_ : fp.modeStar Dm0 dB Hm δ Nl kD ≤ S.Dstar)
-    (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
-      β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
-      b S.K, ∑ m ∈ (Ms l (↑G : bf.Grp)).alive (ancAt A.G J (b - (4 : ℤ) * (↑S.K : ℤ))),
-      ‖c l G b J m‖ ^ (2 : ℕ) ≤ (4 : ℝ) * S.Dstar ^ (2 : ℕ) * (1 : ℝ))
-    (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ))
-    (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1),
-  let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
-    fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
-      _ => (0 : ℂ)
-  let D₀ : fp.SideInput :=
-    { cat := AD.cat, mbs := mbs, Lf := Lf, u := A.uslot p, S := S, hA := hA6,
-      SP := S.sideParams (1 / 1024 : ℝ), hK := hK1,
-      n := Fintype.card (bf.Lab ⊕ Fin fp.Mc), Ms := Ms, c := cf }
-  ∀ (hcat : Fin (4 : ℕ) → List (CatCol bf.Vtx))
-    (hmbb : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ AD.cat l ++ hcat l, e.birth ∈ A.cells)
-    (hmbT : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (8 : ℝ) * A.colBudget + (↑(bf.tmplPath (AD.cat l ++
-      hcat l) y) : ℝ) ≤ (8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl),
-  let mb' : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l ++ hcat l) :=
-    fun l =>
-        { hb := hmbb l, B := 8 * A.colBudget + (1 + AD.Mp) * Nl, hTp := hmbT l }
-  let D : fp.SideInput :=
-    D₀.appendCat hcat mb'
-  ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, fp.hrank ≤ e.rank)
-    (_ : ∀ (l : Fin (4 : ℕ)), D₀.Lf.role l ≤ (4 : ℕ)),
-  let S1 : Finset (ℤ × ℤ) :=
-    {I ∈ S0 | ∀ (j : Fin (4 : ℕ)), ∀ e ∈ Cut j, ¬dyadicGridCell A.G I.1 I.2 ⊆
-      dyadicGridCell A.G e.1 e.2}
-  ∀ (_ : S1 ⊆ S0)
-    (_ : S1 ⊆ A.cells)
-    (_ : ∀ I ∈ A.cells, A.blkStart S.K I.1 ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K * β)
-      : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ)))),
-  let Nb : ℕ :=
-    Nat.log (2 : ℕ) S.K + (1 : ℕ)
-  ∀ (_ : Nb = Nat.log (2 : ℕ) S.K + (1 : ℕ))
-    (_ : (0 : ℝ) < dyadicGridLength A.G A.R.1)
-    (_ : (0 : ℝ) ≤ Vl0),
-  let Os : Finset (Fin (4 : ℕ) × Fin (4 : ℕ) × ℕ × ℕ × ℕ × ℕ) :=
-    FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))
-  ∀ (_ : Os = FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))),
-  let Cjg : ℝ :=
-    ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 : ℝ) *
-      ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc :
-      ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))
-  ∀ (_ : Cjg = ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 :
-      ℝ) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) +
-      (↑cc : ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))),
-  let Γa : Fin (4 : ℕ) → ℝ :=
-    fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) * FamParams.capV A
-      cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) +
-      (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ))))) +
-      FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
-  ∀ (_ : Γa = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) *
-      FamParams.capV A cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc
-      (↑k : ℝ) Vl0) + (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc
-      (↑k : ℝ))))) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength
-      A.G A.R.1),
-  let Γb : Fin (4 : ℕ) → ℝ :=
-    fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ)
-      + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
-  ∀ (_ : Γb = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k
-      : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1),
-  let ΓU : ℝ :=
-    (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
-      dyadicGridLength A.G A.R.1
-  ∀ (_ : ΓU = (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
-      dyadicGridLength A.G A.R.1)
-    (Ee : ℝ)
-    (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D₀.withQ0 (qG G)).errAt L l G I‖ ^ (2 :
-      ℕ) ≤ Ee)
-    (_ : Ee ≤ ((8 : ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget
-      ^ (2 : ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) *
-      dyadicGridLength A.G A.R.1)
-    (_ : ∑ I ∈ S1, dyadicGridLength A.G I.1 * (↑(gs I).card : ℝ) ≤ (↑(AD.Mp * A.famVtxBound)
-      : ℝ) * dyadicGridLength A.G A.R.1)
-    (_ : (1 : ℕ) ≤ dB)
-    (_ : ∀ (j : Fin (4 : ℕ)) (G : ↥gset), D.c j (↑G : bf.Grp) = c j G),
-  let Gq : ℝ :=
-    Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ))
-      + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2
-      : ℕ))
-  ∀ (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
-      1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Gq + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ))),
-  let Mt : ℝ :=
-    (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range (S.Jstar +
-      (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ
-  ∀ (_ : Mt = (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range
-      (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ),
-  let Iw : ℕ :=
-    ⌊Real.logb (2 : ℝ) (S.Dstar ^ (250 : ℕ))⌋₊
-  ∀ (C : Finset (ℤ × ℤ))
-    (C₂ : Finset (ℤ × ℤ))
-    (_ : C ⊆ A.cells)
-    (_ : dyadicRootLength A.G (maximalDyadicCells A.G C) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G
-      A.R.1)
-    (_ : C₂ ⊆ S1)
-    (_ : dyadicRootLength A.G C₂ ≤ ρ * dyadicGridLength A.G A.R.1)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ I ∈ {I ∈ {I ∈ S1 | ¬∃ e ∈ C, dyadicGridCell A.G I.1 I.2 ⊆
-      dyadicGridCell A.G e.1 e.2} | ¬∃ e ∈ C₂, dyadicGridCell A.G I.1 I.2 ⊆
-      dyadicGridCell A.G e.1 e.2}, ∀ G ∈ gs I, √((dyadicGridLength A.G I.1)⁻¹ * ∫ (y :
-      ℝ) in dyadicGridLeft A.G I.1 I.2..dyadicGridLeft A.G I.1 I.2 + dyadicGridLength
-      A.G I.1, ‖augPhys ((D.withQ0 (qG G)).toLeaf.sv l G I) y‖ ^ (2 : ℕ)) ≤ U)
-    (_ : ∑ I ∈ {I ∈ S1 | ¬∃ e ∈ C, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2}
-      with ¬∃ e ∈ C₂, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2,
-      dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ gs I, (fp.Λc I : (Fin (4 : ℕ) →
-      ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (D.toLeafQ qG).out
-      l G I‖ ≤ (6 : ℝ) * (256 : ℝ) * ((2 : ℝ) ^ A.famFuel) ^ (2 : ℕ) * ((2 : ℝ) * η₀ +
-      fp.farC A.famFuel AD.τ₃ (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
-      A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ *
-      dyadicGridLength A.G A.R.1 + (6 : ℝ) * ∑ a : Fin (4 : ℕ), ∑ b : Fin (4 : ℕ), ∑ e :
-      Fin (4 : ℕ), (D.toLeafQ qG).nearBnd hq2 hq3 Nd Nb ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
-      A.famFuel + (2 : ℕ)) (↑AD.Mp : ℝ) ((2 : ℝ) * √(1 : ℝ)) (ρ / (64 : ℝ)) Γa Γb ΓU a b
-      e + A.η ^ ((1 : ℝ) - ((1 : ℝ) - (1 / 1200 : ℝ))) * (D.Tside qG ((2 : ℕ) ^
-      A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
-      : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^
-      A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
-      : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^
-      A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
-      : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * dyadicGridLength A.G
-      A.R.1) + (82 : ℝ) * ((81 : ℝ) * (localFormUniformConstant κ * (coreBd (max ((2 :
-      ℝ) * √(1 : ℝ)) A.S) (D.T2 cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ) + errBd
-      (max ((2 : ℝ) * √(1 : ℝ)) A.S) (D.T2 cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)
-      + √(D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc
-      (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) ^ (3 : ℕ)) * (√((4 : ℝ) * ((↑(AD.Mp *
-      A.famVtxBound) : ℝ) * dyadicGridLength A.G A.R.1)) * √Ee)) + (82 : ℝ) * (A.η ^ ((1
-      : ℝ) - ((1 : ℝ) - (1 / 1200 : ℝ))) * ((81 : ℝ) * localFormUniformConstant κ * max
-      (coreBd (max ((2 : ℝ) * √(1 : ℝ)) A.S) (D.T2 cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) =>
-      Vl0) ρ)) √(D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 :
-      ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) ^ ((1 : ℝ) - (1 / 1200 : ℝ)) *
-      (D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
-      : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) *
-      D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
-      : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) *
-      D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
-      : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) *
-      dyadicGridLength A.G A.R.1)) + (A.η ^ (1 / 1200 : ℝ) * (dyadicGridLength A.G A.R.1
-      * (D.coreM4 (3 : ℕ) U ε (max (max (1 : ℝ) Mt) (D.Tside qG ((2 : ℕ) ^ A.famFuel)
-      ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) =>
-      Vl0) ρ)) + ∑ l : Fin (4 : ℕ), D.coreM3 (3 : ℕ) (1 : ℕ) Iw U ε (max (max (1 : ℝ)
-      Mt) (D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc
-      (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) l)) + ∑ I ∈ {I ∈ S1 | ¬∃ e ∈ C,
-      dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2} with ¬∃ e ∈ C₂,
-      dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2, dyadicGridLength A.G I.1
-      * D.coreE qG gs (3 : ℕ) (1 : ℕ) Iw U ε I))
-    (_ : (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc)
-    (_ : Real.log fp.Hed ≤ (↑k : ℝ) ^ cc)
-    (_ : E ≤ (↑k : ℝ) ^ cc)
-    (_ : ρ⁻¹ ≤ (↑k : ℝ) ^ cc)
-    (_ : (↑k : ℝ) ^ cc ≤ kD)
-    (_ : (2 : ℝ) ≤ (↑k : ℝ))
-    (_ : CΛ = (2 : ℕ) * Cg + (12 : ℕ))
-    (_ : eΛ = Cg + (3 : ℕ) * cc)
-    (_ : (1 : ℝ) ≤ (↑fp.P : ℝ))
-    (u : ℝ)
-    (_ : u = kD * (↑fp.P : ℝ))
-    (_ : (1 : ℝ) ≤ u)
-    (_ : (↑k : ℝ) ≤ u)
-    (_ : Nl ≤ Real.exp ((↑k : ℝ) ^ cc))
-    (_ : (↑A.famVtxBound : ℝ) ≤ (8 : ℝ) * A.colBudget + (1 : ℝ))
-    (_ : Real.log (fp.modeStarG Dm0 dB Hm δ Nl kD δ) ≤ (↑Cg : ℝ) * (kD * (↑fp.P : ℝ)) ^ Cg ∧
-      Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ))) ≤ (↑Cg : ℝ) * (kD *
-      (↑fp.P : ℝ)) ^ Cg),
-  ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
-    dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
-    ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
-    ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
-    dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
-    ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
-    dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
-    ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
-    l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
-    (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
-    leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
-    hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+    (A : ActiveSetup κ c₀) :
+    ℕ :=
+  A.dBnd
 
 open scoped Classical in
-private def LeafEstimateStage6Statement : Prop :=
-  ∀ (κ : LocalKernelClass)
+private noncomputable abbrev leafEstimatePopulation
+    (κ : LocalKernelClass)
     (c₀ : ℕ)
-    (cc : ℕ)
-    (_ : (1 : ℕ) ≤ cc)
-    (Dm0 : ℕ)
-    (Msch : ℝ)
-    (_ : (0 : ℝ) < Msch)
-    (Cg : ℕ)
-    (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
-      : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
-      k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
-      → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
-      (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
-      Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
-      A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
-      (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
-      (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
-      (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg)
-    (g : ℕ)
-    (cT : ℝ)
-    (cL : ℝ)
-    (cK : ℝ)
-    (cMc : ℝ)
-    (cm : ℝ)
-    (ce : ℝ)
-    (ce2 : ℝ)
-    (cQ : ℝ)
-    (CΛ : ℕ)
-    (eΛ : ℕ)
-    (CM1 : ℕ)
-    (t3 : ℕ)
-    (Cb : ℕ)
-    (Cl : ℕ)
-    (_ : g = (8192 : ℕ) * (cc + (1 : ℕ)) * ((1024 : ℕ) * (cc + (1 : ℕ)) + cc + (7 : ℕ)) + cc
-      ^ (2 : ℕ) + (8 : ℕ) ∧ cT = (10 : ℝ) ^ (22 : ℕ) * ((1 : ℝ) +
-      localFormUniformConstant κ) ^ (2 : ℕ) ∧ cL = (159 : ℝ) + (32 : ℝ) * (↑g : ℝ) + (8
-      : ℝ) * Real.log cT ∧ cK = ((1 : ℝ) + (7 : ℝ) * (10 : ℝ) ^ (9 : ℕ) + cT) * (cL + (2
-      : ℝ)) ∧ cMc = (C4c κ + (4 : ℝ) * C3c κ) * cL ^ (4 : ℕ) * cK ^ (2 : ℕ) ∧ cm =
-      (196608 : ℝ) * cT + (83 : ℝ) * ((1 : ℝ) + (81 : ℝ) * localFormUniformConstant κ *
-      ((30000 : ℝ) + √cT)) * ((1 : ℝ) + cT) ^ (3 : ℕ) + cMc ∧ ce = (6642 : ℝ) *
-      localFormUniformConstant κ * ((60000 : ℝ) + √cT) ^ (3 : ℕ) * (288 : ℝ) + (9 : ℝ) *
-      ((16 : ℝ) * fourErrC κ (3 : ℕ) + (648 : ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) + (324 :
-      ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) * √cT) ∧ ce2 = K1c * ((2 : ℝ) * fourKC κ (3 : ℕ)
-      * (12 : ℝ) ^ (4 : ℕ)) + (4 : ℝ) * (K1c * ((8 : ℝ) * entryCU κ (3 : ℕ) (1 : ℕ) * (2
-      : ℝ) ^ ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ))) * (501 : ℝ) ∧ cQ = (65536 : ℝ) *
-      ((8 : ℝ) + (80 : ℝ) * (9 : ℝ) ^ cc * (↑cc : ℝ)) * ((80 : ℝ) * (9 : ℝ) ^ cc * (↑cc
-      : ℝ)) * ((4 : ℝ) * (↑cc : ℝ) ^ (2 : ℕ)) * ((17 : ℝ) * (10 : ℝ) ^ (7 : ℕ)) ∧ CΛ =
-      (2 : ℕ) * Cg + (12 : ℕ) ∧ eΛ = Cg + (3 : ℕ) * cc ∧ CM1 = (⌈Msch⌉₊ + (1 : ℕ)) * CΛ
-      ^ (16 : ℕ) ∧ t3 = (3 : ℕ) ^ cc ∧ Cb = CM1 + (501 : ℕ) * Cg + t3 + (2 : ℕ) * cc +
-      (20 : ℕ) + (16 : ℕ) * eΛ ∧ Cl = ⌈cm * (↑Cb : ℝ) ^ (59 : ℕ) + ce * (↑Cb : ℝ) ^ (18
-      : ℕ) + ce2 + (3 : ℝ) * (10 : ℝ) ^ (11 : ℕ) * cQ⌉₊ + (59 : ℕ) * Cb + (4 : ℕ) * g +
-      (8 : ℕ) * cc + (8 : ℕ))
     (A : ActiveSetup κ c₀)
     (bf : A.BasicFamilies)
-    (k : ℕ)
-    (η₀ : ℝ)
-    (E : ℝ)
-    (_ : A.AncClosed)
-    (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
-      I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀))
-    (_ : A.SubRootProps η₀ E)
-    (_ : A.S = (2 : ℝ))
-    (_ : A.η = (4 : ℝ) * η₀)
-    (_ : (0 : ℝ) < η₀)
-    (_ : A.cells.Nonempty)
-    (q : ℝ)
-    (hq2 : (2 : ℝ) < q)
-    (hq3 : q < (3 : ℝ))
-    (Nd : ℕ)
-    (_ : A.DepthWin Nd)
     (p : Fin (3 : ℕ))
     (AD : bf.AttemptData p)
-    (d : bf.Vtx)
-    (s : ℕ)
-    (δ : ℝ)
-    (ρ : ℝ)
-    (kD : ℝ)
-    (_ : (0 : ℝ) < δ)
-    (_ : δ ≤ (1 / 8 : ℝ))
-    (_ : (0 : ℝ) < ρ)
-    (_ : ρ < (1 : ℝ))
-    (_ : Real.log ((2 : ℝ) * A.colBudget) ≤ (↑k : ℝ) ^ cc)
-    (_ : (↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) + (1 : ℝ)))
-    (_ : (1 : ℝ) ≤ (↑k : ℝ)),
-  let fp : bf.FamParams :=
-    AD.fp
-  let dB : ℕ :=
-    A.dBnd
-  ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
-      (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
-      Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
-      Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
-      bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
-      ℝ) ≤ Real.log bumpConst),
-  let Nl : ℝ :=
-    AD.n (fp.Lc + (5 : ℕ))
-  ∀ (_ : Real.log ((2 : ℝ) * ((8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl)) ≤ (↑k :
-      ℝ) ^ cc)
-    (_ : (2 : ℝ) ≤ A.colBudget)
-    (_ : Monotone AD.n)
-    (hNl0 : (0 : ℝ) ≤ Nl),
-  let Hm : ℝ :=
-    max (max A.Hsrc (Real.exp (↑dB : ℝ))) (max ((5832 : ℝ) * max A.H padW ^ (4 : ℕ))
-      ((↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) / δ))))
-  ∀ (_ : (1 : ℝ) ≤ Hm)
-    (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
-      ℝ) ≤ fp.Hed)
-    (S : ModeSchedule)
-    (_ : S.dmax = (2 : ℕ) * dB + (2 : ℕ))
-    (_ : S.Dm = max (2 : ℝ) Nl)
-    (_ : S.Valid (340 : ℕ) (5 : ℕ) (4 : ℕ) (600 : ℕ) (1 / 1024 : ℝ) (packetW S.dmax S.H))
-    (_ : (2 : ℕ) ≤ S.dmax)
-    (_ : (↑S.dmax : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Bstar)
-    (_ : (1 : ℕ) ≤ S.Q0)
-    (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
-      dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
-      Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ))
-    (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
-      Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
-      + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ))
-    (hK1 : (1 : ℕ) ≤ S.K),
-  let Lf : SearchLeaf :=
-    leafAt A.famFuel fp.Lc (A.basicSlot p) s
-  let ks : ℕ :=
-    Lf.k
-  let S0 : Finset (ℤ × ℤ) :=
-    {I ∈ AD.Tc | ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G
-      c.1 c.2}
-  ∀ (_ : S0 ⊆ AD.Tc),
-  let gs : ℤ × ℤ → Finset bf.Grp :=
-    fun (I : ℤ × ℤ) => fp.groupsAt I ks
-  let gset : Finset bf.Grp :=
-    S0.biUnion gs
-  ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I)
-    (hlenMc : ∀ (l : Fin (4 : ℕ)), (AD.cat l).length ≤ fp.Mc),
-  let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
-    fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
-      (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
-      le_rfl)
-  ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc)))
-    (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md)
-    (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
-      G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
-      / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
-      (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
-      V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
-      G).alive V)).card : ℝ) ≤ Nl)
-    (hA6 : (6 : ℝ) ≤ S.A0),
-  let qG : bf.Grp → ℕ :=
-    fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
-  ∀ (_ : ∀ (G : bf.Grp), (1 : ℕ) ≤ qG G ∧ qG G ≤ S.Q0)
-    (Vl0 : ℝ)
-    (U : ℝ)
-    (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
-      (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
-      : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ))
-    (_ : (0 : ℝ) < S.Dstar)
-    (_ : (1 : ℝ) ≤ S.Dstar)
-    (_ : (16 : ℝ) ≤ U)
-    (_ : (0 : ℝ) < U)
-    (MV : ℝ)
-    (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ))
-    (_ : (0 : ℝ) ≤ MV)
-    (ε : ℝ)
-    (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹)
-    (_ : (0 : ℝ) < ε)
-    (_ : ε ≤ U)
-    (_ : ∀ (σ : ℝ), ε ≤ σ → σ ≤ U → (∃ (k : ℤ), σ = (2 : ℝ) ^ k) → S.Dstar⁻¹ ≤ σ → σ ∈ dyThr
-      ε U S.Dstar)
-    (_ : (↑(dyThr ε U S.Dstar).card : ℝ) ≤ Real.logb (2 : ℝ) U - Real.logb (2 : ℝ) ε + (3 :
-      ℝ)),
-  let Ts : Finset (ℕ × ℕ) :=
-    Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
-      ⌊S.Dstar⌋₊ + (1 : ℕ))
-  ∀ (_ : Ts = Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2
-      : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ))),
-  let BN : ℕ :=
-    ⌈(8 : ℝ) * A.colBudget + Nl⌉₊
-  let τb : ℝ :=
-    (1 : ℝ) / ((1 : ℝ) + (↑BN : ℝ) * A.colBudget ^ (2 : ℕ))
-  ∀ (_ : (0 : ℝ) < τb)
-    (_ : τb ≤ (1 : ℝ))
-    (_ : τb * (↑BN : ℝ) * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ))
-    (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τb⁻¹) ^ A.Dg) ≤ fp.Hed)
-    (_ : ∀ I ∈ A.cells, dyadicGridCell A.G I.1 I.2 ⊆ Set.Icc (dyadicGridLeft A.G A.R.1 A.R.2)
-      (dyadicGridLeft A.G A.R.1 A.R.2 + dyadicGridLength A.G A.R.1))
-    (_ : Fin (4 : ℕ) → ↥gset → bf.Vtx)
-    (_ : ∀ (l : Fin (4 : ℕ)), fp.bbase (Lf.role l) + fp.P ≤ fp.Hmax)
-    (_ : (4 : ℝ) ≤ Nl)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (Finset.card ({q : ↥gset × (bf.Lab ⊕ Fin fp.Mc) | ∃ I ∈
-      A.cells, (∃ (k' : ℕ), fp.Cert k' (↑q.1 : bf.Grp) I) ∧ ∃ (p_1 : Fin fp.P), y ∈
-      dyadicGridCell A.G I.1 I.2 ∧ q.2 ∈ mainLabelsM A.G fp.Mc (bf.origCols l) (AD.cat
-      l) I (fp.brank (Lf.role l)) (fp.bmask I (↑q.1 : bf.Grp) (Lf.role l) ((↑p_1 : ℕ) +
-      (1 : ℕ))) d})) ≤ BN)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∑ G : ↥gset, (↑((Ms l (↑G : bf.Grp)).ptSet y).card : ℝ)
-      ≤ S.Dstar)
-    (_ : fp.modeStar Dm0 dB Hm δ Nl kD ≤ S.Dstar)
-    (_ : ∀ (l : Fin (4 : ℕ)), (↑(Lf.layers l).length : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) +
-      (1 : ℝ)))
-    (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
-      β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
-      b S.K, ∑ m ∈ (Ms l (↑G : bf.Grp)).alive (ancAt A.G J (b - (4 : ℤ) * (↑S.K : ℤ))),
-      ‖c l G b J m‖ ^ (2 : ℕ) ≤ (4 : ℝ) * S.Dstar ^ (2 : ℕ) * (1 : ℝ))
-    (Rr : (l : Fin (4 : ℕ)) → (h : ℕ) → ℕ × ℕ → (G : ↥gset) → (Ms l (↑G : bf.Grp)).RepClass
-      (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) (10 : ℕ) h)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ h ≤ S.Jstar, ∀ (t : ℕ × ℕ) (G : ↥gset), (Rr l h t G).Nd = {c
-      ∈ (Ms l (↑G : bf.Grp)).succNodes (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams
-      (1 / 1024 : ℝ)) (fp.retainedPairs (↑G : bf.Grp) (Finset.image (fun (β : ℕ) =>
-      A.R.1 + (↑(S.K * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ)))) S.K) h | (Ms l
-      (↑G : bf.Grp)).nodeType1 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c = t.1 ∧
-      (Ms l (↑G : bf.Grp)).nodeType2 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c =
-      t.2})
-    (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ))
-    (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1),
-  let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
-    fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
-      _ => (0 : ℂ)
-  let D₀ : fp.SideInput :=
-    { cat := AD.cat, mbs := mbs, Lf := Lf, u := A.uslot p, S := S, hA := hA6,
-      SP := S.sideParams (1 / 1024 : ℝ), hK := hK1,
-      n := Fintype.card (bf.Lab ⊕ Fin fp.Mc), Ms := Ms, c := cf }
-  let gE : ℤ × ℤ → Fin A.famVtxBound → bf.Grp :=
-    fun (I : ℤ × ℤ) (i : Fin A.famVtxBound) => if h : (↑i : ℕ) < (gs I).card then
-      (↑(((gs I).equivFin.symm : Fin (gs I).card → ↥(gs I)) ⟨(↑i : ℕ), h⟩) : bf.Grp)
-      else default
-  ∀ (_ : ∀ (I : ℤ × ℤ), ∀ G ∈ gs I, ∃ (i : Fin A.famVtxBound), gE I i = G)
-    (hcat : Fin (4 : ℕ) → List (CatCol bf.Vtx))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ d ∈ hcat l, d.birth ∈ AD.Tc ∧ d.rank = fp.Lc + (5 : ℕ) ∧ (∃
-      (M : fp.MaskName d.birth), fp.maskOf d.birth M d.tag) ∧ ∃ R ∈ residueBox (bf.vtag
-      d.tag).dim (9 : ℕ), ∃ (γ : ℝ), d = templateCol (bf.vtag d.tag) l R γ d.birth
-      d.rank d.tag)
-    (hmbb : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ AD.cat l ++ hcat l, e.birth ∈ A.cells)
-    (hmbT : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (8 : ℝ) * A.colBudget + (↑(bf.tmplPath (AD.cat l ++
-      hcat l) y) : ℝ) ≤ (8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl),
-  let mb' : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l ++ hcat l) :=
-    fun l =>
-        { hb := hmbb l, B := 8 * A.colBudget + (1 + AD.Mp) * Nl, hTp := hmbT l }
-  let D : fp.SideInput :=
-    D₀.appendCat hcat mb'
-  ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, fp.hrank ≤ e.rank)
-    (_ : ∀ (l : Fin (4 : ℕ)), D₀.Lf.role l ≤ (4 : ℕ))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, bf.occAvail (↑e.tag.2 : ℤ × ℤ) e.tag.1),
-  let S1 : Finset (ℤ × ℤ) :=
-    {I ∈ S0 | ∀ (j : Fin (4 : ℕ)), ∀ e ∈ Cut j, ¬dyadicGridCell A.G I.1 I.2 ⊆
-      dyadicGridCell A.G e.1 e.2}
-  ∀ (_ : S1 ⊆ S0)
-    (_ : S1 ⊆ A.cells)
-    (_ : ∀ I ∈ A.cells, ((I.1 - A.R.1) / (↑S.K : ℤ)).toNat < A.treeDepth + (1 : ℕ))
-    (_ : ∀ I ∈ A.cells, A.blkStart S.K I.1 ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K * β)
-      : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))))
-    (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), D.u ≠ some l → ∀ (w : fp.TestName I Unit), fp.MainRk
-      w → (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).Pass A.G
-      (bf.origCols l) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold A.famVtxBound AD.τ₃
-      AD.n (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).r) fp.mH (D.cat l))
-    (_ : ∀ I ∈ S1, ∀ (a : Fin (4 : ℕ)) (w : fp.HelperName I (Fin A.famVtxBound)),
-      (fp.helperOf a I (fun (i : Fin A.famVtxBound) => (D.toLeafQ qG).sv a (gE I i) I)
-      w).Pass A.G (bf.origCols a) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold
-      A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ))) fp.mH (D.cat a))
-    (_ : ∀ (R : ℕ), (1 : ℕ) ≤ R → R ≤ fp.Lc + (4 : ℕ) → catThreshold A.famVtxBound AD.τ₃ AD.n
-      R * (A.colBudget * √(AD.n (R - (1 : ℕ)))) ≤ AD.τ₃)
-    (_ : catThreshold A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ)) * (A.colBudget * √(AD.n
-      (fp.Lc + (4 : ℕ)))) ≤ AD.τ₃)
-    (_ : ∀ (R : ℕ), (0 : ℝ) ≤ catThreshold A.famVtxBound AD.τ₃ AD.n R)
-    (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), ∀ r ≤ fp.Lc + (4 : ℕ), ∀ (M : bf.Vtx → Prop),
-      (↑(mainLabelsM A.G fp.Mc (bf.origCols l) (D.cat l) I r M d).card : ℝ) ≤ AD.n r),
-  let NH : ℝ :=
-    (2 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl
-  ∀ (_ : ∀ I ∈ S1, ∀ (a : Fin (4 : ℕ)) (M : bf.Vtx → Prop), (↑(mainLabelsM A.G fp.Mc
-      (bf.origCols a) (D.cat a) I (fp.Lc + (5 : ℕ)) M d).card : ℝ) ≤ NH),
-  let τ₂ : ℝ :=
-    AD.τ₃ / ((1 : ℝ) + A.colBudget * √(AD.n (fp.Lc + (4 : ℕ))) * (A.colBudget * √NH))
-  ∀ (_ : (0 : ℝ) < τ₂)
-    (_ : τ₂ ≤ (1 : ℝ))
-    (_ : τ₂ * (A.colBudget * √(AD.n (fp.Lc + (4 : ℕ))) * (A.colBudget * √NH)) ≤ AD.τ₃)
-    (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τ₂⁻¹) ^ A.Dg) ≤ fp.Hed),
-  let Nb : ℕ :=
-    Nat.log (2 : ℕ) S.K + (1 : ℕ)
-  ∀ (_ : Nb = Nat.log (2 : ℕ) S.K + (1 : ℕ))
-    (_ : S.K ≤ (2 : ℕ) ^ Nb)
-    (_ : (0 : ℝ) < dyadicGridLength A.G A.R.1)
-    (_ : (0 : ℝ) ≤ Vl0),
-  let Os : Finset (Fin (4 : ℕ) × Fin (4 : ℕ) × ℕ × ℕ × ℕ × ℕ) :=
-    FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))
-  ∀ (_ : Os = FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))),
-  let Cjg : ℝ :=
-    ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 : ℝ) *
-      ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc :
-      ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))
-  ∀ (_ : Cjg = ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 :
-      ℝ) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) +
-      (↑cc : ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))),
-  let Γa : Fin (4 : ℕ) → ℝ :=
-    fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) * FamParams.capV A
-      cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) +
-      (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ))))) +
-      FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
-  ∀ (_ : Γa = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) *
-      FamParams.capV A cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc
-      (↑k : ℝ) Vl0) + (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc
-      (↑k : ℝ))))) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength
-      A.G A.R.1)
-    (_ : ∀ (a : Fin (4 : ℕ)), D.u ≠ some a → fp.stackEA Os (D.cat a) (D.mbs a) (D.toLeafQ
-      qG).Dpre Nb (FamParams.capV A cc (↑k : ℝ)) (FamParams.SideInput.sideB0 A cc (↑k :
-      ℝ) ((fun (_ : Fin (4 : ℕ)) => Vl0) a)) ≤ ((↑fp.P : ℝ) + (2 : ℝ)) * Γa a *
-      dyadicGridLength A.G A.R.1),
-  let Γb : Fin (4 : ℕ) → ℝ :=
-    fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ)
-      + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
-  ∀ (_ : Γb = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k
-      : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1)
-    (_ : ∀ (b : Fin (4 : ℕ)), D.u ≠ some b → (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A
-      cc (↑k : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) ((fun (_ : Fin (4 : ℕ)) =>
-      Vl0) b)) ≤ Γb b * dyadicGridLength A.G A.R.1),
-  let ΓU : ℝ :=
-    (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
-      dyadicGridLength A.G A.R.1
-  ∀ (_ : ΓU = (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
-      dyadicGridLength A.G A.R.1)
-    (_ : (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) ≤ ΓU *
-      dyadicGridLength A.G A.R.1)
-    (_ : ∀ I ∈ S1, ∀ G ∈ gs I, ∀ (l : Fin (4 : ℕ)), D.u ≠ some l → (D.withQ0 (qG G)).RepAt L
-      l G I)
-    (Ee : ℝ)
-    (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D₀.withQ0 (qG G)).errAt L l G I‖ ^ (2 :
-      ℕ) ≤ Ee)
-    (_ : Ee ≤ ((8 : ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget
-      ^ (2 : ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) *
-      dyadicGridLength A.G A.R.1)
-    (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D.withQ0 (qG G)).errAt L l G I‖ ^ (2 : ℕ)
-      ≤ Ee)
-    (_ : ∑ I ∈ S1, dyadicGridLength A.G I.1 * (↑(gs I).card : ℝ) ≤ (↑(AD.Mp * A.famVtxBound)
-      : ℝ) * dyadicGridLength A.G A.R.1)
-    (_ : (1 : ℕ) ≤ dB)
-    (_ : ∀ G ∈ gset, (D.withQ0 (qG G)).PrinOK G δ fp.Hed (fp.Kstar Dm0 dB Hm δ Nl kD δ)
-      (fp.Kstar Dm0 dB Hm δ Nl kD δ))
-    (_ : ∀ G ∈ gset, (D.withQ0 (qG G)).Stab)
-    (_ : ∀ (j : Fin (4 : ℕ)) (G : ↥gset), D.c j (↑G : bf.Grp) = c j G),
-  let Gq : ℝ :=
-    Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ))
-      + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2
-      : ℕ))
-  ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∑ G : ↥gset, ∑ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K
-      * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ‖(Ms l (↑G : bf.Grp)).blockSide
-      (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) b (fp.retainedV
-      (↑G : bf.Grp) b S.K) (c l G b)‖ ^ (2 : ℕ) ≤ (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax :
-      ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Gq + (2 : ℝ)
-      * (1 : ℝ) / S.Dstar ^ (394 : ℕ)) * dyadicGridLength A.G A.R.1)
-    (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
-      1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Gq + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ)))
-    (_ : Gq = Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 :
-      ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ)))
-      ^ (2 : ℕ))),
-  let Mt : ℝ :=
-    (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range (S.Jstar +
-      (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ
-  ∀ (_ : Mt = (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range
-      (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ)
-    (_ : ∀ (j : Fin (4 : ℕ)) (y : ℝ), ∀ h ∈ ModeComponents.upperHeights D.SP.Jst D.SP.δs, ∀ t
-      ∈ Finset.range (Nat.log (2 : ℕ) ⌊D.S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log
-      (2 : ℕ) ⌊D.S.Dstar⌋₊ + (1 : ℕ)), ∀ σ ∈ dyThr ε U S.Dstar, ∑ G : ↥gset,
-      (↑(Finset.image (fun (p : (ℤ × ℤ) × ℤ × (ℤ × ℤ) × (D.Ms j (↑G : bf.Grp)).Md) =>
-      (Rr j h t G).rep p.2) ({p ∈ fp.useInst (↑G : bf.Grp) D.S.K (Rr j h t G).Nd | (∀ e
-      ∈ Cut j, ¬dyadicGridCell A.G p.1.1 p.1.2 ⊆ dyadicGridCell A.G e.1 e.2) ∧ y ∈
-      dyadicGridCell A.G p.1.1 p.1.2 ∧ σ ^ (2 : ℕ) ≤ (D.Ms j (↑G : bf.Grp)).nodeSize
-      (D.withQ0 (qG (↑G : bf.Grp))).S D.hA D.SP (D.c j (↑G : bf.Grp)) h p})).card : ℝ) ≤
-      Mt * σ ^ (-2 : ℝ))
-    (_ : ∀ I ∈ S1, ∀ G ∈ gs I, ∀ h ∈ ModeComponents.upperHeights D.SP.Jst D.SP.δs, ∀ (j : Fin
-      (4 : ℕ)), ∀ F ∈ (D.withQ0 (qG G)).goodCls G I j h, (D.withQ0 (qG G)).clsSize G I j
-      F ≤ U)
-    (_ : √(D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
-      : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ) ≤ U)
-    (_ : (2 : ℝ) ^ ⌊Real.logb (2 : ℝ) (S.Dstar ^ (250 : ℕ))⌋₊ ≤ S.Dstar ^ (250 : ℕ) ∧ S.Dstar
-      ^ (250 : ℕ) < (2 : ℝ) ^ (⌊Real.logb (2 : ℝ) (S.Dstar ^ (250 : ℕ))⌋₊ + (1 : ℕ)))
-    (_ : ∀ G ∈ gset, (∀ (j : Fin (4 : ℕ)), (8 : ℝ) * (D.Ms j G).Λ ≤ D.S.Ξ) ∧ (∀ (j : Fin (4 :
-      ℕ)), (D.Ms j G).zc = bf.vtag (bf.grpCenter d G)) ∧ (bf.vtag (bf.grpCenter d
-      G)).dim ≤ D.S.dmax),
-  ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
-    dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
-    ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
-    ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
-    dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
-    ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
-    dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
-    ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
-    l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
-    (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
-    leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
-    hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+    (fp : bf.FamParams) :
+    ℝ :=
+  AD.n (fp.Lc + (5 : ℕ))
 
 open scoped Classical in
-private def LeafEstimateStage5Statement : Prop :=
-  ∀ (κ : LocalKernelClass)
+private noncomputable abbrev leafEstimateModeHeight
+    (κ : LocalKernelClass)
     (c₀ : ℕ)
-    (cc : ℕ)
-    (_ : (1 : ℕ) ≤ cc)
-    (Dm0 : ℕ)
-    (Msch : ℝ)
-    (_ : (0 : ℝ) < Msch)
-    (Cg : ℕ)
-    (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
-      : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
-      k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
-      → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
-      (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
-      Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
-      A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
-      (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
-      (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
-      (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg)
-    (g : ℕ)
-    (cT : ℝ)
-    (cL : ℝ)
-    (cK : ℝ)
-    (cMc : ℝ)
-    (cm : ℝ)
-    (ce : ℝ)
-    (ce2 : ℝ)
-    (cQ : ℝ)
-    (CΛ : ℕ)
-    (eΛ : ℕ)
-    (CM1 : ℕ)
-    (t3 : ℕ)
-    (Cb : ℕ)
-    (Cl : ℕ)
-    (_ : g = (8192 : ℕ) * (cc + (1 : ℕ)) * ((1024 : ℕ) * (cc + (1 : ℕ)) + cc + (7 : ℕ)) + cc
-      ^ (2 : ℕ) + (8 : ℕ) ∧ cT = (10 : ℝ) ^ (22 : ℕ) * ((1 : ℝ) +
-      localFormUniformConstant κ) ^ (2 : ℕ) ∧ cL = (159 : ℝ) + (32 : ℝ) * (↑g : ℝ) + (8
-      : ℝ) * Real.log cT ∧ cK = ((1 : ℝ) + (7 : ℝ) * (10 : ℝ) ^ (9 : ℕ) + cT) * (cL + (2
-      : ℝ)) ∧ cMc = (C4c κ + (4 : ℝ) * C3c κ) * cL ^ (4 : ℕ) * cK ^ (2 : ℕ) ∧ cm =
-      (196608 : ℝ) * cT + (83 : ℝ) * ((1 : ℝ) + (81 : ℝ) * localFormUniformConstant κ *
-      ((30000 : ℝ) + √cT)) * ((1 : ℝ) + cT) ^ (3 : ℕ) + cMc ∧ ce = (6642 : ℝ) *
-      localFormUniformConstant κ * ((60000 : ℝ) + √cT) ^ (3 : ℕ) * (288 : ℝ) + (9 : ℝ) *
-      ((16 : ℝ) * fourErrC κ (3 : ℕ) + (648 : ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) + (324 :
-      ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) * √cT) ∧ ce2 = K1c * ((2 : ℝ) * fourKC κ (3 : ℕ)
-      * (12 : ℝ) ^ (4 : ℕ)) + (4 : ℝ) * (K1c * ((8 : ℝ) * entryCU κ (3 : ℕ) (1 : ℕ) * (2
-      : ℝ) ^ ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ))) * (501 : ℝ) ∧ cQ = (65536 : ℝ) *
-      ((8 : ℝ) + (80 : ℝ) * (9 : ℝ) ^ cc * (↑cc : ℝ)) * ((80 : ℝ) * (9 : ℝ) ^ cc * (↑cc
-      : ℝ)) * ((4 : ℝ) * (↑cc : ℝ) ^ (2 : ℕ)) * ((17 : ℝ) * (10 : ℝ) ^ (7 : ℕ)) ∧ CΛ =
-      (2 : ℕ) * Cg + (12 : ℕ) ∧ eΛ = Cg + (3 : ℕ) * cc ∧ CM1 = (⌈Msch⌉₊ + (1 : ℕ)) * CΛ
-      ^ (16 : ℕ) ∧ t3 = (3 : ℕ) ^ cc ∧ Cb = CM1 + (501 : ℕ) * Cg + t3 + (2 : ℕ) * cc +
-      (20 : ℕ) + (16 : ℕ) * eΛ ∧ Cl = ⌈cm * (↑Cb : ℝ) ^ (59 : ℕ) + ce * (↑Cb : ℝ) ^ (18
-      : ℕ) + ce2 + (3 : ℝ) * (10 : ℝ) ^ (11 : ℕ) * cQ⌉₊ + (59 : ℕ) * Cb + (4 : ℕ) * g +
-      (8 : ℕ) * cc + (8 : ℕ))
     (A : ActiveSetup κ c₀)
-    (bf : A.BasicFamilies)
-    (k : ℕ)
-    (η₀ : ℝ)
-    (E : ℝ)
-    (_ : A.AncClosed)
-    (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
-      I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀))
-    (_ : A.SubRootProps η₀ E)
-    (_ : A.S = (2 : ℝ))
-    (_ : A.η = (4 : ℝ) * η₀)
-    (_ : (0 : ℝ) < η₀)
-    (_ : A.cells.Nonempty)
-    (q : ℝ)
-    (hq2 : (2 : ℝ) < q)
-    (hq3 : q < (3 : ℝ))
-    (Nd : ℕ)
-    (_ : A.DepthWin Nd)
-    (p : Fin (3 : ℕ))
-    (AD : bf.AttemptData p)
-    (d : bf.Vtx)
-    (s : ℕ)
     (δ : ℝ)
-    (ρ : ℝ)
-    (kD : ℝ)
-    (_ : (0 : ℝ) < δ)
-    (_ : δ ≤ (1 / 8 : ℝ))
-    (_ : (0 : ℝ) < ρ)
-    (_ : ρ < (1 : ℝ))
-    (_ : Real.log ((2 : ℝ) * A.colBudget) ≤ (↑k : ℝ) ^ cc)
-    (_ : (↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) + (1 : ℝ)))
-    (_ : (1 : ℝ) ≤ (↑k : ℝ)),
-  let fp : bf.FamParams :=
-    AD.fp
-  let dB : ℕ :=
-    A.dBnd
-  ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
-      (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
-      Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
-      Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
-      bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
-      ℝ) ≤ Real.log bumpConst)
-    (_ : (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ)),
-  let Nl : ℝ :=
-    AD.n (fp.Lc + (5 : ℕ))
-  ∀ (_ : Real.log ((2 : ℝ) * ((8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl)) ≤ (↑k :
-      ℝ) ^ cc)
-    (_ : (2 : ℝ) ≤ A.colBudget)
-    (_ : Monotone AD.n)
-    (hNl0 : (0 : ℝ) ≤ Nl),
-  let Hm : ℝ :=
-    max (max A.Hsrc (Real.exp (↑dB : ℝ))) (max ((5832 : ℝ) * max A.H padW ^ (4 : ℕ))
-      ((↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) / δ))))
-  ∀ (_ : (1 : ℝ) ≤ Hm)
-    (_ : ∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB)
-    (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
-      ℝ) ≤ fp.Hed)
-    (S : ModeSchedule)
-    (_ : S.dmax = (2 : ℕ) * dB + (2 : ℕ))
-    (_ : S.Dm = max (2 : ℝ) Nl)
-    (_ : S.Valid (340 : ℕ) (5 : ℕ) (4 : ℕ) (600 : ℕ) (1 / 1024 : ℝ) (packetW S.dmax S.H))
-    (_ : (2 : ℕ) ≤ S.dmax)
-    (_ : (↑S.dmax : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Bstar)
-    (_ : (1 : ℕ) ≤ S.Q0)
-    (_ : (↑S.Q0 : ℝ) * (2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ)) ≤ S.Bstar)
-    (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
-      dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
-      Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ))
-    (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
-      Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
-      + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ))
-    (hK1 : (1 : ℕ) ≤ S.K),
-  let Lf : SearchLeaf :=
-    leafAt A.famFuel fp.Lc (A.basicSlot p) s
-  let ks : ℕ :=
-    Lf.k
-  let S0 : Finset (ℤ × ℤ) :=
-    {I ∈ AD.Tc | ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G
-      c.1 c.2}
-  ∀ (_ : S0 ⊆ AD.Tc),
-  let gs : ℤ × ℤ → Finset bf.Grp :=
-    fun (I : ℤ × ℤ) => fp.groupsAt I ks
-  let gset : Finset bf.Grp :=
-    S0.biUnion gs
-  ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I)
-    (hlenMc : ∀ (l : Fin (4 : ℕ)), (AD.cat l).length ≤ fp.Mc),
-  let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
-    fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
-      (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
-      le_rfl)
-  ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc)))
-    (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, fp.ModeExports l (AD.cat l) G (Lf.role l) d Dm0 dB
-      Hm δ δ Nl (Ms l G) (L l G))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∉ gset, (∀ (p : (Ms l G).Key), (Ms l G).dvOf p + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Bσ = (1 : ℝ) ∧ ∀ (V : ℤ × ℤ), (Ms l
-      G).alive V = ∅)
-    (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
-      G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
-      / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
-      (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
-      V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
-      G).alive V)).card : ℝ) ≤ Nl)
-    (hA6 : (6 : ℝ) ≤ S.A0),
-  let qG : bf.Grp → ℕ :=
-    fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
-  ∀ (_ : ∀ (G : bf.Grp), (1 : ℕ) ≤ qG G ∧ qG G ≤ S.Q0)
-    (Vl0 : ℝ)
-    (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
-      1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) *
-      ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) +
-      Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 :
-      ℕ)))
-    (U : ℝ)
-    (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
-      (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
-      : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ))
-    (_ : (2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ) ≤ U)
-    (_ : (0 : ℝ) < S.Dstar)
-    (_ : (1 : ℝ) ≤ S.Dstar)
-    (_ : (16 : ℝ) ≤ U)
-    (_ : (0 : ℝ) < U)
-    (MV : ℝ)
-    (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ))
-    (_ : (0 : ℝ) ≤ MV)
-    (ε : ℝ)
-    (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹)
-    (_ : (0 : ℝ) < ε)
-    (_ : ε ≤ U)
-    (_ : S.Dstar⁻¹ ≤ U)
-    (_ : ∀ σ ∈ dyThr ε U S.Dstar, S.Dstar⁻¹ ≤ σ)
-    (_ : ∀ (σ : ℝ), ε ≤ σ → σ ≤ U → (∃ (k : ℤ), σ = (2 : ℝ) ^ k) → S.Dstar⁻¹ ≤ σ → σ ∈ dyThr
-      ε U S.Dstar)
-    (_ : (↑(dyThr ε U S.Dstar).card : ℝ) ≤ Real.logb (2 : ℝ) U - Real.logb (2 : ℝ) ε + (3 :
-      ℝ)),
-  let Ts : Finset (ℕ × ℕ) :=
-    Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
-      ⌊S.Dstar⌋₊ + (1 : ℕ))
-  ∀ (_ : Ts = Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2
-      : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ))),
-  let BN : ℕ :=
-    ⌈(8 : ℝ) * A.colBudget + Nl⌉₊
-  let τb : ℝ :=
-    (1 : ℝ) / ((1 : ℝ) + (↑BN : ℝ) * A.colBudget ^ (2 : ℕ))
-  ∀ (_ : (0 : ℝ) < τb)
-    (_ : τb ≤ (1 : ℝ))
-    (_ : τb * (↑BN : ℝ) * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ))
-    (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τb⁻¹) ^ A.Dg) ≤ fp.Hed)
-    (_ : ∀ I ∈ A.cells, dyadicGridCell A.G I.1 I.2 ⊆ Set.Icc (dyadicGridLeft A.G A.R.1 A.R.2)
-      (dyadicGridLeft A.G A.R.1 A.R.2 + dyadicGridLength A.G A.R.1))
-    (ρ₀ : Fin (4 : ℕ) → ↥gset → Fin A.fcd0)
-    (zc : Fin (4 : ℕ) → ↥gset → bf.Vtx)
-    (gsc : Fin (4 : ℕ) → ↥gset → ℤ)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (↑G : bf.Grp).2.1 = some (ρ₀ l G, zc l G, gsc l G))
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), fp.MainLiftExports l (AD.cat l) (↑G : bf.Grp)
-      (Lf.role l) d Dm0 dB Hm (gsc l G) (L l (↑G : bf.Grp)) (Ms l (↑G : bf.Grp)).wave
-      (Ms l (↑G : bf.Grp)).cellOf)
-    (_ : ∀ (l : Fin (4 : ℕ)), fp.bbase (Lf.role l) + fp.P ≤ fp.Hmax)
-    (_ : (4 : ℝ) ≤ Nl)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (Finset.card ({q : ↥gset × (bf.Lab ⊕ Fin fp.Mc) | ∃ I ∈
-      A.cells, (∃ (k' : ℕ), fp.Cert k' (↑q.1 : bf.Grp) I) ∧ ∃ (p_1 : Fin fp.P), y ∈
-      dyadicGridCell A.G I.1 I.2 ∧ q.2 ∈ mainLabelsM A.G fp.Mc (bf.origCols l) (AD.cat
-      l) I (fp.brank (Lf.role l)) (fp.bmask I (↑q.1 : bf.Grp) (Lf.role l) ((↑p_1 : ℕ) +
-      (1 : ℕ))) d})) ≤ BN)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∑ G : ↥gset, (↑((Ms l (↑G : bf.Grp)).ptSet y).card : ℝ)
-      ≤ S.Dstar)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (2 : ℝ) * ((↑S.Q0 : ℝ) * ((3 : ℝ) * ((Ms l (↑G :
-      bf.Grp)).Bσ * (Ms l (↑G : bf.Grp)).Bσ) ^ (2 : ℕ))) ^ (2 : ℕ) ≤ (↑⌊S.Dstar⌋₊ : ℝ))
-    (_ : fp.modeStar Dm0 dB Hm δ Nl kD ≤ S.Dstar)
-    (_ : ∀ (l : Fin (4 : ℕ)), (↑(Lf.layers l).length : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) +
-      (1 : ℝ)))
-    (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
-      β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
-      b S.K, ∑ m ∈ (Ms l (↑G : bf.Grp)).alive (ancAt A.G J (b - (4 : ℤ) * (↑S.K : ℤ))),
-      ‖c l G b J m‖ ^ (2 : ℕ) ≤ (4 : ℝ) * S.Dstar ^ (2 : ℕ) * (1 : ℝ))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∑ G : ↥gset, ∑ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K
-      * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ‖(Ms l (↑G : bf.Grp)).blockSide
-      (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) b (fp.retainedV
-      (↑G : bf.Grp) b S.K) (c l G b)‖ ^ (2 : ℕ) ≤ (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax :
-      ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp
-      (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
-      : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
-      + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ)) * dyadicGridLength A.G A.R.1)
-    (Rr : (l : Fin (4 : ℕ)) → (h : ℕ) → ℕ × ℕ → (G : ↥gset) → (Ms l (↑G : bf.Grp)).RepClass
-      (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) (10 : ℕ) h)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ h ≤ S.Jstar, ∀ (t : ℕ × ℕ) (G : ↥gset), (Rr l h t G).Nd = {c
-      ∈ (Ms l (↑G : bf.Grp)).succNodes (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams
-      (1 / 1024 : ℝ)) (fp.retainedPairs (↑G : bf.Grp) (Finset.image (fun (β : ℕ) =>
-      A.R.1 + (↑(S.K * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ)))) S.K) h | (Ms l
-      (↑G : bf.Grp)).nodeType1 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c = t.1 ∧
-      (Ms l (↑G : bf.Grp)).nodeType2 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c =
-      t.2})
-    (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ))
-    (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∀ h ∈ Finset.range (S.Jstar + (1 : ℕ)), ∀ t ∈ Ts, ∀ σ ∈
-      dyThr ε U S.Dstar, ∑ G : ↥gset, (↑(Finset.image (fun (p : (ℤ × ℤ) × ℤ × (ℤ × ℤ) ×
-      (Ms l (↑G : bf.Grp)).Md) => (Rr l h t G).rep p.2) ({p ∈ fp.useInst (↑G : bf.Grp)
-      S.K (Rr l h t G).Nd | (∀ e ∈ Cut l, ¬dyadicGridCell A.G p.1.1 p.1.2 ⊆
-      dyadicGridCell A.G e.1 e.2) ∧ y ∈ dyadicGridCell A.G p.1.1 p.1.2 ∧ σ ^ (2 : ℕ) ≤
-      (Ms l (↑G : bf.Grp)).nodeSize (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 /
-      1024 : ℝ)) (c l G) h p})).card : ℝ) ≤ min S.Dstar ((24 : ℝ) * ((2 : ℝ) * Real.exp
-      (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
-      : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
-      + (2 : ℝ) * (↑S.K : ℝ) * ((24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2
-      : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc :
-      ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 :
-      ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) /
-      S.Dstar ^ (394 : ℕ)))) * (↑(Finset.range (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U
-      S.Dstar).card : ℝ) / (ρ * σ ^ (2 : ℕ)))),
-  let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
-    fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
-      _ => (0 : ℂ)
-  let D₀ : fp.SideInput :=
-    { cat := AD.cat, mbs := mbs, Lf := Lf, u := A.uslot p, S := S, hA := hA6,
-      SP := S.sideParams (1 / 1024 : ℝ), hK := hK1,
-      n := Fintype.card (bf.Lab ⊕ Fin fp.Mc), Ms := Ms, c := cf }
-  let gE : ℤ × ℤ → Fin A.famVtxBound → bf.Grp :=
-    fun (I : ℤ × ℤ) (i : Fin A.famVtxBound) => if h : (↑i : ℕ) < (gs I).card then
-      (↑(((gs I).equivFin.symm : Fin (gs I).card → ↥(gs I)) ⟨(↑i : ℕ), h⟩) : bf.Grp)
-      else default
-  ∀ (_ : ∀ (I : ℤ × ℤ), ∀ G ∈ gs I, ∃ (i : Fin A.famVtxBound), gE I i = G)
-    (hcat : Fin (4 : ℕ) → List (CatCol bf.Vtx))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ d ∈ hcat l, d.birth ∈ AD.Tc ∧ d.rank = fp.Lc + (5 : ℕ) ∧ (∃
-      (M : fp.MaskName d.birth), fp.maskOf d.birth M d.tag) ∧ ∃ R ∈ residueBox (bf.vtag
-      d.tag).dim (9 : ℕ), ∃ (γ : ℝ), d = templateCol (bf.vtag d.tag) l R γ d.birth
-      d.rank d.tag)
-    (hmbb : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ AD.cat l ++ hcat l, e.birth ∈ A.cells)
-    (hmbT : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (8 : ℝ) * A.colBudget + (↑(bf.tmplPath (AD.cat l ++
-      hcat l) y) : ℝ) ≤ (8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl),
-  let mb' : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l ++ hcat l) :=
-    fun l =>
-        { hb := hmbb l, B := 8 * A.colBudget + (1 + AD.Mp) * Nl, hTp := hmbT l }
-  let D : fp.SideInput :=
-    D₀.appendCat hcat mb'
-  ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, fp.hrank ≤ e.rank)
-    (_ : ∀ (l : Fin (4 : ℕ)), D₀.Lf.role l ≤ (4 : ℕ))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, bf.occAvail (↑e.tag.2 : ℤ × ℤ) e.tag.1),
-  let S1 : Finset (ℤ × ℤ) :=
-    {I ∈ S0 | ∀ (j : Fin (4 : ℕ)), ∀ e ∈ Cut j, ¬dyadicGridCell A.G I.1 I.2 ⊆
-      dyadicGridCell A.G e.1 e.2}
-  ∀ (_ : S1 ⊆ S0)
-    (_ : S1 ⊆ A.cells)
-    (_ : ∀ I ∈ A.cells, ((I.1 - A.R.1) / (↑S.K : ℤ)).toNat < A.treeDepth + (1 : ℕ))
-    (_ : ∀ I ∈ A.cells, A.blkStart S.K I.1 ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K * β)
-      : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))))
-    (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), D.u ≠ some l → ∀ (w : fp.TestName I Unit), fp.MainRk
-      w → (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).Pass A.G
-      (bf.origCols l) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold A.famVtxBound AD.τ₃
-      AD.n (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).r) fp.mH (D.cat l))
-    (_ : ∀ I ∈ S1, ∀ (a : Fin (4 : ℕ)) (w : fp.HelperName I (Fin A.famVtxBound)),
-      (fp.helperOf a I (fun (i : Fin A.famVtxBound) => (D.toLeafQ qG).sv a (gE I i) I)
-      w).Pass A.G (bf.origCols a) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold
-      A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ))) fp.mH (D.cat a))
-    (_ : ∀ (R : ℕ), (1 : ℕ) ≤ R → R ≤ fp.Lc + (4 : ℕ) → catThreshold A.famVtxBound AD.τ₃ AD.n
-      R * (A.colBudget * √(AD.n (R - (1 : ℕ)))) ≤ AD.τ₃)
-    (_ : catThreshold A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ)) * (A.colBudget * √(AD.n
-      (fp.Lc + (4 : ℕ)))) ≤ AD.τ₃)
-    (_ : ∀ (R : ℕ), (0 : ℝ) ≤ catThreshold A.famVtxBound AD.τ₃ AD.n R)
-    (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), ∀ r ≤ fp.Lc + (4 : ℕ), ∀ (M : bf.Vtx → Prop),
-      (↑(mainLabelsM A.G fp.Mc (bf.origCols l) (D.cat l) I r M d).card : ℝ) ≤ AD.n r),
-  let NH : ℝ :=
-    (2 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl
-  ∀ (_ : ∀ I ∈ S1, ∀ (a : Fin (4 : ℕ)) (M : bf.Vtx → Prop), (↑(mainLabelsM A.G fp.Mc
-      (bf.origCols a) (D.cat a) I (fp.Lc + (5 : ℕ)) M d).card : ℝ) ≤ NH),
-  let τ₂ : ℝ :=
-    AD.τ₃ / ((1 : ℝ) + A.colBudget * √(AD.n (fp.Lc + (4 : ℕ))) * (A.colBudget * √NH))
-  ∀ (_ : (0 : ℝ) < τ₂)
-    (_ : τ₂ ≤ (1 : ℝ))
-    (_ : τ₂ * (A.colBudget * √(AD.n (fp.Lc + (4 : ℕ))) * (A.colBudget * √NH)) ≤ AD.τ₃)
-    (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τ₂⁻¹) ^ A.Dg) ≤ fp.Hed),
-  let Nb : ℕ :=
-    Nat.log (2 : ℕ) S.K + (1 : ℕ)
-  ∀ (_ : Nb = Nat.log (2 : ℕ) S.K + (1 : ℕ))
-    (_ : S.K ≤ (2 : ℕ) ^ Nb)
-    (_ : (0 : ℝ) < dyadicGridLength A.G A.R.1)
-    (_ : (0 : ℝ) ≤ Vl0),
-  let Os : Finset (Fin (4 : ℕ) × Fin (4 : ℕ) × ℕ × ℕ × ℕ × ℕ) :=
-    FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))
-  ∀ (_ : Os = FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))),
-  let Cjg : ℝ :=
-    ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 : ℝ) *
-      ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc :
-      ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))
-  ∀ (_ : Cjg = ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 :
-      ℝ) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) +
-      (↑cc : ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))),
-  let Γa : Fin (4 : ℕ) → ℝ :=
-    fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) * FamParams.capV A
-      cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) +
-      (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ))))) +
-      FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
-  ∀ (_ : Γa = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) *
-      FamParams.capV A cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc
-      (↑k : ℝ) Vl0) + (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc
-      (↑k : ℝ))))) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength
-      A.G A.R.1)
-    (_ : ∀ (a : Fin (4 : ℕ)), D.u ≠ some a → fp.stackEA Os (D.cat a) (D.mbs a) (D.toLeafQ
-      qG).Dpre Nb (FamParams.capV A cc (↑k : ℝ)) (FamParams.SideInput.sideB0 A cc (↑k :
-      ℝ) ((fun (_ : Fin (4 : ℕ)) => Vl0) a)) ≤ ((↑fp.P : ℝ) + (2 : ℝ)) * Γa a *
-      dyadicGridLength A.G A.R.1),
-  let Γb : Fin (4 : ℕ) → ℝ :=
-    fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ)
-      + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
-  ∀ (_ : Γb = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k
-      : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1)
-    (_ : ∀ (b : Fin (4 : ℕ)), D.u ≠ some b → (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A
-      cc (↑k : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) ((fun (_ : Fin (4 : ℕ)) =>
-      Vl0) b)) ≤ Γb b * dyadicGridLength A.G A.R.1),
-  let ΓU : ℝ :=
-    (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
-      dyadicGridLength A.G A.R.1
-  ∀ (_ : ΓU = (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
-      dyadicGridLength A.G A.R.1)
-    (_ : (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) ≤ ΓU *
-      dyadicGridLength A.G A.R.1)
-    (_ : ∀ I ∈ S1, ∀ G ∈ gs I, ∀ (l : Fin (4 : ℕ)), D.u ≠ some l → (D.withQ0 (qG G)).RepAt L
-      l G I)
-    (Ee : ℝ)
-    (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D₀.withQ0 (qG G)).errAt L l G I‖ ^ (2 :
-      ℕ) ≤ Ee)
-    (_ : Ee ≤ ((8 : ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget
-      ^ (2 : ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) *
-      dyadicGridLength A.G A.R.1)
-    (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D.withQ0 (qG G)).errAt L l G I‖ ^ (2 : ℕ)
-      ≤ Ee)
-    (_ : ∑ I ∈ S1, dyadicGridLength A.G I.1 * (↑(gs I).card : ℝ) ≤ (↑(AD.Mp * A.famVtxBound)
-      : ℝ) * dyadicGridLength A.G A.R.1),
-  ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
-    dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
-    ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
-    ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
-    dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
-    ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
-    dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
-    ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
-    l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
-    (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
-    leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
-    hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+    (dB : ℕ) :
+    ℝ :=
+  max (max A.Hsrc (Real.exp (↑dB : ℝ))) (max ((5832 : ℝ) * max A.H padW ^ (4 : ℕ))
+        ((↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) / δ))))
 
 open scoped Classical in
-private def LeafEstimateStage4Statement : Prop :=
-  ∀ (κ : LocalKernelClass)
+private noncomputable abbrev leafEstimateLeaf
+    (κ : LocalKernelClass)
     (c₀ : ℕ)
-    (cc : ℕ)
-    (_ : (1 : ℕ) ≤ cc)
-    (Dm0 : ℕ)
-    (Msch : ℝ)
-    (_ : (0 : ℝ) < Msch)
-    (Cg : ℕ)
-    (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
-      : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
-      k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
-      → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
-      (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
-      Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
-      A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
-      (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
-      (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
-      (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg)
-    (g : ℕ)
-    (cT : ℝ)
-    (cL : ℝ)
-    (cK : ℝ)
-    (cMc : ℝ)
-    (cm : ℝ)
-    (ce : ℝ)
-    (ce2 : ℝ)
-    (cQ : ℝ)
-    (CΛ : ℕ)
-    (eΛ : ℕ)
-    (CM1 : ℕ)
-    (t3 : ℕ)
-    (Cb : ℕ)
-    (Cl : ℕ)
-    (_ : g = (8192 : ℕ) * (cc + (1 : ℕ)) * ((1024 : ℕ) * (cc + (1 : ℕ)) + cc + (7 : ℕ)) + cc
-      ^ (2 : ℕ) + (8 : ℕ) ∧ cT = (10 : ℝ) ^ (22 : ℕ) * ((1 : ℝ) +
-      localFormUniformConstant κ) ^ (2 : ℕ) ∧ cL = (159 : ℝ) + (32 : ℝ) * (↑g : ℝ) + (8
-      : ℝ) * Real.log cT ∧ cK = ((1 : ℝ) + (7 : ℝ) * (10 : ℝ) ^ (9 : ℕ) + cT) * (cL + (2
-      : ℝ)) ∧ cMc = (C4c κ + (4 : ℝ) * C3c κ) * cL ^ (4 : ℕ) * cK ^ (2 : ℕ) ∧ cm =
-      (196608 : ℝ) * cT + (83 : ℝ) * ((1 : ℝ) + (81 : ℝ) * localFormUniformConstant κ *
-      ((30000 : ℝ) + √cT)) * ((1 : ℝ) + cT) ^ (3 : ℕ) + cMc ∧ ce = (6642 : ℝ) *
-      localFormUniformConstant κ * ((60000 : ℝ) + √cT) ^ (3 : ℕ) * (288 : ℝ) + (9 : ℝ) *
-      ((16 : ℝ) * fourErrC κ (3 : ℕ) + (648 : ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) + (324 :
-      ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) * √cT) ∧ ce2 = K1c * ((2 : ℝ) * fourKC κ (3 : ℕ)
-      * (12 : ℝ) ^ (4 : ℕ)) + (4 : ℝ) * (K1c * ((8 : ℝ) * entryCU κ (3 : ℕ) (1 : ℕ) * (2
-      : ℝ) ^ ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ))) * (501 : ℝ) ∧ cQ = (65536 : ℝ) *
-      ((8 : ℝ) + (80 : ℝ) * (9 : ℝ) ^ cc * (↑cc : ℝ)) * ((80 : ℝ) * (9 : ℝ) ^ cc * (↑cc
-      : ℝ)) * ((4 : ℝ) * (↑cc : ℝ) ^ (2 : ℕ)) * ((17 : ℝ) * (10 : ℝ) ^ (7 : ℕ)) ∧ CΛ =
-      (2 : ℕ) * Cg + (12 : ℕ) ∧ eΛ = Cg + (3 : ℕ) * cc ∧ CM1 = (⌈Msch⌉₊ + (1 : ℕ)) * CΛ
-      ^ (16 : ℕ) ∧ t3 = (3 : ℕ) ^ cc ∧ Cb = CM1 + (501 : ℕ) * Cg + t3 + (2 : ℕ) * cc +
-      (20 : ℕ) + (16 : ℕ) * eΛ ∧ Cl = ⌈cm * (↑Cb : ℝ) ^ (59 : ℕ) + ce * (↑Cb : ℝ) ^ (18
-      : ℕ) + ce2 + (3 : ℝ) * (10 : ℝ) ^ (11 : ℕ) * cQ⌉₊ + (59 : ℕ) * Cb + (4 : ℕ) * g +
-      (8 : ℕ) * cc + (8 : ℕ))
     (A : ActiveSetup κ c₀)
     (bf : A.BasicFamilies)
-    (k : ℕ)
-    (η₀ : ℝ)
-    (E : ℝ)
-    (_ : A.AncClosed)
-    (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
-      I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀))
-    (_ : A.SubRootProps η₀ E)
-    (_ : A.S = (2 : ℝ))
-    (_ : A.η = (4 : ℝ) * η₀)
-    (_ : (0 : ℝ) < η₀)
-    (_ : A.cells.Nonempty)
-    (q : ℝ)
-    (hq2 : (2 : ℝ) < q)
-    (hq3 : q < (3 : ℝ))
-    (Nd : ℕ)
-    (_ : A.DepthWin Nd)
     (p : Fin (3 : ℕ))
-    (AD : bf.AttemptData p)
-    (d : bf.Vtx)
     (s : ℕ)
-    (δ : ℝ)
-    (ρ : ℝ)
-    (kD : ℝ)
-    (_ : (0 : ℝ) < δ)
-    (_ : δ ≤ (1 / 8 : ℝ))
-    (_ : (0 : ℝ) < ρ)
-    (_ : ρ < (1 : ℝ))
-    (_ : Real.log ((2 : ℝ) * A.colBudget) ≤ (↑k : ℝ) ^ cc)
-    (_ : (↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) + (1 : ℝ)))
-    (_ : (1 : ℝ) ≤ (↑k : ℝ)),
-  let fp : bf.FamParams :=
-    AD.fp
-  let dB : ℕ :=
-    A.dBnd
-  ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
-      (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
-      Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
-      Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
-      bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
-      ℝ) ≤ Real.log bumpConst)
-    (_ : (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ)),
-  let Nl : ℝ :=
-    AD.n (fp.Lc + (5 : ℕ))
-  ∀ (_ : Real.log ((2 : ℝ) * ((8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl)) ≤ (↑k :
-      ℝ) ^ cc)
-    (_ : (2 : ℝ) ≤ A.colBudget)
-    (_ : Monotone AD.n)
-    (hNl0 : (0 : ℝ) ≤ Nl),
-  let Hm : ℝ :=
-    max (max A.Hsrc (Real.exp (↑dB : ℝ))) (max ((5832 : ℝ) * max A.H padW ^ (4 : ℕ))
-      ((↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) / δ))))
-  ∀ (_ : (1 : ℝ) ≤ Hm)
-    (_ : ∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB)
-    (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
-      ℝ) ≤ fp.Hed)
-    (S : ModeSchedule)
-    (_ : S.dmax = (2 : ℕ) * dB + (2 : ℕ))
-    (_ : S.Dm = max (2 : ℝ) Nl)
-    (_ : S.Valid (340 : ℕ) (5 : ℕ) (4 : ℕ) (600 : ℕ) (1 / 1024 : ℝ) (packetW S.dmax S.H))
-    (_ : (2 : ℕ) ≤ S.dmax)
-    (_ : (↑S.dmax : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Bstar)
-    (_ : (1 : ℕ) ≤ S.Q0)
-    (_ : (↑S.Q0 : ℝ) * (2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ)) ≤ S.Bstar)
-    (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
-      dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
-      Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ))
-    (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
-      Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
-      + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ))
-    (hK1 : (1 : ℕ) ≤ S.K),
-  let Lf : SearchLeaf :=
-    leafAt A.famFuel fp.Lc (A.basicSlot p) s
-  let ks : ℕ :=
-    Lf.k
-  let S0 : Finset (ℤ × ℤ) :=
-    {I ∈ AD.Tc | ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G
-      c.1 c.2}
-  ∀ (_ : S0 ⊆ AD.Tc),
-  let gs : ℤ × ℤ → Finset bf.Grp :=
-    fun (I : ℤ × ℤ) => fp.groupsAt I ks
-  let gset : Finset bf.Grp :=
-    S0.biUnion gs
-  ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I),
-  let U_1 : Fin (4 : ℕ) → bf.Grp → Finset (ℤ × ℤ) :=
-    fun (_ : Fin (4 : ℕ)) (G : bf.Grp) => {I ∈ S0 | G ∈ gs I}
-  ∀ (hlenMc : ∀ (l : Fin (4 : ℕ)), (AD.cat l).length ≤ fp.Mc),
-  let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
-    fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
-      (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
-      le_rfl)
-  ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc)))
-    (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, fp.ModeExports l (AD.cat l) G (Lf.role l) d Dm0 dB
-      Hm δ δ Nl (Ms l G) (L l G))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∉ gset, (∀ (p : (Ms l G).Key), (Ms l G).dvOf p + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Bσ = (1 : ℝ) ∧ ∀ (V : ℤ × ℤ), (Ms l
-      G).alive V = ∅)
-    (_ : PLift (∑ l : Fin (4 : ℕ), ∑ G ∈ gset, ∑ I ∈ U_1 l G, ∫ (y : ℝ) in dyadicGridCell A.G
-      I.1 I.2, ‖((↑(↑(fp.physError (Ms l G) (L l G) l (AD.cat l) (mbs l) G (Lf.role l)
-      (Lf.layers l) S.K (A.blkStart S.K I.1)) : ℝ →ₘ[volume] ColumnHilbert (bf.Lab ⊕ Fin
-      fp.Mc)) : ℝ → ColumnHilbert (bf.Lab ⊕ Fin fp.Mc)) y).ofLp none‖ ^ (2 : ℕ) ≤ ((8 :
-      ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget ^ (2 :
-      ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) * dyadicGridLength A.G
-      A.R.1))
-    (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
-      G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
-      / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
-      (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
-      V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
-      G).alive V)).card : ℝ) ≤ Nl)
-    (hA6 : (6 : ℝ) ≤ S.A0),
-  let qG : bf.Grp → ℕ :=
-    fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
-  ∀ (_ : ∀ (G : bf.Grp), (1 : ℕ) ≤ qG G ∧ qG G ≤ S.Q0)
-    (Vl0 : ℝ)
-    (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
-      1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) *
-      ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) +
-      Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 :
-      ℕ)))
-    (U : ℝ)
-    (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
-      (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
-      : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ))
-    (_ : (2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ) ≤ U)
-    (_ : (0 : ℝ) < S.Dstar)
-    (_ : (1 : ℝ) ≤ S.Dstar)
-    (_ : (16 : ℝ) ≤ U)
-    (_ : (0 : ℝ) < U)
-    (MV : ℝ)
-    (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ))
-    (_ : (0 : ℝ) ≤ MV)
-    (ε : ℝ)
-    (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹)
-    (_ : (0 : ℝ) < ε)
-    (_ : ε ≤ U)
-    (_ : S.Dstar⁻¹ ≤ U)
-    (_ : ∀ σ ∈ dyThr ε U S.Dstar, S.Dstar⁻¹ ≤ σ)
-    (_ : ∀ (σ : ℝ), ε ≤ σ → σ ≤ U → (∃ (k : ℤ), σ = (2 : ℝ) ^ k) → S.Dstar⁻¹ ≤ σ → σ ∈ dyThr
-      ε U S.Dstar)
-    (_ : (↑(dyThr ε U S.Dstar).card : ℝ) ≤ Real.logb (2 : ℝ) U - Real.logb (2 : ℝ) ε + (3 :
-      ℝ)),
-  let Ts : Finset (ℕ × ℕ) :=
-    Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
-      ⌊S.Dstar⌋₊ + (1 : ℕ))
-  ∀ (_ : Ts = Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2
-      : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ))),
-  let BN : ℕ :=
-    ⌈(8 : ℝ) * A.colBudget + Nl⌉₊
-  let τb : ℝ :=
-    (1 : ℝ) / ((1 : ℝ) + (↑BN : ℝ) * A.colBudget ^ (2 : ℕ))
-  ∀ (_ : (0 : ℝ) < τb)
-    (_ : τb ≤ (1 : ℝ))
-    (_ : τb * (↑BN : ℝ) * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ))
-    (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τb⁻¹) ^ A.Dg) ≤ fp.Hed)
-    (_ : ∀ I ∈ A.cells, dyadicGridCell A.G I.1 I.2 ⊆ Set.Icc (dyadicGridLeft A.G A.R.1 A.R.2)
-      (dyadicGridLeft A.G A.R.1 A.R.2 + dyadicGridLength A.G A.R.1))
-    (ρ₀ : Fin (4 : ℕ) → ↥gset → Fin A.fcd0)
-    (zc : Fin (4 : ℕ) → ↥gset → bf.Vtx)
-    (gsc : Fin (4 : ℕ) → ↥gset → ℤ)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (↑G : bf.Grp).2.1 = some (ρ₀ l G, zc l G, gsc l G))
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), fp.MainLiftExports l (AD.cat l) (↑G : bf.Grp)
-      (Lf.role l) d Dm0 dB Hm (gsc l G) (L l (↑G : bf.Grp)) (Ms l (↑G : bf.Grp)).wave
-      (Ms l (↑G : bf.Grp)).cellOf)
-    (_ : ∀ (l : Fin (4 : ℕ)), fp.bbase (Lf.role l) + fp.P ≤ fp.Hmax)
-    (_ : (4 : ℝ) ≤ Nl)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (Finset.card ({q : ↥gset × (bf.Lab ⊕ Fin fp.Mc) | ∃ I ∈
-      A.cells, (∃ (k' : ℕ), fp.Cert k' (↑q.1 : bf.Grp) I) ∧ ∃ (p_1 : Fin fp.P), y ∈
-      dyadicGridCell A.G I.1 I.2 ∧ q.2 ∈ mainLabelsM A.G fp.Mc (bf.origCols l) (AD.cat
-      l) I (fp.brank (Lf.role l)) (fp.bmask I (↑q.1 : bf.Grp) (Lf.role l) ((↑p_1 : ℕ) +
-      (1 : ℕ))) d})) ≤ BN)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∑ G : ↥gset, (↑((Ms l (↑G : bf.Grp)).ptSet y).card : ℝ)
-      ≤ S.Dstar)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (2 : ℝ) * ((↑S.Q0 : ℝ) * ((3 : ℝ) * ((Ms l (↑G :
-      bf.Grp)).Bσ * (Ms l (↑G : bf.Grp)).Bσ) ^ (2 : ℕ))) ^ (2 : ℕ) ≤ (↑⌊S.Dstar⌋₊ : ℝ))
-    (_ : fp.modeStar Dm0 dB Hm δ Nl kD ≤ S.Dstar)
-    (_ : ∀ (l : Fin (4 : ℕ)), (↑(Lf.layers l).length : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) +
-      (1 : ℝ)))
-    (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
-      β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
-      b S.K, (Ms l (↑G : bf.Grp)).frozenEval (S.withQ0 (qG (↑G : bf.Grp))) b J (c l G b
-      J) = (columnL2Restriction (dyadicGridCell A.G J.1 J.2) (dyadicGridCell_measurable
-      A.G J.1 J.2) : ↥(ColumnL2 (Ms l (↑G : bf.Grp)).Md) → ↥(ColumnL2 (Ms l (↑G :
-      bf.Grp)).Md)) (((L l (↑G : bf.Grp)).op : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) →
-      ↥(ColumnL2 (Ms l (↑G : bf.Grp)).Md)) (fp.frozenZ l (AD.cat l) (mbs l) (↑G :
-      bf.Grp) (Lf.role l) (Lf.layers l) (b - (4 : ℤ) * (↑S.K : ℤ)))))
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
-      β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
-      b S.K, ∑ m ∈ (Ms l (↑G : bf.Grp)).alive (ancAt A.G J (b - (4 : ℤ) * (↑S.K : ℤ))),
-      ‖c l G b J m‖ ^ (2 : ℕ) ≤ (4 : ℝ) * S.Dstar ^ (2 : ℕ) * (1 : ℝ))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∑ G : ↥gset, ∑ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K
-      * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ‖(Ms l (↑G : bf.Grp)).blockSide
-      (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) b (fp.retainedV
-      (↑G : bf.Grp) b S.K) (c l G b)‖ ^ (2 : ℕ) ≤ (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax :
-      ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp
-      (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
-      : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
-      + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ)) * dyadicGridLength A.G A.R.1)
-    (Rr : (l : Fin (4 : ℕ)) → (h : ℕ) → ℕ × ℕ → (G : ↥gset) → (Ms l (↑G : bf.Grp)).RepClass
-      (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) (10 : ℕ) h)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ h ≤ S.Jstar, ∀ (t : ℕ × ℕ) (G : ↥gset), (Rr l h t G).Nd = {c
-      ∈ (Ms l (↑G : bf.Grp)).succNodes (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams
-      (1 / 1024 : ℝ)) (fp.retainedPairs (↑G : bf.Grp) (Finset.image (fun (β : ℕ) =>
-      A.R.1 + (↑(S.K * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ)))) S.K) h | (Ms l
-      (↑G : bf.Grp)).nodeType1 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c = t.1 ∧
-      (Ms l (↑G : bf.Grp)).nodeType2 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c =
-      t.2})
-    (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ))
-    (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∀ h ∈ Finset.range (S.Jstar + (1 : ℕ)), ∀ t ∈ Ts, ∀ σ ∈
-      dyThr ε U S.Dstar, ∑ G : ↥gset, (↑(Finset.image (fun (p : (ℤ × ℤ) × ℤ × (ℤ × ℤ) ×
-      (Ms l (↑G : bf.Grp)).Md) => (Rr l h t G).rep p.2) ({p ∈ fp.useInst (↑G : bf.Grp)
-      S.K (Rr l h t G).Nd | (∀ e ∈ Cut l, ¬dyadicGridCell A.G p.1.1 p.1.2 ⊆
-      dyadicGridCell A.G e.1 e.2) ∧ y ∈ dyadicGridCell A.G p.1.1 p.1.2 ∧ σ ^ (2 : ℕ) ≤
-      (Ms l (↑G : bf.Grp)).nodeSize (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 /
-      1024 : ℝ)) (c l G) h p})).card : ℝ) ≤ min S.Dstar ((24 : ℝ) * ((2 : ℝ) * Real.exp
-      (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
-      : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
-      + (2 : ℝ) * (↑S.K : ℝ) * ((24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2
-      : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc :
-      ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 :
-      ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) /
-      S.Dstar ^ (394 : ℕ)))) * (↑(Finset.range (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U
-      S.Dstar).card : ℝ) / (ρ * σ ^ (2 : ℕ)))),
-  let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
-    fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
-      _ => (0 : ℂ)
-  let D₀ : fp.SideInput :=
-    { cat := AD.cat, mbs := mbs, Lf := Lf, u := A.uslot p, S := S, hA := hA6,
-      SP := S.sideParams (1 / 1024 : ℝ), hK := hK1,
-      n := Fintype.card (bf.Lab ⊕ Fin fp.Mc), Ms := Ms, c := cf }
-  let gE : ℤ × ℤ → Fin A.famVtxBound → bf.Grp :=
-    fun (I : ℤ × ℤ) (i : Fin A.famVtxBound) => if h : (↑i : ℕ) < (gs I).card then
-      (↑(((gs I).equivFin.symm : Fin (gs I).card → ↥(gs I)) ⟨(↑i : ℕ), h⟩) : bf.Grp)
-      else default
-  ∀ (_ : ∀ (I : ℤ × ℤ), ∀ G ∈ gs I, ∃ (i : Fin A.famVtxBound), gE I i = G)
-    (hcat : Fin (4 : ℕ) → List (CatCol bf.Vtx))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ d ∈ hcat l, d.birth ∈ AD.Tc ∧ d.rank = fp.Lc + (5 : ℕ) ∧ (∃
-      (M : fp.MaskName d.birth), fp.maskOf d.birth M d.tag) ∧ ∃ R ∈ residueBox (bf.vtag
-      d.tag).dim (9 : ℕ), ∃ (γ : ℝ), d = templateCol (bf.vtag d.tag) l R γ d.birth
-      d.rank d.tag)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (↑(bf.tmplPath (AD.cat l ++ hcat l) y) : ℝ) ≤ ((1 : ℝ)
-      + (↑AD.Mp : ℝ)) * Nl)
-    (hmbb : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ AD.cat l ++ hcat l, e.birth ∈ A.cells)
-    (hmbT : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (8 : ℝ) * A.colBudget + (↑(bf.tmplPath (AD.cat l ++
-      hcat l) y) : ℝ) ≤ (8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl),
-  let mb' : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l ++ hcat l) :=
-    fun l =>
-        { hb := hmbb l, B := 8 * A.colBudget + (1 + AD.Mp) * Nl, hTp := hmbT l }
-  let D : fp.SideInput :=
-    D₀.appendCat hcat mb'
-  ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, fp.hrank ≤ e.rank)
-    (_ : ∀ (l : Fin (4 : ℕ)), D₀.Lf.role l ≤ (4 : ℕ))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, bf.occAvail (↑e.tag.2 : ℤ × ℤ) e.tag.1),
-  let S1 : Finset (ℤ × ℤ) :=
-    {I ∈ S0 | ∀ (j : Fin (4 : ℕ)), ∀ e ∈ Cut j, ¬dyadicGridCell A.G I.1 I.2 ⊆
-      dyadicGridCell A.G e.1 e.2}
-  ∀ (_ : S1 ⊆ S0)
-    (_ : S1 ⊆ A.cells)
-    (_ : ∀ I ∈ A.cells, ((I.1 - A.R.1) / (↑S.K : ℤ)).toNat < A.treeDepth + (1 : ℕ))
-    (_ : ∀ I ∈ A.cells, A.blkStart S.K I.1 ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K * β)
-      : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))))
-    (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), D.u ≠ some l → ∀ (w : fp.TestName I Unit), fp.MainRk
-      w → (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).Pass A.G
-      (bf.origCols l) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold A.famVtxBound AD.τ₃
-      AD.n (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).r) fp.mH (D.cat l))
-    (_ : ∀ I ∈ S1, ∀ (a : Fin (4 : ℕ)) (w : fp.HelperName I (Fin A.famVtxBound)),
-      (fp.helperOf a I (fun (i : Fin A.famVtxBound) => (D.toLeafQ qG).sv a (gE I i) I)
-      w).Pass A.G (bf.origCols a) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold
-      A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ))) fp.mH (D.cat a))
-    (_ : ∀ (R : ℕ), (1 : ℕ) ≤ R → R ≤ fp.Lc + (4 : ℕ) → catThreshold A.famVtxBound AD.τ₃ AD.n
-      R * (A.colBudget * √(AD.n (R - (1 : ℕ)))) ≤ AD.τ₃)
-    (_ : catThreshold A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ)) * (A.colBudget * √(AD.n
-      (fp.Lc + (4 : ℕ)))) ≤ AD.τ₃)
-    (_ : ∀ (R : ℕ), (0 : ℝ) ≤ catThreshold A.famVtxBound AD.τ₃ AD.n R)
-    (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), ∀ r ≤ fp.Lc + (4 : ℕ), ∀ (M : bf.Vtx → Prop),
-      (↑(mainLabelsM A.G fp.Mc (bf.origCols l) (D.cat l) I r M d).card : ℝ) ≤ AD.n r),
-  ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
-    dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
-    ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
-    ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
-    dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
-    ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
-    dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
-    ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
-    l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
-    (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
-    leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
-    hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+    (fp : bf.FamParams) :
+    SearchLeaf :=
+  leafAt A.famFuel fp.Lc (A.basicSlot p) s
 
 open scoped Classical in
-private def LeafEstimateStage3Statement : Prop :=
-  ∀ (κ : LocalKernelClass)
-    (c₀ : ℕ)
-    (cc : ℕ)
-    (_ : (1 : ℕ) ≤ cc)
-    (Dm0 : ℕ)
-    (Msch : ℝ)
-    (_ : (0 : ℝ) < Msch)
-    (Cg : ℕ)
-    (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
-      : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
-      k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
-      → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
-      (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
-      Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
-      A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
-      (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
-      (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
-      (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg)
-    (g : ℕ)
-    (cT : ℝ)
-    (cL : ℝ)
-    (cK : ℝ)
-    (cMc : ℝ)
-    (cm : ℝ)
-    (ce : ℝ)
-    (ce2 : ℝ)
-    (cQ : ℝ)
-    (CΛ : ℕ)
-    (eΛ : ℕ)
-    (CM1 : ℕ)
-    (t3 : ℕ)
-    (Cb : ℕ)
-    (Cl : ℕ)
-    (_ : g = (8192 : ℕ) * (cc + (1 : ℕ)) * ((1024 : ℕ) * (cc + (1 : ℕ)) + cc + (7 : ℕ)) + cc
-      ^ (2 : ℕ) + (8 : ℕ) ∧ cT = (10 : ℝ) ^ (22 : ℕ) * ((1 : ℝ) +
-      localFormUniformConstant κ) ^ (2 : ℕ) ∧ cL = (159 : ℝ) + (32 : ℝ) * (↑g : ℝ) + (8
-      : ℝ) * Real.log cT ∧ cK = ((1 : ℝ) + (7 : ℝ) * (10 : ℝ) ^ (9 : ℕ) + cT) * (cL + (2
-      : ℝ)) ∧ cMc = (C4c κ + (4 : ℝ) * C3c κ) * cL ^ (4 : ℕ) * cK ^ (2 : ℕ) ∧ cm =
-      (196608 : ℝ) * cT + (83 : ℝ) * ((1 : ℝ) + (81 : ℝ) * localFormUniformConstant κ *
-      ((30000 : ℝ) + √cT)) * ((1 : ℝ) + cT) ^ (3 : ℕ) + cMc ∧ ce = (6642 : ℝ) *
-      localFormUniformConstant κ * ((60000 : ℝ) + √cT) ^ (3 : ℕ) * (288 : ℝ) + (9 : ℝ) *
-      ((16 : ℝ) * fourErrC κ (3 : ℕ) + (648 : ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) + (324 :
-      ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) * √cT) ∧ ce2 = K1c * ((2 : ℝ) * fourKC κ (3 : ℕ)
-      * (12 : ℝ) ^ (4 : ℕ)) + (4 : ℝ) * (K1c * ((8 : ℝ) * entryCU κ (3 : ℕ) (1 : ℕ) * (2
-      : ℝ) ^ ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ))) * (501 : ℝ) ∧ cQ = (65536 : ℝ) *
-      ((8 : ℝ) + (80 : ℝ) * (9 : ℝ) ^ cc * (↑cc : ℝ)) * ((80 : ℝ) * (9 : ℝ) ^ cc * (↑cc
-      : ℝ)) * ((4 : ℝ) * (↑cc : ℝ) ^ (2 : ℕ)) * ((17 : ℝ) * (10 : ℝ) ^ (7 : ℕ)) ∧ CΛ =
-      (2 : ℕ) * Cg + (12 : ℕ) ∧ eΛ = Cg + (3 : ℕ) * cc ∧ CM1 = (⌈Msch⌉₊ + (1 : ℕ)) * CΛ
-      ^ (16 : ℕ) ∧ t3 = (3 : ℕ) ^ cc ∧ Cb = CM1 + (501 : ℕ) * Cg + t3 + (2 : ℕ) * cc +
-      (20 : ℕ) + (16 : ℕ) * eΛ ∧ Cl = ⌈cm * (↑Cb : ℝ) ^ (59 : ℕ) + ce * (↑Cb : ℝ) ^ (18
-      : ℕ) + ce2 + (3 : ℝ) * (10 : ℝ) ^ (11 : ℕ) * cQ⌉₊ + (59 : ℕ) * Cb + (4 : ℕ) * g +
-      (8 : ℕ) * cc + (8 : ℕ))
-    (A : ActiveSetup κ c₀)
-    (bf : A.BasicFamilies)
-    (k : ℕ)
-    (η₀ : ℝ)
-    (E : ℝ)
-    (_ : A.AncClosed)
-    (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
-      I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀))
-    (_ : A.SubRootProps η₀ E)
-    (_ : A.S = (2 : ℝ))
-    (_ : A.η = (4 : ℝ) * η₀)
-    (_ : (0 : ℝ) < η₀)
-    (_ : A.cells.Nonempty)
-    (q : ℝ)
-    (hq2 : (2 : ℝ) < q)
-    (hq3 : q < (3 : ℝ))
-    (Nd : ℕ)
-    (_ : A.DepthWin Nd)
-    (p : Fin (3 : ℕ))
-    (AD : bf.AttemptData p)
-    (d : bf.Vtx)
-    (s : ℕ)
-    (δ : ℝ)
-    (ρ : ℝ)
-    (kD : ℝ)
-    (_ : (0 : ℝ) < δ)
-    (_ : δ ≤ (1 / 8 : ℝ))
-    (_ : (0 : ℝ) < ρ)
-    (_ : ρ < (1 : ℝ))
-    (_ : Real.log ((2 : ℝ) * A.colBudget) ≤ (↑k : ℝ) ^ cc)
-    (_ : (↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) + (1 : ℝ)))
-    (_ : (1 : ℝ) ≤ (↑k : ℝ)),
-  let fp : bf.FamParams :=
-    AD.fp
-  let dB : ℕ :=
-    A.dBnd
-  ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
-      (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
-      Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
-      Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
-      bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
-      ℝ) ≤ Real.log bumpConst)
-    (_ : (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ)),
-  let Nl : ℝ :=
-    AD.n (fp.Lc + (5 : ℕ))
-  ∀ (_ : Real.log ((2 : ℝ) * ((8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl)) ≤ (↑k :
-      ℝ) ^ cc)
-    (_ : (2 : ℝ) ≤ A.colBudget)
-    (_ : Monotone AD.n)
-    (hNl0 : (0 : ℝ) ≤ Nl),
-  let Hm : ℝ :=
-    max (max A.Hsrc (Real.exp (↑dB : ℝ))) (max ((5832 : ℝ) * max A.H padW ^ (4 : ℕ))
-      ((↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) / δ))))
-  ∀ (_ : (1 : ℝ) ≤ Hm)
-    (_ : ∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB)
-    (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
-      ℝ) ≤ fp.Hed)
-    (S : ModeSchedule)
-    (_ : S.dmax = (2 : ℕ) * dB + (2 : ℕ))
-    (_ : S.Dm = max (2 : ℝ) Nl)
-    (_ : S.Valid (340 : ℕ) (5 : ℕ) (4 : ℕ) (600 : ℕ) (1 / 1024 : ℝ) (packetW S.dmax S.H))
-    (_ : (2 : ℕ) ≤ S.dmax)
-    (_ : (↑S.dmax : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Bstar)
-    (_ : (1 : ℕ) ≤ S.Q0)
-    (_ : (↑S.Q0 : ℝ) * (2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ)) ≤ S.Bstar)
-    (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
-      dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
-      Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ))
-    (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
-      Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
-      + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ))
-    (_ : (1 : ℕ) ≤ S.K),
-  let Lf : SearchLeaf :=
-    leafAt A.famFuel fp.Lc (A.basicSlot p) s
-  let ks : ℕ :=
-    Lf.k
-  let S0 : Finset (ℤ × ℤ) :=
-    {I ∈ AD.Tc | ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G
-      c.1 c.2}
-  ∀ (_ : S0 ⊆ AD.Tc)
-    (_ : S0 ⊆ A.cells),
-  let gs : ℤ × ℤ → Finset bf.Grp :=
-    fun (I : ℤ × ℤ) => fp.groupsAt I ks
-  let gset : Finset bf.Grp :=
-    S0.biUnion gs
-  ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I),
-  let U_1 : Fin (4 : ℕ) → bf.Grp → Finset (ℤ × ℤ) :=
-    fun (_ : Fin (4 : ℕ)) (G : bf.Grp) => {I ∈ S0 | G ∈ gs I}
-  ∀ (hlenMc : ∀ (l : Fin (4 : ℕ)), (AD.cat l).length ≤ fp.Mc),
-  let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
-    fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
-      (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
-      le_rfl)
-  ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc)))
-    (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, fp.ModeExports l (AD.cat l) G (Lf.role l) d Dm0 dB
-      Hm δ δ Nl (Ms l G) (L l G))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∉ gset, (∀ (p : (Ms l G).Key), (Ms l G).dvOf p + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Bσ = (1 : ℝ) ∧ ∀ (V : ℤ × ℤ), (Ms l
-      G).alive V = ∅)
-    (_ : PLift (∑ l : Fin (4 : ℕ), ∑ G ∈ gset, ∑ I ∈ U_1 l G, ∫ (y : ℝ) in dyadicGridCell A.G
-      I.1 I.2, ‖((↑(↑(fp.physError (Ms l G) (L l G) l (AD.cat l) (mbs l) G (Lf.role l)
-      (Lf.layers l) S.K (A.blkStart S.K I.1)) : ℝ →ₘ[volume] ColumnHilbert (bf.Lab ⊕ Fin
-      fp.Mc)) : ℝ → ColumnHilbert (bf.Lab ⊕ Fin fp.Mc)) y).ofLp none‖ ^ (2 : ℕ) ≤ ((8 :
-      ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget ^ (2 :
-      ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) * dyadicGridLength A.G
-      A.R.1))
-    (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
-      G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
-      / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
-      (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
-      V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
-      G).alive V)).card : ℝ) ≤ Nl)
-    (hA6 : (6 : ℝ) ≤ S.A0),
-  let qG : bf.Grp → ℕ :=
-    fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
-  ∀ (_ : ∀ (G : bf.Grp), (1 : ℕ) ≤ qG G ∧ qG G ≤ S.Q0)
-    (Vl0 : ℝ)
-    (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
-      1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) *
-      ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) +
-      Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 :
-      ℕ)))
-    (U : ℝ)
-    (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
-      (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
-      : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ))
-    (_ : (2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ) ≤ U)
-    (_ : (0 : ℝ) < S.Dstar)
-    (_ : (1 : ℝ) ≤ S.Dstar)
-    (_ : (16 : ℝ) ≤ U)
-    (_ : (0 : ℝ) < U)
-    (MV : ℝ)
-    (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ))
-    (_ : (0 : ℝ) ≤ MV)
-    (ε : ℝ)
-    (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹)
-    (_ : (0 : ℝ) < ε)
-    (_ : ε ≤ U)
-    (_ : S.Dstar⁻¹ ≤ U)
-    (_ : ∀ σ ∈ dyThr ε U S.Dstar, S.Dstar⁻¹ ≤ σ)
-    (_ : ∀ (σ : ℝ), ε ≤ σ → σ ≤ U → (∃ (k : ℤ), σ = (2 : ℝ) ^ k) → S.Dstar⁻¹ ≤ σ → σ ∈ dyThr
-      ε U S.Dstar)
-    (_ : (↑(dyThr ε U S.Dstar).card : ℝ) ≤ Real.logb (2 : ℝ) U - Real.logb (2 : ℝ) ε + (3 :
-      ℝ)),
-  let Ts : Finset (ℕ × ℕ) :=
-    Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
-      ⌊S.Dstar⌋₊ + (1 : ℕ))
-  ∀ (_ : Ts = Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2
-      : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ))),
-  let BN : ℕ :=
-    ⌈(8 : ℝ) * A.colBudget + Nl⌉₊
-  let τb : ℝ :=
-    (1 : ℝ) / ((1 : ℝ) + (↑BN : ℝ) * A.colBudget ^ (2 : ℕ))
-  ∀ (_ : (0 : ℝ) < τb)
-    (_ : τb ≤ (1 : ℝ))
-    (_ : τb * (↑BN : ℝ) * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ))
-    (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τb⁻¹) ^ A.Dg) ≤ fp.Hed)
-    (_ : ∀ I ∈ A.cells, dyadicGridCell A.G I.1 I.2 ⊆ Set.Icc (dyadicGridLeft A.G A.R.1 A.R.2)
-      (dyadicGridLeft A.G A.R.1 A.R.2 + dyadicGridLength A.G A.R.1))
-    (ρ₀ : Fin (4 : ℕ) → ↥gset → Fin A.fcd0)
-    (zc : Fin (4 : ℕ) → ↥gset → bf.Vtx)
-    (gsc : Fin (4 : ℕ) → ↥gset → ℤ)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (↑G : bf.Grp).2.1 = some (ρ₀ l G, zc l G, gsc l G))
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), fp.MainLiftExports l (AD.cat l) (↑G : bf.Grp)
-      (Lf.role l) d Dm0 dB Hm (gsc l G) (L l (↑G : bf.Grp)) (Ms l (↑G : bf.Grp)).wave
-      (Ms l (↑G : bf.Grp)).cellOf)
-    (_ : ∀ (l : Fin (4 : ℕ)), fp.bbase (Lf.role l) + fp.P ≤ fp.Hmax)
-    (_ : (4 : ℝ) ≤ Nl)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (Finset.card ({q : ↥gset × (bf.Lab ⊕ Fin fp.Mc) | ∃ I ∈
-      A.cells, (∃ (k' : ℕ), fp.Cert k' (↑q.1 : bf.Grp) I) ∧ ∃ (p_1 : Fin fp.P), y ∈
-      dyadicGridCell A.G I.1 I.2 ∧ q.2 ∈ mainLabelsM A.G fp.Mc (bf.origCols l) (AD.cat
-      l) I (fp.brank (Lf.role l)) (fp.bmask I (↑q.1 : bf.Grp) (Lf.role l) ((↑p_1 : ℕ) +
-      (1 : ℕ))) d})) ≤ BN)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∑ G : ↥gset, (↑((Ms l (↑G : bf.Grp)).ptSet y).card : ℝ)
-      ≤ S.Dstar)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (2 : ℝ) * ((↑S.Q0 : ℝ) * ((3 : ℝ) * ((Ms l (↑G :
-      bf.Grp)).Bσ * (Ms l (↑G : bf.Grp)).Bσ) ^ (2 : ℕ))) ^ (2 : ℕ) ≤ (↑⌊S.Dstar⌋₊ : ℝ))
-    (_ : fp.modeStar Dm0 dB Hm δ Nl kD ≤ S.Dstar)
-    (_ : ∀ (l : Fin (4 : ℕ)), (↑(Lf.layers l).length : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) +
-      (1 : ℝ)))
-    (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
-      β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
-      b S.K, (Ms l (↑G : bf.Grp)).frozenEval (S.withQ0 (qG (↑G : bf.Grp))) b J (c l G b
-      J) = (columnL2Restriction (dyadicGridCell A.G J.1 J.2) (dyadicGridCell_measurable
-      A.G J.1 J.2) : ↥(ColumnL2 (Ms l (↑G : bf.Grp)).Md) → ↥(ColumnL2 (Ms l (↑G :
-      bf.Grp)).Md)) (((L l (↑G : bf.Grp)).op : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) →
-      ↥(ColumnL2 (Ms l (↑G : bf.Grp)).Md)) (fp.frozenZ l (AD.cat l) (mbs l) (↑G :
-      bf.Grp) (Lf.role l) (Lf.layers l) (b - (4 : ℤ) * (↑S.K : ℤ)))))
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
-      β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
-      b S.K, ∑ m ∈ (Ms l (↑G : bf.Grp)).alive (ancAt A.G J (b - (4 : ℤ) * (↑S.K : ℤ))),
-      ‖c l G b J m‖ ^ (2 : ℕ) ≤ (4 : ℝ) * S.Dstar ^ (2 : ℕ) * (1 : ℝ))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∑ G : ↥gset, ∑ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K
-      * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ‖(Ms l (↑G : bf.Grp)).blockSide
-      (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) b (fp.retainedV
-      (↑G : bf.Grp) b S.K) (c l G b)‖ ^ (2 : ℕ) ≤ (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax :
-      ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp
-      (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
-      : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
-      + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ)) * dyadicGridLength A.G A.R.1)
-    (Rr : (l : Fin (4 : ℕ)) → (h : ℕ) → ℕ × ℕ → (G : ↥gset) → (Ms l (↑G : bf.Grp)).RepClass
-      (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) (10 : ℕ) h)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ h ≤ S.Jstar, ∀ (t : ℕ × ℕ) (G : ↥gset), (Rr l h t G).Nd = {c
-      ∈ (Ms l (↑G : bf.Grp)).succNodes (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams
-      (1 / 1024 : ℝ)) (fp.retainedPairs (↑G : bf.Grp) (Finset.image (fun (β : ℕ) =>
-      A.R.1 + (↑(S.K * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ)))) S.K) h | (Ms l
-      (↑G : bf.Grp)).nodeType1 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c = t.1 ∧
-      (Ms l (↑G : bf.Grp)).nodeType2 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c =
-      t.2})
-    (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ))
-    (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1)
-    (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∀ h ∈ Finset.range (S.Jstar + (1 : ℕ)), ∀ t ∈ Ts, ∀ σ ∈
-      dyThr ε U S.Dstar, ∑ G : ↥gset, (↑(Finset.image (fun (p : (ℤ × ℤ) × ℤ × (ℤ × ℤ) ×
-      (Ms l (↑G : bf.Grp)).Md) => (Rr l h t G).rep p.2) ({p ∈ fp.useInst (↑G : bf.Grp)
-      S.K (Rr l h t G).Nd | (∀ e ∈ Cut l, ¬dyadicGridCell A.G p.1.1 p.1.2 ⊆
-      dyadicGridCell A.G e.1 e.2) ∧ y ∈ dyadicGridCell A.G p.1.1 p.1.2 ∧ σ ^ (2 : ℕ) ≤
-      (Ms l (↑G : bf.Grp)).nodeSize (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 /
-      1024 : ℝ)) (c l G) h p})).card : ℝ) ≤ min S.Dstar ((24 : ℝ) * ((2 : ℝ) * Real.exp
-      (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
-      : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
-      + (2 : ℝ) * (↑S.K : ℝ) * ((24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2
-      : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc :
-      ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 :
-      ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) /
-      S.Dstar ^ (394 : ℕ)))) * (↑(Finset.range (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U
-      S.Dstar).card : ℝ) / (ρ * σ ^ (2 : ℕ)))),
-  let gE : ℤ × ℤ → Fin A.famVtxBound → bf.Grp :=
-    fun (I : ℤ × ℤ) (i : Fin A.famVtxBound) => if h : (↑i : ℕ) < (gs I).card then
-      (↑(((gs I).equivFin.symm : Fin (gs I).card → ↥(gs I)) ⟨(↑i : ℕ), h⟩) : bf.Grp)
-      else default
-  ∀ (_ : ∀ (I : ℤ × ℤ), ∀ G ∈ gs I, ∃ (i : Fin A.famVtxBound), gE I i = G),
-  let Wm : Type :=
-    { x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I : ℤ × ℤ) Unit // fp.MainRk
-      x.snd.snd }
-  let main : Wm → Fin (4 : ℕ) × (ℤ × ℤ) × MainTest bf.Vtx bf.Lab fp.Mc :=
-    fun (x : Wm) => ((↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I : ℤ × ℤ)
-      Unit).fst, (↑(↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I : ℤ × ℤ)
-      Unit).snd.fst : ℤ × ℤ), fp.testOf (↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) ×
-      fp.TestName (↑I : ℤ × ℤ) Unit).fst (↑(↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) ×
-      fp.TestName (↑I : ℤ × ℤ) Unit).snd.fst : ℤ × ℤ) (fun (_ : Unit) => bf.patIn fp.Mc
-      p (↑(↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I : ℤ × ℤ)
-      Unit).snd.fst : ℤ × ℤ) (↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I :
-      ℤ × ℤ) Unit).fst) (↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I : ℤ ×
-      ℤ) Unit).snd.snd)
-  ∀ (_ : ∀ (i : Wm), (main i).2.2.r ≤ fp.Lc + (4 : ℕ) ∧ ∀ l' < (main i).2.2.m, (main
-      i).2.2.hr l' ≤ fp.Lc + (4 : ℕ)),
-  ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
-    dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
-    ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
-    ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
-    dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
-    ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
-    dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
-    ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
-    l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
-    (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
-    leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
-    hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+private noncomputable abbrev leafEstimateGroupLevel
+    (Lf : SearchLeaf) :
+    ℕ :=
+  Lf.k
 
 open scoped Classical in
-private def LeafEstimateStage2Statement : Prop :=
-  ∀ (κ : LocalKernelClass)
+private noncomputable abbrev leafEstimateSurvivingCells
+    (κ : LocalKernelClass)
     (c₀ : ℕ)
-    (cc : ℕ)
-    (_ : (1 : ℕ) ≤ cc)
-    (Dm0 : ℕ)
-    (Msch : ℝ)
-    (_ : (0 : ℝ) < Msch)
-    (Cg : ℕ)
-    (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
-      : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
-      k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
-      → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
-      (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
-      Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
-      A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
-      (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
-      (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
-      (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg)
-    (g : ℕ)
-    (cT : ℝ)
-    (cL : ℝ)
-    (cK : ℝ)
-    (cMc : ℝ)
-    (cm : ℝ)
-    (ce : ℝ)
-    (ce2 : ℝ)
-    (cQ : ℝ)
-    (CΛ : ℕ)
-    (eΛ : ℕ)
-    (CM1 : ℕ)
-    (t3 : ℕ)
-    (Cb : ℕ)
-    (Cl : ℕ)
-    (_ : g = (8192 : ℕ) * (cc + (1 : ℕ)) * ((1024 : ℕ) * (cc + (1 : ℕ)) + cc + (7 : ℕ)) + cc
-      ^ (2 : ℕ) + (8 : ℕ) ∧ cT = (10 : ℝ) ^ (22 : ℕ) * ((1 : ℝ) +
-      localFormUniformConstant κ) ^ (2 : ℕ) ∧ cL = (159 : ℝ) + (32 : ℝ) * (↑g : ℝ) + (8
-      : ℝ) * Real.log cT ∧ cK = ((1 : ℝ) + (7 : ℝ) * (10 : ℝ) ^ (9 : ℕ) + cT) * (cL + (2
-      : ℝ)) ∧ cMc = (C4c κ + (4 : ℝ) * C3c κ) * cL ^ (4 : ℕ) * cK ^ (2 : ℕ) ∧ cm =
-      (196608 : ℝ) * cT + (83 : ℝ) * ((1 : ℝ) + (81 : ℝ) * localFormUniformConstant κ *
-      ((30000 : ℝ) + √cT)) * ((1 : ℝ) + cT) ^ (3 : ℕ) + cMc ∧ ce = (6642 : ℝ) *
-      localFormUniformConstant κ * ((60000 : ℝ) + √cT) ^ (3 : ℕ) * (288 : ℝ) + (9 : ℝ) *
-      ((16 : ℝ) * fourErrC κ (3 : ℕ) + (648 : ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) + (324 :
-      ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) * √cT) ∧ ce2 = K1c * ((2 : ℝ) * fourKC κ (3 : ℕ)
-      * (12 : ℝ) ^ (4 : ℕ)) + (4 : ℝ) * (K1c * ((8 : ℝ) * entryCU κ (3 : ℕ) (1 : ℕ) * (2
-      : ℝ) ^ ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ))) * (501 : ℝ) ∧ cQ = (65536 : ℝ) *
-      ((8 : ℝ) + (80 : ℝ) * (9 : ℝ) ^ cc * (↑cc : ℝ)) * ((80 : ℝ) * (9 : ℝ) ^ cc * (↑cc
-      : ℝ)) * ((4 : ℝ) * (↑cc : ℝ) ^ (2 : ℕ)) * ((17 : ℝ) * (10 : ℝ) ^ (7 : ℕ)) ∧ CΛ =
-      (2 : ℕ) * Cg + (12 : ℕ) ∧ eΛ = Cg + (3 : ℕ) * cc ∧ CM1 = (⌈Msch⌉₊ + (1 : ℕ)) * CΛ
-      ^ (16 : ℕ) ∧ t3 = (3 : ℕ) ^ cc ∧ Cb = CM1 + (501 : ℕ) * Cg + t3 + (2 : ℕ) * cc +
-      (20 : ℕ) + (16 : ℕ) * eΛ ∧ Cl = ⌈cm * (↑Cb : ℝ) ^ (59 : ℕ) + ce * (↑Cb : ℝ) ^ (18
-      : ℕ) + ce2 + (3 : ℝ) * (10 : ℝ) ^ (11 : ℕ) * cQ⌉₊ + (59 : ℕ) * Cb + (4 : ℕ) * g +
-      (8 : ℕ) * cc + (8 : ℕ))
     (A : ActiveSetup κ c₀)
     (bf : A.BasicFamilies)
-    (k : ℕ)
-    (η₀ : ℝ)
-    (E : ℝ)
-    (_ : A.AncClosed)
-    (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
-      I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀))
-    (_ : A.SubRootProps η₀ E)
-    (_ : A.S = (2 : ℝ))
-    (_ : A.η = (4 : ℝ) * η₀)
-    (_ : (0 : ℝ) < η₀)
-    (_ : A.cells.Nonempty)
-    (q : ℝ)
-    (hq2 : (2 : ℝ) < q)
-    (hq3 : q < (3 : ℝ))
-    (Nd : ℕ)
-    (_ : A.DepthWin Nd)
     (p : Fin (3 : ℕ))
     (AD : bf.AttemptData p)
-    (d : bf.Vtx)
-    (s : ℕ)
-    (δ : ℝ)
-    (ρ : ℝ)
-    (kD : ℝ)
-    (_ : (0 : ℝ) < δ)
-    (_ : δ ≤ (1 / 8 : ℝ))
-    (_ : (0 : ℝ) < ρ)
-    (_ : ρ < (1 : ℝ))
-    (_ : Real.log ((2 : ℝ) * A.colBudget) ≤ (↑k : ℝ) ^ cc)
-    (_ : (↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) + (1 : ℝ)))
-    (_ : (1 : ℝ) ≤ (↑k : ℝ)),
-  let fp : bf.FamParams :=
-    AD.fp
-  let dB : ℕ :=
-    A.dBnd
-  ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
-      (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
-      Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
-      Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
-      bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
-      ℝ) ≤ Real.log bumpConst)
-    (_ : (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ)),
-  let Nl : ℝ :=
-    AD.n (fp.Lc + (5 : ℕ))
-  ∀ (_ : Real.log ((2 : ℝ) * ((8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl)) ≤ (↑k :
-      ℝ) ^ cc)
-    (_ : (2 : ℝ) ≤ A.colBudget)
-    (_ : Monotone AD.n)
-    (hNl0 : (0 : ℝ) ≤ Nl),
-  let Hm : ℝ :=
-    max (max A.Hsrc (Real.exp (↑dB : ℝ))) (max ((5832 : ℝ) * max A.H padW ^ (4 : ℕ))
-      ((↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) / δ))))
-  ∀ (_ : (1 : ℝ) ≤ Hm)
-    (_ : ∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB)
-    (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
-      ℝ) ≤ fp.Hed)
-    (S : ModeSchedule)
-    (_ : S.dmax = (2 : ℕ) * dB + (2 : ℕ))
-    (_ : S.Dm = max (2 : ℝ) Nl)
-    (_ : S.Q0 = fp.Q0bd dB)
-    (_ : S.Valid (340 : ℕ) (5 : ℕ) (4 : ℕ) (600 : ℕ) (1 / 1024 : ℝ) (packetW S.dmax S.H))
-    (_ : (8 : ℝ) * ((↑S.dmax : ℝ) + (1 : ℝ)) ^ (3 : ℕ) * Real.log ((2 : ℝ) * S.H) / Real.log
-      (2 : ℝ) ≤ packetW S.dmax S.H)
-    (_ : (2 : ℕ) ≤ S.dmax)
-    (_ : (↑S.dmax : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Bstar)
-    (_ : (1 : ℕ) ≤ S.Q0)
-    (_ : (↑S.Q0 : ℝ) * (2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ)) ≤ S.Bstar)
-    (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
-      dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
-      Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ))
-    (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
-      Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
-      + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ))
-    (_ : (1 : ℕ) ≤ S.K),
-  let Lf : SearchLeaf :=
-    leafAt A.famFuel fp.Lc (A.basicSlot p) s
-  ∀ (_ : Lf = leafAt A.famFuel fp.Lc (A.basicSlot p) s),
-  let ks : ℕ :=
-    Lf.k
-  let S0 : Finset (ℤ × ℤ) :=
-    {I ∈ AD.Tc | ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G
-      c.1 c.2}
-  ∀ (_ : S0 ⊆ AD.Tc)
-    (_ : S0 ⊆ A.cells),
-  let gs : ℤ × ℤ → Finset bf.Grp :=
-    fun (I : ℤ × ℤ) => fp.groupsAt I ks
-  let gset : Finset bf.Grp :=
-    S0.biUnion gs
-  ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I),
-  let U_1 : Fin (4 : ℕ) → bf.Grp → Finset (ℤ × ℤ) :=
-    fun (_ : Fin (4 : ℕ)) (G : bf.Grp) => {I ∈ S0 | G ∈ gs I}
-  ∀ (hlenMc : ∀ (l : Fin (4 : ℕ)), (AD.cat l).length ≤ fp.Mc),
-  let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
-    fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
-      (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
-      le_rfl)
-  ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ I ∈ A.cells, (↑(mainLabels A.G fp.Mc (bf.origCols l) (AD.cat
-      l) I (fp.brank (Lf.role l))).card : ℝ) ≤ Nl)
-    (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc)))
-    (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, fp.ModeExports l (AD.cat l) G (Lf.role l) d Dm0 dB
-      Hm δ δ Nl (Ms l G) (L l G))
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∉ gset, (∀ (p : (Ms l G).Key), (Ms l G).dvOf p + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Bσ = (1 : ℝ) ∧ ∀ (V : ℤ × ℤ), (Ms l
-      G).alive V = ∅)
-    (_ : PLift (∑ l : Fin (4 : ℕ), ∑ G ∈ gset, ∑ I ∈ U_1 l G, ∫ (y : ℝ) in dyadicGridCell A.G
-      I.1 I.2, ‖((↑(↑(fp.physError (Ms l G) (L l G) l (AD.cat l) (mbs l) G (Lf.role l)
-      (Lf.layers l) S.K (A.blkStart S.K I.1)) : ℝ →ₘ[volume] ColumnHilbert (bf.Lab ⊕ Fin
-      fp.Mc)) : ℝ → ColumnHilbert (bf.Lab ⊕ Fin fp.Mc)) y).ofLp none‖ ^ (2 : ℕ) ≤ ((8 :
-      ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget ^ (2 :
-      ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) * dyadicGridLength A.G
-      A.R.1))
-    (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
-      G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
-      / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
-      (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
-      V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
-      G).alive V)).card : ℝ) ≤ Nl)
-    (_ : (6 : ℝ) ≤ S.A0),
-  let qG : bf.Grp → ℕ :=
-    fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
-  ∀ (_ : ∀ (G : bf.Grp), (1 : ℕ) ≤ qG G ∧ qG G ≤ S.Q0)
-    (Vl0 : ℝ)
-    (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
-      1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) *
-      ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) +
-      Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 :
-      ℕ)))
-    (U : ℝ)
-    (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
-      (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
-      : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ))
-    (_ : (2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ) ≤ U)
-    (_ : (0 : ℝ) < S.Dstar)
-    (_ : (1 : ℝ) ≤ S.Dstar)
-    (_ : (16 : ℝ) ≤ U)
-    (_ : (0 : ℝ) < U)
-    (MV : ℝ)
-    (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ))
-    (_ : (0 : ℝ) ≤ MV)
-    (ε : ℝ)
-    (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹)
-    (_ : (0 : ℝ) < ε)
-    (_ : ε ≤ U)
-    (_ : S.Dstar⁻¹ ≤ U)
-    (_ : (dyThr ε U S.Dstar).Nonempty)
-    (_ : ∀ σ ∈ dyThr ε U S.Dstar, S.Dstar⁻¹ ≤ σ)
-    (_ : ∀ (σ : ℝ), ε ≤ σ → σ ≤ U → (∃ (k : ℤ), σ = (2 : ℝ) ^ k) → S.Dstar⁻¹ ≤ σ → σ ∈ dyThr
-      ε U S.Dstar)
-    (_ : (↑(dyThr ε U S.Dstar).card : ℝ) ≤ Real.logb (2 : ℝ) U - Real.logb (2 : ℝ) ε + (3 :
-      ℝ)),
-  let Ts : Finset (ℕ × ℕ) :=
-    Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
-      ⌊S.Dstar⌋₊ + (1 : ℕ))
-  ∀ (_ : Ts = Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2
-      : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)))
-    (_ : Ts.Nonempty),
-  let BN : ℕ :=
-    ⌈(8 : ℝ) * A.colBudget + Nl⌉₊
-  let τb : ℝ :=
-    (1 : ℝ) / ((1 : ℝ) + (↑BN : ℝ) * A.colBudget ^ (2 : ℕ))
-  ∀ (_ : (0 : ℝ) < τb)
-    (_ : τb ≤ (1 : ℝ))
-    (_ : τb * (↑BN : ℝ) * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ))
-    (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τb⁻¹) ^ A.Dg) ≤ fp.Hed)
-    (_ : ∀ I ∈ A.cells, dyadicGridCell A.G I.1 I.2 ⊆ Set.Icc (dyadicGridLeft A.G A.R.1 A.R.2)
-      (dyadicGridLeft A.G A.R.1 A.R.2 + dyadicGridLength A.G A.R.1))
-    (ρ₀ : Fin (4 : ℕ) → ↥gset → Fin A.fcd0)
-    (zc : Fin (4 : ℕ) → ↥gset → bf.Vtx)
-    (gsc : Fin (4 : ℕ) → ↥gset → ℤ)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (↑G : bf.Grp).2.1 = some (ρ₀ l G, zc l G, gsc l G))
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), fp.MainLiftExports l (AD.cat l) (↑G : bf.Grp)
-      (Lf.role l) d Dm0 dB Hm (gsc l G) (L l (↑G : bf.Grp)) (Ms l (↑G : bf.Grp)).wave
-      (Ms l (↑G : bf.Grp)).cellOf)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset) (m : (Ms l (↑G : bf.Grp)).Md), (L l (↑G :
-      bf.Grp)).εM m = (Ms l (↑G : bf.Grp)).L.εM m)
-    (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (Ms l (↑G : bf.Grp)).δc = δ)
-    (_ : ∀ (G : ↥gset), (↑G : bf.Grp).1 = ks)
-    (_ : ∀ (l : Fin (4 : ℕ)), fp.bbase (Lf.role l) + fp.P ≤ fp.Hmax),
-  ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
-    dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
-    ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
-    ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
-    dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
-    ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
-    dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
-    ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
-    l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
-    (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
-    leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
-    hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+    (fp : bf.FamParams) :
+    Finset (ℤ × ℤ) :=
+  {I ∈ AD.Tc | ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G
+        c.1 c.2}
 
 open scoped Classical in
-private def LeafEstimateStage1Statement : Prop :=
-  ∀ (κ : LocalKernelClass)
+private noncomputable abbrev leafEstimateCellGroups
+    (κ : LocalKernelClass)
     (c₀ : ℕ)
-    (cc : ℕ)
-    (_ : (1 : ℕ) ≤ cc)
-    (Dm0 : ℕ)
-    (_ : ∀ (A : ActiveSetup κ c₀) (bf : A.BasicFamilies) (fp : bf.FamParams) (cat : Fin (4 :
-      ℕ) → List (CatCol bf.Vtx)), (∀ (l : Fin (4 : ℕ)), ∀ e ∈ cat l, ∃ R ∈ residueBox
-      (bf.vtag e.tag).dim (9 : ℕ), ∃ (γ : ℝ), e = templateCol (bf.vtag e.tag) l R γ
-      e.birth e.rank e.tag) → (∀ (l : Fin (4 : ℕ)), ∀ e ∈ cat l, bf.occAvail (↑e.tag.2 :
-      ℤ × ℤ) e.tag.1) → ∀ (mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (cat l)) (jj : Fin (4
-      : ℕ) → ℕ) (lsi : Fin (4 : ℕ) → List (ℕ × Bool)) (d : bf.Vtx) (gset : Finset
-      bf.Grp), (∀ G ∈ gset, ∃ (I : ℤ × ℤ), fp.ActualUse G I) → A.AncClosed → ∀ {K : ℕ}
-      (blk : ℤ × ℤ → ℤ), (∀ (I : ℤ × ℤ), blk I ≤ I.1 ∧ I.1 < blk I + (↑K : ℤ)) → ∀ (U :
-      Fin (4 : ℕ) → bf.Grp → Finset (ℤ × ℤ)), (∀ (l : Fin (4 : ℕ)) (G : bf.Grp), ∀ I ∈ U
-      l G, fp.ActualUse G I) → ∀ {Nuse : ℕ}, (∀ (y : ℝ), ∑ l : Fin (4 : ℕ), ∑ G ∈ gset,
-      (Finset.card ({I ∈ U l G | y ∈ dyadicGridCell A.G I.1 I.2})) ≤ Nuse) → (2 : ℝ) ≤
-      fp.Hed → ∀ {dB : ℕ}, (∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB) → (∀ (w : bf.Vtx) (a c
-      : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) : ℝ) ≤ fp.Hed) → ∀
-      {δ : ℝ}, (0 : ℝ) < δ → δ ≤ (1 / 8 : ℝ) → (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ) → ∀ {H
-      : ℝ}, A.Hsrc ≤ H → (↑dB : ℝ) ≤ Real.log H → (∀ (w : bf.Vtx) (l : Fin (4 : ℕ)) (i k
-      : Fin (bf.vtag w).dim), (↑(chartRationalHeight (((↑(-slotCoeff l) : ℚ) • (bf.vtag
-      w).C) i k)) : ℝ) ≤ H) → (↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) /
-      δ)) ≤ H → ∀ {δc : ℝ}, (0 : ℝ) < δc → ∀ {N CF : ℝ}, (0 : ℝ) ≤ N → (0 : ℝ) ≤ CF → (∀
-      (l : Fin (4 : ℕ)), ∀ I ∈ A.cells, (↑(mainLabels A.G fp.Mc (bf.origCols l) (cat l)
-      I (fp.brank (jj l))).card : ℝ) ≤ N) → δc ^ (2 : ℕ) * N * A.colBudget ^ (2 : ℕ) ≤
-      (1 : ℝ) → (∀ (l : Fin (4 : ℕ)) (jb : Fin (2 : ℕ)), ∀ V ∈ A.cells,
-      ‖(columnL2Restriction (dyadicGridCell A.G V.1 V.2) (dyadicGridCell_measurable A.G
-      V.1 V.2) : ↥(ColumnL2 (bf.P l jb).V) → ↥(ColumnL2 (bf.P l jb).V)) (bf.P l jb).Z‖ ^
-      (2 : ℕ) ≤ CF * dyadicGridLength A.G V.1) → ∃ (Ms : Fin (4 : ℕ) → bf.Grp →
-      ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc))) (L : (l : Fin (4 : ℕ)) → (G :
-      bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md), (∀ (l : Fin (4 : ℕ)), ∀ G ∈
-      gset, fp.ModeExports l (cat l) G (jj l) d Dm0 dB H δ δc N (Ms l G) (L l G)) ∧ (∀
-      (l : Fin (4 : ℕ)), ∀ G ∉ gset, (∀ (p : (Ms l G).Key), (Ms l G).dvOf p + (Ms l
-      G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Bσ = (1 : ℝ) ∧ ∀ (V : ℤ × ℤ), (Ms l
-      G).alive V = ∅) ∧ ∑ l : Fin (4 : ℕ), ∑ G ∈ gset, ∑ I ∈ U l G, ∫ (y : ℝ) in
-      dyadicGridCell A.G I.1 I.2, ‖((↑(↑(fp.physError (Ms l G) (L l G) l (cat l) (mbs l)
-      G (jj l) (lsi l) K (blk I)) : ℝ →ₘ[volume] ColumnHilbert (bf.Lab ⊕ Fin fp.Mc)) : ℝ
-      → ColumnHilbert (bf.Lab ⊕ Fin fp.Mc)) y).ofLp none‖ ^ (2 : ℕ) ≤ ((8 : ℝ) * (↑dB :
-      ℝ) * δ + (2 : ℝ) * δc ^ (2 : ℕ)) * ((4 : ℝ) * N * A.colBudget ^ (2 : ℕ) * CF) *
-      (↑Nuse : ℝ) * dyadicGridLength A.G A.R.1)
-    (Msch : ℝ)
-    (_ : (0 : ℝ) < Msch)
-    (Cg : ℕ)
-    (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
-      : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
-      k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
-      → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
-      (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
-      Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
-      A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
-      (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
-      (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
-      (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg)
-    (g : ℕ)
-    (cT : ℝ)
-    (cL : ℝ)
-    (cK : ℝ)
-    (cMc : ℝ)
-    (cm : ℝ)
-    (ce : ℝ)
-    (ce2 : ℝ)
-    (cQ : ℝ)
-    (CΛ : ℕ)
-    (eΛ : ℕ)
-    (CM1 : ℕ)
-    (t3 : ℕ)
-    (Cb : ℕ)
-    (Cl : ℕ)
-    (_ : g = (8192 : ℕ) * (cc + (1 : ℕ)) * ((1024 : ℕ) * (cc + (1 : ℕ)) + cc + (7 : ℕ)) + cc
-      ^ (2 : ℕ) + (8 : ℕ) ∧ cT = (10 : ℝ) ^ (22 : ℕ) * ((1 : ℝ) +
-      localFormUniformConstant κ) ^ (2 : ℕ) ∧ cL = (159 : ℝ) + (32 : ℝ) * (↑g : ℝ) + (8
-      : ℝ) * Real.log cT ∧ cK = ((1 : ℝ) + (7 : ℝ) * (10 : ℝ) ^ (9 : ℕ) + cT) * (cL + (2
-      : ℝ)) ∧ cMc = (C4c κ + (4 : ℝ) * C3c κ) * cL ^ (4 : ℕ) * cK ^ (2 : ℕ) ∧ cm =
-      (196608 : ℝ) * cT + (83 : ℝ) * ((1 : ℝ) + (81 : ℝ) * localFormUniformConstant κ *
-      ((30000 : ℝ) + √cT)) * ((1 : ℝ) + cT) ^ (3 : ℕ) + cMc ∧ ce = (6642 : ℝ) *
-      localFormUniformConstant κ * ((60000 : ℝ) + √cT) ^ (3 : ℕ) * (288 : ℝ) + (9 : ℝ) *
-      ((16 : ℝ) * fourErrC κ (3 : ℕ) + (648 : ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) + (324 :
-      ℝ) * threeErrC κ (3 : ℕ) (1 : ℕ) * √cT) ∧ ce2 = K1c * ((2 : ℝ) * fourKC κ (3 : ℕ)
-      * (12 : ℝ) ^ (4 : ℕ)) + (4 : ℝ) * (K1c * ((8 : ℝ) * entryCU κ (3 : ℕ) (1 : ℕ) * (2
-      : ℝ) ^ ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ))) * (501 : ℝ) ∧ cQ = (65536 : ℝ) *
-      ((8 : ℝ) + (80 : ℝ) * (9 : ℝ) ^ cc * (↑cc : ℝ)) * ((80 : ℝ) * (9 : ℝ) ^ cc * (↑cc
-      : ℝ)) * ((4 : ℝ) * (↑cc : ℝ) ^ (2 : ℕ)) * ((17 : ℝ) * (10 : ℝ) ^ (7 : ℕ)) ∧ CΛ =
-      (2 : ℕ) * Cg + (12 : ℕ) ∧ eΛ = Cg + (3 : ℕ) * cc ∧ CM1 = (⌈Msch⌉₊ + (1 : ℕ)) * CΛ
-      ^ (16 : ℕ) ∧ t3 = (3 : ℕ) ^ cc ∧ Cb = CM1 + (501 : ℕ) * Cg + t3 + (2 : ℕ) * cc +
-      (20 : ℕ) + (16 : ℕ) * eΛ ∧ Cl = ⌈cm * (↑Cb : ℝ) ^ (59 : ℕ) + ce * (↑Cb : ℝ) ^ (18
-      : ℕ) + ce2 + (3 : ℝ) * (10 : ℝ) ^ (11 : ℕ) * cQ⌉₊ + (59 : ℕ) * Cb + (4 : ℕ) * g +
-      (8 : ℕ) * cc + (8 : ℕ))
     (A : ActiveSetup κ c₀)
     (bf : A.BasicFamilies)
-    (k : ℕ)
-    (η₀ : ℝ)
-    (E : ℝ)
-    (_ : A.AncClosed)
-    (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
-      I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀))
-    (_ : A.SubRootProps η₀ E)
-    (_ : A.S = (2 : ℝ))
-    (_ : A.η = (4 : ℝ) * η₀)
-    (_ : (0 : ℝ) < η₀)
-    (_ : A.cells.Nonempty)
-    (q : ℝ)
-    (hq2 : (2 : ℝ) < q)
-    (hq3 : q < (3 : ℝ))
-    (Nd : ℕ)
-    (_ : A.DepthWin Nd)
-    (p : Fin (3 : ℕ))
-    (AD : bf.AttemptData p)
-    (_ : bf.Vtx)
-    (s : ℕ)
-    (δ : ℝ)
-    (ρ : ℝ)
-    (kD : ℝ)
-    (_ : (0 : ℝ) < δ)
-    (_ : δ ≤ (1 / 8 : ℝ))
-    (_ : (0 : ℝ) < ρ)
-    (_ : ρ < (1 : ℝ))
-    (_ : Real.log ((2 : ℝ) * A.colBudget) ≤ (↑k : ℝ) ^ cc)
-    (_ : (↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) + (1 : ℝ)))
-    (_ : (1 : ℝ) ≤ (↑k : ℝ)),
-  let fp : bf.FamParams :=
-    AD.fp
-  let dB : ℕ :=
-    A.dBnd
-  ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
-      (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
-      Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
-      Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
-      bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
-      ℝ) ≤ Real.log bumpConst)
-    (_ : (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ)),
-  let Nl : ℝ :=
-    AD.n (fp.Lc + (5 : ℕ))
-  ∀ (_ : Real.log ((2 : ℝ) * ((8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl)) ≤ (↑k :
-      ℝ) ^ cc)
-    (_ : δ ^ (2 : ℕ) * Nl * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ))
-    (_ : (2 : ℝ) ≤ A.colBudget)
-    (_ : Monotone AD.n)
-    (_ : (0 : ℝ) ≤ Nl),
-  let Hm : ℝ :=
-    max (max A.Hsrc (Real.exp (↑dB : ℝ))) (max ((5832 : ℝ) * max A.H padW ^ (4 : ℕ))
-      ((↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) / δ))))
-  ∀ (_ : (1 : ℝ) ≤ Hm)
-    (_ : ∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB)
-    (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
-      ℝ) ≤ fp.Hed)
-    (S : ModeSchedule)
-    (_ : S.dmax = (2 : ℕ) * dB + (2 : ℕ))
-    (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ)
-    (_ : S.Dm = max (2 : ℝ) Nl)
-    (_ : S.Q0 = fp.Q0bd dB)
-    (_ : S.Valid (340 : ℕ) (5 : ℕ) (4 : ℕ) (600 : ℕ) (1 / 1024 : ℝ) (packetW S.dmax S.H))
-    (_ : (8 : ℝ) * ((↑S.dmax : ℝ) + (1 : ℝ)) ^ (3 : ℕ) * Real.log ((2 : ℝ) * S.H) / Real.log
-      (2 : ℝ) ≤ packetW S.dmax S.H)
-    (_ : (2 : ℕ) ≤ S.dmax)
-    (_ : (↑S.dmax : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Dstar)
-    (_ : (2 : ℝ) ≤ S.Bstar)
-    (_ : (1 : ℕ) ≤ S.Q0)
-    (_ : ∀ (z : bf.Vtx), (1 : ℕ) ≤ clearInt (bf.vtag z).C ∧ clearInt (bf.vtag z).C ≤ S.Q0)
-    (_ : (↑S.Q0 : ℝ) * (2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ)) ≤ S.Bstar)
-    (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
-      dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
-      Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ))
-    (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
-      Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
-      + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ))
-    (_ : (1 : ℕ) ≤ S.K),
-  let Lf : SearchLeaf :=
-    leafAt A.famFuel fp.Lc (A.basicSlot p) s
-  ∀ (_ : Lf = leafAt A.famFuel fp.Lc (A.basicSlot p) s),
-  let ks : ℕ :=
-    Lf.k
-  let S0 : Finset (ℤ × ℤ) :=
-    {I ∈ AD.Tc | ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G
-      c.1 c.2}
-  ∀ (_ : S0 ⊆ AD.Tc)
-    (_ : S0 ⊆ A.cells),
-  let gs : ℤ × ℤ → Finset bf.Grp :=
-    fun (I : ℤ × ℤ) => fp.groupsAt I ks
-  let gset : Finset bf.Grp :=
-    S0.biUnion gs
-  ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I)
-    (_ : ∀ G ∈ gset, ∃ (I : ℤ × ℤ), fp.ActualUse G I),
-  let U : Fin (4 : ℕ) → bf.Grp → Finset (ℤ × ℤ) :=
-    fun (_ : Fin (4 : ℕ)) (G : bf.Grp) => {I ∈ S0 | G ∈ gs I}
-  ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : bf.Grp), ∀ I ∈ U l G, fp.ActualUse G I)
-    (_ : ∀ (y : ℝ), ∑ l : Fin (4 : ℕ), ∑ G ∈ gset, (Finset.card ({I ∈ U l G | y ∈
-      dyadicGridCell A.G I.1 I.2})) ≤ (4 : ℕ) * (AD.Mp * A.famVtxBound))
-    (_ : ∀ (l : Fin (4 : ℕ)), (AD.cat l).length ≤ fp.Mc)
-    (_ : ∀ (l : Fin (4 : ℕ)), ∀ I ∈ A.cells, (↑(mainLabels A.G fp.Mc (bf.origCols l) (AD.cat
-      l) I (fp.brank (Lf.role l))).card : ℝ) ≤ Nl),
-  ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
-    dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
-    ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
-    ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
-    dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
-    ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
-    dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
-    ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
-    l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
-    (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
-    leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
-    hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+    (fp : bf.FamParams)
+    (ks : ℕ) :
+    ℤ × ℤ → Finset bf.Grp :=
+  fun (I : ℤ × ℤ) => fp.groupsAt I ks
+
+open scoped Classical in
+private noncomputable abbrev leafEstimateGroups
+    (κ : LocalKernelClass)
+    (c₀ : ℕ)
+    (A : ActiveSetup κ c₀)
+    (bf : A.BasicFamilies)
+    (S0 : Finset (ℤ × ℤ))
+    (gs : ℤ × ℤ → Finset bf.Grp) :
+    Finset bf.Grp :=
+  S0.biUnion gs
+
+open scoped Classical in
+private structure LeafEstimateConstants where
+  κ :
+    LocalKernelClass
+  c₀ :
+    ℕ
+  cc :
+    ℕ
+  hcc :
+    (1 : ℕ) ≤ cc
+  Dm0 :
+    ℕ
+  Msch :
+    ℝ
+  hMsch :
+    (0 : ℝ) < Msch
+  Cg :
+    ℕ
+  g :
+    ℕ
+  cT :
+    ℝ
+  cL :
+    ℝ
+  cK :
+    ℝ
+  cMc :
+    ℝ
+  cm :
+    ℝ
+  ce :
+    ℝ
+  ce2 :
+    ℝ
+  cQ :
+    ℝ
+  CΛ :
+    ℕ
+  eΛ :
+    ℕ
+  CM1 :
+    ℕ
+  t3 :
+    ℕ
+  Cb :
+    ℕ
+  Cl :
+    ℕ
+
+open scoped Classical in
+private structure LeafEstimateSetup (constants : LeafEstimateConstants) where
+  A :
+    ActiveSetup constants.κ constants.c₀
+  bf :
+    A.BasicFamilies
+  k :
+    ℕ
+  η₀ :
+    ℝ
+  E :
+    ℝ
+  hS2 :
+    A.S = (2 : ℝ)
+  hη :
+    A.η = (4 : ℝ) * η₀
+  hη₀ :
+    (0 : ℝ) < η₀
+  q :
+    ℝ
+  hq2 :
+    (2 : ℝ) < q
+  hq3 :
+    q < (3 : ℝ)
+  Nd :
+    ℕ
+  p :
+    Fin (3 : ℕ)
+  AD :
+    bf.AttemptData p
+  d :
+    bf.Vtx
+  s :
+    ℕ
+  δ :
+    ℝ
+  ρ :
+    ℝ
+  kD :
+    ℝ
+  hδ :
+    (0 : ℝ) < δ
+  hδ8 :
+    δ ≤ (1 / 8 : ℝ)
+  hρ :
+    (0 : ℝ) < ρ
+  hρ1 :
+    ρ < (1 : ℝ)
+  hkb :
+    Real.log ((2 : ℝ) * A.colBudget) ≤ (↑k : ℝ) ^ constants.cc
+  hkF :
+    (↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) ≤ (↑constants.cc : ℝ) * (Real.log (↑k : ℝ) + (1 : ℝ))
+  hkB :
+    Real.log ((2 : ℝ) * ((8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) *
+      (leafEstimatePopulation constants.κ constants.c₀ A bf p AD (leafEstimateParameters
+      constants.κ constants.c₀ A bf p AD)))) ≤ (↑k :
+          ℝ) ^ constants.cc
+  hcb :
+    (2 : ℝ) ≤ A.colBudget
+  hNl0 :
+    (0 : ℝ) ≤ (leafEstimatePopulation constants.κ constants.c₀ A bf p AD (leafEstimateParameters
+      constants.κ constants.c₀ A bf p AD))
+
+open scoped Classical in
+private structure LeafEstimateSchedule (constants : LeafEstimateConstants) (setup :
+  LeafEstimateSetup constants) where
+  S :
+    ModeSchedule
+  hSd :
+    S.dmax = (2 : ℕ) * (leafEstimateDimensionBound constants.κ constants.c₀ setup.A) + (2 : ℕ)
+  hSDm :
+    S.Dm = max (2 : ℝ) (leafEstimatePopulation constants.κ constants.c₀ setup.A setup.bf setup.p
+      setup.AD (leafEstimateParameters constants.κ constants.c₀ setup.A setup.bf setup.p
+      setup.AD))
+  hSV :
+    S.Valid (340 : ℕ) (5 : ℕ) (4 : ℕ) (600 : ℕ) (1 / 1024 : ℝ) (packetW S.dmax S.H)
+  hd2 :
+    (2 : ℕ) ≤ S.dmax
+  hD2 :
+    (2 : ℝ) ≤ S.Dstar
+  hB2 :
+    (2 : ℝ) ≤ S.Bstar
+  hQ1 :
+    (1 : ℕ) ≤ S.Q0
+  hK1 :
+    (1 : ℕ) ≤ S.K
+  hlenMc :
+    ∀ (l : Fin (4 : ℕ)), (setup.AD.cat l).length ≤ (leafEstimateParameters constants.κ
+      constants.c₀ setup.A setup.bf setup.p setup.AD).Mc
+
+open scoped Classical in
+private def LeafEstimateConstantRelations (constants : LeafEstimateConstants) : Prop :=
+  constants.g = (8192 : ℕ) * (constants.cc + (1 : ℕ)) * ((1024 : ℕ) * (constants.cc + (1 : ℕ)) +
+    constants.cc + (7 : ℕ)) + constants.cc
+        ^ (2 : ℕ) + (8 : ℕ) ∧ constants.cT = (10 : ℝ) ^ (22 : ℕ) * ((1 : ℝ) +
+        localFormUniformConstant constants.κ) ^ (2 : ℕ) ∧ constants.cL = (159 : ℝ) + (32 : ℝ) *
+          (↑constants.g : ℝ) + (8
+        : ℝ) * Real.log constants.cT ∧ constants.cK = ((1 : ℝ) + (7 : ℝ) * (10 : ℝ) ^ (9 : ℕ) +
+          constants.cT) * (constants.cL + (2
+        : ℝ)) ∧ constants.cMc = (C4c constants.κ + (4 : ℝ) * C3c constants.κ) * constants.cL ^ (4
+          : ℕ) * constants.cK ^ (2 : ℕ) ∧ constants.cm =
+        (196608 : ℝ) * constants.cT + (83 : ℝ) * ((1 : ℝ) + (81 : ℝ) * localFormUniformConstant
+          constants.κ *
+        ((30000 : ℝ) + √constants.cT)) * ((1 : ℝ) + constants.cT) ^ (3 : ℕ) + constants.cMc ∧
+          constants.ce = (6642 : ℝ) *
+        localFormUniformConstant constants.κ * ((60000 : ℝ) + √constants.cT) ^ (3 : ℕ) * (288 : ℝ)
+          + (9 : ℝ) *
+        ((16 : ℝ) * fourErrC constants.κ (3 : ℕ) + (648 : ℝ) * threeErrC constants.κ (3 : ℕ) (1 :
+          ℕ) + (324 :
+        ℝ) * threeErrC constants.κ (3 : ℕ) (1 : ℕ) * √constants.cT) ∧ constants.ce2 = K1c * ((2 :
+          ℝ) * fourKC constants.κ (3 : ℕ)
+        * (12 : ℝ) ^ (4 : ℕ)) + (4 : ℝ) * (K1c * ((8 : ℝ) * entryCU constants.κ (3 : ℕ) (1 : ℕ) * (2
+        : ℝ) ^ ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ))) * (501 : ℝ) ∧ constants.cQ = (65536 : ℝ) *
+        ((8 : ℝ) + (80 : ℝ) * (9 : ℝ) ^ constants.cc * (↑constants.cc : ℝ)) * ((80 : ℝ) * (9 : ℝ)
+          ^ constants.cc * (↑constants.cc
+        : ℝ)) * ((4 : ℝ) * (↑constants.cc : ℝ) ^ (2 : ℕ)) * ((17 : ℝ) * (10 : ℝ) ^ (7 : ℕ)) ∧
+          constants.CΛ =
+        (2 : ℕ) * constants.Cg + (12 : ℕ) ∧ constants.eΛ = constants.Cg + (3 : ℕ) * constants.cc ∧
+          constants.CM1 = (⌈constants.Msch⌉₊ + (1 : ℕ)) * constants.CΛ
+        ^ (16 : ℕ) ∧ constants.t3 = (3 : ℕ) ^ constants.cc ∧ constants.Cb = constants.CM1 + (501 :
+          ℕ) * constants.Cg + constants.t3 + (2 : ℕ) * constants.cc +
+        (20 : ℕ) + (16 : ℕ) * constants.eΛ ∧ constants.Cl = ⌈constants.cm * (↑constants.Cb : ℝ) ^
+          (59 : ℕ) + constants.ce * (↑constants.Cb : ℝ) ^ (18
+        : ℕ) + constants.ce2 + (3 : ℝ) * (10 : ℝ) ^ (11 : ℕ) * constants.cQ⌉₊ + (59 : ℕ) *
+          constants.Cb + (4 : ℕ) * constants.g +
+        (8 : ℕ) * constants.cc + (8 : ℕ)
+
+private structure LeafEstimateContext where
+  constants : LeafEstimateConstants
+  hconst : LeafEstimateConstantRelations constants
+  setup : LeafEstimateSetup constants
+  schedule : LeafEstimateSchedule constants setup
+
+open scoped Classical in
+private def LeafEstimateStage8Statement (context : LeafEstimateContext) : Prop := by
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  exact
+    let fp : bf.FamParams :=
+      (leafEstimateParameters κ c₀ A bf p AD)
+    let dB : ℕ :=
+      (leafEstimateDimensionBound κ c₀ A)
+    let Nl : ℝ :=
+      (leafEstimatePopulation κ c₀ A bf p AD fp)
+    let Hm : ℝ :=
+      (leafEstimateModeHeight κ c₀ A δ dB)
+    let Lf : SearchLeaf :=
+      (leafEstimateLeaf κ c₀ A bf p s fp)
+    let ks : ℕ :=
+      (leafEstimateGroupLevel Lf)
+    let S0 : Finset (ℤ × ℤ) :=
+      (leafEstimateSurvivingCells κ c₀ A bf p AD fp)
+    let gs : ℤ × ℤ → Finset bf.Grp :=
+      (leafEstimateCellGroups κ c₀ A bf fp ks)
+    let gset : Finset bf.Grp :=
+      (leafEstimateGroups κ c₀ A bf S0 gs)
+    let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
+      fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
+        (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
+        le_rfl)
+    ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc))),
+    ∀ (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md),
+    ∀ (hA6 : (6 : ℝ) ≤ S.A0),
+    let qG : bf.Grp → ℕ :=
+      fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
+    ∀ (Vl0 : ℝ),
+    ∀ (U : ℝ),
+    ∀ (MV : ℝ),
+    ∀ (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ)),
+    ∀ (ε : ℝ),
+    ∀ (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹),
+    let Ts : Finset (ℕ × ℕ) :=
+      Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
+        ⌊S.Dstar⌋₊ + (1 : ℕ))
+    ∀ (_ : (4 : ℝ) ≤ Nl),
+    ∀ (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ),
+    ∀ (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1),
+    let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
+      fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
+        _ => (0 : ℂ)
+    let D₀ : fp.SideInput :=
+      { cat := AD.cat, mbs := mbs, Lf := Lf, u := A.uslot p, S := S, hA := hA6,
+        SP := S.sideParams (1 / 1024 : ℝ), hK := hK1,
+        n := Fintype.card (bf.Lab ⊕ Fin fp.Mc), Ms := Ms, c := cf }
+    ∀ (hcat : Fin (4 : ℕ) → List (CatCol bf.Vtx)),
+    ∀ (hmbb : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ AD.cat l ++ hcat l, e.birth ∈ A.cells),
+    ∀ (hmbT : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (8 : ℝ) * A.colBudget + (↑(bf.tmplPath (AD.cat l ++
+        hcat l) y) : ℝ) ≤ (8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl),
+    let mb' : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l ++ hcat l) :=
+      fun l =>
+          { hb := hmbb l, B := 8 * A.colBudget + (1 + AD.Mp) * Nl, hTp := hmbT l }
+    let D : fp.SideInput :=
+      D₀.appendCat hcat mb'
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, fp.hrank ≤ e.rank),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), D₀.Lf.role l ≤ (4 : ℕ)),
+    let S1 : Finset (ℤ × ℤ) :=
+      {I ∈ S0 | ∀ (j : Fin (4 : ℕ)), ∀ e ∈ Cut j, ¬dyadicGridCell A.G I.1 I.2 ⊆
+        dyadicGridCell A.G e.1 e.2}
+    ∀ (_ : S1 ⊆ A.cells),
+    let Nb : ℕ :=
+      Nat.log (2 : ℕ) S.K + (1 : ℕ)
+    ∀ (_ : Nb = Nat.log (2 : ℕ) S.K + (1 : ℕ)),
+    ∀ (_ : (0 : ℝ) < dyadicGridLength A.G A.R.1),
+    ∀ (_ : (0 : ℝ) ≤ Vl0),
+    let Os : Finset (Fin (4 : ℕ) × Fin (4 : ℕ) × ℕ × ℕ × ℕ × ℕ) :=
+      FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))
+    ∀ (_ : Os = FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))),
+    let Cjg : ℝ :=
+      ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 : ℝ) *
+        ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc :
+        ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))
+    ∀ (_ : Cjg = ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 :
+        ℝ) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) +
+        (↑cc : ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))),
+    let Γa : Fin (4 : ℕ) → ℝ :=
+      fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) * FamParams.capV A
+        cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) +
+        (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ))))) +
+        FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
+    ∀ (_ : Γa = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) *
+        FamParams.capV A cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc
+        (↑k : ℝ) Vl0) + (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc
+        (↑k : ℝ))))) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength
+        A.G A.R.1),
+    let Γb : Fin (4 : ℕ) → ℝ :=
+      fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ)
+        + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
+    ∀ (_ : Γb = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k
+        : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1),
+    let ΓU : ℝ :=
+      (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
+        dyadicGridLength A.G A.R.1
+    ∀ (_ : ΓU = (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
+        dyadicGridLength A.G A.R.1),
+    ∀ (Ee : ℝ),
+    ∀ (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D₀.withQ0 (qG G)).errAt L l G I‖ ^ (2 :
+        ℕ) ≤ Ee),
+    ∀ (_ : Ee ≤ ((8 : ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget
+        ^ (2 : ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) *
+        dyadicGridLength A.G A.R.1),
+    ∀ (_ : (1 : ℕ) ≤ dB),
+    let Gq : ℝ :=
+      Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ))
+        + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2
+        : ℕ))
+    ∀ (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
+        1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Gq + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ))),
+    let Mt : ℝ :=
+      (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range (S.Jstar +
+        (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ
+    ∀ (_ : Mt = (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range
+        (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ),
+    let Iw : ℕ :=
+      ⌊Real.logb (2 : ℝ) (S.Dstar ^ (250 : ℕ))⌋₊
+    ∀ (C : Finset (ℤ × ℤ)),
+    ∀ (C₂ : Finset (ℤ × ℤ)),
+    ∀ (_ : C ⊆ A.cells),
+    ∀ (_ : dyadicRootLength A.G (maximalDyadicCells A.G C) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G
+        A.R.1),
+    ∀ (_ : C₂ ⊆ S1),
+    ∀ (_ : dyadicRootLength A.G C₂ ≤ ρ * dyadicGridLength A.G A.R.1),
+    ∀ (_ : (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc),
+    ∀ (_ : E ≤ (↑k : ℝ) ^ cc),
+    ∀ (_ : ρ⁻¹ ≤ (↑k : ℝ) ^ cc),
+    ∀ (_ : (↑k : ℝ) ^ cc ≤ kD),
+    ∀ (_ : (2 : ℝ) ≤ (↑k : ℝ)),
+    ∀ (u : ℝ),
+    ∀ (_ : u = kD * (↑fp.P : ℝ)),
+    ∀ (_ : (↑A.famVtxBound : ℝ) ≤ (8 : ℝ) * A.colBudget + (1 : ℝ)),
+    ∀ (_ : Real.log S.Dstar ≤ (↑Cg : ℝ) * u ^ Cg),
+    let Λ : ℝ :=
+      (↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB Hm δ Nl kD δ) +
+        Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl) + Real.log
+        (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)
+    ∀ (_ : (↑S.K : ℝ) ≤ Msch * Λ ^ (16 : ℕ)),
+    ∀ (_ : Real.log S.H ≤ Msch * Λ ^ (12 : ℕ)),
+    ∀ (_ : (0 : ℝ) ≤ Λ),
+    ∀ (_ : Λ ≤ (↑CΛ : ℝ) * u ^ eΛ),
+    ∀ (_ : (0 : ℝ) ≤ E),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), (0 : ℝ) ≤ (fun (_ : Fin (4 : ℕ)) => Vl0) l ∧ (fun (_ : Fin (4 :
+        ℕ)) => Vl0) l ≤ Vl0),
+    let TT : ℝ :=
+      TsideF A fp.P S.K (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))
+        (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ
+    ∀ (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √TT),
+    ∀ (_ : (0 : ℝ) ≤ TT),
+    let T2v : ℝ :=
+      D.T2 cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ
+    let S₂ : Finset (ℤ × ℤ) :=
+      {I ∈ {I ∈ S1 | ¬∃ e ∈ C, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2} |
+        ¬∃ e ∈ C₂, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2}
+    ∀ (_ : ∑ I ∈ S₂, dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ gs I, (fp.Λc I : (Fin (4 : ℕ) →
+        ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (D.toLeafQ qG).out
+        l G I‖ ≤ (6 : ℝ) * (256 : ℝ) * ((2 : ℝ) ^ A.famFuel) ^ (2 : ℕ) * ((2 : ℝ) * η₀ +
+        fp.farC A.famFuel AD.τ₃ (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
+        A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ *
+        dyadicGridLength A.G A.R.1 + (6 : ℝ) * ∑ a : Fin (4 : ℕ), ∑ b : Fin (4 : ℕ), ∑ e :
+        Fin (4 : ℕ), (D.toLeafQ qG).nearBnd hq2 hq3 Nd Nb ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
+        A.famFuel + (2 : ℕ)) (↑AD.Mp : ℝ) ((2 : ℝ) * √(1 : ℝ)) (ρ / (64 : ℝ)) Γa Γb ΓU a b
+        e + A.η ^ ((1 : ℝ) - ((1 : ℝ) - (1 / 1200 : ℝ))) * (D.Tside qG ((2 : ℕ) ^
+        A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
+        : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^
+        A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
+        : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^
+        A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
+        : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * dyadicGridLength A.G
+        A.R.1) + (82 : ℝ) * ((81 : ℝ) * (localFormUniformConstant κ * (coreBd (max ((2 :
+        ℝ) * √(1 : ℝ)) A.S) T2v + errBd (max ((2 : ℝ) * √(1 : ℝ)) A.S) T2v + √(D.Tside qG
+        ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun
+        (_ : Fin (4 : ℕ)) => Vl0) ρ)) ^ (3 : ℕ)) * (√((4 : ℝ) * ((↑(AD.Mp * A.famVtxBound)
+        : ℝ) * dyadicGridLength A.G A.R.1)) * √Ee)) + (82 : ℝ) * (A.η ^ ((1 : ℝ) - ((1 :
+        ℝ) - (1 / 1200 : ℝ))) * ((81 : ℝ) * localFormUniformConstant κ * max (coreBd (max
+        ((2 : ℝ) * √(1 : ℝ)) A.S) T2v) √(D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
+        A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) ^
+        ((1 : ℝ) - (1 / 1200 : ℝ)) * (D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
+        A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1
+        : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
+        A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1
+        : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
+        A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1
+        : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * dyadicGridLength A.G A.R.1)) + (A.η ^ (1 /
+        1200 : ℝ) * (dyadicGridLength A.G A.R.1 * (D.coreM4 (3 : ℕ) U ε (max (max (1 : ℝ)
+        Mt) (D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc
+        (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) + ∑ l : Fin (4 : ℕ), D.coreM3 (3 : ℕ)
+        (1 : ℕ) Iw U ε (max (max (1 : ℝ) Mt) (D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
+        A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) l))
+        + ∑ I ∈ S₂, dyadicGridLength A.G I.1 * D.coreE qG gs (3 : ℕ) (1 : ℕ) Iw U ε I)),
+    ∀ (_ : Real.exp kD ≤ S.Dstar),
+    let ι : ℝ :=
+      (S.Dstar ^ (100 : ℕ))⁻¹ * S.Dstar ^ (10 : ℕ)
+    let Qe : ℝ :=
+      (16 : ℝ) * fourErrC κ (3 : ℕ) * ι + K1c * ((2 : ℝ) * fourKC κ (3 : ℕ) * (12 : ℝ) ^
+        (4 : ℕ) * ε * U ^ (3 : ℕ) * S.Dstar ^ (4 : ℕ)) + (4 : ℝ) * ((81 : ℝ) * threeErrC κ
+        (3 : ℕ) (1 : ℕ) * ι * U + K1c * ((8 : ℝ) * entryCU κ (3 : ℕ) (1 : ℕ) * (2 : ℝ) ^
+        ((1 : ℕ) + (4 : ℕ)) * (12 : ℝ) ^ (3 : ℕ) * ε * U ^ (3 : ℕ) * (S.Dstar ^ (3 : ℕ) *
+        ((↑Iw : ℝ) + (1 : ℝ)))))
+    ∀ (_ : ∑ I ∈ S₂, dyadicGridLength A.G I.1 * D.coreE qG gs (3 : ℕ) (1 : ℕ) Iw U ε I ≤ Qe *
+        ((↑(AD.Mp * A.famVtxBound) : ℝ) * dyadicGridLength A.G A.R.1)),
+    ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
+      dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
+      ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
+      ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
+      dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
+      ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
+      dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
+      ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
+      l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
+      (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
+      leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
+      hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+
+open scoped Classical in
+private def LeafEstimateStage7Statement (context : LeafEstimateContext) : Prop := by
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  exact
+    ∀ (_ : A.SubRootProps η₀ E),
+    ∀ (_ : A.cells.Nonempty),
+    ∀ (_ : (1 : ℝ) ≤ (↑k : ℝ)),
+    let fp : bf.FamParams :=
+      (leafEstimateParameters κ c₀ A bf p AD)
+    let dB : ℕ :=
+      (leafEstimateDimensionBound κ c₀ A)
+    let Nl : ℝ :=
+      (leafEstimatePopulation κ c₀ A bf p AD fp)
+    let Hm : ℝ :=
+      (leafEstimateModeHeight κ c₀ A δ dB)
+    ∀ (_ : (1 : ℝ) ≤ Hm),
+    ∀ (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
+        dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
+        Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ)),
+    ∀ (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
+        Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
+        + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ)),
+    let Lf : SearchLeaf :=
+      (leafEstimateLeaf κ c₀ A bf p s fp)
+    let ks : ℕ :=
+      (leafEstimateGroupLevel Lf)
+    let S0 : Finset (ℤ × ℤ) :=
+      (leafEstimateSurvivingCells κ c₀ A bf p AD fp)
+    let gs : ℤ × ℤ → Finset bf.Grp :=
+      (leafEstimateCellGroups κ c₀ A bf fp ks)
+    let gset : Finset bf.Grp :=
+      (leafEstimateGroups κ c₀ A bf S0 gs)
+    let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
+      fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
+        (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
+        le_rfl)
+    ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc))),
+    ∀ (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md),
+    ∀ (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
+        G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
+        / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
+        (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
+        V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
+        G).alive V)).card : ℝ) ≤ Nl),
+    ∀ (hA6 : (6 : ℝ) ≤ S.A0),
+    let qG : bf.Grp → ℕ :=
+      fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
+    ∀ (Vl0 : ℝ),
+    ∀ (U : ℝ),
+    ∀ (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
+        (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
+        : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)),
+    ∀ (_ : (0 : ℝ) < S.Dstar),
+    ∀ (_ : (1 : ℝ) ≤ S.Dstar),
+    ∀ (_ : (16 : ℝ) ≤ U),
+    ∀ (MV : ℝ),
+    ∀ (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ)),
+    ∀ (ε : ℝ),
+    ∀ (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹),
+    ∀ (_ : (0 : ℝ) < ε),
+    let Ts : Finset (ℕ × ℕ) :=
+      Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
+        ⌊S.Dstar⌋₊ + (1 : ℕ))
+    ∀ (_ : (4 : ℝ) ≤ Nl),
+    ∀ (_ : fp.modeStar Dm0 dB Hm δ Nl kD ≤ S.Dstar),
+    ∀ (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
+        β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
+        b S.K, ∑ m ∈ (Ms l (↑G : bf.Grp)).alive (ancAt A.G J (b - (4 : ℤ) * (↑S.K : ℤ))),
+        ‖c l G b J m‖ ^ (2 : ℕ) ≤ (4 : ℝ) * S.Dstar ^ (2 : ℕ) * (1 : ℝ)),
+    ∀ (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1),
+    let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
+      fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
+        _ => (0 : ℂ)
+    let D₀ : fp.SideInput :=
+      { cat := AD.cat, mbs := mbs, Lf := Lf, u := A.uslot p, S := S, hA := hA6,
+        SP := S.sideParams (1 / 1024 : ℝ), hK := hK1,
+        n := Fintype.card (bf.Lab ⊕ Fin fp.Mc), Ms := Ms, c := cf }
+    ∀ (hcat : Fin (4 : ℕ) → List (CatCol bf.Vtx)),
+    ∀ (hmbb : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ AD.cat l ++ hcat l, e.birth ∈ A.cells),
+    ∀ (hmbT : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (8 : ℝ) * A.colBudget + (↑(bf.tmplPath (AD.cat l ++
+        hcat l) y) : ℝ) ≤ (8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl),
+    let mb' : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l ++ hcat l) :=
+      fun l =>
+          { hb := hmbb l, B := 8 * A.colBudget + (1 + AD.Mp) * Nl, hTp := hmbT l }
+    let D : fp.SideInput :=
+      D₀.appendCat hcat mb'
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, fp.hrank ≤ e.rank),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), D₀.Lf.role l ≤ (4 : ℕ)),
+    let S1 : Finset (ℤ × ℤ) :=
+      {I ∈ S0 | ∀ (j : Fin (4 : ℕ)), ∀ e ∈ Cut j, ¬dyadicGridCell A.G I.1 I.2 ⊆
+        dyadicGridCell A.G e.1 e.2}
+    ∀ (_ : S1 ⊆ S0),
+    ∀ (_ : S1 ⊆ A.cells),
+    ∀ (_ : ∀ I ∈ A.cells, A.blkStart S.K I.1 ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K * β)
+        : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ)))),
+    let Nb : ℕ :=
+      Nat.log (2 : ℕ) S.K + (1 : ℕ)
+    ∀ (_ : Nb = Nat.log (2 : ℕ) S.K + (1 : ℕ)),
+    ∀ (_ : (0 : ℝ) < dyadicGridLength A.G A.R.1),
+    ∀ (_ : (0 : ℝ) ≤ Vl0),
+    let Os : Finset (Fin (4 : ℕ) × Fin (4 : ℕ) × ℕ × ℕ × ℕ × ℕ) :=
+      FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))
+    ∀ (_ : Os = FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))),
+    let Cjg : ℝ :=
+      ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 : ℝ) *
+        ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc :
+        ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))
+    ∀ (_ : Cjg = ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 :
+        ℝ) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) +
+        (↑cc : ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))),
+    let Γa : Fin (4 : ℕ) → ℝ :=
+      fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) * FamParams.capV A
+        cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) +
+        (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ))))) +
+        FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
+    ∀ (_ : Γa = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) *
+        FamParams.capV A cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc
+        (↑k : ℝ) Vl0) + (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc
+        (↑k : ℝ))))) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength
+        A.G A.R.1),
+    let Γb : Fin (4 : ℕ) → ℝ :=
+      fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ)
+        + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
+    ∀ (_ : Γb = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k
+        : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1),
+    let ΓU : ℝ :=
+      (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
+        dyadicGridLength A.G A.R.1
+    ∀ (_ : ΓU = (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
+        dyadicGridLength A.G A.R.1),
+    ∀ (Ee : ℝ),
+    ∀ (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D₀.withQ0 (qG G)).errAt L l G I‖ ^ (2 :
+        ℕ) ≤ Ee),
+    ∀ (_ : Ee ≤ ((8 : ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget
+        ^ (2 : ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) *
+        dyadicGridLength A.G A.R.1),
+    ∀ (_ : ∑ I ∈ S1, dyadicGridLength A.G I.1 * (↑(gs I).card : ℝ) ≤ (↑(AD.Mp * A.famVtxBound)
+        : ℝ) * dyadicGridLength A.G A.R.1),
+    ∀ (_ : (1 : ℕ) ≤ dB),
+    ∀ (_ : ∀ (j : Fin (4 : ℕ)) (G : ↥gset), D.c j (↑G : bf.Grp) = c j G),
+    let Gq : ℝ :=
+      Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ))
+        + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2
+        : ℕ))
+    ∀ (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
+        1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Gq + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ))),
+    let Mt : ℝ :=
+      (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range (S.Jstar +
+        (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ
+    ∀ (_ : Mt = (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range
+        (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ),
+    let Iw : ℕ :=
+      ⌊Real.logb (2 : ℝ) (S.Dstar ^ (250 : ℕ))⌋₊
+    ∀ (C : Finset (ℤ × ℤ)),
+    ∀ (C₂ : Finset (ℤ × ℤ)),
+    ∀ (_ : C ⊆ A.cells),
+    ∀ (_ : dyadicRootLength A.G (maximalDyadicCells A.G C) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G
+        A.R.1),
+    ∀ (_ : C₂ ⊆ S1),
+    ∀ (_ : dyadicRootLength A.G C₂ ≤ ρ * dyadicGridLength A.G A.R.1),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ I ∈ {I ∈ {I ∈ S1 | ¬∃ e ∈ C, dyadicGridCell A.G I.1 I.2 ⊆
+        dyadicGridCell A.G e.1 e.2} | ¬∃ e ∈ C₂, dyadicGridCell A.G I.1 I.2 ⊆
+        dyadicGridCell A.G e.1 e.2}, ∀ G ∈ gs I, √((dyadicGridLength A.G I.1)⁻¹ * ∫ (y :
+        ℝ) in dyadicGridLeft A.G I.1 I.2..dyadicGridLeft A.G I.1 I.2 + dyadicGridLength
+        A.G I.1, ‖augPhys ((D.withQ0 (qG G)).toLeaf.sv l G I) y‖ ^ (2 : ℕ)) ≤ U),
+    ∀ (_ : ∑ I ∈ {I ∈ S1 | ¬∃ e ∈ C, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2}
+        with ¬∃ e ∈ C₂, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2,
+        dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ gs I, (fp.Λc I : (Fin (4 : ℕ) →
+        ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (D.toLeafQ qG).out
+        l G I‖ ≤ (6 : ℝ) * (256 : ℝ) * ((2 : ℝ) ^ A.famFuel) ^ (2 : ℕ) * ((2 : ℝ) * η₀ +
+        fp.farC A.famFuel AD.τ₃ (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
+        A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ *
+        dyadicGridLength A.G A.R.1 + (6 : ℝ) * ∑ a : Fin (4 : ℕ), ∑ b : Fin (4 : ℕ), ∑ e :
+        Fin (4 : ℕ), (D.toLeafQ qG).nearBnd hq2 hq3 Nd Nb ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) *
+        A.famFuel + (2 : ℕ)) (↑AD.Mp : ℝ) ((2 : ℝ) * √(1 : ℝ)) (ρ / (64 : ℝ)) Γa Γb ΓU a b
+        e + A.η ^ ((1 : ℝ) - ((1 : ℝ) - (1 / 1200 : ℝ))) * (D.Tside qG ((2 : ℕ) ^
+        A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
+        : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^
+        A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
+        : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * D.Tside qG ((2 : ℕ) ^
+        A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4
+        : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) * dyadicGridLength A.G
+        A.R.1) + (82 : ℝ) * ((81 : ℝ) * (localFormUniformConstant κ * (coreBd (max ((2 :
+        ℝ) * √(1 : ℝ)) A.S) (D.T2 cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ) + errBd
+        (max ((2 : ℝ) * √(1 : ℝ)) A.S) (D.T2 cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)
+        + √(D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc
+        (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) ^ (3 : ℕ)) * (√((4 : ℝ) * ((↑(AD.Mp *
+        A.famVtxBound) : ℝ) * dyadicGridLength A.G A.R.1)) * √Ee)) + (82 : ℝ) * (A.η ^ ((1
+        : ℝ) - ((1 : ℝ) - (1 / 1200 : ℝ))) * ((81 : ℝ) * localFormUniformConstant κ * max
+        (coreBd (max ((2 : ℝ) * √(1 : ℝ)) A.S) (D.T2 cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) =>
+        Vl0) ρ)) √(D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 :
+        ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) ^ ((1 : ℝ) - (1 / 1200 : ℝ)) *
+        (D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
+        : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) *
+        D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
+        : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) *
+        D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
+        : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ ^ (((1 : ℝ) - (1 / 1200 : ℝ)) / (2 : ℝ)) *
+        dyadicGridLength A.G A.R.1)) + (A.η ^ (1 / 1200 : ℝ) * (dyadicGridLength A.G A.R.1
+        * (D.coreM4 (3 : ℕ) U ε (max (max (1 : ℝ) Mt) (D.Tside qG ((2 : ℕ) ^ A.famFuel)
+        ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) =>
+        Vl0) ρ)) + ∑ l : Fin (4 : ℕ), D.coreM3 (3 : ℕ) (1 : ℕ) Iw U ε (max (max (1 : ℝ)
+        Mt) (D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc
+        (↑k : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)) l)) + ∑ I ∈ {I ∈ S1 | ¬∃ e ∈ C,
+        dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2} with ¬∃ e ∈ C₂,
+        dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2, dyadicGridLength A.G I.1
+        * D.coreE qG gs (3 : ℕ) (1 : ℕ) Iw U ε I)),
+    ∀ (_ : (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc),
+    ∀ (_ : Real.log fp.Hed ≤ (↑k : ℝ) ^ cc),
+    ∀ (_ : E ≤ (↑k : ℝ) ^ cc),
+    ∀ (_ : ρ⁻¹ ≤ (↑k : ℝ) ^ cc),
+    ∀ (_ : (↑k : ℝ) ^ cc ≤ kD),
+    ∀ (_ : (2 : ℝ) ≤ (↑k : ℝ)),
+    ∀ (_ : CΛ = (2 : ℕ) * Cg + (12 : ℕ)),
+    ∀ (_ : eΛ = Cg + (3 : ℕ) * cc),
+    ∀ (_ : (1 : ℝ) ≤ (↑fp.P : ℝ)),
+    ∀ (u : ℝ),
+    ∀ (_ : u = kD * (↑fp.P : ℝ)),
+    ∀ (_ : (1 : ℝ) ≤ u),
+    ∀ (_ : (↑k : ℝ) ≤ u),
+    ∀ (_ : Nl ≤ Real.exp ((↑k : ℝ) ^ cc)),
+    ∀ (_ : (↑A.famVtxBound : ℝ) ≤ (8 : ℝ) * A.colBudget + (1 : ℝ)),
+    ∀ (_ : Real.log (fp.modeStarG Dm0 dB Hm δ Nl kD δ) ≤ (↑Cg : ℝ) * (kD * (↑fp.P : ℝ)) ^ Cg ∧
+        Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ))) ≤ (↑Cg : ℝ) * (kD *
+        (↑fp.P : ℝ)) ^ Cg),
+    ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
+      dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
+      ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
+      ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
+      dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
+      ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
+      dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
+      ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
+      l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
+      (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
+      leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
+      hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+
+open scoped Classical in
+private def LeafEstimateStage6Statement (context : LeafEstimateContext) : Prop := by
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  exact
+    ∀ (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
+        : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
+        k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
+        → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
+        (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
+        Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
+        A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
+        (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
+        (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
+        (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg),
+    ∀ (_ : A.AncClosed),
+    ∀ (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
+        I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀)),
+    ∀ (_ : A.SubRootProps η₀ E),
+    ∀ (_ : A.cells.Nonempty),
+    ∀ (_ : A.DepthWin Nd),
+    ∀ (_ : (1 : ℝ) ≤ (↑k : ℝ)),
+    let fp : bf.FamParams :=
+      (leafEstimateParameters κ c₀ A bf p AD)
+    let dB : ℕ :=
+      (leafEstimateDimensionBound κ c₀ A)
+    ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
+        (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
+        Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
+        Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
+        bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
+        ℝ) ≤ Real.log bumpConst),
+    let Nl : ℝ :=
+      (leafEstimatePopulation κ c₀ A bf p AD fp)
+    ∀ (_ : Monotone AD.n),
+    let Hm : ℝ :=
+      (leafEstimateModeHeight κ c₀ A δ dB)
+    ∀ (_ : (1 : ℝ) ≤ Hm),
+    ∀ (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
+        ℝ) ≤ fp.Hed),
+    ∀ (_ : (↑S.dmax : ℝ) ≤ S.Dstar),
+    ∀ (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
+        dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
+        Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ)),
+    ∀ (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
+        Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
+        + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ)),
+    let Lf : SearchLeaf :=
+      (leafEstimateLeaf κ c₀ A bf p s fp)
+    let ks : ℕ :=
+      (leafEstimateGroupLevel Lf)
+    let S0 : Finset (ℤ × ℤ) :=
+      (leafEstimateSurvivingCells κ c₀ A bf p AD fp)
+    ∀ (_ : S0 ⊆ AD.Tc),
+    let gs : ℤ × ℤ → Finset bf.Grp :=
+      (leafEstimateCellGroups κ c₀ A bf fp ks)
+    let gset : Finset bf.Grp :=
+      (leafEstimateGroups κ c₀ A bf S0 gs)
+    ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I),
+    let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
+      fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
+        (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
+        le_rfl)
+    ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc))),
+    ∀ (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md),
+    ∀ (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
+        G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
+        / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
+        (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
+        V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
+        G).alive V)).card : ℝ) ≤ Nl),
+    ∀ (hA6 : (6 : ℝ) ≤ S.A0),
+    let qG : bf.Grp → ℕ :=
+      fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
+    ∀ (_ : ∀ (G : bf.Grp), (1 : ℕ) ≤ qG G ∧ qG G ≤ S.Q0),
+    ∀ (Vl0 : ℝ),
+    ∀ (U : ℝ),
+    ∀ (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
+        (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
+        : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)),
+    ∀ (_ : (0 : ℝ) < S.Dstar),
+    ∀ (_ : (1 : ℝ) ≤ S.Dstar),
+    ∀ (_ : (16 : ℝ) ≤ U),
+    ∀ (_ : (0 : ℝ) < U),
+    ∀ (MV : ℝ),
+    ∀ (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ)),
+    ∀ (_ : (0 : ℝ) ≤ MV),
+    ∀ (ε : ℝ),
+    ∀ (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹),
+    ∀ (_ : (0 : ℝ) < ε),
+    ∀ (_ : ε ≤ U),
+    ∀ (_ : ∀ (σ : ℝ), ε ≤ σ → σ ≤ U → (∃ (k : ℤ), σ = (2 : ℝ) ^ k) → S.Dstar⁻¹ ≤ σ → σ ∈ dyThr
+        ε U S.Dstar),
+    ∀ (_ : (↑(dyThr ε U S.Dstar).card : ℝ) ≤ Real.logb (2 : ℝ) U - Real.logb (2 : ℝ) ε + (3 :
+        ℝ)),
+    let Ts : Finset (ℕ × ℕ) :=
+      Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
+        ⌊S.Dstar⌋₊ + (1 : ℕ))
+    ∀ (_ : Ts = Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2
+        : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ))),
+    let BN : ℕ :=
+      ⌈(8 : ℝ) * A.colBudget + Nl⌉₊
+    let τb : ℝ :=
+      (1 : ℝ) / ((1 : ℝ) + (↑BN : ℝ) * A.colBudget ^ (2 : ℕ))
+    ∀ (_ : (0 : ℝ) < τb),
+    ∀ (_ : τb ≤ (1 : ℝ)),
+    ∀ (_ : τb * (↑BN : ℝ) * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ)),
+    ∀ (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τb⁻¹) ^ A.Dg) ≤ fp.Hed),
+    ∀ (_ : ∀ I ∈ A.cells, dyadicGridCell A.G I.1 I.2 ⊆ Set.Icc (dyadicGridLeft A.G A.R.1 A.R.2)
+        (dyadicGridLeft A.G A.R.1 A.R.2 + dyadicGridLength A.G A.R.1)),
+    ∀ (_ : Fin (4 : ℕ) → ↥gset → bf.Vtx),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), fp.bbase (Lf.role l) + fp.P ≤ fp.Hmax),
+    ∀ (_ : (4 : ℝ) ≤ Nl),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (Finset.card ({q : ↥gset × (bf.Lab ⊕ Fin fp.Mc) | ∃ I ∈
+        A.cells, (∃ (k' : ℕ), fp.Cert k' (↑q.1 : bf.Grp) I) ∧ ∃ (p_1 : Fin fp.P), y ∈
+        dyadicGridCell A.G I.1 I.2 ∧ q.2 ∈ mainLabelsM A.G fp.Mc (bf.origCols l) (AD.cat
+        l) I (fp.brank (Lf.role l)) (fp.bmask I (↑q.1 : bf.Grp) (Lf.role l) ((↑p_1 : ℕ) +
+        (1 : ℕ))) d})) ≤ BN),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∑ G : ↥gset, (↑((Ms l (↑G : bf.Grp)).ptSet y).card : ℝ)
+        ≤ S.Dstar),
+    ∀ (_ : fp.modeStar Dm0 dB Hm δ Nl kD ≤ S.Dstar),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), (↑(Lf.layers l).length : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) +
+        (1 : ℝ))),
+    ∀ (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
+        β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
+        b S.K, ∑ m ∈ (Ms l (↑G : bf.Grp)).alive (ancAt A.G J (b - (4 : ℤ) * (↑S.K : ℤ))),
+        ‖c l G b J m‖ ^ (2 : ℕ) ≤ (4 : ℝ) * S.Dstar ^ (2 : ℕ) * (1 : ℝ)),
+    ∀ (Rr : (l : Fin (4 : ℕ)) → (h : ℕ) → ℕ × ℕ → (G : ↥gset) → (Ms l (↑G : bf.Grp)).RepClass
+        (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) (10 : ℕ) h),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ h ≤ S.Jstar, ∀ (t : ℕ × ℕ) (G : ↥gset), (Rr l h t G).Nd = {c
+        ∈ (Ms l (↑G : bf.Grp)).succNodes (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams
+        (1 / 1024 : ℝ)) (fp.retainedPairs (↑G : bf.Grp) (Finset.image (fun (β : ℕ) =>
+        A.R.1 + (↑(S.K * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ)))) S.K) h | (Ms l
+        (↑G : bf.Grp)).nodeType1 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c = t.1 ∧
+        (Ms l (↑G : bf.Grp)).nodeType2 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c =
+        t.2}),
+    ∀ (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1),
+    let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
+      fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
+        _ => (0 : ℂ)
+    let D₀ : fp.SideInput :=
+      { cat := AD.cat, mbs := mbs, Lf := Lf, u := A.uslot p, S := S, hA := hA6,
+        SP := S.sideParams (1 / 1024 : ℝ), hK := hK1,
+        n := Fintype.card (bf.Lab ⊕ Fin fp.Mc), Ms := Ms, c := cf }
+    let gE : ℤ × ℤ → Fin A.famVtxBound → bf.Grp :=
+      fun (I : ℤ × ℤ) (i : Fin A.famVtxBound) => if h : (↑i : ℕ) < (gs I).card then
+        (↑(((gs I).equivFin.symm : Fin (gs I).card → ↥(gs I)) ⟨(↑i : ℕ), h⟩) : bf.Grp)
+        else default
+    ∀ (_ : ∀ (I : ℤ × ℤ), ∀ G ∈ gs I, ∃ (i : Fin A.famVtxBound), gE I i = G),
+    ∀ (hcat : Fin (4 : ℕ) → List (CatCol bf.Vtx)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ d ∈ hcat l, d.birth ∈ AD.Tc ∧ d.rank = fp.Lc + (5 : ℕ) ∧ (∃
+        (M : fp.MaskName d.birth), fp.maskOf d.birth M d.tag) ∧ ∃ R ∈ residueBox (bf.vtag
+        d.tag).dim (9 : ℕ), ∃ (γ : ℝ), d = templateCol (bf.vtag d.tag) l R γ d.birth
+        d.rank d.tag),
+    ∀ (hmbb : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ AD.cat l ++ hcat l, e.birth ∈ A.cells),
+    ∀ (hmbT : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (8 : ℝ) * A.colBudget + (↑(bf.tmplPath (AD.cat l ++
+        hcat l) y) : ℝ) ≤ (8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl),
+    let mb' : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l ++ hcat l) :=
+      fun l =>
+          { hb := hmbb l, B := 8 * A.colBudget + (1 + AD.Mp) * Nl, hTp := hmbT l }
+    let D : fp.SideInput :=
+      D₀.appendCat hcat mb'
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, fp.hrank ≤ e.rank),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), D₀.Lf.role l ≤ (4 : ℕ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, bf.occAvail (↑e.tag.2 : ℤ × ℤ) e.tag.1),
+    let S1 : Finset (ℤ × ℤ) :=
+      {I ∈ S0 | ∀ (j : Fin (4 : ℕ)), ∀ e ∈ Cut j, ¬dyadicGridCell A.G I.1 I.2 ⊆
+        dyadicGridCell A.G e.1 e.2}
+    ∀ (_ : S1 ⊆ S0)
+      (_ : S1 ⊆ A.cells)
+      (_ : ∀ I ∈ A.cells, ((I.1 - A.R.1) / (↑S.K : ℤ)).toNat < A.treeDepth + (1 : ℕ))
+      (_ : ∀ I ∈ A.cells, A.blkStart S.K I.1 ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K * β)
+        : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))))
+      (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), D.u ≠ some l → ∀ (w : fp.TestName I Unit), fp.MainRk
+        w → (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).Pass A.G
+        (bf.origCols l) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold A.famVtxBound AD.τ₃
+        AD.n (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).r) fp.mH (D.cat l))
+      (_ : ∀ I ∈ S1, ∀ (a : Fin (4 : ℕ)) (w : fp.HelperName I (Fin A.famVtxBound)),
+        (fp.helperOf a I (fun (i : Fin A.famVtxBound) => (D.toLeafQ qG).sv a (gE I i) I)
+        w).Pass A.G (bf.origCols a) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold
+        A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ))) fp.mH (D.cat a))
+      (_ : ∀ (R : ℕ), (1 : ℕ) ≤ R → R ≤ fp.Lc + (4 : ℕ) → catThreshold A.famVtxBound AD.τ₃ AD.n
+        R * (A.colBudget * √(AD.n (R - (1 : ℕ)))) ≤ AD.τ₃)
+      (_ : catThreshold A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ)) * (A.colBudget * √(AD.n
+        (fp.Lc + (4 : ℕ)))) ≤ AD.τ₃)
+      (_ : ∀ (R : ℕ), (0 : ℝ) ≤ catThreshold A.famVtxBound AD.τ₃ AD.n R)
+      (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), ∀ r ≤ fp.Lc + (4 : ℕ), ∀ (M : bf.Vtx → Prop),
+        (↑(mainLabelsM A.G fp.Mc (bf.origCols l) (D.cat l) I r M d).card : ℝ) ≤ AD.n r),
+    let NH : ℝ :=
+      (2 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl
+    ∀ (_ : ∀ I ∈ S1, ∀ (a : Fin (4 : ℕ)) (M : bf.Vtx → Prop), (↑(mainLabelsM A.G fp.Mc
+        (bf.origCols a) (D.cat a) I (fp.Lc + (5 : ℕ)) M d).card : ℝ) ≤ NH),
+    let τ₂ : ℝ :=
+      AD.τ₃ / ((1 : ℝ) + A.colBudget * √(AD.n (fp.Lc + (4 : ℕ))) * (A.colBudget * √NH))
+    ∀ (_ : (0 : ℝ) < τ₂)
+      (_ : τ₂ ≤ (1 : ℝ))
+      (_ : τ₂ * (A.colBudget * √(AD.n (fp.Lc + (4 : ℕ))) * (A.colBudget * √NH)) ≤ AD.τ₃)
+      (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τ₂⁻¹) ^ A.Dg) ≤ fp.Hed),
+    let Nb : ℕ :=
+      Nat.log (2 : ℕ) S.K + (1 : ℕ)
+    ∀ (_ : Nb = Nat.log (2 : ℕ) S.K + (1 : ℕ))
+      (_ : S.K ≤ (2 : ℕ) ^ Nb)
+      (_ : (0 : ℝ) < dyadicGridLength A.G A.R.1)
+      (_ : (0 : ℝ) ≤ Vl0),
+    let Os : Finset (Fin (4 : ℕ) × Fin (4 : ℕ) × ℕ × ℕ × ℕ × ℕ) :=
+      FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))
+    ∀ (_ : Os = FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))),
+    let Cjg : ℝ :=
+      ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 : ℝ) *
+        ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc :
+        ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))
+    ∀ (_ : Cjg = ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 :
+        ℝ) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) +
+        (↑cc : ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))),
+    let Γa : Fin (4 : ℕ) → ℝ :=
+      fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) * FamParams.capV A
+        cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) +
+        (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ))))) +
+        FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
+    ∀ (_ : Γa = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) *
+        FamParams.capV A cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc
+        (↑k : ℝ) Vl0) + (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc
+        (↑k : ℝ))))) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength
+        A.G A.R.1)
+      (_ : ∀ (a : Fin (4 : ℕ)), D.u ≠ some a → fp.stackEA Os (D.cat a) (D.mbs a) (D.toLeafQ
+        qG).Dpre Nb (FamParams.capV A cc (↑k : ℝ)) (FamParams.SideInput.sideB0 A cc (↑k :
+        ℝ) ((fun (_ : Fin (4 : ℕ)) => Vl0) a)) ≤ ((↑fp.P : ℝ) + (2 : ℝ)) * Γa a *
+        dyadicGridLength A.G A.R.1),
+    let Γb : Fin (4 : ℕ) → ℝ :=
+      fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ)
+        + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
+    ∀ (_ : Γb = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k
+        : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1)
+      (_ : ∀ (b : Fin (4 : ℕ)), D.u ≠ some b → (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A
+        cc (↑k : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) ((fun (_ : Fin (4 : ℕ)) =>
+        Vl0) b)) ≤ Γb b * dyadicGridLength A.G A.R.1),
+    let ΓU : ℝ :=
+      (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
+        dyadicGridLength A.G A.R.1
+    ∀ (_ : ΓU = (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
+        dyadicGridLength A.G A.R.1)
+      (_ : (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) ≤ ΓU *
+        dyadicGridLength A.G A.R.1)
+      (_ : ∀ I ∈ S1, ∀ G ∈ gs I, ∀ (l : Fin (4 : ℕ)), D.u ≠ some l → (D.withQ0 (qG G)).RepAt L
+        l G I)
+      (Ee : ℝ)
+      (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D₀.withQ0 (qG G)).errAt L l G I‖ ^ (2 :
+        ℕ) ≤ Ee)
+      (_ : Ee ≤ ((8 : ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget
+        ^ (2 : ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) *
+        dyadicGridLength A.G A.R.1)
+      (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D.withQ0 (qG G)).errAt L l G I‖ ^ (2 : ℕ)
+        ≤ Ee)
+      (_ : ∑ I ∈ S1, dyadicGridLength A.G I.1 * (↑(gs I).card : ℝ) ≤ (↑(AD.Mp * A.famVtxBound)
+        : ℝ) * dyadicGridLength A.G A.R.1)
+      (_ : (1 : ℕ) ≤ dB)
+      (_ : ∀ G ∈ gset, (D.withQ0 (qG G)).PrinOK G δ fp.Hed (fp.Kstar Dm0 dB Hm δ Nl kD δ)
+        (fp.Kstar Dm0 dB Hm δ Nl kD δ))
+      (_ : ∀ G ∈ gset, (D.withQ0 (qG G)).Stab)
+      (_ : ∀ (j : Fin (4 : ℕ)) (G : ↥gset), D.c j (↑G : bf.Grp) = c j G),
+    let Gq : ℝ :=
+      Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ))
+        + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2
+        : ℕ))
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∑ G : ↥gset, ∑ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K
+        * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ‖(Ms l (↑G : bf.Grp)).blockSide
+        (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) b (fp.retainedV
+        (↑G : bf.Grp) b S.K) (c l G b)‖ ^ (2 : ℕ) ≤ (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax :
+        ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Gq + (2 : ℝ)
+        * (1 : ℝ) / S.Dstar ^ (394 : ℕ)) * dyadicGridLength A.G A.R.1)
+      (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
+        1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Gq + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ)))
+      (_ : Gq = Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 :
+        ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ)))
+        ^ (2 : ℕ))),
+    let Mt : ℝ :=
+      (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range (S.Jstar +
+        (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ
+    ∀ (_ : Mt = (24 : ℝ) * ((2 : ℝ) * Gq + (2 : ℝ) * (↑S.K : ℝ) * Vl0) * (↑(Finset.range
+        (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U S.Dstar).card : ℝ) / ρ)
+      (_ : ∀ (j : Fin (4 : ℕ)) (y : ℝ), ∀ h ∈ ModeComponents.upperHeights D.SP.Jst D.SP.δs, ∀ t
+        ∈ Finset.range (Nat.log (2 : ℕ) ⌊D.S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log
+        (2 : ℕ) ⌊D.S.Dstar⌋₊ + (1 : ℕ)), ∀ σ ∈ dyThr ε U S.Dstar, ∑ G : ↥gset,
+        (↑(Finset.image (fun (p : (ℤ × ℤ) × ℤ × (ℤ × ℤ) × (D.Ms j (↑G : bf.Grp)).Md) =>
+        (Rr j h t G).rep p.2) ({p ∈ fp.useInst (↑G : bf.Grp) D.S.K (Rr j h t G).Nd | (∀ e
+        ∈ Cut j, ¬dyadicGridCell A.G p.1.1 p.1.2 ⊆ dyadicGridCell A.G e.1 e.2) ∧ y ∈
+        dyadicGridCell A.G p.1.1 p.1.2 ∧ σ ^ (2 : ℕ) ≤ (D.Ms j (↑G : bf.Grp)).nodeSize
+        (D.withQ0 (qG (↑G : bf.Grp))).S D.hA D.SP (D.c j (↑G : bf.Grp)) h p})).card : ℝ) ≤
+        Mt * σ ^ (-2 : ℝ))
+      (_ : ∀ I ∈ S1, ∀ G ∈ gs I, ∀ h ∈ ModeComponents.upperHeights D.SP.Jst D.SP.δs, ∀ (j : Fin
+        (4 : ℕ)), ∀ F ∈ (D.withQ0 (qG G)).goodCls G I j h, (D.withQ0 (qG G)).clsSize G I j
+        F ≤ U)
+      (_ : √(D.Tside qG ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
+        : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ) ≤ U)
+      (_ : (2 : ℝ) ^ ⌊Real.logb (2 : ℝ) (S.Dstar ^ (250 : ℕ))⌋₊ ≤ S.Dstar ^ (250 : ℕ) ∧ S.Dstar
+        ^ (250 : ℕ) < (2 : ℝ) ^ (⌊Real.logb (2 : ℝ) (S.Dstar ^ (250 : ℕ))⌋₊ + (1 : ℕ)))
+      (_ : ∀ G ∈ gset, (∀ (j : Fin (4 : ℕ)), (8 : ℝ) * (D.Ms j G).Λ ≤ D.S.Ξ) ∧ (∀ (j : Fin (4 :
+        ℕ)), (D.Ms j G).zc = bf.vtag (bf.grpCenter d G)) ∧ (bf.vtag (bf.grpCenter d
+        G)).dim ≤ D.S.dmax),
+    ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
+      dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
+      ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
+      ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
+      dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
+      ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
+      dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
+      ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
+      l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
+      (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
+      leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
+      hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+
+open scoped Classical in
+private def LeafEstimateStage5Statement (context : LeafEstimateContext) : Prop := by
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  exact
+    ∀ (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
+        : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
+        k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
+        → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
+        (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
+        Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
+        A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
+        (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
+        (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
+        (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg),
+    ∀ (_ : A.AncClosed),
+    ∀ (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
+        I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀)),
+    ∀ (_ : A.SubRootProps η₀ E),
+    ∀ (_ : A.cells.Nonempty),
+    ∀ (_ : A.DepthWin Nd),
+    ∀ (_ : (1 : ℝ) ≤ (↑k : ℝ)),
+    let fp : bf.FamParams :=
+      (leafEstimateParameters κ c₀ A bf p AD)
+    let dB : ℕ :=
+      (leafEstimateDimensionBound κ c₀ A)
+    ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
+        (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
+        Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
+        Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
+        bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
+        ℝ) ≤ Real.log bumpConst),
+    ∀ (_ : (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ)),
+    let Nl : ℝ :=
+      (leafEstimatePopulation κ c₀ A bf p AD fp)
+    ∀ (_ : Monotone AD.n),
+    let Hm : ℝ :=
+      (leafEstimateModeHeight κ c₀ A δ dB)
+    ∀ (_ : (1 : ℝ) ≤ Hm),
+    ∀ (_ : ∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB),
+    ∀ (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
+        ℝ) ≤ fp.Hed),
+    ∀ (_ : (↑S.dmax : ℝ) ≤ S.Dstar),
+    ∀ (_ : (↑S.Q0 : ℝ) * (2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ)) ≤ S.Bstar),
+    ∀ (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
+        dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
+        Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ)),
+    ∀ (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
+        Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
+        + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ)),
+    let Lf : SearchLeaf :=
+      (leafEstimateLeaf κ c₀ A bf p s fp)
+    let ks : ℕ :=
+      (leafEstimateGroupLevel Lf)
+    let S0 : Finset (ℤ × ℤ) :=
+      (leafEstimateSurvivingCells κ c₀ A bf p AD fp)
+    ∀ (_ : S0 ⊆ AD.Tc),
+    let gs : ℤ × ℤ → Finset bf.Grp :=
+      (leafEstimateCellGroups κ c₀ A bf fp ks)
+    let gset : Finset bf.Grp :=
+      (leafEstimateGroups κ c₀ A bf S0 gs)
+    ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I),
+    let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
+      fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
+        (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
+        le_rfl)
+    ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc))),
+    ∀ (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, fp.ModeExports l (AD.cat l) G (Lf.role l) d Dm0 dB
+        Hm δ δ Nl (Ms l G) (L l G)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∉ gset, (∀ (p : (Ms l G).Key), (Ms l G).dvOf p + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Bσ = (1 : ℝ) ∧ ∀ (V : ℤ × ℤ), (Ms l
+        G).alive V = ∅),
+    ∀ (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
+        G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
+        / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
+        (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
+        V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
+        G).alive V)).card : ℝ) ≤ Nl),
+    ∀ (hA6 : (6 : ℝ) ≤ S.A0),
+    let qG : bf.Grp → ℕ :=
+      fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
+    ∀ (_ : ∀ (G : bf.Grp), (1 : ℕ) ≤ qG G ∧ qG G ≤ S.Q0),
+    ∀ (Vl0 : ℝ),
+    ∀ (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
+        1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) *
+        ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) +
+        Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 :
+        ℕ))),
+    ∀ (U : ℝ),
+    ∀ (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
+        (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
+        : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)),
+    ∀ (_ : (2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ) ≤ U),
+    ∀ (_ : (0 : ℝ) < S.Dstar),
+    ∀ (_ : (1 : ℝ) ≤ S.Dstar),
+    ∀ (_ : (16 : ℝ) ≤ U),
+    ∀ (_ : (0 : ℝ) < U),
+    ∀ (MV : ℝ),
+    ∀ (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ)),
+    ∀ (_ : (0 : ℝ) ≤ MV),
+    ∀ (ε : ℝ),
+    ∀ (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹),
+    ∀ (_ : (0 : ℝ) < ε),
+    ∀ (_ : ε ≤ U),
+    ∀ (_ : S.Dstar⁻¹ ≤ U),
+    ∀ (_ : ∀ σ ∈ dyThr ε U S.Dstar, S.Dstar⁻¹ ≤ σ),
+    ∀ (_ : ∀ (σ : ℝ), ε ≤ σ → σ ≤ U → (∃ (k : ℤ), σ = (2 : ℝ) ^ k) → S.Dstar⁻¹ ≤ σ → σ ∈ dyThr
+        ε U S.Dstar),
+    ∀ (_ : (↑(dyThr ε U S.Dstar).card : ℝ) ≤ Real.logb (2 : ℝ) U - Real.logb (2 : ℝ) ε + (3 :
+        ℝ)),
+    let Ts : Finset (ℕ × ℕ) :=
+      Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
+        ⌊S.Dstar⌋₊ + (1 : ℕ))
+    ∀ (_ : Ts = Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2
+        : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ))),
+    let BN : ℕ :=
+      ⌈(8 : ℝ) * A.colBudget + Nl⌉₊
+    let τb : ℝ :=
+      (1 : ℝ) / ((1 : ℝ) + (↑BN : ℝ) * A.colBudget ^ (2 : ℕ))
+    ∀ (_ : (0 : ℝ) < τb),
+    ∀ (_ : τb ≤ (1 : ℝ)),
+    ∀ (_ : τb * (↑BN : ℝ) * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ)),
+    ∀ (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τb⁻¹) ^ A.Dg) ≤ fp.Hed),
+    ∀ (_ : ∀ I ∈ A.cells, dyadicGridCell A.G I.1 I.2 ⊆ Set.Icc (dyadicGridLeft A.G A.R.1 A.R.2)
+        (dyadicGridLeft A.G A.R.1 A.R.2 + dyadicGridLength A.G A.R.1)),
+    ∀ (ρ₀ : Fin (4 : ℕ) → ↥gset → Fin A.fcd0),
+    ∀ (zc : Fin (4 : ℕ) → ↥gset → bf.Vtx),
+    ∀ (gsc : Fin (4 : ℕ) → ↥gset → ℤ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (↑G : bf.Grp).2.1 = some (ρ₀ l G, zc l G, gsc l G)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), fp.MainLiftExports l (AD.cat l) (↑G : bf.Grp)
+        (Lf.role l) d Dm0 dB Hm (gsc l G) (L l (↑G : bf.Grp)) (Ms l (↑G : bf.Grp)).wave
+        (Ms l (↑G : bf.Grp)).cellOf),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), fp.bbase (Lf.role l) + fp.P ≤ fp.Hmax),
+    ∀ (_ : (4 : ℝ) ≤ Nl),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (Finset.card ({q : ↥gset × (bf.Lab ⊕ Fin fp.Mc) | ∃ I ∈
+        A.cells, (∃ (k' : ℕ), fp.Cert k' (↑q.1 : bf.Grp) I) ∧ ∃ (p_1 : Fin fp.P), y ∈
+        dyadicGridCell A.G I.1 I.2 ∧ q.2 ∈ mainLabelsM A.G fp.Mc (bf.origCols l) (AD.cat
+        l) I (fp.brank (Lf.role l)) (fp.bmask I (↑q.1 : bf.Grp) (Lf.role l) ((↑p_1 : ℕ) +
+        (1 : ℕ))) d})) ≤ BN),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∑ G : ↥gset, (↑((Ms l (↑G : bf.Grp)).ptSet y).card : ℝ)
+        ≤ S.Dstar),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (2 : ℝ) * ((↑S.Q0 : ℝ) * ((3 : ℝ) * ((Ms l (↑G :
+        bf.Grp)).Bσ * (Ms l (↑G : bf.Grp)).Bσ) ^ (2 : ℕ))) ^ (2 : ℕ) ≤ (↑⌊S.Dstar⌋₊ : ℝ)),
+    ∀ (_ : fp.modeStar Dm0 dB Hm δ Nl kD ≤ S.Dstar),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), (↑(Lf.layers l).length : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) +
+        (1 : ℝ))),
+    ∀ (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
+        β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
+        b S.K, ∑ m ∈ (Ms l (↑G : bf.Grp)).alive (ancAt A.G J (b - (4 : ℤ) * (↑S.K : ℤ))),
+        ‖c l G b J m‖ ^ (2 : ℕ) ≤ (4 : ℝ) * S.Dstar ^ (2 : ℕ) * (1 : ℝ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∑ G : ↥gset, ∑ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K
+        * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ‖(Ms l (↑G : bf.Grp)).blockSide
+        (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) b (fp.retainedV
+        (↑G : bf.Grp) b S.K) (c l G b)‖ ^ (2 : ℕ) ≤ (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax :
+        ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp
+        (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
+        : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
+        + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ)) * dyadicGridLength A.G A.R.1),
+    ∀ (Rr : (l : Fin (4 : ℕ)) → (h : ℕ) → ℕ × ℕ → (G : ↥gset) → (Ms l (↑G : bf.Grp)).RepClass
+        (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) (10 : ℕ) h),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ h ≤ S.Jstar, ∀ (t : ℕ × ℕ) (G : ↥gset), (Rr l h t G).Nd = {c
+        ∈ (Ms l (↑G : bf.Grp)).succNodes (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams
+        (1 / 1024 : ℝ)) (fp.retainedPairs (↑G : bf.Grp) (Finset.image (fun (β : ℕ) =>
+        A.R.1 + (↑(S.K * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ)))) S.K) h | (Ms l
+        (↑G : bf.Grp)).nodeType1 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c = t.1 ∧
+        (Ms l (↑G : bf.Grp)).nodeType2 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c =
+        t.2}),
+    ∀ (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∀ h ∈ Finset.range (S.Jstar + (1 : ℕ)), ∀ t ∈ Ts, ∀ σ ∈
+        dyThr ε U S.Dstar, ∑ G : ↥gset, (↑(Finset.image (fun (p : (ℤ × ℤ) × ℤ × (ℤ × ℤ) ×
+        (Ms l (↑G : bf.Grp)).Md) => (Rr l h t G).rep p.2) ({p ∈ fp.useInst (↑G : bf.Grp)
+        S.K (Rr l h t G).Nd | (∀ e ∈ Cut l, ¬dyadicGridCell A.G p.1.1 p.1.2 ⊆
+        dyadicGridCell A.G e.1 e.2) ∧ y ∈ dyadicGridCell A.G p.1.1 p.1.2 ∧ σ ^ (2 : ℕ) ≤
+        (Ms l (↑G : bf.Grp)).nodeSize (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 /
+        1024 : ℝ)) (c l G) h p})).card : ℝ) ≤ min S.Dstar ((24 : ℝ) * ((2 : ℝ) * Real.exp
+        (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
+        : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
+        + (2 : ℝ) * (↑S.K : ℝ) * ((24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2
+        : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc :
+        ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 :
+        ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) /
+        S.Dstar ^ (394 : ℕ)))) * (↑(Finset.range (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U
+        S.Dstar).card : ℝ) / (ρ * σ ^ (2 : ℕ)))),
+    let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
+      fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
+        _ => (0 : ℂ)
+    let D₀ : fp.SideInput :=
+      { cat := AD.cat, mbs := mbs, Lf := Lf, u := A.uslot p, S := S, hA := hA6,
+        SP := S.sideParams (1 / 1024 : ℝ), hK := hK1,
+        n := Fintype.card (bf.Lab ⊕ Fin fp.Mc), Ms := Ms, c := cf }
+    let gE : ℤ × ℤ → Fin A.famVtxBound → bf.Grp :=
+      fun (I : ℤ × ℤ) (i : Fin A.famVtxBound) => if h : (↑i : ℕ) < (gs I).card then
+        (↑(((gs I).equivFin.symm : Fin (gs I).card → ↥(gs I)) ⟨(↑i : ℕ), h⟩) : bf.Grp)
+        else default
+    ∀ (_ : ∀ (I : ℤ × ℤ), ∀ G ∈ gs I, ∃ (i : Fin A.famVtxBound), gE I i = G),
+    ∀ (hcat : Fin (4 : ℕ) → List (CatCol bf.Vtx)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ d ∈ hcat l, d.birth ∈ AD.Tc ∧ d.rank = fp.Lc + (5 : ℕ) ∧ (∃
+        (M : fp.MaskName d.birth), fp.maskOf d.birth M d.tag) ∧ ∃ R ∈ residueBox (bf.vtag
+        d.tag).dim (9 : ℕ), ∃ (γ : ℝ), d = templateCol (bf.vtag d.tag) l R γ d.birth
+        d.rank d.tag),
+    ∀ (hmbb : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ AD.cat l ++ hcat l, e.birth ∈ A.cells),
+    ∀ (hmbT : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (8 : ℝ) * A.colBudget + (↑(bf.tmplPath (AD.cat l ++
+        hcat l) y) : ℝ) ≤ (8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl),
+    let mb' : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l ++ hcat l) :=
+      fun l =>
+          { hb := hmbb l, B := 8 * A.colBudget + (1 + AD.Mp) * Nl, hTp := hmbT l }
+    let D : fp.SideInput :=
+      D₀.appendCat hcat mb'
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, fp.hrank ≤ e.rank),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), D₀.Lf.role l ≤ (4 : ℕ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, bf.occAvail (↑e.tag.2 : ℤ × ℤ) e.tag.1),
+    let S1 : Finset (ℤ × ℤ) :=
+      {I ∈ S0 | ∀ (j : Fin (4 : ℕ)), ∀ e ∈ Cut j, ¬dyadicGridCell A.G I.1 I.2 ⊆
+        dyadicGridCell A.G e.1 e.2}
+    ∀ (_ : S1 ⊆ S0)
+      (_ : S1 ⊆ A.cells)
+      (_ : ∀ I ∈ A.cells, ((I.1 - A.R.1) / (↑S.K : ℤ)).toNat < A.treeDepth + (1 : ℕ))
+      (_ : ∀ I ∈ A.cells, A.blkStart S.K I.1 ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K * β)
+        : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))))
+      (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), D.u ≠ some l → ∀ (w : fp.TestName I Unit), fp.MainRk
+        w → (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).Pass A.G
+        (bf.origCols l) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold A.famVtxBound AD.τ₃
+        AD.n (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).r) fp.mH (D.cat l))
+      (_ : ∀ I ∈ S1, ∀ (a : Fin (4 : ℕ)) (w : fp.HelperName I (Fin A.famVtxBound)),
+        (fp.helperOf a I (fun (i : Fin A.famVtxBound) => (D.toLeafQ qG).sv a (gE I i) I)
+        w).Pass A.G (bf.origCols a) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold
+        A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ))) fp.mH (D.cat a))
+      (_ : ∀ (R : ℕ), (1 : ℕ) ≤ R → R ≤ fp.Lc + (4 : ℕ) → catThreshold A.famVtxBound AD.τ₃ AD.n
+        R * (A.colBudget * √(AD.n (R - (1 : ℕ)))) ≤ AD.τ₃)
+      (_ : catThreshold A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ)) * (A.colBudget * √(AD.n
+        (fp.Lc + (4 : ℕ)))) ≤ AD.τ₃)
+      (_ : ∀ (R : ℕ), (0 : ℝ) ≤ catThreshold A.famVtxBound AD.τ₃ AD.n R)
+      (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), ∀ r ≤ fp.Lc + (4 : ℕ), ∀ (M : bf.Vtx → Prop),
+        (↑(mainLabelsM A.G fp.Mc (bf.origCols l) (D.cat l) I r M d).card : ℝ) ≤ AD.n r),
+    let NH : ℝ :=
+      (2 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl
+    ∀ (_ : ∀ I ∈ S1, ∀ (a : Fin (4 : ℕ)) (M : bf.Vtx → Prop), (↑(mainLabelsM A.G fp.Mc
+        (bf.origCols a) (D.cat a) I (fp.Lc + (5 : ℕ)) M d).card : ℝ) ≤ NH),
+    let τ₂ : ℝ :=
+      AD.τ₃ / ((1 : ℝ) + A.colBudget * √(AD.n (fp.Lc + (4 : ℕ))) * (A.colBudget * √NH))
+    ∀ (_ : (0 : ℝ) < τ₂)
+      (_ : τ₂ ≤ (1 : ℝ))
+      (_ : τ₂ * (A.colBudget * √(AD.n (fp.Lc + (4 : ℕ))) * (A.colBudget * √NH)) ≤ AD.τ₃)
+      (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τ₂⁻¹) ^ A.Dg) ≤ fp.Hed),
+    let Nb : ℕ :=
+      Nat.log (2 : ℕ) S.K + (1 : ℕ)
+    ∀ (_ : Nb = Nat.log (2 : ℕ) S.K + (1 : ℕ))
+      (_ : S.K ≤ (2 : ℕ) ^ Nb)
+      (_ : (0 : ℝ) < dyadicGridLength A.G A.R.1)
+      (_ : (0 : ℝ) ≤ Vl0),
+    let Os : Finset (Fin (4 : ℕ) × Fin (4 : ℕ) × ℕ × ℕ × ℕ × ℕ) :=
+      FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))
+    ∀ (_ : Os = FamParams.SideLeafM.nOs ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ))),
+    let Cjg : ℝ :=
+      ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 : ℝ) *
+        ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc :
+        ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))
+    ∀ (_ : Cjg = ((↑((2 : ℕ) * A.famFuel + (2 : ℕ)) : ℝ) + (1 : ℝ)) ^ (2 : ℕ) * Real.exp ((2 :
+        ℝ) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) +
+        (↑cc : ℝ) + (7 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)))),
+    let Γa : Fin (4 : ℕ) → ℝ :=
+      fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) * FamParams.capV A
+        cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) +
+        (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ))))) +
+        FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
+    ∀ (_ : Γa = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * ((2 : ℝ) *
+        FamParams.capV A cc (↑k : ℝ) + (16 : ℝ) * (Cjg * FamParams.SideInput.sideB0 A cc
+        (↑k : ℝ) Vl0) + (16 : ℝ) * ((↑Nb : ℝ) * (Cjg * ((↑Nb : ℝ) * FamParams.capV A cc
+        (↑k : ℝ))))) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength
+        A.G A.R.1)
+      (_ : ∀ (a : Fin (4 : ℕ)), D.u ≠ some a → fp.stackEA Os (D.cat a) (D.mbs a) (D.toLeafQ
+        qG).Dpre Nb (FamParams.capV A cc (↑k : ℝ)) (FamParams.SideInput.sideB0 A cc (↑k :
+        ℝ) ((fun (_ : Fin (4 : ℕ)) => Vl0) a)) ≤ ((↑fp.P : ℝ) + (2 : ℝ)) * Γa a *
+        dyadicGridLength A.G A.R.1),
+    let Γb : Fin (4 : ℕ) → ℝ :=
+      fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k : ℝ)
+        + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1
+    ∀ (_ : Γb = fun (_ : Fin (4 : ℕ)) => (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A cc (↑k
+        : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) Vl0) / dyadicGridLength A.G A.R.1)
+      (_ : ∀ (b : Fin (4 : ℕ)), D.u ≠ some b → (↑Os.card : ℝ) * ((↑Nb : ℝ) * FamParams.capV A
+        cc (↑k : ℝ) + FamParams.SideInput.sideB0 A cc (↑k : ℝ) ((fun (_ : Fin (4 : ℕ)) =>
+        Vl0) b)) ≤ Γb b * dyadicGridLength A.G A.R.1),
+    let ΓU : ℝ :=
+      (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
+        dyadicGridLength A.G A.R.1
+    ∀ (_ : ΓU = (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) /
+        dyadicGridLength A.G A.R.1)
+      (_ : (↑Os.card : ℝ) * ((2 : ℝ) * ((4 : ℝ) * E * dyadicGridLength A.G A.R.1)) ≤ ΓU *
+        dyadicGridLength A.G A.R.1)
+      (_ : ∀ I ∈ S1, ∀ G ∈ gs I, ∀ (l : Fin (4 : ℕ)), D.u ≠ some l → (D.withQ0 (qG G)).RepAt L
+        l G I)
+      (Ee : ℝ)
+      (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D₀.withQ0 (qG G)).errAt L l G I‖ ^ (2 :
+        ℕ) ≤ Ee)
+      (_ : Ee ≤ ((8 : ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget
+        ^ (2 : ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) *
+        dyadicGridLength A.G A.R.1)
+      (_ : ∑ I ∈ S1, ∑ G ∈ gs I, ∑ l : Fin (4 : ℕ), ‖(D.withQ0 (qG G)).errAt L l G I‖ ^ (2 : ℕ)
+        ≤ Ee)
+      (_ : ∑ I ∈ S1, dyadicGridLength A.G I.1 * (↑(gs I).card : ℝ) ≤ (↑(AD.Mp * A.famVtxBound)
+        : ℝ) * dyadicGridLength A.G A.R.1),
+    ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
+      dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
+      ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
+      ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
+      dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
+      ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
+      dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
+      ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
+      l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
+      (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
+      leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
+      hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+
+open scoped Classical in
+private def LeafEstimateStage4Statement (context : LeafEstimateContext) : Prop := by
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  exact
+    ∀ (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
+        : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
+        k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
+        → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
+        (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
+        Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
+        A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
+        (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
+        (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
+        (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg),
+    ∀ (_ : A.AncClosed),
+    ∀ (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
+        I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀)),
+    ∀ (_ : A.SubRootProps η₀ E),
+    ∀ (_ : A.cells.Nonempty),
+    ∀ (_ : A.DepthWin Nd),
+    ∀ (_ : (1 : ℝ) ≤ (↑k : ℝ)),
+    let fp : bf.FamParams :=
+      (leafEstimateParameters κ c₀ A bf p AD)
+    let dB : ℕ :=
+      (leafEstimateDimensionBound κ c₀ A)
+    ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
+        (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
+        Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
+        Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
+        bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
+        ℝ) ≤ Real.log bumpConst),
+    ∀ (_ : (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ)),
+    let Nl : ℝ :=
+      (leafEstimatePopulation κ c₀ A bf p AD fp)
+    ∀ (_ : Monotone AD.n),
+    let Hm : ℝ :=
+      (leafEstimateModeHeight κ c₀ A δ dB)
+    ∀ (_ : (1 : ℝ) ≤ Hm),
+    ∀ (_ : ∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB),
+    ∀ (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
+        ℝ) ≤ fp.Hed),
+    ∀ (_ : (↑S.dmax : ℝ) ≤ S.Dstar),
+    ∀ (_ : (↑S.Q0 : ℝ) * (2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ)) ≤ S.Bstar),
+    ∀ (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
+        dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
+        Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ)),
+    ∀ (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
+        Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
+        + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ)),
+    let Lf : SearchLeaf :=
+      (leafEstimateLeaf κ c₀ A bf p s fp)
+    let ks : ℕ :=
+      (leafEstimateGroupLevel Lf)
+    let S0 : Finset (ℤ × ℤ) :=
+      (leafEstimateSurvivingCells κ c₀ A bf p AD fp)
+    ∀ (_ : S0 ⊆ AD.Tc),
+    let gs : ℤ × ℤ → Finset bf.Grp :=
+      (leafEstimateCellGroups κ c₀ A bf fp ks)
+    let gset : Finset bf.Grp :=
+      (leafEstimateGroups κ c₀ A bf S0 gs)
+    ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I),
+    let U_1 : Fin (4 : ℕ) → bf.Grp → Finset (ℤ × ℤ) :=
+      fun (_ : Fin (4 : ℕ)) (G : bf.Grp) => {I ∈ S0 | G ∈ gs I}
+    let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
+      fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
+        (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
+        le_rfl)
+    ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc))),
+    ∀ (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, fp.ModeExports l (AD.cat l) G (Lf.role l) d Dm0 dB
+        Hm δ δ Nl (Ms l G) (L l G)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∉ gset, (∀ (p : (Ms l G).Key), (Ms l G).dvOf p + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Bσ = (1 : ℝ) ∧ ∀ (V : ℤ × ℤ), (Ms l
+        G).alive V = ∅),
+    ∀ (_ : PLift (∑ l : Fin (4 : ℕ), ∑ G ∈ gset, ∑ I ∈ U_1 l G, ∫ (y : ℝ) in dyadicGridCell A.G
+        I.1 I.2, ‖((↑(↑(fp.physError (Ms l G) (L l G) l (AD.cat l) (mbs l) G (Lf.role l)
+        (Lf.layers l) S.K (A.blkStart S.K I.1)) : ℝ →ₘ[volume] ColumnHilbert (bf.Lab ⊕ Fin
+        fp.Mc)) : ℝ → ColumnHilbert (bf.Lab ⊕ Fin fp.Mc)) y).ofLp none‖ ^ (2 : ℕ) ≤ ((8 :
+        ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget ^ (2 :
+        ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) * dyadicGridLength A.G
+        A.R.1)),
+    ∀ (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
+        G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
+        / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
+        (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
+        V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
+        G).alive V)).card : ℝ) ≤ Nl),
+    ∀ (hA6 : (6 : ℝ) ≤ S.A0),
+    let qG : bf.Grp → ℕ :=
+      fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
+    ∀ (_ : ∀ (G : bf.Grp), (1 : ℕ) ≤ qG G ∧ qG G ≤ S.Q0),
+    ∀ (Vl0 : ℝ),
+    ∀ (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
+        1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) *
+        ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) +
+        Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 :
+        ℕ))),
+    ∀ (U : ℝ),
+    ∀ (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
+        (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
+        : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)),
+    ∀ (_ : (2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ) ≤ U),
+    ∀ (_ : (0 : ℝ) < S.Dstar),
+    ∀ (_ : (1 : ℝ) ≤ S.Dstar),
+    ∀ (_ : (16 : ℝ) ≤ U),
+    ∀ (_ : (0 : ℝ) < U),
+    ∀ (MV : ℝ),
+    ∀ (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ)),
+    ∀ (_ : (0 : ℝ) ≤ MV),
+    ∀ (ε : ℝ),
+    ∀ (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹),
+    ∀ (_ : (0 : ℝ) < ε),
+    ∀ (_ : ε ≤ U),
+    ∀ (_ : S.Dstar⁻¹ ≤ U),
+    ∀ (_ : ∀ σ ∈ dyThr ε U S.Dstar, S.Dstar⁻¹ ≤ σ),
+    ∀ (_ : ∀ (σ : ℝ), ε ≤ σ → σ ≤ U → (∃ (k : ℤ), σ = (2 : ℝ) ^ k) → S.Dstar⁻¹ ≤ σ → σ ∈ dyThr
+        ε U S.Dstar),
+    ∀ (_ : (↑(dyThr ε U S.Dstar).card : ℝ) ≤ Real.logb (2 : ℝ) U - Real.logb (2 : ℝ) ε + (3 :
+        ℝ)),
+    let Ts : Finset (ℕ × ℕ) :=
+      Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
+        ⌊S.Dstar⌋₊ + (1 : ℕ))
+    ∀ (_ : Ts = Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2
+        : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ))),
+    let BN : ℕ :=
+      ⌈(8 : ℝ) * A.colBudget + Nl⌉₊
+    let τb : ℝ :=
+      (1 : ℝ) / ((1 : ℝ) + (↑BN : ℝ) * A.colBudget ^ (2 : ℕ))
+    ∀ (_ : (0 : ℝ) < τb),
+    ∀ (_ : τb ≤ (1 : ℝ)),
+    ∀ (_ : τb * (↑BN : ℝ) * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ)),
+    ∀ (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τb⁻¹) ^ A.Dg) ≤ fp.Hed),
+    ∀ (_ : ∀ I ∈ A.cells, dyadicGridCell A.G I.1 I.2 ⊆ Set.Icc (dyadicGridLeft A.G A.R.1 A.R.2)
+        (dyadicGridLeft A.G A.R.1 A.R.2 + dyadicGridLength A.G A.R.1)),
+    ∀ (ρ₀ : Fin (4 : ℕ) → ↥gset → Fin A.fcd0),
+    ∀ (zc : Fin (4 : ℕ) → ↥gset → bf.Vtx),
+    ∀ (gsc : Fin (4 : ℕ) → ↥gset → ℤ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (↑G : bf.Grp).2.1 = some (ρ₀ l G, zc l G, gsc l G)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), fp.MainLiftExports l (AD.cat l) (↑G : bf.Grp)
+        (Lf.role l) d Dm0 dB Hm (gsc l G) (L l (↑G : bf.Grp)) (Ms l (↑G : bf.Grp)).wave
+        (Ms l (↑G : bf.Grp)).cellOf),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), fp.bbase (Lf.role l) + fp.P ≤ fp.Hmax),
+    ∀ (_ : (4 : ℝ) ≤ Nl),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (Finset.card ({q : ↥gset × (bf.Lab ⊕ Fin fp.Mc) | ∃ I ∈
+        A.cells, (∃ (k' : ℕ), fp.Cert k' (↑q.1 : bf.Grp) I) ∧ ∃ (p_1 : Fin fp.P), y ∈
+        dyadicGridCell A.G I.1 I.2 ∧ q.2 ∈ mainLabelsM A.G fp.Mc (bf.origCols l) (AD.cat
+        l) I (fp.brank (Lf.role l)) (fp.bmask I (↑q.1 : bf.Grp) (Lf.role l) ((↑p_1 : ℕ) +
+        (1 : ℕ))) d})) ≤ BN),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∑ G : ↥gset, (↑((Ms l (↑G : bf.Grp)).ptSet y).card : ℝ)
+        ≤ S.Dstar),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (2 : ℝ) * ((↑S.Q0 : ℝ) * ((3 : ℝ) * ((Ms l (↑G :
+        bf.Grp)).Bσ * (Ms l (↑G : bf.Grp)).Bσ) ^ (2 : ℕ))) ^ (2 : ℕ) ≤ (↑⌊S.Dstar⌋₊ : ℝ)),
+    ∀ (_ : fp.modeStar Dm0 dB Hm δ Nl kD ≤ S.Dstar),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), (↑(Lf.layers l).length : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) +
+        (1 : ℝ))),
+    ∀ (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
+        β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
+        b S.K, (Ms l (↑G : bf.Grp)).frozenEval (S.withQ0 (qG (↑G : bf.Grp))) b J (c l G b
+        J) = (columnL2Restriction (dyadicGridCell A.G J.1 J.2) (dyadicGridCell_measurable
+        A.G J.1 J.2) : ↥(ColumnL2 (Ms l (↑G : bf.Grp)).Md) → ↥(ColumnL2 (Ms l (↑G :
+        bf.Grp)).Md)) (((L l (↑G : bf.Grp)).op : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) →
+        ↥(ColumnL2 (Ms l (↑G : bf.Grp)).Md)) (fp.frozenZ l (AD.cat l) (mbs l) (↑G :
+        bf.Grp) (Lf.role l) (Lf.layers l) (b - (4 : ℤ) * (↑S.K : ℤ))))),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
+        β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
+        b S.K, ∑ m ∈ (Ms l (↑G : bf.Grp)).alive (ancAt A.G J (b - (4 : ℤ) * (↑S.K : ℤ))),
+        ‖c l G b J m‖ ^ (2 : ℕ) ≤ (4 : ℝ) * S.Dstar ^ (2 : ℕ) * (1 : ℝ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∑ G : ↥gset, ∑ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K
+        * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ‖(Ms l (↑G : bf.Grp)).blockSide
+        (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) b (fp.retainedV
+        (↑G : bf.Grp) b S.K) (c l G b)‖ ^ (2 : ℕ) ≤ (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax :
+        ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp
+        (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
+        : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
+        + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ)) * dyadicGridLength A.G A.R.1),
+    ∀ (Rr : (l : Fin (4 : ℕ)) → (h : ℕ) → ℕ × ℕ → (G : ↥gset) → (Ms l (↑G : bf.Grp)).RepClass
+        (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) (10 : ℕ) h),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ h ≤ S.Jstar, ∀ (t : ℕ × ℕ) (G : ↥gset), (Rr l h t G).Nd = {c
+        ∈ (Ms l (↑G : bf.Grp)).succNodes (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams
+        (1 / 1024 : ℝ)) (fp.retainedPairs (↑G : bf.Grp) (Finset.image (fun (β : ℕ) =>
+        A.R.1 + (↑(S.K * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ)))) S.K) h | (Ms l
+        (↑G : bf.Grp)).nodeType1 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c = t.1 ∧
+        (Ms l (↑G : bf.Grp)).nodeType2 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c =
+        t.2}),
+    ∀ (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∀ h ∈ Finset.range (S.Jstar + (1 : ℕ)), ∀ t ∈ Ts, ∀ σ ∈
+        dyThr ε U S.Dstar, ∑ G : ↥gset, (↑(Finset.image (fun (p : (ℤ × ℤ) × ℤ × (ℤ × ℤ) ×
+        (Ms l (↑G : bf.Grp)).Md) => (Rr l h t G).rep p.2) ({p ∈ fp.useInst (↑G : bf.Grp)
+        S.K (Rr l h t G).Nd | (∀ e ∈ Cut l, ¬dyadicGridCell A.G p.1.1 p.1.2 ⊆
+        dyadicGridCell A.G e.1 e.2) ∧ y ∈ dyadicGridCell A.G p.1.1 p.1.2 ∧ σ ^ (2 : ℕ) ≤
+        (Ms l (↑G : bf.Grp)).nodeSize (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 /
+        1024 : ℝ)) (c l G) h p})).card : ℝ) ≤ min S.Dstar ((24 : ℝ) * ((2 : ℝ) * Real.exp
+        (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
+        : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
+        + (2 : ℝ) * (↑S.K : ℝ) * ((24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2
+        : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc :
+        ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 :
+        ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) /
+        S.Dstar ^ (394 : ℕ)))) * (↑(Finset.range (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U
+        S.Dstar).card : ℝ) / (ρ * σ ^ (2 : ℕ)))),
+    let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
+      fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
+        _ => (0 : ℂ)
+    let D₀ : fp.SideInput :=
+      { cat := AD.cat, mbs := mbs, Lf := Lf, u := A.uslot p, S := S, hA := hA6,
+        SP := S.sideParams (1 / 1024 : ℝ), hK := hK1,
+        n := Fintype.card (bf.Lab ⊕ Fin fp.Mc), Ms := Ms, c := cf }
+    let gE : ℤ × ℤ → Fin A.famVtxBound → bf.Grp :=
+      fun (I : ℤ × ℤ) (i : Fin A.famVtxBound) => if h : (↑i : ℕ) < (gs I).card then
+        (↑(((gs I).equivFin.symm : Fin (gs I).card → ↥(gs I)) ⟨(↑i : ℕ), h⟩) : bf.Grp)
+        else default
+    ∀ (_ : ∀ (I : ℤ × ℤ), ∀ G ∈ gs I, ∃ (i : Fin A.famVtxBound), gE I i = G),
+    ∀ (hcat : Fin (4 : ℕ) → List (CatCol bf.Vtx)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ d ∈ hcat l, d.birth ∈ AD.Tc ∧ d.rank = fp.Lc + (5 : ℕ) ∧ (∃
+        (M : fp.MaskName d.birth), fp.maskOf d.birth M d.tag) ∧ ∃ R ∈ residueBox (bf.vtag
+        d.tag).dim (9 : ℕ), ∃ (γ : ℝ), d = templateCol (bf.vtag d.tag) l R γ d.birth
+        d.rank d.tag),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (↑(bf.tmplPath (AD.cat l ++ hcat l) y) : ℝ) ≤ ((1 : ℝ)
+        + (↑AD.Mp : ℝ)) * Nl),
+    ∀ (hmbb : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ AD.cat l ++ hcat l, e.birth ∈ A.cells),
+    ∀ (hmbT : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (8 : ℝ) * A.colBudget + (↑(bf.tmplPath (AD.cat l ++
+        hcat l) y) : ℝ) ≤ (8 : ℝ) * A.colBudget + ((1 : ℝ) + (↑AD.Mp : ℝ)) * Nl),
+    let mb' : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l ++ hcat l) :=
+      fun l =>
+          { hb := hmbb l, B := 8 * A.colBudget + (1 + AD.Mp) * Nl, hTp := hmbT l }
+    let D : fp.SideInput :=
+      D₀.appendCat hcat mb'
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, fp.hrank ≤ e.rank),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), D₀.Lf.role l ≤ (4 : ℕ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ e ∈ hcat l, bf.occAvail (↑e.tag.2 : ℤ × ℤ) e.tag.1),
+    let S1 : Finset (ℤ × ℤ) :=
+      {I ∈ S0 | ∀ (j : Fin (4 : ℕ)), ∀ e ∈ Cut j, ¬dyadicGridCell A.G I.1 I.2 ⊆
+        dyadicGridCell A.G e.1 e.2}
+    ∀ (_ : S1 ⊆ S0)
+      (_ : S1 ⊆ A.cells)
+      (_ : ∀ I ∈ A.cells, ((I.1 - A.R.1) / (↑S.K : ℤ)).toNat < A.treeDepth + (1 : ℕ))
+      (_ : ∀ I ∈ A.cells, A.blkStart S.K I.1 ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K * β)
+        : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))))
+      (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), D.u ≠ some l → ∀ (w : fp.TestName I Unit), fp.MainRk
+        w → (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).Pass A.G
+        (bf.origCols l) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold A.famVtxBound AD.τ₃
+        AD.n (fp.testOf l I (fun (_ : Unit) => bf.basicIn fp.Mc l I) w).r) fp.mH (D.cat l))
+      (_ : ∀ I ∈ S1, ∀ (a : Fin (4 : ℕ)) (w : fp.HelperName I (Fin A.famVtxBound)),
+        (fp.helperOf a I (fun (i : Fin A.famVtxBound) => (D.toLeafQ qG).sv a (gE I i) I)
+        w).Pass A.G (bf.origCols a) I A.csrc A.Hsrc bf.vtag (A.w I) (catThreshold
+        A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ))) fp.mH (D.cat a))
+      (_ : ∀ (R : ℕ), (1 : ℕ) ≤ R → R ≤ fp.Lc + (4 : ℕ) → catThreshold A.famVtxBound AD.τ₃ AD.n
+        R * (A.colBudget * √(AD.n (R - (1 : ℕ)))) ≤ AD.τ₃)
+      (_ : catThreshold A.famVtxBound AD.τ₃ AD.n (fp.Lc + (5 : ℕ)) * (A.colBudget * √(AD.n
+        (fp.Lc + (4 : ℕ)))) ≤ AD.τ₃)
+      (_ : ∀ (R : ℕ), (0 : ℝ) ≤ catThreshold A.famVtxBound AD.τ₃ AD.n R)
+      (_ : ∀ I ∈ S1, ∀ (l : Fin (4 : ℕ)), ∀ r ≤ fp.Lc + (4 : ℕ), ∀ (M : bf.Vtx → Prop),
+        (↑(mainLabelsM A.G fp.Mc (bf.origCols l) (D.cat l) I r M d).card : ℝ) ≤ AD.n r),
+    ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
+      dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
+      ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
+      ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
+      dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
+      ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
+      dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
+      ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
+      l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
+      (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
+      leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
+      hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+
+open scoped Classical in
+private def LeafEstimateStage3Statement (context : LeafEstimateContext) : Prop := by
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  exact
+    ∀ (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
+        : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
+        k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
+        → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
+        (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
+        Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
+        A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
+        (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
+        (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
+        (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg),
+    ∀ (_ : A.AncClosed),
+    ∀ (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
+        I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀)),
+    ∀ (_ : A.SubRootProps η₀ E),
+    ∀ (_ : A.cells.Nonempty),
+    ∀ (_ : A.DepthWin Nd),
+    ∀ (_ : (1 : ℝ) ≤ (↑k : ℝ)),
+    let fp : bf.FamParams :=
+      (leafEstimateParameters κ c₀ A bf p AD)
+    let dB : ℕ :=
+      (leafEstimateDimensionBound κ c₀ A)
+    ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
+        (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
+        Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
+        Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
+        bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
+        ℝ) ≤ Real.log bumpConst),
+    ∀ (_ : (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ)),
+    let Nl : ℝ :=
+      (leafEstimatePopulation κ c₀ A bf p AD fp)
+    ∀ (_ : Monotone AD.n),
+    let Hm : ℝ :=
+      (leafEstimateModeHeight κ c₀ A δ dB)
+    ∀ (_ : (1 : ℝ) ≤ Hm),
+    ∀ (_ : ∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB),
+    ∀ (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
+        ℝ) ≤ fp.Hed),
+    ∀ (_ : (↑S.dmax : ℝ) ≤ S.Dstar),
+    ∀ (_ : (↑S.Q0 : ℝ) * (2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ)) ≤ S.Bstar),
+    ∀ (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
+        dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
+        Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ)),
+    ∀ (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
+        Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
+        + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ)),
+    let Lf : SearchLeaf :=
+      (leafEstimateLeaf κ c₀ A bf p s fp)
+    let ks : ℕ :=
+      (leafEstimateGroupLevel Lf)
+    let S0 : Finset (ℤ × ℤ) :=
+      (leafEstimateSurvivingCells κ c₀ A bf p AD fp)
+    ∀ (_ : S0 ⊆ AD.Tc),
+    ∀ (_ : S0 ⊆ A.cells),
+    let gs : ℤ × ℤ → Finset bf.Grp :=
+      (leafEstimateCellGroups κ c₀ A bf fp ks)
+    let gset : Finset bf.Grp :=
+      (leafEstimateGroups κ c₀ A bf S0 gs)
+    ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I),
+    let U_1 : Fin (4 : ℕ) → bf.Grp → Finset (ℤ × ℤ) :=
+      fun (_ : Fin (4 : ℕ)) (G : bf.Grp) => {I ∈ S0 | G ∈ gs I}
+    let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
+      fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
+        (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
+        le_rfl)
+    ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc))),
+    ∀ (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, fp.ModeExports l (AD.cat l) G (Lf.role l) d Dm0 dB
+        Hm δ δ Nl (Ms l G) (L l G)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∉ gset, (∀ (p : (Ms l G).Key), (Ms l G).dvOf p + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Bσ = (1 : ℝ) ∧ ∀ (V : ℤ × ℤ), (Ms l
+        G).alive V = ∅),
+    ∀ (_ : PLift (∑ l : Fin (4 : ℕ), ∑ G ∈ gset, ∑ I ∈ U_1 l G, ∫ (y : ℝ) in dyadicGridCell A.G
+        I.1 I.2, ‖((↑(↑(fp.physError (Ms l G) (L l G) l (AD.cat l) (mbs l) G (Lf.role l)
+        (Lf.layers l) S.K (A.blkStart S.K I.1)) : ℝ →ₘ[volume] ColumnHilbert (bf.Lab ⊕ Fin
+        fp.Mc)) : ℝ → ColumnHilbert (bf.Lab ⊕ Fin fp.Mc)) y).ofLp none‖ ^ (2 : ℕ) ≤ ((8 :
+        ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget ^ (2 :
+        ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) * dyadicGridLength A.G
+        A.R.1)),
+    ∀ (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
+        G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
+        / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
+        (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
+        V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
+        G).alive V)).card : ℝ) ≤ Nl),
+    ∀ (hA6 : (6 : ℝ) ≤ S.A0),
+    let qG : bf.Grp → ℕ :=
+      fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
+    ∀ (_ : ∀ (G : bf.Grp), (1 : ℕ) ≤ qG G ∧ qG G ≤ S.Q0),
+    ∀ (Vl0 : ℝ),
+    ∀ (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
+        1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) *
+        ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) +
+        Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 :
+        ℕ))),
+    ∀ (U : ℝ),
+    ∀ (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
+        (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
+        : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)),
+    ∀ (_ : (2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ) ≤ U),
+    ∀ (_ : (0 : ℝ) < S.Dstar),
+    ∀ (_ : (1 : ℝ) ≤ S.Dstar),
+    ∀ (_ : (16 : ℝ) ≤ U),
+    ∀ (_ : (0 : ℝ) < U),
+    ∀ (MV : ℝ),
+    ∀ (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ)),
+    ∀ (_ : (0 : ℝ) ≤ MV),
+    ∀ (ε : ℝ),
+    ∀ (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹),
+    ∀ (_ : (0 : ℝ) < ε),
+    ∀ (_ : ε ≤ U),
+    ∀ (_ : S.Dstar⁻¹ ≤ U),
+    ∀ (_ : ∀ σ ∈ dyThr ε U S.Dstar, S.Dstar⁻¹ ≤ σ),
+    ∀ (_ : ∀ (σ : ℝ), ε ≤ σ → σ ≤ U → (∃ (k : ℤ), σ = (2 : ℝ) ^ k) → S.Dstar⁻¹ ≤ σ → σ ∈ dyThr
+        ε U S.Dstar),
+    ∀ (_ : (↑(dyThr ε U S.Dstar).card : ℝ) ≤ Real.logb (2 : ℝ) U - Real.logb (2 : ℝ) ε + (3 :
+        ℝ)),
+    let Ts : Finset (ℕ × ℕ) :=
+      Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
+        ⌊S.Dstar⌋₊ + (1 : ℕ))
+    ∀ (_ : Ts = Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2
+        : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ))),
+    let BN : ℕ :=
+      ⌈(8 : ℝ) * A.colBudget + Nl⌉₊
+    let τb : ℝ :=
+      (1 : ℝ) / ((1 : ℝ) + (↑BN : ℝ) * A.colBudget ^ (2 : ℕ))
+    ∀ (_ : (0 : ℝ) < τb),
+    ∀ (_ : τb ≤ (1 : ℝ)),
+    ∀ (_ : τb * (↑BN : ℝ) * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ)),
+    ∀ (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τb⁻¹) ^ A.Dg) ≤ fp.Hed),
+    ∀ (_ : ∀ I ∈ A.cells, dyadicGridCell A.G I.1 I.2 ⊆ Set.Icc (dyadicGridLeft A.G A.R.1 A.R.2)
+        (dyadicGridLeft A.G A.R.1 A.R.2 + dyadicGridLength A.G A.R.1)),
+    ∀ (ρ₀ : Fin (4 : ℕ) → ↥gset → Fin A.fcd0),
+    ∀ (zc : Fin (4 : ℕ) → ↥gset → bf.Vtx),
+    ∀ (gsc : Fin (4 : ℕ) → ↥gset → ℤ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (↑G : bf.Grp).2.1 = some (ρ₀ l G, zc l G, gsc l G)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), fp.MainLiftExports l (AD.cat l) (↑G : bf.Grp)
+        (Lf.role l) d Dm0 dB Hm (gsc l G) (L l (↑G : bf.Grp)) (Ms l (↑G : bf.Grp)).wave
+        (Ms l (↑G : bf.Grp)).cellOf),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), fp.bbase (Lf.role l) + fp.P ≤ fp.Hmax),
+    ∀ (_ : (4 : ℝ) ≤ Nl),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), (Finset.card ({q : ↥gset × (bf.Lab ⊕ Fin fp.Mc) | ∃ I ∈
+        A.cells, (∃ (k' : ℕ), fp.Cert k' (↑q.1 : bf.Grp) I) ∧ ∃ (p_1 : Fin fp.P), y ∈
+        dyadicGridCell A.G I.1 I.2 ∧ q.2 ∈ mainLabelsM A.G fp.Mc (bf.origCols l) (AD.cat
+        l) I (fp.brank (Lf.role l)) (fp.bmask I (↑q.1 : bf.Grp) (Lf.role l) ((↑p_1 : ℕ) +
+        (1 : ℕ))) d})) ≤ BN),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∑ G : ↥gset, (↑((Ms l (↑G : bf.Grp)).ptSet y).card : ℝ)
+        ≤ S.Dstar),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (2 : ℝ) * ((↑S.Q0 : ℝ) * ((3 : ℝ) * ((Ms l (↑G :
+        bf.Grp)).Bσ * (Ms l (↑G : bf.Grp)).Bσ) ^ (2 : ℕ))) ^ (2 : ℕ) ≤ (↑⌊S.Dstar⌋₊ : ℝ)),
+    ∀ (_ : fp.modeStar Dm0 dB Hm δ Nl kD ≤ S.Dstar),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), (↑(Lf.layers l).length : ℝ) ≤ (↑cc : ℝ) * (Real.log (↑k : ℝ) +
+        (1 : ℝ))),
+    ∀ (c : (l : Fin (4 : ℕ)) → (G : ↥gset) → ℤ → ℤ × ℤ → (Ms l (↑G : bf.Grp)).Md → ℂ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
+        β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
+        b S.K, (Ms l (↑G : bf.Grp)).frozenEval (S.withQ0 (qG (↑G : bf.Grp))) b J (c l G b
+        J) = (columnL2Restriction (dyadicGridCell A.G J.1 J.2) (dyadicGridCell_measurable
+        A.G J.1 J.2) : ↥(ColumnL2 (Ms l (↑G : bf.Grp)).Md) → ↥(ColumnL2 (Ms l (↑G :
+        bf.Grp)).Md)) (((L l (↑G : bf.Grp)).op : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) →
+        ↥(ColumnL2 (Ms l (↑G : bf.Grp)).Md)) (fp.frozenZ l (AD.cat l) (mbs l) (↑G :
+        bf.Grp) (Lf.role l) (Lf.layers l) (b - (4 : ℤ) * (↑S.K : ℤ))))),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), ∀ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K *
+        β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ∀ J ∈ fp.retainedV (↑G : bf.Grp)
+        b S.K, ∑ m ∈ (Ms l (↑G : bf.Grp)).alive (ancAt A.G J (b - (4 : ℤ) * (↑S.K : ℤ))),
+        ‖c l G b J m‖ ^ (2 : ℕ) ≤ (4 : ℝ) * S.Dstar ^ (2 : ℕ) * (1 : ℝ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∑ G : ↥gset, ∑ b ∈ Finset.image (fun (β : ℕ) => A.R.1 + (↑(S.K
+        * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ))), ‖(Ms l (↑G : bf.Grp)).blockSide
+        (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) b (fp.retainedV
+        (↑G : bf.Grp) b S.K) (c l G b)‖ ^ (2 : ℕ) ≤ (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax :
+        ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp
+        (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
+        : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
+        + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 : ℕ)) * dyadicGridLength A.G A.R.1),
+    ∀ (Rr : (l : Fin (4 : ℕ)) → (h : ℕ) → ℕ × ℕ → (G : ↥gset) → (Ms l (↑G : bf.Grp)).RepClass
+        (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 / 1024 : ℝ)) (10 : ℕ) h),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ h ≤ S.Jstar, ∀ (t : ℕ × ℕ) (G : ↥gset), (Rr l h t G).Nd = {c
+        ∈ (Ms l (↑G : bf.Grp)).succNodes (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams
+        (1 / 1024 : ℝ)) (fp.retainedPairs (↑G : bf.Grp) (Finset.image (fun (β : ℕ) =>
+        A.R.1 + (↑(S.K * β) : ℤ)) (Finset.range (A.treeDepth + (1 : ℕ)))) S.K) h | (Ms l
+        (↑G : bf.Grp)).nodeType1 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c = t.1 ∧
+        (Ms l (↑G : bf.Grp)).nodeType2 (S.withQ0 (qG (↑G : bf.Grp))) hA6 (10 : ℕ) h c =
+        t.2}),
+    ∀ (Cut : Fin (4 : ℕ) → Finset (ℤ × ℤ)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), dyadicRootLength A.G (Cut l) ≤ ρ * dyadicGridLength A.G A.R.1),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (y : ℝ), ∀ h ∈ Finset.range (S.Jstar + (1 : ℕ)), ∀ t ∈ Ts, ∀ σ ∈
+        dyThr ε U S.Dstar, ∑ G : ↥gset, (↑(Finset.image (fun (p : (ℤ × ℤ) × ℤ × (ℤ × ℤ) ×
+        (Ms l (↑G : bf.Grp)).Md) => (Rr l h t G).rep p.2) ({p ∈ fp.useInst (↑G : bf.Grp)
+        S.K (Rr l h t G).Nd | (∀ e ∈ Cut l, ¬dyadicGridCell A.G p.1.1 p.1.2 ⊆
+        dyadicGridCell A.G e.1 e.2) ∧ y ∈ dyadicGridCell A.G p.1.1 p.1.2 ∧ σ ^ (2 : ℕ) ≤
+        (Ms l (↑G : bf.Grp)).nodeSize (S.withQ0 (qG (↑G : bf.Grp))) hA6 (S.sideParams (1 /
+        1024 : ℝ)) (c l G) h p})).card : ℝ) ≤ min S.Dstar ((24 : ℝ) * ((2 : ℝ) * Real.exp
+        (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc
+        : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ))
+        + (2 : ℝ) * (↑S.K : ℝ) * ((24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2
+        : ℝ) * S.Dm) / (1 / 1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc :
+        ℝ) + (1 : ℝ)) * ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 :
+        ℝ)) * ((1 : ℝ) + Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) /
+        S.Dstar ^ (394 : ℕ)))) * (↑(Finset.range (S.Jstar + (1 : ℕ)) ×ˢ Ts ×ˢ dyThr ε U
+        S.Dstar).card : ℝ) / (ρ * σ ^ (2 : ℕ)))),
+    let gE : ℤ × ℤ → Fin A.famVtxBound → bf.Grp :=
+      fun (I : ℤ × ℤ) (i : Fin A.famVtxBound) => if h : (↑i : ℕ) < (gs I).card then
+        (↑(((gs I).equivFin.symm : Fin (gs I).card → ↥(gs I)) ⟨(↑i : ℕ), h⟩) : bf.Grp)
+        else default
+    ∀ (_ : ∀ (I : ℤ × ℤ), ∀ G ∈ gs I, ∃ (i : Fin A.famVtxBound), gE I i = G),
+    let Wm : Type :=
+      { x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I : ℤ × ℤ) Unit // fp.MainRk
+        x.snd.snd }
+    let main : Wm → Fin (4 : ℕ) × (ℤ × ℤ) × MainTest bf.Vtx bf.Lab fp.Mc :=
+      fun (x : Wm) => ((↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I : ℤ × ℤ)
+        Unit).fst, (↑(↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I : ℤ × ℤ)
+        Unit).snd.fst : ℤ × ℤ), fp.testOf (↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) ×
+        fp.TestName (↑I : ℤ × ℤ) Unit).fst (↑(↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) ×
+        fp.TestName (↑I : ℤ × ℤ) Unit).snd.fst : ℤ × ℤ) (fun (_ : Unit) => bf.patIn fp.Mc
+        p (↑(↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I : ℤ × ℤ)
+        Unit).snd.fst : ℤ × ℤ) (↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I :
+        ℤ × ℤ) Unit).fst) (↑x : (_ : Fin (4 : ℕ)) × (I : ↥AD.Tc) × fp.TestName (↑I : ℤ ×
+        ℤ) Unit).snd.snd)
+    ∀ (_ : ∀ (i : Wm), (main i).2.2.r ≤ fp.Lc + (4 : ℕ) ∧ ∀ l' < (main i).2.2.m, (main
+        i).2.2.hr l' ≤ fp.Lc + (4 : ℕ)),
+    ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
+      dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
+      ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
+      ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
+      dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
+      ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
+      dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
+      ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
+      l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
+      (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
+      leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
+      hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+
+open scoped Classical in
+private def LeafEstimateStage2Statement (context : LeafEstimateContext) : Prop := by
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  exact
+    ∀ (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
+        : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
+        k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
+        → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
+        (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
+        Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
+        A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
+        (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
+        (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
+        (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg),
+    ∀ (_ : A.AncClosed),
+    ∀ (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
+        I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀)),
+    ∀ (_ : A.SubRootProps η₀ E),
+    ∀ (_ : A.cells.Nonempty),
+    ∀ (_ : A.DepthWin Nd),
+    ∀ (_ : (1 : ℝ) ≤ (↑k : ℝ)),
+    let fp : bf.FamParams :=
+      (leafEstimateParameters κ c₀ A bf p AD)
+    let dB : ℕ :=
+      (leafEstimateDimensionBound κ c₀ A)
+    ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
+        (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
+        Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
+        Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
+        bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
+        ℝ) ≤ Real.log bumpConst),
+    ∀ (_ : (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ)),
+    let Nl : ℝ :=
+      (leafEstimatePopulation κ c₀ A bf p AD fp)
+    ∀ (_ : Monotone AD.n),
+    let Hm : ℝ :=
+      (leafEstimateModeHeight κ c₀ A δ dB)
+    ∀ (_ : (1 : ℝ) ≤ Hm),
+    ∀ (_ : ∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB),
+    ∀ (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
+        ℝ) ≤ fp.Hed),
+    ∀ (_ : S.Q0 = fp.Q0bd dB),
+    ∀ (_ : (8 : ℝ) * ((↑S.dmax : ℝ) + (1 : ℝ)) ^ (3 : ℕ) * Real.log ((2 : ℝ) * S.H) / Real.log
+        (2 : ℝ) ≤ packetW S.dmax S.H),
+    ∀ (_ : (↑S.dmax : ℝ) ≤ S.Dstar),
+    ∀ (_ : (↑S.Q0 : ℝ) * (2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ)) ≤ S.Bstar),
+    ∀ (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
+        dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
+        Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ)),
+    ∀ (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
+        Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
+        + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ)),
+    let Lf : SearchLeaf :=
+      (leafEstimateLeaf κ c₀ A bf p s fp)
+    ∀ (_ : Lf = leafAt A.famFuel fp.Lc (A.basicSlot p) s),
+    let ks : ℕ :=
+      (leafEstimateGroupLevel Lf)
+    let S0 : Finset (ℤ × ℤ) :=
+      (leafEstimateSurvivingCells κ c₀ A bf p AD fp)
+    ∀ (_ : S0 ⊆ AD.Tc),
+    ∀ (_ : S0 ⊆ A.cells),
+    let gs : ℤ × ℤ → Finset bf.Grp :=
+      (leafEstimateCellGroups κ c₀ A bf fp ks)
+    let gset : Finset bf.Grp :=
+      (leafEstimateGroups κ c₀ A bf S0 gs)
+    ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I),
+    let U_1 : Fin (4 : ℕ) → bf.Grp → Finset (ℤ × ℤ) :=
+      fun (_ : Fin (4 : ℕ)) (G : bf.Grp) => {I ∈ S0 | G ∈ gs I}
+    let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
+      fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
+        (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
+        le_rfl)
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ I ∈ A.cells, (↑(mainLabels A.G fp.Mc (bf.origCols l) (AD.cat
+        l) I (fp.brank (Lf.role l))).card : ℝ) ≤ Nl),
+    ∀ (Ms : Fin (4 : ℕ) → bf.Grp → ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc))),
+    ∀ (L : (l : Fin (4 : ℕ)) → (G : bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, fp.ModeExports l (AD.cat l) G (Lf.role l) d Dm0 dB
+        Hm δ δ Nl (Ms l G) (L l G)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∉ gset, (∀ (p : (Ms l G).Key), (Ms l G).dvOf p + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Bσ = (1 : ℝ) ∧ ∀ (V : ℤ × ℤ), (Ms l
+        G).alive V = ∅),
+    ∀ (_ : PLift (∑ l : Fin (4 : ℕ), ∑ G ∈ gset, ∑ I ∈ U_1 l G, ∫ (y : ℝ) in dyadicGridCell A.G
+        I.1 I.2, ‖((↑(↑(fp.physError (Ms l G) (L l G) l (AD.cat l) (mbs l) G (Lf.role l)
+        (Lf.layers l) S.K (A.blkStart S.K I.1)) : ℝ →ₘ[volume] ColumnHilbert (bf.Lab ⊕ Fin
+        fp.Mc)) : ℝ → ColumnHilbert (bf.Lab ⊕ Fin fp.Mc)) y).ofLp none‖ ^ (2 : ℕ) ≤ ((8 :
+        ℝ) * (↑dB : ℝ) * δ + (2 : ℝ) * δ ^ (2 : ℕ)) * ((4 : ℝ) * Nl * A.colBudget ^ (2 :
+        ℕ) * (1 : ℝ)) * (↑((4 : ℕ) * (AD.Mp * A.famVtxBound)) : ℝ) * dyadicGridLength A.G
+        A.R.1)),
+    ∀ (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ G ∈ gset, (∀ (q : (Ms l G).Key), (Ms l G).dvOf q + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Λ ≤ S.Dstar ∧ gaugeSqNorm (Ms l
+        G).zc.dim (Ms l G).δc ≤ S.Dstar ∧ (2 : ℝ) * gaugeTail (Ms l G).zc.dim (Ms l G).δc
+        / (2 : ℝ) ^ fp.Kstar Dm0 dB Hm δ Nl kD δ * S.Dstar ^ (300 : ℕ) ≤ (1 : ℝ) ∧ (∀ (m :
+        (Ms l G).Md), S.Dstar⁻¹ ≤ (Ms l G).L.εM m) ∧ (∀ (V : ℤ × ℤ), (↑((Ms l G).alive
+        V).card : ℝ) ≤ S.Dstar) ∧ ∀ (V : ℤ × ℤ), (↑(Finset.image (Ms l G).keyOf ((Ms l
+        G).alive V)).card : ℝ) ≤ Nl),
+    ∀ (_ : (6 : ℝ) ≤ S.A0),
+    let qG : bf.Grp → ℕ :=
+      fun (G : bf.Grp) => clearInt (bf.vtag (bf.grpCenter d G)).C
+    ∀ (_ : ∀ (G : bf.Grp), (1 : ℕ) ≤ qG G ∧ qG G ≤ S.Q0),
+    ∀ (Vl0 : ℝ),
+    ∀ (_ : Vl0 = (24 : ℝ) * ((↑⌊(180 : ℝ) * (↑S.dmax : ℝ) * Real.log ((2 : ℝ) * S.Dm) / (1 /
+        1024 : ℝ)⌋₊ : ℝ) + (1 : ℝ)) * (Real.exp (((6144 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) *
+        ((1024 : ℝ) * ((↑cc : ℝ) + (1 : ℝ)) + (↑cc : ℝ) + (7 : ℝ)) + (4 : ℝ)) * ((1 : ℝ) +
+        Real.log ((2 : ℝ) * (↑k : ℝ))) ^ (2 : ℕ)) + (2 : ℝ) * (1 : ℝ) / S.Dstar ^ (394 :
+        ℕ))),
+    ∀ (U : ℝ),
+    ∀ (_ : U = max ((2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ)) √(TsideF A fp.P S.K
+        (A.uslot p) ((2 : ℕ) ^ A.famFuel) ((2 : ℕ) * A.famFuel + (2 : ℕ)) (1 : ℝ) E cc (↑k
+        : ℝ) (fun (_ : Fin (4 : ℕ)) => Vl0) ρ)),
+    ∀ (_ : (2 : ℝ) * (A.colBudget + (2 : ℝ)) * S.Dstar ^ (2 : ℕ) ≤ U),
+    ∀ (_ : (0 : ℝ) < S.Dstar),
+    ∀ (_ : (1 : ℝ) ≤ S.Dstar),
+    ∀ (_ : (16 : ℝ) ≤ U),
+    ∀ (_ : (0 : ℝ) < U),
+    ∀ (MV : ℝ),
+    ∀ (_ : MV = (↑AD.Mp : ℝ) * (↑A.famVtxBound : ℝ)),
+    ∀ (_ : (0 : ℝ) ≤ MV),
+    ∀ (ε : ℝ),
+    ∀ (_ : ε = (U ^ (3 : ℕ) * S.Dstar ^ (5 : ℕ) * Real.exp (↑k : ℝ) * ((1 : ℝ) + MV))⁻¹),
+    ∀ (_ : (0 : ℝ) < ε),
+    ∀ (_ : ε ≤ U),
+    ∀ (_ : S.Dstar⁻¹ ≤ U),
+    ∀ (_ : (dyThr ε U S.Dstar).Nonempty),
+    ∀ (_ : ∀ σ ∈ dyThr ε U S.Dstar, S.Dstar⁻¹ ≤ σ),
+    ∀ (_ : ∀ (σ : ℝ), ε ≤ σ → σ ≤ U → (∃ (k : ℤ), σ = (2 : ℝ) ^ k) → S.Dstar⁻¹ ≤ σ → σ ∈ dyThr
+        ε U S.Dstar),
+    ∀ (_ : (↑(dyThr ε U S.Dstar).card : ℝ) ≤ Real.logb (2 : ℝ) U - Real.logb (2 : ℝ) ε + (3 :
+        ℝ)),
+    let Ts : Finset (ℕ × ℕ) :=
+      Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2 : ℕ)
+        ⌊S.Dstar⌋₊ + (1 : ℕ))
+    ∀ (_ : Ts = Finset.range (Nat.log (2 : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ)) ×ˢ Finset.range (Nat.log (2
+        : ℕ) ⌊S.Dstar⌋₊ + (1 : ℕ))),
+    ∀ (_ : Ts.Nonempty),
+    let BN : ℕ :=
+      ⌈(8 : ℝ) * A.colBudget + Nl⌉₊
+    let τb : ℝ :=
+      (1 : ℝ) / ((1 : ℝ) + (↑BN : ℝ) * A.colBudget ^ (2 : ℕ))
+    ∀ (_ : (0 : ℝ) < τb),
+    ∀ (_ : τb ≤ (1 : ℝ)),
+    ∀ (_ : τb * (↑BN : ℝ) * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ)),
+    ∀ (_ : Real.exp ((↑A.Dg : ℝ) * ((1 : ℝ) + Real.log A.Hsrc + Real.log τb⁻¹) ^ A.Dg) ≤ fp.Hed),
+    ∀ (_ : ∀ I ∈ A.cells, dyadicGridCell A.G I.1 I.2 ⊆ Set.Icc (dyadicGridLeft A.G A.R.1 A.R.2)
+        (dyadicGridLeft A.G A.R.1 A.R.2 + dyadicGridLength A.G A.R.1)),
+    ∀ (ρ₀ : Fin (4 : ℕ) → ↥gset → Fin A.fcd0),
+    ∀ (zc : Fin (4 : ℕ) → ↥gset → bf.Vtx),
+    ∀ (gsc : Fin (4 : ℕ) → ↥gset → ℤ),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (↑G : bf.Grp).2.1 = some (ρ₀ l G, zc l G, gsc l G)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), fp.MainLiftExports l (AD.cat l) (↑G : bf.Grp)
+        (Lf.role l) d Dm0 dB Hm (gsc l G) (L l (↑G : bf.Grp)) (Ms l (↑G : bf.Grp)).wave
+        (Ms l (↑G : bf.Grp)).cellOf),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset) (m : (Ms l (↑G : bf.Grp)).Md), (L l (↑G :
+        bf.Grp)).εM m = (Ms l (↑G : bf.Grp)).L.εM m),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : ↥gset), (Ms l (↑G : bf.Grp)).δc = δ),
+    ∀ (_ : ∀ (G : ↥gset), (↑G : bf.Grp).1 = ks),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), fp.bbase (Lf.role l) + fp.P ≤ fp.Hmax),
+    ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
+      dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
+      ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
+      ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
+      dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
+      ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
+      dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
+      ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
+      l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
+      (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
+      leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
+      hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
+
+open scoped Classical in
+private def LeafEstimateStage1Statement (context : LeafEstimateContext) : Prop := by
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  exact
+    ∀ (_ : ∀ (A : ActiveSetup κ c₀) (bf : A.BasicFamilies) (fp : bf.FamParams) (cat : Fin (4 :
+        ℕ) → List (CatCol bf.Vtx)), (∀ (l : Fin (4 : ℕ)), ∀ e ∈ cat l, ∃ R ∈ residueBox
+        (bf.vtag e.tag).dim (9 : ℕ), ∃ (γ : ℝ), e = templateCol (bf.vtag e.tag) l R γ
+        e.birth e.rank e.tag) → (∀ (l : Fin (4 : ℕ)), ∀ e ∈ cat l, bf.occAvail (↑e.tag.2 :
+        ℤ × ℤ) e.tag.1) → ∀ (mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (cat l)) (jj : Fin (4
+        : ℕ) → ℕ) (lsi : Fin (4 : ℕ) → List (ℕ × Bool)) (d : bf.Vtx) (gset : Finset
+        bf.Grp), (∀ G ∈ gset, ∃ (I : ℤ × ℤ), fp.ActualUse G I) → A.AncClosed → ∀ {K : ℕ}
+        (blk : ℤ × ℤ → ℤ), (∀ (I : ℤ × ℤ), blk I ≤ I.1 ∧ I.1 < blk I + (↑K : ℤ)) → ∀ (U :
+        Fin (4 : ℕ) → bf.Grp → Finset (ℤ × ℤ)), (∀ (l : Fin (4 : ℕ)) (G : bf.Grp), ∀ I ∈ U
+        l G, fp.ActualUse G I) → ∀ {Nuse : ℕ}, (∀ (y : ℝ), ∑ l : Fin (4 : ℕ), ∑ G ∈ gset,
+        (Finset.card ({I ∈ U l G | y ∈ dyadicGridCell A.G I.1 I.2})) ≤ Nuse) → (2 : ℝ) ≤
+        fp.Hed → ∀ {dB : ℕ}, (∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB) → (∀ (w : bf.Vtx) (a c
+        : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) : ℝ) ≤ fp.Hed) → ∀
+        {δ : ℝ}, (0 : ℝ) < δ → δ ≤ (1 / 8 : ℝ) → (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ) → ∀ {H
+        : ℝ}, A.Hsrc ≤ H → (↑dB : ℝ) ≤ Real.log H → (∀ (w : bf.Vtx) (l : Fin (4 : ℕ)) (i k
+        : Fin (bf.vtag w).dim), (↑(chartRationalHeight (((↑(-slotCoeff l) : ℚ) • (bf.vtag
+        w).C) i k)) : ℝ) ≤ H) → (↑dB : ℝ) * (bumpConst * (8 : ℝ) ^ (32 : ℕ) * ((2 : ℝ) /
+        δ)) ≤ H → ∀ {δc : ℝ}, (0 : ℝ) < δc → ∀ {N CF : ℝ}, (0 : ℝ) ≤ N → (0 : ℝ) ≤ CF → (∀
+        (l : Fin (4 : ℕ)), ∀ I ∈ A.cells, (↑(mainLabels A.G fp.Mc (bf.origCols l) (cat l)
+        I (fp.brank (jj l))).card : ℝ) ≤ N) → δc ^ (2 : ℕ) * N * A.colBudget ^ (2 : ℕ) ≤
+        (1 : ℝ) → (∀ (l : Fin (4 : ℕ)) (jb : Fin (2 : ℕ)), ∀ V ∈ A.cells,
+        ‖(columnL2Restriction (dyadicGridCell A.G V.1 V.2) (dyadicGridCell_measurable A.G
+        V.1 V.2) : ↥(ColumnL2 (bf.P l jb).V) → ↥(ColumnL2 (bf.P l jb).V)) (bf.P l jb).Z‖ ^
+        (2 : ℕ) ≤ CF * dyadicGridLength A.G V.1) → ∃ (Ms : Fin (4 : ℕ) → bf.Grp →
+        ModeSystem A.G (Fintype.card (bf.Lab ⊕ Fin fp.Mc))) (L : (l : Fin (4 : ℕ)) → (G :
+        bf.Grp) → LiftData (bf.Lab ⊕ Fin fp.Mc) (Ms l G).Md), (∀ (l : Fin (4 : ℕ)), ∀ G ∈
+        gset, fp.ModeExports l (cat l) G (jj l) d Dm0 dB H δ δc N (Ms l G) (L l G)) ∧ (∀
+        (l : Fin (4 : ℕ)), ∀ G ∉ gset, (∀ (p : (Ms l G).Key), (Ms l G).dvOf p + (Ms l
+        G).zc.dim ≤ (2 : ℕ) * dB + (2 : ℕ)) ∧ (Ms l G).Bσ = (1 : ℝ) ∧ ∀ (V : ℤ × ℤ), (Ms l
+        G).alive V = ∅) ∧ ∑ l : Fin (4 : ℕ), ∑ G ∈ gset, ∑ I ∈ U l G, ∫ (y : ℝ) in
+        dyadicGridCell A.G I.1 I.2, ‖((↑(↑(fp.physError (Ms l G) (L l G) l (cat l) (mbs l)
+        G (jj l) (lsi l) K (blk I)) : ℝ →ₘ[volume] ColumnHilbert (bf.Lab ⊕ Fin fp.Mc)) : ℝ
+        → ColumnHilbert (bf.Lab ⊕ Fin fp.Mc)) y).ofLp none‖ ^ (2 : ℕ) ≤ ((8 : ℝ) * (↑dB :
+        ℝ) * δ + (2 : ℝ) * δc ^ (2 : ℕ)) * ((4 : ℝ) * N * A.colBudget ^ (2 : ℕ) * CF) *
+        (↑Nuse : ℝ) * dyadicGridLength A.G A.R.1),
+    ∀ (_ : ∀ {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.BasicFamilies} (fp
+        : bf.FamParams) (dB : ℕ) {H δc N k δ : ℝ}, (1 : ℝ) ≤ k → (↑fp.Lc : ℝ) + (6 : ℝ) ≤
+        k ^ (cc + (6 : ℕ)) → (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ (k * (↑fp.P : ℝ)) ^ (cc + (6 : ℕ))
+        → (↑dB : ℝ) ≤ k ^ (cc + (6 : ℕ)) → (2 : ℝ) ≤ fp.Hed → Real.log fp.Hed ≤ k ^ (cc +
+        (6 : ℕ)) → (1 : ℝ) ≤ H → Real.log H ≤ k ^ (cc + (6 : ℕ)) → (0 : ℝ) < δc → δc⁻¹ ≤
+        Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) ≤ N → N ≤ Real.exp (k ^ (cc + (6 : ℕ))) →
+        A.colBudget ≤ Real.exp (k ^ (cc + (6 : ℕ))) → (0 : ℝ) < δ → δ⁻¹ ≤ Real.exp (k ^
+        (cc + (6 : ℕ))) → Real.log (fp.modeStarG Dm0 dB H δc N k δ) ≤ (↑Cg : ℝ) * (k *
+        (↑fp.P : ℝ)) ^ Cg ∧ Real.log ((2 : ℝ) ^ (fp.Kstar Dm0 dB H δc N k δ + (1 : ℕ))) ≤
+        (↑Cg : ℝ) * (k * (↑fp.P : ℝ)) ^ Cg),
+    ∀ (_ : A.AncClosed),
+    ∀ (_ : ∀ I ∈ A.cells, ∀ (s s' : Fin (4 : ℕ)), s ≠ s' → PairSmall (dyadicGridLeft A.G I.1
+        I.2) (dyadicGridLength A.G I.1) (A.w I) s s' (A.Y I s) (A.Y I s') ((2 : ℝ) * η₀)),
+    ∀ (_ : A.SubRootProps η₀ E),
+    ∀ (_ : A.cells.Nonempty),
+    ∀ (_ : A.DepthWin Nd),
+    ∀ (_ : (1 : ℝ) ≤ (↑k : ℝ)),
+    let fp : bf.FamParams :=
+      (leafEstimateParameters κ c₀ A bf p AD)
+    let dB : ℕ :=
+      (leafEstimateDimensionBound κ c₀ A)
+    ∀ (_ : (↑fp.Lc : ℝ) + (6 : ℝ) ≤ (↑k : ℝ) ^ cc ∧ (↑fp.Hmax : ℝ) + (1 : ℝ) ≤ ((↑k : ℝ) *
+        (↑fp.P : ℝ)) ^ cc ∧ (↑dB : ℝ) ≤ (↑k : ℝ) ^ cc ∧ Real.log fp.Hed ≤ (↑k : ℝ) ^ cc ∧
+        Real.log A.Hsrc ≤ (↑k : ℝ) ^ cc ∧ Real.log (max A.H padW) ≤ (↑k : ℝ) ^ cc ∧ δ⁻¹ ≤
+        Real.exp kD ∧ E ≤ (↑k : ℝ) ^ cc ∧ ρ⁻¹ ≤ (↑k : ℝ) ^ cc ∧ (2 : ℝ) + Real.log
+        bumpConst + (100 : ℝ) ≤ (↑k : ℝ) ∧ (↑k : ℝ) ^ cc ≤ kD ∧ (2 : ℝ) ≤ (↑k : ℝ) ∧ (0 :
+        ℝ) ≤ Real.log bumpConst),
+    ∀ (_ : (8 : ℝ) * (↑dB : ℝ) * δ ≤ (1 : ℝ)),
+    let Nl : ℝ :=
+      (leafEstimatePopulation κ c₀ A bf p AD fp)
+    ∀ (_ : δ ^ (2 : ℕ) * Nl * A.colBudget ^ (2 : ℕ) ≤ (1 : ℝ)),
+    ∀ (_ : Monotone AD.n),
+    let Hm : ℝ :=
+      (leafEstimateModeHeight κ c₀ A δ dB)
+    ∀ (_ : (1 : ℝ) ≤ Hm),
+    ∀ (_ : ∀ (w : bf.Vtx), (bf.vtag w).dim ≤ dB),
+    ∀ (_ : ∀ (w : bf.Vtx) (a c : Fin (bf.vtag w).dim), (↑(rationalHeight ((bf.vtag w).C a c)) :
+        ℝ) ≤ fp.Hed),
+    ∀ (_ : S.Dstar = fp.modeStarG Dm0 dB Hm δ Nl kD δ),
+    ∀ (_ : S.Q0 = fp.Q0bd dB),
+    ∀ (_ : (8 : ℝ) * ((↑S.dmax : ℝ) + (1 : ℝ)) ^ (3 : ℕ) * Real.log ((2 : ℝ) * S.H) / Real.log
+        (2 : ℝ) ≤ packetW S.dmax S.H),
+    ∀ (_ : (↑S.dmax : ℝ) ≤ S.Dstar),
+    ∀ (_ : ∀ (z : bf.Vtx), (1 : ℕ) ≤ clearInt (bf.vtag z).C ∧ clearInt (bf.vtag z).C ≤ S.Q0),
+    ∀ (_ : (↑S.Q0 : ℝ) * (2 : ℝ) ^ (fp.Kstar Dm0 dB Hm δ Nl kD δ + (1 : ℕ)) ≤ S.Bstar),
+    ∀ (_ : Real.log S.H ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0
+        dB Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ)
+        Nl) + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (12 : ℕ)),
+    ∀ (_ : (↑S.K : ℝ) ≤ Msch * ((↑((2 : ℕ) * dB + (2 : ℕ)) : ℝ) + Real.log (fp.modeStarG Dm0 dB
+        Hm δ Nl kD δ) + Real.log (fp.Bst Dm0 dB Hm δ Nl kD δ) + Real.log (max (2 : ℝ) Nl)
+        + Real.log (↑(fp.Q0bd dB) : ℝ) + (1 : ℝ)) ^ (16 : ℕ)),
+    let Lf : SearchLeaf :=
+      (leafEstimateLeaf κ c₀ A bf p s fp)
+    ∀ (_ : Lf = leafAt A.famFuel fp.Lc (A.basicSlot p) s),
+    let ks : ℕ :=
+      (leafEstimateGroupLevel Lf)
+    let S0 : Finset (ℤ × ℤ) :=
+      (leafEstimateSurvivingCells κ c₀ A bf p AD fp)
+    ∀ (_ : S0 ⊆ AD.Tc),
+    ∀ (_ : S0 ⊆ A.cells),
+    let gs : ℤ × ℤ → Finset bf.Grp :=
+      (leafEstimateCellGroups κ c₀ A bf fp ks)
+    let gset : Finset bf.Grp :=
+      (leafEstimateGroups κ c₀ A bf S0 gs)
+    ∀ (_ : ∀ I ∈ S0, ∀ G ∈ gs I, fp.Cert ks G I ∧ fp.ActualUse G I),
+    ∀ (_ : ∀ G ∈ gset, ∃ (I : ℤ × ℤ), fp.ActualUse G I),
+    let U : Fin (4 : ℕ) → bf.Grp → Finset (ℤ × ℤ) :=
+      fun (_ : Fin (4 : ℕ)) (G : bf.Grp) => {I ∈ S0 | G ∈ gs I}
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)) (G : bf.Grp), ∀ I ∈ U l G, fp.ActualUse G I),
+    ∀ (_ : ∀ (y : ℝ), ∑ l : Fin (4 : ℕ), ∑ G ∈ gset, (Finset.card ({I ∈ U l G | y ∈
+        dyadicGridCell A.G I.1 I.2})) ≤ (4 : ℕ) * (AD.Mp * A.famVtxBound)),
+    ∀ (_ : ∀ (l : Fin (4 : ℕ)), ∀ I ∈ A.cells, (↑(mainLabels A.G fp.Mc (bf.origCols l) (AD.cat
+        l) I (fp.brank (Lf.role l))).card : ℝ) ≤ Nl),
+    ∃ (F : Fin (6 : ℕ) → Finset (ℤ × ℤ)), (∀ (i : Fin (6 : ℕ)), ∀ c ∈ F i,
+      dyadicGridCell A.G c.1 c.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2) ∧ (∀ (i : Fin (6 :
+      ℕ)), dyadicRootLength A.G (F i) ≤ (2 : ℝ) * ρ * dyadicGridLength A.G A.R.1) ∧ ∀ cs
+      ⊆ AD.Tc, (∀ I ∈ cs, ¬∃ c ∈ fp.failRoots, dyadicGridCell A.G I.1 I.2 ⊆
+      dyadicGridCell A.G c.1 c.2) → (∀ I ∈ cs, ∀ (i : Fin (6 : ℕ)), ∀ e ∈ F i,
+      ¬dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) → ∑ I ∈ cs,
+      dyadicGridLength A.G I.1 * min A.η ‖∑ G ∈ fp.groupsAt I ks, (fp.Λc I : (Fin (4 :
+      ℕ) → ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc))) → ℂ) fun (l : Fin (4 : ℕ)) => (fp.ballFilt
+      l (AD.cat l) I G (Lf.role l) : ↥(ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) → ↥(ColumnL2
+      (bf.Lab ⊕ Fin fp.Mc))) (fp.inputL AD.cat I (bf.patIn fp.Mc p I) Lf.layers l)‖ ≤
+      leafBnd Cl kD fp.P k cc A.η η₀ AD.τ₃ δ (finiteDepthConstant κ q Nd) (nbCM κ hq2
+      hq3 + nbCUM κ hq2 hq3) q (dyadicGridLength A.G A.R.1)
 
 private theorem leaf_estimate_hstab : LeafEstimateHstabStatement := by
   classical
@@ -2883,15 +2552,24 @@ private theorem leaf_estimate_conclusion_88 : LeafEstimateConclusion88Statement 
   rw [D₀.toLeafQ_out_appendCat hcat mb' hrankH hroleD qG l G I]
   rfl
 
-private theorem leaf_estimate_stage_8 : LeafEstimateStage8Statement := by
+private theorem leaf_estimate_stage_8 (context : LeafEstimateContext) :
+    LeafEstimateStage8Statement context := by
   classical
-  intro κ c₀ cc hcc Dm0 Msch hMsch Cg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A bf k
-    η₀ E hS2 hη hη₀ q hq2 hq3 Nd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb hkF fp dB Nl hkB hcb hNl0 Hm S
-    hSd hSDm hSV hd2 hD2 hB2 hQ1 hK1 Lf ks S0 gs gset hlenMc mbs Ms L hA6 qG Vl0 U MV hMV ε hεdef
-    Ts hNl4 c Cut hCutl cf D₀ hcat hmbb hmbT mb' D hrankH hroleD S1 hS1c Nb hNb hRl0 hVl00 Os hOs
-    Cjg hCjg Γa hΓadef Γb hΓbdef ΓU hΓUdef Ee hEe0 hEeb hdB1 Gq hVl0 Mt hMt Iw C C₂ hC hlen hC₂
-    hlen₂ hdBk hEk hρk hkD hk2 u hu hVle hlD Λ hK hlogH hΛ0 hΛ hE0 hVl0nn TT hUdef hT0 T2v S₂ hsum
-    hexpD ι Qe hcEsum
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  dsimp (config := { zeta := false, zetaUnused := false }) only [
+    LeafEstimateStage8Statement, leafEstimateParameters, leafEstimateDimensionBound,
+    leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf,
+    leafEstimateGroupLevel, leafEstimateSurvivingCells, leafEstimateCellGroups,
+    leafEstimateGroups] at *
+  intro fp dB Nl Hm Lf ks S0 gs gset mbs Ms L hA6 qG Vl0 U MV hMV ε hεdef Ts hNl4 c Cut hCutl cf D₀
+    hcat hmbb hmbT mb' D hrankH hroleD S1 hS1c Nb hNb hRl0 hVl00 Os hOs Cjg hCjg Γa hΓadef Γb hΓbdef
+    ΓU hΓUdef Ee hEe0 hEeb hdB1 Gq hVl0 Mt hMt Iw C C₂ hC hlen hC₂ hlen₂ hdBk hEk hρk hkD hk2 u hu
+    hVle hlD Λ hK hlogH hΛ0 hΛ hE0 hVl0nn TT hUdef hT0 T2v S₂ hsum hexpD ι Qe hcEsum
   set! G0e := Real.exp ((4096 * (cc + 1) * (1024 * (cc + 1) + cc + 7) + cc ^ 2 + 3) *
     (1 + Real.log (2 * (k : ℝ))) ^ 2) with hG0e
   have! hG0e1 : 1 ≤ G0e := Real.one_le_exp (by positivity)
@@ -3014,15 +2692,26 @@ private theorem leaf_estimate_stage_8 : LeafEstimateStage8Statement := by
     exact @leaf_estimate_conclusion_88 κ c₀ cc Cl A bf k η₀ q hq2 hq3 Nd p AD d s δ ρ kD hρ1 hNl0
       S hK1 hlenMc Ms hA6 c Cut hCutl hcat hmbb hmbT hrankH hroleD hRl0 C C₂ hη0 hBd
 
-private theorem leaf_estimate_stage_7 : LeafEstimateStage7Statement := by
+private theorem leaf_estimate_stage_7 (context : LeafEstimateContext) :
+    LeafEstimateStage7Statement context := by
   classical
-  intro κ c₀ cc hcc Dm0 Msch hMsch Cg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A bf k
-    η₀ E hsub hS2 hη hη₀ hne q hq2 hq3 Nd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb hkF hk1 fp dB Nl hkB
-    hcb hNl0 Hm hHm1 S hSd hSDm hSV hd2 hD2 hB2 hQ1 hlogH hK hK1 Lf ks S0 gs gset hlenMc mbs Ms L
-    hDS hsch' hA6 qG Vl0 U hUdef hD0 hD1 hU16 MV hMV ε hεdef hε0 Ts hNl4 hstar c hcB Cut hCutl cf
-    D₀ hcat hmbb hmbT mb' D hrankH hroleD S1 hS1S0 hS1c hIB Nb hNb hRl0 hVl00 Os hOs Cjg hCjg Γa
-    hΓadef Γb hΓbdef ΓU hΓUdef Ee hEe0 hEeb hMD' hdB1 hcD Gq hVl0 Mt hMt Iw C C₂ hC hlen hC₂ hlen₂
-    hUs hsum hdBk hHedk hEk hρk hkD hk2 hCΛ heΛ hP1 u hu hu1 hku hNlexp hVle hmsG
+  let commonContext := context
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  dsimp (config := { zeta := false, zetaUnused := false }) only [
+    LeafEstimateStage7Statement, leafEstimateParameters, leafEstimateDimensionBound,
+    leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf,
+    leafEstimateGroupLevel, leafEstimateSurvivingCells, leafEstimateCellGroups,
+    leafEstimateGroups] at *
+  intro hsub hne hk1 fp dB Nl Hm hHm1 hlogH hK Lf ks S0 gs gset mbs Ms L hDS hsch' hA6 qG Vl0 U
+    hUdef hD0 hD1 hU16 MV hMV ε hεdef hε0 Ts hNl4 hstar c hcB Cut hCutl cf D₀ hcat hmbb hmbT mb' D
+    hrankH hroleD S1 hS1S0 hS1c hIB Nb hNb hRl0 hVl00 Os hOs Cjg hCjg Γa hΓadef Γb hΓbdef ΓU hΓUdef
+    Ee hEe0 hEeb hMD' hdB1 hcD Gq hVl0 Mt hMt Iw C C₂ hC hlen hC₂ hlen₂ hUs hsum hdBk hHedk hEk hρk
+    hkD hk2 hCΛ heΛ hP1 u hu hu1 hku hNlexp hVle hmsG
   rw [← hu] at hmsG
   have! hlD : Real.log S.Dstar ≤ Cg * u ^ Cg := by rw [hDS]; exact hmsG.1
   have! hlD0 : 0 ≤ Real.log S.Dstar := Real.log_nonneg hD1
@@ -3138,22 +2827,31 @@ private theorem leaf_estimate_stage_7 : LeafEstimateStage7Statement := by
           mul_le_mul_of_nonneg_left hMD' hQe0
   -- the near bands
   expose_names
-  exact @leaf_estimate_stage_8 κ c₀ cc hcc Dm0 Msch hMsch Cg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1
-      t3 Cb Cl hconst A bf k η₀ E hS2 hη hη₀ q hq2 hq3 Nd p AD d s δ ρ kD hδ hδ8 hρ hρ1
-      hkb hkF hkB hcb hNl0 S hSd hSDm hSV hd2 hD2 hB2 hQ1 hK1 hlenMc Ms L hA6 Vl0 U MV hMV
-      ε hεdef hNl4 c Cut hCutl hcat hmbb hmbT hrankH hroleD hS1c hNb hRl0 hVl00 hOs hCjg
-      hΓadef hΓbdef hΓUdef Ee hEe0 hEeb hdB1 hVl0 hMt C C₂ hC hlen hC₂ hlen₂ hdBk hEk hρk
-      hkD hk2 u hu hVle hlD hK hlogH hΛ0 hΛ hE0 hVl0nn hUdef hT0 hsum hexpD hcEsum
+  exact @leaf_estimate_stage_8
+    commonContext
+    Ms L hA6 Vl0 U MV hMV ε hεdef hNl4 c Cut hCutl hcat hmbb hmbT hrankH hroleD hS1c hNb hRl0
+    hVl00 hOs hCjg hΓadef hΓbdef hΓUdef Ee hEe0 hEeb hdB1 hVl0 hMt C C₂ hC hlen hC₂ hlen₂ hdBk
+    hEk hρk hkD hk2 u hu hVle hlD hK hlogH hΛ0 hΛ hE0 hVl0nn hUdef hT0 hsum hexpD hcEsum
 
-private theorem leaf_estimate_stage_6 : LeafEstimateStage6Statement := by
+private theorem leaf_estimate_stage_6 (context : LeafEstimateContext) :
+    LeafEstimateStage6Statement context := by
   classical
-  intro κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A
-    bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb
-    hkF hk1 fp dB hstd Nl hkB hcb hn_mono hNl0 Hm hHm1 hC S hSd hSDm hSV hd2 hdD hD2 hB2 hQ1 hlogH
-    hK hK1 Lf ks S0 hS0T gs gset hcu hlenMc mbs Ms L hDS hsch' hA6 qG hqG1 Vl0 U hUdef hD0 hD1
-    hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hThrM hThrC Ts hTsdef BN τb hτb hτb1 hτbN hHτb hroot' zc
-    hPH hNl4 hNq hpathG hstar hLsl c hcB Rr hRr Cut hCutl cf D₀ gE hgE hcat hhT hmbb hmbT mb' D
-    hrankH hroleD
+  let commonContext := context
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  dsimp (config := { zeta := false, zetaUnused := false }) only [
+    LeafEstimateStage6Statement, leafEstimateParameters, leafEstimateDimensionBound,
+    leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf,
+    leafEstimateGroupLevel, leafEstimateSurvivingCells, leafEstimateCellGroups,
+    leafEstimateGroups] at *
+  intro hCg hanc hpairs hsub hne hNd hk1 fp dB hstd Nl hn_mono Hm hHm1 hC hdD hlogH hK Lf ks S0 hS0T
+    gs gset hcu mbs Ms L hDS hsch' hA6 qG hqG1 Vl0 U hUdef hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0
+    hεU hThrM hThrC Ts hTsdef BN τb hτb hτb1 hτbN hHτb hroot' zc hPH hNl4 hNq hpathG hstar hLsl c
+    hcB Rr hRr Cut hCutl cf D₀ gE hgE hcat hhT hmbb hmbT mb' D hrankH hroleD
   let B₀ : (D₀.toLeafQ qG).BallData gset :=
     { hT := fun l e he => (AD.hT l e he).2.2
       htag := AD.htag
@@ -3224,7 +2922,8 @@ private theorem leaf_estimate_stage_6 : LeafEstimateStage6Statement := by
     (fun I hI => hIB I (hS1c hI)) Cut (fun I hI j e he => (Finset.mem_filter.mp hI).2 j e he)
     (dyThr ε U S.Dstar) hε0 hεU hThrM hTopD hpathG hUD hUT
   obtain ⟨C, C₂, hC, hlen, hC₂, hlen₂, hUs, hsum⟩ := hLB
-  clear * - A AD Cb Cg Cjg Cl Cut CΛ D Dm0 D₀ E Ee Gq Hm Iw Msch Mt Nb Nd Nl Os S S1 Ts U Vl0 cK
+  clear * - commonContext A AD Cb Cg Cjg Cl Cut CΛ D Dm0 D₀ E Ee Gq Hm Iw Msch Mt Nb Nd Nl Os S S1
+    Ts U Vl0 cK
     cL cMc cQ cT ce ce2 cm dB eΛ fp g gs gset hC hCg hCjg hCutl hD0 hD1 hD2 hDS hDm2 hEe0 hGq hHm1
     hIB hK hK1 hMD' hMsch hMt hNb hNl0 hNl4 hOs hQ1 hRl0 hS1S0 hS1c hS2 hSDm hSV hSd hThrC hTsdef
     hU0 hU16 hUdef hVl0 hVl00 hcB hcD hcat hcb hcc hd2 hdB1 hkB hkF hkb hlogH hq2 hq3 hrankH
@@ -3290,23 +2989,33 @@ private theorem leaf_estimate_stage_6 : LeafEstimateStage6Statement := by
     ((by linarith only [hcbexp, hcb] : A.colBudget ≤ Real.exp ((k : ℝ) ^ cc)).trans
       (Real.exp_le_exp.mpr hkk)) hδ (hδk.trans (Real.exp_le_exp.mpr hkDle))
   expose_names
-  exact @leaf_estimate_stage_7 κ c₀ cc hcc Dm0 Msch hMsch Cg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1
-    t3 Cb Cl hconst A bf k η₀ E hsub hS2 hη hη₀ hne q hq2 hq3 Nd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb
-    hkF hk1 hkB hcb hNl0 hHm1 S hSd hSDm hSV hd2 hD2 hB2 hQ1 hlogH hK hK1 hlenMc Ms L hDS hsch'
-    hA6 Vl0 U hUdef hD0 hD1 hU16 MV hMV ε hεdef hε0 hNl4 hstar c hcB Cut hCutl hcat hmbb hmbT
-    hrankH hroleD hS1S0 hS1c hIB hNb hRl0 hVl00 hOs hCjg hΓadef hΓbdef hΓUdef Ee hEe0 hEeb hMD'
-    hdB1 hcD hVl0 hMt C C₂ hC hlen hC₂ hlen₂ hUs hsum hdBk hHedk hEk hρk hkD hk2 hCΛ heΛ hP1 u hu
-    hu1 hku hNlexp hVle hmsG
+  exact @leaf_estimate_stage_7
+    commonContext
+    hsub hne hk1 hHm1 hlogH hK Ms L hDS hsch' hA6 Vl0 U hUdef hD0 hD1 hU16 MV hMV ε hεdef hε0
+    hNl4 hstar c hcB Cut hCutl hcat hmbb hmbT hrankH hroleD hS1S0 hS1c hIB hNb hRl0 hVl00 hOs
+    hCjg hΓadef hΓbdef hΓUdef Ee hEe0 hEeb hMD' hdB1 hcD hVl0 hMt C C₂ hC hlen hC₂ hlen₂ hUs
+    hsum hdBk hHedk hEk hρk hkD hk2 hCΛ heΛ hP1 u hu hu1 hku hNlexp hVle hmsG
 
-private theorem leaf_estimate_stage_5 : LeafEstimateStage5Statement := by
+private theorem leaf_estimate_stage_5 (context : LeafEstimateContext) :
+    LeafEstimateStage5Statement context := by
   classical
-  intro κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A
-    bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb
-    hkF hk1 fp dB hstd hdδ Nl hkB hcb hn_mono hNl0 Hm hHm1 hdim hC S hSd hSDm hSV hd2 hdD hD2 hB2
-    hQ1 hbox hlogH hK hK1 Lf ks S0 hS0T gs gset hcu hlenMc mbs Ms L hexp hnotg hDS hsch' hA6 qG
-    hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThrD hThrM hThrC
-    Ts hTsdef BN τb hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hPH hNl4 hNq hpathG hBσG hstar
-    hLsl c hcB hVE Rr hRr Cut hCutl hTop cf D₀ gE hgE hcat hhT hmbb hmbT mb' D hrankH hroleD
+  let commonContext := context
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  dsimp (config := { zeta := false, zetaUnused := false }) only [
+    LeafEstimateStage5Statement, leafEstimateParameters, leafEstimateDimensionBound,
+    leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf,
+    leafEstimateGroupLevel, leafEstimateSurvivingCells, leafEstimateCellGroups,
+    leafEstimateGroups] at *
+  intro hCg hanc hpairs hsub hne hNd hk1 fp dB hstd hdδ Nl hn_mono Hm hHm1 hdim hC hdD hbox hlogH hK
+    Lf ks S0 hS0T gs gset hcu mbs Ms L hexp hnotg hDS hsch' hA6 qG hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1
+    hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThrD hThrM hThrC Ts hTsdef BN τb hτb hτb1 hτbN hHτb
+    hroot' ρ₀ zc gsc hGz hMLE hPH hNl4 hNq hpathG hBσG hstar hLsl c hcB hVE Rr hRr Cut hCutl hTop cf
+    D₀ gE hgE hcat hhT hmbb hmbT mb' D hrankH hroleD
   let B₀ : (D₀.toLeafQ qG).BallData gset :=
     { hT := fun l e he => (AD.hT l e he).2.2
       htag := AD.htag
@@ -3401,29 +3110,40 @@ private theorem leaf_estimate_stage_5 : LeafEstimateStage5Statement := by
     · change _ ≤ S.dmax
       rw [hSd]
       have! this := hdim (bf.grpCenter d G)
+      dsimp only [leafEstimateDimensionBound]
       omega
   -- the leaf bound
   expose_names
-  exact @leaf_estimate_stage_6 κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ
-    CM1 t3 Cb Cl hconst A bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ
-    kD hδ hδ8 hρ hρ1 hkb hkF hk1 hstd hkB hcb hn_mono hNl0 hHm1 hC S hSd hSDm hSV hd2 hdD hD2 hB2
-    hQ1 hlogH hK hK1 hS0T hcu hlenMc Ms L hDS hsch' hA6 hqG1 Vl0 U hUdef hD0 hD1 hU16 hU0 MV hMV
-    hMV0 ε hεdef hε0 hεU hThrM hThrC hTsdef hτb hτb1 hτbN hHτb hroot' zc hPH hNl4 hNq hpathG hstar
-    hLsl c hcB Rr hRr Cut hCutl hgE hcat hhT hmbb hmbT hrankH hroleD htagH hS1S0 hS1c hbk hIB
+  exact @leaf_estimate_stage_6
+    commonContext
+    hCg hanc hpairs hsub hne hNd hk1 hstd hn_mono hHm1 hC hdD hlogH hK hS0T hcu Ms L hDS hsch'
+    hA6 hqG1 Vl0 U hUdef hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hThrM hThrC hTsdef hτb
+    hτb1 hτbN hHτb hroot' zc hPH hNl4 hNq hpathG hstar hLsl c hcB Rr hRr Cut hCutl hgE hcat hhT
+    hmbb hmbT hrankH hroleD htagH hS1S0 hS1c hbk hIB
     hpassD hhpassD hτr hτH' hτ0 hNlD hNHD hτ₂ hτ₂1 hτ₂' hHed₂ hNb hKN hRl0 hVl00 hOs hCjg hΓadef
     hΓa hΓbdef hΓb hΓUdef hΓU hrepD Ee hEe0 hEeb hEeD' hMD' hdB1 hprin hstab hcD hVE hVl0 hGq hMt
     hTopD hUD hUT hIw12 hGc
 
-private theorem leaf_estimate_stage_4 : LeafEstimateStage4Statement := by
+private theorem leaf_estimate_stage_4 (context : LeafEstimateContext) :
+    LeafEstimateStage4Statement context := by
   classical
-  intro κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A
-    bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb
-    hkF hk1 fp dB hstd hdδ Nl hkB hcb hn_mono hNl0 Hm hHm1 hdim hC S hSd hSDm hSV hd2 hdD hD2 hB2
-    hQ1 hbox hlogH hK hK1 Lf ks S0 hS0T gs gset hcu U_1 hlenMc mbs Ms L hexp hnotg herrW hDS hsch'
-    hA6 qG hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThrD hThrM
-    hThrC Ts hTsdef BN τb hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hPH hNl4 hNq hpathG hBσG
-    hstar hLsl c hcrep hcB hVE Rr hRr Cut hCutl hTop cf D₀ gE hgE hcat hhT hTmpl hmbb hmbT mb' D
-    hrankH hroleD
+  let commonContext := context
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  dsimp (config := { zeta := false, zetaUnused := false }) only [
+    LeafEstimateStage4Statement, leafEstimateParameters, leafEstimateDimensionBound,
+    leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf,
+    leafEstimateGroupLevel, leafEstimateSurvivingCells, leafEstimateCellGroups,
+    leafEstimateGroups] at *
+  intro hCg hanc hpairs hsub hne hNd hk1 fp dB hstd hdδ Nl hn_mono Hm hHm1 hdim hC hdD hbox hlogH hK
+    Lf ks S0 hS0T gs gset hcu U_1 mbs Ms L hexp hnotg herrW hDS hsch' hA6 qG hqG1 Vl0 hVl0 U hUdef
+    hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThrD hThrM hThrC Ts hTsdef BN τb hτb hτb1
+    hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hPH hNl4 hNq hpathG hBσG hstar hLsl c hcrep hcB hVE Rr hRr
+    Cut hCutl hTop cf D₀ gE hgE hcat hhT hTmpl hmbb hmbT mb' D hrankH hroleD
   let B₀ : (D₀.toLeafQ qG).BallData gset :=
     { hT := fun l e he => (AD.hT l e he).2.2
       htag := AD.htag
@@ -3551,25 +3271,36 @@ private theorem leaf_estimate_stage_4 : LeafEstimateStage4Statement := by
       _ = ((AD.Mp * A.famVtxBound : ℕ) : ℝ) := by push_cast; ring
   -- the centers of the groups and the principal-bin data
   expose_names
-  exact @leaf_estimate_stage_5 κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ
-    CM1 t3 Cb Cl hconst A bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ
-    kD hδ hδ8 hρ hρ1 hkb hkF hk1 hstd hdδ hkB hcb hn_mono hNl0 hHm1 hdim hC S hSd hSDm hSV hd2 hdD
-    hD2 hB2 hQ1 hbox hlogH hK hK1 hS0T hcu hlenMc Ms L hexp hnotg hDS hsch' hA6 hqG1 Vl0 hVl0 U
-    hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThrD hThrM hThrC hTsdef hτb hτb1
-    hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hPH hNl4 hNq hpathG hBσG hstar hLsl c hcB hVE Rr hRr Cut
-    hCutl hTop hgE hcat hhT hmbb hmbT hrankH hroleD htagH hS1S0 hS1c hbk hIB hpassD hhpassD hτr
+  exact @leaf_estimate_stage_5
+    commonContext
+    hCg hanc hpairs hsub hne hNd hk1 hstd hdδ hn_mono hHm1 hdim hC hdD hbox hlogH hK hS0T hcu
+    Ms L hexp hnotg hDS hsch' hA6 hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε
+    hεdef hε0 hεU hUD hThrD hThrM hThrC hTsdef hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hPH
+    hNl4 hNq hpathG hBσG hstar hLsl c hcB hVE Rr hRr Cut hCutl hTop hgE hcat hhT hmbb hmbT
+    hrankH hroleD htagH hS1S0 hS1c hbk hIB hpassD hhpassD hτr
     hτH' hτ0 hNlD hNHD hτ₂ hτ₂1 hτ₂' hHed₂ hNb hKN hRl0 hVl00 hOs hCjg hΓadef hΓa hΓbdef hΓb
     hΓUdef hΓU hrepD Ee hEe0 hEeb hEeD' hMD'
 
-private theorem leaf_estimate_stage_3 : LeafEstimateStage3Statement := by
+private theorem leaf_estimate_stage_3 (context : LeafEstimateContext) :
+    LeafEstimateStage3Statement context := by
   classical
-  intro κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A
-    bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb
-    hkF hk1 fp dB hstd hdδ Nl hkB hcb hn_mono hNl0 Hm hHm1 hdim hC S hSd hSDm hSV hd2 hdD hD2 hB2
-    hQ1 hbox hlogH hK hK1 Lf ks S0 hS0T hS0c gs gset hcu U_1 hlenMc mbs Ms L hexp hnotg herrW hDS
-    hsch' hA6 qG hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThrD
-    hThrM hThrC Ts hTsdef BN τb hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hPH hNl4 hNq hpathG
-    hBσG hstar hLsl c hcrep hcB hVE Rr hRr Cut hCutl hTop
+  let commonContext := context
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  dsimp (config := { zeta := false, zetaUnused := false }) only [
+    LeafEstimateStage3Statement, leafEstimateParameters, leafEstimateDimensionBound,
+    leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf,
+    leafEstimateGroupLevel, leafEstimateSurvivingCells, leafEstimateCellGroups,
+    leafEstimateGroups] at *
+  intro hCg hanc hpairs hsub hne hNd hk1 fp dB hstd hdδ Nl hn_mono Hm hHm1 hdim hC hdD hbox hlogH hK
+    Lf ks S0 hS0T hS0c gs gset hcu U_1 mbs Ms L hexp hnotg herrW hDS hsch' hA6 qG hqG1 Vl0 hVl0 U
+    hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThrD hThrM hThrC Ts hTsdef BN τb hτb
+    hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hPH hNl4 hNq hpathG hBσG hstar hLsl c hcrep hcB hVE Rr
+    hRr Cut hCutl hTop
   let cf : (l : Fin (4 : ℕ)) → (G : bf.Grp) → ℤ → ℤ × ℤ → (Ms l G).Md → ℂ :=
     fun (l : Fin (4 : ℕ)) (G : bf.Grp) => if hG : G ∈ gset then c l ⟨G, hG⟩ else fun _ _
       _ => (0 : ℂ)
@@ -3698,24 +3429,34 @@ private theorem leaf_estimate_stage_3 : LeafEstimateStage3Statement := by
     rw [h2]
     exact AD.hlab l I r (by change r ≤ fp.Lc + 5; omega)
   expose_names
-  exact @leaf_estimate_stage_4 κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ
-    CM1 t3 Cb Cl hconst A bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ
-    kD hδ hδ8 hρ hρ1 hkb hkF hk1 hstd hdδ hkB hcb hn_mono hNl0 hHm1 hdim hC S hSd hSDm hSV hd2 hdD
-    hD2 hB2 hQ1 hbox hlogH hK hK1 hS0T hcu hlenMc Ms L hexp hnotg herrW hDS hsch' hA6 hqG1 Vl0
-    hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThrD hThrM hThrC hTsdef hτb
-    hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hPH hNl4 hNq hpathG hBσG hstar hLsl c hcrep hcB hVE
-    Rr hRr Cut hCutl hTop hgE hcat hhT hTmpl hmbb hmbT hrankH hroleD htagH hS1S0 hS1c hbk hIB
+  exact @leaf_estimate_stage_4
+    commonContext
+    hCg hanc hpairs hsub hne hNd hk1 hstd hdδ hn_mono hHm1 hdim hC hdD hbox hlogH hK hS0T hcu
+    Ms L hexp hnotg herrW hDS hsch' hA6 hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0
+    ε hεdef hε0 hεU hUD hThrD hThrM hThrC hTsdef hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE
+    hPH hNl4 hNq hpathG hBσG hstar hLsl c hcrep hcB hVE Rr hRr Cut hCutl hTop hgE hcat hhT
+    hTmpl hmbb hmbT hrankH hroleD htagH hS1S0 hS1c hbk hIB
     hpassD hhpassD hτr hτH' hτ0 hNlD
 
-private theorem leaf_estimate_stage_2 : LeafEstimateStage2Statement := by
+private theorem leaf_estimate_stage_2 (context : LeafEstimateContext) :
+    LeafEstimateStage2Statement context := by
   classical
-  intro κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl hconst A
-    bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ kD hδ hδ8 hρ hρ1 hkb
-    hkF hk1 fp dB hstd hdδ Nl hkB hcb hn_mono hNl0 Hm hHm1 hdim hC S hSd hSDm hSQ hSV hSW hd2 hdD
-    hD2 hB2 hQ1 hbox hlogH hK hK1 Lf hLf ks S0 hS0T hS0c gs gset hcu U_1 hlenMc mbs hNlab Ms L
-    hexp hnotg herrW hDS hsch' hA6 qG hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε
-    hεdef hε0 hεU hUD hThr0 hThrD hThrM hThrC Ts hTsdef hTs0 BN τb hτb hτb1 hτbN hHτb hroot' ρ₀ zc
-    gsc hGz hMLE hεM hδcG hcolG hPH
+  let commonContext := context
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  dsimp (config := { zeta := false, zetaUnused := false }) only [
+    LeafEstimateStage2Statement, leafEstimateParameters, leafEstimateDimensionBound,
+    leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf,
+    leafEstimateGroupLevel, leafEstimateSurvivingCells, leafEstimateCellGroups,
+    leafEstimateGroups] at *
+  intro hCg hanc hpairs hsub hne hNd hk1 fp dB hstd hdδ Nl hn_mono Hm hHm1 hdim hC hSQ hSW hdD hbox
+    hlogH hK Lf hLf ks S0 hS0T hS0c gs gset hcu U_1 mbs hNlab Ms L hexp hnotg herrW hDS hsch' hA6 qG
+    hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThr0 hThrD hThrM
+    hThrC Ts hTsdef hTs0 BN τb hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hεM hδcG hcolG hPH
   have! hNl4 : (4 : ℝ) ≤ Nl := by
     have! this := (AD.hn0).trans (hn_mono (Nat.zero_le (fp.Lc + 5)))
     linarith only [this, hcb]
@@ -3829,21 +3570,30 @@ private theorem leaf_estimate_stage_2 : LeafEstimateStage2Statement := by
     · exact i.2.2 _
     · exact Nat.zero_le _
   expose_names
-  exact @leaf_estimate_stage_3 κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ
-    CM1 t3 Cb Cl hconst A bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ
-    kD hδ hδ8 hρ hρ1 hkb hkF hk1 hstd hdδ hkB hcb hn_mono hNl0 hHm1 hdim hC S hSd hSDm hSV hd2 hdD
-    hD2 hB2 hQ1 hbox hlogH hK hK1 hS0T hS0c hcu hlenMc Ms L hexp hnotg herrW hDS hsch' hA6 hqG1
-    Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThrD hThrM hThrC hTsdef
-    hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hPH hNl4 hNq hpathG hBσG hstar hLsl c hcrep hcB
-    hVE Rr hRr Cut hCutl hTop hgE hmainR
+  exact @leaf_estimate_stage_3
+    commonContext
+    hCg hanc hpairs hsub hne hNd hk1 hstd hdδ hn_mono hHm1 hdim hC hdD hbox hlogH hK hS0T hS0c
+    hcu Ms L hexp hnotg herrW hDS hsch' hA6 hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV
+    hMV0 ε hεdef hε0 hεU hUD hThrD hThrM hThrC hTsdef hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz
+    hMLE hPH hNl4 hNq hpathG hBσG hstar hLsl c hcrep hcB hVE Rr hRr Cut hCutl hTop hgE hmainR
 
-private theorem leaf_estimate_stage_1 : LeafEstimateStage1Statement := by
+private theorem leaf_estimate_stage_1 (context : LeafEstimateContext) :
+    LeafEstimateStage1Statement context := by
   classical
-  intro κ c₀ cc hcc Dm0 hmodes Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ CM1 t3 Cb Cl
-    hconst A bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ kD hδ hδ8 hρ
-    hρ1 hkb hkF hk1 fp dB hstd hdδ Nl hkB hδN hcb hn_mono hNl0 Hm hHm1 hdim hC S hSd hSD hSDm hSQ
-    hSV hSW hd2 hdD hD2 hB2 hQ1 hclr hbox hlogH hK hK1 Lf hLf ks S0 hS0T hS0c gs gset hcu hgsetU U
-    hUuse hpathU hlenMc
+  let commonContext := context
+  rcases context with ⟨⟨κ, c₀, cc, hcc, Dm0, Msch, hMsch, Cg, g, cT, cL, cK, cMc, cm, ce,
+    ce2, cQ, CΛ, eΛ, CM1, t3, Cb, Cl⟩,
+    hconst,
+    ⟨A, bf, k, η₀, E, hS2, hη, hη₀, q, hq2, hq3, Nd, p, AD, d, s, δ, ρ, kD, hδ, hδ8, hρ,
+      hρ1, hkb, hkF, hkB, hcb, hNl0⟩,
+    ⟨S, hSd, hSDm, hSV, hd2, hD2, hB2, hQ1, hK1, hlenMc⟩⟩
+  dsimp (config := { zeta := false, zetaUnused := false }) only [
+    LeafEstimateStage1Statement, leafEstimateParameters, leafEstimateDimensionBound,
+    leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf,
+    leafEstimateGroupLevel, leafEstimateSurvivingCells, leafEstimateCellGroups,
+    leafEstimateGroups] at *
+  intro hmodes hCg hanc hpairs hsub hne hNd hk1 fp dB hstd hdδ Nl hδN hn_mono Hm hHm1 hdim hC hSD
+    hSQ hSW hdD hclr hbox hlogH hK Lf hLf ks S0 hS0T hS0c gs gset hcu hgsetU U hUuse hpathU
   let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
     fun l => MainBudget.ofCounts bf fp.Mc (AD.cat l) (hlenMc l) l (fun e he => AD.hTc
       (AD.hT l e he).1) (fun e he => (AD.hT l e he).2.1) hNl0 (fun I _ => AD.hlab l I _
@@ -3961,12 +3711,12 @@ private theorem leaf_estimate_stage_1 : LeafEstimateStage1Statement := by
     have! this := fp.bbase_le (Lf.role_le l) (le_refl fp.P)
     omega
   expose_names
-  exact @leaf_estimate_stage_2 κ c₀ cc hcc Dm0 Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2 cQ CΛ eΛ
-    CM1 t3 Cb Cl hconst A bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD d s δ ρ
-    kD hδ hδ8 hρ hρ1 hkb hkF hk1 hstd hdδ hkB hcb hn_mono hNl0 hHm1 hdim hC S hSd hSDm hSQ hSV hSW
-    hd2 hdD hD2 hB2 hQ1 hbox hlogH hK hK1 hLf hS0T hS0c hcu hlenMc hNlab Ms L hexp hnotg herrW hDS
-    hsch' hA6 hqG1 Vl0 hVl0 U hUdef hU4 hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThr0
-    hThrD hThrM hThrC hTsdef hTs0 hτb hτb1 hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hεM hδcG hcolG hPH
+  exact @leaf_estimate_stage_2
+    commonContext
+    hCg hanc hpairs hsub hne hNd hk1 hstd hdδ hn_mono hHm1 hdim hC hSQ hSW hdD hbox hlogH hK
+    hLf hS0T hS0c hcu hNlab Ms L hexp hnotg herrW hDS hsch' hA6 hqG1 Vl0 hVl0 U hUdef hU4 hD0
+    hD1 hU16 hU0 MV hMV hMV0 ε hεdef hε0 hεU hUD hThr0 hThrD hThrM hThrC hTsdef hTs0 hτb hτb1
+    hτbN hHτb hroot' ρ₀ zc gsc hGz hMLE hεM hδcG hcolG hPH
 
 open Classical in
 /-- Blueprint lines 2838-2851 on one leaf of the guarded search of an attempt (stages: schedule,
@@ -4127,11 +3877,23 @@ theorem leaf_estimate (κ : LocalKernelClass) (c₀ cc : ℕ) (hcc : 1 ≤ cc) :
       unfold FamParams.brank; omega
     exact (AD.hlab l I _ hr).trans (hn_mono hr)
   expose_names
-  exact @leaf_estimate_stage_1 κ c₀ cc hcc Dm0 hmodes Msch hMsch Cg hCg g cT cL cK cMc cm ce ce2
-    cQ CΛ eΛ CM1 t3 Cb Cl hconst A bf k η₀ E hanc hpairs hsub hS2 hη hη₀ hne q hq2 hq3 Nd hNd p AD
-    d s δ ρ kD hδ hδ8 hρ hρ1 hkb hkF hk1 hstd hdδ hkB hδN hcb hn_mono hNl0 hHm1 hdim hC S hSd hSD
-    hSDm hSQ hSV hSW hd2 hdD hD2 hB2 hQ1 hclr hbox hlogH hK hK1 hLf hS0T hS0c hcu hgsetU hUuse
-    hpathU hlenMc hNlab
+  exact @leaf_estimate_stage_1
+    { constants :=
+        { κ := κ, c₀ := c₀, cc := cc, hcc := hcc, Dm0 := Dm0, Msch := Msch, hMsch := hMsch,
+          Cg := Cg, g := g, cT := cT, cL := cL, cK := cK, cMc := cMc, cm := cm, ce := ce,
+          ce2 := ce2, cQ := cQ, CΛ := CΛ, eΛ := eΛ, CM1 := CM1, t3 := t3, Cb := Cb,
+          Cl := Cl },
+      hconst := hconst,
+      setup :=
+        { A := A, bf := bf, k := k, η₀ := η₀, E := E, hS2 := hS2, hη := hη, hη₀ := hη₀, q := q,
+          hq2 := hq2, hq3 := hq3, Nd := Nd, p := p, AD := AD, d := d, s := s, δ := δ,
+          ρ := ρ, kD := kD, hδ := hδ, hδ8 := hδ8, hρ := hρ, hρ1 := hρ1, hkb := hkb,
+          hkF := hkF, hkB := hkB, hcb := hcb, hNl0 := hNl0 },
+      schedule :=
+        { S := S, hSd := hSd, hSDm := hSDm, hSV := hSV, hd2 := hd2, hD2 := hD2, hB2 := hB2,
+          hQ1 := hQ1, hK1 := hK1, hlenMc := hlenMc } }
+    hmodes hCg hanc hpairs hsub hne hNd hk1 hstd hdδ hδN hn_mono hHm1 hdim hC hSD hSQ hSW hdD
+    hclr hbox hlogH hK hLf hS0T hS0c hcu hgsetU hUuse hpathU hNlab
 
 end ActiveSetup.BasicFamilies
 
