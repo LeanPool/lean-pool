@@ -6,13 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.FunctionSpace
-public import Mathlib.Tactic.ToAdditive
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 5.10 (Scott 1981, PRG-19, §5) — the smash product and the strict
@@ -292,12 +285,14 @@ theorem principal_master_eq_bot {X : Set α} (hX : V₀.mem X) (hXm : X = V₀.m
 /-- A `⊥` left factor collapses the strict pairing to `⊥` (choice-free). -/
 theorem smashPair_bot_left (y : V₁.Element) : smashPair V₀.bot y = (smash V₀ V₁).bot := by
   apply eq_bot_of_no_proper
-  simp_all
+  simp_all only [mem_smashPair, mem_bot, ne_eq, exists_and_left, exists_eq_left,
+    not_true_eq_false, false_and, or_false, smash_master, implies_true]
 
 /-- A `⊥` right factor collapses the strict pairing to `⊥` (choice-free). -/
 theorem smashPair_bot_right (x : V₀.Element) : smashPair x V₁.bot = (smash V₀ V₁).bot := by
   apply eq_bot_of_no_proper
-  simp_all
+  simp_all only [mem_smashPair, ne_eq, mem_bot, exists_and_left, ↓existsAndEq,
+    not_true_eq_false, false_and, and_false, exists_const, or_false, smash_master, implies_true]
 
 /-! ### The strict function space `(𝒟₀ →⊥ 𝒟₁)`.
 
@@ -342,7 +337,7 @@ theorem isStrict_iff_apply_bot {f : ApproximableMap V₀ V₁} :
       exact ⟨V₀.master, V₀.bot.master_mem, f.master_rel⟩
   · intro h Y hrel
     have : (f.toElementMap V₀.bot).mem Y := ⟨V₀.master, V₀.bot.master_mem, hrel⟩
-    simp_all
+    simp_all only [mem_bot]
 
 /-- Strictness is downward closed: a map below a strict map is strict. -/
 theorem IsStrict.mono {f g : ApproximableMap V₀ V₁} (hf : IsStrict f) (hgf : g ≤ f) : IsStrict g :=
@@ -377,12 +372,14 @@ def sstepFun (L : List (Set α × Set β)) : Set (StrictMap V₀ V₁) :=
     f ∈ sstepFun L ↔ ∀ p ∈ L, f.1.rel p.1 p.2 := Iff.rfl
 
 @[simp] theorem sstepFun_nil : (sstepFun [] : Set (StrictMap V₀ V₁)) = Set.univ := by
-  ext f; simp
+  ext f; simp only [mem_sstepFun, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
+    Set.mem_univ]
 
 theorem sstepFun_cons (p : Set α × Set β) (L : List (Set α × Set β)) :
     (sstepFun (p :: L) : Set (StrictMap V₀ V₁)) = sstep p.1 p.2 ∩ sstepFun L := by
   ext f
-  simp_all
+  simp_all only [mem_sstepFun, List.mem_cons, forall_eq_or_imp, Prod.forall, Set.mem_inter_iff,
+    mem_sstep]
 
 theorem sstepFun_append (L L' : List (Set α × Set β)) :
     (sstepFun (L ++ L') : Set (StrictMap V₀ V₁)) = sstepFun L ∩ sstepFun L' := by
@@ -401,7 +398,7 @@ theorem sstepFun_singleton (X : Set α) (Y : Set β) :
 /-- `[Δ₀, Δ₁] = |𝒟₀ →⊥ 𝒟₁|`: every (strict) map relates the masters. -/
 @[simp] theorem sstep_master_eq :
     (sstep V₀.master V₁.master : Set (StrictMap V₀ V₁)) = Set.univ := by
-  ext f; simpa using f.1.master_rel
+  ext f; simpa only [mem_sstep, Set.mem_univ, iff_true] using f.1.master_rel
 
 theorem sstep_inter_right {X : Set α} {Y Y' : Set β} (hY : V₁.mem Y) (hY' : V₁.mem Y') :
     (sstep X Y ∩ sstep X Y' : Set (StrictMap V₀ V₁)) = sstep X (Y ∩ Y') := by
@@ -479,7 +476,8 @@ theorem mem_sstepFun_iff (φ : (strictFun V₀ V₁).Element) {L : List (Set α 
     (hL : ∀ p ∈ L, V₀.mem p.1 ∧ V₁.mem p.2) :
     φ.mem (sstepFun L) ↔ ∀ p ∈ L, φ.mem (sstep p.1 p.2) := by
   induction L with
-  | nil => simp only [sstepFun_nil, List.not_mem_nil, IsEmpty.forall_iff, implies_true, iff_true]
+  | nil => simp only [sstepFun_nil, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
+    iff_true]
            exact φ.master_mem
   | cons p L ih =>
     rw [sstepFun_cons]
@@ -493,7 +491,9 @@ theorem mem_sstepFun_iff (φ : (strictFun V₀ V₁).Element) {L : List (Set α 
       have hne : (sstep p.1 p.2 ∩ sstepFun L).Nonempty := (φ.sub hmem).2
       have htail : φ.mem (sstepFun L) :=
         φ.up_mem hmem ⟨⟨L, hLtail, rfl⟩, hne.mono Set.inter_subset_right⟩ Set.inter_subset_right
-      simp_all
+      simp_all only [List.mem_cons, or_true, and_self, implies_true, Prod.forall, true_iff,
+        forall_const, forall_eq_or_imp, and_true, Set.mem_inter_iff, mem_sstep, mem_sstepFun,
+        Prod.mk.eta]
     · intro hall
       have hstep : φ.mem (sstep p.1 p.2) := hall p (List.mem_cons.mpr (Or.inl rfl))
       have htail : φ.mem (sstepFun L) :=
@@ -691,7 +691,8 @@ theorem rel_sstepFun_iff (h : ApproximableMap V₀ (strictFun V₁ V₂)) {X : S
       have htail : h.rel X (sstepFun L) :=
         h.mono hmem subset_rfl Set.inter_subset_right hX
           ⟨⟨L, hLtail, rfl⟩, hne.mono Set.inter_subset_right⟩
-      simp_all
+      simp_all only [List.mem_cons, or_true, and_self, implies_true, Prod.forall, true_iff,
+        forall_const, forall_eq_or_imp, Set.mem_inter_iff, mem_sstep, mem_sstepFun, Prod.mk.eta]
     · intro hall
       have hstep : h.rel X (sstep p.1 p.2) := hall p (List.mem_cons.mpr (Or.inl rfl))
       have htail : h.rel X (sstepFun L) :=

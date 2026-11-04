@@ -8,7 +8,6 @@ module
 public import LeanPool.DomainTheory.Neighborhood.ExampleB
 public import LeanPool.DomainTheory.Neighborhood.Theorem111
 public import Mathlib.Tactic.Attr.Core
-public import Mathlib.Tactic.Basic
 
 /-!
 # Exercise 1.13 (Scott 1981, PRG-19, §1) — the infinite binary system `B`,
@@ -56,7 +55,8 @@ def prefixSeq (p : ℕ → Bool) : ℕ → Str
 @[simp] theorem prefixSeq_length (p : ℕ → Bool) (n : ℕ) : (prefixSeq p n).length = n := by
   induction n with
   | zero => rfl
-  | succ k ih => simp [prefixSeq, ih]
+  | succ k ih => simp only [prefixSeq, List.length_append, ih, List.length_cons,
+    List.length_nil, Nat.zero_add]
 
 theorem prefixSeq_prefix_succ (p : ℕ → Bool) (n : ℕ) :
     prefixSeq p n <+: prefixSeq p (n + 1) := ⟨[p n], rfl⟩
@@ -110,7 +110,7 @@ theorem prefix_comparable_of_mem {σ τ : Str} (y : B.Element)
   · exfalso
     have hmem : ρ ∈ cone ρ := mem_cone.mpr List.prefix_rfl
     rw [← hρ, h] at hmem
-    simp at hmem
+    simp only [Set.mem_empty_iff_false] at hmem
 
 /-- **Exercise 1.13 (total elements).** Each infinite path `p` gives a *total*
 (maximal) element

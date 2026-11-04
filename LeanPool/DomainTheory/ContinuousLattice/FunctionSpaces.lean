@@ -8,6 +8,8 @@ module
 public import LeanPool.DomainTheory.ContinuousLattice.ScottMaps
 public import Mathlib.Order.FixedPoints
 
+import Mathlib.Tactic.Set -- shake: keep
+
 /-!
 # Function spaces on continuous lattices (Scott 1972, §3)
 
@@ -280,6 +282,22 @@ theorem isLUB_sSup (F : Set (ScottMap D D')) : IsLUB F (sSup F) := by
 noncomputable instance instCompleteLattice : CompleteLattice (ScottMap D D') :=
   completeLatticeOfSup (ScottMap D D') isLUB_sSup
 
+/-- Suprema of families of Scott maps are evaluated pointwise. -/
+theorem iSup_apply {ι : Type*} (maps : ι → ScottMap D D') (x : D) :
+    (⨆ i, maps i) x = ⨆ i, maps i x := by
+  rw [show (⨆ i, maps i) = sSup (Set.range maps) from sSup_range.symm,
+    ScottMap.sSup_apply, ← Set.range_comp, sSup_range]
+  rfl
+
+/-- A Scott map preserves the supremum of a nonempty directed family. -/
+theorem map_iSup_of_directed {ι : Type*} [Nonempty ι] (map : ScottMap D D')
+    (points : ι → D) (directed : Directed (· ≤ ·) points) :
+    map (⨆ i, points i) = ⨆ i, map (points i) := by
+  rw [show (⨆ i, points i) = sSup (Set.range points) from sSup_range.symm,
+    map.preservesDirectedSup_coe (Set.range points) (Set.range_nonempty points)
+      (directedOn_range.mpr directed), ← Set.range_comp, sSup_range]
+  rfl
+
 /-- The identity Scott map. -/
 def idMap : ScottMap D D :=
   ⟨fun x => x, continuous_of_preservesDirectedSup fun S _ _ => by
@@ -529,7 +547,8 @@ theorem wayBelow_le_finset_sup_step (hD : IsContinuousLattice D) (hD' : IsContin
       {F | ∀ p ∈ F, (p.2 : D') ≪ (g : D → D') p.1} with hSg
   have hSgne : Sg.Nonempty := by
     refine ⟨_, ∅, ?_, rfl⟩
-    simp_all
+    simp_all only [Prod.forall, mem_ofPred_eq, Finset.notMem_empty, IsEmpty.forall_iff,
+      implies_true]
   have hSgdir : DirectedOn (· ≤ ·) Sg := by
     rintro _ ⟨F₁, hF₁, rfl⟩ _ ⟨F₂, hF₂, rfl⟩
     refine ⟨(F₁ ∪ F₂).sup (fun p => stepMap p.1 p.2), ⟨F₁ ∪ F₂, fun p hp => ?_, rfl⟩,
@@ -550,7 +569,7 @@ theorem wayBelow_le_finset_sup_step (hD : IsContinuousLattice D) (hD' : IsContin
       have hmemSg : stepMap e e' ∈ Sg := by
         refine ⟨{(e, e')}, fun p hp => ?_, ?_⟩
         · rw [Finset.mem_singleton] at hp; subst hp; exact he'
-        · simp_all
+        · exact Finset.sup_singleton
       have hx : (stepMap e e' : D → D') x ≤ ((sSup Sg : ScottMap D D') : D → D') x := by
         rw [ScottMap.sSup_apply]
         exact le_sSup ⟨stepMap e e', hmemSg, rfl⟩
@@ -661,10 +680,10 @@ theorem sSup_image_prod_mk_left (x : D) (S : Set D') (hS : S.Nonempty) :
     ext ⟨a, b⟩
     simp only [Set.mem_image, Set.mem_prod, Set.mem_singleton_iff]
     constructor
-    · simp_all
-    · simp_all
+    · simp_all only [Prod.mk.injEq, exists_eq_right_right, and_self, implies_true]
+    · simp_all only [Prod.mk.injEq, true_and, exists_eq_right, implies_true]
   have hx : sSup ({x} : Set D) = x := by
-    simp_all
+    exact sSup_singleton
   rw [himage, sSup_prod (hs := ⟨x, Set.mem_singleton x⟩) (ht := hS), hx]
 
 theorem curry_right_preservesDirectedSup (f : ScottMap (D × D') D'') (x : D) :
@@ -678,12 +697,12 @@ theorem curry_right_preservesDirectedSup (f : ScottMap (D × D') D'') (x : D) :
     exact ⟨(x, c), Set.mem_image_of_mem _ hc, And.intro (And.intro le_rfl hac) (
       And.intro le_rfl hbc)⟩
   have hS'ne : (Set.image (fun y => (x, y)) S).Nonempty := by
-    simp_all
+    exact image_nonempty.mpr hS
   rw [show (fun y => f (x, y)) (sSup S) = f (x, sSup S) from rfl,
     ← sSup_image_prod_mk_left x S hS,
     f.preservesDirectedSup_coe (Set.image (fun y => (x, y)) S) hS'ne hS']
   congr 1
-  simp [Set.image_image]
+  simp only [image_image]
 
 /-- **Scott 1972, Proposition 3.5 (right).** Currying in the `y`-variable is
 Scott-continuous. -/
@@ -696,10 +715,10 @@ theorem sSup_image_prod_mk_right (y : D') (S : Set D) (hS : S.Nonempty) :
     ext ⟨a, b⟩
     simp only [Set.mem_image, Set.mem_prod, Set.mem_singleton_iff]
     constructor
-    · simp_all
-    · simp_all
+    · simp_all only [Prod.mk.injEq, ↓existsAndEq, true_and, and_self, implies_true]
+    · simp_all only [Prod.mk.injEq, and_true, exists_eq_right, implies_true]
   have hy : sSup ({y} : Set D') = y := by
-    simp_all
+    exact sSup_singleton
   rw [himage, sSup_prod (hs := hS) (ht := ⟨y, Set.mem_singleton y⟩), hy]
 
 /-- Currying in the `x`-variable: `x ↦ f (x, y)` is Scott-continuous (used for
@@ -716,12 +735,12 @@ theorem curry_left_preservesDirectedSup (f : ScottMap (D × D') D'') (y : D') :
     exact ⟨(c, y), Set.mem_image_of_mem _ hc, And.intro (And.intro hac le_rfl) (
       And.intro hbc le_rfl)⟩
   have hS'ne : (Set.image (fun x => (x, y)) S).Nonempty := by
-    simp_all
+    exact image_nonempty.mpr hS
   rw [show (fun x => f (x, y)) (sSup S) = f (sSup S, y) from rfl,
     ← sSup_image_prod_mk_right y S hS,
     f.preservesDirectedSup_coe (Set.image (fun x => (x, y)) S) hS'ne hS']
   congr 1
-  simp [Set.image_image]
+  simp only [image_image]
 
 /-- The outer half of currying: `x ↦ (y ↦ f (x, y))` preserves directed suprema
 (so `lambda f` is a
@@ -816,7 +835,7 @@ theorem retr_ambientSSup_eq_sSup (R : IsContinuousLatticeRetraction D D') (S : S
   have hne' : (Set.image (R.incl : D → D') S).Nonempty := Set.image_nonempty.2 hS
   rw [R.retr.preservesDirectedSup_coe (Set.image (R.incl : D → D') S) hne' hdir']
   rw [Set.image_image, Set.image_congr fun a _ => R.retr_incl a]
-  simp
+  simp only [image_id']
 
 /-- The inclusion of a retraction preserves directed suprema (it is a Scott map). -/
 theorem incl_preservesDirectedSup (R : IsContinuousLatticeRetraction D D') :
@@ -1024,7 +1043,7 @@ theorem retr_bot (P : IsContinuousLatticeProjection D D') : (P.retr : D' → D) 
 
 /-- **Scott 1972, Proposition 3.10(i), empty case.** `i(⊥) = ⊥`. -/
 theorem incl_bot (P : IsContinuousLatticeProjection D D') : P.incl (⊥ : D) = ⊥ :=
-  le_antisymm (by simpa [retr_bot P] using P.incl_retr_le (⊥ : D')) bot_le
+  le_antisymm (by simpa only [le_bot_iff, retr_bot P] using P.incl_retr_le (⊥ : D')) bot_le
 
 /-- **Scott 1972, Proposition 3.10(i), binary case.** `i(x ⊔ y) = i(x) ⊔ i(y)`. -/
 theorem incl_sup (P : IsContinuousLatticeProjection D D') (x y : D) :
@@ -1053,7 +1072,7 @@ def finsetSupOf (S : Set D) : Set D :=
 
 theorem mem_finsetSupOf_of_mem {S : Set D} {x : D} (hx : x ∈ S) :
     x ∈ finsetSupOf S :=
-  ⟨{x}, by simp [hx], by simp⟩
+  ⟨{x}, by simp only [Finset.mem_singleton, forall_eq, hx], by simp only [sup_singleton, id_eq]⟩
 
 theorem le_sSup_finsetSupOf (S : Set D) : sSup S ≤ sSup (finsetSupOf S) :=
   sSup_le fun _ hx => le_sSup (mem_finsetSupOf_of_mem hx)
@@ -1073,7 +1092,7 @@ theorem directedOn_finsetSupOf (S : Set D) :
   obtain ⟨T₁, hT₁, rfl⟩ := ha
   obtain ⟨T₂, hT₂, rfl⟩ := hb
   have hunion : (T₁ ∪ T₂).sup id = T₁.sup id ⊔ T₂.sup id := by
-    simpa using Finset.sup_union (s₁ := T₁) (s₂ := T₂) (f := id)
+    simpa only using Finset.sup_union (s₁ := T₁) (s₂ := T₂) (f := id)
   refine ⟨T₁.sup id ⊔ T₂.sup id, ⟨T₁ ∪ T₂, ?_, hunion.symm⟩, le_sup_left, le_sup_right⟩
   intro x hx
   simp only [Finset.mem_union] at hx
@@ -1125,7 +1144,7 @@ theorem incl_wayBelow (P : IsContinuousLatticeProjection D D') (hD' : IsContinuo
       @IsContinuousLattice.sSup_wayBelow D' _ hD' (P.incl y),
       P.retr_incl y]
   have hImgne : (Set.image (P.retr : D' → D) W).Nonempty := by
-    simp_all
+    exact P.toIsContinuousLatticeRetraction.image_retr_wayBelow_nonempty y
   have hImgdir : DirectedOn (· ≤ ·) (Set.image (P.retr : D' → D) W) := by
     intro p hp q hq
     obtain ⟨a, ha, rfl⟩ := hp
@@ -1196,9 +1215,7 @@ theorem incl_sup_of_preservesSSup (hi : ∀ S : Set D, i (sSup S) = sSup (i '' S
 /-- From (i): `i` is monotone. -/
 theorem incl_mono_of_preservesSSup (hi : ∀ S : Set D, i (sSup S) = sSup (i '' S)) :
     Monotone i := by
-  intro x y hxy
-  have h := incl_sup_of_preservesSSup hi x y
-  simp_all
+  exact preservesDirectedSup_monotone fun ⦃S⦄ a a_1 => hi S
 
 /-- From (i)+(ii): `i` is order-reflecting (`x ⊑ y ↔ i x ⊑ i y`), since `x ⊑ y ↔ x
 ⊔ y = y`. -/
@@ -1211,7 +1228,8 @@ theorem le_of_incl_le (hi : ∀ S : Set D, i (sSup S) = sSup (i '' S))
 theorem incl_converseRetr_le (hi : ∀ S : Set D, i (sSup S) = sSup (i '' S)) (x' : D') :
     i (converseRetr i x') ≤ x' := by
   change i (sSup {x | i x ≤ x'}) ≤ x'
-  simp_all
+  simp_all only [sSup_le_iff, Set.mem_image, mem_ofPred_eq, forall_exists_index, and_imp,
+    forall_apply_eq_imp_iff₂, implies_true]
 
 /-- `j ∘ i = id` (uses (i)+(ii)): `{x | i x ⊑ i y} = Iic y`, whose join is `y`. -/
 theorem converseRetr_incl (hi : ∀ S : Set D, i (sSup S) = sSup (i '' S))
@@ -1221,7 +1239,7 @@ theorem converseRetr_incl (hi : ∀ S : Set D, i (sSup S) = sSup (i '' S))
     simp only [Set.mem_ofPred_eq, Set.mem_Iic]
     exact ⟨le_of_incl_le hi hinj, fun hx => incl_mono_of_preservesSSup hi hx⟩
   change sSup {x | i x ≤ i y} = y
-  simp_all
+  simp_all only [csSup_Iic]
 
 /-- `j` is Scott-continuous (uses (i)+(iii) and continuity of `D`). For directed
 `S'`: monotonicity
@@ -1343,7 +1361,8 @@ theorem scottSubspaceExtendInf_eq_of_comp {e : X → Y} {f : X → D} {U : Set Y
     scottSubspaceExtendInf e f U = sInf (Set.image (f' : Y → D) (Set.image e Set.univ ∩ U)) := by
   have hset : f '' (e ⁻¹' U) = Set.image (f' : Y → D) (Set.image e Set.univ ∩ U) := by
     ext d
-    simp_all
+    simp_all only [mem_image, mem_preimage, image_univ, mem_inter_iff, mem_range, ↓existsAndEq,
+      true_and]
   rw [scottSubspaceExtendInf, hset]
 
 /-- **Scott 1972, Proposition 3.8 (subspace variant).** `fbar` (with the Scott
@@ -1406,7 +1425,7 @@ theorem scottSubspaceExtend_eq_of_ext {e : X → Y} {f g' : X → D} (h : ∀ x,
   unfold scottSubspaceExtend
   congr 1
   ext d
-  simp [scottSubspaceExtendInf_eq_of_ext h]
+  simp only [scottSubspaceExtendInf_eq_of_ext h, mem_ofPred_eq]
 
 omit [CompleteLattice Y] [TopologicalSpace X] [TopologicalSpace Y] in
 theorem scottSubspaceExtendInf_mono_retr {e : X → Y} {g : X → D'}
@@ -1537,7 +1556,13 @@ theorem isProjection_directedSup {S : Set (ScottMap D D)} (hSne : S.Nonempty)
     have hsSx : ((sSup S : ScottMap D D) : D → D) x = sSup A := ScottMap.sSup_apply S x
     apply le_antisymm
     · rw [hsSx, ScottMap.sSup_apply]
-      simp_all
+      refine sSup_le ?_
+      rintro _ ⟨j, hj, rfl⟩
+      change (j : D → D) (sSup A) ≤ sSup A
+      rw [j.preservesDirectedSup_coe A hAne hAdir]
+      refine sSup_le ?_
+      rintro _ ⟨_, ⟨k, hk, rfl⟩, rfl⟩
+      exact (hle j hj (k x)).trans (le_sSup (Set.mem_image_of_mem _ hk))
     · rw [hsSx, ScottMap.sSup_apply]
       refine sSup_le ?_
       rintro _ ⟨j, hj, rfl⟩
@@ -1547,7 +1572,9 @@ theorem isProjection_directedSup {S : Set (ScottMap D D)} (hSne : S.Nonempty)
         _ ≤ sSup (Set.image (fun f : ScottMap D D => (f : D → D) (sSup A)) S) :=
               le_sSup (Set.mem_image_of_mem _ hj)
   · rw [ScottMap.sSup_apply]
-    simp_all
+    refine sSup_le ?_
+    rintro _ ⟨j, hj, rfl⟩
+    exact hle j hj x
 
 /-- **Scott 1972, Proposition 3.12 (`⊔`-closure).** `J_D` is closed under
 arbitrary suprema in
@@ -1557,7 +1584,8 @@ projection by `isProjection_finsetSup`. -/
 theorem isProjection_sSup {T : Set (ScottMap D D)} (hT : ∀ j ∈ T, IsProjection j) :
     IsProjection (sSup T) := by
   rw [IsContinuousLatticeProjection.sSup_finsetSupOf T]
-  refine isProjection_directedSup ⟨⊥, ∅, by simp, by simp⟩
+  refine isProjection_directedSup ⟨⊥, ∅, by simp only [Finset.notMem_empty, IsEmpty.forall_iff,
+    implies_true], by simp only [Finset.sup_empty]⟩
     (IsContinuousLatticeProjection.directedOn_finsetSupOf T) ?_
   rintro z ⟨F, hF, rfl⟩
   exact isProjection_finsetSup fun j hj => hT j (hF j hj)
