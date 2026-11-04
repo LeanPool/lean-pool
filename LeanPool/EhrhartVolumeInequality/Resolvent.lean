@@ -8,7 +8,8 @@ module
 
 public import LeanPool.EhrhartVolumeInequality.Regularization
 import all LeanPool.EhrhartVolumeInequality.Regularization
-import Mathlib.Analysis.CStarAlgebra.Module.Constructions
+-- Preserve the scalar inner-product instances in the original elaborated types.
+import Mathlib.Analysis.CStarAlgebra.Module.Constructions -- shake: keep
 import Mathlib.Analysis.Normed.Lp.SmoothApprox
 
 /-!
@@ -57,13 +58,6 @@ private theorem normalizedCoverBump_convolution_sq_le_convolution_sq
     (complexShrinkingBump (n := n) k).hasCompactSupport_normed
   have hκint : Integrable κ (volume : Measure (LogSpace n)) :=
     hκ.integrable_of_hasCompactSupport hκcompact
-  have hfirst : Integrable
-      (fun y : LogSpace n => κ y * h (x - y))
-      (volume : Measure (LogSpace n)) := by
-    have hexists := hκcompact.convolutionExists_right L
-      (hh.locallyIntegrable (by norm_num)) hκ x
-    simpa only [L, mul_comm, ContinuousLinearMap.lsmul_apply, smul_eq_mul]
-      using hexists.integrable_swap
   have hsecond : Integrable
       (fun y : LogSpace n => κ y * h (x - y) ^ 2)
       (volume : Measure (LogSpace n)) := by
@@ -71,78 +65,35 @@ private theorem normalizedCoverBump_convolution_sq_le_convolution_sq
       hh.integrable_sq.locallyIntegrable hκ x
     simpa only [L, mul_comm, ContinuousLinearMap.lsmul_apply, smul_eq_mul]
       using hexists.integrable_swap
-  let m : ℝ :=
-    ∫ y : LogSpace n, κ y * h (x - y)
-      ∂(volume : Measure (LogSpace n))
-  have hnonneg :
-      0 ≤ ∫ y : LogSpace n,
-        κ y * (h (x - y) - m) ^ 2
-          ∂(volume : Measure (LogSpace n)) :=
-    integral_nonneg (fun y =>
-      mul_nonneg
-        ((complexShrinkingBump (n := n) k).nonneg_normed y)
-        (sq_nonneg _))
-  have hexpand :
-      (∫ y : LogSpace n,
-        κ y * (h (x - y) - m) ^ 2
-          ∂(volume : Measure (LogSpace n))) =
-      (∫ y : LogSpace n,
-        κ y * h (x - y) ^ 2
-          ∂(volume : Measure (LogSpace n))) - m ^ 2 := by
-    calc
-      (∫ y : LogSpace n,
-        κ y * (h (x - y) - m) ^ 2
-          ∂(volume : Measure (LogSpace n))) =
-        ∫ y : LogSpace n,
-          ((κ y * h (x - y) ^ 2 -
-            (2 * m) * (κ y * h (x - y))) + m ^ 2 * κ y)
-          ∂(volume : Measure (LogSpace n)) := by
-          apply integral_congr_ae
-          filter_upwards with y
-          ring
-      _ =
-          ((∫ y : LogSpace n,
-            κ y * h (x - y) ^ 2
-              ∂(volume : Measure (LogSpace n))) -
-            (2 * m) *
-              (∫ y : LogSpace n,
-                κ y * h (x - y)
-                  ∂(volume : Measure (LogSpace n)))) +
-            m ^ 2 *
-              (∫ y : LogSpace n, κ y
-                ∂(volume : Measure (LogSpace n))) := by
-          calc
-            (∫ y : LogSpace n,
-              (κ y * h (x - y) ^ 2 -
-                (2 * m) * (κ y * h (x - y))) + m ^ 2 * κ y
-                ∂(volume : Measure (LogSpace n))) =
-              (∫ y : LogSpace n,
-                κ y * h (x - y) ^ 2 -
-                  (2 * m) * (κ y * h (x - y))
-                    ∂(volume : Measure (LogSpace n))) +
-                ∫ y : LogSpace n, m ^ 2 * κ y
-                  ∂(volume : Measure (LogSpace n)) :=
-                MeasureTheory.integral_add
-                  (hsecond.sub (hfirst.const_mul (2 * m)))
-                  (hκint.const_mul (m ^ 2))
-            _ = _ := by
-              rw [MeasureTheory.integral_sub hsecond
-                (hfirst.const_mul (2 * m)),
-                MeasureTheory.integral_const_mul,
-                MeasureTheory.integral_const_mul]
-      _ = _ := by
-          change
-            ((∫ y : LogSpace n,
-              κ y * h (x - y) ^ 2
-                ∂(volume : Measure (LogSpace n))) -
-              2 * m * m) +
-                m ^ 2 *
-                  (∫ y : LogSpace n, κ y
-                    ∂(volume : Measure (LogSpace n))) = _
-          rw [(complexShrinkingBump (n := n) k).integral_normed]
-          ring
-  change m ^ 2 ≤ _
-  linarith [hnonneg, hexpand]
+  have hκnonneg (y : LogSpace n) : 0 ≤ κ y :=
+    (complexShrinkingBump (n := n) k).nonneg_normed y
+  let ν : Measure (LogSpace n) :=
+    volume.withDensity (fun y => ENNReal.ofReal (κ y))
+  have hmeas : Measurable (fun y => ENNReal.ofReal (κ y)) :=
+    hκ.measurable.ennreal_ofReal
+  have hmass : ν Set.univ = 1 := by
+    dsimp only [ν]
+    rw [withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
+      ← ofReal_integral_eq_lintegral_ofReal hκint (Filter.Eventually.of_forall hκnonneg),
+      (complexShrinkingBump (n := n) k).integral_normed, ENNReal.ofReal_one]
+  let : IsProbabilityMeasure ν := ⟨hmass⟩
+  have hsecondν : Integrable (fun y => h (x - y) ^ 2) ν := by
+    apply (integrable_withDensity_iff_integrable_smul' hmeas
+      (Filter.Eventually.of_forall (fun _ => ENNReal.ofReal_lt_top))).mpr
+    simpa only [ENNReal.toReal_ofReal (hκnonneg _), smul_eq_mul] using hsecond
+  have hfν : AEStronglyMeasurable (fun y => h (x - y)) ν :=
+    (hh.aestronglyMeasurable.comp_measurePreserving
+      ((volume : Measure (LogSpace n)).measurePreserving_sub_left x)).mono_ac
+        (withDensity_absolutelyContinuous _ _)
+  have hfirstν : Integrable (fun y => h (x - y)) ν :=
+    ((memLp_two_iff_integrable_sq hfν).mpr hsecondν).integrable (by norm_num)
+  have hjensen := (even_two.convexOn_pow : ConvexOn ℝ Set.univ (fun t : ℝ => t ^ 2)).map_integral_le
+    (continuous_id.pow 2).continuousOn isClosed_univ
+    (Filter.Eventually.of_forall (fun _ => Set.mem_univ _)) hfirstν hsecondν
+  simpa only [ν, integral_withDensity_eq_integral_toReal_smul hmeas
+    (Filter.Eventually.of_forall (fun _ => ENNReal.ofReal_lt_top)),
+    ENNReal.toReal_ofReal (hκnonneg _), smul_eq_mul]
+    using hjensen
 
 private theorem norm_normalizedCoverMollification_le
     {n : ℕ} {h : LogSpace n → ℂ}
@@ -212,7 +163,6 @@ private theorem continuous_normalizedCoverComplexDriftCommutator
     (hh : LocallyIntegrable h (volume : Measure (LogSpace n)))
     (hb : Continuous b) (k : ℕ) :
     Continuous (normalizedCoverComplexDriftCommutator b h k) := by
-  unfold normalizedCoverComplexDriftCommutator
   exact (contDiff_normalizedCoverMollification
     (locallyIntegrable_cover_complex_mul_continuous hh hb) k 0).continuous.sub
       (hb.mul (contDiff_normalizedCoverMollification hh k 0).continuous)
@@ -249,7 +199,6 @@ private theorem normalizedCoverComplexDriftCommutator_eq_integral
       DolbeaultRegularity.complexRealMultiplication
       hh hκ x
     simpa only [complexRealMultiplication_apply, mul_comm] using hi.integrable
-  unfold normalizedCoverComplexDriftCommutator
   change
     (κ ⋆[ContinuousLinearMap.lsmul ℝ ℝ,
       (volume : Measure (LogSpace n))]
@@ -320,7 +269,7 @@ private theorem norm_normalizedCoverComplexDriftCommutator_le_driftOscillation
       (fun y : LogSpace n => ‖h y‖ * κ (x - y))
       (volume : Measure (LogSpace n)) := by
     have hi := hκcompact.convolutionExists_right L hhnorm hκ x
-    simpa only [L, ContinuousLinearMap.lsmul_apply, smul_eq_mul] using hi.integrable
+    exact hi.integrable
   have hmajor : Integrable
       (fun y : LogSpace n => c * (‖h y‖ * κ (x - y)))
       (volume : Measure (LogSpace n)) := hbase.const_mul c
@@ -399,7 +348,6 @@ private theorem setIntegral_norm_sq_normalizedCoverComplexDriftCommutator_le
     rw [MeasureTheory.convolution_def]
     apply integral_nonneg
     intro y
-    change 0 ≤ κ y * ‖t (x - y)‖ ^ 2
     exact mul_nonneg
       ((complexShrinkingBump (n := n) k).nonneg_normed y)
       (sq_nonneg _)
@@ -452,7 +400,7 @@ private theorem setIntegral_norm_sq_normalizedCoverComplexDriftCommutator_le
         by_cases hy : κ (x - y) = 0
         · simp only [hy, ContinuousLinearMap.mul_apply', mul_zero, L]
         · have hyS : y ∈ S := hreach x hx y hy
-          simp only [ContinuousLinearMap.mul_apply', hyS, indicator_of_mem, L, t]
+          simp only [hyS, indicator_of_mem, t]
       _ = (κ ⋆[L, (volume : Measure (LogSpace n))]
             (fun y : LogSpace n => ‖t y‖)) x := by
         exact congrFun (coverReal_convolution_comm
@@ -477,7 +425,7 @@ private theorem setIntegral_norm_sq_normalizedCoverComplexDriftCommutator_le
     have hJ' :
         (∫ z : LogSpace n, κ z * ‖t (x - z)‖
           ∂(volume : Measure (LogSpace n))) ^ 2 ≤ q x := by
-      simpa only [L, q, κ, convolution_def, ContinuousLinearMap.mul_apply'] using hJ
+      exact hJ
     calc
       ‖normalizedCoverComplexDriftCommutator b h k x‖ ^ 2 ≤
         (c *
@@ -591,7 +539,6 @@ private theorem setIntegral_norm_sq_normalizedCoverComplexDriftCommutator_tendst
       (complexShrinkingBump (n := n) k).normed
         (volume : Measure (LogSpace n)) (x - y) ≠ 0 → y ∈ S := by
     intro x hx y hy
-    change y ∈ Metric.cthickening 1 K
     exact Metric.mem_cthickening_of_dist_le y x 1 K hx
       ((hkernelDist x y hy).le.trans hrone.le)
   have hosc : ∀ x ∈ K, ∀ y : LogSpace n,
@@ -613,7 +560,7 @@ private theorem setIntegral_norm_sq_normalizedCoverComplexDriftCommutator_tendst
   have hfirst : η ^ 2 * M ≤ η * M :=
     mul_le_mul_of_nonneg_right hηsq hM
   have hsecond : η * M ≤ η * (M + 1) :=
-    mul_le_mul_of_nonneg_left (by linarith) hη.le
+    mul_le_mul_of_nonneg_left (by linarith only []) hη.le
   have hhalf : η * (M + 1) ≤ ε / 2 := by
     rw [le_div_iff₀ two_pos]
     linarith [hηscale]
@@ -661,7 +608,6 @@ private theorem complexDeckPeriodization_periodic
     Function.Periodic (complexDeckPeriodization ψ)
       (TorusCharacters.imaginaryShift q) := by
   intro z
-  unfold complexDeckPeriodization
   calc
     (∑' d : Fin n → ℤ,
       ψ (z + TorusCharacters.imaginaryShift q +
@@ -690,7 +636,6 @@ private theorem exists_finite_complexDeckPeriodization_support_near
         ∀ q : Fin n → ℤ,
           q ∉ s →
             ψ (y + TorusCharacters.imaginaryShift q) = 0 := by
-  classical
   obtain ⟨R, hRpos, hR⟩ :=
     hψcompact.isBounded.exists_pos_norm_le
   obtain ⟨N, hN⟩ := exists_nat_gt
@@ -700,7 +645,7 @@ private theorem exists_finite_complexDeckPeriodization_support_near
       (fun _ : Fin n => Finset.Icc (-(N : ℤ)) (N : ℤ))
   refine ⟨s, ?_⟩
   filter_upwards
-    [Metric.ball_mem_nhds x (show 0 < (1 : ℝ) by norm_num)]
+    [Metric.ball_mem_nhds x (show 0 < (1 : ℝ) by exact zero_lt_one)]
     with y hy
   intro q hq
   by_contra hnonzero
@@ -716,7 +661,7 @@ private theorem exists_finite_complexDeckPeriodization_support_near
     calc
       ‖y‖ = ‖(y - x) + x‖ := by abel_nf
       _ ≤ ‖y - x‖ + ‖x‖ := norm_add_le _ _
-      _ ≤ ‖x‖ + 1 := by linarith
+      _ ≤ ‖x‖ + 1 := by linarith only [hyx]
   have hdeck :
       ‖TorusCharacters.imaginaryShift q‖ ≤
         R + (‖x‖ + 1) := by
@@ -753,7 +698,6 @@ private theorem contDiff_complexDeckPeriodization
     (hψ : ContDiff ℝ r ψ)
     (hψcompact : HasCompactSupport ψ) :
     ContDiff ℝ r (complexDeckPeriodization ψ) := by
-  classical
   apply contDiff_iff_contDiffAt.mpr
   intro x
   obtain ⟨s, hs⟩ :=
@@ -768,10 +712,6 @@ private theorem contDiff_complexDeckPeriodization
     exact hψ.comp (contDiff_id.add contDiff_const)
   apply hF.contDiffAt.congr_of_eventuallyEq
   filter_upwards [hs] with y hy
-  change
-    (∑' q : Fin n → ℤ,
-      ψ (y + TorusCharacters.imaginaryShift q)) =
-      ∑ q ∈ s, ψ (y + TorusCharacters.imaginaryShift q)
   exact tsum_eq_sum (fun q hq => hy q hq)
 
 end TorusDeckPeriodization
@@ -790,7 +730,6 @@ private theorem hasCompactSupport_torusScalarRepresentative_complexDeckPeriodiza
     (hψcompact : HasCompactSupport ψ) :
     HasCompactSupport
       (torusScalarRepresentative (complexDeckPeriodization ψ)) := by
-  classical
   let K : Set (WeightedTorusHilbert.LogTorus n) :=
     complexTorusCoverProjection n '' tsupport ψ
   have hK : IsCompact K :=
@@ -844,10 +783,6 @@ private theorem continuous_torusFunctionBarPartialRepresentative_of_periodic
       Function.Periodic F
         (TorusCharacters.imaginaryShift q)) :
     Continuous (torusFunctionBarPartialRepresentative F) := by
-  change Continuous
-    (fun p : LogTorus n =>
-      WithLp.toLp 2
-        (fun j : Fin n => sourceTorusBarPartial F j p))
   exact (PiLp.continuous_toLp 2
     (fun _ : Fin n => ℂ)).comp
       (continuous_pi (fun j =>
@@ -861,7 +796,6 @@ private theorem hasCompactSupport_torusFunctionBarPartialRepresentative_of_perio
         (TorusCharacters.imaginaryShift q))
     (hcompact : HasCompactSupport (torusScalarRepresentative F)) :
     HasCompactSupport (torusFunctionBarPartialRepresentative F) := by
-  classical
   let K : Set (LogTorus n) :=
     ⋃ j : Fin n, tsupport (sourceTorusBarPartial F j)
   have hK : IsCompact K :=
@@ -915,7 +849,7 @@ private theorem complexDeckPeriodization_barPartial_memLp
   apply
     (continuous_torusFunctionBarPartialRepresentative_of_periodic
       ((contDiff_complexDeckPeriodization hψ hψcompact).of_le
-        (by norm_num))
+        (by decide))
       (fun q => complexDeckPeriodization_periodic ψ q)).memLp_of_hasCompactSupport
   exact
     hasCompactSupport_torusFunctionBarPartialRepresentative_of_periodic
@@ -1076,7 +1010,7 @@ private theorem angularFundamentalBox_integer_shift_eq_zero
     exact_mod_cast hupp
   have hz : q i = 0 := by
     omega
-  simpa only [Pi.zero_apply] using hz
+  exact hz
 
 private theorem complexDeckPeriodization_eq_of_fundamentalCell
     {n : ℕ}
@@ -1093,8 +1027,6 @@ private theorem complexDeckPeriodization_eq_of_fundamentalCell
         x t) =
       ψ (JointHolomorphicLaurentFourierCompatibility.logarithmicPoint
         x t) := by
-  classical
-  unfold complexDeckPeriodization
   refine (tsum_eq_single (0 : Fin n → ℤ) ?_).trans ?_
   · intro q hq
     by_contra hnonzero
@@ -1194,7 +1126,6 @@ private theorem angularMemLp_locallyIntegrable_base
   intro S hS
   have hweighted : IntegrableOn g S (angularWeightedTorusMeasure a) :=
     (hg.locallyIntegrable (by norm_num)).integrableOn_isCompact hS
-  unfold angularWeightedTorusMeasure at hweighted
   change Integrable g
     (((sourceTorusBaseMeasure n).withDensity
       (fun q : LogTorus n =>
@@ -1224,7 +1155,7 @@ private theorem angularMemLp_locallyIntegrable_base
     apply hscaled.congr
     filter_upwards [] with q
     simp only [angularWeightedTorusDensity, (Real.exp_pos (-a q)).le, ENNReal.toReal_ofReal,
-      Complex.real_smul, Complex.ofReal_exp, Complex.ofReal_neg]
+      Complex.real_smul]
   have hreciprocal :
       Continuous
         (fun q : LogTorus n => (Real.exp (a q) : ℂ)) :=
@@ -1327,7 +1258,6 @@ private theorem angularMemLp_restrict_base_isCompact
     (MeasureTheory.memLp_two_iff_integrable_sq_norm
       hg.aestronglyMeasurable).mp hg
   have hweighted := hsq.integrableOn (s := S)
-  unfold angularWeightedTorusMeasure at hweighted
   change Integrable
     (fun q : LogTorus n => ‖g q‖ ^ 2)
     (((sourceTorusBaseMeasure n).withDensity
@@ -1425,9 +1355,6 @@ private theorem angularWeightedScalarCoverLift_memLp_restrict_volume_isCompact
   have hsq := (hcover.integrableOn_isCompact hS).re
   apply hsq.congr
   filter_upwards [] with z
-  change
-    (((‖f (complexTorusCoverProjection n z)‖ ^ 2 : ℝ) : ℂ)).re =
-      ‖f (complexTorusCoverProjection n z)‖ ^ 2
   exact Complex.ofReal_re _
 
 private theorem angularWeightedFormCoordinateCoverLift_memLp_restrict_volume_isCompact
@@ -1465,11 +1392,6 @@ private theorem angularWeightedFormCoordinateCoverLift_memLp_restrict_volume_isC
   have hsq := (hcover.integrableOn_isCompact hS).re
   apply hsq.congr
   filter_upwards [] with z
-  change
-    (((‖(W (complexTorusCoverProjection n z) :
-      EuclideanSpace ℂ (Fin n)) i‖ ^ 2 : ℝ) : ℂ)).re =
-      ‖(W (complexTorusCoverProjection n z) :
-        EuclideanSpace ℂ (Fin n)) i‖ ^ 2
   exact Complex.ofReal_re _
 
 end BergmanJetStrictMixedLocalCore
@@ -1610,7 +1532,6 @@ private theorem exists_finite_complex_fundamental_test_partition
         coverFundamentalInterior (coverCenteredFundamentalBase i)) ∧
       (∀ z : LogSpace n,
         ψ z = ∑ i ∈ s, (χ i z : ℂ) * ψ z) := by
-  classical
   let E := LogSpace n
   let U : E → Set E := fun z =>
     coverFundamentalInterior (coverCenteredFundamentalBase z)
@@ -1672,7 +1593,6 @@ private theorem complexDeckPeriodization_eventuallyEq_on_fundamentalCell
     complexDeckPeriodization ψ =ᶠ[
       𝓝 (JointHolomorphicLaurentFourierCompatibility.logarithmicPoint
         x t)] ψ := by
-  classical
   let z : TorusCharacters.LogSpace n :=
     JointHolomorphicLaurentFourierCompatibility.logarithmicPoint x t
   have hnot : ∀ q : Fin n → ℤ,
@@ -1712,7 +1632,7 @@ private theorem complexDeckPeriodization_eventuallyEq_on_fundamentalCell
           (𝓝 (z + TorusCharacters.imaginaryShift q)) :=
       (continuous_id.add continuous_const).continuousAt
     filter_upwards [htranslate hzero] with w hw
-    simpa only [Pi.zero_apply, preimage_ofPred_eq, mem_ofPred_eq] using hw
+    exact hw
   obtain ⟨s, hs⟩ :=
     exists_finite_complexDeckPeriodization_support_near hψcompact z
   have hall :
@@ -1791,8 +1711,6 @@ private def realAngularWeightedFundamentalCellMeasure {n : ℕ}
 
 private theorem continuous_realTorusCoverProjection (n : ℕ) :
     Continuous (realTorusCoverProjection n) := by
-  change Continuous (fun p : Space n × Space n =>
-    (p.1, angularCoverProjection n p.2))
   exact (continuous_fst : Continuous
     (fun p : Space n × Space n => p.1)).prodMk
       ((continuous_angularCoverProjection n).comp
@@ -1938,8 +1856,7 @@ private theorem compactSupport_angularWeightedCellAdjointScalarTest {n : ℕ}
       (fun p : Space n × Space n =>
         coverAdjointScalarTest ψ j
           (logarithmicCoordinatesEquiv n p)) := by
-    simpa only [ContinuousLinearEquiv.coe_toHomeomorph, comp_def] using
-      (compactSupport_coverAdjointScalarTest hψcompact j).comp_homeomorph
+    exact (compactSupport_coverAdjointScalarTest hψcompact j).comp_homeomorph
         (logarithmicCoordinatesEquiv n).toHomeomorph
   exact hcomp.mul_left
 
@@ -1950,8 +1867,7 @@ private theorem compactSupport_angularWeightedCellAdjointVectorTest {n : ℕ}
   have hcomp : HasCompactSupport
       (fun p : Space n × Space n =>
         ψ (logarithmicCoordinatesEquiv n p)) := by
-    simpa only [ContinuousLinearEquiv.coe_toHomeomorph, comp_def] using
-      hψcompact.comp_homeomorph
+    exact hψcompact.comp_homeomorph
         (logarithmicCoordinatesEquiv n).toHomeomorph
   refine hcomp.mono ?_
   intro p hp
@@ -2243,7 +2159,7 @@ private theorem angularTorus_compact_form_curvature_le_adjoint_add_exterior
         conj (angularTorusFormAdjoint a W p) ∂μ).re +
     (∫ p : LogTorus n,
       sourceTorusFormExteriorDerivativeDensity W p ∂μ).re
-  linarith
+  linarith only [hre, hfull_nonneg]
 
 /-- A quadratic bound for the norm of a difference of complex numbers. -/
 public
@@ -2253,7 +2169,7 @@ theorem complex_norm_sub_sq_le_two_mul_add
   have hsub := norm_sub_le z w
   have hsq : ‖z - w‖ ^ 2 ≤ (‖z‖ + ‖w‖) ^ 2 := by
     exact (sq_le_sq₀ (norm_nonneg _) (add_nonneg (norm_nonneg _) (norm_nonneg _))).mpr hsub
-  nlinarith [sq_nonneg (‖z‖ - ‖w‖)]
+  linarith only [hsq, sq_nonneg (‖z‖ - ‖w‖)]
 
 private theorem complexEuclidean_antisymmetric_energy_le_two_norm_sq
     {n : ℕ}
@@ -2284,7 +2200,7 @@ private theorem complexEuclidean_antisymmetric_energy_le_two_norm_sq
     rw [Finset.sum_comm]
   simp only [mul_add, Finset.sum_add_distrib, ← Finset.mul_sum] at hsum
   rw [hswap] at hsum
-  nlinarith
+  linarith only [hsum]
 
 private theorem sourceTorusBarPartial_cutoffPhysicalField_antisymmetric
     {n : ℕ}
@@ -2713,23 +2629,13 @@ private theorem angularCellWeakAdjointFunctional_closedGraph_zero
     (j : Fin n) (v : angularDolbeaultGraphAmbient a)
     (hv : v ∈ angularDolbeaultGraph a) :
     angularCellWeakAdjointFunctional ha b hψ hψcompact j v = 0 := by
-  let L : angularDolbeaultGraphAmbient a →L[ℂ] ℂ :=
-    angularCellWeakAdjointFunctional ha b hψ hψcompact j
-  have hspan :
-      Submodule.span ℂ (smoothAngularDolbeaultGraphSet a) ≤ L.ker := by
-    apply Submodule.span_le.mpr
-    intro v hv'
-    rcases hv' with
-      ⟨F, hF, hperiod, _hcompact, hFLp, hDLp, rfl⟩
-    exact angularCellWeakAdjointFunctional_smoothGraph_zero
-      ha b hψ hψcompact hcell
-      (hF.of_le (by norm_num)) hperiod hFLp hDLp j
-  have hgraph : angularDolbeaultGraph a ≤ L.ker := by
-    unfold angularDolbeaultGraph
-    exact Submodule.topologicalClosure_minimal
-      (Submodule.span ℂ (smoothAngularDolbeaultGraphSet a))
-      hspan L.isClosed_ker
-  exact hgraph hv
+  refine continuousLinearMap_eq_zero_of_mem_topologicalClosure_span
+    (angularCellWeakAdjointFunctional ha b hψ hψcompact j) ?_ hv
+  intro w hw
+  rcases hw with ⟨F, hF, hperiod, _hcompact, hFLp, hDLp, rfl⟩
+  exact angularCellWeakAdjointFunctional_smoothGraph_zero
+    ha b hψ hψcompact hcell
+    (hF.of_le (by decide)) hperiod hFLp hDLp j
 
 private theorem angularDolbeaultGraph_compact_barPartial_green_of_fundamentalCell
     {n : ℕ} {a : LogTorus n → ℝ} (ha : Continuous a)
@@ -2798,7 +2704,6 @@ private theorem angularDolbeaultGraph_compact_barPartial_green
             (fun q : LogTorus n =>
               (W q : EuclideanSpace ℂ (Fin n)) j) z * (ψ z : ℂ)
           ∂(volume : Measure (LogSpace n))) := by
-  classical
   obtain ⟨s, χ, hχ, hχsupport, hpartition⟩ :=
     exists_finite_fundamental_test_partition hψcompact
   let ξ : LogSpace n → LogSpace n → ℝ :=
@@ -2828,8 +2733,7 @@ private theorem angularDolbeaultGraph_compact_barPartial_green
             coverBarPartialTest (ξ i) j z)
       (volume : Measure (LogSpace n)) := by
     intro i _
-    simpa only [smul_eq_mul] using
-      hfloc.integrable_smul_right_of_hasCompactSupport
+    exact hfloc.integrable_smul_right_of_hasCompactSupport
         (continuous_coverBarPartialTest (hξ i) j)
         (compactSupport_coverBarPartialTest (hξcompact i) j)
   have hintw : ∀ i ∈ s, Integrable
@@ -2840,8 +2744,7 @@ private theorem angularDolbeaultGraph_compact_barPartial_green
               (ξ i z : ℂ))
       (volume : Measure (LogSpace n)) := by
     intro i _
-    simpa only [Function.comp_apply, smul_eq_mul] using
-      hwloc.integrable_smul_right_of_hasCompactSupport
+    exact hwloc.integrable_smul_right_of_hasCompactSupport
         (Complex.continuous_ofReal.comp (hξ i).continuous)
         (compactSupport_complexOfReal (hξcompact i))
   calc
@@ -2884,13 +2787,13 @@ private theorem angularDolbeaultGraph_compact_barPartial_green
                 (ξ i z : ℂ)
         ∂(volume : Measure (LogSpace n))) := by
       rw [integral_finsetSum s hintw]
-      simp only [neg_mul, Finset.sum_neg_distrib, Finset.mul_sum]
+      simp only [Finset.mul_sum]
     _ = _ := by
       congr 1
       apply integral_congr_ae
       filter_upwards [] with z
       rw [hpartition z]
-      simp only [Complex.ofReal_mul, Complex.ofReal_sum, Finset.mul_sum, ξ]
+      simp only [Complex.ofReal_sum, Finset.mul_sum, ξ]
 
 private theorem angularDolbeaultGraph_normalizedCoverMollification_barPartial
     {n : ℕ} {a : LogTorus n → ℝ} (ha : Continuous a)
@@ -2999,8 +2902,7 @@ private theorem normalizedCoverMollification_memLp
   apply hq.mono' (hc.norm.pow 2).aestronglyMeasurable
   filter_upwards [] with x
   rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
-  simpa only [L, κ, q, Pi.pow_apply, convolution_def, ContinuousLinearMap.mul_apply'] using
-    normalizedCoverMollification_norm_sq_le_convolution_norm_sq hh k x
+  exact normalizedCoverMollification_norm_sq_le_convolution_norm_sq hh k x
 
 private theorem integral_norm_sq_normalizedCoverMollification_le
     {n : ℕ} {h : LogSpace n → ℂ}
@@ -3040,8 +2942,7 @@ private theorem integral_norm_sq_normalizedCoverMollification_le
           ∂(volume : Measure (LogSpace n)) := by
           apply integral_mono hsquare hq
           intro x
-          simpa only [convolution_def, ContinuousLinearMap.mul_apply', q, κ, L] using
-            normalizedCoverMollification_norm_sq_le_convolution_norm_sq
+          exact normalizedCoverMollification_norm_sq_le_convolution_norm_sq
               hh k x
     _ =
         (∫ x : LogSpace n, κ x
@@ -3159,20 +3060,12 @@ private theorem angularWeightedScalarL2_periodized_cell_inner_eq_cover
           ψ (logarithmicCoordinatesEquiv n p)
         rw [periodic_torusScalarRepresentative_logarithmicPoint
           F hFperiod p.1 p.2]
-        change
-          complexDeckPeriodization ψ
-            (logarithmicPoint p.1 p.2) =
-          ψ (logarithmicPoint p.1 p.2)
         exact complexDeckPeriodization_eq_of_fundamentalCell
           hhalf p.1 p.2 hp
       have hproj :
           complexTorusCoverProjection n
             (logarithmicCoordinatesEquiv n p) =
             realTorusCoverProjection n p := by
-        change
-          complexTorusCoverProjection n
-            (logarithmicPoint p.1 p.2) =
-            realTorusCoverProjection n (p.1, p.2)
         exact complexTorusCoverProjection_logarithmicPoint p.1 p.2
       change
         (angularWeightedTorusDensity a
@@ -3258,7 +3151,7 @@ private theorem angularWeightedFormL2_periodized_cell_inner_eq_cover
       Continuous (torusFunctionBarPartialRepresentative F) :=
     continuous_torusFunctionBarPartialRepresentative_of_periodic
       ((contDiff_complexDeckPeriodization hψ hψcompact).of_le
-        (by norm_num)) hFperiod
+        (by decide)) hFperiod
   have hhalf : tsupport ψ ⊆
       {z : LogSpace n |
         ((logarithmicCoordinatesEquiv n).symm z).2 ∈
@@ -3305,21 +3198,12 @@ private theorem angularWeightedFormL2_periodized_cell_inner_eq_cover
           (fun z : LogSpace n => barPartialCoordinate F z j)
           (fun q => barPartialCoordinate_periodic F hFperiod j q)
           p.1 p.2]
-        change
-          barPartialCoordinate (complexDeckPeriodization ψ)
-            (logarithmicPoint p.1 p.2) j =
-          barPartialCoordinate ψ
-            (logarithmicPoint p.1 p.2) j
         exact barPartial_complexDeckPeriodization_eq_on_fundamentalCell
           hψcompact hcell p.1 p.2 hp j
       have hproj :
           complexTorusCoverProjection n
             (logarithmicCoordinatesEquiv n p) =
             realTorusCoverProjection n p := by
-        change
-          complexTorusCoverProjection n
-            (logarithmicPoint p.1 p.2) =
-            realTorusCoverProjection n (p.1, p.2)
         exact complexTorusCoverProjection_logarithmicPoint p.1 p.2
       change
         (angularWeightedTorusDensity a
@@ -3485,11 +3369,9 @@ private theorem locallyIntegrable_complex_inner_mul_integrable
   have hconjcontinuous : Continuous (fun z => conj (G z)) :=
     Complex.continuous_conj.comp hG
   have hconjcompact : HasCompactSupport (fun z => conj (G z)) := by
-    simpa only [comp_def] using
-      hGcompact.comp_left (g := (starRingEnd ℂ)) (map_zero _)
+    exact hGcompact.comp_left (g := (starRingEnd ℂ)) (map_zero _)
   have hmul : Integrable (fun z => F z * conj (G z)) μ := by
-    simpa only [smul_eq_mul] using
-      hF.integrable_smul_right_of_hasCompactSupport
+    exact hF.integrable_smul_right_of_hasCompactSupport
         hconjcontinuous hconjcompact
   have hc := Complex.conjCLE.toContinuousLinearMap.integrable_comp hmul
   simpa only [RCLike.inner_apply, ContinuousLinearEquiv.coe_coe, ContinuousAlgEquiv.coeCLE_apply,
@@ -3585,7 +3467,7 @@ private theorem complex_norm_add_sq_le_two_mul_add (u v : ℂ) :
   have hu : 0 ≤ ‖u‖ := norm_nonneg _
   have hv : 0 ≤ ‖v‖ := norm_nonneg _
   have hs : 0 ≤ ‖u + v‖ := norm_nonneg _
-  nlinarith [sq_nonneg (‖u‖ - ‖v‖)]
+  nlinarith only [h, hu, hv, hs, sq_nonneg (‖u‖ - ‖v‖)]
 
 private theorem finite_complex_local_square_integral_sum_tendsto_zero
     {n : ℕ} {ι : Type*}
@@ -4078,11 +3960,6 @@ private theorem normalizedCoverMollification_continuous_compact_L2_tendsto
         ((hc.memLp_of_hasCompactSupport hs).toLp h)) := by
   let hh : MemLp h 2 (volume : Measure (LogSpace n)) :=
     hc.memLp_of_hasCompactSupport hs
-  change Tendsto
-    (fun k : ℕ =>
-      (normalizedCoverMollification_memLp hh k).toLp
-        (normalizedCoverMollification h k))
-    atTop (nhds (hh.toLp h))
   apply tendsto_iff_norm_sub_tendsto_zero.mpr
   have hsq (k : ℕ) :
       ‖(normalizedCoverMollification_memLp hh k).toLp
@@ -4143,7 +4020,6 @@ private theorem contDiff_translatedDensityCancelledCoverKernel
     (ha : ContDiff ℝ 1 (angularCoverPotential a))
     (k : ℕ) (x : LogSpace n) :
     ContDiff ℝ 1 (translatedDensityCancelledCoverKernel a k x) := by
-  unfold translatedDensityCancelledCoverKernel
   exact ((complexShrinkingBump (n := n) k).contDiff_normed.comp
     (contDiff_const.sub contDiff_id)).div
       (contDiff_coverWeight ha)
@@ -4303,7 +4179,7 @@ private theorem normalizedCoverMollification_sub
     ← MeasureTheory.integral_sub hgi hhi]
   apply integral_congr_ae
   filter_upwards [] with y
-  simp only [ContinuousLinearMap.map_sub, ContinuousLinearMap.lsmul_apply, Complex.real_smul]
+  simp only [ContinuousLinearMap.map_sub]
 
 private def normalizedCoverMollificationL2
     {n : ℕ} (k : ℕ)
@@ -4324,12 +4200,6 @@ private theorem normalizedCoverMollificationL2_sub
   let hmem : MemLp (fun x : LogSpace n => u x - v x)
       2 (volume : Measure (LogSpace n)) :=
     (MeasureTheory.Lp.memLp u).sub (MeasureTheory.Lp.memLp v)
-  change
-    normalizedCoverMollificationL2 k u -
-      normalizedCoverMollificationL2 k v =
-      (normalizedCoverMollification_memLp hmem k).toLp
-        (normalizedCoverMollification
-          (fun x : LogSpace n => u x - v x) k)
   apply MeasureTheory.Lp.ext
   filter_upwards
     [MeasureTheory.Lp.coeFn_sub
@@ -4385,7 +4255,6 @@ private theorem normalizedCoverMollification_congr_ae
     (k : ℕ) :
     normalizedCoverMollification g k =
       normalizedCoverMollification h k := by
-  unfold normalizedCoverMollification
   exact MeasureTheory.convolution_congr
     (ContinuousLinearMap.lsmul ℝ ℝ)
     (Filter.Eventually.of_forall (fun _ => rfl)) hgh
@@ -4453,23 +4322,15 @@ private theorem normalizedCoverMollificationL2_tendsto
           (normalizedCoverMollificationL2 k v) +
         dist (normalizedCoverMollificationL2 k v) v +
         dist v u := by
-          calc
-            dist (normalizedCoverMollificationL2 k u) u ≤
-                dist (normalizedCoverMollificationL2 k u)
-                  (normalizedCoverMollificationL2 k v) +
-                dist (normalizedCoverMollificationL2 k v) u :=
-                  dist_triangle _ _ _
-            _ ≤ _ := by
-              linarith [dist_triangle
-                (normalizedCoverMollificationL2 k v) v u]
+          exact dist_triangle4 _ _ _ _
     _ ≤ dist u v +
         dist (normalizedCoverMollificationL2 k v) v +
         dist v u := by
-          gcongr
-          exact normalizedCoverMollificationL2_dist_le k u v
+          exact _root_.add_le_add
+            (_root_.add_le_add (normalizedCoverMollificationL2_dist_le k u v) le_rfl) le_rfl
     _ < ε := by
           rw [dist_comm v u]
-          nlinarith [hN k hk]
+          linarith only [hε, huv, hN k hk]
 
 private theorem normalizedCoverMollification_global_L2_tendsto
     {n : ℕ} {h : LogSpace n → ℂ}
@@ -4515,7 +4376,7 @@ private theorem tendsto_integral_norm_sq_normalizedCoverMollification_sub
           (normalizedCoverMollification h k)) x -
         (hh.toLp h) x‖ ^ 2 = _
     rw [hm, hx]
-  simpa only [hsq, zero_pow (by norm_num : (2 : ℕ) ≠ 0)] using
+  simpa only [hsq, zero_pow (by decide : (2 : ℕ) ≠ 0)] using
     hnorm.pow 2
 
 private theorem normalizedCoverMollification_indicator_cthickening_eq_on
@@ -4551,7 +4412,7 @@ private theorem normalizedCoverMollification_indicator_cthickening_eq_on
       have heq : (x - y) - x = -y := by abel
       rw [heq, norm_neg]
       exact hnorm.le.trans (complexShrinkingBump_rOut_le_one k)
-    simp only [ContinuousLinearMap.lsmul_apply, Complex.real_smul, Set.indicator_of_mem hxy]
+    simp only [Set.indicator_of_mem hxy]
 
 private theorem normalizedCoverMollification_localL2_tendsto_zero
     {n : ℕ} {h : LogSpace n → ℂ}
@@ -4626,7 +4487,6 @@ private def sourceCompactAngularCoverBox
 private theorem isCompact_sourceCompactAngularCoverBox
     {n : ℕ} {S : Set (LogTorus n)} (hS : IsCompact S) :
     IsCompact (sourceCompactAngularCoverBox S) := by
-  unfold sourceCompactAngularCoverBox
   exact ((hS.image continuous_fst).prod
     (isCompact_univ_pi fun _ : Fin n => isCompact_Icc)).image
       (logarithmicCoordinatesEquiv n).continuous
@@ -4642,7 +4502,7 @@ private theorem logarithmicPoint_mem_sourceCompactAngularCoverBox
   · intro i _
     have hi := hbox i
     exact ⟨hi.1.le, by simpa only [Pi.zero_apply, zero_add] using hi.2⟩
-  · simpa only [Prod.mk.eta] using logarithmicCoordinatesEquiv_apply p.1 p.2
+  · exact logarithmicCoordinatesEquiv_apply p.1 p.2
 
 private theorem torusScalarRepresentative_realTorusCoverProjection
     {n : ℕ} (F : LogSpace n → ℂ)
@@ -4722,8 +4582,7 @@ private theorem realFundamentalCell_integral_real_eq_coverJacobian
       simpa only [mem_prod, mem_univ, true_and] using hp
     _ = ∫ z : LogSpace n, g z
           ∂(logarithmicCoverPushforward n) := by
-      simpa only using
-        (logarithmicCoordinates_measurePreserving n).integral_comp
+      exact (logarithmicCoordinates_measurePreserving n).integral_comp
           (logarithmicCoordinatesEquiv n).toHomeomorph.measurableEmbedding g
     _ = _ := by
       rw [logarithmicCoverPushforward_eq_smul_volume,
@@ -4778,7 +4637,6 @@ private theorem angularWeightedTorus_compact_scalarRepresentative_majorant
           logarithmicPoint_mem_sourceCompactAngularCoverBox
             p hpbox hproj
         have hpoint : logarithmicPoint p.1 p.2 = z := by
-          change (logarithmicCoordinatesEquiv n) p = z
           exact (logarithmicCoordinatesEquiv n).apply_symm_apply z
         rw [hpoint] at hmem
         exact hmem
@@ -4848,7 +4706,6 @@ private theorem angularWeightedTorus_compact_scalarRepresentative_L2_tendsto_of_
           ‖torusScalarRepresentative (F k) q - f q‖ ^ 2
             ∂(angularWeightedTorusMeasure a))
       atTop (nhds 0) := by
-  classical
   let K : Set (LogSpace n) := sourceCompactAngularCoverBox S
   have hK : IsCompact K :=
     isCompact_sourceCompactAngularCoverBox hS
@@ -5207,7 +5064,6 @@ private theorem angularMollifiedPhysicalAdjointDriftCommutator_tendsto_zero
           ‖angularMollifiedPhysicalAdjointDriftCommutator W k x‖ ^ 2
           ∂(volume : Measure (LogSpace n)))
       atTop (nhds 0) := by
-  unfold angularMollifiedPhysicalAdjointDriftCommutator
   apply finite_complex_local_square_integral_sum_tendsto_zero
     Finset.univ _ hK
   · intro j _ k
@@ -5374,7 +5230,7 @@ private theorem complexHilbert_norm_le_of_mem_closure_inner_bound
     exact hB
   · have hfpos : 0 < ‖f‖ :=
       lt_of_le_of_ne (norm_nonneg _) (Ne.symm hfzero)
-    nlinarith
+    nlinarith only [hsq, hfpos]
 
 end RadialPhysicalResolventDefectReduction
 
@@ -5388,7 +5244,6 @@ open scoped BigOperators ENNReal ComplexConjugate InnerProductSpace
 private theorem contDiff_complexSourceCoverRadialCutoff_all
     {n : ℕ} (m r : ℕ) :
     ContDiff ℝ r (complexSourceCoverRadialCutoff (n := n) m) := by
-  unfold complexSourceCoverRadialCutoff sourceCoverRadialCutoff
   exact Complex.ofRealCLM.contDiff.comp
     ((WeightedResolventConstantCore.growingBump
       (n := n) m).contDiff.comp
@@ -5502,11 +5357,6 @@ private theorem continuous_complexEuclideanOuterProduct_uncurry
       (fun vw : EuclideanSpace ℂ (Fin n) ×
           EuclideanSpace ℂ (Fin n) =>
         complexEuclideanOuterProduct vw.1 vw.2) := by
-  change Continuous
-    (fun vw : EuclideanSpace ℂ (Fin n) ×
-        EuclideanSpace ℂ (Fin n) =>
-      WithLp.toLp 2 (fun ij : Fin n × Fin n =>
-        vw.1 ij.1 * vw.2 ij.2))
   apply (PiLp.continuous_toLp 2
     (fun _ : Fin n × Fin n => ℂ)).comp
   apply continuous_pi
@@ -5662,7 +5512,6 @@ private theorem angularWeakSourceCutoffAdjointCommutator_norm_le
     (m : ℕ) (q : LogTorus n) :
     ‖angularWeakSourceCutoffAdjointCommutator W m q‖ ≤
       (((m : ℝ) + 1)⁻¹ * C) * ‖W q‖ := by
-  unfold angularWeakSourceCutoffAdjointCommutator
   exact (norm_inner_le_norm _ _).trans
     (mul_le_mul_of_nonneg_right
       (sourceCutoffBarGradient_norm_le hC m q)
@@ -5748,7 +5597,6 @@ private theorem complexEuclideanAntisymmetricEnergy_im
     {n : ℕ}
     (M : EuclideanSpace ℂ (Fin n × Fin n)) :
     (complexEuclideanAntisymmetricEnergy M).im = 0 := by
-  unfold complexEuclideanAntisymmetricEnergy
   change
     ((∑ i : Fin n, ∑ j : Fin n,
       (M (i, j) - M (j, i)) *
@@ -5762,7 +5610,6 @@ private theorem complexEuclideanAntisymmetricEnergy_re_nonneg
     {n : ℕ}
     (M : EuclideanSpace ℂ (Fin n × Fin n)) :
     0 ≤ (complexEuclideanAntisymmetricEnergy M).re := by
-  unfold complexEuclideanAntisymmetricEnergy
   change
     0 ≤ ((∑ i : Fin n, ∑ j : Fin n,
       (M (i, j) - M (j, i)) *
@@ -5795,7 +5642,6 @@ private theorem norm_complexEuclideanAntisymmetricEnergy
 private theorem continuous_complexEuclideanAntisymmetricEnergy
     {n : ℕ} :
     Continuous (complexEuclideanAntisymmetricEnergy (n := n)) := by
-  unfold complexEuclideanAntisymmetricEnergy
   apply Continuous.div_const
   apply continuous_finsetSum
   intro i _
@@ -5947,7 +5793,6 @@ private theorem angularWeightedTorus_fixedRadialCutoff_smul_error_integral_tends
             (sourceRadialCutoff m q : ℂ) • f q‖ ^ 2
           ∂(angularWeightedTorusMeasure a))
       atTop (nhds 0) := by
-  classical
   let S : Set (LogTorus n) :=
     tsupport (sourceRadialCutoff (n := n) m)
   have hS : IsCompact S :=
@@ -6064,7 +5909,6 @@ private theorem sourceRadialCutoff_eventually_one_on_compact
   obtain ⟨N, hN⟩ := exists_nat_gt R
   filter_upwards [eventually_ge_atTop N] with m hm
   intro q hq
-  change growingBump m q.1 = 1
   apply (growingBump m).one_of_mem_closedBall
   rw [Metric.mem_closedBall, dist_zero_right]
   change ‖q.1‖ ≤ (m : ℝ) + 1
@@ -6072,7 +5916,7 @@ private theorem sourceRadialCutoff_eventually_one_on_compact
     exact_mod_cast hm
   have hqR := hR q.1 ⟨q, hq, rfl⟩
   change ‖q.1‖ ≤ R at hqR
-  linarith
+  linarith only [hN, hm, hNm, hqR]
 
 end RadialPhysicalResolventRootCutoffUniformExtraction
 
@@ -6089,7 +5933,6 @@ private theorem angularEuclideanConjugation_sub
       angularEuclideanConjugation v -
         angularEuclideanConjugation w := by
   ext i
-  change conj (v i - w i) = conj (v i) - conj (w i)
   exact map_sub (starRingEnd ℂ) (v i) (w i)
 
 private theorem angularEuclideanConjugation_real_smul
@@ -6165,7 +6008,6 @@ private theorem mollifiedRadialMatrixCommutator_sub_weak
           (angularGraphMollifiedPhysicalField W ℓ) q - W q)
         (sourceCutoffBarGradient m q) := by
   rw [sourceCutoffDerivativeCommutator_eq_outerProduct]
-  unfold angularWeakSourceCutoffDerivativeCommutator
   ext ij
   change
     (torusFormRepresentative
@@ -6251,7 +6093,6 @@ private theorem angularMollifiedPhysicalAdjointDriftCommutator_periodic
       (angularMollifiedPhysicalAdjointDriftCommutator W k)
       (imaginaryShift d) := by
   intro z
-  unfold angularMollifiedPhysicalAdjointDriftCommutator
   apply Finset.sum_congr rfl
   intro j _
   let b : LogSpace n → ℂ := fun x =>
@@ -6323,7 +6164,6 @@ private theorem continuous_angularMollifiedPhysicalAdjointDriftCommutator
     (ha2 : ContDiff ℝ 2 (angularCoverPotential a))
     (W : angularWeightedFormL2 a) (k : ℕ) :
     Continuous (angularMollifiedPhysicalAdjointDriftCommutator W k) := by
-  unfold angularMollifiedPhysicalAdjointDriftCommutator
   apply continuous_finsetSum
   intro j _
   apply continuous_normalizedCoverComplexDriftCommutator
@@ -6342,7 +6182,6 @@ private theorem graphField_mollification_L2_tendsto_zero
               (angularGraphMollifiedPhysicalField W k) q - W q‖ ^ 2
             ∂(angularWeightedTorusMeasure a))
       atTop (nhds 0) := by
-  classical
   let μ : Measure (LogTorus n) := angularWeightedTorusMeasure a
   let : IsLocallyFiniteMeasure μ :=
     angularWeightedTorusMeasure_isLocallyFinite ha
@@ -6457,8 +6296,6 @@ private theorem angularMollifiedPhysicalAdjointDriftCommutator_compact_weighted_
       MemLp (complexTorusCoverLift (fun _ : LogTorus n => (0 : ℂ)))
         2 ((volume : Measure (LogSpace n)).restrict K) := by
     intro K _
-    change MemLp (fun _ : LogSpace n => (0 : ℂ)) 2
-      ((volume : Measure (LogSpace n)).restrict K)
     exact MeasureTheory.MemLp.zero
   have h :=
     angularWeightedTorus_compact_scalarRepresentative_L2_tendsto_of_cover
@@ -6599,7 +6436,7 @@ private theorem angularClosedMollifiedDrift_fixedRadialCutoff_L2_tendsto_zero
         (angularWeightedTorusMeasure a))
     (by simpa only [smul_eq_mul, Pi.zero_apply, sub_zero, Complex.norm_mul, Complex.norm_real,
           Real.norm_eq_abs, mul_zero] using hc)
-  simpa only [smul_eq_mul, MemLp.toLp_zero] using ht
+  exact ht
 
 private theorem angularWeightedScalar_fixedRadialCutoff_mollification_integral_tendsto_zero
     {n : ℕ} {a : LogTorus n → ℝ}
@@ -6916,7 +6753,7 @@ private theorem angularClosedMollifiedRadialMatrixCommutatorL2_sub_norm_sq_le
             (torusFormRepresentative V q - W q)
             (0 : EuclideanSpace ℂ (Fin n)) = 0 := by
         ext ij
-        simp only [complexEuclideanOuterProduct, PiLp.sub_apply, PiLp.zero_apply, mul_zero]
+        simp only [complexEuclideanOuterProduct, PiLp.zero_apply, mul_zero]
       rw [houter]
       simp only [norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, Std.le_refl]
   change ‖M - R‖ ^ 2 ≤
@@ -7078,7 +6915,6 @@ private theorem angularWeakDolbeaultResolvent_weighted_cover_green
           (complexTorusCoverProjection n z))
         (ψ z)
       ∂(coverWeightedMeasure (angularCoverPotential a))) := by
-  classical
   obtain ⟨s, χ, hχ, hχsupport, hpartition⟩ :=
     exists_finite_complex_fundamental_test_partition hψcompact
   let ξ : LogSpace n → LogSpace n → ℂ :=
@@ -7096,7 +6932,6 @@ private theorem angularWeakDolbeaultResolvent_weighted_cover_green
       tsupport (ξ i) ⊆
         coverFundamentalInterior (coverCenteredFundamentalBase i) := by
     intro i
-    change tsupport (fun z => (χ i z : ℂ) * ψ z) ⊆ _
     refine tsupport_mul_subset_left.trans ?_
     refine (closure_mono ?_).trans (hχsupport i)
     intro z hz
@@ -7124,7 +6959,7 @@ private theorem angularWeakDolbeaultResolvent_weighted_cover_green
       (volume : Measure (LogSpace n)) := by
     intro i _
     exact angularWeightedFormCover_density_inner_integrable
-      ha W ((hξ i).of_le (by norm_num)) (hξcompact i)
+      ha W ((hξ i).of_le (by decide)) (hξcompact i)
   have hintr : ∀ i ∈ s, Integrable
       (fun z : LogSpace n =>
         complexCoverWeight (angularCoverPotential a) z *
@@ -7141,7 +6976,7 @@ private theorem angularWeakDolbeaultResolvent_weighted_cover_green
     ext j
     simpa only [hψsum, WithLp.ofLp_sum, Finset.sum_apply] using
       (barPartialCoordinate_finset_sum_complex s ξ
-        (fun i _ => (hξ i).of_le (by norm_num)) j z)
+        (fun i _ => (hξ i).of_le (by decide)) j z)
   change
     (∫ z : LogSpace n,
       @inner ℂ (EuclideanSpace ℂ (Fin n)) _
@@ -7249,7 +7084,6 @@ private theorem contDiff_translatedDensityCancelledCoverKernel_three
     (ha3 : ContDiff ℝ 3 (angularCoverPotential a))
     (k : ℕ) (x : LogSpace n) :
     ContDiff ℝ 3 (translatedDensityCancelledCoverKernel a k x) := by
-  unfold translatedDensityCancelledCoverKernel
   exact ((complexShrinkingBump (n := n) k).contDiff_normed.comp
     (contDiff_const.sub contDiff_id)).div
       ha3.neg.exp
@@ -7299,7 +7133,7 @@ private theorem angularWeakDolbeaultResolvent_unweighted_translated_bump_green
   let d : LogSpace n → ℂ :=
     complexCoverWeight (angularCoverPotential a)
   have ha1 : ContDiff ℝ 1 (angularCoverPotential a) :=
-    ha3.of_le (by norm_num)
+    ha3.of_le (by decide)
   have hχ : ContDiff ℝ 3 χ :=
     contDiff_translatedDensityCancelledCoverKernel_three ha3 k x
   have hψ : ContDiff ℝ 3 ψ :=
@@ -7307,8 +7141,7 @@ private theorem angularWeakDolbeaultResolvent_unweighted_translated_bump_green
   have hψcompact : HasCompactSupport ψ := by
     have ht := hasCompactSupport_translatedDensityCancelledCoverKernel
       a k x
-    simpa only [comp_def] using
-      ht.comp_left (g := Complex.ofReal) (by simp only [Complex.ofReal_zero])
+    exact ht.comp_left (g := Complex.ofReal) (by simp only [Complex.ofReal_zero])
   have hg :=
     TorusHomogeneousResolventGreen.angularWeakDolbeaultResolvent_weighted_cover_green
       ha f hψ hψcompact
@@ -7492,7 +7325,7 @@ private theorem angularWeakDolbeaultResolvent_closed_mollified_divergence
       (fun z : LogSpace n =>
         (angularCoverPotential a z : ℂ)) y j
   have ha1 : ContDiff ℝ 1 (angularCoverPotential a) :=
-    ha3.of_le (by norm_num)
+    ha3.of_le (by decide)
   have hκ : ContDiff ℝ 1 κ :=
     (complexShrinkingBump (n := n) k).contDiff_normed
   have hη : ContDiff ℝ 1 η :=
@@ -7502,8 +7335,7 @@ private theorem angularWeakDolbeaultResolvent_closed_mollified_divergence
     (complexShrinkingBump (n := n) k).hasCompactSupport_normed
       (μ := (volume : Measure (LogSpace n)))
   have hηcompact : HasCompactSupport η := by
-    simpa only [comp_def] using
-      (translatedRealKernel_hasCompactSupport hκcompact x).comp_left
+    exact (translatedRealKernel_hasCompactSupport hκcompact x).comp_left
         (g := Complex.ofReal) (by simp only [Complex.ofReal_zero])
   have hw (j : Fin n) :
       LocallyIntegrable (w j) (volume : Measure (LogSpace n)) := by
@@ -7523,24 +7355,21 @@ private theorem angularWeakDolbeaultResolvent_closed_mollified_divergence
   have hconjcompact (j : Fin n) :
       HasCompactSupport (fun y : LogSpace n =>
         conj (barPartialCoordinate η y j)) := by
-    simpa only [comp_def] using
-      (compactSupport_barPartialCoordinate hηcompact j).comp_left
+    exact (compactSupport_barPartialCoordinate hηcompact j).comp_left
         (g := (starRingEnd ℂ)) (map_zero _)
   have hi (j : Fin n) :
       Integrable
         (fun y : LogSpace n =>
           w j y * conj (barPartialCoordinate η y j))
         (volume : Measure (LogSpace n)) := by
-    simpa only [smul_eq_mul] using
-      (hw j).integrable_smul_right_of_hasCompactSupport
+    exact (hw j).integrable_smul_right_of_hasCompactSupport
         (hconjcont j) (hconjcompact j)
   have hbint (j : Fin n) :
       Integrable
         (fun y : LogSpace n =>
           (b j y * w j y) * η y)
         (volume : Measure (LogSpace n)) := by
-    simpa only [smul_eq_mul] using
-      (hbw j).integrable_smul_right_of_hasCompactSupport
+    exact (hbw j).integrable_smul_right_of_hasCompactSupport
         hη.continuous hηcompact
   have hsplit (j : Fin n) :
       (∫ y : LogSpace n,
@@ -7835,7 +7664,7 @@ private theorem angularSmoothCompactHessianRootVector_L2_norm_sq
       angularTorusFormCurvatureDensity a
         (cutoffPhysicalField m V) q
       ∂(angularWeightedTorusMeasure a)).re := by
-        simpa only [RCLike.re_to_complex] using (integral_re hcurv)
+        exact (integral_re hcurv)
 
 private theorem angularSmoothCompactHessianRootVector_norm_sq_le_adjoint_add_exterior
     {n : ℕ} {a : LogTorus n → ℝ}
@@ -8154,7 +7983,7 @@ private theorem angularClosedMollifiedRadialAdjointCommutatorL2_sub_norm_sq_le
           angularWeakSourceCutoffAdjointCommutator W m q‖ ^ 2 ≤ 0
       rw [TorusStrongWeightedCutoffAdjoint.angularClosedMollifiedRadialAdjointCommutator_sub_weak,
         hz]
-      simp only [CStarModule.inner_sub_right, inner_zero_left, sub_self, norm_zero, ne_eq,
+      simp only [inner_zero_left, norm_zero, ne_eq,
         OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, Std.le_refl]
   change ‖M - R‖ ^ 2 ≤
     A ^ 2 *
@@ -8293,14 +8122,6 @@ private theorem angularPhysicalResolventRootCutoffField_aestronglyMeasurable
     AEStronglyMeasurable
       (angularPhysicalResolventRootCutoffField a W m)
       (angularWeightedTorusMeasure a) := by
-  change AEStronglyMeasurable
-    (fun q : LogTorus n =>
-      (sourceRadialCutoff m q : ℂ) •
-        Matrix.toEuclideanLin
-          (angularMatrixSquareRoot
-            (angularTorusComplexHessianMatrix a) q)
-          (angularEuclideanConjugation (W q)))
-    (angularWeightedTorusMeasure a)
   apply (Complex.continuous_ofReal.comp
     (continuous_sourceRadialCutoff m)).aestronglyMeasurable.smul
   apply aestronglyMeasurable_complexEuclideanConjugatedMatrixAction
@@ -8614,7 +8435,6 @@ private theorem angularClosedMollifiedRadialAdjoint_memLp
     angularGraphMollifiedPhysicalField_periodic W ℓ
   have hc : Continuous
       (angularTorusFormAdjoint a (cutoffPhysicalField m V)) := by
-    unfold angularTorusFormAdjoint
     apply continuous_finsetSum
     intro i _
     exact continuous_angularTorusWeightedHolomorphicDerivative ha2
@@ -8642,8 +8462,7 @@ private theorem angularClosedMollifiedRadialAdjoint_memLp
         ‖angularTorusFormAdjoint a
           (cutoffPhysicalField m V) q‖ ^ 2
     rw [Complex.mul_conj]
-    simp only [Complex.normSq_eq_norm_sq, pow_two, Complex.ofReal_mul, Complex.mul_re,
-      Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
+    simp only [Complex.normSq_eq_norm_sq, Complex.ofReal_re]
   exact (MeasureTheory.memLp_two_iff_integrable_sq_norm
     hc.aestronglyMeasurable).mpr hsquare
 
@@ -8726,7 +8545,7 @@ private theorem angularClosedMollifiedRadialAdjointL2_eq_defect_drift_commutator
           ha W ℓ m := by
   dsimp only
   let ha2 : ContDiff ℝ 2 (angularCoverPotential a) :=
-    ha3.of_le (by norm_num)
+    ha3.of_le (by decide)
   let W : angularWeightedFormL2 a :=
     WithLp.snd
       (angularWeakDolbeaultResolvent a g :
@@ -8842,7 +8661,7 @@ private theorem angularClosedMollifiedRadialAdjointL2_tendsto
           d W hB m)) := by
   dsimp only
   let ha2 : ContDiff ℝ 2 (angularCoverPotential a) :=
-    ha3.of_le (by norm_num)
+    ha3.of_le (by decide)
   let W : angularWeightedFormL2 a :=
     WithLp.snd
       (angularWeakDolbeaultResolvent a g :
@@ -8989,7 +8808,7 @@ private theorem angularPhysicalWeakResolventRootCutoff_sq_le_adjoint_matrix
             (angularWeakSourceCutoffDerivativeCommutator W m)‖ ^ 2 := by
   dsimp only
   let ha2 : ContDiff ℝ 2 (angularCoverPotential a) :=
-    ha3.of_le (by norm_num)
+    ha3.of_le (by decide)
   let W : angularWeightedFormL2 a :=
     WithLp.snd
       (angularWeakDolbeaultResolvent a g :
@@ -9078,7 +8897,7 @@ private theorem angularPhysicalResolventRootCutoffL2_norm_le_of_one_on_support
         · have hmq : sourceRadialCutoff m q = 0 :=
             image_eq_zero_of_notMem_tsupport hq
           simp only [angularPhysicalResolventRootCutoffField, hmq, Complex.ofReal_zero, zero_smul,
-            norm_zero, Complex.coe_smul, one_mul, norm_nonneg])
+            norm_zero, one_mul, norm_nonneg])
   simpa only [one_mul] using hcomp
 
 private theorem eventually_angularPhysicalResolventRootCutoffL2_norm_le

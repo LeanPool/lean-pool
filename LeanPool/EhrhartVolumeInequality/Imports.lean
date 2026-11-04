@@ -7,6 +7,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.EhrhartVolumeInequality
+public import LeanPool.EhrhartVolumeInequality.AnalysisSupport
 public import LeanPool.EhrhartVolumeInequality.Convergence
 public import LeanPool.EhrhartVolumeInequality.Convexity
 public import LeanPool.EhrhartVolumeInequality.Foundations
