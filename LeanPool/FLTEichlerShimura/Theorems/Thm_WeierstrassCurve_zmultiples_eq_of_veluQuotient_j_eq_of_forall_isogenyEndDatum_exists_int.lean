@@ -26,7 +26,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_Velu
 
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.AlgebraicGeometry.EllipticCurve.IsomOfJ
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_pushforwardAlong_pushforwardAlong
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteAlong_comp
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteAlong_of_surjective

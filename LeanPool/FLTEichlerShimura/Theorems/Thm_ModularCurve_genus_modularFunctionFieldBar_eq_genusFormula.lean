@@ -22,7 +22,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_Arithmetic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumerics
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ordDiff_D_eq_ord_sub_one
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ordDiff_eq_ordDifferential
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_twelve_mul_eq_of_sum_ordDiff_eq

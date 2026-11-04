@@ -322,7 +322,7 @@ theorem den_le_natDegree [IsAlgClosed K] [CharZero K]
   classical
   have hb : 0 < q.den := q.den_pos
   have : NeZero q.den := ⟨q.den_nz⟩
-  obtain ⟨μ, hμ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot K q.den
+  obtain ⟨μ, hμ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot K q.den
   have hcard : Nat.card (rootsOfUnity q.den K) = q.den := hμ.card_rootsOfUnity
   have hval : ∀ ζ : Kˣ, char ζ q.den (Multiplicative.ofAdd q) = ζ ^ q.num := fun ζ => by
     have e : Multiplicative.ofAdd q = Multiplicative.ofAdd ((q.num : ℚ) / (q.den : ℚ)) := by

@@ -21,7 +21,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorP
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JLinePlaces
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_eq_jLinePlace1728_iff_ord_jGen_sub_pos
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 

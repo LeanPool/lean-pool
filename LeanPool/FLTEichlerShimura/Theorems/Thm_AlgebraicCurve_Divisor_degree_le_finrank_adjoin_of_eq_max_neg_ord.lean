@@ -24,7 +24,7 @@ import Mathlib.RingTheory.Flat.TorsionFree
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_forall_ord_eq
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

@@ -246,7 +246,7 @@ lemma exists_adicValued_sub_lt_of_adicValued_le_one {x : (WithVal (v.valuation K
   obtain ⟨a, hval⟩ := exists_adicValued_mul_sub_le v hγ hγv.le hge
   use a
   rw [← eq_div_iff_mul_eq hdz] at hnd
-  rw [adicCompletion.valuedAdicCompletion_def, ← adicCompletion.equiv_apply, map_sub,
+  rw [adicCompletion.valuedAdicCompletion_apply, ← adicCompletion.equiv_apply, map_sub,
     adicCompletion.equiv_apply, adicCompletion.equiv_apply,
     adicCompletion.toCompletion_ofCompletion, adicCompletion.toCompletion_ofCompletion,
     ← UniformSpace.Completion.coe_sub, Valued.extensionValuation_apply_coe, hnd, sub_div' hdz,
@@ -286,7 +286,7 @@ theorem closureAlgebraMapIntegers_eq_integers :
     rintro k ⟨x, hx, rfl⟩
     unfold f at hx
     rw [Set.mem_preimage, SetLike.mem_coe, mem_adicCompletionIntegers,
-        adicCompletion.valued_ofCompletion, Valued.valuedCompletion_apply] at hx
+        adicCompletion.valued_ofCompletion_apply, Valued.valuedCompletion_apply] at hx
     rw [mem_closure_iff_nhds_zero]
     intro U hU
     rw [Valued.mem_nhds] at hU

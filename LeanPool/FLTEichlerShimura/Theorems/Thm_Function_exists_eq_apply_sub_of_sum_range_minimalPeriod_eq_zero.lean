@@ -104,8 +104,7 @@ theorem base_apply (x : X) : base f hf (f x) = base f hf x := by
   exact rel_symm f hf ⟨1, rfl⟩
 
 open Classical in
-noncomputable def idx (x : X) : ℕ :=
-  Nat.find (show ∃ k : ℕ, f^[k] (base f hf x) = x from rel_base f hf x)
+noncomputable def idx (x : X) : ℕ := Nat.find (rel_base f hf x)
 
 open Classical in
 theorem iterate_idx (x : X) : f^[idx f hf x] (base f hf x) = x := Nat.find_spec (rel_base f hf x)

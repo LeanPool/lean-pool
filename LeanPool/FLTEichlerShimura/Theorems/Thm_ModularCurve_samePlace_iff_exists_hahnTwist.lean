@@ -298,7 +298,7 @@ theorem exists_monoChar_of_induces [IsAlgClosed K] [CharZero K]
       ∃ g : ℚ, 0 < g ∧ ∀ x, (v x : ℚ) * g = (φ x).order} = n := by
     rw [hcard he0, ← hn, Int.toNat_natCast]
   have : NeZero n := ⟨hn0.ne'⟩
-  obtain ⟨μ, hμ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot K n
+  obtain ⟨μ, hμ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot K n
   have hμu : IsUnit μ := hμ.isUnit hn0.ne'
   set ζ : Kˣ := hμu.unit with hζdef
   have hζμ : (ζ : K) = μ := hμu.unit_spec

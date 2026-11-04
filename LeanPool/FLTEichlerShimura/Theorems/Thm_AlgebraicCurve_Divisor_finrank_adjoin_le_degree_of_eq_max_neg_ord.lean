@@ -28,7 +28,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_ell_le_degree_add_
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteDimensional_lSpace
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_linearIndependent_pow_mul
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

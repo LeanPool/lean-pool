@@ -4083,10 +4083,10 @@ theorem fractionRing_span_and_independent
         mul_eq_zero] at h
       exact h.resolve_left (pow_ne_zero _ hs)
     have h3 : ιT (q.coeff 0) + s * (q.divX).eval₂ ιT s = 0 := by
-      have h := congrArg (Polynomial.eval₂ ιT s) (Polynomial.divX_mul_X_add q)
-      rw [Polynomial.eval₂_add, Polynomial.eval₂_mul, Polynomial.eval₂_X,
-        Polynomial.eval₂_C, hqs] at h
-      simpa only [add_comm, mul_comm] using h
+      have h := hqs
+      conv at h => lhs; rw [← Polynomial.divX_mul_X_add q]
+      simpa only [Polynomial.eval₂_add, Polynomial.eval₂_mul, Polynomial.eval₂_X,
+        Polynomial.eval₂_C, add_comm, mul_comm] using h
     exact ⟨(q.divX).eval₂ ιT s, -q.coeff 0, neg_ne_zero.mpr hq0,
       by rw [map_neg]; exact eq_neg_of_add_eq_zero_right h3⟩
   have hspanFr : ∀ z : FrT, ∃ d : ι → FrT', z = ∑ i, ιFr (d i) * bFr i := by

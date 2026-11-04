@@ -30,7 +30,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_exists_indexOfSpec
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_finiteDimensional_lSpace
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_indexOfSpecialty_eq_finrank_H1
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_stichtenothGenusExists_of_isCurveOver
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

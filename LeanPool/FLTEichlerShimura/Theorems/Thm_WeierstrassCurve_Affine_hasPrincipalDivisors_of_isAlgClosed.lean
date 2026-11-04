@@ -95,7 +95,7 @@ theorem count_spanSingleton (w : HeightOneSpectrum R) {f : L} (hf : f ≠ 0) :
   have hI : FractionalIdeal.spanSingleton R⁰ (IsLocalization.mk' L n d) =
       FractionalIdeal.spanSingleton R⁰ ((algebraMap R L) (d : R))⁻¹
         * ↑(Ideal.span {n} : Ideal R) := by
-    rw [FractionalIdeal.coeIdeal_span_singleton, FractionalIdeal.spanSingleton_mul_spanSingleton]
+    rw [FractionalIdeal.coeIdeal_span_singleton, ← map_mul]
     congr 1
     rw [IsFractionRing.mk'_eq_div, div_eq_mul_inv, mul_comm]
   rw [FractionalIdeal.count_well_defined L w (FractionalIdeal.spanSingleton_ne_zero_iff.mpr hf) hI]
@@ -396,7 +396,7 @@ theorem count_div {a b : W.CoordinateRing} (ha : a ≠ 0) (hb : b ≠ 0)
     (map_ne_zero_iff _ (IsFractionRing.injective W.CoordinateRing W.FunctionField)).mpr ha
   have hb' : algebraMap W.CoordinateRing W.FunctionField b ≠ 0 :=
     (map_ne_zero_iff _ (IsFractionRing.injective W.CoordinateRing W.FunctionField)).mpr hb
-  rw [div_eq_mul_inv, ← FractionalIdeal.spanSingleton_mul_spanSingleton,
+  rw [div_eq_mul_inv, map_mul,
     FractionalIdeal.count_mul W.FunctionField w
       (FractionalIdeal.spanSingleton_ne_zero_iff.mpr ha')
       (FractionalIdeal.spanSingleton_ne_zero_iff.mpr (inv_ne_zero hb')),

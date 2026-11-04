@@ -38,7 +38,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_transcendental_and_f
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_twelve_mul_genusFF_laurentBaseChange_gamma1_add_six_mul_natCard_doubleCoset_eq_index_add_twelve_of_isAlgClosed
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.Henselian
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

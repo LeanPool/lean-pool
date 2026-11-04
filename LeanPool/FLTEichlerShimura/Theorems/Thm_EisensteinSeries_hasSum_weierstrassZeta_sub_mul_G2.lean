@@ -19,7 +19,7 @@ module
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EisensteinSeries_WeierstrassZeta
 
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.E2.Summable
 import Mathlib.Topology.Separation.CompletelyRegular
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

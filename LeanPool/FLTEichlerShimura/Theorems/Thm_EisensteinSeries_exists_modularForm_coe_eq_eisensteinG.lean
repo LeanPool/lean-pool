@@ -23,7 +23,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_EisensteinSeries_Eisens
 
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Complex.LocallyUniformLimit
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.IsBoundedAtImInfty
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.MDifferentiable
 import Mathlib.NumberTheory.ModularForms.Identities

@@ -22,7 +22,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeEis_EichlerIntegra
 
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.Complex.Liouville
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.MeasureTheory.Integral.ExpDecay
 import Mathlib.NumberTheory.ModularForms.Bounds
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Complex_integral_modularFundamentalDomain_eq_boundary_of_hasFDerivAt

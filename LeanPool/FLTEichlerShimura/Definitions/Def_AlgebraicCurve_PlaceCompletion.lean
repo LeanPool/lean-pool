@@ -25,7 +25,7 @@ import Mathlib.RingTheory.PicardGroup
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.Henselian
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!
@@ -224,7 +224,7 @@ theorem kw_ffgc_valued_adicCompletionComap (x : (W.restrict F).adicCompletion) :
           (IsDedekindDomain.HeightOneSpectrum.adicCompletion.continuous_ofCompletion F _)).pow _)
   | ih a =>
     rw [kw_ffgc_adicCompletionComap_coe]
-    simp only [IsDedekindDomain.HeightOneSpectrum.adicCompletion.valued_ofCompletion,
+    simp only [IsDedekindDomain.HeightOneSpectrum.adicCompletion.valued_ofCompletion_apply,
       Valued.valuedCompletion_apply]
     exact kw_ffgc_valued_withValMapAlgebraMap F W a
 

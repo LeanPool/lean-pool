@@ -21,7 +21,7 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Analysis.Complex.LocallyUniformLimit
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.NumberTheory.ModularForms.JacobiTheta.TwoVariable
 import Mathlib.Tactic.NormNum.Prime
 import LeanPool.FLTEichlerShimura.Theorems.Thm_CongruenceSubgroup_closure_T_U_neg_one_eq_Gamma0_three

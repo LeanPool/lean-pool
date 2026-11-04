@@ -23,7 +23,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveO
 public import Mathlib.RingTheory.SimpleRing.Principal
 
 import Mathlib.Algebra.Polynomial.Basis
-import Mathlib.Data.Int.LeastGreatest
+import Mathlib.Order.Int.LeastGreatest
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.PicardGroup
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_PoleDivisorPackage
@@ -35,7 +35,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_
 import Mathlib.RingTheory.Valuation.LocalSubring
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import Mathlib.RingTheory.Henselian
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

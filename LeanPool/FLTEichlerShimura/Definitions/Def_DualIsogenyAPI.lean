@@ -19,7 +19,7 @@ public import Mathlib.Algebra.Group.Hom.End
 
 import Mathlib.Tactic.NoncommRing
 import Mathlib.Analysis.Normed.Ring.Lemmas
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

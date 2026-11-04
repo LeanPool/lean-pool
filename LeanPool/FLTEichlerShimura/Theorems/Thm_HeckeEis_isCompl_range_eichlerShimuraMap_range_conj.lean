@@ -21,7 +21,7 @@ public import Mathlib.NumberTheory.ModularForms.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_HeckeEis_EichlerIntegral
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.RingTheory.RegularLocalRing.Defs
 import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_dimFormula_le_finrank_gamma0

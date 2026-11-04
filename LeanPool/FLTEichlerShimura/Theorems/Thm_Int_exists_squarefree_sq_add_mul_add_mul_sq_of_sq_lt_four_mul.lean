@@ -20,7 +20,7 @@ module
 public import Mathlib.Algebra.Squarefree.Basic
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import LeanPool.FLTEichlerShimura.Theorems.Thm_Nat_exists_squarefree_sq_add
 meta import Lean.Meta.Tactic.NormCast
 

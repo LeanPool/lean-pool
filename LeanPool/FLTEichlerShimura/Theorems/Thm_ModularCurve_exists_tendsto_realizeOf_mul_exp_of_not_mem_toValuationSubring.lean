@@ -22,7 +22,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_JqCoeff
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_X1
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_apply_eq_of_forall_ord_eq_zero_tendsto_realizeOf
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_exists_ringHom_place_order_eq_mul_ord_of_qExpansion_slash
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_ord_eq_neg_width_of_order_eq_mul_ord_of_qExpansion_slash

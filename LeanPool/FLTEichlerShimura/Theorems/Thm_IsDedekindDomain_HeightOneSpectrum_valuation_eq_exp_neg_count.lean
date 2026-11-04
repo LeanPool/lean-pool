@@ -81,7 +81,7 @@ theorem solution {R : Type*} [CommRing R] [IsDedekindDomain R] (K : Type*) [Fiel
       ((Ideal.span {r} : Ideal R) : FractionalIdeal R⁰ K) *
         ((Ideal.span {(s : R)} : Ideal R) : FractionalIdeal R⁰ K)⁻¹ := by
     rw [FractionalIdeal.coeIdeal_span_singleton, FractionalIdeal.coeIdeal_span_singleton,
-      FractionalIdeal.spanSingleton_inv, FractionalIdeal.spanSingleton_mul_spanSingleton,
+      FractionalIdeal.spanSingleton_inv, ← map_mul,
       IsFractionRing.mk'_eq_div, div_eq_mul_inv]
   have hr' : ((Ideal.span {r} : Ideal R) : FractionalIdeal R⁰ K) ≠ 0 := by
     rwa [Ne, FractionalIdeal.coeIdeal_eq_zero, Ideal.span_singleton_eq_bot]

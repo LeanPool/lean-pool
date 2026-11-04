@@ -22,7 +22,7 @@ public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Complex.UpperHalfPlane.FixedPoints
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 
 /-!

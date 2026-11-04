@@ -17,7 +17,7 @@ module
 public import Mathlib.NumberTheory.Modular
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

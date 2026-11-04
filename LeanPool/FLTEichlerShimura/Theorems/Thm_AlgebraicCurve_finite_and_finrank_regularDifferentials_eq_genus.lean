@@ -33,7 +33,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_IsCurveOver_exists
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

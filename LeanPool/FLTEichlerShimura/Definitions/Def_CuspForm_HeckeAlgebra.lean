@@ -132,7 +132,7 @@ open scoped IsMulCommutative in
 instance heckeAlgebra.instCommRing : CommRing (heckeAlgebra N k S) := inferInstance
 
 instance heckeAlgebra.instIsAddTorsionFree : IsAddTorsionFree (heckeAlgebra N k S) where
-  nsmul_right_injective n hn a b hab := by
+  eq_of_nsmul_eq_nsmul_of_addCommute n hn a b _ hab := by
     apply Subtype.ext
     have h : (n : ℂ) • (a : Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) k)) =
         (n : ℂ) • (b : Module.End ℂ (CuspForm (CongruenceSubgroup.Gamma0 N) k)) := by

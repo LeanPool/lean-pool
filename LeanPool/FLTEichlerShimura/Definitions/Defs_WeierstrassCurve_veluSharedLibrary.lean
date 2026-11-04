@@ -275,7 +275,7 @@ theorem isUnit_of_forall_isMaximal [IsNoetherianRing R]
   have ha' : algebraMap R K a ≠ 0 := mt IsFractionRing.to_map_eq_zero_iff.mp ha
   refine IsUnit.mul ?_ (isUnit_coeIdeal_of_forall_isMaximal K hmax J ?_)
   · exact isUnit_iff_exists_inv.mpr ⟨spanSingleton R⁰ (algebraMap R K a), by
-      rw [spanSingleton_mul_spanSingleton, inv_mul_cancel₀ ha', spanSingleton_one]⟩
+      rw [← map_mul, inv_mul_cancel₀ ha', map_one]⟩
   · rintro rfl
     simp at hI
 

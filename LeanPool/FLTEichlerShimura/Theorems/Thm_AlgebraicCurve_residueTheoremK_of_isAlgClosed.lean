@@ -33,7 +33,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ramification
 import Mathlib.RingTheory.RamificationInertia.Basic
 import Mathlib.RingTheory.PicardGroup
 import Mathlib.RingTheory.Valuation.Integral
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.RingTheory.RegularLocalRing.Defs

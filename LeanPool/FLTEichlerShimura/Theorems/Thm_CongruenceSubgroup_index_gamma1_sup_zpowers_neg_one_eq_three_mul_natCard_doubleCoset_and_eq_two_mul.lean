@@ -22,7 +22,7 @@ public import Mathlib.GroupTheory.DoubleCoset
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 
 /-!
 # Index of ±Γ₁(M) and elliptic double-coset counts

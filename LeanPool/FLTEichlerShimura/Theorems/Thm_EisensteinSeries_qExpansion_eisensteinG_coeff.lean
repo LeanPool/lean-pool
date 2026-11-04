@@ -22,7 +22,7 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 public import LeanPool.FLTEichlerShimura.Definitions.Def_EisensteinSeries_EisensteinG
 
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 import Mathlib.Topology.Separation.CompletelyRegular
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

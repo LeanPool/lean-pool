@@ -158,7 +158,7 @@ theorem apply_eq_zero_of_isOfFinAddOrder [IsAddTorsionFree R] {G : Type*} [AddCo
     (f : G →+ R) (x : G) (hx : IsOfFinAddOrder x) : f x = 0 := by
   obtain ⟨n, hn, hnx⟩ := hx.exists_nsmul_eq_zero
   have h : n • f x = n • (0 : R) := by rw [← map_nsmul, hnx, map_zero, nsmul_zero]
-  exact IsAddTorsionFree.nsmul_right_injective hn.ne' h
+  exact eq_of_nsmul_eq_nsmul_of_addCommute hn.ne' (AddCommute.all _ _) h
 
 end Factor
 

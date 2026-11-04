@@ -20,7 +20,7 @@ module
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_EMD
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 
 /-!

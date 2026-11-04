@@ -21,7 +21,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PrimCosetR
 public import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformization
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 import Mathlib.RingTheory.SimpleRing.Principal
 

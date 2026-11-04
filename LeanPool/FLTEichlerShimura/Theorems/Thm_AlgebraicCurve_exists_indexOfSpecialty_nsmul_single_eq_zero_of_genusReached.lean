@@ -22,7 +22,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveO
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_omegaSpace_finite_of_genusReached
 import Mathlib.RingTheory.SimpleRing.Principal
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

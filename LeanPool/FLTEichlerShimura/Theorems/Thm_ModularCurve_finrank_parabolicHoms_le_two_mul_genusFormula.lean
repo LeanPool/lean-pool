@@ -22,7 +22,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_GenusNumer
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_PeriodMap
 
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_CuspSpace_card_cuspSpace_eq_cuspCount
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_Gamma0_index
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_Period_six_mul_finrank_parabolicHoms_add_le_index

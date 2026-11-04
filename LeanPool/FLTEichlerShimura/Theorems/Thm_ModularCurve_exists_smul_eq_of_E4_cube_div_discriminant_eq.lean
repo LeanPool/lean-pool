@@ -19,7 +19,7 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.Discriminant
 
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.NumberTheory.ModularForms.LevelOne.GradedRing
 import LeanPool.FLTEichlerShimura.Definitions.Def_PeriodPair_Uniformization
 import LeanPool.FLTEichlerShimura.Theorems.Thm_PeriodPair_lattice_eq_of_g2_eq_of_g3_eq

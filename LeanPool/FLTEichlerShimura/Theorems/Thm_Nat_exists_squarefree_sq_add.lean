@@ -22,7 +22,7 @@ public import Mathlib.Algebra.Squarefree.Basic
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.PSeries
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.Nat.Prime.Int
 import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Tactic.NormNum.Prime

@@ -24,7 +24,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_MazurStepT
 
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Ring.Lemmas
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_ord_add_eq_of_lt
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_isIntegral_adjoin_of_forall_ord_nonneg
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_card_eq_cuspCount_of_forall_mem_iff_ord_jBar_neg

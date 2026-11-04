@@ -28,7 +28,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_essFiniteType_modula
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_dCoordGenerates_of_isCurveOver
 import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularCurve_genus_eq_genusFF_modularFunctionFieldBar
 import Mathlib.NumberTheory.Height.NumberField
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

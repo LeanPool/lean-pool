@@ -16,7 +16,7 @@ module
 
 public import Mathlib.Algebra.Field.Subfield.Basic
 public import Mathlib.Algebra.Order.Ring.Star
-public import Mathlib.Data.Rat.Star
+public import Mathlib.Algebra.Order.Star.Rat
 public import Mathlib.RingTheory.HahnSeries.Summable
 
 /-!

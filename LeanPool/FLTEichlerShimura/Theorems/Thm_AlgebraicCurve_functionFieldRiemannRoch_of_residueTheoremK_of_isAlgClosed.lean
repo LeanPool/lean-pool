@@ -44,10 +44,10 @@ import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CanonicalDivisorU
 import Mathlib.RingTheory.Valuation.LocalSubring
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.Data.Int.LeastGreatest
+import Mathlib.Order.Int.LeastGreatest
 
 /-!
 # Riemann–Roch from the residue theorem, K algebraically closed

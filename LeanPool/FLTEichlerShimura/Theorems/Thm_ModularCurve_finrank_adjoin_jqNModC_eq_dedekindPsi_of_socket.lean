@@ -350,7 +350,7 @@ private theorem ModularCurve.finrank_adjoin_jqNModC_eq_dedekindPsi_of_socket {K 
       ({jqNModC K d} : Set (LaurentSeries K))) = dedekindPsi d := by
   have hd : (d : K) ≠ 0 := natCast_ne_zero_of_socket d hbase
   have : NeZero ((d : ℕ) : K) := ⟨hd⟩
-  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot (AlgebraicClosure K) d
+  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (AlgebraicClosure K) d
   have hzu : IsUnit z := hz.isUnit (NeZero.ne d)
   have hζ : IsPrimitiveRoot ((hzu.unit : (AlgebraicClosure K)ˣ) : AlgebraicClosure K) d := by
     rw [IsUnit.unit_spec]

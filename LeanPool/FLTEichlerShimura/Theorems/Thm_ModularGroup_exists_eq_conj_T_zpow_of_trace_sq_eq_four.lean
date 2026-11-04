@@ -23,7 +23,7 @@ public import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.Normed.Ring.Lemmas
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.LinearCombination
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 

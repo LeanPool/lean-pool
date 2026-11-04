@@ -19,7 +19,7 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.DedekindEta
 
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.NumberTheory.ModularForms.Discriminant
 import LeanPool.FLTEichlerShimura.Theorems.Thm_CuspForm_exists_gamma0_apply_eq_eta_mul_pow_twentyfour
 

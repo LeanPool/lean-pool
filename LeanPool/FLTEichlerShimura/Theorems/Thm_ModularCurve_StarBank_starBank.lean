@@ -279,7 +279,7 @@ theorem natCast_prime_ne_zero (K : Type*) [Field K] {ℓ p : ℕ} [Fact ℓ.Prim
 theorem exists_primitiveRoot_units (K : Type*) [Field K] [IsAlgClosed K] (p : ℕ)
     [Fact p.Prime] (hp : (p : K) ≠ 0) : ∃ ζ : Kˣ, IsPrimitiveRoot ((ζ : Kˣ) : K) p := by
   have : NeZero ((p : K)) := ⟨hp⟩
-  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot K p
+  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot K p
   obtain ⟨u, hu⟩ := hz.isUnit (Nat.Prime.ne_zero Fact.out)
   exact ⟨u, hu.symm ▸ hz⟩
 

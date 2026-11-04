@@ -367,7 +367,7 @@ theorem aeval_jqModC_ne_jqNModC (hpK : (p : K) ≠ 0) {m : ℕ} (hm : 0 < m)
     (P : Polynomial K) : Polynomial.aeval (jqModC K) P ≠ jqNModC K p := by
   intro h
   have : NeZero ((p : ℕ) : K) := ⟨hpK⟩
-  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot (AlgebraicClosure K) p
+  obtain ⟨z, hz⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (AlgebraicClosure K) p
   set σ : K →+* AlgebraicClosure K := algebraMap K (AlgebraicClosure K) with hσ
   have hzu : IsUnit z := hz.isUnit hp.out.ne_zero
   have hζ : IsPrimitiveRoot ((hzu.unit : (AlgebraicClosure K)ˣ) : AlgebraicClosure K) p := by

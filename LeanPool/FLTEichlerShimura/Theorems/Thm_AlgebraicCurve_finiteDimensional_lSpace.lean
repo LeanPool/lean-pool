@@ -26,7 +26,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Divisor_degree_eq_
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.RegularLocalRing.Defs
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

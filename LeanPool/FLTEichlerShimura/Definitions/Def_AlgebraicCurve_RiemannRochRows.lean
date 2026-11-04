@@ -18,7 +18,7 @@ public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIn
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_CanonicalDivisor
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

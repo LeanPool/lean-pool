@@ -40,7 +40,7 @@ import LeanPool.FLTEichlerShimura.Theorems.Thm_ModularForm_exists_gamma1_weightO
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.RingTheory.Henselian
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Algebra.Order.Ring.Star
 
 /-!

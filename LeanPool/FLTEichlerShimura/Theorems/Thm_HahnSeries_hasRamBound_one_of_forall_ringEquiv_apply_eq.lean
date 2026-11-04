@@ -339,7 +339,7 @@ theorem solution
   intro q hq
   have hb : 0 < q.den := q.den_pos
   have : NeZero q.den := ⟨q.den_nz⟩
-  obtain ⟨μ, hμ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot K q.den
+  obtain ⟨μ, hμ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot K q.den
   obtain ⟨ζ, rfl⟩ : IsUnit μ := by
     first | exact hμ.isUnit q.den_nz
   have hζ : IsPrimitiveRoot ζ q.den := IsPrimitiveRoot.coe_units_iff.mp hμ
