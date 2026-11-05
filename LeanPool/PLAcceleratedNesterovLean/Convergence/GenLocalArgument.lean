@@ -46,12 +46,290 @@ open scoped Topology NNReal
 open Manifold
 
 
+/-- From `ε ≤ √(μ_minus / η)` deduce `ε * η ≤ √(μ_minus * η)`. -/
+private theorem mul_le_sqrt_mul_of_le_sqrt_div {ε μ_minus η : ℝ} (hε_pos : 0 < ε)
+    (hμ_minus : 0 < μ_minus) (hη_pos : 0 < η) (hε_le : ε ≤ Real.sqrt (μ_minus / η)) :
+    ε * η ≤ Real.sqrt (μ_minus * η) := by
+  have hε_sq : ε ^ 2 ≤ μ_minus / η :=
+    (Real.le_sqrt hε_pos.le (div_pos hμ_minus hη_pos).le).mp hε_le
+  rw [← Real.sqrt_sq (mul_pos hε_pos hη_pos).le]
+  apply Real.sqrt_le_sqrt
+  calc
+    (ε * η) ^ 2 = ε ^ 2 * η ^ 2 := mul_pow _ _ _
+    _ ≤ (μ_minus / η) * η ^ 2 :=
+      mul_le_mul_of_nonneg_right hε_sq (sq_nonneg η)
+    _ = μ_minus * η := by field_simp
+
+/-- A linear map satisfying the Pythagorean identity `‖v‖² = ‖P v‖² + ‖v - P v‖²` is
+norm-nonincreasing. -/
+private theorem norm_apply_le_of_pythagorean {d : ℕ} {P : E d →L[ℝ] E d}
+    (hP_ortho : ∀ v : E d, ‖v‖ ^ 2 = ‖P v‖ ^ 2 + ‖v - P v‖ ^ 2) (w : E d) :
+    ‖P w‖ ≤ ‖w‖ := by
+  have hPw_sq : ‖P w‖ ^ 2 ≤ ‖w‖ ^ 2 :=
+    (le_add_of_nonneg_right (sq_nonneg ‖w - P w‖)).trans_eq (hP_ortho w).symm
+  calc ‖P w‖ = Real.sqrt (‖P w‖ ^ 2) := (Real.sqrt_sq (norm_nonneg _)).symm
+    _ ≤ Real.sqrt (‖w‖ ^ 2) := Real.sqrt_le_sqrt hPw_sq
+    _ = ‖w‖ := Real.sqrt_sq (norm_nonneg _)
+
+/-- The derivative of an idempotent map at one of its fixed points is idempotent. -/
+private theorem fderiv_apply_fderiv_of_idempotent {d : ℕ} {π : E d → E d} {mstar : E d}
+    (h_pipi : ∀ x, π (π x) = π x) (hπm : π mstar = mstar)
+    (hπ_diff : DifferentiableAt ℝ π mstar) (x : E d) :
+    fderiv ℝ π mstar (fderiv ℝ π mstar x) = fderiv ℝ π mstar x := by
+  have h_eq : fderiv ℝ (fun x => π (π x)) mstar = fderiv ℝ π mstar := by
+    have : (fun x => π (π x)) = π := funext h_pipi
+    rw [this]
+  have h_chain : fderiv ℝ (fun x => π (π x)) mstar =
+      (fderiv ℝ π mstar).comp (fderiv ℝ π mstar) := by
+    have hπ_diff_at_πm : DifferentiableAt ℝ π (π mstar) := by rwa [hπm]
+    have := fderiv_comp mstar hπ_diff_at_πm hπ_diff
+    rwa [hπm] at this
+  have h_comp_eq : (fderiv ℝ π mstar).comp (fderiv ℝ π mstar) = fderiv ℝ π mstar := by
+    rw [← h_chain, h_eq]
+  have := ContinuousLinearMap.ext_iff.mp h_comp_eq x
+  simp only [ContinuousLinearMap.comp_apply] at this
+  exact this
+
+/-- A map agreeing on an open set `U ∋ mstar` with a map that is `C¹` at `mstar` is
+differentiable on a ball around `mstar`. -/
+private theorem exists_ball_differentiableAt_of_eqOn {d : ℕ} {π π' : E d → E d}
+    {U : Set (E d)} {mstar : E d} (hU : IsOpen U) (hmU : mstar ∈ U)
+    (hC1 : ContDiffAt ℝ 1 π' mstar) (hπ_eq_on_U' : ∀ y ∈ U, π y = π' y) :
+    ∃ δ_diff > 0, ∀ z ∈ Metric.ball mstar δ_diff, DifferentiableAt ℝ π z := by
+  have hfda := (contDiffAt_succ_iff_hasFDerivAt (n := 0)).mp (by exact_mod_cast hC1)
+  obtain ⟨f', ⟨u, hu_nhds, hf'_u⟩, _⟩ := hfda
+  obtain ⟨δ₁, hδ₁_pos, hδ₁_sub⟩ := Metric.mem_nhds_iff.mp hu_nhds
+  obtain ⟨δ₂, hδ₂_pos, hδ₂_sub⟩ := Metric.isOpen_iff.mp hU mstar hmU
+  refine ⟨min δ₁ δ₂, lt_min hδ₁_pos hδ₂_pos, fun z hz => ?_⟩
+  have hdz := Metric.mem_ball.mp hz
+  have hz_u : z ∈ u := hδ₁_sub (lt_of_lt_of_le hdz (min_le_left _ _))
+  have hz_U : z ∈ U :=
+    hδ₂_sub (Metric.mem_ball.mpr (lt_of_lt_of_le hdz (min_le_right _ _)))
+  have hπ'_diff : DifferentiableAt ℝ π' z := (hf'_u z hz_u).differentiableAt
+  have h_evt_z : π =ᶠ[𝓝 z] π' :=
+    (hU.eventually_mem hz_U).mono (fun y hy => hπ_eq_on_U' y hy)
+  exact h_evt_z.differentiableAt_iff.mpr hπ'_diff
+
+/-- Along a segment inside `U_plus`, a lower Hessian bound `-ε` gives the first-order
+estimate `⟪∇f x, x - z⟫ ≥ f x - f z - ε / 2 * ‖x - z‖ ^ 2`. -/
+private theorem inner_gradient_ge_of_hessian_lower_on_segment {d : ℕ}
+    (f : E d → ℝ) (ε : ℝ) {U_plus U : Set (E d)}
+    (hU_plus_open : IsOpen U_plus) (hU_open : IsOpen U) (hU_sub : closure U_plus ⊆ U)
+    (hf_C2_on_U : ContDiffOn ℝ 2 f U)
+    (hHessLow : ∀ x ∈ U_plus, ∀ ξ : E d, hessianQuadForm f x ξ ≥ -ε * ‖ξ‖ ^ 2)
+    (x z : E d) (hseg : ∀ t : ℝ, 0 ≤ t → t ≤ 1 → (1 - t) • z + t • x ∈ U_plus) :
+    @inner ℝ _ _ (gradient f x) (x - z) ≥ f x - f z - ε / 2 * ‖x - z‖ ^ 2 := by
+  have hf_diffOn_Up : DifferentiableOn ℝ f U_plus :=
+    (hf_C2_on_U.differentiableOn (by decide : (2 : WithTop ℕ∞) ≠ 0)).mono
+      (subset_closure.trans hU_sub)
+  set ξ := x - z with hξ_def
+  set φ : ℝ → ℝ := fun t => f (z + t • ξ) with hφ_def
+  have hφ0 : φ 0 = f z := by simp only [hφ_def, zero_smul, add_zero]
+  have hφ1 : φ 1 = f x := by
+    simp only [hφ_def, one_smul, hξ_def]; congr 1; abel
+  have hpath : ∀ t, HasDerivAt (fun (s : ℝ) => z + s • ξ) ξ t := by
+    intro t
+    have h := ((hasDerivAt_id t).smul_const ξ).const_add z
+    simpa [one_smul] using h
+  have hseg' : ∀ t : ℝ, 0 ≤ t → t ≤ 1 → z + t • ξ ∈ U_plus := by
+    intro t ht0 ht1
+    have : z + t • ξ = (1 - t) • z + t • x := by
+      simp only [smul_sub, sub_smul, one_smul, ξ]; abel
+    rw [this]; exact hseg t ht0 ht1
+  have hφ_hd : ∀ t, 0 ≤ t → t ≤ 1 →
+      HasDerivAt φ (fderiv ℝ f (z + t • ξ) ξ) t := by
+    intro t ht0 ht1
+    have hpt_Up : z + t • ξ ∈ U_plus := hseg' t ht0 ht1
+    have hda : DifferentiableAt ℝ f (z + t • ξ) :=
+      hf_diffOn_Up.differentiableAt (hU_plus_open.mem_nhds hpt_Up)
+    exact hda.hasFDerivAt.comp_hasDerivAt t (hpath t)
+  have hderiv1 : deriv φ 1 = @inner ℝ _ _ (gradient f x) ξ := by
+    rw [(hφ_hd 1 zero_le_one le_rfl).deriv]
+    have hone : z + (1 : ℝ) • ξ = x := by
+      simp only [one_smul, hξ_def]; abel
+    rw [hone]
+    exact (inner_gradient_left (𝕜 := ℝ) (f := f) (x := x) (y := ξ)).symm
+  have hφ''_eq : ∀ t, 0 ≤ t → t ≤ 1 →
+      deriv (deriv φ) t = hessianQuadForm f (z + t • ξ) ξ := by
+    intro t ht0 ht1
+    have hpt_Up : z + t • ξ ∈ U_plus := hseg' t ht0 ht1
+    have hpt_U : z + t • ξ ∈ U := hU_sub (subset_closure hpt_Up)
+    have hC2at : ContDiffAt ℝ 2 f (z + t • ξ) :=
+      hf_C2_on_U.contDiffAt (hU_open.mem_nhds hpt_U)
+    exact fiber_path_second_deriv f z ξ t hC2at
+  have hφ''_lower : ∀ t, 0 ≤ t → t ≤ 1 →
+      deriv (deriv φ) t ≥ -ε * ‖ξ‖ ^ 2 := by
+    intro t ht0 ht1
+    rw [hφ''_eq t ht0 ht1]
+    exact hHessLow (z + t • ξ) (hseg' t ht0 ht1) ξ
+  have hφ_C2at : ∀ t ∈ Set.Icc (0:ℝ) 1, ContDiffAt ℝ 2 φ t := by
+    intro t ht
+    exact fiber_path_C2at_on_segment f z ξ hU_open hf_C2_on_U
+      (fun s hs => hU_sub (subset_closure (hseg' s hs.1 hs.2))) t ht
+  have hφ_cont : ContinuousOn φ (Set.Icc 0 1) :=
+    fun t ht => (hφ_C2at t ht).continuousAt.continuousWithinAt
+  have hφ_diffon : DifferentiableOn ℝ φ (Set.Ioo 0 1) :=
+    fun t ht => ((hφ_C2at t (Set.Ioo_subset_Icc_self ht)).differentiableAt
+      (by decide : (2 : WithTop ℕ∞) ≠ 0)).differentiableWithinAt
+  have hφ'_cont : ContinuousOn (deriv φ) (Set.Icc 0 1) := by
+    intro t ht
+    have hfda := (hφ_C2at t ht).fderiv_right
+      (show (1 : WithTop ℕ∞) + 1 ≤ 2 by decide)
+    have h_eq : deriv φ = fun s => fderiv ℝ φ s 1 := by
+      ext s; exact fderiv_apply_one_eq_deriv.symm
+    rw [h_eq]
+    exact (hfda.continuousAt.clm_apply continuousAt_const).continuousWithinAt
+  have hφ'_diffon : DifferentiableOn ℝ (deriv φ) (Set.Ioo 0 1) := by
+    intro t ht
+    have hfda := (hφ_C2at t (Set.Ioo_subset_Icc_self ht)).fderiv_right
+      (show (1 : WithTop ℕ∞) + 1 ≤ 2 by decide)
+    have hfda_diff := hfda.differentiableAt
+      (show (1 : WithTop ℕ∞) ≠ 0 by decide)
+    have h_eq : deriv φ = fun s => fderiv ℝ φ s 1 := by
+      ext s; exact fderiv_apply_one_eq_deriv.symm
+    rw [h_eq]
+    exact (hfda_diff.clm_apply (differentiableAt_const _)).differentiableWithinAt
+  have hest := segment_estimate_from_hessian φ (-ε * ‖ξ‖ ^ 2)
+    hφ_cont hφ_diffon hφ'_cont hφ'_diffon hφ''_lower
+  rw [hderiv1, hφ1, hφ0] at hest
+  linarith
+
+/-- Per-step motion bounds on `Ω`: coercivity and the gradient Lipschitz bound control
+the step displacement and the next velocity by the square root of the Lyapunov value. -/
+private theorem nesterov_step_motion_bounds {d : ℕ}
+    (f : E d → ℝ) (L : ℝ≥0) (μ_minus : ℝ) (hmu4_pos : 0 < μ_minus)
+    (η : ℝ) (hη_pos : 0 < η) (ρ C_coer : ℝ) (hC_coer : 0 < C_coer)
+    (π : E d → E d) (P : E d →L[ℝ] E d) {Ω U : Set (E d)}
+    (hf_lip : LipschitzOnWith (↑L) (gradient f) U) (hΩ_sub_U : Ω ⊆ U)
+    (hπ_in_U : ∀ x, π x ∈ U) (hgrad_zero_π : ∀ x, gradient f (π x) = 0)
+    (hcoer : ∀ s : NesterovState d, s.x ∈ Ω → s.lookahead η ∈ Ω →
+      ‖s.v‖ ^ 2 + μ_minus * ‖normalDispOfState π η s‖ ^ 2 ≤
+        C_coer * lyapunovOfState P μ_minus π f η s) :
+    ∃ Ch > 0, ∃ Cmov > 0, ∀ s : NesterovState d, s.x ∈ Ω → s.lookahead η ∈ Ω →
+      ‖stepDispOfState f η ρ s‖ ≤ Ch * Real.sqrt η *
+        Real.sqrt (lyapunovOfState P μ_minus π f η s) ∧
+      ‖Real.sqrt η • (nesterovStep f η ρ s).v‖ ≤
+        Cmov * Real.sqrt (lyapunovOfState P μ_minus π f η s) := by
+  have hη_nn : (0 : ℝ) ≤ η := le_of_lt hη_pos
+  have hsqrt_η_nn : (0 : ℝ) ≤ Real.sqrt η := Real.sqrt_nonneg η
+  have hL_nn : (0 : ℝ) ≤ (↑L : ℝ) := L.coe_nonneg
+  have hC_coer_nn : (0 : ℝ) ≤ C_coer := le_of_lt hC_coer
+  -- Constants
+  let K := C_coer / μ_minus
+  let Ce := Real.sqrt K
+  let Cg := (↑L : ℝ) * Ce
+  let Cv := Real.sqrt C_coer
+  let Cv' := |ρ| * (Cv + Real.sqrt η * Cg)
+  let Ch := Cv' + Real.sqrt η * Cg + 1
+  let Cmov := Real.sqrt η * Cv' + 1
+  refine ⟨Ch, by positivity, Cmov, by positivity, ?_⟩
+  intro s hsx hslx
+  set Ln := lyapunovOfState P μ_minus π f η s
+  set s' := nesterovStep f η ρ s
+  set gn := gradient f (s.lookahead η)
+  set en := normalDispOfState π η s
+  -- Coercivity on Ω
+  have hcoer_here := hcoer s hsx hslx
+  -- (1) ‖s.v‖ ≤ Cv * √Ln
+  have hv_sq : ‖s.v‖ ^ 2 ≤ C_coer * Ln :=
+    (le_add_of_nonneg_right (mul_nonneg hmu4_pos.le (sq_nonneg ‖en‖))).trans hcoer_here
+  have hv_bound : ‖s.v‖ ≤ Cv * Real.sqrt Ln := by
+    rw [show Cv = Real.sqrt C_coer from rfl,
+        ← Real.sqrt_mul hC_coer_nn,
+        ← Real.sqrt_sq (norm_nonneg s.v)]
+    exact Real.sqrt_le_sqrt hv_sq
+  -- (2) ‖en‖ ≤ Ce * √Ln
+  have he_sq : ‖en‖ ^ 2 ≤ K * Ln := by
+    calc
+      ‖en‖ ^ 2 ≤ (C_coer * Ln) / μ_minus :=
+        (le_div_iff₀' hmu4_pos).mpr
+          ((le_add_of_nonneg_left (sq_nonneg ‖s.v‖)).trans hcoer_here)
+      _ = K * Ln := (div_mul_eq_mul_div C_coer μ_minus Ln).symm
+  have he_bound : ‖en‖ ≤ Ce * Real.sqrt Ln := by
+    have hK_nn : (0 : ℝ) ≤ K := by positivity
+    rw [show Ce = Real.sqrt K from rfl,
+        ← Real.sqrt_mul hK_nn,
+        ← Real.sqrt_sq (norm_nonneg en)]
+    exact Real.sqrt_le_sqrt he_sq
+  -- (3) ‖gn‖ ≤ ↑L * ‖en‖ ≤ Cg * √Ln
+  have hg_raw : ‖gn‖ ≤ (↑L : ℝ) * ‖en‖ := by
+    change ‖gradient f (s.lookahead η)‖ ≤
+      (↑L : ℝ) * ‖s.lookahead η - π (s.lookahead η)‖
+    exact gradient_bound_from_lipschitz f L hf_lip _ _
+      (hΩ_sub_U hslx)
+      (hπ_in_U _)
+      (hgrad_zero_π _)
+  have hg_bound : ‖gn‖ ≤ Cg * Real.sqrt Ln := by
+    calc ‖gn‖ ≤ (↑L : ℝ) * ‖en‖ := hg_raw
+      _ ≤ (↑L : ℝ) * (Ce * Real.sqrt Ln) := by
+          apply mul_le_mul_of_nonneg_left he_bound hL_nn
+      _ = Cg * Real.sqrt Ln := by ring
+  -- (4) s'.v = ρ • (s.v - √η • gn)
+  have hv'_eq : s'.v = ρ • (s.v - Real.sqrt η • gn) := by
+    simp only [s', nesterovStep, gn, NesterovState.lookahead]
+  -- (5) ‖s'.v‖ ≤ Cv' * √Ln
+  have hv'_bound : ‖s'.v‖ ≤ Cv' * Real.sqrt Ln := by
+    have hv'_norm : ‖s'.v‖ ≤ |ρ| * (‖s.v‖ + |Real.sqrt η| * ‖gn‖) := by
+      rw [hv'_eq]
+      exact velocity_bound_from_step s.v gn ρ (Real.sqrt η)
+    rw [abs_of_nonneg hsqrt_η_nn] at hv'_norm
+    calc ‖s'.v‖
+        ≤ |ρ| * (‖s.v‖ + Real.sqrt η * ‖gn‖) := hv'_norm
+      _ ≤ |ρ| * (Cv * Real.sqrt Ln +
+            Real.sqrt η * (Cg * Real.sqrt Ln)) := by
+          apply mul_le_mul_of_nonneg_left _ (abs_nonneg ρ)
+          linarith [hv_bound, hg_bound,
+            mul_le_mul_of_nonneg_left hg_bound hsqrt_η_nn]
+      _ = Cv' * Real.sqrt Ln := by ring
+  -- (6) stepDispOfState decomposition: h = √η • s'.v - η • gn
+  have hhn_eq : stepDispOfState f η ρ s =
+      Real.sqrt η • s'.v - η • gn := by
+    simp only [stepDispOfState, s', nesterovStep, gn, NesterovState.lookahead]
+    abel
+  -- (7) Prove both bounds
+  constructor
+  · -- Step bound: ‖h‖ ≤ Ch * √η * √Ln
+    have hstep_raw : ‖stepDispOfState f η ρ s‖ ≤
+        |Real.sqrt η| * ‖s'.v‖ + |η| * ‖gn‖ := by
+      rw [hhn_eq]
+      exact step_bound s'.v gn (Real.sqrt η) η
+    rw [abs_of_nonneg hsqrt_η_nn, abs_of_nonneg hη_nn] at hstep_raw
+    have hsqrt_Ln_nn := Real.sqrt_nonneg Ln
+    calc ‖stepDispOfState f η ρ s‖
+        ≤ Real.sqrt η * ‖s'.v‖ + η * ‖gn‖ := hstep_raw
+      _ ≤ Real.sqrt η * (Cv' * Real.sqrt Ln) +
+            η * (Cg * Real.sqrt Ln) := by
+          linarith [mul_le_mul_of_nonneg_left hv'_bound hsqrt_η_nn,
+                    mul_le_mul_of_nonneg_left hg_bound hη_nn]
+      _ = (Cv' + Real.sqrt η * Cg) * Real.sqrt η * Real.sqrt Ln := by
+          have hη_sq := (Real.mul_self_sqrt hη_nn).symm
+          linear_combination Cg * Real.sqrt Ln * hη_sq
+      _ ≤ Ch * Real.sqrt η * Real.sqrt Ln := by
+          have : 0 ≤ 1 * (Real.sqrt η * Real.sqrt Ln) :=
+            mul_nonneg one_pos.le (mul_nonneg hsqrt_η_nn hsqrt_Ln_nn)
+          change (Cv' + Real.sqrt η * Cg) * Real.sqrt η * Real.sqrt Ln ≤
+            (Cv' + Real.sqrt η * Cg + 1) * Real.sqrt η * Real.sqrt Ln
+          linarith
+  · -- Velocity bound: ‖√η • s'.v‖ ≤ Cmov * √Ln
+    have hsqrt_Ln_nn := Real.sqrt_nonneg Ln
+    calc ‖Real.sqrt η • s'.v‖
+        = Real.sqrt η * ‖s'.v‖ := by
+          rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg hsqrt_η_nn]
+      _ ≤ Real.sqrt η * (Cv' * Real.sqrt Ln) := by
+          exact mul_le_mul_of_nonneg_left hv'_bound hsqrt_η_nn
+      _ = (Real.sqrt η * Cv') * Real.sqrt Ln := by ring
+      _ ≤ Cmov * Real.sqrt Ln := by
+          have : 0 ≤ 1 * Real.sqrt Ln := mul_nonneg one_pos.le hsqrt_Ln_nn
+          change (Real.sqrt η * Cv') * Real.sqrt Ln ≤
+            (Real.sqrt η * Cv' + 1) * Real.sqrt Ln
+          linarith
+
 /-- Per-phase gen convergence at a single base point m⋆ ∈ M.
 
 Same hypotheses as `local_convergence_at_base_point` but with a gen conclusion:
 existence of a ball where any initial state s₀ with small Lyapunov value
 produces iterates staying in Ω with geometric Lyapunov decay. -/
-private abbrev localConvergenceAtBasePointGenProof
+private theorem localConvergenceAtBasePointGenProof
     {d : ℕ} (hd : 0 < d)
     (L : ℝ≥0) (hL : 0 < (L : ℝ))
     (μ : ℝ) (hμ : 0 < μ) (hμ_le_L : μ ≤ ↑L)
@@ -169,25 +447,9 @@ private abbrev localConvergenceAtBasePointGenProof
     intro x y
     simp only [hP_def, h_fderiv_eq']
     exact hπ'_self_adj mstar hmstar x y
-  have hP_idem : ∀ x : E d, P (P x) = P x := by
-    have h_pipi : ∀ x, π (π x) = π x := fun x => hπ_fix (π x) (hπ_in_S x)
-    have hπ_diff : DifferentiableAt ℝ π mstar :=
-      h_evt_eq'.differentiableAt_iff.mpr (hπ'_diff mstar hmstar)
-    have h_eq : fderiv ℝ (fun x => π (π x)) mstar = fderiv ℝ π mstar := by
-      have : (fun x => π (π x)) = π := funext h_pipi
-      rw [this]
-    have hπm : π mstar = mstar := hπ_fix mstar hmstar
-    have h_chain : fderiv ℝ (fun x => π (π x)) mstar =
-        (fderiv ℝ π mstar).comp (fderiv ℝ π mstar) := by
-      have hπ_diff_at_πm : DifferentiableAt ℝ π (π mstar) := by rwa [hπm]
-      have := fderiv_comp mstar hπ_diff_at_πm hπ_diff
-      rwa [hπm] at this
-    have h_comp_eq : (fderiv ℝ π mstar).comp (fderiv ℝ π mstar) = fderiv ℝ π mstar := by
-      rw [← h_chain, h_eq]
-    intro x
-    have := ContinuousLinearMap.ext_iff.mp h_comp_eq x
-    simp only [ContinuousLinearMap.comp_apply] at this
-    exact this
+  have hP_idem : ∀ x : E d, P (P x) = P x :=
+    fderiv_apply_fderiv_of_idempotent (fun x => hπ_fix (π x) (hπ_in_S x))
+      (hπ_fix mstar hmstar) (h_evt_eq'.differentiableAt_iff.mpr (hπ'_diff mstar hmstar))
   have hmu4_le_L : μ_minus ≤ ↑L := by linarith
   have hμη_lt1_pre : μ_minus * η < 1 := by
     change μ_minus * (1 / ↑L) < 1
@@ -204,16 +466,8 @@ private abbrev localConvergenceAtBasePointGenProof
       P hP_idem hP_self_adj hP_ortho U_plus hπ_metric_Up hQG
   -- ── Curvature absorption (gen) ──────────────────────────────────
   -- Prerequisites
-  have hε_bound : ε * η ≤ Real.sqrt (μ_minus * η) := by
-    have hε_sq : ε ^ 2 ≤ μ_minus / η :=
-      (Real.le_sqrt hε_pos.le (div_pos hμ_minus hη_pos).le).mp hε_le
-    rw [← Real.sqrt_sq (mul_pos hε_pos hη_pos).le]
-    apply Real.sqrt_le_sqrt
-    calc
-      (ε * η) ^ 2 = ε ^ 2 * η ^ 2 := mul_pow _ _ _
-      _ ≤ (μ_minus / η) * η ^ 2 :=
-        mul_le_mul_of_nonneg_right hε_sq (sq_nonneg η)
-      _ = μ_minus * η := by field_simp
+  have hε_bound : ε * η ≤ Real.sqrt (μ_minus * η) :=
+    mul_le_sqrt_mul_of_le_sqrt_div hε_pos hμ_minus hη_pos hε_le
   have hπ_kills_normal : ∀ x ∈ U_plus,
       fderiv ℝ π (π x) (x - π x) = 0 := by
     intro x hx
@@ -227,22 +481,9 @@ private abbrev localConvergenceAtBasePointGenProof
     rw [← hπ_eq_on_U' x hxU] at h
     rwa [← h_evt_eq.fderiv_eq] at h
   have hπ_diff_near : ∃ δ_diff > 0,
-      ∀ z ∈ Metric.ball mstar δ_diff, DifferentiableAt ℝ π z := by
-    have hfda := (contDiffAt_succ_iff_hasFDerivAt (n := 0)).mp
-      (by exact_mod_cast hπ'_C1 mstar hmstar)
-    obtain ⟨f', ⟨u, hu_nhds, hf'_u⟩, _⟩ := hfda
-    obtain ⟨δ₁, hδ₁_pos, hδ₁_sub⟩ := Metric.mem_nhds_iff.mp hu_nhds
-    obtain ⟨δ₂, hδ₂_pos, hδ₂_sub⟩ :=
-      Metric.isOpen_iff.mp hTub_sub.isOpen mstar (hTub_sub.subset hmstar)
-    refine ⟨min δ₁ δ₂, lt_min hδ₁_pos hδ₂_pos, fun z hz => ?_⟩
-    have hdz := Metric.mem_ball.mp hz
-    have hz_u : z ∈ u := hδ₁_sub (lt_of_lt_of_le hdz (min_le_left _ _))
-    have hz_U : z ∈ U :=
-      hδ₂_sub (Metric.mem_ball.mpr (lt_of_lt_of_le hdz (min_le_right _ _)))
-    have hπ'_diff : DifferentiableAt ℝ π' z := (hf'_u z hz_u).differentiableAt
-    have h_evt_z : π =ᶠ[𝓝 z] π' :=
-      (hTub_sub.isOpen.eventually_mem hz_U).mono (fun y hy => hπ_eq_on_U' y hy)
-    exact h_evt_z.differentiableAt_iff.mpr hπ'_diff
+      ∀ z ∈ Metric.ball mstar δ_diff, DifferentiableAt ℝ π z :=
+    exists_ball_differentiableAt_of_eqOn hTub_sub.isOpen (hTub_sub.subset hmstar)
+      (hπ'_C1 mstar hmstar) hπ_eq_on_U'
   -- Apply curv_absorb_assembly_gen
   obtain ⟨R_abs, hR_abs_pos, h_curv_absorb_hyp⟩ :=
     curv_absorb_assembly_gen f L hL μ_minus hμ_minus θ hθ η ρ hη_pos hμη_lt1_pre rfl
@@ -257,79 +498,9 @@ private abbrev localConvergenceAtBasePointGenProof
   have hSegment_hyp : ∀ x z : E d, x ∈ U_plus → z ∈ U_plus →
       (∀ t : ℝ, 0 ≤ t → t ≤ 1 → (1 - t) • z + t • x ∈ U_plus) →
       @inner ℝ _ _ (gradient f x) (x - z) ≥
-        f x - f z - ε / 2 * ‖x - z‖ ^ 2 := by
-    intro x z hxU hzU hseg
-    set ξ := x - z with hξ_def
-    set φ : ℝ → ℝ := fun t => f (z + t • ξ) with hφ_def
-    have hφ0 : φ 0 = f z := by simp only [hφ_def, zero_smul, add_zero]
-    have hφ1 : φ 1 = f x := by
-      simp only [hφ_def, one_smul, hξ_def]; congr 1; abel
-    have hpath : ∀ t, HasDerivAt (fun (s : ℝ) => z + s • ξ) ξ t := by
-      intro t
-      have h := ((hasDerivAt_id t).smul_const ξ).const_add z
-      simpa [one_smul] using h
-    have hseg' : ∀ t : ℝ, 0 ≤ t → t ≤ 1 → z + t • ξ ∈ U_plus := by
-      intro t ht0 ht1
-      have : z + t • ξ = (1 - t) • z + t • x := by
-        simp only [smul_sub, sub_smul, one_smul, ξ]; abel
-      rw [this]; exact hseg t ht0 ht1
-    have hφ_hd : ∀ t, 0 ≤ t → t ≤ 1 →
-        HasDerivAt φ (fderiv ℝ f (z + t • ξ) ξ) t := by
-      intro t ht0 ht1
-      have hpt_Up : z + t • ξ ∈ U_plus := hseg' t ht0 ht1
-      have hda : DifferentiableAt ℝ f (z + t • ξ) :=
-        hf_diffOn_Up.differentiableAt (hU_open.mem_nhds hpt_Up)
-      exact hda.hasFDerivAt.comp_hasDerivAt t (hpath t)
-    have hderiv1 : deriv φ 1 = @inner ℝ _ _ (gradient f x) ξ := by
-      rw [(hφ_hd 1 zero_le_one le_rfl).deriv]
-      have hone : z + (1 : ℝ) • ξ = x := by
-        simp only [one_smul, hξ_def]; abel
-      rw [hone]
-      exact (inner_gradient_left (𝕜 := ℝ) (f := f) (x := x) (y := ξ)).symm
-    have hφ''_eq : ∀ t, 0 ≤ t → t ≤ 1 →
-        deriv (deriv φ) t = hessianQuadForm f (z + t • ξ) ξ := by
-      intro t ht0 ht1
-      have hpt_Up : z + t • ξ ∈ U_plus := hseg' t ht0 ht1
-      have hpt_U : z + t • ξ ∈ U := hU_sub (subset_closure hpt_Up)
-      have hC2at : ContDiffAt ℝ 2 f (z + t • ξ) :=
-        hf_C2_on_U.contDiffAt (hTub_sub.isOpen.mem_nhds hpt_U)
-      exact fiber_path_second_deriv f z ξ t hC2at
-    have hφ''_lower : ∀ t, 0 ≤ t → t ≤ 1 →
-        deriv (deriv φ) t ≥ -ε * ‖ξ‖ ^ 2 := by
-      intro t ht0 ht1
-      rw [hφ''_eq t ht0 ht1]
-      exact hHessLow (z + t • ξ) (hseg' t ht0 ht1) ξ
-    have hφ_C2at : ∀ t ∈ Set.Icc (0:ℝ) 1, ContDiffAt ℝ 2 φ t := by
-      intro t ht
-      exact fiber_path_C2at_on_segment f z ξ hTub_sub.isOpen hf_C2_on_U
-        (fun s hs => hU_sub (subset_closure (hseg' s hs.1 hs.2))) t ht
-    have hφ_cont : ContinuousOn φ (Set.Icc 0 1) :=
-      fun t ht => (hφ_C2at t ht).continuousAt.continuousWithinAt
-    have hφ_diffon : DifferentiableOn ℝ φ (Set.Ioo 0 1) :=
-      fun t ht => ((hφ_C2at t (Set.Ioo_subset_Icc_self ht)).differentiableAt
-        (by decide : (2 : WithTop ℕ∞) ≠ 0)).differentiableWithinAt
-    have hφ'_cont : ContinuousOn (deriv φ) (Set.Icc 0 1) := by
-      intro t ht
-      have hfda := (hφ_C2at t ht).fderiv_right
-        (show (1 : WithTop ℕ∞) + 1 ≤ 2 by decide)
-      have h_eq : deriv φ = fun s => fderiv ℝ φ s 1 := by
-        ext s; exact fderiv_apply_one_eq_deriv.symm
-      rw [h_eq]
-      exact (hfda.continuousAt.clm_apply continuousAt_const).continuousWithinAt
-    have hφ'_diffon : DifferentiableOn ℝ (deriv φ) (Set.Ioo 0 1) := by
-      intro t ht
-      have hfda := (hφ_C2at t (Set.Ioo_subset_Icc_self ht)).fderiv_right
-        (show (1 : WithTop ℕ∞) + 1 ≤ 2 by decide)
-      have hfda_diff := hfda.differentiableAt
-        (show (1 : WithTop ℕ∞) ≠ 0 by decide)
-      have h_eq : deriv φ = fun s => fderiv ℝ φ s 1 := by
-        ext s; exact fderiv_apply_one_eq_deriv.symm
-      rw [h_eq]
-      exact (hfda_diff.clm_apply (differentiableAt_const _)).differentiableWithinAt
-    have hest := segment_estimate_from_hessian φ (-ε * ‖ξ‖ ^ 2)
-      hφ_cont hφ_diffon hφ'_cont hφ'_diffon hφ''_lower
-    rw [hderiv1, hφ1, hφ0] at hest
-    linarith
+        f x - f z - ε / 2 * ‖x - z‖ ^ 2 := fun x z _ _ hseg =>
+    inner_gradient_ge_of_hessian_lower_on_segment f ε hU_open hTub_sub.isOpen hU_sub
+      hf_C2_on_U hHessLow x z hseg
   -- ── lyapunov_contraction_gen ───────────────────────────────────
   obtain ⟨Ω, _Ω_plus, R, hΩ_open, _, hR_pos, hm_in_Ω,
           hΩ_sub_Ωp, hΩp_sub_Up, hLC⟩ :=
@@ -367,131 +538,11 @@ private abbrev localConvergenceAtBasePointGenProof
         let Ln := lyapunovOfState P μ_minus π f η s
         s.x ∈ Ω → s.lookahead η ∈ Ω → Ln ≤ R ^ 2 →
         ‖Real.sqrt η • s'.v‖ ≤ C_mov * Real.sqrt Ln := by
-    -- Setup
-    have hη_pos_local : 0 < η := one_div_pos.mpr hL
-    have hη_nn : (0 : ℝ) ≤ η := le_of_lt hη_pos_local
-    have hsqrt_η_nn : (0 : ℝ) ≤ Real.sqrt η := Real.sqrt_nonneg η
-    have hL_nn : (0 : ℝ) ≤ (↑L : ℝ) := le_of_lt hL
-    have hC_coer_nn : (0 : ℝ) ≤ C_coer := le_of_lt hC_coer
-    have hmu4_pos : (0 : ℝ) < μ_minus := by linarith
-    -- Constants
-    let K := C_coer / μ_minus
-    let Ce := Real.sqrt K
-    let Cg := (↑L : ℝ) * Ce
-    let Cv := Real.sqrt C_coer
-    let Cv' := |ρ| * (Cv + Real.sqrt η * Cg)
-    let Ch := Cv' + Real.sqrt η * Cg + 1
-    let Cmov := Real.sqrt η * Cv' + 1
-    -- State-based bounds helper
-    have hbounds : ∀ (s : NesterovState d),
-        s.x ∈ Ω →
-        s.lookahead η ∈ Ω →
-        ‖stepDispOfState f η ρ s‖ ≤ Ch * Real.sqrt η *
-          Real.sqrt (lyapunovOfState P μ_minus π f η s) ∧
-        ‖Real.sqrt η • (nesterovStep f η ρ s).v‖ ≤
-          Cmov * Real.sqrt (lyapunovOfState P μ_minus π f η s) := by
-      intro s hsx hslx
-      set Ln := lyapunovOfState P μ_minus π f η s
-      set s' := nesterovStep f η ρ s
-      set gn := gradient f (s.lookahead η)
-      set en := normalDispOfState π η s
-      -- Coercivity (via Ω ⊆ U_plus)
-      have hcoer_here := (hcoer_bound s (hΩ_sub_Up hsx) (hΩ_sub_Up hslx)).1
-      -- (1) ‖s.v‖ ≤ Cv * √Ln
-      have hv_sq : ‖s.v‖ ^ 2 ≤ C_coer * Ln :=
-        (le_add_of_nonneg_right (mul_nonneg hmu4_pos.le (sq_nonneg ‖en‖))).trans hcoer_here
-      have hv_bound : ‖s.v‖ ≤ Cv * Real.sqrt Ln := by
-        rw [show Cv = Real.sqrt C_coer from rfl,
-            ← Real.sqrt_mul hC_coer_nn,
-            ← Real.sqrt_sq (norm_nonneg s.v)]
-        exact Real.sqrt_le_sqrt hv_sq
-      -- (2) ‖en‖ ≤ Ce * √Ln
-      have he_sq : ‖en‖ ^ 2 ≤ K * Ln := by
-        calc
-          ‖en‖ ^ 2 ≤ (C_coer * Ln) / μ_minus :=
-            (le_div_iff₀' hmu4_pos).mpr
-              ((le_add_of_nonneg_left (sq_nonneg ‖s.v‖)).trans hcoer_here)
-          _ = K * Ln := (div_mul_eq_mul_div C_coer μ_minus Ln).symm
-      have he_bound : ‖en‖ ≤ Ce * Real.sqrt Ln := by
-        have hK_nn : (0 : ℝ) ≤ K := by positivity
-        rw [show Ce = Real.sqrt K from rfl,
-            ← Real.sqrt_mul hK_nn,
-            ← Real.sqrt_sq (norm_nonneg en)]
-        exact Real.sqrt_le_sqrt he_sq
-      -- (3) ‖gn‖ ≤ ↑L * ‖en‖ ≤ Cg * √Ln
-      have hg_raw : ‖gn‖ ≤ (↑L : ℝ) * ‖en‖ := by
-        change ‖gradient f (s.lookahead η)‖ ≤
-          (↑L : ℝ) * ‖s.lookahead η - π (s.lookahead η)‖
-        exact gradient_bound_from_lipschitz f L hf_lip _ _
-          (hΩ_sub_U hslx)
-          (hTub_sub.subset (hπ_in_S _))
-          (hgrad_zero _ (hπ_in_S _))
-      have hg_bound : ‖gn‖ ≤ Cg * Real.sqrt Ln := by
-        calc ‖gn‖ ≤ (↑L : ℝ) * ‖en‖ := hg_raw
-          _ ≤ (↑L : ℝ) * (Ce * Real.sqrt Ln) := by
-              apply mul_le_mul_of_nonneg_left he_bound hL_nn
-          _ = Cg * Real.sqrt Ln := by ring
-      -- (4) s'.v = ρ • (s.v - √η • gn)
-      have hv'_eq : s'.v = ρ • (s.v - Real.sqrt η • gn) := by
-        simp only [s', nesterovStep, gn, NesterovState.lookahead]
-      -- (5) ‖s'.v‖ ≤ Cv' * √Ln
-      have hv'_bound : ‖s'.v‖ ≤ Cv' * Real.sqrt Ln := by
-        have hv'_norm : ‖s'.v‖ ≤ |ρ| * (‖s.v‖ + |Real.sqrt η| * ‖gn‖) := by
-          rw [hv'_eq]
-          exact velocity_bound_from_step s.v gn ρ (Real.sqrt η)
-        rw [abs_of_nonneg hsqrt_η_nn] at hv'_norm
-        calc ‖s'.v‖
-            ≤ |ρ| * (‖s.v‖ + Real.sqrt η * ‖gn‖) := hv'_norm
-          _ ≤ |ρ| * (Cv * Real.sqrt Ln +
-                Real.sqrt η * (Cg * Real.sqrt Ln)) := by
-              apply mul_le_mul_of_nonneg_left _ (abs_nonneg ρ)
-              linarith [hv_bound, hg_bound,
-                mul_le_mul_of_nonneg_left hg_bound hsqrt_η_nn]
-          _ = Cv' * Real.sqrt Ln := by ring
-      -- (6) stepDispOfState decomposition: h = √η • s'.v - η • gn
-      have hhn_eq : stepDispOfState f η ρ s =
-          Real.sqrt η • s'.v - η • gn := by
-        simp only [stepDispOfState, s', nesterovStep, gn, NesterovState.lookahead]
-        abel
-      -- (7) Prove both bounds
-      constructor
-      · -- Step bound: ‖h‖ ≤ Ch * √η * √Ln
-        have hstep_raw : ‖stepDispOfState f η ρ s‖ ≤
-            |Real.sqrt η| * ‖s'.v‖ + |η| * ‖gn‖ := by
-          rw [hhn_eq]
-          exact step_bound s'.v gn (Real.sqrt η) η
-        rw [abs_of_nonneg hsqrt_η_nn, abs_of_nonneg hη_nn] at hstep_raw
-        have hsqrt_Ln_nn := Real.sqrt_nonneg Ln
-        calc ‖stepDispOfState f η ρ s‖
-            ≤ Real.sqrt η * ‖s'.v‖ + η * ‖gn‖ := hstep_raw
-          _ ≤ Real.sqrt η * (Cv' * Real.sqrt Ln) +
-                η * (Cg * Real.sqrt Ln) := by
-              linarith [mul_le_mul_of_nonneg_left hv'_bound hsqrt_η_nn,
-                        mul_le_mul_of_nonneg_left hg_bound hη_nn]
-          _ = (Cv' + Real.sqrt η * Cg) * Real.sqrt η * Real.sqrt Ln := by
-              have hη_sq := (Real.mul_self_sqrt hη_nn).symm
-              linear_combination Cg * Real.sqrt Ln * hη_sq
-          _ ≤ Ch * Real.sqrt η * Real.sqrt Ln := by
-              have : 0 ≤ 1 * (Real.sqrt η * Real.sqrt Ln) :=
-                mul_nonneg one_pos.le (mul_nonneg hsqrt_η_nn hsqrt_Ln_nn)
-              change (Cv' + Real.sqrt η * Cg) * Real.sqrt η * Real.sqrt Ln ≤
-                (Cv' + Real.sqrt η * Cg + 1) * Real.sqrt η * Real.sqrt Ln
-              linarith
-      · -- Velocity bound: ‖√η • s'.v‖ ≤ Cmov * √Ln
-        have hsqrt_Ln_nn := Real.sqrt_nonneg Ln
-        calc ‖Real.sqrt η • s'.v‖
-            = Real.sqrt η * ‖s'.v‖ := by
-              rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg hsqrt_η_nn]
-          _ ≤ Real.sqrt η * (Cv' * Real.sqrt Ln) := by
-              exact mul_le_mul_of_nonneg_left hv'_bound hsqrt_η_nn
-          _ = (Real.sqrt η * Cv') * Real.sqrt Ln := by ring
-          _ ≤ Cmov * Real.sqrt Ln := by
-              have : 0 ≤ 1 * Real.sqrt Ln := mul_nonneg one_pos.le hsqrt_Ln_nn
-              change (Real.sqrt η * Cv') * Real.sqrt Ln ≤
-                (Real.sqrt η * Cv' + 1) * Real.sqrt Ln
-              linarith
-    -- Provide existential witnesses
-    refine ⟨Ch, by positivity, ?_, Cmov, by positivity, ?_⟩
+    obtain ⟨Ch, hCh, Cmov, hCmov, hbounds⟩ :=
+      nesterov_step_motion_bounds f L μ_minus hμ' η hη_pos ρ C_coer hC_coer π P hf_lip
+        hΩ_sub_U (fun x => hTub_sub.subset (hπ_in_S x)) (fun x => hgrad_zero _ (hπ_in_S x))
+        (fun s h1 h2 => (hcoer_bound s (hΩ_sub_Up h1) (hΩ_sub_Up h2)).1)
+    refine ⟨Ch, hCh, ?_, Cmov, hCmov, ?_⟩
     · intro s₀ n_step _s _Ln hsx hslx _hLn_le
       exact (hbounds (nesterovSeqGen f η ρ s₀ n_step) hsx hslx).1
     · intro s₀ n_step _s _s' _Ln hsx hslx _hLn_le
@@ -508,13 +559,7 @@ private abbrev localConvergenceAtBasePointGenProof
       hcontract C_h hC_h hstep_bound C_mov hC_mov hvel_bound
   -- ── Assemble the local result ──
   -- Derive ‖Pv‖ ≤ ‖v‖ from the Pythagorean identity
-  have hP_norm : ∀ w : E d, ‖P w‖ ≤ ‖w‖ := by
-    intro w
-    have hPw_sq : ‖P w‖ ^ 2 ≤ ‖w‖ ^ 2 :=
-      (le_add_of_nonneg_right (sq_nonneg ‖w - P w‖)).trans_eq (hP_ortho w).symm
-    calc ‖P w‖ = Real.sqrt (‖P w‖ ^ 2) := (Real.sqrt_sq (norm_nonneg _)).symm
-      _ ≤ Real.sqrt (‖w‖ ^ 2) := Real.sqrt_le_sqrt hPw_sq
-      _ = ‖w‖ := Real.sqrt_sq (norm_nonneg _)
+  have hP_norm : ∀ w : E d, ‖P w‖ ≤ ‖w‖ := norm_apply_le_of_pythagorean hP_ortho
   refine ⟨Ω, δ_boot, r_ball, C_coer, hΩ_open, hm_in_Ω, hΩ_sub_U, hδ_boot, hr_ball, hC_coer,
     hball_Ω, hP_idem, hP_norm, hμη_lt1_pre, ?_, ?_⟩
   · -- Coercivity on Ω

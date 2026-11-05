@@ -27,6 +27,138 @@ namespace PLAcceleratedNesterovLean
 open scoped Topology NNReal
 open Manifold
 
+/-- `√(c ^ m) = (√c) ^ m` for `0 ≤ c`. -/
+private theorem sqrt_pow_eq_pow_sqrt {c : ℝ} (hc : 0 ≤ c) (m : ℕ) :
+    Real.sqrt (c ^ m) = Real.sqrt c ^ m := by
+  induction m with
+  | zero => simp only [pow_zero, Real.sqrt_one]
+  | succ k ihk => rw [pow_succ, Real.sqrt_mul (pow_nonneg hc k), ihk, pow_succ]
+
+/-- The contraction factor `c = 1 - (1 - θ)·√(μ'η)` satisfies `0 ≤ c ≤ 1` and `√c < 1`. -/
+private theorem contraction_factor_bounds {μ' η θ : ℝ} (hμ' : 0 < μ') (hη_pos : 0 < η)
+    (hμη_lt1 : μ' * η < 1) (hθ_pos : 0 < θ) (hθ_lt1 : θ < 1) :
+    0 ≤ 1 - (1 - θ) * Real.sqrt (μ' * η) ∧ 1 - (1 - θ) * Real.sqrt (μ' * η) ≤ 1 ∧
+      Real.sqrt (1 - (1 - θ) * Real.sqrt (μ' * η)) < 1 := by
+  have hμη_pos : 0 < μ' * η := mul_pos hμ' hη_pos
+  have ha_pos : 0 < Real.sqrt (μ' * η) := Real.sqrt_pos_of_pos hμη_pos
+  have ha_lt1 : Real.sqrt (μ' * η) < 1 := by
+    calc Real.sqrt (μ' * η) < Real.sqrt 1 := Real.sqrt_lt_sqrt (le_of_lt hμη_pos) hμη_lt1
+      _ = 1 := Real.sqrt_one
+  have hc_pos : 0 < 1 - (1 - θ) * Real.sqrt (μ' * η) := by
+    nlinarith [mul_pos (sub_pos.mpr hθ_lt1) ha_pos]
+  have hc_lt1 : 1 - (1 - θ) * Real.sqrt (μ' * η) < 1 := by
+    nlinarith [mul_pos (sub_pos.mpr hθ_lt1) ha_pos]
+  refine ⟨le_of_lt hc_pos, le_of_lt hc_lt1, ?_⟩
+  calc Real.sqrt (1 - (1 - θ) * Real.sqrt (μ' * η)) < Real.sqrt 1 :=
+        Real.sqrt_lt_sqrt (le_of_lt hc_pos) hc_lt1
+    _ = 1 := Real.sqrt_one
+
+/-- Triangle inequality for a translated point: `dist (y + h) m ≤ dist y m + ‖h‖`. -/
+private theorem dist_add_le_dist_add_norm {d : ℕ} (y h m : E d) :
+    dist (y + h) m ≤ dist y m + ‖h‖ := by
+  rw [dist_eq_norm, dist_eq_norm]
+  calc ‖y + h - m‖ = ‖(y - m) + h‖ := by congr 1; abel
+    _ ≤ ‖y - m‖ + ‖h‖ := norm_add_le _ _
+
+/-- Triangle inequality for a translated point: `dist (y - v) m ≤ dist y m + ‖v‖`. -/
+private theorem dist_sub_le_dist_add_norm {d : ℕ} (y v m : E d) :
+    dist (y - v) m ≤ dist y m + ‖v‖ := by
+  rw [dist_eq_norm, dist_eq_norm]
+  calc ‖y - v - m‖ = ‖(y - m) - v‖ := by congr 1; abel
+    _ ≤ ‖y - m‖ + ‖v‖ := norm_sub_le _ _
+
+/-- A geometric partial sum of displacements is bounded by `A·√L₀/(1-√c)`. -/
+private theorem geometric_displacement_le {A L₀ c r : ℝ} (hA : 0 ≤ A)
+    (hsqrt_c_lt1 : Real.sqrt c < 1)
+    (hdisp : A * Real.sqrt L₀ / (1 - Real.sqrt c) ≤ r / 4) (n : ℕ) :
+    A * Real.sqrt L₀ * (Finset.range n).sum (fun k => Real.sqrt c ^ k) ≤ r / 4 := by
+  have hle := partial_geom_series_bound (Real.sqrt c) (Real.sqrt_nonneg c) hsqrt_c_lt1 n
+  calc A * Real.sqrt L₀ * (Finset.range n).sum (fun k => Real.sqrt c ^ k)
+      ≤ A * Real.sqrt L₀ * (1 / (1 - Real.sqrt c)) :=
+        mul_le_mul_of_nonneg_left hle (mul_nonneg hA (Real.sqrt_nonneg _))
+    _ = A * Real.sqrt L₀ / (1 - Real.sqrt c) := by ring
+    _ ≤ r / 4 := hdisp
+
+/-- **Abstract displacement induction** behind both bootstrap theorems.
+
+Let `X n` be the iterates, `Y n` the look-ahead points with steps `Y (n + 1) = Y n + H n`,
+and `X n = Y n - V n`. If, while both stay in `Ω` with Lyapunov value `Lf n ≤ R²`, the
+Lyapunov value contracts by `c` and the steps `H n`, `V (n + 1)` are controlled by `√(Lf n)`,
+then a start close enough to `m_star` keeps every iterate in `ball m_star r ⊆ Ω` and
+`Lf n ≤ c ^ n · Lf 0`. -/
+private theorem bootstrap_displacement_induction {d : ℕ}
+    (X Y H V : ℕ → E d) (Lf : ℕ → ℝ) (Ω : Set (E d)) (m_star : E d)
+    (r R c A B : ℝ) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hc_nonneg : 0 ≤ c) (hc_le_one : c ≤ 1) (hsqrt_c_lt1 : Real.sqrt c < 1)
+    (hball_Ω : Metric.ball m_star r ⊆ Ω)
+    (hY_step : ∀ n, Y (n + 1) = Y n + H n) (hX_eq : ∀ n, X n = Y n - V n)
+    (hcontract : ∀ n, X n ∈ Ω → Y n ∈ Ω → Lf n ≤ R ^ 2 → Lf (n + 1) ≤ c * Lf n)
+    (hH : ∀ n, X n ∈ Ω → Y n ∈ Ω → Lf n ≤ R ^ 2 → ‖H n‖ ≤ A * Real.sqrt (Lf n))
+    (hV : ∀ n, X n ∈ Ω → Y n ∈ Ω → Lf n ≤ R ^ 2 → ‖V (n + 1)‖ ≤ B * Real.sqrt (Lf n))
+    (hX0 : dist (X 0) m_star < r / 4) (hY0 : dist (Y 0) m_star < r / 4)
+    (hL0_R : Lf 0 ≤ R ^ 2) (hL0_nonneg : 0 ≤ Lf 0)
+    (hdisp : A * Real.sqrt (Lf 0) / (1 - Real.sqrt c) ≤ r / 4)
+    (hvel : B * Real.sqrt (Lf 0) ≤ r / 4) (n : ℕ) :
+    (X n ∈ Ω ∧ Y n ∈ Ω) ∧ (dist (X n) m_star < r ∧ dist (Y n) m_star < r) ∧
+      Lf n ≤ c ^ n * Lf 0 := by
+  have hr_pos : 0 < r := by linarith [dist_nonneg (x := X 0) (y := m_star)]
+  -- While the displacement-sum bound holds, the look-ahead stays within `r / 2` of `m_star`.
+  have hY_half : ∀ k, dist (Y k) m_star ≤ dist (Y 0) m_star + A * Real.sqrt (Lf 0) *
+      (Finset.range k).sum (fun j => Real.sqrt c ^ j) → dist (Y k) m_star < r / 2 := by
+    intro k hk
+    linarith [geometric_displacement_le hA hsqrt_c_lt1 hdisp k]
+  have hinv : ∀ n, dist (X n) m_star < r ∧ Lf n ≤ c ^ n * Lf 0 ∧
+      dist (Y n) m_star ≤ dist (Y 0) m_star + A * Real.sqrt (Lf 0) *
+        (Finset.range n).sum (fun k => Real.sqrt c ^ k) := by
+    intro n
+    induction n with
+    | zero =>
+      refine ⟨by linarith, by simp only [pow_zero, one_mul, le_refl], ?_⟩
+      simp only [Finset.range_zero, Finset.sum_empty, mul_zero, add_zero, le_refl]
+    | succ n ih =>
+      obtain ⟨hXn, hLn, hYn⟩ := ih
+      have hXn_Ω : X n ∈ Ω := hball_Ω (Metric.mem_ball.mpr hXn)
+      have hYn_Ω : Y n ∈ Ω := hball_Ω (Metric.mem_ball.mpr (by linarith [hY_half n hYn]))
+      have hLn_le : Lf n ≤ Lf 0 := by
+        have := mul_le_of_le_one_left hL0_nonneg (pow_le_one₀ hc_nonneg hc_le_one (n := n))
+        linarith
+      have hLn_R : Lf n ≤ R ^ 2 := le_trans hLn_le hL0_R
+      have hsqrt_Ln : Real.sqrt (Lf n) ≤ Real.sqrt c ^ n * Real.sqrt (Lf 0) := by
+        calc Real.sqrt (Lf n) ≤ Real.sqrt (c ^ n * Lf 0) := Real.sqrt_le_sqrt hLn
+          _ = Real.sqrt c ^ n * Real.sqrt (Lf 0) := by
+              rw [Real.sqrt_mul (pow_nonneg hc_nonneg n), sqrt_pow_eq_pow_sqrt hc_nonneg]
+      have hH_geom : ‖H n‖ ≤ A * Real.sqrt (Lf 0) * Real.sqrt c ^ n := by
+        calc ‖H n‖ ≤ A * Real.sqrt (Lf n) := hH n hXn_Ω hYn_Ω hLn_R
+          _ ≤ A * (Real.sqrt c ^ n * Real.sqrt (Lf 0)) :=
+              mul_le_mul_of_nonneg_left hsqrt_Ln hA
+          _ = A * Real.sqrt (Lf 0) * Real.sqrt c ^ n := by ring
+      have hYn1 : dist (Y (n + 1)) m_star ≤ dist (Y 0) m_star + A * Real.sqrt (Lf 0) *
+          (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k) := by
+        calc dist (Y (n + 1)) m_star ≤ dist (Y n) m_star + ‖H n‖ := by
+              rw [hY_step n]; exact dist_add_le_dist_add_norm _ _ _
+          _ ≤ (dist (Y 0) m_star + A * Real.sqrt (Lf 0) *
+                (Finset.range n).sum (fun k => Real.sqrt c ^ k)) +
+              A * Real.sqrt (Lf 0) * Real.sqrt c ^ n := by linarith
+          _ = dist (Y 0) m_star + A * Real.sqrt (Lf 0) *
+                (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k) := by
+              rw [Finset.sum_range_succ]; ring
+      have hV_small : ‖V (n + 1)‖ ≤ r / 4 := by
+        calc ‖V (n + 1)‖ ≤ B * Real.sqrt (Lf n) := hV n hXn_Ω hYn_Ω hLn_R
+          _ ≤ B * Real.sqrt (Lf 0) :=
+              mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt hLn_le) hB
+          _ ≤ r / 4 := hvel
+      refine ⟨?_, ?_, hYn1⟩
+      · calc dist (X (n + 1)) m_star ≤ dist (Y (n + 1)) m_star + ‖V (n + 1)‖ := by
+              rw [hX_eq (n + 1)]; exact dist_sub_le_dist_add_norm _ _ _
+          _ < r := by linarith [hY_half (n + 1) hYn1]
+      · calc Lf (n + 1) ≤ c * Lf n := hcontract n hXn_Ω hYn_Ω hLn_R
+          _ ≤ c * (c ^ n * Lf 0) := mul_le_mul_of_nonneg_left hLn hc_nonneg
+          _ = c ^ (n + 1) * Lf 0 := by ring
+  obtain ⟨hXn, hLn, hYn⟩ := hinv n
+  have hYn_lt : dist (Y n) m_star < r := by linarith [hY_half n hYn]
+  exact ⟨⟨hball_Ω (Metric.mem_ball.mpr hXn), hball_Ω (Metric.mem_ball.mpr hYn_lt)⟩,
+    ⟨hXn, hYn_lt⟩, hLn⟩
+
 /-- **Bootstrap via total displacement control.**
 
 There exists α > 0 such that for Ubar_{m⋆} = B(m⋆, α) ∩ U and every start point in
@@ -37,7 +169,7 @@ Ubar_{m⋆} with zero initial velocity:
 
 The budget-split parameter θ ∈ (0,1) is inherited from the contraction hypothesis.
 -/
-private abbrev bootstrapTotalDisplacementProof
+private theorem bootstrapTotalDisplacementProof
     {d : ℕ} (_hd : 0 < d)
     -- The objective function
     (f : E d → ℝ)
@@ -110,21 +242,10 @@ private abbrev bootstrapTotalDisplacementProof
           lyapunov P μ' π f η ρ x₁ (n + 1) ≤
             (1 - (1 - θ) * a) ^ (n + 1) * lyapunov P μ' π f η ρ x₁ 0) := by
   -- ── Contraction rate and auxiliary constants ────────────────────────────
+  obtain ⟨hc_nonneg, hc_le_one, hsqrt_c_lt1⟩ :=
+    contraction_factor_bounds hμ' hη_pos hμη_lt1 hθ_pos hθ_lt1
   set a := Real.sqrt (μ' * η) with ha_def
   set c := 1 - (1 - θ) * a with hc_def
-  have hμη_pos : 0 < μ' * η := mul_pos hμ' hη_pos
-  have ha_pos : 0 < a := Real.sqrt_pos_of_pos hμη_pos
-  have ha_lt1 : a < 1 := by
-    calc a = Real.sqrt (μ' * η) := rfl
-      _ < Real.sqrt 1 := Real.sqrt_lt_sqrt (le_of_lt hμη_pos) (by linarith)
-      _ = 1 := Real.sqrt_one
-  have hc_pos : (0 : ℝ) < c := by simp only [c]; nlinarith [mul_pos (sub_pos.mpr hθ_lt1) ha_pos]
-  have hc_lt1 : c < 1 := by simp only [c]; nlinarith [mul_pos (sub_pos.mpr hθ_lt1) ha_pos]
-  have hc_nonneg : (0 : ℝ) ≤ c := le_of_lt hc_pos
-  have hc_le_one : c ≤ 1 := le_of_lt hc_lt1
-  have hsqrt_c_lt1 : Real.sqrt c < 1 := by
-    calc Real.sqrt c < Real.sqrt 1 := Real.sqrt_lt_sqrt hc_nonneg (by linarith)
-      _ = 1 := Real.sqrt_one
   have h1_sub_sqrt_c_pos : (0 : ℝ) < 1 - Real.sqrt c := by linarith
   -- ── Step 1: Get r from Ω being open at m⋆ ──────────────────────────────
   obtain ⟨r, hr_pos, hball_Ω⟩ := Metric.isOpen_iff.mp hΩ_open m_star hm_star_Ω
@@ -207,169 +328,23 @@ private abbrev bootstrapTotalDisplacementProof
     calc C_mov * Real.sqrt (L 0) ≤ K * Real.sqrt (L 0) :=
           mul_le_mul_of_nonneg_right this (Real.sqrt_nonneg _)
       _ ≤ r / 4 := hKL0
-  -- ── Main induction ─────────────────────────────────────────────────────
-  -- Invariant: Ω-membership + Lyapunov decay + lookahead displacement bound
-  -- D(n) := dist(x'_n, m⋆)  ≤  dist(x₁,m⋆) + C_h·√η·√(L 0)·Σ_{k<n}(√c)^k
-  have hinduction : ∀ n,
-      ((nesterovSeq f η ρ x₁ n).x ∈ Ω ∧
-       (nesterovSeq f η ρ x₁ n).lookahead η ∈ Ω) ∧
-      L n ≤ c ^ n * L 0 ∧
-      dist ((nesterovSeq f η ρ x₁ n).lookahead η) m_star ≤
-        dist x₁ m_star + C_h * Real.sqrt η * Real.sqrt (L 0) *
-          (Finset.range n).sum (fun k => Real.sqrt c ^ k) := by
-    intro n
-    induction n with
-    | zero =>
-      refine ⟨⟨hx₁_Ω, ?_⟩, by simp only [pow_zero, one_mul, le_refl], ?_⟩
-      · -- x'₀ ∈ Ω (v₀ = 0 so x'₀ = x₁)
-        simp only [NesterovState.lookahead, nesterovSeq, smul_zero, add_zero]; exact hx₁_Ω
-      · -- displacement base case
-        simp only [NesterovState.lookahead, nesterovSeq,
-          smul_zero, add_zero, Finset.range_zero,
-          Finset.sum_empty, mul_zero, le_refl]
-    | succ n ih =>
-      obtain ⟨⟨hxn_Ω, hxn'_Ω⟩, hLn, hDn⟩ := ih
-      -- L n ≤ R² (from c^n ≤ 1 and L 0 ≤ R²)
-      have hLn_R : L n ≤ R ^ 2 := by
-        have hcn : c ^ n ≤ 1 := pow_le_one₀ hc_nonneg hc_le_one
-        have hcnL0 : c ^ n * L 0 ≤ L 0 := mul_le_of_le_one_left hL0_nonneg hcn
-        linarith
-      -- Motion bounds
-      have hh_bound : ‖nesterovH f η ρ x₁ n‖ ≤ C_h * Real.sqrt η * Real.sqrt (L n) :=
-        hstep_bound x₁ n hxn_Ω hxn'_Ω hLn_R
-      have hv_bound : ‖Real.sqrt η • (nesterovSeq f η ρ x₁ (n + 1)).v‖ ≤
-          C_mov * Real.sqrt (L n) :=
-        hvel_bound x₁ n hxn_Ω hxn'_Ω hLn_R
-      -- √(c^m) = (√c)^m for any m
-      have sqrt_pow_c : ∀ m : ℕ, Real.sqrt (c ^ m) = Real.sqrt c ^ m := by
-        intro m; induction m with
-        | zero => simp only [pow_zero, Real.sqrt_one]
-        | succ k ihk =>
-          rw [pow_succ, Real.sqrt_mul (pow_nonneg hc_nonneg k), ihk, pow_succ]
-      -- √(L n) ≤ (√c)^n · √(L 0)
-      have hsqrt_Ln : Real.sqrt (L n) ≤ Real.sqrt c ^ n * Real.sqrt (L 0) := by
-        calc Real.sqrt (L n) ≤ Real.sqrt (c ^ n * L 0) :=
-              Real.sqrt_le_sqrt hLn
-          _ = Real.sqrt (c ^ n) * Real.sqrt (L 0) :=
-              Real.sqrt_mul (pow_nonneg hc_nonneg n) (L 0)
-          _ = Real.sqrt c ^ n * Real.sqrt (L 0) := by rw [sqrt_pow_c]
-      -- ‖h_n‖ ≤ C_h·√η·√(L 0)·(√c)^n
-      have hh_geom : ‖nesterovH f η ρ x₁ n‖ ≤
-          C_h * Real.sqrt η * Real.sqrt (L 0) * Real.sqrt c ^ n := by
-        calc ‖nesterovH f η ρ x₁ n‖
-            ≤ C_h * Real.sqrt η * Real.sqrt (L n) := hh_bound
-          _ ≤ C_h * Real.sqrt η * (Real.sqrt c ^ n * Real.sqrt (L 0)) := by
-              apply mul_le_mul_of_nonneg_left hsqrt_Ln
-              apply mul_nonneg (le_of_lt hC_h) (Real.sqrt_nonneg _)
-          _ = C_h * Real.sqrt η * Real.sqrt (L 0) * Real.sqrt c ^ n := by ring
-      -- ── Displacement bound for x'_{n+1} ────────────────────────────────
-      -- x'_{n+1} = x'_n + h_n  (by definition of nesterovH)
-      -- dist(x'_{n+1}, m⋆) ≤ dist(x'_n, m⋆) + ‖h_n‖
-      have hDn1 : dist ((nesterovSeq f η ρ x₁ (n + 1)).lookahead η) m_star ≤
-          dist x₁ m_star + C_h * Real.sqrt η * Real.sqrt (L 0) *
-            (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k) := by
-        -- h_n = x'_{n+1} - x'_n
-        have hH_def : nesterovH f η ρ x₁ n =
-          (nesterovSeq f η ρ x₁ (n + 1)).lookahead η -
+  -- ── Main induction (abstract displacement argument) ───────────────────
+  have hmain := bootstrap_displacement_induction
+    (fun n => (nesterovSeq f η ρ x₁ n).x) (fun n => (nesterovSeq f η ρ x₁ n).lookahead η)
+    (nesterovH f η ρ x₁) (fun n => Real.sqrt η • (nesterovSeq f η ρ x₁ n).v) L Ω m_star
+    r R c (C_h * Real.sqrt η) C_mov (by positivity) hC_mov.le hc_nonneg hc_le_one hsqrt_c_lt1
+    hball_Ω
+    (fun n => by
+      have hH_def : nesterovH f η ρ x₁ n = (nesterovSeq f η ρ x₁ (n + 1)).lookahead η -
           (nesterovSeq f η ρ x₁ n).lookahead η := rfl
-        -- So x'_{n+1} = x'_n + h_n
-        have hla_step : (nesterovSeq f η ρ x₁ (n + 1)).lookahead η =
-          (nesterovSeq f η ρ x₁ n).lookahead η + nesterovH f η ρ x₁ n := by
-          rw [hH_def]; abel
-        calc dist ((nesterovSeq f η ρ x₁ (n + 1)).lookahead η) m_star
-            = dist ((nesterovSeq f η ρ x₁ n).lookahead η +
-                nesterovH f η ρ x₁ n) m_star := by rw [hla_step]
-          _ ≤ dist ((nesterovSeq f η ρ x₁ n).lookahead η) m_star +
-                ‖nesterovH f η ρ x₁ n‖ := by
-              rw [dist_eq_norm, dist_eq_norm]
-              calc ‖(nesterovSeq f η ρ x₁ n).lookahead η +
-                      nesterovH f η ρ x₁ n - m_star‖
-                  = ‖((nesterovSeq f η ρ x₁ n).lookahead η - m_star) +
-                      nesterovH f η ρ x₁ n‖ := by congr 1; abel
-                _ ≤ ‖(nesterovSeq f η ρ x₁ n).lookahead η - m_star‖ +
-                      ‖nesterovH f η ρ x₁ n‖ := norm_add_le _ _
-          _ ≤ (dist x₁ m_star + C_h * Real.sqrt η * Real.sqrt (L 0) *
-                (Finset.range n).sum (fun k => Real.sqrt c ^ k)) +
-              C_h * Real.sqrt η * Real.sqrt (L 0) * Real.sqrt c ^ n := by
-              linarith [hDn, hh_geom]
-          _ = dist x₁ m_star + C_h * Real.sqrt η * Real.sqrt (L 0) *
-                (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k) := by
-              rw [Finset.sum_range_succ]; ring
-      -- Tighter displacement upper bound: dist(x'_{n+1}, m⋆) ≤ r/4 + r/4 = r/2
-      have hDn1_le_half : dist ((nesterovSeq f η ρ x₁ (n + 1)).lookahead η) m_star ≤
-          r / 2 := by
-        have hsum_bound : C_h * Real.sqrt η * Real.sqrt (L 0) *
-            (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k) ≤ r / 4 := by
-          have hle := partial_geom_series_bound (Real.sqrt c)
-            (Real.sqrt_nonneg c) hsqrt_c_lt1 (n + 1)
-          calc C_h * Real.sqrt η * Real.sqrt (L 0) *
-                (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k)
-              ≤ C_h * Real.sqrt η * Real.sqrt (L 0) * (1 / (1 - Real.sqrt c)) := by
-                apply mul_le_mul_of_nonneg_left hle
-                apply mul_nonneg (mul_nonneg (le_of_lt hC_h) (Real.sqrt_nonneg _))
-                  (Real.sqrt_nonneg _)
-            _ = C_h * Real.sqrt η * Real.sqrt (L 0) / (1 - Real.sqrt c) := by ring
-            _ ≤ r / 4 := hdisp_bound
-        linarith [hDn1, hx₁_dist]
-      have hDn1_lt_r : dist ((nesterovSeq f η ρ x₁ (n + 1)).lookahead η) m_star < r := by
-        linarith
-      -- ── Velocity bound for x_{n+1} ─────────────────────────────────────
-      -- C_mov · √(L n) ≤ C_mov · √(L 0) ≤ r/4
-      have hvel_Ln : C_mov * Real.sqrt (L n) ≤ r / 4 := by
-        have hLn_le_L0 : L n ≤ L 0 := by
-          have := pow_le_one₀ hc_nonneg hc_le_one (n := n)
-          have := mul_le_of_le_one_left hL0_nonneg this
-          linarith
-        calc C_mov * Real.sqrt (L n)
-            ≤ C_mov * Real.sqrt (L 0) := by
-              apply mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt hLn_le_L0) (le_of_lt hC_mov)
-          _ ≤ r / 4 := hvel_comp
-      -- ── x_{n+1} ∈ Ω ──
-      -- dist(x'_{n+1}, m⋆) ≤ r/2, dist(x_{n+1}, m⋆) ≤ r/2 + r/4 = 3r/4 < r
-      have hxn1_mem : (nesterovSeq f η ρ x₁ (n + 1)).x ∈ Ω := by
-        apply hball_Ω; rw [Metric.mem_ball]
-        -- x = x' - √η · v, so dist(x, m⋆) ≤ dist(x', m⋆) + ‖√η · v‖
-        have hx_eq : (nesterovSeq f η ρ x₁ (n + 1)).x =
-            (nesterovSeq f η ρ x₁ (n + 1)).lookahead η -
-            Real.sqrt η • (nesterovSeq f η ρ x₁ (n + 1)).v := by
-          simp only [NesterovState.lookahead, add_sub_cancel_right]
-        calc dist (nesterovSeq f η ρ x₁ (n + 1)).x m_star
-            = dist ((nesterovSeq f η ρ x₁ (n + 1)).lookahead η -
-                Real.sqrt η • (nesterovSeq f η ρ x₁ (n + 1)).v) m_star := by
-              rw [hx_eq]
-          _ ≤ dist ((nesterovSeq f η ρ x₁ (n + 1)).lookahead η) m_star +
-                ‖Real.sqrt η • (nesterovSeq f η ρ x₁ (n + 1)).v‖ := by
-              rw [dist_eq_norm, dist_eq_norm]
-              calc ‖(nesterovSeq f η ρ x₁ (n + 1)).lookahead η -
-                      Real.sqrt η • (nesterovSeq f η ρ x₁ (n + 1)).v - m_star‖
-                  = ‖((nesterovSeq f η ρ x₁ (n + 1)).lookahead η - m_star) -
-                      Real.sqrt η • (nesterovSeq f η ρ x₁ (n + 1)).v‖ := by
-                    congr 1; abel
-                _ ≤ ‖(nesterovSeq f η ρ x₁ (n + 1)).lookahead η - m_star‖ +
-                      ‖Real.sqrt η • (nesterovSeq f η ρ x₁ (n + 1)).v‖ :=
-                    norm_sub_le _ _
-          _ ≤ dist ((nesterovSeq f η ρ x₁ (n + 1)).lookahead η) m_star +
-                C_mov * Real.sqrt (L n) := by linarith [hv_bound]
-          _ ≤ r / 2 + r / 4 := by linarith [hDn1_le_half, hvel_Ln]
-          _ < r := by linarith
-      -- ── x'_{n+1} ∈ Ω ───────────────────────────────────────────────────
-      have hxn1'_mem : (nesterovSeq f η ρ x₁ (n + 1)).lookahead η ∈ Ω := by
-        apply hball_Ω; exact Metric.mem_ball.mpr hDn1_lt_r
-      -- ── Assemble ────────────────────────────────────────────────────────
-      refine ⟨⟨hxn1_mem, hxn1'_mem⟩, ?_, hDn1⟩
-      -- Lyapunov decay: L(n+1) ≤ c^{n+1} · L 0
-      calc L (n + 1) ≤ c * L n := hcontract x₁ n hxn_Ω hxn'_Ω hLn_R
-        _ ≤ c * (c ^ n * L 0) := by
-            apply mul_le_mul_of_nonneg_left hLn hc_nonneg
-        _ = c ^ (n + 1) * L 0 := by ring
-  refine ⟨fun n => (hinduction n).1, fun n => ?_, fun n => ?_⟩
-  · -- (2) All iterates remain in U
-    exact hΩ_sub_U (hinduction n).1.1
-  · -- (3) Geometric decay
-    exact (hinduction (n + 1)).2.1
+      rw [hH_def]; abel)
+    (fun n => by simp only [NesterovState.lookahead, add_sub_cancel_right])
+    (fun n h₁ h₂ h₃ => hcontract x₁ n h₁ h₂ h₃) (fun n h₁ h₂ h₃ => hstep_bound x₁ n h₁ h₂ h₃)
+    (fun n h₁ h₂ h₃ => hvel_bound x₁ n h₁ h₂ h₃) hx₁_dist
+    (by simp only [NesterovState.lookahead, nesterovSeq, smul_zero, add_zero]; exact hx₁_dist)
+    hL0_bound hL0_nonneg hdisp_bound hvel_comp
+  exact ⟨fun n => (hmain n).1, fun n => hΩ_sub_U (hmain n).1.1, fun n => (hmain (n + 1)).2.2⟩
 
-
--- Bootstrap argument requires additional heartbeats for the proof term
 
 /-- **Generalized bootstrap via total displacement control.**
 
@@ -381,7 +356,7 @@ Generalization of `bootstrap_total_displacement` supporting nonzero initial velo
 which is essential for the Nesterov algorithm where velocity carries across
 iterations.
 -/
-private abbrev bootstrapTotalDisplacementGenProof
+private theorem bootstrapTotalDisplacementGenProof
     {d : ℕ}
     (f : E d → ℝ)
     (μ' : ℝ) (hμ' : 0 < μ')
@@ -442,21 +417,10 @@ private abbrev bootstrapTotalDisplacementGenProof
             (1 - (1 - θ) * a) ^ (n + 1) *
             lyapunovOfState P μ' π f η s₀) := by
   -- ── Contraction rate and auxiliary constants ────────────────────────────
+  obtain ⟨hc_nonneg, hc_le_one, hsqrt_c_lt1⟩ :=
+    contraction_factor_bounds hμ' hη_pos hμη_lt1 hθ_pos hθ_lt1
   set a := Real.sqrt (μ' * η) with ha_def
   set c := 1 - (1 - θ) * a with hc_def
-  have hμη_pos : 0 < μ' * η := mul_pos hμ' hη_pos
-  have ha_pos : 0 < a := Real.sqrt_pos_of_pos hμη_pos
-  have ha_lt1 : a < 1 := by
-    calc a = Real.sqrt (μ' * η) := rfl
-      _ < Real.sqrt 1 := Real.sqrt_lt_sqrt (le_of_lt hμη_pos) (by linarith)
-      _ = 1 := Real.sqrt_one
-  have hc_pos : (0 : ℝ) < c := by simp only [c]; nlinarith [mul_pos (sub_pos.mpr hθ_lt1) ha_pos]
-  have hc_lt1 : c < 1 := by simp only [c]; nlinarith [mul_pos (sub_pos.mpr hθ_lt1) ha_pos]
-  have hc_nonneg : (0 : ℝ) ≤ c := le_of_lt hc_pos
-  have hc_le_one : c ≤ 1 := le_of_lt hc_lt1
-  have hsqrt_c_lt1 : Real.sqrt c < 1 := by
-    calc Real.sqrt c < Real.sqrt 1 := Real.sqrt_lt_sqrt hc_nonneg (by linarith)
-      _ = 1 := Real.sqrt_one
   have h1_sub_sqrt_c_pos : (0 : ℝ) < 1 - Real.sqrt c := by linarith
   -- ── Step 1: Get r from Ω being open at m⋆ ──────────────────────────────
   obtain ⟨r, hr_pos, hball_Ω⟩ := Metric.isOpen_iff.mp hΩ_open m_star hm_star_Ω
@@ -476,10 +440,6 @@ private abbrev bootstrapTotalDisplacementGenProof
     lt_of_lt_of_le (Metric.mem_ball.mp hs₀_x) hδ_le_r4
   have hs₀_la_dist : dist (s₀.lookahead η) m_star < r / 4 :=
     lt_of_lt_of_le (Metric.mem_ball.mp hs₀_la) hδ_le_r4
-  have hs₀_x_Ω : s₀.x ∈ Ω :=
-    hball_Ω (Metric.mem_ball.mpr (by linarith))
-  have hs₀_la_Ω : s₀.lookahead η ∈ Ω :=
-    hball_Ω (Metric.mem_ball.mpr (by linarith))
   -- L₀ ≤ R²
   have hL₀_R : lyapunovOfState P μ' π f η s₀ ≤ R ^ 2 :=
     le_trans hL₀_small (by nlinarith [hδ_le_R])
@@ -516,239 +476,19 @@ private abbrev bootstrapTotalDisplacementGenProof
     calc C_mov * Real.sqrt L₀ ≤ K * Real.sqrt L₀ :=
           mul_le_mul_of_nonneg_right this (Real.sqrt_nonneg _)
       _ ≤ r / 4 := hKL₀
-  -- ── Main induction ─────────────────────────────────────────────────────
+  -- ── Main induction (abstract displacement argument) ───────────────────
   set Ln := fun n => lyapunovOfState P μ' π f η (nesterovSeqGen f η ρ s₀ n) with hLn_def
-  have hinduction : ∀ n,
-      ((nesterovSeqGen f η ρ s₀ n).x ∈ Ω ∧
-       (nesterovSeqGen f η ρ s₀ n).lookahead η ∈ Ω) ∧
-      Ln n ≤ c ^ n * L₀ ∧
-      dist ((nesterovSeqGen f η ρ s₀ n).lookahead η) m_star ≤
-        dist (s₀.lookahead η) m_star + C_h * Real.sqrt η * Real.sqrt L₀ *
-          (Finset.range n).sum (fun k => Real.sqrt c ^ k) := by
-    intro n
-    induction n with
-    | zero =>
-      refine ⟨⟨hs₀_x_Ω, hs₀_la_Ω⟩, ?_, ?_⟩
-      · -- Ln 0 ≤ c ^ 0 * L₀
-        have h1 : Ln 0 = L₀ := rfl
-        linarith [pow_zero c]
-      · simp only [nesterovSeqGen, Finset.range_zero, Finset.sum_empty, mul_zero,
-          add_zero, le_refl]
-    | succ n ih =>
-      obtain ⟨⟨hxn_Ω, hxn'_Ω⟩, hLn_decay, hDn⟩ := ih
-      -- Ln ≤ R²
-      have hLn_R : Ln n ≤ R ^ 2 := by
-        have hcn : c ^ n ≤ 1 := pow_le_one₀ hc_nonneg hc_le_one
-        have hcnL₀ : c ^ n * L₀ ≤ L₀ := mul_le_of_le_one_left hL₀_nonneg hcn
-        linarith
-      -- Motion bounds at step n
-      have hh_bound : ‖stepDispOfState f η ρ (nesterovSeqGen f η ρ s₀ n)‖ ≤
-          C_h * Real.sqrt η * Real.sqrt (Ln n) :=
-        hstep_bound s₀ n hxn_Ω hxn'_Ω hLn_R
-      have hv_bound : ‖Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v‖ ≤
-          C_mov * Real.sqrt (Ln n) :=
-        hvel_bound s₀ n hxn_Ω hxn'_Ω hLn_R
-      -- √(c^m) = (√c)^m
-      have sqrt_pow_c : ∀ m : ℕ, Real.sqrt (c ^ m) = Real.sqrt c ^ m := by
-        intro m; induction m with
-        | zero => simp only [pow_zero, Real.sqrt_one]
-        | succ k ihk =>
-          rw [pow_succ, Real.sqrt_mul (pow_nonneg hc_nonneg k), ihk, pow_succ]
-      -- √(Ln n) ≤ (√c)^n · √L₀
-      have hsqrt_Ln : Real.sqrt (Ln n) ≤ Real.sqrt c ^ n * Real.sqrt L₀ := by
-        calc Real.sqrt (Ln n) ≤ Real.sqrt (c ^ n * L₀) :=
-              Real.sqrt_le_sqrt hLn_decay
-          _ = Real.sqrt (c ^ n) * Real.sqrt L₀ :=
-              Real.sqrt_mul (pow_nonneg hc_nonneg n) L₀
-          _ = Real.sqrt c ^ n * Real.sqrt L₀ := by rw [sqrt_pow_c]
-      -- ‖h_n‖ ≤ C_h·√η·√L₀·(√c)^n
-      have hh_geom : ‖stepDispOfState f η ρ (nesterovSeqGen f η ρ s₀ n)‖ ≤
-          C_h * Real.sqrt η * Real.sqrt L₀ * Real.sqrt c ^ n := by
-        calc ‖stepDispOfState f η ρ (nesterovSeqGen f η ρ s₀ n)‖
-            ≤ C_h * Real.sqrt η * Real.sqrt (Ln n) := hh_bound
-          _ ≤ C_h * Real.sqrt η * (Real.sqrt c ^ n * Real.sqrt L₀) := by
-              apply mul_le_mul_of_nonneg_left hsqrt_Ln
-              apply mul_nonneg (le_of_lt hC_h) (Real.sqrt_nonneg _)
-          _ = C_h * Real.sqrt η * Real.sqrt L₀ * Real.sqrt c ^ n := by ring
-      -- ── Displacement bound for lookahead at n+1 ────────────────────────
-      have hla_step : (nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η =
-          (nesterovSeqGen f η ρ s₀ n).lookahead η +
-          stepDispOfState f η ρ (nesterovSeqGen f η ρ s₀ n) := by
-        simp only [stepDispOfState, nesterovSeqGen]; abel
-      have hDn1 : dist ((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η) m_star ≤
-          dist (s₀.lookahead η) m_star + C_h * Real.sqrt η * Real.sqrt L₀ *
-            (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k) := by
-        calc dist ((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η) m_star
-            = dist ((nesterovSeqGen f η ρ s₀ n).lookahead η +
-                stepDispOfState f η ρ (nesterovSeqGen f η ρ s₀ n)) m_star := by
-              rw [hla_step]
-          _ ≤ dist ((nesterovSeqGen f η ρ s₀ n).lookahead η) m_star +
-                ‖stepDispOfState f η ρ (nesterovSeqGen f η ρ s₀ n)‖ := by
-              rw [dist_eq_norm, dist_eq_norm]
-              calc ‖(nesterovSeqGen f η ρ s₀ n).lookahead η +
-                      stepDispOfState f η ρ (nesterovSeqGen f η ρ s₀ n) - m_star‖
-                  = ‖((nesterovSeqGen f η ρ s₀ n).lookahead η - m_star) +
-                      stepDispOfState f η ρ (nesterovSeqGen f η ρ s₀ n)‖ := by
-                    congr 1; abel
-                _ ≤ ‖(nesterovSeqGen f η ρ s₀ n).lookahead η - m_star‖ +
-                      ‖stepDispOfState f η ρ (nesterovSeqGen f η ρ s₀ n)‖ :=
-                    norm_add_le _ _
-          _ ≤ (dist (s₀.lookahead η) m_star + C_h * Real.sqrt η * Real.sqrt L₀ *
-                (Finset.range n).sum (fun k => Real.sqrt c ^ k)) +
-              C_h * Real.sqrt η * Real.sqrt L₀ * Real.sqrt c ^ n := by
-              linarith [hDn, hh_geom]
-          _ = dist (s₀.lookahead η) m_star + C_h * Real.sqrt η * Real.sqrt L₀ *
-                (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k) := by
-              rw [Finset.sum_range_succ]; ring
-      -- dist(x'_{n+1}, m⋆) ≤ r/2
-      have hDn1_le_half : dist ((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η) m_star ≤
-          r / 2 := by
-        have hsum_bound : C_h * Real.sqrt η * Real.sqrt L₀ *
-            (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k) ≤ r / 4 := by
-          have hle := partial_geom_series_bound (Real.sqrt c)
-            (Real.sqrt_nonneg c) hsqrt_c_lt1 (n + 1)
-          calc C_h * Real.sqrt η * Real.sqrt L₀ *
-                (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k)
-              ≤ C_h * Real.sqrt η * Real.sqrt L₀ * (1 / (1 - Real.sqrt c)) := by
-                apply mul_le_mul_of_nonneg_left hle
-                apply mul_nonneg (mul_nonneg (le_of_lt hC_h) (Real.sqrt_nonneg _))
-                  (Real.sqrt_nonneg _)
-            _ = C_h * Real.sqrt η * Real.sqrt L₀ / (1 - Real.sqrt c) := by ring
-            _ ≤ r / 4 := hdisp_bound
-        linarith [hDn1, hs₀_la_dist]
-      have hDn1_lt_r : dist ((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η) m_star < r := by
-        linarith
-      -- ── Velocity bound ─────────────────────────────────────────────────
-      have hvel_Ln : C_mov * Real.sqrt (Ln n) ≤ r / 4 := by
-        have hLn_le_L₀ : Ln n ≤ L₀ := by
-          have := pow_le_one₀ hc_nonneg hc_le_one (n := n)
-          have := mul_le_of_le_one_left hL₀_nonneg this
-          linarith
-        calc C_mov * Real.sqrt (Ln n)
-            ≤ C_mov * Real.sqrt L₀ := by
-              apply mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt hLn_le_L₀) (le_of_lt hC_mov)
-          _ ≤ r / 4 := hvel_comp
-      -- ── x_{n+1} ∈ Ω ───────────────────────────────────────────────────
-      have hxn1_mem : (nesterovSeqGen f η ρ s₀ (n + 1)).x ∈ Ω := by
-        apply hball_Ω; rw [Metric.mem_ball]
-        have hx_eq : (nesterovSeqGen f η ρ s₀ (n + 1)).x =
-            (nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η -
-            Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v := by
-          simp only [NesterovState.lookahead, add_sub_cancel_right]
-        calc dist (nesterovSeqGen f η ρ s₀ (n + 1)).x m_star
-            = dist ((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η -
-                Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v) m_star := by
-              rw [hx_eq]
-          _ ≤ dist ((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η) m_star +
-                ‖Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v‖ := by
-              rw [dist_eq_norm, dist_eq_norm]
-              calc ‖(nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η -
-                      Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v - m_star‖
-                  = ‖((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η - m_star) -
-                      Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v‖ := by
-                    congr 1; abel
-                _ ≤ ‖(nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η - m_star‖ +
-                      ‖Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v‖ :=
-                    norm_sub_le _ _
-          _ ≤ dist ((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η) m_star +
-                C_mov * Real.sqrt (Ln n) := by linarith [hv_bound]
-          _ ≤ r / 2 + r / 4 := by linarith [hDn1_le_half, hvel_Ln]
-          _ < r := by linarith
-      -- ── x'_{n+1} ∈ Ω ──────────────────────────────────────────────────
-      have hxn1'_mem : (nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η ∈ Ω :=
-        hball_Ω (Metric.mem_ball.mpr hDn1_lt_r)
-      -- ── Assemble ───────────────────────────────────────────────────────
-      refine ⟨⟨hxn1_mem, hxn1'_mem⟩, ?_, hDn1⟩
-      -- Lyapunov decay: L_{n+1} ≤ c^{n+1} · L₀
-      calc Ln (n + 1) ≤ c * Ln n := hcontract s₀ n hxn_Ω hxn'_Ω hLn_R
-        _ ≤ c * (c ^ n * L₀) :=
-            mul_le_mul_of_nonneg_left hLn_decay hc_nonneg
-        _ = c ^ (n + 1) * L₀ := by ring
-  -- Ball containment follows from the induction: dist(la, m_star) ≤ r/2 and dist(x, m_star) < r
-  have hball_contain : ∀ n,
-      (nesterovSeqGen f η ρ s₀ n).x ∈ Metric.ball m_star r ∧
-      (nesterovSeqGen f η ρ s₀ n).lookahead η ∈ Metric.ball m_star r := by
-    intro n
-    obtain ⟨_, hLn_decay, hDn⟩ := hinduction n
-    -- lookahead distance bound: dist(la(n), m_star) < r/2
-    have hla_dist : dist ((nesterovSeqGen f η ρ s₀ n).lookahead η) m_star < r := by
-      have hsum_bound : C_h * Real.sqrt η * Real.sqrt L₀ *
-          (Finset.range n).sum (fun k => Real.sqrt c ^ k) ≤ r / 4 := by
-        have hle := partial_geom_series_bound (Real.sqrt c)
-          (Real.sqrt_nonneg c) hsqrt_c_lt1 n
-        calc C_h * Real.sqrt η * Real.sqrt L₀ *
-              (Finset.range n).sum (fun k => Real.sqrt c ^ k)
-            ≤ C_h * Real.sqrt η * Real.sqrt L₀ * (1 / (1 - Real.sqrt c)) := by
-              apply mul_le_mul_of_nonneg_left hle
-              apply mul_nonneg (mul_nonneg (le_of_lt hC_h) (Real.sqrt_nonneg _))
-                (Real.sqrt_nonneg _)
-          _ = C_h * Real.sqrt η * Real.sqrt L₀ / (1 - Real.sqrt c) := by ring
-          _ ≤ r / 4 := hdisp_bound
-      linarith [hDn, hs₀_la_dist]
-    refine ⟨?_, Metric.mem_ball.mpr hla_dist⟩
-    -- x distance bound: x = lookahead - √η • v, so dist(x, m*) ≤ dist(la, m*) + ‖√η•v‖
-    rcases n with _ | n
-    · have hr4_lt_r := div_lt_self hr_pos (by norm_num : (1 : ℝ) < 4)
-      exact Metric.mem_ball.mpr (lt_trans hs₀_x_dist hr4_lt_r)
-    · -- For n+1: we know Ln(n) ≤ L₀, so velocity ≤ C_mov·√L₀ ≤ r/4
-      have hLn_le_L₀ : Ln n ≤ L₀ := by
-        have hcn := pow_le_one₀ hc_nonneg hc_le_one (n := n)
-        have hLn_bound := (hinduction n).2.1
-        nlinarith
-      -- Need velocity bound at step n+1 from hypothesis at step n
-      have hn_mem := (hinduction n).1
-      have hLn_R : Ln n ≤ R ^ 2 := by
-        linarith [mul_le_of_le_one_left hL₀_nonneg
-          (pow_le_one₀ hc_nonneg hc_le_one (n := n))]
-      have hv_bound_n := hvel_bound s₀ n hn_mem.1 hn_mem.2 hLn_R
-      have hvel_small : C_mov * Real.sqrt (Ln n) ≤ r / 4 := by
-        calc C_mov * Real.sqrt (Ln n)
-            ≤ C_mov * Real.sqrt L₀ :=
-              mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt hLn_le_L₀) (le_of_lt hC_mov)
-          _ ≤ r / 4 := hvel_comp
-      have hx_eq : (nesterovSeqGen f η ρ s₀ (n + 1)).x =
-          (nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η -
-          Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v := by
-        simp only [NesterovState.lookahead, add_sub_cancel_right]
-      -- la_{n+1} distance bound: ≤ r/2 (tighter than hla_dist)
-      have hla_n1_half : dist ((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η) m_star ≤
-          r / 2 := by
-        have hDn1 := (hinduction (n + 1)).2.2
-        have hsum_bound1 : C_h * Real.sqrt η * Real.sqrt L₀ *
-            (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k) ≤ r / 4 := by
-          have hle := partial_geom_series_bound (Real.sqrt c)
-            (Real.sqrt_nonneg c) hsqrt_c_lt1 (n + 1)
-          calc C_h * Real.sqrt η * Real.sqrt L₀ *
-                (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k)
-              ≤ C_h * Real.sqrt η * Real.sqrt L₀ * (1 / (1 - Real.sqrt c)) := by
-                apply mul_le_mul_of_nonneg_left hle
-                apply mul_nonneg (mul_nonneg (le_of_lt hC_h) (Real.sqrt_nonneg _))
-                  (Real.sqrt_nonneg _)
-            _ = C_h * Real.sqrt η * Real.sqrt L₀ / (1 - Real.sqrt c) := by ring
-            _ ≤ r / 4 := hdisp_bound
-        linarith [hDn1, hs₀_la_dist]
-      have hv_bound_small : ‖Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v‖ ≤ r / 4 := by
-        linarith [hv_bound_n, hvel_small]
-      rw [Metric.mem_ball]
-      calc dist (nesterovSeqGen f η ρ s₀ (n + 1)).x m_star
-          = dist ((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η -
-              Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v) m_star := by
-            rw [hx_eq]
-        _ ≤ dist ((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η) m_star +
-              ‖Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v‖ := by
-            rw [dist_eq_norm, dist_eq_norm]
-            calc ‖(nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η -
-                    Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v - m_star‖
-                = ‖((nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η - m_star) -
-                    Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v‖ := by
-                  congr 1; abel
-              _ ≤ ‖(nesterovSeqGen f η ρ s₀ (n + 1)).lookahead η - m_star‖ +
-                    ‖Real.sqrt η • (nesterovSeqGen f η ρ s₀ (n + 1)).v‖ :=
-                  norm_sub_le _ _
-        _ ≤ r / 2 + r / 4 := by linarith [hla_n1_half, hv_bound_small]
-        _ < r := by linarith
-  refine ⟨fun n => (hinduction n).1, hball_contain, fun n => ?_⟩
-  exact (hinduction (n + 1)).2.1
+  have hmain := bootstrap_displacement_induction
+    (fun n => (nesterovSeqGen f η ρ s₀ n).x) (fun n => (nesterovSeqGen f η ρ s₀ n).lookahead η)
+    (fun n => stepDispOfState f η ρ (nesterovSeqGen f η ρ s₀ n))
+    (fun n => Real.sqrt η • (nesterovSeqGen f η ρ s₀ n).v) Ln Ω m_star
+    r R c (C_h * Real.sqrt η) C_mov (by positivity) hC_mov.le hc_nonneg hc_le_one hsqrt_c_lt1
+    hball_Ω (fun n => by simp only [stepDispOfState, nesterovSeqGen]; abel)
+    (fun n => by simp only [NesterovState.lookahead, add_sub_cancel_right])
+    (fun n h₁ h₂ h₃ => hcontract s₀ n h₁ h₂ h₃) (fun n h₁ h₂ h₃ => hstep_bound s₀ n h₁ h₂ h₃)
+    (fun n h₁ h₂ h₃ => hvel_bound s₀ n h₁ h₂ h₃) hs₀_x_dist hs₀_la_dist
+    hL₀_R hL₀_nonneg hdisp_bound hvel_comp
+  exact ⟨fun n => (hmain n).1, fun n => (hmain n).2.1, fun n => (hmain (n + 1)).2.2⟩
 
 
 /-- Public theorem wrapper for `bootstrapTotalDisplacementProof`. -/
