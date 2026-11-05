@@ -1,0 +1,53 @@
+slug: goldberg-seymour
+title: The Goldberg–Seymour edge-coloring theorem
+summary: >-
+  Proves the Goldberg–Seymour bound for every finite loopless multigraph,
+  with distinct identities for parallel edges: the chromatic index is at most
+  the maximum of the maximum degree plus one and the ceiling of the odd-set
+  density. Preserves proper partial edge colorings, Kempe components,
+  critical subgraphs, Tashkinov trees, extension sequences, and good hierarchies.
+  The import contains the dependency closure of the full theorem; it does not
+  claim an executable edge-coloring algorithm or its polynomial running time.
+branch: combinatorics
+entry_module: LeanPool.GoldbergSeymour
+authors:
+  - Wesley Pegden
+source:
+  title: Proof of the Goldberg-Seymour Conjecture on Edge-Colorings of Multigraphs
+  authors:
+    - Guantao Chen
+    - Guangming Jing
+    - Wenan Zang
+  arxiv: 1901.10316v2
+  url: https://github.com/wpegden/goldberg_seymour/tree/88d98c1d1a59d1f1bf7c4eb58e73f3945f6daf12
+  github_repo: wpegden/goldberg_seymour
+  commit: 88d98c1d1a59d1f1bf7c4eb58e73f3945f6daf12
+  completion_url: https://www.math.cmu.edu/~wes/trellis.php
+  completion_date: '2026-10-12'
+  formalization_system: Trellis
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - GoldbergSeymour.goldbergSeymour
+  - GoldbergSeymour.GeneralHighIndexElementary
+main_results:
+  - declaration: GoldbergSeymour.goldbergSeymour
+    informal: >-
+      Every finite loopless multigraph G has chromatic index at most
+      max(Delta(G) + 1, ceil(Gamma(G))), where Delta is the maximum vertex
+      degree and Gamma is the maximum of zero and 2|E(U)|/(|U| - 1) over
+      odd vertex sets U of size at least three. E(U) contains every edge
+      whose two endpoints lie in U, including parallel edges separately.
+  - declaration: GoldbergSeymour.GeneralHighIndexElementary
+    informal: >-
+      If a finite loopless multigraph has chromatic index at least its
+      maximum degree plus two, its chromatic index equals the ceiling
+      of its odd-set density.
+tags:
+  - graph-theory
+  - edge-coloring
+  - multigraphs
+  - tashkinov-trees
+msc:
+  - 05C15
