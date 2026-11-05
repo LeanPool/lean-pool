@@ -6,6 +6,7 @@ Authors: Xuanji Li
 module
 
 public import LeanPool.Chudnovsky.Basic
+import LeanPool.Chudnovsky.BernoulliValues
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Analysis.Real.Pi.Bounds
 
@@ -148,7 +149,7 @@ lemma summable_norm_sigma_q (k : ℕ) (τ : ℍ) :
 lemma E₄_eq_tsum (τ : ℍ) :
     E₄ τ = 1 + 240 * ∑' n : ℕ, (ArithmeticFunction.sigma 3 (n + 1) : ℂ) * q τ ^ (n + 1) := by
   have h := EisensteinSeries.q_expansion_bernoulli (k := 4) (by norm_num) (by decide) τ
-  rw [show bernoulli 4 = -1 / 30 by decide +kernel, ← q_eq] at h
+  rw [show bernoulli 4 = -1 / 30 by as_aux_lemma => exact bernoulli_four_value, ← q_eq] at h
   simp only [zpow_natCast] at h
   rw [tsum_pnat_eq_tsum_succ (f := fun n ↦ (ArithmeticFunction.sigma 3 n : ℂ) * q τ ^ n)] at h
   rw [h]; norm_num
@@ -157,7 +158,7 @@ lemma E₄_eq_tsum (τ : ℍ) :
 lemma E₆_eq_tsum (τ : ℍ) :
     E₆ τ = 1 - 504 * ∑' n : ℕ, (ArithmeticFunction.sigma 5 (n + 1) : ℂ) * q τ ^ (n + 1) := by
   have h := EisensteinSeries.q_expansion_bernoulli (k := 6) (by norm_num) (by decide) τ
-  rw [show bernoulli 6 = 1 / 42 by decide +kernel, ← q_eq] at h
+  rw [show bernoulli 6 = 1 / 42 by as_aux_lemma => exact bernoulli_six_value, ← q_eq] at h
   simp only [zpow_natCast] at h
   rw [tsum_pnat_eq_tsum_succ (f := fun n ↦ (ArithmeticFunction.sigma 5 n : ℂ) * q τ ^ n)] at h
   rw [h]; norm_num
@@ -507,14 +508,14 @@ lemma norm_sub_E₄trunc_le {τ : ℍ} (hτ : τ ∈ Region) :
     ‖E₄ τ - E₄trunc τ‖ ≤ 6744 * ‖q τ‖ ^ 3 := by
   have heq : E₄ τ - E₄trunc τ = 240 * eisensteinTail 3 3 τ := by rw [E₄_eq_trunc τ]; ring
   rw [heq, norm_mul, Complex.norm_ofNat]
-  nlinarith [norm_eisensteinTail_sigma₃ hτ, norm_nonneg (eisensteinTail 3 3 τ)]
+  linarith only [norm_eisensteinTail_sigma₃ hτ, pow_nonneg (norm_nonneg (q τ)) 3]
 
 /-- `|δY| = |E₆ - Y| ≤ 123783·|q|³`. -/
 lemma norm_sub_E₆trunc_le {τ : ℍ} (hτ : τ ∈ Region) :
     ‖E₆ τ - E₆trunc τ‖ ≤ 123783 * ‖q τ‖ ^ 3 := by
   have heq : E₆ τ - E₆trunc τ = -(504 * eisensteinTail 5 3 τ) := by rw [E₆_eq_trunc τ]; ring
   rw [heq, norm_neg, norm_mul, Complex.norm_ofNat]
-  nlinarith [norm_eisensteinTail_sigma₅ hτ, norm_nonneg (eisensteinTail 5 3 τ)]
+  linarith only [norm_eisensteinTail_sigma₅ hτ, pow_nonneg (norm_nonneg (q τ)) 3]
 
 /-- `|δZ| = |E₂* - Z| ≤ 96.2·|q|³`. -/
 lemma norm_sub_E₂starTrunc_le {τ : ℍ} (hτ : τ ∈ Region) :
@@ -522,7 +523,7 @@ lemma norm_sub_E₂starTrunc_le {τ : ℍ} (hτ : τ ∈ Region) :
   have heq : E₂star τ - E₂starTrunc τ = -(24 * eisensteinTail 1 3 τ) := by
     rw [E₂star_eq_trunc τ]; ring
   rw [heq, norm_neg, norm_mul, Complex.norm_ofNat]
-  nlinarith [norm_eisensteinTail_sigma₁ hτ, norm_nonneg (eisensteinTail 1 3 τ)]
+  linarith only [norm_eisensteinTail_sigma₁ hτ, pow_nonneg (norm_nonneg (q τ)) 3]
 
 /-! ### Klein's `k` and its truncation `ktilde` (paper Lemma `lemk`) -/
 

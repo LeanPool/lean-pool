@@ -6,7 +6,8 @@ Authors: Xuanji Li
 module
 
 public import LeanPool.Chudnovsky.Basic
-import LeanPool.Chudnovsky.Ramanujan
+import LeanPool.Chudnovsky.BernoulliValues
+import LeanPool.Chudnovsky.Periodicity
 import Mathlib.Geometry.Manifold.MFDeriv.NormedSpace
 
 /-!
@@ -138,7 +139,7 @@ coefficients. These feed the ℤ-refinement `ModularPolynomialZ.lean` downstream
 lemma E₄_qExpansion_coeff_int (n : ℕ) :
     ∃ c : ℤ, (qExpansion 1 E₄).coeff n = (c : ℂ) := by
   have h := EisensteinSeries.E_qExpansion_coeff (k := 4) (by norm_num) (by decide) n
-  have hb : bernoulli 4 = -1 / 30 := by rw [bernoulli, bernoulli'_four]; norm_num
+  have hb : bernoulli 4 = -1 / 30 := bernoulli_four_value
   rw [hb, show (4 : ℕ) - 1 = 3 from rfl] at h
   by_cases hn : n = 0
   · exact ⟨1, by rw [h, ite_eq_left hn]; norm_num⟩
@@ -196,24 +197,15 @@ private lemma coeff_E6Z (n : ℕ) :
   split <;> ring
 
 /-- The Bernoulli number `B₆ = 1/42` (not in Mathlib as a literal). -/
-private lemma bernoulli_six : bernoulli 6 = 1 / 42 := by
-  have h5 : bernoulli' 5 = 0 := bernoulli'_eq_zero_of_odd ⟨2, rfl⟩ (by norm_num)
-  have h6 : bernoulli' 6 = 1 / 42 := by
-    rw [bernoulli'_def]
-    rw [Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
-      Finset.sum_range_succ, Finset.sum_range_succ, Finset.sum_range_succ,
-      Finset.sum_range_zero, bernoulli'_zero, bernoulli'_one, bernoulli'_two,
-      bernoulli'_three, bernoulli'_four, h5]
-    norm_num [Nat.choose]
-  rw [bernoulli, h6]
-  norm_num
+private lemma bernoulli_six : bernoulli 6 = 1 / 42 :=
+  bernoulli_six_value
 
 /-- Analytic identification: Mathlib's q-expansion of `E₄` is the formal series `E4Z`. -/
 private lemma qExpansion_E₄_eq :
     qExpansion 1 ⇑E₄ = PowerSeries.map (Int.castRingHom ℂ) E4Z := by
   ext n
   have h := EisensteinSeries.E_qExpansion_coeff (k := 4) (by norm_num) (by decide) n
-  have hb : bernoulli 4 = -1 / 30 := by rw [bernoulli, bernoulli'_four]; norm_num
+  have hb : bernoulli 4 = -1 / 30 := bernoulli_four_value
   rw [hb, show (4 : ℕ) - 1 = 3 from rfl] at h
   rw [PowerSeries.coeff_map, coeff_E4Z, h]
   split_ifs

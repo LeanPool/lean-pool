@@ -8,7 +8,6 @@ module
 public import LeanPool.ACMax.AHL.AHLMarginals
 public import Mathlib.Analysis.MeanInequalities
 public import Mathlib.Analysis.Convex.Deriv
-public import Mathlib.Analysis.Convex.Jensen
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 /-!

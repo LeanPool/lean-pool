@@ -4,9 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: OpenAI, Dean Cureton
 -/
 
-module
+module -- shake: keep-all
 
+-- Preserve the historical public API while proof modules use narrower dependencies.
 public import LeanPool.GapCVP.Part18
+public import LeanPool.GapCVP.Part16 -- shake: keep
+public import LeanPool.GapCVP.Part17 -- shake: keep
 
 /-!
 # Polynomial-factor hardness of the closest vector problem
@@ -37,7 +40,9 @@ statements stable when updating the proof modules. Their public `PromiseProblem`
 remain behind that interface.
 
 For Mathlib updates, repair the shared trace/composition helpers before individual machine
-proofs, then run `lake build LeanPool.GapCVP` and the project linters. The source modules follow
-dependency order, so a focused rebuild checks the affected suffix without rebuilding other
-pooled projects. The large Turing-machine layer remains a maintenance cost of this import.
+proofs, then run `lake build LeanPool.GapCVP` and the project linters. Proof modules import their
+dependencies directly and keep proof-only imports private. The numbered entry modules retain
+their historical public exports, so focused rebuilds follow the proof dependencies without
+rebuilding other pooled projects. The large Turing-machine layer remains a maintenance cost
+of this import.
 -/

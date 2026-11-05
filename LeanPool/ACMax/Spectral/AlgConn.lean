@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Analysis.Matrix.Spectrum
 public import Mathlib.Combinatorics.SimpleGraph.LapMatrix
-public import Mathlib.Tactic.NormNum
 
 /-!
 # Algebraic connectivity of a finite simple graph

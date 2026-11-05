@@ -6,12 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.FunctionSpace
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 3.21 (Scott 1981, PRG-19, §3) — when does `[Y, Z]` determine `Y` and
@@ -67,7 +61,8 @@ theorem interYs_single_not_subset_eq {YX : Set α} {Z : Set β} {X : Set α}
     (hXY : ¬ X ⊆ YX) : interYs V₁.master [(YX, Z)] X = V₁.master := by
   ext z
   rw [mem_interYs]
-  simp_all
+  simp_all only [List.mem_cons, List.not_mem_nil, or_false, IsEmpty.forall_iff, implies_true,
+    and_true]
 
 /-! ### The least element of a single step neighbourhood. -/
 

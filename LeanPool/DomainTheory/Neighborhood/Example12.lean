@@ -6,9 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
-public import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Tactic.FinCases
 
 /-!
 # Example 1.2 (Scott 1981, PRG-19, §1)
@@ -45,16 +42,18 @@ def memSet : Set (Set Token) := {master, zero, one}
 /-- Membership in the neighbourhood system `𝒟` of Example 1.2. -/
 def mem (X : Set Token) : Prop := X ∈ memSet
 
-theorem mem_master : mem master := by simp [mem, memSet, master, zero, one]
-theorem mem_zero : mem zero := by simp [mem, memSet, master, zero, one]
-theorem mem_one : mem one := by simp [mem, memSet, master, zero, one]
+theorem mem_master : mem master := by
+  exact Or.inl rfl
+theorem mem_zero : mem zero := by
+  exact Or.inr (Or.inl rfl)
+theorem mem_one : mem one := by
+  exact Or.inr (Or.inr (rfl))
 
 /-- A neighbourhood of Example 1.2 is exactly one of `Δ`, `{0}`, or `{1}`. -/
 theorem mem_iff (X : Set Token) : mem X ↔ X = master ∨ X = zero ∨ X = one := by
   constructor
   · intro h
-    simp only [mem, memSet, master, zero, one, Set.mem_insert_iff,
-      Set.mem_singleton_iff] at h
+    simp only [mem, memSet, master, zero, one, Set.mem_insert_iff, Set.mem_singleton_iff] at h
     rcases h with rfl | rfl | rfl
     · exact Or.inl rfl
     · exact Or.inr (Or.inl rfl)
@@ -69,38 +68,41 @@ theorem not_mem_empty : ¬mem (∅ : Set Token) := by
   intro h
   rcases (mem_iff (∅ : Set Token)).mp h with h | h | h
   · rw [master] at h; exact Set.empty_ne_univ h
-  · simp [zero] at h
-  · simp [one] at h
+  · simp only [zero, Fin.isValue, Set.empty_ne_singleton] at h
+  · simp only [one, Fin.isValue, Set.empty_ne_singleton] at h
 
 private theorem zero_ne_master : zero ≠ master := by
   intro h
-  have : (1 : Token) ∈ zero := h ▸ (by simp [master])
-  simp [zero] at this
+  have : (1 : Token) ∈ zero := h ▸ (by simp only [master, Fin.isValue, Set.mem_univ])
+  simp only [zero, Fin.isValue, Set.mem_singleton_iff, Fin.one_eq_zero_iff,
+    Nat.succ_ne_self] at this
 
 private theorem one_ne_master : one ≠ master := by
   intro h
-  have : (0 : Token) ∈ one := h ▸ (by simp [master])
-  simp [one] at this
+  have : (0 : Token) ∈ one := h ▸ (by simp only [master, Fin.isValue, Set.mem_univ])
+  simp only [one, Fin.isValue, Set.mem_singleton_iff, Fin.zero_eq_one_iff, Nat.succ_ne_self] at this
 
 private theorem master_not_subset_zero : ¬master ⊆ zero := by
   intro h
-  have : (1 : Token) ∈ zero := h (by simp [master])
-  simp [zero] at this
+  have : (1 : Token) ∈ zero := h (by simp only [master, Fin.isValue, Set.mem_univ])
+  simp only [zero, Fin.isValue, Set.mem_singleton_iff, Fin.one_eq_zero_iff,
+    Nat.succ_ne_self] at this
 
 private theorem master_not_subset_one : ¬master ⊆ one := by
   intro h
-  have : (0 : Token) ∈ one := h (by simp [master])
-  simp [one] at this
+  have : (0 : Token) ∈ one := h (by simp only [master, Fin.isValue, Set.mem_univ])
+  simp only [one, Fin.isValue, Set.mem_singleton_iff, Fin.zero_eq_one_iff, Nat.succ_ne_self] at this
 
 private theorem one_not_subset_zero : ¬one ⊆ zero := by
   intro h
-  have : (1 : Token) ∈ zero := h (by simp [one])
-  simp [zero] at this
+  have : (1 : Token) ∈ zero := h (by simp only [one, Fin.isValue, Set.mem_singleton_iff])
+  simp only [zero, Fin.isValue, Set.mem_singleton_iff, Fin.one_eq_zero_iff,
+    Nat.succ_ne_self] at this
 
 private theorem zero_not_subset_one : ¬zero ⊆ one := by
   intro h
-  have : (0 : Token) ∈ one := h (by simp [zero])
-  simp [one] at this
+  have : (0 : Token) ∈ one := h (by simp only [zero, Fin.isValue, Set.mem_singleton_iff])
+  simp only [one, Fin.isValue, Set.mem_singleton_iff, Fin.zero_eq_one_iff, Nat.succ_ne_self] at this
 
 private theorem eq_of_master_subset {Y : Set Token} (h : mem Y) (hsub : master ⊆ Y) :
   Y = master := by
@@ -116,10 +118,10 @@ private theorem inter_master (A : Set Token) : A ∩ master = A := by
   rw [master]; exact Set.inter_univ A
 
 private theorem zero_inter_one : zero ∩ one = (∅ : Set Token) := by
-  ext t; fin_cases t <;> simp [zero, one]
+  exact Set.inter_singleton_eq_empty.mpr (by change (1 : Token) ≠ 0; decide)
 
 private theorem one_inter_zero : one ∩ zero = (∅ : Set Token) := by
-  ext t; fin_cases t <;> simp [zero, one]
+  rw [Set.inter_comm]; exact zero_inter_one
 
 private theorem inter_eq (X Y : Set Token) (h : mem X) (h' : mem Y) :
     X ∩ Y = master ∨ X ∩ Y = zero ∨ X ∩ Y = one ∨ X ∩ Y = (∅ : Set Token) := by

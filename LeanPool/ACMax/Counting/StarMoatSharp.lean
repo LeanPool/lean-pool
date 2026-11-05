@@ -7,10 +7,7 @@ module
 
 public import LeanPool.ACMax.Counting.StarNeighbors
 public import LeanPool.ACMax.Counting.Incidence
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Push
 public import LeanPool.ACMax.Counting.Moats
-public import LeanPool.ACMax.Counting.SparseCore
 public import LeanPool.ACMax.Counting.TripleCensus
 public import LeanPool.ACMax.Counting.DecoratedC4
 
@@ -2936,7 +2933,8 @@ theorem z1_star_moat_fires_core {n : ℕ} [Nonempty (Fin n)] (hn : 10 ≤ n)
   by_cases hcheap : ((S₂ ×ˢ F).filter (fun q => G.Adj q.1 q.2)).card ≤ 2 * S₂.card
   · refine algConn_le_two_of_two_clusters G S₁ S₂ hS1ne hS2ne hdisj hnc ?_
     rw [hFeq, hS1card]
-    nlinarith [he1, hcheap, Nat.zero_le S₂.card]
+    nlinarith only [Nat.mul_le_mul_right (S₂.card ^ 2) he1,
+      Nat.mul_le_mul_right 9 hcheap]
   · by_cases hlarge : 2 * ∑ v ∈ S₂, (G.degree v - 3) < internalPairCount G S₂
     · obtain ⟨T, hTsub, hTne, hTslice⟩ :=
         exists_sparse_core_of_twice_excess_lt_pairs G h3 S₂ hlarge

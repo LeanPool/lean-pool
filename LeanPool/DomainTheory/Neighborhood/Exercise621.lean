@@ -6,13 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise619PartB
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.Continuity.Init
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 6.21 (Scott 1981, PRG-19, §6) — the *separated* sum `⊕` and product `⊗`
@@ -395,25 +388,18 @@ theorem oplusMapTok_id :
     oplusMapTok (idMap A₀.sys) (idMap A₁.sys) = idMap (A₀.oplus A₁).sys := by
   apply ApproximableMap.ext
   intro W W'
-  constructor
-  · rintro (⟨hW, rfl⟩ | ⟨X, X', ⟨hX, hX', hsub⟩, hXne, hX'ne, rfl, rfl⟩ |
-      ⟨Y, Y', ⟨hY, hY', hsub⟩, hYne, hY'ne, rfl, rfl⟩)
-    · exact ⟨hW, (A₀.oplus A₁).sys.master_mem, (A₀.oplus A₁).sys.sub_master hW⟩
-    · exact ⟨oplusTok_mem_embF (h₀ := A₀.ne) (h₁ := A₁.ne) hX hXne,
-        oplusTok_mem_embF (h₀ := A₀.ne) (h₁ := A₁.ne) hX' hX'ne, embBit_subset.mpr hsub⟩
-    · exact ⟨oplusTok_mem_embT (h₀ := A₀.ne) (h₁ := A₁.ne) hY hYne,
-        oplusTok_mem_embT (h₀ := A₀.ne) (h₁ := A₁.ne) hY' hY'ne, embBit_subset.mpr hsub⟩
-  · rintro ⟨hW, hW', hsub⟩
-    rcases hW' with rfl | ⟨X', hX', hX'ne, rfl⟩ | ⟨Y', hY', hY'ne, rfl⟩
-    · exact Or.inl ⟨hW, rfl⟩
-    · rcases hW with rfl | ⟨X, hX, hXne, rfl⟩ | ⟨Y, hY, hYne, rfl⟩
-      · exact absurd (hsub nil_mem_sumTokMaster) nil_not_mem_embBit
-      · exact Or.inr (Or.inl ⟨X, X', ⟨hX, hX', embBit_subset.mp hsub⟩, hXne, hX'ne, rfl, rfl⟩)
-      · exact absurd hsub (fun h => embBit_not_subset_cross (by decide) (A₁.ne Y hY) h)
-    · rcases hW with rfl | ⟨X, hX, hXne, rfl⟩ | ⟨Y, hY, hYne, rfl⟩
-      · exact absurd (hsub nil_mem_sumTokMaster) nil_not_mem_embBit
-      · exact absurd hsub (fun h => embBit_not_subset_cross (by decide) (A₀.ne X hX) h)
-      · exact Or.inr (Or.inr ⟨Y, Y', ⟨hY, hY', embBit_subset.mp hsub⟩, hYne, hY'ne, rfl, rfl⟩)
+  apply (oplusMapTok (idMap A₀.sys) (idMap A₁.sys)).relation_iff_subset_of_diagonal
+  · rintro W (rfl | ⟨X, hX, hXne, rfl⟩ | ⟨Y, hY, hYne, rfl⟩)
+    · exact Or.inl ⟨(A₀.oplus A₁).sys.master_mem, rfl⟩
+    · exact Or.inr (Or.inl ⟨X, X,
+        ⟨hX, hX, subset_rfl⟩, hXne, hXne, rfl, rfl⟩)
+    · exact Or.inr (Or.inr ⟨Y, Y,
+        ⟨hY, hY, subset_rfl⟩, hYne, hYne, rfl, rfl⟩)
+  · rintro W W' (⟨hW, rfl⟩ | ⟨X, X', ⟨_, _, hXs⟩, _, _, rfl, rfl⟩ |
+        ⟨Y, Y', ⟨_, _, hYs⟩, _, _, rfl, rfl⟩)
+    · exact (A₀.oplus A₁).sys.sub_master hW
+    · exact embBit_subset.mpr hXs
+    · exact embBit_subset.mpr hYs
 
 /-- **`(g₀ ∘ f₀) ⊕ (g₁ ∘ f₁) = (g₀ ⊕ g₁) ∘ (f₀ ⊕ f₁)`** for **strict** `g₀, g₁`.
 (Strictness of the
@@ -537,21 +523,15 @@ theorem otimesMapTok_id :
     otimesMapTok (idMap A₀.sys) (idMap A₁.sys) = idMap (A₀.otimes A₁).sys := by
   apply ApproximableMap.ext
   intro W W'
-  constructor
-  · rintro (⟨hW, rfl⟩ | ⟨X, Y, X', Y', ⟨hX, hX', hsubX⟩, ⟨hY, hY', hsubY⟩,
-      hXne, hYne, hX'ne, hY'ne, rfl, rfl⟩)
-    · exact ⟨hW, (A₀.otimes A₁).sys.master_mem, (A₀.otimes A₁).sys.sub_master hW⟩
-    · exact ⟨otimesTok_mem_prod hX hY hXne hYne, otimesTok_mem_prod hX' hY' hX'ne hY'ne,
-        prodTokNbhd_subset_iff.mpr ⟨hsubX, hsubY⟩⟩
-  · rintro ⟨hW, hW', hsub⟩
-    rcases hW' with rfl | ⟨X', Y', hX', hY', hX'ne, hY'ne, rfl⟩
-    · exact Or.inl ⟨hW, rfl⟩
-    · rcases hW with rfl | ⟨X, Y, hX, hY, hXne, hYne, rfl⟩
-      · obtain ⟨hsubX, -⟩ := prodTokNbhd_subset_iff.mp hsub
-        exact absurd (Set.Subset.antisymm (A₀.sys.sub_master hX') hsubX) hX'ne
-      · obtain ⟨hsX, hsY⟩ := prodTokNbhd_subset_iff.mp hsub
-        exact Or.inr ⟨X, Y, X', Y', ⟨hX, hX', hsX⟩, ⟨hY, hY', hsY⟩,
-          hXne, hYne, hX'ne, hY'ne, rfl, rfl⟩
+  apply (otimesMapTok (idMap A₀.sys) (idMap A₁.sys)).relation_iff_subset_of_diagonal
+  · rintro W (rfl | ⟨X, Y, hX, hY, hXne, hYne, rfl⟩)
+    · exact Or.inl ⟨(A₀.otimes A₁).sys.master_mem, rfl⟩
+    · exact Or.inr ⟨X, Y, X, Y, ⟨hX, hX, subset_rfl⟩, ⟨hY, hY, subset_rfl⟩,
+        hXne, hYne, hXne, hYne, rfl, rfl⟩
+  · rintro W W' (⟨hW, rfl⟩ |
+        ⟨X, Y, X', Y', ⟨_, _, hXs⟩, ⟨_, _, hYs⟩, _, _, _, _, rfl, rfl⟩)
+    · exact (A₀.otimes A₁).sys.sub_master hW
+    · exact prodTokNbhd_subset_iff.mpr ⟨hXs, hYs⟩
 
 /-- **`(g₀ ∘ f₀) ⊗ (g₁ ∘ f₁) = (g₀ ⊗ g₁) ∘ (f₀ ⊗ f₁)`** for **strict** `g₀, g₁`. -/
 theorem otimesMapTok_comp (f₀ : ApproximableMap A₀.sys B₀.sys) (f₁ : ApproximableMap A₁.sys B₁.sys)
@@ -960,7 +940,7 @@ theorem gFun_iter_fixed (T : GExpr) (hT : T.RootedConst) :
     exact ⟨gIter T (max i j), ⟨max i j, rfl⟩,
       gIter_mono T hT (le_max_left i j), gIter_mono T hT (le_max_right i j)⟩
   have hU : ∀ v, v ∈ (⋃ n, gIter T n) ↔ ∃ S ∈ Set.range (gIter T), v ∈ S := by
-    simp_all
+    exact fun v => Iff.of_eq rfl
   apply Set.ext; intro w
   rw [gFun_continuous T hdir hne hU w]
   constructor

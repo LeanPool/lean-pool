@@ -6,9 +6,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 module
 
 public import LeanPool.ACMax.Spectral.AlgConnK2
-public import LeanPool.ACMax.Cuts.LowDegreeVertex
-public import LeanPool.ACMax.Counting.ResidualInterface
-public import LeanPool.ACMax.Counting.XBoundAssembly
 public import LeanPool.ACMax.Counting.StarvedCensus
 public import LeanPool.ACMax.Counting.MEdgeSparse
 public import LeanPool.ACMax.Counting.SmallDegreeThreeCore

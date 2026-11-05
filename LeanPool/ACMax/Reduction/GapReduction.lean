@@ -5,7 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.NormNum
 public import LeanPool.ACMax.Counting.LargeN
 public import LeanPool.ACMax.Spectral.AlgConnK2
 

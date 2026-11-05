@@ -6,11 +6,9 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part07
-public import Mathlib.FieldTheory.Finite.GaloisField
-public import Mathlib.FieldTheory.PrimitiveElement
-public import Mathlib.LinearAlgebra.Lagrange
-public import Mathlib.LinearAlgebra.Vandermonde
+public import LeanPool.GapCVP.Part07G
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # GapCVP proof, part 08 -/
 

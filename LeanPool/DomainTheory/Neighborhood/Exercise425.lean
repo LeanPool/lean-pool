@@ -7,12 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Example43
 public import LeanPool.DomainTheory.Neighborhood.Theorem41
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 4.25 (Scott 1981, PRG-19, Lecture IV) — the unary sequence domain `C₁`
@@ -76,7 +70,8 @@ of prepending a
 `1`). -/
 def shift (X : Set ℕ) : Set ℕ := {k | ∃ m ∈ X, k = m + 1}
 
-theorem tail_zero : tail 0 = Set.univ := by ext k; simp [tail]
+theorem tail_zero : tail 0 = Set.univ := by ext k; simp only [tail, Nat.zero_le,
+  Set.ofPred_true, Set.mem_univ]
 
 @[simp] theorem mem_tail {n k : ℕ} : k ∈ tail n ↔ n ≤ k := Iff.rfl
 
@@ -92,7 +87,7 @@ theorem shift_tail (n : ℕ) : shift (tail n) = tail (n + 1) := by
 theorem shift_singleton (n : ℕ) : shift ({n} : Set ℕ) = {n + 1} := by
   ext k
   simp only [shift, Set.mem_singleton_iff, Set.mem_ofPred_eq]
-  simp_all
+  exact exists_eq_left
 
 theorem shift_mono {X X' : Set ℕ} (h : X' ⊆ X) : shift X' ⊆ shift X := by
   rintro k ⟨m, hm, rfl⟩; exact ⟨m, h hm, rfl⟩
@@ -120,7 +115,8 @@ theorem singleton_tail_nd (n k : ℕ) :
     ({k} : Set ℕ) ⊆ tail n ∨ tail n ⊆ {k} ∨ ({k} : Set ℕ) ∩ tail n = ∅ := by
   by_cases h : n ≤ k
   · exact Or.inl (by intro x hx; rw [Set.mem_singleton_iff] at hx; subst hx; exact h)
-  · simp_all
+  · simp_all only [not_le, Set.singleton_subset_iff, mem_tail, Set.subset_singleton_iff,
+    Set.singleton_inter_of_notMem, or_true]
 
 /-- Any two neighbourhoods of `C₁` are nested or disjoint. -/
 theorem nestedOrDisjoint : NestedOrDisjoint memC1 := by
@@ -138,7 +134,8 @@ theorem nestedOrDisjoint : NestedOrDisjoint memC1 := by
     · exact Or.inr (Or.inr h)
   · by_cases h : n = m
     · subst h; exact Or.inl (Set.Subset.refl _)
-    · simp_all
+    · simp_all only [Set.subset_singleton_iff, Set.mem_singleton_iff, imp_false, forall_eq,
+      not_false_eq_true, Set.singleton_inter_of_notMem, or_true]
 
 /-- **Exercise 4.25 (Scott 1981, PRG-19).** The unary sequence system `C₁` on `Δ =
 {1}* ≅ ℕ`. -/

@@ -6,9 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
-public import Mathlib.Data.Set.Basic
-import Mathlib.Data.Finset.Attr
-import Mathlib.Order.BooleanAlgebra.Set
 import Mathlib.Tactic.SetLike
 
 /-!

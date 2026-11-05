@@ -9,7 +9,6 @@ public import LeanPool.ACMax.Band.CertAllRange
 public import LeanPool.ACMax.Band.KillSharp
 public import LeanPool.ACMax.Band.Rows
 public import LeanPool.ACMax.Counting.MEdgeSparse
-public import LeanPool.ACMax.Cuts.LowDegreeVertex
 public import LeanPool.ACMax.Spectral.AlgConnK2
 
 /-!

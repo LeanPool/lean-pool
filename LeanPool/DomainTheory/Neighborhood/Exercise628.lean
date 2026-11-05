@@ -6,14 +6,8 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Lemma615
-public import Mathlib.Tactic.ToAdditive
 import LeanPool.DomainTheory.Neighborhood.Proposition612
 import Mathlib.Data.Fintype.Powerset
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 6.28 (Scott 1981, PRG-19, §6) — Plotkin's finite
@@ -172,7 +166,7 @@ theorem finite_element_of_isFinite {α : Type*} {D : NeighborhoodSystem α} (h :
   intro X
   by_cases hX : D.mem X
   · have := Set.ext_iff.mp hxy ⟨X, hX⟩
-    simpa using this
+    simpa only [Set.mem_ofPred_eq] using this
   · exact ⟨fun hmem => absurd (x.sub hmem) hX, fun hmem => absurd (y.sub hmem) hX⟩
 
 /-- **Exercise 6.28 (Scott 1981, PRG-19; suggested by G. Plotkin).** If `𝒟` and

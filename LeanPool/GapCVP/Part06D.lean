@@ -6,7 +6,8 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part06C
+public import LeanPool.GapCVP.Part06B
+import LeanPool.GapCVP.Part06C
 
 /-! # GapCVP proof, part 06, continuation 04 -/
 

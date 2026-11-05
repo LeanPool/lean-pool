@@ -6,6 +6,7 @@ Authors: Xuanji Li
 module
 
 public import LeanPool.Chudnovsky.Basic
+public import LeanPool.Chudnovsky.Periodicity
 public import Mathlib.NumberTheory.ModularForms.Derivative
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
 
@@ -69,21 +70,6 @@ private lemma two_pi_I_ne_zero' : (2 * π * I : ℂ) ≠ 0 := two_pi_I_ne_zero
 lemma deriv_eqOn_upperHalfPlaneSet {F G : ℂ → ℂ} (h : Set.EqOn F G upperHalfPlaneSet)
     {z : ℂ} (hz : 0 < z.im) : deriv F z = deriv G z :=
   (Filter.eventuallyEq_of_mem (isOpen_upperHalfPlaneSet.mem_nhds hz) h).deriv_eq
-
-/-- A `1`-translation-invariant function on `ℍ` extends to a `1`-periodic function on `ℂ`. -/
-lemma periodic_comp_ofComplex_of_vadd {f : ℍ → ℂ} (hf : ∀ τ : ℍ, f ((1 : ℝ) +ᵥ τ) = f τ) :
-    Periodic (f ∘ ofComplex) 1 := by
-  intro w
-  rcases lt_or_ge 0 w.im with hw | hw
-  · have hw1 : 0 < (w + 1).im := by simpa using hw
-    simp only [comp_apply, ofComplex_apply_of_im_pos hw1, ofComplex_apply_of_im_pos hw]
-    have h := hf ⟨w, hw⟩
-    convert h using 2
-    ext
-    simp [add_comm]
-  · have hw1 : (w + 1).im ≤ 0 := by simpa using hw
-    simp only [comp_apply]
-    rw [ofComplex_apply_eq_of_im_nonpos hw1 (by simpa using hw)]
 
 /-! ### Transformation behaviour of `E₂` and of level-one modular forms under `T` and `S` -/
 

@@ -100,7 +100,7 @@ def iprodNbhd (X : ∀ i, Set (α i)) : Set (Σ i, α i) := {p | p.2 ∈ X p.1}
 /-- Product neighbourhoods intersect coordinatewise (Scott's (2)). -/
 theorem iprodNbhd_inter (X X' : ∀ i, Set (α i)) :
     iprodNbhd X ∩ iprodNbhd X' = iprodNbhd (fun i => X i ∩ X' i) := by
-  apply Set.ext; rintro ⟨i, a⟩; simp [iprodNbhd, Set.mem_inter_iff]
+  apply Set.ext; rintro ⟨i, a⟩; simp only [iprodNbhd, Set.mem_inter_iff, Set.mem_ofPred_eq]
 
 /-- Inclusion of product neighbourhoods is coordinatewise (Scott's (1)). -/
 theorem iprodNbhd_subset_iff {X X' : ∀ i, Set (α i)} :
@@ -133,7 +133,7 @@ theorem FinSupp.inter {X X' : ∀ i, Set (α i)}
   -- fully constructive,
   -- no case split on the undecidable proposition `X i = master`.
   refine ⟨l ++ l', fun i hi => ?_⟩
-  simp_all
+  simp_all only [List.mem_append, not_or, not_false_eq_true, Set.inter_self]
 
 variable (D) in
 /-- **Exercise 6.29 — the indexed product `∏_i D_i`.** Neighbourhoods are
@@ -172,11 +172,11 @@ def updTuple (D : ∀ i, NeighborhoodSystem (α i)) (i : ι) (U : Set (α i)) : 
   Function.update (fun j => (D j).master) i U
 
 @[simp] theorem updTuple_apply_self (i : ι) (U : Set (α i)) : updTuple D i U i = U := by
-  simp [updTuple]
+  simp only [updTuple, Function.update_self]
 
 theorem updTuple_apply_ne {i j : ι} (U : Set (α i)) (h : j ≠ i) :
     updTuple D i U j = (D j).master := by
-  simp [updTuple, Function.update_of_ne h]
+  simp only [updTuple, Function.update_of_ne h]
 
 /-- The slice cylinder: `U` at coordinate `i`, master elsewhere. -/
 def slice (D : ∀ i, NeighborhoodSystem (α i)) (i : ι) (U : Set (α i)) : Set (Σ i, α i) :=
@@ -331,7 +331,7 @@ theorem z_mem_of_slices (z : (iprod D).Element) {X : ∀ i, Set (α i)}
   have heq : restrictTo D l X = X := by
     funext j
     rw [restrictTo]
-    simp_all
+    simp_all only [ite_eq_left_iff, not_false_eq_true, implies_true]
   rwa [heq] at key
 
 theorem fromPi_toPi (z : (iprod D).Element) : fromPi D (fun i => proj z i) = z := by
@@ -392,20 +392,20 @@ def injI (i : ι) (X : Set (α i)) : Set (Option (Σ i, α i)) :=
   (fun a => (some ⟨i, a⟩ : Option (Σ i, α i))) '' X
 
 theorem none_not_mem_injI {i : ι} {X : Set (α i)} : (none : Option (Σ i, α i)) ∉ injI i X := by
-  rintro ⟨a, _, heq⟩; simp at heq
+  rintro ⟨a, _, heq⟩; simp only [reduceCtorEq] at heq
 
 @[simp] theorem some_mem_injI {i : ι} {a : α i} {X : Set (α i)} :
     (some ⟨i, a⟩ : Option (Σ i, α i)) ∈ injI i X ↔ a ∈ X := by
   constructor
   · rintro ⟨b, hb, heq⟩
-    simp_all
+    simp_all only [Option.some.injEq, Sigma.mk.injEq, heq_eq_eq, true_and]
   · intro ha; exact ⟨a, ha, rfl⟩
 
 /-- A tagged token determines its summand index. -/
 theorem index_of_some_mem_injI {i k : ι} {a : α k} {X : Set (α i)}
     (hmem : (some ⟨k, a⟩ : Option (Σ i, α i)) ∈ injI i X) : k = i := by
   obtain ⟨b, _, heq⟩ := hmem
-  simp_all
+  simp_all only [Option.some.injEq, Sigma.mk.injEq]
 
 theorem injI_nonempty {i : ι} {X : Set (α i)} (hX : X.Nonempty) : (injI i X).Nonempty := by
   obtain ⟨a, ha⟩ := hX; exact ⟨some ⟨i, a⟩, some_mem_injI.mpr ha⟩
@@ -427,7 +427,7 @@ theorem injI_inter_same (i : ι) (X Y : Set (α i)) : injI i X ∩ injI i Y = in
       exact some_mem_injI.mpr ⟨some_mem_injI.mp hx, some_mem_injI.mp hy⟩
     · intro h
       obtain rfl := index_of_some_mem_injI h
-      simp_all
+      simp_all only [some_mem_injI, Set.mem_inter_iff, and_self]
 
 theorem injI_inter_ne {i j : ι} (h : i ≠ j) (X : Set (α i)) (Y : Set (α j)) :
     injI i X ∩ injI j Y = ∅ := by

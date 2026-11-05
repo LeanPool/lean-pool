@@ -5,8 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Tauto
 public import LeanPool.ACMax.InternalEdgesEven
 public import LeanPool.ACMax.Reduction.Residual
 

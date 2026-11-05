@@ -6,7 +6,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 
 /-!
 # Non-backtracking walks — the foundation of the AHL irregular-Moore ladder

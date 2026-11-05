@@ -6,9 +6,7 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 module
 
 public import LeanPool.ACMax.Counting.Incidence
-public import Mathlib.Tactic.Ring
 public import LeanPool.ACMax.Reduction.Reduction
-public import LeanPool.ACMax.Cuts.SignedCut
 
 /-!
 # Uniformly-provable foundation layers for the general ACMAX residual program

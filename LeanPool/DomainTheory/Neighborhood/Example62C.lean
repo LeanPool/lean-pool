@@ -9,11 +9,6 @@ public import LeanPool.DomainTheory.Neighborhood.Example62
 public import LeanPool.DomainTheory.Neighborhood.Example44
 public import LeanPool.DomainTheory.Neighborhood.Exercise315
 import Mathlib.Data.Fintype.EquivFin
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Example 6.2 (Scott 1981, PRG-19, §6) — `C ≅ {{Λ}} + C + C`
@@ -99,31 +94,37 @@ variable {α β γ : Type*}
   · intro hc; exact ⟨c, rfl, hc⟩
 
 @[simp] theorem none_not_mem_j0 {X : Set α} : (none : Option (α ⊕ β ⊕ γ)) ∉ j0 X := by
-  rintro ⟨a, heq, -⟩; exact absurd heq (by simp [t0])
+  rintro ⟨a, heq, -⟩; exact absurd heq (by simp only [t0, reduceCtorEq, not_false_eq_true])
 
 @[simp] theorem none_not_mem_j1 {Y : Set β} : (none : Option (α ⊕ β ⊕ γ)) ∉ j1 Y := by
-  rintro ⟨b, heq, -⟩; exact absurd heq (by simp [t1])
+  rintro ⟨b, heq, -⟩; exact absurd heq (by simp only [t1, reduceCtorEq, not_false_eq_true])
 
 @[simp] theorem none_not_mem_j2 {Z : Set γ} : (none : Option (α ⊕ β ⊕ γ)) ∉ j2 Z := by
-  rintro ⟨c, heq, -⟩; exact absurd heq (by simp [t2])
+  rintro ⟨c, heq, -⟩; exact absurd heq (by simp only [t2, reduceCtorEq, not_false_eq_true])
 
 @[simp] theorem t1_not_mem_j0 {X : Set α} {b : β} : (t1 b : Option (α ⊕ β ⊕ γ)) ∉ j0 X := by
-  rintro ⟨a, heq, -⟩; exact absurd heq (by simp [t0, t1])
+  rintro ⟨a, heq, -⟩; exact absurd heq (by simp only [t1, t0, Option.some.injEq, reduceCtorEq,
+    not_false_eq_true])
 
 @[simp] theorem t2_not_mem_j0 {X : Set α} {c : γ} : (t2 c : Option (α ⊕ β ⊕ γ)) ∉ j0 X := by
-  rintro ⟨a, heq, -⟩; exact absurd heq (by simp [t0, t2])
+  rintro ⟨a, heq, -⟩; exact absurd heq (by simp only [t2, t0, Option.some.injEq, reduceCtorEq,
+    not_false_eq_true])
 
 @[simp] theorem t0_not_mem_j1 {Y : Set β} {a : α} : (t0 a : Option (α ⊕ β ⊕ γ)) ∉ j1 Y := by
-  rintro ⟨b, heq, -⟩; exact absurd heq (by simp [t0, t1])
+  rintro ⟨b, heq, -⟩; exact absurd heq (by simp only [t0, t1, Option.some.injEq, reduceCtorEq,
+    not_false_eq_true])
 
 @[simp] theorem t2_not_mem_j1 {Y : Set β} {c : γ} : (t2 c : Option (α ⊕ β ⊕ γ)) ∉ j1 Y := by
-  rintro ⟨b, heq, -⟩; exact absurd heq (by simp [t1, t2])
+  rintro ⟨b, heq, -⟩; exact absurd heq (by simp only [t2, t1, Option.some.injEq, Sum.inr.injEq,
+    reduceCtorEq, not_false_eq_true])
 
 @[simp] theorem t0_not_mem_j2 {Z : Set γ} {a : α} : (t0 a : Option (α ⊕ β ⊕ γ)) ∉ j2 Z := by
-  rintro ⟨c, heq, -⟩; exact absurd heq (by simp [t0, t2])
+  rintro ⟨c, heq, -⟩; exact absurd heq (by simp only [t0, t2, Option.some.injEq, reduceCtorEq,
+    not_false_eq_true])
 
 @[simp] theorem t1_not_mem_j2 {Z : Set γ} {b : β} : (t1 b : Option (α ⊕ β ⊕ γ)) ∉ j2 Z := by
-  rintro ⟨c, heq, -⟩; exact absurd heq (by simp [t1, t2])
+  rintro ⟨c, heq, -⟩; exact absurd heq (by simp only [t1, t2, Option.some.injEq, Sum.inr.injEq,
+    reduceCtorEq, not_false_eq_true])
 
 theorem j0_inter_j0 (X X' : Set α) :
     (j0 X ∩ j0 X' : Set (Option (α ⊕ β ⊕ γ))) = j0 (X ∩ X') := by
@@ -368,10 +369,11 @@ theorem memC_embBit_inv {b : Bool} {W : Set Str} (h : C.mem (embBit b W)) : C.me
 
 theorem singleton_nil_inter_embBit (b : Bool) (X : Set Str) :
     (({[]} : Set Str) ∩ embBit b X) = ∅ := by
-  simp_all
+  simp_all only [mem_embBit, List.nil_eq, reduceCtorEq, false_and, exists_const,
+    not_false_eq_true, Set.singleton_inter_of_notMem]
 
 theorem singleton_nil_ne_univ : ({[]} : Set Str) ≠ Set.univ := by
-  simp_all
+  exact Set.singleton_ne_univ []
 
 theorem singleton_nil_ne_embBit (b : Bool) (X : Set Str) : ({[]} : Set Str) ≠ embBit b X := by
   intro h
