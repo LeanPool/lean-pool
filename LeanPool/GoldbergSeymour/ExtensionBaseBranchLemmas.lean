@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+import all LeanPool.GoldbergSeymour.ExtensionBaseBranchPreparation
+import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
 public import LeanPool.GoldbergSeymour.ExtensionBaseStepLemmas
 public import LeanPool.GoldbergSeymour.ExtensionBaseClaim44
 public import LeanPool.GoldbergSeymour.ExtensionBaseClaim43
