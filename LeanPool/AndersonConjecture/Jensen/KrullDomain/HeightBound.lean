@@ -71,7 +71,8 @@ private def intersectionLocalizationSubring
 If for every associated prime P of T/(p) with y ∉ P, the polynomial
 evaluation aeval x f ∈ P implies C(p) | f, then aeval x f ∈ span{p}
 already implies C(p) | f. -/
-include T in theorem derive_mod_principal_trans
+include T in
+theorem derive_mod_principal_trans
     (R : NSubring T) (x : T) (y : R.carrier)
     (hAss_ht : ∀ (r : T), r ≠ 0 →
       ∀ P ∈ associatedPrimes T (T ⧸ Ideal.span {r}), P.height ≤ 1)
@@ -153,7 +154,8 @@ every element of P ∩ S_sub is divisible by a prime p₀ generating P ∩ R,
 then every nonzero element of any prime q ⊊ P ∩ S_sub would be infinitely
 divisible by p₀, contradicting WfDvdMonoid. Hence q = ⊥, giving the
 height bound contradiction. -/
-include T in theorem height_bound_wf_descent
+include T in
+theorem height_bound_wf_descent
     (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
     (S_sub : Subring T)
     (hR_le : R.carrier ≤ S_sub)
@@ -319,10 +321,84 @@ include T in theorem height_bound_wf_descent
     simp [hb_eq, congrArg Subtype.val hb0]))
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
+/- Polynomial evaluations at an element of Rbar stay in Rbar. -/
+private theorem aeval_mem_intersectionSet
+    (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier) (x : T)
+    (hx : x ∈ intersectionSet R x₁ x₂ y₁ y₂) (f : Polynomial R.carrier) :
+    (aeval x f : T) ∈ intersectionSet R x₁ x₂ y₁ y₂ := by
+  change (aeval x f : T) ∈ intersectionLocalizationSubring R x₁ x₂ y₁ y₂
+  induction f using Polynomial.induction_on' with
+  | add f g hf hg =>
+    rw [map_add]
+    exact Subring.add_mem _ hf hg
+  | monomial n r =>
+    rw [Polynomial.aeval_monomial]
+    exact Subring.mul_mem _ (R_le_intersectionSet R x₁ x₂ y₁ y₂ r) (Subring.pow_mem _ hx n)
+
+/- In `A[X]` for a domain `A`, a nonzero prime `J_q` contained in a prime `J` that meets the
+constants only in `0` must equal `J`: both extend to nonzero primes of the PID `K[X]`. -/
+private theorem polynomial_prime_eq_of_le_of_constants_trivial
+    {A : Type*} [CommRing A] [IsDomain A] (J J_q : Ideal (Polynomial A))
+    (hJ_prime : J.IsPrime) (hJ_q_prime : J_q.IsPrime) (hJJ_q : J_q ≤ J) (hJ_q_ne : J_q ≠ ⊥)
+    (hJ_const_zero : ∀ (c : A), Polynomial.C c ∈ J → c = 0) :
+    J_q = J := by
+  have hJ_q_const_zero : ∀ (c : A), Polynomial.C c ∈ J_q → c = 0 :=
+    fun c hc => hJ_const_zero c (hJJ_q hc)
+  -- Localize A[X] → K[X]; K[X] is a PID so dim ≤ 1
+  set K := FractionRing A
+  set ψ := Polynomial.mapRingHom (algebraMap A K)
+  have hψ_inj : Function.Injective ψ :=
+    Polynomial.map_injective _ (IsFractionRing.injective A K)
+  set M' := Submonoid.map (Polynomial.C : A →+* _) (nonZeroDivisors A)
+  have hJ_disj : Disjoint (M' : Set (Polynomial A)) (J : Set _) := by
+    rw [Set.disjoint_left]
+    intro f hfM hfJ
+    obtain ⟨c, hc_nzd, rfl⟩ := hfM
+    exact (nonZeroDivisors.ne_zero hc_nzd) (hJ_const_zero c hfJ)
+  have hJ_q_disj : Disjoint (M' : Set (Polynomial A)) (J_q : Set _) := by
+    rw [Set.disjoint_left]
+    intro f hfM hfJ
+    obtain ⟨c, hc_nzd, rfl⟩ := hfM
+    exact (nonZeroDivisors.ne_zero hc_nzd) (hJ_q_const_zero c hfJ)
+  let : Algebra (Polynomial A) (Polynomial K) := ψ.toAlgebra
+  have : IsLocalization M' (Polynomial K) :=
+    Polynomial.isLocalization (nonZeroDivisors A) K
+  have : (Ideal.map (algebraMap _ (Polynomial K)) J).IsPrime :=
+    IsLocalization.isPrime_of_isPrime_disjoint M' (Polynomial K) J hJ_prime hJ_disj
+  have : (Ideal.map (algebraMap _ (Polynomial K)) J_q).IsPrime :=
+    IsLocalization.isPrime_of_isPrime_disjoint
+      M' (Polynomial K) J_q hJ_q_prime hJ_q_disj
+  have hJ_q_map_ne :
+      Ideal.map (algebraMap _ (Polynomial K)) J_q ≠ ⊥ := by
+    intro h
+    have hsat := IsLocalization.under_map_of_isPrime_disjoint
+      M' (Polynomial K) hJ_q_prime hJ_q_disj
+    rw [h] at hsat
+    have hbot : Ideal.under (Polynomial A) (⊥ : Ideal (Polynomial K)) = ⊥ := by
+      simpa [Ideal.under_def] using
+        Ideal.comap_bot_of_injective (algebraMap (Polynomial A) (Polynomial K)) hψ_inj
+    rw [hbot] at hsat
+    exact hJ_q_ne hsat.symm
+  have : Ring.DimensionLEOne (Polynomial K) :=
+    Ring.DimensionLEOne.principal_ideal_ring _
+  -- In the PID K[X], two nonzero primes with J_q ≤ J forces J_q = J
+  have hmap_eq : Ideal.map (algebraMap _ (Polynomial K)) J_q =
+      Ideal.map (algebraMap _ (Polynomial K)) J :=
+    (Ring.DimensionLeOne.prime_le_prime_iff_eq hJ_q_map_ne).mp
+      (Ideal.map_mono hJJ_q)
+  -- Saturating back gives J_q = J
+  have hJ_sat := IsLocalization.under_map_of_isPrime_disjoint
+    M' (Polynomial K) hJ_prime hJ_disj
+  have hJ_q_sat := IsLocalization.under_map_of_isPrime_disjoint
+    M' (Polynomial K) hJ_q_prime hJ_q_disj
+  exact hJ_q_sat.symm.trans (hmap_eq ▸ hJ_sat)
+
+omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
+include T in
 /-- Height bound for primes of S_sub: every associated prime P of T/(t)
 contracts to an ideal of height ≤ 1 in S_sub. Uses the K[X] PID argument
 for the P∩R = ⊥ case and well-founded descent for P∩R ≠ ⊥. -/
-private def build_height_bound_proof
+theorem build_height_bound
     (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
     (S_sub : Subring T)
     (hR_le : R.carrier ≤ S_sub)
@@ -353,10 +429,10 @@ private def build_height_bound_proof
         b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a})
     (hRbar_le_S : ∀ t, t ∈ intersectionSet R x₁ x₂ y₁ y₂ → t ∈ (S_sub : Set T))
     (hx₁_Rbar : x₁ ∈ intersectionSet R x₁ x₂ y₁ y₂)
-    (hx₂_Rbar : x₂ ∈ intersectionSet R x₁ x₂ y₁ y₂) : PLift (
+    (hx₂_Rbar : x₂ ∈ intersectionSet R x₁ x₂ y₁ y₂) :
     ∀ (t : T), t ≠ 0 →
       ∀ P ∈ associatedPrimes T (T ⧸ Ideal.span {t}),
-        Ideal.height (P.comap S_sub.subtype) ≤ 1 ) := ⟨by
+        Ideal.height (P.comap S_sub.subtype) ≤ 1 := by
   have : IsDomain R.carrier := NSubring.isDomain R
   have : UniqueFactorizationMonoid R.carrier := R.isUFD
   -- Set up Rbar = R[x₁,y₂⁻¹] ∩ R[x₂,y₁⁻¹] and its localization S = Rbar[units⁻¹]
@@ -365,12 +441,6 @@ private def build_height_bound_proof
     {t : T | ∃ (a : T) (b : T), a ∈ Rbar ∧ b ∈ Rbar ∧
       b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a}
   have hS_sub_eq' : (S_sub : Set T) = S_carrier := hS_sub_eq
-  have hRbar_one : (1 : T) ∈ Rbar :=
-    (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).one_mem
-  have hRbar_add : ∀ t₁ t₂, t₁ ∈ Rbar → t₂ ∈ Rbar → t₁ + t₂ ∈ Rbar :=
-    fun _ _ => (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).add_mem
-  have hRbar_mul : ∀ t₁ t₂, t₁ ∈ Rbar → t₂ ∈ Rbar → t₁ * t₂ ∈ Rbar :=
-    fun _ _ => (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).mul_mem
   have hS_mem_rep : ∀ s : S_sub,
       ∃ (a b : T), a ∈ Rbar ∧ b ∈ Rbar ∧
         b ∉ IsLocalRing.maximalIdeal T ∧ (s : T) * b = a := by
@@ -407,36 +477,10 @@ private def build_height_bound_proof
     intro x hx
     by_contra hxnM
     exact hP_prime.ne_top (P.eq_top_of_isUnit_mem hx (IsLocalRing.notMem_maximalIdeal.mp hxnM))
-  have heval_x₁_Rbar : ∀ f : Polynomial R.carrier, (aeval x₁ f : T) ∈ Rbar := by
-    intro f
-    induction f using Polynomial.induction_on' with
-    | add f g hf hg => rw [map_add]
-                       exact hRbar_add _ _ hf hg
-    | monomial n r =>
-      rw [Polynomial.aeval_monomial]
-      exact hRbar_mul _ _ (R_le_intersectionSet R x₁ x₂ y₁ y₂ r) (by
-        induction n with
-        | zero => simp only [pow_zero]
-                  exact hRbar_one
-        | succ n ih => rw [pow_succ]
-                       exact hRbar_mul _ _ ih hx₁_Rbar)
   have heval_x₁_S : ∀ f : Polynomial R.carrier, (aeval x₁ f : T) ∈ S_sub :=
-    fun f => hRbar_le_S _ (heval_x₁_Rbar f)
-  have heval_x₂_Rbar : ∀ f : Polynomial R.carrier, (aeval x₂ f : T) ∈ Rbar := by
-    intro f
-    induction f using Polynomial.induction_on' with
-    | add f g hf hg => rw [map_add]
-                       exact hRbar_add _ _ hf hg
-    | monomial n r =>
-      rw [Polynomial.aeval_monomial]
-      exact hRbar_mul _ _ (R_le_intersectionSet R x₁ x₂ y₁ y₂ r) (by
-        induction n with
-        | zero => simp only [pow_zero]
-                  exact hRbar_one
-        | succ n ih => rw [pow_succ]
-                       exact hRbar_mul _ _ ih hx₂_Rbar)
+    fun f => hRbar_le_S _ (aeval_mem_intersectionSet R x₁ x₂ y₁ y₂ x₁ hx₁_Rbar f)
   have heval_x₂_S : ∀ f : Polynomial R.carrier, (aeval x₂ f : T) ∈ S_sub :=
-    fun f => hRbar_le_S _ (heval_x₂_Rbar f)
+    fun f => hRbar_le_S _ (aeval_mem_intersectionSet R x₁ x₂ y₁ y₂ x₂ hx₂_Rbar f)
   -- Coprimality of y₁, y₂: at least one of them avoids P
   have hy_or : (↑y₁ : T) ∉ P ∨ (↑y₂ : T) ∉ P := by
     by_cases hPR : Ideal.comap R.carrier.subtype P = ⊥
@@ -551,108 +595,261 @@ private def build_height_bound_proof
       have : c ∈ Ideal.comap R.carrier.subtype P := hcP
       rw [hPR_bot] at this
       exact Ideal.mem_bot.mp this
-    have hJ_q_const_zero : ∀ (c : R.carrier), Polynomial.C c ∈ J_q → c = 0 :=
-      fun c hc => hJ_const_zero c (hJJ_q hc)
-    -- Localize R[X] → K[X]; K[X] is a PID so dim ≤ 1
-    set K := FractionRing R.carrier
-    set ψ := Polynomial.mapRingHom (algebraMap R.carrier K)
-    have hψ_inj : Function.Injective ψ :=
-      Polynomial.map_injective _ (IsFractionRing.injective R.carrier K)
-    set M' := Submonoid.map (Polynomial.C : R.carrier →+* _) (nonZeroDivisors R.carrier)
-    have hJ_disj : Disjoint (M' : Set (Polynomial R.carrier)) (J : Set _) := by
-      rw [Set.disjoint_left]
-      intro f hfM hfJ
-      obtain ⟨c, hc_nzd, rfl⟩ := hfM
-      exact (nonZeroDivisors.ne_zero hc_nzd) (hJ_const_zero c hfJ)
-    have hJ_q_disj : Disjoint (M' : Set (Polynomial R.carrier)) (J_q : Set _) := by
-      rw [Set.disjoint_left]
-      intro f hfM hfJ
-      obtain ⟨c, hc_nzd, rfl⟩ := hfM
-      exact (nonZeroDivisors.ne_zero hc_nzd) (hJ_q_const_zero c hfJ)
-    let : Algebra (Polynomial R.carrier) (Polynomial K) := ψ.toAlgebra
-    have : IsLocalization M' (Polynomial K) :=
-      Polynomial.isLocalization (nonZeroDivisors R.carrier) K
-    have : (Ideal.map (algebraMap _ (Polynomial K)) J).IsPrime :=
-      IsLocalization.isPrime_of_isPrime_disjoint M' (Polynomial K) J hJ_prime hJ_disj
-    have : (Ideal.map (algebraMap _ (Polynomial K)) J_q).IsPrime :=
-      IsLocalization.isPrime_of_isPrime_disjoint
-        M' (Polynomial K) J_q hJ_q_prime hJ_q_disj
-    have hJ_q_map_ne :
-        Ideal.map (algebraMap _ (Polynomial K)) J_q ≠ ⊥ := by
-      intro h
-      have hsat := IsLocalization.under_map_of_isPrime_disjoint
-        M' (Polynomial K) hJ_q_prime hJ_q_disj
-      rw [h] at hsat
-      have hbot : Ideal.under (Polynomial R.carrier) (⊥ : Ideal (Polynomial K)) = ⊥ := by
-        simpa [Ideal.under_def] using
-          Ideal.comap_bot_of_injective (algebraMap (Polynomial R.carrier) (Polynomial K)) hψ_inj
-      rw [hbot] at hsat
-      exact hJ_q_ne hsat.symm
-    have : Ring.DimensionLEOne (Polynomial K) :=
-      Ring.DimensionLEOne.principal_ideal_ring _
-    -- In the PID K[X], two nonzero primes with J_q ≤ J forces J_q = J
-    have hmap_eq : Ideal.map (algebraMap _ (Polynomial K)) J_q =
-        Ideal.map (algebraMap _ (Polynomial K)) J :=
-      (Ring.DimensionLeOne.prime_le_prime_iff_eq hJ_q_map_ne).mp
-        (Ideal.map_mono hJJ_q)
-    -- Saturating back gives J_q = J, contradicting J_q ⊊ J
-    have hJ_sat := IsLocalization.under_map_of_isPrime_disjoint
-      M' (Polynomial K) hJ_prime hJ_disj
-    have hJ_q_sat := IsLocalization.under_map_of_isPrime_disjoint
-      M' (Polynomial K) hJ_q_prime hJ_q_disj
-    exact absurd (hJ_q_sat.symm.trans (hmap_eq ▸ hJ_sat))
-      (ne_of_lt hJJ_strict)
+    exact absurd (polynomial_prime_eq_of_le_of_constants_trivial J J_q hJ_prime hJ_q_prime
+      hJJ_q hJ_q_ne hJ_const_zero) (ne_of_lt hJJ_strict)
   -- P∩R ≠ ⊥ case: apply the well-founded descent to get a contradiction
   · exact absurd hs_ne (height_bound_wf_descent R x₁ x₂ y₁ y₂ S_sub hR_le hRbar_le_S hinv
         hR_prime_in_S (fun s => hS_mem_rep s) P hP_ht hR_bound hPR_bot hP_le_M
         x_eval y_elem hy_nP hx_ker_branch heval_S
         get_witness_Rbar q hq_lt s hs_ne hs_q).elim
-⟩
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
-include T in theorem build_height_bound
-    (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
-    (S_sub : Subring T)
-    (hR_le : R.carrier ≤ S_sub)
-    (hcoprime : ∀ p : R.carrier, Prime p → ¬(p ∣ y₁ ∧ p ∣ y₂))
-    (hy₁ : (↑y₁ : T) ≠ 0) (hy₂ : (↑y₂ : T) ≠ 0)
-    (hAss_ht : ∀ (r : T), r ≠ 0 →
-      ∀ P ∈ associatedPrimes T (T ⧸ Ideal.span {r}), P.height ≤ 1)
-    (hM_not_assoc : ∀ (r : T), r ≠ 0 →
-      IsLocalRing.maximalIdeal T ∉ associatedPrimes T (T ⧸ Ideal.span {r}))
-    (hx₁_trans : Transcendental R.carrier x₁)
-    (hx₂_trans : Transcendental R.carrier x₂)
-    (hx₁_ker : ∀ (P : Ideal T), P.IsPrime → P ≠ ⊤ → P.height ≤ 1 → (↑y₂ : T) ∉ P →
-      ∀ (p : R.carrier), Prime p → (↑p : T) ∈ P →
-      ∀ (f : Polynomial R.carrier),
-        aeval x₁ f ∈ P → (C p : Polynomial R.carrier) ∣ f)
-    (hx₂_ker : ∀ (P : Ideal T), P.IsPrime → P ≠ ⊤ → P.height ≤ 1 → (↑y₁ : T) ∉ P →
-      ∀ (p : R.carrier), Prime p → (↑p : T) ∈ P →
-      ∀ (f : Polynomial R.carrier),
-        aeval x₂ f ∈ P → (C p : Polynomial R.carrier) ∣ f)
-    (hinv : ∀ (s : S_sub), (s : T) ∉ IsLocalRing.maximalIdeal T → IsUnit s)
-    (hR_prime_in_S : ∀ (p : R.carrier), Prime p →
-      (↑p : T) ∈ IsLocalRing.maximalIdeal T →
-      Prime (⟨(↑p : T), hR_le p.2⟩ : S_sub))
+/- The fractions `a / b` with `a, b ∈ Rbar` and `b ∉ M` form a subring of `T`. -/
+private theorem exists_subring_eq_fractionCarrier
+    (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier) :
+    ∃ S_sub : Subring T, (S_sub : Set T) =
+      {t : T | ∃ (a : T) (b : T),
+        a ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
+        b ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
+        b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a} := by
+  set Rbar := intersectionSet R x₁ x₂ y₁ y₂
+  have hunit : ∀ (a : T), a ∉ IsLocalRing.maximalIdeal T → IsUnit a :=
+    fun a ha => IsLocalRing.notMem_maximalIdeal.mp ha
+  have hprod_notmem : ∀ (a b : T),
+      a ∉ IsLocalRing.maximalIdeal T → b ∉ IsLocalRing.maximalIdeal T →
+      a * b ∉ IsLocalRing.maximalIdeal T := by
+    intro a b ha hb
+    exact IsLocalRing.notMem_maximalIdeal.mpr ((hunit a ha).mul (hunit b hb))
+  set S_carrier : Set T :=
+    {t : T | ∃ (a : T) (b : T), a ∈ Rbar ∧ b ∈ Rbar ∧
+      b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a}
+  have hRbar_zero : (0 : T) ∈ Rbar :=
+    (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).zero_mem
+  have hRbar_one : (1 : T) ∈ Rbar :=
+    (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).one_mem
+  have hRbar_neg : ∀ t, t ∈ Rbar → -t ∈ Rbar :=
+    fun _ => (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).neg_mem
+  have hRbar_mul : ∀ t₁ t₂, t₁ ∈ Rbar → t₂ ∈ Rbar → t₁ * t₂ ∈ Rbar :=
+    fun _ _ => (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).mul_mem
+  have hRbar_add : ∀ t₁ t₂, t₁ ∈ Rbar → t₂ ∈ Rbar → t₁ + t₂ ∈ Rbar :=
+    fun _ _ => (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).add_mem
+  refine ⟨{
+    carrier := S_carrier
+    zero_mem' := ⟨0, 1, hRbar_zero, hRbar_one,
+      IsLocalRing.notMem_maximalIdeal.mpr isUnit_one, by rw [zero_mul]⟩
+    one_mem' := ⟨1, 1, hRbar_one, hRbar_one,
+      IsLocalRing.notMem_maximalIdeal.mpr isUnit_one, by rw [one_mul]⟩
+    neg_mem' := ?neg
+    add_mem' := ?add
+    mul_mem' := ?mul
+  }, rfl⟩
+  case neg =>
+    intro t ⟨a, b, ha, hb, hb_notM, htb⟩
+    exact ⟨-a, b, hRbar_neg a ha, hb, hb_notM, by rw [neg_mul, htb]⟩
+  case mul =>
+    intro t₁ t₂ ⟨a₁, b₁, ha₁, hb₁, hb₁_notM, ht₁⟩ ⟨a₂, b₂, ha₂, hb₂, hb₂_notM, ht₂⟩
+    refine ⟨a₁ * a₂, b₁ * b₂, hRbar_mul a₁ a₂ ha₁ ha₂, hRbar_mul b₁ b₂ hb₁ hb₂,
+      hprod_notmem b₁ b₂ hb₁_notM hb₂_notM, ?_⟩
+    rw [show t₁ * t₂ * (b₁ * b₂) = (t₁ * b₁) * (t₂ * b₂) from by ring, ht₁, ht₂]
+  case add =>
+    intro t₁ t₂ ⟨a₁, b₁, ha₁, hb₁, hb₁_notM, ht₁⟩ ⟨a₂, b₂, ha₂, hb₂, hb₂_notM, ht₂⟩
+    refine ⟨a₁ * b₂ + a₂ * b₁, b₁ * b₂,
+      hRbar_add _ _ (hRbar_mul a₁ b₂ ha₁ hb₂) (hRbar_mul a₂ b₁ ha₂ hb₁),
+      hRbar_mul b₁ b₂ hb₁ hb₂,
+      hprod_notmem b₁ b₂ hb₁_notM hb₂_notM, ?_⟩
+    rw [show (t₁ + t₂) * (b₁ * b₂) = t₁ * b₁ * b₂ + t₂ * b₂ * b₁ from by ring, ht₁, ht₂]
+
+omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
+/- Both `x₁` and `x₂` lie in Rbar, using `c = x₁ y₁ + x₂ y₂`. -/
+private theorem mem_intersectionSet_of_linear_combination
+    (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier) (c : R.carrier)
+    (hc_eq : (↑c : T) = x₁ * ↑y₁ + x₂ * ↑y₂) :
+    x₁ ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧ x₂ ∈ intersectionSet R x₁ x₂ y₁ y₂ := by
+  have hx₁_A₁ : x₁ ∈ adjoinLocSetY R x₁ y₂ := x_mem_adjoinLocSetY R x₁ y₂
+  have hx₁_A₂ : x₁ ∈ adjoinLocSetY R x₂ y₁ := by
+    refine ⟨C c - X * C y₂, 1, ?_⟩
+    rw [pow_one]
+    rw [Polynomial.aeval_def, eval₂_sub, eval₂_mul, eval₂_C, eval₂_X, eval₂_C,
+      show algebraMap R.carrier T = R.carrier.subtype from rfl]
+    have hc' : x₁ * (↑y₁ : T) = (↑c : T) - x₂ * (↑y₂ : T) := by
+      have h := hc_eq
+      rw [h]
+      ring
+    convert hc' using 2 <;> rfl
+  have hx₂_A₂ : x₂ ∈ adjoinLocSetY R x₂ y₁ := x_mem_adjoinLocSetY R x₂ y₁
+  have hx₂_A₁ : x₂ ∈ adjoinLocSetY R x₁ y₂ := by
+    refine ⟨C c - X * C y₁, 1, ?_⟩
+    rw [pow_one]
+    have haeval : (aeval x₁ (C c - X * C y₁) : T) = (↑c : T) - x₁ * (↑y₁ : T) := by
+      simp [aeval_def, eval₂_sub, eval₂_mul, eval₂_C, eval₂_X,
+        show algebraMap R.carrier T = R.carrier.subtype from rfl]
+      ring
+    rw [haeval]
+    have hc' : x₂ * (↑y₂ : T) = (↑c : T) - x₁ * (↑y₁ : T) := by
+      have h := hc_eq
+      rw [h]
+      ring
+    convert hc'
+  exact ⟨⟨hx₁_A₁, hx₁_A₂⟩, ⟨hx₂_A₁, hx₂_A₂⟩⟩
+
+omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
+/- Elements of the fraction subring outside `M` are units of the subring. -/
+private theorem isUnit_of_notMem_maximalIdeal_fractionSubring
+    (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier) (S_sub : Subring T)
     (hS_sub_eq : (S_sub : Set T) =
       {t : T | ∃ (a : T) (b : T),
         a ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
         b ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
         b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a})
-    (hRbar_le_S : ∀ t, t ∈ intersectionSet R x₁ x₂ y₁ y₂ → t ∈ (S_sub : Set T))
-    (hx₁_Rbar : x₁ ∈ intersectionSet R x₁ x₂ y₁ y₂)
-    (hx₂_Rbar : x₂ ∈ intersectionSet R x₁ x₂ y₁ y₂) :
-    ∀ (t : T), t ≠ 0 →
-      ∀ P ∈ associatedPrimes T (T ⧸ Ideal.span {t}),
-        Ideal.height (P.comap S_sub.subtype) ≤ 1 := by
-  exact
-    (build_height_bound_proof
-      R x₁ x₂ y₁ y₂ S_sub hR_le hcoprime hy₁ hy₂ hAss_ht hM_not_assoc hx₁_trans hx₂_trans
-      hx₁_ker hx₂_ker hinv hR_prime_in_S hS_sub_eq hRbar_le_S hx₁_Rbar hx₂_Rbar
-    ).down
-/-- Helper: the Krull domain intersection construction produces an NSubring
+    (s : S_sub) (hs_notM : (s : T) ∉ IsLocalRing.maximalIdeal T) : IsUnit s := by
+  obtain ⟨s, hs_mem⟩ := s
+  have hs_carrier : s ∈ (S_sub : Set T) := hs_mem
+  rw [hS_sub_eq] at hs_carrier
+  obtain ⟨a, b, ha_Rbar, hb_Rbar, hb_notM, hsb_eq⟩ := hs_carrier
+  have hs_unit : IsUnit s := IsLocalRing.notMem_maximalIdeal.mp hs_notM
+  let s_inv : T := ↑(hs_unit.unit⁻¹ : Tˣ)
+  have hs_mul_inv : s * s_inv = 1 := hs_unit.mul_val_inv
+  have hs_inv_mul : s_inv * s = 1 := hs_unit.val_inv_mul
+  have ha_notM : a ∉ IsLocalRing.maximalIdeal T := by
+    rw [← hsb_eq]
+    exact IsLocalRing.notMem_maximalIdeal.mpr
+      (hs_unit.mul (IsLocalRing.notMem_maximalIdeal.mp hb_notM))
+  have hs_inv_S : s_inv ∈ S_sub := by
+    change s_inv ∈ (S_sub : Set T)
+    rw [hS_sub_eq]
+    refine ⟨b, a, hb_Rbar, ha_Rbar, ha_notM, ?_⟩
+    calc s_inv * a = s_inv * (s * b) := by rw [hsb_eq]
+      _ = (s_inv * s) * b := by ring
+      _ = 1 * b := by rw [hs_inv_mul]
+      _ = b := one_mul b
+  have hmul_one : (⟨s, hs_mem⟩ : S_sub) * ⟨s_inv, hs_inv_S⟩ = 1 :=
+    Subtype.ext hs_mul_inv
+  exact IsUnit.of_mul_eq_one _ hmul_one
+
+omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
+/- `R[x, y⁻¹]` is closed under division by primes of `R`. -/
+private theorem adjoinLocSetY_div_prime
+    (R : NSubring T) (x : T) (y : R.carrier)
+    (hx_mod_trans : ∀ (p : R.carrier), Prime p → ¬p ∣ y → ∀ (f : Polynomial R.carrier),
+      aeval x f ∈ Ideal.span {(↑p : T)} → (C p : Polynomial R.carrier) ∣ f)
+    (p : R.carrier) (hp : Prime p) (t d : T) (ht : t ∈ adjoinLocSetY R x y)
+    (htpd : t = (↑p : T) * d) : d ∈ adjoinLocSetY R x y := by
+  obtain ⟨f, n, hfn⟩ := ht
+  have hpd_eq : (↑p : T) * (d * (↑y : T) ^ n) = aeval x f := by
+    rw [← hfn, htpd]
+    ring
+  -- If p | y, absorb extra y into the polynomial; otherwise use mod-principal transcendence
+  by_cases hpy : p ∣ y
+  · obtain ⟨q, hq⟩ := hpy
+    have hy_eq : (↑y : T) = (↑p : T) * (↑q : T) := by
+      rw [hq]
+      simp
+    refine ⟨f * C q, n + 1, ?_⟩
+    have key : d * (↑y : T) ^ (n + 1) = aeval x f * (↑q : T) := by
+      have hpow : (↑y : T) ^ (n + 1) = (↑y : T) ^ n * ((↑p : T) * (↑q : T)) := by
+        rw [pow_succ, hy_eq]
+      rw [hpow]
+      have : d * ((↑y : T) ^ n * ((↑p : T) * (↑q : T))) =
+          ((↑p : T) * (d * (↑y : T) ^ n)) * (↑q : T) := by ring
+      rw [this, hpd_eq]
+    rw [key, map_mul, aeval_C,
+      show algebraMap R.carrier T = R.carrier.subtype from rfl, Subring.coe_subtype]
+  · suffices hCp_dvd : (C p : Polynomial R.carrier) ∣ f by
+      obtain ⟨g, hfg⟩ := hCp_dvd
+      have hr_ne : (↑p : T) ≠ 0 :=
+        fun h => hp.ne_zero (R.carrier.subtype_injective h)
+      refine ⟨g, n, mul_left_cancel₀ hr_ne ?_⟩
+      rw [hpd_eq, hfg, map_mul, aeval_C,
+        show algebraMap R.carrier T = R.carrier.subtype from rfl]
+      rfl
+    exact hx_mod_trans p hp hpy f
+      (Ideal.mem_span_singleton.mpr ⟨d * (↑y : T) ^ n, hpd_eq.symm⟩)
+
+omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
+/- Cardinality bound: `|S| ≤ |Rbar|² ≤ max(aleph0, |R|)` since `S ↪ Rbar × Rbar`. -/
+private theorem card_fractionSubring_le
+    (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier) (hy₂ : (↑y₂ : T) ≠ 0)
+    (S_sub : Subring T)
+    (hS_sub_eq : (S_sub : Set T) =
+      {t : T | ∃ (a : T) (b : T),
+        a ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
+        b ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
+        b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a}) :
+    Cardinal.mk S_sub ≤ max Cardinal.aleph0 (Cardinal.mk R.carrier) := by
+  set Rbar := intersectionSet R x₁ x₂ y₁ y₂
+  set S_carrier : Set T :=
+    {t : T | ∃ (a : T) (b : T), a ∈ Rbar ∧ b ∈ Rbar ∧
+      b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a}
+  have hALS_card : Cardinal.mk ↥(adjoinLocSetY R x₁ y₂) ≤
+      max Cardinal.aleph0 (Cardinal.mk R.carrier) := by
+    have hsub : (adjoinLocSetY R x₁ y₂ : Set T) ⊆
+        ⋃ (f : Polynomial R.carrier), {t : T | ∃ n : ℕ, t * (↑y₂ : T) ^ n = aeval x₁ f} := by
+      intro t ⟨f, n, h⟩
+      exact Set.mem_iUnion.mpr ⟨f, ⟨n, h⟩⟩
+    apply le_trans (Cardinal.mk_le_mk_of_subset hsub)
+    apply le_trans (Cardinal.mk_iUnion_le _)
+    calc Cardinal.mk (Polynomial R.carrier) *
+          ⨆ (f : Polynomial R.carrier), Cardinal.mk ↑{t : T | ∃ n : ℕ,
+            t * (↑y₂ : T) ^ n = aeval x₁ f}
+        ≤ max (Cardinal.mk R.carrier) Cardinal.aleph0 * Cardinal.aleph0 := by
+          gcongr
+          · exact Polynomial.cardinalMk_le_max
+          · apply ciSup_le'
+            intro f
+            apply Cardinal.mk_le_aleph0_iff.mpr
+            apply Set.Countable.to_subtype
+            apply (Set.countable_iUnion (fun (n : ℕ) =>
+              Set.Subsingleton.countable (fun (t₁ : T) (ht₁ : t₁ * (↑y₂ : T) ^ n = aeval x₁ f)
+                (t₂ : T) (ht₂ : t₂ * (↑y₂ : T) ^ n = aeval x₁ f) =>
+                mul_right_cancel₀ (pow_ne_zero n hy₂) (ht₁.trans ht₂.symm)))).mono
+            intro t ⟨n, hn⟩
+            exact Set.mem_iUnion.mpr ⟨n, hn⟩
+      _ = max (Cardinal.mk R.carrier) Cardinal.aleph0 :=
+          Cardinal.mul_aleph0_eq (le_max_right _ _)
+      _ = max Cardinal.aleph0 (Cardinal.mk R.carrier) := max_comm _ _
+  have hRbar_card : Cardinal.mk ↥Rbar ≤ max Cardinal.aleph0 (Cardinal.mk R.carrier) :=
+    le_trans (Cardinal.mk_le_of_injective
+      (Set.inclusion_injective (Set.inter_subset_left))) hALS_card
+  have hf : Function.Injective (fun (s : S_sub) =>
+      Prod.mk
+        (⟨(hS_sub_eq ▸ s.2 : s.val ∈ S_carrier).choose,
+          (hS_sub_eq ▸ s.2 : s.val ∈ S_carrier).choose_spec.choose_spec.1⟩ : ↥Rbar)
+        (⟨(hS_sub_eq ▸ s.2 : s.val ∈ S_carrier).choose_spec.choose,
+          (hS_sub_eq ▸ s.2 : s.val ∈ S_carrier).choose_spec.choose_spec.2.1⟩ : ↥Rbar)) := by
+    intro s₁ s₂ heq
+    simp only [Prod.mk.injEq, Subtype.mk.injEq] at heq
+    obtain ⟨ha_eq, hb_eq⟩ := heq
+    have h₁ := (hS_sub_eq ▸ s₁.2 : s₁.val ∈ S_carrier).choose_spec.choose_spec
+    have h₂ := (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose_spec
+    have key : s₁.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose =
+               s₂.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose := by
+      calc s₁.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose
+          = s₁.val * (hS_sub_eq ▸ s₁.2 : s₁.val ∈ S_carrier).choose_spec.choose := by rw [← hb_eq]
+        _ = (hS_sub_eq ▸ s₁.2 : s₁.val ∈ S_carrier).choose := h₁.2.2.2
+        _ = (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose := ha_eq
+        _ = s₂.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose := h₂.2.2.2.symm
+    have hb_ne : (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose ≠ (0 : T) := by
+      intro hb0
+      exact h₂.2.2.1 (hb0 ▸ Ideal.zero_mem _)
+    have hsub : (s₁.val - s₂.val) *
+        (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose = 0 := by
+      rw [sub_mul, key, sub_self]
+    exact Subtype.ext (sub_eq_zero.mp
+      ((mul_eq_zero.mp hsub).resolve_right hb_ne))
+  calc Cardinal.mk S_sub
+      ≤ Cardinal.mk (↥Rbar × ↥Rbar) := Cardinal.mk_le_of_injective hf
+    _ = Cardinal.mk ↥Rbar * Cardinal.mk ↥Rbar := (Cardinal.mul_def _ _).symm
+    _ ≤ max Cardinal.aleph0 (Cardinal.mk R.carrier) *
+          max Cardinal.aleph0 (Cardinal.mk R.carrier) :=
+        mul_le_mul' hRbar_card hRbar_card
+    _ = max Cardinal.aleph0 (Cardinal.mk R.carrier) :=
+        Cardinal.mul_eq_self (le_max_left _ _)
+
+omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
+include T in
+/-- The Krull domain intersection construction produces an NSubring
 containing both x₁ and x₂. Core algebraic construction from Heitmann (1993) Lemma 4. -/
-private def build_intersection_nsubring_proof
+theorem build_intersection_nsubring
     (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier) (c : R.carrier)
     (hc_eq : (↑c : T) = x₁ * ↑y₁ + x₂ * ↑y₂)
     (hx₁_trans : Transcendental R.carrier x₁)
@@ -673,63 +870,20 @@ private def build_intersection_nsubring_proof
     (hx₂_ker : ∀ (P : Ideal T), P.IsPrime → P ≠ ⊤ → P.height ≤ 1 → (↑y₁ : T) ∉ P →
       ∀ (p : R.carrier), Prime p → (↑p : T) ∈ P →
       ∀ (f : Polynomial R.carrier),
-        aeval x₂ f ∈ P → (C p : Polynomial R.carrier) ∣ f) : PLift (
-    ∃ S : NSubring T, IsAExtension R S ∧ x₁ ∈ S.carrier ∧ x₂ ∈ S.carrier ) := ⟨by
+        aeval x₂ f ∈ P → (C p : Polynomial R.carrier) ∣ f) :
+    ∃ S : NSubring T, IsAExtension R S ∧ x₁ ∈ S.carrier ∧ x₂ ∈ S.carrier := by
   have : IsDomain R.carrier := NSubring.isDomain R
   have : UniqueFactorizationMonoid R.carrier := R.isUFD
   -- Derive mod-principal transcendence for both x₁ (mod y₂) and x₂ (mod y₁)
   have hx₁_mod_trans := derive_mod_principal_trans R x₁ y₂ hAss_ht hx₁_ker
   have hx₂_mod_trans := derive_mod_principal_trans R x₂ y₁ hAss_ht hx₂_ker
   set Rbar := intersectionSet R x₁ x₂ y₁ y₂
-  have hunit : ∀ (a : T), a ∉ IsLocalRing.maximalIdeal T → IsUnit a :=
-    fun a ha => IsLocalRing.notMem_maximalIdeal.mp ha
-  have hprod_notmem : ∀ (a b : T),
-      a ∉ IsLocalRing.maximalIdeal T → b ∉ IsLocalRing.maximalIdeal T →
-      a * b ∉ IsLocalRing.maximalIdeal T := by
-    intro a b ha hb
-    exact IsLocalRing.notMem_maximalIdeal.mpr ((hunit a ha).mul (hunit b hb))
   -- S = {a/b : a,b ∈ Rbar, b ∉ M} -- localize Rbar at elements outside the maximal ideal
   set S_carrier : Set T :=
     {t : T | ∃ (a : T) (b : T), a ∈ Rbar ∧ b ∈ Rbar ∧
       b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a}
-  have hRbar_zero : (0 : T) ∈ Rbar :=
-    (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).zero_mem
-  have hRbar_one : (1 : T) ∈ Rbar :=
-    (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).one_mem
-  have hRbar_neg : ∀ t, t ∈ Rbar → -t ∈ Rbar :=
-    fun _ => (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).neg_mem
-  have hRbar_mul : ∀ t₁ t₂, t₁ ∈ Rbar → t₂ ∈ Rbar → t₁ * t₂ ∈ Rbar :=
-    fun _ _ => (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).mul_mem
-  have hRbar_add : ∀ t₁ t₂, t₁ ∈ Rbar → t₂ ∈ Rbar → t₁ + t₂ ∈ Rbar :=
-    fun _ _ => (intersectionLocalizationSubring R x₁ x₂ y₁ y₂).add_mem
-  -- Verify S_carrier is closed under ring operations, hence forms a subring of T
-  have hS_carrier_subring : ∃ S_sub : Subring T, (S_sub : Set T) = S_carrier := by
-    refine ⟨{
-      carrier := S_carrier
-      zero_mem' := ⟨0, 1, hRbar_zero, hRbar_one,
-        IsLocalRing.notMem_maximalIdeal.mpr isUnit_one, by rw [zero_mul]⟩
-      one_mem' := ⟨1, 1, hRbar_one, hRbar_one,
-        IsLocalRing.notMem_maximalIdeal.mpr isUnit_one, by rw [one_mul]⟩
-      neg_mem' := ?neg
-      add_mem' := ?add
-      mul_mem' := ?mul
-    }, rfl⟩
-    case neg =>
-      intro t ⟨a, b, ha, hb, hb_notM, htb⟩
-      exact ⟨-a, b, hRbar_neg a ha, hb, hb_notM, by rw [neg_mul, htb]⟩
-    case mul =>
-      intro t₁ t₂ ⟨a₁, b₁, ha₁, hb₁, hb₁_notM, ht₁⟩ ⟨a₂, b₂, ha₂, hb₂, hb₂_notM, ht₂⟩
-      refine ⟨a₁ * a₂, b₁ * b₂, hRbar_mul a₁ a₂ ha₁ ha₂, hRbar_mul b₁ b₂ hb₁ hb₂,
-        hprod_notmem b₁ b₂ hb₁_notM hb₂_notM, ?_⟩
-      rw [show t₁ * t₂ * (b₁ * b₂) = (t₁ * b₁) * (t₂ * b₂) from by ring, ht₁, ht₂]
-    case add =>
-      intro t₁ t₂ ⟨a₁, b₁, ha₁, hb₁, hb₁_notM, ht₁⟩ ⟨a₂, b₂, ha₂, hb₂, hb₂_notM, ht₂⟩
-      refine ⟨a₁ * b₂ + a₂ * b₁, b₁ * b₂,
-        hRbar_add _ _ (hRbar_mul a₁ b₂ ha₁ hb₂) (hRbar_mul a₂ b₁ ha₂ hb₁),
-        hRbar_mul b₁ b₂ hb₁ hb₂,
-        hprod_notmem b₁ b₂ hb₁_notM hb₂_notM, ?_⟩
-      rw [show (t₁ + t₂) * (b₁ * b₂) = t₁ * b₁ * b₂ + t₂ * b₂ * b₁ from by ring, ht₁, ht₂]
-  obtain ⟨S_sub, hS_sub_eq⟩ := hS_carrier_subring
+  obtain ⟨S_sub, hS_sub_eq⟩ : ∃ S_sub : Subring T, (S_sub : Set T) = S_carrier :=
+    exists_subring_eq_fractionCarrier R x₁ x₂ y₁ y₂
   have hRbar_le_S : ∀ t ∈ Rbar, t ∈ (S_sub : Set T) := by
     intro t ht
     rw [hS_sub_eq]
@@ -741,63 +895,14 @@ private def build_intersection_nsubring_proof
   have hR_le : R.carrier ≤ S_sub := by
     intro r hr
     exact hRbar_le_S _ (R_le_intersectionSet R x₁ x₂ y₁ y₂ ⟨r, hr⟩)
-  -- Show x₁ ∈ Rbar: trivially in R[x₁,y₂⁻¹]; in R[x₂,y₁⁻¹] via c = x₁y₁ + x₂y₂
-  have hx₁_A₁ : x₁ ∈ adjoinLocSetY R x₁ y₂ := x_mem_adjoinLocSetY R x₁ y₂
-  have hx₁_A₂ : x₁ ∈ adjoinLocSetY R x₂ y₁ := by
-    refine ⟨C c - X * C y₂, 1, ?_⟩
-    rw [pow_one]
-    rw [Polynomial.aeval_def, eval₂_sub, eval₂_mul, eval₂_C, eval₂_X, eval₂_C,
-      show algebraMap R.carrier T = R.carrier.subtype from rfl]
-    have hc' : x₁ * (↑y₁ : T) = (↑c : T) - x₂ * (↑y₂ : T) := by
-      have h := hc_eq
-      rw [h]
-      ring
-    convert hc' using 2 <;> rfl
-  have hx₁_Rbar : x₁ ∈ Rbar := ⟨hx₁_A₁, hx₁_A₂⟩
-  -- Symmetrically, x₂ ∈ Rbar using x₂ = (c - x₁y₁)/y₂
-  have hx₂_A₂ : x₂ ∈ adjoinLocSetY R x₂ y₁ := x_mem_adjoinLocSetY R x₂ y₁
-  have hx₂_A₁ : x₂ ∈ adjoinLocSetY R x₁ y₂ := by
-    refine ⟨C c - X * C y₁, 1, ?_⟩
-    rw [pow_one]
-    have haeval : (aeval x₁ (C c - X * C y₁) : T) = (↑c : T) - x₁ * (↑y₁ : T) := by
-      simp [aeval_def, eval₂_sub, eval₂_mul, eval₂_C, eval₂_X,
-        show algebraMap R.carrier T = R.carrier.subtype from rfl]
-      ring
-    rw [haeval]
-    have hc' : x₂ * (↑y₂ : T) = (↑c : T) - x₁ * (↑y₁ : T) := by
-      have h := hc_eq
-      rw [h]
-      ring
-    convert hc'
-  have hx₂_Rbar : x₂ ∈ Rbar := ⟨hx₂_A₁, hx₂_A₂⟩
+  -- x₁ ∈ Rbar and x₂ ∈ Rbar via c = x₁y₁ + x₂y₂
+  obtain ⟨hx₁_Rbar, hx₂_Rbar⟩ : x₁ ∈ Rbar ∧ x₂ ∈ Rbar :=
+    mem_intersectionSet_of_linear_combination R x₁ x₂ y₁ y₂ c hc_eq
   have hx₁_S : x₁ ∈ S_sub := hRbar_le_S _ hx₁_Rbar
   have hx₂_S : x₂ ∈ S_sub := hRbar_le_S _ hx₂_Rbar
   -- S is local: elements outside M are units (their inverses lie in S via the a/b representation)
-  have hinv : ∀ (s : S_sub), (s : T) ∉ IsLocalRing.maximalIdeal T → IsUnit s := by
-    intro ⟨s, hs_mem⟩ hs_notM
-    have hs_carrier : s ∈ S_carrier := by rw [← hS_sub_eq]
-                                          exact hs_mem
-    obtain ⟨a, b, ha_Rbar, hb_Rbar, hb_notM, hsb_eq⟩ := hs_carrier
-    have hs_unit : IsUnit s := hunit s hs_notM
-    let s_inv : T := ↑(hs_unit.unit⁻¹ : Tˣ)
-    have hs_mul_inv : s * s_inv = 1 := hs_unit.mul_val_inv
-    have hs_inv_mul : s_inv * s = 1 := hs_unit.val_inv_mul
-    have ha_notM : a ∉ IsLocalRing.maximalIdeal T := by
-      rw [← hsb_eq]
-      exact hprod_notmem s b hs_notM hb_notM
-    have hs_inv_carrier : s_inv ∈ S_carrier := by
-      refine ⟨b, a, hb_Rbar, ha_Rbar, ha_notM, ?_⟩
-      calc s_inv * a = s_inv * (s * b) := by rw [hsb_eq]
-        _ = (s_inv * s) * b := by ring
-        _ = 1 * b := by rw [hs_inv_mul]
-        _ = b := one_mul b
-    have hs_inv_S : s_inv ∈ S_sub := by
-      change s_inv ∈ (S_sub : Set T)
-      rw [hS_sub_eq]
-      exact hs_inv_carrier
-    have hmul_one : (⟨s, hs_mem⟩ : S_sub) * ⟨s_inv, hs_inv_S⟩ = 1 :=
-      Subtype.ext hs_mul_inv
-    exact IsUnit.of_mul_eq_one _ hmul_one
+  have hinv : ∀ (s : S_sub), (s : T) ∉ IsLocalRing.maximalIdeal T → IsUnit s :=
+    isUnit_of_notMem_maximalIdeal_fractionSubring R x₁ x₂ y₁ y₂ S_sub hS_sub_eq
   have hLocal : IsLocalRing S_sub := by
     apply IsLocalRing.of_isUnit_or_isUnit_one_sub_self
     intro a
@@ -823,88 +928,12 @@ private def build_intersection_nsubring_proof
       refine ⟨fun h => ha_ne (Subtype.ext h), c.val, ?_, congrArg Subtype.val hab_eq⟩
       exact fun hcu_T => hc_nu (hinv c (IsLocalRing.notMem_maximalIdeal.mpr hcu_T))
     · exact InvImage.wf _ wellFounded_dvdNotUnit
-  have hS_mem_rep : ∀ s : S_sub,
-      ∃ (a b : T), a ∈ Rbar ∧ b ∈ Rbar ∧
-        b ∉ IsLocalRing.maximalIdeal T ∧ (s : T) * b = a := by
-    intro s
-    have := s.2
-    change s.1 ∈ (S_sub : Set T) at this
-    rw [hS_sub_eq] at this
-    exact this
-  have hRbar_inv_S : ∀ t : T, t ∈ Rbar → t ∉ IsLocalRing.maximalIdeal T →
-      ∃ (t_inv : T), t_inv ∈ (S_sub : Set T) ∧ t * t_inv = 1 := by
-    intro t ht ht_notM
-    have ht_unit := hunit t ht_notM
-    refine ⟨↑ht_unit.unit⁻¹, ?_, ht_unit.mul_val_inv⟩
-    rw [hS_sub_eq]
-    refine ⟨1, t, hRbar_one, ht, ht_notM, ?_⟩
-    rw [ht_unit.val_inv_mul]
   -- Rbar is closed under division by primes of R (key for building the UFD structure)
   have hR_prime_div_Rbar : ∀ (p : R.carrier), Prime p → ∀ t ∈ Rbar,
-      ∀ (d : T), t = (↑p : T) * d → d ∈ Rbar := by
-    intro p hp t ⟨ht_A1, ht_A2⟩ d htpd
-    have hcop := hcoprime p hp
-    push Not at hcop
-    constructor
-    · obtain ⟨f, n, hfn⟩ := ht_A1
-      have hpd_eq : (↑p : T) * (d * (↑y₂ : T) ^ n) = aeval x₁ f := by
-        rw [← hfn, htpd]
-        ring
-      -- If p | y₂, absorb extra y₂ into the polynomial; otherwise use mod-principal transcendence
-      by_cases hpy₂ : p ∣ y₂
-      · obtain ⟨q, hq⟩ := hpy₂
-        have hy₂_eq : (↑y₂ : T) = (↑p : T) * (↑q : T) := by
-          rw [hq]
-          simp
-        refine ⟨f * C q, n + 1, ?_⟩
-        have key : d * (↑y₂ : T) ^ (n + 1) = aeval x₁ f * (↑q : T) := by
-          have hpow : (↑y₂ : T) ^ (n + 1) = (↑y₂ : T) ^ n * ((↑p : T) * (↑q : T)) := by
-            rw [pow_succ, hy₂_eq]
-          rw [hpow]
-          have : d * ((↑y₂ : T) ^ n * ((↑p : T) * (↑q : T))) =
-              ((↑p : T) * (d * (↑y₂ : T) ^ n)) * (↑q : T) := by ring
-          rw [this, hpd_eq]
-        rw [key, map_mul, aeval_C,
-          show algebraMap R.carrier T = R.carrier.subtype from rfl, Subring.coe_subtype]
-      · suffices hCp_dvd : (C p : Polynomial R.carrier) ∣ f by
-          obtain ⟨g, hfg⟩ := hCp_dvd
-          have hr_ne : (↑p : T) ≠ 0 :=
-            fun h => hp.ne_zero (R.carrier.subtype_injective h)
-          refine ⟨g, n, mul_left_cancel₀ hr_ne ?_⟩
-          rw [hpd_eq, hfg, map_mul, aeval_C,
-            show algebraMap R.carrier T = R.carrier.subtype from rfl]
-          rfl
-        exact hx₁_mod_trans p hp hpy₂ f
-          (Ideal.mem_span_singleton.mpr ⟨d * (↑y₂ : T) ^ n, hpd_eq.symm⟩)
-    · obtain ⟨f, n, hfn⟩ := ht_A2
-      have hpd_eq : (↑p : T) * (d * (↑y₁ : T) ^ n) = aeval x₂ f := by
-        rw [← hfn, htpd]
-        ring
-      by_cases hpy₁ : p ∣ y₁
-      · obtain ⟨q, hq⟩ := hpy₁
-        have hy₁_eq : (↑y₁ : T) = (↑p : T) * (↑q : T) := by
-          rw [hq]
-          simp
-        refine ⟨f * C q, n + 1, ?_⟩
-        have key : d * (↑y₁ : T) ^ (n + 1) = aeval x₂ f * (↑q : T) := by
-          have hpow : (↑y₁ : T) ^ (n + 1) = (↑y₁ : T) ^ n * ((↑p : T) * (↑q : T)) := by
-            rw [pow_succ, hy₁_eq]
-          rw [hpow]
-          have : d * ((↑y₁ : T) ^ n * ((↑p : T) * (↑q : T))) =
-              ((↑p : T) * (d * (↑y₁ : T) ^ n)) * (↑q : T) := by ring
-          rw [this, hpd_eq]
-        rw [key, map_mul, aeval_C,
-          show algebraMap R.carrier T = R.carrier.subtype from rfl, Subring.coe_subtype]
-      · suffices hCp_dvd : (C p : Polynomial R.carrier) ∣ f by
-          obtain ⟨g, hfg⟩ := hCp_dvd
-          have hr_ne : (↑p : T) ≠ 0 :=
-            fun h => hp.ne_zero (R.carrier.subtype_injective h)
-          refine ⟨g, n, mul_left_cancel₀ hr_ne ?_⟩
-          rw [hpd_eq, hfg, map_mul, aeval_C,
-            show algebraMap R.carrier T = R.carrier.subtype from rfl]
-          rfl
-        exact hx₂_mod_trans p hp hpy₁ f
-          (Ideal.mem_span_singleton.mpr ⟨d * (↑y₁ : T) ^ n, hpd_eq.symm⟩)
+      ∀ (d : T), t = (↑p : T) * d → d ∈ Rbar :=
+    fun p hp t ht d htpd =>
+      ⟨adjoinLocSetY_div_prime R x₁ y₂ hx₁_mod_trans p hp t d ht.1 htpd,
+        adjoinLocSetY_div_prime R x₂ y₁ hx₂_mod_trans p hp t d ht.2 htpd⟩
   -- Primes of R remain prime in S, then build UFD structure on S
   have hR_prime_in_S := build_R_prime_in_S R x₁ x₂ y₁ y₂ S_sub
     hR_le hx₁_trans hx₂_trans hcoprime hS_sub_eq hR_prime_div_Rbar hinv
@@ -912,71 +941,8 @@ private def build_intersection_nsubring_proof
     build_ufd_proof R x₁ x₂ y₁ y₂ S_sub hR_le hcoprime hy₁ hy₂ hx₁_trans hx₂_trans
       hx₁_mod_trans hx₂_mod_trans hinv hR_prime_in_S hS_sub_eq hRbar_le_S hx₁_Rbar hx₂_Rbar
   -- Cardinality bound: |S| ≤ |Rbar|² ≤ max(aleph0, |R|) since S ↪ Rbar × Rbar via (a,b)
-  have hCard_S : Cardinal.mk S_sub ≤ max Cardinal.aleph0 (Cardinal.mk R.carrier) := by
-    have hALS_card : Cardinal.mk ↥(adjoinLocSetY R x₁ y₂) ≤
-        max Cardinal.aleph0 (Cardinal.mk R.carrier) := by
-      have hsub : (adjoinLocSetY R x₁ y₂ : Set T) ⊆
-          ⋃ (f : Polynomial R.carrier), {t : T | ∃ n : ℕ, t * (↑y₂ : T) ^ n = aeval x₁ f} := by
-        intro t ⟨f, n, h⟩
-        exact Set.mem_iUnion.mpr ⟨f, ⟨n, h⟩⟩
-      apply le_trans (Cardinal.mk_le_mk_of_subset hsub)
-      apply le_trans (Cardinal.mk_iUnion_le _)
-      calc Cardinal.mk (Polynomial R.carrier) *
-            ⨆ (f : Polynomial R.carrier), Cardinal.mk ↑{t : T | ∃ n : ℕ,
-              t * (↑y₂ : T) ^ n = aeval x₁ f}
-          ≤ max (Cardinal.mk R.carrier) Cardinal.aleph0 * Cardinal.aleph0 := by
-            gcongr
-            · exact Polynomial.cardinalMk_le_max
-            · apply ciSup_le'
-              intro f
-              apply Cardinal.mk_le_aleph0_iff.mpr
-              apply Set.Countable.to_subtype
-              apply (Set.countable_iUnion (fun (n : ℕ) =>
-                Set.Subsingleton.countable (fun (t₁ : T) (ht₁ : t₁ * (↑y₂ : T) ^ n = aeval x₁ f)
-                  (t₂ : T) (ht₂ : t₂ * (↑y₂ : T) ^ n = aeval x₁ f) =>
-                  mul_right_cancel₀ (pow_ne_zero n hy₂) (ht₁.trans ht₂.symm)))).mono
-              intro t ⟨n, hn⟩
-              exact Set.mem_iUnion.mpr ⟨n, hn⟩
-        _ = max (Cardinal.mk R.carrier) Cardinal.aleph0 :=
-            Cardinal.mul_aleph0_eq (le_max_right _ _)
-        _ = max Cardinal.aleph0 (Cardinal.mk R.carrier) := max_comm _ _
-    have hRbar_card : Cardinal.mk ↥Rbar ≤ max Cardinal.aleph0 (Cardinal.mk R.carrier) :=
-      le_trans (Cardinal.mk_le_of_injective
-        (Set.inclusion_injective (Set.inter_subset_left))) hALS_card
-    have hf : Function.Injective (fun (s : S_sub) =>
-        Prod.mk
-          (⟨(hS_sub_eq ▸ s.2 : s.val ∈ S_carrier).choose,
-            (hS_sub_eq ▸ s.2 : s.val ∈ S_carrier).choose_spec.choose_spec.1⟩ : ↥Rbar)
-          (⟨(hS_sub_eq ▸ s.2 : s.val ∈ S_carrier).choose_spec.choose,
-            (hS_sub_eq ▸ s.2 : s.val ∈ S_carrier).choose_spec.choose_spec.2.1⟩ : ↥Rbar)) := by
-      intro s₁ s₂ heq
-      simp only [Prod.mk.injEq, Subtype.mk.injEq] at heq
-      obtain ⟨ha_eq, hb_eq⟩ := heq
-      have h₁ := (hS_sub_eq ▸ s₁.2 : s₁.val ∈ S_carrier).choose_spec.choose_spec
-      have h₂ := (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose_spec
-      have key : s₁.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose =
-                 s₂.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose := by
-        calc s₁.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose
-            = s₁.val * (hS_sub_eq ▸ s₁.2 : s₁.val ∈ S_carrier).choose_spec.choose := by rw [← hb_eq]
-          _ = (hS_sub_eq ▸ s₁.2 : s₁.val ∈ S_carrier).choose := h₁.2.2.2
-          _ = (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose := ha_eq
-          _ = s₂.val * (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose := h₂.2.2.2.symm
-      have hb_ne : (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose ≠ (0 : T) := by
-        intro hb0
-        exact h₂.2.2.1 (hb0 ▸ Ideal.zero_mem _)
-      have hsub : (s₁.val - s₂.val) *
-          (hS_sub_eq ▸ s₂.2 : s₂.val ∈ S_carrier).choose_spec.choose = 0 := by
-        rw [sub_mul, key, sub_self]
-      exact Subtype.ext (sub_eq_zero.mp
-        ((mul_eq_zero.mp hsub).resolve_right hb_ne))
-    calc Cardinal.mk S_sub
-        ≤ Cardinal.mk (↥Rbar × ↥Rbar) := Cardinal.mk_le_of_injective hf
-      _ = Cardinal.mk ↥Rbar * Cardinal.mk ↥Rbar := (Cardinal.mul_def _ _).symm
-      _ ≤ max Cardinal.aleph0 (Cardinal.mk R.carrier) *
-            max Cardinal.aleph0 (Cardinal.mk R.carrier) :=
-          mul_le_mul' hRbar_card hRbar_card
-      _ = max Cardinal.aleph0 (Cardinal.mk R.carrier) :=
-          Cardinal.mul_eq_self (le_max_left _ _)
+  have hCard_S : Cardinal.mk S_sub ≤ max Cardinal.aleph0 (Cardinal.mk R.carrier) :=
+    card_fractionSubring_le R x₁ x₂ y₁ y₂ hy₂ S_sub hS_sub_eq
   have hcard : Cardinal.mk S_sub ≤
       max Cardinal.aleph0 (Cardinal.mk (IsLocalRing.ResidueField T)) := by
     calc Cardinal.mk S_sub
@@ -1018,37 +984,7 @@ private def build_intersection_nsubring_proof
         hmax_eq hS_sub_eq hR_prime_div_Rbar
     card_le := hCard_S
   }
-⟩
 
-omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
-include T in theorem build_intersection_nsubring
-    (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier) (c : R.carrier)
-    (hc_eq : (↑c : T) = x₁ * ↑y₁ + x₂ * ↑y₂)
-    (hx₁_trans : Transcendental R.carrier x₁)
-    (hx₂_trans : Transcendental R.carrier x₂)
-    (hcoprime : ∀ p : R.carrier, Prime p → ¬(p ∣ y₁ ∧ p ∣ y₂))
-    (hy₁ : (↑y₁ : T) ≠ 0) (hy₂ : (↑y₂ : T) ≠ 0)
-    (_hM_ne_bot : IsLocalRing.maximalIdeal T ≠ ⊥)
-    (hM_not_assoc : ∀ (r : T), r ≠ 0 →
-      IsLocalRing.maximalIdeal T ∉ associatedPrimes T (T ⧸ Ideal.span {r}))
-    (hAss_ht : ∀ (r : T), r ≠ 0 →
-      ∀ P ∈ associatedPrimes T (T ⧸ Ideal.span {r}), P.height ≤ 1)
-    (_hR_card : Cardinal.mk R.carrier < Cardinal.mk T)
-    (_hT_card : Cardinal.mk T = Cardinal.mk (IsLocalRing.ResidueField T))
-    (hx₁_ker : ∀ (P : Ideal T), P.IsPrime → P ≠ ⊤ → P.height ≤ 1 → (↑y₂ : T) ∉ P →
-      ∀ (p : R.carrier), Prime p → (↑p : T) ∈ P →
-      ∀ (f : Polynomial R.carrier),
-        aeval x₁ f ∈ P → (C p : Polynomial R.carrier) ∣ f)
-    (hx₂_ker : ∀ (P : Ideal T), P.IsPrime → P ≠ ⊤ → P.height ≤ 1 → (↑y₁ : T) ∉ P →
-      ∀ (p : R.carrier), Prime p → (↑p : T) ∈ P →
-      ∀ (f : Polynomial R.carrier),
-        aeval x₂ f ∈ P → (C p : Polynomial R.carrier) ∣ f) :
-    ∃ S : NSubring T, IsAExtension R S ∧ x₁ ∈ S.carrier ∧ x₂ ∈ S.carrier := by
-  exact
-    (build_intersection_nsubring_proof
-      R x₁ x₂ y₁ y₂ c hc_eq hx₁_trans hx₂_trans hcoprime hy₁ hy₂ _hM_ne_bot hM_not_assoc
-      hAss_ht _hR_card _hT_card hx₁_ker hx₂_ker
-    ).down
 end MainTheorem
 
 end

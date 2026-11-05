@@ -38,7 +38,8 @@ section KernelEvalₐ
 variable (I : Ideal R)
 
 /- `(map f I)ⁿ ⊆ ker(evalₐ I n)`: elements from I^n evaluate to zero. -/
-include R in lemma map_pow_le_ker_evalₐ (n : ℕ) :
+include R in
+lemma map_pow_le_ker_evalₐ (n : ℕ) :
     Ideal.map (algebraMap R (AdicCompletion I R)) (I ^ n) ≤
     RingHom.ker (AdicCompletion.evalₐ I n).toRingHom := by
   rw [Ideal.map_le_iff_le_comap]
@@ -49,7 +50,8 @@ include R in lemma map_pow_le_ker_evalₐ (n : ℕ) :
   exact Ideal.Quotient.eq_zero_iff_mem.mpr hr
 
 /- `ker(evalₐ M n) = M̂ⁿ` for Noetherian local R. -/
-include R in lemma ker_evalₐ_eq [IsLocalRing R] [IsNoetherianRing R] (n : ℕ) :
+include R in
+lemma ker_evalₐ_eq [IsLocalRing R] [IsNoetherianRing R] (n : ℕ) :
     RingHom.ker (evalₐ (IsLocalRing.maximalIdeal R) n).toRingHom =
     Ideal.map (algebraMap R (AdicCompletion (IsLocalRing.maximalIdeal R) R))
       (IsLocalRing.maximalIdeal R) ^ n := by
@@ -61,7 +63,8 @@ include R in lemma ker_evalₐ_eq [IsLocalRing R] [IsNoetherianRing R] (n : ℕ)
     exact map_pow_le_ker_evalₐ (IsLocalRing.maximalIdeal R) n
 
 /- Evaluations are stable along Cauchy sequences. -/
-include R in lemma eval_cauchy_stable (f : ℕ → AdicCompletion I R)
+include R in
+lemma eval_cauchy_stable (f : ℕ → AdicCompletion I R)
     (hf : ∀ {m n : ℕ}, m ≤ n →
       SModEq (I ^ m • (⊤ : Submodule R (AdicCompletion I R))) (f m) (f n))
     {k n : ℕ} (hkn : k ≤ n) :
@@ -73,7 +76,8 @@ include R in lemma eval_cauchy_stable (f : ℕ → AdicCompletion I R)
   exact this.symm
 
 /- `factorPow ∘ evalₐ n = evalₐ m` for m ≤ n. -/
-include R in lemma factorPow_comp_evalₐ_noeth {m n : ℕ} (hmn : m ≤ n) (x : AdicCompletion I R) :
+include R in
+lemma factorPow_comp_evalₐ_noeth {m n : ℕ} (hmn : m ≤ n) (x : AdicCompletion I R) :
     Ideal.Quotient.factorPow I hmn (evalₐ I n x) = evalₐ I m x := by
   apply induction_on I R
     (p := fun x => Ideal.Quotient.factorPow I hmn (evalₐ I n x) = evalₐ I m x) x
@@ -142,7 +146,8 @@ noncomputable def buildAdicSeq {α : Type*} {P : ℕ → α → Prop}
   fun K => Nat.rec base (fun K prev => step K prev) K
 
 /- Auxiliary: M * FN(n) ≤ FN(n+1) for the leading-term filtration FN. -/
-omit [IsLocalRing R] [IsNoetherianRing R] in lemma filtration_smul_le
+omit [IsLocalRing R] [IsNoetherianRing R] in
+lemma filtration_smul_le
     (Mi : Ideal R) (J : Ideal (AdicCompletion Mi R))
     (FN : ℕ → Ideal R)
     (hFN_def : ∀ n, FN n = Mi ^ n ⊓ Ideal.comap (Ideal.Quotient.mk (Mi ^ (n + 1)))
@@ -197,7 +202,8 @@ omit [IsLocalRing R] [IsNoetherianRing R] in lemma filtration_smul_le
     exact Ideal.mul_mem_mul hm hs
 
 /- Auxiliary: the shared coefficient-matching step for a single smul generator. -/
-omit [IsLocalRing R] [IsNoetherianRing R] in lemma evalₐ_mk_smul_eq
+omit [IsLocalRing R] [IsNoetherianRing R] in
+lemma evalₐ_mk_smul_eq
     (Mi : Ideal R) (n0 K : ℕ) (m s : R) (hm : m ∈ (Mi ^ K : Ideal R))
     (δ_s : AdicCompletion Mi R)
     (hδ_s_eq : evalₐ Mi (n0 + 1) δ_s = Ideal.Quotient.mk (Mi ^ (n0 + 1)) s) :
@@ -251,7 +257,8 @@ omit [IsLocalRing R] [IsNoetherianRing R] in lemma smul_lift_of_filtration
     exact ⟨δa + δb, I₀.add_mem hδaI hδbI, by rw [map_add, hδaeq, hδbeq, map_add]⟩
 
 /- Auxiliary: per-generator coefficient decomposition for r' ∈ Mi^K • FN_n0. -/
-omit [IsLocalRing R] [IsNoetherianRing R] in lemma coeff_decomp_of_smul
+omit [IsLocalRing R] [IsNoetherianRing R] in
+lemma coeff_decomp_of_smul
     (Mi : Ideal R)
     (n0 K : ℕ)
     (FN_n0 : Ideal R)
@@ -293,7 +300,8 @@ omit [IsLocalRing R] [IsNoetherianRing R] in lemma coeff_decomp_of_smul
     rw [hexp, map_add, hcaeq, hcbeq, map_add]
 
 /- Auxiliary: extract a representative r ∈ Mi^K • FN_n0 from e ∈ Mhat^(n0+K) ∩ J. -/
-omit [IsLocalRing R] [IsNoetherianRing R] in lemma extract_filtration_rep
+omit [IsLocalRing R] [IsNoetherianRing R] in
+lemma extract_filtration_rep
     (Mi : Ideal R) (J : Ideal (AdicCompletion Mi R))
     (FN : ℕ → Ideal R) (n0 K : ℕ)
     (hFN_def : ∀ n, FN n = Mi ^ n ⊓ Ideal.comap (Ideal.Quotient.mk (Mi ^ (n + 1)))
@@ -326,9 +334,170 @@ omit [IsLocalRing R] [IsNoetherianRing R] in lemma extract_filtration_rep
   refine ⟨r, ?_, hr_eq.symm⟩
   simpa only [hn0_pow] using hr_FN
 
+omit [IsLocalRing R] [IsNoetherianRing R] in
+/-- Membership in `M̂ᴷ` is membership in `Mᴷ • ⊤` for the adic completion. -/
+private theorem mem_map_pow_iff_mem_pow_smul_top (Mi : Ideal R) (K : ℕ)
+    (z : AdicCompletion Mi R) :
+    z ∈ Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi ^ K ↔
+      z ∈ Mi ^ K • (⊤ : Submodule R (AdicCompletion Mi R)) := by
+  rw [Ideal.smul_top_eq_map, ← Ideal.map_pow, Submodule.restrictScalars_mem]
+
+omit [IsLocalRing R] [IsNoetherianRing R] in
+/-- A sequence whose consecutive differences lie in `M̂ᴷ` is adically Cauchy. -/
+private theorem smodEq_of_consecutive_differences (Mi : Ideal R)
+    (f : ℕ → AdicCompletion Mi R)
+    (hf : ∀ K, f (K + 1) - f K ∈ Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi ^ K)
+    {m n : ℕ} (hmn : m ≤ n) :
+    f m ≡ f n [SMOD (Mi ^ m • (⊤ : Submodule R (AdicCompletion Mi R)))] := by
+  rw [SModEq.sub_mem, ← mem_map_pow_iff_mem_pow_smul_top R Mi]
+  set Mhat := Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hmn
+  induction d with
+  | zero => simp [sub_self, (Mhat ^ m).zero_mem]
+  | succ d ih =>
+    rw [show m + (d + 1) = (m + d) + 1 from by omega]
+    have hsplit : f m - f ((m + d) + 1) =
+        (f m - f (m + d)) + -(f ((m + d) + 1) - f (m + d)) := by abel
+    rw [hsplit]
+    exact (Mhat ^ m).add_mem (ih (Nat.le_add_right m d))
+      ((Mhat ^ m).neg_mem (Ideal.pow_le_pow_right (Nat.le_add_right m d) (hf (m + d))))
+
+omit [IsLocalRing R] [IsNoetherianRing R] in
+/-- Lifts to `I₀` of the generators of `span S` give lifts of every element of `span S`. -/
+private theorem lift_span_of_generators (Mi : Ideal R) (n : ℕ) (S : Finset R)
+    (I₀ : Ideal (AdicCompletion Mi R))
+    (hgen : ∀ r ∈ S, ∃ δ : AdicCompletion Mi R, δ ∈ I₀ ∧
+      evalₐ Mi n δ = Ideal.Quotient.mk (Mi ^ n) r)
+    (t : R) (ht : t ∈ (Ideal.span ↑S : Ideal R)) :
+    ∃ δ : AdicCompletion Mi R, δ ∈ I₀ ∧ evalₐ Mi n δ = Ideal.Quotient.mk (Mi ^ n) t := by
+  refine Submodule.closure_induction
+    (p := fun t _ => ∃ δ : AdicCompletion Mi R, δ ∈ I₀ ∧
+      evalₐ Mi n δ = Ideal.Quotient.mk (Mi ^ n) t)
+    ?_ ?_ ?_ ht
+  · exact ⟨0, I₀.zero_mem, by simp⟩
+  · intro _ _ _ _ ⟨δ1, hδ1I, hδ1eq⟩ ⟨δ2, hδ2I, hδ2eq⟩
+    exact ⟨δ1 + δ2, I₀.add_mem hδ1I hδ2I, by rw [map_add, hδ1eq, hδ2eq, map_add]⟩
+  · intro c s hs_mem
+    obtain ⟨δ, hδI, hδeq⟩ := hgen s (Finset.mem_coe.mp hs_mem)
+    exact ⟨of Mi R c * δ, I₀.mul_mem_left _ hδI, by
+      simp only [map_mul, evalₐ_of, hδeq, smul_eq_mul]⟩
+
+omit [IsLocalRing R] [IsNoetherianRing R] in
+/-- If `I₀` has the same image as `J` modulo `M̂ⁿ`, then `J ≤ I₀ ⊔ M̂ⁿ`. -/
+private theorem mem_sup_pow_of_map_evalₐ_le (Mi : Ideal R)
+    (J I₀ : Ideal (AdicCompletion Mi R)) (n : ℕ)
+    (hker : RingHom.ker (evalₐ Mi n).toRingHom =
+      Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi ^ n)
+    (hle : Ideal.map (evalₐ Mi n).toRingHom J ≤ Ideal.map (evalₐ Mi n).toRingHom I₀)
+    (x : AdicCompletion Mi R) (hx : x ∈ J) :
+    x ∈ I₀ ⊔ Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi ^ n := by
+  obtain ⟨y, hy, hyx⟩ := (Ideal.mem_map_iff_of_surjective _
+    (surjective_evalₐ Mi n)).mp (hle (Ideal.mem_map_of_mem _ hx))
+  refine Submodule.mem_sup.mpr ⟨y, hy, x - y, ?_, by abel⟩
+  rw [← hker, RingHom.mem_ker, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom,
+    map_sub, sub_eq_zero]
+  exact hyx.symm
+
+omit [IsLocalRing R] [IsNoetherianRing R] in
+/-- Successive approximation (Atiyah–Macdonald Prop. 10.11 / Matsumura Thm. 8.1): if every
+`e ∈ J ∩ M̂^(n0 + K)` can be corrected modulo `M̂^(n0 + K + 1)` by a combination of `genS`
+with coefficients in `M̂ᴷ`, then every `z ∈ J ∩ M̂^n0` is a combination of `genS`. -/
+private theorem exists_coefficients_of_successive_approximation (Mi : Ideal R)
+    (hprec : IsPrecomplete Mi (AdicCompletion Mi R))
+    (J : Ideal (AdicCompletion Mi R)) (genS : Finset (AdicCompletion Mi R)) (n0 : ℕ)
+    (hstep_coeff : ∀ K (e : AdicCompletion Mi R),
+      e ∈ Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi ^ (n0 + K) → e ∈ J →
+      ∃ c : AdicCompletion Mi R → AdicCompletion Mi R,
+        (∀ g, g ∈ genS → c g ∈ Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi ^ K) ∧
+        e - Finset.sum genS (fun g => c g * g) ∈
+          Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi ^ (n0 + (K + 1)))
+    (hsum_J : ∀ d : AdicCompletion Mi R → AdicCompletion Mi R,
+      Finset.sum genS (fun g => d g * g) ∈ J)
+    (z : AdicCompletion Mi R)
+    (hz : z ∈ Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi ^ n0) (hzJ : z ∈ J) :
+    ∃ c : AdicCompletion Mi R → AdicCompletion Mi R,
+      z = Finset.sum genS (fun g => c g * g) := by
+  classical
+  set Mhat := Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi
+  let sumG (f : AdicCompletion Mi R → AdicCompletion Mi R) :=
+    Finset.sum genS (fun g => f g * g)
+  -- Build the recursive coefficient sequence via `buildAdicSeq`.
+  let CSDPred (K : ℕ) (c : AdicCompletion Mi R → AdicCompletion Mi R) :=
+    (z - sumG c) ∈ Mhat ^ (n0 + K) ∧ (z - sumG c) ∈ J
+  have hsum_zero : sumG (fun _ => (0 : AdicCompletion Mi R)) = 0 := by
+    simp only [sumG, zero_mul, Finset.sum_const_zero]
+  have csd0 : { c // CSDPred 0 c } := ⟨fun _ => 0, by
+    constructor
+    · simpa only [hsum_zero, sub_zero, Nat.add_zero] using hz
+    · show z - sumG (fun _ => 0) ∈ _
+      rw [hsum_zero, sub_zero]
+      exact hzJ⟩
+  let csdS : ∀ K, { c // CSDPred K c } → { c // CSDPred (K + 1) c } :=
+    fun K ⟨c_K, hMK, hJK⟩ =>
+    let d := (hstep_coeff K _ hMK hJK).choose
+    let hd := (hstep_coeff K _ hMK hJK).choose_spec
+    ⟨fun g => c_K g + d g, by
+      have hsplit : Finset.sum genS (fun g => (c_K g + d g) * g) =
+          sumG c_K + sumG d := by
+        simp only [sumG, add_mul, Finset.sum_add_distrib]
+      have hrw : z - Finset.sum genS (fun g => (c_K g + d g) * g) =
+          (z - sumG c_K) - sumG d := by
+        rw [hsplit]
+        abel
+      exact ⟨by rw [hrw]
+                exact hd.2,
+        by rw [hrw]
+           exact J.sub_mem hJK (hsum_J d)⟩⟩
+  let csdAll := buildAdicSeq csd0 csdS
+  let pc : ℕ → AdicCompletion Mi R → AdicCompletion Mi R := fun K => (csdAll K).1
+  -- Per-step bound: pc(K+1)(g) - pc(K)(g) ∈ Mhat^K
+  have hpc_diff : ∀ K g, g ∈ genS →
+      pc (K + 1) g - pc K g ∈ Mhat ^ K := by
+    intro K g hg
+    have hcs := hstep_coeff K _ (csdAll K).2.1 (csdAll K).2.2
+    have hcsBound : ∀ g, g ∈ genS → hcs.choose g ∈ Mhat ^ K := hcs.choose_spec.1
+    change (csdS K (csdAll K)).val g - (csdAll K).val g ∈ Mhat ^ K
+    have key : ∀ (dat : { c // CSDPred K c }),
+        (csdS K dat).val g - dat.val g =
+        (hstep_coeff K _ dat.2.1 dat.2.2).choose g := by
+      intro ⟨c_K, _, _⟩
+      simp only [csdS, add_sub_cancel_left]
+    rw [key]
+    exact hcsBound g hg
+  -- Per-generator limits via IsPrecomplete
+  have hpc_lim : ∀ g, g ∈ genS →
+      ∃ cg, ∀ n,
+        pc n g ≡ cg [SMOD (Mi ^ n • ⊤ :
+          Submodule R (AdicCompletion Mi R))] :=
+    fun g hg => IsPrecomplete.prec hprec
+      (smodEq_of_consecutive_differences R Mi (fun K => pc K g) (fun K => hpc_diff K g hg))
+  let cLim : AdicCompletion Mi R → AdicCompletion Mi R :=
+    fun g => if hg : g ∈ genS then (hpc_lim g hg).choose else 0
+  have hcLim_spec : ∀ g, g ∈ genS → ∀ n,
+      pc n g ≡ cLim g [SMOD (Mi ^ n • ⊤ : Submodule R (AdicCompletion Mi R))] := by
+    intro g hg n
+    simpa only [cLim, dite_eq_left hg] using (hpc_lim g hg).choose_spec n
+  -- z = ∑ cLim(g) * g by Hausdorff
+  refine ⟨cLim, ?_⟩
+  apply (IsHausdorff.eq_iff_smodEq (I := Mi) (M := AdicCompletion Mi R)).mpr
+  intro n
+  rw [SModEq.sub_mem, ← mem_map_pow_iff_mem_pow_smul_top R Mi]
+  have hsplit : z - Finset.sum genS (fun g => cLim g * g) =
+      (z - Finset.sum genS (fun g => pc n g * g)) +
+        Finset.sum genS (fun g => (pc n g - cLim g) * g) := by
+    simp only [sub_mul, Finset.sum_sub_distrib]
+    abel
+  rw [hsplit]
+  apply (Mhat ^ n).add_mem
+  · exact Ideal.pow_le_pow_right (Nat.le_add_left n n0) (csdAll n).2.1
+  · exact Ideal.sum_mem _ (fun g hg => Ideal.mul_mem_right _ _
+      (by
+         rw [mem_map_pow_iff_mem_pow_smul_top R Mi]
+         exact SModEq.sub_mem.mp (hcLim_spec g hg n)))
+
 /-- Every ideal of the adic completion of a Noetherian local ring is finitely generated. -/
-private def adicCompletion_ideal_fg_proof : PLift (
-    ∀ J : Ideal (AdicCompletion (IsLocalRing.maximalIdeal R) R), J.FG ) := ⟨by
+private theorem adicCompletion_ideal_fg :
+    ∀ J : Ideal (AdicCompletion (IsLocalRing.maximalIdeal R) R), J.FG := by
   set Mi := IsLocalRing.maximalIdeal R
   intro J
   have hJ_img_fg : forall n, (Ideal.map (evalₐ Mi n).toRingHom J).FG := fun n =>
@@ -399,333 +568,87 @@ private def adicCompletion_ideal_fg_proof : PLift (
       obtain ⟨r, hr, rfl⟩ := hz
       simpa only [dite_eq_left hr, SetLike.mem_coe] using hlF_mem r hr
   refine ⟨genJ ∪ genF, le_antisymm hI0_le_J ?_⟩
-  · -- HARD DIRECTION: J ≤ Ideal.span ↑(genJ ∪ genF)
-    -- It suffices to show ∀ x ∈ J, ∀ N, x ∈ I₀ + M̂^N, then conclude by Hausdorff.
-    -- Successive approximation (Atiyah-Macdonald Prop 10.11 / Matsumura Thm 8.1).
-    set Mhat := Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi
-    have hker_eq : ∀ N, RingHom.ker (evalₐ Mi N).toRingHom = Mhat ^ N :=
-      fun N => ker_evalₐ_eq N
-    have hgenJ_sub : ∀ a ∈ S_J, (if h : a ∈ S_J then lJ a h else 0) ∈ I₀ := by
+  -- HARD DIRECTION: J ≤ Ideal.span ↑(genJ ∪ genF), by successive approximation
+  -- (Atiyah-Macdonald Prop 10.11 / Matsumura Thm 8.1) and Hausdorffness.
+  set Mhat := Ideal.map (algebraMap R (AdicCompletion Mi R)) Mi
+  have hker_eq : ∀ N, RingHom.ker (evalₐ Mi N).toRingHom = Mhat ^ N :=
+    fun N => ker_evalₐ_eq N
+  have hgenJ_sub : ∀ a ∈ S_J, (if h : a ∈ S_J then lJ a h else 0) ∈ I₀ := by
+    intro a ha
+    exact Ideal.subset_span (Finset.mem_coe.mpr
+      (Finset.mem_union_left _ (Finset.mem_image.mpr ⟨a, ha, rfl⟩)))
+  have hgenF_sub : ∀ r ∈ S_F, (if h : r ∈ S_F then lF r h else 0) ∈ I₀ := by
+    intro r hr
+    exact Ideal.subset_span (Finset.mem_coe.mpr
+      (Finset.mem_union_right _ (Finset.mem_image.mpr ⟨r, hr, rfl⟩)))
+  have hlift_span : ∀ t : R, t ∈ (Ideal.span ↑S_F : Ideal R) →
+      ∃ δ : AdicCompletion Mi R, δ ∈ I₀ ∧
+      evalₐ Mi (n0 + 1) δ = Ideal.Quotient.mk (Mi ^ (n0 + 1)) t :=
+    lift_span_of_generators R Mi (n0 + 1) S_F I₀ fun r hr =>
+      ⟨_, hgenF_sub r hr, by simpa only [dite_eq_left hr] using hlF_eq r hr⟩
+  -- Base approximation: J ≤ I₀ ⊔ Mhat^n0, since I₀ and J have the same image mod Mhat^n0.
+  have hI0_surj : Ideal.map (evalₐ Mi n0).toRingHom I₀ = Ideal.span ↑S_J := by
+    apply le_antisymm
+    · rw [Ideal.map_span]
+      apply Ideal.span_le.mpr
       intro a ha
-      exact Ideal.subset_span (Finset.mem_coe.mpr
-        (Finset.mem_union_left _ (Finset.mem_image.mpr ⟨a, ha, rfl⟩)))
-    have hgenF_sub : ∀ r ∈ S_F, (if h : r ∈ S_F then lF r h else 0) ∈ I₀ := by
-      intro r hr
-      exact Ideal.subset_span (Finset.mem_coe.mpr
-        (Finset.mem_union_right _ (Finset.mem_image.mpr ⟨r, hr, rfl⟩)))
-    have hlift_span : ∀ t : R, t ∈ (Ideal.span ↑S_F : Ideal R) →
-        ∃ δ : AdicCompletion Mi R, δ ∈ I₀ ∧
-        evalₐ Mi (n0 + 1) δ = Ideal.Quotient.mk (Mi ^ (n0 + 1)) t := by
-      intro t ht
-      refine Submodule.closure_induction
-        (p := fun t _ => ∃ δ : AdicCompletion Mi R, δ ∈ I₀ ∧
-          evalₐ Mi (n0 + 1) δ = Ideal.Quotient.mk (Mi ^ (n0 + 1)) t)
-        ?_ ?_ ?_ ht
-      · -- zero
-        exact ⟨0, I₀.zero_mem, by simp⟩
-      · -- add
-        intro _ _ _ _ ⟨δ1, hδ1I, hδ1eq⟩ ⟨δ2, hδ2I, hδ2eq⟩
-        exact ⟨δ1 + δ2, I₀.add_mem hδ1I hδ2I, by rw [map_add, hδ1eq, hδ2eq, map_add]⟩
-      · -- smul_mem: r • t with t ∈ S_F
-        intro c t ht_mem
-        have ht_fin : t ∈ S_F := Finset.mem_coe.mp ht_mem
-        refine ⟨of Mi R c * (if h : t ∈ S_F then lF t h else 0),
-          I₀.mul_mem_left _ (hgenF_sub t ht_fin), ?_⟩
-        simp only [map_mul, evalₐ_of, dite_eq_left ht_fin, hlF_eq, smul_eq_mul]
-    -- Phase 1: ∀ K x ∈ J, x ∈ I₀ ⊔ Mhat^(n0 + K)
-    suffices hphase1 : ∀ (K : ℕ) (x : AdicCompletion Mi R), x ∈ J →
-        x ∈ I₀ ⊔ Mhat ^ (n0 + K) by
-      -- Phase 2: Conclude J ≤ I₀
-      intro x hx
-      have happrox : ∀ N, x ∈ I₀ ⊔ Mhat ^ N := by
-        intro N
-        by_cases hN : n0 ≤ N
-        · obtain ⟨K, rfl⟩ := Nat.exists_eq_add_of_le hN
-          exact hphase1 K x hx
-        · push Not at hN
-          have h0 := hphase1 0 x hx
-          rw [Nat.add_zero] at h0
-          exact sup_le_sup_left (Ideal.pow_le_pow_right (by omega)) I₀ h0
-      -- Phase 2: show x ∈ I₀ via coefficient tracking + IsPrecomplete + IsHausdorff.
-      have hstep : ∀ K (e : AdicCompletion Mi R),
-          e ∈ Mhat ^ (n0 + K) → e ∈ J →
-          ∃ (δ : AdicCompletion Mi R), δ ∈ I₀ ∧ δ ∈ Mhat ^ K ∧
-          e - δ ∈ Mhat ^ (n0 + (K + 1)) := by
-        intro K e he heJ
-        obtain ⟨r, hr_in_smul, hr_eq⟩ := extract_filtration_rep R Mi J FN n0 K
-          hFN_def (F_filt.N n0) (fun K => (hn0_pow K).symm) Mhat hker_eq e he heJ
-        obtain ⟨δ, hδI, hδeq⟩ := smul_lift_of_filtration R Mi n0 K
-          (FN n0) S_F hS_F I₀ hlift_span r hr_in_smul
-        refine ⟨δ, hδI, ?_, ?_⟩
-        · have he_K : e ∈ Mhat ^ K := Ideal.pow_le_pow_right (Nat.le_add_left K n0) he
-          have herr : e - δ ∈ Mhat ^ (n0 + (K + 1)) := by
-            rw [show n0 + (K + 1) = n0 + K + 1 from by omega, ← hker_eq,
-              RingHom.mem_ker, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom,
-              map_sub, hδeq, ← hr_eq, sub_self]
-          have : δ = e - (e - δ) := by abel
-          rw [this]
-          exact (Mhat ^ K).sub_mem he_K (Ideal.pow_le_pow_right (by omega) herr)
-        · rw [show n0 + (K + 1) = n0 + K + 1 from by omega, ← hker_eq,
-              RingHom.mem_ker, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom,
-              map_sub, hδeq, ← hr_eq, sub_self]
-      -- Step 2: Build approximation sequence via Nat.rec on Sigma type.
-      obtain ⟨y₀, hy₀, e₀, he₀, hxye₀⟩ := Submodule.mem_sup.mp (hphase1 0 x hx)
-      rw [Nat.add_zero] at he₀
-      have he₀sub : x - y₀ ∈ Mhat ^ n0 := by
-        rwa [eq_sub_of_add_eq' hxye₀] at he₀
-      let SeqPred (K : ℕ) (y : AdicCompletion Mi R) :=
-        y ∈ I₀ ∧ x - y ∈ Mhat ^ (n0 + K) ∧ x - y ∈ J
-      have baseData : { y // SeqPred 0 y } :=
-        ⟨y₀, hy₀, by rwa [Nat.add_zero], J.sub_mem hx (hI0_le_J hy₀)⟩
-      have stepData : ∀ K, { y // SeqPred K y } → { y // SeqPred (K + 1) y } :=
-        fun K ⟨y_K, hy_K_I, hy_K_err, hy_K_J⟩ =>
-        let hexists := hstep K (x - y_K) hy_K_err hy_K_J
-        let δ := hexists.choose
-        let hδ := hexists.choose_spec
-        ⟨y_K + δ, I₀.add_mem hy_K_I hδ.1,
-          by rw [show x - (y_K + δ) = (x - y_K) - δ from by abel]
-             exact hδ.2.2,
-          J.sub_mem hx (hI0_le_J (I₀.add_mem hy_K_I hδ.1))⟩
-      let seqAll := buildAdicSeq baseData stepData
-      set ySeq : ℕ → AdicCompletion Mi R := fun K => (seqAll K).1
-      have hySeq_I₀ : ∀ K, ySeq K ∈ I₀ := fun K => (seqAll K).2.1
-      have hySeq_err : ∀ K, x - ySeq K ∈ Mhat ^ (n0 + K) := fun K => (seqAll K).2.2.1
-      have hySeq_diff : ∀ K, ySeq (K + 1) - ySeq K ∈ Mhat ^ K := by
-        intro K
-        have h1 := hySeq_err K
-        have h2 := hySeq_err (K + 1)
-        have hsub : ySeq (K + 1) - ySeq K = (x - ySeq K) - (x - ySeq (K + 1)) := by abel
-        rw [hsub]
-        apply (Mhat ^ K).sub_mem
-        · exact Ideal.pow_le_pow_right (Nat.le_add_left K n0) h1
-        · exact Ideal.pow_le_pow_right (by omega) h2
-      have hMhat_mem_smul : ∀ K (z : AdicCompletion Mi R),
-          z ∈ Mhat ^ K ↔ z ∈ Mi ^ K • (⊤ : Submodule R (AdicCompletion Mi R)) := by
-        intro K z
-        rw [Ideal.smul_top_eq_map, ← Ideal.map_pow, Submodule.restrictScalars_mem]
-      -- Step 3: ySeq is Cauchy in the Mi-adic topology
-      have hySeq_cauchy : ∀ {m n : ℕ}, m ≤ n →
-          ySeq m ≡ ySeq n [SMOD (Mi ^ m • (⊤ : Submodule R (AdicCompletion Mi R)))] := by
-        intro m n hmn
-        rw [SModEq.sub_mem, ← hMhat_mem_smul]
-        obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hmn
-        induction d with
-        | zero => simp [sub_self, (Mhat ^ m).zero_mem]
-        | succ d ih =>
-          rw [show m + (d + 1) = (m + d) + 1 from by omega]
-          have hsplit : ySeq m - ySeq ((m + d) + 1) =
-            (ySeq m - ySeq (m + d)) + -(ySeq ((m + d) + 1) - ySeq (m + d)) := by abel
-          rw [hsplit]
-          exact (Mhat ^ m).add_mem (ih (Nat.le_add_right m d))
-            ((Mhat ^ m).neg_mem
-              (Ideal.pow_le_pow_right (Nat.le_add_right m d) (hySeq_diff (m + d))))
-      -- Step 4: By IsPrecomplete, get limit L
-      obtain ⟨L, hL⟩ := IsPrecomplete.prec (adicCompletion_isPrecomplete (R := R)) hySeq_cauchy
-      -- Step 5: Show x = L by IsHausdorff
-      have hxL : x = L := by
-        apply (IsHausdorff.eq_iff_smodEq (I := Mi) (M := AdicCompletion Mi R)).mpr
-        intro n
-        rw [SModEq.sub_mem, ← hMhat_mem_smul]
-        have h1 : x - ySeq n ∈ Mhat ^ n :=
-          Ideal.pow_le_pow_right (Nat.le_add_left n n0) (hySeq_err n)
-        have h2 : ySeq n - L ∈ Mhat ^ n := by
-          rw [hMhat_mem_smul]
-          exact SModEq.sub_mem.mp (hL n)
-        rw [show x - L = (x - ySeq n) + (ySeq n - L) from by abel]
-        exact (Mhat ^ n).add_mem h1 h2
-      -- Step 6: Show L ∈ I₀ via per-generator Cauchy coefficient sequences.
-      rw [hxL]
-      have hySeq_diff_I₀ : ∀ K, ySeq (K + 1) - ySeq K ∈ I₀ :=
-        fun K => I₀.sub_mem (hySeq_I₀ (K + 1)) (hySeq_I₀ K)
-      let genS := genJ ∪ genF
-      let sumG (f : AdicCompletion Mi R → AdicCompletion Mi R) :=
-        Finset.sum genS (fun g => f g * g)
-      have hstep_coeff : ∀ K (e : AdicCompletion Mi R),
-          e ∈ Mhat ^ (n0 + K) → e ∈ J →
-          ∃ (c : AdicCompletion Mi R → AdicCompletion Mi R),
-            (∀ g, g ∈ genS → c g ∈ Mhat ^ K) ∧
-            (e - sumG c) ∈ Mhat ^ (n0 + (K + 1)) := by
-        intro K e he heJ
-        obtain ⟨r, hr_in_smul, hr_eq⟩ := extract_filtration_rep R Mi J FN n0 K
-          hFN_def (F_filt.N n0) (fun K => (hn0_pow K).symm) Mhat hker_eq e he heJ
-        obtain ⟨c, hcM, hceq⟩ := coeff_decomp_of_smul R Mi n0 K (FN n0) S_F hS_F
-          genS I₀ rfl hlift_span r hr_in_smul
-        exact ⟨c, hcM, by
-          rw [show n0 + (K + 1) = n0 + K + 1 from by omega, ← hker_eq,
-            RingHom.mem_ker, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom,
-            map_sub, hceq, ← hr_eq, sub_self]⟩
-      -- Step 2: Auxiliary — sum of coeff * gen ∈ I₀
-      have hsum_in_I₀ : ∀ (d : AdicCompletion Mi R → AdicCompletion Mi R),
-          sumG d ∈ I₀ :=
-        fun d => Ideal.sum_mem _ (fun g hg =>
-          I₀.mul_mem_left (d g) (Ideal.subset_span (Finset.mem_coe.mpr hg)))
-      -- Step 3: Build recursive coefficient sequence via buildAdicSeq
-      let CSDPred (K : ℕ) (c : AdicCompletion Mi R → AdicCompletion Mi R) :=
-        (x - y₀ - sumG c) ∈ Mhat ^ (n0 + K) ∧ (x - y₀ - sumG c) ∈ J
-      have hsum_zero : sumG (fun _ => (0 : AdicCompletion Mi R)) = 0 := by
-        simp only [sumG, zero_mul, Finset.sum_const_zero]
-      have csd0 : { c // CSDPred 0 c } := ⟨fun _ => 0, by
-        constructor
-        · simpa only [hsum_zero, sub_zero, Nat.add_zero] using he₀sub
-        · show x - y₀ - sumG (fun _ => 0) ∈ _
-          rw [hsum_zero, sub_zero]
-          exact J.sub_mem hx (hI0_le_J hy₀)⟩
-      let csdS : ∀ K, { c // CSDPred K c } → { c // CSDPred (K + 1) c } :=
-        fun K ⟨c_K, hMK, hJK⟩ =>
-        let d := (hstep_coeff K _ hMK hJK).choose
-        let hd := (hstep_coeff K _ hMK hJK).choose_spec
-        ⟨fun g => c_K g + d g, by
-          have hsplit : Finset.sum genS (fun g => (c_K g + d g) * g) =
-              sumG c_K + sumG d := by
-            simp only [sumG, add_mul, Finset.sum_add_distrib]
-          have hrw : x - y₀ - Finset.sum genS (fun g => (c_K g + d g) * g) =
-              (x - y₀ - sumG c_K) - sumG d := by rw [hsplit]
-                                                 abel
-          exact ⟨by rw [hrw]
-                    exact hd.2,
-            by rw [hrw]
-               exact J.sub_mem hJK (hI0_le_J (hsum_in_I₀ d))⟩⟩
-      let csdAll := buildAdicSeq csd0 csdS
-      let pc : ℕ → AdicCompletion Mi R → AdicCompletion Mi R := fun K => (csdAll K).1
-      -- Step 4: Per-step bound: pc(K+1)(g) - pc(K)(g) ∈ Mhat^K
-      have hpc_diff : ∀ K g, g ∈ genS →
-          pc (K + 1) g - pc K g ∈ Mhat ^ K := by
-        intro K g hg
-        have hcs := hstep_coeff K _ (csdAll K).2.1 (csdAll K).2.2
-        have hcsBound : ∀ g, g ∈ genS → hcs.choose g ∈ Mhat ^ K := hcs.choose_spec.1
-        change (csdS K (csdAll K)).val g - (csdAll K).val g ∈ Mhat ^ K
-        have key : ∀ (dat : { c // CSDPred K c }),
-            (csdS K dat).val g - dat.val g =
-            (hstep_coeff K _ dat.2.1 dat.2.2).choose g := by
-          intro ⟨c_K, _, _⟩
-          simp only [csdS, add_sub_cancel_left]
-        rw [key]
-        exact hcsBound g hg
-      -- Step 5: Per-generator Cauchy
-      have hpc_cauchy : ∀ g, g ∈ genS →
-          ∀ {m n : ℕ}, m ≤ n →
-          pc m g ≡ pc n g [SMOD (Mi ^ m • ⊤ : Submodule R (AdicCompletion Mi R))] := by
-        intro g hg m n hmn
-        rw [SModEq.sub_mem, ← hMhat_mem_smul]
-        obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hmn
-        induction d with
-        | zero => simp [sub_self, (Mhat ^ m).zero_mem]
-        | succ d ih =>
-          rw [show m + (d + 1) = (m + d) + 1 from by omega]
-          have : pc m g - pc ((m + d) + 1) g =
-            (pc m g - pc (m + d) g) + -(pc ((m + d) + 1) g - pc (m + d) g) := by abel
-          rw [this]
-          exact (Mhat ^ m).add_mem (ih (Nat.le_add_right m d))
-            ((Mhat ^ m).neg_mem
-              (Ideal.pow_le_pow_right (Nat.le_add_right m d) (hpc_diff (m + d) g hg)))
-      -- Step 6: Get per-generator limits via IsPrecomplete
-      have hpc_lim : ∀ g, g ∈ genS →
-          ∃ cg, ∀ n,
-            pc n g ≡ cg [SMOD (Mi ^ n • ⊤ :
-              Submodule R (AdicCompletion Mi R))] :=
-        fun g hg => IsPrecomplete.prec
-          (adicCompletion_isPrecomplete (R := R))
-          (hpc_cauchy g hg)
-      let cLim : AdicCompletion Mi R → AdicCompletion Mi R :=
-        fun g => if hg : g ∈ genS then (hpc_lim g hg).choose else 0
-      have hcLim_spec : ∀ g, g ∈ genS → ∀ n,
-          pc n g ≡ cLim g [SMOD (Mi ^ n • ⊤ : Submodule R (AdicCompletion Mi R))] := by
-        intro g hg n
-        simpa only [cLim, dite_eq_left hg] using (hpc_lim g hg).choose_spec n
-      -- Step 7: L = y₀ + ∑ cLim(g) * g by Hausdorff, hence L ∈ I₀
-      suffices hL_eq : L = y₀ + sumG cLim from
-        hL_eq ▸ I₀.add_mem hy₀ (hsum_in_I₀ cLim)
-      apply (IsHausdorff.eq_iff_smodEq (I := Mi) (M := AdicCompletion Mi R)).mpr
-      intro n
-      rw [SModEq.sub_mem, ← hMhat_mem_smul, ← hxL]
-      have hsplit : x - (y₀ + sumG cLim) =
-          (x - y₀ - sumG (pc n)) + Finset.sum genS (fun g => (pc n g - cLim g) * g) := by
-        change x - (y₀ + Finset.sum genS (fun g => cLim g * g)) =
-          (x - y₀ - Finset.sum genS (fun g => pc n g * g)) +
-          Finset.sum genS (fun g => (pc n g - cLim g) * g)
-        simp only [sub_mul, Finset.sum_sub_distrib]
-        abel
-      rw [hsplit]
-      apply (Mhat ^ n).add_mem
-      · exact Ideal.pow_le_pow_right (Nat.le_add_left n n0) (csdAll n).2.1
-      · exact Ideal.sum_mem _ (fun g hg => Ideal.mul_mem_right _ _
-          (by
-             rw [hMhat_mem_smul]
-             exact SModEq.sub_mem.mp (hcLim_spec g hg n)))
-    -- Phase 1: induction on K
-    intro K
-    induction K with
-    | zero =>
-      intro x hx
-      rw [Nat.add_zero]
-      have heval_x : (evalₐ Mi n0).toRingHom x ∈ Ideal.map (evalₐ Mi n0).toRingHom J :=
-        Ideal.mem_map_of_mem _ hx
-      rw [← hS_J] at heval_x
-      suffices hI0_surj : Ideal.map (evalₐ Mi n0).toRingHom I₀ = Ideal.span ↑S_J by
-        have heval_in : (evalₐ Mi n0).toRingHom x ∈ Ideal.map (evalₐ Mi n0).toRingHom I₀ :=
-          hI0_surj ▸ heval_x
-        obtain ⟨y, hy, hyx⟩ := (Ideal.mem_map_iff_of_surjective _
-          (surjective_evalₐ Mi n0)).mp heval_in
-        refine Submodule.mem_sup.mpr ⟨y, hy, x - y, ?_, by abel⟩
-        rw [← hker_eq, RingHom.mem_ker, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom,
-          map_sub, sub_eq_zero]
-        exact hyx.symm
-      apply le_antisymm
-      · rw [Ideal.map_span]
-        apply Ideal.span_le.mpr
-        intro a ha
-        simp only [Set.mem_image, Finset.coe_union, Set.mem_union, Finset.mem_coe] at ha
-        obtain ⟨g, hg, rfl⟩ := ha
-        rcases hg with hg | hg
-        · rw [Finset.mem_image] at hg
-          obtain ⟨a, ha, rfl⟩ := hg
-          rw [dite_eq_left ha, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
-          rw [hlJ_eq a ha]
-          exact Ideal.subset_span ha
-        · rw [Finset.mem_image] at hg
-          obtain ⟨r, hr, rfl⟩ := hg
-          rw [dite_eq_left hr, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
-          have hr_pow : r ∈ Mi ^ n0 := hFN_le n0 (hS_F ▸ Ideal.subset_span hr)
-          have : (evalₐ Mi n0) (lF r hr) =
-            Ideal.Quotient.factorPow Mi (Nat.le_succ n0) (evalₐ Mi (n0 + 1) (lF r hr)) :=
-            (factorPow_comp_evalₐ_noeth Mi (Nat.le_succ n0) (lF r hr)).symm
-          rw [this, hlF_eq r hr]
-          have hfp_eq : Ideal.Quotient.factorPow Mi (Nat.le_succ n0) =
-            Ideal.Quotient.factor (Ideal.pow_le_pow_right (Nat.le_succ n0)) := rfl
-          rw [hfp_eq, Ideal.Quotient.factor_mk,
-            Ideal.Quotient.eq_zero_iff_mem.mpr hr_pow]
-          exact Ideal.zero_mem _
-      · apply Ideal.span_le.mpr
-        intro a ha
-        have ha_fin : a ∈ S_J := ha
-        exact (Ideal.mem_map_iff_of_surjective _ (surjective_evalₐ Mi n0)).mpr
-          ⟨if h : a ∈ S_J then lJ a h else 0, hgenJ_sub a ha_fin, by
-            simpa only [dite_eq_left ha_fin] using hlJ_eq a ha_fin⟩
-    | succ K ih =>
-      intro x hx
-      obtain ⟨y, hy, e, he, hxye⟩ := Submodule.mem_sup.mp (ih x hx)
-      have he_sub : e = x - y := by rw [← hxye, add_sub_cancel_left]
-      have heJ : e ∈ J := he_sub ▸ J.sub_mem hx (hI0_le_J hy)
-      obtain ⟨r, hr_in_smul, hr_eq⟩ := extract_filtration_rep R Mi J FN n0 K
-        hFN_def (F_filt.N n0) (fun K => (hn0_pow K).symm) Mhat hker_eq e he heJ
-      obtain ⟨δ, hδI, hδeq⟩ := smul_lift_of_filtration R Mi n0 K (FN n0) S_F
-        hS_F I₀ hlift_span r hr_in_smul
-      have hsum : (y + δ) + (e - δ) = x := by
-        rw [← hxye]
-        abel
-      have hmem_ker : e - δ ∈ Mhat ^ (n0 + (K + 1)) := by
-        rw [show n0 + (K + 1) = n0 + K + 1 from by omega, ← hker_eq,
-          RingHom.mem_ker, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom,
-          map_sub, hδeq, ← hr_eq, sub_self]
-      exact Submodule.mem_sup.mpr ⟨y + δ, I₀.add_mem hy hδI, e - δ, hmem_ker, hsum⟩
-⟩
+      simp only [Set.mem_image, Finset.coe_union, Set.mem_union, Finset.mem_coe] at ha
+      obtain ⟨g, hg, rfl⟩ := ha
+      rcases hg with hg | hg
+      · rw [Finset.mem_image] at hg
+        obtain ⟨a, ha, rfl⟩ := hg
+        rw [dite_eq_left ha, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
+        rw [hlJ_eq a ha]
+        exact Ideal.subset_span ha
+      · rw [Finset.mem_image] at hg
+        obtain ⟨r, hr, rfl⟩ := hg
+        rw [dite_eq_left hr, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
+        have hr_pow : r ∈ Mi ^ n0 := hFN_le n0 (hS_F ▸ Ideal.subset_span hr)
+        have : (evalₐ Mi n0) (lF r hr) =
+          Ideal.Quotient.factorPow Mi (Nat.le_succ n0) (evalₐ Mi (n0 + 1) (lF r hr)) :=
+          (factorPow_comp_evalₐ_noeth Mi (Nat.le_succ n0) (lF r hr)).symm
+        rw [this, hlF_eq r hr]
+        have hfp_eq : Ideal.Quotient.factorPow Mi (Nat.le_succ n0) =
+          Ideal.Quotient.factor (Ideal.pow_le_pow_right (Nat.le_succ n0)) := rfl
+        rw [hfp_eq, Ideal.Quotient.factor_mk,
+          Ideal.Quotient.eq_zero_iff_mem.mpr hr_pow]
+        exact Ideal.zero_mem _
+    · apply Ideal.span_le.mpr
+      intro a ha
+      have ha_fin : a ∈ S_J := ha
+      exact (Ideal.mem_map_iff_of_surjective _ (surjective_evalₐ Mi n0)).mpr
+        ⟨if h : a ∈ S_J then lJ a h else 0, hgenJ_sub a ha_fin, by
+          simpa only [dite_eq_left ha_fin] using hlJ_eq a ha_fin⟩
+  have hzero : ∀ x ∈ J, x ∈ I₀ ⊔ Mhat ^ n0 :=
+    mem_sup_pow_of_map_evalₐ_le R Mi J I₀ n0 (hker_eq n0) (hI0_surj.trans hS_J).ge
+  -- Correction step: errors in J ∩ Mhat^(n0+K) are fixed by generator combinations.
+  have hstep_coeff : ∀ K (e : AdicCompletion Mi R), e ∈ Mhat ^ (n0 + K) → e ∈ J →
+      ∃ (c : AdicCompletion Mi R → AdicCompletion Mi R),
+        (∀ g, g ∈ genJ ∪ genF → c g ∈ Mhat ^ K) ∧
+        e - Finset.sum (genJ ∪ genF) (fun g => c g * g) ∈ Mhat ^ (n0 + (K + 1)) := by
+    intro K e he heJ
+    obtain ⟨r, hr_in_smul, hr_eq⟩ := extract_filtration_rep R Mi J FN n0 K
+      hFN_def (F_filt.N n0) (fun K => (hn0_pow K).symm) Mhat hker_eq e he heJ
+    obtain ⟨c, hcM, hceq⟩ := coeff_decomp_of_smul R Mi n0 K (FN n0) S_F hS_F
+      (genJ ∪ genF) I₀ rfl hlift_span r hr_in_smul
+    exact ⟨c, hcM, by
+      rw [show n0 + (K + 1) = n0 + K + 1 from by omega, ← hker_eq,
+        RingHom.mem_ker, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom,
+        map_sub, hceq, ← hr_eq, sub_self]⟩
+  have hsum_in_I₀ : ∀ (d : AdicCompletion Mi R → AdicCompletion Mi R),
+      Finset.sum (genJ ∪ genF) (fun g => d g * g) ∈ I₀ :=
+    fun d => Ideal.sum_mem _ (fun g hg =>
+      I₀.mul_mem_left (d g) (Ideal.subset_span (Finset.mem_coe.mpr hg)))
+  intro x hx
+  obtain ⟨y₀, hy₀, e₀, he₀, hxye₀⟩ := Submodule.mem_sup.mp (hzero x hx)
+  have he₀sub : x - y₀ ∈ Mhat ^ n0 := by
+    rwa [eq_sub_of_add_eq' hxye₀] at he₀
+  obtain ⟨c, hc⟩ := exists_coefficients_of_successive_approximation R Mi
+    (adicCompletion_isPrecomplete (R := R)) J (genJ ∪ genF) n0 hstep_coeff
+    (fun d => hI0_le_J (hsum_in_I₀ d)) (x - y₀) he₀sub (J.sub_mem hx (hI0_le_J hy₀))
+  rw [← sub_add_cancel x y₀, hc]
+  exact I₀.add_mem (hsum_in_I₀ c) hy₀
 
-private lemma adicCompletion_ideal_fg :
-    ∀ J : Ideal (AdicCompletion (IsLocalRing.maximalIdeal R) R), J.FG := by
-  exact
-    (adicCompletion_ideal_fg_proof
-      R
-    ).down
 /-- The adic completion of a Noetherian local ring is Noetherian. -/
 instance adicCompletion_isNoetherianRing :
     IsNoetherianRing (AdicCompletion (IsLocalRing.maximalIdeal R) R) :=
