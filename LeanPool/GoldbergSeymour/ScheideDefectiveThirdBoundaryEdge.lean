@@ -5,46 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.BoundaryColorEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.DefectiveColors
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.InternalEdges
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MissingColors
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
-public import LeanPool.GoldbergSeymour.PresentColors
 public import LeanPool.GoldbergSeymour.ScheideDefectiveDeletedTreePair
 public import LeanPool.GoldbergSeymour.ScheideDefectiveNoCross
 public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSecondTerminalComponent
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
-public import LeanPool.GoldbergSeymour.ScheideDefectiveTerminalComponent
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumUnused
-public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
-public import LeanPool.GoldbergSeymour.ScheideStructuralInternalPair
-public import LeanPool.GoldbergSeymour.ScheideStructuralExitsInBase
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TashkinovOrder
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
-
-public import LeanPool.GoldbergSeymour.TashkinovOrderBound
 
 /-!
 # Scheide Defective Third Boundary Edge

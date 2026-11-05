@@ -6,13 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-
 public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
 public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-
 public import LeanPool.GoldbergSeymour.MaximumDegree
-
 public import LeanPool.GoldbergSeymour.TreeMissingColors
+public import Mathlib.Data.Fintype.Card
 
 /-!
 # Common Missing Colors At Uncolored Endpoints

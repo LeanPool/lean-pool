@@ -7,6 +7,9 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.RevisitingTerminalStatements
+public import LeanPool.GoldbergSeymour.TashkinovSeriesAppend
+public import LeanPool.GoldbergSeymour.TdReplacementPrefixExact
+public import LeanPool.GoldbergSeymour.TdEarlierPEWitnessIdentification
 
 /-!
 # Rebuilding a revisiting terminal extension
@@ -5695,7 +5698,6 @@ theorem helper_hseriesTreeAgree_6351.{u_1, u_2} :
               TashkinovSeriesDataAppend]
             convert (Fin.lastCases_castSucc
               j.succ.castSucc) using 1;
-
       _ = originalPrefix.series.data.tree
             j.succ.castSucc := corr.ladderTreesAgree j
       _ = ett.series.data.tree

@@ -7,8 +7,10 @@ module
 
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
 
-public import Mathlib.Data.Fintype.EquivFin
 public import LeanPool.GoldbergSeymour.ExtensionBasePreparations
+public import LeanPool.GoldbergSeymour.ExtensionBaseClosure
+public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBInvariant
+public import LeanPool.GoldbergSeymour.ParallelStepRootComponentSetup
 
 /-!
 # Preparatory lemmas for the extension base

@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
 public import LeanPool.GoldbergSeymour.ChromaticIndexSpec
 public import LeanPool.GoldbergSeymour.ProperColoringRestricts
 

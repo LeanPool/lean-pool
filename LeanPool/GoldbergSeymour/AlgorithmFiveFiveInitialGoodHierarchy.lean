@@ -5,13 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AlgorithmFiveFiveSeed
-
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.GoodHierarchyInitialPairsNonPE
 public import LeanPool.GoldbergSeymour.GoodHierarchyInitialPairsPE
-
 public import LeanPool.GoldbergSeymour.StableColoringEquivalence
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 
 /-!
 # Algorithm Five Five Initial Good Hierarchy

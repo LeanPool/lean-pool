@@ -6,9 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.CombinedStableColoring
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
-
 public import LeanPool.GoldbergSeymour.TreeColoringInvariant
+public import LeanPool.GoldbergSeymour.TashkinovHierarchy
 
 /-!
 # Hierarchy Weakly Stable

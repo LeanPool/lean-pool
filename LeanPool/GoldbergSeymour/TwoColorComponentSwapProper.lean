@@ -5,10 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AdjacentEdges
 public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Two Color Component Swap Proper

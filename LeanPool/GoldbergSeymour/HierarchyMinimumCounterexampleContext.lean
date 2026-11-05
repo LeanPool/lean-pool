@@ -5,20 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
-public import LeanPool.GoldbergSeymour.BoundaryColorVertex
-
-public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
-
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
-
-public import LeanPool.GoldbergSeymour.ModColoring
-
-public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
-
-public import LeanPool.GoldbergSeymour.TreeInterchangeable
-
 public import LeanPool.GoldbergSeymour.LowerRoundProperties
+public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 
 /-!
 # Hierarchy Minimum Counterexample Context

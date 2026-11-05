@@ -10,7 +10,6 @@ public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColorsSubsetLast
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 

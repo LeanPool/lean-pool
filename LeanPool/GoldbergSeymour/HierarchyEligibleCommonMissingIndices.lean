@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
+public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 
 /-!
 # Hierarchy Eligible Common Missing Indices

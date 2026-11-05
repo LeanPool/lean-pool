@@ -5,9 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovColoringSequence
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovLadderStage
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovRungNumber
+public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
 
 /-!
 # Corresponding Extended Tashkinov Tree

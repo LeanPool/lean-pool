@@ -5,33 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.DefectiveColors
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPath
 public import LeanPool.GoldbergSeymour.ScheideExitNoFree
-public import LeanPool.GoldbergSeymour.ScheideExitVertex
-public import LeanPool.GoldbergSeymour.ScheideExitVertices
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumBoundaryFacts
 public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeFreeColors
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeUsedColors
 
 /-!
 # Scheide Structural Internal Pair

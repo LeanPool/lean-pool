@@ -7,12 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.ElementaryClosedNoninterchangeableExitPair
 public import LeanPool.GoldbergSeymour.GoodHierarchyPrefixRepackage
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
-public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
 public import LeanPool.GoldbergSeymour.Step1ExitLegPresentation
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeVertexOrder
 
 /-!
 # Step1Exit Leg Presentation Exists

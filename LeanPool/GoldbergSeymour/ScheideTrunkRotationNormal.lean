@@ -6,15 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.MissingColors
 public import LeanPool.GoldbergSeymour.NormalCycleEdge
-public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.ScheideTrunkRotationCycle
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationTree
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Scheide Trunk Rotation Normal

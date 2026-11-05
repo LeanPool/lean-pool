@@ -5,25 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
-public import LeanPool.GoldbergSeymour.ChromaticIndex
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.ColoredVertexSetStronglyClosed
-public import LeanPool.GoldbergSeymour.Degree
-public import LeanPool.GoldbergSeymour.Density
-public import LeanPool.GoldbergSeymour.DensityCeil
 public import LeanPool.GoldbergSeymour.DensityLowerBound
-public import LeanPool.GoldbergSeymour.DensityValue
 public import LeanPool.GoldbergSeymour.Elementary
-public import LeanPool.GoldbergSeymour.InternalEdges
 public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
 public import LeanPool.GoldbergSeymour.MaximumDegree
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.PresentColors
 
 /-!
 # Strongly Closed Witness Elementary

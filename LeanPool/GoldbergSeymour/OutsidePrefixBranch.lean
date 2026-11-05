@@ -8,18 +8,9 @@ module
 public import LeanPool.GoldbergSeymour.SplitSwapData
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyLEMStable
-public import LeanPool.GoldbergSeymour.HierarchySplitter
-public import LeanPool.GoldbergSeymour.Td
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
-public import LeanPool.GoldbergSeymour.TerminalStoredColors
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.GoodHierarchySameDividerTransport
 public import LeanPool.GoldbergSeymour.GoodHierarchySameDividerReconstruction
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTransTrees
-
-public import LeanPool.GoldbergSeymour.LowerRoundProperties
 
 /-!
 # P2880_T1_Outside Prefix Branch

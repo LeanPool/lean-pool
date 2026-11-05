@@ -5,29 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.CertifiedETTPredecessor
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.ElementaryClosedMissingColorOdd
 public import LeanPool.GoldbergSeymour.GoodHierarchyElementaryLarge
-public import LeanPool.GoldbergSeymour.GoodHierarchyPrefixRepackage
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsCardinality
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAntitone
-public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColorsSubsetLast
-public import LeanPool.GoldbergSeymour.MissingColorsNonemptyOfMaximumDegree
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.ParallelClosureUnionElementary
-public import LeanPool.GoldbergSeymour.ParallelCommonMissingClosed
 public import LeanPool.GoldbergSeymour.PredecessorElementary
 public import LeanPool.GoldbergSeymour.TechnicalInductionContext
 public import LeanPool.GoldbergSeymour.TechnicalCurrentLadderMissingBoundLarge
-public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import LeanPool.GoldbergSeymour.TreeIncidentEdge
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
-public import LeanPool.GoldbergSeymour.StableColoringEquivalence
-
-public import LeanPool.GoldbergSeymour.LowerRoundProperties
 
 /-!
 # P2940_T1_Starred Prefix Preparation

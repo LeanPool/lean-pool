@@ -6,10 +6,6 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Good Hierarchy Prefix Repackage

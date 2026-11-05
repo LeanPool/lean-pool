@@ -6,10 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
-
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainDepartureReturn
-
 public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
+public import LeanPool.GoldbergSeymour.ScheideDepartureReturn
+public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumUnused
+public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumBoundaryFacts
 
 /-!
 # Scheide Defective Chain Last Return No Free

@@ -6,12 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Data.Finset.Max
-
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-
 public import LeanPool.GoldbergSeymour.TreeVerticesBefore
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Extension Base Case Two Observation23

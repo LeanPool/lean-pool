@@ -5,36 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AbsorbingVertex
 public import LeanPool.GoldbergSeymour.AbsorbingVertices
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.BoundaryColorEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.DefectiveColors
 public import LeanPool.GoldbergSeymour.ElementarySingleBoundaryInterchangeable
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
-public import LeanPool.GoldbergSeymour.ScheideReplacementMaximum
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
-public import LeanPool.GoldbergSeymour.ScheideSymmetricDefectiveInternal
 public import LeanPool.GoldbergSeymour.ScheideSymmetricMissingInternal
-public import LeanPool.GoldbergSeymour.TreeFreeColors
-public import LeanPool.GoldbergSeymour.TreeUsedColors
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Scheide Replacement Absorbing

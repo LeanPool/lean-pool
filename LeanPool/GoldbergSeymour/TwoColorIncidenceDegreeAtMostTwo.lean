@@ -6,10 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Basic.Finite.Sum
-
-public import LeanPool.GoldbergSeymour.AdjacentEdges
 public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
+public import Mathlib.Combinatorics.SimpleGraph.Finite
 
 /-!
 # Two Color Incidence Degree At Most Two

@@ -5,20 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.MaximumProperty
 public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
 public import LeanPool.GoldbergSeymour.ModColoring
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.TashkinovClosure
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 
 /-!
 # Restricted Augmentation Corresponding Endpoint

@@ -5,16 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
 public import LeanPool.GoldbergSeymour.BoundaryColorEdges
-
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
-
 public import LeanPool.GoldbergSeymour.OutsideSwapPrefixEffects
 public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
-
 public import LeanPool.GoldbergSeymour.TashkinovClosure
-
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
 

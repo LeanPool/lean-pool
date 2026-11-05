@@ -6,12 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseCaseOneIndices
-public import LeanPool.GoldbergSeymour.ExtensionBaseClosure
 public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClass
-
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-
 public import LeanPool.GoldbergSeymour.TreeVerticesBefore
+public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 
 /-!
 # Extension Base Case One Selection

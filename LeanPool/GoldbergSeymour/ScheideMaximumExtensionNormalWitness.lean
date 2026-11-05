@@ -6,12 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.FixedPairMaximalTashkinovTree
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.ScheideMaximalExtendsEveryTree
 public import LeanPool.GoldbergSeymour.ScheideReversedPathCertificate
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 
 /-!
 # Scheide Maximum Extension Normal Witness

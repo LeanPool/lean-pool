@@ -5,26 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
 public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
-public import LeanPool.GoldbergSeymour.HierarchyStageMissingColors
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
 public import LeanPool.GoldbergSeymour.NineN
-public import LeanPool.GoldbergSeymour.SameGoodHierarchy
-public import LeanPool.GoldbergSeymour.SameHierarchyStages
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
 
 /-!
 # Hierarchy Situation Three Color Choice

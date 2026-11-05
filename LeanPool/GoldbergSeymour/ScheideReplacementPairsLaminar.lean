@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 public import LeanPool.GoldbergSeymour.ScheideReplacementInternalMissing
 
 /-!

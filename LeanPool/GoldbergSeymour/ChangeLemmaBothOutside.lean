@@ -6,58 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation6
-
-public import LeanPool.GoldbergSeymour.BoundaryColorEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.CombinedStableClosurePreserved
-public import LeanPool.GoldbergSeymour.CombinedStableColoring
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
-public import LeanPool.GoldbergSeymour.HierarchyPathNumber
-public import LeanPool.GoldbergSeymour.HierarchySegmentColors
-public import LeanPool.GoldbergSeymour.HierarchySplitter
-public import LeanPool.GoldbergSeymour.HierarchyStageMissingColors
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
-public import LeanPool.GoldbergSeymour.HkuTreeColorsControlled
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-public import LeanPool.GoldbergSeymour.ModColoring
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.RevisitingExtensionCertificate
-public import LeanPool.GoldbergSeymour.SameGoodHierarchy
-public import LeanPool.GoldbergSeymour.SameHierarchyStages
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
-public import LeanPool.GoldbergSeymour.Td
-public import LeanPool.GoldbergSeymour.TreeColorSetMinusClosed
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-public import LeanPool.GoldbergSeymour.TreeVertexOrder
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorComponentsDisjoint
-public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePosition
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
 
 /-!

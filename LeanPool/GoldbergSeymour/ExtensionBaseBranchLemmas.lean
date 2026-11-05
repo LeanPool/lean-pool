@@ -5,12 +5,19 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ExtensionBaseBranchPreparation
-import all LeanPool.GoldbergSeymour.ExtensionBaseBranchPreparation
-
-import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
-
 public import LeanPool.GoldbergSeymour.ExtensionBaseStepLemmas
+public import LeanPool.GoldbergSeymour.ExtensionBaseClaim44
+public import LeanPool.GoldbergSeymour.ExtensionBaseClaim43
+public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoContradiction
+public import LeanPool.GoldbergSeymour.ExtensionBaseClaim45
+public import LeanPool.GoldbergSeymour.ExtensionBaseCaseOneSelection
+public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmB
+public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmA
+public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClassEnumeration
+public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClassColors
+public import LeanPool.GoldbergSeymour.ExtensionBaseClaimStrongInterchangeable
+public import LeanPool.GoldbergSeymour.ExtensionBaseClaimMissingColors
+public import LeanPool.GoldbergSeymour.HkuParallelBoundaryStructure
 
 /-!
 # Preparatory lemmas for the extension base

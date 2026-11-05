@@ -5,27 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryColorEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.DefectiveColors
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPath
 public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
-public import LeanPool.GoldbergSeymour.ScheideExitVertex
-public import LeanPool.GoldbergSeymour.ScheideExitVertices
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
 public import LeanPool.GoldbergSeymour.ScheideStructuralExitsInBase
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Scheide Defective Last Return Exists

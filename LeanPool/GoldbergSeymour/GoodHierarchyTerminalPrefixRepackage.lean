@@ -6,21 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TerminalHierarchyPrefixConstruction
-
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
-public import LeanPool.GoldbergSeymour.HierarchySegmentColors
-public import LeanPool.GoldbergSeymour.HierarchyStageMissingColors
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
 public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!

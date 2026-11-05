@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryEdges
 public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
 public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
 public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
@@ -13,10 +12,7 @@ public import LeanPool.GoldbergSeymour.MaximumDegree
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.TreeExit
-public import LeanPool.GoldbergSeymour.TreeExitPath
-public import LeanPool.GoldbergSeymour.TreeMissingColors
 public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
-public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 
 /-!
 # LEM_extable

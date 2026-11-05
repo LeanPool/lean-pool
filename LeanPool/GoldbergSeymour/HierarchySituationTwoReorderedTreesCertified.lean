@@ -6,51 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified.Preparation2
-
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
-public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
-public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
-public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
-public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-public import LeanPool.GoldbergSeymour.HierarchyNonparallelFirstEdge
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTrees
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoTailData
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.ModColoring
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovClosure
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
-public import LeanPool.GoldbergSeymour.Td
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceEdgeSet
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
-public import LeanPool.GoldbergSeymour.HierarchyBaseCorrespondingTransport
-public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeUnique
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
 
 /-!
 # Hierarchy Situation Two Reordered Trees Certified

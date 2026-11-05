@@ -5,44 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.DefectiveColor
-public import LeanPool.GoldbergSeymour.DefectiveColors
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
-public import LeanPool.GoldbergSeymour.ScheideEnlargedVertexSet
-public import LeanPool.GoldbergSeymour.ScheideExitNoFree
-public import LeanPool.GoldbergSeymour.ScheideExitVertex
-public import LeanPool.GoldbergSeymour.ScheideExitVertices
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumMissingCounts
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.ScheideLastExitPath
-public import LeanPool.GoldbergSeymour.ScheideReplacementData
 public import LeanPool.GoldbergSeymour.ScheideReplacementBoundaryUnique
 public import LeanPool.GoldbergSeymour.ScheideReplacementExitNotDefective
-public import LeanPool.GoldbergSeymour.ScheideReplacementMaximum
 public import LeanPool.GoldbergSeymour.ScheideReplacementPathPrefix
-public import LeanPool.GoldbergSeymour.ScheideReplacementUsedWitness
-public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
-public import LeanPool.GoldbergSeymour.ScheideStructuralExitsInBase
 public import LeanPool.GoldbergSeymour.ScheideSymmetricDefectiveInternal
-public import LeanPool.GoldbergSeymour.TashkinovTree
 public import LeanPool.GoldbergSeymour.TreeFreeColors
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeUsedColors
-public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Scheide Replacement Confinement

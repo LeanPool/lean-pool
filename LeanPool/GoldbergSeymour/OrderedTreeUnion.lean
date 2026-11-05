@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TreeSequenceEdgeSet
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 

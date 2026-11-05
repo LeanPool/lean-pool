@@ -5,15 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.DefectiveColors
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.ScheideLastExitPath
-public import LeanPool.GoldbergSeymour.ScheideReplacementData
 public import LeanPool.GoldbergSeymour.ScheideReplacementMaximum
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
 
 /-!

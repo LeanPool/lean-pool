@@ -5,8 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.HierarchyClaimNine
-
 public import LeanPool.GoldbergSeymour.HierarchySituationOneAdvanceInsideStored
 public import LeanPool.GoldbergSeymour.HierarchySituationOneAdvanceOutsideStored
 

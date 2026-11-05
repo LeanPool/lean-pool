@@ -6,8 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.SameHierarchyStages
-public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
+public import LeanPool.GoldbergSeymour.HierarchyPathNumber
 
 /-!
 # P2752_T2_Hierarchy Measures

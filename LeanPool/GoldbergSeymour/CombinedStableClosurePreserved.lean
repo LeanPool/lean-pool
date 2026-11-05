@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.CombinedStableColoring
 public import LeanPool.GoldbergSeymour.HierarchyBase
 public import LeanPool.GoldbergSeymour.HkuTreeColorsControlled
+public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 
 /-!
 # Combined Stable Closure Preserved

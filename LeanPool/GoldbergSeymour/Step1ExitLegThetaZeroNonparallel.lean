@@ -5,24 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryColorEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsCardinality
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
-public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.Step1ExitLegPresentation
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TreeColorSetClosed
-public import LeanPool.GoldbergSeymour.TreeColorSetMinusClosed
-public import LeanPool.GoldbergSeymour.TreeMissingColors
 public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 
 /-!

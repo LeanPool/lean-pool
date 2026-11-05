@@ -5,12 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
 
 /-!

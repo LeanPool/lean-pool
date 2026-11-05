@@ -5,9 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.ScheideReplacementMaximum
-public import LeanPool.GoldbergSeymour.ScheideReplacementPairFixed
 
 /-!
 # Scheide Replacement Internal Missing

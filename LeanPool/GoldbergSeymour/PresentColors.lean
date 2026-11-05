@@ -5,10 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.Fin
-
 public import LeanPool.GoldbergSeymour.Incident
 public import LeanPool.GoldbergSeymour.PartialEdgeColoring
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Present Colors

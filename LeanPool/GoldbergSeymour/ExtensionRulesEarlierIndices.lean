@@ -5,13 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
-
 public import LeanPool.GoldbergSeymour.ExtensionRulesPEFirstAppearanceBound
-
 public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
-
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 
 /-!

@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.StableChangeCaseThree.Preparation2
+public import LeanPool.GoldbergSeymour.StableChangeCaseThree.Preparation1
+public import LeanPool.GoldbergSeymour.SameGoodHierarchy
 
 /-!
 # StableChangeCaseThree: supporting constructions, part 3

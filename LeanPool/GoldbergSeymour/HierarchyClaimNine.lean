@@ -5,41 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyClaimNineFirstUseAfterSeed
 public import LeanPool.GoldbergSeymour.HierarchyClaimNineFirstUseSeed
 public import LeanPool.GoldbergSeymour.HierarchyClaimNinePENormalization
-public import LeanPool.GoldbergSeymour.HierarchyClaimNineUnusedTailColor
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTailAtLeastTwo
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTerminalCommonMissing
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
-public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
-public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
-public import LeanPool.GoldbergSeymour.HierarchyPathNumber
-public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
-public import LeanPool.GoldbergSeymour.SameGoodHierarchy
-public import LeanPool.GoldbergSeymour.SameHierarchyStages
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.TashkinovClosure
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.HierarchyMeasures
 
 /-!
 # Hierarchy Claim Nine

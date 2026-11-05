@@ -7,16 +7,9 @@ module
 
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoSplitTail
 public import LeanPool.GoldbergSeymour.ChangeLemma
-public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
 public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
-public import LeanPool.GoldbergSeymour.HierarchyNonparallelFirstEdge
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
 public import LeanPool.GoldbergSeymour.ElementaryTerminalComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.TerminalRoute
-public import LeanPool.GoldbergSeymour.BaseDisplayedEdges
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceColoringTransport
 
 /-!
 # P2905_T2_Late Owner Replacement

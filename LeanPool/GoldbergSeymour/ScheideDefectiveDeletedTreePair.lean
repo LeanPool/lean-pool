@@ -6,34 +6,14 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
 public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSecondTerminalComponent
 public import LeanPool.GoldbergSeymour.ScheideDefectiveTerminalComponent
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumUnused
-public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
 public import LeanPool.GoldbergSeymour.ScheideSelectedBlockDeletion
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
 public import LeanPool.GoldbergSeymour.ScheideStructuralExitsInBase
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeIncidentEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
 public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeUsedColors
-public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Scheide Defective Deleted Tree Pair

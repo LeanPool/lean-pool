@@ -6,6 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation5
+public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation4
+public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation3
+public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation2
+public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 
 /-!
 # ChangeLemmaBothOutside: supporting constructions, part 6
@@ -41,7 +45,6 @@ noncomputable abbrev helperGoodS6400.{u_1, u_2} :
   (base : HierarchyBase ett phi) →
   (C : HierarchyCounterexample base) →
   (alpha beta : Fin k) →
-
   let H : TashkinovHierarchy ett base := C.hierarchy;
   let q : Fin (H.dividerCount + (1 : ℕ)) :=
     Fin.last H.dividerCount;

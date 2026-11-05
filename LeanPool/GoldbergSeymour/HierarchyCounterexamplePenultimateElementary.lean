@@ -7,10 +7,9 @@ module
 
 public import LeanPool.GoldbergSeymour.GoodHierarchyPrefixRepackage
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
-
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
-
 public import LeanPool.GoldbergSeymour.ParallelClosureUnionElementary
+public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 
 /-!
 # Hierarchy Counterexample Penultimate Elementary

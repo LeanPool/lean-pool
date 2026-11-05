@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ScheideReplacementPathPrefix
+public import LeanPool.GoldbergSeymour.ScheideLastExitPath
 
 /-!
 # Scheide Replacement Boundary Unique

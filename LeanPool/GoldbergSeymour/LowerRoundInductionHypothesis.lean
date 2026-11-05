@@ -5,18 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryColorVertex
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-
-public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
-
 public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.ModColoring
-
-public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
-
-public import LeanPool.GoldbergSeymour.TreeInterchangeable
-
 public import LeanPool.GoldbergSeymour.LowerRoundProperties
 
 /-!

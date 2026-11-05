@@ -5,36 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothInside
 public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.GoodHierarchyNewMissingClosed
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
 public import LeanPool.GoldbergSeymour.OutsideKempeRecoloring
-public import LeanPool.GoldbergSeymour.OutsideKempeRecoloringStable
-public import LeanPool.GoldbergSeymour.ParallelCommonMissingClosed
-public import LeanPool.GoldbergSeymour.RevisitingExtensionCertificate
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
-public import LeanPool.GoldbergSeymour.TreeColorSetClosed
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.ParallelInterchangeability
 public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
-public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
-public import LeanPool.GoldbergSeymour.HierarchyStageInterchangeability
+public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 
 /-!
 # P2813_T1_Base Control

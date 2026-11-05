@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.Incident
+public import LeanPool.GoldbergSeymour.LooplessMultigraph
 
 /-!
 # Boundary Edges

@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ScheideReplacementMaximum
 public import LeanPool.GoldbergSeymour.ScheideSymmetricMissingInternal
 
 /-!

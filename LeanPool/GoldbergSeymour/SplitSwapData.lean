@@ -6,10 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
-
-public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
+public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
+public import LeanPool.GoldbergSeymour.TreeColoringInvariant
 
 /-!
 # P2880_T1_Split Swap Data

@@ -8,12 +8,9 @@ module
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Two Color Component Swap Non Elementary

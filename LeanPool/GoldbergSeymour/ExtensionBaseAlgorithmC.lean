@@ -5,31 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.ETTStrongInterchangeable
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmCInvariant
-public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmCTrace
-public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClass
-public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClassColors
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.PresentColors
 public import LeanPool.GoldbergSeymour.StrongInterchangeabilityKempePreserved
-public import LeanPool.GoldbergSeymour.TashkinovExtensionKind
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentCycle
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorCycle
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
-public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
 
 /-!
 # Extension Base Algorithm C

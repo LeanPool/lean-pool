@@ -6,29 +6,12 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.Degree
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsCardinality
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MaximumDegree
-public import LeanPool.GoldbergSeymour.MissingColors
 public import LeanPool.GoldbergSeymour.MissingColorsNonemptyOfMaximumDegree
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Order.Fin.Basic
 
 /-!
 # Nine N

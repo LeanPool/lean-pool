@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.IncidentCoreIncidence
-public import LeanPool.GoldbergSeymour.IncidentVertexFintype
 public import LeanPool.GoldbergSeymour.MissingColors
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Incident Core Missing Colors

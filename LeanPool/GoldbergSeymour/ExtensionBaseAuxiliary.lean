@@ -5,56 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
 public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.Degree
-public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmA
-public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmB
-public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmC
-public import LeanPool.GoldbergSeymour.ExtensionBaseCaseOneSelection
-public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoContradiction
-public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoObservation19
-public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoObservation20
-public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoObservation21
-public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoObservation23
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaim43
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaim44
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaim45
 public import LeanPool.GoldbergSeymour.ExtensionBaseClaim45Singleton
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaim46
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaimMissingColors
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaimStrongInterchangeable
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaimTreeEdgeColors
-public import LeanPool.GoldbergSeymour.ExtensionBaseClosure
-public import LeanPool.GoldbergSeymour.ExtensionBaseDeltaExclusion
-public import LeanPool.GoldbergSeymour.ExtensionBaseStoredPairOverlap
-public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClassColors
-public import LeanPool.GoldbergSeymour.ExtensionBaseSupportOrder
-public import LeanPool.GoldbergSeymour.ExtensionRules
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-public import LeanPool.GoldbergSeymour.MaximumDegree
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.TashTree
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePreservesTashkinovTree
-public import LeanPool.GoldbergSeymour.TashkinovClosure
-public import LeanPool.GoldbergSeymour.TashkinovOrder
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
+public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBTrace
+public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
+public import LeanPool.GoldbergSeymour.ExtensionBaseRestorationTrace
+public import LeanPool.GoldbergSeymour.ETTStrongInterchangeable
+public import LeanPool.GoldbergSeymour.InternalEdges
 
 /-!
 # Extension Base Auxiliary Lemmas

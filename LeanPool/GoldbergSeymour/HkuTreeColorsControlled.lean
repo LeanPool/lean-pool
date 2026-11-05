@@ -6,19 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HkuIncidentColorPreserved
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-public import LeanPool.GoldbergSeymour.TashkinovClosure
 public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
-public import LeanPool.GoldbergSeymour.TreeIncidentEdge
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeUsedColors
 
 /-!

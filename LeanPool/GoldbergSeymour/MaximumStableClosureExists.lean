@@ -6,11 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Data.Finset.Max
-
 public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
 public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.TashkinovClosure
+public import Mathlib.Data.Fintype.Card
 
 /-!
 # Maximum Stable Closure Exists

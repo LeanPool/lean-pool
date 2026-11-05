@@ -7,7 +7,13 @@ module
 
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
 
-public import LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
+public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBTrace
+public import LeanPool.GoldbergSeymour.ExtensionBaseRestorationTrace
+public import LeanPool.GoldbergSeymour.ETTStrongInterchangeable
+public import LeanPool.GoldbergSeymour.TreeSequencePrefix
+public import LeanPool.GoldbergSeymour.OrderedTreeUnion
+public import LeanPool.GoldbergSeymour.InternalEdges
 
 /-!
 # Preparatory lemmas for the extension base

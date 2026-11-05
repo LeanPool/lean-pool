@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Data.Finset.Max
-
 public import LeanPool.GoldbergSeymour.TashkinovClosure
+public import Mathlib.Data.Fintype.Card
 
 /-!
 # Tashkinov Closure Exists

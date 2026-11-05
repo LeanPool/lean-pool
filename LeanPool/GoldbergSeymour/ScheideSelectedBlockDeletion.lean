@@ -5,10 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.Incident
 public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 
 /-!
 # Scheide Selected Block Deletion

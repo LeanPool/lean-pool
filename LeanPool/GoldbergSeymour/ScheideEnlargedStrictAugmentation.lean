@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
-
 public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
+public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
 
 /-!
 # Scheide Enlarged Strict Augmentation

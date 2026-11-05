@@ -6,35 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ChangeLemma
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
-public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
-public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
-public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
-public import LeanPool.GoldbergSeymour.HierarchyPathNumber
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoExclusions
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTrees
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 public import LeanPool.GoldbergSeymour.NineN
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovStoredColorsCardinality
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
 
 /-!
 # Hierarchy Situation Two Subcase Two One Nonexceptional
@@ -237,7 +212,7 @@ private noncomputable abbrev helperCStar1926.{u_1, u_2} :
     notElementary :=
       @Eq.mpr
         (Not
-          (@ColoredVertexSetElementary V E  inst_1 G k phi
+          (@ColoredVertexSetElementary V E inst_1 G k phi
             (@TreeSequenceVertexSet V E G e0
               (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
                 inst_3 G k e0 input T phi ett base C ctx
@@ -245,12 +220,12 @@ private noncomputable abbrev helperCStar1926.{u_1, u_2} :
                   E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
                 R))))
         (Not
-          (@ColoredVertexSetElementary V E  inst_1 G k phi
+          (@ColoredVertexSetElementary V E inst_1 G k phi
             (@TreeSequenceVertexSet V E G e0 T)))
         (@id
           (@Eq Prop
             (Not
-              (@ColoredVertexSetElementary V E  inst_1 G k phi
+              (@ColoredVertexSetElementary V E inst_1 G k phi
                 (@TreeSequenceVertexSet V E G e0
                   (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
                     inst_3 G k e0 input T phi ett base C ctx
@@ -259,7 +234,7 @@ private noncomputable abbrev helperCStar1926.{u_1, u_2} :
                       ctx D)
                     R))))
             (Not
-              (@ColoredVertexSetElementary V E  inst_1 G k phi
+              (@ColoredVertexSetElementary V E inst_1 G k phi
                 (@TreeSequenceVertexSet V E G e0 T))))
           (@congrArg (Finset V) Prop
             (@TreeSequenceVertexSet V E G e0
@@ -270,7 +245,7 @@ private noncomputable abbrev helperCStar1926.{u_1, u_2} :
                 R))
             (@TreeSequenceVertexSet V E G e0 T)
             (fun (_a : Finset V) ↦
-              Not (@ColoredVertexSetElementary V E  inst_1 G k phi _a))
+              Not (@ColoredVertexSetElementary V E inst_1 G k phi _a))
             (@HierarchySituationTwoReorderedTrees.starVertexSet V E inst inst_1
               inst_2 inst_3 G k e0 input T phi ett base C ctx
               (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
@@ -787,11 +762,10 @@ private abbrev helperContinuation4235Conditions.{u_1, u_2} : Prop :=
 
 private abbrev transferredGoodHierarchyConstructorType.{u_1, u_2} (V : Type u_1) (E : Type u_2) :=
     open scoped Classical in
-
-  [ Fintype V] →
-  [ Fintype E] →
-  [ DecidableEq V] →
-  [ DecidableEq E] →
+  [Fintype V] →
+  [Fintype E] →
+  [DecidableEq V] →
+  [DecidableEq E] →
   (G : LooplessMultigraph V E) →
   (k : ℕ) →
   (e0 : E) →
@@ -2907,7 +2881,7 @@ private theorem helper_hstarPath_824.{u_1, u_2} :
         notElementary :=
           @Eq.mpr
             (Not
-              (@ColoredVertexSetElementary V E  inst_1 G k phi
+              (@ColoredVertexSetElementary V E inst_1 G k phi
                 (@TreeSequenceVertexSet V E G e0
                   (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
                     G k e0 input T phi ett base C ctx
@@ -2915,12 +2889,12 @@ private theorem helper_hstarPath_824.{u_1, u_2} :
                       inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
                     R))))
             (Not
-              (@ColoredVertexSetElementary V E  inst_1 G k phi
+              (@ColoredVertexSetElementary V E inst_1 G k phi
                 (@TreeSequenceVertexSet V E G e0 T)))
             (@id
               (@Eq Prop
                 (Not
-                  (@ColoredVertexSetElementary V E  inst_1 G k phi
+                  (@ColoredVertexSetElementary V E inst_1 G k phi
                     (@TreeSequenceVertexSet V E G e0
                       (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
                         inst_3 G k e0 input T phi ett base C ctx
@@ -2929,7 +2903,7 @@ private theorem helper_hstarPath_824.{u_1, u_2} :
                           D)
                         R))))
                 (Not
-                  (@ColoredVertexSetElementary V E  inst_1 G k phi
+                  (@ColoredVertexSetElementary V E inst_1 G k phi
                     (@TreeSequenceVertexSet V E G e0 T))))
               (@congrArg (Finset V) Prop
                 (@TreeSequenceVertexSet V E G e0
@@ -2940,7 +2914,7 @@ private theorem helper_hstarPath_824.{u_1, u_2} :
                     R))
                 (@TreeSequenceVertexSet V E G e0 T)
                 (fun (_a : Finset V) ↦
-                  Not (@ColoredVertexSetElementary V E  inst_1 G k phi _a))
+                  Not (@ColoredVertexSetElementary V E inst_1 G k phi _a))
                 (@HierarchySituationTwoReorderedTrees.starVertexSet V E inst inst_1 inst_2
                   inst_3 G k e0 input T phi ett base C ctx
                   (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
@@ -3101,7 +3075,7 @@ private theorem helper_hstarMeasure_839.{u_1, u_2} :
         notElementary :=
           @Eq.mpr
             (Not
-              (@ColoredVertexSetElementary V E  inst_1 G k phi
+              (@ColoredVertexSetElementary V E inst_1 G k phi
                 (@TreeSequenceVertexSet V E G e0
                   (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
                     G k e0 input T phi ett base C ctx
@@ -3109,12 +3083,12 @@ private theorem helper_hstarMeasure_839.{u_1, u_2} :
                       inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
                     R))))
             (Not
-              (@ColoredVertexSetElementary V E  inst_1 G k phi
+              (@ColoredVertexSetElementary V E inst_1 G k phi
                 (@TreeSequenceVertexSet V E G e0 T)))
             (@id
               (@Eq Prop
                 (Not
-                  (@ColoredVertexSetElementary V E  inst_1 G k phi
+                  (@ColoredVertexSetElementary V E inst_1 G k phi
                     (@TreeSequenceVertexSet V E G e0
                       (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
                         inst_3 G k e0 input T phi ett base C ctx
@@ -3123,7 +3097,7 @@ private theorem helper_hstarMeasure_839.{u_1, u_2} :
                           D)
                         R))))
                 (Not
-                  (@ColoredVertexSetElementary V E  inst_1 G k phi
+                  (@ColoredVertexSetElementary V E inst_1 G k phi
                     (@TreeSequenceVertexSet V E G e0 T))))
               (@congrArg (Finset V) Prop
                 (@TreeSequenceVertexSet V E G e0
@@ -3134,7 +3108,7 @@ private theorem helper_hstarMeasure_839.{u_1, u_2} :
                     R))
                 (@TreeSequenceVertexSet V E G e0 T)
                 (fun (_a : Finset V) ↦
-                  Not (@ColoredVertexSetElementary V E  inst_1 G k phi _a))
+                  Not (@ColoredVertexSetElementary V E inst_1 G k phi _a))
                 (@HierarchySituationTwoReorderedTrees.starVertexSet V E inst inst_1 inst_2
                   inst_3 G k e0 input T phi ett base C ctx
                   (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E

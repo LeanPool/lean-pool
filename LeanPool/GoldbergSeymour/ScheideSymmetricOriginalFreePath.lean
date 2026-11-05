@@ -5,18 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPath
 public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPathExists
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumMissingCounts
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
-public import LeanPool.GoldbergSeymour.TashkinovTree
 public import LeanPool.GoldbergSeymour.TreeFreeColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeUsedColors
 
 /-!
 # Scheide Symmetric Original Free Path

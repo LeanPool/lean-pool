@@ -6,9 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TashkinovSeries
-
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 
 /-!
 # Hku Unsupported Vertex Colors

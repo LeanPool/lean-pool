@@ -7,12 +7,8 @@ module
 
 public import LeanPool.GoldbergSeymour.ETTStrongInterchangeable
 public import LeanPool.GoldbergSeymour.EarlierPECycleFirstNonrevisitingInternal
-
 public import LeanPool.GoldbergSeymour.ExtensionBaseActiveIndices
-
 public import LeanPool.GoldbergSeymour.TwoColorInterchangeableDistinctComponentCycle
-public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
-
 public import LeanPool.GoldbergSeymour.ParallelStepRootComponentSetup
 public import LeanPool.GoldbergSeymour.StableSeriesCycleComponentTransport
 

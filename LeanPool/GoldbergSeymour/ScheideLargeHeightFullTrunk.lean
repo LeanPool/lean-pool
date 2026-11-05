@@ -6,27 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.DefectiveColors
 public import LeanPool.GoldbergSeymour.Elementary
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainDepartureReturn
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPathExists
-public import LeanPool.GoldbergSeymour.ScheideDepartureReturn
 public import LeanPool.GoldbergSeymour.ScheideExitNoFree
-public import LeanPool.GoldbergSeymour.ScheideExitVertex
-public import LeanPool.GoldbergSeymour.ScheideExitVertices
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumBoundaryFacts
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumMissingCounts
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideGraphHeight
-public import LeanPool.GoldbergSeymour.TashkinovOrder
-public import LeanPool.GoldbergSeymour.TreeFreeColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeUsedColors
 public import LeanPool.GoldbergSeymour.CriticalGraphElementaryWitness
 
 /-!

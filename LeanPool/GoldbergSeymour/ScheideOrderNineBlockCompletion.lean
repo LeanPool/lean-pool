@@ -7,31 +7,11 @@ module
 
 public import Mathlib.Tactic.FinCases
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.ScheideGraphHeight
 public import LeanPool.GoldbergSeymour.ScheideHeightFiveGammaEdges
 public import LeanPool.GoldbergSeymour.ScheideHeightFiveOutsideLinks
-public import LeanPool.GoldbergSeymour.ScheideKempePathHeightBound
 public import LeanPool.GoldbergSeymour.ScheideTrunkRotationColoring
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationCycle
 public import LeanPool.GoldbergSeymour.ScheideTrunkRotationNormal
 public import LeanPool.GoldbergSeymour.ScheideTrunkRotationTree
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # P2968_T2_Scheide Order Nine Block Completion

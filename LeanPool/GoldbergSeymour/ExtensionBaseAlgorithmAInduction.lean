@@ -5,11 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmAColorState
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmASingleStep
-
 public import LeanPool.GoldbergSeymour.ExtensionBaseRestorationInvariant
-
 public import LeanPool.GoldbergSeymour.StrongInterchangeabilityKempePreserved
 
 /-!

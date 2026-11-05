@@ -6,42 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ScheideOrderNineRebasingPreparation
-
-public import LeanPool.GoldbergSeymour.AdjacentEdges
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.ScheideOrderNineBlockCompletion
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideHeightFiveGammaEdges
-public import LeanPool.GoldbergSeymour.ScheideHeightFiveOutsideLinks
-public import LeanPool.GoldbergSeymour.ScheideKempePathHeightBound
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationColoring
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationCycle
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationNormal
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationPreserves
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationTree
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TrunkRotation
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
-public import Mathlib.Tactic.FinCases
 
 /-!
 # Scheide Order Nine Block Structure
@@ -1123,8 +1088,8 @@ private theorem helper_continuation_1913.{u_1, u_2} : scheideBlockContinuationSt
     obtain ⟨tc1, htc1⟩ := firstEight pc1'
     obtain ⟨tw, htw⟩ := firstSeven w
     let S' : TreeSequence G e := by
-      exact @helperS3810 (@V) (@E)   inferInstance (@G) (@k) (@e)
-           (@S)  (@hlen) (@f1) (@f2) (@v1) (@v2) (@hf1ends') (@hf2ends') (@beta56)
+      exact @helperS3810 (@V) (@E) inferInstance (@G) (@e)
+           (@S) (@hlen) (@f1) (@f2) (@v1) (@v2) (@hf1ends') (@hf2ends') (@beta56)
           (@hbeta56ends) (@ha1ends) (@ha3ends) (@w) (@pc) (@hc0ends) (@ha0eq) (@ha0ends)
           (@hedgeListLength) (@nv0) (@nv1) (@nv2) (@nv3) (@nv4) (@nv5) (@nv6) (@nv7) (@nv8)
           (@ne0) (@ne1) (@ne2) (@ne3) (@ne4) (@ne5) (@ne6) (@ne7) (@newVertex_injective)

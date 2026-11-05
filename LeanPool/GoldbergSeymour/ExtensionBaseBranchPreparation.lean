@@ -8,6 +8,7 @@ module
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseStepLemmas
+public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 
 /-!
 # Preparatory lemmas for the extension base

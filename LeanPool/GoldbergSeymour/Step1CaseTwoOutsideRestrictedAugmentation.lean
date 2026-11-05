@@ -5,17 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryColorVertex
-public import LeanPool.GoldbergSeymour.DefectiveColor
-public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
 public import LeanPool.GoldbergSeymour.GoodHierarchyRestrictedAugmentation
-public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
-public import LeanPool.GoldbergSeymour.TreeInterchangeable
-public import LeanPool.GoldbergSeymour.TreeVertexOrder
 public import LeanPool.GoldbergSeymour.ElementaryEndpointExclusion
 public import LeanPool.GoldbergSeymour.FirstEntryClipping
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
 
 /-!

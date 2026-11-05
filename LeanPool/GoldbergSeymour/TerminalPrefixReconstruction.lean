@@ -8,6 +8,8 @@ module
 public import LeanPool.GoldbergSeymour.HierarchyPrefixData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeData
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
+public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
+public import LeanPool.GoldbergSeymour.HierarchyLEMStable
 
 /-!
 # P2752_T2_Prefix Reconstruction

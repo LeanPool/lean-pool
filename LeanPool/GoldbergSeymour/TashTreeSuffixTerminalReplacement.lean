@@ -5,24 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.TashTreeBadPair
 public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPair
-public import LeanPool.GoldbergSeymour.TashTreePathIndex
 public import LeanPool.GoldbergSeymour.TashTreeProperInitialSegmentRankLess
-public import LeanPool.GoldbergSeymour.TashTreeRankLess
-public import LeanPool.GoldbergSeymour.TashTreeSuffixPath
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 
 /-!
 # Tash Tree Suffix Terminal Replacement

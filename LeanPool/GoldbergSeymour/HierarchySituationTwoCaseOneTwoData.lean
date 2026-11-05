@@ -7,8 +7,6 @@ module
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCommonTailData
 
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoTailData
-
 /-!
 # Hierarchy Situation Two Case One Two Data
 

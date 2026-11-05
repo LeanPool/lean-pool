@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
-
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Hierarchy First Missing Position Prefix Cutoff

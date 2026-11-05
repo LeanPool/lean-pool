@@ -5,14 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainBoundaryEdges
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPath
-public import LeanPool.GoldbergSeymour.ScheideDefectiveNoCross
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
-public import LeanPool.GoldbergSeymour.ScheideStructuralInternalPair
 public import LeanPool.GoldbergSeymour.ScheideSymmetricOriginalPathOrder
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Scheide Symmetric Original Boundary Avoidance

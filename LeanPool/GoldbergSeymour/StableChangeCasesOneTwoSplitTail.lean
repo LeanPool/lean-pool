@@ -5,56 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
-public import LeanPool.GoldbergSeymour.CertifiedETTPredecessor
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.BoundaryColorEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.CombinedStableColoring
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
 public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
-public import LeanPool.GoldbergSeymour.HierarchySegmentColors
-public import LeanPool.GoldbergSeymour.HierarchySplitter
-public import LeanPool.GoldbergSeymour.HierarchyStageMissingColors
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
 public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
-public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-public import LeanPool.GoldbergSeymour.ModColoring
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
 public import LeanPool.GoldbergSeymour.SameGoodHierarchy
-public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwo
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceComponentSwap
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovExtensionKind
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
-public import LeanPool.GoldbergSeymour.TreeColorSetMinusClosed
-public import LeanPool.GoldbergSeymour.TreeColoringInvariant
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorPathComponent
-public import LeanPool.GoldbergSeymour.BaseControl
-public import LeanPool.GoldbergSeymour.DisplayedEdges
-public import LeanPool.GoldbergSeymour.MinusClosedTransport
-public import LeanPool.GoldbergSeymour.PrefixSegmentTransport
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePosition
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 
 /-!
 # Stable Change Cases One Two Split Tail

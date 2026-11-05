@@ -6,9 +6,6 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ETTStrongInterchangeable
-
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
-
 public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
 public import LeanPool.GoldbergSeymour.TwoColorPathComponentNotCycle
 

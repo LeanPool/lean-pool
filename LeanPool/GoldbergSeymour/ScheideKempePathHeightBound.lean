@@ -5,27 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.FixedPairMaximalTashkinovTree
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.ScheideGraphHeight
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumFixedPairMaximal
 public import LeanPool.GoldbergSeymour.ScheideMaximumExtensionNormalWitness
-public import LeanPool.GoldbergSeymour.ScheideMaximalExtendsEveryTree
 public import LeanPool.GoldbergSeymour.ScheideMaximalKempePath
 public import LeanPool.GoldbergSeymour.ScheideReversedKempePathTree
-public import LeanPool.GoldbergSeymour.TashkinovOrder
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Scheide Kempe Path Height Bound

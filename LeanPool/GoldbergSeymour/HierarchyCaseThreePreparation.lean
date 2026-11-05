@@ -6,72 +6,12 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ChangeLemma
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
-public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
-public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
-public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-public import LeanPool.GoldbergSeymour.HierarchyLEMStable
-public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
-public import LeanPool.GoldbergSeymour.HierarchyNonparallelFirstEdge
-public import LeanPool.GoldbergSeymour.HierarchyPathNumber
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
-public import LeanPool.GoldbergSeymour.HierarchySegmentColors
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeNormalizedData
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoCommonTailData
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoOutsidePenultimateReconstruction
-public import LeanPool.GoldbergSeymour.HierarchyStageMissingColors
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.ModColoring
 public import LeanPool.GoldbergSeymour.NineN
-public import LeanPool.GoldbergSeymour.RevisitingExtensionCertificate
-public import LeanPool.GoldbergSeymour.SameGoodHierarchy
-public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
-public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoFullTail
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.TashkinovClosure
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
-public import LeanPool.GoldbergSeymour.Td
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentsDisjoint
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 public import LeanPool.GoldbergSeymour.NormalizedDatum
-public import Mathlib.Data.Finset.Option
-public import LeanPool.GoldbergSeymour.TashkinovAlternatingSegmentAppend
-public import LeanPool.GoldbergSeymour.TwoColorComponentNearestSegment
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.HierarchyBaseCorrespondingTransport
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.MinimumContextTransport
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.BaseDisplayedEdges
 
 /-!
 # Preparatory lemmas for hierarchy case-three normalization
@@ -337,7 +277,6 @@ Keeping this interface separate avoids repeating its dependent hypotheses and da
 -/
 abbrev hierarchyExtensionConstructorType.{u_1, u_2} (V : Type u_1) (E : Type u_2) :=
     open scoped Classical in
-
   [Fintype V] →
   [Fintype E] →
   [DecidableEq V] →

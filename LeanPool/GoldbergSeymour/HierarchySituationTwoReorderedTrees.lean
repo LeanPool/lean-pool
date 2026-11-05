@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoTailData
+public import LeanPool.GoldbergSeymour.TreeSequenceEdgeSet
 
 /-!
 # Hierarchy Situation Two Reordered Trees

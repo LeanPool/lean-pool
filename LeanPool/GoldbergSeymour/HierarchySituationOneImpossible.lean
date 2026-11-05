@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.HierarchySituationOnePenultimateCommonMissing
 public import LeanPool.GoldbergSeymour.HierarchySituationOneShorteningContradiction
+public import LeanPool.GoldbergSeymour.HierarchyClaimNine
 
 /-!
 # Hierarchy Situation One Impossible

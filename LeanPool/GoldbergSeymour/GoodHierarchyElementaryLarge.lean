@@ -5,48 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryColorVertex
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.DefectiveColor
-public import LeanPool.GoldbergSeymour.Degree
-public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
 public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePathNumberBounds
-public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTailAtLeastTwo
-public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
-public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
 public import LeanPool.GoldbergSeymour.HierarchySituationOneImpossible
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoImpossible
 public import LeanPool.GoldbergSeymour.HierarchySituationThreeImpossible
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.MaximumDegree
 public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.ModColoring
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
-public import LeanPool.GoldbergSeymour.TashkinovExtensionKind
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovOrder
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
-public import LeanPool.GoldbergSeymour.TreeInterchangeable
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeVertexOrder
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-
 public import LeanPool.GoldbergSeymour.LowerRoundProperties
 
 /-!

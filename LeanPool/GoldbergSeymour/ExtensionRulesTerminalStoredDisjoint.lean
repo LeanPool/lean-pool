@@ -7,47 +7,15 @@ module
 
 public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
 public import LeanPool.GoldbergSeymour.EarlierPECycleFirstNonrevisitingInternal
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
 public import LeanPool.GoldbergSeymour.ExtensionRulesPEFirstAppearanceBound
-public import LeanPool.GoldbergSeymour.HkuMissingStoredMonotone
 public import LeanPool.GoldbergSeymour.HkuParallelBoundaryStructure
-public import LeanPool.GoldbergSeymour.InternalEdges
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.ParallelExtensionColor
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.RevisitingExtensionCertificate
 public import LeanPool.GoldbergSeymour.SameColorSeriesPreserved
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TashkinovExtensionKind
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
 public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
 public import LeanPool.GoldbergSeymour.TreeInterchangeable
-public import LeanPool.GoldbergSeymour.TreeExit
-public import LeanPool.GoldbergSeymour.TreeExitComponentMeetsTreeOnlyAtExit
-public import LeanPool.GoldbergSeymour.TreeExitPath
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentCycle
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentsDisjoint
 public import LeanPool.GoldbergSeymour.TwoColorInterchangeableDistinctComponentCycle
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
-public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
-
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!

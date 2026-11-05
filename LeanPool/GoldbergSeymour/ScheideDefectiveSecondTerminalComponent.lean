@@ -5,32 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.DefectiveColors
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MissingColors
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
-public import LeanPool.GoldbergSeymour.PresentColors
 public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPath
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
 public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TreeIncidentEdge
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Scheide Defective Second Terminal Component

@@ -6,11 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetStronglyClosed
-
 public import LeanPool.GoldbergSeymour.DefectiveColors
-
-public import LeanPool.GoldbergSeymour.InternalEdges
-
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 
 /-!

@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Traversal
 public import LeanPool.GoldbergSeymour.DefectiveColors
 public import LeanPool.GoldbergSeymour.MissingColors
 public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPath

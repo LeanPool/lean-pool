@@ -5,14 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
-
-public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
-
 public import LeanPool.GoldbergSeymour.HierarchyStageInterchangeability
-
-public import Mathlib.Tactic.ClearExcept
+public import LeanPool.GoldbergSeymour.GoodHierarchyNewMissingClosed
+public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 
 /-!
 # Change Lemma Both Inside

@@ -5,9 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.Fin
-
 public import LeanPool.GoldbergSeymour.DefectiveColor
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Defective Colors

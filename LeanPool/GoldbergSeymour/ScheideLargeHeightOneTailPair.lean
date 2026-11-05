@@ -5,36 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AdjacentEdges
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.Elementary
-public import LeanPool.GoldbergSeymour.FixedPairMaximalTashkinovTree
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.ScheideExitNoFree
-public import LeanPool.GoldbergSeymour.ScheideExitVertex
-public import LeanPool.GoldbergSeymour.ScheideExitVertices
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumMissingCounts
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideGraphHeight
 public import LeanPool.GoldbergSeymour.ScheideGraphHeightOdd
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumFixedPairMaximal
 public import LeanPool.GoldbergSeymour.ScheideKempePathHeightBound
-public import LeanPool.GoldbergSeymour.ScheideMaximalKempePath
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
 public import LeanPool.GoldbergSeymour.ScheideStructuralLemma
-public import LeanPool.GoldbergSeymour.TashkinovOrder
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeFreeColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeUsedColors
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Scheide Large Height One Tail Pair

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ScheideReversedPathPreparation
+public import LeanPool.GoldbergSeymour.ScheideReversedPathCertificate
 
 /-!
 # Scheide Reversed Kempe Path Tree

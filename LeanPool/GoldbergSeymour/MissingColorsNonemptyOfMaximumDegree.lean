@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.MaximumDegree
 public import LeanPool.GoldbergSeymour.MissingColors
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Missing Colors Nonempty Of Maximum Degree

@@ -5,31 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
-public import LeanPool.GoldbergSeymour.TashTreeBadPair
 public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPair
-public import LeanPool.GoldbergSeymour.TashTreePathIndex
 public import LeanPool.GoldbergSeymour.TashTreeProperInitialSegmentRankLess
-public import LeanPool.GoldbergSeymour.TashTreeProperPrefixElementary
-public import LeanPool.GoldbergSeymour.TashTreeRankLess
-public import LeanPool.GoldbergSeymour.TashTreeSuffixPath
-public import LeanPool.GoldbergSeymour.TashkinovTree
 public import LeanPool.GoldbergSeymour.TashkinovTreeComponentSwapWitnessTransport
 public import LeanPool.GoldbergSeymour.TreeColorUnusedThrough
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapNonElementary
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 public import LeanPool.GoldbergSeymour.TwoColorPathComponent
 
 /-!

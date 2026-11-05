@@ -9,7 +9,6 @@ public import LeanPool.GoldbergSeymour.ExtensionBaseClaim43EdgeEffects
 public import LeanPool.GoldbergSeymour.ExtensionBaseClaim43MissingColors
 public import LeanPool.GoldbergSeymour.ExtensionBaseClaim43Stability
 public import LeanPool.GoldbergSeymour.ExtensionBaseClaim43TreeEdges
-public import LeanPool.GoldbergSeymour.ExtensionRules
 
 /-!
 # Extension Base Claim43

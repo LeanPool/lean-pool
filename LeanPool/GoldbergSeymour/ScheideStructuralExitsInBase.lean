@@ -5,13 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ScheideExitNoFree
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumUnused
 public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.MaximumDegree
-public import LeanPool.GoldbergSeymour.MissingColors
 
 /-!
 # Scheide Structural Exits In Base

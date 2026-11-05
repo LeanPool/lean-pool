@@ -9,8 +9,8 @@ public import LeanPool.GoldbergSeymour.ParallelSupportClosureProperties
 public import LeanPool.GoldbergSeymour.ParallelTerminalAwayInterchangeable
 public import LeanPool.GoldbergSeymour.ParallelTerminalPEPreprocessing
 public import LeanPool.GoldbergSeymour.ParallelTwoConstituentPathContradiction
-
 public import LeanPool.GoldbergSeymour.Td
+public import LeanPool.GoldbergSeymour.Basic2
 
 /-!
 # Parallel Closure Union Elementary

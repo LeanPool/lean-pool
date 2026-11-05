@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseBranchLemmas
+public import LeanPool.GoldbergSeymour.ExtensionBaseBranchPreparation
+public import LeanPool.GoldbergSeymour.ExtensionBaseStoredPairOverlap
 
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
 

@@ -5,27 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryEdges
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.GoodHierarchyNewMissingClosed
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchySegmentColors
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAntitone
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
 public import LeanPool.GoldbergSeymour.ParallelCommonMissingClosed
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-public import LeanPool.GoldbergSeymour.TashkinovClosure
-public import LeanPool.GoldbergSeymour.TreeColorSetClosed
-public import LeanPool.GoldbergSeymour.TreeIncidentEdge
 public import LeanPool.GoldbergSeymour.TreeSequenceEdgeSet
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.StableColoringEquivalence
-public import Mathlib.Tactic.ClearExcept
 
 /-!
 # rutcor
@@ -688,7 +674,6 @@ private theorem helper_continuation_896.{u_1, u_2} :
               | omega
               | ( have := GoldbergSeymour.TreeSequence.positive T
                   have := GoldbergSeymour.ExtendedTashkinovTree.roundsPositive ett
-
                   all_goals omega)
     ⟩ : Fin ett.rounds);
     let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc;

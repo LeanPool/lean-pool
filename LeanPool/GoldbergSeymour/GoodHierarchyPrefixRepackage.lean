@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.GoodHierarchyPrefixConstruction
+public import LeanPool.GoldbergSeymour.MaximumProperty
 
 /-!
 # Good Hierarchy Prefix Repackage

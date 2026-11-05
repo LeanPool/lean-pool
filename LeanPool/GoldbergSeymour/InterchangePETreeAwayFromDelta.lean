@@ -5,54 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryColorEdges
-public import LeanPool.GoldbergSeymour.BoundaryColorVertex
-public import LeanPool.GoldbergSeymour.BoundaryEdges
 public import LeanPool.GoldbergSeymour.CertifiedETTPredecessor
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.CombinedStableClosurePreserved
 public import LeanPool.GoldbergSeymour.CombinedStableColoring
-public import LeanPool.GoldbergSeymour.DefectiveColor
 public import LeanPool.GoldbergSeymour.ElementarySingleBoundaryInterchangeable
-public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.ExtensionBase
 public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HkuParallelBoundaryStructure
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.ModColoring
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
 public import LeanPool.GoldbergSeymour.ParallelClosureUnionElementary
-public import LeanPool.GoldbergSeymour.ParallelExtensionColor
-public import LeanPool.GoldbergSeymour.ParallelExtensionUndoStable
-public import LeanPool.GoldbergSeymour.PartialEdgeColoring
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
-public import LeanPool.GoldbergSeymour.TashkinovExtensionKind
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
-public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
-public import LeanPool.GoldbergSeymour.TreeInterchangeable
-public import LeanPool.GoldbergSeymour.TreeIncidentEdge
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeVertexOrder
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
-public import LeanPool.GoldbergSeymour.TwoColorPathComponent
-public import LeanPool.GoldbergSeymour.StableColoringEquivalence
-
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
 
 /-!

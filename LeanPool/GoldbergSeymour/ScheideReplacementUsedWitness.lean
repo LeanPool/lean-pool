@@ -5,14 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.MissingColors
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
-public import LeanPool.GoldbergSeymour.ScheideStructuralExitsInBase
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 public import LeanPool.GoldbergSeymour.TreeUsedColors
 
 /-!

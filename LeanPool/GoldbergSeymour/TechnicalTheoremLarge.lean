@@ -5,11 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.Basic2
-public import LeanPool.GoldbergSeymour.ExtensionBase
-public import LeanPool.GoldbergSeymour.ExtensionRules
 public import LeanPool.GoldbergSeymour.RutgersCurrentRungInterchangeability
-public import LeanPool.GoldbergSeymour.Td
 public import LeanPool.GoldbergSeymour.TechnicalCurrentRungElementaryLarge
 
 /-!

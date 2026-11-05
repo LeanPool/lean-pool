@@ -11,13 +11,8 @@ public import LeanPool.GoldbergSeymour.HierarchyMeasures
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.TerminalRoute
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceColoringTransport
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorComponentsDisjoint
-public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # P2880_T1_Common Preparation
@@ -78,7 +73,7 @@ private theorem helper_hsigmaOne_150.{u_1, u_2} :
   dsimp [sigma]
   refine ⟨?_, ?_⟩
   · simp [TwoColorComponentSwap, P.minimumContext.oneEdgeUncolored.1]
-  · apply helper_branch_51; assumption
+  · apply helper_branch_51; exact hne
 private theorem helper_branch_75.{u_1, u_2} :
     open scoped Classical in
       ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
@@ -218,7 +213,7 @@ private theorem helper_coreA_303.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx P H q A prefixTrans stageSegment
   by_cases hz : H.dividerCount = 0
-  · apply helper_branch_110; assumption
+  · apply helper_branch_110; exact hz
   · apply helper_branch_122 <;> assumption
 private theorem helper_hlenBX_410.{u_1, u_2} :
     open scoped Classical in
@@ -1393,7 +1388,7 @@ private theorem helper_firstPositionOnB_1140.{u_1, u_2} :
         P.coloring B eta := by
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha beta j B sigma hB_missingEq eta
-  apply helper_firstPositionOnB_760; assumption
+  apply helper_firstPositionOnB_760; exact hB_missingEq
 private theorem helper_firstPositionBoundOnT_1144.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :

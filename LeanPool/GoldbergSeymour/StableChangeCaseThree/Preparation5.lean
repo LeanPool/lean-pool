@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.StableChangeCaseThree.Preparation4
+public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside
 
 /-!
 # StableChangeCaseThree: supporting constructions, part 5

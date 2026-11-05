@@ -5,13 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.Step1ZeroDividerAnchor
 public import LeanPool.GoldbergSeymour.Step1ExitLegMinimumExists
 public import LeanPool.GoldbergSeymour.Step1ExitLegPrecoloringElementary
 public import LeanPool.GoldbergSeymour.Step1ExitLegPresentationExists
 public import LeanPool.GoldbergSeymour.Step1ExitLegThetaPositive
 public import LeanPool.GoldbergSeymour.Step1ExitLegThetaZeroNonparallel
 public import LeanPool.GoldbergSeymour.Step1ExitLegThetaZeroParallel
+public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
 
 /-!
 # Step1Exit Leg Global Minimum

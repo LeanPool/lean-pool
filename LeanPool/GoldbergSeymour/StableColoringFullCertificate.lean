@@ -7,8 +7,8 @@ module
 
 public import LeanPool.GoldbergSeymour.HierarchyPrefixData
 public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
-
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceColoringTransport
+public import LeanPool.GoldbergSeymour.Td
 
 /-!
 # P2752_T2_Full Certificate

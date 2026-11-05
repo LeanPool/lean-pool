@@ -5,20 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryEdges
 public import LeanPool.GoldbergSeymour.ClosedSetTwoColorComponentAvoidance
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideReplacementMaximum
-public import LeanPool.GoldbergSeymour.ScheideReplacementPairFixed
-public import LeanPool.GoldbergSeymour.ScheideStructuralInternalPair
 public import LeanPool.GoldbergSeymour.ScheideSymmetricDefectiveInternal
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Scheide Replacement Missing Deleted Internal

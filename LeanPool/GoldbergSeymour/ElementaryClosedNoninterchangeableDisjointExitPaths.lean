@@ -6,16 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-
 public import LeanPool.GoldbergSeymour.TreeColorSetClosed
 public import LeanPool.GoldbergSeymour.TreeExitPath
 public import LeanPool.GoldbergSeymour.TreeInterchangeable
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-
 public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
 public import LeanPool.GoldbergSeymour.TwoColorComponentsDisjoint
-
-public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
 
 /-!
 # Elementary Closed Noninterchangeable Disjoint Exit Paths

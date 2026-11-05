@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.ClosedColorExitPathBoundaryEdge
 public import LeanPool.GoldbergSeymour.ElementaryClosedNoninterchangeableDisjointExitPaths
+public import LeanPool.GoldbergSeymour.TreeMissingColors
 
 /-!
 # Elementary Closed Noninterchangeable Exit Pair

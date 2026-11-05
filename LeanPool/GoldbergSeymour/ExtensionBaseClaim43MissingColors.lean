@@ -5,11 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaimMissingColors
-
 public import LeanPool.GoldbergSeymour.ExtensionBaseRestorationInvariant
-
-public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClassColors
 
 /-!
 # Extension Base Claim43Missing Colors

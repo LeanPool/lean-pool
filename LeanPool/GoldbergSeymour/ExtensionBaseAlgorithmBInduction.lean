@@ -5,10 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBSingleStep
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBTrace
-
 public import LeanPool.GoldbergSeymour.StrongInterchangeabilityKempePreserved
 
 /-!

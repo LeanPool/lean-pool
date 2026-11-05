@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Data.Fintype.EquivFin
 public import LeanPool.GoldbergSeymour.IncidentCoreIncidence
-public import LeanPool.GoldbergSeymour.IncidentVertexFintype
 public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 public import LeanPool.GoldbergSeymour.RestrictEdges
 

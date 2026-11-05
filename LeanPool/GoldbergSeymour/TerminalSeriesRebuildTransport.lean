@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TerminalSeriesRebuildPreparation
+public import LeanPool.GoldbergSeymour.TashkinovSeriesAppend
+public import LeanPool.GoldbergSeymour.ExtensionBase
 
 /-!
 # Transport lemmas for terminal extension reconstruction
@@ -2385,7 +2387,7 @@ theorem helper_hpeAlternativeZero_5555.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
         e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (Tstar closureTree : TreeSequence G e0),
+        k) (closureTree : TreeSequence G e0),
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
           have := GoldbergSeymour.TreeSequence.positive T
@@ -2444,12 +2446,11 @@ theorem helper_hpeAlternativeZero_5555.{u_1, u_2} :
         appendedChoice.selected rho ∧ ¬Disjoint (MissingColors G rho appendedChoice.otherEndpoint)
         (TreeMissingColors rho (appendedData.tree zeroLast.succ.castSucc)) := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ closureTree q gamma
-      previousProper previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne
-      hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice
-      hnewAlternativeFails prefixInput zeroPrefix zeroLast newStored newEdges newKind newVertex
-      newOutside newDelta newGamma appendedData happendTree happendColor happendStored
-      appendedChoice
+  intro V E _ _ _ G k e0 input T generating ett hpositive sigma closureTree q gamma previousProper
+      previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ
+      hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice hnewAlternativeFails prefixInput
+      zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma
+      appendedData happendTree happendColor happendStored appendedChoice
   rcases hnewAlternativeFails with
     ⟨rho, hrhoProper, hrhoOne, hrhoStable, hrhoNotDisjoint⟩
   refine ⟨rho, hrhoProper, hrhoOne, ?_, ?_⟩
@@ -2472,7 +2473,7 @@ theorem helper_hpeGammaRuleZero_5579.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
         e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (Tstar closureTree : TreeSequence G e0),
+        k) (closureTree : TreeSequence G e0),
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
           have := GoldbergSeymour.TreeSequence.positive T
@@ -2524,12 +2525,11 @@ theorem helper_hpeGammaRuleZero_5579.{u_1, u_2} :
         ParallelExtensionColor appendedData zeroLast.castSucc appendedChoice.selected
         appendedChoice.vertex gamma := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ closureTree q gamma
-      previousProper previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne
-      hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice
-      hgammaPrevMissing H u p prefixInput zeroPrefix zeroLast newStored newEdges newKind
-      newVertex newOutside newDelta newGamma appendedData happendTree happendColor happendStored
-      appendedChoice
+  intro V E _ _ _ G k e0 input T generating ett hpositive sigma closureTree q gamma previousProper
+      previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ
+      hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice hgammaPrevMissing H u p prefixInput
+      zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma
+      appendedData happendTree happendColor happendStored appendedChoice
   rw [ParallelExtensionColorAppend zeroPrefix.data closureTree sigma
     newStored newEdges newKind newVertex newOutside newDelta newGamma
     zeroLast appendedChoice.selected appendedChoice.vertex gamma]
@@ -2546,7 +2546,7 @@ theorem helper_lastStep_5593.{u_1, u_2} :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
         e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
         k), IsProperEdgeColoring G sigma → IsOneEdgeUncolored sigma e0 →
-    ∀ (Tstar closureTree : TreeSequence G e0), TreeSequenceInitialSegment (ett.series.data.tree
+    ∀ (closureTree : TreeSequence G e0), TreeSequenceInitialSegment (ett.series.data.tree
         (Fin.last ett.rounds).castSucc) closureTree →
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
@@ -2612,15 +2612,15 @@ theorem helper_lastStep_5593.{u_1, u_2} :
         < closureTree.length → TashkinovSeriesStep G k (1 : ℕ) e0 prefixInput appendedData
         (Fin.last (1 : ℕ)) := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper hsigmaOne _
-      closureTree hTnClosure q hqSucc gamma secondStable previousProper previousOneUncolored
-      choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective
-      hchoiceEdgeNew hsigmaPrevSelf hclosedPrev hnotStrongPrev hsigmaRecovered hnewExit
-      prefixInput zeroPrefix hterminalClosure zeroLast newStored newEdges newKind newVertex
-      newOutside newDelta newGamma appendedData happendLastTree happendLastColor
-      happendLastStored happendLastEdges happendLastKind happendLastVertex happendLastOutside
-      happendLastDelta happendLastGamma happendTree happendColor happendStored appendedChoice
-      hpeNoRevisitingZero hpeAlternativeZero hpeGammaRuleZero hstrictClosure
+  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper hsigmaOne closureTree
+      hTnClosure q hqSucc gamma secondStable previousProper previousOneUncolored choice sigmaPrev
+      hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew
+      hsigmaPrevSelf hclosedPrev hnotStrongPrev hsigmaRecovered hnewExit prefixInput zeroPrefix
+      hterminalClosure zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma
+      appendedData happendLastTree happendLastColor happendLastStored happendLastEdges
+      happendLastKind happendLastVertex happendLastOutside happendLastDelta happendLastGamma
+      happendTree happendColor happendStored appendedChoice hpeNoRevisitingZero hpeAlternativeZero
+      hpeGammaRuleZero hstrictClosure
   have hlast : zeroLast.succ = Fin.last 1 := by
     apply Fin.ext
     rfl
@@ -3383,7 +3383,7 @@ theorem helper_hpeAlternativeReplacement_5946.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (Tstar : TreeSequence G e0),
+        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) ,
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
           have := GoldbergSeymour.TreeSequence.positive T
@@ -3440,11 +3440,10 @@ theorem helper_hpeAlternativeReplacement_5946.{u_1, u_2} :
         (MissingColors G rho replacementChoice.otherEndpoint) (TreeMissingColors rho
         (corr.replacementSeries.data.tree replacementLast.succ)) := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q previousProper
-      previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ
-      hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice hnewAlternativeFails
-      originalPrefix corr hcorrFinalColor replacementLast hreplacementCurrentTree
-      hreplacementStored replacementChoice
+  intro V E _ _ _ G k e0 input T generating ett hpositive q previousProper previousOneUncolored
+      choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective
+      hchoiceEdgeNew hsigmaPrevSelf newChoice hnewAlternativeFails originalPrefix corr
+      hcorrFinalColor replacementLast hreplacementCurrentTree hreplacementStored replacementChoice
   rcases hnewAlternativeFails with
     ⟨rho, hrhoProper, hrhoOne, hrhoStable, hrhoNotDisjoint⟩
   refine ⟨rho, hrhoProper, hrhoOne, ?_, ?_⟩
@@ -3661,7 +3660,7 @@ theorem helper_branch_6368.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (Tstar : TreeSequence G e0),
+        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) ,
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
           have := GoldbergSeymour.TreeSequence.positive T
@@ -3739,7 +3738,7 @@ theorem helper_branch_6368.{u_1, u_2} :
         TashkinovExtensionKind.PE → corr.replacementSeries.data.chosenVertex h ≠ some
         replacementChoice.vertex := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q gamma previousProper
+  intro V E _ _ _ G k e0 input T generating ett hpositive q gamma previousProper
       previousOneUncolored choice gammaRule sigmaPrev hsigmaPrevProper hsigmaPrevOne
       hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf H u p hroundLarge
       originalPrefix hr corr hcorrFinalColor replacementLast horiginalPositive
@@ -4852,7 +4851,7 @@ private theorem helper_continuation_4951.{u_1, u_2} :
       (@hsigmaStable) (@Tstar) (@closureTree) (@hroundOne) (@prefixInput) (@extendedSeries)
       (@hroundsEq) (@hfinalColor)
   let replacementETT := @helperReplacementETT3160 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett)  (@sigma)
+      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@sigma)
       (@Tstar) (@hTnTstar) (@hstrict) (@closureTree) (@hTstarClosure) (@prefixInput)
       (@extendedSeries) (@hroundsEq) (@hfinalTree) (@hpenultimateTree) (@hfinalColor)
   refine ⟨{
@@ -4965,7 +4964,7 @@ theorem helper_branch_11555.{u_1, u_2} :
       (@Tstar) (@closureTree) (@choice) (@prefixInput) (@zeroPrefix)
   have hnewAlternativeZero := @helper_hnewAlternativeZero_3753 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-      (@Tstar) (@closureTree) (@previousProper) (@previousOneUncolored) (@choice) (@sigmaPrev)
+       (@closureTree) (@previousProper) (@previousOneUncolored) (@choice) (@sigmaPrev)
       (@hsigmaPrevProper) (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hchoiceDefective)
       (@hchoiceEdgeNew) (@hsigmaPrevSelf) (@hnewAlternative) (@prefixInput) (@zeroPrefix)
       (@happendTree) (@happendColor) (@happendStored)
@@ -4973,7 +4972,7 @@ theorem helper_branch_11555.{u_1, u_2} :
       (ett.series.data.tree (Fin.last ett.rounds).castSucc).length <
         closureTree.length := lt_of_lt_of_le hstrict hTstarClosure.1
   have lastStep := @helper_lastStep_3779 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar) (@closureTree)
+      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@closureTree)
       (@hTnClosure) (@hqSucc) (@adjoined) (@previousProper) (@previousOneUncolored) (@choice)
       (@sigmaPrev) (@hsigmaPrevProper) (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hsigmaPrevSigma)
       (@hchoiceDefective) (@hchoiceEdgeNew) (@hsigmaPrevSelf) (@hclosedPrev) (@hnotStrongPrev)
@@ -5084,7 +5083,7 @@ theorem helper_hsigmaPrevEnlarged_12232.{u_1, u_2} :
   have hclosed : ∀ x, x ∈ path.support → ∀ y,
       (TwoColorIncidenceGraph G secondStable gamma choice.color).Adj x y →
       y ∈ path.support := by
-    exact @helper_hclosed_1893 (@V) (@E) inferInstance inferInstance  inferInstance
+    exact @helper_hclosed_1893 (@V) (@E) inferInstance inferInstance inferInstance
         (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar) (@gamma)
         (@secondStable) (@choice) (@hmissing) (@hdegree) (@u) (@path) (@pathIs) (@pathLen)
         (by
@@ -5228,7 +5227,7 @@ private theorem helper_hpeAlternativeZero_6498.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
         e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (Tstar closureTree : TreeSequence G e0),
+        k) (closureTree : TreeSequence G e0),
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
           omega
@@ -5286,14 +5285,13 @@ private theorem helper_hpeAlternativeZero_6498.{u_1, u_2} :
         appendedChoice.selected rho ∧ ¬Disjoint (MissingColors G rho appendedChoice.otherEndpoint)
         (TreeMissingColors rho (appendedData.tree zeroLast.succ.castSucc)) := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma Tstar closureTree q gamma
-      previousProper previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne
-      hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice
-      hnewAlternativeFails prefixInput zeroPrefix zeroLast newStored newEdges newKind newVertex
-      newOutside newDelta newGamma appendedData happendTree happendColor happendStored
-      appendedChoice
+  intro V E _ _ _ G k e0 input T generating ett hpositive sigma closureTree q gamma previousProper
+      previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ
+      hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice hnewAlternativeFails prefixInput
+      zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma
+      appendedData happendTree happendColor happendStored appendedChoice
   exact @helper_hpeAlternativeZero_5555 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar)
+      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
       (@closureTree) (@gamma) (@previousProper) (@previousOneUncolored) (@choice) (@sigmaPrev)
       (@hsigmaPrevProper) (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hchoiceDefective)
       (@hchoiceEdgeNew) (@hsigmaPrevSelf) (@hnewAlternativeFails) (@prefixInput) (@zeroPrefix)
@@ -5305,7 +5303,7 @@ private theorem helper_hpeGammaRuleZero_6513.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
         e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (Tstar closureTree : TreeSequence G e0),
+        k) (closureTree : TreeSequence G e0),
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
           omega
@@ -5352,13 +5350,13 @@ private theorem helper_hpeGammaRuleZero_6513.{u_1, u_2} :
         ParallelExtensionColor appendedData zeroLast.castSucc appendedChoice.selected
         appendedChoice.vertex gamma := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma Tstar closureTree q gamma
-      previousProper previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne
-      hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf hgammaPrevMissing H u p
-      prefixInput zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside newDelta
-      newGamma appendedData happendTree happendColor happendStored appendedChoice
+  intro V E _ _ _ G k e0 input T generating ett hpositive sigma closureTree q gamma previousProper
+      previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ
+      hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf hgammaPrevMissing H u p prefixInput zeroPrefix
+      zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma appendedData
+      happendTree happendColor happendStored appendedChoice
   exact @helper_hpeGammaRuleZero_5579 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar)
+      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
       (@closureTree) (@gamma) (@previousProper) (@previousOneUncolored) (@choice) (@sigmaPrev)
       (@hsigmaPrevProper) (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hchoiceDefective)
       (@hchoiceEdgeNew) (@hsigmaPrevSelf) (@hgammaPrevMissing) (@u) (@p) (@prefixInput)
@@ -5370,8 +5368,8 @@ private theorem helper_lastStep_6525.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
         e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ : IsProperEdgeColoring G sigma) (_ : IsOneEdgeUncolored sigma e0) (Tstar closureTree
-        : TreeSequence G e0) (_ : TreeSequenceInitialSegment (ett.series.data.tree (Fin.last
+        k) (_ : IsProperEdgeColoring G sigma) (_ : IsOneEdgeUncolored sigma e0) (closureTree :
+        TreeSequence G e0) (_ : TreeSequenceInitialSegment (ett.series.data.tree (Fin.last
         ett.rounds).castSucc) closureTree),
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
@@ -5437,18 +5435,18 @@ private theorem helper_lastStep_6525.{u_1, u_2} :
         ett.rounds).castSucc).length < closureTree.length), TashkinovSeriesStep G k (1 : ℕ) e0
         prefixInput appendedData (Fin.last (1 : ℕ)) := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper hsigmaOne Tstar
-      closureTree hTnClosure q hqSucc gamma secondStable previousProper previousOneUncolored
-      choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective
-      hchoiceEdgeNew hsigmaPrevSelf hclosedPrev hnotStrongPrev hsigmaRecovered hnewExit
-      prefixInput zeroPrefix hterminalClosure zeroLast newStored newEdges newKind newVertex
-      newOutside newDelta newGamma appendedData happendLastTree happendLastColor
-      happendLastStored happendLastEdges happendLastKind happendLastVertex happendLastOutside
-      happendLastDelta happendLastGamma happendTree happendColor happendStored appendedChoice
-      hpeNoRevisitingZero hpeAlternativeZero hpeGammaRuleZero hstrictClosure
+  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper hsigmaOne closureTree
+      hTnClosure q hqSucc gamma secondStable previousProper previousOneUncolored choice sigmaPrev
+      hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew
+      hsigmaPrevSelf hclosedPrev hnotStrongPrev hsigmaRecovered hnewExit prefixInput zeroPrefix
+      hterminalClosure zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma
+      appendedData happendLastTree happendLastColor happendLastStored happendLastEdges
+      happendLastKind happendLastVertex happendLastOutside happendLastDelta happendLastGamma
+      happendTree happendColor happendStored appendedChoice hpeNoRevisitingZero hpeAlternativeZero
+      hpeGammaRuleZero hstrictClosure
   exact @helper_lastStep_5593 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
       (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper)
-      (@hsigmaOne) (@Tstar) (@closureTree) (@hTnClosure) (@hqSucc) (@gamma) (@secondStable)
+      (@hsigmaOne) (@closureTree) (@hTnClosure) (@hqSucc) (@gamma) (@secondStable)
       (@previousProper) (@previousOneUncolored) (@choice) (@sigmaPrev) (@hsigmaPrevProper)
       (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hchoiceDefective) (@hchoiceEdgeNew)
       (@hsigmaPrevSelf) (@hclosedPrev) (@hnotStrongPrev) (@hsigmaRecovered) (@hnewExit)
@@ -5845,7 +5843,7 @@ theorem helper_branch_12554.{u_1, u_2} :
         ¬ Disjoint (MissingColors G rho appendedChoice.otherEndpoint)
           (TreeMissingColors rho
             (appendedData.tree zeroLast.succ.castSucc)) := by
-    apply helper_hpeAlternativeZero_6498 <;> assumption
+    apply helper_hpeAlternativeZero_6498; assumption
   have hpeGammaRuleZero : ParallelExtensionColor appendedData
       zeroLast.castSucc appendedChoice.selected appendedChoice.vertex
       gamma := by
@@ -6902,7 +6900,7 @@ theorem helper_hpeGammaRuleReplacement_13982.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (Tstar : TreeSequence G e0),
+        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ : TreeSequence G e0),
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
           have := GoldbergSeymour.TreeSequence.positive T
@@ -7004,7 +7002,7 @@ theorem helper_hpeGammaRuleReplacement_13982.{u_1, u_2} :
   refine ⟨?_, ?_⟩
   · simpa [replacementChoice] using hgammaPrevMissing
   · exact @helper_branch_6368 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-      (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar) (@gamma) (@previousProper)
+      (@input) (@T) (@generating) (@ett) (@hpositive) (@gamma) (@previousProper)
       (@previousOneUncolored) (@choice) (@gammaRule) (@sigmaPrev) (@hsigmaPrevProper)
       (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hchoiceDefective) (@hchoiceEdgeNew)
       (@hsigmaPrevSelf) (@u) (@p) (@hroundLarge) (@originalPrefix) (@hr) (@corr)

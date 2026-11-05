@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.MissingColors
 public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
+public import Mathlib.Combinatorics.SimpleGraph.Paths
 
 /-!
 # Tree Exit Path

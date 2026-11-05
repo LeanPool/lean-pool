@@ -5,16 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.DefectiveColors
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
 public import LeanPool.GoldbergSeymour.ScheideReplacementMaximum
-public import LeanPool.GoldbergSeymour.ScheideReplacementPairFixed
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
-public import LeanPool.GoldbergSeymour.ScheideStructuralExitsInBase
-public import LeanPool.GoldbergSeymour.TreeSequence
 
 /-!
 # Scheide Symmetric Replacement Boundary Configuration

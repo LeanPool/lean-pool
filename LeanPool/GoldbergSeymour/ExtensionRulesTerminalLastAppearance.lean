@@ -6,18 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
-
 public import LeanPool.GoldbergSeymour.HkuMissingStoredMonotone
-
 public import LeanPool.GoldbergSeymour.MaximumProperty
-
 public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
-
 public import LeanPool.GoldbergSeymour.TreeExitComponentMeetsTreeOnlyAtExit
-
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-
-public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 
 /-!
 # Extension Rules Terminal Last Appearance

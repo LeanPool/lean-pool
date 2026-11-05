@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.OutsideExitTransport
-
 public import LeanPool.GoldbergSeymour.Step1ZeroDividerAnchorNonPE
+public import LeanPool.GoldbergSeymour.HierarchyLEMStable
 
 /-!
 # Step1Case One Inside Zero Non PE

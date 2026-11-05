@@ -5,9 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ExtensionBase
-
-public import LeanPool.GoldbergSeymour.ParallelExtensionUndoStable
+public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
+public import LeanPool.GoldbergSeymour.HkuMissingStoredMonotone
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
+public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 
 /-!
 # Basic2Terminal SERE

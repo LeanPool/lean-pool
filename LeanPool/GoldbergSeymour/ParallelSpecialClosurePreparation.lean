@@ -6,16 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.AlgorithmFiveFiveBaseStage
-
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTransTrees
-
 public import LeanPool.GoldbergSeymour.ParallelBaseFourCommonMissingColors
 public import LeanPool.GoldbergSeymour.ParallelClosureUnionElementary
 public import LeanPool.GoldbergSeymour.ParallelCommonMissingClosed
 public import LeanPool.GoldbergSeymour.ParallelCoreAugmentationStrict
-
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceStrictBoundaryWitness
-
 public import LeanPool.GoldbergSeymour.PredecessorElementary
 public import LeanPool.GoldbergSeymour.ClosedCoreElementary
 public import LeanPool.GoldbergSeymour.CoreClosurePresentation

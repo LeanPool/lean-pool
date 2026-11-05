@@ -6,34 +6,11 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-
 public import LeanPool.GoldbergSeymour.StableChangeCaseThree.Preparation5
-
-public import LeanPool.GoldbergSeymour.ChangeLemma
-public import LeanPool.GoldbergSeymour.CombinedStableClosurePreserved
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.GoodHierarchyPrefixRepackage
-public import LeanPool.GoldbergSeymour.HierarchySplitter
 public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
-public import LeanPool.GoldbergSeymour.HkuTreeColorsControlled
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
 public import LeanPool.GoldbergSeymour.SameGoodHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.Td
-public import LeanPool.GoldbergSeymour.TreeColorSetMinusClosed
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePosition
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceComponentSwap
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 
 /-!
 # Stable Change Case Three

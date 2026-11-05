@@ -6,7 +6,6 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseCaseOneIndices
-public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClass
 
 /-!
 # Extension Base Algorithm BTrace

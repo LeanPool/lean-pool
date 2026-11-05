@@ -5,14 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.CorrespondingTerminalClosureEq
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
 public import LeanPool.GoldbergSeymour.MaximumStableClosureExists
 public import LeanPool.GoldbergSeymour.TechnicalTheoremLarge
 public import LeanPool.GoldbergSeymour.TerminalClosureMaximum
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeUnique
-public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 
 /-!
 # Normalize Positive Terminal Maximum

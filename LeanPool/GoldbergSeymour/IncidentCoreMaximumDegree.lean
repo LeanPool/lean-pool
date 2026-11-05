@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.IncidentCoreDegree
 public import LeanPool.GoldbergSeymour.MaximumDegree
+public import LeanPool.GoldbergSeymour.IncidentVertexFintype
 
 /-!
 # Incident Core Maximum Degree

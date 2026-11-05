@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TerminalSeriesRebuildTransport
+public import LeanPool.GoldbergSeymour.TdReplacementPrefixExact
 
 /-!
 # Td Terminal SEPERebuild
@@ -1107,7 +1108,7 @@ private abbrev helperContinuation1431Conditions.{u_1, u_2} : Prop :=
        MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree replacementLast.succ)
         (TashkinovStoredColors corr.replacementSeries.data replacementLast)
         (corr.replacementSeries.data.coloring replacementLast) :=
-       helperReplacementChoice5196 G k e0 input T generating ett hpositive  previousProper
+       helperReplacementChoice5196 G k e0 input T generating ett hpositive previousProper
         previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ
         hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf originalPrefix corr hcorrFinalColor
         hreplacementCurrentTree hreplacementStored;
@@ -2402,7 +2403,7 @@ private theorem helper_continuation_1943.{u_1, u_2} :
             (TreeMissingColors rho
               (corr.replacementSeries.data.tree replacementLast.succ)) := by
       exact @helper_hpeAlternativeReplacement_5946 (@V) (@E) inferInstance inferInstance
-          inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar)
+          inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive)
           (@previousProper) (@previousOneUncolored) (@choice) (@sigmaPrev) (@hsigmaPrevProper)
           (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hchoiceDefective) (@hchoiceEdgeNew)
           (@hsigmaPrevSelf) (@hnewAlternativeFails) (@originalPrefix) (@corr) (@hcorrFinalColor)
@@ -2759,7 +2760,7 @@ private theorem helper_continuation_2339.{u_1, u_2} :
       (ett.series.data.tree q.succ.castSucc)
       (TashkinovStoredColors ett.series.data q.castSucc) sigmaPrev := by
     exact @helperNewChoice4049 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive)  (@previousProper)
+        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@previousProper)
         (@previousOneUncolored) (@choice) (@sigmaPrev) (@hsigmaPrevProper) (@hsigmaPrevOne)
         (@hsigmaPrevStableQ) (@hchoiceDefective) (@hchoiceEdgeNew) (@hsigmaPrevSelf)
   have hclosedPrev : ColoredVertexSetClosed G sigmaPrev
@@ -3047,7 +3048,7 @@ private theorem helper_continuation_2265.{u_1, u_2} :
           (TreeMissingColors pi
             (corr.replacementSeries.data.tree replacementLast.succ)) := by
       exact @helper_hnewAlternativeReplacement_4116 (@V) (@E) inferInstance inferInstance
-          inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar)
+          inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive)
           (@previousProper) (@previousOneUncolored) (@choice) (@sigmaPrev) (@hsigmaPrevProper)
           (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hchoiceDefective) (@hchoiceEdgeNew)
           (@hsigmaPrevSelf) (@hnewAlternative) (@originalPrefix) (@corr) (@hcorrFinalColor)
@@ -3164,7 +3165,7 @@ private theorem helper_branch_2237.{u_1, u_2} :
       (ett.series.data.tree q.succ.castSucc)
       (TashkinovStoredColors ett.series.data q.castSucc) sigmaPrev := by
     exact @helperNewChoice2409 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive)  (@previousProper)
+        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@previousProper)
         (@previousOneUncolored) (@choice) (@sigmaPrev) (@hsigmaPrevProper) (@hsigmaPrevOne)
         (@hsigmaPrevStableQ) (@hchoiceDefective) (@hchoiceEdgeNew) (@hsigmaPrevSelf)
   have hclosedPrev : ColoredVertexSetClosed G sigmaPrev

@@ -5,8 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPathIndex
-
 public import LeanPool.GoldbergSeymour.TashTreeLastIndexDeletion
 public import LeanPool.GoldbergSeymour.TashTreeLastIndexFirstNormalForm
 public import LeanPool.GoldbergSeymour.TashTreeLastIndexSecondNormalForm

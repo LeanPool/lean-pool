@@ -7,13 +7,8 @@ module
 
 public import LeanPool.GoldbergSeymour.CombinedStableClosurePreserved
 public import LeanPool.GoldbergSeymour.CombinedStableColoring
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-public import LeanPool.GoldbergSeymour.ModColoring
 public import LeanPool.GoldbergSeymour.SameHierarchyStages
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
 public import LeanPool.GoldbergSeymour.Td
-
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
 
 /-!

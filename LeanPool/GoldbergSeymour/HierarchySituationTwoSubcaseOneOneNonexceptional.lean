@@ -6,38 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ChangeLemma
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.HierarchyBase
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
-public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
-public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
-public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-public import LeanPool.GoldbergSeymour.HierarchyPathNumber
-public import LeanPool.GoldbergSeymour.HierarchySegmentColors
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseOneData
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTrees
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoTailData
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchyStageMissingColors
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.SameGoodHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Hierarchy Situation Two Subcase One One Nonexceptional

@@ -6,9 +6,6 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
-
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-
 public import LeanPool.GoldbergSeymour.ScheideBalancedCandidateMaximumExists
 public import LeanPool.GoldbergSeymour.ScheideBalancedCandidateMaximumOrder
 public import LeanPool.GoldbergSeymour.ScheideBalancedCandidateNormalTransport

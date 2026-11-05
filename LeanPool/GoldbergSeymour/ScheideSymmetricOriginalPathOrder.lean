@@ -5,20 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainBoundaryEdges
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPath
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
-public import LeanPool.GoldbergSeymour.ScheideExitVertex
-public import LeanPool.GoldbergSeymour.ScheideExitVertices
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
 public import LeanPool.GoldbergSeymour.ScheideReplacementInternalMissing
-public import LeanPool.GoldbergSeymour.ScheideStructuralExitsInBase
-public import LeanPool.GoldbergSeymour.ScheideSymmetricOriginalFreePath
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
 
 /-!
 # Scheide Symmetric Original Path Order

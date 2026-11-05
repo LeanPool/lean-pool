@@ -6,18 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
-public import LeanPool.GoldbergSeymour.BaseDisplayedEdges
-public import LeanPool.GoldbergSeymour.TerminalRoute
 public import LeanPool.GoldbergSeymour.ElementaryTerminalComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceColoringTransport
 public import LeanPool.GoldbergSeymour.ChangeLemma
-public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoSplitTail
 
 /-!

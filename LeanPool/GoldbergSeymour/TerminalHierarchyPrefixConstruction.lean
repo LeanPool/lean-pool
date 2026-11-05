@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TerminalHierarchyPrefixPreparation
+public import LeanPool.GoldbergSeymour.MaximumProperty
+public import LeanPool.GoldbergSeymour.GoodHierarchy
 
 /-!
 # Terminal hierarchy prefix constructors

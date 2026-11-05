@@ -5,16 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MissingColors
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
 public import LeanPool.GoldbergSeymour.ScheideStructuralReorderingData
-public import LeanPool.GoldbergSeymour.ScheideStructuralSelectionData
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 
 /-!
 # Scheide Structural Reduced Assembly

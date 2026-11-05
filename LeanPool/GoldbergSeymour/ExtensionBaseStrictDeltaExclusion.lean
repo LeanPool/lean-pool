@@ -6,12 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-
 public import LeanPool.GoldbergSeymour.ExtensionBaseSupportOrder
-
 public import LeanPool.GoldbergSeymour.SameColorSeriesPreserved
-
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
+public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 
 /-!
 # Extension Base Strict Delta Exclusion

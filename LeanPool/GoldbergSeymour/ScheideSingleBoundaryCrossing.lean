@@ -5,11 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ScheideReplacementFamilyExists
 public import LeanPool.GoldbergSeymour.ScheideOriginalDefectiveConfinement
 public import LeanPool.GoldbergSeymour.ScheideOriginalNondefectiveConfinement
 public import LeanPool.GoldbergSeymour.ScheideReplacementConfinement
-
 public import LeanPool.GoldbergSeymour.ScheideTwoColorLastExitPath
 
 /-!

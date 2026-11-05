@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Algebra.Ring.Parity
-
-public import LeanPool.GoldbergSeymour.Preamble
+public import Mathlib.Data.Sym.Sym2.Init
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Eligible Odd Set

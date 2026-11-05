@@ -5,49 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAntitone
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TerminalRoute
-public import LeanPool.GoldbergSeymour.CertifiedETTPredecessor
-public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.BaseControl
 public import LeanPool.GoldbergSeymour.DisplayedEdges
 public import LeanPool.GoldbergSeymour.RecoloredPrefixReconstruction
 public import LeanPool.GoldbergSeymour.RetainedHierarchy
-public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.CombinedStableClosurePreserved
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.GoodHierarchyNewMissingClosed
-public import LeanPool.GoldbergSeymour.GoodHierarchyPrefixRepackage
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
-public import LeanPool.GoldbergSeymour.HierarchySplitter
 public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
-public import LeanPool.GoldbergSeymour.HkuTreeColorsControlled
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
-public import LeanPool.GoldbergSeymour.OutsideKempeRecoloring
-public import LeanPool.GoldbergSeymour.OutsideKempeRecoloringStable
-public import LeanPool.GoldbergSeymour.ParallelCommonMissingClosed
-public import LeanPool.GoldbergSeymour.RevisitingExtensionCertificate
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.Td
-public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
-public import LeanPool.GoldbergSeymour.TreeColorSetClosed
-public import LeanPool.GoldbergSeymour.TreeColorSetMinusClosed
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.ParallelInterchangeability
-public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
-public import LeanPool.GoldbergSeymour.StableColoringEquivalence
-public import LeanPool.GoldbergSeymour.HierarchyStageInterchangeability
-
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
 
 /-!

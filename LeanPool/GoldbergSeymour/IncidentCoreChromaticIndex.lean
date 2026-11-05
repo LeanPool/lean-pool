@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
 public import LeanPool.GoldbergSeymour.ChromaticIndexSpec
 public import LeanPool.GoldbergSeymour.IncidentCoreColoringTransport
+public import LeanPool.GoldbergSeymour.IncidentVertexFintype
 
 /-!
 # Incident Core Chromatic Index

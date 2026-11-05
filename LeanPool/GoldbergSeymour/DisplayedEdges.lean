@@ -6,11 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
-public import LeanPool.GoldbergSeymour.GoodHierarchyNewMissingClosed
 public import LeanPool.GoldbergSeymour.BaseDisplayedEdges
 public import LeanPool.GoldbergSeymour.TerminalRoute
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePosition
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.OutsideKempeRecoloringStable
 
 /-!

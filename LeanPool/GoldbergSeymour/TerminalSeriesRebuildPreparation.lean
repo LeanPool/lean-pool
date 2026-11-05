@@ -5,68 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.Basic2
 public import LeanPool.GoldbergSeymour.PositivePrefixNoRevisiting
-public import LeanPool.GoldbergSeymour.TdEarlierPEWitnessIdentification
-public import LeanPool.GoldbergSeymour.TdReplacementPrefixExact
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.BoundaryColorEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ColoredVertexSetStronglyClosed
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.DefectiveColor
-public import LeanPool.GoldbergSeymour.DefectiveEdge
-public import LeanPool.GoldbergSeymour.DefectiveVertex
-public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.ExtensionBase
-public import LeanPool.GoldbergSeymour.ExtensionRules
 public import LeanPool.GoldbergSeymour.HkuMissingStoredMonotone
-public import LeanPool.GoldbergSeymour.HkuTreeColorsControlled
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
-public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.ModColoring
-public import LeanPool.GoldbergSeymour.ParallelExtensionColor
-public import LeanPool.GoldbergSeymour.ParallelExtensionUndoStable
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.RevisitingExtensionCertificate
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-public import LeanPool.GoldbergSeymour.TashkinovClosure
-public import LeanPool.GoldbergSeymour.TashkinovClosureExists
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesAppend
-public import LeanPool.GoldbergSeymour.TashkinovSeriesFinalETTExists
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
-public import LeanPool.GoldbergSeymour.TashkinovStoredColorsAppend
-public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
-public import LeanPool.GoldbergSeymour.TreeExit
-public import LeanPool.GoldbergSeymour.TreeExitPath
-public import LeanPool.GoldbergSeymour.TreeIncidentEdge
-public import LeanPool.GoldbergSeymour.TreeInterchangeable
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorCycle
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorPathComponent
-public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
 public import LeanPool.GoldbergSeymour.RevisitingExtensionCertificateAppend
-public import LeanPool.GoldbergSeymour.ParallelExtensionColorAppend
-public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
 public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
 
@@ -798,7 +739,6 @@ noncomputable abbrev helperReplacementChoice3411.{u_1, u_2} :
   (generating : PartialEdgeColoring E k) →
   (ett : ExtendedTashkinovTree G k e0 input T generating) →
   (hpositive : (0 : ℕ) < ett.rounds) →
-
   let q : Fin ett.rounds :=
     (⟨ett.rounds - (1 : ℕ),
         by
@@ -950,7 +890,6 @@ noncomputable abbrev helperReplacementChoice5196.{u_1, u_2} :
   (generating : PartialEdgeColoring E k) →
   (ett : ExtendedTashkinovTree G k e0 input T generating) →
   (hpositive : (0 : ℕ) < ett.rounds) →
-
   let q : Fin ett.rounds :=
     (⟨ett.rounds - (1 : ℕ),
         by
@@ -4783,7 +4722,7 @@ theorem helper_hnewAlternativeZero_3753.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
         e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (Tstar closureTree : TreeSequence G e0),
+        k) (closureTree : TreeSequence G e0),
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
         have := GoldbergSeymour.TreeSequence.positive T
@@ -4841,12 +4780,12 @@ theorem helper_hnewAlternativeZero_3753.{u_1, u_2} :
         appendedChoice.selected pi → Disjoint (MissingColors G pi appendedChoice.otherEndpoint)
         (TreeMissingColors pi (appendedData.tree zeroLast.succ.castSucc)) := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ closureTree q
-      previousProper previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne
-      hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice hnewAlternative
-      prefixInput zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside newDelta
-      newGamma appendedData happendTree happendColor happendStored appendedChoice pi hpiProper
-      hpiOne hpiStable
+  intro V E _ _ _ G k e0 input T generating ett hpositive sigma closureTree q previousProper
+      previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ
+      hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice hnewAlternative prefixInput
+      zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma
+      appendedData happendTree happendColor happendStored appendedChoice pi hpiProper hpiOne
+      hpiStable
   have hpiStable' := hpiStable
   change StableColoring (appendedData.tree zeroLast.succ.castSucc)
     (insert choice.color
@@ -4867,7 +4806,7 @@ theorem helper_lastStep_3779.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
         e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (Tstar closureTree : TreeSequence G e0), TreeSequenceInitialSegment
+        k) (closureTree : TreeSequence G e0), TreeSequenceInitialSegment
         (ett.series.data.tree (Fin.last ett.rounds).castSucc) closureTree →
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
@@ -4930,15 +4869,14 @@ theorem helper_lastStep_3779.{u_1, u_2} :
         (Fin.last ett.rounds).castSucc).length < closureTree.length → TashkinovSeriesStep G k (1 :
         ℕ) e0 prefixInput appendedData (Fin.last (1 : ℕ)) := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ closureTree hTnClosure q
-      hqSucc adjoined previousProper previousOneUncolored choice sigmaPrev hsigmaPrevProper
-      hsigmaPrevOne hsigmaPrevStableQ hsigmaPrevSigma hchoiceDefective hchoiceEdgeNew
-      hsigmaPrevSelf hclosedPrev hnotStrongPrev prefixInput zeroPrefix fstar seed hadjoin hfstar
-      hseedClosure zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma
-      appendedData happendLastTree happendLastColor happendLastStored happendLastEdges
-      happendLastKind happendLastVertex happendLastOutside happendLastDelta happendLastGamma
-      happendTree happendColor happendStored appendedChoice hnoRevisitingZero hnewAlternativeZero
-      hstrictClosure
+  intro V E _ _ _ G k e0 input T generating ett hpositive sigma closureTree hTnClosure q hqSucc
+      adjoined previousProper previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne
+      hsigmaPrevStableQ hsigmaPrevSigma hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf hclosedPrev
+      hnotStrongPrev prefixInput zeroPrefix fstar seed hadjoin hfstar hseedClosure zeroLast
+      newStored newEdges newKind newVertex newOutside newDelta newGamma appendedData happendLastTree
+      happendLastColor happendLastStored happendLastEdges happendLastKind happendLastVertex
+      happendLastOutside happendLastDelta happendLastGamma happendTree happendColor happendStored
+      appendedChoice hnoRevisitingZero hnewAlternativeZero hstrictClosure
   have hlast : zeroLast.succ = Fin.last 1 := by
     apply Fin.ext
     rfl
@@ -5695,7 +5633,7 @@ theorem helper_hnewAlternativeReplacement_4116.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (Tstar : TreeSequence G e0),
+        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) ,
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
         have := GoldbergSeymour.TreeSequence.positive T
@@ -5752,11 +5690,11 @@ theorem helper_hnewAlternativeReplacement_4116.{u_1, u_2} :
         G pi replacementChoice.otherEndpoint) (TreeMissingColors pi
         (corr.replacementSeries.data.tree replacementLast.succ)) := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q previousProper
-      previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ
-      hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice hnewAlternative originalPrefix
-      corr hcorrFinalColor replacementLast hreplacementCurrentTree hreplacementStored
-      replacementChoice pi hpiProper hpiOne hpiStable
+  intro V E _ _ _ G k e0 input T generating ett hpositive q previousProper previousOneUncolored
+      choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective
+      hchoiceEdgeNew hsigmaPrevSelf newChoice hnewAlternative originalPrefix corr hcorrFinalColor
+      replacementLast hreplacementCurrentTree hreplacementStored replacementChoice pi hpiProper
+      hpiOne hpiStable
   have hpiStable' := hpiStable
   change StableColoring
     (corr.replacementSeries.data.tree replacementLast.succ)

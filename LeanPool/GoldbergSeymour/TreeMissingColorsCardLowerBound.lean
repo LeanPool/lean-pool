@@ -6,16 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.Degree
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
 public import LeanPool.GoldbergSeymour.MaximumDegree
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.PartialEdgeColoring
-public import LeanPool.GoldbergSeymour.PresentColors
 public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Tree Missing Colors Card Lower Bound

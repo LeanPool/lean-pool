@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.BoundaryColorEdges
+public import LeanPool.GoldbergSeymour.Incident
 
 /-!
 # Boundary Color Vertex

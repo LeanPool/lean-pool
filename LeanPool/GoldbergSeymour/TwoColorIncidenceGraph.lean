@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import LeanPool.GoldbergSeymour.Incident
 public import LeanPool.GoldbergSeymour.PartialEdgeColoring
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Tactic.Bound.Init
 
 /-!
 # Two Color Incidence Graph

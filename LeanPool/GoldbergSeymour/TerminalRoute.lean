@@ -6,12 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
-
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
 
 /-!
 # P2813_T1_Terminal Route

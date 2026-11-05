@@ -5,19 +5,16 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaim45
-
 public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
-
 public import LeanPool.GoldbergSeymour.OrderedTreeUnionExists
-
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
 public import LeanPool.GoldbergSeymour.TashkinovClosureExists
-
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
+public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
+public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 
 /-!
 # Extension Base Case Two Contradiction

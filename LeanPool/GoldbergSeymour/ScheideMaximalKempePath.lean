@@ -6,19 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MissingColors
 public import LeanPool.GoldbergSeymour.ScheideMaximalContainsEveryTree
-public import LeanPool.GoldbergSeymour.ScheideMaximalElementaryClosed
-public import LeanPool.GoldbergSeymour.TashTree
-public import LeanPool.GoldbergSeymour.TashkinovTree
 public import LeanPool.GoldbergSeymour.TreeColorUnusedThrough
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TashkinovTreeComponentSwapWitnessTransport
 
 /-!
 # Scheide Maximal Kempe Path

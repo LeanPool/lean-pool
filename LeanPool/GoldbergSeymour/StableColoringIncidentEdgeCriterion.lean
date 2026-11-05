@@ -5,11 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.Degree
 public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
 public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-
 public import LeanPool.GoldbergSeymour.StableColoring
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # sc1

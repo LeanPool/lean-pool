@@ -9,7 +9,6 @@ public import LeanPool.GoldbergSeymour.MinusClosedTransport
 public import LeanPool.GoldbergSeymour.PrefixSegmentTransport
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.BoundaryColorEdges
 
 /-!
 # P2813_T1_Retained Hierarchy

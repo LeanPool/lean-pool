@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.ParallelExtensionColor
 public import LeanPool.GoldbergSeymour.TashkinovSeriesDataAppend
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Parallel Extension Color Append

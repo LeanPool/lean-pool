@@ -11,6 +11,8 @@ public import LeanPool.GoldbergSeymour.HierarchySituationThreeDisjointThetaStore
 public import
     LeanPool.GoldbergSeymour.HierarchySituationThreeDisjointThetaUnstoredBetaStoredImpossible
 public import LeanPool.GoldbergSeymour.HierarchySituationThreeDisjointThetaUnstoredOutsideImpossible
+public import LeanPool.GoldbergSeymour.HierarchySituationThreeClaimJMinusOneEmpty
+public import LeanPool.GoldbergSeymour.HierarchySituationThreeColorChoice
 
 /-!
 # Hierarchy Situation Three Impossible

@@ -5,8 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-
 public import LeanPool.GoldbergSeymour.TreeFreeColors
 public import LeanPool.GoldbergSeymour.TwoColorComponent
 

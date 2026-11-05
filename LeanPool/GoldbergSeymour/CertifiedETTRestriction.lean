@@ -5,7 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.CertifiedETTPredecessor
+public import LeanPool.GoldbergSeymour.MaximumPropertyPrefix
+public import LeanPool.GoldbergSeymour.ExtendedTashkinovTreePrefix
 
 /-!
 # Certified ETTRestriction

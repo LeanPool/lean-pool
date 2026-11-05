@@ -7,13 +7,9 @@ module
 
 public import LeanPool.GoldbergSeymour.ClosedColorExitPathBoundaryEdge
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-
 public import LeanPool.GoldbergSeymour.TreeMissingColors
-
 public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
 public import LeanPool.GoldbergSeymour.TwoColorComponentsDisjoint
-
-public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
 
 /-!
 # Elementary Closed Exit Pair Same Component

@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-
 public import LeanPool.GoldbergSeymour.TashkinovTree
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Tashkinov Augmentation Sequence Preserves Tashkinov Tree

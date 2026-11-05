@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation3
+public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation1
 
 /-!
 # ChangeLemmaBothOutside: supporting constructions, part 4

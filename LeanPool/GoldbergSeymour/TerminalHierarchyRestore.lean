@@ -9,8 +9,8 @@ public import LeanPool.GoldbergSeymour.HierarchyPrefixData
 public import LeanPool.GoldbergSeymour.TerminalStoredColors
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeData
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-
 public import LeanPool.GoldbergSeymour.GoodHierarchyCommonOriginalBaseTransport
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 
 /-!
 # P2752_T2_Terminal Hierarchy Restore

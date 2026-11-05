@@ -5,10 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.BoundaryColorEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.ETTStrongInterchangeable
 public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoObservation19
@@ -16,31 +12,13 @@ public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoObservation20
 public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoObservation21
 public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoObservation23
 public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClass
-public import LeanPool.GoldbergSeymour.Incident
 public import LeanPool.GoldbergSeymour.InternalEdges
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
 public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
-public import LeanPool.GoldbergSeymour.PresentColors
 public import LeanPool.GoldbergSeymour.OutsideSwapPrefixEffects
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-public import LeanPool.GoldbergSeymour.TashkinovClosure
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeIncidentEdge
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeVerticesBefore
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Extension Base Claim46

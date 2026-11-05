@@ -7,14 +7,8 @@ module
 
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.HierarchyStageMissingColors
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!

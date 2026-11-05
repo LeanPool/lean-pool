@@ -6,7 +6,6 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
-public import LeanPool.GoldbergSeymour.TreeMissingColors
 
 /-!
 # Scheide Defective Setup

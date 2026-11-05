@@ -5,13 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
 public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 public import LeanPool.GoldbergSeymour.TreeInterchangeable
 public import LeanPool.GoldbergSeymour.TwoColorComponentCycle
 public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorPathComponent
 
 /-!
 # Two Color Interchangeable Distinct Component Cycle

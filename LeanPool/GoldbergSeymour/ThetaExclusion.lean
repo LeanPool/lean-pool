@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
 public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
+public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 
 /-!
 # P2880_T1_Theta Exclusion

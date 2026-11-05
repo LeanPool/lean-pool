@@ -5,14 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BoundaryEdges
 public import LeanPool.GoldbergSeymour.InternalEdges
-public import LeanPool.GoldbergSeymour.RevisitingExtensionCertificate
 public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-public import LeanPool.GoldbergSeymour.TwoColorCycle
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Earlier PECycle First Nonrevisiting Internal

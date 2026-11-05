@@ -6,7 +6,6 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
 
 /-!
 # Scheide Replacement Data

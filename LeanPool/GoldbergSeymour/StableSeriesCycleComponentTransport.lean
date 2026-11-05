@@ -5,18 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.HkuMissingStoredMonotone
-public import LeanPool.GoldbergSeymour.InternalEdges
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 public import LeanPool.GoldbergSeymour.SameColorSeriesPreserved
 public import LeanPool.GoldbergSeymour.StableColoringEquivalence
-public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
-public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.TwoColorComponentCycle
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 
 /-!
 # Stable Series Cycle Component Transport

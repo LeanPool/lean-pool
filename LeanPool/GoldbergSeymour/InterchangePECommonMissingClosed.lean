@@ -5,10 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.CombinedStableClosurePreserved
-
-public import LeanPool.GoldbergSeymour.ParallelClosureUnionElementary
 public import LeanPool.GoldbergSeymour.ParallelCommonMissingClosed
+public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
+public import LeanPool.GoldbergSeymour.CombinedStableColoring
+public import LeanPool.GoldbergSeymour.CertifiedETTPredecessor
+public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 
 /-!
 # Interchange PECommon Missing Closed

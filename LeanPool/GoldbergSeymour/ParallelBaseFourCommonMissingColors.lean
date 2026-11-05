@@ -26,7 +26,7 @@ open scoped Sym2
 
 theorem ParallelBaseFourCommonMissingColors
     {V E : Type*} [Fintype V] [Fintype E]
-    [ DecidableEq V] [ DecidableEq E]
+    [DecidableEq V] [DecidableEq E]
     {G : LooplessMultigraph V E} {k : Nat} {e0 : E}
     {input : PartialEdgeColoring E k} {T : TreeSequence G e0}
     {phi : PartialEdgeColoring E k}

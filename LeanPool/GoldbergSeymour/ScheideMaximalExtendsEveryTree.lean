@@ -7,10 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.FixedPairMaximalTashkinovTree
 public import LeanPool.GoldbergSeymour.ScheideMaximalContainsEveryTree
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeSequence
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 
 /-!
 # Scheide Maximal Extends Every Tree

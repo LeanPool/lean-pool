@@ -5,7 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
+public import Mathlib.Combinatorics.SimpleGraph.Init
+public import Mathlib.Data.Sym.Sym2.Init
+public import Mathlib.Tactic.Bound.Init
+public import Mathlib.Data.Finset.Attr
+public import Mathlib.Tactic.SetLike
+public import Mathlib.Tactic.Finiteness.Attr
+public import Mathlib.Data.Nat.Notation
+public import Mathlib.Tactic.ToDual
 
 /-!
 # Hierarchy Counterexample Less

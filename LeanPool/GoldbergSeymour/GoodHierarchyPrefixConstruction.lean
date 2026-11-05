@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.GoodHierarchyPrefixPreparation
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Good Hierarchy Prefix Repackage

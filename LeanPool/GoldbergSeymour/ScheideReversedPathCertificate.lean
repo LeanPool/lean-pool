@@ -6,8 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TashkinovTree
-
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
 
 /-!
 # Scheide Reversed Path Certificate

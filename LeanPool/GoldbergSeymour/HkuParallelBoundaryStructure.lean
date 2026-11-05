@@ -6,12 +6,9 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-
 public import LeanPool.GoldbergSeymour.TashkinovSeries
-
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-
-public import LeanPool.GoldbergSeymour.StableColoringEquivalence
+public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
 
 /-!
 # Hku Parallel Boundary Structure

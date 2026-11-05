@@ -7,11 +7,8 @@ module
 
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoStarredTail
 public import LeanPool.GoldbergSeymour.ChangeLemma
-public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsCardinality
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
 public import LeanPool.GoldbergSeymour.ElementaryTerminalComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
 
 /-!
 # P2905_T2_Base Extra Replacement

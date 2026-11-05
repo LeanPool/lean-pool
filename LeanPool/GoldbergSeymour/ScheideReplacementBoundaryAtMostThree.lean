@@ -5,23 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
 public import LeanPool.GoldbergSeymour.ScheideReplacementBoundaryParity
-public import LeanPool.GoldbergSeymour.ScheideReducedConfiguration
-public import LeanPool.GoldbergSeymour.ScheideStructuralConfiguration
-public import LeanPool.GoldbergSeymour.TashkinovOrder
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 
 /-!
 # Scheide Replacement Boundary At Most Three
@@ -455,7 +441,6 @@ private theorem helper_continuation_668.{u_1, u_2} :
                           GoldbergSeymour.ScheideStructuralConfiguration.p_ge_two
                             (ScheideReducedConfiguration.toScheideStructuralConfiguration
                             C)
-
                         all_goals omega)
     ⟩ : Fin C.p) ∈ TreeSequenceVertexSet T \ (insert (C.blockVertex (D.gammaIndex d) (0 : Fin (2 :
         ℕ))) ({C.blockVertex (D.gammaIndex d) (1 : Fin (2 : ℕ))} : Finset V) : Finset V) ∧ (

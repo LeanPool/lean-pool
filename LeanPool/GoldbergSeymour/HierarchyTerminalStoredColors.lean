@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
+public import LeanPool.GoldbergSeymour.TashkinovHierarchy
 
 /-!
 # Hierarchy Terminal Stored Colors

@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Finset.Powerset
-public import Mathlib.Order.Northcott
-
 public import LeanPool.GoldbergSeymour.ChromaticIndexRestrict
 public import LeanPool.GoldbergSeymour.Critical
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Finset.Max
+public import Mathlib.Tactic.Bound.Init
 
 /-!
 # Critical Core Exists

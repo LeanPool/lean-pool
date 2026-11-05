@@ -5,15 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ClosedColorExitPathBoundaryEdge
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.ElementaryClosedExitPairExtendsTriple
 public import LeanPool.GoldbergSeymour.Step1ExitLegMinimum
-public import LeanPool.GoldbergSeymour.Step1ExitLegPresentation
-public import LeanPool.GoldbergSeymour.TreeExitPath
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TreeVertexOrder
 
 /-!
 # Step1Exit Leg Minimum Exists

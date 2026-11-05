@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.TashTreeCaseNoRepeatedOnPath
 public import LeanPool.GoldbergSeymour.TashTreeCasePathIndexLast
+public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPathIndex
 
 /-!
 # Tash Tree No Minimum Bad Pair

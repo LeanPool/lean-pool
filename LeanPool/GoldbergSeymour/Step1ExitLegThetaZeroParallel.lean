@@ -5,8 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsCardinality
-
 public import LeanPool.GoldbergSeymour.ParallelCommonMissingClosed
 public import LeanPool.GoldbergSeymour.Step1ExitLegPresentation
 

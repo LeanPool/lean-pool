@@ -5,15 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.MissingColors
 public import LeanPool.GoldbergSeymour.MissingColorsNonemptyOfMaximumDegree
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
 public import LeanPool.GoldbergSeymour.TchangeCounterexampleMeasure
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeExitPath
 public import LeanPool.GoldbergSeymour.TreeVertexOrder
 
 /-!

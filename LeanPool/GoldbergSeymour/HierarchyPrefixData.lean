@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyCounterexample
-public import LeanPool.GoldbergSeymour.HierarchyLEMStable
+public import LeanPool.GoldbergSeymour.SameGoodHierarchy
+public import LeanPool.GoldbergSeymour.TreeColoringInvariant
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 
 /-!
 # P2752_T2_Prefix Data

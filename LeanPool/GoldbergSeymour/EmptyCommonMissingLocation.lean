@@ -7,8 +7,6 @@ module
 
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
 
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
-
 /-!
 # P2905_T2_Empty Common Missing Location
 

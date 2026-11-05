@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
+public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
 
 /-!
 # Hierarchy Terminal Stored Colors Subset Last

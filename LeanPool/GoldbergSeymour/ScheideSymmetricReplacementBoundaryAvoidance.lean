@@ -5,13 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainBoundaryEdges
-public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPath
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.ScheideReplacementInternalMissing
-public import LeanPool.GoldbergSeymour.ScheideReplacementPairFixed
-public import LeanPool.GoldbergSeymour.ScheideSymmetricReplacementBoundaryConfiguration
 public import LeanPool.GoldbergSeymour.ScheideSymmetricReplacementPathOrder
 
 /-!

@@ -7,8 +7,6 @@ module
 
 public import LeanPool.GoldbergSeymour.TashkinovSeries
 
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-
 /-!
 # Hku Missing Stored Monotone
 

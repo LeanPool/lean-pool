@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 /-!
 # Two Color Component

@@ -5,31 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AdjacentEdges
-public import LeanPool.GoldbergSeymour.BoundaryEdges
-public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
 public import LeanPool.GoldbergSeymour.TashTree
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePreservesTashkinovTree
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TashkinovClosureExists
-public import LeanPool.GoldbergSeymour.TashkinovTree
 public import LeanPool.GoldbergSeymour.TchangeKempeClosureData
 public import LeanPool.GoldbergSeymour.TreeExitComponentMeetsTreeOnlyAtExit
-public import LeanPool.GoldbergSeymour.TreeExitPath
 public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequencePrefix
 public import LeanPool.GoldbergSeymour.TreeVertexOrder
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 public import LeanPool.GoldbergSeymour.TwoColorComponentsDisjoint
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
 
 /-!
 # Tchange Kempe Closure Preparation

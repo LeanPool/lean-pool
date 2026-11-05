@@ -6,15 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Critical
 public import LeanPool.GoldbergSeymour.Elementary
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.MaximumDegree
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideGraphHeightOdd
-public import LeanPool.GoldbergSeymour.ScheideLargeHeightElementary
 public import LeanPool.GoldbergSeymour.ScheideSmallHeightElementary
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 
 /-!
 # Scheide Order Nine Parameters

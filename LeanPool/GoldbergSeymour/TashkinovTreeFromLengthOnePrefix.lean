@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
 public import LeanPool.GoldbergSeymour.TashkinovTree
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Tashkinov Tree From Length One Prefix

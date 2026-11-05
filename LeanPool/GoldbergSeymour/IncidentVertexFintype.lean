@@ -5,9 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.Basic
-
 public import LeanPool.GoldbergSeymour.IncidentVertex
+public import Mathlib.Data.Fintype.Sets
 
 /-!
 # Incident Vertex Fintype

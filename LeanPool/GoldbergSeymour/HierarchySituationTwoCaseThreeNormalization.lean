@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchyCaseThreePreparation
+public import LeanPool.GoldbergSeymour.HierarchySituationTwoOutsidePenultimateReconstruction
 
 /-!
 # Hierarchy Situation Two Case Three Normalization

@@ -6,13 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.AlgorithmThreeOneInitialSeriesExists
-public import LeanPool.GoldbergSeymour.AlgorithmThreeOneStepExists
-public import LeanPool.GoldbergSeymour.MaximumProperty
 public import LeanPool.GoldbergSeymour.PositiveWellDefinedness
 public import LeanPool.GoldbergSeymour.CertifiedSeriesRoundsBound
-public import LeanPool.GoldbergSeymour.TashkinovSeriesDataAppend
-public import LeanPool.GoldbergSeymour.TashkinovSeriesFinalETTExists
-public import LeanPool.GoldbergSeymour.TechnicalTheoremLarge
 
 /-!
 # Large Order Terminal Witness

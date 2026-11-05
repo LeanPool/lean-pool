@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
-
 public import LeanPool.GoldbergSeymour.MissingColors
-
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
+public import Mathlib.Basic.Finite.Sum
+public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
+public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 
 /-!
 # Missing Color Incidence Endpoint

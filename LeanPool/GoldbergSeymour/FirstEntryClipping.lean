@@ -6,8 +6,6 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TreeExitPath
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Decomp
-public import Mathlib.Combinatorics.SimpleGraph.Paths
 
 /-!
 # P2716_T2_First Entry Clipping

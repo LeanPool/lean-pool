@@ -6,6 +6,10 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.EligibleIndexBoundConstruction
+public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
+public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTailAtLeastTwo
+public import LeanPool.GoldbergSeymour.StableChangeCaseThree
+public import LeanPool.GoldbergSeymour.TerminalKempeStageSwitch
 
 /-!
 # Hierarchy Situation Three Eligible Index Bound

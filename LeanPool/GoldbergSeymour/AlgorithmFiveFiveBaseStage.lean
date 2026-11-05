@@ -7,8 +7,8 @@ module
 
 public import LeanPool.GoldbergSeymour.AlgorithmFiveFiveInitialGoodHierarchy
 public import LeanPool.GoldbergSeymour.AlgorithmFiveFiveParallelStrictGrowth
-
 public import LeanPool.GoldbergSeymour.GoodHierarchyRestrictedAugmentation
+public import LeanPool.GoldbergSeymour.AlgorithmFiveFiveSeed
 
 /-!
 # Algorithm Five Five Base Stage

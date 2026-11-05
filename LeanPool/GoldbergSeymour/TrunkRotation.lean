@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.NormalCycleEdge
 
 /-!

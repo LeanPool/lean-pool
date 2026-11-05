@@ -5,80 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ChangeLemma
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.CombinedStableClosurePreserved
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.GoodHierarchy
-public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
-public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
-public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
-public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
-public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
-public import LeanPool.GoldbergSeymour.HierarchyNonparallelFirstEdge
-public import LeanPool.GoldbergSeymour.HierarchyPathNumber
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
-public import LeanPool.GoldbergSeymour.HierarchySegmentColors
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseOneData
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeNormalization
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeOneData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTrees
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseOneOne
-public import LeanPool.GoldbergSeymour.HierarchySituationTwoTailData
-public import LeanPool.GoldbergSeymour.HierarchyStageMissingColors
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
-public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
 public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.ModColoring
-public import LeanPool.GoldbergSeymour.OrderedTreeUnion
-public import LeanPool.GoldbergSeymour.SameGoodHierarchy
-public import LeanPool.GoldbergSeymour.StableColoring
-public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwo
-public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoFullTail
-public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoSplitTail
-public import LeanPool.GoldbergSeymour.TashkinovAugmentation
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceColoringTransport
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.TashkinovClosure
-public import LeanPool.GoldbergSeymour.TashkinovHierarchy
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TashkinovStoredColors
-public import LeanPool.GoldbergSeymour.TreeColoringInvariant
-public import LeanPool.GoldbergSeymour.TreeIncidentEdge
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentsDisjoint
-public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
-public import LeanPool.GoldbergSeymour.TwoColorPathComponent
-public import LeanPool.GoldbergSeymour.StableColoringEquivalence
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
 public import LeanPool.GoldbergSeymour.MinimumContextTransport
-public import LeanPool.GoldbergSeymour.HierarchyMeasures
-public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
-public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 public import LeanPool.GoldbergSeymour.TerminalStoredColors
-public import LeanPool.GoldbergSeymour.BaseDisplayedEdges
-public import LeanPool.GoldbergSeymour.TerminalRoute
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
 
 /-!
 # HierarchySituationTwoSubcaseThreeOne: supporting constructions, part 1
@@ -2304,7 +2238,7 @@ theorem helper_separateVertices_1307.{u_1, u_2} :
           change Sum.inl x ∈ {z | z ∈ p.support}
           rw [hsupport]
           exact hx
-        exact hpPath.isTrail.not_mem_support_of_subsingleton_neighborSet
+        exact hpPath.isTrail.notMem_support_of_subsingleton_neighborSet
           hn.1 hn.2 (leafComponent rho a b hne hp x hm) hs
       have hue := endpoint u (he ▸ selfComponent rho a b u) (Or.inl hu)
       have hve := endpoint v (by rw [he, hsame]; exact selfComponent rho a b v) (Or.inr hv)

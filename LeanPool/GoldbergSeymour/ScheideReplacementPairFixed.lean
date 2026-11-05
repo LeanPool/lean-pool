@@ -5,8 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
+public import LeanPool.GoldbergSeymour.ScheideDefectiveTailExternal
 
 /-!
 # Scheide Replacement Pair Fixed

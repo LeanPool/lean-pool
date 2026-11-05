@@ -7,10 +7,6 @@ module
 
 public import LeanPool.GoldbergSeymour.CriticalCoreExists
 public import LeanPool.GoldbergSeymour.ElementaryTransfer
-
-public import
-    LeanPool.GoldbergSeymour.HierarchySituationThreeDisjointThetaUnstoredBetaStoredImpossible
-
 public import LeanPool.GoldbergSeymour.MaximumDegreeRestrict
 public import LeanPool.GoldbergSeymour.ThmGS2
 

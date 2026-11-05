@@ -5,8 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
-
 public import LeanPool.GoldbergSeymour.AbsorbingVertices
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumFourFree
 

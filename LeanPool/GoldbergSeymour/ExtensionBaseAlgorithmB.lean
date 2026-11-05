@@ -6,12 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBInduction
-
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBInvariant
-
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBTraceExists
-
-public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClassColors
 
 /-!
 # Extension Base Algorithm B

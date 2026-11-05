@@ -5,7 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.StableChangeCaseThree.Preparation1
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
+public import LeanPool.GoldbergSeymour.HierarchyCounterexample
 
 /-!
 # StableChangeCaseThree: supporting constructions, part 2

@@ -5,10 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Traversal
 public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
+public import Mathlib.Combinatorics.SimpleGraph.Paths
 
 /-!
 # Normal Global Maximum Triple

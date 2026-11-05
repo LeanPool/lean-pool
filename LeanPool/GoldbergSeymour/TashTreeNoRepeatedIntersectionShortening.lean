@@ -5,21 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.KTriple
 public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPair
-public import LeanPool.GoldbergSeymour.TashTreeBadPair
-public import LeanPool.GoldbergSeymour.TashTreePathIndex
-public import LeanPool.GoldbergSeymour.TashTreeRankLess
-public import LeanPool.GoldbergSeymour.TashTreeSuffixPath
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePreservesTashkinovTree
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.TwoColorComponentTashkinovSplice
 

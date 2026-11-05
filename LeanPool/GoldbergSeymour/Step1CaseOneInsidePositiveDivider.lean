@@ -5,12 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
-
-public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAntitone
-
-public import LeanPool.GoldbergSeymour.ParallelInterchangeability
-
 public import LeanPool.GoldbergSeymour.OutsideExitTransport
 public import LeanPool.GoldbergSeymour.PositivePrefixPresentation
 

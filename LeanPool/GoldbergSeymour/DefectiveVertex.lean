@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.DefectiveEdge
+public import LeanPool.GoldbergSeymour.Incident
 
 /-!
 # Defective Vertex

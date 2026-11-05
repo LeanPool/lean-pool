@@ -5,21 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.Critical
 public import LeanPool.GoldbergSeymour.Elementary
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.GlobalMaximumTripleExists
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.MaximumDegree
-public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.ScheideBalancedExists
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.ScheideGraphHeight
-public import LeanPool.GoldbergSeymour.ScheideGraphHeightOdd
 public import LeanPool.GoldbergSeymour.ScheideLargeHeightFullTrunk
 public import LeanPool.GoldbergSeymour.ScheideLargeHeightOneTailPair
-public import LeanPool.GoldbergSeymour.TashkinovOrder
-public import LeanPool.GoldbergSeymour.TreeSequence
 
 /-!
 # Scheide Large Height Elementary

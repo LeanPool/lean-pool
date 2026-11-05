@@ -5,10 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.Fin
-
 public import LeanPool.GoldbergSeymour.TreeSequence
 public import LeanPool.GoldbergSeymour.PartialEdgeColoring
+public import Mathlib.Data.Fintype.Basic
 
 /-!
 # Tree Used Colors

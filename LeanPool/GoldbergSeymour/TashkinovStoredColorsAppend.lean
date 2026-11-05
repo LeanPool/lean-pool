@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.TashkinovSeriesDataAppend
 public import LeanPool.GoldbergSeymour.TashkinovStoredColors
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Tashkinov Stored Colors Append

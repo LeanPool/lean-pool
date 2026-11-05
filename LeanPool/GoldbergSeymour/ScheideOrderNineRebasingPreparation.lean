@@ -5,41 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.AdjacentEdges
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.BoundaryEdges
 public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.GlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
-public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple
-public import LeanPool.GoldbergSeymour.PresentColors
 public import LeanPool.GoldbergSeymour.ScheideOrderNineBlockCompletion
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
-public import LeanPool.GoldbergSeymour.ScheideHeightFiveGammaEdges
-public import LeanPool.GoldbergSeymour.ScheideHeightFiveOutsideLinks
-public import LeanPool.GoldbergSeymour.ScheideKempePathHeightBound
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationColoring
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationCycle
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationNormal
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationPreserves
-public import LeanPool.GoldbergSeymour.ScheideTrunkRotationTree
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeSequence
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-public import LeanPool.GoldbergSeymour.TrunkRotation
-public import LeanPool.GoldbergSeymour.TwoColorComponent
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
-public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
-public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
-public import Mathlib.Tactic.FinCases
 
 /-!
 # Scheide Order Nine Block Structure
@@ -1119,12 +1088,9 @@ noncomputable abbrev helperS3810.{u_1, u_2} :
     open scoped Classical in
       {V : Type u_1} →
   {E : Type u_2} →
-
   [ DecidableEq E] →
   (G : LooplessMultigraph V E) →
-  (k : ℕ) →
   {e : E} →
-
   (S : TreeSequence G e) →
   (hlen : S.length = (8 : ℕ)) →
   let y0 : V :=
@@ -1462,7 +1428,7 @@ noncomputable abbrev helperS3810.{u_1, u_2} :
     G
     e := by
   classical
-  intro V E _ G k e S hlen y0 y1 y2 y3 y4 y7 y8 a1 a3 b0 c0 c1 f1 f2 v1 v2 hf1ends' hf2ends' beta56
+  intro V E _ G e S hlen y0 y1 y2 y3 y4 y7 y8 a1 a3 b0 c0 c1 f1 f2 v1 v2 hf1ends' hf2ends' beta56
       hbeta56ends ha1ends ha3ends r6' r7' w pc pc' hc0ends a0 ha0eq ha0ends cast9 permA permB
       newVertex edgeList hedgeListLength newEdge nv0 nv1 nv2 nv3 nv4 nv5 nv6 nv7 nv8 ne0 ne1 ne2 ne3
       ne4 ne5 ne6 ne7 newVertex_injective newEdge_injective pc1 pc1' hc1ends tc0 htc0 tc1 htc1
@@ -1687,7 +1653,7 @@ abbrev helperHS'tash4523Conditions.{u_1, u_2} : Prop :=
     ) tc1) = S.vertex (⟨(↑pc1' : ℕ),
     by omega
     ⟩ : Fin (S.length + (1 : ℕ)))) (tw : Fin (7 : ℕ)),
-    let S' : TreeSequence G e := helperS3810 G k S hlen f1 f2 v1 v2 hf1ends' hf2ends' beta56
+    let S' : TreeSequence G e := helperS3810 G S hlen f1 f2 v1 v2 hf1ends' hf2ends' beta56
         hbeta56ends ha1ends ha3ends w pc hc0ends ha0eq ha0ends hedgeListLength nv0 nv1 nv2 nv3 nv4
         nv5 nv6 nv7 nv8 ne0 ne1 ne2 ne3 ne4 ne5 ne6 ne7 newVertex_injective newEdge_injective pc1
         hc1ends tc0 htc0 tc1 htc1;

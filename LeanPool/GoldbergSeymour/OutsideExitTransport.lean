@@ -5,13 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Data.Fintype.EquivFin
 public import LeanPool.GoldbergSeymour.OutsideKempeRecoloringStable
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.TreeColorSetClosed
 public import LeanPool.GoldbergSeymour.TreeExitPath
-
-public import Mathlib.Combinatorics.SimpleGraph.Paths
 
 /-!
 # P2716_T1_Outside Exit Transport

@@ -5,17 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
-public import Mathlib.Tactic.NormNum
-
-public import LeanPool.GoldbergSeymour.Incident
-public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
 public import LeanPool.GoldbergSeymour.KTriple
-public import LeanPool.GoldbergSeymour.LooplessMultigraph
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.ScheideReversedPathCertificate
-public import LeanPool.GoldbergSeymour.TashkinovTree
 public import LeanPool.GoldbergSeymour.TreeSequence
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
+public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import Mathlib.Tactic.NormNum.OfScientific
+public import Mathlib.Tactic.NormNum.DivMod
+public import Mathlib.Tactic.NormNum.Abs
+public import Mathlib.Data.Rat.Cast.Order
+public import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Preparatory lemmas for a reversed Kempe-path tree

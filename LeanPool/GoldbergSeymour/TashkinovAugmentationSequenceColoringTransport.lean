@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Tashkinov Augmentation Sequence Coloring Transport

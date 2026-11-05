@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Tree Sequence Initial Segment Vertex Set Subset

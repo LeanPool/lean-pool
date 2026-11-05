@@ -6,9 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSetupExists
-public import LeanPool.GoldbergSeymour.ScheideEnlargedElementary
 public import LeanPool.GoldbergSeymour.ScheideEnlargedStronglyClosed
-public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumBoundaryFacts
 public import LeanPool.GoldbergSeymour.ScheideReplacementFamilyExists
 public import LeanPool.GoldbergSeymour.ScheideStructuralReduction
 public import LeanPool.GoldbergSeymour.CriticalGraphElementaryWitness

@@ -7,10 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmAInduction
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmATraceExists
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaimMissingColors
-public import LeanPool.GoldbergSeymour.ExtensionBaseClaimStrongInterchangeable
-
-public import LeanPool.GoldbergSeymour.ExtensionBaseStoredPairOverlap
+public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmAColorState
 
 /-!
 # Extension Base Algorithm A

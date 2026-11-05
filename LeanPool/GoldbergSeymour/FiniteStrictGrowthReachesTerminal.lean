@@ -6,10 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import Mathlib.Data.Fintype.EquivFin
-
-public import Mathlib.Data.Fintype.Basic
-
-public import LeanPool.GoldbergSeymour.Preamble
+public import Mathlib.Data.Sym.Sym2.Init
 
 /-!
 # Finite Strict Growth Reaches Terminal

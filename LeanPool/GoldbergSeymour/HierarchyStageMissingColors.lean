@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.HierarchyStarredStage
+public import LeanPool.GoldbergSeymour.TashkinovHierarchy
 
 /-!
 # Hierarchy Stage Missing Colors

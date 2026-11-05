@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
+public import LeanPool.GoldbergSeymour.HierarchyCounterexample
 
 /-!
 # Hierarchy Full Tail Prefix

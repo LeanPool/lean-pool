@@ -5,25 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.DefectiveVertex
-public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
 public import LeanPool.GoldbergSeymour.ExtensionBaseActiveIndices
 public import LeanPool.GoldbergSeymour.ExtensionBaseDeltaExclusion
 public import LeanPool.GoldbergSeymour.ExtensionBaseSameSupportStoredPairOverlap
-public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClass
 public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClassEnumeration
-public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClassColors
-public import LeanPool.GoldbergSeymour.ExtensionBaseSupportOrder
 public import LeanPool.GoldbergSeymour.ExtensionRules
-public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
 public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.ModColoring
-public import LeanPool.GoldbergSeymour.TashkinovSeries
-public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
-public import LeanPool.GoldbergSeymour.TreeInterchangeable
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
-
 public import LeanPool.GoldbergSeymour.LowerRoundProperties
 
 /-!

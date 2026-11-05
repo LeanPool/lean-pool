@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.TreeColorSetClosed
 public import LeanPool.GoldbergSeymour.TreeExitPath
 public import LeanPool.GoldbergSeymour.TreeMissingColors
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 /-!
 # P2716_T2_Elementary Endpoint Exclusion

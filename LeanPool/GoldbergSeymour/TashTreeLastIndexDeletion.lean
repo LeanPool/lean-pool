@@ -5,18 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.MissingColors
-public import LeanPool.GoldbergSeymour.PresentColors
-public import LeanPool.GoldbergSeymour.TashTreeBadPair
 public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPair
-public import LeanPool.GoldbergSeymour.TashTreePathIndex
-public import LeanPool.GoldbergSeymour.TashTreeRankLess
-public import LeanPool.GoldbergSeymour.TashTreeSuffixPath
-public import LeanPool.GoldbergSeymour.TashkinovTree
-public import LeanPool.GoldbergSeymour.TreeSequence
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 
 /-!
 # Tash Tree Last Index Deletion

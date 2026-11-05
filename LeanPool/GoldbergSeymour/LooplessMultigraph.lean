@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.Preamble
+public import Mathlib.Data.Sym.Sym2
 
 /-!
 # Loopless Multigraph

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified.Preparation1
+public import LeanPool.GoldbergSeymour.Td
 
 /-!
 # HierarchySituationTwoReorderedTreesCertified: supporting constructions, part 2
