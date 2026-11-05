@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import Mathlib.Data.Nat.Basic
 public import Mathlib.Data.Sym.Sym2.Init
 public import Mathlib.Data.Finset.Attr
 public import Mathlib.Tactic.SetLike
@@ -21,6 +22,15 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
+
+/-- A natural number above one strictly bounds its truncated predecessor. -/
+theorem positivePrefixPredecessorBound (n : ℕ) (hn : 1 < n) : n - 1 < n :=
+  Nat.sub_lt (lt_trans Nat.zero_lt_one hn) Nat.zero_lt_one
+
+/-- A predecessor bound is preserved after adding the same offset. -/
+theorem positivePrefixPrefixBound (n m offset : ℕ) (h : m = n - 1) :
+    m + offset ≤ n + offset :=
+  Nat.add_le_add_right (le_trans (le_of_eq h) (Nat.sub_le n 1)) offset
 
 end GoldbergSeymour
 

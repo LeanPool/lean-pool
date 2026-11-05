@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.Preamble
+
 public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.MaximumProperty
@@ -75,26 +77,26 @@ private abbrev positivePrefixContradictionStatement.{u_1, u_2} : Prop :=
   IsProperEdgeColoring G
     (ett.series.data.coloring
      (⟨ett.rounds - (1 : ℕ),
-        Decidable.byContradiction fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds) ↦ by omega⟩ :
+        positivePrefixPredecessorBound ett.rounds hroundLarge⟩ :
        Fin ett.rounds).castSucc) →
   IsOneEdgeUncolored
     (ett.series.data.coloring
      (⟨ett.rounds - (1 : ℕ),
-        Decidable.byContradiction fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds) ↦ by omega⟩ :
+        positivePrefixPredecessorBound ett.rounds hroundLarge⟩ :
        Fin ett.rounds).castSucc)
     e0 →
   StableColoring
     (ett.series.data.tree
      (⟨ett.rounds - (1 : ℕ),
-        Decidable.byContradiction fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds) ↦ by omega⟩ :
+        positivePrefixPredecessorBound ett.rounds hroundLarge⟩ :
        Fin ett.rounds).succ.castSucc)
     (TashkinovStoredColors ett.series.data
      (⟨ett.rounds - (1 : ℕ),
-        Decidable.byContradiction fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds) ↦ by omega⟩ :
+        positivePrefixPredecessorBound ett.rounds hroundLarge⟩ :
        Fin ett.rounds).castSucc)
     (ett.series.data.coloring
      (⟨ett.rounds - (1 : ℕ),
-        Decidable.byContradiction fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds) ↦ by omega⟩ :
+        positivePrefixPredecessorBound ett.rounds hroundLarge⟩ :
        Fin ett.rounds).castSucc)
     sigmaPrev →
   ∀
@@ -102,8 +104,7 @@ private abbrev positivePrefixContradictionStatement.{u_1, u_2} : Prop :=
     ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
      (ett.series.data.coloring
       (⟨ett.rounds - (1 : ℕ),
-         Decidable.byContradiction fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds) ↦ by
-          omega⟩ :
+         positivePrefixPredecessorBound ett.rounds hroundLarge⟩ :
         Fin ett.rounds).castSucc))
    (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)),
   MaximumProperty originalPrefix →
@@ -112,40 +113,34 @@ private abbrev positivePrefixContradictionStatement.{u_1, u_2} : Prop :=
   originalPrefix.series.data.tree i =
    ett.series.data.tree
     (Fin.castLE
-     (Decidable.byContradiction
-      fun (a : ¬originalPrefix.rounds + (2 : ℕ) ≤ ett.rounds + (2 : ℕ)) ↦ by omega)
+     (positivePrefixPrefixBound ett.rounds originalPrefix.rounds 2 hr)
      i)) →
   (
   ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))),
   originalPrefix.series.data.coloring i =
     ett.series.data.coloring
      (Fin.castLE
-      (Decidable.byContradiction
-       fun (a : ¬originalPrefix.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦ by omega)
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds 1 hr)
       i) ∧
    originalPrefix.series.data.stored i =
      ett.series.data.stored
       (Fin.castLE
-       (Decidable.byContradiction
-        fun (a : ¬originalPrefix.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦ by omega)
+       (positivePrefixPrefixBound ett.rounds originalPrefix.rounds 1 hr)
        i) ∧
     originalPrefix.series.data.connectingEdges i =
       ett.series.data.connectingEdges
        (Fin.castLE
-        (Decidable.byContradiction
-         fun (a : ¬originalPrefix.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦ by omega)
+        (positivePrefixPrefixBound ett.rounds originalPrefix.rounds 1 hr)
         i) ∧
      originalPrefix.series.data.kind i =
        ett.series.data.kind
         (Fin.castLE
-         (Decidable.byContradiction
-          fun (a : ¬originalPrefix.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦ by omega)
+         (positivePrefixPrefixBound ett.rounds originalPrefix.rounds 1 hr)
          i) ∧
       TashkinovStoredColors originalPrefix.series.data i =
        TashkinovStoredColors ett.series.data
         (Fin.castLE
-         (Decidable.byContradiction
-          fun (a : ¬originalPrefix.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦ by omega)
+         (positivePrefixPrefixBound ett.rounds originalPrefix.rounds 1 hr)
          i)) →
   ∀
    (corr :
@@ -156,30 +151,31 @@ private abbrev positivePrefixContradictionStatement.{u_1, u_2} : Prop :=
   ¬Nonempty
      (RevisitingExtensionCertificate ett.series.data
       (⟨ett.rounds - (1 : ℕ),
-         Decidable.byContradiction fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds) ↦ by
-          omega⟩ :
+         positivePrefixPredecessorBound ett.rounds hroundLarge⟩ :
         Fin ett.rounds).castSucc) →
-  ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) : Fin ett.rounds).succ =
+  ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin ett.rounds)
+      : Fin ett.rounds).succ =
     Fin.last ett.rounds →
   (0 : ℕ) < originalPrefix.rounds →
   Fin.castLE
-     (Decidable.byContradiction
-      fun (a : ¬originalPrefix.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦ by
-      omega)
+     (positivePrefixPrefixBound ett.rounds originalPrefix.rounds 1 hr)
      (Fin.last originalPrefix.rounds : Fin (originalPrefix.rounds + (1 : ℕ))) =
-    ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+    ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+        ett.rounds) :
       Fin ett.rounds).castSucc →
   corr.replacementSeries.data.tree
      (Fin.last originalPrefix.rounds :
        Fin (originalPrefix.rounds + (1 : ℕ))).succ =
     ett.series.data.tree
-     ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+     ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+         ett.rounds) :
        Fin ett.rounds).succ.castSucc →
   originalPrefix.series.data.tree
      (Fin.last originalPrefix.rounds :
        Fin (originalPrefix.rounds + (1 : ℕ))).castSucc =
     ett.series.data.tree
-     ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+     ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+         ett.rounds) :
        Fin ett.rounds).castSucc.castSucc →
   (
   ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
@@ -1652,35 +1648,47 @@ private abbrev helperBranch280Conditions.{u_1, u_2} : Prop :=
    (_ : IsOneEdgeUncolored sigmaPrev e0)
    (_ :
     IsProperEdgeColoring G
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc))
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc))
    (_ :
     IsOneEdgeUncolored
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc) e0)
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc) e0)
    (_ :
     StableColoring
-     (ett.series.data.tree (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).succ.castSucc)
+     (ett.series.data.tree (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).succ.castSucc)
      (TashkinovStoredColors ett.series.data
-      (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)
+      (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+          ett.rounds).castSucc)
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc)
      sigmaPrev)
    (originalPrefix :
     ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc))
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc))
    (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)) (_ : MaximumProperty originalPrefix)
    (_ :
     (
   ∀ (i : Fin (originalPrefix.rounds + (2 : ℕ))),
-  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE (by omega) i)))
+  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i)))
    (_ :
     (
   ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))),
-  originalPrefix.series.data.coloring i = ett.series.data.coloring (Fin.castLE (by omega) i) ∧
-   originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE (by omega) i) ∧
+  originalPrefix.series.data.coloring i = ett.series.data.coloring (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
+   originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
     originalPrefix.series.data.connectingEdges i =
-      ett.series.data.connectingEdges (Fin.castLE (by omega) i) ∧
-     originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE (by omega) i) ∧
+      ett.series.data.connectingEdges (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
+     originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
       TashkinovStoredColors originalPrefix.series.data i =
-       TashkinovStoredColors ett.series.data (Fin.castLE (by omega) i)))
+       TashkinovStoredColors ett.series.data (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i)))
    (corr :
     CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
      (ett.series.data.tree (Fin.last ett.rounds).castSucc))
@@ -1689,9 +1697,11 @@ private abbrev helperBranch280Conditions.{u_1, u_2} : Prop :=
    (_ :
     ¬Nonempty
       (RevisitingExtensionCertificate ett.series.data
-       (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc))
+       (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+           ett.rounds).castSucc))
    (_ :
-    ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) : Fin ett.rounds).succ =
+    ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+        ett.rounds) : Fin ett.rounds).succ =
      Fin.last ett.rounds)
    (_ : (0 : ℕ) < originalPrefix.rounds)
    (_ :
@@ -1699,17 +1709,20 @@ private abbrev helperBranch280Conditions.{u_1, u_2} : Prop :=
       (Decidable.byContradiction fun (a : ¬originalPrefix.rounds + (1 : ℕ) ≤ ett.rounds + (1 : ℕ)) ↦
        by omega)
       (Fin.last originalPrefix.rounds : Fin (originalPrefix.rounds + (1 : ℕ))) =
-     ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) : Fin ett.rounds).castSucc)
+     ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+         ett.rounds) : Fin ett.rounds).castSucc)
    (_ :
     corr.replacementSeries.data.tree
       (Fin.last originalPrefix.rounds : Fin (originalPrefix.rounds + (1 : ℕ))).succ =
      ett.series.data.tree
-      ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) : Fin ett.rounds).succ.castSucc)
+      ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+          ett.rounds) : Fin ett.rounds).succ.castSucc)
    (_ :
     originalPrefix.series.data.tree
       (Fin.last originalPrefix.rounds : Fin (originalPrefix.rounds + (1 : ℕ))).castSucc =
      ett.series.data.tree
-      ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) : Fin ett.rounds).castSucc.castSucc)
+      ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+          ett.rounds) : Fin ett.rounds).castSucc.castSucc)
    (_ :
     (
   ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
@@ -1767,11 +1780,13 @@ private abbrev helperHtreePrefixFull719Conditions.{u_1, u_2} : Prop :=
    (sigmaPrev : PartialEdgeColoring E k)
    (originalPrefix :
     ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc))
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc))
    (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)),
   (
   ∀ (i : Fin (originalPrefix.rounds + (2 : ℕ))),
-  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE (by omega) i)) →
+  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i)) →
   ∀
    (corr :
     CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
@@ -1786,10 +1801,12 @@ private abbrev helperHtreePrefixFull719Conditions.{u_1, u_2} : Prop :=
    (_ : Fin k),
   (available.earlier : Fin (originalPrefix.rounds + (1 : ℕ))) = oldi.succ →
   oldi.succ = (available.earlier : Fin (originalPrefix.rounds + (1 : ℕ))) →
-  ∀ (horiginalRoundsLess : originalPrefix.rounds < ett.rounds),
+  ∀ (_ : originalPrefix.rounds < ett.rounds),
   ∀ (fulli : Fin ett.rounds),
   fulli.succ =
-    (Fin.castLE (by omega) (available.earlier : Fin (originalPrefix.rounds + (1 : ℕ))) :
+    (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) (available.earlier : Fin
+          (originalPrefix.rounds + (1 : ℕ))) :
      Fin (ett.rounds + (1 : ℕ))) →
   originalPrefix.series.data.tree oldi.succ.castSucc =
    ett.series.data.tree fulli.succ.castSucc
@@ -2070,39 +2087,51 @@ private abbrev helperContinuation1990Conditions.{u_1, u_2} : Prop :=
    (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
    (T : TreeSequence G e0) (generating : PartialEdgeColoring E k)
    (ett : ExtendedTashkinovTree G k e0 input T generating) (hroundLarge : (1 : ℕ) < ett.rounds),
-  let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds);
+  let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+      hroundLarge⟩ : Fin ett.rounds);
   ∀ (sigmaPrev : PartialEdgeColoring E k)
    (originalPrefix :
     ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc))
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc))
    (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ))
-   (hprefixTrees :
+   (_ :
   ∀ (i : Fin (originalPrefix.rounds + (2 : ℕ))),
-  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE (by omega) i))
-   (hprefixData :
+  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i))
+   (_ :
   ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))),
-  originalPrefix.series.data.coloring i = ett.series.data.coloring (Fin.castLE (by omega) i) ∧
-   originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE (by omega) i) ∧
+  originalPrefix.series.data.coloring i = ett.series.data.coloring (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
+   originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
     originalPrefix.series.data.connectingEdges i =
-      ett.series.data.connectingEdges (Fin.castLE (by omega) i) ∧
-     originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE (by omega) i) ∧
+      ett.series.data.connectingEdges (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
+     originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
       TashkinovStoredColors originalPrefix.series.data i =
-       TashkinovStoredColors ett.series.data (Fin.castLE (by omega) i))
+       TashkinovStoredColors ett.series.data (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i))
    (corr :
     CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
      (ett.series.data.tree (Fin.last ett.rounds).castSucc))
-   (noRevisiting :
+   (_ :
     ¬Nonempty
       (RevisitingExtensionCertificate ett.series.data
-       (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)),
+       (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+           ett.rounds).castSucc)),
   let replacementLast : Fin (originalPrefix.rounds + (1 : ℕ)) := Fin.last originalPrefix.rounds;
   ∀
-   (hlastMap :
-    Fin.castLE (by omega) replacementLast =
-     (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)
-   (hreplacementCurrentTree :
+   (_ :
+    Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) replacementLast =
+     (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+         ett.rounds).castSucc)
+   (_ :
     corr.replacementSeries.data.tree replacementLast.succ =
-     ett.series.data.tree (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).succ.castSucc)
+     ett.series.data.tree (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).succ.castSucc)
    (available : RevisitingExtensionCertificate corr.replacementSeries.data replacementLast),
   let earlierPrefix : Fin (originalPrefix.rounds + (1 : ℕ)) := available.earlier;
   ∀ (oldi : Fin originalPrefix.rounds)
@@ -2110,9 +2139,9 @@ private abbrev helperContinuation1990Conditions.{u_1, u_2} : Prop :=
     MaximumDefectiveChoice G e0 (originalPrefix.series.data.tree oldi.succ.castSucc)
      (TashkinovStoredColors originalPrefix.series.data oldi.castSucc)
      (originalPrefix.series.data.coloring oldi.castSucc))
-   (oldGamma : Fin k) (holdDeltaAvailable : oldChoice.color = available.delta)
-   (holdGammaAvailable : oldGamma = available.gamma)
-   (hreturnInOldEarlier :
+   (oldGamma : Fin k) (_ : oldChoice.color = available.delta)
+   (_ : oldGamma = available.gamma)
+   (_ :
     available.returnVertex ∈
      TreeSequenceVertexSet (originalPrefix.series.data.tree earlierPrefix.castSucc)),
   let originalReturnGraph : SimpleGraph (V ⊕ E) :=
@@ -2124,43 +2153,48 @@ private abbrev helperContinuation1990Conditions.{u_1, u_2} : Prop :=
   let originalReturnPath :
    originalReturnGraph.Walk (Sum.inr available.edge) (Sum.inl available.returnVertex) :=
    available.returnPath.transfer originalReturnGraph returnEdgeTransfer;
-  ∀ (horiginalReturnIsPath : originalReturnPath.IsPath)
-   (horiginalReturnSupport :
+  ∀ (_ : originalReturnPath.IsPath)
+   (_ :
   ∀ (z : V ⊕ E),
   z ∈ originalReturnPath.support ↔ z ∈ available.returnPath.support)
-   (hreturnInQ :
+   (_ :
     Sum.inl available.returnVertex ∈
      TwoColorComponent G
-      (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)
+      (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+          hroundLarge⟩ : Fin ett.rounds).castSucc)
       available.gamma available.delta (Sum.inr available.edge))
-   (houtsideInQ :
+   (_ :
     Sum.inl available.outsideEndpoint ∈
      TwoColorComponent G
-      (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)
+      (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+          hroundLarge⟩ : Fin ett.rounds).castSucc)
       available.gamma available.delta (Sum.inr available.edge))
-   (horiginalRoundsLess : originalPrefix.rounds < ett.rounds)
+   (_ : originalPrefix.rounds < ett.rounds)
    (originalCycle :
     TwoColorCycle G
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc)
      available.gamma available.delta)
-   (hcycleFull :
+   (_ :
   ∀ (x : V ⊕ E),
   x ∈ originalCycle.walk.support ↔
    x ∈
     TwoColorComponent G
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc)
      available.gamma available.delta (Sum.inr available.edge)),
-  let oldEarlier : Fin (ett.rounds + (1 : ℕ)) := Fin.castLE (by omega) earlierPrefix;
-  ∀ (hfullEarlierKind : ett.series.data.kind oldEarlier = some TashkinovExtensionKind.PE)
+  let oldEarlier : Fin (ett.rounds + (1 : ℕ)) := Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) earlierPrefix;
+  ∀ (_ : ett.series.data.kind oldEarlier = some TashkinovExtensionKind.PE)
    (fulli : Fin ett.rounds)
    (fullChoice :
     MaximumDefectiveChoice G e0 (ett.series.data.tree fulli.succ.castSucc)
      (TashkinovStoredColors ett.series.data fulli.castSucc)
      (ett.series.data.coloring fulli.castSucc))
    (fullGamma : Fin k)
-   (fullCurrentDelta : ett.series.data.delta fulli.succ = some fullChoice.color)
-   (fullCurrentGamma : ett.series.data.gamma fulli.succ = some fullGamma)
-   (hfullIndex : fulli.succ = oldEarlier)
+   (_ : ett.series.data.delta fulli.succ = some fullChoice.color)
+   (_ : ett.series.data.gamma fulli.succ = some fullGamma)
+   (_ : fulli.succ = oldEarlier)
    (htreePrefixFull :
     originalPrefix.series.data.tree oldi.succ.castSucc =
      ett.series.data.tree fulli.succ.castSucc),
@@ -2169,26 +2203,26 @@ private abbrev helperContinuation1990Conditions.{u_1, u_2} : Prop :=
     (TashkinovStoredColors originalPrefix.series.data oldi.castSucc)
     (originalPrefix.series.data.coloring oldi.castSucc) :=
    (htreePrefixFull ▸ oldChoice);
-  ∀ (hprefColorCast : prefixChoiceOnFull.color = oldChoice.color)
-   (hfullEdgePairs :
+  ∀ (_ : prefixChoiceOnFull.color = oldChoice.color)
+   (_ :
     ({ prefixChoiceOnFull.edge } : Finset E) = ({ fullChoice.edge } : Finset E))
-   (hfullColorPairs :
+   (_ :
     (insert prefixChoiceOnFull.color ({ oldGamma } : Finset (Fin k)) : Finset (Fin k)) =
      (insert fullChoice.color ({ fullGamma } : Finset (Fin k)) : Finset (Fin k)))
-   (hfullDeltaMissing :
+   (_ :
     fullChoice.color ∈
      MissingColors G (ett.series.data.coloring fulli.succ) fullChoice.vertex)
-   (hfullGammaNotMissing :
+   (_ :
     fullGamma ∉ MissingColors G (ett.series.data.coloring fulli.succ) fullChoice.vertex)
-   (hmissingPrefixFull :
+   (_ :
     MissingColors G (originalPrefix.series.data.coloring oldi.succ)
       prefixChoiceOnFull.vertex =
      MissingColors G (ett.series.data.coloring fulli.succ) fullChoice.vertex)
-   (hprefDeltaForFull :
+   (_ :
     prefixChoiceOnFull.color ∈
      MissingColors G (originalPrefix.series.data.coloring oldi.succ)
       prefixChoiceOnFull.vertex)
-   (hprefGammaForFull :
+   (_ :
     oldGamma ∉
      MissingColors G (originalPrefix.series.data.coloring oldi.succ)
       prefixChoiceOnFull.vertex),
@@ -2203,34 +2237,45 @@ private abbrev helperBranch1721Conditions.{u_1, u_2} : Prop :=
   ∀ (sigmaPrev : PartialEdgeColoring E k)
    (originalPrefix :
     ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc))
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc))
    (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)),
   (
   ∀ (i : Fin (originalPrefix.rounds + (2 : ℕ))),
-  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE (by omega) i)) →
+  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i)) →
   (
   ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))),
-  originalPrefix.series.data.coloring i = ett.series.data.coloring (Fin.castLE (by omega) i) ∧
-   originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE (by omega) i) ∧
+  originalPrefix.series.data.coloring i = ett.series.data.coloring (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
+   originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
     originalPrefix.series.data.connectingEdges i =
-      ett.series.data.connectingEdges (Fin.castLE (by omega) i) ∧
-     originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE (by omega) i) ∧
+      ett.series.data.connectingEdges (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
+     originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
       TashkinovStoredColors originalPrefix.series.data i =
-       TashkinovStoredColors ett.series.data (Fin.castLE (by omega) i)) →
+       TashkinovStoredColors ett.series.data (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i)) →
   ∀
    (corr :
     CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
      (ett.series.data.tree (Fin.last ett.rounds).castSucc)),
   ¬Nonempty
      (RevisitingExtensionCertificate ett.series.data
-      (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc) →
-  Fin.castLE (by omega)
+      (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+          ett.rounds).castSucc) →
+  Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr)
      (Fin.last originalPrefix.rounds : Fin (originalPrefix.rounds + (1 : ℕ))) =
-    ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) : Fin ett.rounds).castSucc →
+    ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+        ett.rounds) : Fin ett.rounds).castSucc →
   corr.replacementSeries.data.tree
      (Fin.last originalPrefix.rounds : Fin (originalPrefix.rounds + (1 : ℕ))).succ =
     ett.series.data.tree
-     ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) : Fin ett.rounds).succ.castSucc →
+     ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+         ett.rounds) : Fin ett.rounds).succ.castSucc →
   ∀
    (available :
     RevisitingExtensionCertificate corr.replacementSeries.data
@@ -2307,21 +2352,24 @@ private abbrev helperBranch1721Conditions.{u_1, u_2} : Prop :=
      edge ∈
       (TwoColorIncidenceGraph G
          (ett.series.data.coloring
-          ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+          ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+              ett.rounds) :
             Fin ett.rounds).castSucc)
          available.gamma available.delta :
         SimpleGraph (V ⊕ E)).edgeSet),
   (available.returnPath.transfer
       (TwoColorIncidenceGraph G
         (ett.series.data.coloring
-         ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+         ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+             ett.rounds) :
            Fin ett.rounds).castSucc)
         available.gamma available.delta :
        SimpleGraph (V ⊕ E))
       returnEdgeTransfer :
      (TwoColorIncidenceGraph G
          (ett.series.data.coloring
-          ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+          ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+              ett.rounds) :
             Fin ett.rounds).castSucc)
          available.gamma available.delta :
         SimpleGraph (V ⊕ E)).Walk
@@ -2332,14 +2380,16 @@ private abbrev helperBranch1721Conditions.{u_1, u_2} : Prop :=
     (available.returnPath.transfer
        (TwoColorIncidenceGraph G
          (ett.series.data.coloring
-          ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+          ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+              ett.rounds) :
             Fin ett.rounds).castSucc)
          available.gamma available.delta :
         SimpleGraph (V ⊕ E))
        returnEdgeTransfer :
       (TwoColorIncidenceGraph G
           (ett.series.data.coloring
-           ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+           ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+               ett.rounds) :
              Fin ett.rounds).castSucc)
           available.gamma available.delta :
          SimpleGraph (V ⊕ E)).Walk
@@ -2349,20 +2399,23 @@ private abbrev helperBranch1721Conditions.{u_1, u_2} : Prop :=
   Sum.inl available.returnVertex ∈
     TwoColorComponent G
      (ett.series.data.coloring
-      ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+      ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+          ett.rounds) :
         Fin ett.rounds).castSucc)
      available.gamma available.delta (Sum.inr available.edge) →
   Sum.inl available.outsideEndpoint ∈
     TwoColorComponent G
      (ett.series.data.coloring
-      ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+      ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+          ett.rounds) :
         Fin ett.rounds).castSucc)
      available.gamma available.delta (Sum.inr available.edge) →
-  ∀ (horiginalRoundsLess : originalPrefix.rounds < ett.rounds)
+  ∀ (_ : originalPrefix.rounds < ett.rounds)
    (originalCycle :
     TwoColorCycle G
      (ett.series.data.coloring
-      ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+      ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+          ett.rounds) :
         Fin ett.rounds).castSucc)
      available.gamma available.delta),
   (
@@ -2371,11 +2424,13 @@ private abbrev helperBranch1721Conditions.{u_1, u_2} : Prop :=
    x ∈
     TwoColorComponent G
      (ett.series.data.coloring
-      ((⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds) :
+      ((⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+          ett.rounds) :
         Fin ett.rounds).castSucc)
      available.gamma available.delta (Sum.inr available.edge)) →
   ett.series.data.kind
-     (Fin.castLE (by omega)
+     (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr)
        (available.earlier : Fin (originalPrefix.rounds + (1 : ℕ))) :
       Fin (ett.rounds + (1 : ℕ))) =
     some TashkinovExtensionKind.PE →
@@ -2405,7 +2460,8 @@ private abbrev helperBranch1721Conditions.{u_1, u_2} : Prop :=
     ({ fullChoice.edge } : Finset E) →
   ett.series.data.delta fulli.succ = some fullChoice.color →
   ett.series.data.gamma fulli.succ = some fullGamma →
-  (Fin.castLE (by omega)
+  (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr)
       (available.earlier :
        Fin (originalPrefix.rounds + (1 : ℕ))) :
      Fin (ett.rounds + (1 : ℕ))) =
@@ -2430,7 +2486,7 @@ private abbrev helperContinuation4070Conditions.{u_1, u_2} : Prop :=
    (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
    (T : TreeSequence G e0) (generating : PartialEdgeColoring E k)
    (ett : ExtendedTashkinovTree G k e0 input T generating) (hroundLarge : (1 : ℕ) < ett.rounds)
-   (hlower :
+   (_ :
   ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
    {generating' : PartialEdgeColoring E k}
    (lower : ExtendedTashkinovTree G k e0 input' T' generating'),
@@ -2463,47 +2519,61 @@ private abbrev helperContinuation4070Conditions.{u_1, u_2} : Prop :=
     (lower.series.data.coloring n) sigma →
   ∀ w ∈ TreeSequenceVertexSet Tn,
    Sum.inl w ∈ TwoColorComponent G sigma gamma delta (Sum.inl v) ↔ w = v),
-  let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds);
+  let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+      hroundLarge⟩ : Fin ett.rounds);
   ∀ (sigmaPrev : PartialEdgeColoring E k)
-   (previousProper :
+   (_ :
     IsProperEdgeColoring G
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc))
-   (previousOneUncolored :
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc))
+   (_ :
     IsOneEdgeUncolored
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc) e0)
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc) e0)
    (originalPrefix :
     ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc))
-   (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)) (hprefixMP : MaximumProperty originalPrefix)
-   (hprefixTrees :
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc))
+   (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)) (_ : MaximumProperty originalPrefix)
+   (_ :
   ∀ (i : Fin (originalPrefix.rounds + (2 : ℕ))),
-  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE (by omega) i))
-   (hprefixData :
+  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i))
+   (_ :
   ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))),
-  originalPrefix.series.data.coloring i = ett.series.data.coloring (Fin.castLE (by omega) i) ∧
-   originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE (by omega) i) ∧
+  originalPrefix.series.data.coloring i = ett.series.data.coloring (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
+   originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
     originalPrefix.series.data.connectingEdges i =
-      ett.series.data.connectingEdges (Fin.castLE (by omega) i) ∧
-     originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE (by omega) i) ∧
+      ett.series.data.connectingEdges (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
+     originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
       TashkinovStoredColors originalPrefix.series.data i =
-       TashkinovStoredColors ett.series.data (Fin.castLE (by omega) i))
+       TashkinovStoredColors ett.series.data (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i))
    (corr :
     CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
      (ett.series.data.tree (Fin.last ett.rounds).castSucc))
-   (hcorrMP : MaximumProperty corr.replacementETT)
-   (noRevisiting :
+   (_ : MaximumProperty corr.replacementETT)
+   (_ :
     ¬Nonempty
       (RevisitingExtensionCertificate ett.series.data
-       (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)),
+       (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+           ett.rounds).castSucc)),
   let replacementLast : Fin (originalPrefix.rounds + (1 : ℕ)) := Fin.last originalPrefix.rounds;
-  ∀ (horiginalPositive : (0 : ℕ) < originalPrefix.rounds)
-   (hlastMap :
-    Fin.castLE (by omega) replacementLast =
-     (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)
-   (hreplacementCurrentTree :
+  ∀ (_ : (0 : ℕ) < originalPrefix.rounds)
+   (_ :
+    Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) replacementLast =
+     (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+         ett.rounds).castSucc)
+   (_ :
     corr.replacementSeries.data.tree replacementLast.succ =
-     ett.series.data.tree (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).succ.castSucc)
-   (peRootOnly :
+     ett.series.data.tree (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).succ.castSucc)
+   (_ :
   ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
    {generating' : PartialEdgeColoring E k}
    (base : ExtendedTashkinovTree G k e0 input' T' generating'),
@@ -2528,7 +2598,7 @@ private abbrev helperContinuation4070Conditions.{u_1, u_2} : Prop :=
    (available : RevisitingExtensionCertificate corr.replacementSeries.data replacementLast),
   let earlierPrefix : Fin (originalPrefix.rounds + (1 : ℕ)) := available.earlier;
   ∀
-   (hbaseEarlierKind :
+   (_ :
     originalPrefix.series.data.kind earlierPrefix = some TashkinovExtensionKind.PE)
    (oldi : Fin originalPrefix.rounds)
    (oldChoice :
@@ -2536,30 +2606,30 @@ private abbrev helperContinuation4070Conditions.{u_1, u_2} : Prop :=
      (TashkinovStoredColors originalPrefix.series.data oldi.castSucc)
      (originalPrefix.series.data.coloring oldi.castSucc))
    (oldGamma : Fin k)
-   (oldCurrentProper : IsProperEdgeColoring G (originalPrefix.series.data.coloring oldi.succ))
-   (oldCurrentOne : IsOneEdgeUncolored (originalPrefix.series.data.coloring oldi.succ) e0)
-   (oldCurrentStored :
+   (_ : IsProperEdgeColoring G (originalPrefix.series.data.coloring oldi.succ))
+   (_ : IsOneEdgeUncolored (originalPrefix.series.data.coloring oldi.succ) e0)
+   (_ :
     originalPrefix.series.data.stored oldi.succ =
      (insert oldChoice.color ({ oldGamma } : Finset (Fin k)) : Finset (Fin k)))
-   (oldCurrentEdges :
+   (_ :
     originalPrefix.series.data.connectingEdges oldi.succ = ({ oldChoice.edge } : Finset E))
-   (oldCurrentKind : originalPrefix.series.data.kind oldi.succ = some TashkinovExtensionKind.PE)
-   (oldCurrentVertex : originalPrefix.series.data.chosenVertex oldi.succ = some oldChoice.vertex)
-   (oldCurrentDelta : originalPrefix.series.data.delta oldi.succ = some oldChoice.color)
-   (oldCurrentGamma : originalPrefix.series.data.gamma oldi.succ = some oldGamma)
-   (hbaseTarget : earlierPrefix = oldi.succ) (holdIndex : oldi.succ = earlierPrefix)
+   (_ : originalPrefix.series.data.kind oldi.succ = some TashkinovExtensionKind.PE)
+   (_ : originalPrefix.series.data.chosenVertex oldi.succ = some oldChoice.vertex)
+   (_ : originalPrefix.series.data.delta oldi.succ = some oldChoice.color)
+   (_ : originalPrefix.series.data.gamma oldi.succ = some oldGamma)
+   (_ : earlierPrefix = oldi.succ) (_ : oldi.succ = earlierPrefix)
    (newGamma : Fin k)
    (newChoicePE :
     MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree oldi.succ.castSucc)
      (TashkinovStoredColors corr.replacementSeries.data oldi.castSucc)
      (corr.replacementSeries.data.coloring oldi.castSucc))
-   (newCurrentProper : IsProperEdgeColoring G (corr.replacementSeries.data.coloring oldi.succ))
-   (newCurrentOne : IsOneEdgeUncolored (corr.replacementSeries.data.coloring oldi.succ) e0)
-   (newCurrentKind : corr.replacementSeries.data.kind oldi.succ = some TashkinovExtensionKind.PE)
-   (newCurrentVertex :
+   (_ : IsProperEdgeColoring G (corr.replacementSeries.data.coloring oldi.succ))
+   (_ : IsOneEdgeUncolored (corr.replacementSeries.data.coloring oldi.succ) e0)
+   (_ : corr.replacementSeries.data.kind oldi.succ = some TashkinovExtensionKind.PE)
+   (_ :
     corr.replacementSeries.data.chosenVertex oldi.succ = some newChoicePE.vertex)
-   (newCurrentDelta : corr.replacementSeries.data.delta oldi.succ = some newChoicePE.color)
-   (newCurrentGamma : corr.replacementSeries.data.gamma oldi.succ = some newGamma)
+   (_ : corr.replacementSeries.data.delta oldi.succ = some newChoicePE.color)
+   (_ : corr.replacementSeries.data.gamma oldi.succ = some newGamma)
    (hbaseTree :
     corr.replacementSeries.data.tree oldi.succ.castSucc =
      originalPrefix.series.data.tree oldi.succ.castSucc),
@@ -2569,14 +2639,14 @@ private abbrev helperContinuation4070Conditions.{u_1, u_2} : Prop :=
     (originalPrefix.series.data.coloring oldi.castSucc) :=
    (Eq.symm hbaseTree ▸ oldChoice);
   ∀
-   (transportChoiceFields :
+   (_ :
   ∀ {A B : TreeSequence G e0} (hAB : A = B) (C : Finset (Fin k))
    (phi : PartialEdgeColoring E k) (ch : MaximumDefectiveChoice G e0 A C phi),
   (hAB ▸ ch).edge = ch.edge ∧
    (hAB ▸ ch).vertex = ch.vertex ∧
     (hAB ▸ ch).otherEndpoint = ch.otherEndpoint ∧ (hAB ▸ ch).color = ch.color)
-   (holdColorCast : oldChoiceOnNew.color = oldChoice.color)
-   (pePostStatus :
+   (_ : oldChoiceOnNew.color = oldChoice.color)
+   (_ :
   ∀ (X : TreeSequence G e0) (C : Finset (Fin k)) (phi : PartialEdgeColoring E k)
    (ch : MaximumDefectiveChoice G e0 X C phi) (g : Fin k) (second : PartialEdgeColoring E k),
   IsProperEdgeColoring G second →
@@ -2586,35 +2656,35 @@ private abbrev helperContinuation4070Conditions.{u_1, u_2} : Prop :=
    TwoColorComponentSwap G second g ch.color (Sum.inl ch.vertex);
   ch.color ∈ MissingColors G post ch.vertex ∧
    g ∉ MissingColors G post ch.vertex ∧ g ≠ ch.color)
-   (holdDeltaMissing :
+   (_ :
     oldChoice.color ∈
      MissingColors G (originalPrefix.series.data.coloring oldi.succ) oldChoice.vertex)
-   (holdGammaNotMissing :
+   (_ :
     oldGamma ∉ MissingColors G (originalPrefix.series.data.coloring oldi.succ) oldChoice.vertex)
-   (holdColorNe : oldGamma ≠ oldChoice.color) (hnewColorNe : newGamma ≠ newChoicePE.color)
-   (hidentifiedDelta : newChoicePE.color = oldChoiceOnNew.color)
-   (hidentifiedGamma : newGamma = oldGamma)
-   (hnewDeltaAvailable : newChoicePE.color = available.delta)
-   (hnewGammaAvailable : newGamma = available.gamma)
-   (holdDeltaAvailable : oldChoice.color = available.delta)
-   (holdGammaAvailable : oldGamma = available.gamma)
-   (hnewVertexOld : newChoicePE.vertex = oldChoice.vertex)
-   (hnewPostSigmaPrev : corr.replacementSeries.data.coloring oldi.succ = sigmaPrev)
-   (hbaseFinalColor :
+   (_ : oldGamma ≠ oldChoice.color) (_ : newGamma ≠ newChoicePE.color)
+   (_ : newChoicePE.color = oldChoiceOnNew.color)
+   (_ : newGamma = oldGamma)
+   (_ : newChoicePE.color = available.delta)
+   (_ : newGamma = available.gamma)
+   (_ : oldChoice.color = available.delta)
+   (_ : oldGamma = available.gamma)
+   (_ : newChoicePE.vertex = oldChoice.vertex)
+   (_ : corr.replacementSeries.data.coloring oldi.succ = sigmaPrev)
+   (_ :
     originalPrefix.series.data.coloring replacementLast = ett.series.data.coloring q.castSucc)
-   (holdPostOriginal :
+   (_ :
     originalPrefix.series.data.coloring oldi.succ = ett.series.data.coloring q.castSucc)
-   (holdDeltaOriginal :
+   (_ :
     available.delta ∈ MissingColors G (ett.series.data.coloring q.castSucc) oldChoice.vertex)
-   (hgammaDeltaNe : available.gamma ≠ available.delta)
-   (holdVertexFinal :
+   (_ : available.gamma ≠ available.delta)
+   (_ :
     oldChoice.vertex ∈
      TreeSequenceVertexSet
       (originalPrefix.series.data.tree (Fin.last (originalPrefix.rounds + (1 : ℕ)))))
-   (hreturnInOldEarlier :
+   (_ :
     available.returnVertex ∈
      TreeSequenceVertexSet (originalPrefix.series.data.tree earlierPrefix.castSucc))
-   (hreturnInFinal :
+   (_ :
     available.returnVertex ∈
      TreeSequenceVertexSet
       (originalPrefix.series.data.tree (Fin.last (originalPrefix.rounds + (1 : ℕ))))),
@@ -2627,22 +2697,22 @@ private abbrev helperContinuation4070Conditions.{u_1, u_2} : Prop :=
   let originalReturnPath :
    originalReturnGraph.Walk (Sum.inr available.edge) (Sum.inl available.returnVertex) :=
    available.returnPath.transfer originalReturnGraph returnEdgeTransfer;
-  ∀ (horiginalReturnIsPath : originalReturnPath.IsPath)
-   (horiginalReturnSupport :
+  ∀ (_ : originalReturnPath.IsPath)
+   (_ :
   ∀ (z : V ⊕ E),
   z ∈ originalReturnPath.support ↔ z ∈ available.returnPath.support)
-   (hreturnInQ :
+   (_ :
     Sum.inl available.returnVertex ∈
      TwoColorComponent G (ett.series.data.coloring q.castSucc) available.gamma available.delta
       (Sum.inr available.edge))
-   (houtsideInQ :
+   (_ :
     Sum.inl available.outsideEndpoint ∈
      TwoColorComponent G (ett.series.data.coloring q.castSucc) available.gamma available.delta
       (Sum.inr available.edge))
-   (hpathComponent :
+   (_ :
     TwoColorNontrivialPathComponent G (ett.series.data.coloring q.castSucc) available.gamma
      available.delta (Sum.inl oldChoice.vertex))
-   (hpathMeetsFinal :
+   (_ :
     ∃
      v ∈
       TreeSequenceVertexSet
@@ -2650,7 +2720,7 @@ private abbrev helperContinuation4070Conditions.{u_1, u_2} : Prop :=
      Sum.inl v ∈
       TwoColorComponent G (ett.series.data.coloring q.castSucc) available.gamma
        available.delta (Sum.inl oldChoice.vertex))
-   (hreplacementLeaf :
+   (_ :
     ((TwoColorIncidenceGraph G (corr.replacementSeries.data.coloring replacementLast)
         available.gamma available.delta).neighborSet
       (Sum.inl newChoicePE.vertex)).Subsingleton),
@@ -2662,7 +2732,7 @@ private abbrev helperContinuation4611Conditions.{u_1, u_2} : Prop :=
    (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
    (T : TreeSequence G e0) (generating : PartialEdgeColoring E k)
    (ett : ExtendedTashkinovTree G k e0 input T generating) (hroundLarge : (1 : ℕ) < ett.rounds)
-   (hlower :
+   (_ :
   ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
    {generating' : PartialEdgeColoring E k}
    (lower : ExtendedTashkinovTree G k e0 input' T' generating'),
@@ -2695,48 +2765,62 @@ private abbrev helperContinuation4611Conditions.{u_1, u_2} : Prop :=
     (lower.series.data.coloring n) sigma →
   ∀ w ∈ TreeSequenceVertexSet Tn,
    Sum.inl w ∈ TwoColorComponent G sigma gamma delta (Sum.inl v) ↔ w = v),
-  let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds);
-  ∀ (sigmaPrev : PartialEdgeColoring E k) (hsigmaPrevProper : IsProperEdgeColoring G sigmaPrev)
-   (previousProper :
+  let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+      hroundLarge⟩ : Fin ett.rounds);
+  ∀ (sigmaPrev : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G sigmaPrev)
+   (_ :
     IsProperEdgeColoring G
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc))
-   (previousOneUncolored :
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc))
+   (_ :
     IsOneEdgeUncolored
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc) e0)
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc) e0)
    (originalPrefix :
     ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc))
-   (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)) (hprefixMP : MaximumProperty originalPrefix)
-   (hprefixTrees :
+     (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).castSucc))
+   (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)) (_ : MaximumProperty originalPrefix)
+   (_ :
   ∀ (i : Fin (originalPrefix.rounds + (2 : ℕ))),
-  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE (by omega) i))
-   (hprefixData :
+  originalPrefix.series.data.tree i = ett.series.data.tree (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i))
+   (_ :
   ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))),
-  originalPrefix.series.data.coloring i = ett.series.data.coloring (Fin.castLE (by omega) i) ∧
-   originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE (by omega) i) ∧
+  originalPrefix.series.data.coloring i = ett.series.data.coloring (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
+   originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
     originalPrefix.series.data.connectingEdges i =
-      ett.series.data.connectingEdges (Fin.castLE (by omega) i) ∧
-     originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE (by omega) i) ∧
+      ett.series.data.connectingEdges (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
+     originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i) ∧
       TashkinovStoredColors originalPrefix.series.data i =
-       TashkinovStoredColors ett.series.data (Fin.castLE (by omega) i))
+       TashkinovStoredColors ett.series.data (Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) i))
    (corr :
     CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
      (ett.series.data.tree (Fin.last ett.rounds).castSucc))
-   (hcorrMP : MaximumProperty corr.replacementETT)
-   (noRevisiting :
+   (_ : MaximumProperty corr.replacementETT)
+   (_ :
     ¬Nonempty
       (RevisitingExtensionCertificate ett.series.data
-       (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)),
+       (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+           ett.rounds).castSucc)),
   let replacementLast : Fin (originalPrefix.rounds + (1 : ℕ)) := Fin.last originalPrefix.rounds;
-  ∀ (hcorrFinalColor : corr.replacementSeries.data.coloring replacementLast = sigmaPrev)
-   (horiginalPositive : (0 : ℕ) < originalPrefix.rounds)
-   (hlastMap :
-    Fin.castLE (by omega) replacementLast =
-     (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)
-   (hreplacementCurrentTree :
+  ∀ (_ : corr.replacementSeries.data.coloring replacementLast = sigmaPrev)
+   (_ : (0 : ℕ) < originalPrefix.rounds)
+   (_ :
+    Fin.castLE
+      (positivePrefixPrefixBound ett.rounds originalPrefix.rounds _ hr) replacementLast =
+     (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds hroundLarge⟩ : Fin
+         ett.rounds).castSucc)
+   (_ :
     corr.replacementSeries.data.tree replacementLast.succ =
-     ett.series.data.tree (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).succ.castSucc)
-   (peRootOnly :
+     ett.series.data.tree (⟨ett.rounds - (1 : ℕ), positivePrefixPredecessorBound ett.rounds
+         hroundLarge⟩ : Fin ett.rounds).succ.castSucc)
+   (_ :
   ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
    {generating' : PartialEdgeColoring E k}
    (base : ExtendedTashkinovTree G k e0 input' T' generating'),
@@ -2761,7 +2845,7 @@ private abbrev helperContinuation4611Conditions.{u_1, u_2} : Prop :=
    (available : RevisitingExtensionCertificate corr.replacementSeries.data replacementLast),
   let earlierPrefix : Fin (originalPrefix.rounds + (1 : ℕ)) := available.earlier;
   ∀
-   (hbaseEarlierKind :
+   (_ :
     originalPrefix.series.data.kind earlierPrefix = some TashkinovExtensionKind.PE)
    (oldi : Fin originalPrefix.rounds)
    (oldChoice :
@@ -2769,30 +2853,30 @@ private abbrev helperContinuation4611Conditions.{u_1, u_2} : Prop :=
      (TashkinovStoredColors originalPrefix.series.data oldi.castSucc)
      (originalPrefix.series.data.coloring oldi.castSucc))
    (oldGamma : Fin k)
-   (oldCurrentProper : IsProperEdgeColoring G (originalPrefix.series.data.coloring oldi.succ))
-   (oldCurrentOne : IsOneEdgeUncolored (originalPrefix.series.data.coloring oldi.succ) e0)
-   (oldCurrentStored :
+   (_ : IsProperEdgeColoring G (originalPrefix.series.data.coloring oldi.succ))
+   (_ : IsOneEdgeUncolored (originalPrefix.series.data.coloring oldi.succ) e0)
+   (_ :
     originalPrefix.series.data.stored oldi.succ =
      (insert oldChoice.color ({ oldGamma } : Finset (Fin k)) : Finset (Fin k)))
-   (oldCurrentEdges :
+   (_ :
     originalPrefix.series.data.connectingEdges oldi.succ = ({ oldChoice.edge } : Finset E))
-   (oldCurrentKind : originalPrefix.series.data.kind oldi.succ = some TashkinovExtensionKind.PE)
-   (oldCurrentVertex : originalPrefix.series.data.chosenVertex oldi.succ = some oldChoice.vertex)
-   (oldCurrentDelta : originalPrefix.series.data.delta oldi.succ = some oldChoice.color)
-   (oldCurrentGamma : originalPrefix.series.data.gamma oldi.succ = some oldGamma)
-   (hbaseTarget : earlierPrefix = oldi.succ) (holdIndex : oldi.succ = earlierPrefix)
+   (_ : originalPrefix.series.data.kind oldi.succ = some TashkinovExtensionKind.PE)
+   (_ : originalPrefix.series.data.chosenVertex oldi.succ = some oldChoice.vertex)
+   (_ : originalPrefix.series.data.delta oldi.succ = some oldChoice.color)
+   (_ : originalPrefix.series.data.gamma oldi.succ = some oldGamma)
+   (_ : earlierPrefix = oldi.succ) (_ : oldi.succ = earlierPrefix)
    (newGamma : Fin k)
    (newChoicePE :
     MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree oldi.succ.castSucc)
      (TashkinovStoredColors corr.replacementSeries.data oldi.castSucc)
      (corr.replacementSeries.data.coloring oldi.castSucc))
-   (newCurrentProper : IsProperEdgeColoring G (corr.replacementSeries.data.coloring oldi.succ))
-   (newCurrentOne : IsOneEdgeUncolored (corr.replacementSeries.data.coloring oldi.succ) e0)
-   (newCurrentKind : corr.replacementSeries.data.kind oldi.succ = some TashkinovExtensionKind.PE)
-   (newCurrentVertex :
+   (_ : IsProperEdgeColoring G (corr.replacementSeries.data.coloring oldi.succ))
+   (_ : IsOneEdgeUncolored (corr.replacementSeries.data.coloring oldi.succ) e0)
+   (_ : corr.replacementSeries.data.kind oldi.succ = some TashkinovExtensionKind.PE)
+   (_ :
     corr.replacementSeries.data.chosenVertex oldi.succ = some newChoicePE.vertex)
-   (newCurrentDelta : corr.replacementSeries.data.delta oldi.succ = some newChoicePE.color)
-   (newCurrentGamma : corr.replacementSeries.data.gamma oldi.succ = some newGamma)
+   (_ : corr.replacementSeries.data.delta oldi.succ = some newChoicePE.color)
+   (_ : corr.replacementSeries.data.gamma oldi.succ = some newGamma)
    (hbaseTree :
     corr.replacementSeries.data.tree oldi.succ.castSucc =
      originalPrefix.series.data.tree oldi.succ.castSucc),
@@ -2802,14 +2886,14 @@ private abbrev helperContinuation4611Conditions.{u_1, u_2} : Prop :=
     (originalPrefix.series.data.coloring oldi.castSucc) :=
    (Eq.symm hbaseTree ▸ oldChoice);
   ∀
-   (transportChoiceFields :
+   (_ :
   ∀ {A B : TreeSequence G e0} (hAB : A = B) (C : Finset (Fin k))
    (phi : PartialEdgeColoring E k) (ch : MaximumDefectiveChoice G e0 A C phi),
   (hAB ▸ ch).edge = ch.edge ∧
    (hAB ▸ ch).vertex = ch.vertex ∧
     (hAB ▸ ch).otherEndpoint = ch.otherEndpoint ∧ (hAB ▸ ch).color = ch.color)
-   (holdColorCast : oldChoiceOnNew.color = oldChoice.color)
-   (pePostStatus :
+   (_ : oldChoiceOnNew.color = oldChoice.color)
+   (_ :
   ∀ (X : TreeSequence G e0) (C : Finset (Fin k)) (phi : PartialEdgeColoring E k)
    (ch : MaximumDefectiveChoice G e0 X C phi) (g : Fin k) (second : PartialEdgeColoring E k),
   IsProperEdgeColoring G second →
@@ -2819,47 +2903,47 @@ private abbrev helperContinuation4611Conditions.{u_1, u_2} : Prop :=
    TwoColorComponentSwap G second g ch.color (Sum.inl ch.vertex);
   ch.color ∈ MissingColors G post ch.vertex ∧
    g ∉ MissingColors G post ch.vertex ∧ g ≠ ch.color)
-   (holdDeltaMissing :
+   (_ :
     oldChoice.color ∈
      MissingColors G (originalPrefix.series.data.coloring oldi.succ) oldChoice.vertex)
-   (holdGammaNotMissing :
+   (_ :
     oldGamma ∉ MissingColors G (originalPrefix.series.data.coloring oldi.succ) oldChoice.vertex)
-   (holdColorNe : oldGamma ≠ oldChoice.color) (hnewColorNe : newGamma ≠ newChoicePE.color)
-   (hidentifiedDelta : newChoicePE.color = oldChoiceOnNew.color)
-   (hidentifiedGamma : newGamma = oldGamma)
-   (hnewDeltaAvailable : newChoicePE.color = available.delta)
-   (hnewGammaAvailable : newGamma = available.gamma)
-   (holdDeltaAvailable : oldChoice.color = available.delta)
-   (holdGammaAvailable : oldGamma = available.gamma)
-   (hnewVertexOld : newChoicePE.vertex = oldChoice.vertex)
-   (hnewPostSigmaPrev : corr.replacementSeries.data.coloring oldi.succ = sigmaPrev)
-   (hbaseFinalColor :
+   (_ : oldGamma ≠ oldChoice.color) (_ : newGamma ≠ newChoicePE.color)
+   (_ : newChoicePE.color = oldChoiceOnNew.color)
+   (_ : newGamma = oldGamma)
+   (_ : newChoicePE.color = available.delta)
+   (_ : newGamma = available.gamma)
+   (_ : oldChoice.color = available.delta)
+   (_ : oldGamma = available.gamma)
+   (_ : newChoicePE.vertex = oldChoice.vertex)
+   (_ : corr.replacementSeries.data.coloring oldi.succ = sigmaPrev)
+   (_ :
     originalPrefix.series.data.coloring replacementLast = ett.series.data.coloring q.castSucc)
-   (holdPostOriginal :
+   (_ :
     originalPrefix.series.data.coloring oldi.succ = ett.series.data.coloring q.castSucc)
-   (hnewDeltaSigmaPrev : available.delta ∈ MissingColors G sigmaPrev newChoicePE.vertex)
-   (holdDeltaOriginal :
+   (_ : available.delta ∈ MissingColors G sigmaPrev newChoicePE.vertex)
+   (_ :
     available.delta ∈ MissingColors G (ett.series.data.coloring q.castSucc) oldChoice.vertex)
-   (holdGammaOriginalNot :
+   (_ :
     available.gamma ∉ MissingColors G (ett.series.data.coloring q.castSucc) oldChoice.vertex)
-   (hgammaDeltaNe : available.gamma ≠ available.delta)
-   (holdVertexFinal :
+   (_ : available.gamma ≠ available.delta)
+   (_ :
     oldChoice.vertex ∈
      TreeSequenceVertexSet
       (originalPrefix.series.data.tree (Fin.last (originalPrefix.rounds + (1 : ℕ)))))
-   (hreturnInOldEarlier :
+   (_ :
     available.returnVertex ∈
      TreeSequenceVertexSet (originalPrefix.series.data.tree earlierPrefix.castSucc))
-   (hreturnInFinal :
+   (_ :
     available.returnVertex ∈
      TreeSequenceVertexSet
       (originalPrefix.series.data.tree (Fin.last (originalPrefix.rounds + (1 : ℕ)))))
-   (replacementReturnEdgeData :
-  ∀ (f : E) (hf : Sum.inr f ∈ available.returnPath.support),
+   (_ :
+  ∀ (f : E) (_ : Sum.inr f ∈ available.returnPath.support),
   TreeIncidentEdge (ett.series.data.tree q.succ.castSucc) f ∧
    (sigmaPrev f = some available.gamma ∨ sigmaPrev f = some available.delta))
-   (copyReturnEdge :
-  ∀ (f : E) (hf : Sum.inr f ∈ available.returnPath.support),
+   (_ :
+  ∀ (f : E) (_ : Sum.inr f ∈ available.returnPath.support),
   sigmaPrev f = ett.series.data.coloring q.castSucc f),
   False
 
