@@ -206,7 +206,7 @@ def test_quality_audits_cover_every_owned_module(repository: Path) -> None:
         patch("lean_pool.quality._run_option_audit", return_value=[]) as backdoors,
     ):
         assert _cached_pool_audits(repository, cache) == []
-        assert [call.args[2] for call in axioms.call_args_list] == pool_units(
+        assert [call.args[1] for call in axioms.call_args_list] == pool_units(
             repository
         )
         assert [
