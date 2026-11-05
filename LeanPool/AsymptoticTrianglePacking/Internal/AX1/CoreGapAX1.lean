@@ -625,7 +625,7 @@ private lemma certificate_nonneg [Finite C] (inc : O → Finset C)
       apply Finset.sum_le_sum
       intro o _
       have hcard : (1 : ℝ) ≤ (inc o).card := by exact_mod_cast Finset.card_pos.mpr (hinc o)
-      nlinarith [hq_neg o]
+      nlinarith only [mul_nonpos_of_nonneg_of_nonpos (sub_nonneg.mpr hcard) (hq_neg o)]
     -- Therefore: C * q_last + ∑ o, q_o o ≥ C * q_last + ∑ o, (inc o).card * q_o o ≥ 0
     have h_bound : Fintype.card C * q_last + ∑ o : O, q_o o ≥ 0 := by
       linarith only [h_sum_cons, h_expand, h_double_sum, h_card_mul_le]
@@ -653,7 +653,7 @@ private lemma certificate_nonneg [Finite C] (inc : O → Finset C)
         apply Finset.sum_le_sum
         intro o _
         have hcard : (1 : ℝ) ≤ (inc o).card := by exact_mod_cast Finset.card_pos.mpr (hinc o)
-        nlinarith [hw.1 o]
+        exact le_mul_of_one_le_left (hw.1 o) hcard
       linarith only [h_sum_cons, h_double_sum, h_le]
     -- Now use that normalized certificate gives a packing with value ≤ packOpt inc < a
     -- Define normalized packing: w o = -q_o o / q_last
@@ -761,18 +761,8 @@ private lemma coverOpt_le_ratio_of_mem_closure (inc : O → Finset C) {a ε : �
     intro i
     have h1 : dist (coverRhs a) b < δ := hb_dist
     have h2 : |(coverRhs a).ofLp i - b.ofLp i| ≤ ‖(coverRhs a : ConstraintSpace O) - b‖ := by
-      have hnn : ((coverRhs a).ofLp i - b.ofLp i) ^ 2 ≤
-          ‖(coverRhs a : ConstraintSpace O) - b‖ ^ 2 := by
-        rw [EuclideanSpace.norm_eq, Real.sq_sqrt (Finset.sum_nonneg fun _ _ => sq_nonneg _)]
-        have heq : ∀ j, ‖(coverRhs a - b).ofLp j‖ ^ 2 = ((coverRhs a).ofLp j - b.ofLp j) ^ 2 := by
-          intro j
-          simp [Real.norm_eq_abs]
-        simp_rw [heq]
-        apply Finset.single_le_sum (f := fun j => ((coverRhs a).ofLp j - b.ofLp j) ^ 2)
-        · intros; positivity
-        · simp
-      have := Real.abs_le_sqrt hnn
-      rwa [Real.sqrt_sq (norm_nonneg _)] at this
+      simpa only [Real.norm_eq_abs, PiLp.sub_apply] using
+        PiLp.norm_apply_le ((coverRhs a : ConstraintSpace O) - b) i
     rw [dist_eq_norm] at h1
     exact lt_of_le_of_lt h2 h1
   -- From coverMap inc x = b, derive bounds on row sums
@@ -847,8 +837,10 @@ private lemma coverOpt_le_ratio_of_mem_closure (inc : O → Finset C) {a ε : �
   have h_ratio_bound : (a + δ) / (1 - δ) ≤ (a + ε) / (1 - ε) := by
     have h1mε_pos : 0 < 1 - ε := by linarith only [hε1]
     have h1mδ_pos : 0 < 1 - δ := by linarith only [hδ_lt1]
-    field_simp
-    nlinarith [hδ_le, ha_ge_neg1]
+    rw [div_le_div_iff₀ h1mδ_pos h1mε_pos]
+    have hδε : δ ≤ ε := hδ_le.trans (half_le_self hε.le)
+    nlinarith only [mul_nonneg (sub_nonneg.mpr hδε)
+      (show 0 ≤ a + 1 by linarith only [ha_ge_neg1])]
   linarith only [h_coverOpt_le, h_sum_z_bound, h_ratio_bound]
 
 /-- Approximate conic feasibility can be repaired (by a uniform scaling) to an actual cover.
@@ -1911,17 +1903,18 @@ theorem roundOracleExistsCeil_holds : RoundOracleExistsCeil := by
     exfalso
     have hS : (0 : ℝ) ≤ (S.card : ℝ) := Nat.cast_nonneg _
     have hN : (0 : ℝ) ≤ (Fintype.card V : ℝ) := Nat.cast_nonneg _
-    nlinarith
+    nlinarith only [hβ1, hS, hN, hlt]
   obtain ⟨Pm⟩ := exists_tightParams r hr hβ hβ1
   have hr1 : 1 ≤ r := le_trans (by norm_num) hr
   have hrR : (2 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr
   obtain ⟨D₀, hD₀, c₀, hc₀, hround⟩ :=
     sharpRoundHyp_of_two_gamma_le_eps r hr Pm.gam Pm.eps Pm.exc (β / 2) Pm.gam_pos Pm.gam_le
-      Pm.eps_le Pm.two_gam_le_eps Pm.exc_pos Pm.exc_le (by linarith) (by linarith)
+      Pm.eps_le Pm.two_gam_le_eps Pm.exc_pos Pm.exc_le
+      (by linarith only [hβ]) (by linarith only [hβ1])
   -- the parameters of the interface
   obtain ⟨mu, hmudef⟩ : ∃ m : ℝ,
       m = min Pm.wid (min (c₀ * Pm.lomin) (min (1 / (2 * (D₀ + 1))) (1 / 2))) := ⟨_, rfl⟩
-  have hD1 : (0 : ℝ) < 2 * (D₀ + 1) := by linarith
+  have hD1 : (0 : ℝ) < 2 * (D₀ + 1) := by linarith only [hD₀]
   have hmupos : 0 < mu := by
     rw [hmudef]
     exact lt_min Pm.wid_pos (lt_min (mul_pos hc₀ Pm.lomin_pos)
@@ -1935,10 +1928,10 @@ theorem roundOracleExistsCeil_holds : RoundOracleExistsCeil := by
   have hmu_half : mu ≤ 1 / 2 := by
     rw [hmudef]
     exact le_trans (min_le_right _ _) (le_trans (min_le_right _ _) (min_le_right _ _))
-  have hcpos : (0 : ℝ) < Pm.gam / (16 * r) := div_pos Pm.gam_pos (by linarith)
+  have hcpos : (0 : ℝ) < Pm.gam / (16 * r) := div_pos Pm.gam_pos (by linarith only [hrR])
   have hcle : Pm.gam / (16 * r) ≤ 1 := by
-    rw [div_le_one (by linarith)]
-    linarith [Pm.gam_le]
+    rw [div_le_one (by linarith only [hrR])]
+    linarith only [Pm.gam_le, hrR]
   refine ⟨mu, hmupos, Pm.eta, Pm.eta_pos, max 1 (D₀ / Pm.lomin),
     lt_of_lt_of_le one_pos (le_max_left _ _), Pm.gam / (16 * r), hcpos, hcle, ?_⟩
   intro V _ _ H d hd hd0 huni hreg hcodeg hceil
@@ -1955,7 +1948,8 @@ theorem roundOracleExistsCeil_holds : RoundOracleExistsCeil := by
     obtain ⟨Exc, hExc, hExcdeg⟩ := hreg
     have hetahalf : Pm.eta ≤ β / 2 := le_trans Pm.sig_init (Pm.sig_le 0 (Nat.zero_le _))
     have hExcnn : (0 : ℝ) ≤ (Exc.card : ℝ) := Nat.cast_nonneg _
-    have hExclt : (Exc.card : ℝ) < (Fintype.card V : ℝ) := by nlinarith
+    have hExclt : (Exc.card : ℝ) < (Fintype.card V : ℝ) := by
+      nlinarith only [hExc, hetahalf, hβ1, hNpos]
     obtain ⟨v, hv⟩ : ∃ v : V, v ∉ Exc := by
       by_contra hcon
       push Not at hcon
@@ -1969,18 +1963,20 @@ theorem roundOracleExistsCeil_holds : RoundOracleExistsCeil := by
     push Not at hcon
     have hmu_D' : mu * (2 * (D₀ + 1)) ≤ 1 := by
       rw [le_div_iff₀ hD1] at hmu_D
-      linarith
-    have hstep1 : d / 2 ≤ (degree H v : ℝ) := by nlinarith
-    have hr1R : (1 : ℝ) ≤ (r : ℝ) - 1 := by linarith
+      exact hmu_D
+    have hstep1 : d / 2 ≤ (degree H v : ℝ) := by
+      linarith only [hdeg, mul_le_mul_of_nonneg_right hmu_half hd.le]
+    have hr1R : (1 : ℝ) ≤ (r : ℝ) - 1 := by linarith only [hrR]
     have hstep2 : (degree H v : ℝ) ≤ ((r : ℝ) - 1) * (degree H v : ℝ) := by
       linarith only [mul_le_mul_of_nonneg_right hr1R hdegnn]
-    have hstep3 : d / 2 ≤ ((Fintype.card V : ℝ) - 1) * (mu * d) := by linarith
+    have hstep3 : d / 2 ≤ ((Fintype.card V : ℝ) - 1) * (mu * d) := by
+      linarith only [hstep1, hstep2, hcg]
     have hstep4 : (1 : ℝ) / 2 ≤ ((Fintype.card V : ℝ) - 1) * mu := by
       have hmul : d * (1 / 2) ≤ d * (((Fintype.card V : ℝ) - 1) * mu) := by
         linarith only [hstep3]
       exact le_of_mul_le_mul_left hmul hd
     nlinarith only [hstep4, hmu_D', hcon, hmupos,
-      mul_pos hmupos (show (0 : ℝ) < D₀ - (Fintype.card V : ℝ) by linarith)]
+      mul_pos hmupos (show (0 : ℝ) < D₀ - (Fintype.card V : ℝ) by linarith only [hcon])]
   refine hasRoundOracle_of_scheduled_invariant H hcpos.le hcle Pm.T Pm.decay
     (fun j H' S => (∀ e ∈ H', Disjoint e S) ∧
       ∃ (K : Finset (Finset V)) (E : Finset V), K ⊆ H' ∧ IsUniform K r ∧
@@ -1995,19 +1991,19 @@ theorem roundOracleExistsCeil_holds : RoundOracleExistsCeil := by
     refine ⟨fun e _ => Finset.disjoint_empty_right e, H, Exc, Finset.Subset.refl _, huni,
       fun e _ => Finset.disjoint_empty_right e, ?_, ?_, hcodeg, ?_⟩
     · intro v
-      have h1 : (1 : ℝ) + mu ≤ Pm.hi 0 := by linarith [Pm.init_hi]
-      have := hceil v
-      nlinarith
+      have h1 : (1 : ℝ) + mu ≤ Pm.hi 0 := by linarith only [Pm.init_hi, hmu_wid]
+      simpa only [mul_comm d] using
+        (hceil v).trans (mul_le_mul_of_nonneg_right h1 hd.le)
     · intro v _ hvE
-      have h1 : Pm.lo 0 ≤ 1 - mu := by linarith [Pm.init_lo]
-      have := (hExcdeg v hvE).1
-      nlinarith
+      have h1 : Pm.lo 0 ≤ 1 - mu := by linarith only [Pm.init_lo, hmu_wid]
+      linarith only [mul_le_mul_of_nonneg_right h1 hd.le, (hExcdeg v hvE).1]
     · have hNnn : (0 : ℝ) ≤ (Fintype.card V : ℝ) := Nat.cast_nonneg _
       exact le_trans hExc (mul_le_mul_of_nonneg_right Pm.sig_init hNnn)
   · -- one round of the schedule
     rintro j hj H' S ⟨hH'disj, K, E, hKH', huniK, hKdisj, hhi, hlo, hcodK, hE⟩ hlt
     have hSnn : (0 : ℝ) ≤ (S.card : ℝ) := Nat.cast_nonneg _
-    have hNpos : (0 : ℝ) < (Fintype.card V : ℝ) := by nlinarith
+    have hNpos : (0 : ℝ) < (Fintype.card V : ℝ) := by
+      nlinarith only [hβ1, hlt, hSnn]
     obtain ⟨R', hR'K, hcov, K', E', hK'res, huniK', hK'disj, hhi', hlo', hcodK', hE'⟩ :=
       tight_round_step hr Pm hc₀.le hround hd (mul_nonneg hmupos.le hd.le) hDlo hcodsmall
         (hNbig hNpos) hj huniK hKdisj hhi hlo hcodK hE hlt
@@ -3091,8 +3087,10 @@ theorem nibbleGap_denseCore (ε : ℝ) (hε : 0 < ε) :
     have hθs : θ * ((posDeg G).card : ℝ) ≤ θ * (Fintype.card V : ℝ) :=
       mul_le_mul_of_nonneg_left hsn hθ0.le
     constructor
-    · nlinarith
-    · nlinarith
+    · have hθD : θ * ((posDeg G).card : ℝ) ≤ (D : ℝ) := hθs.trans hDR
+      rw [hθdef] at hθD
+      linarith only [hlo, hθD, mul_le_mul_of_nonneg_right hmμ hspos'.le]
+    · linarith only [hhi, mul_nonneg hμ.le hspos'.le]
   have hreg : NearlyRegularMost (triangleHypergraphSub G) ((posDeg G).card : ℝ) μ η :=
     triangleHypergraphSub_nearlyRegularMost_of_bounds G ∅
       (by

@@ -1359,14 +1359,17 @@ theorem fracNibble_withSlack (β : ℝ) (hβ : 0 < β) :
     simp
   have hS : 1 / γ ≤ S := by rw [hSeq]; exact hslack
   have hγS : 1 ≤ S * γ := (div_le_iff₀ hγpos).mp hS
-  have hS1 : 1 ≤ S := by nlinarith
+  have hS1 : 1 ≤ S :=
+    hγS.trans (mul_le_of_le_one_right
+      (le_trans (one_div_pos.mpr hγpos).le hS) hγ1)
   set m := ⌈S⌉₊ with hmdef
   have hmS : S ≤ (m : ℝ) := Nat.le_ceil S
   have hmpos : (0 : ℝ) < (m : ℝ) := lt_of_lt_of_le (by linarith) hmS
   have hm : 0 < m := by exact_mod_cast hmpos
   have hmlt : (m : ℝ) < S + 1 := Nat.ceil_lt_add_one (by linarith)
   have hinvm : 1 / (m : ℝ) ≤ γ := by
-    rw [div_le_iff₀ hmpos]; nlinarith
+    rw [div_le_iff₀ hmpos]
+    exact (hγS.trans (mul_le_mul_of_nonneg_right hmS hγpos.le)).trans_eq (mul_comm _ _)
   -- the padded system satisfies every hypothesis of the near-perfect weighted nibble
   have hunif := Slack.padFam_uniform K m hK
   have hnn := Slack.padWt_nonneg K w m hw hload
@@ -1385,7 +1388,8 @@ theorem fracNibble_withSlack (β : ℝ) (hβ : 0 < β) :
     | inl a => rw [Slack.padLoad_inl K w m hm a]; linarith
     | inr d =>
         rw [Slack.padLoad_inr K w m hm d, le_div_iff₀ hmpos]
-        nlinarith
+        have hunit : 1 ≤ γ₀ * (m : ℝ) := (div_le_iff₀ hmpos).mp (hinvm.trans hγle)
+        linarith only [hmlt, hunit]
   have hexc : ((∅ : Finset (Slack.Pad X m)).card : ℝ)
       ≤ η * (Fintype.card (Slack.Pad X m) : ℝ) := by
     simp only [Finset.card_empty, Nat.cast_zero]
@@ -1396,10 +1400,8 @@ theorem fracNibble_withSlack (β : ℝ) (hβ : 0 < β) :
     have hmixbound : ∀ a : X, (1 - Slack.wLoad K w a) / (m : ℝ) ≤ γ₀ := by
       intro a
       have h0 : 0 ≤ Slack.wLoad K w a := Finset.sum_nonneg fun T _ => hw T
-      have : (1 - Slack.wLoad K w a) / (m : ℝ) ≤ 1 / (m : ℝ) := by
-        gcongr
-        linarith
-      linarith [hinvm]
+      exact (div_le_div_of_nonneg_right (sub_le_self _ h0) hmpos.le).trans
+        (hinvm.trans hγle)
     cases x with
     | inl a =>
         cases z with
@@ -1421,8 +1423,8 @@ theorem fracNibble_withSlack (β : ℝ) (hβ : 0 < β) :
             have hSnn : 0 ≤ S := by linarith
             have : S / (m : ℝ) ^ 2 ≤ 1 / (m : ℝ) := by
               rw [div_le_div_iff₀ (by positivity) hmpos]
-              nlinarith
-            linarith [hinvm]
+              simpa only [one_mul, pow_two] using mul_le_mul_of_nonneg_right hmS hmpos.le
+            exact this.trans (hinvm.trans hγle)
   obtain ⟨M, hM, -, hMcard⟩ :=
     hmain (Slack.padFam K m) (Slack.padWt K w m) ∅ hunif hnn hle hge hexc hcodeg
   rw [Slack.sum_padWt K w m hm] at hMcard
@@ -1980,14 +1982,17 @@ theorem fracNibbleR_withSlack (k : ℕ) (hk : 0 < k) (β : ℝ) (hβ : 0 < β) :
   set S := Slack.slackTotal K w with hSdef
   have hS : 1 / γ ≤ S := hslack
   have hγS : 1 ≤ S * γ := (div_le_iff₀ hγpos).mp hS
-  have hS1 : 1 ≤ S := by nlinarith
+  have hS1 : 1 ≤ S :=
+    hγS.trans (mul_le_of_le_one_right
+      (le_trans (one_div_pos.mpr hγpos).le hS) hγ1)
   set m := ⌈S⌉₊ with hmdef
   have hmS : S ≤ (m : ℝ) := Nat.le_ceil S
   have hmpos : (0 : ℝ) < (m : ℝ) := lt_of_lt_of_le (by linarith) hmS
   have hm : 0 < m := by exact_mod_cast hmpos
   have hmlt : (m : ℝ) < S + 1 := Nat.ceil_lt_add_one (by linarith)
   have hinvm : 1 / (m : ℝ) ≤ γ := by
-    rw [div_le_iff₀ hmpos]; nlinarith
+    rw [div_le_iff₀ hmpos]
+    exact (hγS.trans (mul_le_mul_of_nonneg_right hmS hγpos.le)).trans_eq (mul_comm _ _)
   -- the padded system satisfies every hypothesis of the near-perfect weighted nibble
   have hunif := padFamR_uniform K k m hK
   have hnn := padWtR_nonneg K w k m hw hload
@@ -2008,7 +2013,8 @@ theorem fracNibbleR_withSlack (k : ℕ) (hk : 0 < k) (β : ℝ) (hβ : 0 < β) :
     | inr d =>
         obtain ⟨j, e⟩ := d
         rw [padLoad_inr K w k m hk hm j e, le_div_iff₀ hmpos]
-        nlinarith
+        have hunit : 1 ≤ γ₀ * (m : ℝ) := (div_le_iff₀ hmpos).mp (hinvm.trans hγle)
+        linarith only [hmlt, hunit]
   have hexc : ((∅ : Finset (PadR X k m)).card : ℝ)
       ≤ η * (Fintype.card (PadR X k m) : ℝ) := by
     simp only [Finset.card_empty, Nat.cast_zero]
@@ -2019,10 +2025,8 @@ theorem fracNibbleR_withSlack (k : ℕ) (hk : 0 < k) (β : ℝ) (hβ : 0 < β) :
     have hmixbound : ∀ a : X, (1 - Slack.wLoad K w a) / (m : ℝ) ≤ γ₀ := by
       intro a
       have h0 : 0 ≤ Slack.wLoad K w a := Finset.sum_nonneg fun T _ => hw T
-      have : (1 - Slack.wLoad K w a) / (m : ℝ) ≤ 1 / (m : ℝ) := by
-        gcongr
-        linarith
-      linarith [hinvm]
+      exact (div_le_div_of_nonneg_right (sub_le_self _ h0) hmpos.le).trans
+        (hinvm.trans hγle)
     cases x with
     | inl a =>
         cases z with
@@ -2046,9 +2050,9 @@ theorem fracNibbleR_withSlack (k : ℕ) (hk : 0 < k) (β : ℝ) (hβ : 0 < β) :
             have hSnn : 0 ≤ S := by linarith
             have : S / (m : ℝ) ^ 2 ≤ 1 / (m : ℝ) := by
               rw [div_le_div_iff₀ (by positivity) hmpos]
-              nlinarith
+              simpa only [one_mul, pow_two] using mul_le_mul_of_nonneg_right hmS hmpos.le
             rw [← hSdef]
-            linarith [hinvm]
+            exact this.trans (hinvm.trans hγle)
   obtain ⟨M, hM, -, hMcard⟩ :=
     hmain (padFamR K k m) (padWtR K w k m) ∅ hunif hnn hle hge hexc hcodeg
   rw [sum_padWtR K w k m hk hm, ← hSdef] at hMcard
@@ -2547,7 +2551,7 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
       have h1 : Slack.wLoad K w a / (m : ℝ) ≤ 1 / (m : ℝ) := by
         gcongr
         exact hload a
-      linarith [hinvm]
+      exact h1.trans hinvm
     cases x with
     | inl a =>
         cases z with
@@ -2570,8 +2574,8 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
             refine le_trans (LEUnif.padCodeg_inr_inr hm K w hw hne) ?_
             have h1 : W / (m : ℝ) ^ 2 ≤ 1 / (m : ℝ) := by
               rw [div_le_div_iff₀ (by positivity) hm']
-              nlinarith
-            linarith [hinvm]
+              simpa only [one_mul, pow_two] using mul_le_mul_of_nonneg_right hWm hm'.le
+            exact h1.trans hinvm
   -- the slack of the padded system
   have hslackEq : Slack.slackTotal K' w'
       = (∑ v : X, (1 - Slack.wLoad K' w' (Sum.inl v)))
@@ -2605,7 +2609,8 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
       field_simp
     rw [hslackEq]
     rw [hcardrm, hkey] at hdum
-    nlinarith [hmWpos]
+    exact hmWpos.trans ((le_mul_of_one_le_left (sub_nonneg.mpr hWm) hr1).trans
+      (hdum.trans (le_add_of_nonneg_left hreal)))
   obtain ⟨M, hM, hMcard⟩ :=
     hmain K' w' hunif hnn hloadPad hcodPad hslackLB
   -- the total weight and the size of the slack
@@ -2630,7 +2635,7 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
         have := (hsize T hT).1
         have : 1 ≤ #T := Finset.card_pos.mpr this
         exact_mod_cast this
-      nlinarith [hw T]
+      exact le_mul_of_one_le_left (hw T) h2
     have h3 : ∑ v : X, Slack.wLoad K w v ≤ (Fintype.card X : ℝ) := by
       have := Finset.sum_le_sum (fun v (_ : v ∈ (univ : Finset X)) => hload v)
       rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one] at this
@@ -2653,7 +2658,11 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
     have hbr : b * (1 + (r : ℝ)) = β := by
       rw [hbdef]
       field_simp
-    nlinarith [hb.le, hWX, hW0]
+    have h3 : b * (r : ℝ) * W ≤ b * (r : ℝ) * (Fintype.card X : ℝ) :=
+      mul_le_mul_of_nonneg_left hWX (mul_nonneg hb.le (Nat.cast_nonneg _))
+    have h4 : b * (Fintype.card X : ℝ) + b * (r : ℝ) * (Fintype.card X : ℝ)
+        = β * (Fintype.card X : ℝ) := by rw [← hbr]; ring
+    linarith only [h1, mul_le_mul_of_nonneg_left h2 hb.le, h3, h4]
   have hbw : b * W ≤ β * W := mul_le_mul_of_nonneg_right hbβ hW0
   linarith only [hMcard, hslackbound, hbw]
 
