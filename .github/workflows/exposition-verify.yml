@@ -101,6 +101,14 @@ jobs:
         id: build-identity
         run: echo "revision=$(PYTHONPATH=python python3 -m lean_pool.ci_cache revision)" >> "$GITHUB_OUTPUT"
 
+      # The dependency and pool build caches together exceed the runner's
+      # default free space, so restoring them fails with ENOSPC.
+      - name: Free runner disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/share/swift
+          df -h /
+
       # Match Lean Action CI's cache lookup exactly. This workflow only needs
       # compiled Lean artifacts; restoring doc-gen output here used to make a
       # broad fallback pull an incompatible cache after every toolchain bump.
