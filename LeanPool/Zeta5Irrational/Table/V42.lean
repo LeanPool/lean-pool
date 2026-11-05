@@ -6,6 +6,8 @@ Authors: Moritz Firsching
 
 module
 
+import LeanPool.Zeta5Irrational.Table.RationalSeries
+
 public import LeanPool.Zeta5Irrational.Energy
 import LeanPool.Zeta5Irrational.Certificates
 import LeanPool.Zeta5Irrational.PotentialV
@@ -48,8 +50,11 @@ lemma V_505 :
   have hL1 :
     (4409976854913976428969 / 10000000000000000000000 : ℝ) ≤
       Real.log (99472454719789 / 64000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (99472454719789 / 64000000000000 : ℚ))
+        (L := (4409976854913976428969 / 10000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (35832454719789 / 64000000000000 : ℝ) ≤
       (-(5800290439484741597991 / 10000000000000000000000 : ℝ)) := by
@@ -59,8 +64,11 @@ lemma V_505 :
           (35832454719789 / 64000000000000 : ℝ) = (35832454719789 / 32000000000000 : ℝ) / 2 ^ 1 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (35832454719789 / 32000000000000 : ℚ))
+             (U := (1131181363515258402009 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (35832454719789 / 32000000000000 : ℝ) ≤
             (1131181363515258402009 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -76,8 +84,11 @@ lemma V_505 :
   have hau782 :
     Real.arctan (3722422279231305 / 11233492409951068 : ℝ) ≤
       (3199809025526181901943 / 10000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (3722422279231305 / 11233492409951068 : ℚ))
+        (U := (3199809025526181901943 / 10000000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau781 :
     Real.arctan (744484455846261 / 1000000000000000 : ℝ) ≤
       (2 * (3199809025526181901943 / 10000000000000000000000 : ℝ)) :=
@@ -115,8 +126,11 @@ lemma V_505 :
   have hat2 :
     Real.arctan (250000000000000 / 2481614852820869 : ℝ) ≤
       (1004021175411097253659 / 10000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (250000000000000 / 2481614852820869 : ℚ))
+        (U := (1004021175411097253659 / 10000000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (35472454719789 / 64000000000000 : ℝ) ≤
       (250000000000000 / 2481614852820869 : ℝ) := by
@@ -166,8 +180,11 @@ lemma V_506 :
   have hL1 :
     (883600937481077002919 / 2000000000000000000000 : ℝ) ≤
       Real.log (3111010675057 / 2000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (3111010675057 / 2000000000000 : ℚ))
+        (L := (883600937481077002919 / 2000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (1122260675057 / 2000000000000 : ℝ) ≤
       (-(5778020694737567426223 / 10000000000000000000000 : ℝ)) := by
@@ -176,8 +193,11 @@ lemma V_506 :
         (show (1122260675057 / 2000000000000 : ℝ) = (1122260675057 / 1000000000000 : ℝ) / 2 ^ 1 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (1122260675057 / 1000000000000 : ℚ))
+             (U := (1153451108262432573777 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (1122260675057 / 1000000000000 : ℝ) ≤
             (1153451108262432573777 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -192,8 +212,11 @@ lemma V_506 :
   have hau784 :
     Real.arctan (2484407681539897 / 7490663322545827 : ℝ) ≤
       (3202503278670062354709 / 10000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (2484407681539897 / 7490663322545827 : ℚ))
+        (U := (3202503278670062354709 / 10000000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau783 :
     Real.arctan (7453223044619691 / 10000000000000000 : ℝ) ≤
       (2 * (3202503278670062354709 / 10000000000000000000000 : ℝ)) :=
@@ -233,8 +256,11 @@ lemma V_506 :
   have hat2 :
     Real.arctan (31250000000000 / 310550960192487 : ℝ) ≤
       (250725017368404689187 / 2500000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (31250000000000 / 310550960192487 : ℚ))
+        (U := (250725017368404689187 / 2500000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (1111010675057 / 2000000000000 : ℝ) ≤
       (31250000000000 / 310550960192487 : ℝ) := by
@@ -284,8 +310,11 @@ lemma V_507 :
   have hL1 :
     (885205216091294371751 / 2000000000000000000000 : ℝ) ≤
       Real.log (99632228483859 / 64000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (99632228483859 / 64000000000000 : ℚ))
+        (L := (885205216091294371751 / 2000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (35992228483859 / 64000000000000 : ℝ) ≤
       (-(719475054245545283031 / 1250000000000000000000 : ℝ)) := by
@@ -295,8 +324,11 @@ lemma V_507 :
           (35992228483859 / 64000000000000 : ℝ) = (35992228483859 / 32000000000000 : ℝ) / 2 ^ 1 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (35992228483859 / 32000000000000 : ℚ))
+             (U := (146958921129454716969 / 1250000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (35992228483859 / 32000000000000 : ℝ) ≤
             (146958921129454716969 / 1250000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -312,8 +344,11 @@ lemma V_507 :
   have hau786 :
     Real.arctan (7461592122732903 / 22476993107557192 : ℝ) ≤
       (3205192347747627695933 / 10000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (7461592122732903 / 22476993107557192 : ℚ))
+        (U := (3205192347747627695933 / 10000000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau785 :
     Real.arctan (7461592122732903 / 10000000000000000 : ℝ) ≤
       (2 * (3205192347747627695933 / 10000000000000000000000 : ℝ)) :=
@@ -353,8 +388,11 @@ lemma V_507 :
   have hat2 :
     Real.arctan (2500000000000 / 24871973742443 : ℝ) ≤
       (500891355368140157209 / 5000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (2500000000000 / 24871973742443 : ℚ))
+        (U := (500891355368140157209 / 5000000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (35632228483859 / 64000000000000 : ℝ) ≤
       (2500000000000 / 24871973742443 : ℝ) := by
@@ -403,8 +441,11 @@ lemma V_508 :
   have hL1 :
     (2217020522194807226801 / 5000000000000000000000 : ℝ) ≤
       Real.log (49856057682947 / 32000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (49856057682947 / 32000000000000 : ℚ))
+        (L := (2217020522194807226801 / 5000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (18036057682947 / 32000000000000 : ℝ) ≤
       (-(5733629437743145774003 / 10000000000000000000000 : ℝ)) := by
@@ -414,8 +455,11 @@ lemma V_508 :
           (18036057682947 / 32000000000000 : ℝ) = (18036057682947 / 16000000000000 : ℝ) / 2 ^ 1 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (18036057682947 / 16000000000000 : ℚ))
+             (U := (1197842365256854225997 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (18036057682947 / 16000000000000 : ℝ) ≤
             (1197842365256854225997 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -430,8 +474,11 @@ lemma V_508 :
   have hau788 :
     Real.arctan (7469951824423595 / 22481994242075637 : ℝ) ≤
       (1603938125610509220697 / 5000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (7469951824423595 / 22481994242075637 : ℚ))
+        (U := (1603938125610509220697 / 5000000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau787 :
     Real.arctan (1493990364884719 / 2000000000000000 : ℝ) ≤
       (2 * (1603938125610509220697 / 5000000000000000000000 : ℝ)) :=
@@ -470,8 +517,11 @@ lemma V_508 :
   have hat2 :
     Real.arctan (93750000000000 / 933743978052949 : ℝ) ≤
       (125083634796351411801 / 1250000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (93750000000000 / 933743978052949 : ℚ))
+        (U := (125083634796351411801 / 1250000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (17856057682947 / 32000000000000 : ℝ) ≤
       (93750000000000 / 933743978052949 : ℝ) := by
@@ -520,8 +570,11 @@ lemma V_509 :
   have hL1 :
     (111051239737559752989 / 250000000000000000000 : ℝ) ≤
       Real.log (99792002247929 / 64000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (99792002247929 / 64000000000000 : ℚ))
+        (L := (111051239737559752989 / 250000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (36152002247929 / 64000000000000 : ℝ) ≤
       (-(5711507488108152006311 / 10000000000000000000000 : ℝ)) := by
@@ -531,8 +584,11 @@ lemma V_509 :
           (36152002247929 / 64000000000000 : ℝ) = (36152002247929 / 32000000000000 : ℝ) / 2 ^ 1 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (36152002247929 / 32000000000000 : ℚ))
+             (U := (1219964314891847993689 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (36152002247929 / 32000000000000 : ℝ) ≤
             (1219964314891847993689 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -548,8 +604,11 @@ lemma V_509 :
   have hau790 :
     Real.arctan (934787772642047 / 2810874171700294 : ℝ) ≤
       (128422200298052838079 / 400000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (934787772642047 / 2810874171700294 : ℚ))
+        (U := (128422200298052838079 / 400000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau789 :
     Real.arctan (934787772642047 / 1250000000000000 : ℝ) ≤
       (2 * (128422200298052838079 / 400000000000000000000 : ℝ)) :=
@@ -587,8 +646,11 @@ lemma V_509 :
   have hat2 :
     Real.arctan (750000000000000 / 7478302181136373 : ℝ) ≤
       (999559151710662100997 / 10000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (750000000000000 / 7478302181136373 : ℚ))
+        (U := (999559151710662100997 / 10000000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (35792002247929 / 64000000000000 : ℝ) ≤
       (750000000000000 / 7478302181136373 : ℝ) := by
@@ -638,8 +700,11 @@ lemma V_510 :
   have hL1 :
     (4450051726067655387087 / 10000000000000000000000 : ℝ) ≤
       Real.log (24967972282491 / 16000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (24967972282491 / 16000000000000 : ℚ))
+        (L := (4450051726067655387087 / 10000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (9057972282491 / 16000000000000 : ℝ) ≤
       (-(5689434368536972102147 / 10000000000000000000000 : ℝ)) := by
@@ -648,8 +713,11 @@ lemma V_510 :
         (show (9057972282491 / 16000000000000 : ℝ) = (9057972282491 / 8000000000000 : ℝ) / 2 ^ 1
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (9057972282491 / 8000000000000 : ℚ))
+             (U := (1242037434463027897853 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (9057972282491 / 8000000000000 : ℝ) ≤
             (1242037434463027897853 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -664,8 +732,11 @@ lemma V_510 :
   have hau792 :
     Real.arctan (3743321612070247 / 11245995252271025 : ℝ) ≤
       (803307158674833361741 / 2500000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (3743321612070247 / 11245995252271025 : ℚ))
+        (U := (803307158674833361741 / 2500000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau791 :
     Real.arctan (3743321612070247 / 5000000000000000 : ℝ) ≤
       (2 * (803307158674833361741 / 2500000000000000000000 : ℝ)) :=
@@ -704,8 +775,11 @@ lemma V_510 :
   have hat2 :
     Real.arctan (750000000000000 / 7486643224140491 : ℝ) ≤
       (499226455124696702811 / 5000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (750000000000000 / 7486643224140491 : ℚ))
+        (U := (499226455124696702811 / 5000000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (8967972282491 / 16000000000000 : ℝ) ≤
       (750000000000000 / 7486643224140491 : ℝ) := by
@@ -754,8 +828,11 @@ lemma V_511 :
   have hL1 :
     (2229023732166812530537 / 5000000000000000000000 : ℝ) ≤
       Real.log (99951776011999 / 64000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (99951776011999 / 64000000000000 : ℚ))
+        (L := (2229023732166812530537 / 5000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (36311776011999 / 64000000000000 : ℝ) ≤
       (-(5667409863937838582023 / 10000000000000000000000 : ℝ)) := by
@@ -765,8 +842,11 @@ lemma V_511 :
           (36311776011999 / 64000000000000 : ℝ) = (36311776011999 / 32000000000000 : ℝ) / 2 ^ 1 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (36311776011999 / 32000000000000 : ℚ))
+             (U := (1264061939062161417977 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (36311776011999 / 32000000000000 : ℝ) ≤
             (1264061939062161417977 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -782,8 +862,11 @@ lemma V_511 :
   have hau794 :
     Real.arctan (1873743746132800 / 5624246409323659 : ℝ) ≤
       (100496785972697601687 / 312500000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (1873743746132800 / 5624246409323659 : ℚ))
+        (U := (100496785972697601687 / 312500000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau793 :
     Real.arctan (1171089841333 / 1562500000000 : ℝ) ≤
       (2 * (100496785972697601687 / 312500000000000000000 : ℝ)) :=
@@ -817,8 +900,11 @@ lemma V_511 :
   have hat2 :
     Real.arctan (750000000000000 / 7494974984531197 : ℝ) ≤
       (997350333639085100309 / 10000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (750000000000000 / 7494974984531197 : ℚ))
+        (U := (997350333639085100309 / 10000000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (35951776011999 / 64000000000000 : ℝ) ≤
       (750000000000000 / 7494974984531197 : ℝ) := by
@@ -868,8 +954,11 @@ lemma V_512 :
   have hL1 :
     (4466036814523950969417 / 10000000000000000000000 : ℝ) ≤
       Real.log (50015831447017 / 32000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (50015831447017 / 32000000000000 : ℚ))
+        (L := (4466036814523950969417 / 10000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (18195831447017 / 32000000000000 : ℝ) ≤
       (-(5645433760637049356529 / 10000000000000000000000 : ℝ)) := by
@@ -879,8 +968,11 @@ lemma V_512 :
           (18195831447017 / 32000000000000 : ℝ) = (18195831447017 / 16000000000000 : ℝ) / 2 ^ 1 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (18195831447017 / 16000000000000 : ℚ))
+             (U := (1286038042362950643471 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (18195831447017 / 16000000000000 : ℝ) ≤
             (1286038042362950643471 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -896,8 +988,11 @@ lemma V_512 :
   have hau796 :
     Real.arctan (7503297493231103 / 22501978774255223 : ℝ) ≤
       (643712114958955676583 / 2000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (7503297493231103 / 22501978774255223 : ℚ))
+        (U := (643712114958955676583 / 2000000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau795 :
     Real.arctan (7503297493231103 / 10000000000000000 : ℝ) ≤
       (2 * (643712114958955676583 / 2000000000000000000000 : ℝ)) :=
@@ -937,8 +1032,11 @@ lemma V_512 :
   have hat2 :
     Real.arctan (7500000000000 / 75032974932311 : ℝ) ≤
       (498125700844381961051 / 5000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (7500000000000 / 75032974932311 : ℚ))
+        (U := (498125700844381961051 / 5000000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (18015831447017 / 32000000000000 : ℝ) ≤
       (7500000000000 / 75032974932311 : ℝ) := by
@@ -986,8 +1084,11 @@ lemma V_513 :
   have hL1 :
     (4474019786837800397257 / 10000000000000000000000 : ℝ) ≤
       Real.log (100111549776069 / 64000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (100111549776069 / 64000000000000 : ℚ))
+        (L := (4474019786837800397257 / 10000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (36471549776069 / 64000000000000 : ℝ) ≤
       (-(1124701169273305923953 / 2000000000000000000000 : ℝ)) := by
@@ -997,8 +1098,11 @@ lemma V_513 :
           (36471549776069 / 64000000000000 : ℝ) = (36471549776069 / 32000000000000 : ℝ) / 2 ^ 1 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (36471549776069 / 32000000000000 : ℚ))
+             (U := (261593191326694076047 / 2000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (36471549776069 / 32000000000000 : ℝ) ≤
             (261593191326694076047 / 2000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -1014,8 +1118,11 @@ lemma V_513 :
   have hau798 :
     Real.arctan (7511610780991507 / 22506969917814139 : ℝ) ≤
       (161060946183457558827 / 500000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (7511610780991507 / 22506969917814139 : ℚ))
+        (U := (161060946183457558827 / 500000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau797 :
     Real.arctan (7511610780991507 / 10000000000000000 : ℝ) ≤
       (2 * (161060946183457558827 / 500000000000000000000 : ℝ)) :=
@@ -1055,8 +1162,11 @@ lemma V_513 :
   have hat2 :
     Real.arctan (46875000000000 / 469475673811969 : ℝ) ≤
       (124394511795356336081 / 1250000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (46875000000000 / 469475673811969 : ℚ))
+        (U := (124394511795356336081 / 1250000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (36111549776069 / 64000000000000 : ℝ) ≤
       (46875000000000 / 469475673811969 : ℝ) := by
@@ -1106,8 +1216,11 @@ lemma V_514 :
   have hL1 :
     (2240998195724967104201 / 5000000000000000000000 : ℝ) ≤
       Real.log (12523929582263 / 8000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (12523929582263 / 8000000000000 : ℚ))
+        (L := (2240998195724967104201 / 5000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (4568929582263 / 8000000000000 : ℝ) ≤
       (-(5601625910251529815539 / 10000000000000000000000 : ℝ)) := by
@@ -1116,8 +1229,11 @@ lemma V_514 :
         (show (4568929582263 / 8000000000000 : ℝ) = (4568929582263 / 4000000000000 : ℝ) / 2 ^ 1 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (4568929582263 / 4000000000000 : ℚ))
+             (U := (1329845892748470184461 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (4568929582263 / 4000000000000 : ℝ) ≤
             (1329845892748470184461 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -1132,8 +1248,11 @@ lemma V_514 :
   have hau800 :
     Real.arctan (2506638292797913 / 7503986356785649 : ℝ) ≤
       (3223872215616594728717 / 10000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (2506638292797913 / 7503986356785649 : ℚ))
+        (U := (3223872215616594728717 / 10000000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau799 :
     Real.arctan (7519914878393739 / 10000000000000000 : ℝ) ≤
       (2 * (3223872215616594728717 / 10000000000000000000000 : ℝ)) :=
@@ -1173,8 +1292,11 @@ lemma V_514 :
   have hat2 :
     Real.arctan (31250000000000 / 313329786599739 : ℝ) ≤
       (497032195889812852133 / 5000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (31250000000000 / 313329786599739 : ℚ))
+        (U := (497032195889812852133 / 5000000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (4523929582263 / 8000000000000 : ℝ) ≤
       (31250000000000 / 313329786599739 : ℝ) := by
@@ -1224,8 +1346,11 @@ lemma V_515 :
   have hL1 :
     (2248965269073266439973 / 5000000000000000000000 : ℝ) ≤
       Real.log (50175605211087 / 32000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (50175605211087 / 32000000000000 : ℚ))
+        (L := (2248965269073266439973 / 5000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (18355605211087 / 32000000000000 : ℝ) ≤
       (-(5558009135882844102449 / 10000000000000000000000 : ℝ)) := by
@@ -1235,8 +1360,11 @@ lemma V_515 :
           (18355605211087 / 32000000000000 : ℝ) = (18355605211087 / 16000000000000 : ℝ) / 2 ^ 1 by
           norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (18355605211087 / 16000000000000 : ℚ))
+             (U := (1373462667117155897551 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (18355605211087 / 16000000000000 : ℝ) ≤
             (1373462667117155897551 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -1252,8 +1380,11 @@ lemma V_515 :
   have hau802 :
     Real.arctan (7536495623606962 / 22521931411912735 : ℝ) ≤
       (3229163699717176018831 / 10000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (7536495623606962 / 22521931411912735 : ℚ))
+        (U := (3229163699717176018831 / 10000000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau801 :
     Real.arctan (3768247811803481 / 5000000000000000 : ℝ) ≤
       (2 * (3229163699717176018831 / 10000000000000000000000 : ℝ)) :=
@@ -1292,8 +1423,11 @@ lemma V_515 :
   have hat2 :
     Real.arctan (750000000000000 / 7536495623606959 : ℝ) ≤
       (30996616314830743811 / 312500000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (750000000000000 / 7536495623606959 : ℚ))
+        (U := (30996616314830743811 / 312500000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (18175605211087 / 32000000000000 : ℝ) ≤
       (750000000000000 / 7536495623606959 : ℝ) := by
@@ -1343,8 +1477,11 @@ lemma V_516 :
   have hL1 :
     (4513839335526654517601 / 10000000000000000000000 : ℝ) ≤
       Real.log (25127746046561 / 16000000000000 : ℝ) :=
-    log_ge_of_ge_one (by norm_num) 11
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_ge_of_ge_one_rat
+        (r := (25127746046561 / 16000000000000 : ℚ))
+        (L := (4513839335526654517601 / 10000000000000000000000 : ℚ))
+        11 (by decide +kernel))
   have hU2 :
     Real.log (9217746046561 / 16000000000000 : ℝ) ≤
       (-(5514581777940426081753 / 10000000000000000000000 : ℝ)) := by
@@ -1353,8 +1490,11 @@ lemma V_516 :
         (show (9217746046561 / 16000000000000 : ℝ) = (9217746046561 / 8000000000000 : ℝ) / 2 ^ 1
           by norm_num)
         (by norm_num)
-        (log_le_of_ge_one (by norm_num) 6
-            (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num) :
+        ((by
+           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
+             (r := (9217746046561 / 8000000000000 : ℚ))
+             (U := (1416890025059573918247 / 10000000000000000000000 : ℚ))
+             6 (by decide +kernel)) :
           Real.log (9217746046561 / 8000000000000 : ℝ) ≤
             (1416890025059573918247 / 10000000000000000000000 : ℝ))
     linarith only [h, Real.log_two_gt_d9]
@@ -1369,8 +1509,11 @@ lemma V_516 :
   have hau804 :
     Real.arctan (3776519985085683 / 11265947908956119 : ℝ) ≤
       (1617217584057645801541 / 5000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 7
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (3776519985085683 / 11265947908956119 : ℚ))
+        (U := (1617217584057645801541 / 5000000000000000000000 : ℚ))
+        7 (by decide +kernel))
   have hau803 :
     Real.arctan (3776519985085683 / 5000000000000000 : ℝ) ≤
       (2 * (1617217584057645801541 / 5000000000000000000000 : ℝ)) :=
@@ -1409,8 +1552,11 @@ lemma V_516 :
   have hat2 :
     Real.arctan (250000000000000 / 2517679990057121 : ℝ) ≤
       (989733236539927218279 / 10000000000000000000000 : ℝ) :=
-    arctan_le_of_series (by norm_num) (by norm_num) 4
-      (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+    (by
+      simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using arctan_le_of_series_rat
+        (z := (250000000000000 / 2517679990057121 : ℚ))
+        (U := (989733236539927218279 / 10000000000000000000000 : ℚ))
+        4 (by decide +kernel))
   have hz2 :
     (3 / 40) / Real.sqrt (9127746046561 / 16000000000000 : ℝ) ≤
       (250000000000000 / 2517679990057121 : ℝ) := by
