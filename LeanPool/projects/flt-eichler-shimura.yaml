@@ -29,10 +29,12 @@ main_results:
     and antiholomorphic cusp forms, with descended cohomological Hecke operators
     and compatibility with T_p away from the level and U_p at primes dividing it.
 - declaration: WeierstrassCurve.tateModuleRep_charpoly_frobenius
-  informal: On the p-adic Tate module of an elliptic curve, for a good prime
-    ell distinct from p, the characteristic polynoimal of Frobenius at l is
-    X^2 - a_ell X + ell. (This formulation assumes the expected cardinalities 
-    of the p-power torsion subgroups, proved elsewhere in this library.)
+  informal: For an integral Weierstrass model W over Z and primes p and ell
+    with ell distinct from p and not dividing the discriminant of W, Frobenius
+    at ell acts on the p-adic Tate module of W over the algebraic closure of Q
+    with characteristic polynomial X^2 - a_ell X + ell. This formulation assumes
+    the expected cardinalities of the p-power torsion subgroups, proved elsewhere
+    in this library.
 - declaration: WeierstrassCurve.isogenyEnd_eq_zsmul_of_transcendental_j
   informal: Over an algebraically closed field of characteristic zero, if an
     elliptic curve has j-invariant transcendental over the rationals, every
