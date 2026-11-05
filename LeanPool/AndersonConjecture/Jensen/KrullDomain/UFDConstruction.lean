@@ -161,7 +161,70 @@ include T in theorem build_R_prime_in_S
 
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
-private def build_loc_away_ufd_proof
+/- Helper for `build_loc_away_ufd`: polynomial expressions over `R` in an element `x₁` of
+`S_sub ⊇ R` stay in `S_sub`. -/
+private theorem build_loc_away_ufd_aeval_mem (R : NSubring T) (x₁ : T) (S_sub : Subring T)
+    (hR_le : R.carrier ≤ S_sub) (hx₁_S : x₁ ∈ S_sub) (f : Polynomial R.carrier) :
+    (aeval x₁ f : T) ∈ S_sub := by
+  induction f using Polynomial.induction_on' with
+  | add f g hf hg =>
+    rw [map_add]
+    exact S_sub.add_mem hf hg
+  | monomial n a =>
+    rw [Polynomial.aeval_monomial]
+    simp only [
+      show algebraMap R.carrier T =
+        R.carrier.subtype from rfl,
+      Subring.coe_subtype]
+    exact S_sub.mul_mem (hR_le a.property)
+      (S_sub.pow_mem hx₁_S n)
+
+/- Helper for `build_loc_away_ufd`: elements sent to units by an injective ring hom are
+non-zero-divisors. -/
+private theorem build_loc_away_ufd_le_nonZeroDivisors {A B : Type*} [CommRing A] [CommRing B]
+    (φ : A →+* B) (hφ_inj : Function.Injective φ) (M : Submonoid A)
+    (hM : ∀ f ∈ M, IsUnit (φ f)) : M ≤ nonZeroDivisors A := by
+  intro f hf
+  have hφf_unit : IsUnit (φ f) := hM f hf
+  refine ⟨fun g hfg => ?_, fun g hgf => ?_⟩
+  · have h1 : φ f * φ g = 0 := by
+      rw [← map_mul, hfg, map_zero]
+    have : φ g = 0 := hφf_unit.mul_right_eq_zero.mp h1
+    exact hφ_inj (by rw [this, map_zero])
+  · have h1 : φ g * φ f = 0 := by
+      rw [← map_mul, hgf, map_zero]
+    have : φ g = 0 := hφf_unit.mul_left_eq_zero.mp h1
+    exact hφ_inj (by rw [this, map_zero])
+
+/- Helper for `build_loc_away_ufd`: clearing the denominator `s ^ nn` of `z` in the
+localization away from `s`. -/
+private theorem build_loc_away_ufd_mul_eq {S : Type*} [CommRing S] (s : S)
+    (z : Localization.Away s) (w m a : S) (nn : ℕ)
+    (hz : z * algebraMap S (Localization.Away s) s ^ nn =
+      algebraMap S (Localization.Away s) w)
+    (hkey : w * m = a * s ^ nn) :
+    z * algebraMap S (Localization.Away s) m = algebraMap S (Localization.Away s) a := by
+  let A := algebraMap S (Localization.Away s)
+  have hs_pow_unit :
+      IsUnit (A (s ^ nn)) := by
+    rw [map_pow]
+    exact IsUnit.pow nn
+      (IsLocalization.Away.algebraMap_isUnit
+        (S := Localization.Away s) (x := s))
+  have hz' : z * A (s ^ nn) = A w := by
+    show z * A (s ^ nn) = A w
+    rw [map_pow]
+    exact hz
+  apply hs_pow_unit.mul_right_cancel
+  calc z * A m * A (s ^ nn)
+      = z * A (s ^ nn) * A m := by ring
+    _ = A w * A m := by rw [hz']
+    _ = A (w * m) := (map_mul A _ _).symm
+    _ = A (a * s ^ nn) := by rw [hkey]
+    _ = A a * A (s ^ nn) := map_mul A _ _
+
+omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
+include T in theorem build_loc_away_ufd
     (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
     (S_sub : Subring T) [IsDomain S_sub]
     (hR_le : R.carrier ≤ S_sub)
@@ -174,11 +237,11 @@ private def build_loc_away_ufd_proof
         b ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
         b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a})
     (hRbar_le_S : ∀ t, t ∈ intersectionSet R x₁ x₂ y₁ y₂ → t ∈ (S_sub : Set T))
-    (hx₁_Rbar : x₁ ∈ intersectionSet R x₁ x₂ y₁ y₂) : PLift (
+    (hx₁_Rbar : x₁ ∈ intersectionSet R x₁ x₂ y₁ y₂) :
     UniqueFactorizationMonoid
       (Localization.Away
         (Subring.inclusion hR_le y₁ *
-          Subring.inclusion hR_le y₂)) ) := ⟨by
+          Subring.inclusion hR_le y₂)) := by
   have : IsDomain R.carrier := NSubring.isDomain R
   have : UniqueFactorizationMonoid R.carrier := R.isUFD
   set Rbar := intersectionSet R x₁ x₂ y₁ y₂
@@ -210,20 +273,8 @@ private def build_loc_away_ufd_proof
     IsLocalization.injective (Localization.Away s) hpow_le
   have haeval_S :
       ∀ f : Polynomial R.carrier,
-        (aeval x₁ f : T) ∈ S_sub := by
-    intro f
-    induction f using Polynomial.induction_on' with
-    | add f g hf hg =>
-      rw [map_add]
-      exact S_sub.add_mem hf hg
-    | monomial n a =>
-      rw [Polynomial.aeval_monomial]
-      simp only [
-        show algebraMap R.carrier T =
-          R.carrier.subtype from rfl,
-        Subring.coe_subtype]
-      exact S_sub.mul_mem (hR_le a.property)
-        (S_sub.pow_mem hx₁_S n)
+        (aeval x₁ f : T) ∈ S_sub :=
+    build_loc_away_ufd_aeval_mem R x₁ S_sub hR_le hx₁_S
   let evalS : Polynomial R.carrier →+* S_sub :=
     RingHom.codRestrict
       (aeval (R := R.carrier) (A := T) x₁).toRingHom
@@ -273,23 +324,8 @@ private def build_loc_away_ufd_proof
         rw [map_mul]
         exact ha.mul hb }
   have hM_le :
-      M ≤ nonZeroDivisors (Polynomial R.carrier) := by
-    intro f hf
-    have hφf_unit : IsUnit (φ f) := hf
-    have hφf_ne : φ f ≠ 0 := hφf_unit.ne_zero
-    refine ⟨fun g hfg => ?_, fun g hgf => ?_⟩
-    · have h1 : φ f * φ g = 0 := by
-        rw [← map_mul, hfg, map_zero]
-      have : φ g = 0 :=
-        Or.resolve_left (mul_eq_zero.mp h1)
-          hφf_ne
-      exact hφ_inj (by rw [this, map_zero])
-    · have h1 : φ g * φ f = 0 := by
-        rw [← map_mul, hgf, map_zero]
-      have : φ g = 0 :=
-        Or.resolve_right (mul_eq_zero.mp h1)
-          hφf_ne
-      exact hφ_inj (by rw [this, map_zero])
+      M ≤ nonZeroDivisors (Polynomial R.carrier) :=
+    build_loc_away_ufd_le_nonZeroDivisors φ hφ_inj M fun _ hf => hf
   have : IsLocalization M (Localization.Away s) := by
     rw [isLocalization_iff]
     refine ⟨fun ⟨f, hf⟩ => hf,
@@ -335,34 +371,8 @@ private def build_loc_away_ufd_proof
             A |>.mul (hy₂_unit.pow jw))).mul
           (hy₂_unit.pow kw)
       refine ⟨⟨a_poly, ⟨m_poly, hm_mem⟩⟩, ?_⟩
-      change z * φ m_poly = φ a_poly
-      suffices hkey :
-          w * evalS m_poly =
-            evalS a_poly * s ^ nn by
-        have hs_pow_unit :
-            IsUnit (A (s ^ nn)) := by
-          rw [map_pow]
-          exact IsUnit.pow nn
-            (IsLocalization.Away.algebraMap_isUnit
-              (S := Localization.Away s) (x := s))
-        change z * A (evalS m_poly) =
-          A (evalS a_poly)
-        have hz' : z * A (s ^ nn) = A w := by
-          show z * A (s ^ nn) = A w
-          rw [map_pow]
-          exact hz
-        apply hs_pow_unit.mul_right_cancel
-        calc z * A (evalS m_poly) * A (s ^ nn)
-            = z * A (s ^ nn) *
-                A (evalS m_poly) := by ring
-          _ = A w * A (evalS m_poly) := by
-              rw [hz']
-          _ = A (w * evalS m_poly) :=
-              (map_mul A _ _).symm
-          _ = A (evalS a_poly * s ^ nn) := by
-              rw [hkey]
-          _ = A (evalS a_poly) *
-                A (s ^ nn) := map_mul A _ _
+      change z * A (evalS m_poly) = A (evalS a_poly)
+      refine build_loc_away_ufd_mul_eq s z w _ _ nn hz ?_
       apply Subtype.ext
       simp only [Subring.coe_mul,
         SubmonoidClass.coe_pow]
@@ -395,34 +405,128 @@ private def build_loc_away_ufd_proof
           (↑y₂ : T) ^ kw * hw_eq
     · exact ⟨1, by rw [hφ_inj hab]⟩
   exact localization_submonoid_UFD hM_le
-⟩
+
+/- Helper for `build_ufd_proof`: divisibility in the localization away from `s` descends
+to divisibility up to a power of `s`. -/
+private theorem build_ufd_dvd_mul_pow_of_dvd {S : Type*} [CommRing S] (s : S)
+    (hinj_loc : Function.Injective (algebraMap S (Localization.Away s))) (r x : S)
+    (hqx : algebraMap S (Localization.Away s) r ∣ algebraMap S _ x) :
+    ∃ m : ℕ, r ∣ x * s ^ m := by
+  obtain ⟨z, hz⟩ := hqx
+  obtain ⟨⟨c, ⟨_, m, rfl⟩⟩, hc⟩ :=
+    IsLocalization.surj (Submonoid.powers s) z
+  have key : x * s ^ m = r * c := by
+    apply hinj_loc
+    rw [map_mul, map_mul, map_pow]
+    calc algebraMap S _ x * (algebraMap S _ s) ^ m
+        = algebraMap S _ r * (z * (algebraMap S _ s) ^ m) := by
+          rw [hz, mul_assoc]
+      _ = algebraMap S _ r * algebraMap S _ c := by rw [← map_pow, hc]
+  exact ⟨m, c, key⟩
+
+/- Helper for `build_ufd_proof`: an element that is prime in the localization away from `s`
+is prime, provided it is a nonzero nonunit and powers of `s` can be cancelled from its
+multiples. -/
+private theorem build_ufd_prime_of_prime_away {S : Type*} [CommRing S] (s : S)
+    (hinj_loc : Function.Injective (algebraMap S (Localization.Away s))) (r : S)
+    (hr_ne : r ≠ 0) (hr_not_unit : ¬IsUnit r)
+    (hr_prime_loc : Prime (algebraMap S (Localization.Away s) r))
+    (hcancel : ∀ (x : S) (m : ℕ), r ∣ x * s ^ m → r ∣ x) : Prime r := by
+  have hdvd_back : ∀ (x : S),
+      (algebraMap S (Localization.Away s) r ∣ algebraMap S _ x) → r ∣ x := by
+    intro x hqx
+    obtain ⟨m, hm⟩ := build_ufd_dvd_mul_pow_of_dvd s hinj_loc r x hqx
+    exact hcancel x m hm
+  refine ⟨hr_ne, hr_not_unit, fun a b hab => ?_⟩
+  have hab_loc : algebraMap S (Localization.Away s) r ∣
+      algebraMap S _ a * algebraMap S _ b := by
+    rw [← map_mul]
+    exact map_dvd _ hab
+  exact (hr_prime_loc.dvd_or_dvd hab_loc).imp (hdvd_back a) (hdvd_back b)
+
+/- Helper for `build_ufd_proof`: inductive stripping, removing all prime factors `ι p`,
+`p ∈ ps`, from an element of `P` while preserving membership in `P`. -/
+private theorem build_ufd_strip_prime_factors {A S : Type*} [CommRing S] [WfDvdMonoid S]
+    (ι : A → S) (P : Ideal S) (hP_prime : P.IsPrime) (ps : List A) :
+    ∀ (a : S), a ≠ 0 → a ∈ P →
+      (∀ p ∈ ps, (Prime (ι p) ∧ ι p ∉ P) ∨ IsUnit (ι p)) →
+      ∃ (a' : S) (d : S),
+        a = d * a' ∧ a' ∈ P ∧ a' ≠ 0 ∧
+        (∀ p ∈ ps, Prime (ι p) → ¬(ι p ∣ a')) := by
+  induction ps with
+  | nil =>
+    intro a ha_ne ha_P _
+    exact ⟨a, 1, by ring, ha_P, ha_ne, fun _ h _ => absurd h List.not_mem_nil⟩
+  | cons q qs ih =>
+    intro a ha_ne ha_P hclass
+    have hqs_class : ∀ p ∈ qs, (Prime (ι p) ∧ ι p ∉ P) ∨ IsUnit (ι p) :=
+      fun p hp => hclass p (List.mem_cons_of_mem q hp)
+    rcases hclass q List.mem_cons_self with ⟨hq_prime, hq_avoid⟩ | hq_unit
+    · obtain ⟨kq, a₁, hq_ndvd_a₁, ha_eq⟩ :=
+        WfDvdMonoid.max_power_factor' ha_ne hq_prime.not_isUnit
+      have ha₁_P : a₁ ∈ P := by
+        rw [ha_eq] at ha_P
+        exact (hP_prime.mem_or_mem ha_P).resolve_left
+          (fun h => hq_avoid (hP_prime.mem_of_pow_mem kq h))
+      have ha₁_ne : a₁ ≠ 0 := right_ne_zero_of_mul (ha_eq ▸ ha_ne)
+      obtain ⟨a', d', ha₁_eq, ha'_P, ha'_ne, ha'_ndvd⟩ :=
+        ih a₁ ha₁_ne ha₁_P hqs_class
+      refine ⟨a', (ι q) ^ kq * d', ?_, ha'_P, ha'_ne, ?_⟩
+      · rw [ha_eq, ha₁_eq]
+        ring
+      · intro p hp hp_prime
+        rcases List.mem_cons.mp hp with rfl | hp'
+        · intro h
+          exact hq_ndvd_a₁ (dvd_trans h (Dvd.intro_left d' ha₁_eq.symm))
+        · exact ha'_ndvd p hp' hp_prime
+    · obtain ⟨a', d', ha_eq, ha'_P, ha'_ne, ha'_ndvd⟩ :=
+        ih a ha_ne ha_P hqs_class
+      refine ⟨a', d', ha_eq, ha'_P, ha'_ne, ?_⟩
+      intro p hp hp_prime
+      rcases List.mem_cons.mp hp with rfl | hp'
+      · exact absurd hq_unit hp_prime.not_isUnit
+      · exact ha'_ndvd p hp' hp_prime
+
+/- Helper for `build_ufd_proof`: if `r' ∣ a * (∏ ι p)^m` and no prime `ι p` divides `r'`,
+then `r' ∣ a`. -/
+private theorem build_ufd_dvd_of_dvd_mul_prod_pow {A S : Type*} [CommRing S] [IsDomain S]
+    (ι : A → S) (P : Ideal S) (r' : S) (m : ℕ) (ps : List A) :
+    ∀ (a : S),
+      (∀ p ∈ ps, (Prime (ι p) ∧ ι p ∉ P) ∨ IsUnit (ι p)) →
+      (∀ p ∈ ps, Prime (ι p) → ¬(ι p ∣ r')) →
+      r' ∣ a * (ps.map ι).prod ^ m → r' ∣ a := by
+  induction ps with
+  | nil => intro a _ _ h
+           simpa using h
+  | cons p ps ih =>
+    intro a hclass hndvd h
+    have hclass' := fun q hq => hclass q (List.mem_cons_of_mem p hq)
+    have hndvd' := fun q hq => hndvd q (List.mem_cons_of_mem p hq)
+    simp only [List.map_cons, List.prod_cons] at h
+    rcases hclass p List.mem_cons_self with ⟨hp_prime, _⟩ | hp_unit
+    · have hp_ndvd := hndvd p List.mem_cons_self hp_prime
+      have h1 : r' ∣ (a * (ps.map ι).prod ^ m) * (ι p) ^ m := by
+        rwa [show a * (ι p * (List.map ι ps).prod) ^ m =
+          (a * (List.map ι ps).prod ^ m) * (ι p) ^ m from by
+            rw [mul_pow]
+            ring] at h
+      have h2 : r' ∣ a * (ps.map ι).prod ^ m :=
+        dvd_of_dvd_mul_prime_pow hp_prime hp_ndvd m h1
+      exact ih a hclass' hndvd' h2
+    · have hpm_unit : IsUnit ((ι p) ^ m) := hp_unit.pow m
+      have h1 : r' ∣ (a * (ι p) ^ m) * (ps.map ι).prod ^ m := by
+        rwa [show a * (ι p * (List.map ι ps).prod) ^ m =
+          (a * (ι p) ^ m) * (List.map ι ps).prod ^ m from by
+            rw [mul_pow]
+            ring] at h
+      have h2 : r' ∣ a * (ι p) ^ m :=
+        ih (a * (ι p) ^ m) hclass' hndvd' h1
+      exact (hpm_unit.dvd_mul_right).mp h2
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
-include T in theorem build_loc_away_ufd
-    (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
-    (S_sub : Subring T) [IsDomain S_sub]
-    (hR_le : R.carrier ≤ S_sub)
-    (hy₁ : (↑y₁ : T) ≠ 0) (hy₂ : (↑y₂ : T) ≠ 0)
-    (hx₁_trans : Transcendental R.carrier x₁)
-    (hinv : ∀ (s : S_sub), (s : T) ∉ IsLocalRing.maximalIdeal T → IsUnit s)
-    (hS_sub_eq : (S_sub : Set T) =
-      {t : T | ∃ (a : T) (b : T),
-        a ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
-        b ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
-        b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a})
-    (hRbar_le_S : ∀ t, t ∈ intersectionSet R x₁ x₂ y₁ y₂ → t ∈ (S_sub : Set T))
-    (hx₁_Rbar : x₁ ∈ intersectionSet R x₁ x₂ y₁ y₂) :
-    UniqueFactorizationMonoid
-      (Localization.Away
-        (Subring.inclusion hR_le y₁ *
-          Subring.inclusion hR_le y₂)) := by
-  exact
-    (build_loc_away_ufd_proof
-      R x₁ x₂ y₁ y₂ S_sub hR_le hy₁ hy₂ hx₁_trans hinv hS_sub_eq hRbar_le_S hx₁_Rbar
-    ).down
-/-- S_sub is a UFD via Kaplansky criterion. Uses the intersection construction
+/- S_sub is a UFD via Kaplansky criterion. Uses the intersection construction
 and Nagata-type arguments for the P∩R = ⊥ case. -/
-private def build_ufd_proof_proof
+include T in theorem build_ufd_proof
     (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
     (S_sub : Subring T) [IsDomain S_sub] [WfDvdMonoid S_sub]
     (hR_le : R.carrier ≤ S_sub)
@@ -447,8 +551,8 @@ private def build_ufd_proof_proof
         b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a})
     (hRbar_le_S : ∀ t, t ∈ intersectionSet R x₁ x₂ y₁ y₂ → t ∈ (S_sub : Set T))
     (hx₁_Rbar : x₁ ∈ intersectionSet R x₁ x₂ y₁ y₂)
-    (_hx₂_Rbar : x₂ ∈ intersectionSet R x₁ x₂ y₁ y₂) : PLift (
-    UniqueFactorizationMonoid S_sub ) := ⟨by
+    (_hx₂_Rbar : x₂ ∈ intersectionSet R x₁ x₂ y₁ y₂) :
+    UniqueFactorizationMonoid S_sub := by
   have : IsDomain R.carrier := NSubring.isDomain R
   have : UniqueFactorizationMonoid R.carrier := R.isUFD
   rw [UniqueFactorizationMonoid.iff_exists_prime_mem_of_isPrime]
@@ -534,30 +638,9 @@ private def build_ufd_proof_proof
             IsUnit.pow _ (IsLocalization.Away.algebraMap_isUnit s)
           exact hq'_eq ▸ associated_mul_unit_left _ _ hpn_unit
         exact hassoc.prime_iff.mpr hq'_prime
-      have hdvd_back : ∀ (x : S_sub),
-          (algebraMap S_sub (Localization.Away s) r ∣ algebraMap S_sub _ x) →
-          r ∣ x := by
-        intro x hqx
-        obtain ⟨z, hz⟩ := hqx
-        obtain ⟨⟨c, ⟨_, m, rfl⟩⟩, hc⟩ :=
-          IsLocalization.surj (Submonoid.powers s) z
-        have key : x * s ^ m = r * c := by
-          apply hinj_loc
-          rw [map_mul, map_mul, map_pow]
-          calc algebraMap S_sub _ x * (algebraMap S_sub _ s) ^ m
-              = algebraMap S_sub _ r * (z * (algebraMap S_sub _ s) ^ m) := by
-                rw [hz, mul_assoc]
-            _ = algebraMap S_sub _ r * algebraMap S_sub _ c := by rw [← map_pow, hc]
-        have hsm_unit : IsUnit (s ^ m) := IsUnit.pow m hs_unit
-        have : r ∣ x * s ^ m := ⟨c, key⟩
-        exact (hsm_unit.dvd_mul_right).mp this
-      have hr_prime : Prime r := by
-        refine ⟨hr_ne, hr_not_unit, fun a b hab => ?_⟩
-        have hab_loc : algebraMap S_sub (Localization.Away s) r ∣
-            algebraMap S_sub _ a * algebraMap S_sub _ b := by
-          rw [← map_mul]
-          exact map_dvd _ hab
-        exact (hr_prime_loc.dvd_or_dvd hab_loc).imp (hdvd_back a) (hdvd_back b)
+      have hr_prime : Prime r :=
+        build_ufd_prime_of_prime_away s hinj_loc r hr_ne hr_not_unit hr_prime_loc
+          fun x m h => (IsUnit.pow m hs_unit).dvd_mul_right.mp h
       exact ⟨r, hr_in_P, hr_prime⟩
     -- Case s is not a unit: factor y₁y₂ into primes in R and strip those factors from r
     · have hy₁y₂_ne : y₁ * y₂ ≠ (0 : R.carrier) := mul_ne_zero hy₁_ne hy₂_ne
@@ -584,50 +667,9 @@ private def build_ufd_proof_proof
           exact ⟨hR_prime_in_S p hp_prime hpM, hR_avoids_P p hp_prime.ne_zero⟩
         · right
           exact hinv (ι p) hpM
-      -- Inductive stripping: remove all prime factors of s from r, preserving membership in P
-      have fold_strip : ∀ (ps : List R.carrier) (a : S_sub),
-          a ≠ 0 → a ∈ P →
-          (∀ p ∈ ps, (Prime (ι p) ∧ ι p ∉ P) ∨ IsUnit (ι p)) →
-          ∃ (a' : S_sub) (d : S_sub),
-            a = d * a' ∧ a' ∈ P ∧ a' ≠ 0 ∧
-            (∀ p ∈ ps, Prime (ι p) → ¬(ι p ∣ a')) := by
-        intro ps
-        induction ps with
-        | nil =>
-          intro a ha_ne ha_P _
-          exact ⟨a, 1, by ring, ha_P, ha_ne, fun _ h _ => absurd h List.not_mem_nil⟩
-        | cons q qs ih =>
-          intro a ha_ne ha_P hclass
-          have hqs_class : ∀ p ∈ qs, (Prime (ι p) ∧ ι p ∉ P) ∨ IsUnit (ι p) :=
-            fun p hp => hclass p (List.mem_cons_of_mem q hp)
-          rcases hclass q List.mem_cons_self with ⟨hq_prime, hq_avoid⟩ | hq_unit
-          · obtain ⟨kq, a₁, hq_ndvd_a₁, ha_eq⟩ :=
-              WfDvdMonoid.max_power_factor' ha_ne hq_prime.not_isUnit
-            have ha₁_P : a₁ ∈ P := by
-              rw [ha_eq] at ha_P
-              exact (hP_prime.mem_or_mem ha_P).resolve_left
-                (fun h => hq_avoid (hP_prime.mem_of_pow_mem kq h))
-            have ha₁_ne : a₁ ≠ 0 := right_ne_zero_of_mul (ha_eq ▸ ha_ne)
-            obtain ⟨a', d', ha₁_eq, ha'_P, ha'_ne, ha'_ndvd⟩ :=
-              ih a₁ ha₁_ne ha₁_P hqs_class
-            refine ⟨a', (ι q) ^ kq * d', ?_, ha'_P, ha'_ne, ?_⟩
-            · rw [ha_eq, ha₁_eq]
-              ring
-            · intro p hp hp_prime
-              rcases List.mem_cons.mp hp with rfl | hp'
-              · intro h
-                exact hq_ndvd_a₁ (dvd_trans h (Dvd.intro_left d' ha₁_eq.symm))
-              · exact ha'_ndvd p hp' hp_prime
-          · obtain ⟨a', d', ha_eq, ha'_P, ha'_ne, ha'_ndvd⟩ :=
-              ih a ha_ne ha_P hqs_class
-            refine ⟨a', d', ha_eq, ha'_P, ha'_ne, ?_⟩
-            intro p hp hp_prime
-            rcases List.mem_cons.mp hp with rfl | hp'
-            · exact absurd hq_unit hp_prime.not_isUnit
-            · exact ha'_ndvd p hp' hp_prime
       -- Apply the stripping lemma to get r' ∈ P with no prime factor of s dividing r'
       obtain ⟨r', d_strip, hr_eq_strip, hr'_in_P, hr'_ne, hr'_ndvd⟩ :=
-        fold_strip pfactors r hr_ne hr_in_P hfactor_class
+        build_ufd_strip_prime_factors ι P hP_prime pfactors r hr_ne hr_in_P hfactor_class
       -- Show r' maps to a prime in the localization
       have hr'_prime_loc : Prime (algebraMap S_sub (Localization.Away s) r') := by
         have h1 : algebraMap S_sub (Localization.Away s) r =
@@ -656,76 +698,21 @@ private def build_ufd_proof_proof
           hq'_prime
       -- Descend primality from the localization back to S_sub
       have hr'_prime : Prime r' := by
-        refine ⟨hr'_ne, ?_, ?_⟩
-        · intro hu
-          exact hP_prime.ne_top (Ideal.eq_top_of_isUnit_mem P hr'_in_P hu)
-        · intro a b hab
-          have hab_loc : algebraMap S_sub (Localization.Away s) r' ∣
-              algebraMap S_sub _ a * algebraMap S_sub _ b := by
-            rw [← map_mul]
-            exact map_dvd _ hab
-          suffices hdvd_back : ∀ (x : S_sub),
-              (algebraMap S_sub (Localization.Away s) r' ∣ algebraMap S_sub _ x) →
-              r' ∣ x by
-            exact (hr'_prime_loc.dvd_or_dvd hab_loc).imp (hdvd_back a) (hdvd_back b)
-          intro x hqx
-          obtain ⟨z, hz⟩ := hqx
-          obtain ⟨⟨c, ⟨_, m, rfl⟩⟩, hc⟩ :=
-            IsLocalization.surj (Submonoid.powers s) z
-          have key : x * s ^ m = r' * c := by
-            apply hinj_loc
-            rw [map_mul, map_mul, map_pow]
-            calc algebraMap S_sub _ x * (algebraMap S_sub _ s) ^ m
-                = algebraMap S_sub _ r' * (z * (algebraMap S_sub _ s) ^ m) := by
-                  rw [hz, mul_assoc]
-              _ = algebraMap S_sub _ r' * algebraMap S_sub _ c := by
-                  rw [← map_pow, hc]
-          have hr'_dvd_xsm : r' ∣ x * s ^ m := ⟨c, key⟩
-          obtain ⟨u_s, hu_s⟩ := hpfactors_assoc
-          -- Key lemma: if r' | a * (prod of primes)^m and r' is coprime to each prime, then r' | a
-          have strip_list_prod_pow : ∀ (ps : List R.carrier) (a : S_sub),
-              (∀ p ∈ ps, (Prime (ι p) ∧ ι p ∉ P) ∨ IsUnit (ι p)) →
-              (∀ p ∈ ps, Prime (ι p) → ¬(ι p ∣ r')) →
-              r' ∣ a * (ps.map ι).prod ^ m → r' ∣ a := by
-            intro ps
-            induction ps with
-            | nil => intro a _ _ h
-                     simpa using h
-            | cons p ps ih =>
-              intro a hclass hndvd h
-              have hclass' := fun q hq => hclass q (List.mem_cons_of_mem p hq)
-              have hndvd' := fun q hq => hndvd q (List.mem_cons_of_mem p hq)
-              simp only [List.map_cons, List.prod_cons] at h
-              rcases hclass p List.mem_cons_self with ⟨hp_prime, _⟩ | hp_unit
-              · have hp_ndvd := hndvd p List.mem_cons_self hp_prime
-                have h1 : r' ∣ (a * (ps.map ι).prod ^ m) * (ι p) ^ m := by
-                  rwa [show a * (ι p * (List.map ι ps).prod) ^ m =
-                    (a * (List.map ι ps).prod ^ m) * (ι p) ^ m from by
-                      rw [mul_pow]
-                      ring] at h
-                have h2 : r' ∣ a * (ps.map ι).prod ^ m :=
-                  dvd_of_dvd_mul_prime_pow hp_prime hp_ndvd m h1
-                exact ih a hclass' hndvd' h2
-              · have hpm_unit : IsUnit ((ι p) ^ m) := hp_unit.pow m
-                have h1 : r' ∣ (a * (ι p) ^ m) * (ps.map ι).prod ^ m := by
-                  rwa [show a * (ι p * (List.map ι ps).prod) ^ m =
-                    (a * (ι p) ^ m) * (List.map ι ps).prod ^ m from by
-                      rw [mul_pow]
-                      ring] at h
-                have h2 : r' ∣ a * (ι p) ^ m :=
-                  ih (a * (ι p) ^ m) hclass' hndvd' h1
-                exact (hpm_unit.dvd_mul_right).mp h2
-          -- Factor s^m = (prod of primes)^m * unit^m, strip primes, then cancel the unit
-          have hr'_dvd_xU : r' ∣ x * ↑u_s ^ m := by
-            have hsm_eq : s ^ m = (pfactors.map ι).prod ^ m * ↑u_s ^ m := by
-              rw [← hu_s, mul_pow]
-            have h1 : r' ∣ (x * ↑u_s ^ m) * (pfactors.map ι).prod ^ m := by
-              rwa [show (x * ↑u_s ^ m) * (pfactors.map ι).prod ^ m =
-                x * s ^ m from by rw [hsm_eq]
-                                  ring]
-            exact strip_list_prod_pow pfactors (x * ↑u_s ^ m)
-              hfactor_class hr'_ndvd h1
-          exact (u_s.isUnit.pow m).dvd_mul_right.mp hr'_dvd_xU
+        obtain ⟨u_s, hu_s⟩ := hpfactors_assoc
+        refine build_ufd_prime_of_prime_away s hinj_loc r' hr'_ne
+          (fun hu => hP_prime.ne_top (Ideal.eq_top_of_isUnit_mem P hr'_in_P hu))
+          hr'_prime_loc fun x m hr'_dvd_xsm => ?_
+        -- Factor s^m = (prod of primes)^m * unit^m, strip primes, then cancel the unit
+        have hr'_dvd_xU : r' ∣ x * ↑u_s ^ m := by
+          have hsm_eq : s ^ m = (pfactors.map ι).prod ^ m * ↑u_s ^ m := by
+            rw [← hu_s, mul_pow]
+          have h1 : r' ∣ (x * ↑u_s ^ m) * (pfactors.map ι).prod ^ m := by
+            rwa [show (x * ↑u_s ^ m) * (pfactors.map ι).prod ^ m =
+              x * s ^ m from by rw [hsm_eq]
+                                ring]
+          exact build_ufd_dvd_of_dvd_mul_prod_pow ι P r' m pfactors (x * ↑u_s ^ m)
+            hfactor_class hr'_ndvd h1
+        exact (u_s.isUnit.pow m).dvd_mul_right.mp hr'_dvd_xU
       exact ⟨r', hr'_in_P, hr'_prime⟩
   -- Case P ∩ R ≠ 0: R is a UFD, so P ∩ R contains a prime q of R; q maps to a prime in S_sub
   · obtain ⟨q, hq_mem, hq_prime⟩ :=
@@ -737,41 +724,6 @@ private def build_ufd_proof_proof
       by_contra h
       exact hP_prime.ne_top (Ideal.eq_top_of_isUnit_mem P hq_P (hinv (ι q) h))
     exact ⟨ι q, hq_P, hR_prime_in_S q hq_prime hq_M⟩
-⟩
-
-omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
-include T in theorem build_ufd_proof
-    (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
-    (S_sub : Subring T) [IsDomain S_sub] [WfDvdMonoid S_sub]
-    (hR_le : R.carrier ≤ S_sub)
-    (_hcoprime : ∀ p : R.carrier, Prime p → ¬(p ∣ y₁ ∧ p ∣ y₂))
-    (hy₁ : (↑y₁ : T) ≠ 0) (hy₂ : (↑y₂ : T) ≠ 0)
-    (hx₁_trans : Transcendental R.carrier x₁)
-    (_hx₂_trans : Transcendental R.carrier x₂)
-    (_hx₁_mod_trans : ∀ (p : R.carrier), Prime p → ¬p ∣ y₂ →
-      ∀ (f : Polynomial R.carrier),
-        aeval x₁ f ∈ Ideal.span {(↑p : T)} → (C p : Polynomial R.carrier) ∣ f)
-    (_hx₂_mod_trans : ∀ (p : R.carrier), Prime p → ¬p ∣ y₁ →
-      ∀ (f : Polynomial R.carrier),
-        aeval x₂ f ∈ Ideal.span {(↑p : T)} → (C p : Polynomial R.carrier) ∣ f)
-    (hinv : ∀ (s : S_sub), (s : T) ∉ IsLocalRing.maximalIdeal T → IsUnit s)
-    (hR_prime_in_S : ∀ (p : R.carrier), Prime p →
-      (↑p : T) ∈ IsLocalRing.maximalIdeal T →
-      Prime (⟨(↑p : T), hR_le p.2⟩ : S_sub))
-    (hS_sub_eq : (S_sub : Set T) =
-      {t : T | ∃ (a : T) (b : T),
-        a ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
-        b ∈ intersectionSet R x₁ x₂ y₁ y₂ ∧
-        b ∉ IsLocalRing.maximalIdeal T ∧ t * b = a})
-    (hRbar_le_S : ∀ t, t ∈ intersectionSet R x₁ x₂ y₁ y₂ → t ∈ (S_sub : Set T))
-    (hx₁_Rbar : x₁ ∈ intersectionSet R x₁ x₂ y₁ y₂)
-    (_hx₂_Rbar : x₂ ∈ intersectionSet R x₁ x₂ y₁ y₂) :
-    UniqueFactorizationMonoid S_sub := by
-  exact
-    (build_ufd_proof_proof
-      R x₁ x₂ y₁ y₂ S_sub hR_le _hcoprime hy₁ hy₂ hx₁_trans _hx₂_trans _hx₁_mod_trans
-      _hx₂_mod_trans hinv hR_prime_in_S hS_sub_eq hRbar_le_S hx₁_Rbar _hx₂_Rbar
-    ).down
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
 /- R-primes stay prime in S_sub: given the intersection subring construction,
 every prime element of R maps to a prime element of S_sub. -/
