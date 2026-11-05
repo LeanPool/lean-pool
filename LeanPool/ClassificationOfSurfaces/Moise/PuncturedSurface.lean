@@ -9,9 +9,6 @@ public import LeanPool.ClassificationOfSurfaces.Moise.ChartExtraction
 public import LeanPool.ClassificationOfSurfaces.Moise.BoundaryInvariant
 import Mathlib.Analysis.Normed.Module.Ball.Homeomorph
 import Mathlib.Analysis.Normed.Module.Connected
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Punctured surface charts

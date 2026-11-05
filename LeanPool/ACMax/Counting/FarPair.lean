@@ -5,11 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Positivity
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Tauto
 public import LeanPool.ACMax.Spectral.TestVector
 
 /-!
@@ -164,7 +159,7 @@ private theorem algConn_le_two_of_weighted_double_star_hterm : ∀ {V : Type u_1
         ite_eq_left ⟨hadj, hiu⟩
       have hxi : x i = au := by rw [hiu]; exact hxu
       rw [hxi, hxA j hjA]
-      linarith [nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10]
+      linarith only [nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, e1]
     · by_cases hju : j = u
       · -- `N(u) → u` edge.
         have hiA : i ∈ A := (hmemA i).mpr (G.adj_symm (hju ▸ hadj))
@@ -173,7 +168,7 @@ private theorem algConn_le_two_of_weighted_double_star_hterm : ∀ {V : Type u_1
         have hxj : x j = au := by rw [hju]; exact hxu
         have hval : (p i - au) ^ 2 = (au - p i) ^ 2 := by ring
         rw [hxj, hxA i hiA, hval]
-        linarith [nn1, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10]
+        linarith only [nn1, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, e2]
       · by_cases hiv : i = v
         · -- `v → N(v)` edge.
           have hjB : j ∈ B := (hmemB j).mpr (hiv ▸ hadj)
@@ -182,7 +177,7 @@ private theorem algConn_le_two_of_weighted_double_star_hterm : ∀ {V : Type u_1
           have hxi : x i = -av := by rw [hiv]; exact hxv
           have hval : (-av - -(q j)) ^ 2 = (av - q j) ^ 2 := by ring
           rw [hxi, hxB j hjB, hval]
-          linarith [nn1, nn2, nn4, nn5, nn6, nn7, nn8, nn9, nn10]
+          linarith only [nn1, nn2, nn4, nn5, nn6, nn7, nn8, nn9, nn10, e3]
         · by_cases hjv : j = v
           · -- `N(v) → v` edge.
             have hiB : i ∈ B := (hmemB i).mpr (G.adj_symm (hjv ▸ hadj))
@@ -191,7 +186,7 @@ private theorem algConn_le_two_of_weighted_double_star_hterm : ∀ {V : Type u_1
             have hxj : x j = -av := by rw [hjv]; exact hxv
             have hval : (-(q i) - -av) ^ 2 = (av - q i) ^ 2 := by ring
             rw [hxj, hxB i hiB, hval]
-            linarith [nn1, nn2, nn3, nn5, nn6, nn7, nn8, nn9, nn10]
+            linarith only [nn1, nn2, nn3, nn5, nn6, nn7, nn8, nn9, nn10, e4]
           · -- Neither endpoint is a centre.
             by_cases hiA : i ∈ A
             · by_cases hjB : j ∈ B
@@ -200,7 +195,7 @@ private theorem algConn_le_two_of_weighted_double_star_hterm : ∀ {V : Type u_1
                     = (p i + q j) ^ 2 := ite_eq_left ⟨hadj, hiA, hjB⟩
                 have hval : (p i - -(q j)) ^ 2 = (p i + q j) ^ 2 := by ring
                 rw [hxA i hiA, hxB j hjB, hval]
-                linarith [nn1, nn2, nn3, nn4, nn6, nn7, nn8, nn9, nn10]
+                linarith only [nn1, nn2, nn3, nn4, nn6, nn7, nn8, nn9, nn10, e5]
               · by_cases hjA : j ∈ A
                 · -- internal `N(u)` edge: charge both slots.
                   have e7 : (if G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B then p i ^ 2 else 0)
@@ -210,13 +205,13 @@ private theorem algConn_le_two_of_weighted_double_star_hterm : ∀ {V : Type u_1
                   have hb : (p i - p j) ^ 2 ≤ p i ^ 2 + p j ^ 2 := by
                     nlinarith only [mul_nonneg (hp i hiA) (hp j hjA)]
                   rw [hxA i hiA, hxA j hjA]
-                  linarith [nn1, nn2, nn3, nn4, nn5, nn6, nn9, nn10]
+                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn9, nn10, e7, e8, hb]
                 · -- leak `N(u) → Z`.
                   have e7 : (if G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B then p i ^ 2 else 0)
                       = p i ^ 2 := ite_eq_left ⟨hadj, hiA, hju, hjB⟩
                   have hval : (p i - 0) ^ 2 = p i ^ 2 := by ring
                   rw [hxA i hiA, hxZ j hju hjv hjA hjB, hval]
-                  linarith [nn1, nn2, nn3, nn4, nn5, nn6, nn8, nn9, nn10]
+                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn8, nn9, nn10, e7]
             · by_cases hiB : i ∈ B
               · by_cases hjA : j ∈ A
                 · -- cross edge `N(v) → N(u)`.
@@ -224,7 +219,7 @@ private theorem algConn_le_two_of_weighted_double_star_hterm : ∀ {V : Type u_1
                       = (p j + q i) ^ 2 := ite_eq_left ⟨hadj, hiB, hjA⟩
                   have hval : (-(q i) - p j) ^ 2 = (p j + q i) ^ 2 := by ring
                   rw [hxB i hiB, hxA j hjA, hval]
-                  linarith [nn1, nn2, nn3, nn4, nn5, nn7, nn8, nn9, nn10]
+                  linarith only [nn1, nn2, nn3, nn4, nn5, nn7, nn8, nn9, nn10, e6]
                 · by_cases hjB : j ∈ B
                   · -- internal `N(v)` edge.
                     have e9 : (if G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A then q i ^ 2 else 0)
@@ -234,31 +229,31 @@ private theorem algConn_le_two_of_weighted_double_star_hterm : ∀ {V : Type u_1
                     have hb : (-(q i) - -(q j)) ^ 2 ≤ q i ^ 2 + q j ^ 2 := by
                       nlinarith only [mul_nonneg (hq i hiB) (hq j hjB)]
                     rw [hxB i hiB, hxB j hjB]
-                    linarith [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8]
+                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, e9, e10, hb]
                   · -- leak `N(v) → Z`.
                     have e9 : (if G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A then q i ^ 2 else 0)
                         = q i ^ 2 := ite_eq_left ⟨hadj, hiB, hjv, hjA⟩
                     have hval : (-(q i) - 0) ^ 2 = q i ^ 2 := by ring
                     rw [hxB i hiB, hxZ j hju hjv hjA hjB, hval]
-                    linarith [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn10]
+                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn10, e9]
               · by_cases hjA : j ∈ A
                 · -- leak `Z → N(u)`.
                   have e8 : (if G.Adj i j ∧ j ∈ A ∧ i ≠ u ∧ i ∉ B then p j ^ 2 else 0)
                       = p j ^ 2 := ite_eq_left ⟨hadj, hjA, hiu, hiB⟩
                   have hval : (0 - p j) ^ 2 = p j ^ 2 := by ring
                   rw [hxZ i hiu hiv hiA hiB, hxA j hjA, hval]
-                  linarith [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn9, nn10]
+                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn9, nn10, e8]
                 · by_cases hjB : j ∈ B
                   · -- leak `Z → N(v)`.
                     have e10 : (if G.Adj i j ∧ j ∈ B ∧ i ≠ v ∧ i ∉ A then q j ^ 2 else 0)
                         = q j ^ 2 := ite_eq_left ⟨hadj, hjB, hiv, hiA⟩
                     have hval : (0 - -(q j)) ^ 2 = q j ^ 2 := by ring
                     rw [hxZ i hiu hiv hiA hiB, hxB j hjB, hval]
-                    linarith [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9]
+                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, e10]
                   · -- `Z → Z`: zero.
                     rw [hxZ i hiu hiv hiA hiB, hxZ j hju hjv hjA hjB]
                     norm_num
-                    linarith [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10]
+                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10]
   · simp [hadj]
 
 open Classical in
@@ -679,33 +674,30 @@ private theorem algConn_le_two_of_apex_double_star_hterm : ∀ {V : Type u_1} [F
         have e11 : (if i = u ∧ j = g then au ^ 2 else 0) = au ^ 2 := ite_eq_left ⟨hiu, hjg⟩
         have hxi : x i = au := by rw [hiu]; exact hxu
         have hxj : x j = 0 := by rw [hjg]; exact hxg
-        have hval : (au - 0) ^ 2 = au ^ 2 := by ring
-        rw [hxi, hxj, hval]
-        linarith
+        rw [hxi, hxj, sub_zero]
+        linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn12, nn13, nn14, e11]
       · -- `u → A` edge.
         have hjA : j ∈ A := (hmemA j).mpr ⟨hjg, hiu ▸ hadj⟩
         have e1 : (if i = u ∧ j ∈ A then (au - p j) ^ 2 else 0) = (au - p j) ^ 2 :=
           ite_eq_left ⟨hiu, hjA⟩
         have hxi : x i = au := by rw [hiu]; exact hxu
         rw [hxi, hxA j hjA]
-        linarith
+        linarith only [nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn12, nn13, nn14, e1]
     · by_cases hju : j = u
       · by_cases hig : i = g
         · -- apex edge `g → u`.
           have e12 : (if j = u ∧ i = g then au ^ 2 else 0) = au ^ 2 := ite_eq_left ⟨hju, hig⟩
           have hxi : x i = 0 := by rw [hig]; exact hxg
           have hxj : x j = au := by rw [hju]; exact hxu
-          have hval : ((0:ℝ) - au) ^ 2 = au ^ 2 := by ring
-          rw [hxi, hxj, hval]
-          linarith
+          rw [hxi, hxj, zero_sub, neg_sq]
+          linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn13, nn14, e12]
         · -- `A → u` edge.
           have hiA : i ∈ A := (hmemA i).mpr ⟨hig, G.adj_symm (hju ▸ hadj)⟩
           have e2 : (if j = u ∧ i ∈ A then (au - p i) ^ 2 else 0) = (au - p i) ^ 2 :=
             ite_eq_left ⟨hju, hiA⟩
           have hxj : x j = au := by rw [hju]; exact hxu
-          have hval : (p i - au) ^ 2 = (au - p i) ^ 2 := by ring
-          rw [hxj, hxA i hiA, hval]
-          linarith
+          rw [hxj, hxA i hiA, sub_sq_comm (p i) au]
+          linarith only [nn1, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn12, nn13, nn14, e2]
       · by_cases hiv : i = v
         · by_cases hjg : j = g
           · -- apex edge `v → g`.
@@ -713,9 +705,8 @@ private theorem algConn_le_two_of_apex_double_star_hterm : ∀ {V : Type u_1} [F
               ite_eq_left ⟨hiv, hjg⟩
             have hxi : x i = -av := by rw [hiv]; exact hxv
             have hxj : x j = 0 := by rw [hjg]; exact hxg
-            have hval : (-av - 0) ^ 2 = av ^ 2 := by ring
-            rw [hxi, hxj, hval]
-            linarith
+            rw [hxi, hxj, sub_zero, neg_sq]
+            linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn12, nn14, e13]
           · -- `v → B` edge.
             have hjB : j ∈ B := (hmemB j).mpr ⟨hjg, hiv ▸ hadj⟩
             have e3 : (if i = v ∧ j ∈ B then (av - q j) ^ 2 else 0) = (av - q j) ^ 2 :=
@@ -723,7 +714,7 @@ private theorem algConn_le_two_of_apex_double_star_hterm : ∀ {V : Type u_1} [F
             have hxi : x i = -av := by rw [hiv]; exact hxv
             have hval : (-av - -(q j)) ^ 2 = (av - q j) ^ 2 := by ring
             rw [hxi, hxB j hjB, hval]
-            linarith
+            linarith only [nn1, nn2, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn12, nn13, nn14, e3]
         · by_cases hjv : j = v
           · by_cases hig : i = g
             · -- apex edge `g → v`.
@@ -731,9 +722,9 @@ private theorem algConn_le_two_of_apex_double_star_hterm : ∀ {V : Type u_1} [F
                 ite_eq_left ⟨hjv, hig⟩
               have hxi : x i = 0 := by rw [hig]; exact hxg
               have hxj : x j = -av := by rw [hjv]; exact hxv
-              have hval : ((0:ℝ) - -av) ^ 2 = av ^ 2 := by ring
-              rw [hxi, hxj, hval]
-              linarith
+              rw [hxi, hxj, zero_sub, neg_neg]
+              linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
+                nn8, nn9, nn10, nn11, nn12, nn13, e14]
             · -- `B → v` edge.
               have hiB : i ∈ B := (hmemB i).mpr ⟨hig, G.adj_symm (hjv ▸ hadj)⟩
               have e4 : (if j = v ∧ i ∈ B then (av - q i) ^ 2 else 0)
@@ -741,16 +732,17 @@ private theorem algConn_le_two_of_apex_double_star_hterm : ∀ {V : Type u_1} [F
               have hxj : x j = -av := by rw [hjv]; exact hxv
               have hval : (-(q i) - -av) ^ 2 = (av - q i) ^ 2 := by ring
               rw [hxj, hxB i hiB, hval]
-              linarith
+              linarith only [nn1, nn2, nn3, nn5, nn6, nn7, nn8,
+                nn9, nn10, nn11, nn12, nn13, nn14, e4]
           · -- Neither endpoint is a centre.
             by_cases hiA : i ∈ A
             · by_cases hjB : j ∈ B
               · -- cross edge `A → B`.
                 have e5 : (if G.Adj i j ∧ i ∈ A ∧ j ∈ B then (p i + q j) ^ 2 else 0)
                     = (p i + q j) ^ 2 := ite_eq_left ⟨hadj, hiA, hjB⟩
-                have hval : (p i - -(q j)) ^ 2 = (p i + q j) ^ 2 := by ring
-                rw [hxA i hiA, hxB j hjB, hval]
-                linarith
+                rw [hxA i hiA, hxB j hjB, sub_neg_eq_add]
+                linarith only [nn1, nn2, nn3, nn4, nn6, nn7, nn8,
+                  nn9, nn10, nn11, nn12, nn13, nn14, e5]
               · by_cases hjA : j ∈ A
                 · -- internal `A` edge: charge both slots.
                   have e7 : (if G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B then p i ^ 2 else 0)
@@ -760,13 +752,14 @@ private theorem algConn_le_two_of_apex_double_star_hterm : ∀ {V : Type u_1} [F
                   have hb : (p i - p j) ^ 2 ≤ p i ^ 2 + p j ^ 2 := by
                     nlinarith only [mul_nonneg (hp i hiA) (hp j hjA)]
                   rw [hxA i hiA, hxA j hjA]
-                  linarith
+                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn9,
+                    nn10, nn11, nn12, nn13, nn14, e7, e8, hb]
                 · -- leak `A → Z`.
                   have e7 : (if G.Adj i j ∧ i ∈ A ∧ j ≠ u ∧ j ∉ B then p i ^ 2 else 0)
                       = p i ^ 2 := ite_eq_left ⟨hadj, hiA, hju, hjB⟩
-                  have hval : (p i - 0) ^ 2 = p i ^ 2 := by ring
-                  rw [hxA i hiA, hxZ j hju hjv hjA hjB, hval]
-                  linarith
+                  rw [hxA i hiA, hxZ j hju hjv hjA hjB, sub_zero]
+                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn8,
+                    nn9, nn10, nn11, nn12, nn13, nn14, e7]
             · by_cases hiB : i ∈ B
               · by_cases hjA : j ∈ A
                 · -- cross edge `B → A`.
@@ -774,7 +767,8 @@ private theorem algConn_le_two_of_apex_double_star_hterm : ∀ {V : Type u_1} [F
                       = (p j + q i) ^ 2 := ite_eq_left ⟨hadj, hiB, hjA⟩
                   have hval : (-(q i) - p j) ^ 2 = (p j + q i) ^ 2 := by ring
                   rw [hxB i hiB, hxA j hjA, hval]
-                  linarith
+                  linarith only [nn1, nn2, nn3, nn4, nn5, nn7, nn8,
+                    nn9, nn10, nn11, nn12, nn13, nn14, e6]
                 · by_cases hjB : j ∈ B
                   · -- internal `B` edge.
                     have e9 : (if G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A then q i ^ 2 else 0)
@@ -784,33 +778,35 @@ private theorem algConn_le_two_of_apex_double_star_hterm : ∀ {V : Type u_1} [F
                     have hb : (-(q i) - -(q j)) ^ 2 ≤ q i ^ 2 + q j ^ 2 := by
                       nlinarith only [mul_nonneg (hq i hiB) (hq j hjB)]
                     rw [hxB i hiB, hxB j hjB]
-                    linarith
+                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
+                      nn8, nn11, nn12, nn13, nn14, e9, e10, hb]
                   · -- leak `B → Z`.
                     have e9 : (if G.Adj i j ∧ i ∈ B ∧ j ≠ v ∧ j ∉ A then q i ^ 2 else 0)
                         = q i ^ 2 := ite_eq_left ⟨hadj, hiB, hjv, hjA⟩
-                    have hval : (-(q i) - 0) ^ 2 = q i ^ 2 := by ring
-                    rw [hxB i hiB, hxZ j hju hjv hjA hjB, hval]
-                    linarith
+                    rw [hxB i hiB, hxZ j hju hjv hjA hjB, sub_zero, neg_sq]
+                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
+                      nn8, nn10, nn11, nn12, nn13, nn14, e9]
               · by_cases hjA : j ∈ A
                 · -- leak `Z → A`.
                   have e8 : (if G.Adj i j ∧ j ∈ A ∧ i ≠ u ∧ i ∉ B then p j ^ 2 else 0)
                       = p j ^ 2 := ite_eq_left ⟨hadj, hjA, hiu, hiB⟩
-                  have hval : (0 - p j) ^ 2 = p j ^ 2 := by ring
-                  rw [hxZ i hiu hiv hiA hiB, hxA j hjA, hval]
-                  linarith
+                  rw [hxZ i hiu hiv hiA hiB, hxA j hjA, zero_sub, neg_sq]
+                  linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
+                    nn9, nn10, nn11, nn12, nn13, nn14, e8]
                 · by_cases hjB : j ∈ B
                   · -- leak `Z → B`.
                     have e10 : (if G.Adj i j ∧ j ∈ B ∧ i ≠ v ∧ i ∉ A then q j ^ 2
                         else 0) = q j ^ 2 := ite_eq_left ⟨hadj, hjB, hiv, hiA⟩
-                    have hval : (0 - -(q j)) ^ 2 = q j ^ 2 := by ring
-                    rw [hxZ i hiu hiv hiA hiB, hxB j hjB, hval]
-                    linarith
+                    rw [hxZ i hiu hiv hiA hiB, hxB j hjB, zero_sub, neg_neg]
+                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
+                      nn8, nn9, nn11, nn12, nn13, nn14, e10]
                   · -- `Z → Z`: zero.
                     rw [hxZ i hiu hiv hiA hiB, hxZ j hju hjv hjA hjB]
                     norm_num
-                    linarith
+                    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7,
+                      nn8, nn9, nn10, nn11, nn12, nn13, nn14]
   · rw [ite_eq_right hadj]
-    linarith
+    linarith only [nn1, nn2, nn3, nn4, nn5, nn6, nn7, nn8, nn9, nn10, nn11, nn12, nn13, nn14]
 
 open Classical in
 private theorem algConn_le_two_of_apex_double_star_hC5 : ∀ {V : Type u_1} [Fintype V] (G :

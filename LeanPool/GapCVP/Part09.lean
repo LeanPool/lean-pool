@@ -6,18 +6,21 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part08
-public import Mathlib.Algebra.Order.Floor.Semifield
-public import Mathlib.Data.Int.Star
-public import Mathlib.FieldTheory.RatFunc.AsPolynomial
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.Henselian
-public import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
-public import Mathlib.RingTheory.MvPolynomial.Symmetric.NewtonIdentities
-public import Mathlib.RingTheory.Polynomial.Resultant.Basic
-public import Mathlib.RingTheory.Polynomial.Vieta
-public import Mathlib.RingTheory.RegularLocalRing.Defs
 public import Mathlib.RingTheory.SimpleRing.Principal
+public import LeanPool.GapCVP.Part08D
+public import Mathlib.FieldTheory.RatFunc.Basic
+public import Mathlib.LinearAlgebra.Lagrange
+public import Mathlib.RingTheory.Valuation.Basic
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.FieldTheory.RatFunc.AsPolynomial
+import Mathlib.RingTheory.Flat.TorsionFree
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
+import Mathlib.RingTheory.MvPolynomial.Symmetric.NewtonIdentities
+import Mathlib.RingTheory.Polynomial.Resultant.Basic
+import Mathlib.RingTheory.Polynomial.Vieta
+import Mathlib.RingTheory.RegularLocalRing.Defs
 
 /-! # GapCVP proof, part 09 -/
 

@@ -6,6 +6,7 @@ Authors: OpenAI, Sidharth Hariharan, Gareth Ma, Dean Cureton
 
 module
 
+import all LeanPool.SpherePacking.RadialConstruction
 public import LeanPool.SpherePacking.PackingBound
 import all LeanPool.SpherePacking.PackingBound
 public import LeanPool.SpherePacking.Foundations
@@ -799,32 +800,15 @@ private theorem radialSchwartzParametric_iteratedFDeriv_integral
       rw [hprevious,
         (radialSchwartzParametric_hasFDerivAt_iteratedIntegral
           μ g C hmeas hbound n x).fderiv]
-      calc
-        (continuousMultilinearCurryLeftEquiv ℝ
-          (fun _ : Fin (n + 1) ↦ Ambient d) ℂ).symm
-            (∫ a : α, fderiv ℝ
-              (iteratedFDeriv ℝ n (g a : Ambient d → ℂ)) x ∂μ) =
-            ∫ a : α,
-              (continuousMultilinearCurryLeftEquiv ℝ
-                (fun _ : Fin (n + 1) ↦ Ambient d) ℂ).symm
-                  (fderiv ℝ
-                    (iteratedFDeriv ℝ n (g a : Ambient d → ℂ)) x)
-                  ∂μ := by
-              exact
-                (LinearIsometry.integral_comp_comm
-                  (𝕜 := ℝ)
-                  (LinearIsometryEquiv.toLinearIsometry
-                    ((continuousMultilinearCurryLeftEquiv ℝ
-                      (fun _ : Fin (n + 1) ↦ Ambient d) ℂ).symm))
-                  (fun a : α ↦ fderiv ℝ
-                    (iteratedFDeriv ℝ n
-                      (g a : Ambient d → ℂ)) x)).symm
-        _ = ∫ a : α, iteratedFDeriv ℝ (n + 1)
-              (g a : Ambient d → ℂ) x ∂μ := by
-              apply integral_congr_ae
-              filter_upwards [] with a
-              rw [iteratedFDeriv_succ_eq_comp_left]
-              rfl
+      simp_rw [iteratedFDeriv_succ_eq_comp_left, Function.comp_apply]
+      exact
+        (LinearIsometry.integral_comp_comm
+          (𝕜 := ℝ)
+          (LinearIsometryEquiv.toLinearIsometry
+            ((continuousMultilinearCurryLeftEquiv ℝ
+              (fun _ : Fin (n + 1) ↦ Ambient d) ℂ).symm))
+          (fun a : α ↦ fderiv ℝ
+            (iteratedFDeriv ℝ n (g a : Ambient d → ℂ)) x)).symm
 
 end ProbabilityAverage
 

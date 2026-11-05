@@ -7,6 +7,7 @@ Authors: Scott Armstrong, Tuomo Kuusi
 module
 
 public import LeanPool.HighContrastHomogenization.Support.Sobolev.W1p.ConvexApproxSmoothing.WeakDerivSmoothing
+public import Mathlib.Analysis.Calculus.ParametricIntegral
 
 /-!
 # Coarse-graining support: Support.Sobolev.W1p.ConvexApproxSmoothing.Continuity

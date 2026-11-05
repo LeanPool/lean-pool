@@ -62,3 +62,4 @@ public import LeanPool.NashEmbedding.NashEmbeddingTest.NashCompact
 public import LeanPool.NashEmbedding.NashEmbeddingTest.NashTorus
 public import LeanPool.NashEmbedding.NashEmbeddingTest.RealizableMetrics
 public import LeanPool.NashEmbedding.Solution
+public import LeanPool.NashEmbedding.Tactics

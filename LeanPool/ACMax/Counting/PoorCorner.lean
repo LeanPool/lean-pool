@@ -5,13 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.IntervalCases
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Push
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Tauto
-public import LeanPool.ACMax.Reduction.Residual
 public import LeanPool.ACMax.Counting.FarPair
 public import LeanPool.ACMax.Counting.DoubleStar
 
@@ -181,7 +174,8 @@ theorem algConn_le_two_of_far_deg3_pair [Nonempty V]
             exact_mod_cast this
           push_cast at hcast
           linarith
-        nlinarith [h2]
+        norm_num only [show (2 : ℝ) ^ 2 = 4 by norm_num]
+        exact mul_le_mul_of_nonneg_right h2 (by norm_num)
       calc (∑ w ∈ G.neighborFinset t,
             ((G.neighborFinset w \ insert t (G.neighborFinset t')).card : ℝ)
               * (2:ℝ) ^ 2)
@@ -218,7 +212,8 @@ theorem algConn_le_two_of_far_deg3_pair [Nonempty V]
             exact_mod_cast this
           push_cast at hcast
           linarith
-        nlinarith [h2]
+        norm_num only [show (2 : ℝ) ^ 2 = 4 by norm_num]
+        exact mul_le_mul_of_nonneg_right h2 (by norm_num)
       calc (∑ w ∈ G.neighborFinset t',
             ((G.neighborFinset w \ insert t' (G.neighborFinset t)).card : ℝ)
               * (2:ℝ) ^ 2)

@@ -8,6 +8,7 @@ module
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnCohomologyRingModel
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.InducedOnRPCohomology
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Projective top-class and model power API

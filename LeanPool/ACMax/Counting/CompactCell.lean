@@ -6,7 +6,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 module
 
 public import LeanPool.ACMax.Counting.CherryMShape
-public import LeanPool.ACMax.Reduction.Reduction
 
 /-!
 # The compact-cell reduction of the `Δ ≥ 5` fat side

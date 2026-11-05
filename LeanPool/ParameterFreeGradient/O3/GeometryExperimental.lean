@@ -6,6 +6,7 @@ Authors: Yuning Yang
 module
 
 
+public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.MeanInequalitiesPow
 public import Mathlib.Analysis.InnerProductSpace.NormPow
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus

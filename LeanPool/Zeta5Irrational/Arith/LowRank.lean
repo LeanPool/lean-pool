@@ -9,7 +9,7 @@ module
 import Mathlib.LinearAlgebra.Matrix.SchurComplement
 
 public import LeanPool.Zeta5Irrational.Arith.Val
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
 import Mathlib.Tactic.Linarith

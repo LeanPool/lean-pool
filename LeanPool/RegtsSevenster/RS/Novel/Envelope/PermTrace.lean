@@ -44,23 +44,23 @@ theorem catTrace_permMor_conj
     [RigidCategory A]
     (X : A) (g : End X) (n : ℕ)
     (ρ π : Equiv.Perm (Fin n)) :
-    catTrace (permMor X n (ρ * π * ρ⁻¹) ≫ powHom X g n) =
-      catTrace (permMor X n π ≫ powHom X g n) := by
+    catTrace (permMor X n (ρ * π * ρ⁻¹) ≫ (powHom X g n).asHom) =
+      catTrace (permMor X n π ≫ (powHom X g n).asHom) := by
   have hsplit : permMor X n (ρ * π * ρ⁻¹) =
       permMor X n ρ⁻¹ ≫ permMor X n π ≫ permMor X n ρ := by
     rw [permMor_mul, permMor_mul]
   have hcancel : permMor X n ρ ≫ permMor X n ρ⁻¹ =
       𝟙 (tensorPow A X n) := by
     rw [← permMor_mul, inv_mul_cancel, permMor_one]
-  calc catTrace (permMor X n (ρ * π * ρ⁻¹) ≫ powHom X g n)
+  calc catTrace (permMor X n (ρ * π * ρ⁻¹) ≫ (powHom X g n).asHom)
       = catTrace (permMor X n ρ⁻¹ ≫
-          (permMor X n π ≫ powHom X g n ≫ permMor X n ρ)) := by
+          (permMor X n π ≫ (powHom X g n).asHom ≫ permMor X n ρ)) := by
         rw [hsplit, Category.assoc, Category.assoc,
           permMor_comp_powHom]
-    _ = catTrace ((permMor X n π ≫ powHom X g n ≫ permMor X n ρ) ≫
+    _ = catTrace ((permMor X n π ≫ (powHom X g n).asHom ≫ permMor X n ρ) ≫
           permMor X n ρ⁻¹) :=
         catTrace_comp_comm _ _
-    _ = catTrace (permMor X n π ≫ powHom X g n) := by
+    _ = catTrace (permMor X n π ≫ (powHom X g n).asHom) := by
         rw [Category.assoc, Category.assoc, hcancel, Category.comp_id]
 
 /-! ## Multiplicativity over a block sum -/
@@ -75,61 +75,61 @@ theorem catTrace_permMor_blockSum
     (X : A) (g : End X) {p q : ℕ}
     (σ : Equiv.Perm (Fin p)) (τ : Equiv.Perm (Fin q)) :
     catTrace (permMor X (p + q) (blockSum σ τ) ≫
-        powHom X g (p + q)) =
-      catTrace (permMor X p σ ≫ powHom X g p) *
-        catTrace (permMor X q τ ≫ powHom X g q) := by
+        (powHom X g (p + q)).asHom) =
+      catTrace (permMor X p σ ≫ (powHom X g p).asHom) *
+        catTrace (permMor X q τ ≫ (powHom X g q).asHom) := by
   have hu : (permMor X (p + q) (blockSum σ τ) ≫
-        powHom X g (p + q)) ≫ (splitPow X p q).hom =
+        (powHom X g (p + q)).asHom) ≫ (splitPow X p q).hom =
       (splitPow X p q).hom ≫
-        ((permMor X p σ ≫ powHom X g p) ⊗ₘ
-          (permMor X q τ ≫ powHom X g q)) := by
+        ((permMor X p σ ≫ (powHom X g p).asHom) ⊗ₘ
+          (permMor X q τ ≫ (powHom X g q).asHom)) := by
     calc (permMor X (p + q) (blockSum σ τ) ≫
-            powHom X g (p + q)) ≫ (splitPow X p q).hom
+            (powHom X g (p + q)).asHom) ≫ (splitPow X p q).hom
         = permMor X (p + q) (blockSum σ τ) ≫
-            (powHom X g (p + q) ≫ (splitPow X p q).hom) :=
+            ((powHom X g (p + q)).asHom ≫ (splitPow X p q).hom) :=
           Category.assoc _ _ _
       _ = permMor X (p + q) (blockSum σ τ) ≫
             ((splitPow X p q).hom ≫
-              (powHom X g p ⊗ₘ powHom X g q)) :=
+              ((powHom X g p).asHom ⊗ₘ (powHom X g q).asHom)) :=
           congrArg (fun z => permMor X (p + q) (blockSum σ τ) ≫ z)
             (powHom_comp_splitPow X g p q)
       _ = (permMor X (p + q) (blockSum σ τ) ≫
             (splitPow X p q).hom) ≫
-            (powHom X g p ⊗ₘ powHom X g q) :=
+            ((powHom X g p).asHom ⊗ₘ (powHom X g q).asHom) :=
           (Category.assoc _ _ _).symm
       _ = ((splitPow X p q).hom ≫
             (permMor X p σ ⊗ₘ permMor X q τ)) ≫
-            (powHom X g p ⊗ₘ powHom X g q) :=
-          congrArg (fun z => z ≫ (powHom X g p ⊗ₘ powHom X g q))
+            ((powHom X g p).asHom ⊗ₘ (powHom X g q).asHom) :=
+          congrArg (fun z => z ≫ ((powHom X g p).asHom ⊗ₘ (powHom X g q).asHom))
             (permMor_comp_splitPow X σ q τ)
       _ = (splitPow X p q).hom ≫
             ((permMor X p σ ⊗ₘ permMor X q τ) ≫
-              (powHom X g p ⊗ₘ powHom X g q)) :=
+              ((powHom X g p).asHom ⊗ₘ (powHom X g q).asHom)) :=
           Category.assoc _ _ _
       _ = (splitPow X p q).hom ≫
-            ((permMor X p σ ≫ powHom X g p) ⊗ₘ
-              (permMor X q τ ≫ powHom X g q)) :=
+            ((permMor X p σ ≫ (powHom X g p).asHom) ⊗ₘ
+              (permMor X q τ ≫ (powHom X g q).asHom)) :=
           congrArg (fun z => (splitPow X p q).hom ≫ z)
             (tensorHom_comp_tensorHom _ _ _ _)
   calc catTrace (permMor X (p + q) (blockSum σ τ) ≫
-          powHom X g (p + q))
+          (powHom X g (p + q)).asHom)
       = catTrace (((permMor X (p + q) (blockSum σ τ) ≫
-          powHom X g (p + q)) ≫ (splitPow X p q).hom) ≫
+          (powHom X g (p + q)).asHom) ≫ (splitPow X p q).hom) ≫
           (splitPow X p q).inv) := by
         rw [Category.assoc, Iso.hom_inv_id, Category.comp_id]
     _ = catTrace ((splitPow X p q).inv ≫
           ((permMor X (p + q) (blockSum σ τ) ≫
-            powHom X g (p + q)) ≫ (splitPow X p q).hom)) :=
+            (powHom X g (p + q)).asHom) ≫ (splitPow X p q).hom)) :=
         catTrace_comp_comm _ _
     _ = catTrace ((splitPow X p q).inv ≫ ((splitPow X p q).hom ≫
-          ((permMor X p σ ≫ powHom X g p) ⊗ₘ
-            (permMor X q τ ≫ powHom X g q)))) :=
+          ((permMor X p σ ≫ (powHom X g p).asHom) ⊗ₘ
+            (permMor X q τ ≫ (powHom X g q).asHom)))) :=
         congrArg (fun z => catTrace ((splitPow X p q).inv ≫ z)) hu
-    _ = catTrace ((permMor X p σ ≫ powHom X g p) ⊗ₘ
-          (permMor X q τ ≫ powHom X g q)) := by
+    _ = catTrace ((permMor X p σ ≫ (powHom X g p).asHom) ⊗ₘ
+          (permMor X q τ ≫ (powHom X g q).asHom)) := by
         rw [← Category.assoc, Iso.inv_hom_id, Category.id_comp]
-    _ = catTrace (permMor X p σ ≫ powHom X g p) *
-          catTrace (permMor X q τ ≫ powHom X g q) :=
+    _ = catTrace (permMor X p σ ≫ (powHom X g p).asHom) *
+          catTrace (permMor X q τ ≫ (powHom X g q).asHom) :=
         catTrace_tensorHom _ _
 
 /-! ## A single cycle -/
@@ -141,7 +141,7 @@ theorem catTrace_permMor_finRotate
     [RigidCategory A]
     (X : A) (g : End X) (m : ℕ) :
     catTrace (permMor X (m + 1) (finRotate (m + 1)) ≫
-        powHom X g (m + 1)) = catTrace (g ^ (m + 1)) := by
+        (powHom X g (m + 1)).asHom) = catTrace (g ^ (m + 1)).asHom := by
   rw [← topCycle_zero, permMor_topCycle,
     show ((0 : Fin (m + 1)) : ℕ) = 0 from rfl, Nat.sub_zero,
     catTrace_insertTop X g (le_refl m), Nat.sub_self, pow_zero,
@@ -157,11 +157,11 @@ theorem catTrace_blockCycles
     (X : A) (g : End X) :
     ∀ l : List ℕ, (∀ c ∈ l, 1 ≤ c) →
       catTrace (permMor X l.sum (blockCycles l) ≫
-          powHom X g l.sum) =
-        (l.map (fun c => catTrace (g ^ c))).prod
+          (powHom X g l.sum).asHom) =
+        (l.map (fun c => catTrace (g ^ c).asHom)).prod
   | [], _ => by
-      change catTrace (permMor X 0 1 ≫ powHom X g 0) = 1
-      rw [permMor_one, powHom_zero]
+      change catTrace (permMor X 0 1 ≫ (powHom X g 0).asHom) = 1
+      rw [permMor_one, powHom_zero, End.one_asHom]
       erw [Category.id_comp]
       exact (catTrace_id _).trans catDim_unit
   | c :: rest, hmem => by
@@ -171,7 +171,7 @@ theorem catTrace_blockCycles
         hmem d (by simp [hd])
       change catTrace (permMor X ((m + 1) + rest.sum)
           (blockSum (finRotate (m + 1)) (blockCycles rest)) ≫
-          powHom X g ((m + 1) + rest.sum)) = _
+          (powHom X g ((m + 1) + rest.sum)).asHom) = _
       rw [catTrace_permMor_blockSum, catTrace_permMor_finRotate,
         catTrace_blockCycles X g rest hrest, List.map_cons,
         List.prod_cons]
@@ -188,8 +188,8 @@ theorem catTrace_permMor_powHom
     [RigidCategory A]
     (X : A) (g : End X) {n : ℕ}
     (π : Equiv.Perm (Fin n)) :
-    catTrace (permMor X n π ≫ powHom X g n) =
-      ((fullCycleType π).map (fun c => catTrace (g ^ c))).prod := by
+    catTrace (permMor X n π ≫ (powHom X g n).asHom) =
+      ((fullCycleType π).map (fun c => catTrace (g ^ c).asHom)).prod := by
   obtain ⟨l, hsum, ρ, hmem, hcoe, hconj⟩ := exists_conj_blockCycles π
   subst hsum
   have hfin : (finCongr (rfl : l.sum = l.sum)).permCongr

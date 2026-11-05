@@ -6,9 +6,9 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part10
-public import Mathlib.Analysis.SpecialFunctions.Pow.NthRootLemmas
-public import Mathlib.InformationTheory.Hamming
+public import LeanPool.GapCVP.Part10B
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.CategoryTheory.Category.Init
 
 /-! # GapCVP proof, part 11 -/
 

@@ -326,7 +326,8 @@ theorem finite_support_vc_approx
         ne_top_of_le_ne_top (by simp [measure_univ]) (measure_mono (Set.subset_univ _))
       have h1 := MeasureTheory.measure_compl
         (DiscreteMeasurableSpace.forall_measurableSet _) hfin
-      simp_all
+      rw [h1, measure_univ]
+      exact tsub_pos_of_lt hbad_lt_one
     -- Sub-step 2: Witness extraction with all-Sum.inl guarantee
     -- D = PMF.toMeasure (μ.toPMF.map Sum.inl) is supported on range Sum.inl.
     -- So the product measure is supported on {xs | ∀ i, xs i ∈ range Sum.inl}.
@@ -359,7 +360,7 @@ theorem finite_support_vc_approx
       have hsub : allInlᶜ ⊆ ⋃ i : Fin Tnat, {xs | xs i ∉ Set.range Sum.inl} := by
         intro xs hxs
         simp only [allInl, Set.mem_compl_iff, Set.mem_ofPred_eq, not_forall] at hxs
-        simp_all
+        simpa only [Set.mem_iUnion, Set.mem_ofPred_eq] using hxs
       have hzero : ∀ i : Fin Tnat,
           Measure.pi (fun _ => D) {xs | xs i ∉ Set.range Sum.inl} = 0 := by
         intro i
@@ -391,12 +392,13 @@ theorem finite_support_vc_approx
           _ ≤ Measure.pi (fun _ => D) (badᶜ ∩ allInl) +
               Measure.pi (fun _ => D) allInlᶜ :=
               MeasureTheory.measure_union_le _ _
-      simp_all
+      exact (not_le_of_gt hcompl_pos)
+        (by simpa only [h0, hallInl_compl_zero, add_zero] using this)
     -- Extract witness from badᶜ ∩ allInl
     have hne : (badᶜ ∩ allInl).Nonempty := by
       by_contra h
       rw [Set.not_nonempty_iff_eq_empty] at h
-      simp_all
+      exact (ne_of_gt hinter_pos) (by rw [h, measure_empty])
     obtain ⟨xs, hxs_good, hxs_inl⟩ := hne
     -- hxs_good : xs ∈ badᶜ, i.e., xs ∉ bad
     have hxs_not_bad : xs ∉ bad := hxs_good
@@ -422,7 +424,7 @@ theorem finite_support_vc_approx
       congr 1
       apply Finset.sum_congr rfl; intro i _
       simp only [zeroOneLoss, hhs_eq i, extendBool]
-      split_ifs <;> simp_all
+      cases a (hs i) <;> rfl
     rw [htrue_eq] at hdev
     rw [hemp_eq] at hdev
     rw [← boolTestExpectation_empirical_eq_avg hTpos hs a] at hdev

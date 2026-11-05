@@ -36,7 +36,7 @@ public noncomputable def testCubeVectorH1
     (hpsi : IsLocalVecTest (openCubeSet (originCube d n)) psi) :
     CubeVectorH1Function (originCube d n) where
   coord i := H1Function.ofContDiff (isOpen_openCubeSet _)
-    ((contDiff_apply ℝ ℝ i).comp (hpsi.contDiff.of_le (by simp)))
+    ((contDiff_apply ℝ (fun _ => ℝ) i).comp (hpsi.contDiff.of_le (by simp)))
     (hpsi.hasCompactSupport.comp_left rfl)
 
 @[simp] private theorem testCubeVectorH1_toField
@@ -86,7 +86,7 @@ public noncomputable def pulledTestCompetitor
     (hpsi : IsLocalVecTest (openCubeSet (originCube d n)) psi) :
     ContinuousKCompetitor d where
   coord i := H1Function.ofContDiff (isOpen_openCubeSet _)
-    ((contDiff_apply ℝ ℝ i).comp
+    ((contDiff_apply ℝ (fun _ => ℝ) i).comp
       ((hpsi.contDiff.of_le (by simp)).comp
         (contDiff_const_smul (centeredCubeScale n))))
     ((hpsi.hasCompactSupport.comp_smul (centeredCubeScale_ne_zero n)).comp_left rfl)

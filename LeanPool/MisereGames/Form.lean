@@ -347,7 +347,7 @@ theorem sub_right_mem_moves_sub {p : Player} {x y : G} (h : x ∈ moves p y) (z 
 theorem exists_moves_add {p : Player} {P : G → Prop} {x y : G} :
     (∃ a ∈ moves p (x + y), P a) ↔
       (∃ a ∈ moves p x, P (a + y)) ∨ (∃ b ∈ moves p y, P (x + b)) := by
-  aesop
+  rw [moves_add, Set.exists_mem_union, Set.exists_mem_image, Set.exists_mem_image]
 
 @[aesop simp]
 lemma isOption_iff_mem_union {x y : G} : IsOption x y ↔ x ∈ moves .left y ∪ moves .right y := by

@@ -445,7 +445,7 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zero_ne_one, ite_self, add_zero, contribForm, heightLB, one_ne_zero,
       tailContribution_same, zero_add, lbCoeff, Fin.mk_one, hT4, headContribution_same,
       zeroChip, add_left_inj, Fin.reduceFinMk, hH4]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, add_zero, not_lt,
     nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false, add_right_inj, not_le])
@@ -877,7 +877,7 @@ theorem rb7Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zero_ne_one, ite_self, add_zero, contribForm, heightRB7, tailContribution_same,
       headContribution_same, rb7Coeff, Fin.mk_one, zero_add, one_ne_zero, hT4, zeroChip,
       Fin.reduceFinMk, hH4]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, not_le])
   all_goals (try split_ifs)
@@ -973,7 +973,7 @@ theorem rb6Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       heightRB6, tailContribution_same, headContribution_same, rb6Coeff, Fin.mk_one, zero_add,
       one_ne_zero, hT4, zeroChip, Fin.reduceFinMk, zero_sub, Int.reduceNeg, positiveChip,
       add_left_inj, hH4, mul_ite, mul_zero, mul_one, sub_zero]
-  all_goals (try (first | ring1 | ring_nf))
+  all_goals (try ring_nf)
   all_goals (try split_ifs)
   all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, nonpos_iff_eq_zero,
     Int.reduceNeg, add_neg_cancel, add_zero, not_le, neg_mul, one_mul, zero_mul])

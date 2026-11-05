@@ -200,7 +200,7 @@ private theorem H10Function.hasWeakPartialDerivOn_convolution_zeroExtension
       Filter.atTop (nhds 0) := by
     refine u.tendsto_approx.congr (fun n => ?_)
     rw [u.approx_sub_zeroExtension_eq_indicator_sub n,
-      eLpNorm_indicator_eq_eLpNorm_restrict hU]
+      eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet]
   have hgi_tend : Filter.Tendsto
       (fun n => eLpNorm
         (fun x =>
@@ -209,7 +209,7 @@ private theorem H10Function.hasWeakPartialDerivOn_convolution_zeroExtension
       Filter.atTop (nhds 0) := by
     refine (u.tendsto_approx_grad i).congr (fun n => ?_)
     rw [u.fderiv_approx_sub_zeroExtensionGrad_eq_indicator_sub_inwardMollification n i,
-      eLpNorm_indicator_eq_eLpNorm_restrict hU]
+      eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet]
   have hun_tend : Filter.Tendsto
       (fun n => eLpNorm
         (fun x => un n x -

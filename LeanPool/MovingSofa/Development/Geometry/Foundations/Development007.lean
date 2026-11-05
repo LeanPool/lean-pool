@@ -466,6 +466,7 @@ private theorem polygonNiche_area_ge_rectangle (Θ : AngleSet)
   let a := supportValue K.val (t : Real.Angle) - 1
   let b := supportValue K.val ((t + Real.pi / 2 : ℝ) : Real.Angle) - 1
   let L := a / Real.cos t + b / Real.sin t
+  have hLpos : 0 < L := hL
   let R : Set Point := {p | p 0 ∈ Set.Ioo (-b / Real.sin t + L / 4)
     (a / Real.cos t - L / 4) ∧ p 1 ∈ Set.Ioo 0 (L * Real.sin t * Real.cos t / 4)}
   have hsub : R ⊆ polygonNiche Θ K := by
@@ -483,9 +484,8 @@ private theorem polygonNiche_area_ge_rectangle (Θ : AngleSet)
   have harea : ClassicalResults.area R = L ^ 2 * Real.sin t * Real.cos t / 8 := by
     change (volume R).toReal = _
     rw [volume_coordinate_open_rectangle, hwidth, sub_zero, ENNReal.toReal_mul,
-      ENNReal.toReal_ofReal (show 0 ≤ L / 2 by dsimp [L, a, b]; positivity),
-      ENNReal.toReal_ofReal (show 0 ≤ L * Real.sin t * Real.cos t / 4 by
-        dsimp [L, a, b]; positivity)]
+      ENNReal.toReal_ofReal (show 0 ≤ L / 2 by positivity),
+      ENNReal.toReal_ofReal (show 0 ≤ L * Real.sin t * Real.cos t / 4 by positivity)]
     ring
   rw [← harea]
   exact ENNReal.toReal_mono (niche_uniform_bounds.2.1 Θ K).2.2.1.ne (measure_mono hsub)

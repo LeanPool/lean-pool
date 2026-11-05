@@ -1,7 +1,8 @@
 name: Proof Profile
 
-# Profile on demand when the PR author or anyone with write access comments
-# `/profile`, or through workflow_dispatch with an explicit PR number.
+# Keep a sticky profile comment on every PR, including drafts, and refresh it
+# after pushes or reopening. The PR author or anyone with write access can
+# also comment `/profile`; workflow_dispatch takes an explicit PR number.
 #
 # Added files get an absolute profile (`lean --profile` + heartbeat counts).
 # Modified files instead get a base→head compile-cost comparison: heartbeats
@@ -43,6 +44,8 @@ name: Proof Profile
 # also take from the default branch).
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   issue_comment:
     types: [created]
   workflow_dispatch:
@@ -68,6 +71,7 @@ concurrency:
   group: >-
     ${{
       (github.event_name == 'workflow_dispatch' ||
+       github.event_name == 'pull_request' ||
        (github.event_name == 'issue_comment' &&
         startsWith(github.event.comment.body, '/profile')))
       && format('proof-profile-{0}',
@@ -82,7 +86,7 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     name: Plan profile
-    # workflow_dispatch also supports drafts. For issue comments, run only
+    # Automatic PR events also support drafts. For issue comments, run only
     # when the body starts with `/profile` AND the commenter is
     # either the PR author or someone with write access. The measurement jobs
     # check out and *run* the PR's Lean code, so the workflow stays
@@ -92,6 +96,7 @@ jobs:
     # on someone else's fork PR.
     if: >-
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'pull_request' ||
       (github.event_name == 'issue_comment' &&
        github.event.issue.pull_request != null &&
        startsWith(github.event.comment.body, '/profile') &&
@@ -165,11 +170,11 @@ jobs:
           CACHE_MATCHED: ${{ steps.lake-cache.outputs.cache-matched-key }}
         run: |
           set -euo pipefail
-          added=$(git diff --name-only --diff-filter=A "$BASE_SHA"...HEAD \
+          added=$(git diff --no-renames --name-only --diff-filter=A "$BASE_SHA"...HEAD \
                     -- LeanPool \
                   | grep '\.lean$' \
                   | tr '\n' ' ' || true)
-          modified=$(git diff --name-only --diff-filter=M "$BASE_SHA"...HEAD \
+          modified=$(git diff --no-renames --name-only --diff-filter=M "$BASE_SHA"...HEAD \
                        -- LeanPool \
                      | grep '\.lean$' \
                      | tr '\n' ' ' || true)
@@ -222,7 +227,7 @@ jobs:
             echo "head_build_modules=$head_build_modules"
           } >> "$GITHUB_OUTPUT"
           if [ -z "$files" ]; then
-            echo "No new or modified Lean files in this diff; profile will no-op."
+            echo "No new or modified Lean files in this diff; report will explain that."
           else
             echo "Will profile: $files"
             echo "Compare against merge base $merge_base: $compare"
@@ -489,8 +494,7 @@ jobs:
     # renderer degrades gracefully when a log is missing. `!cancelled()`
     # keeps this off only when the run was cancelled outright.
     if: >-
-      !cancelled() && needs.plan.result == 'success' &&
-      needs.plan.outputs.files != ''
+      !cancelled() && needs.plan.result == 'success'
     runs-on: ubuntu-latest
     name: Report profile
     # Only the reporting job receives comment permissions; measurement jobs
@@ -507,12 +511,14 @@ jobs:
           persist-credentials: false
 
       - name: Download measurement logs
+        if: needs.plan.outputs.files != ''
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           pattern: proof-profile-part-*
           merge-multiple: true
 
       - name: Render profile summary
+        if: needs.plan.outputs.files != ''
         env:
           BASE_SHA: ${{ needs.plan.outputs.base_sha }}
           HEAD_SHA: ${{ needs.plan.outputs.head_sha }}
@@ -546,7 +552,21 @@ jobs:
             || cp scripts/proof-profile/statements.py "$RUNNER_TEMP/statements.py"
           python3 "$RUNNER_TEMP/render.py"
 
-      # A `/profile` comment or dispatch posts the comment itself. The `workflow_run`
+      - name: Report no files to profile
+        if: needs.plan.outputs.files == ''
+        run: |
+          cat > proof-profile.md <<'EOF'
+          ## Proof profile (new / modified Lean files)
+
+          No added or modified Lean files under `LeanPool/` in this PR. No compile-cost measurements are needed.
+
+          _Advisory only — never blocks merge._
+          EOF
+          cat proof-profile.md >> "$GITHUB_STEP_SUMMARY"
+
+      # Same-repo PR runs, `/profile` comments, and dispatches post directly.
+      # Fork PRs use the artifact companion because their token is read-only.
+      # The `workflow_run`
       # companion cannot cover these reliably: GitHub never emits the event
       # for re-run attempts, which silently lost the comment on a bot-opened
       # PR whose first attempt sat waiting for approval (#326).

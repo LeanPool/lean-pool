@@ -48,7 +48,8 @@ variable {s : Set α} (hs : MeasurableSet s)
 noncomputable def extendByZeroFun (f : Lp E p (μ.restrict s)) : Lp E p μ :=
   let hf : MemLp (fun x : α => f x) p (μ.restrict s) := Lp.memLp f
   let hfi : MemLp (s.indicator fun x : α => f x) p μ :=
-    (memLp_indicator_iff_restrict (μ := μ) (p := p) (s := s) (f := fun x : α => f x) hs).2 hf
+    (memLp_indicator_iff_restrict (μ := μ) (p := p) (s := s)
+      (f := fun x : α => f x) hs.nullMeasurableSet).2 hf
   hfi.toLp (s.indicator fun x : α => f x)
 
 omit [NormedSpace ℝ E] [Fact (1 ≤ p)] in
@@ -173,7 +174,7 @@ noncomputable def extendByZeroₗᵢ : Lp E p (μ.restrict s) →ₗᵢ[ℝ] Lp 
     have hfi :
         MemLp (s.indicator fun x : α => f x) p μ :=
       (memLp_indicator_iff_restrict (μ := μ) (p := p) (s := s)
-        (f := fun x : α => f x) hs).2 (Lp.memLp f)
+        (f := fun x : α => f x) hs.nullMeasurableSet).2 (Lp.memLp f)
     -- Norm in the codomain is the `eLpNorm` of the indicator.
     have hnorm_out :
         ‖extendByZeroₗ (μ := μ) (p := p) (s := s) hs f‖ =
@@ -185,7 +186,7 @@ noncomputable def extendByZeroₗᵢ : Lp E p (μ.restrict s) →ₗᵢ[ℝ] Lp 
         eLpNorm (s.indicator fun x : α => f x) p μ =
           eLpNorm (fun x : α => f x) p (μ.restrict s) := by
       simpa using (eLpNorm_indicator_eq_eLpNorm_restrict (μ := μ) (p := p) (s := s)
-        (f := fun x : α => f x) hs)
+        (f := fun x : α => f x) hs.nullMeasurableSet)
     -- Combine with the definition of the `Lp` norm on the restricted space.
     simp [hnorm_out, hnorm_restrict, norm_def]
 

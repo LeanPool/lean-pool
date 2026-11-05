@@ -7,6 +7,7 @@ module
 
 public import LeanPool.PolylogIntegrals.Defs
 public import Mathlib.Analysis.Calculus.SmoothSeries
+public import Mathlib.Analysis.PSeries
 public import Mathlib.NumberTheory.ZetaValues
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog

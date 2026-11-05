@@ -339,10 +339,16 @@ theorem forall_moves_neg {P : GameForm → Prop} {p : Player} {x : GameForm} :
   simp only [moves_neg', Set.mem_neg, Set.forall_neg_mem]
 
 theorem IsOption.add_left {x y z : GameForm} (h : IsOption x y) : IsOption (z + x) (z + y) := by
-  aesop (add simp [moves_add'])
+  rcases h with ⟨_, ⟨p, rfl⟩, hp⟩
+  apply IsOption.of_mem_moves (p := p)
+  rw [moves_add']
+  exact Or.inr ⟨x, hp, rfl⟩
 
 theorem IsOption.add_right {x y z : GameForm} (h : IsOption x y) : IsOption (x + z) (y + z) := by
-  aesop (add simp [moves_add'])
+  rcases h with ⟨_, ⟨p, rfl⟩, hp⟩
+  apply IsOption.of_mem_moves (p := p)
+  rw [moves_add']
+  exact Or.inl ⟨x, hp, rfl⟩
 
 private theorem add_comm' (x y : GameForm) : x + y = y + x := by
   ext

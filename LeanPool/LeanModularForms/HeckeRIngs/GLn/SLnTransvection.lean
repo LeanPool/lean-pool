@@ -82,7 +82,7 @@ private lemma slTransvecG_col0 {m : ℕ} (i j : Fin (m + 1)) (hij : i ≠ j) (c 
 private lemma col0_ne_zero {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ) :
     ∃ i, σ.1 i 0 ≠ 0 := by
   by_contra h; push Not at h
-  linarith [σ.2, Matrix.det_eq_zero_of_column_eq_zero 0 (fun i => h i)]
+  linarith only [h, σ.2, Matrix.det_eq_zero_of_column_eq_zero 0 (fun i => h i)]
 
 private def nzCount {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ) : ℕ :=
   (Finset.univ.filter fun i : Fin (m+1) => σ.1 i 0 ≠ 0).card
@@ -106,7 +106,7 @@ private lemma col0_euclidean_step {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin
     set q := σ.1 i₀ 0 / σ.1 j₀ 0
     have h_new : (slTransvecG i₀ j₀ hij₀ (-q) * σ).1 i₀ 0 = σ.1 i₀ 0 % σ.1 j₀ 0 := by
       rw [slTransvecG_col0]; simp only [ite_true]
-      linarith [(Int.mul_ediv_add_emod (σ.1 i₀ 0) (σ.1 j₀ 0)).symm]
+      linarith only [(Int.mul_ediv_add_emod (σ.1 i₀ 0) (σ.1 j₀ 0)).symm]
     have h_oth : ∀ a, a ≠ i₀ → (slTransvecG i₀ j₀ hij₀ (-q) * σ).1 a 0 = σ.1 a 0 :=
       fun a ha => by rw [slTransvecG_col0]; simp [ha]
     have h_rem : (σ.1 i₀ 0 % σ.1 j₀ 0).natAbs < (σ.1 j₀ 0).natAbs := by
@@ -122,14 +122,14 @@ private lemma col0_euclidean_step {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin
         ((slTransvecG i₀ j₀ hij₀ (-q) * σ).1 k 0).natAbs =
         ∑ k ∈ Finset.univ.erase i₀, (σ.1 k 0).natAbs :=
       Finset.sum_congr rfl fun k hk => by rw [h_oth k (Finset.mem_erase.mp hk).1]
-    rw [h_rest, h_new]; linarith [Nat.lt_of_lt_of_le h_rem hge]
+    rw [h_rest, h_new]; linarith only [hge, h_rem, Nat.lt_of_lt_of_le h_rem hge]
   · push Not at hge
     refine ⟨j₀, i₀, Ne.symm hij₀, -(σ.1 j₀ 0 / σ.1 i₀ 0), ?_⟩
     set q := σ.1 j₀ 0 / σ.1 i₀ 0
     have h_new : (slTransvecG j₀ i₀ (Ne.symm hij₀) (-q) * σ).1 j₀ 0 =
         σ.1 j₀ 0 % σ.1 i₀ 0 := by
       rw [slTransvecG_col0]; simp only [ite_true]
-      linarith [(Int.mul_ediv_add_emod (σ.1 j₀ 0) (σ.1 i₀ 0)).symm]
+      linarith only [(Int.mul_ediv_add_emod (σ.1 j₀ 0) (σ.1 i₀ 0)).symm]
     have h_oth : ∀ a, a ≠ j₀ →
         (slTransvecG j₀ i₀ (Ne.symm hij₀) (-q) * σ).1 a 0 =
         σ.1 a 0 :=
@@ -147,7 +147,7 @@ private lemma col0_euclidean_step {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin
         ((slTransvecG j₀ i₀ (Ne.symm hij₀) (-q) * σ).1 k 0).natAbs =
         ∑ k ∈ Finset.univ.erase j₀, (σ.1 k 0).natAbs :=
       Finset.sum_congr rfl fun k hk => by rw [h_oth k (Finset.mem_erase.mp hk).1]
-    rw [h_rest, h_new]; linarith [Nat.lt_of_lt_of_le h_rem (Nat.le_of_lt hge)]
+    rw [h_rest, h_new]; linarith only [hge, h_rem, Nat.lt_of_lt_of_le h_rem (Nat.le_of_lt hge)]
 
 private lemma col0_reduce {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ) :
     ∃ (L : List (Matrix.SpecialLinearGroup (Fin (m+1)) ℤ)),

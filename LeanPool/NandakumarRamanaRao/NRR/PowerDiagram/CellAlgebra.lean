@@ -6,8 +6,8 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.Defs
+public import LeanPool.NandakumarRamanaRao.NRR.HalfSpace
 
 /-!
 # `NRR.PowerDiagram.CellAlgebra` — exact half‑space description of power cells

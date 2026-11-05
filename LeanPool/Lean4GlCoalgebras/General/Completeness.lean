@@ -534,8 +534,7 @@ lemma rep_next_cor (Γ : Sequent) {Δ : Sequent} {strat : Strategy coalgebraGame
   convert
     (rewind_history_correspondence Γ g.1 strat
       (Fin.find _ (List.mem_iff_get.1 rep)).1 _ _ _ _ g.2.1).1 _ <;>
-    try simp_all <;>
-    try grind
+    (try simp_all; try grind)
   · have length := history_length_in_cone strat g.1 g.2.1
     simp only [g.2.2, reduceCtorEq, ite_false] at *
     have := Fin.find_spec (List.mem_iff_get.1 rep)

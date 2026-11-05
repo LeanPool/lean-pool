@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Analysis.InnerProductSpace.Defs
 public import Mathlib.Topology.Algebra.Module.ModuleTopology
 import Mathlib.Analysis.InnerProductSpace.Calculus

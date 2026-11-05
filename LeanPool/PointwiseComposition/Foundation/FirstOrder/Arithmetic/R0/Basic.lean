@@ -1,0 +1,322 @@
+/-
+Copyright (c) 2026 Formalized Formal Logic contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Formalized Formal Logic contributors
+-/
+
+module
+
+-- Ported and adapted for Lean Pool from the upstream revision recorded in the project card.
+
+public import LeanPool.PointwiseComposition.Foundation.FirstOrder.Arithmetic.Basic
+
+/-! Supporting results for pointwise provable equality. -/
+
+namespace PointwiseComposition
+
+@[expose] public section
+/-!
+# Cobham's theory $\mathsf{R_0}$
+
+-/
+
+noncomputable section
+
+namespace FFL
+namespace FirstOrder
+namespace Arithmetic
+
+/-- Data and laws for 𝐑₀ in `𝐑₀`. -/
+inductive R0 : ArithmeticTheory
+  | equal : ∀ φ ∈ 𝐄𝐐 ℒₒᵣ, R0 φ
+  | Ω₁ (n m : ℕ) : R0 “↑n + ↑m = ↑(n + m)”
+  | Ω₂ (n m : ℕ) : R0 “↑n * ↑m = ↑(n * m)”
+  | Ω₃ (n : ℕ) : R0 “∀ x, x < ↑n ↔ ⋁ i < n, x = ↑i”
+
+/-- The «term𝐑₀» construction in `FFL.FirstOrder.Arithmetic`. -/
+notation "𝐑₀" => R0
+
+namespace R0
+
+instance : 𝐄𝐐 ℒₒᵣ ≼ 𝐑₀ :=
+  Entailment.WeakerThan.ofSubset <| fun φ hp ↦ R0.equal φ hp
+
+instance : ℕ↓[ℒₒᵣ] ⊧* 𝐑₀ :=
+  ⟨by
+    intro σ h
+    rcases h <;>
+      try { simp [models_iff]; done
+      }
+    case equal h =>
+      have : ℕ↓[ℒₒᵣ] ⊧* (𝐄𝐐 ℒₒᵣ : ArithmeticTheory) := inferInstance
+      simpa [models_iff] using models_theory_iff.mp this _ h⟩
+
+end R0
+
+section model
+
+variable {M : Type*} [ORingStructure M] [M↓[ℒₒᵣ] ⊧* 𝐑₀]
+
+open Language ORingStructure
+
+lemma numeral_add_numeral (n m : ℕ) : (numeral n : M) + numeral m = numeral (n + m) := by
+  simpa [models_iff] using Theory.models M _ (R0.Ω₁ n m)
+
+lemma numeral_mul_numeral (n m : ℕ) : (numeral n : M) * numeral m = numeral (n * m) := by
+  simpa [models_iff] using Theory.models M _ (R0.Ω₂ n m)
+
+lemma lt_numeral_iff {x : M} {n : ℕ} : x < numeral n ↔ ∃ i : Fin n, x = numeral i :=
+  by
+  have := by simpa [models_iff] using Theory.models M _ (R0.Ω₃ n)
+  constructor
+  · intro hx
+    rcases (this x).mp hx with ⟨i, hi, rfl⟩
+    exact ⟨⟨i, hi⟩, by simp⟩
+  · rintro ⟨i, rfl⟩
+    exact (this (numeral i)).mpr ⟨i, by simp, rfl⟩
+
+lemma not_numeral_lt_self (n : ℕ) : ¬(numeral n : M) < numeral n := by
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    intro h
+    rcases lt_numeral_iff.mp h with ⟨i, hi⟩
+    exact ih i i.isLt (hi ▸ h)
+
+lemma numeral_ne_numeral_of_ne {n m : ℕ} (h : n ≠ m) : (numeral n : M) ≠ numeral m :=
+  by
+  rcases Nat.lt_or_gt_of_ne h with hnm | hnm
+  · intro he
+    exact not_numeral_lt_self n (he ▸ lt_numeral_iff.mpr ⟨⟨n, hnm⟩, by simp⟩)
+  · intro he
+    exact not_numeral_lt_self m (he ▸ lt_numeral_iff.mpr ⟨⟨m, hnm⟩, by simp⟩)
+
+@[simp]
+lemma numeral_inj_iff {n m : ℕ} : (numeral n : M) = numeral m ↔ n = m :=
+  ⟨by contrapose; exact numeral_ne_numeral_of_ne, by rintro rfl; rfl⟩
+
+@[simp]
+lemma numeral_lt_numeral_iff : (numeral n : M) < numeral m ↔ n < m :=
+  ⟨by
+    contrapose
+    intro h H
+    rcases lt_numeral_iff.mp H with ⟨i, hi⟩
+    rcases numeral_inj_iff.mp hi
+    exact (lt_self_iff_false m).mp (lt_of_le_of_lt (Nat.le_of_not_gt h) i.prop), fun h ↦
+    lt_numeral_iff.mpr ⟨⟨n, h⟩, by simp⟩⟩
+
+open Hierarchy
+
+lemma val_numeral {n ξ} (bv : Fin n → ℕ) (fv : ξ → ℕ) (t : ArithmeticSemiterm ξ n) :
+    t.val (M := M) (numeral ∘ bv) (numeral ∘ fv) = numeral (t.val bv fv) :=
+  match t with
+  | #_ => by simp
+  | &_ => by simp
+  | .func Language.Zero.zero _ => by simp [Matrix.empty_eq]
+  | .func Language.One.one _ => by simp [Matrix.empty_eq]
+  | .func Language.Add.add v => by
+    simp [Semiterm.val_func, val_numeral _ _ (v 0), val_numeral _ _ (v 1), numeral_add_numeral]
+  | .func Language.Mul.mul v => by
+    simp [Semiterm.val_func, val_numeral _ _ (v 0), val_numeral _ _ (v 1), numeral_mul_numeral]
+
+lemma bold_sigma_one_completeness {n} {φ : ArithmeticSemiformula ξ n} (hp : Hierarchy Σ 1 φ)
+    {bv : Fin n → ℕ} {fv : ξ → ℕ} :
+    φ.Eval bv fv → φ.Eval (M := M) (numeral ∘ bv) (numeral ∘ fv) :=
+  by
+  revert bv
+  apply sigma₁_induction' hp
+  case hVerum => simp
+  case hFalsum => simp
+  case hEQ => intro n t₁ t₂ e; simp [val_numeral]
+  case hNEQ => intro n t₁ t₂ e; simp [val_numeral]
+  case hLT => intro n t₁ t₂ e; simp [val_numeral]
+  case hNLT => intro n t₁ t₂ e; simp [val_numeral]
+  case hAnd => simp; grind
+  case hOr => simp; grind
+  case hBall =>
+    intro n t φ _ ihp bv
+    suffices
+      (∀ x < t.val bv fv, (φ.Eval (x :> bv) fv)) →
+        ∀ x < numeral (t.val bv fv), (φ.Eval (x :> numeral ∘ bv) (numeral ∘ fv))
+      by simpa [val_numeral]
+    intro hp x hx
+    rcases lt_numeral_iff.mp hx with ⟨x, rfl⟩
+    simpa [Matrix.comp_vecCons''] using ihp (hp x (by simp))
+  case hExs =>
+    simp only [Semiformula.eval_ex, Nat.succ_eq_add_one, forall_exists_index]
+    intro n φ _ ihp e x hp
+    exact ⟨numeral x, by simpa [Matrix.comp_vecCons''] using ihp hp⟩
+
+lemma R0.model_complete {σ : ArithmeticSentence} (hσ : Hierarchy Σ 1 σ) :
+    ℕ↓[ℒₒᵣ] ⊧ σ → M↓[ℒₒᵣ] ⊧ σ :=
+  by
+  suffices σ.Evalb (M := ℕ) ![] → σ.Evalb (M := M) ![] by simpa [models_iff]
+  intro h
+  simpa [Matrix.empty_eq, Empty.eq_elim] using bold_sigma_one_completeness hσ h
+
+variable (M)
+
+lemma nat_extention_sigmaOne {σ : ArithmeticSentence} (hσ : Hierarchy Σ 1 σ) :
+    ℕ↓[ℒₒᵣ] ⊧ σ → M↓[ℒₒᵣ] ⊧ σ := fun h ↦ by
+  simpa [Matrix.empty_eq] using R0.model_complete (M := M) hσ h
+
+lemma nat_extention_piOne {σ : ArithmeticSentence} (hσ : Hierarchy Π 1 σ) :
+    M↓[ℒₒᵣ] ⊧ σ → ℕ↓[ℒₒᵣ] ⊧ σ := by
+  contrapose
+  simpa using nat_extention_sigmaOne M (σ := ∼σ) (by simpa using hσ)
+
+variable {M}
+
+lemma bold_sigma_one_completeness' {n} {σ : ArithmeticSemisentence n} (hσ : Hierarchy Σ 1 σ)
+    {bv} : σ.Evalb (M := ℕ) bv → σ.Evalb (M := M) (numeral ∘ bv) := fun h ↦ by
+  simpa [Empty.eq_elim] using
+    bold_sigma_one_completeness (M := M) (φ := σ) hσ (fv := Empty.elim) (bv := bv) h
+
+instance consistent : Entailment.Consistent 𝐑₀ :=
+  let : ℕ↓[ℒₒᵣ] ⊧* 𝐑₀ := inferInstance
+  Sound.consistent_of_satisfiable ⟨_, this⟩
+
+end model
+
+variable {T : ArithmeticTheory} [𝐑₀ ≼ T]
+
+theorem sigma_one_completeness {σ : ArithmeticSentence} (hσ : Hierarchy Σ 1 σ) :
+    ℕ↓[ℒₒᵣ] ⊧ σ → T ⊢ σ := fun H =>
+  haveI : 𝐄𝐐 _ ≼ T := Entailment.WeakerThan.trans (𝓣 := 𝐑₀) inferInstance inferInstance
+  complete.{0} _ _ <| fun M _ _ ↦
+    by
+    have : M↓[ℒₒᵣ] ⊧* 𝐑₀ := ModelsTheory.of_provably_subtheory M 𝐑₀ T inferInstance
+    exact R0.model_complete hσ H
+
+open _root_.Classical Classical in
+theorem sigma_one_completeness_iff [T.SoundOnHierarchy Σ 1] {σ : ArithmeticSentence}
+    (hσ : Hierarchy Σ 1 σ) : ℕ↓[ℒₒᵣ] ⊧ σ ↔ T ⊢ σ :=
+  haveI : 𝐑₀ ≼ T := Entailment.WeakerThan.trans (𝓣 := T) inferInstance inferInstance
+  ⟨fun h ↦ sigma_one_completeness hσ h, fun h ↦ T.soundOnHierarchy Σ 1 h (by simp [hσ])⟩
+
+/-!
+## Unprovable theorems of $\mathsf{R}_0$
+
+$\omega + 1$ (the structure of order type $\omega + 1$) is a models of $\mathsf{R}_0$.
+-/
+
+/-! ω + 1 models 𝐑₀ -/
+namespace R0
+namespace Countermodel
+
+/-- The Omega Add One construction in `FFL.FirstOrder.Arithmetic.R0.Countermodel`. -/
+def OmegaAddOne :=
+  Option ℕ
+
+namespace OmegaAddOne
+
+instance : NatCast OmegaAddOne :=
+  ⟨fun i ↦ .some i⟩
+
+instance (n : ℕ) : OfNat OmegaAddOne n :=
+  ⟨.some n⟩
+
+instance : Top OmegaAddOne :=
+  ⟨.none⟩
+
+instance : ORingStructure OmegaAddOne
+    where
+  add a
+    b :=
+    match a, b with
+    | .some i, .some j => i + j
+    | .none, _ => 0
+    | _, .none => 0
+  mul a
+    b :=
+    match a, b with
+    | .some i, .some j => (i * j)
+    | .none, _ => 0
+    | _, .none => 0
+  lt a
+    b :=
+    match a, b with
+    | .some i, .some j => i < j
+    | .none, _ => False
+    | .some _, .none => True
+
+@[simp]
+lemma coe_zero : (↑(0 : ℕ) : OmegaAddOne) = 0 :=
+  rfl
+
+@[simp]
+lemma coe_one : (↑(1 : ℕ) : OmegaAddOne) = 1 :=
+  rfl
+
+@[simp]
+lemma coe_add (a b : ℕ) : ↑(a + b) = ((↑a + ↑b) : OmegaAddOne) :=
+  rfl
+
+@[simp]
+lemma coe_mul (a b : ℕ) : ↑(a * b) = ((↑a * ↑b) : OmegaAddOne) :=
+  rfl
+
+@[simp]
+lemma lt_coe_iff (n m : ℕ) : (n : OmegaAddOne) < (m : OmegaAddOne) ↔ n < m := by rfl
+
+@[simp]
+lemma not_top_lt (n : ℕ) : ¬⊤ < (n : OmegaAddOne) := by rintro ⟨⟩
+
+@[simp]
+lemma lt_top (n : ℕ) : (n : OmegaAddOne) < ⊤ := by trivial
+
+@[simp]
+lemma top_add_zero : (⊤ : OmegaAddOne) + 0 = 0 := by rfl
+
+lemma exists_add_zero_ne_self : ∃ x : OmegaAddOne, x + 0 ≠ x :=
+  ⟨⊤, by simp⟩
+
+@[simp]
+lemma numeral_eq (n : ℕ) : (ORingStructure.numeral n : OmegaAddOne) = n :=
+  match n with
+  | 0 => rfl
+  | 1 => rfl
+  | n + 2 => by simp [ORingStructure.numeral, numeral_eq (n + 1)]; rfl
+
+@[simp]
+lemma coe_inj_iff (n m : ℕ) : (↑n : OmegaAddOne) = (↑m : OmegaAddOne) ↔ n = m :=
+  Option.some_inj
+
+/-- The cases' construction in `FFL.FirstOrder.Arithmetic.R0.Countermodel.OmegaAddOne`. -/
+def cases' {P : OmegaAddOne → Sort*} (nat : (n : ℕ) → P n) (top : P ⊤) : ∀ x : OmegaAddOne, P x
+  | .some n => nat n
+  | .none => top
+
+instance : OmegaAddOne↓[ℒₒᵣ] ⊧* 𝐑₀ :=
+  ⟨by
+    intro σ h
+    rcases h
+    case equal
+      h =>
+      have : OmegaAddOne↓[ℒₒᵣ] ⊧* (𝐄𝐐 _ : ArithmeticTheory) := inferInstance
+      exact models_theory_iff.mp this _ h
+    case Ω₃
+      n =>
+      suffices ∀ x : OmegaAddOne, x < ↑n ↔ ∃ i < n, x = ↑i by simpa [models_iff]
+      intro x
+      cases x using cases' <;> simp
+    all_goals simp [models_iff]⟩
+
+end OmegaAddOne
+
+end Countermodel
+
+lemma unprovable_addZero : 𝐑₀ ⊬ “∀ x, x + 0 = x” :=
+  unprovable_of_countermodel _ (M := Countermodel.OmegaAddOne) <| by
+    simpa [notModels_iff] using Countermodel.OmegaAddOne.exists_add_zero_ne_self
+
+end R0
+
+end Arithmetic
+end FirstOrder
+end FFL
+
+end
+
+end
+
+end PointwiseComposition

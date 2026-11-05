@@ -61,18 +61,18 @@ theorem pv_split_at_crossing {γ : ℝ → ℂ} {a b : ℝ} {s : ℂ} {ε δ : �
   have hδ_lt_right : δ < b - t₀ := lt_of_lt_of_le hδ_small (min_le_right _ _)
   have ha_lt_t₀ : a < t₀ := ht₀.1
   have ht₀_lt_b : t₀ < b := ht₀.2
-  have h_left_lt : a < t₀ - δ := by linarith
-  have h_mid_lt : t₀ - δ < t₀ + δ := by linarith
-  have h_right_lt : t₀ + δ < b := by linarith
+  have h_left_lt : a < t₀ - δ := by linarith only [hδ_lt_left]
+  have h_mid_lt : t₀ - δ < t₀ + δ := by linarith only [hδ]
+  have h_right_lt : t₀ + δ < b := by linarith only [hδ_lt_right]
   -- F = 0 on the middle segment [t₀ - δ, t₀ + δ]
   have hF_mid : ∀ t ∈ uIoc (t₀ - δ) (t₀ + δ), F t = 0 := by
     intro t ht
-    rw [uIoc_of_le (by linarith)] at ht
+    rw [uIoc_of_le (by linarith only [hδ])] at ht
     simp only [hF_def]
     rw [ite_eq_right (not_lt.mpr _)]
     apply h_near
     rw [abs_le]
-    constructor <;> [linarith [ht.1]; linarith [ht.2]]
+    constructor <;> [linarith only [ht, ht.1]; linarith only [ht, ht.2]]
   -- F = (γ t - s)⁻¹ * deriv γ t a.e. on [a, t₀ - δ]
   -- (The single boundary point t = t₀ - δ is measure zero; for all other t in Ioc a (t₀-δ)
   --  we have |t - t₀| > δ strictly, so h_far applies.)
@@ -85,10 +85,10 @@ theorem pv_split_at_crossing {γ : ℝ → ℂ} {a b : ℝ} {s : ℂ} {ε δ : �
     simp only [hF_def]
     rw [ite_eq_left]
     -- ht : t ∈ Ioc a (t₀ - δ), t ≠ t₀ - δ, so t < t₀ - δ, giving |t - t₀| > δ
-    apply h_far t ⟨le_of_lt ht.1, le_trans ht.2 (by linarith)⟩
-    rw [abs_of_nonpos (by linarith [ht.2])]
+    apply h_far t ⟨le_of_lt ht.1, le_trans ht.2 (by linarith only [hδ, hδ_lt_right])⟩
+    rw [abs_of_nonpos (by linarith only [hδ, ht, ht.2])]
     have : t < t₀ - δ := lt_of_le_of_ne ht.2 (fun h => ht_ne (Set.mem_singleton_iff.mpr h))
-    linarith
+    linarith only [this]
   -- F = (γ t - s)⁻¹ * deriv γ t a.e. on [t₀ + δ, b]
   have hF_right : ∀ᵐ t ∂volume, t ∈ uIoc (t₀ + δ) b →
       F t = (γ t - s)⁻¹ * deriv γ t := by
@@ -99,9 +99,9 @@ theorem pv_split_at_crossing {γ : ℝ → ℂ} {a b : ℝ} {s : ℂ} {ε δ : �
     simp only [hF_def]
     rw [ite_eq_left]
     -- ht : t ∈ Ioc (t₀ + δ) b, so t₀ + δ < t, giving |t - t₀| = t - t₀ > δ
-    apply h_far t ⟨le_trans (by linarith) (le_of_lt ht.1), ht.2⟩
-    rw [abs_of_nonneg (by linarith [ht.1])]
-    linarith [ht.1]
+    apply h_far t ⟨le_trans (by linarith only [hδ, hδ_lt_left]) (le_of_lt ht.1), ht.2⟩
+    rw [abs_of_nonneg (by linarith only [hδ, ht, ht.1])]
+    linarith only [ht, ht.1]
   -- Integrability of F on each piece
   have hF_int_left : IntervalIntegrable F volume a (t₀ - δ) :=
     hint_left.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr
@@ -131,6 +131,8 @@ theorem pv_split_at_crossing {γ : ℝ → ℂ} {a b : ℝ} {s : ℂ} {ε δ : �
       ∫ t in (t₀ + δ)..b, (γ t - s)⁻¹ * deriv γ t :=
     integral_congr_ae hF_right
   -- Assemble
-  simp_all
+  simp_all only [mem_Ioo, and_self, lt_min_iff, mem_Icc, and_imp, gt_iff_lt, ite_eq_right_iff,
+    mul_eq_zero,
+    inv_eq_zero, ite_eq_left_iff, not_lt, zero_eq_mul, add_zero]
 
 end ContourIntegral

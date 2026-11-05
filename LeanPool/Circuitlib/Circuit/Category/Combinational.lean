@@ -398,7 +398,7 @@ lemma pentagon
     tensorHomVal, CategoryStruct.id, id, idVal,
     Wires.get_append_vector, Wires.get_cast, Wires.get_cast_vector,
     Wires.get_take, Wires.get_take_vector, Wires.get_drop, Wires.get_drop_vector]
-  split_ifs <;> exact congrArg v.get (Fin.ext (by simp <;> omega))
+  split_ifs <;> exact congrArg v.get (Fin.ext (by simp; all_goals omega))
 
 omit [SemilatticeSup V] in
 lemma leftUnitor_eq
@@ -565,7 +565,7 @@ lemma braiding_hom_inv_id
     monoidal_tensorObj_obj, id_coe_apply, Wires.get_cast_vector,
     Wires.get_append_vector, Wires.get_take, Wires.get_take_vector,
     Wires.get_drop, Wires.get_drop_vector]
-  split_ifs <;> exact congrArg v.get (Fin.ext (by simp <;> omega))
+  split_ifs <;> exact congrArg v.get (Fin.ext (by simp; all_goals omega))
 
 /-- The braiding isomorphism of the symmetric monoidal structure. -/
 @[inline, simp]
@@ -594,7 +594,7 @@ lemma braiding_naturality_left
       | (exact congrArg v.get (Fin.ext (by simp)))
       | (congr 1 <;>
           first
-            | exact Fin.ext (by simp; try omega)
+            | exact Fin.ext (by simp)
             | (refine congrArg f.val (Wires.ext fun k => ?_)
                simp only [Wires.get_cast_vector,
                  Wires.get_append_vector,
@@ -644,7 +644,7 @@ lemma braiding_naturality_right
       | (exact congrArg v.get (Fin.ext (by simp)))
       | (congr 1 <;>
           first
-            | exact Fin.ext (by simp; try omega)
+            | exact Fin.ext (by simp)
             | (refine congrArg f.val (Wires.ext fun k => ?_)
                simp only [Wires.get_cast_vector,
                  Wires.get_append_vector,
@@ -724,7 +724,7 @@ lemma hexagon_forward
   split_ifs <;>
     first
       | (exfalso; omega)
-      | (exact congrArg v.get (Fin.ext (by simp <;> omega)))
+      | (exact congrArg v.get (Fin.ext (by simp; all_goals omega)))
 
 lemma hexagon_reverse
     (X Y Z : CombinationalCircuitCategory V G) :

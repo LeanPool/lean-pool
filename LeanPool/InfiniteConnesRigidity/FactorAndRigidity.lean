@@ -7,11 +7,6 @@ Authors: OpenAI, Dean Cureton
 module
 
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.RingTheory.WittVector.IsPoly
-import Mathlib.Tactic.ENatToNat
-import Mathlib.Tactic.Polynomial.Basic
-import Mathlib.Tactic.ReduceModChar
-import Std.Tactic.BVDecide.Normalize.Prop
 public import LeanPool.InfiniteConnesRigidity.SpectralAndPropertyT
 import LeanPool.InfiniteConnesRigidity.GroupConstruction
 
@@ -1249,6 +1244,18 @@ private theorem semidirectIntrinsicSubquotientEquiv_mk_inclusion
   rw [← hmk, quotientEquiv.symm_apply_apply]
   exact multiplicativeTwoTorsionQuotientEquiv_mk hfour x
 
+/-- Conjugation of the abelian normal factor depends only on the quotient coordinate. -/
+private theorem semidirect_conj_inl_commutative {N H : Type*} [CommGroup N] [Group H]
+    (φ : H →* MulAut N) (g : SemidirectProduct N H φ) (n : N) :
+    g * SemidirectProduct.inl n * g⁻¹ = SemidirectProduct.inl (φ g.right n) := by
+  apply SemidirectProduct.ext
+  · simp only [mul_assoc, SemidirectProduct.mul_left, SemidirectProduct.left_inl,
+      SemidirectProduct.right_inl, map_one, SemidirectProduct.inv_left, map_inv,
+      MulAut.inv_apply, MulAut.one_apply, mul_comm, map_mul, MulEquiv.apply_symm_apply,
+      mul_inv_cancel_left]
+  · simp only [SemidirectProduct.mul_right, SemidirectProduct.right_inl, mul_one,
+      SemidirectProduct.inv_right, mul_inv_cancel]
+
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem semidirectIntrinsicSubquotientEquiv_conjugation
     [DistribMulAction K E]
@@ -1281,26 +1288,10 @@ private theorem semidirectIntrinsicSubquotientEquiv_conjugation
       apply Subtype.ext
       change g * SemidirectProduct.inl
           (Multiplicative.ofAdd (Multiplicative.toAdd y).val) * g⁻¹ =
-        SemidirectProduct.inl (Multiplicative.ofAdd
-          (Multiplicative.toAdd y').val)
-      change g * SemidirectProduct.inl
-          (Multiplicative.ofAdd (Multiplicative.toAdd y).val) * g⁻¹ =
         SemidirectProduct.inl
-          (Multiplicative.ofAdd (g.right •
-            (Multiplicative.toAdd y).val))
+          (Multiplicative.ofAdd (g.right • (Multiplicative.toAdd y).val))
       rw [hact]
-      change g * SemidirectProduct.inl
-          (Multiplicative.ofAdd (Multiplicative.toAdd y).val) * g⁻¹ =
-        SemidirectProduct.inl
-          (φ g.right
-            (Multiplicative.ofAdd (Multiplicative.toAdd y).val))
-      apply SemidirectProduct.ext
-      · simp only [mul_assoc, SemidirectProduct.mul_left, SemidirectProduct.left_inl,
-          SemidirectProduct.right_inl, map_one, SemidirectProduct.inv_left, map_inv,
-          MulAut.inv_apply, MulAut.one_apply, mul_comm, map_mul, MulEquiv.apply_symm_apply,
-          mul_inv_cancel_left]
-      · simp only [SemidirectProduct.mul_right, SemidirectProduct.right_inl, mul_one,
-          SemidirectProduct.inv_right, mul_inv_cancel]
+      exact semidirect_conj_inl_commutative φ g _
     change Multiplicative.toAdd
         (semidirectIntrinsicSubquotientEquiv φ hfour I D hI hD
           (QuotientGroup.mk' (intrinsicDenominator I D)
@@ -2169,25 +2160,25 @@ private theorem primitiveVector_specialLinear_completion_of_coordinateIdeal (v :
   obtain ⟨c, hc⟩ := (Ideal.mem_span_range_iff_exists_fun).mp hone
   let f : V →ₗ[R] R := Fintype.linearCombination R c
   have hfv : f v = 1 := by
-    simpa [f, Fintype.linearCombination_apply, smul_eq_mul, mul_comm] using hc
+    simpa only [f, Fintype.linearCombination_apply, smul_eq_mul, mul_comm] using hc
   let N : Submodule R V := LinearMap.ker f
   obtain ⟨n, b⟩ := Submodule.basisOfPid (Pi.basisFun R (Fin 4)) N
   have hli : ∀ (a : R), ∀ x ∈ N, a • v + x = 0 → a = 0 := by
     intro a x hx h
     have hx' : f x = 0 := LinearMap.mem_ker.mp hx
     have hz := congrArg f h
-    simpa [map_add, map_smul, hfv, hx'] using hz
+    simpa only [map_add, map_smul, hfv, hx', smul_eq_mul, mul_one, add_zero, map_zero] using hz
   have hsp : ∀ z : V, ∃ a : R, z + a • v ∈ N := by
     intro z
     refine ⟨-(f z), ?_⟩
     apply LinearMap.mem_ker.mpr
-    simp [map_add, map_smul, hfv]
+    simp only [map_add, map_smul, hfv, neg_smul, map_neg, smul_eq_mul, mul_one, add_neg_cancel]
   let bfull : Module.Basis (Fin (n + 1)) R V :=
     Module.Basis.mkFinCons v b hli hsp
   have hn : n + 1 = 4 := by
     have hcard := Fintype.card_congr
       (bfull.indexEquiv (Pi.basisFun R (Fin 4)))
-    simpa using hcard
+    simpa only [Nat.reduceEqDiff, Fintype.card_fin] using hcard
   let bfour : Module.Basis (Fin 4) R V := bfull.reindex (finCongr hn)
   have hbzero : bfour 0 = v := by
     have hz : (finCongr hn).symm (0 : Fin 4) = (0 : Fin (n + 1)) :=
@@ -2207,8 +2198,9 @@ private theorem primitiveVector_specialLinear_completion_of_coordinateIdeal (v :
   apply funext
   intro i
   change A.mulVec e i = v i
-  simp [A, Matrix.mulVec, dotProduct, e, Module.Basis.toMatrix_apply,
-    hbzero]
+  simp only [A, Matrix.mulVec, dotProduct, e, Module.Basis.toMatrix_apply, hbzero,
+    Pi.basisFun_repr, Fin.isValue, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq',
+    Finset.mem_univ, ↓reduceIte]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem primitiveVector_specialLinear_completion (v : V)
@@ -2858,7 +2850,8 @@ private theorem invariantDual_boxDetection_bound
     (boxDetectionSet N) standard hstandard
     (fun v _ ↦ dualDetectionSet_measurable (polynomialVectorVal v))
     (boxDetectionSet_measurable N) hpoint huniform
-  simpa [standard] using hbound
+  simpa only [standard, ProbabilityMeasure.measureReal_eq_coe_coeFn, ge_iff_le,
+    polynomialVectorVal_boundedStandardVector] using hbound
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem dualProbability_detection_gap
@@ -3400,6 +3393,7 @@ private theorem groupFactorUnitary_apply
       F ((l2Reindex (Multiplicative.toAdd : Multiplicative A ≃ A))
         (semidirectFubini φ ξ h)) := rfl
 
+
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem groupFactorUnitary_conj_inl
     (φ : H →* MulAut (Multiplicative A))
@@ -3417,7 +3411,7 @@ private theorem groupFactorUnitary_conj_inl
           (leftRegularUnitary (Multiplicative.ofAdd a) :
             GroupL2 (Multiplicative A) →L[ℂ]
               GroupL2 (Multiplicative A))) := by
-  apply ContinuousLinearMap.ext
+  apply conjStarAlgEquiv_eq_of_intertwining
   intro ξ
   apply lp.ext
   funext h
@@ -3427,22 +3421,15 @@ private theorem groupFactorUnitary_conj_inl
           (SemidirectProduct.inl (Multiplicative.ofAdd a) :
             SemidirectProduct (Multiplicative A) H φ) :
               GroupL2 (SemidirectProduct (Multiplicative A) H φ) →L[ℂ]
-                GroupL2 (SemidirectProduct (Multiplicative A) H φ))
-          ((groupFactorUnitary φ X F).symm ξ)) h) =
-      normalFourierCoordinates X F
-        ((leftRegularUnitary (Multiplicative.ofAdd a) :
-          GroupL2 (Multiplicative A) →L[ℂ]
-            GroupL2 (Multiplicative A))
-          ((normalFourierCoordinates X F).symm (ξ h)))
-  congr 1
+                GroupL2 (SemidirectProduct (Multiplicative A) H φ)) ξ) h) =
+    (normalFourierCoordinates X F).conjStarAlgEquiv
+      (leftRegularUnitary (Multiplicative.ofAdd a))
+      (normalFourierCoordinates X F (semidirectFubini φ ξ h))
+  rw [LinearIsometryEquiv.conjStarAlgEquiv_apply_apply,
+    LinearIsometryEquiv.symm_apply_apply]
+  apply congrArg (normalFourierCoordinates X F)
   ext b
-  rw [semidirectFubini_leftRegular_inl_apply]
-  change (semidirectFubini φ
-      ((groupFactorUnitary φ X F).symm ξ) h)
-        ((Multiplicative.ofAdd a)⁻¹ * b) =
-      ((normalFourierCoordinates X F).symm (ξ h))
-        ((Multiplicative.ofAdd a)⁻¹ * b)
-  congr 1
+  exact semidirectFubini_leftRegular_inl_apply φ (Multiplicative.ofAdd a) ξ h b
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private def gammaGroupFactorUnitary (n : ℕ) :
@@ -3519,16 +3506,6 @@ private theorem splitL2Reindex_single [DecidableEq D]
   rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
-private theorem splitFourierEquiv_single_smul [DecidableEq D]
-    (d : D) (c : ℂ) :
-    splitFourierEquiv (lp.single 2 d c) = c • splitCharacterL2 d := by
-  classical
-  have hsingle : lp.single (E := fun _ : D => ℂ) 2 d c =
-      c • lp.single (E := fun _ : D => ℂ) 2 d (1 : ℂ) := by
-    simpa only [smul_eq_mul, mul_one] using (lp.single_smul (E := fun _ : D => ℂ) 2 d c (1 : ℂ))
-  rw [hsingle, map_smul, splitFourierEquiv_single]
-
-/-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem splitCharacterL2_zero :
     splitCharacterL2 0 = Lp.const 2 productHaar (1 : ℂ) := by
   apply Lp.ext
@@ -3563,23 +3540,13 @@ private theorem splitFourierEquiv_kDLinear (k : K) (ξ : GroupL2 D) :
   have h : left = right := by
     apply lp.ext_continuousLinearMap (by simp only [ne_eq, ENNReal.ofNat_ne_top, not_false_eq_true])
     intro d
-    apply ContinuousLinearMap.ext
-    intro c
+    apply ContinuousLinearMap.ext_ring
     change splitFourierEquiv
-        (l2Reindex (kDLinear k).toEquiv (lp.single 2 d c)) =
+        (l2Reindex (kDLinear k).toEquiv (lp.single 2 d (1 : ℂ))) =
       crossedActionL2Equiv paperSplitHaarAction k
-        (splitFourierEquiv (lp.single 2 d c))
-    rw [splitL2Reindex_single, splitFourierEquiv_single_smul,
-      splitFourierEquiv_single_smul]
-    let hp : MeasurePreserving
-        (paperSplitPerm k⁻¹ : X × Y → X × Y) productHaar productHaar :=
-      paperSplitHaarAction.action_preserves_measure k⁻¹
-    change c • splitCharacterL2 (kDLinear k d) =
-      (Lp.compMeasurePreservingₗ ℂ (paperSplitPerm k⁻¹) hp)
-        (c • splitCharacterL2 d)
-    rw [map_smul]
-    exact congrArg (fun x : Lp ℂ 2 productHaar => c • x)
-      (splitCharacterL2_kDLinear k d)
+        (splitFourierEquiv (lp.single 2 d (1 : ℂ)))
+    rw [splitL2Reindex_single, splitFourierEquiv_single, splitFourierEquiv_single]
+    exact splitCharacterL2_kDLinear k d
   exact DFunLike.congr_fun h ξ
 
 end
@@ -3615,7 +3582,7 @@ private theorem groupFactorUnitary_conj_inr
           GroupL2 (SemidirectProduct (Multiplicative A) H φ) →L[ℂ]
             GroupL2 (SemidirectProduct (Multiplicative A) H φ)) =
       (crossedGroupUnitary X k).toContinuousLinearEquiv.toContinuousLinearMap := by
-  apply ContinuousLinearMap.ext
+  apply conjStarAlgEquiv_eq_of_intertwining
   intro ξ
   apply lp.ext
   funext h
@@ -3625,32 +3592,24 @@ private theorem groupFactorUnitary_conj_inr
           (SemidirectProduct.inr k :
             SemidirectProduct (Multiplicative A) H φ) :
             GroupL2 (SemidirectProduct (Multiplicative A) H φ) →L[ℂ]
-              GroupL2 (SemidirectProduct (Multiplicative A) H φ))
-          ((groupFactorUnitary φ X F).symm ξ)) h) =
-      crossedActionL2Equiv X k (ξ (k⁻¹ * h))
+              GroupL2 (SemidirectProduct (Multiplicative A) H φ)) ξ) h) =
+    crossedActionL2Equiv X k
+      (normalFourierCoordinates X F (semidirectFubini φ ξ (k⁻¹ * h)))
   have hnormal :
       semidirectFubini φ
         ((leftRegularUnitary
           (SemidirectProduct.inr k :
             SemidirectProduct (Multiplicative A) H φ) :
             GroupL2 (SemidirectProduct (Multiplicative A) H φ) →L[ℂ]
-              GroupL2 (SemidirectProduct (Multiplicative A) H φ))
-          ((groupFactorUnitary φ X F).symm ξ)) h =
-      l2Reindex (φ k).toEquiv
-        (semidirectFubini φ ((groupFactorUnitary φ X F).symm ξ)
-          (k⁻¹ * h)) := by
+              GroupL2 (SemidirectProduct (Multiplicative A) H φ)) ξ) h =
+      l2Reindex (φ k).toEquiv (semidirectFubini φ ξ (k⁻¹ * h)) := by
     ext a
     rw [semidirectFubini_leftRegular_inr_apply, l2Reindex_apply]
-    apply congrArg (fun b : Multiplicative A =>
-      (semidirectFubini φ
-        ((groupFactorUnitary φ X F).symm ξ) (k⁻¹ * h)) b)
+    apply congrArg (fun b : Multiplicative A => (semidirectFubini φ ξ (k⁻¹ * h)) b)
     change φ k⁻¹ a = (φ k).symm a
     rw [map_inv]
     rfl
   rw [hnormal, hcov]
-  congr 1
-  exact congrArg (fun z => z (k⁻¹ * h))
-    ((groupFactorUnitary φ X F).apply_symm_apply ξ)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem carryTaggedFourierCovariance (n : ℕ) (k : K)
@@ -3711,16 +3670,6 @@ private theorem gammaGroupFactorUnitary_conj_inr (n : ℕ) (k : K) :
           GroupL2 (Gamma n) →L[ℂ] GroupL2 (Gamma n)) =
       (crossedGroupUnitary
         (paperCarryHaarAction n) k).toContinuousLinearEquiv.toContinuousLinearMap := by
-  change
-    (groupFactorUnitary (kEAction n) (paperCarryHaarAction n)
-      (carryFourierEquiv n)).conjStarAlgEquiv
-      (leftRegularUnitary
-        (SemidirectProduct.inr k :
-          SemidirectProduct (Multiplicative (E n)) K (kEAction n)) :
-          GroupL2 (SemidirectProduct (Multiplicative (E n)) K (kEAction n))
-            →L[ℂ]
-          GroupL2 (SemidirectProduct (Multiplicative (E n)) K (kEAction n))) =
-      (crossedGroupUnitary (paperCarryHaarAction n) k).toContinuousLinearEquiv.toContinuousLinearMap
   exact groupFactorUnitary_conj_inr
     (kEAction n) (paperCarryHaarAction n) (carryFourierEquiv n)
     (carryTaggedFourierCovariance n) k
@@ -3733,13 +3682,8 @@ private theorem lambdaGroupFactorUnitary_conj_inr (k : K) :
           GroupL2 Lambda →L[ℂ] GroupL2 Lambda) =
       (crossedGroupUnitary
         paperSplitHaarAction k).toContinuousLinearEquiv.toContinuousLinearMap := by
-  change
-    (groupFactorUnitary kDAction paperSplitHaarAction splitFourierEquiv).conjStarAlgEquiv
-      (leftRegularUnitary (SemidirectProduct.inr k : Lambda) :
-          GroupL2 Lambda →L[ℂ] GroupL2 Lambda) =
-      (crossedGroupUnitary paperSplitHaarAction k).toContinuousLinearEquiv.toContinuousLinearMap
-  apply groupFactorUnitary_conj_inr
-  exact splitTaggedFourierCovariance
+  exact groupFactorUnitary_conj_inr kDAction paperSplitHaarAction splitFourierEquiv
+    splitTaggedFourierCovariance k
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem gammaGroupFactorUnitary_conj_inl (n : ℕ) (η : E n) :
@@ -3749,21 +3693,12 @@ private theorem gammaGroupFactorUnitary_conj_inl (n : ℕ) (η : E n) :
           GroupL2 (Gamma n) →L[ℂ] GroupL2 (Gamma n)) =
       crossedMultiplier (paperCarryHaarAction n)
         (carryCharacterCoefficient n η) := by
-  calc
-    _ = crossedFiberwiseOperator (K := K)
-        ((normalFourierCoordinates (paperCarryHaarAction n)
-          (carryFourierEquiv n)).conjStarAlgEquiv
-            (leftRegularUnitary (Multiplicative.ofAdd η) :
-              GroupL2 (Multiplicative (E n)) →L[ℂ]
-                GroupL2 (Multiplicative (E n)))) :=
-      groupFactorUnitary_conj_inl (A := E n) (H := K)
-        (kEAction n) (paperCarryHaarAction n) (carryFourierEquiv n) η
-    _ = crossedMultiplier (paperCarryHaarAction n)
-        (carryCharacterCoefficient n η) := by
-      change crossedFiberwiseOperator (K := K) _ =
-        crossedFiberwiseOperator (K := K) _
-      congr 1
-      exact carryFourier_conjugates_normal_generator n η
+  refine (groupFactorUnitary_conj_inl (A := E n) (H := K)
+      (kEAction n) (paperCarryHaarAction n) (carryFourierEquiv n) η).trans ?_
+  change crossedFiberwiseOperator (K := K) _ =
+    crossedFiberwiseOperator (K := K) _
+  congr 1
+  exact carryFourier_conjugates_normal_generator n η
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem split_normalFourierCoordinates_eq :
@@ -3781,22 +3716,13 @@ private theorem lambdaGroupFactorUnitary_conj_inl (d : D) :
           GroupL2 Lambda →L[ℂ] GroupL2 Lambda) =
       crossedMultiplier paperSplitHaarAction
         (splitCharacterCoefficient d) := by
-  calc
-    _ = crossedFiberwiseOperator (K := K)
-        ((normalFourierCoordinates paperSplitHaarAction
-          splitFourierEquiv).conjStarAlgEquiv
-            (leftRegularUnitary (Multiplicative.ofAdd d) :
-              GroupL2 (Multiplicative D) →L[ℂ]
-                GroupL2 (Multiplicative D))) :=
-      groupFactorUnitary_conj_inl (A := D) (H := K)
-        kDAction paperSplitHaarAction splitFourierEquiv d
-    _ = crossedMultiplier paperSplitHaarAction
-        (splitCharacterCoefficient d) := by
-      change crossedFiberwiseOperator (K := K) _ =
-        crossedFiberwiseOperator (K := K) _
-      congr 1
-      rw [split_normalFourierCoordinates_eq]
-      exact splitFourier_conjugates_normal_generator d
+  refine (groupFactorUnitary_conj_inl (A := D) (H := K)
+      kDAction paperSplitHaarAction splitFourierEquiv d).trans ?_
+  change crossedFiberwiseOperator (K := K) _ =
+    crossedFiberwiseOperator (K := K) _
+  congr 1
+  rw [split_normalFourierCoordinates_eq]
+  exact splitFourier_conjugates_normal_generator d
 
 end
 
@@ -4228,108 +4154,17 @@ private theorem gammaGroupFactorUnitary_vacuum (n : ℕ) :
     (paperCarryHaarAction n) (carryFourierEquiv n)
     (@carryFourierEquiv_zero_single n (Classical.decEq (E n)))
 
-open Classical in
-/-- Cross-module support for the infinite Connes-rigidity construction. -/
-private theorem lambdaDelta_apply (g : Lambda) :
-    delta lambdaGroup 1 (show lambdaGroup from g) =
-      if g = (1 : Lambda) then 1 else 0 := by
-  classical
-  rw [delta_eq_single lambdaGroup (1 : lambdaGroup)]
-  by_cases hg : g = (1 : Lambda)
-  · subst g
-    rw [ite_eq_left rfl]
-    exact lp.single_apply_self (E := fun _ : lambdaGroup => ℂ)
-      2 (1 : lambdaGroup) (1 : ℂ)
-  · rw [ite_eq_right hg]
-    exact lp.single_apply_ne (E := fun _ : lambdaGroup => ℂ)
-      2 (1 : lambdaGroup) (1 : ℂ) hg
-
-open Classical in
-/-- Cross-module support for the infinite Connes-rigidity construction. -/
-private theorem splitVacuum_apply (k : K) :
-  crossedVacuum paperSplitHaarAction k =
-      if k = 1 then Lp.const 2 productHaar (1 : ℂ) else 0 := by
-  classical
-  by_cases hk : k = (1 : K)
-  · subst k
-    rw [ite_eq_left rfl]
-    change
-      (@lp.single K (fun _ ↦ Lp ℂ 2 productHaar) _
-        (fun a b ↦ Classical.propDecidable (a = b))
-        2 (1 : K) (Lp.const 2 productHaar (1 : ℂ))) 1 =
-          Lp.const 2 productHaar (1 : ℂ)
-    exact @lp.single_apply_self K (fun _ ↦ Lp ℂ 2 productHaar) _
-      (fun a b ↦ Classical.propDecidable (a = b))
-      2 (1 : K) (Lp.const 2 productHaar (1 : ℂ))
-  · rw [ite_eq_right hk]
-    change
-      (@lp.single K (fun _ ↦ Lp ℂ 2 productHaar) _
-        (fun a b ↦ Classical.propDecidable (a = b))
-        2 (1 : K) (Lp.const 2 productHaar (1 : ℂ))) k = 0
-    exact @lp.single_apply_ne K (fun _ ↦ Lp ℂ 2 productHaar) _
-      (fun a b ↦ Classical.propDecidable (a = b))
-      2 (1 : K) (Lp.const 2 productHaar (1 : ℂ)) k hk
-
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem lambdaGroupFactorUnitary_vacuum :
     lambdaGroupFactorUnitary (delta lambdaGroup 1) =
       crossedVacuum paperSplitHaarAction := by
-  classical
-  apply lp.ext
-  funext k
-  change
-    splitFourierEquiv
-      (l2Reindex (Multiplicative.toAdd : Multiplicative D ≃ D)
-        (semidirectFubini (A := Multiplicative D) (K := K)
-          kDAction (delta lambdaGroup 1) k)) =
-      crossedVacuum paperSplitHaarAction k
-  by_cases hk : k = 1
-  · subst k
-    have hfiber :
-        l2Reindex (Multiplicative.toAdd : Multiplicative D ≃ D)
-            (semidirectFubini (A := Multiplicative D) (K := K)
-              kDAction (delta lambdaGroup 1) 1) =
-          lp.single 2 (0 : D) (1 : ℂ) := by
-      ext d
-      change delta lambdaGroup 1
-        (⟨Multiplicative.ofAdd d, 1⟩ : Lambda) =
-        (lp.single (E := fun _ : D => ℂ) 2 (0 : D) (1 : ℂ)) d
-      rw [lambdaDelta_apply]
-      by_cases hd : d = 0
-      · subst d
-        have hpoint : (⟨Multiplicative.ofAdd (0 : D), 1⟩ : Lambda) = 1 := by
-          apply SemidirectProduct.ext <;> rfl
-        rw [ite_eq_left hpoint]
-        exact (lp.single_apply_self (E := fun _ : D => ℂ)
-          2 (0 : D) (1 : ℂ)).symm
-      · have hpoint :
-            (⟨Multiplicative.ofAdd d, 1⟩ : Lambda) ≠ 1 := by
-          intro hpoint
-          apply hd
-          have hleft := congrArg
-            (fun g : Lambda => Multiplicative.toAdd g.left) hpoint
-          simpa only [toAdd_ofAdd, SemidirectProduct.one_left, toAdd_one] using hleft
-        rw [ite_eq_right hpoint]
-        exact (lp.single_apply_ne (E := fun _ : D => ℂ)
-          2 (0 : D) (1 : ℂ) hd).symm
-    rw [hfiber, splitFourierEquiv_zero_single]
-    rw [splitVacuum_apply, ite_eq_left rfl]
-  · have hfiber :
-        l2Reindex (Multiplicative.toAdd : Multiplicative D ≃ D)
-            (semidirectFubini (A := Multiplicative D) (K := K)
-              kDAction (delta lambdaGroup 1) k) = 0 := by
-      ext d
-      change delta lambdaGroup 1
-        (⟨Multiplicative.ofAdd d, k⟩ : Lambda) = 0
-      rw [lambdaDelta_apply]
-      have hpoint :
-          (⟨Multiplicative.ofAdd d, k⟩ : Lambda) ≠ 1 := by
-        intro hpoint
-        apply hk
-        simpa only [SemidirectProduct.one_right] using congrArg SemidirectProduct.right hpoint
-      rw [ite_eq_right hpoint]
-    rw [hfiber, map_zero]
-    rw [splitVacuum_apply, ite_eq_right hk]
+  change groupFactorUnitary kDAction paperSplitHaarAction splitFourierEquiv
+      (delta lambdaGroup 1) = crossedVacuum paperSplitHaarAction
+  rw [@delta_eq_single lambdaGroup
+    (@instDecidableEqSemidirectProduct (Multiplicative D) K _ _
+      kDAction (Classical.decEq _) (Classical.decEq _)) 1]
+  exact groupFactorUnitary_vacuum kDAction paperSplitHaarAction splitFourierEquiv
+    (@splitFourierEquiv_zero_single (Classical.decEq D))
 
 end
 
@@ -4919,7 +4754,9 @@ private theorem lambdaFourMulDetectedMass_le_energy
           apply integral_mono hu (h₁.add h₂)
           intro χ
           by_cases hχ₁ : χ ∈ S₁ <;> by_cases hχ₂ : χ ∈ S₂ <;>
-            simp [hχ₁, hχ₂]
+            simp only [hχ₁, hχ₂, Set.mem_union, or_self, Set.indicator_of_mem, Pi.add_apply,
+              le_add_iff_nonneg_right, Nat.ofNat_nonneg, or_false, not_false_eq_true,
+              Set.indicator_of_notMem, add_zero, Std.le_refl, or_true, zero_add]
     _ = spectralDetectionEnergy μ (e, 0) +
           spectralDetectionEnergy μ (0, diagonal e) := by
           rw [integral_add h₁ h₂,

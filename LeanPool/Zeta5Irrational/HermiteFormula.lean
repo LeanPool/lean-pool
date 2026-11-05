@@ -142,10 +142,8 @@ theorem hermite_pole (j : ℕ) (hj : 1 ≤ j) :
     refine setIntegral_congr_fun measurableSet_Ioi fun y hy => ?_
     have hy : 0 < y := hy
     have hne : y ^ 2 + a ^ 2 ≠ 0 := by positivity
-    rw [w_eq_F4 hy]; unfold g0; field_simp;
-    try
-      ring
-        -- Step 2: integrate by parts four times
+    rw [w_eq_F4 hy]; unfold g0; field_simp
+    -- Step 2: integrate by parts four times
   rw [h1, integral_g0F4_eq ha]
     -- Step 3: the pointwise decomposition of `g₄ F₀`
   have hdec :
@@ -160,9 +158,7 @@ theorem hermite_pole (j : ℕ) (hj : 1 ≤ j) :
     rw [tsum_mul_left]
     have hy' : y ≠ 0 := hy.ne'
     field_simp
-    try
-      ring
-        -- Step 4: integrability of the pieces
+    -- Step 4: integrability of the pieces
   have hA : IntegrableOn (fun y => -(1 / 2) * g4 a y) (Ioi 0) := (integrableOn_g4 ha).const_mul _
   have hB : IntegrableOn (fun y => 1 / (2 * Real.pi) * h4 a y) (Ioi 0) :=
     (integrableOn_h4 ha).const_mul _

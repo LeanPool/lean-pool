@@ -17,6 +17,7 @@ CACHE_PREFIXES = (
     "LeanValidation-v1-",
     "DocsInfo-v3-",
     "DocsInfoMathlib-v3-",
+    "DocsState-v1-",
     "Exposition-v1-",
 )
 

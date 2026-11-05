@@ -34,7 +34,7 @@ theorem conempty : con ∅ = (⊤ : Formula) := by rfl
 theorem consingle {f : Formula} : con [f] = f := by rfl
 
 theorem listEq_to_conEq : l1 = l2 → con l1 = con l2 := by
-  aesop
+  aesop (rule_sets := [-default])
 
 theorem conEvalHT {X f W M} {w : W} :
     evaluate M w (con (f :: X)) ↔ evaluate M w f ∧ evaluate M w (con X) :=
@@ -106,7 +106,7 @@ theorem disempty : dis ∅ = (⊥ : Formula) := rfl
 theorem dissingle {f : Formula} : dis [f] = f := rfl
 
 theorem listEq_to_disEq : l1 = l2 → dis l1 = dis l2 := by
-  aesop
+  aesop (rule_sets := [-default])
 
 theorem disEvalHT {X f W M} {w : W} :
     evaluate M w (dis (f :: X)) ↔ evaluate M w f ∨ evaluate M w (dis X) :=
@@ -356,7 +356,7 @@ theorem disconAnd {XS YS} : discon (XS ⊎ YS) ≡ discon XS ⋀ discon YS :=
     exists_exists_and_eq_and, exists_exists_and_exists_and_eq_and, List.mem_append, evaluate]
   rw [disconEval XS]
   rw [disconEval YS]
-  aesop
+  aesop (rule_sets := [-default])
 
 theorem union_elem_uplus {XS YS : Finset (Finset Formula)} {X Y : Finset Formula} :
   X ∈ XS → Y ∈ YS → ((X ∪ Y) ∈ (XS ⊎ YS)) :=
@@ -371,6 +371,6 @@ theorem mapCon_mapForall (M : KripkeModel W) w φ
     (∃ f ∈ List.map (fun Fδ => con (g Fδ φ)) X, evaluate M w f) ↔
     ∃ fs ∈ List.map (fun Fδ => g Fδ φ) X, ∀ f ∈ fs, evaluate M w f := by
   simp_all only [List.mem_map, Prod.exists, ↓existsAndEq, and_true]
-  constructor <;> grind [conEval]
+  constructor <;> grind only [conEval]
 
 end PDL

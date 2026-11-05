@@ -673,12 +673,14 @@ private theorem ncard_restrictions_le_sum_choose_set {X : Type u}
         simp [Finset.mem_inter, Finset.mem_filter, hy'T]
       have h2 : (⟨y', hy'S⟩ : ↥S) ∈ t_sub ↔ g' ⟨y', hy'S⟩ = true := by
         simp [t_sub, Finset.mem_filter, hy'T]
-      simp_all
+      rw [hTA] at h1
+      exact h1.symm.trans h2
     -- g' ⟨y', hy'S⟩ = g ⟨y', hyTval⟩ since y' ∈ Tval
     have h_g'_eq : g' ⟨y', hy'S⟩ = g ⟨y', hyTval⟩ := by
       simp only [g', dite_eq_left hyTval]
     -- Combine: c y' = f ⟨y',hy'S⟩ and f = true ↔ g = true
-    simp_all
+    rw [hcf_y, ← h_g'_eq]
+    exact Bool.eq_iff_iff.mpr h_f_iff_g'
   -- Step 5: Fintype.card ↥S = S.card
   have h5 : Fintype.card ↥S = S.card := Fintype.card_coe S
   -- Combine
@@ -1600,13 +1602,14 @@ private theorem analytical_log_sqrt_bound (d m : ℕ) (ε : ℝ)
   have h_mid : 2 / t + 2 * Real.log t / t ≤ 2 / t + 4 / Real.sqrt t := by
     have : 2 * Real.log t / t ≤ 4 * Real.sqrt t / t := by
       apply div_le_div_of_nonneg_right _ (le_of_lt ht_pos)
-      nlinarith [h_log_t_bound, Real.sqrt_nonneg t]
+      linarith only [h_log_t_bound]
     have h_sq : 4 * Real.sqrt t / t = 4 / Real.sqrt t := by
       rw [div_eq_div_iff (ne_of_gt ht_pos) (ne_of_gt (Real.sqrt_pos.mpr ht_pos))]
       -- Goal: 4 * √t * √t = 4 * t
       rw [show 4 * Real.sqrt t * Real.sqrt t = 4 * (Real.sqrt t * Real.sqrt t) by ring]
       rw [Real.mul_self_sqrt (le_of_lt ht_pos)]
-    linarith [this, h_sq.symm.le]
+    rw [h_sq] at this
+    exact add_le_add (le_refl _) this
   -- Need: 2/t + 4/√t < ε².
   -- From t > 32/ε⁴: 2/t < ε⁴/16 and 4/√t < 4ε²/√32 = ε²/√2.
   -- Total < ε⁴/16 + ε²/√2 < ε² (since ε ≤ 1 and 1 / 16 + 1/√2 < 1).
@@ -1619,7 +1622,7 @@ private theorem analytical_log_sqrt_bound (d m : ℕ) (ε : ℝ)
           ≤ ↑(⌈32 * (↑d + 1) / ε ^ 4⌉₊) := Nat.le_ceil _
         _ < (m : ℝ) := by exact_mod_cast (by omega : ⌈32 * ((d : ℝ) + 1) / ε ^ 4⌉₊ < m)
     rw [div_lt_iff₀ hε4_pos] at hceil
-    nlinarith
+    linarith only [hceil]
   -- Bound 4/√t: √t > 4√2/ε² (since t > 32/ε⁴), so 4/√t < ε²/√2
   have h_sqrt_t_lower : 4 * Real.sqrt 2 / ε ^ 2 < Real.sqrt t := by
     rw [Real.lt_sqrt (by positivity)]
@@ -1639,14 +1642,17 @@ private theorem analytical_log_sqrt_bound (d m : ℕ) (ε : ℝ)
     -- Need: 2 * 16 = 32 < ε² * t
     -- From h_t_large: 32 / ε⁴ < t, so ε² * (32 / ε⁴) < ε² * t
     -- ε² * (32 / ε⁴) = 32 / ε², and 32 / ε² ≥ 32 (since ε² ≤ 1)
-    have hε2_le : ε ^ 2 ≤ 1 := by nlinarith [_hε1]
+    have hε2_le : ε ^ 2 ≤ 1 := by nlinarith only [hε, _hε1]
     have h1 : ε ^ 2 * (32 / ε ^ 4) < ε ^ 2 * t :=
       mul_lt_mul_of_pos_left h_t_large hε2_pos
     have h2 : ε ^ 2 * (32 / ε ^ 4) = 32 / ε ^ 2 := by
       field_simp
     have h3 : (32 : ℝ) ≤ 32 / ε ^ 2 := by
-      rw [le_div_iff₀ hε2_pos]; nlinarith
-    linarith
+      rw [le_div_iff₀ hε2_pos]
+      linarith only [hε2_le]
+    calc 2 * 16 = (32 : ℝ) := by norm_num
+      _ ≤ 32 / ε ^ 2 := h3
+      _ < ε ^ 2 * t := h2 ▸ h1
   -- ε²/16 + ε²/√2 < ε²: show 1 / 16 + 1/√2 < 1
   -- √2 > 4 / 3, so 1/√2 < 3 / 4, so 1 / 16 + 1/√2 < 1 / 16 + 3 / 4 = 13 / 16 < 1
   have h_sqrt2_bound : (4 : ℝ) / 3 < Real.sqrt 2 := by
@@ -1654,9 +1660,11 @@ private theorem analytical_log_sqrt_bound (d m : ℕ) (ε : ℝ)
     norm_num
   have h_inv_sqrt2 : ε ^ 2 / Real.sqrt 2 < 3 * ε ^ 2 / 4 := by
     rw [div_lt_div_iff₀ (Real.sqrt_pos.mpr (by norm_num : (0:ℝ) < 2)) (by norm_num : (0:ℝ) < 4)]
-    nlinarith [h_sqrt2_bound]
+    calc ε ^ 2 * 4 = (3 * ε ^ 2) * (4 / 3) := by ring
+      _ < (3 * ε ^ 2) * Real.sqrt 2 :=
+        mul_lt_mul_of_pos_left h_sqrt2_bound (by positivity)
   -- Combine: 2/t + 4/√t < ε²/16 + ε²/√2 < ε²/16 + 3ε²/4 = 13ε²/16 < ε²
-  linarith [h_mid, h_2_over_t, h_4_over_sqrt, h_inv_sqrt2]
+  linarith only [h_mid, h_2_over_t, h_4_over_sqrt, h_inv_sqrt2, hε2_pos]
 
 /-- VCDim finite → Rademacher vanishes uniformly.
     The bound m₀ depends only on d and ε, NOT on D. -/

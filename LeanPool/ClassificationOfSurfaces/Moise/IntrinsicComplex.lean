@@ -45,6 +45,54 @@ namespace IntrinsicTwoComplex
 
 variable (K : IntrinsicTwoComplex)
 
+section
+
+open scoped BigOperators
+
+/-- A simplex affine combination is the coordinatewise weighted sum. -/
+theorem simplex_affineCombination_eq_weighted_sum {ι α : Type*} [Fintype ι]
+    (point : ι → α → ℝ) (x : stdSimplex ℝ ι) :
+    Finset.univ.affineCombination ℝ point x = fun v ↦ ∑ p, x p * point p v := by
+  rw [Finset.univ.affineCombination_eq_linear_combination point x x.2.2]
+  funext v
+  simp only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+
+/-- Affine evaluation commutes with a simplex weighted sum. -/
+theorem affineMap_apply_weighted_sum {ι α β : Type*} [Fintype ι]
+    (a : (α → ℝ) →ᵃ[ℝ] (β → ℝ)) (point : ι → α → ℝ)
+    (x : stdSimplex ℝ ι) :
+    a (fun v ↦ ∑ p, x p * point p v) = fun v ↦ ∑ p, x p * a (point p) v := by
+  rw [← simplex_affineCombination_eq_weighted_sum point x,
+    Finset.univ.map_affineCombination point x x.2.2 a,
+    simplex_affineCombination_eq_weighted_sum (a ∘ point) x]
+  rfl
+
+/-- The affine combination map is injective when its source points are affinely independent. -/
+theorem affineCombination_injective_of_affineIndependent
+    {ι E : Type*} [Fintype ι] [AddCommGroup E] [Module ℝ E]
+    (source : ι → E) (hsource : AffineIndependent ℝ source) :
+    Function.Injective (fun x : stdSimplex ℝ ι ↦
+      Finset.univ.affineCombination ℝ source x) := by
+  intro x y hxy
+  have hweights := (hsource.affineCombination_eq_iff_eq x.2.2 y.2.2).mp hxy
+  exact Subtype.ext (funext fun i ↦ hweights i (Finset.mem_univ i))
+
+theorem simplex_eq_of_weighted_sum_eq_of_affineIndependent
+    {ι α : Type*} [Fintype ι]
+    (source : ι → α → ℝ) (hsource : AffineIndependent ℝ source)
+    {x y : stdSimplex ℝ ι}
+    (hxy : (fun v ↦ ∑ p, x p * source p v) =
+      (fun v ↦ ∑ p, y p * source p v)) :
+    x = y := by
+  apply affineCombination_injective_of_affineIndependent source hsource
+  change Finset.univ.affineCombination ℝ source x =
+    Finset.univ.affineCombination ℝ source y
+  rw [simplex_affineCombination_eq_weighted_sum source x,
+    simplex_affineCombination_eq_weighted_sum source y]
+  exact hxy
+
+end
+
 /-- The canonical barycentric realization of an intrinsic complex. -/
 abbrev realization : Type :=
   GeometricRealization K.Vertex K.faces

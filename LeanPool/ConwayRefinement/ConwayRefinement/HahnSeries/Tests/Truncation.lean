@@ -9,7 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrderType
 
 import Mathlib.Data.Finsupp.Basic
 import Mathlib.Data.Finsupp.Single
-import Mathlib.Data.Sum.Order
+import Mathlib.Order.Sum.Order
 
 /-!
 # API checks for Hahn-series truncations

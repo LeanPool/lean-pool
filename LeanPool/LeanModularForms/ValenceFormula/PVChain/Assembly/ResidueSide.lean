@@ -51,9 +51,9 @@ private lemma fd_point_mem_fdBox
     (↑p : ℂ) ∈ allZerosInFdBox f hf hM_half := by
   rw [mem_allZerosInFdBox_iff]
   have h_fd := hS p hp_S
-  refine ⟨⟨?_, ?_, ?_, by linarith [hH_bound p hp_S]⟩, ?_⟩
-  · rw [UpperHalfPlane.coe_re]; linarith [(abs_le.mp h_fd.2).1]
-  · rw [UpperHalfPlane.coe_re]; linarith [(abs_le.mp h_fd.2).2]
+  refine ⟨⟨?_, ?_, ?_, by linarith only [hH_lt_M, hH_bound, hp_S, hH_bound p hp_S]⟩, ?_⟩
+  · rw [UpperHalfPlane.coe_re]; linarith only [h_fd, (abs_le.mp h_fd.2).1]
+  · rw [UpperHalfPlane.coe_re]; linarith only [h_fd, (abs_le.mp h_fd.2).2]
   · by_contra h_le
     have h_le' : (↑p : ℂ).im ≤ 1/2 := le_of_not_gt h_le
     rw [UpperHalfPlane.coe_im] at h_le'
@@ -61,9 +61,10 @@ private lemma fd_point_mem_fdBox
         1 ≤ p.re * p.re + p.im * p.im := by
       have := Complex.normSq_apply (↑p : ℂ)
       rw [UpperHalfPlane.coe_re, UpperHalfPlane.coe_im] at this
-      linarith [h_fd.1]
-    nlinarith [(abs_le.mp h_fd.2).1, (abs_le.mp h_fd.2).2, p.im_pos]
-  · simp_all
+      linarith only [h_fd, this, h_fd.1]
+    nlinarith only [h_fd, h_le', h_nsq, (abs_le.mp h_fd.2).1, (abs_le.mp h_fd.2).2, p.im_pos]
+  · simp_all only [ne_eq, one_div, UpperHalfPlane.coe_im, Function.comp_apply,
+    UpperHalfPlane.ofComplex_apply]
 
 omit f hf in
 private lemma exists_height_above_sqrt3_and_S
@@ -71,10 +72,10 @@ private lemma exists_height_above_sqrt3_and_S
     ∃ H₀ : ℝ, Real.sqrt 3 / 2 < H₀ ∧ 1 ≤ H₀ ∧
       ∀ s ∈ S, (s : ℂ).im < H₀ := by
   rcases S.eq_empty_or_nonempty with rfl | hne
-  · exact ⟨1, by nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)],
+  · exact ⟨1, by nlinarith only [Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)],
       le_refl _, fun s hs => absurd hs (Finset.notMem_empty s)⟩
   · refine ⟨max 1 (S.sup' hne (fun s => (s : ℂ).im) + 1), ?_, ?_, ?_⟩
-    · calc Real.sqrt 3 / 2 < 1 := by nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)]
+    · calc Real.sqrt 3 / 2 < 1 := by nlinarith only [Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)]
           _ ≤ _ := le_max_left _ _
     · exact le_max_left _ _
     · intro s hs
@@ -215,7 +216,9 @@ private lemma cpv_residue_side_eventually_eq
         Sbox hSbox S_on hS_on s hs
       filter_upwards [Ioo_mem_nhdsGT hδ_pos] with ε hε
       intro t ht; exact lt_of_lt_of_le hε.2 (hδ_bound t ht)
-    simp_all
+    simp_all only [ne_eq, UpperHalfPlane.coe_im, Finset.mem_sdiff, Finset.mem_union, not_or,
+      mem_Icc, and_imp,
+        eventually_all_finset, eventually_all, not_false_eq_true, implies_true]
   filter_upwards [h_finite_family] with ε hε t ht
   rw [Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
   simp only [cauchyPrincipalValueIntegrandOn]
@@ -232,7 +235,9 @@ private lemma cpv_residue_side_eventually_eq
       · exact ⟨s, h_on, h_norm⟩
     · rintro ⟨s, hs, h_norm⟩
       exact ⟨s, hS0 ▸ Finset.mem_union.mpr (Or.inr hs), h_norm⟩
-  simp_all
+  simp_all only [ne_eq, UpperHalfPlane.coe_im, Finset.mem_sdiff, Finset.mem_union, not_or,
+    mem_Icc, and_imp,
+      eventually_all_finset, eventually_all]
 
 include hf in
 /-- The on-curve singular points that are not box-zeros contribute zero to the
@@ -362,8 +367,8 @@ theorem cpv_residue_side_tendsto
   set γ := fdBoundaryH H with hγ_def
   set S_on := sArcOfS S ∪ sVertOfS S with hS_on_def
   set M := H + 1 with hM_def
-  have hM_half : (1 : ℝ)/2 < M := by linarith
-  have hHM : H < M := by linarith
+  have hM_half : (1 : ℝ)/2 < M := by linarith only [hH₀_ge1, hH_ge]
+  have hHM : H < M := by linarith only []
   set Sbox := allZerosInFdBox f hf hM_half with hSbox_def
   set S0 := Sbox ∪ S_on with hS0_def
   have hSimplePoles : ∀ s ∈ S0, HasSimplePoleAt F s :=
@@ -412,7 +417,7 @@ theorem cpv_residue_side_tendsto
         intro habs
         have := h (γ t) habs
         simp [sub_self] at this
-        linarith [mem_Ioi.mp hε]
+        linarith only [hε, this, mem_Ioi.mp hε]
       change Fp (γ t) * _ = F (γ t) * _
       congr 1; exact logDerivPatched_eq_raw_off F S0 hSimplePoles h_not
   have hL_tendsto_S_on : Tendsto (fun ε =>

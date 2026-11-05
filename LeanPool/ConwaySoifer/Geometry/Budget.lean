@@ -9,7 +9,9 @@ public import LeanPool.ConwaySoifer.Geometry.CornerCap
 public import LeanPool.ConwaySoifer.Geometry.Normal
 public import LeanPool.ConwaySoifer.Geometry.Oblique
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # The area budget with corner help and the bound `s < 11/25`
@@ -76,7 +78,6 @@ theorem det_perm_ne_zero (Q : EquilateralTriangle) (hσ : 0 < Q.side) (i j k : F
       not_true_eq_false, Fin.mk_one, zero_ne_one, not_false_eq_true, Fin.reduceFinMk, Fin.reduceEq,
       one_ne_zero] <;>
     first
-    | exact h
     | (rw [triangleDet_rotate]; exact h)
     | (rw [← triangleDet_rotate]; exact h)
     | (rw [triangleDet_swap]; exact neg_ne_zero.mpr h)

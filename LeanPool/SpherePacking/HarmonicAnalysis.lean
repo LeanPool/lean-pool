@@ -68,7 +68,7 @@ private theorem tendsto_saddleEulerHarmonicCorrection
         atTop atTop := by
     have h := hcast.atTop_add
       (tendsto_const_nhds (x := m + 1))
-    convert! h using 1
+    convert h using 1
     funext n
     ring
   have hdigamma :=
@@ -140,7 +140,7 @@ private theorem tendsto_saddleEulerHarmonicCorrection
   push_cast at hrec
   rw [show m + ((n : ℝ) + 1) =
     m + (n : ℝ) + 1 by ring] at hrec
-  linarith
+  linarith only [hrec]
 
 private noncomputable def upperCenteredLaplaceKernel
     (c T a : ℝ) : ℂ :=
@@ -284,11 +284,11 @@ private theorem upperGammaCenteredGeometricLimit_eq_kernel
     upperCenteredLaplaceKernel η T a *
         (((1 - Real.exp (-(2 * a / ℓ)))⁻¹ : ℝ) : ℂ) =
       upperGammaCenteredKernel ℓ η T a := by
-  simp only [upperCenteredLaplaceKernel, mul_comm, Complex.ofReal_mul, mul_neg, div_eq_mul_inv,
-    Complex.ofReal_inv, Complex.ofReal_exp, Complex.ofReal_neg, mul_assoc, mul_left_comm,
-      Complex.ofReal_sub,
+  simp only [upperCenteredLaplaceKernel, Complex.ofReal_mul, div_eq_mul_inv,
+    Complex.ofReal_inv, Complex.ofReal_exp, Complex.ofReal_neg, Complex.ofReal_sub,
     Complex.ofReal_one, Complex.ofReal_ofNat, upperGammaCenteredKernel,
-      upperGammaMeasureDensity, mul_inv_rev]
+    upperGammaMeasureDensity, mul_inv_rev]
+  ring
 
 private theorem tendsto_integral_upperGammaCenteredTruncatedKernel
     {ℓ η : ℝ} (hℓ : 0 < ℓ) (hη : 0 < η) (T : ℝ) :
@@ -315,7 +315,7 @@ private theorem tendsto_integral_upperGammaCenteredTruncatedKernel
       apply Real.exp_lt_one_iff.mpr
       have hp : 0 < 2 * a / ℓ :=
         div_pos (mul_pos (by norm_num) ha) hℓ
-      linarith
+      linear_combination hp
     have hsum :
         (∑ k ∈ Finset.range (n + 1),
           Real.exp (-(2 * a / ℓ)) ^ k) ≤
@@ -349,7 +349,7 @@ private theorem tendsto_integral_upperGammaCenteredTruncatedKernel
       apply Real.exp_lt_one_iff.mpr
       have hp : 0 < 2 * a / ℓ :=
         div_pos (mul_pos (by norm_num) ha) hℓ
-      linarith
+      linear_combination hp
     have hgeo :=
       (hasSum_geometric_of_lt_one hq0 hq1).tendsto_sum_nat
     have hshift := hgeo.comp (tendsto_add_atTop_nat 1)
@@ -647,7 +647,7 @@ private theorem exp_integral_upperGammaCenteredTruncatedKernel
               (((b *
                 (∑ k ∈ Finset.range (n + 1),
                   (m + (k : ℝ))⁻¹) : ℝ) : ℂ))) := by
-    simpa [m, b] using!
+    simpa only [m, b, Complex.ofReal_add, Complex.ofReal_natCast] using!
       exp_integral_upperGammaCenteredTruncatedKernel_eq_product
         hℓ hη T n
   have hphase :
@@ -796,7 +796,7 @@ private theorem exp_upperGammaCenteredPhase
                     (m + (k : ℝ))⁻¹) : ℝ) : ℂ)))) := by
     filter_upwards [eventually_gt_atTop (0 : ℕ)]
       with n hn
-    simpa [m, b] using!
+    simpa only [m, b] using!
       exp_integral_upperGammaCenteredTruncatedKernel
         hℓ hη T hn
   have hmatch :=
@@ -844,7 +844,7 @@ private theorem saddleSourceCenteredPhase_cubic_remainder_norm_le
           T ^ 2 : ℝ) : ℂ)‖ ≤
       (ℓ * upperSaddleThirdMoment ε ℓ (u - 1) / 6) *
         |T| ^ 3 := by
-  have hη : 0 < 1 + u := by linarith
+  have hη : 0 < 1 + u := by linear_combination hu
   have hgamma :=
     upperGammaCenteredPhase_cubic_remainder_norm_le
       hℓ hη T
@@ -946,7 +946,7 @@ private theorem saddleSourceCenteredEnvelope_eq_gamma_shell
           ((ℓ * T * Real.log Real.pi / 2 : ℝ) : ℂ)) *
         Complex.exp
           (Complex.I * ((ℓ * T * v : ℝ) : ℂ))) := by
-  have hη : 0 < 1 + u := by linarith
+  have hη : 0 < 1 + u := by linarith only [hu]
   have hm : 0 < ℓ * (1 + u) / 2 := by positivity
   have hG :
       (Real.Gamma (ℓ * (1 + u) / 2) : ℂ) ≠ 0 := by
@@ -1015,7 +1015,7 @@ private theorem saddleSourceCenteredEnvelope_stationary_eq_exp_phase
     saddleSourceCenteredEnvelope ε ℓ u
         (saddleSourceStationaryLogRadius ε ℓ u) T =
       Complex.exp (saddleSourceCenteredPhase ε ℓ u T) := by
-  have hη : 0 < 1 + u := by linarith
+  have hη : 0 < 1 + u := by linear_combination hu
   rw [saddleSourceCenteredEnvelope_eq_gamma_shell
     hℓ hu]
   rw [saddleSourceStationaryFrequencyPhase_eq]
@@ -1099,7 +1099,10 @@ private theorem saddleSourceCenteredEnvelope_stationary_gaussian_error_le
         (Complex.norm_exp_sub_one_le hRone) hg.le
     _ ≤ saddleSourceGaussianKernel ε ℓ u T *
         (2 * q) := by
-      gcongr
+      exact mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left hR
+            zero_le_two)
+          (le_of_lt hg)
     _ = 2 * saddleSourceGaussianKernel ε ℓ u T * q := by
       ring
 
@@ -1204,7 +1207,7 @@ private theorem saddleSourceCenteredPolynomial_centralGaussianError_le
         _ ≤ ‖P ((T : ℂ) + z) - P z‖ + ‖P z‖ :=
           norm_add_le _ _
         _ ≤ p * ‖P z‖ + ‖P z‖ := by
-          gcongr
+          exact add_le_add hpolyT (le_refl ‖P z‖)
         _ = (1 + p) * ‖P z‖ := by ring
     have hg : 0 ≤ saddleSourceGaussianKernel ε ℓ u T := by
       unfold saddleSourceGaussianKernel
@@ -1248,7 +1251,14 @@ private theorem saddleSourceCenteredPolynomial_centralGaussianError_le
             ((1 + p) * ‖P z‖) +
           saddleSourceGaussianKernel ε ℓ u T *
             (p * ‖P z‖) := by
-          gcongr
+          exact add_le_add
+              (mul_le_mul henvq hpolynorm (norm_nonneg (P (↑T + z)))
+                (mul_nonneg
+                  (mul_nonneg
+                    zero_le_two
+                    hg)
+                  hq))
+              (mul_le_mul_of_nonneg_left hpolyT hg)
       _ = c * saddleSourceGaussianKernel ε ℓ u T := by
         try dsimp [c]
         ring
@@ -1388,7 +1398,7 @@ private theorem saddle_abs_le_exp_sq (T : ℝ) :
   have hsquare : (|T| - 1) ^ 2 ≥ 0 := sq_nonneg _
   have habs : |T| ^ 2 = T ^ 2 := sq_abs T
   have hlinear : |T| ≤ 1 + T ^ 2 := by
-    linarith [abs_nonneg T, sq_nonneg T]
+    linarith only [abs_nonneg T, sq_nonneg T, hsquare, habs]
   exact hlinear.trans (by
     simpa only [add_comm] using! Real.add_one_le_exp (T ^ 2))
 
@@ -1406,14 +1416,14 @@ private theorem saddleGaussianTailWeight_le_two_exp_three_sq (T : ℝ) :
     exact (Real.one_le_exp_iff).mpr (by positivity)
   unfold saddleGaussianTailWeight
   rw [hexpcube] at hcube
-  linarith
+  linarith only [hcube, hone]
 
 private theorem saddleGaussianTailWeight_le_two_exp_three_abs (T : ℝ) :
     saddleGaussianTailWeight T ≤
       2 * Real.exp (3 * |T|) := by
   have hlinear : |T| ≤ Real.exp |T| := by
     calc
-      |T| ≤ 1 + |T| := by linarith
+      |T| ≤ 1 + |T| := by linarith only []
       _ ≤ Real.exp |T| := by
         simpa only [add_comm] using! Real.add_one_le_exp |T|
   have hcube : |T| ^ 3 ≤ (Real.exp |T|) ^ 3 :=
@@ -1426,7 +1436,7 @@ private theorem saddleGaussianTailWeight_le_two_exp_three_abs (T : ℝ) :
     exact (Real.one_le_exp_iff).mpr (by positivity)
   unfold saddleGaussianTailWeight
   rw [hexpcube] at hcube
-  linarith
+  linarith only [hcube, hone]
 
 private theorem saddle_integral_exp_neg_mul_abs
     {a : ℝ} (ha : 0 < a) :
@@ -1491,7 +1501,7 @@ private theorem saddleGaussian_cubic_tail_integral_le
         Real.exp (-k * T ^ 2)) ≤
       2 * Real.exp (-(k / 4) * R ^ 2) *
         Real.sqrt (Real.pi / (k / 4)) := by
-  have hkpos : 0 < k := by linarith
+  have hkpos : 0 < k := by linear_combination hk
   have hquarter : 0 < k / 4 := by positivity
   let c : ℝ := 2 * Real.exp (-(k / 4) * R ^ 2)
   have hc : 0 ≤ c := by
@@ -1515,16 +1525,17 @@ private theorem saddleGaussian_cubic_tail_integral_le
         3 * T ^ 2 + (-k * T ^ 2) ≤
           (-(k / 4) * R ^ 2) +
             (-(k / 4) * T ^ 2) := by
-      linarith [
-        mul_nonneg (show 0 ≤ k - 6 by linarith)
-          (sq_nonneg T),
-        mul_nonneg (show 0 ≤ k by linarith)
-          (show 0 ≤ T ^ 2 - R ^ 2 by linarith)]
+      linarith only [
+        mul_nonneg (show 0 ≤ k - 6 by linarith) (sq_nonneg T),
+        mul_nonneg (show 0 ≤ k by linarith) (show 0 ≤ T ^ 2 - R ^ 2 by linarith),
+        hk,
+        hsq
+      ]
     calc
       saddleGaussianTailWeight T * Real.exp (-k * T ^ 2) ≤
           (2 * Real.exp (3 * T ^ 2)) *
             Real.exp (-k * T ^ 2) := by
-              gcongr
+              refine mul_le_mul_of_nonneg_right ?_ (le_of_lt (Real.exp_pos (-k * T ^ 2)))
               exact saddleGaussianTailWeight_le_two_exp_three_sq T
       _ = 2 * Real.exp
           (3 * T ^ 2 + (-k * T ^ 2)) := by
@@ -1533,7 +1544,8 @@ private theorem saddleGaussian_cubic_tail_integral_le
       _ ≤ 2 * Real.exp
           (-(k / 4) * R ^ 2 +
             (-(k / 4) * T ^ 2)) := by
-              gcongr
+              exact mul_le_mul_of_nonneg_left (Real.exp_monotone hexponent)
+                  zero_le_two
       _ = c * Real.exp (-(k / 4) * T ^ 2) := by
             try dsimp [c]
             rw [Real.exp_add]
@@ -1566,7 +1578,7 @@ private theorem saddleExponential_cubic_tail_integral_le
         Real.exp (-k * |T|)) ≤
       2 * Real.exp (-(k / 4) * R) *
         (2 / (k / 4)) := by
-  have hkpos : 0 < k := by linarith
+  have hkpos : 0 < k := by linear_combination hk
   have hquarter : 0 < k / 4 := by positivity
   let c : ℝ := 2 * Real.exp (-(k / 4) * R)
   have hc : 0 ≤ c := by
@@ -1587,16 +1599,18 @@ private theorem saddleExponential_cubic_tail_integral_le
     have hexponent :
         3 * |T| + (-k * |T|) ≤
           (-(k / 4) * R) + (-(k / 4) * |T|) := by
-      linarith [
-        mul_nonneg (show 0 ≤ k - 6 by linarith)
-          hTabs,
-        mul_nonneg (show 0 ≤ k by linarith)
-          (show 0 ≤ |T| - R by linarith)]
+      linarith only [
+        mul_nonneg (show 0 ≤ k - 6 by linarith) hTabs,
+        mul_nonneg (show 0 ≤ k by linarith) (show 0 ≤ |T| - R by linarith),
+        hk,
+        hT,
+        hTabs
+      ]
     calc
       saddleGaussianTailWeight T * Real.exp (-k * |T|) ≤
           (2 * Real.exp (3 * |T|)) *
             Real.exp (-k * |T|) := by
-              gcongr
+              refine mul_le_mul_of_nonneg_right ?_ (le_of_lt (Real.exp_pos (-k * |T|)))
               exact saddleGaussianTailWeight_le_two_exp_three_abs T
       _ = 2 * Real.exp
           (3 * |T| + (-k * |T|)) := by
@@ -1604,7 +1618,8 @@ private theorem saddleExponential_cubic_tail_integral_le
             ring
       _ ≤ 2 * Real.exp
           (-(k / 4) * R + (-(k / 4) * |T|)) := by
-              gcongr
+              exact mul_le_mul_of_nonneg_left (Real.exp_monotone hexponent)
+                  zero_le_two
       _ = c * Real.exp (-(k / 4) * |T|) := by
             try dsimp [c]
             rw [Real.exp_add]
@@ -1648,7 +1663,7 @@ private theorem saddleGaussianOuterPhi_le_endpointBarrier
         c * ℓ * Q * Real.exp (B * δ₀) := by
   have hδnonneg : 0 ≤ δ := hδ₀.trans hδ
   have hlog := Real.log_le_sub_one_of_pos
-    (show 0 < 2 + δ by linarith)
+    (show 0 < 2 + δ by linear_combination hδ₀ + hδ)
   have hexpstep :
       Real.exp (B * δ₀) *
           (1 + B * (δ - δ₀)) ≤
@@ -1658,7 +1673,7 @@ private theorem saddleGaussianOuterPhi_le_endpointBarrier
           (1 + B * (δ - δ₀)) ≤
         Real.exp (B * δ₀) *
           Real.exp (B * (δ - δ₀)) := by
-            gcongr
+            refine mul_le_mul_of_nonneg_left ?_ (le_of_lt (Real.exp_pos (B * δ₀)))
             simpa only [add_comm] using!
               Real.add_one_le_exp (B * (δ - δ₀))
       _ = Real.exp (B * δ) := by
@@ -1668,7 +1683,7 @@ private theorem saddleGaussianOuterPhi_le_endpointBarrier
   have hdifference :
       Real.exp (B * δ₀) * (B * (δ - δ₀)) ≤
         Real.exp (B * δ) - Real.exp (B * δ₀) := by
-    linarith
+    linear_combination hexpstep
   have hcoefficient : 0 ≤ c * ℓ * Q := by
     apply (mul_nonneg_iff_of_pos_right hB).mp
     exact mul_nonneg
@@ -1677,9 +1692,9 @@ private theorem saddleGaussianOuterPhi_le_endpointBarrier
     mul_le_mul_of_nonneg_left hdifference hcoefficient
   have hlinearscaled :=
     mul_le_mul_of_nonneg_right hscale
-      (show 0 ≤ δ - δ₀ by linarith)
+      (show 0 ≤ δ - δ₀ by linear_combination hδ)
   unfold saddleGaussianOuterPhi
-  linarith
+  linarith only [hlog, hexpscaled, hlinearscaled]
 
 private theorem eventually_saddleGaussianOuterPhi_uniform
     {B Q c δ₀ : ℝ}
@@ -1707,7 +1722,7 @@ private theorem eventually_saddleGaussianOuterPhi_uniform
           Real.exp (A * δ₀ + 4) *
             (ℓ ^ (1 / 2 : ℝ) * Real.exp (-s * ℓ)))
         atTop (𝓝 (0 : ℝ)) := by
-      convert!
+      convert
         (tendsto_const_nhds
           (x := Real.exp (A * δ₀ + 4))).mul hbase using 1; simp only [mul_zero]
     apply hscaled.congr'
@@ -1737,7 +1752,7 @@ private theorem eventually_saddleGaussianOuterPhi_uniform
         (A / (c * Q * B * Real.exp (B * δ₀)))]
       with ℓ hℓ
     apply (div_le_iff₀ hfactor).mp at hℓ
-    linarith
+    linear_combination hℓ
   filter_upwards [eventually_ge_atTop (0 : ℝ),
     hthreshold, hsmall] with ℓ hℓ hscale hbound
   intro δ hδ
@@ -1751,7 +1766,7 @@ private theorem eventually_saddleGaussianOuterPhi_uniform
     apply mul_le_mul_of_nonneg_left _ (Real.sqrt_nonneg ℓ)
     apply Real.exp_le_exp.mpr
     try dsimp [A, s]
-    linarith
+    linear_combination hphi
   exact hcompare.trans_lt hbound
 
 private theorem upperPositiveShellVariance_firstBranch_le
@@ -1764,7 +1779,7 @@ private theorem upperPositiveShellVariance_firstBranch_le
   have hB : 0 ≤ B := by
     try dsimp [B]
     positivity
-  have horder : B ≤ B + 1 := by linarith
+  have horder : B ≤ B + 1 := by linarith only []
   have huabs : |u| ≤ 1 + ε / 2 := by
     apply (abs_le).mpr
     constructor <;> linarith
@@ -1817,10 +1832,10 @@ private theorem upperFirstBranch_saddleSourceGaussianVariance_upper_bound
   let η : ℝ := 1 + u
   have hη : 0 < η := by
     try dsimp [η]
-    linarith
+    linear_combination hulower
   have hηupper : η ≤ 2 + ε / 2 := by
     try dsimp [η]
-    linarith
+    linear_combination huupper
   have hgammabound :=
     (upperGammaVariance_bounds hℓ hη).2
   have hsmallterm : 1 / (ℓ * η ^ 2) ≤ 1 / η := by
@@ -1832,7 +1847,7 @@ private theorem upperFirstBranch_saddleSourceGaussianVariance_upper_bound
     calc
       upperGammaVariance ℓ η ≤
           1 / (2 * η) + 1 / (ℓ * η ^ 2) := hgammabound
-      _ ≤ 1 / (2 * η) + 1 / η := by gcongr
+      _ ≤ 1 / (2 * η) + 1 / η := by exact add_le_add (le_refl (1 / (2 * η))) hsmallterm
       _ = (3 / 2 : ℝ) / η := by ring_nf
   have hshort := upperShortShellVariance_nonneg
     (δ := u - 1) hε horder hmargin
@@ -1850,7 +1865,7 @@ private theorem upperFirstBranch_saddleSourceGaussianVariance_upper_bound
       try dsimp [η]
       ring
     rw [hargument]
-    linarith
+    linear_combination hgamma + hshort + hremote
   calc
     saddleSourceGaussianVariance ε ℓ u ≤
       (3 / 2 : ℝ) / η +
@@ -1876,10 +1891,10 @@ private theorem saddle_exp_neg_mul_min_le_add
     rcases le_total x y with hxy | hyx
     · rw [min_eq_left hxy, max_eq_left]
       apply Real.exp_le_exp.mpr
-      linarith [mul_nonneg ha (sub_nonneg.mpr hxy)]
+      linarith only [mul_nonneg ha (sub_nonneg.mpr hxy), ha, hxy]
     · rw [min_eq_right hyx, max_eq_right]
       apply Real.exp_le_exp.mpr
-      linarith [mul_nonneg ha (sub_nonneg.mpr hyx)]
+      linarith only [mul_nonneg ha (sub_nonneg.mpr hyx), ha, hyx]
   rw [hmax]
   exact max_le_add_of_nonneg
     (Real.exp_pos (-a * x)).le (Real.exp_pos (-a * y)).le
@@ -1906,7 +1921,7 @@ private theorem saddleSourceNormalizedEnvelope_continuous
         Complex.ofReal_re, Complex.add_re, Complex.one_re, Complex.ofReal_im, Complex.add_im,
           Complex.one_im, add_zero,
         mul_zero, sub_zero, Complex.I_re, zero_mul, Complex.I_im, Complex.mul_im, sub_self]
-      linarith [mul_pos hℓ (show 0 < 1 + u by linarith)]
+      linarith only [mul_pos hℓ (show 0 < 1 + u by linarith), hℓ, hu]
     exact (saddleMellinGamma_differentiableAt_of_re_pos
       hre).continuousAt.comp_of_eq harg.continuousAt (by rfl)
   have hregular : Continuous
@@ -1957,7 +1972,8 @@ private theorem saddleSourceTailIntegrand_continuous
           Real.exp (-saddleSourceContourDamping ε ℓ u T)) := by
   have hweight : Continuous saddleGaussianTailWeight := by
     unfold saddleGaussianTailWeight
-    fun_prop
+    exact Continuous.const_add
+        (Continuous.comp' (Continuous.fun_pow continuous_id' 3) (Continuous.abs continuous_id')) 1
   exact hweight.mul
     (saddleSourceDampingExponential_continuous
       hε hℓ hu horder)
@@ -1975,7 +1991,7 @@ private theorem saddleSourceContourDamping_firstBranch_min_lower_bound
     (ε * ℓ / (2 * Real.exp 1)) *
         min (T ^ 2 / (1 + u)) |T| ≤
       saddleSourceContourDamping ε ℓ u T := by
-  have hη : 0 < 1 + u := by linarith
+  have hη : 0 < 1 + u := by linear_combination hulower
   have hgamma := upperGammaDamping_lower_bound
     hℓ hη T
   have hfirst := upperFirstBranchSaddleDamping_lower_bound
@@ -2008,7 +2024,7 @@ private theorem saddleSource_firstBranch_weighted_integrable
   let a : ℝ := ε * ℓ / (2 * Real.exp 1)
   have hη : 0 < η := by
     try dsimp [η]
-    linarith
+    linear_combination hulower
   have ha : 0 < a := by
     try dsimp [a]
     positivity
@@ -2053,8 +2069,7 @@ private theorem saddleSource_firstBranch_weighted_integrable
       -a * (T ^ 2 / η) = -(a / η) * T ^ 2 := by
     ring
   rw [hrearrange] at hexp
-  linarith [mul_le_mul_of_nonneg_left hexp
-    (saddleGaussianTailWeight_nonneg T)]
+  linarith only [mul_le_mul_of_nonneg_left hexp (saddleGaussianTailWeight_nonneg T), hexp]
 
 private theorem saddleSource_firstBranch_weighted_tail_le
     {ε ℓ u R : ℝ}
@@ -2086,7 +2101,7 @@ private theorem saddleSource_firstBranch_weighted_tail_le
   let a : ℝ := ε * ℓ / (2 * Real.exp 1)
   have hη : 0 < η := by
     try dsimp [η]
-    linarith
+    linarith only [hulower]
   have ha : 0 < a := by
     try dsimp [a]
     positivity
@@ -2129,8 +2144,7 @@ private theorem saddleSource_firstBranch_weighted_tail_le
               -a * (T ^ 2 / η) = -(a / η) * T ^ 2 := by
             ring
           rw [hrearrange]
-    linarith [mul_le_mul_of_nonneg_left hexp
-      (saddleGaussianTailWeight_nonneg T)]
+    linarith only [mul_le_mul_of_nonneg_left hexp (saddleGaussianTailWeight_nonneg T), hexp]
   have hcompare := setIntegral_mono_on
     hsource.integrableOn hmajor.integrableOn
     (saddleGaussianTailSet_measurable R) hpoint
@@ -2167,7 +2181,7 @@ private theorem saddleSource_firstBranch_weighted_tail_le
             Real.sqrt (Real.pi / (a / η / 4)) +
           2 * Real.exp (-(a / 4) * R) *
             (2 / (a / 4)) := by
-      gcongr
+      refine add_le_add ?_ ?_
       · apply saddleGaussian_cubic_tail_integral_le
         · exact hquadratic
         · exact hR
@@ -2192,7 +2206,13 @@ private theorem saddleFirstBranch_normalizedGaussian_prefactor_le
           4 * Real.pi * (η * V) / c := by
             field_simp [hc.ne', hℓ.ne', hη.ne']
       _ ≤ 4 * Real.pi * C / c := by
-        gcongr
+        exact div_le_div_of_nonneg_right
+            (mul_le_mul_of_nonneg_left hupper
+              (le_of_lt
+                (mul_pos
+                  ((by norm_num))
+                  Real.pi_pos)))
+            (le_of_lt hc)
       _ = 4 * (Real.pi * C / c) := by ring
   rw [← Real.sqrt_mul (mul_nonneg hℓ.le hV.le)]
   calc
@@ -2242,7 +2262,7 @@ private theorem saddleFirstBranch_normalizedLinear_prefactor_le
     apply (div_le_div_iff₀ hℓ (mul_pos hℓ hη)).mpr
     have hscaled :=
       mul_le_mul_of_nonneg_left hupper hℓ.le
-    linarith
+    linear_combination hscaled
   have hidentity :
       Real.sqrt (ℓ * V) / ℓ = Real.sqrt (V / ℓ) := by
     calc
@@ -2293,7 +2313,7 @@ private theorem saddleSource_firstBranch_normalized_tail_bound
   let R : ℝ := z / Real.sqrt (ℓ * V)
   have hη : 0 < η := by
     try dsimp [η]
-    linarith
+    linarith only [hulower]
   have hc : 0 < c := by
     try dsimp [c]
     positivity
@@ -2417,8 +2437,7 @@ private theorem saddleSourceFirstBranchVarianceCoefficient_pos
   have hshell :=
     saddleSourcePositiveShellVariance_nonneg ε (ε / 2)
   unfold saddleSourceFirstBranchVarianceCoefficient
-  linarith [mul_nonneg
-    (show 0 ≤ 2 + ε / 2 by positivity) hshell]
+  linarith only [mul_nonneg (show 0 ≤ 2 + ε / 2 by positivity) hshell, hε, hshell]
 
 private noncomputable def saddleFirstBranchTailLogMajorant
     (c C ℓ : ℝ) : ℝ :=
@@ -2450,7 +2469,7 @@ private theorem tendsto_saddleFirstBranchTailLogMajorant
         -(c / (4 * C)) *
           (Real.log ℓ / 4) ^ (1 / 6 : ℝ))
       atTop atBot :=
-    hpower.const_mul_atTop_of_neg (by linarith)
+    hpower.const_mul_atTop_of_neg (by linear_combination hrate)
   have hexp : Tendsto
       (fun ℓ : ℝ =>
         Real.exp
@@ -2466,7 +2485,7 @@ private theorem tendsto_saddleFirstBranchTailLogMajorant
       (fun ℓ : ℝ =>
         Real.sqrt (C / (Real.log ℓ / 4)))
       atTop (𝓝 (0 : ℝ)) := by
-    convert! hratio.sqrt using 1; simp only [Real.sqrt_zero]
+    convert hratio.sqrt using 1; simp only [Real.sqrt_zero]
   have hfirst := hexp.const_mul
     (4 * Real.sqrt (Real.pi * C / c))
   have hsecond := hsqrt.const_mul (16 / c)
@@ -2548,10 +2567,10 @@ private theorem eventually_saddleSource_firstBranch_uniform_tail :
   let z : ℝ := (ℓ * η) ^ (1 / 12 : ℝ)
   have hη : 0 < η := by
     try dsimp [η]
-    linarith
+    linear_combination hulower
   have hηU : η ≤ U := by
     try dsimp [η, U]
-    linarith
+    linear_combination huupper
   have hscale : 1 ≤ ℓ * η :=
     hlogoneℓ.trans hlogscale
   have hV : 0 < V := by
@@ -2562,7 +2581,7 @@ private theorem eventually_saddleSource_firstBranch_uniform_tail :
         0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
     have h := hmargin a ha
-    linarith
+    linear_combination hεsmall + hε + h
   have hvariance :=
     upperFirstBranch_saddleSourceGaussianVariance_upper_bound
       hε hℓ hulower huupper horder hmargin' hscale
@@ -2575,12 +2594,11 @@ private theorem eventually_saddleSource_firstBranch_uniform_tail :
       _ = C := by field_simp [hη.ne']
   have hlinear : 6 ≤ c * ℓ := by
     have h := (div_le_iff₀ hc).mp hlinbase
-    linarith
+    linear_combination h
   have hquadratic : 6 ≤ (c * ℓ) / η := by
     apply (le_div_iff₀ hη).mpr
     have h := (div_le_iff₀ hc).mp hquadbase
-    linarith [mul_le_mul_of_nonneg_left hηU
-      (by norm_num : (0 : ℝ) ≤ 6)]
+    linarith only [mul_le_mul_of_nonneg_left hηU (by norm_num : (0 : ℝ) ≤ 6), hηU, h]
   have hz : 0 ≤ z := by
     try dsimp [z]
     positivity
@@ -2588,8 +2606,8 @@ private theorem eventually_saddleSource_firstBranch_uniform_tail :
     (z := z) (C := C)
     hε hεsmall hℓ hulower huupper horder hmargin'
     hV hC hupper hz (by
-      convert! hquadratic using 1; dsimp [c, η]; ring) (by
-      convert! hlinear using 1; dsimp [c]; ring)
+      convert hquadratic using 1; dsimp [c, η]; ring) (by
+      convert hlinear using 1; dsimp [c]; ring)
   have hlognonneg : 0 ≤ Real.log ℓ / 4 := zero_le_one.trans hlogoneℓ
   have hpower :
       (Real.log ℓ / 4) ^ (1 / 6 : ℝ) ≤ z ^ 2 := by
@@ -2666,7 +2684,7 @@ private theorem eventually_saddleGaussianOuterPhi_uniform_polynomial
     filter_upwards [hlimit] with ℓ hℓ
     intro δ hδ
     have hδnonnegative : 0 ≤ δ := hδ₀.trans hδ
-    have hη : 0 < 2 + δ := by linarith
+    have hη : 0 < 2 + δ := by linear_combination hδ₀ + hδ
     have hpower :
         (2 + δ) ^ 4 =
           Real.exp (4 * Real.log (2 + δ)) := by
@@ -2736,7 +2754,7 @@ private theorem saddleSourcePositiveShellThirdMoment_nonneg
   have hB : 0 ≤ (ε⁻¹ ^ 3) := by
     positivity
   unfold upperPositiveShellThirdMoment
-  apply intervalIntegral.integral_nonneg (by linarith)
+  apply intervalIntegral.integral_nonneg (by linarith only [])
   intro a ha
   have ha : 0 ≤ a := hB.trans ha.1
   have hdensity : 0 ≤ positiveShellDensity ε a := by
@@ -2757,7 +2775,7 @@ private theorem upperPositiveShellThirdMoment_firstBranch_le
   have hB : 0 ≤ B := by
     try dsimp [B]
     positivity
-  have horder : B ≤ B + 1 := by linarith
+  have horder : B ≤ B + 1 := by linarith only []
   have huabs : |u| ≤ 1 + ε / 2 := by
     apply (abs_le).mpr
     constructor <;> linarith
@@ -2806,7 +2824,7 @@ private theorem upperGammaVariance_firstBranch_scaled_le
         (upperGammaVariance_bounds hℓ hη).2 hη.le
     _ = 1 / 2 + 1 / (ℓ * η) := by
       field_simp [hℓ.ne', hη.ne']
-    _ ≤ (3 / 2 : ℝ) := by linarith
+    _ ≤ (3 / 2 : ℝ) := by linear_combination hone
 
 private theorem upperGammaThirdMoment_firstBranch_scaled_le
     {ℓ η : ℝ} (hℓ : 0 < ℓ) (hη : 0 < η)
@@ -2818,7 +2836,9 @@ private theorem upperGammaThirdMoment_firstBranch_scaled_le
   have htwo : 2 / (ℓ * η) ≤ (2 : ℝ) := by
     calc
       2 / (ℓ * η) = 2 * (1 / (ℓ * η)) := by ring
-      _ ≤ 2 * (1 : ℝ) := by gcongr
+      _ ≤ 2 * (1 : ℝ) := by
+        exact mul_le_mul_of_nonneg_left hone
+            zero_le_two
       _ = 2 := by ring
   calc
     η ^ 2 * upperGammaThirdMoment ℓ η ≤
@@ -2829,7 +2849,7 @@ private theorem upperGammaThirdMoment_firstBranch_scaled_le
         (sq_nonneg η)
     _ = 1 / 2 + 2 / (ℓ * η) := by
       field_simp [hℓ.ne', hη.ne']
-    _ ≤ (5 / 2 : ℝ) := by linarith
+    _ ≤ (5 / 2 : ℝ) := by linear_combination htwo
 
 private noncomputable def saddleSourceFirstBranchThirdMomentCoefficient
     (ε : ℝ) : ℝ :=
@@ -2854,13 +2874,13 @@ private theorem upperFirstBranch_saddleSourceThirdMoment_scaled_le
   let U : ℝ := 2 + ε / 2
   have hη : 0 < η := by
     try dsimp [η]
-    linarith
+    linear_combination hulower
   have hU : 0 < U := by
     try dsimp [U]
     positivity
   have hηU : η ≤ U := by
     try dsimp [η, U]
-    linarith
+    linear_combination huupper
   have hA : 0 ≤ (10 * Real.log (1 / ε)) := by
     have hcut : 0 < (ε ^ 3) := by
       positivity
@@ -2879,7 +2899,7 @@ private theorem upperFirstBranch_saddleSourceThirdMoment_scaled_le
       upperShortShellVariance ε (u - 1) ≤
         upperGammaVariance ℓ η := by
     try dsimp [η]
-    linarith [mul_nonneg hε.le hgammanonneg]
+    linarith only [mul_nonneg hε.le hgammanonneg, hε, hgammanonneg, hshortvariance]
   have hshortthird := upperShortShellThirdMoment_le
     (δ := u - 1) hε horder hmargin
   have hshort :
@@ -2897,9 +2917,13 @@ private theorem upperFirstBranch_saddleSourceThirdMoment_scaled_le
       _ = (10 * Real.log (1 / ε)) * η *
           (η * upperGammaVariance ℓ η) := by ring
       _ ≤ (10 * Real.log (1 / ε)) * η * (3 / 2 : ℝ) := by
-        gcongr
+        exact mul_le_mul_of_nonneg_left hgamma (mul_nonneg hA (le_of_lt hη))
       _ ≤ (10 * Real.log (1 / ε)) * U * (3 / 2 : ℝ) := by
-        gcongr
+        exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hηU hA)
+            (le_of_lt
+              (div_pos
+                ((by norm_num))
+                (zero_lt_two)))
       _ = (3 / 2 : ℝ) * (10 * Real.log (1 / ε)) * U := by
         ring
   have hremote :=
@@ -2916,7 +2940,7 @@ private theorem upperFirstBranch_saddleSourceThirdMoment_scaled_le
           η ^ 2 * upperPositiveShellThirdMoment ε (ε / 2) :=
         mul_le_mul_of_nonneg_left hremote (sq_nonneg η)
       _ ≤ U ^ 2 * upperPositiveShellThirdMoment ε (ε / 2) := by
-        gcongr
+        exact mul_le_mul_of_nonneg_right (pow_le_pow_left₀ (le_of_lt hη) hηU 2) hremote0
   unfold saddleSourceFirstBranchThirdMomentCoefficient
   unfold upperSaddleThirdMoment upperNetShellThirdMoment
   have hargument : 2 + (u - 1) = η := by
@@ -2930,7 +2954,7 @@ private theorem upperFirstBranch_saddleSourceThirdMoment_scaled_le
     (5 / 2 : ℝ) +
       (3 / 2 : ℝ) * (10 * Real.log (1 / ε)) * U +
       U ^ 2 * upperPositiveShellThirdMoment ε (ε / 2)
-  linarith only [hthirdgamma, hshort, hremoteScaled]
+  linear_combination hthirdgamma + hshort + hremoteScaled
 
 private noncomputable def saddleSourceSecondBranchVarianceFloor (ε : ℝ) : ℝ :=
   (99 / 200 : ℝ) * (ε⁻¹ ^ 3) ^ 2 *
@@ -2955,7 +2979,7 @@ private theorem eventually_saddleSourceGaussianVariance_secondBranch_floor :
     with ε hε hvariance
   change 0 < ε at hε
   intro ℓ hℓ δ hδ
-  have hδ0 : 0 ≤ δ := by linarith
+  have hδ0 : 0 ≤ δ := by linarith only [hε, hδ]
   have hB : 0 ≤ (ε⁻¹ ^ 3) := by
     positivity
   have hfactor :
@@ -2989,17 +3013,25 @@ private theorem eventually_saddleSourceGaussianVariance_secondBranch_floor :
               (ε⁻¹ ^ 3) ^ 2 *
                 shellWeight ε *
                   Real.exp (δ * (ε⁻¹ ^ 3))) := by
-        gcongr
+        exact mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hmono hfactor)
+            (le_of_lt
+              (div_pos
+                ((by norm_num))
+                ((by norm_num))))
       _ ≤ (99 / 100 : ℝ) *
             upperPositiveShellVariance ε δ := by
-        gcongr
-  have hη : 0 < 2 + δ := by linarith
+        exact mul_le_mul_of_nonneg_left hpositive
+            (le_of_lt
+              (div_pos
+                ((by norm_num))
+                ((by norm_num))))
+  have hη : 0 < 2 + δ := by linarith only [hε, hδ]
   have hgamma : 0 ≤ 1 / (2 * (2 + δ)) := by
     positivity
   unfold saddleSourceGaussianVariance
   have hargument : 1 + δ - 1 = δ := by ring
   rw [hargument]
-  linarith
+  linear_combination hfull + hfloor + hgamma
 
 private theorem saddleSource_cubic_window_le
     {ℓ V M C z T : ℝ}
@@ -3015,7 +3047,11 @@ private theorem saddleSource_cubic_window_le
   calc
     (ℓ * M / 6) * |T| ^ 3 ≤
         (ℓ * (C * V) / 6) * |T| ^ 3 := by
-      gcongr
+      exact mul_le_mul_of_nonneg_right
+          (div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left hM (le_of_lt hℓ))
+            (le_of_lt
+              ((by norm_num))))
+          (pow_nonneg (abs_nonneg T) 3)
     _ ≤ (ℓ * (C * V) / 6) *
         (z / Real.sqrt (ℓ * V)) ^ 3 := by
       gcongr
@@ -3147,11 +3183,11 @@ private theorem exists_polynomial_uniform_central_window
       exact mul_nonneg
         (mul_nonneg (abs_nonneg T) (sub_nonneg.mpr hTunit))
         (by positivity)
-    linarith
+    linarith only [hfactor]
   have hscale : 2 * C * R ≤ κ := by
     have hmin : R ≤ κ / (2 * C) := min_le_right _ _
     have hfactor : 0 < 2 * C := by positivity
-    linarith [(le_div_iff₀ hfactor).mp hmin]
+    linarith only [(le_div_iff₀ hfactor).mp hmin, hmin, hfactor]
   calc
     ‖P ((T : ℂ) + Complex.I * (u : ℂ)) - P (Complex.I * (u : ℂ))‖ ≤
       C * (|T| + |T| ^ 3) * ‖P (Complex.I * (u : ℂ))‖ :=
@@ -3161,7 +3197,7 @@ private theorem exists_polynomial_uniform_central_window
       calc
         C * (|T| + |T| ^ 3) ≤ C * (2 * R) := by
           apply mul_le_mul_of_nonneg_left _ hC.le
-          linarith
+          linarith only [hT, hcube]
         _ = 2 * C * R := by ring
     _ ≤ κ * ‖P (Complex.I * (u : ℂ))‖ := by
       exact mul_le_mul_of_nonneg_right hscale (norm_nonneg _)
@@ -3239,7 +3275,7 @@ private theorem saddleSource_scaled_cubic_window_le
       (K / (6 * c * Real.sqrt c)) *
         (z ^ 3 / Real.sqrt (ℓ * η)) := by
   have hV : 0 < V := by
-    nlinarith [hvariance, mul_pos hη hc]
+    exact pos_of_mul_pos_right (hc.trans_le hvariance) hη.le
   have hs : 0 < Real.sqrt (ℓ * V) :=
     Real.sqrt_pos.2 (mul_pos hℓ hV)
   have ht : 0 < Real.sqrt (ℓ * η) :=
@@ -3250,7 +3286,7 @@ private theorem saddleSource_scaled_cubic_window_le
     Real.sqrt_pos.2 hc
   have hm : M ≤ K / η ^ 2 := by
     apply (le_div_iff₀ (sq_pos_of_pos hη)).2
-    linarith
+    linarith only [hmoment]
   have hcross :
       Real.sqrt (ℓ * V) * η =
         Real.sqrt (ℓ * η) * Real.sqrt (η * V) := by
@@ -3292,7 +3328,13 @@ private theorem saddleSource_scaled_cubic_window_le
     (ℓ * M / 6) * |T| ^ 3 ≤
         (ℓ * (K / η ^ 2) / 6) *
           (z / Real.sqrt (ℓ * V)) ^ 3 := by
-      gcongr
+      refine mul_le_mul
+        (div_le_div_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hm hℓ.le) (by norm_num))
+        (pow_le_pow_left₀ (abs_nonneg T) hT 3)
+        (pow_nonneg (abs_nonneg T) 3) ?_
+      exact div_nonneg
+        (mul_nonneg hℓ.le (div_nonneg hK (sq_nonneg η))) (by norm_num)
     _ = (K / 6) * z ^ 3 /
         (Real.sqrt (ℓ * η) *
           (Real.sqrt (η * V)) ^ 3) := by
@@ -3311,7 +3353,11 @@ private theorem saddleSource_scaled_cubic_window_le
     _ ≤ (K / 6) * z ^ 3 /
         (Real.sqrt (ℓ * η) *
           (Real.sqrt c) ^ 3) := by
-      gcongr
+      exact div_le_div_of_nonneg_left
+        (mul_nonneg (div_nonneg hK (by norm_num)) (pow_nonneg hz 3))
+        (mul_pos ht (pow_pos hcroot 3))
+        (mul_le_mul_of_nonneg_left
+          (pow_le_pow_left₀ hcroot.le hwlower 3) ht.le)
     _ = (K / (6 * c * Real.sqrt c)) *
         (z ^ 3 / Real.sqrt (ℓ * η)) := by
       have hcsquare : (Real.sqrt c) ^ 2 = c :=
@@ -3330,7 +3376,7 @@ private theorem upperFirstBranch_saddleSourceGaussianVariance_scaled_lower_bound
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a))) :
     2 * ε ≤ (1 + u) *
       saddleSourceGaussianVariance ε ℓ u := by
-  have hη : 0 < 1 + u := by linarith
+  have hη : 0 < 1 + u := by linear_combination hulower
   have hgamma := (upperGammaVariance_bounds hℓ hη).1
   have hsource :=
     upperFirstBranch_saddleSourceGaussianVariance_lower_bound
@@ -3342,10 +3388,16 @@ private theorem upperFirstBranch_saddleSourceGaussianVariance_scaled_lower_bound
       norm_num
     _ ≤ (1 + u) *
         (4 * ε * upperGammaVariance ℓ (1 + u)) := by
-      gcongr
+      exact mul_le_mul_of_nonneg_left
+          (mul_le_mul_of_nonneg_left hgamma
+            (le_of_lt
+              (mul_pos
+                ((by norm_num))
+                hε)))
+          (le_of_lt hη)
     _ ≤ (1 + u) *
         saddleSourceGaussianVariance ε ℓ u := by
-      gcongr
+      exact mul_le_mul_of_nonneg_left hsource (le_of_lt hη)
 
 private theorem saddleSourceFirstBranchThirdMomentCoefficient_pos
     {ε : ℝ} (hε : 0 < ε)
@@ -3376,7 +3428,7 @@ private theorem saddleSourceFirstBranch_cubic_central_window_le
       (saddleSourceFirstBranchThirdMomentCoefficient ε /
         (12 * ε * Real.sqrt (2 * ε))) *
           (ℓ * (1 + u)) ^ (-(1 / 4 : ℝ)) := by
-  have hη : 0 < 1 + u := by linarith
+  have hη : 0 < 1 + u := by linear_combination hulower
   have hx : 0 < ℓ * (1 + u) := mul_pos hℓ hη
   have hK :=
     saddleSourceFirstBranchThirdMomentCoefficient_pos hε horder
@@ -3430,7 +3482,7 @@ private theorem eventually_saddleSourceSecondBranch_cubic_central_window_le :
     with ε hε horder hfloor hmoment
   change 0 < ε at hε
   intro ℓ hℓ δ hδ T hT
-  have hℓpositive : 0 < ℓ := by linarith
+  have hℓpositive : 0 < ℓ := by linear_combination hℓ
   have hfloorpositive :=
     saddleSourceSecondBranchVarianceFloor_pos hε
   have hvariance := hfloor ℓ hℓpositive δ hδ
@@ -3537,7 +3589,9 @@ private theorem saddleSource_scaled_central_radius_le
         _ = z * Real.sqrt (ℓ * V) * η := by ring
     _ ≤ U * z /
         (Real.sqrt (ℓ * η) * Real.sqrt c) := by
-      gcongr
+      exact div_le_div₀ (mul_nonneg hU hz) (mul_le_mul_of_nonneg_right hηU hz)
+          (mul_pos (Real.sqrt_pos_of_pos (mul_pos hℓ hη)) (Real.sqrt_pos_of_pos hc))
+          (mul_le_mul_of_nonneg_left hwlower (le_of_lt (Real.sqrt_pos_of_pos (mul_pos hℓ hη))))
     _ = (U / Real.sqrt c) *
         (z / Real.sqrt (ℓ * η)) := by
       ring
@@ -3554,7 +3608,7 @@ private theorem saddleSourceFirstBranch_central_radius_le
     saddleSourceFirstBranchCentralRadius ε ℓ u ≤
       ((2 + ε / 2) / Real.sqrt (2 * ε)) *
         (ℓ * (1 + u)) ^ (-(5 / 12 : ℝ)) := by
-  have hη : 0 < 1 + u := by linarith
+  have hη : 0 < 1 + u := by linear_combination hulower
   have hx : 0 < ℓ * (1 + u) := mul_pos hℓ hη
   have hvariance :=
     upperFirstBranch_saddleSourceGaussianVariance_scaled_lower_bound
@@ -3564,7 +3618,7 @@ private theorem saddleSourceFirstBranch_central_radius_le
     (V := saddleSourceGaussianVariance ε ℓ u)
     (c := 2 * ε) (U := 2 + ε / 2)
     (z := (ℓ * (1 + u)) ^ (1 / 12 : ℝ))
-    hℓ hη (by positivity) (by linarith)
+    hℓ hη (by positivity) (by linear_combination huupper)
     (Real.rpow_nonneg hx.le _) hvariance
   calc
     saddleSourceFirstBranchCentralRadius ε ℓ u ≤
@@ -3637,14 +3691,14 @@ private theorem eventually_saddleSourceFirstBranch_cubic_window :
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
     have h := hmargin a ha
-    linarith
+    linear_combination h
   intro κ hκ
   let A : ℝ := saddleSourceFirstBranchThirdMomentCoefficient ε /
     (12 * ε * Real.sqrt (2 * ε))
   have htendsto :
       Tendsto (fun x : ℝ => A * x ^ (-(1 / 4 : ℝ)))
         atTop (𝓝 (0 : ℝ)) := by
-    convert! tendsto_const_nhds.mul
+    convert tendsto_const_nhds.mul
       (tendsto_rpow_neg_atTop
         (by norm_num : (0 : ℝ) < 1 / 4)) using 1
     all_goals simp only [mul_zero]
@@ -3656,9 +3710,9 @@ private theorem eventually_saddleSourceFirstBranch_cubic_window :
     with ℓ hℓ hlog hlogone
   intro u hu huupper hstar T hT
   have hxN : N ≤ ℓ * (1 + u) := by
-    linarith
+    linarith only [hlog, hstar]
   have hxone : 1 ≤ ℓ * (1 + u) := by
-    linarith
+    linarith only [hlogone, hstar]
   have hbound := saddleSourceFirstBranch_cubic_central_window_le
     hε hεsmall hℓ hu huupper horder hmargin'
     hxone hT
@@ -3686,7 +3740,7 @@ private theorem eventually_saddleSourceSecondBranch_cubic_window :
   have htendsto :
       Tendsto (fun ℓ : ℝ => A * ℓ ^ (-(1 / 4 : ℝ)))
         atTop (𝓝 (0 : ℝ)) := by
-    convert! tendsto_const_nhds.mul
+    convert tendsto_const_nhds.mul
       (tendsto_rpow_neg_atTop
         (by norm_num : (0 : ℝ) < 1 / 4)) using 1
     all_goals simp only [mul_zero]
@@ -3720,13 +3774,13 @@ private theorem eventually_saddleSourceFirstBranch_central_radius_lt :
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
     have h := hmargin a ha
-    linarith
+    linear_combination h
   intro κ hκ
   let A : ℝ := (2 + ε / 2) / Real.sqrt (2 * ε)
   have htendsto :
       Tendsto (fun x : ℝ => A * x ^ (-(5 / 12 : ℝ)))
         atTop (𝓝 (0 : ℝ)) := by
-    convert! tendsto_const_nhds.mul
+    convert tendsto_const_nhds.mul
       (tendsto_rpow_neg_atTop
         (by norm_num : (0 : ℝ) < 5 / 12)) using 1
     all_goals simp only [mul_zero]
@@ -3737,7 +3791,7 @@ private theorem eventually_saddleSourceFirstBranch_central_radius_lt :
     with ℓ hℓ hlog
   intro u hu huupper hstar
   have hxN : N ≤ ℓ * (1 + u) := by
-    linarith
+    linarith only [hlog, hstar]
   exact (saddleSourceFirstBranch_central_radius_le
     hε hεsmall hℓ hu huupper horder hmargin').trans_lt
       (hN (ℓ * (1 + u)) hxN)
@@ -3760,7 +3814,7 @@ private theorem eventually_saddleSourceSecondBranch_central_radius_lt :
   have htendsto :
       Tendsto (fun ℓ : ℝ => A * ℓ ^ (-(5 / 12 : ℝ)))
         atTop (𝓝 (0 : ℝ)) := by
-    convert! tendsto_const_nhds.mul
+    convert tendsto_const_nhds.mul
       (tendsto_rpow_neg_atTop
         (by norm_num : (0 : ℝ) < 5 / 12)) using 1
     all_goals simp only [mul_zero]
@@ -3781,9 +3835,8 @@ private theorem exists_saddleSource_central_error_tolerance
     positivity
   have hquarter : q ≤ (1 / 4 : ℝ) := min_le_left _ _
   have hk : q ≤ κ / 8 := min_le_right _ _
-  refine ⟨q, hq, by linarith, ?_⟩
-  linarith [mul_nonneg hq.le
-    (sub_nonneg.mpr hquarter)]
+  refine ⟨q, hq, by linarith only [hq, hquarter], ?_⟩
+  linarith only [mul_nonneg hq.le (sub_nonneg.mpr hquarter), hq, hquarter, hk]
 
 private theorem eventually_saddleSourceFirstBranch_centralGaussianErrors :
     ∀ᶠ ε : ℝ in 𝓝[>] (0 : ℝ),
@@ -3820,7 +3873,7 @@ private theorem eventually_saddleSourceFirstBranch_centralGaussianErrors :
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
     have h := hmargin a ha
-    linarith
+    linear_combination h
   intro κ hκ
   obtain ⟨q, hq, hqone, hfactor⟩ :=
     exists_saddleSource_central_error_tolerance hκ
@@ -3837,7 +3890,7 @@ private theorem eventually_saddleSourceFirstBranch_centralGaussianErrors :
   let R : ℝ := saddleSourceFirstBranchCentralRadius ε ℓ u
   have hV := hvariance ℓ hℓ u hu huupper
   have hR : 0 ≤ R := by
-    have hη : 0 ≤ 1 + u := by linarith
+    have hη : 0 ≤ 1 + u := by linear_combination hu
     try dsimp [R, saddleSourceFirstBranchCentralRadius]
     exact div_nonneg
       (Real.rpow_nonneg (mul_nonneg hℓ.le hη) _)
@@ -3878,7 +3931,7 @@ private theorem eventually_saddleSourceFirstBranch_centralGaussianErrors :
         hcentral
       _ < κ * ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (∫ T : ℝ, saddleSourceGaussianKernel ε ℓ u T) := by
-        gcongr
+        exact mul_lt_mul_of_pos_right (mul_lt_mul_of_pos_right hfactor hden) hG
   · intro huminus
     have hpoly : ∀ T : ℝ, |T| ≤ R →
         ‖minusPolynomial ε
@@ -3894,7 +3947,7 @@ private theorem eventually_saddleSourceFirstBranch_centralGaussianErrors :
       have hbound :=
         minusPolynomial_imaginary_norm_ge_three_beta
           hε huminus
-      linarith
+      linarith only [hε, hbound]
     have hcentral :=
       saddleSourceCenteredMinusIntegrand_centralGaussianError_le
         hε hℓ hu horder hmargin' hV hR hq.le hqone hq.le
@@ -3910,7 +3963,7 @@ private theorem eventually_saddleSourceFirstBranch_centralGaussianErrors :
         hcentral
       _ < κ * ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (∫ T : ℝ, saddleSourceGaussianKernel ε ℓ u T) := by
-        gcongr
+        exact mul_lt_mul_of_pos_right (mul_lt_mul_of_pos_right hfactor hden) hG
 
 private theorem eventually_saddleSourceSecondBranch_centralGaussianErrors :
     ∀ᶠ ε : ℝ in 𝓝[>] (0 : ℝ),
@@ -3955,7 +4008,7 @@ private theorem eventually_saddleSourceSecondBranch_centralGaussianErrors :
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
     have h := hmargin a ha
-    linarith
+    linear_combination h
   intro κ hκ
   obtain ⟨q, hq, hqone, hfactor⟩ :=
     exists_saddleSource_central_error_tolerance hκ
@@ -3971,13 +4024,13 @@ private theorem eventually_saddleSourceSecondBranch_centralGaussianErrors :
   intro δ hδ
   let u : ℝ := 1 + δ
   let R : ℝ := saddleSourceSecondBranchCentralRadius ε ℓ u
-  have hδzero : 0 ≤ δ := by linarith
+  have hδzero : 0 ≤ δ := by linarith only [hε, hδ]
   have hu : -1 < u := by
     try dsimp [u]
-    linarith
+    linarith only [hε, hδ]
   have huminus : 1 + ε / 4 ≤ u := by
     try dsimp [u]
-    linarith
+    linarith only [hε, hδ]
   have hV : 0 < saddleSourceGaussianVariance ε ℓ u := by
     try dsimp [u]
     exact hvariance ℓ hℓ δ hδ
@@ -4021,7 +4074,8 @@ private theorem eventually_saddleSourceSecondBranch_centralGaussianErrors :
             saddleSourceGaussianPlusIntegrand ε ℓ u T)‖ <
         κ * ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (∫ T : ℝ, saddleSourceGaussianKernel ε ℓ u T)
-    exact hcentral.trans_lt (by gcongr)
+    exact hcentral.trans_lt
+      (mul_lt_mul_of_pos_right (mul_lt_mul_of_pos_right hfactor hden) hG)
   · have hpoly : ∀ T : ℝ, |T| ≤ R →
         ‖minusPolynomial ε
             ((T : ℂ) + Complex.I * (u : ℂ)) -
@@ -4036,7 +4090,7 @@ private theorem eventually_saddleSourceSecondBranch_centralGaussianErrors :
       have hbound :=
         minusPolynomial_imaginary_norm_ge_three_beta
           hε huminus
-      linarith
+      linarith only [hε, hbound]
     have hcentral :=
       saddleSourceCenteredMinusIntegrand_centralGaussianError_le
         hε hℓ hu horder hmargin' hV hR hq.le hqone hq.le
@@ -4048,7 +4102,8 @@ private theorem eventually_saddleSourceSecondBranch_centralGaussianErrors :
             saddleSourceGaussianMinusIntegrand ε ℓ u T)‖ <
         κ * ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (∫ T : ℝ, saddleSourceGaussianKernel ε ℓ u T)
-    exact hcentral.trans_lt (by gcongr)
+    exact hcentral.trans_lt
+      (mul_lt_mul_of_pos_right (mul_lt_mul_of_pos_right hfactor hden) hG)
 
 private theorem upperPositiveShellDamping_local_variance_lower
     {ε ℓ δ T : ℝ}
@@ -4060,13 +4115,13 @@ private theorem upperPositiveShellDamping_local_variance_lower
   have hB : 0 ≤ B := by
     try dsimp [B]
     positivity
-  have hB1 : 0 < B + 1 := by linarith
-  have horder : B ≤ B + 1 := by linarith
+  have hB1 : 0 < B + 1 := by linear_combination hB
+  have horder : B ≤ B + 1 := by linarith only []
   have hwindow : (B + 1) * |T| ≤ 1 / 2 := by
     calc
       (B + 1) * |T| ≤
           (B + 1) * (1 / (2 * (B + 1))) := by
-            apply mul_le_mul_of_nonneg_left _ (by linarith)
+            apply mul_le_mul_of_nonneg_left _ (by linear_combination hB)
             simpa only [one_div, mul_inv_rev, B] using! hT
       _ = 1 / 2 := by
         field_simp [hB1.ne']
@@ -4074,7 +4129,7 @@ private theorem upperPositiveShellDamping_local_variance_lower
     positiveShellDensity_continuous ε
   have hcosh : Continuous
       (fun a : ℝ => Real.cosh ((1 + δ) * a)) := by
-    fun_prop
+    exact Continuous.comp' Real.continuous_cosh (Continuous.const_mul continuous_id' (1 + δ))
   have hosc : Continuous
       (fun a : ℝ => 1 - Real.cos (a * T)) := by
     fun_prop
@@ -4163,10 +4218,10 @@ private theorem upperGammaVarianceDensity_laplace_linear_lower
     positivity
   have hden : 0 < 1 - Real.exp (-x) := by
     have h := Real.exp_lt_one_iff.mpr
-      (show -x < 0 by linarith)
-    linarith
+      (show -x < 0 by linear_combination hx)
+    linear_combination h
   have hdenone : 1 - Real.exp (-x) ≤ 1 := by
-    linarith [Real.exp_pos (-x)]
+    linarith only [Real.exp_pos (-x)]
   have hinv : 1 ≤ (1 - Real.exp (-x))⁻¹ := by
     rw [inv_eq_one_div]
     apply (le_div_iff₀ hden).2
@@ -4206,7 +4261,7 @@ private theorem upperGammaDamping_local_variance_lower
     calc
       1 / (2 * η) = (1 / η) / 2 := by ring
       _ ≤ 1 / η := by
-        linarith [inv_pos.mpr hη]
+        linarith only [inv_pos.mpr hη, hq]
   have hsubset : Ioc p q ⊆ Ioi (0 : ℝ) := by
     intro a ha
     exact hp.trans ha.1
@@ -4223,13 +4278,15 @@ private theorem upperGammaDamping_local_variance_lower
     intro a ha
     have ha0 : 0 < a := hp.trans ha.1
     have halower : 1 / (2 * η) ≤ a := by
-      simpa [p] using! ha.1.le
+      simpa only [p] using! ha.1.le
     have haupper : a ≤ 1 / η := by
-      simpa [q] using! ha.2
+      simpa only [q] using! ha.2
     have hquarter : 1 / (4 * η) ≤ a / 2 := by
       calc
         1 / (4 * η) = (1 / (2 * η)) / 2 := by ring
-        _ ≤ a / 2 := by gcongr
+        _ ≤ a / 2 := by
+          exact div_le_div_of_nonneg_right halower
+              zero_le_two
     have heta : η * a ≤ 1 := by
       calc
         η * a ≤ η * (1 / η) :=
@@ -4239,7 +4296,7 @@ private theorem upperGammaDamping_local_variance_lower
         Real.exp (-η * a) := by
       rw [← Real.exp_neg]
       apply Real.exp_le_exp.mpr
-      linarith
+      linarith only [heta]
     have hmoment :
         (ℓ / 4 + 1 / (4 * η)) *
             (Real.exp 1)⁻¹ ≤
@@ -4262,7 +4319,7 @@ private theorem upperGammaDamping_local_variance_lower
             Real.exp (-η * a) := by
           gcongr
         _ ≤ a ^ 2 * upperGammaMeasureDensity ℓ η a := by
-          linarith
+          linarith only [hgamma, hlinear]
     have haT : |a * T| ≤ 1 := by
       rw [abs_mul, abs_of_pos ha0]
       calc
@@ -4327,8 +4384,8 @@ private theorem upperGammaDamping_local_variance_lower
       _ = ℓ / (2 * η) + 1 / η ^ 2 := by
         field_simp [hℓ.ne', hη.ne']
       _ ≤ ℓ / η + 1 / η ^ 2 := by
-        gcongr
-        linarith
+        refine add_le_add (div_le_div₀ (le_of_lt hℓ) (le_refl ℓ) hη ?_) (le_refl (1 / η ^ 2))
+        linarith only [hη]
   have hidentity :
       (q - p) * C =
         ((ℓ / η + 1 / η ^ 2) /
@@ -4343,7 +4400,13 @@ private theorem upperGammaDamping_local_variance_lower
           ring
     _ ≤ ((ℓ / η + 1 / η ^ 2) /
         (32 * Real.exp 1)) * T ^ 2 := by
-          gcongr
+          exact mul_le_mul_of_nonneg_right
+              (div_le_div_of_nonneg_right hscaled
+                (le_of_lt
+                  (mul_pos
+                    ((by norm_num))
+                    (Real.exp_pos 1))))
+              (Even.pow_nonneg (even_two_mul 1) T)
     _ = (q - p) * C := hidentity.symm
     _ = ∫ a : ℝ in Ioc p q, C :=
       hconstintegral.symm
@@ -4371,9 +4434,9 @@ private theorem eventually_saddleSourceContourDamping_secondBranch_local_coerciv
   change 0 < ε at hε
   intro ℓ hℓ δ hδ T hT
   have hδnonnegative : 0 ≤ δ := by
-    linarith
+    linarith only [hε, hδ]
   have hη : 0 < 2 + δ := by
-    linarith
+    linarith only [hε, hδ]
   have hB : 0 ≤ (ε⁻¹ ^ 3) := by
     positivity
   have hhalf :
@@ -4381,10 +4444,10 @@ private theorem eventually_saddleSourceContourDamping_secondBranch_local_coerciv
     have hb : 0 < 2 * ((ε⁻¹ ^ 3) + 1) := by
       positivity
     apply (div_le_iff₀ hb).2
-    linarith
+    linear_combination hB
   have hTgamma : |T| ≤ 2 + δ := by
     have hsmall := hT.trans hhalf
-    linarith
+    linarith only [hε, hδ, hT, hhalf]
   have hgamma := upperGammaDamping_local_variance_lower
     hℓ hη hTgamma
   have hshell := upperPositiveShellDamping_local_variance_lower
@@ -4414,7 +4477,7 @@ private theorem eventually_saddleSourceContourDamping_secondBranch_local_coerciv
           upperGammaVariance ℓ (2 + δ) * T ^ 2 ≤
         (ℓ / (32 * Real.exp 1)) *
           upperGammaVariance ℓ (2 + δ) * T ^ 2 := by
-            convert! mul_le_mul_of_nonneg_right
+            convert mul_le_mul_of_nonneg_right
               hγcoefficient hγbase using 1 <;> ring
       _ ≤ upperGammaDamping ℓ (2 + δ) T := hgamma
   have heone : 1 ≤ Real.exp 1 :=
@@ -4426,7 +4489,7 @@ private theorem eventually_saddleSourceContourDamping_secondBranch_local_coerciv
       (1 / (100 * Real.exp 1) : ℝ) ≤ 1 / 100 := by
         apply (div_le_iff₀ (by positivity :
           (0 : ℝ) < 100 * Real.exp 1)).2
-        linarith
+        linear_combination heone
       _ ≤ (99 / 100 : ℝ) * (1 / 4) := by
         norm_num
   have hsbase :
@@ -4443,7 +4506,7 @@ private theorem eventually_saddleSourceContourDamping_secondBranch_local_coerciv
         (99 / 100 : ℝ) *
           ((ℓ / 4) *
             upperPositiveShellVariance ε δ * T ^ 2) := by
-            convert! mul_le_mul_of_nonneg_right
+            convert mul_le_mul_of_nonneg_right
               hscoefficient hsbase using 1 <;> ring
       _ ≤ (99 / 100 : ℝ) *
           positiveShellDamping ε ℓ δ T :=
@@ -4453,7 +4516,7 @@ private theorem eventually_saddleSourceContourDamping_secondBranch_local_coerciv
         upperGammaVariance ℓ (2 + δ) +
           upperPositiveShellVariance ε δ := by
     unfold upperSaddleVariance
-    linarith [(hnet δ hδ).2]
+    linarith only [(hnet δ hδ).2, hnet, hδ]
   have hfactor : 0 ≤
       (ℓ / (100 * Real.exp 1)) * T ^ 2 := by
     positivity
@@ -4468,7 +4531,7 @@ private theorem eventually_saddleSourceContourDamping_secondBranch_local_coerciv
           upperGammaVariance ℓ (2 + δ) * T ^ 2 +
         (ℓ / (100 * Real.exp 1)) *
           upperPositiveShellVariance ε δ * T ^ 2 := by
-          convert! mul_le_mul_of_nonneg_left
+          convert mul_le_mul_of_nonneg_left
             hvariance hfactor using 1 <;> ring
     _ ≤ upperGammaDamping ℓ (2 + δ) T +
         (99 / 100 : ℝ) *
@@ -4493,8 +4556,8 @@ private theorem eventually_saddleSourceContourDamping_secondBranch_min_lower_bou
     with ε hε hdom
   change 0 < ε at hε
   intro ℓ hℓ δ hδ T
-  have hδ0 : 0 ≤ δ := by linarith
-  have hη : 0 < 2 + δ := by linarith
+  have hδ0 : 0 ≤ δ := by linarith only [hε, hδ]
+  have hη : 0 < 2 + δ := by linarith only [hε, hδ]
   have hgamma := upperGammaDamping_lower_bound
     hℓ hη T
   have hshell : 0 ≤ (99 / 100 : ℝ) *
@@ -4502,7 +4565,7 @@ private theorem eventually_saddleSourceContourDamping_secondBranch_min_lower_bou
     positivity [positiveShellDamping_nonneg
       (ε := ε) (δ := δ) (T := T) hℓ.le]
   rw [saddleSourceContourDamping_eq_secondBranch]
-  linarith [hdom ℓ hℓ δ hδ T]
+  linarith only [hdom ℓ hℓ δ hδ T, hdom, hℓ, hδ, hgamma, hshell]
 
 private theorem eventually_saddleSource_secondBranch_weighted_integrable :
     ∀ᶠ ε : ℝ in 𝓝[>] (0 : ℝ),
@@ -4523,14 +4586,14 @@ private theorem eventually_saddleSource_secondBranch_weighted_integrable :
   intro ℓ hℓ δ hδ
   let η : ℝ := 2 + δ
   let a : ℝ := ℓ / (8 * Real.exp 1)
-  have hδ0 : 0 ≤ δ := by linarith
+  have hδ0 : 0 ≤ δ := by linarith only [hε, hδ]
   have hη : 0 < η := by
     try dsimp [η]
-    linarith
+    linarith only [hε, hδ]
   have ha : 0 < a := by
     try dsimp [a]
     positivity
-  have hu : -1 < 1 + δ := by linarith
+  have hu : -1 < 1 + δ := by linarith only [hε, hδ]
   have hgaussian :=
     saddleGaussianTailWeight_mul_gaussian_integrable
       (div_pos ha hη)
@@ -4574,8 +4637,7 @@ private theorem eventually_saddleSource_secondBranch_weighted_integrable :
           Real.exp (-(a / η) * T ^ 2) +
         saddleGaussianTailWeight T *
           Real.exp (-a * |T|)
-  linarith [mul_le_mul_of_nonneg_left hexp
-    (saddleGaussianTailWeight_nonneg T)]
+  linarith only [mul_le_mul_of_nonneg_left hexp (saddleGaussianTailWeight_nonneg T), hexp]
 
 private theorem saddleGaussian_weighted_integral_le_rescaled
     {k : ℝ} (hk : 0 < k) :
@@ -4613,7 +4675,7 @@ private theorem saddleGaussian_weighted_integral_le_rescaled
     have hcube : 0 ≤ |T| ^ 3 := by positivity
     have hscaled := mul_le_mul_of_nonneg_right
       hCproduct hcube
-    linarith
+    linarith only [hCone, hscaled]
   have hpoint (T : ℝ) :
       saddleGaussianTailWeight T *
           Real.exp (-k * T ^ 2) ≤
@@ -4695,7 +4757,7 @@ private theorem saddleExponential_weighted_integral_le_rescaled
     have hcube : 0 ≤ |T| ^ 3 := by positivity
     have hscaled := mul_le_mul_of_nonneg_right
       hCproduct hcube
-    linarith
+    linarith only [hCone, hscaled]
   have hpoint (T : ℝ) :
       saddleGaussianTailWeight T *
           Real.exp (-k * |T|) ≤
@@ -4803,10 +4865,10 @@ private theorem eventually_saddleSource_secondBranch_pointwise_gaussian_plus_out
   let t₀ : ℝ := saddleSourceSecondBranchLocalFrequency ε
   let a : ℝ := ℓ / (8 * Real.exp 1)
   let η : ℝ := 2 + δ
-  have hδ0 : 0 ≤ δ := by linarith
+  have hδ0 : 0 ≤ δ := by linarith only [hε, hδ]
   have hη : 0 < η := by
     try dsimp [η]
-    linarith
+    linarith only [hε, hδ]
   have ha : 0 < a := by
     try dsimp [a]
     positivity
@@ -4820,7 +4882,7 @@ private theorem eventually_saddleSource_secondBranch_pointwise_gaussian_plus_out
     apply (div_le_iff₀
       (show (0 : ℝ) < 2 * ((ε⁻¹ ^ 3) + 1) by
         positivity)).2
-    linarith
+    linarith only [hB]
   have hw : 0 ≤ saddleGaussianTailWeight T :=
     saddleGaussianTailWeight_nonneg T
   by_cases hinside : |T| ≤ t₀
@@ -4836,7 +4898,7 @@ private theorem eventually_saddleSource_secondBranch_pointwise_gaussian_plus_out
               ε ℓ δ * T ^ 2) := by
       apply Real.exp_le_exp.mpr
       unfold saddleSourceSecondBranchGaussianRate
-      linarith
+      linear_combination hquadratic
     have hfirst := mul_le_mul_of_nonneg_left hlocalexp hw
     have houter : 0 ≤
         Real.exp
@@ -4850,7 +4912,7 @@ private theorem eventually_saddleSource_secondBranch_pointwise_gaussian_plus_out
                 (-saddleSourceSecondBranchGammaLinearRate
                   ℓ * |T|)) := by
       positivity
-    linarith
+    linear_combination hfirst + houter
   · have houtside : t₀ ≤ |T| :=
       le_of_not_ge hinside
     have hsquare : t₀ ^ 2 ≤ T ^ 2 := by
@@ -4894,7 +4956,7 @@ private theorem eventually_saddleSource_secondBranch_pointwise_gaussian_plus_out
       rw [saddleSourceContourDamping_eq_secondBranch]
       have hfull := hdom ℓ hℓ δ hδ T
       try dsimp [a, η] at hgamma ⊢
-      linarith
+      linear_combination hbarrier + hgamma + hfull
     have hmin := saddle_exp_neg_mul_min_le_add
       (a := a) (x := T ^ 2 / η) (y := |T|) ha.le
     have hexp :
@@ -4917,7 +4979,7 @@ private theorem eventually_saddleSource_secondBranch_pointwise_gaussian_plus_out
             (-(saddleSourceSecondBranchOuterBarrier ε ℓ δ +
               a * min (T ^ 2 / η) |T|)) := by
             apply Real.exp_le_exp.mpr
-            linarith
+            linear_combination hcombined
         _ = Real.exp
               (-saddleSourceSecondBranchOuterBarrier ε ℓ δ) *
             Real.exp
@@ -4950,7 +5012,7 @@ private theorem eventually_saddleSource_secondBranch_pointwise_gaussian_plus_out
             (-saddleSourceSecondBranchGaussianRate
               ε ℓ δ * T ^ 2) := by
       positivity
-    linarith
+    linear_combination hweighted + hfirst
 
 private theorem eventually_saddleSource_secondBranch_weighted_tail_explicit :
     ∀ᶠ ε : ℝ in 𝓝[>] (0 : ℝ),
@@ -4999,8 +5061,8 @@ private theorem eventually_saddleSource_secondBranch_weighted_tail_explicit :
   let q : ℝ := saddleSourceSecondBranchGammaGaussianRate ℓ δ
   let a : ℝ := saddleSourceSecondBranchGammaLinearRate ℓ
   let b : ℝ := saddleSourceSecondBranchOuterBarrier ε ℓ δ
-  have hδ0 : 0 ≤ δ := by linarith
-  have hη : 0 < 2 + δ := by linarith
+  have hδ0 : 0 ≤ δ := by linarith only [hε, hδ]
+  have hη : 0 < 2 + δ := by linarith only [hε, hδ]
   have hV := hvariance ℓ hℓ δ hδ
   have hkpos : 0 < k := by
     try dsimp [k, saddleSourceSecondBranchGaussianRate]
@@ -5294,8 +5356,8 @@ private theorem saddle_sqrt_le_one_add
     Real.sqrt x ≤ 1 + x := by
   apply Real.sqrt_le_iff.mpr
   constructor
-  · linarith
-  · linarith [sq_nonneg x]
+  · linear_combination hx
+  · linarith only [sq_nonneg x, hx]
 
 private theorem saddle_inverse_sqrt_cube_le
     {q : ℝ} (hq : 0 < q) :
@@ -5313,12 +5375,12 @@ private theorem saddle_inverse_sqrt_cube_le
   have hidentity :
       ((s ^ 3)⁻¹) ^ 2 = (6 / q) ^ 3 := by
     field_simp [hq.ne', hs.ne']
-    linarith [hcubed]
+    linarith only [hcubed]
   have hnonnegative : 0 ≤ (s ^ 3)⁻¹ := by
     positivity
   change (s ^ 3)⁻¹ ≤ 1 + (6 / q) ^ 3
   rw [← hidentity]
-  linarith [sq_nonneg ((s ^ 3)⁻¹ - (1 / 2 : ℝ))]
+  linarith only [sq_nonneg ((s ^ 3)⁻¹ - (1 / 2 : ℝ))]
 
 private theorem saddleSecondBranch_gammaWeightedCoefficient_le
     {q η C : ℝ}
@@ -5331,7 +5393,7 @@ private theorem saddleSecondBranch_gammaWeightedCoefficient_le
       Real.sqrt (Real.pi / (q / 2)) ≤
         (2 * (1 + (6 * C) ^ 3) *
           (1 + 2 * Real.pi * C)) * η ^ 4 := by
-  have hη0 : 0 ≤ η := by linarith
+  have hη0 : 0 ≤ η := by linear_combination hη
   have hηthree : 1 ≤ η ^ 3 := by
     simpa only [one_pow] using!
       (pow_le_pow_left₀
@@ -5342,12 +5404,15 @@ private theorem saddleSecondBranch_gammaWeightedCoefficient_le
         1 + (6 / q) ^ 3 := by
     apply max_le
     · have : 0 ≤ (6 / q) ^ 3 := by positivity
-      linarith
+      linear_combination this
     · exact hinverse
   have hqscaled : 6 / q ≤ 6 * C * η := by
     calc
       6 / q = 6 * (1 / q) := by ring
-      _ ≤ 6 * (C * η) := by gcongr
+      _ ≤ 6 * (C * η) := by
+        exact mul_le_mul_of_nonneg_left hrate
+            (le_of_lt
+              ((by norm_num)))
       _ = 6 * C * η := by ring
   have hmaxpoly :
       max (1 : ℝ) ((Real.sqrt (q / 6) ^ 3)⁻¹) ≤
@@ -5356,11 +5421,18 @@ private theorem saddleSecondBranch_gammaWeightedCoefficient_le
       max (1 : ℝ) ((Real.sqrt (q / 6) ^ 3)⁻¹) ≤
           1 + (6 / q) ^ 3 := hmax
       _ ≤ 1 + (6 * C * η) ^ 3 := by
-        gcongr
+        exact add_le_add (le_refl 1)
+            (pow_le_pow_left₀
+              (le_of_lt
+                (div_pos
+                  ((by norm_num))
+                  hq))
+              hqscaled 3)
       _ ≤ (1 + (6 * C) ^ 3) * η ^ 3 := by
-        linarith [mul_nonneg
-          (show 0 ≤ (6 * C) ^ 3 by positivity)
-          (show 0 ≤ η ^ 3 - 1 by linarith)]
+        linarith only [
+          mul_nonneg (show 0 ≤ (6 * C) ^ 3 by positivity) (show 0 ≤ η ^ 3 - 1 by linarith),
+          hηthree
+        ]
   have hpiscaled :
       Real.pi / (q / 2) ≤
         2 * Real.pi * C * η := by
@@ -5369,7 +5441,11 @@ private theorem saddleSecondBranch_gammaWeightedCoefficient_le
           (2 * Real.pi) * (1 / q) := by
         field_simp [hq.ne']
       _ ≤ (2 * Real.pi) * (C * η) := by
-        gcongr
+        exact mul_le_mul_of_nonneg_left hrate
+            (le_of_lt
+              (mul_pos
+                (zero_lt_two)
+                Real.pi_pos))
       _ = 2 * Real.pi * C * η := by ring
   have hsqrt :
       Real.sqrt (Real.pi / (q / 2)) ≤
@@ -5379,9 +5455,9 @@ private theorem saddleSecondBranch_gammaWeightedCoefficient_le
           1 + Real.pi / (q / 2) :=
         saddle_sqrt_le_one_add (by positivity)
       _ ≤ 1 + 2 * Real.pi * C * η := by
-        linarith
+        linear_combination hpiscaled
       _ ≤ (1 + 2 * Real.pi * C) * η := by
-        linarith
+        linear_combination hη
   calc
     2 * max (1 : ℝ)
         ((Real.sqrt (q / 6) ^ 3)⁻¹) *
@@ -5412,22 +5488,33 @@ private theorem saddleSecondBranch_linearWeightedCoefficient_le
   have hbase : 6 / a ≤ 6 * C := by
     calc
       6 / a = 6 * (1 / a) := by ring
-      _ ≤ 6 * C := by gcongr
+      _ ≤ 6 * C := by
+        exact mul_le_mul_of_nonneg_left hrate
+            (le_of_lt
+              ((by norm_num)))
   have hmax :
       max (1 : ℝ) (((a / 6) ^ 3)⁻¹) ≤
         1 + (6 * C) ^ 3 := by
     rw [hidentity]
     apply max_le
     · have : 0 ≤ (6 * C) ^ 3 := by positivity
-      linarith
+      linear_combination this
     · have hcubes : (6 / a) ^ 3 ≤ (6 * C) ^ 3 := by
-        gcongr
-      linarith
+        exact pow_le_pow_left₀
+            (le_of_lt
+              (div_pos
+                ((by norm_num))
+                ha))
+            hbase 3
+      linear_combination hcubes
   have hlinear : 2 / (a / 2) ≤ 4 * C := by
     calc
       2 / (a / 2) = 4 * (1 / a) := by
         field_simp [ha.ne']; ring
-      _ ≤ 4 * C := by gcongr
+      _ ≤ 4 * C := by
+        exact mul_le_mul_of_nonneg_left hrate
+            (le_of_lt
+              ((by norm_num)))
   calc
     2 * max (1 : ℝ) (((a / 6) ^ 3)⁻¹) *
         (2 / (a / 2)) ≤
@@ -5437,8 +5524,7 @@ private theorem saddleSecondBranch_linearWeightedCoefficient_le
       have hcoefficient :
           0 ≤ 8 * C * (1 + (6 * C) ^ 3) := by
         positivity
-      linarith [mul_le_mul_of_nonneg_left
-        hηfour hcoefficient]
+      linarith only [mul_le_mul_of_nonneg_left hηfour hcoefficient, hηfour, hcoefficient]
 
 private noncomputable def saddleSourceSecondBranchMomentCoefficient : ℝ :=
   let C : ℝ := 8 * Real.exp 1
@@ -5494,9 +5580,12 @@ private theorem saddleSourceSecondBranch_outerMoment_le
           (Real.exp_pos 1).ne', hηpositive.ne']
       _ ≤ C * η := by
         apply (div_le_iff₀ hℓpositive).2
-        linarith [mul_nonneg
-          (mul_nonneg hC.le hηpositive.le)
-          (show 0 ≤ ℓ - 1 by linarith)]
+        linarith only [
+          mul_nonneg (mul_nonneg hC.le hηpositive.le) (show 0 ≤ ℓ - 1 by linarith),
+          hℓ,
+          hηpositive,
+          hC
+        ]
   have harate : 1 / a ≤ C := by
     calc
       1 / a = C / ℓ := by
@@ -5506,8 +5595,7 @@ private theorem saddleSourceSecondBranch_outerMoment_le
           (Real.exp_pos 1).ne']
       _ ≤ C := by
         apply (div_le_iff₀ hℓpositive).2
-        linarith [mul_nonneg hC.le
-          (show 0 ≤ ℓ - 1 by linarith)]
+        linarith only [mul_nonneg hC.le (show 0 ≤ ℓ - 1 by linarith), hℓ, hC]
   have hgamma := saddleSecondBranch_gammaWeightedCoefficient_le
     hq hη hC hqrate
   have hlinear := saddleSecondBranch_linearWeightedCoefficient_le
@@ -5527,7 +5615,7 @@ private theorem saddleSourceSecondBranch_outerMoment_le
       (2 * (1 + (6 * C) ^ 3) *
           (1 + 2 * Real.pi * C) +
         8 * C * (1 + (6 * C) ^ 3)) * η ^ 4
-  linarith
+  linear_combination hgamma + hlinear
 
 private noncomputable def saddleSourceSecondBranchVarianceCoefficient (ε : ℝ) : ℝ :=
   2 + ((ε⁻¹ ^ 3) + 1) ^ 2 * shellWeight ε
@@ -5551,13 +5639,13 @@ private theorem eventually_saddleSourceGaussianVariance_secondBranch_upper :
     with ε hε hvariance
   change 0 < ε at hε
   intro ℓ hℓ δ hδ
-  have hℓpositive : 0 < ℓ := by linarith
-  have hδ0 : 0 ≤ δ := by linarith
+  have hℓpositive : 0 < ℓ := by linarith only [hℓ]
+  have hδ0 : 0 ≤ δ := by linarith only [hε, hδ]
   let η : ℝ := 2 + δ
   have hηtwo : 2 ≤ η := by
     try dsimp [η]
-    linarith
-  have hη : 0 < η := by linarith
+    linarith only [hε, hδ]
+  have hη : 0 < η := by linarith only [hε, hδ]
   have hB : 0 ≤ (ε⁻¹ ^ 3) := by
     positivity
   have hexp : 1 ≤
@@ -5567,15 +5655,15 @@ private theorem eventually_saddleSourceGaussianVariance_secondBranch_upper :
   have hfirst : 1 / (2 * η) ≤ (1 : ℝ) := by
     apply (div_le_iff₀
       (show 0 < 2 * η by positivity)).2
-    linarith
+    linarith only [hε, hδ]
   have hden : 0 < ℓ * η ^ 2 := by positivity
   have hsecond : 1 / (ℓ * η ^ 2) ≤ (1 : ℝ) := by
     apply (div_le_iff₀ hden).2
     have hηsquare : 1 ≤ η ^ 2 := by
-      linarith [sq_nonneg (η - 1)]
+      linarith only [sq_nonneg (η - 1), hε, hδ]
     have hscaled := mul_le_mul_of_nonneg_right
       hℓ (sq_nonneg η)
-    linarith
+    linarith only [hηsquare, hscaled]
   have hshell :=
     (upperPositiveShellVariance_bounds hε hδ0).2
   have hfull := (hvariance ℓ hℓpositive δ hδ).2
@@ -5590,9 +5678,9 @@ private theorem eventually_saddleSourceGaussianVariance_secondBranch_upper :
         ((ε⁻¹ ^ 3) + 1) ^ 2 *
           shellWeight ε *
             Real.exp (((ε⁻¹ ^ 3) + 1) * δ) := by
-    convert! hshell using 1; ring_nf
+    convert hshell using 1; ring_nf
   unfold saddleSourceSecondBranchVarianceCoefficient
-  linarith
+  linarith only [hexp, hfirst, hsecond, hsource, hshell']
 
 private theorem eventually_saddleSource_secondBranch_sqrtVariance_le :
     ∀ᶠ ε : ℝ in 𝓝[>] (0 : ℝ),
@@ -5613,7 +5701,7 @@ private theorem eventually_saddleSource_secondBranch_sqrtVariance_le :
   let C : ℝ := saddleSourceSecondBranchVarianceCoefficient ε
   have hC : 0 < C :=
     saddleSourceSecondBranchVarianceCoefficient_pos ε
-  have hℓpositive : 0 < ℓ := by linarith
+  have hℓpositive : 0 < ℓ := by linear_combination hℓ
   have hsource := hupper ℓ hℓ δ hδ
   have hscaled := mul_le_mul_of_nonneg_left
     hsource hℓpositive.le
@@ -5662,7 +5750,7 @@ theorem tendsto_saddleSourceSecondBranchLocalTailMajorant :
   have hexp := Real.tendsto_exp_atBot.comp hnegative
   have hscaled := hexp.const_mul
     (2 * Real.sqrt (400 * Real.exp 1 * Real.pi))
-  convert! hscaled using 1
+  convert hscaled using 1
   · funext ℓ
     congr 2
     ring
@@ -5741,11 +5829,11 @@ private theorem eventually_saddleSource_secondBranch_uniform_tail :
   let V : ℝ := saddleSourceGaussianVariance ε ℓ (1 + δ)
   let z : ℝ := ℓ ^ (1 / 12 : ℝ)
   let η : ℝ := 2 + δ
-  have hℓpositive : 0 < ℓ := by linarith
-  have hδ0 : 0 ≤ δ := by linarith
+  have hℓpositive : 0 < ℓ := by linear_combination hℓ
+  have hδ0 : 0 ≤ δ := by linarith only [hε, hδ]
   have hη : 1 ≤ η := by
     try dsimp [η]
-    linarith
+    linarith only [hε, hδ]
   have hVfloor : V₀ ≤ V := by
     try dsimp [V₀, V]
     exact hfloor ℓ hℓpositive δ hδ
@@ -5755,11 +5843,11 @@ private theorem eventually_saddleSource_secondBranch_uniform_tail :
     positivity
   have hscale : 600 * Real.exp 1 ≤ ℓ * V₀ := by
     have h := (div_le_iff₀ hV₀).mp hone
-    linarith
+    exact h
   have hfullscale : 600 * Real.exp 1 ≤ ℓ * V := by
     have h := mul_le_mul_of_nonneg_left
       hVfloor hℓpositive.le
-    linarith
+    linear_combination hscale + h
   have hk :
       6 ≤ saddleSourceSecondBranchGaussianRate ε ℓ δ := by
     unfold saddleSourceSecondBranchGaussianRate
@@ -5769,8 +5857,8 @@ private theorem eventually_saddleSource_secondBranch_uniform_tail :
     have hgoal :
         (6 : ℝ) ≤ (ℓ * V) / (100 * Real.exp 1) := by
       apply (le_div_iff₀ hden).2
-      linarith
-    convert! hgoal using 1; ring
+      linear_combination hfullscale
+    convert hgoal using 1; ring
   have hsource := htail ℓ hℓpositive δ hδ z hz hk
   have hpower : z ^ 2 = ℓ ^ (1 / 6 : ℝ) := by
     try dsimp [z]
@@ -5860,7 +5948,7 @@ private theorem eventually_saddleSource_secondBranch_uniform_tail :
             (-saddleSourceContourDamping
               ε ℓ (1 + δ) T)) ≤ _ at hsource
   dsimp only [M] at houterterm
-  linarith
+  linear_combination hlocalterm + houterterm + hsource
 
 end
 
@@ -5947,7 +6035,7 @@ private theorem saddleGaussian_fullLine_error_le_central_add_tails
     _ ≤ ‖∫ T : ℝ in s, (F T - G T)‖ +
           ((∫ T : ℝ in tail, ‖F T‖) +
             (∫ T : ℝ in tail, ‖G T‖)) := by
-          gcongr
+          exact add_le_add (le_refl ‖∫ (T : ℝ) in s, F T - G T‖) htailbound
     _ = ‖∫ T : ℝ in Icc (-R) R, (F T - G T)‖ +
         (∫ T : ℝ in saddleGaussianTailSet R, ‖F T‖) +
         (∫ T : ℝ in saddleGaussianTailSet R, ‖G T‖) := by
@@ -5993,12 +6081,12 @@ private theorem saddleSource_scaled_tail_lt_relative_gaussian
         Real.sqrt (2 * Real.pi) /
           Real.sqrt (ℓ * saddleSourceGaussianVariance ε ℓ u) := by
     apply (eq_div_iff hs.ne').mpr
-    linarith
+    linear_combination hmass
   have hW :
       W < κ /
         Real.sqrt (ℓ * saddleSourceGaussianVariance ε ℓ u) := by
     apply (lt_div_iff₀ hs).mpr
-    linarith
+    linear_combination hnormalized
   calc
     X ≤ C * A * W := hbound
     _ < C * A *
@@ -6102,7 +6190,7 @@ private theorem exists_saddleSourceCenteredMinusIntegrand_weighted_tail_integral
   obtain ⟨C, hC, hpoly⟩ := exists_minusPolynomial_uniform_weighted_bound hε
   exact ⟨C, hC, fun ℓ hℓ u hu v R hweighted =>
     SaddleSign.centeredIntegrand_weighted_tail_integral_le .minus
-      hε hℓ (by linarith) horder (hpoly u hu) v R hweighted⟩
+      hε hℓ (by linarith only [hε, hu]) horder (hpoly u hu) v R hweighted⟩
 
 private theorem SaddleSign.gaussianIntegrand_tail_norm_eq (s : SaddleSign)
     (ε ℓ u R : ℝ) :
@@ -6230,8 +6318,8 @@ private theorem saddleSourceGaussianKernel_normalized_tail_le
     positivity
   have hk : 6 ≤ k := by
     try dsimp [k, V]
-    linarith
-  have hkpos : 0 < k := by linarith
+    linarith only [hlarge]
+  have hkpos : 0 < k := by linear_combination hk
   have hR : 0 ≤ R := by
     try dsimp [R]
     positivity
@@ -6244,12 +6332,11 @@ private theorem saddleSourceGaussianKernel_normalized_tail_le
     intro T hT
     have hw : 1 ≤ saddleGaussianTailWeight T := by
       unfold saddleGaussianTailWeight
-      linarith [pow_nonneg (abs_nonneg T) 3]
+      linarith only [pow_nonneg (abs_nonneg T) 3]
     unfold saddleSourceGaussianKernel
     change Real.exp (-k * T ^ 2) ≤
       saddleGaussianTailWeight T * Real.exp (-k * T ^ 2)
-    linarith [mul_le_mul_of_nonneg_right hw
-      (Real.exp_pos (-k * T ^ 2)).le]
+    linarith only [mul_le_mul_of_nonneg_right hw (Real.exp_pos (-k * T ^ 2)).le, hw]
   have hcompare := setIntegral_mono_on
     hgaussian.integrableOn hweighted.integrableOn
       (saddleGaussianTailSet_measurable R) hpoint
@@ -6329,7 +6416,7 @@ private theorem tendsto_saddleSourceGaussianNormalizedTailMajorant :
       atTop atBot := by
     have h := hpower.const_mul_atTop_of_neg
       (by norm_num : -(1 / 8 : ℝ) < 0)
-    convert! h using 1
+    convert h using 1
     funext x
     ring
   have hexp := Real.tendsto_exp_atBot.comp hnegative
@@ -6390,10 +6477,10 @@ private theorem eventually_saddleSource_firstBranch_uniform_gaussian_tail :
   let z : ℝ := (ℓ * η) ^ (1 / 12 : ℝ)
   have hη : 0 < η := by
     try dsimp [η]
-    linarith
+    linear_combination hulower
   have hηupper : η ≤ U := by
     try dsimp [η, U]
-    linarith
+    linear_combination huupper
   have hV : 0 < V :=
     hvariance ℓ hℓ u hulower huupper
   have hmargin' :
@@ -6401,7 +6488,7 @@ private theorem eventually_saddleSource_firstBranch_uniform_gaussian_tail :
         0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
     have h := hmargin a ha
-    linarith
+    linear_combination hεsmall + hε + h
   have hvar :=
     upperFirstBranch_saddleSourceGaussianVariance_scaled_lower_bound
       hε hεsmall hℓ hulower huupper horder hmargin'
@@ -6412,16 +6499,16 @@ private theorem eventually_saddleSource_firstBranch_uniform_gaussian_tail :
     exact hvar.trans hproduct
   have hthreshold' : 6 * U ≤ ℓ * ε := by
     have h := (div_le_iff₀ hε).mp hthreshold
-    linarith
+    exact h
   have hlarge : 12 ≤ ℓ * V := by
     have hproduct := mul_le_mul_of_nonneg_left
       hvarupper hℓ.le
     have hmain : U * 12 ≤ U * (ℓ * V) := by
-      linarith
+      linarith only [hthreshold', hproduct]
     by_contra hnot
     have hlt : ℓ * V < 12 := lt_of_not_ge hnot
     have hcontradiction := mul_lt_mul_of_pos_left hlt hU
-    linarith
+    linarith only [hthreshold', hproduct, hcontradiction]
   have hz : 0 ≤ z := by
     try dsimp [z]
     exact Real.rpow_nonneg
@@ -6490,7 +6577,7 @@ private theorem eventually_saddleSource_secondBranch_uniform_gaussian_tail :
   have hlarge : 12 ≤ ℓ * V := by
     have hbase := (div_le_iff₀ hV₀).mp hthreshold
     calc
-      12 ≤ ℓ * V₀ := by linarith
+      12 ≤ ℓ * V₀ := by exact hbase
       _ ≤ ℓ * V :=
         mul_le_mul_of_nonneg_left hVlower hℓ.le
   have hz : 0 ≤ z := by
@@ -6569,7 +6656,7 @@ private theorem eventually_saddleSourceFirstBranch_sourceL1Tails :
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
     have h := hmargin a ha
-    linarith
+    linear_combination hεsmall + hε + h
   obtain ⟨Cp, hCp, hplus⟩ :=
     exists_saddleSourceCenteredPlusIntegrand_weighted_tail_integral_bound
       hε horder
@@ -6595,14 +6682,14 @@ private theorem eventually_saddleSourceFirstBranch_sourceL1Tails :
           saddleGaussianTailWeight T *
             Real.exp (-saddleSourceContourDamping ε ℓ u T)) <
           κ / Cp := by
-    simpa [R, V, saddleSourceFirstBranchCentralRadius] using! hp u hu huupper hstar
+    simpa only [R, V, saddleSourceFirstBranchCentralRadius] using! hp u hu huupper hstar
   have hmnormal :
       Real.sqrt (ℓ * V) *
         (∫ T : ℝ in saddleGaussianTailSet R,
           saddleGaussianTailWeight T *
             Real.exp (-saddleSourceContourDamping ε ℓ u T)) <
           κ / Cm := by
-    simpa [R, V, saddleSourceFirstBranchCentralRadius] using! hm u hu huupper hstar
+    simpa only [R, V, saddleSourceFirstBranchCentralRadius] using! hm u hu huupper hstar
   constructor
   · have hden : 0 <
         ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ :=
@@ -6623,7 +6710,7 @@ private theorem eventually_saddleSourceFirstBranch_sourceL1Tails :
             (∫ T : ℝ in saddleGaussianTailSet R,
               saddleGaussianTailWeight T *
                 Real.exp (-saddleSourceContourDamping ε ℓ u T))) := by
-          gcongr
+          exact mul_le_mul_of_nonneg_left hbound (le_of_lt (Real.sqrt_pos_of_pos (mul_pos hℓ hV)))
       _ = Cp * ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (Real.sqrt (ℓ * V) *
             (∫ T : ℝ in saddleGaussianTailSet R,
@@ -6632,7 +6719,7 @@ private theorem eventually_saddleSourceFirstBranch_sourceL1Tails :
           ring
       _ < Cp * ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (κ / Cp) := by
-          gcongr
+          exact mul_lt_mul_of_pos_left hpnormal (mul_pos hCp hden)
       _ = κ * ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ := by
           field_simp [hCp.ne']
   · intro huminus
@@ -6642,7 +6729,7 @@ private theorem eventually_saddleSourceFirstBranch_sourceL1Tails :
       have hnorm :=
         minusPolynomial_imaginary_norm_ge_three_beta
           hε huminus
-      linarith
+      linarith only [hε, hnorm]
     have hbound := hminus ℓ hℓ u huminus v R hweighted
     change
       Real.sqrt (ℓ * V) *
@@ -6658,7 +6745,7 @@ private theorem eventually_saddleSourceFirstBranch_sourceL1Tails :
             (∫ T : ℝ in saddleGaussianTailSet R,
               saddleGaussianTailWeight T *
                 Real.exp (-saddleSourceContourDamping ε ℓ u T))) := by
-          gcongr
+          exact mul_le_mul_of_nonneg_left hbound (le_of_lt (Real.sqrt_pos_of_pos (mul_pos hℓ hV)))
       _ = Cm * ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (Real.sqrt (ℓ * V) *
             (∫ T : ℝ in saddleGaussianTailSet R,
@@ -6667,7 +6754,7 @@ private theorem eventually_saddleSourceFirstBranch_sourceL1Tails :
           ring
       _ < Cm * ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (κ / Cm) := by
-          gcongr
+          exact mul_lt_mul_of_pos_left hmnormal (mul_pos hCm hden)
       _ = κ * ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ := by
           field_simp [hCm.ne']
 
@@ -6706,7 +6793,7 @@ private theorem eventually_saddleSourceFirstBranch_gaussianL1Tails :
   have hkernel :
       s * (∫ T : ℝ in saddleGaussianTailSet R,
         saddleSourceGaussianKernel ε ℓ u T) < κ := by
-    simpa [s, R, saddleSourceFirstBranchCentralRadius] using! hℓ u hu huupper hstar
+    simpa only [s, R, saddleSourceFirstBranchCentralRadius] using! hℓ u hu huupper hstar
   constructor
   · have hden : 0 <
         ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ :=
@@ -6717,7 +6804,7 @@ private theorem eventually_saddleSourceFirstBranch_gaussianL1Tails :
         ‖saddleSourceGaussianPlusIntegrand ε ℓ u T‖) <
       κ * ‖plusPolynomial ε (Complex.I * (u : ℂ))‖
     rw [saddleSourceGaussianPlusIntegrand_tail_norm_eq]
-    linarith [mul_lt_mul_of_pos_left hkernel hden]
+    linarith only [mul_lt_mul_of_pos_left hkernel hden, hkernel, hden]
   · intro huminus
     have hden : 0 <
         ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ := by
@@ -6725,13 +6812,13 @@ private theorem eventually_saddleSourceFirstBranch_gaussianL1Tails :
       have hnorm :=
         minusPolynomial_imaginary_norm_ge_three_beta
           hε huminus
-      linarith
+      linarith only [hε, hnorm]
     change s *
       (∫ T : ℝ in saddleGaussianTailSet R,
         ‖saddleSourceGaussianMinusIntegrand ε ℓ u T‖) <
       κ * ‖minusPolynomial ε (Complex.I * (u : ℂ))‖
     rw [saddleSourceGaussianMinusIntegrand_tail_norm_eq]
-    linarith [mul_lt_mul_of_pos_left hkernel hden]
+    linarith only [mul_lt_mul_of_pos_left hkernel hden, hkernel, hden]
 
 private theorem eventually_saddleSourceFirstBranch_fullGaussianErrors :
     ∀ᶠ ε : ℝ in 𝓝[>] (0 : ℝ),
@@ -6817,7 +6904,7 @@ private theorem eventually_saddleSourceFirstBranch_fullGaussianErrors :
       _ < ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (∫ T : ℝ,
             saddleSourceGaussianKernel ε ℓ u T) := by
-        linarith [mul_pos hden hG]
+        linarith only [mul_pos hden hG, hG, hden]
   · intro huminus
     have hden : 0 <
         ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ := by
@@ -6825,7 +6912,7 @@ private theorem eventually_saddleSourceFirstBranch_fullGaussianErrors :
       have hnorm :=
         minusPolynomial_imaginary_norm_ge_three_beta
           hε huminus
-      linarith
+      linarith only [hε, hnorm]
     have hfull :=
       saddleGaussian_fullLine_error_lt_of_central_and_normalized_tails
         (ε := ε) (ℓ := ℓ) (u := u) (R := R)
@@ -6859,7 +6946,7 @@ private theorem eventually_saddleSourceFirstBranch_fullGaussianErrors :
       _ < ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (∫ T : ℝ,
             saddleSourceGaussianKernel ε ℓ u T) := by
-        linarith [mul_pos hden hG]
+        linarith only [mul_pos hden hG, hG, hden]
 
 private theorem eventually_saddleSourceSecondBranch_sourceL1Tails_of_uniform_tail
     (hweighted :
@@ -6935,10 +7022,10 @@ private theorem eventually_saddleSourceSecondBranch_sourceL1Tails_of_uniform_tai
   let V : ℝ := saddleSourceGaussianVariance ε ℓ u
   have hu : -1 < u := by
     try dsimp [u]
-    linarith
+    linarith only [hε, hδ]
   have huminus : 1 + ε / 4 ≤ u := by
     try dsimp [u]
-    linarith
+    linarith only [hε, hδ]
   have hV : 0 < V := by
     try dsimp [V, u]
     exact hvariance ℓ hℓ δ hδ
@@ -6978,7 +7065,7 @@ private theorem eventually_saddleSourceSecondBranch_sourceL1Tails_of_uniform_tai
             (∫ T : ℝ in saddleGaussianTailSet R,
               saddleGaussianTailWeight T *
                 Real.exp (-saddleSourceContourDamping ε ℓ u T))) := by
-          gcongr
+          exact mul_le_mul_of_nonneg_left hbound (le_of_lt (Real.sqrt_pos_of_pos (mul_pos hℓ hV)))
       _ = Cp * ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (Real.sqrt (ℓ * V) *
             (∫ T : ℝ in saddleGaussianTailSet R,
@@ -6987,7 +7074,7 @@ private theorem eventually_saddleSourceSecondBranch_sourceL1Tails_of_uniform_tai
           ring
       _ < Cp * ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (κ / Cp) := by
-          gcongr
+          exact mul_lt_mul_of_pos_left hpnormal (mul_pos hCp hden)
       _ = κ * ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ := by
           field_simp [hCp.ne']
   · have hden : 0 <
@@ -6996,7 +7083,7 @@ private theorem eventually_saddleSourceSecondBranch_sourceL1Tails_of_uniform_tai
       have hnorm :=
         minusPolynomial_imaginary_norm_ge_three_beta
           hε huminus
-      linarith
+      linarith only [hε, hnorm]
     have hbound := hminus ℓ hℓ u huminus v R hweighted'
     change
       Real.sqrt (ℓ * V) *
@@ -7012,7 +7099,7 @@ private theorem eventually_saddleSourceSecondBranch_sourceL1Tails_of_uniform_tai
             (∫ T : ℝ in saddleGaussianTailSet R,
               saddleGaussianTailWeight T *
                 Real.exp (-saddleSourceContourDamping ε ℓ u T))) := by
-          gcongr
+          exact mul_le_mul_of_nonneg_left hbound (le_of_lt (Real.sqrt_pos_of_pos (mul_pos hℓ hV)))
       _ = Cm * ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (Real.sqrt (ℓ * V) *
             (∫ T : ℝ in saddleGaussianTailSet R,
@@ -7021,7 +7108,7 @@ private theorem eventually_saddleSourceSecondBranch_sourceL1Tails_of_uniform_tai
           ring
       _ < Cm * ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (κ / Cm) := by
-          gcongr
+          exact mul_lt_mul_of_pos_left hmnormal (mul_pos hCm hden)
       _ = κ * ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ := by
           field_simp [hCm.ne']
 
@@ -7062,14 +7149,14 @@ private theorem eventually_saddleSourceSecondBranch_gaussianL1Tails :
     Real.sqrt (ℓ * saddleSourceGaussianVariance ε ℓ u)
   have hu : -1 < u := by
     try dsimp [u]
-    linarith
+    linarith only [hε, hδ]
   have huminus : 1 + ε / 4 ≤ u := by
     try dsimp [u]
-    linarith
+    linarith only [hε, hδ]
   have hkernel :
       s * (∫ T : ℝ in saddleGaussianTailSet R,
         saddleSourceGaussianKernel ε ℓ u T) < κ := by
-    simpa [s, R, u, saddleSourceSecondBranchCentralRadius] using! hℓ δ hδ
+    simpa only [s, R, u, saddleSourceSecondBranchCentralRadius] using! hℓ δ hδ
   constructor
   · have hden : 0 <
         ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ :=
@@ -7080,20 +7167,20 @@ private theorem eventually_saddleSourceSecondBranch_gaussianL1Tails :
         ‖saddleSourceGaussianPlusIntegrand ε ℓ u T‖) <
       κ * ‖plusPolynomial ε (Complex.I * (u : ℂ))‖
     rw [saddleSourceGaussianPlusIntegrand_tail_norm_eq]
-    linarith [mul_lt_mul_of_pos_left hkernel hden]
+    linarith only [mul_lt_mul_of_pos_left hkernel hden, hkernel, hden]
   · have hden : 0 <
         ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ := by
       have hb := div_pos hε four_pos
       have hnorm :=
         minusPolynomial_imaginary_norm_ge_three_beta
           hε huminus
-      linarith
+      linarith only [hε, hnorm]
     change s *
       (∫ T : ℝ in saddleGaussianTailSet R,
         ‖saddleSourceGaussianMinusIntegrand ε ℓ u T‖) <
       κ * ‖minusPolynomial ε (Complex.I * (u : ℂ))‖
     rw [saddleSourceGaussianMinusIntegrand_tail_norm_eq]
-    linarith [mul_lt_mul_of_pos_left hkernel hden]
+    linarith only [mul_lt_mul_of_pos_left hkernel hden, hkernel, hden]
 
 private theorem eventually_saddleSourceSecondBranch_fullGaussianErrors_of_sourceL1
     (hsource :
@@ -7168,10 +7255,10 @@ private theorem eventually_saddleSourceSecondBranch_fullGaussianErrors_of_source
   let v : ℝ := saddleSourceStationaryLogRadius ε ℓ u
   have hu : -1 < u := by
     try dsimp [u]
-    linarith
+    linarith only [hε, hδ]
   have huminus : 1 + ε / 4 ≤ u := by
     try dsimp [u]
-    linarith
+    linarith only [hε, hδ]
   have hV : 0 < saddleSourceGaussianVariance ε ℓ u := by
     try dsimp [u]
     exact hvariance ℓ hℓ δ hδ
@@ -7225,14 +7312,14 @@ private theorem eventually_saddleSourceSecondBranch_fullGaussianErrors_of_source
       _ < ‖plusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (∫ T : ℝ,
             saddleSourceGaussianKernel ε ℓ u T) := by
-        linarith [mul_pos hden hG]
+        linarith only [mul_pos hden hG, hG, hden]
   · have hden : 0 <
         ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ := by
       have hb := div_pos hε four_pos
       have hnorm :=
         minusPolynomial_imaginary_norm_ge_three_beta
           hε huminus
-      linarith
+      linarith only [hε, hnorm]
     have hfull :=
       saddleGaussian_fullLine_error_lt_of_central_and_normalized_tails
         (ε := ε) (ℓ := ℓ) (u := u) (R := R)
@@ -7273,7 +7360,7 @@ private theorem eventually_saddleSourceSecondBranch_fullGaussianErrors_of_source
       _ < ‖minusPolynomial ε (Complex.I * (u : ℂ))‖ *
           (∫ T : ℝ,
             saddleSourceGaussianKernel ε ℓ u T) := by
-        linarith [mul_pos hden hG]
+        linarith only [mul_pos hden hG, hG, hden]
 
 private theorem eventually_saddleSourceSecondBranch_sourceL1Tails :
     ∀ᶠ ε : ℝ in 𝓝[>] (0 : ℝ),
@@ -7354,7 +7441,7 @@ private theorem saddleDigamma_eq_complexDigamma_re
     have hre := congrArg Complex.re h
     have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
     simp only [Complex.ofReal_re, Complex.neg_re, Complex.natCast_re] at hre
-    linarith
+    linarith only [hx, hre]
   have hreal :
       HasDerivAt Real.Gamma
         (deriv Complex.Gamma (x : ℂ)).re x := by
@@ -7378,7 +7465,7 @@ private theorem complexGamma_differentiableOn_positiveHalfPlane :
   have hnreal : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
   simp only [Complex.neg_re, Complex.natCast_re] at hre
   change 0 < z.re at hz
-  linarith
+  linarith only [hre, hz]
 
 private theorem complexDigamma_continuousOn_positiveHalfPlane :
     ContinuousOn Complex.digamma
@@ -7426,7 +7513,7 @@ private theorem tendsto_saddleDigamma_atTop :
     Tendsto saddleDigamma atTop atTop := by
   have h := Real.tendsto_log_atTop.atTop_add
     tendsto_saddleDigamma_sub_log
-  convert! h using 1
+  convert h using 1
   funext x
   ring
 
@@ -7557,7 +7644,7 @@ private theorem saddleSourceShellDerivative_hasDerivAt
             Real.cosh (u * a)) u := by
     have h := saddleSinhShellInterval_hasDerivAt
       w hw horder u
-    convert! h using 1
+    convert h using 1
     · funext v
       apply intervalIntegral.integral_congr
       intro a ha
@@ -7574,7 +7661,7 @@ private theorem saddleSourceShellDerivative_hasDerivAt
       congr 2
       ring
   have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 := by
-    linarith
+    linarith only []
   have hpositive :
       HasDerivAt
         (fun v : ℝ =>
@@ -7588,7 +7675,7 @@ private theorem saddleSourceShellDerivative_hasDerivAt
       (positiveShellDensity ε)
       (positiveShellDensity_continuous ε)
       hremote u
-    convert! h using 1
+    convert h using 1
     · funext v
       apply intervalIntegral.integral_congr
       intro a ha
@@ -7617,7 +7704,7 @@ private theorem saddleSourceShellDerivative_hasDerivAt
     ring_nf
   have hsum := hshort.add hpositive
   unfold saddleSourceShellDerivative
-  convert! hsum using 1
+  convert hsum using 1
   rw [hshortvariance, hpositivevariance]
   unfold upperNetShellVariance
   ring
@@ -7646,8 +7733,8 @@ private theorem eventually_saddleSourceShellDerivative_monotone_secondBranch :
       have hmem : u ∈ Ici (1 + ε / 2) :=
         interior_subset hu
       exact hmem
-    have hδ : ε / 2 ≤ u - 1 := by linarith
-    have hδnonneg : 0 ≤ u - 1 := by linarith
+    have hδ : ε / 2 ≤ u - 1 := by linear_combination hthreshold
+    have hδnonneg : 0 ≤ u - 1 := by linarith only [hε, hthreshold]
     have hvariance :=
       (upperPositiveShellVariance_bounds hε hδnonneg).1
     have hpositive : 0 ≤ upperPositiveShellVariance ε (u - 1) := by
@@ -7657,7 +7744,7 @@ private theorem eventually_saddleSourceShellDerivative_monotone_secondBranch :
             Real.exp ((u - 1) * (ε⁻¹ ^ 3)) by
           positivity [shellWeight_pos ε]).trans hvariance
     have hnetlower := (hnet (u - 1) hδ).1
-    linarith
+    linarith only [hpositive, hnetlower]
 
 private theorem saddleLogRadius_continuousOn_Ici
     {ε : ℝ} (hε : 0 < ε)
@@ -7677,7 +7764,7 @@ private theorem saddleLogRadius_continuousOn_Ici
     try dsimp [g]
     have hu' : u₀ ≤ u := hu
     have hupositive : 0 < 1 + u := by
-      linarith
+      linarith only [hu₀, hu']
     change 0 < ((d : ℝ) / 2) * (1 + u) / 2
     positivity
   have hdigamma :
@@ -7716,7 +7803,7 @@ private theorem tendsto_saddleGammaArgument_atTop
   have hlinear := tendsto_id.const_mul_atTop hslope
   have h := hlinear.atTop_add
     (tendsto_const_nhds (x := (d : ℝ) / 4))
-  convert! h using 1
+  convert h using 1
   funext u
   simp only [id_eq]
   ring
@@ -7757,7 +7844,7 @@ private theorem tendsto_saddleLogRadius_atTop_of_shell_monotone
       · exact hu
     rw [saddleLogRadius_eq_digamma_add_shellDerivative]
     try dsimp [C]
-    linarith
+    linear_combination hshell
   exact tendsto_atTop_mono' atTop hcomparison hbaseline
 
 private theorem eventually_tendsto_saddleLogRadius_atTop :
@@ -7833,7 +7920,7 @@ private theorem eventually_saddleSmallRadiusStarOrdinate_gt_neg_one :
   have hdreal : (3 : ℝ) ≤ (d : ℝ) := by
     exact_mod_cast hd
   have hdimension : 1 < (d : ℝ) / 2 := by
-    linarith
+    linarith only [hdreal]
   have hlog : 0 < Real.log ((d : ℝ) / 2) :=
     Real.log_pos hdimension
   have hdenominator : 0 < 4 * ((d : ℝ) / 2) := by
@@ -7843,7 +7930,7 @@ private theorem eventually_saddleSmallRadiusStarOrdinate_gt_neg_one :
         (4 * ((d : ℝ) / 2)) :=
     div_pos hlog hdenominator
   unfold saddleSmallRadiusStarOrdinate
-  linarith
+  linear_combination hratio
 
 private theorem eventually_saddleSmallRadiusStar_log_coverage :
     ∀ᶠ ε : ℝ in 𝓝[>] (0 : ℝ),
@@ -7879,7 +7966,7 @@ private theorem eventually_saddleSourceRadius_log_coverage :
     with ε hε hcoverage
   change 0 < ε at hε
   intro d hd r hr
-  have hu₀ : -1 < 1 + ε / 4 := by linarith
+  have hu₀ : -1 < 1 + ε / 4 := by linarith only [hε]
   apply hcoverage d hd (1 + ε / 4) hu₀ r
   exact hr
 
@@ -7924,7 +8011,7 @@ private theorem eventualLowerBound_of_uniform_and_constructive
     (hlower : UniformAdmissibleLowerBound)
     (hupper : ConstructivePrimalUpperBound) : EventualLowerBound := by
   intro c hc
-  have haux : Real.pi⁻¹ < Real.pi⁻¹ + 1 := by linarith
+  have haux : Real.pi⁻¹ < Real.pi⁻¹ + 1 := by linarith only []
   filter_upwards [hlower c hc, hupper (Real.pi⁻¹ + 1) haux]
     with d hcost ⟨f, _⟩
   unfold normalizedProgram
@@ -7940,14 +8027,14 @@ private theorem sharpQuotient_of_eventual_bounds
   refine tendsto_order.2 ⟨?_, ?_⟩
   · intro a ha
     have hmid : (a + Real.pi⁻¹) / 2 < Real.pi⁻¹ := by
-      linarith
+      linarith only [ha]
     filter_upwards [hlower _ hmid] with d hd
-    linarith
+    linarith only [ha, hd]
   · intro b hb
     have hmid : Real.pi⁻¹ < (Real.pi⁻¹ + b) / 2 := by
-      linarith
+      linarith only [hb]
     filter_upwards [hupper _ hmid] with d hd
-    linarith
+    linarith only [hb, hd]
 
 private theorem sharpQuotient_of_uniform_lower_and_constructive_upper
     (hlower : UniformAdmissibleLowerBound)

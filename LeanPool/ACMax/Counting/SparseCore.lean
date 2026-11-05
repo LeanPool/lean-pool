@@ -5,7 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Ring
 public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 public import LeanPool.ACMax.Counting.Quotient
 public import LeanPool.ACMax.Cuts.WeightedCut

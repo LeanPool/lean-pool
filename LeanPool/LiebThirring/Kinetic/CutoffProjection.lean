@@ -32,7 +32,7 @@ variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteS
 @[expose] noncomputable def lowFrequencyClass (h : Lp H 2 (volume : Measure Position))
     (E : ℝ) : Lp H 2 (volume : Measure Position) :=
   ((Lp.memLp (Lp.fourierTransformₗᵢ Position H h)).indicator
-    (measurableSet_lowMomentumRegion E)).toLp
+    (measurableSet_lowMomentumRegion E).nullMeasurableSet).toLp
       ((lowMomentumRegion E).indicator
         (Lp.fourierTransformₗᵢ Position H h : Position → H))
 
@@ -47,13 +47,13 @@ theorem lowFourierProjection_ae (h : Lp H 2 (volume : Measure Position))
     (lowFourierProjection h E : Position → H) =ᵐ[volume] lowFourierField h E :=
   Fourier.fourierInv_toLp_ae_eq (integrable_lowFourierRepresentative h E hE)
     ((Lp.memLp (Lp.fourierTransformₗᵢ Position H h)).indicator
-      (measurableSet_lowMomentumRegion E))
+      (measurableSet_lowMomentumRegion E).nullMeasurableSet)
 
 /-- The literal complementary high-frequency class. -/
 @[expose] noncomputable def highFrequencyClass (h : Lp H 2 (volume : Measure Position))
     (E : ℝ) : Lp H 2 (volume : Measure Position) :=
   ((Lp.memLp (Lp.fourierTransformₗᵢ Position H h)).indicator
-    (measurableSet_lowMomentumRegion E).compl).toLp
+    (measurableSet_lowMomentumRegion E).compl.nullMeasurableSet).toLp
       ((lowMomentumRegion E)ᶜ.indicator
         (Lp.fourierTransformₗᵢ Position H h : Position → H))
 
@@ -63,9 +63,9 @@ theorem highFrequencyClass_eq_sub (h : Lp H 2 (volume : Measure Position)) (E : 
   apply Lp.ext
   filter_upwards [
     ((Lp.memLp (Lp.fourierTransformₗᵢ Position H h)).indicator
-      (measurableSet_lowMomentumRegion E).compl).coeFn_toLp,
+      (measurableSet_lowMomentumRegion E).compl.nullMeasurableSet).coeFn_toLp,
     ((Lp.memLp (Lp.fourierTransformₗᵢ Position H h)).indicator
-      (measurableSet_lowMomentumRegion E)).coeFn_toLp,
+      (measurableSet_lowMomentumRegion E).nullMeasurableSet).coeFn_toLp,
     Lp.coeFn_sub (𝓕 h) (lowFrequencyClass h E)] with ξ hh hl hs
   change highFrequencyClass h E ξ = _ at hh
   change lowFrequencyClass h E ξ = _ at hl

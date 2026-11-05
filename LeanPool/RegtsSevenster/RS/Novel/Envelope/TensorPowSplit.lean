@@ -328,15 +328,15 @@ private theorem tensorHom_comp_splitPow [Category.{v} A] [MonoidalCategory A]
 theorem powHom_comp_splitPow [Category.{v} A] [MonoidalCategory A]
     (X : A) (g : End X) (p : ℕ) :
     ∀ q : ℕ,
-      powHom X g (p + q) ≫ (splitPow X p q).hom =
-        (splitPow X p q).hom ≫ (powHom X g p ⊗ₘ powHom X g q)
+      (powHom X g (p + q)).asHom ≫ (splitPow X p q).hom =
+        (splitPow X p q).hom ≫ ((powHom X g p).asHom ⊗ₘ (powHom X g q).asHom)
   | 0 => by
       rw [splitPow_zero]
-      change powHom X g p ≫ (ρ_ (tensorPow A X p)).inv =
-        (ρ_ (tensorPow A X p)).inv ≫ (powHom X g p ⊗ₘ 𝟙 (𝟙_ A))
+      change (powHom X g p).asHom ≫ (ρ_ (tensorPow A X p)).inv =
+        (ρ_ (tensorPow A X p)).inv ≫ ((powHom X g p).asHom ⊗ₘ 𝟙 (𝟙_ A))
       rw [tensorHom_id, rightUnitor_inv_naturality]
   | q + 1 => by
-      have h := tensorHom_comp_splitPow X p q (c := g)
+      have h := tensorHom_comp_splitPow X p q (c := g.asHom)
         (powHom_comp_splitPow X g p q)
       exact h
 

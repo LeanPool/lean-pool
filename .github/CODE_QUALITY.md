@@ -135,10 +135,16 @@ Scheduled update checks are future work.
 
 ### 10. Documentation
 
-[`docs.yml`](workflows/docs.yml) builds doc-gen4 documentation with the nested
-[`docbuild/`](../docbuild/) Lake project. Pull requests build the docs site as a
-check. Pushes to `main` build `LeanPool:docs` and deploy
-`docbuild/.lake/build/doc` to GitHub Pages.
+[`docs.yml`](workflows/docs.yml) retains cheap workspace and generated-index
+preflight checks for PRs and merge groups. It does not generate documentation.
+
+[`docs-publish.yml`](workflows/docs-publish.yml) publishes documentation daily
+at 06:23 UTC or on manual dispatch, independently of merges. It documents only
+LeanPool modules and links dependencies to their hosted documentation. Bounded
+analysis jobs save consistent incremental checkpoints; a separate rendering job
+and exposition build must both finish and validate before Pages is replaced.
+The published `SOURCE_SHA` records the documented snapshot. See the
+[documentation operations guide](../docbuild/README.md).
 
 ## Future Work
 

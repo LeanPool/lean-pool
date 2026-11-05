@@ -6,12 +6,8 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.ApproximableExercises
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
+
+import Mathlib.Tactic.Set -- shake: keep
 
 /-!
 # Exercise 4.7 (Scott 1981, PRG-19, Lecture IV)

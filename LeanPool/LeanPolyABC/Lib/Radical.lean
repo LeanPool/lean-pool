@@ -7,6 +7,8 @@ module
 
 public import Mathlib.Algebra.Polynomial.FieldDivision
 
+import Mathlib.Algebra.Order.Group.Finset
+
 /-!
 # LeanPool.LeanPolyABC.Lib.Radical
 -/

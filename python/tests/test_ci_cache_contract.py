@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import shlex
 import subprocess
 from pathlib import Path
 
@@ -44,62 +45,33 @@ def test_shared_cache_paths_and_keys_match() -> None:
     assert contracts["build"][1] == (".lake/build",)
 
 
-def _docs_condition(condition: str, event: str, ref: str, preview: bool, readme: bool):
-    """Evaluate the small event predicate used by docs job allocation."""
-    expression = condition
-    values = {
-        "needs.preflight.outputs.readme_only": repr(str(readme).lower()),
-        "github.event_name": repr(event),
-        "github.ref": repr(ref),
-        "inputs.preview": repr(preview),
+def test_documentation_publishing_is_scheduled_and_independent() -> None:
+    """PRs retain preflight while generation runs only on schedule or dispatch."""
+    preflight = yaml.safe_load((WORKFLOWS / "docs.yml").read_text())
+    assert set(preflight.get("on", preflight.get(True))) == {
+        "pull_request",
+        "merge_group",
     }
-    for name, value in values.items():
-        expression = expression.replace(name, value)
-    return eval(
-        expression.replace("&&", " and ").replace("||", " or "),
-        {"__builtins__": {}},
-        {},
-    )
-
-
-def test_docs_generate_on_main_and_explicit_preview_only() -> None:
-    """PRs scope preflight without allocating heavy docs runners."""
-    jobs = yaml.safe_load((WORKFLOWS / "docs.yml").read_text())["jobs"]
-    assert jobs["preflight"]["name"] == "Documentation preflight"
-    assert jobs["preflight"]["needs"] == "scope"
-    scenarios = [
-        ("pull_request", "refs/pull/123/merge", False, False, False),
-        ("push", "refs/heads/main", False, False, True),
-        ("workflow_dispatch", "refs/heads/main", False, False, True),
-        ("workflow_dispatch", "refs/heads/topic", False, False, False),
-        ("workflow_dispatch", "refs/heads/topic", True, False, True),
-        ("pull_request", "refs/pull/123/merge", True, False, False),
-        ("push", "refs/heads/main", False, True, False),
-    ]
-    for name in ("exposition", "mathlib_doc_info", "build"):
-        for event, ref, preview, readme, expected in scenarios:
-            assert (
-                _docs_condition(jobs[name]["if"], event, ref, preview, readme)
-                == expected
-            )
-    # Branch previews produce artifacts but cannot replace production Pages.
-    assert not _docs_condition(
-        jobs["deployment_freshness"]["if"],
+    assert set(preflight["jobs"]) == {"scope", "preflight"}
+    assert preflight["jobs"]["preflight"]["name"] == "Documentation preflight"
+    publishing = yaml.safe_load((WORKFLOWS / "docs-publish.yml").read_text())
+    assert set(publishing.get("on", publishing.get(True))) == {
+        "schedule",
         "workflow_dispatch",
-        "refs/heads/topic",
-        True,
-        False,
+    }
+    assert publishing["concurrency"]["cancel-in-progress"] is False
+    assert publishing["jobs"]["build"]["needs"] == ["prepare", "analysis_complete"]
+    stages = yaml.safe_load((WORKFLOWS / "docs-build.yml").read_text())
+    assert stages["env"]["DOCGEN_LOCAL_MODULE_ROOTS"] == "LeanPool"
+    assert "TauCeti=" in stages["env"]["DOCGEN_DEPS_DOCS_URLS"]
+    steps = stages["jobs"]["build"]["steps"]
+    names = [step.get("name") for step in steps]
+    assert names.index("Save completed analysis batches") > names.index(
+        "Analyze a bounded batch"
     )
-
-
-def test_documentation_helper_changes_trigger_main_publishing() -> None:
-    """Documentation's preparation/rendering helpers also trigger publication."""
-    workflow = yaml.safe_load((WORKFLOWS / "docs.yml").read_text())
-    events = workflow.get("on", workflow.get(True))
-    assert {
-        "python/lean_pool/documentation.py",
-        "python/lean_pool/indexes.py",
-    } <= set(events["push"]["paths"])
+    assert names.index("Render and validate the complete local API") > names.index(
+        "Save completed analysis batches"
+    )
 
 
 def test_single_and_sharded_builds_use_validation_cache() -> None:
@@ -316,7 +288,7 @@ def test_assembly_restores_projects_once_and_main_owns_full_cache():
 def test_extraction_caches_survive_failure_and_retry_keys_can_advance():
     """Failed batches save verified siblings; immutable retry keys can gain work."""
     for workflow, job in (
-        ("docs.yml", "exposition"),
+        ("docs-publish.yml", "exposition"),
         ("exposition-verify.yml", "verify"),
     ):
         steps = yaml.safe_load((WORKFLOWS / workflow).read_text())["jobs"][job]["steps"]
@@ -680,6 +652,8 @@ def test_scoped_checks_handle_large_diffs(tmp_path, filename):
         ("lake-manifest.json", "true", "false", True),
         ("python/lean_pool/ci_pr_build.py", "true", "false", True),
         ("python/tests/test_ci_pr_build.py", "true", "false", True),
+        ("python/lean_pool/quality.py", "true", "false", True),
+        ("python/tests/test_axiom_audit_lean.py", "true", "false", True),
         ('"python/lean_pool/quoted.py"', "true", "false", True),
         ("scripts/ProjectIndexes.lean", "true", "false", True),
         ("scripts/exposition/Extract.lean", "true", "false", True),
@@ -724,10 +698,29 @@ def test_dependency_tracking_tests_scope(
         assert tracking["if"] == "needs.plan.outputs.dependency_tests == 'true'"
 
 
-def test_profiling_is_opt_in_and_cache_pruning_is_scheduled() -> None:
-    """Advisory compilation and maintenance do not run on ordinary PR events."""
+@pytest.mark.parametrize("job_name", ["build", "finalize", "rebase"])
+def test_pinned_lean_ci_runs_compiled_axiom_audit(job_name: str) -> None:
+    """The compiled axiom fixture must run rather than silently skip in CI."""
+    jobs = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())["jobs"]
+    step = next(
+        step
+        for step in jobs[job_name]["steps"]
+        if step.get("name")
+        == "Check compiled artifact dependency tracking with pinned Lean"
+    )
+    assert step["env"]["LEAN_POOL_REQUIRE_TEST_TOOLCHAIN"] == "1"
+    command = shlex.split(step["run"])
+    assert "python/tests/test_axiom_audit_lean.py" in command
+    assert command[command.index("-k") + 1] == (
+        "test_lake_ or test_compiled_axiom_audit"
+    )
+
+
+def test_profiling_is_automatic_and_cache_pruning_is_scheduled() -> None:
+    """PRs get advisory profiles while cache maintenance stays scheduled."""
     profiling = yaml.safe_load((WORKFLOWS / "proof-profile.yml").read_text())
     assert set(profiling.get("on", profiling.get(True))) == {
+        "pull_request",
         "issue_comment",
         "workflow_dispatch",
     }

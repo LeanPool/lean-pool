@@ -277,7 +277,7 @@ theorem lerayAssembly_weakConv_localBox_all
   let W : ParabolicPoint → ℝ := Q.indicator w
   have hW : MemLp W 2 (volume.restrict QT) := by
     change MemLp (Q.indicator w) 2 (volume.restrict QT)
-    rw [memLp_indicator_iff_restrict hQ,
+    rw [memLp_indicator_iff_restrict hQ.nullMeasurableSet,
       Measure.restrict_restrict_of_subset hsub]
     exact hw
   have hpair (g : ParabolicPoint → ℝ) :

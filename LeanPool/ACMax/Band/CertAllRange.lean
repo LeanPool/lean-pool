@@ -278,8 +278,8 @@ theorem band_cert_uniform_ge_48 (n X h : ℕ)
     have hsquare : 43 * t ≤ t * t := Nat.mul_le_mul_right t ht43
     have hlinear : 10 * v + 1 + 9 * t ≤ 43 * t := by omega
     have hpoly : 10 * v + 1 + 9 * t ≤ t * t := hlinear.trans hsquare
-    have hA : t * (v - 1) + 1 ≤ (t - 10) * (v + t) := by
-      nlinarith
+    have hA : t * (v - 1) + 1 ≤ (t - 10) * (v + t) :=
+      uniform_count_bound t v ht10 hv hpoly
     change t * (v - 1) * v ^ ell <
       (v + t) * ((v + 2 * t) ^ ell - v ^ ell)
     exact sum_cert_of_power ht10 hA hpower hv

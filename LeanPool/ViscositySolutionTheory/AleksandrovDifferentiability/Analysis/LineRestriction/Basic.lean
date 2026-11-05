@@ -6,6 +6,7 @@ Authors: William M. Feldman
 
 module
 
+public import Mathlib.Analysis.Calculus.Deriv.Comp
 public import LeanPool.ViscositySolutionTheory.AleksandrovDifferentiability.Analysis.OneDimConvex
 public import Mathlib.Analysis.Calculus.LineDeriv.Basic
 

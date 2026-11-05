@@ -32,9 +32,10 @@ homomorphism. -/
 def scalarUnitRingHom
     [Category.{v} A] [Preadditive A] [CategoryTheory.Linear ℂ A]
     [MonoidalCategory A] : ℂ →+* End (𝟙_ A) where
-  toFun c := c • 𝟙 (𝟙_ A)
+  toFun c := c • 1
   map_one' := one_smul _ _
   map_mul' a b := by
+    apply End.ext
     change (a * b) • 𝟙 (𝟙_ A) = (b • 𝟙 (𝟙_ A)) ≫ (a • 𝟙 (𝟙_ A))
     rw [Linear.smul_comp, Linear.comp_smul, Category.comp_id,
       smul_smul, mul_comm]
@@ -49,12 +50,13 @@ noncomputable def scalarUnitEquiv
     [MonoidalCategory A]
     (h : HasScalarUnit A) :
     ℂ ≃+* End (𝟙_ A) :=
-  RingEquiv.ofBijective (scalarUnitRingHom A) h
+  RingEquiv.ofBijective (scalarUnitRingHom A)
+    (End.homEquiv.symm.bijective.comp h)
 
 @[simp] theorem scalarUnitEquiv_apply
     [Category.{v} A] [Preadditive A] [CategoryTheory.Linear ℂ A]
     [MonoidalCategory A]
     (h : HasScalarUnit A) (c : ℂ) :
-    scalarUnitEquiv h c = c • 𝟙 (𝟙_ A) := rfl
+    scalarUnitEquiv h c = c • 1 := rfl
 
 end RS

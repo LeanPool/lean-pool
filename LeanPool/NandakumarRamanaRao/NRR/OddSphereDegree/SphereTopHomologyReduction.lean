@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.SphereTopHomology
-public import Mathlib.Algebra.Category.ModuleCat.Products
+import Mathlib.Algebra.Category.ModuleCat.Products
 
 /-!
 # Sphere top homology from a suspension tower

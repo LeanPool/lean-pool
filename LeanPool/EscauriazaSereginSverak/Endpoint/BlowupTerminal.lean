@@ -310,7 +310,7 @@ theorem blowup_terminal_indicator_magnitude_memLp
         (vec3EuclideanNorm_le_sqrt_three_mul_norm (u y))
   have hInd : MemLp (B.indicator fun y => vec3EuclideanNorm (u y)) 3
       (volume : Measure Vec3) :=
-    (memLp_indicator_iff_restrict hB).mpr hEu
+    (memLp_indicator_iff_restrict hB.nullMeasurableSet).mpr hEu
   have hEq : (fun y => vec3EuclideanNorm (B.indicator u y)) =
       B.indicator (fun y => vec3EuclideanNorm (u y)) := by
     funext y
@@ -331,7 +331,7 @@ theorem blowup_terminal_local_trace_rescaled_tendsto_zero
       (fun x => r k • B.indicator u (x₀ + r k • x)) 2
       (volume.restrict (vec3Ball c 1))) atTop (nhds 0) := by
   have hU : MemLp (B.indicator u) 3 (volume : Measure Vec3) :=
-    (memLp_indicator_iff_restrict hB).mpr hu
+    (memLp_indicator_iff_restrict hB.nullMeasurableSet).mpr hu
   have hmag := blowup_terminal_indicator_magnitude_memLp B hB u hu
   exact blowup_terminal_rescaled_vector_eLpNorm_two_tendsto_zero
     (B.indicator u) hU.aestronglyMeasurable hmag x₀ c r hr hr0

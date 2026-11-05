@@ -9,7 +9,6 @@ public import LeanPool.ClassificationOfSurfaces.Moise.IntrinsicFaceFilling
 import LeanPool.ClassificationOfSurfaces.Moise.IntrinsicMidpointSubdivision
 import LeanPool.ClassificationOfSurfaces.Moise.PLApproximation
 import LeanPool.ClassificationOfSurfaces.Moise.PolygonalFamilyPolyhedron
-import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # Cellwise assembly of intrinsic PL face fillings

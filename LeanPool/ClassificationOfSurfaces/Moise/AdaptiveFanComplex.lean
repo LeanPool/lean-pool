@@ -383,6 +383,14 @@ noncomputable def adaptiveFanSourcePoint (hU : IsOpen U)
     intro p _
     rw [(K.adaptiveFanVertexSource_mem_carrier U hU f p) v hv, mul_zero]
 
+/-- The coordinate function underlying an adaptive fan source point. -/
+theorem adaptiveFanSourcePoint_val (hU : IsOpen U)
+    (f : K.AdaptiveFanFace U hU)
+    (x : stdSimplex ℝ {p // p ∈ K.adaptiveFanFaceVertices U hU f}) :
+    (K.adaptiveFanSourcePoint U hU f x).1 =
+      (fun v ↦ ∑ p, x p * (K.adaptiveFanVertexSource U hU f p).1 v) := by
+  simp only [adaptiveFanSourcePoint]
+
 theorem adaptiveFanSourcePoint_mem_carrier (hU : IsOpen U)
     (f : K.AdaptiveFanFace U hU)
     (x : stdSimplex ℝ {p // p ∈ K.adaptiveFanFaceVertices U hU f}) :
@@ -391,7 +399,7 @@ theorem adaptiveFanSourcePoint_mem_carrier (hU : IsOpen U)
   by
     classical
     intro v hv
-    change (∑ p, x p * (K.adaptiveFanVertexSource U hU f p).1 v) = 0
+    rw [K.adaptiveFanSourcePoint_val U hU f x]
     apply Finset.sum_eq_zero
     intro p _
     rw [(K.adaptiveFanVertexSource_mem_carrier U hU f p) v hv, mul_zero]
@@ -417,7 +425,7 @@ theorem adaptiveFanSourcePoint_simplexLineMap (hU : IsOpen U)
           (K.adaptiveFanSourcePoint U hU f y).1 r.1 := by
   classical
   funext v
-  simp only [adaptiveFanSourcePoint, adaptiveFanSimplexLineMap,
+  simp only [adaptiveFanSourcePoint_val, adaptiveFanSimplexLineMap,
     AffineMap.lineMap_apply_module, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   change (∑ p, (((1 - r.1) • x.1 + r.1 • y.1) p) *
       (K.adaptiveFanVertexSource U hU f p).1 v) =
@@ -444,10 +452,8 @@ theorem adaptiveFanSourcePoint_vertex (hU : IsOpen U)
   classical
   apply Subtype.ext
   funext v
-  change (∑ q, (stdSimplex.vertex p :
-        stdSimplex ℝ {p // p ∈ K.adaptiveFanFaceVertices U hU f}) q *
-      (K.adaptiveFanVertexSource U hU f q).1 v) =
-        (K.adaptiveFanVertexSource U hU f p).1 v
+  rw [K.adaptiveFanSourcePoint_val]
+  dsimp only
   rw [Finset.sum_eq_single p]
   · simp
   · intro q _ hqp
@@ -523,6 +529,7 @@ theorem adaptiveFanSourcePoint_opposite (hU : IsOpen U)
       x.1 (K.adaptiveFanCenterVertex U hU f) / 3 := by
   classical
   let c := K.adaptiveFanCenterVertex U hU f
+  rw [K.adaptiveFanSourcePoint_val]
   change (∑ p, x p * (K.adaptiveFanVertexSource U hU f p).1
       ((K.safeSubdivision f.1.1).refined.faceVertex f.1.2.1 (f.2.1 + 2))) = x c / 3
   rw [Finset.sum_eq_single c]
@@ -579,6 +586,7 @@ theorem adaptiveFanSourcePoint_faceVertex_lower_bound (hU : IsOpen U)
   have hqNonneg : 0 ≤ x q * (K.adaptiveFanVertexSource U hU f q).1
       ((K.safeSubdivision f.1.1).refined.faceVertex f.1.2.1 i) :=
     mul_nonneg (x.2.1 q) ((K.adaptiveFanVertexSource U hU f q).2.1.1 _)
+  rw [K.adaptiveFanSourcePoint_val]
   change x c / 3 ≤ ∑ r, x r * (K.adaptiveFanVertexSource U hU f r).1
     ((K.safeSubdivision f.1.1).refined.faceVertex f.1.2.1 i)
   rw [K.adaptiveFanVertex_univ U hU f,
@@ -611,10 +619,12 @@ theorem adaptiveFanSourcePoint_eq_lineMap_normalizedBase (hU : IsOpen U)
   have hpNot : p ∉ ({q} : Finset _) := by
     simp [p, q, K.adaptiveFanFirstVertex_ne_second U hU f]
   funext v
-  change (∑ r, x r * (K.adaptiveFanVertexSource U hU f r).1 v) = _
+  rw [K.adaptiveFanSourcePoint_val]
+  dsimp only
   rw [K.adaptiveFanVertex_univ U hU f,
     Finset.sum_insert hcNot, Finset.sum_insert hpNot, Finset.sum_singleton,
     AffineMap.lineMap_apply_module]
+  rw [K.adaptiveFanSourcePoint_val]
   change x.1 c * _ + (x.1 p * _ + x.1 q * _) =
     (1 - d) * (K.adaptiveFanVertexSource U hU f c).1 v +
       d * (∑ r,
@@ -830,39 +840,6 @@ theorem affineIndependent_adaptiveFanVertexSource_val (hU : IsOpen U)
     exact hthree.range
   · exact K.adaptiveFanVertexSource_val_injective U hU f
 
-/-- The affine combination map is injective when its source points are affinely independent. -/
-theorem affineCombination_injective_of_affineIndependent
-    {ι E : Type*} [Fintype ι] [AddCommGroup E] [Module ℝ E]
-    (source : ι → E) (hsource : AffineIndependent ℝ source) :
-    Function.Injective (fun x : stdSimplex ℝ ι ↦
-      Finset.univ.affineCombination ℝ source x) := by
-  intro x y hxy
-  have hweights := (hsource.affineCombination_eq_iff_eq x.2.2 y.2.2).mp hxy
-  exact Subtype.ext (funext fun i ↦ hweights i (Finset.mem_univ i))
-
-theorem simplex_eq_of_weighted_sum_eq_of_affineIndependent
-    {ι α : Type*} [Fintype ι]
-    (source : ι → α → ℝ) (hsource : AffineIndependent ℝ source)
-    {x y : stdSimplex ℝ ι}
-    (hxy : (fun v ↦ ∑ p, x p * source p v) =
-      (fun v ↦ ∑ p, y p * source p v)) :
-    x = y := by
-  apply affineCombination_injective_of_affineIndependent source hsource
-  change Finset.univ.affineCombination ℝ source x =
-    Finset.univ.affineCombination ℝ source y
-  rw [Finset.univ.affineCombination_eq_linear_combination source x x.2.2,
-    Finset.univ.affineCombination_eq_linear_combination source y y.2.2]
-  funext v
-  simpa only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul] using congrFun hxy v
-
-/-- The coordinate function underlying an adaptive fan source point. -/
-theorem adaptiveFanSourcePoint_val (hU : IsOpen U)
-    (f : K.AdaptiveFanFace U hU)
-    (x : stdSimplex ℝ {p // p ∈ K.adaptiveFanFaceVertices U hU f}) :
-    (K.adaptiveFanSourcePoint U hU f x).1 =
-      (fun v ↦ ∑ p, x p * (K.adaptiveFanVertexSource U hU f p).1 v) := by
-  rfl
-
 /-- The standard simplex parametrizing one adaptive fan face. -/
 abbrev adaptiveFanSimplex (hU : IsOpen U) (f : K.AdaptiveFanFace U hU) :=
   stdSimplex ℝ {p // p ∈ K.adaptiveFanFaceVertices U hU f}
@@ -878,14 +855,11 @@ theorem adaptiveFanSourcePoint_val_injective (hU : IsOpen U)
     (f : K.AdaptiveFanFace U hU) :
     Function.Injective (K.adaptiveFanSourcePointVal U hU f) := by
   intro x y hxy
-  let source : {p // p ∈ K.adaptiveFanFaceVertices U hU f} →
-      (K.safeSubdivision f.1.1).refined.Vertex → ℝ :=
-    fun p ↦ (K.adaptiveFanVertexSource U hU f p).1
-  apply simplex_eq_of_weighted_sum_eq_of_affineIndependent source
+  apply simplex_eq_of_weighted_sum_eq_of_affineIndependent
+    (fun p ↦ (K.adaptiveFanVertexSource U hU f p).1)
     (K.affineIndependent_adaptiveFanVertexSource_val U hU f)
-  change (fun v ↦ ∑ p, x p * (K.adaptiveFanVertexSource U hU f p).1 v) =
-    (fun v ↦ ∑ p, y p * (K.adaptiveFanVertexSource U hU f p).1 v) at hxy
-  simpa only [source, Finset.sum_apply, Pi.smul_apply, smul_eq_mul] using hxy
+  exact (K.adaptiveFanSourcePoint_val U hU f x).symm.trans
+    (hxy.trans (K.adaptiveFanSourcePoint_val U hU f y))
 
 /-- One parametrized fan triangle in the open subspace. -/
 noncomputable def adaptiveFanFaceMap (hU : IsOpen U)
@@ -1082,6 +1056,7 @@ theorem adaptiveFanSourcePoint_baseSimplexPath_val (hU : IsOpen U)
   have hpNot : p ∉ ({q} : Finset _) := by
     simp [p, q, K.adaptiveFanFirstVertex_ne_second U hU f]
   funext v
+  rw [K.adaptiveFanSourcePoint_val]
   change (∑ z, K.adaptiveFanBaseSimplexPath U hU f r z *
       (K.adaptiveFanVertexSource U hU f z).1 v) = _
   rw [K.adaptiveFanVertex_univ U hU f,
@@ -1442,7 +1417,7 @@ theorem levelFaceEdgeParameter_adaptiveFanFaceMap_of_center_eq_zero
         K.adaptiveFanSourcePoint U hU f x := by
     exact (K.safeSubdivision f.1.1).homeo.symm_apply_apply _
   unfold levelFaceEdgeParameter
-  rw [hsymm]
+  rw [hsymm, K.adaptiveFanSourcePoint_val]
   change (∑ r, x r * (K.adaptiveFanVertexSource U hU f r).1
       ((K.safeSubdivision f.1.1).refined.faceVertex f.1.2.1 (f.2.1 + 1))) = _
   rw [K.adaptiveFanVertex_univ U hU f,
@@ -1853,6 +1828,7 @@ theorem adaptiveFanFaceMap_mem_relInterior_of_center_pos (hU : IsOpen U)
     intro p
     exact mul_nonneg (x.2.1 p)
       ((K.adaptiveFanVertexSource U hU f p).2.1.1 _)
+  rw [K.adaptiveFanSourcePoint_val]
   change 0 < ∑ p, x p * (K.adaptiveFanVertexSource U hU f p).1
     ((K.safeSubdivision f.1.1).refined.faceVertex f.1.2.1 i)
   exact lt_of_lt_of_le hterm
@@ -3032,6 +3008,7 @@ theorem adaptiveFanFaceMap_eq_of_extendedCoordinates_eq_of_same_tile
   apply congrArg (K.safeSubdivision t.1).homeo
   apply Subtype.ext
   funext v
+  rw [K.adaptiveFanSourcePoint_val, K.adaptiveFanSourcePoint_val]
   change (∑ p, x p * (K.adaptiveFanVertexSource U hU ⟨t, i, a⟩ p).1 v) =
     ∑ p, y p * (K.adaptiveFanVertexSource U hU ⟨t, j, b⟩ p).1 v
   simpa only [adaptiveFanVertexSource] using

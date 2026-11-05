@@ -5,9 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import LeanPool.ACMax.Counting.FarPair
-public import LeanPool.ACMax.Counting.CompactCell
-public import LeanPool.ACMax.Counting.CompactLedgers
 public import LeanPool.ACMax.Counting.HubCross
 public import LeanPool.ACMax.Counting.Quotient
 
@@ -850,6 +847,24 @@ theorem sigma_transfer_sat {d : ℕ} (hd : 16 ≤ d) :
   nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 16 by linarith)
     (show (0 : ℝ) ≤ (d : ℝ) - 2 by linarith)]
 
+/-- The usable transfer follows from four nonnegative polynomial terms. -/
+private theorem sigma_usable_transfer_arithmetic (d f j S : ℝ)
+    (hd : 6 ≤ d) (hf : 0 ≤ f) (hfj : 3 ≤ f + j) (hSj : 2 / 3 * j ≤ S) :
+    (d - 3) * (d - f) ≤ (5 / 4 * (d - 4) + S) * (d - 2) := by
+  have hd2 : 0 ≤ d - 2 := by linarith only [hd]
+  have h1 := mul_nonneg (show 0 ≤ d - 4 by linarith only [hd])
+    (show 0 ≤ d - 6 by linarith only [hd])
+  have h2 := mul_nonneg hf (show 0 ≤ d - 5 by linarith only [hd])
+  have h3 := mul_nonneg (sub_nonneg.mpr hfj) hd2
+  have h4 := mul_le_mul_of_nonneg_right hSj hd2
+  nlinarith only [h1, h2, h3, h4]
+/-- The non-usable transfer is its degree certificate plus the positive mass gap. -/
+private theorem sigma_nonusable_transfer_arithmetic (d f S : ℝ)
+    (hd : 0 < d - 2) (hdf : 0 ≤ (d - 4) * (d - 6 + 2 * f))
+    (hS : 2 - 1 / 2 * f < S) :
+    (d - 3) * (d - f) ≤ (5 / 4 * (d - 4) + S) * (d - 2) := by
+  nlinarith only [hdf, mul_pos hd (sub_pos.mpr hS)]
+
 open Classical in
 /-- **The non-usable transfer** (suppressed heavy vertices): if `deg w = d ≥ 5`
 and `sigS w > 2`, then `σ(d)(a₃ + j) ≤ (5/4)(d−4) + S_w`.  The real relaxation
@@ -914,7 +929,7 @@ theorem sigma_transfer_nonusable (G : SimpleGraph (Fin n)) (w : Fin n)
     have hd5R : (5 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd
     have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith
     rw [sigma, div_mul_eq_mul_div, div_le_iff₀ hpos]
-    nlinarith [mul_pos hpos (show (0 : ℝ) < S - (2 - (1 / 2) * (f : ℝ)) by linarith)]
+    exact sigma_nonusable_transfer_arithmetic d f S hpos hdfR hSgt
 
 open Classical in
 /-- **The usable transfer** (uncapped, non-`W₅`): if `deg w = d ≥ 5`,
@@ -974,17 +989,10 @@ theorem sigma_transfer_usable (G : SimpleGraph (Fin n)) (w : Fin n)
   · -- `d ≥ 6`
     have hd6R : (6 : ℝ) ≤ (d : ℝ) := by exact_mod_cast hd6
     have hfR : (0 : ℝ) ≤ (f : ℝ) := by positivity
-    have hjR : (0 : ℝ) ≤ (j : ℝ) := by positivity
     have hfj3R : (3 : ℝ) ≤ (f : ℝ) + (j : ℝ) := by exact_mod_cast hfj3
     have hpos : (0 : ℝ) < (d : ℝ) - 2 := by linarith
     rw [sigma, div_mul_eq_mul_div, div_le_iff₀ hpos]
-    -- goal: (d−3)(d−f) ≤ ((5/4)(d−4) + S)(d−2); use S ≥ (2/3)j, j ≥ 3−f
-    nlinarith [mul_nonneg (show (0 : ℝ) ≤ (d : ℝ) - 4 by linarith)
-        (show (0 : ℝ) ≤ (d : ℝ) - 6 by linarith),
-      mul_nonneg hfR (show (0 : ℝ) ≤ (d : ℝ) - 5 by linarith),
-      mul_nonneg hjR (show (0 : ℝ) ≤ (d : ℝ) - 5 by linarith),
-      mul_pos hpos (show (0 : ℝ) < (d : ℝ) - 2 by linarith),
-      mul_le_mul_of_nonneg_right hSj (le_of_lt hpos)]
+    exact sigma_usable_transfer_arithmetic d f j S hd6R hfR hfj3R hSj
 
 open Classical in
 /-- **The `W₅` transfer with overflow `1/12`**: a usable degree-5 vertex with
@@ -1223,7 +1231,7 @@ theorem capped_overflow_le (n : ℕ) (G : SimpleGraph (Fin n))
       = ∑ w ∈ Q, (sigma (G.degree w) * ((G.degree w : ℝ))
         - (5 / 4) * ((G.degree w : ℝ) - 4)) := by rw [hQ]
   rw [hQC]
-  nlinarith [hMpart, hQpart, hgrid]
+  linarith only [hMpart, hQpart, hgrid]
 
 /-! ## The exchange identity and the summed transfer -/
 

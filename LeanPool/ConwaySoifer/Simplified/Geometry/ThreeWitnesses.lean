@@ -7,7 +7,9 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Receiver
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
 
 /-!
 # ThreeWitnesses

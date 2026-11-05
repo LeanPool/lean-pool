@@ -4,14 +4,16 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: OpenAI, Dean Cureton
 -/
 
-module
+module -- shake: keep-all
 
 public import Mathlib.Algebra.Group.Translate
-public import Mathlib.Algebra.Module.ZLattice.Basic
+import Mathlib.Algebra.Module.ZLattice.Basic
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Computability.Language
 public import Mathlib.Computability.TuringMachine.Computable
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Logic.Equiv.Finset
 
 /-! # GapCVP proof, part 01 -/
 

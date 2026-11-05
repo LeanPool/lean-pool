@@ -66,7 +66,7 @@ theorem exists_residue_common_primitiveRoot_powers
       ω ^ a₁ = w₁ ∧ ω ^ a₂ = w₂ ∧ ω ^ a₃ = w₃ := by
   let : NeZero (n : OpeningResidueClosure p) :=
     ⟨residueClosure_natCast_ne_zero_of_coprime p n hcoprime⟩
-  obtain ⟨ω, hω⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot (OpeningResidueClosure p) n
+  obtain ⟨ω, hω⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (OpeningResidueClosure p) n
   obtain ⟨a₁, ha₁lt, ha₁⟩ := hω.eq_pow_of_pow_eq_one hw₁
   obtain ⟨a₂, ha₂lt, ha₂⟩ := hω.eq_pow_of_pow_eq_one hw₂
   obtain ⟨a₃, ha₃lt, ha₃⟩ := hω.eq_pow_of_pow_eq_one hw₃

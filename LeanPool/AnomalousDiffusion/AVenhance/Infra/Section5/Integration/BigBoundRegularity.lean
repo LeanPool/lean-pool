@@ -660,7 +660,7 @@ theorem BigBoundRegularity.chiTilde_contDiff_infty {β : ℝ} (I : Ingredients �
   intro i
   have hu : ContDiff ℝ (⊤ : ℕ∞)
       (fun x => uShear β I.Λ m k (I.xFlowInv hΦ m (lIdx β I.Λ m k) t x) i) :=
-    (contDiff_apply ℝ ℝ i).comp ((contDiff_uShear' β I.Λ m k).comp hY)
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp ((contDiff_uShear' β I.Λ m k).comp hY)
   simpa [Ingredients.chiTilde, Ingredients.chiMK] using
     (contDiff_const : ContDiff ℝ (⊤ : ℕ∞)
       (fun _ : Vec 2 => -(I.corrTime κm m k t))).mul hu

@@ -1161,8 +1161,8 @@ private lemma sqrt_cross_sum_le {β β' ε : ℝ} (hβ0 : 0 ≤ β) (hβ'0 : 0 �
     Real.sqrt (1 - β) * Real.sqrt β' + Real.sqrt β * Real.sqrt (1 - β')
       ≤ 2 * Real.sqrt (ε * (1 - ε)) := by
   have hε0 : 0 ≤ ε := le_trans hβ0 hβε
-  have hβ1 : β ≤ 1 := by linarith
-  have hβ'1 : β' ≤ 1 := by linarith
+  have hβ1 : β ≤ 1 := hβε.trans (hε2.trans (by norm_num))
+  have hβ'1 : β' ≤ 1 := hβ'ε.trans (hε2.trans (by norm_num))
   set s := Real.sqrt β with hs
   set s' := Real.sqrt β' with hs'
   set c := Real.sqrt (1 - β) with hc
@@ -1174,8 +1174,8 @@ private lemma sqrt_cross_sum_le {β β' ε : ℝ} (hβ0 : 0 ≤ β) (hβ'0 : 0 �
   have hc'0 : 0 ≤ c' := Real.sqrt_nonneg _
   have hs2 : s ^ 2 = β := Real.sq_sqrt hβ0
   have hs'2 : s' ^ 2 = β' := Real.sq_sqrt hβ'0
-  have hc2 : c ^ 2 = 1 - β := Real.sq_sqrt (by linarith)
-  have hc'2 : c' ^ 2 = 1 - β' := Real.sq_sqrt (by linarith)
+  have hc2 : c ^ 2 = 1 - β := Real.sq_sqrt (sub_nonneg.mpr hβ1)
+  have hc'2 : c' ^ 2 = 1 - β' := Real.sq_sqrt (sub_nonneg.mpr hβ'1)
   have he2 : e ^ 2 = ε := Real.sq_sqrt hε0
   have hse : s ≤ e := by rw [hs, he]; exact Real.sqrt_le_sqrt hβε
   have hs'e : s' ≤ e := by rw [hs', he]; exact Real.sqrt_le_sqrt hβ'ε
@@ -1186,7 +1186,7 @@ private lemma sqrt_cross_sum_le {β β' ε : ℝ} (hβ0 : 0 ≤ β) (hβ'0 : 0 �
     rw [show (c - c') ^ 2 = c ^ 2 - 2 * (c * c') + c' ^ 2 from by ring,
       hc2, hc'2] at hsq
     rw [hs2, hs'2]
-    linarith
+    linarith only [hsq]
   -- the squared left side, against the polynomial
   have hLsq : (c * s' + s * c') ^ 2 ≤ (s + s') ^ 2 * (1 - s * s') := by
     have h1 : (c * s' + s * c') ^ 2
@@ -1201,14 +1201,16 @@ private lemma sqrt_cross_sum_le {β β' ε : ℝ} (hβ0 : 0 ≤ β) (hβ'0 : 0 �
           + 2 * (s * s') * (1 - (s ^ 2 + s' ^ 2) / 2)
         = (s + s') ^ 2 * (1 - s * s') := by
       rw [← hs2, ← hs'2]; ring
-    linarith [h1, h2, h3]
+    rw [h1, ← h3]
+    exact add_le_add_right h2 _
   have hpoly := poly_bound hs0 hs'0 hse hs'e heh
   -- conclude by monotone square root
   have hL0 : 0 ≤ c * s' + s * c' :=
     add_nonneg (mul_nonneg hc0 hs'0) (mul_nonneg hs0 hc'0)
   have hchain : (c * s' + s * c') ^ 2 ≤ (2 * Real.sqrt (ε * (1 - ε))) ^ 2 := by
     have hRsq : (2 * Real.sqrt (ε * (1 - ε))) ^ 2 = 4 * (ε * (1 - ε)) := by
-      rw [mul_pow, Real.sq_sqrt (by nlinarith : (0 : ℝ) ≤ ε * (1 - ε))]
+      rw [mul_pow, Real.sq_sqrt
+        (mul_nonneg hε0 (sub_nonneg.mpr (hε2.trans (by norm_num))))]
       norm_num
     rw [hRsq]
     calc (c * s' + s * c') ^ 2 ≤ (s + s') ^ 2 * (1 - s * s') := hLsq

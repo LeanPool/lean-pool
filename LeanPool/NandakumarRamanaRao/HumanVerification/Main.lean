@@ -6,8 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Tactic
+public import LeanPool.NandakumarRamanaRao.HumanVerification.InternalModel
 public import LeanPool.NandakumarRamanaRao.HumanVerification.EqualAreaEqualPerimeterPartitionWrapper
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.MeasureTheory.Covering.Besicovitch
+import Mathlib.Tactic.Positivity.Finset
 
 /-! # Main -/
 

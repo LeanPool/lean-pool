@@ -269,6 +269,13 @@ def fan15Owner0Part5 : FanWitness := (.next ([796800000000, 4980000000000], [104
     ([-1533000000000], [4785000000000]) (some (0, 4, 10)) (some (0, 4, 10))
     fan15Owner0Part4))))))))))))))))))))))))
 
+-- Limit kernel memory by checking this fan tail separately.
+private theorem checkedFan8Owner0Part0 :
+    fan8Owner0Part0.check (model8.B 0 ++ [step8.q]) 9000000000000
+      (model8.caps 0) 0 1 100 12
+      ([261600000000, -2490000000000], [796800000000, 4980000000000]) = true := by
+  decide +kernel
+
 theorem excluded8_0 : ExcludedOn (model8.B 0 ++ [step8.q]) 9000000000000 (model8.caps 0) (model8.ord
     0) 0 1 100 := by
   apply ExclusionHint.sound (.witnessedFan (.next ([1838400000000, 2490000000000], [398400000000,
@@ -295,7 +302,12 @@ theorem excluded8_0 : ExcludedOn (model8.B 0 ++ [step8.q]) 9000000000000 (model8
       ([261600000000, -2490000000000], [796800000000, 4980000000000]) (some (0, 10, 10)) (some (0,
       10, 10)) fan8Owner0Part0)))))))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma =>
+    simp only [ExclusionHint.check, FanWitness.check,
+      checkedFan8Owner0Part0,
+      Bool.and_eq_true, and_true]
+    repeat' apply And.intro
+    all_goals decide
 
 theorem excluded8_1 : ExcludedOn (model8.B 1 ++ [step8.q]) 9000000000000 (model8.caps 1) (model8.ord
     1) 0 1 100 := by
@@ -534,6 +546,13 @@ theorem next10 : model10.insert step10 = model11 := by
   apply Model.ext_fields
   all_goals intro j; fin_cases j <;> decide +kernel
 
+-- Limit kernel memory by checking this fan tail separately.
+private theorem checkedFan11Owner0Part0 :
+    fan11Owner0Part0.check (model11.B 0 ++ [step11.q]) 9000000000000
+      (model11.caps 0) 0 1 100 12
+      ([398400000000, 2490000000000], [1838400000000, 2490000000000]) = true := by
+  decide +kernel
+
 theorem excluded11_0 : ExcludedOn (model11.B 0 ++ [step11.q]) 9000000000000 (model11.caps 0)
     (model11.ord 0) 0 1 100 := by
   apply ExclusionHint.sound (.witnessedFan (.next ([1838400000000, 2490000000000], [398400000000,
@@ -562,7 +581,12 @@ theorem excluded11_0 : ExcludedOn (model11.B 0 ++ [step11.q]) 9000000000000 (mod
       ([398400000000, 2490000000000], [1838400000000, 2490000000000]) (some (10, 4, 10)) (some (10,
       4, 10)) fan11Owner0Part0)))))))))))))))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma =>
+    simp only [ExclusionHint.check, FanWitness.check,
+      checkedFan11Owner0Part0,
+      Bool.and_eq_true, and_true]
+    repeat' apply And.intro
+    all_goals decide
 
 theorem excluded11_1 : ExcludedOn (model11.B 1 ++ [step11.q]) 9000000000000 (model11.caps 1)
     (model11.ord 1) 0 1 100 := by
@@ -926,6 +950,88 @@ theorem next14 : model14.insert step14 = model15 := by
   apply Model.ext_fields
   all_goals intro j; fin_cases j <;> decide +kernel
 
+-- Verify the shared tails in one proof to bound the kernel working set.
+private theorem checkedFan15Owner0Part5Checks :
+    (fan15Owner0Part0.check (model15.B 0 ++ [step15.q]) 9000000000000
+      (model15.caps 0) 0 740624 318861100 12
+      ([-660000000000], [2100000000000]) = true) ∧
+    (fan15Owner0Part1.check (model15.B 0 ++ [step15.q]) 9000000000000
+      (model15.caps 0) 0 740624 318861100 12
+      ([2193600000000, -2490000000000], [2329800000000, 4980000000000]) = true) ∧
+    (fan15Owner0Part2.check (model15.B 0 ++ [step15.q]) 9000000000000
+      (model15.caps 0) 740624 2083888 318861100 12
+      ([-1533000000000], [4785000000000]) = true) ∧
+    (fan15Owner0Part3.check (model15.B 0 ++ [step15.q]) 9000000000000
+      (model15.caps 0) 740624 2083888 318861100 12
+      ([796800000000, 4980000000000], [1041600000000, -2490000000000]) = true) ∧
+    (fan15Owner0Part4.check (model15.B 0 ++ [step15.q]) 9000000000000
+      (model15.caps 0) 2224 3403 340300 12
+      ([-1533000000000], [4785000000000]) = true) ∧
+    (fan15Owner0Part5.check (model15.B 0 ++ [step15.q]) 9000000000000
+      (model15.caps 0) 2224 3403 340300 12
+      ([660000000000], [780000000000]) = true) := by
+  have checkedTail0 :
+      fan15Owner0Part0.check (model15.B 0 ++ [step15.q]) 9000000000000
+        (model15.caps 0) 0 740624 318861100 12
+        ([-660000000000], [2100000000000]) = true := by
+    decide +kernel
+  have checkedTail1 :
+      fan15Owner0Part1.check (model15.B 0 ++ [step15.q]) 9000000000000
+        (model15.caps 0) 0 740624 318861100 12
+        ([2193600000000, -2490000000000], [2329800000000, 4980000000000]) = true := by
+    delta fan15Owner0Part1
+    simp only [FanWitness.check, checkedTail0,
+      Bool.and_eq_true, and_true]
+    repeat' apply And.intro
+    all_goals decide +kernel
+  have checkedTail2 :
+      fan15Owner0Part2.check (model15.B 0 ++ [step15.q]) 9000000000000
+        (model15.caps 0) 740624 2083888 318861100 12
+        ([-1533000000000], [4785000000000]) = true := by
+    decide +kernel
+  have checkedTail3 :
+      fan15Owner0Part3.check (model15.B 0 ++ [step15.q]) 9000000000000
+        (model15.caps 0) 740624 2083888 318861100 12
+        ([796800000000, 4980000000000], [1041600000000, -2490000000000]) = true := by
+    delta fan15Owner0Part3
+    simp only [FanWitness.check, checkedTail2,
+      Bool.and_eq_true, and_true]
+    repeat' apply And.intro
+    all_goals decide +kernel
+  have checkedTail4 :
+      fan15Owner0Part4.check (model15.B 0 ++ [step15.q]) 9000000000000
+        (model15.caps 0) 2224 3403 340300 12
+        ([-1533000000000], [4785000000000]) = true := by
+    decide +kernel
+  have checkedTail5 :
+      fan15Owner0Part5.check (model15.B 0 ++ [step15.q]) 9000000000000
+        (model15.caps 0) 2224 3403 340300 12
+        ([660000000000], [780000000000]) = true := by
+    delta fan15Owner0Part5
+    simp only [FanWitness.check, checkedTail4,
+      Bool.and_eq_true, and_true]
+    repeat' apply And.intro
+    all_goals decide +kernel
+  exact ⟨checkedTail0, checkedTail1, checkedTail2, checkedTail3, checkedTail4, checkedTail5⟩
+
+private theorem checkedFan15Owner0Part1 :
+    fan15Owner0Part1.check (model15.B 0 ++ [step15.q]) 9000000000000
+      (model15.caps 0) 0 740624 318861100 12
+      ([2193600000000, -2490000000000], [2329800000000, 4980000000000]) = true := by
+  exact checkedFan15Owner0Part5Checks.2.1
+
+private theorem checkedFan15Owner0Part3 :
+    fan15Owner0Part3.check (model15.B 0 ++ [step15.q]) 9000000000000
+      (model15.caps 0) 740624 2083888 318861100 12
+      ([796800000000, 4980000000000], [1041600000000, -2490000000000]) = true := by
+  exact checkedFan15Owner0Part5Checks.2.2.2.1
+
+private theorem checkedFan15Owner0Part5 :
+    fan15Owner0Part5.check (model15.B 0 ++ [step15.q]) 9000000000000
+      (model15.caps 0) 2224 3403 340300 12
+      ([660000000000], [780000000000]) = true := by
+  exact checkedFan15Owner0Part5Checks.2.2.2.2.2
+
 theorem excluded15_0 : ExcludedOn (model15.B 0 ++ [step15.q]) 9000000000000 (model15.caps 0)
     (model15.ord 0) 0 1 100 := by
   apply ExclusionHint.sound (.split (0) (2224) (3403) (340300) (.split (0) (740624) (2083888)
@@ -983,7 +1089,12 @@ theorem excluded15_0 : ExcludedOn (model15.B 0 ++ [step15.q]) 9000000000000 (mod
       [2193000000000]) (some (10, 3, 10)) (some (10, 3, 10)) (.next ([660000000000], [780000000000])
       (some (10, 3, 10)) (some (10, 3, 10)) fan15Owner0Part5))))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  as_aux_lemma =>
+    simp only [ExclusionHint.check, FanWitness.check,
+      checkedFan15Owner0Part1, checkedFan15Owner0Part3, checkedFan15Owner0Part5,
+      Bool.and_eq_true, and_true]
+    repeat' apply And.intro
+    all_goals decide
 
 theorem excluded15_1 : ExcludedOn (model15.B 1 ++ [step15.q]) 9000000000000 (model15.caps 1)
     (model15.ord 1) 0 1 100 := by

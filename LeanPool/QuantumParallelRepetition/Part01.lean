@@ -5,15 +5,24 @@ Authors: OpenAI, Dean Cureton
 -/
 module
 
-public import Mathlib.Algebra.Order.Archimedean.Real.Hom
+public import Mathlib.Analysis.CStarAlgebra.Matrix
 public import Mathlib.Analysis.CStarAlgebra.Module.Constructions
 public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import Mathlib.Analysis.Matrix.Order
 public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.MeasureTheory.SpecificCodomains.Pi
-public import Mathlib.Tactic.NormNum.RealSqrt
+public import Mathlib.Tactic.NormNum.RealSqrt -- shake: keep
+public import Mathlib.Analysis.InnerProductSpace.Positive
+public import Mathlib.Analysis.Matrix.HermitianFunctionalCalculus
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
+public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
+
+import Mathlib.Algebra.Order.Archimedean.Real.Hom
+import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
 /-! # Quantum parallel repetition, part 01 -/
 
@@ -27,19 +36,15 @@ namespace QuantumParallelRepetition
 noncomputable local instance matrixComplexContinuousENormPartOne
     {m n : Type*} [Fintype m] [Fintype n] :
     ContinuousENorm (Matrix m n ℂ) :=
-  @SeminormedAddGroup.toContinuousENorm (Matrix m n ℂ)
-    (Matrix.normedAddCommGroup.toSeminormedAddCommGroup.toSeminormedAddGroup)
+  (@SeminormedAddGroup.toESeminormedAddMonoid (Matrix m n ℂ)
+    Matrix.normedAddCommGroup.toSeminormedAddCommGroup.toSeminormedAddGroup).toContinuousENorm
 
 /-- The local matrix norm instance used while elaborating part one. -/
 noncomputable local instance matrixComplexESeminormedAddCommMonoidPartOne
     {m n : Type*} [Fintype m] [Fintype n] :
     ESeminormedAddCommMonoid (Matrix m n ℂ) :=
-  let base := @NormedAddCommGroup.toENormedAddCommMonoid (Matrix m n ℂ)
-    Matrix.normedAddCommGroup
-  { toContinuousENorm := inferInstance
-    toAddCommMonoid := base.toAddCommMonoid
-    enorm_zero := base.enorm_zero
-    enorm_add_le := base.enorm_add_le }
+  (@NormedAddCommGroup.toENormedAddCommMonoid (Matrix m n ℂ)
+    Matrix.normedAddCommGroup).toESeminormedAddCommMonoid
 
 section
 
@@ -241,7 +246,7 @@ theorem winProbability_nonneg (S : Strategy G) : 0 ≤ S.winProbability := by
   refine Finset.sum_nonneg fun x _ => Finset.sum_nonneg fun y _ => ?_
   apply mul_nonneg (G.weight_nonneg x y)
   exact Finset.sum_nonneg fun a _ => Finset.sum_nonneg fun b _ => by
-    split <;> simp [S.outcomeProbability_nonneg]
+    split <;> simp only [S.outcomeProbability_nonneg, Std.le_refl]
 
 theorem winProbability_le_one (S : Strategy G) : S.winProbability ≤ 1 := by
   classical
@@ -359,7 +364,7 @@ theorem quadraticExpectation_sub_le
   have h_expand :
       ⟪z, W z⟫_ℂ - ⟪w, W w⟫_ℂ =
         ⟪z - w, W z⟫_ℂ + ⟪w, W (z - w)⟫_ℂ := by
-    simp only [CStarModule.inner_sub_left, map_sub, CStarModule.inner_sub_right,
+    simp only [CStarModule.inner_sub_left, map_sub W, CStarModule.inner_sub_right,
       sub_add_sub_cancel]
   have hz := norm_le_of_operator_contraction W hW z
   have hdiff := norm_le_of_operator_contraction W hW (z - w)
@@ -376,9 +381,10 @@ theorem quadraticExpectation_sub_le
       norm_add_le _ _
     _ ≤ ‖z - w‖ * ‖W z‖ + ‖w‖ * ‖W (z - w)‖ :=
       add_le_add (norm_inner_le_norm _ _) (norm_inner_le_norm _ _)
-    _ ≤ ‖z - w‖ * ‖z‖ + ‖w‖ * ‖z - w‖ := by
-      gcongr
-    _ = (‖z‖ + ‖w‖) * ‖z - w‖ := by ring
+    _ ≤ ‖z - w‖ * ‖z‖ + ‖w‖ * ‖z - w‖ :=
+      add_le_add (mul_le_mul_of_nonneg_left hz (norm_nonneg _))
+        (mul_le_mul_of_nonneg_left hdiff (norm_nonneg _))
+    _ = (‖z‖ + ‖w‖) * ‖z - w‖ := by rw [add_mul, mul_comm ‖z‖]
 
 theorem weighted_real_cauchy
     {ι : Type*} [Fintype ι]
@@ -462,7 +468,7 @@ theorem winningEffect_born
   intro a _
   apply Finset.sum_congr rfl
   intro b _
-  split <;> simp
+  split <;> simp only [Matrix.trace_zero, Complex.zero_re]
 
 theorem winProbability_eq_winningEffect_born
     (S : Strategy G) :
@@ -757,7 +763,7 @@ private theorem convexMixtureStrategy_winProbability
         ∑ j : J, p j *
           (if G.predicate x y a b = true then
             (S j).outcomeProbability x y a b else 0) := by
-    split <;> simp
+    split <;> simp only [mul_zero, Finset.sum_const_zero]
   have h_swap (f : X → Y → A → B → J → ℝ) :
       (∑ x : X, ∑ y : Y, ∑ a : A, ∑ b : B, ∑ j : J,
         f x y a b j) =
@@ -807,7 +813,7 @@ private theorem convexMixtureStrategy_winProbability
   intro a _
   apply Finset.sum_congr rfl
   intro b _
-  ring
+  ac_rfl
 
 end
 
@@ -1065,7 +1071,7 @@ theorem exists_greedy_stopping [Fintype ι] [DecidableEq ι]
           (sub_nonneg.mpr hη_one)
       _ = (1 - η) ^ (insert i D).card := by
         rw [Finset.card_insert_of_notMem hi_not, pow_succ]
-        ring
+        ac_rfl
   have hnext_mem : insert i D ∈ candidates := by
     simp only [candidates, Finset.mem_filter, Finset.mem_powerset]
     exact ⟨Finset.subset_univ _, hnext_card, hnext_bound⟩
@@ -1186,7 +1192,7 @@ private theorem strategyEventLaw_winEvent
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro b _
-  split <;> simp
+  split <;> simp only [mul_zero]
 
 /-- The repeated coordinate win construction used in the quantum parallel-repetition argument. -/
 def repeatedCoordinateWin (G : Game X Y A B) (n : ℕ)
@@ -1524,27 +1530,37 @@ section
 open MeasureTheory Filter Set
 open scoped BigOperators Topology
 
+private theorem scalarResolventPurification_hasDerivAt
+    {z x : ℝ} (hz : 0 < z) (hx : 0 ≤ x) :
+    HasDerivAt (fun t : ℝ => -(z ^ 2) / (z + t))
+      ((z / (z + x)) ^ 2) x := by
+  have hden : z + x ≠ 0 := ne_of_gt (add_pos_of_pos_of_nonneg hz hx)
+  have hd := ((hasDerivAt_const x (-(z ^ 2))).div
+    ((hasDerivAt_const x z).add (hasDerivAt_id x)) hden)
+  have hfun :
+      (fun t : ℝ => -(z ^ 2) / (z + t)) =
+        (fun _t : ℝ => -(z ^ 2)) / ((fun _t : ℝ => z) + id) := by
+    funext t
+    rfl
+  rw [hfun]
+  simpa only [div_pow, Pi.add_apply, id_eq, zero_mul, zero_add, mul_one,
+    sub_neg_eq_add] using hd
+
+private theorem scalarResolventPurification_tendsto_zero (z : ℝ) :
+    Tendsto (fun t : ℝ => -(z ^ 2) / (z + t)) atTop (𝓝 (0 : ℝ)) := by
+  have hden : Tendsto (fun t : ℝ => t + z) atTop atTop :=
+    tendsto_atTop_add_const_right atTop z tendsto_id
+  have hzero : Tendsto (fun t : ℝ => -(z ^ 2) / (t + z))
+      atTop (𝓝 (0 : ℝ)) := tendsto_const_nhds.div_atTop hden
+  simpa only [add_comm] using hzero
+
 theorem scalar_resolvent_purification_integrable_of_pos
     {z : ℝ} (hz : 0 < z) :
     IntegrableOn (fun s : ℝ => (z / (z + s)) ^ 2) (Ioi 0) := by
-  have hpower :
-      IntegrableOn (fun s : ℝ => (s + z) ^ (-2 : ℝ)) (Ioi 0) := by
-    exact integrableOn_add_rpow_Ioi_of_lt
-      (a := (-2 : ℝ)) (c := (0 : ℝ)) (m := z)
-      (by norm_num) (by linarith)
-  have hscaled :
-      IntegrableOn (fun s : ℝ => z ^ 2 * (s + z) ^ (-2 : ℝ))
-        (Ioi 0) :=
-    hpower.const_mul (z ^ 2)
-  refine hscaled.congr_fun (fun s hs => ?_) measurableSet_Ioi
-  have hspos : 0 < s + z := by
-    have : 0 < s := hs
-    linarith
-  change z ^ 2 * (s + z) ^ (-2 : ℝ) = (z / (z + s)) ^ 2
-  rw [show (-2 : ℝ) = -(2 : ℝ) by norm_num,
-    Real.rpow_neg hspos.le, Real.rpow_two]
-  rw [div_pow]
-  simp only [add_comm, div_eq_mul_inv]
+  exact integrableOn_Ioi_deriv_of_nonneg'
+    (fun x hx => scalarResolventPurification_hasDerivAt hz hx)
+    (fun x _ => sq_nonneg (z / (z + x)))
+    (scalarResolventPurification_tendsto_zero z)
 
 theorem scalar_resolvent_purification_integrable
     {z : ℝ} (hz : 0 ≤ z) :
@@ -1561,36 +1577,10 @@ theorem scalar_resolvent_purification_integral
   rcases hz.eq_or_lt with rfl | hzpos
   · simp only [zero_add, zero_div, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
       integral_zero]
-  · have hderiv :
-        ∀ x ∈ Ici (0 : ℝ),
-          HasDerivAt (fun t : ℝ => -(z ^ 2) / (z + t))
-            ((z / (z + x)) ^ 2) x := by
-      intro x hx
-      have hden : z + x ≠ 0 := by
-        have hx_nonneg : 0 ≤ x := hx
-        exact ne_of_gt (by linarith)
-      have hd := ((hasDerivAt_const x (-(z ^ 2))).div
-        ((hasDerivAt_const x z).add (hasDerivAt_id x)) hden)
-      have hfun :
-          (fun t : ℝ => -(z ^ 2) / (z + t)) =
-            (fun _t : ℝ => -(z ^ 2)) /
-              ((fun _t : ℝ => z) + id) := by
-        funext t
-        rfl
-      rw [hfun]
-      simpa only [div_pow, Pi.add_apply, id_eq, zero_mul, zero_add, mul_one,
-        sub_neg_eq_add] using hd
-    have hlimit :
-        Tendsto (fun t : ℝ => -(z ^ 2) / (z + t))
-          atTop (𝓝 (0 : ℝ)) := by
-      have hden : Tendsto (fun t : ℝ => t + z) atTop atTop :=
-        tendsto_atTop_add_const_right atTop z tendsto_id
-      have hzero : Tendsto (fun t : ℝ => -(z ^ 2) / (t + z))
-          atTop (𝓝 (0 : ℝ)) :=
-        tendsto_const_nhds.div_atTop hden
-      simpa only [add_comm] using hzero
-    have hftc := integral_Ioi_of_hasDerivAt_of_tendsto'
-      hderiv (scalar_resolvent_purification_integrable_of_pos hzpos) hlimit
+  · have hftc := integral_Ioi_of_hasDerivAt_of_tendsto'
+      (fun x hx => scalarResolventPurification_hasDerivAt hzpos hx)
+      (scalar_resolvent_purification_integrable_of_pos hzpos)
+      (scalarResolventPurification_tendsto_zero z)
     calc
       (∫ s in Ioi (0 : ℝ), (z / (z + s)) ^ 2) =
           (0 : ℝ) - (-(z ^ 2) / (z + 0)) := hftc
@@ -1772,23 +1762,15 @@ private theorem spectralPurificationFilter_gram
     apply Matrix.isHermitian_diagonal_iff.mpr
     intro i
     change star ((eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ) = _
-    simp only [Complex.ofReal_div, Complex.ofReal_add, star_div₀, RCLike.star_def,
-      Complex.conj_ofReal, star_add]
+    simp only [RCLike.star_def, Complex.conj_ofReal]
   have hDstar : star D = D := by
     simpa only [Matrix.star_eq_conjTranspose] using hDhermitian.eq
   have hDsquare : D * D = diagonalPurificationGram eigenvalue s := by
-    dsimp [D]
-    rw [Matrix.diagonal_mul_diagonal]
-    ext i j
-    by_cases h : i = j
-    · subst j
-      simp only [Complex.ofReal_div, Complex.ofReal_add, Matrix.diagonal_apply_eq,
-        diagonalPurificationGram, pow_two, Complex.ofReal_mul]
-    · simp only [Complex.ofReal_div, Complex.ofReal_add, ne_eq, h, not_false_eq_true,
-        Matrix.diagonal_apply_ne, diagonalPurificationGram, Complex.ofReal_pow]
+    simp only [D, diagonalPurificationGram, Matrix.diagonal_mul_diagonal,
+      pow_two, Complex.ofReal_mul]
   change star (e D) * e D = e (diagonalPurificationGram eigenvalue s)
   calc
-    star (e D) * e D = e (star D) * e D := by rw [map_star]
+    star (e D) * e D = e (star D) * e D := by rw [map_star e]
     _ = e (star D * D) := (map_mul e (star D) D).symm
     _ = e (diagonalPurificationGram eigenvalue s) := by
       rw [hDstar, hDsquare]
@@ -1895,7 +1877,7 @@ theorem marginalX_mul_conditionalYGivenX
       have hle := G.questionWeight_le_marginalX x y
       have hnonneg := G.weight_nonneg x y
       rw [hx] at hle
-      linarith
+      linarith only [hnonneg, hle]
     simp only [hx, hzero, div_zero, mul_zero]
   · field_simp
 
@@ -1909,7 +1891,7 @@ theorem marginalY_mul_conditionalXGivenY
       have hle := G.questionWeight_le_marginalY x y
       have hnonneg := G.weight_nonneg x y
       rw [hy] at hle
-      linarith
+      linarith only [hnonneg, hle]
     simp only [hy, hzero, div_zero, mul_zero]
   · field_simp
 
@@ -1964,10 +1946,10 @@ theorem alice_mixed_history_pairing
   apply Finset.sum_congr rfl
   intro x _
   unfold conditionalBobAverage
-  rw [map_sum, Finset.mul_sum]
+  rw [map_sum (pair (H x)), Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro y _
-  rw [map_smul]
+  rw [LinearMap.map_smul]
   simp only [smul_eq_mul]
   rw [← mul_assoc, G.marginalX_mul_conditionalYGivenX x y]
 
@@ -1992,9 +1974,7 @@ theorem bob_mixed_history_pairing
         apply Finset.sum_congr rfl
         intro y _
         unfold conditionalAliceAverage
-        rw [map_sum]
-        simp only [LinearMap.sum_apply, map_smul,
-          LinearMap.smul_apply, smul_eq_mul]
+        simp only [LinearMap.map_sum₂, LinearMap.map_smul₂, smul_eq_mul]
         rw [Finset.mul_sum]
         apply Finset.sum_congr rfl
         intro x _
@@ -2029,7 +2009,7 @@ theorem alice_reveal_increment
   rw [← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
   intro y _
-  rw [map_sub]
+  rw [map_sub pair]
   simp only [LinearMap.sub_apply]
   ring
 
@@ -2124,7 +2104,7 @@ theorem conditionedAliceEffect_complement_positive
       ← Finset.sum_sub_distrib]
     apply Finset.sum_congr rfl
     intro answers _
-    split_ifs <;> simp
+    split_ifs <;> simp only [sub_self, sub_zero]
   rw [hsplit]
   apply Matrix.posSemidef_sum Finset.univ
   intro answers _
@@ -2152,7 +2132,7 @@ theorem conditionedBobEffect_complement_positive
       ← Finset.sum_sub_distrib]
     apply Finset.sum_congr rfl
     intro answers _
-    split_ifs <;> simp
+    split_ifs <;> simp only [sub_self, sub_zero]
   rw [hsplit]
   apply Matrix.posSemidef_sum Finset.univ
   intro answers _
@@ -2195,7 +2175,7 @@ theorem spectralSupportFunctional_mul
   let e := Unitary.conjStarAlgAut ℂ (Matrix d d ℂ)
     hF.isHermitian.eigenvectorUnitary
   change e _ * e _ = e _
-  rw [← map_mul, Matrix.diagonal_mul_diagonal]
+  rw [← map_mul e, Matrix.diagonal_mul_diagonal]
   congr 1
   funext i
   push_cast
@@ -2242,7 +2222,7 @@ theorem spectralSupportFunctional_isHermitian
     simpa only [Matrix.star_eq_conjTranspose] using hD.eq
   change Matrix.conjTranspose (e D) = e D
   simpa only [Matrix.star_eq_conjTranspose] using
-    (show star (e D) = e D by rw [← map_star, hDstar])
+    (show star (e D) = e D by rw [← map_star e, hDstar])
 
 /-- Apply reciprocal eigenvalues to a positive matrix, with zero on its kernel. -/
 def spectralSupportInverse
@@ -2332,7 +2312,8 @@ private theorem spectralSupportProjection_mul
     _ = spectralSupportFunctional F hF (fun x => x) :=
       spectralSupportFunctional_congr F hF (by
         intro i
-        by_cases hi : hF.isHermitian.eigenvalues i = 0 <;> simp [hi])
+        by_cases hi : hF.isHermitian.eigenvalues i = 0 <;> simp only [hi, ↓reduceIte, mul_zero,
+          one_mul])
     _ = F := spectralSupportFunctional_id F hF
 
 private theorem spectralSupportInverse_penrose
@@ -3110,7 +3091,7 @@ theorem fullHistoryWeight_mul_hidden
           G.marginalY (h.bobRemaining i)) *
           (∏ i : {i : Fin n // i ∈ fullHistoryRemaining n D L},
             G.conditionalXGivenY
-              (h.bobRemaining i) (hx i))) := by ring
+              (h.bobRemaining i) (hx i))) := by ac_rfl
     _ = (∏ i ∈ D, q i) *
           (∏ i ∈ L, q i) *
           (∏ i ∈ fullHistoryRemaining n D L, q i) := by
@@ -3496,7 +3477,7 @@ theorem fullHistoryFilters_born_expansion
   intro hx _
   apply Finset.sum_congr rfl
   intro hy _
-  ring
+  ac_rfl
 
 theorem fullSubsetHistory_mass_eq_postselection
     (G : Game X Y A B) (n : ℕ)
@@ -3587,7 +3568,7 @@ theorem fullSubsetHistory_mass_eq_postselection
         intro β _
         rw [fullHistoryWinIndicator_eq_question G D L h hx hy α β]
         rw [← fullHistoryWeight_mul_hidden G D L hL h hx hy]
-        ring
+        ac_rfl
     _ = ∑ xs : Fin n → X, ∑ ys : Fin n → Y,
       ∑ α : {i : Fin n // i ∈ D} → A,
       ∑ β : {i : Fin n // i ∈ D} → B,
@@ -3676,7 +3657,7 @@ theorem spectralPurificationFilter_mul_shift
     rw [mul_smul_comm, mul_one, smul_mul_assoc]
     simp only [SetLike.coe_mem, Unitary.mul_star_self_of_mem]
   change e T * (F + s • (1 : Matrix d d ℂ)) = F
-  rw [hFspec, ← hscalar, ← map_add, ← map_mul, hproduct]
+  rw [hFspec, ← hscalar, ← map_add e, ← map_mul e, hproduct]
 
 theorem spectralPurificationFilter_eq_resolvent
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -3727,51 +3708,28 @@ theorem spectralPurificationFilter_square_contraction
     apply Matrix.isHermitian_diagonal_iff.mpr
     intro i
     change star ((eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ) = _
-    simp only [Complex.ofReal_div, Complex.ofReal_add, star_div₀, RCLike.star_def,
-      Complex.conj_ofReal, star_add]
+    simp only [RCLike.star_def, Complex.conj_ofReal]
   have hDstar : star D = D := by
     simpa only [Matrix.star_eq_conjTranspose] using hDhermitian.eq
   have hdiag : (D - D * D).PosSemidef := by
-    rw [show D * D = Matrix.diagonal (fun i =>
-      (((eigenvalue i / (eigenvalue i + s)) ^ 2 : ℝ) : ℂ)) by
-        dsimp [D]
-        rw [Matrix.diagonal_mul_diagonal]
-        congr 1
-        funext i
-        simp only [Complex.ofReal_div, Complex.ofReal_add, pow_two, Complex.ofReal_mul]]
-    have hsub : D - Matrix.diagonal (fun i =>
-        (((eigenvalue i / (eigenvalue i + s)) ^ 2 : ℝ) : ℂ)) =
-        Matrix.diagonal (fun i =>
-          ((eigenvalue i / (eigenvalue i + s) -
-            (eigenvalue i / (eigenvalue i + s)) ^ 2 : ℝ) : ℂ)) := by
-      ext i j
-      by_cases hij : i = j
-      · subst j
-        simp only [Complex.ofReal_div, Complex.ofReal_add, Complex.ofReal_pow, Matrix.sub_apply,
-          Matrix.diagonal_apply_eq, Complex.ofReal_sub, D]
-      · simp only [Complex.ofReal_div, Complex.ofReal_add, Complex.ofReal_pow, Matrix.sub_apply,
-          ne_eq, hij, not_false_eq_true, Matrix.diagonal_apply_ne, sub_self, Complex.ofReal_sub,
-          D]
-    rw [hsub]
+    dsimp only [D]
+    rw [Matrix.diagonal_mul_diagonal, Matrix.diagonal_sub]
     apply Matrix.PosSemidef.diagonal
     intro i
-    change 0 ≤ ((eigenvalue i / (eigenvalue i + s) -
-      (eigenvalue i / (eigenvalue i + s)) ^ 2 : ℝ) : ℂ)
-    apply Complex.nonneg_iff.mpr
-    constructor
-    · have hnonneg : 0 ≤ eigenvalue i / (eigenvalue i + s) :=
-        div_nonneg (hF.eigenvalues_nonneg i)
-          (le_of_lt (add_pos_of_nonneg_of_pos
-            (hF.eigenvalues_nonneg i) hs))
-      have hle : eigenvalue i / (eigenvalue i + s) ≤ 1 :=
-        (div_le_one (add_pos_of_nonneg_of_pos
-          (hF.eigenvalues_nonneg i) hs)).mpr (by linarith)
-      change 0 ≤ eigenvalue i / (eigenvalue i + s) -
-        (eigenvalue i / (eigenvalue i + s)) ^ 2
-      nlinarith
-    · simp only [Complex.ofReal_im]
+    change 0 ≤ ((eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ) -
+      ((eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ) *
+        ((eigenvalue i / (eigenvalue i + s) : ℝ) : ℂ)
+    rw [← Complex.ofReal_mul, ← Complex.ofReal_sub]
+    have hnonneg : 0 ≤ eigenvalue i / (eigenvalue i + s) :=
+      div_nonneg (hF.eigenvalues_nonneg i)
+        (le_of_lt (add_pos_of_nonneg_of_pos (hF.eigenvalues_nonneg i) hs))
+    have hle : eigenvalue i / (eigenvalue i + s) ≤ 1 :=
+      (div_le_one (add_pos_of_nonneg_of_pos (hF.eigenvalues_nonneg i) hs)).mpr
+        (le_add_of_nonneg_right hs.le)
+    exact Complex.nonneg_iff.mpr
+      ⟨sub_nonneg.mpr (mul_le_of_le_one_right hnonneg hle), rfl⟩
   change (e D - star (e D) * e D).PosSemidef
-  rw [← map_star, hDstar, ← map_mul, ← map_sub]
+  rw [← map_star e, hDstar, ← map_mul e, ← map_sub e]
   change ((U : Matrix d d ℂ) * (D - D * D) *
     star (U : Matrix d d ℂ)).PosSemidef
   simpa only [Matrix.star_eq_conjTranspose] using
@@ -3837,12 +3795,8 @@ theorem bochner_integral_posSemidef
     filter_upwards [hpos] with t ht
     simpa only [Matrix.star_eq_conjTranspose] using ht.isHermitian.eq
   have hhermitian : (∫ t, f t ∂μ).IsHermitian := by
-    apply Matrix.IsHermitian.ext
-    intro i j
-    have hstar : star (∫ t, f t ∂μ) = ∫ t, f t ∂μ :=
-      hadjoint.trans (integral_congr_ae hadjoint_ae)
-    have hentry := congr_fun (congr_fun hstar i) j
-    simpa only [RCLike.star_def, Matrix.star_apply] using hentry
+    change star (∫ t, f t ∂μ) = ∫ t, f t ∂μ
+    exact hadjoint.trans (integral_congr_ae hadjoint_ae)
   apply Matrix.PosSemidef.of_dotProduct_mulVec_nonneg hhermitian
   intro x
   have hcomm :
@@ -4032,7 +3986,7 @@ theorem weighted_shifted_inverse_second_order
     (fun i => Matrix.nonsing_inv_mul _ (hdetF i))
     (Matrix.mul_nonsing_inv _ hdetM)
     (Matrix.nonsing_inv_mul _ hdetM)
-  simpa [W, RF, RM, smul_mul_assoc] using hidentity
+  simpa only [W, RF, RM, smul_mul_assoc, one_mul] using hidentity
 
 theorem weighted_spectralPurificationFilter_variance_le_inverse_jensen
     {ι d : Type*} [Fintype ι] [Fintype d] [DecidableEq d]
@@ -4239,8 +4193,6 @@ theorem scalar_entropy_resolvent_integrable
         (Ioi 0) := hproduct.const_mul (z - 1)
   refine hscaled.congr_fun (fun s hs => ?_) measurableSet_Ioi
   have hspos : 0 < s := hs
-  have hzone : 1 + s ≠ 0 := ne_of_gt (by linarith)
-  have hzden : z + s ≠ 0 := ne_of_gt (by linarith)
   field_simp
   ring
 
@@ -4547,8 +4499,8 @@ theorem scalar_entropy_resolvent_integral
             (z / (1 + x) - z / (z + x)) x := by
       intro x hx
       have hxnonneg : 0 ≤ x := hx
-      have hnum : 1 + x ≠ 0 := ne_of_gt (by linarith)
-      have hden : z + x ≠ 0 := ne_of_gt (by linarith)
+      have hnum : 1 + x ≠ 0 := ne_of_gt (by linarith only [hxnonneg])
+      have hden : z + x ≠ 0 := ne_of_gt (by linarith only [hzpos, hxnonneg])
       have hratio : (1 + x) / (z + x) ≠ 0 :=
         div_ne_zero hnum hden
       have hdnum :=
@@ -4583,7 +4535,7 @@ theorem scalar_entropy_resolvent_integral
         simpa only [add_zero] using hone.add hzero
       apply h'.congr'
       filter_upwards [eventually_gt_atTop (-z)] with t ht
-      have hden : z + t ≠ 0 := ne_of_gt (by linarith)
+      have hden : z + t ≠ 0 := ne_of_gt (by linarith only [ht])
       field_simp
       ring
     have hlog_limit :
@@ -5206,7 +5158,7 @@ private theorem leftSpectralBornWeight_sum
         (positiveMatrixSpectralAtom F hF i) G) =
       bornTracePairing ρ.matrix
         (∑ i : dA, positiveMatrixSpectralAtom F hF i) G := by
-          simp only [map_sum, LinearMap.sum_apply]
+          simp only [LinearMap.map_sum₂]
     _ = bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ) G := by
       rw [positiveMatrixSpectralAtom_sum]
 
@@ -5245,7 +5197,7 @@ private theorem leftSpectralBornWeight_moment
         apply Finset.sum_congr rfl
         intro i _
         unfold leftSpectralBornWeight
-        ring
+        ac_rfl
     _ = bornTracePairing ρ.matrix F G := h.symm
 
 private theorem leftSpectralBornWeight_entropy
@@ -5283,7 +5235,7 @@ private theorem leftSpectralBornWeight_entropy
       apply Finset.sum_congr rfl
       intro i _
       unfold leftSpectralBornWeight
-      ring
+      ac_rfl
 
 theorem bornTracePairing_one_one
     {dA dB : Type*}
@@ -5314,7 +5266,7 @@ theorem bornTracePairing_one_le_one
       bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ) G :=
     (bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ)).map_sub 1 G
   rw [hdiff, bornTracePairing_one_one] at hpositive
-  linarith
+  linarith only [hpositive]
 
 theorem positiveContraction_eigenvalue_le_one
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -5491,7 +5443,8 @@ theorem rawEmbezzlementState_norm_sq (n : ℕ) :
         ‖(↑((Real.sqrt ((i.val : ℝ) + 1))⁻¹) : ℂ)‖ ^ 2
       else
         0 := by
-    split_ifs <;> simp
+    split_ifs <;> simp only [Complex.ofReal_inv, norm_inv, Complex.norm_real, Real.norm_eq_abs,
+      inv_pow, sq_abs, norm_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow]
   rw [EuclideanSpace.norm_sq_eq, Fintype.sum_prod_type]
   unfold harmonicNumber
   apply Finset.sum_congr rfl
@@ -5594,13 +5547,13 @@ theorem spectralAtom_mul
   by_cases hij : i = j
   · subst j
     simp only [ite_true]
-    rw [← map_mul, Matrix.diagonal_mul_diagonal]
+    rw [← map_mul e, Matrix.diagonal_mul_diagonal]
     congr 1
     ext k l
     simp only [Matrix.diagonal_apply, Pi.single_apply]
     split_ifs <;> simp_all
   · simp only [hij, ite_false]
-    rw [← map_mul, Matrix.diagonal_mul_diagonal, ← map_zero e]
+    rw [← map_mul e, Matrix.diagonal_mul_diagonal, ← map_zero e]
     congr 1
     ext k l
     by_cases hik : k = i
@@ -5749,7 +5702,8 @@ theorem finiteTensorVector_norm
     ‖finiteTensorVector v‖ = 1 := by
   have hsquare := finiteTensorVector_norm_sq v
   simp_rw [hv, one_pow, Finset.prod_const_one] at hsquare
-  nlinarith [norm_nonneg (finiteTensorVector v)]
+  exact (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp (by
+    simpa only [one_pow] using hsquare)
 
 theorem spectralAtomOverlap_sum_right
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -5837,7 +5791,7 @@ theorem spectralAtomOverlap_schmidtMass_le_one
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro j _
-          ring
+          ac_rfl
       _ = ∑ i : d, hF.isHermitian.eigenvalues i := by
         simp_rw [spectralAtomOverlap_sum_right,
           mul_one]
@@ -5860,7 +5814,7 @@ theorem spectralAtomOverlap_schmidtMass_le_one
           rw [Finset.mul_sum]
           apply Finset.sum_congr rfl
           intro i _
-          ring
+          ac_rfl
       _ = ∑ j : d, hG.isHermitian.eigenvalues j := by
         simp_rw [spectralAtomOverlap_sum_left,
           mul_one]
@@ -5877,7 +5831,7 @@ theorem spectralAtomOverlap_schmidtMass_le_one
         apply Finset.sum_congr rfl
         intro j _
         dsimp [w, f, g]
-        ring
+        ac_rfl
     _ ≤ Real.sqrt (∑ q : d × d, w q * f q ^ 2) *
         Real.sqrt (∑ q : d × d, w q * g q ^ 2) := by
           apply weighted_real_cauchy
@@ -5987,10 +5941,11 @@ theorem unitVector_distance_of_real_overlap
     exact hoverlap
   have hsq : ‖z - w‖ ^ 2 ≤ 2 * ε := by
     rw [@norm_sub_sq ℂ, hz, hw]
-    linarith [hoverlap']
+    linarith only [hoverlap']
   have hsqrt : (Real.sqrt (2 * ε)) ^ 2 = 2 * ε :=
     Real.sq_sqrt (by positivity)
-  nlinarith [norm_nonneg (z - w), Real.sqrt_nonneg (2 * ε)]
+  exact (sq_le_sq₀ (norm_nonneg _) (Real.sqrt_nonneg _)).mp
+    (hsq.trans_eq hsqrt.symm)
 
 /--
 The shared threshold resource raw construction used in the quantum parallel-repetition argument.
@@ -6361,7 +6316,7 @@ theorem doublyStochasticSchmidtMass_le_one
             rw [Finset.mul_sum]
             apply Finset.sum_congr rfl
             intro i _
-            ring
+            ac_rfl
       _ = ∑ j : κ, μ j ^ 2 := by simp_rw [hcol, mul_one]
       _ = 1 := hμunit
   calc
@@ -6373,7 +6328,7 @@ theorem doublyStochasticSchmidtMass_le_one
           apply Finset.sum_congr rfl
           intro j _
           dsimp [W, f, g]
-          ring
+          ac_rfl
     _ ≤ Real.sqrt (∑ q : ι × κ, W q * f q ^ 2) *
         Real.sqrt (∑ q : ι × κ, W q * g q ^ 2) := by
           apply weighted_real_cauchy
@@ -6454,8 +6409,8 @@ theorem complexInner_norm_sq_le
     (z w : EuclideanSpace ℂ ι) :
     ‖inner ℂ z w‖ ^ 2 ≤ ‖z‖ ^ 2 * ‖w‖ ^ 2 := by
   have hcauchy := @norm_inner_le_norm ℂ _ _ _ _ z w
-  nlinarith [norm_nonneg (inner ℂ z w), norm_nonneg z,
-    norm_nonneg w, mul_nonneg (norm_nonneg z) (norm_nonneg w)]
+  simpa only [mul_pow] using
+    (sq_le_sq₀ (norm_nonneg _) (mul_nonneg (norm_nonneg z) (norm_nonneg w))).mpr hcauchy
 
 private theorem twoSidedSchmidtSpectralEnergy_le
     {ι κ ν : Type*} [Fintype ι] [Fintype κ] [Fintype ν]
@@ -6514,7 +6469,7 @@ private theorem twoSidedSchmidtSpectralEnergy_le
               σ μ hσ hμ L,
               weightedComplexOverlapVector_norm_sq
                 σ μ hσ hμ R]
-      _ ≤ a := by nlinarith
+      _ ≤ a := mul_le_of_le_one_right ha hb
   have hre : (inner ℂ ψ φ).re ^ 2 ≤ a := by
     calc
       (inner ℂ ψ φ).re ^ 2 =
@@ -6536,7 +6491,7 @@ private theorem twoSidedSchmidtSpectralEnergy_le
     hσunit hμunit hLrow hLcol, hdistance]
   change 2 - 2 * a ≤ 2 *
     (2 - 2 * (inner ℂ ψ φ).re)
-  linarith [sq_nonneg ((inner ℂ ψ φ).re - 1)]
+  linarith only [hre, sq_nonneg ((inner ℂ ψ φ).re - 1)]
 
 /-- The target object for tensor embezzlement. -/
 def tensorEmbezzlementTarget
@@ -6605,7 +6560,8 @@ theorem tensorEmbezzlementTarget_norm
       ← EuclideanSpace.norm_sq_eq, ← EuclideanSpace.norm_sq_eq,
       ξ.property, embezzlementState_norm n hn]
     norm_num
-  nlinarith [norm_nonneg (tensorEmbezzlementTarget (n := n) ξ)]
+  exact (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp (by
+    simpa only [one_pow] using hsquare)
 
 /-- The operator action for local unitary. -/
 def localUnitaryAction {n : ℕ}
@@ -6623,6 +6579,22 @@ theorem localUnitaryAction_matrix_mem_unitary {n : ℕ}
         Matrix.unitaryGroup (Fin n × Fin n) ℂ := by
   exact Matrix.kronecker_mem_unitary U.property V.property
 
+/-- A matrix with identity Gram matrix preserves the self inner product. -/
+theorem matrix_mulVec_inner_self_of_gram
+    {d : Type*} [Fintype d] [DecidableEq d]
+    (K : Matrix d d ℂ) (gram : K.conjTranspose * K = 1)
+    (z : EuclideanSpace ℂ d) :
+    inner ℂ (toLp 2 (K.mulVec (ofLp z))) (toLp 2 (K.mulVec (ofLp z))) =
+      (‖z‖ : ℂ) ^ 2 := by
+  calc
+    _ = inner ℂ z z := by
+      change dotProduct (K.mulVec (ofLp z)) (star (K.mulVec (ofLp z))) =
+        dotProduct (ofLp z) (star (ofLp z))
+      rw [dotProduct_comm (K.mulVec (ofLp z)), Matrix.star_mulVec, Matrix.dotProduct_mulVec,
+        Matrix.vecMul_vecMul, gram, Matrix.vecMul_one]
+      exact dotProduct_comm _ _
+    _ = _ := inner_self_eq_norm_sq_to_K z
+
 theorem localUnitaryAction_norm {n : ℕ}
     (U V : Matrix.unitaryGroup (Fin n) ℂ)
     (ψ : EuclideanSpace ℂ (Fin n × Fin n)) :
@@ -6632,14 +6604,13 @@ theorem localUnitaryAction_norm {n : ℕ}
       (V : Matrix (Fin n) (Fin n) ℂ)
   have hM : M ∈ Matrix.unitaryGroup (Fin n × Fin n) ℂ :=
     localUnitaryAction_matrix_mem_unitary U V
-  have hclm : Matrix.toEuclideanCLM
-      (n := Fin n × Fin n) (𝕜 := ℂ) M ∈
-      unitary
-        (EuclideanSpace ℂ (Fin n × Fin n) →L[ℂ]
-          EuclideanSpace ℂ (Fin n × Fin n)) :=
-    Unitary.map_mem
-      (Matrix.toEuclideanCLM (n := Fin n × Fin n) (𝕜 := ℂ)) hM
-  exact ContinuousLinearMap.norm_map_of_mem_unitary hclm ψ
+  have gram : M.conjTranspose * M = 1 := by
+    simpa only [Matrix.star_eq_conjTranspose] using (Matrix.mem_unitaryGroup_iff'.mp hM)
+  apply (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp
+  change ‖toLp 2 (M.mulVec (ofLp ψ))‖ ^ 2 = ‖ψ‖ ^ 2
+  simpa only [inner_self_eq_norm_sq_to_K, Complex.coe_algebraMap,
+    ← Complex.ofReal_pow, Complex.ofReal_re] using
+    congrArg Complex.re (matrix_mulVec_inner_self_of_gram M gram ψ)
 
 theorem unitary_row_norm_sq_sum
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -6694,7 +6665,8 @@ theorem diagonalSchmidtState_norm_sq
   have hterm (j : d) :
       ‖if i = j then (σ i : ℂ) else 0‖ ^ 2 =
         if i = j then σ i ^ 2 else 0 := by
-    split_ifs <;> simp [Complex.norm_real, Real.norm_eq_abs, sq_abs]
+    split_ifs <;> simp only [Complex.norm_real, Real.norm_eq_abs, sq_abs, norm_zero, ne_eq,
+                    OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow]
   simp_rw [hterm]
   simp only [Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
 
@@ -6769,7 +6741,7 @@ private theorem weightedComplexOverlapVector_inner
     _ =
       ((Real.sqrt (σ i * μ j) : ℂ) *
         (Real.sqrt (σ i * μ j) : ℂ)) *
-          L i j * R i j := by ring
+          L i j * R i j := by ac_rfl
     _ = (σ i : ℂ) * (μ j : ℂ) * L i j * R i j := by
       rw [hsqrt]
 
@@ -6903,23 +6875,25 @@ theorem schmidtVector_spectralEnergy_le
   have hψ : ‖schmidtVector σ U V‖ = 1 := by
     have h := schmidtVector_norm_sq σ U V
     rw [hσunit] at h
-    nlinarith [norm_nonneg (schmidtVector σ U V)]
+    exact (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp (by
+      simpa only [one_pow] using h)
   have hφ : ‖schmidtVector μ X Y‖ = 1 := by
     have h := schmidtVector_norm_sq μ X Y
     rw [hμunit] at h
-    nlinarith [norm_nonneg (schmidtVector μ X Y)]
+    exact (sq_eq_sq₀ (norm_nonneg _) zero_le_one).mp (by
+      simpa only [one_pow] using h)
   let L : Fin d → Fin d → ℂ :=
     fun i j => star (unitaryBasisOverlap U X i j)
   let R : Fin d → Fin d → ℂ :=
     fun i j => unitaryBasisOverlap V Y i j
   have hLrow : ∀ i, (∑ j : Fin d, ‖L i j‖ ^ 2) = 1 := by
     intro i
-    simpa [L] using
+    simpa only [L, norm_star] using
       unitary_row_norm_sq_sum
         (unitaryBasisOverlap U X) i
   have hLcol : ∀ j, (∑ i : Fin d, ‖L i j‖ ^ 2) = 1 := by
     intro j
-    simpa [L] using
+    simpa only [L, norm_star] using
       unitary_col_norm_sq_sum
         (unitaryBasisOverlap U X) j
   have hRrow : ∀ i, (∑ j : Fin d, ‖R i j‖ ^ 2) = 1 := by
@@ -6942,7 +6916,7 @@ theorem schmidtVector_spectralEnergy_le
       (fun i j => unitaryBasisOverlap V Y i j)]
     simpa only [unitaryBasisOverlap_apply] using
       schmidtVector_inner σ μ U V X Y
-  simpa [L] using
+  simpa only [L, norm_star] using
     twoSidedSchmidtSpectralEnergy_le
       (schmidtVector σ U V)
       (schmidtVector μ X Y)
@@ -7007,8 +6981,6 @@ theorem linearMap_exists_singularBases
     intro i j
     have hi : (σ (i : Fin d) : ℂ) ≠ 0 := by
       exact_mod_cast i.property
-    have hj : (σ (j : Fin d) : ℂ) ≠ 0 := by
-      exact_mod_cast j.property
     change inner ℂ
       (((σ (i : Fin d) : ℂ)⁻¹) • T (v i))
       (((σ (j : Fin d) : ℂ)⁻¹) • T (v j)) = _

@@ -38,7 +38,7 @@ private theorem lerayLimit_interpolation_bound
     eLpNorm' d q μ ≤ Bdiff ^ beta * eLpNorm' d 2 μ ^ theta := by
   let p1 : ℝ := 2 / theta
   let p2 : ℝ := (10 / 3 : ℝ) / beta
-  have hp1Pos : 0 < p1 := by dsimp [p1]; positivity
+  have hp1Pos : 0 < p1 := lt_trans hqPos hqLt
   have hp2Pos : 0 < p2 := by dsimp [p2]; positivity
   have hp1coe : ENNReal.ofReal p1 = ENNReal.ofReal 2 / ENNReal.ofReal theta := by
     dsimp [p1]
@@ -71,10 +71,9 @@ private theorem lerayLimit_interpolation_bound
         eLpNorm' (fun x => ‖d x‖ ^ theta) p1 μ *
           eLpNorm' (fun x => ‖d x‖ ^ beta) p2 μ := by
     simpa [p1, p2, mul_assoc] using (eLpNorm'_le_eLpNorm'_mul_eLpNorm'
+      (fun x y : ℝ => x * y) 1
       hf₁.aestronglyMeasurable hf₂.aestronglyMeasurable
-      (fun x y : ℝ => x * y) 1 (by filter_upwards [] with x; simp)
-      hqPos hqLt (by
-        simpa [one_div] using hHolder.inv_add_inv_eq_inv.symm))
+      (by filter_upwards [] with x; simp) hHolder)
   calc
     eLpNorm' d q μ = eLpNorm' (fun x => ‖d x‖) q μ := by
       symm

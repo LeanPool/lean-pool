@@ -10,7 +10,7 @@ public import Mathlib.NumberTheory.FunctionField
 
 public import Mathlib.RingTheory.RamificationInertia.Inertia
 public import Mathlib.RingTheory.Valuation.AlgebraInstances
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.GroupTheory.ArchimedeanDensely
 
@@ -61,7 +61,7 @@ theorem valuation_eq_exp_neg_count (v : IsDedekindDomain.HeightOneSpectrum R) (x
       spanSingleton R⁰ (algebraMap R K (d : R))⁻¹ *
         (Ideal.span {n} : Ideal R) := by
     rw [← hx, IsFractionRing.mk'_eq_div, div_eq_mul_inv,
-      coeIdeal_span_singleton, spanSingleton_mul_spanSingleton, mul_comm]
+      coeIdeal_span_singleton, ← map_mul, mul_comm]
   conv_lhs =>
     rw [← hx, v.valuation_of_mk', v.intValuation_if_neg hn,
       v.intValuation_if_neg (nonZeroDivisors.ne_zero d.property)]

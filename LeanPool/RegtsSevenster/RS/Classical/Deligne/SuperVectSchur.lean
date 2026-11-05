@@ -1161,22 +1161,23 @@ object is the dimension times the Schur specialisation at the super
 power sums. -/
 theorem sTr_permAlg_e (P : SchurPackage.{0}) (p q : ℕ)
     (lam : YoungDiagram) :
-    sTr (permAlg (stdSuper p q) lam.card (P.e lam)) =
+    sTr ((permAlg (stdSuper p q) lam.card (P.e lam)).asHom) =
       (P.dim lam : ℂ) * diagramSchur lam (superPS p q) := by
   classical
   set L : SymGroupAlgebra lam.card →ₗ[ℂ] ℂ :=
     (sTrL (tensorPow SuperVect (stdSuper p q) lam.card)).comp
-      (permAlg (stdSuper p q) lam.card).toLinearMap with hL
+      (End.linearEquiv.toLinearMap.comp
+      (permAlg (stdSuper p q) lam.card).toLinearMap) with hL
   have hLof : ∀ π : Equiv.Perm (Fin lam.card),
       L (MonoidAlgebra.of ℂ (Equiv.Perm (Fin lam.card)) π) =
         cycleFun (superPS p q) π := by
     intro π
-    change sTrL _ (permAlg (stdSuper p q) lam.card
-      (MonoidAlgebra.of ℂ (Equiv.Perm (Fin lam.card)) π)) = _
+    change sTrL _ ((permAlg (stdSuper p q) lam.card
+      (MonoidAlgebra.of ℂ (Equiv.Perm (Fin lam.card)) π)).asHom) = _
     rw [show MonoidAlgebra.of ℂ (Equiv.Perm (Fin lam.card)) π =
       MonoidAlgebra.single π (1 : ℂ) from rfl, permAlg_single,
       sTrL_apply, sTr_permMor]
-  have hgoal : sTr (permAlg (stdSuper p q) lam.card (P.e lam)) =
+  have hgoal : sTr ((permAlg (stdSuper p q) lam.card (P.e lam)).asHom) =
       L (P.e lam) := rfl
   rw [hgoal, SchurPackage.e_def, charIdempotent, map_smul, map_sum]
   rw [Finset.sum_congr rfl fun π _ => show
@@ -1204,7 +1205,8 @@ theorem not_schurKilled_stdSuper (P : SchurPackage.{0}) {p q : ℕ}
     ¬ SchurKilled P (stdSuper p q) lam := by
   intro h0
   have hval := sTr_permAlg_e P p q lam
-  have h0' : permAlg (stdSuper p q) lam.card (P.e lam) = 0 := h0
+  have h0' : (permAlg (stdSuper p q) lam.card (P.e lam)).asHom = 0 :=
+    congrArg End.asHom h0
   rw [h0'] at hval
   obtain ⟨m, hm, hs⟩ := diagramSchur_superPS_pos lam h
   rw [hs] at hval
@@ -1249,23 +1251,23 @@ the categorical algebra action. -/
 theorem gradedSignRep_asAlgebraHom (p q n : ℕ)
     (z : SymGroupAlgebra n) :
     (gradedSignRep p q n).asAlgebraHom z =
-      tot (permAlg (stdSuper p q) n z) := by
+      tot ((permAlg (stdSuper p q) n z).asHom) := by
   induction z using MonoidAlgebra.induction_on with
   | of σ =>
       change (gradedSignRep p q n).asAlgebraHom
           (MonoidAlgebra.single σ (1 : ℂ)) =
-        tot (permAlg (stdSuper p q) n
-          (MonoidAlgebra.single σ (1 : ℂ)))
+        tot ((permAlg (stdSuper p q) n
+          (MonoidAlgebra.single σ (1 : ℂ))).asHom)
       rw [Representation.asAlgebraHom_single, one_smul,
         gradedSignRep_apply]
-      exact congrArg tot (permAlg_single _ _ σ).symm
+      exact congrArg (fun f => tot f.asHom) (permAlg_single _ _ σ).symm
   | add a b ha hb =>
-      rw [map_add, map_add, ha, hb]
-      exact (tot_add (permAlg (stdSuper p q) n a)
-        (permAlg (stdSuper p q) n b)).symm
+      rw [map_add, map_add, End.add_asHom, ha, hb]
+      exact (tot_add ((permAlg (stdSuper p q) n a).asHom)
+        ((permAlg (stdSuper p q) n b).asHom)).symm
   | smul r a ha =>
-      rw [map_smul, map_smul, ha]
-      exact (tot_smul r (permAlg (stdSuper p q) n a)).symm
+      rw [map_smul, map_smul, End.smul_asHom, ha]
+      exact (tot_smul r ((permAlg (stdSuper p q) n a).asHom)).symm
 
 end
 

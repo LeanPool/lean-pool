@@ -8,6 +8,8 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.NormPow
 public import Mathlib.Analysis.Calculus.Deriv.Add
+public import Mathlib.Analysis.Calculus.Deriv.Mul
+public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 public import LeanPool.ParameterFreeGradient.O3.Geometry
 
 /-!

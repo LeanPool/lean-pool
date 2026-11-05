@@ -4,11 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.RingTheory.Henselian
+public import Mathlib.RingTheory.Finiteness.ModuleFinitePresentation
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Analysis.Complex.HasPrimitives
+public import Mathlib.Analysis.Complex.BranchLogRoot
+import all LeanPool.HopfProblem.CuspFibre.CuspCentralHomology2
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Toric.DiagonalQuotient1
 import all LeanPool.HopfProblem.Uniformization.SpecialPeriods6
-import all LeanPool.HopfProblem.Toric.DiagonalQuotient1
 
 /-!
 # Hopf problem: foundations · complex
@@ -19,10 +25,9 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap ENNReal
+  EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix NNReal Pointwise
+  RealInnerProductSpace
 
 universe u v
 

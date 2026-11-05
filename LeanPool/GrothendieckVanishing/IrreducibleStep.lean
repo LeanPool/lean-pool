@@ -13,6 +13,7 @@ import LeanPool.GrothendieckVanishing.ConstantSheafFlasque
 import LeanPool.GrothendieckVanishing.FinitelyGeneratedVanishing
 import LeanPool.GrothendieckVanishing.TopologicalKrullDim
 import Mathlib.GroupTheory.Archimedean
+import Mathlib.GroupTheory.SpecificGroups.Cyclic.Subgroup
 
 /-!
 # Irreducible positive-dimensional vanishing
@@ -172,8 +173,8 @@ theorem exists_nonzero_stalk_in_V
       (evaluation (Opens X)ᵒᵖ AddCommGrpCat.{u}).obj U) hRsh_zero
 
 /-- At each point `x ∈ V`, the image of the stalk of `R` under `i` is a subgroup of
-    `stalk(zeroOutsideInt V, x) ≅ ULift ℤ`. Transporting to `ℤ` and applying
-    `Int.subgroup_cyclic`, if this image is nonzero, it has a positive generator `d_x`.
+    `stalk(zeroOutsideInt V, x) ≅ ULift ℤ`. Transporting to `ℤ` and using that its
+    subgroups are cyclic, if this image is nonzero, it has a positive generator `d_x`.
     The "index" `d_x` measures how deeply
     `R` sits inside `zeroOutsideInt V` at `x`.
 
@@ -213,7 +214,9 @@ theorem exists_section_generating_stalks
   have cyclic_generator_of_coeff {x : X} {hx : x ∈ V} {d : ℤ} {a}
       (hd : d ≠ 0) (ha : i_x x a = d • gen_at x hx) :
       ∃ e : ℕ, 0 < e ∧ (e : ℤ) ∈ H_at x hx ∧ ∀ h ∈ H_at x hx, (e : ℤ) ∣ h := by
-    obtain ⟨e, he⟩ := Int.subgroup_cyclic (H_at x hx)
+    obtain ⟨e, he⟩ := (H_at x hx).isAddCyclic_iff_exists_zmultiples_eq_top.mp inferInstance
+    have he : H_at x hx = AddSubgroup.closure {e} := by
+      rw [← he, AddSubgroup.zmultiples_eq_closure]
     have hd_mem : d ∈ H_at x hx := ⟨a, ha⟩
     refine ⟨e.natAbs, ?_, by simp [he], ?_⟩
     · exact Int.natAbs_pos.mpr (fun he0 ↦ hd (by

@@ -4,13 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Foundations.InvariantSubsetQuotient
 public import LeanPool.HopfProblem.PeriodFamily.PeriodPoint
 import all LeanPool.HopfProblem.Toric.ToricSpace1
 import all LeanPool.HopfProblem.Foundations.InvariantSubsetQuotient
-import all LeanPool.HopfProblem.PeriodFamily.PeriodPoint
 
 /-!
 # Hopf problem: toric · toric space 2
@@ -21,10 +21,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -1316,13 +1314,13 @@ private theorem
   obtain rfl | ⟨l, rfl⟩ := Fin.eq_self_or_eq_succAbove j k
   · simpa only [insertZero_at] using
       (contDiff_const : ContDiff ℂ ω (fun _ : ToricCharts.CoordinateSpace 2 => (0 : ℂ)))
-  · simpa only [insertZero, Fin.insertNth_apply_succAbove] using (contDiff_apply ℂ ℂ l)
+  · simpa only [insertZero, Fin.insertNth_apply_succAbove] using (contDiff_apply ℂ (fun _ => ℂ) l)
 
 private theorem ToricComponent.removeCoordinate_holomorphic (j : Fin 3) :
     ContDiff ℂ ω (removeCoordinate j) := by
   apply contDiff_pi.mpr
   intro i
-  exact contDiff_apply ℂ ℂ (j.succAbove i)
+  exact contDiff_apply ℂ (fun _ => ℂ) (j.succAbove i)
 
 private structure ToricComponent.ChartIndex (v : Fin 2 → ℤ) where
   triangle : ToricFan.Triangle

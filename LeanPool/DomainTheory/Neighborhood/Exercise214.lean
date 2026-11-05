@@ -6,7 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Approximable
-import Mathlib.Data.Set.Basic
 
 /-!
 # Exercise 2.14 (Scott 1981, PRG-19, §2) — the neighbourhood correspondence `φ` of

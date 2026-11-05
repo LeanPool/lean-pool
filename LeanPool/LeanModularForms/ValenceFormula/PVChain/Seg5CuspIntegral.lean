@@ -8,7 +8,6 @@ module
 public import LeanPool.LeanModularForms.ValenceFormula.ModularInvariance
 public import LeanPool.LeanModularForms.ValenceFormula.Boundary.Basic
 import LeanPool.LeanModularForms.ForMathlib.QExpansion
-import LeanPool.LeanModularForms.ValenceFormula.Boundary.Bounds
 import LeanPool.LeanModularForms.ValenceFormula.Boundary.Smooth
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
@@ -163,7 +162,8 @@ private lemma cuspFunction_factored (hf : f ≠ 0) :
       (Convex.isPreconnected (convex_ball 0 1)) h0_mem hF_local
   refine ⟨g₀, hg_diff, hg_ne, fun q hq => ?_⟩
   have := hF_eq hq
-  simp_all
+  simp_all only [ne_eq, sub_zero, smul_eq_mul, Metric.mem_ball, dist_self, zero_lt_one,
+    dist_zero_right]
 
 /-! ### Circle integral helpers -/
 
@@ -218,7 +218,7 @@ lemma seg5_q_radius_H_pos (H : ℝ) : 0 < seg5QRadiusH H :=
 omit f hf in
 /-- `seg5QRadiusH H < 1` when `H > 0`. -/
 private lemma seg5_q_radius_H_lt_one' {H : ℝ} (hH : 0 < H) : seg5QRadiusH H < 1 :=
-  Real.exp_lt_one_iff.mpr (by nlinarith [Real.pi_pos])
+  Real.exp_lt_one_iff.mpr (by nlinarith only [hH, Real.pi_pos])
 
 /-! ### Circle integral of logDeriv(cuspFunction) -/
 
@@ -320,7 +320,9 @@ omit f hf in
 private lemma im_fdBoundary_seg5_H_pos {H : ℝ} (hH : 0 < H) (t : ℝ) :
     0 < (fdBoundarySeg5H H t).im := by
   change 0 < ((↑t : ℂ) - 9 / 2 + ↑H * I).im
-  simp_all
+  simp_all only [add_im, sub_im, ofReal_im, div_ofNat_im, im_ofNat, zero_div, sub_self, mul_im,
+    ofReal_re, I_im,
+      mul_one, I_re, mul_zero, add_zero, zero_add]
 
 omit hf in
 /-- Chain rule for logDeriv along seg5 at height H:
@@ -349,7 +351,7 @@ private lemma logDeriv_modularForm_eq_logDeriv_cuspFn_mul_qderiv_H
     simp only [q_fn, Function.Periodic.norm_qParam]
     have him : 0 < (fdBoundarySeg5H H t).im := im_fdBoundary_seg5_H_pos hH t
     rw [show (-2 * Real.pi * z.im / (1 : ℝ)) = -2 * Real.pi * z.im by ring]
-    exact Real.exp_lt_one_iff.mpr (by nlinarith [Real.pi_pos])
+    exact Real.exp_lt_one_iff.mpr (by nlinarith only [him, Real.pi_pos])
   have hF_diff : DifferentiableAt ℂ F (q_fn z) :=
     ModularFormClass.differentiableAt_cuspFunction f one_pos
       (by simp) hq_norm

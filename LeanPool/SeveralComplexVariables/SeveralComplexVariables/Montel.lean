@@ -172,6 +172,7 @@ theorem exists_tendstoLocallyUniformlyOn_of_forall_exists_tendsto [FiniteDimensi
     (hp : ∀ z ∈ V, ∃ y : F, Tendsto (fun n => f n z) atTop (𝓝 y)) :
     ∃ g : E → F, DifferentiableOn ℂ g D ∧
       TendstoLocallyUniformlyOn f g atTop D := by
+  let := FiniteDimensional.proper ℂ E
   let U : TopologicalSpace.Opens E := ⟨D, hD⟩
   let s : ℕ → HolomorphicMap U F := fun n =>
     ⟨⟨fun z => f n z, (hf n).continuousOn.domRestrict⟩,

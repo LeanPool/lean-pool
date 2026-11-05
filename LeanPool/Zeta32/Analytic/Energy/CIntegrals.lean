@@ -5,6 +5,7 @@ Authors: Qian Tang
 -/
 module
 public import LeanPool.Zeta32.Analytic.Energy.Component
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
 /-! The integrals over `c ∈ (0, ∞)` with the weight `g = (1/3, 5/3, 4/3)`

@@ -81,7 +81,7 @@ lemma logDeriv_modform_S_transform (z : ℂ) (hz : 0 < z.im) (hz_ne : z ≠ 0)
     logDeriv_comp (h_diffOn_g.differentiableAt (h_uhp_open.mem_nhds h_neg_inv_im))
       (DifferentiableAt.div (differentiableAt_const _) differentiableAt_id hz_ne)
   have h_deriv_S : deriv (fun w => -(1 : ℂ)/w) z = 1 / z ^ 2 := by
-    simp_all
+    simp_all only [ne_eq, Function.comp_apply, deriv_const_div_id, neg_neg, one_div]
   have h_zpow_ne : z ^ k ≠ 0 := zpow_ne_zero k hz_ne
   have h_diff_zpow : DifferentiableAt ℂ (· ^ k) z := differentiableAt_zpow.mpr (.inl hz_ne)
   have h_diff_g_at_z : DifferentiableAt ℂ g z :=
@@ -113,7 +113,7 @@ lemma S_isometry_unit_circle (z w : ℂ) (hz : ‖z‖ = 1) (hw : ‖w‖ = 1) :
 omit f hf in
 lemma fdBoundary_arc_S_reverse (H : ℝ) (t : ℝ) (ht : t ∈ Set.Ioo (1 : ℝ) 3) :
     fdBoundaryH H (4 - t) = -(1 : ℂ) / fdBoundaryH H t := by
-  rw [fdBoundary_H_eq_arc (by linarith [ht.2]) (by linarith [ht.1]),
+  rw [fdBoundary_H_eq_arc (by linarith only [ht, ht.2]) (by linarith only [ht, ht.1]),
       fdBoundary_H_eq_arc ht.1 ht.2]
   have hne : exp ((↑(Real.pi * (1 + t) / 6) : ℂ) * I) ≠ 0 := Complex.exp_ne_zero _
   rw [eq_div_iff hne, ← Complex.exp_add]
@@ -139,9 +139,11 @@ private lemma arc_indicator_symmetric_of_sArcOfS
     have h_norm_s := h_S_unit s₀ hs₀
     calc ‖fdBoundaryH H t - (-(1 : ℂ)/s₀)‖
         = ‖-(1 : ℂ)/fdBoundaryH H t - (-(1 : ℂ)/(-(1 : ℂ)/s₀))‖ :=
-          (S_isometry_unit_circle _ _ h_norm_t (by simp_all)).symm
+          (S_isometry_unit_circle _ _ h_norm_t
+            (h_S_unit _ (h_S_closed s₀ hs₀))).symm
       _ = ‖-(1 : ℂ)/fdBoundaryH H t - s₀‖ := by
-          simp_all
+          simp_all only [mem_Ioo, ne_eq, neg_eq_zero, one_ne_zero, not_false_eq_true,
+            div_div_cancel₀]
       _ = ‖fdBoundaryH H (4 - t) - s₀‖ := by rw [← h_arc_rev]
       _ ≤ ε := h_le
   · rintro ⟨s₁, hs₁, h_le⟩
@@ -501,22 +503,22 @@ private lemma arc_re_strictly_between (H : ℝ) (t : ℝ) (ht : t ∈ Set.Ioo (1
     -1/2 < (fdBoundaryH H t).re ∧ (fdBoundaryH H t).re < 1/2 := by
   rw [fdBoundary_H_eq_arc ht.1 ht.2, Complex.exp_ofReal_mul_I_re]
   have hpi := Real.pi_pos
-  have hθ_lo : Real.pi / 3 < Real.pi * (1 + t) / 6 := by nlinarith [ht.1]
-  have hθ_hi : Real.pi * (1 + t) / 6 < 2 * Real.pi / 3 := by nlinarith [ht.2]
+  have hθ_lo : Real.pi / 3 < Real.pi * (1 + t) / 6 := by nlinarith only [ht, hpi, ht.1]
+  have hθ_hi : Real.pi * (1 + t) / 6 < 2 * Real.pi / 3 := by nlinarith only [ht, hpi, ht.2]
   have hθ_Icc : Real.pi * (1 + t) / 6 ∈ Set.Icc 0 Real.pi :=
-    ⟨by nlinarith [ht.1], by nlinarith [ht.2]⟩
+    ⟨by nlinarith only [hpi, hθ_lo, ht.1], by nlinarith only [hpi, hθ_hi, ht.2]⟩
   have hpi3_Icc : Real.pi / 3 ∈ Set.Icc 0 Real.pi :=
-    ⟨by nlinarith, by nlinarith⟩
+    ⟨by nlinarith only [hpi], by nlinarith only [hpi]⟩
   have h23_Icc : 2 * Real.pi / 3 ∈ Set.Icc 0 Real.pi :=
-    ⟨by nlinarith, by nlinarith⟩
+    ⟨by nlinarith only [hpi], by nlinarith only [hpi]⟩
   constructor
   · have h1 := Real.strictAntiOn_cos hθ_Icc h23_Icc hθ_hi
     have h2 : Real.cos (2 * Real.pi / 3) = -1 / 2 := by
       rw [show 2 * Real.pi / 3 = Real.pi - Real.pi / 3 from by ring,
           Real.cos_pi_sub, Real.cos_pi_div_three]; ring
-    linarith
+    linarith only [h1, h2]
   · have h1 := Real.strictAntiOn_cos hpi3_Icc hθ_Icc hθ_lo
-    rw [Real.cos_pi_div_three] at h1; linarith
+    rw [Real.cos_pi_div_three] at h1; linarith only [h1]
 
 omit f hf in
 private lemma arc_ne_svert (H : ℝ) (S : Finset UpperHalfPlane)
@@ -528,7 +530,7 @@ private lemma arc_ne_svert (H : ℝ) (S : Finset UpperHalfPlane)
   · rcases lt_or_eq_of_le ht.2 with ht3 | rfl
     · have := arc_re_strictly_between H t ⟨ht1, ht3⟩
       rw [h_eq] at this
-      rcases hs_re with h | h <;> linarith [this.1, this.2]
+      rcases hs_re with h | h <;> linarith only [this, h, this.1, this.2]
     · rw [fdBoundary_H_at_three H] at h_eq
       exact hs_not (h_eq ▸ sArcOfS_rho_in S)
   · rw [fdBoundary_H_at_one H] at h_eq
@@ -575,7 +577,11 @@ private lemma arc_svert_combined_dist (H : ℝ) (S : Finset UpperHalfPlane) :
           rcases Finset.mem_insert.mp hs with rfl | h
           · exact le_trans (min_le_right _ _) (hδ₂_bound t ht)
           · exact le_trans (min_le_left _ _) (hδ₁_bound s h h_sv h_na t ht)⟩
-      · simp_all
+      · simp_all only [gt_iff_lt, mem_Icc, and_imp, not_false_eq_true, implies_true,
+        forall_const, Finset.mem_insert,
+            not_and, Decidable.not_not, forall_eq_or_imp, not_true_eq_false,
+              not_isEmpty_of_nonempty, IsEmpty.forall_iff,
+            true_and]
 
 omit f hf in
 lemma arc_cpv_eventually_eq_union (S : Finset UpperHalfPlane)

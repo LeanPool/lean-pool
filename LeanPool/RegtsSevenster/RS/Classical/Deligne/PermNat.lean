@@ -301,8 +301,8 @@ theorem permAlg_natural
     [Preadditive A] [Linear ℂ A]
     {X Y : A} (f : X ⟶ Y) (n : ℕ)
     (x : SymGroupAlgebra n) :
-    permAlg X n x ≫ tensorPowMap f n =
-      tensorPowMap f n ≫ permAlg Y n x := by
+    (permAlg X n x).asHom ≫ tensorPowMap f n =
+      tensorPowMap f n ≫ (permAlg Y n x).asHom := by
   induction x using MonoidAlgebra.induction_on with
   | of σ =>
     rw [show (MonoidAlgebra.of ℂ (Equiv.Perm (Fin n))) σ =
@@ -310,10 +310,10 @@ theorem permAlg_natural
       permAlg_single, permAlg_single]
     exact permMor_natural f n σ
   | add x y hx hy =>
-    rw [map_add, map_add]
+    rw [map_add, map_add, End.add_asHom, End.add_asHom]
     exact intertwine_add hx hy
   | smul r x hx =>
-    rw [map_smul, map_smul]
+    rw [map_smul, map_smul, End.smul_asHom, End.smul_asHom]
     exact intertwine_smul r hx
 
 /-! ## Stability of Schur vanishing
@@ -361,7 +361,8 @@ theorem SchurKilled.of_mono
     {X Y : A} (f : Y ⟶ X) [Mono f] {μ : YoungDiagram}
     (h : SchurKilled P X μ) : SchurKilled P Y μ := by
   have := tensorPowMap_mono f μ.card
-  exact zero_of_intertwine_mono (permAlg_natural f μ.card (P.e μ)) h
+  exact End.ext (zero_of_intertwine_mono (permAlg_natural f μ.card (P.e μ))
+    (congrArg End.asHom h))
 
 /-- **Schur vanishing descends along epimorphisms** (the quotient
 half of Deligne's 1.19, at the idempotent level). -/
@@ -372,7 +373,8 @@ theorem SchurKilled.of_epi
     {X Y : A} (f : X ⟶ Y) [Epi f] {μ : YoungDiagram}
     (h : SchurKilled P X μ) : SchurKilled P Y μ := by
   have := tensorPowMap_epi f μ.card
-  exact zero_of_intertwine_epi (permAlg_natural f μ.card (P.e μ)) h
+  exact End.ext (zero_of_intertwine_epi (permAlg_natural f μ.card (P.e μ))
+    (congrArg End.asHom h))
 
 /-- **Schur vanishing is invariant under isomorphism.**  No rigidity
 is needed: the tensor power of `e.inv` splits the tensor power of
@@ -386,8 +388,8 @@ theorem SchurKilled.of_iso
   have hST : tensorPowMap e.inv μ.card ≫ tensorPowMap e.hom μ.card =
       𝟙 (tensorPow A Y μ.card) := by
     rw [← tensorPowMap_comp, e.inv_hom_id, tensorPowMap_id]
-  exact zero_of_intertwine_split hST
-    (permAlg_natural e.hom μ.card (P.e μ)) h
+  exact End.ext (zero_of_intertwine_split hST
+    (permAlg_natural e.hom μ.card (P.e μ)) (congrArg End.asHom h))
 
 end Linear
 

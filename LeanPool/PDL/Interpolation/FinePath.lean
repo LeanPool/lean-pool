@@ -224,7 +224,7 @@ lemma LocalPathIn.mem_internalLocalPaths {X} {lt : LocalTableau X} (lp : LocalPa
     simp only [internalLocalPaths, List.mem_cons, reduceCtorEq, List.mem_flatMap, List.mem_attach,
       List.mem_map, cons.injEq, true_and, Subtype.exists, Finset.mem_seqSort, false_or]
     exact ⟨Y, Y_in, tail, IH (by simpa [LocalPathIn.isInternal, LocalPathIn.ltAt] using! h),
-      rfl, by grind⟩
+      rfl, by grind only []⟩
 
 /-! ## Fine paths: all nodes of a tableau
 
@@ -351,7 +351,7 @@ theorem FinePathIn.mem_allFinePaths {H X} {tab : Tableau H X} (f : FinePathIn ta
     simp only [allFinePaths, List.mem_append, List.mem_map, List.mem_attach, reduceCtorEq,
       and_false, exists_false, List.mem_flatMap, loc.injEq, true_and, Subtype.exists,
       Finset.mem_seqSort, false_or]
-    exact ⟨_, Y_in, tail, IH, rfl, by grind⟩
+    exact ⟨_, Y_in, tail, IH, rfl, by grind only []⟩
   case pdl tail IH =>
     simp only [allFinePaths, List.mem_cons, List.mem_map]
     exact Or.inr ⟨tail, IH, rfl⟩
@@ -648,7 +648,7 @@ lemma FinePathIn.exists_child_coarseChildrenBelow {H X} {tab : Tableau H X}
     obtain ⟨g, g_in, hg⟩ := IH q' hq'
     refine ⟨.loc Y_in g, by
       simp only [children, Finset.mem_image, loc.injEq, heq_eq_eq, true_and,
-        exists_eq_right]; grind, ?_⟩
+        exists_eq_right]; grind only [], ?_⟩
     rcases hg with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · exact Or.inl ⟨by simp [FinePathIn.base, h1], by
         simp only [FinePathIn.coarseChildrenBelow, List.mem_map]; exact ⟨q', h2, rfl⟩⟩
@@ -658,7 +658,7 @@ lemma FinePathIn.exists_child_coarseChildrenBelow {H X} {tab : Tableau H X}
     obtain ⟨q', hq', rfl⟩ := hq
     obtain ⟨g, g_in, hg⟩ := IH q' hq'
     refine ⟨.pdl g, by simp only [children, Finset.mem_image, pdl.injEq,
-      exists_eq_right]; grind, ?_⟩
+      exists_eq_right]; grind only [], ?_⟩
     rcases hg with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · exact Or.inl ⟨by simp [FinePathIn.base, h1], by
         simp only [FinePathIn.coarseChildrenBelow, List.mem_map]; exact ⟨q', h2, rfl⟩⟩

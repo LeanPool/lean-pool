@@ -11,7 +11,7 @@ public import Mathlib.Algebra.Group.End
 public import Mathlib.Data.Finsupp.Defs
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Sigma
-public import Mathlib.Data.Int.ConditionallyCompleteOrder
+public import Mathlib.Order.Int.ConditionallyCompleteOrder
 public import Mathlib.Data.Int.Interval
 public import Mathlib.Order.Lattice.Nat
 import Mathlib.Analysis.Normed.Field.Lemmas
@@ -140,7 +140,7 @@ theorem forbidden_mem_forbiddenFinset [IsAddTorsionFree G]
       q • x = -(∑ b, c b • (b : G)) := eq_neg_of_add_eq_zero_left hx
       _ = q • equationSolution B q c := (eq_neg_of_add_eq_zero_left hw).symm
   have hxeq : x = equationSolution B q c :=
-    zsmul_right_injective hq0 hqx
+    (AddCommute.all x (equationSolution B q c)).eq_of_zsmul_eq_zsmul hq0 hqx
   rw [hxeq]
   exact Finset.mem_image.mpr ⟨(q, c), Finset.mem_product.mpr ⟨hqmem, hcmem⟩, rfl⟩
 

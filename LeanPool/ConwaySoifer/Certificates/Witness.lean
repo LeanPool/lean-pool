@@ -6,7 +6,7 @@ Authors: Vladislav Kuznetsov
 module
 
 public import LeanPool.ConwaySoifer.Certificates.WitnessedArithmetic
-import Mathlib.Tactic
+import Mathlib.Tactic.NormNum.Basic
 
 /-! Untrusted exclusion hints with kernel-checked local arithmetic.
 The producer chooses a method, fan, or split; soundness does not trust the search. -/

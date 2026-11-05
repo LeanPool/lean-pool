@@ -7,7 +7,10 @@ module
 
 public import LeanPool.ConwaySoifer.SevenTriangles.Geometry.Basic
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.Basic
+import Mathlib.Tactic.Ring
 
 /-! Diameter bounds for the filled convex hull, in the project's Euclidean coordinates. -/
 

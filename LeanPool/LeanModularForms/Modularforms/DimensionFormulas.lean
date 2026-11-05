@@ -8,8 +8,8 @@ module
 
 public import LeanPool.LeanModularForms.Modularforms.Eisenstein
 import LeanPool.LeanModularForms.Modularforms.QExpansionLems
-import Mathlib.Data.Int.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Algebra.Order.Star.Rat
 
 /-! # DimensionFormulas -/
 
@@ -134,7 +134,8 @@ lemma delta_eq_E4E6_const : ∃ (c : ℂ), (c • Delta) = DeltaE4E6Aux := by
 
 lemma cuspform_weight_lt_12_zero (k : ℤ) (hk : k < 12) : Module.rank ℂ (CuspForm Γ(1) k) = 0 := by
   rw [LinearEquiv.rank_eq (CuspFormsIsoModforms k)]
-  exact rank_modularForm_gammaOne (ModularForm.levelOne_neg_weight_rank_zero (by linarith))
+  exact rank_modularForm_gammaOne (ModularForm.levelOne_neg_weight_rank_zero (by
+    linarith only [hk]))
 
 lemma IsCuspForm_weight_lt_eq_zero (k : ℤ) (hk : k < 12) (f : ModularForm Γ(1) k)
     (hf : IsCuspForm Γ(1) k f) : f = 0 := by
@@ -148,7 +149,7 @@ lemma IsCuspForm_weight_lt_eq_zero (k : ℤ) (hk : k < 12) (f : ModularForm Γ(1
   rw [← hz]
   have := rank_zero_iff_forall_zero.mp (cuspform_weight_lt_12_zero k hk)
     (IsCuspFormToCuspForm Γ(1) k f hf)
-  simp_all
+  simp_all only [SlashInvariantForm.toFun_eq_coe, toSlashInvariantForm_coe, zero_apply]
 
 lemma Delta_E4_E6_eq : ModFormMk _ _ DeltaE4E6Aux =
   ((1/ 1728 : ℂ) • (((DirectSum.of _ 4 E₄)^3 - (DirectSum.of _ 6 E₆)^2) 12 )) := by
@@ -228,7 +229,7 @@ theorem Delta_E4_eqn : Delta = DeltaE4E6Aux := by
   ext z
   obtain ⟨c, H⟩ := delta_eq_E4E6_const
   suffices h2 : c = 1 by
-    simp_all
+    simp_all only [one_smul]
   · have h1 := Delta_q_one_term
     have h2 := Delta_E4_E6_aux_q_one_term
     rw [← H] at h2
@@ -236,7 +237,7 @@ theorem Delta_E4_eqn : Delta = DeltaE4E6Aux := by
       (hh := by positivity) (hΓ := by simp) c Delta).symm
     have hsmul : qExpansion 1 ⇑(c • Delta) = qExpansion 1 (c • ⇑Delta) := by rfl
     rw [hsmul, ← Nat.cast_one (R := ℝ), ← hs] at h2
-    simp_all
+    simp_all only [Nat.cast_one, map_smul, smul_eq_mul, mul_one, one_smul]
 
 
 /-- A weight-`k` level-one space with a generator `g` whose `q`-expansion has constant term `1`
@@ -462,31 +463,31 @@ lemma dim_modforms_lvl_one (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) :
     · convert (congrArg (1 + ·) (rank_modularForm_gammaOne
         (ModularForm.levelOne_neg_weight_rank_zero
           (show (-8 : ℤ) < 0 by norm_num)))) using 1
-      all_goals first | rfl | (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
+      all_goals (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
     -- k = 6: weight k - 12 = -6
     · convert (congrArg (1 + ·) (rank_modularForm_gammaOne
         (ModularForm.levelOne_neg_weight_rank_zero
           (show (-6 : ℤ) < 0 by norm_num)))) using 1
-      all_goals first | rfl | (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
+      all_goals (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
     -- k = 8: weight k - 12 = -4
     · convert (congrArg (1 + ·) (rank_modularForm_gammaOne
         (ModularForm.levelOne_neg_weight_rank_zero
           (show (-4 : ℤ) < 0 by norm_num)))) using 1
-      all_goals first | rfl | (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
+      all_goals (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
     -- k = 10: weight k - 12 = -2
     · convert (congrArg (1 + ·) (rank_modularForm_gammaOne
         (ModularForm.levelOne_neg_weight_rank_zero
           (show (-2 : ℤ) < 0 by norm_num)))) using 1
-      all_goals first | rfl | (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
+      all_goals (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
     -- k = 12: weight k - 12 = 0
     · convert (congrArg (1 + ·)
         (rank_modularForm_gammaOne ModularForm.levelOne_weight_zero_rank_one)) using 1
-      all_goals first | rfl | norm_num [show ⌊(12 : ℚ) / 12⌋₊ = 1 from by norm_num]
+      all_goals norm_num [show ⌊(12 : ℚ) / 12⌋₊ = 1 from by norm_num]
     -- k = 14: weight k - 12 = 2
     · have hfloor : ⌊(14 : ℚ) / 12⌋₊ = 1 := by
         rw [Nat.floor_eq_iff] <;> norm_num
       convert (congrArg (1 + ·) dim_weight_two) using 1
-      all_goals first | rfl | simp only [hfloor, Nat.cast_one]
+      all_goals simp only [hfloor, Nat.cast_one]
       all_goals norm_num
 
 lemma ModularForm.dimension_level_one_floor (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) :

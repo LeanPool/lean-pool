@@ -5,6 +5,7 @@ Authors: Bastiaan J Braams
 -/
 module
 
+public import Mathlib.Analysis.Analytic.Constructions
 public import Mathlib.Analysis.Analytic.IsolatedZeros
 public import Mathlib.Topology.Compactness.Compact
 public import LeanPool.SeveralComplexVariables.SeveralComplexVariables.ZeroSets.Basic

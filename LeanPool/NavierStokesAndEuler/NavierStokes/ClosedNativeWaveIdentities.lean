@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.LocalizedWaveBounds
+import Mathlib.Analysis.Calculus.ContDiff.WithLp
 import LeanPool.NavierStokesAndEuler.NavierStokes.LocalizedCurlRealization
 
 /-!

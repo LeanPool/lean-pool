@@ -6,11 +6,12 @@ Authors: Arseniy Akopyan
 module
 
 
-public import Mathlib.Algebra.Homology.ConcreteCategory
-public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.SmallChainComplex
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.IteratedSubdivisionSmallChains
+import Mathlib.Algebra.Homology.ConcreteCategory
+import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
+import Mathlib.Data.EReal.Inv
+import Mathlib.Tactic.Measurability.Init
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.BarycentricSubdivisionIter
 
 /-! # Small Chains Homology Surjectivity -/

@@ -6,10 +6,12 @@ Authors: Kenny Lau
 module
 
 public import LeanPool.ZetaZeros.Zeta.Defs
+public import Mathlib.Analysis.Convolution
 import LeanPool.ZetaZeros.Meta.Attr
 import LeanPool.ZetaZeros.Numeric.MontgomeryTaylor
 import Mathlib.Analysis.Calculus.ContDiff.Convolution
 import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Std.Tactic.BVDecide.Normalize.Prop
 
 /-!

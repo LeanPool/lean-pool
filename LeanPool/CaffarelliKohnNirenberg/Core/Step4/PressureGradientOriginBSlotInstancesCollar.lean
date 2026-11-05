@@ -67,7 +67,8 @@ theorem cutoff_force_slice_eLpNorm_le
       nlinarith only [h₁, h₂, h₃, abs_nonneg (mollifiedBallCutoff z.1 hρ y)]
     · rw [hzero y hy, zero_mul, enorm_zero]
       exact bot_le
-  exact hmono.trans_eq (eLpNorm_indicator_eq_eLpNorm_restrict (vec3Ball_measurable z.1 ρ))
+  exact hmono.trans_eq
+    (eLpNorm_indicator_eq_eLpNorm_restrict (vec3Ball_measurable z.1 ρ).nullMeasurableSet)
 
 
 /-- **The collar slice bound of `eq:pressure-gradient-decomposition`.**  On the half

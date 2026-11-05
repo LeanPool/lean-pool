@@ -89,7 +89,7 @@ theorem tc_gradXInv_contDiffOn (l : ℤ) (i a : Fin 2) :
     ContDiffOn ℝ ∞ (fun p : ℝ × Vec 2 =>
       gradMatrix (fun z => I.xFlowInv hΦ m l p.1 z) p.2 i a) tcU :=
   Integration.contDiffOn_spaceGrad_slice_Ioi (F := fun t z => I.xFlowInv hΦ m l t z a)
-    (((contDiff_apply ℝ ℝ a).comp
+    (((contDiff_apply ℝ (fun _ => ℝ) a).comp
       (Infra.Section4.amnr_xFlowInv_joint_contDiff_infty I hΦ m l)).contDiffOn) i
 
 end AVenhance.Infra.Section5.Contracts

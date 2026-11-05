@@ -6,9 +6,14 @@ Authors: Arseniy Akopyan
 module
 
 
-public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.UnconditionalDegree
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.FinalOddMapComparison
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.SphereTopHomologyReduction
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AlgebraicTopology.DegreeHomotopyInvariance
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.AntipodalDegree
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.DegreeAPIStrengthening
+import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.ModTwoDegreeComparison
+import Mathlib.Tactic.Positivity.Finset
+public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.UnconditionalDegree
 
 /-!
 # Positive-dimensional degree from bundled sphere orientations

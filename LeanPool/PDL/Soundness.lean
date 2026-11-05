@@ -43,7 +43,7 @@ theorem pdlRuleSat (r : PdlRule X Y) (satX : satisfiable X) : satisfiable Y := b
        Finset.mem_insert, Finset.mem_union, Finset.mem_erase, ne_eq] at φ_in
     rcases φ_in with φ_def | ⟨φ_neq, bla⟩ | bla <;>
     all_goals
-      apply w_; simp [Sequent.toFinset]; grind
+      apply w_; simp [Sequent.toFinset]; grind only []
   case loadR =>
     use W, M, w
     simp_all [vDash.SemImplies, Sequent.toFinset]
@@ -852,7 +852,7 @@ private theorem loadedDiamondPathsPDL_modL (α : Program) (X : Sequent) (tab : T
             rw [tabAt_t_def]
             simp_all [Sequent.toFinset]
             have := @Finset.mem_projection
-            grind
+            grind only []
           apply this
           simp only [relate]
           exact v_α_w
@@ -873,7 +873,7 @@ private theorem loadedDiamondPathsPDL_modL (α : Program) (X : Sequent) (tab : T
             rw [tabAt_t_def]
             simp_all [Sequent.toFinset]
             have := @Finset.mem_projection
-            grind
+            grind only []
           apply this
           simp only [relate]
           exact v_α_w
@@ -1002,7 +1002,7 @@ private theorem loadedDiamondPathsPDL_modR (α : Program) (X : Sequent) (tab : T
             rw [tabAt_t_def]
             simp_all [Sequent.toFinset]
             have := @Finset.mem_projection
-            grind
+            grind only []
           apply this
           simp only [relate]
           exact v_α_w
@@ -1023,7 +1023,7 @@ private theorem loadedDiamondPathsPDL_modR (α : Program) (X : Sequent) (tab : T
             rw [tabAt_t_def]
             simp_all [Sequent.toFinset]
             have := @Finset.mem_projection
-            grind
+            grind only []
           apply this
           exact v_α_w
     · -- (c)
@@ -1064,12 +1064,12 @@ lemma loadedDiamondPathsPDL
     exfalso
     simp only [nodeAt, AnyNegFormula.inSide] at negLoad_in
     rw [tabAt_t_def] at negLoad_in
-    aesop
+    aesop (rule_sets := [-default])
   case loadR =>
     exfalso
     simp only [nodeAt, AnyNegFormula.inSide] at negLoad_in
     rw [tabAt_t_def] at negLoad_in
-    aesop
+    aesop (rule_sets := [-default])
   case freeL L R δ β φ Z_def Y_def =>
     subst Z_def Y_def
     -- Leaving cluster, interesting that IH is not needed here.
@@ -1106,9 +1106,9 @@ lemma loadedDiamondPathsPDL
     · apply not_cEquiv_of_free_loaded
       -- use lemma that load and free are never in same cluster
       · simp only [Sequent.isFree, Sequent.isLoaded, nodeAt]
-        grind
+        grind only []
       · simp only [Sequent.isLoaded, nodeAt]
-        grind
+        grind only []
   case freeR L R δ β φ Z_def Y_def =>
     subst Z_def Y_def
     -- Leaving cluster, interesting that IH is not needed here.
@@ -1145,9 +1145,9 @@ lemma loadedDiamondPathsPDL
     · apply not_cEquiv_of_free_loaded
       -- use lemma that load and free are never in same cluster
       · simp only [Sequent.isFree, Sequent.isLoaded, nodeAt]
-        grind
+        grind only []
       · simp only [Sequent.isLoaded, nodeAt]
-        grind
+        grind only []
   case modL L R a ξ' Z_def Y_def =>
     exact loadedDiamondPathsPDL_modL α X tab t v_t ξ negLoad_in v_α_w w_nξ
       bas nflprep next Y_def Z_def tabAt_t_def
@@ -1575,7 +1575,7 @@ theorem tableauThenNotSat {Root} (tab : Tableau .nil Root) (Root_isFree : Root.i
       case nil =>
         simp only [loadMulti, List.foldr_nil] at lf_def
         have in_t : (~''(⌊α⌋φ)).inSide _theSide (nodeAt t) := by
-          simp_all [nodeAt]; aesop
+          simp_all [nodeAt]; aesop (rule_sets := [-default])
         -- Let C be the cluster to which `t` belongs.
         -- We claim that any ◃-path of satisfiable nodes starting at t must remain in C.
         have claim : ∀ s, t ◃⁺ s → satisfiable (nodeAt s) → s ≡ᶜ t := by
@@ -1615,7 +1615,7 @@ theorem tableauThenNotSat {Root} (tab : Tableau .nil Root) (Root_isFree : Root.i
           · have : (nodeAt t).isLoaded := by
               unfold Sequent.isLoaded
               simp [AnyNegFormula.inSide] at in_t
-              aesop
+              aesop (rule_sets := [-default])
             apply ePropB.e_help _ _ this rest_s_free t_to_s
       case cons β δ =>
         rintro ⟨W,M,v,v_⟩
@@ -1661,7 +1661,7 @@ theorem tableauThenNotSat {Root} (tab : Tableau .nil Root) (Root_isFree : Root.i
           · have : (nodeAt t).isLoaded := by
               unfold Sequent.isLoaded
               simp [AnyNegFormula.inSide] at in_t
-              aesop
+              aesop (rule_sets := [-default])
             apply ePropB.e_help _ _ this rest_s_free t_to_s
 
 theorem correctness : ∀ LR : Sequent, LR.isFree → satisfiable LR → consistent LR := by

@@ -5,14 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import LeanPool.ACMax.Counting.Incidence
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Positivity
-public import Mathlib.Tactic.Ring
-public import LeanPool.ACMax.Counting.FarPair
-public import LeanPool.ACMax.Counting.CompactCell
 public import LeanPool.ACMax.Counting.CompactLedgers
 
 /-!

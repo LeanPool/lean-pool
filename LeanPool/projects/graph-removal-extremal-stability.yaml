@@ -1,0 +1,49 @@
+slug: graph-removal-extremal-stability
+title: Graph removal and extremal stability
+summary: Formalizes the graph removal lemma for every fixed graph, Füredi's sharp
+  stability inequality and Erdős–Simonovits stability for colourable forbidden
+  graphs. A bridge theorem shows that near-extremal graphs with few labelled
+  forbidden copies are close to a complete multipartite graph.
+branch: graph theory
+entry_module: LeanPool.RemovalExtremalStability
+authors:
+- Juan Pablo Traverso Gianini
+source:
+  title: Füredi and Erdős–Simonovits stability; general graph removal lemma
+  authors:
+  - Juan Pablo Traverso Gianini
+  url: https://github.com/jtraverso/turan-stability
+  github_repo: jtraverso/turan-stability
+  commit: 3eb99033cc931add291781f77b7446dcba8f5f9d
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- TuranStability.stability
+- RemovalLemma.graph_removal
+main_results:
+- declaration: TuranStability.furedi
+  informal: A clique-free graph near Turán's edge bound has a large colourable subgraph.
+  source_ref: Füredi's stability theorem.
+- declaration: TuranStability.stability
+  informal: An L-free graph near the Turán density for a (p+1)-colourable L is
+    close in edit distance to a complete p-partite graph.
+  source_ref: Erdős–Simonovits stability theorem.
+- declaration: RemovalLemma.graph_removal
+  informal: Few labelled copies of any fixed graph H can be destroyed by deleting
+    few edges.
+  source_ref: Conlon–Fox, Graph removal lemmas, Theorem 1.1
+    (https://arxiv.org/pdf/1211.3487v1); Erdős–Frankl–Rödl (1986), Theorems 1.5
+    and 1.5′, are related precursors; formal source
+    https://github.com/jtraverso/graph-removal-lemma/tree/589cf03ef1e4c80ea8cdd6be77778232c62dd37c.
+- declaration: RemovalExtremalStability.stability_of_few_copies
+  informal: A graph near the Turán density with few labelled L copies is close
+    in edit distance to a complete multipartite graph.
+tags:
+- graph-theory
+- graph-removal
+- extremal-graph-theory
+- stability
+- regularity
+msc:
+- 05C35

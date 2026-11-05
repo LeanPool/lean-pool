@@ -20,6 +20,7 @@ public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Flow.InverseC1
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section3.CorrectorBounds
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section4.LocalFinite
 public import Mathlib.Analysis.Calculus.MeanValue
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-! Time regularity ingredients for the limit stream.
 
@@ -331,7 +332,7 @@ theorem composed_jacobian_spatial_partial_bound {β Cmat : ℝ}
     contDiff_const
   have hf : ContDiff ℝ (⊤ : ℕ∞) f := by
     dsimp [f]
-    exact (contDiff_apply ℝ ℝ i).comp (hv.sub hconst)
+    exact (contDiff_apply ℝ (fun _ => ℝ) i).comp (hv.sub hconst)
   have hcont : Continuous
       (fun y => iteratedFDeriv ℝ 1 f y (fun _ => basisVec k)) :=
     continuous_iteratedCoordinate hf (fun _ => k)
@@ -349,7 +350,7 @@ theorem composed_jacobian_spatial_partial_bound {β Cmat : ℝ}
   let c : Vec 2 → ℝ := fun _ =>
     (ContinuousLinearMap.id ℝ (Vec 2)) (basisVec j) i
   have hg : ContDiff ℝ (⊤ : ℕ∞) g :=
-    (contDiff_apply ℝ ℝ i).comp hv
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hv
   have hdiffg : DifferentiableAt ℝ g x := hg.differentiable (by simp) x
   have hdiffc : DifferentiableAt ℝ c x := differentiableAt_const _
   have hsub : fderiv ℝ f x = fderiv ℝ g x - fderiv ℝ c x := by

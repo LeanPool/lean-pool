@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import LeanPool.LeanModularForms.Modularforms.EtaCleanup
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Topology
 import Mathlib.Combinatorics.Matroid.Init
 import Mathlib.Data.Nat.Choose.Multinomial
 import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
@@ -53,7 +54,8 @@ theorem E₂_differentiableOn :
   simp only [comp, ofComplex_apply_of_im_pos hz, Pi.mul_apply]
   have h := eta_logDeriv' ⟨z, hz⟩
   have hpi : (↑Real.pi : ℂ) * Complex.I / 12 ≠ 0 := by
-    simp_all
+    simp_all only [ne_eq, div_eq_zero_iff, mul_eq_zero, Complex.ofReal_eq_zero, Real.pi_ne_zero,
+        Complex.I_ne_zero, or_self, OfNat.ofNat_ne_zero, not_false_eq_true]
   change logDeriv dedekindEtaFun' z = _ at h
   rw [h, inv_mul_cancel_left₀ hpi]
 

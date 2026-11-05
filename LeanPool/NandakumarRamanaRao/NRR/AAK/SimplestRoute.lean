@@ -7,9 +7,15 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.Multivalued.Separator.ObstructionValue
-public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.FacetShuffleEquiv
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.TopIncidenceComplex
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.OrderComplexRealization
+public import LeanPool.NandakumarRamanaRao.NRR.FairPartition.Predicates
+public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.FlexibleCore
+public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.ProjectedZeroSet
+public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.FacetShuffleEquiv
+import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement.FlexibleIteration
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.FiniteAffineZeroCount
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeRefinement
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.TopFlagSubdivision

@@ -1,0 +1,91 @@
+slug: classical-matching-factors
+title: Classical matching and factor theorems in finite graphs
+summary: >-
+  Develops augmenting-path and odd-component certificates for maximum matchings,
+  bipartite matching-cover duality, perfect matchings in bridgeless cubic graphs,
+  Tutte's f-factor criterion, and decompositions of even-regular graphs into
+  two-factors. Includes the finite Dilworth and Mirsky partition theorems as an
+  order-theoretic companion. All graph results use Mathlib's SimpleGraph and
+  matching predicates. Hall's and Tutte's one-factor theorems are imported from
+  Mathlib; the general matching and factor conclusions are proved here.
+  The collection integrates five Palomar-registered developments and does not
+  claim new mathematical results or a formalization of polynomial-time algorithms.
+branch: graph theory and finite order theory
+entry_module: LeanPool.ClassicalMatchingFactors
+authors:
+- Juan Pablo Traverso Gianini
+source:
+  title: A Short Proof of the Factor Theorem for Finite Graphs
+  authors:
+  - W. T. Tutte
+  doi: 10.4153/CJM-1954-033-3
+  url: https://github.com/jtraverso/tutte-f-factor/tree/dc3bbce463c80c499d3e9fa072d13f9145d907d0
+  github_repo: jtraverso/tutte-f-factor
+  commit: dc3bbce463c80c499d3e9fa072d13f9145d907d0
+  note: >-
+    This source anchors the f-factor development. The other four frozen source
+    repositories, their commits and Palomar IDs are linked in the imported
+    module docstrings; each main result below identifies its mathematical source.
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- BergeMatching.exists_tutte_berge
+- FFactor.tutte_f_factor
+main_results:
+- declaration: BergeMatching.isMaximum_iff_not_exists_augmenting
+  informal: >-
+    A matching in a finite simple graph has maximum cardinality if and only if
+    it has no augmenting path, with distinct unmatched endpoints and alternating edges.
+  source_ref: Berge (1957), Two theorems in graph theory, doi:10.1073/pnas.43.9.842.
+- declaration: BergeMatching.exists_tutte_berge
+  informal: >-
+    Every finite simple graph admits a matching M and a vertex set U with
+    twice the number of matching edges plus the number of odd components of
+    G minus U equal to the number of vertices plus the size of U.
+  source_ref: Berge (1958), Sur le couplage maximum d'un graphe; PALOMAR-2026-10-16-000011.
+- declaration: Konig.Egervary.exists_matching_card_eq_vertexCover
+  informal: Every finite bipartite simple graph has a matching and a vertex cover of equal size.
+  source_ref: Kőnig and Egerváry (1931); PALOMAR-2026-10-15-000019.
+- declaration: PetersenTheorem.exists_isPerfectMatching_mem
+  informal: >-
+    For every edge in a finite bridgeless cubic simple graph there is a perfect
+    matching containing that edge.
+  source_ref: Petersen (1891), doi:10.1007/BF02392606; PALOMAR-2026-10-16-000004.
+- declaration: FFactor.tutte_f_factor
+  informal: >-
+    A finite simple graph has a spanning subgraph with prescribed nonnegative
+    integer vertex degrees f exactly when Tutte's odd-component inequality holds
+    for every pair of disjoint vertex sets S and T.
+  source_ref: Tutte (1952, 1954), doi:10.4153/CJM-1954-033-3; PALOMAR-2026-10-18-000005.
+- declaration: SimpleGraph.petersen_two_factor
+  informal: >-
+    Every finite simple graph of degree 2k at every vertex is the edge-disjoint
+    union of k spanning subgraphs of degree two at every vertex, including k equal to zero.
+  source_ref: Petersen (1891), doi:10.1007/BF02392606; PALOMAR-2026-10-16-000016.
+- declaration: Konig.Poset.dilworth
+  informal: A finite partially ordered set has an antichain A and a partition into the size of A chains.
+  source_ref: Dilworth (1950), doi:10.2307/1969503; proof follows Galvin (1994).
+- declaration: Konig.Poset.mirsky
+  informal: A finite partially ordered set has a chain C and a partition into the size of C antichains.
+  source_ref: Mirsky (1971), doi:10.1080/00029890.1971.11992886.
+- declaration: ClassicalMatchingFactors.exists_matching_with_barrier_and_no_augmenting
+  informal: >-
+    A finite graph admits a matching with both a tight odd-component barrier
+    and no augmenting path, combining the two maximum-matching certificates.
+  source_ref: Interface corollary of the two proved Berge theorems in this collection.
+- declaration: ClassicalMatchingFactors.exists_optimal_matching_cover_pair
+  informal: >-
+    A finite bipartite graph admits an equal-size matching and vertex cover
+    which respectively maximize matching size and minimize cover size.
+  source_ref: Interface corollary of the proved Kőnig-Egerváry theorem and weak duality.
+tags:
+- graph-theory
+- matchings
+- graph-factors
+- minimax-theorems
+- finite-orders
+msc:
+- 05C70
+- 05C15
+- 06A07

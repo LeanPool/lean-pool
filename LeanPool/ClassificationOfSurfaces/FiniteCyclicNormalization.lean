@@ -8,10 +8,6 @@ module
 public import LeanPool.ClassificationOfSurfaces.FiniteCyclicCrosscap
 import LeanPool.ClassificationOfSurfaces.FiniteCyclicMoveRealization
 import LeanPool.ClassificationOfSurfaces.FiniteCyclicP2DegenerateRealization
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Combinatorics.SimpleGraph.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Stable closure for Gallier--Xu normalization chains

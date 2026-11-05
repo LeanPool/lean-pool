@@ -13,7 +13,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
   — at the request of David Wiygul
 -/
 public import Mathlib.Data.Finsupp.Notation
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Distribution
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Periodization
 
@@ -82,7 +82,7 @@ lemma sobolevNormSqDistrib_triangle (s : ℝ) (a b c : TrigPolyDual n)
       refine Summable.of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _
           ) ) ( fun m => mul_le_mul_of_nonneg_left ( h_ineq m ) ( weight_nonneg _ _ ) ) ?_;
       convert hab.mul_left 2 |> Summable.add <| hbc.mul_left 2 using 2
-      all_goals (first | rfl | ring)
+      all_goals (ring)
     · exact Summable.add ( hab.mul_left _ ) ( hbc.mul_left _ );
   · exact hab.mul_left 2;
   · exact hbc.mul_left 2

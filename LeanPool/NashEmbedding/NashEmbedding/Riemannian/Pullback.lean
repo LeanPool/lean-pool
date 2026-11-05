@@ -382,6 +382,13 @@ theorem prodForm_contMDiff (g : ContMDiffRiemannianMetric I ∞ E (TangentSpace 
   have hsnd : ContMDiff (I.prod I') I' ∞ (Prod.snd : M × M' → M') := contMDiff_snd
   have hA := pullbackForm_contMDiff (I := I.prod I') (J := I) g hfst
   have hB := pullbackForm_contMDiff (I := I.prod I') (J := I') g' hsnd
+  -- Fix the bundle instances before asking for smoothness of the sum of sections.
+  let : ∀ p : M × M', AddCommGroup
+      (TangentSpace (I.prod I') p →L[ℝ] TangentSpace (I.prod I') p →L[ℝ] ℝ) :=
+    fun _ => inferInstance
+  let : ∀ p : M × M', Module ℝ
+      (TangentSpace (I.prod I') p →L[ℝ] TangentSpace (I.prod I') p →L[ℝ] ℝ) :=
+    fun _ => inferInstance
   refine (hA.add_section hB).congr fun p => ?_
   have hp : prodFormT g g' p =
       (fun p => pullbackFormT (I := I.prod I') (J := I) Prod.fst g p) p +

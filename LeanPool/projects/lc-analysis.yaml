@@ -1,0 +1,77 @@
+slug: lc-analysis
+title: Michal–Bastiani Calculus on Locally Convex Spaces
+summary: >-
+  Develops real Michal–Bastiani calculus on Hausdorff locally convex spaces,
+  with the chain rule, continuous symmetric higher differentials, and Taylor's
+  formula in weak form. It proves equivalence with smooth Fréchet calculus on
+  open subsets of normed spaces. Weak integrals exist for continuous curves in
+  sequentially complete spaces and for continuously differentiable curves in
+  Mackey complete spaces; Mackey completeness is characterized by weak
+  integrability of Lipschitz curves. A smooth map from a Banach space to a
+  normed space with derivative uniformly bounded below reflects finite
+  differentiability of continuous maps from open locally convex domains.
+branch: functional analysis
+entry_module: LeanPool.LCAnalysis
+authors:
+- Gabriel Larotonda
+source:
+  title: Infinite-Dimensional Lie Groups
+  authors:
+  - Helge Glöckner
+  - Karl-Hermann Neeb
+  arxiv: '2602.12362'
+  url: https://github.com/glaroton/LCAnalysis
+  github_repo: glaroton/LCAnalysis
+  commit: c7c5a228221bba0313e7caee62ca0f9b1e2e5c0f
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LCAnalysis.ContDiffMBOn.comp
+- LCAnalysis.ContDiffMBOn.exists_iteratedDMB_multilinear
+- LCAnalysis.smoothMBOn_iff_contDiffOn
+- LCAnalysis.exists_hasWeakIntegral
+- LCAnalysis.mackeyComplete_iff_integratesLipschitzCurves
+- LCAnalysis.ContDiffMBOn.of_comp_of_boundedBelow
+main_results:
+- declaration: LCAnalysis.ContDiffMBOn.comp
+  informal: >-
+    Composing two real Michal–Bastiani C^k maps between open subsets of
+    Hausdorff locally convex spaces preserves C^k regularity, provided the
+    inner map takes the first domain into the second.
+- declaration: LCAnalysis.ContDiffMBOn.exists_iteratedDMB_multilinear
+  informal: >-
+    At every point of its open domain, the kth differential of a
+    Michal–Bastiani C^k map is a continuous symmetric k-linear map.
+- declaration: LCAnalysis.smoothMBOn_iff_contDiffOn
+  informal: >-
+    On open subsets of real normed spaces, Michal–Bastiani smoothness is
+    equivalent to Fréchet smoothness.
+- declaration: LCAnalysis.exists_hasWeakIntegral
+  informal: >-
+    A continuous curve on the closed interval between any two real
+    endpoints has a weak integral in every sequentially complete
+    Hausdorff locally convex target space.
+- declaration: LCAnalysis.mackeyComplete_iff_integratesLipschitzCurves
+  informal: >-
+    In a Hausdorff locally convex real space, convergence of Mackey–Cauchy
+    sequences is equivalent to existence of weak integrals for all curves
+    whose difference quotients form a bounded set on every nondegenerate
+    compact real interval.
+- declaration: LCAnalysis.ContDiffMBOn.of_comp_of_boundedBelow
+  informal: >-
+    Let j be a smooth map from an open subset U of a real Banach space to
+    a real normed space, with a fixed m > 0 such that every x in U and
+    every vector v satisfy norm(dj(x)v) >= m * norm(v). If gamma maps an
+    open locally convex domain
+    continuously into U and j composed with gamma is C^k in the sense of
+    Michal–Bastiani, then gamma is C^k.
+tags:
+- functional-analysis
+- locally-convex-spaces
+- calculus
+- weak-integrals
+msc:
+- 46T20
+- 46A03
+- 58B10

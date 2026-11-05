@@ -19,6 +19,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.ChildEquivariance
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.ChildTestMap
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.BoundaryOrthants
 public import LeanPool.NandakumarRamanaRao.NRR.PrimeModel.AugmentedReference
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Prime configuration-model interface

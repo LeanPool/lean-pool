@@ -690,7 +690,7 @@ private theorem regEquicontinuity_modulus_for_sequence
   have hw' : ContDiff ℝ (⊤ : ℕ∞) w' := toVec3.contDiff.comp hw
   have hw'c : HasCompactSupport w' := hwc.comp_left (g := toVec3) rfl
   have hWdiff : ∀ i, ContDiff ℝ (⊤ : ℕ∞) (W i) := fun i =>
-    (contDiff_apply ℝ ℝ i).comp hw'
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hw'
   have hWc : ∀ i, HasCompactSupport (W i) := by
     intro i
     apply HasCompactSupport.of_support_subset_isCompact hw'c.isCompact

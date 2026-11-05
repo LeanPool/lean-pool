@@ -93,10 +93,10 @@ theorem pressureSplit_remainder_memLp_product
   have hpGlobal : MemLp (D.indicator
       (fun z : Vec3 × ℝ => p (parabolicHomeomorph.symm z)))
       (ENNReal.ofReal (3 / 2 : ℝ)) (volume : Measure (Vec3 × ℝ)) :=
-    (memLp_indicator_iff_restrict hD).2 hpDomain
+    (memLp_indicator_iff_restrict hD.nullMeasurableSet).2 hpDomain
   have hPGlobal : MemLp (D.indicator P)
       (ENNReal.ofReal (3 / 2 : ℝ)) (volume : Measure (Vec3 × ℝ)) :=
-    hpP.indicator hD
+    hpP.indicator hD.nullMeasurableSet
   have hdiff : MemLp (fun z : Vec3 × ℝ =>
       D.indicator (fun w => p (parabolicHomeomorph.symm w) - P w) z)
       (ENNReal.ofReal (3 / 2 : ℝ)) (volume : Measure (Vec3 × ℝ)) := by
@@ -417,7 +417,7 @@ theorem pressureSplit_remainder_pairing_zero
   have hpProductGlobal : MemLp (D.indicator
       (fun z : Vec3 × ℝ => p (parabolicHomeomorph.symm z)))
       (ENNReal.ofReal (3 / 2 : ℝ)) volume :=
-    (memLp_indicator_iff_restrict hprodDomain).2 hpProduct
+    (memLp_indicator_iff_restrict hprodDomain.nullMeasurableSet).2 hpProduct
   have hpWeightGlobal := blowup_pressure_mul_product_laplacian_integrable
     hpProductGlobal hψ hψc hθ hθc
   have hpWeightSet : IntegrableOn

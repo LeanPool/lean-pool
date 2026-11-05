@@ -8,7 +8,6 @@ module
 public import LeanPool.ClassificationOfSurfaces.Moise.LocallyFiniteFaceExtension
 public import LeanPool.ClassificationOfSurfaces.Moise.FinitePLHomeomorph
 import LeanPool.ClassificationOfSurfaces.Moise.PLApproximation
-import Mathlib.CategoryTheory.Category.Init
 
 /-!
 # PL fillings of locally finite polygonal face boundaries

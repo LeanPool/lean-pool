@@ -5,6 +5,8 @@ Authors: Scott Armstrong, Vlad Vicol
 -/
 module
 
+public import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
+
 public import Mathlib.MeasureTheory.Integral.MeanInequalities
 public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 public import Mathlib.MeasureTheory.Group.Arithmetic

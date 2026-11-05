@@ -6,7 +6,9 @@ Authors: Xuanji Li
 module
 
 public import LeanPool.Chudnovsky.SingularModuli.CosetOrbit
-import LeanPool.Chudnovsky.Ramanujan
+import LeanPool.Chudnovsky.Periodicity
+import Mathlib.Analysis.Complex.AbsMax
+import Mathlib.LinearAlgebra.Matrix.FixedDetMatrices
 import Mathlib.RingTheory.MvPolynomial.Symmetric.NewtonIdentities
 
 /-!

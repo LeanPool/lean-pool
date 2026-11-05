@@ -221,7 +221,7 @@ lemma Sequent.not_closed_of_sub {L R L' R' : Finset Formula} {O O' : Olf}
     (hL : ∀ f ∈ L', f ∈ L) (hR : ∀ f ∈ R', f ∈ R) (h : ¬ Sequent.closed ⟨L, R, O⟩) :
     ¬ Sequent.closed ⟨L', R', O'⟩ := by
   simp only [Sequent.closed, Sequent.mem_def, Sequent.L_eq, Sequent.R_eq] at h ⊢
-  grind
+  grind only []
 
 /-- Applying the rule `(L-)` to free the loaded formula: all formulas we had are kept. -/
 lemma PdlRule.exists_freeStep {Z : Sequent} (hZ : Z.O ≠ none) :

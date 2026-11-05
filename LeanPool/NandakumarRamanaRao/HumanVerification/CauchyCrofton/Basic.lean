@@ -7,8 +7,11 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.HumanVerification.InternalModel
+public import LeanPool.NandakumarRamanaRao.NRR.AreaPerimeter
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarPerimeterMonotonicity
 public import LeanPool.NandakumarRamanaRao.NRR.Geometry.ConvexBody.PlanarPerimeterTransform
+import Mathlib.Tactic.Basify
+import Mathlib.Tactic.ENatToNat
 
 /-!
 # Cauchy–Crofton bridge: basic set-up

@@ -6,7 +6,9 @@ Authors: Xuanji Li
 module
 
 public import LeanPool.Chudnovsky.Lattices
+import LeanPool.Chudnovsky.BernoulliValues
 import LeanPool.Chudnovsky.Liouville
+import Mathlib.Analysis.Normed.Module.Connected
 
 /-!
 # Fourier expansions: the lattice ↔ modular-forms bridge
@@ -75,7 +77,7 @@ private lemma eisensteinSeries_eq_two_E (τ : ℍ) {k : ℕ} (hk : 3 ≤ k) :
 /-- `ζ(6) = π⁶/945`. -/
 private lemma riemannZeta_six : riemannZeta 6 = (π : ℂ) ^ 6 / 945 := by
   have h := riemannZeta_two_mul_nat (k := 3) (by norm_num)
-  norm_num [show bernoulli 6 = 1 / 42 by decide +kernel] at h
+  norm_num [show bernoulli 6 = 1 / 42 by as_aux_lemma => exact bernoulli_six_value] at h
   rw [h]; ring
 
 private lemma pi_C_ne_zero : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero

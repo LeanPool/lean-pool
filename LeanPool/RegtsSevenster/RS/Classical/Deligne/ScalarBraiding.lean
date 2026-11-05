@@ -127,15 +127,15 @@ theorem permAlg_of_scalar
     permAlg X n x =
       (∑ σ : Equiv.Perm (Fin n), x.coeff σ *
         (if Equiv.Perm.sign σ = 1 then (1 : ℂ) else c)) •
-        𝟙 (tensorPow A X n) := by
+        1 := by
   classical
   have hlift : permAlg X n x =
-      x.coeff.sum fun σ r => r • permMor X n σ := by
+      x.coeff.sum fun σ r => r • End.of (permMor X n σ) := by
     rw [permAlg]
     exact MonoidAlgebra.lift_apply _ _
   rw [hlift]
-  rw [show (x.coeff.sum fun σ r => r • permMor X n σ) =
-    ∑ σ ∈ x.coeff.support, x.coeff σ • permMor X n σ from rfl]
+  apply End.ext
+  simp only [Finsupp.sum, End.sum_asHom, End.smul_asHom, End.one_asHom]
   rw [Finset.sum_congr rfl fun σ _ => by
     rw [permMor_of_scalar hβ hc2 σ, smul_smul]]
   rw [← Finset.sum_smul]

@@ -5,6 +5,7 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
+public import LeanPool.ACMax.Counting.Arithmetic
 public import LeanPool.ACMax.Counting.V9Discharge
 public import LeanPool.ACMax.Counting.MoatSharp
 
@@ -47,11 +48,10 @@ open Classical in
 /-- **The sharp strip cubic.**  The single-variable inequality the `n ≥ 123` region arithmetic
 bottoms out at, after `X` is pushed to its master maximum and `H` to the end of its range.
 Substituting `N = 123 + u` makes every coefficient non-negative
-(`1068496017 + 1122649307u + 11552736u² + 20700u³`), which is what `nlinarith` finds. -/
+(`1068496017 + 1122649307u + 11552736u² + 20700u³`), giving an explicit positive certificate. -/
 theorem strip_cubic_sharp {N : ℤ} (hN : 123 ≤ N) :
     779812849 * N + 755972700 < 20700 * N ^ 3 + 3914436 * N ^ 2 := by
-  have hu : (0 : ℤ) ≤ N - 123 := by linarith
-  nlinarith [hu, mul_nonneg hu hu, mul_nonneg (mul_nonneg hu hu) hu]
+  exact Arithmetic.strip_cubic_sharp hN
 
 open Classical in
 /-- **The two-variable core.**  After both `X`-eliminations the target is a cubic in `(N, H)`:
@@ -67,17 +67,7 @@ theorem moore_strip_twovar_sharp {N H : ℤ} (hN : 123 ≤ N) (hH : 0 ≤ H)
     4608000 * (N - H) ^ 2
       < 38400 * ((N - H) * (16 * N + 7 * H - 30))
         + 23 * ((6 * N + 160 - 23 * H) * (16 * N + 7 * H - 150) ^ 2) := by
-  have hd : (0 : ℤ) ≤ (4 * N - 200) - 17 * H := by linarith
-  have hHm : (0 : ℤ) ≤ 17 * H := by linarith
-  have hnc1 : (0 : ℤ) ≤ 104512 * N ^ 2 - 11944120 * N + 18478500 := by nlinarith [hN]
-  have hnc2 : (0 : ℤ) ≤ 111734 * N + 3585580 := by linarith
-  have hsq : (0 : ℤ) ≤ (4 * N - 200) ^ 2 + 17 * H * (4 * N - 200) + (17 * H) ^ 2 := by
-    nlinarith [hHm, hd, sq_nonneg (4 * N - 200), sq_nonneg (17 * H)]
-  have e1 := mul_nonneg hd hnc1
-  have e2 := mul_nonneg (mul_nonneg hd (by linarith : (0 : ℤ) ≤ (4 * N - 200) + 17 * H)) hnc2
-  have e3 := mul_nonneg (mul_nonneg hd hsq) (by norm_num : (0 : ℤ) ≤ 25921)
-  have hcub := strip_cubic_sharp hN
-  linarith [e1, e2, e3, hcub]
+  exact Arithmetic.moore_strip_twovar_sharp hN hH hs
 
 open Classical in
 /-- **The `R`-free core of the sharp strip discharge.**  On the counting region
@@ -93,25 +83,7 @@ theorem moore_strip_core_sharp {N X H : ℤ} (hN : 123 ≤ N) (hH : 0 ≤ H) (hH
     4608 * (N - H) ^ 2
       < 384 * ((N - H) * (2 * N - X - 23))
         + 23 * ((N - 4 - X - 3 * H) * (2 * N - X - 35) ^ 2) := by
-  have h17 : 17 * H ≤ 4 * N - 200 := by linarith
-  have hvpos : (0 : ℤ) ≤ N - H := by linarith
-  have hPpos : (0 : ℤ) ≤ 6 * N + 160 - 23 * H := by linarith
-  have hQpos : (0 : ℤ) ≤ 16 * N + 7 * H - 150 := by linarith
-  have hP : 6 * N + 160 - 23 * H ≤ 10 * (N - 4 - X - 3 * H) := by linarith
-  have hQ : 16 * N + 7 * H - 150 ≤ 10 * (2 * N - X - 35) := by linarith
-  -- the ball factor, pushed to the master maximum
-  have hA : 38400 * ((N - H) * (16 * N + 7 * H - 30))
-      ≤ 1000 * (384 * ((N - H) * (2 * N - X - 23))) := by nlinarith [hvpos, hQ]
-  -- the excess factor, pushed to the master maximum
-  have hQ2 : (16 * N + 7 * H - 150) ^ 2 ≤ (10 * (2 * N - X - 35)) ^ 2 := by
-    nlinarith [hQpos, hQ]
-  have hmul : (6 * N + 160 - 23 * H) * (16 * N + 7 * H - 150) ^ 2
-      ≤ (10 * (N - 4 - X - 3 * H)) * (10 * (2 * N - X - 35)) ^ 2 :=
-    mul_le_mul hP hQ2 (sq_nonneg _) (by linarith)
-  have hB : 23 * ((6 * N + 160 - 23 * H) * (16 * N + 7 * H - 150) ^ 2)
-      ≤ 1000 * (23 * ((N - 4 - X - 3 * H) * (2 * N - X - 35) ^ 2)) := by nlinarith [hmul]
-  have htv := moore_strip_twovar_sharp hN hH h17
-  linarith [hA, hB, htv]
+  exact Arithmetic.moore_strip_core_sharp hN hH hHX hmaster
 
 open Classical in
 /-- **The sharp strip Moore arithmetic.**  On the counting region, `MASTER′` together with
@@ -134,13 +106,19 @@ theorem moore_strip_arith_sharp {N X H R : ℤ} (hN : 123 ≤ N)
   have hcore := moore_strip_core_sharp hN hH hHX hmaster
   -- the ball term: `12(2R + 1) = 24R + 12 ≥ 2N − X − 23`
   have hball : (N - H) * (2 * N - X - 23) ≤ 12 * ((N - H) * (2 * R + 1)) := by
-    nlinarith [hvpos, hR]
+    convert mul_le_mul_of_nonneg_left (add_le_add_right hR 12) hvpos using 1 <;> ring
   -- the excess term
-  have hsq : (2 * N - X - 35) ^ 2 ≤ 576 * R ^ 2 := by nlinarith [hR, hApos]
-  have hRR : 23 * R ^ 2 ≤ 8 * (3 * R ^ 2 - R) := by nlinarith [hR8]
-  have hexc : 23 * (2 * N - X - 35) ^ 2 ≤ 4608 * (3 * R ^ 2 - R) := by nlinarith [hsq, hRR]
+  have hsq : (2 * N - X - 35) ^ 2 ≤ 576 * R ^ 2 := by
+    convert pow_le_pow_left₀ hApos hR 2 using 1; ring
+  have hRR : 23 * R ^ 2 ≤ 8 * (3 * R ^ 2 - R) := by
+    nlinarith only [mul_nonneg (show 0 ≤ R by omega) (sub_nonneg.mpr hR8)]
+  have hexc : 23 * (2 * N - X - 35) ^ 2 ≤ 4608 * (3 * R ^ 2 - R) := by
+    have hleft := mul_le_mul_of_nonneg_left hsq (by norm_num : (0 : ℤ) ≤ 23)
+    have hright := mul_le_mul_of_nonneg_left hRR (by norm_num : (0 : ℤ) ≤ 576)
+    nlinarith only [hleft, hright]
   have hB : 23 * ((N - 4 - X - 3 * H) * (2 * N - X - 35) ^ 2)
-      ≤ 4608 * ((N - 4 - X - 3 * H) * (3 * R ^ 2 - R)) := by nlinarith [hq, hexc]
+      ≤ 4608 * ((N - 4 - X - 3 * H) * (3 * R ^ 2 - R)) := by
+    convert mul_le_mul_of_nonneg_left hexc hq using 1 <;> ring
   linarith [hcore, hball, hB]
 
 /-! ## The graph-level dispatch -/

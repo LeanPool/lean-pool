@@ -4,12 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Boris Alexeev
 -/
 module
+public import Mathlib.Tactic.NormNum.Parity
+public import Mathlib.Topology.Covering.Basic
+import all Mathlib.Topology.Homotopy.Lifting
 
-public import LeanPool.HopfProblem.Prelude
+public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.HomologyOfX.ThreefoldHomology1
 import all LeanPool.HopfProblem.Foundations.TriangleRegularBaseFundamentalGroup
 import all LeanPool.HopfProblem.Foundations.FibreTopology
-import all LeanPool.HopfProblem.HomologyOfX.ThreefoldHomology1
 
 /-!
 # Hopf problem: foundations · two open transition
@@ -20,10 +22,8 @@ Supporting definitions and proofs for this stage of the six-sphere construction.
 
 open Set Function Filter Manifold Topology
 
-open scoped BigOperators CategoryTheory Complex.UnitDisc ComplexConjugate ContDiff ContinuousMap
-  Convolution ENNReal EuclideanSpace Fin.NatCast InnerProductSpace Interval Matrix MatrixGroups
-  Modular NNReal Pointwise RealInnerProductSpace TensorProduct UniformConvergence Uniformity
-  UpperHalfPlane
+open scoped BigOperators ComplexConjugate ContDiff ContinuousMap ENNReal EuclideanSpace Fin.NatCast
+  InnerProductSpace Interval Matrix NNReal Pointwise RealInnerProductSpace
 
 universe u v
 
@@ -405,11 +405,11 @@ private theorem
       · exact D.basedLoop_mem_of_path_in_V H hH p (fun t => hp ⟨t, rfl⟩)
   apply top_unique
   intro q _
-  have hq := hall q
+  have hq := hall q.toPath
   have hrefl : (Path.Homotopic.Quotient.refl D.base).symm = Path.Homotopic.Quotient.refl D.base :=
     by
-    change (1 : FundamentalGroup X D.base)⁻¹ = 1
-    exact inv_one
+    exact congrArg FundamentalGroup.toPath
+      (show (1 : FundamentalGroup X D.base)⁻¹ = 1 from inv_one)
   simpa only [TriangleRegularBaseFundamentalGroup.basedLoop, D.basedSection_base,
     Path.Homotopic.Quotient.refl_trans, hrefl, Path.Homotopic.Quotient.trans_refl] using hq
 
@@ -785,9 +785,9 @@ private theorem TwoOpenTransition.fundamentalGroupToMulOpposite_trans_U_V {X G :
     (D : TwoOpenTransition X G) {b c : X} (hb : b ∈ (D.U : Set X) ∩ (D.V : Set X))
     (hc : c ∈ (D.U : Set X) ∩ (D.V : Set X)) (α : Path b c) (β : Path c b) (hα : ∀ s, α s ∈ D.U)
     (hβ : ∀ s, β s ∈ D.V) :
-    D.fundamentalGroupToMulOpposite b hb.1 (.mk (α.trans β)) =
+    D.fundamentalGroupToMulOpposite b hb.1 (FundamentalGroup.fromPath (.mk (α.trans β))) =
       MulOpposite.op (D.transition c * (D.transition b)⁻¹) := by
-  apply (D.isQuotientCoveringMap.fundamentalGroupToMulOpposite_apply_eq_Iff).mpr
+  apply (D.isQuotientCoveringMap.fundamentalGroupToMulOpposite_apply_eq_iff).mpr
   have hm := congrArg Subtype.val (D.monodromy_trans_U_V hb hc α β hα hβ 1)
   simpa only [MulOpposite.unop_op, basepointU_eq_fiberPointU, smul_pointU, mul_one, one_mul,
     fiberPointU_val] using hm.symm

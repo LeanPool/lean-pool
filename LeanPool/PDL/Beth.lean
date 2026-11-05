@@ -49,7 +49,7 @@ theorem beth (φ : Formula) (h : φ.impDef p) :
       and_imp] at h
     intro w_φp0 w_p0
     specialize h w_φp0
-    aesop
+    aesop (rule_sets := [-default])
   rcases interpolation this with ⟨ψ, ip_voc, ip_one, ip_two⟩
   clear this
   use ψ
@@ -85,7 +85,7 @@ theorem beth (φ : Formula) (h : φ.impDef p) :
         simp only [Formula.voc, Finset.union_singleton, Finset.mem_inter, Finset.mem_insert,
           true_or, Sum.inl.injEq, p0_neq_p1, false_or, true_and] at ip_voc
         rw [repl_in_F_voc_def] at ip_voc
-        aesop
+        aesop (rule_sets := [-default])
     have ip_two_p : tautology (ψ ↣ (φ ↣ ·p)) := by
       clear ip_one
       have := non_occ_taut_then_taut_imp_repl_in
@@ -99,7 +99,7 @@ theorem beth (φ : Formula) (h : φ.impDef p) :
         simp only [Formula.voc, Finset.union_singleton, Finset.mem_inter, Finset.mem_insert,
           Sum.inl.injEq, true_or, and_true] at ip_voc
         rw [repl_in_F_voc_def] at ip_voc
-        aesop
+        aesop (rule_sets := [-default])
       · assumption
     intro W M w w_φ
     simp at w_φ

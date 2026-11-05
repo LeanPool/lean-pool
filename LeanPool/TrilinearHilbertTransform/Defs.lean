@@ -1,0 +1,40 @@
+/-
+Copyright (c) 2026 Joris Roos. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joris Roos
+-/
+module
+
+/- Adapted for Lean Pool from roos-j/lean-trilinearht at
+7b4209609e6a7fb9d9935973ee8541495f943660. Imports, names, proof organization and
+Mathlib interfaces have been updated; original authorship is retained above. -/
+
+public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+
+/-!
+
+# Definition of the trilinear Hilbert transform
+
+-/
+
+@[expose] public noncomputable section
+
+namespace TrilinearHT
+
+open Topology Filter
+
+/-- Truncated trilinear Hilbert transform of a triple of functions `f` at `x`. -/
+def truncatedTransform (f : Fin 3 → ℝ → ℂ) (x : ℝ) (ε : ℝ) : ℂ :=
+  ∫ t in {t : ℝ | ε < |t|}, (∏ i : Fin 3, f i (x + (i.val + 1) * t)) / t
+
+/-- Trilinear Hilbert transform.
+
+**Note:** The (trivial) fact that the principal value limit exists when `f` are Schwartz functions
+is proved as the automatically generated lemma `TrilinearHT.Auto.tendsto_truncatedTransform`.
+-/
+def T (f : Fin 3 → ℝ → ℂ) (x : ℝ) : ℂ := limUnder (𝓝[>] 0) (truncatedTransform f x)
+
+end TrilinearHT
+
+end

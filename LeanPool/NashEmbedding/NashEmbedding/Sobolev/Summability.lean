@@ -14,9 +14,10 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
 -/
 public import Mathlib.Algebra.Order.Ring.Star
 public import Mathlib.Analysis.MeanInequalities
+public import Mathlib.Analysis.Normed.Group.FunctionSeries
 public import Mathlib.Analysis.PSeries
 public import Mathlib.Analysis.RCLike.Lemmas
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Basic
 
 /-!

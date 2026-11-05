@@ -351,7 +351,7 @@ theorem lps_associatedPressure_tensor_memLp_two_of_velocity_memLp_four
       u (parabolicHomeomorph.symm z) i * u (parabolicHomeomorph.symm z) j)
       (ENNReal.ofReal (2 : ℝ)) (volume.restrict Q) := hi.mul hj
   rw [CKN.Leray.associatedPressureTensor,
-    memLp_indicator_iff_restrict hQ]
+    memLp_indicator_iff_restrict hQ.nullMeasurableSet]
   simpa only [show ENNReal.ofReal (2 : ℝ) = (2 : ℝ≥0∞) by norm_num] using hproduct
 
 /-- The equation interface with the exact regularized uniform bounds and the

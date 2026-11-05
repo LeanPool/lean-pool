@@ -44,9 +44,9 @@ private lemma arc_chord_re_neg (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
   by_cases hs0 : s = 0
   · subst hs0
     simp only [sub_zero, one_mul, zero_mul, add_zero]
-    nlinarith [hpi, hsqrt3_pos]
+    nlinarith only [hpi, hsqrt3_pos]
   · have hs_pos : s > 0 := lt_of_le_of_ne hs.1 (Ne.symm hs0)
-    nlinarith [hs.1, hs.2, hs_pos, mul_pos hpi hsqrt3_pos]
+    nlinarith only [hs, hpi, hsqrt3_pos, hs_pos, hs.1, hs.2, mul_pos hpi hsqrt3_pos]
 
 /-- The homotopy is not differentiable at `t = 1` (left/right derivatives differ). -/
 private lemma not_diffAt_at_one (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
@@ -191,7 +191,7 @@ private lemma not_diffAt_at_three (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
           rw [show ((↑(Real.pi / 2) : ℂ) + ((↑(3 : ℝ) : ℂ) - ↑(2 : ℝ)) * (↑(Real.pi / 6) : ℂ)) =
               ↑(2 * Real.pi / 3) from by push_cast; ring]
           exact exp_two_pi_div_three_eq_rho
-        simp_all
+        simp_all only [mem_Icc, ofReal_div, ofReal_ofNat]
       have h_chord : HasDerivAt (fun t' : ℝ => chordSegment iPoint rho (t' - 2))
           (rho - iPoint) (3 : ℝ) :=
         hasDerivAt_chordSegment_shift iPoint rho 2 3
@@ -291,10 +291,16 @@ private lemma not_diffAt_at_three (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
               (-Real.pi * Real.sqrt 3 / 12 - Real.pi / 12 * I) +
               (s:ℂ) * (-1/2 + (Real.sqrt 3 / 2 - 1) * I)) =
             (1 - s) * (-Real.pi * Real.sqrt 3 / 12) + s * (-1/2) := by
-        simp_all
+        simp_all only [mem_Icc, neg_mul, subset_compl_singleton_iff, mem_Iio, lt_self_iff_false,
+          not_false_eq_true,
+            mem_Ioi, add_re, mul_re, sub_re, one_re, ofReal_re, div_ofNat_re, neg_re, ofReal_im,
+              mul_zero, sub_zero, I_re,
+            div_ofNat_im, zero_div, I_im, mul_one, sub_self, sub_im, one_im, neg_im, mul_im,
+              zero_mul, add_zero, neg_zero,
+            zero_sub, mul_neg, add_im, zero_add]
       have h_re_eq := congr_arg Complex.re heq
       rw [h_lhs_re, h_rhs_re] at h_re_eq
-      linarith [h_re_eq, arc_chord_re_neg s hs]
+      linarith only [hs, h_re_eq, arc_chord_re_neg s hs]
     exact h_ne h_eq_left.symm
 
 /-- The homotopy is not differentiable at `t = 4` (left/right derivatives differ). -/
@@ -413,12 +419,17 @@ lemma interval_in_segment (p₁ p₂ : ℝ) (_hp : p₁ < p₂)
           · by_contra hlt
             have h3_in : (3 : ℝ) ∈ Set.Ioo p₁ p₂ := ⟨not_le.mp hlt, not_le.mp h3⟩
             have := h_avoid 3 h3_in
-            simp_all
+            simp_all only [mem_Ioo, Finset.mem_insert, Finset.mem_singleton, not_or, and_imp,
+              not_le, ge_iff_le, and_self,
+                OfNat.ofNat_eq_ofNat, Nat.succ_ne_self, Nat.reduceEqDiff, or_false, or_true,
+                  not_true_eq_false]
           · exact h4
         · right
           by_contra hlt
           have h4_in : (4 : ℝ) ∈ Set.Ioo p₁ p₂ := ⟨not_le.mp hlt, not_le.mp h4⟩
           have := h_avoid 4 h4_in
-          simp_all
+          simp_all only [mem_Ioo, Finset.mem_insert, Finset.mem_singleton, not_or, and_imp,
+            not_le, ge_iff_le, and_self,
+              OfNat.ofNat_eq_ofNat, Nat.reduceEqDiff, Nat.succ_ne_self, or_true, not_true_eq_false]
 
 end RectHomotopyProof

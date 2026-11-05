@@ -40,7 +40,7 @@ theorem proj : g ∈ projection A X ↔ (⌈·A⌉g) ∈ X :=
   case cons =>
     simp only [projection, formProjection, beq_iff_eq, List.map_cons, List.mem_cons]
     rw [List.reduceOption_mem_iff]
-    aesop
+    aesop (rule_sets := [-default])
 
 /-- Collect the continuations of matching atomic boxes in a formula finset. -/
 def _root_.Finset.pdlProjection : Nat → Finset Formula → Finset Formula
@@ -136,7 +136,7 @@ lemma LoadedPathRepeat.ext {Hist X} (lprA lprB : LoadedPathRepeat Hist X) :
     lprA.1 = lprB.1 → lprA = lprB := by
   rcases lprA with ⟨a, ha⟩
   rcases lprB with ⟨b, hb⟩
-  grind
+  grind only []
 
 instance {Hist X} : DecidableEq (LoadedPathRepeat Hist X) := Subtype.instDecidableEq
 
@@ -362,7 +362,6 @@ instance Tableau.instDecidableEq {Hist X} {tab1 tab2 : Tableau Hist X} :
   all_goals
     try simp_all only [reduceCtorEq, pdl.injEq, lrep.injEq]
     try exact instDecidableFalse
-    try exact instDecidableTrue
     try infer_instance
   case pdl.pdl =>
     by_cases h : Y1 = Y2

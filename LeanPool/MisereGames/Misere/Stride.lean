@@ -82,7 +82,8 @@ theorem isSolved_of_subposition {g gp : GameForm} {p : Player} (h1 : IsSolved p 
     rw [<-Subposition] at h3
     exact isSolved_of_subposition (isSolved_of_isOption h1 h_isOption) h3
 termination_by g
-decreasing_by form_wf
+decreasing_by
+  exact MisereGames.Moves.Subposition.of_isOption h_isOption
 
 theorem isSolved_of_mem_moves {p : Player} {g g' : GameForm} {q : Player}
     (h : IsSolved p g) (hm : g' ∈ moves q g) : IsSolved p g' :=
@@ -187,7 +188,11 @@ theorem isSolved_add {p : Player} {g h : GameForm}
     · subst h_gx
       exact isSolved_add h_isSolved_g (isSolved_of_mem_moves h_isSolved_h h_x_mem)
 termination_by (g, h)
-decreasing_by form_wf
+decreasing_by
+  all_goals
+    first
+    | exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+    | exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
 
 theorem not_isSolved_add_left {p : Player} {g h : GameForm}
     (hg : ¬IsSolved p g) : ¬IsSolved p (g + h) := by
@@ -295,7 +300,8 @@ theorem isSolved_deadEnd {p : Player} {g : GameForm} (h_deadEnd : IsDeadEnd p g)
   · intro gp h_isOption
     exact isSolved_deadEnd (isDeadEnd_of_isOption h_deadEnd h_isOption)
 termination_by g
-decreasing_by form_wf
+decreasing_by
+  exact MisereGames.Moves.Subposition.of_isOption h_isOption
 
 /-! ## Strides -/
 
@@ -661,7 +667,11 @@ theorem hasStride_add {p : Player} {g h : GameForm} {sL_g sL_h sR_g sR_h : ℕ}
           rw [show sL_g + (sL_h' + 1) = s + 1 from by omega] at this
           exact ⟨g + h', add_left_mem_moves_add hh'_mem g, this⟩
 termination_by (g, h)
-decreasing_by form_wf
+decreasing_by
+  all_goals
+    first
+    | exact Prod.Lex.left _ _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
+    | exact Prod.Lex.right _ (MisereGames.Moves.Subposition.of_mem_moves (by assumption))
 
 private theorem hasStride_neg {p : Player} {g : GameForm} {n : ℕ}
     (h_hasStride : HasStride p g n) :

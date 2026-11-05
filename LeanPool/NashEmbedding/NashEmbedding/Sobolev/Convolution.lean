@@ -13,7 +13,7 @@ Authors: Aristotle (Harmonic), Claude Fable 5 (Anthropic), Claude Opus 4.7 (Anth
   — at the request of David Wiygul
 -/
 public import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 public import LeanPool.NashEmbedding.NashEmbedding.Sobolev.Distribution
 
 /-!
@@ -206,7 +206,7 @@ theorem mollifier_convergence (φ : (Fin n → ℝ) → ℂ)
         all_goals try first
         | rfl
         | (simp only [ tsum_zero ])
-        case hsum => convert hu.mul_left ( ( 2 * ∫ y, ‖φ y‖ ) ^ 2 ) using 2; first | rfl | ring
+        case hsum => convert hu.mul_left ( ( 2 * ∫ y, ‖φ y‖ ) ^ 2 ) using 2; ring
         case hab =>
           intro m;
           -- By definition of $fourierCoeffDistrib$, we know that

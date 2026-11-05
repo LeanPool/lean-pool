@@ -7,7 +7,11 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Geometry.SupportFan
 public import LeanPool.ConwaySoifer.Simplified.Geometry.Affine
-import Mathlib.Tactic
+import Mathlib.Tactic.Convert
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # FullOwn

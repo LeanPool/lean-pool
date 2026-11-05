@@ -6,12 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.FunctionSpace
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 3.28 (Scott 1981, PRG-19, §3) — the elementwise formula for the least
@@ -63,12 +57,17 @@ theorem Element.mem_interYs_of (z : V₁.Element) {L : List (Set α × Set β)} 
       fun q hq => hall q (List.mem_cons.mpr (Or.inr hq))
     by_cases hXp : X ⊆ p.1
     · have heq : interYs V₁.master (p :: L) X = p.2 ∩ interYs V₁.master L X := by
-        rw [interYs_cons]; simp_all
+        rw [interYs_cons];
+          simp_all only [List.mem_cons, or_true, implies_true, forall_const, forall_eq_or_imp,
+            and_true, Prod.forall, Set.ofPred_mem_eq]
       rw [heq]
       exact z.inter_mem (hall p (List.mem_cons.mpr (Or.inl rfl)) hXp) (ih htail)
     · have heq : interYs V₁.master (p :: L) X = interYs V₁.master L X := by
-        rw [interYs_cons]; simp_all
-      simp_all
+        rw [interYs_cons];
+          simp_all only [List.mem_cons, or_true, implies_true, forall_const, forall_eq_or_imp,
+            IsEmpty.forall_iff, and_self, Prod.forall, Set.ofPred_true, Set.univ_inter]
+      simp_all only [List.mem_cons, or_true, implies_true, forall_const, forall_eq_or_imp,
+        IsEmpty.forall_iff, and_self, Prod.forall]
 
 /-- **Exercise 3.28 — the active values.** The set `{ ↑Yᵢ ∣ x ∈ [Xᵢ] }` of
 principal filters whose

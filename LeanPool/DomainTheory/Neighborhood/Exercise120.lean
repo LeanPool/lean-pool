@@ -6,8 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Basic
-import Mathlib.Data.Set.Basic
-import Mathlib.Tactic.Tauto
 
 /-!
 # Exercise 1.20 (Scott 1981, PRG-19, §1) — the power system `𝒟' = {↑X}`

@@ -432,14 +432,14 @@ theorem radial_segments_inter {center p q : Plane} {radius : ℝ}
         rw [dist_lineMap_left, Real.norm_eq_abs, abs_of_nonneg hu.1,
           dist_comm center q, hq]
       rw [heq] at hdistU
-      nlinarith
+      exact mul_right_cancel₀ hradius.ne' (hdistT.symm.trans hdistU)
     by_cases ht0 : t = 0
     · simp [ht0]
     · exfalso
       apply hpq
       rw [AffineMap.lineMap_apply_module', AffineMap.lineMap_apply_module', htu] at heq
       have hsmul : t • (q - center) = t • (p - center) := by
-        simpa [htu] using add_right_cancel heq
+        simpa only [htu] using add_right_cancel heq
       have hpqc : p - center = q - center := by
         exact (smul_right_injective Plane ht0 hsmul).symm
       calc
@@ -458,7 +458,9 @@ theorem eq_endpoint_of_mem_radial_segment {center p x : Plane} {radius : ℝ}
   have hdist : dist (AffineMap.lineMap center p t) center = t * radius := by
     rw [dist_lineMap_left, Real.norm_eq_abs, abs_of_nonneg ht.1,
       dist_comm center p, hp]
-  have ht1 : t = 1 := by nlinarith
+  have ht1 : t = 1 := by
+    exact mul_right_cancel₀ hradius.ne'
+      (hdist.symm.trans (hxsphere.trans (one_mul radius).symm))
   simp [ht1]
 
 theorem disjoint_radial_segments_away_center {center p q : Plane} {radius : ℝ}

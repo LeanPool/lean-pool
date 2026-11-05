@@ -287,14 +287,16 @@ private lemma spanningTreeHom_root {G : Type u} [Groupoid.{u} G] [IsFreeGroupoid
 def spanningLoopOfHom {G : Type u} [Groupoid.{u} G] [IsFreeGroupoid G]
     (T : WideSubquiver (Symmetrify (IsFreeGroupoid.Generators G))) [Arborescence T]
     {a b : G} (p : a ⟶ b) : End (spanningRoot T) :=
-  spanningTreeHom T a ≫ p ≫ inv (spanningTreeHom T b)
+  .of (spanningTreeHom T a ≫ p ≫ inv (spanningTreeHom T b))
 
 private lemma spanningLoopOfHom_eq_id {G : Type u} [Groupoid.{u} G] [IsFreeGroupoid G]
     (T : WideSubquiver (Symmetrify (IsFreeGroupoid.Generators G))) [Arborescence T]
     {a b : IsFreeGroupoid.Generators G} (e : a ⟶ b)
     (h : e ∈ wideSubquiverSymmetrify T a b) :
-    spanningLoopOfHom T (IsFreeGroupoid.of e) = 𝟙 (spanningRoot T) := by
-  rw [spanningLoopOfHom, ← Category.assoc, IsIso.comp_inv_eq, Category.id_comp]
+    spanningLoopOfHom T (IsFreeGroupoid.of e) = 1 := by
+  apply End.ext
+  change spanningTreeHom T a ≫ IsFreeGroupoid.of e ≫ inv (spanningTreeHom T b) = 𝟙 _
+  rw [← Category.assoc, IsIso.comp_inv_eq, Category.id_comp]
   rcases h with h | h
   · rw [spanningTreeHom_eq T (Path.cons default ⟨Sum.inl e, h⟩),
       spanningHomOfPath.eq_def]
@@ -313,12 +315,14 @@ private def spanningFunctorOfMonoidHom {G : Type u} [Groupoid.{u} G] [IsFreeGrou
     intro a
     dsimp only [spanningLoopOfHom]
     rw [Category.id_comp, IsIso.hom_inv_id]
-    simpa only [CategoryTheory.End.one_def, id_as_one] using f.map_one
+    exact f.map_one
   map_comp := by
     intros
     rw [comp_as_mul, ← f.map_mul]
-    simp only [IsIso.inv_hom_id_assoc, spanningLoopOfHom, CategoryTheory.End.mul_def,
-      Category.assoc]
+    congr 1
+    apply End.ext
+    simp only [spanningLoopOfHom, CategoryTheory.End.mul_asHom, Category.assoc,
+      IsIso.inv_hom_id_assoc]
 
 /-- The free-group basis obtained from the arrows outside a spanning tree. -/
 noncomputable def spanningTreeBasis {G : Type u} [Groupoid.{u} G] [IsFreeGroupoid G]
@@ -335,14 +339,16 @@ noncomputable def spanningTreeBasis {G : Type u} [Groupoid.{u} G] [IsFreeGroupoi
     let f' : Labelling (IsFreeGroupoid.Generators G) Y := fun a b e =>
       if h : e ∈ wideSubquiverSymmetrify T a b then 1 else f ⟨⟨a, b, e⟩, h⟩
     rcases IsFreeGroupoid.unique_lift f' with ⟨F', hF', uF'⟩
-    refine ⟨F'.mapEnd _, ?_, ?_⟩
-    · suffices ∀ {x y} (q : x ⟶ y), F'.map (spanningLoopOfHom T q) = (F'.map q : Y) by
+    refine ⟨(SingleObj.toEnd Y).symm.toMonoidHom.comp (F'.mapEnd _), ?_, ?_⟩
+    · suffices ∀ {x y} (q : x ⟶ y),
+          F'.map (spanningLoopOfHom T q).asHom = (F'.map q : Y) by
         rintro ⟨⟨a, b, e⟩, h⟩
-        simp only [Functor.mapEnd, DFunLike.coe, this, hF']
+        change F'.map (spanningLoopOfHom T (IsFreeGroupoid.of e)).asHom = _
+        rw [this, hF']
         exact dite_eq_right h
       intro x y q
       suffices ∀ {a} (p : Path (root T) a), F'.map (spanningHomOfPath T p) = 1 by
-        simp only [this, spanningTreeHom, comp_as_mul, inv_as_inv, spanningLoopOfHom, inv_one,
+        simp only [this, spanningTreeHom, comp_as_mul, inv_as_inv, inv_one,
           mul_one, one_mul, Functor.map_inv, Functor.map_comp]
       intro a p
       induction p with
@@ -356,7 +362,7 @@ noncomputable def spanningTreeBasis {G : Type u} [Groupoid.{u} G] [IsFreeGroupoi
             exact dite_eq_left (Or.inr eT)
     · intro E hE
       ext x
-      suffices (spanningFunctorOfMonoidHom T E).map x = F'.map x by
+      suffices (spanningFunctorOfMonoidHom T E).map x.asHom = F'.map x.asHom by
         simpa only [spanningLoopOfHom, spanningFunctorOfMonoidHom, IsIso.inv_id,
           spanningTreeHom_root, Category.id_comp, Category.comp_id] using! this
       congr
@@ -364,7 +370,7 @@ noncomputable def spanningTreeBasis {G : Type u} [Groupoid.{u} G] [IsFreeGroupoi
       intro a b e
       change E (spanningLoopOfHom T _) = dite _ _ _
       split_ifs with h
-      · rw [spanningLoopOfHom_eq_id T e h, ← CategoryTheory.End.one_def, E.map_one]
+      · rw [spanningLoopOfHom_eq_id T e h, E.map_one]
       · exact hE ⟨⟨a, b, e⟩, h⟩)
 
 instance freeGroupoidIsFree : IsFreeGroupoid (Quiver.FreeGroupoid V) where

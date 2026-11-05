@@ -93,23 +93,25 @@ theorem oncurve_vert_capture
   have h_im_val : z.im = H' - t * (H' - Real.sqrt 3 / 2) := by
     rw [hz_seg]; simp [fdBoundarySeg1H, add_im, mul_im, I_re, I_im, ofReal_re, ofReal_im,
       div_ofNat]
-  have h_im_gt : z.im > Real.sqrt 3 / 2 := by rw [h_im_val]; nlinarith [ht.2]
-  have h_im_pos : 0 < z.im := by linarith [Real.sqrt_pos.mpr (show (0 : ℝ) < 3 by norm_num)]
+  have h_im_gt : z.im > Real.sqrt 3 / 2 := by rw [h_im_val]; nlinarith only [hH', ht, ht.2]
+  have h_im_pos : 0 < z.im := by
+    linarith only [h_im_gt, Real.sqrt_pos.mpr (show (0 : ℝ) < 3 by norm_num)]
   have h_re_sq : z.re ^ 2 = 1/4 := by rw [h_re]; ring
   have h_norm_gt : ‖z‖ > 1 := by
     have h_im_sq_gt : z.im ^ 2 > 3 / 4 := by
-      nlinarith [mul_self_lt_mul_self (by positivity : 0 ≤ Real.sqrt 3 / 2) h_im_gt,
+      nlinarith only [h_im_gt, mul_self_lt_mul_self (by positivity : 0 ≤ Real.sqrt 3 / 2) h_im_gt,
         Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)]
     rw [Complex.norm_eq_sqrt_sq_add_sq]
     calc 1 = Real.sqrt 1 := by simp only [Real.sqrt_one]
       _ < Real.sqrt (z.re ^ 2 + z.im ^ 2) :=
-          Real.sqrt_lt_sqrt (by norm_num) (by linarith)
+          Real.sqrt_lt_sqrt (by norm_num) (by linarith only [h_re_sq, h_im_sq_gt])
   let p : ℍ := ⟨z, h_im_pos⟩
   have hp_fd : p ∈ 𝒟 := by
     refine ⟨?_, by change |z.re| ≤ 1/2; rw [h_re]; norm_num⟩
     change 1 ≤ Complex.normSq z
     rw [Complex.normSq_apply]
-    nlinarith [mul_self_le_mul_self (by positivity : 0 ≤ Real.sqrt 3 / 2) h_im_gt.le,
+    nlinarith only [h_im_gt, h_re_sq,
+      mul_self_le_mul_self (by positivity : 0 ≤ Real.sqrt 3 / 2) h_im_gt.le,
       Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)]
   have hp_zero : f p = 0 := modform_zero_to_uhp f h_im_pos h_zero
   have hp_in_S := hS_complete p hp_fd (orderOfVanishingAt'_ne_zero_of_eq_zero f hf p hp_zero)
@@ -126,17 +128,17 @@ theorem height_contradiction
     {H : ℝ} (hH_ge1 : 1 ≤ H) (hH_bound : ∀ s ∈ S, (s : ℂ).im < H)
     {z : ℂ} (h_im : z.im = H) (h_re : |z.re| ≤ 1 / 2)
     (h_zero : modularFormCompOfComplex f z = 0) : False := by
-  have h_im_pos : 0 < z.im := by linarith
+  have h_im_pos : 0 < z.im := by linarith only [hH_ge1, h_im]
   let p : ℍ := ⟨z, h_im_pos⟩
   have hp_fd : p ∈ 𝒟 := by
     refine ⟨?_, h_re⟩
     change 1 ≤ Complex.normSq z
     rw [Complex.normSq_apply]
-    nlinarith [sq_nonneg z.re, sq_nonneg z.im, sq_abs z.im]
+    nlinarith only [hH_ge1, h_im, sq_nonneg z.re, sq_nonneg z.im, sq_abs z.im]
   have hp_zero : f p = 0 := modform_zero_to_uhp f h_im_pos h_zero
   have hp_in_S := hS_complete p hp_fd (orderOfVanishingAt'_ne_zero_of_eq_zero f hf p hp_zero)
   have h_p_im : (↑p : ℂ).im = z.im := rfl
-  linarith [hH_bound p hp_in_S]
+  linarith only [hH_bound, h_im, hp_in_S, hH_bound p hp_in_S]
 
 omit hf in
 lemma seg4_eq_seg1_minus_one_H (H : ℝ) (s : ℝ) (_hs : s ∈ Icc 0 1) :
@@ -153,10 +155,11 @@ theorem oncurve_seg4_capture
     fdBoundaryH H t ∈ (↑(sVertOfS S) : Set ℂ) := by
   set z := fdBoundaryH H t with hz_def
   have hz_seg : z = fdBoundarySeg4H H t :=
-    fdBoundary_H_eq_seg4_H (by linarith [ht.1]) (le_of_lt ht.2)
+    fdBoundary_H_eq_seg4_H (by linarith only [ht, ht.1]) (le_of_lt ht.2)
   set s := 4 - t with hs_def
-  have hs_Icc : s ∈ Icc (0 : ℝ) 1 := ⟨by linarith [ht.2], by linarith [ht.1]⟩
-  have hs_Ioo : s ∈ Set.Ioo (0 : ℝ) 1 := ⟨by linarith [ht.2], by linarith [ht.1]⟩
+  have hs_Icc : s ∈ Icc (0 : ℝ) 1 := ⟨by linarith only [ht, ht.2], by linarith only [ht, ht.1]⟩
+  have hs_Ioo : s ∈ Set.Ioo (0 : ℝ) 1 := ⟨by linarith only [ht, ht.2], by
+    linarith only [ht, ht.1]⟩
   have h4s : (4 : ℝ) - s = t := by rw [hs_def]; ring
   have h_seg_eq : z = fdBoundarySeg1H H s - 1 := by
     rw [hz_seg, ← h4s]; exact seg4_eq_seg1_minus_one_H H s hs_Icc
@@ -170,24 +173,25 @@ theorem oncurve_seg4_capture
   have h_im_val : (fdBoundarySeg1H H s).im = H - s * (H - Real.sqrt 3 / 2) := by
     simp [fdBoundarySeg1H, add_im, mul_im, I_re, I_im, ofReal_re, ofReal_im, div_ofNat]
   have h_im_gt : (fdBoundarySeg1H H s).im > Real.sqrt 3 / 2 := by
-    rw [h_im_val]; nlinarith [hs_Ioo.2]
+    rw [h_im_val]; nlinarith only [hH, hs_Ioo, hs_Ioo.2]
   have h_im_pos : 0 < (fdBoundarySeg1H H s).im := by
-    linarith [Real.sqrt_pos.mpr (show (0 : ℝ) < 3 by norm_num)]
+    linarith only [h_im_gt, Real.sqrt_pos.mpr (show (0 : ℝ) < 3 by norm_num)]
   have h_re_sq : (fdBoundarySeg1H H s).re ^ 2 = 1/4 := by rw [h_re]; ring
   have h_norm_gt : ‖fdBoundarySeg1H H s‖ > 1 := by
     have h_im_sq_gt : (fdBoundarySeg1H H s).im ^ 2 > 3/4 := by
-      nlinarith [mul_self_lt_mul_self (by positivity : 0 ≤ Real.sqrt 3 / 2) h_im_gt,
+      nlinarith only [h_im_gt, mul_self_lt_mul_self (by positivity : 0 ≤ Real.sqrt 3 / 2) h_im_gt,
         Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)]
     rw [Complex.norm_eq_sqrt_sq_add_sq]
     calc 1 = Real.sqrt 1 := by simp only [Real.sqrt_one]
       _ < Real.sqrt ((fdBoundarySeg1H H s).re ^ 2 + (fdBoundarySeg1H H s).im ^ 2) :=
-        Real.sqrt_lt_sqrt (by norm_num) (by linarith)
+        Real.sqrt_lt_sqrt (by norm_num) (by linarith only [h_re_sq, h_im_sq_gt])
   let p : ℍ := ⟨fdBoundarySeg1H H s, h_im_pos⟩
   have hp_fd : p ∈ 𝒟 := by
     refine ⟨?_, by change |(fdBoundarySeg1H H s).re| ≤ 1/2; rw [h_re]; norm_num⟩
     change 1 ≤ Complex.normSq (fdBoundarySeg1H H s)
     rw [Complex.normSq_apply]
-    nlinarith [mul_self_le_mul_self (by positivity : 0 ≤ Real.sqrt 3 / 2) h_im_gt.le,
+    nlinarith only [h_im_gt, h_re_sq,
+      mul_self_le_mul_self (by positivity : 0 ≤ Real.sqrt 3 / 2) h_im_gt.le,
       Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)]
   have hp_zero : f p = 0 := modform_zero_to_uhp f h_im_pos h_zero_seg1
   have hp_in_S := hS_complete p hp_fd (orderOfVanishingAt'_ne_zero_of_eq_zero f hf p hp_zero)
@@ -235,7 +239,7 @@ theorem oncurve_full_capture (S : Finset ℍ) (_hS : ∀ p ∈ S, p ∈ 𝒟)
           rw [fdBoundary_H_eq_arc h1 h3s]
           exact Complex.norm_exp_ofReal_mul_I _
         exact oncurve_arc_capture f hf S hS_complete hH_sqrt3
-          ⟨by linarith, by linarith [ht.2]⟩ h_norm h_zero
+          ⟨by linarith only [h1], by linarith only [h3, ht.2]⟩ h_norm h_zero
     · rcases le_or_gt t 4 with h4 | h4
       · rcases (eq_or_lt_of_le h4 : t = 4 ∨ t < 4) with rfl | h4s
         · exfalso
@@ -252,12 +256,12 @@ theorem oncurve_full_capture (S : Finset ℍ) (_hS : ∀ p ∈ S, p ∈ 𝒟)
           exact oncurve_seg4_capture f hf S hS_complete hH_sqrt3 ⟨h3, h4s⟩ h_zero
       · exfalso
         have h_re : |(fdBoundaryH H t).re| ≤ 1/2 := by
-          rw [fdBoundary_H_eq_seg5_H (by linarith : (4 : ℝ) < t)]
+          rw [fdBoundary_H_eq_seg5_H (by linarith only [h4] : (4 : ℝ) < t)]
           simp only [fdBoundarySeg5H, add_re, sub_re, ofReal_re, div_ofNat_re, re_ofNat, mul_re,
             I_re, mul_zero, ofReal_im, I_im, mul_one, sub_self, add_zero, one_div]
-          rw [abs_le]; constructor <;> linarith [ht.2]
+          rw [abs_le]; constructor <;> linarith only [h4, ht.2, ht]
         have h_im : (fdBoundaryH H t).im = H := by
-          rw [fdBoundary_H_eq_seg5_H (by linarith : (4 : ℝ) < t)]
+          rw [fdBoundary_H_eq_seg5_H (by linarith only [h4] : (4 : ℝ) < t)]
           simp [fdBoundarySeg5H, add_im, sub_im, mul_im, I_re, I_im, ofReal_re, ofReal_im]
         exact height_contradiction f hf S hS_complete hH_ge1 hH_bound h_im h_re h_zero
 

@@ -17,10 +17,11 @@ public import Mathlib.Algebra.Ring.IsFormallyReal
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Mathlib.Geometry.Manifold.Algebra.LieGroup
+public import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 public import Mathlib.Geometry.Manifold.Sheaf.Basic
 public import Mathlib.Geometry.Manifold.VectorBundle.Riemannian
 public import Mathlib.Geometry.Manifold.VectorField.Pullback
-public import Mathlib.Tactic
+public import LeanPool.NashEmbedding.Tactics
 
 /-!
 # The ambient metric along an immersion
