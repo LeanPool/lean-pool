@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
+
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 
 public import LeanPool.GoldbergSeymour.MaximumProperty
@@ -532,61 +534,11 @@ theorem AlgorithmFiveFiveSeed {V E : Type*}
   have seriesProper : ∀ j : Fin (ett.rounds + 1),
       IsProperEdgeColoring G (ett.series.data.coloring j) := by
     intro j
-    have certificate := ett.series.certified j
-    cases certificate with
-    | initial triple seedLength initialColoring initialStored initialEdges initialKind
-        initialVertex initialOutside initialDelta initialGamma initialClosure =>
-        simpa [initialColoring] using triple.2.2.2.1
-    | SE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternative
-        currentColoring currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma adjoined adjoinedExactly
-        closedExtension orderedExtension strictExtension =>
-        rw [currentColoring]
-        exact choice.selectedProper
-    | PE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-        gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-        secondStableRelation exitWitness currentColoring currentProper
-        currentOneUncolored currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma closedExtension orderedExtension
-        strictExtension =>
-        exact currentProper
-    | RE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed available currentColoring currentStored currentEdges
-        currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-        adjoinedExactly closedExtension orderedExtension strictExtension =>
-        rw [currentColoring]
-        exact previousProper
+    exact (ett.series.coloringProperties j).1
   have seriesOneUncolored : ∀ j : Fin (ett.rounds + 1),
       IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by
     intro j
-    have certificate := ett.series.certified j
-    cases certificate with
-    | initial triple seedLength initialColoring initialStored initialEdges initialKind
-        initialVertex initialOutside initialDelta initialGamma initialClosure =>
-        simpa [initialColoring] using triple.2.2.2.2
-    | SE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternative
-        currentColoring currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma adjoined adjoinedExactly
-        closedExtension orderedExtension strictExtension =>
-        rw [currentColoring]
-        exact choice.selectedOneUncolored
-    | PE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-        gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-        secondStableRelation exitWitness currentColoring currentProper
-        currentOneUncolored currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma closedExtension orderedExtension
-        strictExtension =>
-        exact currentOneUncolored
-    | RE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed available currentColoring currentStored currentEdges
-        currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-        adjoinedExactly closedExtension orderedExtension strictExtension =>
-        rw [currentColoring]
-        exact previousOneUncolored
+    exact (ett.series.coloringProperties j).2
   have selfStable : ∀ (X : TreeSequence G e0) (C : Finset (Fin k))
       (q : PartialEdgeColoring E k), StableColoring X C q q := by
     intro X C q

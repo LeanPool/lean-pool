@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorComponentColoringFacts
+
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeTwoData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseTwoOne
 public import LeanPool.GoldbergSeymour.StableChangeCaseThree
@@ -1347,46 +1351,6 @@ private theorem helper_hBterminal_159.{u_1, u_2} :
   simp only [Fin.val_castLE, Fin.val_last]
   omega
 
-private theorem helper_firstAt_173.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (D : HierarchySituationTwoCaseThreeTwoData G k e0 input T phi ett base C ctx),
-    let B : TreeSequence G e0 :=
-      HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1 : ℕ));
-    B.length + (1 : ℕ) = T.length →
-    T.vertex D.penultimateVertexIndex ∈ TreeSequenceVertexSet B →
-    ColoredVertexSetElementary G phi (TreeSequenceVertexSet B) →
-    ∀ {c : Fin k},
-    c ∈ MissingColors G phi (T.vertex D.penultimateVertexIndex) →
-    HierarchyFirstMissingPosition phi T c = D.penultimateVertexIndex := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D B hBlen hyB hElementary c hc
-  let candidates := Finset.univ.filter fun i : Fin (T.length + 1) =>
-    c ∈ MissingColors G phi (T.vertex i)
-  have hy : D.penultimateVertexIndex ∈ candidates := by simp [candidates, hc]
-  have hn : candidates.Nonempty := ⟨_, hy⟩
-  have hmin := Finset.min'_le candidates _ hy
-  have hm : c ∈ MissingColors G phi (T.vertex (candidates.min' hn)) :=
-    (Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2
-  have hmem : T.vertex (candidates.min' hn) ∈ TreeSequenceVertexSet B := by
-    let j : Fin (B.length + 1) := ⟨(candidates.min' hn).val, by
-      have hp := D.penultimateVertexPosition
-      change (candidates.min' hn).val ≤ D.penultimateVertexIndex.val at hmin
-      omega⟩
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
-    refine ⟨j, ?_⟩
-    rfl
-  have heq : candidates.min' hn = D.penultimateVertexIndex := by
-    by_contra hne
-    have hvne := fun h => hne (T.vertex_injective h)
-    exact Finset.disjoint_left.mp (hElementary hmem hyB hvne) hm hc
-  simpa only [HierarchyFirstMissingPosition, candidates, dite_eq_left hn] using heq
-
 private theorem helper_hnotA_197.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -1534,221 +1498,6 @@ private theorem helper_missingSubset_269.{u_1, u_2} :
     exact Finset.mem_biUnion.mpr
       ⟨v, TreeSequenceInitialSegmentVertexSetSubset hXY hv, hm⟩
 
-private theorem helper_leaf_278.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
-      (k : ℕ) (rho : PartialEdgeColoring E k) (a b : Fin k),
-    a ≠ b →
-    IsProperEdgeColoring G rho →
-    ∀ (v : V),
-    a ∈ MissingColors G rho v ∨ b ∈ MissingColors G rho v →
-    ((TwoColorIncidenceGraph G rho a b).neighborSet (Sum.inl v)).Subsingleton := by
-  classical
-  intro V E _ _ G k rho a b hne hp v hm
-  let _ := Fintype.ofFinite V
-  have hd : @SimpleGraph.degree _ (TwoColorIncidenceGraph G rho a b)
-      (Sum.inl v) (Fintype.ofFinite _) ≤ 1 := by
-    rcases hm with ha | hb
-    · exact MissingColorIncidenceEndpoint G rho a b hne hp v ha
-    · have he : TwoColorIncidenceGraph G rho a b = TwoColorIncidenceGraph G rho b a := by
-        ext x y
-        cases x <;> cases y <;> simp [TwoColorIncidenceGraph, or_comm]
-      rw [he]
-      exact MissingColorIncidenceEndpoint G rho b a hne.symm hp v hb
-  rw [← SimpleGraph.card_neighborFinset_eq_degree] at hd
-  intro x hx y hy
-  exact Finset.card_le_one_iff.mp hd
-    (by simpa [SimpleGraph.mem_neighborFinset] using hx)
-    (by simpa [SimpleGraph.mem_neighborFinset] using hy)
-
-private theorem helper_separate_297.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
-      (k : ℕ),
-    (∀ (rho : PartialEdgeColoring E k) (a b : Fin k) (v : V),
-        Sum.inl v ∈ TwoColorComponent G rho a b (Sum.inl v)) →
-    (∀ (rho : PartialEdgeColoring E k) (a b : Fin k),
-        a ≠ b →
-          IsProperEdgeColoring G rho →
-            ∀ (v : V),
-              a ∈ MissingColors G rho v ∨ b ∈ MissingColors G rho v →
-                ((TwoColorIncidenceGraph G rho a b).neighborSet (Sum.inl v)).Subsingleton) →
-    ∀ (rho : PartialEdgeColoring E k) (a b : Fin k),
-    a ≠ b →
-    IsProperEdgeColoring G rho →
-    ∀ (u v w : V),
-    u ≠ v →
-    u ≠ w →
-    v ≠ w →
-    a ∈ MissingColors G rho u →
-    b ∈ MissingColors G rho v →
-    a ∈ MissingColors G rho w ∨ b ∈ MissingColors G rho w →
-    TwoColorComponent G rho a b (Sum.inl u) = TwoColorComponent G rho a b (Sum.inl v) →
-    Disjoint (TwoColorComponent G rho a b (Sum.inl w))
-      (TwoColorComponent G rho a b (Sum.inl u)) := by
-  classical
-  intro V E _ _ G k self leaf rho a b hne hp u v w huv huw hvw hu hv hw hsame
-  let _ := Fintype.ofFinite V
-  rcases TwoColorComponentsDisjoint G rho a b (Sum.inl w) (Sum.inl u) with he | hd
-  · exfalso
-    obtain ⟨s, t, p, hpPath, hsupport⟩ :=
-      TwoColorComponentSpanningPath G rho a b hp (Sum.inl w)
-    have ends (x : V) (hx : Sum.inl x ∈ TwoColorComponent G rho a b (Sum.inl w))
-        (hm : a ∈ MissingColors G rho x ∨ b ∈ MissingColors G rho x) :
-        Sum.inl x = s ∨ Sum.inl x = t := by
-      by_contra hnot
-      push Not at hnot
-      have hs : Sum.inl x ∈ p.support := by
-        change Sum.inl x ∈ {z | z ∈ p.support}
-        rw [hsupport]
-        exact hx
-      exact hpPath.isTrail.notMem_support_of_subsingleton_neighborSet
-        hnot.1 hnot.2 (leaf rho a b hne hp x hm) hs
-    have hue := ends u (he ▸ self rho a b u) (Or.inl hu)
-    have hve := ends v (by rw [he, hsame]; exact self rho a b v) (Or.inr hv)
-    have hwe := ends w (self rho a b w) hw
-    rcases hue with hu | hu <;> rcases hve with hv | hv <;> rcases hwe with hw | hw
-    all_goals first
-      | exact huv (Sum.inl.inj (hu.trans hv.symm))
-      | exact huw (Sum.inl.inj (hu.trans hw.symm))
-      | exact hvw (Sum.inl.inj (hv.trans hw.symm))
-  · exact hd
-
-private theorem helper_separateAny_332.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
-      (k : ℕ),
-    (∀ (rho : PartialEdgeColoring E k) (a b : Fin k) (v : V),
-        Sum.inl v ∈ TwoColorComponent G rho a b (Sum.inl v)) →
-    (∀ (rho : PartialEdgeColoring E k) (a b : Fin k),
-        a ≠ b →
-          IsProperEdgeColoring G rho →
-            ∀ (u v w : V),
-              u ≠ v →
-                u ≠ w →
-                  v ≠ w →
-                    a ∈ MissingColors G rho u →
-                      b ∈ MissingColors G rho v →
-                        a ∈ MissingColors G rho w ∨ b ∈ MissingColors G rho w →
-                          TwoColorComponent G rho a b (Sum.inl u) =
-                              TwoColorComponent G rho a b (Sum.inl v) →
-                            Disjoint (TwoColorComponent G rho a b (Sum.inl w))
-                              (TwoColorComponent G rho a b (Sum.inl u))) →
-    ∀ (rho : PartialEdgeColoring E k) (a b : Fin k),
-    a ≠ b →
-    IsProperEdgeColoring G rho →
-    ∀ (u v w : V),
-    u ≠ w →
-    v ≠ w →
-    a ∈ MissingColors G rho u →
-    b ∈ MissingColors G rho v →
-    a ∈ MissingColors G rho w ∨ b ∈ MissingColors G rho w →
-    TwoColorComponent G rho a b (Sum.inl u) = TwoColorComponent G rho a b (Sum.inl v) →
-    Disjoint (TwoColorComponent G rho a b (Sum.inl w))
-      (TwoColorComponent G rho a b (Sum.inl u)) := by
-  classical
-  intro V E _ _ G k self separate rho a b hne hp u v w huw hvw hu hv hw hsame
-  let _ := Fintype.ofFinite V
-  by_cases huv : u = v
-  · subst v
-    rcases TwoColorComponentsDisjoint G rho a b (Sum.inl w) (Sum.inl u) with he | hd
-    · have noColor (c : Fin k) (hc : c ∈ MissingColors G rho u)
-          (f : E) (hf : Incident G u f) : rho f ≠ some c := by
-        intro hcol
-        exact (Finset.mem_sdiff.mp hc).2
-          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, f, hf, hcol⟩)
-      have hn : (TwoColorIncidenceGraph G rho a b).neighborSet (Sum.inl u) = ∅ := by
-        apply Set.eq_empty_iff_forall_notMem.mpr
-        intro x hx
-        cases x with
-        | inl x => exact hx
-        | inr f =>
-          rcases hx with ⟨hi, hc⟩
-          exact hc.elim (noColor a hu f hi) (noColor b hv f hi)
-      have hwIn : Sum.inl w ∈ TwoColorComponent G rho a b (Sum.inl u) :=
-        he ▸ self rho a b w
-      change (TwoColorIncidenceGraph G rho a b).connectedComponentMk (Sum.inl w) =
-        (TwoColorIncidenceGraph G rho a b).connectedComponentMk (Sum.inl u) at hwIn
-      exact False.elim (SimpleGraph.not_reachable_of_neighborSet_left_eq_empty
-        (fun h => huw (Sum.inl.inj h)) hn
-        (SimpleGraph.ConnectedComponent.exact hwIn).symm)
-    · exact hd
-  · exact separate rho a b hne hp u v w huv huw hvw hu hv hw hsame
-
-private theorem helper_prefixMissing_366.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base),
-    let B : TreeSequence G e0 :=
-      HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1 : ℕ));
-    ∀ (z : V ⊕ E) (rho : PartialEdgeColoring E k) (a b : Fin k),
-    a ≠ b →
-    IsProperEdgeColoring G rho →
-    ColoredVertexSetElementary G rho (TreeSequenceVertexSet B) →
-    ∀ (u v : V),
-    u ∈ TreeSequenceVertexSet B →
-    v ∈ TreeSequenceVertexSet B →
-    a ∈ MissingColors G rho u →
-    b ∈ MissingColors G rho v →
-    Sum.inl u ∉ TwoColorComponent G rho a b z →
-    Sum.inl v ∉ TwoColorComponent G rho a b z →
-    ∀ w ∈ TreeSequenceVertexSet B,
-    MissingColors G (TwoColorComponentSwap G rho a b z) w = MissingColors G rho w := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C B z rho a b hne hp helem u v huB hvB hu hv hdu hdv
-  as_aux_lemma =>
-    clear_value B
-    clear * - G rho a b hne hp helem u v huB hvB hu hv hdu hdv B z
-    have behavior := TwoColorComponentSwapMissingBehavior G rho a b hne hp z
-    intro w hwB
-    by_cases hw : Sum.inl w ∈ TwoColorComponent G rho a b z
-    · have hwa : a ∉ MissingColors G rho w := by
-        intro hm
-        have hwu : w ≠ u := fun he => hdu (he ▸ hw)
-        exact Finset.disjoint_left.mp (helem hwB huB hwu) hm hu
-      have hwb : b ∉ MissingColors G rho w := by
-        intro hm
-        have hwv : w ≠ v := fun he => hdv (he ▸ hw)
-        exact Finset.disjoint_left.mp (helem hwB hvB hwv) hm hv
-      have presentSwapped (c d : Fin k)
-          (hd : d ∉ MissingColors G rho w)
-          (hdab : (d = a ∧ c = b) ∨ (d = b ∧ c = a)) :
-          c ∉ MissingColors G (TwoColorComponentSwap G rho a b z) w := by
-        have hpres : d ∈ PresentColors G rho w := by simpa [MissingColors] using hd
-        simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and] at hpres
-        rcases hpres with ⟨e, hwe, he⟩
-        have hadj : (TwoColorIncidenceGraph G rho a b).Adj (Sum.inr e) (Sum.inl w) := by
-          simp only [TwoColorIncidenceGraph]
-          exact ⟨hwe, hdab.elim (fun h => Or.inl (he.trans (congrArg some h.1)))
-            (fun h => Or.inr (he.trans (congrArg some h.1)))⟩
-        have heC : Sum.inr e ∈ TwoColorComponent G rho a b z := by
-          change (TwoColorIncidenceGraph G rho a b).connectedComponentMk (Sum.inl w) = _ at hw
-          change (TwoColorIncidenceGraph G rho a b).connectedComponentMk (Sum.inr e) = _
-          exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj).trans hw
-        have heSwap : TwoColorComponentSwap G rho a b z e = some c := by
-          rcases hdab with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-          · simp [TwoColorComponentSwap, heC, he]
-          · simp [TwoColorComponentSwap, heC, he]
-        have hpresent : c ∈ PresentColors G (TwoColorComponentSwap G rho a b z) w := by
-          simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨e, hwe, heSwap⟩
-        simpa [MissingColors] using hpresent
-      have hnewa := presentSwapped a b hwb (Or.inr ⟨rfl, rfl⟩)
-      have hnewb := presentSwapped b a hwa (Or.inl ⟨rfl, rfl⟩)
-      apply Finset.ext
-      intro c
-      by_cases hca : c = a
-      · subst c
-        simp only [hnewa, hwa]
-      · by_cases hcb : c = b
-        · subst c
-          simp only [hnewb, hwb]
-        · exact behavior.2.2.2 w c hca hcb
-    · exact behavior.1 w hw
-
 private theorem helper_firstPreserved_424.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -1816,43 +1565,6 @@ private theorem helper_firstUnaffected_449.{u_1, u_2} :
     exact hb.2.2.2 _ c hca hcb
   unfold HierarchyFirstMissingPosition
   rw [he]
-
-private theorem helper_seriesFacts_464.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (j : Fin (ett.rounds + (1 : ℕ))),
-    IsProperEdgeColoring G (ett.series.data.coloring j) ∧
-      IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett j
-  have certificate := ett.series.certified j
-  cases certificate with
-  | initial triple seedLength initialColoring initialStored initialEdges initialKind
-      initialVertex initialOutside initialDelta initialGamma initialClosure =>
-      simpa [initialColoring] using triple.2.2.2
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-      rw [currentColoring]
-      exact ⟨choice.selectedProper, choice.selectedOneUncolored⟩
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-      exact ⟨currentProper, currentOneUncolored⟩
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored currentEdges
-      currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-      adjoinedExactly closedExtension orderedExtension strictExtension =>
-      rw [currentColoring]
-      exact ⟨previousProper, previousOneUncolored⟩
 
 private theorem helper_sameStar_518.{u_1, u_2} :
     open scoped Classical in
@@ -4426,9 +4138,9 @@ theorem HierarchySituationTwoSubcaseThreeTwo {V E : Type*}
   have firstAt {c : Fin k}
       (hc : c ∈ MissingColors G phi (T.vertex D.penultimateVertexIndex)) :
       HierarchyFirstMissingPosition phi T c = D.penultimateVertexIndex := by
-    exact @helper_firstAt_173 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@hBlen) (@hyB)
-        (@hElementary) (@c) (@hc)
+    exact TreeSequenceFirstMissingPositionEq hBT hElementary (by
+      have := D.penultimateVertexPosition
+      omega) hc
   have hfirstTheta := firstAt D.thetaMissingPenultimate
   have hnotA {c : Fin k}
       (hc : c ∈ MissingColors G phi (T.vertex D.penultimateVertexIndex)) :
@@ -4466,12 +4178,7 @@ theorem HierarchySituationTwoSubcaseThreeTwo {V E : Type*}
       TreeMissingColors rho X ⊆ TreeMissingColors rho Y := by
     exact @helper_missingSubset_269 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0) (@rho)
         (@X) (@Y) (@hXY)
-  have leaf (rho : PartialEdgeColoring E k) (a b : Fin k) (hne : a ≠ b)
-      (hp : IsProperEdgeColoring G rho) (v : V)
-      (hm : a ∈ MissingColors G rho v ∨ b ∈ MissingColors G rho v) :
-      Set.Subsingleton ((TwoColorIncidenceGraph G rho a b).neighborSet (Sum.inl v)) := by
-    exact @helper_leaf_278 (@V) (@E) inferInstance inferInstance (@G) (@k) (@rho) (@a) (@b)
-        (@hne) (@hp) (@v) (@hm)
+  have leaf := TwoColorMissingVertexLeaf G k
   have separate (rho : PartialEdgeColoring E k) (a b : Fin k) (hne : a ≠ b)
       (hp : IsProperEdgeColoring G rho) (u v w : V)
       (huv : u ≠ v) (huw : u ≠ w) (hvw : v ≠ w)
@@ -4481,9 +4188,7 @@ theorem HierarchySituationTwoSubcaseThreeTwo {V E : Type*}
         TwoColorComponent G rho a b (Sum.inl v)) :
       Disjoint (TwoColorComponent G rho a b (Sum.inl w))
         (TwoColorComponent G rho a b (Sum.inl u)) := by
-    exact @helper_separate_297 (@V) (@E) inferInstance inferInstance
-        (@G) (@k) (@self) (@leaf) (@rho) (@a) (@b) (@hne) (@hp) (@u) (@v) (@w) (@huv) (@huw)
-        (@hvw) (@hu) (@hv) (@hw) (@hsame)
+    exact TwoColorMissingVerticesDisjoint G k rho a b hne hp u v w huv huw hvw hu hv hw hsame
   -- Coincident first witnesses miss both colors, so their component is isolated.
   have separateAny (rho : PartialEdgeColoring E k) (a b : Fin k) (hne : a ≠ b)
       (hp : IsProperEdgeColoring G rho) (u v w : V)
@@ -4494,9 +4199,7 @@ theorem HierarchySituationTwoSubcaseThreeTwo {V E : Type*}
         TwoColorComponent G rho a b (Sum.inl v)) :
       Disjoint (TwoColorComponent G rho a b (Sum.inl w))
         (TwoColorComponent G rho a b (Sum.inl u)) := by
-    exact @helper_separateAny_332 (@V) (@E) inferInstance inferInstance (@G) (@k)
-        (@self) (@separate) (@rho) (@a) (@b) (@hne) (@hp) (@u) (@v) (@w) (@huw) (@hvw) (@hu)
-        (@hv) (@hw) (@hsame)
+    exact TwoColorMissingVerticesDisjointAny G k rho a b hne hp u v w huw hvw hu hv hw hsame
   have prefixMissing (z : Sum V E) (rho : PartialEdgeColoring E k) (a b : Fin k) (hne : a ≠ b)
       (hp : IsProperEdgeColoring G rho)
       (helem : ColoredVertexSetElementary G rho (TreeSequenceVertexSet B))
@@ -4506,9 +4209,8 @@ theorem HierarchySituationTwoSubcaseThreeTwo {V E : Type*}
       (hdv : Sum.inl v ∉ TwoColorComponent G rho a b z) :
       ∀ w ∈ TreeSequenceVertexSet B,
         MissingColors G (TwoColorComponentSwap G rho a b z) w = MissingColors G rho w := by
-    exact @helper_prefixMissing_366 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@z) (@rho) (@a)
-        (@b) (@hne) (@hp) (@helem) (@u) (@v) (@huB) (@hvB) (@hu) (@hv) (@hdu) (@hdv)
+    exact TwoColorComponentSwapMissingOnElementarySet (TreeSequenceVertexSet B) rho a b
+      hne hp helem z u v huB hvB hu hv hdu hdv
   have firstPreserved (rho sigma : PartialEdgeColoring E k) (c : Fin k)
       (helem : ColoredVertexSetElementary G rho (TreeSequenceVertexSet B))
       (hmiss : ∀ v ∈ TreeSequenceVertexSet B, MissingColors G sigma v = MissingColors G rho v)
@@ -4526,8 +4228,7 @@ theorem HierarchySituationTwoSubcaseThreeTwo {V E : Type*}
   have seriesFacts : ∀ j : Fin (ett.rounds + 1),
       IsProperEdgeColoring G (ett.series.data.coloring j) ∧
         IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by
-    exact @helper_seriesFacts_464 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@phi) (@ett)
+    exact ett.series.coloringProperties
   let corrRefl : CorrespondingExtendedTashkinovTree G k e0 ett phi T :=
     { replacementInput := input
       replacementSeries := ett.series

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorComponentColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 public import LeanPool.GoldbergSeymour.HierarchySituationThreeDisjointData
 public import LeanPool.GoldbergSeymour.HierarchySituationThreeEligibleIndexBound
@@ -1075,75 +1077,6 @@ private theorem helper_hthetaFirstIndex_397.{u_1, u_2} :
     exact Finset.disjoint_left.mp (hElemZ iZ yZ hvne)
       hthetaFirst.1 hthetaMissingY
 
-private theorem helper_prefixMissing_770.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (alpha beta : Fin k)
-        (_ : HierarchySituationThreeDisjointData G k e0 input T phi ett base C ctx P alpha beta),
-    let _ : V ⊕ E := Sum.inl (T.vertex (Fin.last T.length));
-    ∀ (W : TreeSequence G e0) (z : V ⊕ E) (rho : PartialEdgeColoring E k) (a b : Fin k), a ≠ b →
-        IsProperEdgeColoring G rho → ColoredVertexSetElementary G rho (TreeSequenceVertexSet W) →
-    ∀ (u v : V), u ∈ TreeSequenceVertexSet W → v ∈ TreeSequenceVertexSet W → a ∈ MissingColors G
-        rho u → b ∈ MissingColors G rho v → Sum.inl u ∉ TwoColorComponent G rho a b z → Sum.inl v
-        ∉ TwoColorComponent G rho a b z →
-    ∀ w ∈ TreeSequenceVertexSet W, MissingColors G (TwoColorComponentSwap G rho a b z) w =
-        MissingColors G rho w := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha beta d z W z rho a b hne hp helem u
-      v huB hvB hu hv hdu hdv
-  as_aux_lemma =>
-    clear * - G rho a b hne hp helem u v huB hvB hu hv hdu hdv W z
-    have behavior := TwoColorComponentSwapMissingBehavior G rho a b hne hp z
-    intro w hwB
-    by_cases hw : Sum.inl w ∈ TwoColorComponent G rho a b z
-    · have hwa : a ∉ MissingColors G rho w := by
-        intro hm
-        have hwu : w ≠ u := fun he => hdu (he ▸ hw)
-        exact Finset.disjoint_left.mp (helem hwB huB hwu) hm hu
-      have hwb : b ∉ MissingColors G rho w := by
-        intro hm
-        have hwv : w ≠ v := fun he => hdv (he ▸ hw)
-        exact Finset.disjoint_left.mp (helem hwB hvB hwv) hm hv
-      have presentSwapped (c d : Fin k)
-          (hd : d ∉ MissingColors G rho w)
-          (hdab : (d = a ∧ c = b) ∨ (d = b ∧ c = a)) :
-          c ∉ MissingColors G (TwoColorComponentSwap G rho a b z) w := by
-        have hpres : d ∈ PresentColors G rho w := by simpa [MissingColors] using hd
-        simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and] at hpres
-        rcases hpres with ⟨e, hwe, he⟩
-        have hadj : (TwoColorIncidenceGraph G rho a b).Adj (Sum.inr e) (Sum.inl w) := by
-          simp only [TwoColorIncidenceGraph]
-          exact ⟨hwe, hdab.elim (fun h => Or.inl (he.trans (congrArg some h.1)))
-            (fun h => Or.inr (he.trans (congrArg some h.1)))⟩
-        have heC : Sum.inr e ∈ TwoColorComponent G rho a b z := by
-          change (TwoColorIncidenceGraph G rho a b).connectedComponentMk (Sum.inl w) = _ at hw
-          change (TwoColorIncidenceGraph G rho a b).connectedComponentMk (Sum.inr e) = _
-          exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj).trans hw
-        have heSwap : TwoColorComponentSwap G rho a b z e = some c := by
-          rcases hdab with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-          · simp [TwoColorComponentSwap, heC, he]
-          · simp [TwoColorComponentSwap, heC, he]
-        have hpresent : c ∈ PresentColors G (TwoColorComponentSwap G rho a b z) w := by
-          simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨e, hwe, heSwap⟩
-        simpa [MissingColors] using hpresent
-      have hnewa := presentSwapped a b hwb (Or.inr ⟨rfl, rfl⟩)
-      have hnewb := presentSwapped b a hwa (Or.inl ⟨rfl, rfl⟩)
-      apply Finset.ext
-      intro c
-      by_cases hca : c = a
-      · subst c
-        simp only [hnewa, hwa]
-      · by_cases hcb : c = b
-        · subst c
-          simp only [hnewb, hwb]
-        · exact behavior.2.2.2 w c hca hcb
-    · exact behavior.1 w hw
-
 private theorem helper_routeToY_1012.{u_1, u_2} :
     helperRouteToY1012Conditions.{u_1, u_2} := by
   classical
@@ -1767,74 +1700,6 @@ private theorem helper_sameGammaBeta_943.{u_1, u_2} :
       rw [← hstar]
       exact hgammaA
     exact firstChange.1 ⟨Nat.pos_of_ne_zero hzero, Or.inl hgammaLast⟩
-
-private theorem helper_componentLeaf_969.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (rho : PartialEdgeColoring E k) (a b : Fin k), a ≠ b → IsProperEdgeColoring G rho →
-    ∀ (v : V), a ∈ MissingColors G rho v ∨ b ∈ MissingColors G rho v → ((TwoColorIncidenceGraph G
-        rho a b).neighborSet (Sum.inl v)).Subsingleton := by
-  classical
-  intro V E _ _ G k rho a b hne hp v hm
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    have hd : @SimpleGraph.degree _ (TwoColorIncidenceGraph G rho a b)
-        (Sum.inl v) (Fintype.ofFinite _) ≤ 1 := by
-      rcases hm with ha | hb
-      · exact MissingColorIncidenceEndpoint G rho a b hne hp v ha
-      · have he : TwoColorIncidenceGraph G rho a b =
-            TwoColorIncidenceGraph G rho b a := by
-          ext x y
-          cases x <;> cases y <;> simp [TwoColorIncidenceGraph, or_comm]
-        rw [he]
-        exact MissingColorIncidenceEndpoint G rho b a hne.symm hp v hb
-    rw [← SimpleGraph.card_neighborFinset_eq_degree] at hd
-    intro x hx y hy
-    exact Finset.card_le_one_iff.mp hd
-      (by simpa [SimpleGraph.mem_neighborFinset] using hx)
-      (by simpa [SimpleGraph.mem_neighborFinset] using hy)
-
-private theorem helper_separateComponents_991.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ), (
-    ∀ (rho : PartialEdgeColoring E k) (a b : Fin k) (v : V), Sum.inl v ∈ TwoColorComponent G rho a
-        b (Sum.inl v)) → (
-    ∀ (rho : PartialEdgeColoring E k) (a b : Fin k), a ≠ b → IsProperEdgeColoring G rho →
-    ∀ (v : V), a ∈ MissingColors G rho v ∨ b ∈ MissingColors G rho v → ((TwoColorIncidenceGraph G
-        rho a b).neighborSet (Sum.inl v)).Subsingleton) →
-    ∀ (rho : PartialEdgeColoring E k) (a b : Fin k), a ≠ b → IsProperEdgeColoring G rho →
-    ∀ (u v w : V), u ≠ v → u ≠ w → v ≠ w → a ∈ MissingColors G rho u → b ∈ MissingColors G rho v →
-        a ∈ MissingColors G rho w ∨ b ∈ MissingColors G rho w → TwoColorComponent G rho a b
-        (Sum.inl u) = TwoColorComponent G rho a b (Sum.inl v) → Disjoint (TwoColorComponent G rho
-        a b (Sum.inl w)) (TwoColorComponent G rho a b (Sum.inl u)) := by
-  classical
-  intro V E _ _ G k componentSelf componentLeaf rho a b hne hp u v w huv huw hvw hu hv hw hsame
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    rcases TwoColorComponentsDisjoint G rho a b (Sum.inl w) (Sum.inl u) with he | hd
-    · exfalso
-      obtain ⟨s, t, p, hpPath, hsupport⟩ :=
-        TwoColorComponentSpanningPath G rho a b hp (Sum.inl w)
-      have ends (x : V) (hx : Sum.inl x ∈ TwoColorComponent G rho a b (Sum.inl w))
-          (hm : a ∈ MissingColors G rho x ∨ b ∈ MissingColors G rho x) :
-          Sum.inl x = s ∨ Sum.inl x = t := by
-        by_contra hnot
-        push Not at hnot
-        have hs : Sum.inl x ∈ p.support := by
-          change Sum.inl x ∈ {z | z ∈ p.support}
-          rw [hsupport]
-          exact hx
-        exact hpPath.isTrail.notMem_support_of_subsingleton_neighborSet
-          hnot.1 hnot.2 (componentLeaf rho a b hne hp x hm) hs
-      have hue := ends u (he ▸ componentSelf rho a b u) (Or.inl hu)
-      have hve := ends v (by rw [he, hsame]; exact componentSelf rho a b v) (Or.inr hv)
-      have hwe := ends w (componentSelf rho a b w) hw
-      rcases hue with hu | hu <;> rcases hve with hv | hv <;> rcases hwe with hw | hw
-      all_goals first
-        | exact huv (Sum.inl.inj (hu.trans hv.symm))
-        | exact huw (Sum.inl.inj (hu.trans hw.symm))
-        | exact hvw (Sum.inl.inj (hv.trans hw.symm))
-    · exact hd
 
 private theorem helper_hBlt_1027.{u_1, u_2} :
     open scoped Classical in
@@ -3597,9 +3462,8 @@ private theorem helper_continuation_2662.{u_1, u_2} :
       (hdv : Sum.inl v ∉ TwoColorComponent G rho a b z) :
       ∀ w ∈ TreeSequenceVertexSet W,
         MissingColors G (TwoColorComponentSwap G rho a b z) w = MissingColors G rho w := by
-    exact helper_prefixMissing_770 G k e0 input T phi ett base C ctx P alpha beta d W z rho a b
-        hne hp helem u v huB hvB hu hv
-        hdu hdv
+    exact TwoColorComponentSwapMissingOnElementarySet (TreeSequenceVertexSet W) rho a b
+      hne hp helem z u v huB hvB hu hv hdu hdv
   have firstPreserved (W : TreeSequence G e0)
       (hWT : TreeSequenceInitialSegment W T) (rho sigma : PartialEdgeColoring E k) (c : Fin k)
       (helem : ColoredVertexSetElementary G rho (TreeSequenceVertexSet W))
@@ -3783,12 +3647,7 @@ private theorem helper_continuation_2578.{u_1, u_2} :
       Sum.inl v ∈ TwoColorComponent G rho a b (Sum.inl v) := by
     change (TwoColorIncidenceGraph G rho a b).connectedComponentMk (Sum.inl v) = _
     rfl
-  have componentLeaf (rho : PartialEdgeColoring E k) (a b : Fin k)
-      (hne : a ≠ b) (hp : IsProperEdgeColoring G rho) (v : V)
-      (hm : a ∈ MissingColors G rho v ∨ b ∈ MissingColors G rho v) :
-      Set.Subsingleton
-        ((TwoColorIncidenceGraph G rho a b).neighborSet (Sum.inl v)) := by
-    exact helper_componentLeaf_969 (@G) (@k) (@rho) (@a) (@b) (@hne) (@hp) (@v) (@hm)
+  have componentLeaf := TwoColorMissingVertexLeaf G k
   have separateComponents (rho : PartialEdgeColoring E k) (a b : Fin k)
       (hne : a ≠ b) (hp : IsProperEdgeColoring G rho) (u v w : V)
       (huv : u ≠ v) (huw : u ≠ w) (hvw : v ≠ w)
@@ -3798,9 +3657,7 @@ private theorem helper_continuation_2578.{u_1, u_2} :
         TwoColorComponent G rho a b (Sum.inl v)) :
       Disjoint (TwoColorComponent G rho a b (Sum.inl w))
         (TwoColorComponent G rho a b (Sum.inl u)) := by
-    exact helper_separateComponents_991 (@G) (@k) (@componentSelf) (@componentLeaf) (@rho) (@a)
-        (@b) (@hne) (@hp)
-        (@u) (@v) (@w) (@huv) (@huw) (@hvw) (@hu) (@hv) (@hw) (@hsame)
+    exact TwoColorMissingVerticesDisjoint G k rho a b hne hp u v w huv huw hvw hu hv hw hsame
   have hBlt : B.length < T.length := by
     exact helper_hBlt_1027 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
         (@alpha) (@beta) (@d) (@j) (@hcutJstrict) (@fullPrefixEq)

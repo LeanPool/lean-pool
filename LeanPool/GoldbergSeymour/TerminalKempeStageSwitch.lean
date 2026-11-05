@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
 public import LeanPool.GoldbergSeymour.ElementaryTerminalComponent
 public import LeanPool.GoldbergSeymour.ChangeLemma
@@ -423,57 +425,6 @@ private abbrev helperContinuation1225Conditions.{u_1, u_2} : Prop :=
         → b ∈ MissingColors G S.coloring (T.vertex (Fin.last T.length))) ∧ (b ∈ MissingColors G
         R.coloring (T.vertex (Fin.last T.length)) → a ∈ MissingColors G S.coloring (T.vertex
         (Fin.last T.length)))
-
-private theorem helper_firstAt_167.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (hTlen : (2 : ℕ) ≤
-        T.length) (_ : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-    let B : TreeSequence G e0 := TreeSequencePrefix T (T.length - (1 : ℕ))
-        (Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ T.length - (1 : ℕ)) =>
-    by omega
-    ) (Decidable.byContradiction fun (a : ¬T.length - (1 : ℕ) ≤ T.length) =>
-    by omega
-    ); TreeSequenceInitialSegment B T → (
-    ∀ (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-        ColoredVertexSetElementary G R.coloring (TreeSequenceVertexSet B)) → (
-    ∀ (U : TreeSequence G e0) (j : Fin (U.length + (1 : ℕ))), U.vertex j ∈ TreeSequenceVertexSet
-        U) → (
-    ∀ (psi : PartialEdgeColoring E k) (c : Fin k) (j : Fin (T.length + (1 : ℕ))), c ∈
-        MissingColors G psi (T.vertex j) → HierarchyFirstMissingPosition psi T c ≤ j) → (
-    ∀ (psi : PartialEdgeColoring E k) (c : Fin k), (↑(HierarchyFirstMissingPosition psi T c) : ℕ)
-        < T.length → c ∈ MissingColors G psi (T.vertex (HierarchyFirstMissingPosition psi T c))) →
-    ∀ (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (c : Fin k) (j :
-        Fin (B.length + (1 : ℕ))), c ∈ MissingColors G R.coloring (B.vertex j) →
-        (↑(HierarchyFirstMissingPosition R.coloring T c) : ℕ) = (↑j : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx hTlen R B hBT elementary vertexMem firstLe
-      firstMem R c j hc
-  clear * - G T B R c j hc elementary vertexMem firstLe firstMem hBT
-  have hcT : c ∈ MissingColors G R.coloring
-      (T.vertex (Fin.castLE (Nat.succ_le_succ hBT.1) j)) := by
-    rw [hBT.2.1 j]; exact hc
-  have hle := firstLe R.coloring c _ hcT
-  have hlt : (HierarchyFirstMissingPosition R.coloring T c).val < T.length := by
-    have := j.isLt
-    change (HierarchyFirstMissingPosition R.coloring T c).val ≤ j.val at hle
-    have hblen : B.length = T.length - 1 := rfl
-    omega
-  let x : Fin (B.length + 1) := ⟨(HierarchyFirstMissingPosition R.coloring T c).val, by
-    change (HierarchyFirstMissingPosition R.coloring T c).val ≤ j.val at hle
-    omega⟩
-  have hxT : Fin.castLE (Nat.succ_le_succ hBT.1) x =
-      HierarchyFirstMissingPosition R.coloring T c := Fin.ext rfl
-  have hcx : c ∈ MissingColors G R.coloring (B.vertex x) := by
-    rw [← hBT.2.1 x, hxT]
-    exact firstMem R.coloring c hlt
-  have he : B.vertex x = B.vertex j := by
-    by_contra hn
-    exact Finset.disjoint_left.mp (elementary R (vertexMem B x) (vertexMem B j) hn) hcx hc
-  exact congrArg Fin.val (B.vertex_injective he)
 
 private theorem helper_firstFixed_193.{u_1, u_2} :
     open scoped Classical in
@@ -1480,8 +1431,7 @@ private theorem helper_continuation_190.{u_1, u_2} :
       (c : Fin k) (j : Fin (B.length + 1))
       (hc : c ∈ MissingColors G R.coloring (B.vertex j)) :
       (HierarchyFirstMissingPosition R.coloring T c).val = j.val := by
-    exact @helper_firstAt_167 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        input T phi ett base C ctx hTlen R hBT elementary vertexMem firstLe firstMem R c j hc
+    exact TreeSequenceFirstMissingPositionEqCast hBT (elementary R) hc
   have firstFixed (psi tau : PartialEdgeColoring E k)
       (hmissing : ∀ v ∈ TreeSequenceVertexSet B,
         MissingColors G tau v = MissingColors G psi v) (c : Fin k) :

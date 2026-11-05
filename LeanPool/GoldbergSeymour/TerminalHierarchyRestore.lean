@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.HierarchyPrefixData
 public import LeanPool.GoldbergSeymour.TerminalStoredColors
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeData
@@ -323,23 +325,8 @@ private theorem helper_terminalData_340.{u_1, u_2} :
     original.series.data.tree (Fin.last original.rounds).castSucc ∧
     c.replacementETT.series.data.kind (Fin.last c.replacementETT.rounds) =
     original.series.data.kind (Fin.last original.rounds) := by
-  classical
   intro V E _ _ _ G k e0 sigma inp gen U original W c
-  rcases c with ⟨ri, rs, re, hr, hs, hf, ht, hd, he, hk, hp, hu, hst⟩
-  cases re with
-  | mk rounds positive series above strict below generating =>
-    cases hr
-    have hseries : series = rs := eq_of_heq hs
-    cases hseries
-    let i : Fin original.rounds := ⟨original.rounds - 1, by
-      have := original.roundsPositive
-      omega⟩
-    have hi : i.succ = Fin.last original.rounds := by
-      apply Fin.ext
-      have := original.roundsPositive
-      simp [i]
-      omega
-    exact ⟨by simpa [hi] using ht i, hk _⟩
+  exact CorrespondingExtendedTashkinovTree.terminalTreeKind G k e0 sigma original W c
 
 private theorem helper_oldMetadata_391.{u_1, u_2} :
     open scoped Classical in

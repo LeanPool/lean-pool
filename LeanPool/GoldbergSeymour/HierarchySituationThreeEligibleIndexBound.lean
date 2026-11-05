@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.EligibleIndexBoundConstruction
 public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTailAtLeastTwo
@@ -1044,56 +1046,6 @@ private theorem helper_advance_1257.{u_1, u_2} :
       input T phi ett base C ctx componentData trans starEq hAT hlen hBT fullB elementary
       vertexMem firstAt stageSwitch gammaTransport outsideA notRaw gammaChoice m P alpha ha
       haLast hm hmT hAX hXB hAXlt haM theta htheta nextMember excNext excM avoidNext hAlphaStored
-private theorem helper_firstAt_1681.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (hlen : (4 : ℕ) ≤
-        T.length),
-    let B : TreeSequence G e0 := TreeSequencePrefix T (T.length - (1 : ℕ))
-        (Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ T.length - (1 : ℕ)) ↦
-    by omega
-    ) (Decidable.byContradiction fun (a : ¬T.length - (1 : ℕ) ≤ T.length) ↦
-    by omega
-    ); TreeSequenceInitialSegment B T → (
-    ∀ (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-        ColoredVertexSetElementary G R.coloring (TreeSequenceVertexSet B)) → (
-    ∀ (U : TreeSequence G e0) (j : Fin (U.length + (1 : ℕ))), U.vertex j ∈ TreeSequenceVertexSet
-        U) → (
-    ∀ (psi : PartialEdgeColoring E k) (c : Fin k) (j : Fin (T.length + (1 : ℕ))), c ∈
-        MissingColors G psi (T.vertex j) → HierarchyFirstMissingPosition psi T c ≤ j) → (
-    ∀ (psi : PartialEdgeColoring E k) (c : Fin k), (↑(HierarchyFirstMissingPosition psi T c) : ℕ)
-        < T.length → c ∈ MissingColors G psi (T.vertex (HierarchyFirstMissingPosition psi T c))) →
-    ∀ (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (c : Fin k) (j :
-        Fin (B.length + (1 : ℕ))), c ∈ MissingColors G R.coloring (B.vertex j) →
-        (↑(HierarchyFirstMissingPosition R.coloring T c) : ℕ) = (↑j : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx hlen B hBT elementary vertexMem firstLe
-      firstMem R c j hc
-  have hcT : c ∈ MissingColors G R.coloring
-      (T.vertex (Fin.castLE (Nat.succ_le_succ hBT.1) j)) := by
-    rw [hBT.2.1 j]; exact hc
-  have hle := firstLe R.coloring c _ hcT
-  have hlt : (HierarchyFirstMissingPosition R.coloring T c).val < T.length := by
-    have := j.isLt
-    change (HierarchyFirstMissingPosition R.coloring T c).val ≤ j.val at hle
-    have hblen : B.length = T.length - 1 := rfl
-    omega
-  let x : Fin (B.length + 1) := ⟨(HierarchyFirstMissingPosition R.coloring T c).val, by
-    change (HierarchyFirstMissingPosition R.coloring T c).val ≤ j.val at hle
-    omega⟩
-  have hxT : Fin.castLE (Nat.succ_le_succ hBT.1) x =
-      HierarchyFirstMissingPosition R.coloring T c := Fin.ext rfl
-  have hcx : c ∈ MissingColors G R.coloring (B.vertex x) := by
-    rw [← hBT.2.1 x, hxT]
-    exact firstMem R.coloring c hlt
-  have he : B.vertex x = B.vertex j := by
-    by_contra hn
-    exact Finset.disjoint_left.mp (elementary R (vertexMem B x) (vertexMem B j) hn) hcx hc
-  exact congrArg Fin.val (B.vertex_injective he)
-
 private theorem helper_firstMem_2558.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E]
@@ -1585,8 +1537,7 @@ theorem HierarchySituationThreeEligibleIndexBound {V E : Type*}
         (c : Fin k) (j : Fin (B.length + 1))
         (hc : c ∈ MissingColors G R.coloring (B.vertex j)) :
         (HierarchyFirstMissingPosition R.coloring T c).val = j.val := by
-      exact helper_firstAt_1681 G k e0 input T phi ett base C ctx hlen hBT elementary vertexMem
-          firstLe firstMem R c j hc
+      exact TreeSequenceFirstMissingPositionEqCast hBT (elementary R) hc
     have stageSwitch := P2963_T1_TerminalKempeStageSwitch G k e0 input T phi ett base C ctx
       A B (by omega) rfl rfl
     have lastData (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) :

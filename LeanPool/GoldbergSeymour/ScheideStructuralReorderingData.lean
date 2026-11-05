@@ -97,6 +97,61 @@ structure ScheideStructuralReorderingData {V E : Type*} [Fintype V] [Fintype E] 
   vertex_set_eq : TreeSequenceVertexSet T' = TreeSequenceVertexSet T
   exit_set_eq : ScheideExitVertices T' phi = ScheideExitVertices T phi
 
+/-- Nonfirst initial edges of the reordered configuration avoid all retained block colors. -/
+theorem ScheideStructuralReorderingData.initialNonfirstAvoidsRetainedColor.{u_1, u_2} :
+    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
+      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
+      (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
+      (C : ScheideStructuralConfiguration G k e0 phi T)
+      (D : ScheideStructuralSelectionData G k e0 phi T C) (T' : TreeSequence G e0)
+      (Q : ScheideStructuralReorderingData G k e0 phi T C D T'),
+    ∀ (n : Fin (C.p - (1 : ℕ) + (2 : ℕ) * D.absorbedCount)),
+    (1 : ℕ) ≤ (↑n : ℕ) →
+    ∀ (d : Fin k),
+    phi
+          (T'.edge
+            (⟨(↑n : ℕ),
+                have hn : (↑n : ℕ) < C.p - (1 : ℕ) + (2 : ℕ) * D.absorbedCount := n.isLt;
+                have hp : (2 : ℕ) ≤ C.p := C.p_ge_two;
+                have hl : T.length + (1 : ℕ) = C.p + (2 : ℕ) * C.s := C.length_eq;
+                have hd : C.s = D.absorbedCount + D.retainedCount := D.count_eq;
+                Eq.mpr (id (congrArg (fun (_a : ℕ) => (↑n : ℕ) < _a) Q.length_eq))
+                  (Decidable.byContradiction fun (a : ¬(↑n : ℕ) < T.length) => by omega)⟩ :
+              Fin T'.length)) =
+        some d →
+    ∀ (r : Fin D.retainedCount),
+    d ≠ C.gamma (D.retained r) := by
+  classical
+  intro V E _ _ _ _ G k e0 phi T C D T' Q n hn d hdedge rr
+  refine Fin.addCases ?_ ?_ n hn d hdedge rr
+  · intro u hn d hdedge rr
+    have hold := Q.base_edge_position u
+    change 1 ≤ u.val at hn
+    apply C.initial_nonfirst_avoids_blocks u hn d (by
+      rw [← hold]
+      exact hdedge) (D.retained rr)
+  · intro u hn d hdedge rr
+    let paired : Fin (D.absorbedCount * 2) :=
+      Fin.cast (Nat.mul_comm 2 D.absorbedCount) u
+    let h := paired.divNat
+    let j := paired.modNat
+    have huv : u.val = 2 * h.val + j.val := by
+      dsimp [h, j, paired, Fin.divNat, Fin.modNat]
+      omega
+    have hedge := Q.absorbed_edge_position h j
+    have hblock : phi (C.blockEdge (D.absorbedEquiv h).1 j) = some d := by
+      rw [← hedge]
+      simpa [huv, Nat.add_assoc] using hdedge
+    have hcolor := C.block_color (D.absorbedEquiv h).1 j
+    have heq : d = C.gamma (D.absorbedEquiv h).1 := by
+      rw [hcolor] at hblock
+      simpa using hblock.symm
+    intro hbad
+    apply (D.absorbedEquiv h).2
+    refine ⟨rr, ?_⟩
+    apply C.gamma_injective
+    rw [← heq, hbad]
+
 end GoldbergSeymour
 
 end

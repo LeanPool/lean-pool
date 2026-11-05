@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorComponentSwapPresentColors
+
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBSingleStep
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBTrace
 public import LeanPool.GoldbergSeymour.StrongInterchangeabilityKempePreserved
@@ -86,97 +88,6 @@ private theorem helper_root_swap_exchange_230.{u_1, u_2} :
       true_and]
     exact ⟨eAlpha, heAlphaIncident, by
       simp [TwoColorComponentSwap, heAlphaComponent, heAlphaColor]⟩
-
-private theorem helper_swap_preserves_present_295.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] {G :
-    LooplessMultigraph V E} {k : ℕ}, (∀ {phi : PartialEdgeColoring E k} {v : V} {alpha beta c
-    : Fin k} {z : V ⊕ E}, c ∈ PresentColors G phi v → c ≠ alpha → c ≠ beta → c ∈ PresentColors
-    G (TwoColorComponentSwap G phi alpha beta z) v) → ∀ {phi : PartialEdgeColoring E k} {v :
-    V} {alpha beta : Fin k} {z : V ⊕ E}, alpha ∈ PresentColors G phi v → beta ∈ PresentColors
-    G phi v → ∀ c ∈ PresentColors G phi v, c ∈ PresentColors G (TwoColorComponentSwap G phi
-    alpha beta z) v := by
-  classical
-  intro V E _ _ G k swap_present_other phi v alpha beta z halpha hbeta c hc
-  let _ := Fintype.ofFinite V
-  by_cases hca : c = alpha
-  · subst c
-    by_cases hvK : Sum.inl v ∈ TwoColorComponent G phi alpha beta z
-    · obtain ⟨e, hev, heColor⟩ := by
-        simpa only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-          true_and] using hbeta
-      have heK : Sum.inr e ∈ TwoColorComponent G phi alpha beta z := by
-        let H := TwoColorIncidenceGraph G phi alpha beta
-        have hadj : H.Adj (Sum.inl v) (Sum.inr e) := by
-          simpa [H, TwoColorIncidenceGraph] using
-            And.intro hev (Or.inr heColor)
-        change H.connectedComponentMk (Sum.inr e) = H.connectedComponentMk z
-        change H.connectedComponentMk (Sum.inl v) = H.connectedComponentMk z
-          at hvK
-        exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-          hadj).symm.trans hvK
-      simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-        true_and]
-      exact ⟨e, hev, by
-        simp [TwoColorComponentSwap, heK, heColor]⟩
-    · obtain ⟨e, hev, heColor⟩ := by
-        simpa only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-          true_and] using halpha
-      have heK : Sum.inr e ∉ TwoColorComponent G phi alpha beta z := by
-        intro heK
-        apply hvK
-        let H := TwoColorIncidenceGraph G phi alpha beta
-        have hadj : H.Adj (Sum.inl v) (Sum.inr e) := by
-          simpa [H, TwoColorIncidenceGraph] using
-            And.intro hev (Or.inl heColor)
-        change H.connectedComponentMk (Sum.inr e) = H.connectedComponentMk z
-          at heK
-        change H.connectedComponentMk (Sum.inl v) = H.connectedComponentMk z
-        exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-          hadj).trans heK
-      simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-        true_and]
-      exact ⟨e, hev, by
-        simpa [TwoColorComponentSwap, heK] using heColor⟩
-  · by_cases hcb : c = beta
-    · subst c
-      by_cases hvK : Sum.inl v ∈ TwoColorComponent G phi alpha beta z
-      · obtain ⟨e, hev, heColor⟩ := by
-          simpa only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-            true_and] using halpha
-        have heK : Sum.inr e ∈ TwoColorComponent G phi alpha beta z := by
-          let H := TwoColorIncidenceGraph G phi alpha beta
-          have hadj : H.Adj (Sum.inl v) (Sum.inr e) := by
-            simpa [H, TwoColorIncidenceGraph] using
-              And.intro hev (Or.inl heColor)
-          change H.connectedComponentMk (Sum.inr e) = H.connectedComponentMk z
-          change H.connectedComponentMk (Sum.inl v) = H.connectedComponentMk z
-            at hvK
-          exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-            hadj).symm.trans hvK
-        simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-          true_and]
-        exact ⟨e, hev, by
-          simp [TwoColorComponentSwap, heK, heColor]⟩
-      · obtain ⟨e, hev, heColor⟩ := by
-          simpa only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-            true_and] using hbeta
-        have heK : Sum.inr e ∉ TwoColorComponent G phi alpha beta z := by
-          intro heK
-          apply hvK
-          let H := TwoColorIncidenceGraph G phi alpha beta
-          have hadj : H.Adj (Sum.inl v) (Sum.inr e) := by
-            simpa [H, TwoColorIncidenceGraph] using
-              And.intro hev (Or.inr heColor)
-          change H.connectedComponentMk (Sum.inr e) = H.connectedComponentMk z
-            at heK
-          change H.connectedComponentMk (Sum.inl v) = H.connectedComponentMk z
-          exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-            hadj).trans heK
-        simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-          true_and]
-        exact ⟨e, hev, by
-          simpa [TwoColorComponentSwap, heK] using heColor⟩
-    · exact swap_present_other hc hca hcb
 
 private theorem helper_branch_318.{u_1, u_2} :
     open scoped Classical in
@@ -682,13 +593,7 @@ theorem ExtensionBaseAlgorithmBInduction {V E : Type*}
       (hc : c ∈ PresentColors G phi v) (hca : c ≠ alpha)
       (hcb : c ≠ beta) :
       c ∈ PresentColors G (TwoColorComponentSwap G phi alpha beta z) v := by
-    simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-      true_and] at hc ⊢
-    rcases hc with ⟨e, hev, hec⟩
-    refine ⟨e, hev, ?_⟩
-    by_cases heK : Sum.inr e ∈ TwoColorComponent G phi alpha beta z
-    · simp [TwoColorComponentSwap, heK, hec, hca, hcb]
-    · simpa [TwoColorComponentSwap, heK] using hec
+    exact TwoColorComponentSwapPreservesOther hc hca hcb
   have root_swap_exchange := @helper_root_swap_exchange_230 V E inferInstance inferInstance G k
   have swap_preserves_present {phi : PartialEdgeColoring E k} {v : V}
       {alpha beta : Fin k} {z : Sum V E}
@@ -698,8 +603,7 @@ theorem ExtensionBaseAlgorithmBInduction {V E : Type*}
       ∀ c : Fin k, c ∈ PresentColors G phi v →
         c ∈ PresentColors G
           (TwoColorComponentSwap G phi alpha beta z) v := by
-    exact @helper_swap_preserves_present_295 V E inferInstance inferInstance G k
-        swap_present_other phi v alpha beta z halpha hbeta
+    exact TwoColorComponentSwapPreservesPresent halpha hbeta
   have invariant := @helper_invariant_383 V E inferInstance inferInstance inferInstance G k e0 input
       T generating ett terminalSupport rho1 u p indices gamma delta b trace hposition htraceDelta
       hproper hone hchain hselected trace_colors_ne future_gamma_ne next_delta_eq_gamma slot_mem

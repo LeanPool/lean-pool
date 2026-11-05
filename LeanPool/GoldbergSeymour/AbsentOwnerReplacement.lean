@@ -1254,42 +1254,6 @@ private theorem helper_vertexMemB_487.{u_1, u_2} :
     exact hBprefix.2.1 j
   exact hvEq.symm
 
-private theorem helper_seriesFacts_583.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (j : Fin (ett.rounds + (1 : ℕ))), IsProperEdgeColoring G
-        (ett.series.data.coloring j) ∧ IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett j
-  have certificate := ett.series.certified j
-  cases certificate with
-  | initial triple seedLength initialColoring initialStored initialEdges initialKind
-      initialVertex initialOutside initialDelta initialGamma initialClosure =>
-      simpa [initialColoring] using triple.2.2.2
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-      rw [currentColoring]
-      exact ⟨choice.selectedProper, choice.selectedOneUncolored⟩
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-      exact ⟨currentProper, currentOneUncolored⟩
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored currentEdges
-      currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-      adjoinedExactly closedExtension orderedExtension strictExtension =>
-      rw [currentColoring]
-      exact ⟨previousProper, previousOneUncolored⟩
-
 private theorem helper_branch_724.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -1549,8 +1513,7 @@ private theorem helper_continuation_2632.{u_1, u_2} :
       hib hvB hterminalPath sigma hbetaTerminal hbetaX hcut hstable
   rcases hstable with ⟨_, _, _, _, hCorr⟩
   obtain ⟨corr, hmax, baseT, K, goodT, sameGood⟩ := hCorr
-  have seriesFacts := @helper_seriesFacts_583 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett)
+  have seriesFacts := ett.series.coloringProperties
   let corrRefl : CorrespondingExtendedTashkinovTree G k e0 ett phi T :=
     { replacementInput := input
       replacementSeries := ett.series

@@ -64,6 +64,7 @@ public import LeanPool.GoldbergSeymour.ConditionNineTransport
 public import LeanPool.GoldbergSeymour.CopyAugmentationPrefix
 public import LeanPool.GoldbergSeymour.CoreClosurePresentation
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTrans
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTransTrees
 public import LeanPool.GoldbergSeymour.CorrespondingTerminalClosureEq
@@ -704,6 +705,7 @@ public import LeanPool.GoldbergSeymour.TreeSequence
 public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
 public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeUnique
 public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 public import LeanPool.GoldbergSeymour.TreeSequenceEdgeSet
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
@@ -717,6 +719,7 @@ public import LeanPool.GoldbergSeymour.TreeVertexOrder
 public import LeanPool.GoldbergSeymour.TreeVerticesBefore
 public import LeanPool.GoldbergSeymour.TrunkRotation
 public import LeanPool.GoldbergSeymour.TwoColorComponent
+public import LeanPool.GoldbergSeymour.TwoColorComponentColoringFacts
 public import LeanPool.GoldbergSeymour.TwoColorComponentCycle
 public import LeanPool.GoldbergSeymour.TwoColorComponentNearestSegment
 public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
@@ -724,6 +727,7 @@ public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapDisjointPairGraph
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapNonElementary
+public import LeanPool.GoldbergSeymour.TwoColorComponentSwapPresentColors
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapPreservesDisjointComponent
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 public import LeanPool.GoldbergSeymour.TwoColorComponentTashkinovSplice

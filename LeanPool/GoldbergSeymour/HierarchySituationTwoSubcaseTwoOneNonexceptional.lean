@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoExclusions
@@ -1936,69 +1938,6 @@ private theorem helper_hstarSecondEdge_484.{u_1, u_2} :
     omega
   rw [hi]
   exact hstarEdge
-
-private theorem helper_terminalData_494.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-  [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-  (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-  (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-  (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-  (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-  (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx),
-  let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-  let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-  ∀
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData)
-    (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-    (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-    (_ : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-    (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-    (baseStar : HierarchyBase corrStar.replacementETT phi)
-    (_ : TashkinovHierarchy corrStar.replacementETT baseStar) (_ : Fin k)
-    (U : TreeSequence G e0) (corr : CorrespondingExtendedTashkinovTree G k e0 ett phi U),
-  corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc =
-      ett.series.data.tree n.castSucc ∧
-  corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
-      ett.series.data.kind n ∧
-  TashkinovStoredColors corr.replacementETT.series.data
-      (Fin.last corr.replacementETT.rounds) =
-    Dn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D n Dn R corrMinus baseMinus HMinus
-      corrStar baseStar HStar beta U corr
-  rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-    rungAgreement, seriesPresentation, finalGeneratingColoring,
-    ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-    extensionKindsAgree, replacementProper, replacementOneUncolored,
-    replacementStable⟩
-  cases replacementETT with
-  | mk rounds roundsPositive replacementData above strict below generating =>
-    cases rungAgreement
-    have seriesSame : replacementData = replacementSeries :=
-      eq_of_heq seriesPresentation
-    cases seriesSame
-    let i : Fin ett.rounds := ⟨ett.rounds - 1, by have hp := C.positive; omega⟩
-    have hi : i.succ = n := by
-      apply Fin.ext
-      simp only [Fin.val_succ]
-      change ett.rounds - 1 + 1 = ett.rounds
-      have hp := C.positive
-      omega
-    have htree : replacementSeries.data.tree n.castSucc =
-        ett.series.data.tree n.castSucc := by
-      rw [← hi]
-      exact ladderTreesAgree i
-    refine ⟨htree, extensionKindsAgree n, ?_⟩
-    change TashkinovStoredColors replacementSeries.data n = Dn
-    dsimp [Dn]
-    unfold TashkinovStoredColors
-    have hn : n.val ≠ 0 := by simpa [n] using Nat.ne_of_gt C.positive
-    simp only [ite_eq_right hn]
-    simp_rw [storedColorsAgree]
-    rw [← finalGeneratingColoring, htree, ← ett.generatingColoring]
 
 private theorem helper_hApositive_533.{u_1, u_2} :
     open scoped Classical in
@@ -4439,9 +4378,7 @@ private theorem helper_continuation_4235.{u_1, u_2} :
           ett.series.data.kind n ∧
         TashkinovStoredColors corr.replacementETT.series.data
           (Fin.last corr.replacementETT.rounds) = Dn := by
-    exact @helper_terminalData_494 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@R)
-        (@corrMinus) (@baseMinus) (@HMinus) (@corrStar) (@baseStar) (@HStar) (@beta) (@U) (@corr)
+    exact corr.terminalData
   have hApositive (hq : 0 < H.dividerCount) : A = H.stage q.castSucc := by
     exact @helper_hApositive_533 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@R)
