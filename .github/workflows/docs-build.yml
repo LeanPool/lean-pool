@@ -36,6 +36,13 @@ jobs:
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         persist-credentials: false
+    # The fresh main pool-build cache (about 8 GB compressed) plus the
+    # dependency cache overflow the runner's default free space.
+    - name: Free runner disk space
+      run: |
+        sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+          /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/share/swift
+        df -h /
     - name: Restore Lean dependencies
       id: dependency-cache
       uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
