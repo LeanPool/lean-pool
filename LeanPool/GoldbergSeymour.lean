@@ -6,7 +6,7 @@ Authors: Wesley Pegden
 
 module
 
-public import LeanPool.GoldbergSeymour.ThmGS
+public import LeanPool.GoldbergSeymour.MathlibGraph
 
 /-!
 # The Goldberg–Seymour edge-coloring theorem

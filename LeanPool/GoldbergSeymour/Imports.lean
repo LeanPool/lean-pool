@@ -327,6 +327,7 @@ public import LeanPool.GoldbergSeymour.LateOwnerReplacement
 public import LeanPool.GoldbergSeymour.LooplessMultigraph
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
 public import LeanPool.GoldbergSeymour.LowerRoundProperties
+public import LeanPool.GoldbergSeymour.MathlibGraph
 public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
 public import LeanPool.GoldbergSeymour.MaximumDefectiveChoiceExists
 public import LeanPool.GoldbergSeymour.MaximumDegree

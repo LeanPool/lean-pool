@@ -23,391 +23,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
-private abbrev helperHNcard363Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := HierarchyFullTailLength C;
-    ∀ (htailA : (3 : ℕ) ≤ T.length - A.length) (hell : ell = T.length - A.length) (hNine : (2 : ℕ)
-        * ett.rounds + (11 : ℕ) ≤ ((fun (i : ℕ) ↦ (TreeMissingColors phi ((fun (i : ℕ) ↦
-        TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last H.dividerCount)).length + i)
-        T.length) (
-    by
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 have :=
-                  GoldbergSeymour.TreeSequence.positive
-                   (HierarchyStarredStage H (Fin.last H.dividerCount))
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 omega
-    ) (
-    by
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 have :=
-                  GoldbergSeymour.TreeSequence.positive
-                   (HierarchyStarredStage H (Fin.last H.dividerCount))
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 omega
-    )) i) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree
-        (Fin.last ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ (fun (i :
-        ℕ) ↦ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + i ∧ phi (T.edge r)
-        = some c} : Finset (Fin k))) i) (ell - (2 : ℕ))).card ∧ (((fun (i : ℕ) ↦
-        (TreeMissingColors phi ((fun (i : ℕ) ↦ TreeSequencePrefix T (min ((HierarchyStarredStage H
-        (Fin.last H.dividerCount)).length + i) T.length) (
-    by
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   have :=
-                    GoldbergSeymour.TreeSequence.positive
-                     (HierarchyStarredStage H (Fin.last H.dividerCount))
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   omega
-    ) (
-    by
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   have :=
-                    GoldbergSeymour.TreeSequence.positive
-                     (HierarchyStarredStage H (Fin.last H.dividerCount))
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   omega
-    )) i) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree
-        (Fin.last ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ (fun (i :
-        ℕ) ↦ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + i ∧ phi (T.edge r)
-        = some c} : Finset (Fin k))) i) (ell - (2 : ℕ)) \ ((HierarchyStoredColorsAt H (Fin.last
-        H.dividerCount)).biUnion (C.good.gamma (Fin.last H.dividerCount)) ∪
-        HierarchyStoredColorsAt H (Fin.last H.dividerCount))).card ≤ (4 : ℕ) →
-    ∃ (eta : Fin (7 : ℕ) → Fin k), Function.Injective eta ∧
-    ∀ (h : Fin (7 : ℕ)), eta h ∈ HierarchyStoredColorsAt H (Fin.last H.dividerCount) ∧ eta h ∈
-        TreeMissingColors phi ((fun (i : ℕ) ↦ TreeSequencePrefix T (min ((HierarchyStarredStage H
-        (Fin.last H.dividerCount)).length + i) T.length) (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage H (Fin.last H.dividerCount))
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega
-    ) (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage H (Fin.last H.dividerCount))
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega
-    )) (ell - (2 : ℕ))) ∧ Disjoint (C.good.gamma (Fin.last H.dividerCount) (eta h) ∪ ({eta h} :
-        Finset (Fin k))) ((fun (i : ℕ) ↦ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + i ∧ phi (T.edge r)
-        = some c} : Finset (Fin k))) (ell - (2 : ℕ))))) (hNineAt hNi : (2 : ℕ) * ett.rounds + (11
-        : ℕ) ≤ ((TreeMissingColors phi (TreeSequencePrefix T (min ((HierarchyStarredStage H
-        (Fin.last H.dividerCount)).length + (T.length - (HierarchyStarredStage C.hierarchy
-        (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))) T.length) (
-    by
-             have := GoldbergSeymour.TreeSequence.positive T
-             have :=
-              GoldbergSeymour.TreeSequence.positive
-               (HierarchyStarredStage H (Fin.last H.dividerCount))
-             have := GoldbergSeymour.TreeSequence.positive T
-             have :=
-              GoldbergSeymour.TreeSequence.positive
-               (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-             omega
-    ) (
-    by
-             have := GoldbergSeymour.TreeSequence.positive T
-             have :=
-              GoldbergSeymour.TreeSequence.positive
-               (HierarchyStarredStage H (Fin.last H.dividerCount))
-             have := GoldbergSeymour.TreeSequence.positive T
-             have :=
-              GoldbergSeymour.TreeSequence.positive
-               (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-             omega
-    )) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k))).card ∧ ((((TreeMissingColors phi
-        (TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last H.dividerCount)).length +
-        (T.length - (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length
-        - (2 : ℕ))) T.length) (
-    by
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage H (Fin.last H.dividerCount))
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-               omega
-    ) (
-    by
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage H (Fin.last H.dividerCount))
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-               omega
-    )) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k))) \ ((HierarchyStoredColorsAt H (Fin.last
-        H.dividerCount)).biUnion (C.good.gamma (Fin.last H.dividerCount)) ∪
-        HierarchyStoredColorsAt H (Fin.last H.dividerCount))).card ≤ (4 : ℕ) →
-    ∃ (eta : Fin (7 : ℕ) → Fin k), Function.Injective eta ∧
-    ∀ (h : Fin (7 : ℕ)), eta h ∈ HierarchyStoredColorsAt H (Fin.last H.dividerCount) ∧ eta h ∈
-        TreeMissingColors phi (TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last
-        H.dividerCount)).length + (T.length - (HierarchyStarredStage C.hierarchy (Fin.last
-        C.hierarchy.dividerCount)).length - (2 : ℕ))) T.length) (
-    by
-                have := GoldbergSeymour.TreeSequence.positive T
-                have :=
-                 GoldbergSeymour.TreeSequence.positive
-                  (HierarchyStarredStage H (Fin.last H.dividerCount))
-                have := GoldbergSeymour.TreeSequence.positive T
-                have :=
-                 GoldbergSeymour.TreeSequence.positive
-                  (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                omega
-    ) (
-    by
-                have := GoldbergSeymour.TreeSequence.positive T
-                have :=
-                 GoldbergSeymour.TreeSequence.positive
-                  (HierarchyStarredStage H (Fin.last H.dividerCount))
-                have := GoldbergSeymour.TreeSequence.positive T
-                have :=
-                 GoldbergSeymour.TreeSequence.positive
-                  (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                omega
-    )) ∧ Disjoint (C.good.gamma (Fin.last H.dividerCount) (eta h) ∪ ({eta h} : Finset (Fin k)))
-        ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k)))),
-    let r0 : Fin T.length := (⟨T.length - (2 : ℕ),
-    have this : (3 : ℕ) ≤ T.length - A.length := htailA; Decidable.byContradiction fun (a :
-        ¬T.length - (2 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let r1 : Fin T.length := (⟨T.length - (1 : ℕ),
-    have this : (3 : ℕ) ≤ T.length - A.length := htailA; Decidable.byContradiction fun (a :
-        ¬T.length - (1 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let N : Finset (Fin k) := (phi (T.edge r0)).toList.toFinset ∪ (phi (T.edge
-        r1)).toList.toFinset; N.card ≤ (2 : ℕ)
-
-private abbrev helperHSuffixN373Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := HierarchyFullTailLength C;
-    let X : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-    ∀ (htailA : (3 : ℕ) ≤ T.length - A.length) (hell : ell = T.length - A.length), X.length =
-        T.length - (2 : ℕ) →
-    ∀ (hNine : (2 : ℕ) * ett.rounds + (11 : ℕ) ≤ ((fun (i : ℕ) ↦ (TreeMissingColors phi ((fun (i :
-        ℕ) ↦ TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last H.dividerCount)).length
-        + i) T.length) (
-    by
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   have :=
-                    GoldbergSeymour.TreeSequence.positive
-                     (HierarchyStarredStage H (Fin.last H.dividerCount))
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   omega
-    ) (
-    by
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   have :=
-                    GoldbergSeymour.TreeSequence.positive
-                     (HierarchyStarredStage H (Fin.last H.dividerCount))
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   omega
-    )) i) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree
-        (Fin.last ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ (fun (i :
-        ℕ) ↦ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + i ∧ phi (T.edge r)
-        = some c} : Finset (Fin k))) i) (ell - (2 : ℕ))).card ∧ (((fun (i : ℕ) ↦
-        (TreeMissingColors phi ((fun (i : ℕ) ↦ TreeSequencePrefix T (min ((HierarchyStarredStage H
-        (Fin.last H.dividerCount)).length + i) T.length) (
-    by
-                     have := GoldbergSeymour.TreeSequence.positive T
-                     have :=
-                      GoldbergSeymour.TreeSequence.positive
-                       (HierarchyStarredStage H (Fin.last H.dividerCount))
-                     have := GoldbergSeymour.TreeSequence.positive T
-                     omega
-    ) (
-    by
-                     have := GoldbergSeymour.TreeSequence.positive T
-                     have :=
-                      GoldbergSeymour.TreeSequence.positive
-                       (HierarchyStarredStage H (Fin.last H.dividerCount))
-                     have := GoldbergSeymour.TreeSequence.positive T
-                     omega
-    )) i) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree
-        (Fin.last ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ (fun (i :
-        ℕ) ↦ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + i ∧ phi (T.edge r)
-        = some c} : Finset (Fin k))) i) (ell - (2 : ℕ)) \ ((HierarchyStoredColorsAt H (Fin.last
-        H.dividerCount)).biUnion (C.good.gamma (Fin.last H.dividerCount)) ∪
-        HierarchyStoredColorsAt H (Fin.last H.dividerCount))).card ≤ (4 : ℕ) →
-    ∃ (eta : Fin (7 : ℕ) → Fin k), Function.Injective eta ∧
-    ∀ (h : Fin (7 : ℕ)), eta h ∈ HierarchyStoredColorsAt H (Fin.last H.dividerCount) ∧ eta h ∈
-        TreeMissingColors phi ((fun (i : ℕ) ↦ TreeSequencePrefix T (min ((HierarchyStarredStage H
-        (Fin.last H.dividerCount)).length + i) T.length) (
-    by
-                    have := GoldbergSeymour.TreeSequence.positive T
-                    have :=
-                     GoldbergSeymour.TreeSequence.positive
-                      (HierarchyStarredStage H (Fin.last H.dividerCount))
-                    have := GoldbergSeymour.TreeSequence.positive T
-                    omega
-    ) (
-    by
-                    have := GoldbergSeymour.TreeSequence.positive T
-                    have :=
-                     GoldbergSeymour.TreeSequence.positive
-                      (HierarchyStarredStage H (Fin.last H.dividerCount))
-                    have := GoldbergSeymour.TreeSequence.positive T
-                    omega
-    )) (ell - (2 : ℕ))) ∧ Disjoint (C.good.gamma (Fin.last H.dividerCount) (eta h) ∪ ({eta h} :
-        Finset (Fin k))) ((fun (i : ℕ) ↦ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + i ∧ phi (T.edge r)
-        = some c} : Finset (Fin k))) (ell - (2 : ℕ))))) (hNineAt hNi : (2 : ℕ) * ett.rounds + (11
-        : ℕ) ≤ ((TreeMissingColors phi (TreeSequencePrefix T (min ((HierarchyStarredStage H
-        (Fin.last H.dividerCount)).length + (T.length - (HierarchyStarredStage C.hierarchy
-        (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))) T.length) (
-    by
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage H (Fin.last H.dividerCount))
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-               omega
-    ) (
-    by
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage H (Fin.last H.dividerCount))
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-               omega
-    )) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k))).card ∧ ((((TreeMissingColors phi
-        (TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last H.dividerCount)).length +
-        (T.length - (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length
-        - (2 : ℕ))) T.length) (
-    by
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 have :=
-                  GoldbergSeymour.TreeSequence.positive
-                   (HierarchyStarredStage H (Fin.last H.dividerCount))
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 have :=
-                  GoldbergSeymour.TreeSequence.positive
-                   (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                 omega
-    ) (
-    by
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 have :=
-                  GoldbergSeymour.TreeSequence.positive
-                   (HierarchyStarredStage H (Fin.last H.dividerCount))
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 have :=
-                  GoldbergSeymour.TreeSequence.positive
-                   (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                 omega
-    )) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k))) \ ((HierarchyStoredColorsAt H (Fin.last
-        H.dividerCount)).biUnion (C.good.gamma (Fin.last H.dividerCount)) ∪
-        HierarchyStoredColorsAt H (Fin.last H.dividerCount))).card ≤ (4 : ℕ) →
-    ∃ (eta : Fin (7 : ℕ) → Fin k), Function.Injective eta ∧
-    ∀ (h : Fin (7 : ℕ)), eta h ∈ HierarchyStoredColorsAt H (Fin.last H.dividerCount) ∧ eta h ∈
-        TreeMissingColors phi (TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last
-        H.dividerCount)).length + (T.length - (HierarchyStarredStage C.hierarchy (Fin.last
-        C.hierarchy.dividerCount)).length - (2 : ℕ))) T.length) (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage H (Fin.last H.dividerCount))
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                  omega
-    ) (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage H (Fin.last H.dividerCount))
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                  omega
-    )) ∧ Disjoint (C.good.gamma (Fin.last H.dividerCount) (eta h) ∪ ({eta h} : Finset (Fin k)))
-        ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k)))),
-    let r0 : Fin T.length := (⟨T.length - (2 : ℕ),
-    have this : (3 : ℕ) ≤ T.length - A.length := htailA; Decidable.byContradiction fun (a :
-        ¬T.length - (2 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let r1 : Fin T.length := (⟨T.length - (1 : ℕ),
-    have this : (3 : ℕ) ≤ T.length - A.length := htailA; Decidable.byContradiction fun (a :
-        ¬T.length - (1 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let N : Finset (Fin k) := (phi (T.edge r0)).toList.toFinset ∪ (phi (T.edge
-        r1)).toList.toFinset; (↑r0 : ℕ) = T.length - (2 : ℕ) → (↑r1 : ℕ) = T.length - (1 : ℕ) →
-    ∀ (c : Fin k) (r : Fin T.length), X.length ≤ (↑r : ℕ) → phi (T.edge r) = some c → c ∈ N
-
 private abbrev helperHbetaExists392Conditions.{u_1, u_2} : Prop :=
  open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -615,280 +230,6 @@ private abbrev helperHbetaExists392Conditions.{u_1, u_2} : Prop :=
     ∀ (i : Fin (7 : ℕ)), rho i ∈ D ∧ rho i ∈ TreeMissingColors phi X ∧ Disjoint (C.good.gamma q
         (rho i) ∪ ({rho i} : Finset (Fin k))) U) →
     ∃ beta ∈ TreeMissingColors phi X, beta ∉ M0 ∧ beta ∉ Gamma ∧ beta ∉ U ∧ beta ∉ N
-
-private abbrev helperFirstMem500Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := HierarchyFullTailLength C; (3 : ℕ) ≤ T.length - A.length → ell = T.length -
-        A.length → (2 : ℕ) * ett.rounds + (11 : ℕ) ≤ ((fun (i : ℕ) ↦ (TreeMissingColors phi ((fun
-        (i : ℕ) ↦ TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last
-        H.dividerCount)).length + i) T.length) (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage H (Fin.last H.dividerCount))
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega
-    ) (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage H (Fin.last H.dividerCount))
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega
-    )) i) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree
-        (Fin.last ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ (fun (i :
-        ℕ) ↦ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + i ∧ phi (T.edge r)
-        = some c} : Finset (Fin k))) i) (ell - (2 : ℕ))).card ∧ (((fun (i : ℕ) ↦
-        (TreeMissingColors phi ((fun (i : ℕ) ↦ TreeSequencePrefix T (min ((HierarchyStarredStage H
-        (Fin.last H.dividerCount)).length + i) T.length) (
-    by
-                    have := GoldbergSeymour.TreeSequence.positive T
-                    have :=
-                     GoldbergSeymour.TreeSequence.positive
-                      (HierarchyStarredStage H (Fin.last H.dividerCount))
-                    have := GoldbergSeymour.TreeSequence.positive T
-                    omega
-    ) (
-    by
-                    have := GoldbergSeymour.TreeSequence.positive T
-                    have :=
-                     GoldbergSeymour.TreeSequence.positive
-                      (HierarchyStarredStage H (Fin.last H.dividerCount))
-                    have := GoldbergSeymour.TreeSequence.positive T
-                    omega
-    )) i) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree
-        (Fin.last ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ (fun (i :
-        ℕ) ↦ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + i ∧ phi (T.edge r)
-        = some c} : Finset (Fin k))) i) (ell - (2 : ℕ)) \ ((HierarchyStoredColorsAt H (Fin.last
-        H.dividerCount)).biUnion (C.good.gamma (Fin.last H.dividerCount)) ∪
-        HierarchyStoredColorsAt H (Fin.last H.dividerCount))).card ≤ (4 : ℕ) →
-    ∃ (eta : Fin (7 : ℕ) → Fin k), Function.Injective eta ∧
-    ∀ (h : Fin (7 : ℕ)), eta h ∈ HierarchyStoredColorsAt H (Fin.last H.dividerCount) ∧ eta h ∈
-        TreeMissingColors phi ((fun (i : ℕ) ↦ TreeSequencePrefix T (min ((HierarchyStarredStage H
-        (Fin.last H.dividerCount)).length + i) T.length) (
-    by
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   have :=
-                    GoldbergSeymour.TreeSequence.positive
-                     (HierarchyStarredStage H (Fin.last H.dividerCount))
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   omega
-    ) (
-    by
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   have :=
-                    GoldbergSeymour.TreeSequence.positive
-                     (HierarchyStarredStage H (Fin.last H.dividerCount))
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   omega
-    )) (ell - (2 : ℕ))) ∧ Disjoint (C.good.gamma (Fin.last H.dividerCount) (eta h) ∪ ({eta h} :
-        Finset (Fin k))) ((fun (i : ℕ) ↦ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + i ∧ phi (T.edge r)
-        = some c} : Finset (Fin k))) (ell - (2 : ℕ)))) → (2 : ℕ) * ett.rounds + (11 : ℕ) ≤
-        ((TreeMissingColors phi (TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last
-        H.dividerCount)).length + (T.length - (HierarchyStarredStage C.hierarchy (Fin.last
-        C.hierarchy.dividerCount)).length - (2 : ℕ))) T.length) (
-    by
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage H (Fin.last H.dividerCount))
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-               omega
-    ) (
-    by
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage H (Fin.last H.dividerCount))
-               have := GoldbergSeymour.TreeSequence.positive T
-               have :=
-                GoldbergSeymour.TreeSequence.positive
-                 (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-               omega
-    )) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k))).card ∧ ((((TreeMissingColors phi
-        (TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last H.dividerCount)).length +
-        (T.length - (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length
-        - (2 : ℕ))) T.length) (
-    by
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 have :=
-                  GoldbergSeymour.TreeSequence.positive
-                   (HierarchyStarredStage H (Fin.last H.dividerCount))
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 have :=
-                  GoldbergSeymour.TreeSequence.positive
-                   (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                 omega
-    ) (
-    by
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 have :=
-                  GoldbergSeymour.TreeSequence.positive
-                   (HierarchyStarredStage H (Fin.last H.dividerCount))
-                 have := GoldbergSeymour.TreeSequence.positive T
-                 have :=
-                  GoldbergSeymour.TreeSequence.positive
-                   (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                 omega
-    )) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k))) \ ((HierarchyStoredColorsAt H (Fin.last
-        H.dividerCount)).biUnion (C.good.gamma (Fin.last H.dividerCount)) ∪
-        HierarchyStoredColorsAt H (Fin.last H.dividerCount))).card ≤ (4 : ℕ) →
-    ∃ (eta : Fin (7 : ℕ) → Fin k), Function.Injective eta ∧
-    ∀ (h : Fin (7 : ℕ)), eta h ∈ HierarchyStoredColorsAt H (Fin.last H.dividerCount) ∧ eta h ∈
-        TreeMissingColors phi (TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last
-        H.dividerCount)).length + (T.length - (HierarchyStarredStage C.hierarchy (Fin.last
-        C.hierarchy.dividerCount)).length - (2 : ℕ))) T.length) (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage H (Fin.last H.dividerCount))
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                  omega
-    ) (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage H (Fin.last H.dividerCount))
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                  omega
-    )) ∧ Disjoint (C.good.gamma (Fin.last H.dividerCount) (eta h) ∪ ({eta h} : Finset (Fin k)))
-        ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k))) → (2 : ℕ) * ett.rounds + (11 : ℕ) ≤
-        ((TreeMissingColors phi (TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last
-        H.dividerCount)).length + (T.length - (HierarchyStarredStage C.hierarchy (Fin.last
-        C.hierarchy.dividerCount)).length - (2 : ℕ))) T.length) (
-    by
-                have := GoldbergSeymour.TreeSequence.positive T
-                have :=
-                 GoldbergSeymour.TreeSequence.positive
-                  (HierarchyStarredStage H (Fin.last H.dividerCount))
-                have := GoldbergSeymour.TreeSequence.positive T
-                have :=
-                 GoldbergSeymour.TreeSequence.positive
-                  (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                omega
-    ) (
-    by
-                have := GoldbergSeymour.TreeSequence.positive T
-                have :=
-                 GoldbergSeymour.TreeSequence.positive
-                  (HierarchyStarredStage H (Fin.last H.dividerCount))
-                have := GoldbergSeymour.TreeSequence.positive T
-                have :=
-                 GoldbergSeymour.TreeSequence.positive
-                  (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                omega
-    )) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k))).card ∧ ((((TreeMissingColors phi
-        (TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last H.dividerCount)).length +
-        (T.length - (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length
-        - (2 : ℕ))) T.length) (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage H (Fin.last H.dividerCount))
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                  omega
-    ) (
-    by
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage H (Fin.last H.dividerCount))
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  have :=
-                   GoldbergSeymour.TreeSequence.positive
-                    (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                  omega
-    )) \ (TreeSequenceVertexSet base.core \ TreeSequenceVertexSet (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc)).biUnion fun (v : V) ↦ MissingColors G phi v) \ ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k))) \ ((HierarchyStoredColorsAt H (Fin.last
-        H.dividerCount)).biUnion (C.good.gamma (Fin.last H.dividerCount)) ∪
-        HierarchyStoredColorsAt H (Fin.last H.dividerCount))).card ≤ (4 : ℕ) →
-    ∃ (eta : Fin (7 : ℕ) → Fin k), Function.Injective eta ∧
-    ∀ (h : Fin (7 : ℕ)), eta h ∈ HierarchyStoredColorsAt H (Fin.last H.dividerCount) ∧ eta h ∈
-        TreeMissingColors phi (TreeSequencePrefix T (min ((HierarchyStarredStage H (Fin.last
-        H.dividerCount)).length + (T.length - (HierarchyStarredStage C.hierarchy (Fin.last
-        C.hierarchy.dividerCount)).length - (2 : ℕ))) T.length) (
-    by
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   have :=
-                    GoldbergSeymour.TreeSequence.positive
-                     (HierarchyStarredStage H (Fin.last H.dividerCount))
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   have :=
-                    GoldbergSeymour.TreeSequence.positive
-                     (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                   omega
-    ) (
-    by
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   have :=
-                    GoldbergSeymour.TreeSequence.positive
-                     (HierarchyStarredStage H (Fin.last H.dividerCount))
-                   have := GoldbergSeymour.TreeSequence.positive T
-                   have :=
-                    GoldbergSeymour.TreeSequence.positive
-                     (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount))
-                   omega
-    )) ∧ Disjoint (C.good.gamma (Fin.last H.dividerCount) (eta h) ∪ ({eta h} : Finset (Fin k)))
-        ({c : Fin k |
-    ∃ (r : Fin T.length), (HierarchyStarredStage H (Fin.last H.dividerCount)).length ≤ (↑r : ℕ) ∧
-        (↑r : ℕ) < (HierarchyStarredStage H (Fin.last H.dividerCount)).length + (T.length -
-        (HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)).length - (2 : ℕ))
-        ∧ phi (T.edge r) = some c} : Finset (Fin k))) →
-    ∀ (c : Fin k), (↑(HierarchyFirstMissingPosition phi T c) : ℕ) < T.length → c ∈ MissingColors G
-        phi (T.vertex (HierarchyFirstMissingPosition phi T c))
 
 private abbrev helperHibLt530Conditions.{u_1, u_2} : Prop :=
  open scoped Classical in
@@ -1804,14 +1145,13 @@ private abbrev helperContinuation212Conditions.{u_1, u_2} : Prop :=
 
 private theorem helper_firstLe_242.{u_1, u_2} :
     open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E]
+    ∀ {V : Type u_1} {E : Type u_2} [Fintype E]
       (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (T : TreeSequence G e0)
       (phi : PartialEdgeColoring E k) (c : Fin k) (i : Fin (T.length + (1 : ℕ))),
     c ∈ MissingColors G phi (T.vertex i) →
     (↑(HierarchyFirstMissingPosition phi T c) : ℕ) ≤ (↑i : ℕ) := by
   classical
-  intro V E _ _ G k e0 T phi c i hi
-  let _ := Fintype.ofFinite V
+  intro V E _ G k e0 T phi c i hi
   let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
     c ∈ MissingColors G phi (T.vertex j)
   have hm : i ∈ candidates := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩
@@ -1913,26 +1253,6 @@ private theorem helper_vertexMemB_487.{u_1, u_2} :
     rw [← hcast]
     exact hBprefix.2.1 j
   exact hvEq.symm
-
-private theorem helper_firstLeFor_501.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (T : TreeSequence G e0)
-      (psi : PartialEdgeColoring E k) (c : Fin k) (i : Fin (T.length + (1 : ℕ))),
-    c ∈ MissingColors G psi (T.vertex i) →
-    (↑(HierarchyFirstMissingPosition psi T c) : ℕ) ≤ (↑i : ℕ) := by
-  classical
-  intro V E _ _ G k e0 T psi c i hi
-  let _ := Fintype.ofFinite V
-  let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-    c ∈ MissingColors G psi (T.vertex j)
-  have hm : i ∈ candidates := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩
-  have hn : candidates.Nonempty := ⟨i, hm⟩
-  unfold HierarchyFirstMissingPosition
-  rw [dite_eq_left hn]
-  have hle := Finset.min'_le candidates i hm
-  change (candidates.min' hn).val ≤ i.val at hle
-  exact hle
 
 private theorem helper_seriesFacts_583.{u_1, u_2} :
     open scoped Classical in
@@ -2051,33 +1371,29 @@ private theorem helper_branch_724.{u_1, u_2} :
         ⟨v, Finset.mem_sdiff.mpr ⟨hvCoreOld, hvNotTn⟩, hbetaPhi⟩
     exact hbM0 hbetaM0
 
-private theorem helper_hNcard_363.{u_1, u_2} :
-    helperHNcard363Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A ell htailA hell hNine hNineAt hNi r0 r1 N
-  dsimp [N]
+private theorem optionPair_card_le_two {α : Type*} [DecidableEq α]
+    (first second : Option α) :
+    (first.toList.toFinset ∪ second.toList.toFinset).card ≤ 2 := by
   calc
-    _ ≤ (phi (T.edge r0)).toList.length + (phi (T.edge r1)).toList.length :=
+    _ ≤ first.toList.length + second.toList.length :=
       (Finset.card_union_le _ _).trans (Nat.add_le_add
         (List.toFinset_card_le _) (List.toFinset_card_le _))
-    _ ≤ 2 := by
-      cases phi (T.edge r0) <;> cases phi (T.edge r1) <;> simp
+    _ ≤ 2 := by cases first <;> cases second <;> simp
 
-private theorem helper_hSuffixN_373.{u_1, u_2} :
-    helperHSuffixN373Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A ell X htailA hell hlenX hNine hNineAt hNi
-      r0 r1 N hr0val hr1val c r hr hc
-  have hindex : r.val = r0.val ∨ r.val = r1.val := by
-    have := hlenX
-    omega
+private theorem color_mem_final_pair {α : Type*} [DecidableEq α] {length : ℕ}
+    (color : Fin length → Option α) (first second : Fin length)
+    (hfirst : first.val = length - 2) (hsecond : second.val = length - 1)
+    (position : Fin length) (hposition : length - 2 ≤ position.val)
+    {c : α} (hc : color position = some c) :
+    c ∈ (color first).toList.toFinset ∪ (color second).toList.toFinset := by
+  have hindex : position.val = first.val ∨ position.val = second.val := by omega
   rcases hindex with hindex | hindex
-  · have hr0 : r = r0 := Fin.ext hindex
-    subst r
-    simp [N, hc]
-  · have hr1 : r = r1 := Fin.ext hindex
-    subst r
-    simp [N, hc]
+  · have hsame : position = first := Fin.ext hindex
+    subst position
+    simp [hc]
+  · have hsame : position = second := Fin.ext hindex
+    subst position
+    simp [hc]
 
 private theorem helper_hbetaExists_392.{u_1, u_2} :
     helperHbetaExists392Conditions.{u_1, u_2} := by
@@ -2162,10 +1478,12 @@ private theorem helper_hbetaExists_392.{u_1, u_2} :
         (Finset.mem_union_right _ (Finset.mem_singleton.mpr rfl)) hb)
     refine ⟨beta, hbTailMissing, hbM0, hbGamma, hbU, hbN⟩
 
-private theorem helper_firstMem_500.{u_1, u_2} :
-    helperFirstMem500Conditions.{u_1, u_2} := by
+private theorem firstMissingPosition_mem_of_lt {V E : Type*} [Fintype E]
+    (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (T : TreeSequence G e0)
+    (phi : PartialEdgeColoring E k) (c : Fin k)
+    (hlt : (HierarchyFirstMissingPosition phi T c).val < T.length) :
+    c ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T c)) := by
   classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A ell htailA hell hNine hNineAt hNi c hlt
   let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
     c ∈ MissingColors G phi (T.vertex j)
   by_cases hn : candidates.Nonempty
@@ -2426,7 +1744,7 @@ private theorem helper_continuation_2387.{u_1, u_2} :
     simp [sigma, TwoColorComponentSwap, hnotAlpha, hnotBeta]
   have vertexMemB := @helper_vertexMemB_487 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hBprefix) (@hlenB)
-  have firstLeFor := @helper_firstLeFor_501 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0)
+  have firstLeFor := @helper_firstLe_242 (@V) (@E) inferInstance (@G) (@k) (@e0)
       (@T)
   have firstMemFor (psi : PartialEdgeColoring E k) (c : Fin k)
       (hlt : (HierarchyFirstMissingPosition psi T c).val < T.length) :
@@ -2532,14 +1850,14 @@ private theorem helper_continuation_212.{u_1, u_2} :
   let r0 : Fin T.length := ⟨T.length - 2, by have := htailA; omega⟩
   let r1 : Fin T.length := ⟨T.length - 1, by have := htailA; omega⟩
   let N := (phi (T.edge r0)).toList.toFinset ∪ (phi (T.edge r1)).toList.toFinset
-  have hNcard := @helper_hNcard_363 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@htailA) (@hell)
-      (@hNine) (@hNineAt) (@hNi)
+  have hNcard : N.card ≤ 2 := optionPair_card_le_two (phi (T.edge r0)) (phi (T.edge r1))
   have hr0val : r0.val = T.length - 2 := by simp [r0]
   have hr1val : r1.val = T.length - 1 := by simp [r1]
-  have hSuffixN := @helper_hSuffixN_373 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@htailA) (@hell)
-      (@hlenX) (@hNine) (@hNineAt) (@hNi) (@hr0val) (@hr1val)
+  have hSuffixN : ∀ (c : Fin k) (r : Fin T.length),
+      X.length ≤ r.val → phi (T.edge r) = some c → c ∈ N := by
+    intro c r hr hc
+    exact color_mem_final_pair (fun position => phi (T.edge position)) r0 r1
+      hr0val hr1val r (hlenX ▸ hr) hc
   let Free := Avail \ (Gamma ∪ D)
   have hNineSmall := hNi.2
   change (Avail \ (Gamma ∪ D)).card ≤ 4 →
@@ -2573,11 +1891,9 @@ private theorem helper_continuation_212.{u_1, u_2} :
   obtain ⟨ubIdx, hubIdx⟩ :
       ∃ i : Fin (X.length + 1), X.vertex i = ub := by
     simpa only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] using hub
-  have firstLe := @helper_firstLe_242 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0) (@T)
+  have firstLe := @helper_firstLe_242 (@V) (@E) inferInstance (@G) (@k) (@e0) (@T)
       (@phi)
-  have firstMem := @helper_firstMem_500 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@htailA) (@hell)
-      (@hNine) (@hNineAt) (@hNi)
+  have firstMem := firstMissingPosition_mem_of_lt G k e0 T phi
   have hiaLe : (HierarchyFirstMissingPosition phi T alpha).val ≤ A.length := by
     let iT := Fin.castLE (Nat.succ_le_succ hA.1) uaIdx
     have hmiss : alpha ∈ MissingColors G phi (T.vertex iT) := by

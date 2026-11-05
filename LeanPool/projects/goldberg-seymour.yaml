@@ -6,6 +6,8 @@ summary: >-
   the maximum of the maximum degree plus one and the ceiling of the odd-set
   density. Preserves proper partial edge colorings, Kempe components,
   critical subgraphs, Tashkinov trees, extension sequences, and good hierarchies.
+  An incidence-preserving bridge supports Mathlib graphs on their actual vertex
+  and edge sets, including isolated vertices and independently identified parallel edges.
   The import contains the dependency closure of the full theorem; it does not
   claim an executable edge-coloring algorithm or its polynomial running time.
 branch: combinatorics
