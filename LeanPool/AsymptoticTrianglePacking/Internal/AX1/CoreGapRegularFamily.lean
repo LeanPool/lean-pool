@@ -402,7 +402,7 @@ theorem fracNibble_nearlyRegular (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < 
     rw [le_div_iff₀ hrpos, mul_comm]
     exact fracMatching_sum_le hunif hcon
   rcases le_or_gt β 1 with h1 | h1
-  · exact le_trans (mul_le_mul_of_nonneg_left hsum (by linarith)) hMcard
+  · exact le_trans (mul_le_mul_of_nonneg_left hsum (by linarith only [h1])) hMcard
   · have hnn' : 0 ≤ ∑ T ∈ H, w T := Finset.sum_nonneg (fun T _ => hnn T)
     have : (1 - β) * (∑ T ∈ H, w T) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) hnn'
     exact le_trans this (Nat.cast_nonneg _)
@@ -703,7 +703,7 @@ theorem gap_le_of_regular_triangle_degrees (ε : ℝ) (hε : 0 < ε) :
   have hdpos : (0 : ℝ) < d := by linarith
   have hinv : 1 / μ ≤ d := le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) hd
   have hcodeg : (1 : ℝ) ≤ μ * d := by
-    rw [div_le_iff₀ hμ] at hinv; linarith
+    rw [div_le_iff₀ hμ] at hinv; linarith only [hinv]
   -- the exceptional set, transported to the edge vertex type
   set Exc' : Finset (EdgeV G) := (univ : Finset (EdgeV G)).filter (fun E => E.val ∈ Exc)
     with hExc'def
@@ -717,7 +717,7 @@ theorem gap_le_of_regular_triangle_degrees (ε : ℝ) (hε : 0 < ε) :
   have hExc' : (Exc'.card : ℝ) ≤ η * (Fintype.card (EdgeV G) : ℝ) := by
     rw [hcardEdge]
     have : (Exc'.card : ℝ) ≤ (Exc.card : ℝ) := by exact_mod_cast hExc'card
-    linarith
+    linarith only [hExc, this]
   have hhi' : ∀ E : EdgeV G, (Hypergraph.degree (triangleHypergraphSub G) E : ℝ) ≤ (1 + μ) * d := by
     intro E
     rw [edgeTriangleDegree_eq G E]
@@ -1085,7 +1085,7 @@ theorem nu3_ge_of_regular_triangle_degrees (β : ℝ) (hβ : 0 < β) :
   have hdpos : (0 : ℝ) < d := by linarith
   have hinv : 1 / μ ≤ d := le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) hd
   have hcodeg : (1 : ℝ) ≤ μ * d := by
-    rw [div_le_iff₀ hμ] at hinv; linarith
+    rw [div_le_iff₀ hμ] at hinv; linarith only [hinv]
   set Exc' : Finset (EdgeV G) := (univ : Finset (EdgeV G)).filter (fun E => E.val ∈ Exc)
     with hExc'def
   have hExc'card : Exc'.card ≤ Exc.card := by
@@ -1098,7 +1098,7 @@ theorem nu3_ge_of_regular_triangle_degrees (β : ℝ) (hβ : 0 < β) :
   have hExc' : (Exc'.card : ℝ) ≤ η * (Fintype.card (EdgeV G) : ℝ) := by
     rw [hcardEdge]
     have : (Exc'.card : ℝ) ≤ (Exc.card : ℝ) := by exact_mod_cast hExc'card
-    linarith
+    linarith only [hExc, this]
   have hhi' : ∀ E : EdgeV G, (Hypergraph.degree (triangleHypergraphSub G) E : ℝ) ≤ (1 + μ) * d := by
     intro E
     rw [edgeTriangleDegree_eq G E]
@@ -1185,9 +1185,9 @@ theorem coreGapResidual_of_regularDecomp (h : RegularDecompResidual) : CoreGapRe
   have hEn : ((G.cliqueFinset 2).card : ℝ) ≤ (Fintype.card V : ℝ) ^ 2 / 2 :=
     Nibble.edge_card_le_half_card_sq G
   have hnn : (0 : ℝ) ≤ (Fintype.card V : ℝ) ^ 2 := by positivity
-  have hstar6 : nu3star G ≤ (Fintype.card V : ℝ) ^ 2 / 6 := by linarith
-  have hcoef : (0 : ℝ) < 1 - 3 * ε := by linarith
-  have hS' : nu3star G - (ε / 2) * (Fintype.card V : ℝ) ^ 2 ≤ S := by linarith
+  have hstar6 : nu3star G ≤ (Fintype.card V : ℝ) ^ 2 / 6 := by linarith only [hstar, hEn]
+  have hcoef : (0 : ℝ) < 1 - 3 * ε := by linarith only [hsmall]
+  have hS' : nu3star G - (ε / 2) * (Fintype.card V : ℝ) ^ 2 ≤ S := by linarith only [hval]
   have h1 : (1 - 3 * ε) * (nu3star G - (ε / 2) * (Fintype.card V : ℝ) ^ 2)
       ≤ (1 - 3 * ε) * S := mul_le_mul_of_nonneg_left hS' hcoef.le
   have hA : (1 - 3 * ε) * (nu3star G - (ε / 2) * (Fintype.card V : ℝ) ^ 2) ≤ (nu3 G : ℝ) :=
@@ -1259,7 +1259,7 @@ theorem regularDecomp_witness_of_regular (ε μ η d₀ : ℝ) (hε : 0 ≤ ε)
     have hnn : (0 : ℝ) ≤ ε * (Fintype.card V : ℝ) ^ 2 := by positivity
     simp only [Finset.sum_range_one]
     rw [hcard]
-    linarith
+    linarith only [hstar, hnn]
 
 end Nibble.AX1
 
@@ -1556,7 +1556,7 @@ theorem regularDecompResidual_of_reducedFamily (h : ReducedFamilyResidual) :
     · exact hasNearRegularFamily_of_few_triangles G' hpoor
     · exact hmain V G P hV₀ hP hPl' hPb' hPu hrich
   have := hasNearRegularFamily_of_reduced G hε₁ P hP hPl' hPu hfam
-  exact this.mono_eps (by linarith)
+  exact this.mono_eps (by linarith only [hε₁le])
 
 /-- **The converse.**  The reduced residual is a *weakening* of `Nibble.AX1.RegularDecompResidual`
 (reduced graphs are graphs), so by `Nibble.AX1.regularDecompResidual_of_reducedFamily` the two are

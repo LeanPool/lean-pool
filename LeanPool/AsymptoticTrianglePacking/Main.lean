@@ -863,7 +863,7 @@ theorem slot_count_le_sz (hidx : Function.Injective idx) (hcl : Function.Injecti
     have h3 : (0 : ℝ) ≤ (sz c p : ℝ) := Nat.cast_nonneg _
     have h4 : (0 : ℝ) ≤ (sz c q : ℝ) := Nat.cast_nonneg _
     gcongr
-    nlinarith
+    nlinarith only [h2, h1]
 
 omit [Fintype ι] [Fintype κ] in
 /-- **Two slots pin a copy down in a third coordinate.**  This is the estimate that makes the
@@ -1170,7 +1170,7 @@ theorem codeg_inl_inr_le (hP : 0 < P) {s₀ : ℕ} (hs : ∀ c a, sz c a ≤ s�
     rw [ite_eq_left (Finset.mem_univ c)]
     have h9 : (0 : ℝ) ≤ (s₀ : ℝ) ^ 2 := sq_nonneg _
     rw [div_le_div_iff_of_pos_right (by positivity)]
-    linarith
+    linarith only [h9]
 
 include hidx hcl hsz1 hszP in
 omit [Fintype ι] in
@@ -1320,7 +1320,7 @@ theorem card_copies_le {ε : ℝ} (hε0 : 0 ≤ ε) (hcl : ∀ c, Function.Injec
         have e1 : cl c 1 = T := congrArg Prod.snd hc.2
         have a0 : (1 : ℝ) ≤ (sz c 0 : ℝ) := by exact_mod_cast hsz1 c 0
         have a1 : (1 : ℝ) ≤ (sz c 1 : ℝ) := by exact_mod_cast hsz1 c 1
-        have h01 : (1 : ℝ) ≤ (sz c 0 : ℝ) * (sz c 1 : ℝ) := by nlinarith
+        have h01 : (1 : ℝ) ≤ (sz c 0 : ℝ) * (sz c 1 : ℝ) := by nlinarith only [a0, a1]
         exact le_trans h01 (sz_mul_le_boxDemandC e0 e1)
       have hle : ((Finset.univ.filter (fun c : κ => (cl c 0, cl c 1) = (S, T))).card : ℝ)
           ≤ boxDemand cl sz S T := by
@@ -1396,16 +1396,16 @@ private theorem bad_area_le {κ : Type} [Fintype κ] [DecidableEq κ]
       have h2 : (sz c (a + 1) : ℝ) ≤ (s₀ : ℝ) := by exact_mod_cast hs c (a + 1)
       have h3 : (0 : ℝ) ≤ (sz c a : ℝ) := Nat.cast_nonneg _
       have h4 : (0 : ℝ) ≤ (sz c (a + 1) : ℝ) := Nat.cast_nonneg _
-      nlinarith
+      nlinarith only [h1, h2]
     calc ∑ a : ZMod 3, (sz c a : ℝ) * (sz c (a + 1) : ℝ)
         ≤ ∑ _a : ZMod 3, (s₀ : ℝ) ^ 2 := Finset.sum_le_sum (fun a _ => hb a)
       _ = 3 * (s₀ : ℝ) ^ 2 := by simp [ZMod.card]
   refine le_trans harea ?_
   have hs₀ne : (s₀ : ℝ) ≠ 0 := ne_of_gt hs₀
-  have hCpos : (0 : ℝ) < 6 * C := by linarith
+  have hCpos : (0 : ℝ) < 6 * C := by linarith only [hC]
   have h2a : θ * θ ≤ θ * (ε / (6 * C)) := mul_le_mul_of_nonneg_left hθC hθ.le
   have h2b : θ * (ε / (6 * C)) ≤ 1 * (ε / (6 * C)) :=
-    mul_le_mul_of_nonneg_right (by linarith) (by positivity)
+    mul_le_mul_of_nonneg_right (by linarith only [hθ1]) (by positivity)
   have h2 : θ ^ 2 ≤ ε / (6 * C) := by linarith only [h2a, h2b]
   have h1 : (s₀ : ℝ) * (s₀ : ℝ) ≤ (θ * (P : ℝ)) * (θ * (P : ℝ)) :=
     mul_self_le_mul_self hs₀.le hsP
@@ -1422,7 +1422,7 @@ private theorem bad_area_le {κ : Type} [Fintype κ] [DecidableEq κ]
   have h5 : (P : ℝ) ^ 2 ≤ (n : ℝ) ^ 2 * (P : ℝ) ^ 2 := by
     nlinarith only [hn2, sq_nonneg (P : ℝ)]
   have hkey : 3 * (s₀ : ℝ) ^ 2 * C ≤ ε / 2 * ((n : ℝ) ^ 2 * (P : ℝ) ^ 2) := by
-    have hmul := mul_le_mul_of_nonneg_left h5 (by linarith : (0 : ℝ) ≤ ε / 2)
+    have hmul := mul_le_mul_of_nonneg_left h5 (by linarith only [hε] : (0 : ℝ) ≤ ε / 2)
     linarith only [h3, h4, hmul]
   have hβs : 3 * β * (3 * (s₀ : ℝ) ^ 2) = ε / 2 := by
     rw [hβ]; field_simp; ring
@@ -1518,7 +1518,7 @@ theorem boxAllocationResidual_main (ε : ℝ) (hε : 0 < ε) (s₀ : ℕ) :
       have hsθ : (s₀ : ℝ) / (P : ℝ) ≤ θ := by
         rw [div_le_iff₀ hPR]; linarith only [hsP]
       calc 18 * (s₀ : ℝ) / (P : ℝ) = 18 * ((s₀ : ℝ) / (P : ℝ)) := by ring
-        _ ≤ 18 * θ := by linarith
+        _ ≤ 18 * θ := by linarith only [hsθ]
         _ ≤ γ := by linarith only [hθγ]
     obtain ⟨M, hM, hMcard⟩ := hnib K w hedge hw0 hload (by
       intro x z hxz

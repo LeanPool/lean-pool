@@ -1309,7 +1309,7 @@ theorem nu3star_regularityReduced_le_host (G : SimpleGraph V) [DecidableRel G.Ad
         (hR ▸ SimpleGraph.regularityReduced_le) (Sv : Finset V) (Tv : Finset V)
     have hcapG := hcap (Sv : Finset V) Sv.2 (Tv : Finset V) Tv.2 fun h => hST (Subtype.ext h)
     rw [himg]
-    linarith
+    linarith only [hmono, hcapR, hmono2, hcapG]
   -- the aggregate is a fractional packing of the cluster graph
   have hpack : IsFracPacking Hst wH := by
     refine ⟨fun T => ?_, fun T hT => ?_, fun e => ?_⟩

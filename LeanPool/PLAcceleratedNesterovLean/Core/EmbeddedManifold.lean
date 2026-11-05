@@ -117,11 +117,195 @@ private abbrev isInvertible_of_bijective_finiteDimensional
   · ext x
     rfl
 
--- IFT + chart argument: large because of manifold API elaboration
+/-- An embedding written in the extended chart at `p` is `C²` at the chart image of `p`. -/
+private theorem contDiffAt_comp_extChartAt_symm_of_smoothEmbedding {d n : ℕ}
+    (M : Type*) [TopologicalSpace M]
+    [ChartedSpace (ManifoldModel n) M]
+    (ι : M → E d)
+    (hι : IsSmoothEmbedding (modelI n) (𝓘(ℝ, E d)) 2 ι) (p : M) :
+    ContDiffAt ℝ 2 (ι ∘ (extChartAt (modelI n) p).symm) (extChartAt (modelI n) p p) := by
+  let F := hι.isImmersion.complement
+  have hFp := hι.isImmersion.isImmersionOfComplement_complement p
+  have hp_ext_source : p ∈ (hFp.domChart.extend (modelI n)).source := by
+    rw [hFp.domChart.extend_source]; exact hFp.mem_domChart_source
+  have hp_inTarget := (hFp.domChart.extend (modelI n)).map_source hp_ext_source
+  have : (modelI n).Boundaryless := by unfold modelI; infer_instance
+  have htarget_open : IsOpen (hFp.domChart.extend (modelI n)).target :=
+    hFp.domChart.isOpen_extend_target
+  have heq : (hFp.codChart.extend (𝓘(ℝ, E d)) ∘ ι ∘ (hFp.domChart.extend (modelI n)).symm)
+      =ᶠ[𝓝 (hFp.domChart.extend (modelI n) p)]
+      (↑hFp.equiv ∘ fun v => (v, (0 : F))) :=
+    hFp.writtenInCharts.eventuallyEq_of_mem (htarget_open.mem_nhds hp_inTarget)
+  have hsmooth : ContDiffAt ℝ 2 (↑hFp.equiv ∘ fun v => (v, (0 : F)))
+      (hFp.domChart.extend (modelI n) p) :=
+    (hFp.equiv.contDiff.comp (contDiff_prodMk_left 0)).contDiffAt
+  have hcoord_cda := hsmooth.congr_of_eventuallyEq heq
+  have hι_cont : ContinuousAt ι p := hι.isEmbedding.continuous.continuousAt
+  have hι_cmd : ContMDiffAt (modelI n) (𝓘(ℝ, E d)) 2 ι p := by
+    change ContMDiffWithinAt (modelI n) (𝓘(ℝ, E d)) 2 ι Set.univ p
+    rw [contMDiffWithinAt_iff_of_mem_maximalAtlas
+      hFp.domChart_mem_maximalAtlas hFp.codChart_mem_maximalAtlas
+      hFp.mem_domChart_source hFp.mem_codChart_source]
+    exact ⟨hι_cont.continuousWithinAt, hcoord_cda.contDiffWithinAt⟩
+  rw [contMDiffAt_iff] at hι_cmd
+  simp only [modelI, extChartAt_model_space_eq_id, PartialEquiv.refl_coe,
+    modelWithCornersSelf_coe, Set.range_id, contDiffWithinAt_univ] at hι_cmd
+  exact hι_cmd.2
+
+/-- An immersion written in the extended chart at `p` has injective derivative at the chart
+image of `p`. -/
+private theorem injective_fderiv_comp_extChartAt_symm_of_smoothEmbedding {d n : ℕ}
+    (M : Type*) [TopologicalSpace M]
+    [ChartedSpace (ManifoldModel n) M]
+    [IsManifold (modelI n) 2 M]
+    (ι : M → E d)
+    (hι : IsSmoothEmbedding (modelI n) (𝓘(ℝ, E d)) 2 ι) (p : M) :
+    Function.Injective
+      (fderiv ℝ (ι ∘ (extChartAt (modelI n) p).symm) (extChartAt (modelI n) p p)) := by
+  let c := extChartAt (modelI n) p
+  let a := c p
+  let g : ManifoldModel n → E d := ι ∘ c.symm
+  have hp_source : p ∈ c.source := mem_extChartAt_source p
+  have hg_smooth : ContDiffAt ℝ 2 g a :=
+    contDiffAt_comp_extChartAt_symm_of_smoothEmbedding M ι hι p
+  change Function.Injective (fderiv ℝ g a)
+  let F := hι.isImmersion.complement
+  have hFp := hι.isImmersion.isImmersionOfComplement_complement p
+  have : (modelI n).Boundaryless := by unfold modelI; infer_instance
+  have hg_diff' : DifferentiableAt ℝ g a := hg_smooth.differentiableAt (by norm_num)
+  have hp_ext_source : p ∈ (hFp.domChart.extend (modelI n)).source := by
+    rw [hFp.domChart.extend_source]; exact hFp.mem_domChart_source
+  set transition : ManifoldModel n → ManifoldModel n :=
+    hFp.domChart.extend (modelI n) ∘ ↑c.symm with htrans_def
+  have hcsymm_mem : ∀ᶠ y in 𝓝 a, c.symm y ∈ hFp.domChart.source := by
+    have hcont := continuousAt_extChartAt_symm (I := modelI n) p
+    have h_mem : hFp.domChart.source ∈ 𝓝 (c.symm a) := by
+      rw [c.left_inv hp_source]
+      exact hFp.domChart.open_source.mem_nhds hFp.mem_domChart_source
+    exact hcont h_mem
+  have ha_target : a ∈ c.target := c.map_source hp_source
+  have htarget_mem := (isOpen_extChartAt_target (I := modelI n) p).mem_nhds ha_target
+  have htarget_open : IsOpen (hFp.domChart.extend (modelI n)).target :=
+    hFp.domChart.isOpen_extend_target
+  have heq_comp : (↑(hFp.codChart.extend (𝓘(ℝ, E d))) ∘ g)
+      =ᶠ[𝓝 a] (↑hFp.equiv ∘ fun v => (v, (0 : F))) ∘ transition := by
+    filter_upwards [hcsymm_mem] with y hy
+    simp only [Function.comp]
+    have hy' : c.symm y ∈ (hFp.domChart.extend (modelI n)).source := by
+      rwa [OpenPartialHomeomorph.extend_source]
+    have hz := hFp.writtenInCharts ((hFp.domChart.extend (modelI n)).map_source hy')
+    simp only [Function.comp] at hz
+    rwa [(hFp.domChart.extend (modelI n)).left_inv hy'] at hz
+  have hfderiv_eq := heq_comp.fderiv_eq (𝕜 := ℝ)
+  have htrans_diff : DifferentiableAt ℝ transition a := by
+    have h := ModelWithCorners.contDiffWithinAt_extendCoordChange' (I := modelI n)
+      (IsManifold.chart_mem_maximalAtlas (I := modelI n) p)
+      hFp.domChart_mem_maximalAtlas
+      (mem_chart_source (ManifoldModel n) p) hFp.mem_domChart_source
+    simp only [modelI, modelWithCornersSelf_coe, Set.range_id, contDiffWithinAt_univ] at h
+    simpa [transition, htrans_def, a, c, extChartAt, modelI] using
+      h.differentiableAt (by norm_num)
+  have hinv_comp_eq : (↑c ∘ ↑(hFp.domChart.extend (modelI n)).symm) ∘ transition
+      =ᶠ[𝓝 a] id := by
+    filter_upwards [hcsymm_mem, htarget_mem] with y hy1 hy2
+    simp only [Function.comp, id, htrans_def]
+    have hy1' : c.symm y ∈ (hFp.domChart.extend (modelI n)).source := by
+      rwa [OpenPartialHomeomorph.extend_source]
+    rw [(hFp.domChart.extend (modelI n)).left_inv hy1', c.right_inv hy2]
+  have htrans_a : transition a = hFp.domChart.extend (modelI n) p := by
+    change (hFp.domChart.extend (modelI n)) (c.symm (c p)) = _
+    rw [c.left_inv hp_source]
+  have hinv_diff : DifferentiableAt ℝ (↑c ∘ ↑(hFp.domChart.extend (modelI n)).symm)
+      (transition a) := by
+    have h := ModelWithCorners.contDiffWithinAt_extendCoordChange' (I := modelI n)
+      hFp.domChart_mem_maximalAtlas
+      (IsManifold.chart_mem_maximalAtlas (I := modelI n) p)
+      hFp.mem_domChart_source (mem_chart_source (ManifoldModel n) p)
+    simp only [modelI, modelWithCornersSelf_coe, Set.range_id, contDiffWithinAt_univ] at h
+    simpa [htrans_a, c, extChartAt, modelI] using h.differentiableAt (by norm_num)
+  have hcomp_id : fderiv ℝ ((↑c ∘ ↑(hFp.domChart.extend (modelI n)).symm) ∘ transition) a =
+      ContinuousLinearMap.id ℝ _ := by
+    rw [hinv_comp_eq.fderiv_eq (𝕜 := ℝ), fderiv_id]
+  have hchain := fderiv_comp (x := a) hinv_diff htrans_diff
+  rw [hchain] at hcomp_id
+  have htrans_inj : Function.Injective (fderiv ℝ transition a) :=
+    Function.HasLeftInverse.injective ⟨fderiv ℝ (↑c ∘ ↑(hFp.domChart.extend (modelI n)).symm)
+      (transition a), fun x => by
+      have := congr_fun (congr_arg DFunLike.coe hcomp_id) x
+      simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.id_apply] at this
+      exact this⟩
+  set equiv_inl : ManifoldModel n →L[ℝ] E d :=
+    hFp.equiv.toContinuousLinearMap.comp (ContinuousLinearMap.inl ℝ _ F) with hequiv_inl_def
+  have hequiv_inl_eq : ↑hFp.equiv ∘ (fun v => (v, (0 : F))) = ⇑equiv_inl := by
+    ext v; simp [equiv_inl, ContinuousLinearMap.comp_apply, ContinuousLinearMap.inl_apply]
+  have hequiv_inl_inj : Function.Injective equiv_inl :=
+    hFp.equiv.injective.comp (fun x y h => (Prod.mk.inj h).1)
+  have hrhs_inj : Function.Injective
+      (fderiv ℝ ((↑hFp.equiv ∘ fun v => (v, (0 : F))) ∘ transition) a) := by
+    rw [hequiv_inl_eq]
+    rw [fderiv_comp (x := a) equiv_inl.differentiableAt htrans_diff,
+        ContinuousLinearMap.fderiv]
+    exact hequiv_inl_inj.comp htrans_inj
+  rw [← hfderiv_eq] at hrhs_inj
+  have hcodchart_diff : DifferentiableAt ℝ (↑(hFp.codChart.extend (𝓘(ℝ, E d)))) (g a) := by
+    have hga : g a = ι p := by change ι (c.symm (c p)) = ι p; rw [c.left_inv hp_source]
+    rw [hga]
+    have h := ModelWithCorners.contDiffWithinAt_extendCoordChange' (I := 𝓘(ℝ, E d))
+      (IsManifold.chart_mem_maximalAtlas (I := 𝓘(ℝ, E d)) (ι p))
+      hFp.codChart_mem_maximalAtlas
+      (mem_chart_source (E d) (ι p)) hFp.mem_codChart_source
+    simp only [modelWithCornersSelf_coe, Set.range_id, contDiffWithinAt_univ] at h
+    simpa [chartAt_self_eq, extChartAt_model_space_eq_id, PartialEquiv.refl_coe] using
+      h.differentiableAt (by norm_num)
+  rw [fderiv_comp (x := a) hcodchart_diff hg_diff'] at hrhs_inj
+  intro x y hxy
+  apply hrhs_inj
+  simp only [ContinuousLinearMap.comp_apply, hxy]
+
+/-- A map that is `C²` at `0` agrees near `0` with a globally `C²` map, obtained by
+multiplying with a smooth bump function. -/
+private theorem exists_contDiff_eventuallyEq_of_contDiffAt_zero
+    {V W : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
+    [NormedAddCommGroup W] [NormedSpace ℝ W] {φ_raw : V → W}
+    (hφ_raw_smooth_at : ContDiffAt ℝ 2 φ_raw 0) :
+    ∃ φ : V → W, ContDiff ℝ 2 φ ∧ φ =ᶠ[𝓝 0] φ_raw := by
+  have hφ_raw_ev : ∀ᶠ v in 𝓝 (0 : V), ContDiffAt ℝ 2 φ_raw v :=
+    hφ_raw_smooth_at.eventually (by norm_num)
+  obtain ⟨ε, hε_pos, hε_ball⟩ := Metric.eventually_nhds_iff.mp hφ_raw_ev
+  -- Construct smooth bump χ equal to 1 near 0 with support inside ball 0 ε
+  let bump : ContDiffBump (0 : V) :=
+    { rIn := ε / 3
+      rOut := ε / 2
+      rIn_pos := by positivity
+      rIn_lt_rOut := by linarith }
+  -- Define bump-extended φ := bump • φ_raw, which is globally C²
+  set φ : V → W := fun v => bump v • φ_raw v
+  -- Near 0, bump = 1 so φ = φ_raw
+  have hφ_eq_raw_near : φ =ᶠ[𝓝 0] φ_raw := by
+    filter_upwards [bump.eventuallyEq_one] with v hv
+    change bump v • φ_raw v = φ_raw v
+    have hbv : (↑bump : V → ℝ) v = 1 := by simpa using hv
+    rw [hbv, one_smul]
+  have hφ_smooth : ContDiff ℝ 2 φ := by
+    rw [contDiff_iff_contDiffAt]
+    intro v
+    by_cases hv : v ∈ tsupport (↑bump : V → ℝ)
+    · have hv_dist : dist v 0 < ε := by
+        have hmem : v ∈ Metric.closedBall (0 : V) (ε / 2) := bump.tsupport_eq ▸ hv
+        exact lt_of_le_of_lt (Metric.mem_closedBall.mp hmem) (by linarith)
+      exact (bump.contDiff (n := 2)).contDiffAt.smul (hε_ball hv_dist)
+    · have hφ_eq_zero : φ =ᶠ[𝓝 v] (fun _ : V => (0 : W)) := by
+        filter_upwards [notMem_tsupport_iff_eventuallyEq.mp hv] with w hw
+        change bump w • φ_raw w = (0 : W)
+        have hbw : (↑bump : V → ℝ) w = 0 := by simpa using hw
+        rw [hbw, zero_smul]
+      exact contDiffAt_const.congr_of_eventuallyEq hφ_eq_zero
+  exact ⟨φ, hφ_smooth, hφ_eq_raw_near⟩
+
 /-- At each point of a C² smooth embedding, the image is locally a C² graph
     over an n-dimensional subspace, with φ(0) = 0, Dφ(0) = 0.
     (IFT applied to the embedding.) -/
-private abbrev smooth_embedding_local_graph {d n : ℕ}
+private theorem smooth_embedding_local_graph {d n : ℕ}
     (M : Type*) [TopologicalSpace M]
     [ChartedSpace (ManifoldModel n) M]
     [IsManifold (modelI n) 2 M]
@@ -144,130 +328,13 @@ private abbrev smooth_embedding_local_graph {d n : ℕ}
   let g : ManifoldModel n → E d := ι ∘ c.symm
   have hp_source : p ∈ c.source := mem_extChartAt_source p
   -- Step 3: Key analytic properties of g
-  have hg_smooth : ContDiffAt ℝ 2 g a := by
-    let F := hι.isImmersion.complement
-    have hFp := hι.isImmersion.isImmersionOfComplement_complement p
-    have hp_ext_source : p ∈ (hFp.domChart.extend (modelI n)).source := by
-      rw [hFp.domChart.extend_source]; exact hFp.mem_domChart_source
-    have hp_inTarget := (hFp.domChart.extend (modelI n)).map_source hp_ext_source
-    have : (modelI n).Boundaryless := by unfold modelI; infer_instance
-    have htarget_open : IsOpen (hFp.domChart.extend (modelI n)).target :=
-      hFp.domChart.isOpen_extend_target
-    have heq : (hFp.codChart.extend (𝓘(ℝ, E d)) ∘ ι ∘ (hFp.domChart.extend (modelI n)).symm)
-        =ᶠ[𝓝 (hFp.domChart.extend (modelI n) p)]
-        (↑hFp.equiv ∘ fun v => (v, (0 : F))) :=
-      hFp.writtenInCharts.eventuallyEq_of_mem (htarget_open.mem_nhds hp_inTarget)
-    have hsmooth : ContDiffAt ℝ 2 (↑hFp.equiv ∘ fun v => (v, (0 : F)))
-        (hFp.domChart.extend (modelI n) p) :=
-      (hFp.equiv.contDiff.comp (contDiff_prodMk_left 0)).contDiffAt
-    have hcoord_cda := hsmooth.congr_of_eventuallyEq heq
-    have hι_cont : ContinuousAt ι p := hι.isEmbedding.continuous.continuousAt
-    have hι_cmd : ContMDiffAt (modelI n) (𝓘(ℝ, E d)) 2 ι p := by
-      change ContMDiffWithinAt (modelI n) (𝓘(ℝ, E d)) 2 ι Set.univ p
-      rw [contMDiffWithinAt_iff_of_mem_maximalAtlas
-        hFp.domChart_mem_maximalAtlas hFp.codChart_mem_maximalAtlas
-        hFp.mem_domChart_source hFp.mem_codChart_source]
-      exact ⟨hι_cont.continuousWithinAt, hcoord_cda.contDiffWithinAt⟩
-    rw [contMDiffAt_iff] at hι_cmd
-    simp only [modelI, extChartAt_model_space_eq_id, PartialEquiv.refl_coe,
-      modelWithCornersSelf_coe, Set.range_id, contDiffWithinAt_univ] at hι_cmd
-    exact hι_cmd.2
+  have hg_smooth : ContDiffAt ℝ 2 g a :=
+    contDiffAt_comp_extChartAt_symm_of_smoothEmbedding M ι hι p
   have hg_a : g a = m := by
     change ι (c.symm (c p)) = m
     rw [PartialEquiv.left_inv c hp_source, hp]
-  have hg_inj : Function.Injective (fderiv ℝ g a) := by
-    let F := hι.isImmersion.complement
-    have hFp := hι.isImmersion.isImmersionOfComplement_complement p
-    have : (modelI n).Boundaryless := by unfold modelI; infer_instance
-    have hg_diff' : DifferentiableAt ℝ g a := hg_smooth.differentiableAt (by norm_num)
-    have hp_ext_source : p ∈ (hFp.domChart.extend (modelI n)).source := by
-      rw [hFp.domChart.extend_source]; exact hFp.mem_domChart_source
-    set transition : ManifoldModel n → ManifoldModel n :=
-      hFp.domChart.extend (modelI n) ∘ ↑c.symm with htrans_def
-    have hcsymm_mem : ∀ᶠ y in 𝓝 a, c.symm y ∈ hFp.domChart.source := by
-      have hcont := continuousAt_extChartAt_symm (I := modelI n) p
-      have h_mem : hFp.domChart.source ∈ 𝓝 (c.symm a) := by
-        rw [c.left_inv hp_source]
-        exact hFp.domChart.open_source.mem_nhds hFp.mem_domChart_source
-      exact hcont h_mem
-    have ha_target : a ∈ c.target := c.map_source hp_source
-    have htarget_mem := (isOpen_extChartAt_target (I := modelI n) p).mem_nhds ha_target
-    have htarget_open : IsOpen (hFp.domChart.extend (modelI n)).target :=
-      hFp.domChart.isOpen_extend_target
-    have heq_comp : (↑(hFp.codChart.extend (𝓘(ℝ, E d))) ∘ g)
-        =ᶠ[𝓝 a] (↑hFp.equiv ∘ fun v => (v, (0 : F))) ∘ transition := by
-      filter_upwards [hcsymm_mem] with y hy
-      simp only [Function.comp]
-      have hy' : c.symm y ∈ (hFp.domChart.extend (modelI n)).source := by
-        rwa [OpenPartialHomeomorph.extend_source]
-      have hz := hFp.writtenInCharts ((hFp.domChart.extend (modelI n)).map_source hy')
-      simp only [Function.comp] at hz
-      rwa [(hFp.domChart.extend (modelI n)).left_inv hy'] at hz
-    have hfderiv_eq := heq_comp.fderiv_eq (𝕜 := ℝ)
-    have htrans_diff : DifferentiableAt ℝ transition a := by
-      have h := ModelWithCorners.contDiffWithinAt_extendCoordChange' (I := modelI n)
-        (IsManifold.chart_mem_maximalAtlas (I := modelI n) p)
-        hFp.domChart_mem_maximalAtlas
-        (mem_chart_source (ManifoldModel n) p) hFp.mem_domChart_source
-      simp only [modelI, modelWithCornersSelf_coe, Set.range_id, contDiffWithinAt_univ] at h
-      simpa [transition, htrans_def, a, c, extChartAt, modelI] using
-        h.differentiableAt (by norm_num)
-    have hinv_comp_eq : (↑c ∘ ↑(hFp.domChart.extend (modelI n)).symm) ∘ transition
-        =ᶠ[𝓝 a] id := by
-      filter_upwards [hcsymm_mem, htarget_mem] with y hy1 hy2
-      simp only [Function.comp, id, htrans_def]
-      have hy1' : c.symm y ∈ (hFp.domChart.extend (modelI n)).source := by
-        rwa [OpenPartialHomeomorph.extend_source]
-      rw [(hFp.domChart.extend (modelI n)).left_inv hy1', c.right_inv hy2]
-    have htrans_a : transition a = hFp.domChart.extend (modelI n) p := by
-      change (hFp.domChart.extend (modelI n)) (c.symm (c p)) = _
-      rw [c.left_inv hp_source]
-    have hinv_diff : DifferentiableAt ℝ (↑c ∘ ↑(hFp.domChart.extend (modelI n)).symm)
-        (transition a) := by
-      have h := ModelWithCorners.contDiffWithinAt_extendCoordChange' (I := modelI n)
-        hFp.domChart_mem_maximalAtlas
-        (IsManifold.chart_mem_maximalAtlas (I := modelI n) p)
-        hFp.mem_domChart_source (mem_chart_source (ManifoldModel n) p)
-      simp only [modelI, modelWithCornersSelf_coe, Set.range_id, contDiffWithinAt_univ] at h
-      simpa [htrans_a, c, extChartAt, modelI] using h.differentiableAt (by norm_num)
-    have hcomp_id : fderiv ℝ ((↑c ∘ ↑(hFp.domChart.extend (modelI n)).symm) ∘ transition) a =
-        ContinuousLinearMap.id ℝ _ := by
-      rw [hinv_comp_eq.fderiv_eq (𝕜 := ℝ), fderiv_id]
-    have hchain := fderiv_comp (x := a) hinv_diff htrans_diff
-    rw [hchain] at hcomp_id
-    have htrans_inj : Function.Injective (fderiv ℝ transition a) :=
-      Function.HasLeftInverse.injective ⟨fderiv ℝ (↑c ∘ ↑(hFp.domChart.extend (modelI n)).symm)
-        (transition a), fun x => by
-        have := congr_fun (congr_arg DFunLike.coe hcomp_id) x
-        simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.id_apply] at this
-        exact this⟩
-    set equiv_inl : ManifoldModel n →L[ℝ] E d :=
-      hFp.equiv.toContinuousLinearMap.comp (ContinuousLinearMap.inl ℝ _ F) with hequiv_inl_def
-    have hequiv_inl_eq : ↑hFp.equiv ∘ (fun v => (v, (0 : F))) = ⇑equiv_inl := by
-      ext v; simp [equiv_inl, ContinuousLinearMap.comp_apply, ContinuousLinearMap.inl_apply]
-    have hequiv_inl_inj : Function.Injective equiv_inl :=
-      hFp.equiv.injective.comp (fun x y h => (Prod.mk.inj h).1)
-    have hrhs_inj : Function.Injective
-        (fderiv ℝ ((↑hFp.equiv ∘ fun v => (v, (0 : F))) ∘ transition) a) := by
-      rw [hequiv_inl_eq]
-      rw [fderiv_comp (x := a) equiv_inl.differentiableAt htrans_diff,
-          ContinuousLinearMap.fderiv]
-      exact hequiv_inl_inj.comp htrans_inj
-    rw [← hfderiv_eq] at hrhs_inj
-    have hcodchart_diff : DifferentiableAt ℝ (↑(hFp.codChart.extend (𝓘(ℝ, E d)))) (g a) := by
-      have hga : g a = ι p := by change ι (c.symm (c p)) = ι p; rw [c.left_inv hp_source]
-      rw [hga]
-      have h := ModelWithCorners.contDiffWithinAt_extendCoordChange' (I := 𝓘(ℝ, E d))
-        (IsManifold.chart_mem_maximalAtlas (I := 𝓘(ℝ, E d)) (ι p))
-        hFp.codChart_mem_maximalAtlas
-        (mem_chart_source (E d) (ι p)) hFp.mem_codChart_source
-      simp only [modelWithCornersSelf_coe, Set.range_id, contDiffWithinAt_univ] at h
-      simpa [chartAt_self_eq, extChartAt_model_space_eq_id, PartialEquiv.refl_coe] using
-        h.differentiableAt (by norm_num)
-    rw [fderiv_comp (x := a) hcodchart_diff hg_diff'] at hrhs_inj
-    intro x y hxy
-    apply hrhs_inj
-    simp only [ContinuousLinearMap.comp_apply, hxy]
+  have hg_inj : Function.Injective (fderiv ℝ g a) :=
+    injective_fderiv_comp_extChartAt_symm_of_smoothEmbedding M ι hι p
   have hg_diff : DifferentiableAt ℝ g a := hg_smooth.differentiableAt (by norm_num)
   -- Step 4: Define the tangent subspace V = range(Dg(a))
   set L : ManifoldModel n →L[ℝ] E d := fderiv ℝ g a with hL_def
@@ -336,41 +403,10 @@ private abbrev smooth_embedding_local_graph {d n : ℕ}
         (Vᗮ.orthogonalProjectionOnto.comp L).comp (fderiv ℝ ψ 0) by
       rw [hassoc, hperp, ContinuousLinearMap.zero_comp]
     ext1 v; simp only [ContinuousLinearMap.comp_apply]
-  -- Extract ball around 0 where φ_raw is C²
-  have hφ_raw_ev : ∀ᶠ v in 𝓝 (0 : ↥V), ContDiffAt ℝ 2 φ_raw v :=
-    hφ_raw_smooth_at.eventually (by norm_num)
-  obtain ⟨ε, hε_pos, hε_ball⟩ := Metric.eventually_nhds_iff.mp hφ_raw_ev
-  -- Construct smooth bump χ equal to 1 near 0 with support inside ball 0 ε
-  let bump : ContDiffBump (0 : ↥V) :=
-    { rIn := ε / 3
-      rOut := ε / 2
-      rIn_pos := by positivity
-      rIn_lt_rOut := by linarith }
-  -- Define bump-extended φ := bump • φ_raw, which is globally C²
-  set φ : ↥V → ↥(Vᗮ) := fun v => bump v • φ_raw v with hφ_def
-  -- Near 0, bump = 1 so φ = φ_raw
-  have hφ_eq_raw_near : φ =ᶠ[𝓝 0] φ_raw := by
-    filter_upwards [bump.eventuallyEq_one] with v hv
-    change bump v • φ_raw v = φ_raw v
-    have hbv : (↑bump : ↥V → ℝ) v = 1 := by simpa using hv
-    rw [hbv, one_smul]
-  have hφ_zero : φ 0 = 0 := by
-    change bump 0 • φ_raw 0 = 0
-    rw [hφ_raw_zero, smul_zero]
-  have hφ_smooth : ContDiff ℝ 2 φ := by
-    rw [contDiff_iff_contDiffAt]
-    intro v
-    by_cases hv : v ∈ tsupport (↑bump : ↥V → ℝ)
-    · have hv_dist : dist v 0 < ε := by
-        have hmem : v ∈ Metric.closedBall (0 : ↥V) (ε / 2) := bump.tsupport_eq ▸ hv
-        exact lt_of_le_of_lt (Metric.mem_closedBall.mp hmem) (by linarith)
-      exact (bump.contDiff (n := 2)).contDiffAt.smul (hε_ball hv_dist)
-    · have hφ_eq_zero : φ =ᶠ[𝓝 v] (fun _ : ↥V => (0 : ↥(Vᗮ))) := by
-        filter_upwards [notMem_tsupport_iff_eventuallyEq.mp hv] with w hw
-        change bump w • φ_raw w = (0 : ↥(Vᗮ))
-        have hbw : (↑bump : ↥V → ℝ) w = 0 := by simpa using hw
-        rw [hbw, zero_smul]
-      exact contDiffAt_const.congr_of_eventuallyEq hφ_eq_zero
+  -- Extend φ_raw globally via a bump function, keeping it unchanged near 0
+  obtain ⟨φ, hφ_smooth, hφ_eq_raw_near⟩ :=
+    exists_contDiff_eventuallyEq_of_contDiffAt_zero hφ_raw_smooth_at
+  have hφ_zero : φ 0 = 0 := by rw [hφ_eq_raw_near.eq_of_nhds, hφ_raw_zero]
   have hDφ_zero : fderiv ℝ φ 0 = 0 := by
     rw [hφ_eq_raw_near.fderiv_eq]
     exact hDφ_raw_zero

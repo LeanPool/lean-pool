@@ -36,7 +36,204 @@ open Cardinal Ideal
 
 variable {T : Type*} [CommRing T] [IsLocalRing T] [IsNoetherianRing T] [IsDomain T]
 
-private def close_up_aux_b2_nonzero_proof
+/-- Recombination for the B2 sub-case: from `c - x₁ * a = p * w` in `S₁` and
+`w ∈ (insert a s'_div)·S₂`, deduce `c ∈ s·S₂`. -/
+private theorem close_up_b2_recombine
+    {R S₁ S₂ : NSubring T} [DecidableEq R.carrier]
+    (hAext₁ : IsAExtension R S₁) (hAext₂ : IsAExtension S₁ S₂)
+    (hle₁ : R.carrier ≤ S₁.carrier) (hle₂ : S₁.carrier ≤ S₂.carrier)
+    {a p c : R.carrier} {s s' s'_div : Finset R.carrier}
+    (hs_insert : s = insert a s')
+    (h_ml : span {p} * span (↑(insert a s'_div) : Set R.carrier) ≤
+      span (↑(insert a s') : Set R.carrier))
+    (x₁ w : S₁.carrier)
+    (hw_eq : (⟨(c : T), hle₁ c.2⟩ : S₁.carrier) - x₁ * ⟨(a : T), hle₁ a.2⟩ =
+      ⟨(p : T), hle₁ p.2⟩ * w)
+    (hw_S₂ : (⟨(↑w : T), hle₂ w.2⟩ : S₂.carrier) ∈
+      Ideal.map (Subring.inclusion hle₂)
+        (Ideal.map (Subring.inclusion hle₁) (span (↑(insert a s'_div) : Set R.carrier)))) :
+    ∃ S : NSubring T, IsAExtension R S ∧ ∃ (hle : R.carrier ≤ S.carrier),
+      (⟨(c : T), hle c.2⟩ : S.carrier) ∈
+        Ideal.map (Subring.inclusion hle) (span (↑s : Set R.carrier)) := by
+  have hle_comp : R.carrier ≤ S₂.carrier := le_trans hle₁ hle₂
+  refine ⟨S₂, isAExtension_trans' hAext₁ hAext₂, hle_comp, ?_⟩
+  have hc_val : (c : T) = (↑x₁ : T) * (a : T) + (p : T) * (↑w : T) := by
+    have := congr_arg Subtype.val hw_eq
+    simp only [Subring.coe_mul, AddSubgroupClass.coe_sub] at this
+    linear_combination this
+  change (⟨(c : T), hle_comp c.2⟩ : S₂.carrier) ∈
+    Ideal.map (Subring.inclusion hle_comp)
+      (span (↑s : Set R.carrier))
+  rw [hs_insert]
+  have hc_eq : (⟨(c : T), hle_comp c.2⟩ : S₂.carrier) =
+      ⟨(↑x₁ : T), hle₂ x₁.2⟩ * ⟨(a : T), hle_comp a.2⟩ +
+      ⟨(p : T), hle_comp p.2⟩ * ⟨(↑w : T), hle₂ w.2⟩ := by
+    ext
+    simpa only [Subring.coe_mul, Subring.coe_add] using hc_val
+  rw [hc_eq]
+  apply add_mem
+  · apply Ideal.mul_mem_left
+    exact Ideal.map_mono
+      (Ideal.span_mono
+        (Set.singleton_subset_iff.mpr (Finset.mem_coe.mpr (Finset.mem_insert_self a s'))))
+      (Ideal.mem_map_of_mem _ (Ideal.subset_span rfl))
+  · have hw_comp : (⟨(↑w : T), hle₂ w.2⟩ : S₂.carrier) ∈
+        Ideal.map (Subring.inclusion hle_comp)
+          (span (↑(insert a s'_div) : Set R.carrier)) := by
+      rw [show Subring.inclusion hle_comp =
+        (Subring.inclusion hle₂).comp (Subring.inclusion hle₁) from
+        RingHom.ext fun _ => rfl, ← Ideal.map_map]
+      exact hw_S₂
+    have hmul := Ideal.mul_mem_mul
+      (show (⟨(p : T), hle_comp p.2⟩ : S₂.carrier) ∈
+        Ideal.map (Subring.inclusion hle_comp)
+          (span {p}) from
+        Ideal.mem_map_of_mem _
+          (Ideal.subset_span rfl))
+      hw_comp
+    rw [← Ideal.map_mul] at hmul
+    exact Ideal.map_mono h_ml hmul
+
+/-- Inductive step for the B2 sub-case: having divided the generators `s'` by the
+common prime `p`, close up `w` against `insert a (s'/p)` over `S₁`, using either the
+cardinality induction hypothesis or the GCD-complexity induction hypothesis. -/
+private theorem close_up_b2_divided_step
+    (n'' : ℕ)
+    (ih : ∀ (R : NSubring T) (_ : Cardinal.mk R.carrier < Cardinal.mk T)
+      (s : Finset R.carrier) (_ : s.card ≤ n'' + 1 + 1) (c : R.carrier)
+      (_ : (c : T) ∈ Ideal.map R.carrier.subtype (span (↑s : Set R.carrier))),
+      ∃ S : NSubring T, IsAExtension R S ∧ ∃ (hle : R.carrier ≤ S.carrier),
+        (⟨(c : T), hle c.2⟩ : S.carrier) ∈
+          Ideal.map (Subring.inclusion hle) (span (↑s : Set R.carrier)))
+    (m : ℕ)
+    (ih_m : ∀ m_1, m_1 < m →
+      ∀ (R : NSubring T) (_ : Cardinal.mk R.carrier < Cardinal.mk T),
+      letI : IsDomain R.carrier := NSubring.isDomain R
+      letI : UniqueFactorizationMonoid R.carrier := R.isUFD
+      ∀ (a : R.carrier) (s : Finset R.carrier),
+      gcdComplexity s ≤ m_1 →
+      s.card = n'' + 1 + 1 + 1 → a ∈ s → ∀ (c : R.carrier),
+      (c : T) ∈ Ideal.map R.carrier.subtype (span (↑s : Set R.carrier)) →
+      ∃ S : NSubring T, IsAExtension R S ∧ ∃ (hle : R.carrier ≤ S.carrier),
+        (⟨(c : T), hle c.2⟩ : S.carrier) ∈
+          Ideal.map (Subring.inclusion hle) (span (↑s : Set R.carrier)))
+    {R S₁ : NSubring T} [DecidableEq R.carrier]
+    (hAext₁ : IsAExtension R S₁) (hle₁ : R.carrier ≤ S₁.carrier)
+    (hS₁_card : Cardinal.mk S₁.carrier < Cardinal.mk T)
+    {a : R.carrier} {s : Finset R.carrier}
+    (hs_gcd : gcdComplexity s ≤ m)
+    (hs_eq : s.card = n'' + 1 + 1 + 1) (ha_mem : a ∈ s)
+    (s' : Finset R.carrier) (hs'_def : s' = s.erase a)
+    (hs_insert : s = insert a s')
+    (hs'_card : s'.card ≤ n'' + 1 + 1)
+    {p : R.carrier} (hp : Prime p)
+    (div_p : R.carrier → R.carrier) (hdiv : ∀ x ∈ s', x = p * div_p x)
+    (w : S₁.carrier)
+    (hw_mem_T : (↑w : T) ∈
+      Ideal.map R.carrier.subtype (span (↑(insert a (s'.image div_p)) : Set R.carrier))) :
+    ∃ S₂ : NSubring T, IsAExtension S₁ S₂ ∧
+      ∃ (hle₂ : S₁.carrier ≤ S₂.carrier), (⟨(↑w : T), hle₂ w.2⟩ : S₂.carrier) ∈
+        Ideal.map (Subring.inclusion hle₂)
+          (Ideal.map (Subring.inclusion hle₁)
+            (span (↑(insert a (s'.image div_p)) : Set R.carrier))) := by
+  classical
+  set s'_div := s'.image div_p with hs'_div_def
+  by_cases ha_s'_div : a ∈ s'_div
+  · -- a ∈ s'_div: insert = s'_div
+    have h_eq2 : insert a s'_div = s'_div := Finset.insert_eq_of_mem ha_s'_div
+    rw [h_eq2] at hw_mem_T ⊢
+    have hs'_div_card : s'_div.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans hs'_card
+    let liftR₁ := Subring.inclusion hle₁
+    let s₁ := s'_div.image liftR₁
+    have hs₁_card : s₁.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans hs'_div_card
+    have hw_s₁ : (↑w : T) ∈
+        Ideal.map S₁.carrier.subtype (span (↑s₁ : Set S₁.carrier)) := by
+      change (↑w : T) ∈ Ideal.map S₁.carrier.subtype
+        (span (↑(s'_div.image liftR₁) : Set S₁.carrier))
+      rw [Finset.coe_image, ← Ideal.map_span, Ideal.map_map,
+        show S₁.carrier.subtype.comp liftR₁ = R.carrier.subtype from
+          RingHom.ext fun _ => rfl]
+      exact hw_mem_T
+    obtain ⟨S₂, hAext₂, hle₂, hw_S₂⟩ := ih S₁ hS₁_card s₁ hs₁_card w hw_s₁
+    refine ⟨S₂, hAext₂, hle₂, ?_⟩
+    convert hw_S₂ using 1
+    congr 1
+    rw [Ideal.map_span, ← Finset.coe_image]
+  · -- a ∉ s'_div
+    by_cases hs'_div_card : s'_div.card ≤ n'' + 1
+    · -- |insert a s'_div| ≤ n''+2
+      have h_ins_card3 : (insert a s'_div).card ≤ n'' + 1 + 1 := by
+        rw [Finset.card_insert_of_notMem ha_s'_div]
+        omega
+      let liftR₁ := Subring.inclusion hle₁
+      let s₁ := (insert a s'_div).image liftR₁
+      have hs₁_card : s₁.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans h_ins_card3
+      have hw_s₁ : (↑w : T) ∈
+          Ideal.map S₁.carrier.subtype (span (↑s₁ : Set S₁.carrier)) := by
+        change (↑w : T) ∈ Ideal.map S₁.carrier.subtype
+          (span (↑((insert a s'_div).image liftR₁) : Set S₁.carrier))
+        rw [Finset.coe_image, ← Ideal.map_span, Ideal.map_map,
+          show S₁.carrier.subtype.comp liftR₁ = R.carrier.subtype from
+            RingHom.ext fun _ => rfl]
+        exact hw_mem_T
+      obtain ⟨S₂, hAext₂, hle₂, hw_S₂⟩ := ih S₁ hS₁_card s₁ hs₁_card w hw_s₁
+      refine ⟨S₂, hAext₂, hle₂, ?_⟩
+      convert hw_S₂ using 1
+      congr 1
+      rw [Ideal.map_span, ← Finset.coe_image]
+    · -- s'_div.card = n''+2, need WF on GCD complexity
+      push Not at hs'_div_card
+      have hs'_div_card_eq : s'_div.card = n'' + 1 + 1 := by
+        have h_le : s'_div.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans hs'_card
+        omega
+      let liftR₁' := Subring.inclusion hle₁
+      let s₁' := (insert a s'_div).image liftR₁'
+      have hw_s₁' : (↑w : T) ∈
+          Ideal.map S₁.carrier.subtype (span (↑s₁' : Set S₁.carrier)) := by
+        change (↑w : T) ∈ Ideal.map S₁.carrier.subtype
+          (span (↑((insert a s'_div).image liftR₁') : Set S₁.carrier))
+        rw [Finset.coe_image, ← Ideal.map_span, Ideal.map_map,
+          show S₁.carrier.subtype.comp liftR₁' = R.carrier.subtype from
+            RingHom.ext fun _ => rfl]
+        exact hw_mem_T
+      have hs₁'_card : s₁'.card = n'' + 1 + 1 + 1 := by
+        rw [show s₁' = (insert a s'_div).image liftR₁' from rfl,
+          Finset.card_image_of_injective _ (Subring.inclusion_injective hle₁),
+          Finset.card_insert_of_notMem ha_s'_div, hs'_div_card_eq]
+      have ha_s₁' : liftR₁' a ∈ s₁' :=
+        Finset.mem_image.mpr ⟨a, Finset.mem_insert_self a s'_div, rfl⟩
+      -- GCD complexity drops: gcdComplexity s₁' < m
+      have hgcd_s₁' : gcdComplexity s₁' < m := by
+        have hcross : gcdComplexity s₁' = gcdComplexity (insert a s'_div) := by
+          unfold gcdComplexity
+          have hinj₁ : Set.InjOn liftR₁' ↑(insert a s'_div) :=
+            fun x _ y _ h => (Subring.inclusion_injective hle₁) h
+          rw [show s₁' = (insert a s'_div).image liftR₁' from rfl,
+              Finset.sum_image hinj₁]
+          apply Finset.sum_congr rfl
+          intro x _
+          exact normalizedFactors_card_inclusion R S₁
+            ⟨hAext₁.le, hAext₁.primes_preserved, hAext₁.card_le⟩
+            hle₁ x
+        have hstrict : gcdComplexity (insert a s'_div) < gcdComplexity s :=
+          gcdComplexity_div_prime_strict hs_insert hs'_def
+            (by
+               rw [hs'_def, Finset.card_erase_of_mem ha_mem, hs_eq]
+               omega)
+            hp div_p hdiv ha_s'_div
+        calc gcdComplexity s₁' = gcdComplexity (insert a s'_div) := hcross
+          _ < gcdComplexity s := hstrict
+          _ ≤ m := hs_gcd
+      obtain ⟨S₂, hAext₂, hle₂, hw_S₂⟩ :=
+        ih_m (gcdComplexity s₁') hgcd_s₁' S₁ hS₁_card (liftR₁' a) s₁' le_rfl hs₁'_card
+          ha_s₁' w hw_s₁'
+      refine ⟨S₂, hAext₂, hle₂, ?_⟩
+      convert hw_S₂ using 1
+      congr 1
+      rw [Ideal.map_span, ← Finset.coe_image]
+
+-- Extracted: Sub-case B2 of close_up_aux_wf (p∤a, no common prime divides both a and c).
+theorem close_up_aux_b2_nonzero
     [IsAdicComplete (IsLocalRing.maximalIdeal T) T]
     (hM_not_assoc : ∀ (r : T), r ≠ 0 →
       IsLocalRing.maximalIdeal T ∉ associatedPrimes T (T ⧸ Ideal.span {r}))
@@ -80,10 +277,10 @@ private def close_up_aux_b2_nonzero_proof
     (ht_eq : u = R.carrier.subtype a * t)
     (huv : u + v = (c : T))
     (ha_zero : (a : T) ≠ 0)
-    (_hI_s'_bot : Ideal.map R.carrier.subtype (span (↑s' : Set R.carrier)) ≠ ⊥) : PLift (
+    (_hI_s'_bot : Ideal.map R.carrier.subtype (span (↑s' : Set R.carrier)) ≠ ⊥) :
     ∃ S : NSubring T, IsAExtension R S ∧ ∃ (hle : R.carrier ≤ S.carrier),
       (⟨(c : T), hle c.2⟩ : S.carrier) ∈
-        Ideal.map (Subring.inclusion hle) (span (↑s : Set R.carrier)) ) := ⟨by
+        Ideal.map (Subring.inclusion hle) (span (↑s : Set R.carrier)) := by
   by_cases hM_bot : IsLocalRing.maximalIdeal T = ⊥
   · -- M = ⊥: T is a field, a is a unit, trivial
     refine ⟨R, ⟨le_refl _, fun r hr => hr, le_max_right _ _⟩,
@@ -203,201 +400,11 @@ private def close_up_aux_b2_nonzero_proof
             (Set.singleton_subset_iff.mpr (Finset.mem_coe.mpr (Finset.mem_insert_self a s'_div))))
           (by rw [Ideal.map_span, Set.image_singleton]
               exact Ideal.mem_span_singleton.mpr ⟨t'_b2, rfl⟩)
-    -- Suffices: find S₂ with w ∈ span(insert a s'_div)·S₂, then compose back
-    suffices h_suff_main : ∃ S₂ : NSubring T, IsAExtension S₁ S₂ ∧
-        ∃ (hle₂ : S₁.carrier ≤ S₂.carrier), (⟨(↑w : T), hle₂ w.2⟩ : S₂.carrier) ∈
-          Ideal.map (Subring.inclusion hle₂)
-            (Ideal.map (Subring.inclusion hle₁) (span (↑(insert a s'_div) : Set R.carrier))) by
-      obtain ⟨S₂, hAext₂, hle₂, hw_S₂⟩ := h_suff_main
-      have hle_comp : R.carrier ≤ S₂.carrier := le_trans hle₁ hle₂
-      refine ⟨S₂, isAExtension_trans' hAext₁ hAext₂, hle_comp, ?_⟩
-      have hc_val : (c : T) = (↑x₁ : T) * (a : T) + (p : T) * (↑w : T) := by
-        have := congr_arg Subtype.val hw_eq
-        simp only [Subring.coe_mul, AddSubgroupClass.coe_sub] at this
-        linear_combination this
-      change (⟨(c : T), hle_comp c.2⟩ : S₂.carrier) ∈
-        Ideal.map (Subring.inclusion hle_comp)
-          (span (↑s : Set R.carrier))
-      rw [hs_insert]
-      have hc_eq : (⟨(c : T), hle_comp c.2⟩ : S₂.carrier) =
-          ⟨(↑x₁ : T), hle₂ x₁.2⟩ * ⟨(a : T), hle_comp a.2⟩ +
-          ⟨(p : T), hle_comp p.2⟩ * ⟨(↑w : T), hle₂ w.2⟩ := by
-        ext
-        simpa only [Subring.coe_mul, Subring.coe_add] using hc_val
-      rw [hc_eq]
-      apply add_mem
-      · apply Ideal.mul_mem_left
-        exact Ideal.map_mono
-          (Ideal.span_mono
-            (Set.singleton_subset_iff.mpr (Finset.mem_coe.mpr (Finset.mem_insert_self a s'))))
-          (Ideal.mem_map_of_mem _ (Ideal.subset_span rfl))
-      · have hw_comp : (⟨(↑w : T), hle₂ w.2⟩ : S₂.carrier) ∈
-            Ideal.map (Subring.inclusion hle_comp)
-              (span (↑(insert a s'_div) : Set R.carrier)) := by
-          rw [show Subring.inclusion hle_comp =
-            (Subring.inclusion hle₂).comp (Subring.inclusion hle₁) from
-            RingHom.ext fun _ => rfl, ← Ideal.map_map]
-          exact hw_S₂
-        have hmul := Ideal.mul_mem_mul
-          (show (⟨(p : T), hle_comp p.2⟩ : S₂.carrier) ∈
-            Ideal.map (Subring.inclusion hle_comp)
-              (span {p}) from
-            Ideal.mem_map_of_mem _
-              (Ideal.subset_span rfl))
-          hw_comp
-        rw [← Ideal.map_mul] at hmul
-        exact Ideal.map_mono h_ml_b2 hmul
-    -- Now apply IH to S₁ with w and insert a s'_div
-    by_cases ha_s'_div : a ∈ s'_div
-    · -- a ∈ s'_div: insert = s'_div
-      have h_eq2 : insert a s'_div = s'_div := Finset.insert_eq_of_mem ha_s'_div
-      rw [h_eq2] at hw_mem_T ⊢
-      have hs'_div_card : s'_div.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans hs'_card
-      let liftR₁ := Subring.inclusion hle₁
-      let s₁ := s'_div.image liftR₁
-      have hs₁_card : s₁.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans hs'_div_card
-      have hw_s₁ : (↑w : T) ∈
-          Ideal.map S₁.carrier.subtype (span (↑s₁ : Set S₁.carrier)) := by
-        change (↑w : T) ∈ Ideal.map S₁.carrier.subtype
-          (span (↑(s'_div.image liftR₁) : Set S₁.carrier))
-        rw [Finset.coe_image, ← Ideal.map_span, Ideal.map_map,
-          show S₁.carrier.subtype.comp liftR₁ = R.carrier.subtype from
-            RingHom.ext fun _ => rfl]
-        exact hw_mem_T
-      obtain ⟨S₂, hAext₂, hle₂, hw_S₂⟩ := ih S₁ hS₁_card s₁ hs₁_card w hw_s₁
-      refine ⟨S₂, hAext₂, hle₂, ?_⟩
-      convert hw_S₂ using 1
-      congr 1
-      rw [Ideal.map_span, ← Finset.coe_image]
-    · -- a ∉ s'_div
-      by_cases hs'_div_card : s'_div.card ≤ n'' + 1
-      · -- |insert a s'_div| ≤ n''+2
-        have h_ins_card3 : (insert a s'_div).card ≤ n'' + 1 + 1 := by
-          rw [Finset.card_insert_of_notMem ha_s'_div]
-          omega
-        let liftR₁ := Subring.inclusion hle₁
-        let s₁ := (insert a s'_div).image liftR₁
-        have hs₁_card : s₁.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans h_ins_card3
-        have hw_s₁ : (↑w : T) ∈
-            Ideal.map S₁.carrier.subtype (span (↑s₁ : Set S₁.carrier)) := by
-          change (↑w : T) ∈ Ideal.map S₁.carrier.subtype
-            (span (↑((insert a s'_div).image liftR₁) : Set S₁.carrier))
-          rw [Finset.coe_image, ← Ideal.map_span, Ideal.map_map,
-            show S₁.carrier.subtype.comp liftR₁ = R.carrier.subtype from
-              RingHom.ext fun _ => rfl]
-          exact hw_mem_T
-        obtain ⟨S₂, hAext₂, hle₂, hw_S₂⟩ := ih S₁ hS₁_card s₁ hs₁_card w hw_s₁
-        refine ⟨S₂, hAext₂, hle₂, ?_⟩
-        convert hw_S₂ using 1
-        congr 1
-        rw [Ideal.map_span, ← Finset.coe_image]
-      · -- s'_div.card = n''+2, need WF on GCD complexity
-        push Not at hs'_div_card
-        have hs'_div_card_eq : s'_div.card = n'' + 1 + 1 := by
-          have h_le : s'_div.card ≤ n'' + 1 + 1 := Finset.card_image_le.trans hs'_card
-          omega
-        let liftR₁' := Subring.inclusion hle₁
-        let s₁' := (insert a s'_div).image liftR₁'
-        have hw_s₁' : (↑w : T) ∈
-            Ideal.map S₁.carrier.subtype (span (↑s₁' : Set S₁.carrier)) := by
-          change (↑w : T) ∈ Ideal.map S₁.carrier.subtype
-            (span (↑((insert a s'_div).image liftR₁') : Set S₁.carrier))
-          rw [Finset.coe_image, ← Ideal.map_span, Ideal.map_map,
-            show S₁.carrier.subtype.comp liftR₁' = R.carrier.subtype from
-              RingHom.ext fun _ => rfl]
-          exact hw_mem_T
-        have hs₁'_card : s₁'.card = n'' + 1 + 1 + 1 := by
-          rw [show s₁' = (insert a s'_div).image liftR₁' from rfl,
-            Finset.card_image_of_injective _ (Subring.inclusion_injective hle₁),
-            Finset.card_insert_of_notMem ha_s'_div, hs'_div_card_eq]
-        have ha_s₁' : liftR₁' a ∈ s₁' :=
-          Finset.mem_image.mpr ⟨a, Finset.mem_insert_self a s'_div, rfl⟩
-        -- GCD complexity drops: gcdComplexity s₁' < m
-        have hgcd_s₁' : gcdComplexity s₁' < m := by
-          have hcross : gcdComplexity s₁' = gcdComplexity (insert a s'_div) := by
-            unfold gcdComplexity
-            have hinj₁ : Set.InjOn liftR₁' ↑(insert a s'_div) :=
-              fun x _ y _ h => (Subring.inclusion_injective hle₁) h
-            rw [show s₁' = (insert a s'_div).image liftR₁' from rfl,
-                Finset.sum_image hinj₁]
-            apply Finset.sum_congr rfl
-            intro x _
-            exact normalizedFactors_card_inclusion R S₁
-              ⟨hAext₁.le, hAext₁.primes_preserved, hAext₁.card_le⟩
-              hle₁ x
-          have hstrict : gcdComplexity (insert a s'_div) < gcdComplexity s :=
-            gcdComplexity_div_prime_strict hs_insert hs'_def
-              (by
-                 rw [hs'_def, Finset.card_erase_of_mem ha_mem, hs_eq]
-                 omega)
-              hp div_p_b2 hdiv_b2 ha_s'_div
-          calc gcdComplexity s₁' = gcdComplexity (insert a s'_div) := hcross
-            _ < gcdComplexity s := hstrict
-            _ ≤ m := hs_gcd
-        obtain ⟨S₂, hAext₂, hle₂, hw_S₂⟩ :=
-          ih_m (gcdComplexity s₁') hgcd_s₁' S₁ hS₁_card (liftR₁' a) s₁' le_rfl hs₁'_card
-            ha_s₁' w hw_s₁'
-        refine ⟨S₂, hAext₂, hle₂, ?_⟩
-        convert hw_S₂ using 1
-        congr 1
-        rw [Ideal.map_span, ← Finset.coe_image]
-⟩
+    obtain ⟨S₂, hAext₂, hle₂, hw_S₂⟩ :=
+      close_up_b2_divided_step n'' ih m ih_m hAext₁ hle₁ hS₁_card hs_gcd hs_eq ha_mem
+        s' hs'_def hs_insert hs'_card hp div_p_b2 hdiv_b2 w hw_mem_T
+    exact close_up_b2_recombine hAext₁ hAext₂ hle₁ hle₂ hs_insert h_ml_b2 x₁ w hw_eq hw_S₂
 
--- Extracted: Sub-case B2 of close_up_aux_wf (p∤a, no common prime divides both a and c).
-theorem close_up_aux_b2_nonzero
-    [IsAdicComplete (IsLocalRing.maximalIdeal T) T]
-    (hM_not_assoc : ∀ (r : T), r ≠ 0 →
-      IsLocalRing.maximalIdeal T ∉ associatedPrimes T (T ⧸ Ideal.span {r}))
-    (hAss_ht : ∀ (r : T), r ≠ 0 →
-      ∀ P ∈ associatedPrimes T (T ⧸ Ideal.span {r}), P.height ≤ 1)
-    (hT_card : Cardinal.mk T = Cardinal.mk (IsLocalRing.ResidueField T))
-    (hT_aleph0 : Cardinal.aleph0 < Cardinal.mk T)
-    (n'' : ℕ)
-    (ih : ∀ (R : NSubring T) (_ : Cardinal.mk R.carrier < Cardinal.mk T)
-      (s : Finset R.carrier) (_ : s.card ≤ n'' + 1 + 1) (c : R.carrier)
-      (_ : (c : T) ∈ Ideal.map R.carrier.subtype (span (↑s : Set R.carrier))),
-      ∃ S : NSubring T, IsAExtension R S ∧ ∃ (hle : R.carrier ≤ S.carrier),
-        (⟨(c : T), hle c.2⟩ : S.carrier) ∈
-          Ideal.map (Subring.inclusion hle) (span (↑s : Set R.carrier)))
-    (m : ℕ)
-    (ih_m : ∀ m_1, m_1 < m →
-      ∀ (R : NSubring T) (_ : Cardinal.mk R.carrier < Cardinal.mk T),
-      letI : IsDomain R.carrier := NSubring.isDomain R
-      letI : UniqueFactorizationMonoid R.carrier := R.isUFD
-      ∀ (a : R.carrier) (s : Finset R.carrier),
-      gcdComplexity s ≤ m_1 →
-      s.card = n'' + 1 + 1 + 1 → a ∈ s → ∀ (c : R.carrier),
-      (c : T) ∈ Ideal.map R.carrier.subtype (span (↑s : Set R.carrier)) →
-      ∃ S : NSubring T, IsAExtension R S ∧ ∃ (hle : R.carrier ≤ S.carrier),
-        (⟨(c : T), hle c.2⟩ : S.carrier) ∈
-          Ideal.map (Subring.inclusion hle) (span (↑s : Set R.carrier)))
-    {R : NSubring T} (hR_card : Cardinal.mk R.carrier < Cardinal.mk T)
-    [DecidableEq R.carrier]
-    {a : R.carrier} {s : Finset R.carrier}
-    (hs_gcd : gcdComplexity s ≤ m)
-    (hs_eq : s.card = n'' + 1 + 1 + 1) (ha_mem : a ∈ s)
-    {c : R.carrier}
-    (s' : Finset R.carrier) (hs'_def : s' = s.erase a)
-    (hs_insert : s = insert a s')
-    (hs'_card : s'.card ≤ n'' + 1 + 1)
-    {p : R.carrier} (hp : Prime p) (hp_dvd : ∀ x ∈ s', p ∣ x)
-    (hpa : ¬p ∣ a)
-    (_hgcd_factor : ∀ (q : R.carrier), Prime q → (∀ x ∈ s', q ∣ x) → ¬q ∣ a ∧ ¬q ∣ c)
-    (t : T) (u : T) (v : T)
-    (hv : v ∈ Ideal.map R.carrier.subtype (span (↑s' : Set R.carrier)))
-    (ht_eq : u = R.carrier.subtype a * t)
-    (huv : u + v = (c : T))
-    (ha_zero : (a : T) ≠ 0)
-    (_hI_s'_bot : Ideal.map R.carrier.subtype (span (↑s' : Set R.carrier)) ≠ ⊥) :
-    ∃ S : NSubring T, IsAExtension R S ∧ ∃ (hle : R.carrier ≤ S.carrier),
-      (⟨(c : T), hle c.2⟩ : S.carrier) ∈
-        Ideal.map (Subring.inclusion hle) (span (↑s : Set R.carrier)) := by
-  exact
-    (close_up_aux_b2_nonzero_proof
-      (R := R) (a := a) (s := s) (c := c) (p := p) hM_not_assoc hAss_ht hT_card hT_aleph0
-      n'' ih m ih_m hR_card hs_gcd hs_eq ha_mem s' hs'_def hs_insert hs'_card hp hp_dvd hpa
-      _hgcd_factor t u v hv ht_eq huv ha_zero _hI_s'_bot
-    ).down
 theorem close_up_aux_b2
     [IsAdicComplete (IsLocalRing.maximalIdeal T) T]
     (hM_not_assoc : ∀ (r : T), r ≠ 0 →

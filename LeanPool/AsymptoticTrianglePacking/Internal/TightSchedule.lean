@@ -600,21 +600,21 @@ theorem exists_uncovered_le_of_roundOracle (H : Finset (Finset V)) {c β : ℝ}
                 rw [heq]; exact hgc
               have hsucc := uncoveredCount_succ hRsub H k
               have hstepbd : uncoveredCount R H (k + 1) ≤ (1 - c) * uncoveredCount R H k := by
-                rw [hsucc]; linarith
+                rw [hsucc]; linarith only [hcov]
               have hpow : (1 - c) * uncoveredCount R H k
                   ≤ (1 - c) * ((1 - c) ^ k * (Fintype.card V : ℝ)) :=
-                mul_le_mul_of_nonneg_left hbd (by linarith)
+                mul_le_mul_of_nonneg_left hbd (by linarith only [hc1])
               calc uncoveredCount R H (k + 1) ≤ (1 - c) * uncoveredCount R H k := hstepbd
                 _ ≤ (1 - c) * ((1 - c) ^ k * (Fintype.card V : ℝ)) := hpow
                 _ = (1 - c) ^ (k + 1) * (Fintype.card V : ℝ) := by ring
-  obtain ⟨T, hT⟩ := exists_pow_lt_of_lt_one hβ0 (show (1 : ℝ) - c < 1 by linarith)
+  obtain ⟨T, hT⟩ := exists_pow_lt_of_lt_one hβ0 (show (1 : ℝ) - c < 1 by linarith only [hc0])
   refine ⟨R, T, hRsub, ?_⟩
   rcases key T with h | ⟨_, h⟩
   · exact h
   · have hVnn : (0 : ℝ) ≤ (Fintype.card V : ℝ) := Nat.cast_nonneg _
     have : (1 - c) ^ T * (Fintype.card V : ℝ) ≤ β * (Fintype.card V : ℝ) :=
       mul_le_mul_of_nonneg_right hT.le hVnn
-    linarith
+    linarith only [h, this]
 
 /-- **The per-round oracle produces the full adaptive strategy sequence.**  This is exactly the
 per-instance conclusion demanded by
@@ -667,7 +667,7 @@ theorem hasRoundOracle_of_scheduled_invariant (H : Finset (Finset V)) {c β : �
       have : (Fintype.card V : ℝ) - (S.card : ℝ) ≤ β * (Fintype.card V : ℝ) :=
         le_trans hdec (le_trans (mul_le_mul_of_nonneg_right hpow hNnn)
           (mul_le_mul_of_nonneg_right hT hNnn))
-      linarith
+      linarith only [hlt, this]
     obtain ⟨R', hR'sub, hP', hcov⟩ := hstep j hjT H' S hPj hlt
     refine ⟨R', hR'sub, ⟨j + 1, hP', ?_⟩, hcov⟩
     have hXdisj : Disjoint S (support (roundMatching R')) := by
@@ -683,13 +683,13 @@ theorem hasRoundOracle_of_scheduled_invariant (H : Finset (Finset V)) {c β : �
     rw [hcard]
     have h1 : (Fintype.card V : ℝ) - (S.card : ℝ)
         - ((support (roundMatching R')).card : ℝ)
-        ≤ (1 - c) * ((Fintype.card V : ℝ) - (S.card : ℝ)) := by linarith
+        ≤ (1 - c) * ((Fintype.card V : ℝ) - (S.card : ℝ)) := by linarith only [hcov]
     calc (Fintype.card V : ℝ) - ((S.card : ℝ) + ((support (roundMatching R')).card : ℝ))
         = (Fintype.card V : ℝ) - (S.card : ℝ)
             - ((support (roundMatching R')).card : ℝ) := by ring
       _ ≤ (1 - c) * ((Fintype.card V : ℝ) - (S.card : ℝ)) := h1
       _ ≤ (1 - c) * ((1 - c) ^ j * (Fintype.card V : ℝ)) :=
-          mul_le_mul_of_nonneg_left hdec (by linarith)
+          mul_le_mul_of_nonneg_left hdec (by linarith only [hc1])
       _ = (1 - c) ^ (j + 1) * (Fintype.card V : ℝ) := by ring
 
 /-! ### Bridges to the hypergraph bricks
@@ -1194,9 +1194,9 @@ theorem budget_arith {e b h hh dm tot psi sigj exc sig1 N : ℝ}
   have hs : (0 : ℝ) ≤ e + b := by linarith
   have hps : (0 : ℝ) ≤ psi * (e + b) := mul_nonneg hpsi0 hs
   have g1 : h ≤ psi * (e + b) := by nlinarith [mul_nonneg hpsi0 hb]
-  have g2 : hh ≤ (1 + psi) * (e + b) := by nlinarith
-  have g3 : dm ≤ psi * ((1 + psi) * (e + b)) := by nlinarith
-  have g4 : tot ≤ (2 + psi) ^ 2 * (e + b) := by nlinarith
+  have g2 : hh ≤ (1 + psi) * (e + b) := by nlinarith only [h2, g1]
+  have g3 : dm ≤ psi * ((1 + psi) * (e + b)) := by nlinarith only [h3, hpsi0, h2, g1]
+  have g4 : tot ≤ (2 + psi) ^ 2 * (e + b) := by nlinarith only [he, hb, htot, h2, hps, g1, g3]
   have g5 : (2 + psi) ^ 2 * (e + b) ≤ (2 + psi) ^ 2 * ((sigj + exc) * N) :=
     mul_le_mul_of_nonneg_left hEB (sq_nonneg _)
   nlinarith only [g4, g5, hstep, hN]
@@ -1235,7 +1235,7 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
   classical
   have hr1 : 1 ≤ r := le_trans (by norm_num) hr
   have hrR : (2 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr
-  have hrpos : (0 : ℝ) < (r : ℝ) := by linarith
+  have hrpos : (0 : ℝ) < (r : ℝ) := by linarith only [hrR]
   have hjT : j ≤ Pm.T := le_of_lt hj
   have hj1T : j + 1 ≤ Pm.T := hj
   have hlo_pos : 0 < Pm.lo j := lt_of_lt_of_le Pm.lomin_pos (Pm.lomin_le j hjT)
@@ -1254,7 +1254,7 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
     refine le_trans hE ?_
     exact mul_le_mul_of_nonneg_right hsigj hN0
   have hAhalf : ((Fintype.card W : ℝ) - (S.card : ℝ)) / 2 ≤ (A.card : ℝ) := by linarith
-  have hAbig : β / 2 * N ≤ (A.card : ℝ) := by linarith
+  have hAbig : β / 2 * N ≤ (A.card : ℝ) := by linarith only [huncov, hAcard, hEsmall]
   -- apply the sharp round
   have hlo' : ∀ v ∈ A, d * Pm.lo j ≤ (degree K v : ℝ) := by
     intro v hv
@@ -1299,7 +1299,7 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
   set Dam : Finset W :=
     (Finset.univ : Finset W).filter (fun v => ζ < (lostDegree Kres Hi v : ℝ)) with hDamdef
   have hDhi : (0 : ℝ) < d * Pm.hi j := by positivity
-  have hr1' : (0 : ℝ) ≤ (r : ℝ) - 1 := by linarith
+  have hr1' : (0 : ℝ) ≤ (r : ℝ) - 1 := by linarith only [hrR]
   have hg1 : (0 : ℝ) ≤ 1 - Pm.gam := by linarith only [Pm.gam_le]
   have hKres0 : ∀ v : W, v ∈ S ∪ covered R' → degree Kres v = 0 := by
     intro v hv
@@ -1321,12 +1321,12 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
       intro h
       rw [hKres0 v (Finset.mem_union_left _ h)] at hdeg
       simp only [Nat.cast_zero] at hdeg
-      linarith
+      linarith only [hpos1, hdeg]
     have hvcov : v ∉ covered R' := by
       intro h
       rw [hKres0 v (Finset.mem_union_right _ h)] at hdeg
       simp only [Nat.cast_zero] at hdeg
-      linarith
+      linarith only [hpos1, hdeg]
     have hvA : v ∈ A := by
       rw [hAdef, Finset.mem_compl, Finset.mem_union]
       push Not
@@ -1361,7 +1361,7 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
         intro hlt
         exact hv (Finset.mem_filter.mpr ⟨Finset.mem_univ v, hlt⟩)
       push Not at h2
-      linarith
+      linarith only [h1, h2]
   · -- the new floor
     intro v hvS hvE'
     simp only [Finset.mem_union, not_or] at hvS hvE'
@@ -1383,7 +1383,7 @@ theorem tight_round_step {r : ℕ} (hr : 2 ≤ r) {β : ℝ} (Pm : TightParams r
           - Pm.eps * Pm.gam * (d * Pm.hi j) - ζ := by
       rw [hζdef]
       linarith only [mul_le_mul_of_nonneg_left hstep hd.le]
-    linarith
+    linarith only [hlow, hdrop, hlost, hkey]
   · -- codegrees only decrease
     intro x y hxy
     refine le_trans ?_ (hcodeg x y hxy)
@@ -1724,7 +1724,7 @@ theorem exists_tightParams (r : ℕ) (hr : 2 ≤ r) {β : ℝ} (hβ0 : 0 < β) (
     have hpos : (0 : ℝ) < (r : ℝ) / (eps * gam) := by positivity
     nlinarith only [hpos]
   have hGpow : ∀ k : ℕ, (1 : ℝ) ≤ (2 * Gg) ^ k := by
-    intro k; exact one_le_pow₀ (by linarith)
+    intro k; exact one_le_pow₀ (by linarith only [hgam8, hgam, hGge])
   have hGpowpos : ∀ k : ℕ, (0 : ℝ) < (2 * Gg) ^ k := fun k => lt_of_lt_of_le one_pos (hGpow k)
   obtain ⟨exc, hexcdef⟩ : ∃ x : ℝ, x = β / (8 * (2 * Gg) ^ T) := ⟨_, rfl⟩
   have hexcpos : 0 < exc := by
@@ -1825,7 +1825,7 @@ theorem exists_tightParams (r : ℕ) (hr : 2 ≤ r) {β : ℝ} (hβ0 : 0 < β) (
         = β * (2 * Gg) ^ k / (4 * (2 * Gg) ^ T) := by
       field_simp
       ring
-    rw [hrw, div_le_iff₀ (by linarith : (0 : ℝ) < 4 * (2 * Gg) ^ T)]
+    rw [hrw, div_le_iff₀ (by linarith only [hTpos] : (0 : ℝ) < 4 * (2 * Gg) ^ T)]
     linarith only [mul_le_mul_of_nonneg_left h1 hβ0.le, mul_nonneg hβ0.le hTpos.le]
   · -- the decay
     exact tight_schedule_decay_le hrR hgam hgam8 hβ0 hLdef hMdef hgamT_lb

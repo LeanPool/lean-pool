@@ -89,7 +89,7 @@ theorem pair_excess_le {H : Finset (Finset V)} {p : ℝ} {r Δ κ : ℕ}
       _ ≤ coverRate H p x * coverRate H p y := this
   -- Bernoulli: 1 − (1−p)^{2rΔ} ≤ 2rΔ p
   have hbern : 1 - 2 * (r : ℝ) * (Δ : ℝ) * p ≤ ((1 - p) ^ (r * Δ)) ^ 2 := by
-    have h1 := one_add_mul_le_pow (a := -p) (by linarith) (2 * (r * Δ))
+    have h1 := one_add_mul_le_pow (a := -p) (by linarith only [hp1]) (2 * (r * Δ))
     have h2 : ((1 : ℝ) + -p) ^ (2 * (r * Δ)) = ((1 - p) ^ (r * Δ)) ^ 2 := by
       rw [show (2 : ℕ) * (r * Δ) = (r * Δ) * 2 by ring, pow_mul]
       ring_nf
@@ -105,7 +105,7 @@ theorem pair_excess_le {H : Finset (Finset V)} {p : ℝ} {r Δ κ : ℕ}
   have hdy0 : (0 : ℝ) ≤ (degree H y : ℝ) := Nat.cast_nonneg _
   have hpow0 : (0 : ℝ) ≤ ((1 - p) ^ (r * Δ)) ^ 2 := by positivity
   have hpow1 : ((1 - p) ^ (r * Δ)) ^ 2 ≤ 1 := by
-    have : (1 - p) ^ (r * Δ) ≤ 1 := pow_le_one₀ hq0 (by linarith)
+    have : (1 - p) ^ (r * Δ) ≤ 1 := pow_le_one₀ hq0 (by linarith only [hp0])
     nlinarith [pow_nonneg hq0 (r * Δ)]
   -- the deficit of the crude bound against the product
   have hdef : (degree H x : ℝ) * (degree H y : ℝ) * p ^ 2
@@ -131,7 +131,7 @@ theorem pair_excess_le {H : Finset (Finset V)} {p : ℝ} {r Δ κ : ℕ}
       _ = 2 * (r : ℝ) * (Δ : ℝ) ^ 3 * p ^ 3 := by ring
   have hcodp : (codegree H x y : ℝ) * p ≤ (κ : ℝ) * p :=
     mul_le_mul_of_nonneg_right hcod hp0
-  linarith
+  linarith only [hcrude, hprod, hdef, hcodp]
 
 /-- The total weight of the linear form: `∑_{u ≠ v} codeg(v,u) = (r−1)·deg(v)`. -/
 theorem sum_codegree_erase_eq {H : Finset (Finset V)} {r : ℕ} (hr : IsUniform H r) (v : V) :
@@ -200,7 +200,7 @@ theorem centered_second_moment_le {H : Finset (Finset V)} {p : ℝ}
                 nlinarith only [mul_nonneg (mul_nonneg ha0 hqu0) (sub_nonneg.mpr haκ)]
             _ ≤ (codegree H v u : ℝ) * (κ : ℝ) * qhi := by
                 nlinarith only [mul_nonneg (mul_nonneg ha0 hκ0) (sub_nonneg.mpr (hq u))]
-        linarith
+        linarith only [hstep, hstep2]
       linarith [mul_nonneg (mul_nonneg ha0 ha0) hε0]
     · rw [ite_eq_right huu']
       have hp2 := hpair u u' huu'

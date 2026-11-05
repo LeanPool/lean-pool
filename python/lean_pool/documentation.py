@@ -32,6 +32,7 @@ IMPORTS = re.compile(
     r"(?m)^\s*(?:(?:public|private|meta)\s+)*import\s+(?:all\s+)?([^\n]+)"
 )
 STATE = "documentation-progress.json"
+TOOLCHAIN_ROOTS = frozenset({"Init", "Std", "Lean", "Lake"})
 
 
 def module_sources(root: Path) -> dict[str, Path]:
@@ -112,7 +113,7 @@ def prepare(root: Path) -> None:
 def external_modules(root: Path) -> list[str]:
     """Collect external links without loading a combined pool environment."""
     sources = module_sources(root)
-    imports = {"Init", "Std", "Lean", "Lake"}
+    imports = set(TOOLCHAIN_ROOTS)
     for path in sources.values():
         imports.update(
             item
@@ -121,6 +122,19 @@ def external_modules(root: Path) -> list[str]:
             if item not in sources
         )
     return sorted(imports)
+
+
+def compiled_dependencies(root: Path) -> list[str]:
+    """Name the external modules whose compiled files Lake must provide.
+
+    The Mathlib cache supplies Mathlib and its dependencies, but nothing supplies
+    Tau Ceti outside analysis batches, so rendering must build it explicitly.
+    """
+    return [
+        name
+        for name in external_modules(root)
+        if name.split(".")[0] not in TOOLCHAIN_ROOTS
+    ]
 
 
 def validate_database(build: Path) -> None:
@@ -246,6 +260,11 @@ def render(root: Path, lake: str) -> None:
     # Loading one import-all Lean environment would combine the independent
     # projects' memory requirements. The database already holds every local
     # module; only external names need an environment before rendering it.
+    dependencies = compiled_dependencies(root)
+    if dependencies:
+        subprocess.run(
+            [lake, "build", *dependencies], cwd=root / "docbuild", check=True
+        )
     commands = [
         [
             "externals",
