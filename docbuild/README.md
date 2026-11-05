@@ -6,9 +6,6 @@ Maintainers can also dispatch that workflow manually. Publication never runs on 
 PR, merge group or ordinary push. The independent `Documentation preflight`
 check still validates workspace compatibility and generated indexes.
 
-The same workflow's `metadata` job refreshes the README statistics and NOTICE
-on `main`, after waiting for the merge queue to empty.
-
 Each run uses one fixed Git revision. The previously published site stays online
 until API documentation and exposition both pass validation. `/SOURCE_SHA` and
 `/deployments/<commit>.txt` identify the published revision. A manual dispatch
