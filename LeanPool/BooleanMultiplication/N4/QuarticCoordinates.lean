@@ -339,17 +339,11 @@ def onePlaceCoeff3 : Fin 3 → F₂ := ![0, 1, 0]
 
 @[simp] theorem rationalTwo_zeroPlaceCoeff3 :
     rationalTwo zeroPlaceCoeff3 = rationalPlaceTwo 0 := by
-  funext i j
-  fin_cases i <;> fin_cases j <;>
-    simp [zeroPlaceCoeff3, rationalTwo, rationalPlaceTwo, vectorWedge, placeA, placeB,
-      Fin.sum_univ_succ]
+  simp [zeroPlaceCoeff3, rationalTwo, Fin.sum_univ_succ]
 
 @[simp] theorem rationalTwo_onePlaceCoeff3 :
     rationalTwo onePlaceCoeff3 = rationalPlaceTwo 1 := by
-  funext i j
-  fin_cases i <;> fin_cases j <;>
-    simp [onePlaceCoeff3, rationalTwo, rationalPlaceTwo, vectorWedge, placeA, placeB,
-      Fin.sum_univ_succ]
+  simp [onePlaceCoeff3, rationalTwo, Fin.sum_univ_succ]
 
 theorem exists_rationalTwo_of_mem {q : TwoForm}
     (hq : q ∈ rationalPlaceTwoSpace) :

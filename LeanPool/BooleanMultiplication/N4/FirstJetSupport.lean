@@ -217,42 +217,48 @@ private theorem tangent_support_zero_zero :
       vectorWedgeTwo (tangentSupportCombination 0 0 coeff)
           (rationalTwo (rationalSingleton 0)) ≠ 0 →
       InNormalizedFirstJet 0 (tangentSupportCombination 0 0 coeff) := by
-  solve_tangent_support_certificate
+  unfold InNormalizedFirstJet tangentSupportCombination
+  decide +kernel
 
 private theorem tangent_support_zero_one :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 0 1 coeff)
           (rationalTwo (rationalSingleton 0)) ≠ 0 →
       InNormalizedFirstJet 0 (tangentSupportCombination 0 1 coeff) := by
-  solve_tangent_support_certificate
+  unfold InNormalizedFirstJet tangentSupportCombination
+  decide +kernel
 
 private theorem tangent_support_one_zero :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 1 0 coeff)
           (rationalTwo (rationalSingleton 1)) ≠ 0 →
       InNormalizedFirstJet 1 (tangentSupportCombination 1 0 coeff) := by
-  solve_tangent_support_certificate
+  unfold InNormalizedFirstJet tangentSupportCombination
+  decide +kernel
 
 private theorem tangent_support_one_one :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 1 1 coeff)
           (rationalTwo (rationalSingleton 1)) ≠ 0 →
       InNormalizedFirstJet 1 (tangentSupportCombination 1 1 coeff) := by
-  solve_tangent_support_certificate
+  unfold InNormalizedFirstJet tangentSupportCombination
+  decide +kernel
 
 private theorem tangent_support_two_zero :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 2 0 coeff)
           (rationalTwo (rationalSingleton 2)) ≠ 0 →
       InNormalizedFirstJet 2 (tangentSupportCombination 2 0 coeff) := by
-  solve_tangent_support_certificate
+  unfold InNormalizedFirstJet tangentSupportCombination
+  decide +kernel
 
 private theorem tangent_support_two_one :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 2 1 coeff)
           (rationalTwo (rationalSingleton 2)) ≠ 0 →
       InNormalizedFirstJet 2 (tangentSupportCombination 2 1 coeff) := by
-  solve_tangent_support_certificate
+  unfold InNormalizedFirstJet tangentSupportCombination
+  decide +kernel
 
 /-- The support calculation also recovers the nonzero first-jet component of
 the seed linear form after normalizing its rational place to zero. -/
