@@ -324,6 +324,19 @@ private theorem nesterov_step_motion_bounds {d : ℕ}
             (Real.sqrt η * Cv' + 1) * Real.sqrt Ln
           linarith
 
+/-- If `π` agrees on an open set `U` with a projection `π'` whose derivative kills normal
+displacements, then so does the derivative of `π`. -/
+private theorem fderiv_kills_normal_of_eqOn {F : Type*} [NormedAddCommGroup F]
+    [NormedSpace ℝ F] {S U : Set F} {π π' : F → F} (hU : IsOpen U) (hSU : S ⊆ U)
+    (hπ_mem : ∀ x ∈ U, π x ∈ S) (hπ_eq : ∀ y ∈ U, π y = π' y)
+    (hπ'_kills : ∀ x ∈ U, fderiv ℝ π' (π' x) (x - π' x) = 0) {x : F} (hxU : x ∈ U) :
+    fderiv ℝ π (π x) (x - π x) = 0 := by
+  have h_evt_eq : π =ᶠ[𝓝 (π x)] π' :=
+    (hU.eventually_mem (hSU (hπ_mem x hxU))).mono fun y hy => hπ_eq y hy
+  have h := hπ'_kills x hxU
+  rw [← hπ_eq x hxU] at h
+  rwa [← h_evt_eq.fderiv_eq] at h
+
 /-- Per-phase gen convergence at a single base point m⋆ ∈ M.
 
 Same hypotheses as `local_convergence_at_base_point` but with a gen conclusion:
@@ -468,18 +481,9 @@ private theorem localConvergenceAtBasePointGenProof
   -- Prerequisites
   have hε_bound : ε * η ≤ Real.sqrt (μ_minus * η) :=
     mul_le_sqrt_mul_of_le_sqrt_div hε_pos hμ_minus hη_pos hε_le
-  have hπ_kills_normal : ∀ x ∈ U_plus,
-      fderiv ℝ π (π x) (x - π x) = 0 := by
-    intro x hx
-    have hxU : x ∈ U := hU_sub (subset_closure hx)
-    have hπxS : π x ∈ S := (hπ_on_U x hxU).1
-    have hπxU : π x ∈ U := hTub_sub.subset hπxS
-    have h_evt_eq : π =ᶠ[𝓝 (π x)] π' :=
-      (hTub_sub.isOpen.eventually_mem hπxU).mono
-        (fun y hy => hπ_eq_on_U' y hy)
-    have h := hπ'_kills x hxU
-    rw [← hπ_eq_on_U' x hxU] at h
-    rwa [← h_evt_eq.fderiv_eq] at h
+  have hπ_kills_normal : ∀ x ∈ U_plus, fderiv ℝ π (π x) (x - π x) = 0 := fun x hx =>
+    fderiv_kills_normal_of_eqOn hTub_sub.isOpen hTub_sub.subset
+      (fun y hy => (hπ_on_U y hy).1) hπ_eq_on_U' hπ'_kills (hU_sub (subset_closure hx))
   have hπ_diff_near : ∃ δ_diff > 0,
       ∀ z ∈ Metric.ball mstar δ_diff, DifferentiableAt ℝ π z :=
     exists_ball_differentiableAt_of_eqOn hTub_sub.isOpen (hTub_sub.subset hmstar)
