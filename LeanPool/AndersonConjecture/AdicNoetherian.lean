@@ -225,6 +225,31 @@ omit [IsLocalRing R] [IsNoetherianRing R] in lemma evalₐ_mk_smul_eq
   rw [mul_sub] at hmk_kills
   rw [sub_eq_zero.mp hmk_kills, show m • s = m * s from rfl, ← map_mul]
 
+/- Auxiliary: lift elements of Mi^K • FN(n0) to I₀ with evalₐ compatibility. -/
+omit [IsLocalRing R] [IsNoetherianRing R] in lemma smul_lift_of_filtration
+    (Mi : Ideal R)
+    (n0 K : ℕ)
+    (FN_n0 : Ideal R)
+    (S_F : Finset R) (hS_F : Ideal.span ↑S_F = FN_n0)
+    (I₀ : Ideal (AdicCompletion Mi R))
+    (hlift_span : ∀ t : R, t ∈ (Ideal.span ↑S_F : Ideal R) →
+        ∃ δ : AdicCompletion Mi R, δ ∈ I₀ ∧
+        evalₐ Mi (n0 + 1) δ = Ideal.Quotient.mk (Mi ^ (n0 + 1)) t)
+    (r' : R) (hr' : r' ∈ (Mi ^ K • (FN_n0 : Submodule R R) : Submodule R R)) :
+    ∃ δ : AdicCompletion Mi R, δ ∈ I₀ ∧
+      evalₐ Mi (n0 + K + 1) δ =
+      Ideal.Quotient.mk (Mi ^ (n0 + K + 1)) r' := by
+  refine Submodule.smul_induction_on hr' ?_ ?_
+  · intro m hm s hs
+    have hs_span : s ∈ (Ideal.span ↑S_F : Ideal R) :=
+      hS_F ▸ hs
+    obtain ⟨δ_s, hδ_s_I, hδ_s_eq⟩ := hlift_span s hs_span
+    refine ⟨of Mi R m * δ_s, I₀.mul_mem_left _ hδ_s_I, ?_⟩
+    rw [map_mul, evalₐ_of]
+    exact evalₐ_mk_smul_eq R Mi n0 K m s hm δ_s hδ_s_eq
+  · intro a b ⟨δa, hδaI, hδaeq⟩ ⟨δb, hδbI, hδbeq⟩
+    exact ⟨δa + δb, I₀.add_mem hδaI hδbI, by rw [map_add, hδaeq, hδbeq, map_add]⟩
+
 /- Auxiliary: per-generator coefficient decomposition for r' ∈ Mi^K • FN_n0. -/
 omit [IsLocalRing R] [IsNoetherianRing R] in lemma coeff_decomp_of_smul
     (Mi : Ideal R)
