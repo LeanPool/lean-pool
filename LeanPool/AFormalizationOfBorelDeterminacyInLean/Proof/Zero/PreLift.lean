@@ -8,7 +8,7 @@ module
 public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.CoveringClosedGame
 public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.WinAsap
 public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Proof.BuildLevelwise
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Order.Lattice.Nat
 import Mathlib.Tactic.Linarith.Frontend

@@ -80,7 +80,7 @@ theorem pushforwardEvent_of_mem_core_self [NeZero d] {abar : Mat d}
 /-- The inverse gauge root is quasi-measure-preserving on `Vec d`. -/
 theorem quasiMeasurePreserving_matVecMul_gaugeRootInv [NeZero d] {abar : Mat d}
     (hS : (symmPart abar).PosDef) :
-    Measure.QuasiMeasurePreserving (matVecMul (gaugeRoot abar)⁻¹)
+    MeasureTheory.QuasiMeasurePreserving (matVecMul (gaugeRoot abar)⁻¹)
       (volume : Measure (Vec d)) volume := by
   refine ⟨(continuous_matVecMul _).measurable, ?_⟩
   have hmap := Real.map_matrix_volume_pi_eq_smul_volume_pi

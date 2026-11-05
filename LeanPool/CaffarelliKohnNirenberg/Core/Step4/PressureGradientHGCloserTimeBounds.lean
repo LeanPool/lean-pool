@@ -100,7 +100,7 @@ theorem lintegral_cutoff_slice_eLpNorm_lt_top_of_memLp
         by_contra hne
         exact hx (hηsupport hne)
       simp only [hzero, zero_mul]
-  rw [hmul, ← eLpNorm_indicator_eq_eLpNorm_restrict hB]
+  rw [hmul, ← eLpNorm_indicator_eq_eLpNorm_restrict hB.nullMeasurableSet]
   apply eLpNorm_mono_ae (hη.mul ((aestronglyMeasurable_indicator_iff hB).2 ht))
   filter_upwards with x
   change ‖η x * B.indicator (fun y => F (y, t)) x‖ ≤

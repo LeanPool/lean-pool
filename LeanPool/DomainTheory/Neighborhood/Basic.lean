@@ -8,11 +8,8 @@ module
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Data.Set.Lattice.Disjoint
 public import Mathlib.Data.Set.Lattice.Image
-public import Mathlib.Data.Set.Lattice.Indexed
 public import Mathlib.Data.Set.Lattice.Order
 
-public import Mathlib.Order.Hom.Basic
-public import Mathlib.Data.Set.Basic
 
 /-!
 # Neighborhood systems (Scott 1981, PRG-19, §1) — foundations
@@ -288,7 +285,7 @@ theorem Element.ext {x y : V.Element} (h : ∀ X, x.mem X ↔ y.mem X) : x = y :
   rcases x with ⟨xmem, _, _, _, _⟩
   rcases y with ⟨ymem, _, _, _, _⟩
   have hmem : xmem = ymem := funext fun X => propext (h X)
-  simp_all
+  simp_all only [implies_true]
 
 /-- A filter (`Element`) is closed under the finite intersection `⋂_{i<n} Xᵢ`: if
 every factor

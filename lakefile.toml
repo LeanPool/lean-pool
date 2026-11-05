@@ -19,7 +19,7 @@ rev = "5189e8a380bdf5740cc1fe4123cc9cbe635724c2"
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.35.0-rc3"
+rev = "v4.35.0"
 
 [[lean_lib]]
 name = "LeanPool"

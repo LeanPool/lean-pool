@@ -7,6 +7,7 @@ module
 
 public import LeanPool.RiemannRochFunctionFields.RRspace.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.RingTheory.Adjoin.Polynomial.Bivariate
 
 /-!
 # Pole divisors and Stichtenoth 1.4.11

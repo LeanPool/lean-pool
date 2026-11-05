@@ -6,6 +6,7 @@ Authors: Qian Tang
 module
 public import LeanPool.Zeta32.Family
 public import Mathlib.Analysis.SpecialFunctions.Stirling
+public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 public import Mathlib.Analysis.SumIntegralComparisons
 public import Mathlib.Tactic.Convert
 public import Mathlib.Tactic.FieldSimp

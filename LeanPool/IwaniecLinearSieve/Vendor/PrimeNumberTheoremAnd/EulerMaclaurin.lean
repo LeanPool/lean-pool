@@ -8,6 +8,7 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.MeasureTheory.Function.Floor
 import Mathlib.NumberTheory.AbelSummation
 
 /-! We prove the 1st order Euler-Maclaurin formula by specialising Abel summation and manipulating

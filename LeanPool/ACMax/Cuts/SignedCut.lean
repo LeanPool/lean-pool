@@ -5,12 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.Tauto
-public import LeanPool.ACMax.Spectral.AlgConn
-public import LeanPool.ACMax.Spectral.RayleighUpper
 public import LeanPool.ACMax.Spectral.TestVector
 
 /-!
@@ -174,7 +168,7 @@ theorem algConn_le_two_of_signed {V : Type*} [Fintype V] [Nonempty V]
           first
           | exact absurd hiN (hiPN i hiP)
           | exact absurd hjN (hiPN j hjP)
-          | (simp [hadj, hiP, hiN, hjP, hjN, Finset.mem_union] <;> norm_num)
+          | norm_num [hadj, hiP, hiN, hjP, hjN, Finset.mem_union]
       · simp [hadj]
     simp_rw [hterm, Finset.sum_add_distrib, ← Finset.mul_sum]
     rw [hPN, hNP, hPZ, hZP, hNZ, hZN]

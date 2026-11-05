@@ -153,6 +153,7 @@ theorem norm_forcedTruncTensor_sub_le (ρ : RegMollifierProfile) (ε : ℝ) (hε
         ‖forcedTrunc R v - forcedTrunc R w‖
       ≤ regularizedMildMollifierConstant ρ ε * (R + R) * (2 * ‖v - w‖) := by
         gcongr
+        exact mul_nonneg hK (add_nonneg hR hR)
     _ = 4 * regularizedMildMollifierConstant ρ ε * R * ‖v - w‖ := by ring
 
 end CKN.Leray

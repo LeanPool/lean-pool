@@ -74,28 +74,18 @@ def fixedMap : Fin 2 → DenseBivariatePolynomial :=
 
 end DenseEndpoint
 
+-- Kernel reduction checks the closed rational arithmetic without constructing a separate
+-- normalization proof for each polynomial operation.
 /-- Each coordinate of the fixed-point map is strictly inside the unit interval. -/
 private theorem endpointMapPolynomial_coefficientL1Norm_lt_one_0 (j : Fin 2) (hj : j = 0) :
     DenseBivariatePolynomial.coefficientL1Norm (DenseEndpoint.fixedMap j) < 1 := by
-  fin_cases j <;> cases hj
-  all_goals norm_num [DenseBivariatePolynomial.coefficientL1Norm, DenseEndpoint.fixedMap,
-      DenseEndpoint.balance, DenseEndpoint.gram, DenseEndpoint.scaledS, DenseEndpoint.scaledB,
-      DenseBivariatePolynomial.add, DenseBivariatePolynomial.neg, DenseBivariatePolynomial.scale,
-      DenseBivariatePolynomial.mul, DenseBivariatePolynomial.scaleRow, DenseBivariatePolynomial.pow,
-      DenseBivariatePolynomial.literal, DenseBivariatePolynomial.first,
-      DenseBivariatePolynomial.second, DenseUnivariate.add, DenseUnivariate.neg,
-      DenseUnivariate.scale, DenseUnivariate.mul, DenseUnivariate.coefficientL1Norm]
+  subst j
+  decide +kernel
 
 private theorem endpointMapPolynomial_coefficientL1Norm_lt_one_1 (j : Fin 2) (hj : j = 1) :
     DenseBivariatePolynomial.coefficientL1Norm (DenseEndpoint.fixedMap j) < 1 := by
-  fin_cases j <;> cases hj
-  all_goals norm_num [DenseBivariatePolynomial.coefficientL1Norm, DenseEndpoint.fixedMap,
-      DenseEndpoint.balance, DenseEndpoint.gram, DenseEndpoint.scaledS, DenseEndpoint.scaledB,
-      DenseBivariatePolynomial.add, DenseBivariatePolynomial.neg, DenseBivariatePolynomial.scale,
-      DenseBivariatePolynomial.mul, DenseBivariatePolynomial.scaleRow, DenseBivariatePolynomial.pow,
-      DenseBivariatePolynomial.literal, DenseBivariatePolynomial.first,
-      DenseBivariatePolynomial.second, DenseUnivariate.add, DenseUnivariate.neg,
-      DenseUnivariate.scale, DenseUnivariate.mul, DenseUnivariate.coefficientL1Norm]
+  subst j
+  decide +kernel
 
 theorem endpointMapPolynomial_coefficientL1Norm_lt_one (i : Fin 2) :
     DenseBivariatePolynomial.coefficientL1Norm (DenseEndpoint.fixedMap i) < 1 := by
@@ -110,16 +100,8 @@ private theorem endpointMapPolynomial_derivative_coefficientL1Norm_lt_0 (j : Fin
       DenseBivariatePolynomial.coefficientL1Norm (DenseBivariatePolynomial.derivSecond
         (DenseEndpoint.fixedMap j)) <
       1 / 10 ^ 9 := by
-  fin_cases j <;> cases hj
-  all_goals norm_num [DenseBivariatePolynomial.coefficientL1Norm, DenseEndpoint.fixedMap,
-      DenseEndpoint.balance, DenseEndpoint.gram, DenseEndpoint.scaledS, DenseEndpoint.scaledB,
-      DenseBivariatePolynomial.add, DenseBivariatePolynomial.neg, DenseBivariatePolynomial.scale,
-      DenseBivariatePolynomial.mul, DenseBivariatePolynomial.scaleRow, DenseBivariatePolynomial.pow,
-      DenseBivariatePolynomial.literal, DenseBivariatePolynomial.first,
-      DenseBivariatePolynomial.second, DenseBivariatePolynomial.derivFirst,
-      DenseBivariatePolynomial.derivSecond, DenseUnivariate.add, DenseUnivariate.neg,
-      DenseUnivariate.scale, DenseUnivariate.mul, DenseUnivariate.deriv,
-      DenseUnivariate.coefficientL1Norm]
+  subst j
+  decide +kernel
 
 private theorem endpointMapPolynomial_derivative_coefficientL1Norm_lt_1 (j : Fin 2) (hj : j = 1) :
     DenseBivariatePolynomial.coefficientL1Norm (DenseBivariatePolynomial.derivFirst
@@ -127,16 +109,8 @@ private theorem endpointMapPolynomial_derivative_coefficientL1Norm_lt_1 (j : Fin
       DenseBivariatePolynomial.coefficientL1Norm (DenseBivariatePolynomial.derivSecond
         (DenseEndpoint.fixedMap j)) <
       1 / 10 ^ 9 := by
-  fin_cases j <;> cases hj
-  all_goals norm_num [DenseBivariatePolynomial.coefficientL1Norm, DenseEndpoint.fixedMap,
-      DenseEndpoint.balance, DenseEndpoint.gram, DenseEndpoint.scaledS, DenseEndpoint.scaledB,
-      DenseBivariatePolynomial.add, DenseBivariatePolynomial.neg, DenseBivariatePolynomial.scale,
-      DenseBivariatePolynomial.mul, DenseBivariatePolynomial.scaleRow, DenseBivariatePolynomial.pow,
-      DenseBivariatePolynomial.literal, DenseBivariatePolynomial.first,
-      DenseBivariatePolynomial.second, DenseBivariatePolynomial.derivFirst,
-      DenseBivariatePolynomial.derivSecond, DenseUnivariate.add, DenseUnivariate.neg,
-      DenseUnivariate.scale, DenseUnivariate.mul, DenseUnivariate.deriv,
-      DenseUnivariate.coefficientL1Norm]
+  subst j
+  decide +kernel
 
 theorem endpointMapPolynomial_derivative_coefficientL1Norm_lt (i : Fin 2) :
     DenseBivariatePolynomial.coefficientL1Norm

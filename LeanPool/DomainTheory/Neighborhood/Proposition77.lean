@@ -235,12 +235,14 @@ theorem memS_sub_embZero (hD : ∀ X, D.mem X → X.Nonempty) {W : Set (List Boo
   cases hW with
   | gamma =>
       obtain ⟨a, ha⟩ := hD D.master D.master_mem
-      exact absurd (hsub (show ((true :: [], a) : List Bool × α) ∈ Gamma D from ha)).1 (by simp)
+      exact absurd (hsub (show ((true :: [], a) : List Bool × α) ∈ Gamma D from ha)).1
+        (by simp only [List.cons_ne_self, not_false_eq_true])
   | @zero Z hZ => exact ⟨Z, hZ, rfl⟩
   | @pair Pp Qq hP hQ =>
       obtain ⟨⟨pth, a⟩, ht⟩ := embPair_nonempty (memS_nonempty hD hP) (Q := Qq)
       have hmem := hsub ht
-      simp_all
+      simp_all only [mem_embPair, mem_embZero, List.nil_eq, reduceCtorEq, false_and,
+        exists_const, or_self]
 
 theorem memS_sub_embPair (hD : ∀ X, D.mem X → X.Nonempty)
     {W A B : Set (List Bool × α)} (hW : MemS D W) (hsub : W ⊆ embPair A B) :
@@ -250,14 +252,14 @@ theorem memS_sub_embPair (hD : ∀ X, D.mem X → X.Nonempty)
       obtain ⟨a, ha⟩ := hD D.master D.master_mem
       rcases hsub (show (([], a) : List Bool × α) ∈ Gamma D from
         ha) with ⟨p', hp', -⟩ | ⟨q', hq', -⟩
-      · simp at hp'
-      · simp at hq'
+      · simp only [List.nil_eq, reduceCtorEq] at hp'
+      · simp only [List.nil_eq, reduceCtorEq] at hq'
   | @zero Z hZ =>
       obtain ⟨a, ha⟩ := hD Z hZ
       rcases hsub (show (([], a) : List Bool × α) ∈ embZero Z from ⟨rfl, ha⟩) with
         ⟨p', hp', -⟩ | ⟨q', hq', -⟩
-      · simp at hp'
-      · simp at hq'
+      · simp only [List.nil_eq, reduceCtorEq] at hp'
+      · simp only [List.nil_eq, reduceCtorEq] at hq'
   | @pair Pp Qq hP hQ => exact ⟨Pp, Qq, hP, hQ, rfl⟩
 
 theorem exists_sub_embZero_iff (hD : ∀ X, D.mem X → X.Nonempty) (Y : Set α) :
@@ -336,7 +338,7 @@ private theorem listGet_foldl_zero (l : List ℕ) (val : ℕ) :
     (List.foldl (fun acc x => listGetStp (Nat.pair x (Nat.pair acc 0))) (Nat.pair 0 val) l).unpair.2
       = val := by
   induction l generalizing val with
-  | nil => simp
+  | nil => simp only [List.foldl_nil, Nat.unpair_pair]
   | cons x xs ih =>
       rw [List.foldl_cons, listGetStp_pair, Nat.zero_sub,
         show isOne 0 = 0 from rfl, selectFn_zero, ih]
@@ -542,13 +544,19 @@ theorem dsharpStep_ln (a b tbl : ℕ) :
     dsharpStep fcons feq finter (Nat.pair (Nat.pair (2 * a + 1) (2 * b +
       2)) tbl) = packT 0 0 0 := by
   simp only [dsharpStep, unpair_pair_fst, unpair_pair_snd]
-  simp_all
+  simp_all only [le_add_iff_nonneg_left, zero_le, Nat.sub_eq_zero_of_le,
+    Nat.mul_add_mod_self_left, Nat.mod_succ, Nat.add_mod_right, Nat.mul_mod_right, zero_lt_two,
+    Nat.add_div_right, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀,
+    selectFn_zero, add_tsub_cancel_right, selectFn_one]
 
 theorem dsharpStep_nl (a b tbl : ℕ) :
     dsharpStep fcons feq finter (Nat.pair (Nat.pair (2 * a + 2) (2 * b +
       1)) tbl) = packT 0 0 0 := by
   simp only [dsharpStep, unpair_pair_fst, unpair_pair_snd]
-  simp_all
+  simp_all only [le_add_iff_nonneg_left, zero_le, Nat.sub_eq_zero_of_le, Nat.add_mod_right,
+    Nat.mul_mod_right, Nat.mul_add_mod_self_left, Nat.mod_succ, zero_lt_two, Nat.add_div_right,
+    ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀, selectFn_one,
+    add_tsub_cancel_right, selectFn_zero]
 
 theorem dsharpStep_nn (a b tbl : ℕ) :
     dsharpStep fcons feq finter (Nat.pair (Nat.pair (2 * a + 2) (2 * b + 2)) tbl)
@@ -567,7 +575,9 @@ theorem dsharpStep_nn (a b tbl : ℕ) :
               2) - 1 - Nat.pair a.unpair.2 b.unpair.2)))
             + 2) := by
   simp only [dsharpStep, unpair_pair_fst, unpair_pair_snd]
-  simp_all
+  simp_all only [le_add_iff_nonneg_left, zero_le, Nat.sub_eq_zero_of_le, Nat.add_mod_right,
+    Nat.mul_mod_right, zero_lt_two, Nat.add_div_right, ne_eq, OfNat.ofNat_ne_zero,
+    not_false_eq_true, mul_div_cancel_left₀, selectFn_zero, add_tsub_cancel_right]
 
 /-- The decider step is primitive recursive when the `D`-level functions are. -/
 theorem primrec_dsharpStep (hfcons : Nat.Primrec fcons) (hfeq : Nat.Primrec feq)

@@ -656,6 +656,17 @@ def exactGlobalHistoryFinPsi
       exact normalizeOrDefault_norm _ _
         (exactPaddedDefault_norm G n S D r)⟩
 
+private theorem exactGlobalHistoryFinVector_sub_norm
+    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
+    (D : Finset (Fin n)) (r : ExactHistoryFlag X Y A B D)
+    (u v : EuclideanSpace ℂ
+      (ExactPaddedLocalIndex G n S D r × ExactPaddedLocalIndex G n S D r)) :
+    ‖exactGlobalHistoryFinReindex G n S D (exactGlobalHistoryVector G n S D r u) -
+      exactGlobalHistoryFinReindex G n S D (exactGlobalHistoryVector G n S D r v)‖ =
+      ‖u - v‖ := by
+  rw [← LinearIsometryEquiv.map_sub, LinearIsometryEquiv.norm_map,
+    ← exactGlobalHistoryVector_sub, exactGlobalHistoryVector_norm]
+
 theorem exactGlobalHistoryFinGamma_sub_Psi_norm
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -664,17 +675,8 @@ theorem exactGlobalHistoryFinGamma_sub_Psi_norm
     ‖(exactGlobalHistoryFinGamma G n S D r x).val -
       (exactGlobalHistoryFinPsi G n S D r x y).val‖ =
       ‖exactGamma G n S D r x -
-        exactPsi G n S D r x y‖ := by
-  change
-    ‖exactGlobalHistoryFinReindex G n S D
-        (exactGlobalHistoryVector G n S D r
-          (exactGamma G n S D r x)) -
-      exactGlobalHistoryFinReindex G n S D
-        (exactGlobalHistoryVector G n S D r
-          (exactPsi G n S D r x y))‖ = _
-  rw [← map_sub, ← exactGlobalHistoryVector_sub,
-    LinearIsometryEquiv.norm_map,
-    exactGlobalHistoryVector_norm]
+        exactPsi G n S D r x y‖ :=
+  exactGlobalHistoryFinVector_sub_norm G n S D r _ _
 
 end
 
@@ -6107,7 +6109,7 @@ theorem exactFairAliceHistoryEntropy_eq_operatorPotential_sub
   rw [← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
   intro y _
-  rw [← mul_sub, map_sub]
+  rw [← mul_sub, map_sub (bornTracePairing S.state.matrix)]
   rfl
 
 theorem exactFairBobHistoryEntropy_eq_operatorPotential_sub
@@ -6124,7 +6126,8 @@ theorem exactFairBobHistoryEntropy_eq_operatorPotential_sub
   rw [← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
   intro x _
-  rw [← mul_sub, map_sub]
+  rw [← mul_sub, map_sub (bornTracePairing S.state.matrix
+    (exactAliceQuestionFilter G n S D r.seed r.history r.aliceAnswer x))]
 
 /-- The potential function controlling exact reverse alice filter high operator. -/
 def exactReverseAliceFilterHighOperatorPotential
@@ -7135,17 +7138,8 @@ theorem exactGlobalHistoryFinPsi_sub_Phi_norm
     ‖(exactGlobalHistoryFinPsi G n S D r x y).val -
       (exactGlobalHistoryFinPhi G n S D r y).val‖ =
       ‖exactPsi G n S D r x y -
-        exactPhi G n S D r y‖ := by
-  change
-    ‖exactGlobalHistoryFinReindex G n S D
-        (exactGlobalHistoryVector G n S D r
-          (exactPsi G n S D r x y)) -
-      exactGlobalHistoryFinReindex G n S D
-        (exactGlobalHistoryVector G n S D r
-          (exactPhi G n S D r y))‖ = _
-  rw [← map_sub, ← exactGlobalHistoryVector_sub,
-    LinearIsometryEquiv.norm_map,
-    exactGlobalHistoryVector_norm]
+        exactPhi G n S D r y‖ :=
+  exactGlobalHistoryFinVector_sub_norm G n S D r _ _
 
 theorem exactLocallySampleableLaw_zero_of_coordinate_mismatch
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))

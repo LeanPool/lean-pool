@@ -7,8 +7,6 @@ module
 
 public import LeanPool.DomainTheory.Neighborhood.Product
 public import LeanPool.DomainTheory.Neighborhood.Example23
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Set.Image
 import Mathlib.Tactic.Attr.Core
 import Mathlib.Tactic.SetLike
 
@@ -76,35 +74,44 @@ abbrev TD : NeighborhoodSystem Example12.Token := Example12.neighborhoodSystem
 theorem zero_ne_one : (Example12.zero : Set Example12.Token) ≠ Example12.one := by
   intro h
   have h0 := Set.ext_iff.mp h 0
-  simp [Example12.zero, Example12.one] at h0
+  simp only [Example12.zero, Fin.isValue, Set.mem_singleton_iff, Example12.one,
+    Fin.zero_eq_one_iff, Nat.succ_ne_self, iff_false, not_true_eq_false] at h0
 
 theorem zero_ne_master : (Example12.zero : Set Example12.Token) ≠ Example12.master := by
   intro h
   have h1 := Set.ext_iff.mp h 1
-  simp [Example12.zero, Example12.master] at h1
+  simp only [Example12.zero, Fin.isValue, Set.mem_singleton_iff, Fin.one_eq_zero_iff,
+    Nat.succ_ne_self, Example12.master, Set.mem_univ, iff_true] at h1
 
 theorem one_ne_master : (Example12.one : Set Example12.Token) ≠ Example12.master := by
   intro h
   have h0 := Set.ext_iff.mp h 0
-  simp [Example12.one, Example12.master] at h0
+  simp only [Example12.one, Fin.isValue, Set.mem_singleton_iff, Fin.zero_eq_one_iff,
+    Nat.succ_ne_self, Example12.master, Set.mem_univ, iff_true] at h0
 
 /-- A `T`-neighbourhood contained in `{0}` is `{0}` (the other two, `Δ` and `{1}`,
 are not). -/
 theorem Tmem_eq_zero {C : Set Example12.Token} (hC : Example12.mem C) (h : C ⊆ Example12.zero) :
     C = Example12.zero := by
   rcases (Example12.mem_iff C).mp hC with rfl | rfl | rfl
-  · exact absurd (h (Set.mem_univ 1)) (by simp [Example12.zero])
+  · exact absurd (h (Set.mem_univ 1)) (by simp only [Example12.zero, Fin.isValue,
+    Set.mem_singleton_iff, Fin.one_eq_zero_iff, Nat.succ_ne_self, not_false_eq_true])
   · rfl
-  · exact absurd (h (by simp [Example12.one] : (1 : Example12.Token) ∈ Example12.one))
-      (by simp [Example12.zero])
+  · exact absurd (h (by simp only [Example12.one, Fin.isValue,
+    Set.mem_singleton_iff] : (1 : Example12.Token) ∈ Example12.one))
+      (by simp only [Example12.zero, Fin.isValue, Set.mem_singleton_iff, Fin.one_eq_zero_iff,
+        Nat.succ_ne_self, not_false_eq_true])
 
 /-- A `T`-neighbourhood contained in `{1}` is `{1}`. -/
 theorem Tmem_eq_one {C : Set Example12.Token} (hC : Example12.mem C) (h : C ⊆ Example12.one) :
     C = Example12.one := by
   rcases (Example12.mem_iff C).mp hC with rfl | rfl | rfl
-  · exact absurd (h (Set.mem_univ 0)) (by simp [Example12.one])
-  · exact absurd (h (by simp [Example12.zero] : (0 : Example12.Token) ∈ Example12.zero))
-      (by simp [Example12.one])
+  · exact absurd (h (Set.mem_univ 0)) (by simp only [Example12.one, Fin.isValue,
+    Set.mem_singleton_iff, Fin.zero_eq_one_iff, Nat.succ_ne_self, not_false_eq_true])
+  · exact absurd (h (by simp only [Example12.zero, Fin.isValue,
+    Set.mem_singleton_iff] : (0 : Example12.Token) ∈ Example12.zero))
+      (by simp only [Example12.one, Fin.isValue, Set.mem_singleton_iff, Fin.zero_eq_one_iff,
+        Nat.succ_ne_self, not_false_eq_true])
   · rfl
 
 /-! ### The conditional relation. -/

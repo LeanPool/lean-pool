@@ -82,7 +82,7 @@ theorem gradMatrix_Gbar_entry_abs_le_of_active_flow_bounds
   have hGderiv (l : ℤ) : HasFDerivAt
       (fun y : Vec 2 => G I hΦ m T l t y j)
       (fderiv ℝ (fun y : Vec 2 => G I hΦ m T l t y j) x) x :=
-    ((contDiff_apply ℝ ℝ j).comp (hG l)).differentiable (by simp) x |>.hasFDerivAt
+    ((contDiff_apply ℝ (fun _ => ℝ) j).comp (hG l)).differentiable (by simp) x |>.hasFDerivAt
   have hsumDeriv : HasFDerivAt
       (fun y : Vec 2 => ∑ l ∈ S, I.hatXiML m l t * G I hΦ m T l t y j)
       (∑ l ∈ S, I.hatXiML m l t •

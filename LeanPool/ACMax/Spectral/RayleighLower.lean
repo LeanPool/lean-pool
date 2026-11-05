@@ -5,9 +5,6 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
 public import LeanPool.ACMax.Spectral.AlgConn
 
 /-!
@@ -138,12 +135,15 @@ theorem le_algConn_of_forall {V : Type*} [Fintype V] [Nonempty V] [Nontrivial V]
     rw [hsqw, hnormw, hquadw] at hbnd
     have hpos : 0 < (∑ k, v0 k) ^ 2 + (∑ k, v1 k) ^ 2 := by
       have h2 : 0 < (∑ k, v0 k) ^ 2 := by rw [pow_two]; exact mul_self_pos.mpr hS0
-      nlinarith [sq_nonneg (∑ k, v1 k)]
+      exact add_pos_of_pos_of_nonneg h2 (sq_nonneg _)
     have hub : (∑ k, v1 k) ^ 2 * lam j0 + (∑ k, v0 k) ^ 2 * lam j1
         ≤ algConn G * ((∑ k, v0 k) ^ 2 + (∑ k, v1 k) ^ 2) := by
       rw [hlamj0]
-      nlinarith [mul_le_mul_of_nonneg_left hlamj1 (sq_nonneg (∑ k, v0 k)),
-        sq_nonneg (∑ k, v1 k), sq_nonneg (∑ k, v0 k)]
+      calc
+        _ ≤ (∑ k, v1 k) ^ 2 * algConn G + (∑ k, v0 k) ^ 2 * algConn G :=
+          add_le_add le_rfl
+            (mul_le_mul_of_nonneg_left hlamj1 (sq_nonneg (∑ k, v0 k)))
+        _ = _ := by ring
     have hfin : c * ((∑ k, v0 k) ^ 2 + (∑ k, v1 k) ^ 2)
         ≤ algConn G * ((∑ k, v0 k) ^ 2 + (∑ k, v1 k) ^ 2) := le_trans hbnd hub
     exact le_of_mul_le_mul_right hfin hpos

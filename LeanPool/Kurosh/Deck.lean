@@ -48,21 +48,21 @@ noncomputable def quotientDeckEndHom (G : Type u) [Group G] (H : Subgroup G)
     [H.Normal] [Fintype (G ⧸ H)] : G ⧸ H →* End (SchreierAction G H) :=
   QuotientGroup.lift H (Action.FintypeCat.toEndHom H) (by
     intro n hn
-    change Action.FintypeCat.toEndHom H n = 𝟙 _
+    change Action.FintypeCat.toEndHom H n = 1
     exact Action.FintypeCat.toEndHom_trivial_of_mem (N := H) hn)
 
 @[simp]
 lemma quotientDeckEndHom_mk (G : Type u) [Group G] (H : Subgroup G)
     [H.Normal] [Fintype (G ⧸ H)] (g h : G) :
-    (quotientDeckEndHom G H (g : G ⧸ H)).hom ⟦h⟧ = ⟦h * g⁻¹⟧ := rfl
+    (quotientDeckEndHom G H (g : G ⧸ H)).asHom.hom ⟦h⟧ = ⟦h * g⁻¹⟧ := rfl
 
 @[simp]
 lemma quotientDeckEndHom_apply_one (G : Type u) [Group G] (H : Subgroup G)
     [H.Normal] [Fintype (G ⧸ H)] (q : G ⧸ H) :
-    (quotientDeckEndHom G H q).hom (1 : G ⧸ H) = q⁻¹ := by
+    (quotientDeckEndHom G H q).asHom.hom (1 : G ⧸ H) = q⁻¹ := by
   refine QuotientGroup.induction_on q ?_
   intro g
-  change (quotientDeckEndHom G H (g : G ⧸ H)).hom ⟦(1 : G)⟧ = _
+  change (quotientDeckEndHom G H (g : G ⧸ H)).asHom.hom ⟦(1 : G)⟧ = _
   rw [quotientDeckEndHom_mk]
   change QuotientGroup.mk' H (1 * g⁻¹) = (QuotientGroup.mk' H g)⁻¹
   simp
@@ -99,12 +99,12 @@ noncomputable def quotientDeckHom (G : Type u) [Group G] (H : Subgroup G)
 
 lemma quotientDeckHom_hom (G : Type u) [Group G] (H : Subgroup G)
     [H.Normal] [Fintype (G ⧸ H)] (q : G ⧸ H) :
-    (quotientDeckHom G H q).hom.hom = (quotientDeckEndHom G H q).hom := rfl
+    (quotientDeckHom G H q).asIso.hom.hom = (quotientDeckEndHom G H q).asHom.hom := rfl
 
 @[simp]
 lemma quotientDeckHom_apply_one (G : Type u) [Group G] (H : Subgroup G)
     [H.Normal] [Fintype (G ⧸ H)] (q : G ⧸ H) :
-    (quotientDeckHom G H q).hom.hom (1 : G ⧸ H) = q⁻¹ := by
+    (quotientDeckHom G H q).asIso.hom.hom (1 : G ⧸ H) = q⁻¹ := by
   rw [quotientDeckHom_hom]
   exact quotientDeckEndHom_apply_one G H q
 
@@ -132,7 +132,7 @@ lemma quotientDeckHom_injective (G : Type u) [Group G] (H : Subgroup G)
     [H.Normal] [Fintype (G ⧸ H)] :
     Function.Injective (quotientDeckHom G H) := by
   intro q r h
-  have h' := congrArg (fun d : SchreierDeckGroup G H => d.hom.hom (1 : G ⧸ H)) h
+  have h' := congrArg (fun d : SchreierDeckGroup G H => d.asIso.hom.hom (1 : G ⧸ H)) h
   dsimp [SchreierAction] at h'
   rw [quotientDeckHom_apply_one, quotientDeckHom_apply_one] at h'
   have h'' := congrArg
@@ -144,17 +144,18 @@ lemma quotientDeckHom_surjective (G : Type u) [Group G] (H : Subgroup G)
     [H.Normal] [Fintype (G ⧸ H)] :
     Function.Surjective (quotientDeckHom G H) := by
   intro d
-  obtain ⟨g, hg⟩ := QuotientGroup.mk'_surjective H (d.hom.hom (1 : G ⧸ H))
+  obtain ⟨g, hg⟩ := QuotientGroup.mk'_surjective H (d.asIso.hom.hom (1 : G ⧸ H))
   refine ⟨(g⁻¹ : G ⧸ H), ?_⟩
   apply Aut.ext
+  apply Iso.ext
   apply schreierActionHom_ext_of_one G H
-  change (quotientDeckEndHom G H (g⁻¹ : G ⧸ H)).hom (1 : G ⧸ H) =
-    d.hom.hom (1 : G ⧸ H)
+  change (quotientDeckEndHom G H (g⁻¹ : G ⧸ H)).asHom.hom (1 : G ⧸ H) =
+    d.asIso.hom.hom (1 : G ⧸ H)
   have hg' : ((g : G ⧸ H) : (SchreierAction G H).V.obj) =
-      d.hom.hom (1 : G ⧸ H) := by
+      d.asIso.hom.hom (1 : G ⧸ H) := by
     exact congrArg (fun x : G ⧸ H => (x : (SchreierAction G H).V.obj)) hg
   have hg'' : (((g⁻¹ : G ⧸ H)⁻¹ : G ⧸ H) : (SchreierAction G H).V.obj) =
-      d.hom.hom (1 : G ⧸ H) := by
+      d.asIso.hom.hom (1 : G ⧸ H) := by
     simpa only [inv_inv] using hg'
   simpa only [inv_inv] using
     (quotientDeckEndHom_apply_one G H (g⁻¹ : G ⧸ H)).trans hg''

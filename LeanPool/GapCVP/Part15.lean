@@ -6,7 +6,10 @@ Authors: OpenAI, Dean Cureton
 
 module
 
-public import LeanPool.GapCVP.Part14
+public import LeanPool.GapCVP.Part14B
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.RegularLocalRing.Defs
 
 /-! # GapCVP proof, part 15 -/
 

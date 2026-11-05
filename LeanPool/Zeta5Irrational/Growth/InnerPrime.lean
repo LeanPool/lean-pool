@@ -8,8 +8,8 @@ module
 
 import LeanPool.Zeta5Irrational.Legendre
 import Mathlib.Tactic.ReduceModChar
-import Mathlib.Data.Rat.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Rat
+import Mathlib.Algebra.Order.Star.Int
 public import LeanPool.Zeta5Irrational.Growth.ClassData
 public import LeanPool.Zeta5Irrational.Norm
 import Mathlib.Tactic.Linarith

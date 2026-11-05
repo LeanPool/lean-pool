@@ -220,7 +220,7 @@ def graphEdgeRetraction (t : I) : C(I, I) where
   toFun s :=
     ⟨(1 - (s : ℝ)) * (t : ℝ),
       unitInterval.mul_mem
-        ⟨unitInterval.one_minus_nonneg s, unitInterval.one_minus_le_one s⟩ t.2⟩
+        ⟨unitInterval.one_sub_nonneg s, unitInterval.one_sub_le_one s⟩ t.2⟩
   continuous_toFun := by fun_prop
 
 @[simp]

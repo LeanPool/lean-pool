@@ -55,8 +55,8 @@ theorem regUniformMollifiedInitial_contDiff_of_memLp
         allDerivativeScalarVectorAction volume) :=
     hkernelCompact.contDiff_convolution_left
       (L := allDerivativeScalarVectorAction) hkernelSmooth hloc
-  have hto : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => WithLp.toLp 2 x) := by
-    fun_prop
+  have hto : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => WithLp.toLp 2 x) :=
+    (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm.contDiff
   let e : L2Vec3 ≃L[ℝ] Vec3 := PiLp.continuousLinearEquiv 2 ℝ
     (fun _ : Fin 3 => ℝ)
   have hcoordinate : ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 =>

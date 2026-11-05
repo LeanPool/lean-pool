@@ -12,12 +12,6 @@ public import LeanPool.DomainTheory.Neighborhood.Exercise510
 public import Mathlib.Tactic.Attr.Core
 import LeanPool.DomainTheory.Neighborhood.Exercise516
 public import LeanPool.DomainTheory.Neighborhood.Theorem69
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Exercise 6.17 (Scott 1981, PRG-19, §6) — the algebras for which `C` is initial
@@ -340,34 +334,22 @@ theorem sumMap3_id :
       (idMap V₀) (idMap V₁) (idMap V₂) = idMap (sum3 V₀ V₁ V₂ h₀ h₁ h₂) := by
   apply ApproximableMap.ext
   intro W W'
-  constructor
-  · rintro ⟨hW, hW', hd⟩
-    refine ⟨hW, hW', ?_⟩
+  apply (sumMap3 (h₀ := h₀) (h₁ := h₁) (h₂ := h₂) (h₀' := h₀) (h₁' := h₁) (h₂' := h₂)
+    (idMap V₀) (idMap V₁) (idMap V₂)).relation_iff_subset_of_diagonal
+  · intro W hW
+    refine ⟨hW, hW, ?_⟩
+    rcases hW with rfl | ⟨X, hX, rfl⟩ | ⟨Y, hY, rfl⟩ | ⟨Z, hZ, rfl⟩
+    · exact Or.inl rfl
+    · exact Or.inr (Or.inl ⟨X, X, rfl, rfl, hX, hX, subset_rfl⟩)
+    · exact Or.inr (Or.inr (Or.inl ⟨Y, Y, rfl, rfl, hY, hY, subset_rfl⟩))
+    · exact Or.inr (Or.inr (Or.inr ⟨Z, Z, rfl, rfl, hZ, hZ, subset_rfl⟩))
+  · rintro W W' ⟨hW, _, hd⟩
     rcases hd with rfl | ⟨X, Y', rfl, rfl, _, _, hXY⟩ | ⟨Y, Y', rfl, rfl, _, _, hXY⟩
       | ⟨Z, Y', rfl, rfl, _, _, hXY⟩
     · exact (sum3 V₀ V₁ V₂ h₀ h₁ h₂).sub_master hW
     · exact j0_subset_j0.mpr hXY
     · exact j1_subset_j1.mpr hXY
     · exact j2_subset_j2.mpr hXY
-  · rintro ⟨hW, hW', hsub⟩
-    refine ⟨hW, hW', ?_⟩
-    rcases hW with rfl | ⟨X, hX, rfl⟩ | ⟨Y, hY, rfl⟩ | ⟨Z, hZ, rfl⟩
-    · left; exact eq_master3_of_subset hsub ((sum3 V₀ V₁ V₂ h₀ h₁ h₂).sub_master hW')
-    · rcases hW' with rfl | ⟨X', hX', rfl⟩ | ⟨Y', hY', rfl⟩ | ⟨Z', hZ', rfl⟩
-      · exact Or.inl rfl
-      · exact Or.inr (Or.inl ⟨X, X', rfl, rfl, hX, hX', j0_subset_j0.mp hsub⟩)
-      · obtain ⟨a, ha⟩ := h₀ X hX; exact absurd (hsub (t0_mem_j0.mpr ha)) t0_not_mem_j1
-      · obtain ⟨a, ha⟩ := h₀ X hX; exact absurd (hsub (t0_mem_j0.mpr ha)) t0_not_mem_j2
-    · rcases hW' with rfl | ⟨X', hX', rfl⟩ | ⟨Y', hY', rfl⟩ | ⟨Z', hZ', rfl⟩
-      · exact Or.inl rfl
-      · obtain ⟨b, hb⟩ := h₁ Y hY; exact absurd (hsub (t1_mem_j1.mpr hb)) t1_not_mem_j0
-      · exact Or.inr (Or.inr (Or.inl ⟨Y, Y', rfl, rfl, hY, hY', j1_subset_j1.mp hsub⟩))
-      · obtain ⟨b, hb⟩ := h₁ Y hY; exact absurd (hsub (t1_mem_j1.mpr hb)) t1_not_mem_j2
-    · rcases hW' with rfl | ⟨X', hX', rfl⟩ | ⟨Y', hY', rfl⟩ | ⟨Z', hZ', rfl⟩
-      · exact Or.inl rfl
-      · obtain ⟨c, hc⟩ := h₂ Z hZ; exact absurd (hsub (t2_mem_j2.mpr hc)) t2_not_mem_j0
-      · obtain ⟨c, hc⟩ := h₂ Z hZ; exact absurd (hsub (t2_mem_j2.mpr hc)) t2_not_mem_j1
-      · exact Or.inr (Or.inr (Or.inr ⟨Z, Z', rfl, rfl, hZ, hZ', j2_subset_j2.mp hsub⟩))
 
 /-- **Functoriality (composition): `(g₀∘f₀) + (g₁∘f₁) + (g₂∘f₂) = (g₀+g₁+g₂) ∘
 (f₀+f₁+f₂)`.** -/
@@ -786,7 +768,8 @@ theorem consMap_not_mem_nil {b : Bool} {z : C.Element} :
   rintro ⟨X', hzX', hX'mem, _, hsub⟩
   obtain ⟨a, ha⟩ := C_nonempty X' hX'mem
   rw [← embBit_eq_prepend] at hsub
-  simp_all
+  simp_all only [Set.subset_singleton_iff, mem_embBit, forall_exists_index, reduceCtorEq,
+    imp_false, not_and]
 
 /-- **`toCC ∘ (0·) = inj₁` and `toCC ∘ (1·) = inj₂`.** Prepending the bit `b` to
 `z` is, across the

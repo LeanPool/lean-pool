@@ -253,7 +253,7 @@ theorem levelEnergy_sumCoordNorm_le
         ∫ x in A, (u.toH1Function.grad x i) ^ 2 ∂volume := by
     intro i
     rw [toReal_eLpNorm_two_sq_eq_integral_sq
-      ((u.toH1Function.gradMemL2 i).indicator hAm)]
+      ((u.toH1Function.gradMemL2 i).indicator hAm.nullMeasurableSet)]
     have hind : (fun x => (A.indicator
         (fun y => u.toH1Function.grad y i) x) ^ 2) =
         A.indicator (fun x => (u.toH1Function.grad x i) ^ 2) := by

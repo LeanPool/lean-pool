@@ -396,7 +396,7 @@ theorem HasWeakGradientOn.comp_convexApproxSample
 
 theorem quasiMeasurePreserving_convexApproxSample
     {d : ℕ} (x0 z : Vec d) (r ε : ℝ) (hε1 : ε < 1) :
-    MeasureTheory.Measure.QuasiMeasurePreserving (convexApproxSample x0 z r ε)
+    MeasureTheory.QuasiMeasurePreserving (convexApproxSample x0 z r ε)
       MeasureTheory.volume MeasureTheory.volume := by
   let a : ℝ := 1 - ε
   let b : Vec d := ε • (x0 - r • z)
@@ -404,7 +404,7 @@ theorem quasiMeasurePreserving_convexApproxSample
     dsimp [a]
     linarith
   have hsmul :
-      MeasureTheory.Measure.QuasiMeasurePreserving (fun x : Vec d => a • x)
+      MeasureTheory.QuasiMeasurePreserving (fun x : Vec d => a • x)
         MeasureTheory.volume MeasureTheory.volume :=
     MeasureTheory.Measure.quasiMeasurePreserving_smul (μ := MeasureTheory.volume) ha_ne
   have hadd :
@@ -418,7 +418,7 @@ theorem quasiMeasurePreserving_convexApproxSample_prod
     {d : ℕ} {U : Set (Vec d)} {ρ : Vec d → ℝ}
     (_hρ : IsConvexApproxKernel ρ)
     (x0 : Vec d) (r ε : ℝ) (hε1 : ε < 1) :
-    MeasureTheory.Measure.QuasiMeasurePreserving
+    MeasureTheory.QuasiMeasurePreserving
       (fun p : Vec d × Vec d => convexApproxSample x0 p.2 r ε p.1)
       ((MeasureTheory.volume.restrict U).prod (MeasureTheory.volume.restrict (tsupport ρ)))
       MeasureTheory.volume := by

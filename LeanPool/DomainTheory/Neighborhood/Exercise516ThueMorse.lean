@@ -8,11 +8,6 @@ module
 public import LeanPool.DomainTheory.Neighborhood.Exercise516
 public import Mathlib.Data.Nat.Bits
 public import Mathlib.Algebra.Group.Nat.Defs
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
 import Mathlib.Tactic.Ring.RingNF
 
 /-!
@@ -86,7 +81,7 @@ def expand : Str → Str
 theorem expand_append (σ τ : Str) : expand (σ ++ τ) = expand σ ++ expand τ := by
   induction σ with
   | nil => rfl
-  | cons b σ ih => simp [ih]
+  | cons b σ ih => simp only [List.cons_append, expand_cons, ih]
 
 /-! ### `Φ` on a partial element computes by interleaving — and equals `expand`. -/
 
@@ -189,7 +184,7 @@ number of `1`s in
 the binary expansion of `n` (Lambek's description). -/
 def tm (n : ℕ) : Bool := (Nat.bits n).foldr xor false
 
-@[simp] theorem tm_zero : tm 0 = false := by simp [tm, Nat.zero_bits]
+@[simp] theorem tm_zero : tm 0 = false := by simp only [tm, Nat.zero_bits, List.foldr_nil]
 
 /-- The even recurrence `tm (2n) = tm n` (appending a `0`-digit does not change
 the parity). -/

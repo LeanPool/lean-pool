@@ -15,6 +15,7 @@ import LeanPool.PFR.ImprovedPFR
 import LeanPool.PFR.Mathlib.Algebra.Group.Action.Pointwise.Set.Basic
 import LeanPool.PFR.Mathlib.LinearAlgebra.Dimension.FreeAndStrongRankCondition
 import LeanPool.PFR.Mathlib.LinearAlgebra.Quotient.Basic
+import Mathlib.Algebra.Group.Pointwise.Set.Card
 import Mathlib.LinearAlgebra.FreeModule.ModN
 import Mathlib.LinearAlgebra.FreeModule.PID
 
@@ -105,6 +106,8 @@ variable {G : Type*} [AddCommGroup G] [MeasurableSpace G] [MeasurableSingletonCl
 public
 lemma torsion_free_doubling [FiniteRange X] [FiniteRange Y] (hX : Measurable X) (hY : Measurable Y)
     [IsAddTorsionFree G] : d[X; μ # (Y + Y); μ'] ≤ 5 * d[X; μ # Y; μ'] := by
+  have : HasUniqueDiv G :=
+    ⟨fun _ hn _ _ h ↦ eq_of_nsmul_eq_nsmul_of_addCommute hn (.all _ _) h⟩
   obtain ⟨A, mA, μA, X', Y'₁, Y'₂, hμA, h_indep, hX'_meas, hY'₁_meas, hY'₂_meas, hX'_ident,
     hY'₁_ident, hY'₂_ident, _, _, _⟩ := independent_copies3_nondep_finiteRange hX hY hY μ μ' μ'
   have h_meas (i : Fin 3) : Measurable (![X', Y'₁, Y'₂] i) := by fin_cases i <;> assumption
@@ -674,7 +677,7 @@ lemma weak_PFR_asymm_prelim (A B : Set G) [A_fin : Finite A] [B_fin : Finite B]
   let _mH : MeasurableSpace H := ⊤
   have : Finite H := ModN.instFinite
   let h_fintype : Fintype H := .ofFinite H
-  have : IsAddTorsionFree G :=.of_isTorsionFree ℤ _
+  have : HasUniqueDiv G := .of_isTorsionFree ℤ _
   obtain ⟨Ω, mΩ, UA, hμ, hUA_mes, hUA_unif, hUA_mem, hUA_fin⟩ :=
     exists_isUniform_measureSpace' A A_fin hnA
   obtain ⟨Ω', mΩ', UB, hμ', hUB_mes, hUB_unif, hUB_mem, hUB_fin⟩ :=

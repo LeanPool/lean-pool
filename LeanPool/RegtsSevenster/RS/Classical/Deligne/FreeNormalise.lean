@@ -105,18 +105,18 @@ theorem freeModPow_alg
     [IsCommMonObj A] (V : D)
     (n : ℕ) (z : SymGroupAlgebra (n + 1)) :
     freeCollapseSection A V n ≫
-        (modPowAlg A (freeMod A V).X (n + 1) z :
+        ((modPowAlg A (freeMod A V).X (n + 1) z).asHom :
           modPow A (freeMod A V).X (n + 1) ⟶
             modPow A (freeMod A V).X (n + 1)) ≫
         freeCollapseDesc A V (n + 1) =
-      A ◁ (permAlg V (n + 1) z : tensorPow D V (n + 1) ⟶
+      A ◁ ((permAlg V (n + 1) z).asHom : tensorPow D V (n + 1) ⟶
         tensorPow D V (n + 1)) := by
   have hmid : modPowπ A (freeMod A V).X (n + 1) ≫
-      ((modPowAlg A (freeMod A V).X (n + 1) z :
+      (((modPowAlg A (freeMod A V).X (n + 1) z).asHom :
           modPow A (freeMod A V).X (n + 1) ⟶
             modPow A (freeMod A V).X (n + 1)) ≫
         freeCollapseDesc A V (n + 1)) =
-      (permAlg (A ⊗ V) (n + 1) z :
+      ((permAlg (A ⊗ V) (n + 1) z).asHom :
           tensorPow D (A ⊗ V) (n + 1) ⟶
             tensorPow D (A ⊗ V) (n + 1)) ≫
         freeCollapse A V (n + 1) := by
@@ -143,10 +143,10 @@ theorem whisker_permAlg_eq_zero
     [IsCommMonObj A] (V : D)
     (n : ℕ) (hn : n ≠ 0)
     (z : SymGroupAlgebra n)
-    (h : (modPowAlg A (freeMod A V).X n z :
+    (h : ((modPowAlg A (freeMod A V).X n z).asHom :
       modPow A (freeMod A V).X n ⟶
         modPow A (freeMod A V).X n) = 0) :
-    (A ◁ (permAlg V n z : tensorPow D V n ⟶
+    (A ◁ ((permAlg V n z).asHom : tensorPow D V n ⟶
       tensorPow D V n)) = 0 := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn
   rw [← freeModPow_alg A V k z, h]
@@ -162,9 +162,9 @@ theorem modPowAlg_eq_zero
     (A : D) [MonObj A] [IsCommMonObj A] (V : D)
     (n : ℕ) (hn : n ≠ 0)
     (z : SymGroupAlgebra n)
-    (h : (A ◁ (permAlg V n z : tensorPow D V n ⟶
+    (h : (A ◁ ((permAlg V n z).asHom : tensorPow D V n ⟶
       tensorPow D V n)) = 0) :
-    (modPowAlg A (freeMod A V).X n z :
+    ((modPowAlg A (freeMod A V).X n z).asHom :
       modPow A (freeMod A V).X n ⟶
         modPow A (freeMod A V).X n) = 0 := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn

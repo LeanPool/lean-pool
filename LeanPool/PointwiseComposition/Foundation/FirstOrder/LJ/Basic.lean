@@ -311,14 +311,67 @@ lemma height_cast {Γ Δ : Sequent L} {Ξ Λ : Head L} (d : Γ ⊢ᴸᴶ¹ Ξ) (
   subst Λ
   rfl
 
+section
+
+-- Realize the existing equation API before simplifying dependent derivations.
+attribute [local simp] height
+
 /-- Term substitution preserves derivation height (standard syntactic property). -/
 @[simp]
 lemma height_rewrite (f : ℕ → SyntacticTerm L) {Γ : Sequent L} {Ξ : Head L} (d : Γ ⊢ᴸᴶ¹ Ξ) :
     height (d.rewrite f) = height d :=
   by
-  induction d generalizing f <;> simp only [LJ.Derivation.rewrite, height, height_cast]
-  case positiveAnd a b iha ihb => exact congrArg (· + 1) <| congrArg₂ max (iha f) (ihb f)
-  all_goals aesop
+  induction d generalizing f <;> simp only [LJ.Derivation.rewrite, height_cast]
+  case identity => rfl
+  case verum => rfl
+  case falsum => rfl
+  case cut a b iha ihb =>
+    change max (height _) (height _) + 1 = max (height a) (height b) + 1
+    simpa only [height_cast] using congrArg (· + 1) (congrArg₂ max (iha _) (ihb _))
+  case contraction a ih =>
+    change height _ + 1 = height a + 1
+    simpa only [height_cast] using congrArg (· + 1) (ih _)
+  case weakening a ih =>
+    change height _ + 1 = height a + 1
+    simpa only [height_cast] using congrArg (· + 1) (ih _)
+  case weakeningRight a ih =>
+    change height _ + 1 = height a + 1
+    exact congrArg (· + 1) (ih f)
+  case positiveImply a ih =>
+    change height _ + 1 = height a + 1
+    simpa only [height_cast] using congrArg (· + 1) (ih _)
+  case negativeImply a b iha ihb =>
+    change max (height _) (height _) + 1 = max (height a) (height b) + 1
+    simpa only [height_cast] using congrArg (· + 1) (congrArg₂ max (iha _) (ihb _))
+  case positiveAnd a b iha ihb =>
+    change max (height _) (height _) + 1 = max (height a) (height b) + 1
+    exact congrArg (· + 1) (congrArg₂ max (iha f) (ihb f))
+  case negativeAnd a ih =>
+    change height _ + 1 = height a + 1
+    simpa only [height_cast] using congrArg (· + 1) (ih _)
+  case positiveOrLeft a ih =>
+    change height _ + 1 = height a + 1
+    exact congrArg (· + 1) (ih f)
+  case positiveOrRight a ih =>
+    change height _ + 1 = height a + 1
+    exact congrArg (· + 1) (ih f)
+  case negativeOr a b iha ihb =>
+    change max (height _) (height _) + 1 = max (height a) (height b) + 1
+    simpa only [height_cast] using congrArg (· + 1) (congrArg₂ max (iha _) (ihb _))
+  case positiveForall a ih =>
+    change height _ + 1 = height a + 1
+    simpa only [height_cast] using congrArg (· + 1) (ih _)
+  case negativeForall a ih =>
+    change height _ + 1 = height a + 1
+    simpa only [height_cast] using congrArg (· + 1) (ih _)
+  case positiveExists a ih =>
+    change height _ + 1 = height a + 1
+    simpa only [height_cast] using congrArg (· + 1) (ih _)
+  case negativeExists a ih =>
+    change height _ + 1 = height a + 1
+    simpa only [height_cast] using congrArg (· + 1) (ih _)
+
+end
 
 /-- The map construction in `FFL.FirstOrder.LJ.Derivation`. -/
 protected def map (d : Γ ⊢ᴸᴶ¹ Ξ) (f : ℕ → ℕ) :

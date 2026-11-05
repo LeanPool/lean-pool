@@ -7,6 +7,9 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.GapCVP.Part14A
+import Mathlib.Algebra.Order.Floor.Semifield
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.RegularLocalRing.Defs
 
 /-! # GapCVP proof, part 14, continuation 02 -/
 
@@ -1404,6 +1407,28 @@ private theorem paperVariableArityPhysicalMatrixFamilyGuardCover
                 afterRefinement, ordinary,
                 afterOrdinary, decide_true, Bool.and_self, Bool.or_true]
 
+private theorem physicalMatrixGuardedFourFamilyCheck_bits
+    (global refinement ordinary shifted : List Bool → List Bool)
+    (query : List Bool) (row globalBoundary refinementBoundary ordinaryBoundary : ℕ)
+    (entry : Bool)
+    (correctGlobal : global query = [decide (row < globalBoundary) && entry])
+    (correctRefinement : refinement query =
+      [decide (globalBoundary ≤ row ∧ row < refinementBoundary) && entry])
+    (correctOrdinary : ordinary query =
+      [decide (refinementBoundary ≤ row ∧ row < ordinaryBoundary) && entry])
+    (correctShifted : shifted query = [decide (ordinaryBoundary ≤ row) && entry]) :
+    physicalMatrixGuardedFourFamilyCheck global refinement ordinary shifted query = [entry] := by
+  have last := fourFamilyBooleanOrOutput_bits ordinary shifted query _ _
+    correctOrdinary correctShifted
+  have middle := fourFamilyBooleanOrOutput_bits refinement
+    (sourceFourFamilyBooleanOrOutput ordinary shifted) query _ _ correctRefinement last
+  have complete := fourFamilyBooleanOrOutput_bits global
+    (sourceFourFamilyBooleanOrOutput refinement
+      (sourceFourFamilyBooleanOrOutput ordinary shifted)) query _ _ correctGlobal middle
+  exact complete.trans (congrArg (fun bit => [bit])
+    (paperVariableArityPhysicalMatrixFamilyGuardCover
+      row globalBoundary refinementBoundary ordinaryBoundary entry))
+
 theorem paperVariableArityPhysicalMatrixGuardedFourFamilyCheck_valid
     (global refinement ordinary shifted : List Bool → List Bool)
     (formula : ThreeCNF)
@@ -1462,63 +1487,16 @@ theorem paperVariableArityPhysicalMatrixGuardedFourFamilyCheck_valid
         ((physicalWordBinarySystem
           (encodeThreeCNF formula).length formula).check
             row column = (1 : ZMod 2))] := by
-  let query := affineCellQuery row.val column.val
-    (encodeThreeCNF formula)
-  let entry := decide
-    ((physicalWordBinarySystem
-      (encodeThreeCNF formula).length formula).check
-        row column = (1 : ZMod 2))
-  let globalBit :=
-    decide (row.val < physicalFormulaGlobalBoundary formula)
-  let refinementBit := decide
-    (physicalFormulaGlobalBoundary formula ≤ row.val ∧
-      row.val < physicalFormulaRefinementBoundary formula)
-  let ordinaryBit := decide
-    (physicalFormulaRefinementBoundary formula ≤ row.val ∧
-      row.val < physicalFormulaOrdinaryBoundary formula)
-  let shiftedBit := decide
-    (physicalFormulaOrdinaryBoundary formula ≤ row.val)
-  have globalValue : global query = [globalBit && entry] := by
-    simpa only [query, globalBit, entry] using correctGlobal
-  have refinementValue : refinement query = [refinementBit && entry] := by
-    simpa only [query, refinementBit, entry] using correctRefinement
-  have ordinaryValue : ordinary query = [ordinaryBit && entry] := by
-    simpa only [query, ordinaryBit, entry] using correctOrdinary
-  have shiftedValue : shifted query = [shiftedBit && entry] := by
-    simpa only [query, shiftedBit, entry] using correctShifted
-  have last := fourFamilyBooleanOrOutput_bits
-    ordinary shifted query
-    (ordinaryBit && entry) (shiftedBit && entry)
-    ordinaryValue shiftedValue
-  have middle := fourFamilyBooleanOrOutput_bits
-    refinement (sourceFourFamilyBooleanOrOutput ordinary shifted) query
-    (refinementBit && entry)
-    ((ordinaryBit && entry) || (shiftedBit && entry))
-    refinementValue last
-  have complete := fourFamilyBooleanOrOutput_bits
-    global
-    (sourceFourFamilyBooleanOrOutput refinement
-      (sourceFourFamilyBooleanOrOutput ordinary shifted)) query
-    (globalBit && entry)
-    ((refinementBit && entry) ||
-      ((ordinaryBit && entry) || (shiftedBit && entry)))
-    globalValue middle
-  have covered := paperVariableArityPhysicalMatrixFamilyGuardCover
-    row.val
+  exact physicalMatrixGuardedFourFamilyCheck_bits global refinement ordinary shifted
+    (affineCellQuery row.val column.val (encodeThreeCNF formula)) row.val
     (physicalFormulaGlobalBoundary formula)
     (physicalFormulaRefinementBoundary formula)
     (physicalFormulaOrdinaryBoundary formula)
-    entry
-  change
-    physicalMatrixGuardedFourFamilyCheck
-      global refinement ordinary shifted query = [entry]
-  change
-    sourceFourFamilyBooleanOrOutput global
-      (sourceFourFamilyBooleanOrOutput refinement
-        (sourceFourFamilyBooleanOrOutput ordinary shifted)) query =
-      [entry]
-  rw [← covered]
-  exact complete
+    (decide
+    ((physicalWordBinarySystem
+      (encodeThreeCNF formula).length formula).check
+        row column = (1 : ZMod 2)))
+    correctGlobal correctRefinement correctOrdinary correctShifted
 
 private theorem paperVariableArityPhysicalMatrixCheckEntry_transport
     (source target : GapCVP.Core.BinaryAffineSystem)

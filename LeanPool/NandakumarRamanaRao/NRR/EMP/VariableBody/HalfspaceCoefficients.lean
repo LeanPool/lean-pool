@@ -7,7 +7,11 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.EMP.VariableBody.Basic
+public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellAlgebra
+import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.BodyCellPartition
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellAreaContinuityWeights
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Positivity.Finset
 public import LeanPool.NandakumarRamanaRao.NRR.ConfigurationSpace
 
 /-!

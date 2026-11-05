@@ -56,7 +56,9 @@ theorem Equiv.trans {f g h : BQF} (hfg : Equiv f g) (hgh : Equiv g h) : Equiv f 
   obtain ⟨p', q', r', s', hdet', rfl⟩ := hgh
   refine ⟨p * p' + q * r', p * q' + q * s', r * p' + s * r', r * q' + s * s', ?_,
     (act_act f p q r s p' q' r' s').symm⟩
-  nlinarith [hdet, hdet']
+  calc
+    _ = (p * s - q * r) * (p' * s' - q' * r') := by ring
+    _ = 1 := by rw [hdet, hdet', one_mul]
 
 /-- The `T`-generator: shift `(a, b, c) ↦ (a, b + 2an, a n² + b n + c)`; preserves the form
 class and (obviously) the discriminant. -/
@@ -195,6 +197,25 @@ private lemma reprN_eq_reprB (m d : ℕ) : reprN m d = reprB m d := by
     exact ⟨t, ht, h2, l, ⟨hl1, by omega⟩, h1⟩
   · rintro ⟨t, ht, h2, l, ⟨hl1, hl9⟩, h1⟩
     exact ⟨t, ht, l, ⟨hl1, by omega⟩, h1, h2⟩
+
+/-- The Boolean sieve for the three-prime test retains only `163`. -/
+private lemma three_prime_candidates :
+    (List.range 245).filter (fun d => reprB 41 d && reprB 43 d && reprB 61 d) = [163] := by
+  decide +kernel
+
+/-- Membership in the Boolean sieve gives the bounded discriminant test. -/
+private lemma three_prime_bound :
+    ∀ d < 245, reprB 41 d = true → reprB 43 d = true → reprB 61 d = true → d = 163 := by
+  intro d hd h41 h43 h61
+  have hmem : d ∈ (List.range 245).filter
+      (fun d => reprB 41 d && reprB 43 d && reprB 61 d) :=
+    List.mem_filter.mpr ⟨List.mem_range.mpr hd, by simp only [h41, h43, h61, Bool.and_self]⟩
+  simpa only [three_prime_candidates, List.mem_singleton] using hmem
+
+-- Keep the original decision bridge and its generated declarations while reusing the sieve proof.
+private local instance three_prime_decidable : Decidable
+    (∀ d < 245, reprB 41 d = true → reprB 43 d = true → reprB 61 d = true → d = 163) :=
+  isTrue three_prime_bound
 
 /-- **(C5), computational core.** The only `d ∈ [1, 244]` simultaneously representable at
 `m = 41, 43, 61` is `d = 163` (i.e. `D₀ = −163`).  The `{41,43,47}` trap of §6.6 is exactly

@@ -8,6 +8,7 @@ module
 public import LeanPool.BrauerGroupNew.MoritaEquivalence
 public import Mathlib.RingTheory.Morita.Basic
 import Mathlib.Algebra.Category.ModuleCat.Abelian
+import Mathlib.CategoryTheory.Adjunction.Limits
 import Mathlib.CategoryTheory.Limits.Shapes.Countable
 import Mathlib.RingTheory.HopkinsLevitzki
 import Mathlib.RingTheory.SimpleModule.Rank
@@ -74,45 +75,38 @@ instance instAlgebraEndOfLeanPool : Algebra R (End (ModuleCat.of A A)) := inferI
 
 /-- Right multiplication identifies the opposite division ring with endomorphisms of its regular
 module. -/
-@[simps]
+@[simps apply]
 def mopToEnd : Aᵐᵒᵖ →ₐ[R] End (ModuleCat.of A A) where
-  toFun a := ModuleCat.ofHom <|
+  toFun a := .of <| ModuleCat.ofHom <|
     { toFun := fun (x : A) ↦ x * a.unop
       map_add' := by simp [add_mul]
       map_smul' := by simp [mul_assoc] }
-  map_zero' := by simp; rfl
-  map_one' := by aesop
-  map_add' := fun x y => by simp [mul_add]; rfl
-  map_mul' := fun (x y) => by
-    simp only [MulOpposite.unop_mul, End.mul_def]
-    apply ModuleCat.hom_ext
-    simp only [ModuleCat.hom_comp]; ext; simp
+  map_zero' := by ext; simp
+  map_one' := by ext; simp
+  map_add' := fun x y => by ext; simp [mul_add]
+  map_mul' := fun x y => by ext; simp
   commutes' := fun r ↦ by
-    apply hom_ext
-    simp only [MulOpposite.algebraMap_apply, MulOpposite.unop_op, ConcreteCategory.hom_ofHom]
-    ext
-    simp only [LinearMap.coe_mk, AddHom.coe_mk, one_mul]
-    change _ = (ModuleCat.ofHom _).hom 1
-    rw [ModuleCat.hom_ofHom]
-    simp only [End.one_def, hom_id, LinearMap.smul_apply, LinearMap.id_coe, id_eq]
-    change _ = algebraMap R A r * 1
-    rw [mul_one]
+    apply End.ext
+    apply ModuleCat.hom_ext
+    apply LinearMap.ext
+    intro x
+    change x * algebraMap R A r = algebraMap R A r * x
+    exact (Algebra.commutes r x).symm
 
-lemma moptoend_bij : Function.Bijective (mopToEnd R A) :=
-  ⟨RingHom.injective_iff_ker_eq_bot _ |>.mpr <|
-    SetLike.ext fun (α : Aᵐᵒᵖ) => ⟨fun (h : _ = _) => by
-      have h1 := congrArg (fun φ : End (ModuleCat.of A A) => φ.hom (1 : A)) h
-      rw [Submodule.mem_bot]
-      have hα : α.unop = (0 : A) := by
-        have hzero : (Hom.hom (0 : End (ModuleCat.of A A))) (1 : A) = 0 := rfl
-        simpa only [mopToEnd_apply, hom_ofHom, LinearMap.coe_mk, AddHom.coe_mk,
-          ModuleCat.hom_zero, LinearMap.zero_apply, one_mul, hzero] using h1
-      exact MulOpposite.unop_injective hα,
-      by rintro rfl; simp⟩, fun φ => ⟨MulOpposite.op (φ.hom.toFun (1 : A)), ModuleCat.hom_ext <|
-      LinearMap.ext fun r ↦ by
-      simp only [AddHom.toFun_eq_coe, LinearMap.coe_toAddHom, mopToEnd_apply, MulOpposite.unop_op,
-        hom_ofHom, LinearMap.coe_mk, AddHom.coe_mk]
-      rw [← smul_eq_mul, ← φ.hom.map_smul, smul_eq_mul, mul_one]⟩⟩
+lemma moptoend_bij : Function.Bijective (mopToEnd R A) := by
+  constructor
+  · intro a b h
+    apply MulOpposite.unop_injective
+    have h1 := congrArg (fun φ : End (ModuleCat.of A A) => φ.asHom.hom (1 : A)) h
+    simpa [mopToEnd] using h1
+  · intro φ
+    refine ⟨MulOpposite.op (φ.asHom.hom (1 : A)), ?_⟩
+    apply End.ext
+    apply ModuleCat.hom_ext
+    apply LinearMap.ext
+    intro r
+    change r * φ.asHom.hom 1 = φ.asHom.hom r
+    rw [← smul_eq_mul, ← φ.asHom.hom.map_smul, smul_eq_mul, mul_one]
 
 /-- The opposite division ring is equivalent to endomorphisms of its regular module. -/
 noncomputable def mopAlgEquivEnd : Aᵐᵒᵖ ≃ₐ[R] End (ModuleCat.of A A) :=
@@ -126,27 +120,21 @@ variable (e : MoritaEquivalence R A B)
 
 /-- Transport endomorphism algebras along the functor of a Morita equivalence. -/
 def aux1 : End (ModuleCat.of A A) ≃ₐ[R] End (e.eqv.functor.obj <| .of A A) where
-  toFun (f : _ ⟶ _) := e.eqv.functor.map f
-  invFun g := e.eqv.fullyFaithfulFunctor.preimage g
+  toFun f := .of (e.eqv.functor.map f.asHom)
+  invFun g := .of (e.eqv.fullyFaithfulFunctor.preimage g.asHom)
   left_inv := by
     intro f
-    exact e.eqv.fullyFaithfulFunctor.preimage_map f
+    apply End.ext
+    exact e.eqv.fullyFaithfulFunctor.preimage_map f.asHom
   right_inv := by
     intro g
-    exact e.eqv.fullyFaithfulFunctor.map_preimage g
-  map_mul' x y := by simp
-  map_add' x y := Functor.map_add e.eqv.functor (f := x) (g := y)
+    apply End.ext
+    exact e.eqv.fullyFaithfulFunctor.map_preimage g.asHom
+  map_mul' x y := by apply End.ext; simp
+  map_add' x y := by apply End.ext; simp
   commutes' r := by
-    rw [Algebra.algebraMap_eq_smul_one (A := End (ModuleCat.of A A))]
-    calc
-      e.eqv.functor.map (r • (1 : End (ModuleCat.of A A)))
-          = r • e.eqv.functor.map (1 : End (ModuleCat.of A A)) :=
-            e.linear.map_smul (1 : End (ModuleCat.of A A)) r
-      _ = r • (1 : End (e.eqv.functor.obj (ModuleCat.of A A))) :=
-        congrArg (fun z ↦ r • z) (e.eqv.functor.map_id (ModuleCat.of A A))
-      _ = (algebraMap R (End (e.eqv.functor.obj (ModuleCat.of A A)))) r :=
-        (Algebra.algebraMap_eq_smul_one
-          (A := End (e.eqv.functor.obj (ModuleCat.of A A))) r).symm
+    apply End.ext
+    simp [Algebra.algebraMap_eq_smul_one]
 
 /-- The target simple module associated to the source regular module under a Morita equivalence. -/
 noncomputable def aux20 : (e.eqv.functor.obj (ModuleCat.of A A)) ≅ ModuleCat.of B B := by
@@ -160,27 +148,15 @@ noncomputable def aux20 : (e.eqv.functor.obj (ModuleCat.of A A)) ≅ ModuleCat.o
   exact this.some.toModuleIso
 /-- Conjugation by a module isomorphism gives an equivalence of endomorphism algebras. -/
 def aux2 (M N : ModuleCat B) (f : M ≅ N) : End M ≃ₐ[R] End N where
-  toFun x := f.inv ≫ x ≫ f.hom
-  invFun x := f.hom ≫ x ≫ f.inv
-  left_inv x := by simp
-  right_inv x := by simp
-  map_mul' x y := by simp
-  map_add' x y := by
-    calc
-      f.inv ≫ (x + y) ≫ f.hom = (f.inv ≫ x + f.inv ≫ y) ≫ f.hom :=
-        congrArg (fun z ↦ z ≫ f.hom) (Preadditive.comp_add _ _ _ f.inv x y)
-      _ = f.inv ≫ x ≫ f.hom + f.inv ≫ y ≫ f.hom :=
-        Preadditive.add_comp _ _ _ (f.inv ≫ x) (f.inv ≫ y) f.hom
+  toFun x := .of (f.inv ≫ x.asHom ≫ f.hom)
+  invFun x := .of (f.hom ≫ x.asHom ≫ f.inv)
+  left_inv x := by apply End.ext; simp
+  right_inv x := by apply End.ext; simp
+  map_mul' x y := by apply End.ext; simp
+  map_add' x y := by apply End.ext; simp
   commutes' r := by
-    apply hom_ext
-    ext n
-    simp only [hom_comp, LinearMap.coe_comp, Function.comp_apply]
-    change f.hom.hom ((ModuleCat.ofHom _).hom (f.inv.hom n)) = (ModuleCat.ofHom _).hom n
-    simp only [of_coe, End.one_def, hom_id, ConcreteCategory.hom_ofHom, LinearMap.smul_apply,
-      LinearMap.id_coe, id_eq]
-    erw [map_smul f.hom.hom]
-    simp
-    rfl
+    apply End.ext
+    simp [Algebra.algebraMap_eq_smul_one]
 /-- A Morita equivalence between division rings induces an equivalence of opposite rings. -/
 noncomputable def toRingMopEquiv : Aᵐᵒᵖ ≃ₐ[R] Bᵐᵒᵖ :=
   mopAlgEquivEnd R A |>.trans <|

@@ -171,7 +171,7 @@ theorem tsupport_comp_const_sub_subset_closedBall {K : Vec d → ℝ} {r : ℝ}
 /-- The zero extension of an `H¹` function is globally square integrable. -/
 theorem memLp_indicator_h1 {U : Set (Vec d)} (hUm : MeasurableSet U) (u : H1Function U) :
     MemLp (Set.indicator U u.toFun) 2 volume := by
-  rw [MeasureTheory.memLp_indicator_iff_restrict hUm]
+  rw [MeasureTheory.memLp_indicator_iff_restrict hUm.nullMeasurableSet]
   exact u.memL2
 
 /-- The zero extension of an `H¹` function is locally integrable. -/

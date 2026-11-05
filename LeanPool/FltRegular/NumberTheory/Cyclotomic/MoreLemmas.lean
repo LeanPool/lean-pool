@@ -9,6 +9,7 @@ module
 import Mathlib.RingTheory.NormTrace
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
+import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
 
 /-!
 # Additional lemmas for cyclotomic fields

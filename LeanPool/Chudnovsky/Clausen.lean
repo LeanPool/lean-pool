@@ -9,13 +9,9 @@ public import Mathlib.Analysis.SpecialFunctions.OrdinaryHypergeometric
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Algebra.Order.Ring.Star
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.SmoothSeries
-import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-import Mathlib.Analysis.SpecialFunctions.Bernstein
-import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.Data.Nat.Choose.Multinomial
-import Mathlib.NumberTheory.ArithmeticFunction.VonMangoldt
+import Mathlib.Topology.Algebra.Module.ModuleTopology -- shake: keep
 
 /-!
 # Clausen's formula and the hypergeometric differential equations
@@ -1079,8 +1075,7 @@ theorem clausen_coeff_identity (n : ℕ) :
 /-- Clausen's formula specialized to `a = 1/12`, `b = 5/12` (paper Thm. `satzclausen`):
 `(₂F₁(1/12, 5/12; 1; z))² = ₃F₂(1/6, 5/6, 1/2; 1, 1; z)` for `‖z‖ < 1`.
 
-The analytic reduction (Cauchy product of the square, coefficient comparison) is carried out
-here; the remaining arithmetic core is `clausen_coeff_identity`. -/
+This follows directly from the general formula, with both lower parameters equal to `1`. -/
 theorem hyp2F1_sq_eq_hyp3F2 {z : ℂ} (hz : ‖z‖ < 1) : hyp2F1 z ^ 2 = hyp3F2 z := by
   -- Non-degeneracy of the lower parameter `c = 1` (and of `a = 1/12`, `b = 5/12`).
   have hnd : ∀ kn : ℕ, (kn : ℂ) ≠ -(1 / 12) ∧ (kn : ℂ) ≠ -(5 / 12) ∧ (kn : ℂ) ≠ -1 := by
@@ -1092,55 +1087,12 @@ theorem hyp2F1_sq_eq_hyp3F2 {z : ℂ} (hz : ‖z‖ < 1) : hyp2F1 z ^ 2 = hyp3F2
       rw [Nat.cast_eq_zero] at h0; omega
     · have h0 : ((kn + 1 : ℕ) : ℂ) = 0 := by push_cast; linear_combination h
       rw [Nat.cast_eq_zero] at h0; omega
-  -- Absolute convergence of the `₂F₁` series, needed for the Cauchy product.
-  have hfsum : Summable fun n : ℕ =>
-      ‖ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 n * z ^ n‖ :=
-    ordinaryHypergeometric_norm_summable (1 / 12) (5 / 12) 1 hnd hz
-  -- `hyp2F1 z` as a `tsum` of `cₖ zᵏ`.
-  have hL : hyp2F1 z =
-      ∑' n : ℕ, ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 n * z ^ n := by
-    rw [hyp2F1, ordinaryHypergeometric, ordinaryHypergeometric_sum_eq]
-    exact tsum_congr fun n => smul_eq_mul _ _
-  -- `hyp3F2 z` as a `tsum` of `dₙ zⁿ`.
-  have hR : hyp3F2 z =
-      ∑' n : ℕ, generalizedHypergeometricCoefficient (1 / 6 : ℂ) (5 / 6) (1 / 2) 1 1 n * z ^ n := by
-    rw [hyp3F2, generalizedHypergeometric, generalizedHypergeometric_sum_eq]
-    exact tsum_congr fun n => smul_eq_mul _ _
-  -- The square is the Cauchy product; compare coefficients.
-  rw [sq, hL, hR, tsum_mul_tsum_eq_tsum_sum_range_of_summable_norm hfsum hfsum]
-  refine tsum_congr fun n => ?_
-  -- Pull `zⁿ` out of the finite convolution sum.
-  have hz_pow : ∀ k ∈ Finset.range (n + 1),
-      ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 k * z ^ k *
-        (ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 (n - k) * z ^ (n - k))
-        = ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 k *
-          ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 (n - k) * z ^ n := by
-    intro k hk
-    rw [Finset.mem_range, Nat.lt_succ_iff] at hk
-    have hpow : z ^ k * z ^ (n - k) = z ^ n := by rw [← pow_add, Nat.add_sub_cancel' hk]
-    linear_combination (ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 k *
-      ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 (n - k)) * hpow
-  rw [Finset.sum_congr rfl hz_pow, ← Finset.sum_mul]
-  -- Reduce the complex coefficient identity to the rational one.
-  congr 1
-  have hq := clausen_coeff_identity n
-  have hsumcast : (∑ k ∈ Finset.range (n + 1),
-        ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 k *
-          ordinaryHypergeometricCoefficient (1 / 12 : ℂ) (5 / 12) 1 (n - k))
-      = ((∑ k ∈ Finset.range (n + 1),
-          ordinaryHypergeometricCoefficient (1 / 12 : ℚ) (5 / 12) 1 k *
-            ordinaryHypergeometricCoefficient (1 / 12 : ℚ) (5 / 12) 1 (n - k) : ℚ) : ℂ) := by
-    rw [Rat.cast_sum]
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [Rat.cast_mul, ordinaryHypergeometricCoefficient_ratCast,
-      ordinaryHypergeometricCoefficient_ratCast]
-    norm_num
-  have hgencast :
-      generalizedHypergeometricCoefficient (1 / 6 : ℂ) (5 / 6) (1 / 2) 1 1 n
-        = ((generalizedHypergeometricCoefficient (1 / 6 : ℚ) (5 / 6) (1 / 2) 1 1 n : ℚ) : ℂ) := by
-    rw [generalizedHypergeometricCoefficient_ratCast]
-    norm_num
-  rw [hsumcast, hgencast, hq]
+  have hc : (1 / 12 : ℂ) + 5 / 12 + 1 / 2 = 1 := by norm_num
+  have hc' : 2 * (1 / 12 : ℂ) + 2 * (5 / 12) = 1 := by norm_num
+  have h := clausen_formula (1 / 12 : ℂ) (5 / 12)
+    (fun k => by rw [hc]; exact (hnd k).2.2)
+    (fun k => by rw [hc']; exact (hnd k).2.2) hz
+  convert h using 1 <;> norm_num [hyp2F1, hyp3F2]
 
 /-- The Pochhammer/factorial identity from the proof of paper Thm. `darst`:
 `(1/6)ₙ · (1/2)ₙ · (5/6)ₙ = (6n)! / ((3n)! · 12^(3n))`, stated over `ℚ`. -/

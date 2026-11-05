@@ -7,11 +7,9 @@ module
 
 
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
-public import Mathlib.Algebra.Polynomial.Div
-public import Mathlib.Algebra.Polynomial.Coeff
-public import Mathlib.Data.ZMod.Basic
-public import Mathlib.RingTheory.AdjoinRoot
 public import Mathlib.LinearAlgebra.Dimension.Finrank
+public import Mathlib.Algebra.Polynomial.AlgebraMap
+import Mathlib.RingTheory.AdjoinRoot
 
 /-!
 # The algebraic target ring `F₂[α] / (αⁿ⁺¹)` of the `RPⁿ` mod-two cohomology computation

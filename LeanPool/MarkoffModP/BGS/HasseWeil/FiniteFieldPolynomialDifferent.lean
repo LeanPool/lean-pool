@@ -6,6 +6,7 @@ Authors: Yuma Mizuno
 module
 
 
+public import Mathlib.RingTheory.Localization.Finiteness
 public import Mathlib.RingTheory.DedekindDomain.Different
 public import Mathlib.RingTheory.PolynomialAlgebra
 public import Mathlib.RingTheory.Unramified.Field

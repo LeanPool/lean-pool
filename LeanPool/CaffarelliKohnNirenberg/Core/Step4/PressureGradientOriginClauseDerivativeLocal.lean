@@ -120,7 +120,7 @@ private theorem derivative_local_force
       exact (norm_mul (η w.1) (f w j)).le.trans
         (mul_le_of_le_one_left (norm_nonneg _) he)
   exact pressure_source_morrey_lt_top_of_memLp (by norm_num) hκ
-    ((memLp_indicator_iff_restrict hQ).mpr hprod)
+    ((memLp_indicator_iff_restrict hQ.nullMeasurableSet).mpr hprod)
 
 /-- On one backward cylinder, the fixed harmonic/far temporal envelope gives
 Morrey control of the same selected weak derivative on its spatial half-ball.

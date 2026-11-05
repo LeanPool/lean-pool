@@ -52,7 +52,7 @@ private theorem memLp_mul_cutoff_le
     on_goal 1 => rw [norm_mul]
     exact mul_le_mul_of_nonneg_right (hη x) (norm_nonneg (f x))
   have hglob : MemLp (U.indicator (fun x => η x * f x)) p volume :=
-    (memLp_indicator_iff_restrict hU).2 hmul
+    (memLp_indicator_iff_restrict hU.nullMeasurableSet).2 hmul
   have heq : U.indicator (fun x => η x * f x) = (fun x => η x * f x) := by
     funext x
     by_cases hx : x ∈ U
@@ -256,10 +256,10 @@ private lemma h1_global_sobolev_bound_hGbound_1 :
       simp [B, hgradη0, hx]
   have houterIndicatorG : eLpNorm (U.indicator u.grad) 2 volume =
       weakGradientLpNormOn 2 U u.grad := by
-    rw [eLpNorm_indicator_eq_eLpNorm_restrict hUmeas]
+    rw [eLpNorm_indicator_eq_eLpNorm_restrict hUmeas.nullMeasurableSet]
     rfl
   have houterIndicatorU : eLpNorm (U.indicator u.toFun) 2 volume = lpNormOn 2 U u.toFun := by
-    rw [eLpNorm_indicator_eq_eLpNorm_restrict hUmeas]
+    rw [eLpNorm_indicator_eq_eLpNorm_restrict hUmeas.nullMeasurableSet]
     rfl
   rw [show G = A + B by rfl]
   calc
@@ -357,7 +357,7 @@ private lemma h1_global_sobolev_bound_hvBound_3 :
           (fun hxt => hx (hηU hxt))
         simp [v, hη0]
     _ = lpNormOn 2 U u.toFun := by
-      rw [eLpNorm_indicator_eq_eLpNorm_restrict hUmeas]
+      rw [eLpNorm_indicator_eq_eLpNorm_restrict hUmeas.nullMeasurableSet]
       rfl
 
 private lemma h1_global_sobolev_bound_hboundEventually_4 :

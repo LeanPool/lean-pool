@@ -55,7 +55,7 @@ theorem restrictToDomain_coeFn (U : Set (Vec d)) (f : AmbientScalarL2 d) :
 
 theorem zeroExtendFromDomain_memLp (hU : MeasurableSet U)
     (f : ScalarL2 U) : MemLp (U.indicator fun x ↦ f x) 2 volume := by
-  rw [memLp_indicator_iff_restrict hU]
+  rw [memLp_indicator_iff_restrict hU.nullMeasurableSet]
   exact Lp.memLp f
 
 /-- Extension by zero from a domain as a linear map on L² classes. -/
@@ -100,7 +100,7 @@ noncomputable def zeroExtendFromDomain (hU : MeasurableSet U) :
   norm_map' f := by
     rw [show zeroExtendFromDomainLinearMap hU f =
         (zeroExtendFromDomain_memLp hU f).toLp (U.indicator fun x ↦ f x) from rfl,
-      Lp.norm_toLp, eLpNorm_indicator_eq_eLpNorm_restrict hU, Lp.norm_def]
+      Lp.norm_toLp, eLpNorm_indicator_eq_eLpNorm_restrict hU.nullMeasurableSet, Lp.norm_def]
 
 theorem zeroExtendFromDomain_coeFn (hU : MeasurableSet U) (f : ScalarL2 U) :
     zeroExtendFromDomain hU f =ᵐ[volume] U.indicator fun x ↦ f x :=

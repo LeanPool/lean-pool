@@ -419,7 +419,7 @@ theorem AllJetsFlat.temporalDerivative {f : VelocityField} (hf : AllJetsFlat l q
     (hU : IsOpen U) (hl : ∀ᶠ z in l, z ∈ U) (hs : ContDiffOn ℝ ∞ f U) :
     AllJetsFlat l q (fun z => temporalDerivative f z.1 z.2) := by
   have hfull := hs.fderiv_of_isOpen (m := ∞) hU (by simp)
-  apply (hf.fderiv.linear_map (ContinuousLinearMap.apply ℝ Space (E := SpaceTime) (1, 0))
+  apply (hf.fderiv.linear_map (ContinuousLinearMap.apply ℝ Space (E' := SpaceTime) (1, 0))
     hU hl hfull).congr_on hU hl
   intro z hz
   exact (temporalDerivative_eq_full
@@ -436,7 +436,7 @@ theorem AllJetsFlat.pressureGradient {p : PressureField} (hp : AllJetsFlat l q p
     exact (hD.clm_apply contDiffOn_const).smul contDiffOn_const
   · intro i _
     have hi := hflatD.linear_map
-      (ContinuousLinearMap.apply ℝ ℝ (E := Space) (coordinateVector i)) hU hl hD
+      (ContinuousLinearMap.apply ℝ ℝ (E' := Space) (coordinateVector i)) hU hl hD
     exact hi.linear_map ((ContinuousLinearMap.id ℝ ℝ).smulRight (coordinateVector i))
       hU hl (hD.clm_apply contDiffOn_const)
 
@@ -452,12 +452,12 @@ theorem AllJetsFlat.spatialLaplacian {f : VelocityField} (hf : AllJetsFlat l q f
       (hD.clm_apply contDiffOn_const) (m := ∞) (by simp)).clm_apply contDiffOn_const
   · intro i _
     have hi := hflatD.linear_map
-      (ContinuousLinearMap.apply ℝ Space (E := Space) (coordinateVector i)) hU hl hD
+      (ContinuousLinearMap.apply ℝ Space (E' := Space) (coordinateVector i)) hU hl hD
     have his : ContDiffOn ℝ ∞
         (fun z => spatialDerivative f z.1 z.2 (coordinateVector i)) U :=
       hD.clm_apply contDiffOn_const
     exact (hi.space_fderiv hU hl his).linear_map
-      (ContinuousLinearMap.apply ℝ Space (E := Space) (coordinateVector i)) hU hl
+      (ContinuousLinearMap.apply ℝ Space (E' := Space) (coordinateVector i)) hU hl
       (ResidualRegularity.contDiffOn_space_fderiv hU his (m := ∞) (by simp))
 
 theorem spatialSlice_differentiable {f : SpaceTime → V}
@@ -539,7 +539,7 @@ theorem allJetsFlat_residualDifference {u w : VelocityField} {p r : PressureFiel
     (hp : ContDiffOn ℝ ∞ p U) (hr : ContDiffOn ℝ ∞ r U)
     (hgrowth : AllJetsGrowth l q u) (hwflat : AllJetsFlat l q w)
     (hrflat : AllJetsFlat l q r) : AllJetsFlat l q (residualDifference u w p r) := by
-  let L := (ContinuousLinearMap.apply ℝ Space (E := Space)).flip
+  let L := (ContinuousLinearMap.apply ℝ Space (E' := Space)).flip
   have hDu := ResidualRegularity.contDiffOn_spatialDerivative hU hu
   have hDw := ResidualRegularity.contDiffOn_spatialDerivative hU hw
   have hDug := hgrowth.space_fderiv hU hl hu
@@ -673,20 +673,20 @@ theorem norm_iteratedFDeriv_spatialCurl_le {U : Set SpaceTime} {A : VelocityFiel
 
 /-- Time jet, given by `ContinuousLinearMap.apply ℝ Space (1, 0)`. -/
 def timeJet : (SpaceTime →L[ℝ] Space) →L[ℝ] Space :=
-  ContinuousLinearMap.apply ℝ Space (E := SpaceTime) (1, 0)
+  ContinuousLinearMap.apply ℝ Space (E' := SpaceTime) (1, 0)
 
 /-- Laplace jet as an element of `(SpaceTime →L[ℝ] SpaceTime →L[ℝ] Space) →L[ℝ] Space`. -/
 def laplaceJet : (SpaceTime →L[ℝ] SpaceTime →L[ℝ] Space) →L[ℝ] Space :=
   ∑ i : Fin 3,
-    (ContinuousLinearMap.apply ℝ Space (E := ℝ × Space) (0, coordinateVector i)).comp
-      (ContinuousLinearMap.apply ℝ (SpaceTime →L[ℝ] Space) (E := SpaceTime)
+    (ContinuousLinearMap.apply ℝ Space (E' := ℝ × Space) (0, coordinateVector i)).comp
+      (ContinuousLinearMap.apply ℝ (SpaceTime →L[ℝ] Space) (E' := SpaceTime)
         (0, coordinateVector i))
 
 /-- Pressure jet as an element of `(SpaceTime →L[ℝ] ℝ) →L[ℝ] Space`. -/
 def pressureJet : (SpaceTime →L[ℝ] ℝ) →L[ℝ] Space :=
   ∑ i : Fin 3,
     ((ContinuousLinearMap.id ℝ ℝ).smulRight (coordinateVector i)).comp
-      (ContinuousLinearMap.apply ℝ ℝ (E := SpaceTime) (0, coordinateVector i))
+      (ContinuousLinearMap.apply ℝ ℝ (E' := SpaceTime) (0, coordinateVector i))
 
 @[simp] theorem laplaceJet_apply (L : SpaceTime →L[ℝ] SpaceTime →L[ℝ] Space) :
     laplaceJet L = ∑ i : Fin 3, L (0, coordinateVector i) (0, coordinateVector i) := by
@@ -711,7 +711,7 @@ theorem spatialLaplacian_eq_full {U : Set SpaceTime} {w : VelocityField}
     unfold spatialDerivative
     rw [space_fderiv_eq_full ((hw.contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp))]
     rfl
-  have hslice := ((ContinuousLinearMap.apply ℝ Space (E := SpaceTime)
+  have hslice := ((ContinuousLinearMap.apply ℝ Space (E' := SpaceTime)
     (0, coordinateVector i)).hasFDerivAt.comp z hDz).comp (f := fun y : Space => (z.1, y)) z.2
     (hasFDerivAt_prodMk_right (𝕜 := ℝ) z.1 z.2)
   rw [ResidualRegularity.space_fderiv_congr heq]

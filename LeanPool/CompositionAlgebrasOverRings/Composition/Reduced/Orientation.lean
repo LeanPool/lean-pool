@@ -531,7 +531,7 @@ theorem dualOrientationAlternating_orientation
     rw [orientationAlternating_orientation] at h₁
     simp only [LinearMap.compAlternatingMap_apply, LinearMap.smul_apply, LinearEquiv.coe_coe,
       orientation_ιMulti, smul_eq_mul, LinearMap.zero_compAlternatingMap,
-      AlternatingMap.zero_apply]
+      zero_apply]
     linear_combination h₁ - h₂
   have := LinearMap.congr_fun h ω
   rwa [LinearMap.smul_apply, LinearEquiv.coe_coe, hω, smul_eq_mul, mul_one, LinearMap.zero_apply,

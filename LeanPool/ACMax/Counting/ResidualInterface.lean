@@ -5,14 +5,8 @@ Authors: Zeru Zhu, Jinzheng Li, Yuanjie Ren
 -/
 module
 
-public import Mathlib.Tactic.Push
-public import LeanPool.ACMax.Reduction.Residual
-public import LeanPool.ACMax.Spectral.AlgConn
-public import LeanPool.ACMax.Spectral.RayleighUpper
-public import LeanPool.ACMax.Spectral.TestVector
 public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import LeanPool.ACMax.Counting.CompactCell
-public import LeanPool.ACMax.Counting.DoubleStar
 
 /-!
 # The residual-core interface lemmas

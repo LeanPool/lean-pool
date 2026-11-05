@@ -800,7 +800,7 @@ theorem matrixOperatorNorm_streamField_sub_le_small (M : ABKModel d)
       convert add_le_add
         (mul_le_mul_of_nonneg_left hscales.1 hlow0)
         (mul_le_mul_of_nonneg_left hscales.2 hupp0) using 1
-      all_goals first | rfl | ring
+      all_goals ring
     simp only [Matrix.sub_apply]
     calc
       |streamField omega x i k - streamField omega y i k| ≤
@@ -825,7 +825,7 @@ theorem matrixOperatorNorm_streamField_sub_le_small (M : ABKModel d)
                 (holderUpperSum_nonneg M)))
         have hstep := mul_le_mul_of_nonneg_left habsorb hcoef
         convert hstep using 1
-        all_goals first | rfl | ring
+        all_goals ring
   have hmatrix := (matrixOperatorNorm_le_sum_abs_entries_holder
     (streamField omega x - streamField omega y)).trans
       (sum_abs_entries_le_of_forall_holder _ hentry)

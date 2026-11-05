@@ -234,7 +234,7 @@ lemma rdist_le_avg_ent {X : Ω → G} {Y : Ω' → G} [FiniteRange X] [FiniteRan
 public
 lemma rdist_of_inj {H : Type*} [hH : MeasurableSpace H] [MeasurableSingletonClass H]
   [AddCommGroup H] [Countable H] (hX : Measurable X) (hY : Measurable Y)
-  (φ : G →+ H) (hφ : Injective φ) [IsProbabilityMeasure μ] [IsProbabilityMeasure μ'] :
+  (φ : G →+ H) (hφ : Injective φ) [IsProbabilityMeasure μ'] :
     d[φ ∘ X; μ # φ ∘ Y; μ'] = d[X; μ # Y; μ'] := by
     rw [rdist_def, rdist_def]
     congr 2

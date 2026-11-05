@@ -6,6 +6,7 @@ Authors: Scott Armstrong and Vlad Vicol
 module
 
 public import LeanPool.AnomalousDiffusion.AVenhance.Infra.Section5.GradientChain
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-! Product-rule lemmas for the transport identity of the finite cutoff ansatz. -/
 

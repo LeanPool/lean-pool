@@ -6,12 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Example23
-import Mathlib.Data.Finset.Attr
-import Mathlib.Data.Rat.Cast.Order
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
-import Mathlib.Tactic.NormNum.Pow
 
 /-!
 # Example 4.3 (Scott 1981, PRG-19, §4) — the natural-number domain `N`
@@ -86,7 +80,7 @@ theorem singleton_ne_univ (n : ℕ) : ({n} : Set ℕ) ≠ Set.univ := fun h => u
 
 /-- Singletons of naturals are one-one as sets. -/
 theorem singleton_nat_inj {n m : ℕ} (h : ({n} : Set ℕ) = {m}) : n = m := by
-  simp_all
+  simp_all only [Set.singleton_eq_singleton_iff]
 
 /-- Any two neighbourhoods of `N` are nested or disjoint: `ℕ` contains every
 singleton, and two
@@ -98,7 +92,8 @@ theorem nestedOrDisjoint : NestedOrDisjoint memN := by
   · exact Or.inl (Set.subset_univ _)
   · by_cases h : n = m
     · subst h; exact Or.inl (Set.Subset.refl _)
-    · simp_all
+    · simp_all only [Set.subset_singleton_iff, Set.mem_singleton_iff, imp_false, forall_eq,
+      not_false_eq_true, Set.singleton_inter_of_notMem, or_true]
 
 /-- **Example 4.3 (Scott 1981, PRG-19).** The natural-number neighbourhood system
 `N` on `Δ = ℕ`. -/
@@ -129,7 +124,8 @@ theorem mem_natElem_iff {n : ℕ} {Y : Set ℕ} :
   · rintro ⟨hY, hsub⟩
     rcases hY with rfl | ⟨m, rfl⟩
     · exact Or.inl rfl
-    · simp_all
+    · simp_all only [Set.subset_singleton_iff, Set.mem_singleton_iff, forall_eq,
+      Set.singleton_ne_univ, or_true]
   · rintro (rfl | rfl)
     · exact ⟨memN_univ, Set.subset_univ _⟩
     · exact ⟨memN_singleton n, subset_rfl⟩
@@ -200,7 +196,7 @@ theorem constLiftN_natElem {β : Type*} (V : NeighborhoodSystem β) (val : ℕ �
     rw [mem_natElem_iff] at hXmem
     rcases hrel with ⟨_, rfl⟩ | ⟨k, hXk, hY⟩
     · exact (val n).master_mem
-    · simp_all
+    · simp_all only [Set.singleton_ne_univ, Set.singleton_eq_singleton_iff, false_or]
   · intro hY
     exact ⟨{n}, mem_natElem_iff.mpr (Or.inr rfl), Or.inr ⟨n, rfl, hY⟩⟩
 

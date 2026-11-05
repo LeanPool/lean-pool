@@ -92,7 +92,8 @@ intersections. -/
 theorem IFamily_inter (F₁ F₂ : Finset A) :
     IFamily F₁ ∩ IFamily F₂ = IFamily (F₁ ∪ F₂) := by
   ext G
-  simp only [IFamily, Set.mem_inter_iff, Set.mem_ofPred_eq, Finset.coe_union, Set.union_subset_iff]
+  simp only [IFamily, Set.mem_inter_iff, Set.mem_ofPred_eq, Finset.coe_union,
+    Set.union_subset_iff]
 
 /-- **Exercise 1.26 — the neighbourhood system of a commutative ring.** Tokens are
 finite subsets
@@ -161,9 +162,10 @@ theorem mem_IFamily_of_forall (x : (ringSystem (A := A)).Element) (F : Finset A)
   | empty => exact x.master_mem
   | @insert a F' _ ih =>
     have hins : (insert a F' : Finset A) = {a} ∪ F' := by
-      ext y; simp [Finset.mem_insert]
+      ext y; simp only [Finset.mem_insert, Finset.singleton_union]
     rw [hins, ← IFamily_inter]
-    exact x.inter_mem (h a (by simp)) (ih (fun b hb => h b (by simp [hb])))
+    exact x.inter_mem (h a (by simp only [Finset.mem_insert,
+      true_or])) (ih (fun b hb => h b (by simp only [Finset.mem_insert, hb, or_true])))
 
 /-! ### From ideals to filters. -/
 
@@ -208,7 +210,8 @@ theorem ofIdeal_idealOf (x : (ringSystem (A := A)).Element) : ofIdeal (idealOf x
   constructor
   · rintro ⟨F, rfl, hF⟩
     refine mem_IFamily_of_forall x F (fun a ha => ?_)
-    have haspan : a ∈ Ideal.span (↑F : Set A) := Ideal.subset_span (by simpa using ha)
+    have haspan : a ∈ Ideal.span (↑F : Set A) := Ideal.subset_span (by simpa only [
+      SetLike.mem_coe] using ha)
     exact mem_idealOf.mp (hF haspan)
   · intro hS
     obtain ⟨F, rfl⟩ := x.sub hS

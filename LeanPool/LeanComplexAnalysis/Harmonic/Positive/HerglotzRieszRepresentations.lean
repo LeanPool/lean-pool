@@ -14,6 +14,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Topology.ContinuousMap.Ordered
 import LeanPool.LeanComplexAnalysis.Harmonic.PoissonIntegral
 import LeanPool.LeanComplexAnalysis.Harmonic.Positive.HerglotzRieszUnique
+import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.Complex.Harmonic.Analytic
 import Mathlib.Analysis.InnerProductSpace.Harmonic.Constructions
 import Mathlib.Analysis.SpecialFunctions.Bernstein
@@ -356,8 +357,7 @@ noncomputable def ΛN (p : ℂ → ℂ) (r : ℕ → ℝ) (n : ℕ)
     at h_integral_bound ⊢
   unfold ΛNVal; intro f; convert mul_le_mul_of_nonneg_left (h_integral_bound f) (
     by positivity : 0 ≤ (1 : ℝ) / (2 * π)) using 1 <;>
-    first | rfl
-          | (ring_nf; done)
+    first | (ring_nf; done)
           | (norm_num [mul_assoc, mul_comm, mul_left_comm, abs_mul, abs_inv, abs_of_nonneg,
               Real.pi_pos.le]))
 

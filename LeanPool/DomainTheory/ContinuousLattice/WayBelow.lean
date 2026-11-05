@@ -8,6 +8,8 @@ module
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Order.CompleteLattice.Defs
 
+import Mathlib.Tactic.Set -- shake: keep
+
 /-!
 # The induced (Scott) topology and the way-below relation (Scott 1972, §2)
 
@@ -61,7 +63,7 @@ theorem ScottOpen.isUpperSet {U : Set D} (h : ScottOpen U) : IsUpperSet U := h.1
 
 theorem scottOpen_univ : ScottOpen (Set.univ : Set D) := by
   refine ⟨isUpperSet_univ, fun S hS _ _ => ?_⟩
-  simp_all
+  simpa only [Set.inter_univ] using hS
 
 theorem scottOpen_inter {U V : Set D} (hU : ScottOpen U) (hV : ScottOpen V) :
     ScottOpen (U ∩ V) := by

@@ -6,7 +6,6 @@ Authors: Catskills Research Company
 module
 
 public import LeanPool.DomainTheory.Neighborhood.Exercise315
-import Mathlib.Order.BooleanAlgebra.Set
 
 /-!
 # Exercise 3.16 (Scott 1981, PRG-19, §3) — the infinite iterate `𝒟^∞`
@@ -93,10 +92,10 @@ def single (n : ℕ) (X : Set α) : Set (ℕ × α) :=
 variable {V}
 
 @[simp] theorem fiber_single_self (n : ℕ) (X : Set α) : fiber (single V n X) n = X := by
-  ext a; simp [fiber, single]
+  ext a; simp only [fiber, single, Set.mem_ofPred_eq, ↓reduceIte, Set.ofPred_mem_eq]
 
 theorem fiber_single_ne {n i : ℕ} (h : i ≠ n) (X : Set α) : fiber (single V n X) i = V.master := by
-  ext a; simp [fiber, single, h]
+  ext a; simp only [fiber, single, Set.mem_ofPred_eq, h, ↓reduceIte, Set.ofPred_mem_eq]
 
 theorem single_mono {n : ℕ} {X X' : Set α} (h : X ⊆ X') : single V n X ⊆ single V n X' := by
   intro p hp
@@ -182,7 +181,7 @@ theorem reconstruct_subset {W : Set (ℕ × α)} (_hW : (iterSys V).mem W) {N : 
   by_cases h : j < N
   · have hsub := (iterSys V).interUpTo_subset (fun i => single V i (fiber W i)) h
     have hmem : (j, a) ∈ single V j (fiber W j) := hsub ha
-    simpa [single] using hmem
+    simpa only [single, mem_fiber, Set.mem_ofPred_eq, ↓reduceIte] using hmem
   · have haM : a ∈ V.master := interUpTo_subset_master (fun i => single V i (fiber W i)) N ha
     have : a ∈ fiber W j := by rw [hN j (not_lt.mp h)]; exact haM
     exact this

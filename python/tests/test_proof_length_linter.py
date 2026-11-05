@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import runpy
+import shlex
 import shutil
 import subprocess
 import tomllib
@@ -120,4 +121,5 @@ def test_proof_length_plugin_has_pinned_ci_coverage() -> None:
     assert len(steps) == 3
     for step in steps:
         assert step["env"]["LEAN_POOL_REQUIRE_TEST_TOOLCHAIN"] == "1"
-        assert "-k 'test_lake_'" in step["run"]
+        command = shlex.split(step["run"])
+        assert "test_lake_" in command[command.index("-k") + 1].split(" or ")

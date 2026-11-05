@@ -112,7 +112,7 @@ private theorem vorticityEnergy_first_slice_hasCompactSupport_of_compact
 theorem vorticityEnergy_fieldComponent_contDiff
     {z : Vec3 × ℝ → Vec3} (hz : ContDiff ℝ (⊤ : ℕ∞) z) (i : Fin 3) :
     ContDiff ℝ (⊤ : ℕ∞) (fun w : Vec3 × ℝ => z w i) :=
-  (contDiff_apply ℝ ℝ i).comp hz
+  (contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hz
 
 /-- Integrals commute with finite sums of integrable vorticity components
 (manuscript `lem:localized-vorticity-energy`). -/
@@ -421,11 +421,11 @@ theorem smoothVorticityComponentEnergyBalance
         (contDiff_id.prodMk contDiff_const)
   have hVsmooth (j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (V j) := by
     exact vorticityEnergy_slice_contDiff
-      ((contDiff_apply ℝ ℝ j).comp hv) t
+      ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) j).comp hv) t
   have hZsmoothAll (k : Fin 3) : ContDiff ℝ (⊤ : ℕ∞)
       (fun x : Vec3 => z (x, t) k) := by
     exact vorticityEnergy_slice_contDiff
-      ((contDiff_apply ℝ ℝ k).comp hz) t
+      ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) k).comp hz) t
   have hAsmooth (j : Fin 3) : ContDiff ℝ (⊤ : ℕ∞) (A j) := by
     dsimp [A, V, Z]
     exact ((hVsmooth j).mul hZsmooth).sub ((hZsmoothAll j).mul (hVsmooth i))
@@ -433,7 +433,7 @@ theorem smoothVorticityComponentEnergyBalance
     exact vorticityEnergy_slice_contDiff (hF j i) t
   have hGsmooth : ContDiff ℝ (⊤ : ℕ∞) G := by
     exact vorticityEnergy_slice_contDiff
-      ((contDiff_apply ℝ ℝ i).comp hg) t
+      ((contDiff_apply ℝ (fun _ : Fin 3 => ℝ) i).comp hg) t
   have hDAcont (j : Fin 3) : Continuous (DA j) :=
     (CKN.contDiff_spatialDeriv_smooth (hAsmooth j) j).continuous
   have hDHcont (j : Fin 3) : Continuous (DH j) :=

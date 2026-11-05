@@ -7,6 +7,10 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.PrimePolyhedron.FoxNeuwirth.RelativeSubdivisionOneStepEndpoints
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Polynomial.Basic
+import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.ReduceModChar
 /-!
 # Base-facet chain of the one-step subdivision cylinder
 

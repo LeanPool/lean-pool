@@ -7,6 +7,10 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.GapCVP.Part08C
+public import Mathlib.FieldTheory.Finite.GaloisField
+public import Mathlib.LinearAlgebra.Vandermonde
+import Mathlib.Data.Nat.Bitwise
+import Mathlib.LinearAlgebra.Lagrange
 
 /-! # GapCVP proof, part 08, continuation 04 -/
 

@@ -7,7 +7,7 @@ module
 
 
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.DoubleCoverClass
-public import Mathlib.Analysis.Normed.Module.Connected
+import Mathlib.Analysis.Normed.Module.Connected
 
 /-!
 # Nontriviality of the monodromy classifying character of the double cover

@@ -46,11 +46,11 @@ def toQList {α : Q(Type u)} : List Q($α) → Q(List $α)
 
 
 
-lemma List.mem_of_eq {a b : α} {l} (h : a = b) : a ∈ b :: l := by simp [h]
+theorem List.mem_of_eq {a b : α} {l} (h : a = b) : a ∈ b :: l := by simp [h]
 
-lemma List.mem_of_mem {a b : α} {l : List α} (h : a ∈ l) : a ∈ b :: l := by simp [h]
+theorem List.mem_of_mem {a b : α} {l : List α} (h : a ∈ l) : a ∈ b :: l := by simp [h]
 
-lemma List.mem_singleton_of_eq (a b : α) (h : a = b) : a ∈ [b] := by simp [h]
+theorem List.mem_singleton_of_eq (a b : α) (h : a = b) : a ∈ [b] := by simp [h]
 
 /-- The mem QList? construction in `Qq`. -/
 def memQListOptional {α : Q(Type u)} (a : Q($α)) : (l : List Q($α)) → MetaM <| Option Q($a ∈

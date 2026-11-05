@@ -6,10 +6,12 @@ Authors: Junqi Liu, Jujian Zhang
 module
 
 public import Mathlib.NumberTheory.Chebyshev
+import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SumIntegralComparisons
 
 /-!

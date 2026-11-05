@@ -8,6 +8,7 @@ module
 -- Imported from upstream commit 8bf4656f07f5aaa227b0b850d77b16976915bbd4.
 -- Imports adapted for Lean Pool.
 import Mathlib.Analysis.Calculus.Taylor
+import Mathlib.Analysis.Calculus.LocalExtr.Basic
 public import Mathlib.Analysis.InnerProductSpace.Laplacian
 import Mathlib.Analysis.InnerProductSpace.Calculus
 /-!

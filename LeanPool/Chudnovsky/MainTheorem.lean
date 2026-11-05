@@ -6,9 +6,11 @@ Authors: Xuanji Li
 module
 
 public import LeanPool.Chudnovsky.Basic
+public import Mathlib.Analysis.SpecialFunctions.OrdinaryHypergeometric
 import LeanPool.Chudnovsky.Estimates
 import LeanPool.Chudnovsky.Kummer
 import LeanPool.Chudnovsky.Ramanujan
+import Mathlib.Analysis.Calculus.SmoothSeries
 
 /-!
 # The Main Theorem (Milla, ch. 9)

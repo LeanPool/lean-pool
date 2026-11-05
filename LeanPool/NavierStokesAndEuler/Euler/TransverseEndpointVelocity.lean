@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.Euler.TransverseStrongAlgebra
+import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import LeanPool.NavierStokesAndEuler.Euler.TransverseInitialCoordinates
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun

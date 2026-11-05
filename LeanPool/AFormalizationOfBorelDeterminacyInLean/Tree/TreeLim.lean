@@ -227,10 +227,8 @@ def limObj : tree (∀ j, (F.obj j).1) where
       simpa only [List.map_append, List.map_cons, List.map_nil] using h1 j)
     intro _ _ f; specialize h2 f; apply_fun List.take x.length at h2
     simp_rw [List.map_append, List.map_cons, List.map_nil, ← take_apply_val] at h2
-    convert h2 <;> first
-      | rfl
-      | simp only [List.length_map, le_refl, List.take_append_of_le_length,
-          ← List.map_take, List.take_length, take_coe]
+    convert h2 <;> simp only [List.length_map, le_refl, List.take_append_of_le_length,
+      ← List.map_take, List.take_length, take_coe]
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 def limCone : Limits.Cone F where
   pt := ⟨_, limObj F⟩

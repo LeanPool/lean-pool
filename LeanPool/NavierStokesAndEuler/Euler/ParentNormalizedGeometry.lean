@@ -6,6 +6,7 @@ Authors: OpenAI
 module
 
 import LeanPool.NavierStokesAndEuler.Euler.SmoothImplicitLift
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.Euler.SmoothTimeFieldJoint
 import LeanPool.NavierStokesAndEuler.Euler.SmoothTimeFieldTimeJets
 public import LeanPool.NavierStokesAndEuler.Euler.ParentPacketPhysicalCoefficients

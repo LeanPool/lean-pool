@@ -117,7 +117,7 @@ theorem proposition_2_9_a {ι : Type*} (E : ι → Type*) [∀ i, CompleteLattic
       · rw [hei]; exact Set.mem_Ici.1 (hUsub hz)
       · rw [he, Function.update_of_ne hji]; exact bot_le
   have hle : e i ≤ b i := (hb hcyl) i
-  simp_all
+  simp_all only [mem_ofPred_eq, Function.update_self]
 
 /-! ### Proposition 2.9(b): the induced topology of a product is the product
 topology
@@ -159,8 +159,9 @@ theorem update_preservesDirectedSup {ι : Type*} [DecidableEq ι] {E : ι → Ty
   rw [sSup_apply_eq_sSup_image, Set.image_image]
   rcases eq_or_ne j i with hji | hji
   · rw [hji, Function.update_self]
-    simp_all
-  · simp_all
+    simp_all only [Function.eval, Function.update_self, image_id']
+  · simp_all only [ne_eq, not_false_eq_true, Function.update_of_ne, Function.eval,
+    Nonempty.image_const, sSup_singleton]
 
 /-- A way-below relation in a product projects to each coordinate: if `a ≪ z` in
 `∏ᵢ Eᵢ` then
@@ -174,7 +175,7 @@ theorem wayBelow_proj {ι : Type*} {E : ι → Type*} [∀ i, CompleteLattice (E
   obtain ⟨W, hW, hzW, hWsub⟩ := h
   refine ⟨(fun v : E i => Function.update z i v) ⁻¹' W, ?_, ?_, ?_⟩
   · exact scottOpen_preimage (update_preservesDirectedSup z i) hW
-  · simp_all
+  · simp_all only [mem_preimage, Function.update_eq_self]
   · intro v hv
     have hav : a ≤ Function.update z i v := Set.mem_Ici.1 (hWsub hv)
     have := hav i
@@ -216,13 +217,13 @@ theorem wayBelow_finite_support {ι : Type*} {E : ι → Type*} [∀ i, Complete
     · rw [Pi.le_def]; intro j
       rw [sSup_apply_eq_sSup_image]
       refine le_sSup ⟨Z {j}, ⟨{j}, rfl⟩, ?_⟩
-      simp [hZ, Function.eval]
+      simp only [Function.eval, hZ, Finset.mem_singleton, ↓reduceIte]
   rw [← hsup] at h
   obtain ⟨d, hd𝒵, had⟩ := (wayBelow_sSup_iff h𝒵ne h𝒵dir).1 h
   obtain ⟨F, rfl⟩ := hd𝒵
   refine ⟨F, fun j hjF => ?_⟩
   have hj := had.le j
-  simp_all
+  simp_all only [↓reduceIte, le_bot_iff]
 
 /-- **Scott 1972, Proposition 2.9(b).** For a family of continuous lattices, the
 Scott topology of
@@ -267,7 +268,7 @@ theorem proposition_2_9_b {ι : Type*} (E : ι → Type*) [∀ i, CompleteLattic
       exact iInf_le
         (fun i => TopologicalSpace.induced (fun w : ∀ j, E j => w i) scottTopologicalSpace) i _ hind
     · -- the box contains `z`
-      simp_all
+      simp_all only [mem_iInter, mem_preimage, implies_true]
 
 /-- **Scott 1972, Proposition 2.9 (full statement).** The product of a family of
 continuous lattices

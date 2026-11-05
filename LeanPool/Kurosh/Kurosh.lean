@@ -1823,9 +1823,9 @@ noncomputable def quotientEdgeLoop {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     {a b : RawBassSerreOrbitVertex G H} (e : a ⟶ b) :
     KuroshFreePart G H :=
-  quotientTreePathHom G H a ≫
+  .of (quotientTreePathHom G H a ≫
     (Quiver.FreeGroupoid.of (RawBassSerreOrbitVertex G H)).map e ≫
-      Groupoid.inv (quotientTreePathHom G H b)
+      Groupoid.inv (quotientTreePathHom G H b))
 
 /-- Evaluate a morphism of the quotient free groupoid using subgroup edge labels. -/
 noncomputable def quotientPathValue {ι : Type v}
@@ -1926,12 +1926,12 @@ theorem quotientGraphFunctor_map_pos {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     {a b : RawBassSerreOrbitVertex G H} (e : a ⟶ b) :
     (SingleObj.toEnd H).symm
-        ((Quiver.FreeGroupoid.lift (quotientGraphLabelPrefunctor G H)).map
-          ((Quiver.FreeGroupoid.of (RawBassSerreOrbitVertex G H)).map e)) =
+        (.of ((Quiver.FreeGroupoid.lift (quotientGraphLabelPrefunctor G H)).map
+          ((Quiver.FreeGroupoid.of (RawBassSerreOrbitVertex G H)).map e))) =
       quotientEdgeLabel G H e := by
   have hs := Prefunctor.congr_hom
     (Quiver.FreeGroupoid.lift_spec (quotientGraphLabelPrefunctor G H)) e
-  exact congrArg (fun z => (SingleObj.toEnd H).symm z) hs
+  exact congrArg (fun z => (SingleObj.toEnd H).symm (.of z)) hs
 
 theorem rawBassSerreOrbitTree_root_eq {ι : Type v} (G : ι → Type u)
     [∀ i, Group (G i)] (H : Subgroup (FreeProduct G)) :
@@ -2136,7 +2136,7 @@ theorem quotientTreePathValue_one {ι : Type v}
 theorem kuroshFreePartHom_apply {ι : Type v}
     (G : ι → Type u) [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     (x : KuroshFreePart G H) :
-    kuroshFreePartHom G H x = quotientPathValue G H x := by
+    kuroshFreePartHom G H x = quotientPathValue G H x.asHom := by
   rfl
 
 theorem kuroshFreePartHom_quotientEdgeLoop {ι : Type v}
@@ -2154,7 +2154,8 @@ theorem quotientEdgeLoop_tree_pos {ι : Type v}
     (G : ι → Type u) [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     {a b : RawBassSerreOrbitVertex G H} (e : a ⟶ b)
     (he : Quiver.Hom.toPos e ∈ rawBassSerreOrbitTree G H a b) :
-    quotientEdgeLoop G H e = 𝟙 _ := by
+    quotientEdgeLoop G H e = 1 := by
+  apply End.ext
   let te : @Quiver.Hom (RawBassSerreOrbitVertex G H)
       (rawTreeQuiver G H) a b := ⟨Quiver.Hom.toPos e, he⟩
   let : Unique (@Quiver.Path (RawBassSerreOrbitVertex G H)
@@ -2185,7 +2186,8 @@ theorem quotientEdgeLoop_tree_neg {ι : Type v}
     (G : ι → Type u) [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
     {a b : RawBassSerreOrbitVertex G H} (e : a ⟶ b)
     (he : Quiver.Hom.toNeg e ∈ rawBassSerreOrbitTree G H b a) :
-    quotientEdgeLoop G H e = 𝟙 _ := by
+    quotientEdgeLoop G H e = 1 := by
+  apply End.ext
   let te : @Quiver.Hom (RawBassSerreOrbitVertex G H)
       (rawTreeQuiver G H) b a := ⟨Quiver.Hom.toNeg e, he⟩
   let : Unique (@Quiver.Path (RawBassSerreOrbitVertex G H)

@@ -35,7 +35,7 @@ theorem TransportPiolaDivergence.spatialGradientMatrix_contDiff_one
     hD.clm_apply contDiff_const
   have hcomponent : ContDiff ℝ 1
       (fun x => fderiv ℝ Y x (FaaDiBruno.coordinateVector 2 j) i) :=
-    (contDiff_apply ℝ ℝ i).comp hcolumn
+    (contDiff_apply ℝ (fun _ => ℝ) i).comp hcolumn
   simpa [FaaDiBruno.spatialGradientMatrix] using hcomponent
 
 /-- The Piola vector built from the inverse-flow cofactor has divergence

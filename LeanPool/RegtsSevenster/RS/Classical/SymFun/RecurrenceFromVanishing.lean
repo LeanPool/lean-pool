@@ -261,7 +261,7 @@ theorem exists_recurrence_of_schurDet_vanishing {t : ℕ → ℂ} {a b : ℕ}
       exact congr_fun (hρ_eq i) j
     exact absurd h_det_zero
       ((Matrix.isUnit_iff_isUnit_det M).mp
-        (Matrix.linearIndependent_rows_iff_isUnit.mp
+        (Matrix.linearIndependent_row_iff_isUnit.mp
           (h_rows_eq ▸ hg_LI))).ne_zero
   -- ═══════ STAGE 3: extract the nonzero annihilator ═══════
   have h_lt_top : W < ⊤ := by

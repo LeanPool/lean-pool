@@ -9,6 +9,8 @@ module
 public import LeanPool.EhrhartVolumeInequality.Foundations
 public import Mathlib.Analysis.Complex.Exponential
 import all LeanPool.EhrhartVolumeInequality.Foundations
+import Mathlib.Analysis.Calculus.FDeriv.Symmetric
+import Mathlib.Analysis.Calculus.FDeriv.WithLp
 import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 import Mathlib.Analysis.Matrix.PosDef
 import Mathlib.MeasureTheory.Measure.FiniteMeasure
@@ -417,7 +419,7 @@ private theorem finiteEnergyTargetGeodesic_differenceQuotient_error
           t * v q ≤
         |t| * (|v p - v q| + |t|) := by
     have habssq : |t| ^ 2 = t ^ 2 := sq_abs t
-    nlinarith
+    linarith
   have hfrac :
       (finiteEnergyTargetGeodesic F v t x - F.potential x) / t +
         v q =
@@ -502,7 +504,7 @@ theorem abs_exp_sub_one_le_mul_exp_abs (z : ℝ) :
       simp only [neg_add_cancel, Real.exp_zero]
     rw [hinverse] at hmul
     rw [abs_of_nonneg hfirst, abs_of_nonneg hz]
-    nlinarith
+    linarith
   · have hz' : z ≤ 0 := le_of_not_ge hz
     have he : 0 < Real.exp (-z) := Real.exp_pos (-z)
     have hfirst : Real.exp z - 1 ≤ 0 := by
@@ -515,7 +517,7 @@ theorem abs_exp_sub_one_le_mul_exp_abs (z : ℝ) :
     rw [abs_of_nonpos hfirst, abs_of_nonpos hz']
     have hnonneg : 0 ≤ -z := neg_nonneg.mpr hz'
     have hscaled := mul_le_mul_of_nonneg_left hunit hnonneg
-    nlinarith
+    linarith
 
 private def finiteEnergyTargetDensityDifferenceQuotient
     {n : ℕ} {K : CenteredBody n}
@@ -1496,7 +1498,7 @@ private theorem integrable_monomialWeight_finiteEnergySource_of_mem_interior
     ← Real.exp_add]
   apply Real.exp_le_exp.mpr
   have h := hcoerc x
-  nlinarith
+  linarith only [mul_le_mul_of_nonneg_left h hk.le]
 
 private theorem monomialWeight_momentNormalizedPotential_eq
     {n : ℕ} {K : CenteredBody n}
@@ -4197,7 +4199,7 @@ private theorem momentZeroMonomialNorm_le_partition
     unfold monomialWeight pairing
     simp only [Pi.zero_apply, zero_mul, Finset.sum_const_zero, zero_sub]
     apply Real.exp_le_exp.mpr
-    nlinarith [F.nonnegative x]
+    nlinarith only [hkone, F.nonnegative x]
   have hshift :
       monomialNormSquared k (0 : Space n)
           (momentNormalizedPotential F) =
@@ -4264,11 +4266,10 @@ private theorem momentJointGlobalLowerBound_le_zeroMonomial
       Real.log (finiteEnergySourcePartition F) ≤
         |Real.log (finiteEnergySourcePartition F)| := le_abs_self _
       _ ≤ (k : ℝ) * |Real.log (finiteEnergySourcePartition F)| := by
-        nlinarith [abs_nonneg
-          (Real.log (finiteEnergySourcePartition F))]
+        exact le_mul_of_one_le_left (abs_nonneg _) hkone
   unfold momentJointGlobalLowerBound
   apply (le_div_iff₀ hkreal).mpr
-  nlinarith
+  linarith
 
 private theorem inv_momentZeroMonomialNorm_le_diagonalKernel
     {n k : ℕ} (K : CenteredBody n) (hk : 0 < k)
@@ -7372,7 +7373,7 @@ private theorem weighted_complex_coordinate_integration_by_parts_volume
   calc
     _ = ∫ z : E, (fderiv ℝ F z) v * W z ∂μ := hright.symm
     _ = -(∫ z : E, F z * (fderiv ℝ W z) v ∂μ) := by
-      linear_combination hip
+      exact ((congrArg Neg.neg hip).trans (neg_neg _)).symm
     _ = _ := congrArg Neg.neg hleft
 
 private theorem weighted_complex_coordinate_integration_by_parts

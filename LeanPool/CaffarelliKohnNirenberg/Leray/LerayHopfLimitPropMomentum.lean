@@ -175,7 +175,7 @@ theorem lerayHopfLimit_momentum
       Tendsto (fun n => ∫ z, D n z i j * w z ∂μK) atTop (𝓝 (∫ z, Du z i j * w z ∂μK)) := by
     intro i j w hw
     have hw' : MemLp (K.indicator w) 2 μ := by
-      rw [memLp_indicator_iff_restrict hKmeas, hrestrict]
+      rw [memLp_indicator_iff_restrict hKmeas.nullMeasurableSet, hrestrict]
       exact hw
     have hconv := hDweak i j (K.indicator w) hw'
     have hloc : ∀ F : ParabolicPoint → ℝ,

@@ -284,7 +284,7 @@ private theorem momentNormalized_off_phase_setIntegral_le_exp_mul_base
       apply Real.exp_le_exp.mpr
       have h := hphase x hx
       unfold phase at h
-      nlinarith
+      linarith only [mul_le_mul_of_nonneg_left h (sub_nonneg.mpr hk)]
     _ ≤ ∫ x : Space n,
         Real.exp ((k - 1) * M) *
           monomialWeight 1 u (momentNormalizedPotential F) x
@@ -337,7 +337,7 @@ private theorem exists_momentNormalized_phase_gap_outside_ball
       simpa only [ge_iff_le, mul_comm] using (div_le_iff₀ hδ).mp hle
     have hscale := mul_lt_mul_of_pos_left hxnorm hδ
     have hcoerce := hcoercive x
-    nlinarith
+    linarith
   let t : Set (Space n) :=
     Metric.closedBall (0 : Space n) R ∩
       (Metric.ball x₀ r)ᶜ

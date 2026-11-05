@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.NavierStokesAndEuler.NavierStokes.GaugeMomentBalances
+import Mathlib.Analysis.Calculus.Deriv.Prod
 public import LeanPool.NavierStokesAndEuler.NavierStokes.LabelSumBounds
 public import LeanPool.NavierStokesAndEuler.NavierStokes.LocalRankDefect
 

@@ -8,7 +8,7 @@ module
 public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.TreeBody
 public import LeanPool.AFormalizationOfBorelDeterminacyInLean.Tree.LenTreeHom
 import LeanPool.AFormalizationOfBorelDeterminacyInLean.Basic.General
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Order.Lattice.Nat
 import Mathlib.Tactic.NormNum.Abs

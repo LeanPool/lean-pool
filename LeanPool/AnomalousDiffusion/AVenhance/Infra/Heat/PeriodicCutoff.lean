@@ -107,10 +107,10 @@ theorem heatPeriodicCutoff2_contDiff :
     ContDiff ℝ (⊤ : ℕ∞) heatPeriodicCutoff2 := by
   have h0 : ContDiff ℝ (⊤ : ℕ∞)
       (fun x : Vec 2 => heatPeriodicCutoff (x 0)) :=
-    heatPeriodicCutoff_contDiff.comp (contDiff_apply ℝ ℝ 0)
+    heatPeriodicCutoff_contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) 0)
   have h1 : ContDiff ℝ (⊤ : ℕ∞)
       (fun x : Vec 2 => heatPeriodicCutoff (x 1)) :=
-    heatPeriodicCutoff_contDiff.comp (contDiff_apply ℝ ℝ 1)
+    heatPeriodicCutoff_contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) 1)
   change ContDiff ℝ (⊤ : ℕ∞)
     (fun x : Vec 2 => heatPeriodicCutoff (x 0) * heatPeriodicCutoff (x 1))
   exact h0.mul h1
@@ -161,9 +161,9 @@ theorem fderiv_heatPeriodicCutoff2 (i : Fin 2) (x : Vec 2) :
   let a : Vec 2 → ℝ := fun y => heatPeriodicCutoff (y 0)
   let b : Vec 2 → ℝ := fun y => heatPeriodicCutoff (y 1)
   have hca : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec 2 => heatPeriodicCutoff (y 0)) :=
-    heatPeriodicCutoff_contDiff.comp (contDiff_apply ℝ ℝ (0 : Fin 2))
+    heatPeriodicCutoff_contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) (0 : Fin 2))
   have hcb : ContDiff ℝ (⊤ : ℕ∞) (fun y : Vec 2 => heatPeriodicCutoff (y 1)) :=
-    heatPeriodicCutoff_contDiff.comp (contDiff_apply ℝ ℝ (1 : Fin 2))
+    heatPeriodicCutoff_contDiff.comp (contDiff_apply ℝ (fun _ => ℝ) (1 : Fin 2))
   have ha : DifferentiableAt ℝ a x :=
     (ContDiff.contDiffAt (x := x) hca).differentiableAt (by simp)
   have hb : DifferentiableAt ℝ b x :=

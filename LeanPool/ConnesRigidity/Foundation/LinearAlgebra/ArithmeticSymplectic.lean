@@ -13,6 +13,7 @@ the namespace for the Zhou §2 and §5 interfaces. See the upstream PORT_MAP.md.
 -/
 module
 
+public import Mathlib.LinearAlgebra.Matrix.Action
 public import Mathlib.LinearAlgebra.SymplecticGroup
 
 /-!

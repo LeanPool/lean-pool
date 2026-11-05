@@ -127,7 +127,7 @@ theorem productDensity_nonneg (d : ℕ) (hr : 0 < r) (x : Vec d) :
 
 theorem contDiff_productDensity (d : ℕ) (hr : 0 < r) :
     ContDiff ℝ (⊤ : ℕ∞) (productDensity d hr) :=
-  contDiff_prod fun i _ => (contDiff_scaledBump hr).comp (contDiff_apply ℝ ℝ i)
+  contDiff_prod fun i _ => (contDiff_scaledBump hr).comp (contDiff_apply ℝ (fun _ ↦ ℝ) i)
 
 theorem continuous_productDensity (d : ℕ) (hr : 0 < r) :
     Continuous (productDensity d hr) :=

@@ -1,0 +1,58 @@
+slug: balanced-edge-colourings
+title: Balanced and vertex-distinguishing edge colourings
+summary: Formalizes Balister–Kostochka–Li–Schelp (2004), Theorems 1, 6, 10(2) and Corollary 12. Least-cost
+  edge colourings balance palette multiplicities within two. Degree-count bounds then yield vertex-distinguishing
+  colourings and the Burris–Schelp bound for graphs of large maximum degree and minimum degree at
+  least five. Theorem 10(2) explicitly assumes k ≥ 3. Includes simultaneous Kempe exchanges, palette-counting
+  and linear-programming dual bounds; does not formalize Theorem 10(1), Corollary 11 or the whole
+  Burris–Schelp conjecture.
+branch: graph theory
+entry_module: LeanPool.BalancedEdgeColourings
+authors:
+- Juan Pablo Traverso Gianini
+source:
+  title: Balanced edge colorings
+  authors:
+  - P. N. Balister
+  - A. V. Kostochka
+  - Hao Li
+  - R. H. Schelp
+  doi: 10.1016/S0095-8956(03)00073-X
+  url: https://github.com/jtraverso/balanced-edge-colourings
+  github_repo: jtraverso/balanced-edge-colourings
+  commit: 736c78e6addcdb77e95cd83e4e44c5c0700f13ef
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.BalancedEdgeColourings.BklsPalomar.theorem1
+- LeanPool.BalancedEdgeColourings.BklsPalomar.theorem6
+- LeanPool.BalancedEdgeColourings.BklsPalomar.theorem10
+- LeanPool.BalancedEdgeColourings.BklsPalomar.corollary12
+main_results:
+- declaration: LeanPool.BalancedEdgeColourings.BklsPalomar.theorem1
+  informal: 'Every least-cost proper k-edge-colouring is balanced: for palettes P and Q of equal cardinality,
+    the number of vertices seeing P is at most the number seeing Q plus two.'
+  source_ref: BKLS (2004), Theorem 1
+- declaration: LeanPool.BalancedEdgeColourings.BklsPalomar.theorem6
+  informal: A proper three-edge-colouring can be replaced by a four-edge-colouring that separates
+    vertices with equal keys, under the paper's restrictions on repeated degree-three palettes and
+    key classes.
+  source_ref: BKLS (2004), Theorem 6
+- declaration: LeanPool.BalancedEdgeColourings.BklsPalomar.theorem10
+  informal: For k at least three and at least the maximum degree, the degree-count bounds in BKLS
+    Theorem 10(2) guarantee a vertex-distinguishing proper edge-colouring with k+1 colours.
+  source_ref: BKLS (2004), Theorem 10(2), with k ≥ 3
+- declaration: LeanPool.BalancedEdgeColourings.BklsPalomar.corollary12
+  informal: For a finite simple graph with minimum degree at least five and maximum degree at least
+    sqrt(2|V|)+4, let k be the least integer with n_d at most binomial(k,d) for every d. A vertex-distinguishing
+    proper edge-colouring exists with k+1 colours, and every such colouring uses at least k colours.
+  source_ref: BKLS (2004), Corollary 12
+tags:
+- graph-theory
+- edge-colouring
+- vertex-distinguishing-colouring
+- kempe-chains
+- combinatorics
+msc:
+- 05C15

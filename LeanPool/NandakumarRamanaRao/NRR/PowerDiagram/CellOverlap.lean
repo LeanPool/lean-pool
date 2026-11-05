@@ -8,7 +8,6 @@ module
 
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.Tactic
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.Defs
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellAlgebra
 public import LeanPool.NandakumarRamanaRao.NRR.PowerDiagram.CellGeometry

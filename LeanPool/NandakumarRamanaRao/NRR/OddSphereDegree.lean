@@ -32,6 +32,9 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.SphereTopHomology
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.SphereTopHomologyReduction
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.TopCatBridge
 public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.UnconditionalDegree
+import Mathlib.Combinatorics.Matroid.Init
+import Mathlib.Tactic.Measurability.Init
+import Mathlib.Tactic.Positivity.Finset
 
 /-! Supporting modules for Equal-area and equal-perimeter convex partitions. -/
 

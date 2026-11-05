@@ -121,7 +121,7 @@ unit cylinder with an angle interval to the unit cylinder: a set of measure zero
 has preimage of measure zero, since each fixed-angle slice is exactly measure preserving on the
 unit cylinder. -/
 theorem quasiMeasurePreserving_rotZ_prod :
-    Measure.QuasiMeasurePreserving (fun q : ParabolicPoint × ℝ => (rotZ (-q.2) q.1.1, q.1.2))
+    QuasiMeasurePreserving (fun q : ParabolicPoint × ℝ => (rotZ (-q.2) q.1.1, q.1.2))
       ((volume.restrict unitCylinder).prod (volume.restrict (Ioc (0 : ℝ) (2 * Real.pi))))
       (volume.restrict unitCylinder) :=
   ⟨measurable_rotate_pair, Measure.AbsolutelyContinuous.mk fun s hs hs0 => by

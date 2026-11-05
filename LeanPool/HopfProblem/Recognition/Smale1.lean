@@ -22,6 +22,8 @@ public import Mathlib.LinearAlgebra.FreeModule.PID
 
 public import LeanPool.HopfProblem.InternalPrelude
 public import LeanPool.HopfProblem.Foundations.TriangleRegularBaseFundamentalGroup
+import Mathlib.Analysis.Calculus.Deriv.Prod
+import Mathlib.Analysis.ODE.ExistUnique
 import all LeanPool.HopfProblem.Foundations.LineBundleTransport
 import all Mathlib.Analysis.Calculus.Implicit
 import all Mathlib.Geometry.Manifold.LocalDiffeomorph
@@ -433,7 +435,7 @@ private theorem Smale.MorseHandle.hasDerivAt_descentFlow {N P : Type*} [NormedAd
   have h₁ := (Real.hasDerivAt_exp t).smul_const z.1
   have h₂ := ((hasDerivAt_id t).neg.exp).smul_const z.2
   simpa only [descentFlow, descent, id_eq, Pi.neg_apply, mul_neg, mul_one, neg_smul] using
-    h₁.prodMk h₂
+    HasDerivAt.prodMk h₁ h₂
 
 private theorem Smale.MorseHandle.norm_descentFlow_fst {N P : Type*} [NormedAddCommGroup N]
     [NormedSpace ℝ N] [NormedAddCommGroup P] [NormedSpace ℝ P] (t : ℝ) (z : N × P) :
