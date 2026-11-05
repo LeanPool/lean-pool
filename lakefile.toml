@@ -9,6 +9,10 @@ pp.unicode.fun = true # pretty-prints `fun a ↦ b`
 relaxedAutoImplicit = false
 weak.linter.mathlibStandardSet = true
 maxSynthPendingDepth = 3
+# Every warning is a compile error, so local builds fail exactly like CI and a
+# cached build can never hide one. Pool files cannot override it: `set_option`
+# is banned by the quality gate.
+warningAsError = true
 
 [[require]]
 name = "TauCeti"

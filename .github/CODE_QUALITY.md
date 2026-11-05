@@ -9,8 +9,8 @@ Lean Pool uses deterministic CI for mechanical quality checks and LLM review for
 [`lean_action_ci.yml`](workflows/lean_action_ci.yml) currently runs:
 
 - `lake exe mk_all --module --check` (the pool and project indexes must use `module` and `public import`)
-- `lake build LeanPool`
-- a warning scan over the build log
+- `lake build LeanPool`, with `warningAsError = true` in `lakefile.toml`, so every Lean warning is a compile error (locally too)
+- a warning scan over the build log, for warnings Lake itself prints
 - `lake exe runLinter` on `LeanPool`
 - `lake exe lint-style` on `LeanPool`
 - `python -m lean_pool.quality --repo ..`
