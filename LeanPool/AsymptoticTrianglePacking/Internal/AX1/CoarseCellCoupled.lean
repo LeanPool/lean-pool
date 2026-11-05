@@ -115,10 +115,10 @@ private theorem elo_lower {τ δ ε₁ a b c dAB dAC dBC : ℝ} (hτ : 0 < τ) (
     have h4 : (0:ℝ) ≤ τ ^ 2 * δ ^ 3 := by positivity
     rw [h2]
     rw [h3] at h1
-    linarith
+    linarith only [h1, h4]
   have h2 : 0 ≤ dAC * a * c := by positivity
   have h3 : 0 ≤ dBC * b * c := by positivity
-  linarith
+  linarith only [hmain, h2, h3]
 
 /-- The product of three densities at least `δ` is at least `δ³`. -/
 private theorem dens_prod_lower {δ x y z : ℝ} (hδ : 0 < δ) (hx : δ ≤ x) (hy : δ ≤ y) (hz : δ ≤ z) :
@@ -237,9 +237,9 @@ private theorem exc_bound {ε₂ δ μ₂ η τ t S sup Elo : ℝ}
     have hnn2 : (0:ℝ) ≤ μ₂ * τ * δ ^ 3 / 2 := by positivity
     exact mul_le_mul hle1 ht hnn2 (le_trans hnn hle1)
   have h3 : 160 * ε₂ * τ ^ 3 ≤ η * (1 / 8 * (τ ^ 2 * δ ^ 3)) * (μ₂ * τ * δ ^ 3 / 2) := by
-    have hkey : 160 * ε₂ ≤ η * μ₂ * δ ^ 6 / 16 := by linarith
+    have hkey : 160 * ε₂ ≤ η * μ₂ * δ ^ 6 / 16 := by linarith only [hε₂c]
     linarith only [mul_le_mul_of_nonneg_right hkey hτ3.le]
-  linarith
+  linarith only [h1, h2, h3]
 /-- **The coupled block-allocation residual.**  Given the accuracy `ε`, a density threshold
 `δ ≤ ε`, the block uniformity scale `ε₂` that the caller needs and a scale floor `T₀`, the residual
 names a regularity window `ε₁₀ > 0`; for every regularity scale `ε₁ ≤ ε₁₀` it then names a relative
@@ -342,12 +342,12 @@ theorem subTripleDesignLocalResidual_of_blockCoverCoupled (h : BlockCoverResidua
   have hτpos : 0 < τ := lt_of_lt_of_le hT₀0 hτT
   have hτ2 : 2 / (μ₂ * δ ^ 3) ≤ τ := le_trans hT₀1 hτT
   have hτ2' : 2 ≤ τ * (μ₂ * δ ^ 3) := by
-    rw [div_le_iff₀ (by positivity)] at hτ2; linarith
+    rw [div_le_iff₀ (by positivity)] at hτ2; linarith only [hτ2]
   have hτδ3 : 2 ≤ τ * δ ^ 3 := tau_delta3_lower hτpos hδ3 hμ₂1 hτ2'
   have hτδ8 : 8 ≤ τ * δ := tau_delta_lower hτpos hδ0 hδhalf hτδ3
   have hτd₀ : d₀ ≤ τ * δ ^ 3 := by
     have hle : d₀ / δ ^ 3 ≤ τ := le_trans hT₀2 hτT
-    rw [div_le_iff₀ hδ3] at hle; linarith
+    rw [div_le_iff₀ hδ3] at hle; linarith only [hle]
   -- ### the local clauses of the design
   have hα0 : 0 < α := lt_of_lt_of_le (by positivity) hαε
   -- the derived windows for the block uniformity scale `ε₂ = (ε₁/8)/α`
@@ -361,14 +361,14 @@ theorem subTripleDesignLocalResidual_of_blockCoverCoupled (h : BlockCoverResidua
     simpa using pow_le_pow_of_le_one hδ0.le hδ1 (by norm_num : 1 ≤ 3)
   have hμδpos : (0:ℝ) ≤ μ₂ * δ ^ 3 := by positivity
   have hErr : ε₁ / 8 + 2 * (ε₁ / 8 / α) ≤ μ₂ * δ ^ 3 / 12 := by
-    have h1 : ε₁ / 8 ≤ μ₂ * δ ^ 3 / 96 := by linarith
+    have h1 : ε₁ / 8 ≤ μ₂ * δ ^ 3 / 96 := by linarith only [hε₁A]
     linarith
   have hdense : 2 * (ε₁ / 8 / α) + ε₁ / 8 ≤ δ := by
-    have h1 : ε₁ / 8 ≤ δ / 16 := by linarith
-    have h2 : δ ^ 3 / 80 ≤ δ / 80 := by linarith
+    have h1 : ε₁ / 8 ≤ δ / 16 := by linarith only [hε₁b]
+    have h2 : δ ^ 3 / 80 ≤ δ / 80 := by linarith only [hδ3le]
     linarith
   have hde : ε₁ / 4 ≤ δ := by linarith
-  have hshape := subTripleShape_of_gridSubTriples G P U W X A B C hε₁0 hαε (by linarith)
+  have hshape := subTripleShape_of_gridSubTriples G P U W X A B C hε₁0 hαε (by linarith only [hα2])
     hδ0 hδ1 hμ₂0 hμ₂1 hde hErr hdense hτ2 hgrid hdisj
   -- ### the numerical data of each sub-triple
   have hdata : ∀ i < k,
@@ -380,7 +380,7 @@ theorem subTripleDesignLocalResidual_of_blockCoverCoupled (h : BlockCoverResidua
         |((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (B i) (C i) : ℝ)
           - (G.edgeDensity (W i) (X i) : ℝ)| ≤ ε₁ / 8) := by
     intro i hi
-    obtain ⟨h1, -, h3⟩ := gridSubTriple_data G P hε₁0 hαε (by linarith) hde (hgrid i hi)
+    obtain ⟨h1, -, h3⟩ := gridSubTriple_data G P hε₁0 hαε (by linarith only [hα2]) hde (hgrid i hi)
     exact ⟨h1, h3⟩
   have hsize : ∀ (s dens : ℝ), δ ≤ dens → dens ≤ 1 → |s - τ * dens| ≤ 1 →
       3 / 4 * (τ * δ) ≤ s ∧ s ≤ 5 / 4 * τ :=
@@ -438,7 +438,7 @@ theorem subTripleDesignLocalResidual_of_blockCoverCoupled (h : BlockCoverResidua
         ≤ (((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ)) := by
       have hlow := (abs_le.mp habs1).1
       have hUW := (gridSubTriple_density_mem G P (hgrid i hi)).1.1
-      linarith
+      linarith only [hlow, hUW]
     have hElo := elo_lower (ε₁ := ε₁) hτpos hδ0 hδ1 hε₁0 hε₁b hdAB
       (hHdens (A i) (C i)) (hHdens (B i) (C i)) haL hbL hc0 ha0 hb0
     simp only [designBad, designSupport]
@@ -607,8 +607,8 @@ theorem cover_approx_of_gridSubTriple (G : SimpleGraph V) [DecidableRel G.Adj]
           + |z * ((#B : ℝ) * (#C : ℝ) - τ ^ 2 * (x * y))| := by
             have := abs_add_le (x * ((#A : ℝ) * (#B : ℝ) - τ ^ 2 * (y * z)))
               (y * ((#A : ℝ) * (#C : ℝ) - τ ^ 2 * (x * z)))
-            linarith
-      _ ≤ 6 * τ + 3 := by linarith
+            linarith only [this]
+      _ ≤ 6 * τ + 3 := by linarith only [h1, h2, h3]
   exact habs
 
 /-! ### Members on nearly disjoint cluster triples never clash -/
@@ -708,12 +708,12 @@ theorem nu3star_le_cover_of_family_value
     intro i hi
     have h := cover_approx_of_gridSubTriple G P hτ (hgrid i (Finset.mem_range.mp hi))
     have := (abs_le.mp h).1
-    linarith
+    linarith only [this]
   have hsum := Finset.sum_le_sum hterm
   rw [Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul, Finset.card_range,
     ← Finset.sum_div] at hsum
   have hcap := nu3star_regularityReduced_le_dense_cluster_capacity G P ep de (θ := θ) hθ
-  linarith
+  linarith only [hval, hsum, hcap]
 
 /-! ### Axiom check -/
 
@@ -859,7 +859,7 @@ theorem exists_clusterTripleLP (G : SimpleGraph V) [DecidableRel G.Adj]
       (edgeDensity_mul_card_mul_card G (S : Finset V) (T : Finset V)).symm
     rw [himg]
     rw [hcapG] at hmono2
-    linarith
+    linarith only [hmono, hcapR, hmono2]
   · -- the value
     have hval : clusterLPValue (P := P)
         (fun th => ∑ t ∈ (R.cliqueFinset 3).filter (fun t => hostTri P t = th),
@@ -985,7 +985,7 @@ theorem exists_sparse_clusterTripleLP (G : SimpleGraph V) [DecidableRel G.Adj]
     have hle : u th₀ ≤ ∑ th ∈ triplesThrough P S T, u th :=
       Finset.single_le_sum (fun th _ => hallpos th) hmem
     rw [hurel S T hST] at hle
-    linarith
+    linarith only [hpos, hle]
   · -- push along the relation until a coordinate vanishes
     push Not at hallpos
     obtain ⟨θ, hθ⟩ := hallpos
@@ -998,14 +998,14 @@ theorem exists_sparse_clusterTripleLP (G : SimpleGraph V) [DecidableRel G.Adj]
     have hθ₁supp : θ₁ ∈ clusterLPSupport y := husupp θ₁ (ne_of_lt hθ₁neg)
     have hyθ₁ : 0 < y θ₁ :=
       lt_of_le_of_ne (hy.1 θ₁) (Ne.symm (Finset.mem_filter.mp hθ₁supp).2)
-    have ht0 : 0 < t := div_pos hyθ₁ (by linarith)
+    have ht0 : 0 < t := div_pos hyθ₁ (by linarith only [hθ₁neg])
     set y' : Finset {S : Finset V // S ∈ P.parts} → ℝ := fun th => y th + t * u th with hy'def
     have hy'nonneg : ∀ th, 0 ≤ y' th := by
       intro th
       rcases lt_or_ge (u th) 0 with hneg | hpos
       · have hmemN : th ∈ Neg := by simp [hNegDef, hneg]
         have hle := hθ₁min th hmemN
-        have hposth : (0:ℝ) < -u th := by linarith
+        have hposth : (0:ℝ) < -u th := by linarith only [hneg]
         have h1 : t * (-u th) ≤ y th := by
           have h2 := mul_le_mul_of_nonneg_right hle hposth.le
           rwa [div_mul_cancel₀ _ (ne_of_gt hposth)] at h2
@@ -1039,13 +1039,13 @@ theorem exists_sparse_clusterTripleLP (G : SimpleGraph V) [DecidableRel G.Adj]
       have : 0 ≤ t * ∑ th, u th := mul_nonneg ht0.le huval
       simp only [clusterLPValue] at hxy ⊢
       rw [hy'val]
-      linarith
+      linarith only [hxy, this]
     -- the support has strictly shrunk
     have hsubset : clusterLPSupport y' ⊆ clusterLPSupport y := by
       intro th hth
       exact hy'supp th (Finset.mem_filter.mp hth).2
     have hcancel : y θ₁ / (-u θ₁) * (-u θ₁) = y θ₁ :=
-      div_mul_cancel₀ _ (by linarith : (-u θ₁) ≠ 0)
+      div_mul_cancel₀ _ (by linarith only [hθ₁neg] : (-u θ₁) ≠ 0)
     have hθ₁zero : y' θ₁ = 0 := by
       simp only [hy'def, htdef]
       linear_combination -hcancel
@@ -1107,11 +1107,11 @@ theorem nu3star_le_cover_of_family_lp_value
     intro i hi
     have h := cover_approx_of_gridSubTriple G P hτ (hgrid i (Finset.mem_range.mp hi))
     have := (abs_le.mp h).1
-    linarith
+    linarith only [this]
   have hsum := Finset.sum_le_sum hterm
   rw [Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul, Finset.card_range,
     ← Finset.sum_div] at hsum
-  linarith
+  linarith only [hnu, hval, hsum]
 
 /-! ### Axiom check -/
 
@@ -2285,7 +2285,7 @@ private theorem cap_to_Pn {en Kr lr cST cardS cardT Pnr mmaxr : ℝ}
   have hprod : cardS * cardT ≤ mmaxr ^ 2 := by nlinarith only [hS, hT, hT0]
   have hbase := capacity_bound he0 he1 (by positivity : (0:ℝ) ≤ 1 / Kr) hu hP0 hl hv hmm0 hmm
   have hnn : (0:ℝ) ≤ (1 - en / 8) * (1 + 1 / Kr) ^ 2 :=
-    mul_nonneg (by linarith) (sq_nonneg _)
+    mul_nonneg (by linarith only [he1]) (sq_nonneg _)
   have hA : (1 - en / 8) * (1 + 1 / Kr) ^ 2 / (lr ^ 2 * cST) * (cST * cardS * cardT)
       = (1 - en / 8) * (1 + 1 / Kr) ^ 2 * (cardS * cardT) / lr ^ 2 := by
     field_simp
@@ -2478,7 +2478,7 @@ private theorem box_demand_bound {V : Type} [Fintype V] [DecidableEq V]
             (szf th a : ℝ) * (szf th b : ℝ) else 0)
   rw [hbd]
   have hPnnn : (0 : ℝ) ≤ (1 - e / 64) * (Pn : ℝ) ^ 2 :=
-    mul_nonneg (by linarith) (by positivity)
+    mul_nonneg (by linarith only [he1]) (by positivity)
   -- a copy of a triple through the pair forces the pair to be dense
   have hnotmem : ∀ th ∈ Gd, ∀ a b : ZMod 3, triPos Pp th a = S → triPos Pp th b = T →
       a ≠ b ∧ δ ≤ (G.edgeDensity (S : Finset V) (T : Finset V) : ℝ) := by
@@ -2554,7 +2554,7 @@ private theorem box_demand_bound {V : Type} [Fintype V] [DecidableEq V]
     -- the LP capacity of the pair
     have hWc0 : (0 : ℝ) ≤ (1 - e / 8) * (1 + 1 / (K : ℝ)) ^ 2
         / ((l : ℝ) ^ 2 * (G.edgeDensity (S : Finset V) (T : Finset V) : ℝ)) := by
-      have : (0:ℝ) ≤ 1 - e / 8 := by linarith
+      have : (0:ℝ) ≤ 1 - e / 8 := by linarith only [he1]
       positivity
     have hstep1 : ∑ th ∈ Gd, (1 - e / 8) * (1 + 1 / (K : ℝ)) ^ 2
           / ((l : ℝ) ^ 2 * (G.edgeDensity (S : Finset V) (T : Finset V) : ℝ))
@@ -3164,7 +3164,7 @@ theorem blockCoverResidualCoupled_of_boxAllocation (hbox : BoxAllocationResidual
   have hmin2 : min 1 ε₂ ≤ ε₂ := min_le_right _ _
   have hm10 : (0 : ℝ) < min 1 ε₂ := lt_min one_pos hε₂0
   have hε₁α : ε₁ / 8 ≤ α * min 1 ε₂ := by linarith only [hε₁le]
-  refine ⟨α, ?_, by linarith, ?_, ?_⟩
+  refine ⟨α, ?_, by linarith only [he1, hα0, hαe], ?_, ?_⟩
   · have h : α * min 1 ε₂ ≤ α * 1 := mul_le_mul_of_nonneg_left hmin1 hα0.le
     rw [mul_one] at h
     linarith only [hε₁α, h]
@@ -3275,14 +3275,14 @@ theorem blockCoverResidualCoupled_of_boxAllocation (hbox : BoxAllocationResidual
   have hKu : 1 / (K : ℝ) ≤ e / 640 := by
     have h1 : (640 : ℝ) ≤ (K : ℝ) * e := (div_le_iff₀ he0).mp hKR
     rw [div_le_div_iff₀ hKpos (by norm_num : (0:ℝ) < 640)]
-    linarith
+    linarith only [h1]
   have hPv : 2 / (Pn : ℝ) ≤ e / 400 := by
     have h1 : (1 : ℝ) ≤ (Pn : ℝ) * (4 * α) :=
       (div_le_iff₀ (by positivity : (0:ℝ) < 4 * α)).mp hPnge
     have h2 : α * (Pn : ℝ) ≤ e / 3200 * (Pn : ℝ) :=
       mul_le_mul_of_nonneg_right hαe hPn0R.le
     rw [div_le_div_iff₀ hPn0R (by norm_num : (0:ℝ) < 400)]
-    linarith
+    linarith only [h1, h2]
   have hτsq : τ ^ 2 = (l : ℝ) ^ 2 * (K : ℝ) ^ 2 / δ ^ 2 := by
     rw [hτdef]; field_simp
   have hncUB : ∀ th ∈ Gd, (nc th : ℝ)
@@ -3291,7 +3291,7 @@ theorem blockCoverResidualCoupled_of_boxAllocation (hbox : BoxAllocationResidual
     have hy0 : (0 : ℝ) ≤ y th := hyLP.1 th
     have hdp := hdProd0 th hth
     have h0 : (0 : ℝ) ≤ (1 - e / 8) * y th / (τ ^ 2 * dProd G Pp th) := by
-      apply div_nonneg (mul_nonneg (by linarith) hy0)
+      apply div_nonneg (mul_nonneg (by linarith only [he1, hα0, hαe]) hy0)
       positivity
     rw [hncdef]
     refine le_trans (Nat.floor_le h0) (le_of_eq ?_)

@@ -275,7 +275,7 @@ private theorem window_lower {x y z x' y' s τ μ ε e : ℝ}
     mul_le_mul (by linarith) (by linarith) hyE.le (by linarith)
   have hp : 0 ≤ (x' - ε) * (y' - 2 * ε) := mul_nonneg (by linarith) (by linarith)
   have h1 : (x * y - 2 * (e + 2 * ε)) * (τ * z - 1) ≤ (x' - ε) * (y' - 2 * ε) * (τ * z - 1) :=
-    mul_le_mul_of_nonneg_right (le_trans step1 step1') (by linarith)
+    mul_le_mul_of_nonneg_right (le_trans step1 step1') (by linarith only [hx1, hE0, hxE, hτz])
   have h2 : (x' - ε) * (y' - 2 * ε) * (τ * z - 1) ≤ (x' - ε) * (y' - 2 * ε) * s :=
     mul_le_mul_of_nonneg_left hslo hp
   linarith only [hcore, h1, h2]
@@ -327,12 +327,12 @@ theorem scale_window {x y z x' y' s τ d δ μ ε e : ℝ}
   have hE0 : 0 < e + 2 * ε := by linarith only [he, hε]
   have hEone : e + 2 * ε ≤ 1 / 12 := by nlinarith only [hz, hz1, hμ0, hμ1, hE, hδcube]
   have hEδ : e + 2 * ε ≤ δ / 12 := by nlinarith only [hμ0, hμ1, hE, hδcube, hE0]
-  have hτ1 : 1 ≤ τ := by nlinarith
+  have hτ1 : 1 ≤ τ := by nlinarith only [he, hμ1, hE, hT2, hδ1, hμ0, hε, hEone, hδcube]
   have hz0 : 0 ≤ z := le_trans hδ0.le hz
-  have hτz : 2 ≤ τ * z := by nlinarith
-  have hxy : δ * δ ≤ x * y := by nlinarith
-  have hA : δ ^ 3 ≤ x * y * z := by nlinarith
-  have hxy1 : x * y ≤ 1 := by nlinarith
+  have hτz : 2 ≤ τ * z := by nlinarith only [hz, hδcube, hδ0, hT2, he, hε, hμ1, hδ3, hE]
+  have hxy : δ * δ ≤ x * y := by nlinarith only [hδ0, hx, hy]
+  have hA : δ ^ 3 ≤ x * y * z := by nlinarith only [hz, hδ0, hxy]
+  have hxy1 : x * y ≤ 1 := by nlinarith only [hx1, hδ0, hy1, hx]
   have hmul : μ * τ * δ ^ 3 ≤ μ * (τ * (x * y * z)) := by
     calc μ * τ * δ ^ 3 = (μ * τ) * δ ^ 3 := by ring
       _ ≤ (μ * τ) * (x * y * z) := mul_le_mul_of_nonneg_left hA (by positivity)
@@ -346,8 +346,8 @@ theorem scale_window {x y z x' y' s τ d δ μ ε e : ℝ}
   have hy'hi : y' ≤ y + e := by have := abs_le.mp hy'; linarith only [this.2]
   have hslo : τ * z - 1 ≤ s := by have := abs_le.mp hs; linarith only [this.1]
   have hshi : s ≤ τ * z + 1 := by have := abs_le.mp hs; linarith only [this.2]
-  have hxE : 0 < x - (e + 2 * ε) := by linarith
-  have hyE : 0 < y - (e + 2 * ε) := by linarith
+  have hxE : 0 < x - (e + 2 * ε) := by linarith only [hx, he, hε, hEδ]
+  have hyE : 0 < y - (e + 2 * ε) := by linarith only [hy, he, hε, hEδ]
   obtain ⟨core1, core2⟩ := scale_core (δ := δ) hz1 hE0 hEone hxy1 hT2 hmul hEτ hτpos
   subst hd
   exact ⟨window_lower hx1 hy1 hE0 hε hxE hyE hx'lo hy'lo hslo hτz core1,
@@ -611,7 +611,7 @@ theorem subTripleShape_grid (G : SimpleGraph V) [DecidableRel G.Adj] {U W X : Fi
   have hlow : ∀ (u v : ℝ), δ ≤ v → |u - v| ≤ ε₁ → 2 * (ε₁ / α) ≤ u := by
     intro u v hv habs
     have := (abs_le.mp habs).1
-    linarith
+    linarith only [hdense, hv, this]
   refine ⟨?_, ?_, ?_, huAB, huAC, huBC, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact fun i _ => Finset.disjoint_of_subset_left (blockOf_subset U sA _)
       (Finset.disjoint_of_subset_right (blockOf_subset W sB _) hUW)

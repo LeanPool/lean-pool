@@ -84,7 +84,7 @@ theorem centered_second_moment_le_params {H : Finset (Finset V)} {p : ℝ} {r Δ
   have hε0 : 0 ≤ εp := by
     have : (0 : ℝ) ≤ (κ : ℝ) * p := mul_nonneg (Nat.cast_nonneg _) hp0
     have h2 : (0 : ℝ) ≤ (Δ : ℝ) ^ 2 * p ^ 2 := by positivity
-    rw [hεp]; linarith
+    rw [hεp]; linarith only [this, h2]
   have hq : ∀ u : V, coverRate H p u ≤ (Δ : ℝ) * p := by
     intro u
     refine le_trans (coverRate_le hp0 hp1 u) ?_
@@ -98,7 +98,7 @@ theorem centered_second_moment_le_params {H : Finset (Finset V)} {p : ℝ} {r Δ
     have h1 := prob_two_covered_le_params ρ hp0 hΔ hκ u u' huu'
     have h2 : 0 ≤ coverRate H p u * coverRate H p u' :=
       mul_nonneg (coverRate_nonneg hp0 hp1 u) (coverRate_nonneg hp0 hp1 u')
-    rw [hεp]; linarith
+    rw [hεp]; linarith only [h1, h2]
   have hκv : ∀ u : V, u ≠ v → codegree H v u ≤ κ := fun u hu => hκ v u (fun h => hu h.symm)
   have hmain := centered_second_moment_le ρ hp0 hp1 v hκv hq hε0 hpair
   -- rewrite the codegree sum
@@ -116,7 +116,7 @@ theorem centered_second_moment_le_params {H : Finset (Finset V)} {p : ℝ} {r Δ
   have hdv0 : (0 : ℝ) ≤ (degree H v : ℝ) := Nat.cast_nonneg _
   have hr0 : (0 : ℝ) ≤ (r : ℝ) - 1 := by
     have : (1 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr1
-    linarith
+    linarith only [this]
   have hA : ((r : ℝ) - 1) * (degree H v : ℝ) ≤ ((r : ℝ) - 1) * (Δ : ℝ) :=
     mul_le_mul_of_nonneg_left hdv hr0
   have hA0 : (0 : ℝ) ≤ ((r : ℝ) - 1) * (degree H v : ℝ) := mul_nonneg hr0 hdv0
@@ -131,7 +131,7 @@ theorem centered_second_moment_le_params {H : Finset (Finset V)} {p : ℝ} {r Δ
   have ht2 : εp * (((r : ℝ) - 1) * (degree H v : ℝ)) ^ 2
       ≤ εp * (((r : ℝ) - 1) * (Δ : ℝ)) ^ 2 := mul_le_mul_of_nonneg_left hsq hε0
   rw [hεp] at ht2 ⊢
-  linarith
+  linarith only [ht1, ht2]
 
 omit [Fintype V] in
 /-- The mean of the pair count in terms of the hypergraph parameters. -/
@@ -194,7 +194,7 @@ theorem exists_tight_round_of_params {H : Finset (Finset V)} {p : ℝ} {r Δ δ 
     refine le_trans ?_ (coverRate_ge hp0 hp1 hr hΔ v)
     have hd : (δ : ℝ) ≤ (degree H v : ℝ) := by exact_mod_cast hδ v
     have hfac : (0 : ℝ) ≤ p * (1 - p) ^ (r * Δ) :=
-      mul_nonneg hp0 (pow_nonneg (by linarith) _)
+      mul_nonneg hp0 (pow_nonneg (by linarith only [hp1]) _)
     exact mul_le_mul_of_nonneg_right hd hfac
   have hqlo1 : (δ : ℝ) * (p * (1 - p) ^ (r * Δ)) ≤ 1 := by
     refine le_trans (hqlo v0) ?_
@@ -361,7 +361,7 @@ theorem exists_round_residual_band {H : Finset (Finset V)} {p : ℝ} {r Δ δ κ
     linarith only [this]
   have hqhi0 : (0 : ℝ) ≤ (Δ : ℝ) * p := mul_nonneg (Nat.cast_nonneg _) hp0
   have hqlo0 : (0 : ℝ) ≤ (δ : ℝ) * (p * (1 - p) ^ (r * Δ)) :=
-    mul_nonneg (Nat.cast_nonneg _) (mul_nonneg hp0 (pow_nonneg (by linarith) _))
+    mul_nonneg (Nat.cast_nonneg _) (mul_nonneg hp0 (pow_nonneg (by linarith only [hp1]) _))
   -- the centre is pinned between the two explicit values
   have hupper : lossWeightMean H p v ≤ ((r : ℝ) - 1) * (Δ : ℝ) * ((Δ : ℝ) * p) := by
     refine le_trans hmeanle ?_
@@ -494,7 +494,7 @@ theorem exists_tight_round_cheb {H : Finset (Finset V)} {p : ℝ}
       + (ℙ : Measure Ω).real
         {ω | (Q / 2) ^ 2
           ≤ (((covered (retainedSet H ρ ω)).card : ℝ) - ∑ v : V, coverRate H p v) ^ 2} < 1 := by
-    linarith
+    linarith only [hsmall, hP1, hP2]
   obtain ⟨ω, hω1, hω2⟩ := exists_notMem_of_measureReal_add_lt_one hsum
   refine ⟨ω, Finset.univ.filter (fun v : V =>
     t ≤ |lossWeight ρ v ω - lossWeightMean H p v| ∨ s ≤ pairCount ρ v ω), ?_, ?_, ?_⟩
@@ -503,7 +503,7 @@ theorem exists_tight_round_cheb {H : Finset (Finset V)} {p : ℝ}
       by_contra hc
       push Not at hc
       exact hω1 hc
-    linarith
+    linarith only [h1, h2]
   · intro v hv
     have hnot : ¬ (t ≤ |lossWeight ρ v ω - lossWeightMean H p v| ∨ s ≤ pairCount ρ v ω) := by
       intro h
@@ -607,11 +607,11 @@ theorem exists_tight_round_cheb_of_params {H : Finset (Finset V)} {p : ℝ} {r �
     refine le_trans ?_ (coverRate_ge hp0' hp1' hr hΔ v)
     have hd : (δ : ℝ) ≤ (degree H v : ℝ) := by exact_mod_cast hδ v
     have hfac : (0 : ℝ) ≤ p * (1 - p) ^ (r * Δ) :=
-      mul_nonneg hp0' (pow_nonneg (by linarith) _)
+      mul_nonneg hp0' (pow_nonneg (by linarith only [hp1]) _)
     exact mul_le_mul_of_nonneg_right hd hfac
   have hqlo0 : (0 : ℝ) < (δ : ℝ) * (p * (1 - p) ^ (r * Δ)) := by
     have hδR : (0 : ℝ) < (δ : ℝ) := by exact_mod_cast hδ0
-    have : (0 : ℝ) < (1 - p) ^ (r * Δ) := pow_pos (by linarith) _
+    have : (0 : ℝ) < (1 - p) ^ (r * Δ) := pow_pos (by linarith only [hp1]) _
     positivity
   have hQ : (0 : ℝ) < (Fintype.card V : ℝ) * ((δ : ℝ) * (p * (1 - p) ^ (r * Δ))) :=
     mul_pos hN0 hqlo0
@@ -632,7 +632,7 @@ theorem exists_tight_round_cheb_of_params {H : Finset (Finset V)} {p : ℝ} {r �
     have h1 : (0 : ℝ) ≤ (κ : ℝ) * p := mul_nonneg (Nat.cast_nonneg _) hp0'
     have h2 : (0 : ℝ) ≤ 4 * (r : ℝ) ^ 2 * (κ : ℝ) * (Δ : ℝ) ^ 2 * p ^ 3 :=
       mul_nonneg (by positivity) (pow_nonneg hp0' 3)
-    linarith
+    linarith only [h1, h2]
   have hpair : ∀ u u' : V, u ≠ u' →
       (ℙ : Measure Ω).real ({ω | u ∈ covered (retainedSet H ρ ω)}
           ∩ {ω | u' ∈ covered (retainedSet H ρ ω)})
@@ -704,10 +704,10 @@ theorem exists_round_residual_band_cheb {H : Finset (Finset V)} {p : ℝ} {r Δ 
   have hdvδ : (δ : ℝ) ≤ (degree H v : ℝ) := by exact_mod_cast hδ v
   have hr0 : (0 : ℝ) ≤ (r : ℝ) - 1 := by
     have : (1 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr1
-    linarith
+    linarith only [this]
   have hqhi0 : (0 : ℝ) ≤ (Δ : ℝ) * p := mul_nonneg (Nat.cast_nonneg _) hp0'
   have hqlo0 : (0 : ℝ) ≤ (δ : ℝ) * (p * (1 - p) ^ (r * Δ)) :=
-    mul_nonneg (Nat.cast_nonneg _) (mul_nonneg hp0' (pow_nonneg (by linarith) _))
+    mul_nonneg (Nat.cast_nonneg _) (mul_nonneg hp0' (pow_nonneg (by linarith only [hp1]) _))
   have hupper : lossWeightMean H p v ≤ ((r : ℝ) - 1) * (Δ : ℝ) * ((Δ : ℝ) * p) := by
     refine le_trans hmeanle ?_
     have := mul_le_mul_of_nonneg_left hdvΔ hr0
@@ -717,7 +717,7 @@ theorem exists_round_residual_band_cheb {H : Finset (Finset V)} {p : ℝ} {r Δ 
     refine le_trans ?_ hmeange
     have := mul_le_mul_of_nonneg_left hdvδ hr0
     exact mul_le_mul_of_nonneg_right this hqlo0
-  exact ⟨by linarith, by linarith⟩
+  exact ⟨by linarith only [hlo, hdvδ, hupper], by linarith only [hup, hdvΔ, hlower]⟩
 
 end LeanPool.AsymptoticTrianglePacking.Internal
 
@@ -944,13 +944,13 @@ theorem cheb_smallness_explicit {R D dd k N γ θ L p t s a : ℝ}
           + (D * (R - 1) ^ 2 * (D ^ 2 * p ^ 2 + k * p)) / s)) / a
       + (N * (D * p) + N ^ 2 * (k * p + 4 * R ^ 2 * k * D ^ 2 * p ^ 3))
         / (N * (dd * (p * L)) / 2) ^ 2 < 1 := by
-  have hRpos : (0 : ℝ) < R := by linarith
-  have hDpos : (0 : ℝ) < D := by linarith
+  have hRpos : (0 : ℝ) < R := by linarith only [hR, hγ0, hγ1]
+  have hDpos : (0 : ℝ) < D := by linarith only [hD, hγ0, hγ1]
   have hNpos : (0 : ℝ) < N := lt_of_lt_of_le (by positivity) hN
   have hppos : 0 < p := by rw [hp]; positivity
-  have hNγ : 512 * R ≤ N * γ := by rw [div_le_iff₀ hγ0] at hN; linarith
+  have hNγ : 512 * R ≤ N * γ := by rw [div_le_iff₀ hγ0] at hN; linarith only [hN]
   have hF4 : k * (1280 * R) ≤ θ * γ ^ 3 * D := by
-    rw [le_div_iff₀ (by positivity : (0:ℝ) < 1280 * R)] at hk; linarith
+    rw [le_div_iff₀ (by positivity : (0:ℝ) < 1280 * R)] at hk; linarith only [hk]
   have hkR : 512 * k * R ≤ γ * D := auxkR hR hD hk0 hγ0 hγ1 hθ1 hF4
   have hEDp : D * p = γ / R := by rw [hp]; field_simp
   have hEVb : k * ((R - 1) * D) * (D * p)
@@ -970,7 +970,7 @@ theorem cheb_smallness_explicit {R D dd k N γ θ L p t s a : ℝ}
     have h1 : k * γ * D * ((R - 1) + (1 + 4 * γ ^ 2) * (R - 1) ^ 2) ≤ k * γ * D * (3 * R ^ 2) :=
       mul_le_mul_of_nonneg_left (auxS hR hγ0 hγ1) (by positivity)
     have h2 := auxA1 hR hD hk0 hγ0 hF4
-    linarith
+    linarith only [h1, h2]
   have hA2 : (D * (R - 1) ^ 2 * (D ^ 2 * p ^ 2 + k * p)) / s ≤ θ / 8 := by
     have hspos : (0:ℝ) < s := by rw [hs]; positivity
     rw [hEPb, div_le_iff₀ hspos, hs]
@@ -984,18 +984,18 @@ theorem cheb_smallness_explicit {R D dd k N γ θ L p t s a : ℝ}
     calc N * ((k * ((R - 1) * D) * (D * p)
             + (k * p + 4 * R ^ 2 * k * D ^ 2 * p ^ 3) * ((R - 1) * D) ^ 2) / t ^ 2
           + (D * (R - 1) ^ 2 * (D ^ 2 * p ^ 2 + k * p)) / s)
-        ≤ N * (θ / 8 + θ / 8) := mul_le_mul_of_nonneg_left (by linarith) hNpos.le
+        ≤ N * (θ / 8 + θ / 8) := mul_le_mul_of_nonneg_left (by linarith only [hA1, hA2]) hNpos.le
       _ = 1 / 4 * (θ * N) := by ring
   have hqlo : γ / (4 * R) ≤ dd * (p * L) := cheb_qlo_explicit hR hD hdd1 hDdd hγ0 hL0 hp
   have hDenLowPos : (0:ℝ) < (N * (γ / (4 * R)) / 2) ^ 2 := by positivity
   have hDenLow : (N * (γ / (4 * R)) / 2) ^ 2 ≤ (N * (dd * (p * L)) / 2) ^ 2 := by
     have h1 : N * (γ / (4 * R)) / 2 ≤ N * (dd * (p * L)) / 2 := by
-      have := mul_le_mul_of_nonneg_left hqlo hNpos.le; linarith
+      have := mul_le_mul_of_nonneg_left hqlo hNpos.le; linarith only [this]
     exact pow_le_pow_left₀ (by positivity) h1 2
   have hNum0 : 0 ≤ N * (D * p) + N ^ 2 * (k * p + 4 * R ^ 2 * k * D ^ 2 * p ^ 3) := by
     have h1 : 0 ≤ N * (D * p) := by positivity
     have h2 := mul_nonneg (sq_nonneg N) hε0
-    linarith
+    linarith only [h1, h2]
   have hNumB : N * (D * p) + N ^ 2 * (k * p + 4 * R ^ 2 * k * D ^ 2 * p ^ 3)
       ≤ 1 / 2 * (N * (γ / (4 * R)) / 2) ^ 2 := by
     have hden : (N * (γ / (4 * R)) / 2) ^ 2 = N ^ 2 * γ ^ 2 / (64 * R ^ 2) := by
@@ -1011,8 +1011,8 @@ theorem cheb_smallness_explicit {R D dd k N γ θ L p t s a : ℝ}
       have heq : N ^ 2 * (γ ^ 2 / (256 * R ^ 2)) = 1 / 4 * (N ^ 2 * γ ^ 2 / (64 * R ^ 2)) := by
         field_simp; ring
       rw [heq] at hfin
-      linarith
-    linarith
+      linarith only [hstep, hfin]
+    linarith only [hone, htwo]
   have hB : (N * (D * p) + N ^ 2 * (k * p + 4 * R ^ 2 * k * D ^ 2 * p ^ 3))
       / (N * (dd * (p * L)) / 2) ^ 2 ≤ 1 / 2 := by
     refine le_trans (div_le_div_of_nonneg_left hNum0 hDenLowPos hDenLow) ?_
@@ -1049,7 +1049,7 @@ theorem exists_round_explicit {V : Type u} [Fintype V] [DecidableEq V]
   classical
   -- basic numerics
   have hR : (2 : ℝ) ≤ (r : ℝ) := by exact_mod_cast hr2
-  have hRpos : (0 : ℝ) < (r : ℝ) := by linarith
+  have hRpos : (0 : ℝ) < (r : ℝ) := by linarith only [hγ0, hγ1, hR]
   have hNpos : (0 : ℝ) < (Fintype.card V : ℝ) := lt_of_lt_of_le (by positivity) hNbig
   have hNcard : 0 < Fintype.card V := by exact_mod_cast hNpos
   obtain ⟨v0⟩ := Fintype.card_pos_iff.mp hNcard
@@ -1058,8 +1058,8 @@ theorem exists_round_explicit {V : Type u} [Fintype V] [DecidableEq V]
   have hdd1 : (1 : ℝ) ≤ (δ : ℝ) := by exact_mod_cast hδ1
   have hD : (1 : ℝ) ≤ (Δ : ℝ) := by
     have : (δ : ℝ) ≤ (Δ : ℝ) := by exact_mod_cast hδΔ
-    linarith
-  have hDpos : (0 : ℝ) < (Δ : ℝ) := by linarith
+    linarith only [hdd1, this]
+  have hDpos : (0 : ℝ) < (Δ : ℝ) := by linarith only [hγ0, hγ1, hD]
   set p : ℝ := γ / ((r : ℝ) * (Δ : ℝ)) with hpdef
   have hppos : 0 < p := by rw [hpdef]; positivity
   have hrΔp : ((r * Δ : ℕ) : ℝ) * p = γ := by
@@ -1069,20 +1069,20 @@ theorem exists_round_explicit {V : Type u} [Fintype V] [DecidableEq V]
       rw [hpdef, div_le_iff₀ (by positivity)]
       linarith only [mul_nonneg hγ0.le
         (show (0:ℝ) ≤ (r : ℝ) * (Δ : ℝ) - 1 by nlinarith only [hR, hD])]
-    linarith
+    linarith only [hγ0, hγ1, h1]
   -- the conflict factor `L = (1−p)^{rΔ}`
   set L : ℝ := (1 - p) ^ (r * Δ) with hLdef
   have hL1 : L ≤ 1 := by
-    rw [hLdef]; exact pow_le_one₀ (by linarith) (by linarith)
+    rw [hLdef]; exact pow_le_one₀ (by linarith only [hplt]) (by linarith only [hppos])
   have hL0 : 1 / 2 ≤ L := by
     have hbern : 1 + ((r * Δ : ℕ) : ℝ) * (-p) ≤ (1 + (-p)) ^ (r * Δ) :=
-      one_add_mul_le_pow (by linarith) (r * Δ)
+      one_add_mul_le_pow (by linarith only [hγ0, hγ1, hplt]) (r * Δ)
     have h1 : 1 + ((r * Δ : ℕ) : ℝ) * (-p) = 1 - γ := by
       have : ((r * Δ : ℕ) : ℝ) * (-p) = -(((r * Δ : ℕ) : ℝ) * p) := by ring
       rw [this, hrΔp]; ring
     have h2 : (1 + (-p)) ^ (r * Δ) = L := by rw [hLdef]; ring_nf
     rw [h1, h2] at hbern
-    linarith
+    linarith only [hγ1, hbern]
   -- the smallness condition
   have hsmall := cheb_smallness_explicit (R := (r : ℝ)) (D := (Δ : ℝ)) (dd := (δ : ℝ))
     (k := (κ : ℝ)) (N := (Fintype.card V : ℝ)) (γ := γ) (θ := θ) (L := L) (p := p)
@@ -1109,9 +1109,9 @@ theorem exists_round_explicit {V : Type u} [Fintype V] [DecidableEq V]
         have hfrac : ((r : ℝ) - 1) * (Δ : ℝ) * (γ / (r : ℝ)) = γ * (Δ : ℝ) * (((r : ℝ) - 1) / r) :=
           by field_simp
         rw [hfrac]
-        have hle : ((r : ℝ) - 1) / (r : ℝ) ≤ 1 := by rw [div_le_one hRpos]; linarith
+        have hle : ((r : ℝ) - 1) / (r : ℝ) ≤ 1 := by rw [div_le_one hRpos]; linarith only [hγ0, hγ1]
         linarith only [mul_le_mul_of_nonneg_left hle (mul_nonneg hγ0.le hDpos.le)]
-      linarith
+      linarith only [this]
     have hup' : (Δ : ℝ) - ((r : ℝ) - 1) * (δ : ℝ) * ((δ : ℝ) * (p * L))
           + γ ^ 2 * (Δ : ℝ) + 16 * γ ^ 2 * (Δ : ℝ) / θ
         ≤ (Δ : ℝ) - ((r : ℝ) - 1) * (δ : ℝ) * (γ / (4 * (r : ℝ)))
@@ -1119,15 +1119,15 @@ theorem exists_round_explicit {V : Type u} [Fintype V] [DecidableEq V]
       have hmul : ((r : ℝ) - 1) * (δ : ℝ) * (γ / (4 * (r : ℝ)))
           ≤ ((r : ℝ) - 1) * (δ : ℝ) * ((δ : ℝ) * (p * L)) :=
         mul_le_mul_of_nonneg_left hqlo
-          (mul_nonneg (by linarith : (0:ℝ) ≤ (r : ℝ) - 1) (by positivity))
-      linarith
+          (mul_nonneg (by linarith only [hγ0, hγ1, hR] : (0:ℝ) ≤ (r : ℝ) - 1) (by positivity))
+      linarith only [hmul]
     exact ⟨by linarith, by linarith⟩
   · have hqlo : γ / (4 * (r : ℝ)) ≤ (δ : ℝ) * (p * L) :=
       cheb_qlo_explicit hR hD hdd1 hΔδ hγ0 hL0 hpdef
     have h2 : (Fintype.card V : ℝ) * (γ / (4 * (r : ℝ))) / 2
         ≤ (Fintype.card V : ℝ) * ((δ : ℝ) * (p * L)) / 2 := by
       have := mul_le_mul_of_nonneg_left hqlo hNpos.le
-      linarith
+      linarith only [this]
     have heq : (Fintype.card V : ℝ) * (γ / (4 * (r : ℝ))) / 2
         = (Fintype.card V : ℝ) * γ / (8 * (r : ℝ)) := by field_simp; ring
     rw [heq] at h2

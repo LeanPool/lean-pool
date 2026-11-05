@@ -207,10 +207,10 @@ theorem exists_step (k : ℕ) (H : Finset (Finset V)) (hk : ∀ t ∈ H, t.card 
     obtain ⟨hy0t, hy1t⟩ := hstrict t htF
     rw [hcdef]
     by_cases h : 0 < U t
-    · simp only [h, ite_true]; exact div_pos (by linarith) h
+    · simp only [h, ite_true]; exact div_pos (by linarith only [hy1t]) h
     · simp only [h, ite_false]
       have hUneg : U t < 0 := lt_of_le_of_ne (not_lt.mp h) htU
-      exact div_pos_of_neg_of_neg (by linarith) hUneg
+      exact div_pos_of_neg_of_neg (by linarith only [hy0t]) hUneg
   set lam : ℝ := (P.image c).min' (hPne.image c) with hlamdef
   have hlammem : lam ∈ P.image c := Finset.min'_mem _ _
   obtain ⟨t₀, ht₀P, ht₀c⟩ := Finset.mem_image.mp hlammem
@@ -584,7 +584,7 @@ theorem exists_rounding_pairs (r : ℕ) (H : Finset (Finset V)) (hunif : ∀ T �
     have h := hbound ({v} : Finset V)
     rw [hsum] at h
     rw [hcard]
-    exact le_trans h (by push_cast [hkdef]; linarith)
+    exact le_trans h (by push_cast [hkdef]; linarith only [])
   · -- codegrees
     intro x z
     have hcard : (((Ss.image (fun U => U.biUnion id)).filter
@@ -615,7 +615,7 @@ theorem exists_rounding_pairs (r : ℕ) (H : Finset (Finset V)) (hunif : ∀ T �
     have h := hbound ({x, z} : Finset V)
     rw [hsum] at h
     rw [hcard]
-    exact le_trans h (by push_cast [hkdef]; linarith)
+    exact le_trans h (by push_cast [hkdef]; linarith only [])
 
 end Nibble.BeckFiala
 
@@ -765,21 +765,21 @@ theorem fracNibble_spread_weightedCodegree (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (
     rw [hfrac v, hdegeq v, hkr] at h
     have h2 : (D : ℝ) * ∑ T ∈ H.filter (fun T => v ∈ T), w T ≤ (D : ℝ) * 1 :=
       mul_le_mul_of_nonneg_left (hvle v) hDR.le
-    linarith
+    linarith only [hkpos, hkD, h, h2]
   have hlow : ∀ v : W, v ∉ Exc → (1 - μ) * (D : ℝ) ≤ (degree S v : ℝ) := by
     intro v hv
     have h := (abs_le.mp (hdeg v)).1
     rw [hfrac v, hdegeq v, hkr] at h
     have h2 : (D : ℝ) * (1 - μ / 4) ≤ (D : ℝ) * ∑ T ∈ H.filter (fun T => v ∈ T), w T :=
       mul_le_mul_of_nonneg_left (hvge v hv) hDR.le
-    linarith
+    linarith only [hkpos, hkD, h, h2]
   have hScod : CodegreeBounded S (μ * (D : ℝ)) := by
     intro x z hxz
     have h := (abs_le.mp (hcodeg x z)).2
     rw [hfrac2 x z, hcodeq x z, hkr] at h
     have h2 : (D : ℝ) * ∑ T ∈ H.filter (fun T => x ∈ T ∧ z ∈ T), w T ≤ (D : ℝ) * (μ / 4) :=
       mul_le_mul_of_nonneg_left (hcod x z hxz) hDR.le
-    linarith
+    linarith only [hkpos, hkD, h, h2]
   have hreg : NearlyRegularMost S (D : ℝ) μ η :=
     ⟨Exc, hExc, fun v hv => ⟨hlow v hv, hceil v⟩⟩
   obtain ⟨M, hM, hMcard⟩ := hmain S (D : ℝ) hDR hd₀D hSunif hreg hScod hceil
@@ -792,10 +792,10 @@ theorem fracNibble_spread_weightedCodegree (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (
     rw [le_div_iff₀ hrpos, mul_comm]
     exact Hypergraph.weightedSum_le_card H w hunif hvle
   rcases le_or_gt β 1 with h1 | h1
-  · exact le_trans (mul_le_mul_of_nonneg_left hsum (by linarith)) hMcard
+  · exact le_trans (mul_le_mul_of_nonneg_left hsum (by linarith only [h1])) hMcard
   · have hnn' : 0 ≤ ∑ T ∈ H, w T := Finset.sum_nonneg (fun T _ => hwnn T)
     have hle0 : (1 - β) * (∑ T ∈ H, w T) ≤ 0 :=
-      mul_nonpos_of_nonpos_of_nonneg (by linarith) hnn'
+      mul_nonpos_of_nonpos_of_nonneg (by linarith only [h1]) hnn'
     exact le_trans hle0 (Nat.cast_nonneg _)
 
 /-- **The spread hypothesis is redundant.**  Every edge contains a pair `x ≠ z`, so its weight is at
@@ -1364,9 +1364,9 @@ theorem fracNibble_withSlack (β : ℝ) (hβ : 0 < β) :
       (le_trans (one_div_pos.mpr hγpos).le hS) hγ1)
   set m := ⌈S⌉₊ with hmdef
   have hmS : S ≤ (m : ℝ) := Nat.le_ceil S
-  have hmpos : (0 : ℝ) < (m : ℝ) := lt_of_lt_of_le (by linarith) hmS
+  have hmpos : (0 : ℝ) < (m : ℝ) := lt_of_lt_of_le (by linarith only [hS1]) hmS
   have hm : 0 < m := by exact_mod_cast hmpos
-  have hmlt : (m : ℝ) < S + 1 := Nat.ceil_lt_add_one (by linarith)
+  have hmlt : (m : ℝ) < S + 1 := Nat.ceil_lt_add_one (by linarith only [hS1])
   have hinvm : 1 / (m : ℝ) ≤ γ := by
     rw [div_le_iff₀ hmpos]
     exact (hγS.trans (mul_le_mul_of_nonneg_right hmS hγpos.le)).trans_eq (mul_comm _ _)
@@ -1385,7 +1385,7 @@ theorem fracNibble_withSlack (β : ℝ) (hβ : 0 < β) :
       1 - γ₀ ≤ ∑ U ∈ (Slack.padFam K m).filter (fun U => v ∈ U), Slack.padWt K w m U := by
     rintro v -
     cases v with
-    | inl a => rw [Slack.padLoad_inl K w m hm a]; linarith
+    | inl a => rw [Slack.padLoad_inl K w m hm a]; linarith only [hγ₀]
     | inr d =>
         rw [Slack.padLoad_inr K w m hm d, le_div_iff₀ hmpos]
         have hunit : 1 ≤ γ₀ * (m : ℝ) := (div_le_iff₀ hmpos).mp (hinvm.trans hγle)
@@ -1420,7 +1420,7 @@ theorem fracNibble_withSlack (β : ℝ) (hβ : 0 < β) :
         | inr d' =>
             have hdd : d ≠ d' := fun h => hxz (by rw [h])
             refine le_trans (Slack.padCodeg_inr_inr K w m hm hload hdd) ?_
-            have hSnn : 0 ≤ S := by linarith
+            have hSnn : 0 ≤ S := by linarith only [hS1]
             have : S / (m : ℝ) ^ 2 ≤ 1 / (m : ℝ) := by
               rw [div_le_div_iff₀ (by positivity) hmpos]
               simpa only [one_mul, pow_two] using mul_le_mul_of_nonneg_right hmS hmpos.le
@@ -1436,7 +1436,7 @@ theorem fracNibble_withSlack (β : ℝ) (hβ : 0 < β) :
   refine ⟨M', hM', ?_⟩
   have hloadnn : (0 : ℝ) ≤ ∑ v : X, Slack.wLoad K w v :=
     Finset.sum_nonneg fun v _ => Finset.sum_nonneg fun T _ => hw T
-  have hScard : S ≤ (Fintype.card X : ℝ) := by rw [hSeq]; linarith
+  have hScard : S ≤ (Fintype.card X : ℝ) := by rw [hSeq]; linarith only [hloadnn]
   rw [hM'card]
   nlinarith only [hMcard, hmix, hsplit, hScard, hmlt, hβ.le]
 
@@ -1987,9 +1987,9 @@ theorem fracNibbleR_withSlack (k : ℕ) (hk : 0 < k) (β : ℝ) (hβ : 0 < β) :
       (le_trans (one_div_pos.mpr hγpos).le hS) hγ1)
   set m := ⌈S⌉₊ with hmdef
   have hmS : S ≤ (m : ℝ) := Nat.le_ceil S
-  have hmpos : (0 : ℝ) < (m : ℝ) := lt_of_lt_of_le (by linarith) hmS
+  have hmpos : (0 : ℝ) < (m : ℝ) := lt_of_lt_of_le (by linarith only [hS1]) hmS
   have hm : 0 < m := by exact_mod_cast hmpos
-  have hmlt : (m : ℝ) < S + 1 := Nat.ceil_lt_add_one (by linarith)
+  have hmlt : (m : ℝ) < S + 1 := Nat.ceil_lt_add_one (by linarith only [hS1])
   have hinvm : 1 / (m : ℝ) ≤ γ := by
     rw [div_le_iff₀ hmpos]
     exact (hγS.trans (mul_le_mul_of_nonneg_right hmS hγpos.le)).trans_eq (mul_comm _ _)
@@ -2009,7 +2009,7 @@ theorem fracNibbleR_withSlack (k : ℕ) (hk : 0 < k) (β : ℝ) (hβ : 0 < β) :
       1 - γ₀ ≤ ∑ U ∈ (padFamR K k m).filter (fun U => v ∈ U), padWtR K w k m U := by
     rintro v -
     cases v with
-    | inl a => rw [padLoad_inl K w k m hk hm a]; linarith
+    | inl a => rw [padLoad_inl K w k m hk hm a]; linarith only [hγ₀]
     | inr d =>
         obtain ⟨j, e⟩ := d
         rw [padLoad_inr K w k m hk hm j e, le_div_iff₀ hmpos]
@@ -2047,7 +2047,7 @@ theorem fracNibbleR_withSlack (k : ℕ) (hk : 0 < k) (β : ℝ) (hβ : 0 < β) :
         | inr d' =>
             have hdd : (j, e) ≠ d' := fun h => hxz (by rw [h])
             refine le_trans (padCodeg_inr_inr K w k m hk hm hload hdd) ?_
-            have hSnn : 0 ≤ S := by linarith
+            have hSnn : 0 ≤ S := by linarith only [hS1]
             have : S / (m : ℝ) ^ 2 ≤ 1 / (m : ℝ) := by
               rw [div_le_div_iff₀ (by positivity) hmpos]
               simpa only [one_mul, pow_two] using mul_le_mul_of_nonneg_right hmS hmpos.le
@@ -2505,21 +2505,21 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
     have h2 : 1 / γ₂ ≤ (⌈1 / γ₂⌉₊ : ℝ) := Nat.le_ceil _
     rw [hmdef]
     push_cast
-    linarith
+    linarith only [h1, h2]
   have hmub : (m : ℝ) ≤ W + 1 / γ₂ + 3 := by
     have h1 : (⌈W⌉₊ : ℝ) < W + 1 := Nat.ceil_lt_add_one hW0
     have h2 : (⌈1 / γ₂⌉₊ : ℝ) < 1 / γ₂ + 1 := Nat.ceil_lt_add_one (by positivity)
     rw [hmdef]
     push_cast
-    linarith
+    linarith only [h1, h2]
   have hWm : W ≤ (m : ℝ) := by
     have : (0 : ℝ) < 1 / γ₂ := by positivity
-    linarith
+    linarith only [hmW, this]
   have hinvm : 1 / (m : ℝ) ≤ γ₂ := by
     rw [div_le_iff₀ hm']
-    have : 1 / γ₂ ≤ (m : ℝ) := by linarith
+    have : 1 / γ₂ ≤ (m : ℝ) := by linarith only [hW0, hmW]
     rw [div_le_iff₀ hγ₂] at this
-    linarith
+    linarith only [this]
   -- the padded system
   set K' := LEUnif.padFamLE r m K with hK'
   set w' := LEUnif.padWtLE r m w with hw'
@@ -2591,7 +2591,7 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
     have hreal : 0 ≤ ∑ v : X, (1 - Slack.wLoad K' w' (Sum.inl v)) := by
       refine Finset.sum_nonneg fun v _ => ?_
       have := hloadPad (Sum.inl v)
-      linarith
+      linarith only [this]
     have hdum : (Fintype.card (Fin r × Fin m) : ℝ) * (1 - W / (m : ℝ))
         ≤ ∑ d : Fin r × Fin m, (1 - Slack.wLoad K' w' (Sum.inr d)) := by
       have hconst : (Fintype.card (Fin r × Fin m) : ℝ) * (1 - W / (m : ℝ))
@@ -2600,11 +2600,11 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
       rw [hconst]
       refine Finset.sum_le_sum fun d _ => ?_
       have := hdummy d
-      linarith
+      linarith only [this]
     have hcardrm : (Fintype.card (Fin r × Fin m) : ℝ) = (r : ℝ) * (m : ℝ) := by
       simp
     have hr1 : (1 : ℝ) ≤ (r : ℝ) := by exact_mod_cast (by omega : 1 ≤ r)
-    have hmWpos : 1 / γ₂ ≤ (m : ℝ) - W := by linarith
+    have hmWpos : 1 / γ₂ ≤ (m : ℝ) - W := by linarith only [hmW]
     have hkey : (r : ℝ) * (m : ℝ) * (1 - W / (m : ℝ)) = (r : ℝ) * ((m : ℝ) - W) := by
       field_simp
     rw [hslackEq]
@@ -2620,7 +2620,7 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
     have hbound : ∀ v : LEUnif.PadV X r m, 1 - Slack.wLoad K' w' v ≤ 1 := by
       intro v
       have : 0 ≤ Slack.wLoad K' w' v := Finset.sum_nonneg fun U _ => hnn U
-      linarith
+      linarith only [this]
     have := Finset.sum_le_sum (fun v (_ : v ∈ (univ : Finset (LEUnif.PadV X r m))) => hbound v)
     rw [Slack.slackTotal]
     refine le_trans this ?_
@@ -2641,7 +2641,7 @@ theorem fracNibble_leUniform (r : ℕ) (hr : 2 ≤ r) (β : ℝ) (hβ : 0 < β) 
       rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one] at this
       exact this
     rw [LEUnif.sum_wLoad_eq K w] at h3
-    linarith
+    linarith only [h1, h3]
   obtain ⟨M', hM', hM'card⟩ :=
     LEUnif.exists_matching_of_padMatchingLE (fun T hT => (hsize T hT).1) hM
   refine ⟨M', hM', ?_⟩

@@ -1115,7 +1115,7 @@ theorem safeDegCube_variance_le {H : Finset (Finset V)} {r Δ κ : ℕ} {p : ℝ
     _ ≤ 2 * p * M + 2 * p ^ 2 * (((r : ℝ) * (Δ : ℝ)) * M)
         + 2 * p ^ 3 * (((r : ℝ) * (Δ : ℝ)) * (((r : ℝ) * (Δ : ℝ)) * M)) := by
           have e1 : 2 * p * (∑ k ∈ H, w k ^ 2) ≤ 2 * p * M :=
-            mul_le_mul_of_nonneg_left hS2 (by linarith)
+            mul_le_mul_of_nonneg_left hS2 (by linarith only [hp0])
           have e2 : 2 * p ^ 2 * (∑ k ∈ H, Q k) ≤ 2 * p ^ 2 * (((r : ℝ) * (Δ : ℝ)) * M) :=
             mul_le_mul_of_nonneg_left hSQ (by positivity)
           have e3 : 2 * p ^ 3 * (∑ k ∈ H, C k ^ 2)
@@ -1862,7 +1862,7 @@ theorem exists_safe_round_cheb {H : Finset (Finset V)} {p : ℝ}
       + (ℙ : Measure Ω).real
         {ω | (Q / 2) ^ 2
           ≤ (((covered (retainedSet H ρ ω)).card : ℝ) - ∑ v : V, coverRate H p v) ^ 2} < 1 := by
-    linarith
+    linarith only [hsmall, hP1, hP2]
   obtain ⟨ω, hω1, hω2⟩ := exists_notMem_of_measureReal_add_lt_one hsum
   refine ⟨ω, Finset.univ.filter (fun v : V =>
     t ≤ |(safeDegree H (covered (retainedSet H ρ ω)) v : ℝ) - safeDegMean ρ v|), ?_, ?_, ?_⟩
@@ -1871,7 +1871,7 @@ theorem exists_safe_round_cheb {H : Finset (Finset V)} {p : ℝ}
       by_contra hc
       push Not at hc
       exact hω1 hc
-    linarith
+    linarith only [h1, h2]
   · intro v hv
     by_contra hc
     push Not at hc
@@ -2175,10 +2175,10 @@ theorem exists_sharp_round_band {K : Finset (Finset V)} (A : Finset V) {r Δ δ 
     intro v hv
     refine le_trans ?_ (coverRate_ge hp0.le hp1.le hr hΔ v)
     have hd : (δ : ℝ) ≤ (degree K v : ℝ) := by exact_mod_cast hδA v hv
-    exact mul_le_mul_of_nonneg_right hd (mul_nonneg hp0.le (pow_nonneg (by linarith) _))
+    exact mul_le_mul_of_nonneg_right hd (mul_nonneg hp0.le (pow_nonneg (by linarith only [hp1]) _))
   have hqlo0 : (0 : ℝ) < (δ : ℝ) * (p * (1 - p) ^ (r * Δ)) := by
     have hδR : (0 : ℝ) < (δ : ℝ) := by exact_mod_cast hδ0
-    have : (0 : ℝ) < (1 - p) ^ (r * Δ) := pow_pos (by linarith) _
+    have : (0 : ℝ) < (1 - p) ^ (r * Δ) := pow_pos (by linarith only [hp1]) _
     positivity
   have hAR : (0 : ℝ) < (A.card : ℝ) := by exact_mod_cast hA
   have hQ : (0 : ℝ) < (A.card : ℝ) * ((δ : ℝ) * (p * (1 - p) ^ (r * Δ))) := mul_pos hAR hqlo0
@@ -2199,7 +2199,7 @@ theorem exists_sharp_round_band {K : Finset (Finset V)} (A : Finset V) {r Δ δ 
     have h1 : (0 : ℝ) ≤ (κ : ℝ) * p := mul_nonneg (Nat.cast_nonneg _) hp0.le
     have h2 : (0 : ℝ) ≤ 4 * (r : ℝ) ^ 2 * (κ : ℝ) * (Δ : ℝ) ^ 2 * p ^ 3 :=
       mul_nonneg (by positivity) (pow_nonneg hp0.le 3)
-    linarith
+    linarith only [h1, h2]
   have hpair : ∀ u u' : V, u ≠ u' →
       (ℙ : Measure (Finset V → Bool)).real ({ω | u ∈ covered (retainedSet K ρ ω)}
           ∩ {ω | u' ∈ covered (retainedSet K ρ ω)})
@@ -2373,7 +2373,7 @@ theorem Exp_safeDegCube_le {K : Finset (Finset V)} (A : Finset V) {r Δ δ κ : 
     have h1 := hpair e he
     by_cases hd : Disjoint e Aᶜ
     · have h2 := hgood e (by rw [hG, Finset.mem_filter]; exact ⟨he, hd⟩)
-      rw [ite_eq_left hd]; linarith
+      rw [ite_eq_left hd]; linarith only [h1, h2]
     · rw [ite_eq_right hd]; linarith [hnonneg e he]
   have hsum : ∑ e ∈ S, (1 - (if Disjoint e Aᶜ then W else 0) + E)
       = (degree K v : ℝ) - (G.card : ℝ) * W + (degree K v : ℝ) * E := by
