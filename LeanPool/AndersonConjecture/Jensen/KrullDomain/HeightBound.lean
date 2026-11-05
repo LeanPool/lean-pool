@@ -71,7 +71,8 @@ private def intersectionLocalizationSubring
 If for every associated prime P of T/(p) with y ∉ P, the polynomial
 evaluation aeval x f ∈ P implies C(p) | f, then aeval x f ∈ span{p}
 already implies C(p) | f. -/
-include T in theorem derive_mod_principal_trans
+include T in
+theorem derive_mod_principal_trans
     (R : NSubring T) (x : T) (y : R.carrier)
     (hAss_ht : ∀ (r : T), r ≠ 0 →
       ∀ P ∈ associatedPrimes T (T ⧸ Ideal.span {r}), P.height ≤ 1)
@@ -153,7 +154,8 @@ every element of P ∩ S_sub is divisible by a prime p₀ generating P ∩ R,
 then every nonzero element of any prime q ⊊ P ∩ S_sub would be infinitely
 divisible by p₀, contradicting WfDvdMonoid. Hence q = ⊥, giving the
 height bound contradiction. -/
-include T in theorem height_bound_wf_descent
+include T in
+theorem height_bound_wf_descent
     (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
     (S_sub : Subring T)
     (hR_le : R.carrier ≤ S_sub)

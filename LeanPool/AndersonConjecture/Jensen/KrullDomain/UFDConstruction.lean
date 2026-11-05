@@ -46,7 +46,8 @@ omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
 /- R-primes in the maximal ideal are prime in S_sub.
 If p is prime in R with (p:T) ∈ M_T, then the image of p in S_sub is prime.
 The proof uses denominator clearing in Rbar and coprime prime_in_adjoinLocSet. -/
-include T in theorem build_R_prime_in_S
+include T in
+theorem build_R_prime_in_S
     (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
     (S_sub : Subring T)
     (hR_le : R.carrier ≤ S_sub)
@@ -224,7 +225,8 @@ private theorem build_loc_away_ufd_mul_eq {S : Type*} [CommRing S] (s : S)
     _ = A a * A (s ^ nn) := map_mul A _ _
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
-include T in theorem build_loc_away_ufd
+include T in
+theorem build_loc_away_ufd
     (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
     (S_sub : Subring T) [IsDomain S_sub]
     (hR_le : R.carrier ≤ S_sub)
@@ -526,7 +528,8 @@ private theorem build_ufd_dvd_of_dvd_mul_prod_pow {A S : Type*} [CommRing S] [Is
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
 /- S_sub is a UFD via Kaplansky criterion. Uses the intersection construction
 and Nagata-type arguments for the P∩R = ⊥ case. -/
-include T in theorem build_ufd_proof
+include T in
+theorem build_ufd_proof
     (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
     (S_sub : Subring T) [IsDomain S_sub] [WfDvdMonoid S_sub]
     (hR_le : R.carrier ≤ S_sub)
@@ -727,7 +730,8 @@ include T in theorem build_ufd_proof
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
 /- R-primes stay prime in S_sub: given the intersection subring construction,
 every prime element of R maps to a prime element of S_sub. -/
-include T in theorem build_primes_preserved
+include T in
+theorem build_primes_preserved
     (R : NSubring T) (x₁ x₂ : T) (y₁ y₂ : R.carrier)
     (S_sub : Subring T) [IsLocalRing S_sub] [UniqueFactorizationMonoid S_sub]
     (hR_le : R.carrier ≤ S_sub)

@@ -39,7 +39,8 @@ open Cardinal Ideal
 variable {T : Type*} [CommRing T] [IsLocalRing T] [IsNoetherianRing T] [IsDomain T]
 
 -- Helper: a prime P of height ≤ 1 with P ∩ R ≠ ⊥ lies in Ass(T/r₀T) for some nonzero r₀ ∈ R.
-include T in theorem prime_height_le_one_mem_assoc
+include T in
+theorem prime_height_le_one_mem_assoc
     {R : NSubring T}
     (P : Ideal T) (hP_prime : P.IsPrime) (hP_ht : P.height ≤ 1)
     (hPR_ne : P.comap R.carrier.subtype ≠ ⊥) :
@@ -66,7 +67,8 @@ include T in theorem prime_height_le_one_mem_assoc
   exact ⟨r₀, hr₀T_ne, hP_assoc⟩
 
 -- Helper: I_s' ⊄ P for associated primes P when no common prime divides s'.
-include T in theorem no_common_I_not_le_assoc
+include T in
+theorem no_common_I_not_le_assoc
     {R : NSubring T}
     [DecidableEq R.carrier]
     {a : R.carrier} {s : Finset R.carrier}
@@ -538,7 +540,8 @@ private theorem no_common_exists_transcendental
 
 -- Extracted: no-common-factor branch of close_up_aux_wf.
 -- When no prime divides all generators in s', use Heitmann reparametrization.
-include T in theorem close_up_aux_no_common_nonzero
+include T in
+theorem close_up_aux_no_common_nonzero
     [IsAdicComplete (IsLocalRing.maximalIdeal T) T]
     (hM_not_assoc : ∀ (r : T), r ≠ 0 →
       IsLocalRing.maximalIdeal T ∉ associatedPrimes T (T ⧸ Ideal.span {r}))
@@ -644,7 +647,8 @@ include T in theorem close_up_aux_no_common_nonzero
                          simp only [Subring.coe_add, Subring.coe_mul]
                          ring)
 
-include T in theorem close_up_aux_no_common
+include T in
+theorem close_up_aux_no_common
     [IsAdicComplete (IsLocalRing.maximalIdeal T) T]
     (hM_not_assoc : ∀ (r : T), r ≠ 0 →
       IsLocalRing.maximalIdeal T ∉ associatedPrimes T (T ⧸ Ideal.span {r}))

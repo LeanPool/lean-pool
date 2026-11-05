@@ -42,7 +42,8 @@ omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
 /- Shared height-1 step for the kernel proofs: a height-≤-1 prime `P` of `T`
 containing a prime `p` of `R` is an associated prime of `T/(p)`, and `(p)R`
 equals `P ∩ R`. -/
-include T in private theorem ker_pf_span_eq
+include T in
+private theorem ker_pf_span_eq
     (R : NSubring T) (P : Ideal T) (hP_prime : P.IsPrime) (hP_ht : P.height ≤ 1)
     (p : R.carrier) (hp : Prime p) (hp_P : (↑p : T) ∈ P)
     (hp_ne : (↑p : T) ≠ 0) :
@@ -191,7 +192,8 @@ private def intersection_close_up_proof_ker_pf₁
 ⟩
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
-include T in theorem intersection_close_up_ker_pf₁
+include T in
+theorem intersection_close_up_ker_pf₁
     (R : NSubring T) (y₂ : R.carrier) (t₁ u : T)
     (C_ext : Set (Ideal T))
     (D_ext : Set T)
@@ -222,7 +224,8 @@ omit [IsAdicComplete (IsLocalRing.maximalIdeal T) T] in
 /- Helper for `intersection_close_up`: kernel proof for x₂ = t₂ - u·y₁.
     Shows that for each height-≤-1 prime P with y₁ ∉ P and p ∈ P prime in R,
     any polynomial f with aeval(x₂) f ∈ P is divisible by C(p). -/
-include T in theorem intersection_close_up_ker_pf₂
+include T in
+theorem intersection_close_up_ker_pf₂
     (R : NSubring T) (y₁ : R.carrier) (t₂ u : T)
     (C_ext : Set (Ideal T))
     (D_ext : Set T)
