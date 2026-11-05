@@ -275,8 +275,8 @@ theorem hasNearRegularFamily_of_subTripleDesignLocal (G : SimpleGraph V) [Decida
   · intro i hi e he
     have h := (hBad i hi).2.2.1 e he
     have hle : (1 + μ₂) * d i ≤ (1 + μ) * d i := by
-      have := hdnn i hi; nlinarith
-    linarith
+      have := hdnn i hi; nlinarith only [hμ₂, this]
+    linarith only [h, hle]
   · intro i hi
     obtain ⟨Exc, hExc, hlo⟩ := (hBad i hi).2.2.2.1
     refine ⟨Exc, ?_, ?_⟩
@@ -292,7 +292,7 @@ theorem hasNearRegularFamily_of_subTripleDesignLocal (G : SimpleGraph V) [Decida
           ≤ ((#((prune (tripleGraph G (A i) (B i) (C i)) (Bad i)).cliqueFinset 2) : ℕ) : ℝ) := by
         have h5 := (hBad i hi).2.2.2.2
         have := hElo i hi
-        linarith
+        linarith only [hBadle, h5, this]
       have hex := hexc i hi
       have hη' : η * (Elo i - designBad ε₂ (A i) (B i) (C i))
           ≤ η * ((#((prune (tripleGraph G (A i) (B i) (C i)) (Bad i)).cliqueFinset 2) : ℕ) : ℝ) :=
@@ -301,7 +301,7 @@ theorem hasNearRegularFamily_of_subTripleDesignLocal (G : SimpleGraph V) [Decida
     · intro e he hne
       have h := hlo e he hne
       have := hslack i hi
-      linarith
+      linarith only [h, this]
   · refine le_trans hcover ?_
     have hterm : ∀ i ∈ Finset.range k,
         (Elo i - designBad ε₂ (A i) (B i) (C i)) / 3
@@ -312,9 +312,9 @@ theorem hasNearRegularFamily_of_subTripleDesignLocal (G : SimpleGraph V) [Decida
       have h5 := (hBad i hi).2.2.2.2
       have h1 := (hBad i hi).1
       have := hElo i hi
-      linarith
+      linarith only [h5, h1, this]
     have := Finset.sum_le_sum hterm
-    linarith
+    linarith only [this]
 
 end Nibble.AX1
 

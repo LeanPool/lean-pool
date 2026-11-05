@@ -351,8 +351,8 @@ theorem subTripleDesignLocalResidual_of_blockCover (h : BlockCoverResidual) :
     have h1 : ε₁ / 8 ≤ μ₂ * δ ^ 3 / 96 := by
       have h0 : μ₂ * δ ^ 3 / 24 * δ ≤ μ₂ * δ ^ 3 / 24 :=
         mul_delta_le (by positivity) hδ1 hδ0.le
-      linarith
-    linarith
+      linarith only [hε₁a, hε₂0, hε₂A, h0]
+    linarith only [hε₂0, hε₂A, h1]
   have hdense : 2 * (ε₁ / 8 / (δ / 2 : ℝ)) + ε₁ / 8 ≤ δ := by
     rw [hquarter]
     have h1 : ε₁ / 8 ≤ δ / 16 := by linarith
@@ -430,7 +430,7 @@ theorem subTripleDesignLocalResidual_of_blockCover (h : BlockCoverResidual) :
         ≤ (((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ)) := by
       have hlow := (abs_le.mp habs1).1
       have hUW := (gridSubTriple_density_mem G P (hgrid i hi)).1.1
-      linarith
+      linarith only [hlow, hUW]
     have hElo := elo_lower (ε₁ := ε₁) hτpos hδ0 hδ1 hε₁0 hε₁b hdAB
       (hHdens (A i) (C i)) (hHdens (B i) (C i)) haL hbL hc0 ha0 hb0
     simp only [designBad, designSupport, hquarter]
@@ -620,8 +620,8 @@ theorem subTripleDesignLocalResidual_of_blockCoverFine (h : BlockCoverResidualFi
     have h1 : ε₁ / 8 ≤ μ₂ * δ ^ 3 / 96 := by
       have h0 : μ₂ * δ ^ 3 / 24 * δ ≤ μ₂ * δ ^ 3 / 24 :=
         mul_delta_le (by positivity) hδ1 hδ0.le
-      linarith
-    linarith
+      linarith only [hε₁a, hε₂0, hε₂A, h0]
+    linarith only [hε₂0, hε₂A, h1]
   have hdense : 2 * (ε₁ / 8 / (δ / 2 : ℝ)) + ε₁ / 8 ≤ δ := by
     rw [hquarter]
     have h1 : ε₁ / 8 ≤ δ / 16 := by linarith
@@ -699,7 +699,7 @@ theorem subTripleDesignLocalResidual_of_blockCoverFine (h : BlockCoverResidualFi
         ≤ (((G.regularityReduced P (ε₁ / 8) (ε₁ / 4)).edgeDensity (A i) (B i) : ℝ)) := by
       have hlow := (abs_le.mp habs1).1
       have hUW := (gridSubTriple_density_mem G P (hgrid i hi)).1.1
-      linarith
+      linarith only [hlow, hUW]
     have hElo := elo_lower (ε₁ := ε₁) hτpos hδ0 hδ1 hε₁0 hε₁b hdAB
       (hHdens (A i) (C i)) (hHdens (B i) (C i)) haL hbL hc0 ha0 hb0
     simp only [designBad, designSupport, hquarter]

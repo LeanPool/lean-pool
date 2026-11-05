@@ -71,10 +71,16 @@ def Exp (p : ℝ) (f : (ι → Bool) → ℝ) : ℝ := ∑ ω, wt p ω * f ω
 
 omit [DecidableEq ι] in
 theorem wt_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (ω : ι → Bool) : 0 ≤ wt p ω :=
-  Finset.prod_nonneg fun i _ => by split_ifs <;> linarith
+  Finset.prod_nonneg fun i _ => by
+    split_ifs
+    · exact hp0
+    · exact sub_nonneg.mpr hp1
 
 theorem wtc_nonneg {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (i : ι) (ω : ι → Bool) : 0 ≤ wtc i p ω :=
-  Finset.prod_nonneg fun j _ => by split_ifs <;> linarith
+  Finset.prod_nonneg fun j _ => by
+    split_ifs
+    · exact hp0
+    · exact sub_nonneg.mpr hp1
 
 theorem sum_wt {p : ℝ} : ∑ ω : ι → Bool, wt p ω = 1 := by
   change ∑ ω : ι → Bool, ∏ i, (if ω i then p else 1 - p) = 1
@@ -185,8 +191,8 @@ theorem Exp_sq_avgOne_le {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (i : ι) (f :
   have h := Exp_sq_sub_avgOne p i f
   have hnn : 0 ≤ Exp p (fun ω => D i f ω ^ 2) :=
     Finset.sum_nonneg fun ω _ => mul_nonneg (wt_nonneg hp0 hp1 ω) (sq_nonneg _)
-  have hc : 0 ≤ p * (1 - p) := mul_nonneg hp0 (by linarith)
-  nlinarith [mul_nonneg hc hnn]
+  have hc : 0 ≤ p * (1 - p) := mul_nonneg hp0 (sub_nonneg.mpr hp1)
+  exact sub_nonneg.mp (h.symm ▸ mul_nonneg hc hnn)
 
 omit [Fintype ι] in
 theorem D_avgOne_comm {i j : ι} (hij : i ≠ j) (p : ℝ) (f : (ι → Bool) → ℝ) :
@@ -403,7 +409,10 @@ theorem Exp_coord_mul {p : ℝ} (f g : ι) :
     have hi2 : ∀ i : ι, p * h i true + (1 - p) * h i false
         = (if i = f then p else 1) * (if i = g then p else 1) := by
       intro i; rw [hh]
-      by_cases hi : i = f <;> by_cases hj : i = g <;> simp_all
+      by_cases hi : i = f
+      · subst i
+        simp [hfg]
+      · by_cases hj : i = g <;> simp [hi, hj, Ne.symm hfg]
     rw [Finset.prod_congr rfl (fun i _ => hi2 i), Finset.prod_mul_distrib,
       Finset.prod_ite_eq' Finset.univ f (fun _ => p),
       Finset.prod_ite_eq' Finset.univ g (fun _ => p)]
@@ -1051,9 +1060,8 @@ theorem safeDegCube_variance_le {H : Finset (Finset V)} {r Δ κ : ℕ} {p : ℝ
       refine Cube.Exp_mono hp0 hp1 fun ω => ?_
       have h1 := abs_D_safeDegCube_le H v k ω
       have h2 : Cube.D k (safeDegCube H v) ω ^ 2 ≤ (w k + flipWeight H v k ω) ^ 2 := by
-        have := abs_nonneg (Cube.D k (safeDegCube H v) ω)
-        nlinarith [sq_abs (Cube.D k (safeDegCube H v) ω)]
-      nlinarith [sq_nonneg (w k - flipWeight H v k ω)]
+        exact (sq_abs _).symm.trans_le (pow_le_pow_left₀ (abs_nonneg _) h1 2)
+      nlinarith only [h2, sq_nonneg (w k - flipWeight H v k ω)]
     have hexp : Cube.Exp p (fun ω => 2 * w k ^ 2 + 2 * flipWeight H v k ω ^ 2)
         = 2 * w k ^ 2 + 2 * Cube.Exp p (fun ω => flipWeight H v k ω ^ 2) := by
       rw [Cube.Exp_add (f := fun _ => 2 * w k ^ 2) (g := fun ω => 2 * flipWeight H v k ω ^ 2),
@@ -1063,7 +1071,12 @@ theorem safeDegCube_variance_le {H : Finset (Finset V)} {r Δ κ : ℕ} {p : ℝ
     have hstep : Cube.Exp p (fun ω => Cube.D k (safeDegCube H v) ω ^ 2)
         ≤ 2 * w k ^ 2 + 2 * p * Q k + 2 * p ^ 2 * C k ^ 2 := by
       rw [hexp] at hmono; nlinarith only [hmono, hfw]
-    nlinarith only [hp0, hEnn, hmono, hexp, hfw]
+    calc p * (1 - p) * Cube.Exp p (fun ω => Cube.D k (safeDegCube H v) ω ^ 2)
+        ≤ p * Cube.Exp p (fun ω => Cube.D k (safeDegCube H v) ω ^ 2) :=
+          mul_le_mul_of_nonneg_right
+            (mul_le_of_le_one_right hp0 (sub_le_self _ hp0)) hEnn
+      _ ≤ p * (2 * w k ^ 2 + 2 * p * Q k + 2 * p ^ 2 * C k ^ 2) :=
+          mul_le_mul_of_nonneg_left hstep hp0
   have hS2 : ∑ k ∈ H, w k ^ 2 ≤ M := sum_edgeWeight_sq_le hr hΔ hκ v
   have hQnn : ∀ k, 0 ≤ Q k := fun _ => Finset.sum_nonneg fun _ _ => sq_nonneg _
   have hSQ : ∑ k ∈ H, Q k ≤ ((r : ℝ) * (Δ : ℝ)) * M := by
@@ -1083,8 +1096,7 @@ theorem safeDegCube_variance_le {H : Finset (Finset V)} {r Δ κ : ℕ} {p : ℝ
     have h1 : ∀ k ∈ H, C k ^ 2 ≤ ((r : ℝ) * (Δ : ℝ)) * Q k := by
       intro k hk
       have hcs : C k ^ 2 ≤ ((meets H k).card : ℝ) * Q k := sq_sum_le_card_mul_sum_sq
-      have := card_meets_le hr hΔ hk
-      nlinarith [hQnn k]
+      exact hcs.trans (mul_le_mul_of_nonneg_right (card_meets_le hr hΔ hk) (hQnn k))
     calc ∑ k ∈ H, C k ^ 2 ≤ ∑ k ∈ H, ((r : ℝ) * (Δ : ℝ)) * Q k := Finset.sum_le_sum h1
       _ = ((r : ℝ) * (Δ : ℝ)) * ∑ k ∈ H, Q k := by rw [Finset.mul_sum]
       _ ≤ ((r : ℝ) * (Δ : ℝ)) * (((r : ℝ) * (Δ : ℝ)) * M) := mul_le_mul_of_nonneg_left hSQ hrΔ
@@ -1103,14 +1115,14 @@ theorem safeDegCube_variance_le {H : Finset (Finset V)} {r Δ κ : ℕ} {p : ℝ
     _ ≤ 2 * p * M + 2 * p ^ 2 * (((r : ℝ) * (Δ : ℝ)) * M)
         + 2 * p ^ 3 * (((r : ℝ) * (Δ : ℝ)) * (((r : ℝ) * (Δ : ℝ)) * M)) := by
           have e1 : 2 * p * (∑ k ∈ H, w k ^ 2) ≤ 2 * p * M :=
-            mul_le_mul_of_nonneg_left hS2 (by linarith)
+            mul_le_mul_of_nonneg_left hS2 (by linarith only [hp0])
           have e2 : 2 * p ^ 2 * (∑ k ∈ H, Q k) ≤ 2 * p ^ 2 * (((r : ℝ) * (Δ : ℝ)) * M) :=
             mul_le_mul_of_nonneg_left hSQ (by positivity)
           have e3 : 2 * p ^ 3 * (∑ k ∈ H, C k ^ 2)
               ≤ 2 * p ^ 3 * (((r : ℝ) * (Δ : ℝ)) * (((r : ℝ) * (Δ : ℝ)) * M)) :=
             mul_le_mul_of_nonneg_left hSC
               (mul_nonneg (by norm_num) (pow_nonneg hp0 3))
-          linarith only [e1, e2, e3]
+          exact add_le_add (add_le_add e1 e2) e3
     _ = 2 * p * M * (1 + p * (r : ℝ) * (Δ : ℝ) + (p * (r : ℝ) * (Δ : ℝ)) ^ 2) := by ring
 
 end LeanPool.AsymptoticTrianglePacking.Internal
@@ -1362,7 +1374,9 @@ theorem safeIndicator_covariance_le {H : Finset (Finset V)} {p : ℝ}
             exact_mod_cast le_trans (Finset.card_erase_le) hT
           exact mul_le_mul_of_nonneg_right this hsq0
       _ = (T.card : ℝ) * ((n : ℝ) * (qhi ^ 2 + ε₂)) := by rw [Finset.sum_const, nsmul_eq_mul]
-      _ ≤ (n : ℝ) ^ 2 * (qhi ^ 2 + ε₂) := by nlinarith [mul_nonneg hn0 hsq0]
+      _ ≤ (n : ℝ) ^ 2 * (qhi ^ 2 + ε₂) := by
+          simpa only [pow_two, mul_assoc] using
+            mul_le_mul_of_nonneg_right hTn (mul_nonneg hn0 hsq0)
   have hBcle : Bc ≤ (n : ℝ) ^ 2 * (qhi ^ 2 + ε₂) := hBcBound S hn
   have hBc'le : Bc' ≤ (n : ℝ) ^ 2 * (qhi ^ 2 + ε₂) := hBcBound S' hn'
   -- lower bounds on ℙ(A), ℙ(B) via Bonferroni
@@ -1413,8 +1427,9 @@ theorem safeIndicator_covariance_le {H : Finset (Finset V)} {p : ℝ}
           have hcards : (S.card : ℝ) * (S'.card : ℝ) ≤ (n : ℝ) ^ 2 := by
             have h1 : (S.card : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
             have h2 : (S'.card : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn'
-            nlinarith [Nat.cast_nonneg (α := ℝ) S.card, Nat.cast_nonneg (α := ℝ) S'.card]
-          nlinarith [hε0]
+            simpa only [pow_two] using mul_le_mul h1 h2 (Nat.cast_nonneg _) hn0
+          exact add_le_add (add_le_add le_rfl
+            (mul_le_mul_of_nonneg_right hcards hε0)) le_rfl
   -- assemble
   rw [safeIndicator_covariance_eq ρ v e e']
   have hprod : Q * Q' - Q * Bc' - Q' * Bc
@@ -1847,7 +1862,7 @@ theorem exists_safe_round_cheb {H : Finset (Finset V)} {p : ℝ}
       + (ℙ : Measure Ω).real
         {ω | (Q / 2) ^ 2
           ≤ (((covered (retainedSet H ρ ω)).card : ℝ) - ∑ v : V, coverRate H p v) ^ 2} < 1 := by
-    linarith
+    linarith only [hsmall, hP1, hP2]
   obtain ⟨ω, hω1, hω2⟩ := exists_notMem_of_measureReal_add_lt_one hsum
   refine ⟨ω, Finset.univ.filter (fun v : V =>
     t ≤ |(safeDegree H (covered (retainedSet H ρ ω)) v : ℝ) - safeDegMean ρ v|), ?_, ?_, ?_⟩
@@ -1856,7 +1871,7 @@ theorem exists_safe_round_cheb {H : Finset (Finset V)} {p : ℝ}
       by_contra hc
       push Not at hc
       exact hω1 hc
-    linarith
+    linarith only [h1, h2]
   · intro v hv
     by_contra hc
     push Not at hc
@@ -2160,10 +2175,10 @@ theorem exists_sharp_round_band {K : Finset (Finset V)} (A : Finset V) {r Δ δ 
     intro v hv
     refine le_trans ?_ (coverRate_ge hp0.le hp1.le hr hΔ v)
     have hd : (δ : ℝ) ≤ (degree K v : ℝ) := by exact_mod_cast hδA v hv
-    exact mul_le_mul_of_nonneg_right hd (mul_nonneg hp0.le (pow_nonneg (by linarith) _))
+    exact mul_le_mul_of_nonneg_right hd (mul_nonneg hp0.le (pow_nonneg (by linarith only [hp1]) _))
   have hqlo0 : (0 : ℝ) < (δ : ℝ) * (p * (1 - p) ^ (r * Δ)) := by
     have hδR : (0 : ℝ) < (δ : ℝ) := by exact_mod_cast hδ0
-    have : (0 : ℝ) < (1 - p) ^ (r * Δ) := pow_pos (by linarith) _
+    have : (0 : ℝ) < (1 - p) ^ (r * Δ) := pow_pos (by linarith only [hp1]) _
     positivity
   have hAR : (0 : ℝ) < (A.card : ℝ) := by exact_mod_cast hA
   have hQ : (0 : ℝ) < (A.card : ℝ) * ((δ : ℝ) * (p * (1 - p) ^ (r * Δ))) := mul_pos hAR hqlo0
@@ -2184,7 +2199,7 @@ theorem exists_sharp_round_band {K : Finset (Finset V)} (A : Finset V) {r Δ δ 
     have h1 : (0 : ℝ) ≤ (κ : ℝ) * p := mul_nonneg (Nat.cast_nonneg _) hp0.le
     have h2 : (0 : ℝ) ≤ 4 * (r : ℝ) ^ 2 * (κ : ℝ) * (Δ : ℝ) ^ 2 * p ^ 3 :=
       mul_nonneg (by positivity) (pow_nonneg hp0.le 3)
-    linarith
+    linarith only [h1, h2]
   have hpair : ∀ u u' : V, u ≠ u' →
       (ℙ : Measure (Finset V → Bool)).real ({ω | u ∈ covered (retainedSet K ρ ω)}
           ∩ {ω | u' ∈ covered (retainedSet K ρ ω)})
@@ -2358,7 +2373,7 @@ theorem Exp_safeDegCube_le {K : Finset (Finset V)} (A : Finset V) {r Δ δ κ : 
     have h1 := hpair e he
     by_cases hd : Disjoint e Aᶜ
     · have h2 := hgood e (by rw [hG, Finset.mem_filter]; exact ⟨he, hd⟩)
-      rw [ite_eq_left hd]; linarith
+      rw [ite_eq_left hd]; linarith only [h1, h2]
     · rw [ite_eq_right hd]; linarith [hnonneg e he]
   have hsum : ∑ e ∈ S, (1 - (if Disjoint e Aᶜ then W else 0) + E)
       = (degree K v : ℝ) - (G.card : ℝ) * W + (degree K v : ℝ) * E := by
@@ -2755,22 +2770,22 @@ theorem sharpRoundFor_of_two_gamma_le_eps (r : ℕ) (hr2 : 2 ≤ r) (γ ε θ α
   set Δn : ℕ := ⌊Δ⌋₊ with hΔndef
   set δn : ℕ := ⌈δ⌉₊ with hδndef
   set κn : ℕ := ⌊κ⌋₊ with hκndef
-  have hDn_le : (Δn : ℝ) ≤ Δ := Nat.floor_le (by linarith)
+  have hDn_le : (Δn : ℝ) ≤ Δ := Nat.floor_le (by linarith only [hΔ4])
   have hDn_gt : Δ < (Δn : ℝ) + 1 := Nat.lt_floor_add_one Δ
   have hδ_le_dn : δ ≤ (δn : ℝ) := Nat.le_ceil δ
   have hδ2 : (2 : ℝ) ≤ δ := by linarith only [hΔδ, hΔ4]
-  have hdn_lt : (δn : ℝ) < δ + 1 := Nat.ceil_lt_add_one (by linarith)
+  have hdn_lt : (δn : ℝ) < δ + 1 := Nat.ceil_lt_add_one (by linarith only [hδ2])
   have hkn_le : (κn : ℝ) ≤ κ := Nat.floor_le hκ0
   have hkn0 : (0 : ℝ) ≤ (κn : ℝ) := Nat.cast_nonneg _
   have hΔnat : ∀ v : V, degree K v ≤ Δn := fun v => Nat.le_floor (hΔle v)
   have hδnat : ∀ v ∈ A, δn ≤ degree K v := fun v hv => Nat.ceil_le.mpr (hδA v hv)
   have hκnat : ∀ x y : V, x ≠ y → codegree K x y ≤ κn := fun x y h => Nat.le_floor (hκle x y h)
-  have hΔn3 : 3 ≤ Δn := Nat.le_floor (by push_cast; linarith)
+  have hΔn3 : 3 ≤ Δn := Nat.le_floor (by push_cast; linarith only [hΔ4])
   have hDn3 : (3 : ℝ) ≤ (Δn : ℝ) := by exact_mod_cast hΔn3
   have hDnpos : (0 : ℝ) < (Δn : ℝ) := by linarith only [hDn3]
   -- the active set is nonempty
   have hAc0 : (0 : ℝ) < (A.card : ℝ) :=
-    lt_of_lt_of_le (mul_pos hα0 (by linarith : (0 : ℝ) < N)) hAN
+    lt_of_lt_of_le (mul_pos hα0 (by linarith only [hN4] : (0 : ℝ) < N)) hAN
   have hAcardN : 0 < A.card := by exact_mod_cast hAc0
   obtain ⟨v0, hv0⟩ := Finset.card_pos.mp hAcardN
   have hdn_le_Dn : δn ≤ Δn := le_trans (hδnat v0 hv0) (hΔnat v0)
@@ -2792,14 +2807,18 @@ theorem sharpRoundFor_of_two_gamma_le_eps (r : ℕ) (hr2 : 2 ≤ r) (γ ε θ α
     (by push_cast; exact hpγ)
   have hLge : 1 - γ ≤ L := by rw [hLdef]; exact hLbounds.1
   have hLu : L ≤ 1 - γ + γ ^ 2 / 2 := by rw [hLdef]; exact hLbounds.2
-  have hLle : L ≤ 1 := pow_le_one₀ (by linarith) (by linarith)
-  have hLpos : (0 : ℝ) < L := pow_pos (by linarith) _
+  have hLle : L ≤ 1 := pow_le_one₀ (sub_nonneg.mpr hp1.le) (sub_le_self _ hp0.le)
+  have hLpos : (0 : ℝ) < L := pow_pos (sub_pos.mpr hp1) _
   -- the band parameters
   set t : ℝ := ε * γ * (Δn : ℝ) / 16 with htdef
   have ht0 : 0 < t := by rw [htdef]; positivity
   set S : ℝ := ((r : ℝ) - 1) / (r : ℝ) with hSdef
-  have hSnn : (0 : ℝ) ≤ S := by rw [hSdef]; apply div_nonneg <;> linarith
-  have hS1 : S ≤ 1 := by rw [hSdef, div_le_one hR0]; linarith
+  have hSnn : (0 : ℝ) ≤ S := by
+    rw [hSdef]
+    exact div_nonneg (sub_nonneg.mpr (by linarith only [hR2])) hR0.le
+  have hS1 : S ≤ 1 := by
+    rw [hSdef, div_le_one hR0]
+    exact sub_le_self _ zero_le_one
   set mlo : ℝ := (δn : ℝ) * (1 - ((r : ℝ) - 1) * ((Δn : ℝ) * p)) with hmlodef
   set Err : ℝ :=
     (Δn : ℝ) * (((r : ℝ) - 1) * ((r : ℝ) - 2)) * ((Δn : ℝ) ^ 2 * p ^ 2 + (κn : ℝ) * p) with hErrdef
@@ -2826,13 +2845,14 @@ theorem sharpRoundFor_of_two_gamma_le_eps (r : ℕ) (hr2 : 2 ≤ r) (γ ε θ α
     rw [← hLdef, hmhidef, hErrdef]
     simp only
     exact sharp_mean_ceiling_arith
-      (mul_nonneg (mul_nonneg (by linarith) (Nat.cast_nonneg _)) (mul_nonneg hp0.le hLpos.le))
+      (mul_nonneg (mul_nonneg (by linarith only [hR2]) (Nat.cast_nonneg _))
+        (mul_nonneg hp0.le hLpos.le))
       (by nlinarith only [hR2])
       (add_nonneg (by positivity) (mul_nonneg (Nat.cast_nonneg _) hp0.le))
       (by exact_mod_cast hΔnat v) (by exact_mod_cast hδnat v hv)
   -- codegree bound in integer form
   have hkn3 : (κn : ℝ) ≤ θ * ε ^ 2 * γ * α ^ 2 * (Δn : ℝ) / (8192 * (r : ℝ)) := by
-    have hΔ2Dn : Δ ≤ 2 * (Δn : ℝ) := by linarith
+    have hΔ2Dn : Δ ≤ 2 * (Δn : ℝ) := by linarith only [hDn_gt, hDn3]
     have : (κn : ℝ) ≤ c₀ * (2 * (Δn : ℝ)) := by
       refine le_trans hkn_le (le_trans hκc ?_)
       exact mul_le_mul_of_nonneg_left hΔ2Dn hc₀0.le
@@ -2841,7 +2861,9 @@ theorem sharpRoundFor_of_two_gamma_le_eps (r : ℕ) (hr2 : 2 ≤ r) (γ ε θ α
       _ = θ * ε ^ 2 * γ * α ^ 2 * (Δn : ℝ) / (8192 * (r : ℝ)) := by field_simp; ring
   -- the cover rate on the active set
   have hkey : γ / (8 * (r : ℝ)) ≤ (δn : ℝ) * (p * L) / 2 :=
-    sharp_cover_rate_le hR0 hDnpos (by linarith) (by linarith) hp0 hpγ
+    sharp_cover_rate_le hR0 hDnpos
+      (by linarith only [hDn_le, hΔδ, hδ_le_dn])
+      (by linarith only [hLge, hγ1]) hp0 hpγ
   -- the smallness condition
   have hsmall :
       (N * ((2 * p * ((r : ℝ) ^ 2 * (κn : ℝ) * (Δn : ℝ) ^ 2)
@@ -2851,14 +2873,17 @@ theorem sharpRoundFor_of_two_gamma_le_eps (r : ℕ) (hr2 : 2 ≤ r) (γ ε θ α
           / ((A.card : ℝ) * ((δn : ℝ) * (p * (1 - p) ^ (r * Δn))) / 2) ^ 2 < 1 := by
     rw [← hLdef]
     exact sharp_smallness_numeric r hr2 γ ε θ α N (Δn : ℝ) (δn : ℝ) (κn : ℝ) (A.card : ℝ) p L t
-      hγ0 hγ1 hε0 hε1 hθ0 hθ1 hα0 hα1 hN256' hN4 hDn3 (by linarith) hkn0 hkn3 hp0 hpγ
-      (by linarith) htdef hAN
+      hγ0 hγ1 hε0 hε1 hθ0 hθ1 hα0 hα1 hN256' hN4 hDn3
+      (by linarith only [hDn_le, hΔδ, hδ_le_dn]) hkn0 hkn3 hp0 hpγ
+      (by linarith only [hLge, hγ1]) htdef hAN
   obtain ⟨R', hR'sub, B, hBcard, hband, hcov⟩ :=
     exists_sharp_round_band (K := K) A (r := r) (Δ := Δn) (δ := δn) (κ := κn)
       (p := p) (t := t) (a := θ * N) (mlo := mlo) (mhi := mhi)
       hp0 hp1 (by omega) hr hΔnat hδnat hκnat ht0 (by positivity) hdn1 hAcardN hlo hhi hsmall
-  have hΔpos : (0 : ℝ) < Δ := by linarith
-  have hεΔ : (96 : ℝ) ≤ ε * Δ := by rw [div_le_iff₀ hε0] at hΔ96; linarith
+  have hΔpos : (0 : ℝ) < Δ := by linarith only [hΔ4]
+  have hεΔ : (96 : ℝ) ≤ ε * Δ := by
+    rw [div_le_iff₀ hε0] at hΔ96
+    linarith only [hΔ96]
   have ht2 : t ≤ ε * γ * Δ / 16 := by
     rw [htdef]
     linarith only [mul_le_mul_of_nonneg_left hDn_le (show (0 : ℝ) ≤ ε * γ by positivity)]

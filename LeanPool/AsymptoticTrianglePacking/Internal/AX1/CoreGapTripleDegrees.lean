@@ -236,9 +236,9 @@ theorem uniform_triple_codegree (G : SimpleGraph V) [DecidableRel G.Adj] {A B C 
   set Ahi : Finset V := {x ∈ A | (dA + ε) * (#C : ℝ) < ((#{z ∈ C | G.Adj x z} : ℕ) : ℝ)} with hAhi
   have hCC : (#C : ℝ) * ε ≤ (#C : ℝ) := by nlinarith only [hε1]
   have hAlocard : ((#Alo : ℕ) : ℝ) ≤ ε * (#A : ℝ) :=
-    card_filter_lt_le G hε hAC (subset_refl C) hCC (by linarith)
+    card_filter_lt_le G hε hAC (subset_refl C) hCC (by linarith only [])
   have hAhicard : ((#Ahi : ℕ) : ℝ) ≤ ε * (#A : ℝ) :=
-    card_filter_gt_le G hε hAC (subset_refl C) hCC (by linarith)
+    card_filter_gt_le G hε hAC (subset_refl C) hCC (by linarith only [])
   -- the good vertices of `A` have few bad partners in `B`
   have hgood : ∀ x ∈ A, x ∉ Alo → x ∉ Ahi →
       ((#{y ∈ B | Q (x, y)} : ℕ) : ℝ) ≤ 2 * ε * (#B : ℝ) := by
@@ -259,9 +259,9 @@ theorem uniform_triple_codegree (G : SimpleGraph V) [DecidableRel G.Adj] {A B C 
     set Bhi : Finset V := {y ∈ B | (dB + 2 * ε) * (#Cx : ℝ) < ((#{z ∈ Cx | G.Adj y z} : ℕ) : ℝ)}
       with hBhi
     have hBlocard : ((#Blo : ℕ) : ℝ) ≤ ε * (#B : ℝ) :=
-      card_filter_lt_le G hε hBC hCxsub hCxcard (by linarith)
+      card_filter_lt_le G hε hBC hCxsub hCxcard (by linarith only [hε])
     have hBhicard : ((#Bhi : ℕ) : ℝ) ≤ ε * (#B : ℝ) :=
-      card_filter_gt_le G hε hBC hCxsub hCxcard (by linarith)
+      card_filter_gt_le G hε hBC hCxsub hCxcard (by linarith only [hε])
     have hsub : {y ∈ B | Q (x, y)} ⊆ Blo ∪ Bhi := by
       intro y hy
       rw [Finset.mem_filter] at hy
@@ -285,12 +285,12 @@ theorem uniform_triple_codegree (G : SimpleGraph V) [DecidableRel G.Adj] {A B C 
       · rw [hcodeg]
         nlinarith only [hdBC, hCxlo, h1]
       · rw [hcodeg]
-        nlinarith
+        nlinarith only [h2, hε, hCxhi, hdBC]
     calc ((#{y ∈ B | Q (x, y)} : ℕ) : ℝ) ≤ ((#(Blo ∪ Bhi) : ℕ) : ℝ) := by
           exact_mod_cast Finset.card_le_card hsub
       _ ≤ ((#Blo : ℕ) : ℝ) + ((#Bhi : ℕ) : ℝ) := by
           exact_mod_cast Finset.card_union_le Blo Bhi
-      _ ≤ 2 * ε * (#B : ℝ) := by linarith
+      _ ≤ 2 * ε * (#B : ℝ) := by linarith only [hBlocard, hBhicard]
   -- assemble
   rw [card_filter_product A B Q]
   push_cast
@@ -312,7 +312,7 @@ theorem uniform_triple_codegree (G : SimpleGraph V) [DecidableRel G.Adj] {A B C 
             exact_mod_cast Finset.card_le_card hs
           have h2 : ((#(Alo ∪ Ahi) : ℕ) : ℝ) ≤ ((#Alo : ℕ) : ℝ) + ((#Ahi : ℕ) : ℝ) := by
             exact_mod_cast Finset.card_union_le Alo Ahi
-          nlinarith
+          nlinarith only [hAlocard, hAhicard, h1, h2]
   have hgoodsum : ∑ x ∈ {x ∈ A | ¬ (x ∈ Alo ∪ Ahi)}, ((#{y ∈ B | Q (x, y)} : ℕ) : ℝ)
       ≤ 2 * ε * (#A : ℝ) * (#B : ℝ) := by
     have hle : ∀ x ∈ {x ∈ A | ¬ (x ∈ Alo ∪ Ahi)},
@@ -330,7 +330,7 @@ theorem uniform_triple_codegree (G : SimpleGraph V) [DecidableRel G.Adj] {A B C 
             exact_mod_cast Finset.card_filter_le A _
           have h2 : (0 : ℝ) ≤ 2 * ε * (#B : ℝ) := by positivity
           linarith only [mul_le_mul_of_nonneg_right h1 h2]
-  linarith
+  linarith only [hbad, hgoodsum]
 
 end Nibble.AX1
 
@@ -627,34 +627,34 @@ theorem tripleGraph_near_regular (G : SimpleGraph V) [DecidableRel G.Adj] {U W X
     have hcross : crossAdj U W X x y := hadj.2
     rcases hcross with ⟨hxU, hyW⟩ | ⟨hxW, hyU⟩ | ⟨hxU, hyX⟩ | ⟨hxX, hyU⟩ | ⟨hxW, hyX⟩ | ⟨hxX, hyW⟩
     · obtain ⟨h1, h2⟩ := hB1 x hxU y hyW hadj hn1
-      exact ⟨by linarith, by linarith⟩
+      exact ⟨by linarith only [hXlo, h1], by linarith only [hXhi, h2]⟩
     · rw [hpc]
       rw [hpc] at hn1
       obtain ⟨h1, h2⟩ := hB1 y hyU x hxW hadj.symm hn1
-      exact ⟨by linarith, by linarith⟩
+      exact ⟨by linarith only [hXlo, h1], by linarith only [hXhi, h2]⟩
     · have hadj2 : (tripleGraph G U X W).Adj x y := by rw [hT2]; exact hadj
       obtain ⟨h1, h2⟩ := hB2 x hxU y hyX hadj2 hn2
       rw [edgeTriangleDegree_congr_graph hT2] at h1 h2
       rw [hcXW] at h1 h2
-      exact ⟨by linarith, by linarith⟩
+      exact ⟨by linarith only [hWlo, h1], by linarith only [hWhi, h2]⟩
     · rw [hpc]
       rw [hpc] at hn2
       have hadj2 : (tripleGraph G U X W).Adj y x := by rw [hT2]; exact hadj.symm
       obtain ⟨h1, h2⟩ := hB2 y hyU x hxX hadj2 hn2
       rw [edgeTriangleDegree_congr_graph hT2] at h1 h2
       rw [hcXW] at h1 h2
-      exact ⟨by linarith, by linarith⟩
+      exact ⟨by linarith only [hWlo, h1], by linarith only [hWhi, h2]⟩
     · have hadj3 : (tripleGraph G W X U).Adj x y := by rw [hT3]; exact hadj
       obtain ⟨h1, h2⟩ := hB3 x hxW y hyX hadj3 hn3
       rw [edgeTriangleDegree_congr_graph hT3] at h1 h2
       rw [hcWU, hcXU] at h1 h2
-      exact ⟨by linarith, by linarith⟩
+      exact ⟨by linarith only [hUlo, h1], by linarith only [hUhi, h2]⟩
     · rw [hpc]
       rw [hpc] at hn3
       have hadj3 : (tripleGraph G W X U).Adj y x := by rw [hT3]; exact hadj.symm
       obtain ⟨h1, h2⟩ := hB3 y hyW x hxX hadj3 hn3
       rw [edgeTriangleDegree_congr_graph hT3] at h1 h2
       rw [hcWU, hcXU] at h1 h2
-      exact ⟨by linarith, by linarith⟩
+      exact ⟨by linarith only [hUlo, h1], by linarith only [hUhi, h2]⟩
 
 end Nibble.AX1
