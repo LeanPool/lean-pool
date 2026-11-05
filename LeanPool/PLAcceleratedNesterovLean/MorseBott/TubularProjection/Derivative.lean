@@ -92,6 +92,103 @@ private abbrev phi_lipschitzOn_near_zero
     (Metric.mem_closedBall.mpr (le_of_lt (Metric.mem_ball.mp ha)))
  -- Needed: nlinarith/linarith proofs exceed default heartbeat limit
 
+/-- The scalar estimate supplied by nearest-point optimality and a small Lipschitz constant. -/
+private theorem projection_displacement_bound {a b ε : ℝ}
+    (ha_nn : 0 ≤ a) (hb_nn : 0 ≤ b) (hε_pos : 0 < ε) (hε_le : ε ≤ 1 / 4)
+    (hcore : a * a + b * b ≤ (b + ε * a) * (b + ε * a)) :
+    a ≤ 3 * b * ε := by
+  have hcore2 : a * a * (1 - ε * ε) ≤ 2 * b * ε * a := by
+    have hexp : (b + ε * a) * (b + ε * a) =
+        b * b + 2 * b * (ε * a) + ε * a * (ε * a) := by ring
+    have key : a * a ≤ 2 * b * (ε * a) + ε * a * (ε * a) := by
+      have h_combined := le_trans hcore (le_of_eq hexp)
+      linarith
+    have factored : a * a * (1 - ε * ε) = a * a - ε * ε * (a * a) := by ring
+    have rearranged : ε * a * (ε * a) = ε * ε * (a * a) := by ring
+    linarith
+  have hε_sq : 1 - ε * ε ≥ 15 / 16 := by
+    have := mul_self_le_mul_self hε_pos.le hε_le
+    linarith
+  by_cases ha0 : a = 0
+  · rw [ha0]; positivity
+  · have ha_pos : 0 < a := lt_of_le_of_ne ha_nn (Ne.symm ha0)
+    have h_cancel : a * (1 - ε * ε) ≤ 2 * b * ε := by
+      by_contra h; push Not at h
+      have h1 := mul_lt_mul_of_pos_right h ha_pos
+      have : a * (1 - ε * ε) * a = a * a * (1 - ε * ε) := by ring
+      linarith [hcore2]
+    have h_step : a * (15 / 16) ≤ 2 * b * ε :=
+      le_trans (mul_le_mul_of_nonneg_left (by linarith : (15:ℝ)/16 ≤ 1 - ε * ε) ha_nn)
+               h_cancel
+    have h_bε_nn : 0 ≤ b * ε := mul_nonneg hb_nn hε_pos.le
+    linarith
+
+/-- Convert the chart displacement bounds into the requested little-o coefficient. -/
+private theorem projection_error_bound {a b c ε d n : ℝ}
+    (hc : 0 < c) (hε_pos : 0 < ε) (hε_le : ε ≤ 1 / 4) (hε_le_c : ε ≤ c / 12)
+    (ha_bound : a ≤ 3 * b * ε) (hb_bound : b ≤ 2 * d)
+    (hxm_nn : 0 ≤ d) (hdiff_bound : n ≤ (1 + ε) * a) : n ≤ c * d := by
+  have h1 : (1 + ε) * a ≤ (1 + ε) * (3 * b * ε) :=
+    mul_le_mul_of_nonneg_left ha_bound (by linarith)
+  have h2 : (1 + ε) * (3 * b * ε) ≤ (1 + ε) * (3 * (2 * d) * ε) := by
+    apply mul_le_mul_of_nonneg_left _ (by linarith : (0:ℝ) ≤ 1 + ε)
+    apply mul_le_mul_of_nonneg_right _ hε_pos.le
+    have h_bb := hb_bound
+    linarith
+  have h3 : (1 + ε) * (3 * (2 * d) * ε) = (1 + ε) * 6 * ε * d := by ring
+  have h4 : (1 + ε) * 6 * ε * d ≤ c * d := by
+    apply mul_le_mul_of_nonneg_right _ hxm_nn
+    have h_1e : (1 : ℝ) + ε ≤ 5 / 4 := by linarith
+    have h_6e : 6 * ε ≤ c / 2 := by linarith
+    calc (1 + ε) * 6 * ε = (1 + ε) * (6 * ε) := by ring
+      _ ≤ (5 / 4) * (c / 2) :=
+          mul_le_mul h_1e h_6e (by positivity) (by positivity)
+      _ = 5 * c / 8 := by ring
+      _ ≤ c := by linarith only [hc]
+  have h5 := hdiff_bound
+  linarith
+
+/-- The local graph chart has the tangent-space orthogonal projection as its derivative. -/
+private theorem chart_hasFDerivAt_starProjection
+    {V : Submodule ℝ E} {φ : V → V.orthogonal}
+    (hφC2 : ContDiff ℝ 2 φ) (hDφ0 : fderiv ℝ φ 0 = 0) (m : E) :
+    HasFDerivAt (fun x : E =>
+      m + (V.starProjection (x - m) : E) + (φ (V.orthogonalProjectionOnto (x - m)) : E))
+      V.starProjection m := by
+  -- HasFDerivAt (· - m) at m
+  have h_sub : HasFDerivAt (· - m) (.id ℝ E) m := hasFDerivAt_sub_const m
+  -- HasFDerivAt (V.starProjection ∘ (· - m)) at m
+  have h_star : HasFDerivAt (fun x => V.starProjection (x - m)) V.starProjection m := by
+    have := V.starProjection.hasFDerivAt.comp m h_sub
+    rwa [ContinuousLinearMap.comp_id] at this
+  -- φ is differentiable at 0 with derivative 0
+  have hφ_fd : HasFDerivAt φ (0 : V →L[ℝ] V.orthogonal) (0 : V) := by
+    have hd : Differentiable ℝ φ := hφC2.differentiable two_ne_zero
+    have h := (hd (0 : V)).hasFDerivAt
+    rw [hDφ0] at h; exact h
+  -- V.orthogonalProjectionOnto evaluates to 0 at (m - m)
+  have h_proj_zero : V.orthogonalProjectionOnto (m - m) = 0 := by rw [sub_self, map_zero]
+  -- HasFDerivAt (V.orthogonalProjectionOnto ∘ (· - m)) at m
+  have h_proj : HasFDerivAt (fun x => V.orthogonalProjectionOnto (x - m))
+      (V.orthogonalProjectionOnto.comp (.id ℝ E)) m :=
+    (V.orthogonalProjectionOnto : E →L[ℝ] V).hasFDerivAt.comp m h_sub
+  -- HasFDerivAt (φ ∘ V.orthogonalProjectionOnto ∘ (· - m)) at m with derivative 0
+  have h_phi : HasFDerivAt (fun x => φ (V.orthogonalProjectionOnto (x - m)))
+      (0 : E →L[ℝ] V.orthogonal) m := by
+    have h1 : HasFDerivAt φ (0 : V →L[ℝ] V.orthogonal)
+        (V.orthogonalProjectionOnto (m - m)) := by
+      rw [h_proj_zero]; exact hφ_fd
+    have h2 := h1.comp m h_proj
+    rwa [ContinuousLinearMap.zero_comp] at h2
+  -- Coerce φ-term to E; derivative is still 0
+  have h_coe : HasFDerivAt (fun x => (φ (V.orthogonalProjectionOnto (x - m)) : E))
+      (0 : E →L[ℝ] E) m := by
+    have := V.orthogonal.subtypeL.hasFDerivAt.comp m h_phi
+    rwa [ContinuousLinearMap.comp_zero] at this
+  -- Combine: χ = (m + star_part) + coe_part, derivative = V.starProjection + 0
+  have h_all := (h_star.const_add m).add h_coe
+  rwa [add_zero] at h_all
+
 /-- At each point `m ∈ S`, the Fréchet derivative of the tubular projection
     equals `V.starProjection` (the orthogonal projection `E → E` onto the
     tangent space `V`).
@@ -286,32 +383,8 @@ private abbrev tubularProj_hasFDerivAt_starProjection {S U : Set E}
     have hcore : a * a + b * b ≤ (b + ε * a) * (b + ε * a) := by
       calc a * a + b * b ≤ ‖x - χ x‖ * ‖x - χ x‖ := hopt_sq
         _ ≤ (b + ε * a) * (b + ε * a) := mul_self_le_mul_self (norm_nonneg _) htri
-    have hcore2 : a * a * (1 - ε * ε) ≤ 2 * b * ε * a := by
-      have hexp : (b + ε * a) * (b + ε * a) =
-          b * b + 2 * b * (ε * a) + ε * a * (ε * a) := by ring
-      have key : a * a ≤ 2 * b * (ε * a) + ε * a * (ε * a) := by
-        have h_combined := le_trans hcore (le_of_eq hexp)
-        linarith
-      have factored : a * a * (1 - ε * ε) = a * a - ε * ε * (a * a) := by ring
-      have rearranged : ε * a * (ε * a) = ε * ε * (a * a) := by ring
-      linarith
-    have hε_sq : 1 - ε * ε ≥ 15 / 16 := by
-      have := mul_self_le_mul_self hε_pos.le hε_le
-      linarith
-    have ha_bound : a ≤ 3 * b * ε := by
-      by_cases ha0 : a = 0
-      · rw [ha0]; positivity
-      · have ha_pos : 0 < a := lt_of_le_of_ne ha_nn (Ne.symm ha0)
-        have h_cancel : a * (1 - ε * ε) ≤ 2 * b * ε := by
-          by_contra h; push Not at h
-          have h1 := mul_lt_mul_of_pos_right h ha_pos
-          have : a * (1 - ε * ε) * a = a * a * (1 - ε * ε) := by ring
-          linarith [hcore2]
-        have h_step : a * (15 / 16) ≤ 2 * b * ε :=
-          le_trans (mul_le_mul_of_nonneg_left (by linarith : (15:ℝ)/16 ≤ 1 - ε * ε) ha_nn)
-                   h_cancel
-        have h_bε_nn : 0 ≤ b * ε := mul_nonneg hb_nn hε_pos.le
-        linarith
+    have ha_bound : a ≤ 3 * b * ε :=
+      projection_displacement_bound ha_nn hb_nn hε_pos hε_le hcore
     -- Bound b ≤ 2‖x-m‖
     have hw_norm : ‖(w : E)‖ ≤ ‖x - m‖ :=
       Submodule.norm_orthogonalProjectionOnto_apply_le V.orthogonal (x - m)
@@ -347,62 +420,12 @@ private abbrev tubularProj_hasFDerivAt_starProjection {S U : Set E}
         _ ≤ a + ε * a := add_le_add (le_of_eq h_vs_norm) h_lip_coe
         _ = (1 + ε) * a := by ring
     -- Final: (1+ε) * 3bε ≤ (5/4) * 6ε * ‖x-m‖ ≤ c * ‖x-m‖
-    have hxm_nn : 0 ≤ ‖x - m‖ := norm_nonneg _
-    have h1 : (1 + ε) * a ≤ (1 + ε) * (3 * b * ε) :=
-      mul_le_mul_of_nonneg_left ha_bound (by linarith)
-    have h2 : (1 + ε) * (3 * b * ε) ≤ (1 + ε) * (3 * (2 * ‖x - m‖) * ε) := by
-      apply mul_le_mul_of_nonneg_left _ (by linarith : (0:ℝ) ≤ 1 + ε)
-      apply mul_le_mul_of_nonneg_right _ hε_pos.le
-      have h_bb := hb_bound
-      linarith
-    have h3 : (1 + ε) * (3 * (2 * ‖x - m‖) * ε) = (1 + ε) * 6 * ε * ‖x - m‖ := by ring
-    have h4 : (1 + ε) * 6 * ε * ‖x - m‖ ≤ c * ‖x - m‖ := by
-      apply mul_le_mul_of_nonneg_right _ hxm_nn
-      have h_1e : (1 : ℝ) + ε ≤ 5 / 4 := by linarith
-      have h_6e : 6 * ε ≤ c / 2 := by linarith
-      calc (1 + ε) * 6 * ε = (1 + ε) * (6 * ε) := by ring
-        _ ≤ (5 / 4) * (c / 2) :=
-            mul_le_mul h_1e h_6e (by positivity) (by positivity)
-        _ = 5 * c / 8 := by ring
-        _ ≤ c := by linarith
-    have h5 := hdiff_bound
-    linarith
+    exact projection_error_bound hc hε_pos hε_le hε_le_c ha_bound hb_bound
+      (norm_nonneg (x - m)) hdiff_bound
   -- Step 2: χ has Fréchet derivative V.starProjection at m
   -- (The φ-term vanishes because Dφ(0) = 0; the starProjection term is linear.)
-  have h_chartHasFDeriv : HasFDerivAt χ V.starProjection m := by
-    -- HasFDerivAt (· - m) at m
-    have h_sub : HasFDerivAt (· - m) (.id ℝ E) m := hasFDerivAt_sub_const m
-    -- HasFDerivAt (V.starProjection ∘ (· - m)) at m
-    have h_star : HasFDerivAt (fun x => V.starProjection (x - m)) V.starProjection m := by
-      have := V.starProjection.hasFDerivAt.comp m h_sub
-      rwa [ContinuousLinearMap.comp_id] at this
-    -- φ is differentiable at 0 with derivative 0
-    have hφ_fd : HasFDerivAt φ (0 : V →L[ℝ] V.orthogonal) (0 : V) := by
-      have hd : Differentiable ℝ φ := hφC2.differentiable two_ne_zero
-      have h := (hd (0 : V)).hasFDerivAt
-      rw [hDφ0] at h; exact h
-    -- V.orthogonalProjectionOnto evaluates to 0 at (m - m)
-    have h_proj_zero : V.orthogonalProjectionOnto (m - m) = 0 := by rw [sub_self, map_zero]
-    -- HasFDerivAt (V.orthogonalProjectionOnto ∘ (· - m)) at m
-    have h_proj : HasFDerivAt (fun x => V.orthogonalProjectionOnto (x - m))
-        (V.orthogonalProjectionOnto.comp (.id ℝ E)) m :=
-      (V.orthogonalProjectionOnto : E →L[ℝ] V).hasFDerivAt.comp m h_sub
-    -- HasFDerivAt (φ ∘ V.orthogonalProjectionOnto ∘ (· - m)) at m with derivative 0
-    have h_phi : HasFDerivAt (fun x => φ (V.orthogonalProjectionOnto (x - m)))
-        (0 : E →L[ℝ] V.orthogonal) m := by
-      have h1 : HasFDerivAt φ (0 : V →L[ℝ] V.orthogonal)
-          (V.orthogonalProjectionOnto (m - m)) := by
-        rw [h_proj_zero]; exact hφ_fd
-      have h2 := h1.comp m h_proj
-      rwa [ContinuousLinearMap.zero_comp] at h2
-    -- Coerce φ-term to E; derivative is still 0
-    have h_coe : HasFDerivAt (fun x => (φ (V.orthogonalProjectionOnto (x - m)) : E))
-        (0 : E →L[ℝ] E) m := by
-      have := V.orthogonal.subtypeL.hasFDerivAt.comp m h_phi
-      rwa [ContinuousLinearMap.comp_zero] at this
-    -- Combine: χ = (m + star_part) + coe_part, derivative = V.starProjection + 0
-    have h_all := (h_star.const_add m).add h_coe
-    rwa [add_zero] at h_all
+  have h_chartHasFDeriv : HasFDerivAt χ V.starProjection m :=
+    chart_hasFDerivAt_starProjection hφC2 hDφ0 m
   -- Combine: transfer HasFDerivAt from χ to π via Lipschitz perturbation.
   -- Since π(m) = χ(m) and (π − χ) = o(‖· − m‖), HasFDerivAt χ L m ⟹ HasFDerivAt π L m.
   exact hasFDerivAt_of_isLittleO_sub h_chartHasFDeriv h_base h_diff
