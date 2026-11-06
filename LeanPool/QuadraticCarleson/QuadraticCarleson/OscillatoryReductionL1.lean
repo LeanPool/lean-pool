@@ -30,13 +30,13 @@ theorem fixedHeightRadius_eq_zero_mul_pow (lam : ℝ) (hlam : lam ≠ 0) (r : �
   rw [oscillatoryScaleIndex_eq_add]
   rw [show oscillatoryScaleIndex lam 0 hlam + (r : ℤ) - 1 =
     (oscillatoryScaleIndex lam 0 hlam - 1) + (r : ℤ) by ring]
-  rw [zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_natCast]
+  rw [zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_natCast]
 
 theorem summable_fixedHeightKernelBounds (lam : ℝ) (hlam : lam ≠ 0) :
     Summable (fun r : ℕ ↦ (2 * positiveDyadicAmplitudeBound) /
       fixedHeightRadius lam r hlam) := by
   have hs : Summable (fun r : ℕ ↦ (1 / 2 : ℝ) ^ r) :=
-    summable_geometric_of_abs_lt_one (by norm_num)
+    summable_geometric_of_abs_lt_one (by norm_num1)
   apply (hs.mul_left ((2 * positiveDyadicAmplitudeBound) /
     fixedHeightRadius lam 0 hlam)).congr
   intro r

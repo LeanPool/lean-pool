@@ -7,8 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.HilbertMaximalWeakOneOne
-public import Mathlib.Analysis.Fourier.Inversion
-public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 
 /-!
 # Fourier formulas for the Poisson kernels
@@ -49,7 +47,7 @@ theorem integrable_poissonSpectralKernel {r : ℝ} (hr : 0 < r) :
       (fun ξ : ℝ ↦ Complex.exp (((-2 * Real.pi * r : ℝ) : ℂ) * ξ)) (Ioi 0) := by
     apply integrableOn_exp_mul_complex_Ioi
     simp only [Complex.ofReal_re]
-    nlinarith [Real.pi_pos]
+    nlinarith only [hr, Real.pi_pos]
   have hneg : IntegrableOn
       (fun ξ : ℝ ↦ Complex.exp (((2 * Real.pi * r : ℝ) : ℂ) * ξ)) (Iic 0) := by
     apply integrableOn_exp_mul_complex_Iic
@@ -74,17 +72,17 @@ theorem memLp_two_poissonSpectralKernel {r : ℝ} (hr : 0 < r) :
     have hnorm : ‖poissonSpectralKernel r ξ‖ ≤ 1 := by
       rw [poissonSpectralKernel, Complex.norm_exp, Complex.ofReal_re]
       have hnonneg : 0 ≤ 2 * Real.pi * r * |ξ| :=
-        mul_nonneg (mul_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hr.le) (abs_nonneg ξ)
-      have hnonpos : -2 * Real.pi * r * |ξ| ≤ 0 := by linarith
+        mul_nonneg (mul_nonneg (mul_nonneg (by norm_num1) Real.pi_pos.le) hr.le) (abs_nonneg ξ)
+      have hnonpos : -2 * Real.pi * r * |ξ| ≤ 0 := by linarith only [hnonneg]
       exact Real.exp_le_one_iff.mpr hnonpos
     rw [Real.norm_of_nonneg (sq_nonneg _)]
-    nlinarith [norm_nonneg (poissonSpectralKernel r ξ)]
+    nlinarith only [hnorm, norm_nonneg (poissonSpectralKernel r ξ)]
 
 /-- The spectral kernel has the expected explicit `L¹` mass. -/
 theorem integral_norm_poissonSpectralKernel {r : ℝ} (hr : 0 < r) :
     ∫ ξ : ℝ, ‖poissonSpectralKernel r ξ‖ = 1 / (Real.pi * r) := by
   have hpos := integral_exp_mul_Ioi (a := -2 * Real.pi * r)
-    (by nlinarith [Real.pi_pos]) 0
+    (by nlinarith only [hr, Real.pi_pos]) 0
   have hneg := integral_exp_mul_Iic (a := 2 * Real.pi * r) (by positivity) 0
   rw [← integral_add_compl (s := Ioi (0 : ℝ)) measurableSet_Ioi
     (integrable_poissonSpectralKernel hr).norm]
@@ -139,7 +137,7 @@ theorem fourier_poissonSpectralKernel {r : ℝ} (hr : 0 < r) (w : ℝ) :
         (fun ξ ↦ Complex.exp (positiveHalfExponent r w * ξ)) by
     filter_upwards [ae_restrict_mem measurableSet_Ioi] with ξ hξ
     have hξ' : 0 < ξ := hξ
-    simp only [poissonSpectralKernel, abs_of_pos hξ', RCLike.inner_apply, conj_trivial]
+    simp only [RCLike.inner_apply, conj_trivial, poissonSpectralKernel, abs_of_pos hξ']
     change Complex.exp (↑(-2 * Real.pi * (w * ξ)) * Complex.I) *
       Complex.exp ↑(-2 * Real.pi * r * ξ) = _
     rw [← Complex.exp_add]
@@ -148,15 +146,14 @@ theorem fourier_poissonSpectralKernel {r : ℝ} (hr : 0 < r) (w : ℝ) :
     ring)]
   rw [integral_exp_mul_complex_Ioi (by
     rw [positiveHalfExponent_re]
-    nlinarith [Real.pi_pos]) 0]
+    nlinarith only [hr, Real.pi_pos]) 0]
   rw [integral_congr_ae (show
       (fun ξ : ℝ ↦ Complex.exp ((↑(-2 * Real.pi * inner ℝ ξ w) * Complex.I)) •
           poissonSpectralKernel r ξ) =ᵐ[volume.restrict (Iic 0)]
         (fun ξ ↦ Complex.exp (negativeHalfExponent r w * ξ)) by
     filter_upwards [ae_restrict_mem measurableSet_Iic] with ξ hξ
     have hξ' : ξ ≤ 0 := hξ
-    simp only [poissonSpectralKernel, abs_of_nonpos hξ', RCLike.inner_apply,
-      conj_trivial]
+    simp only [RCLike.inner_apply, conj_trivial, poissonSpectralKernel, abs_of_nonpos hξ']
     change Complex.exp (↑(-2 * Real.pi * (w * ξ)) * Complex.I) *
       Complex.exp ↑(-2 * Real.pi * r * -ξ) = _
     rw [← Complex.exp_add]
@@ -171,12 +168,12 @@ theorem fourier_poissonSpectralKernel {r : ℝ} (hr : 0 < r) (w : ℝ) :
     intro h
     have h' := congrArg Complex.re h
     simp [positiveHalfExponent] at h'
-    nlinarith [Real.pi_pos]
+    linarith only [hr, h', Real.pi_pos]
   have hn : negativeHalfExponent r w ≠ 0 := by
     intro h
     have h' := congrArg Complex.re h
     simp [negativeHalfExponent] at h'
-    nlinarith [Real.pi_pos]
+    linarith only [hr, h', Real.pi_pos]
   have hs : w ^ 2 + r ^ 2 ≠ 0 := by positivity
   simp only [positiveHalfExponent, negativeHalfExponent]
   push_cast
@@ -185,12 +182,12 @@ theorem fourier_poissonSpectralKernel {r : ℝ} (hr : 0 < r) (w : ℝ) :
     intro h
     have h' := congrArg Complex.re h
     simp at h'
-    linarith
+    linarith only [hr, h']
   have hn' : ((r : ℂ) - (w : ℂ) * Complex.I) ≠ 0 := by
     intro h
     have h' := congrArg Complex.re h
     simp at h'
-    linarith
+    linarith only [hr, h']
   have hs' : (r : ℂ) ^ 2 + (w : ℂ) ^ 2 ≠ 0 := by
     have hsr : r ^ 2 + w ^ 2 ≠ 0 := by positivity
     exact_mod_cast hsr
@@ -199,7 +196,7 @@ theorem fourier_poissonSpectralKernel {r : ℝ} (hr : 0 < r) (w : ℝ) :
     exact_mod_cast hs
   field_simp [hs'']
   ring_nf
-  simp
+  simp only [Complex.I_sq, mul_neg, mul_one, neg_mul]
 
 /-- The normalized positive Poisson kernel, whose integral and Fourier
 multiplier both have mass one. -/
@@ -218,7 +215,7 @@ theorem integrable_cotlarPoissonKernel {r : ℝ} (hr : 0 < r) :
   simp only [cotlarPoissonKernel]
   have hden : x ^ 2 + r ^ 2 ≠ 0 := by positivity
   field_simp [ne_of_gt hr, hden]
-  ring
+  ac_rfl
 
 theorem integrable_normalizedPoissonKernel {r : ℝ} (hr : 0 < r) :
     Integrable (normalizedPoissonKernel r) := by
@@ -259,7 +256,7 @@ theorem integrable_conjugatePoissonSpectralKernel {r : ℝ} (hr : 0 < r) :
     rw [norm_mul, norm_neg, Complex.norm_I, one_mul, Complex.norm_real]
     exact HilbertL2Fourier.norm_real_sign_le_one ξ
   exact ((integrable_poissonSpectralKernel hr).bdd_mul hm hb).congr
-    (ae_of_all _ fun ξ ↦ by simp [conjugatePoissonSpectralKernel])
+    (ae_of_all _ fun ξ ↦ by simp only [neg_mul, conjugatePoissonSpectralKernel])
 
 private def positiveHalfInverseExponent (r x : ℝ) : ℂ :=
   ((-2 * Real.pi * r : ℝ) : ℂ) + ((2 * Real.pi * x : ℝ) : ℂ) * Complex.I
@@ -326,7 +323,7 @@ theorem fourierInv_conjugatePoissonSpectralKernel {r : ℝ} (hr : 0 < r) (x : �
     ring)]
   rw [integral_const_mul, integral_exp_mul_complex_Ioi (by
     rw [positiveHalfInverseExponent_re]
-    nlinarith [Real.pi_pos]) 0]
+    nlinarith only [hr, Real.pi_pos]) 0]
   rw [integral_congr_ae (show
       (fun ξ : ℝ ↦ Complex.exp
           ((↑(-2 * Real.pi * inner ℝ ξ (-x)) * Complex.I)) •
@@ -354,12 +351,12 @@ theorem fourierInv_conjugatePoissonSpectralKernel {r : ℝ} (hr : 0 < r) (x : �
     intro h
     have h' := congrArg Complex.re h
     simp [positiveHalfInverseExponent] at h'
-    nlinarith [Real.pi_pos]
+    linarith only [hr, h', Real.pi_pos]
   have hn : negativeHalfInverseExponent r x ≠ 0 := by
     intro h
     have h' := congrArg Complex.re h
     simp [negativeHalfInverseExponent] at h'
-    nlinarith [Real.pi_pos]
+    linarith only [hr, h', Real.pi_pos]
   have hs : x ^ 2 + r ^ 2 ≠ 0 := by positivity
   simp only [positiveHalfInverseExponent, negativeHalfInverseExponent]
   push_cast
@@ -369,12 +366,12 @@ theorem fourierInv_conjugatePoissonSpectralKernel {r : ℝ} (hr : 0 < r) (x : �
   rw [show -(r : ℂ) + Complex.I * (x : ℂ) =
       Complex.I * (x : ℂ) - (r : ℂ) by ring,
     show (r : ℂ) + Complex.I * (x : ℂ) =
-      Complex.I * (x : ℂ) + (r : ℂ) by ring]
+      Complex.I * (x : ℂ) + (r : ℂ) by ac_rfl]
   rw [inv_I_mul_sub_real, inv_I_mul_add_real]
   push_cast
   field_simp [hsr]
   ring_nf
-  simp
+  simp only [Complex.I_sq, neg_mul, one_mul, neg_neg]
 
 /-- An absolutely convergent spectral realization of the conjugate-Poisson
 action on an `L¹` function. The translated Fourier transform is retained
@@ -420,7 +417,7 @@ theorem cotlarConjugatePoissonAction_eq_shiftedSpectral
       apply integral_congr_ae
       filter_upwards with z
       rw [hpoint]
-      ring
+      ac_rfl
     _ = (Real.pi : ℂ) * ∫ z : ℝ,
         𝓕 (conjugatePoissonSpectralKernel r) z * g (z + x) := by
       rw [integral_const_mul]
@@ -440,7 +437,7 @@ theorem cotlarConjugatePoissonAction_eq_shiftedSpectral
         ∫ ξ : ℝ, conjugatePoissonSpectralKernel r ξ *
           VectorFourier.fourierIntegral Real.fourierChar volume (innerₗ ℝ)
             (fun z ↦ g (z + x)) ξ
-      simpa only [smul_eq_mul, mul_comm] using hswap
+      simpa only [mul_comm, smul_eq_mul] using hswap
 
 theorem fourier_comp_add_right_real (g : ℝ → ℂ) (x ξ : ℝ) :
     𝓕 (fun z ↦ g (z + x)) ξ =
@@ -453,7 +450,7 @@ theorem fourier_comp_add_right_real (g : ℝ → ℂ) (x ξ : ℝ) :
         VectorFourier.fourierIntegral Real.fourierChar volume (innerₗ ℝ) g ξ
   have hi : ((innerₗ ℝ) x) ξ = x * ξ := by
     change ξ * x = x * ξ
-    ring
+    ac_rfl
   rw [hi] at hξ
   exact hξ
 
@@ -481,8 +478,7 @@ theorem cotlarConjugatePoissonAction_eq_hilbertSpectral
     cotlarConjugatePoissonAction r g x =
       cotlarHilbertSpectralAction r g x := by
   rw [cotlarConjugatePoissonAction_eq_shiftedSpectral hr hg x]
-  simp only [cotlarShiftedSpectralAction, cotlarHilbertSpectralAction,
-    fourier_comp_add_right_real]
+  simp only [cotlarShiftedSpectralAction, fourier_comp_add_right_real, cotlarHilbertSpectralAction]
   rw [← integral_const_mul]
   apply integral_congr_ae
   filter_upwards with ξ

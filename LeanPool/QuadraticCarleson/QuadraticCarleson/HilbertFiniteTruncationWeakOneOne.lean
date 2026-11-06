@@ -63,7 +63,7 @@ theorem norm_annularHilbertKernel_le {ε R : ℝ} (hε : 0 < ε) (t : ℝ) :
       exact (not_lt_of_ge hε.le) (by simpa only [abs_zero] using h.1)
     rw [norm_div, norm_one, Complex.norm_real, Real.norm_eq_abs, one_div]
     simpa only [one_div] using one_div_le_one_div_of_le hε h.1.le
-  · simpa using one_div_nonneg.mpr hε.le
+  · simpa only [norm_zero, one_div, inv_nonneg] using one_div_nonneg.mpr hε.le
 
 theorem integrable_annularHilbertKernel {ε R : ℝ} (hε : 0 < ε) :
     Integrable (annularHilbertKernel ε R) := by
@@ -95,7 +95,7 @@ theorem integral_norm_annularHilbertKernel_le {ε R : ℝ} (hε : 0 < ε)
       · exact norm_annularHilbertKernel_le hε
     _ = 2 * R / ε := by
       rw [setIntegral_const, Measure.real_def, Real.volume_Icc,
-        ENNReal.toReal_ofReal (by linarith : 0 ≤ R - -R)]
+        ENNReal.toReal_ofReal (by linarith only [hR] : 0 ≤ R - -R)]
       simp only [smul_eq_mul]
       ring
 
@@ -157,7 +157,7 @@ theorem integrableOn_zeroHilbertTail {ε : ℝ} (hε : 0 < ε)
     simpa only [one_div] using one_div_le_one_div_of_le hε ht.le
   have hi := hg.integrableOn.bdd_mul hm.aestronglyMeasurable.restrict hb
   change Integrable (fun t ↦ f (x - t) / (t : ℂ)) (volume.restrict s)
-  simpa only [div_eq_mul_inv, one_mul, mul_one, mul_comm] using hi
+  simpa only [div_eq_mul_inv, mul_comm, mul_one] using hi
 
 /-- The annular convolution is exactly the difference of two sharp ordinary
 Hilbert truncations. Thus this module's concrete operator is the `λ = 0`
@@ -176,7 +176,7 @@ theorem annularHilbertTruncation_eq_zeroTrunc_sub {ε R : ℝ}
     exact hεR.trans_lt ht
   have hdiff : sε \ sR = A := by
     ext t
-    simp only [sε, sR, A, Set.mem_sdiff, mem_ofPred_eq, not_lt]
+    simp only [Set.mem_sdiff, mem_ofPred_eq, not_lt, sε, sR, A]
   have hA : MeasurableSet A :=
     (measurableSet_lt measurable_const measurable_norm).inter
       (measurableSet_le measurable_norm measurable_const)
@@ -191,10 +191,10 @@ theorem annularHilbertTruncation_eq_zeroTrunc_sub {ε R : ℝ}
       apply integral_congr_ae
       filter_upwards with t
       by_cases ht : t ∈ A
-      · simp only [indicator_of_mem ht, annularHilbertKernel, A, mem_ofPred_eq] at ht ⊢
+      · simp only [mem_ofPred_eq, annularHilbertKernel, indicator_of_mem ht, A] at ht ⊢
         rw [ite_eq_left ht]
-        simp [div_eq_mul_inv, mul_comm]
-      · simp only [indicator_of_notMem ht, annularHilbertKernel, A, mem_ofPred_eq] at ht ⊢
+        simp only [div_eq_mul_inv, mul_comm, mul_one, ContinuousLinearMap.mul_apply']
+      · simp only [mem_ofPred_eq, annularHilbertKernel, indicator_of_notMem ht, A] at ht ⊢
         rw [ite_eq_right ht]
         change (0 : ℂ) * f (x - t) = 0
         rw [zero_mul]
@@ -287,7 +287,7 @@ theorem finiteAnnularHilbertMax_le_sum {N : ℕ} (ε R : Fin N → ℝ)
         ‖annularHilbertTruncation (ε i) (R i) f x‖₊) : ℝ) ≤
         ↑(∑ i, ‖annularHilbertTruncation (ε i) (R i) f x‖₊) :=
       NNReal.coe_le_coe.mpr hnn
-    _ = _ := by simp
+    _ = _ := by simp only [NNReal.coe_sum, coe_nnnorm]
 
 theorem integrable_finiteAnnularHilbertMax {N : ℕ} (ε R : Fin N → ℝ)
     (hε : ∀ i, 0 < ε i) {f : ℝ → ℂ} (hf : Integrable f) :
@@ -297,7 +297,7 @@ theorem integrable_finiteAnnularHilbertMax {N : ℕ} (ε R : Fin N → ℝ)
       (↑(s.sup fun i ↦ ‖annularHilbertTruncation (ε i) (R i) f x‖₊) : ℝ)) := by
     intro s
     induction s using Finset.induction_on with
-    | empty => simp
+    | empty => simp only [Finset.sup_empty, bot_eq_zero', NNReal.coe_zero, integrable_fun_zero]
     | @insert i s hi ih =>
         have hii : Integrable (fun x ↦
             ‖annularHilbertTruncation (ε i) (R i) f x‖) :=

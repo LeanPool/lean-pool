@@ -57,7 +57,7 @@ private theorem pStopping_interval_eq_of_mutual_carrier_subset {I J : RealInterv
   apply interval_eq_of_carrier_subset_of_length_le hIJ
   have he := (Ioc_subset_Ioc_iff J.left_lt_right).mp hJI
   dsimp [RealInterval.length]
-  linarith [he.1, he.2]
+  linarith only [he, he.1, he.2]
 
 private theorem pStopping_childCollection_ssubset
     {S : Finset RealInterval} {f monitor : ℝ → ℂ} {I K : RealInterval}
@@ -312,18 +312,18 @@ theorem exists_pStopping_recursive_sparse_bound
   have hRsparse' : ∀ K ∈ C,
       IsSparse (1 / 4) (↑(R' K) : Set RealInterval) := by
     intro K hK
-    simp only [R', dite_eq_left hK]
+    simp only [dite_eq_left hK, R']
     exact hRsparse K hK
   have hRsub' : ∀ K ∈ C, ∀ J ∈ R' K, J.carrier ⊆ K.carrier := by
     intro K hK
-    simp only [R', dite_eq_left hK]
+    simp only [dite_eq_left hK, R']
     exact hRsub K hK
   have hRbound' : ∀ K ∈ C,
       (∫⁻ x, localizedTailMaximal ell₀ scale (childCollection S K) f x * ‖g x‖ₑ) ≤
         ENNReal.ofReal (A * holderConjugate p) *
           sparseForm p f g (↑(R' K) : Set RealInterval) := by
     intro K hK
-    simp only [R', dite_eq_left hK]
+    simp only [dite_eq_left hK, R']
     exact hRbound K hK
   let B := C.biUnion R'
   let Rall := insert I B

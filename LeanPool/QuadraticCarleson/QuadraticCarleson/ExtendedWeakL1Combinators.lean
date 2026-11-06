@@ -74,7 +74,7 @@ theorem hasExtendedWeakL1Bound_iSup_of_directed
     exact ⟨k, fun x hx ↦ hx.trans_le (hik x), fun x hx ↦ hx.trans_le (hjk x)⟩
   have hEunion : (⋃ i, E i) = {x | ENNReal.ofReal a < ⨆ i, F i x} := by
     ext x
-    simp only [E, mem_iUnion, mem_ofPred_eq, lt_iSup_iff]
+    simp only [mem_iUnion, mem_ofPred_eq, lt_iSup_iff, E]
   rw [← hEunion, hEdir.measure_iUnion, ENNReal.mul_iSup]
   exact iSup_le fun i ↦ (hweak i).2 a ha
 
@@ -97,29 +97,29 @@ theorem hasExtendedWeakL1Bound_of_le_two_mul_add_sixteen_mul
   have ha4 : 0 < a / 4 := by positivity
   have ha32 : 0 < a / 32 := by positivity
   have hfour : (4 : ENNReal) * ENNReal.ofReal (a / 4) = ENNReal.ofReal a := by
-    rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
+    rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
     congr 1
     ring
   have hthirtytwo : (32 : ENNReal) * ENNReal.ofReal (a / 32) =
       ENNReal.ofReal a := by
-    rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 32)]
+    rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 32)]
     congr 1
     ring
   have htwo : (2 : ENNReal) * ENNReal.ofReal (a / 4) =
       ENNReal.ofReal (a / 2) := by
-    rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+    rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
     congr 1
     ring
   have hsixteen : (16 : ENNReal) * ENNReal.ofReal (a / 32) =
       ENNReal.ofReal (a / 2) := by
     rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul
-      (by norm_num : (0 : ℝ) ≤ 16)]
+      (by norm_num1 : (0 : ℝ) ≤ 16)]
     congr 1
     ring
   have hhalf : ENNReal.ofReal (a / 2) + ENNReal.ofReal (a / 2) =
       ENNReal.ofReal a := by
     rw [← two_mul, ← ENNReal.ofReal_ofNat,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
     congr 1
     ring
   have hsub : E ⊆ EH ∪ EM := by
@@ -156,9 +156,9 @@ theorem hasExtendedWeakL1Bound_of_le_two_mul_add_sixteen_mul
       · exact hH.2 (a / 4) ha4
       · exact hM.2 (a / 32) ha32
     _ = ENNReal.ofReal (4 * AH + 32 * AM) := by
-      rw [ENNReal.ofReal_add (mul_nonneg (by norm_num) hAH),
-        ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4),
-        ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 32),
+      rw [ENNReal.ofReal_add (mul_nonneg (by norm_num1) hAH),
+        ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4),
+        ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 32),
         ENNReal.ofReal_ofNat, ENNReal.ofReal_ofNat]
       positivity
 
@@ -170,12 +170,12 @@ theorem hasExtendedWeakL1Bound_centeredHardyLittlewoodMaximal_enorm
       (4 * (∫⁻ x, ‖f x‖ₑ).toReal)
       (centeredHardyLittlewoodMaximal fun x ↦ ‖f x‖ₑ) := by
   have hmass : (∫⁻ x, ‖f x‖ₑ) ≠ ∞ := hfi.hasFiniteIntegral.ne
-  refine ⟨mul_nonneg (by norm_num) ENNReal.toReal_nonneg, ?_⟩
+  refine ⟨mul_nonneg (by norm_num1) ENNReal.toReal_nonneg, ?_⟩
   intro a ha
   have h := centeredHardyLittlewoodMaximal_weak_bound
     (fun x ↦ ‖f x‖ₑ) (ENNReal.ofReal a)
   apply h.trans_eq
-  rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4),
+  rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4),
     ENNReal.ofReal_ofNat, ENNReal.ofReal_toReal hmass]
 
 

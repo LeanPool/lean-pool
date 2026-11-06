@@ -66,7 +66,7 @@ theorem sum_sparseResidue_indicator (τ : ℤ) (a : ℝ≥0∞) :
   · intro σ hσ hne
     have hnot : ¬τ ≡ (σ.val : ℤ) [ZMOD sparseModulus] := fun h ↦ hne (huniq σ h)
     simp only [ite_eq_right hnot]
-  · simp
+  · simp only [Finset.mem_univ, not_true_eq_false, ite_eq_right_iff, IsEmpty.forall_iff]
 
 theorem sum_sparseFrozenBlockInputL1Mass_eq
     (A : ℕ → ℝ) (f : ℝ → ℂ) (k B c : ℕ) (τ : ℤ) :
@@ -137,7 +137,7 @@ theorem frozenMiddleOrliczConstant_lt_top : frozenMiddleOrliczConstant < ∞ :=
 
 theorem lacunaryLowLevelConstant_twenty_nonneg : 0 ≤ lacunaryLowLevelConstant 20 := by
   exact add_nonneg (lacunarySmallLevelConstant_nonneg)
-    (mul_nonneg (by norm_num) (sq_nonneg _))
+    (mul_nonneg (by norm_num1) (sq_nonneg _))
 
 /-- Exact paper cutoff and complete sparse residue sum, with no assumed
 summability or assumed final Orlicz inequality. -/
@@ -150,7 +150,7 @@ theorem frozenLogSquaredMassBudget_paperCutoff_le_orlicz
   have hmass := frozenLogSquaredMassBudget_le_levelMass hf lacunaryHighCutoff_pos hc
   simp_rw [cast_lacunaryHighCutoff] at hmass
   have hlevel := tsum_lacunaryLowWeight_mul_levelMass_le_orlicz volume
-    (C := 20) (by norm_num) hf
+    (C := 20) (by norm_num1) hf
   have h := hmass.trans (mul_le_mul' (le_refl frozenMassPackingConstant) hlevel)
   simp_rw [ENNReal.ofReal_mul lacunaryLowLevelConstant_twenty_nonneg] at h
   rw [lintegral_const_mul' _ _ ENNReal.ofReal_ne_top] at h
@@ -201,7 +201,7 @@ theorem lacunaryFrozenMainOutput_paperCutoff_compl_levelSet_one_le_orlicz
         ∫⁻ x, ENNReal.ofReal (‖f x‖ * paperLog 2 ‖f x‖ ^ 2 * paperLog 4 ‖f x‖) := by
   simpa only [ENNReal.ofReal_one, one_mul] using
     lacunaryFrozenMainOutput_paperCutoff_compl_levelSet_mul_le_orlicz hf hfi hc hblock
-      (by norm_num : (0 : ℝ) < 1)
+      (by exact zero_lt_one : (0 : ℝ) < 1)
 
 theorem lintegral_enorm_le_lacunaryOrlicz (f : ℝ → ℂ) :
     (∫⁻ x, ‖f x‖ₑ) ≤

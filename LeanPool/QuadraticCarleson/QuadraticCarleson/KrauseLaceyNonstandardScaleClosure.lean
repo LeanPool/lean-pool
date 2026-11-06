@@ -54,8 +54,7 @@ theorem sqrt_weight_mul_threshold_rpow
     Real.sqrt (nonstandardScaleWeight s) *
         nonstandardScaleThreshold a p s ^ (1 - p / 2) =
       a ^ (1 - p / 2) * nonstandardScaleWeight s ^ ((p - 1) / p) := by
-  simpa only [nonstandardScaleThreshold] using
-    sqrt_mul_threshold_rpow ha (nonstandardScaleWeight_pos s) hp
+  exact sqrt_mul_threshold_rpow ha (nonstandardScaleWeight_pos s) hp
 
 theorem threshold_rpow_one_sub
     {a p : ℝ} (ha : 0 < a) (hp : 0 < p) (s : ℕ) :

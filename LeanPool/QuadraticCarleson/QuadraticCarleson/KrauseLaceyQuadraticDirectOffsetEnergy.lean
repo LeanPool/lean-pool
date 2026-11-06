@@ -43,7 +43,7 @@ theorem krauseLaceyLocalizedPiece_indicator_centralThird
   apply integral_congr_ae
   filter_upwards with y
   congr 1
-  simp only [Set.indicator_indicator, Set.inter_self]
+  simp only [indicator_indicator, inter_self]
 
 /-- Consequently the genuine squared energy is unchanged by repeating the
 central-third restriction. -/
@@ -73,9 +73,7 @@ theorem localizedEnergy_offsetGroupedInput_le
         ∫ x in I.centralThird, ‖offsetGroupedInput S scale f I s x‖ := by
   let b := smallestScaleInput S scale f (scale I - s)
   have hoff : offsetGroupedInput S scale f I s = I.centralThird.indicator b := by
-    simpa only [b] using
-      offsetGroupedInput_eq_indicator_smallestScaleInput
-        hlam scale hscale hI (f : ℝ → ℂ) hs
+    exact offsetGroupedInput_eq_indicator_smallestScaleInput hlam scale hscale hI (f : ℝ → ℂ) hs
   have henergy := localizedEnergy_smallestScaleInput_le
     hlam scale hscale f hgap hM hmass I hI (hscale I hI)
   rw [hoff, localizedEnergy_indicator_centralThird]

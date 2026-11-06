@@ -26,15 +26,15 @@ noncomputable def packetScale (N j : ℕ) : ℝ :=
   (2 : ℝ) ^ (-((N * j : ℕ) : ℤ))
 
 theorem packetScale_pos (N j : ℕ) : 0 < packetScale N j := by
-  exact zpow_pos (by norm_num) _
+  exact zpow_pos (by norm_num1) _
 
 theorem packetScale_le_one (N j : ℕ) : packetScale N j ≤ 1 := by
-  apply zpow_le_one_of_nonpos₀ (by norm_num)
+  apply zpow_le_one_of_nonpos₀ (by norm_num1)
   omega
 
 theorem packetScale_lt_one {N j : ℕ} (hN : 0 < N) (hj : 0 < j) :
     packetScale N j < 1 := by
-  apply zpow_lt_one_of_neg₀ (by norm_num)
+  apply zpow_lt_one_of_neg₀ (by norm_num1)
   have hNj : 0 < N * j := Nat.mul_pos hN hj
   rw [neg_lt_zero]
   exact_mod_cast hNj
@@ -48,7 +48,7 @@ theorem wavePacket_support_subset_packetInterval (N j : ℕ) :
   intro x hx
   have hx' := wavePacket_support (packetScale_pos N j) hx
   rw [packetInterval]
-  constructor <;> linarith [hx'.1, hx'.2, packetScale_pos N j]
+  constructor <;> linarith only [hx', hx'.1, hx'.2, packetScale_pos N j]
 
 theorem packetInterval_separated {N j k : ℕ} (hN : 0 < N) (hj : 0 < j) (hjk : j < k) :
     ∀ x ∈ packetInterval N j, ∀ y ∈ packetInterval N k, x < y := by
@@ -58,7 +58,7 @@ theorem packetInterval_separated {N j k : ℕ} (hN : 0 < N) (hj : 0 < j) (hjk : 
   have hkScale := packetScale_lt_one hN hk
   have hjkReal : (j : ℝ) + 1 ≤ (k : ℝ) := by exact_mod_cast hjk
   rw [packetInterval] at hx hy
-  linarith [hx.2, hy.1]
+  linarith only [hx, hy, hjScale, hkScale, hjkReal, hx.2, hy.1]
 
 theorem wavePacket_support_disjoint {N j k : ℕ}
     (hN : 0 < N) (hj : 0 < j) (hk : 0 < k) (hjk : j ≠ k) :

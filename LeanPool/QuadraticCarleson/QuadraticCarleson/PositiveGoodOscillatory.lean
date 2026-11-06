@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.OscillatoryReductionMaximal
-public import LeanPool.QuadraticCarleson.QuadraticCarleson.PositiveHighHeightConvergence
 
 /-!
 # All-height oscillatory L² estimates

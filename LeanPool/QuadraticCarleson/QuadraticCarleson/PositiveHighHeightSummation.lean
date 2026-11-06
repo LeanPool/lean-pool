@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PositiveHighHeightTail
-public import Mathlib.MeasureTheory.Function.LpSeminorm.ChebyshevMarkov
 
 /-!
 # The high contribution summed over magnitude levels
@@ -91,7 +90,7 @@ theorem paperHighContribution_levelSet_le
       eLpNorm (highContributionMajorant B b) 2 ^ 2 := by
     simpa only [ENNReal.toReal_ofNat, enorm_eq_self, ENNReal.one_rpow,
       one_mul, one_pow, ENNReal.rpow_two] using mul_meas_ge_le_pow_eLpNorm' volume
-      (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ∞)
+      (by norm_num1 : (2 : ℝ≥0∞) ≠ 0) (by decide +kernel : (2 : ℝ≥0∞) ≠ ∞)
       (f := highContributionMajorant B b) (1 : ℝ≥0∞)
   exact hset.trans (hcheb.trans
     (pow_le_pow_left₀ bot_le (highContributionMajorant_eLpNorm_le B hb) 2))
@@ -102,11 +101,11 @@ theorem disjointLevelAtomSum_eLpNorm_le {ι : Type*} [Countable ι]
     (hdisj : Pairwise (Disjoint on fun i ↦ centeredInterval (z i) (R i))) :
     eLpNorm (disjointLevelAtomSum A f k z R) 2 ≤
       (ENNReal.ofReal (4 * A k) * magnitudeLevelL1Mass volume A f k) ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
     (measurable_disjointLevelAtomSum (A := A) hf k z R).aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   exact ENNReal.rpow_le_rpow (disjointLevelAtomSum_sq_lintegral_le hf hAk z R hR hdisj)
-    (by norm_num)
+    (by norm_num1)
 
 /-- The full countable high contribution for the actual level atoms in an
 explicit countable disjoint interval family, before numerical optimization. -/

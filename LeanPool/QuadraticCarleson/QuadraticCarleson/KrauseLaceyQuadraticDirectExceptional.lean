@@ -56,7 +56,7 @@ theorem mem_directExceptionalIntervals_iff
     {S : Finset RealInterval} {g : ℝ → ℂ} {p Λ : ℝ} {I : RealInterval} :
     I ∈ directExceptionalIntervals S g p Λ ↔
       I ∈ S ∧ Λ * I.length < ∫ x in I.carrier, ‖g x‖ ^ p := by
-  simp [directExceptionalIntervals]
+  simp only [directExceptionalIntervals, Finset.mem_filter]
 
 theorem mem_directMaximalExceptionalIntervals_iff
     {S : Finset RealInterval} {g : ℝ → ℂ} {p Λ : ℝ} {I : RealInterval} :
@@ -64,7 +64,7 @@ theorem mem_directMaximalExceptionalIntervals_iff
       I ∈ directExceptionalIntervals S g p Λ ∧
         ∀ J ∈ directExceptionalIntervals S g p Λ, I.carrier ⊆ J.carrier → J = I := by
   classical
-  simp [directMaximalExceptionalIntervals]
+  simp only [directMaximalExceptionalIntervals, Finset.mem_filter]
 
 theorem mem_directRegularIntervals_iff
     {S : Finset RealInterval} {g : ℝ → ℂ} {p Λ : ℝ} {I : RealInterval} :
@@ -108,10 +108,10 @@ private theorem direct_interval_eq_of_subset_of_length_le {I J : RealInterval}
   have h := (Ioc_subset_Ioc_iff I.left_lt_right).mp hsub
   have hl : I.left = J.left := by
     dsimp [RealInterval.length] at hlen
-    linarith
+    linarith only [hlen, h]
   have hr : I.right = J.right := by
     dsimp [RealInterval.length] at hlen
-    linarith
+    linarith only [hlen, h]
   cases I
   cases J
   simp_all
@@ -248,8 +248,8 @@ theorem directQuadratic_pairing_threshold_closure
         C * (A ^ (1 - p) * Λ * V) := add_le_add hlow hhigh
     _ = 2 * C * delta ^ (p - 1) * V := by
       rw [show delta * A ^ (1 - p / 2) * V =
-        (delta * A ^ (1 - p / 2)) * V by ring, hlowid]
-      rw [show A ^ (1 - p) * Λ * V = (A ^ (1 - p) * Λ) * V by ring, hhighid]
+        (delta * A ^ (1 - p / 2)) * V by rfl, hlowid]
+      rw [show A ^ (1 - p) * Λ * V = (A ^ (1 - p) * Λ) * V by rfl, hhighid]
       ring
 
 /-- The preceding closure at the exact direct choices

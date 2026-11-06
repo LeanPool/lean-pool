@@ -9,7 +9,6 @@ module
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PVFourierIdentity
 public import Mathlib.Analysis.Fourier.LpSpace
 public import Mathlib.Basic.Real.Sign
-public import Mathlib.MeasureTheory.Function.LpSeminorm.Monotonicity
 
 /-!
 # The ordinary Hilbert transform on `L²`
@@ -132,18 +131,6 @@ def ordinaryHilbertTransformL2 (f : Lp (α := ℝ) ℂ 2) :
     Lp (α := ℝ) ℂ 2 :=
   (Lp.fourierTransformₗᵢ ℝ ℂ).symm (ordinaryHilbertMultiplierL2 f)
 
-theorem eLpNorm_multipliedFourierRepresentative_le
-    (f : Lp (α := ℝ) ℂ 2) :
-    eLpNorm (multipliedFourierRepresentative f) 2 volume ≤
-      ENNReal.ofReal Real.pi * eLpNorm (fourierL2Representative f) 2 volume := by
-  apply eLpNorm_le_mul_eLpNorm_of_ae_le_mul
-    (aestronglyMeasurable_multipliedFourierRepresentative f)
-  filter_upwards with ξ
-  unfold multipliedFourierRepresentative
-  rw [norm_mul]
-  exact mul_le_mul_of_nonneg_right (norm_ordinaryHilbertMultiplier_le ξ)
-    (norm_nonneg _)
-
 theorem eLpNorm_multipliedFourierRepresentative_eq
     (f : Lp (α := ℝ) ℂ 2 volume) :
     eLpNorm (multipliedFourierRepresentative f) 2 volume =
@@ -171,27 +158,11 @@ theorem eLpNorm_multipliedFourierRepresentative_eq
       rw [← ofReal_norm]
       simp []
 
-theorem enorm_ordinaryHilbertMultiplierL2_le (f : Lp (α := ℝ) ℂ 2) :
-    ‖ordinaryHilbertMultiplierL2 f‖ₑ ≤
-      ENNReal.ofReal Real.pi * ‖f‖ₑ := by
-  calc
-    ‖ordinaryHilbertMultiplierL2 f‖ₑ =
-        eLpNorm (multipliedFourierRepresentative f) 2 volume := by
-      exact Lp.enorm_toLp (memLp_ordinaryHilbertMultiplier_mul_fourier f)
-    _ ≤ ENNReal.ofReal Real.pi * eLpNorm (fourierL2Representative f) 2 volume :=
-      eLpNorm_multipliedFourierRepresentative_le f
-    _ = ENNReal.ofReal Real.pi * ‖Lp.fourierTransformₗᵢ ℝ ℂ f‖ₑ := by
-      have heq : MemLp.toLp (fourierL2Representative f)
-          (memLp_fourierL2Representative f) = Lp.fourierTransformₗᵢ ℝ ℂ f := by
-        exact Lp.toLp_coeFn _ _
-      rw [← Lp.enorm_toLp (memLp_fourierL2Representative f), heq]
-    _ = _ := by simp
-
-theorem norm_ordinaryHilbertMultiplierL2_le (f : Lp (α := ℝ) ℂ 2) :
-    ‖ordinaryHilbertMultiplierL2 f‖ ≤ Real.pi * ‖f‖ := by
-  have h := enorm_ordinaryHilbertMultiplierL2_le f
-  have hreal := (ENNReal.toReal_le_toReal (by finiteness) (by finiteness)).2 h
-  simpa [ENNReal.toReal_mul, ENNReal.toReal_ofReal Real.pi_pos.le] using hreal
+theorem eLpNorm_multipliedFourierRepresentative_le
+    (f : Lp (α := ℝ) ℂ 2) :
+    eLpNorm (multipliedFourierRepresentative f) 2 volume ≤
+      ENNReal.ofReal Real.pi * eLpNorm (fourierL2Representative f) 2 volume :=
+  (eLpNorm_multipliedFourierRepresentative_eq f).le
 
 theorem norm_ordinaryHilbertMultiplierL2_eq (f : Lp (α := ℝ) ℂ 2 volume) :
     ‖ordinaryHilbertMultiplierL2 f‖ = Real.pi * ‖f‖ := by
@@ -211,6 +182,16 @@ theorem norm_ordinaryHilbertMultiplierL2_eq (f : Lp (α := ℝ) ℂ 2 volume) :
       _ = _ := by simp
   have hreal := congrArg ENNReal.toReal henorm
   simpa [ENNReal.toReal_mul, ENNReal.toReal_ofReal Real.pi_pos.le] using hreal
+
+theorem enorm_ordinaryHilbertMultiplierL2_le (f : Lp (α := ℝ) ℂ 2) :
+    ‖ordinaryHilbertMultiplierL2 f‖ₑ ≤
+      ENNReal.ofReal Real.pi * ‖f‖ₑ := by
+  rw [← ofReal_norm, ← ofReal_norm, norm_ordinaryHilbertMultiplierL2_eq,
+    ENNReal.ofReal_mul Real.pi_pos.le]
+
+theorem norm_ordinaryHilbertMultiplierL2_le (f : Lp (α := ℝ) ℂ 2) :
+    ‖ordinaryHilbertMultiplierL2 f‖ ≤ Real.pi * ‖f‖ :=
+  (norm_ordinaryHilbertMultiplierL2_eq f).le
 
 theorem norm_ordinaryHilbertTransformL2_le (f : Lp (α := ℝ) ℂ 2) :
     ‖ordinaryHilbertTransformL2 f‖ ≤ Real.pi * ‖f‖ := by

@@ -45,7 +45,7 @@ theorem ofReal_realCenteredAverageKernel {N : ℕ} (r : Fin N → ℝ)
     simp only [mem_closedBall, Real.dist_eq, abs_sub_comm y x]
   by_cases h : |x - y| ≤ r (σ x)
   · simp only [h, ↓reduceIte, Set.indicator_of_mem (hmem.mpr h)]
-    rw [ENNReal.ofReal_inv_of_pos (mul_pos (by norm_num) (hr (σ x)))]
+    rw [ENNReal.ofReal_inv_of_pos (mul_pos (by norm_num1) (hr (σ x)))]
   · simp only [h, ↓reduceIte, ENNReal.ofReal_zero,
       Set.indicator_of_notMem (mt hmem.mp h)]
 
@@ -132,7 +132,7 @@ theorem ofReal_quadraticFixedHeightMajorant_max_le {N : ℕ}
   have hsmall (a b : ℝ) (i : Fin N) : 0 ≤ realCenteredAverageKernel (u * r i) a b :=
     realCenteredAverageKernel_nonneg (mul_pos hu (hr i)) a b
   have hlarge (a b : ℝ) (i : Fin N) : 0 ≤ realCenteredAverageKernel (2 * r i) a b :=
-    realCenteredAverageKernel_nonneg (mul_pos (by norm_num) (hr i)) a b
+    realCenteredAverageKernel_nonneg (mul_pos (by norm_num1) (hr i)) a b
   rw [ENNReal.ofReal_add
       (mul_nonneg (by positivity) (add_nonneg (hsmall x y (σ x)) (hsmall y x (σ y))))
       (mul_nonneg (by positivity) (add_nonneg (hlarge x y (σ x)) (hlarge y x (σ y)))),
@@ -143,7 +143,7 @@ theorem ofReal_quadraticFixedHeightMajorant_max_le {N : ℕ}
   simpa only [ofReal_realCenteredAverageKernel (fun i ↦ u * r i)
       (fun i ↦ mul_pos hu (hr i)) σ,
     ofReal_realCenteredAverageKernel (fun i ↦ 2 * r i)
-      (fun i ↦ mul_pos (by norm_num) (hr i)) σ] using h
+      (fun i ↦ mul_pos (by norm_num1) (hr i)) σ] using h
 
 /-- Additivity for the nonnegative double integrals used in the majorant. -/
 theorem lintegral_lintegral_add_left {F : ℝ → ℝ → ℝ≥0∞}
@@ -163,12 +163,12 @@ theorem scaled_symmetric_selectedAverageKernel_pairing_le {N : ℕ}
       f x * f y) ≤ (66 * C) * ∫⁻ x, f x ^ 2 := by
   have hid (x y : ℝ) :
       C * (selectedAverageKernel r σ x y + selectedAverageKernel r σ y x) * f x * f y =
-      C * ((selectedAverageKernel r σ x y + selectedAverageKernel r σ y x) * f x * f y) := by ring
+      C * ((selectedAverageKernel r σ x y + selectedAverageKernel r σ y x) * f x * f y) := by ac_rfl
   simp_rw [hid, lintegral_const_mul' C _ hC]
   calc
     _ ≤ C * (66 * ∫⁻ x, f x ^ 2) :=
       mul_le_mul' le_rfl (symmetric_selectedAverageKernel_pairing_le r hr hσ hf)
-    _ = _ := by ring
+    _ = _ := by ac_rfl
 
 /-- The exact fixed-height quadratic majorant gives a second-moment
 quadratic-form bound with a uniform coefficient proportional to `u`. -/
@@ -208,12 +208,12 @@ theorem quadraticFixedHeightMajorant_pairing_le {N : ℕ}
         (scaled_symmetric_selectedAverageKernel_pairing_le r₁
           (fun i ↦ mul_pos hu (hr i)) hσ C₁ (by finiteness) hf)
         (scaled_symmetric_selectedAverageKernel_pairing_le r₂
-          (fun i ↦ mul_pos (by norm_num) (hr i)) hσ C₂ (by finiteness) hf)
+          (fun i ↦ mul_pos (by norm_num1) (hr i)) hσ C₂ (by finiteness) hf)
     _ = _ := by
       rw [← add_mul, ← mul_add]
       dsimp [C₁, C₂]
       rw [← ENNReal.ofReal_add (by positivity) (by positivity),
-        ← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 66)]
+        ← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 66)]
       congr 2
       ring
 

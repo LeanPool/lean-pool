@@ -23,7 +23,7 @@ namespace QuadraticCarleson
 
 @[simp]
 theorem norm_phase (s : ℝ) : ‖phase s‖ = 1 := by
-  simpa [phase] using Complex.norm_exp_ofReal_mul_I (2 * Real.pi * s)
+  exact Complex.norm_exp_ofReal_mul_I (2 * Real.pi * s)
 
 theorem phase_add (s t : ℝ) : phase (s + t) = phase s * phase t := by
   rw [phase, phase, phase, ← Complex.exp_add]
@@ -39,11 +39,11 @@ theorem torusNorm_le_half (x : ℝ) : torusNorm x ≤ 1 / 2 := by
   rw [torusNorm]
   rcases le_total (Int.fract x) (1 / 2 : ℝ) with h | h
   · exact (min_le_left _ _).trans h
-  · exact (min_le_right _ _).trans (by linarith)
+  · exact (min_le_right _ _).trans (by linarith only [h])
 
 @[simp]
 theorem torusNorm_add_int (x : ℝ) (z : ℤ) : torusNorm (x + z) = torusNorm x := by
-  simp [torusNorm, Int.fract_add_intCast]
+  simp only [torusNorm, Int.fract_add_intCast]
 
 theorem measurable_torusNorm : Measurable torusNorm := by
   change Measurable (fun x : ℝ => min (Int.fract x) (1 - Int.fract x))

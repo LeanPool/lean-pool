@@ -509,7 +509,6 @@ noncomputable def safeLogScale (N : ℕ) : ℝ := max 5 (paperLog 1 N)
 theorem one_le_paperLog_one (N : ℕ) : 1 ≤ paperLog 1 N := by
   rw [paperLog_succ, paperLog_zero, Real.le_log_iff_exp_le (by positivity : (0 : ℝ) < 10 + N)]
   refine Real.exp_one_lt_three.le.trans ?_
-  have hN : (0 : ℝ) ≤ N := Nat.cast_nonneg N
   linarith
 
 theorem four_lt_safeLogScale (N : ℕ) : 4 < safeLogScale N := by
@@ -618,7 +617,7 @@ theorem exists_pointwiseMaximizer {X : Type*} (n : ℕ) (F : Fin (n + 1) → X �
     Finset.le_sup (s := Finset.univ) (f := fun q : Fin (n + 1) ↦ ‖F q x‖₊)
       (Finset.mem_univ i)
   have hcyclic : cyclicFin n j.1 = j := by
-    simpa using cyclicFin_eq_of_le n j.1 hjle
+    exact cyclicFin_eq_of_le n j.1 hjle
   rw [hj, ← hcyclic] at hi
   exact_mod_cast hi
 

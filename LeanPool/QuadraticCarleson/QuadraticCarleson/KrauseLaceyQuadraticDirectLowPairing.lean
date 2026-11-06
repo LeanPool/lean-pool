@@ -62,7 +62,7 @@ theorem directQuadraticTailEnergy_eq_constant_mul
       directQuadraticTailEnergyConstant M * ENNReal.ofReal (t * V) := by
   have hcoeffB :
       0 ≤ 432 * positiveDyadicAmplitudeBound ^ 2 * M :=
-    mul_nonneg (mul_nonneg (by norm_num) (sq_nonneg _)) hM
+    mul_nonneg (mul_nonneg (by norm_num1) (sq_nonneg _)) hM
   have hB :
       ENNReal.ofReal
           ((432 * positiveDyadicAmplitudeBound ^ 2 * M * t) * V) =
@@ -71,7 +71,7 @@ theorem directQuadraticTailEnergy_eq_constant_mul
     rw [show (432 * positiveDyadicAmplitudeBound ^ 2 * M * t) * V =
       (432 * positiveDyadicAmplitudeBound ^ 2 * M) * (t * V) by ring,
       ENNReal.ofReal_mul hcoeffB]
-  have h8t : 0 ≤ 8 * t := mul_nonneg (by norm_num) ht
+  have h8t : 0 ≤ 8 * t := mul_nonneg (by norm_num1) ht
   have hrealC :
       (2 * (Real.pi * projectionRemainderConstant) * Real.sqrt (3 * M) *
           Real.sqrt (8 * t) * Real.sqrt V) ^ 2 =
@@ -87,11 +87,11 @@ theorem directQuadraticTailEnergy_eq_constant_mul
           Real.sqrt (3 * M)) ^ 2 * (8 * t) * V := by
         rw [Real.sq_sqrt h8t, Real.sq_sqrt hV]
       _ = ((2 * (Real.pi * projectionRemainderConstant) *
-          Real.sqrt (3 * M)) ^ 2 * 8) * (t * V) := by ring
+          Real.sqrt (3 * M)) ^ 2 * 8) * (t * V) := by ac_rfl
   have hcoeffC :
       0 ≤ (2 * (Real.pi * projectionRemainderConstant) *
         Real.sqrt (3 * M)) ^ 2 * 8 :=
-    mul_nonneg (sq_nonneg _) (by norm_num)
+    mul_nonneg (sq_nonneg _) (by norm_num1)
   have hC :
       ENNReal.ofReal
           ((2 * (Real.pi * projectionRemainderConstant) * Real.sqrt (3 * M) *
@@ -127,7 +127,7 @@ theorem eLpNorm_offsetTailMaximalOn_le_factored
       (directQuadraticTailEnergyConstant M) ^ (1 / 2 : ℝ) *
         (ENNReal.ofReal
           ((2 : ℝ) ^ (-s) * ∫ x in I₀.carrier, ‖f x‖)) ^ (1 / 2 : ℝ) := by
-  have ht : 0 ≤ (2 : ℝ) ^ (-s) := zpow_nonneg (by norm_num) _
+  have ht : 0 ≤ (2 : ℝ) ^ (-s) := zpow_nonneg (by norm_num1) _
   have hV : 0 ≤ ∫ x in I₀.carrier, ‖f x‖ := integral_nonneg fun _ ↦ norm_nonneg _
   calc
     eLpNorm (offsetTailMaximalOn S A scale
@@ -154,7 +154,7 @@ theorem eLpNorm_offsetTailMaximalOn_le_factored
     _ = (directQuadraticTailEnergyConstant M) ^ (1 / 2 : ℝ) *
         (ENNReal.ofReal
           ((2 : ℝ) ^ (-s) * ∫ x in I₀.carrier, ‖f x‖)) ^ (1 / 2 : ℝ) :=
-      ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)
+      ENNReal.mul_rpow_of_nonneg _ _ (by norm_num1)
 
 /-- The factored direct-tail estimate for an arbitrary output subcollection.
 The former frequency-radius premise is discharged by deleting the outputs
@@ -204,13 +204,13 @@ theorem ennreal_dyadic_mass_rpow_half_eq_delta
     (n : ℕ) {V : ℝ} (hV : 0 ≤ V) :
     (ENNReal.ofReal ((2 : ℝ) ^ (-(n : ℤ)) * V)) ^ (1 / 2 : ℝ) =
       ENNReal.ofReal (directQuadraticDelta n * Real.sqrt V) := by
-  have ht : 0 ≤ (2 : ℝ) ^ (-(n : ℤ)) := zpow_nonneg (by norm_num) _
-  rw [ENNReal.ofReal_rpow_of_nonneg (mul_nonneg ht hV) (by norm_num)]
+  have ht : 0 ≤ (2 : ℝ) ^ (-(n : ℤ)) := zpow_nonneg (by norm_num1) _
+  rw [ENNReal.ofReal_rpow_of_nonneg (mul_nonneg ht hV) (by norm_num1)]
   congr 1
   rw [Real.mul_rpow ht hV, Real.sqrt_eq_rpow]
   congr 1
   unfold directQuadraticDelta
-  rw [← Real.rpow_intCast, ← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2)]
+  rw [← Real.rpow_intCast, ← Real.rpow_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
   congr 1
   push_cast
   ring
@@ -235,13 +235,13 @@ theorem lintegral_pairing_interpolationLow_ennreal_le_normalized_mul
     rw [← ENNReal.ofReal_mul (Real.rpow_nonneg ha.le (2 - p))]
     rw [ENNReal.ofReal_rpow_of_nonneg
       (mul_nonneg (Real.rpow_nonneg ha.le _) hV)
-      (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+      (by norm_num1 : (0 : ℝ) ≤ 1 / 2)]
     rw [← ENNReal.ofReal_mul (mul_nonneg hdelta (Real.sqrt_nonneg V))]
     rw [show delta * Real.sqrt V * (a ^ (2 - p) * V) ^ (1 / 2 : ℝ) =
-      delta * (Real.sqrt V * (a ^ (2 - p) * V) ^ (1 / 2 : ℝ)) by ring]
+      delta * (Real.sqrt V * (a ^ (2 - p) * V) ^ (1 / 2 : ℝ)) by ac_rfl]
     rw [KrauseLaceyBadScale.sqrt_mul_rpow_mul_sqrt ha hV]
     congr 1
-    ring
+    ac_rfl
   calc
     (∫⁻ x, U x * ‖interpolationLow g a x‖ₑ) ≤
         eLpNorm U 2 volume *
@@ -255,7 +255,7 @@ theorem lintegral_pairing_interpolationLow_ennreal_le_normalized_mul
       apply mul_le_mul' hU
       apply ENNReal.rpow_le_rpow
       · exact mul_le_mul' le_rfl hgp
-      norm_num
+      norm_num1
     _ = C * ENNReal.ofReal (delta * a ^ (1 - p / 2) * V) := by
       rw [mul_assoc, halg]
 
@@ -288,7 +288,7 @@ theorem lintegral_offsetTailMaximalOn_interpolationLow_le_directQuadratic
         ENNReal.ofReal (directQuadraticDelta n ^ (p - 1) * V) := by
   let C : ℝ≥0∞ := (directQuadraticTailEnergyConstant M) ^ (1 / 2 : ℝ)
   have hn0 : (0 : ℤ) ≤ n := by exact_mod_cast n.zero_le
-  have ht : 0 ≤ (2 : ℝ) ^ (-(n : ℤ)) := zpow_nonneg (by norm_num) _
+  have ht : 0 ≤ (2 : ℝ) ^ (-(n : ℤ)) := zpow_nonneg (by norm_num1) _
   have hscaleMass :
       ENNReal.ofReal
           ((2 : ℝ) ^ (-(n : ℤ)) * ∫ x in I₀.carrier, ‖f x‖) ≤
@@ -313,7 +313,7 @@ theorem lintegral_offsetTailMaximalOn_interpolationLow_le_directQuadratic
           (ENNReal.ofReal ((2 : ℝ) ^ (-(n : ℤ)) * V)) ^
             (1 / 2 : ℝ) := by
         apply mul_le_mul' le_rfl
-        exact ENNReal.rpow_le_rpow hscaleMass (by norm_num)
+        exact ENNReal.rpow_le_rpow hscaleMass (by norm_num1)
       _ = C * ENNReal.ofReal
           (directQuadraticDelta n * Real.sqrt V) := by
         rw [ennreal_dyadic_mass_rpow_half_eq_delta n hV]
@@ -337,7 +337,7 @@ theorem lintegral_offsetTailMaximalOn_interpolationLow_le_directQuadratic
       rw [show directQuadraticDelta n *
           directQuadraticLowThreshold n ^ (1 - p / 2) * V =
         (directQuadraticDelta n *
-          directQuadraticLowThreshold n ^ (1 - p / 2)) * V by ring,
+          directQuadraticLowThreshold n ^ (1 - p / 2)) * V by rfl,
         directQuadratic_low_threshold_identity]
 
 /-- The same paper-facing low estimate with no per-offset gap premise. It is
@@ -365,7 +365,7 @@ theorem lintegral_offsetTailMaximalOn_interpolationLow_le_directQuadratic_of_non
         ENNReal.ofReal (directQuadraticDelta n ^ (p - 1) * V) := by
   let C : ℝ≥0∞ := (directQuadraticTailEnergyConstant M) ^ (1 / 2 : ℝ)
   have hn0 : (0 : ℤ) ≤ n := by exact_mod_cast n.zero_le
-  have ht : 0 ≤ (2 : ℝ) ^ (-(n : ℤ)) := zpow_nonneg (by norm_num) _
+  have ht : 0 ≤ (2 : ℝ) ^ (-(n : ℤ)) := zpow_nonneg (by norm_num1) _
   have hscaleMass :
       ENNReal.ofReal
           ((2 : ℝ) ^ (-(n : ℤ)) * ∫ x in I₀.carrier, ‖f x‖) ≤
@@ -389,7 +389,7 @@ theorem lintegral_offsetTailMaximalOn_interpolationLow_le_directQuadratic_of_non
           (ENNReal.ofReal ((2 : ℝ) ^ (-(n : ℤ)) * V)) ^
             (1 / 2 : ℝ) := by
         apply mul_le_mul' le_rfl
-        exact ENNReal.rpow_le_rpow hscaleMass (by norm_num)
+        exact ENNReal.rpow_le_rpow hscaleMass (by norm_num1)
       _ = C * ENNReal.ofReal
           (directQuadraticDelta n * Real.sqrt V) := by
         rw [ennreal_dyadic_mass_rpow_half_eq_delta n hV]
@@ -413,7 +413,7 @@ theorem lintegral_offsetTailMaximalOn_interpolationLow_le_directQuadratic_of_non
       rw [show directQuadraticDelta n *
           directQuadraticLowThreshold n ^ (1 - p / 2) * V =
         (directQuadraticDelta n *
-          directQuadraticLowThreshold n ^ (1 - p / 2)) * V by ring,
+          directQuadraticLowThreshold n ^ (1 - p / 2)) * V by rfl,
         directQuadratic_low_threshold_identity]
 
 /-- The genuine direct localized tail paired with the low truncation of the

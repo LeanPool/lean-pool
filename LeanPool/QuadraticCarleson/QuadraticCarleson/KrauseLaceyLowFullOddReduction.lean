@@ -53,10 +53,10 @@ theorem hasCompactSupport_fullDyadicQuadraticKernel (lam : ℝ) (j : ℤ) :
   intro t ht
   have hpsi : dyadicPsi j t ≠ 0 := by
     intro hz
-    exact ht (by simp [annularQuadraticKernel, hz])
+    exact ht (by simp only [annularQuadraticKernel, hz, Complex.ofReal_zero, zero_mul])
   have hsupp := (dyadicPsi_support_subset j) hpsi
   have hout : |t| < (2 : ℝ) ^ (j - 1) := by
-    simpa only [mem_ofPred_eq] using hsupp.2
+    exact hsupp.2
   rw [abs_lt] at hout
   exact ⟨hout.1.le, hout.2.le⟩
 
@@ -103,7 +103,7 @@ theorem finiteFullDyadicTail_one_sub_zero_eq_errorIntegral
   apply integral_congr_ae
   filter_upwards [] with y
   unfold finiteLowFullPhaseErrorKernel annularQuadraticKernel
-  simp only [Finset.sum_mul, one_mul, zero_mul, phase_zero, mul_one]
+  simp only [one_mul, Finset.sum_mul, zero_mul, phase_zero, mul_one]
   rw [← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
   intro r hr

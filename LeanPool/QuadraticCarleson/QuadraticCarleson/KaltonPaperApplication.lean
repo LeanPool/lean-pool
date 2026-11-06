@@ -55,7 +55,7 @@ theorem hasExtendedWeakL1Bound_blockSupremum
   have hs : {x | ENNReal.ofReal a < blockSupremum F x} =
       ⋃ τ, {x | ENNReal.ofReal a < F τ x} := by
     ext x
-    simp only [blockSupremum, mem_ofPred_eq, lt_iSup_iff, mem_iUnion]
+    simp only [blockSupremum, lt_iSup_iff, mem_ofPred_eq, mem_iUnion]
   rw [hs]
   calc
     _ ≤ ENNReal.ofReal a * ∑' τ, μ {x | ENNReal.ofReal a < F τ x} :=
@@ -233,10 +233,10 @@ theorem hasExtendedWeakL1Bound_tsum_paperLog
     HasExtendedWeakL1Bound μ
       (24 * ∑' k : ℕ, paperLog 1 ((k : ℝ) + 2) * A k)
       (fun x ↦ ∑' k, F k x) := by
-  refine ⟨mul_nonneg (by norm_num) (tsum_nonneg fun k ↦ ?_), ?_⟩
+  refine ⟨mul_nonneg (by norm_num1) (tsum_nonneg fun k ↦ ?_), ?_⟩
   · apply mul_nonneg _ (hweak k).1
     rw [paper_outer_weight_eq]
-    exact Real.log_nonneg (by have hk : (0 : ℝ) ≤ k := Nat.cast_nonneg k; linarith)
+    exact Real.log_nonneg (by have hk : (0 : ℝ) ≤ k := Nat.cast_nonneg k; linarith only [])
   intro a ha
   let E : ℕ → ℕ → Set X := fun N M ↦ {x | ENNReal.ofReal a < partialCap F N M x}
   have hM (N : ℕ) : Monotone (E N) := by
@@ -308,7 +308,7 @@ theorem paperBlockOutput_levelSet_one_le
       ENNReal.ofReal (24 * ∑' k : ℕ,
         paperLog 1 ((k : ℝ) + 2) * ∑' τ, A k τ) := by
   simpa only [ENNReal.ofReal_one, one_mul] using
-    paperBlockOutput_levelSet_mul_le hF hweak hrow hA (by norm_num : (0 : ℝ) < 1)
+    paperBlockOutput_levelSet_mul_le hF hweak hrow hA (by exact zero_lt_one : (0 : ℝ) < 1)
 
 /-- Existing real-valued weak bounds feed the extended-output formulation
 without a new analytic estimate. -/
@@ -322,10 +322,9 @@ theorem hasExtendedWeakL1Bound_ofReal
 
 theorem paperOuterWeight_one_le (k : ℕ) : 1 ≤ paperLog 1 ((k : ℝ) + 2) := by
   rw [paper_outer_weight_eq, ← Real.exp_le_exp,
-    Real.exp_log (by have hk : (0 : ℝ) ≤ k := Nat.cast_nonneg k; linarith)]
-  have he : Real.exp 1 < 3 := lt_trans Real.exp_one_lt_d9 (by norm_num)
-  have hk : (0 : ℝ) ≤ k := Nat.cast_nonneg k
-  linarith
+    Real.exp_log (by have hk : (0 : ℝ) ≤ k := Nat.cast_nonneg k; linarith only [])]
+  have he : Real.exp 1 < 3 := lt_trans Real.exp_one_lt_d9 (by norm_num1)
+  linarith only [he]
 
 /-- The weighted budget is an extended-real nonnegative sum, so an infinite
 budget is represented honestly and no convergence assumptions are hidden in
@@ -378,11 +377,11 @@ theorem paperBlockOutput_levelSet_mul_le_budget
     ENNReal.ofReal a * μ {x | ENNReal.ofReal a < paperBlockOutput F x} ≤
       24 * paperBlockBudget A := by
   by_cases hbudget : paperBlockBudget A = ∞
-  · simp [hbudget]
+  · simp only [hbudget, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, ENNReal.mul_top, le_top]
   have hA : ∀ k τ, 0 ≤ A k τ := fun k τ ↦ (hweak k τ).1
   obtain ⟨hrow, hsum⟩ := summability_of_paperBlockBudget_ne_top hA hbudget
   apply (paperBlockOutput_levelSet_mul_le hF hweak hrow hsum ha).trans_eq
-  rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 24),
+  rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 24),
     ENNReal.ofReal_tsum_of_nonneg (fun k ↦ mul_nonneg
       (le_trans zero_le_one (paperOuterWeight_one_le k)) (tsum_nonneg (hA k))) hsum]
   simp only [ENNReal.ofReal_ofNat]
@@ -399,7 +398,7 @@ theorem paperBlockOutput_levelSet_one_le_budget
     (hweak : ∀ k τ, HasExtendedWeakL1Bound μ (A k τ) (F k τ)) :
     μ {x | 1 < paperBlockOutput F x} ≤ 24 * paperBlockBudget A := by
   simpa only [ENNReal.ofReal_one, one_mul] using
-    paperBlockOutput_levelSet_mul_le_budget hF hweak (by norm_num : (0 : ℝ) < 1)
+    paperBlockOutput_levelSet_mul_le_budget hF hweak (by exact zero_lt_one : (0 : ℝ) < 1)
 
 /-- Direct interface for the real-valued nonnegative block outputs used in
 the existing weak-L¹ estimates. No extra summability hypothesis is needed. -/

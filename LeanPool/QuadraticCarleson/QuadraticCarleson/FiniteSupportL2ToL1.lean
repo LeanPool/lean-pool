@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.HilbertPoissonFourier
-public import Mathlib.MeasureTheory.Function.LpSeminorm.Indicator
 
 /-!
 # From L² approximation to L¹ on finite supports
@@ -36,15 +35,15 @@ theorem integral_norm_le_sqIntegral_mul_measureReal_sqrt
         (volume.real s) ^ (1 / (2 : ℝ)) := by
   let g : ℝ → ℂ := s.indicator (fun _ ↦ 1)
   have hg : MemLp g 2 volume := memLp_indicator_const 2 hs.nullMeasurableSet 1 (Or.inr hμs)
-  have hf' : MemLp f (ENNReal.ofReal 2) volume := by simpa using hf
-  have hg' : MemLp g (ENNReal.ofReal 2) volume := by simpa using hg
+  have hf' : MemLp f (ENNReal.ofReal 2) volume := by simpa only [ENNReal.ofReal_ofNat] using hf
+  have hg' : MemLp g (ENNReal.ofReal 2) volume := by simpa only [ENNReal.ofReal_ofNat] using hg
   have hholder := integral_mul_norm_le_Lp_mul_Lq
     (p := (2 : ℝ)) (q := (2 : ℝ)) Real.HolderConjugate.two_two hf' hg'
   have hnorm : ∀ᵐ x ∂volume, ‖f x‖ = ‖f x‖ * ‖g x‖ := by
     filter_upwards [hfs] with x hx
     by_cases hxs : x ∈ s
-    · simp [g, hxs]
-    · simp [g, hxs, hx hxs]
+    · simp only [hxs, indicator_of_mem, norm_one, mul_one, g]
+    · simp only [hx hxs, norm_zero, hxs, not_false_eq_true, indicator_of_notMem, mul_zero, g]
   have hgint : (∫ x, ‖g x‖ ^ (2 : ℝ)) = volume.real s := by
     calc
       _ = ∫ x in s, (1 : ℝ) := by

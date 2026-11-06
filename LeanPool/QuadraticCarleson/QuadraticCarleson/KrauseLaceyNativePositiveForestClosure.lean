@@ -148,8 +148,6 @@ theorem exists_sparse_bound_forest_of_tree_witnesses
     exact (Finset.mem_filter.mp hI).2
   have hunion : Q.biUnion branch = S := by
     exact biUnion_rootSubfamily_eq topScale shift maxDepth F S hSforest
-  have hbranchDisjoint : Set.PairwiseDisjoint (↑Q : Set ℤ) branch := by
-    exact rootSubfamilies_pairwiseDisjoint topScale shift maxDepth Q S
   have hroot (q₀ : ℤ) (hq₀ : q₀ ∈ Q) :=
     htree q₀ (branch q₀) (hbranchTree q₀ hq₀)
   choose R hRsparse hRsub hRbound using hroot
@@ -188,7 +186,7 @@ theorem exists_sparse_bound_forest_of_tree_witnesses
       let RF : ι → Set RealInterval := fun q₀ ↦ ↑(R' q₀.1)
       let U : ι → Set ℝ := fun q₀ ↦
         (finiteShiftGridInterval topScale shift 0 q₀.1).carrier
-      let _ : Nonempty ι := Set.nonempty_coe_sort.mpr (by simpa using hQ)
+      let _ : Nonempty ι := Set.nonempty_coe_sort.mpr (by exact hQ)
       have hU : (Set.univ : Set ι).PairwiseDisjoint U := by
         intro q₀ hq₀ q₁ hq₁ hne
         exact finiteShiftGridRootIntervals_pairwiseDisjoint topScale shift

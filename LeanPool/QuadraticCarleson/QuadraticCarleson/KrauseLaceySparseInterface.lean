@@ -100,7 +100,7 @@ the project's Hölder conjugate `p' = p/(p-1)`. -/
 theorem krauseLaceyFactor_le_holderConjugate {p : ℝ} (hp : 1 < p) :
     krauseLaceyFactor p ≤ holderConjugate p := by
   rw [krauseLaceyFactor, holderConjugate]
-  exact (div_le_div_iff_of_pos_right (sub_pos.mpr hp)).2 (by linarith)
+  exact (div_le_div_iff_of_pos_right (sub_pos.mpr hp)).2 (by linarith only [hp])
 
 /-- Conversely `p'` differs from the source's `1/(p-1)` by at most a factor
 two when `p ≤ 2`. -/
@@ -110,7 +110,7 @@ theorem holderConjugate_le_two_mul_krauseLaceyFactor
   rw [krauseLaceyFactor, holderConjugate]
   apply (div_le_iff₀ (sub_pos.mpr hp)).2
   field_simp [ne_of_gt (sub_pos.mpr hp)]
-  nlinarith
+  linarith only [hp2]
 
 /-- The kernel phase is unchanged when a positive scale is moved from the
 modulation into the spatial variable. This is the algebraic core of the
@@ -133,7 +133,7 @@ theorem quadratic_kernel_density_scale (sigma a t : ℝ) (ha : a ≠ 0) :
   · simp [ht]
   · field_simp [ha, ht]
     push_cast
-    ring
+    ac_rfl
 
 /-- Every nonzero real modulation is a signed square, with scale
 `sqrt |lambda|`. Thus the degree-two Krause--Lacey theorem at phase `+t²`
@@ -143,9 +143,9 @@ theorem nonzero_modulation_eq_signed_sqrt_square {lam : ℝ} (hlam : lam ≠ 0) 
     lam = (if lam < 0 then (-1 : ℝ) else 1) * (Real.sqrt |lam|) ^ 2 := by
   rw [Real.sq_sqrt (abs_nonneg lam)]
   by_cases hneg : lam < 0
-  · simp [hneg, abs_of_neg hneg]
+  · simp only [hneg, ↓reduceIte, abs_of_neg hneg, mul_neg, neg_mul, one_mul, neg_neg]
   · have hpos : 0 < lam := lt_of_le_of_ne (le_of_not_gt hneg) (Ne.symm hlam)
-    simp [hneg, abs_of_pos hpos]
+    simp only [hneg, ↓reduceIte, abs_of_pos hpos, one_mul]
 
 /-- Pointwise normalization of the singular density for an arbitrary
 nonzero modulation. This makes the paper's exclusion of `lambda = 0`
@@ -184,7 +184,7 @@ theorem quadraticHilbertTrunc_scale (sigma : ℝ) {a : ℝ} (ha : 0 < a) (ε : �
     f ((a * x - u) / a) * phase (sigma * u ^ 2) / (u : ℂ)
   have hset : a • s = s' := by
     ext u
-    simp only [Set.mem_smul_set]
+    simp only [mem_smul_set]
     constructor
     · rintro ⟨t, ht, rfl⟩
       change a * ε < |a • t|
@@ -195,13 +195,13 @@ theorem quadraticHilbertTrunc_scale (sigma : ℝ) {a : ℝ} (ha : 0 < a) (ε : �
       refine ⟨a⁻¹ * u, ?_, ?_⟩
       · change ε < |a⁻¹ * u|
         rw [abs_mul, abs_inv, abs_of_pos ha]
-        exact (lt_inv_mul_iff₀ ha).2 (by simpa [mul_comm] using hu)
+        exact (lt_inv_mul_iff₀ ha).2 (by exact hu)
       · simp only [smul_eq_mul]
         field_simp [ha.ne']
   have hcv := Measure.setIntegral_comp_smul_of_pos volume F s ha
   rw [hset, Module.finrank_self, pow_one] at hcv
   have hcv' : (∫ t in s, F (a * t)) = a⁻¹ • ∫ u in s', F u := by
-    simpa only [smul_eq_mul] using hcv
+    exact hcv
   change (∫ t in s, f (x - t) * phase (sigma * a ^ 2 * t ^ 2) / (t : ℂ)) =
     ∫ u in s', F u
   calc
@@ -310,7 +310,7 @@ private theorem integrableOn_quadraticHilbertTrunc_integrand
   change Integrable
     (fun t ↦ f (x - t) * phase (lam * t ^ 2) / (t : ℂ))
     (volume.restrict {t : ℝ | ε < |t|})
-  simpa only [s, mul_comm, div_eq_mul_inv, mul_left_comm, mul_assoc] using hi
+  simpa only [mul_comm, div_eq_mul_inv, mul_assoc] using hi
 
 theorem quadraticHilbertTrunc_add
     (lam : ℝ) {ε : ℝ} (hε : 0 < ε) (f g : L0Infinity) (x : ℝ) :

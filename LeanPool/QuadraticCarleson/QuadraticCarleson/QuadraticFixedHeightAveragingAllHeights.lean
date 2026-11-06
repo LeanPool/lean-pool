@@ -40,7 +40,7 @@ theorem finiteConvolutionMaximal_le_centered {N : ℕ}
         rw [realCenteredAverageKernel, ite_eq_left hd, hid]
         exact hbound i (x - t)
       · rw [hzero i (x - t) (lt_of_not_ge hd)]
-        simp [realCenteredAverageKernel, hd]
+        simp only [norm_zero, realCenteredAverageKernel, hd, ↓reduceIte, mul_zero, Std.le_refl]
     have h := ENNReal.ofReal_le_ofReal hp
     rw [ENNReal.ofReal_mul (by positivity : 0 ≤ 2 * L),
       ofReal_realCenteredAverageKernel r hr (fun _ ↦ i) x t] at h
@@ -149,6 +149,6 @@ theorem finite_fixedHeightQuadraticKernel_maximal_sq_decay_all_heights
     apply (finite_fixedHeightQuadraticKernel_maximal_sq_bound n 0 lam hlam hf).trans
     apply mul_le_mul' ?_ le_rfl
     apply ENNReal.ofReal_le_ofReal
-    nlinarith [sq_nonneg positiveDyadicAmplitudeBound]
+    linarith only [sq_nonneg positiveDyadicAmplitudeBound]
 
 end QuadraticCarleson

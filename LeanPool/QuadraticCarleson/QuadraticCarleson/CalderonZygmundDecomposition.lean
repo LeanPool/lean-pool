@@ -143,15 +143,14 @@ theorem tsum_volume_czSet_le_lintegral_norm {f : ℝ → ℂ} (hf : Integrable f
       have hmzero : volume.real (czSet hf i) = 0 :=
         le_antisymm (le_of_not_gt hn) measureReal_nonneg
       rw [setAverage_eq, hmzero, inv_zero, zero_smul] at havg
-      linarith
+      linarith only [havg]
     have hreal : volume.real (czSet hf i) < ∫ x in czSet hf i, ‖f x‖ := by
       calc
         volume.real (czSet hf i) = volume.real (czSet hf i) * 1 := by ring
         _ < volume.real (czSet hf i) * (⨍ y in czSet hf i, ‖f y‖) :=
           mul_lt_mul_of_pos_left havg hmpos
         _ = ∫ x in czSet hf i, ‖f x‖ := by
-          simpa [smul_eq_mul] using
-            (measure_smul_setAverage (f := fun x ↦ ‖f x‖) hfin)
+          simpa only [smul_eq_mul] using (measure_smul_setAverage (f := fun x ↦ ‖f x‖) hfin)
     calc
       volume (czSet hf i) = ENNReal.ofReal (volume.real (czSet hf i)) := by
         rw [Measure.real, ENNReal.ofReal_toReal hfin]
@@ -183,7 +182,7 @@ theorem centeredInterval_subset_czSet {f : ℝ → ℂ} (hf : Integrable f)
   intro x hx
   simp only [centeredInterval, mem_Ico] at hx
   simp only [mem_Icc]
-  constructor <;> linarith
+  constructor <;> linarith only [hf, hx]
 
 /-- The ordinary bad atom on a selected interval. -/
 def czBadAtom {f : ℝ → ℂ} (hf : Integrable f) (i : czIndex hf) : ℝ → ℂ :=
@@ -193,7 +192,7 @@ theorem support_centeredAtom_subset (f : ℝ → ℂ) (z R : ℝ) :
     Function.support (centeredAtom f z R) ⊆ centeredInterval z R := by
   intro x hx
   by_contra hnot
-  exact hx (by simp [centeredAtom, hnot])
+  exact hx (by simp only [centeredAtom, hnot, not_false_eq_true, indicator_of_notMem])
 
 theorem integral_centeredAtom_eq_zero (f : ℝ → ℂ) (z R : ℝ) :
     ∫ x, centeredAtom f z R x = 0 := by
@@ -272,13 +271,13 @@ theorem integral_sq_norm_czOutsideGoodPart_le_l1 {f : ℝ → ℂ}
       ((hg.1.norm.aemeasurable.pow_const 2).aestronglyMeasurable)
     filter_upwards [ae_norm_czOutsideGoodPart_le_one hf] with x hx
     rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _), pow_two]
-    nlinarith [norm_nonneg (czOutsideGoodPart hf x)]
+    nlinarith only [hf, hx, norm_nonneg (czOutsideGoodPart hf x)]
   calc
     (∫ x, ‖czOutsideGoodPart hf x‖ ^ 2) ≤ ∫ x, ‖czOutsideGoodPart hf x‖ := by
       apply integral_mono_ae hsq hg.norm
       filter_upwards [ae_norm_czOutsideGoodPart_le_one hf] with x hx
       rw [pow_two]
-      nlinarith [norm_nonneg (czOutsideGoodPart hf x)]
+      nlinarith only [hf, hx, norm_nonneg (czOutsideGoodPart hf x)]
     _ ≤ ∫ x, ‖f x‖ := by
       apply integral_mono_ae hg.norm hf.norm
       filter_upwards with x

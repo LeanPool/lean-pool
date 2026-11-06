@@ -43,7 +43,7 @@ theorem tripleCenteredInterval_subset_fivefold {z R : ℝ} (hR : 0 < R) :
     tripleCenteredInterval z R ⊆ centeredInterval z (5 * R) := by
   intro x hx
   obtain ⟨hl, hu⟩ := hx
-  constructor <;> linarith
+  constructor <;> linarith only [hR, hl, hu]
 
 theorem not_mem_triple_of_not_mem_fivefoldExceptionalSet {ι : Type*} {z R : ι → ℝ}
     (hR : ∀ i, 0 < R i) {x : ℝ} (hx : x ∉ fivefoldExceptionalSet z R) (i : ι) :
@@ -55,7 +55,7 @@ theorem not_mem_triple_of_not_mem_fivefoldExceptionalSet {ι : Type*} {z R : ι 
 theorem volume_fivefoldExceptionalSet_le {ι : Type*} [Countable ι] (z R : ι → ℝ) :
     volume (fivefoldExceptionalSet z R) ≤ 5 * ∑' i, ENNReal.ofReal (R i) := by
   apply (measure_iUnion_le _).trans_eq
-  simp_rw [volume_centeredInterval, ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 5)]
+  simp_rw [volume_centeredInterval, ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 5)]
   rw [ENNReal.tsum_mul_left]
   norm_num
 

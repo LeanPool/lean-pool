@@ -33,7 +33,7 @@ noncomputable def lowKernelBadAtomConstant : ℝ :=
 
 theorem lowKernelBadAtomConstant_nonneg :
     0 ≤ lowKernelBadAtomConstant := by
-  exact le_trans (by norm_num) (le_max_left 2 (32 * lowKernelDerivativeConstant))
+  exact le_trans (by norm_num1) (le_max_left 2 (32 * lowKernelDerivativeConstant))
 
 theorem two_le_lowKernelBadAtomConstant :
     2 ≤ lowKernelBadAtomConstant :=
@@ -56,7 +56,7 @@ theorem norm_setIntegral_paperLowCZKernel_le_size
       (2 / |x - z|) * ∫ y in centeredInterval z R, ‖f y‖ := by
   have hxz : 0 < |x - z| := by
     have := not_mem_tripleCenteredInterval_abs hx
-    linarith
+    linarith only [hR, this]
   have hmajorant : IntegrableOn
       (fun y ↦ (2 / |x - z|) * ‖f y‖) (centeredInterval z R) :=
     hf.norm.const_mul (2 / |x - z|)
@@ -74,7 +74,7 @@ theorem norm_setIntegral_paperLowCZKernel_le_size
             (sub_ne_zero.mpr (by
               intro h
               rw [h] at hxy
-              simp at hxy))
+              simp only [sub_self, abs_zero, lt_self_iff_false] at hxy))
         _ ≤ 1 / (|x - z| / 2) :=
           one_div_le_one_div_of_le (half_pos hxz) hdist
         _ = 2 / |x - z| := by field_simp [ne_of_gt hxz]
@@ -142,7 +142,7 @@ theorem norm_setIntegral_paperLowCZKernel_le_lowDecayMajorant
   have hA : 0 ≤ A := integral_nonneg fun _ ↦ norm_nonneg _
   have hxz : 0 < |x - z| := by
     have := not_mem_tripleCenteredInterval_abs hx
-    linarith
+    linarith only [hR, this]
   have hsize := norm_setIntegral_paperLowCZKernel_le_size
     hlam B f hR hx hf
   have hcancel := norm_setIntegral_paperLowCZKernel_le_cancellation
@@ -229,18 +229,18 @@ theorem integral_norm_paperLowCZKernel_le_sharp
           lowDecayMajorant ((2 : ℝ) ^ (2 * B)) (3 * R / 2) z x := by
         apply mul_le_mul_of_nonneg_left _
           (mul_nonneg lowKernelBadAtomConstant_nonneg hA)
-        exact lowDecayMajorant_mono_length (by positivity) (by linarith)
+        exact lowDecayMajorant_mono_length (by positivity) (by linarith only [hR])
   have h := integral_le_four_mul_succ_of_le_lowDecayMajorant
     (fun x ↦ ‖∫ y in centeredInterval z R,
       paperLowCZKernel lam hlam B x y * f y‖)
     (lowKernelBadAtomConstant * A) (3 * R / 2) z B
     (mul_nonneg lowKernelBadAtomConstant_nonneg hA) hscale
-    (by simpa only [tripleCenteredInterval] using hmeas)
+    (by exact hmeas)
     (fun _ _ ↦ norm_nonneg _)
     (by
       intro x hx
       apply hmajorant x
-      simpa only [tripleCenteredInterval] using hx)
-  simpa only [A, tripleCenteredInterval] using h
+      exact hx)
+  simpa only [tripleCenteredInterval] using h
 
 end QuadraticCarleson

@@ -31,30 +31,30 @@ theorem tendsto_dyadicCutoffArgument_add_nat_zero (j : ℤ) (t : ℝ) :
       (fun n : ℕ ↦ (2⁻¹ : ℝ) ^ (j + (n : ℤ) - 1) * t)
       atTop (𝓝 0) := by
   have hp : Tendsto (fun n : ℕ ↦ (1 / 2 : ℝ) ^ n) atTop (𝓝 0) :=
-    tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
+    tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num1) (by norm_num1)
   have hc : Tendsto (fun _ : ℕ ↦ (2⁻¹ : ℝ) ^ (j - 1)) atTop
       (𝓝 ((2⁻¹ : ℝ) ^ (j - 1))) := tendsto_const_nhds
   have h := (hc.mul hp).mul_const t
   convert h using 1
   · funext n
     rw [show j + (n : ℤ) - 1 = (j - 1) + (n : ℤ) by ring,
-      zpow_add₀ (by norm_num : (2⁻¹ : ℝ) ≠ 0), zpow_natCast]
+      zpow_add₀ (by norm_num1 : (2⁻¹ : ℝ) ≠ 0), zpow_natCast]
     norm_num
-  · simp
+  · simp only [inv_zpow', neg_sub, mul_zero, zero_mul]
 
 /-- At every nonzero point the positive-height dyadic kernel sequence has
 finite support. -/
 theorem hasFiniteSupport_dyadicPsi_add_nat (j : ℤ) (t : ℝ) :
     HasFiniteSupport (fun r : ℕ ↦ dyadicPsi (j + (r : ℤ)) t) := by
   have hp : Tendsto (fun n : ℕ ↦ (2 : ℝ) ^ n) atTop atTop :=
-    tendsto_pow_atTop_atTop_of_one_lt (by norm_num)
-  have hc : 0 < (2 : ℝ) ^ (j - 3) := zpow_pos (by norm_num) _
+    tendsto_pow_atTop_atTop_of_one_lt (by norm_num1)
+  have hc : 0 < (2 : ℝ) ^ (j - 3) := zpow_pos (by norm_num1) _
   have hscale : Tendsto
       (fun n : ℕ ↦ (2 : ℝ) ^ (j + (n : ℤ) - 3)) atTop atTop := by
     convert hp.const_mul_atTop hc using 1
     funext n
     rw [show j + (n : ℤ) - 3 = (j - 3) + (n : ℤ) by ring,
-      zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_natCast]
+      zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_natCast]
   have hz : ∀ᶠ n : ℕ in atTop,
       dyadicPsi (j + (n : ℤ)) t = 0 := by
     filter_upwards [hscale.eventually_gt_atTop |t|] with n hn
@@ -63,8 +63,7 @@ theorem hasFiniteSupport_dyadicPsi_add_nat (j : ℤ) (t : ℝ) :
     rw [Nat.cofinite_eq_atTop]
     exact hz
   rw [mem_cofinite] at hzcofinite
-  simpa only [HasFiniteSupport, support, ne_eq,
-    compl_ofPred] using hzcofinite
+  exact hzcofinite
 
 theorem summable_dyadicPsi_add_nat (j : ℤ) (t : ℝ) :
     Summable (fun r : ℕ ↦ dyadicPsi (j + (r : ℤ)) t) :=
@@ -86,7 +85,7 @@ theorem hasSum_dyadicPsi_add_nat (j : ℤ) {t : ℝ} (ht : t ≠ 0) :
       (fun n : ℕ ↦ dyadicCutoff
         ((2⁻¹ : ℝ) ^ (j + (n : ℤ) - 1) * t))
       atTop (𝓝 (dyadicCutoff 0)) at h
-    rw [dyadicCutoff_eq_one (x := (0 : ℝ)) (by norm_num)] at h
+    rw [dyadicCutoff_eq_one (x := (0 : ℝ)) (by norm_num1)] at h
     exact h
   have hc : Tendsto
       (fun _ : ℕ ↦ dyadicCutoff ((2⁻¹ : ℝ) ^ (j - 1) * t)) atTop
@@ -162,7 +161,7 @@ theorem hasSum_selectedDyadicQuadraticKernel
     rw [hz]
     have hkernel : paperOscillatoryKernel lam hlam 0 = 0 := by
       simp [paperOscillatoryKernel,
-        dyadicCutoff_eq_one (x := (0 : ℝ)) (by norm_num)]
+        dyadicCutoff_eq_one (x := (0 : ℝ)) (by norm_num1)]
     rw [hkernel]
     exact (hasSum_zero : HasSum (fun _ : ℕ ↦ (0 : ℂ)) 0)
   · have hr := hasSum_dyadicPsi_oscillatoryScaleIndex lam hlam ht
@@ -171,8 +170,7 @@ theorem hasSum_selectedDyadicQuadraticKernel
         (((1 - dyadicCutoff
           ((2⁻¹ : ℝ) ^ (oscillatoryScaleIndex lam 0 hlam - 1) * t)) / t : ℝ) : ℂ) :=
       Complex.hasSum_ofReal.mpr hr
-    simpa only [paperOscillatoryKernel] using
-      hc.mul_right (phase (lam * t ^ 2))
+    exact hc.mul_right (phase (lam * t ^ 2))
 
 theorem tsum_selectedDyadicQuadraticKernel
     (lam : ℝ) (hlam : lam ≠ 0) (t : ℝ) :

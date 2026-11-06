@@ -38,7 +38,7 @@ def reflect (f : L0Infinity) : L0Infinity where
 
 @[simp] theorem reflect_reflect (f : L0Infinity) : reflect (reflect f) = f := by
   cases f
-  simp [reflect]
+  simp only [reflect, neg_neg]
 
 end L0Infinity
 
@@ -52,10 +52,10 @@ def reflect (I : RealInterval) : RealInterval :=
 @[simp] theorem reflect_right (I : RealInterval) : I.reflect.right = -I.left := rfl
 @[simp] theorem reflect_reflect (I : RealInterval) : I.reflect.reflect = I := by
   cases I
-  simp [reflect]
+  simp only [reflect, neg_neg]
 
 @[simp] theorem reflect_length (I : RealInterval) : I.reflect.length = I.length := by
-  simp [length, reflect]
+  simp only [length, reflect, sub_neg_eq_add]
   ring
 
 theorem reflect_injective : Injective reflect :=
@@ -68,7 +68,7 @@ theorem preimage_neg_reflect_carrier_ae (I : RealInterval) :
   have heq : (fun x : ℝ ↦ -x) ⁻¹' I.reflect.carrier = Ico I.left I.right := by
     ext x
     change (-I.right < -x ∧ -x ≤ -I.left) ↔ (I.left ≤ x ∧ x < I.right)
-    constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith
+    constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith only [h₂, h₁]
   rw [heq]
   exact Ico_ae_eq_Ioc
 
@@ -82,7 +82,7 @@ def reflectedFamily (S : Set RealInterval) : Set RealInterval := RealInterval.re
 @[simp] theorem reflectedFamily_reflectedFamily (S : Set RealInterval) :
     reflectedFamily (reflectedFamily S) = S := by
   ext I
-  simp [reflectedFamily]
+  simp only [reflectedFamily, mem_preimage, RealInterval.reflect_reflect]
 
 /-- The index equivalence between a reflected interval family and the original family. -/
 def reflectedIndexEquiv (S : Set RealInterval) :
@@ -108,7 +108,7 @@ theorem isSparse_reflectedFamily {η : ℝ} {S : Set RealInterval} (hS : IsSpars
     change -I.1.right < -x ∧ -x ≤ -I.1.left at hxE
     change I.1.left < x ∧ x ≤ I.1.right
     have hxne : x ≠ I.1.left := hx.2
-    exact ⟨lt_of_le_of_ne (by linarith) hxne.symm, by linarith⟩
+    exact ⟨lt_of_le_of_ne (by linarith only [hxE]) hxne.symm, by linarith only [hxE]⟩
   · intro I J hIJ
     apply Disjoint.mono sdiff_subset sdiff_subset
     exact (hEd (e.injective.ne hIJ)).preimage _
@@ -126,7 +126,7 @@ theorem isSparse_reflectedFamily_iff {η : ℝ} {S : Set RealInterval} :
     IsSparse η (reflectedFamily S) ↔ IsSparse η S := by
   constructor
   · intro h
-    simpa using isSparse_reflectedFamily h
+    simpa only [reflectedFamily_reflectedFamily] using isSparse_reflectedFamily h
   · exact isSparse_reflectedFamily
 
 theorem localAverage_reflect (p : ℝ) (f : ℝ → ℂ) (I : RealInterval) :
@@ -137,7 +137,7 @@ theorem localAverage_reflect (p : ℝ) (f : ℝ → ℂ) (I : RealInterval) :
   rw [RealInterval.carrier, ← intervalIntegral.integral_of_le I.reflect.left_lt_right.le]
   change (∫ x in I.reflect.left..I.reflect.right, (fun y ↦ ‖f y‖ ^ p) (-x)) = _
   rw [intervalIntegral.integral_comp_neg (fun y : ℝ ↦ ‖f y‖ ^ p)]
-  simp only [RealInterval.reflect_right, RealInterval.reflect_left, neg_neg]
+  simp only [RealInterval.reflect_right, neg_neg, RealInterval.reflect_left]
   exact intervalIntegral.integral_of_le I.left_lt_right.le
 
 theorem sparseForm_reflectedFamily (p : ℝ) (f g : ℝ → ℂ) (S : Set RealInterval) :
@@ -159,14 +159,14 @@ def reflectedOperator (T : TestOperator) : TestOperator :=
 @[simp] theorem reflectedOperator_reflectedOperator (T : TestOperator) :
     reflectedOperator (reflectedOperator T) = T := by
   funext f x
-  simp [reflectedOperator]
+  simp only [reflectedOperator, L0Infinity.reflect_reflect, neg_neg]
 
 theorem operatorPairing_reflectedOperator (T : TestOperator) (f g : L0Infinity) :
     operatorPairing (reflectedOperator T) f g =
       operatorPairing T (L0Infinity.reflect f) (L0Infinity.reflect g) := by
   unfold operatorPairing reflectedOperator
   have h := integral_neg_eq_self (fun x ↦ T (L0Infinity.reflect f) x * star (g (-x))) volume
-  simpa only [neg_neg, L0Infinity.reflect_apply] using h
+  simpa only [L0Infinity.reflect_apply, neg_neg] using h
 
 /-- Sparse bounds pass to reflection without any loss in their constant
 or their `1/4` sparseness parameter. -/
@@ -182,7 +182,7 @@ theorem hasSparseOnePBound_reflectedOperator_iff {C p : ℝ} {T : TestOperator} 
     HasSparseOnePBound C p (reflectedOperator T) ↔ HasSparseOnePBound C p T := by
   constructor
   · intro h
-    simpa using hasSparseOnePBound_reflectedOperator h
+    simpa only [reflectedOperator_reflectedOperator] using hasSparseOnePBound_reflectedOperator h
   · exact hasSparseOnePBound_reflectedOperator
 
 theorem sparseOnePNorm_reflectedOperator (p : ℝ) (T : TestOperator) :
@@ -251,7 +251,7 @@ noncomputable def normInput (g : L0Infinity) : L0Infinity where
 
 theorem localAverage_normInput (p : ℝ) (g : L0Infinity) (I : RealInterval) :
     localAverage p (normInput g) I = localAverage p g I := by
-  simp [localAverage, normInput]
+  simp only [localAverage, normInput, Complex.norm_real, norm_norm, one_div]
 
 theorem sparseForm_normInput (p : ℝ) (f : ℝ → ℂ) (g : L0Infinity) (S : Set RealInterval) :
     sparseForm p f (normInput g) S = sparseForm p f g S := by
@@ -324,7 +324,7 @@ theorem integrable_pairing_of_locallyIntegrable {u : ℝ → ℂ}
     apply subset_tsupport g
     change g x ≠ 0
     intro hg
-    exact hx (by simp [hg])
+    exact hx (by simp only [hg, star_zero, mul_zero])
   apply (integrableOn_iff_integrable_of_support_subset hs).mp
   obtain ⟨C, hC⟩ := g.bounded_toFun
   have hgm : Measurable (fun x : ℝ ↦ star (g x)) :=

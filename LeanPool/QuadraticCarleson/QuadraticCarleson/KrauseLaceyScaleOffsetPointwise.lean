@@ -159,8 +159,8 @@ theorem norm_finiteSmoothMax_le_dyadicMax_add_boundary
       ‖dyadicSmoothHighPassMaxOperator lam (adjacentDyadicLowerIndex s) f x‖ +
         24 * ‖centeredHardyLittlewoodBoundaryOperator f x‖)).mp
   simpa only [ENNReal.ofReal_add (norm_nonneg _)
-    (mul_nonneg (by norm_num : (0 : ℝ) ≤ 24) (norm_nonneg _)),
-    ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 24), ENNReal.ofReal_ofNat,
+    (mul_nonneg (by norm_num1 : (0 : ℝ) ≤ 24) (norm_nonneg _)),
+    ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 24), ENNReal.ofReal_ofNat,
     ofReal_norm] using h
 
 @[simp] theorem absoluteValue_centeredHardyLittlewoodBoundaryOperator :

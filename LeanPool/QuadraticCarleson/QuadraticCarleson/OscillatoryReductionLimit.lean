@@ -37,7 +37,7 @@ theorem tendsto_smallPhaseKernel (lam ρ t : ℝ) :
       (eventually_lt_nhds (abs_pos.mpr ht)).filter_mono nhdsWithin_le_nhds
     apply tendsto_const_nhds.congr'
     filter_upwards [he] with ε hε
-    simp only [smallPhaseKernel, hε, abs_pos.mpr ht, true_and]
+    simp only [smallPhaseKernel, abs_pos.mpr ht, true_and, hε]
 
 theorem tendsto_smallPhaseIntegral (lam : ℝ) (hlam : lam ≠ 0)
     (f : L0Infinity) (x : ℝ) :
@@ -114,8 +114,8 @@ theorem forall_nonzero_principalValue_iff_hilbert (f : L0Infinity) (x : ℝ) :
       ∃ z : ℂ, HasQuadraticPrincipalValue 0 f x z := by
   constructor
   · intro h
-    exact (exists_quadraticPrincipalValue_iff_hilbert 1 (by norm_num) f x).mp
-      (h ⟨1, by norm_num⟩)
+    exact (exists_quadraticPrincipalValue_iff_hilbert 1 (by norm_num1) f x).mp
+      (h ⟨1, by norm_num1⟩)
   · intro h lam
     exact (exists_quadraticPrincipalValue_iff_hilbert lam.1 lam.2 f x).mpr h
 

@@ -28,29 +28,29 @@ specified in the paper's notation section. -/
 theorem torusNorm_eq_abs_of_mem_Ico {x : ℝ}
     (hx : x ∈ Ico (-1 / 2 : ℝ) (1 / 2 : ℝ)) : torusNorm x = |x| := by
   by_cases hx0 : 0 ≤ x
-  · have hfract : Int.fract x = x := Int.fract_eq_self.mpr ⟨hx0, by linarith [hx.2]⟩
-    rw [torusNorm, hfract, min_eq_left (by linarith [hx.2]), abs_of_nonneg hx0]
+  · have hfract : Int.fract x = x := Int.fract_eq_self.mpr ⟨hx0, by linarith only [hx, hx.2]⟩
+    rw [torusNorm, hfract, min_eq_left (by linarith only [hx, hx.2]), abs_of_nonneg hx0]
   · have hxneg : x < 0 := lt_of_not_ge hx0
     have hfloor : ⌊x⌋ = (-1 : ℤ) := Int.floor_eq_iff.mpr (by
-      constructor <;> norm_num <;> linarith [hx.1])
+      constructor <;> norm_num <;> linarith only [hx, hx.1, hx0])
     have hfract : Int.fract x = x + 1 := by simp [Int.fract, hfloor]
-    rw [torusNorm, hfract, min_eq_right (by linarith [hx.1]), abs_of_neg hxneg]
+    rw [torusNorm, hfract, min_eq_right (by linarith only [hx, hx.1]), abs_of_neg hxneg]
     ring
 
 /-- Distance to the nearest integer is bounded by distance to zero. -/
 theorem torusNorm_le_abs (x : ℝ) : torusNorm x ≤ |x| := by
   by_cases hx : |x| < 1 / 2
   · exact (torusNorm_eq_abs_of_mem_Ico
-      ⟨by linarith [(abs_lt.mp hx).1], (abs_lt.mp hx).2⟩).le
+      ⟨by linarith only [hx, (abs_lt.mp hx).1], (abs_lt.mp hx).2⟩).le
   · exact (torusNorm_le_half x).trans (le_of_not_gt hx)
 
 @[simp]
 theorem torusNorm_sub_int (x : ℝ) (z : ℤ) : torusNorm (x - z) = torusNorm x := by
-  simp [torusNorm, Int.fract_sub_intCast]
+  simp only [torusNorm, Int.fract_sub_intCast]
 
 /-- The fractional-part formula is a lower bound for distance to every integer. -/
 theorem torusNorm_le_abs_sub_int (x : ℝ) (z : ℤ) : torusNorm x ≤ |x - z| := by
-  simpa using torusNorm_le_abs (x - z)
+  simpa only [torusNorm_sub_int] using torusNorm_le_abs (x - z)
 
 /-- One integer attains the torus norm, so this is a minimum, not merely an infimum. -/
 theorem exists_int_abs_sub_eq_torusNorm (x : ℝ) : ∃ z : ℤ, |x - z| = torusNorm x := by

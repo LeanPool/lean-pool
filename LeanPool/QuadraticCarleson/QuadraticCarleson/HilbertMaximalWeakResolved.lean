@@ -31,11 +31,11 @@ open CalderonZygmundDyadicStopping HilbertPrincipalValueClosure
 theorem lintegral_sq_enorm_stoppingGoodPart_le {f : ℝ → ℂ} (hf : Integrable f) :
     (∫⁻ x, ‖stoppingGoodPart f x‖ₑ ^ 2) ≤ 5 * ∫⁻ x, ‖f x‖ₑ := by
   have h := ENNReal.ofReal_le_ofReal (integral_sq_norm_stoppingGoodPart_le_five_l1 hf)
-  rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 5),
+  rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 5),
     ofReal_integral_eq_lintegral_ofReal (integrable_sq_norm_stoppingGoodPart hf)
       (ae_of_all _ fun x ↦ sq_nonneg _),
     ofReal_integral_eq_lintegral_ofReal hf.norm (ae_of_all _ fun x ↦ norm_nonneg _)] at h
-  simpa only [ENNReal.ofReal_ofNat, ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm] using h
+  simpa only [ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm, ENNReal.ofReal_ofNat] using h
 
 theorem lintegral_sq_enorm_goodHilbert_le {f : ℝ → ℂ} (hf : Integrable f) :
     (∫⁻ x, ‖measurableStoppingGoodHilbertRepresentative f hf x‖ₑ ^ 2) ≤
@@ -139,7 +139,7 @@ theorem normalized_weak_bound {f : ℝ → ℂ} (hf : Measurable f) (hfi : Integ
       (mul_le_mul' le_rfl (lintegral_sq_enorm_stoppingGoodPart_le hfi))
   have hD : volume D ≤ 96 * I + 2 * (ENNReal.ofReal (32 / 3) * I + 128 * I) := by
     calc
-      _ ≤ 32 * volume D := le_mul_of_one_le_left' (by norm_num)
+      _ ≤ 32 * volume D := le_mul_of_one_le_left' (by norm_num1)
       _ ≤ _ := quadraticHilbertMaximalTruncation_badPart_weak_bound_one hf hfi
   calc
     _ ≤ volume ((A ∪ B) ∪ D) := measure_mono hsub
@@ -171,7 +171,7 @@ theorem ordinaryHilbertMaximal_weak_bound {f : ℝ → ℂ}
       quadraticHilbertMaximalTruncation 0 (fun y ↦ (c : ℂ) * f y) x} =
       {x | ENNReal.ofReal a < quadraticHilbertMaximalTruncation 0 f x} := by
     ext x
-    simp only [mem_ofPred_eq, quadraticHilbertMaximalTruncation_zero_const_mul, hcnorm]
+    simp only [quadraticHilbertMaximalTruncation_zero_const_mul, hcnorm, mem_ofPred_eq]
     rw [← hca, ENNReal.ofReal_mul hc.le]
     exact ENNReal.mul_lt_mul_iff_right (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top
   rw [hset] at hn
@@ -187,7 +187,7 @@ theorem ordinaryHilbertMaximal_weak_bound {f : ℝ → ℂ}
       rw [show ENNReal.ofReal a * (ENNReal.ofReal normalizedWeakConstant *
         (ENNReal.ofReal c * ∫⁻ y, ‖f y‖ₑ)) =
         ((ENNReal.ofReal a * ENNReal.ofReal c) * ENNReal.ofReal normalizedWeakConstant) *
-          ∫⁻ y, ‖f y‖ₑ by ring]
+          ∫⁻ y, ‖f y‖ₑ by ac_rfl]
       rw [← ENNReal.ofReal_mul ha.le, hac,
         ← ENNReal.ofReal_mul normalizedThreshold_pos.le]
       rfl

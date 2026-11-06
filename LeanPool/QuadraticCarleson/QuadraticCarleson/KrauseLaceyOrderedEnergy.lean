@@ -39,11 +39,11 @@ theorem sum_abs_inner_eq_diagonal_add_crossRows
     · subst j
       simp []
     · by_cases hlt : rank j < rank i
-      · simp [hij, hlt, not_lt_of_ge hlt.le]
+      · simp only [hlt, ↓reduceIte, not_lt_of_ge hlt.le, add_zero, hij]
       · by_cases hgt : rank i < rank j
-        · simp [hij, hlt, hgt]
+        · simp only [hlt, ↓reduceIte, hgt, zero_add, hij, add_zero]
         · have hr : rank i = rank j := by omega
-          simp [hij, hlt, hgt, heq i hi j hj hij hr]
+          simp only [heq i hi j hj hij hr, abs_zero, hlt, ↓reduceIte, hgt, add_zero, hij]
   have hswap :
       (∑ i ∈ S, ∑ j ∈ S, if rank i < rank j then |inner ℝ (v i) (v j)| else 0) =
       ∑ i ∈ S, ∑ j ∈ S, if rank j < rank i then |inner ℝ (v i) (v j)| else 0 := by
@@ -87,7 +87,7 @@ theorem signed_sum_sq_le_diagonal_add_crossRows
   calc
     c i * (c j * inner ℝ (v i) (v j)) ≤ |c i * (c j * inner ℝ (v i) (v j))| :=
       le_abs_self _
-    _ = (|c i| * |c j|) * |inner ℝ (v i) (v j)| := by rw [abs_mul, abs_mul]; ring
+    _ = (|c i| * |c j|) * |inner ℝ (v i) (v j)| := by rw [abs_mul, abs_mul]; ac_rfl
     _ ≤ 1 * |inner ℝ (v i) (v j)| := mul_le_mul_of_nonneg_right
       ((mul_le_mul_of_nonneg_right (hc i hi) (abs_nonneg _)).trans
         (by simpa only [one_mul] using hc j hj)) (abs_nonneg _)
@@ -133,7 +133,7 @@ theorem signed_sum_sq_le_mass_of_residue_bounds
           |inner ℝ (v i) (v j)| := signed_sum_sq_le_diagonal_add_crossRows S v rank heq c hc
     _ ≤ diagonalCoefficient * (∑ i ∈ S, mass i) +
         2 * (rowCoefficient * ∑ i ∈ S, mass i) :=
-      add_le_add hdiag (mul_le_mul_of_nonneg_left hrows (by norm_num))
+      add_le_add hdiag (mul_le_mul_of_nonneg_left hrows (by norm_num1))
     _ = _ := by ring
 
 
@@ -155,7 +155,7 @@ theorem norm_sum_sq_le_of_finite_partition
   calc
     _ ≤ (∑ r : Fin 3, ‖w r‖) ^ 2 := by gcongr; exact norm_sum_le _ _
     _ ≤ 3 * ∑ r : Fin 3, ‖w r‖ ^ 2 := by
-      simpa using sq_sum_le_card_mul_sum_sq (s := Finset.univ) (f := fun r : Fin 3 => ‖w r‖)
+      exact sq_sum_le_card_mul_sum_sq (s := Finset.univ) (f := fun r : Fin 3 => ‖w r‖)
     _ ≤ 3 * ∑ r : Fin 3, C * ∑ i ∈ R r, mass i := by
       gcongr with r
       exact hbound r
@@ -165,6 +165,6 @@ theorem norm_sum_sq_le_of_finite_partition
         Finset.sum_fiberwise_of_maps_to (fun i (_ : i ∈ S) =>
           Finset.mem_univ (colour i)) _
       rw [hm]
-      ring
+      ac_rfl
 
 end QuadraticCarleson.KrauseLaceyOrderedEnergy

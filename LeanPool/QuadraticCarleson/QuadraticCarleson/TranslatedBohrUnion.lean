@@ -34,7 +34,7 @@ theorem mem_integerTranslate_iff {k : ℤ} {E : Set ℝ} {x : ℝ} :
   · intro hx
     exact ⟨x - k, hx, by ring⟩
   · rintro ⟨y, hy, rfl⟩
-    simpa [integerTranslate] using hy
+    simpa only [integerTranslate, mem_preimage, add_sub_cancel_left] using hy
 
 theorem measurableSet_integerTranslate {k : ℤ} {E : Set ℝ}
     (hE : MeasurableSet E) : MeasurableSet (integerTranslate k E) :=
@@ -43,12 +43,12 @@ theorem measurableSet_integerTranslate {k : ℤ} {E : Set ℝ}
 @[simp]
 theorem volume_integerTranslate (k : ℤ) (E : Set ℝ) :
     volume (integerTranslate k E) = volume E := by
-  simp [integerTranslate, sub_eq_add_neg]
+  simp only [integerTranslate, sub_eq_add_neg, measure_preimage_add_right]
 
 @[simp]
 theorem volume_real_integerTranslate (k : ℤ) (E : Set ℝ) :
     volume.real (integerTranslate k E) = volume.real E := by
-  simp [measureReal_def]
+  simp only [measureReal_def, volume_integerTranslate]
 
 /-- Integer translates of sets supported in `[1/4,1/2)` do not overlap. -/
 theorem integerTranslate_disjoint {k l : ℤ} {E F : Set ℝ}
@@ -61,9 +61,9 @@ theorem integerTranslate_disjoint {k l : ℤ} {E F : Set ℝ}
   have hy' := hF hy
   rcases lt_or_gt_of_ne hkl with hkl | hlk
   · have hkl' : (k : ℝ) + 1 ≤ l := by exact_mod_cast hkl
-    linarith [hx'.2, hy'.1]
+    linarith only [hx', hy', hkl', hx'.2, hy'.1]
   · have hlk' : (l : ℝ) + 1 ≤ k := by exact_mod_cast hlk
-    linarith [hy'.2, hx'.1]
+    linarith only [hx', hy', hlk', hy'.2, hx'.1]
 
 /-- The translated pieces appearing in the definition of `E_N`. -/
 def translatedDyadicBohrUnion (I : Finset ℤ) (M : ℤ → ℝ) (B c : ℝ) : Set ℝ :=
@@ -110,7 +110,7 @@ theorem translatedDyadicBohrUnion_volume_real_ge
   rw [translatedDyadicBohrUnion_volume_real_eq_sum]
   calc
     (I.card : ℝ) * (a / (1536 * (a + 1))) =
-        ∑ _k ∈ I, a / (1536 * (a + 1)) := by simp
+        ∑ _k ∈ I, a / (1536 * (a + 1)) := by simp only [Finset.sum_const, nsmul_eq_mul]
     _ ≤ ∑ k ∈ I, volume.real (dyadicBohrLogUnion (M k) B c) := by
       apply Finset.sum_le_sum
       intro k hk
@@ -129,7 +129,7 @@ theorem paperBohrIndices_pos {N : ℕ} {k : ℤ} (hN : 20 ≤ N)
     (hk : k ∈ paperBohrIndices N) : 0 < k := by
   have hN' : (20 : ℝ) ≤ N := by exact_mod_cast hN
   have hk' := (mem_paperBohrIndices.mp hk).1
-  have hk0 : (0 : ℝ) < k := by linarith
+  have hk0 : (0 : ℝ) < k := by linarith only [hN', hk']
   exact_mod_cast hk0
 
 /-- A concrete index count sufficient for the paper's `|E_N| ≳ N` estimate. -/
@@ -140,14 +140,14 @@ theorem paperBohrIndices_card_ge {N : ℕ} (hN : 20 ≤ N) :
   have hu := Int.lt_floor_add_one (7 * (N : ℝ) / 10)
   have hlu : ⌈3 * (N : ℝ) / 5⌉ ≤ ⌊7 * (N : ℝ) / 10⌋ + 1 := by
     have hlu' : (⌈3 * (N : ℝ) / 5⌉ : ℝ) ≤ (⌊7 * (N : ℝ) / 10⌋ : ℝ) + 1 := by
-      linarith
+      linarith only [hN', hl, hu]
     exact_mod_cast hlu'
   have hcard := Int.card_Icc_of_le (a := ⌈3 * (N : ℝ) / 5⌉)
     (b := ⌊7 * (N : ℝ) / 10⌋) hlu
   have hcard' := congrArg (fun z : ℤ => (z : ℝ)) hcard
   push_cast at hcard'
   change (N : ℝ) / 20 ≤ ((Finset.Icc ⌈3 * (N : ℝ) / 5⌉ ⌊7 * (N : ℝ) / 10⌋).card : ℝ)
-  linarith
+  linarith only [hN', hl, hu, hcard']
 
 /-- The specialized linear estimate on the paper's index interval, still
 allowing arbitrary logarithmic windows and any fixed lower bound on `Bc`. -/
@@ -177,20 +177,19 @@ theorem paperTranslatedBohrSet_volume_real_ge {N : ℕ} {L : ℝ}
     (hN : 20 ≤ N) (hL : 2 ≤ 3 * (N : ℝ) ^ 2 / 5 + L) :
     (N : ℝ) / (30720 * ((2 : ℝ) ^ 100 + 1)) ≤ volume.real (paperTranslatedBohrSet N L) := by
   have hN' : (20 : ℝ) ≤ N := by exact_mod_cast hN
-  have hN0 : (0 : ℝ) < N := by linarith
+  have hN0 : (0 : ℝ) < N := by linarith only [hN']
   have hM : ∀ k ∈ paperBohrIndices N, 2 ≤ (N : ℝ) * k + L := by
     intro k hk
     have hk' := (mem_paperBohrIndices.mp hk).1
-    nlinarith [mul_le_mul_of_nonneg_left hk' hN0.le]
+    linarith only [hL, hN0, hk', mul_le_mul_of_nonneg_left hk' hN0.le]
   have hc : (1 : ℝ) / ((2 : ℝ) ^ 100 * N) < 1 / 10 := by
     apply (div_lt_iff₀ (by positivity)).mpr
-    have hpow : (10 : ℝ) < 2 ^ 100 := by norm_num
-    nlinarith
+    linarith only [hN']
   have hac : (1 : ℝ) / 2 ^ 100 ≤ (N : ℝ) * (1 / ((2 : ℝ) ^ 100 * N)) := by
     apply le_of_eq
     field_simp
   have h := translatedDyadicBohrUnion_paperIndices_volume_real_ge
-    (fun k => (N : ℝ) * k + L) hN hM (by linarith : (1 : ℝ) ≤ N)
+    (fun k => (N : ℝ) * k + L) hN hM (by linarith only [hN'] : (1 : ℝ) ≤ N)
     (by positivity : (0 : ℝ) < 1 / 2 ^ 100) hac hc
   change ((N : ℝ) / 20) * ((1 / (2 : ℝ) ^ 100) / (1536 * (1 / (2 : ℝ) ^ 100 + 1))) ≤
     volume.real (paperTranslatedBohrSet N L) at h

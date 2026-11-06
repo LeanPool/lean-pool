@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PVSymmetricLimit
-public import Mathlib.MeasureTheory.Measure.Lebesgue.Integral
 
 /-!
 # Differential prerequisites for the principal-value Fourier identity
@@ -49,7 +48,7 @@ theorem smulLeft_id_principalValueOneDiv :
   let g := SchwartzMap.smulLeftCLM ℂ (fun x : ℝ ↦ (x : ℂ)) f
   have hg : ∀ x, g x = (x : ℂ) * f x := by
     intro x
-    simp [g, SchwartzMap.smulLeftCLM_apply_apply hpoly, smul_eq_mul]
+    simp only [SchwartzMap.smulLeftCLM_apply_apply hpoly, smul_eq_mul, g]
   have ha : (fun x : ℝ ↦ g x / (x : ℂ)) =ᵐ[volume] f := by
     filter_upwards [volume.ae_ne (0 : ℝ)] with x hx
     rw [hg]
@@ -63,7 +62,7 @@ theorem smulLeft_id_principalValueOneDiv :
     integral_congr_ae (ae_restrict_of_ae hn), integral_congr_ae (ae_restrict_of_ae ha)]
   have hc : {x : ℝ | 1 ≤ |x|} = (Ioo (-1 : ℝ) 1)ᶜ := by
     ext x
-    simp only [Set.mem_ofPred_eq, mem_compl_iff, mem_Ioo, ← abs_lt, not_lt]
+    simp only [mem_ofPred_eq, mem_compl_iff, mem_Ioo, ← abs_lt, not_lt]
   rw [hc]
   exact integral_add_compl measurableSet_Ioo f.integrable
 
@@ -98,7 +97,7 @@ theorem deriv_signTemperedDistribution :
 theorem schwartz_lineDeriv_one_eq_deriv (f : 𝓢(ℝ, ℂ)) :
     ∂_{(1 : ℝ)} f = SchwartzMap.derivCLM ℂ ℂ f := by
   ext x
-  simp [SchwartzMap.lineDerivOp_apply_eq_fderiv]
+  rfl
 
 theorem distribution_lineDeriv_one_eq_deriv (T : 𝓢'(ℝ, ℂ)) :
     ∂_{(1 : ℝ)} T = TemperedDistribution.derivCLM ℂ T := by
@@ -132,7 +131,7 @@ theorem deriv_fourier_principalValueOneDiv :
   have hm : TemperedDistribution.smulLeftCLM ℂ
       (fun x : ℝ ↦ ((inner ℝ x 1 : ℝ) : ℂ)) principalValueOneDiv =
         (volume : Measure ℝ).toTemperedDistribution := by
-    simpa using smulLeft_id_principalValueOneDiv
+    simpa only [RCLike.inner_apply, conj_trivial, one_mul] using smulLeft_id_principalValueOneDiv
   rw [hm, fourier_smul, fourier_volume]
 
 /-- The remaining error in the desired principal-value Fourier identity
@@ -265,7 +264,6 @@ theorem principalValueOneDiv_eq_FourierCandidate_of_odd_schwartz_antiderivatives
     principalValueOneDiv = principalValueOneDivFourierCandidate := by
   have h := congrArg (fun T : 𝓢'(ℝ, ℂ) ↦ 𝓕⁻ T)
     (fourier_principalValueOneDiv_of_odd_schwartz_antiderivatives hprimitive)
-  simpa only [fourierInv_fourier_eq, fourierInv_smul,
-    principalValueOneDivFourierCandidate] using h
+  simpa only [principalValueOneDivFourierCandidate, fourierInv_fourier_eq, fourierInv_smul] using h
 
 end QuadraticCarleson

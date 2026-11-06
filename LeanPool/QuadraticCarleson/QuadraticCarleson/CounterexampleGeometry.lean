@@ -37,12 +37,12 @@ private theorem packetScale_lt_half {N j : ℕ} (hN : 100 ≤ N) (hj : 1 ≤ j) 
   have hNj : 1 < N * j := by
     calc
       1 < N := by omega
-      _ = N * 1 := by simp
+      _ = N * 1 := by simp only [mul_one]
       _ ≤ N * j := Nat.mul_le_mul_left N hj
   have hexp : -((N * j : ℕ) : ℤ) < (-1 : ℤ) := by omega
   have hpow : packetScale N j < (2 : ℝ) ^ (-1 : ℤ) := by
     unfold packetScale
-    exact zpow_lt_zpow_right₀ (by norm_num) hexp
+    exact zpow_lt_zpow_right₀ (by norm_num1) hexp
   norm_num at hpow ⊢
   exact hpow
 
@@ -57,13 +57,12 @@ theorem packetPoint_abs_sub_left_ge
   have hkcast : (k.toNat : ℝ) = k := paperBohrIndex_cast_toNat hN hk
   rw [abs_of_nonneg]
   · rw [Nat.cast_sub hj, hkcast]
-    linarith [hτ.1]
+    linarith only [hτ, hτ.1]
   · have hjR : (j : ℝ) ≤ k := by
       calc
         (j : ℝ) ≤ k.toNat := by exact_mod_cast hj
         _ = k := hkcast
-    have hdiff : (0 : ℝ) ≤ (k.toNat - j : ℕ) := by positivity
-    linarith [hτ.1, hjR]
+    linarith only [hτ, hjR, hτ.1]
 
 /-- Distance to a packet on the right of the translate, retaining the integer
 separation from its centre. -/
@@ -77,13 +76,12 @@ theorem packetPoint_abs_sub_right_ge
   have hkcast : (k.toNat : ℝ) = k := paperBohrIndex_cast_toNat hN hk
   rw [abs_of_nonpos]
   · rw [Nat.cast_sub hj, Nat.cast_add, hkcast]
-    linarith [hτ.2]
+    linarith only [hτ, hτ.2]
   · have hjR : k + 1 ≤ (j : ℝ) := by
       calc
         k + 1 = (k.toNat : ℝ) + 1 := by rw [hkcast]
         _ ≤ (j : ℝ) := by exact_mod_cast hj
-    have hdiff : (0 : ℝ) ≤ (j - (k.toNat + 1) : ℕ) := by positivity
-    linarith [hτ.2, hjR]
+    linarith only [hτ, hjR, hτ.2]
 
 /-- Equivalent right-hand estimate written with the full integer separation
 from `k`, rather than separation from the next centre. -/
@@ -104,7 +102,7 @@ theorem packetPoint_abs_sub_right_ge' {N : ℕ} {k : ℤ} {τ : ℝ} {j : ℕ}
     ring
   rw [hsub]
   rw [hsubnext] at h
-  linarith
+  linarith only [h]
 
 /-- Every packet centre is at least a quarter away from an admissible point. -/
 theorem packetPoint_abs_sub_ge_quarter

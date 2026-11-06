@@ -103,24 +103,19 @@ theorem enorm_convolution_le_maximal_of_supported_kernel
       A * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x := by
   let r : ℝ := q
   let d : ℝ≥0∞ := ENNReal.ofReal (2 * r)
-  have hr : 0 < r := by
-    have : (0 : ℝ) < (q : ℝ) := by exact_mod_cast q.property
-    simpa only [r] using this
-  have hd0 : d ≠ 0 := ENNReal.ofReal_ne_zero_iff.mpr (by positivity)
-  have hdtop : d ≠ ⊤ := ENNReal.ofReal_ne_top
   have hpoint (y : ℝ) :
       ‖K (x - y) * f y‖ₑ ≤
         (closedBall x r).indicator (fun z ↦ (A / d) * ‖f z‖ₑ) y := by
     by_cases hy : y ∈ closedBall x r
     · rw [indicator_of_mem hy, enorm_mul]
-      exact mul_le_mul' (by simpa [d, r] using hKnorm (x - y)) le_rfl
+      exact mul_le_mul' (by exact hKnorm (x - y)) le_rfl
     · rw [indicator_of_notMem hy]
       have hzero : K (x - y) = 0 := by
         by_contra hne
         have hb := hKsupport hne
         apply hy
-        simpa only [mem_closedBall, Real.dist_eq, sub_zero, abs_sub_comm] using hb
-      simp [hzero]
+        simpa only [mem_closedBall, Real.dist_eq, abs_sub_comm, sub_zero] using hb
+      simp only [hzero, zero_mul, enorm_zero, Std.le_refl]
   calc
     ‖∫ y, K (x - y) * f y‖ₑ ≤ ∫⁻ y, ‖K (x - y) * f y‖ₑ :=
       enorm_integral_le_lintegral_enorm _
@@ -229,7 +224,7 @@ theorem measurable_finitePieceTailMax {N : ℕ} {u : ℕ → ℝ → ℂ}
   classical
   unfold finitePieceTailMax
   induction Finset.range (N + 1) using Finset.induction_on with
-  | empty => simp
+  | empty => simp only [Finset.sup_empty, bot_eq_zero', measurable_const]
   | @insert n s hn ih =>
       simp only [Finset.sup_insert]
       exact (measurable_finitePieceTail hu n).enorm.max ih
@@ -255,7 +250,7 @@ theorem aemeasurable_finitePieceTailMax {N : ℕ} {u : ℕ → ℝ → ℂ}
   classical
   unfold finitePieceTailMax
   induction Finset.range (N + 1) using Finset.induction_on with
-  | empty => simp
+  | empty => simp only [Finset.sup_empty, bot_eq_zero', aemeasurable_const]
   | @insert n s hn ih =>
       simp only [Finset.sup_insert]
       exact (htail n).enorm.max ih
@@ -303,7 +298,7 @@ theorem finitePieceTailMax_sq_lintegral_le
       lintegral_mono hpoint
     _ = 4 * ((∫⁻ x, F x ^ 2) + A ^ 2 * ∫⁻ x, M x ^ 2) := by
       simp_rw [mul_pow]
-      rw [lintegral_const_mul' _ _ (by norm_num),
+      rw [lintegral_const_mul' _ _ (by decide +kernel),
         lintegral_add_left (hF.pow_const 2)]
       rw [lintegral_const_mul'' (A ^ 2)
         ((measurable_centeredHardyLittlewoodMaximal hF).pow_const 2).aemeasurable]
@@ -338,7 +333,7 @@ theorem finitePieceTailMax_sq_lintegral_le_ae
       lintegral_mono_ae hpoint
     _ = 4 * ((∫⁻ x, F x ^ 2) + A ^ 2 * ∫⁻ x, M x ^ 2) := by
       simp_rw [mul_pow]
-      rw [lintegral_const_mul' _ _ (by norm_num),
+      rw [lintegral_const_mul' _ _ (by decide +kernel),
         lintegral_add_left (hF.pow_const 2)]
       rw [lintegral_const_mul'' (A ^ 2)
         ((measurable_centeredHardyLittlewoodMaximal hF).pow_const 2).aemeasurable]

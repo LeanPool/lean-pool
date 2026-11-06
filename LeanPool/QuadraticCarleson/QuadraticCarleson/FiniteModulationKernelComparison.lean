@@ -73,7 +73,7 @@ the rational-radius maximal function used in the project. -/
 theorem centeredAverage_le_two_mul_centeredHardyLittlewoodMaximal
     {r : ℝ} (hr : 0 < r) (g : ℝ → ℝ≥0∞) (x : ℝ) :
     centeredAverage r g x ≤ 2 * centeredHardyLittlewoodMaximal g x := by
-  obtain ⟨q0, hrq, hq2r⟩ := exists_rat_btwn (show r < 2 * r by linarith)
+  obtain ⟨q0, hrq, hq2r⟩ := exists_rat_btwn (show r < 2 * r by linarith only [hr])
   let q : PositiveRational := ⟨q0, by exact_mod_cast hr.trans hrq⟩
   have hqpos : (0 : ℝ) < (q : ℝ) := by exact_mod_cast q.property
   have hsubset : closedBall x r ⊆ closedBall x (q : ℝ) :=
@@ -87,8 +87,8 @@ theorem centeredAverage_le_two_mul_centeredHardyLittlewoodMaximal
   have hqtop : ENNReal.ofReal (2 * (q : ℝ)) ≠ ⊤ := ENNReal.ofReal_ne_top
   have hden : ENNReal.ofReal (2 * (q : ℝ)) ≤ 2 * ENNReal.ofReal (2 * r) := by
     rw [← ENNReal.ofReal_ofNat,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
-    exact ENNReal.ofReal_le_ofReal (by linarith)
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
+    exact ENNReal.ofReal_le_ofReal (by linarith only [hq2r])
   unfold centeredAverage
   calc
     (∫⁻ y in closedBall x r, g y) / ENNReal.ofReal (2 * r) ≤
@@ -117,15 +117,15 @@ theorem cutoffBoundaryKernel_eq_zero_of_abs_le
     (lam : ℝ) {ρ t : ℝ} (hρ : 0 < ρ) (ht : |t| ≤ ρ) :
     cutoffBoundaryKernel lam ρ t = 0 := by
   by_cases ht0 : t = 0
-  · simp [cutoffBoundaryKernel, ht0]
+  · simp only [cutoffBoundaryKernel, ht0, ↓reduceIte]
   · have hden : 0 < 4 * ρ := by positivity
     have harg : |t / (4 * ρ)| ≤ 1 / 4 := by
       rw [abs_div, abs_of_pos hden]
       apply (div_le_iff₀ hden).2
-      nlinarith
+      linarith only [ht]
     rw [cutoffBoundaryKernel, ite_eq_right ht0, ite_eq_left ht,
       dyadicCutoff_eq_one harg]
-    simp
+    simp only [sub_self, zero_div, Complex.ofReal_zero, zero_mul]
 
 theorem cutoffBoundaryKernel_eq_zero_of_two_mul_le_abs
     (lam : ℝ) {ρ t : ℝ} (hρ : 0 < ρ) (ht : 2 * ρ ≤ |t|) :
@@ -133,31 +133,31 @@ theorem cutoffBoundaryKernel_eq_zero_of_two_mul_le_abs
   have ht0 : t ≠ 0 := by
     intro h
     subst t
-    simp at ht
-    linarith
-  have hnball : ¬ |t| ≤ ρ := by linarith
+    simp only [abs_zero] at ht
+    linarith only [hρ, ht]
+  have hnball : ¬ |t| ≤ ρ := by linarith only [hρ, ht]
   have hden : 0 < 4 * ρ := by positivity
   have harg : 1 / 2 ≤ |t / (4 * ρ)| := by
     rw [abs_div, abs_of_pos hden]
     apply (le_div_iff₀ hden).2
-    nlinarith
+    linarith only [ht]
   rw [cutoffBoundaryKernel, ite_eq_right ht0, ite_eq_right hnball,
     dyadicCutoff_eq_zero harg]
-  simp
+  simp only [sub_self, zero_div, Complex.ofReal_zero, zero_mul]
 
 theorem cutoffBoundaryKernel_norm_le
     (lam : ℝ) {ρ t : ℝ} (hρ : 0 < ρ) :
     ‖cutoffBoundaryKernel lam ρ t‖ ≤ 1 / ρ := by
   by_cases hin : |t| ≤ ρ
   · rw [cutoffBoundaryKernel_eq_zero_of_abs_le lam hρ hin]
-    simpa using one_div_nonneg.mpr hρ.le
+    simpa only [norm_zero, one_div, inv_nonneg] using one_div_nonneg.mpr hρ.le
   · by_cases hout : 2 * ρ ≤ |t|
     · rw [cutoffBoundaryKernel_eq_zero_of_two_mul_le_abs lam hρ hout]
-      simpa using one_div_nonneg.mpr hρ.le
+      simpa only [norm_zero, one_div, inv_nonneg] using one_div_nonneg.mpr hρ.le
     · have ht0 : t ≠ 0 := by
         intro h
         apply hin
-        simp [h, hρ.le]
+        simp only [h, abs_zero, hρ.le]
       have hρt : ρ < |t| := lt_of_not_ge hin
       rw [cutoffBoundaryKernel, ite_eq_right ht0, ite_eq_right hin, norm_mul, norm_phase,
         mul_one, Complex.norm_real, Real.norm_eq_abs, abs_div]
@@ -190,7 +190,7 @@ theorem sharpQuadraticTailKernel_norm_le
       Complex.norm_real, Real.norm_eq_abs]
     exact one_div_le_one_div_of_le hε ht.le
   · rw [sharpQuadraticTailKernel, ite_eq_right ht]
-    simpa using one_div_nonneg.mpr hε.le
+    simpa only [norm_zero, one_div, inv_nonneg] using one_div_nonneg.mpr hε.le
 
 theorem measurable_cutoffBoundaryKernel (lam ρ : ℝ) :
     Measurable (cutoffBoundaryKernel lam ρ) := by
@@ -270,20 +270,19 @@ theorem cutoffBoundaryOperator_enorm_le_maximal
         · simpa only [← ofReal_norm] using
             ENNReal.ofReal_le_ofReal (cutoffBoundaryKernel_norm_le lam hρ)
         · exact le_rfl
-      · simp only [Set.indicator, hy, ↓reduceIte]
+      · simp only [indicator, hy, ↓reduceIte]
         have hk : cutoffBoundaryKernel lam ρ (x - y) = 0 := by
           apply notMem_support.mp
           intro hmem
           apply hy
           have hs := cutoffBoundaryKernel_support_subset lam hρ hmem
           simpa [mem_closedBall, Real.dist_eq, abs_sub_comm] using hs
-        simp [hk]
+        simp only [hk, zero_mul, enorm_zero, Std.le_refl]
     _ = ENNReal.ofReal (1 / ρ) *
           ∫⁻ y in closedBall x (2 * ρ), ‖f y‖ₑ := by
       rw [MeasureTheory.lintegral_const_mul _ hf.enorm]
     _ = 4 * centeredAverage (2 * ρ) (fun y ↦ ‖f y‖ₑ) x := by
       unfold centeredAverage
-      have hρ0 : ρ ≠ 0 := ne_of_gt hρ
       rw [show ENNReal.ofReal (1 / ρ) =
           4 / ENNReal.ofReal (2 * (2 * ρ)) by
         rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_div_of_pos (by positivity)]
@@ -293,7 +292,7 @@ theorem cutoffBoundaryOperator_enorm_le_maximal
       ac_rfl
     _ ≤ 8 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x := by
       have h := centeredAverage_le_two_mul_centeredHardyLittlewoodMaximal
-        (mul_pos (by norm_num : (0 : ℝ) < 2) hρ) (fun y ↦ ‖f y‖ₑ) x
+        (mul_pos (by norm_num1 : (0 : ℝ) < 2) hρ) (fun y ↦ ‖f y‖ₑ) x
       calc
         4 * centeredAverage (2 * ρ) (fun y ↦ ‖f y‖ₑ) x ≤
             4 * (2 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x) :=
@@ -304,14 +303,14 @@ private theorem scale_cutoff_eq_radius_cutoff (s : ℤ) (t : ℝ) :
     dyadicCutoff ((2⁻¹ : ℝ) ^ s * t) =
       dyadicCutoff (t / (4 * (2 : ℝ) ^ (s - 2))) := by
   congr 1
-  rw [zpow_sub₀ (by norm_num : (2 : ℝ) ≠ 0)]
+  rw [zpow_sub₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
   norm_num
-  rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num, inv_zpow]
+  rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num1, inv_zpow]
   field_simp [zpow_ne_zero]
 
 private theorem dyadic_block_innerRadius_le_outerRadius (j : ℤ) (B : ℕ) :
     (2 : ℝ) ^ (j - 3) ≤ (2 : ℝ) ^ (j + (B : ℤ) - 2) := by
-  apply (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2
+  apply (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2
   omega
 
 /-- Exact kernel algebra behind the comparison: the smooth dyadic block is
@@ -374,8 +373,8 @@ theorem finiteQuadraticDyadicBlock_eq_truncations_add_boundaries
       ∫ y, cutoffBoundaryKernel lam ((2 : ℝ) ^ (j - 3)) (x - y) * f y := by
   let ε : ℝ := (2 : ℝ) ^ (j - 3)
   let R : ℝ := (2 : ℝ) ^ (j + (B : ℤ) - 2)
-  have hε : 0 < ε := zpow_pos (by norm_num) _
-  have hR : 0 < R := zpow_pos (by norm_num) _
+  have hε : 0 < ε := zpow_pos (by norm_num1) _
+  have hR : 0 < R := zpow_pos (by norm_num1) _
   have htailε : Integrable
       (fun y ↦ sharpQuadraticTailKernel lam ε (x - y) * f y) :=
     integrable_kernel_mul hfi x
@@ -407,7 +406,7 @@ theorem finiteQuadraticDyadicBlock_eq_truncations_add_boundaries
       exact Filter.Eventually.of_forall (fun y ↦ by
         change lowOscillatoryKernel lam B (fun r ↦ j + (r : ℤ)) (x - y) * f y = _
         rw [lowOscillatoryKernel_consecutive_eq_truncations_add_boundaries]
-        simp only [sharpQuadraticTailKernel, ε, R])
+        rfl)
     _ = quadraticHilbertConvolutionTrunc lam ε f x -
           quadraticHilbertConvolutionTrunc lam R f x +
           (∫ y, cutoffBoundaryKernel lam R (x - y) * f y) -
@@ -425,19 +424,19 @@ theorem finiteQuadraticDyadicBlock_eq_truncations_add_boundaries
               sharpQuadraticTailKernel lam R (x - y) * f y +
               cutoffBoundaryKernel lam R (x - y) * f y) -
             ∫ y, cutoffBoundaryKernel lam ε (x - y) * f y by
-        simpa only [Pi.sub_apply, Pi.add_apply] using hsplitOuter]
+        simpa only [Pi.add_apply, Pi.sub_apply] using hsplitOuter]
       rw [show (∫ y, sharpQuadraticTailKernel lam ε (x - y) * f y -
             sharpQuadraticTailKernel lam R (x - y) * f y +
             cutoffBoundaryKernel lam R (x - y) * f y) =
           (∫ y, sharpQuadraticTailKernel lam ε (x - y) * f y -
             sharpQuadraticTailKernel lam R (x - y) * f y) +
           ∫ y, cutoffBoundaryKernel lam R (x - y) * f y by
-        simpa only [Pi.sub_apply, Pi.add_apply] using hsplitMiddle]
+        simpa only [Pi.sub_apply] using hsplitMiddle]
       rw [show (∫ y, sharpQuadraticTailKernel lam ε (x - y) * f y -
             sharpQuadraticTailKernel lam R (x - y) * f y) =
           (∫ y, sharpQuadraticTailKernel lam ε (x - y) * f y) -
           ∫ y, sharpQuadraticTailKernel lam R (x - y) * f y by
-        simpa only [Pi.sub_apply] using hsplitInner]
+        exact hsplitInner]
       rfl
     _ = _ := by
       rw [quadraticHilbertConvolutionTrunc_eq_quadraticHilbertTrunc,
@@ -461,8 +460,8 @@ theorem finiteQuadraticDyadicBlock_enorm_le_maximalTruncation_add_maximal
   let F : ℂ := ∫ y, cutoffBoundaryKernel lam ε (x - y) * f y
   let H : ℝ≥0∞ := quadraticHilbertMaximalTruncation lam f x
   let M : ℝ≥0∞ := centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x
-  have hε : 0 < ε := zpow_pos (by norm_num) _
-  have hR : 0 < R := zpow_pos (by norm_num) _
+  have hε : 0 < ε := zpow_pos (by norm_num1) _
+  have hR : 0 < R := zpow_pos (by norm_num1) _
   have hA : ‖A‖ₑ ≤ H := by
     exact le_iSup (fun δ : {δ : ℝ // 0 < δ} ↦
       ‖quadraticHilbertTrunc lam δ f x‖ₑ) ⟨ε, hε⟩

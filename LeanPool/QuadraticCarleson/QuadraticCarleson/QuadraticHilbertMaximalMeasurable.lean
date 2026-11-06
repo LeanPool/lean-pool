@@ -8,8 +8,6 @@ module
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.FiniteModulationKernelComparison
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.HilbertFiniteTruncationWeakOneOne
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
-public import Mathlib.Topology.Order.IsLUB
 
 /-!
 # Measurability of the quadratic maximal truncation
@@ -70,9 +68,9 @@ theorem quadraticHilbertTruncation_eq_oneSidedTails
     constructor
     · rintro (h | h)
       · exact Or.inr h
-      · exact Or.inl (by linarith)
+      · exact Or.inl (by linarith only [h])
     · rintro (h | h)
-      · exact Or.inr (by linarith)
+      · exact Or.inr (by linarith only [h])
       · exact Or.inl h
   have hwhole := integrableOn_quadraticHilbertTail lam hε hf x
   have hleft : IntegrableOn (quadraticHilbertIntegrand lam f x) (Iio (-ε)) := by
@@ -82,7 +80,7 @@ theorem quadraticHilbertTruncation_eq_oneSidedTails
     change ε < |t|
     have htneg : t < 0 := ht.trans (neg_neg_of_pos hε)
     rw [abs_of_neg htneg]
-    linarith
+    linarith only [ht]
   have hright : IntegrableOn (quadraticHilbertIntegrand lam f x) (Ioi ε) := by
     apply hwhole.mono_set
     intro t ht
@@ -94,7 +92,7 @@ theorem quadraticHilbertTruncation_eq_oneSidedTails
     intro t htl htr
     change t < -ε at htl
     change ε < t at htr
-    linarith
+    linarith only [hε, htl, htr]
   unfold quadraticHilbertTrunc quadraticHilbertIntegrand
   rw [hset]
   exact setIntegral_union hdis measurableSet_Ioi hleft hright
@@ -104,7 +102,7 @@ theorem continuousAt_quadraticHilbertTruncation_radius
     {f : ℝ → ℂ} (hf : Integrable f) (x : ℝ) :
     ContinuousAt (fun δ : ℝ ↦ quadraticHilbertTrunc lam δ f x) ε := by
   let a : ℝ := ε / 2
-  have ha : 0 < a := by dsimp [a]; linarith
+  have ha : 0 < a := by dsimp [a]; linarith only [hε]
   have hwhole := integrableOn_quadraticHilbertTail lam ha hf x
   have hright : IntegrableOn (quadraticHilbertIntegrand lam f x) (Ioi a) := by
     apply hwhole.mono_set
@@ -120,8 +118,8 @@ theorem continuousAt_quadraticHilbertTruncation_radius
     change a < |t|
     have htneg : t < 0 := ht.trans (neg_neg_of_pos ha)
     rw [abs_of_neg htneg]
-    linarith
-  have hεa : a < ε := by dsimp [a]; linarith
+    linarith only [ht]
+  have hεa : a < ε := by dsimp [a]; linarith only [hε]
   have hrightAt : ContinuousAt
       (fun δ : ℝ ↦ ∫ t in Ioi δ, quadraticHilbertIntegrand lam f x t) ε := by
     apply (hright.continuousOn_Ici_primitive_Ioi ε hεa.le).continuousAt
@@ -129,8 +127,8 @@ theorem continuousAt_quadraticHilbertTruncation_radius
   have hleftAtBound : ContinuousAt
       (fun b : ℝ ↦ ∫ t in Iio b, quadraticHilbertIntegrand lam f x t) (-ε) := by
     apply (hleft.continuousOn_Iic_primitive_Iio (-ε)
-      (by linarith : -ε ≤ -a)).continuousAt
-    exact Iic_mem_nhds (by linarith : -ε < -a)
+      (by linarith only [hεa] : -ε ≤ -a)).continuousAt
+    exact Iic_mem_nhds (by linarith only [hεa] : -ε < -a)
   have hleftAt : ContinuousAt
       (fun δ : ℝ ↦ ∫ t in Iio (-δ), quadraticHilbertIntegrand lam f x t) ε :=
     hleftAtBound.comp continuousAt_neg

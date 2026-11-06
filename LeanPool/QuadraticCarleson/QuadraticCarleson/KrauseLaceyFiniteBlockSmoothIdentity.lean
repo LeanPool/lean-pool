@@ -37,9 +37,9 @@ theorem finiteQuadraticDyadicBlock_eq_smoothHighPass_sub
         smoothQuadraticHighPass lam ((2 : ℝ) ^ (j + (B : ℤ) - 2)) f x := by
   rw [finiteQuadraticDyadicBlock_eq_truncations_add_boundaries lam j B hfi,
     quadraticHilbertTrunc_eq_smoothHighPass_add_boundary lam
-      (zpow_pos (by norm_num : (0 : ℝ) < 2) _) hfi,
+      (zpow_pos (by norm_num1 : (0 : ℝ) < 2) _) hfi,
     quadraticHilbertTrunc_eq_smoothHighPass_add_boundary lam
-      (zpow_pos (by norm_num : (0 : ℝ) < 2) _) hfi]
+      (zpow_pos (by norm_num1 : (0 : ℝ) < 2) _) hfi]
   ring
 
 theorem paperLowDyadicOperator_eq_smoothHighPass_sub

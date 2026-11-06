@@ -28,14 +28,14 @@ theorem normalizedRadius_bracket (a : ℝ) (ha : 0 < a) (j k : ℤ)
     (hlow : 1 ≤ a * (2 : ℝ) ^ j) (hhigh : a * (2 : ℝ) ^ j ≤ 2) :
     (2 : ℝ) ^ (j + k) ≤ (2 : ℝ) ^ (k + 1) / a ∧
       (2 : ℝ) ^ (k + 1) / a ≤ 2 * (2 : ℝ) ^ (j + k) := by
-  have hk : 0 ≤ (2 : ℝ) ^ k := (zpow_pos (by norm_num : (0 : ℝ) < 2) k).le
+  have hk : 0 ≤ (2 : ℝ) ^ k := (zpow_pos (by norm_num1 : (0 : ℝ) < 2) k).le
   constructor
   · apply (le_div_iff₀ ha).2
-    simp only [zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_one]
-    nlinarith [mul_le_mul_of_nonneg_right hhigh hk]
+    simp only [zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_one]
+    linarith only [hhigh, hk, mul_le_mul_of_nonneg_right hhigh hk]
   · apply (div_le_iff₀ ha).2
-    simp only [zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_one]
-    nlinarith [mul_le_mul_of_nonneg_right hlow hk]
+    simp only [zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_one]
+    linarith only [hlow, hk, mul_le_mul_of_nonneg_right hlow hk]
 
 /-- The starting radius corresponds to the fixed normalized radius `1/4`. -/
 theorem lowerRadius_bracket (a : ℝ) (ha : 0 < a) (j : ℤ)

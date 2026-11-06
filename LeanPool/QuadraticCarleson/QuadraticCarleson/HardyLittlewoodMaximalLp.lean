@@ -28,7 +28,7 @@ theorem lintegral_rpow_Ioo_zero
     {p t : ℝ} (hp : 1 < p) (ht : 0 < t) :
     (∫⁻ a in Ioo (0 : ℝ) t, ENNReal.ofReal (a ^ (p - 2))) =
       ENNReal.ofReal (t ^ (p - 1) / (p - 1)) := by
-  have hexp : -1 < p - 2 := by linarith
+  have hexp : -1 < p - 2 := by linarith only [hp]
   have hint : IntegrableOn (fun a : ℝ ↦ a ^ (p - 2)) (Ioo 0 t) :=
     (intervalIntegral.integrableOn_Ioo_rpow_iff ht).2 hexp
   have hnonneg : 0 ≤ᵐ[volume.restrict (Ioo (0 : ℝ) t)] fun a : ℝ ↦ a ^ (p - 2) := by
@@ -61,21 +61,21 @@ theorem lintegral_rpow_half_level_indicator
   have heq : {a | ENNReal.ofReal (a / 2) < v} ∩ Ioi (0 : ℝ) =
       Ioo 0 (2 * v.toReal) := by
     ext a
-    simp only [mem_inter_iff, mem_Ioi, mem_ofPred_eq, mem_Ioo]
+    simp only [mem_inter_iff, mem_ofPred_eq, mem_Ioi, mem_Ioo]
     constructor
     · rintro ⟨hav, ha⟩
       have hhalf : a / 2 < v.toReal :=
         (ENNReal.ofReal_lt_iff_lt_toReal (by positivity) hv).mp hav
       constructor
       · exact ha
-      · linarith
+      · linarith only [hhalf]
     · rintro ⟨ha, hav⟩
       constructor
       · apply (ENNReal.ofReal_lt_iff_lt_toReal (by positivity) hv).mpr
-        linarith
+        linarith only [hav]
       · exact ha
   rw [heq]
-  exact lintegral_rpow_Ioo_zero hp (mul_pos (by norm_num) hvpos)
+  exact lintegral_rpow_Ioo_zero hp (mul_pos (by norm_num1) hvpos)
 
 theorem lintegral_rpow_half_level_indicator_mul
     {p : ℝ} (hp : 1 < p) (v : ℝ≥0∞) (hv : v ≠ ∞) :
@@ -100,14 +100,14 @@ theorem rpow_half_level_factor_mul
   by_cases hv0 : v = 0
   · subst v
     have hp0 : 0 < p := lt_trans zero_lt_one hp
-    simp [ENNReal.zero_rpow_of_pos hp0]
+    simp only [ENNReal.toReal_zero, mul_zero, ENNReal.zero_rpow_of_pos hp0]
   have hvpos : 0 < v.toReal := ENNReal.toReal_pos hv0 hv
   rw [← ENNReal.ofReal_toReal hv]
   simp only [ENNReal.toReal_ofReal hvpos.le]
   rw [ENNReal.ofReal_rpow_of_nonneg hvpos.le (lt_trans zero_lt_one hp).le]
   rw [← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul (by positivity)]
   congr 1
-  rw [Real.mul_rpow (by norm_num : (0 : ℝ) ≤ 2) hvpos.le]
+  rw [Real.mul_rpow (by norm_num1 : (0 : ℝ) ≤ 2) hvpos.le]
   have hvpow : v.toReal ^ p = v.toReal ^ (p - 1) * v.toReal := by
     conv_lhs => rw [show p = (p - 1) + 1 by ring]
     rw [Real.rpow_add hvpos, Real.rpow_one]
@@ -215,7 +215,7 @@ theorem centeredHardyLittlewoodMaximal_truncated_rpow_lintegral_le
         (min_le_left _ _)
     have hhalf : 2 * ENNReal.ofReal (a / 2) = ENNReal.ofReal a := by
       rw [← ENNReal.ofReal_ofNat,
-        ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+        ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
       congr 1
       ring
     have hw := centeredHardyLittlewoodMaximal_localized_weak_bound
@@ -265,7 +265,7 @@ theorem centeredHardyLittlewoodMaximal_truncated_rpow_lintegral_le
     _ = ENNReal.ofReal p *
         (8 * (ENNReal.ofReal ((2 : ℝ) ^ (p - 1) / (p - 1)) *
           ∫⁻ y, f y ^ p)) := by
-      rw [lintegral_const_mul' 8 _ (by norm_num),
+      rw [lintegral_const_mul' 8 _ (by decide +kernel),
         lintegral_rpow_high_value_tails hf hfinite hp]
     _ = ENNReal.ofReal (centeredHardyLittlewoodRpowConstant p) *
           ∫⁻ y, f y ^ p := by
@@ -275,7 +275,7 @@ theorem centeredHardyLittlewoodMaximal_truncated_rpow_lintegral_le
         ← ENNReal.ofReal_mul (by positivity : 0 ≤ p * 8)]
       unfold centeredHardyLittlewoodRpowConstant
       congr 2
-      ring
+      ac_rfl
 
 /-- Increasing finite truncations recover an extended nonnegative real
 power whenever the exponent is positive. -/
@@ -288,13 +288,13 @@ theorem iSup_min_nat_rpow (v : ℝ≥0∞) {p : ℝ} (hp : 1 ≤ p) :
     exact ENNReal.rpow_le_rpow (min_le_left _ _) hp0.le
   · by_cases hv : v = ∞
     · subst v
-      simp only [min_top_left, ENNReal.top_rpow_of_pos hp0]
+      simp only [ENNReal.top_rpow_of_pos hp0, min_top_left]
       rw [← ENNReal.iSup_natCast]
       apply iSup_mono
       intro n
       by_cases hn : n = 0
       · subst n
-        simp
+        simp only [CharP.cast_eq_zero, zero_le]
       · exact ENNReal.le_rpow_self_of_one_le
           (by exact_mod_cast (Nat.one_le_iff_ne_zero.mpr hn)) hp
     · obtain ⟨n, hn⟩ := exists_nat_ge v.toReal

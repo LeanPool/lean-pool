@@ -72,7 +72,7 @@ theorem mem_selectedSubintervals_iff
     {S : Finset RealInterval} {I J : RealInterval} :
     J ∈ selectedSubintervals S I ↔ J ∈ S ∧ J.carrier ⊆ I.carrier := by
   classical
-  simp [selectedSubintervals]
+  simp only [selectedSubintervals, Finset.mem_filter]
 
 theorem mem_smallestSelectedRegion_iff
     {S : Finset RealInterval} {J : RealInterval} {x : ℝ} :
@@ -99,7 +99,7 @@ private theorem length_le_of_carrier_subset {I J : RealInterval}
     (h : I.carrier ⊆ J.carrier) : I.length ≤ J.length := by
   have he := (Ioc_subset_Ioc_iff I.left_lt_right).mp h
   dsimp [RealInterval.length]
-  linarith [he.1, he.2]
+  linarith only [he, he.1, he.2]
 
 private theorem length_lt_of_strict_carrier_subset {I J : RealInterval}
     (hne : I ≠ J) (h : I.carrier ⊆ J.carrier) : I.length < J.length := by

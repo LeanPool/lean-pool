@@ -52,7 +52,7 @@ theorem lowSupportRadius_pos (B : ℕ) (m : ℤ) :
 theorem sqrt_dyadicModulation (m : ℤ) :
     Real.sqrt (dyadicModulation m) = (2 : ℝ) ^ ((m : ℝ) / 2) := by
   rw [dyadicModulation, Real.sqrt_eq_rpow, ← Real.rpow_intCast]
-  rw [← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2)]
+  rw [← Real.rpow_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
   congr 1
   ring
 
@@ -76,7 +76,7 @@ theorem dyadicModulation_mul_lowSupportRadius (B : ℕ) (m : ℤ) :
     _ = (2 : ℝ) ^ (B : ℝ) * (2 : ℝ) ^ ((m : ℝ) / 2) := by
       rw [sqrt_dyadicModulation, Real.rpow_natCast]
     _ = (2 : ℝ) ^ ((B : ℝ) + (m : ℝ) / 2) := by
-      rw [Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
+      rw [Real.rpow_add (by norm_num1 : (0 : ℝ) < 2)]
 
 /-- In the paper's very-small range, an atom is shorter than the outer
 support radius of the low kernel. -/
@@ -84,9 +84,9 @@ theorem atomLength_lt_lowSupportRadius_of_mem_L
     {c B : ℕ} (hB : 0 < B) {m j : ℤ} (hj : j ∈ LacunaryMiddleRange.L B c m)
     {R : ℝ} (hscale : (2 : ℝ) ^ j ≤ R ∧ R < (2 : ℝ) ^ (j + 1)) :
     R < lowSupportRadius B m := by
-  have hR : 0 < R := (zpow_pos (by norm_num) j).trans_le hscale.1
+  have hR : 0 < R := (zpow_pos (by norm_num1) j).trans_le hscale.1
   have hR2 : R ^ 2 < ((2 : ℝ) ^ (j + 1)) ^ 2 :=
-    (sq_lt_sq₀ hR.le (zpow_nonneg (by norm_num) (j + 1))).2 hscale.2
+    (sq_lt_sq₀ hR.le (zpow_nonneg (by norm_num1) (j + 1))).2 hscale.2
   have hmpos : 0 < dyadicModulation m := dyadicModulation_pos m
   have hmul : dyadicModulation m * R ^ 2 <
       dyadicModulation m * ((2 : ℝ) ^ (j + 1)) ^ 2 :=
@@ -94,19 +94,19 @@ theorem atomLength_lt_lowSupportRadius_of_mem_L
   have hexp : dyadicModulation m * ((2 : ℝ) ^ (j + 1)) ^ 2 =
       (2 : ℝ) ^ (m + 2 * j + 2) := by
     rw [dyadicModulation, pow_two,
-      ← zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0),
-      ← zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+      ← zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0),
+      ← zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
     congr 1
     ring
   have hBexp : ((2 : ℝ) ^ B) ^ 2 = (2 : ℝ) ^ (2 * (B : ℤ)) := by
-    rw [pow_two, ← zpow_natCast, ← zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+    rw [pow_two, ← zpow_natCast, ← zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
     congr 1
     omega
   have hexplt : m + 2 * j + 2 < 2 * (B : ℤ) := by
     rw [LacunaryMiddleRange.mem_L] at hj
     omega
   have hpow : (2 : ℝ) ^ (m + 2 * j + 2) < (2 : ℝ) ^ (2 * (B : ℤ)) :=
-    (zpow_lt_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2 hexplt
+    (zpow_lt_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2 hexplt
   have hsquare : (R * Real.sqrt (dyadicModulation m)) ^ 2 < ((2 : ℝ) ^ B) ^ 2 := by
     rw [mul_pow, Real.sq_sqrt (dyadicModulation_pos m).le, hBexp]
     simpa only [mul_comm] using (hmul.trans_eq hexp).trans hpow
@@ -122,7 +122,7 @@ theorem expandedLength_le_three_mul_lowSupportRadius
     {c B : ℕ} (hB : 0 < B) {m j : ℤ} (hj : j ∈ LacunaryMiddleRange.L B c m)
     {R : ℝ} (hscale : (2 : ℝ) ^ j ≤ R ∧ R < (2 : ℝ) ^ (j + 1)) :
     2 * lowSupportRadius B m + R ≤ 3 * lowSupportRadius B m := by
-  linarith [atomLength_lt_lowSupportRadius_of_mem_L hB hj hscale]
+  linarith only [hB, hj, hscale, atomLength_lt_lowSupportRadius_of_mem_L hB hj hscale]
 
 /-- The product of the cancellation size and the support length is exactly
 controlled by the paper's very-small weight. -/
@@ -133,13 +133,13 @@ theorem verySmallCancellationCoefficient_le
         (2 * lowSupportRadius B m + R) ≤
       3 * lowKernelDerivativeConstant * verySmallWeight B m j := by
   have hR : 0 ≤ R :=
-    (zpow_nonneg (by norm_num) j).trans hscale.1
+    (zpow_nonneg (by norm_num1) j).trans hscale.1
   have hC : 0 ≤ lowKernelDerivativeConstant * dyadicModulation m * (R / 2) :=
     mul_nonneg
       (mul_nonneg lowKernelDerivativeConstant_nonneg (dyadicModulation_pos m).le)
-      (div_nonneg hR (by norm_num))
+      (div_nonneg hR (by norm_num1))
   have hfactor : 0 ≤ (3 / 2 : ℝ) * lowKernelDerivativeConstant := by
-    exact mul_nonneg (by norm_num) lowKernelDerivativeConstant_nonneg
+    exact mul_nonneg (by norm_num1) lowKernelDerivativeConstant_nonneg
   have hscale' : () ∈ dyadicAtomScaleClass (fun _ : Unit ↦ R) j := hscale
   calc
     (lowKernelDerivativeConstant * dyadicModulation m * (R / 2)) *
@@ -172,12 +172,12 @@ theorem radius_lt_distance_of_not_mem_expanded
   rw [centeredInterval] at hx hy
   simp only [mem_Ico, not_and_or] at hx
   rcases hx with hx | hx
-  · have hxy : x - y < 0 := by linarith [hy.1]
+  · have hxy : x - y < 0 := by linarith only [hD, hy, hx, hy.1]
     rw [abs_of_neg hxy]
-    linarith [hy.1]
-  · have hxy : 0 < x - y := by linarith [hy.2]
+    linarith only [hy, hx, hy.1]
+  · have hxy : 0 < x - y := by linarith only [hD, hy, hx, hy.2]
     rw [abs_of_pos hxy]
-    linarith [hy.2]
+    linarith only [hy, hx, hy.2]
 
 /-- Outside the expanded interval, the actual low kernel is identically zero
 on the atom interval. -/
@@ -189,7 +189,7 @@ theorem paperLowCZKernel_eq_zero_of_not_mem_expanded
   by_contra hne
   have ht : x - y ∈ support (paperLowOscillatoryKernel
       (dyadicModulation m) (dyadicModulation_pos m).ne' B) := by
-    simpa only [paperLowCZKernel, mem_support] using hne
+    simpa only [mem_support, paperLowCZKernel] using hne
   have hs := (paperLowOscillatoryKernel_support_normalized
     (dyadicModulation m) (dyadicModulation_pos m).ne' B ht).2
   rw [abs_of_pos (dyadicModulation_pos m)] at hs
@@ -234,13 +234,6 @@ theorem lintegral_enorm_paperLowCZKernel_levelAtom_compl_fivefold_le
   let C : ℝ := (lowKernelDerivativeConstant * dyadicModulation m * (R / 2)) *
     ∫ y in centeredInterval z R, ‖levelAtom A f k z R y‖
   let E : Set ℝ := centeredInterval z (2 * lowSupportRadius B m + R)
-  have hC : 0 ≤ C := by
-    dsimp [C]
-    exact mul_nonneg
-      (mul_nonneg
-        (mul_nonneg lowKernelDerivativeConstant_nonneg (dyadicModulation_pos m).le)
-        (by linarith))
-      (integral_nonneg fun _ ↦ norm_nonneg _)
   have hpoint : ∀ᵐ x ∂volume.restrict (centeredInterval z (5 * R))ᶜ,
       ‖∫ y in centeredInterval z R,
         paperLowCZKernel (dyadicModulation m) (dyadicModulation_pos m).ne' B x y *
@@ -292,11 +285,7 @@ theorem lintegral_enorm_paperLowCZKernel_levelAtom_verySmall_le
     dsimp [C]
     exact mul_nonneg
       (mul_nonneg lowKernelDerivativeConstant_nonneg (dyadicModulation_pos m).le)
-      (by linarith)
-  have hD : 0 ≤ D := by
-    dsimp [D]
-    exact add_nonneg
-      (mul_nonneg (by norm_num) (lowSupportRadius_pos B m).le) hR.le
+      (by linarith only [hR])
   have hcoef : C * D ≤
       3 * lowKernelDerivativeConstant * verySmallWeight B m j := by
     exact verySmallCancellationCoefficient_le hB hj hscale
@@ -311,7 +300,7 @@ theorem lintegral_enorm_paperLowCZKernel_levelAtom_verySmall_le
     _ = ENNReal.ofReal ((C * D) * M) := by
       rw [← ENNReal.ofReal_mul (mul_nonneg hC hM)]
       congr 1
-      ring
+      ac_rfl
     _ ≤ ENNReal.ofReal
         ((3 * lowKernelDerivativeConstant * verySmallWeight B m j) * M) := by
       exact ENNReal.ofReal_le_ofReal (mul_le_mul_of_nonneg_right hcoef hM)
@@ -319,7 +308,7 @@ theorem lintegral_enorm_paperLowCZKernel_levelAtom_verySmall_le
         ENNReal.ofReal M := by
       rw [ENNReal.ofReal_mul]
       exact mul_nonneg
-        (mul_nonneg (by norm_num) lowKernelDerivativeConstant_nonneg)
+        (mul_nonneg (by norm_num1) lowKernelDerivativeConstant_nonneg)
         (verySmallWeight_pos B m j).le
 
 /-- Strong fixed-scale family form, retaining the actual atom mass rather
@@ -389,7 +378,7 @@ theorem tsum_lintegral_enorm_paperLowCZKernel_levelAtom_verySmall_le
     hf hAk z R hdisj
   have hcoefNonneg :
       0 ≤ 3 * lowKernelDerivativeConstant * verySmallWeight B m j :=
-    mul_nonneg (mul_nonneg (by norm_num) lowKernelDerivativeConstant_nonneg)
+    mul_nonneg (mul_nonneg (by norm_num1) lowKernelDerivativeConstant_nonneg)
       (verySmallWeight_pos B m j).le
   calc
     (∑' i : ι, ∫⁻ x in (centeredInterval (z i) (5 * R i))ᶜ,
@@ -558,7 +547,7 @@ theorem canonicalScaleLowActionMass_le_outputMass
     have h := aestronglyMeasurable_norm_setIntegral_paperLowCZKernel_levelAtom
       (A := A) (dyadicModulation_pos m).ne' B hf k
       (stoppingCenter I.1) (stoppingLength I.1)
-    simpa only [F, ofReal_norm] using h.aemeasurable.ennreal_ofReal.restrict
+    simpa only [ofReal_norm] using h.aemeasurable.ennreal_ofReal.restrict
   have hsub (I : {I : stoppingCell f // I ∈ S}) :
       Eᶜ ⊆ (centeredInterval
         (stoppingCenter I.1) (5 * stoppingLength I.1))ᶜ := by
@@ -649,7 +638,7 @@ theorem restrictedCanonicalVerySmallOutputMass_le
       restrictedVerySmallWeight, indicator_of_mem hm]
     apply (canonicalScaleVerySmallOutputMass_le hf hAk hB hj).trans_eq
     rw [← ENNReal.ofReal_mul
-      (mul_nonneg (by norm_num) lowKernelDerivativeConstant_nonneg)]
+      (mul_nonneg (by norm_num1) lowKernelDerivativeConstant_nonneg)]
   · have hm : m ∉ verySmallModulations B c j := hj
     simp [restrictedCanonicalVerySmallOutputMass, restrictedVerySmallWeight, hj, hm]
 
@@ -729,7 +718,7 @@ theorem tsum_tsum_restrictedCanonicalVerySmallOutputMass_le_levelMass
           (6 * lowKernelDerivativeConstant * verySmallGeometricConstant) *
         PositiveLevelIntegration.magnitudeLevelL1Mass volume A f k := by
       have hC : 0 ≤ 3 * lowKernelDerivativeConstant :=
-        mul_nonneg (by norm_num) lowKernelDerivativeConstant_nonneg
+        mul_nonneg (by norm_num1) lowKernelDerivativeConstant_nonneg
       have hG : 0 ≤ verySmallGeometricConstant :=
         verySmallGeometricConstant_nonneg
       have hcoef : ENNReal.ofReal (3 * lowKernelDerivativeConstant) *

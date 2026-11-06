@@ -81,7 +81,7 @@ theorem finiteRadiusFrozenBlockHilbertMaxEnorm_le_finiteMax
   let j : Fin (Q B τ).card := (Q B τ).equivFin ⟨m, hm⟩
   have hj : modulationBlockIndex B τ j = m := by
     dsimp only [j, modulationBlockIndex]
-    simp
+    simp only [Equiv.symm_apply_apply]
   calc
     ‖quadraticHilbertTrunc (dyadicModulation m) ε.1.1
         (frozenBlockInput lacunaryAmplitude f k B c τ) x‖ₑ ≤

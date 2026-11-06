@@ -74,7 +74,7 @@ theorem abs_sub_center_le_of_wavePacket_ne_zero {s t u : ℝ} (ht : 0 < t)
     (hu : wavePacket s t u ≠ 0) : |u - s| ≤ t / 4 := by
   have hsupp := wavePacket_support ht hu
   rw [abs_le]
-  constructor <;> linarith [hsupp.1, hsupp.2]
+  constructor <;> linarith only [hsupp, hsupp.1, hsupp.2]
 
 /-- If `x` lies outside the interval of centre `s` and length `t`, its
 distance from the centre is at least half the length. -/
@@ -83,11 +83,11 @@ theorem half_length_le_abs_sub_center {s t x : ℝ} (ht : 0 < t)
   rw [mem_Icc, not_and_or] at hx
   rcases hx with hx | hx
   · rw [abs_of_nonpos]
-    · linarith
-    · linarith
+    · linarith only [hx]
+    · linarith only [ht, hx]
   · rw [abs_of_nonneg]
-    · linarith
-    · linarith
+    · linarith only [hx]
+    · linarith only [ht, hx]
 
 /-- On the packet support, the kernel variable `x-u` stays at least half as
 far from zero as the centre variable `x-s`. -/
@@ -100,7 +100,7 @@ theorem half_abs_sub_center_le_abs_sub {s t x u : ℝ} (ht : 0 < t)
     calc
       |x - s| = |(x - u) + (u - s)| := by ring_nf
       _ ≤ |x - u| + |u - s| := abs_add_le _ _
-  linarith
+  linarith only [hus, hts, htri]
 
 /-- The zero-fold case of the oscillatory estimate in the paper. It is also
 the uniform off-support size bound for the kernel action. -/
@@ -129,7 +129,7 @@ theorem offSupportKernelAction_norm_le {modulation s t x : ℝ} (ht : 0 < t)
       apply (div_le_iff₀ hseppos).2
       rw [div_mul_eq_mul_div]
       apply (le_div_iff₀ hdistpos).2
-      nlinarith
+      linarith only [hsep]
   rw [offSupportKernelAction]
   calc
     ‖∫ u : ℝ, (wavePacket s t u : ℂ) * phase (modulation * (x - u) ^ 2) /
@@ -152,7 +152,7 @@ private theorem kernel_difference_bound {modulation s t x u : ℝ} (ht : 0 < t)
   have hbpos : 0 < |b| := lt_of_lt_of_le (half_pos ht) htb
   have hba : |b| / 2 ≤ |a| := half_abs_sub_center_le_abs_sub ht hx hu
   have hapos : 0 < |a| := lt_of_lt_of_le (half_pos hbpos) hba
-  have hba' : |b| ≤ 2 * |a| := by linarith
+  have hba' : |b| ≤ 2 * |a| := by linarith only [hba]
   have hab : |a - b| = |u - s| := by
     rw [show a - b = -(u - s) by dsimp [a, b]; ring, abs_neg]
   have habsum : |a + b| ≤ 3 * |a| := by
@@ -170,7 +170,7 @@ private theorem kernel_difference_bound {modulation s t x u : ℝ} (ht : 0 < t)
       _ = 2 * Real.pi * |modulation| * |a - b| * |a + b| := by
         rw [show modulation * a ^ 2 - modulation * b ^ 2 =
             modulation * (a - b) * (a + b) by ring, abs_mul, abs_mul]
-        ring
+        ac_rfl
       _ = 2 * Real.pi * |modulation| * |u - s| * |a + b| := by rw [hab]
       _ ≤ 2 * Real.pi * |modulation| * |u - s| * (3 * |a|) := by
         exact mul_le_mul_of_nonneg_left habsum (by positivity)
@@ -179,7 +179,7 @@ private theorem kernel_difference_bound {modulation s t x u : ℝ} (ht : 0 < t)
       ‖(phase (modulation * a ^ 2) - phase (modulation * b ^ 2)) /
           (a : ℂ)‖ ≤ 6 * Real.pi * |modulation| * |u - s| := by
     rw [norm_div, Complex.norm_real, Real.norm_eq_abs]
-    exact (div_le_iff₀ hapos).2 (by simpa [mul_assoc] using hphase)
+    exact (div_le_iff₀ hapos).2 (by exact hphase)
   have hrecip :
       ‖phase (modulation * b ^ 2) * ((1 / (a : ℂ)) - (1 / (b : ℂ)))‖ ≤
         2 * |u - s| / |b| ^ 2 := by
@@ -195,14 +195,14 @@ private theorem kernel_difference_bound {modulation s t x u : ℝ} (ht : 0 < t)
         Complex.norm_real, Real.norm_eq_abs]
     rw [hcastnorm, abs_sub_comm, hab]
     by_cases hus0 : |u - s| = 0
-    · simp [hus0]
+    · simp only [hus0, zero_div, mul_zero, sq_abs, Std.le_refl]
     · apply (div_le_div_iff₀ (mul_pos hapos hbpos) (sq_pos_of_pos hbpos)).2
       have huspos : 0 < |u - s| := lt_of_le_of_ne (abs_nonneg _) (Ne.symm hus0)
       calc
         |u - s| * |b| ^ 2 = (|u - s| * |b|) * |b| := by ring
         _ ≤ (|u - s| * |b|) * (2 * |a|) :=
           mul_le_mul_of_nonneg_left hba' (mul_nonneg huspos.le (abs_nonneg _))
-        _ = 2 * |u - s| * (|a| * |b|) := by ring
+        _ = 2 * |u - s| * (|a| * |b|) := by ac_rfl
   have hdecomp :
       phase (modulation * a ^ 2) / (a : ℂ) -
           phase (modulation * b ^ 2) / (b : ℂ) =
@@ -210,8 +210,6 @@ private theorem kernel_difference_bound {modulation s t x u : ℝ} (ht : 0 < t)
           phase (modulation * b ^ 2) * ((1 / (a : ℂ)) - (1 / (b : ℂ))) := by
     have ha0r : a ≠ 0 := abs_pos.mp hapos
     have hb0r : b ≠ 0 := abs_pos.mp hbpos
-    have ha0 : (a : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr ha0r
-    have hb0 : (b : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hb0r
     field_simp
     ring
   change ‖phase (modulation * a ^ 2) / (a : ℂ) -
@@ -234,7 +232,6 @@ theorem offSupportKernelAction_sub_main_le {modulation s t x : ℝ} (ht : 0 < t)
     (phase (modulation * (x - u) ^ 2) / ((x - u : ℝ) : ℂ) - main)
   let moment : ℝ → ℝ := fun u ↦ wavePacket s t u * |u - s|
   let C : ℝ := 6 * Real.pi * |modulation| + 2 / |x - s| ^ 2
-  have hC : 0 ≤ C := by dsimp [C]; positivity
   have hmomentContinuous : Continuous moment := by
     exact (continuous_wavePacket s t).mul ((continuous_id.sub continuous_const).abs)
   have hmomentCompact : HasCompactSupport moment := by
@@ -301,7 +298,7 @@ theorem offSupportKernelAction_sub_main_le {modulation s t x : ℝ} (ht : 0 < t)
     have hmainIntegral :
         (∫ u : ℝ, (wavePacket s t u : ℂ) * main) = main := by
       rw [integral_mul_const, integral_complex_ofReal, wavePacket_integral s ht]
-      simp
+      simp only [Complex.ofReal_one, one_mul]
     rw [offSupportKernelAction, ← hmainIntegral,
       ← integral_sub hactionIntegrable hmainIntegrable]
     congr 1
@@ -320,14 +317,11 @@ theorem offSupportKernelAction_sub_main_le {modulation s t x : ℝ} (ht : 0 < t)
     _ ≤ 7 * max (|modulation| * t) (t / |x - s| ^ 2) := by
       have hpi : Real.pi ≤ 4 := Real.pi_le_four
       have hA : 0 ≤ |modulation| * t := mul_nonneg (abs_nonneg _) ht.le
-      have hB : 0 ≤ t / |x - s| ^ 2 := div_nonneg ht.le (sq_nonneg _)
       have hAmax : |modulation| * t ≤
           max (|modulation| * t) (t / |x - s| ^ 2) := le_max_left _ _
       have hBmax : t / |x - s| ^ 2 ≤
           max (|modulation| * t) (t / |x - s| ^ 2) := le_max_right _ _
-      have hmax : 0 ≤ max (|modulation| * t) (t / |x - s| ^ 2) :=
-        hA.trans hAmax
-      have hpicoeff : (3 / 2 : ℝ) * Real.pi ≤ 6 := by nlinarith
+      have hpicoeff : (3 / 2 : ℝ) * Real.pi ≤ 6 := by linarith only [hpi]
       dsimp [C]
       rw [show (6 * Real.pi * |modulation| + 2 / |x - s| ^ 2) * (t / 4) =
           (3 / 2 : ℝ) * Real.pi * (|modulation| * t) +
@@ -341,6 +335,6 @@ theorem offSupportKernelAction_sub_main_le {modulation s t x : ℝ} (ht : 0 < t)
             (1 / 2 : ℝ) * max (|modulation| * t) (t / |x - s| ^ 2) := by
           gcongr
         _ ≤ 7 * max (|modulation| * t) (t / |x - s| ^ 2) := by
-          nlinarith
+          linarith only [hA, hAmax]
 
 end QuadraticCarleson

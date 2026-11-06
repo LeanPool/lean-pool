@@ -28,7 +28,7 @@ theorem quadraticPhase_hasTemperateGrowth (modulation : ℝ) :
       (fun u : ℝ => Complex.exp (u * Complex.I)) ∘
         fun y : ℝ => 2 * Real.pi * (modulation * y ^ 2) by
     funext y
-    simp only [Function.comp_apply, phase]]
+    simp only [phase, Function.comp_apply]]
   exact Complex.hasTemperateGrowth_exp_mul_I.comp (by fun_prop)
 
 /-- The distribution `e(λ y²) · p.v. (1 / y)`. -/

@@ -53,7 +53,7 @@ theorem sum_Q_le (B : ℕ) (τ : ℤ) (a : ℤ → ENNReal) (M : ENNReal)
   calc
     ∑ m ∈ Q B τ, a m ≤ ∑ _m ∈ Q B τ, M := by
       exact Finset.sum_le_sum fun m hm ↦ ha m hm
-    _ = (B : ENNReal) * M := by simp [card_Q]
+    _ = (B : ENNReal) * M := by simp only [Finset.sum_const, card_Q, nsmul_eq_mul]
 
 /-- The analogous finite-sum consequence of the paper's `#R ≤ 5B` bound. -/
 theorem sum_R_le_five_mul
@@ -64,7 +64,7 @@ theorem sum_R_le_five_mul
   calc
     ∑ j ∈ R B c τ, a j ≤ ∑ _j ∈ R B c τ, M := by
       exact Finset.sum_le_sum fun j hj ↦ ha j hj
-    _ = ((R B c τ).card : ℕ) * M := by simp
+    _ = ((R B c τ).card : ℕ) * M := by simp only [Finset.sum_const, nsmul_eq_mul]
     _ ≤ (5 * B : ℕ) * M := by
       gcongr
       exact card_R_le_five_mul B c τ hB hc
@@ -130,7 +130,7 @@ theorem tsum_sparseBlockMass_le
         apply tsum_congr
         intro j
         by_cases hj : j ∈ R B c τ <;> simp [hj]
-      · simp [sparseBlockMass, hτρ]
+      · simp only [sparseBlockMass, hτρ, ↓reduceIte, false_and, tsum_zero]
     _ = ∑' j : ℤ, ∑' τ : ℤ,
           (if τ ≡ ρ [ZMOD sparseModulus] ∧ j ∈ R B c τ then a j else 0) :=
       ENNReal.tsum_comm

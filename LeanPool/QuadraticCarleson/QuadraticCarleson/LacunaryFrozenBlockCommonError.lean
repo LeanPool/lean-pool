@@ -55,9 +55,9 @@ theorem hasLogSquaredFrozenBlockWeakBounds_of_common_error
   have hmass : mass ≠ ∞ := g.integrable.hasFiniteIntegral.ne
   have hL : 1 ≤ L := PositiveEndpointOptimization.one_le_paperLog_one
     (by positivity : 0 ≤ (B k : ℝ))
-  have hLsq : 1 ≤ L ^ 2 := by nlinarith
+  have hLsq : 1 ≤ L ^ 2 := by nlinarith only [hL]
   have hcoefficient : 2 * (D * L ^ 2) + 384 ≤ (2 * D + 384) * L ^ 2 := by
-    nlinarith
+    linarith only [hLsq]
   have hsmall := hasExtendedWeakL1Bound_of_finiteMax_add_fortyEight_maximal
     (T k τ) (mul_nonneg hD (sq_nonneg L)) (hweak k τ) g (hpoint k τ)
   have hglobal : HasExtendedWeakL1Bound volume

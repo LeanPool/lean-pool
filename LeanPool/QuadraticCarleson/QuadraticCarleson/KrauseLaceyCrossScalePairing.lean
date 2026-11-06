@@ -148,7 +148,7 @@ theorem krauseLaceyPositiveKernel_mixed_adjoint_le
       ‖∫ t, annularQuadraticKernel (positiveDyadicAmplitude k) 1 (-x - t) *
         conj (annularQuadraticKernel (positiveDyadicAmplitude j) 1 (-y - t))‖ := by
     rw [← RCLike.norm_conj, ← integral_conj]
-    simp only [map_mul, starRingEnd_self_apply, krauseLaceyPositiveKernel_apply]
+    simp only [krauseLaceyPositiveKernel_apply, map_mul, starRingEnd_self_apply]
     rw [← MeasureTheory.integral_sub_left_eq_self
       (fun t ↦ annularQuadraticKernel (positiveDyadicAmplitude k) 1 (-x - t) *
         conj (annularQuadraticKernel (positiveDyadicAmplitude j) 1 (-y - t))) volume 0]

@@ -56,7 +56,7 @@ theorem IsSparse.iUnion_of_disjoint_carriers
     if hI : I ∈ F i then E i ⟨I, hI⟩ else ∅
   have hEambient (i : ι) (I : RealInterval) (hI : I ∈ F i) :
       Eambient i I = E i ⟨I, hI⟩ := by
-    simp only [Eambient, dite_eq_left hI]
+    simp only [dite_eq_left hI, Eambient]
   let E' (I : {I : RealInterval // I ∈ ⋃ i, F i}) : Set ℝ :=
     Eambient (idx I) I.1
   refine ⟨hη, hη1, E', ?_, ?_, ?_, ?_⟩

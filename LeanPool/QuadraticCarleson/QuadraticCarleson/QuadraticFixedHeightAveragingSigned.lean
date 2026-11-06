@@ -29,7 +29,7 @@ theorem ennreal_add_sq_le (a b : ℝ≥0∞) : (a + b) ^ 2 ≤ 2 * (a ^ 2 + b ^ 
   lift a to ℝ≥0 using ha
   lift b to ℝ≥0 using hb
   exact_mod_cast (show ((a : ℝ) + (b : ℝ)) ^ 2 ≤ 2 * ((a : ℝ) ^ 2 + (b : ℝ) ^ 2) by
-    nlinarith [sq_nonneg ((a : ℝ) - (b : ℝ))])
+    linarith only [sq_nonneg ((a : ℝ) - (b : ℝ))])
 
 theorem lintegral_sq_le_of_le_add {F G H : ℝ → ℝ≥0∞}
     (hF : Measurable F) (h : ∀ x, H x ≤ F x + G x) :
@@ -40,14 +40,14 @@ theorem lintegral_sq_le_of_le_add {F G H : ℝ → ℝ≥0∞}
       intro x
       exact (pow_le_pow_left₀ bot_le (h x) 2).trans (ennreal_add_sq_le _ _)
     _ = _ := by
-      rw [lintegral_const_mul' _ _ (by norm_num), lintegral_add_left (hF.pow_const 2) _]
+      rw [lintegral_const_mul' _ _ (by decide +kernel), lintegral_add_left (hF.pow_const 2) _]
 
 /-- Continuous compactly supported kernels can be integrated against any
 `L²` input at every point, not only almost everywhere. -/
 theorem integrable_convolution_row_of_memLp {κ f : ℝ → ℂ}
     (hc : Continuous κ) (hs : HasCompactSupport κ) (hf : MemLp f 2) (x : ℝ) :
     Integrable (fun t ↦ κ (x - t) * f t) := by
-  have hloc := hf.locallyIntegrable (by norm_num : (1 : ℝ≥0∞) ≤ 2)
+  have hloc := hf.locallyIntegrable (by norm_num1 : (1 : ℝ≥0∞) ≤ 2)
   exact hloc.integrable_smul_left_of_hasCompactSupport
     (hc.comp (continuous_const.sub continuous_id)) (hs.comp_homeomorph (Homeomorph.subLeft x))
 
@@ -112,8 +112,6 @@ theorem finiteConvolutionMaximal_sub_reflect_sq_bound {N : ℕ}
       (4 * C) * ∫⁻ x, ‖f x‖ₑ ^ 2 := by
   have hfr : MemLp (fun t ↦ f (-t)) 2 := hf.comp_measurePreserving
     (Measure.measurePreserving_neg volume)
-  have hmr := measurable_finiteConvolutionMaximal κ (fun i ↦ (hc i).measurable)
-    (hfm.comp measurable_neg)
   have hmf := measurable_finiteConvolutionMaximal κ (fun i ↦ (hc i).measurable) hfm
   have hpoint (x : ℝ) :
       finiteConvolutionMaximal (fun i t ↦ κ i t - κ i (-t)) f x ≤
@@ -158,7 +156,6 @@ theorem finiteConvolutionMaximal_eq_or_conj_sq_bound {N : ℕ}
     {f : ℝ → ℂ} (hfm : Measurable f) (hf : MemLp f 2) :
     (∫⁻ x, finiteConvolutionMaximal τ f x ^ 2) ≤ (4 * C) * ∫⁻ x, ‖f x‖ₑ ^ 2 := by
   have hfc : MemLp (fun t ↦ conj (f t)) 2 := hf.star
-  have hfmconj := Complex.continuous_conj.measurable.comp hfm
   have hnorm (t : ℝ) : ‖conj (f t)‖ₑ = ‖f t‖ₑ := by
     simp only [← ofReal_norm, RCLike.norm_conj]
   calc
@@ -195,11 +192,11 @@ theorem dyadicPsi_eq_positive_sub_reflect (j : ℤ) (t : ℝ) :
   · rw [positiveDyadicAmplitude_eq, positiveDyadicAmplitude_eq]
     simp only [not_lt.mpr ht.le, ↓reduceIte, neg_pos.mpr ht, zero_sub]
     rw [dyadicPsi_odd j t]
-    simp
+    simp only [Complex.ofReal_neg, neg_neg]
   · subst t
     simp [positiveDyadicAmplitude_eq, dyadicPsi_zero]
   · rw [positiveDyadicAmplitude_eq, positiveDyadicAmplitude_eq]
-    simp [ht, not_lt.mpr (neg_nonpos.mpr ht.le)]
+    simp only [ht, ↓reduceIte, not_lt.mpr (neg_nonpos.mpr ht.le), sub_zero]
 
 /-- The actual full fixed-height dyadic kernel from the paper. -/
 noncomputable def fixedHeightQuadraticKernel (lam : ℝ) (height : ℕ) (hlam : lam ≠ 0) (t : ℝ) : ℂ :=
@@ -232,7 +229,7 @@ theorem hasCompactSupport_positiveFixedHeightQuadraticKernel
   intro t ht
   apply positiveDyadicAmplitude_support_subset (oscillatoryScaleIndex lam height hlam)
   intro hz
-  exact ht (by simp [positiveFixedHeightQuadraticKernel, annularQuadraticKernel, hz])
+  exact ht (by simp only [positiveFixedHeightQuadraticKernel, annularQuadraticKernel, hz, zero_mul])
 
 theorem continuous_fixedHeightQuadraticKernel (lam : ℝ) (height : ℕ) (hlam : lam ≠ 0) :
     Continuous (fixedHeightQuadraticKernel lam height hlam) := by
@@ -266,7 +263,7 @@ theorem finite_fixedHeightQuadraticKernel_positive_maximal_sq_decay
     exact fixedHeightQuadraticKernel_eq_positive_sub_reflect _ _ _ _
   rw [hk]
   convert h using 1
-  rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
+  rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
   congr 2
   ring
 
@@ -279,7 +276,7 @@ theorem oscillatoryScaleIndex_abs (lam : ℝ) (height : ℕ) (hlam : lam ≠ 0) 
 
 theorem fixedHeight_conj_phase (s : ℝ) : conj (phase s) = phase (-s) := by
   have h := (phase_sub_eq_mul_conj 0 s).symm
-  simpa only [zero_sub, phase_zero, one_mul] using h
+  simpa only [phase_zero, one_mul, zero_sub] using h
 
 /-- Every nonzero signed modulation gives either the absolute-modulation
 kernel or its complex conjugate. -/
@@ -326,7 +323,7 @@ theorem finite_fixedHeightQuadraticKernel_maximal_sq_decay
     (fun g hg ↦ finite_fixedHeightQuadraticKernel_positive_maximal_sq_decay n height hh
       (fun i ↦ |lam i|) (fun i ↦ abs_pos.mpr (hlam i)) hg) hgm hg
   convert h using 1
-  rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
+  rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
   congr 2
   ring
 

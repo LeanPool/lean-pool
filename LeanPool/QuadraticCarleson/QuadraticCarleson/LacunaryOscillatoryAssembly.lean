@@ -117,7 +117,7 @@ theorem paperLacunaryOscillatoryMaximal_stoppingBadPart_le_low_add_high
   · exact le_iSup (fun m : ℤ ↦ ‖∑' n : ℕ,
       ∫ t, lacunaryStoppingLevelBadPart f k (x-t) *
         (dyadicPsi (oscillatoryScaleIndex ((2 : ℝ) ^ m) (B k+n+1)
-          (zpow_pos (by norm_num) m).ne') t : ℂ) * phase ((2 : ℝ) ^ m*t^2)‖ₑ) m
+          (zpow_pos (by norm_num1) m).ne') t : ℂ) * phase ((2 : ℝ) ^ m*t^2)‖ₑ) m
 
 theorem lintegral_lacunaryHighOrlicz_le_lowOrlicz (f : ℝ → ℂ) :
     (∫⁻ x, ENNReal.ofReal (‖f x‖ * paperLog 2 ‖f x‖ ^ 2)) ≤
@@ -223,7 +223,7 @@ theorem paperLacunaryOscillatoryMaximal_levelSet_three_le_orlicz
     by_contra hb
     have h := (paperLacunaryOscillatoryMaximal_le_good_add_bad hf hfi x).trans
       (add_le_add (le_of_not_gt hg) (le_of_not_gt hb))
-    norm_num only [show (1 : ℝ≥0∞) + 2 = 3 by norm_num] at h
+    norm_num only [show (1 : ℝ≥0∞) + 2 = 3 by norm_num1] at h
     exact hx.not_ge h
   apply ((measure_mono hsub).trans (measure_union_le _ _)).trans
   rw [lacunaryOscillatoryEndpointConstant, add_mul]

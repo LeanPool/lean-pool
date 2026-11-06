@@ -65,8 +65,8 @@ theorem hasSignedSumSquareBound_badSubcollectionGenerations
     omega
   · intro I hI
     split_ifs with hi
-    · rcases hc _ hi with h | h | h <;> rw [h] <;> norm_num
-    · norm_num
+    · rcases hc _ hi with h | h | h <;> rw [h] <;> norm_num1
+    · norm_num1
 
 /-- The largest norm of a prefix containing at most `M` generations of bad pieces from `N`. -/
 noncomputable def badSubcollectionPrefixMaximal

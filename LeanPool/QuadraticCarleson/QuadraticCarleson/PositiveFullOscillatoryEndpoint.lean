@@ -33,13 +33,13 @@ open PositiveStoppingBadEstimate PositiveGoodOscillatory
 theorem stoppingGoodPart_add_stoppingBadPart (f : ℝ → ℂ) :
     stoppingGoodPart f + stoppingBadPart f = f := by
   funext x
-  simp [Pi.add_apply, stoppingBadPart]
+  simp only [Pi.add_apply, stoppingBadPart, add_sub_cancel]
 
 theorem integrable_stoppingGoodPart {f : ℝ → ℂ} (hf : Measurable f)
     (hfi : Integrable f) : Integrable (stoppingGoodPart f) := by
   convert hfi.sub (integrable_stoppingBadPart hf hfi) using 1
   funext x
-  simp [Pi.sub_apply, stoppingBadPart]
+  simp only [Pi.sub_apply, stoppingBadPart, sub_sub_cancel]
 
 theorem paperOscillatoryMaximal_add_le {f g : ℝ → ℂ}
     (hf : Integrable f) (hg : Integrable g) (x : ℝ) :
@@ -129,7 +129,7 @@ theorem stoppingBadPart_half_levelSet_le_orlicz {f : ℝ → ℂ}
   have hiL : (∫⁻ x, 2 * L x) = 2 * ∫⁻ x, L x :=
     lintegral_const_mul' _ _ (by finiteness)
   have hiH : (∫⁻ x, (2 * H x) ^ 2) = 4 * ∫⁻ x, H x ^ 2 := by
-    simp only [mul_pow, show (2 : ℝ≥0∞)^2 = 4 by norm_num]
+    simp only [mul_pow, show (2 : ℝ≥0∞)^2 = 4 by norm_num1]
     exact lintegral_const_mul' _ _ (by finiteness)
   rw [hiL, hiH] at hs
   have hE : volume E ≤ 5 * ∫⁻ x, ENNReal.ofReal (‖f x‖ * paperLog 1 ‖f x‖) :=
@@ -142,9 +142,9 @@ theorem stoppingBadPart_half_levelSet_le_orlicz {f : ℝ → ℂ}
       {x | 1 < 2 * paperOscillatoryMaximal (stoppingBadPart f) x} := by
     intro x hx
     change 1 < 2 * paperOscillatoryMaximal (stoppingBadPart f) x
-    have h := ENNReal.mul_lt_mul_right (by norm_num : (2 : ℝ≥0∞) ≠ 0)
+    have h := ENNReal.mul_lt_mul_right (by norm_num1 : (2 : ℝ≥0∞) ≠ 0)
       (by finiteness : (2 : ℝ≥0∞) ≠ ∞) hx
-    simpa only [one_div, ENNReal.mul_inv_cancel (by norm_num : (2 : ℝ≥0∞) ≠ 0)
+    simpa only [one_div, ENNReal.mul_inv_cancel (by norm_num1 : (2 : ℝ≥0∞) ≠ 0)
       (by finiteness : (2 : ℝ≥0∞) ≠ ∞)] using h
   apply ((measure_mono hset).trans hs).trans
   apply (add_le_add (add_le_add hE
@@ -160,8 +160,8 @@ theorem stoppingGoodPart_half_levelSet_le_orlicz {f : ℝ → ℂ}
         ∫⁻ x, ENNReal.ofReal (‖f x‖ * paperLog 1 ‖f x‖) := by
   have h := stoppingGoodPart_oscillatory_levelSet_mul_le hfi (1/2)
   have hc : (4 : ℝ≥0∞) * (1/2 : ℝ≥0∞)^2 = 1 := by
-    rw [show (4 : ℝ≥0∞) = 2^2 by norm_num, ← mul_pow, one_div,
-      ENNReal.mul_inv_cancel (by norm_num) (by finiteness), one_pow]
+    rw [show (4 : ℝ≥0∞) = 2^2 by norm_num1, ← mul_pow, one_div,
+      ENNReal.mul_inv_cancel (by norm_num1) (by finiteness), one_pow]
   calc
     _ = 4 * ((1/2 : ℝ≥0∞)^2 *
         volume {x | (1/2 : ℝ≥0∞) < paperOscillatoryMaximal (stoppingGoodPart f) x}) := by

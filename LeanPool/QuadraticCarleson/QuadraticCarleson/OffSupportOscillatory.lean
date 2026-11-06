@@ -8,9 +8,6 @@ module
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.WavePacket
 public import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
-public import Mathlib.Analysis.Calculus.Deriv.Support
-public import Mathlib.Analysis.Complex.RealDeriv
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 
 /-!
 # Two-fold nonstationary phase away from a wave packet
@@ -114,7 +111,7 @@ private theorem oscillatoryCoeff_ne_zero {modulation : ℝ} (hmod : 0 < modulati
     oscillatoryCoeff modulation ≠ 0 := by
   rw [oscillatoryCoeff]
   exact mul_ne_zero (Complex.ofReal_ne_zero.mpr
-    (neg_ne_zero.mpr (mul_ne_zero (mul_ne_zero (by norm_num) Real.pi_ne_zero) hmod.ne')))
+    (neg_ne_zero.mpr (mul_ne_zero (mul_ne_zero (by norm_num1) Real.pi_ne_zero) hmod.ne')))
     Complex.I_ne_zero
 
 private theorem hasDerivAt_ibpAmplitude0
@@ -198,12 +195,6 @@ private theorem twofold_integration_by_parts
   have hA1 : ∀ u ∈ uIcc l r, HasDerivAt A1 (A1' u) u := by
     intro u hu
     exact hasDerivAt_ibpAmplitude1 hmod (hxu u hu) (hp u hu) (hp' u hu)
-  have hqcont : ContinuousOn q (uIcc l r) := fun u hu ↦
-    (hq u hu).continuousAt.continuousWithinAt
-  have hA0cont : ContinuousOn A0 (uIcc l r) := fun u hu ↦
-    (hA0 u hu).continuousAt.continuousWithinAt
-  have hA1cont : ContinuousOn A1 (uIcc l r) := fun u hu ↦
-    (hA1 u hu).continuousAt.continuousWithinAt
   have hq'cont : Continuous q' := by
     dsimp only [q', q]
     unfold phase
@@ -269,7 +260,6 @@ private theorem twofold_integration_by_parts
     ring
   have hsecond : ∀ u ∈ uIcc l r, A0' u * q u = A1 u * q' u := by
     intro u hu
-    have hd := oscillatoryCoeff_ne_zero hmod
     have hzc : ((x - u : ℝ) : ℂ) ≠ 0 :=
       Complex.ofReal_ne_zero.mpr (hxu u hu)
     dsimp only [A0', A1, q', q]
@@ -286,18 +276,18 @@ private theorem twofold_integration_by_parts
         ((x - u : ℝ) : ℂ)) = ∫ u in l..r, A0 u * q' u := by
       apply intervalIntegral.integral_congr
       intro u hu
-      exact hfirst u (by simpa using hu)
+      exact hfirst u (by exact hu)
     _ = -(∫ u in l..r, A0' u * q u) := by
       rw [hibp0, hA0left, hA0right]
-      simp
+      simp only [zero_mul, sub_self, zero_sub]
     _ = -(∫ u in l..r, A1 u * q' u) := by
       congr 1
       apply intervalIntegral.integral_congr
       intro u hu
-      exact hsecond u (by simpa using hu)
+      exact hsecond u (by exact hu)
     _ = ∫ u in l..r, A1' u * q u := by
       rw [hibp1, hA1left, hA1right]
-      simp
+      simp only [zero_mul, sub_self, zero_sub, neg_neg]
     _ = ∫ u in l..r, ibpAmplitude1Deriv modulation x p p' p'' u *
         phase (modulation * (x - u) ^ 2) := rfl
 
@@ -443,24 +433,24 @@ theorem half_length_le_abs_center {s t x : ℝ} (ht : 0 < t)
     (hx : x ∉ Icc (s - t / 2) (s + t / 2)) : t / 2 ≤ |x - s| := by
   rw [mem_Icc, not_and_or] at hx
   rcases hx with hx | hx
-  · rw [abs_of_nonpos] <;> linarith
-  · rw [abs_of_nonneg] <;> linarith
+  · rw [abs_of_nonpos] <;> linarith only [hx, ht]
+  · rw [abs_of_nonneg] <;> linarith only [hx, ht]
 
 theorem third_interval_separation {s t x u : ℝ} (ht : 0 < t)
     (hx : x ∉ Icc (s - t / 2) (s + t / 2))
     (hu : u ∈ uIcc (s - t / 3) (s + t / 3)) :
     |x - s| / 3 ≤ |x - u| := by
-  have hlr : s - t / 3 ≤ s + t / 3 := by linarith
+  have hlr : s - t / 3 ≤ s + t / 3 := by linarith only [ht]
   rw [uIcc_of_le hlr, mem_Icc] at hu
   have hus : |u - s| ≤ t / 3 := by
     rw [abs_le]
-    constructor <;> linarith [hu.1, hu.2]
+    constructor <;> linarith only [hu, hu.1, hu.2]
   have hts := half_length_le_abs_center ht hx
   have htri : |x - s| ≤ |x - u| + |u - s| := by
     calc
       |x - s| = |(x - u) + (u - s)| := by ring_nf
       _ ≤ |x - u| + |u - s| := abs_add_le _ _
-  linarith
+  linarith only [hus, hts, htri]
 
 private theorem support_oscillatory_integrand_subset
     {modulation s t x : ℝ} (ht : 0 < t) :
@@ -471,19 +461,19 @@ private theorem support_oscillatory_integrand_subset
   have hp : wavePacket s t u ≠ 0 := by
     intro hp
     apply hu
-    simp [hp]
+    simp only [hp, Complex.ofReal_zero, zero_mul, Complex.ofReal_sub, zero_div]
   have hsupp := wavePacket_support ht hp
-  constructor <;> linarith [hsupp.1, hsupp.2]
+  constructor <;> linarith only [ht, hsupp, hsupp.1, hsupp.2]
 
 private theorem norm_phase_oscillatory (a : ℝ) : ‖phase a‖ = 1 := by
   rw [phase]
-  simpa [mul_assoc] using Complex.norm_exp_ofReal_mul_I (2 * Real.pi * a)
+  exact Complex.norm_exp_ofReal_mul_I (2 * Real.pi * a)
 
 private theorem norm_oscillatoryCoeff (modulation : ℝ) (hmod : 0 < modulation) :
     ‖oscillatoryCoeff modulation‖ = 4 * Real.pi * modulation := by
   rw [oscillatoryCoeff, norm_mul, Complex.norm_real, Real.norm_eq_abs,
     Complex.norm_I, mul_one, abs_neg, abs_mul, abs_mul,
-    abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 4), abs_of_nonneg Real.pi_pos.le,
+    abs_of_nonneg (by norm_num1 : (0 : ℝ) ≤ 4), abs_of_nonneg Real.pi_pos.le,
     abs_of_pos hmod]
 
 /-- The corrected twice-integrated identity for the fixed wave packet. -/
@@ -507,7 +497,7 @@ theorem offSupportOscillatoryAction_eq_twiceIntegrated
       intro hux
       subst x
       rw [sub_self, abs_zero] at hsep
-      linarith)
+      linarith only [hsep, hdistpos])
   · exact continuous_wavePacket s t
   · exact continuous_wavePacketDeriv s t
   · exact continuous_wavePacketSecondDeriv s t
@@ -535,15 +525,15 @@ private theorem norm_ibpAmplitude1Deriv_le
   have hpow3 : a ^ 3 ≤ 27 * |x - u| ^ 3 := by
     calc
       a ^ 3 = 27 * (a / 3) ^ 3 := by ring
-      _ ≤ 27 * |x - u| ^ 3 := mul_le_mul_of_nonneg_left h3 (by norm_num)
+      _ ≤ 27 * |x - u| ^ 3 := mul_le_mul_of_nonneg_left h3 (by norm_num1)
   have hpow4 : a ^ 4 ≤ 81 * |x - u| ^ 4 := by
     calc
       a ^ 4 = 81 * (a / 3) ^ 4 := by ring
-      _ ≤ 81 * |x - u| ^ 4 := mul_le_mul_of_nonneg_left h4 (by norm_num)
+      _ ≤ 81 * |x - u| ^ 4 := mul_le_mul_of_nonneg_left h4 (by norm_num1)
   have hpow5 : a ^ 5 ≤ 243 * |x - u| ^ 5 := by
     calc
       a ^ 5 = 243 * (a / 3) ^ 5 := by ring
-      _ ≤ 243 * |x - u| ^ 5 := mul_le_mul_of_nonneg_left h5 (by norm_num)
+      _ ≤ 243 * |x - u| ^ 5 := mul_le_mul_of_nonneg_left h5 (by norm_num1)
   have hterm2 :
       |p'' u| / ((4 * Real.pi * modulation) ^ 2 * |x - u| ^ 3) ≤
         (27 * |p'' u| / a ^ 3) / (4 * Real.pi * modulation) ^ 2 := by
@@ -552,7 +542,7 @@ private theorem norm_ibpAmplitude1Deriv_le
       (mul_pos (pow_pos ha 3) hD)).2
     have h := mul_le_mul_of_nonneg_left hpow3
       (mul_nonneg (abs_nonneg (p'' u)) hD.le)
-    nlinarith
+    linarith only [h]
   have hterm1 :
       5 * |p' u| / ((4 * Real.pi * modulation) ^ 2 * |x - u| ^ 4) ≤
         (405 * |p' u| / a ^ 4) / (4 * Real.pi * modulation) ^ 2 := by
@@ -560,8 +550,8 @@ private theorem norm_ibpAmplitude1Deriv_le
     apply (div_le_div_iff₀ (mul_pos hD (pow_pos hz 4))
       (mul_pos (pow_pos ha 4) hD)).2
     have h := mul_le_mul_of_nonneg_left hpow4
-      (mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 5) (abs_nonneg (p' u))) hD.le)
-    nlinarith
+      (mul_nonneg (mul_nonneg (by norm_num1 : (0 : ℝ) ≤ 5) (abs_nonneg (p' u))) hD.le)
+    linarith only [h]
   have hterm0 :
       8 * |p u| / ((4 * Real.pi * modulation) ^ 2 * |x - u| ^ 5) ≤
         (1944 * |p u| / a ^ 5) / (4 * Real.pi * modulation) ^ 2 := by
@@ -569,8 +559,8 @@ private theorem norm_ibpAmplitude1Deriv_le
     apply (div_le_div_iff₀ (mul_pos hD (pow_pos hz 5))
       (mul_pos (pow_pos ha 5) hD)).2
     have h := mul_le_mul_of_nonneg_left hpow5
-      (mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 8) (abs_nonneg (p u))) hD.le)
-    nlinarith
+      (mul_nonneg (mul_nonneg (by norm_num1 : (0 : ℝ) ≤ 8) (abs_nonneg (p u))) hD.le)
+    linarith only [h]
   rw [norm_mul, norm_phase_oscillatory, mul_one]
   unfold ibpAmplitude1Deriv
   calc
@@ -611,9 +601,8 @@ theorem offSupportOscillatoryAction_norm_le
       (1944 / a ^ 5) * |wavePacket s t u|) / D
   have ha : 0 < a :=
     lt_of_lt_of_le (half_pos ht) (half_length_le_abs_center ht hx)
-  have hD : 0 < D := by dsimp [D]; positivity
   have hpabs : Integrable (fun u : ℝ ↦ |wavePacket s t u|) := by
-    simpa only [Real.norm_eq_abs] using (wavePacket_integrable s ht).norm
+    exact (wavePacket_integrable s ht).norm
   have hg : Integrable g := by
     dsimp only [g]
     exact ((((integrable_abs_wavePacketSecondDeriv s ht).const_mul (27 / a ^ 3)).add
@@ -623,7 +612,7 @@ theorem offSupportOscillatoryAction_norm_le
     intro u
     dsimp only [g]
     positivity
-  have hlr : s - t / 3 ≤ s + t / 3 := by linarith
+  have hlr : s - t / 3 ≤ s + t / 3 := by linarith only [ht]
   rw [offSupportOscillatoryAction_eq_twiceIntegrated hmod ht hx]
   calc
     ‖∫ u in (s - t / 3)..(s + t / 3),
@@ -676,30 +665,26 @@ theorem offSupportOscillatoryAction_norm_le
             exact ae_of_all _ fun u ↦ abs_of_nonneg (wavePacket_nonneg s u ht)
           _ = 1 := wavePacket_integral s ht
       rw [hpint]
-      ring
+      ac_rfl
     _ ≤ offSupportOscillatoryConstant /
         (modulation ^ 2 * t ^ 2 * |x - s| ^ 3) := by
       have hdist : t / 2 ≤ a := by
         exact half_length_le_abs_center ht hx
-      have hta : t ≤ 2 * a := by linarith
-      have ht2a2 : t ^ 2 ≤ 4 * a ^ 2 := by nlinarith
+      have hta : t ≤ 2 * a := by linarith only [hdist]
+      have ht2a2 : t ^ 2 ≤ 4 * a ^ 2 := by nlinarith only [ht, ha, hdist]
       have hI1 : 0 ≤ ∫ v : ℝ, |deriv baseBump v| :=
-        integral_nonneg fun _ ↦ abs_nonneg _
-      have hI2 : 0 ≤ ∫ v : ℝ, |iteratedDeriv 2 baseBump v| :=
         integral_nonneg fun _ ↦ abs_nonneg _
       have hlinear :
           405 * (∫ v : ℝ, |deriv baseBump v|) * t ≤
             810 * (∫ v : ℝ, |deriv baseBump v|) * a := by
         have h := mul_le_mul_of_nonneg_left hta
-          (mul_nonneg (by norm_num : (0 : ℝ) ≤ 405) hI1)
-        nlinarith
-      have hconstant : 1944 * t ^ 2 ≤ 7776 * a ^ 2 := by
-        nlinarith
+          (mul_nonneg (by norm_num1 : (0 : ℝ) ≤ 405) hI1)
+        linarith only [h]
       dsimp only [D]
       change _ ≤ offSupportOscillatoryConstant /
         (modulation ^ 2 * t ^ 2 * a ^ 3)
       unfold offSupportOscillatoryConstant
       field_simp [ne_of_gt hmod, ne_of_gt ht, ne_of_gt ha, Real.pi_ne_zero]
-      nlinarith
+      nlinarith only [ha, ht2a2, hlinear]
 
 end QuadraticCarleson

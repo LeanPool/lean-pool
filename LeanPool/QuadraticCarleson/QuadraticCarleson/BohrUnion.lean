@@ -72,18 +72,17 @@ theorem sum_measure_sq_le_union_mul_sum_inter {α ι : Type*} [MeasurableSpace �
     apply inter_eq_left.mpr
     exact subset_iUnion₂_of_subset i hi Subset.rfl
   have hfu : ⟪f, u⟫_ℝ = ∑ i ∈ s, μ.real (E i) := by
-    simp only [f, sum_inner]
+    simp only [sum_inner, f]
     exact Finset.sum_congr rfl heu
   have hff : ⟪f, f⟫_ℝ = ∑ i ∈ s, ∑ j ∈ s, μ.real (E i ∩ E j) := by
-    simp only [f, sum_inner, inner_sum, e,
-      L2.real_inner_indicatorConstLp_one_indicatorConstLp_one]
+    simp only [inner_sum, sum_inner, L2.real_inner_indicatorConstLp_one_indicatorConstLp_one, f, e]
     apply Finset.sum_congr rfl
     intro i hi
     apply Finset.sum_congr rfl
     intro j hj
     rw [inter_comm]
   have huu : ⟪u, u⟫_ℝ = μ.real U := by
-    simp only [u, L2.real_inner_indicatorConstLp_one_indicatorConstLp_one, inter_self]
+    simp only [L2.real_inner_indicatorConstLp_one_indicatorConstLp_one, inter_self, u]
   have hcs := real_inner_mul_inner_self_le f u
   rw [hfu, hff, huu] at hcs
   simpa only [pow_two, mul_comm] using hcs
@@ -117,21 +116,20 @@ private theorem bohrCell_subset {n j : ℕ} {c : ℝ}
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn
   have hden : (0 : ℝ) < 4 * n := by positivity
   have hj' : (j : ℝ) + 1 ≤ n := by exact_mod_cast hj
-  have hj0 : (0 : ℝ) ≤ j := Nat.cast_nonneg j
   have hx₁ := (div_le_iff₀ hden).mp hx.1
   have hx₂ := (lt_div_iff₀ hden).mp hx.2
   constructor
-  · constructor <;> nlinarith
+  · constructor <;> nlinarith only [hn', hx₁, hc, hj', hx₂]
   · have hfract : Int.fract ((4 * n : ℕ) * x : ℝ) =
         4 * (n : ℝ) * x - ((n : ℝ) + j) := by
       apply Int.fract_eq_iff.mpr
-      refine ⟨by nlinarith, by nlinarith, ⟨(n + j : ℕ), ?_⟩⟩
+      refine ⟨by linarith only [hx₁], by linarith only [hc, hx₂], ⟨(n + j : ℕ), ?_⟩⟩
       push_cast
       ring
     change min (Int.fract ((4 * n : ℕ) * x : ℝ))
       (1 - Int.fract ((4 * n : ℕ) * x : ℝ)) ≤ c
     rw [hfract]
-    exact (min_le_left _ _).trans (by nlinarith)
+    exact (min_le_left _ _).trans (by linarith only [hx₂])
 
 /-- An explicit single-set lower bound at frequencies divisible by four.
 Only the right-hand half of each Bohr interval is needed. -/
@@ -139,7 +137,6 @@ theorem bohrSet_four_mul_volume_real_ge {n : ℕ} {c : ℝ}
     (hn : 0 < n) (hc0 : 0 ≤ c) (hc : c ≤ 1) :
     c / 4 ≤ volume.real (bohrSet (4 * n) c) := by
   classical
-  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
   have hden : (0 : ℝ) < 4 * n := by positivity
   have hdisj : PairwiseDisjoint (↑(Finset.range n) : Set ℕ) (fun j => bohrCell n j c) := by
     intro i _ j _ hij
@@ -151,15 +148,15 @@ theorem bohrSet_four_mul_volume_real_ge {n : ℕ} {c : ℝ}
     have hj₂ := (lt_div_iff₀ hden).mp hxj.2
     rcases lt_or_gt_of_ne hij with hij | hji
     · have hij' : (i : ℝ) + 1 ≤ j := by exact_mod_cast hij
-      linarith
+      linarith only [hc, hi₂, hj₁, hij']
     · have hji' : (j : ℝ) + 1 ≤ i := by exact_mod_cast hji
-      linarith
+      linarith only [hc, hi₁, hj₂, hji']
   have hcell : ∀ j, volume.real (bohrCell n j c) = c / (4 * n) := by
     intro j
     dsimp [bohrCell]
     rw [Real.volume_real_Ico_of_le]
     · ring
-    · exact div_le_div_of_nonneg_right (by linarith) hden.le
+    · exact div_le_div_of_nonneg_right (by linarith only [hc0]) hden.le
   have hsub : (⋃ j ∈ Finset.range n, bohrCell n j c) ⊆ bohrSet (4 * n) c := by
     apply iUnion₂_subset
     intro j hj
@@ -198,7 +195,7 @@ private theorem dyadicGcdRatio_of_le (M : ℕ) {i j : ℕ} (hij : i ≤ j) :
     dyadicGcdRatio M i j = (2 : ℝ) ^ i / 2 ^ j := by
   have hdvd : 2 ^ (M + i) ∣ 2 ^ (M + j) := pow_dvd_pow 2 (by omega)
   have hle : 2 ^ (M + i) ≤ 2 ^ (M + j) :=
-    Nat.pow_le_pow_right (by norm_num) (by omega)
+    Nat.pow_le_pow_right (by decide +kernel) (by omega)
   rw [dyadicGcdRatio, Nat.gcd_eq_left hdvd, max_eq_right hle]
   push_cast
   simp only [pow_add]
@@ -211,10 +208,10 @@ private theorem dyadicGcdRatio_self (M i : ℕ) : dyadicGcdRatio M i i = 1 := by
 private theorem sum_two_pow_le (B : ℕ) :
     ∑ i ∈ Finset.range B, (2 : ℝ) ^ i ≤ 2 ^ B := by
   induction B with
-  | zero => norm_num
+  | zero => exact zero_le_one
   | succ B ih =>
     rw [Finset.sum_range_succ, pow_succ]
-    linarith
+    linarith only [ih]
 
 private theorem sum_dyadicGcdRatio_last_le (M B : ℕ) :
     ∑ i ∈ Finset.range B, dyadicGcdRatio M i B ≤ 1 := by
@@ -241,7 +238,7 @@ theorem sum_dyadic_gcd_ratio_le (M B : ℕ) :
       simpa only [dyadicGcdRatio_comm M B] using hr
     simp only [Finset.sum_range_succ, Finset.sum_add_distrib,
       dyadicGcdRatio_self, Nat.cast_add, Nat.cast_one]
-    linarith
+    linarith only [ih, hr, hc]
 
 /-- The quantitative second-moment bound used in the paper's Bohr-union proof. -/
 theorem dyadicBohr_second_moment_le (M B : ℕ) {c : ℝ}
@@ -270,7 +267,7 @@ theorem dyadicBohr_second_moment_le (M B : ℕ) {c : ℝ}
     ring
   rw [hsum] at hbound
   change (∑ i ∈ Finset.range B, ∑ j ∈ Finset.range B, dyadicGcdRatio M i j) ≤ 3 * B at hgcd
-  nlinarith [mul_le_mul_of_nonneg_left hgcd hc0, sq_nonneg ((B : ℝ) * c)]
+  linarith only [hc0, hbound, hgcd, mul_le_mul_of_nonneg_left hgcd hc0, sq_nonneg ((B : ℝ) * c)]
 
 /-- The paper's Bohr-union lower bound, with threshold `M ≥ 2` and absolute
 constant `1/768`. The theorem holds on the larger radius range `0 < c < 1/10`. -/
@@ -291,7 +288,7 @@ theorem dyadicBohrUnion_volume_real_ge {M B : ℕ} {c : ℝ}
       _ ≤ S := by
         apply Finset.sum_le_sum
         intro i hi
-        exact bohrSet_dyadic_volume_real_ge (by omega) hc0.le (by linarith)
+        exact bohrSet_dyadic_volume_real_ge (by omega) hc0.le (by linarith only [hc0, hc])
   have hS0 : 0 ≤ S := (by positivity : 0 ≤ t / 4).trans hS
   have hQ : Q ≤ 48 * (t ^ 2 + t) := dyadicBohr_second_moment_le M B hc0.le hc
   have hcs : S ^ 2 ≤ V * Q :=
@@ -302,7 +299,7 @@ theorem dyadicBohrUnion_volume_real_ge {M B : ℕ} {c : ℝ}
   have hcs' := hcs.trans (mul_le_mul_of_nonneg_left hQ hV)
   change t ^ 2 / (768 * (t ^ 2 + t)) ≤ V
   apply (div_le_iff₀ (by positivity : 0 < 768 * (t ^ 2 + t))).mpr
-  nlinarith [sq_nonneg (S - t / 4)]
+  nlinarith only [hc0, hc, ht, hS, hcs', sq_nonneg (S - t / 4)]
 
 /-- Explicit meaning of the paper's uniform lower bound: if `Bc ≥ a > 0`,
 the measure is at least `a / (768 (a+1))`, independently of `M,B,c`. -/
@@ -311,13 +308,13 @@ theorem dyadicBohrUnion_volume_real_ge_uniform {M B : ℕ} {c a : ℝ}
     (hac : a ≤ (B : ℝ) * c) (hc : c < 1 / 10) :
     a / (768 * (a + 1)) ≤ volume.real (dyadicBohrUnion M B c) := by
   have hB' : (0 : ℝ) < B := by exact_mod_cast hB
-  have hc0 : 0 < c := by nlinarith
+  have hc0 : 0 < c := by nlinarith only [ha, hac]
   have ht : 0 < (B : ℝ) * c := mul_pos hB' hc0
   calc
     a / (768 * (a + 1)) ≤
         ((B : ℝ) * c) ^ 2 / (768 * (((B : ℝ) * c) ^ 2 + (B : ℝ) * c)) := by
       apply (div_le_div_iff₀ (by positivity) (by positivity)).mpr
-      nlinarith [mul_nonneg ht.le (sub_nonneg.mpr hac)]
+      linarith only [hac, ht, mul_nonneg ht.le (sub_nonneg.mpr hac)]
     _ ≤ volume.real (dyadicBohrUnion M B c) := dyadicBohrUnion_volume_real_ge hM hB hc0 hc
 
 /-- In particular, a radius at least the reciprocal of the block length
@@ -328,8 +325,8 @@ theorem dyadicBohrUnion_volume_real_ge_of_inv_le {M B : ℕ} {c : ℝ}
   have hB' : (0 : ℝ) < B := by exact_mod_cast hB
   have hBc : (1 : ℝ) ≤ (B : ℝ) * c := by
     have h := mul_le_mul_of_nonneg_left hcB hB'.le
-    simpa [ne_of_gt hB'] using h
-  have h := dyadicBohrUnion_volume_real_ge_uniform hM hB (by norm_num : (0 : ℝ) < 1) hBc hc
+    simpa only [ge_iff_le, ne_eq, ne_of_gt hB', not_false_eq_true, mul_inv_cancel₀] using h
+  have h := dyadicBohrUnion_volume_real_ge_uniform hM hB (by exact zero_lt_one : (0 : ℝ) < 1) hBc hc
   norm_num at h
   exact h
 
@@ -352,14 +349,14 @@ theorem mem_dyadicBohrLogUnion_iff {M B c x : ℝ} (hM : 0 < M) :
         x ∈ bohrSet (2 ^ n) c := by
   have hlog : ∀ n : ℕ, Real.logb 2 (2 ^ n : ℝ) = n := by
     intro n
-    rw [Real.logb_pow, Real.logb_self_eq_one (by norm_num : (1 : ℝ) < 2), mul_one]
+    rw [Real.logb_pow, Real.logb_self_eq_one (by norm_num1 : (1 : ℝ) < 2), mul_one]
   constructor
   · intro hx
     obtain ⟨n, hn, hx⟩ := mem_iUnion₂.mp hx
     have hnpos : 0 < n := by exact_mod_cast hM.trans_le hn.1
-    exact ⟨n, hnpos, by simpa only [hlog, Set.mem_Ico] using hn, hx⟩
+    exact ⟨n, hnpos, by simpa only [hlog, mem_Ico] using hn, hx⟩
   · rintro ⟨n, hn, hlogn, hx⟩
-    exact mem_iUnion₂.mpr ⟨n, by simpa only [hlog, Set.mem_Ico] using hlogn, hx⟩
+    exact mem_iUnion₂.mpr ⟨n, by simpa only [hlog, mem_Ico] using hlogn, hx⟩
 
 theorem dyadicBohrLogUnion_subset_Ico (M B c : ℝ) :
     dyadicBohrLogUnion M B c ⊆ Ico (1 / 4 : ℝ) (1 / 2 : ℝ) := by
@@ -380,8 +377,8 @@ theorem dyadicBohrUnion_ceil_floor_subset {M B c : ℝ} (hM : 0 ≤ M) (hB : 0 �
   refine ⟨⌈M⌉₊ + j, ?_, hx⟩
   push_cast
   constructor
-  · linarith [Nat.cast_nonneg (α := ℝ) j]
-  · linarith
+  · linarith only [hlow, Nat.cast_nonneg (α := ℝ) j]
+  · linarith only [hj', hupp, hfloor]
 
 /-- The Bohr-union proposition for real logarithmic endpoints and lengths.
 Rounding the endpoints costs at most a factor of two in the absolute constant. -/
@@ -389,16 +386,16 @@ theorem dyadicBohrLogUnion_volume_real_ge {M B c : ℝ}
     (hM : 2 ≤ M) (hB : 1 ≤ B) (hc0 : 0 < c) (hc : c < 1 / 10) :
     (B * c) ^ 2 / (1536 * ((B * c) ^ 2 + B * c)) ≤
       volume.real (dyadicBohrLogUnion M B c) := by
-  have hM0 : 0 ≤ M := by linarith
-  have hB0 : 0 ≤ B := by linarith
+  have hM0 : 0 ≤ M := by linarith only [hM, hc0, hc]
+  have hB0 : 0 ≤ B := by linarith only [hB, hc0, hc]
   have hL : 2 ≤ ⌈M⌉₊ := by
     exact_mod_cast (hM.trans (Nat.le_ceil M))
   have hN : 0 < ⌊B⌋₊ := Nat.floor_pos.mpr hB
   have hN1 : (1 : ℝ) ≤ (⌊B⌋₊ : ℕ) := by exact_mod_cast hN
-  have hhalf : B / 2 ≤ (⌊B⌋₊ : ℕ) := by linarith [Nat.lt_floor_add_one B]
-  have ht : 0 < B * c := mul_pos (by linarith) hc0
+  have hhalf : B / 2 ≤ (⌊B⌋₊ : ℕ) := by linarith only [hN1, Nat.lt_floor_add_one B]
+  have ht : 0 < B * c := mul_pos (by linarith only [hB, hc0, hc]) hc0
   have hac : B * c / 2 ≤ (⌊B⌋₊ : ℕ) * c := by
-    nlinarith [mul_le_mul_of_nonneg_right hhalf hc0.le]
+    linarith only [hc0, hhalf, mul_le_mul_of_nonneg_right hhalf hc0.le]
   have hblock := dyadicBohrUnion_volume_real_ge_uniform hL hN
     (by positivity : 0 < B * c / 2) hac hc
   have hmono : volume.real (dyadicBohrUnion ⌈M⌉₊ ⌊B⌋₊ c) ≤
@@ -409,7 +406,7 @@ theorem dyadicBohrLogUnion_volume_real_ge {M B c : ℝ}
     (B * c) ^ 2 / (1536 * ((B * c) ^ 2 + B * c)) ≤
         (B * c / 2) / (768 * (B * c / 2 + 1)) := by
       apply (div_le_div_iff₀ (by positivity) (by positivity)).mpr
-      nlinarith [mul_pos ht (sq_pos_of_pos ht)]
+      linarith only [ht, mul_pos ht (sq_pos_of_pos ht)]
     _ ≤ volume.real (dyadicBohrUnion ⌈M⌉₊ ⌊B⌋₊ c) := hblock
     _ ≤ volume.real (dyadicBohrLogUnion M B c) := hmono
 
@@ -419,14 +416,14 @@ theorem dyadicBohrLogUnion_volume_real_ge_uniform {M B c a : ℝ}
     (hM : 2 ≤ M) (hB : 1 ≤ B) (ha : 0 < a)
     (hac : a ≤ B * c) (hc : c < 1 / 10) :
     a / (1536 * (a + 1)) ≤ volume.real (dyadicBohrLogUnion M B c) := by
-  have hB' : 0 < B := by linarith
-  have hc0 : 0 < c := by nlinarith
+  have hB' : 0 < B := by linarith only [hB]
+  have hc0 : 0 < c := by nlinarith only [hB, ha, hac]
   have ht : 0 < B * c := mul_pos hB' hc0
   calc
     a / (1536 * (a + 1)) ≤
         (B * c) ^ 2 / (1536 * ((B * c) ^ 2 + B * c)) := by
       apply (div_le_div_iff₀ (by positivity) (by positivity)).mpr
-      nlinarith [mul_nonneg ht.le (sub_nonneg.mpr hac)]
+      linarith only [hac, ht, mul_nonneg ht.le (sub_nonneg.mpr hac)]
     _ ≤ volume.real (dyadicBohrLogUnion M B c) :=
       dyadicBohrLogUnion_volume_real_ge hM hB hc0 hc
 

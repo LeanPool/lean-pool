@@ -61,7 +61,7 @@ theorem localUnitMass_eq_integral_indicator (I : RealInterval) (b : ℝ → ℂ)
   filter_upwards with t
   have heq : t ∈ Icc (x - 1 / 2) (x + 1 / 2) ↔ |x - t| ≤ (1 / 2 : ℝ) := by
     rw [mem_Icc, abs_le]
-    constructor <;> intro h <;> constructor <;> linarith [h.1, h.2]
+    constructor <;> intro h <;> constructor <;> linarith only [h, h.1, h.2]
   simp only [indicator_apply, heq]
 
 theorem aestronglyMeasurable_localUnitMass (I : RealInterval) {b : ℝ → ℂ}
@@ -222,7 +222,7 @@ theorem localizedEnergy_le_integral_adjoint_majorant
   rw [norm_mul, RCLike.norm_conj]
   by_cases hxI : x ∈ I.centralThird
   · exact mul_le_mul_of_nonneg_left (hx hxI) (norm_nonneg _)
-  · simp [c, indicator_of_notMem hxI]
+  · simp only [indicator_of_notMem hxI, norm_zero, zero_mul, Std.le_refl, c]
 
 /-- The actual `TT*` energy is bounded by the sum of the two explicit
 positive budgets. No classification hypothesis is used. -/
@@ -285,11 +285,11 @@ theorem IsNonstandard.isEnergyNonstandard
       (C * localUnitMass I b x)) := by
     convert hn.const_mul C using 1
     funext x
-    ring
+    ac_rfl
   apply (localizedEnergy_le_integral_adjoint_majorant k I hb
     (fun x ↦ C * localUnitMass I b x) hi h).trans_eq
   simp_rw [show ∀ x, ‖I.centralThird.indicator b x‖ * (C * localUnitMass I b x) =
-      C * (‖I.centralThird.indicator b x‖ * localUnitMass I b x) by intro x; ring]
+      C * (‖I.centralThird.indicator b x‖ * localUnitMass I b x) by intro x; ac_rfl]
   rw [integral_const_mul]
   unfold nearEnergy
   dsimp [C]
@@ -303,7 +303,7 @@ theorem IsEnergyStandard.localizedEnergy_le_far
     localizedEnergy k I b ≤ (100 / 99 : ℝ) * farEnergy I b := by
   have he := localizedEnergy_le_near_add_far k I hscale hb
   unfold IsEnergyStandard at h
-  linarith
+  linarith only [h, he]
 
 /-- The positive near energy of an actual bad-scale input has the desired
 `2^(-s)` gain, derived from stopping parents and the unit-window bound. -/
@@ -343,7 +343,7 @@ theorem nearEnergy_badScaleInput_le
   apply (mul_le_mul_of_nonneg_left hn
     (by positivity [I.length_pos] : 0 ≤ 16 * positiveDyadicAmplitudeBound ^ 2 / I.length)).trans_eq
   have hpow : (2 : ℝ) ^ (k + 2 - s) = (2 : ℝ) ^ (k + 2) * (2 : ℝ) ^ (-s) := by
-    rw [show k + 2 - s = (k + 2) + (-s) by ring, zpow_add₀ (by norm_num)]
+    rw [show k + 2 - s = (k + 2) + (-s) by rfl, zpow_add₀ (by norm_num1)]
   dsimp only [M, b]
   rw [hscale, hpow]
   field_simp
@@ -368,7 +368,7 @@ theorem energyNonstandard_badPiece_diagonalEnergy_le
   apply hNS.trans
   apply (mul_le_mul_of_nonneg_left
     (nearEnergy_badScaleInput_le hf I₀ k₀ k s hlam hparent hsub hscale hℓ)
-    (by norm_num : (0 : ℝ) ≤ 100)).trans_eq
+    (by norm_num1 : (0 : ℝ) ≤ 100)).trans_eq
   ring
 
 /-- All admissible interval/bad-scale pairs at a fixed gap, before the
@@ -486,12 +486,11 @@ theorem energyStandard_badPiece_diagonalEnergy_le
         ∫ x in I.centralThird, ‖badScaleInput S f I₀ k₀ (k + 2 - s) x‖ := by
   let b := badScaleInput S f I₀ k₀ (k + 2 - s)
   let m := ∫ x in I.centralThird, ‖b x‖
-  have hm : 0 ≤ m := integral_nonneg (fun _ ↦ norm_nonneg _)
   have hmass : m ≤ 10 * intervalL1Average f I₀ * I.length :=
     badScaleInput_localMass_le hf I₀ k₀ (k + 2 - s) hlam hsub hI
   have hfar := hstd.localizedEnergy_le_far (integrable_badScaleInput S hf I₀ k₀ _) hscale
   have hnear : localizedEnergy k I b ≤ 2 * farEnergy I b :=
-    hfar.trans (mul_le_mul_of_nonneg_right (by norm_num) (farEnergy_nonneg I b))
+    hfar.trans (mul_le_mul_of_nonneg_right (by norm_num1) (farEnergy_nonneg I b))
   apply hnear.trans
   unfold farEnergy
   change 2 * (128 * positiveDyadicAmplitudeBound ^ 2 / I.length ^ 2 * m ^ 2) ≤ _
@@ -535,7 +534,7 @@ theorem sum_energyStandard_badPiece_diagonalEnergy_le
       apply div_le_div_of_nonneg_left (by positivity [intervalL1Average_nonneg f I₀])
         (by positivity : 0 < (2 : ℝ) ^ (kmin + 2))
       rw [(he I hI).2.1]
-      exact zpow_le_zpow_right₀ (by norm_num) (by have := hmin I hI; omega)
+      exact zpow_le_zpow_right₀ (by norm_num1) (by have := hmin I hI; omega)
     _ = (C / (2 : ℝ) ^ (kmin + 2)) * ∑ I ∈ N, ∫ x in I.centralThird,
         ‖badScaleInput S f I₀ k₀ (scale I + 2 - s) x‖ := (Finset.mul_sum _ _ _).symm
     _ ≤ _ := mul_le_mul_of_nonneg_left

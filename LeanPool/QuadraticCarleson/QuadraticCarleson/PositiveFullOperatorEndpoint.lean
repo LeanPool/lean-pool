@@ -68,7 +68,7 @@ theorem quadraticCarlesonL0_le_oscillatory_add_hilbert_add_maximal
       quadraticHilbertMaximalTruncation 0 f x ≤
           2 * quadraticHilbertMaximalTruncation 0 f x := by
         simpa only [one_mul] using
-          (mul_le_mul' (by norm_num : (1 : ENNReal) ≤ 2)
+          (mul_le_mul' (by norm_num1 : (1 : ENNReal) ≤ 2)
             (le_refl (quadraticHilbertMaximalTruncation 0 f x)))
       _ ≤ paperOscillatoryMaximal f x +
           2 * quadraticHilbertMaximalTruncation 0 f x :=
@@ -94,15 +94,15 @@ theorem maximalErrorConstantReal_pos : 0 < maximalErrorConstantReal := by
 theorem ofReal_maximalErrorConstantReal :
     ENNReal.ofReal maximalErrorConstantReal = maximalErrorConstant := by
   unfold maximalErrorConstantReal maximalErrorConstant
-  rw [ENNReal.ofReal_add (by norm_num : (0 : ℝ) ≤ 8) (by positivity),
-    ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 8)]
+  rw [ENNReal.ofReal_add (by norm_num1 : (0 : ℝ) ≤ 8) (by positivity),
+    ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 8)]
   norm_num
 
 theorem paperLog_one_two_mul_le_two_mul {t : ℝ} (ht : 0 ≤ t) :
     paperLog 1 (2 * t) ≤ 2 * paperLog 1 t := by
   simp only [paperLog_succ, paperLog_zero]
-  have hleft : 0 < 10 + 2 * t := by linarith
-  have hright : 0 < 10 + t := by linarith
+  have hleft : 0 < 10 + 2 * t := by linarith only [ht]
+  have hright : 0 < 10 + t := by linarith only [ht]
   have hpoly : 10 + 2 * t ≤ (10 + t) ^ 2 := by nlinarith
   calc
     Real.log (10 + 2 * t) ≤ Real.log ((10 + t) ^ 2) := by
@@ -126,12 +126,10 @@ theorem scaled_half_fullOrlicz_lintegral_le
         4 * ENNReal.ofReal (‖f x‖ * paperLog 1 ‖f x‖)
       rw [show ‖f x‖ / (1 / 2 : ℝ) = 2 * ‖f x‖ by ring,
         show (4 : ENNReal) = ENNReal.ofReal (4 : ℝ) by norm_num,
-        ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
+        ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
       apply ENNReal.ofReal_le_ofReal
       have hlog := paperLog_one_two_mul_le_two_mul (norm_nonneg (f x))
-      have hlog0 : 0 ≤ paperLog 1 ‖f x‖ := by
-        exact PositiveEndpointOptimization.paperLog_nonnegative 1 (norm_nonneg (f x))
-      nlinarith [norm_nonneg (f x)]
+      nlinarith only [hlog, norm_nonneg (f x)]
     _ = _ := lintegral_const_mul' _ _ (by finiteness)
 
 /-- Threshold-one full-operator endpoint, reduced only to a uniform ordinary
@@ -160,12 +158,12 @@ theorem quadraticCarlesonL0_levelSet_one_le_orlicz_of_hilbertWeak
   have htwoeight : (2 : ENNReal) * ENNReal.ofReal (1 / 8 : ℝ) =
       ENNReal.ofReal (1 / 4 : ℝ) := by
     rw [show (2 : ENNReal) = ENNReal.ofReal (2 : ℝ) by norm_num,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
     norm_num
   have hthresholds : ENNReal.ofReal (1 / 2 : ℝ) +
       2 * ENNReal.ofReal (1 / 8 : ℝ) + ENNReal.ofReal (1 / 4 : ℝ) = 1 := by
-    rw [htwoeight, ← ENNReal.ofReal_add (by norm_num) (by norm_num),
-      ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    rw [htwoeight, ← ENNReal.ofReal_add (by norm_num1) (by norm_num1),
+      ← ENNReal.ofReal_add (by norm_num1) (by norm_num1)]
     norm_num
   have hsub : {x | 1 < quadraticCarlesonL0 f x} ⊆
       {x | ENNReal.ofReal (1 / 2 : ℝ) < O x} ∪
@@ -196,17 +194,17 @@ theorem quadraticCarlesonL0_levelSet_one_le_orlicz_of_hilbertWeak
   have hOset : volume {x | ENNReal.ofReal (1 / 2 : ℝ) < O x} ≤
       (4 * fullOscillatoryEndpointConstant) * J := by
     have h := paperOscillatoryMaximal_levelSet_le_scaled_orlicz
-      f.measurable_toFun f.integrable (by norm_num : (0 : ℝ) < 1 / 2)
+      f.measurable_toFun f.integrable (by norm_num1 : (0 : ℝ) < 1 / 2)
     apply h.trans
     exact (mul_le_mul' le_rfl (scaled_half_fullOrlicz_lintegral_le f)).trans_eq
       (by ring)
   have hmass_ne : (∫⁻ x, ‖f x‖ₑ) ≠ ∞ := f.integrable.hasFiniteIntegral.ne
   have hHset : volume {x | ENNReal.ofReal (1 / 8 : ℝ) < H x} ≤
       8 * ENNReal.ofReal CH * (∫⁻ x, ‖f x‖ₑ) := by
-    have h := hH.2 (1 / 8) (by norm_num)
+    have h := hH.2 (1 / 8) (by norm_num1)
     have height : (8 : ENNReal) * ENNReal.ofReal (1 / 8 : ℝ) = 1 := by
       rw [show (8 : ENNReal) = ENNReal.ofReal (8 : ℝ) by norm_num,
-        ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 8)]
+        ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 8)]
       norm_num
     calc
       volume {x | ENNReal.ofReal (1 / 8 : ℝ) < H x} =
@@ -217,7 +215,7 @@ theorem quadraticCarlesonL0_levelSet_one_le_orlicz_of_hilbertWeak
           (CH * (∫⁻ x, ‖f x‖ₑ).toReal) := mul_le_mul' le_rfl h
       _ = 8 * ENNReal.ofReal CH * (∫⁻ x, ‖f x‖ₑ) := by
         rw [ENNReal.ofReal_mul hCH, ENNReal.ofReal_toReal hmass_ne]
-        ring
+        ac_rfl
   have hMweak := centeredHardyLittlewoodMaximal_weak_bound
     (fun x ↦ ‖f x‖ₑ) (ENNReal.ofReal (1 / (4 * D)))
   have hMset : volume {x | ENNReal.ofReal (1 / (4 * D)) < M x} ≤
@@ -236,7 +234,7 @@ theorem quadraticCarlesonL0_levelSet_one_le_orlicz_of_hilbertWeak
       _ ≤ ENNReal.ofReal (4 * D) * (4 * ∫⁻ x, ‖f x‖ₑ) :=
         mul_le_mul' le_rfl hMweak
       _ = 16 * ENNReal.ofReal D * (∫⁻ x, ‖f x‖ₑ) := by
-        rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4), ENNReal.ofReal_ofNat]
+        rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4), ENNReal.ofReal_ofNat]
         ring
   calc
     volume {x | 1 < quadraticCarlesonL0 f x} ≤

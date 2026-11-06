@@ -101,7 +101,7 @@ theorem localizedEnergy_completeFiniteShiftGridTree_goodCollection_le
   have hM :
       0 ≤ 10 * intervalL1Average f
         (finiteShiftGridInterval topScale shift 0 q₀) := by
-    exact mul_nonneg (by norm_num)
+    exact mul_nonneg (by norm_num1)
       (intervalL1Average_nonneg f (finiteShiftGridInterval topScale shift 0 q₀))
   have hgoodMass :
       ∀ J ∈ goodCollection

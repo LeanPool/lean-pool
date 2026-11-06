@@ -46,7 +46,6 @@ theorem hasExtendedWeakL1Bound_frozenBlockMaxEnorm
         (stoppingCenter (f := f)) stoppingLength)ᶜ)
       (4 * AH + 128 * (frozenBlockInputL1Mass A f k B c τ).toReal)
       (frozenBlockMaxEnorm A f k B c τ) := by
-  have hfm := measurable_frozenBlockInput (A := A) hf k B c τ
   have hfi' := integrable_frozenBlockInput (A := A) hf hfi hAk B c τ
   have hM := ExtendedWeakL1Combinators.HasExtendedWeakL1Bound.restrict
     (hasExtendedWeakL1Bound_centeredHardyLittlewoodMaximal_enorm hfi')
@@ -73,7 +72,7 @@ theorem logSquaredFrozenBlockWeakBounds_of_hilbert
     {B : ℕ → ℕ} {c : ℕ} {C : ℝ}
     (hH : HasLogSquaredFrozenHilbertBlockWeakBounds f B c C) :
     HasLogSquaredFrozenBlockWeakBounds f B c (4 * C + 128) := by
-  refine ⟨by linarith [hH.1], ?_⟩
+  refine ⟨by linarith only [hH, hH.1], ?_⟩
   intro k τ a ha
   let mass := frozenBlockInputL1Mass lacunaryAmplitude f k (B k) c τ
   let L := paperLog 1 (B k : ℝ)
@@ -85,12 +84,12 @@ theorem logSquaredFrozenBlockWeakBounds_of_hilbert
     change 1 ≤ paperLog 1 (B k : ℝ)
     exact PositiveEndpointOptimization.one_le_paperLog_one
       (t := (B k : ℝ)) (by positivity)
-  have hLsq : 1 ≤ L ^ 2 := by nlinarith
-  have hC' : 0 ≤ 4 * C + 128 := by linarith [hH.1]
+  have hLsq : 1 ≤ L ^ 2 := by nlinarith only [hL]
+  have hC' : 0 ≤ 4 * C + 128 := by linarith only [hH, hH.1]
   have hconstant :
       4 * ((C * L ^ 2) * mass.toReal) + 128 * mass.toReal ≤
         ((4 * C + 128) * L ^ 2) * mass.toReal := by
-    nlinarith [hH.1]
+    nlinarith only [hmass0, hLsq, hH.1]
   have hlow := hasExtendedWeakL1Bound_frozenBlockMaxEnorm hf hfi
     (lacunaryAmplitude_pos k).le (B k) c τ (hH.2 k τ)
   have hlow' := ExtendedWeakL1Combinators.HasExtendedWeakL1Bound.mono_constant

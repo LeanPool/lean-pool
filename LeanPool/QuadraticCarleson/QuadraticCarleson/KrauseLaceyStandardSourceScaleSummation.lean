@@ -34,30 +34,29 @@ theorem nat_sq_le_four_mul_two_pow : ∀ n : ℕ,
     (n : ℝ) ^ 2 ≤ 4 * (2 : ℝ) ^ n := by
   intro n
   induction n with
-  | zero => norm_num
+  | zero => norm_num1
   | succ n ih =>
       by_cases hn : n ≤ 2
-      · interval_cases n <;> norm_num
+      · interval_cases n <;> norm_num1
       · have hn3 : 3 ≤ n := by omega
         calc
           ((n + 1 : ℕ) : ℝ) ^ 2 ≤ 2 * (n : ℝ) ^ 2 := by
             norm_num only [Nat.cast_add, Nat.cast_one]
-            have hn0 : 0 ≤ (n : ℝ) := by positivity
             have hn3r : (3 : ℝ) ≤ n := by exact_mod_cast hn3
-            nlinarith
+            nlinarith only [hn3r]
           _ ≤ 2 * (4 * (2 : ℝ) ^ n) :=
-            mul_le_mul_of_nonneg_left ih (by norm_num)
+            mul_le_mul_of_nonneg_left ih (by norm_num1)
           _ = 4 * (2 : ℝ) ^ (n + 1) := by rw [pow_succ]; ring
 
 theorem nat_le_two_mul_two_rpow_half (n : ℕ) :
     (n : ℝ) ≤ 2 * (2 : ℝ) ^ ((n : ℝ) / 2) := by
   rw [← sq_le_sq₀ (by positivity : (0 : ℝ) ≤ n)
-    (mul_nonneg (by norm_num) (Real.rpow_nonneg (by norm_num) _))]
+    (mul_nonneg (by norm_num1) (Real.rpow_nonneg (by norm_num1) _))]
   calc
     (n : ℝ) ^ 2 ≤ 4 * (2 : ℝ) ^ n := nat_sq_le_four_mul_two_pow n
     _ = (2 * (2 : ℝ) ^ ((n : ℝ) / 2)) ^ 2 := by
-      rw [mul_pow, show (4 : ℝ) = 2 ^ 2 by norm_num,
-        ← Real.rpow_mul_natCast (by norm_num : (0 : ℝ) ≤ 2),
+      rw [mul_pow, show (4 : ℝ) = 2 ^ 2 by norm_num1,
+        ← Real.rpow_mul_natCast (by norm_num1 : (0 : ℝ) ≤ 2),
         show (n : ℝ) / 2 * (2 : ℕ) = n by norm_num,
         Real.rpow_natCast]
 
@@ -74,7 +73,7 @@ the available exponential decay. -/
 theorem int_div_two_zpow_le_decay {j : ℤ} (hj : 0 ≤ j) :
     (j : ℝ) / (2 : ℝ) ^ j ≤
       2 * (2 : ℝ) ^ (-(j : ℝ) / 2) := by
-  rw [div_le_iff₀ (zpow_pos (by norm_num) j)]
+  rw [div_le_iff₀ (zpow_pos (by norm_num1) j)]
   calc
     (j : ℝ) ≤ 2 * (2 : ℝ) ^ ((j : ℝ) / 2) :=
       int_le_two_mul_two_rpow_half hj
@@ -82,7 +81,7 @@ theorem int_div_two_zpow_le_decay {j : ℤ} (hj : 0 ≤ j) :
       rw [← Real.rpow_intCast]
       rw [mul_assoc]
       congr 1
-      rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 2)]
+      rw [← Real.rpow_add (by norm_num1 : (0 : ℝ) < 2)]
       congr 1
       ring
 
@@ -92,7 +91,7 @@ theorem int_ratio_rpow_le_two_mul_scaleDecayRatio_zpow
     {q : ℝ} (hq : 2 ≤ q) {j : ℤ} (hj : 0 ≤ j) :
     ((j : ℝ) / (2 : ℝ) ^ j) ^ (1 / q) ≤
       2 * (scaleDecayRatio q) ^ j := by
-  have hq0 : 0 < q := lt_of_lt_of_le (by norm_num) hq
+  have hq0 : 0 < q := lt_of_lt_of_le (by norm_num1) hq
   have hratio0 : 0 ≤ (j : ℝ) / (2 : ℝ) ^ j := by positivity
   have hroot := Real.rpow_le_rpow hratio0
     (int_div_two_zpow_le_decay hj) (by positivity : (0 : ℝ) ≤ 1 / q)
@@ -101,27 +100,27 @@ theorem int_ratio_rpow_le_two_mul_scaleDecayRatio_zpow
         (2 * (2 : ℝ) ^ (-(j : ℝ) / 2)) ^ (1 / q) := hroot
     _ = (2 : ℝ) ^ (1 / q) *
         (2 : ℝ) ^ ((-(j : ℝ) / 2) * (1 / q)) := by
-      rw [Real.mul_rpow (by norm_num : (0 : ℝ) ≤ 2)
-        (Real.rpow_nonneg (by norm_num) _)]
-      rw [Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2)]
+      rw [Real.mul_rpow (by norm_num1 : (0 : ℝ) ≤ 2)
+        (Real.rpow_nonneg (by norm_num1) _)]
+      rw [Real.rpow_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
     _ ≤ 2 * (2 : ℝ) ^ ((-(j : ℝ) / 2) * (1 / q)) := by
       gcongr
-      have hq1 : (1 : ℝ) ≤ q := by linarith
+      have hq1 : (1 : ℝ) ≤ q := by linarith only [hq]
       simpa only [Real.rpow_one] using
-        Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 2)
+        Real.rpow_le_rpow_of_exponent_le (by norm_num1 : (1 : ℝ) ≤ 2)
           ((div_le_one hq0).2 hq1)
     _ ≤ 2 * (2 : ℝ) ^ (-(j : ℝ) / (5 * q)) := by
       have hjr : 0 ≤ (j : ℝ) := by exact_mod_cast hj
       apply mul_le_mul_of_nonneg_left
-        (Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 2) ?_)
-        (by norm_num)
+        (Real.rpow_le_rpow_of_exponent_le (by norm_num1 : (1 : ℝ) ≤ 2) ?_)
+        (by norm_num1)
       field_simp
-      nlinarith
+      linarith only [hjr]
     _ = 2 * (scaleDecayRatio q) ^ j := by
       unfold scaleDecayRatio
       congr 1
       rw [← Real.rpow_intCast]
-      rw [← Real.rpow_mul (by norm_num : (0 : ℝ) ≤ 2)]
+      rw [← Real.rpow_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
       congr 1
       ring
 
@@ -144,13 +143,13 @@ theorem finite_int_ratio_rpow_sum_le_forty_mul_q
     (hS : ∀ j ∈ S, 0 ≤ j) :
     (∑ j ∈ S, ((j : ℝ) / (2 : ℝ) ^ j) ^ (1 / q)) ≤ 40 * q := by
   let r : ℝ := scaleDecayRatio q
-  have hq0 : 0 < q := lt_of_lt_of_le (by norm_num) hq
+  have hq0 : 0 < q := lt_of_lt_of_le (by norm_num1) hq
   have hr0 : 0 ≤ r := scaleDecayRatio_nonneg
   have hr1 : r < 1 := scaleDecayRatio_lt_one hq0
   have hinj : Set.InjOn Int.toNat (↑S : Set ℤ) := by
     intro a ha b hb hab
-    have ha0 := hS a (by simpa using ha)
-    have hb0 := hS b (by simpa using hb)
+    have ha0 := hS a (by exact ha)
+    have hb0 := hS b (by simpa only [SetLike.mem_coe] using hb)
     have haeq : (a.toNat : ℤ) = a := Int.toNat_of_nonneg ha0
     have hbeq : (b.toNat : ℤ) = b := Int.toNat_of_nonneg hb0
     exact haeq.symm.trans ((congrArg (fun n : ℕ ↦ (n : ℤ)) hab).trans hbeq)
@@ -168,7 +167,7 @@ theorem finite_int_ratio_rpow_sum_le_forty_mul_q
     _ ≤ 2 * ∑' n : ℕ, r ^ n := by
       gcongr
       exact (summable_geometric_of_norm_lt_one
-        (by simpa [Real.norm_eq_abs, abs_of_nonneg hr0] using hr1)).sum_le_tsum
+        (by simpa only [Real.norm_eq_abs, abs_of_nonneg hr0] using hr1)).sum_le_tsum
           (S.image Int.toNat) (fun n hn ↦ pow_nonneg hr0 n)
     _ ≤ 2 * (20 * q) := by
       gcongr
@@ -206,12 +205,8 @@ theorem eLpNorm_energyStandardFixedPhysicalSourceAction_le_budget_mul_ratio
         ENNReal.ofReal (((j : ℝ) / (2 : ℝ) ^ j) ^ (1 / q)) := by
   have hj0 : 0 ≤ j := le_trans (by omega : 0 ≤ k₀) hk₀j
   have hjr0 : 0 ≤ (j : ℝ) := by exact_mod_cast hj0
-  have hpow0 : 0 ≤ (2 : ℝ) ^ j := (zpow_pos (by norm_num) j).le
+  have hpow0 : 0 ≤ (2 : ℝ) ^ j := (zpow_pos (by norm_num1) j).le
   have hratio0 : 0 ≤ (j : ℝ) / (2 : ℝ) ^ j := div_nonneg hjr0 hpow0
-  have hC0 : 0 ≤
-      (2560 * positiveDyadicAmplitudeBound ^ 2 * intervalL1Average f I₀) *
-        ∫ x, ‖f x‖ := by
-    positivity [intervalL1Average_nonneg f I₀]
   apply (eLpNorm_energyStandardFixedPhysicalSourceAction_le_j_mul
     hf I₀ k₀ j hk₀ hk₀j scale hlam hsub N hN hfixed hq).trans_eq
   have hrearrange :
@@ -261,14 +256,14 @@ theorem eLpNorm_finset_sum_le_budget_mul_forty_mul_q
       B * ENNReal.ofReal (40 * q) := by
   have hp1 : (1 : ℝ≥0∞) ≤ ENNReal.ofReal q := by
     rw [← ENNReal.ofReal_one]
-    exact ENNReal.ofReal_le_ofReal (by linarith)
+    exact ENNReal.ofReal_le_ofReal (by linarith only [hq])
   have hsum := finite_int_ratio_rpow_sum_le_forty_mul_q hq S hS
   have hratio_nonneg : ∀ j ∈ S,
       0 ≤ ((j : ℝ) / (2 : ℝ) ^ j) ^ (1 / q) := by
     intro j hj
     apply Real.rpow_nonneg
     exact div_nonneg (by exact_mod_cast hS j hj)
-      (zpow_pos (by norm_num) j).le
+      (zpow_pos (by norm_num1) j).le
   have hofsum :
       (∑ j ∈ S, ENNReal.ofReal (((j : ℝ) / (2 : ℝ) ^ j) ^ (1 / q))) =
         ENNReal.ofReal
