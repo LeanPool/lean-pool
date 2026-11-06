@@ -68,7 +68,6 @@ def job_errors(location: str, steps: list[dict[str, Any]], script: str) -> list[
                     f"that always runs with it; add `uses: {ACTION_REFERENCE}` "
                     f"after checkout"
                 )
-            break
     return errors
 
 

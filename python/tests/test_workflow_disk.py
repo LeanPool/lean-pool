@@ -109,3 +109,11 @@ def test_save_only_steps_are_exempt(tmp_path):
     """Saving uploads the build; it downloads nothing onto the runner."""
     save = {**RESTORE, "uses": "actions/cache/save@sha"}
     assert workflow_errors(write_repository(tmp_path, [CHECKOUT, save])) == []
+
+
+def test_every_restore_is_checked_not_only_the_first(tmp_path):
+    """A covered conditional restore does not excuse a later unconditional one."""
+    condition = "github.event_name == 'push'"
+    steps = [{**FREE, "if": condition}, {**RESTORE, "if": condition}, RESTORE]
+    errors = workflow_errors(write_repository(tmp_path, steps))
+    assert len(errors) == 1
