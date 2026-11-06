@@ -64,8 +64,8 @@ a zero-probability endpoint is ever used.
 * `StableToolkit.eventually_walkLaw_tail_le`: if `r_n / a_{M_n} → ∞` then
   `max_{i ≤ M_n} P(|S_i| > r_n) → 0` (the only use of "maximal tightness", lines 1763–1770,
   1912; marginal uniform tightness suffices).
-* `isProbabilityMeasure_walkLaw`: each `walkLaw μ m` is a probability measure (a definitional
-  fact needed above, recorded as an instance).
+* `isProbabilityMeasure_walkLaw`: each `walkLaw μ m` is a probability measure, supplied by the
+  common instances in `Setup/Walk.lean`.
 -/
 
 @[expose] public section
@@ -128,20 +128,6 @@ structure StableToolkit (μ : PMF ℕ) (α : ℝ) (a : ℕ → ℝ) : Prop where
   tight : ∀ ε : ℝ, 0 < ε → ∃ K : ℝ, ∀ m : ℕ, 1 ≤ m →
     (walkLaw μ m).real {x : ℤ | K * a m < |(x : ℝ)|} ≤ ε
   lattice : ∃ (d : ℕ) (L : ℝ), LatticeLocal μ a d L
-
-instance isProbabilityMeasure_stepLaw (μ : PMF ℕ) : IsProbabilityMeasure (stepLaw μ) := by
-  unfold stepLaw
-  infer_instance
-
-theorem isProbabilityMeasure_walkLaw' (μ : PMF ℕ) (m : ℕ) :
-    IsProbabilityMeasure (walkLaw μ m) := by
-  induction m with
-  | zero => rw [walkLaw]; infer_instance
-  | succ m ih => rw [walkLaw]; infer_instance
-
-instance isProbabilityMeasure_walkLaw (μ : PMF ℕ) (m : ℕ) :
-    IsProbabilityMeasure (walkLaw μ m) :=
-  isProbabilityMeasure_walkLaw' μ m
 
 /-- `Ψ_m(x) = P(S_m = x)` at a natural time. -/
 theorem walkProb_natCast_real (μ : PMF ℕ) (m : ℕ) (x : ℤ) :

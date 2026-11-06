@@ -24,7 +24,7 @@ data because Assumption (S) mentions `a_n`.
 
 The definitions `stepLaw`, `walkLaw`, `SlowlyVarying`, `StableDomain` and `InStableDomain` are
 in `PoissonDeclumping.Statements.Defs` (from the upstream statement contract); this module adds
-`walkProb`.
+canonical probability-measure instances and `walkProb`.
 -/
 
 @[expose] public section
@@ -33,6 +33,20 @@ open MeasureTheory Filter
 open scoped Topology
 
 namespace PoissonDeclumping
+
+instance isProbabilityMeasure_stepLaw (μ : PMF ℕ) : IsProbabilityMeasure (stepLaw μ) := by
+  unfold stepLaw
+  infer_instance
+
+theorem isProbabilityMeasure_walkLaw' (μ : PMF ℕ) (m : ℕ) :
+    IsProbabilityMeasure (walkLaw μ m) := by
+  induction m with
+  | zero => rw [walkLaw]; infer_instance
+  | succ m ih => rw [walkLaw]; infer_instance
+
+instance isProbabilityMeasure_walkLaw (μ : PMF ℕ) (m : ℕ) :
+    IsProbabilityMeasure (walkLaw μ m) :=
+  isProbabilityMeasure_walkLaw' μ m
 
 /-- `Ψ_m(i) = P(S_m = i)`, with the paper's convention `Ψ_m(i) = 0` for negative `m`. -/
 noncomputable def walkProb (μ : PMF ℕ) (m : ℤ) (i : ℤ) : ℝ :=

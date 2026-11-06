@@ -45,10 +45,6 @@ open Lukasiewicz PlaneTree
 theorem stepLaw_eq_toMeasure (μ : PMF ℕ) : stepLaw μ = (stepPMF μ).toMeasure := by
   rw [stepLaw, stepPMF, PMF.toMeasure_map _ μ (measurable_of_countable _)]
 
-instance (μ : PMF ℕ) : IsProbabilityMeasure (stepLaw μ) := by
-  rw [stepLaw_eq_toMeasure]
-  infer_instance
-
 /-- **Bridge between the two walk laws.** The `m`-fold convolution `walkLaw μ m` is the law of
 `S_m = X_1 + ⋯ + X_m` when `(X_1, …, X_m)` has the product law `walkVecLaw μ m`. -/
 theorem walkLaw_eq_map_sum (μ : PMF ℕ) (m : ℕ) :
@@ -78,10 +74,6 @@ theorem walkLaw_eq_map_sum (μ : PMF ℕ) (m : ℕ) :
       Prod.fst_swap, Prod.snd_swap, id]
     rw [Fin.sum_univ_succAbove _ 0]
     simp [Fin.insertNthEquiv, add_comm]
-
-instance (μ : PMF ℕ) (m : ℕ) : IsProbabilityMeasure (walkLaw μ m) := by
-  rw [walkLaw_eq_map_sum]
-  infer_instance
 
 theorem walkLaw_apply (μ : PMF ℕ) (m : ℕ) (s : Set ℤ) :
     walkLaw μ m s = walkVecLaw μ m {ω | ∑ i, ω i ∈ s} := by

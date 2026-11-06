@@ -30,16 +30,11 @@ namespace PoissonDeclumping.Stable
 
 variable (μ : PMF ℕ)
 
-instance isProbabilityMeasure_stepLaw : IsProbabilityMeasure (stepLaw μ) := by
-  unfold stepLaw
-  constructor
-  rw [Measure.map_apply (measurable_of_countable _) MeasurableSet.univ]
-  simp
+/-- Compatibility name for the common step-law probability instance, without a new instance. -/
+theorem isProbabilityMeasure_stepLaw : IsProbabilityMeasure (stepLaw μ) := inferInstance
 
-instance isProbabilityMeasure_walkLaw (n : ℕ) : IsProbabilityMeasure (walkLaw μ n) := by
-  induction n with
-  | zero => simp only [walkLaw]; infer_instance
-  | succ n ih => simp only [walkLaw]; infer_instance
+/-- Compatibility name for the common walk-law probability instance, without a new instance. -/
+theorem isProbabilityMeasure_walkLaw (n : ℕ) : IsProbabilityMeasure (walkLaw μ n) := inferInstance
 
 /-- The characteristic function `φ(θ) = E e^{iθX}` of one step. -/
 noncomputable def stepCF (θ : ℝ) : ℂ := ∫ z, cexp (θ * z * I) ∂(stepLaw μ)
