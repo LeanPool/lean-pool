@@ -71,11 +71,15 @@ jobs:
           .lake/packages/UnicodeBasic
           .lake/packages/BibtexQuery
           .lake/packages/MD4Lean
-        key: DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json',
-          'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ github.run_id }}-${{ github.run_attempt
-          }}-${{ inputs.stage }}
+        # Most pool lakefile edits leave many docInfo traces valid, so fall back to a
+        # checkpoint from an older lakefile; Lake rebuilds only what changed and the
+        # cursor identity still includes lakefile.toml.
+        key: DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml',
+          'docbuild/lake-manifest.json') }}-${{ hashFiles('lakefile.toml') }}-${{ github.run_id }}-${{
+          github.run_attempt }}-${{ inputs.stage }}
         restore-keys: |
-          DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-
+          DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ hashFiles('lakefile.toml') }}-
+          DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-
     - name: Install Lean
       uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
       with:

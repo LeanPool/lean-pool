@@ -72,6 +72,11 @@ def test_documentation_publishing_is_scheduled_and_independent() -> None:
     assert names.index("Render and validate the complete local API") > names.index(
         "Save completed analysis batches"
     )
+    checkpoint = next(step for step in steps if step.get("id") == "docs-cache")
+    *_, fallback = checkpoint["with"]["restore-keys"].splitlines()
+    assert "lakefile.toml'" not in fallback.replace("docbuild/lakefile.toml", "")
+    assert "lean-toolchain" in fallback
+    assert "lake-manifest.json" in fallback
 
 
 def test_single_and_sharded_builds_use_validation_cache() -> None:
