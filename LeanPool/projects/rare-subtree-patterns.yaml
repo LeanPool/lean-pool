@@ -36,8 +36,9 @@ main_results:
       numbers when the expected count diverges, along admissible tree sizes.
   - declaration: PoissonDeclumping.poissonApproximation2
     informal: >-
-      Structural microscopicity of the original marks and non-clustering of
-      the root-declumped marks yield Poisson approximation with the c_B-adjusted
+      For a root-degree set B with positive finite weight c_B, structural
+      microscopicity of the original marks and non-clustering of the
+      root-declumped marks yield Poisson approximation with the c_B-adjusted
       parameter when expected counts are bounded, and divergence in probability
       when they grow, along admissible tree sizes.
   - declaration: PoissonDeclumping.maxString
