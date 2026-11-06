@@ -43,7 +43,7 @@ def test_restore_without_cleanup_fails(tmp_path):
     """A job that restores the pool build without cleanup is reported."""
     errors = workflow_errors(write_repository(tmp_path, [CHECKOUT, RESTORE]))
     assert len(errors) == 1
-    assert "restores the pool build cache before freeing disk" in errors[0]
+    assert "without an earlier cleanup" in errors[0]
 
 
 def test_cleanup_after_restore_fails(tmp_path):
@@ -75,3 +75,37 @@ def test_lookup_only_and_other_caches_are_exempt(tmp_path):
     }
     root = write_repository(tmp_path, [CHECKOUT, lookup, dependencies])
     assert workflow_errors(root) == []
+
+
+def test_conditional_cleanup_does_not_cover_unconditional_restore(tmp_path):
+    """Cleanup skipped on some events leaves those restores unprotected."""
+    conditional = {**FREE, "if": "github.event_name == 'push'"}
+    errors = workflow_errors(write_repository(tmp_path, [conditional, RESTORE]))
+    assert len(errors) == 1
+
+
+def test_cleanup_with_the_restores_condition_passes(tmp_path):
+    """A cleanup gated exactly like its restore always runs alongside it."""
+    condition = "github.event_name == 'push'"
+    steps = [{**FREE, "if": condition}, {**RESTORE, "if": condition}]
+    assert workflow_errors(write_repository(tmp_path, steps)) == []
+
+
+def test_pool_build_fallback_key_counts_as_a_restore(tmp_path):
+    """A pool build restored through `restore-keys` still needs cleanup."""
+    fallback = {
+        **RESTORE,
+        "with": {
+            "path": ".lake/build",
+            "key": "Other-v1-abc",
+            "restore-keys": "LeanPoolBuild-v1-Linux-\n",
+        },
+    }
+    errors = workflow_errors(write_repository(tmp_path, [CHECKOUT, fallback]))
+    assert len(errors) == 1
+
+
+def test_save_only_steps_are_exempt(tmp_path):
+    """Saving uploads the build; it downloads nothing onto the runner."""
+    save = {**RESTORE, "uses": "actions/cache/save@sha"}
+    assert workflow_errors(write_repository(tmp_path, [CHECKOUT, save])) == []

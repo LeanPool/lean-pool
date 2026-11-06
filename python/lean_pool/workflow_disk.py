@@ -18,6 +18,7 @@ ACTION_PATH = Path(".github/actions/free-disk-space/action.yml")
 ACTION_REFERENCE = "./.github/actions/free-disk-space"
 POOL_BUILD_CACHE_PREFIX = "LeanPoolBuild-"
 CLEANUP_MARKER = "sudo rm -rf /usr/share/dotnet"
+RESTORING_ACTIONS = ("actions/cache@", "actions/cache/restore@")
 
 
 def cleanup_script(root: Path) -> str:
@@ -28,12 +29,13 @@ def cleanup_script(root: Path) -> str:
 
 def restores_pool_build(step: dict[str, Any]) -> bool:
     """Whether a step downloads the whole-pool build cache onto the runner."""
-    if not str(step.get("uses", "")).startswith("actions/cache"):
+    if not str(step.get("uses", "")).startswith(RESTORING_ACTIONS):
         return False
     settings = step.get("with") or {}
     if settings.get("lookup-only") in (True, "true"):
         return False
-    return POOL_BUILD_CACHE_PREFIX in str(settings.get("key", ""))
+    keys = f"{settings.get('key', '')}\n{settings.get('restore-keys', '')}"
+    return POOL_BUILD_CACHE_PREFIX in keys
 
 
 def frees_disk(step: dict[str, Any], script: str) -> bool:
@@ -53,15 +55,19 @@ def job_errors(location: str, steps: list[dict[str, Any]], script: str) -> list[
                 f"{location}: inline disk cleanup differs from {ACTION_PATH}; "
                 f"use `uses: {ACTION_REFERENCE}` or copy its script exactly"
             )
+    cleanup_conditions = []
     for step in steps:
         if frees_disk(step, script):
-            break
-        if restores_pool_build(step):
-            errors.append(
-                f"{location}: step {step.get('name', step['uses'])!r} restores "
-                f"the pool build cache before freeing disk; add "
-                f"`uses: {ACTION_REFERENCE}` after checkout"
-            )
+            cleanup_conditions.append(step.get("if"))
+        elif restores_pool_build(step):
+            # A conditional cleanup only covers a restore with the same condition.
+            if not {None, step.get("if")} & set(cleanup_conditions):
+                errors.append(
+                    f"{location}: step {step.get('name', step['uses'])!r} "
+                    f"restores the pool build cache without an earlier cleanup "
+                    f"that always runs with it; add `uses: {ACTION_REFERENCE}` "
+                    f"after checkout"
+                )
             break
     return errors
 
