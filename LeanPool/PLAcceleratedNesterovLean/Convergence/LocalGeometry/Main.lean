@@ -14,7 +14,6 @@ import LeanPool.PLAcceleratedNesterovLean.MorseBott.Bridge
 import LeanPool.PLAcceleratedNesterovLean.MorseBott.Submanifold
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
-import Mathlib.Analysis.InnerProductSpace.Calculus
 
 
 /-!
@@ -243,8 +242,8 @@ private theorem hessianQuadForm_ge_of_unit_sphere {d : ℕ} {f : E d → ℝ} {x
       simp only [hessianQuadForm, map_smul, real_inner_smul_left, real_inner_smul_right]
       ring
     rw [hhomog]
-    have hc_sq_nonneg : (0 : ℝ) ≤ c ^ 2 := sq_nonneg c
-    nlinarith [hbound₀, hc_sq_nonneg]
+    exact (mul_comm a (c ^ 2)).trans_le
+      (mul_le_mul_of_nonneg_left hbound₀ (sq_nonneg c))
 
 /-- Local compactness of `S` near `m⋆`: some closed ball piece of `S` is compact. -/
 private theorem exists_compact_local_piece {d : ℕ} {S U : Set (E d)}

@@ -42,7 +42,12 @@ FILES_PER_SHARD = 250
 SHARD_MIN_PROJECTS = 4
 SHARD_MIN_FILES = 500
 # Changes to any of these invalidate the whole pool's build.
-GLOBAL_BUILD_INPUTS = {"lean-toolchain", "lake-manifest.json", "lakefile.toml"}
+GLOBAL_BUILD_INPUTS = {
+    "lean-toolchain",
+    "lake-manifest.json",
+    "lakefile.toml",
+    "scripts/ci/LeanPoolLinters.lean",
+}
 
 
 def project_weights() -> dict[str, int]:
@@ -120,7 +125,7 @@ def main() -> None:
         elif cold:
             reason = "no warm build cache"
         elif global_change:
-            reason = "toolchain/manifest/lakefile changed"
+            reason = "shared compiler or build inputs changed"
         else:
             reason = "no diff available for this event"
     else:
