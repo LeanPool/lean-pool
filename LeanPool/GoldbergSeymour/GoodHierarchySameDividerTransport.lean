@@ -12,7 +12,6 @@ public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Good Hierarchy Same Divider Transport

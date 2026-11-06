@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.SharedFacts.InsideAdvancement
 
 
@@ -363,47 +364,6 @@ private theorem helper_advance_428.{u_1, u_2} :
   exact nextMember P2 theta (by rw [hmissing2 _ (vertexMem B jnext)]; exact htheta1)
     (hterminal2 hgLast)
 
-private theorem helper_trans_785.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-        HierarchyPathNumber C.hierarchy = (1 : ℕ) →
-    ∀ (i : ℕ), (1 : ℕ) ≤ i → i < HierarchyFullTailLength C - (1 : ℕ) →
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-        → TreeSequenceInitialSegment X Z := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hsituation i hiLower hiUpper X Y Z hXY hYZ
-  clear * - hXY hYZ
-  refine ⟨hXY.1.trans hYZ.1, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
-
-private theorem helper_common_795.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-        HierarchyPathNumber C.hierarchy = (1 : ℕ) →
-    ∀ (i : ℕ), (1 : ℕ) ≤ i → i < HierarchyFullTailLength C - (1 : ℕ) → (
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-        → TreeSequenceInitialSegment X Z) →
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Z → TreeSequenceInitialSegment Y Z
-        → X.length ≤ Y.length → TreeSequenceInitialSegment X Y := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hsituation i hiLower hiUpper trans X Y Z hXZ
-      hYZ hXY
-  clear * - hXZ hYZ hXY
-  refine ⟨hXY, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
-
 private theorem helper_hAT_826.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -683,12 +643,11 @@ theorem HierarchySituationOneAdvanceInsideStored {V E : Type*}
     omega
   classical
   open scoped Sym2 in
-    have trans := @helper_trans_785 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hsituation) (@i)
-        (@hiLower) (@hiUpper)
-    have common := @helper_common_795 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hsituation) (@i)
-        (@hiLower) (@hiUpper) (@trans)
+    have trans := @TreeSequenceInitialSegment.trans V E G e0
+    have common {X Y Z : TreeSequence G e0}
+        (hXZ : TreeSequenceInitialSegment X Z) (hYZ : TreeSequenceInitialSegment Y Z)
+        (hXY : X.length ≤ Y.length) : TreeSequenceInitialSegment X Y := by
+      exact TreeSequenceInitialSegment.of_common_extension hYZ hXZ hXY
     have sameLast :
     ∀ {a b : ℕ} (s : Fin (a + 2) → TreeSequence G e0) (t : Fin (b + 2) → TreeSequence G e0) (u v :
         TreeSequence G e0), a = b → HEq s t → u = v → Fin.cases (motive := fun _ => TreeSequence G

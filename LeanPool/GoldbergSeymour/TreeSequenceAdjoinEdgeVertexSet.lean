@@ -5,33 +5,30 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
-public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 public import Mathlib.Combinatorics.SimpleGraph.Init
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Tactic.Bound.Init
 
-/-!
-# Shared facts for ScheideDefectiveDeletedTreePair
+public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
+public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 
-These interfaces and proofs are shared across the imported proof branches.
-Extracted from Wesley Pegden’s Trellis formalization at
-88d98c1d1a59d1f1bf7c4eb58e73f3945f6daf12 during the Lean Pool port.
+/-!
+# Vertex Sets of Adjoined Trees
+
+Shared facts from Wesley Pegden's Trellis formalization at
+88d98c1d1a59d1f1bf7c4eb58e73f3945f6daf12, generalized during the Lean Pool port.
 -/
 
 @[expose] public section
 
-namespace GoldbergSeymour.SharedFacts.ScheideDefectiveDeletedTreePair
+namespace GoldbergSeymour
 
-/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
-abbrev adjoinVertexSetStatement.{u_1, u_2} : Prop :=
+/-- Adjoining an edge to a fresh endpoint inserts exactly that endpoint into the tree. -/
+theorem TreeSequenceAdjoinEdge.vertexSet_eq_insert.{u_1, u_2} :
   open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [DecidableEq V] (G :
       LooplessMultigraph V E) (e0 : E) (A B : TreeSequence G e0) (f : E) (x y : V), G.ends f =
       s(x, y) → y ∉ TreeSequenceVertexSet A → TreeSequenceAdjoinEdge A f B →
-      TreeSequenceVertexSet B = insert y (TreeSequenceVertexSet A)
-
-/-- A common proof used by the branches of this transport or construction argument. -/
-theorem adjoin_vertex_set.{u_1, u_2} : adjoinVertexSetStatement.{u_1, u_2} := by
+      TreeSequenceVertexSet B = insert y (TreeSequenceVertexSet A) := by
   classical
   intro V E _ G e0 A B f x y hxy hyA hAB
   rcases hAB with ⟨hlen, hinit, hlast⟩
@@ -77,6 +74,6 @@ theorem adjoin_vertex_set.{u_1, u_2} : adjoinVertexSetStatement.{u_1, u_2} := by
     rw [hBcard, Finset.card_insert_of_notMem hyA, hAcard, hlen]
   exact (Finset.eq_of_subset_of_card_le hinsert hcard).symm
 
-end GoldbergSeymour.SharedFacts.ScheideDefectiveDeletedTreePair
+end GoldbergSeymour
 
 end

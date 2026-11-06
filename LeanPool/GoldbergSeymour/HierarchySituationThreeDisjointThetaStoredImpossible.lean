@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaTransport
 
 public import LeanPool.GoldbergSeymour.SharedFacts.SecondSituationTransport
@@ -2141,10 +2142,7 @@ private theorem helper_continuation_2252.{u_1, u_2} :
   have treeMissingSubset {U W : TreeSequence G e0}
       (hUW : TreeSequenceInitialSegment U W) :
       TreeMissingColors sigma U ⊆ TreeMissingColors sigma W := by
-    exact @SharedFacts.DisjointThetaTransport.treeMissingSubset (@V) (@E) inferInstance
-        inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
-        (@alpha) (@beta) (@d) (@U) (@W) (@hUW)
+    exact TreeSequenceInitialSegment.treeMissingColors_subset hUW
   have hgammaMissingZ : gamma ∈ TreeMissingColors sigma Z :=
     treeMissingSubset hAtoZ hgammaA
   have hbetaMissingZ : beta ∈ TreeMissingColors sigma Z :=

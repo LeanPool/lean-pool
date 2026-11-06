@@ -3687,38 +3687,6 @@ theorem helper_hprimeVertexBefore_2750.{u_1, u_2} :
     exact ⟨i, rfl⟩
   · exact ⟨i, uPosition, rfl, huPosition, hi⟩
 
-theorem helper_transportURoute_2771.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (v : V) (sigma : PartialEdgeColoring E k) (hvFinal : v ∈
-        TreeSequenceVertexSet T) (trace : ExtensionBaseRestorationTrace ett v hvFinal sigma) (p0 :
-        ℕ) (indices0 : Fin (p0 + (1 : ℕ)) → Fin ett.rounds),
-    let rho1 : PartialEdgeColoring E k := trace.coloring (Fin.last trace.steps);
-    ∀ (TjPrime : TreeSequence G e0) (u : V) (b : Fin (p0 + (1 : ℕ))) (traceB :
-        ExtensionBaseAlgorithmBTrace ett v rho1 u p0 indices0 b),
-    let rho2 : PartialEdgeColoring E k := traceB.coloring (Fin.last traceB.steps);
-    ∀ (uPosition : Fin (TjPrime.length + (1 : ℕ))) (huPositionPositive : (1 : ℕ) ≤ (↑uPosition :
-        ℕ)) (huPositionBound : (↑uPosition : ℕ) ≤ TjPrime.length),
-    let U : TreeSequence G e0 := TreeSequencePrefix TjPrime (↑uPosition : ℕ) huPositionPositive
-        huPositionBound; (
-    ∀ {A B : TreeSequence G e0}, TashkinovAugmentation rho1 A B → TreeSequenceInitialSegment B U →
-        TashkinovAugmentation rho2 A B) →
-    ∀ (S : TreeSequence G e0), TashkinovAugmentationSequence rho1 S U →
-        TashkinovAugmentationSequence rho2 S U := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett v sigma hvFinal trace p0 indices0 rho1 TjPrime u
-      b traceB rho2 uPosition huPositionPositive huPositionBound U transportUStep S hroute
-  unfold TashkinovAugmentationSequence at hroute ⊢
-  induction hroute using Relation.ReflTransGen.head_induction_on with
-  | refl => exact Relation.ReflTransGen.refl
-  | @head A B hAB hBU ih =>
-      have hBsegment : TreeSequenceInitialSegment B U :=
-        TashkinovAugmentationSequenceInitialSegment rho1 B U hBU
-      exact Relation.ReflTransGen.head
-        (transportUStep hAB hBsegment) ih
-
 theorem helper_hterminalInclusion_2787.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :

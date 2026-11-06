@@ -3317,88 +3317,6 @@ private theorem helper_gammaNotTerminal_3372.{u_1, u_2} :
       mpMinus baseMinus HMinus corrStar baseStar HStar minusLength countMinus goodMinus gammaNe
       ig vg gammaAt vgTerminal changeOld lastMinus pathBound vgMinus terminalMinus
   apply helper_gammaNotTerminal_634 <;> assumption
-private theorem helper_gammaNotTerminal_3460.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (D : HierarchySituationTwoCaseOneData G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let B : TreeSequence G e0 :=
-      HierarchyFullTailPrefix C (HierarchyFullTailLength C - (2 : ℕ));
-    let P : TreeSequence G e0 :=
-      HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1 : ℕ));
-    ∀ (_ : (2 : ℕ) ≤ T.length - A.length) (_ : B.length + (2 : ℕ) = T.length)
-      (_ : P.length + (1 : ℕ) = T.length)
-      (R :
-        HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-          D.toHierarchySituationTwoTailData)
-      (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-      (_ : MaximumProperty corrMinus.replacementETT)
-      (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-      (HMinus : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-      (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-      (baseStar : HierarchyBase corrStar.replacementETT phi)
-      (_ : TashkinovHierarchy corrStar.replacementETT baseStar)
-      (_ : R.minus.length = B.length + (1 : ℕ))
-      (_ : HMinus.dividerCount = H.dividerCount) (_ : GoodHierarchy HMinus)
-      (_ : D.gammaOne ≠ D.alpha),
-    let ig : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T D.gammaOne;
-    let vg : V := T.vertex ig;
-    ∀ (_ : D.gammaOne ∈ MissingColors G phi vg)
-      (_ : vg ≠ T.vertex D.terminalVertexIndex)
-      (_ :
-        let H : TashkinovHierarchy ett base := C.hierarchy;
-        have q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-        have n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-        have A : TreeSequence G e0 := HierarchyStarredStage H q;
-        have Tnq : TreeSequence G e0 :=
-          H.stage
-            (⟨H.dividerCount, by
-                omega⟩ :
-              Fin (H.dividerCount + (2 : ℕ)));
-        have Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-        have Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-        have Dnq : Finset (Fin k) := HierarchyStoredColorsAt H q;
-        have va : V := T.vertex (HierarchyFirstMissingPosition phi T D.gammaOne);
-        have vb : V := T.vertex (HierarchyFirstMissingPosition phi T D.alpha);
-        have sameComponent : Prop :=
-          TwoColorComponent G phi D.gammaOne D.alpha (Sum.inl va) =
-            TwoColorComponent G phi D.gammaOne D.alpha (Sum.inl vb);
-        ((0 : ℕ) < H.dividerCount ∧
-              (D.gammaOne ∈ TreeMissingColors phi Tnq ∨
-                Disjoint (insert D.gammaOne ({ D.alpha } : Finset (Fin k)) : Finset (Fin k))
-                  Dnq) →
-            sameComponent) ∧
-          (H.dividerCount = (0 : ℕ) ∧
-                (D.gammaOne ∈ TreeMissingColors phi Tn ∨
-                  Disjoint
-                    (insert D.gammaOne ({ D.alpha } : Finset (Fin k)) : Finset (Fin k))
-                    Dn) →
-              sameComponent) ∧
-            (D.gammaOne ∈ TreeMissingColors phi A ∧
-                TreeColorSetClosed G phi A ({ D.gammaOne } : Finset (Fin k)) →
-              sameComponent ∧ TreeInterchangeable G A phi D.gammaOne D.alpha))
-      (_ : HierarchyStarredStage HMinus (Fin.last HMinus.dividerCount) = A)
-      (_ :
-        ∀ {U : TreeSequence G e0} {inp : PartialEdgeColoring E k}
-          {et : ExtendedTashkinovTree G k e0 inp U phi} {b : HierarchyBase et phi}
-          (K : TashkinovHierarchy et b),
-          HierarchyPathNumber K ≤
-            U.length - (HierarchyStarredStage K (Fin.last K.dividerCount)).length)
-      (_ : vg ∈ TreeSequenceVertexSet R.minus)
-      (_ : T.vertex D.terminalVertexIndex ∈ TreeSequenceVertexSet R.minus),
-    D.gammaOne ∉ MissingColors G phi (T.vertex D.terminalVertexIndex) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A B P htail hBL hPL R corrMinus
-      mpMinus baseMinus HMinus corrStar baseStar HStar minusLength countMinus goodMinus gammaNe
-      ig vg gammaAt vgTerminal changeOld lastMinus pathBound vgMinus terminalMinus
-  apply helper_gammaNotTerminal_3372 <;> assumption
 private theorem helper_continuation_3550.{u_1, u_2} :
     helperContinuation3550Conditions.{u_1, u_2} := by
   classical
@@ -3617,7 +3535,7 @@ private theorem helper_continuation_3038.{u_1, u_2} :
     rw [← R.minusTerminalVertex]
     exact vertexMem R.minus _
   have gammaNotTerminal : D.gammaOne ∉ MissingColors G phi (T.vertex D.terminalVertexIndex) := by
-    apply helper_gammaNotTerminal_3460 <;> assumption
+    apply helper_gammaNotTerminal_3372 <;> assumption
   let CS : HierarchyCounterexample baseStar :=
     { positive := by rw [corrStar.rungAgreement]; exact C.positive
       hierarchy := HStar

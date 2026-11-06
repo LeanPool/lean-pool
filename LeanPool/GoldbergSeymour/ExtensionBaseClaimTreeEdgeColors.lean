@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.HkuTreeColorsControlled
 
 public import LeanPool.GoldbergSeymour.SameColorSeriesPreserved
@@ -20,52 +21,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_segment_61.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-    LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (rounds : ℕ)
-    (series : TashkinovSeries G k rounds e0 input) (j : Fin (rounds + (1 : ℕ))) (i : Fin
-    rounds), j = i.succ → TreeSequenceInitialSegment (series.data.tree i.succ.castSucc)
-    (series.data.tree i.succ.succ) := by
-  classical
-  intro V E _ _ _ G k e0 input rounds series j i hji
-  cases series.certified j with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    exact (Fin.succ_ne_zero i) hji.symm |>.elim
-  | SE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hvals := congrArg Fin.val hji
-    simp at hvals
-    have hieq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
-  | PE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have hvals := congrArg Fin.val hji
-    simp at hvals
-    have hieq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
-  | RE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hvals := congrArg Fin.val hji
-    simp at hvals
-    have hieq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
 
 private theorem helper_setTransfer_118.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -225,8 +180,7 @@ theorem ExtensionBaseClaimTreeEdgeColors {V E : Type*}
   exact ((by
     classical
   let : DecidableEq V := Classical.decEq V
-  have segment := @helper_segment_61 V E inferInstance inferInstance inferInstance G k e0 input
-      rounds series
+  have segment := TashkinovSeries.stepInitialSegment G k rounds e0 input series
   have vertexTransfer {A B : TreeSequence G e0}
       (hab : TreeSequenceInitialSegment A B) {v : V}
       (hv : v ∈ TreeSequenceVertexSet A) :

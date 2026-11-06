@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
+
 public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 
@@ -26,69 +28,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem ParallelTwoConstituentPathContradiction_missing_leaf_163.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G : LooplessMultigraph V E) (k :
-    ℕ) (e0 : E) (sigma : PartialEdgeColoring E k) (right : TreeSequence G e0),
-    IsProperEdgeColoring G sigma → ColoredVertexSetClosed G sigma (TreeSequenceVertexSet
-    right) → ∀ (alpha beta : Fin k), let H := TwoColorIncidenceGraph G sigma alpha beta; ∀ (x
-    : V), alpha ∈ MissingColors G sigma x ∨ beta ∈ MissingColors G sigma x → (H.neighborSet
-    (Sum.inl x)).Subsingleton := by
-  classical
-  intro V E _ _ G k e0 sigma right hproper _ alpha beta H x hmissing z hz w hw
-  cases hzv : z with
-  | inl y =>
-      rw [hzv] at hz
-      simp [H, SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] at hz
-  | inr e =>
-      cases hwv : w with
-      | inl y =>
-          rw [hwv] at hw
-          simp [H, SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] at hw
-      | inr f =>
-          rw [hzv] at hz
-          rw [hwv] at hw
-          have he : Incident G x e ∧
-              (sigma e = some alpha ∨ sigma e = some beta) := by
-            simpa [H, SimpleGraph.mem_neighborSet,
-              TwoColorIncidenceGraph] using hz
-          have hf : Incident G x f ∧
-              (sigma f = some alpha ∨ sigma f = some beta) := by
-            simpa [H, SimpleGraph.mem_neighborSet,
-              TwoColorIncidenceGraph] using hw
-          apply congrArg Sum.inr
-          by_contra hef
-          rcases hmissing with ha | hb
-          · have hna : alpha ∉ PresentColors G sigma x := by
-              simpa [MissingColors] using ha
-            have heBeta : sigma e = some beta := he.2.resolve_left (by
-              intro heAlpha
-              apply hna
-              simpa [PresentColors] using
-                (show ∃ q, Incident G x q ∧ sigma q = some alpha from
-                  ⟨e, he.1, heAlpha⟩))
-            have hfBeta : sigma f = some beta := hf.2.resolve_left (by
-              intro hfAlpha
-              apply hna
-              simpa [PresentColors] using
-                (show ∃ q, Incident G x q ∧ sigma q = some alpha from
-                  ⟨f, hf.1, hfAlpha⟩))
-            exact (hproper hef ⟨x, he.1, hf.1⟩ heBeta) hfBeta
-          · have hnb : beta ∉ PresentColors G sigma x := by
-              simpa [MissingColors] using hb
-            have heAlpha : sigma e = some alpha := he.2.resolve_right (by
-              intro heBeta
-              apply hnb
-              simpa [PresentColors] using
-                (show ∃ q, Incident G x q ∧ sigma q = some beta from
-                  ⟨e, he.1, heBeta⟩))
-            have hfAlpha : sigma f = some alpha := hf.2.resolve_right (by
-              intro hfBeta
-              apply hnb
-              simpa [PresentColors] using
-                (show ∃ q, Incident G x q ∧ sigma q = some beta from
-                  ⟨f, hf.1, hfBeta⟩))
-            exact (hproper hef ⟨x, he.1, hf.1⟩ heAlpha) hfAlpha
 
 private theorem ParallelTwoConstituentPathContradiction_continuation_235.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G : LooplessMultigraph V E) (k :
@@ -349,8 +288,7 @@ theorem ParallelTwoConstituentPathContradiction {V E : Type*}
       (hmissing : alpha ∈ MissingColors G sigma x ∨
         beta ∈ MissingColors G sigma x) :
       Set.Subsingleton (H.neighborSet (Sum.inl x)) := by
-    exact @ParallelTwoConstituentPathContradiction_missing_leaf_163 V E inferInstance
-        inferInstance G k e0 sigma right hproper (by assumption) alpha beta x hmissing
+    exact TwoColorMissingVertexNeighborsSubsingleton G sigma hproper alpha beta x hmissing
   exact @ParallelTwoConstituentPathContradiction_continuation_235 V E inferInstance inferInstance
         G k e0 sigma left right hproper hleftElementary
       hrightElementary (by assumption) support common hcommonLeft hcommonRight alpha u v huLeft

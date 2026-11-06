@@ -173,20 +173,6 @@ abbrev hthetaYStatement.{u_1, u_2} : Prop :=
           TreeSequenceVertexSet W → c ∈ MissingColors G rho v → c ∈ TreeMissingColors rho W) →
           d.theta ∈ TreeMissingColors sigma Y
 
-/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
-abbrev treeMissingSubsetStatement.{u_1, u_2} : Prop :=
-  open scoped Classical in
-      ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-          LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-          TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-          input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-          HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-          HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (alpha beta : Fin k)
-          (d : HierarchySituationThreeDisjointData G k e0 input T phi ett base C ctx P alpha beta),
-      let R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx := d.switched;
-      let sigma : PartialEdgeColoring E k := R.coloring;
-      ∀ {U W : TreeSequence G e0}, TreeSequenceInitialSegment U W → TreeMissingColors sigma U ⊆
-          TreeMissingColors sigma W
 
 /-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
 abbrev apositiveStatement.{u_1, u_2} : Prop :=
@@ -782,15 +768,6 @@ theorem hthetaY.{u_1, u_2} : hthetaYStatement.{u_1, u_2} := by
     exact treeMissingIntro sigma Y (Y.vertex (Fin.last Y.length)) d.theta
       (vertexMemSelf Y (Fin.last Y.length)) hthetaMissingY
 
-/-- A common proof used by the branches of this transport or construction argument. -/
-theorem treeMissingSubset.{u_1, u_2} : treeMissingSubsetStatement.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha beta d R sigma U W hUW
-  as_aux_lemma =>
-    intro c hc
-    obtain ⟨v, hv, hmiss⟩ := Finset.mem_biUnion.mp hc
-    exact Finset.mem_biUnion.mpr ⟨v,
-      TreeSequenceInitialSegmentVertexSetSubset hUW hv, hmiss⟩
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem apositive.{u_1, u_2} : apositiveStatement.{u_1, u_2} := by

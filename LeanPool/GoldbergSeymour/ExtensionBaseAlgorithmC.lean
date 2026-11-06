@@ -572,74 +572,6 @@ private theorem helper_single_step_295.{u_1, u_2} :
         And.intro heBetaNIncident (Or.inr heBetaNColor)
     exact hedgeNe (Sum.inr.inj (hsub hAlphaNeighbor hBetaNeighbor))
 
-private theorem helper_root_swap_exchange_437.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] {G : LooplessMultigraph V E}
-      {k : ℕ} {phi : PartialEdgeColoring E k} {v : V} {alpha beta : Fin k}
-      (_ : alpha ≠ beta) (_ : beta ∈ MissingColors G phi v)
-      (_ : alpha ∈ PresentColors G phi v),
-    alpha ∈ MissingColors G (TwoColorComponentSwap G phi alpha beta (Sum.inl v)) v ∧
-    beta ∈ PresentColors G (TwoColorComponentSwap G phi alpha beta (Sum.inl v)) v := by
-  classical
-  intro V E _ _ G k phi v alpha beta hne hbeta halpha
-  let _ := Fintype.ofFinite V
-  have hbetaNotPresent : beta ∉ PresentColors G phi v := by
-    simpa [MissingColors] using hbeta
-  obtain ⟨eAlpha, heAlphaIncident, heAlphaColor⟩ := by
-    simpa only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-      true_and] using halpha
-  have heAlphaComponent : Sum.inr eAlpha ∈
-      TwoColorComponent G phi alpha beta (Sum.inl v) := by
-    let H := TwoColorIncidenceGraph G phi alpha beta
-    have hadj : H.Adj (Sum.inl v) (Sum.inr eAlpha) := by
-      simpa [H, TwoColorIncidenceGraph] using
-        And.intro heAlphaIncident (Or.inl heAlphaColor)
-    change H.connectedComponentMk (Sum.inr eAlpha) =
-      H.connectedComponentMk (Sum.inl v)
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-      hadj).symm
-  constructor
-  · unfold MissingColors
-    rw [Finset.mem_sdiff]
-    refine ⟨Finset.mem_univ _, ?_⟩
-    intro hpresent
-    simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-      true_and] at hpresent
-    rcases hpresent with ⟨e, hev, heColor⟩
-    by_cases heK :
-        Sum.inr e ∈ TwoColorComponent G phi alpha beta (Sum.inl v)
-    · have heBeta : phi e = some beta := by
-        unfold TwoColorComponentSwap at heColor
-        rw [ite_eq_left heK] at heColor
-        by_cases heAlpha : phi e = some alpha
-        · rw [ite_eq_left heAlpha] at heColor
-          exact False.elim (hne (Option.some.inj heColor).symm)
-        · by_cases heBeta : phi e = some beta
-          · exact heBeta
-          · rw [ite_eq_right heAlpha, ite_eq_right heBeta] at heColor
-            exact False.elim (heAlpha heColor)
-      apply hbetaNotPresent
-      simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-        true_and]
-      exact ⟨e, hev, heBeta⟩
-    · have heOldAlpha : phi e = some alpha := by
-        simpa [TwoColorComponentSwap, heK] using heColor
-      have heAdj : (TwoColorIncidenceGraph G phi alpha beta).Adj
-          (Sum.inl v) (Sum.inr e) := by
-        simpa [TwoColorIncidenceGraph] using
-          And.intro hev (Or.inl heOldAlpha)
-      apply heK
-      change (TwoColorIncidenceGraph G phi alpha beta).connectedComponentMk
-          (Sum.inr e) =
-        (TwoColorIncidenceGraph G phi alpha beta).connectedComponentMk
-          (Sum.inl v)
-      exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-        heAdj).symm
-  · simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-      true_and]
-    exact ⟨eAlpha, heAlphaIncident, by
-      simp [TwoColorComponentSwap, heAlphaComponent, heAlphaColor]⟩
-
 private theorem helper_branch_509.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
@@ -1625,7 +1557,7 @@ private theorem helper_continuation_1280.{u_1, u_2} :
       (hcb : c ≠ beta) :
       c ∈ PresentColors G (TwoColorComponentSwap G phi alpha beta z) v := by
     exact TwoColorComponentSwapPreservesOther hc hca hcb
-  have root_swap_exchange := @helper_root_swap_exchange_437 V E inferInstance inferInstance G k
+  have root_swap_exchange := @TwoColorComponentSwapExchangesRootColors V E inferInstance G k
   have swap_preserves_present {phi : PartialEdgeColoring E k} {v : V}
       {alpha beta : Fin k} {z : Sum V E}
       (hne : alpha ≠ beta)

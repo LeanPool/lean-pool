@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TashkinovSeries
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 /-!
 # Shared facts for HkuUnsupportedVertexColors
@@ -29,45 +29,9 @@ abbrev nextSegmentStatement.{u_1, u_2} : Prop :=
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem next_segment.{u_1, u_2} : nextSegmentStatement.{u_1, u_2} := by
-  classical
   intro V E _ _ _ G k rounds e0 input series j i hj
-  cases series.certified j with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    exact (Fin.succ_ne_zero i) hj.symm |>.elim
-  | SE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hvals := congrArg Fin.val hj
-    simp at hvals
-    have hieq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
-  | RE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hvals := congrArg Fin.val hj
-    simp at hvals
-    have hieq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
-  | PE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have hvals := congrArg Fin.val hj
-    simp at hvals
-    have hieq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
+  exact TashkinovSeries.stepInitialSegment G k rounds e0 input series j i hj
+
 
 end GoldbergSeymour.SharedFacts.UnsupportedVertexColors
 

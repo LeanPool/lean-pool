@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeVertexSet
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDefectiveNoCross
 
 public import LeanPool.GoldbergSeymour.ScheideDefectiveCrossingSelection
@@ -137,55 +139,6 @@ private theorem helper_htreeS_255.{u_1, u_2} :
       exact (missing_unaffected (C.y b) (by
         rw [← C.base_vertex_position b]
         simp [X, TreeSequenceVertexSet]) (C.gamma r) hrgamma hrdelta).mpr hbmissing
-
-private theorem helper_adjoin_vertex_set_343.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [DecidableEq V] (G :
-    LooplessMultigraph V E) (e0 : E) (A B : TreeSequence G e0) (f : E) (x y : V), G.ends f =
-    s(x, y) → y ∉ TreeSequenceVertexSet A → TreeSequenceAdjoinEdge A f B →
-    TreeSequenceVertexSet B = insert y (TreeSequenceVertexSet A) := by
-  classical
-  intro V E _ G e0 A B f x y hxy hyA hAB
-  rcases hAB with ⟨hlen, hinit, hlast⟩
-  rcases hinit with ⟨hle, hvertices, hedges⟩
-  have holdSubset : TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hv ⊢
-    obtain ⟨q, hq⟩ := hv
-    refine ⟨Fin.castLE (Nat.succ_le_succ hle) q, ?_⟩
-    rw [hvertices]
-    exact hq
-  have hyB : y ∈ TreeSequenceVertexSet B := by
-    let j : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
-    obtain ⟨a, ha⟩ := B.attaches j
-    have hyEnds : y ∈ G.ends (B.edge j) := by
-      rw [hlast, hxy]
-      simp
-    rw [ha] at hyEnds
-    rcases (by simpa only [Sym2.mem_iff] using hyEnds) with hynew | hyold
-    · simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-        true_and]
-      exact ⟨j.succ, hynew.symm⟩
-    · simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-        true_and]
-      exact ⟨Fin.castLT a (Nat.lt_trans a.isLt (Nat.succ_lt_succ j.isLt)),
-        hyold.symm⟩
-  have hinsert : insert y (TreeSequenceVertexSet A) ⊆ TreeSequenceVertexSet B := by
-    intro v hv
-    simp only [Finset.mem_insert] at hv
-    rcases hv with rfl | hv
-    · exact hyB
-    · exact holdSubset hv
-  have hAcard : (TreeSequenceVertexSet A).card = A.length + 1 := by
-    simp [TreeSequenceVertexSet, Finset.card_image_of_injective,
-      A.vertex_injective]
-  have hBcard : (TreeSequenceVertexSet B).card = B.length + 1 := by
-    simp [TreeSequenceVertexSet, Finset.card_image_of_injective,
-      B.vertex_injective]
-  have hcard : (TreeSequenceVertexSet B).card ≤
-      (insert y (TreeSequenceVertexSet A)).card := by
-    rw [hBcard, Finset.card_insert_of_notMem hyA, hAcard, hlen]
-  exact (Finset.eq_of_subset_of_card_le hinsert hcard).symm
 
 private theorem helper_component_vertex_of_edge_285.{u_1, u_2} :
     open scoped Classical in
@@ -701,7 +654,7 @@ theorem ScheideDefectiveNoCross {V E : Type*}
       (hyA : y ∉ TreeSequenceVertexSet A)
       (hAB : TreeSequenceAdjoinEdge A f B) :
       TreeSequenceVertexSet B = insert y (TreeSequenceVertexSet A) := by
-    exact @helper_adjoin_vertex_set_343 V E inferInstance G e0 A B f x y hxy hyA hAB
+    exact @TreeSequenceAdjoinEdge.vertexSet_eq_insert V E inferInstance G e0 A B f x y hxy hyA hAB
   have hSverticesZ : TreeSequenceVertexSet S = Z := by
     simpa [Z, X, U, i] using hSvertices
   have hv0S : D.v0 d ∈ TreeSequenceVertexSet S := by

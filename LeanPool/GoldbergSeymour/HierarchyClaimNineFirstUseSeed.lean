@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.HierarchyClaimNineFirstUseAfterSeed
 public import LeanPool.GoldbergSeymour.HierarchyClaimNineUnusedTailColor
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
@@ -1997,25 +1998,6 @@ private theorem helper_hfixedX_1181.{u_1, u_2} :
     rw [← hXT.2.2 t, he, hAT.2.2 tA]
     exact hfixedA tA
 
-private theorem helper_segTrans_1202.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx), HierarchyPathNumber
-        P.counterexample.hierarchy = (1 : ℕ) →
-    ∀ {S U W : TreeSequence G e0}, TreeSequenceInitialSegment S U → TreeSequenceInitialSegment U W
-        → TreeSequenceInitialSegment S W := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P hsituation S U W hSU hUW
-  refine ⟨hSU.1.trans hUW.1, ?_, ?_⟩
-  · intro j
-    exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hSU.1) j)).trans (hSU.2.1 j)
-  · intro j
-    exact (hUW.2.2 (Fin.castLE hSU.1 j)).trans (hSU.2.2 j)
-
 private theorem helper_coreToA_1217.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -2852,9 +2834,7 @@ private theorem helper_continuation_2492.{u_1, u_2} :
   have segTrans {S U W : TreeSequence G e0}
       (hSU : TreeSequenceInitialSegment S U)
       (hUW : TreeSequenceInitialSegment U W) : TreeSequenceInitialSegment S W := by
-    exact @helper_segTrans_1202 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@hsituation) (@S)
-        (@U) (@W) (@hSU) (@hUW)
+    exact hSU.trans hUW
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by

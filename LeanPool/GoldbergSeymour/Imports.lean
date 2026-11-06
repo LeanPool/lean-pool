@@ -549,7 +549,6 @@ public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparat
 public import LeanPool.GoldbergSeymour.SharedFacts.OutsideAdvancement
 public import LeanPool.GoldbergSeymour.SharedFacts.ParallelSupportClosureProperties
 public import LeanPool.GoldbergSeymour.SharedFacts.RevisitingTerminalPreparation
-public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDefectiveDeletedTreePair
 public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDefectiveNoCross
 public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDefectiveThirdBoundaryEdge
 public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDeletedMissingReplacementInternal
@@ -667,6 +666,7 @@ public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePreservesTas
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceStrictBoundaryWitness
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
 public import LeanPool.GoldbergSeymour.TashkinovClosure
 public import LeanPool.GoldbergSeymour.TashkinovClosureExists
 public import LeanPool.GoldbergSeymour.TashkinovClosureOfRouteAndAllMissingClosed
@@ -686,6 +686,7 @@ public import LeanPool.GoldbergSeymour.TashkinovSeriesPrefix
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStepAppend
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStepPrefix
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 public import LeanPool.GoldbergSeymour.TashkinovStoredColors
 public import LeanPool.GoldbergSeymour.TashkinovStoredColorsAppend
 public import LeanPool.GoldbergSeymour.TashkinovStoredColorsCardinality
@@ -740,6 +741,7 @@ public import LeanPool.GoldbergSeymour.TreeMissingColorsCardLowerBound
 public import LeanPool.GoldbergSeymour.TreeSequence
 public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
 public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeUnique
+public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeVertexSet
 public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 public import LeanPool.GoldbergSeymour.TreeSequenceEdgeSet
@@ -753,10 +755,12 @@ public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 public import LeanPool.GoldbergSeymour.TreeUsedColors
 public import LeanPool.GoldbergSeymour.TreeVertexOrder
 public import LeanPool.GoldbergSeymour.TreeVerticesBefore
+public import LeanPool.GoldbergSeymour.TreeVerticesBeforeFacts
 public import LeanPool.GoldbergSeymour.TrunkRotation
 public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.TwoColorComponentColoringFacts
 public import LeanPool.GoldbergSeymour.TwoColorComponentCycle
+public import LeanPool.GoldbergSeymour.TwoColorComponentLeafPaths
 public import LeanPool.GoldbergSeymour.TwoColorComponentNearestSegment
 public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
@@ -772,6 +776,7 @@ public import LeanPool.GoldbergSeymour.TwoColorCycle
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceGraph
 public import LeanPool.GoldbergSeymour.TwoColorInterchangeableDistinctComponentCycle
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
 public import LeanPool.GoldbergSeymour.TwoColorPathComponent
 public import LeanPool.GoldbergSeymour.TwoColorPathComponentNotCycle

@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDefectiveDeletedTreePair
+public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeVertexSet
 
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
@@ -538,7 +538,7 @@ private theorem helper_continuation_619.{u_1, u_2} :
       (hyA : y ∉ TreeSequenceVertexSet A)
       (hAB : TreeSequenceAdjoinEdge A f B) :
       TreeSequenceVertexSet B = insert y (TreeSequenceVertexSet A) := by
-    exact @SharedFacts.ScheideDefectiveDeletedTreePair.adjoin_vertex_set V E inferInstance G
+    exact @TreeSequenceAdjoinEdge.vertexSet_eq_insert V E inferInstance G
         e0 A B f x y hxy hyA hAB
   have hv0Gamma : D.v0 d ∈ TreeSequenceVertexSet Tgamma := by
     obtain ⟨a, _, ha⟩ := Finset.mem_image.mp

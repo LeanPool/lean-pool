@@ -1197,20 +1197,8 @@ theorem helper_hUPrime_3958.{u_1, u_2} :
     SharedFacts.ExtensionBaseStepLemmas.uPrimeStatement.{u_1, u_2} :=
   SharedFacts.ExtensionBaseStepLemmas.uPrime.{u_1, u_2}
 
-/-- Existing proof-module entry point for the shared interface or construction. -/
-theorem helper_hbeforePrimeNeU_3983.{u_1, u_2} :
-    SharedFacts.ExtensionBranchPreparation.hbeforePrimeNeUStatement.{u_1, u_2} :=
-  SharedFacts.ExtensionBranchPreparation.hbeforePrimeNeU.{u_1, u_2}
 
-/-- Existing proof-module entry point for the shared interface or construction. -/
-theorem helper_hbeforePrimeMissing_3991.{u_1, u_2} :
-    SharedFacts.ExtensionBranchPreparation.hbeforePrimeMissingStatement.{u_1, u_2} :=
-  SharedFacts.ExtensionBranchPreparation.hbeforePrimeMissing.{u_1, u_2}
 
-/-- Existing proof-module entry point for the shared interface or construction. -/
-theorem helper_transportURoute_4006.{u_1, u_2} :
-    SharedFacts.ExtensionBranchPreparation.transportURouteStatement.{u_1, u_2} :=
-  SharedFacts.ExtensionBranchPreparation.transportURoute.{u_1, u_2}
 
 /-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_huU_4024.{u_1, u_2} :
@@ -1382,20 +1370,7 @@ theorem helper_hZTj_4280.{u_1, u_2} :
   · intro i
     simp [Z, TreeSequencePrefix]
 
-/-- Existing proof-module entry point for the shared interface or construction. -/
-theorem helper_hbeforePrimeNeU_4309.{u_1, u_2} :
-    SharedFacts.ExtensionBranchPreparation.hbeforePrimeNeUStatement.{u_1, u_2} :=
-  SharedFacts.ExtensionBranchPreparation.hbeforePrimeNeU.{u_1, u_2}
 
-/-- Existing proof-module entry point for the shared interface or construction. -/
-theorem helper_hbeforePrimeMissing_4318.{u_1, u_2} :
-    SharedFacts.ExtensionBranchPreparation.hbeforePrimeMissingStatement.{u_1, u_2} :=
-  SharedFacts.ExtensionBranchPreparation.hbeforePrimeMissing.{u_1, u_2}
-
-/-- Existing proof-module entry point for the shared interface or construction. -/
-theorem helper_transportURoute_4333.{u_1, u_2} :
-    SharedFacts.ExtensionBranchPreparation.transportURouteStatement.{u_1, u_2} :=
-  SharedFacts.ExtensionBranchPreparation.transportURoute.{u_1, u_2}
 
 theorem helper_hterminalMissingEq_4347.{u_1, u_2} :
     open scoped Classical in
@@ -2087,114 +2062,6 @@ theorem helper_hseedBeforeU_5770.{u_1, u_2} :
       (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@p0) (@indices0) (@terminalPosition)
       (@hterminalPositionPositive) (@hterminalPositionBound) (@TjPrime) (@hseedPrime) (@u)
       (@uPosition) (@huPosition) (@huNotSeed)
-
-theorem helper_hUsegmentVertexBefore_5797.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (v : V),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T)
-        (hfirstUpper : ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ)) (hfirstPositive
-        : (0 : ℕ) < ETTFirstAppearanceIndex ett v hvFinal),
-    let jSlot : Fin ett.rounds := (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (p0 : ℕ) (_ : Fin (p0 + (1 : ℕ)) → Fin ett.rounds) (terminalPosition : Fin
-        ((ett.series.data.tree jSlot.succ.castSucc).length + (1 : ℕ))), (1 : ℕ) ≤
-        (↑terminalPosition : ℕ) → (↑terminalPosition : ℕ) ≤ (ett.series.data.tree
-        jSlot.succ.castSucc).length →
-    ∀ (TjPrime : TreeSequence G e0) (u : V) (huPrime : u ∈ TreeSequenceVertexSet TjPrime)
-        (uPosition : Fin (TjPrime.length + (1 : ℕ))) (huPositionPositive : (1 : ℕ) ≤ (↑uPosition :
-        ℕ)) (huPositionBound : (↑uPosition : ℕ) ≤ TjPrime.length),
-    let U : TreeSequence G e0 := TreeSequencePrefix TjPrime (↑uPosition : ℕ) huPositionPositive
-        huPositionBound; TreeSequenceInitialSegment U TjPrime → (
-    ∀ (i : Fin (TjPrime.length + (1 : ℕ))), (↑i : ℕ) < (↑uPosition : ℕ) → TjPrime.vertex i ∈
-        TreeVerticesBefore TjPrime u huPrime) →
-    ∀ {A : TreeSequence G e0}, TreeSequenceInitialSegment A U → A.length < U.length →
-    ∀ {x : V}, x ∈ TreeSequenceVertexSet A → x ∈ TreeVerticesBefore TjPrime u huPrime := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v q hqTerminal hvFinal hfirstUpper
-      hfirstPositive jSlot p0 indices0 terminalPosition hterminalPositionPositive
-      hterminalPositionBound TjPrime u huPrime uPosition huPositionPositive huPositionBound U
-      hUPrime hprimeVertexBefore A hAU hAlen x hxA
-  exact @helper_hUsegmentVertexBefore_2265 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v)
-      (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@p0) (@indices0)
-      (@terminalPosition) (@hterminalPositionPositive) (@hterminalPositionBound) (@TjPrime)
-      (@u) (@huPrime) (@uPosition) (@huPositionPositive) (@huPositionBound) (@hUPrime)
-      (@hprimeVertexBefore) (@A) (@hAU) (@hAlen) (@x) (@hxA)
-
-theorem helper_transportUStep_5808.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (v : V) (sigma :
-        PartialEdgeColoring E k),
-    let this : DecidableEq V := Classical.decEq V;
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T)
-        (hfirstUpper : ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ)) (hfirstPositive
-        : (0 : ℕ) < ETTFirstAppearanceIndex ett v hvFinal),
-    let jSlot : Fin ett.rounds := (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds); (
-    ∀ {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B C
-        → TreeSequenceInitialSegment A C) →
-    ∀ (trace : ExtensionBaseRestorationTrace ett v hvFinal sigma) (p0 : ℕ) (indices0 : Fin (p0 +
-        (1 : ℕ)) → Fin ett.rounds),
-    let rho1 : PartialEdgeColoring E k := trace.coloring (Fin.last trace.steps);
-    ∀ (terminalPosition : Fin ((ett.series.data.tree jSlot.succ.castSucc).length + (1 : ℕ))), (1 :
-        ℕ) ≤ (↑terminalPosition : ℕ) → (↑terminalPosition : ℕ) ≤ (ett.series.data.tree
-        jSlot.succ.castSucc).length →
-    ∀ (TjPrime : TreeSequence G e0) (u : V) (huPrime : u ∈ TreeSequenceVertexSet TjPrime) (b : Fin
-        (p0 + (1 : ℕ))) (traceB : ExtensionBaseAlgorithmBTrace ett v rho1 u p0 indices0 b),
-    let rho2 : PartialEdgeColoring E k := traceB.coloring (Fin.last traceB.steps); ((
-    ∀ x ∈ TreeSequenceVertexSet (ett.series.data.tree jSlot.succ.castSucc) ∪ TreeVerticesBefore
-        TjPrime u huPrime, MissingColors G (traceB.coloring (Fin.last traceB.steps)) x =
-        MissingColors G rho1 x) ∧
-    ∀ (f : E), ((
-    ∃ (a : Fin (ett.series.data.tree jSlot.succ.castSucc).length), (ett.series.data.tree
-        jSlot.succ.castSucc).edge a = f) ∨
-    ∃ (a : Fin TjPrime.length) (z : Fin (TjPrime.length + (1 : ℕ))), TjPrime.vertex z = u ∧ (↑a :
-        ℕ) < (↑z : ℕ) ∧ TjPrime.edge a = f) → traceB.coloring (Fin.last traceB.steps) f = rho1 f)
-        →
-    ∀ (uPosition : Fin (TjPrime.length + (1 : ℕ))), TjPrime.vertex uPosition = u →
-    ∀ (huPositionPositive : (1 : ℕ) ≤ (↑uPosition : ℕ)) (huPositionBound : (↑uPosition : ℕ) ≤
-        TjPrime.length),
-    let U : TreeSequence G e0 := TreeSequencePrefix TjPrime (↑uPosition : ℕ) huPositionPositive
-        huPositionBound; TreeSequenceInitialSegment U TjPrime → (
-    ∀ {A : TreeSequence G e0}, TreeSequenceInitialSegment A U → A.length < U.length →
-    ∀ {x : V}, x ∈ TreeSequenceVertexSet A → x ∈ TreeVerticesBefore TjPrime u huPrime) →
-    ∀ {A B : TreeSequence G e0}, TashkinovAugmentation rho1 A B → TreeSequenceInitialSegment B U →
-        TashkinovAugmentation rho2 A B := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v sigma this q hqTerminal hvFinal
-      hfirstUpper hfirstPositive jSlot segmentTrans trace p0 indices0 rho1 terminalPosition
-      hterminalPositionPositive hterminalPositionBound TjPrime u huPrime b traceB rho2 c2
-      uPosition huPosition huPositionPositive huPositionBound U hUPrime hUsegmentVertexBefore A B
-      hstep hBU
-  exact @helper_transportUStep_2285 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@sigma)
-      (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@segmentTrans) (@trace)
-      (@p0) (@indices0) (@terminalPosition) (@hterminalPositionPositive)
-      (@hterminalPositionBound) (@TjPrime) (@u) (@huPrime) (@b) (@traceB) (@c2)
-      (@uPosition) (@huPosition) (@huPositionPositive) (@huPositionBound) (@hUPrime)
-      (@hUsegmentVertexBefore) (@A) (@B) (@hstep) (@hBU)
 
 theorem helper_hterminalInclusion_5831.{u_1, u_2} :
     open scoped Classical in

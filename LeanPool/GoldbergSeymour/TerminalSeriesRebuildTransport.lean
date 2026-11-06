@@ -6226,65 +6226,6 @@ private theorem helper_hmissing_6909.{u_1, u_2} :
           newChoice.vertex := congrArg _
             (hvertexIdentity.trans hfullVertexCast).symm
 
-private theorem helper_hcolorPairs_7591.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (sigmaPrev : PartialEdgeColoring E k) (hroundLarge : (1 : ℕ) <
-        ett.rounds) (originalPrefix : ExtendedTashkinovTree G k e0 input (ett.series.data.tree
-        (Fin.last ett.rounds).castSucc) (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ),
-    by
-                omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))) (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)) (_ :
-    ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))), originalPrefix.series.data.coloring i =
-        ett.series.data.coloring (Fin.castLE (
-    by
-                    omega
-    ) i) ∧ originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE (
-    by
-                      omega
-    ) i) ∧ originalPrefix.series.data.connectingEdges i = ett.series.data.connectingEdges
-        (Fin.castLE (
-    by
-                        omega
-    ) i) ∧ originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE (
-    by
-                          omega
-    ) i) ∧ TashkinovStoredColors originalPrefix.series.data i = TashkinovStoredColors
-        ett.series.data (Fin.castLE (
-    by
-                          omega
-    ) i)) (corr : CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc)) (j : Fin (originalPrefix.rounds +
-        (1 : ℕ))),
-    let fullj : Fin (ett.rounds + (1 : ℕ)) := Fin.castLE (
-    by
-          omega
-    ) j;
-    ∀ (fulli : Fin ett.rounds) (fullChoice : MaximumDefectiveChoice G e0 (ett.series.data.tree
-        fulli.succ.castSucc) (TashkinovStoredColors ett.series.data fulli.castSucc)
-        (ett.series.data.coloring fulli.castSucc)) (fullGamma : Fin k) (_ : ett.series.data.stored
-        fulli.succ = (insert fullChoice.color ({ fullGamma } : Finset (Fin k)) : Finset (Fin k)))
-        (_ : fulli.succ = fullj) (newi : Fin originalPrefix.rounds) (newChoice :
-        MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree newi.succ.castSucc)
-        (TashkinovStoredColors corr.replacementSeries.data newi.castSucc)
-        (corr.replacementSeries.data.coloring newi.castSucc)) (newGamma : Fin k) (_ :
-        corr.replacementSeries.data.stored newi.succ = (insert newChoice.color ({ newGamma } :
-        Finset (Fin k)) : Finset (Fin k))) (_ : newi.succ = j) (htree :
-        corr.replacementSeries.data.tree newi.succ.castSucc = ett.series.data.tree
-        fulli.succ.castSucc),
-    let fullChoiceOnNew : MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree
-        newi.succ.castSucc) (TashkinovStoredColors ett.series.data fulli.castSucc)
-        (ett.series.data.coloring fulli.castSucc) := (Eq.symm htree ▸ fullChoice);
-    ∀ (_ : fullChoiceOnNew.color = fullChoice.color), (insert fullChoiceOnNew.color ({ fullGamma }
-        : Finset (Fin k)) : Finset (Fin k)) = (insert newChoice.color ({ newGamma } : Finset (Fin
-        k)) : Finset (Fin k)) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett sigmaPrev hroundLarge originalPrefix hr
-      hprefixData corr j fullj fulli fullChoice fullGamma fullCurrentStored hfullIndex newi
-      newChoice newGamma newCurrentStored hnewIndex htree fullChoiceOnNew hfullColorCast
-  apply helper_hcolorPairs_6830 <;> assumption
 private theorem helper_hprefixPostFull_7637.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -6396,7 +6337,7 @@ theorem helper_branch_12991.{u_1, u_2} :
   have hcolorPairs :
       ({fullChoiceOnNew.color, fullGamma} : Finset (Fin k)) =
         {newChoice.color, newGamma} := by
-    apply helper_hcolorPairs_7591 <;> assumption
+    apply helper_hcolorPairs_6830 <;> assumption
   have hedgeIdentity : newChoice.edge =
       fullChoiceOnNew.edge := by
     apply Finset.mem_singleton.mp

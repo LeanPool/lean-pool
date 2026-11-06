@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDefectiveThirdBoundaryEdge
 
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
@@ -93,57 +94,6 @@ private abbrev helperContinuation1024Conditions.{u_1, u_2} : Prop :=
         d)) (↑d : Fin k) (Sum.inl (D.v0 d)) f2 = some (↑d : Fin k) ∧ TwoColorComponentSwap G
         (OutsideTreeColorSwap T phi (C.gamma (D.gammaIndex d)) (C.gamma R.blockIndex)) (C.gamma
         R.blockIndex) (↑d : Fin k) (Sum.inl R.v1) f2 = some (↑d : Fin k) ∧ u2 ≠ D.u0 d ∧ u2 ≠ R.u1
-
-private theorem helper_adjoin_vertex_set_647.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [DecidableEq V] (G : LooplessMultigraph V E) (e0 : E) (A0 A1 :
-        TreeSequence G e0) (f : E) (x y : V), G.ends f = s(x, y) → y ∉ TreeSequenceVertexSet A0 →
-        TreeSequenceAdjoinEdge A0 f A1 → TreeSequenceVertexSet A1 = insert y
-        (TreeSequenceVertexSet A0) := by
-  classical
-  intro V E _ G e0 A0 A1 f x y hxy hyA hAA
-  rcases hAA with ⟨hlen, hinit, hlast⟩
-  rcases hinit with ⟨hle, hvertices, hedges⟩
-  have holdSubset : TreeSequenceVertexSet A0 ⊆ TreeSequenceVertexSet A1 := by
-    intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hv ⊢
-    obtain ⟨q, hq⟩ := hv
-    refine ⟨Fin.castLE (Nat.succ_le_succ hle) q, ?_⟩
-    rw [hvertices]
-    exact hq
-  have hyB : y ∈ TreeSequenceVertexSet A1 := by
-    let q : Fin A1.length := Fin.cast hlen.symm (Fin.last A0.length)
-    obtain ⟨a, ha⟩ := A1.attaches q
-    have hyEnds : y ∈ G.ends (A1.edge q) := by
-      rw [hlast, hxy]
-      simp
-    rw [ha] at hyEnds
-    rcases (by simpa only [Sym2.mem_iff] using hyEnds) with hynew | hyold
-    · simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-        true_and]
-      exact ⟨q.succ, hynew.symm⟩
-    · simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-        true_and]
-      exact ⟨Fin.castLT a (Nat.lt_trans a.isLt
-        (Nat.succ_lt_succ q.isLt)), hyold.symm⟩
-  have hinsert : insert y (TreeSequenceVertexSet A0) ⊆
-      TreeSequenceVertexSet A1 := by
-    intro v hv
-    simp only [Finset.mem_insert] at hv
-    rcases hv with rfl | hv
-    · exact hyB
-    · exact holdSubset hv
-  have hAcard : (TreeSequenceVertexSet A0).card = A0.length + 1 := by
-    simp [TreeSequenceVertexSet, Finset.card_image_of_injective,
-      A0.vertex_injective]
-  have hBcard : (TreeSequenceVertexSet A1).card = A1.length + 1 := by
-    simp [TreeSequenceVertexSet, Finset.card_image_of_injective,
-      A1.vertex_injective]
-  have hcard : (TreeSequenceVertexSet A1).card ≤
-      (insert y (TreeSequenceVertexSet A0)).card := by
-    rw [hBcard, Finset.card_insert_of_notMem hyA, hAcard, hlen]
-  exact (Finset.eq_of_subset_of_card_le hinsert hcard).symm
 
 private theorem helper_hfinalVertices_391.{u_1, u_2} :
     open scoped Classical in
@@ -818,7 +768,7 @@ private theorem helper_continuation_1024.{u_1, u_2} :
       (hyA : y ∉ TreeSequenceVertexSet A0)
       (hAA : TreeSequenceAdjoinEdge A0 f A1) :
       TreeSequenceVertexSet A1 = insert y (TreeSequenceVertexSet A0) := by
-    exact @helper_adjoin_vertex_set_647 V E inferInstance G e0 A0 A1 f x y hxy hyA hAA
+    exact @TreeSequenceAdjoinEdge.vertexSet_eq_insert V E inferInstance G e0 A0 A1 f x y hxy hyA hAA
   have hu2Uj := @helper_hu2Uj_695 V E inferInstance inferInstance inferInstance inferInstance G k e0
       phi T C D d R horder block_mem_X base_mem_Z hj01 hblocksSub hv1Z f2 z2 hz2Z u2 hu2Z hf2ends
       hz2X hu2u0 hu2u1 hproperJ1 hstableJ1 hfixedJ1 hproperJ2 honeJ2 hdeltaMissingJ2 hf0colorJ2

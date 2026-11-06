@@ -16,7 +16,6 @@ public import LeanPool.GoldbergSeymour.SameColorSeriesPreserved
 public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
 public import LeanPool.GoldbergSeymour.TreeInterchangeable
 public import LeanPool.GoldbergSeymour.TwoColorInterchangeableDistinctComponentCycle
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Extension Rules Terminal Stored Disjoint

@@ -7,6 +7,7 @@ module
 
 
 
+
 public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
 public import LeanPool.GoldbergSeymour.ScheideDefectiveThirdBoundaryEdge
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumMissingCounts
@@ -895,7 +896,7 @@ private theorem helper_continuation_291.{u_1, u_2} :
       (hyA : y ∉ TreeSequenceVertexSet A)
       (hAB : TreeSequenceAdjoinEdge A f B) :
       TreeSequenceVertexSet B = insert y (TreeSequenceVertexSet A) := by
-    exact @SharedFacts.ScheideDefectiveDeletedTreePair.adjoin_vertex_set V E inferInstance G
+    exact @TreeSequenceAdjoinEdge.vertexSet_eq_insert V E inferInstance G
         e0 A B f x y hxy hyA hAB
   have hz2Sgamma : z2 ∈ TreeSequenceVertexSet Sgamma := by
     rw [hSgammaVertices]

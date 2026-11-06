@@ -15,7 +15,6 @@ public import LeanPool.GoldbergSeymour.TreeExitComponentMeetsTreeOnlyAtExit
 public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Algorithm Three One Step Exists

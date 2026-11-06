@@ -5,9 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
+
+public import LeanPool.GoldbergSeymour.TreeVerticesBeforeFacts
+
 public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
 public import LeanPool.GoldbergSeymour.OrderedTreeUnionExists
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
 public import LeanPool.GoldbergSeymour.TashkinovClosureExists
@@ -802,64 +805,6 @@ private theorem helper_hbound_937.{u_1, u_2} :
       hclosureAdjoinC
     simpa only [hTjStored] using hraw
 
-private theorem helper_transportUStep_875.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-        {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k}
-        {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett :
-        ExtendedTashkinovTree G k e0 input T generating) {lowerInput : PartialEdgeColoring E k}
-        {lowerTree : TreeSequence G e0} {lowerGenerating : PartialEdgeColoring E k} (_ :
-        ExtendedTashkinovTree G k e0 lowerInput lowerTree lowerGenerating) (_ : Fin ett.rounds)
-        (Tj _ TjPrime : TreeSequence G e0) (rho1 rho3 : PartialEdgeColoring E k) (u : V) (huPrime
-        : u ∈ TreeSequenceVertexSet TjPrime) (zPosition : Fin (Tj.length + (1 : ℕ))) (uPosition :
-        Fin (TjPrime.length + (1 : ℕ))) (_ : (
-    ∀ (f : E) (_ : ((
-    ∃ (a : Fin Tj.length), (↑a : ℕ) < (↑zPosition : ℕ) ∧ Tj.edge a = f) ∨
-    ∃ (a : Fin TjPrime.length), (↑a : ℕ) < (↑uPosition : ℕ) ∧ TjPrime.edge a = f)), rho3 f = rho1
-        f)) (_ : (
-    ∀ {A B C : TreeSequence G e0} (_ : TreeSequenceInitialSegment A B) (_ :
-        TreeSequenceInitialSegment B C), TreeSequenceInitialSegment A C)) (huPositionPositive : (1
-        : ℕ) ≤ (↑uPosition : ℕ)) (huPositionBound : (↑uPosition : ℕ) ≤ TjPrime.length),
-    let U : TreeSequence G e0 := TreeSequencePrefix TjPrime (↑uPosition : ℕ) huPositionPositive
-        huPositionBound;
-    ∀ (_ : TreeSequenceInitialSegment U TjPrime) (_ : (
-    ∀ {A : TreeSequence G e0} (_ : TreeSequenceInitialSegment A U) (_ : A.length < U.length)
-        {v : V} (_ : v ∈ TreeSequenceVertexSet A), v ∈ TreeVerticesBefore TjPrime u huPrime)) (_ :
-        (
-    ∀ w ∈ TreeVerticesBefore TjPrime u huPrime, MissingColors G rho3 w = MissingColors G rho1 w))
-        {A B : TreeSequence G e0} (_ : TashkinovAugmentation rho1 A B) (_ :
-        TreeSequenceInitialSegment B U), TashkinovAugmentation rho3 A B := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett lowerInput lowerTree lowerGenerating lower jSlot
-      Tj seed TjPrime rho1 rho3 u huPrime zPosition uPosition hd2Edges segmentTrans
-      huPositionPositive huPositionBound U hUPrime hUsegmentVertexBefore hbeforePrimeMissing A B
-      hstep hBU
-  rcases hstep with ⟨hlen, hAB, c, hcolor, hcMissing⟩
-  have hAU : TreeSequenceInitialSegment A U := segmentTrans hAB hBU
-  have hAlen : A.length < U.length :=
-    lt_of_lt_of_le (by omega) hBU.1
-  have hcMissingRho : c ∈ TreeMissingColors rho3 A := by
-    unfold TreeMissingColors at hcMissing ⊢
-    obtain ⟨w, hwA, hcw⟩ := Finset.mem_biUnion.mp hcMissing
-    refine Finset.mem_biUnion.mpr ⟨w, hwA, ?_⟩
-    rw [hbeforePrimeMissing w (hUsegmentVertexBefore hAU hAlen hwA)]
-    exact hcw
-  let added : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
-  let addedU : Fin U.length := Fin.castLE hBU.1 added
-  let addedPrime : Fin TjPrime.length := Fin.castLE hUPrime.1 addedU
-  have haddedPosition : addedPrime.val < uPosition.val := by
-    change A.length < uPosition.val
-    have hUlen : U.length = uPosition.val := by simp [U, TreeSequencePrefix]
-    omega
-  have haddedIdentity : TjPrime.edge addedPrime = B.edge added := by
-    exact (hUPrime.2.2 addedU).trans (hBU.2.2 added)
-  have haddedFixed : rho3 (B.edge added) = rho1 (B.edge added) := by
-    apply hd2Edges (B.edge added)
-    exact Or.inr ⟨addedPrime, haddedPosition, haddedIdentity⟩
-  refine ⟨hlen, hAB, c, ?_, hcMissingRho⟩
-  change rho3 (B.edge added) = some c
-  exact haddedFixed.trans hcolor
-
 private theorem helper_branch_1101.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
@@ -1009,44 +954,6 @@ private theorem helper_hseedVertexBefore_888.{u_1, u_2} :
     · exact hseedJ.2.1 i
     · exact (hseedJ.2.1 (Fin.last seed.length)).trans hseedTerminal
     · simpa [p, q] using hi
-
-private theorem helper_hUsegmentVertexBefore_1004.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-        {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k}
-        {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett :
-        ExtendedTashkinovTree G k e0 input T generating) {lowerInput : PartialEdgeColoring E k}
-        {lowerTree : TreeSequence G e0} {lowerGenerating : PartialEdgeColoring E k} (_ :
-        ExtendedTashkinovTree G k e0 lowerInput lowerTree lowerGenerating) (_ : Fin ett.rounds)
-        (Tj _ TjPrime : TreeSequence G e0) (u : V) (huPrime : u ∈ TreeSequenceVertexSet TjPrime)
-        (_ : Fin (Tj.length + (1 : ℕ))) (uPosition : Fin (TjPrime.length + (1 : ℕ)))
-        (huPositionPositive : (1 : ℕ) ≤ (↑uPosition : ℕ)) (huPositionBound : (↑uPosition : ℕ) ≤
-        TjPrime.length),
-    let U : TreeSequence G e0 := TreeSequencePrefix TjPrime (↑uPosition : ℕ) huPositionPositive
-        huPositionBound;
-    ∀ (_ : TreeSequenceInitialSegment U TjPrime) (_ : (
-    ∀ (i : Fin (TjPrime.length + (1 : ℕ))) (_ : (↑i : ℕ) < (↑uPosition : ℕ)), TjPrime.vertex i ∈
-        TreeVerticesBefore TjPrime u huPrime)) {A : TreeSequence G e0} (_ :
-        TreeSequenceInitialSegment A U) (_ : A.length < U.length) {v : V} (_ : v ∈
-        TreeSequenceVertexSet A), v ∈ TreeVerticesBefore TjPrime u huPrime := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett lowerInput lowerTree lowerGenerating lower jSlot
-      Tj seed TjPrime u huPrime zPosition uPosition huPositionPositive huPositionBound U hUPrime
-      hprimeVertexBefore A hAU hAlen v hvA
-  obtain ⟨hAULen, hAUVertices, -⟩ := hAU
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-    true_and] at hvA
-  obtain ⟨i, rfl⟩ := hvA
-  let iU : Fin (U.length + 1) :=
-    Fin.castLE (Nat.succ_le_succ hAULen) i
-  let iPrime : Fin (TjPrime.length + 1) :=
-    Fin.castLE (Nat.succ_le_succ hUPrime.1) iU
-  have hiPrime : iPrime.val < uPosition.val := by
-    change i.val < uPosition.val
-    have hUlen : U.length = uPosition.val := by simp [U, TreeSequencePrefix]
-    omega
-  rw [← hAUVertices i, ← hUPrime.2.1 iU]
-  exact hprimeVertexBefore iPrime hiPrime
 
 private theorem helper_hbeforeZMissing_1101.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E]
@@ -1382,43 +1289,33 @@ private theorem helper_continuation_1295.{u_1, u_2} :
       exact ⟨i, rfl⟩
     · unfold TreeVertexOrder
       exact ⟨i, uPosition, rfl, huPosition, hi⟩
-  have hUsegmentVertexBefore := @helper_hUsegmentVertexBefore_1004 V E inferInstance inferInstance
-      inferInstance G k e0 input T generating ett lowerInput lowerTree lowerGenerating lower jSlot
-      Tj seed TjPrime u huPrime zPosition uPosition huPositionPositive huPositionBound hUPrime
-      hprimeVertexBefore
-  have hbeforePrimeNeU {w : V}
-      (hw : w ∈ TreeVerticesBefore TjPrime u huPrime) : w ≠ u := by
-    unfold TreeVerticesBefore at hw
-    obtain ⟨-, i, j, hiw, hju, hij⟩ := Finset.mem_filter.mp hw
-    intro hwu
-    have hijEq : i = j := TjPrime.vertex_injective
-      (hiw.trans (hwu.trans hju.symm))
-    omega
+  have hUsegmentVertexBefore {A : TreeSequence G e0}
+      (hAU : TreeSequenceInitialSegment A U) (hAlen : A.length < U.length)
+      {w : V} (hwA : w ∈ TreeSequenceVertexSet A) :
+      w ∈ TreeVerticesBefore TjPrime u huPrime := by
+    exact TreeSequenceInitialSegment.mem_before_of_length hAU hUPrime hAlen
+      hprimeVertexBefore hwA
   have hbeforePrimeMissing (w : V)
       (hw : w ∈ TreeVerticesBefore TjPrime u huPrime) :
       MissingColors G rho3 w = MissingColors G rho1 w := by
-    by_cases hwz : w = z
-    · subst w
-      exact hd2Z hw
-    · apply hd2Missing w
-      apply Finset.mem_erase.mpr
-      refine ⟨hwz, Finset.mem_erase.mpr ⟨hbeforePrimeNeU hw, ?_⟩⟩
-      apply Finset.mem_union_right
-      exact Finset.mem_union_left _ hw
-  have transportUStep := @helper_transportUStep_875 V E inferInstance inferInstance inferInstance G
-      k e0 input T generating ett lowerInput lowerTree lowerGenerating lower jSlot Tj seed TjPrime
-      rho1 rho3 u huPrime zPosition uPosition hd2Edges segmentTrans huPositionPositive
-      huPositionBound hUPrime hUsegmentVertexBefore hbeforePrimeMissing
+    exact TreeVerticesBefore.missingColors_eq_of_erase hd2Missing hd2Z hw
   have transportURoute (S : TreeSequence G e0)
       (hroute : TashkinovAugmentationSequence rho1 S U) :
       TashkinovAugmentationSequence rho3 S U := by
-    unfold TashkinovAugmentationSequence at hroute ⊢
-    induction hroute using Relation.ReflTransGen.head_induction_on with
-    | refl => exact Relation.ReflTransGen.refl
-    | @head A B hAB hBU ih =>
-        have hBsegment : TreeSequenceInitialSegment B U :=
-          TashkinovAugmentationSequenceInitialSegment rho1 B U hBU
-        exact Relation.ReflTransGen.head (transportUStep hAB hBsegment) ih
+    apply TashkinovAugmentationSequence.transport_of_fixed (target := U) ?_ ?_ hroute
+    · intro index
+      let primeIndex : Fin TjPrime.length := Fin.castLE hUPrime.1 index
+      have atPosition : primeIndex.val < uPosition.val := by
+        change index.val < uPosition.val
+        exact index.isLt
+      have agreement : rho3 (TjPrime.edge primeIndex) =
+          rho1 (TjPrime.edge primeIndex) := by
+        apply hd2Edges (TjPrime.edge primeIndex)
+        exact Or.inr ⟨primeIndex, atPosition, rfl⟩
+      rw [show TjPrime.edge primeIndex = U.edge index from hUPrime.2.2 index] at agreement
+      exact agreement
+    · intro A hAU hAlen vertex member
+      exact hbeforePrimeMissing vertex (hUsegmentVertexBefore hAU hAlen member)
   have hrouteRhoThreeU : TashkinovAugmentationSequence rho3 seed U :=
     transportURoute seed hrouteRhoOneU
   have hterminalNeZ : terminalSupport ≠ z := by

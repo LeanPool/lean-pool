@@ -629,34 +629,6 @@ private theorem helper_nonPEMissingClosed_914.{u_1, u_2} :
       phi f = some c := by simpa [BoundaryColorEdges] using hf
   exact hnonPEClosed hnonPE hfd.1 hx hfd.2 hcx
 
-private theorem helper_trans_889.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-      {U W Z : TreeSequence G e0} (_ : TreeSequenceInitialSegment U W)
-      (_ : TreeSequenceInitialSegment W Z),
-    TreeSequenceInitialSegment U Z := by
-  classical
-  intro V E G e0 U W Z hUW hWZ
-  exact @helper_trans_800 (@V) (@E) (@G) (@e0) (@U) (@W) (@Z) (@hUW) (@hWZ)
-
-private theorem helper_stageChain_894.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    ∀ (_ : (
-    ∀ {U W Z : TreeSequence G e0} (_ : TreeSequenceInitialSegment U W) (_ :
-        TreeSequenceInitialSegment W Z), TreeSequenceInitialSegment U Z)) (j : ℕ) (hj : j <
-        H.dividerCount + (2 : ℕ)) (i : Fin (H.dividerCount + (2 : ℕ))) (_ : (↑i : ℕ) ≤ j),
-        TreeSequenceInitialSegment (H.stage i) (H.stage (⟨j, hj⟩ : Fin (H.dividerCount + (2 :
-        ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H trans
-  exact @helper_stageChain_600 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@trans)
-
 private theorem helper_starStage_899.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -672,28 +644,6 @@ private theorem helper_starStage_899.{u_1, u_2} :
   refine Fin.cases ?_ (fun i => ?_) r
   · exact H.coreInsideFirst
   · exact H.nested i.succ
-
-private theorem helper_starChain_906.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    ∀ (_ : (
-    ∀ {U W Z : TreeSequence G e0} (_ : TreeSequenceInitialSegment U W) (_ :
-        TreeSequenceInitialSegment W Z), TreeSequenceInitialSegment U Z)) (_ : (
-    ∀ (j : ℕ) (hj : j < H.dividerCount + (2 : ℕ)) (i : Fin (H.dividerCount + (2 : ℕ))) (_ : (↑i :
-        ℕ) ≤ j), TreeSequenceInitialSegment (H.stage i) (H.stage (⟨j, hj⟩ : Fin (H.dividerCount +
-        (2 : ℕ)))))) (_ : (
-    ∀ (r : Fin (H.dividerCount + (1 : ℕ))), TreeSequenceInitialSegment (HierarchyStarredStage H r)
-        (H.stage r.succ))) (r s : Fin (H.dividerCount + (1 : ℕ))) (_ : r ≤ s),
-        TreeSequenceInitialSegment (HierarchyStarredStage H r) (HierarchyStarredStage H s) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H trans stageChain starStage r s hrs
-  exact @helper_starChain_626 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@trans) (@stageChain)
-      (@starStage) (@r) (@s) (@hrs)
 
 private theorem helper_hAT_912.{u_1, u_2} :
     open scoped Classical in
@@ -712,31 +662,6 @@ private theorem helper_hAT_912.{u_1, u_2} :
   have hh := starStage q
   have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
   simpa [hlast, H.terminalStage] using hh
-
-private theorem helper_hATy_916.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let Ty : TreeSequence G e0 :=
-      TreeSequencePrefix T (min (A.length + (T.length - A.length - (1 : ℕ))) T.length)
-        (have hA : (1 : ℕ) ≤ A.length := A.positive;
-        have hT : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction
-          fun (a : ¬(1 : ℕ) ≤ min (A.length + (T.length - A.length - (1 : ℕ))) T.length) ↦
-          by omega)
-        (by omega);
-    ∀ (_ : TreeSequenceInitialSegment A T),
-    TreeSequenceInitialSegment A Ty := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A Ty hAT
-  exact @helper_hATy_738 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hAT)
 
 private theorem helper_helemStar_926.{u_1, u_2} :
     open scoped Classical in
@@ -758,55 +683,6 @@ private theorem helper_helemStar_926.{u_1, u_2} :
     (starChain r q (Fin.le_last r))
   intro u hu v hv hne'
   exact helemA (hsub hu) (hsub hv) hne'
-
-private theorem helper_missingFirst_933.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let Ty : TreeSequence G e0 :=
-      TreeSequencePrefix T (min (A.length + (T.length - A.length - (1 : ℕ))) T.length)
-        (have hA : (1 : ℕ) ≤ A.length := A.positive;
-        have hT : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction
-          fun (a : ¬(1 : ℕ) ≤ min (A.length + (T.length - A.length - (1 : ℕ))) T.length) ↦
-          by omega)
-        (by omega);
-    ∀ (_ : TreeSequenceInitialSegment Ty T),
-    ∀ c ∈ TreeMissingColors phi Ty,
-      c ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T c)) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A Ty hTyT c hc
-  exact @helper_missingFirst_764 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hTyT) (@c) (@hc)
-
-private theorem helper_pathMissing_944.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (_ :
-        IsProperEdgeColoring G phi) (alpha beta : Fin k) (_ : (
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ia : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T alpha;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    ∀ (_ : alpha ∉ TreeMissingColors phi A ∨ beta ∉ TreeMissingColors phi A), TreeVertexOrder T
-        (T.vertex ia) (T.vertex ib) ∧ alpha ∉ ({c : Fin k |
-    ∃ (t : Fin T.length), A.length ≤ (↑t : ℕ) ∧ (↑t : ℕ) < (↑ib : ℕ) ∧ phi (T.edge t) = some c} :
-        Finset (Fin k)))) (c d : Fin k) (_ : c ≠ d) (v : V) (_ : c ∈ MissingColors G phi v),
-        TwoColorPathComponent G phi c d (Sum.inl v) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hproper alpha beta _ c d hcd v hc
-  exact @helper_pathMissing_696 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper)
-      (@alpha) (@beta) (by assumption) (@c) (@d) (@hcd) (@v) (@hc)
 
 private theorem helper_graphSwap_950.{u_1, u_2} :
     open scoped Classical in
@@ -842,44 +718,6 @@ private theorem helper_componentSwap_955.{u_1, u_2} :
   unfold TwoColorComponent
   rw [graphSwap]
 
-private theorem helper_interchangeableSwap_959.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Finite E] (G : LooplessMultigraph V E) (k : ℕ) (e0
-        : E) (phi : PartialEdgeColoring E k) (_ : (
-    ∀ (c d : Fin k), TwoColorIncidenceGraph G phi c d = TwoColorIncidenceGraph G phi d c)) (_ : (
-    ∀ (c d : Fin k) (z : V ⊕ E), TwoColorComponent G phi c d z = TwoColorComponent G phi d c z))
-        (B : TreeSequence G e0) (c d : Fin k) (_ : TreeInterchangeable G B phi c d),
-        TreeInterchangeable G B phi d c := by
-  classical
-  intro V E _ _ G k e0 phi graphSwap componentSwap B c d hi
-  let _ := Fintype.ofFinite V
-  let _ := Fintype.ofFinite E
-  exact @helper_interchangeableSwap_801 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0)
-      (@phi) (@graphSwap) (@componentSwap) (@B) (@c) (@d) (@hi)
-
-private theorem helper_equalFromInterchange_964.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (T : TreeSequence G e0) (phi : PartialEdgeColoring E k) (alpha beta : Fin k) (_ :
-        alpha ≠ beta),
-    let a : V := T.vertex (HierarchyFirstMissingPosition phi T alpha);
-    let b : V := T.vertex (HierarchyFirstMissingPosition phi T beta);
-    ∀ (_ : alpha ∈ MissingColors G phi a) (_ : beta ∈ MissingColors G phi b) (_ : (
-    ∀ (c d : Fin k) (_ : c ≠ d) (v : V) (_ : c ∈ MissingColors G phi v), TwoColorPathComponent G
-        phi c d (Sum.inl v))) (_ : (
-    ∀ (c d : Fin k), TwoColorIncidenceGraph G phi c d = TwoColorIncidenceGraph G phi d c)) (_ : (
-    ∀ (c d : Fin k) (z : V ⊕ E), TwoColorComponent G phi c d z = TwoColorComponent G phi d c z))
-        (B : TreeSequence G e0) (_ : a ∈ TreeSequenceVertexSet B) (_ : b ∈ TreeSequenceVertexSet
-        B) (_ : TreeInterchangeable G B phi alpha beta), TwoColorComponent G phi alpha beta
-        (Sum.inl a) = TwoColorComponent G phi alpha beta (Sum.inl b) := by
-  classical
-  intro V E _ _ G k e0 T phi alpha beta hne a b haMissing hbMissing pathMissing graphSwap
-      componentSwap B haB hbB hi
-  let _ := Fintype.ofFinite V
-  exact @helper_equalFromInterchange_881 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0)
-      (@T) (@phi) (@alpha) (@beta) (@hne) (@haMissing) (@hbMissing) (@pathMissing) (@graphSwap)
-      (@componentSwap) (@B) (@haB) (@hbB) (@hi)
-
 private theorem helper_bothClosed_972.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G : LooplessMultigraph V E)
@@ -895,186 +733,6 @@ private theorem helper_bothClosed_972.{u_1, u_2} :
     hproper helem (hc alpha (Finset.mem_singleton_self _))
   rw [hd beta (Finset.mem_singleton_self _)]
   simp
-
-private theorem helper_hnonPEClosed_987.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (_ :
-        IsProperEdgeColoring G phi) (_ : IsOneEdgeUncolored phi e0) (alpha beta : Fin k) (_ : (
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ia : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T alpha;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    ∀ (_ : alpha ∉ TreeMissingColors phi A ∨ beta ∉ TreeMissingColors phi A), TreeVertexOrder T
-        (T.vertex ia) (T.vertex ib) ∧ alpha ∉ ({c : Fin k |
-    ∃ (t : Fin T.length), A.length ≤ (↑t : ℕ) ∧ (↑t : ℕ) < (↑ib : ℕ) ∧ phi (T.edge t) = some c} :
-        Finset (Fin k)))),
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    ∀ (_ : (
-    ∀ {U W Z : TreeSequence G e0} (_ : TreeSequenceInitialSegment U W) (_ :
-        TreeSequenceInitialSegment W Z), TreeSequenceInitialSegment U Z)) (_ :
-        ett.series.data.kind n ≠ some TashkinovExtensionKind.PE), ColoredVertexSetClosed G phi
-        (TreeSequenceVertexSet Tn) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hproper hone alpha beta _ n Tn trans hnonPE
-  exact @helper_hnonPEClosed_372 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
-      (@alpha) (@beta) (by assumption) (@trans) (@hnonPE)
-
-private theorem helper_nonPEMissingClosed_993.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (alpha beta
-        : Fin k) (_ : (
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ia : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T alpha;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    ∀ (_ : alpha ∉ TreeMissingColors phi A ∨ beta ∉ TreeMissingColors phi A), TreeVertexOrder T
-        (T.vertex ia) (T.vertex ib) ∧ alpha ∉ ({c : Fin k |
-    ∃ (t : Fin T.length), A.length ≤ (↑t : ℕ) ∧ (↑t : ℕ) < (↑ib : ℕ) ∧ phi (T.edge t) = some c} :
-        Finset (Fin k)))),
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    ∀ (_ : (
-    ∀ (_ : ett.series.data.kind n ≠ some TashkinovExtensionKind.PE), ColoredVertexSetClosed G phi
-        (TreeSequenceVertexSet Tn))) (_ : ett.series.data.kind n ≠ some
-        TashkinovExtensionKind.PE),
-    ∀ c ∈ TreeMissingColors phi Tn, TreeColorSetClosed G phi Tn ({ c } : Finset (Fin k)) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta _ n Tn hnonPEClosed hnonPE c hc
-  exact @helper_nonPEMissingClosed_914 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-      (by assumption) (@hnonPEClosed) (@hnonPE) (@c) (@hc)
-
-private theorem helper_closedStar_1000.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (_ :
-        IsProperEdgeColoring G phi) (_ : IsOneEdgeUncolored phi e0) (_ :
-        LowerRoundInductionHypothesis G k e0 ett.rounds) (_ : (
-    ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
-        {generating' : PartialEdgeColoring E k} (other : ExtendedTashkinovTree G k e0 input' T'
-        generating') (_ : other.rounds = ett.rounds) (_ : MaximumProperty other) (base' :
-        HierarchyBase other generating') (K : TashkinovHierarchy other base') (_ : GoodHierarchy
-        K) (_ : K.dividerCount < C.hierarchy.dividerCount), ColoredVertexSetElementary G
-        generating' (TreeSequenceVertexSet T'))) (_ : (
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc; (2 : ℕ) * ett.rounds + (11 : ℕ)
-        ≤ (TreeMissingColors phi Tn).card)),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    ∀ (_ : (
-    ∀ (r : Fin (H.dividerCount + (1 : ℕ))), ColoredVertexSetElementary G phi
-        (TreeSequenceVertexSet (HierarchyStarredStage H r)))) (_ : CombinedStableColoring Tn
-        base.closure (TashkinovStoredColors ett.series.data n) phi phi) (_ : (
-    ∀ (_ : ett.series.data.kind n ≠ some TashkinovExtensionKind.PE),
-    ∀ c ∈ TreeMissingColors phi Tn, TreeColorSetClosed G phi Tn ({ c } : Finset (Fin k)))) (r :
-        Fin (H.dividerCount + (1 : ℕ))) (c d : Fin k) (_ : c ≠ d) (_ : c ∈ TreeMissingColors phi
-        (HierarchyStarredStage H r)) (_ : d ∈ TreeMissingColors phi (HierarchyStarredStage H r))
-        (_ : TreeColorSetClosed G phi (HierarchyStarredStage H r) ({ c } : Finset (Fin k))),
-        TreeInterchangeable G (HierarchyStarredStage H r) phi c d := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hproper hone hlower hfewer hlarge H n Tn
-      helemStar hcombined nonPEMissingClosed r c d hcd hc hd hclosed
-  exact @helper_closedStar_471 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
-      (@hlower) (@hfewer) (@hlarge) (@helemStar) (@hcombined) (@nonPEMissingClosed) (@r) (@c)
-      (@d) (@hcd) (@hc) (@hd) (@hclosed)
-
-private theorem helper_coreSame_1010.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (_ :
-        IsProperEdgeColoring G phi) (_ : IsOneEdgeUncolored phi e0) (_ :
-        LowerRoundInductionHypothesis G k e0 ett.rounds) (alpha beta : Fin k),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let a : V := T.vertex (HierarchyFirstMissingPosition phi T alpha);
-    let b : V := T.vertex (HierarchyFirstMissingPosition phi T beta);
-    ∀ (_ : (
-    ∀ (r : Fin (H.dividerCount + (1 : ℕ))), ColoredVertexSetElementary G phi
-        (TreeSequenceVertexSet (HierarchyStarredStage H r)))) (_ : alpha ∈ MissingColors G phi a)
-        (_ : beta ∈ MissingColors G phi b) (_ : (
-    ∀ (B : TreeSequence G e0) (c d : Fin k) (_ : TreeInterchangeable G B phi c d),
-        TreeInterchangeable G B phi d c)) (_ : (
-    ∀ (B : TreeSequence G e0) (_ : a ∈ TreeSequenceVertexSet B) (_ : b ∈ TreeSequenceVertexSet B)
-        (_ : TreeInterchangeable G B phi alpha beta), TwoColorComponent G phi alpha beta (Sum.inl
-        a) = TwoColorComponent G phi alpha beta (Sum.inl b))) (_ : (
-    ∀ (B : TreeSequence G e0) (_ : ColoredVertexSetElementary G phi (TreeSequenceVertexSet B)) (_
-        : TreeColorSetClosed G phi B ({ alpha } : Finset (Fin k))) (_ : TreeColorSetClosed G phi B
-        ({ beta } : Finset (Fin k))), TreeInterchangeable G B phi alpha beta)) (_ :
-        CombinedStableColoring Tn base.closure (TashkinovStoredColors ett.series.data n) phi phi)
-        (_ : (
-    ∀ (_ : ett.series.data.kind n ≠ some TashkinovExtensionKind.PE),
-    ∀ c ∈ TreeMissingColors phi Tn, TreeColorSetClosed G phi Tn ({ c } : Finset (Fin k)))) (_ : a
-        ∈ TreeSequenceVertexSet base.core) (_ : b ∈ TreeSequenceVertexSet base.core),
-        TwoColorComponent G phi alpha beta (Sum.inl a) = TwoColorComponent G phi alpha beta
-        (Sum.inl b) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hproper hone hlower alpha beta H n Tn a b
-      helemStar haMissing hbMissing interchangeableSwap equalFromInterchange bothClosed hcombined
-      nonPEMissingClosed haCore hbCore
-  exact @helper_coreSame_500 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone) (@hlower)
-      (@alpha) (@beta) (@helemStar) (@haMissing) (@hbMissing) (@interchangeableSwap)
-      (@equalFromInterchange) (@bothClosed) (@hcombined) (@nonPEMissingClosed) (@haCore) (@hbCore)
-
-private theorem helper_hsame_1022.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (alpha beta
-        : Fin k) (_ : alpha ≠ beta),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let a : V := T.vertex (HierarchyFirstMissingPosition phi T alpha);
-    let b : V := T.vertex (HierarchyFirstMissingPosition phi T beta);
-    ∀ (_ : ColoredVertexSetElementary G phi (TreeSequenceVertexSet A)) (_ : (
-    ∀ (r : Fin (H.dividerCount + (1 : ℕ))), ColoredVertexSetElementary G phi
-        (TreeSequenceVertexSet (HierarchyStarredStage H r)))) (_ : alpha ∈ MissingColors G phi a)
-        (_ : beta ∈ MissingColors G phi b) (_ : a ∈ TreeSequenceVertexSet A) (_ : b ∈
-        TreeSequenceVertexSet A) (_ : (
-    ∀ (B : TreeSequence G e0) (c d : Fin k) (_ : TreeInterchangeable G B phi c d),
-        TreeInterchangeable G B phi d c)) (_ : (
-    ∀ (B : TreeSequence G e0) (_ : a ∈ TreeSequenceVertexSet B) (_ : b ∈ TreeSequenceVertexSet B)
-        (_ : TreeInterchangeable G B phi alpha beta), TwoColorComponent G phi alpha beta (Sum.inl
-        a) = TwoColorComponent G phi alpha beta (Sum.inl b))) (_ : (
-    ∀ (B : TreeSequence G e0) (_ : ColoredVertexSetElementary G phi (TreeSequenceVertexSet B)) (_
-        : TreeColorSetClosed G phi B ({ alpha } : Finset (Fin k))) (_ : TreeColorSetClosed G phi B
-        ({ beta } : Finset (Fin k))), TreeInterchangeable G B phi alpha beta)) (_ : (
-    ∀ (r : Fin (H.dividerCount + (1 : ℕ))) (c d : Fin k) (_ : c ≠ d) (_ : c ∈ TreeMissingColors
-        phi (HierarchyStarredStage H r)) (_ : d ∈ TreeMissingColors phi (HierarchyStarredStage H
-        r)) (_ : TreeColorSetClosed G phi (HierarchyStarredStage H r) ({ c } : Finset (Fin k))),
-        TreeInterchangeable G (HierarchyStarredStage H r) phi c d)) (_ : (
-    ∀ (_ : a ∈ TreeSequenceVertexSet base.core) (_ : b ∈ TreeSequenceVertexSet base.core),
-        TwoColorComponent G phi alpha beta (Sum.inl a) = TwoColorComponent G phi alpha beta
-        (Sum.inl b))) (_ : alpha ∈ TreeMissingColors phi A) (_ : beta ∈ TreeMissingColors phi A),
-        TwoColorComponent G phi alpha beta (Sum.inl a) = TwoColorComponent G phi alpha beta
-        (Sum.inl b) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta hne H q A a b helemA helemStar
-      haMissing hbMissing haA hbA interchangeableSwap equalFromInterchange bothClosed closedStar
-      coreSame haMissingA hbMissingA
-  exact @helper_hsame_542 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta) (@hne)
-      (@helemA) (@helemStar) (@haMissing) (@hbMissing) (@haA) (@hbA) (@interchangeableSwap)
-      (@equalFromInterchange) (@bothClosed) (@closedStar) (@coreSame) (@haMissingA) (@hbMissingA)
 
 private theorem helper_continuation_1524.{u_1, u_2} :
     open scoped Classical in
@@ -1152,20 +810,20 @@ private theorem helper_continuation_1524.{u_1, u_2} :
   have hnonPEClosed
       (hnonPE : ett.series.data.kind n ≠ some TashkinovExtensionKind.PE) :
       ColoredVertexSetClosed G phi (TreeSequenceVertexSet Tn) := by
-    exact @helper_hnonPEClosed_987 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @helper_hnonPEClosed_372 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
         (@alpha) (@beta) (by assumption) (@trans) (@hnonPE)
   have nonPEMissingClosed
       (hnonPE : ett.series.data.kind n ≠ some TashkinovExtensionKind.PE)
       (c : Fin k) (hc : c ∈ TreeMissingColors phi Tn) :
       TreeColorSetClosed G phi Tn {c} := by
-    exact @helper_nonPEMissingClosed_993 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @helper_nonPEMissingClosed_914 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
         (by assumption) (@hnonPEClosed) (@hnonPE) (@c) (@hc)
-  have closedStar := @helper_closedStar_1000 (@V) (@E) inferInstance inferInstance inferInstance
+  have closedStar := @helper_closedStar_471 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
       (@hlower) (@hfewer) (@hlarge) (@helemStar) (@hcombined) (@nonPEMissingClosed)
-  have coreSame := @helper_coreSame_1010 (@V) (@E) inferInstance inferInstance inferInstance
+  have coreSame := @helper_coreSame_500 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
       (@hlower) (@alpha) (@beta) (@helemStar) (@haMissing) (@hbMissing) (@interchangeableSwap)
       (@equalFromInterchange) (@bothClosed) (@hcombined) (@nonPEMissingClosed)
@@ -1174,7 +832,7 @@ private theorem helper_continuation_1524.{u_1, u_2} :
   have hbMissingA : beta ∈ TreeMissingColors phi A :=
     Finset.mem_biUnion.mpr ⟨b, hbA, hbMissing⟩
   have hsame :=
-    @helper_hsame_1022 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
+    @helper_hsame_542 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
         (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta) (@hne) (@helemA)
         (@helemStar) (@haMissing) (@hbMissing) (@haA) (@hbA) (@interchangeableSwap)
         (@equalFromInterchange) (@bothClosed) (@closedStar) (@coreSame) (@haMissingA) (@hbMissingA)
@@ -1293,20 +951,20 @@ theorem ChangeLemmaBothInside {V E : Type*}
     (min (A.length + ((T.length - A.length) - 1)) T.length)
     (by have hA := A.positive; have hT := T.positive; omega)
     (Nat.min_le_right _ _)
-  have trans := @helper_trans_889 (@V) (@E) (@G) (@e0)
+  have trans := @helper_trans_800 (@V) (@E) (@G) (@e0)
   have stageChain :=
-    @helper_stageChain_894 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
+    @helper_stageChain_600 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
         (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@trans)
   have starStage := @helper_starStage_899 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
-  have starChain := @helper_starChain_906 (@V) (@E) inferInstance inferInstance inferInstance
+  have starChain := @helper_starChain_626 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@trans) (@stageChain)
       (@starStage)
   have hAT :=
     @helper_hAT_912 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G) (@k)
         (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@starStage)
   have hATy :=
-    @helper_hATy_916 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G) (@k)
+    @helper_hATy_738 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G) (@k)
         (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hAT)
   have hTyT : TreeSequenceInitialSegment Ty T :=
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
@@ -1317,7 +975,7 @@ theorem ChangeLemmaBothInside {V E : Type*}
       (TreeSequenceInitialSegmentVertexSetSubset hATy hv) hne'
   have helemStar := @helper_helemStar_926 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@starChain) (@helemA)
-  have missingFirst := @helper_missingFirst_933 (@V) (@E) inferInstance inferInstance inferInstance
+  have missingFirst := @helper_missingFirst_764 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hTyT)
   have haMissing : alpha ∈ MissingColors G phi a :=
     missingFirst alpha hmissingPrefix.1
@@ -1328,7 +986,7 @@ theorem ChangeLemmaBothInside {V E : Type*}
   have pathMissing (c d : Fin k) (hcd : c ≠ d) (v : V)
       (hc : c ∈ MissingColors G phi v) :
       TwoColorPathComponent G phi c d (Sum.inl v) := by
-    exact @helper_pathMissing_944 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @helper_pathMissing_696 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper)
         (@alpha) (@beta) (by assumption) (@c) (@d) (@hcd) (@v) (@hc)
   have graphSwap (c d : Fin k) :
@@ -1337,9 +995,9 @@ theorem ChangeLemmaBothInside {V E : Type*}
         (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta) (by assumption)
         (@c) (@d)
   have componentSwap := @helper_componentSwap_955 (@V) (@E) (@G) (@k) (@phi) (@graphSwap)
-  have interchangeableSwap := @helper_interchangeableSwap_959 (@V) (@E) inferInstance inferInstance
+  have interchangeableSwap := @helper_interchangeableSwap_801 (@V) (@E) inferInstance inferInstance
       (@G) (@k) (@e0) (@phi) (@graphSwap) (@componentSwap)
-  have equalFromInterchange := @helper_equalFromInterchange_964 (@V) (@E) inferInstance
+  have equalFromInterchange := @helper_equalFromInterchange_881 (@V) (@E) inferInstance
       inferInstance (@G) (@k) (@e0) (@T) (@phi) (@alpha) (@beta) (@hne) (@haMissing) (@hbMissing)
       (@pathMissing) (@graphSwap) (@componentSwap)
   have bothClosed := @helper_bothClosed_972 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0)

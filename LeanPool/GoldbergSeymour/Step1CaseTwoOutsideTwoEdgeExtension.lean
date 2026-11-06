@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeVertexSet
+
 public import LeanPool.GoldbergSeymour.BoundaryMissingColorAugmentation
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.GoodHierarchyCommonOriginalBaseTransport
@@ -25,56 +27,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_adjoin_vertex_set_147.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [DecidableEq V] (G : LooplessMultigraph V E) (e0 : E) (A B :
-        TreeSequence G e0) (f : E) (x y : V), G.ends f = s(x, y) → y ∉ TreeSequenceVertexSet A →
-        TreeSequenceAdjoinEdge A f B → TreeSequenceVertexSet B = (insert y (TreeSequenceVertexSet
-        A) : Finset V) := by
-  classical
-  intro V E _ G e0 A B f x y hxy hyA hAB
-  rcases hAB with ⟨hlen, hinit, hlast⟩
-  rcases hinit with ⟨hle, hvertices, hedges⟩
-  have holdSubset : TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hv ⊢
-    obtain ⟨q, hq⟩ := hv
-    refine ⟨Fin.castLE (Nat.succ_le_succ hle) q, ?_⟩
-    rw [hvertices]
-    exact hq
-  have hyB : y ∈ TreeSequenceVertexSet B := by
-    let j : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
-    obtain ⟨a, ha⟩ := B.attaches j
-    have hyEnds : y ∈ G.ends (B.edge j) := by
-      rw [hlast, hxy]
-      simp
-    rw [ha] at hyEnds
-    rcases (by simpa only [Sym2.mem_iff] using hyEnds) with hynew | hyold
-    · simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-        true_and]
-      exact ⟨j.succ, hynew.symm⟩
-    · simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-        true_and]
-      exact ⟨Fin.castLT a (Nat.lt_trans a.isLt (Nat.succ_lt_succ j.isLt)),
-        hyold.symm⟩
-  have hinsert : insert y (TreeSequenceVertexSet A) ⊆ TreeSequenceVertexSet B := by
-    intro v hv
-    simp only [Finset.mem_insert] at hv
-    rcases hv with rfl | hv
-    · exact hyB
-    · exact holdSubset hv
-  have hAcard : (TreeSequenceVertexSet A).card = A.length + 1 := by
-    simp [TreeSequenceVertexSet, Finset.card_image_of_injective,
-      A.vertex_injective]
-  have hBcard : (TreeSequenceVertexSet B).card = B.length + 1 := by
-    simp [TreeSequenceVertexSet, Finset.card_image_of_injective,
-      B.vertex_injective]
-  have hcard : (TreeSequenceVertexSet B).card ≤
-      (insert y (TreeSequenceVertexSet A)).card := by
-    rw [hBcard, Finset.card_insert_of_notMem hyA, hAcard, hlen]
-  exact (Finset.eq_of_subset_of_card_le hinsert hcard).symm
 
 private theorem helper_havoid_232.{u_1, u_2} :
     open scoped Classical in
@@ -332,15 +284,16 @@ lemma Step1CaseTwoOutsideTwoEdgeExtension {V E : Type*}
     simpa using hxy
   obtain ⟨x₁, y₁, hx₁, hy₁, hxy₁⟩ := hends₁
   have adjoin_vertex_set (A B : TreeSequence G e0) (f : E) (x y : V)
-      (hxy : G.ends f = s(x, y)) (hxA : x ∈ TreeSequenceVertexSet A)
+      (hxy : G.ends f = s(x, y))
       (hyA : y ∉ TreeSequenceVertexSet A)
       (hAB : TreeSequenceAdjoinEdge A f B) :
       TreeSequenceVertexSet B = insert y (TreeSequenceVertexSet A) := by
-    exact @helper_adjoin_vertex_set_147 (@V) (@E) inferInstance (@G) (@e0) (@A) (@B) (@f) (@x)
+    exact @TreeSequenceAdjoinEdge.vertexSet_eq_insert (@V) (@E) inferInstance (@G) (@e0) (@A)
+        (@B) (@f) (@x)
         (@y) (@hxy) (@hyA) (@hAB)
   have hJ1vertices : TreeSequenceVertexSet J₁ =
       insert y₁ (TreeSequenceVertexSet C) :=
-    adjoin_vertex_set C J₁ f₁ x₁ y₁ hxy₁ hx₁ hy₁ had₁
+    adjoin_vertex_set C J₁ f₁ x₁ y₁ hxy₁ hy₁ had₁
   have hboundary₂ : f₂ ∈ BoundaryColorEdges G mu (TreeSequenceVertexSet J₁) beta := by
     simp only [BoundaryColorEdges, BoundaryEdges, Finset.mem_filter,
       Finset.mem_univ, true_and] at hf₂ ⊢
@@ -456,7 +409,7 @@ lemma Step1CaseTwoOutsideTwoEdgeExtension {V E : Type*}
   have hJvertices : TreeSequenceVertexSet J =
       insert y₂ (TreeSequenceVertexSet J₁) :=
     adjoin_vertex_set J₁ J f₂ x₂ y₂ hxy₂
-      (by rw [hJ1vertices]; exact Finset.mem_insert_of_mem hx₂) hy₂J₁ had₂
+      hy₂J₁ had₂
   have hf₁J : ∀ v, Incident G v f₁ → v ∈ TreeSequenceVertexSet J := by
     intro v hv
     have hv' : v ∈ G.ends f₁ := hv

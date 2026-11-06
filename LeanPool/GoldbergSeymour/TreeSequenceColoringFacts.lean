@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
 public import LeanPool.GoldbergSeymour.TreeMissingColors
@@ -130,6 +132,16 @@ theorem TreeSequenceFirstMissingPositionMem {V E : Type*} [Fintype E]
       rw [dite_eq_right nonempty]
       rfl
     omega
+
+/-- Enlarging a tree by an initial-segment extension can only add missing colors. -/
+theorem TreeSequenceInitialSegment.treeMissingColors_subset {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {coloring : PartialEdgeColoring E k}
+    {initial tree : TreeSequence G e0} (segment : TreeSequenceInitialSegment initial tree) :
+    TreeMissingColors coloring initial ⊆ TreeMissingColors coloring tree := by
+  classical
+  intro color membership
+  obtain ⟨vertex, inInitial, missing⟩ := Finset.mem_biUnion.mp membership
+  exact Finset.mem_biUnion.mpr ⟨vertex, segment.vertexSet_subset inInitial, missing⟩
 
 end GoldbergSeymour
 

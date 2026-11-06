@@ -7,10 +7,9 @@ module
 
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.ExtensionBaseRestorationTrace
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
-public import LeanPool.GoldbergSeymour.TreeVerticesBefore
+public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
 
 /-!
 # Shared facts for ExtensionBaseAuxiliary
@@ -187,48 +186,6 @@ abbrev branch3129Statement.{u_1, u_2} : Prop :=
           TreeSequenceAdjoinEdge Tprevious f adjoinSeed ∧ TashkinovAugmentationSequence
           (ett.series.data.coloring i.succ) adjoinSeed seed
 
-/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
-abbrev usegmentVertexBeforeStatement.{u_1, u_2} : Prop :=
-  open scoped Classical in
-      ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-          LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-          TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-          e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (v : V) (gamma delta : Fin k)
-          (sigma : PartialEdgeColoring E k),
-      let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-      by omega
-      ⟩ : Fin ett.rounds);
-      ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T)
-          (hfirstUpper : ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ)) (hfirstPositive
-          : (0 : ℕ) < ETTFirstAppearanceIndex ett v hvFinal),
-      let jSlot : Fin ett.rounds := (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ),
-      by omega
-      ⟩ : Fin ett.rounds);
-      ∀ (trace : ExtensionBaseRestorationTrace ett v hvFinal sigma) (p0 : ℕ) (_ : Fin (p0 + (1 : ℕ))
-          → Fin ett.rounds) (_ _ : Fin (p0 + (1 : ℕ)) → Fin k),
-      let rho1 : PartialEdgeColoring E k := trace.coloring (Fin.last trace.steps);
-      ∀ (terminalPosition : Fin ((ett.series.data.tree jSlot.succ.castSucc).length + (1 : ℕ)))
-          (hterminalPositionPositive : (1 : ℕ) ≤ (↑terminalPosition : ℕ)) (hterminalPositionBound :
-          (↑terminalPosition : ℕ) ≤ (ett.series.data.tree jSlot.succ.castSucc).length),
-      let seed : TreeSequence G e0 := TreeSequencePrefix (ett.series.data.tree jSlot.succ.castSucc)
-          (↑terminalPosition : ℕ) hterminalPositionPositive hterminalPositionBound;
-      ∀ (_ : TreeSequenceInitialSegment seed (ett.series.data.tree jSlot.succ.castSucc)) (TjPrime :
-          TreeSequence G e0),
-      let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G rho1 gamma delta;
-      ∀ (x : V) (_ : H.Walk (Sum.inl v) (Sum.inl x)) (u : V) (_ : (TwoColorIncidenceGraph G rho1
-          gamma delta).Walk (Sum.inl x) (Sum.inl u)) (_ : Fin ((ett.series.data.tree
-          jSlot.succ.castSucc).length + (1 : ℕ))) (u0 : V) (huPrime0 : u0 ∈ TreeSequenceVertexSet
-          TjPrime) (_ : (TwoColorIncidenceGraph G rho1 gamma delta).Walk (Sum.inl x) (Sum.inl u0))
-          (_ : Fin ((ett.series.data.tree jSlot.succ.castSucc).length + (1 : ℕ))) (uPosition : Fin
-          (TjPrime.length + (1 : ℕ))) (huPositionPositive : (1 : ℕ) ≤ (↑uPosition : ℕ))
-          (huPositionBound : (↑uPosition : ℕ) ≤ TjPrime.length),
-      let U : TreeSequence G e0 := TreeSequencePrefix TjPrime (↑uPosition : ℕ) huPositionPositive
-          huPositionBound;
-      ∀ (_ : TreeSequenceInitialSegment U TjPrime) (_ : (
-      ∀ (i : Fin (TjPrime.length + (1 : ℕ))) (_ : (↑i : ℕ) < (↑uPosition : ℕ)), TjPrime.vertex i ∈
-          TreeVerticesBefore TjPrime u0 huPrime0)) {A : TreeSequence G e0} (_ :
-          TreeSequenceInitialSegment A U) (_ : A.length < U.length) {y : V} (_ : y ∈
-          TreeSequenceVertexSet A), y ∈ TreeVerticesBefore TjPrime u0 huPrime0
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem branch.{u_1, u_2} : branchStatement.{u_1, u_2} := by
@@ -440,29 +397,6 @@ theorem branch3129.{u_1, u_2} : branch3129Statement.{u_1, u_2} := by
         (ett.series.data.tree jSlot.succ.castSucc) hroute
         hadjoinedSeed hseedTj)
 
-/-- A common proof used by the branches of this transport or construction argument. -/
-theorem usegmentVertexBefore.{u_1, u_2} : usegmentVertexBeforeStatement.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v gamma delta sigma q hqTerminal
-      hvFinal hfirstUpper hfirstPositive jSlot trace p0 indices0 gamma0 delta0 rho1
-      terminalPosition hterminalPositionPositive hterminalPositionBound seed hseedTj TjPrime H x
-      componentPath u exitPath zPosition u0 huPrime0 exitPath0 zPosition0 uPosition
-      huPositionPositive huPositionBound U hUPrime hprimeVertexBefore A hAU hAlen y hyA
-  obtain ⟨hAULen, hAUVertices, -⟩ := hAU
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-    true_and] at hyA
-  obtain ⟨i, rfl⟩ := hyA
-  let iU : Fin (U.length + 1) :=
-    Fin.castLE (Nat.succ_le_succ hAULen) i
-  let iPrime : Fin (TjPrime.length + 1) :=
-    Fin.castLE (Nat.succ_le_succ hUPrime.1) iU
-  have hiPrime : iPrime.val < uPosition.val := by
-    change i.val < uPosition.val
-    have hUlen : U.length = uPosition.val := by
-      simp [U, TreeSequencePrefix]
-    omega
-  rw [← hAUVertices i, ← hUPrime.2.1 iU]
-  exact hprimeVertexBefore iPrime hiPrime
 
 end GoldbergSeymour.SharedFacts.ExtensionBranches
 
