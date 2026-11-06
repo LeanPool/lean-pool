@@ -160,6 +160,54 @@ theorem TwoColorComponentSpanningPath {V E : Type*}
       rw [SimpleGraph.Walk.support_map]
       exact List.mem_map.mpr ⟨⟨x, hx⟩, hy, rfl⟩
 
+/-- Three vertices with at most one neighbor in one two-color component cannot all differ. -/
+theorem TwoColorComponent.leaf_eq_or_eq {V E : Type*} [Finite V] [Finite E]
+    {G : LooplessMultigraph V E} {k : ℕ} (phi : PartialEdgeColoring E k) (a b : Fin k)
+    (proper : IsProperEdgeColoring G phi) (x y z : V ⊕ E)
+    (leafX : ((TwoColorIncidenceGraph G phi a b).neighborSet x).Subsingleton)
+    (leafY : ((TwoColorIncidenceGraph G phi a b).neighborSet y).Subsingleton)
+    (leafZ : ((TwoColorIncidenceGraph G phi a b).neighborSet z).Subsingleton)
+    (sameXY : TwoColorComponent G phi a b x = TwoColorComponent G phi a b y)
+    (sameXZ : TwoColorComponent G phi a b x = TwoColorComponent G phi a b z) :
+    x = y ∨ x = z ∨ y = z := by
+  classical
+  let _ := Fintype.ofFinite V
+  let _ := Fintype.ofFinite E
+  by_contra different
+  push Not at different
+  obtain ⟨u, v, path, isPath, support⟩ := TwoColorComponentSpanningPath G phi a b proper x
+  have memberX : x ∈ path.support := by
+    change x ∈ {t | t ∈ path.support}
+    rw [support]
+    rfl
+  have memberY : y ∈ path.support := by
+    change y ∈ {t | t ∈ path.support}
+    rw [support, sameXY]
+    rfl
+  have memberZ : z ∈ path.support := by
+    change z ∈ {t | t ∈ path.support}
+    rw [support, sameXZ]
+    rfl
+  have endpoint (t : V ⊕ E)
+      (leaf : ((TwoColorIncidenceGraph G phi a b).neighborSet t).Subsingleton)
+      (member : t ∈ path.support) : t = u ∨ t = v := by
+    by_contra neither
+    push Not at neither
+    exact (isPath.isTrail.notMem_support_of_subsingleton_neighborSet
+      neither.1 neither.2 leaf) member
+  have endsX := endpoint x leafX memberX
+  have endsY := endpoint y leafY memberY
+  have endsZ := endpoint z leafZ memberZ
+  rcases endsX with xu | xv <;> rcases endsY with yu | yv <;> rcases endsZ with zu | zv
+  · exact different.1 (xu.trans yu.symm)
+  · exact different.1 (xu.trans yu.symm)
+  · exact different.2.1 (xu.trans zu.symm)
+  · exact different.2.2 (yv.trans zv.symm)
+  · exact different.2.2 (yu.trans zu.symm)
+  · exact different.2.1 (xv.trans zv.symm)
+  · exact different.1 (xv.trans yv.symm)
+  · exact different.1 (xv.trans yv.symm)
+
 end GoldbergSeymour
 
 end

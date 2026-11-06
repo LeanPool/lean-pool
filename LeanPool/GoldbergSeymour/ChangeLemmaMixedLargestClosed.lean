@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
 public import LeanPool.GoldbergSeymour.StableHierarchyReplacement
 
 
@@ -2868,130 +2869,6 @@ private theorem helper_hstarLast_1371.{u_1, u_2} :
     Fin.ext (by simp [q])
   simpa only [hj] using hs
 
-private theorem helper_pathLe_1383.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (alpha beta : Fin k)
-      (_ : Fin (C.hierarchy.dividerCount + (1 : ℕ))),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    let vb : V := T.vertex ib;
-    let _ : ℕ := T.length - A.length;
-    TreeSequenceInitialSegment A T →
-    ∀ (hAib : A.length < (↑ib : ℕ)),
-    let B : TreeSequence G e0 :=
-      TreeSequencePrefix T (↑ib : ℕ)
-        (have this : (1 : ℕ) ≤ A.length := A.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-        (by omega);
-    TreeSequenceInitialSegment B T →
-    A.length < B.length →
-    ∀ (rpB : (1 : ℕ) ≤ ett.1)
-      (aboveB :
-        TreeSequenceInitialSegment
-          (ett.series.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))) B)
-      (strictB :
-        (ett.series.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))).length <
-          B.length)
-      (belowB :
-        TreeSequenceInitialSegment B (ett.series.data.tree (Fin.last (ett.1 + (1 : ℕ)))))
-      (genB : phi = ett.series.data.coloring (Fin.last ett.1)),
-    let ettB : ExtendedTashkinovTree G k e0 input B phi :=
-      { rounds := ett.rounds, roundsPositive := rpB, series := ett.series,
-        abovePenultimate := aboveB, strictAbovePenultimate := strictB, belowFinal := belowB,
-        generatingColoring := genB : ExtendedTashkinovTree G k e0 input B phi };
-    let sigma : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G phi alpha beta (Sum.inl vb);
-    ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 ettB sigma B)
-      (baseS : HierarchyBase corr.replacementETT sigma) (count : ℕ)
-      (stages : Fin (count + (2 : ℕ)) → TreeSequence G e0)
-      (positionsS : Fin count → Fin (B.length + (1 : ℕ)))
-      (hspositive : ∀ (i : Fin count), (1 : ℕ) ≤ (↑(positionsS i) : ℕ))
-      (hsincreasing :
-        ∀ (i j : Fin count),
-          (↑i : ℕ) < (↑j : ℕ) → (↑(positionsS i) : ℕ) < (↑(positionsS j) : ℕ))
-      (hsbase :
-        stages (0 : Fin (count + (2 : ℕ))) =
-          corr.replacementETT.series.data.tree
-            (Fin.last corr.replacementETT.rounds).castSucc)
-      (hsterminal : stages (Fin.last (count + (1 : ℕ))) = B)
-      (hsnested :
-        ∀ (j : Fin (count + (1 : ℕ))),
-          TreeSequenceInitialSegment (stages j.castSucc) (stages j.succ))
-      (hsstrict :
-        ∀ (j : Fin (count + (1 : ℕ))), (stages j.castSucc).length < (stages j.succ).length)
-      (hsdivider :
-        ∀ (i : Fin count),
-          stages (⟨(↑i : ℕ) + (1 : ℕ), by omega⟩ : Fin (count + (2 : ℕ))) =
-            TreeSequencePrefix B (↑(positionsS i) : ℕ) (hspositive i) (by omega))
-      (hscore :
-        TreeSequenceInitialSegment baseS.core
-          (stages (⟨(1 : ℕ), by omega⟩ : Fin (count + (2 : ℕ))))),
-    let HS : TashkinovHierarchy corr.replacementETT baseS :=
-      { dividerCount := count, stage := stages, baseStage := hsbase,
-        terminalStage := hsterminal, nested := hsnested, strict := hsstrict,
-        dividerPosition := positionsS, dividerPositive := hspositive,
-        dividerIncreasing := hsincreasing, dividerStage := hsdivider,
-        coreInsideFirst := hscore : TashkinovHierarchy corr.replacementETT baseS };
-    HierarchyStarredStage HS (Fin.last count) = A →
-    HierarchyPathNumber HS ≤ HierarchyPathNumber H := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta r H q A ib vb ell AToT hAib B BToT
-      ABstrict rpB aboveB strictB belowB genB ettB sigma corr baseS count stages positionsS
-      hspositive hsincreasing hsbase hsterminal hsnested hsstrict hsdivider hscore HS hstarLast
-  clear * - HS H A T B q ell count hstarLast BToT AToT ABstrict
-  let tailB := B.length - A.length
-  let candidatesT := (Finset.Icc 1 ell).filter fun i =>
-    ∀ t : Fin T.length, A.length + i ≤ t.val →
-      G.ends (T.edge t) = s(T.vertex t.castSucc, T.vertex t.succ)
-  let candidatesB := (Finset.Icc 1 tailB).filter fun i =>
-    ∀ t : Fin B.length, A.length + i ≤ t.val →
-      G.ends (B.edge t) = s(B.vertex t.castSucc, B.vertex t.succ)
-  have htail : 1 ≤ tailB := by dsimp [tailB]; omega
-  have htailT : 1 ≤ ell := by dsimp [ell]; omega
-  have htmem : ell ∈ candidatesT := by
-    refine Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr ⟨htailT, le_rfl⟩, ?_⟩
-    intro t ht
-    have hAT := AToT.1
-    have := t.isLt
-    dsimp [ell] at ht
-    omega
-  have hbmem : tailB ∈ candidatesB := by
-    refine Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr ⟨htail, le_rfl⟩, ?_⟩
-    intro t ht
-    have := t.isLt
-    dsimp [tailB] at ht
-    omega
-  have hnT : candidatesT.Nonempty := ⟨ell, htmem⟩
-  have hnB : candidatesB.Nonempty := ⟨tailB, hbmem⟩
-  have hmT := Finset.min'_mem candidatesT hnT
-  have hbounds := Finset.mem_Icc.mp (Finset.mem_filter.mp hmT).1
-  have hminB : candidatesB.min' hnB ≤ candidatesT.min' hnT := by
-    by_cases ht : candidatesT.min' hnT ≤ tailB
-    · apply Finset.min'_le
-      refine Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr ⟨hbounds.1, ht⟩, ?_⟩
-      intro t hpos
-      have he := (Finset.mem_filter.mp hmT).2 (Fin.castLE BToT.1 t) hpos
-      have hv0 := BToT.2.1 t.castSucc
-      have hv1 := BToT.2.1 t.succ
-      have hi0 : (Fin.castLE BToT.1 t).castSucc =
-          Fin.castLE (Nat.succ_le_succ BToT.1) t.castSucc := Fin.ext rfl
-      have hi1 : (Fin.castLE BToT.1 t).succ =
-          Fin.castLE (Nat.succ_le_succ BToT.1) t.succ := Fin.ext rfl
-      simpa only [BToT.2.2, hi0, hi1, hv0, hv1] using he
-    · exact le_trans (Finset.min'_le candidatesB tailB hbmem) (by omega)
-  unfold HierarchyPathNumber
-  rw [hstarLast]
-  change (if h : candidatesB.Nonempty then candidatesB.min' h else tailB) ≤
-    (if h : candidatesT.Nonempty then candidatesT.min' h else ell)
-  rw [dite_eq_left hnB, dite_eq_left hnT]
-  exact hminB
-
 private theorem helper_hinter_3502.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -3260,10 +3137,8 @@ private theorem helper_continuation_5082.{u_1, u_2} :
     simpa only [hj] using hs
   -- Path candidates restrict to the shorter prefix; the second measure decreases strictly.
   have pathLe :=
-    helper_pathLe_1383 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
-        (@beta) (@r) (@AToT) (@hAib) (@BToT) (@ABstrict) (@rpB) (@aboveB) (@strictB) (@belowB)
-        (@genB) (@corr) (@baseS) (@count) (@stages) (@positionsS) (@hspositive) (@hsincreasing)
-        (@hsbase) (@hsterminal) (@hsnested) (@hsstrict) (@hsdivider) (@hscore) (@hstarLast)
+    H.pathNumber_le_of_prefix HS
+      (congrArg (fun S : TreeSequence G e0 => S.length) hstarLast) BToT ABstrict
   have tailLess : B.length - (HS.stage (Fin.last count).castSucc).length <
       T.length - (H.stage q.castSucc).length := by
     clear * - hlastOrd ordinaryToA BstrictT ABstrict AToT

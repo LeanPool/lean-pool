@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.InterchangeableExitPaths
 public import LeanPool.GoldbergSeymour.TwoColorComponentClosedColors
 
 public import LeanPool.GoldbergSeymour.TreeExitPathTransport
@@ -251,178 +252,6 @@ private theorem helper_finalInterchange_379.{u_1, u_2} :
     rw [hpredNext] at hinter
     exact hinter
 
-private theorem helper_finish_473.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (hpositive : (0 : ℕ) < ett.rounds) (base : HierarchyBase ett phi) (_ :
-        TashkinovHierarchy ett base) (beta : Fin k) (a₁ b₁ a₂ b₂ : V), a₁ ≠ a₂ →
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let p : Fin (ett.rounds + (1 : ℕ)) := (⟨ett.rounds - (1 : ℕ), Decidable.byContradiction fun (a
-        : ¬ett.rounds - (1 : ℕ) < ett.rounds + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ)));
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dp : Finset (Fin k) := TashkinovStoredColors ett.series.data p;
-    let x : V := Tn.vertex (0 : Fin (Tn.length + (1 : ℕ))); x ∈ TreeSequenceVertexSet Tn →
-    ∀ c ∈ MissingColors G phi x, c ≠ beta → (
-    ∀ (sigma : PartialEdgeColoring E k), IsProperEdgeColoring G sigma → IsOneEdgeUncolored sigma
-        e0 → StableColoring Tn Dp phi sigma →
-    ∀ (a b : Fin k), a ∈ TreeMissingColors sigma Tn ∨ b ∈ TreeMissingColors sigma Tn →
-        TreeInterchangeable G Tn sigma a b) →
-    ∀ (sigma : PartialEdgeColoring E k), IsProperEdgeColoring G sigma → IsOneEdgeUncolored sigma
-        e0 → StableColoring Tn Dp phi sigma → c ∈ TreeMissingColors sigma Tn →
-    ∀ (Q₁ : (TwoColorIncidenceGraph G sigma c beta).Walk (Sum.inl a₁) (Sum.inl b₁)) (Q₂ :
-        (TwoColorIncidenceGraph G sigma c beta).Walk (Sum.inl a₂) (Sum.inl b₂)), TreeExitPath Tn
-        sigma c beta a₁ b₁ Q₁ → TreeExitPath Tn sigma c beta a₂ b₂ Q₂ → False := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive base H beta a₁ b₁ a₂ b₂ ha n p Tn Dp x hxT c
-      hcxMissing hcNeBeta finalInterchange sigma hsProper hsOne hsStable hcMissing Q₁ Q₂ hQ₁ hQ₂
-  let graph := TwoColorIncidenceGraph G sigma c beta
-  have missingLeaf : ∀ (v : V),
-      (c ∈ MissingColors G sigma v ∨ beta ∈ MissingColors G sigma v) →
-      Set.Subsingleton (graph.neighborSet (Sum.inl v)) := by
-    intro v hmissing z hz w hw
-    cases hzv : z with
-    | inl u =>
-        rw [hzv] at hz
-        simp [graph, SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] at hz
-    | inr e =>
-        cases hwv : w with
-        | inl u =>
-            rw [hwv] at hw
-            simp [graph, SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] at hw
-        | inr f =>
-            rw [hzv] at hz
-            rw [hwv] at hw
-            have he : Incident G v e ∧
-                (sigma e = some c ∨ sigma e = some beta) := by
-              simpa [graph, SimpleGraph.mem_neighborSet,
-                TwoColorIncidenceGraph] using hz
-            have hf : Incident G v f ∧
-                (sigma f = some c ∨ sigma f = some beta) := by
-              simpa [graph, SimpleGraph.mem_neighborSet,
-                TwoColorIncidenceGraph] using hw
-            apply congrArg Sum.inr
-            by_contra hef
-            rcases hmissing with hcm | hbm
-            · have hnc : c ∉ PresentColors G sigma v := by
-                simpa [MissingColors] using hcm
-              have hec : sigma e = some beta := he.2.resolve_left (by
-                intro hec
-                apply hnc
-                simpa [PresentColors] using
-                  (show ∃ q, Incident G v q ∧ sigma q = some c from
-                    ⟨e, he.1, hec⟩))
-              have hfc : sigma f = some beta := hf.2.resolve_left (by
-                intro hfc
-                apply hnc
-                simpa [PresentColors] using
-                  (show ∃ q, Incident G v q ∧ sigma q = some c from
-                    ⟨f, hf.1, hfc⟩))
-              exact (hsProper hef ⟨v, he.1, hf.1⟩ hec) hfc
-            · have hnb : beta ∉ PresentColors G sigma v := by
-                simpa [MissingColors] using hbm
-              have heb : sigma e = some c := he.2.resolve_right (by
-                intro heb
-                apply hnb
-                simpa [PresentColors] using
-                  (show ∃ q, Incident G v q ∧ sigma q = some beta from
-                    ⟨e, he.1, heb⟩))
-              have hfb : sigma f = some c := hf.2.resolve_right (by
-                intro hfb
-                apply hnb
-                simpa [PresentColors] using
-                  (show ∃ q, Incident G v q ∧ sigma q = some beta from
-                    ⟨f, hf.1, hfb⟩))
-              exact (hsProper hef ⟨v, he.1, hf.1⟩ heb) hfb
-  have hcxSigma : c ∈ MissingColors G sigma x := by
-    rw [hsStable.2 x hxT]
-    exact hcxMissing
-  have hxLeaf : Set.Subsingleton (graph.neighborSet (Sum.inl x)) :=
-    missingLeaf x (Or.inl hcxSigma)
-  have ha₁Leaf : Set.Subsingleton (graph.neighborSet (Sum.inl a₁)) :=
-    missingLeaf a₁ hQ₁.2.2.2.2.1
-  have ha₂Leaf : Set.Subsingleton (graph.neighborSet (Sum.inl a₂)) :=
-    missingLeaf a₂ hQ₂.2.2.2.2.1
-  have hpathX : TwoColorPathComponent G sigma c beta (Sum.inl x) :=
-    ⟨hcNeBeta, Sum.inl x, rfl, hxLeaf⟩
-  have hpath₁ : TwoColorPathComponent G sigma c beta (Sum.inl a₁) :=
-    ⟨hcNeBeta, Sum.inl a₁, rfl, ha₁Leaf⟩
-  have hpath₂ : TwoColorPathComponent G sigma c beta (Sum.inl a₂) :=
-    ⟨hcNeBeta, Sum.inl a₂, rfl, ha₂Leaf⟩
-  have hmeetX : ∃ v ∈ TreeSequenceVertexSet Tn,
-      Sum.inl v ∈ TwoColorComponent G sigma c beta (Sum.inl x) :=
-    ⟨x, hxT, rfl⟩
-  have hmeet₁ : ∃ v ∈ TreeSequenceVertexSet Tn,
-      Sum.inl v ∈ TwoColorComponent G sigma c beta (Sum.inl a₁) := by
-    refine ⟨b₁, hQ₁.2.2.2.1, ?_⟩
-    change graph.connectedComponentMk (Sum.inl b₁) =
-      graph.connectedComponentMk (Sum.inl a₁)
-    exact (SimpleGraph.ConnectedComponent.sound Q₁.reachable).symm
-  have hmeet₂ : ∃ v ∈ TreeSequenceVertexSet Tn,
-      Sum.inl v ∈ TwoColorComponent G sigma c beta (Sum.inl a₂) := by
-    refine ⟨b₂, hQ₂.2.2.2.1, ?_⟩
-    change graph.connectedComponentMk (Sum.inl b₂) =
-      graph.connectedComponentMk (Sum.inl a₂)
-    exact (SimpleGraph.ConnectedComponent.sound Q₂.reachable).symm
-  have ha₁x : a₁ ≠ x := by
-    intro h
-    exact hQ₁.2.2.1 (h ▸ hxT)
-  have ha₂x : a₂ ≠ x := by
-    intro h
-    exact hQ₂.2.2.1 (h ▸ hxT)
-  have hdistinct :
-      TwoColorComponent G sigma c beta (Sum.inl x) ≠
-          TwoColorComponent G sigma c beta (Sum.inl a₁) ∨
-      TwoColorComponent G sigma c beta (Sum.inl x) ≠
-          TwoColorComponent G sigma c beta (Sum.inl a₂) := by
-    by_contra hnot
-    push Not at hnot
-    obtain ⟨u, v, R, hRpath, hRsupport⟩ :=
-      TwoColorComponentSpanningPath G sigma c beta hsProper (Sum.inl x)
-    have hxR : Sum.inl x ∈ R.support := by
-      change Sum.inl x ∈ {z | z ∈ R.support}
-      rw [hRsupport]
-      rfl
-    have ha₁R : Sum.inl a₁ ∈ R.support := by
-      change Sum.inl a₁ ∈ {z | z ∈ R.support}
-      rw [hRsupport, hnot.1]
-      rfl
-    have ha₂R : Sum.inl a₂ ∈ R.support := by
-      change Sum.inl a₂ ∈ {z | z ∈ R.support}
-      rw [hRsupport, hnot.2]
-      rfl
-    have endpointOfLeaf :
-    ∀ (z : Sum V E), Set.Subsingleton (graph.neighborSet z) → z ∈ R.support → z = u ∨ z = v := by
-      intro z hzLeaf hzR
-      by_contra hzEnds
-      push Not at hzEnds
-      exact (hRpath.isTrail.notMem_support_of_subsingleton_neighborSet
-        hzEnds.1 hzEnds.2 hzLeaf) hzR
-    have hxEnds := endpointOfLeaf (Sum.inl x) hxLeaf hxR
-    have ha₁Ends := endpointOfLeaf (Sum.inl a₁) ha₁Leaf ha₁R
-    have ha₂Ends := endpointOfLeaf (Sum.inl a₂) ha₂Leaf ha₂R
-    rcases hxEnds with hxu | hxv <;>
-      rcases ha₁Ends with h₁u | h₁v <;>
-      rcases ha₂Ends with h₂u | h₂v
-    · exact ha₁x (Sum.inl.inj (h₁u.trans hxu.symm))
-    · exact ha₁x (Sum.inl.inj (h₁u.trans hxu.symm))
-    · exact ha₂x (Sum.inl.inj (h₂u.trans hxu.symm))
-    · exact ha (Sum.inl.inj (h₁v.trans h₂v.symm))
-    · exact ha (Sum.inl.inj (h₁u.trans h₂u.symm))
-    · exact ha₂x (Sum.inl.inj (h₂v.trans hxv.symm))
-    · exact ha₁x (Sum.inl.inj (h₁v.trans hxv.symm))
-    · exact ha₁x (Sum.inl.inj (h₁v.trans hxv.symm))
-  have hinter := finalInterchange sigma hsProper hsOne hsStable c beta
-    (Or.inl hcMissing)
-  rcases hdistinct with hneComp | hneComp
-  · exact hneComp (hinter (Sum.inl x) (Sum.inl a₁)
-      hpathX hpath₁ hmeetX hmeet₁)
-  · exact hneComp (hinter (Sum.inl x) (Sum.inl a₂)
-      hpathX hpath₂ hmeetX hmeet₂)
-
 private theorem helper_branch_639.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -632,9 +461,21 @@ private theorem helper_continuation_1146.{u_1, u_2} :
   have finalInterchange := @helper_finalInterchange_379 V E inferInstance inferInstance
       inferInstance inferInstance G k e0 input T phi ett hMP hpositive hlower base H hterminal
       treeMissingEq
-  have finish := @helper_finish_473 V E inferInstance inferInstance inferInstance inferInstance G k
-      e0 input T phi ett hpositive base H beta a₁ b₁ a₂ b₂ ha hxT c hcxMissing hcNeBeta
-      finalInterchange
+  have finish :
+      ∀ (sigma : PartialEdgeColoring E k), IsProperEdgeColoring G sigma →
+        IsOneEdgeUncolored sigma e0 → StableColoring Tn Dp phi sigma →
+        c ∈ TreeMissingColors sigma Tn →
+        ∀ (Q₁ : (TwoColorIncidenceGraph G sigma c beta).Walk (Sum.inl a₁) (Sum.inl b₁))
+          (Q₂ : (TwoColorIncidenceGraph G sigma c beta).Walk (Sum.inl a₂) (Sum.inl b₂)),
+        TreeExitPath Tn sigma c beta a₁ b₁ Q₁ →
+          TreeExitPath Tn sigma c beta a₂ b₂ Q₂ → False := by
+    intro sigma hsProper hsOne hsStable hcMissing Q₁ Q₂ hQ₁ hQ₂
+    have hcxSigma : c ∈ MissingColors G sigma x := by
+      rw [hsStable.2 x hxT]
+      exact hcxMissing
+    have hinter := finalInterchange sigma hsProper hsOne hsStable c beta (Or.inl hcMissing)
+    exact ha (hinter.exitPath_start_eq hsProper hcNeBeta x hxT
+      (Or.inl hcxSigma) Q₁ Q₂ hQ₁ hQ₂)
   by_cases hac : alpha = c
   · subst alpha
     have hsRefl : StableColoring Tn Dp phi phi := by

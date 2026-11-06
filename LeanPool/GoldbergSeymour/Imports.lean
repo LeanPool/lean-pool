@@ -229,6 +229,7 @@ public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
 public import LeanPool.GoldbergSeymour.HierarchyOutsideKempeStable
 public import LeanPool.GoldbergSeymour.HierarchyPathNumber
 public import LeanPool.GoldbergSeymour.HierarchyPathNumberFacts
+public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
 public import LeanPool.GoldbergSeymour.HierarchyPrefixData
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
@@ -325,6 +326,7 @@ public import LeanPool.GoldbergSeymour.InterchangePECommonMissingClosed
 public import LeanPool.GoldbergSeymour.InterchangePEMixedCore
 public import LeanPool.GoldbergSeymour.InterchangePETreeAwayFromDelta
 public import LeanPool.GoldbergSeymour.InterchangePETreeConstituent
+public import LeanPool.GoldbergSeymour.InterchangeableExitPaths
 public import LeanPool.GoldbergSeymour.InternalEdges
 public import LeanPool.GoldbergSeymour.IsFullEdgeColoring
 public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored

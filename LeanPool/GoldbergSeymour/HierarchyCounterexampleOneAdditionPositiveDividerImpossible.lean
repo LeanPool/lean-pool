@@ -1460,109 +1460,6 @@ private abbrev helperContinuation2110Conditions.{u_1, u_2} : Prop :=
                                 ¬ColoredVertexSetElementary G sigma (TreeSequenceVertexSet T) →
                                  False
 
-private theorem helper_outsideMissingComponent_540.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    ∀
-      (_ :
-        (∀ (psi : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G psi) (c d : Fin k)
-          (_ : c ≠ d) (v : V) (_ : c ∈ MissingColors G psi v ∨ d ∈ MissingColors G psi v),
-          ((TwoColorIncidenceGraph G psi c d).neighborSet (Sum.inl v)).Subsingleton))
-      (_ :
-        (∀ (psi : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G psi) (c d : Fin k)
-          (_ : c ≠ d) (v : V) (_ : c ∈ MissingColors G psi v ∨ d ∈ MissingColors G psi v),
-          TwoColorPathComponent G psi c d (Sum.inl v)))
-      (psi : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G psi) (c d : Fin k)
-      (_ : c ≠ d) (_ : c ∈ TreeMissingColors psi A) (_ : d ∈ TreeMissingColors psi A),
-    ∀ w ∉ TreeSequenceVertexSet A,
-    c ∈ MissingColors G psi w ∨ d ∈ MissingColors G psi w →
-    TreeInterchangeable G A psi c d →
-    ∀ v ∈ TreeSequenceVertexSet A,
-    Sum.inl v ∉ TwoColorComponent G psi c d (Sum.inl w) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A missingLeaf pathMissing psi hpsi c d hcd
-      hcA hdA w hwOutside hcw hinter
-  obtain ⟨u, huA, hcu⟩ := Finset.mem_biUnion.mp hcA
-  obtain ⟨v, hvA, hdv⟩ := Finset.mem_biUnion.mp hdA
-  intro z hzA hzC
-  have huvC := hinter (Sum.inl u) (Sum.inl v)
-    (pathMissing psi hpsi c d hcd u (Or.inl hcu))
-    (pathMissing psi hpsi c d hcd v (Or.inr hdv))
-    ⟨u, huA, rfl⟩ ⟨v, hvA, rfl⟩
-  have huwC := hinter (Sum.inl u) (Sum.inl w)
-    (pathMissing psi hpsi c d hcd u (Or.inl hcu))
-    (pathMissing psi hpsi c d hcd w hcw) ⟨u, huA, rfl⟩ ⟨z, hzA, hzC⟩
-  have hvC : Sum.inl v ∈ TwoColorComponent G psi c d (Sum.inl u) := by
-    rw [huvC]
-    rfl
-  have hwC : Sum.inl w ∈ TwoColorComponent G psi c d (Sum.inl u) := by
-    rw [huwC]
-    rfl
-  have huw : Sum.inl u ≠ (Sum.inl w : Sum V E) := by
-    intro he
-    exact hwOutside (Sum.inl.inj he ▸ huA)
-  have hvw : Sum.inl v ≠ (Sum.inl w : Sum V E) := by
-    intro he
-    exact hwOutside (Sum.inl.inj he ▸ hvA)
-  by_cases huv : u = v
-  · subst v
-    have hnone : (TwoColorIncidenceGraph G psi c d).neighborSet (Sum.inl u) = ∅ := by
-      ext z
-      simp only [Set.mem_empty_iff_false, iff_false]
-      intro hz
-      cases z with
-      | inl z => exact hz
-      | inr edge =>
-        change Incident G u edge ∧ (psi edge = some c ∨ psi edge = some d) at hz
-        obtain ⟨hinc, hcolor⟩ := hz
-        have hcnot : c ∉ PresentColors G psi u := by
-          simpa [MissingColors] using hcu
-        have hdnot : d ∉ PresentColors G psi u := by
-          simpa [MissingColors] using hdv
-        rcases hcolor with hcolor | hcolor
-        · apply hcnot
-          simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨edge, hinc, hcolor⟩
-        · apply hdnot
-          simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨edge, hinc, hcolor⟩
-    have hreach : (TwoColorIncidenceGraph G psi c d).Reachable
-        (Sum.inl u) (Sum.inl w) :=
-      SimpleGraph.ConnectedComponent.reachable_of_mem_supp _ rfl hwC
-    exact SimpleGraph.not_reachable_of_neighborSet_left_eq_empty huw hnone hreach
-  · obtain ⟨a, b, p, hp, hsupport⟩ :=
-      TwoColorComponentSpanningPath G psi c d hpsi (Sum.inl u)
-    have endpoint (t : V)
-        (htC : Sum.inl t ∈ TwoColorComponent G psi c d (Sum.inl u))
-        (htMissing : c ∈ MissingColors G psi t ∨ d ∈ MissingColors G psi t) :
-        Sum.inl t = a ∨ Sum.inl t = b := by
-      by_contra hnot
-      push Not at hnot
-      have htSupport : Sum.inl t ∈ p.support := by
-        change Sum.inl t ∈ {z | z ∈ p.support}
-        rw [hsupport]
-        exact htC
-      exact (hp.isTrail.notMem_support_of_subsingleton_neighborSet
-        hnot.1 hnot.2 (missingLeaf psi hpsi c d hcd t htMissing)) htSupport
-    have huEnd := endpoint u rfl (Or.inl hcu)
-    have hvEnd := endpoint v hvC (Or.inr hdv)
-    have hwEnd := endpoint w hwC hcw
-    have huv' : Sum.inl u ≠ (Sum.inl v : Sum V E) := fun he => huv (Sum.inl.inj he)
-    rcases huEnd with huEnd | huEnd <;>
-      rcases hvEnd with hvEnd | hvEnd <;>
-      rcases hwEnd with hwEnd | hwEnd
-    all_goals first
-      | exact huv' (huEnd.trans hvEnd.symm)
-      | exact huw (huEnd.trans hwEnd.symm)
-      | exact hvw (hvEnd.trans hwEnd.symm)
-
 private theorem helper_terminalColors_890.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -2444,49 +2341,6 @@ private theorem helper_hgammaTerminalExcluded_1690.{u_1, u_2} :
     omega
   exact (Finset.mem_sdiff.mp (C.good.avoidance q eta heta hgamma)).2 hseg
 
-private theorem helper_missingLeaf_1742.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (hpositive : (0 : ℕ) < C.hierarchy.dividerCount),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let i : Fin H.dividerCount :=
-      (⟨H.dividerCount - (1 : ℕ),
-          id
-            (fun (hpositive : (0 : ℕ) < H.dividerCount) ↦
-              Decidable.byContradiction
-                fun (a : ¬H.dividerCount - (1 : ℕ) < H.dividerCount) ↦ by omega)
-            hpositive⟩ :
-        Fin H.dividerCount);
-    ∀ (eta : Fin k) (_ : (C.good.gamma i.succ eta).card = (2 : ℕ))
-      (_ :
-        (∀ (psi : PartialEdgeColoring E k) (c d : Fin k),
-          TwoColorIncidenceGraph G psi c d = TwoColorIncidenceGraph G psi d c))
-      (psi : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G psi) (c d : Fin k)
-      (_ : c ≠ d) (v : V) (_ : c ∈ MissingColors G psi v ∨ d ∈ MissingColors G psi v),
-    ((TwoColorIncidenceGraph G psi c d).neighborSet (Sum.inl v)).Subsingleton := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hpositive H i eta hcard graphSwap psi hpsi c d
-      hcd v hc
-  let : Fintype ((TwoColorIncidenceGraph G psi c d).neighborSet (Sum.inl v)) :=
-    Fintype.ofFinite _
-  have hdegree : @SimpleGraph.degree _ (TwoColorIncidenceGraph G psi c d)
-      (Sum.inl v) (Fintype.ofFinite _) ≤ 1 := by
-    rcases hc with hc | hc
-    · exact MissingColorIncidenceEndpoint G psi c d hcd hpsi v hc
-    · rw [graphSwap psi c d]
-      exact MissingColorIncidenceEndpoint G psi d c hcd.symm hpsi v hc
-  have hcard : Fintype.card
-      ((TwoColorIncidenceGraph G psi c d).neighborSet (Sum.inl v)) ≤ 1 := by
-    rw [SimpleGraph.card_neighborSet_eq_degree]
-    exact hdegree
-  intro z hz w hw
-  exact congrArg Subtype.val
-    (Fintype.card_le_one_iff.mp hcard ⟨z, hz⟩ ⟨w, hw⟩)
-
 private theorem helper_hsigmaRoute_1829.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -3225,23 +3079,6 @@ private theorem helper_continuation_2074.{u_1, u_2} :
     have heStored : eta ∈ HierarchyStoredColorsAt H q := by
       simpa only [hiq] using heta
     exact hgammaTerminalExcluded eta heStored (he ▸ hp)
-  have graphSwap (psi : PartialEdgeColoring E k) (c d : Fin k) :
-      TwoColorIncidenceGraph G psi c d = TwoColorIncidenceGraph G psi d c := by
-    ext z w
-    cases z <;> cases w <;> simp [TwoColorIncidenceGraph, or_comm]
-  have missingLeaf (psi : PartialEdgeColoring E k) (hpsi : IsProperEdgeColoring G psi)
-      (c d : Fin k) (hcd : c ≠ d) (v : V)
-      (hc : c ∈ MissingColors G psi v ∨ d ∈ MissingColors G psi v) :
-      Set.Subsingleton ((TwoColorIncidenceGraph G psi c d).neighborSet (Sum.inl v)) := by
-    exact @helper_missingLeaf_1742 V E inferInstance inferInstance inferInstance inferInstance G
-        k e0 input T phi ett base C hpositive eta hcard graphSwap psi hpsi c d hcd v hc
-  have pathMissing (psi : PartialEdgeColoring E k) (hpsi : IsProperEdgeColoring G psi)
-      (c d : Fin k) (hcd : c ≠ d) (v : V)
-      (hc : c ∈ MissingColors G psi v ∨ d ∈ MissingColors G psi v) :
-      TwoColorPathComponent G psi c d (Sum.inl v) :=
-    ⟨hcd, Sum.inl v, rfl, missingLeaf psi hpsi c d hcd v hc⟩
-  -- A missing-color component outside A cannot acquire a third endpoint.
-  -- The coincident-witness case is an isolated component and is handled separately.
   have outsideMissingComponent (psi : PartialEdgeColoring E k)
       (hpsi : IsProperEdgeColoring G psi) (c d : Fin k) (hcd : c ≠ d)
       (hcA : c ∈ TreeMissingColors psi A) (hdA : d ∈ TreeMissingColors psi A)
@@ -3250,9 +3087,7 @@ private theorem helper_continuation_2074.{u_1, u_2} :
       (hinter : TreeInterchangeable G A psi c d) :
       ∀ v ∈ TreeSequenceVertexSet A,
         Sum.inl v ∉ TwoColorComponent G psi c d (Sum.inl w) := by
-    exact @helper_outsideMissingComponent_540 V E inferInstance inferInstance inferInstance
-        inferInstance G k e0 input T phi ett base C missingLeaf pathMissing psi hpsi c d hcd hcA
-        hdA w hwOutside hcw hinter
+    exact hinter.outside_missing_component hpsi hcd hcA hdA w hwOutside hcw
   have stepInterchange (beta : Fin k) (hne : theta ≠ beta) :
       TreeInterchangeable G A phi theta beta := by
     have hstage : H.stage i.succ.castSucc = A := by rw [hiq, ← hA]

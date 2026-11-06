@@ -21,271 +21,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
-private theorem helper_hTnW_292.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (J W : TreeSequence G e0),
-    let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc;
-    ∀ (_ : TreeSequenceInitialSegment Tn J) (_ : TreeSequenceInitialSegment J W),
-    TreeSequenceInitialSegment Tn W := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett J W Tn hTnJ hJWsegment
-  refine ⟨hTnJ.1.trans hJWsegment.1, ?_, ?_⟩
-  · intro i
-    exact (hJWsegment.2.1 (Fin.castLE (Nat.succ_le_succ hTnJ.1) i)).trans
-      (hTnJ.2.1 i)
-  · intro i
-    exact (hJWsegment.2.2 (Fin.castLE hTnJ.1 i)).trans (hTnJ.2.2 i)
-
-private theorem helper_hcarry_334.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (_ : HierarchyBase ett phi) (U : TreeSequence G e0) (corrU :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi U) (baseU : HierarchyBase
-        corrU.replacementETT phi) (H : TashkinovHierarchy corrU.replacementETT baseU) (_ :
-        GoodHierarchy H) (W : TreeSequence G e0) (corrW : CorrespondingExtendedTashkinovTree G k
-        e0 ett phi W) (baseW : HierarchyBase corrW.replacementETT phi) (HW : TashkinovHierarchy
-        corrW.replacementETT baseW) (hcountW : HW.dividerCount = H.dividerCount + (1 : ℕ)) (V' :
-        TreeSequence G e0) (corrV : CorrespondingExtendedTashkinovTree G k e0 ett phi V') (baseV :
-        HierarchyBase corrV.replacementETT phi) (K : TashkinovHierarchy corrV.replacementETT
-        baseV) (hcount : K.dividerCount = HW.dividerCount) (_ : (
-    ∀ (j : Fin (K.dividerCount + (1 : ℕ))),
-    have jo : Fin (HW.dividerCount + (1 : ℕ)) := Fin.cast (
-    by omega
-    ) j; K.stage j.castSucc = HW.stage jo.castSucc ∧ HierarchyStarredStage K j =
-        HierarchyStarredStage HW jo ∧ HierarchyStoredColorsAt K j = HierarchyStoredColorsAt HW jo
-        ∧ HierarchyStageMissingColors K j = HierarchyStageMissingColors HW jo)) (j : Fin
-        (HW.dividerCount + (1 : ℕ))), K.stage (⟨(↑j : ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (2 : ℕ))) = HW.stage j.castSucc ∧ HierarchyStarredStage K (⟨(↑j :
-        ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = HierarchyStarredStage HW j ∧ HierarchyStoredColorsAt K
-        (⟨(↑j : ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = HierarchyStoredColorsAt HW j := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base U corrU baseU H good W corrW baseW HW hcountW V'
-      corrV baseV K hcount hstagesV j
-  have hh := hstagesV (⟨j.val, by omega⟩ : Fin (K.dividerCount + 1))
-  dsimp only at hh
-  have hi : Fin.cast (congrArg (fun n : Nat => n + 1) hcount)
-      (⟨j.val, by omega⟩ : Fin (K.dividerCount + 1)) = j := Fin.ext rfl
-  rw [hi] at hh
-  exact ⟨hh.1, hh.2.1, hh.2.2.1⟩
-
-private theorem helper_hprecedingV_354.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (_ : HierarchyBase ett phi) (U : TreeSequence G e0) (corrU :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi U) (baseU : HierarchyBase
-        corrU.replacementETT phi) (H : TashkinovHierarchy corrU.replacementETT baseU) (_ :
-        GoodHierarchy H) (W : TreeSequence G e0) (corrW : CorrespondingExtendedTashkinovTree G k
-        e0 ett phi W) (baseW : HierarchyBase corrW.replacementETT phi) (HW : TashkinovHierarchy
-        corrW.replacementETT baseW) (hcountW : HW.dividerCount = H.dividerCount + (1 : ℕ)) (_ :
-        HW.stage (Fin.last HW.dividerCount).castSucc = U) (V' : TreeSequence G e0) (corrV :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi V') (baseV : HierarchyBase
-        corrV.replacementETT phi) (K : TashkinovHierarchy corrV.replacementETT baseV) (hcount :
-        K.dividerCount = HW.dividerCount) (_ : (
-    ∀ (j : Fin (HW.dividerCount + (1 : ℕ))), K.stage (⟨(↑j : ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (2 : ℕ))) = HW.stage j.castSucc ∧ HierarchyStarredStage K (⟨(↑j :
-        ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = HierarchyStarredStage HW j ∧ HierarchyStoredColorsAt K
-        (⟨(↑j : ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = HierarchyStoredColorsAt HW j)) (_ : (⟨HW.dividerCount,
-    by omega
-    ⟩ : Fin (K.dividerCount + (2 : ℕ))) = (Fin.last K.dividerCount).castSucc), K.stage (Fin.last
-        K.dividerCount).castSucc = U := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base U corrU baseU H good W corrW baseW HW hcountW
-      hprecedingW V' corrV baseV K hcount hcarry hlastStageIndex
-  have hh := (hcarry (Fin.last HW.dividerCount)).1
-  change K.stage ⟨HW.dividerCount, by omega⟩ =
-    HW.stage (Fin.last HW.dividerCount).castSucc at hh
-  rw [hlastStageIndex] at hh
-  exact hh.trans hprecedingW
-
-private theorem helper_hstarV_360.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (_ : HierarchyBase ett phi) (U : TreeSequence G e0) (corrU :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi U) (baseU : HierarchyBase
-        corrU.replacementETT phi) (H : TashkinovHierarchy corrU.replacementETT baseU) (_ :
-        GoodHierarchy H) (W : TreeSequence G e0) (corrW : CorrespondingExtendedTashkinovTree G k
-        e0 ett phi W) (baseW : HierarchyBase corrW.replacementETT phi) (HW : TashkinovHierarchy
-        corrW.replacementETT baseW) (hcountW : HW.dividerCount = H.dividerCount + (1 : ℕ)) (_ :
-        HierarchyStarredStage HW (Fin.last HW.dividerCount) = U) (V' : TreeSequence G e0) (corrV :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi V') (baseV : HierarchyBase
-        corrV.replacementETT phi) (K : TashkinovHierarchy corrV.replacementETT baseV) (hcount :
-        K.dividerCount = HW.dividerCount) (_ : (
-    ∀ (j : Fin (HW.dividerCount + (1 : ℕ))), K.stage (⟨(↑j : ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (2 : ℕ))) = HW.stage j.castSucc ∧ HierarchyStarredStage K (⟨(↑j :
-        ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = HierarchyStarredStage HW j ∧ HierarchyStoredColorsAt K
-        (⟨(↑j : ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = HierarchyStoredColorsAt HW j)) (_ : (⟨HW.dividerCount,
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = Fin.last K.dividerCount), HierarchyStarredStage K
-        (Fin.last K.dividerCount) = U := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base U corrU baseU H good W corrW baseW HW hcountW
-      hstarW V' corrV baseV K hcount hcarry hlastIndex
-  have hh := (hcarry (Fin.last HW.dividerCount)).2.1
-  change HierarchyStarredStage K ⟨HW.dividerCount, by omega⟩ =
-    HierarchyStarredStage HW (Fin.last HW.dividerCount) at hh
-  rw [hlastIndex] at hh
-  exact hh.trans hstarW
-
-private theorem helper_hnewStoredV_366.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (_ : HierarchyBase ett phi) (U : TreeSequence G e0) (corrU :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi U) (baseU : HierarchyBase
-        corrU.replacementETT phi) (H : TashkinovHierarchy corrU.replacementETT baseU) (_ :
-        GoodHierarchy H) (W : TreeSequence G e0) (corrW : CorrespondingExtendedTashkinovTree G k
-        e0 ett phi W) (baseW : HierarchyBase corrW.replacementETT phi) (HW : TashkinovHierarchy
-        corrW.replacementETT baseW) (hcountW : HW.dividerCount = H.dividerCount + (1 : ℕ)) (_ :
-        HierarchyStoredColorsAt HW (Fin.last HW.dividerCount) = HierarchyTerminalStoredColors H)
-        (V' : TreeSequence G e0) (corrV : CorrespondingExtendedTashkinovTree G k e0 ett phi V')
-        (baseV : HierarchyBase corrV.replacementETT phi) (K : TashkinovHierarchy
-        corrV.replacementETT baseV) (hcount : K.dividerCount = HW.dividerCount) (_ : (
-    ∀ (j : Fin (HW.dividerCount + (1 : ℕ))), K.stage (⟨(↑j : ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (2 : ℕ))) = HW.stage j.castSucc ∧ HierarchyStarredStage K (⟨(↑j :
-        ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = HierarchyStarredStage HW j ∧ HierarchyStoredColorsAt K
-        (⟨(↑j : ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = HierarchyStoredColorsAt HW j)) (_ : (⟨HW.dividerCount,
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = Fin.last K.dividerCount), HierarchyStoredColorsAt K
-        (Fin.last K.dividerCount) = HierarchyTerminalStoredColors H := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base U corrU baseU H good W corrW baseW HW hcountW
-      hnewStoredW V' corrV baseV K hcount hcarry hlastIndex
-  have hh := (hcarry (Fin.last HW.dividerCount)).2.2
-  change HierarchyStoredColorsAt K ⟨HW.dividerCount, by omega⟩ =
-    HierarchyStoredColorsAt HW (Fin.last HW.dividerCount) at hh
-  rw [hlastIndex] at hh
-  exact hh.trans hnewStoredW
-
-private theorem helper_branch_397.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (_ : HierarchyBase ett phi) (U : TreeSequence G e0) (corrU :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi U) (baseU : HierarchyBase
-        corrU.replacementETT phi) (H : TashkinovHierarchy corrU.replacementETT baseU) (_ :
-        GoodHierarchy H) (W : TreeSequence G e0) (corrW : CorrespondingExtendedTashkinovTree G k
-        e0 ett phi W) (baseW : HierarchyBase corrW.replacementETT phi) (HW : TashkinovHierarchy
-        corrW.replacementETT baseW) (hcountW : HW.dividerCount = H.dividerCount + (1 : ℕ)) (_ : (
-    ∀ (j : Fin (H.dividerCount + (2 : ℕ))), HW.stage (Fin.castLE (
-    by omega
-    ) j) = H.stage j)) (V' : TreeSequence G e0) (corrV : CorrespondingExtendedTashkinovTree G k e0
-        ett phi V') (baseV : HierarchyBase corrV.replacementETT phi) (K : TashkinovHierarchy
-        corrV.replacementETT baseV) (hcount : K.dividerCount = HW.dividerCount) (_ :
-        K.dividerCount = H.dividerCount + (1 : ℕ)) (_ : (
-    ∀ (j : Fin (HW.dividerCount + (1 : ℕ))), K.stage (⟨(↑j : ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (2 : ℕ))) = HW.stage j.castSucc ∧ HierarchyStarredStage K (⟨(↑j :
-        ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = HierarchyStarredStage HW j ∧ HierarchyStoredColorsAt K
-        (⟨(↑j : ℕ),
-    by omega
-    ⟩ : Fin (K.dividerCount + (1 : ℕ))) = HierarchyStoredColorsAt HW j)) (j : Fin (H.dividerCount
-        + (2 : ℕ))), K.stage (Fin.castLE (
-    by omega
-    ) j) = H.stage j := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base U corrU baseU H good W corrW baseW HW hcountW
-      hstagesW V' corrV baseV K hcount hcountV hcarry j
-  have hh := (hcarry (⟨j.val, by omega⟩ : Fin (HW.dividerCount + 1))).1
-  calc
-    K.stage (Fin.castLE (by omega) j) =
-        HW.stage (Fin.castLE (by omega) j) := by
-      convert hh using 1 <;> congr 1
-    _ = H.stage j := hstagesW j
-
-private theorem helper_branch_404.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (_ : HierarchyBase ett phi) (U : TreeSequence G e0) (corrU :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi U) (baseU : HierarchyBase
-        corrU.replacementETT phi) (H : TashkinovHierarchy corrU.replacementETT baseU) (_ :
-        GoodHierarchy H) (W : TreeSequence G e0) (corrW : CorrespondingExtendedTashkinovTree G k
-        e0 ett phi W) (baseW : HierarchyBase corrW.replacementETT phi) (HW : TashkinovHierarchy
-        corrW.replacementETT baseW) (hcountW : HW.dividerCount = H.dividerCount + (1 : ℕ)) (_ : (
-    ∀ (i : Fin H.dividerCount), (↑(HW.dividerPosition (Fin.castLE (
-    by omega
-    ) i)) : ℕ) = (↑(H.dividerPosition i) : ℕ))) (V' : TreeSequence G e0) (corrV :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi V') (baseV : HierarchyBase
-        corrV.replacementETT phi) (K : TashkinovHierarchy corrV.replacementETT baseV) (hcount :
-        K.dividerCount = HW.dividerCount) (_ : (
-    ∀ (i : Fin K.dividerCount), (↑(K.dividerPosition i) : ℕ) = (↑(HW.dividerPosition (Fin.cast
-        hcount i)) : ℕ))) (_ : K.dividerCount = H.dividerCount + (1 : ℕ)) (i : Fin
-        H.dividerCount), (↑(K.dividerPosition (Fin.castLE (
-    by omega
-    ) i)) : ℕ) = (↑(H.dividerPosition i) : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base U corrU baseU H good W corrW baseW HW hcountW
-      hdividersW V' corrV baseV K hcount hdividersV hcountV i
-  have hh := hdividersV (Fin.castLE (by omega) i)
-  have hi : Fin.cast hcount (Fin.castLE (by omega) i) =
-      Fin.castLE (by omega) i := Fin.ext rfl
-  rw [hi] at hh
-  exact hh.trans (hdividersW i)
-
-private theorem helper_branch_410.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (U : TreeSequence G e0) (corrU : CorrespondingExtendedTashkinovTree G k e0
-        ett phi U) (baseU : HierarchyBase corrU.replacementETT phi) (H : TashkinovHierarchy
-        corrU.replacementETT baseU) (W : TreeSequence G e0) (corrW :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi W) (baseW : HierarchyBase
-        corrW.replacementETT phi) (HW : TashkinovHierarchy corrW.replacementETT baseW) (hcountW :
-        HW.dividerCount = H.dividerCount + (1 : ℕ)) (_ : (↑(HW.dividerPosition (Fin.cast (
-    by omega
-    ) (Fin.last H.dividerCount))) : ℕ) = U.length) (V' : TreeSequence G e0) (corrV :
-        CorrespondingExtendedTashkinovTree G k e0 ett phi V') (baseV : HierarchyBase
-        corrV.replacementETT phi) (K : TashkinovHierarchy corrV.replacementETT baseV) (hcount :
-        K.dividerCount = HW.dividerCount) (_ : (
-    ∀ (i : Fin K.dividerCount), (↑(K.dividerPosition i) : ℕ) = (↑(HW.dividerPosition (Fin.cast
-        hcount i)) : ℕ))) (_ : K.dividerCount = H.dividerCount + (1 : ℕ)), (↑(K.dividerPosition
-        (Fin.cast (
-    by omega
-    ) (Fin.last H.dividerCount))) : ℕ) = U.length := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett U corrU baseU H W corrW baseW HW hcountW hnewDividerW
-      V' corrV baseV K hcount hdividersV hcountV
-  have hh := hdividersV (Fin.cast hcountV.symm (Fin.last H.dividerCount))
-  have hi : Fin.cast hcount (Fin.cast hcountV.symm (Fin.last H.dividerCount)) =
-      Fin.cast hcountW.symm (Fin.last H.dividerCount) := Fin.ext rfl
-  rw [hi] at hh
-  exact hh.trans hnewDividerW
-
 theorem AlgorithmFiveSixFixedRootRefresh
     {V E : Type*} [Fintype V] [Fintype E]
     [DecidableEq V] [DecidableEq E]
@@ -507,9 +242,7 @@ theorem AlgorithmFiveSixFixedRootRefresh
     · obtain ⟨_, f0, _, hadjoinJ⟩ := hnonPE
       exact hadjoinJ.2.1
   have hJWsegment := TashkinovAugmentationSequenceInitialSegment phi J W hJW
-  have hTnW :=
-    @helper_hTnW_292 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0) (@input)
-        (@T) (@phi) (@ett) (@J) (@W) (@hTnJ) (@hJWsegment)
+  have hTnW := hTnJ.trans hJWsegment
   have hTnStrictW : Tn.length < W.length := by
     have hTnLeJ := hTnJ.1
     have hJLeU := (TashkinovAugmentationSequenceInitialSegment phi J U hroute).1
@@ -545,10 +278,16 @@ theorem AlgorithmFiveSixFixedRootRefresh
     GoodHierarchyRestrictedAugmentation G k e0 input T phi phi ett hmod hMP
       W corrW baseW HW goodW
   have hcountV : K.dividerCount = H.dividerCount + 1 := hcount.trans hcountW
-  have hcarry := @helper_hcarry_334 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@U) (@corrU) (@baseU) (@H)
-      (@good) (@W) (@corrW) (@baseW) (@HW) (@hcountW) (@V') (@corrV) (@baseV) (@K) (@hcount)
-      (@hstagesV)
+  have hcarry (j : Fin (HW.dividerCount + 1)) :
+      K.stage ⟨j.val, by omega⟩ = HW.stage j.castSucc ∧
+      HierarchyStarredStage K ⟨j.val, by omega⟩ = HierarchyStarredStage HW j ∧
+      HierarchyStoredColorsAt K ⟨j.val, by omega⟩ = HierarchyStoredColorsAt HW j := by
+    have hh := hstagesV (⟨j.val, by omega⟩ : Fin (K.dividerCount + 1))
+    dsimp only at hh
+    have hi : Fin.cast (congrArg (fun n : Nat => n + 1) hcount)
+        (⟨j.val, by omega⟩ : Fin (K.dividerCount + 1)) = j := Fin.ext rfl
+    rw [hi] at hh
+    exact ⟨hh.1, hh.2.1, hh.2.2.1⟩
   have hcarryGamma (j : Fin (HW.dividerCount + 1)) (theta : Fin k) :
       goodV.gamma ⟨j.val, by omega⟩ theta = goodW.gamma j theta := by
     have hh := hgammaV (⟨j.val, by omega⟩ : Fin (K.dividerCount + 1)) theta
@@ -559,21 +298,25 @@ theorem AlgorithmFiveSixFixedRootRefresh
       Fin.last K.dividerCount := Fin.ext (by simpa using hcount.symm)
   have hlastStageIndex : (⟨HW.dividerCount, by omega⟩ : Fin (K.dividerCount + 2)) =
       (Fin.last K.dividerCount).castSucc := Fin.ext (by simpa using hcount.symm)
-  have hprecedingV :=
-    @helper_hprecedingV_354 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@U) (@corrU) (@baseU) (@H) (@good)
-        (@W) (@corrW) (@baseW) (@HW) (@hcountW) (@hprecedingW) (@V') (@corrV) (@baseV) (@K)
-        (@hcount) (@hcarry) (@hlastStageIndex)
-  have hstarV :=
-    @helper_hstarV_360 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@U) (@corrU) (@baseU) (@H) (@good) (@W)
-        (@corrW) (@baseW) (@HW) (@hcountW) (@hstarW) (@V') (@corrV) (@baseV) (@K) (@hcount)
-        (@hcarry) (@hlastIndex)
-  have hnewStoredV :=
-    @helper_hnewStoredV_366 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@U) (@corrU) (@baseU) (@H) (@good)
-        (@W) (@corrW) (@baseW) (@HW) (@hcountW) (@hnewStoredW) (@V') (@corrV) (@baseV) (@K)
-        (@hcount) (@hcarry) (@hlastIndex)
+  have hprecedingV : K.stage (Fin.last K.dividerCount).castSucc = U := by
+    have hh := (hcarry (Fin.last HW.dividerCount)).1
+    change K.stage ⟨HW.dividerCount, by omega⟩ =
+      HW.stage (Fin.last HW.dividerCount).castSucc at hh
+    rw [hlastStageIndex] at hh
+    exact hh.trans hprecedingW
+  have hstarV : HierarchyStarredStage K (Fin.last K.dividerCount) = U := by
+    have hh := (hcarry (Fin.last HW.dividerCount)).2.1
+    change HierarchyStarredStage K ⟨HW.dividerCount, by omega⟩ =
+      HierarchyStarredStage HW (Fin.last HW.dividerCount) at hh
+    rw [hlastIndex] at hh
+    exact hh.trans hstarW
+  have hnewStoredV : HierarchyStoredColorsAt K (Fin.last K.dividerCount) =
+      HierarchyTerminalStoredColors H := by
+    have hh := (hcarry (Fin.last HW.dividerCount)).2.2
+    change HierarchyStoredColorsAt K ⟨HW.dividerCount, by omega⟩ =
+      HierarchyStoredColorsAt HW (Fin.last HW.dividerCount) at hh
+    rw [hlastIndex] at hh
+    exact hh.trans hnewStoredW
   have hlastGamma (theta : Fin k) : goodV.gamma (Fin.last K.dividerCount) theta =
       goodW.gamma (Fin.last HW.dividerCount) theta := by
     have hh := hcarryGamma (Fin.last HW.dividerCount) theta
@@ -598,18 +341,23 @@ theorem AlgorithmFiveSixFixedRootRefresh
   · simpa only [bne_iff_ne] using hne
   · intro theta htheta hthetaNe
     exact hcopiedW theta htheta (by simpa only [bne_iff_ne] using hthetaNe)
-  · exact @helper_branch_397 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@U) (@corrU) (@baseU) (@H) (@good)
-      (@W) (@corrW) (@baseW) (@HW) (@hcountW) (@hstagesW) (@V') (@corrV) (@baseV) (@K) (@hcount)
-      (@hcountV) (@hcarry)
-  · exact @helper_branch_404 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@U) (@corrU) (@baseU) (@H) (@good)
-      (@W) (@corrW) (@baseW) (@HW) (@hcountW) (@hdividersW) (@V') (@corrV) (@baseV) (@K)
-      (@hcount) (@hdividersV) (@hcountV)
-  · exact @helper_branch_410 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@U) (@corrU) (@baseU) (@H) (@W) (@corrW)
-      (@baseW) (@HW) (@hcountW) (@hnewDividerW) (@V') (@corrV) (@baseV) (@K) (@hcount)
-      (@hdividersV) (@hcountV)
+  · intro j
+    have hh := (hcarry (⟨j.val, by omega⟩ : Fin (HW.dividerCount + 1))).1
+    calc
+      K.stage (Fin.castLE (by omega) j) = HW.stage (Fin.castLE (by omega) j) := by
+        convert hh using 1 <;> congr 1
+      _ = H.stage j := hstagesW j
+  · intro i
+    have hh := hdividersV (Fin.castLE (by omega) i)
+    have hi : Fin.cast hcount (Fin.castLE (by omega) i) =
+        Fin.castLE (by omega) i := Fin.ext rfl
+    rw [hi] at hh
+    exact hh.trans (hdividersW i)
+  · have hh := hdividersV (Fin.cast hcountV.symm (Fin.last H.dividerCount))
+    have hi : Fin.cast hcount (Fin.cast hcountV.symm (Fin.last H.dividerCount)) =
+        Fin.cast hcountW.symm (Fin.last H.dividerCount) := Fin.ext rfl
+    rw [hi] at hh
+    exact hh.trans hnewDividerW
   · intro j
     have hh := (hcarry (Fin.castLE (by omega) j)).2.2
     exact hh.trans (hstoredW j)

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation5
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation4
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation3
@@ -1023,13 +1024,8 @@ theorem helper_continuation_4653.{u_1, u_2} :
     simpa only [hj] using hs
   -- Path candidates restrict to the shorter prefix; the second measure decreases strictly.
   have pathLe : HierarchyPathNumber HS ≤ HierarchyPathNumber H := by
-    exact @helper_pathLe_5303 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta) (@AToT) (@hAib)
-        (@BToT) (@ABstrict) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@corr)
-        (@baseS) (@count) (@stages) (@hbbase) (@hbterminal) (@hbnested) (@hbstrict) (@positions)
-        (@hbpositive) (@hbincreasing) (@hbdivider) (@hbcore) (@positionsS) (@hspositive)
-        (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested) (@hsstrict) (@hsdivider) (@hscore)
-        (@hstarLast)
+    exact H.pathNumber_le_of_prefix HS
+      (congrArg (fun S : TreeSequence G e0 => S.length) hstarLast) BToT ABstrict
   have tailLess : B.length - (HS.stage (Fin.last count).castSucc).length <
       T.length - (H.stage q.castSucc).length := by
     rw [hlastOrd]

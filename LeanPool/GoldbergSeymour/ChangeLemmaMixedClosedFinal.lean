@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
 public import LeanPool.GoldbergSeymour.StableHierarchyReplacement
 
 
@@ -1253,12 +1254,8 @@ private theorem helper_continuation_5185.{u_1, u_2} :
     simpa only [hj] using hs
   -- Path candidates restrict to the shorter prefix; the second measure decreases strictly.
   have pathLe : HierarchyPathNumber HS ≤ HierarchyPathNumber H := by
-    exact @GoldbergSeymour.SharedFacts.MixedChangeTransport.pathLengthUpperBound (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta) (@AToT) (@hAib)
-        (@BToT) (@ABstrict) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@corr) (@baseS)
-        (@count) (@stages) (@positionsS) (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal)
-        (@hsnested) (@hsstrict) (@hsdivider) (@hscore) (@hstarLast)
+    exact H.pathNumber_le_of_prefix HS
+      (congrArg (fun S : TreeSequence G e0 => S.length) hstarLast) BToT ABstrict
   have tailLess : B.length - (HS.stage (Fin.last count).castSucc).length <
       T.length - (H.stage q.castSucc).length := by
     clear * - hlastOrd ordinaryToA BstrictT ABstrict AToT

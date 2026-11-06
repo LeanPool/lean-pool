@@ -887,7 +887,8 @@ private abbrev helperContinuation1015Conditions.{u_1, u_2} : Prop :=
        (h : a = b) →
         (S : TashkinovSeries G k a e0 corr.replacementInput) →
          TashkinovSeries G k b e0 corr.replacementInput :=
-      fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) ↦ (h ▸ S);
+      fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) ↦
+        S.castRounds h;
      ∀
       (castSeriesTree :
        ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput)
@@ -895,19 +896,7 @@ private abbrev helperContinuation1015Conditions.{u_1, u_2} : Prop :=
       (castSeriesColoring :
        ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput)
         (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.coloring i = S.data.coloring (Fin.cast (by omega) i))
-      (castSeriesStored :
-       ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput)
-        (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.stored i = S.data.stored (Fin.cast (by omega) i))
-      (castSeriesEdges :
-       ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput)
-        (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.connectingEdges i = S.data.connectingEdges (Fin.cast (by omega) i))
-      (castSeriesKind :
-       ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput)
-        (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.kind i = S.data.kind (Fin.cast (by omega) i)),
+        (castSeries h S).data.coloring i = S.data.coloring (Fin.cast (by omega) i)),
       let finalSeries : TashkinovSeries G k ett.rounds e0 corr.replacementInput :=
        castSeries hroundsEq extendedSeries;
       ∀
@@ -988,7 +977,8 @@ private abbrev helperContinuation1218Conditions.{u_1, u_2} : Prop :=
         (h : a = b) →
          (S : TashkinovSeries G k a e0 corr.replacementInput) →
           TashkinovSeries G k b e0 corr.replacementInput :=
-       fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) ↦ (h ▸ S);
+       fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) ↦
+        S.castRounds h;
       ∀
        (castSeriesTree :
         ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput)
@@ -997,19 +987,7 @@ private abbrev helperContinuation1218Conditions.{u_1, u_2} : Prop :=
        (castSeriesColoring :
         ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput)
          (i : Fin (b + (1 : ℕ))),
-         (castSeries h S).data.coloring i = S.data.coloring (Fin.cast (by omega) i))
-       (castSeriesStored :
-        ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput)
-         (i : Fin (b + (1 : ℕ))),
-         (castSeries h S).data.stored i = S.data.stored (Fin.cast (by omega) i))
-       (castSeriesEdges :
-        ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput)
-         (i : Fin (b + (1 : ℕ))),
-         (castSeries h S).data.connectingEdges i = S.data.connectingEdges (Fin.cast (by omega) i))
-       (castSeriesKind :
-        ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput)
-         (i : Fin (b + (1 : ℕ))),
-         (castSeries h S).data.kind i = S.data.kind (Fin.cast (by omega) i)),
+         (castSeries h S).data.coloring i = S.data.coloring (Fin.cast (by omega) i)),
        let finalSeries : TashkinovSeries G k ett.rounds e0 corr.replacementInput :=
         castSeries hroundsEq extendedSeries;
        ∀
@@ -1647,24 +1625,12 @@ private theorem helper_continuation_1015.{u_1, u_2} :
       currentEdges currentKind sigmaPrev hroundLarge originalPrefix hr hprefixTrees hprefixData
       corr horiginalPositive newStored newEdges newKind newVertex newOutside newDelta newGamma
       extendedSeries hextendedData hroundsEq castSeries castSeriesTree castSeriesColoring
-      castSeriesStored castSeriesEdges castSeriesKind finalSeries hfinalPenultimateTree hfinalTree
-  let rawFinalColor : Fin (originalPrefix.rounds + 2) :=
-    Fin.cast
-      (congrArg (fun m : ℕ => m + 1) hroundsEq.symm)
-      (Fin.last ett.rounds)
-  have hrawFinalColor : rawFinalColor =
-      Fin.last (originalPrefix.rounds + 1) := by
-    apply Fin.ext
-    simp [rawFinalColor]
+      finalSeries hfinalPenultimateTree hfinalTree
   have hfinalColor : finalSeries.data.coloring
         (Fin.last ett.rounds) = sigma := by
     change (extendedSeries.castRounds hroundsEq).data.coloring (Fin.last ett.rounds) = sigma
     rw [TashkinovSeries.castRounds_finalColoring, hextendedData]
     simp [TashkinovSeriesDataAppend]
-  let rawDataIndex (i : Fin (ett.rounds + 1)) :
-      Fin (originalPrefix.rounds + 2) :=
-    Fin.cast
-      (congrArg (fun m : ℕ => m + 1) hroundsEq.symm) i
   have hseriesDataAgree : ∀ i : Fin (ett.rounds + 1),
       finalSeries.data.stored i = ett.series.data.stored i ∧
       finalSeries.data.connectingEdges i =
@@ -1687,10 +1653,6 @@ private theorem helper_continuation_1015.{u_1, u_2} :
       · simpa only [hqSucc] using currentStored.symm
       · simpa only [hqSucc] using currentEdges.symm
       · simpa only [hqSucc] using currentKind.symm
-  let rawTreeIndex (i : Fin (ett.rounds + 2)) :
-      Fin (originalPrefix.rounds + 3) :=
-    Fin.cast
-      (congrArg (fun m : ℕ => m + 2) hroundsEq.symm) i
   have hseriesTreeAgree : ∀ i : Fin ett.rounds,
       finalSeries.data.tree i.succ.castSucc =
         ett.series.data.tree i.succ.castSucc := by
@@ -1773,56 +1735,14 @@ private theorem helper_caseContinuation_422.{u_1, u_2} :
   have hroundsEq : originalPrefix.rounds + 1 = ett.rounds := by
     rw [hr]
     omega
-  let castSeries {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput) :
-      TashkinovSeries G k b e0 corr.replacementInput := by
-    subst b
-    exact S
-  have castSeriesTree : ∀ {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput)
-      (i : Fin (b + 2)),
-      (castSeries h S).data.tree i =
-        S.data.tree
-          (Fin.cast (congrArg (fun m : ℕ => m + 2) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesColoring : ∀ {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput)
-      (i : Fin (b + 1)),
-      (castSeries h S).data.coloring i =
-        S.data.coloring
-          (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesStored : ∀ {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput)
-      (i : Fin (b + 1)),
-      (castSeries h S).data.stored i =
-        S.data.stored
-          (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesEdges : ∀ {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput)
-      (i : Fin (b + 1)),
-      (castSeries h S).data.connectingEdges i =
-        S.data.connectingEdges
-          (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesKind : ∀ {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput)
-      (i : Fin (b + 1)),
-      (castSeries h S).data.kind i =
-        S.data.kind
-          (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
+  let castSeries := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) => S.castRounds h
+  let castSeriesTree := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 2)) =>
+    S.castRounds_tree h i
+  let castSeriesColoring := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 1)) =>
+    S.castRounds_coloring h i
   let finalSeries : TashkinovSeries G k ett.rounds e0
       corr.replacementInput :=
     castSeries hroundsEq extendedSeries
@@ -1848,14 +1768,6 @@ private theorem helper_caseContinuation_422.{u_1, u_2} :
       _ = ett.series.data.tree (Fin.last ett.rounds).castSucc :=
         hreplacementCurrentTree.trans
           (congrArg ett.series.data.tree (congrArg Fin.castSucc hqSucc))
-  let rawFinalTree : Fin (originalPrefix.rounds + 3) :=
-    Fin.cast
-      (congrArg (fun m : ℕ => m + 2) hroundsEq.symm)
-      (Fin.last (ett.rounds + 1))
-  have hrawFinalTree : rawFinalTree =
-      Fin.last (originalPrefix.rounds + 2) := by
-    apply Fin.ext
-    simp [rawFinalTree]
   have hfinalTree : finalSeries.data.tree
         (Fin.last (ett.rounds + 1)) = closureTree := by
     change (extendedSeries.castRounds hroundsEq).data.tree (Fin.last (ett.rounds + 1)) = closureTree
@@ -1867,7 +1779,7 @@ private theorem helper_caseContinuation_422.{u_1, u_2} :
       (@choice) (@currentStored) (@currentEdges) (@currentKind) (@sigmaPrev) (@hroundLarge)
       (@originalPrefix) (@hr) (@hprefixTrees) (@hprefixData) (@corr) (@horiginalPositive)
       (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesTree) (@castSeriesColoring)
-      (@castSeriesStored) (@castSeriesEdges) (@castSeriesKind) (@hfinalPenultimateTree)
+      (@hfinalPenultimateTree)
       (@hfinalTree)
 private theorem helper_continuation_1218.{u_1, u_2} :
     helperContinuation1218Conditions.{u_1, u_2} := by
@@ -1877,25 +1789,13 @@ private theorem helper_continuation_1218.{u_1, u_2} :
       currentStored currentEdges currentKind sigmaPrev H u p hroundLarge originalPrefix hr
       hprefixTrees hprefixData corr horiginalPositive newStored newEdges newKind newVertex
       newOutside newDelta newGamma extendedSeries hextendedData hroundsEq castSeries
-      castSeriesTree castSeriesColoring castSeriesStored castSeriesEdges castSeriesKind
+      castSeriesTree castSeriesColoring
       finalSeries hfinalPenultimateTree hfinalTree
-  let rawFinalColor : Fin (originalPrefix.rounds + 2) :=
-    Fin.cast
-      (congrArg (fun m : ℕ => m + 1) hroundsEq.symm)
-      (Fin.last ett.rounds)
-  have hrawFinalColor : rawFinalColor =
-      Fin.last (originalPrefix.rounds + 1) := by
-    apply Fin.ext
-    simp [rawFinalColor]
   have hfinalColor : finalSeries.data.coloring
         (Fin.last ett.rounds) = sigma := by
     change (extendedSeries.castRounds hroundsEq).data.coloring (Fin.last ett.rounds) = sigma
     rw [TashkinovSeries.castRounds_finalColoring, hextendedData]
     simp [TashkinovSeriesDataAppend]
-  let rawDataIndex (i : Fin (ett.rounds + 1)) :
-      Fin (originalPrefix.rounds + 2) :=
-    Fin.cast
-      (congrArg (fun m : ℕ => m + 1) hroundsEq.symm) i
   have hseriesDataAgree : ∀ i : Fin (ett.rounds + 1),
       finalSeries.data.stored i = ett.series.data.stored i ∧
       finalSeries.data.connectingEdges i =
@@ -1918,10 +1818,6 @@ private theorem helper_continuation_1218.{u_1, u_2} :
       · simpa only [hqSucc] using currentStored.symm
       · simpa only [hqSucc] using currentEdges.symm
       · simpa only [hqSucc] using currentKind.symm
-  let rawTreeIndex (i : Fin (ett.rounds + 2)) :
-      Fin (originalPrefix.rounds + 3) :=
-    Fin.cast
-      (congrArg (fun m : ℕ => m + 2) hroundsEq.symm) i
   have hseriesTreeAgree : ∀ i : Fin ett.rounds,
       finalSeries.data.tree i.succ.castSucc =
         ett.series.data.tree i.succ.castSucc := by
@@ -2004,56 +1900,14 @@ private theorem helper_caseContinuation_1078.{u_1, u_2} :
   have hroundsEq : originalPrefix.rounds + 1 = ett.rounds := by
     rw [hr]
     omega
-  let castSeries {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput) :
-      TashkinovSeries G k b e0 corr.replacementInput := by
-    subst b
-    exact S
-  have castSeriesTree : ∀ {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput)
-      (i : Fin (b + 2)),
-      (castSeries h S).data.tree i =
-        S.data.tree
-          (Fin.cast (congrArg (fun m : ℕ => m + 2) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesColoring : ∀ {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput)
-      (i : Fin (b + 1)),
-      (castSeries h S).data.coloring i =
-        S.data.coloring
-          (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesStored : ∀ {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput)
-      (i : Fin (b + 1)),
-      (castSeries h S).data.stored i =
-        S.data.stored
-          (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesEdges : ∀ {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput)
-      (i : Fin (b + 1)),
-      (castSeries h S).data.connectingEdges i =
-        S.data.connectingEdges
-          (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesKind : ∀ {a b : ℕ} (h : a = b)
-      (S : TashkinovSeries G k a e0 corr.replacementInput)
-      (i : Fin (b + 1)),
-      (castSeries h S).data.kind i =
-        S.data.kind
-          (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
+  let castSeries := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) => S.castRounds h
+  let castSeriesTree := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 2)) =>
+    S.castRounds_tree h i
+  let castSeriesColoring := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 1)) =>
+    S.castRounds_coloring h i
   let finalSeries : TashkinovSeries G k ett.rounds e0
       corr.replacementInput :=
     castSeries hroundsEq extendedSeries
@@ -2079,14 +1933,6 @@ private theorem helper_caseContinuation_1078.{u_1, u_2} :
       _ = ett.series.data.tree (Fin.last ett.rounds).castSucc :=
         hreplacementCurrentTree.trans
           (congrArg ett.series.data.tree (congrArg Fin.castSucc hqSucc))
-  let rawFinalTree : Fin (originalPrefix.rounds + 3) :=
-    Fin.cast
-      (congrArg (fun m : ℕ => m + 2) hroundsEq.symm)
-      (Fin.last (ett.rounds + 1))
-  have hrawFinalTree : rawFinalTree =
-      Fin.last (originalPrefix.rounds + 2) := by
-    apply Fin.ext
-    simp [rawFinalTree]
   have hfinalTree : finalSeries.data.tree
         (Fin.last (ett.rounds + 1)) = closureTree := by
     change (extendedSeries.castRounds hroundsEq).data.tree (Fin.last (ett.rounds + 1)) = closureTree
@@ -2098,7 +1944,7 @@ private theorem helper_caseContinuation_1078.{u_1, u_2} :
       (@gamma) (@choice) (@currentStored) (@currentEdges) (@currentKind) (@sigmaPrev) (@u) (@p)
       (@hroundLarge) (@originalPrefix) (@hr) (@hprefixTrees) (@hprefixData) (@corr)
       (@horiginalPositive) (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesTree)
-      (@castSeriesColoring) (@castSeriesStored) (@castSeriesEdges) (@castSeriesKind)
+      (@castSeriesColoring)
       (@hfinalPenultimateTree) (@hfinalTree)
 private theorem helper_continuation_1431.{u_1, u_2} :
     helperContinuation1431Conditions.{u_1, u_2} := by

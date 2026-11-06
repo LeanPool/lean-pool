@@ -49,6 +49,38 @@ theorem TashkinovSeries.castRounds_tree
   cases rounds
   rfl
 
+/-- Round casts commute with every coloring projection. -/
+theorem TashkinovSeries.castRounds_coloring
+    (series : TashkinovSeries G k r e0 input) (rounds : r = s) (i : Fin (s + 1)) :
+    (series.castRounds rounds).data.coloring i =
+      series.data.coloring (Fin.cast (congrArg (fun n : ℕ => n + 1) rounds.symm) i) := by
+  cases rounds
+  rfl
+
+/-- Round casts commute with every stored-color projection. -/
+theorem TashkinovSeries.castRounds_stored
+    (series : TashkinovSeries G k r e0 input) (rounds : r = s) (i : Fin (s + 1)) :
+    (series.castRounds rounds).data.stored i =
+      series.data.stored (Fin.cast (congrArg (fun n : ℕ => n + 1) rounds.symm) i) := by
+  cases rounds
+  rfl
+
+/-- Round casts commute with every connecting-edge projection. -/
+theorem TashkinovSeries.castRounds_connectingEdges
+    (series : TashkinovSeries G k r e0 input) (rounds : r = s) (i : Fin (s + 1)) :
+    (series.castRounds rounds).data.connectingEdges i =
+      series.data.connectingEdges (Fin.cast (congrArg (fun n : ℕ => n + 1) rounds.symm) i) := by
+  cases rounds
+  rfl
+
+/-- Round casts commute with every extension-kind projection. -/
+theorem TashkinovSeries.castRounds_kind
+    (series : TashkinovSeries G k r e0 input) (rounds : r = s) (i : Fin (s + 1)) :
+    (series.castRounds rounds).data.kind i =
+      series.data.kind (Fin.cast (congrArg (fun n : ℕ => n + 1) rounds.symm) i) := by
+  cases rounds
+  rfl
+
 /-- Round casts preserve the last tree. -/
 theorem TashkinovSeries.castRounds_finalTree
     (series : TashkinovSeries G k r e0 input) (rounds : r = s) :

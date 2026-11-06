@@ -5638,45 +5638,23 @@ private theorem revisitingFinalSeries.{u_1, u_2} : revisitingFinalSeriesStatemen
   have hroundsEq : originalPrefix.rounds + 1 = ett.rounds := by
     rw [hr]
     omega
-  let castSeries {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) :
-    TashkinovSeries G k b e0 corr.replacementInput := by
-    subst b
-    exact S
-  have castSeriesTree :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 2)),
-      (castSeries h S).data.tree i =
-        S.data.tree (Fin.cast (congrArg (fun m : ℕ => m + 2) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesColoring :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 1)),
-      (castSeries h S).data.coloring i =
-        S.data.coloring (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesStored :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 1)),
-      (castSeries h S).data.stored i =
-        S.data.stored (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesEdges :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 1)),
-      (castSeries h S).data.connectingEdges i =
-        S.data.connectingEdges (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
-  have castSeriesKind :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 1)),
-      (castSeries h S).data.kind i =
-        S.data.kind (Fin.cast (congrArg (fun m : ℕ => m + 1) h.symm) i) := by
-    intro a b h S i
-    subst b
-    rfl
+  let castSeries := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) => S.castRounds h
+  let castSeriesTree := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 2)) =>
+    S.castRounds_tree h i
+  let castSeriesColoring := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 1)) =>
+    S.castRounds_coloring h i
+  let castSeriesStored := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 1)) =>
+    S.castRounds_stored h i
+  let castSeriesEdges := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 1)) =>
+    S.castRounds_connectingEdges h i
+  let castSeriesKind := fun {a b : ℕ} (h : a = b)
+      (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + 1)) =>
+    S.castRounds_kind h i
   let finalSeries : TashkinovSeries G k ett.rounds e0 corr.replacementInput :=
     castSeries hroundsEq extendedSeries
   let rawPenultimate : Fin (originalPrefix.rounds + 3) :=
