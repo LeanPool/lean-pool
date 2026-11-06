@@ -47,7 +47,7 @@ noncomputable def stepCF (θ : ℝ) : ℂ := ∫ z, cexp (θ * z * I) ∂(stepLa
 /-- The characteristic function `E e^{iθ S_n}` of the walk at time `n`. -/
 noncomputable def walkCF (n : ℕ) (θ : ℝ) : ℂ := ∫ z, cexp (θ * z * I) ∂(walkLaw μ n)
 
-lemma integral_conv_int {W P : Measure ℤ} [IsFiniteMeasure W] [IsFiniteMeasure P] (F : ℤ → ℂ) :
+lemma integral_conv_int {W P : Measure ℤ} (F : ℤ → ℂ) :
     ∫ z, F z ∂(W ∗ P) = ∫ p, F (p.1 + p.2) ∂(W.prod P) := by
   rw [Measure.conv, integral_map (by fun_prop) (measurable_of_countable _).aestronglyMeasurable]
 

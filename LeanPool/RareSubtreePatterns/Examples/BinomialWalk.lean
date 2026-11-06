@@ -39,6 +39,7 @@ lemma w_eq_zero {j : ℕ} (hj : j ∉ ({0, 1, 2} : Finset ℕ)) : w j = 0 := by
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hj
   simp [w, hj.1, hj.2.1, hj.2.2]
 
+/-- The binomial offspring weights as extended nonnegative reals. -/
 noncomputable def f (j : ℕ) : ℝ≥0∞ := ENNReal.ofReal (w j)
 
 /-- The offspring law Binomial(2, 1/2). -/
@@ -85,6 +86,7 @@ theorem latticeSpan_eq_one : Stable.latticeSpan μ = 1 := by
 /-- The normalizing sequence `a_n = √(n/4)`. -/
 noncomputable def a (n : ℕ) : ℝ := Real.sqrt (n / 4)
 
+/-- The truncated second-moment function at positive integer arguments. -/
 noncomputable def ℓ (x : ℝ) : ℝ := if x < 2 then 1 / 2 else 3 / 2
 
 /-- `∑_{j ≤ n} j² μ_j` is `1/2` for `n = 1` and `3/2` for `n ≥ 2`. -/

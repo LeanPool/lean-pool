@@ -28,8 +28,10 @@ open scoped Topology ENNReal NNReal
 namespace PoissonDeclumping.Examples.SimpleWalk
 open PoissonDeclumping PoissonDeclumping.Stable
 
+/-- Equal offspring weights at zero and two, with all other weights zero. -/
 noncomputable def f : ℕ → ℝ≥0∞ := fun j => if j = 0 ∨ j = 2 then 1 / 2 else 0
 
+/-- The critical binary offspring law `(δ₀ + δ₂)/2`. -/
 noncomputable def μ : PMF ℕ := PMF.ofFinset f {0, 2}
   (by
     simp only [f, one_div, Finset.mem_singleton, OfNat.zero_ne_ofNat, not_false_eq_true,
@@ -51,8 +53,10 @@ lemma critical : IsCritical μ := by
 
 lemma nondeg : μ 1 ≠ 1 := by simp [μ_apply, f]
 
+/-- The normalizing sequence `a_n = √(n/2)` for the symmetric walk. -/
 noncomputable def a (n : ℕ) : ℝ := Real.sqrt (n / 2)
 
+/-- The truncated second-moment function at positive integer arguments. -/
 noncomputable def ℓ (x : ℝ) : ℝ := if x < 2 then 0 else 2
 
 lemma toReal_μ (j : ℕ) : (μ j).toReal = if j = 0 ∨ j = 2 then 1 / 2 else 0 := by
