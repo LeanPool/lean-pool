@@ -1066,10 +1066,8 @@ theorem HierarchySituationOneAdvanceOutsideStored {V E : Type*}
           (Fin.last R.corresponding.replacementETT.rounds).castSucc) (T.edge t) ∧
           c ∈ TashkinovStoredColors R.corresponding.replacementETT.series.data
             (Fin.last R.corresponding.replacementETT.rounds) := by
-      exact SharedFacts.InsideAdvancement.tailException G k e0 input T phi ett base C ctx i
-          trans starEq hAT hlen
-          hBT fullEq fullB elementary
-          vertexMem R j hj hjlt c hc t hlo hhi hcol
+      exact SharedFacts.InsideAdvancement.tailException G k e0 input T phi ett base C ctx
+        starEq hAT hlen fullEq fullB elementary R j hj hjlt c hc t hlo hhi hcol
     have consecutive (t : Fin T.length)
         (ht : A.length + HierarchyPathNumber C.hierarchy ≤ t.val) :
         G.ends (T.edge t) = s(T.vertex t.castSucc, T.vertex t.succ) := by

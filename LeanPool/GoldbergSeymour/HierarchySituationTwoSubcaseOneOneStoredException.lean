@@ -5,13 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTailColorFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.StoredExceptionTransport
 
 
 
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseOneData
-public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
 public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
 public import LeanPool.GoldbergSeymour.NineN
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoFullTail
@@ -1617,134 +1618,6 @@ private theorem helper_lastX_1135.{u_1, u_2} :
   change X.length = D.penultimateVertexIndex.val
   exact hPenVal.symm
 
-private theorem helper_htailEdges_1141.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (D :
-        HierarchySituationTwoCaseOneData G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := HierarchyFullTailLength C;
-    let X : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (1 : ℕ));
-        TreeSequenceInitialSegment A T → ell = T.length - A.length → (↑D.lastEdgeIndex : ℕ) =
-        X.length → X.length + (1 : ℕ) = T.length → X.length = A.length + (ell - (1 : ℕ)) → (1 : ℕ)
-        ≤ ell - (1 : ℕ) → ell - (1 : ℕ) < ell → TreeSequenceInitialSegment X T →
-    ∀ (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (a b : Fin k), a ≠
-        b → (
-    ∀ (t : Fin T.length), A.length ≤ (↑t : ℕ) → P.coloring (T.edge t) ≠ some a) → b ∈
-        MissingColors G P.coloring (T.vertex D.penultimateVertexIndex) →
-    ∀ (lastColor : Fin k), P.coloring (T.edge D.lastEdgeIndex) = some lastColor → lastColor ∉
-        MissingColors G P.coloring (T.vertex D.penultimateVertexIndex) →
-    let J : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-        P.corresponding.replacementETT;
-    let C' : HierarchyCounterexample P.replacementBase := P.counterexample;
-    let col : PartialEdgeColoring E k := P.coloring;
-    let H' : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase := C'.hierarchy;
-    let q' : Fin (H'.dividerCount + (1 : ℕ)) := Fin.last H'.dividerCount;
-    let z : V ⊕ E := Sum.inl (T.vertex D.terminalVertexIndex);
-    let mu : PartialEdgeColoring E k := TwoColorComponentSwap G col a b z; HierarchyStarredStage
-        P.counterexample.hierarchy (Fin.last P.counterexample.hierarchy.dividerCount) = A ∧
-        HierarchyFullTailLength P.counterexample = ell ∧ HierarchyFullTailPrefix P.counterexample
-        (ell - (1 : ℕ)) = X ∧ HierarchyPathNumber P.counterexample.hierarchy = HierarchyPathNumber
-        H → HierarchyStarredStage H' q' = A → ColoredVertexSetElementary G col
-        (TreeSequenceVertexSet (HierarchyFullTailPrefix C' (HierarchyFullTailLength C' - (1 :
-        ℕ)))) →
-    let Tn : TreeSequence G e0 := J.series.data.tree (Fin.last J.rounds).castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors J.series.data (Fin.last J.rounds);
-        StableColoring Tn Dn col mu → X.vertex (Fin.last X.length) = T.vertex
-        D.penultimateVertexIndex →
-    ∀ (t : Fin T.length), A.length ≤ (↑t : ℕ) → mu (T.edge t) = col (T.edge t) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A ell X hAT hell hLastVal hTlen
-      hXexact hEllone hElllt hXT P a b hne haTail hb lastColor htheta hthetaPresent J C' col H'
-      q' z mu hg hstar' helemP Tn Dn stableTn lastX t ht
-  have hna : col (T.edge t) ≠ some a := haTail t ht
-  by_cases hcb : col (T.edge t) = some b
-  · by_cases hlast : t = D.lastEdgeIndex
-    · have htb : lastColor = b :=
-        Option.some.inj (htheta.symm.trans (hlast ▸ hcb))
-      exact (hthetaPresent (htb.symm ▸ hb)).elim
-    · have htX : t.val < X.length := by
-        have hle : t.val ≤ X.length := Nat.le_of_lt_succ
-          (by change t.val < X.length + 1; rw [hTlen]; exact t.isLt)
-        have hne : t.val ≠ X.length := by
-          intro he
-          exact hlast (Fin.ext (he.trans hLastVal.symm))
-        exact lt_of_le_of_ne hle hne
-      let r : Fin X.length := ⟨t.val, htX⟩
-      have hbLast : b ∈ MissingColors G col (X.vertex (Fin.last X.length)) := by
-        rw [lastX]
-        exact hb
-      let Y := HierarchyFullTailPrefix C' (ell - 1)
-      have hYX : Y = X := hg.2.2.1
-      let rY : Fin Y.length := Fin.cast (congrArg TreeSequence.length hYX.symm) r
-      have hrY : rY.val = t.val := rfl
-      have hedgeY : Y.edge rY = T.edge t := by
-        have edgeCast (U W : TreeSequence G e0) (h : U = W)
-            (i : Fin W.length) :
-            U.edge (Fin.cast (congrArg TreeSequence.length h.symm) i) = W.edge i := by
-          cases h
-          rfl
-        exact (edgeCast Y X hYX r).trans (hXT.2.2 r).symm
-      have hbY : b ∈ MissingColors G col (Y.vertex (Fin.last Y.length)) := by
-        rw [hYX]
-        exact hbLast
-      have hexc := HierarchyTailMissingColorExclusion G k e0
-        P.corresponding.replacementInput T col J P.replacementBase H'
-        helemP
-        (ell - 1) hEllone
-        (by
-          change ell - 1 < T.length - (HierarchyStarredStage H' q').length
-          rw [hstar', ← hell]
-          exact hElllt)
-        b hbY rY
-        (by
-          change (HierarchyStarredStage H' q').length ≤ rY.val
-          rw [hstar', hrY]
-          exact ht)
-        (by
-          change rY.val < (HierarchyStarredStage H' q').length + (ell - 1)
-          rw [hstar', hrY]
-          rw [← hXexact]
-          exact htX)
-        ((congrArg col hedgeY).trans hcb)
-      obtain ⟨hqzero, hcore, hrpos, f, hstep, hkind, hsingleton,
-        hrf, hfb, hstored⟩ := hexc
-      have hAcore : A = P.replacementBase.core := by
-        have hi : q' = 0 := by apply Fin.ext; simp [q', hqzero]
-        have hcore' : HierarchyStarredStage H' q' = P.replacementBase.core := by
-          rw [hi]
-          rfl
-        exact hstar'.symm.trans hcore'
-      have hATn : A = Tn := hAcore.trans hcore
-      have htpos : t.val = A.length := by
-        change rY.val = (HierarchyStarredStage H' q').length at hrpos
-        simpa only [hrY, hstar'] using hrpos
-      obtain ⟨j, hj⟩ := T.attaches t
-      let ia : Fin (A.length + 1) := ⟨j.val, by rw [← htpos]; exact j.isLt⟩
-      have hvertex : A.vertex ia =
-          T.vertex (Fin.castLT j (Nat.lt_trans j.isLt (Nat.succ_lt_succ t.isLt))) := by
-        rw [← hAT.2.1 ia]
-        apply congrArg T.vertex
-        apply Fin.ext
-        rfl
-      have hincident : TreeIncidentEdge Tn (T.edge t) := by
-        rw [← hATn]
-        refine ⟨A.vertex ia, ?_, ?_⟩
-        · exact (@Finset.mem_image _ _ (Classical.decEq V)).mpr
-            ⟨ia, Finset.mem_univ _, rfl⟩
-        · rw [hvertex]
-          simp [Incident, hj]
-      exact stableTn.1 (T.edge t) hincident
-        ⟨b, Finset.mem_union_right _ hstored, hcb⟩
-  · dsimp only [mu]
-    unfold TwoColorComponentSwap
-    simp only [ite_eq_right hna, ite_eq_right hcb, ite_self]
-
 private theorem helper_hsize_1264.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -3132,11 +3005,27 @@ private theorem helper_swapStep_3176.{u_1, u_2} : storedExceptionSwapStepStateme
           (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@hPenVal)
     have htailEdges : ∀ t : Fin T.length, A.length ≤ t.val →
         mu (T.edge t) = col (T.edge t) := by
-      exact @helper_htailEdges_1141 (@V) (@E) inferInstance inferInstance inferInstance
-          inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-          (@hAT) (@hell) (@hLastVal) (@hTlen) (@hXexact) (@hEllone) (@hElllt) (@hXT) (@P) (@a)
-          (@b) (@hne) (@haTail) (@hb) (@lastColor) (@htheta) (@hthetaPresent) (@hg) (@hstar')
-          (@helemP) (@stableTn) (@lastX)
+      let replacementHierarchy := C'.hierarchy
+      have starEqual : HierarchyStarredStage replacementHierarchy
+          (Fin.last replacementHierarchy.dividerCount) = A := hstar'
+      have tailPrefixEqual : HierarchyTailPrefix replacementHierarchy
+          (T.length - (HierarchyStarredStage replacementHierarchy
+            (Fin.last replacementHierarchy.dividerCount)).length - 1) = X := by
+        change HierarchyFullTailPrefix C' (HierarchyFullTailLength C' - 1) = X
+        rw [hg.2.1]
+        exact hg.2.2.1
+      have fixed := replacementHierarchy.stableComponentSwapOnTail
+        (alpha := a) (beta := b) (root := z)
+        (by rw [starEqual]; exact hAT) helemP
+        (by change 1 ≤ HierarchyFullTailLength C' - 1; rw [hg.2.1]; exact hEllone)
+        D.lastEdgeIndex (by rw [tailPrefixEqual]; exact hLastVal)
+        (by rw [tailPrefixEqual, lastX]; exact hb)
+        (by
+          intro colored
+          have equal : lastColor = b := Option.some.inj (htheta.symm.trans colored)
+          exact hthetaPresent (equal.symm ▸ hb)) stableTn
+        (by intro t lower; exact haTail t (by simpa only [starEqual] using lower))
+      exact fun t lower => fixed t (by simpa only [starEqual] using lower)
     have hfull := StableChangeCasesOneTwoFullTail G k e0
       P.corresponding.replacementInput T col J P.replacementBase C' P.minimumContext
       a b hne hmissingP z hpath mu rfl hcase' hdis

@@ -644,29 +644,7 @@ theorem missingColorsEquality.{u_1, u_2} : missingColorsEqualityStatement.{u_1, 
     rw [htree, treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset TnToA)]
   · exact treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageBToA i.succ))
 
-/-- A common proof used by the branches of this transport or construction argument. -/
-theorem firstMissingPositionUpperBound.{u_1, u_2} :
-    firstMissingPositionUpperBoundStatement.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A ib hAib B psi eta i hc
-  clear * - psi eta i hc
-  let candidates := Finset.univ.filter fun j => eta ∈ MissingColors G psi (B.vertex j)
-  have hi : i ∈ candidates := by simp [candidates, hc]
-  have hn : candidates.Nonempty := ⟨i, hi⟩
-  simpa [HierarchyFirstMissingPosition, candidates, hn] using
-    (show (candidates.min' hn).val ≤ i.val from Finset.min'_le candidates i hi)
 
-/-- A common proof used by the branches of this transport or construction argument. -/
-theorem beforeFirstMissingPosition.{u_1, u_2} : beforeFirstMissingPositionStatement.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A ib hAib B psi eta h
-  clear * - psi eta h
-  unfold HierarchyFirstMissingPosition at h ⊢
-  dsimp only at h ⊢
-  split_ifs with hn
-  · exact (Finset.mem_filter.mp (Finset.min'_mem _ hn)).2
-  · simp only [dite_eq_right hn, Fin.val_last] at h
-    omega
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem firstMissingPositionEquality.{u_1, u_2} : firstMissingPositionEqualityStatement.{u_1,

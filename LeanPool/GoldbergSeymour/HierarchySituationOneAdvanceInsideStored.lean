@@ -565,10 +565,8 @@ theorem HierarchySituationOneAdvanceInsideStored {V E : Type*}
       G k e0 input T phi ett base C ctx lastData
     have gammaUnused := SharedFacts.OutsideAdvancement.gammaUnused
       G k e0 input T phi ett base C ctx starEq
-    have tailException := @SharedFacts.InsideAdvancement.tailException V E inferInstance
-        inferInstance inferInstance
-        inferInstance G k e0 input T phi ett base C ctx i trans starEq hAT hlen hBT fullEq fullB
-        elementary vertexMem
+    have tailException := SharedFacts.InsideAdvancement.tailException
+      G k e0 input T phi ett base C ctx starEq hAT hlen fullEq fullB elementary
     have consecutive := @SharedFacts.InsideAdvancement.consecutive V E inferInstance
         inferInstance inferInstance
         inferInstance G k e0 input T phi ett base C i hpathUpper

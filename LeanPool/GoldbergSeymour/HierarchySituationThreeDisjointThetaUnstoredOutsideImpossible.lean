@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+
+
 public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 public import LeanPool.GoldbergSeymour.HierarchySituationThreeDisjointData
 public import LeanPool.GoldbergSeymour.HierarchySituationThreeEligibleIndexBound
@@ -1398,127 +1400,17 @@ theorem HierarchySituationThreeDisjointThetaUnstoredOutsideImpossible
         (∀ x ∈ B,
           MissingColors G (TwoColorComponentSwap G psi a b (Sum.inl w)) x =
             MissingColors G psi x) := by
-    clear * - G psi a b hne hproper B helem u v w hu hv huv hwu hwv hau hbv hw hsame
-    let J := TwoColorIncidenceGraph G psi a b
-    have leaf (x : V) (hx : a ∈ MissingColors G psi x ∨ b ∈ MissingColors G psi x) :
-        (J.neighborSet (Sum.inl x)).Subsingleton := by
-      have hd : @SimpleGraph.degree _ J (Sum.inl x) (Fintype.ofFinite _) ≤ 1 := by
-        rcases hx with hx | hx
-        · exact MissingColorIncidenceEndpoint G psi a b hne hproper x hx
-        · have hJ : TwoColorIncidenceGraph G psi b a = J := by
-            ext z z'
-            cases z <;> cases z' <;> simp [J, TwoColorIncidenceGraph, or_comm]
-          rw [← hJ]
-          exact MissingColorIncidenceEndpoint G psi b a hne.symm hproper x hx
-      let : Fintype (J.neighborSet (Sum.inl x)) := Fintype.ofFinite _
-      have hc : Fintype.card (J.neighborSet (Sum.inl x)) ≤ 1 := by
-        rw [SimpleGraph.card_neighborSet_eq_degree]
-        exact hd
-      intro z hz z' hz'
-      exact congrArg Subtype.val
-        (Fintype.card_le_one_iff.mp hc ⟨z, hz⟩ ⟨z', hz'⟩)
-    have hnot : Sum.inl w ∉ TwoColorComponent G psi a b (Sum.inl u) := by
-      intro hwC
-      obtain ⟨s, t, p, hp, hsupport⟩ :=
-        TwoColorComponentSpanningPath G psi a b hproper (Sum.inl u)
-      have endpoint (x : V)
-          (hxC : Sum.inl x ∈ TwoColorComponent G psi a b (Sum.inl u))
-          (hx : a ∈ MissingColors G psi x ∨ b ∈ MissingColors G psi x) :
-          Sum.inl x = s ∨ Sum.inl x = t := by
-        by_contra hh
-        push Not at hh
-        have hxP : Sum.inl x ∈ p.support := by
-          change Sum.inl x ∈ {z | z ∈ p.support}
-          rw [hsupport]
-          exact hxC
-        exact (hp.isTrail.notMem_support_of_subsingleton_neighborSet
-          hh.1 hh.2 (leaf x hx)) hxP
-      have huE := endpoint u (by rfl) (Or.inl hau)
-      have hvE := endpoint v (by rw [hsame]; rfl) (Or.inr hbv)
-      have hwE := endpoint w hwC hw
-      rcases huE with huE | huE <;> rcases hvE with hvE | hvE <;>
-        rcases hwE with hwE | hwE
-      all_goals first
-        | exact huv (Sum.inl.inj (huE.trans hvE.symm))
-        | exact hwu (Sum.inl.inj (hwE.trans huE.symm))
-        | exact hwv (Sum.inl.inj (hwE.trans hvE.symm))
-    have hdis : Disjoint (TwoColorComponent G psi a b (Sum.inl w))
-        (TwoColorComponent G psi a b (Sum.inl u)) := by
-      rcases TwoColorComponentsDisjoint G psi a b (Sum.inl w) (Sum.inl u) with hh | hh
-      · exact (hnot (by rw [← hh]; rfl)).elim
-      · exact hh
-    refine ⟨hdis, ⟨hne, Sum.inl w, by rfl, leaf w hw⟩, ?_⟩
-    let Q := TwoColorComponent G psi a b (Sum.inl w)
-    let tau := TwoColorComponentSwap G psi a b (Sum.inl w)
-    have huQ : Sum.inl u ∉ Q := by
-      intro hh
-      exact Set.disjoint_left.mp hdis hh (by rfl)
-    have hvQ : Sum.inl v ∉ Q := by
-      intro hh
-      exact Set.disjoint_left.mp hdis hh (by rw [hsame]; rfl)
-    obtain ⟨outside, -, -, unaffected⟩ :=
-      TwoColorComponentSwapMissingBehavior G psi a b hne hproper (Sum.inl w)
-    have edgeIn {x : V} {e : E} (hx : Sum.inl x ∈ Q)
-        (hi : Incident G x e) (hc : psi e = some a ∨ psi e = some b) :
-        Sum.inr e ∈ Q := by
-      change J.connectedComponentMk (Sum.inl x) = J.connectedComponentMk (Sum.inl w) at hx
-      change J.connectedComponentMk (Sum.inr e) = J.connectedComponentMk (Sum.inl w)
-      have ha : J.Adj (Sum.inr e) (Sum.inl x) := ⟨hi, hc⟩
-      exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj ha).trans hx
-    intro x hx
-    by_cases hxQ : Sum.inl x ∈ Q
-    · have haNot : a ∉ MissingColors G psi x := by
-        intro ha
-        by_cases hxu : x = u
-        · exact huQ (hxu ▸ hxQ)
-        · exact Finset.disjoint_left.mp (helem hx hu hxu) ha hau
-      have hbNot : b ∉ MissingColors G psi x := by
-        intro hb
-        by_cases hxv : x = v
-        · exact hvQ (hxv ▸ hxQ)
-        · exact Finset.disjoint_left.mp (helem hx hv hxv) hb hbv
-      have present (c : Fin k) (hc : c ∉ MissingColors G psi x) :
-          ∃ e, Incident G x e ∧ psi e = some c := by
-        simpa [MissingColors, PresentColors] using hc
-      obtain ⟨ea, hia, hca⟩ := present a haNot
-      obtain ⟨eb, hib, hcb⟩ := present b hbNot
-      have haNew : a ∉ MissingColors G tau x := by
-        have heQ := edgeIn hxQ hib (Or.inr hcb)
-        have hcol : tau eb = some a := by
-          simp [tau, TwoColorComponentSwap, show Sum.inr eb ∈
-            TwoColorComponent G psi a b (Sum.inl w) from heQ, hcb, hne.symm]
-        exact fun hm => (Finset.mem_sdiff.mp hm).2
-          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, eb, hib, hcol⟩)
-      have hbNew : b ∉ MissingColors G tau x := by
-        have heQ := edgeIn hxQ hia (Or.inl hca)
-        have hcol : tau ea = some b := by
-          simp [tau, TwoColorComponentSwap, show Sum.inr ea ∈
-            TwoColorComponent G psi a b (Sum.inl w) from heQ, hca]
-        exact fun hm => (Finset.mem_sdiff.mp hm).2
-          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, ea, hia, hcol⟩)
-      ext c
-      by_cases hca : c = a
-      · subst c
-        exact iff_of_false haNew haNot
-      · by_cases hcb : c = b
-        · subst c
-          exact iff_of_false hbNew hbNot
-        · exact unaffected x c hca hcb
-    · exact outside x hxQ
+    exact P2905_T2_ElementaryTerminalComponent G psi a b hne hproper
+      B helem u v w hu hv hwu hwv hau hbv hw hsame
   have firstMissingVertex (psi : PartialEdgeColoring E k) (U : TreeSequence G e0)
       (i : Fin (U.length + 1)) (c : Fin k)
       (hc : c ∈ MissingColors G psi (U.vertex i)) :
       c ∈ MissingColors G psi (U.vertex (HierarchyFirstMissingPosition psi U c)) ∧
         (HierarchyFirstMissingPosition psi U c).val ≤ i.val := by as_aux_lemma =>
-    clear * - psi U i c hc
-    let candidates := Finset.univ.filter fun r : Fin (U.length + 1) =>
-      c ∈ MissingColors G psi (U.vertex r)
-    have hi : i ∈ candidates := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hc⟩
-    have hn : candidates.Nonempty := ⟨i, hi⟩
-    unfold HierarchyFirstMissingPosition
-    rw [dite_eq_left hn]
-    exact ⟨(Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2,
-      Finset.min'_le candidates i hi⟩
+    have member : c ∈ TreeMissingColors psi U :=
+      Finset.mem_biUnion.mpr ⟨U.vertex i, by simp [TreeSequenceVertexSet], hc⟩
+    exact ⟨TreeSequenceFirstMissingPositionMemOfMissing member,
+      TreeSequenceFirstMissingPositionLe hc⟩
   let H := R.counterexample.hierarchy
   let q : Fin (H.dividerCount + 1) := Fin.last H.dividerCount
   let A := HierarchyStarredStage H q

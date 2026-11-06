@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.HierarchyTailPrefix
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.HierarchyNonparallelFirstEdge
@@ -30,58 +31,24 @@ private theorem helper_segmentTrans_135.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
         {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y
         Z → TreeSequenceInitialSegment X Z := by
-  classical
   intro V E G e0 X Y Z hXY hYZ
-  rcases hXY with ⟨hxy, hvxy, hexy⟩
-  rcases hYZ with ⟨hyz, hvyz, heyz⟩
-  refine ⟨le_trans hxy hyz, ?_, ?_⟩
-  · intro r
-    have hmid := hvyz (Fin.castLE (Nat.succ_le_succ hxy) r)
-    simpa using hmid.trans (hvxy r)
-  · intro r
-    have hmid := heyz (Fin.castLE hxy r)
-    simpa using hmid.trans (hexy r)
+  exact TreeSequenceInitialSegment.trans hXY hYZ
 
 private theorem helper_commonPrefix_148.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
         {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Z → TreeSequenceInitialSegment Y
         Z → X.length ≤ Y.length → TreeSequenceInitialSegment X Y := by
-  classical
   intro V E G e0 X Y Z hXZ hYZ hXY
-  rcases hXZ with ⟨hxz, hvxz, hexz⟩
-  rcases hYZ with ⟨hyz, hvyz, heyz⟩
-  refine ⟨hXY, ?_, ?_⟩
-  · intro r
-    calc
-      Y.vertex (Fin.castLE (Nat.succ_le_succ hXY) r) =
-          Z.vertex (Fin.castLE (Nat.succ_le_succ hyz)
-            (Fin.castLE (Nat.succ_le_succ hXY) r)) :=
-        (hvyz _).symm
-      _ = Z.vertex (Fin.castLE (Nat.succ_le_succ hxz) r) := by
-        congr 1
-      _ = X.vertex r := hvxz r
-  · intro r
-    calc
-      Y.edge (Fin.castLE hXY r) =
-          Z.edge (Fin.castLE hyz (Fin.castLE hXY r)) :=
-        (heyz _).symm
-      _ = Z.edge (Fin.castLE hxz r) := by
-        congr 1
-      _ = X.edge r := hexz r
+  exact TreeSequenceInitialSegment.of_common_extension hYZ hXZ hXY
 
 private theorem helper_prefixToTree_173.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
       (X : TreeSequence G e0) (m : ℕ) (hm : (1 : ℕ) ≤ m) (hmX : m ≤ X.length),
     TreeSequenceInitialSegment (TreeSequencePrefix X m hm hmX) X := by
-  classical
-  intro V E G e0 X m hm hmX
-  refine ⟨hmX, ?_, ?_⟩
-  · intro r
-    simp [TreeSequencePrefix]
-  · intro r
-    simp [TreeSequencePrefix]
+  intro V E G e0 X m positive bound
+  exact TreeSequenceInitialSegment.prefix_segment X m positive bound
 
 private theorem helper_stageToEnd_206.{u_1, u_2} :
     open scoped Classical in

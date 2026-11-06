@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTransport
+
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 
 public import LeanPool.GoldbergSeymour.ChangeLemma
@@ -106,156 +108,7 @@ private noncomputable abbrev helperCStar1926.{u_1, u_2} :
   classical
   intro V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D R corrStar hstarMP
       baseStar HStar goodStar
-  exact {
-    positive :=
-      @Eq.mpr
-        (@LT.lt Nat instLTNat
-          (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-          (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0
-            (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1
-              inst_3 G k e0 input T phi ett phi
-              (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                inst_3 G k e0 input T phi ett base C ctx
-                (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                  E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                R)
-              corrStar)
-            (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-              G k e0 input T phi ett base C ctx
-              (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-              R)
-            phi
-            (@CorrespondingExtendedTashkinovTree.replacementETT V E inst inst_1
-              inst_3 G k e0 input T phi ett phi
-              (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                inst_3 G k e0 input T phi ett base C ctx
-                (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                  E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                R)
-              corrStar)))
-        (@LT.lt Nat instLTNat
-          (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-          (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0 input T phi
-            ett))
-        (@id
-          (@Eq Prop
-            (@LT.lt Nat instLTNat
-              (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-              (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0
-                (@CorrespondingExtendedTashkinovTree.replacementInput V E inst
-                  inst_1 inst_3 G k e0 input T phi ett phi
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                    inst_3 G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                      V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C
-                      ctx D)
-                    R)
-                  corrStar)
-                (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                  inst_3 G k e0 input T phi ett base C ctx
-                  (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                    V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx
-                    D)
-                  R)
-                phi
-                (@CorrespondingExtendedTashkinovTree.replacementETT V E inst inst_1
-                  inst_3 G k e0 input T phi ett phi
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                    inst_3 G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                      V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C
-                      ctx D)
-                    R)
-                  corrStar)))
-            (@LT.lt Nat instLTNat
-              (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-              (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0 input T
-                phi ett)))
-          (@congrArg Nat Prop
-            (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0
-              (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1
-                inst_3 G k e0 input T phi ett phi
-                (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                  inst_3 G k e0 input T phi ett base C ctx
-                  (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                    V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx
-                    D)
-                  R)
-                corrStar)
-              (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                inst_3 G k e0 input T phi ett base C ctx
-                (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                  E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                R)
-              phi
-              (@CorrespondingExtendedTashkinovTree.replacementETT V E inst inst_1
-                inst_3 G k e0 input T phi ett phi
-                (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                  inst_3 G k e0 input T phi ett base C ctx
-                  (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                    V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx
-                    D)
-                  R)
-                corrStar))
-            (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0 input T phi
-              ett)
-            (@LT.lt Nat instLTNat
-              (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0))))
-            (by
-              have :=
-                GoldbergSeymour.CorrespondingExtendedTashkinovTree.rungAgreement
-                  corrStar
-              have := GoldbergSeymour.TreeSequence.positive T
-              omega)))
-        (@HierarchyCounterexample.positive V E inst inst_1 inst_2 inst_3 G k e0
-          input T phi ett base C),
-    hierarchy := HStar, good := goodStar, maximum := hstarMP,
-    notElementary :=
-      @Eq.mpr
-        (Not
-          (@ColoredVertexSetElementary V E inst_1 G k phi
-            (@TreeSequenceVertexSet V E G e0
-              (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                inst_3 G k e0 input T phi ett base C ctx
-                (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                  E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                R))))
-        (Not
-          (@ColoredVertexSetElementary V E inst_1 G k phi
-            (@TreeSequenceVertexSet V E G e0 T)))
-        (@id
-          (@Eq Prop
-            (Not
-              (@ColoredVertexSetElementary V E inst_1 G k phi
-                (@TreeSequenceVertexSet V E G e0
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                    inst_3 G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                      V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C
-                      ctx D)
-                    R))))
-            (Not
-              (@ColoredVertexSetElementary V E inst_1 G k phi
-                (@TreeSequenceVertexSet V E G e0 T))))
-          (@congrArg (Finset V) Prop
-            (@TreeSequenceVertexSet V E G e0
-              (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                inst_3 G k e0 input T phi ett base C ctx
-                (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                  E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                R))
-            (@TreeSequenceVertexSet V E G e0 T)
-            (fun (_a : Finset V) ↦
-              Not (@ColoredVertexSetElementary V E inst_1 G k phi _a))
-            (@HierarchySituationTwoReorderedTrees.starVertexSet V E inst inst_1
-              inst_2 inst_3 G k e0 input T phi ett base C ctx
-              (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-              R)))
-        (@HierarchyCounterexample.notElementary V E inst inst_1 inst_2 inst_3 G k e0
-          input T phi ett base C) :
-    HierarchyCounterexample baseStar };
+  exact (C.transport HStar goodStar hstarMP corrStar.rungAgreement R.starVertexSet);
 
 private abbrev helperContinuation3768Conditions.{u_1, u_2} : Prop :=
  open scoped Classical in
@@ -327,28 +180,7 @@ private abbrev helperContinuation3768Conditions.{u_1, u_2} : Prop :=
    (hibeta :
     Fin.castLE (Nat.succ_le_succ hBT.1) ibeta = HierarchyFirstMissingPosition phi T beta),
   let CStar : HierarchyCounterexample baseStar :=
-   {
-    positive := by
-     first
-     | omega
-     | (
-       have := GoldbergSeymour.CorrespondingExtendedTashkinovTree.rungAgreement corrStar
-       have := GoldbergSeymour.TreeSequence.positive T
-       have := GoldbergSeymour.ExtendedTashkinovTree.roundsPositive ett
-       have := GoldbergSeymour.HierarchyCounterexample.positive C
-       have := hBT.1
-       have := hminusStar.1
-       have := hBstar.1
-       have := congrArg GoldbergSeymour.TreeSequence.length hstarStarred
-       all_goals omega),
-    hierarchy := HStar, good := goodStar, maximum := hstarMP,
-    notElementary :=
-     ((Eq.symm
-       (id
-        (congrArg (fun (_a : Finset V) ↦ ¬ColoredVertexSetElementary G phi _a)
-         R.starVertexSet))) ▸
-      C.notElementary) :
-    HierarchyCounterexample baseStar };
+   (C.transport HStar goodStar hstarMP corrStar.rungAgreement R.starVertexSet);
   ∀
    (ctxStar :
     HierarchyMinimumCounterexampleContext G k e0 corrStar.replacementInput R.star phi
@@ -488,33 +320,7 @@ private abbrev helperContinuation3898Conditions.{u_1, u_2} : Prop :=
    (hibeta : Fin.castLE (Nat.succ_le_succ hBT.1) ibeta = HierarchyFirstMissingPosition phi T beta)
    (hbetaAtB : beta ∈ MissingColors G phi (B.vertex ibeta)),
   let CStar : HierarchyCounterexample baseStar :=
-   {
-    positive := by
-     first
-     | omega
-     | (
-       have := GoldbergSeymour.CorrespondingExtendedTashkinovTree.rungAgreement corrStar
-       have := GoldbergSeymour.TreeSequence.positive T
-       have := GoldbergSeymour.ExtendedTashkinovTree.roundsPositive ett
-       have := GoldbergSeymour.HierarchyCounterexample.positive C
-       have := hBT.1
-       have := hBminus.1
-       have := hminusStar.1
-       have := hBstar.1
-       have := congrArg GoldbergSeymour.TreeSequence.length hstarStarred
-       try dsimp only [H] at *
-       try dsimp only [GoldbergSeymour.HierarchyFullTailLength] at *
-       try dsimp only [GoldbergSeymour.HierarchyFullTailPrefix] at *
-       try dsimp only [GoldbergSeymour.TreeSequencePrefix] at *
-       all_goals omega),
-    hierarchy := HStar, good := goodStar, maximum := hstarMP,
-    notElementary :=
-     ((Eq.symm
-       (id
-        (congrArg (fun (_a : Finset V) ↦ ¬ColoredVertexSetElementary G phi _a)
-         R.starVertexSet))) ▸
-      C.notElementary) :
-    HierarchyCounterexample baseStar };
+   (C.transport HStar goodStar hstarMP corrStar.rungAgreement R.starVertexSet);
   ∀ (hstarPath : HierarchyPathNumber HStar = HierarchyPathNumber H),
   False
 
@@ -2822,153 +2628,7 @@ private theorem helper_hstarPath_824.{u_1, u_2} :
     U.length - (HierarchyStarredStage K (Fin.last K.dividerCount)).length) →
   let _ : HierarchyCounterexample baseStar := by
     exact
-      {
-        positive :=
-          @Eq.mpr
-            (@LT.lt Nat instLTNat
-              (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-              (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0
-                (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1
-                  inst_3 G k e0 input T phi ett phi
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-                    G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                      inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                    R)
-                  corrStar)
-                (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3 G
-                  k e0 input T phi ett base C ctx
-                  (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                    inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                  R)
-                phi
-                (@CorrespondingExtendedTashkinovTree.replacementETT V E inst inst_1 inst_3
-                  G k e0 input T phi ett phi
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-                    G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                      inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                    R)
-                  corrStar)))
-            (@LT.lt Nat instLTNat
-              (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-              (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0 input T phi
-                ett))
-            (@id
-              (@Eq Prop
-                (@LT.lt Nat instLTNat
-                  (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-                  (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0
-                    (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1
-                      inst_3 G k e0 input T phi ett phi
-                      (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                        inst_3 G k e0 input T phi ett base C ctx
-                        (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                          V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx
-                          D)
-                        R)
-                      corrStar)
-                    (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                      inst_3 G k e0 input T phi ett base C ctx
-                      (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                        E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                      R)
-                    phi
-                    (@CorrespondingExtendedTashkinovTree.replacementETT V E inst inst_1
-                      inst_3 G k e0 input T phi ett phi
-                      (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                        inst_3 G k e0 input T phi ett base C ctx
-                        (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                          V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx
-                          D)
-                        R)
-                      corrStar)))
-                (@LT.lt Nat instLTNat
-                  (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-                  (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0 input T phi
-                    ett)))
-              (@congrArg Nat Prop
-                (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0
-                  (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1
-                    inst_3 G k e0 input T phi ett phi
-                    (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                      inst_3 G k e0 input T phi ett base C ctx
-                      (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                        E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                      R)
-                    corrStar)
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-                    G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                      inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                    R)
-                  phi
-                  (@CorrespondingExtendedTashkinovTree.replacementETT V E inst inst_1
-                    inst_3 G k e0 input T phi ett phi
-                    (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                      inst_3 G k e0 input T phi ett base C ctx
-                      (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                        E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                      R)
-                    corrStar))
-                (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0 input T phi
-                  ett)
-                (@LT.lt Nat instLTNat
-                  (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0))))
-                (by
-                  have :=
-                    GoldbergSeymour.CorrespondingExtendedTashkinovTree.rungAgreement
-                      corrStar
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega)))
-            (@HierarchyCounterexample.positive V E inst inst_1 inst_2 inst_3 G k e0 input
-              T phi ett base C),
-        hierarchy := HStar, good := goodStar, maximum := hstarMP,
-        notElementary :=
-          @Eq.mpr
-            (Not
-              (@ColoredVertexSetElementary V E inst_1 G k phi
-                (@TreeSequenceVertexSet V E G e0
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-                    G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                      inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                    R))))
-            (Not
-              (@ColoredVertexSetElementary V E inst_1 G k phi
-                (@TreeSequenceVertexSet V E G e0 T)))
-            (@id
-              (@Eq Prop
-                (Not
-                  (@ColoredVertexSetElementary V E inst_1 G k phi
-                    (@TreeSequenceVertexSet V E G e0
-                      (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                        inst_3 G k e0 input T phi ett base C ctx
-                        (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                          V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx
-                          D)
-                        R))))
-                (Not
-                  (@ColoredVertexSetElementary V E inst_1 G k phi
-                    (@TreeSequenceVertexSet V E G e0 T))))
-              (@congrArg (Finset V) Prop
-                (@TreeSequenceVertexSet V E G e0
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-                    G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                      inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                    R))
-                (@TreeSequenceVertexSet V E G e0 T)
-                (fun (_a : Finset V) ↦
-                  Not (@ColoredVertexSetElementary V E inst_1 G k phi _a))
-                (@HierarchySituationTwoReorderedTrees.starVertexSet V E inst inst_1 inst_2
-                  inst_3 G k e0 input T phi ett base C ctx
-                  (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                    inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                  R)))
-            (@HierarchyCounterexample.notElementary V E inst inst_1 inst_2 inst_3 G k e0
-              input T phi ett base C) :
-        HierarchyCounterexample baseStar };
+      (C.transport HStar goodStar hstarMP corrStar.rungAgreement R.starVertexSet);
   HierarchyPathNumber HStar = HierarchyPathNumber H := by
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A ell B hell hsum hBlen hBT R
@@ -3016,153 +2676,7 @@ private theorem helper_hstarMeasure_839.{u_1, u_2} :
     (goodStar : GoodHierarchy HStar),
   let CStar : HierarchyCounterexample baseStar := by
     exact
-      {
-        positive :=
-          @Eq.mpr
-            (@LT.lt Nat instLTNat
-              (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-              (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0
-                (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1
-                  inst_3 G k e0 input T phi ett phi
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-                    G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                      inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                    R)
-                  corrStar)
-                (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3 G
-                  k e0 input T phi ett base C ctx
-                  (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                    inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                  R)
-                phi
-                (@CorrespondingExtendedTashkinovTree.replacementETT V E inst inst_1 inst_3
-                  G k e0 input T phi ett phi
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-                    G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                      inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                    R)
-                  corrStar)))
-            (@LT.lt Nat instLTNat
-              (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-              (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0 input T phi
-                ett))
-            (@id
-              (@Eq Prop
-                (@LT.lt Nat instLTNat
-                  (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-                  (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0
-                    (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1
-                      inst_3 G k e0 input T phi ett phi
-                      (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                        inst_3 G k e0 input T phi ett base C ctx
-                        (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                          V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx
-                          D)
-                        R)
-                      corrStar)
-                    (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                      inst_3 G k e0 input T phi ett base C ctx
-                      (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                        E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                      R)
-                    phi
-                    (@CorrespondingExtendedTashkinovTree.replacementETT V E inst inst_1
-                      inst_3 G k e0 input T phi ett phi
-                      (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                        inst_3 G k e0 input T phi ett base C ctx
-                        (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                          V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx
-                          D)
-                        R)
-                      corrStar)))
-                (@LT.lt Nat instLTNat
-                  (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0)))
-                  (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0 input T phi
-                    ett)))
-              (@congrArg Nat Prop
-                (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0
-                  (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1
-                    inst_3 G k e0 input T phi ett phi
-                    (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                      inst_3 G k e0 input T phi ett base C ctx
-                      (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                        E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                      R)
-                    corrStar)
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-                    G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                      inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                    R)
-                  phi
-                  (@CorrespondingExtendedTashkinovTree.replacementETT V E inst inst_1
-                    inst_3 G k e0 input T phi ett phi
-                    (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                      inst_3 G k e0 input T phi ett base C ctx
-                      (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V
-                        E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                      R)
-                    corrStar))
-                (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_3 G k e0 input T phi
-                  ett)
-                (@LT.lt Nat instLTNat
-                  (@OfNat.ofNat Nat (nat_lit 0) (instOfNatNat (nat_lit 0))))
-                (by
-                  have :=
-                    GoldbergSeymour.CorrespondingExtendedTashkinovTree.rungAgreement
-                      corrStar
-                  have := GoldbergSeymour.TreeSequence.positive T
-                  omega)))
-            (@HierarchyCounterexample.positive V E inst inst_1 inst_2 inst_3 G k e0 input
-              T phi ett base C),
-        hierarchy := HStar, good := goodStar, maximum := hstarMP,
-        notElementary :=
-          @Eq.mpr
-            (Not
-              (@ColoredVertexSetElementary V E inst_1 G k phi
-                (@TreeSequenceVertexSet V E G e0
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-                    G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                      inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                    R))))
-            (Not
-              (@ColoredVertexSetElementary V E inst_1 G k phi
-                (@TreeSequenceVertexSet V E G e0 T)))
-            (@id
-              (@Eq Prop
-                (Not
-                  (@ColoredVertexSetElementary V E inst_1 G k phi
-                    (@TreeSequenceVertexSet V E G e0
-                      (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2
-                        inst_3 G k e0 input T phi ett base C ctx
-                        (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData
-                          V E inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx
-                          D)
-                        R))))
-                (Not
-                  (@ColoredVertexSetElementary V E inst_1 G k phi
-                    (@TreeSequenceVertexSet V E G e0 T))))
-              (@congrArg (Finset V) Prop
-                (@TreeSequenceVertexSet V E G e0
-                  (@HierarchySituationTwoReorderedTrees.star V E inst inst_1 inst_2 inst_3
-                    G k e0 input T phi ett base C ctx
-                    (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                      inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                    R))
-                (@TreeSequenceVertexSet V E G e0 T)
-                (fun (_a : Finset V) ↦
-                  Not (@ColoredVertexSetElementary V E inst_1 G k phi _a))
-                (@HierarchySituationTwoReorderedTrees.starVertexSet V E inst inst_1 inst_2
-                  inst_3 G k e0 input T phi ett base C ctx
-                  (@HierarchySituationTwoCaseTwoData.toHierarchySituationTwoTailData V E
-                    inst inst_1 inst_2 inst_3 G k e0 input T phi ett base C ctx D)
-                  R)))
-            (@HierarchyCounterexample.notElementary V E inst inst_1 inst_2 inst_3 G k e0
-              input T phi ett base C) :
-        HierarchyCounterexample baseStar };
+      (C.transport HStar goodStar hstarMP corrStar.rungAgreement R.starVertexSet);
   HierarchyPathNumber HStar = HierarchyPathNumber H →
   HStar.stage
         (⟨HStar.dividerCount,
@@ -4064,12 +3578,8 @@ private theorem helper_continuation_4102.{u_1, u_2} :
         (@HMinus) (@hminusCount) (@corrStar) (@baseStar) (@HStar) (@hstarCount) (@hBminus)
         (@hstarLen) (@hminusLen) (@hstarLength) (@beta) (@vertexMem) (@hbetaFirstBound)
         (@goodMinus) (@hminusStarred) (@pathLeFull) (@hbetaAtB)
-  let CStar : HierarchyCounterexample baseStar := {
-    positive := by simpa [corrStar.rungAgreement] using C.positive
-    hierarchy := HStar
-    good := goodStar
-    maximum := hstarMP
-    notElementary := by rw [R.starVertexSet]; exact C.notElementary }
+  let CStar : HierarchyCounterexample baseStar :=
+    (C.transport HStar goodStar hstarMP corrStar.rungAgreement R.starVertexSet)
   have hstarPath : HierarchyPathNumber HStar = HierarchyPathNumber H := by
     exact @helper_hstarPath_824 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)

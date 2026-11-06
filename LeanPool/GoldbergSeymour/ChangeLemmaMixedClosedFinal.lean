@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 
 
@@ -1323,17 +1324,11 @@ private theorem helper_continuation_5185.{u_1, u_2} :
   have firstLe (psi : PartialEdgeColoring E k) (eta : Fin k)
       (i : Fin (B.length + 1)) (hc : eta ∈ MissingColors G psi (B.vertex i)) :
       (HierarchyFirstMissingPosition psi B eta).val ≤ i.val := by
-    exact @SharedFacts.MixedChangeTransport.firstMissingPositionUpperBound (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta) (@hAib) (@psi)
-        (@eta) (@i) (@hc)
+    exact TreeSequenceFirstMissingPositionLe hc
   have firstStrict (psi : PartialEdgeColoring E k) (eta : Fin k)
       (h : (HierarchyFirstMissingPosition psi B eta).val < B.length) :
       eta ∈ MissingColors G psi (B.vertex (HierarchyFirstMissingPosition psi B eta)) := by
-    exact @SharedFacts.MixedChangeTransport.beforeFirstMissingPosition (@V) (@E) inferInstance
-        inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@hAib) (@psi) (@eta) (@h)
+    exact TreeSequenceFirstMissingPositionMem h
   have firstEq (eta : Fin k) :
       HierarchyFirstMissingPosition sigma B eta = HierarchyFirstMissingPosition phi B eta := by
     exact @SharedFacts.MixedChangeTransport.firstMissingPositionEquality (@V) (@E)

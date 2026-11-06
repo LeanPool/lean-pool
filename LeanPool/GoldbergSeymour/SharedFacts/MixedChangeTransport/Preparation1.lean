@@ -899,49 +899,7 @@ abbrev missingColorsEqualityStatement.{u_1, u_2} : Prop :=
       ∀ (j : Fin (count + (1 : ℕ))),
       HierarchyStageMissingColors HS j = HierarchyStageMissingColors HB j
 
-/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
-abbrev firstMissingPositionUpperBoundStatement.{u_1, u_2} : Prop :=
-  open scoped Classical in
-      ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-        [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-        (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-        (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (_ beta : Fin k),
-      let H : TashkinovHierarchy ett base := C.hierarchy;
-      let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-      let A : TreeSequence G e0 := HierarchyStarredStage H q;
-      let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-      ∀ (hAib : A.length < (↑ib : ℕ)),
-      let B : TreeSequence G e0 :=
-        TreeSequencePrefix T (↑ib : ℕ)
-          (have this : (1 : ℕ) ≤ A.length := A.positive;
-          Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-          (by omega);
-      ∀ (psi : PartialEdgeColoring E k) (eta : Fin k) (i : Fin (B.length + (1 : ℕ))),
-      eta ∈ MissingColors G psi (B.vertex i) →
-      (↑(HierarchyFirstMissingPosition psi B eta) : ℕ) ≤ (↑i : ℕ)
 
-/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
-abbrev beforeFirstMissingPositionStatement.{u_1, u_2} : Prop :=
-  open scoped Classical in
-      ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-        [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-        (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-        (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (_ beta : Fin k),
-      let H : TashkinovHierarchy ett base := C.hierarchy;
-      let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-      let A : TreeSequence G e0 := HierarchyStarredStage H q;
-      let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-      ∀ (hAib : A.length < (↑ib : ℕ)),
-      let B : TreeSequence G e0 :=
-        TreeSequencePrefix T (↑ib : ℕ)
-          (have this : (1 : ℕ) ≤ A.length := A.positive;
-          Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-          (by omega);
-      ∀ (psi : PartialEdgeColoring E k) (eta : Fin k),
-      (↑(HierarchyFirstMissingPosition psi B eta) : ℕ) < B.length →
-      eta ∈ MissingColors G psi (B.vertex (HierarchyFirstMissingPosition psi B eta))
 
 /-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
 abbrev firstMissingPositionEqualityStatement.{u_1, u_2} : Prop :=
