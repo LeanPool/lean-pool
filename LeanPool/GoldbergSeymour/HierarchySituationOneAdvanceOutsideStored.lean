@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTailSwapData
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ReplacementPrefixes
 
 
@@ -599,105 +601,14 @@ private theorem helper_branch_542.{u_1, u_2} :
       P.coloring (T.edge t) ≠ some alpha := by
     intro t hlo hhi hc
     exact haRaw (excM P alpha haM t hlo hhi hc).2
-  have hne : alpha ≠ theta := by
-    intro he
-    have hvertices : B.vertex jm ≠ B.vertex jnext := by
-      intro hh
-      have hh := congrArg Fin.val (B.vertex_injective hh)
-      dsimp [jm, jnext] at hh
-      omega
-    exact Finset.disjoint_left.mp (elementary P
-      (vertexMem B jm) (vertexMem B jnext) hvertices) haM (he ▸ htheta)
   have iaEq := firstAt P alpha jm haM
   have ibEq := firstAt P theta jnext htheta
-  have jaEq : Fin.castLE (Nat.succ_le_succ hBT.1) jm =
-      HierarchyFirstMissingPosition P.coloring T alpha := Fin.ext iaEq.symm
-  have jbEq : Fin.castLE (Nat.succ_le_succ hBT.1) jnext =
-      HierarchyFirstMissingPosition P.coloring T theta := Fin.ext ibEq.symm
-  have hordered : TreeVertexOrder T
-      (T.vertex (HierarchyFirstMissingPosition P.coloring T alpha))
-      (T.vertex (HierarchyFirstMissingPosition P.coloring T theta)) :=
-    ⟨_, _, rfl, rfl, by dsimp [jm, jnext] at iaEq ibEq; omega⟩
-  have hunused : alpha ∉ (Finset.univ.filter fun c => ∃ t : Fin T.length,
-      A.length ≤ t.val ∧ t.val < (HierarchyFirstMissingPosition P.coloring T theta).val ∧
-        P.coloring (T.edge t) = some c) := by
-    intro hh
-    obtain ⟨_, t, hlo, hhi, hc⟩ := Finset.mem_filter.mp hh
-    exact haUnused t hlo (by rw [ibEq] at hhi; exact hhi) hc
-  have haB : alpha ∈ TreeMissingColors P.coloring B :=
-    Finset.mem_biUnion.mpr ⟨B.vertex jm, vertexMem B jm, haM⟩
-  have hthetaB : theta ∈ TreeMissingColors P.coloring B :=
-    Finset.mem_biUnion.mpr ⟨B.vertex jnext, vertexMem B jnext, htheta⟩
-  have hprefixP : ColoredVertexSetElementary G P.coloring
-      (TreeSequenceVertexSet (HierarchyFullTailPrefix P.counterexample
-        (HierarchyFullTailLength P.counterexample - 1))) := by
-    rw [fullB P]
-    exact elementary P
-  have hmissingP : alpha ∈ TreeMissingColors P.coloring
-      (HierarchyFullTailPrefix P.counterexample (HierarchyFullTailLength P.counterexample - 1)) ∧
-      theta ∈ TreeMissingColors P.coloring
-      (HierarchyFullTailPrefix P.counterexample (HierarchyFullTailLength P.counterexample - 1))
-         := by
-    rw [fullB P]
-    exact ⟨haB, hthetaB⟩
-  have change := ChangeLemma G k e0 P.corresponding.replacementInput T P.coloring
-    P.corresponding.replacementETT P.replacementBase P.counterexample
-    P.minimumContext.proper P.minimumContext.oneEdgeUncolored P.minimumContext.lowerRung
-    P.minimumContext.fewerDividers P.minimumContext.lexicographicMinimality hprefixP
-    P.minimumContext.largeMissingSet alpha theta hne hmissingP
-    (by dsimp only; rw [starEq P]; intro _; exact ⟨hordered, hunused⟩)
-  have hdisStored : Disjoint ({alpha, theta} : Finset (Fin k))
-      (HierarchyStoredColorsAt P.counterexample.hierarchy
-        (Fin.last P.counterexample.hierarchy.dividerCount)) := by
-    apply Finset.disjoint_left.mpr
-    intro c hc hd
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hc
-    rcases hc with rfl | rfl
-    · exact hAlphaStored hd
-    · exact hThetaStored hd
-  have hdisRaw : Disjoint ({alpha, theta} : Finset (Fin k))
-      (TashkinovStoredColors P.corresponding.replacementETT.series.data
-        (Fin.last P.corresponding.replacementETT.rounds)) := by
-    apply Finset.disjoint_left.mpr
-    intro c hc hd
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hc
-    rcases hc with rfl | rfl
-    · exact haRaw hd
-    · exact hthetaRaw hd
-  have hsame : TwoColorComponent G P.coloring alpha theta (Sum.inl (B.vertex jm)) =
-      TwoColorComponent G P.coloring alpha theta (Sum.inl (B.vertex jnext)) := by
-    have hh : TwoColorComponent G P.coloring alpha theta
-        (Sum.inl (T.vertex (HierarchyFirstMissingPosition P.coloring T alpha))) =
-        TwoColorComponent G P.coloring alpha theta
-        (Sum.inl (T.vertex (HierarchyFirstMissingPosition P.coloring T theta))) := by
-      by_cases hq : P.counterexample.hierarchy.dividerCount = 0
-      · exact change.2.1 ⟨hq, Or.inr hdisRaw⟩
-      · exact change.1 ⟨by omega, Or.inr hdisStored⟩
-    rw [← jaEq, ← jbEq, hBT.2.1 jm, hBT.2.1 jnext] at hh
-    exact hh
-  obtain ⟨hdis, hpath, hmissing⟩ := componentData P.coloring alpha theta hne
-    P.minimumContext.proper (TreeSequenceVertexSet B) (elementary P)
-    (B.vertex jm) (B.vertex jnext) (T.vertex (Fin.last T.length))
-    (vertexMem B jm) (vertexMem B jnext)
-    (by intro hh; have hh := congrArg Fin.val (B.vertex_injective hh)
-        dsimp [jm, jnext] at hh; omega)
-    (by intro hh; have hh := T.vertex_injective (hh.trans (hBT.2.1 jm).symm)
-        have hh := congrArg Fin.val hh; dsimp [jm] at hh; omega)
-    (by intro hh; have hh := T.vertex_injective (hh.trans (hBT.2.1 jnext).symm)
-        have hh := congrArg Fin.val hh; dsimp [jnext] at hh; omega)
-    haM htheta (Or.inl haLast) hsame
-  let sigma := TwoColorComponentSwap G P.coloring alpha theta
-    (Sum.inl (T.vertex (Fin.last T.length)))
-  have hprecedes : ∀ v ∈ TreeSequenceVertexSet A,
-      TreeVertexOrder T v (T.vertex (HierarchyFirstMissingPosition P.coloring T alpha)) := by
-    intro v hv
-    obtain ⟨j, hj⟩ : ∃ j, A.vertex j = v := by simpa [TreeSequenceVertexSet] using hv
-    refine ⟨Fin.castLE (Nat.succ_le_succ hAT.1) j, _, (hAT.2.1 j).trans hj, rfl, ?_⟩
-    change j.val < (HierarchyFirstMissingPosition P.coloring T alpha).val
-    rw [iaEq]
-    have := j.isLt
-    dsimp [jm]
-    omega
+  obtain ⟨hne, hordered, hprefixP, hmissingP, hmissing, hprecedes⟩ :=
+    P.minimumContext.tailSwapData A B hAT hBT (starEq P) (fullB P) (elementary P)
+      vertexMem componentData alpha theta jm jnext
+      (by dsimp [jm]; omega) (by dsimp [jm, jnext]; omega)
+      (by dsimp [jnext]; omega) haM htheta haLast hAlphaStored hThetaStored haRaw hthetaRaw
+      iaEq ibEq haUnused
   exact helper_continuation_613 G k e0 input T phi ett base C ctx hsituation P alpha trans starEq
       hlen hBT vertexMem m hmLower
       P alpha haLast hAlphaStored hmT theta htheta nextMember hThetaStored haUnused hne iaEq ibEq
@@ -1113,7 +1024,7 @@ theorem HierarchySituationOneAdvanceOutsideStored {V E : Type*}
           S.counterexample.good.gamma (Fin.last S.counterexample.hierarchy.dividerCount) eta := by
       exact @SharedFacts.OutsideAdvancement.gammaTransport (@V) (@E) inferInstance
           inferInstance inferInstance
-          inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@trans)
+          inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx)
           (@lastData) (@R) (@S) (@eta) (@heta)
     have gammaUnused (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
         (eta a : Fin k)
@@ -1171,7 +1082,7 @@ theorem HierarchySituationOneAdvanceOutsideStored {V E : Type*}
         ∃ a ∈ R.counterexample.good.gamma (Fin.last R.counterexample.hierarchy.dividerCount) eta,
           R.coloring f ≠ some a := by
       exact SharedFacts.OutsideAdvancement.gammaChoice (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett)
-          (@base) (@C) (@ctx) (@trans)
+          (@base) (@C) (@ctx)
           (@R) (@eta) (@heta) (@f)
     have advance (m : ℕ) (hmLower : HierarchyPathNumber C.hierarchy ≤ m)
         (hmUpper : m < HierarchyFullTailLength C - 1)

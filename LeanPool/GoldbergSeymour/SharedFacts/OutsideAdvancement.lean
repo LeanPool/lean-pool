@@ -53,8 +53,6 @@ abbrev gammaTransportStatement.{u_1, u_2} : Prop :=
           TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
           input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
           HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C), (
-      ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-          → TreeSequenceInitialSegment X Z) → (
       ∀ (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
           HierarchyStoredColorsAt C.hierarchy (Fin.last C.hierarchy.dividerCount) =
           HierarchyStoredColorsAt R.counterexample.hierarchy (Fin.last
@@ -115,9 +113,7 @@ abbrev gammaChoiceStatement.{u_1, u_2} : Prop :=
           LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
           TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
           input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-          HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C), (
-      ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-          → TreeSequenceInitialSegment X Z) →
+          HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C),
       ∀ (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
       ∀ eta ∈ HierarchyStoredColorsAt R.counterexample.hierarchy (Fin.last
           R.counterexample.hierarchy.dividerCount),
@@ -162,8 +158,7 @@ theorem lastData.{u_1, u_2} : lastDataStatement.{u_1, u_2} := by
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem gammaTransport.{u_1, u_2} : gammaTransportStatement.{u_1, u_2} := by
   classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx trans lastData R S eta heta
-  clear * - R S eta heta lastData
+  intro V E _ _ _ _ G k e0 input T phi ett base C ctx lastData R S eta heta
   have hOrig : eta ∈ HierarchyStoredColorsAt C.hierarchy (Fin.last C.hierarchy.dividerCount)
      := by
     rw [(lastData R).1]; exact heta
@@ -197,8 +192,7 @@ theorem notRaw.{u_1, u_2} : notRawStatement.{u_1, u_2} := by
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem gammaChoice.{u_1, u_2} : gammaChoiceStatement.{u_1, u_2} := by
   classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx trans R eta heta f
-  clear * - R eta heta f
+  intro V E _ _ _ _ G k e0 input T phi ett base C ctx R eta heta f
   by_contra hn
   push Not at hn
   have hc : (R.counterexample.good.gamma

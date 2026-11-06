@@ -286,6 +286,7 @@ public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsCardinality
 public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
 public import LeanPool.GoldbergSeymour.HierarchyTailPrefix
+public import LeanPool.GoldbergSeymour.HierarchyTailSwapData
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColorsSubsetLast
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
@@ -441,6 +442,7 @@ public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
 public import LeanPool.GoldbergSeymour.ScheideDefectiveTailExternal
 public import LeanPool.GoldbergSeymour.ScheideDefectiveTerminalComponent
 public import LeanPool.GoldbergSeymour.ScheideDefectiveThirdBoundaryEdge
+public import LeanPool.GoldbergSeymour.ScheideDeletedBlock
 public import LeanPool.GoldbergSeymour.ScheideDeletedMissingReplacementInternal
 public import LeanPool.GoldbergSeymour.ScheideDepartureReturn
 public import LeanPool.GoldbergSeymour.ScheideEnlargedBoundarySelection
@@ -695,6 +697,7 @@ public import LeanPool.GoldbergSeymour.TashkinovSeriesStability
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStepAppend
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStepPrefix
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 public import LeanPool.GoldbergSeymour.TashkinovStoredColors
 public import LeanPool.GoldbergSeymour.TashkinovStoredColorsAppend
@@ -747,6 +750,7 @@ public import LeanPool.GoldbergSeymour.TreeExitPathTransport
 public import LeanPool.GoldbergSeymour.TreeFreeColors
 public import LeanPool.GoldbergSeymour.TreeIncidentEdge
 public import LeanPool.GoldbergSeymour.TreeInterchangeable
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
 public import LeanPool.GoldbergSeymour.TreeMissingColors
 public import LeanPool.GoldbergSeymour.TreeMissingColorsCardLowerBound
 public import LeanPool.GoldbergSeymour.TreeSequence
