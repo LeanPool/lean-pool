@@ -60,8 +60,7 @@ theorem measurable_localizedPiece
   have hi := h.stronglyMeasurable.integral_prod_right' (ν := volume)
   change Measurable (fun x : ℝ ↦ ∫ y : ℝ, positiveDyadicAmplitude j y *
     phase (1 * y ^ 2) * I.centralThird.indicator f (x - y))
-  simpa only [one_mul, Function.comp_def, Pi.mul_apply]
-    using hi.measurable
+  simpa only [one_mul, comp_def, Pi.mul_apply] using hi.measurable
 
 theorem measurable_localizedTailAction
     (scale : RealInterval → ℤ) (S : Finset RealInterval) {f : ℝ → ℂ}

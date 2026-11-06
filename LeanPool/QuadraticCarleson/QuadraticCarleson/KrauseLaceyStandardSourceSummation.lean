@@ -168,7 +168,7 @@ theorem sum_energyStandard_fixedPhysical_diagonalEnergy_over_gaps_le
       have hlenj : I.length = (2 : ℝ) ^ j := by
         rw [he.2.1, hfixed s hs I hI]
       rw [hlenj] at hE
-      simpa only [C] using hE
+      exact hE
     _ = C * (∑ s ∈ R, ∑ I ∈ N s, ∫ x in I.centralThird,
         ‖badScaleInput S f I₀ k₀ (scale I + 2 - s) x‖) := by
       simp_rw [Finset.mul_sum]
@@ -297,7 +297,7 @@ theorem norm_energyStandardFixedPhysicalSourceLp_sq_le
       gcongr
       exact norm_sum_le _ _
     _ ≤ (R.card : ℝ) * ∑ s ∈ R, ‖v s‖ ^ 2 := by
-      simpa using sq_sum_le_card_mul_sum_sq (s := R) (f := fun s ↦ ‖v s‖)
+      exact sq_sum_le_card_mul_sum_sq (s := R) (f := fun s ↦ ‖v s‖)
     _ = (R.card : ℝ) * ∑ s ∈ R, ∑ I ∈ N s,
         localizedEnergy (scale I) I
           (badScaleInput S f I₀ k₀ (scale I + 2 - s)) := by rw [hsum]

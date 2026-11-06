@@ -38,23 +38,23 @@ theorem exists_uniform_zero_fullDyadic_integrands
   obtain ⟨Rf, _, hRf⟩ := f.hasCompactSupport_toFun.isBounded.exists_pos_norm_le
   obtain ⟨Rg, _, hRg⟩ := g.hasCompactSupport_toFun.isBounded.exists_pos_norm_le
   have hp : Tendsto (fun r : ℕ ↦ (2 : ℝ) ^ r) atTop atTop :=
-    tendsto_pow_atTop_atTop_of_one_lt (by norm_num)
-  have hc : 0 < (2 : ℝ) ^ (j - 3) := zpow_pos (by norm_num) _
+    tendsto_pow_atTop_atTop_of_one_lt (by norm_num1)
+  have hc : 0 < (2 : ℝ) ^ (j - 3) := zpow_pos (by norm_num1) _
   have hscale : Tendsto (fun r : ℕ ↦ (2 : ℝ) ^ (j + (r : ℤ) - 3)) atTop atTop := by
     convert hp.const_mul_atTop hc using 1
     funext r
     rw [show j + (r : ℤ) - 3 = (j - 3) + (r : ℤ) by ring,
-      zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_natCast]
+      zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_natCast]
   obtain ⟨N, hN⟩ := eventually_atTop.mp (hscale.eventually_gt_atTop (Rg + Rf))
   refine ⟨N, fun lam x hx r hr y ↦ ?_⟩
   by_cases hy : f y = 0
-  · simp [hy]
+  · simp only [hy, mul_zero]
   have hx' : |x| ≤ Rg := by simpa only [Real.norm_eq_abs] using hRg x hx
   have hy' : |y| ≤ Rf := by
     simpa only [Real.norm_eq_abs] using hRf y (subset_tsupport f hy)
   have hxy := (abs_sub x y).trans (add_le_add hx' hy')
   have hz := dyadicPsi_eq_zero_of_abs_le (hxy.trans (hN r hr).le)
-  simp [annularQuadraticKernel, hz]
+  simp only [annularQuadraticKernel, hz, Complex.ofReal_zero, zero_mul]
 
 theorem exists_uniform_zero_fullDyadicConvolution (j : ℤ) (f g : L0Infinity) :
     ∃ N : ℕ, ∀ (lam : ℝ) (x : ℝ), x ∈ tsupport g →
@@ -110,7 +110,7 @@ theorem exists_operatorPairing_smoothHighPass_eq_finiteTail (j : ℤ) (f g : L0I
     rw [hN lam x hx n hn]
     rfl
   · have hg := image_eq_zero_of_notMem_tsupport hx
-    simp [hg]
+    simp only [hg, star_zero, mul_zero]
 
 theorem hasSparseOnePBound_smoothHighPass_of_uniform_finiteTail
     (lam : ℝ) (j : ℤ) {C p : ℝ}
@@ -191,7 +191,7 @@ theorem exists_operatorPairing_fullDyadicTailSup_eq_finiteMax (j : ℤ) (f g : L
   filter_upwards with x
   by_cases hx : x ∈ tsupport g
   · rw [hN lam x hx]
-  · simp [image_eq_zero_of_notMem_tsupport hx]
+  · simp only [image_eq_zero_of_notMem_tsupport hx, star_zero, mul_zero]
 
 theorem hasSparseOnePBound_fullDyadicTailSup_of_uniform_finiteMax
     (lam : ℝ) (j : ℤ) {C p : ℝ}
@@ -233,7 +233,7 @@ theorem hasSparseOnePBound_of_compact_finiteMax_domination
     rw [norm_mul, norm_star]
     by_cases hx : x ∈ tsupport g
     · exact mul_le_mul_of_nonneg_right (hN x hx) (norm_nonneg _)
-    · simp [image_eq_zero_of_notMem_tsupport hx]
+    · simp only [image_eq_zero_of_notMem_tsupport hx, norm_zero, mul_zero, Std.le_refl]
   exact ⟨S, hS, (ENNReal.ofReal_le_ofReal hnorm).trans hb⟩
 
 theorem hasSparseOnePBound_smoothHighPass_of_uniform_finiteMax
@@ -367,7 +367,7 @@ theorem exists_operatorPairing_dyadicSmoothHighPassMax_eq_finiteSuffixMax
   filter_upwards with x
   by_cases hx : x ∈ tsupport g
   · rw [hN lam x hx]
-  · simp [image_eq_zero_of_notMem_tsupport hx]
+  · simp only [image_eq_zero_of_notMem_tsupport hx, star_zero, mul_zero]
 
 /-- Uniform KL-oriented finite suffix bounds pass to the genuine smooth
 high-pass maximum without a sparse-family limit and without constant loss. -/

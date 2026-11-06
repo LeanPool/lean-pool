@@ -34,7 +34,7 @@ theorem offSupportWeightedAction_norm_le_all_orders (k r q : ℕ) {lam s t x : �
   have hd : 0 < |x - s| :=
     lt_of_lt_of_le (half_pos ht) (half_length_le_abs_center ht hx)
   have htd : t ≤ 2 * |x - s| := by
-    linarith [half_length_le_abs_center ht hx]
+    linarith only [ht, hx, half_length_le_abs_center ht hx]
   exact offSupportDecay_bound_of_step
     (fun r q ↦ ‖offSupportWeightedAction lam r q s t x‖)
     (abs_pos.mpr hlam) ht hd htd

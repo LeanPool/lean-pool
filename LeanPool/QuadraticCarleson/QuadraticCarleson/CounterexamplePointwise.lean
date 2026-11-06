@@ -33,10 +33,9 @@ private theorem paperBohrIndex_toNat_le {N : ℕ} {k : ℤ}
   have hkcast : (k.toNat : ℝ) = k := by
     exact_mod_cast Int.toNat_of_nonneg hkpos
   have hkupper := (mem_paperBohrIndices.mp hk).2
-  have hN : (0 : ℝ) ≤ N := Nat.cast_nonneg N
   have hreal : (k.toNat : ℝ) ≤ N := by
     rw [hkcast]
-    linarith
+    linarith only [hkupper]
   exact_mod_cast hreal
 
 private theorem sum_Icc_split_at {N k : ℕ} (hk : k ≤ N) (f : ℕ → ℂ) :
@@ -105,8 +104,7 @@ theorem paperTranslatedBohrSet_pointwise_of_error_budget
       counterexampleOffSupportSum_split (by omega) hk]
   have hosc : ‖oscillatory‖ ≤
       128 * offSupportOscillatoryConstant / ((N : ℝ) * A ^ 2) := by
-    simpa only [oscillatory, hxform] using
-      paperOscillatoryPacketSum_norm_le hN hkn hA hLA hτ
+    simpa only [hxform] using paperOscillatoryPacketSum_norm_le hN hkn hA hLA hτ
   have hscale : packetScale N (k.toNat + 1) ≤ packetScale N 1 := by
     simpa using (stationary_packetScale_le_first
       (N := N) (k := (0 : ℤ)) (j := k.toNat + 1)
@@ -118,10 +116,6 @@ theorem paperTranslatedBohrSet_pointwise_of_error_budget
     simpa only [stationary, hxform] using
       norm_stationaryPacketAction_ge_harmonicPhaseSum_sub_error
         hN hkn hLA hA hτ.1 hτ.2
-  have hstationary' :
-      Real.log N / (4 * N) -
-          (14 * A / N + 28 * packetScale N 1) ≤ ‖stationary‖ := by
-    nlinarith
   have hstationary_le_operator : ‖stationary‖ ≤
       ‖quadraticHilbertSchwartz ((2 : ℝ) ^ n) (counterexampleSchwartz N) x‖ +
         ‖oscillatory‖ := by
@@ -132,6 +126,6 @@ theorem paperTranslatedBohrSet_pointwise_of_error_budget
         abel
       _ ≤ ‖oscillatory + stationary‖ + ‖oscillatory‖ := norm_sub_le _ _
   refine ⟨n, ?_⟩
-  nlinarith
+  linarith only [hbudget, hmain, hosc, hscale, hstationary, hstationary_le_operator]
 
 end QuadraticCarleson

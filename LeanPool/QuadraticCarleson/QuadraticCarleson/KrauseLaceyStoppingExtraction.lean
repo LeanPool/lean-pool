@@ -31,8 +31,8 @@ namespace KrauseLaceyStoppingExtraction
 theorem interval_eq_of_carrier_subset_of_length_le {I J : RealInterval}
     (hsub : I.carrier ⊆ J.carrier) (hlen : J.length ≤ I.length) : I = J := by
   have he := (Ioc_subset_Ioc_iff I.left_lt_right).mp hsub
-  have hl : I.left = J.left := by dsimp [RealInterval.length] at hlen; linarith
-  have hr : I.right = J.right := by dsimp [RealInterval.length] at hlen; linarith
+  have hl : I.left = J.left := by dsimp [RealInterval.length] at hlen; linarith only [hlen, he]
+  have hr : I.right = J.right := by dsimp [RealInterval.length] at hlen; linarith only [hlen, he]
   cases I
   cases J
   simp_all
@@ -61,7 +61,7 @@ theorem mem_badDescendants_iff
     {S : Finset RealInterval} {f g : ℝ → ℂ} {I J : RealInterval} :
     J ∈ badDescendants S f g I ↔ J ∈ S ∧ IsBadDescendant f g I J := by
   classical
-  simp [badDescendants]
+  simp only [badDescendants, Finset.mem_filter]
 
 theorem mem_stoppingChildren_iff
     {S : Finset RealInterval} {f g : ℝ → ℂ} {I J : RealInterval} :
@@ -69,7 +69,7 @@ theorem mem_stoppingChildren_iff
       J ∈ badDescendants S f g I ∧
         ∀ K ∈ badDescendants S f g I, J.carrier ⊆ K.carrier → K = J := by
   classical
-  simp [stoppingChildren]
+  simp only [stoppingChildren, Finset.mem_filter]
 
 theorem stoppingChildren_subset
     (S : Finset RealInterval) (f g : ℝ → ℂ) (I : RealInterval) :
@@ -85,8 +85,8 @@ theorem stoppingChildren_bad
 theorem self_not_badDescendant (f g : ℝ → ℂ) (I : RealInterval) :
     ¬ IsBadDescendant f g I I := by
   rintro ⟨_, hf | hg⟩
-  · linarith [intervalL1Average_nonneg f I]
-  · linarith [intervalL1Average_nonneg g I]
+  · linarith only [hf, intervalL1Average_nonneg f I]
+  · linarith only [hg, intervalL1Average_nonneg g I]
 
 theorem self_not_mem_stoppingChildren
     (S : Finset RealInterval) (f g : ℝ → ℂ) (I : RealInterval) :

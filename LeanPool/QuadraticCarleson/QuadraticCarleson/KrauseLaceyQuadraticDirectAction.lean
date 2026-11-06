@@ -51,7 +51,7 @@ theorem mem_activeHighCollection_iff
     {ell₀ : ℤ} {S : Finset RealInterval} {I : RealInterval} :
     I ∈ activeHighCollection ell₀ S ↔
       I ∈ S ∧ (2 : ℝ) ^ ell₀ ≤ I.length := by
-  simp [activeHighCollection]
+  simp only [activeHighCollection, Finset.mem_filter]
 
 /-- At every admissible tail threshold, deleting intervals below the fixed
 cutoff changes no summand. -/
@@ -62,7 +62,7 @@ theorem localizedTailAction_activeHighCollection
       localizedTailAction scale S f ell := by
   classical
   have hp : (2 : ℝ) ^ ell₀ ≤ (2 : ℝ) ^ ell :=
-    zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2) hell
+    zpow_le_zpow_right₀ (by norm_num1 : (1 : ℝ) ≤ 2) hell
   funext x
   unfold localizedTailAction activeHighCollection
   apply Finset.sum_subset (Finset.filter_subset _ S)
@@ -97,7 +97,7 @@ theorem scale_add_two_ge_cutoff_of_mem_activeHighCollection
     ell₀ ≤ scale I + 2 := by
   have hmem := mem_activeHighCollection_iff.mp hI
   rw [hscale I hmem.1] at hmem
-  exact (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).mp hmem.2
+  exact (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).mp hmem.2
 
 private theorem memLp_two_l0Infinity (f : L0Infinity) :
     MemLp (f : ℝ → ℂ) 2 volume := by
@@ -177,7 +177,6 @@ theorem offsetGroupedInput_eq_zero_of_scale_add_two_sub_neg
   have hselected := Finset.mem_filter.mp hJ
   have hJS : J ∈ S := (mem_selectedSubintervals_iff.mp hselected.1).1
   have hJnonneg : 0 ≤ scale J := hscaleNonneg J hJS
-  have hoffset : scale I - scale J = s := hselected.2
   exfalso
   omega
 
@@ -193,7 +192,7 @@ theorem mem_relevantOffsetOutputs_iff
     {s : ℤ} {I : RealInterval} :
     I ∈ relevantOffsetOutputs A scale s ↔
       I ∈ A ∧ 0 ≤ scale I + 2 - s := by
-  simp [relevantOffsetOutputs]
+  simp only [relevantOffsetOutputs, Int.sub_nonneg, Finset.mem_filter]
 
 /-- Removing the irrelevant outputs changes no fixed-offset action. -/
 theorem offsetLocalizedActionOn_relevantOffsetOutputs
@@ -285,7 +284,7 @@ theorem memLp_two_offsetGroupedInput
         2 volume := by
     induction T using Finset.induction_on with
     | empty =>
-        simp
+        simp only [Finset.sum_empty, MemLp.zero]
     | @insert J T hJ ih =>
         have hterm : MemLp
             (I.centralThird.indicator
@@ -293,7 +292,7 @@ theorem memLp_two_offsetGroupedInput
           (memLp_two_l0Infinity f).indicator
             (measurableSet_smallestSelectedRegion S J).nullMeasurableSet |>.indicator
               I.measurableSet_centralThird.nullMeasurableSet
-        simpa [Finset.sum_insert, hJ] using hterm.add ih
+        simpa only [hJ, not_false_eq_true, Finset.sum_insert] using hterm.add ih
   unfold offsetGroupedInput
   have hsum' : MemLp
       (fun y ↦ ∑ J ∈ T,
@@ -352,8 +351,7 @@ theorem offsetGroupedInput_eq_indicator_smallestScaleInput
   classical
   funext x
   by_cases hxI : x ∈ I.centralThird
-  · simp only [offsetGroupedInput, smallestScaleInput,
-      Set.indicator_of_mem hxI]
+  · simp only [offsetGroupedInput, Set.indicator_of_mem hxI, smallestScaleInput]
     apply Finset.sum_subset
     · intro J hJ
       have hsel := Finset.mem_filter.mp hJ
@@ -391,7 +389,7 @@ theorem offsetGroupedInput_eq_indicator_smallestScaleInput
       exact Set.disjoint_left.mp hdis
         (I.centralThird_subset_carrier hxI)
         (smallestSelectedRegion_subset_carrier S J hxJ)
-  · simp [offsetGroupedInput, Set.indicator_of_notMem hxI]
+  · simp only [offsetGroupedInput, Set.indicator_of_notMem hxI, Finset.sum_const_zero]
 
 /-- Every offset arising below `I` belongs to the global finite offset set. -/
 theorem offset_mem_offsetSet
@@ -492,7 +490,7 @@ theorem localizedPiece_eq_sum_offset
     intro t ht
     apply positiveDyadicAmplitude_support_subset (scale I)
     intro hz
-    exact ht (by simp [κ, annularQuadraticKernel, hz])
+    exact ht (by simp only [annularQuadraticKernel, hz, one_mul, zero_mul, κ])
   have hint (s : ℤ) :
       Integrable (fun t ↦ κ (x - t) *
         offsetGroupedInput S scale f I s t) :=

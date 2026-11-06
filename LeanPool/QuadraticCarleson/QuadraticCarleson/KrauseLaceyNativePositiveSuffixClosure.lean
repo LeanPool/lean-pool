@@ -59,7 +59,7 @@ private theorem length_le_of_carrier_subset {I J : RealInterval}
     (h : I.carrier ⊆ J.carrier) : I.length ≤ J.length := by
   have he := (Ioc_subset_Ioc_iff I.left_lt_right).mp h
   dsimp [RealInterval.length]
-  linarith [he.1, he.2]
+  linarith only [he, he.1, he.2]
 
 private theorem interval_eq_of_mutual_carrier_subset {I J : RealInterval}
     (hIJ : I.carrier ⊆ J.carrier) (hJI : J.carrier ⊆ I.carrier) : I = J :=
@@ -86,25 +86,11 @@ theorem isSparse_insert_root_biUnion
   have hCdisj : Set.Pairwise (↑C : Set RealInterval)
       (Disjoint on fun K : RealInterval ↦ K.carrier) :=
     stoppingChildren_pairwiseDisjoint f monitor I hlam
-  have hRdisj : Set.PairwiseDisjoint (↑C : Set RealInterval) R := by
-    intro K hK L hL hKL
-    apply Finset.disjoint_left.mpr
-    intro J hJK hJL
-    have hx : J.right ∈ J.carrier := ⟨J.left_lt_right, le_rfl⟩
-    exact Set.disjoint_left.mp (hCdisj hK hL hKL)
-      (hRsub K hK J hJK hx) (hRsub L hL J hJL hx)
-  have hIB : I ∉ B := by
-    intro hI
-    obtain ⟨K, hK, hIK⟩ := Finset.mem_biUnion.mp hI
-    have hIKsub := hRsub K hK I hIK
-    have hKIsub := (stoppingChildren_bad hK).1
-    have hKI : K = I := (interval_eq_of_mutual_carrier_subset hIKsub hKIsub).symm
-    exact self_not_mem_stoppingChildren S f monitor I (by simpa only [hKI] using hK)
   by_cases hC : C.Nonempty
   · let ι := {K : RealInterval // K ∈ C}
     let F : ι → Set RealInterval := fun K ↦ ↑(R K.1)
     let U : ι → Set ℝ := fun K ↦ K.1.carrier
-    let _ : Nonempty ι := Set.nonempty_coe_sort.mpr (by simpa using hC)
+    let _ : Nonempty ι := Set.nonempty_coe_sort.mpr (by exact hC)
     have hFsparse : ∀ K : ι, IsSparse (1 / 4) (F K) := fun K ↦
       hRsparse K.1 K.2
     have hFU : ∀ K : ι, ∀ J ∈ F K, J.carrier ⊆ U K := fun K J hJ ↦
@@ -131,22 +117,22 @@ theorem isSparse_insert_root_biUnion
     refine ⟨heta0, heta1, E', ?_, ?_, ?_, ?_⟩
     · intro J
       by_cases hJI : J.1 = I
-      · simp only [E', dite_eq_left hJI]
+      · simp only [dite_eq_left hJI, E']
         exact I.measurableSet_carrier.diff
           (Finset.measurableSet_biUnion C fun K _ ↦ K.measurableSet_carrier)
-      · simp only [E', dite_eq_right hJI]
+      · simp only [dite_eq_right hJI, E']
         exact hEmeas _
     · intro J
       by_cases hJI : J.1 = I
-      · simp only [E', dite_eq_left hJI]
+      · simp only [dite_eq_left hJI, E']
         simpa only [hJI] using (sdiff_subset : I.carrier \ Uchildren ⊆ I.carrier)
-      · simp only [E', dite_eq_right hJI]
+      · simp only [dite_eq_right hJI, E']
         exact hEsub _
     · intro J L hJL
       by_cases hJI : J.1 = I
       · have hLI : L.1 ≠ I := fun h ↦
           hJL (Subtype.ext (hJI.trans h.symm))
-        simp only [E', dite_eq_left hJI, dite_eq_right hLI]
+        simp only [dite_eq_left hJI, dite_eq_right hLI, E']
         apply Set.disjoint_left.mpr
         intro x hxroot hxL
         have hLB : L.1 ∈ B := (Finset.mem_insert.mp L.2).resolve_left hLI
@@ -154,7 +140,7 @@ theorem isSparse_insert_root_biUnion
         exact hxroot.2 (Set.mem_iUnion_of_mem K
           (Set.mem_iUnion_of_mem hK (hRsub K hK L.1 hLK (hEsub _ hxL))))
       · by_cases hLI : L.1 = I
-        · simp only [E', dite_eq_right hJI, dite_eq_left hLI]
+        · simp only [dite_eq_right hJI, dite_eq_left hLI, E']
           apply Disjoint.symm
           apply Set.disjoint_left.mpr
           intro x hxroot hxJ
@@ -162,7 +148,7 @@ theorem isSparse_insert_root_biUnion
           obtain ⟨K, hK, hJK⟩ := Finset.mem_biUnion.mp hJB
           exact hxroot.2 (Set.mem_iUnion_of_mem K
             (Set.mem_iUnion_of_mem hK (hRsub K hK J.1 hJK (hEsub _ hxJ))))
-        · simp only [E', dite_eq_right hJI, dite_eq_right hLI]
+        · simp only [dite_eq_right hJI, dite_eq_right hLI, E']
           apply hEdisj
           intro h
           apply hJL
@@ -170,16 +156,16 @@ theorem isSparse_insert_root_biUnion
           exact congrArg (fun z : {J : RealInterval // J ∈ (↑B : Set RealInterval)} ↦ z.1) h
     · intro J
       by_cases hJI : J.1 = I
-      · simp only [E', dite_eq_left hJI]
+      · simp only [dite_eq_left hJI, E']
         have hfour := stoppingMajorSubset_measure_ge_four_fifths f monitor I
           hf.integrableOn hm.integrableOn hlam
         have hquarter : (1 / 4 : ℝ) * I.length ≤
             (volume (I.carrier \ Uchildren)).toReal := by
           apply (mul_le_mul_of_nonneg_right
-            (by norm_num : (1 / 4 : ℝ) ≤ 4 / 5) I.length_pos.le).trans
-          simpa only [krauseLaceyStoppingMajorSubset, id_eq, C, Uchildren] using hfour
+            (by norm_num1 : (1 / 4 : ℝ) ≤ 4 / 5) I.length_pos.le).trans
+          exact hfour
         simpa only [hJI] using hquarter
-      · simp only [E', dite_eq_right hJI]
+      · simp only [dite_eq_right hJI, E']
         exact hEmass ⟨J.1, (Finset.mem_insert.mp J.2).resolve_left hJI⟩
   · have hCempty : C = ∅ := Finset.not_nonempty_iff_eq_empty.mp hC
     simp only [C] at hCempty
@@ -400,18 +386,18 @@ theorem exists_recursive_sparse_bound
     fun K => if hK : K ∈ C then R K hK else ∅
   have hRsparse' : ∀ K ∈ C, IsSparse (1 / 4) (↑(R' K) : Set RealInterval) := by
     intro K hK
-    simp only [R', dite_eq_left hK]
+    simp only [dite_eq_left hK, R']
     exact hRsparse K hK
   have hRsub' : ∀ K ∈ C, ∀ J ∈ R' K, J.carrier ⊆ K.carrier := by
     intro K hK
-    simp only [R', dite_eq_left hK]
+    simp only [dite_eq_left hK, R']
     exact hRsub K hK
   have hRbound' : ∀ K ∈ C,
       (∫⁻ x, localizedTailMaximal ell₀ scale (childCollection S K) f x * ‖g x‖ₑ) ≤
         ENNReal.ofReal (A * holderConjugate p) *
           sparseForm p f g (↑(R' K) : Set RealInterval) := by
     intro K hK
-    simp only [R', dite_eq_left hK]
+    simp only [dite_eq_left hK, R']
     exact hRbound K hK
   let B := C.biUnion R'
   let Rall := insert I B
@@ -481,7 +467,7 @@ theorem operatorPairing_localizedTailMaximalTestOperator_le
     apply hof.trans
     apply lintegral_mono
     intro x
-    simp only [T, localizedTailMaximalTestOperator, norm_mul, norm_star, ← ofReal_norm]
+    simp only [localizedTailMaximalTestOperator, ← ofReal_norm, norm_mul, norm_star, T]
     rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg ENNReal.toReal_nonneg]
     rw [ENNReal.ofReal_mul ENNReal.toReal_nonneg]
     exact mul_le_mul' ENNReal.ofReal_toReal_le le_rfl

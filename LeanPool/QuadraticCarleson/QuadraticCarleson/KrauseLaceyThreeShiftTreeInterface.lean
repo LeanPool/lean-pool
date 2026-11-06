@@ -77,7 +77,7 @@ theorem finiteShiftGridInterval_subset_root
                 ring
       _ ≤ (shift : ℝ) * shiftedGridRootLength topScale / 3 +
           (q : ℝ) * dyadicLength (shiftedGridRootLength topScale) depth := by
-            linarith
+            linarith only [hloR]
       _ < x := hx.1
   · calc
       x ≤ (shift : ℝ) * shiftedGridRootLength topScale / 3 +
@@ -86,7 +86,7 @@ theorem finiteShiftGridInterval_subset_root
       _ ≤ (shift : ℝ) * shiftedGridRootLength topScale / 3 +
           (((q₀ : ℝ) + 1) * (2 : ℝ) ^ depth) *
             dyadicLength (shiftedGridRootLength topScale) depth := by
-              linarith
+              linarith only [hhiR]
       _ = (shift : ℝ) * shiftedGridRootLength topScale / 3 +
           ((q₀ : ℝ) + 1) *
             dyadicLength (shiftedGridRootLength topScale) 0 := by
@@ -107,11 +107,11 @@ theorem finiteShiftGridInterval_injective
     (by positivity : (2 : ℝ) ^ depth' ≠ 0)).mp hlength
   have hroot := shiftedGridRootLength_pos topScale
   have hpowR : (2 : ℝ) ^ depth = (2 : ℝ) ^ depth' := by
-    nlinarith
+    nlinarith only [hcross, hroot]
   have hpowN : (2 : ℕ) ^ depth = (2 : ℕ) ^ depth' := by
     exact_mod_cast hpowR
   have hdepth : depth = depth' :=
-    Nat.pow_right_injective (by norm_num) hpowN
+    Nat.pow_right_injective (by exact le_rfl) hpowN
   subst depth'
   have hleft := congrArg RealInterval.left h
   change
@@ -120,7 +120,7 @@ theorem finiteShiftGridInterval_injective
       (shift : ℝ) * shiftedGridRootLength topScale / 3 +
         (q' : ℝ) * dyadicLength (shiftedGridRootLength topScale) depth at hleft
   have hlenpos := dyadicLength_pos (shiftedGridRootLength_pos topScale) depth
-  have hqR : (q : ℝ) = (q' : ℝ) := by nlinarith
+  have hqR : (q : ℝ) = (q' : ℝ) := by nlinarith only [hleft, hlenpos]
   exact ⟨rfl, by exact_mod_cast hqR⟩
 
 /-- The grid label, depth, and address are jointly unique, even when the two
@@ -138,11 +138,11 @@ theorem finiteShiftGridInterval_global_injective
     (by positivity : (2 : ℝ) ^ depth' ≠ 0)).mp hlength
   have hroot := shiftedGridRootLength_pos topScale
   have hpowR : (2 : ℝ) ^ depth = (2 : ℝ) ^ depth' := by
-    nlinarith
+    nlinarith only [hcross, hroot]
   have hpowN : (2 : ℕ) ^ depth = (2 : ℕ) ^ depth' := by
     exact_mod_cast hpowR
   have hdepth : depth = depth' :=
-    Nat.pow_right_injective (by norm_num) hpowN
+    Nat.pow_right_injective (by exact le_rfl) hpowN
   subst depth'
   have hparent :
       KrauseLaceyShiftedLocalization.centralThirdTileParent
@@ -202,7 +202,7 @@ theorem finiteShiftGridInterval_length_eq_scale
   rw [finiteShiftGridDepth_interval]
   rw [show topScale - (depth : ℤ) + 2 =
     (topScale + 2) - (depth : ℤ) by omega]
-  rw [zpow_sub₀ (by norm_num : (2 : ℝ) ≠ 0), zpow_natCast]
+  rw [zpow_sub₀ (by norm_num1 : (2 : ℝ) ≠ 0), zpow_natCast]
 
 /-- Every interval of a complete finite shifted-grid tree is contained in
 its root interval. -/
@@ -312,7 +312,7 @@ theorem completeFiniteShiftGridTree_hasDyadicParents
   refine ⟨K, hKmem, finiteShiftGridInterval_parent_subset topScale shift d q, ?_, ?_⟩
   · have hpos := (finiteShiftGridInterval topScale shift (d + 1) q).length_pos
     rw [finiteShiftGridInterval_parent_length]
-    linarith
+    linarith only [hpos]
   · rw [finiteShiftGridInterval_parent_length]
 
 /-- The abstract one-step stopping theorem applies directly to every

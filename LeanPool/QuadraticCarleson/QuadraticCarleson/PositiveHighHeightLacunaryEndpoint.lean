@@ -46,7 +46,7 @@ noncomputable def lacunaryHighPrefactorSeries : ℝ≥0∞ :=
 
 theorem lacunaryHighPrefactorSeries_lt_top : lacunaryHighPrefactorSeries < ∞ := by
   exact (summable_lacunaryHighFrequencyPrefactor (β := 1 / 10) (C := 20)
-    (by norm_num) (by norm_num)).tsum_ofReal_lt_top
+    (by norm_num1) (by norm_num1)).tsum_ofReal_lt_top
 
 theorem lacunaryHighPrefactor_eq (k : ℕ) :
     4 * lacunaryAmplitude k * (2 : ℝ) ^ (-((lacunaryHighCutoff k : ℕ) : ℝ) / 5) /
@@ -56,7 +56,7 @@ theorem lacunaryHighPrefactor_eq (k : ℕ) :
   rw [cast_lacunaryHighCutoff]
   have hp : (2 : ℝ) ^ (-(lacunaryCutoff 20 k) / 5) =
       Real.exp (-2 * (1 / 10) * Real.log 2 * lacunaryCutoff 20 k) := by
-    rw [Real.rpow_def_of_pos (by norm_num : (0 : ℝ) < 2)]
+    rw [Real.rpow_def_of_pos (by norm_num1 : (0 : ℝ) < 2)]
     congr 1
     ring
   rw [hp]
@@ -67,7 +67,7 @@ theorem tsum_lacunaryHighPrefactor :
       (2 : ℝ) ^ (-((lacunaryHighCutoff k : ℕ) : ℝ) / 5) /
         paperLog 1 (lacunaryCutoff 20 k) ^ 2)) =
       4 * lacunaryHighPrefactorSeries := by
-  simp_rw [lacunaryHighPrefactor_eq, ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
+  simp_rw [lacunaryHighPrefactor_eq, ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
   rw [ENNReal.tsum_mul_left]
   norm_num [lacunaryHighPrefactorSeries]
 
@@ -95,19 +95,19 @@ theorem realHighContribution_lacunaryLevels_levelSet_le_orlicz
   have hmain := paperHighContribution_disjointLevelAtoms_weighted_levelSet_le
     (fun k ↦ (lacunaryAmplitude_pos k).le) lacunaryHighCutoff
     (fun k ↦ paperLog 1 (lacunaryCutoff 20 k) ^ 2)
-    (fun k ↦ sq_pos_of_pos ((by norm_num : (0 : ℝ) < 1).trans_le
-      (one_le_paperLog_one_lacunaryCutoff (by norm_num) k))) hf hfi z R hR hdisj
+    (fun k ↦ sq_pos_of_pos ((by exact zero_lt_one : (0 : ℝ) < 1).trans_le
+      (one_le_paperLog_one_lacunaryCutoff (by norm_num1) k))) hf hfi z R hR hdisj
   rw [tsum_lacunaryHighPrefactor] at hmain
   have hc : 0 ≤ lacunaryHighLevelConstant 20 := by
     unfold lacunaryHighLevelConstant
     exact add_nonneg (lacunarySmallLevelConstant_nonneg)
-      (mul_nonneg (by norm_num) (sq_nonneg _))
+      (mul_nonneg (by norm_num1) (sq_nonneg _))
   have hweight : (∑' k : ℕ, ENNReal.ofReal (paperLog 1 (lacunaryCutoff 20 k) ^ 2) *
       magnitudeLevelL1Mass volume lacunaryAmplitude f k) ≤
       ENNReal.ofReal (lacunaryHighLevelConstant 20) *
         ∫⁻ x, ENNReal.ofReal (‖f x‖ * paperLog 2 ‖f x‖ ^ 2) := by
     have h := tsum_lacunaryHighWeight_mul_levelMass_le_orlicz volume
-      (C := 20) (by norm_num) hf
+      (C := 20) (by norm_num1) hf
     simp_rw [ENNReal.ofReal_mul hc] at h
     rwa [lintegral_const_mul' _ _ (by finiteness)] at h
   apply hmain.trans
@@ -136,7 +136,7 @@ theorem paperLacunaryHighContribution_le_real (B : ℕ → ℕ) (b : ℕ → ℝ
   exact le_iSup (fun lam : {lam : ℝ // lam ≠ 0} ↦ ‖∑' n : ℕ,
     ∫ t, b k (x - t) *
       (dyadicPsi (oscillatoryScaleIndex lam.val (B k + n + 1) lam.property) t : ℂ) *
-        phase (lam.val * t ^ 2)‖ₑ) ⟨(2 : ℝ) ^ m, (zpow_pos (by norm_num) m).ne'⟩
+        phase (lam.val * t ^ 2)‖ₑ) ⟨(2 : ℝ) ^ m, (zpow_pos (by decide +kernel) m).ne'⟩
 
 theorem lacunaryHighContribution_levelSet_le_orlicz
     {ι : Type*} [Countable ι] {f : ℝ → ℂ} (hf : Measurable f) (hfi : Integrable f)

@@ -7,7 +7,6 @@ module
 
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Integral
-public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 
 /-!
 # The special Marcinkiewicz interpolation step from `L²` to `L∞`
@@ -51,8 +50,8 @@ omit [MeasurableSpace α] in
 lemma norm_interpolationLow_le (f : α → E) {a : ℝ} (ha : 0 ≤ a) (x : α) :
     ‖interpolationLow f a x‖ ≤ a := by
   by_cases hx : ‖f x‖ ≤ a
-  · simp [interpolationLow, hx]
-  · simp [interpolationLow, hx, ha]
+  · simp only [interpolationLow, hx, ↓reduceIte]
+  · simp only [interpolationLow, hx, ↓reduceIte, norm_zero, ha]
 
 omit [MeasurableSpace α] in
 lemma enorm_interpolationHigh (f : α → E) (a : ℝ) (x : α) :
@@ -126,13 +125,13 @@ theorem measure_norm_operator_gt_le_twoInfinity_tail
       add_le_add_right (hlo x) _
     have : t < ‖T hi x‖ + t / 2 := lt_of_lt_of_le hx (htri.trans hsum)
     change t / 2 ≤ ‖T hi x‖
-    linarith
+    linarith only [hx, htri, hsum]
   have hmarkov := mul_meas_ge_le_lintegral₀
     ((hTmeas hi hhi).enorm.pow_const (2 : ℕ)) (ENNReal.ofReal ((t / 2) ^ 2))
   have hsets : {x | ENNReal.ofReal ((t / 2) ^ 2) ≤ ‖T hi x‖ₑ ^ (2 : ℕ)} =
       {x | t / 2 ≤ ‖T hi x‖} := by
     ext x
-    simp only [Set.mem_ofPred_eq]
+    simp only [mem_ofPred_eq]
     rw [← ofReal_norm, ← ENNReal.ofReal_pow (norm_nonneg _) 2]
     rw [ENNReal.ofReal_le_ofReal_iff (sq_nonneg _)]
     exact sq_le_sq₀ (by positivity) (norm_nonneg _)
@@ -187,7 +186,7 @@ theorem twoInfinity_high_tail_layercake
     rw [enorm_interpolationHigh]
     by_cases hx : t < F x
     · have hx' := heq.mpr hx
-      simp [hx, hx', w]
+      simp only [hx', ↓reduceIte, mem_ofPred_eq, hx, indicator_of_mem, w]
     · have hx' : ¬t / (2 * MTop) < ‖f x‖ := fun h ↦ hx (heq.mp h)
       simp [hx, hx', w]
   have hlayer := lintegral_rpow_eq_lintegral_meas_lt_mul
@@ -223,7 +222,7 @@ theorem twoInfinity_high_tail_layercake
           ‖f x‖ ^ 2 * ((2 * MTop) * ‖f x‖) ^ (q - 2) =
           (2 * MTop) ^ (q - 2) * (‖f x‖ ^ 2 * ‖f x‖ ^ (q - 2)) := by
             rw [Real.mul_rpow (by positivity) (norm_nonneg _)]
-            ring
+            ac_rfl
           _ = (2 * MTop) ^ (q - 2) * ‖f x‖ ^ q := by
             congr 1
             rw [← Real.rpow_natCast]
@@ -231,7 +230,7 @@ theorem twoInfinity_high_tail_layercake
               ‖f x‖ ^ (2 : ℝ) * ‖f x‖ ^ (q - 2) =
                   ‖f x‖ ^ ((2 : ℝ) + (q - 2)) :=
                 (Real.rpow_add_of_nonneg (norm_nonneg _)
-                  (by norm_num) (by linarith)).symm
+                  (by norm_num1) (by linarith only [hq])).symm
               _ = ‖f x‖ ^ q := by congr 1; ring
       _ = ENNReal.ofReal ((2 * MTop) ^ (q - 2)) *
           ENNReal.ofReal (‖f x‖ ^ q) :=
@@ -272,7 +271,7 @@ theorem lintegral_norm_rpow_operator_le_twoInfinity
       (ENNReal.ofReal q * ENNReal.ofReal (4 * M₂ ^ 2) *
           ENNReal.ofReal ((2 * MTop) ^ (q - 2)) / ENNReal.ofReal (q - 2)) *
         ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ q) ∂μ := by
-  have hq0 : 0 < q := lt_trans (by norm_num) hq
+  have hq0 : 0 < q := lt_trans (by norm_num1) hq
   have hout := lintegral_rpow_eq_lintegral_meas_lt_mul
     μ (Eventually.of_forall fun x ↦ norm_nonneg (T f x))
       (hTmeas f hf).norm.measurable.aemeasurable hq0
@@ -299,16 +298,16 @@ theorem lintegral_norm_rpow_operator_le_twoInfinity
           rw [ENNReal.ofReal_mul (sq_nonneg _)]
         _ = ENNReal.ofReal (((t / 2) ^ 2 * (4 * M₂ ^ 2)) * t ^ (q - 3)) :=
           (ENNReal.ofReal_mul
-            (mul_nonneg (sq_nonneg _) (mul_nonneg (by norm_num) (sq_nonneg _)))).symm
+            (mul_nonneg (sq_nonneg _) (mul_nonneg (by norm_num1) (sq_nonneg _)))).symm
         _ = ENNReal.ofReal (M₂ ^ 2 * t ^ (q - 1)) := by
           congr 1
           rw [← twoInfinity_weight_identity ht]
-          ring
+          ac_rfl
         _ = ENNReal.ofReal (M₂ ^ 2) * ENNReal.ofReal (t ^ (q - 1)) :=
           ENNReal.ofReal_mul (sq_nonneg _)
     calc
       (μ {x | t < ‖T f x‖} * ENNReal.ofReal (t ^ (q - 1))) * A =
-          (A * μ {x | t < ‖T f x‖}) * ENNReal.ofReal (t ^ (q - 1)) := by ring
+          (A * μ {x | t < ‖T f x‖}) * ENNReal.ofReal (t ^ (q - 1)) := by ac_rfl
       _ ≤ (ENNReal.ofReal (M₂ ^ 2) *
           ∫⁻ x, ‖interpolationHigh f (t / (2 * MTop)) x‖ₑ ^ (2 : ℕ) ∂μ) *
             ENNReal.ofReal (t ^ (q - 1)) := by gcongr
@@ -361,7 +360,7 @@ theorem lintegral_norm_rpow_operator_le_twoInfinity
         ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ q) ∂μ := by
       have hlayer := twoInfinity_high_tail_layercake (μ := μ) f hf hq hMTop
       have hp0 : ENNReal.ofReal (q - 2) ≠ 0 :=
-        (ENNReal.ofReal_pos.mpr (by linarith)).ne'
+        (ENNReal.ofReal_pos.mpr (by linarith only [hq])).ne'
       have hptop : ENNReal.ofReal (q - 2) ≠ ∞ := ENNReal.ofReal_ne_top
       have hdiv := (ENNReal.eq_div_iff hp0 hptop).mpr hlayer
       rw [hdiv]

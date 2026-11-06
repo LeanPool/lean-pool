@@ -43,18 +43,18 @@ theorem mem_dyadicAtomScaleClass_iff {ι : Type*} {length : ι → ℝ}
 /-- Every positive real number has a unique half-open dyadic scale. -/
 theorem existsUnique_dyadicScale (ell : ℝ) (hell : 0 < ell) :
     ∃! j : ℤ, (2 : ℝ) ^ j ≤ ell ∧ ell < (2 : ℝ) ^ (j + 1) := by
-  obtain ⟨j, hj⟩ := exists_mem_Ico_zpow hell (by norm_num : (1 : ℝ) < 2)
+  obtain ⟨j, hj⟩ := exists_mem_Ico_zpow hell (by norm_num1 : (1 : ℝ) < 2)
   refine ⟨j, hj, fun k hk ↦ ?_⟩
   apply le_antisymm
   · by_contra hnot
     have hjk : j + 1 ≤ k := by omega
     have hp : (2 : ℝ) ^ (j + 1) ≤ (2 : ℝ) ^ k :=
-      (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2 hjk
+      (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2 hjk
     exact (not_lt_of_ge (hp.trans hk.1)) hj.2
   · by_contra hnot
     have hkj : k + 1 ≤ j := by omega
     have hp : (2 : ℝ) ^ (k + 1) ≤ (2 : ℝ) ^ j :=
-      (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2 hkj
+      (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2 hkj
     exact (not_lt_of_ge (hp.trans hj.1)) hk.2
 
 /-- Every positive-length atom belongs to a unique scale class. -/
@@ -84,12 +84,8 @@ theorem mem_dyadicAtomScaleClass_iff_index_eq
     {I : ι} {j : ℤ} :
     I ∈ dyadicAtomScaleClass length j ↔
       dyadicAtomScaleIndex length hlength I = j := by
-  constructor
-  · intro hI
-    exact (dyadicAtomScaleIndex_unique length hlength hI).symm
-  · intro h
-    rw [← h]
-    exact dyadicAtomScaleIndex_mem length hlength I
+  exact (ExistsUnique.choose_eq_iff
+    (existsUnique_mem_dyadicAtomScaleClass length hlength I)).symm
 
 /-- The dyadic classes cover all atoms. -/
 theorem iUnion_dyadicAtomScaleClass_eq_univ
@@ -133,20 +129,20 @@ theorem mem_dyadicAtomScaleClass_iff_normalized
     {ι : Type*} {length : ι → ℝ} {I : ι} {j : ℤ} :
     I ∈ dyadicAtomScaleClass length j ↔
       1 ≤ length I / (2 : ℝ) ^ j ∧ length I / (2 : ℝ) ^ j < 2 := by
-  have hj : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num) _
+  have hj : 0 < (2 : ℝ) ^ j := zpow_pos (by norm_num1) _
   rw [mem_dyadicAtomScaleClass_iff]
   constructor
   · intro h
     constructor
-    · exact (le_div_iff₀ hj).2 (by simpa using h.1)
+    · exact (le_div_iff₀ hj).2 (by simpa only [one_mul] using h.1)
     · apply (div_lt_iff₀ hj).2
-      rw [zpow_add_one₀ (by norm_num : (2 : ℝ) ≠ 0)] at h
-      nlinarith
+      rw [zpow_add_one₀ (by norm_num1 : (2 : ℝ) ≠ 0)] at h
+      linarith only [h]
   · intro h
     constructor
-    · simpa using (le_div_iff₀ hj).1 h.1
-    · rw [zpow_add_one₀ (by norm_num : (2 : ℝ) ≠ 0)]
-      simpa [mul_comm] using (div_lt_iff₀ hj).1 h.2
+    · simpa only [one_mul] using (le_div_iff₀ hj).1 h.1
+    · rw [zpow_add_one₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
+      simpa only [mul_comm] using (div_lt_iff₀ hj).1 h.2
 
 /-- Equality at a lower endpoint belongs to that class. -/
 theorem mem_dyadicAtomScaleClass_of_length_eq_lower
@@ -154,7 +150,7 @@ theorem mem_dyadicAtomScaleClass_of_length_eq_lower
     (hI : length I = (2 : ℝ) ^ j) :
     I ∈ dyadicAtomScaleClass length j := by
   rw [mem_dyadicAtomScaleClass_iff, hI]
-  exact ⟨le_rfl, (zpow_lt_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2 (by omega)⟩
+  exact ⟨le_rfl, (zpow_lt_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2 (by omega)⟩
 
 /-- Equality at an upper endpoint belongs to the next class, not the current
 one. -/
@@ -177,8 +173,8 @@ theorem dyadicAtomScaleClass_length_lt_two_mul
     (hI : I ∈ dyadicAtomScaleClass length j) :
     length I < 2 * (2 : ℝ) ^ j := by
   have hu := hI.2
-  rw [zpow_add_one₀ (by norm_num : (2 : ℝ) ≠ 0)] at hu
-  simpa [mul_comm] using hu
+  rw [zpow_add_one₀ (by norm_num1 : (2 : ℝ) ≠ 0)] at hu
+  simpa only [gt_iff_lt, mul_comm] using hu
 
 /-- Lengths in one scale class differ by a factor strictly smaller than two. -/
 theorem dyadicAtomScaleClass_lengths_comparable
@@ -188,9 +184,9 @@ theorem dyadicAtomScaleClass_lengths_comparable
     length I < 2 * length J ∧ length J < 2 * length I := by
   constructor
   · exact (dyadicAtomScaleClass_length_lt_two_mul hI).trans_le
-      (mul_le_mul_of_nonneg_left hJ.1 (by norm_num))
+      (mul_le_mul_of_nonneg_left hJ.1 (by norm_num1))
   · exact (dyadicAtomScaleClass_length_lt_two_mul hJ).trans_le
-      (mul_le_mul_of_nonneg_left hI.1 (by norm_num))
+      (mul_le_mul_of_nonneg_left hI.1 (by norm_num1))
 
 /-- Reciprocal bounds corresponding exactly to the half-open length bounds. -/
 theorem dyadicAtomScaleClass_reciprocal_bounds
@@ -199,8 +195,8 @@ theorem dyadicAtomScaleClass_reciprocal_bounds
     ((2 : ℝ) ^ (j + 1))⁻¹ < (length I)⁻¹ ∧
       (length I)⁻¹ ≤ ((2 : ℝ) ^ j)⁻¹ := by
   constructor
-  · exact (inv_lt_inv₀ (zpow_pos (by norm_num) _) (hlength I)).2 hI.2
-  · exact (inv_le_inv₀ (hlength I) (zpow_pos (by norm_num) _)).2 hI.1
+  · exact (inv_lt_inv₀ (zpow_pos (by norm_num1) _) (hlength I)).2 hI.2
+  · exact (inv_le_inv₀ (hlength I) (zpow_pos (by norm_num1) _)).2 hI.1
 
 /-- Squared scale bounds used for quadratic oscillation. -/
 theorem dyadicAtomScaleClass_sq_bounds
@@ -210,13 +206,13 @@ theorem dyadicAtomScaleClass_sq_bounds
       (length I) ^ 2 < (2 : ℝ) ^ (2 * (j + 1)) := by
   constructor
   · rw [show (2 : ℝ) ^ (2 * j) = ((2 : ℝ) ^ j) ^ 2 by
-      rw [show 2 * j = j + j by ring, zpow_add₀ (by norm_num)]; ring]
-    exact pow_le_pow_left₀ (zpow_nonneg (by norm_num) _) hI.1 2
+      rw [show 2 * j = j + j by ring, zpow_add₀ (by norm_num1)]; ring]
+    exact pow_le_pow_left₀ (zpow_nonneg (by norm_num1) _) hI.1 2
   · rw [show (2 : ℝ) ^ (2 * (j + 1)) = ((2 : ℝ) ^ (j + 1)) ^ 2 by
       rw [show 2 * (j + 1) = (j + 1) + (j + 1) by ring,
-        zpow_add₀ (by norm_num)]; ring]
+        zpow_add₀ (by norm_num1)]; ring]
     exact (sq_lt_sq₀ (hlength I).le
-      (zpow_pos (by norm_num : (0 : ℝ) < 2) (j + 1)).le).2 hI.2
+      (zpow_pos (by norm_num1 : (0 : ℝ) < 2) (j + 1)).le).2 hI.2
 
 /-- Ordering atom lengths orders their dyadic scale indices. -/
 theorem dyadicAtomScale_mono_of_length_le
@@ -227,7 +223,7 @@ theorem dyadicAtomScale_mono_of_length_le
   by_contra hnot
   have hkj : k + 1 ≤ j := by omega
   have hp : (2 : ℝ) ^ (k + 1) ≤ (2 : ℝ) ^ j :=
-    (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2 hkj
+    (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2 hkj
   have hJI : length J < length I := hJ.2.trans_le (hp.trans hI.1)
   exact (not_lt_of_ge hIJ) hJI
 
@@ -247,7 +243,7 @@ theorem length_lt_of_dyadicAtomScale_lt
     (hJ : J ∈ dyadicAtomScaleClass length k) (hjk : j < k) :
     length I < length J := by
   have hp : (2 : ℝ) ^ (j + 1) ≤ (2 : ℝ) ^ k :=
-    (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2 (by omega)
+    (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2 (by omega)
   exact hI.2.trans_le (hp.trans hJ.1)
 
 /-- A gap of `d+1` dyadic generations gives the geometric separation
@@ -259,15 +255,15 @@ theorem pow_mul_length_lt_of_dyadicAtomScale_gap
     (hgap : j + (d : ℤ) + 1 ≤ k) :
     (2 : ℝ) ^ d * length I < length J := by
   have hmul := mul_lt_mul_of_pos_left hI.2
-    (pow_pos (by norm_num : (0 : ℝ) < 2) d)
+    (pow_pos (by norm_num1 : (0 : ℝ) < 2) d)
   have heq : (2 : ℝ) ^ d * (2 : ℝ) ^ (j + 1) =
       (2 : ℝ) ^ (j + (d : ℤ) + 1) := by
-    rw [← zpow_natCast, ← zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+    rw [← zpow_natCast, ← zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
     congr 1
-    ring
+    ac_rfl
   rw [heq] at hmul
   have hp : (2 : ℝ) ^ (j + (d : ℤ) + 1) ≤ (2 : ℝ) ^ k :=
-    (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).2 hgap
+    (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).2 hgap
   exact hmul.trans_le (hp.trans hJ.1)
 
 end QuadraticCarleson

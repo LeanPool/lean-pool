@@ -45,7 +45,6 @@ noncomputable def nonstandardSignedEnergyBudget
 theorem nonstandardSignedEnergyBudget_nonneg (f : ℝ → ℂ) (I₀ : RealInterval) (s : ℤ) :
     0 ≤ nonstandardSignedEnergyBudget f I₀ s := by
   unfold nonstandardSignedEnergyBudget
-  have hmass : 0 ≤ ∫ x, ‖f x‖ := integral_nonneg fun x ↦ norm_nonneg (f x)
   positivity [intervalL1Average_nonneg f I₀]
 
 /-- Every signed sum of the actual minimal generations has the uniform
@@ -71,7 +70,7 @@ theorem hasSignedSumSquareBound_nonstandardGenerations
     have hi := (Finset.mem_filter.mp hI).2.2.1
     omega
   · intro I hI
-    rcases hc _ (generationIndex_spec hI).1 with h | h | h <;> rw [h] <;> norm_num
+    rcases hc _ (generationIndex_spec hI).1 with h | h | h <;> rw [h] <;> norm_num1
 
 /-- The actual maximal finite prefix of the actual integral-operator
 generation functions, with no choice of `Lp` representative in its definition. -/
@@ -120,7 +119,7 @@ theorem integral_nonstandardGenerationPrefixMaximal_sq_le
         nonstandardSignedEnergyBudget f I₀ s := by
   have heq := (nonstandardGenerationPrefixMaximal_ae_eq S f hf I₀ k₀ s scale).fun_comp
     (fun t : ℝ ↦ t ^ 2)
-  simp only [Function.comp_def] at heq
+  simp only [comp_def] at heq
   rw [integral_congr_ae heq]
   exact integral_finitePrefixMaximal_sq_le_log2 _ _
     (hasSignedSumSquareBound_nonstandardGenerations hf I₀ k₀ s hk₀ hs scale hlam hparent hsub)

@@ -7,7 +7,6 @@ module
 
 
 public import Mathlib.NumberTheory.Harmonic.Bounds
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 public import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.Analysis.Complex.ExponentialBounds
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.BohrIntersection
@@ -47,13 +46,13 @@ theorem norm_phase_sub_one_le (x : ℝ) : ‖phase x - 1‖ ≤ 2 * Real.pi * |x
     ring
   rw [heq]
   exact h.trans_eq (by
-    rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 2),
+    rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_of_pos (by norm_num1 : (0 : ℝ) < 2),
       abs_of_pos Real.pi_pos])
 
 theorem norm_phase_sub_one_le_abs_sub_int (x : ℝ) (z : ℤ) :
     ‖phase x - 1‖ ≤ 2 * Real.pi * |x - z| := by
   have h : phase x = phase (x - z) := by
-    simpa using phase_add_int (x - z) z
+    simpa only [sub_add_cancel] using phase_add_int (x - z) z
   rw [h]
   exact norm_phase_sub_one_le _
 
@@ -74,7 +73,7 @@ theorem norm_phase_integer_modulation_sub_one_le {ell : ℤ} {τ δ : ℝ}
       norm_phase_sub_one_le_abs_sub_int _ z
     _ = 2 * Real.pi * (2 * (j : ℝ)) * |(ell : ℝ) * τ - a| := by
       rw [heq, abs_mul, abs_of_nonneg (by positivity)]
-      ring
+      ac_rfl
     _ ≤ 2 * Real.pi * (2 * (j : ℝ)) * δ := by gcongr
     _ = 4 * Real.pi * j * δ := by ring
 
@@ -84,8 +83,7 @@ noncomputable def reciprocalMass (n : ℕ) (τ : ℝ) : ℝ :=
 
 private theorem shifted_denominator_pos {τ : ℝ} (hτ : τ < 1) (i : ℕ) :
     0 < (i : ℝ) + 1 - τ := by
-  have hi : (0 : ℝ) ≤ i := Nat.cast_nonneg i
-  linarith
+  linarith only [hτ]
 
 theorem reciprocalMass_nonneg (n : ℕ) {τ : ℝ} (hτ : τ < 1) :
     0 ≤ reciprocalMass n τ := by
@@ -100,7 +98,7 @@ theorem harmonic_le_reciprocalMass (n : ℕ) {τ : ℝ} (hτ0 : 0 ≤ τ) (hτ :
     Nat.cast_add, Nat.cast_one, reciprocalMass, one_div]
   apply Finset.sum_le_sum
   intro i hi
-  exact inv_anti₀ (shifted_denominator_pos hτ i) (by linarith)
+  exact inv_anti₀ (shifted_denominator_pos hτ i) (by linarith only [hτ0])
 
 /-- Comparison with the ordinary harmonic number, above. -/
 theorem reciprocalMass_le_two_mul_harmonic (n : ℕ) {τ : ℝ} (hτ : τ ≤ 1 / 2) :
@@ -109,11 +107,10 @@ theorem reciprocalMass_le_two_mul_harmonic (n : ℕ) {τ : ℝ} (hτ : τ ≤ 1 
     Nat.cast_add, Nat.cast_one, reciprocalMass, Finset.mul_sum]
   apply Finset.sum_le_sum
   intro i hi
-  have hi0 : (0 : ℝ) ≤ i := Nat.cast_nonneg i
-  have hd : 0 < (i : ℝ) + 1 - τ := shifted_denominator_pos (by linarith) i
+  have hd : 0 < (i : ℝ) + 1 - τ := shifted_denominator_pos (by linarith only [hτ]) i
   rw [← div_eq_mul_inv]
   apply (div_le_div_iff₀ hd (by positivity)).mpr
-  nlinarith
+  linarith only [hτ]
 
 /-- A complex weighted version of the shifted harmonic sum. -/
 noncomputable def weightedPhaseSum (n : ℕ) (τ : ℝ) (z : ℕ → ℂ) : ℂ :=
@@ -153,17 +150,17 @@ theorem weightedPhaseSum_norm_ge (n : ℕ) {τ ε : ℝ} (z : ℕ → ℂ)
   rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (reciprocalMass_nonneg n hτ)] at h
   have he := weightedPhaseSum_error_le n z hτ hz
   rw [norm_sub_rev] at he
-  nlinarith
+  linarith only [h, he]
 
 private theorem paper_reciprocal_length_bounds {N k : ℕ}
     (hN : 100 ≤ N) (hk : (k : ℝ) ≤ 7 * (N : ℝ) / 10) :
     k ≤ N ∧ (N : ℝ) / 4 ≤ ((N - k : ℕ) : ℝ) ∧ (4 : ℝ) ≤ ((N - k : ℕ) : ℝ) := by
   have hN' : (100 : ℝ) ≤ N := by exact_mod_cast hN
   have hkn : k ≤ N := by
-    have : (k : ℝ) ≤ N := by linarith
+    have : (k : ℝ) ≤ N := by linarith only [hk, hN']
     exact_mod_cast this
   have hd : ((N - k : ℕ) : ℝ) = (N : ℝ) - k := Nat.cast_sub hkn
-  exact ⟨hkn, by nlinarith, by nlinarith⟩
+  exact ⟨hkn, by linarith only [hk, hN', hd], by linarith only [hk, hN', hd]⟩
 
 /-- The shifted reciprocal sum has logarithmic size throughout the paper's
 index interval; the explicit large-`N` threshold is `100`. -/
@@ -175,25 +172,25 @@ theorem reciprocalMass_paper_lower {N k : ℕ} {τ : ℝ}
   have hN0 : (0 : ℝ) < N := by exact_mod_cast (show 0 < N by omega)
   have hn0 : (0 : ℝ) ≤ (N - k : ℕ) := Nat.cast_nonneg _
   have hsq : (N : ℝ) ≤ (((N - k : ℕ) : ℝ) + 1) ^ 2 := by
-    nlinarith [mul_nonneg hn0 (sub_nonneg.mpr hn4)]
+    linarith only [hnquarter, hn4, hn0, mul_nonneg hn0 (sub_nonneg.mpr hn4)]
   have hlog := Real.log_le_log hN0 hsq
   rw [Real.log_pow] at hlog
   have hh := log_add_one_le_harmonic (N - k)
   simp only [Nat.cast_add, Nat.cast_one, Nat.cast_ofNat] at hh hlog
   have hm := harmonic_le_reciprocalMass (N - k) hτ0 hτ
-  linarith
+  linarith only [hlog, hh, hm]
 
 /-- The matching logarithmic upper bound controls the total phase error. -/
 theorem reciprocalMass_paper_upper {N k : ℕ} {τ : ℝ}
     (hN : 100 ≤ N) (hk : (k : ℝ) ≤ 7 * (N : ℝ) / 10) (hτ : τ ≤ 1 / 2) :
     reciprocalMass (N - k) τ ≤ 2 * (1 + Real.log N) := by
   obtain ⟨hkn, hnquarter, hn4⟩ := paper_reciprocal_length_bounds hN hk
-  have hnpos : (0 : ℝ) < (N - k : ℕ) := by linarith
+  have hnpos : (0 : ℝ) < (N - k : ℕ) := by linarith only [hn4]
   have hnN : ((N - k : ℕ) : ℝ) ≤ N := by exact_mod_cast Nat.sub_le N k
   have hlog := Real.log_le_log hnpos hnN
   have hh := harmonic_le_one_add_log (N - k)
   have hm := reciprocalMass_le_two_mul_harmonic (N - k) hτ
-  linarith
+  linarith only [hlog, hh, hm]
 
 /-- The explicit phase error furnished by the paper's Bohr radius. -/
 noncomputable def paperPhaseError : ℝ := 4 * Real.pi / (2 : ℝ) ^ 100
@@ -206,14 +203,12 @@ theorem paperPhaseError_le_half : paperPhaseError ≤ 1 / 2 := by
   unfold paperPhaseError
   apply (div_le_iff₀ (by positivity)).mpr
   have hp := Real.pi_lt_four
-  have hpow : (32 : ℝ) ≤ 2 ^ 100 := by norm_num
-  nlinarith
+  linarith only [hp]
 
 theorem norm_paper_phase_sub_one_le {N k j : ℕ} {ell : ℤ} {τ : ℝ}
     (hN : 0 < N) (hj : j ≤ N)
     (hbohr : torusNorm ((ell : ℝ) * τ) ≤ 1 / ((2 : ℝ) ^ 100 * N)) :
     ‖phase (2 * (ell : ℝ) * j * ((k : ℝ) + τ)) - 1‖ ≤ paperPhaseError := by
-  have hN' : (0 : ℝ) < N := by exact_mod_cast hN
   calc
     ‖phase (2 * (ell : ℝ) * j * ((k : ℝ) + τ)) - 1‖ ≤
         4 * Real.pi * j * (1 / ((2 : ℝ) ^ 100 * N)) :=
@@ -316,7 +311,7 @@ theorem harmonicPhaseSum_error_relative {N k : ℕ} {ell : ℤ} {τ : ℝ}
     dsimp [z]
     push_cast
     ring
-  have hn : ‖(N : ℂ)‖ = (N : ℝ) := by simp
+  have hn : ‖(N : ℂ)‖ = (N : ℝ) := by simp only [RCLike.norm_natCast]
   rw [hid, norm_mul, norm_neg, norm_div, norm_one, hn]
   calc
     1 / (N : ℝ) * ‖weightedPhaseSum (N - k) τ z - (reciprocalMass (N - k) τ : ℂ)‖ ≤
@@ -341,11 +336,11 @@ theorem harmonicPhaseSum_error_le {N k : ℕ} {ell : ℤ} {τ : ℝ}
   have hN0 : 0 < N := by omega
   have hm := reciprocalMass_paper_upper hN hk hτ
   have hlog := one_le_log_of_paper_large hN
-  have hm' : reciprocalMass (N - k) τ ≤ 4 * Real.log N := by linarith
+  have hm' : reciprocalMass (N - k) τ ≤ 4 * Real.log N := by linarith only [hm, hlog]
   calc
     ‖harmonicPhaseSum N k ell τ - harmonicReciprocalSum N k τ‖ ≤
         paperPhaseError * reciprocalMass (N - k) τ / N :=
-      harmonicPhaseSum_error_relative hN0 hkn (by linarith) hbohr
+      harmonicPhaseSum_error_relative hN0 hkn (by linarith only [hτ]) hbohr
     _ ≤ paperPhaseError * (4 * Real.log N) / N := by
       exact div_le_div_of_nonneg_right
         (mul_le_mul_of_nonneg_left hm' paperPhaseError_nonneg) (Nat.cast_nonneg N)
@@ -387,7 +382,7 @@ theorem harmonicPhaseSum_norm_ge_of_mem_bohrSet {N k ell : ℕ} {τ : ℝ}
     (hN : 100 ≤ N) (hk : (k : ℝ) ≤ 7 * (N : ℝ) / 10)
     (hτ : τ ∈ bohrSet ell (1 / ((2 : ℝ) ^ 100 * N))) :
     Real.log N / (4 * N) ≤ ‖harmonicPhaseSum N k (ell : ℤ) τ‖ := by
-  exact harmonicPhaseSum_norm_ge hN hk hτ.1 (by simpa using hτ.2)
+  exact harmonicPhaseSum_norm_ge hN hk hτ.1 (by exact hτ.2)
 
 /-- Including the possible endpoint `j=k` changes the normalized sum by at
 most `4/N`, accounting for the paper's first `O(1/N)` term. -/
@@ -407,8 +402,8 @@ theorem harmonicPhaseSum_endpoint_error_le {N k : ℕ} (ell : ℤ) {τ : ℝ}
       (1 / (N : ℂ)) * (∑ j ∈ Finset.Icc (k + 1) N, f j) = _
     rw [hsum]
     ring
-  have hτpos : 0 < τ := by linarith
-  have hτinv : 1 / τ ≤ 4 := (div_le_iff₀ hτpos).mpr (by linarith)
+  have hτpos : 0 < τ := by linarith only [hτ]
+  have hτinv : 1 / τ ≤ 4 := (div_le_iff₀ hτpos).mpr (by linarith only [hτ])
   change ‖((1 / (N : ℂ)) * ∑ j ∈ Finset.Icc k N, f j) -
     harmonicPhaseSum N k ell τ‖ ≤ _
   rw [hdiff, norm_mul]

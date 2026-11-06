@@ -63,11 +63,11 @@ theorem hasSum_levelRestricted_apply
     funext l
     by_cases hl : l = k
     · subst l
-      simp [levelRestricted_apply_of_mem hxk]
+      simp only [levelRestricted_apply_of_mem hxk, ↓reduceIte]
     · have hxl : x ∉ magnitudeLevelSet A f l := by
         intro hmem
         exact hl (hunique l hmem)
-      simp [hl, levelRestricted_apply_of_not_mem hxl]
+      simp only [levelRestricted_apply_of_not_mem hxl, hl, ↓reduceIte]
   rw [heq]
   exact hasSum_ite_eq k (f x)
 
@@ -133,10 +133,10 @@ theorem hasSum_setIntegral_levelRestricted
     dsimp only [S]
     rw [← inter_iUnion]
     rw [iUnion_magnitudeLevelSet_eq_univ hA hcofinal f]
-    simp
+    simp only [inter_univ]
   have hsum : HasSum (fun k ↦ ∫ x in S k, f x) (∫ x in I, f x) := by
     rw [← hUnion]
-    exact hasSum_integral_iUnion hSm hSd (by simpa [hUnion] using hfi)
+    exact hasSum_integral_iUnion hSm hSd (by simpa only [hUnion] using hfi)
   have heq : (fun k ↦ ∫ x in centeredInterval z R, levelRestricted A f k x) =
       (fun k ↦ ∫ x in S k, f x) := by
     funext k
@@ -156,7 +156,7 @@ theorem hasSum_levelAverage
       (⨍ x in centeredInterval z R, f x) := by
   have hsum := (hasSum_setIntegral_levelRestricted hA hcofinal hf z R hfi).const_smul
     (volume.real (centeredInterval z R))⁻¹
-  simpa [levelAverage, setAverage_eq] using hsum
+  simpa only [levelAverage, setAverage_eq, Complex.real_smul, Complex.ofReal_inv] using hsum
 
 theorem tsum_levelAverage
     {A : ℕ → ℝ} (hA : StrictMono A)
@@ -177,8 +177,8 @@ theorem hasSum_levelAtom_apply
   by_cases hx : x ∈ centeredInterval z R
   · have hrestr := hasSum_levelRestricted_apply hA hcofinal f x
     have havg := hasSum_levelAverage hA hcofinal hf z R hfi
-    simpa [levelAtom, centeredAtom, hx] using hrestr.sub havg
-  · simp [levelAtom, centeredAtom, hx]
+    simpa only [levelAtom, hx, indicator_of_mem, centeredAtom] using hrestr.sub havg
+  · simp only [levelAtom, hx, not_false_eq_true, indicator_of_notMem, centeredAtom, hasSum_zero]
 
 theorem tsum_levelAtom_apply
     {A : ℕ → ℝ} (hA : StrictMono A)

@@ -55,11 +55,11 @@ theorem exists_principal_family (S : Finset RealInterval) (f : ℝ → ℂ)
         10 * intervalL1Average f I < intervalL1Average f J
       have hTS : T ⊆ S := Finset.filter_subset _ _
       have hIT : I ∉ T := by
-        simp only [T, Finset.mem_filter]
+        simp only [Finset.mem_filter, T]
         intro hi
         rcases hi.2 with hn | hb
         · exact hn Subset.rfl
-        · linarith [intervalL1Average_nonneg f I]
+        · linarith only [hb, intervalL1Average_nonneg f I]
       have hstrict : T ⊂ S :=
         Finset.ssubset_iff_subset_ne.mpr ⟨hTS, fun h ↦ hIT (h.symm ▸ hI)⟩
       obtain ⟨R, hRT, hsep, hcover⟩ := ih T hstrict (hlam.mono hTS)
@@ -86,7 +86,7 @@ theorem exists_principal_family (S : Finset RealInterval) (f : ℝ → ℂ)
           exact ⟨I, Finset.mem_insert_self _ _, not_not.mp (not_or.mp hnot).1,
             le_of_not_gt (not_or.mp hnot).2⟩
     · refine ⟨∅, Finset.empty_subset _, ?_, ?_⟩
-      · simp [AverageSeparated]
+      · simp only [AverageSeparated, Finset.notMem_empty, ne_eq, IsEmpty.forall_iff, implies_true]
       · intro J hJ
         exact (hS ⟨J, hJ⟩).elim
 
@@ -148,7 +148,7 @@ theorem finiteLaminarMaximal_le_of_cover
   calc
     ENNReal.ofReal (localAverage 1 f J) ≤ 10 * ENNReal.ofReal (localAverage 1 f I) := by
       simpa only [localAverage_one_eq_intervalL1Average,
-        ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 10), ENNReal.ofReal_ofNat] using
+        ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 10), ENNReal.ofReal_ofNat] using
         ENNReal.ofReal_le_ofReal havg
     _ ≤ _ := mul_le_mul' le_rfl hpoint
 
@@ -226,7 +226,7 @@ theorem exists_sparse_domination_finiteLaminarMaximal
       rw [← mul_assoc]
       exact mul_le_mul' (hpoint x) le_rfl
     _ = 10 * ∫⁻ x, sparseAveragingFunction R f x * ‖g x‖ₑ := by
-      exact lintegral_const_mul' _ _ (by norm_num)
+      exact lintegral_const_mul' _ _ (by decide +kernel)
     _ = _ := by
       rw [lintegral_sparseAveragingFunction_mul_enorm R f g g.integrable_finiteSparseProof]
 

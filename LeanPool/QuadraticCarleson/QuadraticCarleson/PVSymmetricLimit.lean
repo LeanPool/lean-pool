@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PrincipalValueDistribution
-public import Mathlib.MeasureTheory.Group.Integral
 
 /-!
 # Symmetric truncations of the principal-value distribution
@@ -36,9 +35,8 @@ private theorem symmetricAnnulus_constant_integral (ε : ℝ) (c : ℂ) :
   let F : ℝ → ℂ := s.indicator (fun x ↦ c / (x : ℂ))
   have hodd : (fun x ↦ F (-x)) = fun x ↦ -F x := by
     funext x
-    simp only [F, s, Set.indicator, Set.mem_ofPred_eq, abs_neg, Complex.ofReal_neg,
-      div_neg]
-    split_ifs <;> simp
+    simp only [indicator, mem_ofPred_eq, abs_neg, Complex.ofReal_neg, div_neg, F, s]
+    split_ifs <;> simp only [neg_zero]
   rw [← integral_indicator hs]
   change (∫ x : ℝ, F x) = 0
   apply self_eq_neg.mp
@@ -97,7 +95,7 @@ theorem principalValuePairing_sub_truncation {ε : ℝ} (hε : 0 < ε)
   have hasub : a ⊆ Ioo (-1 : ℝ) 1 := fun _ hx ↦ abs_lt.mp hx.2
   have hcsub : Icc (-ε) ε ⊆ Ioo (-1 : ℝ) 1 := by
     intro x hx
-    exact ⟨lt_of_lt_of_le (by linarith) hx.1, hx.2.trans_lt hε₁⟩
+    exact ⟨lt_of_lt_of_le (by linarith only [hε₁]) hx.1, hx.2.trans_lt hε₁⟩
   have hset : Ioo (-1 : ℝ) 1 = a ∪ Icc (-ε) ε := by
     ext x
     constructor
@@ -132,7 +130,7 @@ theorem norm_principalValueTruncation_sub_pairing_le {ε : ℝ} (hε : 0 < ε)
       norm_setIntegral_le_of_norm_le_const measure_Icc_lt_top
         (fun x _ ↦ norm_principalValueNearIntegrand_le f x)
     _ = 2 * ε * SchwartzMap.seminorm ℂ 0 1 f := by
-      rw [Measure.real, Real.volume_Icc, ENNReal.toReal_ofReal (by linarith)]
+      rw [Measure.real, Real.volume_Icc, ENNReal.toReal_ofReal (by linarith only [hε])]
       ring
 
 /-- Parissis's direct cancelled pairing is precisely the principal-value
@@ -144,7 +142,7 @@ theorem tendsto_principalValueTruncation (f : 𝓢(ℝ, ℂ)) :
   refine squeeze_zero' (g := fun ε ↦ 2 * ε * SchwartzMap.seminorm ℂ 0 1 f)
     (Eventually.of_forall fun _ ↦ norm_nonneg _) ?_ ?_
   · filter_upwards [eventually_mem_nhdsWithin,
-      (eventually_lt_nhds (show (0 : ℝ) < 1 by norm_num)).filter_mono
+      (eventually_lt_nhds (show (0 : ℝ) < 1 by exact zero_lt_one)).filter_mono
         nhdsWithin_le_nhds] with ε hε hε₁
     exact norm_principalValueTruncation_sub_pairing_le hε hε₁ f
   · have hzero : Tendsto (fun ε : ℝ ↦ ε) (𝓝[>] 0) (𝓝 (0 : ℝ)) :=

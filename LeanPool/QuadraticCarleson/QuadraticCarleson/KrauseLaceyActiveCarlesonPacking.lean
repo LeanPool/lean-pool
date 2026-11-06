@@ -161,7 +161,7 @@ theorem sum_activeBadIntervals_length_le_of_geometry
   have heq := Finset.sum_filter_add_sum_filter_not A
     (fun I ↦ k₀ < scale I + 2 - s) RealInterval.length
   dsimp only [A] at heq
-  linarith
+  linarith only [hfar, hnear, heq]
 
 
 theorem sum_activeBadIntervals_length_le

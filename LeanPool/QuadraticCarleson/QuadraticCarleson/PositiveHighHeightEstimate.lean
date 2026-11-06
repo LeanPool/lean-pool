@@ -8,7 +8,6 @@ module
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.QuadraticFixedHeightAveragingNorm
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.CalderonZygmundLevelAtoms
-public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
 # Genuine high-height estimate: disjoint level-atom inputs
@@ -60,7 +59,7 @@ theorem map_disjointLevelAtomSum {ι : Type*}
   · have hz : ∀ i, levelAtom A f k (z i) (R i) x = 0 := by
       intro i
       exact levelAtom_eq_zero_of_not_mem (fun hi ↦ hx ⟨i, hi⟩)
-    simp [disjointLevelAtomSum, hz, hΦ]
+    simp only [disjointLevelAtomSum, hz, tsum_zero, hΦ]
 
 theorem measurable_disjointLevelAtomSum {ι : Type*} [Countable ι]
     {A : ℕ → ℝ} {f : ℝ → ℂ} (hf : Measurable f)
@@ -131,10 +130,10 @@ theorem memLp_disjointLevelAtomSum {ι : Type*} [Countable ι]
   have hs : (∫⁻ x, ‖disjointLevelAtomSum A f k z R x‖ₑ ^ 2) < ∞ :=
     (disjointLevelAtomSum_sq_lintegral_le hf hAk z R hR hdisj).trans_lt
       (ENNReal.mul_lt_top (by finiteness) hmass)
-  rw [MemLp, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [MemLp, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
     hm.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
-  exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hs.ne
+  exact ENNReal.rpow_lt_top_of_nonneg (by norm_num1) hs.ne
 
 /-- The high-height input estimate invokes the genuine, unrestricted
 real-parameter maximal L² theorem, not a supplied oscillatory hypothesis. -/
@@ -148,11 +147,11 @@ theorem fixedHeight_disjointLevelAtomSum_eLpNorm_le {ι : Type*} [Countable ι]
   apply (paperFixedHeightQuadraticMaximal_eLpNorm_decay height
     (memLp_disjointLevelAtomSum hf hfi hAk z R hR hdisj)).trans
   apply mul_le_mul' le_rfl
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
     (measurable_disjointLevelAtomSum (A := A) hf k z R).aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   exact ENNReal.rpow_le_rpow (disjointLevelAtomSum_sq_lintegral_le hf hAk z R hR hdisj)
-    (by norm_num)
+    (by norm_num1)
 
 end PositiveHighHeightEstimate
 end QuadraticCarleson

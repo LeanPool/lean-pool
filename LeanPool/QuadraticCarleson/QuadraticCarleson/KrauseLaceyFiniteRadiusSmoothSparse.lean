@@ -83,7 +83,7 @@ theorem integrable_pairing_dyadicSmoothHighPassMax
   filter_upwards with x
   by_cases hx : x ∈ tsupport g
   · rw [hN lam x hx]
-  · simp [image_eq_zero_of_notMem_tsupport hx]
+  · simp only [image_eq_zero_of_notMem_tsupport hx, star_zero, mul_zero]
 
 theorem absoluteValue_dyadicSmoothHighPassMaxOperator (lam : ℝ) (j : ℤ) :
     absoluteValueOperator (dyadicSmoothHighPassMaxOperator lam j) =

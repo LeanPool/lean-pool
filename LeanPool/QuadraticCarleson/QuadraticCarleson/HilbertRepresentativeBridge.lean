@@ -29,7 +29,7 @@ theorem integral_fourier_mul_eq (f g : ℝ → ℂ)
     (∫ x, 𝓕 f x * g x) = ∫ x, f x * 𝓕 g x := by
   have h := VectorFourier.integral_fourierIntegral_smul_eq_flip
     (L := innerₗ ℝ) Real.continuous_fourierChar continuous_inner hf hg
-  have hflip : (innerₗ ℝ).flip = innerₗ ℝ := by ext; simp
+  have hflip : (innerₗ ℝ).flip = innerₗ ℝ := by ext; rfl
   rw [hflip] at h
   exact h
 
@@ -44,7 +44,7 @@ theorem fourier_toLp_ae_eq {f : ℝ → ℂ} (hf : Integrable f)
     rw [← he]
     exact (Real.Lp.fourierTransform _).continuous
   apply ae_eq_of_integral_contDiff_smul_eq
-    ((Lp.memLp _).locallyIntegrable (by norm_num)) hc.locallyIntegrable
+    ((Lp.memLp _).locallyIntegrable (by norm_num1)) hc.locallyIntegrable
   intro g hgs hgc
   have hgc' : HasCompactSupport (Complex.ofRealCLM ∘ g) := hgc.comp_left rfl
   have hgs' : ContDiff ℝ ∞ (Complex.ofRealCLM ∘ g) := by fun_prop
@@ -61,10 +61,10 @@ theorem fourier_toLp_ae_eq {f : ℝ → ℂ} (hf : Integrable f)
     (∫ x, g x • (Lp.fourierTransformₗᵢ ℝ ℂ (hf₂.toLp f)) x) =
         ∫ x, (𝓕 φ) x * f x := by
       change (∫ x, g x • (𝓕 (hf₂.toLp f)) x) = _
-      simpa [φ, Complex.real_smul] using hdist.symm
+      exact hdist.symm
     _ = ∫ x, φ x * 𝓕 f x := by
       exact integral_fourier_mul_eq φ f φ.integrable hf
-    _ = ∫ x, g x • 𝓕 f x := by simp [φ, Complex.real_smul]
+    _ = ∫ x, g x • 𝓕 f x := by rfl
 
 
 open HilbertPoissonFourier HilbertL2Fourier HilbertMaximalWeakOneOne
@@ -89,7 +89,7 @@ theorem integral_conj_mul_eq_fourier {k : ℝ → ℂ} (hk : Integrable k)
       _ = _ := by
         apply integral_congr_ae
         filter_upwards [hk₂.coeFn_toLp] with y hy
-        simp [hy, RCLike.inner_apply, mul_comm]
+        simp only [hy, RCLike.inner_apply, mul_comm]
   exact hi'.symm
 
 theorem memLp_normalizedPoissonKernel {r : ℝ} (hr : 0 < r) :

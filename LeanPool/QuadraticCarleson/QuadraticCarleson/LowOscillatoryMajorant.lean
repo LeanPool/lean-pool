@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.CalderonZygmundBadPart
-public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # The logarithmic low-oscillatory majorant
@@ -37,7 +36,7 @@ noncomputable def positiveLowDecay (D ℓ x : ℝ) : ℝ :=
 theorem integrableOn_positiveLowDecay_Ioi (D ℓ : ℝ) (hD : 1 ≤ D) (hℓ : 0 < ℓ) :
     IntegrableOn (positiveLowDecay D ℓ) (Ioi ℓ) := by
   have hpow : IntegrableOn (fun x : ℝ ↦ x ^ (-2 : ℝ)) (Ioi ℓ) :=
-    integrableOn_Ioi_rpow_of_lt (by norm_num) hℓ
+    integrableOn_Ioi_rpow_of_lt (by norm_num1) hℓ
   have hsecond : IntegrableOn (fun x : ℝ ↦ D * ℓ * x ^ (-2 : ℝ)) (Ioi ℓ) :=
     hpow.const_mul (D * ℓ)
   have hmeas : AEStronglyMeasurable (positiveLowDecay D ℓ)
@@ -58,13 +57,13 @@ theorem integrableOn_positiveLowDecay_Ioi (D ℓ : ℝ) (hD : 1 ≤ D) (hℓ : 0
     positiveLowDecay D ℓ x ≤ D * ℓ / x ^ 2 := min_le_right _ _
     _ = D * ℓ * x ^ (-2 : ℝ) := by
       rw [Real.rpow_neg hx0.le, Real.rpow_two]
-      ring
+      rfl
 
 /-- Exact evaluation of the positive-half-line logarithmic majorant. -/
 theorem integral_positiveLowDecay_Ioi (D ℓ : ℝ) (hD : 1 ≤ D) (hℓ : 0 < ℓ) :
     ∫ x in Ioi ℓ, positiveLowDecay D ℓ x = Real.log D + 1 := by
   have hDℓ : 0 < D * ℓ := mul_pos (zero_lt_one.trans_le hD) hℓ
-  have hle : ℓ ≤ D * ℓ := by nlinarith
+  have hle : ℓ ≤ D * ℓ := by nlinarith only [hD, hℓ]
   have hg := integrableOn_positiveLowDecay_Ioi D ℓ hD hℓ
   have hgD : IntegrableOn (positiveLowDecay D ℓ) (Ioi (D * ℓ)) :=
     hg.mono_set (Ioi_subset_Ioi hle)
@@ -80,7 +79,7 @@ theorem integral_positiveLowDecay_Ioi (D ℓ : ℝ) (hD : 1 ≤ D) (hℓ : 0 < �
         simp only [positiveLowDecay]
         rw [min_eq_left]
         apply (div_le_div_iff₀ hx0 (sq_pos_of_pos hx0)).2
-        nlinarith [hx.2]
+        nlinarith only [hx, hx0, hx.2]
       _ = Real.log ((D * ℓ) / ℓ) := integral_one_div_of_pos hℓ hDℓ
       _ = Real.log D := by rw [mul_div_cancel_right₀ D hℓ.ne']
   have htail : (∫ x in Ioi (D * ℓ), positiveLowDecay D ℓ x) = 1 := by
@@ -93,7 +92,7 @@ theorem integral_positiveLowDecay_Ioi (D ℓ : ℝ) (hD : 1 ≤ D) (hℓ : 0 < �
         simp only [positiveLowDecay]
         rw [min_eq_right]
         · rw [Real.rpow_neg hx0.le, Real.rpow_two]
-          ring
+          rfl
         · calc
             D * ℓ / x ^ 2 ≤ 1 / x := by
               rw [div_le_iff₀ (sq_pos_of_pos hx0)]
@@ -103,8 +102,8 @@ theorem integral_positiveLowDecay_Ioi (D ℓ : ℝ) (hD : 1 ≤ D) (hℓ : 0 < �
             _ = 1 / x := rfl
       _ = D * ℓ * (1 / (D * ℓ)) := by
         rw [integral_const_mul]
-        rw [integral_Ioi_rpow_of_lt (by norm_num : (-2 : ℝ) < -1) hDℓ]
-        rw [show (-2 : ℝ) + 1 = -1 by norm_num, Real.rpow_neg_one]
+        rw [integral_Ioi_rpow_of_lt (by norm_num1 : (-2 : ℝ) < -1) hDℓ]
+        rw [show (-2 : ℝ) + 1 = -1 by norm_num1, Real.rpow_neg_one]
         ring
       _ = 1 := by simpa only [one_div] using mul_inv_cancel₀ hDℓ.ne'
   rw [hinterval, htail]
@@ -123,7 +122,7 @@ theorem integral_lowDecayMajorant_Ioi (D ℓ z : ℝ) (hD : 1 ≤ D) (hℓ : 0 <
   have hset : (fun x : ℝ ↦ x + z) ⁻¹' Ioi (z + ℓ) = Ioi ℓ := by
     ext x
     simp only [mem_preimage, mem_Ioi]
-    constructor <;> intro h <;> linarith
+    constructor <;> intro h <;> linarith only [h]
   rw [hset] at hmap
   calc
     (∫ x in Ioi (z + ℓ), lowDecayMajorant D ℓ z x) =
@@ -132,8 +131,7 @@ theorem integral_lowDecayMajorant_Ioi (D ℓ z : ℝ) (hD : 1 ≤ D) (hℓ : 0 <
       apply setIntegral_congr_fun measurableSet_Ioi
       intro x hx
       have hx0 : 0 < x := hℓ.trans hx
-      simp only [lowDecayMajorant, positiveLowDecay, add_sub_cancel_right,
-        abs_of_pos hx0]
+      simp only [lowDecayMajorant, add_sub_cancel_right, abs_of_pos hx0, positiveLowDecay]
     _ = Real.log D + 1 := integral_positiveLowDecay_Ioi D ℓ hD hℓ
 
 /-- Reflection gives the same logarithmic mass on the left of the center. -/
@@ -146,7 +144,7 @@ theorem integral_lowDecayMajorant_Iio (D ℓ z : ℝ) (hD : 1 ≤ D) (hℓ : 0 <
   have hset : (fun x : ℝ ↦ x + z) ⁻¹' Iio (z - ℓ) = Iio (-ℓ) := by
     ext x
     simp only [mem_preimage, mem_Iio]
-    constructor <;> intro h <;> linarith
+    constructor <;> intro h <;> linarith only [h]
   rw [hset] at hmap
   calc
     (∫ x in Iio (z - ℓ), lowDecayMajorant D ℓ z x) =
@@ -186,7 +184,7 @@ theorem integral_lowDecayMajorant_compl (D ℓ z : ℝ) (hD : 1 ≤ D) (hℓ : 0
     intro x hxl hxr
     simp only [mem_Iio] at hxl
     simp only [mem_Ioi] at hxr
-    linarith
+    linarith only [hℓ, hxl, hxr]
   have hpos : 0 < D := zero_lt_one.trans_le hD
   have hmeas : AEStronglyMeasurable (lowDecayMajorant D ℓ z) := by
     have habs : Measurable (fun x : ℝ ↦ |x - z|) :=
@@ -197,12 +195,6 @@ theorem integral_lowDecayMajorant_compl (D ℓ z : ℝ) (hD : 1 ≤ D) (hℓ : 0
       ‖lowDecayMajorant D ℓ z x‖ ≤
         D * ℓ * (1 / |x - z| ^ 2) := by
     intro x hx
-    have hdist : ℓ < |x - z| := by
-      simp only [mem_Icc, not_and_or, not_le] at hx
-      rw [abs_sub_comm, lt_abs]
-      rcases hx with hx | hx
-      · exact Or.inl (by linarith)
-      · exact Or.inr (by linarith)
     have hmin0 : 0 ≤ lowDecayMajorant D ℓ z x := by
       apply le_min
       · exact one_div_nonneg.mpr (abs_nonneg _)
@@ -217,7 +209,7 @@ theorem integral_lowDecayMajorant_compl (D ℓ z : ℝ) (hD : 1 ≤ D) (hℓ : 0
       Icc (z - ℓ) (z + ℓ) := by
     ext x
     simp only [tripleCenteredInterval, mem_Icc]
-    constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith
+    constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith only [h₁, h₂]
   rw [hsetTriple] at hinv
   have hmaj : IntegrableOn (fun x : ℝ ↦ D * ℓ * (1 / |x - z| ^ 2))
       (Icc (z - ℓ) (z + ℓ))ᶜ := hinv.const_mul (D * ℓ)
@@ -263,7 +255,7 @@ theorem integrableOn_lowDecayMajorant_compl
       Icc (z - ℓ) (z + ℓ) := by
     ext x
     simp only [tripleCenteredInterval, mem_Icc]
-    constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith
+    constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith only [h₁, h₂]
   rw [hsetTriple] at hinv
   have hmaj : IntegrableOn (fun x : ℝ ↦ D * ℓ * (1 / |x - z| ^ 2))
       (Icc (z - ℓ) (z + ℓ))ᶜ := hinv.const_mul (D * ℓ)
@@ -274,8 +266,8 @@ theorem integrableOn_lowDecayMajorant_compl
     simp only [mem_compl_iff, mem_Icc, not_and_or, not_le] at hx
     rw [abs_sub_comm, lt_abs]
     rcases hx with hx | hx
-    · exact Or.inl (by linarith)
-    · exact Or.inr (by linarith)
+    · exact Or.inl (by linarith only [hx])
+    · exact Or.inr (by linarith only [hx])
   have hmin0 : 0 ≤ lowDecayMajorant D ℓ z x := by
     apply le_min
     · exact one_div_nonneg.mpr (abs_nonneg _)
@@ -293,16 +285,15 @@ theorem integral_lowDecayMajorant_two_pow_le (B : ℕ) (ℓ z : ℝ) (hℓ : 0 <
         lowDecayMajorant ((2 : ℝ) ^ (2 * B)) ℓ z x ≤
       4 * (B + 1 : ℝ) := by
   have hD : (1 : ℝ) ≤ (2 : ℝ) ^ (2 * B) := by
-    exact one_le_pow₀ (by norm_num)
+    exact one_le_pow₀ (by norm_num1)
   rw [integral_lowDecayMajorant_compl ((2 : ℝ) ^ (2 * B)) ℓ z hD hℓ]
   rw [Real.log_pow]
   have hlog : Real.log 2 ≤ 1 := by
-    have h := Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)
+    have h := Real.log_le_sub_one_of_pos (by norm_num1 : (0 : ℝ) < 2)
     norm_num at h ⊢
     exact h
-  have hB : 0 ≤ (B : ℝ) := Nat.cast_nonneg B
   push_cast
-  nlinarith
+  nlinarith only [hlog]
 
 /-- A measurable nonnegative function dominated by the paper's dyadic
 low-oscillatory majorant has the required `O(B)` integral. This packages the
@@ -317,7 +308,7 @@ theorem integral_le_four_mul_succ_of_le_lowDecayMajorant
       F x ≤ A * lowDecayMajorant ((2 : ℝ) ^ (2 * B)) ℓ z x) :
     ∫ x in (Icc (z - ℓ) (z + ℓ))ᶜ, F x ≤
       4 * (B + 1 : ℝ) * A := by
-  have hD : (1 : ℝ) ≤ (2 : ℝ) ^ (2 * B) := one_le_pow₀ (by norm_num)
+  have hD : (1 : ℝ) ≤ (2 : ℝ) ^ (2 * B) := one_le_pow₀ (by norm_num1)
   have hdecay := integrableOn_lowDecayMajorant_compl
     ((2 : ℝ) ^ (2 * B)) ℓ z hD hℓ
   have hscaled : IntegrableOn
@@ -341,6 +332,6 @@ theorem integral_le_four_mul_succ_of_le_lowDecayMajorant
       rw [integral_const_mul]
     _ ≤ A * (4 * (B + 1 : ℝ)) := mul_le_mul_of_nonneg_left
       (integral_lowDecayMajorant_two_pow_le B ℓ z hℓ) hA
-    _ = 4 * (B + 1 : ℝ) * A := by ring
+    _ = 4 * (B + 1 : ℝ) * A := by ac_rfl
 
 end QuadraticCarleson

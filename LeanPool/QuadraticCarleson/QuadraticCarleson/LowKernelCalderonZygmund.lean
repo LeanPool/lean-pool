@@ -8,7 +8,6 @@ module
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.LowKernelDerivative
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.CalderonZygmundBadPart
-public import Mathlib.Analysis.Calculus.MeanValue
 
 /-!
 # Calderón--Zygmund regularity of the low oscillatory kernel
@@ -48,7 +47,7 @@ theorem distance_interval_point_le_two_center_distance
       |x - y| = |(x - z) + (z - y)| := by ring_nf
       _ ≤ |x - z| + |z - y| := abs_add_le _ _
   rw [abs_sub_comm z y] at htri
-  linarith
+  linarith only [hR, hyz, hxz, htri]
 
 /-- Subtracting a point of the segment between `x-y` and `x-z` from `x`
 produces a point of the segment between `y` and `z`. -/
@@ -58,9 +57,9 @@ theorem sub_mem_uIcc_of_mem_sub_uIcc {x y z u : ℝ}
   rw [mem_uIcc] at hu ⊢
   rcases hu with hu | hu
   · right
-    constructor <;> linarith
+    constructor <;> linarith only [hu]
   · left
-    constructor <;> linarith
+    constructor <;> linarith only [hu]
 
 /-- Every point of the mean-value segment remains at least one quarter of
 `|x-y|` away from zero. -/
@@ -73,7 +72,7 @@ theorem quarter_distance_le_abs_of_mem_kernel_segment
   have hvseg : x - u ∈ uIcc y z := sub_mem_uIcc_of_mem_sub_uIcc hu
   have hvz : |(x - u) - z| ≤ |y - z| := by
     rw [abs_sub_comm (x - u) z]
-    simpa [abs_sub_comm z y] using abs_sub_right_of_mem_uIcc hvseg
+    simpa only [abs_sub_comm z y] using abs_sub_right_of_mem_uIcc hvseg
   have hvbound : |(x - u) - z| ≤ R / 2 :=
     hvz.trans (abs_sub_center_le_of_mem_centeredInterval hy)
   have hhalf : |x - z| / 2 ≤ |x - (x - u)| :=
@@ -83,11 +82,11 @@ theorem quarter_distance_le_abs_of_mem_kernel_segment
         calc
           |x - z| = |(x - (x - u)) + ((x - u) - z)| := by ring_nf
           _ ≤ _ := abs_add_le _ _
-      linarith
+      linarith only [hR, hvbound, hxz, htri]
   have hcompare := distance_interval_point_le_two_center_distance hR hx hy
   have hcancel : x - (x - u) = u := by ring
   rw [hcancel] at hhalf
-  linarith
+  linarith only [hhalf, hcompare]
 
 /-- The explicit Calderón--Zygmund regularity constant of the low kernel at
 height `B`. -/
@@ -98,7 +97,7 @@ theorem lowKernelCZConstant_nonneg (B : ℕ) :
     0 ≤ lowKernelCZConstant B := by
   unfold lowKernelCZConstant
   exact mul_nonneg
-    (mul_nonneg (by norm_num) lowKernelDerivativeConstant_nonneg) (by positivity)
+    (mul_nonneg (by norm_num1) lowKernelDerivativeConstant_nonneg) (by positivity)
 
 /-- The paper's low convolution kernel satisfies the precise Lipschitz
 kernel-difference estimate required by the cancellative bad-part lemma. -/
@@ -116,17 +115,16 @@ theorem paperLowCZKernel_sub_center_norm_le
   have hxy : 0 < |x - y| := by
     have hhalf := half_center_distance_le_distance hR.le hx hy
     have hxz := not_mem_tripleCenteredInterval_abs hx
-    linarith
+    linarith only [hR, hhalf, hxz]
   have hdiff : ∀ u ∈ uIcc a b, DifferentiableAt ℝ F u := by
     intro u hu
     have huabs : |x - y| / 4 ≤ |u| := by
-      simpa [a, b] using
-        quarter_distance_le_abs_of_mem_kernel_segment hR hx hy hu
+      exact quarter_distance_le_abs_of_mem_kernel_segment hR hx hy hu
     have hu0 : u ≠ 0 := by
       intro heu
       subst u
       simp only [abs_zero] at huabs
-      linarith
+      linarith only [hxy, huabs]
     exact (hasDerivAt_paperLowOscillatoryKernel hlam B hu0).differentiableAt
   have hderiv : ∀ u ∈ uIcc a b,
       ‖deriv F u‖ ≤
@@ -134,13 +132,12 @@ theorem paperLowCZKernel_sub_center_norm_le
           |x - y| ^ 2 := by
     intro u hu
     have huabs : |x - y| / 4 ≤ |u| := by
-      simpa [a, b] using
-        quarter_distance_le_abs_of_mem_kernel_segment hR hx hy hu
+      exact quarter_distance_le_abs_of_mem_kernel_segment hR hx hy hu
     have hu0 : u ≠ 0 := by
       intro heu
       subst u
       simp only [abs_zero] at huabs
-      linarith
+      linarith only [hxy, huabs]
     have hbase := paperLowOscillatoryKernel_deriv_norm_le_min hlam B hu0
     have hdecay : ‖deriv F u‖ ≤
         lowKernelDerivativeConstant *
@@ -167,7 +164,7 @@ theorem paperLowCZKernel_sub_center_norm_le
         (16 * lowKernelDerivativeConstant * (2 : ℝ) ^ (2 * B) /
           |x - y| ^ 2) * ‖a - b‖ := hmv
     _ = lowKernelCZConstant B * |y - z| / |x - y| ^ 2 := by
-      simp only [a, b, Real.norm_eq_abs, lowKernelCZConstant]
+      simp only [Real.norm_eq_abs, lowKernelCZConstant, a, b]
       rw [show x - y - (x - z) = -(y - z) by ring, abs_neg]
       ring
 

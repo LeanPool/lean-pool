@@ -64,7 +64,7 @@ theorem finiteFullDyadicTail_succ_eq_finiteQuadraticDyadicBlock
   unfold finiteQuadraticDyadicBlock lowOscillatoryKernel
   apply integral_congr_ae
   filter_upwards [] with y
-  simp only [annularQuadraticKernel, Finset.sum_mul]
+  rfl
 
 /-- A single phase-zero suffix is controlled by the genuine ordinary Hilbert
 maximal truncation and the common cutoff-boundary maximal error. -/

@@ -41,7 +41,7 @@ theorem scale_le_of_mem_energyStandard_physicalTail
   have htail := (Finset.mem_filter.mp hI).2
   rw [hlen] at htail
   have hpow : ell ≤ scale I + 2 :=
-    (zpow_le_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).mp
+    (zpow_le_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).mp
       htail
   omega
 

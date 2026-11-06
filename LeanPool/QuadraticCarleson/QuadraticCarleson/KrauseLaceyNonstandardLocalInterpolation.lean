@@ -100,10 +100,10 @@ theorem eLpNorm_interpolationLow_le_rpow
     (hg : Measurable g) :
     eLpNorm (interpolationLow g a) 2 volume ≤
       (ENNReal.ofReal (a ^ (2 - p)) * ∫⁻ x, ENNReal.ofReal (‖g x‖ ^ p)) ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
     (stronglyMeasurable_interpolationLow hg.stronglyMeasurable a).aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
-  apply ENNReal.rpow_le_rpow _ (by norm_num)
+  apply ENNReal.rpow_le_rpow _ (by norm_num1)
   calc
     _ ≤ ∫⁻ x, ENNReal.ofReal (a ^ (2 - p)) * ENNReal.ofReal (‖g x‖ ^ p) := by
       apply lintegral_mono
@@ -133,10 +133,10 @@ theorem lintegral_pairing_le_threshold_of_L2
       eLpNorm F 2 volume * eLpNorm (interpolationLow g a) 2 volume := by
     have h := ENNReal.lintegral_mul_le_Lp_mul_Lq volume Real.HolderConjugate.two_two
       hF hlow.aestronglyMeasurable.enorm
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
         hFm.aestronglyMeasurable,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hlow.aestronglyMeasurable]
-    simpa only [Pi.mul_apply, ENNReal.toReal_ofNat] using h
+      eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by norm_num) hlow.aestronglyMeasurable]
+    exact h
   calc
     _ = (∫⁻ x, ‖F x‖ₑ * ‖interpolationLow g a x‖ₑ) +
         ∫⁻ x, ‖F x‖ₑ * ‖interpolationHigh g a x‖ₑ := by
@@ -168,7 +168,7 @@ theorem lintegral_nonstandard_pairing_le_threshold
         (ENNReal.ofReal (a ^ (2 - p)) * ∫⁻ x, ENNReal.ofReal (‖g x‖ ^ p)) ^ (1 / 2 : ℝ) +
       ENNReal.ofReal (8 * positiveDyadicAmplitudeBound * (a ^ (1 - p) * G) * ∫ x, ‖f x‖) := by
   apply lintegral_pairing_le_threshold_of_L2
-    (aemeasurable_badLengthTailMaximal S hf I₀ k₀ s scale N) hg hgi (by linarith) hp2 ha
+    (aemeasurable_badLengthTailMaximal S hf I₀ k₀ s scale N) hg hgi (by linarith only [hp]) hp2 ha
     (eLpNorm_nonstandard_badLengthTailMaximal_le hf I₀ k₀ s hk₀ scale hlam hparent hsub N hN)
   exact lintegral_nonstandard_pairing_le_of_averages_le hf
     (integrable_interpolationHigh_local hg hgi a) I₀ k₀ s scale hlam N hN

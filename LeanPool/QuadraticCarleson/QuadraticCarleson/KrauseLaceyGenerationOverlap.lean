@@ -34,7 +34,7 @@ private theorem length_le_of_carrier_subset {I J : RealInterval}
     (h : I.carrier ⊆ J.carrier) : I.length ≤ J.length := by
   have he := (Ioc_subset_Ioc_iff I.left_lt_right).mp h
   dsimp [RealInterval.length]
-  linarith [he.1, he.2]
+  linarith only [he, he.1, he.2]
 
 /-- Survival through `n` removals produces an actual chain of `n + 1`
 distinct intervals, with the given interval as its largest member and
@@ -51,7 +51,7 @@ theorem exists_chain_of_mem_remainingIntervals
   classical
   induction n generalizing I with
   | zero =>
-      refine ⟨{I}, ?_, by simp, by simp, ?_, ?_, I, by simp, ?_⟩
+      refine ⟨{I}, ?_, by rfl, by simp, ?_, ?_, I, by simp, ?_⟩
       · simpa [remainingIntervals] using hI
       · intro J hJ
         rw [Finset.mem_singleton.mp hJ]
@@ -166,7 +166,7 @@ theorem generation_eq_empty_of_ae_overlapCount_le
     generation S n = ∅ := by
   classical
   rw [generation, remainingIntervals_eq_empty_of_ae_overlapCount_le S hbound hMn]
-  simp [minimalLayer]
+  rfl
 
 theorem generation_eq_empty_of_overlapCount_le
     (S : Finset RealInterval) {M n : ℕ}

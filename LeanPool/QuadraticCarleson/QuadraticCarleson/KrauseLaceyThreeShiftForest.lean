@@ -155,13 +155,13 @@ theorem finiteShiftGridRootIntervals_pairwiseDisjoint
         (r : ℝ) * dyadicLength (shiftedGridRootLength topScale) 0 := by
       apply mul_le_mul_of_nonneg_right _ hL.le
       exact_mod_cast hstep
-    linarith
+    linarith only [hxq, hxr, hcast]
   · have hstep : r + 1 ≤ q := (Int.add_one_le_iff).mpr hgt
     have hcast : ((r : ℝ) + 1) * dyadicLength (shiftedGridRootLength topScale) 0 ≤
         (q : ℝ) * dyadicLength (shiftedGridRootLength topScale) 0 := by
       apply mul_le_mul_of_nonneg_right _ hL.le
       exact_mod_cast hstep
-    linarith
+    linarith only [hxq, hxr, hcast]
 
 /-- Different root components of the completed forest are disjoint, not just
 laminar. -/

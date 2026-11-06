@@ -100,12 +100,12 @@ theorem badLengthTailMaximal_le_massMajorant_of_scale
     split_ifs
     · exact norm_localizedBadPiece_le_mass_of_scale hf I₀ k₀ s scale (hscale I hI) x
     · rw [norm_zero]
-      exact mul_nonneg (div_nonneg (mul_nonneg (by norm_num)
+      exact mul_nonneg (div_nonneg (mul_nonneg (by norm_num1)
         positiveDyadicAmplitudeBound_nonneg) I.length_pos.le)
         (intervalBadMass_nonneg S f I₀ k₀ s scale I)
   · rw [Set.indicator_of_notMem hx, krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 (scale I) I _
       (hscale I hI) hx]
-    simp
+    simp only [ite_self, norm_zero, Std.le_refl]
 
 
 theorem lintegral_badLengthTail_pairing_le_sum_local_averages_of_scale
@@ -178,18 +178,18 @@ theorem lintegral_badLengthTail_pairing_le_of_averages_le
       apply Finset.sum_le_sum
       intro I hI
       exact mul_le_mul_of_nonneg_left (hgavg I hI) (mul_nonneg
-        (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+        (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
         (intervalBadMass_nonneg S f I₀ k₀ s scale I))
     _ = 8 * positiveDyadicAmplitudeBound * G * ∑ I ∈ N, intervalBadMass S f I₀ k₀ s scale I := by
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro I hI
-      ring
+      ac_rfl
     _ ≤ _ := mul_le_mul_of_nonneg_left
       (sum_intervalBadInput_mass_le hf I₀ k₀ s scale hlam N
         hN
         hscale)
-      (mul_nonneg (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg) hG)
+      (mul_nonneg (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg) hG)
 
 /-- Exact equality with the all-integer maximal function: the scalar
 family already lies above the source's lower physical scale `k₀ + s`. -/
@@ -256,7 +256,7 @@ theorem lintegral_energyNonstandard_good_pairing_le
   have h := lintegral_energyNonstandard_pairing_le_of_averages_le hf hg I₀ k₀ s scale hlam
     (energyNonstandardIntervals S f I₀ k₀ s scale ∩ goodCollection S f g I₀)
     Finset.inter_subset_left
-    (mul_nonneg (by norm_num) (intervalL1Average_nonneg g I₀))
+    (mul_nonneg (by norm_num1) (intervalL1Average_nonneg g I₀))
     (fun I hI ↦ (goodCollection_averages_le hsub (Finset.mem_inter.mp hI).2).2)
   convert h using 1
   congr 1
@@ -286,7 +286,7 @@ theorem lintegral_energyNonstandard_pairing_le_threshold
   have hFm : AEMeasurable (energyNonstandardSourceTailMaximal S f I₀ k₀ s scale N) volume := by
     rw [energyNonstandardSourceTailMaximal_eq_badLengthTailMaximal f I₀ k₀ s scale hlam N hN]
     exact aemeasurable_badLengthTailMaximal S hf I₀ k₀ s scale N
-  apply lintegral_pairing_le_threshold_of_L2 hFm hg hgi (by linarith) hp2 ha
+  apply lintegral_pairing_le_threshold_of_L2 hFm hg hgi (by linarith only [hp]) hp2 ha
     (eLpNorm_energyNonstandardSourceTailMaximal_le hf I₀ k₀ s hk₀ scale hlam hparent hsub N hN)
   exact lintegral_energyNonstandard_pairing_le_of_averages_le hf
     (integrable_interpolationHigh_local hg hgi a) I₀ k₀ s scale hlam N hN

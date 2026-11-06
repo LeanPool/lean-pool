@@ -47,21 +47,20 @@ theorem hasExtendedWeakL1Bound_of_finiteMax_add_fortyEight_maximal
   let EM : Set ℝ := {x | ENNReal.ofReal (a / 96) <
     centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x}
   have ha2 : 0 < a / 2 := by positivity
-  have ha96 : 0 < a / 96 := by positivity
   have htwo : (2 : ℝ≥0∞) * ENNReal.ofReal (a / 2) = ENNReal.ofReal a := by
     rw [← ENNReal.ofReal_ofNat,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
     congr 1
     ring
   have h96 : (96 : ℝ≥0∞) * ENNReal.ofReal (a / 96) = ENNReal.ofReal a := by
     rw [← ENNReal.ofReal_ofNat,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 96)]
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 96)]
     congr 1
     ring
   have h48 : (48 : ℝ≥0∞) * ENNReal.ofReal (a / 96) =
       ENNReal.ofReal (a / 2) := by
     rw [← ENNReal.ofReal_ofNat,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 48)]
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 48)]
     congr 1
     ring
   have hhalf : ENNReal.ofReal (a / 2) + ENNReal.ofReal (a / 2) =
@@ -102,8 +101,8 @@ theorem hasExtendedWeakL1Bound_of_finiteMax_add_fortyEight_maximal
     _ = ENNReal.ofReal ((2 * C + 384) * mass.toReal) := by
       rw [ENNReal.ofReal_mul (by positivity : 0 ≤ 2 * C + 384),
         ENNReal.ofReal_toReal hmass,
-        ENNReal.ofReal_add (by positivity : 0 ≤ 2 * C) (by norm_num),
-        ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2),
+        ENNReal.ofReal_add (by positivity : 0 ≤ 2 * C) (by norm_num1),
+        ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2),
         ENNReal.ofReal_ofNat, ENNReal.ofReal_ofNat]
       ring
 

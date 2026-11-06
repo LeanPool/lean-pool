@@ -58,7 +58,7 @@ theorem one_le_roundedScale {ρ : ℝ} (hρ : 0 < ρ) (hmin : 1 / 8 ≤ ρ) :
     have h := hmin.trans_lt (dyadicFloorScale_bounds ρ hρ).2
     norm_num at h ⊢
     exact h
-  have hidx := (zpow_lt_zpow_iff_right₀ (by norm_num : (1 : ℝ) < 2)).mp hpow
+  have hidx := (zpow_lt_zpow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)).mp hpow
   omega
 
 /-- Every such rounded cutoff is already one of the allowed high cutoffs. -/

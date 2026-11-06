@@ -55,8 +55,8 @@ theorem RealInterval.centralThird_subset_carrier (I : RealInterval) :
   change (2 * I.left + I.right) / 3 < x ∧
     x ≤ (I.left + 2 * I.right) / 3 at hx
   change I.left < x ∧ x ≤ I.right
-  exact ⟨by linarith [hx.1, I.left_lt_right],
-    by linarith [hx.2, I.left_lt_right]⟩
+  exact ⟨by linarith only [hx, hx.1, I.left_lt_right],
+    by linarith only [hx, hx.2, I.left_lt_right]⟩
 
 /-- The genuine localized quadratic dyadic piece corresponding to
 Krause--Lacey (3.2), with the source input restriction to the central third.
@@ -71,9 +71,9 @@ project's one-sided dyadic amplitude is exactly `|I|/8`. -/
 theorem krauseLacey_scale_eq_eight_mul_radius (j : ℤ) :
     (2 : ℝ) ^ (j + 2) = 8 * (2 : ℝ) ^ (j - 1) := by
   rw [show j + 2 = (j - 1) + 3 by ring,
-    zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+    zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
   norm_num
-  ring
+  ac_rfl
 
 /-- The exact support/locality assertion following Krause--Lacey (3.2):
 localizing the input to the central third makes the scale-`j` piece supported
@@ -93,11 +93,11 @@ theorem krauseLaceyLocalizedPiece_eq_zero_of_notMem
       apply integral_congr_ae
       filter_upwards with y
       by_cases ha : positiveDyadicAmplitude j y = 0
-      · simp [ha]
+      · simp only [ha, zero_mul]
       have hy := positiveDyadicAmplitude_support_subset j ha
-      have hradius_pos : 0 < (2 : ℝ) ^ (j - 1) := zpow_pos (by norm_num) _
+      have hradius_pos : 0 < (2 : ℝ) ^ (j - 1) := zpow_pos (by norm_num1) _
       have hy_nonneg : 0 ≤ y :=
-        le_trans (div_nonneg hradius_pos.le (by norm_num)) hy.1
+        le_trans (div_nonneg hradius_pos.le (by norm_num1)) hy.1
       have hy_upper : y ≤ I.length / 8 := by
         rw [hscale, krauseLacey_scale_eq_eight_mul_radius]
         norm_num
@@ -110,13 +110,13 @@ theorem krauseLaceyLocalizedPiece_eq_zero_of_notMem
         rw [RealInterval.carrier]
         constructor
         · change I.left < x
-          linarith [hmid.1, I.left_lt_right]
+          linarith only [hy_nonneg, hmid, hmid.1, I.left_lt_right]
         · change x ≤ I.right
           dsimp [RealInterval.length] at hy_upper
-          linarith [hmid.2]
+          linarith only [hy_upper, hmid, hmid.2]
       rw [Set.indicator_of_notMem hnotmid]
-      simp
-    _ = 0 := by simp
+      simp only [mul_zero]
+    _ = 0 := by simp only [integral_zero]
 
 /-- Set-theoretic support formulation of the preceding exact pointwise
 localization. -/
@@ -148,7 +148,7 @@ theorem krauseLaceySignedLocalizedPiece_eq_zero_of_notMem
       apply integral_congr_ae
       filter_upwards with y
       by_cases ha : dyadicPsi j y = 0
-      · simp [ha]
+      · simp only [ha, Complex.ofReal_zero, zero_mul]
       have hy := dyadicPsi_support_subset j ha
       change (2 : ℝ) ^ (j - 3) < |y| ∧ |y| < (2 : ℝ) ^ (j - 1) at hy
       have hy_upper : y ≤ I.length / 8 := by
@@ -168,13 +168,13 @@ theorem krauseLaceySignedLocalizedPiece_eq_zero_of_notMem
         constructor
         · change I.left < x
           dsimp [RealInterval.length] at hy_lower
-          linarith [hmid.1, I.left_lt_right]
+          linarith only [hy_lower, hmid, hmid.1, I.left_lt_right]
         · change x ≤ I.right
           dsimp [RealInterval.length] at hy_upper
-          linarith [hmid.2]
+          linarith only [hy_upper, hmid, hmid.2]
       rw [Set.indicator_of_notMem hnotmid]
-      simp
-    _ = 0 := by simp
+      simp only [mul_zero]
+    _ = 0 := by simp only [integral_zero]
 
 theorem krauseLaceySignedLocalizedPiece_support_subset
     (lam : ℝ) (j : ℤ) (I : RealInterval) (f : ℝ → ℂ)
@@ -251,14 +251,14 @@ theorem krauseLacey_stoppingChildren_length_le_tenth
       have haverage_nonneg := intervalL1Average_nonneg f I
       have hlength_sum_pos : 0 < ∑ i ∈ s, (J i).length :=
         Finset.sum_pos (fun i _ ↦ (J i).length_pos) hs
-      nlinarith [I.length_pos]
+      nlinarith only [hstrict, haverage_nonneg, hlength_sum_pos, I.length_pos]
     exact (le_of_lt (by
-      apply (lt_div_iff₀ (by norm_num : (0 : ℝ) < 10)).2
-      nlinarith [hstrict])).trans_eq (by ring)
+      apply (lt_div_iff₀ (by norm_num1 : (0 : ℝ) < 10)).2
+      nlinarith [hstrict])).trans_eq (by rfl)
   · have hempty : s = ∅ := Finset.not_nonempty_iff_eq_empty.mp hs
     rw [hempty]
     simp only [Finset.sum_empty]
-    exact div_nonneg I.length_pos.le (by norm_num)
+    exact div_nonneg I.length_pos.le (by norm_num1)
 
 /-- The exact two-function packing estimate in the stopping recursion for
 Krause--Lacey Lemma 3.5. A child is stopped when either input average is more
@@ -305,7 +305,7 @@ theorem krauseLacey_stoppingChildren_length_le_fifth
       rcases Finset.mem_filter.mp hi with ⟨his, hn⟩
       exact (hbad i his).resolve_left hn
   rw [← Finset.sum_filter_add_sum_filter_not s p fun i ↦ (J i).length]
-  linarith [hfpack, hgpack]
+  linarith only [hfpack, hgpack]
 
 /-- The part of a parent interval left after deleting its stopping children.
 These are the major subsets used by the recursive sparse construction. -/
@@ -358,12 +358,12 @@ theorem krauseLacey_stoppingMajorSubset_measure_ge_four_fifths
     volume.real (I.carrier \ (⋃ i ∈ s, (J i).carrier))
   rw [MeasureTheory.measureReal_sdiff hunion_sub hunion_meas (by simp)]
   have hI : volume.real I.carrier = I.length := by
-    simpa [Measure.real] using I.volume_carrier_toReal
+    exact I.volume_carrier_toReal
   have hU : volume.real (⋃ i ∈ s, (J i).carrier) =
       ∑ i ∈ s, (J i).length := by
-    simpa [Measure.real] using hunion_measure
+    exact hunion_measure
   rw [hI, hU]
-  linarith
+  linarith only [hpack]
 
 /-- In particular, every step of this recursion meets the approved KL18
 `1/4` major-subset density, with considerable slack. -/
@@ -381,7 +381,7 @@ theorem krauseLacey_stoppingMajorSubset_measure_ge_quarter
   have hfour := krauseLacey_stoppingMajorSubset_measure_ge_four_fifths
     s J I f g hdisj hsub hf hg hbad
   have hlen := I.length_pos
-  linarith
+  linarith only [hfour, hlen]
 
 /-- A finite KL18 stopping recursion produces a sparse family.
 
@@ -410,7 +410,7 @@ theorem krauseLacey_finiteStoppingTree_isSparse
   classical
   let E : {I : RealInterval // I ∈ (↑S : Set RealInterval)} → Set ℝ :=
     fun I ↦ krauseLaceyStoppingMajorSubset (children I.1) id I.1
-  refine ⟨by norm_num, by norm_num, E, ?_, ?_, ?_, ?_⟩
+  refine ⟨by norm_num1, by norm_num1, E, ?_, ?_, ?_, ?_⟩
   · intro I
     exact measurableSet_krauseLaceyStoppingMajorSubset (children I.1) id I.1
   · intro I

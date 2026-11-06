@@ -97,8 +97,8 @@ theorem hasSignedSumSquareBound_energyStandardGenerations
   rw [sum_smul_generations_eq]
   let v := badPieceLp S f hf I₀ k₀ s scale
   have hcoeff (I : RealInterval) (hI : I ∈ N) : |c (generationIndex N I)| ≤ 1 := by
-    exact (hc _ (generationIndex_spec hI).1).elim (fun h ↦ by rw [h]; norm_num)
-      (fun h ↦ h.elim (fun h ↦ by rw [h]; norm_num) (fun h ↦ by rw [h]; norm_num))
+    exact (hc _ (generationIndex_spec hI).1).elim (fun h ↦ by rw [h]; norm_num1)
+      (fun h ↦ h.elim (fun h ↦ by rw [h]; norm_num1) (fun h ↦ by rw [h]; norm_num1))
   have hdiag : (∑ I ∈ N, ‖v I‖ ^ 2) ≤
       (2560 * positiveDyadicAmplitudeBound ^ 2 * intervalL1Average f I₀ /
         (2 : ℝ) ^ (kmin + 2)) * ∫ x, ‖f x‖ := by
@@ -114,8 +114,8 @@ theorem hasSignedSumSquareBound_energyStandardGenerations
       rw [norm_smul, Real.norm_eq_abs]
       exact mul_le_of_le_one_left (norm_nonneg _) (hcoeff I hI)
     _ ≤ (N.card : ℝ) * ∑ I ∈ N, ‖v I‖ ^ 2 := by
-      simpa using sq_sum_le_card_mul_sum_sq (s := N) (f := fun I ↦ ‖v I‖)
-    _ ≤ _ := mul_le_mul_of_nonneg_left hdiag (by positivity)
+      exact sq_sum_le_card_mul_sum_sq (s := N) (f := fun I ↦ ‖v I‖)
+    _ ≤ _ := mul_le_mul_of_nonneg_left hdiag (by exact Nat.cast_nonneg' N.card)
 
 theorem eLpNorm_energyStandardGenerationPrefixMaximal_le
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
@@ -227,11 +227,11 @@ theorem lintegral_energyStandardSourceTail_pairing_le
   have h := ENNReal.lintegral_mul_le_Lp_mul_Lq volume Real.HolderConjugate.two_two
     (aemeasurable_energyStandardSourceTailMaximal S hf I₀ k₀ s scale N).enorm
     hgi.aestronglyMeasurable.enorm
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by norm_num)
       (aemeasurable_energyStandardSourceTailMaximal S hf I₀ k₀ s scale N).aestronglyMeasurable,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by norm_num)
       hgi.aestronglyMeasurable]
-  simpa only [Pi.mul_apply, ENNReal.toReal_ofNat] using h
+  exact h
 
 theorem eLpNorm_energyStandardSourceTailMaximal_le
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
@@ -253,7 +253,7 @@ theorem eLpNorm_energyStandardSourceTailMaximal_le
     _ = ENNReal.ofReal 2 *
         eLpNorm (energyStandardGenerationPrefixMaximal S f I₀ k₀ s scale N) 2 volume := by
       rw [eLpNorm_const_smul, show ‖(2 : ℝ)‖ₑ = ENNReal.ofReal 2 by
-        exact Real.enorm_of_nonneg (by norm_num)]
+        exact Real.enorm_of_nonneg (by norm_num1)]
     _ ≤ _ := by
       calc
         _ ≤ ENNReal.ofReal 2 * ENNReal.ofReal ((Nat.log2 N.card + 1 : ℝ) * Real.sqrt
@@ -261,12 +261,12 @@ theorem eLpNorm_energyStandardSourceTailMaximal_le
               intervalL1Average f I₀ / (2 : ℝ) ^ (kmin + 2)) * ∫ x, ‖f x‖))) :=
           mul_le_mul' le_rfl (eLpNorm_energyStandardGenerationPrefixMaximal_le hf I₀ k₀ s kmin
             scale hlam hsub N hN hmin)
-        _ = _ := (ENNReal.ofReal_mul (by norm_num)).symm
+        _ = _ := (ENNReal.ofReal_mul (by norm_num1)).symm
   rw [Real.norm_of_nonneg
     (energyStandardSourceTailMaximal_nonneg I₀ k₀ s scale hlam N hN x)]
   change energyStandardSourceTailMaximal S f I₀ k₀ s scale N x ≤
     ‖2 * energyStandardGenerationPrefixMaximal S f I₀ k₀ s scale N x‖
-  rw [Real.norm_of_nonneg (mul_nonneg (by norm_num)
+  rw [Real.norm_of_nonneg (mul_nonneg (by norm_num1)
     (energyStandardGenerationPrefixMaximal_nonneg S f I₀ k₀ s scale N x))]
   exact energyStandardSourceTailMaximal_le_prefix I₀ k₀ s scale hlam N hN x
 

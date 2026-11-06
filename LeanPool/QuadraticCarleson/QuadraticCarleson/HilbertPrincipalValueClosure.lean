@@ -9,7 +9,6 @@ module
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.OscillatoryReductionLimit
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.HilbertFiniteTruncationWeakOneOne
 public import Mathlib.Analysis.Normed.Lp.SmoothApprox
-public import Mathlib.Topology.MetricSpace.Cauchy
 
 /-!
 # Principal-value closure from the uniform maximal weak estimate
@@ -49,7 +48,7 @@ theorem hasUniformHilbertMaximalWeakBound_of_real
   by_cases ha : a = 0
   · simp only [ha, zero_mul, zero_le]
   by_cases hat : a = ∞
-  · simp [hat]
+  · simp only [hat, not_top_lt, ofPred_false, measure_empty, mul_zero, zero_le]
   simpa only [ENNReal.ofReal_toReal hat] using
     hweak f a.toReal (ENNReal.toReal_pos ha hat)
 
@@ -72,7 +71,7 @@ theorem exists_compactSchwartz_lintegral_residual_le
     ∃ (g : 𝓢(ℝ, ℂ)) (hg : HasCompactSupport (g : ℝ → ℂ)),
       (∫⁻ x, ‖schwartzResidual f g hg x‖ₑ) ≤ ENNReal.ofReal ε := by
   obtain ⟨g, hg, hgs, happrox⟩ := MeasureTheory.MemLp.exist_eLpNorm_sub_le
-    (p := 1) (by norm_num) (by norm_num)
+    (p := 1) (by decide +kernel) (by exact le_rfl)
     (memLp_one_iff_integrable.mpr f.integrable) hε
   refine ⟨hg.toSchwartzMap hgs, hg, ?_⟩
   change (∫⁻ x, ‖f x - g x‖ₑ) ≤ ENNReal.ofReal ε
@@ -114,7 +113,7 @@ theorem principalValue_tail_pair_small
         ‖quadraticHilbertTrunc 0 s g x - quadraticHilbertTrunc 0 t g x‖ < η := by
   have he := hg (Metric.ball_mem_nhds w (by positivity : 0 < η / 2))
   obtain ⟨δ, hδ, hδsub⟩ :=
-    (mem_nhdsGT_iff_exists_Ioo_subset' (by norm_num : (0 : ℝ) < 1)).mp he
+    (mem_nhdsGT_iff_exists_Ioo_subset' (by exact zero_lt_one : (0 : ℝ) < 1)).mp he
   refine ⟨δ, hδ, fun s hs hsδ t ht htδ ↦ ?_⟩
   have hsclose := hδsub ⟨hs, hsδ⟩
   have htclose := hδsub ⟨ht, htδ⟩
@@ -124,7 +123,7 @@ theorem principalValue_tail_pair_small
   have hh := dist_triangle (quadraticHilbertTrunc 0 s g x) w
     (quadraticHilbertTrunc 0 t g x)
   rw [dist_comm w] at hh
-  linarith
+  linarith only [hsclose, htclose, hh]
 
 /-- Smooth convergence and a uniformly small maximal residual exclude a
 tail-oscillation obstruction for the original input. -/
@@ -165,7 +164,7 @@ theorem badHilbertCauchySet_subset_maximal_residual
         congr 1
         ring
       _ ≤ _ := (norm_add_le _ _).trans (add_le_add (norm_sub_le _ _) le_rfl)
-  linarith
+  linarith only [hg, hbad, hresS, hresT, hgs, hbound]
 
 /-- Every positive Cauchy-obstruction level has outer measure zero. The
 proof sends the actual smooth-approximation error to zero in `L¹`. -/
@@ -185,7 +184,7 @@ theorem volume_badHilbertCauchySet_eq_zero
     have hreal := tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)
     have he := (ENNReal.continuous_ofReal.tendsto 0).comp hreal
     have hc := (ENNReal.continuous_const_mul hweak.1.ne).tendsto (ENNReal.ofReal 0)
-    simpa only [ENNReal.ofReal_zero, mul_zero, Function.comp_def] using hc.comp he
+    simpa only [Function.comp_def, ENNReal.ofReal_zero, mul_zero] using hc.comp he
   have hzero : ENNReal.ofReal (η / 4) * volume (badHilbertCauchySet f η) = 0 :=
     le_antisymm (ge_of_tendsto hlim (Eventually.of_forall fun n : ℕ ↦
       hbound (by positivity : 0 < 1 / ((n : ℝ) + 1)))) bot_le

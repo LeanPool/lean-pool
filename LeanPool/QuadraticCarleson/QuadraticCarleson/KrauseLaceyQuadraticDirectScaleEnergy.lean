@@ -294,7 +294,7 @@ theorem sum_integral_norm_offsetGroupedInput_allScales_le_root
   have hzero (m : ℤ) (hm : m ∈ K.image shift) (hmS : m ∉ S.image scale) : F m = 0 := by
     dsimp only [F]
     rw [smallestScaleInput_eq_zero_of_not_mem_image S scale f m hmS]
-    simp
+    simp only [Pi.zero_apply, norm_zero, integral_zero]
   have hfilter : (∑ m ∈ K.image shift, F m) = ∑ m ∈ U, F m := by
     symm
     apply Finset.sum_subset

@@ -45,8 +45,7 @@ theorem quadraticHilbertSchwartz_wavePacket_norm_le_all_orders (k : ℕ)
       offSupportDecayConstant k 0 1 /
         (|lam| ^ k * t ^ k * |x - s| ^ (k + 1)) := by
   rw [quadraticHilbertSchwartz_wavePacket_eq_offSupportKernelAction ht hx]
-  simpa only [offSupportOscillatoryAction_eq_offSupportKernelAction] using
-    offSupportOscillatoryAction_norm_le_all_orders k hlam ht hx
+  exact offSupportOscillatoryAction_norm_le_all_orders k hlam ht hx
 
 /-- A direct entry point for both displayed estimates in the paper's first
 lemma of Section 3. The constants are uniform in every interval and modulation;

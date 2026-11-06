@@ -258,18 +258,18 @@ theorem lacunaryLowContribution_paperCutoff_levelSet_one_le_orlicz
   have h2quarter : (2 : ℝ≥0∞) * ENNReal.ofReal (1 / 4 : ℝ) =
       ENNReal.ofReal (1 / 2 : ℝ) := by
     rw [show (2 : ℝ≥0∞) = ENNReal.ofReal (2 : ℝ) by norm_num,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
     norm_num
   have hhalf : ENNReal.ofReal (1 / 2 : ℝ) + 2 * ENNReal.ofReal (1 / 4 : ℝ) = 1 := by
-    rw [h2quarter, ← ENNReal.ofReal_add (by norm_num) (by norm_num)]
+    rw [h2quarter, ← ENNReal.ofReal_add (by norm_num1) (by norm_num1)]
     norm_num
   have htwo : (2 : ℝ≥0∞) * ENNReal.ofReal (1 / 2 : ℝ) = 1 := by
     rw [show (2 : ℝ≥0∞) = ENNReal.ofReal (2 : ℝ) by norm_num,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2)]
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 2)]
     norm_num
   have hfour : (4 : ℝ≥0∞) * ENNReal.ofReal (1 / 4 : ℝ) = 1 := by
     rw [show (4 : ℝ≥0∞) = ENNReal.ofReal (4 : ℝ) by norm_num,
-      ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 4)]
+      ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 4)]
     norm_num
   have hsub : {x | 1 < lacunaryLowContribution f lacunaryHighCutoff x} ⊆
       E ∪ (({x | ENNReal.ofReal (1 / 2 : ℝ) < M x} ∩ Eᶜ) ∪
@@ -291,7 +291,7 @@ theorem lacunaryLowContribution_paperCutoff_levelSet_one_le_orlicz
   have hM : volume ({x | ENNReal.ofReal (1 / 2 : ℝ) < M x} ∩ Eᶜ) ≤
       (48 * ENNReal.ofReal C * frozenMiddleOrliczConstant) * J := by
     have h := lacunaryFrozenMainOutput_paperCutoff_compl_levelSet_mul_le_orlicz
-      hf hfi hc hblock (by norm_num : (0 : ℝ) < 1 / 2)
+      hf hfi hc hblock (by norm_num1 : (0 : ℝ) < 1 / 2)
     calc
       _ = 2 * (ENNReal.ofReal (1 / 2 : ℝ) *
           volume ({x | ENNReal.ofReal (1 / 2 : ℝ) < M x} ∩ Eᶜ)) := by

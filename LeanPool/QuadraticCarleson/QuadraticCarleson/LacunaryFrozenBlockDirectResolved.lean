@@ -64,7 +64,7 @@ theorem frozenBlockMaxEnorm_le_highSuffixFamily_add_maximal
   let i : Fin (Q B τ).card := (Q B τ).equivFin ⟨m, hm⟩
   have hi : modulationBlockIndex B τ i = m := by
     dsimp only [i, modulationBlockIndex]
-    simp
+    simp only [Equiv.symm_apply_apply]
   change ‖paperLowDyadicOperator (dyadicModulation m) (dyadicModulation_pos m).ne'
     B (frozenBlockInputL0 f k B c τ) x‖ₑ ≤ _
   have hpoint := enorm_paperLowDyadicOperator_le_dilatedHighSuffix_add_maximal

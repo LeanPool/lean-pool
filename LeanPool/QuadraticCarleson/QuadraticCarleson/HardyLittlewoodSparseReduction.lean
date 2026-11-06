@@ -51,7 +51,7 @@ theorem closedBall_subset_carrier_of_mem_centralThird
     x ≤ (I.left + 2 * I.right) / 3 at hx
   change I.left < y ∧ y ≤ I.right
   dsimp [RealInterval.length] at hr
-  constructor <;> linarith
+  constructor <;> linarith only [hr, hy, hx]
 
 /-- A ball contained in an interval of at most eight times its length is
 controlled by eight times that interval's normalized average. -/
@@ -67,9 +67,9 @@ theorem centeredAverage_le_eight_intervalAverage
       ENNReal.ofReal (localAverage 1 f I) * ENNReal.ofReal I.length := by
     rw [hav, ENNReal.div_mul_cancel hI ENNReal.ofReal_ne_top]
   have hlen' : ENNReal.ofReal I.length ≤ 8 * ENNReal.ofReal (2 * r) := by
-    rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 8)]
+    rw [← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 8)]
     apply ENNReal.ofReal_le_ofReal
-    nlinarith
+    linarith only [hlen]
   unfold centeredAverage
   apply (ENNReal.div_le_iff hd ENNReal.ofReal_ne_top).mpr
   calc
@@ -90,14 +90,14 @@ theorem radiusGridScale_bounds (q : PositiveRational) :
   have heq : (2 : ℝ) ^ (radiusGridScale q + 2) = 8 * dyadicCeilRadius (q : ℝ) hp := by
     unfold radiusGridScale dyadicCeilRadius
     rw [show dyadicFloorScale (q : ℝ) hp + 2 + 2 =
-      (dyadicFloorScale (q : ℝ) hp + 1) + 3 by ring,
-      zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+      (dyadicFloorScale (q : ℝ) hp + 1) + 3 by ac_rfl,
+      zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
     norm_num
     ring
   rw [heq]
   constructor
-  · nlinarith [lt_dyadicCeilRadius (q : ℝ) hp]
-  · nlinarith [dyadicCeilRadius_le_two_mul (q : ℝ) hp]
+  · linarith only [hp, lt_dyadicCeilRadius (q : ℝ) hp]
+  · linarith only [hp, dyadicCeilRadius_le_two_mul (q : ℝ) hp]
 
 /-- The largest grid scale associated with the radii in `s`, with value zero when `s` is empty. -/
 def radiusTopScale (s : Finset PositiveRational) : ℤ :=
@@ -173,7 +173,7 @@ theorem exists_three_laminar_maxima_domination
     closedBall_subset_carrier_of_mem_centralThird I hxI (by rw [hlen]; linarith [hbound.1])
   calc
     _ ≤ 8 * ENNReal.ofReal (localAverage 1 f I) :=
-      centeredAverage_le_eight_intervalAverage f I hrad hball (by simpa [hlen] using hbound.2)
+      centeredAverage_le_eight_intervalAverage f I hrad hball (by simpa only [hlen] using hbound.2)
     _ ≤ 8 * finiteIntervalMaximal (G shift) f x := by
       apply mul_le_mul' le_rfl
       exact le_iSup_of_le I (le_iSup_of_le hIG
@@ -239,10 +239,10 @@ theorem localAverage_one_le (g : L0Infinity) (I : RealInterval) {p : ℝ} (hp : 
     simp [μ, Measure.smul_apply, ENNReal.inv_mul_cancel hlen ENNReal.ofReal_ne_top]⟩
   have hav (r : ℝ) (hr : 0 < r) : ENNReal.ofReal (localAverage r g I) = eLpNorm' g r μ := by
     rw [ofReal_localAverage_eq_rpow_lintegral r hr g I (g.integrableOn_norm_rpow I hr.le)]
-    simp only [eLpNorm', μ, lintegral_smul_measure, smul_eq_mul, ENNReal.div_eq_inv_mul]
+    simp only [ENNReal.div_eq_inv_mul, eLpNorm', lintegral_smul_measure, smul_eq_mul, μ]
   apply (ENNReal.ofReal_le_ofReal_iff (localAverage_nonneg p g I)).mp
-  rw [hav 1 (by norm_num), hav p (lt_of_lt_of_le (by norm_num) hp)]
-  exact eLpNorm'_le_eLpNorm'_of_exponent_le (by norm_num) hp μ
+  rw [hav 1 (by exact zero_lt_one), hav p (lt_of_lt_of_le (by exact zero_lt_one) hp)]
+  exact eLpNorm'_le_eLpNorm'_of_exponent_le (by exact zero_lt_one) hp μ
     g.measurable_toFun.aestronglyMeasurable
 
 theorem sparseForm_one_le (f : ℝ → ℂ) (g : L0Infinity) (S : Set RealInterval)
@@ -261,9 +261,9 @@ theorem hasSparseOnePBound_of_one {C p : ℝ} {T : TestOperator}
   exact ⟨S, hS, hb.trans (mul_le_mul' le_rfl (sparseForm_one_le f g S hp))⟩
 
 theorem isSparse_empty : IsSparse (1 / 4) (∅ : Set RealInterval) := by
-  refine ⟨by norm_num, by norm_num, fun _ ↦ ∅, ?_, ?_, ?_, ?_⟩
-  · simp
-  · simp
+  refine ⟨by norm_num1, by norm_num1, fun _ ↦ ∅, ?_, ?_, ?_, ?_⟩
+  · simp only [MeasurableSet.empty, implies_true]
+  · simp only [empty_subset, implies_true]
   · intro I
     exact I.2.elim
   · intro I
@@ -311,10 +311,10 @@ theorem hasSparseOneOneBound_centered_of_finite_laminar
         apply lintegral_mono
         intro x
         by_cases hx : g x = 0
-        · simp [hx]
-        · simpa only [Finset.sum_mul, mul_assoc] using mul_le_mul' (hG f x hx) le_rfl
+        · simp only [hx, enorm_zero, mul_zero, Finset.sum_const_zero, Std.le_refl]
+        · simpa only [mul_assoc, Finset.sum_mul] using mul_le_mul' (hG f x hx) le_rfl
       _ = _ := by
-        rw [lintegral_const_mul' _ _ (by norm_num)]
+        rw [lintegral_const_mul' _ _ (by decide +kernel)]
         congr 1
         exact lintegral_finsetSum _ fun shift _ ↦
           (measurable_finiteIntervalMaximal (G shift) f).mul g.measurable_toFun.enorm
@@ -327,15 +327,15 @@ theorem hasSparseOneOneBound_centered_of_finite_laminar
         exact (hbound shift).trans (mul_le_mul' le_rfl (hmax shift (Finset.mem_univ shift)))
       _ = _ := by simp [nsmul_eq_mul]
   have hhalf : B ≤ 2 * ∫⁻ x, finiteCenteredMaximal s f x * ‖g x‖ₑ := by
-    have hh := (ENNReal.div_le_iff (by norm_num : (2 : ℝ≥0∞) ≠ 0)
-      (by norm_num : (2 : ℝ≥0∞) ≠ ∞)).mp hs.le
+    have hh := (ENNReal.div_le_iff (by norm_num1 : (2 : ℝ≥0∞) ≠ 0)
+      (by decide +kernel : (2 : ℝ≥0∞) ≠ ∞)).mp hs.le
     simpa only [mul_comm] using hh
   change B ≤ _
   calc
     _ ≤ 2 * (8 * (3 * (ENNReal.ofReal K * sparseForm 1 f g (R shift₀)))) :=
       hhalf.trans (mul_le_mul' le_rfl (hdom.trans (mul_le_mul' le_rfl hsum)))
     _ = ENNReal.ofReal (48 * K) * sparseForm 1 f g (R shift₀) := by
-      rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 48)]
+      rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 48)]
       norm_num
       ring
 

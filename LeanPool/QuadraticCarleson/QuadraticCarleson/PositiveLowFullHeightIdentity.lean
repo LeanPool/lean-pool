@@ -84,7 +84,7 @@ theorem paperFullLowContribution_eq_heightContribution
   intro lam
   rw [integral_paperLowCZKernel_eq_sum_fixedHeights
     ((memLp_disjointLevelAtomSum hf hfi (fullAmplitude_pos k).le z R hR hdisj).locallyIntegrable
-      (by norm_num : (1 : ℝ≥0∞) ≤ 2))]
+      (by norm_num1 : (1 : ℝ≥0∞) ≤ 2))]
 
 /-- Full low-oscillation endpoint estimate in the paper's exact height and
 convolution conventions, with the exceptional family length left explicit. -/

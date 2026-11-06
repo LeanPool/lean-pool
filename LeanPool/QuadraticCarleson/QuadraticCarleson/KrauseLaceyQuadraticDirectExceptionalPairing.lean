@@ -51,7 +51,6 @@ theorem L0Infinity.integrable_norm_rpow_direct
   have hfinite : volume (tsupport f) < ∞ := hcompact.measure_lt_top
   rcases f.bounded_toFun with ⟨C, hC⟩
   let D : ℝ := max C 0
-  have hD : 0 ≤ D := le_max_right _ _
   have hbound (x : ℝ) : ‖f x‖ ≤ D := (hC x).trans (le_max_left _ _)
   have hmeas : AEStronglyMeasurable (fun x ↦ ‖f x‖ ^ p) :=
     ((Real.continuous_rpow_const hp.le).measurable.comp
@@ -66,7 +65,7 @@ theorem L0Infinity.integrable_norm_rpow_direct
     apply subset_tsupport f
     intro hzero
     apply hx
-    simp [hzero, Real.zero_rpow hp.ne']
+    simp only [hzero, norm_zero, Real.zero_rpow hp.ne']
 
 /-- The selected intervals spatially contained in `Q`. -/
 def selectedInside (S : Finset RealInterval) (Q : RealInterval) :
@@ -77,7 +76,7 @@ def selectedInside (S : Finset RealInterval) (Q : RealInterval) :
 theorem mem_selectedInside_iff
     {S : Finset RealInterval} {Q J : RealInterval} :
     J ∈ selectedInside S Q ↔ J ∈ S ∧ J.carrier ⊆ Q.carrier := by
-  simp [selectedInside]
+  simp only [selectedInside, Finset.mem_filter]
 
 /-- Passing to all selected intervals inside `Q` does not change the
 smallest-selected region of an interval already contained in `Q`. -/
@@ -212,7 +211,7 @@ theorem mem_exceptionalBelow_iff
     I ∈ exceptionalBelow S g p Λ Q ↔
       I ∈ directExceptionalIntervals S g p Λ ∧
         I.carrier ⊆ Q.carrier := by
-  simp [exceptionalBelow]
+  simp only [exceptionalBelow, Finset.mem_filter]
 
 /-- The exceptional descendants of distinct maximal exceptional intervals
 are disjoint as finite index sets. -/
@@ -373,7 +372,7 @@ theorem lintegral_exceptional_offsetTailMaximalOn_le_of_packing
         8 * positiveDyadicAmplitudeBound * mass I * G :=
           mul_le_mul_of_nonneg_left (hgavg I hIS)
             (mul_nonneg
-              (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+              (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
               hmass0)
       _ = (8 * positiveDyadicAmplitudeBound * G) * mass I := by ring
   have hmass : (∑ I ∈ E, mass I) ≤ F * L := by
@@ -390,9 +389,9 @@ theorem lintegral_exceptional_offsetTailMaximalOn_le_of_packing
       apply ENNReal.ofReal_le_ofReal
       exact mul_le_mul_of_nonneg_left hmass
         (mul_nonneg
-          (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg) hG)
+          (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg) hG)
     _ = ENNReal.ofReal
-        (8 * positiveDyadicAmplitudeBound * G * F * L) := by ring
+        (8 * positiveDyadicAmplitudeBound * G * F * L) := by ac_rfl
 
 /-- The exceptional contribution at the author's exact threshold
 `Λ = δ^{-(p-1)}`. The global `p`-mass supplies the maximal-root packing,
@@ -475,9 +474,9 @@ theorem lintegral_offsetTailMaximalOn_interpolationHigh_le
         8 * positiveDyadicAmplitudeBound * mass I * H :=
           mul_le_mul_of_nonneg_left (havg I hI)
             (mul_nonneg
-              (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+              (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
               hmass0)
-      _ = (8 * positiveDyadicAmplitudeBound * H) * mass I := by ring
+      _ = (8 * positiveDyadicAmplitudeBound * H) * mass I := by ac_rfl
   have hmass : (∑ I ∈ A, mass I) ≤ ∫ x in I₀.carrier, ‖f x‖ :=
     sum_offsetGroupedInput_mass_le_interval_unfibered
       hlam scale hscale f hs I₀ hA hsub
@@ -493,7 +492,7 @@ theorem lintegral_offsetTailMaximalOn_interpolationHigh_le
       apply ENNReal.ofReal_le_ofReal
       exact mul_le_mul_of_nonneg_left hmass
         (mul_nonneg
-          (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg) hH)
+          (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg) hH)
     _ = ENNReal.ofReal (8 * positiveDyadicAmplitudeBound *
         (a ^ (1 - p) * G) * ∫ x in I₀.carrier, ‖f x‖) := by
       rfl

@@ -33,7 +33,7 @@ theorem activeOverlapCutoff_le (s : ℕ) :
     activeOverlapCutoff s ≤ 2 * (s + 1) * 2 ^ s := by
   have hpow : 1 ≤ (2 : ℕ) ^ s := Nat.one_le_pow s 2 (by omega)
   unfold activeOverlapCutoff
-  nlinarith
+  nlinarith only [hpow]
 
 theorem activeOverlapCutoff_le_pow (s : ℕ) :
     activeOverlapCutoff s ≤ 2 ^ (2 * s + 1) := by
@@ -52,7 +52,7 @@ theorem activeOverlapCutoff_le_pow (s : ℕ) :
 theorem log2_activeOverlapCutoff_le (s : ℕ) :
     Nat.log2 (activeOverlapCutoff s) ≤ 2 * s + 1 := by
   have h := Nat.log_mono_right (b := 2) (activeOverlapCutoff_le_pow s)
-  simpa only [Nat.log2_eq_log_two, Nat.log_pow (by norm_num : 1 < (2 : ℕ))] using h
+  simpa only [Nat.log2_eq_log_two, Nat.log_pow (by decide +kernel : 1 < (2 : ℕ))] using h
 
 /-- At the concrete source-size cutoff, the actual pruned maximal prefix
 has an explicit linear-in-`s` logarithmic factor. No packing or overlap
@@ -75,7 +75,7 @@ theorem eLpNorm_paperPrunedActivePrefixMaximal_le
   apply mul_le_mul_of_nonneg_right _ (Real.sqrt_nonneg _)
   have h := log2_activeOverlapCutoff_le s
   have hr : (Nat.log2 (activeOverlapCutoff s) : ℝ) ≤ 2 * (s : ℝ) + 1 := by exact_mod_cast h
-  linarith
+  linarith only [hr]
 
 
 end KrauseLaceyBadScale

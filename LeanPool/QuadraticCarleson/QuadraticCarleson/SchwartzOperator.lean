@@ -71,7 +71,7 @@ noncomputable def dyadicModulation (n : ℤ) : ℝ :=
   (2 : ℝ) ^ n
 
 theorem dyadicModulation_pos (n : ℤ) : 0 < dyadicModulation n := by
-  exact zpow_pos (by norm_num) n
+  exact zpow_pos (by norm_num1) n
 
 /-- The full quadratic Carleson operator on Schwartz functions. The value is
 extended nonnegative real so an unbounded supremum is represented faithfully. -/

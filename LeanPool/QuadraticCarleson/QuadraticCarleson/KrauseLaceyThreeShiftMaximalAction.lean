@@ -76,8 +76,7 @@ theorem measurable_finitePositiveGlobalTail
           (positiveDyadicAmplitude (topScale - (depth : ℤ))) 1 (p.1 - p.2) * f p.2) := by
       exact (hk.comp (measurable_fst.sub measurable_snd)).mul
         (hf.comp measurable_snd)
-    simpa only [Function.comp_def] using
-      hprod.stronglyMeasurable.integral_prod_right'.measurable
+    exact hprod.stronglyMeasurable.integral_prod_right'.measurable
   · simp only [ite_eq_right hcut]
     exact measurable_const
 

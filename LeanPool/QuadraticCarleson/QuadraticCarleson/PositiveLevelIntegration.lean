@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PositiveEndpointOptimization
-public import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 
 /-!
 # Measurable magnitude levels and endpoint-weight integration
@@ -102,7 +101,7 @@ theorem exists_unique_mem_magnitudeLevelSet
     simp only [mem_magnitudeLevelSet]
     by_cases hk0 : k = 0
     · rw [InMagnitudeLevel, ite_eq_left hk0]
-      have hkupper0 : ‖f x‖ ≤ A 0 := by simpa [hk0] using hkupper
+      have hkupper0 : ‖f x‖ ≤ A 0 := by simpa only [hk0] using hkupper
       exact ⟨norm_nonneg _, hkupper0⟩
     · rw [InMagnitudeLevel, ite_eq_right hk0]
       refine ⟨lt_of_not_ge ?_, hkupper⟩
@@ -125,28 +124,28 @@ theorem iUnion_magnitudeLevelSet_eq_univ
 theorem strictMono_fullAmplitude : StrictMono fullAmplitude := by
   intro k l hkl
   apply Real.exp_lt_exp.mpr
-  exact mul_lt_mul_of_pos_left (pow_lt_pow_right₀ (by norm_num) hkl)
-    (by linarith [half_lt_log_two])
+  exact mul_lt_mul_of_pos_left (pow_lt_pow_right₀ (by norm_num1) hkl)
+    (by linarith only [half_lt_log_two])
 
 theorem strictMono_lacunaryScale : StrictMono lacunaryScale := by
   intro k l hkl
   apply Real.exp_lt_exp.mpr
-  exact mul_lt_mul_of_pos_left (pow_lt_pow_right₀ (by norm_num) hkl)
-    (by linarith [half_lt_log_two])
+  exact mul_lt_mul_of_pos_left (pow_lt_pow_right₀ (by norm_num1) hkl)
+    (by linarith only [half_lt_log_two])
 
 theorem strictMono_lacunaryAmplitude : StrictMono lacunaryAmplitude := by
   intro k l hkl
   apply Real.exp_lt_exp.mpr
   exact mul_lt_mul_of_pos_left (strictMono_lacunaryScale hkl)
-    (by linarith [half_lt_log_two])
+    (by linarith only [half_lt_log_two])
 
 theorem dyadicScale_le_fullAmplitude (k : ℕ) :
     dyadicScale k ≤ fullAmplitude k := by
   rw [fullAmplitude_eq_two_pow, dyadicScale]
-  rw [pow_le_pow_iff_right₀ (by norm_num : (1 : ℝ) < 2)]
+  rw [pow_le_pow_iff_right₀ (by norm_num1 : (1 : ℝ) < 2)]
   have hk : (k : ℝ) + 1 ≤ (2 : ℝ) ^ k := by
-    simpa [dyadicScale] using dyadicScale_ge_nat_succ k
-  have hreal : (k : ℝ) ≤ (2 : ℝ) ^ k := by linarith
+    simpa only [dyadicScale] using dyadicScale_ge_nat_succ k
+  have hreal : (k : ℝ) ≤ (2 : ℝ) ^ k := by linarith only [hk]
   exact_mod_cast hreal
 
 theorem fullAmplitude_cofinal (t : ℝ) :
@@ -154,7 +153,7 @@ theorem fullAmplitude_cofinal (t : ℝ) :
   obtain ⟨k, hk⟩ := exists_nat_ge t
   refine ⟨k, hk.trans ?_⟩
   calc
-    (k : ℝ) ≤ (k : ℝ) + 1 := by linarith
+    (k : ℝ) ≤ (k : ℝ) + 1 := by linarith only []
     _ ≤ dyadicScale k := dyadicScale_ge_nat_succ k
     _ ≤ fullAmplitude k := dyadicScale_le_fullAmplitude k
 
@@ -165,7 +164,7 @@ theorem lacunaryScale_le_lacunaryAmplitude (k : ℕ) :
   apply Real.exp_le_exp.mpr
   simp only [lacunaryScale, Real.log_exp]
   exact mul_le_mul_of_nonneg_left (dyadicScale_le_fullAmplitude k)
-    (by linarith [half_lt_log_two])
+    (by linarith only [half_lt_log_two])
 
 theorem lacunaryAmplitude_cofinal (t : ℝ) :
     ∃ k, t ≤ lacunaryAmplitude k := by
@@ -337,9 +336,9 @@ theorem tsum_full_weight_mul_levelMass_le_orlicz
 theorem one_le_paperLog_succ (n : ℕ) {t : ℝ} (ht : 0 ≤ t) :
     1 ≤ paperLog (n + 1) t := by
   rw [paperLog_succ, Real.le_log_iff_exp_le
-    (by linarith [paperLog_nonnegative n ht])]
-  have hexp : Real.exp 1 < 10 := Real.exp_one_lt_d9.trans (by norm_num)
-  exact hexp.le.trans (by linarith [paperLog_nonnegative n ht])
+    (by linarith only [ht, paperLog_nonnegative n ht])]
+  have hexp : Real.exp 1 < 10 := Real.exp_one_lt_d9.trans (by norm_num1)
+  exact hexp.le.trans (by linarith only [ht, paperLog_nonnegative n ht])
 
 /-- The constant controlling the small magnitude levels in the lacunary level decomposition. -/
 noncomputable def lacunarySmallLevelConstant (C : ℝ) : ℝ :=
@@ -355,7 +354,7 @@ noncomputable def lacunaryLowLevelConstant (C : ℝ) : ℝ :=
 
 theorem lacunarySmallLevelConstant_nonneg {C : ℝ} :
     0 ≤ lacunarySmallLevelConstant C := by
-  exact mul_nonneg (paperLog_nonnegative 1 (by norm_num)) (sq_nonneg _)
+  exact mul_nonneg (paperLog_nonnegative 1 (by norm_num1)) (sq_nonneg _)
 
 theorem one_le_lacunaryEndpointFactor {t : ℝ} (ht : 0 ≤ t) :
     1 ≤ paperLog 2 t ^ 2 * paperLog 4 t := by
@@ -389,7 +388,7 @@ theorem lacunaryHighWeight_le_orlicz_all
         mul_le_mul_of_nonneg_right hindex hterm0
     have hfactor : 1 ≤ paperLog 2 t ^ 2 := by
       have := one_le_paperLog_succ 1 ht0
-      nlinarith
+      nlinarith only [this]
     calc
       paperLog 1 (lacunaryCutoff C k) ^ 2 * t
           ≤ lacunarySmallLevelConstant C * t := hdrop.trans hsmall
@@ -399,7 +398,7 @@ theorem lacunaryHighWeight_le_orlicz_all
           (lacunarySmallLevelConstant_nonneg)
       _ ≤ lacunaryHighLevelConstant C * (t * paperLog 2 t ^ 2) := by
         apply mul_le_mul_of_nonneg_right
-        · exact le_add_of_nonneg_right (mul_nonneg (by norm_num) (sq_nonneg _))
+        · exact le_add_of_nonneg_right (mul_nonneg (by norm_num1) (sq_nonneg _))
         · positivity
 
 /-- All lacunary low-level weights, including the first six levels, are
@@ -428,12 +427,12 @@ theorem lacunaryLowWeight_le_orlicz_all
         exact mul_le_mul_of_nonneg_left
           (by
             have := mul_le_mul_of_nonneg_left hfactor ht0
-            simpa only [mul_one, mul_assoc] using this)
+            simpa only [mul_assoc, mul_one] using this)
           (lacunarySmallLevelConstant_nonneg)
       _ ≤ lacunaryLowLevelConstant C *
           (t * paperLog 2 t ^ 2 * paperLog 4 t) := by
         exact mul_le_mul_of_nonneg_right
-          (le_add_of_nonneg_right (mul_nonneg (by norm_num) (sq_nonneg _))) hend0
+          (le_add_of_nonneg_right (mul_nonneg (by norm_num1) (sq_nonneg _))) hend0
 
 /-- The lacunary level integral weighted by the squared logarithm of the high cutoff. -/
 noncomputable def lacunaryHighLevelLIntegral

@@ -143,7 +143,7 @@ theorem sum_inv_cube_residueScale_le_two (r : Fin 7) (N : ℕ) :
           _ = ((2 : ℝ) ^ (n : ℤ))⁻¹ := by rw [zpow_natCast]
           _ = (2 : ℝ) ^ (-(n : ℤ)) :=
             (zpow_neg (2 : ℝ) (n : ℤ)).symm]
-      apply zpow_le_zpow_right₀ (by norm_num : (1 : ℝ) ≤ 2)
+      apply zpow_le_zpow_right₀ (by norm_num1 : (1 : ℝ) ≤ 2)
       unfold residueScale
       have hr : 0 ≤ (r : ℕ) := Nat.zero_le _
       omega
@@ -161,8 +161,7 @@ theorem sum_projectionRemainder_residueWeight_le
       (((2 : ℝ) ^ k)⁻¹) ^ 4 * (2 : ℝ) ^ (k + 2 - s) =
         (2 : ℝ) ^ (2 - s) * (((2 : ℝ) ^ k)⁻¹) ^ 3 := by
     rw [show k + 2 - s = k + (2 - s) by ring,
-      zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
-    have hk : (2 : ℝ) ^ k ≠ 0 := zpow_ne_zero k (by norm_num)
+      zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
     field_simp
   simp_rw [hweight]
   rw [← Finset.mul_sum]
@@ -174,8 +173,8 @@ theorem sum_projectionRemainder_residueWeight_le
         mul_le_mul_of_nonneg_left
           (sum_inv_cube_residueScale_le_two r N) (by positivity)
     _ = 8 * (2 : ℝ) ^ (-s) := by
-      rw [show 2 - s = 2 + (-s) by ring,
-        zpow_add₀ (by norm_num : (2 : ℝ) ≠ 0)]
+      rw [show 2 - s = 2 + (-s) by rfl,
+        zpow_add₀ (by norm_num1 : (2 : ℝ) ≠ 0)]
       norm_num
       ring
 
@@ -241,7 +240,7 @@ theorem norm_finiteProjectionErrorMajorant_directResidue_le_centeredSum
     · rw [ite_eq_right hk,
         directScaleInput_eq_zero_of_not_mem_image S A scale f
           (residueScale r n) s hk]
-      simp [centeredUnitMass]
+      simp only [centeredUnitMass, one_div, Pi.zero_apply, norm_zero, integral_zero, Std.le_refl]
   simpa only [input, bound] using
     norm_finiteProjectionErrorMajorantL2_le_of_centeredUnitMass
       (N := N) (k := residueScale r) (fun n ↦ residueScale_nonneg r n)
@@ -316,7 +315,7 @@ theorem norm_finiteProjectionErrorMajorant_directResidue_le_root
   have hC : 0 ≤ C := by
     dsimp only [C]
     exact mul_nonneg
-      (mul_nonneg (by norm_num)
+      (mul_nonneg (by norm_num1)
         (mul_nonneg Real.pi_pos.le projectionRemainderConstant_nonneg))
       (Real.sqrt_nonneg _)
   have hterm (n : ℕ) :
@@ -329,7 +328,7 @@ theorem norm_finiteProjectionErrorMajorant_directResidue_le_root
           Real.sqrt (bound n) = Real.sqrt (3 * M) *
               Real.sqrt ((2 : ℝ) ^ (residueScale r n + 2 - s)) := by
         dsimp only [bound]
-        rw [ite_eq_left hk, Real.sqrt_mul (mul_nonneg (by norm_num) hM)]
+        rw [ite_eq_left hk, Real.sqrt_mul (mul_nonneg (by norm_num1) hM)]
       have hsqrtWeight :
           Real.sqrt (weight n) =
             ((2 : ℝ) ^ residueScale r n)⁻¹ ^ 2 *
@@ -342,7 +341,7 @@ theorem norm_finiteProjectionErrorMajorant_directResidue_le_root
           Real.sqrt_mul_self (sq_nonneg _)]
       rw [hsqrtBound, hsqrtWeight]
       dsimp only [C]
-      ring
+      ac_rfl
     · have hinput : input n = 0 := by
         dsimp only [input]
         exact directScaleInput_eq_zero_of_not_mem_image S A scale f
@@ -350,9 +349,9 @@ theorem norm_finiteProjectionErrorMajorant_directResidue_le_root
       have hmassZero : mass n = 0 := by
         dsimp only [mass]
         rw [hinput]
-        simp
+        simp only [Pi.zero_apply, norm_zero, integral_zero]
       rw [hmassZero]
-      simp
+      simp only [inv_pow, Real.sqrt_zero, mul_zero]
   have hCS :
       (∑ n ∈ Finset.range N,
           Real.sqrt (weight n) * Real.sqrt (mass n)) ≤
@@ -362,7 +361,7 @@ theorem norm_finiteProjectionErrorMajorant_directResidue_le_root
   have hweightSum :
       (∑ n ∈ Finset.range N, weight n) ≤
         8 * (2 : ℝ) ^ (-s) := by
-    simpa only [weight] using sum_projectionRemainder_residueWeight_le r s N
+    exact sum_projectionRemainder_residueWeight_le r s N
   have hmassSum :
       (∑ n ∈ Finset.range N, mass n) ≤
         ∫ x in I₀.carrier, ‖f x‖ := by
@@ -400,7 +399,7 @@ theorem norm_finiteProjectionErrorMajorant_directResidue_le_root
         Real.sqrt (8 * (2 : ℝ) ^ (-s)) *
           Real.sqrt (∫ x in I₀.carrier, ‖f x‖) := by
       dsimp only [C]
-      ring
+      ac_rfl
 
 /-- Cardinality-free square-integral estimate for the actual nonnegative
 direct residue remainder majorant. -/
@@ -428,7 +427,7 @@ theorem lintegral_directResidueRemainderMajorant_sq_le_root
     exact mul_nonneg
       (mul_nonneg
         (mul_nonneg
-          (mul_nonneg (by norm_num)
+          (mul_nonneg (by norm_num1)
             (mul_nonneg Real.pi_pos.le projectionRemainderConstant_nonneg))
           (Real.sqrt_nonneg _))
         (Real.sqrt_nonneg _))
@@ -472,9 +471,7 @@ theorem directResidueOutput_ae_eq_projected_add_remainder
       annularProjectionL2 k (offsetOutputScaleLp S A scale f k s) x +
         quadraticProjectionRemainderOutput k (directScaleInput S A scale f k s) x :=
     sub_eq_iff_eq_add'.mp hsubx
-  simpa only [directResidueOutput, projectedOffsetResidueOutput,
-    annularResidueRepresentative, annularResiduePiece, offsetScaleFamily,
-    directResidueRemainderOutput, k] using hdirect.trans hadd
+  exact hdirect.trans hadd
 
 /-- Replacing every direct residue output by its projected output costs at
 most the finite scalar sum of the corresponding remainder outputs. -/
@@ -665,7 +662,7 @@ theorem sum_directResidueTailMax_sq_lintegral_le_root
       lintegral_mono hpoint
     _ = 49 * ∑ r : Fin 7, ∫⁻ x, (finitePieceTailMax N
           (directResidueOutput S A scale (f : ℝ → ℂ) r s) x) ^ 2 := by
-      rw [lintegral_const_mul' _ _ (by norm_num),
+      rw [lintegral_const_mul' _ _ (by decide +kernel),
         lintegral_finsetSum' _ (fun r _ ↦ (htail r).pow_const 2)]
     _ ≤ 49 * ∑ _r : Fin 7, 4 *
         ((4 + 128 *
@@ -805,10 +802,10 @@ theorem eLpNorm_offsetTailMaximalOn_le_root
   have hroot : (D ^ (1 / 2 : ℝ)) ^ (2 : ℝ) = D := by
     rw [← ENNReal.rpow_mul]
     norm_num
-  apply (ENNReal.rpow_le_rpow_iff (by norm_num : (0 : ℝ) < 2)).mp
+  apply (ENNReal.rpow_le_rpow_iff (by norm_num1 : (0 : ℝ) < 2)).mp
   rw [hroot, ENNReal.rpow_two, eLpNorm_two_sq_lintegral _
     (measurable_offsetTailMaximalOn S A scale f.measurable_toFun ell₀ s).aestronglyMeasurable]
-  simpa only [enorm_eq_self] using hsq
+  exact hsq
 
 
 end

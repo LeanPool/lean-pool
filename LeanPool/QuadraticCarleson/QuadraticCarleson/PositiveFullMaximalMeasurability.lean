@@ -65,7 +65,7 @@ theorem quadraticDifferenceKernel_norm_le (lam t : ℝ) :
   · calc
       _ ≤ 2 * Real.pi * |lam| * |t| := quadraticDifferenceKernel_norm_le_linear lam t
       _ ≤ 2 * Real.pi * |lam| * 1 := mul_le_mul_of_nonneg_left ht hC
-      _ ≤ 2 * Real.pi * |lam| + 2 := by linarith
+      _ ≤ 2 * Real.pi * |lam| + 2 := by linarith only []
   · have ht1 : 1 < |t| := lt_of_not_ge ht
     have hp : ‖phase (lam * t ^ 2) - 1‖ ≤ 2 := by
       simpa only [norm_phase, norm_one, one_add_one_eq_two] using
@@ -73,7 +73,7 @@ theorem quadraticDifferenceKernel_norm_le (lam t : ℝ) :
     unfold quadraticDifferenceKernel
     rw [norm_div, Complex.norm_real, Real.norm_eq_abs]
     have hb : ‖phase (lam * t ^ 2) - 1‖ / |t| ≤ 2 :=
-      (div_le_iff₀ (lt_trans zero_lt_one ht1)).mpr (by linarith)
+      (div_le_iff₀ (lt_trans zero_lt_one ht1)).mpr (by linarith only [ht, hp])
     exact hb.trans (le_add_of_nonneg_left hC)
 
 /-- Convolution of a test function with the quadratic difference kernel. -/
@@ -101,7 +101,7 @@ theorem continuous_quadraticDifferenceIntegral_modulation (f : L0Infinity) (x : 
       (measurable_quadraticDifferenceKernel lam)).aestronglyMeasurable
   · have hnear : ∀ᶠ lam in 𝓝 lam₀, |lam| < |lam₀| + 1 :=
       (continuous_abs.tendsto lam₀).eventually
-        (eventually_lt_nhds (show |lam₀| < |lam₀| + 1 by linarith))
+        (eventually_lt_nhds (show |lam₀| < |lam₀| + 1 by linarith only []))
     filter_upwards [hnear] with lam hlam
     filter_upwards with t
     rw [norm_mul, mul_comm ‖f (x - t)‖]

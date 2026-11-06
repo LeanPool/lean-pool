@@ -80,7 +80,6 @@ theorem centeredHardyLittlewoodMaximal_le_of_forall_le
 theorem centeredHardyLittlewoodMaximal_enorm_ne_top (f : L0Infinity) (x : ℝ) :
     centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x ≠ ∞ := by
   rcases f.bounded_toFun with ⟨C, hC⟩
-  have hC0 : 0 ≤ C := le_trans (norm_nonneg (f 0)) (hC 0)
   have hpoint (y : ℝ) : ‖f y‖ₑ ≤ ENNReal.ofReal C := by
     rw [← ofReal_norm]
     exact ENNReal.ofReal_le_ofReal (hC y)
@@ -113,7 +112,7 @@ theorem measurable_centeredHardyLittlewoodBoundaryOperator (f : L0Infinity) :
 private theorem eLpNorm_two_sq_lintegral_boundary {E : Type*} [TopologicalSpace E] [ENorm E]
     (F : ℝ → E) (hF : AEStronglyMeasurable F volume) :
     eLpNorm F 2 volume ^ 2 = ∫⁻ x, ‖F x‖ₑ ^ (2 : ℕ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hF]
+  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel) hF]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   rw [← ENNReal.rpow_mul_natCast]
   norm_num
@@ -131,7 +130,7 @@ theorem centeredHardyLittlewoodBoundaryOperator_locallyIntegrable
       (fun x ↦ centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x) 2 volume := by
     have hm := measurable_centeredHardyLittlewoodMaximal f.measurable_toFun.enorm
     have hle := centeredHardyLittlewoodMaximal_rpow_lintegral_le
-      f.measurable_toFun.enorm (fun _y ↦ enorm_ne_top) (p := 2) (by norm_num)
+      f.measurable_toFun.enorm (fun _y ↦ enorm_ne_top) (p := 2) (by norm_num1)
     have hfin : (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ)) ≠ ∞ := by
       have hp : eLpNorm f 2 volume ^ 2 < ∞ :=
         ENNReal.pow_lt_top (n := 2) hf2.eLpNorm_lt_top
@@ -146,14 +145,14 @@ theorem centeredHardyLittlewoodBoundaryOperator_locallyIntegrable
           2 volume ^ 2 < ∞ := by
       simpa only [eLpNorm_two_sq_lintegral_boundary _ hm.aestronglyMeasurable,
         enorm_eq_self, ENNReal.rpow_two] using hsq
-    exact (ENNReal.pow_lt_top_iff.mp hp).resolve_right (by norm_num)
+    exact (ENNReal.pow_lt_top_iff.mp hp).resolve_right (by decide +kernel)
   have hcomplex : MemLp (centeredHardyLittlewoodBoundaryOperator f) 2 volume := by
     apply hM2.of_le_enorm
       (measurable_centeredHardyLittlewoodBoundaryOperator f).aestronglyMeasurable
     filter_upwards [] with x
     simpa only [enorm_centeredHardyLittlewoodBoundaryOperator, enorm_eq_self]
       using (le_refl (centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x))
-  exact hcomplex.locallyIntegrable (by norm_num)
+  exact hcomplex.locallyIntegrable (by norm_num1)
 
 /-- Explicit weak `(1,1)` distribution bound for the concrete boundary
 operator. -/
@@ -169,7 +168,7 @@ theorem centeredHardyLittlewoodBoundaryOperator_hasWeakOneOneBound :
         {x | ENNReal.ofReal a <
           centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x} := by
     ext x
-    simp only [mem_ofPred_eq, norm_centeredHardyLittlewoodBoundaryOperator]
+    simp only [norm_centeredHardyLittlewoodBoundaryOperator, mem_ofPred_eq]
     exact (ENNReal.ofReal_lt_iff_lt_toReal ha.le (htop x)).symm
   rw [hset]
   simpa only [ENNReal.ofReal_ofNat] using
@@ -270,10 +269,7 @@ theorem finiteRadiusSmoothHighPassBlockFamily_hasWeakOneOneBound
 private theorem coe_nnreal_finset_sup_boundary {alpha : Type*}
     (s : Finset alpha) (u : alpha → NNReal) :
     (↑(s.sup u) : ℝ≥0∞) = s.sup fun a ↦ (u a : ℝ≥0∞) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih => simp [Finset.sup_insert, ih]
+  exact ENNReal.coe_finset_sup
 
 /-- A common extended-valued error can be moved outside a finite pointwise
 maximum without being repeated once per member. -/
@@ -328,12 +324,11 @@ theorem finiteRadiusSharpBlockFamily_hasWeakOneOneBound_of_smoothSparse
     positivity [finiteSparseMaximalUniversalConstant_pos, hA.1]
   have hsmooth : HasWeakOneOneBound C
       (finiteMax (finiteRadiusSmoothHighPassBlockFamily B tau s)) := by
-    simpa only [C] using
-      finiteRadiusSmoothHighPassBlockFamily_hasWeakOneOneBound hA B tau s
+    exact finiteRadiusSmoothHighPassBlockFamily_hasWeakOneOneBound hA B tau s
   intro f a ha
   let mass : ℝ≥0∞ := ∫⁻ x, ‖f x‖ₑ
   have hmass : mass ≠ ∞ := by
-    simpa only [mass] using f.integrable.hasFiniteIntegral.ne
+    exact f.integrable.hasFiniteIntegral.ne
   have hsmoothExt : KaltonPaperApplication.HasExtendedWeakL1Bound volume
       (C * mass.toReal)
       (fun x ↦ ENNReal.ofReal
@@ -410,18 +405,18 @@ theorem hasLogSquaredFrozenHilbertBlockWeakBounds_of_smoothSparse
     finiteSparseMaximalUniversalConstant_pos.le
   have hKA : 0 ≤ finiteSparseMaximalUniversalConstant * A :=
     mul_nonneg hK hA.1
-  refine ⟨by nlinarith, ?_⟩
+  refine ⟨by linarith only [hKA], ?_⟩
   intro k tau
   let L : ℝ := paperLog 1 (B k : ℝ)
   let D : ℝ :=
     (4 * (finiteSparseMaximalUniversalConstant * A) + 128) * L ^ 2
   have hL : 1 ≤ L := by
     dsimp only [L]
-    exact PositiveEndpointOptimization.one_le_paperLog_one (by positivity)
-  have hLsq : 1 ≤ L ^ 2 := by nlinarith
+    exact PositiveEndpointOptimization.one_le_paperLog_one (by exact Nat.cast_nonneg' (B k))
+  have hLsq : 1 ≤ L ^ 2 := by nlinarith only [hL]
   have hD : 0 ≤ D := by
     dsimp only [D]
-    exact mul_nonneg (by nlinarith) (sq_nonneg _)
+    exact mul_nonneg (by linarith only [hKA]) (sq_nonneg _)
   apply
     hasExtendedWeakL1Bound_frozenBlockHilbertMaxEnorm_restrict_of_uniform_finiteRadii
       f k (B k) c tau hD
@@ -431,7 +426,7 @@ theorem hasLogSquaredFrozenHilbertBlockWeakBounds_of_smoothSparse
   apply hsmall.mono
   dsimp only [D, L]
   have hA0 : 0 ≤ A := hA.1
-  nlinarith [mul_nonneg hK hA0]
+  linarith only [hLsq, mul_nonneg hK hA0]
 
 /-- Paper-facing uniform frozen-block conclusion with the finite sparse-
 maximal lemma and both deterministic Hardy--Littlewood boundary passages

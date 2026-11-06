@@ -7,7 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.QuadraticFixedHeightAveragingCountable
-public import Mathlib.Topology.Instances.Rat
 
 /-!
 # Fixed-scale parameter continuity and rational approximation of half-open bands
@@ -60,7 +59,7 @@ theorem hasCompactSupport_complex_dyadicPsi (j : ℤ) :
   intro t ht
   have hψ : dyadicPsi j t ≠ 0 := by
     intro hz
-    exact ht (by simp [hz])
+    exact ht (by simp only [hz, Complex.ofReal_zero])
   have hb := (dyadicPsi_support_subset j hψ).2
   exact ⟨(abs_lt.mp hb).1.le, (abs_lt.mp hb).2.le⟩
 
@@ -94,12 +93,12 @@ theorem rationalModulationSequence_ne_zero (n : ℕ) :
     rationalModulationSequence n ≠ 0 := by
   dsimp only [rationalModulationSequence]
   split_ifs with h
-  · norm_num
+  · norm_num1
   · exact_mod_cast h
 
 theorem exists_rationalModulationSequence (q : ℚ) (hq : q ≠ 0) :
     ∃ n, rationalModulationSequence n = (q : ℝ) := by
   refine ⟨Encodable.encode q, ?_⟩
-  simp [rationalModulationSequence, hq]
+  simp only [rationalModulationSequence, Encodable.encodek, Option.getD_some, hq, ↓reduceIte]
 
 end QuadraticCarleson

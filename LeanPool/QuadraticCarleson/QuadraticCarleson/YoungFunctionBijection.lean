@@ -7,8 +7,6 @@ module
 
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.CounterexampleModular
-public import Mathlib.Topology.Order.IntermediateValue
-public import Mathlib.Order.Hom.Set
 
 /-!
 # Young functions are bijections of the nonnegative half-line

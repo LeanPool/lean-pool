@@ -34,7 +34,7 @@ noncomputable def badPieceUniformBound (f : ℝ → ℂ) (I₀ : RealInterval) :
 theorem badPieceUniformBound_nonneg (f : ℝ → ℂ) (I₀ : RealInterval) :
     0 ≤ badPieceUniformBound f I₀ := by
   unfold badPieceUniformBound
-  exact mul_nonneg (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+  exact mul_nonneg (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
     (intervalL1Average_nonneg f I₀)
 
 theorem norm_localizedBadPiece_le_uniform_of_geometry
@@ -108,10 +108,10 @@ theorem badLengthTailMaximal_le_uniform_mul_overlapCount_of_geometry
         · simpa only [norm_zero] using badPieceUniformBound_nonneg f I₀
       · rw [ite_eq_right hx, krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 (scale I) I _
           (Finset.mem_filter.mp (hN hI)).2.1 hx]
-        simp
+        simp only [ite_self, norm_zero, Std.le_refl]
     _ = badPieceUniformBound f I₀ * overlapCount N x := by
       rw [← Finset.sum_filter]
-      simp only [Finset.sum_const, nsmul_eq_mul, overlapCount, mul_comm]
+      simp only [Finset.sum_const, nsmul_eq_mul, mul_comm, overlapCount]
 
 theorem badLengthTailMaximal_le_uniform_mul_overlapCount
     {S : Finset RealInterval} {f : ℝ → ℂ} (hf : Integrable f)
@@ -148,7 +148,7 @@ theorem eLpNorm_removed_badLengthTailMaximal_sq_le_of_geometry
     Finset.sdiff_subset.trans ((activeBadIntervals_subset S f I₀ k₀ s scale N).trans hN)
   have heq : eLpNorm (badLengthTailMaximal S f I₀ k₀ s scale R) 2 volume ^ 2 =
       ∫⁻ x, ‖badLengthTailMaximal S f I₀ k₀ s scale R x‖ₑ ^ 2 := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by norm_num)
       (aemeasurable_badLengthTailMaximal S hf I₀ k₀ s scale R).aestronglyMeasurable]
     simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
     rw [← ENNReal.rpow_mul_natCast]

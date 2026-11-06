@@ -154,7 +154,7 @@ theorem integrable_energyStandardSourceParentInput
   apply integrable_finsetSum
   intro s hs
   by_cases hIs : I ∈ N s
-  · simp only [hIs, ite_eq_left, intervalBadInput]
+  · simp only [hIs, intervalBadInput, ite_eq_left]
     exact (integrable_badScaleInput S hf I₀ k₀ (scale I + 2 - s)).indicator
       I.measurableSet_centralThird
   · simp only [hIs]
@@ -312,7 +312,7 @@ theorem energyStandardFixedPhysicalSourceAction_reindex
         intro I hIU hIN
         simp only [ite_eq_right hIN]
       rw [← hext]
-      simp
+      simp only [Finset.sum_ite_mem, Finset.inter_self]
     _ = _ := by
       rw [Finset.sum_comm]
 
@@ -506,7 +506,7 @@ theorem norm_energyStandardRegroupedSourceAction_le_localAverage
       by_contra h
       exact hex ⟨I, hIU, h⟩
     rw [hzero, norm_zero]
-    exact mul_nonneg (mul_nonneg (by norm_num) positiveDyadicAmplitudeBound_nonneg)
+    exact mul_nonneg (mul_nonneg (by norm_num1) positiveDyadicAmplitudeBound_nonneg)
       (intervalL1Average_nonneg f I₀)
 
 /-- Source-faithful fixed-physical-scale `L∞` estimate in the original

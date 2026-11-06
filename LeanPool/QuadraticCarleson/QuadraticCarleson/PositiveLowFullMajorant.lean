@@ -46,7 +46,7 @@ theorem lintegral_lowAtomMajorant_le (B : ℕ) (b : ℝ → ℂ) (z R : ℝ) (hR
         ENNReal.ofReal (∫ y, ‖b y‖) := by
   have hC := lowKernelBadAtomConstant_nonneg
   have hlen : 0 < 3 * R / 2 := by positivity
-  have hD : (1 : ℝ) ≤ (2 : ℝ) ^ (2 * B) := one_le_pow₀ (by norm_num)
+  have hD : (1 : ℝ) ≤ (2 : ℝ) ^ (2 * B) := one_le_pow₀ (by norm_num1)
   have hi := integrableOn_lowDecayMajorant_compl
     ((2 : ℝ) ^ (2 * B)) (3 * R / 2) z hD hlen
   have hn : ∀ x, 0 ≤ lowDecayMajorant ((2 : ℝ) ^ (2 * B)) (3 * R / 2) z x := by
@@ -86,7 +86,7 @@ theorem paperLowBadAtomMaximal_levelAtom_le_majorant
   apply hp.trans
   apply ENNReal.ofReal_le_ofReal
   exact mul_le_mul_of_nonneg_left
-    (lowDecayMajorant_mono_length (by positivity) (by linarith : R ≤ 3 * R / 2))
+    (lowDecayMajorant_mono_length (by positivity) (by linarith only [hR] : R ≤ 3 * R / 2))
     (mul_nonneg lowKernelBadAtomConstant_nonneg (integral_nonneg fun _ ↦ norm_nonneg _))
 
 /-- The sum of low-frequency atom majorants at a fixed magnitude level. -/
@@ -157,12 +157,12 @@ theorem lintegral_fullLowMajorant_le_orlicz {ι : Type*} [Countable ι]
     apply ENNReal.ofReal_le_ofReal
     rw [← cast_fullHighCutoff]
     have hB : (1 : ℝ) ≤ fullHighCutoff k := by exact_mod_cast fullHighCutoff_pos k
-    nlinarith [lowKernelBadAtomConstant_nonneg]
+    nlinarith only [hC, hB, lowKernelBadAtomConstant_nonneg]
   have hs := ENNReal.tsum_le_tsum hp
   rw [ENNReal.tsum_mul_left] at hs
-  have hw := tsum_full_weight_mul_levelMass_le_orlicz volume (C := 20) (by norm_num) hf
-  norm_num only [show (4 : ℝ) * 20 = 80 by norm_num] at hw
-  simp_rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 80)] at hw
+  have hw := tsum_full_weight_mul_levelMass_le_orlicz volume (C := 20) (by norm_num1) hf
+  norm_num only [show (4 : ℝ) * 20 = 80 by norm_num1] at hw
+  simp_rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 80)] at hw
   rw [lintegral_const_mul' _ _ (by finiteness)] at hw
   apply hs.trans
   apply (mul_le_mul' le_rfl hw).trans_eq

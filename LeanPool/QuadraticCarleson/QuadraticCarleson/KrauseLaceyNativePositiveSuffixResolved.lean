@@ -73,7 +73,7 @@ private theorem sparse_suffix_of_forest_bounds {A p : ℝ}
     apply hclosure
       (j + 2) topScale shift N (roots shift) (branch shift) f g
     · omega
-    · simpa only [topScale, roots, branch] using hforest shift
+    · exact hforest shift
   choose R hRsparse hRbound using hbranch
   obtain ⟨shift₀, _, hmax⟩ := Finset.univ.exists_max_image
     (fun shift : Fin 3 ↦ sparseForm p f g (↑(R shift) : Set RealInterval))
@@ -107,7 +107,7 @@ private theorem sparse_suffix_of_forest_bounds {A p : ℝ}
               ‖g x‖ₑ := by
           apply lintegral_mono
           intro x
-          exact mul_le_mul' (by simpa only [T, topScale, branch] using hpoint x) le_rfl
+          exact mul_le_mul' (by exact hpoint x) le_rfl
         _ = _ := by
           simp_rw [Finset.sum_mul]
           apply lintegral_finsetSum
@@ -135,7 +135,7 @@ private theorem sparse_suffix_of_forest_bounds {A p : ℝ}
           sparseForm p f g (↑(R shift₀) : Set RealInterval)) := hthree.trans hsum
       _ = ENNReal.ofReal (3 * (A * holderConjugate p)) *
           sparseForm p f g (↑(R shift₀) : Set RealInterval) := by
-        rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 3)]
+        rw [ENNReal.ofReal_mul (by norm_num1 : (0 : ℝ) ≤ 3)]
         norm_num
         ring
   · have hzero : operatorPairing T f g = 0 := by
@@ -179,24 +179,24 @@ suffix, with the factor `3` from the shifted grids. -/
 theorem hasNativeUnitHighPositiveSuffixSparseBound_of_oneNodeGoodPart
     {A : ℝ} (hlocal : HasOneNodeGoodPartPairingBound A) :
     HasNativeUnitHighPositiveSuffixSparseBound (3 * A) := by
-  refine ⟨mul_nonneg (by norm_num) hlocal.1, ?_⟩
+  refine ⟨mul_nonneg (by norm_num1) hlocal.1, ?_⟩
   intro p hp hp2 j hj N
   have h :=
     hasSparseOnePBound_finitePositiveDyadicSuffixMaxOperator_of_oneNodeGoodPart
       hlocal hp hp2 j hj N
-  convert h using 1; ring
+  convert h using 1; ac_rfl
 
 /-- The genuine `p`-monitor one-node estimate closes all high positive
 suffixes, with only the three-shift factor. -/
 theorem hasNativeUnitHighPositiveSuffixSparseBound_of_oneNodePStoppingGoodPart
     {A : ℝ} (hlocal : HasOneNodePStoppingGoodPartPairingBound A) :
     HasNativeUnitHighPositiveSuffixSparseBound (3 * A) := by
-  refine ⟨mul_nonneg (by norm_num) hlocal.1, ?_⟩
+  refine ⟨mul_nonneg (by norm_num1) hlocal.1, ?_⟩
   intro p hp hp2 j hj N
   have h :=
     hasSparseOnePBound_finitePositiveDyadicSuffixMaxOperator_of_oneNodePStoppingGoodPart
       hlocal hp hp2 j hj N
-  convert h using 1; ring
+  convert h using 1; ac_rfl
 
 /-- The part of the downstream all-scale suffix interface not supplied by
 the source's high-scale one-node argument. -/

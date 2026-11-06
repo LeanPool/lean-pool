@@ -31,14 +31,14 @@ theorem applyIntegral_indicator_Icc_eq (K : FiniteRangeKernel) (f : ℝ → ℂ)
   apply integral_congr_ae
   filter_upwards [] with t
   by_cases ht : t ∈ Icc (-n) n
-  · simp [Set.indicator, ht]
+  · simp only [indicator, ht, ↓reduceIte]
   · have hdist : K.radius < |x - t| := by
       by_contra h
       have hxt := abs_le.mp (le_of_not_gt h)
       apply ht
-      constructor <;> linarith [neg_abs_le x, le_abs_self x]
+      constructor <;> linarith only [hn, hxt, neg_abs_le x, le_abs_self x]
     rw [K.eq_zero x t hdist]
-    simp
+    simp only [zero_mul]
 
 /-- A uniform second-moment bound on integrable measurable tests extends to
 every measurable locally integrable input. -/
@@ -58,7 +58,7 @@ theorem sq_lintegral_bound_of_integrable (K : FiniteRangeKernel) (A : ℝ≥0∞
     apply lintegral_mono
     intro t
     by_cases ht : t ∈ Icc (-(n : ℝ)) (n : ℝ)
-    · simp [fN, ht]
+    · simp only [ht, indicator_of_mem, Std.le_refl, fN]
     · simp [fN, ht]
   have hevent (t : ℝ) :
       (fun n : ℕ ↦ ‖K.applyIntegral (fN n) t‖ₑ ^ 2) =ᶠ[atTop]
@@ -91,7 +91,7 @@ theorem adjoint_sq_lintegral_le_of_selectedAverageKernel_memLp {N : ℕ}
     (∫⁻ t, ‖K.adjoint.applyIntegral g t‖ₑ ^ 2) ≤
       (66 * C) * ∫⁻ t, ‖g t‖ₑ ^ 2 := by
   apply K.adjoint.sq_lintegral_bound_of_integrable (66 * C) ?_ hgm
-    (hg.locallyIntegrable (by norm_num))
+    (hg.locallyIntegrable (by norm_num1))
   intro f hfm hfi
   exact K.adjoint_sq_lintegral_le_of_selectedAverageKernel r hr hσ C hC hbound hfm hfi
 

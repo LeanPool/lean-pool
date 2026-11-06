@@ -8,7 +8,6 @@ module
 
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.LowKernelRealMaximal
 public import LeanPool.QuadraticCarleson.QuadraticCarleson.PositiveHighHeightFullEndpoint
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # The low kernel applied to the genuine countable atom sum
@@ -45,7 +44,7 @@ theorem paperLowOscillatoryKernel_norm_le_global
   apply (paperLowOscillatoryKernel_norm_le_inv_abs hlam B
     (abs_pos.mp ht0)).trans
   apply (div_le_iff₀ ht0).mpr
-  nlinarith
+  linarith only [hs]
 
 theorem integral_paperLowCZKernel_mul_levelAtom_eq_setIntegral
     {lam : ℝ} (hlam : lam ≠ 0) (B : ℕ) {A : ℕ → ℝ} {f : ℝ → ℂ}
@@ -57,7 +56,7 @@ theorem integral_paperLowCZKernel_mul_levelAtom_eq_setIntegral
   apply integral_congr_ae
   filter_upwards with y
   by_cases hy : y ∈ centeredInterval z R
-  · simp [hy]
+  · simp only [hy, indicator_of_mem]
   · simp [hy, levelAtom_eq_zero_of_not_mem hy]
 
 theorem tsum_lintegral_enorm_paperLowCZKernel_mul_levelAtom_lt_top
