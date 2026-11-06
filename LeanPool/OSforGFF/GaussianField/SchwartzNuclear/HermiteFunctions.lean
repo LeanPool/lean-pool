@@ -989,14 +989,10 @@ private lemma hasDerivAt_hermiteFunction_sq (n : ℕ) (x : ℝ) :
 /-- The derivative of hermiteFunction n is in L² (as a MemLp function). -/
 private lemma deriv_hermiteFunction_memLp (n : ℕ) :
     MemLp (deriv (hermiteFunction n)) 2 volume := by
-  -- ψₙ' = √(n/2) ψ_{n-1} - √((n+1)/2) ψ_{n+1}, and each ψⱼ is in L²
-  have h_eq : deriv (hermiteFunction n) =
-      fun x => Real.sqrt (↑n / 2) * hermiteFunction (n - 1) x -
-               Real.sqrt (↑(n + 1) / 2) * hermiteFunction (n + 1) x := by
-    ext x; exact deriv_hermiteFunction n x
-  rw [h_eq]
-  exact (hermiteFunction_memLp (n - 1)).const_mul (Real.sqrt (↑n / 2))
-    |>.sub ((hermiteFunction_memLp (n + 1)).const_mul (Real.sqrt (↑(n + 1) / 2)))
+  obtain ⟨φ, hφ⟩ := hermiteFunction_schwartz n
+  have heq : (φ : ℝ → ℝ) = hermiteFunction n := funext hφ
+  rw [← heq]
+  exact (SchwartzMap.derivCLM ℝ ℝ φ).memLp 2 volume
 
 /-- The product ψₙ · ψₙ' is integrable (for Cauchy-Schwarz/FTC). -/
 private lemma integrable_hermiteFunction_mul_deriv (n : ℕ) :
