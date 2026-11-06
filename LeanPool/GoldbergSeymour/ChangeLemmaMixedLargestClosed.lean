@@ -4164,112 +4164,30 @@ private theorem helper_storedS_1119.{u_1, u_2} :
   unfold Dn TashkinovStoredColors
   simp only [ettB, hstored, ← hgen, ← ett.generatingColoring, htree, hm, n, Tn]
 
-private theorem helper_stageBToB_1145.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (_ beta : Fin k)
-      (_ : Fin (C.hierarchy.dividerCount + (1 : ℕ))),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    (∀ (S : TreeSequence G e0), TreeSequenceInitialSegment S S) →
-    (∀ {S U W : TreeSequence G e0},
-        TreeSequenceInitialSegment S U →
-          TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W) →
-    ∀ (hAib : A.length < (↑ib : ℕ)),
-    let B : TreeSequence G e0 :=
-      TreeSequencePrefix T (↑ib : ℕ)
-        (have this : (1 : ℕ) ≤ A.length := A.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-        (by omega);
-    ∀ (rpB : (1 : ℕ) ≤ ett.1)
-      (aboveB :
-        TreeSequenceInitialSegment
-          (ett.series.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))) B)
-      (strictB :
-        (ett.series.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))).length <
-          B.length)
-      (belowB :
-        TreeSequenceInitialSegment B (ett.series.data.tree (Fin.last (ett.1 + (1 : ℕ)))))
-      (genB : phi = ett.series.data.coloring (Fin.last ett.1))
-      (baseB :
-        HierarchyBase
-          { rounds := ett.1, roundsPositive := rpB, series := ett.series,
-            abovePenultimate := aboveB, strictAbovePenultimate := strictB,
-            belowFinal := belowB, generatingColoring := genB :
-            ExtendedTashkinovTree G k e0 input B phi }
-          phi)
-      (HB :
-        TashkinovHierarchy
-          { rounds := ett.1, roundsPositive := rpB, series := ett.series,
-            abovePenultimate := aboveB, strictAbovePenultimate := strictB,
-            belowFinal := belowB, generatingColoring := genB :
-            ExtendedTashkinovTree G k e0 input B phi }
-          baseB)
-      (j : Fin (HB.dividerCount + (2 : ℕ))),
-    TreeSequenceInitialSegment (HB.stage j) B := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta r H q A ib segRefl segTrans hAib B
-      rpB aboveB strictB belowB genB baseB HB j
-  clear * - HB j B segRefl segTrans
+private theorem hierarchyStageInitialSegment {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k}
+    {tree : TreeSequence G e0} {generating coloring : PartialEdgeColoring E k}
+    {ett : ExtendedTashkinovTree G k e0 input tree generating} {base : HierarchyBase ett coloring}
+    (hierarchy : TashkinovHierarchy ett base) (index : Fin (hierarchy.dividerCount + 2)) :
+    TreeSequenceInitialSegment (hierarchy.stage index) tree := by
   exact Fin.reverseInduction
-    (motive := fun j => TreeSequenceInitialSegment (HB.stage j) B)
-    (by simpa only [HB.terminalStage] using segRefl B)
-    (fun i hi => segTrans (HB.nested i) hi) j
+    (motive := fun index => TreeSequenceInitialSegment (hierarchy.stage index) tree)
+    (by simpa only [hierarchy.terminalStage] using TreeSequenceInitialSegment.refl tree)
+    (fun index segment => (hierarchy.nested index).trans segment) index
 
-private theorem helper_closureBToA_1152.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (_ beta : Fin k)
-      (_ : Fin (C.hierarchy.dividerCount + (1 : ℕ))),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    TreeSequenceInitialSegment base.core A →
-    ∀ (hAib : A.length < (↑ib : ℕ)),
-    let B : TreeSequence G e0 :=
-      TreeSequencePrefix T (↑ib : ℕ)
-        (have this : (1 : ℕ) ≤ A.length := A.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-        (by omega);
-    ∀ (rpB : (1 : ℕ) ≤ ett.1)
-      (aboveB :
-        TreeSequenceInitialSegment
-          (ett.series.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))) B)
-      (strictB :
-        (ett.series.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))).length <
-          B.length)
-      (belowB :
-        TreeSequenceInitialSegment B (ett.series.data.tree (Fin.last (ett.1 + (1 : ℕ)))))
-      (genB : phi = ett.series.data.coloring (Fin.last ett.1))
-      (baseB :
-        HierarchyBase
-          { rounds := ett.1, roundsPositive := rpB, series := ett.series,
-            abovePenultimate := aboveB, strictAbovePenultimate := strictB,
-            belowFinal := belowB, generatingColoring := genB :
-            ExtendedTashkinovTree G k e0 input B phi }
-          phi),
-    baseB.core = base.core →
-    ett.series.data.kind n = some TashkinovExtensionKind.PE →
-    TreeSequenceVertexSet baseB.closure ⊆ TreeSequenceVertexSet A := by
+private theorem parallelClosureVertexSubsetCore {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k}
+    {tree : TreeSequence G e0} {generating coloring : PartialEdgeColoring E k}
+    {ett : ExtendedTashkinovTree G k e0 input tree generating} (base : HierarchyBase ett coloring)
+    (parallel : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE) :
+    TreeSequenceVertexSet base.closure ⊆ TreeSequenceVertexSet base.core := by
   classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta r H q A n ib coreToA hAib B rpB
-      aboveB strictB belowB genB baseB hcoreB hp
-  clear * - hp baseB coreToA hcoreB
-  obtain ⟨_, _, ⟨u⟩⟩ := baseB.parallel hp
-  intro v hv
-  apply TreeSequenceInitialSegmentVertexSetSubset coreToA
-  rw [← hcoreB, u.vertexSet]
-  exact Finset.mem_union_right _ hv
+  obtain ⟨_, _, ⟨union⟩⟩ := base.parallel parallel
+  intro vertex member
+  rw [union.vertexSet]
+  exact Finset.mem_union_right _ member
 
 private theorem helper_minusEq_1160.{u_1, u_2} :
     open scoped Classical in
@@ -6387,14 +6305,13 @@ private theorem helper_continuation_5082.{u_1, u_2} :
     clear * - hstagesB starredToA j
     rw [(hstagesB j).2]
     exact starredToA _
-  have stageBToB :=
-    helper_stageBToB_1145 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
-        (@beta) (@r) (@segRefl) (@segTrans) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB)
-        (@baseB) (@HB)
-  have closureBToA :=
-    helper_closureBToA_1152 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
-        (@alpha) (@beta) (@r) (@coreToA) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB)
-        (@baseB) (@hcoreB)
+  have stageBToB := hierarchyStageInitialSegment HB
+  have closureBToA (parallel : ett.series.data.kind n = some TashkinovExtensionKind.PE) :
+      TreeSequenceVertexSet baseB.closure ⊆ TreeSequenceVertexSet A := by
+    intro vertex member
+    apply TreeSequenceInitialSegmentVertexSetSubset coreToA
+    rw [← hcoreB]
+    exact parallelClosureVertexSubsetCore baseB parallel member
   have minusEq :=
     helper_minusEq_1160 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
         (@beta) (@r) (@RToA)

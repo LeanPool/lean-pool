@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.TerminalRoute
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
 public import LeanPool.GoldbergSeymour.HierarchySplitter
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceColoringTransport
+public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningProofs
 
 /-!
 # Hierarchy Situation Three Eligible Index Bound
@@ -2208,36 +2209,7 @@ theorem helper_hsproper_329.{u_1, u_2} :
   let sigma : PartialEdgeColoring E k := fun (e : E) ↦ if e = f then some alpha else mu e;
   (∀ (e : E), e ≠ f → sigma e = mu e) →
   IsProperEdgeColoring G sigma := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha haT mu trans hlenT B halphaB r f y
-      w hends sigma fixed e g c heg hadj he hg
-  by_cases hef : e = f
-  · subst e
-    have hgf : g ≠ f := heg.symm
-    have hc : c = alpha := by simpa [sigma] using he.symm
-    subst c
-    rw [fixed g hgf] at hg
-    obtain ⟨v, hvf, hvg⟩ := hadj
-    have hv : v = y ∨ v = w := by simpa only [Incident, hends, Sym2.mem_iff] using hvf
-    rcases hv with rfl | rfl
-    · exact (Finset.mem_sdiff.mp halphaB).2
-        (Finset.mem_filter.mpr ⟨Finset.mem_univ _, g, hvg, hg⟩)
-    · exact (Finset.mem_sdiff.mp haT).2
-        (Finset.mem_filter.mpr ⟨Finset.mem_univ _, g, hvg, hg⟩)
-  · by_cases hgf : g = f
-    · subst g
-      have hc : c = alpha := by simpa [sigma] using hg.symm
-      subst c
-      rw [fixed e hef] at he
-      obtain ⟨v, hve, hvf⟩ := hadj
-      have hv : v = y ∨ v = w := by simpa only [Incident, hends, Sym2.mem_iff] using hvf
-      rcases hv with rfl | rfl
-      · exact (Finset.mem_sdiff.mp halphaB).2
-          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, e, hve, he⟩)
-      · exact (Finset.mem_sdiff.mp haT).2
-          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, e, hve, he⟩)
-    · exact P.minimumContext.proper heg hadj ((fixed e hef).symm.trans he)
-        ((fixed g hgf).symm.trans hg)
+  exact @GoldbergSeymour.SharedFacts.ShorteningProofs.properRecoloring
 
 theorem helper_hdata_519.{u_1, u_2} :
     open scoped Classical in
@@ -2611,28 +2583,11 @@ theorem helper_terminalStored_647.{u_1, u_2} :
       S hSBlen sigma missingTree positiveB aboveB strictB belowB generatingB baseB HB EB corr
       hmaximum bs hcore hpe hclosure baseStageK terminalStageK nestedK strictK coreInsideK
       positiveK increasingK dividerStageK KF hstage hposition starredEq terminalTree
-  rcases corr with ⟨ri, rs, re, hr, hp, hc, hl, hstored, he, hk, hpr, ho, hst⟩
-  rcases re with ⟨rounds, positive, data, above, strict, below, generating⟩
-  cases hr
-  have hs : data = rs := eq_of_heq hp
-  cases hs
-  let j : Fin EB.rounds := ⟨EB.rounds - 1, by have := EB.roundsPositive; omega⟩
-  have hj : j.succ = Fin.last EB.rounds := Fin.ext (by
-    dsimp [j]; have := EB.roundsPositive; omega)
-  have ht : rs.data.tree (Fin.last EB.rounds).castSucc = Tn := by
-    change rs.data.tree (Fin.last EB.rounds).castSucc =
-      EB.series.data.tree (Fin.last EB.rounds).castSucc
-    rw [← hj]; exact hl j
-  have hm : TreeMissingColors (rs.data.coloring (Fin.last EB.rounds))
-      (rs.data.tree (Fin.last EB.rounds).castSucc) = TreeMissingColors mu Tn := by
-    rw [← hc, ht]
-    exact missingTree Tn (TreeSequenceInitialSegmentVertexSetSubset hTnX)
-  have hmOld : TreeMissingColors (EB.series.data.coloring (Fin.last EB.rounds))
-      (EB.series.data.tree (Fin.last EB.rounds).castSucc) = TreeMissingColors mu Tn := by
-    rw [← EB.generatingColoring]
-  change TashkinovStoredColors rs.data (Fin.last EB.rounds) =
-    TashkinovStoredColors EB.series.data (Fin.last EB.rounds)
-  simp only [TashkinovStoredColors, hstored, hm, hmOld]
+  exact GoldbergSeymour.SharedFacts.ShorteningProofs.terminalStoredColors
+    G k e0 input T phi ett base C ctx P alpha hlenT hTnX S hSBlen missingTree positiveB aboveB
+    strictB belowB generatingB baseB HB corr hmaximum bs hcore hpe hclosure baseStageK
+    terminalStageK nestedK strictK coreInsideK positiveK increasingK dividerStageK hstage
+    hposition starredEq terminalTree
 
 theorem helper_hpS_844.{u_1, u_2} :
     open scoped Classical in
@@ -4858,33 +4813,7 @@ theorem helper_lastOrdinary_2387.{u_1, u_2} :
 
 theorem helper_uniqueRefresh_4523.{u_1, u_2} :
     helperUniqueRefresh4523Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha mu hlenT B X r f sigma missingFixed
-      positiveB aboveB strictB belowB generatingB baseB HB goodB EB corr bs baseStageK
-      terminalStageK nestedK strictK coreInsideK positiveK increasingK dividerStageK KF starredEq
-      stageBX storedEq i
-  have hnew :
-      ((TreeSequenceVertexSet (HB.stage i.succ.castSucc) \
-        TreeSequenceVertexSet (HierarchyStarredStage HB i.castSucc)).biUnion
-          fun v => MissingColors G sigma v) =
-      ((TreeSequenceVertexSet (HB.stage i.succ.castSucc) \
-        TreeSequenceVertexSet (HierarchyStarredStage HB i.castSucc)).biUnion
-          fun v => MissingColors G mu v) := by
-    apply Finset.biUnion_congr rfl
-    intro v hv
-    exact missingFixed v (TreeSequenceInitialSegmentVertexSetSubset (stageBX i.succ)
-      (Finset.mem_sdiff.mp hv).1)
-  change ∃! c : Fin k,
-    c ∈ HierarchyStoredColorsAt KF i.succ ∧
-      goodB.gamma i.succ c ⊆
-        ((TreeSequenceVertexSet (HB.stage i.succ.castSucc) \
-          TreeSequenceVertexSet (HierarchyStarredStage KF i.castSucc)).biUnion
-            fun v => MissingColors G sigma v) ∧
-      ∀ d ∈ HierarchyStoredColorsAt KF i.succ, d ≠ c →
-        goodB.gamma i.succ d = goodB.gamma i.castSucc d
-  rw [starredEq i.castSucc, hnew]
-  simp only [storedEq]
-  exact goodB.uniqueRefresh i
+  exact @GoldbergSeymour.SharedFacts.ShorteningProofs.uniqueRefreshTransport
 
 theorem helper_parallelBase_4547.{u_1, u_2} :
     helperParallelBase4547Conditions.{u_1, u_2} := by

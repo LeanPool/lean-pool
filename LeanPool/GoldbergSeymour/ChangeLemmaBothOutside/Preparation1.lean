@@ -13,6 +13,7 @@ public import LeanPool.GoldbergSeymour.HierarchySplitter
 public import LeanPool.GoldbergSeymour.SameHierarchyStages
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePosition
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation2
 
 /-!
 # ChangeLemmaBothOutside: supporting constructions, part 1
@@ -1074,43 +1075,7 @@ theorem helper_missingBefore_438.{u_1, u_2} :
     ∀ v ∈ TreeSequenceVertexSet B,
     v ≠ vb →
     MissingColors G sigma v = MissingColors G phi v := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta hne H q A ia ib va vb ell yLength Y
-      hElementaryY ha hb haY hbY hAib B BToY K sigma haK behavior edgeOfVertex v hv hvb
-  by_cases hvK : Sum.inl v ∈ K
-  · have hva : v ≠ va := by intro he; exact haK (he ▸ hvK)
-    have hvY := TreeSequenceInitialSegmentVertexSetSubset BToY hv
-    have han : alpha ∉ MissingColors G phi v := fun hc =>
-      Finset.disjoint_left.mp (hElementaryY hvY haY hva) hc ha.1
-    have hbn : beta ∉ MissingColors G phi v := fun hc =>
-      Finset.disjoint_left.mp (hElementaryY hvY hbY hvb) hc hb.1
-    have hpa : ∃ f, Incident G v f ∧ phi f = some alpha := by
-      simpa [MissingColors, PresentColors] using han
-    have hpb : ∃ f, Incident G v f ∧ phi f = some beta := by
-      simpa [MissingColors, PresentColors] using hbn
-    obtain ⟨fa, hfa, hfca⟩ := hpa
-    obtain ⟨fb, hfb, hfcb⟩ := hpb
-    have hfaK := edgeOfVertex hvK hfa (Or.inl hfca)
-    have hfbK := edgeOfVertex hvK hfb (Or.inr hfcb)
-    have hnewa : sigma fb = some alpha := by
-      simp [sigma, TwoColorComponentSwap, K, hfbK, hfcb, hne.symm]
-    have hnewb : sigma fa = some beta := by
-      simp [sigma, TwoColorComponentSwap, K, hfaK, hfca]
-    have hana : alpha ∉ MissingColors G sigma v := by
-      simp only [MissingColors, Finset.mem_sdiff, Finset.mem_univ, true_and,
-        PresentColors, Finset.mem_filter, not_not]
-      exact ⟨fb, hfb, hnewa⟩
-    have hbnb : beta ∉ MissingColors G sigma v := by
-      simp only [MissingColors, Finset.mem_sdiff, Finset.mem_univ, true_and,
-        PresentColors, Finset.mem_filter, not_not]
-      exact ⟨fa, hfa, hnewb⟩
-    ext c
-    by_cases hca : c = alpha
-    · subst c; simp [hana, han]
-    · by_cases hcb : c = beta
-      · subst c; simp [hbnb, hbn]
-      · exact behavior.2.2.2 v c hca hcb
-  · exact behavior.1 v hvK
+  exact @GoldbergSeymour.SharedFacts.MixedChangeTransport.notMissingBeforeFirstPosition
 
 theorem helper_terminalRoute_532.{u_1, u_2} :
     open scoped Classical in
@@ -1983,26 +1948,7 @@ theorem helper_firstMissing_1057.{u_1, u_2} :
     ∀ c ∈ TreeMissingColors phi Y,
     c ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T c)) ∧
     (↑(HierarchyFirstMissingPosition phi T c) : ℕ) ≤ Y.length := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A ell yLength Y YToT c hc
-  obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-  obtain ⟨i, hi⟩ := hv
-  let it := Fin.castLE (Nat.succ_le_succ YToT.1) i
-  have hci : c ∈ MissingColors G phi (T.vertex it) := by
-    rw [YToT.2.1 i, hi]
-    exact hcv
-  let candidates := Finset.univ.filter fun j => c ∈ MissingColors G phi (T.vertex j)
-  have hit : it ∈ candidates := by simp [candidates, hci]
-  have hnon : candidates.Nonempty := ⟨it, hit⟩
-  have hmem := Finset.min'_mem candidates hnon
-  have hle := Finset.min'_le candidates it hit
-  refine ⟨?_, ?_⟩
-  · simpa [HierarchyFirstMissingPosition, candidates, hnon] using
-      (Finset.mem_filter.mp hmem).2
-  · have hiv : it.val ≤ Y.length := Nat.le_of_lt_succ i.isLt
-    have hval : (candidates.min' hnon).val ≤ it.val := hle
-    simpa [HierarchyFirstMissingPosition, candidates, hnon] using le_trans hval hiv
+  exact @GoldbergSeymour.SharedFacts.MixedChangeTransport.firstMissingPositionWitness
 
 /-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_outsideIndex_1087.{u_1, u_2} :
@@ -3171,20 +3117,7 @@ theorem helper_missingEq_1447.{u_1, u_2} :
         coreInsideFirst := hscore : TashkinovHierarchy corr.replacementETT baseS };
     ∀ (j : Fin (count + (1 : ℕ))),
     HierarchyStageMissingColors HS j = HierarchyStageMissingColors HB j := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A n Tn ib vb TnToA hAib B rpB
-      aboveB strictB belowB genB baseB ettB sigma treeMissingEq corr baseS count stages hbbase
-      hbterminal hbnested hbstrict positions hbpositive hbincreasing hbdivider hbcore stageBToA
-      positionsS hspositive hsincreasing hsbase hsterminal hsnested hsstrict hsdivider hscore HB
-      HS j
-  refine Fin.cases ?_ (fun i => ?_) j
-  · change TreeMissingColors sigma (corr.replacementETT.series.data.tree
-        (Fin.last corr.replacementETT.rounds).castSucc) = TreeMissingColors phi Tn
-    have htree : corr.replacementETT.series.data.tree
-        (Fin.last corr.replacementETT.rounds).castSucc = Tn :=
-      hsbase.symm.trans hbbase
-    rw [htree, treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset TnToA)]
-  · exact treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageBToA i.succ))
+  exact @GoldbergSeymour.SharedFacts.MixedChangeTransport.missingColorsEquality
 
 theorem helper_firstEq_1458.{u_1, u_2} :
     open scoped Classical in
