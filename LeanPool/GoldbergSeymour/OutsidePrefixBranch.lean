@@ -1246,51 +1246,6 @@ private theorem helper_hlowerX_1128.{u_1, u_2} :
     exact hlt
   exact P.minimumContext.lowerRung lower hpos hlt' hmax
 
-private theorem helper_hfull_1473.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (alpha beta : Fin k)
-        (sigma : PartialEdgeColoring E k) (_ : P2880_T1_SplitSwapData G k e0 input T phi ett base
-        C ctx P alpha beta sigma),
-    let X : TreeSequence G e0 := HierarchyFullTailPrefix C (HierarchyPathNumber C.hierarchy - (1 :
-        ℕ));
-    let m : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-        P.corresponding.replacementETT;
-    let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-        P.counterexample.hierarchy;
-    ∀ (ettX : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput X P.coloring) (baseX :
-        HierarchyBase ettX P.coloring) (_ : baseX.closure = P.replacementBase.closure) (HX :
-        TashkinovHierarchy ettX baseX) (goodX : GoodHierarchy HX) (_ : IsProperEdgeColoring G
-        sigma) (_ : IsOneEdgeUncolored sigma e0) (_ : StableColoring X (TashkinovStoredColors
-        ettX.series.data (Fin.last ettX.rounds)) P.coloring sigma),
-    let n : Fin (m.rounds + (1 : ℕ)) := Fin.last m.rounds;
-    let Tn : TreeSequence G e0 := m.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors m.series.data n;
-    ∀ (_ : StableColoring Tn Dn P.coloring sigma) (_ : ModColoring m sigma) (_ :
-        m.series.data.kind n = some TashkinovExtensionKind.PE ∧ TashkinovAugmentationSequence
-        sigma Tn T ∨ (m.series.data.kind n = some TashkinovExtensionKind.SE ∨ m.series.data.kind n
-        = some TashkinovExtensionKind.RE) ∧
-    ∃ (f : E) (seed : TreeSequence G e0), m.series.data.connectingEdges n = ({ f } : Finset E) ∧
-        TreeSequenceAdjoinEdge Tn f seed ∧ TashkinovAugmentationSequence sigma seed T) (_ :
-        TreeSequenceInitialSegment Tn T) (_ : Tn.length < T.length) (corrPrefix :
-        CorrespondingExtendedTashkinovTree G k e0 m sigma X) (basePrefix : HierarchyBase
-        corrPrefix.replacementETT sigma) (KPrefix : TashkinovHierarchy corrPrefix.replacementETT
-        basePrefix) (goodPrefix : GoodHierarchy KPrefix) (_ : SameGoodHierarchy goodX goodPrefix)
-        (_ : ettX.series.data.kind (Fin.last ettX.rounds) = m.series.data.kind n),
-    ∃ (corr : CorrespondingExtendedTashkinovTree G k e0 m sigma T), MaximumProperty
-        corr.replacementETT ∧
-    ∃ (newBase : HierarchyBase corr.replacementETT sigma) (K : TashkinovHierarchy
-        corr.replacementETT newBase), newBase.closure = basePrefix.closure ∧ SameHierarchyStages H
-        K := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha beta sigma S X m H ettX baseX
-      hclosureX HX goodX hsigmaProper hsigmaOne hstableX n Tn Dn hstableTn hmod hroute hNT
-      hNstrict corrPrefix basePrefix KPrefix goodPrefix samePrefix hkindX
-  apply helper_hfull_1262 <;> assumption
 private theorem helper_continuation_1640.{u_1, u_2} :
     helperContinuation1640Conditions.{u_1, u_2} := by
   classical
@@ -1446,7 +1401,7 @@ private theorem helper_continuation_1844.{u_1, u_2} :
         ∃ newBase : HierarchyBase corr.replacementETT sigma,
           ∃ K : TashkinovHierarchy corr.replacementETT newBase,
             newBase.closure = basePrefix.closure ∧ SameHierarchyStages H K := by
-    apply helper_hfull_1473 <;> assumption
+    apply helper_hfull_1262 <;> assumption
   rcases hfull with ⟨corrFull, hmaximumFull, baseFull, KFull, hclosure, hsameFull⟩
   have hcoreFull : baseFull.core = basePrefix.core := by
     have hprefixCore := samePrefix.1.1

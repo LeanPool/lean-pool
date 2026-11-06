@@ -1218,334 +1218,6 @@ private theorem helper_branch_1407.{u_1, u_2} :
     (Or.inl ⟨c, hc2, hsel.trans hcf⟩)
   exact hstable.trans hsel
 
-private theorem helper_branch_1764.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (v : V) (gamma delta : Fin k) (_ :
-        series.data.kind q.succ = some TashkinovExtensionKind.PE) (sigma : PartialEdgeColoring E
-        k) (ci : Fin rounds) (_ : IsProperEdgeColoring G (series.data.coloring ci.castSucc)) (_ :
-        IsOneEdgeUncolored (series.data.coloring ci.castSucc) e0) (_ : ColoredVertexSetClosed G
-        (series.data.coloring ci.castSucc) (TreeSequenceVertexSet (series.data.tree
-        ci.succ.castSucc))) (_ : ¬ColoredVertexSetStronglyClosed G (series.data.coloring
-        ci.castSucc) (TreeSequenceVertexSet (series.data.tree ci.succ.castSucc))) (_ : ¬Nonempty
-        (RevisitingExtensionCertificate series.data ci.castSucc)) (choice : MaximumDefectiveChoice
-        G e0 (series.data.tree ci.succ.castSucc) (TashkinovStoredColors series.data ci.castSucc)
-        (series.data.coloring ci.castSucc)) (_ :
-    ∀ (pi : PartialEdgeColoring E k), IsProperEdgeColoring G pi → IsOneEdgeUncolored pi e0 →
-        StableColoring (series.data.tree ci.succ.castSucc) (insert choice.color
-        (TashkinovStoredColors series.data ci.castSucc) : Finset (Fin k)) choice.selected pi →
-        Disjoint (MissingColors G pi choice.otherEndpoint) (TreeMissingColors pi (series.data.tree
-        ci.succ.castSucc))) (_ : series.data.coloring ci.succ = choice.selected) (_ :
-        series.data.stored ci.succ = ({ choice.color } : Finset (Fin k))) (_ :
-        series.data.connectingEdges ci.succ = ({ choice.edge } : Finset E)) (_ : series.data.kind
-        ci.succ = some TashkinovExtensionKind.SE) (_ : series.data.chosenVertex ci.succ = some
-        choice.vertex) (_ : series.data.outsideVertex ci.succ = some choice.otherEndpoint) (_ :
-        series.data.delta ci.succ = some choice.color) (_ : series.data.gamma ci.succ = none)
-        (adjoined : TreeSequence G e0) (_ : TreeSequenceAdjoinEdge (series.data.tree
-        ci.succ.castSucc) choice.edge adjoined) (_ : TashkinovClosure (series.data.coloring
-        ci.succ) adjoined (series.data.tree ci.succ.succ)) (_ : TreeSequenceInitialSegment
-        (series.data.tree ci.succ.castSucc) (series.data.tree ci.succ.succ)) (_ :
-        (series.data.tree ci.succ.castSucc).length < (series.data.tree ci.succ.succ).length) (_ :
-        q.succ = ci.succ),
-    ∃ (selected : PartialEdgeColoring E k) (secondStable : PartialEdgeColoring E k),
-        IsProperEdgeColoring G selected ∧ IsOneEdgeUncolored selected e0 ∧ StableColoring
-        (series.data.tree ci.succ.castSucc) (TashkinovStoredColors series.data q.castSucc)
-        (series.data.coloring q.castSucc) selected ∧ IsProperEdgeColoring G secondStable ∧
-        IsOneEdgeUncolored secondStable e0 ∧ StableColoring (series.data.tree ci.succ.castSucc)
-        (insert delta (TashkinovStoredColors series.data q.castSucc) : Finset (Fin k)) selected
-        secondStable ∧ series.data.coloring ci.succ = TwoColorComponentSwap G secondStable gamma
-        delta (Sum.inl v) ∧
-    let undone : PartialEdgeColoring E k := TwoColorComponentSwap G sigma gamma delta (Sum.inl v);
-        StableColoring (series.data.tree ci.succ.castSucc) (insert delta (TashkinovStoredColors
-        series.data q.castSucc) : Finset (Fin k)) secondStable undone ∧ StableColoring
-        (series.data.tree ci.succ.castSucc) (insert delta (TashkinovStoredColors series.data
-        q.castSucc) : Finset (Fin k)) selected undone ∧ StableColoring (series.data.tree
-        ci.succ.castSucc) (TashkinovStoredColors series.data q.castSucc) (series.data.coloring
-        q.castSucc) undone := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q v gamma delta hkind sigma ci previousProper
-      previousOneUncolored previousClosed previousNotStronglyClosed noRevisiting choice
-      seriesAlternative currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly closedExtension
-      orderedExtension strictExtension target_eq
-  apply helper_branch_1099 <;> assumption
-private theorem helper_branch_1776.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (v : V) (gamma delta : Fin k) (_ :
-        series.data.kind q.succ = some TashkinovExtensionKind.PE) (sigma : PartialEdgeColoring E
-        k) (ci : Fin rounds) (_ : IsProperEdgeColoring G (series.data.coloring ci.castSucc)) (_ :
-        IsOneEdgeUncolored (series.data.coloring ci.castSucc) e0) (_ : ColoredVertexSetClosed G
-        (series.data.coloring ci.castSucc) (TreeSequenceVertexSet (series.data.tree
-        ci.succ.castSucc))) (_ : ¬ColoredVertexSetStronglyClosed G (series.data.coloring
-        ci.castSucc) (TreeSequenceVertexSet (series.data.tree ci.succ.castSucc))) (available :
-        RevisitingExtensionCertificate series.data ci.castSucc) (_ : series.data.coloring ci.succ
-        = series.data.coloring ci.castSucc) (_ : series.data.stored ci.succ = (insert
-        available.delta ({ available.gamma } : Finset (Fin k)) : Finset (Fin k))) (_ :
-        series.data.connectingEdges ci.succ = ({ available.edge } : Finset E)) (_ :
-        series.data.kind ci.succ = some TashkinovExtensionKind.RE) (_ : series.data.chosenVertex
-        ci.succ = some available.insideEndpoint) (_ : series.data.outsideVertex ci.succ = some
-        available.outsideEndpoint) (_ : series.data.delta ci.succ = some available.delta) (_ :
-        series.data.gamma ci.succ = some available.gamma) (adjoined : TreeSequence G e0) (_ :
-        TreeSequenceAdjoinEdge (series.data.tree ci.succ.castSucc) available.edge adjoined) (_ :
-        TashkinovClosure (series.data.coloring ci.succ) adjoined (series.data.tree ci.succ.succ))
-        (_ : TreeSequenceInitialSegment (series.data.tree ci.succ.castSucc) (series.data.tree
-        ci.succ.succ)) (_ : (series.data.tree ci.succ.castSucc).length < (series.data.tree
-        ci.succ.succ).length) (_ : q.succ = ci.succ),
-    ∃ (selected : PartialEdgeColoring E k) (secondStable : PartialEdgeColoring E k),
-        IsProperEdgeColoring G selected ∧ IsOneEdgeUncolored selected e0 ∧ StableColoring
-        (series.data.tree ci.succ.castSucc) (TashkinovStoredColors series.data q.castSucc)
-        (series.data.coloring q.castSucc) selected ∧ IsProperEdgeColoring G secondStable ∧
-        IsOneEdgeUncolored secondStable e0 ∧ StableColoring (series.data.tree ci.succ.castSucc)
-        (insert delta (TashkinovStoredColors series.data q.castSucc) : Finset (Fin k)) selected
-        secondStable ∧ series.data.coloring ci.succ = TwoColorComponentSwap G secondStable gamma
-        delta (Sum.inl v) ∧
-    let undone : PartialEdgeColoring E k := TwoColorComponentSwap G sigma gamma delta (Sum.inl v);
-        StableColoring (series.data.tree ci.succ.castSucc) (insert delta (TashkinovStoredColors
-        series.data q.castSucc) : Finset (Fin k)) secondStable undone ∧ StableColoring
-        (series.data.tree ci.succ.castSucc) (insert delta (TashkinovStoredColors series.data
-        q.castSucc) : Finset (Fin k)) selected undone ∧ StableColoring (series.data.tree
-        ci.succ.castSucc) (TashkinovStoredColors series.data q.castSucc) (series.data.coloring
-        q.castSucc) undone := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q v gamma delta hkind sigma ci previousProper
-      previousOneUncolored previousClosed previousNotStronglyClosed available currentColoring
-      currentStored currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension strictExtension
-      target_eq
-  apply helper_branch_1110 <;> assumption
-private theorem helper_htreeEdge_1972.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (chosenGamma : Fin k)
-        (secondStable : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G secondStable) (choice
-        : MaximumDefectiveChoice G e0 (series.data.tree q.succ.castSucc) (TashkinovStoredColors
-        series.data q.castSucc) (series.data.coloring q.castSucc)) (_ : chosenGamma ∈
-        MissingColors G secondStable choice.vertex) (u : V) (path : (TwoColorIncidenceGraph G
-        secondStable chosenGamma choice.color).Walk (Sum.inl u) (Sum.inl choice.vertex)) (_ :
-        (chosenGamma ∈ MissingColors G secondStable u ∨ choice.color ∈ MissingColors G
-        secondStable u) ∧
-    ∀ w ∈ TreeSequenceVertexSet (series.data.tree q.succ.castSucc), Sum.inl w ∈ path.support ↔ w =
-        choice.vertex) (_ :
-    ∀ y ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl choice.vertex), y ∈
-        path.support) (_ :
-    ∀ (e : E), Sum.inr e ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl
-        choice.vertex) → secondStable e = some chosenGamma ∨ secondStable e = some choice.color)
-        (_ : secondStable choice.edge = some choice.color) (e : E), TreeIncidentEdge
-        (series.data.tree q.succ.castSucc) e → Sum.inr e ∈ TwoColorComponent G secondStable
-        chosenGamma choice.color (Sum.inl choice.vertex) → e = choice.edge := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q chosenGamma secondStable secondStableProper choice
-      hmissing u path endOnly hpathComponent hcompEdge hchoiceSecond
-  apply helper_htreeEdge_1211 <;> assumption
-private theorem helper_hsigmaEdge_1980.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (sigma : PartialEdgeColoring E k)
-        (_ : IsProperEdgeColoring G sigma) (_ : StableColoring (series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors series.data q.succ) (series.data.coloring q.succ) sigma)
-        (chosenGamma : Fin k) (secondStable : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G
-        secondStable) (choice : MaximumDefectiveChoice G e0 (series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors series.data q.castSucc) (series.data.coloring q.castSucc)) (_ :
-        series.data.coloring q.succ = TwoColorComponentSwap G secondStable chosenGamma
-        choice.color (Sum.inl choice.vertex)) (_ : series.data.stored q.succ = (insert
-        choice.color ({ chosenGamma } : Finset (Fin k)) : Finset (Fin k))) (_ : series.data.gamma
-        q.succ = some chosenGamma) (_ : choice.vertex ∈ TreeSequenceVertexSet (series.data.tree
-        q.succ.castSucc)) (_ :
-    ∀ w ∈ TreeSequenceVertexSet (series.data.tree q.succ.castSucc), Sum.inl w ∈ TwoColorComponent
-        G sigma chosenGamma choice.color (Sum.inl choice.vertex) ↔ w = choice.vertex) (_ :
-        chosenGamma ∈ MissingColors G secondStable choice.vertex) (_ : V) (_ :
-    ∀ (e : E), Sum.inr e ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl
-        choice.vertex) → secondStable e = some chosenGamma ∨ secondStable e = some choice.color)
-        (_ : secondStable choice.edge = some choice.color) (_ : chosenGamma ≠ choice.color) (_ :
-        Sum.inr choice.edge ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl
-        choice.vertex)) (e : E), TreeIncidentEdge (series.data.tree q.succ.castSucc) e → Sum.inr e
-        ∈ TwoColorComponent G sigma chosenGamma choice.color (Sum.inl choice.vertex) → e =
-        choice.edge := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q sigma hsigmaProper hsigmaStable chosenGamma
-      secondStable secondStableProper choice currentColoring currentStored hgamma hv hcomponent
-      hmissing u hcompEdge hchoiceSecond hneq hfcomponent
-  apply helper_hsigmaEdge_358 <;> assumption
-private theorem helper_currentColorMissing_2017.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (chosenGamma : Fin k)
-        (secondStable : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G secondStable) (choice
-        : MaximumDefectiveChoice G e0 (series.data.tree q.succ.castSucc) (TashkinovStoredColors
-        series.data q.castSucc) (series.data.coloring q.castSucc)) (_ : series.data.coloring
-        q.succ = TwoColorComponentSwap G secondStable chosenGamma choice.color (Sum.inl
-        choice.vertex)) (_ : chosenGamma ∈ MissingColors G secondStable choice.vertex) (_ :
-    ∀ (e : E), Sum.inr e ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl
-        choice.vertex) → secondStable e = some chosenGamma ∨ secondStable e = some choice.color)
-        (_ : secondStable choice.edge = some choice.color) (_ : chosenGamma ≠ choice.color) (_ :
-        Sum.inr choice.edge ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl
-        choice.vertex)), choice.color ∈ MissingColors G (series.data.coloring q.succ)
-        choice.vertex := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q chosenGamma secondStable secondStableProper choice
-      currentColoring hmissing hcompEdge hchoiceSecond hneq hfcomponent
-  apply helper_currentColorMissing_1304 <;> assumption
-private theorem helper_stableSecond_2052.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (sigma :
-        PartialEdgeColoring E k) (_ : IsProperEdgeColoring G sigma) (_ : IsOneEdgeUncolored sigma
-        e0) (_ : StableColoring (series.data.tree q.succ.castSucc) (TashkinovStoredColors
-        series.data q.succ) (series.data.coloring q.succ) sigma) (chosenGamma : Fin k)
-        (secondStable : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G secondStable) (_ :
-        IsOneEdgeUncolored secondStable e0) (choice : MaximumDefectiveChoice G e0
-        (series.data.tree q.succ.castSucc) (TashkinovStoredColors series.data q.castSucc)
-        (series.data.coloring q.castSucc)) (_ : StableColoring (series.data.tree q.succ.castSucc)
-        (insert choice.color (TashkinovStoredColors series.data q.castSucc) : Finset (Fin k))
-        choice.selected secondStable) (_ : series.data.coloring q.succ = TwoColorComponentSwap G
-        secondStable chosenGamma choice.color (Sum.inl choice.vertex)) (_ : IsProperEdgeColoring G
-        (series.data.coloring q.succ)) (_ : IsOneEdgeUncolored (series.data.coloring q.succ) e0)
-        (_ :
-    ∀ (w : V), chosenGamma ∈ MissingColors G secondStable w ∨ choice.color ∈ MissingColors G
-        secondStable w → @SimpleGraph.degree (Sum V E) (@TwoColorIncidenceGraph V E G k
-        secondStable chosenGamma (@MaximumDefectiveChoice.color V E inst inst_1 G k e0
-        (@TashkinovSeriesData.tree V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1 inst_2
-        G k rounds e0 input series) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat
-        instAddNat) rounds (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@Fin.succ
-        rounds q))) (@TashkinovStoredColors V E inst_1 G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q))
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q)) choice)) (@Sum.inl V E w)
-        (@Subtype.fintype (Sum V E) (@Membership.mem (Sum V E) (Set (Sum V E))
-        (@Set.instMembership (Sum V E)) (@SimpleGraph.neighborSet (Sum V E)
-        (@TwoColorIncidenceGraph V E G k secondStable chosenGamma (@MaximumDefectiveChoice.color V
-        E inst inst_1 G k e0 (@TashkinovSeriesData.tree V E G k rounds e0 (@TashkinovSeries.data V
-        E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat
-        (@instHAdd Nat instAddNat) rounds (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit
-        1)))) (@Fin.succ rounds q))) (@TashkinovStoredColors V E inst_1 G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds q)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q)) choice))
-        (@Sum.inl V E w))) (fun (a : Sum V E) ↦ @SimpleGraph.neighborSet.memDecidable (Sum V E)
-        (@TwoColorIncidenceGraph V E G k secondStable chosenGamma (@MaximumDefectiveChoice.color V
-        E inst inst_1 G k e0 (@TashkinovSeriesData.tree V E G k rounds e0 (@TashkinovSeries.data V
-        E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat
-        (@instHAdd Nat instAddNat) rounds (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit
-        1)))) (@Fin.succ rounds q))) (@TashkinovStoredColors V E inst_1 G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds q)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q)) choice))
-        (@Sum.inl V E w) (fun (a b : Sum V E) ↦ Classical.propDecidable (@SimpleGraph.Adj (Sum V
-        E) (@TwoColorIncidenceGraph V E G k secondStable chosenGamma
-        (@MaximumDefectiveChoice.color V E inst inst_1 G k e0 (@TashkinovSeriesData.tree V E G k
-        rounds e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series)
-        (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) rounds (@OfNat.ofNat Nat
-        (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@Fin.succ rounds q))) (@TashkinovStoredColors V
-        E inst_1 G k rounds e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input
-        series) (@Fin.castSucc rounds q)) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds q)) choice)) a b)) a) (@instFintypeSum V E inst inst_1)) ≤ (1 : ℕ)) (u : V) (path :
-        (TwoColorIncidenceGraph G secondStable chosenGamma choice.color).Walk (Sum.inl u) (Sum.inl
-        choice.vertex)) (_ :
-    ∀ (x : V ⊕ E), @SimpleGraph.degree (Sum V E) (@TwoColorIncidenceGraph V E G k secondStable
-        chosenGamma (@MaximumDefectiveChoice.color V E inst inst_1 G k e0
-        (@TashkinovSeriesData.tree V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1 inst_2
-        G k rounds e0 input series) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat
-        instAddNat) rounds (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@Fin.succ
-        rounds q))) (@TashkinovStoredColors V E inst_1 G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q))
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q)) choice)) x (@Fintype.ofFinite
-        (@Set.Elem (Sum V E) (@SimpleGraph.neighborSet (Sum V E) (@TwoColorIncidenceGraph V E G k
-        secondStable chosenGamma (@MaximumDefectiveChoice.color V E inst inst_1 G k e0
-        (@TashkinovSeriesData.tree V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1 inst_2
-        G k rounds e0 input series) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat
-        instAddNat) rounds (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@Fin.succ
-        rounds q))) (@TashkinovStoredColors V E inst_1 G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q))
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q)) choice)) x)) (@Subtype.finite
-        (Sum V E) (@Finite.instSum V E (@Finite.of_fintype V inst) (@Finite.of_fintype E inst_1))
-        (@Membership.mem (Sum V E) (Set (Sum V E)) (@Set.instMembership (Sum V E))
-        (@SimpleGraph.neighborSet (Sum V E) (@TwoColorIncidenceGraph V E G k secondStable
-        chosenGamma (@MaximumDefectiveChoice.color V E inst inst_1 G k e0
-        (@TashkinovSeriesData.tree V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1 inst_2
-        G k rounds e0 input series) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat
-        instAddNat) rounds (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@Fin.succ
-        rounds q))) (@TashkinovStoredColors V E inst_1 G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q))
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q)) choice)) x)))) ≤ (2 : ℕ)) (_
-        :
-    ∀ x ∈ path.support,
-    ∀ (y : V ⊕ E), (TwoColorIncidenceGraph G secondStable chosenGamma choice.color).Adj x y → y ∈
-        path.support) (_ :
-    ∀ y ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl choice.vertex), y ∈
-        path.support) (_ :
-    ∀ (e : E), Sum.inr e ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl
-        choice.vertex) → secondStable e = some chosenGamma ∨ secondStable e = some choice.color)
-        (_ : secondStable choice.edge = some choice.color) (_ :
-    ∀ (e : E), TreeIncidentEdge (series.data.tree q.succ.castSucc) e → Sum.inr e ∈
-        TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl choice.vertex) → e =
-        choice.edge) (_ :
-    ∀ (e : E), TreeIncidentEdge (series.data.tree q.succ.castSucc) e → Sum.inr e ∈
-        TwoColorComponent G sigma chosenGamma choice.color (Sum.inl choice.vertex) → e =
-        choice.edge),
-    let undone : PartialEdgeColoring E k := TwoColorComponentSwap G sigma chosenGamma choice.color
-        (Sum.inl choice.vertex);
-    ∀ (_ : IsProperEdgeColoring G undone) (_ : IsOneEdgeUncolored undone e0) (_ :
-        TreeMissingColors secondStable (series.data.tree q.succ.castSucc) = TreeMissingColors
-        choice.selected (series.data.tree q.succ.castSucc)) (_ :
-    ∀ (e : E), Sum.inr e ∈ TwoColorComponent G sigma chosenGamma choice.color (Sum.inl
-        choice.vertex) → sigma e = some chosenGamma ∨ sigma e = some choice.color) (_ :
-        choice.color ∈ MissingColors G sigma choice.vertex) (_ :
-    ∀ c ∈ TreeMissingColors choice.selected (series.data.tree q.succ.castSucc) ∪ (insert
-        choice.color (TashkinovStoredColors series.data q.castSucc) : Finset (Fin k)), c ∈
-        TreeMissingColors (series.data.coloring q.succ) (series.data.tree q.succ.castSucc) ∪
-        TashkinovStoredColors series.data q.succ) (_ : chosenGamma ∈ TreeMissingColors
-        choice.selected (series.data.tree q.succ.castSucc) ∪ (insert choice.color
-        (TashkinovStoredColors series.data q.castSucc) : Finset (Fin k))), StableColoring
-        (series.data.tree q.succ.castSucc) (insert choice.color (TashkinovStoredColors series.data
-        q.castSucc) : Finset (Fin k)) secondStable undone := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q sigma hsigmaProper hsigmaOneUncolored hsigmaStable
-      chosenGamma secondStable secondStableProper secondStableOneUncolored choice
-      secondStableRelation currentColoring currentProper currentOneUncolored hdegree u path
-      hdegreeBound hclosed hpathComponent hcompEdge hchoiceSecond htreeEdge hsigmaEdge undone
-      undoneProper undoneOne treeSecondSelected sigmaComponentColor sigmaColorMissing
-      currentControl gammaControl
-  apply helper_stableSecond_588 <;> assumption
-private theorem helper_stableSelected_2064.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (sigma : PartialEdgeColoring E k)
-        (chosenGamma : Fin k) (secondStable : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G
-        secondStable) (_ : IsOneEdgeUncolored secondStable e0) (choice : MaximumDefectiveChoice G
-        e0 (series.data.tree q.succ.castSucc) (TashkinovStoredColors series.data q.castSucc)
-        (series.data.coloring q.castSucc)) (_ : StableColoring (series.data.tree q.succ.castSucc)
-        (insert choice.color (TashkinovStoredColors series.data q.castSucc) : Finset (Fin k))
-        choice.selected secondStable),
-    let undone : PartialEdgeColoring E k := TwoColorComponentSwap G sigma chosenGamma choice.color
-        (Sum.inl choice.vertex);
-    ∀ (_ : IsProperEdgeColoring G undone) (_ : IsOneEdgeUncolored undone e0) (_ :
-        TreeMissingColors secondStable (series.data.tree q.succ.castSucc) = TreeMissingColors
-        choice.selected (series.data.tree q.succ.castSucc)) (_ : StableColoring (series.data.tree
-        q.succ.castSucc) (insert choice.color (TashkinovStoredColors series.data q.castSucc) :
-        Finset (Fin k)) secondStable undone), StableColoring (series.data.tree q.succ.castSucc)
-        (insert choice.color (TashkinovStoredColors series.data q.castSucc) : Finset (Fin k))
-        choice.selected undone := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q sigma chosenGamma secondStable secondStableProper
-      secondStableOneUncolored choice secondStableRelation undone undoneProper undoneOne
-      treeSecondSelected stableSecond
-  exact @helper_stableSelected_718 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@rounds) (@e0) (@input) (@series) (@q) (@sigma) (@chosenGamma) (@secondStable)
-      (@secondStableProper) (@secondStableOneUncolored) (@choice) (@secondStableRelation)
-      (@undoneProper) (@undoneOne) (@treeSecondSelected) (@stableSecond)
-
 theorem ParallelExtensionUndoStable {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq E]
     (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E)
@@ -1602,13 +1274,13 @@ theorem ParallelExtensionUndoStable {V E : Type*}
       currentColoring currentStored currentEdges currentKind currentVertex
       currentOutside currentDelta currentGamma adjoined adjoinedExactly
       closedExtension orderedExtension strictExtension =>
-          apply helper_branch_1764 <;> assumption
+          apply helper_branch_1099 <;> assumption
   | RE ci previousProper previousOneUncolored previousClosed
       previousNotStronglyClosed available currentColoring currentStored
       currentEdges currentKind currentVertex currentOutside currentDelta
       currentGamma adjoined adjoinedExactly closedExtension orderedExtension
       strictExtension =>
-          apply helper_branch_1776 <;> assumption
+          apply helper_branch_1110 <;> assumption
   | PE ci previousProper previousOneUncolored previousClosed
       previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
       chosenGamma gammaRule secondStable secondStableProper
@@ -1673,8 +1345,8 @@ theorem ParallelExtensionUndoStable {V E : Type*}
     have htreeEdge :
     ∀ e, TreeIncidentEdge (series.data.tree q.succ.castSucc) e → Sum.inr e ∈ TwoColorComponent G
         secondStable chosenGamma choice.color (Sum.inl choice.vertex) → e = choice.edge := by
-      apply helper_htreeEdge_1972 <;> assumption
-    have hsigmaEdge := @helper_hsigmaEdge_1980 (@V) (@E) inferInstance inferInstance inferInstance
+      apply helper_htreeEdge_1211 <;> assumption
+    have hsigmaEdge := @helper_hsigmaEdge_358 (@V) (@E) inferInstance inferInstance inferInstance
         (@G) (@k) (@rounds) (@e0) (@input) (@series) (@q) (@sigma) (@hsigmaProper) (@hsigmaStable)
         (@chosenGamma) (@secondStable) (@secondStableProper) (@choice) (@currentColoring)
         (@currentStored) (@hgamma) (@hv) (@hcomponent) (@hmissing) (@u) (@hcompEdge)
@@ -1702,7 +1374,7 @@ theorem ParallelExtensionUndoStable {V E : Type*}
     ∀ e, Sum.inr e ∈ TwoColorComponent G sigma chosenGamma choice.color (Sum.inl choice.vertex) →
         sigma e = some chosenGamma ∨ sigma e = some choice.color := by
       apply helper_sigmaComponentColor_1288; assumption
-    have currentColorMissing := @helper_currentColorMissing_2017 (@V) (@E) inferInstance
+    have currentColorMissing := @helper_currentColorMissing_1304 (@V) (@E) inferInstance
         inferInstance inferInstance (@G) (@k) (@rounds) (@e0) (@input) (@series) (@q) (@chosenGamma)
         (@secondStable) (@secondStableProper) (@choice) (@currentColoring) (@hmissing) (@hcompEdge)
         (@hchoiceSecond) (@hneq) (@hfcomponent)
@@ -1734,8 +1406,8 @@ theorem ParallelExtensionUndoStable {V E : Type*}
         (series.data.tree q.succ.castSucc)
         (insert choice.color (TashkinovStoredColors series.data q.castSucc))
         secondStable undone := by
-      apply helper_stableSecond_2052 <;> assumption
-    have stableSelected := @helper_stableSelected_2064 (@V) (@E) inferInstance inferInstance
+      apply GoldbergSeymour.helper_stableSecond_588 <;> assumption
+    have stableSelected := @helper_stableSelected_718 (@V) (@E) inferInstance inferInstance
         inferInstance (@G) (@k) (@rounds) (@e0) (@input) (@series) (@q) (@sigma) (@chosenGamma)
         (@secondStable) (@secondStableProper) (@secondStableOneUncolored) (@choice)
         (@secondStableRelation) (@undoneProper) (@undoneOne) (@treeSecondSelected) (@stableSecond)

@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.ChangeLemmaBothOutsidePreparation1
+
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation1
 public import LeanPool.GoldbergSeymour.HierarchyPathNumber
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 
 /-!
 # Shared facts for ChangeLemmaMixedClosedFinal
@@ -266,25 +267,13 @@ abbrev pathLengthUpperBoundStatement.{u_1, u_2} : Prop :=
       HierarchyStarredStage HS (Fin.last count) = A →
       HierarchyPathNumber HS ≤ HierarchyPathNumber H
 
-/-- A common proof used by the branches of this transport or construction argument. -/
-theorem initialSegmentTransitive.{u_1, u_2} : initialSegmentTransitiveStatement.{u_1, u_2} := by
-  classical
-  intro V E G e0 S U W hSU hUW
-  refine ⟨le_trans hSU.1 hUW.1, ?_, ?_⟩
-  · intro i
-    exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hSU.1) i)).trans (hSU.2.1 i)
-  · intro i
-    exact (hUW.2.2 (Fin.castLE hSU.1 i)).trans (hSU.2.2 i)
 
 /-- A common proof used by the branches of this transport or construction argument. -/
-theorem comparableInitialSegments.{u_1, u_2} : comparableInitialSegmentsStatement.{u_1, u_2} := by
-  classical
-  intro V E G e0 S U W hSW hUW hlen
-  refine ⟨hlen, ?_, ?_⟩
-  · intro i
-    exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans (hSW.2.1 i)
-  · intro i
-    exact (hUW.2.2 (Fin.castLE hlen i)).symm.trans (hSW.2.2 i)
+alias initialSegmentTransitive :=
+  SharedFacts.ChangeLemmaBothOutsidePreparation1.initialSegmentTransitive
+
+alias comparableInitialSegments :=
+  SharedFacts.ChangeLemmaBothOutsidePreparation1.comparableInitialSegments
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem stageInitialSegment.{u_1, u_2} : stageInitialSegmentStatement.{u_1, u_2} := by

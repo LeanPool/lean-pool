@@ -2445,15 +2445,11 @@ theorem helper_terminalStored_647.{u_1, u_2} :
     (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
     (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
     (alpha : Fin k),
-  let old : HierarchyCounterexample P.replacementBase := P.counterexample;
-  let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-    old.hierarchy;
   let n : Fin (P.corresponding.replacementETT.rounds + (1 : ℕ)) :=
     Fin.last P.corresponding.replacementETT.rounds;
   let Tn : TreeSequence G e0 :=
     P.corresponding.replacementETT.series.data.tree n.castSucc;
   let mu : PartialEdgeColoring E k := P.coloring;
-  HierarchyPathNumber H = HierarchyPathNumber C.hierarchy →
   ∀ (hlenT : (3 : ℕ) ≤ T.length),
   let B : TreeSequence G e0 :=
     TreeSequencePrefix T (T.length - (1 : ℕ))
@@ -2607,7 +2603,7 @@ theorem helper_terminalStored_647.{u_1, u_2} :
       (Fin.last corr.replacementETT.rounds) =
     TashkinovStoredColors EB.series.data (Fin.last EB.rounds) := by
   classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha old H n Tn mu hp hlenT B X hTnX r f
+  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha n Tn mu hlenT B X hTnX r f
       S hSBlen sigma missingTree positiveB aboveB strictB belowB generatingB baseB HB EB corr
       hmaximum bs hcore hpe hclosure baseStageK terminalStageK nestedK strictK coreInsideK
       positiveK increasingK dividerStageK KF hstage hposition starredEq terminalTree

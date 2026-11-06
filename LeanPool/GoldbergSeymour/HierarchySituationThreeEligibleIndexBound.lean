@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningTransport
 
 public import LeanPool.GoldbergSeymour.SharedFacts.OutsideAdvancement
 
@@ -252,7 +251,7 @@ private theorem helper_continuation_5697.{u_1, u_2} :
   have terminalStored : TashkinovStoredColors corr.replacementETT.series.data
       (Fin.last corr.replacementETT.rounds) = TashkinovStoredColors EB.series.data
         (Fin.last EB.rounds) := by
-    exact helper_terminalStored_647 G k e0 input T phi ett base C ctx P alpha hp hlenT hTnX S
+    exact helper_terminalStored_647 G k e0 input T phi ett base C ctx P alpha hlenT hTnX S
         hSBlen missingTree positiveB aboveB strictB belowB generatingB baseB HB corr hmaximum
         bs hcore hpe hclosure baseStageK terminalStageK nestedK strictK coreInsideK positiveK
         increasingK dividerStageK hstage hposition starredEq terminalTree

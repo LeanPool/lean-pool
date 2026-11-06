@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
+
 public import LeanPool.GoldbergSeymour.SharedFacts.RevisitingTerminalPreparation
 
 public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
@@ -1048,32 +1050,7 @@ theorem helper_reStepColoring_588.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q adjoined available
     adjoinedExactly hroundLarge originalPrefix hr corr oldi oldChoice oldGamma newi newChoice
     newGamma htree rounds' input' series j hj
-  have hstep := series.certified j.succ
-  generalize hslot : j.succ = slot at hstep
-  cases hstep with
-  | initial triple seedLength initialColoring initialStored initialEdges initialKind initialVertex
-    initialOutside initialDelta initialGamma initialClosure => exact (Fin.succ_ne_zero j hslot).elim
-  | SE i prevProper prevOne prevClosed prevNotStrong noRE choice alternative coloring stored edges
-    kind vertex outside delta gamma adjoined adjoinedExactly closed ordered
-    strict =>
-    have hbad := kind.symm.trans (by simpa [hslot] using hj)
-    cases hbad
-  | PE i prevProper prevOne prevClosed prevNotStrong noRE choice alternativeFails gamma gammaRule
-    second secondProper secondOne secondStable exit coloring coloringProper coloringOne stored edges
-    kind vertex outside delta gammaValue closed ordered
-    strict =>
-    have hbad := kind.symm.trans (by simpa [hslot] using hj)
-    cases hbad
-  | RE i prevProper prevOne prevClosed prevNotStrong cert coloring stored edges kind vertex outside
-    delta gamma adjoined adjoinedExactly closed ordered
-    strict =>
-    have hi : i = j := by
-      apply Fin.ext
-      have hv := congrArg Fin.val hslot
-      simp only [Fin.val_succ] at hv
-      omega
-    subst i
-    simpa [hslot] using coloring
+  exact series.revisitingStepColoring j hj
 
 theorem helper_reIntervalColoring_625.{u_1, u_2} :
     open scoped Classical in
@@ -1110,38 +1087,7 @@ theorem helper_reIntervalColoring_625.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q available hroundLarge
     originalPrefix hr corr oldi oldChoice oldGamma newi newChoice newGamma htree reStepColoring
     rounds' input' series a b hab hbetween
-  have coloringAlong :
-    ∀ m : ℕ, a.val ≤ m → m ≤ b.val →
-    ∀ x : Fin (rounds' + 1), x.val = m → series.data.coloring x = series.data.coloring a := by
-    intro m ham
-    induction m, ham using Nat.le_induction with
-    | base =>
-      intro hmb x hx
-      have hxa : x = a := by
-        apply Fin.ext
-        omega
-      rw [hxa]
-    | succ m ham ih =>
-      intro hmb x hx
-      let j : Fin rounds' :=
-        ⟨m, by
-          have hbLt := b.isLt
-          omega⟩
-      have hjKind : series.data.kind j.succ = some TashkinovExtensionKind.RE := by
-        apply hbetween j.succ
-        · simp [j]
-          omega
-        · simp [j]
-          omega
-      have hstep := reStepColoring series j hjKind
-      have hxj : x = j.succ := by
-        apply Fin.ext
-        simp [j, hx]
-      calc
-        series.data.coloring x = series.data.coloring j.succ := by rw [hxj]
-        _ = series.data.coloring j.castSucc := hstep
-        _ = series.data.coloring a := ih (by omega) j.castSucc (by simp [j])
-  exact coloringAlong b.val hab le_rfl b rfl
+  exact series.revisitingIntervalColoring a b hab hbetween
 
 theorem helper_holdColorConstant_669.{u_1, u_2} :
     open scoped Classical in

@@ -5,12 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
-public import LeanPool.GoldbergSeymour.TreeMissingColors
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import Mathlib.Combinatorics.SimpleGraph.Init
-public import Mathlib.Data.Fintype.EquivFin
-public import Mathlib.Tactic.Bound.Init
+public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningTransport
+
 
 /-!
 # Shared facts for Preparation1
@@ -50,6 +46,9 @@ abbrev initialSegmentTransitiveStatement.{u_1, u_2} : Prop :=
     TreeSequenceInitialSegment Y Z →
     TreeSequenceInitialSegment X Z
 
+alias initialSegmentTransitive :=
+  SharedFacts.ShorteningTransport.trans
+
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem firstMissingPositionUpperBound.{u_1, u_2} :
     firstMissingPositionUpperBoundStatement.{u_1, u_2} := by
@@ -82,15 +81,6 @@ theorem firstMissingPositionWitness.{u_1, u_2} : firstMissingPositionWitnessStat
     rw [dite_eq_left ⟨i, hm⟩]
     exact (Finset.mem_filter.mp (Finset.min'_mem _ ⟨i, hm⟩)).2
 
-/-- A common proof used by the branches of this transport or construction argument. -/
-theorem initialSegmentTransitive.{u_1, u_2} : initialSegmentTransitiveStatement.{u_1, u_2} := by
-  classical
-  intro V E G e0 X Y Z hXY hYZ
-  refine ⟨hXY.1.trans hYZ.1, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
 
 end GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
 

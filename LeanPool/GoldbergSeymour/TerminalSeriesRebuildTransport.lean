@@ -4852,45 +4852,6 @@ theorem helper_branch_11555.{u_1, u_2} :
     subst b
     rfl
   apply helper_continuation_4951 <;> assumption
-private theorem helper_hsigmaEdge_6158.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ : IsProperEdgeColoring G sigma) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (_ : StableColoring (ett.series.data.tree q.succ.castSucc) (TashkinovStoredColors
-        ett.series.data q.succ) (ett.series.data.coloring q.succ) sigma) (gamma : Fin k)
-        (secondStable : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G secondStable) (choice
-        : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (_ : ett.series.data.coloring q.succ = TwoColorComponentSwap G secondStable gamma
-        choice.color (Sum.inl choice.vertex)) (_ : ett.series.data.stored q.succ = (insert
-        choice.color ({ gamma } : Finset (Fin k)) : Finset (Fin k))) (_ : choice.vertex ∈
-        TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc)) (_ :
-    ∀ w ∈ TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc), Sum.inl w ∈
-        TwoColorComponent G sigma gamma choice.color (Sum.inl choice.vertex) ↔ w = choice.vertex)
-        (_ : gamma ∈ MissingColors G secondStable choice.vertex) (_ : V) (_ :
-    ∀ (e : E), Sum.inr e ∈ TwoColorComponent G secondStable gamma choice.color (Sum.inl
-        choice.vertex) → secondStable e = some gamma ∨ secondStable e = some choice.color) (_ :
-        secondStable choice.edge = some choice.color) (_ : gamma ≠ choice.color) (_ : Sum.inr
-        choice.edge ∈ TwoColorComponent G secondStable gamma choice.color (Sum.inl choice.vertex))
-        (e : E), TreeIncidentEdge (ett.series.data.tree q.succ.castSucc) e → Sum.inr e ∈
-        TwoColorComponent G sigma gamma choice.color (Sum.inl choice.vertex) → e = choice.edge := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper Tstar q
-      hsigmaStableQ gamma secondStable secondStableProper choice currentColoring currentStored
-      hchoiceVertex hcomponent hmissing u hcompEdge hchoiceSecond hneq hfcomponent
-  exact @helper_hsigmaEdge_4922 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-      (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper) (@Tstar)
-      (@hsigmaStableQ) (@gamma) (@secondStable) (@secondStableProper) (@choice)
-      (@currentColoring) (@currentStored) (@hchoiceVertex) (@hcomponent) (@hmissing) (@u)
-      (@hcompEdge) (@hchoiceSecond) (@hneq) (@hfcomponent)
-
 theorem helper_hsigmaPrevEnlarged_12232.{u_1, u_2} :
     helperHsigmaPrevEnlarged12232Conditions.{u_1, u_2} := by
   classical
@@ -4943,7 +4904,7 @@ theorem helper_hsigmaPrevEnlarged_12232.{u_1, u_2} :
       (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar) (@gamma) (@secondStable)
       (@secondStableProper) (@choice) (@hmissing) (@u) (@path) (@endOnly) (@hpathComponent)
       (@hcompEdge) (@hchoiceSecond)
-  have hsigmaEdge := @helper_hsigmaEdge_6158 (@V) (@E) inferInstance inferInstance inferInstance
+  have hsigmaEdge := @helper_hsigmaEdge_4922 (@V) (@E) inferInstance inferInstance inferInstance
       (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper)
       (@Tstar) (@hsigmaStableQ) (@gamma) (@secondStable) (@secondStableProper) (@choice)
       (@currentColoring) (@currentStored) (@hchoiceVertex) (@hcomponent) (@hmissing) (@u)
@@ -5023,460 +4984,6 @@ theorem helper_hsigmaPrevEnlarged_12232.{u_1, u_2} :
   rw [hsigmaPrevFormula]
   exact stableSelected
 
-private theorem helper_hprefixFields_6306.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ _ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (sigmaPrev : PartialEdgeColoring E k),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G sigmaPrev gamma choice.color;
-    ∀ (u : V) (_ : H.Walk (Sum.inl choice.vertex) (Sum.inl u)) (_ : ett.rounds = (1 : ℕ))
-        (prefixInput : PartialEdgeColoring E k) (zeroPrefix : TashkinovSeries G k (0 : ℕ) e0
-        prefixInput),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    ∀ (_ : (0 : ℕ) + (1 : ℕ) = ett.rounds) (i : Fin (ett.rounds + (1 : ℕ))), (↑i : ℕ) < ett.rounds
-        → zeroPrefix.data.stored zeroLast = ett.series.data.stored i ∧
-        zeroPrefix.data.connectingEdges zeroLast = ett.series.data.connectingEdges i ∧
-        zeroPrefix.data.kind zeroLast = ett.series.data.kind i := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive Tstar closureTree q gamma choice
-      sigmaPrev H u p hroundOne prefixInput zeroPrefix zeroLast hroundsEq
-  exact @helper_hprefixFields_3431 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar)
-      (@closureTree) (@gamma) (@choice) (@sigmaPrev) (@u) (@p) (@hroundOne)
-      (@prefixInput) (@zeroPrefix) (@hroundsEq)
-
-private theorem helper_hpeAlternativeZero_6498.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (closureTree : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (previousProper : IsProperEdgeColoring G (ett.series.data.coloring
-        q.castSucc)) (previousOneUncolored : IsOneEdgeUncolored (ett.series.data.coloring
-        q.castSucc) e0) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree
-        q.succ.castSucc) (TashkinovStoredColors ett.series.data q.castSucc)
-        (ett.series.data.coloring q.castSucc)) (sigmaPrev : PartialEdgeColoring E k)
-        (hsigmaPrevProper : IsProperEdgeColoring G sigmaPrev) (hsigmaPrevOne : IsOneEdgeUncolored
-        sigmaPrev e0) (hsigmaPrevStableQ : StableColoring (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)
-        sigmaPrev) (hchoiceDefective : DefectiveColor G sigmaPrev (TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.castSucc)) choice.color) (hchoiceEdgeNew : choice.edge ∈
-        BoundaryColorEdges G sigmaPrev (TreeSequenceVertexSet (ett.series.data.tree
-        q.succ.castSucc)) choice.color) (hsigmaPrevSelf : StableColoring (ett.series.data.tree
-        q.succ.castSucc) (TashkinovStoredColors ett.series.data q.castSucc) sigmaPrev sigmaPrev),
-    let newChoice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) sigmaPrev := helperNewChoice4049 G k e0
-        input T generating ett hpositive previousProper previousOneUncolored choice sigmaPrev
-        hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew
-        hsigmaPrevSelf;
-    ∀ (_ :
-    ∃ (rho : PartialEdgeColoring E k), IsProperEdgeColoring G rho ∧ IsOneEdgeUncolored rho e0 ∧
-        StableColoring (ett.series.data.tree q.succ.castSucc) (insert newChoice.color
-        (TashkinovStoredColors ett.series.data q.castSucc) : Finset (Fin k)) newChoice.selected
-        rho ∧ ¬Disjoint (MissingColors G rho newChoice.otherEndpoint) (TreeMissingColors rho
-        (ett.series.data.tree q.succ.castSucc))) (prefixInput : PartialEdgeColoring E k)
-        (zeroPrefix : TashkinovSeries G k (0 : ℕ) e0 prefixInput),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    let newStored : Finset (Fin k) := (insert choice.color ({ gamma } : Finset (Fin k)) : Finset
-        (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.PE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := some gamma;
-    let appendedData : TashkinovSeriesData G k ((0 : ℕ) + (1 : ℕ)) e0 := TashkinovSeriesDataAppend
-        zeroPrefix.data closureTree sigma newStored newEdges newKind newVertex newOutside newDelta
-        newGamma;
-    ∀ (happendTree : appendedData.tree zeroLast.succ.castSucc = ett.series.data.tree
-        q.succ.castSucc) (happendColor : appendedData.coloring zeroLast.castSucc = sigmaPrev)
-        (happendStored : TashkinovStoredColors appendedData zeroLast.castSucc =
-        TashkinovStoredColors ett.series.data q.castSucc),
-    let appendedChoice : MaximumDefectiveChoice G e0 (appendedData.tree zeroLast.succ.castSucc)
-        (TashkinovStoredColors appendedData zeroLast.castSucc) (appendedData.coloring
-        zeroLast.castSucc) := helperAppendedChoice4500 G k e0 input T generating ett hpositive
-        sigma closureTree gamma previousProper previousOneUncolored choice sigmaPrev
-        hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew
-        hsigmaPrevSelf prefixInput zeroPrefix happendTree happendColor happendStored;
-    ∃ (rho : PartialEdgeColoring E k), IsProperEdgeColoring G rho ∧ IsOneEdgeUncolored rho e0 ∧
-        StableColoring (appendedData.tree zeroLast.succ.castSucc) (insert appendedChoice.color
-        (TashkinovStoredColors appendedData zeroLast.castSucc) : Finset (Fin k))
-        appendedChoice.selected rho ∧ ¬Disjoint (MissingColors G rho appendedChoice.otherEndpoint)
-        (TreeMissingColors rho (appendedData.tree zeroLast.succ.castSucc)) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma closureTree q gamma previousProper
-      previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ
-      hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf newChoice hnewAlternativeFails prefixInput
-      zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma
-      appendedData happendTree happendColor happendStored appendedChoice
-  exact @helper_hpeAlternativeZero_5555 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-      (@closureTree) (@gamma) (@previousProper) (@previousOneUncolored) (@choice) (@sigmaPrev)
-      (@hsigmaPrevProper) (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hchoiceDefective)
-      (@hchoiceEdgeNew) (@hsigmaPrevSelf) (@hnewAlternativeFails) (@prefixInput) (@zeroPrefix)
-      (@happendTree) (@happendColor) (@happendStored)
-
-private theorem helper_hpeGammaRuleZero_6513.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (closureTree : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (previousProper : IsProperEdgeColoring G (ett.series.data.coloring
-        q.castSucc)) (previousOneUncolored : IsOneEdgeUncolored (ett.series.data.coloring
-        q.castSucc) e0) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree
-        q.succ.castSucc) (TashkinovStoredColors ett.series.data q.castSucc)
-        (ett.series.data.coloring q.castSucc)) (sigmaPrev : PartialEdgeColoring E k)
-        (hsigmaPrevProper : IsProperEdgeColoring G sigmaPrev) (hsigmaPrevOne : IsOneEdgeUncolored
-        sigmaPrev e0) (hsigmaPrevStableQ : StableColoring (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)
-        sigmaPrev) (hchoiceDefective : DefectiveColor G sigmaPrev (TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.castSucc)) choice.color) (hchoiceEdgeNew : choice.edge ∈
-        BoundaryColorEdges G sigmaPrev (TreeSequenceVertexSet (ett.series.data.tree
-        q.succ.castSucc)) choice.color) (hsigmaPrevSelf : StableColoring (ett.series.data.tree
-        q.succ.castSucc) (TashkinovStoredColors ett.series.data q.castSucc) sigmaPrev sigmaPrev)
-        (_ : gamma ∈ MissingColors G sigmaPrev choice.vertex),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G sigmaPrev gamma choice.color;
-    ∀ (u : V) (_ : H.Walk (Sum.inl choice.vertex) (Sum.inl u)) (prefixInput : PartialEdgeColoring
-        E k) (zeroPrefix : TashkinovSeries G k (0 : ℕ) e0 prefixInput),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    let newStored : Finset (Fin k) := (insert choice.color ({ gamma } : Finset (Fin k)) : Finset
-        (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.PE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := some gamma;
-    let appendedData : TashkinovSeriesData G k ((0 : ℕ) + (1 : ℕ)) e0 := TashkinovSeriesDataAppend
-        zeroPrefix.data closureTree sigma newStored newEdges newKind newVertex newOutside newDelta
-        newGamma;
-    ∀ (happendTree : appendedData.tree zeroLast.succ.castSucc = ett.series.data.tree
-        q.succ.castSucc) (happendColor : appendedData.coloring zeroLast.castSucc = sigmaPrev)
-        (happendStored : TashkinovStoredColors appendedData zeroLast.castSucc =
-        TashkinovStoredColors ett.series.data q.castSucc),
-    let appendedChoice : MaximumDefectiveChoice G e0 (appendedData.tree zeroLast.succ.castSucc)
-        (TashkinovStoredColors appendedData zeroLast.castSucc) (appendedData.coloring
-        zeroLast.castSucc) := helperAppendedChoice4500 G k e0 input T generating ett hpositive
-        sigma closureTree gamma previousProper previousOneUncolored choice sigmaPrev
-        hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew
-        hsigmaPrevSelf prefixInput zeroPrefix happendTree happendColor happendStored;
-        ParallelExtensionColor appendedData zeroLast.castSucc appendedChoice.selected
-        appendedChoice.vertex gamma := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma closureTree q gamma previousProper
-      previousOneUncolored choice sigmaPrev hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ
-      hchoiceDefective hchoiceEdgeNew hsigmaPrevSelf hgammaPrevMissing H u p prefixInput zeroPrefix
-      zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma appendedData
-      happendTree happendColor happendStored appendedChoice
-  exact @helper_hpeGammaRuleZero_5579 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-      (@closureTree) (@gamma) (@previousProper) (@previousOneUncolored) (@choice) (@sigmaPrev)
-      (@hsigmaPrevProper) (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hchoiceDefective)
-      (@hchoiceEdgeNew) (@hsigmaPrevSelf) (@hgammaPrevMissing) (@u) (@p) (@prefixInput)
-      (@zeroPrefix) (@happendTree) (@happendColor) (@happendStored)
-
-private theorem helper_lastStep_6525.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ : IsProperEdgeColoring G sigma) (_ : IsOneEdgeUncolored sigma e0) (closureTree :
-        TreeSequence G e0) (_ : TreeSequenceInitialSegment (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) closureTree),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (_ : q.succ = Fin.last ett.rounds) (gamma : Fin k) (_ : PartialEdgeColoring E k)
-        (previousProper : IsProperEdgeColoring G (ett.series.data.coloring q.castSucc))
-        (previousOneUncolored : IsOneEdgeUncolored (ett.series.data.coloring q.castSucc) e0)
-        (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (sigmaPrev : PartialEdgeColoring E k) (hsigmaPrevProper : IsProperEdgeColoring G
-        sigmaPrev) (hsigmaPrevOne : IsOneEdgeUncolored sigmaPrev e0) (hsigmaPrevStableQ :
-        StableColoring (ett.series.data.tree q.succ.castSucc) (TashkinovStoredColors
-        ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc) sigmaPrev)
-        (hchoiceDefective : DefectiveColor G sigmaPrev (TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.castSucc)) choice.color) (hchoiceEdgeNew : choice.edge ∈
-        BoundaryColorEdges G sigmaPrev (TreeSequenceVertexSet (ett.series.data.tree
-        q.succ.castSucc)) choice.color) (hsigmaPrevSelf : StableColoring (ett.series.data.tree
-        q.succ.castSucc) (TashkinovStoredColors ett.series.data q.castSucc) sigmaPrev sigmaPrev)
-        (_ : ColoredVertexSetClosed G sigmaPrev (TreeSequenceVertexSet (ett.series.data.tree
-        q.succ.castSucc))) (_ : ¬ColoredVertexSetStronglyClosed G sigmaPrev (TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.castSucc))) (_ : sigma = TwoColorComponentSwap G sigmaPrev
-        gamma choice.color (Sum.inl choice.vertex)) (_ : TreeExit (ett.series.data.tree
-        q.succ.castSucc) sigmaPrev gamma choice.color choice.vertex) (prefixInput :
-        PartialEdgeColoring E k) (zeroPrefix : TashkinovSeries G k (0 : ℕ) e0 prefixInput) (_ :
-        TashkinovClosure sigma (ett.series.data.tree (Fin.last ett.rounds).castSucc) closureTree),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    let newStored : Finset (Fin k) := (insert choice.color ({ gamma } : Finset (Fin k)) : Finset
-        (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.PE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := some gamma;
-    let appendedData : TashkinovSeriesData G k ((0 : ℕ) + (1 : ℕ)) e0 := TashkinovSeriesDataAppend
-        zeroPrefix.data closureTree sigma newStored newEdges newKind newVertex newOutside newDelta
-        newGamma;
-    ∀ (_ : appendedData.tree (Fin.last (2 : ℕ)) = closureTree) (_ : appendedData.coloring
-        (Fin.last (1 : ℕ)) = sigma) (_ : appendedData.stored (Fin.last (1 : ℕ)) = newStored) (_ :
-        appendedData.connectingEdges (Fin.last (1 : ℕ)) = newEdges) (_ : appendedData.kind
-        (Fin.last (1 : ℕ)) = newKind) (_ : appendedData.chosenVertex (Fin.last (1 : ℕ)) =
-        newVertex) (_ : appendedData.outsideVertex (Fin.last (1 : ℕ)) = newOutside) (_ :
-        appendedData.delta (Fin.last (1 : ℕ)) = newDelta) (_ : appendedData.gamma (Fin.last (1 :
-        ℕ)) = newGamma) (happendTree : appendedData.tree zeroLast.succ.castSucc =
-        ett.series.data.tree q.succ.castSucc) (happendColor : appendedData.coloring
-        zeroLast.castSucc = sigmaPrev) (happendStored : TashkinovStoredColors appendedData
-        zeroLast.castSucc = TashkinovStoredColors ett.series.data q.castSucc),
-    let appendedChoice : MaximumDefectiveChoice G e0 (appendedData.tree zeroLast.succ.castSucc)
-        (TashkinovStoredColors appendedData zeroLast.castSucc) (appendedData.coloring
-        zeroLast.castSucc) := helperAppendedChoice4500 G k e0 input T generating ett hpositive
-        sigma closureTree gamma previousProper previousOneUncolored choice sigmaPrev
-        hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew
-        hsigmaPrevSelf prefixInput zeroPrefix happendTree happendColor happendStored;
-    ∀ (_ : ¬Nonempty (RevisitingExtensionCertificate appendedData zeroLast.castSucc)) (_ :
-    ∃ (rho : PartialEdgeColoring E k), IsProperEdgeColoring G rho ∧ IsOneEdgeUncolored rho e0 ∧
-        StableColoring (appendedData.tree zeroLast.succ.castSucc) (insert appendedChoice.color
-        (TashkinovStoredColors appendedData zeroLast.castSucc) : Finset (Fin k))
-        appendedChoice.selected rho ∧ ¬Disjoint (MissingColors G rho appendedChoice.otherEndpoint)
-        (TreeMissingColors rho (appendedData.tree zeroLast.succ.castSucc))) (_ :
-        ParallelExtensionColor appendedData zeroLast.castSucc appendedChoice.selected
-        appendedChoice.vertex gamma) (_ : (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc).length < closureTree.length), TashkinovSeriesStep G k (1 : ℕ) e0
-        prefixInput appendedData (Fin.last (1 : ℕ)) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper hsigmaOne closureTree
-      hTnClosure q hqSucc gamma secondStable previousProper previousOneUncolored choice sigmaPrev
-      hsigmaPrevProper hsigmaPrevOne hsigmaPrevStableQ hchoiceDefective hchoiceEdgeNew
-      hsigmaPrevSelf hclosedPrev hnotStrongPrev hsigmaRecovered hnewExit prefixInput zeroPrefix
-      hterminalClosure zeroLast newStored newEdges newKind newVertex newOutside newDelta newGamma
-      appendedData happendLastTree happendLastColor happendLastStored happendLastEdges
-      happendLastKind happendLastVertex happendLastOutside happendLastDelta happendLastGamma
-      happendTree happendColor happendStored appendedChoice hpeNoRevisitingZero hpeAlternativeZero
-      hpeGammaRuleZero hstrictClosure
-  exact @helper_lastStep_5593 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-      (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper)
-      (@hsigmaOne) (@closureTree) (@hTnClosure) (@hqSucc) (@gamma) (@secondStable)
-      (@previousProper) (@previousOneUncolored) (@choice) (@sigmaPrev) (@hsigmaPrevProper)
-      (@hsigmaPrevOne) (@hsigmaPrevStableQ) (@hchoiceDefective) (@hchoiceEdgeNew)
-      (@hsigmaPrevSelf) (@hclosedPrev) (@hnotStrongPrev) (@hsigmaRecovered) (@hnewExit)
-      (@prefixInput) (@zeroPrefix) (@hterminalClosure) (@happendLastTree) (@happendLastColor)
-      (@happendLastStored) (@happendLastEdges) (@happendLastKind) (@happendLastVertex)
-      (@happendLastOutside) (@happendLastDelta) (@happendLastGamma) (@happendTree)
-      (@happendColor) (@happendStored) (@hpeNoRevisitingZero) (@hpeAlternativeZero)
-      (@hpeGammaRuleZero) (@hstrictClosure)
-
-private theorem helper_hpenultimateTree_6615.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ closureTree : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (_ : q.succ = Fin.last ett.rounds) (gamma : Fin k) (choice : MaximumDefectiveChoice G e0
-        (ett.series.data.tree q.succ.castSucc) (TashkinovStoredColors ett.series.data q.castSucc)
-        (ett.series.data.coloring q.castSucc)) (sigmaPrev : PartialEdgeColoring E k),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G sigmaPrev gamma choice.color;
-    ∀ (u : V) (_ : H.Walk (Sum.inl choice.vertex) (Sum.inl u)) (prefixInput : PartialEdgeColoring
-        E k) (zeroPrefix : TashkinovSeries G k (0 : ℕ) e0 prefixInput),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    let newStored : Finset (Fin k) := (insert choice.color ({ gamma } : Finset (Fin k)) : Finset
-        (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.PE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := some gamma;
-    let appendedData : TashkinovSeriesData G k ((0 : ℕ) + (1 : ℕ)) e0 := TashkinovSeriesDataAppend
-        zeroPrefix.data closureTree sigma newStored newEdges newKind newVertex newOutside newDelta
-        newGamma;
-    ∀ (_ : appendedData.tree zeroLast.succ.castSucc = ett.series.data.tree q.succ.castSucc)
-        (extendedSeries : TashkinovSeries G k ((0 : ℕ) + (1 : ℕ)) e0 prefixInput) (_ :
-        extendedSeries.data = TashkinovSeriesDataAppend zeroPrefix.data closureTree sigma
-        newStored newEdges newKind newVertex newOutside newDelta newGamma) (hroundsEq : (0 : ℕ) +
-        (1 : ℕ) = ett.rounds),
-    let castSeries : {a b : ℕ} → (h : a = b) → (S : TashkinovSeries G k a e0 prefixInput) →
-        TashkinovSeries G k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k
-        a e0 prefixInput) ↦ (h ▸ S);
-    ∀ (_ :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
-        (castSeries h S).data.tree i = S.data.tree (Fin.cast (
-    by
-                  omega
-    ) i)),
-    let finalSeries : TashkinovSeries G k ett.rounds e0 prefixInput := castSeries hroundsEq
-        extendedSeries;
-    let rawTreeIndex : (i : Fin (ett.rounds + (2 : ℕ))) → Fin (3 : ℕ) := fun (i : Fin (ett.rounds
-        + (2 : ℕ))) ↦ Fin.cast (
-    by
-          omega
-    ) i;
-    ∀ (_ : rawTreeIndex (⟨ett.rounds,
-    by
-                omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ))) = zeroLast.succ.castSucc), finalSeries.data.tree (⟨ett.rounds,
-    by
-            omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ))) = ett.series.data.tree (Fin.last ett.rounds).castSucc := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma Tstar closureTree q hqSucc gamma
-      choice sigmaPrev H u p prefixInput zeroPrefix zeroLast newStored newEdges newKind newVertex
-      newOutside newDelta newGamma appendedData happendTree extendedSeries hextendedData
-      hroundsEq castSeries castSeriesTree finalSeries rawTreeIndex hrawPenultimate
-  exact @helper_hpenultimateTree_5732 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar)
-      (@closureTree) (@hqSucc) (@gamma) (@choice) (@sigmaPrev) (@u) (@p) (@prefixInput)
-      (@zeroPrefix) (@happendTree) (@extendedSeries) (@hextendedData) (@hroundsEq)
-      (@castSeriesTree) (@hrawPenultimate)
-
-private theorem helper_hseriesTreeAgree_7410.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ closureTree : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (_ : q.succ = Fin.last ett.rounds) (gamma : Fin k) (choice : MaximumDefectiveChoice G e0
-        (ett.series.data.tree q.succ.castSucc) (TashkinovStoredColors ett.series.data q.castSucc)
-        (ett.series.data.coloring q.castSucc)) (sigmaPrev : PartialEdgeColoring E k),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G sigmaPrev gamma choice.color;
-    ∀ (u : V) (_ : H.Walk (Sum.inl choice.vertex) (Sum.inl u)) (_ : ett.rounds = (1 : ℕ))
-        (prefixInput : PartialEdgeColoring E k) (zeroPrefix : TashkinovSeries G k (0 : ℕ) e0
-        prefixInput),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    let newStored : Finset (Fin k) := (insert choice.color ({ gamma } : Finset (Fin k)) : Finset
-        (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.PE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := some gamma;
-    let appendedData : TashkinovSeriesData G k ((0 : ℕ) + (1 : ℕ)) e0 := TashkinovSeriesDataAppend
-        zeroPrefix.data closureTree sigma newStored newEdges newKind newVertex newOutside newDelta
-        newGamma;
-    ∀ (_ : appendedData.tree zeroLast.succ.castSucc = ett.series.data.tree q.succ.castSucc)
-        (extendedSeries : TashkinovSeries G k ((0 : ℕ) + (1 : ℕ)) e0 prefixInput) (_ :
-        extendedSeries.data = TashkinovSeriesDataAppend zeroPrefix.data closureTree sigma
-        newStored newEdges newKind newVertex newOutside newDelta newGamma) (hroundsEq : (0 : ℕ) +
-        (1 : ℕ) = ett.rounds),
-    let castSeries : {a b : ℕ} → (h : a = b) → (S : TashkinovSeries G k a e0 prefixInput) →
-        TashkinovSeries G k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k
-        a e0 prefixInput) ↦ (h ▸ S);
-    ∀ (_ :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
-        (castSeries h S).data.tree i = S.data.tree (Fin.cast (
-    by
-                  omega
-    ) i)),
-    let finalSeries : TashkinovSeries G k ett.rounds e0 prefixInput := castSeries hroundsEq
-        extendedSeries;
-    ∀ (j : Fin ett.rounds), finalSeries.data.tree j.succ.castSucc = ett.series.data.tree
-        j.succ.castSucc := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma Tstar closureTree q hqSucc gamma
-      choice sigmaPrev H u p hroundOne prefixInput zeroPrefix zeroLast newStored newEdges newKind
-      newVertex newOutside newDelta newGamma appendedData happendTree extendedSeries
-      hextendedData hroundsEq castSeries castSeriesTree finalSeries
-  exact @helper_hseriesTreeAgree_5768 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar)
-      (@closureTree) (@hqSucc) (@gamma) (@choice) (@sigmaPrev) (@u) (@p) (@hroundOne)
-      (@prefixInput) (@zeroPrefix) (@happendTree) (@extendedSeries) (@hextendedData)
-      (@hroundsEq) (@castSeriesTree)
-
-private theorem helper_hseriesColorProperties_7486.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ : IsProperEdgeColoring G sigma) (_ : IsOneEdgeUncolored sigma e0) (_ closureTree :
-        TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (sigmaPrev : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G sigmaPrev) (_ :
-        IsOneEdgeUncolored sigmaPrev e0),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G sigmaPrev gamma choice.color;
-    ∀ (u : V) (_ : H.Walk (Sum.inl choice.vertex) (Sum.inl u)) (_ : ett.rounds = (1 : ℕ))
-        (prefixInput : PartialEdgeColoring E k) (zeroPrefix : TashkinovSeries G k (0 : ℕ) e0
-        prefixInput),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    let newStored : Finset (Fin k) := (insert choice.color ({ gamma } : Finset (Fin k)) : Finset
-        (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.PE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := some gamma;
-    let appendedData : TashkinovSeriesData G k ((0 : ℕ) + (1 : ℕ)) e0 := TashkinovSeriesDataAppend
-        zeroPrefix.data closureTree sigma newStored newEdges newKind newVertex newOutside newDelta
-        newGamma;
-    ∀ (_ : appendedData.coloring zeroLast.castSucc = sigmaPrev) (extendedSeries : TashkinovSeries
-        G k ((0 : ℕ) + (1 : ℕ)) e0 prefixInput) (_ : extendedSeries.data =
-        TashkinovSeriesDataAppend zeroPrefix.data closureTree sigma newStored newEdges newKind
-        newVertex newOutside newDelta newGamma) (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
-    let castSeries : {a b : ℕ} → (h : a = b) → (S : TashkinovSeries G k a e0 prefixInput) →
-        TashkinovSeries G k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k
-        a e0 prefixInput) ↦ (h ▸ S);
-    ∀ (_ :
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.coloring i = S.data.coloring (Fin.cast (
-    by
-                  omega
-    ) i)),
-    let finalSeries : TashkinovSeries G k ett.rounds e0 prefixInput := castSeries hroundsEq
-        extendedSeries;
-    ∀ (_ : finalSeries.data.coloring (Fin.last ett.rounds) = sigma) (i : Fin (ett.rounds + (1 :
-        ℕ))), IsProperEdgeColoring G (finalSeries.data.coloring i) ∧ IsOneEdgeUncolored
-        (finalSeries.data.coloring i) e0 := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper hsigmaOne Tstar
-      closureTree q gamma choice sigmaPrev hsigmaPrevProper hsigmaPrevOne H u p hroundOne
-      prefixInput zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside newDelta
-      newGamma appendedData happendColor extendedSeries hextendedData hroundsEq castSeries
-      castSeriesColoring finalSeries hfinalColor
-  exact @helper_hseriesColorProperties_5776 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper)
-      (@hsigmaOne) (@Tstar) (@closureTree) (@gamma) (@choice) (@sigmaPrev) (@hsigmaPrevProper)
-      (@hsigmaPrevOne) (@u) (@p) (@hroundOne) (@prefixInput) (@zeroPrefix) (@happendColor)
-      (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesColoring) (@hfinalColor)
-
 private theorem helper_continuation_7494.{u_1, u_2} :
     helperContinuation7494Conditions.{u_1, u_2} := by
   classical
@@ -5522,7 +5029,7 @@ private theorem helper_continuation_7494.{u_1, u_2} :
   have hpenultimateTree : finalSeries.data.tree
       (⟨ett.rounds, by omega⟩ : Fin (ett.rounds + 2)) =
         ett.series.data.tree (Fin.last ett.rounds).castSucc := by
-    apply helper_hpenultimateTree_6615 <;> assumption
+    apply helper_hpenultimateTree_5732 <;> assumption
   have hfinalColor := @helper_hfinalColor_5740 (@V) (@E) inferInstance inferInstance inferInstance
       (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar)
       (@closureTree) (@gamma) (@choice) (@prefixInput) (@zeroPrefix) (@happendLastColor)
@@ -5532,7 +5039,7 @@ private theorem helper_continuation_7494.{u_1, u_2} :
         ett.series.data.stored i ∧ zeroPrefix.data.connectingEdges zeroLast =
         ett.series.data.connectingEdges i ∧ zeroPrefix.data.kind zeroLast = ett.series.data.kind i
   := by
-    apply helper_hprefixFields_6306 <;> assumption
+    apply helper_hprefixFields_3431 <;> assumption
   have hseriesDataAgree := @helper_hseriesDataAgree_3459 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
       (@Tstar) (@closureTree) (@hqSucc) (@gamma) (@choice) (@currentStored) (@currentEdges)
@@ -5540,12 +5047,12 @@ private theorem helper_continuation_7494.{u_1, u_2} :
       (@hp) (@hroundOne) (@prefixInput) (@zeroPrefix) (@happendLastStored) (@happendLastEdges)
       (@happendLastKind) (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesStored)
       (@castSeriesEdges) (@castSeriesKind) (@hrawFinalData) (@hprefixFields)
-  have hseriesTreeAgree := @helper_hseriesTreeAgree_7410 (@V) (@E) inferInstance inferInstance
+  have hseriesTreeAgree := @helper_hseriesTreeAgree_5768 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
       (@Tstar) (@closureTree) (@hqSucc) (@gamma) (@choice) (@sigmaPrev) (@u) (@p) (@hroundOne)
       (@prefixInput) (@zeroPrefix) (@happendTree) (@extendedSeries) (@hextendedData) (@hroundsEq)
       (@castSeriesTree)
-  have hseriesColorProperties := @helper_hseriesColorProperties_7486 (@V) (@E) inferInstance
+  have hseriesColorProperties := @helper_hseriesColorProperties_5776 (@V) (@E) inferInstance
       inferInstance inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive)
       (@sigma) (@hsigmaProper) (@hsigmaOne) (@Tstar) (@closureTree) (@gamma) (@choice) (@sigmaPrev)
       (@hsigmaPrevProper) (@hsigmaPrevOne) (@u) (@p) (@hroundOne) (@prefixInput) (@zeroPrefix)
@@ -5675,17 +5182,17 @@ theorem helper_branch_12554.{u_1, u_2} :
         ¬ Disjoint (MissingColors G rho appendedChoice.otherEndpoint)
           (TreeMissingColors rho
             (appendedData.tree zeroLast.succ.castSucc)) := by
-    apply helper_hpeAlternativeZero_6498; assumption
+    apply helper_hpeAlternativeZero_5555; assumption
   have hpeGammaRuleZero : ParallelExtensionColor appendedData
       zeroLast.castSucc appendedChoice.selected appendedChoice.vertex
       gamma := by
-    apply helper_hpeGammaRuleZero_6513 <;> assumption
+    apply helper_hpeGammaRuleZero_5579 <;> assumption
   have hstrictClosure :
       (ett.series.data.tree (Fin.last ett.rounds).castSucc).length <
         closureTree.length := lt_of_lt_of_le hstrict hTstarClosure.1
   have lastStep : TashkinovSeriesStep G k 1 e0 prefixInput
       appendedData (Fin.last 1) := by
-    apply helper_lastStep_6525 <;> assumption
+    apply helper_lastStep_5593 <;> assumption
   obtain ⟨extendedSeries, hextendedData⟩ :=
     TashkinovSeriesAppend G k 0 e0 prefixInput zeroPrefix closureTree
       sigma newStored newEdges newKind newVertex newOutside newDelta
@@ -6226,67 +5733,6 @@ private theorem helper_hmissing_6909.{u_1, u_2} :
           newChoice.vertex := congrArg _
             (hvertexIdentity.trans hfullVertexCast).symm
 
-private theorem helper_hprefixPostFull_7637.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (sigmaPrev : PartialEdgeColoring E k),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G sigmaPrev gamma choice.color;
-    ∀ (u : V) (_ : H.Walk (Sum.inl choice.vertex) (Sum.inl u)) (hroundLarge : (1 : ℕ) <
-        ett.rounds) (originalPrefix : ExtendedTashkinovTree G k e0 input (ett.series.data.tree
-        (Fin.last ett.rounds).castSucc) (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ),
-    by
-                omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))) (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)) (_ :
-    ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))), originalPrefix.series.data.coloring i =
-        ett.series.data.coloring (Fin.castLE (
-    by
-                    omega
-    ) i) ∧ originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE (
-    by
-                      omega
-    ) i) ∧ originalPrefix.series.data.connectingEdges i = ett.series.data.connectingEdges
-        (Fin.castLE (
-    by
-                        omega
-    ) i) ∧ originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE (
-    by
-                          omega
-    ) i) ∧ TashkinovStoredColors originalPrefix.series.data i = TashkinovStoredColors
-        ett.series.data (Fin.castLE (
-    by
-                          omega
-    ) i)) (corr : CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc)) (_ : (0 : ℕ) <
-        originalPrefix.rounds) (j : Fin (originalPrefix.rounds + (1 : ℕ))),
-    let fullj : Fin (ett.rounds + (1 : ℕ)) := Fin.castLE (
-    by
-          omega
-    ) j;
-    ∀ (fulli : Fin ett.rounds) (_ : MaximumDefectiveChoice G e0 (ett.series.data.tree
-        fulli.succ.castSucc) (TashkinovStoredColors ett.series.data fulli.castSucc)
-        (ett.series.data.coloring fulli.castSucc)) (_ : fullj = fulli.succ) (newi : Fin
-        originalPrefix.rounds) (_ : newi.succ = j) (_ : corr.replacementSeries.data.tree
-        newi.succ.castSucc = ett.series.data.tree fulli.succ.castSucc),
-        originalPrefix.series.data.coloring newi.succ = ett.series.data.coloring fulli.succ := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive Tstar q gamma choice sigmaPrev H u p
-      hroundLarge originalPrefix hr hprefixData corr horiginalPositive j fullj fulli fullChoice
-      hfullTarget newi hnewIndex htree
-  exact @helper_hprefixPostFull_6259 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar) (@gamma) (@choice)
-      (@sigmaPrev) (@u) (@p) (@hroundLarge) (@originalPrefix) (@hr) (@hprefixData) (@corr)
-      (@horiginalPositive) (@j) (@fulli) (@fullChoice) (@hfullTarget) (@newi) (@hnewIndex)
-      (@htree)
-
 theorem helper_branch_12991.{u_1, u_2} :
     helperBranch12991Conditions.{u_1, u_2} := by
   classical
@@ -6370,7 +5816,7 @@ theorem helper_branch_12991.{u_1, u_2} :
       newSecondStable newGammaRule.1
   rw [← fullCurrentColoring] at hfullDeltaMissing hfullGammaNotMissing
   rw [← newCurrentColoring] at hnewDeltaMissing hnewGammaNotMissing
-  have hprefixPostFull := @helper_hprefixPostFull_7637 (@V) (@E) inferInstance inferInstance
+  have hprefixPostFull := @helper_hprefixPostFull_6259 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar)
       (@gamma) (@choice) (@sigmaPrev) (@u) (@p) (@hroundLarge) (@originalPrefix) (@hr)
       (@hprefixData) (@corr) (@horiginalPositive) (@j) (@fulli) (@fullChoice) (@hfullTarget) (@newi)

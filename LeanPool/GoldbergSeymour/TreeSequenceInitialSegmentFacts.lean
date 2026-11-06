@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeVertexOrder
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 
@@ -73,6 +75,46 @@ theorem of_common_extension {first second extension : TreeSequence G e0}
         (firstEdges _).symm
       _ = extension.edge (Fin.castLE secondLength index) := by congr 1
       _ = second.edge index := secondEdges index
+
+/-- A tree's last vertex does not occur in a strictly shorter initial segment. -/
+theorem last_vertex_ne {initial tree : TreeSequence G e0}
+    (segment : TreeSequenceInitialSegment initial tree) (shorter : initial.length < tree.length)
+    (index : Fin (initial.length + 1)) :
+    tree.vertex (Fin.last tree.length) ≠ initial.vertex index := by
+  intro equal
+  have positions := congrArg Fin.val (tree.vertex_injective (equal.trans (segment.2.1 index).symm))
+  have bound := index.isLt
+  change tree.length = index.val at positions
+  omega
+
+/-- Every vertex of a prefix precedes a tree position lying strictly beyond that prefix. -/
+theorem vertex_precedes {initial tree : TreeSequence G e0}
+    (segment : TreeSequenceInitialSegment initial tree) {position : Fin (tree.length + 1)}
+    (later : initial.length < position.val) {vertex : V}
+    (member : vertex ∈ TreeSequenceVertexSet initial) :
+    TreeVertexOrder tree vertex (tree.vertex position) := by
+  classical
+  obtain ⟨index, equality⟩ : ∃ index, initial.vertex index = vertex := by
+    simpa [TreeSequenceVertexSet] using member
+  refine ⟨Fin.castLE (Nat.succ_le_succ segment.1) index, position,
+    (segment.2.1 index).trans equality, rfl, ?_⟩
+  have bound := index.isLt
+  change index.val < position.val
+  omega
+
+/-- A tree position beyond an initial segment has a vertex outside that segment. -/
+theorem vertex_not_mem_after {initial tree : TreeSequence G e0}
+    (segment : TreeSequenceInitialSegment initial tree) {position : Fin (tree.length + 1)}
+    (later : initial.length < position.val) :
+    tree.vertex position ∉ TreeSequenceVertexSet initial := by
+  classical
+  intro member
+  obtain ⟨index, equality⟩ : ∃ index, initial.vertex index = tree.vertex position := by
+    simpa [TreeSequenceVertexSet] using member
+  have equal := congrArg Fin.val (tree.vertex_injective ((segment.2.1 index).trans equality))
+  have bound := index.isLt
+  change index.val = position.val at equal
+  omega
 
 end GoldbergSeymour.TreeSequenceInitialSegment
 

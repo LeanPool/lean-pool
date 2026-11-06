@@ -1067,6 +1067,91 @@ private abbrev helperContinuation5379Conditions.{u_1, u_2} : Prop :=
                                           TreeMissingColors phi X) →
                                        False
 
+private noncomputable abbrev helperTailTwo6007.{u_1, u_2} :
+    open scoped Classical in
+      {V : Type u_1} →
+        {E : Type u_2} →
+          [Fintype V] →
+            [Fintype E] →
+              [DecidableEq V] →
+                [DecidableEq E] →
+                  (G : LooplessMultigraph V E) →
+                    (k : ℕ) →
+                      (e0 : E) →
+                        (input : PartialEdgeColoring E k) →
+                          (T : TreeSequence G e0) →
+                            (phi : PartialEdgeColoring E k) →
+                              (ett : ExtendedTashkinovTree G k e0 input T phi) →
+                                (base : HierarchyBase ett phi) →
+                                  (C : HierarchyCounterexample base) →
+                                    (ctx :
+                                        HierarchyMinimumCounterexampleContext G k e0 input T phi ett
+                                          base C) →
+                                      (D :
+                                          HierarchySituationTwoCaseTwoTwoData G k e0 input T phi ett
+                                            base C ctx) →
+                                        let H : TashkinovHierarchy ett base := C.hierarchy;
+                                        let q : Fin (H.dividerCount + (1 : ℕ)) :=
+                                          Fin.last H.dividerCount;
+                                        let A : TreeSequence G e0 := HierarchyStarredStage H q;
+                                        (2 : ℕ) ≤ T.length - A.length →
+                                          (∀
+                                              (P :
+                                                HierarchyReplacementPresentation G k e0 input T phi
+                                                  ett base C ctx),
+                                              HierarchyStarredStage P.counterexample.hierarchy
+                                                  (Fin.last
+                                                    P.counterexample.hierarchy.dividerCount) =
+                                                A) →
+                                            (beta : Fin k) →
+                                              let z : V ⊕ E :=
+                                                Sum.inl (T.vertex D.terminalVertexIndex);
+                                              (POne :
+                                                  HierarchyReplacementPresentation G k e0 input T
+                                                    phi ett base C ctx) →
+                                                let rho : PartialEdgeColoring E k := POne.coloring;
+                                                let muTwo : PartialEdgeColoring E k :=
+                                                  TwoColorComponentSwap G rho beta D.theta z;
+                                                muTwo (T.edge D.lastEdgeIndex) = some beta →
+                                                  beta ∉
+                                                      MissingColors G muTwo
+                                                        (T.vertex D.penultimateVertexIndex) →
+                                                    (PTwo :
+                                                        HierarchyReplacementPresentation G k e0
+                                                          input T phi ett base C ctx) →
+                                                      PTwo.coloring = muTwo →
+                                                        HierarchySituationTwoTailData G k e0
+                                                          PTwo.corresponding.replacementInput T
+                                                          PTwo.coloring
+                                                          PTwo.corresponding.replacementETT
+                                                          PTwo.replacementBase PTwo.counterexample
+                                                          PTwo.minimumContext := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A htail sameStar beta z POne rho
+      muTwo hlastTwo hgammaPenTwo PTwo hPTwo
+  exact {
+    tailAtLeastTwo := by
+      change 2 ≤ T.length - (HierarchyStarredStage PTwo.counterexample.hierarchy
+        (Fin.last PTwo.counterexample.hierarchy.dividerCount)).length
+      rw [sameStar PTwo]
+      exact htail
+    pathNumberFull := by
+      have hp := D.pathNumberFull
+      unfold HierarchyPathNumber HierarchyFullTailLength at hp ⊢
+      dsimp only at hp ⊢
+      rw [sameStar PTwo]
+      exact hp
+    lastEdgeIndex := D.lastEdgeIndex
+    penultimateVertexIndex := D.penultimateVertexIndex
+    terminalVertexIndex := D.terminalVertexIndex
+    lastEdgePosition := D.lastEdgePosition
+    penultimateVertexPosition := D.penultimateVertexPosition
+    terminalVertexPosition := D.terminalVertexPosition
+    lastEdgeNotIncidentPenultimate := D.lastEdgeNotIncidentPenultimate
+    theta := beta
+    thetaOnLastEdge := hPTwo.symm ▸ hlastTwo
+    thetaPresentPenultimate := hPTwo.symm ▸ hgammaPenTwo }
+
 private theorem helper_hBterminal_158.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -3332,133 +3417,6 @@ private theorem helper_branch_3441.{u_1, u_2} :
   · exact @helper_branch_1685 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
       (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@beta) (@hbetaGamma)
 
-private theorem helper_hsameTwo_3799.{u_1, u_2} :
-    SharedFacts.SecondSubcaseTransport.hsameTwo964Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A B hnotA Bshort sameStar sameLast
-      beta hbetaMissing hbetaUnused hbetaStored hzero houtside hcutoff hbetaAlpha hbetaTheta ib
-      hbFirst hibB hby hbt horder hrawBeta hmissing hchange hsame z muOne hdisjoint hpath
-      houtsideBeta houtsideAlpha hmissingOne hfixedOne hstoredOne hcase corrOne hmaxOne baseOne
-      KOne goodOne hsameOne hbTerminalOne POne hPOne rho ettOne baseOne' COne' HOne qOne
-      hmissingA hbetaStoredOne hgammaPenOne hgammaTermOne hgammaWitnessOne' hfirstGammaOne
-      hfirstThetaOne hgammaUnusedOne hcaseOne hmissingPairOne hchangeOne
-  exact @helper_hsameTwo_964 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-      (@hnotA) (@sameStar) (@sameLast) (@beta) (@hbetaMissing) (@hbetaUnused)
-      (@hbetaStored) (@hzero) (@houtside) (@hcutoff) (@hbetaAlpha) (@hbetaTheta) (@hbFirst)
-      (@hibB) (@hby) (@hbt) (@horder) (@hrawBeta) (@hmissing) (@hchange) (@hsame)
-      (@hdisjoint) (@hpath) (@houtsideBeta) (@houtsideAlpha) (@hmissingOne) (@hfixedOne)
-      (@hstoredOne) (@hcase) (@corrOne) (@hmaxOne) (@baseOne) (@KOne) (@goodOne)
-      (@hsameOne) (@hbTerminalOne) (@POne) (@hPOne) (@hmissingA) (@hbetaStoredOne)
-      (@hgammaPenOne) (@hgammaTermOne) (@hgammaWitnessOne') (@hfirstGammaOne)
-      (@hfirstThetaOne) (@hgammaUnusedOne) (@hcaseOne) (@hmissingPairOne) (@hchangeOne)
-
-private theorem helper_hsameTwo_4804.{u_1, u_2} :
-    SharedFacts.SecondSubcaseTransport.hsameTwo964Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A B hnotA Bshort sameStar sameLast
-      beta hbetaMissing hbetaUnused hbetaStored hzero houtside hcutoff hbetaAlpha hbetaTheta ib
-      hbFirst hibB hby hbt horder hrawBeta hmissing hchange hsame z muOne hdisjoint hpath
-      houtsideBeta houtsideAlpha hmissingOne hfixedOne hstoredOne hcase corrOne hmaxOne baseOne
-      KOne goodOne hsameOne hbTerminalOne POne hPOne rho ettOne baseOne' COne' HOne qOne
-      hmissingA hbetaStoredOne hgammaPenOne hgammaTermOne hgammaWitnessOne' hfirstGammaOne
-      hfirstThetaOne hgammaUnusedOne hcaseOne hmissingPairOne hchangeOne
-  exact @helper_hsameTwo_3799 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-      (@hnotA) (@sameStar) (@sameLast) (@beta) (@hbetaMissing) (@hbetaUnused)
-      (@hbetaStored) (@hzero) (@houtside) (@hcutoff) (@hbetaAlpha) (@hbetaTheta) (@hbFirst)
-      (@hibB) (@hby) (@hbt) (@horder) (@hrawBeta) (@hmissing) (@hchange) (@hsame)
-      (@hdisjoint) (@hpath) (@houtsideBeta) (@houtsideAlpha) (@hmissingOne) (@hfixedOne)
-      (@hstoredOne) (@hcase) (@corrOne) (@hmaxOne) (@baseOne) (@KOne) (@goodOne)
-      (@hsameOne) (@hbTerminalOne) (@POne) (@hPOne) (@hmissingA) (@hbetaStoredOne)
-      (@hgammaPenOne) (@hgammaTermOne) (@hgammaWitnessOne') (@hfirstGammaOne)
-      (@hfirstThetaOne) (@hgammaUnusedOne) (@hcaseOne) (@hmissingPairOne) (@hchangeOne)
-
-private noncomputable abbrev helperTailTwo6007.{u_1, u_2} :
-    open scoped Classical in
-      {V : Type u_1} →
-        {E : Type u_2} →
-          [Fintype V] →
-            [Fintype E] →
-              [DecidableEq V] →
-                [DecidableEq E] →
-                  (G : LooplessMultigraph V E) →
-                    (k : ℕ) →
-                      (e0 : E) →
-                        (input : PartialEdgeColoring E k) →
-                          (T : TreeSequence G e0) →
-                            (phi : PartialEdgeColoring E k) →
-                              (ett : ExtendedTashkinovTree G k e0 input T phi) →
-                                (base : HierarchyBase ett phi) →
-                                  (C : HierarchyCounterexample base) →
-                                    (ctx :
-                                        HierarchyMinimumCounterexampleContext G k e0 input T phi ett
-                                          base C) →
-                                      (D :
-                                          HierarchySituationTwoCaseTwoTwoData G k e0 input T phi ett
-                                            base C ctx) →
-                                        let H : TashkinovHierarchy ett base := C.hierarchy;
-                                        let q : Fin (H.dividerCount + (1 : ℕ)) :=
-                                          Fin.last H.dividerCount;
-                                        let A : TreeSequence G e0 := HierarchyStarredStage H q;
-                                        (2 : ℕ) ≤ T.length - A.length →
-                                          (∀
-                                              (P :
-                                                HierarchyReplacementPresentation G k e0 input T phi
-                                                  ett base C ctx),
-                                              HierarchyStarredStage P.counterexample.hierarchy
-                                                  (Fin.last
-                                                    P.counterexample.hierarchy.dividerCount) =
-                                                A) →
-                                            (beta : Fin k) →
-                                              let z : V ⊕ E :=
-                                                Sum.inl (T.vertex D.terminalVertexIndex);
-                                              (POne :
-                                                  HierarchyReplacementPresentation G k e0 input T
-                                                    phi ett base C ctx) →
-                                                let rho : PartialEdgeColoring E k := POne.coloring;
-                                                let muTwo : PartialEdgeColoring E k :=
-                                                  TwoColorComponentSwap G rho beta D.theta z;
-                                                muTwo (T.edge D.lastEdgeIndex) = some beta →
-                                                  beta ∉
-                                                      MissingColors G muTwo
-                                                        (T.vertex D.penultimateVertexIndex) →
-                                                    (PTwo :
-                                                        HierarchyReplacementPresentation G k e0
-                                                          input T phi ett base C ctx) →
-                                                      PTwo.coloring = muTwo →
-                                                        HierarchySituationTwoTailData G k e0
-                                                          PTwo.corresponding.replacementInput T
-                                                          PTwo.coloring
-                                                          PTwo.corresponding.replacementETT
-                                                          PTwo.replacementBase PTwo.counterexample
-                                                          PTwo.minimumContext := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A htail sameStar beta z POne rho
-      muTwo hlastTwo hgammaPenTwo PTwo hPTwo
-  exact {
-    tailAtLeastTwo := by
-      change 2 ≤ T.length - (HierarchyStarredStage PTwo.counterexample.hierarchy
-        (Fin.last PTwo.counterexample.hierarchy.dividerCount)).length
-      rw [sameStar PTwo]
-      exact htail
-    pathNumberFull := by
-      have hp := D.pathNumberFull
-      unfold HierarchyPathNumber HierarchyFullTailLength at hp ⊢
-      dsimp only at hp ⊢
-      rw [sameStar PTwo]
-      exact hp
-    lastEdgeIndex := D.lastEdgeIndex
-    penultimateVertexIndex := D.penultimateVertexIndex
-    terminalVertexIndex := D.terminalVertexIndex
-    lastEdgePosition := D.lastEdgePosition
-    penultimateVertexPosition := D.penultimateVertexPosition
-    terminalVertexPosition := D.terminalVertexPosition
-    lastEdgeNotIncidentPenultimate := D.lastEdgeNotIncidentPenultimate
-    theta := beta
-    thetaOnLastEdge := hPTwo.symm ▸ hlastTwo
-    thetaPresentPenultimate := hPTwo.symm ▸ hgammaPenTwo }
-
 private theorem helper_branch_6081.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -3667,7 +3625,7 @@ private theorem helper_continuation_5379.{u_1, u_2} :
   have hsameTwo : TwoColorComponent G rho beta D.theta (Sum.inl (T.vertex ib)) =
       TwoColorComponent G rho beta D.theta
         (Sum.inl (T.vertex D.penultimateVertexIndex)) := by
-    exact @helper_hsameTwo_4804 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
+    exact @helper_hsameTwo_964 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
         (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@hnotA) (@sameStar)
         (@sameLast) (@beta) (@hbetaMissing) (@hbetaUnused) (@hbetaStored) (@hzero) (@houtside)
         (@hcutoff) (@hbetaAlpha) (@hbetaTheta) (@hbFirst) (@hibB) (@hby) (@hbt) (@horder)

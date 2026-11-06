@@ -1000,6 +1000,179 @@ private abbrev transferredGoodHierarchyConstructorType.{u_1, u_2} (V : Type u_1)
   GoodHierarchy
     K
 
+private abbrev helperBranch685Conditions.{u_1, u_2} : Prop :=
+ open scoped Classical in
+  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V]
+   [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
+   (input : PartialEdgeColoring E k) (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
+   (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
+   (C : HierarchyCounterexample base),
+  let H : TashkinovHierarchy ett base := C.hierarchy;
+  ∀ (U : TreeSequence G e0) (corr : CorrespondingExtendedTashkinovTree G k e0 ett phi U)
+   (baseU : HierarchyBase corr.replacementETT phi)
+   (K : TashkinovHierarchy corr.replacementETT baseU) (hcount : K.dividerCount = H.dividerCount),
+  let index :
+  Fin (K.dividerCount + (1 : ℕ)) →
+  Fin (H.dividerCount + (1 : ℕ)) :=
+   fun (j : Fin (K.dividerCount + (1 : ℕ))) ↦
+   Fin.cast
+    (by
+     have := GoldbergSeymour.CorrespondingExtendedTashkinovTree.rungAgreement corr
+     have := GoldbergSeymour.TreeSequence.positive T
+     have := GoldbergSeymour.TreeSequence.positive U
+     omega)
+    j;
+  let gammaU :
+  Fin (K.dividerCount + (1 : ℕ)) →
+  Fin k →
+  Finset (Fin k) :=
+   fun (j : Fin (K.dividerCount + (1 : ℕ))) (eta : Fin k) ↦ C.good.gamma (index j) eta;
+  (
+  ∀ (j : Fin (K.dividerCount + (1 : ℕ))),
+  K.stage j.castSucc = H.stage (index j).castSucc) →
+  (
+  ∀ (j : Fin (K.dividerCount + (1 : ℕ))),
+  HierarchyStarredStage K j = HierarchyStarredStage H (index j)) →
+  (
+  ∀ (j : Fin (K.dividerCount + (1 : ℕ))),
+  HierarchyStoredColorsAt K j = HierarchyStoredColorsAt H (index j)) →
+  ∀ (i : Fin K.dividerCount),
+  let io : Fin H.dividerCount := Fin.cast hcount i;
+  io.succ = index i.succ →
+  io.castSucc = index i.castSucc →
+  ∀ (eta : Fin k),
+  (∀ (y : Fin k),
+    (fun (eta : Fin k) ↦
+       eta ∈ HierarchyStoredColorsAt C.hierarchy io.succ ∧
+        (C.good.gamma io.succ eta ⊆
+          (TreeSequenceVertexSet (C.hierarchy.stage io.succ.castSucc) \
+             TreeSequenceVertexSet (HierarchyStarredStage C.hierarchy io.castSucc)).biUnion
+           fun (v : V) ↦ MissingColors G phi v) ∧
+         ∀ theta ∈ HierarchyStoredColorsAt C.hierarchy io.succ,
+  theta ≠ eta →
+  C.good.gamma io.succ theta = C.good.gamma io.castSucc theta)
+      y →
+     y = eta) →
+  ∀ (y : Fin k),
+  (fun (eta : Fin k) ↦
+     eta ∈ HierarchyStoredColorsAt K i.succ ∧
+      (gammaU i.succ eta ⊆
+        (TreeSequenceVertexSet (K.stage i.succ.castSucc) \
+           TreeSequenceVertexSet (HierarchyStarredStage K i.castSucc)).biUnion
+         fun (v : V) ↦ MissingColors G phi v) ∧
+       ∀ theta ∈ HierarchyStoredColorsAt K i.succ,
+  theta ≠ eta →
+  gammaU i.succ theta = gammaU i.castSucc theta)
+    y →
+  y = eta
+
+private abbrev helperContinuation4495Conditions.{u_1, u_2} : Prop :=
+ open scoped Classical in
+  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V]
+   [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
+   (input : PartialEdgeColoring E k) (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
+   (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
+   (C : HierarchyCounterexample base)
+   (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
+   (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx)
+   (hnonexceptional :
+  let H : TashkinovHierarchy ett base := C.hierarchy;
+  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
+  ¬∃ eta ∈ HierarchyStoredColorsAt H q,
+    eta ∈ MissingColors G phi (T.vertex D.penultimateVertexIndex) ∧ D.theta ∈ C.good.gamma q eta),
+  let H : TashkinovHierarchy ett base := C.hierarchy;
+  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
+  let A : TreeSequence G e0 := HierarchyStarredStage H q;
+  let ell : ℕ := HierarchyFullTailLength C;
+  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
+  let Bplus : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (1 : ℕ));
+  let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
+  let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
+  ∀ (htail : (2 : ℕ) ≤ ell) (hell : ell = T.length - A.length) (hsum : A.length + ell = T.length)
+   (hBlen : B.length = T.length - (2 : ℕ)) (hBT : TreeSequenceInitialSegment B T)
+   (hprefixElementary : ColoredVertexSetElementary G phi (TreeSequenceVertexSet Bplus))
+   (halpha :
+    D.alpha ∉ TreeMissingColors phi B ∧
+     D.alpha ∉ Dn ∧
+  ∀ (t : Fin T.length),
+  A.length ≤ (↑t : ℕ) →
+  phi (T.edge t) ≠ some D.alpha)
+   (R :
+    HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
+     D.toHierarchySituationTwoTailData)
+   (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
+   (hminusMP : MaximumProperty corrMinus.replacementETT)
+   (baseMinus : HierarchyBase corrMinus.replacementETT phi)
+   (hminusCore : baseMinus.core = base.core) (hminusClosure : baseMinus.closure = base.closure)
+   (HMinus : TashkinovHierarchy corrMinus.replacementETT baseMinus)
+   (hminusCount : HMinus.dividerCount = C.hierarchy.dividerCount)
+   (hminusStages :
+  ∀ (j : Fin (HMinus.dividerCount + (1 : ℕ))),
+  HMinus.stage j.castSucc = C.hierarchy.stage (Fin.cast (by omega) j).castSucc)
+   (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
+   (hstarMP : MaximumProperty corrStar.replacementETT)
+   (baseStar : HierarchyBase corrStar.replacementETT phi) (hstarCore : baseStar.core = base.core)
+   (hstarClosure : baseStar.closure = base.closure)
+   (HStar : TashkinovHierarchy corrStar.replacementETT baseStar)
+   (hstarCount : HStar.dividerCount = C.hierarchy.dividerCount)
+   (hstarStages :
+  ∀ (j : Fin (HStar.dividerCount + (1 : ℕ))),
+  HStar.stage j.castSucc = C.hierarchy.stage (Fin.cast (by omega) j).castSucc)
+   (hBminus :
+    TreeSequenceInitialSegment (HierarchyFullTailPrefix C (HierarchyFullTailLength C - (2 : ℕ)))
+     R.minus)
+   (hstarLen : R.star.length = R.minus.length + (1 : ℕ))
+   (hminusStar : TreeSequenceInitialSegment R.minus R.star)
+   (hstarEdge :
+    R.star.edge (Fin.cast (by omega) (Fin.last R.minus.length)) = T.edge R.penultimateEdgeIndex)
+   (hminusLen : R.minus.length = B.length + (1 : ℕ))
+   (hminusEdge :
+    R.minus.edge
+      (Fin.cast (by change B.length + 1 = R.minus.length; exact hminusLen.symm)
+       (Fin.last (HierarchyFullTailPrefix C (HierarchyFullTailLength C - (2 : ℕ))).length)) =
+     T.edge D.lastEdgeIndex)
+   (hstarLength : R.star.length = T.length) (beta : Fin k)
+   (hbetaMissing : beta ∈ TreeMissingColors phi B)
+   (hbetaUnused :
+  ∀ (t : Fin T.length),
+  A.length ≤ (↑t : ℕ) →
+  phi (T.edge t) ≠ some beta)
+   (hcolorsDistinct : beta ≠ D.alpha)
+   (firstMissingLe :
+  ∀ (S : TreeSequence G e0) (c : Fin k) (i : Fin (S.length + (1 : ℕ)))
+   (hc : c ∈ MissingColors G phi (S.vertex i)),
+  HierarchyFirstMissingPosition phi S c ≤ i)
+   (firstMissingMem :
+  ∀ (S : TreeSequence G e0) (c : Fin k) (hc : c ∈ TreeMissingColors phi S),
+  c ∈ MissingColors G phi (S.vertex (HierarchyFirstMissingPosition phi S c)))
+   (vertexMem :
+  ∀ (S : TreeSequence G e0) (i : Fin (S.length + (1 : ℕ))),
+  S.vertex i ∈ TreeSequenceVertexSet S)
+   (missingMono :
+  ∀ {S U : TreeSequence G e0} (hSU : TreeSequenceInitialSegment S U),
+  TreeMissingColors phi S ⊆ TreeMissingColors phi U)
+   (hbetaT : beta ∈ TreeMissingColors phi T)
+   (hbetaFirstBound : (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ B.length)
+   (halphaFirst : HierarchyFirstMissingPosition phi T D.alpha = D.penultimateVertexIndex)
+   (hbetaPrefix : beta ∈ TreeMissingColors phi Bplus)
+   (halphaPrefix : D.alpha ∈ TreeMissingColors phi Bplus)
+   (horderedUnused :
+  beta ∉ TreeMissingColors phi A ∨ D.alpha ∉ TreeMissingColors phi A →
+  TreeVertexOrder T (T.vertex (HierarchyFirstMissingPosition phi T beta))
+    (T.vertex (HierarchyFirstMissingPosition phi T D.alpha)) ∧
+   beta ∉
+    ({c : Fin k |
+      ∃ (t : Fin T.length),
+       A.length ≤ (↑t : ℕ) ∧
+        (↑t : ℕ) < (↑(HierarchyFirstMissingPosition phi T D.alpha) : ℕ) ∧
+         phi (T.edge t) = some c} :
+     Finset (Fin k)))
+   (hDnDisjoint : Disjoint (insert beta ({ D.alpha } : Finset (Fin k)) : Finset (Fin k)) Dn)
+   (hDnqDisjoint :
+    Disjoint (insert beta ({ D.alpha } : Finset (Fin k)) : Finset (Fin k))
+     (HierarchyStoredColorsAt H q)),
+  False
+
 private theorem helper_hfinalCard_138.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -2355,72 +2528,6 @@ private theorem helper_branch_677.{u_1, u_2} :
     rw [storedEq, ← hn] at htheta
     simpa [gammaU, ← hn, ← hp] using heta.2.2 theta htheta hne
 
-private abbrev helperBranch685Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V]
-   [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-   (input : PartialEdgeColoring E k) (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-   (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-   (C : HierarchyCounterexample base),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  ∀ (U : TreeSequence G e0) (corr : CorrespondingExtendedTashkinovTree G k e0 ett phi U)
-   (baseU : HierarchyBase corr.replacementETT phi)
-   (K : TashkinovHierarchy corr.replacementETT baseU) (hcount : K.dividerCount = H.dividerCount),
-  let index :
-  Fin (K.dividerCount + (1 : ℕ)) →
-  Fin (H.dividerCount + (1 : ℕ)) :=
-   fun (j : Fin (K.dividerCount + (1 : ℕ))) ↦
-   Fin.cast
-    (by
-     have := GoldbergSeymour.CorrespondingExtendedTashkinovTree.rungAgreement corr
-     have := GoldbergSeymour.TreeSequence.positive T
-     have := GoldbergSeymour.TreeSequence.positive U
-     omega)
-    j;
-  let gammaU :
-  Fin (K.dividerCount + (1 : ℕ)) →
-  Fin k →
-  Finset (Fin k) :=
-   fun (j : Fin (K.dividerCount + (1 : ℕ))) (eta : Fin k) ↦ C.good.gamma (index j) eta;
-  (
-  ∀ (j : Fin (K.dividerCount + (1 : ℕ))),
-  K.stage j.castSucc = H.stage (index j).castSucc) →
-  (
-  ∀ (j : Fin (K.dividerCount + (1 : ℕ))),
-  HierarchyStarredStage K j = HierarchyStarredStage H (index j)) →
-  (
-  ∀ (j : Fin (K.dividerCount + (1 : ℕ))),
-  HierarchyStoredColorsAt K j = HierarchyStoredColorsAt H (index j)) →
-  ∀ (i : Fin K.dividerCount),
-  let io : Fin H.dividerCount := Fin.cast hcount i;
-  io.succ = index i.succ →
-  io.castSucc = index i.castSucc →
-  ∀ (eta : Fin k),
-  (∀ (y : Fin k),
-    (fun (eta : Fin k) ↦
-       eta ∈ HierarchyStoredColorsAt C.hierarchy io.succ ∧
-        (C.good.gamma io.succ eta ⊆
-          (TreeSequenceVertexSet (C.hierarchy.stage io.succ.castSucc) \
-             TreeSequenceVertexSet (HierarchyStarredStage C.hierarchy io.castSucc)).biUnion
-           fun (v : V) ↦ MissingColors G phi v) ∧
-         ∀ theta ∈ HierarchyStoredColorsAt C.hierarchy io.succ,
-  theta ≠ eta →
-  C.good.gamma io.succ theta = C.good.gamma io.castSucc theta)
-      y →
-     y = eta) →
-  ∀ (y : Fin k),
-  (fun (eta : Fin k) ↦
-     eta ∈ HierarchyStoredColorsAt K i.succ ∧
-      (gammaU i.succ eta ⊆
-        (TreeSequenceVertexSet (K.stage i.succ.castSucc) \
-           TreeSequenceVertexSet (HierarchyStarredStage K i.castSucc)).biUnion
-         fun (v : V) ↦ MissingColors G phi v) ∧
-       ∀ theta ∈ HierarchyStoredColorsAt K i.succ,
-  theta ≠ eta →
-  gammaU i.succ theta = gammaU i.castSucc theta)
-    y →
-  y = eta
-
 private theorem helper_branch_685.{u_1, u_2} :
     helperBranch685Conditions.{u_1, u_2} := by
   classical
@@ -3649,272 +3756,6 @@ private theorem helper_hpt_3177.{u_1, u_2} :
   have ht := D.terminalVertexPosition
   omega
 
-private theorem helper_firstLowerInOld_3203.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx),
-  let ell : ℕ := HierarchyFullTailLength C;
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-  ∀ (_ : B.length = T.length - (2 : ℕ)) (_ : TreeSequenceInitialSegment B T)
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData)
-    (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-    (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-    (_ : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-    (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-    (baseStar : HierarchyBase corrStar.replacementETT phi)
-    (_ : TashkinovHierarchy corrStar.replacementETT baseStar)
-    (_ : R.star.length = R.minus.length + (1 : ℕ))
-    (_ : R.minus.length = B.length + (1 : ℕ))
-    (_ : R.star.length = T.length) (_ : Fin k)
-    (_ :
-  ∀ (S : TreeSequence G e0) (c : Fin k) (i : Fin (S.length + (1 : ℕ)))
-    (_ : c ∈ MissingColors G phi (S.vertex i)),
-  HierarchyFirstMissingPosition phi S c ≤ i)
-    (_ :
-  ∀ (S : TreeSequence G e0) (c : Fin k)
-    (_ : (↑(HierarchyFirstMissingPosition phi S c) : ℕ) < S.length),
-  c ∈ MissingColors G phi (S.vertex (HierarchyFirstMissingPosition phi S c)))
-    (U : TreeSequence G e0) (_ : TreeSequenceInitialSegment B U) (eta : Fin k) (r : ℕ)
-    (_ : r ≤ B.length) (_ : r < (↑(HierarchyFirstMissingPosition phi U eta) : ℕ)),
-  r < (↑(HierarchyFirstMissingPosition phi T eta) : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D ell B hBlen hBT R corrMinus baseMinus
-      HMinus corrStar baseStar HStar hstarLen hminusLen hstarLength beta firstMissingLe
-      firstMissingMemBelow U hBU eta r hrB hrU
-  apply helper_firstLowerInOld_356 <;> assumption
-private theorem helper_horderedUnused_3229.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  let A : TreeSequence G e0 := HierarchyStarredStage H q;
-  let ell : ℕ := HierarchyFullTailLength C;
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-  ∀ (_ : B.length = T.length - (2 : ℕ))
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData)
-    (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-    (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-    (_ : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-    (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-    (baseStar : HierarchyBase corrStar.replacementETT phi)
-    (_ : TashkinovHierarchy corrStar.replacementETT baseStar)
-    (_ : R.star.length = R.minus.length + (1 : ℕ))
-    (_ : R.minus.length = B.length + (1 : ℕ))
-    (_ : R.star.length = T.length) (beta : Fin k)
-    (_ :
-  ∀ (t : Fin T.length),
-  A.length ≤ (↑t : ℕ) →
-  phi (T.edge t) ≠ some beta)
-    (_ : (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ B.length)
-    (_ :
-      HierarchyFirstMissingPosition phi T D.alpha = D.penultimateVertexIndex),
-  beta ∉ TreeMissingColors phi A ∨ D.alpha ∉ TreeMissingColors phi A →
-  TreeVertexOrder T (T.vertex (HierarchyFirstMissingPosition phi T beta))
-      (T.vertex (HierarchyFirstMissingPosition phi T D.alpha)) ∧
-  beta ∉
-    ({c : Fin k |
-        ∃ (t : Fin T.length),
-          A.length ≤ (↑t : ℕ) ∧
-            (↑t : ℕ) < (↑(HierarchyFirstMissingPosition phi T D.alpha) : ℕ) ∧
-              phi (T.edge t) = some c} :
-      Finset (Fin k)) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A ell B hBlen R corrMinus baseMinus
-      HMinus corrStar baseStar HStar hstarLen hminusLen hstarLength beta hbetaUnused
-      hbetaFirstBound halphaFirst
-  apply helper_horderedUnused_290 <;> assumption
-private theorem helper_halphaFirst_3258.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  let A : TreeSequence G e0 := HierarchyStarredStage H q;
-  let ell : ℕ := HierarchyFullTailLength C;
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-  let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-  let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-  ∀ (_ : B.length = T.length - (2 : ℕ)) (_ : TreeSequenceInitialSegment B T)
-    (_ :
-      D.alpha ∉ TreeMissingColors phi B ∧
-        D.alpha ∉ Dn ∧
-  ∀ (t : Fin T.length),
-  A.length ≤ (↑t : ℕ) →
-  phi (T.edge t) ≠ some D.alpha)
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData)
-    (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-    (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-    (_ : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-    (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-    (baseStar : HierarchyBase corrStar.replacementETT phi)
-    (_ : TashkinovHierarchy corrStar.replacementETT baseStar)
-    (_ : R.star.length = R.minus.length + (1 : ℕ))
-    (_ : R.minus.length = B.length + (1 : ℕ))
-    (_ : R.star.length = T.length) (_ : Fin k)
-    (_ :
-  ∀ (S : TreeSequence G e0) (c : Fin k) (i : Fin (S.length + (1 : ℕ)))
-    (_ : c ∈ MissingColors G phi (S.vertex i)),
-  HierarchyFirstMissingPosition phi S c ≤ i)
-    (_ :
-  ∀ (S : TreeSequence G e0) (c : Fin k) (_ : c ∈ TreeMissingColors phi S),
-  c ∈ MissingColors G phi (S.vertex (HierarchyFirstMissingPosition phi S c)))
-    (_ :
-  ∀ (S : TreeSequence G e0) (i : Fin (S.length + (1 : ℕ))),
-  S.vertex i ∈ TreeSequenceVertexSet S)
-    (_ : D.alpha ∈ TreeMissingColors phi T),
-  HierarchyFirstMissingPosition phi T D.alpha = D.penultimateVertexIndex := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A ell B n Dn hBlen hBT halpha R
-      corrMinus baseMinus HMinus corrStar baseStar HStar hstarLen hminusLen hstarLength beta
-      firstMissingLe firstMissingMem vertexMem halphaT
-  apply helper_halphaFirst_256 <;> assumption
-private theorem helper_hstarPath_3572.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  let A : TreeSequence G e0 := HierarchyStarredStage H q;
-  let ell : ℕ := HierarchyFullTailLength C;
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-  ∀ (_ : ell = T.length - A.length) (_ : A.length + ell = T.length)
-    (_ : B.length = T.length - (2 : ℕ)) (_ : TreeSequenceInitialSegment B T)
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData)
-    (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-    (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-    (HMinus : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-    (_ : HMinus.dividerCount = C.hierarchy.dividerCount)
-    (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-    (_ : MaximumProperty corrStar.replacementETT)
-    (baseStar : HierarchyBase corrStar.replacementETT phi)
-    (HStar : TashkinovHierarchy corrStar.replacementETT baseStar)
-    (_ : HStar.dividerCount = C.hierarchy.dividerCount)
-    (_ : R.star.length = R.minus.length + (1 : ℕ))
-    (_ : R.minus.length = B.length + (1 : ℕ))
-    (_ : R.star.length = T.length) (beta : Fin k)
-    (_ : (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ B.length)
-    (_ : GoodHierarchy HStar)
-    (_ : HierarchyStarredStage HStar (Fin.last HStar.dividerCount) = A)
-    (_ :
-  ∀ {inputU : PartialEdgeColoring E k} {U : TreeSequence G e0}
-    {ettU : ExtendedTashkinovTree G k e0 inputU U phi}
-    {baseU : HierarchyBase ettU phi} (K : TashkinovHierarchy ettU baseU),
-  HierarchyPathNumber K ≤
-    U.length - (HierarchyStarredStage K (Fin.last K.dividerCount)).length),
-  HierarchyPathNumber HStar = HierarchyPathNumber H := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A ell B hell hsum hBlen hBT R
-      corrMinus baseMinus HMinus hminusCount corrStar hstarMP baseStar HStar hstarCount hstarLen
-      hminusLen hstarLength beta hbetaFirstBound goodStar hstarStarred pathLeFull
-  apply helper_hstarPath_824 <;> assumption
-private theorem helper_hDnDisjoint_3416.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  let A : TreeSequence G e0 := HierarchyStarredStage H q;
-  let ell : ℕ := HierarchyFullTailLength C;
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-  let Bplus : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (1 : ℕ));
-  let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-  let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-  ∀
-    (_ :
-      D.alpha ∉ TreeMissingColors phi B ∧
-        D.alpha ∉ Dn ∧
-  ∀ (t : Fin T.length),
-  A.length ≤ (↑t : ℕ) →
-  phi (T.edge t) ≠ some D.alpha)
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData),
-  let baseExtraMissing : Finset (Fin k) :=
-    (TreeSequenceVertexSet base.core \
-          TreeSequenceVertexSet (ett.series.data.tree n.castSucc)).biUnion
-      fun (v : V) ↦ MissingColors G phi v;
-  let prefixUsed : Finset (Fin k) :=
-    ({c : Fin k |
-        ∃ (r : Fin T.length),
-          A.length ≤ (↑r : ℕ) ∧
-            (↑r : ℕ) < A.length + (ell - (2 : ℕ)) ∧ phi (T.edge r) = some c} :
-      Finset (Fin k));
-  let available : Finset (Fin k) :=
-    (TreeMissingColors phi B \ baseExtraMissing) \ prefixUsed;
-  let finalColors : Finset (Fin k) :=
-    ({c : Fin k | phi (T.edge R.penultimateEdgeIndex) = some c} : Finset (Fin k)) ∪
-      ({c : Fin k | phi (T.edge D.lastEdgeIndex) = some c} : Finset (Fin k));
-  ∀ (beta : Fin k) (_ : beta ∈ (available \ finalColors) \ Dn)
-    (_ : beta ∈ available \ finalColors) (_ : beta ∉ Dn)
-    (_ : beta ∈ available) (_ : beta ∉ finalColors)
-    (_ : beta ∈ TreeMissingColors phi B \ baseExtraMissing)
-    (_ : beta ∉ prefixUsed)
-    (_ : beta ∈ TreeMissingColors phi B) (_ : beta ∉ baseExtraMissing)
-    (_ :
-  ∀ (t : Fin T.length),
-  A.length ≤ (↑t : ℕ) →
-  phi (T.edge t) ≠ some beta)
-    (_ : beta ≠ D.alpha) (_ : beta ∈ TreeMissingColors phi T)
-    (_ : (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ B.length)
-    (_ : beta ∈ TreeMissingColors phi Bplus)
-    (_ :
-  beta ∉ TreeMissingColors phi A ∨ D.alpha ∉ TreeMissingColors phi A →
-  TreeVertexOrder T (T.vertex (HierarchyFirstMissingPosition phi T beta))
-      (T.vertex (HierarchyFirstMissingPosition phi T D.alpha)) ∧
-    beta ∉
-      ({c : Fin k |
-          ∃ (t : Fin T.length),
-            A.length ≤ (↑t : ℕ) ∧
-              (↑t : ℕ) < (↑(HierarchyFirstMissingPosition phi T D.alpha) : ℕ) ∧
-                phi (T.edge t) = some c} :
-        Finset (Fin k))),
-  Disjoint (insert beta ({ D.alpha } : Finset (Fin k)) : Finset (Fin k)) Dn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A ell B Bplus n Dn halpha R
-      baseExtraMissing prefixUsed available finalColors beta hbeta hbetaAvailableFinal hbetaDn
-      hbetaAvailable hbetaFinal hbetaMissingExtra hbetaPrefixUnused hbetaMissing hbetaExtra
-      hbetaUnused hcolorsDistinct hbetaT hbetaFirstBound hbetaPrefix horderedUnused
-  exact @helper_hDnDisjoint_310 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-      (@halpha) (@R) (@beta) (@hbeta) (@hbetaAvailableFinal) (@hbetaDn) (@hbetaAvailable)
-      (@hbetaFinal) (@hbetaMissingExtra) (@hbetaPrefixUnused) (@hbetaMissing) (@hbetaExtra)
-      (@hbetaUnused) (@hcolorsDistinct) (@hbetaT) (@hbetaFirstBound) (@hbetaPrefix)
-      (@horderedUnused)
-
 private theorem helper_continuation_3768.{u_1, u_2} :
     helperContinuation3768Conditions.{u_1, u_2} := by
   classical
@@ -4230,7 +4071,7 @@ private theorem helper_continuation_4102.{u_1, u_2} :
     maximum := hstarMP
     notElementary := by rw [R.starVertexSet]; exact C.notElementary }
   have hstarPath : HierarchyPathNumber HStar = HierarchyPathNumber H := by
-    exact @helper_hstarPath_3572 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @helper_hstarPath_824 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
         (@hell) (@hsum) (@hBlen) (@hBT) (@R) (@corrMinus) (@baseMinus) (@HMinus) (@hminusCount)
         (@corrStar) (@hstarMP) (@baseStar) (@HStar) (@hstarCount) (@hstarLen) (@hminusLen)
@@ -4366,192 +4207,6 @@ private theorem helper_continuation_4235.{u_1, u_2} :
       (@hminusTerminalAvoidance) (@hBstar) (@hstarFirstEdge) (@hstarTerminalAvoidance)
       (@terminalData) (@copyGood)
 
-private theorem helper_terminalAvoidance_4467.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx)
-    (_ :
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  ¬∃ eta ∈ HierarchyStoredColorsAt H q,
-      eta ∈ MissingColors G phi (T.vertex D.penultimateVertexIndex) ∧
-        D.theta ∈ C.good.gamma q eta),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  let A : TreeSequence G e0 := HierarchyStarredStage H q;
-  let ell : ℕ := HierarchyFullTailLength C;
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-  ∀ (_ : (2 : ℕ) ≤ ell) (_ : ell = T.length - A.length)
-    (_ : A.length + ell = T.length) (_ : B.length = T.length - (2 : ℕ))
-    (_ : TreeSequenceInitialSegment B T)
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData)
-    (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-    (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-    (_ : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-    (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-    (baseStar : HierarchyBase corrStar.replacementETT phi)
-    (_ : TashkinovHierarchy corrStar.replacementETT baseStar)
-    (_ : R.star.length = R.minus.length + (1 : ℕ))
-    (_ : R.minus.length = B.length + (1 : ℕ))
-    (_ : R.star.length = T.length) (_ : Fin k)
-    (_ :
-  ∀ (S : TreeSequence G e0) (c : Fin k)
-    (_ : (↑(HierarchyFirstMissingPosition phi S c) : ℕ) < S.length),
-  c ∈ MissingColors G phi (S.vertex (HierarchyFirstMissingPosition phi S c)))
-    (_ :
-  ∀ (U : TreeSequence G e0) (_ : TreeSequenceInitialSegment B U) (eta : Fin k)
-    (r : ℕ) (_ : r ≤ B.length)
-    (_ : r < (↑(HierarchyFirstMissingPosition phi U eta) : ℕ)),
-  r < (↑(HierarchyFirstMissingPosition phi T eta) : ℕ))
-    (_ :
-  ∀ (eta c : Fin k) (r : Fin T.length) (_ : A.length ≤ (↑r : ℕ))
-    (_ : (↑r : ℕ) < (↑(HierarchyFirstMissingPosition phi T eta) : ℕ))
-    (_ : phi (T.edge r) = some c),
-  c ∈ HierarchySegmentColors H q eta)
-    (U : TreeSequence G e0) (_ : TreeSequenceInitialSegment B U)
-    (_ : U.length ≤ B.length + (2 : ℕ))
-    (_ :
-  ∀ (r : Fin U.length),
-  (↑r : ℕ) = B.length →
-  U.edge r = T.edge D.lastEdgeIndex)
-    (_ :
-  ∀ (r : Fin U.length),
-  (↑r : ℕ) = B.length + (1 : ℕ) →
-  U.edge r = T.edge R.penultimateEdgeIndex),
-  ∀ eta ∈ HierarchyStoredColorsAt H q,
-  Disjoint (C.good.gamma q eta)
-    ({c : Fin k |
-        ∃ (r : Fin U.length),
-          A.length ≤ (↑r : ℕ) ∧
-            (↑r : ℕ) < min (↑(HierarchyFirstMissingPosition phi U eta) : ℕ) U.length ∧
-              phi (U.edge r) = some c} :
-      Finset (Fin k)) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D hnonexceptional H q A ell B htail hell
-      hsum hBlen hBT R corrMinus baseMinus HMinus corrStar baseStar HStar hstarLen hminusLen
-      hstarLength beta firstMissingMemBelow firstLowerInOld oldSegmentMember U hBU hlen
-      hfirstEdge hsecondEdge
-  exact @helper_terminalAvoidance_394 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-      (@hnonexceptional) (@htail) (@hell) (@hsum) (@hBlen) (@hBT) (@R) (@corrMinus)
-      (@baseMinus) (@HMinus) (@corrStar) (@baseStar) (@HStar) (@hstarLen) (@hminusLen)
-      (@hstarLength) (@beta) (@firstMissingMemBelow) (@firstLowerInOld) (@oldSegmentMember)
-      (@U) (@hBU) (@hlen) (@hfirstEdge) (@hsecondEdge)
-
-private abbrev helperContinuation4495Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V]
-   [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-   (input : PartialEdgeColoring E k) (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-   (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-   (C : HierarchyCounterexample base)
-   (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-   (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx)
-   (hnonexceptional :
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  ¬∃ eta ∈ HierarchyStoredColorsAt H q,
-    eta ∈ MissingColors G phi (T.vertex D.penultimateVertexIndex) ∧ D.theta ∈ C.good.gamma q eta),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  let A : TreeSequence G e0 := HierarchyStarredStage H q;
-  let ell : ℕ := HierarchyFullTailLength C;
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-  let Bplus : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (1 : ℕ));
-  let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-  let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-  ∀ (htail : (2 : ℕ) ≤ ell) (hell : ell = T.length - A.length) (hsum : A.length + ell = T.length)
-   (hBlen : B.length = T.length - (2 : ℕ)) (hBT : TreeSequenceInitialSegment B T)
-   (hprefixElementary : ColoredVertexSetElementary G phi (TreeSequenceVertexSet Bplus))
-   (halpha :
-    D.alpha ∉ TreeMissingColors phi B ∧
-     D.alpha ∉ Dn ∧
-  ∀ (t : Fin T.length),
-  A.length ≤ (↑t : ℕ) →
-  phi (T.edge t) ≠ some D.alpha)
-   (R :
-    HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-     D.toHierarchySituationTwoTailData)
-   (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-   (hminusMP : MaximumProperty corrMinus.replacementETT)
-   (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-   (hminusCore : baseMinus.core = base.core) (hminusClosure : baseMinus.closure = base.closure)
-   (HMinus : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-   (hminusCount : HMinus.dividerCount = C.hierarchy.dividerCount)
-   (hminusStages :
-  ∀ (j : Fin (HMinus.dividerCount + (1 : ℕ))),
-  HMinus.stage j.castSucc = C.hierarchy.stage (Fin.cast (by omega) j).castSucc)
-   (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-   (hstarMP : MaximumProperty corrStar.replacementETT)
-   (baseStar : HierarchyBase corrStar.replacementETT phi) (hstarCore : baseStar.core = base.core)
-   (hstarClosure : baseStar.closure = base.closure)
-   (HStar : TashkinovHierarchy corrStar.replacementETT baseStar)
-   (hstarCount : HStar.dividerCount = C.hierarchy.dividerCount)
-   (hstarStages :
-  ∀ (j : Fin (HStar.dividerCount + (1 : ℕ))),
-  HStar.stage j.castSucc = C.hierarchy.stage (Fin.cast (by omega) j).castSucc)
-   (hBminus :
-    TreeSequenceInitialSegment (HierarchyFullTailPrefix C (HierarchyFullTailLength C - (2 : ℕ)))
-     R.minus)
-   (hstarLen : R.star.length = R.minus.length + (1 : ℕ))
-   (hminusStar : TreeSequenceInitialSegment R.minus R.star)
-   (hstarEdge :
-    R.star.edge (Fin.cast (by omega) (Fin.last R.minus.length)) = T.edge R.penultimateEdgeIndex)
-   (hminusLen : R.minus.length = B.length + (1 : ℕ))
-   (hminusEdge :
-    R.minus.edge
-      (Fin.cast (by change B.length + 1 = R.minus.length; exact hminusLen.symm)
-       (Fin.last (HierarchyFullTailPrefix C (HierarchyFullTailLength C - (2 : ℕ))).length)) =
-     T.edge D.lastEdgeIndex)
-   (hstarLength : R.star.length = T.length) (beta : Fin k)
-   (hbetaMissing : beta ∈ TreeMissingColors phi B)
-   (hbetaUnused :
-  ∀ (t : Fin T.length),
-  A.length ≤ (↑t : ℕ) →
-  phi (T.edge t) ≠ some beta)
-   (hcolorsDistinct : beta ≠ D.alpha)
-   (firstMissingLe :
-  ∀ (S : TreeSequence G e0) (c : Fin k) (i : Fin (S.length + (1 : ℕ)))
-   (hc : c ∈ MissingColors G phi (S.vertex i)),
-  HierarchyFirstMissingPosition phi S c ≤ i)
-   (firstMissingMem :
-  ∀ (S : TreeSequence G e0) (c : Fin k) (hc : c ∈ TreeMissingColors phi S),
-  c ∈ MissingColors G phi (S.vertex (HierarchyFirstMissingPosition phi S c)))
-   (vertexMem :
-  ∀ (S : TreeSequence G e0) (i : Fin (S.length + (1 : ℕ))),
-  S.vertex i ∈ TreeSequenceVertexSet S)
-   (missingMono :
-  ∀ {S U : TreeSequence G e0} (hSU : TreeSequenceInitialSegment S U),
-  TreeMissingColors phi S ⊆ TreeMissingColors phi U)
-   (hbetaT : beta ∈ TreeMissingColors phi T)
-   (hbetaFirstBound : (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ B.length)
-   (halphaFirst : HierarchyFirstMissingPosition phi T D.alpha = D.penultimateVertexIndex)
-   (hbetaPrefix : beta ∈ TreeMissingColors phi Bplus)
-   (halphaPrefix : D.alpha ∈ TreeMissingColors phi Bplus)
-   (horderedUnused :
-  beta ∉ TreeMissingColors phi A ∨ D.alpha ∉ TreeMissingColors phi A →
-  TreeVertexOrder T (T.vertex (HierarchyFirstMissingPosition phi T beta))
-    (T.vertex (HierarchyFirstMissingPosition phi T D.alpha)) ∧
-   beta ∉
-    ({c : Fin k |
-      ∃ (t : Fin T.length),
-       A.length ≤ (↑t : ℕ) ∧
-        (↑t : ℕ) < (↑(HierarchyFirstMissingPosition phi T D.alpha) : ℕ) ∧
-         phi (T.edge t) = some c} :
-     Finset (Fin k)))
-   (hDnDisjoint : Disjoint (insert beta ({ D.alpha } : Finset (Fin k)) : Finset (Fin k)) Dn)
-   (hDnqDisjoint :
-    Disjoint (insert beta ({ D.alpha } : Finset (Fin k)) : Finset (Fin k))
-     (HierarchyStoredColorsAt H q)),
-  False
-
 private theorem helper_continuation_4495.{u_1, u_2} :
     helperContinuation4495Conditions.{u_1, u_2} := by
   classical
@@ -4586,11 +4241,12 @@ private theorem helper_continuation_4495.{u_1, u_2} :
       (hrB : r ≤ B.length)
       (hrU : r < (HierarchyFirstMissingPosition phi U eta).val) :
       r < (HierarchyFirstMissingPosition phi T eta).val := by
-    exact @helper_firstLowerInOld_3203 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-        (@hBlen) (@hBT) (@R) (@corrMinus) (@baseMinus) (@HMinus) (@corrStar) (@baseStar) (@HStar)
-        (@hstarLen) (@hminusLen) (@hstarLength) (@beta) (@firstMissingLe) (@firstMissingMemBelow)
-        (@U) (@hBU) (@eta) (@r) (@hrB) (@hrU)
+    exact (@helper_firstLowerInOld_356 (@V) (@E) inferInstance inferInstance inferInstance
+        inferInstance
+        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@hBlen) (@hBT)
+        (@R) (@corrMinus) (@baseMinus) (@HMinus) (@corrStar) (@baseStar) (@HStar) (@hstarLen)
+        (@hminusLen) (@hstarLength) (@eta) (@firstMissingLe) (@firstMissingMemBelow) (@U) (@hBU)
+        (@eta) (@r) (@hrB) (@hrU))
   have oldSegmentMember (eta c : Fin k) (r : Fin T.length)
       (hlo : A.length ≤ r.val)
       (hhi : r.val < (HierarchyFirstMissingPosition phi T eta).val)
@@ -4610,7 +4266,7 @@ private theorem helper_continuation_4495.{u_1, u_2} :
             A.length ≤ r.val ∧
               r.val < min (HierarchyFirstMissingPosition phi U eta).val U.length ∧
                 phi (U.edge r) = some c) := by
-    exact @helper_terminalAvoidance_4467 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @helper_terminalAvoidance_394 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
         (@hnonexceptional) (@htail) (@hell) (@hsum) (@hBlen) (@hBT) (@R) (@corrMinus)
         (@baseMinus) (@HMinus) (@corrStar) (@baseStar) (@HStar) (@hstarLen) (@hminusLen)
@@ -4786,7 +4442,7 @@ theorem HierarchySituationTwoSubcaseTwoOneNonexceptional {V E : Type*}
         (@hstarLen) (@hminusLen) (@hstarLength) (@beta) (@hbetaMissing) (@firstMissingLe)
   have halphaFirst : HierarchyFirstMissingPosition phi T D.alpha =
       D.penultimateVertexIndex := by
-    exact @helper_halphaFirst_3258 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @helper_halphaFirst_256 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
         (@hBlen) (@hBT) (@halpha) (@R) (@corrMinus) (@baseMinus) (@HMinus) (@corrStar)
         (@baseStar) (@HStar) (@hstarLen) (@hminusLen) (@hstarLength) (@beta) (@firstMissingLe)
@@ -4807,13 +4463,13 @@ theorem HierarchySituationTwoSubcaseTwoOneNonexceptional {V E : Type*}
           A.length ≤ t.val ∧
             t.val < (HierarchyFirstMissingPosition phi T D.alpha).val ∧
               phi (T.edge t) = some c) := by
-    exact @helper_horderedUnused_3229 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @helper_horderedUnused_290 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
         (@hBlen) (@R) (@corrMinus) (@baseMinus) (@HMinus) (@corrStar) (@baseStar) (@HStar)
         (@hstarLen) (@hminusLen) (@hstarLength) (@beta) (@hbetaUnused) (@hbetaFirstBound)
         (@halphaFirst)
   have hDnDisjoint : Disjoint ({beta, D.alpha} : Finset (Fin k)) Dn := by
-    exact @helper_hDnDisjoint_3416 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @helper_hDnDisjoint_310 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
         (@halpha) (@R) (@beta) (@hbeta) (@hbetaAvailableFinal) (@hbetaDn) (@hbetaAvailable)
         (@hbetaFinal) (@hbetaMissingExtra) (@hbetaPrefixUnused) (@hbetaMissing) (@hbetaExtra)

@@ -5,6 +5,12 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.RevisitingTerminalPreparation
+
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
+public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
+
 public import LeanPool.GoldbergSeymour.Preamble
 
 public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
@@ -1811,237 +1817,6 @@ private abbrev helperHtreePrefixFull719Conditions.{u_1, u_2} : Prop :=
   originalPrefix.series.data.tree oldi.succ.castSucc =
    ett.series.data.tree fulli.succ.castSucc
 
-private abbrev helperBranch3084Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [ DecidableEq E]
-   (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-   (T : TreeSequence G e0) (generating : PartialEdgeColoring E k)
-   (ett : ExtendedTashkinovTree G k e0 input T generating) (hroundLarge : (1 : ℕ) < ett.rounds),
-  let q : Fin ett.rounds :=
-   (⟨ett.rounds - (1 : ℕ), by
-     have := GoldbergSeymour.TreeSequence.positive T
-     omega⟩ :
-    Fin ett.rounds);
-  ∀ (sigmaPrev : PartialEdgeColoring E k)
-   (originalPrefix :
-    ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-     (ett.series.data.coloring
-      (⟨ett.rounds - (1 : ℕ),
-         by
-         have := GoldbergSeymour.TreeSequence.positive T
-         omega⟩ :
-        Fin ett.rounds).castSucc))
-   (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)),
-  (
-  ∀ (i : Fin (originalPrefix.rounds + (2 : ℕ))),
-  originalPrefix.series.data.tree i =
-   ett.series.data.tree
-    (Fin.castLE
-     (by
-      have := GoldbergSeymour.TreeSequence.positive T
-      omega)
-     i)) →
-  (
-  ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))),
-  originalPrefix.series.data.coloring i =
-    ett.series.data.coloring
-     (Fin.castLE
-      (by
-       have := GoldbergSeymour.TreeSequence.positive T
-       omega)
-      i) ∧
-   originalPrefix.series.data.stored i =
-     ett.series.data.stored
-      (Fin.castLE
-       (by
-        have := GoldbergSeymour.TreeSequence.positive T
-        omega)
-       i) ∧
-    originalPrefix.series.data.connectingEdges i =
-      ett.series.data.connectingEdges
-       (Fin.castLE
-        (by
-         have := GoldbergSeymour.TreeSequence.positive T
-         omega)
-        i) ∧
-     originalPrefix.series.data.kind i =
-       ett.series.data.kind
-        (Fin.castLE
-         (by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega)
-         i) ∧
-      TashkinovStoredColors originalPrefix.series.data i =
-       TashkinovStoredColors ett.series.data
-        (Fin.castLE
-         (by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega)
-         i)) →
-  ∀
-   (corr :
-    CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
-     (ett.series.data.tree (Fin.last ett.rounds).castSucc)),
-  ¬Nonempty
-     (RevisitingExtensionCertificate ett.series.data
-      (⟨ett.rounds - (1 : ℕ),
-         by
-         have := GoldbergSeymour.TreeSequence.positive T
-         omega⟩ :
-        Fin ett.rounds).castSucc) →
-  let replacementLast : Fin (originalPrefix.rounds + (1 : ℕ)) :=
-   Fin.last originalPrefix.rounds;
-  Fin.castLE
-     (by
-      have := GoldbergSeymour.TreeSequence.positive T
-      omega)
-     replacementLast =
-    (⟨ett.rounds - (1 : ℕ),
-       by
-       have := GoldbergSeymour.TreeSequence.positive T
-       omega⟩ :
-      Fin ett.rounds).castSucc →
-  corr.replacementSeries.data.tree replacementLast.succ =
-    ett.series.data.tree
-     (⟨ett.rounds - (1 : ℕ),
-        by
-        have := GoldbergSeymour.TreeSequence.positive T
-        omega⟩ :
-       Fin ett.rounds).succ.castSucc →
-  ∀
-   (available : RevisitingExtensionCertificate corr.replacementSeries.data replacementLast),
-  let earlierPrefix : Fin (originalPrefix.rounds + (1 : ℕ)) := available.earlier;
-  ∀ (oldi : Fin originalPrefix.rounds)
-   (oldChoice :
-    MaximumDefectiveChoice G e0 (originalPrefix.series.data.tree oldi.succ.castSucc)
-     (TashkinovStoredColors originalPrefix.series.data oldi.castSucc)
-     (originalPrefix.series.data.coloring oldi.castSucc))
-   (oldGamma : Fin k),
-  originalPrefix.series.data.stored oldi.succ =
-    (insert oldChoice.color ({ oldGamma } : Finset (Fin k)) : Finset (Fin k)) →
-  originalPrefix.series.data.connectingEdges oldi.succ =
-    ({ oldChoice.edge } : Finset E) →
-  earlierPrefix = oldi.succ →
-  oldi.succ = earlierPrefix →
-  ∀ (newGamma : Fin k)
-   (newChoicePE :
-    MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree oldi.succ.castSucc)
-     (TashkinovStoredColors corr.replacementSeries.data oldi.castSucc)
-     (corr.replacementSeries.data.coloring oldi.castSucc))
-   (hbaseTree :
-    corr.replacementSeries.data.tree oldi.succ.castSucc =
-     originalPrefix.series.data.tree oldi.succ.castSucc),
-  (
-  ∀ {A B : TreeSequence G e0} (hAB : A = B) (C : Finset (Fin k))
-   (phi : PartialEdgeColoring E k) (ch : MaximumDefectiveChoice G e0 A C phi),
-  (@Eq.rec (@TreeSequence V E G e0) A
-      (fun (x : @TreeSequence V E G e0) (h : @Eq (@TreeSequence V E G e0) A x) ↦
-       @MaximumDefectiveChoice V E inst inst_1 G k e0 x C phi)
-      ch B hAB).edge =
-    ch.edge ∧
-   (@Eq.rec (@TreeSequence V E G e0) A
-       (fun (x : @TreeSequence V E G e0) (h : @Eq (@TreeSequence V E G e0) A x) ↦
-        @MaximumDefectiveChoice V E inst inst_1 G k e0 x C phi)
-       ch B hAB).vertex =
-     ch.vertex ∧
-    (@Eq.rec (@TreeSequence V E G e0) A
-        (fun (x : @TreeSequence V E G e0) (h : @Eq (@TreeSequence V E G e0) A x) ↦
-         @MaximumDefectiveChoice V E inst inst_1 G k e0 x C phi)
-        ch B hAB).otherEndpoint =
-      ch.otherEndpoint ∧
-     (@Eq.rec (@TreeSequence V E G e0) A
-        (fun (x : @TreeSequence V E G e0) (h : @Eq (@TreeSequence V E G e0) A x) ↦
-         @MaximumDefectiveChoice V E inst inst_1 G k e0 x C phi)
-        ch B hAB).color =
-      ch.color) →
-  (
-  ∀ (X : TreeSequence G e0) (C : Finset (Fin k)) (phi : PartialEdgeColoring E k)
-   (ch : MaximumDefectiveChoice G e0 X C phi) (g : Fin k)
-   (second : PartialEdgeColoring E k),
-  IsProperEdgeColoring G second →
-  StableColoring X (insert ch.color C : Finset (Fin k)) ch.selected second →
-  g ∈ MissingColors G ch.selected ch.vertex →
-  let post : PartialEdgeColoring E k :=
-   TwoColorComponentSwap G second g ch.color (Sum.inl ch.vertex);
-  ch.color ∈ MissingColors G post ch.vertex ∧
-   g ∉ MissingColors G post ch.vertex ∧ g ≠ ch.color) →
-  oldChoice.color ∈
-    MissingColors G (originalPrefix.series.data.coloring oldi.succ)
-     oldChoice.vertex →
-  oldGamma ∉
-    MissingColors G (originalPrefix.series.data.coloring oldi.succ)
-     oldChoice.vertex →
-  oldChoice.color = available.delta →
-  oldGamma = available.gamma →
-  available.returnVertex ∈
-    TreeSequenceVertexSet
-     (originalPrefix.series.data.tree earlierPrefix.castSucc) →
-  let originalReturnGraph : SimpleGraph (V ⊕ E) :=
-   TwoColorIncidenceGraph G (ett.series.data.coloring q.castSucc)
-    available.gamma available.delta;
-  ∀
-   (returnEdgeTransfer :
-    ∀ edge ∈ available.returnPath.edges, edge ∈ originalReturnGraph.edgeSet),
-  let originalReturnPath :
-   originalReturnGraph.Walk (Sum.inr available.edge)
-    (Sum.inl available.returnVertex) :=
-   available.returnPath.transfer originalReturnGraph returnEdgeTransfer;
-  originalReturnPath.IsPath →
-  (
-  ∀ (z : V ⊕ E),
-  z ∈ originalReturnPath.support ↔ z ∈ available.returnPath.support) →
-  Sum.inl available.returnVertex ∈
-    TwoColorComponent G (ett.series.data.coloring q.castSucc)
-     available.gamma available.delta (Sum.inr available.edge) →
-  Sum.inl available.outsideEndpoint ∈
-    TwoColorComponent G (ett.series.data.coloring q.castSucc)
-     available.gamma available.delta (Sum.inr available.edge) →
-  ∀ (horiginalRoundsLess : originalPrefix.rounds < ett.rounds)
-   (originalCycle :
-    TwoColorCycle G (ett.series.data.coloring q.castSucc) available.gamma
-     available.delta),
-  (
-  ∀ (x : V ⊕ E),
-  x ∈ originalCycle.walk.support ↔
-   x ∈
-    TwoColorComponent G (ett.series.data.coloring q.castSucc)
-     available.gamma available.delta (Sum.inr available.edge)) →
-  let oldEarlier : Fin (ett.rounds + (1 : ℕ)) :=
-   Fin.castLE
-    (by
-     have := GoldbergSeymour.TreeSequence.positive T
-     omega)
-    earlierPrefix;
-  ett.series.data.kind oldEarlier = some TashkinovExtensionKind.PE →
-  ∀ (fulli : Fin ett.rounds)
-   (fullChoice :
-    MaximumDefectiveChoice G e0
-     (ett.series.data.tree fulli.succ.castSucc)
-     (TashkinovStoredColors ett.series.data fulli.castSucc)
-     (ett.series.data.coloring fulli.castSucc))
-   (fullGamma : Fin k),
-  ParallelExtensionColor ett.series.data fulli.castSucc
-    fullChoice.selected fullChoice.vertex fullGamma →
-  ∀ (fullSecond : PartialEdgeColoring E k),
-  IsProperEdgeColoring G fullSecond →
-  StableColoring (ett.series.data.tree fulli.succ.castSucc)
-    (insert fullChoice.color
-      (TashkinovStoredColors ett.series.data fulli.castSucc) :
-     Finset (Fin k))
-    fullChoice.selected fullSecond →
-  ett.series.data.coloring fulli.succ =
-    TwoColorComponentSwap G fullSecond fullGamma fullChoice.color
-     (Sum.inl fullChoice.vertex) →
-  ett.series.data.stored fulli.succ =
-    (insert fullChoice.color ({ fullGamma } : Finset (Fin k)) :
-     Finset (Fin k)) →
-  ett.series.data.connectingEdges fulli.succ =
-    ({ fullChoice.edge } : Finset E) →
-  ett.series.data.delta fulli.succ = some fullChoice.color →
-  ett.series.data.gamma fulli.succ = some fullGamma →
-  oldEarlier = fulli.succ →
-  False
-
 private abbrev helperHoriginalPathInQ1511Conditions.{u_1, u_2} : Prop :=
  open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E]
@@ -3402,148 +3177,6 @@ private theorem helper_peRootOnly_167.{u_1, u_2} :
     rw [htree]
     exact hw
 
-private theorem helper_reStepColoring_872.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [
-    Fintype E] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input :
-    PartialEdgeColoring E k) (T : TreeSequence G e0) (generating : PartialEdgeColoring E k)
-    (ett : ExtendedTashkinovTree G k e0 input T generating) (hroundLarge : (1 : ℕ) <
-    ett.rounds) (sigmaPrev : PartialEdgeColoring E k) (originalPrefix : ExtendedTashkinovTree
-    G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-    (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)),
-  originalPrefix.rounds = ett.rounds - (1 : ℕ) →
-  ∀ (corr :
-    CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev (ett.series.data.tree
-    (Fin.last ett.rounds).castSucc)) (_ : RevisitingExtensionCertificate
-    corr.replacementSeries.data (Fin.last originalPrefix.rounds)) (oldi : Fin
-    originalPrefix.rounds) (_ : MaximumDefectiveChoice G e0 (originalPrefix.series.data.tree
-    oldi.succ.castSucc) (TashkinovStoredColors originalPrefix.series.data oldi.castSucc)
-    (originalPrefix.series.data.coloring oldi.castSucc)) (_ _ : Fin k) (_ :
-    MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree oldi.succ.castSucc)
-    (TashkinovStoredColors corr.replacementSeries.data oldi.castSucc)
-    (corr.replacementSeries.data.coloring oldi.castSucc)),
-  corr.replacementSeries.data.tree
-    oldi.succ.castSucc = originalPrefix.series.data.tree oldi.succ.castSucc →
-  ∀ {rounds' : ℕ}
-    {input' : PartialEdgeColoring E k} (series : TashkinovSeries G k rounds' e0 input') (j :
-    Fin rounds'),
-  series.data.kind j.succ = some TashkinovExtensionKind.RE →
-  series.data.coloring j.succ = series.data.coloring j.castSucc := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hroundLarge sigmaPrev originalPrefix hr corr
-      available oldi oldChoice oldGamma newGamma newChoicePE hbaseTree rounds' input' series j hj
-  have hstep := series.certified j.succ
-  generalize hslot : j.succ = slot at hstep
-  cases hstep with
-  | initial triple seedLength initialColoring initialStored
-      initialEdges initialKind initialVertex initialOutside
-      initialDelta initialGamma initialClosure =>
-      exact (Fin.succ_ne_zero j hslot).elim
-  | SE i prevProper prevOne prevClosed prevNotStrong noRE
-      ch alternative coloring stored edges kind vertex
-      outside delta gamma adjoined adjoinedExactly closed
-      ordered strict =>
-      have hbad := kind.symm.trans
-        (by simpa [hslot] using hj)
-      cases hbad
-  | PE i prevProper prevOne prevClosed prevNotStrong noRE
-      ch alternativeFails gamma gammaRule second
-      secondProper secondOne secondStable exit coloring
-      coloringProper coloringOne stored edges kind vertex
-      outside delta gammaValue closed ordered strict =>
-      have hbad := kind.symm.trans
-        (by simpa [hslot] using hj)
-      cases hbad
-  | RE i prevProper prevOne prevClosed prevNotStrong cert
-      coloring stored edges kind vertex outside delta gamma
-      adjoined adjoinedExactly closed ordered strict =>
-      have hi : i = j := by
-        apply Fin.ext
-        have hv := congrArg Fin.val hslot
-        simp only [Fin.val_succ] at hv
-        omega
-      subst i
-      simpa [hslot] using coloring
-
-private theorem helper_reIntervalColoring_913.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [
-    Fintype E] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input :
-    PartialEdgeColoring E k) (T : TreeSequence G e0) (generating : PartialEdgeColoring E k)
-    (ett : ExtendedTashkinovTree G k e0 input T generating) (hroundLarge : (1 : ℕ) <
-    ett.rounds) (sigmaPrev : PartialEdgeColoring E k) (originalPrefix : ExtendedTashkinovTree
-    G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-    (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds).castSucc)),
-  originalPrefix.rounds = ett.rounds - (1 : ℕ) →
-  ∀ (corr :
-    CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev (ett.series.data.tree
-    (Fin.last ett.rounds).castSucc)) (_ : RevisitingExtensionCertificate
-    corr.replacementSeries.data (Fin.last originalPrefix.rounds)) (oldi : Fin
-    originalPrefix.rounds) (_ : MaximumDefectiveChoice G e0 (originalPrefix.series.data.tree
-    oldi.succ.castSucc) (TashkinovStoredColors originalPrefix.series.data oldi.castSucc)
-    (originalPrefix.series.data.coloring oldi.castSucc)) (_ _ : Fin k) (_ :
-    MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree oldi.succ.castSucc)
-    (TashkinovStoredColors corr.replacementSeries.data oldi.castSucc)
-    (corr.replacementSeries.data.coloring oldi.castSucc)),
-  corr.replacementSeries.data.tree
-    oldi.succ.castSucc = originalPrefix.series.data.tree oldi.succ.castSucc →
-  (
-  ∀ {rounds' : ℕ}
-   {input' : PartialEdgeColoring E k} (series : TashkinovSeries G k rounds' e0 input') (j :
-   Fin rounds'),
-  series.data.kind j.succ = some TashkinovExtensionKind.RE →
-  series.data.coloring j.succ = series.data.coloring j.castSucc) →
-  ∀ {rounds' : ℕ} {input' :
-    PartialEdgeColoring E k} (series : TashkinovSeries G k rounds' e0 input') (a b : Fin
-    (rounds' + (1 : ℕ))),
-  (↑a : ℕ) ≤ (↑b : ℕ) →
-  (
-  ∀ (j : Fin (rounds' + (1 : ℕ))),
-  (↑a : ℕ) <
-    (↑j : ℕ) →
-  (↑j : ℕ) ≤ (↑b : ℕ) →
-  series.data.kind j = some TashkinovExtensionKind.RE) →
-  series.data.coloring b = series.data.coloring a := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hroundLarge sigmaPrev originalPrefix hr corr
-      available oldi oldChoice oldGamma newGamma newChoicePE hbaseTree reStepColoring rounds'
-      input' series a b hab hbetween
-  have coloringAlong : ∀ m : ℕ, a.val ≤ m →
-      m ≤ b.val → ∀ x : Fin (rounds' + 1),
-      x.val = m →
-        series.data.coloring x = series.data.coloring a := by
-    intro m ham
-    induction m, ham using Nat.le_induction with
-    | base =>
-        intro hmb x hx
-        have hxa : x = a := by
-          apply Fin.ext
-          omega
-        rw [hxa]
-    | succ m ham ih =>
-        intro hmb x hx
-        let j : Fin rounds' := ⟨m, by
-          have hbLt := b.isLt
-          omega⟩
-        have hjKind : series.data.kind j.succ =
-            some TashkinovExtensionKind.RE := by
-          apply hbetween j.succ
-          · simp [j]
-            omega
-          · simp [j]
-            omega
-        have hstep := reStepColoring series j hjKind
-        have hxj : x = j.succ := by
-          apply Fin.ext
-          simp [j, hx]
-        calc
-          series.data.coloring x =
-              series.data.coloring j.succ := by rw [hxj]
-          _ = series.data.coloring j.castSucc := hstep
-          _ = series.data.coloring a :=
-            ih (by omega) j.castSucc (by simp [j])
-  exact coloringAlong b.val hab le_rfl b rfl
-
 private theorem helper_stepSegment_1041.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [
@@ -4223,37 +3856,6 @@ private theorem helper_branch_1721.{u_1, u_2} :
       (@htreePrefixFull) (@hprefColorCast) (@hfullEdgePairs) (@hfullColorPairs)
       (@hfullDeltaMissing) (@hfullGammaNotMissing) (@hmissingPrefixFull) (@hprefDeltaForFull)
       (@hprefGammaForFull)
-private theorem helper_segmentTrans_1816.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0
-    : E) (A B C : TreeSequence G e0),
-  TreeSequenceInitialSegment A B →
-  TreeSequenceInitialSegment B C →
-  TreeSequenceInitialSegment A C := by
-  classical
-  intro V E G e0 A B C hAB hBC
-  rcases hAB with ⟨hlenAB, hvertexAB, hedgeAB⟩
-  rcases hBC with ⟨hlenBC, hvertexBC, hedgeBC⟩
-  refine ⟨hlenAB.trans hlenBC, ?_, ?_⟩
-  · intro x
-    calc
-      C.vertex (Fin.castLE
-          (Nat.succ_le_succ (hlenAB.trans hlenBC)) x) =
-          C.vertex (Fin.castLE (Nat.succ_le_succ hlenBC)
-            (Fin.castLE (Nat.succ_le_succ hlenAB) x)) := by
-              congr 1
-      _ = B.vertex
-          (Fin.castLE (Nat.succ_le_succ hlenAB) x) :=
-        hvertexBC _
-      _ = A.vertex x := hvertexAB x
-  · intro x
-    calc
-      C.edge (Fin.castLE (hlenAB.trans hlenBC) x) =
-          C.edge (Fin.castLE hlenBC
-            (Fin.castLE hlenAB x)) := by congr 1
-      _ = B.edge (Fin.castLE hlenAB x) := hedgeBC _
-      _ = A.edge x := hedgeAB x
-
 private theorem helper_replacementReturnEdgeData_1963.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [
@@ -4594,26 +4196,6 @@ private theorem helper_hedgeSecond_2373.{u_1, u_2} :
       (Finset.mem_insert_self _ _), ch.edgeColor⟩).trans
         ch.edgeColor
 
-private theorem helper_hne_2379.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E)
-  (X : TreeSequence G e0) (C : Finset (Fin k)) (phi : PartialEdgeColoring E k)
-  (ch : MaximumDefectiveChoice G e0 X C phi) (g : Fin k) (second : PartialEdgeColoring E k),
-  g ∈ MissingColors G second ch.vertex →
-  second ch.edge = some ch.color →
-  g ≠ ch.color := by
-  classical
-  intro V E _ _ G k e0 X C phi ch g second hgSecond hedgeSecond heq
-  have hpresent : g ∈ PresentColors G second ch.vertex := by
-    simp only [PresentColors, Finset.mem_filter,
-      Finset.mem_univ, true_and]
-    exact ⟨ch.edge, ch.edgeIncident,
-      by simpa [heq] using hedgeSecond⟩
-  have hnotPresent : g ∉ PresentColors G second ch.vertex := by
-    simpa [MissingColors] using hgSecond
-  exact hnotPresent hpresent
-
 private theorem helper_hreplacementColorConstant_2536.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E]
@@ -4685,66 +4267,6 @@ private theorem helper_hreplacementColorConstant_2536.{u_1, u_2} :
       omega
     · exact hjUpper
 
-private theorem helper_hbaseColorConstant_2550.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E]
-  (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-      TreeSequence G e0)
-  (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T generating)
-  (hroundLarge : (1 : ℕ) < ett.rounds) (sigmaPrev : PartialEdgeColoring E k)
-  (originalPrefix :
-    ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last ett.rounds).castSucc)
-      (ett.series.data.coloring
-        (⟨ett.rounds - (1 : ℕ), by
-              have := GoldbergSeymour.TreeSequence.positive T
-              omega⟩ :
-            Fin ett.rounds).castSucc)),
-  originalPrefix.rounds = ett.rounds - (1 : ℕ) →
-  ∀
-    (corr :
-      CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc)),
-  let replacementLast : Fin (originalPrefix.rounds + (1 : ℕ)) := Fin.last
-      originalPrefix.rounds;
-  ∀ (available : RevisitingExtensionCertificate corr.replacementSeries.data
-      replacementLast),
-  let earlierPrefix : Fin (originalPrefix.rounds + (1 : ℕ)) := available.earlier;
-  (0 : ℕ) < (↑earlierPrefix : ℕ) →
-  ∀ (oldi : Fin originalPrefix.rounds)
-    (_ :
-      MaximumDefectiveChoice G e0 (originalPrefix.series.data.tree oldi.succ.castSucc)
-        (TashkinovStoredColors originalPrefix.series.data oldi.castSucc)
-        (originalPrefix.series.data.coloring oldi.castSucc))
-    (_ : Fin k),
-  earlierPrefix = oldi.succ →
-  oldi.succ = earlierPrefix →
-  ∀ (_ : Fin k)
-    (_ :
-      MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree
-          oldi.succ.castSucc)
-        (TashkinovStoredColors corr.replacementSeries.data oldi.castSucc)
-        (corr.replacementSeries.data.coloring oldi.castSucc)),
-  corr.replacementSeries.data.tree oldi.succ.castSucc =
-      originalPrefix.series.data.tree oldi.succ.castSucc →
-  (
-  ∀ {rounds' : ℕ} {input' : PartialEdgeColoring E k} (series :
-     TashkinovSeries G k rounds' e0 input')
-     (a b : Fin (rounds' + (1 : ℕ))),
-  (↑a : ℕ) ≤ (↑b : ℕ) →
-  (
-  ∀ (j : Fin (rounds' + (1 : ℕ))),
-  (↑a : ℕ) < (↑j : ℕ) →
-  (↑j : ℕ) ≤ (↑b : ℕ) →
-  series.data.kind j = some
-    TashkinovExtensionKind.RE) →
-  series.data.coloring b = series.data.coloring a) →
-  originalPrefix.series.data.coloring replacementLast =
-    originalPrefix.series.data.coloring oldi.succ := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hroundLarge sigmaPrev originalPrefix hr corr
-      replacementLast available earlierPrefix hearlierPositive oldi oldChoice oldGamma
-      hbaseTarget holdIndex newGamma newChoicePE hbaseTree reIntervalColoring
-  apply helper_hbaseColorConstant_1908 <;> assumption
 private theorem helper_hnewDeltaSigmaPrev_2577.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E]
@@ -5303,31 +4825,6 @@ private theorem helper_branch_3071.{u_1, u_2} :
   have hbad := fullCurrentKind.symm.trans hk
   cases hbad
 
-private theorem helper_branch_3084.{u_1, u_2} :
-    helperBranch3084Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hroundLarge q sigmaPrev originalPrefix hr
-      hprefixTrees hprefixData corr noRevisiting replacementLast hlastMap hreplacementCurrentTree
-      available earlierPrefix oldi oldChoice oldGamma oldCurrentStored oldCurrentEdges
-      hbaseTarget holdIndex newGamma newChoicePE hbaseTree transportChoiceFields pePostStatus
-      holdDeltaMissing holdGammaNotMissing holdDeltaAvailable holdGammaAvailable
-      hreturnInOldEarlier originalReturnGraph returnEdgeTransfer originalReturnPath
-      horiginalReturnIsPath horiginalReturnSupport hreturnInQ houtsideInQ horiginalRoundsLess
-      originalCycle hcycleFull oldEarlier hfullEarlierKind fulli fullChoice fullGamma
-      fullGammaRule fullSecond fullSecondProper fullSecondStable fullCurrentColoring
-      fullCurrentStored fullCurrentEdges fullCurrentDelta fullCurrentGamma hfullTarget
-  exact helper_branch_1721 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hroundLarge)
-      (@sigmaPrev) (@originalPrefix) (@hr) (@hprefixTrees) (@hprefixData) (@corr) (@noRevisiting)
-      (@hlastMap) (@hreplacementCurrentTree) (@available) (@oldi) (@oldChoice) (@oldGamma)
-      (@oldCurrentStored) (@oldCurrentEdges) (@hbaseTarget) (@holdIndex) (@newGamma)
-      (@newChoicePE) (@hbaseTree) (@transportChoiceFields) (@pePostStatus) (@holdDeltaMissing)
-      (@holdGammaNotMissing) (@holdDeltaAvailable) (@holdGammaAvailable) (@hreturnInOldEarlier)
-      (@returnEdgeTransfer) (@horiginalReturnIsPath) (@horiginalReturnSupport) (@hreturnInQ)
-      (@houtsideInQ) (@horiginalRoundsLess) (@originalCycle) (@hcycleFull) (@hfullEarlierKind)
-      (@fulli) (@fullChoice) (@fullGamma) (@fullGammaRule) (@fullSecond) (@fullSecondProper)
-      (@fullSecondStable) (@fullCurrentColoring) (@fullCurrentStored) (@fullCurrentEdges)
-      (@fullCurrentDelta) (@fullCurrentGamma) (@hfullTarget)
-
 private theorem helper_pePostStatus_3432.{u_1, u_2} :
     helperPePostStatus3432Conditions.{u_1, u_2} := by
   classical
@@ -5339,7 +4836,7 @@ private theorem helper_pePostStatus_3432.{u_1, u_2} :
   have hedgeSecond : second ch.edge = some ch.color := by
     apply helper_hedgeSecond_2373; assumption
   have hne : g ≠ ch.color := by
-    apply helper_hne_2379 <;> assumption
+    apply SharedFacts.RevisitingTerminalPreparation.hne <;> assumption
   have hedgeComponent : Sum.inr ch.edge ∈
       TwoColorComponent G second g ch.color
         (Sum.inl ch.vertex) := by
@@ -5529,7 +5026,8 @@ private theorem helper_continuation_4070.{u_1, u_2} :
       fullCurrentOutside fullCurrentDelta fullCurrentGamma
       fullClosedExtension fullOrderedExtension
       fullStrictExtension =>
-          exact helper_branch_3084 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett)
+          exact GoldbergSeymour.helper_branch_1721 (@G) (@k) (@e0) (@input) (@T) (@generating)
+              (@ett)
               (@hroundLarge) (@sigmaPrev) (@originalPrefix) (@hr) (@hprefixTrees) (@hprefixData)
               (@corr) (@noRevisiting) (@hlastMap) (@hreplacementCurrentTree) (@available) (@oldi)
               (@oldChoice) (@oldGamma) (@oldCurrentStored) (@oldCurrentEdges) (@hbaseTarget)
@@ -6103,26 +5601,22 @@ private theorem positivePrefixColorIdentification.{u_1, u_2} :
   have hnewOtherOld : newChoicePE.otherEndpoint =
       oldChoice.otherEndpoint :=
     hidentifiedOther.trans holdOtherCast
-  have reStepColoring :=
-    @helper_reStepColoring_872 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hroundLarge) (@sigmaPrev)
-        (@originalPrefix) (@hr) (@corr) (@available) (@oldi) (@oldChoice) (@oldGamma) (@newGamma)
-        (@newChoicePE) (@hbaseTree)
-  have reIntervalColoring :=
-    @helper_reIntervalColoring_913 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hroundLarge) (@sigmaPrev)
-        (@originalPrefix) (@hr) (@corr) (@available) (@oldi) (@oldChoice) (@oldGamma) (@newGamma)
-        (@newChoicePE) (@hbaseTree) (@reStepColoring)
+  have reStepColoring := @TashkinovSeries.revisitingStepColoring V E inferInstance inferInstance
+    inferInstance G k e0
+  have reIntervalColoring := @TashkinovSeries.revisitingIntervalColoring V E inferInstance
+      inferInstance
+    inferInstance G k e0
   have hreplacementColorConstant :=
     helper_hreplacementColorConstant_2536 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett)
         (@hroundLarge) (@sigmaPrev) (@originalPrefix) (@hr) (@corr) (@available)
         (@hearlierPositive) (@oldi) (@oldChoice) (@oldGamma) (@hbaseTarget) (@newGamma)
         (@newChoicePE) (@hnewIndex) (@hbaseTree) (@reIntervalColoring)
   have hbaseColorConstant :=
-    helper_hbaseColorConstant_2550 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett)
-        (@hroundLarge) (@sigmaPrev) (@originalPrefix) (@hr) (@corr) (@available)
-        (@hearlierPositive) (@oldi) (@oldChoice) (@oldGamma) (@hbaseTarget) (@holdIndex)
-        (@newGamma) (@newChoicePE) (@hbaseTree) (@reIntervalColoring)
+    (@GoldbergSeymour.helper_hbaseColorConstant_1908 _ _ inferInstance inferInstance inferInstance
+        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hroundLarge) (@sigmaPrev)
+        (@originalPrefix) (@hr) (@corr) (@available) (@hearlierPositive) (@oldi) (@oldChoice)
+        (@newGamma) (@hbaseTarget) (@holdIndex) (@newGamma) (@newChoicePE) (@hbaseTree)
+        (@reIntervalColoring))
   have hnewPostSigmaPrev :
       corr.replacementSeries.data.coloring oldi.succ =
         sigmaPrev :=
@@ -6166,8 +5660,10 @@ private theorem positivePrefixColorIdentification.{u_1, u_2} :
     helper_stepSegment_1041 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hroundLarge)
         (@sigmaPrev) (@originalPrefix) (@hr) (@corr) (@available) (@oldi) (@oldChoice)
         (@oldGamma) (@newGamma) (@newChoicePE) (@hbaseTree)
-  have segmentTrans :=
-    @helper_segmentTrans_1816 (@V) (@E) (@G) (@e0)
+  have segmentTrans (first second third : TreeSequence G e0)
+      (firstSecond : TreeSequenceInitialSegment first second)
+      (secondThird : TreeSequenceInitialSegment second third) :
+      TreeSequenceInitialSegment first third := firstSecond.trans secondThird
   have treeToFinal :=
     helper_treeToFinal_1111 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hroundLarge)
         (@sigmaPrev) (@originalPrefix) (@hr) (@corr) (@available) (@oldi) (@oldChoice)

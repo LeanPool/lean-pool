@@ -1096,7 +1096,8 @@ theorem helper_finish_4308.{u_1, u_2} :
   -- Elementarity fixes missing sets before the swapped endpoint, even inside its component.
   have missingBefore (v : V) (hv : v ∈ TreeSequenceVertexSet B) (hvb : v ≠ vb) :
       MissingColors G sigma v = MissingColors G phi v := by
-    exact @helper_missingBefore_438 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @SharedFacts.MixedChangeTransport.notMissingBeforeFirstPosition (@V) (@E) inferInstance
+        inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
         (@hne) (@hElementaryY) (@ha) (@hb) (@haY) (@hbY) (@hAib) (@BToY) (@haK) (@behavior)
         (@edgeOfVertex) (@v) (@hv) (@hvb)

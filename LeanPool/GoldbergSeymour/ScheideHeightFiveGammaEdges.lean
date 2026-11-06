@@ -2291,222 +2291,6 @@ private theorem helper_f2_eq_f3_2262.{u_1, u_2} :
       (@hne)
   exact crossing_contra hz2cases hz3cases
 
-private theorem helper_hgamma_alpha_2298.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (_ :
-        ScheideGraphHeight G = (5 : ℕ)) (gamma : Fin k) (g : E) (v : V) (_ : phi g = some gamma),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let r1 : Fin T.length := (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length) ↦
-    by
-              omega
-    ⟩ : Fin T.length);
-    let r2 : Fin T.length := (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length) ↦
-    by
-              omega
-    ⟩ : Fin T.length);
-    let r3 : Fin T.length := (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length) ↦
-    by
-              omega
-    ⟩ : Fin T.length);
-    let a1 : E := T.edge r1;
-    let a2 : E := T.edge r2;
-    let a3 : E := T.edge r3;
-    let q : E := N.closingEdge;
-    ∀ (_ : y0 ≠ y1) (_ : y0 ≠ y2) (_ : y0 ≠ y3) (_ : y0 ≠ y4) (_ : y1 ≠ y2) (_ : y1 ≠ y3) (_ : y1
-        ≠ y4) (_ : y2 ≠ y3) (_ : y2 ≠ y4) (_ : y3 ≠ y4) (_ : G.ends a1 = s(y1, y2)) (_ : G.ends a2
-        = s(y2, y3)) (_ : G.ends a3 = s(y3, y4)) (_ : phi a1 = some N.alpha) (_ : a1 ≠ a2) (_ :
-        phi a2 = some N.beta) (_ : a2 ≠ a3) (_ : phi a3 = some N.alpha) (_ : v ≠ y0) (_ : v ≠ y1)
-        (_ : v ≠ y2) (_ : v ≠ y3) (_ : v ≠ y4) (_ : G.ends g = s(y0, v) ∨ G.ends g = s(y1, v) ∨
-        G.ends g = s(y2, v) ∨ G.ends g = s(y3, v) ∨ G.ends g = s(y4, v)) (p1 :
-        (TwoColorIncidenceGraph G phi gamma N.beta).Walk (Sum.inl (T.vertex (⟨(0 : ℕ),
-        Nat.zero_lt_succ T.length⟩ : Fin (T.length + (1 : ℕ))))) (Sum.inl (T.vertex (⟨(1 : ℕ),
-        Nat.succ_lt_succ T.positive⟩ : Fin (T.length + (1 : ℕ)))))) (_ : p1.IsPath) (_ : (4 : ℕ) ∣
-        p1.length) (_ : p1.length / (2 : ℕ) + (1 : ℕ) ≤ ScheideGraphHeight G),
-    let C1 : Set (V ⊕ E) := TwoColorComponent G phi gamma N.beta (Sum.inl y0);
-    ∀ (_ : Sum.inl y0 ∈ C1) (_ :
-    ∀ {z : V ⊕ E} (_ : z ∈ C1), z ∈ p1.support) (_ :
-    ∀ {x : V} {f : E} (_ : Sum.inl x ∈ C1) (_ : Incident G x f) (_ : phi f = some gamma ∨ phi f =
-        some N.beta), Sum.inr f ∈ C1) (_ :
-    ∀ {f : E} {x : V} (_ : Sum.inr f ∈ C1) (_ : Incident G x f) (_ : phi f = some gamma ∨ phi f =
-        some N.beta), Sum.inl x ∈ C1) (_ : Sum.inr q ∈ C1) (_ : Sum.inl y4 ∈ C1) (_ : Sum.inl y1 ∈
-        C1) (_ : q ≠ a1) (_ : q ≠ a2) (_ : q ≠ a3) (_ : a1 ≠ a3), gamma ≠ N.alpha := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight hGheight gamma g v hgcolor y0 y1 y2 y3 y4 r1 r2 r3 a1
-      a2 a3 q hy01 hy02 hy03 hy04 hy12 hy13 hy14 hy23 hy24 hy34 ha1ends ha2ends ha3ends ha1color
-      ha12ne ha2color ha23ne ha3color hv0' hv1' hv2' hv3' hv4' hgends' p1 hp1 hp1div hp1bound C1
-      hC1root support_of_C1 edge_step_C1 vertex_step_C1 hqC1 hy4C1 hy1C1 hqa1 hqa2 hqa3 ha13ne
-  exact @helper_hgamma_alpha_425 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@hGheight) (@gamma) (@g) (@v) (@hgcolor)
-      (@hy01) (@hy02) (@hy03) (@hy04) (@hy12) (@hy13) (@hy14) (@hy23) (@hy24) (@hy34)
-      (@ha1ends) (@ha2ends) (@ha3ends) (@ha1color) (@ha12ne) (@ha2color) (@ha23ne)
-      (@ha3color) (@hv0') (@hv1') (@hv2') (@hv3') (@hv4') (@hgends') (@p1) (@hp1) (@hp1div)
-      (@hp1bound) (@hC1root) (@support_of_C1) (@edge_step_C1) (@vertex_step_C1) (@hqC1)
-      (@hy4C1) (@hy1C1) (@hqa1) (@hqa2) (@hqa3) (@ha13ne)
-
-private theorem helper_middle_too_large_2342.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (_ :
-        ScheideGraphHeight G = (5 : ℕ)) (gamma : Fin k) (r : E) (w : V) (_ : phi r = some gamma),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let r2 : Fin T.length := (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length) ↦
-    by
-              omega
-    ⟩ : Fin T.length);
-    let a2 : E := T.edge r2;
-    let q : E := N.closingEdge;
-    ∀ (_ : y0 ≠ y1) (_ : y0 ≠ y2) (_ : y0 ≠ y3) (_ : y0 ≠ y4) (_ : y1 ≠ y2) (_ : y1 ≠ y3) (_ : y1
-        ≠ y4) (_ : y2 ≠ y3) (_ : y2 ≠ y4) (_ : y3 ≠ y4) (_ : phi a2 = some N.beta) (p1 :
-        (TwoColorIncidenceGraph G phi gamma N.beta).Walk (Sum.inl (T.vertex (⟨(0 : ℕ),
-        Nat.zero_lt_succ T.length⟩ : Fin (T.length + (1 : ℕ))))) (Sum.inl (T.vertex (⟨(1 : ℕ),
-        Nat.succ_lt_succ T.positive⟩ : Fin (T.length + (1 : ℕ)))))) (_ : p1.IsPath) (_ : (4 : ℕ) ∣
-        p1.length) (_ : p1.length / (2 : ℕ) + (1 : ℕ) ≤ ScheideGraphHeight G),
-    let C1 : Set (V ⊕ E) := TwoColorComponent G phi gamma N.beta (Sum.inl y0);
-    ∀ (_ : Sum.inl y0 ∈ C1) (_ :
-    ∀ {z : V ⊕ E} (_ : z ∈ C1), z ∈ p1.support) (_ :
-    ∀ {x : V} {f : E} (_ : Sum.inl x ∈ C1) (_ : Incident G x f) (_ : phi f = some gamma ∨ phi f =
-        some N.beta), Sum.inr f ∈ C1) (_ : Sum.inr q ∈ C1) (_ : Sum.inl y4 ∈ C1) (_ : Sum.inl y1 ∈
-        C1) (b : E) (_ : Sum.inr b ∈ C1) (_ : q ≠ a2) (_ : w ≠ y0) (_ : w ≠ y1) (_ : w ≠ y2) (_ :
-        w ≠ y3) (_ : w ≠ y4) (_ : Incident G y2 a2) (_ : Incident G y2 r ∨ Incident G y3 r) (_ : b
-        ≠ q) (_ : b ≠ a2) (_ : r ≠ q) (_ : r ≠ a2) (_ : b ≠ r) (_ : Sum.inl y2 ∈ C1) (_ : Sum.inl
-        y3 ∈ C1) (_ : Sum.inl w ∈ C1), False := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight hGheight gamma r w hrcolor y0 y1 y2 y3 y4 r2 a2 q hy01
-      hy02 hy03 hy04 hy12 hy13 hy14 hy23 hy24 hy34 ha2color p1 hp1 hp1div hp1bound C1 hC1root
-      support_of_C1 edge_step_C1 hqC1 hy4C1 hy1C1 b hbC1 hqa2 hw0 hw1 hw2 hw3 hw4 ha2inc2
-      hrmiddle hbq hba2 hrq hra2 hbr hy2C hy3C hwC
-  exact @helper_middle_too_large_561 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@hGheight) (@gamma) (@r) (@w) (@hrcolor)
-      (@hy01) (@hy02) (@hy03) (@hy04) (@hy12) (@hy13) (@hy14) (@hy23) (@hy24) (@hy34)
-      (@ha2color) (@p1) (@hp1) (@hp1div) (@hp1bound) (@hC1root) (@support_of_C1)
-      (@edge_step_C1) (@hqC1) (@hy4C1) (@hy1C1) (@b) (@hbC1) (@hqa2) (@hw0) (@hw1) (@hw2)
-      (@hw3) (@hw4) (@ha2inc2) (@hrmiddle) (@hbq) (@hba2) (@hrq) (@hra2) (@hbr) (@hy2C)
-      (@hy3C) (@hwC)
-
-private theorem helper_f2_eq_f3_2563.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
-        : Fin k) (g : E) (v : V) (_ : phi g = some gamma),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by
-                omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    ∀ (_ : gamma ∈ MissingColors G phi y0) (f2 : E) (_ : Incident G y2 f2) (_ : phi f2 = some
-        gamma) (f3 : E) (_ : Incident G y3 f3) (_ : phi f3 = some gamma) (z2 : V) (_ : G.ends f2 =
-        s(y2, z2)) (z3 : V) (_ : G.ends f3 = s(y3, z3)) (_ : z2 = y0 ∨ z2 = y1 ∨ z2 = y2 ∨ z2 = y3
-        ∨ z2 = y4) (_ : z3 = y0 ∨ z3 = y1 ∨ z3 = y2 ∨ z3 = y3 ∨ z3 = y4) (_ : IsProperEdgeColoring
-        G phi) (_ :
-    ∀ {x : V} {f : E} (_ : gamma ∈ MissingColors G phi x) (_ : Incident G x f), phi f ≠ some
-        gamma) (_ : z2 ≠ y2) (_ : z3 ≠ y3) (_ : z2 ≠ y0) (_ : z3 ≠ y0) (_ : G.ends g = s(y0, v) ∨
-        G.ends g = s(y1, v) ∨ G.ends g = s(y2, v) ∨ G.ends g = s(y3, v) ∨ G.ends g = s(y4, v)) (_
-        : v ≠ y1) (_ : v ≠ y2) (_ : v ≠ y3) (_ : v ≠ y4) (_ : Incident G v g), f2 = f3 := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight gamma g v hgcolor y0 y1 y2 y3 y4 hgamma0 f2 hf2inc
-      hf2color f3 hf3inc hf3color z2 hf2ends z3 hf3ends hz2trunk hz3trunk hproper
-      missing_excludes hz22 hz33 hz20 hz30 hgends' hv1' hv2' hv3' hv4' hgvinc
-  exact @helper_f2_eq_f3_2262 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-      (@e0) (@phi) (@T) (@N) (@hNheight) (@gamma) (@g) (@v) (@hgcolor) (@hgamma0) (@f2)
-      (@hf2inc) (@hf2color) (@f3) (@hf3inc) (@hf3color) (@z2) (@hf2ends) (@z3) (@hf3ends)
-      (@hz2trunk) (@hz3trunk) (@hproper) (@missing_excludes) (@hz22) (@hz33) (@hz20) (@hz30)
-      (@hgends') (@hv1') (@hv2') (@hv3') (@hv4') (@hgvinc)
-
 private theorem helper_continuation_2789.{u_1, u_2} :
     helperContinuation2789Conditions.{u_1, u_2} := by
   classical
@@ -2540,7 +2324,7 @@ private theorem helper_continuation_2789.{u_1, u_2} :
   have hgvinc : Incident G v g := by
     rcases hgends' with h | h | h | h | h <;>
       unfold Incident <;> rw [h] <;> simp
-  have f2_eq_f3 := @helper_f2_eq_f3_2563 (@V) (@E) inferInstance inferInstance inferInstance (@G)
+  have f2_eq_f3 := @helper_f2_eq_f3_2262 (@V) (@E) inferInstance inferInstance inferInstance (@G)
       (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@gamma) (@g) (@v) (@hgcolor) (@hgamma0) (@f2)
       (@hf2inc) (@hf2color) (@f3) (@hf3inc) (@hf3color) (@z2) (@hf2ends) (@z3) (@hf3ends)
       (@hz2trunk) (@hz3trunk) (@hproper) (@missing_excludes) (@hz22) (@hz33) (@hz20) (@hz30)
@@ -2797,7 +2581,7 @@ private theorem helper_caseContinuation_3777.{u_1, u_2} :
     intro h
     exact (show r1 ≠ r3 by simp [r1, r3])
       (T.edge_injective (by simpa [a1, a3] using h))
-  have hgamma_alpha := @helper_hgamma_alpha_2298 (@V) (@E) inferInstance inferInstance inferInstance
+  have hgamma_alpha := @helper_hgamma_alpha_425 (@V) (@E) inferInstance inferInstance inferInstance
       (@G) (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@hGheight) (@gamma) (@g) (@v) (@hgcolor) (@hy01)
       (@hy02) (@hy03) (@hy04) (@hy12) (@hy13) (@hy14) (@hy23) (@hy24) (@hy34) (@ha1ends) (@ha2ends)
       (@ha3ends) (@ha1color) (@ha12ne) (@ha2color) (@ha23ne) (@ha3color) (@hv0') (@hv1') (@hv2')
@@ -2837,7 +2621,7 @@ private theorem helper_caseContinuation_3777.{u_1, u_2} :
     exact hgamma_beta (Option.some.inj hrcolor.symm)
   have hbr := @helper_hbr_549 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
       (@phi) (@T) (@N) (@hNheight) (@r) (@w) (@hy12) (@hy13) (@b) (@hbinc) (@hrends') (@hw1)
-  have middle_too_large := @helper_middle_too_large_2342 (@V) (@E) inferInstance inferInstance
+  have middle_too_large := @helper_middle_too_large_561 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@hGheight) (@gamma) (@r) (@w)
       (@hrcolor) (@hy01) (@hy02) (@hy03) (@hy04) (@hy12) (@hy13) (@hy14) (@hy23) (@hy24) (@hy34)
       (@ha2color) (@p1) (@hp1) (@hp1div) (@hp1bound) (@hC1root) (@support_of_C1) (@edge_step_C1)

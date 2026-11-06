@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseStepLemmas
 
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
@@ -3132,18 +3133,9 @@ theorem helper_hrightOutside_3985.{u_1, u_2} :
       x componentPath u exitPath zPosition u0 exitPath0 zPosition0 uPosition huPositionPositive
       huPositionBound hzPositionPositive hzPositionBound U Z M hleftSegment n hnU hnM j i
       hvertexMZ hmem
-  simp only [TreeSequenceVertexSet, Finset.mem_image,
-    Finset.mem_univ, true_and] at hmem
-  obtain ⟨a, ha⟩ := hmem
-  have hmvertex : M.vertex
-        (Fin.castLE (Nat.succ_le_succ hleftSegment.1) a) =
-      U.vertex a := hleftSegment.2.1 a
-  have heq : M.vertex j.succ = M.vertex
-      (Fin.castLE (Nat.succ_le_succ hleftSegment.1) a) :=
-    hvertexMZ.trans (ha.symm.trans hmvertex.symm)
-  have hindex := congrArg Fin.val (M.vertex_injective heq)
-  simp [j] at hindex
-  omega
+  apply hleftSegment.vertex_not_mem_after (position := j.succ)
+    (by change U.length < n + 1; omega)
+  rwa [hvertexMZ]
 
 theorem helper_hvFinal_2051.{u_1, u_2} :
     open scoped Classical in

@@ -7,7 +7,6 @@ module
 
 public import LeanPool.GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
 
-public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseOneData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeOneData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTrees

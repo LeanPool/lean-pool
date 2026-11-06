@@ -285,6 +285,7 @@ public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
 public import LeanPool.GoldbergSeymour.HierarchyTailPrefix
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColorsSubsetLast
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
 public import LeanPool.GoldbergSeymour.HkuIncidentColorPreserved
 public import LeanPool.GoldbergSeymour.HkuMissingStoredMonotone
@@ -533,6 +534,7 @@ public import LeanPool.GoldbergSeymour.ScheideTwoColorLastExitPath
 public import LeanPool.GoldbergSeymour.SharedFacts.BaseControl
 public import LeanPool.GoldbergSeymour.SharedFacts.Basic2TerminalPE
 public import LeanPool.GoldbergSeymour.SharedFacts.ChangeLemmaBothOutsidePreparation1
+public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaRoutes
 public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaTransport
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseClaim45Singleton
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseStepLemmas
@@ -542,12 +544,12 @@ public import LeanPool.GoldbergSeymour.SharedFacts.FirstSubcaseTransport
 public import LeanPool.GoldbergSeymour.SharedFacts.FullTailTransport
 public import LeanPool.GoldbergSeymour.SharedFacts.GoodHierarchyPrefixPreparation
 public import LeanPool.GoldbergSeymour.SharedFacts.InsideAdvancement
-public import LeanPool.GoldbergSeymour.SharedFacts.LargestClosedTransport
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation1
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation2
 public import LeanPool.GoldbergSeymour.SharedFacts.OutsideAdvancement
 public import LeanPool.GoldbergSeymour.SharedFacts.ParallelSupportClosureProperties
+public import LeanPool.GoldbergSeymour.SharedFacts.ReplacementPrefixes
 public import LeanPool.GoldbergSeymour.SharedFacts.RevisitingTerminalPreparation
 public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDefectiveNoCross
 public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDefectiveThirdBoundaryEdge

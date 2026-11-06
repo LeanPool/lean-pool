@@ -231,66 +231,6 @@ private theorem helper_hstableR_473.{u_1, u_2} :
     exact hrecoveredStable.2 x
       (TreeSequenceInitialSegmentVertexSetSubset hRTerminal hx)
 
-private theorem helper_hfirstLower_518.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds),
-    let _ : DecidableEq V := Classical.decEq V;
-    ∀ (v : V) (_ : v ∈ TreeSequenceVertexSet T) (q : Fin ett.rounds) (hqBefore : (↑q : ℕ) + (1 :
-        ℕ) < ett.rounds),
-    let r : ℕ := ett.rounds - (1 : ℕ);
-    ∀ (hrBefore : r < ett.rounds) (_ : v ∈ TreeSequenceVertexSet (ett.series.data.tree (⟨(↑q : ℕ)
-        + (1 : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ))))) (lower : ExtendedTashkinovTree G k e0 input
-        (ett.series.data.tree (⟨r + (1 : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) (ett.series.data.coloring (⟨r,
-    by omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))) (hr : lower.rounds = r) (_ : (
-    ∀ (i : Fin (lower.rounds + (2 : ℕ))), lower.series.data.tree i = ett.series.data.tree
-        (Fin.castLE (
-    by omega
-    ) i))) (hvLower : v ∈ TreeSequenceVertexSet (ett.series.data.tree (⟨r + (1 : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ))))),
-    let qLower : Fin lower.rounds := (⟨(↑q : ℕ),
-    by omega
-    ⟩ : Fin lower.rounds); ETTFirstAppearanceIndex lower v hvLower ≤ (↑qLower : ℕ) + (1 : ℕ) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive this v hvFinal q hqBefore r hrBefore
-      hvAtQ lower hr htree hvLower qLower
-  unfold ETTFirstAppearanceIndex
-  dsimp
-  have hqTreeCast : Fin.castLE (by omega) qLower.succ.castSucc =
-      (⟨q.val + 1, by omega⟩ : Fin (ett.rounds + 2)) := by
-    apply Fin.ext
-    rfl
-  have hmem : qLower.castSucc ∈
-      Finset.univ.filter
-        (fun i : Fin (lower.rounds + 1) =>
-          v ∈ TreeSequenceVertexSet
-            (ExtendedTashkinovLadderStage lower i)) := by
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [show ExtendedTashkinovLadderStage lower qLower.castSucc =
-        lower.series.data.tree qLower.succ.castSucc by
-      unfold ExtendedTashkinovLadderStage
-      exact @Fin.lastCases_castSucc lower.rounds
-        (fun _ : Fin (lower.rounds + 1) => TreeSequence G e0)
-        (ett.series.data.tree ⟨r + 1, by omega⟩)
-        (fun j => lower.series.data.tree j.succ.castSucc) qLower]
-    rw [htree qLower.succ.castSucc, hqTreeCast]
-    exact hvAtQ
-  have hle := Finset.min'_le
-    (Finset.univ.filter
-      (fun i : Fin (lower.rounds + 1) =>
-        v ∈ TreeSequenceVertexSet
-          (ExtendedTashkinovLadderStage lower i))) qLower.castSucc hmem
-  have hnat := Fin.le_iff_val_le_val.mp hle
-  simpa [qLower] using Nat.succ_le_succ hnat
-
 private theorem helper_continuation_618.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -466,9 +406,14 @@ private theorem helper_continuation_618.{u_1, u_2} :
       some vi := by
     rw [hqVertex, hqCast]
     exact hchosen
-  have hfirstLower :=
-    @helper_hfirstLower_518 V E inferInstance inferInstance inferInstance G k e0 input T
-        generating ett hpositive v hvFinal q hqBefore hrBefore hvAtQ lower hr htree hvLower
+  have hfirstLower : ETTFirstAppearanceIndex lower v hvLower ≤ qLower.val + 1 := by
+    apply ETTFirstAppearanceIndex.le_of_series_mem lower v hvLower qLower
+    have castEqual : Fin.castLE (by omega) qLower.succ.castSucc =
+        (⟨q.val + 1, by omega⟩ : Fin (ett.rounds + 2)) := by
+      apply Fin.ext
+      rfl
+    rw [htree qLower.succ.castSucc, castEqual]
+    exact hvAtQ
   have hdefectiveLower : DefectiveColor G recovered
       (TreeSequenceVertexSet (lower.series.data.tree nLower.castSucc))
       delta := by

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+
+
 public import LeanPool.GoldbergSeymour.SharedFacts.BaseControl
 
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
@@ -240,112 +242,6 @@ private abbrev helperContinuation1245Conditions.{u_1, u_2} : Prop :=
         TreeMissingColors phi (HierarchyStarredStage H r) → TreeColorSetClosed G phi
         (HierarchyStarredStage H r) ({ c } : Finset (Fin k)) → OutsideKempeRecoloring
         (HierarchyStarredStage H r) phi sigma alpha beta
-
-private theorem helper_starChain_162.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy; (
-    ∀ {U W Z : TreeSequence G e0}, TreeSequenceInitialSegment U W → TreeSequenceInitialSegment W Z
-        → TreeSequenceInitialSegment U Z) → (
-    ∀ (j : ℕ) (hj : j < H.dividerCount + (2 : ℕ)) (i : Fin (H.dividerCount + (2 : ℕ))), (↑i : ℕ) ≤
-        j → TreeSequenceInitialSegment (H.stage i) (H.stage (⟨j, hj⟩ : Fin (H.dividerCount + (2 :
-        ℕ))))) → (
-    ∀ (r : Fin (H.dividerCount + (1 : ℕ))), TreeSequenceInitialSegment (HierarchyStarredStage H r)
-        (H.stage r.succ)) →
-    ∀ (r s : Fin (H.dividerCount + (1 : ℕ))), r ≤ s → TreeSequenceInitialSegment
-        (HierarchyStarredStage H r) (HierarchyStarredStage H s) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H trans stageChain starStage r s hrs
-  by_cases heq : r = s
-  · subst s
-    exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  · have hrlt : r.val < s.val := by
-      have := Fin.le_iff_val_le_val.mp hrs
-      have : r.val ≠ s.val := fun h => heq (Fin.ext h)
-      omega
-    have hs : s ≠ 0 := by intro hs; subst s; simp at hrlt
-    have hstar : HierarchyStarredStage H s = H.stage s.castSucc := by
-      rw [← Fin.succ_pred s hs]
-      rfl
-    rw [hstar]
-    exact trans (starStage r)
-      (stageChain s.val (by omega) r.succ (by simp; omega))
-
-private theorem helper_hATy_184.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let Ty : TreeSequence G e0 := TreeSequencePrefix T (min (A.length + (T.length - A.length - (1
-        : ℕ))) T.length) (
-    have hA : (1 : ℕ) ≤ A.length := A.positive;
-    have hT : (1 : ℕ) ≤ T.length := T.positive; Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ min
-        (A.length + (T.length - A.length - (1 : ℕ))) T.length) ↦
-    by omega
-    ) (
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := GoldbergSeymour.TreeSequence.positive A
-          omega
-    ); TreeSequenceInitialSegment A T → TreeSequenceInitialSegment A Ty := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A Ty hAT
-  have hlen : A.length ≤ Ty.length := by
-    change A.length ≤ min (A.length + ((T.length - A.length) - 1)) T.length
-    exact Nat.le_min.mpr ⟨Nat.le_add_right _ _, hAT.1⟩
-  refine ⟨hlen, ?_, ?_⟩
-  · intro j
-    change T.vertex _ = A.vertex j
-    exact hAT.2.1 j
-  · intro j
-    change T.edge _ = A.edge j
-    exact hAT.2.2 j
-
-private theorem helper_missingFirst_210.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let Ty : TreeSequence G e0 :=
-      TreeSequencePrefix T (min (A.length + (T.length - A.length - (1 : ℕ))) T.length)
-        (have hA : (1 : ℕ) ≤ A.length := A.positive;
-        have hT : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction
-          fun (a : ¬(1 : ℕ) ≤ min (A.length + (T.length - A.length - (1 : ℕ))) T.length) ↦
-          by omega)
-        (by
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := GoldbergSeymour.TreeSequence.positive A
-          omega);
-    TreeSequenceInitialSegment Ty T →
-    ∀ c ∈ TreeMissingColors phi Ty,
-    c ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T c)) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A Ty hTyT c hc
-  obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-  have hvT := TreeSequenceInitialSegmentVertexSetSubset hTyT hv
-  obtain ⟨j, hj⟩ : ∃ j, T.vertex j = v := by
-    simpa [TreeSequenceVertexSet] using hvT
-  let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-    c ∈ MissingColors G phi (T.vertex j)
-  have hcandidates : candidates.Nonempty := by
-    refine ⟨j, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
-    simpa [hj] using hcv
-  unfold HierarchyFirstMissingPosition
-  rw [dite_eq_left hcandidates]
-  exact (Finset.mem_filter.mp (Finset.min'_mem candidates hcandidates)).2
 
 private theorem helper_pathMissing_230.{u_1, u_2} :
     open scoped Classical in
@@ -1496,24 +1392,13 @@ theorem P2813_T1_BaseControl {V E : Type*}
   have stageChain := @SharedFacts.BaseControl.stageChain (@V) (@E) inferInstance inferInstance
       inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@trans)
-  have starStage (r : Fin (H.dividerCount + 1)) :
-      TreeSequenceInitialSegment (HierarchyStarredStage H r)
-        (H.stage r.succ) := by
-    clear * - H r
-    refine Fin.cases ?_ (fun i => ?_) r
-    · exact H.coreInsideFirst
-    · exact H.nested i.succ
-  have starChain := @helper_starChain_162 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@trans) (@stageChain)
-      (@starStage)
-  have hAT : TreeSequenceInitialSegment A T := by
-    have hh := starStage q
-    have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
-    simpa [hlast, H.terminalStage] using hh
-  have hATy := @helper_hATy_184 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hAT)
+  have starChain := H.starredStageInitialSegmentOfLE
+  have hAT : TreeSequenceInitialSegment A T := H.lastStarredInitialSegment
   have hTyT : TreeSequenceInitialSegment Ty T :=
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
+  have hATy : TreeSequenceInitialSegment A Ty := hTyT.of_common_extension hAT (by
+    change A.length ≤ min (A.length + ((T.length - A.length) - 1)) T.length
+    exact Nat.le_min.mpr ⟨Nat.le_add_right _ _, hAT.1⟩)
   have helemA : ColoredVertexSetElementary G phi (TreeSequenceVertexSet A) := by
     intro u hu v hv hne'
     exact hprefixElementary
@@ -1526,8 +1411,9 @@ theorem P2813_T1_BaseControl {V E : Type*}
       (starChain r q (Fin.le_last r))
     intro u hu v hv hne'
     exact helemA (hsub hu) (hsub hv) hne'
-  have missingFirst := @helper_missingFirst_210 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hTyT)
+  have missingFirst (color : Fin k) (member : color ∈ TreeMissingColors phi Ty) :
+      color ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T color)) :=
+    TreeSequenceFirstMissingPositionMemOfMissing (hTyT.treeMissingColors_subset member)
   have haMissing : alpha ∈ MissingColors G phi a :=
     missingFirst alpha hmissingPrefix.1
   have hbMissing : beta ∈ MissingColors G phi b :=

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.ExtensionBaseStepLemmas
+
 public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
 public import LeanPool.GoldbergSeymour.EarlierPECycleFirstNonrevisitingInternal
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
@@ -104,37 +106,6 @@ private abbrev helperContinuation1661Conditions.{u_1, u_2} : Prop :=
         TwoColorIncidenceGraph G (ett.series.data.coloring r.succ) gammaR choiceR.color =
         TwoColorIncidenceGraph G secondStableR gammaR choiceR.color → Disjoint
         (ett.series.data.stored q.succ) (ett.series.data.stored r.succ)
-
-private theorem helper_segmentTrans_108.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B
-        C → TreeSequenceInitialSegment A C := by
-  classical
-  intro V E G e0 A B C hAB hBC
-  rcases hAB with ⟨hab, hvab, heab⟩
-  rcases hBC with ⟨hbc, hvbc, hebc⟩
-  refine ⟨hab.trans hbc, ?_, ?_⟩
-  · intro i
-    simpa using (hvbc (Fin.castLE (Nat.succ_le_succ hab) i)).trans (hvab i)
-  · intro i
-    simpa using (hebc (Fin.castLE hab i)).trans (heab i)
-
-private theorem helper_stepSegment_119.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (i : Fin (ett.rounds + (1 : ℕ))), (0 : ℕ) < (↑i : ℕ) →
-        TreeSequenceInitialSegment (ett.series.data.tree i.castSucc) (ett.series.data.tree i.succ)
-  := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett i hi
-  cases ett.series.certified i with
-  | initial => simp at hi
-  | SE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-  | PE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-  | RE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
 
 private theorem helper_stageToStage_128.{u_1, u_2} :
     open scoped Classical in
@@ -1752,7 +1723,8 @@ theorem ExtensionRulesTerminalStoredDisjoint {V E : Type*}
       TreeSequenceInitialSegment A C := by
     apply TreeSequenceInitialSegment.trans <;> assumption
   have stepSegment :=
-    @helper_stepSegment_119 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
+    @_root_.GoldbergSeymour.ExtensionBaseProof.helper_stepSegment_2099 (@V) (@E) inferInstance
+        inferInstance inferInstance (@G) (@k) (@e0)
         (@input) (@T) (@generating) (@ett)
   have stageToStage := @helper_stageToStage_128 (@V) (@E) inferInstance inferInstance inferInstance
       (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@vn) (@vr) (@hvn) (@hvr) (@segmentRefl)

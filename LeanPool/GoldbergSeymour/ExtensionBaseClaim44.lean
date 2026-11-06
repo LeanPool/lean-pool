@@ -1161,105 +1161,6 @@ private theorem helper_hsequenceInitialSegment_1207.{u_1, u_2} :
   | @head A D hstep htail ih =>
       exact hinitialSegmentTrans hstep.2.1 ih
 
-private theorem helper_branch_1233.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E]
-        {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k}
-        {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett :
-        ExtendedTashkinovTree G k e0 input T generating),
-    ∀ terminalSupport ∈ TreeSequenceVertexSet T,
-    ∀ (jSlot : Fin ett.rounds) (rho1 : PartialEdgeColoring E k) (u : V) (TjPrime seed :
-        TreeSequence G e0) (terminalPosition : Fin ((ett.series.data.tree
-        jSlot.succ.castSucc).length + (1 : ℕ))) (hterminalPositionPositive : (1 : ℕ) ≤
-        (↑terminalPosition : ℕ)), seed = TreeSequencePrefix (ett.series.data.tree
-        jSlot.succ.castSucc) (↑terminalPosition : ℕ) hterminalPositionPositive (
-    by omega
-    ) →
-    ∀ (huPrime : u ∈ TreeSequenceVertexSet TjPrime) (p : ℕ) (indices : Fin (p + (1 : ℕ)) → Fin
-        ett.rounds) (_ _ : Fin (p + (1 : ℕ)) → Fin k) (b : Fin (p + (1 : ℕ))) (trace :
-        ExtensionBaseAlgorithmBTrace ett terminalSupport rho1 u p indices b), TashkinovClosure
-        rho1 seed TjPrime → (
-    ∀ (a : Fin trace.steps) (f : E) (c : Fin k), c ≠ trace.gamma a → c ≠ trace.delta a →
-        (trace.coloring a.succ f = some c ↔ trace.coloring a.castSucc f = some c)) → (
-    ∀ (a : Fin trace.steps) {v : V}, v ∈ TreeVerticesBefore TjPrime u huPrime → trace.gamma a ∉
-        MissingColors G rho1 v ∧ trace.delta a ∉ MissingColors G rho1 v) → (
-    ∀ (n : Fin (trace.steps + (1 : ℕ))) (q : Fin (ett.series.data.tree
-        jSlot.succ.castSucc).length), trace.coloring n ((ett.series.data.tree
-        jSlot.succ.castSucc).edge q) = rho1 ((ett.series.data.tree jSlot.succ.castSucc).edge q)) →
-        (
-    ∀ {A B : TreeSequence G e0}, TashkinovAugmentationSequence rho1 A B →
-        TreeSequenceInitialSegment A B) → (
-    ∀ {B : TreeSequence G e0}, TashkinovAugmentationSequence rho1 seed B →
-    ∀ (a : Fin B.length), seed.length ≤ (↑a : ℕ) →
-    ∃ (i : Fin (B.length + (1 : ℕ))), (↑i : ℕ) ≤ (↑a : ℕ) ∧
-    ∃ (c : Fin k), rho1 (B.edge a) = some c ∧ c ∈ MissingColors G rho1 (B.vertex i)) →
-    ∀ (f : E), ((
-    ∃ (a : Fin (ett.series.data.tree jSlot.succ.castSucc).length), (ett.series.data.tree
-        jSlot.succ.castSucc).edge a = f) ∨
-    ∃ (a : Fin TjPrime.length) (z : Fin (TjPrime.length + (1 : ℕ))), TjPrime.vertex z = u ∧ (↑a :
-        ℕ) < (↑z : ℕ) ∧ TjPrime.edge a = f) → trace.coloring (Fin.last trace.steps) f = rho1 f := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett terminalSupport hterminalSupport jSlot rho1 u
-      TjPrime seed terminalPosition hterminalPositionPositive hseed huPrime p indices gamma delta
-      b trace hclosure hunaffectedValue hprefixColorsNotMissing hstageEdgesPreserved
-      hsequenceInitialSegment haugmentationEdgeMissing
-  exact @helper_branch_851 V E inferInstance inferInstance inferInstance G k e0 input T
-    generating ett terminalSupport hterminalSupport jSlot rho1 u TjPrime seed terminalPosition
-    hterminalPositionPositive hseed huPrime p indices gamma delta b trace hclosure
-    hunaffectedValue hprefixColorsNotMissing hstageEdgesPreserved hsequenceInitialSegment
-    haugmentationEdgeMissing
-
-private theorem helper_branch_1767.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E]
-        {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k}
-        {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett :
-        ExtendedTashkinovTree G k e0 input T generating),
-    ∀ terminalSupport ∈ TreeSequenceVertexSet T,
-    ∀ (jSlot : Fin ett.rounds) (rho1 : PartialEdgeColoring E k) (u : V) (TjPrime seed :
-        TreeSequence G e0) (terminalPosition : Fin ((ett.series.data.tree
-        jSlot.succ.castSucc).length + (1 : ℕ))) (hterminalPositionPositive : (1 : ℕ) ≤
-        (↑terminalPosition : ℕ)), seed = TreeSequencePrefix (ett.series.data.tree
-        jSlot.succ.castSucc) (↑terminalPosition : ℕ) hterminalPositionPositive (
-    by
-            have := GoldbergSeymour.TreeSequence.positive T
-            omega
-    ) →
-    ∀ (huPrime : u ∈ TreeSequenceVertexSet TjPrime) (p : ℕ) (indices : Fin (p + (1 : ℕ)) → Fin
-        ett.rounds) (_ _ : Fin (p + (1 : ℕ)) → Fin k) (b : Fin (p + (1 : ℕ))) (trace :
-        ExtensionBaseAlgorithmBTrace ett terminalSupport rho1 u p indices b), TashkinovClosure
-        rho1 seed TjPrime → (
-    ∀ (a : Fin trace.steps) (f : E) (c : Fin k), c ≠ trace.gamma a → c ≠ trace.delta a →
-        (trace.coloring a.succ f = some c ↔ trace.coloring a.castSucc f = some c)) → (
-    ∀ (a : Fin trace.steps) {v : V}, v ∈ TreeVerticesBefore TjPrime u huPrime → trace.gamma a ∉
-        MissingColors G rho1 v ∧ trace.delta a ∉ MissingColors G rho1 v) → (
-    ∀ (n : Fin (trace.steps + (1 : ℕ))) (q : Fin (ett.series.data.tree
-        jSlot.succ.castSucc).length), trace.coloring n ((ett.series.data.tree
-        jSlot.succ.castSucc).edge q) = rho1 ((ett.series.data.tree jSlot.succ.castSucc).edge q)) →
-        (
-    ∀ {A B : TreeSequence G e0}, TashkinovAugmentationSequence rho1 A B →
-        TreeSequenceInitialSegment A B) → (
-    ∀ {B : TreeSequence G e0}, TashkinovAugmentationSequence rho1 seed B →
-    ∀ (a : Fin B.length), seed.length ≤ (↑a : ℕ) →
-    ∃ (i : Fin (B.length + (1 : ℕ))), (↑i : ℕ) ≤ (↑a : ℕ) ∧
-    ∃ (c : Fin k), rho1 (B.edge a) = some c ∧ c ∈ MissingColors G rho1 (B.vertex i)) →
-    ∀ (f : E), ((
-    ∃ (a : Fin (ett.series.data.tree jSlot.succ.castSucc).length), (ett.series.data.tree
-        jSlot.succ.castSucc).edge a = f) ∨
-    ∃ (a : Fin TjPrime.length) (z : Fin (TjPrime.length + (1 : ℕ))), TjPrime.vertex z = u ∧ (↑a :
-        ℕ) < (↑z : ℕ) ∧ TjPrime.edge a = f) → trace.coloring (Fin.last trace.steps) f = rho1 f := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett terminalSupport hterminalSupport jSlot rho1 u
-      TjPrime seed terminalPosition hterminalPositionPositive hseed huPrime p indices gamma delta
-      b trace hclosure hunaffectedValue hprefixColorsNotMissing hstageEdgesPreserved
-      hsequenceInitialSegment haugmentationEdgeMissing
-  exact @helper_branch_1233 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-    (@input) (@T) (@generating) (@ett) (@terminalSupport) (@hterminalSupport) (@jSlot) (@rho1)
-    (@u) (@TjPrime) (@seed) (@terminalPosition) (@hterminalPositionPositive) (@hseed)
-    (@huPrime) (@p) (@indices) (@gamma) (@delta) (@b) (@trace) (@hclosure) (@hunaffectedValue)
-    (@hprefixColorsNotMissing) (@hstageEdgesPreserved) (@hsequenceInitialSegment)
-    (@haugmentationEdgeMissing)
-
 private theorem helper_hpositionBelowAnti_1591.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E]
@@ -1511,7 +1412,7 @@ private theorem helper_continuation_1854.{u_1, u_2} :
   constructor
   · intro v hv
     exact hmissingPreserved (Fin.last trace.steps) v hv
-  · exact @helper_branch_1767 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
+  · exact @helper_branch_851 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
       (@input) (@T) (@generating) (@ett) (@terminalSupport) (@hterminalSupport) (@jSlot) (@rho1)
       (@u) (@TjPrime) (@seed) (@terminalPosition) (@hterminalPositionPositive) (@hseed)
       (@huPrime) (@p) (@indices) (@gamma) (@delta) (@b) (@trace) (@hclosure) (@hunaffectedValue)

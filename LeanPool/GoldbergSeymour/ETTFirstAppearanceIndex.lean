@@ -39,6 +39,30 @@ noncomputable def ETTFirstAppearanceIndex {V E : Type*} [Fintype V] [Fintype E] 
     exact hv
   exact (candidates.min' ⟨Fin.last ett.rounds, hlast⟩).val + 1
 
+/-- A vertex already present in a nonterminal ladder stage appears no later than that stage. -/
+theorem ETTFirstAppearanceIndex.le_of_series_mem {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input generating : PartialEdgeColoring E k}
+    {tree : TreeSequence G e0} (ett : ExtendedTashkinovTree G k e0 input tree generating)
+    (vertex : V) (member : vertex ∈ TreeSequenceVertexSet tree) (index : Fin ett.rounds)
+    (stageMember : vertex ∈ TreeSequenceVertexSet (ett.series.data.tree index.succ.castSucc)) :
+    ETTFirstAppearanceIndex ett vertex member ≤ index.val + 1 := by
+  classical
+  unfold ETTFirstAppearanceIndex
+  dsimp
+  have candidate : index.castSucc ∈ Finset.univ.filter
+      (fun position : Fin (ett.rounds + 1) =>
+        vertex ∈ TreeSequenceVertexSet (ExtendedTashkinovLadderStage ett position)) := by
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    rw [show ExtendedTashkinovLadderStage ett index.castSucc =
+        ett.series.data.tree index.succ.castSucc by
+      unfold ExtendedTashkinovLadderStage
+      exact @Fin.lastCases_castSucc ett.rounds
+        (fun _ : Fin (ett.rounds + 1) => TreeSequence G e0) tree
+        (fun index => ett.series.data.tree index.succ.castSucc) index]
+    exact stageMember
+  exact Nat.succ_le_succ (Fin.le_iff_val_le_val.mp (Finset.min'_le _ _ candidate))
+
 end GoldbergSeymour
 
 end

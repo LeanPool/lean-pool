@@ -1989,131 +1989,6 @@ private theorem helper_pathLE_1072.{u_1, u_2} :
   · exact le_trans (Finset.min'_le newCandidates ellB hnewMem) (Nat.le_of_lt
       (Nat.lt_of_not_ge hr))
 
-private theorem helper_hcombined_1980.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-        IsProperEdgeColoring G phi → IsOneEdgeUncolored phi e0 → LowerRoundInductionHypothesis G k
-        e0 ett.rounds →
-    ∀ (alpha beta : Fin k), (
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n; H.dividerCount = (0 : ℕ) ∧
-        ¬TreeColorSetClosed G phi A ({ alpha } : Finset (Fin k)) ∧ (alpha ∈ TreeMissingColors phi
-        Tn ∨ Disjoint (insert alpha ({ beta } : Finset (Fin k)) : Finset (Fin k)) Dn)) →
-    let A : TreeSequence G e0 := base.core;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    let ia : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T alpha;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    let va : V := T.vertex ia;
-    let vb : V := T.vertex ib;
-    let Ty : TreeSequence G e0 := TreeSequencePrefix T (min (A.length + (T.length - A.length - (1
-        : ℕ))) T.length) (
-    have this : (1 : ℕ) ≤ A.length := A.positive;
-    have this_1 : (1 : ℕ) ≤ T.length := T.positive; Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤
-        min (A.length + (T.length - A.length - (1 : ℕ))) T.length) ↦
-    by omega
-    ) (
-    by
-        have := GoldbergSeymour.TreeSequence.positive T
-        have := GoldbergSeymour.TreeSequence.positive A
-        omega
-    ); (alpha ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T alpha)) ∧
-        (↑(HierarchyFirstMissingPosition phi T alpha) : ℕ) ≤ Ty.length ∧
-    ∀ (j : Fin (T.length + (1 : ℕ))), alpha ∈ MissingColors G phi (T.vertex j) →
-        (↑(HierarchyFirstMissingPosition phi T alpha) : ℕ) ≤ (↑j : ℕ)) → ett.series.data.kind n =
-        some TashkinovExtensionKind.PE → TreeSequenceInitialSegment Tn A → TreeSequenceVertexSet
-        base.closure ⊆ TreeSequenceVertexSet A → CombinedStableColoring Tn base.closure Dn phi phi
-        → va ∈ TreeSequenceVertexSet Tn ∧ va ∉ TreeSequenceVertexSet base.closure ∨ va ∈
-        TreeSequenceVertexSet base.closure ∧ va ∉ TreeSequenceVertexSet Tn →
-    let root : V ⊕ E := Sum.inl vb;
-    let sigma : PartialEdgeColoring E k := TwoColorComponentSwap G phi alpha beta root;
-    let component : Set (V ⊕ E) := TwoColorComponent G phi alpha beta root; (
-    ∀ (X : TreeSequence G e0), TreeSequenceVertexSet X ⊆ TreeSequenceVertexSet A → va ∉
-        TreeSequenceVertexSet X → alpha ∉ TreeMissingColors phi X ∧ beta ∉ TreeMissingColors phi
-        X) → (
-    ∀ (X : TreeSequence G e0) (D : Finset (Fin k)), alpha ∉ TreeMissingColors phi X → beta ∉
-        TreeMissingColors phi X → alpha ∉ D → beta ∉ D → StableColoring X D phi sigma) → (
-    ∀ (X : TreeSequence G e0) (D : Finset (Fin k)), (
-    ∀ v ∈ TreeSequenceVertexSet X, Sum.inl v ∉ component) → StableColoring X D phi sigma) → (
-    ∀ (X : TreeSequence G e0), va ∈ TreeSequenceVertexSet X → TreeInterchangeable G X phi alpha
-        beta →
-    ∀ v ∈ TreeSequenceVertexSet X, Sum.inl v ∉ component) → CombinedStableColoring Tn base.closure
-        Dn phi sigma := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hproper hone hlower alpha beta hbranch A n Tn
-      Dn ia ib va vb Ty ha terminalPE hTnA hRA hidentity hsplit root sigma component noMissing
-      stableNoMissing stableOutside outsideFromInterchange
-  exact helper_hcombined_604 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper)
-      (@hone) (@hlower) (@alpha) (@beta) (@hbranch) (@ha) (@terminalPE) (@hTnA) (@hRA)
-      (@hidentity) (@hsplit) (@noMissing) (@stableNoMissing) (@stableOutside)
-      (@outsideFromInterchange)
-
-private theorem helper_hnotMinus_2199.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (_ : HierarchyCounterexample base),
-        LowerRoundInductionHypothesis G k e0 ett.rounds →
-    ∀ (alpha beta : Fin k),
-    let A : TreeSequence G e0 := base.core;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    let ia : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T alpha;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    let va : V := T.vertex ia;
-    let vb : V := T.vertex ib; va ∈ TreeSequenceVertexSet A → beta ∉ TreeMissingColors phi A →
-        alpha ∈ TreeMissingColors phi A → ett.series.data.kind n = some TashkinovExtensionKind.PE
-        → TwoColorPathComponent G phi alpha beta (Sum.inl va) → TwoColorPathComponent G phi alpha
-        beta (Sum.inl vb) → ¬TwoColorComponent G phi alpha beta (Sum.inl va) = TwoColorComponent G
-        phi alpha beta (Sum.inl vb) →
-    let root : V ⊕ E := Sum.inl vb;
-    let sigma : PartialEdgeColoring E k := TwoColorComponentSwap G phi alpha beta root;
-    let component : Set (V ⊕ E) := TwoColorComponent G phi alpha beta root; IsProperEdgeColoring G
-        sigma → IsOneEdgeUncolored sigma e0 → (
-    ∀ (f : E) (v : V), Incident G v f → phi f = some alpha ∨ phi f = some beta → Sum.inr f ∈
-        component → Sum.inl v ∈ component) → TwoColorIncidenceGraph G sigma alpha beta =
-        TwoColorIncidenceGraph G phi alpha beta → (
-    ∀ (z : V ⊕ E), TwoColorComponent G sigma alpha beta z = TwoColorComponent G phi alpha beta z)
-        → CombinedStableColoring Tn base.closure Dn phi sigma →
-    ∀ (hAib : A.length < (↑ib : ℕ)),
-    let B : TreeSequence G e0 := TreeSequencePrefix T (↑ib : ℕ) (
-    have this : (1 : ℕ) ≤ A.length := A.positive; Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤
-        (↑ib : ℕ)) ↦
-    by omega
-    ) (
-    by
-        have := GoldbergSeymour.TreeSequence.positive T
-        omega
-    ); TreeMissingColors sigma A = TreeMissingColors phi A →
-    ∀ (ettB : ExtendedTashkinovTree G k e0 input B phi) (baseB : HierarchyBase ettB phi),
-        baseB.core = base.core →
-    ∀ (HB : TashkinovHierarchy ettB baseB) (goodB : GoodHierarchy HB), ettB.series.data.tree
-        (Fin.last ettB.rounds).castSucc = Tn ∧ TashkinovStoredColors ettB.series.data (Fin.last
-        ettB.rounds) = Dn ∧ ettB.series.data.kind (Fin.last ettB.rounds) = some
-        TashkinovExtensionKind.PE →
-    let reserved : Finset (Fin k) := (HierarchyStoredColorsAt HB (0 : Fin (HB.dividerCount + (1 :
-        ℕ)))).biUnion (goodB.gamma (0 : Fin (HB.dividerCount + (1 : ℕ))));
-        ¬TreeColorSetMinusClosed G sigma A reserved := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hlower alpha beta A n Tn Dn ia ib va vb hvaA
-      hbetaA halphaA terminalPE hpathA hpathB hdistinct root sigma component hsProper hsOne
-      edgeVertex hgraph hcomponents hcombined hAib B hmissingTreeA ettB baseB hcoreB HB goodB
-      hBdata reserved
-  exact helper_hnotMinus_969 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hlower)
-      (@alpha) (@beta) (@hvaA) (@hbetaA) (@halphaA) (@terminalPE) (@hpathA) (@hpathB)
-      (@hdistinct) (@hsProper) (@hsOne) (@edgeVertex) (@hgraph) (@hcomponents) (@hcombined)
-      (@hAib) (@hmissingTreeA) (@ettB) (@baseB) (@hcoreB) (@HB) (@goodB) (@hBdata)
-
 private theorem helper_continuation_2160.{u_1, u_2} :
     helperContinuation2160Conditions.{u_1, u_2} := by
   classical
@@ -2203,7 +2078,7 @@ private theorem helper_continuation_2160.{u_1, u_2} :
         (@hcoreNew) (@halphaNotStored) (@hfirstEq) (@hnextHB) (@hnextK) (@eta) (@heta)
   let reserved := (HierarchyStoredColorsAt HB 0).biUnion (goodB.gamma 0)
   have hnotMinus : ¬ TreeColorSetMinusClosed G sigma A reserved := by
-    exact helper_hnotMinus_2199 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
+    exact helper_hnotMinus_969 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
         (@hlower) (@alpha) (@beta) (@hvaA) (@hbetaA) (@halphaA) (@terminalPE) (@hpathA) (@hpathB)
         (@hdistinct) (@hsProper) (@hsOne) (@edgeVertex) (@hgraph) (@hcomponents) (@hcombined)
         (@hAib) (@hmissingTreeA) (@ettB) (@baseB) (@hcoreB) (@HB) (@goodB) (@hBdata)
@@ -2431,7 +2306,7 @@ private theorem helper_caseContinuation_2060.{u_1, u_2} :
     exact hdistinct (hinter (Sum.inl va) root hpathA hpathB
       ⟨va, hva, by change _ = _; rfl⟩ ⟨v, hv, hvc⟩)
   have hcombined : CombinedStableColoring Tn base.closure Dn phi sigma := by
-    exact helper_hcombined_1980 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
+    exact helper_hcombined_604 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
         (@hproper) (@hone) (@hlower) (@alpha) (@beta) (@hbranch) (@ha) (@terminalPE) (@hTnA)
         (@hRA) (@hidentity) (@hsplit) (@noMissing) (@stableNoMissing) (@stableOutside)
         (@outsideFromInterchange)

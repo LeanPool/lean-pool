@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningTransport
+
 
 public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
@@ -861,19 +863,6 @@ private theorem helper_hstoredFirst_583.{u_1, u_2} :
       exact missingOther _ eta hna heb
     simp only [HierarchyFirstMissingPosition, heq]
 
-private theorem helper_segTrans_616.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {S U W : TreeSequence G e0}, TreeSequenceInitialSegment S U → TreeSequenceInitialSegment U
-        W → TreeSequenceInitialSegment S W := by
-  classical
-  intro V E G e0 S U W hSU hUW
-  refine ⟨hSU.1.trans hUW.1, ?_, ?_⟩
-  · intro i
-    exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hSU.1) i)).trans (hSU.2.1 i)
-  · intro i
-    exact (hUW.2.2 (Fin.castLE hSU.1 i)).trans (hSU.2.2 i)
-
 private theorem helper_lastPositive_633.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -1279,7 +1268,7 @@ private theorem helper_continuation_1607.{u_1, u_2} :
         (@firstSpec) (@hib) (@missingOther) (@hmissingB)
   let n := Fin.last em.rounds
   let Tn := em.series.data.tree n.castSucc
-  have segTrans := @helper_segTrans_616 (@V) (@E) (@G) (@e0)
+  have segTrans := @SharedFacts.ShorteningTransport.trans (@V) (@E) (@G) (@e0)
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by

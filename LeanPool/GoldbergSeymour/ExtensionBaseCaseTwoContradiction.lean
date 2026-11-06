@@ -5,14 +5,15 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBranches
+
+
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
 
 public import LeanPool.GoldbergSeymour.TreeVerticesBeforeFacts
 
 public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
 public import LeanPool.GoldbergSeymour.OrderedTreeUnionExists
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
 public import LeanPool.GoldbergSeymour.TashkinovClosureExists
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
 public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
@@ -99,72 +100,6 @@ private theorem helper_transportStep_250.{u_1, u_2} :
   refine ⟨hlen, hAB, c, ?_, hcMissingRho⟩
   change rho3 (B.edge added) = some c
   exact haddedFixed.trans hcolor
-
-private theorem helper_equalPrefixes_181.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0
-    : E} {A B D : TreeSequence G e0}, TreeSequenceInitialSegment A D →
-    TreeSequenceInitialSegment B D → A.length = B.length → A = B := by
-  classical
-  intro V E G e0 A B D hAD hBD hlen
-  rcases hAD with ⟨hlenAD, hvertexAD, hedgeAD⟩
-  rcases hBD with ⟨hlenBD, hvertexBD, hedgeBD⟩
-  cases A with
-  | mk alen apos avertex aedge avinj aeinf afirst aattach =>
-    cases B with
-    | mk blen bpos bvertex bedge bvinj beinj bfirst battach =>
-      simp only at hlen
-      subst blen
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext i
-        calc
-          avertex i = D.vertex
-              (Fin.castLE (Nat.succ_le_succ hlenAD) i) :=
-            (hvertexAD i).symm
-          _ = D.vertex (Fin.castLE (Nat.succ_le_succ hlenBD) i) := by
-            congr 1
-          _ = bvertex i := hvertexBD i
-      · apply heq_of_eq
-        funext i
-        calc
-          aedge i = D.edge (Fin.castLE hlenAD i) := (hedgeAD i).symm
-          _ = D.edge (Fin.castLE hlenBD i) := by congr 1
-          _ = bedge i := hedgeBD i
-
-private theorem helper_hrightOutside_219.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0 : E} (Tj TjPrime :
-        TreeSequence G e0) (zPosition : Fin (Tj.length + (1 : ℕ))) (uPosition : Fin
-        (TjPrime.length + (1 : ℕ))) (huPositionPositive : (1 : ℕ) ≤ (↑uPosition : ℕ))
-        (huPositionBound : (↑uPosition : ℕ) ≤ TjPrime.length) (hzPositionPositive : (1 : ℕ) ≤
-        (↑zPosition : ℕ)) (hzPositionBound : (↑zPosition : ℕ) ≤ Tj.length),
-    let U : TreeSequence G e0 := TreeSequencePrefix TjPrime (↑uPosition : ℕ) huPositionPositive
-        huPositionBound;
-    let Z : TreeSequence G e0 := TreeSequencePrefix Tj (↑zPosition : ℕ) hzPositionPositive
-        hzPositionBound;
-    ∀ (M : TreeSequence G e0) (_ : TreeSequenceInitialSegment U M) (n : ℕ) (_ : U.length ≤ n) (hnM
-        : n + (1 : ℕ) ≤ M.length),
-    let j : Fin M.length := (⟨n, Decidable.byContradiction fun (a : ¬n < M.length) ↦
-    by omega
-    ⟩ : Fin M.length);
-    ∀ (i : Fin Z.length) (_ : M.vertex j.succ = Z.vertex i.succ), Z.vertex i.succ ∉
-        TreeSequenceVertexSet U := by
-  classical
-  intro V E G e0 Tj TjPrime zPosition uPosition huPositionPositive huPositionBound
-      hzPositionPositive hzPositionBound U Z M hleftSegment n hnU hnM j i hvertexMZ hmem
-  simp only [TreeSequenceVertexSet, Finset.mem_image,
-    Finset.mem_univ, true_and] at hmem
-  obtain ⟨a, ha⟩ := hmem
-  have hmvertex : M.vertex
-        (Fin.castLE (Nat.succ_le_succ hleftSegment.1) a) =
-      U.vertex a := hleftSegment.2.1 a
-  have heq : M.vertex j.succ =
-      M.vertex (Fin.castLE (Nat.succ_le_succ hleftSegment.1) a) :=
-    hvertexMZ.trans (ha.symm.trans hmvertex.symm)
-  have hindex := congrArg Fin.val (M.vertex_injective heq)
-  simp [j] at hindex
-  omega
 
 private theorem helper_hiSeed_234.{u_1, u_2} :
     open scoped Classical in
@@ -509,9 +444,9 @@ private theorem helper_branch_209.{u_1, u_2} :
     hnSuccM
   let j : Fin M.length := ⟨n, by omega⟩
   obtain ⟨i, hedgeMZ, hvertexMZ⟩ := hnewEntryFromRight j hnU
-  have hrightOutside := @helper_hrightOutside_219 V E G e0 Tj TjPrime zPosition uPosition
-      huPositionPositive huPositionBound hzPositionPositive hzPositionBound M hleftSegment n hnU hnM
-      i hvertexMZ
+  have hrightOutside : Z.vertex i.succ ∉ TreeSequenceVertexSet U := by
+    rw [← hvertexMZ]
+    exact hleftSegment.vertex_not_mem_after (by change U.length < n + 1; omega)
   have hiSeed := @helper_hiSeed_234 V E G e0 Tj seed TjPrime zPosition uPosition huPositionPositive
       huPositionBound hzPositionPositive hzPositionBound hseedU M hseedZSegment n i hrightOutside
   have hiZ : i.val < Z.length := i.isLt
@@ -709,7 +644,7 @@ private theorem helper_hrouteUM_530.{u_1, u_2} :
       · apply heq_of_eq
         funext i
         rfl
-  have equalPrefixes := @helper_equalPrefixes_181 V E G e0
+  have equalPrefixes := @SharedFacts.ExtensionBranches.equalPrefixes V E G e0
   have prefixAtLeft :
       TreeSequencePrefix M U.length U.positive hleftSegment.1 = U := by
     apply equalPrefixes

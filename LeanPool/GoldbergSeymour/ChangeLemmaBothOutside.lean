@@ -196,7 +196,8 @@ theorem ChangeLemmaBothOutside {V E : Type*}
   have firstMissing (c : Fin k) (hc : c ∈ TreeMissingColors phi Y) :
       c ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T c)) ∧
         (HierarchyFirstMissingPosition phi T c).val ≤ Y.length := by
-    exact @helper_firstMissing_1057 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @SharedFacts.MixedChangeTransport.firstMissingPositionWitness (@V) (@E) inferInstance
+        inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@YToT) (@c) (@hc)
   have ha := firstMissing alpha hmissingY.1
   have hb := firstMissing beta hmissingY.2

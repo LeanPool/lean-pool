@@ -114,6 +114,24 @@ theorem TreeSequenceFirstMissingPositionEqCast {V E : Type*} [Fintype E]
   exact congrArg Fin.val (TreeSequenceFirstMissingPositionEq segment elementary
     (show position.val ≤ initialSegment.length from Nat.le_of_lt_succ position.isLt) witness)
 
+/-- A color missing somewhere on the tree is missing at its first missing position. -/
+theorem TreeSequenceFirstMissingPositionMemOfMissing {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {phi : PartialEdgeColoring E k}
+    {tree : TreeSequence G e0} {color : Fin k} (member : color ∈ TreeMissingColors phi tree) :
+    color ∈ MissingColors G phi (tree.vertex (HierarchyFirstMissingPosition phi tree color)) := by
+  classical
+  obtain ⟨vertex, inTree, missing⟩ := Finset.mem_biUnion.mp member
+  obtain ⟨index, equality⟩ : ∃ index, tree.vertex index = vertex := by
+    simpa [TreeSequenceVertexSet] using inTree
+  let candidates := Finset.univ.filter fun index : Fin (tree.length + 1) =>
+    color ∈ MissingColors G phi (tree.vertex index)
+  have nonempty : candidates.Nonempty := by
+    refine ⟨index, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
+    simpa [equality] using missing
+  unfold HierarchyFirstMissingPosition
+  rw [dite_eq_left nonempty]
+  exact (Finset.mem_filter.mp (Finset.min'_mem candidates nonempty)).2
+
 /-- A first missing position strictly before the fallback endpoint is an actual missing witness. -/
 theorem TreeSequenceFirstMissingPositionMem {V E : Type*} [Fintype E]
     {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {phi : PartialEdgeColoring E k}

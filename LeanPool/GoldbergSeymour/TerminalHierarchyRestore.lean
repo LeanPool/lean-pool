@@ -315,19 +315,6 @@ private theorem helper_segmentOriginal_459.{u_1, u_2} :
   · rintro ⟨r, hlo, hhi, hcol⟩
     exact ⟨r, hlo, hhi, (edgeEq r).trans hcol⟩
 
-private theorem helper_terminalData_340.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (sigma : PartialEdgeColoring
-    E k) {inp gen : PartialEdgeColoring E k} {U : TreeSequence G e0} (original :
-    ExtendedTashkinovTree G k e0 inp U gen) (W : TreeSequence G e0) (c :
-    CorrespondingExtendedTashkinovTree G k e0 original sigma W),
-    c.replacementETT.series.data.tree (Fin.last c.replacementETT.rounds).castSucc =
-    original.series.data.tree (Fin.last original.rounds).castSucc ∧
-    c.replacementETT.series.data.kind (Fin.last c.replacementETT.rounds) =
-    original.series.data.kind (Fin.last original.rounds) := by
-  intro V E _ _ _ G k e0 sigma inp gen U original W c
-  exact CorrespondingExtendedTashkinovTree.terminalTreeKind G k e0 sigma original W c
-
 private theorem helper_oldMetadata_391.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
@@ -672,7 +659,8 @@ theorem P2752_T2_TerminalHierarchyRestore {V E : Type*}
   classical
   let Bplus := HierarchyFullTailPrefix C (HierarchyFullTailLength C - 1)
   let H := C.hierarchy
-  have terminalData := @helper_terminalData_340 V E inferInstance inferInstance inferInstance G k e0
+  have terminalData := @GoldbergSeymour.CorrespondingExtendedTashkinovTree.terminalTreeKind V E
+      inferInstance inferInstance inferInstance G k e0
       sigma
   have commonBase := @helper_commonBase_214 V E inferInstance inferInstance inferInstance
       inferInstance G k e0 input T phi sigma ett base C corr
