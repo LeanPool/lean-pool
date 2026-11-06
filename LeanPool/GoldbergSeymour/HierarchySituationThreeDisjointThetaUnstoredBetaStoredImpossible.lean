@@ -30,56 +30,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
-private abbrev helperRouteToY1012Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (alpha beta : Fin k)
-        (d : HierarchySituationThreeDisjointData G k e0 input T phi ett base C ctx P alpha beta)
-        (j : ℕ), HierarchyPathNumber C.hierarchy = j → (2 : ℕ) ≤ j →
-    let R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx := d.switched;
-    let H : TashkinovHierarchy R.corresponding.replacementETT R.replacementBase :=
-        R.counterexample.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := HierarchyFullTailLength C;
-    let X : TreeSequence G e0 := HierarchyFullTailPrefix C (j - (1 : ℕ));
-    let Y : TreeSequence G e0 := HierarchyFullTailPrefix C j;
-    let Z : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (1 : ℕ));
-        TreeSequenceInitialSegment A T → (
-    ∀ {U W : TreeSequence G e0}, TreeSequenceInitialSegment U T → TreeSequenceInitialSegment W T →
-        U.length ≤ W.length → TreeSequenceInitialSegment U W) → Y.length = A.length + j →
-        TreeSequenceInitialSegment Y T → TreeSequenceInitialSegment X Y →
-        TreeSequenceInitialSegment Y Z → TreeSequenceInitialSegment A Y → (
-    ∀ (S : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-        HierarchyStarredStage S.counterexample.hierarchy (Fin.last
-        S.counterexample.hierarchy.dividerCount) = A) → (
-    ∀ {input' : PartialEdgeColoring E k} (old new : PartialEdgeColoring E k) (et :
-        ExtendedTashkinovTree G k e0 input' T old) (bs : HierarchyBase et old) (K :
-        TashkinovHierarchy et bs), HierarchyWeaklyStable K (Fin.last K.dividerCount) new →
-        IsOneEdgeUncolored old e0 → IsOneEdgeUncolored new e0 →
-    ∀ (t : Fin (HierarchyStarredStage K (Fin.last K.dividerCount)).length), new
-        ((HierarchyStarredStage K (Fin.last K.dividerCount)).edge t) = old ((HierarchyStarredStage
-        K (Fin.last K.dividerCount)).edge t)) → Y.length = X.length + (1 : ℕ) →
-    ∀ (S : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (nu :
-        PartialEdgeColoring E k), IsOneEdgeUncolored nu e0 → HierarchyWeaklyStable
-        S.counterexample.hierarchy (Fin.last S.counterexample.hierarchy.dividerCount) nu → (
-    ∀ (t : Fin T.length), A.length ≤ (↑t : ℕ) → (↑t : ℕ) < Y.length → nu (T.edge t) = S.coloring
-        (T.edge t)) → (
-    ∀ v ∈ TreeSequenceVertexSet Z, MissingColors G nu v = MissingColors G S.coloring v) →
-    let et : ExtendedTashkinovTree G k e0 S.corresponding.replacementInput T S.coloring :=
-        S.corresponding.replacementETT;
-    let n : Fin (et.rounds + (1 : ℕ)) := Fin.last et.rounds;
-    let Tn : TreeSequence G e0 := et.series.data.tree n.castSucc; et.series.data.kind n = some
-        TashkinovExtensionKind.PE ∧ TashkinovAugmentationSequence nu Tn Y ∨ (et.series.data.kind n
-        = some TashkinovExtensionKind.SE ∨ et.series.data.kind n = some TashkinovExtensionKind.RE)
-        ∧
-    ∃ (f : E) (seed : TreeSequence G e0), et.series.data.connectingEdges n = { f } ∧
-        TreeSequenceAdjoinEdge Tn f seed ∧ TashkinovAugmentationSequence nu seed Y
-
 private abbrev helperContinuation2578Conditions.{u_1, u_2} : Prop :=
  open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
