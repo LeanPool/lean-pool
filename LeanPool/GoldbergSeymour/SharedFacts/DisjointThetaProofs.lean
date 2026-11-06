@@ -12,17 +12,17 @@ public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
 public import LeanPool.GoldbergSeymour.TerminalRoute
 
 /-!
-# Disjoint-theta replacement routes
+# Shared terminal-route and replacement-colouring proofs
 
-The stored and unstored branches use these same replacement and route transport proofs.
-Extracted from Wesley Pegden's pinned Trellis formalization during the Lean Pool port.
+Shared proofs used by the Goldberg–Seymour construction branches.
+Extracted from the credited Trellis port at
+88d98c1d1a59d1f1bf7c4eb58e73f3945f6daf12; the original branch contracts remain available.
 -/
 
 @[expose] public section
 
-namespace GoldbergSeymour.SharedFacts.DisjointThetaRoutes
+namespace GoldbergSeymour.SharedFacts.DisjointThetaProofs
 
-/-- Shared transport fact for the two disjoint-theta proof branches. -/
 theorem terminalRouteToPrefix.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -158,8 +158,7 @@ theorem terminalRouteToPrefix.{u_1, u_2} :
       exact Or.inr ⟨hk, f, seed, he, ha, transport seed
         (TashkinovAugmentationSequenceRestrict S.coloring seed Y T hr hseedY hYtoT)⟩
 
-/-- Shared transport fact for the two disjoint-theta proof branches. -/
-theorem changeReplacementColoring.{u_1, u_2} :
+theorem changeLemmaForReplacementColoring.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
         : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
@@ -247,7 +246,7 @@ theorem changeReplacementColoring.{u_1, u_2} :
         rw [hthetaFirstIndex] at hhi
         exact hgammaUnusedRho t hlo hhi he)
 
-/-- Shared transport fact for the two disjoint-theta proof branches. -/
+/-- The first replacement change used by both disjoint-theta branches. -/
 theorem firstReplacementChange.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -321,6 +320,6 @@ theorem firstReplacementChange.{u_1, u_2} :
                   sigma (T.edge t) = some c)
         exact horderedUnusedGammaBeta)
 
-end GoldbergSeymour.SharedFacts.DisjointThetaRoutes
+end GoldbergSeymour.SharedFacts.DisjointThetaProofs
 
 end

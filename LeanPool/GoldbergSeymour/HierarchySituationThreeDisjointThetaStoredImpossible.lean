@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaRoutes
+public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaProofs
 
 
 public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaTransport
@@ -1353,7 +1353,8 @@ private theorem helper_continuation_2545.{u_1, u_2} :
     rw [he]
     exact ⟨hgammaMissingZ, hthetaMissingZ⟩
   have changeRho := by
-    exact @SharedFacts.DisjointThetaRoutes.changeReplacementColoring V E inferInstance inferInstance
+    exact @SharedFacts.DisjointThetaProofs.changeLemmaForReplacementColoring V E inferInstance
+        inferInstance
         inferInstance inferInstance G k
         e0 input T phi ett base C ctx P alpha beta d j gamma hthetaFirstIndex hgammaNeTheta
         sameStarAll samePenultimate R1 hElemRho hfirstGammaRho hfirstThetaRho hgammaUnusedRho
@@ -1549,7 +1550,7 @@ private theorem helper_continuation_2327.{u_1, u_2} :
           et.series.data.connectingEdges n = {f} ∧
           TreeSequenceAdjoinEdge Tn f seed ∧
           TashkinovAugmentationSequence nu seed Y) := by
-    exact @SharedFacts.DisjointThetaRoutes.terminalRouteToPrefix V E inferInstance inferInstance
+    exact @SharedFacts.DisjointThetaProofs.terminalRouteToPrefix V E inferInstance inferInstance
         inferInstance inferInstance G k e0
         input T phi ett base C ctx P alpha beta d j hj hpathLower hAtoT commonPrefix hYlen hYtoT
         hXtoY hYtoZ hAtoY sameStarAll weakEdges hXYlen S nu hn hw hf hm
@@ -1792,7 +1793,7 @@ private theorem helper_continuation_2252.{u_1, u_2} :
     rw [penultimatePrefixEq]
     exact ⟨hgammaMissingZ, hbetaMissingZ⟩
   have firstChange := by
-    exact @SharedFacts.DisjointThetaRoutes.firstReplacementChange (@V) (@E) inferInstance
+    exact @SharedFacts.DisjointThetaProofs.firstReplacementChange (@V) (@E) inferInstance
         inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
         (@alpha) (@beta) (@d) (@gamma) (@hgammaNeBeta) (@sameStar) (@horderedUnusedGammaBeta)

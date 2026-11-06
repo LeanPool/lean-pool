@@ -534,7 +534,7 @@ public import LeanPool.GoldbergSeymour.ScheideTwoColorLastExitPath
 public import LeanPool.GoldbergSeymour.SharedFacts.BaseControl
 public import LeanPool.GoldbergSeymour.SharedFacts.Basic2TerminalPE
 public import LeanPool.GoldbergSeymour.SharedFacts.ChangeLemmaBothOutsidePreparation1
-public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaRoutes
+public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaProofs
 public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaTransport
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseClaim45Singleton
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseStepLemmas
@@ -558,6 +558,7 @@ public import LeanPool.GoldbergSeymour.SharedFacts.ScheideHeightFiveGammaEdges
 public import LeanPool.GoldbergSeymour.SharedFacts.ScheideSelectedBlockDeletion
 public import LeanPool.GoldbergSeymour.SharedFacts.SecondSituationTransport
 public import LeanPool.GoldbergSeymour.SharedFacts.SecondSubcaseTransport
+public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningProofs
 public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningTransport
 public import LeanPool.GoldbergSeymour.SharedFacts.StableChangeCasesOneTwoSplitTail
 public import LeanPool.GoldbergSeymour.SharedFacts.StoredExceptionTransport
