@@ -91,14 +91,14 @@ private lemma norm_cexp_neg_normSq_add_le (s m : ℝ) (hs : 0 ≤ s) (k : Spatia
     simp only [Complex.add_re, sq, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
       mul_zero, sub_zero]
   simp only [h_im, h_re, mul_zero, sub_zero]
-  nlinarith [sq_nonneg ‖k‖]
+  nlinarith only [hs, sq_nonneg ‖k‖]
 
 /-- Norm bound for the heat-kernel factor: `‖exp(-((-a-b)²/(4s)))‖ ≤ 1` for `s ≥ 0`. -/
 private lemma norm_cexp_neg_heat_le_one (a b s : ℝ) (hs : 0 ≤ s) :
     ‖Complex.exp (-((-a - b)^2 / (4 * s) : ℝ))‖ ≤ 1 := by
   rw [Complex.norm_exp]
   simp only [neg_re, Complex.ofReal_re]
-  exact Real.exp_le_one_iff.mpr (neg_nonpos.mpr (div_nonneg (sq_nonneg _) (by linarith)))
+  exact Real.exp_le_one_iff.mpr (neg_nonpos.mpr (div_nonneg (sq_nonneg _) (by linarith only [hs])))
 
 /-- Norm of the `√(π/s)` scalar factor cast to `ℂ`. -/
 private lemma norm_sqrt_pi_div (s : ℝ) :
@@ -721,7 +721,7 @@ theorem schwinger_bound_integrable (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ
     fun s hs x => heatKernelPositionSpace_integral_translated s hs (timeReflection x)
   have hCf_nonneg : 0 ≤ Cf := by
     have := hCf 0
-    linarith [norm_nonneg (f 0)]
+    linarith only [this, norm_nonneg (f 0)]
   exact schwinger_bound_integrable_fubini m f Cf hCf h_f_int hCf_nonneg h_y_eq_one h_exp_int
 
 
@@ -1135,7 +1135,7 @@ lemma triangular_fubini_quadrant {f : ℝ → ℝ → ℝ}
       intro y _
       exact (hasDerivWithinAt_id y _).add_const x
     · -- Injectivity of (· + x)
-      exact fun _ _ _ _ h => by linarith
+      exact fun _ _ _ _ h => by linarith only [h]
   -- Step 2: ∫_{x>0} ∫_{u>x} f(x, u) du dx = ∫_{u>0} ∫_{0<x<u} f(x, u) dx du
   -- This is a standard Tonelli/Fubini reindexing for the region {(x, u) : 0 < x < u}
   have h_reindex : ∫ x in Set.Ioi 0, ∫ u in Set.Ioi x, f x u =
@@ -1419,9 +1419,9 @@ lemma heat_kernel_moment_integral (s : ℝ) (hs : 0 < s) :
                     have h1 : -(x + y)^2 / (4 * s) ≤ -(x^2 + y^2) / (4 * s) := by
                       apply div_le_div_of_nonneg_right _ (le_of_lt (by linarith : 0 < 4 * s))
                       apply neg_le_neg
-                      nlinarith [sq_nonneg x, sq_nonneg y]
+                      linarith only [hxy_pos, sq_nonneg x, sq_nonneg y]
                     have h2 : -(x^2 + y^2) / (4 * s) = -x^2 / (4 * s) + -y^2 / (4 * s) := by ring
-                    linarith
+                    linarith only [h1, h2]
                   calc x * y * Real.exp (-(x + y) ^ 2 / (4 * s))
                       ≤ x * y * (Real.exp (-x^2 / (4 * s)) * Real.exp (-y^2 / (4 * s))) := by
                         simp_all
@@ -1487,11 +1487,11 @@ lemma heat_kernel_moment_integral_bound (s : ℝ) (hs : 0 < s) :
       rw [Real.sqrt_lt' (by norm_num : (0:ℝ) < 2)]
       calc π < 4 := pi_lt_four
          _ = 2^2 := by norm_num
-    calc (4/3 : ℝ) * Real.sqrt π < (4/3) * 2 := by nlinarith [Real.sqrt_nonneg π]
+    calc (4/3 : ℝ) * Real.sqrt π < (4/3) * 2 := by linarith only [hsqrt, Real.sqrt_nonneg π]
       _ = 8/3 := by ring
       _ < 10 := by norm_num
   have hs32 : 0 ≤ s^(3/2 : ℝ) := Real.rpow_nonneg (le_of_lt hs) _
-  nlinarith
+  nlinarith only [hπ, hs32]
 
 /-- Helper lemma: t * exp(-b*t²) is integrable on (0, ∞) for b > 0.
     This follows from `integrable_mul_exp_neg_mul_sq` restricted to positive reals.
@@ -1527,7 +1527,7 @@ lemma heat_kernel_inner_integrableOn {s t₁ : ℝ} (hs : 0 < s) (ht₁ : 0 ≤ 
       (fun t => t * Real.exp (-t^2 / (4 * s))) (MeasureTheory.volume.restrict (Set.Ioi 0)) := by
     convert h_dom using 2 with t
     congr 1
-    have h4s : 4 * s ≠ 0 := by linarith
+    have h4s : 4 * s ≠ 0 := by linarith only [hs]
     field_simp
   -- The integrand is dominated by t₂ * exp(-t₂²/(4s)) on Ioi 0
   apply MeasureTheory.Integrable.mono h_dom'
@@ -1542,9 +1542,9 @@ lemma heat_kernel_inner_integrableOn {s t₁ : ℝ} (hs : 0 < s) (ht₁ : 0 ≤ 
     apply mul_le_mul_of_nonneg_left _ (le_of_lt ht₂)
     apply Real.exp_le_exp.mpr
     -- Need: -(t₁+t₂)²/(4s) ≤ -t₂²/(4s), i.e., (t₁+t₂)² ≥ t₂²
-    apply div_le_div_of_nonneg_right _ (by linarith : 0 ≤ 4 * s)
+    apply div_le_div_of_nonneg_right _ (by linarith only [hs] : 0 ≤ 4 * s)
     apply neg_le_neg
-    nlinarith [sq_nonneg t₁]
+    nlinarith only [ht₁, ht₂, sq_nonneg t₁]
 
 /-- The heat kernel moment integrand is integrable on the product quadrant (0,∞)².
     This is the key integrability result extracted from heat_kernel_moment_integral.
@@ -1589,14 +1589,14 @@ lemma heat_kernel_moment_integrableOn_quadrant (s : ℝ) (hs : 0 < s) :
     have hsum : (x + y)^2 ≥ x^2 + y^2 := by nlinarith [sq_nonneg x, sq_nonneg y, mul_pos hx hy]
     have hexp : Real.exp (-(x+y)^2/(4*s)) ≤ Real.exp (-(x^2 + y^2)/(4*s)) := by
       apply Real.exp_le_exp_of_le
-      apply div_le_div_of_nonneg_right _ (le_of_lt (by linarith : 0 < 4*s))
-      linarith [hsum]
+      apply div_le_div_of_nonneg_right _ (le_of_lt (by linarith only [hs] : 0 < 4*s))
+      linarith only [hsum]
     have hexp_factor : Real.exp (-(x^2 + y^2)/(4*s)) =
         Real.exp (-(1/(4*s)) * x^2) * Real.exp (-(1/(4*s)) * y^2) := by
       rw [← Real.exp_add]; congr 1; field_simp; ring
     calc x * y * Real.exp (-(x + y)^2 / (4 * s))
         ≤ x * y * Real.exp (-(x^2 + y^2)/(4*s)) := by
-          nlinarith [Real.exp_nonneg (-(x^2 + y^2)/(4*s))]
+          nlinarith only [hsum, hexp, Real.exp_nonneg (-(x^2 + y^2)/(4*s))]
       _ = x * y * (Real.exp (-(1/(4*s)) * x^2) * Real.exp (-(1/(4*s)) * y^2)) := by rw [hexp_factor]
       _ = x * Real.exp (-(1/(4*s)) * x^2) * (y * Real.exp (-(1/(4*s)) * y^2)) := by ring
 
@@ -1958,7 +1958,7 @@ lemma spacetime_fubini_linear_vanishing_bound (f : TestFunctionℂ)
           apply mul_le_mul_of_nonneg_left _ (Real.sqrt_nonneg _)
           rw [Real.exp_le_one_iff]
           apply div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (sq_nonneg _))
-          linarith
+          linarith only [hs]
       _ = Real.sqrt (π / s) := mul_one _
   have h_tonelli := schwartz_tonelli_spacetime f f K hK_nonneg hK_meas hK_bdd
   -- G from h_tonelli matches spatialNormIntegral via the linking lemma
@@ -2072,7 +2072,7 @@ lemma schwartz_iterated_integral_integrable (f : TestFunctionℂ)
       have h_exp_le : Real.exp (-(p.1 0 + p.2 0)^2 / (4 * s)) ≤ 1 := by
         have h_nonneg : 0 ≤ (p.1 0 + p.2 0)^2 / (4 * s) := by
           have hsq : 0 ≤ (p.1 0 + p.2 0)^2 := sq_nonneg _
-          have hden : 0 < (4 * s) := by nlinarith [hs]
+          have hden : 0 < (4 * s) := by linarith only [hs]
           exact div_nonneg hsq (le_of_lt hden)
         have hneg' : -(p.1 0 + p.2 0)^2 / (4 * s) = -((p.1 0 + p.2 0)^2 / (4 * s)) := by
           ring
@@ -2244,12 +2244,12 @@ lemma F_norm_bound_via_linear_vanishing (m : ℝ) [Fact (0 < m)] (f : TestFuncti
         intro a
         simp only [norm_mul, Real.norm_eq_abs, abs_of_nonneg (norm_nonneg _),
                    abs_of_nonneg (Real.sqrt_nonneg _), abs_of_nonneg hexp_nonneg]
-        have h4s_pos : 0 < 4 * s := by linarith
+        have h4s_pos : 0 < 4 * s := by linarith only [hs]
         have hexp_le : Real.exp (-(x 0 + a 0)^2 / (4 * s)) ≤ 1 := by
           rw [Real.exp_le_one_iff]
           apply div_nonpos_of_nonpos_of_nonneg
           · exact neg_nonpos.mpr (sq_nonneg _)
-          · linarith
+          · linarith only [hs]
         calc ‖f x‖ * ‖f a‖ * √(π / s) * |rexp (-(x 0 + a 0)^2 / (4 * s))| * exp_factor
             ≤ ‖f x‖ * ‖f a‖ * √(π / s) * 1 * exp_factor := by
               gcongr; rw [abs_of_nonneg (Real.exp_nonneg _)]; exact hexp_le

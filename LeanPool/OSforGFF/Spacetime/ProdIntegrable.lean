@@ -6,7 +6,6 @@ Authors: Michael R. Douglas, Sarah Hoback, Anna Mei, Ron Nissim
 module
 
 public import LeanPool.OSforGFF.Spacetime.Basic
-import LeanPool.OSforGFF.General.FunctionalAnalysis
 import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 import Mathlib.Data.Nat.Factorial.DoubleFactorial
 
@@ -98,7 +97,7 @@ theorem schwartz_vanishing_linear_bound (f : TestFunctionℂ)
     _ = ‖f x - f x₀_bdy‖ := by rw [hf_bdy]
     _ ≤ C_deriv * ‖x - x₀_bdy‖ := h_mvt
     _ = C_deriv * (x 0) := by rw [h_dist]
-    _ ≤ (C_deriv + 1) * (x 0) := by nlinarith [hx_pos]
+    _ ≤ (C_deriv + 1) * (x 0) := by linarith only [hx_pos]
 
 /-! ## Integrate over space first (Fubini approach)
 
@@ -169,7 +168,7 @@ lemma spacetimeOfTimeSpace_norm_ge (t : ℝ) (x : SpatialCoords3) :
     simp only [h1, h2, h3]
     ring
   have hsq_le : ‖x‖ ^ 2 ≤ ‖spacetimeOfTimeSpace t x‖ ^ 2 := by
-    rw [hsq]; nlinarith [sq_nonneg t]
+    rw [hsq]; linarith only [sq_nonneg t]
   have hx : 0 ≤ ‖x‖ := norm_nonneg _
   have hy : 0 ≤ ‖spacetimeOfTimeSpace t x‖ := norm_nonneg _
   exact (sq_le_sq₀ hx hy).mp hsq_le
@@ -236,7 +235,7 @@ lemma schwartz_time_slice_integrable (f : TestFunctionℂ) (t : ℝ) :
     -- Convert between (1+‖x‖)^(-5:ℝ) and C/(1+‖x‖)^5
     have h_eq : ∀ x : SpatialCoords3, C / (1 + ‖x‖) ^ 5 = C * (1 + ‖x‖) ^ (-(5 : ℝ)) := by
       intro x
-      have h_pos : 0 < 1 + ‖x‖ := by linarith [norm_nonneg x]
+      have h_pos : 0 < 1 + ‖x‖ := by linarith only [norm_nonneg x]
       have h1 : ((1 + ‖x‖) ^ 5)⁻¹ = (1 + ‖x‖) ^ (-(5 : ℝ)) := by
         rw [← Real.rpow_natCast (1 + ‖x‖) 5, ← Real.rpow_neg (le_of_lt h_pos)]
         simp
@@ -254,10 +253,10 @@ lemma schwartz_time_slice_integrable (f : TestFunctionℂ) (t : ℝ) :
     -- This follows from ‖spacetimeOfTimeSpace t x‖ ≥ ‖x‖.
     have h_norm_ge : ‖spacetimeOfTimeSpace t x‖ ≥ ‖x‖ :=
       spacetimeOfTimeSpace_norm_ge t x
-    have h_bracket_ge : 1 + ‖spacetimeOfTimeSpace t x‖ ≥ 1 + ‖x‖ := by linarith
-    have h_bracket_pos : 0 < 1 + ‖x‖ := by linarith [norm_nonneg x]
+    have h_bracket_ge : 1 + ‖spacetimeOfTimeSpace t x‖ ≥ 1 + ‖x‖ := by linarith only [h_norm_ge]
+    have h_bracket_pos : 0 < 1 + ‖x‖ := by linarith only [norm_nonneg x]
     have h_pow_le : (1 + ‖x‖)^5 ≤ (1 + ‖spacetimeOfTimeSpace t x‖)^5 := by
-      apply pow_le_pow_left₀ (by linarith [norm_nonneg x]) h_bracket_ge
+      apply pow_le_pow_left₀ (by linarith only [h_bracket_pos, norm_nonneg x]) h_bracket_ge
     calc ‖f (spacetimeOfTimeSpace t x)‖
         ≤ C / (1 + ‖spacetimeOfTimeSpace t x‖)^5 := h1
       _ ≤ C / (1 + ‖x‖)^5 := by
@@ -335,16 +334,16 @@ lemma schwartz_vanishing_ftc_decay (f : TestFunctionℂ)
   -- For ‖y‖ ≥ 1: ‖Df‖ ≤ C_decay/‖y‖^4 ≤ 16*C_decay/(1+‖y‖)^4
   -- For ‖y‖ < 1: ‖Df‖ ≤ C_unif ≤ 16*C_unif/(1+‖y‖)^4 since (1+‖y‖)^4 < 16
   let C := 16 * (C_decay + C_unif) + 1
-  have hC_pos : 0 < C := by simp only [C]; linarith
+  have hC_pos : 0 < C := by simp only [C]; linarith only [hC_decay_nn, hC_unif_nn]
   -- Key bound: ‖fderiv ℝ f y‖ ≤ C / (1 + ‖y‖)^4
   have h_fderiv_decay : ∀ y : SpaceTime, ‖fderiv ℝ f y‖ ≤ C / (1 + ‖y‖)^4 := by
     intro y
     have h_norm_eq : ‖iteratedFDeriv ℝ 1 f y‖ = ‖fderiv ℝ f y‖ := norm_iteratedFDeriv_one_eq f y
-    have h1y : 0 < 1 + ‖y‖ := by linarith [norm_nonneg y]
+    have h1y : 0 < 1 + ‖y‖ := by linarith only [norm_nonneg y]
     have h1y_pow : 0 < (1 + ‖y‖)^4 := pow_pos h1y 4
     by_cases hy_large : 1 ≤ ‖y‖
     · -- Large ‖y‖ case: use decay' 4 1
-      have hy_pos : 0 < ‖y‖ := by linarith
+      have hy_pos : 0 < ‖y‖ := by linarith only [hy_large]
       have hy_pow : 0 < ‖y‖^4 := pow_pos hy_pos 4
       have h_raw := hC_decay y
       -- From ‖y‖^4 * ‖iteratedFDeriv 1 f y‖ ≤ C_decay, get ‖fderiv f y‖ ≤ C_decay / ‖y‖^4
@@ -355,24 +354,24 @@ lemma schwartz_vanishing_ftc_decay (f : TestFunctionℂ)
       -- Convert: 1 + ‖y‖ ≤ 2‖y‖ implies (1+‖y‖)^4 ≤ 16*‖y‖^4
       have h_16 : (1 + ‖y‖)^4 ≤ 16 * ‖y‖^4 := by
         have : (1 + ‖y‖)^4 ≤ (2 * ‖y‖)^4 := by
-          apply pow_le_pow_left₀ (by linarith [norm_nonneg y]); linarith
+          apply pow_le_pow_left₀ (by linarith [norm_nonneg y]); linarith only [hy_large]
         calc (1 + ‖y‖)^4 ≤ (2 * ‖y‖)^4 := this
           _ = 16 * ‖y‖^4 := by ring
       have h_norm_ge : ‖y‖^4 ≥ (1 + ‖y‖)^4 / 16 := by
-        rw [ge_iff_le, div_le_iff₀ (by norm_num : (0:ℝ) < 16)]; linarith [h_16]
+        rw [ge_iff_le, div_le_iff₀ (by norm_num : (0:ℝ) < 16)]; linarith only [h_16]
       calc ‖fderiv ℝ f y‖ ≤ C_decay / ‖y‖^4 := h_fderiv_raw
         _ ≤ C_decay / ((1 + ‖y‖)^4 / 16) := by
             apply div_le_div_of_nonneg_left hC_decay_nn (div_pos h1y_pow (by norm_num)) h_norm_ge
         _ = 16 * C_decay / (1 + ‖y‖)^4 := by field_simp
         _ ≤ C / (1 + ‖y‖)^4 := by
             apply div_le_div_of_nonneg_right _ (le_of_lt h1y_pow)
-            simp only [C]; linarith
+            simp only [C]; linarith only [hC_unif_nn]
     · -- Small ‖y‖ case: use uniform bound C_unif
       push Not at hy_large
       -- For ‖y‖ < 1: (1+‖y‖)^4 < 16, so C_unif ≤ 16*C_unif/(1+‖y‖)^4
       have h_bracket_small : (1 + ‖y‖)^4 ≤ 16 := by
         calc (1 + ‖y‖)^4 ≤ 2^4 := by
-              apply pow_le_pow_left₀ (by linarith [norm_nonneg y]); linarith
+              apply pow_le_pow_left₀ (by linarith [norm_nonneg y]); linarith only [hy_large]
           _ = 16 := by norm_num
       calc ‖fderiv ℝ f y‖ = ‖iteratedFDeriv ℝ 1 f y‖ := h_norm_eq.symm
         _ ≤ C_unif := h_unif y
@@ -385,7 +384,7 @@ lemma schwartz_vanishing_ftc_decay (f : TestFunctionℂ)
         _ = 16 * C_unif / (1 + ‖y‖)^4 := by ring
         _ ≤ C / (1 + ‖y‖)^4 := by
             apply div_le_div_of_nonneg_right _ (le_of_lt h1y_pow)
-            simp only [C]; linarith
+            simp only [C]; linarith only [hC_decay_nn]
   -- Use C as the constant
   refine ⟨C, hC_pos, fun t ht x_sp => ?_⟩
   -- Step 2: Segment bound - on path from (0, x_sp) to (t, x_sp), use spacetimeOfTimeSpace_norm_ge
@@ -396,11 +395,11 @@ lemma schwartz_vanishing_ftc_decay (f : TestFunctionℂ)
     intros s _ _
     have h_decay := h_fderiv_decay (spacetimeOfTimeSpace s x_sp)
     have h_norm_ge : ‖spacetimeOfTimeSpace s x_sp‖ ≥ ‖x_sp‖ := spacetimeOfTimeSpace_norm_ge s x_sp
-    have h1x : 0 < 1 + ‖x_sp‖ := by linarith [norm_nonneg x_sp]
+    have h1x : 0 < 1 + ‖x_sp‖ := by linarith only [norm_nonneg x_sp]
     have h1x_pow : 0 < (1 + ‖x_sp‖)^4 := pow_pos h1x 4
     have h_bracket : (1 + ‖spacetimeOfTimeSpace s x_sp‖)^4 ≥ (1 + ‖x_sp‖)^4 := by
-      apply pow_le_pow_left₀ (by linarith [norm_nonneg x_sp])
-      linarith [h_norm_ge]
+      apply pow_le_pow_left₀ (by linarith only [h1x, norm_nonneg x_sp])
+      linarith only [h_norm_ge]
     calc ‖fderiv ℝ f (spacetimeOfTimeSpace s x_sp)‖
         ≤ C / (1 + ‖spacetimeOfTimeSpace s x_sp‖)^4 := h_decay
       _ ≤ C / (1 + ‖x_sp‖)^4 := by
@@ -412,7 +411,7 @@ lemma schwartz_vanishing_ftc_decay (f : TestFunctionℂ)
   let x := spacetimeOfTimeSpace t x_sp
   let x₀_bdy := spacetimeOfTimeSpace 0 x_sp
   have hf_bdy : f x₀_bdy = 0 := hf_supp x₀_bdy (by rw [spacetimeOfTimeSpace_time])
-  have h1x : 0 < 1 + ‖x_sp‖ := by linarith [norm_nonneg x_sp]
+  have h1x : 0 < 1 + ‖x_sp‖ := by linarith only [norm_nonneg x_sp]
   have h1x_pow : 0 < (1 + ‖x_sp‖)^4 := pow_pos h1x 4
   -- Compute ‖x - x₀_bdy‖ = t
   have h_dist : ‖x - x₀_bdy‖ = t := by
@@ -438,7 +437,7 @@ lemma schwartz_vanishing_ftc_decay (f : TestFunctionℂ)
         0 2
       simp_all
     have hnorm : 0 ≤ ‖spacetimeOfTimeSpace t 0‖ := norm_nonneg _
-    nlinarith [sq_nonneg ‖spacetimeOfTimeSpace t 0‖, sq_nonneg t, hsq, ht]
+    nlinarith only [ht, hsq, hnorm, sq_nonneg ‖spacetimeOfTimeSpace t 0‖, sq_nonneg t]
   -- Apply 1D MVT via parameterization F(s) = f(spacetimeOfTimeSpace s x_sp)
   -- F : ℝ → ℂ is differentiable, and we have ‖F'(s)‖ ≤ C/(1+‖x_sp‖)^4 on [0,t]
   -- Define F
@@ -518,7 +517,7 @@ lemma schwartz_vanishing_ftc_decay (f : TestFunctionℂ)
     -- Step 3: derivWithin equals the computed derivative
     have h_deriv_eq : derivWithin F (Set.Icc 0 t) s = (fderiv ℝ f (spacetimeOfTimeSpace s x_sp)) e₀
       :=
-      h_F_deriv.derivWithin (uniqueDiffOn_Icc (by linarith : (0 : ℝ) < t) s h_in_Icc)
+      h_F_deriv.derivWithin (uniqueDiffOn_Icc (by linarith only [ht] : (0 : ℝ) < t) s h_in_Icc)
     -- Step 4: Bound using operator norm
     rw [h_deriv_eq]
     calc ‖(fderiv ℝ f (spacetimeOfTimeSpace s x_sp)) e₀‖
@@ -555,7 +554,7 @@ theorem spatialNormIntegral_linear_bound (f : TestFunctionℂ)
   -- K is nonnegative (integral of nonnegative function)
   have hK_nonneg : 0 ≤ K := integral_nonneg (fun x => by positivity)
   -- Use C = C_pt * (K + 1) to ensure positivity
-  refine ⟨C_pt * (K + 1), mul_pos hC_pt_pos (by linarith), fun t ht => ?_⟩
+  refine ⟨C_pt * (K + 1), mul_pos hC_pt_pos (by linarith only [hK_nonneg]), fun t ht => ?_⟩
   -- Step 4: Apply integral monotonicity
   -- First, show the integrand is bounded pointwise
   have h_pointwise : ∀ x : SpatialCoords3,
@@ -583,7 +582,7 @@ theorem spatialNormIntegral_linear_bound (f : TestFunctionℂ)
       = ∫ x : SpatialCoords3, ‖f (spacetimeOfTimeSpace t x)‖ := rfl
     _ ≤ ∫ x : SpatialCoords3, C_pt * t / (1 + ‖x‖)^4 := h_mono
     _ = C_pt * t * K := h_factor
-    _ ≤ C_pt * t * (K + 1) := by nlinarith [mul_pos hC_pt_pos ht]
+    _ ≤ C_pt * t * (K + 1) := by linarith only [hC_pt_pos, ht, mul_pos hC_pt_pos ht]
     _ = C_pt * (K + 1) * t := by ring
 
 end SpaceTime

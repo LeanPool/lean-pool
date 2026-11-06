@@ -320,7 +320,7 @@ theorem schwartz_cross_covariance_decay_real (m : ℝ) [Fact (0 < m)]
     intro z hz
     simp only [Set.mem_compl_iff, Metric.mem_closedBall, dist_zero_right, not_le] at hz
     simp only [Set.mem_ofPred_eq, ne_eq]
-    exact norm_ne_zero_iff.mp (by linarith)
+    exact norm_ne_zero_iff.mp (by linarith only [hz])
   have h_decay_tendsto : Filter.Tendsto
       (fun a => ∫ x : SpaceTime, ∫ y : SpaceTime,
         (toComplex f) x * (freeCovarianceKernel m (x - y) : ℂ) * (toComplex g) (y - a))
@@ -349,7 +349,7 @@ theorem schwartz_cross_covariance_decay_real (m : ℝ) [Fact (0 < m)]
     have := hR_bound ha_in
     simp only [Metric.mem_ball, dist_zero_right] at this
     have : ‖a‖ ≤ R := le_of_lt this
-    linarith [lt_of_le_of_lt (le_max_left R 1) ha]
+    linarith only [ha, this, lt_of_le_of_lt (le_max_left R 1) ha]
   -- Apply the decay bound from cocompact membership
   have h_int_bound := hK_compl ha_not_in_K
   simp only [Set.mem_ofPred_eq, dist_zero_right] at h_int_bound
@@ -703,7 +703,7 @@ theorem gaussianFreeField_satisfies_OS4_PolynomialClustering (m : ℝ) [Fact (0 
         apply mul_le_mul h_bound
         · apply Real.exp_le_exp.mpr h_bound
         · exact Real.exp_nonneg _
-        · exact mul_nonneg hc_nonneg (Real.rpow_nonneg (by linarith : 0 ≤ 1 + t) _)
+        · exact mul_nonneg hc_nonneg (Real.rpow_nonneg (by linarith only [ht] : 0 ≤ 1 + t) _)
     _ ≤ ‖Ef‖ * ‖Eg‖ * (c_decay * (1 + t)^(-α) * Real.exp c_decay) := by
         apply mul_le_mul_of_nonneg_left _ (mul_nonneg (norm_nonneg _) (norm_nonneg _))
         apply mul_le_mul_of_nonneg_left _ (mul_nonneg hc_nonneg (Real.rpow_nonneg (by linarith) _))
@@ -713,8 +713,8 @@ theorem gaussianFreeField_satisfies_OS4_PolynomialClustering (m : ℝ) [Fact (0 
                 apply mul_le_mul_of_nonneg_left _ hc_nonneg
                 -- Use: for x ≥ 1 and z ≤ 0, x^z ≤ 1
                 apply Real.rpow_le_one_of_one_le_of_nonpos
-                · linarith  -- 1 ≤ 1 + t
-                · linarith  -- -α ≤ 0
+                · linarith only [ht]  -- 1 ≤ 1 + t
+                · linarith only [hα]  -- -α ≤ 0
           _ = c_decay := by ring
     _ = final_c * (1 + t)^(-α) := by ring
 

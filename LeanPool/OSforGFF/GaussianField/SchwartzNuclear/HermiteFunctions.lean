@@ -107,18 +107,18 @@ private lemma pow_mul_exp_neg_le (k : ℕ) {b : ℝ} (hb : 0 < b) (x : ℝ) :
   have hquad : |x| ≤ b / 2 * x ^ 2 + 1 / (2 * b) := by
     have heq : b / 2 * x ^ 2 + 1 / (2 * b) = (b ^ 2 * x ^ 2 + 1) / (2 * b) := by field_simp
     rw [heq, le_div_iff₀ (by positivity : (0 : ℝ) < 2 * b)]
-    nlinarith [sq_abs x, sq_nonneg (b * |x| - 1)]
+    nlinarith only [sq_abs x, sq_nonneg (b * |x| - 1)]
   calc |x| ^ k * Real.exp (-b * x ^ 2)
       ≤ |x| ^ k * Real.exp (-(b / 2) * x ^ 2) := by
         apply mul_le_mul_of_nonneg_left _ (pow_nonneg (abs_nonneg x) k)
-        exact Real.exp_le_exp.mpr (by nlinarith [sq_nonneg x])
+        exact Real.exp_le_exp.mpr (by nlinarith only [hb, sq_nonneg x])
     _ ≤ ↑k.factorial * Real.exp (|x|) * Real.exp (-(b / 2) * x ^ 2) :=
         mul_le_mul_of_nonneg_right hpow (Real.exp_pos _).le
     _ = ↑k.factorial * (Real.exp (|x|) * Real.exp (-(b / 2) * x ^ 2)) := by ring
     _ = ↑k.factorial * Real.exp (|x| + -(b / 2) * x ^ 2) := by rw [← Real.exp_add]
     _ ≤ ↑k.factorial * Real.exp (1 / (2 * b)) := by
         apply mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg' _)
-        exact Real.exp_le_exp.mpr (by linarith)
+        exact Real.exp_le_exp.mpr (by linarith only [hquad])
 
 /-- Monomial times Gaussian is integrable: ∫ |x^k · exp(-b·x²)| dx < ∞.
     Uses the bound |x|^k ≤ k! · exp(|x|) (from Taylor series of exp) and
@@ -148,7 +148,7 @@ private lemma integrable_pow_mul_exp_neg_mul_sq (k : ℕ) {b : ℝ} (hb : 0 < b)
   have hquad : |x| ≤ b / 2 * x ^ 2 + 1 / (2 * b) := by
     have heq : b / 2 * x ^ 2 + 1 / (2 * b) = (b ^ 2 * x ^ 2 + 1) / (2 * b) := by field_simp
     rw [heq, le_div_iff₀ (by positivity : (0 : ℝ) < 2 * b)]
-    nlinarith [sq_abs x, sq_nonneg (b * |x| - 1)]
+    nlinarith only [sq_abs x, sq_nonneg (b * |x| - 1)]
   -- Step 3: Factor exp(-b·x²) = exp(-(b/2)·x²) · exp(-(b/2)·x²) and combine
   have hfactor : Real.exp (-b * x ^ 2) =
       Real.exp (-(b / 2) * x ^ 2) * Real.exp (-(b / 2) * x ^ 2) := by
@@ -163,7 +163,7 @@ private lemma integrable_pow_mul_exp_neg_mul_sq (k : ℕ) {b : ℝ} (hb : 0 < b)
     _ = ↑k.factorial * Real.exp (|x| + -(b / 2) * x ^ 2) := by rw [← Real.exp_add]
     _ ≤ ↑k.factorial * Real.exp (1 / (2 * b)) := by
         apply mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg' _)
-        exact Real.exp_le_exp.mpr (by linarith)
+        exact Real.exp_le_exp.mpr (by linarith only [hquad])
 
 /-- For any polynomial p and b > 0, the function x ↦ p(x) · exp(-b·x²) is integrable.
     Proved by polynomial induction, reducing to monomial integrability.
@@ -213,7 +213,7 @@ theorem hermiteFunction_memLp (n : ℕ) :
   simp only [ENNReal.toReal_ofNat]
   -- Reduce to showing (hermiteFunction n)² is integrable (npow, avoiding rpow headaches)
   suffices h : Integrable (fun x : ℝ => (hermiteFunction n x) ^ 2) volume by
-    simp_all
+    simp_all only [norm_eq_abs, rpow_ofNat, sq_abs]
   -- Express (hermiteFunction n x)² as c² · (Q·Q)(x) · exp(-x²)
   -- where Q = (hermiteR n) ∘ (√2 · X), so Q(x) = Hₙ(x√2)
   set P := (hermite n).map (Int.castRingHom ℝ) with hP_def
@@ -289,13 +289,14 @@ private theorem deriv_hermiteEval_mul_gaussian (m : ℕ) (x : ℝ) :
   rw [hd]
   -- Convert deriv of polynomial eval via aeval
   have hpoly : deriv (fun u => (hermiteR m).eval u) x = (derivative (hermiteR m)).eval x := by
-    simp_all
+    simp_all only [Polynomial.deriv, derivative_map]
   rw [hpoly]
   have hexp : deriv (fun u : ℝ => Real.exp (-(u ^ 2 / 2))) x = -x * gaussian x := by
     have h1 : HasDerivAt (fun u : ℝ => -(u ^ 2 / 2)) (-x) x := by
       have := ((hasDerivAt_pow 2 x).div_const 2).neg
       have hf : (fun u : ℝ => -(u ^ 2 / 2)) = -fun x => x ^ 2 / 2 := by ext u; simp
-      simp_all
+      simp_all only [derivative_map, Polynomial.deriv, Nat.cast_ofNat, Nat.add_one_sub_one,
+        pow_one, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, mul_div_cancel_left₀]
     exact h1.exp.deriv.trans (mul_comm _ _)
   rw [hexp]
   -- Hermite recurrence: H_{m+1}(x) = x · Hₘ(x) - Hₘ'(x)
@@ -303,7 +304,8 @@ private theorem deriv_hermiteEval_mul_gaussian (m : ℕ) (x : ℝ) :
     x := by
     have h1 : hermiteR (m + 1) = X * hermiteR m - derivative (hermiteR m) := by
       unfold hermiteR
-      simp_all
+      simp_all only [derivative_map, neg_mul, mul_neg, Polynomial.deriv, hermite_succ,
+        Polynomial.map_sub, Polynomial.map_mul, map_X]
     rw [h1]; simp [Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_X]
   rw [hrec]; ring
 
@@ -453,10 +455,10 @@ private theorem J_succ_zero (k : ℕ) : J (k + 1) 0 = 0 := by
     simp [J_comm]
   -- So (k+2) * J(k+1, 0) = J(k+1, 0), hence (k+1) * J(k+1, 0) = 0
   have h3 : (↑(k + 1) : ℝ) * J (k + 1) 0 = 0 := by
-    have h12 : (↑(k + 2) : ℝ) * J (k + 1) 0 - J (k + 1) 0 = 0 := by linarith
+    have h12 : (↑(k + 2) : ℝ) * J (k + 1) 0 - J (k + 1) 0 = 0 := by linarith only [h1, h2]
     have : (↑(k + 1) : ℝ) * J (k + 1) 0 =
         (↑(k + 2) : ℝ) * J (k + 1) 0 - J (k + 1) 0 := by push_cast; ring
-    linarith
+    linarith only [h1, h2, this]
   have h4 : (↑(k + 1) : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
   exact (mul_eq_zero.mp h3).resolve_left h4
 
@@ -683,7 +685,7 @@ lemma hermiteR_recurrence_succ (n : ℕ) (t : ℝ) :
   simp only [Polynomial.map_mul, Polynomial.map_add, Polynomial.map_X,
     Polynomial.map_natCast, Polynomial.eval_mul, Polynomial.eval_add,
     Polynomial.eval_X, Polynomial.eval_natCast] at h
-  linarith
+  linarith only [h]
 
 /-- Hermite recurrence for n = 0: t · H₀(t) = H₁(t). -/
 lemma hermiteR_recurrence_zero (t : ℝ) :
@@ -943,7 +945,7 @@ private lemma hermiteFunction_deriv_l2_sq (n : ℕ) :
       Real.mul_self_sqrt (div_nonneg (Nat.cast_nonneg' n) (by norm_num))
     have h2 : Real.sqrt (↑(n + 1) / 2) * Real.sqrt (↑(n + 1) / 2) = ↑(n + 1) / 2 :=
       Real.mul_self_sqrt (div_nonneg (Nat.cast_nonneg' (n+1)) (by norm_num))
-    nlinarith [h1, h2]
+    nlinarith only [h1, h2]
   rw [h_eq]
   -- Integrability
   have hA : Integrable f_A := (hermiteFunction_sq_integrable (n - 1)).const_mul _
@@ -1005,7 +1007,7 @@ private lemma integrable_hermiteFunction_mul_deriv (n : ℕ) :
 private lemma schwartz_tendsto_atBot (φ : SchwartzMap ℝ ℝ) :
     Filter.Tendsto (fun x => φ x) Filter.atBot (nhds 0) := by
   have hza := ZeroAtInftyContinuousMapClass.zero_at_infty φ
-  simp_all
+  simp_all only [cocompact_eq_atBot_atTop, Filter.tendsto_sup]
 
 /-- ψₙ(x)² → 0 as x → -∞. -/
 private lemma hermiteFunction_sq_tendsto_atBot (n : ℕ) :
@@ -1108,7 +1110,7 @@ theorem hermiteFunction_sup_bound :
   -- 1 + (2n+1)/2 = (2n+3)/2 ≤ 2(1+n) since 2n+3 ≤ 4+4n iff 0 ≤ 2+2n
   have h_arith : 1 + (2 * (↑n : ℝ) + 1) / 2 ≤ 2 * (1 + ↑n) := by
     have : (0 : ℝ) ≤ ↑n := Nat.cast_nonneg n
-    linarith
+    linarith only []
   have h_sq_le : hermiteFunction n a * hermiteFunction n a ≤ 2 * (1 + ↑n) :=
     le_trans h_sq_final h_arith
   -- Now |ψ_n(a)|² ≤ 2·(1+n), so |ψ_n(a)| ≤ √(2·(1+n)) = √2 · (1+n)^{1/2}
@@ -1145,12 +1147,12 @@ private theorem hermiteFunction_pointwise_bound (k m : ℕ) :
       -- Base case: k=0, m=0. Use hermiteFunction_sup_bound.
       obtain ⟨C, s, hC, hs, hbound⟩ := hermiteFunction_sup_bound
       exact ⟨C, s, hC, hs, fun n x => by
-        simp_all⟩
+        simp_all only [pow_zero, iteratedDeriv_zero, norm_eq_abs, one_mul]⟩
     | succ k ih =>
       -- Step k → k+1 (m=0): use mul_x_hermiteFunction
       -- |x|^{k+1} |ψ_n| = |x|^k |x·ψ_n| ≤ |x|^k (√((n+1)/2)|ψ_{n+1}| + √(n/2)|ψ_{n-1}|)
       obtain ⟨C, s, hC, hs, hbound⟩ := ih
-      refine ⟨C * ((2 : ℝ) ^ s + 1), s + 1, by positivity, by linarith, fun n x => ?_⟩
+      refine ⟨C * ((2 : ℝ) ^ s + 1), s + 1, by positivity, by linarith only [hs], fun n x => ?_⟩
       simp only [iteratedDeriv_zero, Real.norm_eq_abs] at hbound ⊢
       -- |x|^{k+1} * |ψ_n(x)| = |x|^k * |x * ψ_n(x)|
       rw [pow_succ, mul_assoc, ← abs_mul]
@@ -1188,15 +1190,16 @@ private theorem hermiteFunction_pointwise_bound (k m : ℕ) :
           rw [← Real.sqrt_sq (by positivity : (0:ℝ) ≤ 1 + ↑n)]
           apply Real.sqrt_le_sqrt
           have : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
-          nlinarith [sq_nonneg ((n : ℕ) : ℝ)]
+          nlinarith only [sq_nonneg ((n : ℕ) : ℝ)]
         have hrpow1 : (1 + ↑(n + 1) : ℝ) ^ s ≤
             (2 : ℝ) ^ s * (1 + ↑n) ^ s := by
           rw [← Real.mul_rpow (by positivity : (0 : ℝ) ≤ 2)
             (by positivity : (0 : ℝ) ≤ 1 + ↑n)]
-          apply Real.rpow_le_rpow (by positivity) _ hs; push_cast; linarith
+          apply Real.rpow_le_rpow (by positivity) _ hs; push_cast; linarith only []
         have hrpow2 : (1 + ↑(n - 1) : ℝ) ^ s ≤ (1 + (↑n : ℝ)) ^ s := by
           apply Real.rpow_le_rpow (by positivity) _ hs
-          simp_all
+          simp_all only [Nat.cast_add, Nat.cast_one, Nat.ofNat_nonneg, sqrt_div',
+            add_le_add_iff_left, Nat.cast_le, tsub_le_iff_right, le_add_iff_nonneg_right, zero_le]
         have hrpow_split : (1 + (↑n : ℝ)) ^ (s + 1) = (1 + ↑n) ^ s * (1 + ↑n) := by
           rw [Real.rpow_add (by positivity : (0:ℝ) < 1 + ↑n), Real.rpow_one]
         calc Real.sqrt ((↑(n + 1) : ℝ) / 2) * (|x| ^ k * |hermiteFunction (n + 1) x|) +
@@ -1218,7 +1221,7 @@ private theorem hermiteFunction_pointwise_bound (k m : ℕ) :
     -- iteratedDeriv (m+1) ψ_n = iteratedDeriv m (ψ_n')
     --   = √(n/2) · iteratedDeriv m ψ_{n-1} - √((n+1)/2) · iteratedDeriv m ψ_{n+1}
     obtain ⟨C, s, hC, hs, hbound⟩ := ih
-    refine ⟨C * ((2 : ℝ) ^ s + 1), s + 1, by positivity, by linarith, fun n x => ?_⟩
+    refine ⟨C * ((2 : ℝ) ^ s + 1), s + 1, by positivity, by linarith only [hs], fun n x => ?_⟩
     -- iteratedDeriv (m+1) ψ_n = iteratedDeriv m (deriv ψ_n)
     rw [iteratedDeriv_succ']
     -- deriv ψ_n = √(n/2) · ψ_{n-1} - √((n+1)/2) · ψ_{n+1}
@@ -1282,10 +1285,12 @@ private theorem hermiteFunction_pointwise_bound (k m : ℕ) :
             · rw [← Real.sqrt_sq (by positivity : (0 : ℝ) ≤ 1 + ↑n)]
               apply Real.sqrt_le_sqrt
               have : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
-              nlinarith [sq_nonneg ((n : ℕ) : ℝ)]
+              nlinarith only [sq_nonneg ((n : ℕ) : ℝ)]
             · apply mul_le_mul_of_nonneg_left _ (le_of_lt hC)
               apply Real.rpow_le_rpow (by positivity) _ hs
-              simp_all
+              simp_all only [norm_eq_abs, Nat.cast_nonneg, sqrt_div, Nat.cast_add, Nat.cast_one,
+                Nat.ofNat_nonneg, sqrt_div', norm_mul, norm_div, add_le_add_iff_left, Nat.cast_le,
+                tsub_le_iff_right, le_add_iff_nonneg_right, zero_le]
           · apply mul_le_mul _ _ (by positivity) (by positivity)
             · rw [← Real.sqrt_sq (by positivity : (0:ℝ) ≤ 1 + ↑n)]
               apply Real.sqrt_le_sqrt; push_cast
@@ -1294,7 +1299,7 @@ private theorem hermiteFunction_pointwise_bound (k m : ℕ) :
             · apply mul_le_mul_of_nonneg_left _ (le_of_lt hC)
               rw [← Real.mul_rpow (by positivity : (0 : ℝ) ≤ 2)
                 (by positivity : (0 : ℝ) ≤ 1 + ↑n)]
-              apply Real.rpow_le_rpow (by positivity) _ hs; push_cast; linarith
+              apply Real.rpow_le_rpow (by positivity) _ hs; push_cast; linarith only []
       _ = C * ((2:ℝ) ^ s + 1) * ((1 + ↑n) ^ s * (1 + ↑n)) := by ring
       _ = C * ((2:ℝ) ^ s + 1) * (1 + ↑n) ^ (s + 1) := by
           rw [Real.rpow_add (by positivity : (0:ℝ) < 1 + ↑n), Real.rpow_one]
@@ -1319,7 +1324,7 @@ theorem hermiteFunction_seminorm_bound (k m : ℕ) :
   · intro x
     have hext : ⇑(Classical.choose (hermiteFunction_schwartz n)) = hermiteFunction n :=
       funext (Classical.choose_spec (hermiteFunction_schwartz n))
-    simp_all
+    simp_all only [norm_eq_abs]
 
 /-! ## Sobolev-Hermite Spaces
 
@@ -1340,7 +1345,7 @@ by the Sobolev-Hermite norms.
 theorem sobolevHermite_hs_sum_bound (s : ℝ) (hs : 1 / 2 < s) :
     ∃ C : ℝ, ∀ N : ℕ, ∑ i ∈ Finset.range N, ((1 + (i : ℝ)) ^ (-2 * s)) ≤ C := by
   -- The series ∑ (1+n)^{-2s} converges when 2s > 1, so partial sums are bounded by tsum
-  have hexp : -2 * s < -1 := by linarith
+  have hexp : -2 * s < -1 := by linarith only [hs]
   have hsumm : Summable (fun i : ℕ => (1 + (i : ℝ)) ^ (-2 * s)) := by
     have h := (summable_nat_add_iff (f := fun n => (↑n : ℝ) ^ (-2 * s)) 1).mpr
       (Real.summable_nat_rpow.mpr hexp)
@@ -1573,7 +1578,7 @@ private lemma integrable_g_mul_exp_linear
       _ ≤ |f x| * Real.exp (c ^ 2 + -(x ^ 2 / 4)) := by
           apply mul_le_mul_of_nonneg_left _ (abs_nonneg _)
           apply Real.exp_le_exp_of_le
-          nlinarith [sq_nonneg (|x| / 2 - c), sq_abs x]
+          linarith only [sq_nonneg (|x| / 2 - c), sq_abs x]
       _ = Real.exp (c ^ 2) * (|f x| * Real.exp (-(x ^ 2 / 4))) := by rw [Real.exp_add]; ring
 
 /-- The L^1 Fourier transform of g(x) = f(x) exp(-x^2/2) vanishes when all
@@ -1622,7 +1627,7 @@ private lemma fourierIntegral_f_mul_gaussian_eq_zero
       have h1 : (-2 : ℝ) * π * (y * ξ) = -(2 * π * (y * ξ)) := by ring
       rw [h1, abs_neg, abs_mul, abs_of_pos (by positivity : (0 : ℝ) < 2 * π), abs_mul]
       ring
-    linarith
+    linarith only [this]
   -- Step 3: ‖F N x‖ ≤ bound x
   have h_bound : ∀ N, ∀ᵐ x ∂volume, ‖F N x‖ ≤ bound x := by
     intro N
@@ -1636,7 +1641,12 @@ private lemma fourierIntegral_f_mul_gaussian_eq_zero
           = ‖∑ k ∈ Finset.range N, z x ^ k / (Nat.factorial k : ℂ)‖ := rfl
         _ ≤ ∑ k ∈ Finset.range N, ‖z x ^ k / (Nat.factorial k : ℂ)‖ := norm_sum_le _ _
         _ = ∑ k ∈ Finset.range N, ‖z x‖ ^ k / (Nat.factorial k) := by
-            simp_all
+            simp_all only [Complex.ofReal_mul, Complex.ofReal_exp, Complex.ofReal_neg,
+              Complex.ofReal_div, Complex.ofReal_pow, Complex.ofReal_ofNat, neg_mul, norm_mul,
+              norm_eq_abs, abs_exp, innerₗ_apply_apply, RCLike.inner_apply, conj_trivial,
+              norm_neg, Complex.norm_ofNat, Complex.norm_real, abs_pi,
+              Complex.norm_I, mul_one, mul_eq_mul_left_iff, abs_eq_zero, Complex.norm_div,
+              norm_pow, RCLike.norm_natCast]
         _ ≤ Real.exp ‖z x‖ :=
             Real.sum_le_exp_of_nonneg (norm_nonneg _) N
         _ ≤ Real.exp (2 * π * |ξ| * |x|) :=
@@ -1680,7 +1690,10 @@ private lemma fourierIntegral_f_mul_gaussian_eq_zero
     intro k y
     simp only [z, innerₗ_apply_apply]
     rw [show @inner ℝ ℝ _ y ξ = y * ξ from by
-      simp_all]
+      simp_all only [Complex.ofReal_mul, Complex.ofReal_exp, Complex.ofReal_neg,
+        Complex.ofReal_div, Complex.ofReal_pow, Complex.ofReal_ofNat, neg_mul, norm_mul,
+        norm_eq_abs, abs_exp, innerₗ_apply_apply, RCLike.inner_apply, conj_trivial, norm_neg,
+        Complex.norm_ofNat, Complex.norm_real, abs_pi, Complex.norm_I, mul_one]]
     rw [show (↑(-2 * π * (y * ξ)) : ℂ) * Complex.I = c * ↑y from by
       simp only [c]; push_cast; ring]
     rw [mul_pow, Complex.ofReal_pow]
@@ -1720,7 +1733,11 @@ private lemma fourierIntegral_f_mul_gaussian_eq_zero
           congr_arg _ integral_ofReal
       _ = 0 := by rw [h_moments k, Complex.ofReal_zero, mul_zero]
   -- Step 8: Limit of zeros is zero
-  simp_all
+  simp_all only [Complex.ofReal_mul, Complex.ofReal_exp, Complex.ofReal_neg, Complex.ofReal_div,
+    Complex.ofReal_pow, Complex.ofReal_ofNat, neg_mul, norm_mul, norm_eq_abs, abs_exp,
+    innerₗ_apply_apply, RCLike.inner_apply, conj_trivial, norm_neg,
+    Complex.norm_ofNat, Complex.norm_real, abs_pi, Complex.norm_I, mul_one,
+    tendsto_const_nhds_iff]
 
 /-- If ĝ = 0 and φ is smooth compactly supported, then ∫ φ · g = 0.
     Uses Parseval identity and Fourier inversion for Schwartz functions.
@@ -1779,7 +1796,7 @@ private theorem hermiteFunction_complete_proof :
   have h_moments := integral_f_xpow_gaussian_zero f hf horth
   suffices hg : (fun x => f x * Real.exp (-(x ^ 2 / 2))) =ᵐ[volume] 0 by
     filter_upwards [hg] with x hx
-    simp_all
+    simp_all only [Pi.zero_apply, mul_eq_zero, exp_ne_zero, or_false]
   have hg_loc : LocallyIntegrable (fun x => f x * Real.exp (-(x ^ 2 / 2))) volume :=
     (integrable_f_mul_gaussian f hf).locallyIntegrable
   exact ae_eq_zero_of_integral_contDiff_smul_eq_zero hg_loc

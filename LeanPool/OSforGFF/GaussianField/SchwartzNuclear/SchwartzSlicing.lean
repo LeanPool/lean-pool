@@ -166,7 +166,7 @@ private lemma euclideanSnoc_norm_ge_left (d : ℕ)
     ← Real.sqrt_sq (norm_nonneg (euclideanSnoc (d + 1) y t))]
   apply Real.sqrt_le_sqrt
   rw [euclideanSnoc_norm_sq]
-  linarith [sq_nonneg t]
+  linarith only [sq_nonneg t]
 
 /-- The last coordinate contributes to the norm:
 `|t| ≤ ‖euclideanSnoc (d+1) y t‖`.
@@ -178,7 +178,7 @@ private lemma euclideanSnoc_norm_ge_right (d : ℕ)
     ← Real.sqrt_sq (norm_nonneg (euclideanSnoc (d + 1) y t))]
   apply Real.sqrt_le_sqrt
   rw [euclideanSnoc_norm_sq, Real.norm_eq_abs, sq_abs]
-  linarith [sq_nonneg ‖y‖]
+  linarith only [sq_nonneg ‖y‖]
 
 -- A1: Slicing a Schwartz function along the last coordinate
 /-- Restrict `f ∈ S(ℝ^{d+2})` to the hyperplane `{x | x_rest = y}`,

@@ -241,7 +241,7 @@ theorem schwartz_integration_by_parts_twice
   -- ibp1 : ∫ (derivCLM f) x * deriv g x = -∫ deriv(derivCLM f) x * g x
   -- So ∫ deriv(derivCLM f) x * g x = -∫ (derivCLM f) x * deriv g x
   have lhs_eq : ∫ x, deriv (⇑(derivCLM ℝ ℝ f)) x * g x =
-      -(∫ x, (derivCLM ℝ ℝ f) x * deriv (⇑g) x) := by linarith
+      -(∫ x, (derivCLM ℝ ℝ f) x * deriv (⇑g) x) := by linarith only [ibp1]
   -- Apply IBP to RHS: ∫ f * (derivCLM g)' = -∫ f' * (derivCLM g)
   -- i.e., ∫ f * deriv(derivCLM g) = -∫ deriv(f) * (derivCLM g)
   have ibp2 := integral_mul_deriv_eq_neg_deriv_mul f (derivCLM ℝ ℝ g)
@@ -251,7 +251,7 @@ theorem schwartz_integration_by_parts_twice
   simp only [derivCLM_apply] at ibp1 ibp2 lhs_eq ⊢
   -- Now lhs_eq : LHS = -(∫ deriv f x * deriv g x)
   -- ibp2 : RHS = -(∫ deriv f x * deriv g x)
-  linarith
+  linarith only [ibp1, ibp2]
 
 /-- The harmonic oscillator is symmetric on Schwartz space:
     ∫ Hf · ψₙ = (2n+1) ∫ f · ψₙ.
@@ -303,7 +303,7 @@ theorem hermiteCoeff_harmonic_oscillator (n : ℕ) (f : SchwartzMap ℝ ℝ) :
       have : x ^ 2 * hermiteFunction n x =
           (2 * ↑n + 1) * hermiteFunction n x +
             iteratedDeriv 2 (hermiteFunction n) x := by
-        linarith
+        linarith only [h]
       calc x ^ 2 * f x * hermiteFunction n x
           = f x * (x ^ 2 * hermiteFunction n x) := by ring
         _ = f x * ((2 * ↑n + 1) * hermiteFunction n x +
@@ -330,7 +330,7 @@ theorem hermiteCoeff_harmonic_oscillator (n : ℕ) (f : SchwartzMap ℝ ℝ) :
     have hx2 : x ^ 2 * hermiteFunction n x =
         (2 * ↑n + 1) * hermiteFunction n x +
           iteratedDeriv 2 (hermiteFunction n) x := by
-      linarith
+      linarith only [h]
     calc x ^ 2 * f x * hermiteFunction n x
         = f x * (x ^ 2 * hermiteFunction n x) := by ring
       _ = f x * ((2 * ↑n + 1) * hermiteFunction n x +
@@ -358,7 +358,7 @@ theorem hermiteCoeff_harmonic_oscillator (n : ℕ) (f : SchwartzMap ℝ ℝ) :
   rw [integral_add hint_main hint_diff, integral_const_mul, integral_sub hint_fψ'' hint_f''ψ]
   -- Goal: (2n+1) * ∫ f·ψₙ + (∫ f·ψₙ'' - ∫ f''·ψₙ) = (2n+1) * hermiteCoeff1D n f
   -- By IBP: ∫ f''·ψₙ = ∫ f·ψₙ'', so the second term is 0
-  rw [hibp]; unfold hermiteCoeff1D; linarith
+  rw [hibp]; unfold hermiteCoeff1D; linarith only []
 
 /-! ## Section 5: Coefficient Decay
 
@@ -412,7 +412,7 @@ private lemma cauchy_schwarz_integral (f g : ℝ → ℝ) (hf : Integrable (fun 
           (∫ x, 2 * t * (f x * g x)) + ∫ x, t ^ 2 * (g x ^ 2) :=
         integral_add hint1 hint2
       rw [h_sq, h_s1, h_s2, integral_const_mul, integral_const_mul]; ring
-    linarith
+    linarith only [h0, heq]
   -- Case split on B
   by_cases hB : B = 0
   · -- B = 0 implies g² =ᵐ 0, hence g =ᵐ 0, hence C = 0
@@ -433,7 +433,7 @@ private lemma cauchy_schwarz_integral (f g : ℝ → ℝ) (hf : Integrable (fun 
     have hsimp : A + 2 * (-C / B) * C + (-C / B) ^ 2 * B = A - C ^ 2 / B := by field_simp; ring
     rw [hsimp] at h
     have hCsq : C ^ 2 ≤ A * B := by
-      have h1 : C ^ 2 / B ≤ A := by linarith
+      have h1 : C ^ 2 / B ≤ A := by linarith only [h]
       calc C ^ 2 = C ^ 2 / B * B := by field_simp
         _ ≤ A * B := mul_le_mul_of_nonneg_right h1 hB_pos.le
     -- |C| = √(C²) ≤ √(AB) = √A · √B
@@ -518,7 +518,7 @@ private lemma schwartz_l2_le_sup_seminorm :
   have hI_nn : 0 ≤ ∫ x : ℝ, (1 + ‖x‖) ^ ((-2) : ℝ) :=
     integral_nonneg (fun x => rpow_nonneg (by positivity) _)
   refine ⟨(1, 0), 2 * Real.sqrt (∫ x : ℝ, (1 + ‖x‖) ^ ((-2) : ℝ)) + 1,
-    by linarith [Real.sqrt_nonneg (∫ x : ℝ, (1 + ‖x‖) ^ ((-2) : ℝ))], fun f => ?_⟩
+    by linarith only [Real.sqrt_nonneg (∫ x : ℝ, (1 + ‖x‖) ^ ((-2) : ℝ))], fun f => ?_⟩
   set S := (Finset.Iic (1, 0)).sup (fun p => SchwartzMap.seminorm ℝ p.1 p.2) f
   have hS_nn : (0 : ℝ) ≤ S := apply_nonneg _ _
   -- Integrability of f²
@@ -545,7 +545,7 @@ private lemma schwartz_l2_le_sup_seminorm :
       rw [mul_pow, mul_comm ((1 + ‖x‖) ^ 2)]; simp_all
     rw [h_eq]
     calc ((1 + ‖x‖) * ‖f x‖) ^ 2 ≤ (2 * S) ^ 2 :=
-          sq_le_sq' (by nlinarith [norm_nonneg (f x)]) (by linarith)
+          sq_le_sq' (by nlinarith only [hS_nn, hx_pos, norm_nonneg (f x)]) (by linarith only [h])
       _ = 4 * S ^ 2 := by ring
   -- Integrate the bound
   have h_integral : ∫ x, (f x) ^ 2 ≤
@@ -561,8 +561,8 @@ private lemma schwartz_l2_le_sup_seminorm :
     _ = Real.sqrt (4 * S ^ 2) * Real.sqrt I := Real.sqrt_mul (by positivity) I
     _ = 2 * S * Real.sqrt I := by
         rw [show (4 : ℝ) * S ^ 2 = (2 * S) ^ 2 from by ring,
-          Real.sqrt_sq (by linarith)]
-    _ ≤ (2 * Real.sqrt I + 1) * S := by nlinarith [Real.sqrt_nonneg I]
+          Real.sqrt_sq (by linarith only [hS_nn])]
+    _ ≤ (2 * Real.sqrt I + 1) * S := by linarith only [hS_nn, Real.sqrt_nonneg I]
 
 -- Helper: a single seminorm of T f is bounded by finitely many seminorms of f
 private lemma clm_single_seminorm_bound (T : (SchwartzMap ℝ ℝ) →L[ℝ] (SchwartzMap ℝ ℝ))
@@ -620,7 +620,7 @@ private lemma clm_finset_sup_seminorm_bound
         _ ≤ (C_a : ℝ) * (Finset.Iic (q₁, q₂)).sup snf f :=
             mul_le_mul_of_nonneg_left (hsub_a f) (NNReal.coe_nonneg C_a)
         _ ≤ (max C_s (C_a : ℝ) + 1) * (Finset.Iic (q₁, q₂)).sup snf f := by
-            gcongr; linarith [le_max_right C_s (C_a : ℝ)]
+            gcongr; linarith only [le_max_right C_s (C_a : ℝ)]
     · -- Bound for the rest (from IH)
       have hsub_s : (Finset.Iic q_s).sup snf ≤ (Finset.Iic (q₁, q₂)).sup snf := by
         apply Finset.sup_le; intro ⟨i, j⟩ hij
@@ -632,7 +632,7 @@ private lemma clm_finset_sup_seminorm_bound
         _ ≤ C_s * (Finset.Iic (q₁, q₂)).sup snf f :=
             mul_le_mul_of_nonneg_left (hsub_s f) (le_of_lt hC_s)
         _ ≤ (max C_s (C_a : ℝ) + 1) * (Finset.Iic (q₁, q₂)).sup snf f := by
-            gcongr; linarith [le_max_left C_s (C_a : ℝ)]
+            gcongr; linarith only [le_max_left C_s (C_a : ℝ)]
 
 -- Helper: sup-seminorms of T f bounded by sup-seminorms of f (single step, Iic version)
 private lemma clm_sup_seminorm_bound (T : (SchwartzMap ℝ ℝ) →L[ℝ] (SchwartzMap ℝ ℝ))
@@ -696,7 +696,7 @@ theorem hermiteCoeff1D_decay :
             (le_trans (le_max_left k 0) (Nat.le_ceil (max k 0)))
       _ = (1 + ↑n) ^ m := by rw [rpow_natCast]
       _ ≤ (2 * ↑n + 1) ^ m :=
-          pow_le_pow_left₀ (by positivity) (by linarith) m
+          pow_le_pow_left₀ (by positivity) (by linarith only []) m
   -- Combine the exponent comparison and coefficient bound.
   calc |hermiteCoeff1D n f| * (1 + ↑n) ^ k
       ≤ |hermiteCoeff1D n f| * (2 * ↑n + 1) ^ m :=
@@ -886,7 +886,7 @@ private lemma bessel_inequality (f : SchwartzMap ℝ ℝ) (N : ℕ) :
   have hnn : 0 ≤ ∫ x, (f x - ∑ n ∈ Finset.range N,
       hermiteCoeff1D n f * hermiteFunction n x) ^ 2 :=
     integral_nonneg (fun x => sq_nonneg _)
-  linarith
+  linarith only [h, hnn]
 
 -- Helper: summability of hermiteCoeff squares (Bessel's inequality)
 private lemma hermiteCoeff_sq_summable (f : SchwartzMap ℝ ℝ) :
@@ -1046,7 +1046,7 @@ private lemma integral_tsum_mul_hermite (f : SchwartzMap ℝ ℝ) (m : ℕ) :
                 simp only [Pi.add_apply]
                 have h := two_mul_le_add_sq |hermiteFunction n a| |hermiteFunction m a|
                 rw [sq_abs, sq_abs] at h
-                linarith
+                linarith only [h]
           _ = 1 := by
               rw [integral_div, integral_add (hψ_sq_int n) (hψ_sq_int m), hψ_sq n, hψ_sq m]
               norm_num

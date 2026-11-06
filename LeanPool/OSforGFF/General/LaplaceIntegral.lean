@@ -61,7 +61,7 @@ lemma glasser_expand (c u : ℝ) (hu : u ≠ 0) : (c / u - u)^2 = c^2 / u^2 - 2*
 /-- Lower bound: (c/u - u)² ≥ u² - 2c -/
 lemma glasser_lower_bound (c u : ℝ) (hu : u ≠ 0) : (c / u - u)^2 ≥ u^2 - 2*c := by
   rw [glasser_expand c u hu]; have : 0 ≤ c^2 / u^2 := div_nonneg (sq_nonneg c) (sq_nonneg u);
-    linarith
+    linarith only [this]
 
 
 /-- The derivative of u ↦ c/u - u is -c/u² - 1 -/
@@ -115,7 +115,7 @@ lemma glasser_integral_substitution_identity (c : ℝ) (hc : 0 < c) :
     · rintro ⟨u, hu, rfl⟩; exact div_pos hc hu
     · intro hv; exact ⟨c / v, div_pos hc hv, by field_simp⟩
   have h_inj : InjOn (fun u => c / u) (Ioi 0) := fun x hx y hy hxy => by
-    simp only [mem_Ioi] at hx hy; field_simp at hxy; nlinarith [mul_pos hx hy]
+    simp only [mem_Ioi] at hx hy; field_simp at hxy; linarith only [hxy, mul_pos hx hy]
   have h_deriv : ∀ u ∈ Ioi 0, HasDerivWithinAt (fun u => c / u) (-c / u^2) (Ioi 0) u := fun u hu =>
     (((hasDerivAt_inv (ne_of_gt hu)).const_mul c).hasDerivWithinAt).congr_deriv (by field_simp)
   let g : ℝ → ℝ := fun v => exp (-(c/v - v)^2)
@@ -126,7 +126,7 @@ lemma glasser_integral_substitution_identity (c : ℝ) (hc : 0 < c) :
   have h_simp : ∀ u ∈ Ioi 0, |-c / u^2| * g (c / u) = (c / u^2) * exp (-(c/u - u)^2) := fun u hu =>
     by
     have hu_pos : 0 < u := hu
-    rw [abs_of_neg (div_neg_of_neg_of_pos (by linarith) (sq_pos_of_pos hu_pos))]
+    rw [abs_of_neg (div_neg_of_neg_of_pos (by linarith only [hc]) (sq_pos_of_pos hu_pos))]
     simp only [g]; congr 2
     · ring
     · have h_eq : c / (c / u) - c / u = u - c / u := by field_simp [ne_of_gt hu_pos]
@@ -273,7 +273,7 @@ theorem glasser_weighted_integrable (c : ℝ) (hc : 0 < c) :
       rw [Real.norm_eq_abs, abs_of_pos (mul_pos (div_pos hc (sq_pos_of_pos hu_pos)) (exp_pos _))]
       rw [Real.norm_eq_abs, abs_of_pos (mul_pos (mul_pos hc (exp_pos _)) (exp_pos _))]
       have h_cu2 : c / u^2 ≤ c := by
-        have h_u2_ge_1 : 1 ≤ u^2 := by nlinarith
+        have h_u2_ge_1 : 1 ≤ u^2 := by nlinarith only [hu1]
         -- div_le_div_of_nonneg_left : 0 ≤ a → 0 < c → c ≤ b → a / b ≤ a / c
         -- For c/u² ≤ c/1: a=c, b=u², c=1. Need: 0 ≤ c, 0 < 1, 1 ≤ u²
         calc c / u^2 ≤ c / 1 := div_le_div_of_nonneg_left (le_of_lt hc) one_pos h_u2_ge_1
@@ -329,7 +329,7 @@ lemma glasser_tendsto_atTop_at_zero (c : ℝ) (hc : 0 < c) :
       refine ⟨isOpen_Iio, (zero_lt_one : (0 : ℝ) < 1), ?_⟩
       intro x hx
       simp_all
-    · intro u hu; simp only [mem_Ioo] at hu; linarith
+    · intro u hu; simp only [mem_Ioo] at hu; linarith only [hu]
   have h_eq : (fun u => c / u - u) = (fun u => (-u) + (c / u)) := by ext u; ring
   rw [h_eq]
   exact tendsto_atTop_add_left_of_le' _ (-1) h_bdd h3
@@ -361,9 +361,9 @@ lemma glasser_strictAntiOn (c : ℝ) (hc : 0 < c) : StrictAntiOn (fun u => c / u
   have h3 : x - y < 0 := sub_neg_of_lt hxy
   calc c / y - y = c / x - (c / x - c / y) - y := by ring
     _ = c / x - c * (y - x) / (x * y) - y := by rw [h1]
-    _ < c / x - 0 - y := by linarith
+    _ < c / x - 0 - y := by linarith only [h2]
     _ = c / x - x + (x - y) := by ring
-    _ < c / x - x + 0 := by linarith
+    _ < c / x - x + 0 := by linarith only [hxy]
     _ = c / x - x := by ring
 
 /-- The Glasser map is injective on (0, ∞). -/
@@ -411,7 +411,7 @@ lemma glasser_image_eq_univ (c : ℝ) (hc : 0 < c) :
 lemma glasser_deriv_abs (c : ℝ) (hc : 0 < c) (u : ℝ) (hu : u ∈ Ioi 0) :
     |(-c / u^2 - 1)| = 1 + c / u^2 := by
   have h : 0 < c / u^2 := div_pos hc (sq_pos_of_pos hu)
-  rw [show -c / u^2 = -(c / u^2) by ring, abs_of_neg (by linarith)]; ring
+  rw [show -c / u^2 = -(c / u^2) by ring, abs_of_neg (by linarith only [h])]; ring
 
 /-- The weighted integral equals √π via change of variables w = c/u - u.
     This is the core analytical step.
@@ -448,7 +448,7 @@ theorem weighted_glasser_integral_eq_gaussian (c : ℝ) (hc : 0 < c) :
 
 theorem glasser_gaussian_integral (c : ℝ) (hc : 0 < c) :
     ∫ u in Ioi 0, exp (-(c/u - u)^2) = sqrt π / 2 := by
-  linarith [glasser_integral_double c hc, weighted_glasser_integral_eq_gaussian c hc]
+  linarith only [hc, glasser_integral_double c hc, weighted_glasser_integral_eq_gaussian c hc]
 
 /-! ## Part 4: Completing the square -/
 

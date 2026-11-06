@@ -144,14 +144,14 @@ theorem mixed_representation (f : TestFunctionℂ)
 lemma energy_pos (k_sp : SpatialCoords) : 0 < Real.sqrt (‖k_sp‖^2 + m^2) := by
   apply Real.sqrt_pos_of_pos
   have hm : 0 < m := Fact.out
-  nlinarith [sq_nonneg ‖k_sp‖]
+  nlinarith only [hm, sq_nonneg ‖k_sp‖]
 
 /-! ## Part 5: Factorization Helpers -/
 
 omit [Fact (0 < m)] in
 lemma abs_neg_sum_nonneg (x0 y0 : ℝ) (hx : 0 ≤ x0) (hy : 0 ≤ y0) :
     |-x0 - y0| = x0 + y0 := by
-  rw [abs_of_nonpos (by linarith : -x0 - y0 ≤ 0)]; ring
+  rw [abs_of_nonpos (by linarith only [hx, hy] : -x0 - y0 ≤ 0)]; ring
 
 omit [Fact (0 < m)] in
 lemma spatialDot_sub (k_sp x_sp y_sp : SpatialCoords) :

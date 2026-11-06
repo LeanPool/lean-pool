@@ -97,7 +97,7 @@ lemma PositiveTimeTestFunctionℂ.zero_on_nonpositive
   refine image_eq_zero_of_notMem_tsupport (fun hx_mem => ?_)
   have hx_pos : getTimeComponent x > 0 := by
     simpa [positiveTimeSet, HasPositiveTime] using f.property hx_mem
-  linarith
+  linarith only [hx, hx_pos]
 
 /-- Helper lemma: starRingEnd ℂ commutes through derivatives and preserves norms -/
 lemma starRingEnd_iteratedFDeriv_norm_eq (g : TestFunctionℂ) (n : ℕ) (x : SpaceTime) :
@@ -142,6 +142,6 @@ lemma PositiveTimeTestFunction.zero_on_nonpositive
   refine image_eq_zero_of_notMem_tsupport (fun hx_mem => ?_)
   have hx_pos : getTimeComponent x > 0 := by
     simpa [positiveTimeSet, HasPositiveTime] using f.property hx_mem
-  linarith
+  linarith only [hx, hx_pos]
 
 end

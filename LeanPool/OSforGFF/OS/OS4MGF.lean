@@ -221,12 +221,12 @@ lemma exp_sub_one_bound_general (x : ℂ) : ‖Complex.exp x - 1‖ ≤ ‖x‖ 
   have h2 : Real.exp ‖x‖ - 1 ≤ ‖x‖ * Real.exp ‖x‖ := by
     by_cases hr1 : ‖x‖ ≤ 1
     · have hle : 1 - Real.exp (-‖x‖) ≤ ‖x‖ := by
-        have := Real.add_one_le_exp (-‖x‖); linarith
+        have := Real.add_one_le_exp (-‖x‖); linarith only [this]
       have hkey : Real.exp ‖x‖ - 1 = Real.exp ‖x‖ * (1 - Real.exp (-‖x‖)) := by
         rw [Real.exp_neg]; field_simp
-      nlinarith [mul_le_mul_of_nonneg_left hle (le_of_lt hexp_pos)]
+      linarith only [hexp_pos, hle, hkey, mul_le_mul_of_nonneg_left hle (le_of_lt hexp_pos)]
     · push Not at hr1
-      nlinarith [(le_mul_iff_one_le_left hexp_pos).mpr (le_of_lt hr1)]
-  linarith
+      linarith only [hexp_pos, hr1, (le_mul_iff_one_le_left hexp_pos).mpr (le_of_lt hr1)]
+  linarith only [h1, h2]
 
 end OS4infra

@@ -580,7 +580,7 @@ lemma s_integral_complex_eval (k_sp : SpatialCoords) (x y : SpaceTime) (m : ℝ)
   -- using ω² = ‖k_sp‖² + m²
   have h_omega_sq : ω^2 = ‖k_sp‖^2 + m^2 := by
     simp only [ω]
-    exact Real.sq_sqrt (by nlinarith [sq_nonneg ‖k_sp‖, sq_pos_of_pos hm])
+    exact Real.sq_sqrt (by linarith only [hm, sq_nonneg ‖k_sp‖, sq_pos_of_pos hm])
   have h_exp_conv : ∀ a ∈ Set.Ioi (0:ℝ),
       Complex.exp (-(a : ℂ) * ((‖k_sp‖^2 : ℂ) + (m^2 : ℂ))) =
       Complex.exp (-(a * ω^2 : ℝ)) := by
@@ -1193,7 +1193,7 @@ lemma mixed_rep_to_k0_inside_integrand (k_spatial : SpatialCoords) (m : ℝ) [Fa
     simp only [ω]
     apply Real.sqrt_pos_of_pos
     have hm : 0 < m := Fact.out
-    nlinarith [sq_nonneg ‖k_spatial‖]
+    nlinarith only [hm, sq_nonneg ‖k_spatial‖]
   -- By fourier_lorentzian_1d_neg: ∫ exp(-ik₀t)/(k₀²+ω²) = (π/ω) exp(-ω|t|)
   have h_fourier := fourier_lorentzian_1d_neg ω hω_pos t
   -- Rearrange: (1/ω) exp(-ω|t|) = (1/π) * (π/ω) exp(-ω|t|) = (1/π) * ∫...

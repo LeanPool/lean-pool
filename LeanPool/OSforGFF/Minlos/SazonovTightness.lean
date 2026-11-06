@@ -81,7 +81,7 @@ lemma marginalFun_isPositiveDefinite (φ : H → ℂ) (hpd : IsPositiveDefinite 
 
 /-- 1 - exp(-t) > 0 for t > 0. -/
 lemma one_sub_exp_neg_pos {t : ℝ} (ht : 0 < t) : 0 < 1 - Real.exp (-t) := by
-  simp_all
+  simp_all only [sub_pos, Real.exp_lt_one_iff, Left.neg_neg_iff]
 
 /-- exp(-b) ≤ exp(-a) when a ≤ b. -/
 lemma exp_neg_le_exp_neg {a b : ℝ} (hab : a ≤ b) :
@@ -104,7 +104,8 @@ lemma tail_bound_from_exp_integral {V : Type*} [NormedAddCommGroup V]
     (μ.toMeasure {y | R ≤ ‖y‖}).toReal ≤ C / (1 - Real.exp (-(σ ^ 2 * R ^ 2 / 2))) := by
   set δ := 1 - Real.exp (-(σ ^ 2 * R ^ 2 / 2)) with hδ_def
   have hδ_pos : 0 < δ := by
-    simp_all
+    simp_all only [sub_pos, Real.exp_lt_one_iff, Left.neg_neg_iff, Nat.ofNat_pos,
+      div_pos_iff_of_pos_right, pow_succ_pos, mul_pos_iff_of_pos_left]
   set A := {y : V | R ≤ ‖y‖}
   set f : V → ℝ := fun y => 1 - Real.exp (-(σ ^ 2 * ‖y‖ ^ 2 / 2))
   have hA_meas : MeasurableSet A :=
@@ -113,14 +114,14 @@ lemma tail_bound_from_exp_integral {V : Type*} [NormedAddCommGroup V]
     intro y; simp only [f]
     have : Real.exp (-(σ ^ 2 * ‖y‖ ^ 2 / 2)) ≤ Real.exp 0 :=
       Real.exp_le_exp_of_le (by linarith [show 0 ≤ σ ^ 2 * ‖y‖ ^ 2 / 2 from by positivity])
-    rw [Real.exp_zero] at this; linarith
+    rw [Real.exp_zero] at this; linarith only [this]
   have hf_ge_δ : ∀ y ∈ A, δ ≤ f y := by
     intro y hy
     simp only [A, mem_ofPred_eq] at hy; simp only [f, hδ_def]
     have : σ ^ 2 * R ^ 2 / 2 ≤ σ ^ 2 * ‖y‖ ^ 2 / 2 := by
       apply div_le_div_of_nonneg_right _ (by positivity : (0:ℝ) ≤ 2)
-      exact mul_le_mul_of_nonneg_left (sq_le_sq' (by linarith) hy) (by positivity)
-    linarith [Real.exp_le_exp_of_le (neg_le_neg this)]
+      exact mul_le_mul_of_nonneg_left (sq_le_sq' (by linarith only [hR, hy]) hy) (by positivity)
+    linarith only [this, Real.exp_le_exp_of_le (neg_le_neg this)]
   have hf_cont : Continuous f := by
     simp only [f]; apply continuous_const.sub
     exact Real.continuous_exp.comp (continuous_neg.comp
@@ -129,7 +130,7 @@ lemma tail_bound_from_exp_integral {V : Type*} [NormedAddCommGroup V]
     apply Integrable.mono' (integrable_const (1 : ℝ)) hf_cont.aestronglyMeasurable
     exact Eventually.of_forall fun y => by
       rw [Real.norm_eq_abs, abs_of_nonneg (hf_nn y)]
-      simp only [f]; linarith [Real.exp_nonneg (-(σ ^ 2 * ‖y‖ ^ 2 / 2))]
+      simp only [f]; linarith only [Real.exp_nonneg (-(σ ^ 2 * ‖y‖ ^ 2 / 2))]
   have key : δ * (μ.toMeasure A).toReal ≤ C :=
     calc δ * (μ.toMeasure A).toReal
         = ∫ _ in A, δ ∂μ.toMeasure := by
@@ -140,7 +141,7 @@ lemma tail_bound_from_exp_integral {V : Type*} [NormedAddCommGroup V]
       _ ≤ ∫ y, f y ∂μ.toMeasure :=
           setIntegral_le_integral hf_int (Eventually.of_forall hf_nn)
       _ ≤ C := hC
-  exact (le_div_iff₀ hδ_pos).mpr (by linarith)
+  exact (le_div_iff₀ hδ_pos).mpr (by linarith only [key])
 
 /-! ## The Gaussian Averaging Bound (with scaling parameter) -/
 
@@ -174,7 +175,7 @@ lemma gaussDensity_integrable' (σ : ℝ) (hσ : 0 < σ) :
   have hcint : Integrable (fun x : V => cexp (-(b : ℂ) * ↑(‖x‖ ^ 2))) := by
     have := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add
       (show 0 < ((b : ℂ)).re by simp [hb]) (0 : ℂ) (0 : V)
-    simp_all
+    simp_all only [neg_mul, inner_zero_left, ofReal_zero, mul_zero, add_zero, ofReal_pow]
   have heq : gaussDensity (V := V) σ = fun x => ‖cexp (-(b : ℂ) * ↑(‖x‖ ^ 2))‖ := by
     ext x; unfold gaussDensity; rw [Complex.norm_exp]; congr 1
     simp only [Complex.neg_re, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
@@ -223,7 +224,7 @@ private lemma exp_neg_sq_integrable_prob' (μ : ProbabilityMeasure V) (σ : ℝ)
   filter_upwards with y
   simp only [Real.norm_eq_abs, abs_of_nonneg (Real.exp_nonneg _)]
   rw [← Real.exp_zero]
-  exact Real.exp_le_exp_of_le (by nlinarith [sq_nonneg σ, sq_nonneg ‖y‖])
+  exact Real.exp_le_exp_of_le (by nlinarith only [sq_nonneg σ, sq_nonneg ‖y‖])
 
 omit [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] [SecondCountableTopology V] in
 private lemma cexp_neg_sq_integrable_prob' (μ : ProbabilityMeasure V) (σ : ℝ) (_hσ : 0 < σ) :
@@ -311,8 +312,13 @@ theorem fubini_gaussian_charFun
       apply Integrable.mono' (gaussDensity_integrable' σ hσ)
         (by fun_prop : Continuous (fun x : V =>
           (↑(gaussDensity σ x) : ℂ) * cexp (↑⟪y, x⟫_ℝ * I))).aestronglyMeasurable
-      simp_all
-    · simp_all
+      simp_all only [ne_eq, ofReal_div, ofReal_mul, ofReal_pow, ofReal_ofNat, ofReal_exp, one_div,
+        mul_inv_rev, neg_mul, ofReal_neg, ofReal_inv, Complex.norm_mul, norm_exp_ofReal_mul_I,
+        mul_one, forall_const, Std.le_refl, eventually_true]
+    · simp_all only [ne_eq, ofReal_div, ofReal_mul, ofReal_pow, ofReal_ofNat, ofReal_exp, one_div,
+        mul_inv_rev, neg_mul, ofReal_neg, ofReal_inv, Complex.norm_mul, norm_exp_ofReal_mul_I,
+        mul_one, forall_const, uncurry_apply_pair, enorm_ne_top, not_false_eq_true,
+        integrable_const_enorm]
   have fubini := integral_integral_swap hprod
   have lhs_eq : ∫ y, (∫ x, (gaussDensity σ x : ℂ) * cexp (↑⟪y, x⟫_ℝ * I)) ∂μ.toMeasure =
       ↑C * ∫ y, cexp (-(σ ^ 2 * ‖y‖ ^ 2 / 2 : ℝ)) ∂μ.toMeasure := by
@@ -380,26 +386,26 @@ private lemma gaussian_real_formula' (b : ℝ) (hb : 0 < b) (w : V) (c : ℝ) :
   congr 1; push_cast; ring
 
 private lemma id_le_sinh' {t : ℝ} (ht : 0 ≤ t) : t ≤ Real.sinh t := by
-  simp_all
+  simp_all only [Real.self_le_sinh_iff]
 
 private lemma half_sq_le_cosh_sub_one' (x : ℝ) : x ^ 2 / 2 ≤ Real.cosh x - 1 := by
   suffices key : (x / 2) ^ 2 ≤ Real.sinh (x / 2) ^ 2 by
     have h1 := Real.cosh_two_mul (x / 2)
     rw [show 2 * (x / 2) = x from by ring] at h1
-    nlinarith [Real.cosh_sq (x / 2)]
+    linarith only [key, h1, Real.cosh_sq (x / 2)]
   set t := x / 2
   suffices h : 0 ≤ (Real.sinh t + t) * (Real.sinh t - t) by nlinarith [sq_sub_sq (Real.sinh t) t]
   by_cases ht : 0 ≤ t
   · have h1 := id_le_sinh' ht
-    exact mul_nonneg (by linarith) (by linarith)
+    exact mul_nonneg (by linarith only [ht, h1]) (by linarith only [h1])
   · push Not at ht
     have h1 : Real.sinh t ≤ t := by
-      have := id_le_sinh' (by linarith : 0 ≤ -t)
-      rw [Real.sinh_neg] at this; linarith
+      have := id_le_sinh' (by linarith only [ht] : 0 ≤ -t)
+      rw [Real.sinh_neg] at this; linarith only [this]
     have h2 : Real.sinh t ≤ 0 := by
-      simp_all
-    have ha : Real.sinh t + t ≤ 0 := by linarith
-    have hb : Real.sinh t - t ≤ 0 := by linarith
+      simp_all only [Real.sinh_le_self_iff, Real.sinh_nonpos_iff]
+    have ha : Real.sinh t + t ≤ 0 := by linarith only [ht, h1]
+    have hb : Real.sinh t - t ≤ 0 := by linarith only [h1]
     exact mul_nonneg_of_nonpos_of_nonpos ha hb
 
 omit [SecondCountableTopology V] in
@@ -444,7 +450,7 @@ private lemma tendsto_exp_slope' (A : ℝ) :
         ((hasDerivAt_id (0 : ℝ)).mul_const A)
       change HasDerivAt (fun t : ℝ => rexp (t * A)) A 0
       simpa [zero_mul, Real.exp_zero, Function.comp_def] using this
-    simp_all
+    simp_all only [hasDerivAt_sub_const_iff]
   have := hd.tendsto_slope_zero_right
   simp only [zero_add, zero_mul, Real.exp_zero, sub_self, sub_zero] at this
   exact this.congr fun t => by rw [smul_eq_mul, ← div_eq_inv_mul]
@@ -498,9 +504,9 @@ private lemma gaussDensity_mul_inner_sq_integrable' (σ : ℝ) (hσ : 0 < σ) (w
   change gaussDensity σ x * |(@inner ℝ V _ w x) ^ 2| ≤
     2 * (gaussDensity σ x * Real.cosh (1 * @inner ℝ V _ w x))
   rw [abs_of_nonneg (sq_nonneg _), one_mul]
-  nlinarith [half_sq_le_cosh_sub_one' (@inner ℝ V _ w x),
-    Real.one_le_cosh (@inner ℝ V _ w x),
-    gaussDensity_nonneg' σ x, Real.cosh_pos (@inner ℝ V _ w x)]
+  nlinarith only [half_sq_le_cosh_sub_one' (@inner ℝ V _ w x),
+    Real.one_le_cosh (@inner ℝ V _ w x), gaussDensity_nonneg' σ x,
+    Real.cosh_pos (@inner ℝ V _ w x)]
 
 private lemma gaussian_inner_sq_le' (σ : ℝ) (hσ : 0 < σ) (w : V) :
     ∫ x : V, gaussDensity σ x * (@inner ℝ V _ w x) ^ 2 ≤
@@ -526,7 +532,7 @@ private lemma gaussian_inner_sq_le' (σ : ℝ) (hσ : 0 < σ) (w : V) :
               (gaussDensity_integrable' σ hσ) |>.const_mul 2 |>.congr
               (Eventually.of_forall fun x => by simp only [Pi.sub_apply]; ring))
             fun x => mul_le_mul_of_nonneg_left
-              (by nlinarith [half_sq_le_cosh_sub_one' (c * @inner ℝ V _ w x)])
+              (by linarith only [half_sq_le_cosh_sub_one' (c * @inner ℝ V _ w x)])
               (gaussDensity_nonneg' σ x)
       _ = 2 * C * (rexp (t * A) - 1) := by
           have step_a : ∫ x : V, gaussDensity σ x *
@@ -595,7 +601,8 @@ theorem gaussian_quadForm_integral_le
     fun i => gaussian_inner_sq_le' σ hσ (b i)
   have hnorm : ∀ i, ‖b i‖ = 1 := fun i => b.orthonormal.1 i
   have heveq : ∀ i, ev i = @inner ℝ V _ (b i) (S (b i)) := by
-    simp_all
+    simp_all only [ContinuousLinearMap.coe_coe, one_pow, mul_one, OrthonormalBasis.norm_eq_one,
+      implies_true, inner_self_eq_norm_sq_to_K, RCLike.ofReal_real_eq_id, id_eq]
   rw [hint_eq]
   have hbound' : ∀ i, ∫ x : V, gaussDensity σ x * (@inner ℝ V _ (b i) x) ^ 2 ≤
       C * σ ^ 2 := by
@@ -621,7 +628,7 @@ theorem gaussian_quadForm_integral_le
 
 private lemma mul_exp_neg_le_one' {t : ℝ} (_ht : 0 ≤ t) : t * Real.exp (-t) ≤ 1 := by
   rw [Real.exp_neg, ← div_eq_mul_inv, div_le_one (Real.exp_pos t)]
-  linarith [Real.add_one_le_exp t]
+  linarith only [Real.add_one_le_exp t]
 
 omit [SecondCountableTopology V] in
 lemma gaussDensity_mul_quadForm_integrable' (σ : ℝ) (hσ : 0 < σ)
@@ -667,7 +674,7 @@ lemma gaussDensity_mul_quadForm_integrable' (σ : ℝ) (hσ : 0 < σ)
         calc Real.exp (-(b / 2 * s)) * s * b
             = 2 * (b / 2 * (Real.exp (-(b / 2 * s)) * s)) := by ring
           _ = 2 * (b / 2 * s * Real.exp (-(b / 2 * s))) := by ring
-          _ ≤ 2 * 1 := by linarith
+          _ ≤ 2 * 1 := by linarith only [key]
           _ = 2 := by ring
       rw [show -(b / 2) * s = -(b / 2 * s) from by ring] at hexp_nn ⊢
       calc Real.exp (-(b / 2 * s)) * Real.exp (-(b / 2 * s)) * s
@@ -717,14 +724,14 @@ theorem gaussian_averaging_bound
         calc (1 - (φ x).re) = (1 - φ x).re := by simp [sub_re]
           _ ≤ |(1 - φ x).re| := le_abs_self _
           _ ≤ ‖1 - φ x‖ := abs_re_le_norm _
-      linarith [h_bound x hqf, quadForm_nonneg hS x]
+      linarith only [hS, h_bound, hqf, hre, h_bound x hqf, quadForm_nonneg hS x]
     · push Not at hqf
       have hre_le : (φ x).re ≤ ‖φ x‖ := le_trans (le_abs_self _) (abs_re_le_norm _)
       have hnorm_le : ‖φ x‖ ≤ 1 := by
         rw [← hφ]; have : IsProbabilityMeasure μ.toMeasure := inferInstance
         exact norm_charFun_le_one x
       have hneg_re : -(φ x).re ≤ ‖φ x‖ := le_trans (neg_le_abs _) (abs_re_le_norm _)
-      linarith
+      linarith only [hε, hqf, hnorm_le, hneg_re]
   -- Step 3: Integrability
   have hgqf_int : Integrable (fun x => g x * quadForm S x) volume :=
     gaussDensity_mul_quadForm_integrable' (V := V) σ hσ S
@@ -798,7 +805,7 @@ lemma scaled_tail_bound
       (ε + 2 * σ ^ 2 * T) / (1 - Real.exp (-(σ ^ 2 * R ^ 2 / 2))) := by
   have hσ2 : 0 < σ ^ 2 := by positivity
   have hRσ : 0 < σ ^ 2 * R ^ 2 / 2 := by positivity
-  have hC0 : 0 ≤ ε + 2 * σ ^ 2 * T := by nlinarith
+  have hC0 : 0 ≤ ε + 2 * σ ^ 2 * T := by nlinarith only [hε, hT]
   have hgab := gaussian_averaging_bound μ φ hφ ε hε σ hσ S hS h_bound T hT h_trace
   exact tail_bound_from_exp_integral μ σ hσ _ hC0 hgab R hR
 
@@ -901,7 +908,7 @@ theorem orthonormal_diag_le_hilbert_trace (S : H →L[ℝ] H) (hS : S.IsPositive
       ∑' k, @inner ℝ H _ (b k) (S (b k)) by
     have h_nn : 0 ≤ ∑' k, @inner ℝ H _ (b k - Pv (b k)) (S (b k - Pv (b k))) :=
       tsum_nonneg fun k => hnn (b k - Pv (b k))
-    linarith
+    linarith only [hsuff, h_nn]
   have expand : ∀ k, @inner ℝ H _ (b k - Pv (b k)) (S (b k - Pv (b k))) =
       @inner ℝ H _ (b k) (S (b k)) - 2 * @inner ℝ H _ (Pv (b k)) (S (b k)) +
       @inner ℝ H _ (Pv (b k)) (S (Pv (b k))) := by
@@ -957,7 +964,7 @@ theorem orthonormal_diag_le_hilbert_trace (S : H →L[ℝ] H) (hS : S.IsPositive
     rw [← hv]
     refine h.congr (fun k => ?_)
     ring_nf
-  linarith [hQ.tsum_eq]
+  linarith only [hQ, hQ.tsum_eq]
 
 omit [CompleteSpace H] in
 /-- The trace of restrictOp in any ONB of EuclideanSpace equals ∑ⱼ ⟪vⱼ, S(vⱼ)⟫.
@@ -989,8 +996,10 @@ lemma restrictOp_trace_eq_diag (S : H →L[ℝ] H) {n : ℕ} (v : Fin n → H)
     have h_app : ∀ i, (restrictOp S v (EuclideanSpace.single j 1)) i =
         @inner ℝ H _ (v i) (S (v j)) := by
       intro i; rw [restrictOp_apply]
-      simp_all
-    simp_all
+      simp_all only [EuclideanSpace.basisFun_apply, PiLp.single_apply, ite_smul, one_smul,
+        zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
+    simp_all only [EuclideanSpace.basisFun_apply, PiLp.single_apply, mul_ite, mul_one, mul_zero,
+      Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
   exact lhs_eq.trans ((h1.symm.trans h2).trans rhs_eq)
 
 /-- The trace of the restricted operator is bounded by the trace of the
@@ -1016,24 +1025,24 @@ lemma restrictOp_trace_le (S : H →L[ℝ] H) (hS : S.IsPositive)
 -/
 lemma exists_R_for_tail_bound (C η σ : ℝ) (hC : 0 < C) (hCη : C < η) (hσ : 0 < σ) :
     ∃ R > 0, C / (1 - Real.exp (-(σ ^ 2 * R ^ 2 / 2))) < η := by
-  have hη : 0 < η := by linarith
+  have hη : 0 < η := by linarith only [hC, hCη]
   set δ := (1 - C / η) / 2 with hδ_def
   have hCη' : C / η < 1 := by rwa [div_lt_one hη]
-  have hδ_pos : 0 < δ := by rw [hδ_def]; linarith
-  have hδ_bound : δ < 1 - C / η := by rw [hδ_def]; linarith
-  have hδ_lt_one : δ < 1 := by linarith [div_pos hC hη]
+  have hδ_pos : 0 < δ := by rw [hδ_def]; linarith only [hCη']
+  have hδ_bound : δ < 1 - C / η := by rw [hδ_def]; linarith only [hδ_def, hδ_pos]
+  have hδ_lt_one : δ < 1 := by linarith only [hC, hη, hδ_def, hδ_pos, div_pos hC hη]
   have hlog_neg : Real.log δ < 0 := Real.log_neg hδ_pos hδ_lt_one
   set R := Real.sqrt (2 * (-Real.log δ)) / σ with hR_def
   use R
   constructor
-  · rw [hR_def]; apply div_pos (Real.sqrt_pos.mpr (by nlinarith)) hσ
+  · rw [hR_def]; apply div_pos (Real.sqrt_pos.mpr (by linarith only [hlog_neg])) hσ
   · have hσ2 : 0 < σ ^ 2 := by positivity
     have hR_sq : R ^ 2 = 2 * (-Real.log δ) / σ ^ 2 := by
-      rw [hR_def, div_pow, Real.sq_sqrt (by nlinarith)]
+      rw [hR_def, div_pow, Real.sq_sqrt (by linarith only [hlog_neg])]
     have h_exp_arg : σ ^ 2 * R ^ 2 / 2 = -Real.log δ := by rw [hR_sq]; field_simp
     rw [h_exp_arg, neg_neg, Real.exp_log hδ_pos, div_lt_iff₀ (by linarith : 0 < 1 - δ)]
     have : η * (1 - δ) = (η + C) / 2 := by rw [hδ_def]; field_simp; ring
-    linarith
+    linarith only [hCη, this]
 
 /-- **Sazonov Tightness Theorem.** If φ : H → ℂ is positive definite, normalized,
     and Sazonov-continuous at 0, then the family of all finite-dimensional
@@ -1048,7 +1057,7 @@ theorem sazonov_tightness (φ : H → ℂ) (_hpd : IsPositiveDefinite φ)
     (μ.toMeasure {y | R ≤ ‖y‖}).toReal < η := by
   intro η hη
   set ε := η / 3 with hε_def
-  have hε : 0 < ε := by linarith
+  have hε : 0 < ε := by linarith only [hη, hε_def]
   obtain ⟨S, hS_bound⟩ := hsaz ε hε
   obtain ⟨hpos, ι, b, hsum⟩ := S.traceClass
   set T := ∑' i, @inner ℝ H _ (b i) (S.op (b i)) with hT_def
@@ -1058,7 +1067,7 @@ theorem sazonov_tightness (φ : H → ℂ) (_hpd : IsPositiveDefinite φ)
     simp only [RCLike.re_to_real] at this
     rwa [real_inner_comm]
   set σ := Real.sqrt (η / (6 * (T + 1))) with hσ_def
-  have hT1 : 0 < T + 1 := by linarith
+  have hT1 : 0 < T + 1 := by linarith only [hT_nn]
   have hσ_sq_pos : 0 < η / (6 * (T + 1)) := by positivity
   have hσ_pos : 0 < σ := Real.sqrt_pos.mpr hσ_sq_pos
   have hσ_sq : σ ^ 2 = η / (6 * (T + 1)) := by rw [hσ_def, sq, Real.mul_self_sqrt hσ_sq_pos.le]
@@ -1070,8 +1079,8 @@ theorem sazonov_tightness (φ : H → ℂ) (_hpd : IsPositiveDefinite φ)
       field_simp; ring]
     rw [div_add_div _ _ (by positivity : (3:ℝ) ≠ 0) (by positivity : 3 * (T + 1) ≠ 0)]
     rw [div_lt_iff₀ (by positivity : 0 < 3 * (3 * (T + 1)))]
-    nlinarith
-  have hC_pos : 0 < C := by rw [hC_def]; nlinarith [sq_nonneg σ]
+    nlinarith only [hη, hT_nn]
+  have hC_pos : 0 < C := by rw [hC_def]; nlinarith only [hε, hT_nn, sq_nonneg σ]
   obtain ⟨R, hR, hR_bound⟩ := exists_R_for_tail_bound C η σ hC_pos hC_bound hσ_pos
   use R, hR
   intro n v hv μ hμ

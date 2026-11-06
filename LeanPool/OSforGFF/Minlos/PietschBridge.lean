@@ -75,7 +75,7 @@ lemma summable_sq_mul_of_bounded (f : ℕ → (E →L[ℝ] ℝ)) (c : ℕ → �
       calc (f n x) ^ 2 = |f n x| ^ 2 := (sq_abs _).symm
         _ ≤ (q x) ^ 2 := by
           apply sq_le_sq'
-          · linarith [abs_nonneg (f n x), hfq n x, apply_nonneg q x]
+          · linarith only [hfq, abs_nonneg (f n x), hfq n x, apply_nonneg q x]
           · exact hfq n x
     exact mul_le_mul_of_nonneg_right h1 (hc_nn n)
   · exact (hc_sum.mul_left ((q x) ^ 2)).congr (fun n => by ring)
@@ -263,7 +263,7 @@ theorem hilbertianLift_le_dominator (f : ℕ → (E →L[ℝ] ℝ)) (c : ℕ →
             calc (f n x) ^ 2 = |f n x| ^ 2 := (sq_abs _).symm
               _ ≤ (q x) ^ 2 := by
                 apply sq_le_sq'
-                · linarith [abs_nonneg (f n x), hfq n x]
+                · linarith only [hqx, abs_nonneg (f n x), hfq n x]
                 · exact hfq n x
           exact mul_le_mul_of_nonneg_right h1 (hc_nn n))
     _ = Real.sqrt ((q x) ^ 2 * ∑' n, c n) := by rw [tsum_mul_left]
@@ -320,7 +320,7 @@ lemma Seminorm.innerProd_add_left (R : Seminorm ℝ E) (hR : R.IsHilbertian) (x�
   rw [show x₂ + y - x₁ = -(x₁ - x₂ - y) from by abel, map_neg_eq_map] at p3
   rw [R_congr' R (show x₂ - y + x₁ = x₁ + x₂ - y by abel)] at p4
   rw [show x₂ - y - x₁ = -(x₁ - x₂ + y) from by abel, map_neg_eq_map] at p4
-  linarith
+  linarith only [p1, p2, p3, p4]
 
 omit [TopologicalSpace E] in
 /-- `ip(∑ xⱼ, y) = ∑ ip(xⱼ, y)` (finite sum in first argument). -/
@@ -383,14 +383,14 @@ private lemma Seminorm.sq_add_of_innerProd_eq_zero (R : Seminorm ℝ E)
     (hR : R.IsHilbertian) (x y : E) (hxy : R.innerProd x y = 0) :
     R (x + y) ^ 2 = R x ^ 2 + R y ^ 2 := by
   have h1 : R (x + y) ^ 2 = R (x - y) ^ 2 := by simp only [Seminorm.innerProd] at hxy; linarith
-  linarith [hR x y]
+  linarith only [hR, h1, hR x y]
 
 omit [TopologicalSpace E] in
 /-- `R(vⱼ) = 1` for an R-orthonormal sequence. -/
 private lemma R_orthonormal_norm (R : Seminorm ℝ E) {N : ℕ} (v : Fin N → E)
     (hv : R.IsOrthonormalSeq v) (j : Fin N) : R (v j) = 1 := by
   have h : R (v j) ^ 2 = 1 := by simpa [R.innerProd_self] using hv j j
-  nlinarith [apply_nonneg R (v j)]
+  nlinarith only [h, apply_nonneg R (v j)]
 
 omit [TopologicalSpace E] in
 /-- `R(∑ⱼ aⱼ • vⱼ)² = ∑ⱼ aⱼ²` for R-orthonormal `{vⱼ}` (by induction using Pythagoras). -/
@@ -445,7 +445,7 @@ theorem bessel_hilbertian {N : ℕ}
     _ ≤ |φ w| := le_abs_self _
     _ ≤ R w := hφ w
   have hRw_sq : R w ^ 2 = S := R.sq_sum_orthonormal hR v hv (fun j => φ (v j))
-  nlinarith [sq_nonneg (R w), sq_nonneg (S - 1), apply_nonneg R w]
+  nlinarith only [hS_le, hRw_sq, sq_nonneg (R w), sq_nonneg (S - 1), apply_nonneg R w]
 
 /-! ### HS Embedding from Nuclear Factorization -/
 
@@ -501,7 +501,7 @@ theorem isHilbertSchmidtEmbedding_of_nuclear
             calc (∑' n, |f n (e j)| * c n) ^ 2
                 ≤ (Real.sqrt (∑' n, c n) *
                     Real.sqrt (∑' n, (f n (e j)) ^ 2 * c n)) ^ 2 :=
-                  sq_le_sq' (by linarith) h_le
+                  sq_le_sq' (by linarith only [h_le, h_nn]) h_le
               _ = (∑' n, c n) * (∑' n, (f n (e j)) ^ 2 * c n) := by
                   rw [mul_pow, Real.sq_sqrt (tsum_nonneg hc_nn),
                       Real.sq_sqrt (tsum_nonneg (fun n =>
@@ -561,8 +561,8 @@ private lemma hilbertian_smul (K : NNReal) (R : Seminorm ℝ E) (hR : R.IsHilber
   have h3 : (K • R) x = ↑K * R x := rfl
   have h4 : (K • R) y = ↑K * R y := rfl
   rw [h1, h2, h3, h4, mul_pow, mul_pow, mul_pow, mul_pow]
-  nlinarith [hR x y, sq_nonneg (↑K : ℝ),
-             mul_add ((↑K : ℝ) ^ 2) (R (x + y) ^ 2) (R (x - y) ^ 2)]
+  nlinarith only [hR, hR x y, sq_nonneg (↑K : ℝ),
+    mul_add ((↑K : ℝ) ^ 2) (R (x + y) ^ 2) (R (x - y) ^ 2)]
 
 /-- **Double Pietsch step**: Apply `IsNuclear` twice to produce a Hilbertian
 seminorm `r ≥ p` with a nuclear expansion whose functionals are bounded by `r`.

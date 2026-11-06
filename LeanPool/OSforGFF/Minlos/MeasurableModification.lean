@@ -229,7 +229,7 @@ private lemma extensionFun_eq (d : ℕ → E) (hd : DenseRange d)
     calc |ω (d m) - ω (d n)|
         ≤ (↑C : ℝ) * (s.sup p) (d m - d n) := h_bound m
       _ ≤ (↑C + 1) * (s.sup p) (d m - d n) := by
-          apply mul_le_mul_of_nonneg_right (by linarith) (apply_nonneg _ _)
+          apply mul_le_mul_of_nonneg_right (by linarith only []) (apply_nonneg _ _)
       _ < (↑C + 1) * (ε / (↑C + 1)) := by
           exact mul_lt_mul_of_pos_left hx_U hCε
       _ = ε := mul_div_cancel₀ ε (ne_of_gt hCε)
@@ -293,7 +293,7 @@ private lemma extensionFun_continuous (d : ℕ → E) (hd : DenseRange d)
       calc |ω (d m) - ω (d n)|
           ≤ (C : ℝ) * (s.sup p) (d m - d n) := h_bound m n
         _ ≤ ((C : ℝ) + 1) * (s.sup p) (d m - d n) := by
-            apply mul_le_mul_of_nonneg_right (by linarith) (apply_nonneg _ _)
+            apply mul_le_mul_of_nonneg_right (by linarith only []) (apply_nonneg _ _)
         _ ≤ ((C : ℝ) + 1) * ((s.sup p) (d m - x) + (s.sup p) (d n - x)) := by
             gcongr
             calc (s.sup p) (d m - d n)
@@ -383,10 +383,10 @@ private lemma extensionFun_map_add (d : ℕ → E) (hd : DenseRange d)
       calc |ω (d k) - ω (d m + d n)|
           = |ω (d k - (d m + d n))| := by
               have := hql_c'.trans h2'  -- ω(dk-(dm+dn)) = ω(dk) - ω(dm) - ω(dn)
-              rw [h_ω_sum]; congr 1; linarith
+              rw [h_ω_sum]; congr 1; linarith only [hql_c', h2']
         _ ≤ (C : ℝ) * (s.sup p) (d k - (d m + d n)) := hbd_c'
         _ ≤ ((C : ℝ) + 1) * (s.sup p) (d k - (d m + d n)) := by
-            apply mul_le_mul_of_nonneg_right (by linarith) (apply_nonneg _ _)
+            apply mul_le_mul_of_nonneg_right (by linarith only []) (apply_nonneg _ _)
         _ < ((C : ℝ) + 1) * (ε / ((C : ℝ) + 1)) := mul_lt_mul_of_pos_left hz_U hCε
         _ = ε := mul_div_cancel₀ ε (ne_of_gt hCε)
     rw [hg_at, hql_c, h2, hg_eq, hg_eq]
@@ -473,7 +473,7 @@ private lemma extensionFun_map_smul (d : ℕ → E) (hd : DenseRange d)
               simp_all
         _ ≤ (C : ℝ) * (s.sup p) (d m - (q : ℝ) • d n) := hbd_c'
         _ ≤ ((C : ℝ) + 1) * (s.sup p) (d m - (q : ℝ) • d n) := by
-            apply mul_le_mul_of_nonneg_right (by linarith) (apply_nonneg _ _)
+            apply mul_le_mul_of_nonneg_right (by linarith only []) (apply_nonneg _ _)
         _ < ((C : ℝ) + 1) * (ε / ((C : ℝ) + 1)) := mul_lt_mul_of_pos_left hx_U hCε
         _ = ε := mul_div_cancel₀ ε (ne_of_gt hCε)
     rw [hg_at, hql_c, h2, hg_eq]
@@ -803,7 +803,7 @@ theorem qLinearPaths_ae [SeparableSpace E] [Nonempty E]
   have := ae_eq_zero_of_charfun_eq_one hX_meas hX_cf
   filter_upwards [this] with ω hω
   -- X(ω) = 0 means ω(y) = ∑ cᵢ * ω(dᵢ)
-  linarith [show X ω = 0 from hω]
+  linarith only [hω, show X ω = 0 from hω]
 
 omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] in
 /-- **Minlos concentration** — see `Minlos.MinlosConcentration`. -/

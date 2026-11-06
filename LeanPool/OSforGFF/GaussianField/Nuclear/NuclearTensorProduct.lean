@@ -454,7 +454,7 @@ theorem hasSum_basisVec (a : RapidDecaySeq) :
     have h_fin_eq : ∑' n, (if (n ∈ s) then g n else (0 : ℝ)) = ∑ n ∈ s, g n := by
       rw [tsum_eq_sum (fun n hn => ite_eq_right hn)]
       exact Finset.sum_congr rfl (fun n hn => ite_eq_left hn)
-    linarith⟩
+    linarith only [h_partial, h_split, h_fin_eq]⟩
 
 theorem rapidDecay_expansion (φ : RapidDecaySeq →L[ℝ] ℝ) (a : RapidDecaySeq) :
     φ a = ∑' m, (a.val m) * φ (basisVec m) := by
@@ -773,9 +773,9 @@ private theorem one_add_pair_le_sq (i j : ℕ) :
   have h_pair : (Nat.pair i j : ℝ) ≤ ((i : ℝ) + j + 1) ^ 2 := by
     exact_mod_cast nat_pair_bound i j
   calc (1 : ℝ) + Nat.pair i j
-      ≤ 1 + (i + j + 1) ^ 2 := by linarith
+      ≤ 1 + (i + j + 1) ^ 2 := by linarith only [h_pair]
     _ ≤ (i + j + 2) ^ 2 := by nlinarith
-    _ ≤ (2 * (1 + i) * (1 + j)) ^ 2 := pow_le_pow_left₀ (by positivity) (by nlinarith) _
+    _ ≤ (2 * (1 + i) * (1 + j)) ^ 2 := pow_le_pow_left₀ (by positivity) (by nlinarith only []) _
 
 /-- The pure tensor map: given `e₁ : E₁` and `e₂ : E₂` with DM structure,
 produces the sequence `m ↦ coeff(unpair(m).1, e₁) * coeff(unpair(m).2, e₂)`.
@@ -927,7 +927,7 @@ theorem pure_seminorm_bound (k : ℕ) :
         have h4 : (4 : ℝ) ^ k = (2 : ℝ) ^ (2 * k) := by
           rw [show (4 : ℝ) = 2 ^ 2 from by norm_num, ← pow_mul]
         rw [h4, ← pow_mul, mul_pow, mul_pow]
-      linarith
+      linarith only [h1, h2]
     have h_a : |DyninMityaginSpace.coeff i e₁| * (1 + (i : ℝ)) ^ (2 * k) ≤
         B₁ / (1 + (i : ℝ)) ^ 2 := by
       rw [le_div_iff₀ (pow_pos hi_pos 2)]
@@ -1033,8 +1033,8 @@ private theorem finsetSup_seminorm_ball_mem_nhds
   intro x hx
   simp only [Set.mem_iInter, Set.mem_ofPred_eq] at hx ⊢
   rcases Seminorm.zero_or_exists_apply_eq_finset_sup q t x with h | ⟨i, hi, heq⟩
-  · linarith
-  · linarith [hx i hi]
+  · linarith only [hε, h]
+  · linarith only [hx, hi, heq, hx i hi]
 
 /-- The pure tensor map is jointly continuous on `E₁ × E₂`. -/
 theorem pure_continuous :
@@ -1079,11 +1079,11 @@ theorem pure_continuous :
           hbound e₁ e₂
       _ ≤ ↑C * 1 * (ε / (↑C + 1)) := by
           apply mul_le_mul (mul_le_mul_of_nonneg_left he₁.le (NNReal.coe_nonneg C))
-            he₂.le (apply_nonneg _ _) (mul_nonneg (NNReal.coe_nonneg C) (by linarith))
+            he₂.le (apply_nonneg _ _) (mul_nonneg (NNReal.coe_nonneg C) (by linarith only []))
       _ = ↑C * ε / (↑C + 1) := by ring
       _ < ε := by
           rw [div_lt_iff₀ (by positivity : (0 : ℝ) < ↑C + 1)]
-          linarith [NNReal.coe_nonneg C]
+          linarith only [hε, NNReal.coe_nonneg C]
   · -- Continuity of f x at 0 for each x
     intro e₁
     exact (pureCLMRight e₁).continuous.continuousAt
@@ -1132,9 +1132,9 @@ private lemma lift_summable
     set j := (Nat.unpair m).2
     rw [norm_smul, Real.norm_eq_abs]
     have hi_le : (1 + (i : ℝ)) ≤ (1 + (m : ℝ)) := by
-      linarith [(Nat.cast_le (α := ℝ)).mpr (Nat.unpair_left_le m)]
+      linarith only [(Nat.cast_le (α := ℝ)).mpr (Nat.unpair_left_le m)]
     have hj_le : (1 + (j : ℝ)) ≤ (1 + (m : ℝ)) := by
-      linarith [(Nat.cast_le (α := ℝ)).mpr (Nat.unpair_right_le m)]
+      linarith only [(Nat.cast_le (α := ℝ)).mpr (Nat.unpair_right_le m)]
     have h1i : (0 : ℝ) ≤ 1 + (i : ℝ) := by positivity
     have h1j : (0 : ℝ) ≤ 1 + (j : ℝ) := by positivity
     calc |a.val m| * ‖B (DyninMityaginSpace.basis i) (DyninMityaginSpace.basis j)‖

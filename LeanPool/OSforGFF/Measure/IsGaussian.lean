@@ -209,10 +209,10 @@ private lemma eq_of_analytic_agree_on_reals {F G : ℂ → ℂ}
     have h_mem_V : ((ε / 2 : ℝ) : ℂ) ∈ V := hε_ball (by
       simp only [Metric.mem_ball, Complex.dist_eq, sub_zero, Complex.norm_real]
       rw [Real.norm_eq_abs, abs_of_pos h_half_pos]
-      linarith)
+      linarith only [hε_pos])
     have h_ne : ((ε / 2 : ℝ) : ℂ) ≠ 0 := by
       simp only [ne_eq, Complex.ofReal_eq_zero]
-      linarith
+      linarith only [hε_pos]
     exact hV_sub ⟨h_mem_V, h_ne⟩ (h_agree (ε / 2))
   exact congrFun h_eq z
 

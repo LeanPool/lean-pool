@@ -83,7 +83,7 @@ lemma ae_eq_zero_of_charfun_eq_one {Ω : Type*} [MeasurableSpace Ω]
       have : @inner ℝ ℝ _ (X ω) t = t * X ω := by
         change t * starRingEnd ℝ (X ω) = t * X ω; simp
       rw [this]; push_cast; ring_nf
-    simp_all
+    simp_all only [ofReal_mul, RCLike.inner_apply, conj_trivial, ofReal_zero, zero_mul, exp_zero]
   -- Step 2: Deduce X = 0 a.e.
   have h_ae : ∀ᵐ y ∂(ν.map X), y = 0 := by
     rw [h_eq]; exact ae_dirac_iff (measurableSet_singleton 0) |>.mpr rfl
@@ -111,14 +111,15 @@ lemma cf_norm_le_one
   calc ‖∫ ω, exp (I * ↑(ω x)) ∂ν‖
       ≤ ∫ ω, ‖exp (I * ↑(ω x))‖ ∂ν := norm_integral_le_integral_norm _
     _ = ∫ ω, 1 ∂ν := by
-        simp_all
+        simp_all only [ofReal_sum, ofReal_mul, norm_exp_I_mul_ofReal, integral_const,
+          probReal_univ, smul_eq_mul, mul_one]
     _ = 1 := by simp
 
 /-- `1 - Re(z) ≤ 2` when `‖z‖ ≤ 1`. -/
 lemma one_sub_re_le_two_of_norm_le (z : ℂ) (hz : ‖z‖ ≤ 1) : 1 - z.re ≤ 2 := by
   have h1 : |z.re| ≤ ‖z‖ := abs_re_le_norm z
-  have h2 : -1 ≤ z.re := by linarith [abs_le.mp (h1.trans hz)]
-  linarith
+  have h2 : -1 ≤ z.re := by linarith only [hz, h1, abs_le.mp (h1.trans hz)]
+  linarith only [h2]
 
 omit [TopologicalSpace E] [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] in
 /-- Quadratic bound outside a seminorm ball: if `q(x) ≥ δ > 0` and `‖Φ(x)‖ ≤ 1`,
@@ -134,7 +135,7 @@ lemma quadratic_bound_outside
     _ = (2 / δ ^ 2) * δ ^ 2 := by field_simp
     _ ≤ (2 / δ ^ 2) * q x ^ 2 := by
         apply mul_le_mul_of_nonneg_left _ (by positivity)
-        exact sq_le_sq' (by linarith) hx
+        exact sq_le_sq' (by linarith only [hδ, hx]) hx
 
 omit [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
   [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] in
@@ -143,8 +144,8 @@ lemma one_sub_re_nonneg
     (Φ : E → ℂ) (h_norm_le : ∀ x : E, ‖Φ x‖ ≤ 1) (x : E) :
     0 ≤ 1 - (Φ x).re := by
   have h1 : |Complex.re (Φ x)| ≤ ‖Φ x‖ := abs_re_le_norm _
-  have h2 : (Φ x).re ≤ 1 := by linarith [abs_le.mp (h1.trans (h_norm_le x))]
-  linarith
+  have h2 : (Φ x).re ≤ 1 := by linarith only [h_norm_le, h1, abs_le.mp (h1.trans (h_norm_le x))]
+  linarith only [h2]
 
 omit [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] in
 /-- From `Continuous Φ`, `Φ 0 = 1`, and `WithSeminorms p`: extract a finite set
@@ -226,14 +227,14 @@ lemma combined_quadratic_bound
     have h1 : 1 - (Φ x).re ≤ ‖1 - Φ x‖ := by
       have := abs_re_le_norm (1 - Φ x)
       simp only [Complex.sub_re, Complex.one_re] at this
-      linarith [abs_le.mp this]
+      linarith only [this, abs_le.mp this]
     have h3 : (0 : ℝ) ≤ 2 / r ^ 2 * (p m₀) x ^ 2 := by positivity
-    linarith [h_ball x hx]
+    linarith only [h_ball, hx, h1, h3, h_ball x hx]
   · -- Outside ball: use quadratic_bound_outside with q = p m₀
     push Not at hx
     have hx' : r ≤ (p m₀) x := le_trans hx (h_mono x)
     have := quadratic_bound_outside Φ h_norm_le (p m₀) r hr x hx'
-    linarith
+    linarith only [hε, this]
 
 
 /-! ## CF vanishes on seminorm kernel -/
@@ -259,7 +260,7 @@ lemma cf_kernel_of_ball_bound
       _ = ‖t‖ * 0 := by rw [hz]
       _ = 0 := mul_zero _
       _ < r := hr
-  linarith [h_bound (t • z) h_qtz]
+  linarith only [h_bound, h_qtz, h_bound (t • z) h_qtz]
 
 /-! ## Linear combination a.e. from joint CF -/
 
@@ -303,10 +304,10 @@ lemma linear_combination_ae
       rw [show ∑ j : Fin k, -t * β j * ω' (e j) =
           -(t * ∑ j, β j * ω' (e j)) from by
         rw [Finset.mul_sum, ← Finset.sum_neg_distrib]; congr 1; ext j; ring]
-    simp_all
+    simp_all only [ofReal_sum, ofReal_mul]
   have := ae_eq_zero_of_charfun_eq_one hX_meas hX_cf
   filter_upwards [this] with ω hω
-  linarith [show X ω = 0 from hω]
+  linarith only [hω, show X ω = 0 from hω]
 
 
 /-! ## Pushforward CF for finite evaluation maps -/
@@ -384,7 +385,8 @@ lemma kernel_eval_ae_zero
   apply ae_eq_zero_of_charfun_eq_one (measurable_pi_apply z)
   intro t
   have h := h_cf_joint 1 (fun _ => t) (fun _ => z)
-  simp_all
+  simp_all only [ofReal_sum, ofReal_mul, Finset.univ_unique, Fin.default_eq_zero, Fin.isValue,
+    Finset.sum_const, Finset.card_singleton, one_smul]
 
 
 /-! ## ℚ-linearity for all Finsupp simultaneously -/
@@ -529,8 +531,8 @@ private lemma gs_pythagoras (p : Seminorm ℝ F)
     (hp : p.IsHilbertian) (x y : F) (hxy : p.innerProd x y = 0) :
     p (x + y) ^ 2 = p x ^ 2 + p y ^ 2 := by
   have h1 : p (x + y) ^ 2 = p (x - y) ^ 2 := by
-    simp only [Seminorm.innerProd] at hxy; linarith
-  linarith [hp x y]
+    simp only [Seminorm.innerProd] at hxy; linarith only [hxy]
+  linarith only [hp, h1, hp x y]
 
 omit [TopologicalSpace F] [IsTopologicalAddGroup F] [ContinuousSMul ℝ F] in
 /-- **Gram-Schmidt for Hilbertian seminorms**: given N vectors in F and a Hilbertian
@@ -560,7 +562,7 @@ lemma gram_schmidt_seminorm_aux (p : Seminorm ℝ F) (hp : p.IsHilbertian)
       intro j; change p.innerProd (v - ∑ i : Fin k, c i • e i) (e j) = 0
       rw [gs_innerProd_sub_left p hp, p.innerProd_sum_left hp]
       simp_rw [p.innerProd_smul_left hp]
-      suffices h : ∑ i : Fin k, c i * p.innerProd (e i) (e j) = c j by linarith
+      suffices h : ∑ i : Fin k, c i * p.innerProd (e i) (e j) = c j by linarith only [h]
       conv_lhs => arg 2; ext i; rw [he_orth i j]
       simp [Finset.sum_ite_eq', Finset.mem_univ]
     -- u ⊥ (Σ c_j e_j)
@@ -1294,7 +1296,7 @@ private lemma tail_bound_uniform_gaussian_average
       ε_q + K * σ ^ 2 * C_HS := by
   rcases k with _ | k
   · simp [Finset.sum_empty, Real.exp_zero]
-    linarith [hε_q, mul_nonneg (mul_nonneg hK (sq_nonneg σ)) hC_HS]
+    linarith only [hK, hε_q, hC_HS, mul_nonneg (mul_nonneg hK (sq_nonneg σ)) hC_HS]
   set V := EuclideanSpace ℝ (Fin (k + 1)) with hV_def
   let toLp := MeasurableEquiv.toLp (p := 2) (X := Fin (k + 1) → ℝ)
   let eval_e : (E → ℝ) → V := fun ω => toLp (fun j => ω (e j))
@@ -1399,14 +1401,19 @@ private lemma tail_bound_uniform_gaussian_average
       have h_single_left : ∀ (v : V),
           @inner ℝ V _ (EuclideanSpace.single j 1) v = v j := by
         intro v; erw [PiLp.inner_apply]
-        simp_all
+        simp_all only [ofReal_sum, ofReal_mul, tsub_le_iff_right, implies_true, PiLp.single_apply,
+          RCLike.inner_apply, MonoidWithZeroHom.map_ite_one_zero, mul_ite, mul_one, mul_zero,
+          Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
       have h_single_right : ∀ (v : V),
           @inner ℝ V _ v (EuclideanSpace.single l 1) = v l := by
         intro v; erw [PiLp.inner_apply]
-        simp_all
-      simp_all
+        simp_all only [ofReal_sum, ofReal_mul, tsub_le_iff_right, implies_true, PiLp.single_apply,
+          RCLike.inner_apply, conj_trivial, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq',
+          Finset.mem_univ, ↓reduceIte]
+      simp_all only [ofReal_sum, ofReal_mul, tsub_le_iff_right, implies_true, PiLp.single_apply]
     suffices h_suff : ∑ j, Mij j j ≤ C_HS by
-      simp_all
+      simp_all only [ofReal_sum, ofReal_mul, tsub_le_iff_right, implies_true, mul_ite, mul_one,
+        mul_zero, Finset.sum_ite_eq, ↓reduceIte]
     simp_rw [show ∀ j : Fin (k + 1), Mij j j = p_inner (e j) ^ 2 from
       fun j => Seminorm.innerProd_self p_inner (e j)]
     exact h_HS (k + 1) e he
@@ -1669,7 +1676,7 @@ theorem nuclear_cylindrical_concentration
   -- Step 1: Get quadratic bound from CF continuity
   have h_norm_le : ∀ x : E, ‖Φ x‖ ≤ 1 := cf_norm_le_one Φ ν h_cf_joint
   obtain ⟨m₀, K, hK, h_quad⟩ := combined_quadratic_bound Φ ν h_cf_cont h_normalized
-    h_cf_joint p hp_top hp_hs (ε / 8) (by linarith)
+    h_cf_joint p hp_top hp_hs (ε / 8) (by linarith only [hε])
   -- Step 2: Set m = m₀ + 1 so ker(p m) ⊆ ker(p m₀)
   set m := m₀ + 1
   -- Step 3: HS constant for embedding p m₀ → p m
@@ -1681,7 +1688,7 @@ theorem nuclear_cylindrical_concentration
     intro x hx t
     have h_pm₀_zero : (p m₀) x = 0 := by
       have h_mono : (p m₀) x ≤ (p m) x := h_le_m x
-      linarith [apply_nonneg (p m₀) x]
+      linarith only [hx, h_mono, apply_nonneg (p m₀) x]
     calc 1 - (Φ (t • x)).re
         ≤ ε / 8 + K * (p m₀) (t • x) ^ 2 := h_quad (t • x)
       _ = ε / 8 + K * (‖t‖ * (p m₀) x) ^ 2 := by rw [map_smul_eq_mul]
@@ -1757,19 +1764,19 @@ theorem nuclear_cylindrical_concentration
             -- Need: |ω(x)| ≤ C_nat · p(x)
             exact le_trans h_le (mul_le_mul_of_nonneg_right hC_ge (apply_nonneg _ _))
         _ ≤ ENNReal.ofReal (ε / 2) := h_bound N
-    · exact ENNReal.ofReal_lt_ofReal_iff_of_nonneg (by linarith) |>.mpr (by linarith)
+    · exact ENNReal.ofReal_lt_ofReal_iff_of_nonneg (by linarith) |>.mpr (by linarith only [hε])
   -- Now prove the suffices: ∃ C_real, 0 < C_real ∧ ∀ N, ν(B_N) ≤ ofReal(ε/2)
   -- Step 6a: Get uniform tail bound R
   obtain ⟨R, hR_pos, h_tail_unif⟩ := tail_bound_uniform Φ ν h_cf_joint h_norm_le
-    (p m₀) (hp_hilb m₀) (ε / 8) K (by linarith) hK h_quad C_HS hC_HS (ε / 4) (by linarith)
-    (by linarith) (p m) h_HS_bound
+    (p m₀) (hp_hilb m₀) (ε / 8) K (by linarith only [hε]) hK h_quad C_HS hC_HS (ε / 4) (by linarith)
+    (by linarith only [hε]) (p m) h_HS_bound
   -- Step 6b: Use C_real = R
   refine ⟨R, hR_pos, fun N => ?_⟩
   -- For this N, get Gram-Schmidt data
   obtain ⟨k, e, α_map, he_orth, h_ker_decomp, h_pars⟩ := h_gs N
   -- Step 6c: Kernel concentration bound
   have h_ker_bound := kernel_concentration_bound Φ ν h_cf_joint h_normalized
-    (p m) (ε / 8) (by linarith) h_kernel_quad d N e α_map h_ker_decomp
+    (p m) (ε / 8) (by linarith only [hε]) h_kernel_quad d N e α_map h_ker_decomp
   -- Step 6d: Apply badSetN_bound_with_kernel
   have h_bn := badSetN_bound_with_kernel Φ ν d (p m) e α_map R hR_pos N h_pars
     (ENNReal.ofReal (ε / 8)) h_ker_bound
@@ -1781,7 +1788,7 @@ theorem nuclear_cylindrical_concentration
     _ ≤ ENNReal.ofReal (ε / 4) + ENNReal.ofReal (ε / 8) := by gcongr
     _ ≤ ENNReal.ofReal (ε / 4 + ε / 8) := ENNReal.ofReal_add (by linarith) (by linarith) |>.symm.le
     _ ≤ ENNReal.ofReal (ε / 2) := by
-        apply ENNReal.ofReal_le_ofReal; linarith
+        apply ENNReal.ofReal_le_ofReal; linarith only [hε]
 
 
 /-! ## Main theorem -/
