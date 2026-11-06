@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.HierarchyCounterexample
 public import LeanPool.GoldbergSeymour.TwoColorPathComponent
 
@@ -463,54 +462,6 @@ abbrev routeTransportStatement.{u_1, u_2} : Prop :=
       TashkinovAugmentationSequence sigma S B
 
 /-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
-abbrev storedColorsAtReplacementStageStatement.{u_1, u_2} : Prop :=
-  open scoped Classical in
-      ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-        [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-        (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-        (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-        (alpha beta : Fin k),
-      let H : TashkinovHierarchy ett base := C.hierarchy;
-      let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-      let A : TreeSequence G e0 := HierarchyStarredStage H q;
-      let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-      let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-      let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-      let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-      let vb : V := T.vertex ib;
-      TreeSequenceInitialSegment Tn A →
-      ∀ (hAib : A.length < (↑ib : ℕ)),
-      let B : TreeSequence G e0 :=
-        TreeSequencePrefix T (↑ib : ℕ)
-          (have this : (1 : ℕ) ≤ A.length := A.positive;
-          Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-          (by omega);
-      ∀ (rpB : (1 : ℕ) ≤ ett.1)
-        (aboveB :
-          TreeSequenceInitialSegment
-            (ett.series.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))) B)
-        (strictB :
-          (ett.series.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))).length <
-            B.length)
-        (belowB :
-          TreeSequenceInitialSegment B (ett.series.data.tree (Fin.last (ett.1 + (1 : ℕ)))))
-        (genB : phi = ett.series.data.coloring (Fin.last ett.1)),
-      let ettB : ExtendedTashkinovTree G k e0 input B phi :=
-        { rounds := ett.rounds, roundsPositive := rpB, series := ett.series,
-          abovePenultimate := aboveB, strictAbovePenultimate := strictB, belowFinal := belowB,
-          generatingColoring := genB : ExtendedTashkinovTree G k e0 input B phi };
-      let sigma : PartialEdgeColoring E k :=
-        TwoColorComponentSwap G phi alpha beta (Sum.inl vb);
-      (∀ (S : TreeSequence G e0),
-          TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet A →
-            TreeMissingColors sigma S = TreeMissingColors phi S) →
-      ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 ettB sigma B),
-      TashkinovStoredColors corr.replacementETT.series.data
-          (Fin.last corr.replacementETT.rounds) =
-        Dn
-
-/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
 abbrev replacementStageInitialSegmentOfPrefixStatement.{u_1, u_2} : Prop :=
   open scoped Classical in
       ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -599,40 +550,6 @@ abbrev closureInitialSegmentOfStarredStageStatement.{u_1, u_2} : Prop :=
       baseB.core = base.core →
       ett.series.data.kind n = some TashkinovExtensionKind.PE →
       TreeSequenceVertexSet baseB.closure ⊆ TreeSequenceVertexSet A
-
-/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
-abbrev firstMissingPositionEqualityStatement.{u_1, u_2} : Prop :=
-  open scoped Classical in
-      ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-        [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-        (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-        (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-        (alpha beta : Fin k),
-      let H : TashkinovHierarchy ett base := C.hierarchy;
-      let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-      let A : TreeSequence G e0 := HierarchyStarredStage H q;
-      let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-      let vb : V := T.vertex ib;
-      ∀ (hAib : A.length < (↑ib : ℕ)),
-      let B : TreeSequence G e0 :=
-        TreeSequencePrefix T (↑ib : ℕ)
-          (have this : (1 : ℕ) ≤ A.length := A.positive;
-          Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-          (by omega);
-      TreeSequenceInitialSegment B T →
-      let sigma : PartialEdgeColoring E k :=
-        TwoColorComponentSwap G phi alpha beta (Sum.inl vb);
-      (∀ v ∈ TreeSequenceVertexSet B,
-          v ≠ vb → MissingColors G sigma v = MissingColors G phi v) →
-      (∀ (psi : PartialEdgeColoring E k) (eta : Fin k) (i : Fin (B.length + (1 : ℕ))),
-          eta ∈ MissingColors G psi (B.vertex i) →
-            (↑(HierarchyFirstMissingPosition psi B eta) : ℕ) ≤ (↑i : ℕ)) →
-      (∀ (psi : PartialEdgeColoring E k) (eta : Fin k),
-          (↑(HierarchyFirstMissingPosition psi B eta) : ℕ) < B.length →
-            eta ∈ MissingColors G psi (B.vertex (HierarchyFirstMissingPosition psi B eta))) →
-      ∀ (eta : Fin k),
-      HierarchyFirstMissingPosition sigma B eta = HierarchyFirstMissingPosition phi B eta
 
 end GoldbergSeymour.SharedFacts.MixedChangeTransport
 

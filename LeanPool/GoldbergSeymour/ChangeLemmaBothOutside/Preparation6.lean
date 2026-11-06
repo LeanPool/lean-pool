@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation1
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation2
 
 /-!
@@ -897,10 +898,7 @@ theorem helper_continuation_4653.{u_1, u_2} :
   obtain ⟨corr, hMPS, baseS, HS, hsame⟩ := replacement
   have storedS : TashkinovStoredColors corr.replacementETT.series.data
       (Fin.last corr.replacementETT.rounds) = Dn := by
-    exact @helper_storedS_1369 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@TnToA) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@HB)
-        (@treeMissingEq) (@corr) (@hMPS) (@baseS) (@HS) (@hsame)
+    exact corr.terminalData.2.2
   have hrS : corr.replacementETT.rounds = ett.rounds := corr.rungAgreement
   have stageBToA (j : Fin (HB.dividerCount + 1)) :
       TreeSequenceInitialSegment (HB.stage j.castSucc) A := by

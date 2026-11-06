@@ -18,7 +18,6 @@ public import LeanPool.GoldbergSeymour.EligibleIndexBoundConstruction
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTailAtLeastTwo
 public import LeanPool.GoldbergSeymour.StableChangeCaseThree
 public import LeanPool.GoldbergSeymour.TerminalKempeStageSwitch
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningProofs
 
 /-!

@@ -324,25 +324,6 @@ theorem routeTransport.{u_1, u_2} : routeTransportStatement.{u_1, u_2} := by
       exact Finset.mem_biUnion.mpr ⟨v, hv, by rw [missingBefore v hvB hvb]; exact hcv⟩
 
 /-- A common proof used by the branches of this transport or construction argument. -/
-theorem storedColorsAtReplacementStage.{u_1, u_2} :
-    storedColorsAtReplacementStageStatement.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A n Tn Dn ib vb TnToA hAib B rpB
-      aboveB strictB belowB genB ettB sigma treeMissingEq corr
-  rcases corr with ⟨newInput, newSeries, newETT, hr, hs, hgen, htrees, hstored,
-    hedges, hkinds, hproperSeries, honeSeries, hstableSeries⟩
-  rcases newETT with ⟨r, rp, series, above, strict, below, gen⟩
-  cases hr
-  have heq : series = newSeries := eq_of_heq hs
-  cases heq
-  let j : Fin ett.rounds := ⟨ett.rounds - 1, by have := C.positive; omega⟩
-  have hj : j.succ = n := Fin.ext (by simp [j, n]; have := C.positive; omega)
-  have htree : newSeries.data.tree n.castSucc = Tn := by simpa [hj, ettB, Tn] using htrees j
-  have hm := treeMissingEq Tn (TreeSequenceInitialSegmentVertexSetSubset TnToA)
-  unfold Dn TashkinovStoredColors
-  simp only [ettB, hstored, ← hgen, ← ett.generatingColoring, htree, hm, n, Tn]
-
-/-- A common proof used by the branches of this transport or construction argument. -/
 theorem replacementStageInitialSegmentOfPrefix.{u_1, u_2} :
     replacementStageInitialSegmentOfPrefixStatement.{u_1, u_2} := by
   classical
@@ -366,37 +347,6 @@ theorem closureInitialSegmentOfStarredStage.{u_1, u_2} :
   apply TreeSequenceInitialSegmentVertexSetSubset coreToA
   rw [← hcoreB, u.vertexSet]
   exact Finset.mem_union_right _ hv
-
-/-- A common proof used by the branches of this transport or construction argument. -/
-theorem firstMissingPositionEquality.{u_1, u_2} : firstMissingPositionEqualityStatement.{u_1,
-    u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A ib vb hAib B BToT sigma
-      missingBefore firstLe firstStrict eta
-  have beforeLast (i : Fin (B.length + 1)) (hi : i.val < B.length) :
-      MissingColors G sigma (B.vertex i) = MissingColors G phi (B.vertex i) := by
-    apply missingBefore
-    · simp [TreeSequenceVertexSet]
-    · intro he
-      have heT := (BToT.2.1 i).trans he
-      have heval := congrArg Fin.val (T.vertex_injective heT)
-      have hbLen : B.length = ib.val := rfl
-      change i.val = ib.val at heval
-      omega
-  apply Fin.ext
-  apply Nat.le_antisymm
-  · by_cases h : (HierarchyFirstMissingPosition phi B eta).val < B.length
-    · apply firstLe sigma eta
-      rw [beforeLast _ h]
-      exact firstStrict phi eta h
-    · have := (HierarchyFirstMissingPosition sigma B eta).isLt
-      omega
-  · by_cases h : (HierarchyFirstMissingPosition sigma B eta).val < B.length
-    · apply firstLe phi eta
-      rw [← beforeLast _ h]
-      exact firstStrict sigma eta h
-    · have := (HierarchyFirstMissingPosition phi B eta).isLt
-      omega
 
 end GoldbergSeymour.SharedFacts.MixedChangeTransport
 

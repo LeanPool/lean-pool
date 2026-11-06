@@ -21,6 +21,8 @@ public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation2
 public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 /-!
 # Change Lemma Mixed Closed Final
@@ -1040,21 +1042,15 @@ private theorem helper_continuation_5185.{u_1, u_2} :
       HierarchyStageMissingColors HS j = HierarchyStageMissingColors HB j := by
     exact HB.stageMissingColors_eq_of_agreement HS j j rfl
       (treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageBToA j)))
-  -- A change only at the last vertex leaves the totalized first position unchanged.
-  have firstLe (psi : PartialEdgeColoring E k) (eta : Fin k)
-      (i : Fin (B.length + 1)) (hc : eta ∈ MissingColors G psi (B.vertex i)) :
-      (HierarchyFirstMissingPosition psi B eta).val ≤ i.val := by
-    exact TreeSequenceFirstMissingPositionLe hc
-  have firstStrict (psi : PartialEdgeColoring E k) (eta : Fin k)
-      (h : (HierarchyFirstMissingPosition psi B eta).val < B.length) :
-      eta ∈ MissingColors G psi (B.vertex (HierarchyFirstMissingPosition psi B eta)) := by
-    exact TreeSequenceFirstMissingPositionMem h
   have firstEq (eta : Fin k) :
       HierarchyFirstMissingPosition sigma B eta = HierarchyFirstMissingPosition phi B eta := by
-    exact @SharedFacts.MixedChangeTransport.firstMissingPositionEquality (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta) (@hAib) (@BToT)
-        (@missingBefore) (@firstLe) (@firstStrict) (@eta)
+    have lastVertex : B.vertex (Fin.last B.length) = vb := by
+      have index : Fin.castLE (Nat.succ_le_succ BToT.1) (Fin.last B.length) = ib :=
+        Fin.ext rfl
+      exact (BToT.2.1 _).symm.trans (congrArg T.vertex index)
+    exact B.firstMissingPosition_eq_of_except_last
+      (fun v hv different => missingBefore v hv
+        (fun equal => different (equal.trans lastVertex.symm))) eta
   have segmentEq (j : Fin (count + 1)) (eta : Fin k)
       (he : eta ∈ HierarchyStoredColorsAt HB j) :
       HierarchySegmentColors HS j eta = HierarchySegmentColors HB j eta := by
@@ -1233,10 +1229,7 @@ private theorem helper_continuation_5094.{u_1, u_2} :
   obtain ⟨corr, hMPS, baseS, HS, hsame⟩ := replacement
   have storedS : TashkinovStoredColors corr.replacementETT.series.data
       (Fin.last corr.replacementETT.rounds) = Dn := by
-    exact @SharedFacts.MixedChangeTransport.storedColorsAtReplacementStage (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta) (@TnToA)
-        (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@treeMissingEq) (@corr)
+    exact corr.terminalData.2.2
   have hrS : corr.replacementETT.rounds = ett.rounds := corr.rungAgreement
   have stageBToA (j : Fin (HB.dividerCount + 1)) :
       TreeSequenceInitialSegment (HB.stage j.castSucc) A := by
