@@ -49,6 +49,8 @@ The whole-library checks (`lake exe runLinter LeanPool`, `lake exe lint-style Le
 
 **Lean.** CI runs `lake exe mk_all --check`, `lake build LeanPool`, `lake exe runLinter` and `lake exe lint-style` on `LeanPool`, the quality checker (see [`lean_action_ci.yml`](.github/workflows/lean_action_ci.yml)). Conventions live in [`.github/CODE_QUALITY.md`](.github/CODE_QUALITY.md).
 
+Warnings are not allowed. `lakefile.toml` sets `warningAsError = true`, so any warning (an unused variable, a deprecated lemma, a linter hit) fails `lake build` on your machine just as it does in CI. Fix the code; suppressing the warning is not allowed either.
+
 **Python.** From `python/`: `uv run ruff check`, `uv run ruff format`, and `uv run --group test pytest`.
 
 ## Coding guidelines
