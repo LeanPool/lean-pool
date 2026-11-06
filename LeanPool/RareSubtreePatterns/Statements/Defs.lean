@@ -353,7 +353,7 @@ noncomputable def cB (μ : PMF ℕ) (B : Set ℕ) : ℝ≥0∞ :=
   ∑' j : ℕ, B.indicator (fun j => (j : ℝ≥0∞) * μ j) j
 
 /-- Theorem 1.2 (`thm:PoissonApproximation2`, source lines 396–442): root declumping. The
-raw marks satisfy (S) and the declumped marks `Ĝ_k = declumpedMark B G_k` satisfy (C), both
+raw marks satisfy (S) and the declumped marks `Ghat_k = declumpedMark B G_k` satisfy (C), both
 with the same cutoff sequence. -/
 def PoissonApproximation2Statement : Prop :=
   ∀ (μ : PMF ℕ) (α : ℝ) (a : ℕ → ℝ), StableDomain μ α a →

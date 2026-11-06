@@ -16,8 +16,8 @@ public import Mathlib.Analysis.Normed.Group.Tannery
 
 Section 5.1 of the paper (source lines 2148–2229; inventory P15 and Lemma
 `lem:root_declumping`(i),(ii)). For a critical offspring law `μ` with `μ_1 ≠ 1`, a set
-`B ⊆ ℕ` and a mark `G`, write `π = P(G(𝒯) = 1)` and `π̂ = P(Ĝ(𝒯) = 1)` for the declumped
-mark `Ĝ = declumpedMark B G` (root degree in `B` and some marked child).
+`B ⊆ ℕ` and a mark `G`, write `π = P(G(𝒯) = 1)` and `π̂ = P(Ghat(𝒯) = 1)` for the declumped
+mark `Ghat = declumpedMark B G` (root degree in `B` and some marked child).
 
 * `parent_formula` (`eq:parent_formula`): by the branching property,
   `π̂ = E[1{D ∈ B}(1 - (1 - π)^D)] = F_B(π)`, `F_B(p) = ∑_{j ∈ B} μ_j (1 - (1 - p)^j)`;
@@ -135,7 +135,8 @@ noncomputable def parentFun (μ : PMF ℕ) (B : Set ℕ) (p : ℝ) : ℝ :=
 
 /-- **Parent formula** `eq:parent_formula` (source lines 2219–2224, inventory P15): for a
 critical `μ` with `μ_1 ≠ 1`, any `B ⊆ ℕ` and any mark `G`, with `π = P(G(𝒯) = 1)` and
-`Ĝ = declumpedMark B G`, `P(Ĝ(𝒯) = 1) = E[1{D ∈ B}(1 - (1 - π)^D)] = ∑_{j ∈ B} μ_j (1-(1-π)^j)`. -/
+`Ghat = declumpedMark B G`, `P(Ghat(𝒯) = 1) = E[1{D ∈ B}(1 - (1 - π)^D)] = ∑_{j ∈ B} μ_j
+(1-(1-π)^j)`. -/
 theorem parent_formula (hc : IsCritical μ) (h1 : μ 1 ≠ 1) (B : Set ℕ) (G : PlaneTree → Prop) :
     (bienayme μ).real {T | declumpedMark B G T} =
       parentFun μ B ((bienayme μ).real {T | G T}) := by
@@ -382,7 +383,7 @@ theorem bB_eq_prob (hc : IsCritical μ) (h1 : μ 1 ≠ 1) (B : Set ℕ) :
   simp only [one_pow, mul_one] at h
   rw [h, bB]
 
-/-- `π̂ ≥ b_B π` (source line 2210): `P(Ĝ(𝒯) = 1) ≥ b_B P(G(𝒯) = 1)`. -/
+/-- `π̂ ≥ b_B π` (source line 2210): `P(Ghat(𝒯) = 1) ≥ b_B P(G(𝒯) = 1)`. -/
 theorem bB_mul_le_declumped (hc : IsCritical μ) (h1 : μ 1 ≠ 1) (B : Set ℕ)
     (G : PlaneTree → Prop) :
     bB μ B * (bienayme μ).real {T | G T} ≤ (bienayme μ).real {T | declumpedMark B G T} := by

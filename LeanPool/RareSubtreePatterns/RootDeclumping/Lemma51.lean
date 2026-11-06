@@ -15,7 +15,7 @@ public import LeanPool.RareSubtreePatterns.Statements.Main
 Source lines 2197–2229. This restates the general results of
 `PoissonDeclumping.RootDeclumping.ParentFormula` with the paper's objects: the sequence
 `π_n = P(G_{k_n}(𝒯) = 1) = markProb μ G k n`, the declumped marks
-`Ĝ_k = declumpedMark B G_k`, the constant `c_B = cB μ B` of `Statements.Main` (an extended
+`Ghat_k = declumpedMark B G_k`, the constant `c_B = cB μ B` of `Statements.Main` (an extended
 nonnegative real, finite for critical `μ`), and limits along admissible sizes
 (`admissibleSizes μ`).
 

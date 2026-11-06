@@ -59,7 +59,7 @@ theorem exists_eventually_mul_markProb_le_of_isBigO {μ : PMF ℕ} {G : ℕ → 
 /-- **Corollary `cor:declump_zero`** (source lines 2403–2422), from Theorem 1.2.
 Assume the hypotheses of Theorem 1.2 (`(H_α)` with normalizing sequence `a`, a cutoff `M`,
 `c_B ∈ (0, ∞)`, Assumption (S) for `(G_k)` and Assumption (C) for the declumped marks
-`(Ĝ_k)`, all along `(k_n)` with respect to `(M_n)`), the propagation property of Lemma
+`(Ghat_k)`, all along `(k_n)` with respect to `(M_n)`), the propagation property of Lemma
 `lem:declump_to_raw` for every `k`, and `π_n = O(1/n)`. Then
 `P(N_{k_n}(𝒯^n) = 0) - exp(-c_B n π_n) → 0` along admissible sizes. -/
 theorem declump_zero_of (h2 : PoissonApproximation2Statement) {μ : PMF ℕ} {α : ℝ}

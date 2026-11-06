@@ -17,7 +17,7 @@ public import LeanPool.RareSubtreePatterns.Bridge.CriterionS
 
 Section 6.2 of the paper, source lines 2623–2792 (inventory L6.2 (i),(ii), L6.3, P19, P21).
 Marks: `G_k(T) = 1{H_{r,k} ≺ T}` (`Embeds (completeTree r k)`) and its declumping
-`Ĝ_k(T) = 1{k_∅(T) ≠ r} 1{∃ u ∈ Γ_∅(T), G_k(T_u) = 1}`
+`Ghat_k(T) = 1{k_∅(T) ≠ r} 1{∃ u ∈ Γ_∅(T), G_k(T_u) = 1}`
 (`declumpedMark {d | d ≠ r} (Embeds (completeTree r k))`). `π_k = P(H_{r,k} ≺ 𝒯)`.
 
 ## Main statements
@@ -445,8 +445,8 @@ theorem lem_S_rary {α : ℝ} {a : ℕ → ℝ} (hT : StableToolkit μ α a) {r 
 /-! ### Lemma `lem:C_rary`: the declumped marks -/
 
 /-- **P21** (source lines 2768–2786): for every `r`, `k` and `ℓ ≥ 1`,
-`P(|𝒯| ≥ ℓ+1, Ĝ_k(𝒯) = 1, Ĝ_k(𝒯_{u_{ℓ+1}(𝒯)}) = 1) ≤ π̂_k²`, by Lemma `lem:cut_graft` with
-`𝓠_0` the whole tree space and `𝓡` the cut trees all of whose re-graftings are in `{Ĝ_k = 1}`. -/
+`P(|𝒯| ≥ ℓ+1, Ghat_k(𝒯) = 1, Ghat_k(𝒯_{u_{ℓ+1}(𝒯)}) = 1) ≤ π̂_k²`, by Lemma `lem:cut_graft` with
+`𝓠_0` the whole tree space and `𝓡` the cut trees all of whose re-graftings are in `{Ghat_k = 1}`. -/
 theorem pair_declumped_completeTree_le (hc : IsCritical μ) (hne : μ 1 ≠ 1) (r k ℓ : ℕ)
     (hℓ : 1 ≤ ℓ) :
     (bienayme μ).real {T | ℓ + 1 ≤ T.vertexCount ∧
@@ -469,7 +469,7 @@ theorem pair_declumped_completeTree_le (hc : IsCritical μ) (hne : μ 1 ≠ 1) (
 
 /-- **Lemma `lem:C_rary`** (source lines 2762–2791): for every `r`, every level sequence `(k_n)`
 and every cutoff sequence with `M_n = o(n)`, the declumped complete `r`-ary marks
-`Ĝ_k = 1{k_∅ ≠ r} 1{∃ child c, H_{r,k} ≺ 𝒯_c}` satisfy Assumption (C):
+`Ghat_k = 1{k_∅ ≠ r} 1{∃ child c, H_{r,k} ≺ 𝒯_c}` satisfy Assumption (C):
 `∑_{ℓ=1}^{M_n} Â_n(ℓ) ≤ M_n π̂_{k_n}² = o(n π̂_{k_n}²)`. -/
 theorem lem_C_rary (hc : IsCritical μ) (hne : μ 1 ≠ 1) (r : ℕ) (k M : ℕ → ℕ)
     (hM : (fun n => (M n : ℝ)) =o[atTop] (fun n => (n : ℝ))) :

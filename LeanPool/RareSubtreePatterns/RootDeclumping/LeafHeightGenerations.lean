@@ -19,8 +19,8 @@ Write `π_s = P(λ_∅(𝒯) ≥ s)` (`piSeq`), `P_k = P(· | λ_∅(𝒯) ≥ k
 `C_k = skelSize k = Z_0 + ⋯ + Z_{k-1}`, `L_k = Z_k`.
 
 * `cond_rootDegree_children_mem_tilt`: for `s ≥ 1`, under `P_s` the root has `j` children with
-  probability `μ̃_s(j) = μ_j π_{s-1}^j / π_s` (`tiltLaw`, `j ≥ 1`), and the child subtrees are
-  then independent with law `P_{s-1}`; `hasSum_tiltLaw`, `hasSum_mul_tiltLaw`: `μ̃_s` is a
+  probability `μ_tilt_s(j) = μ_j π_{s-1}^j / π_s` (`tiltLaw`, `j ≥ 1`), and the child subtrees are
+  then independent with law `P_{s-1}`; `hasSum_tiltLaw`, `hasSum_mul_tiltLaw`: `μ_tilt_s` is a
   probability law with mean `m_s = π_{s-1} g'(π_{s-1}) / π_s` (`tiltMean`).
 * `lintegral_genCount_cond_eq`: `E_k[Z_i] = m_k m_{k-1} ⋯ m_{k-i+1}` for `i ≤ k`, obtained from the
   depth-one many-to-one formula `setLIntegral_sum_children`.
@@ -198,7 +198,7 @@ theorem ofReal_mul_pgfDeriv (hc : IsCritical μ) {x : ℝ} (hx0 : 0 ≤ x) (hx1 
     ring
 
 variable (μ) in
-/-- The mean `m_s = π_{s-1} g'(π_{s-1}) / π_s` of the tilted offspring law `μ̃_s` (source lines
+/-- The mean `m_s = π_{s-1} g'(π_{s-1}) / π_s` of the tilted offspring law `μ_tilt_s` (source lines
 3088–3096). -/
 noncomputable def tiltMean (s : ℕ) : ℝ := xgDeriv μ (piSeq μ (s - 1)) / piSeq μ s
 
@@ -387,13 +387,13 @@ theorem lintegral_skelSize_add_genCount_cond_le (hc : IsCritical μ) (h1 : μ 1 
 /-! ### The tilted offspring law -/
 
 variable (μ) in
-/-- The tilted offspring law `μ̃_s(j) = μ_j π_{s-1}^j / π_s` for `j ≥ 1` (and `μ̃_s(0) = 0`)
+/-- The tilted offspring law `μ_tilt_s(j) = μ_j π_{s-1}^j / π_s` for `j ≥ 1` (and `μ_tilt_s(0) = 0`)
 of a vertex that must remain protected for another `s ≥ 1` generations (source lines
 3088–3092). -/
 noncomputable def tiltLaw (s j : ℕ) : ℝ :=
   if j = 0 then 0 else mass μ j * piSeq μ (s - 1) ^ j / piSeq μ s
 
-/-- `μ̃_s` is a probability law on `ℕ` (`s ≥ 1`), since `π_s = g(π_{s-1})`. -/
+/-- `μ_tilt_s` is a probability law on `ℕ` (`s ≥ 1`), since `π_s = g(π_{s-1})`. -/
 theorem hasSum_tiltLaw (hc : IsCritical μ) (h1 : μ 1 ≠ 1) {s : ℕ} (hs : 1 ≤ s) :
     HasSum (tiltLaw μ s) 1 := by
   set x := piSeq μ (s - 1)
@@ -417,7 +417,8 @@ theorem hasSum_tiltLaw (hc : IsCritical μ) (h1 : μ 1 ≠ 1) {s : ℕ} (hs : 1 
   · simp
   · rfl
 
-/-- The mean of `μ̃_s` is `m_s = π_{s-1} g'(π_{s-1}) / π_s` (`s ≥ 1`, source lines 3093–3096). -/
+/-- The mean of `μ_tilt_s` is `m_s = π_{s-1} g'(π_{s-1}) / π_s` (`s ≥ 1`, source lines 3093–3096).
+-/
 theorem hasSum_mul_tiltLaw (hc : IsCritical μ) (h1 : μ 1 ≠ 1) (s : ℕ) :
     HasSum (fun j : ℕ => (j : ℝ) * tiltLaw μ s j) (tiltMean μ s) := by
   have hx0 : 0 ≤ piSeq μ (s - 1) := (piSeq_pos hc h1 _).le
@@ -429,11 +430,11 @@ theorem hasSum_mul_tiltLaw (hc : IsCritical μ) (h1 : μ 1 ≠ 1) (s : ℕ) :
   · ring
 
 /-- **The conditional tree law given `λ_∅ ≥ s`** (source lines 3085–3092, inventory P23): for
-`s ≥ 1`, under `P(· | λ_∅(𝒯) ≥ s)` the root has `j` children with probability `μ̃_s(j)`, and,
+`s ≥ 1`, under `P(· | λ_∅(𝒯) ≥ s)` the root has `j` children with probability `μ_tilt_s(j)`, and,
 given this, the child subtrees are independent with law `P(· | λ_∅(𝒯) ≥ s - 1)`:
-`P(k_∅ = j, 𝒯_i ∈ A_i ∀ i < j | λ_∅ ≥ s) = μ̃_s(j) ∏_{i<j} P(A_i | λ_∅ ≥ s - 1)`.
+`P(k_∅ = j, 𝒯_i ∈ A_i ∀ i < j | λ_∅ ≥ s) = μ_tilt_s(j) ∏_{i<j} P(A_i | λ_∅ ≥ s - 1)`.
 Iterating, the first `k` generations under `P(· | λ_∅ ≥ k)` form a Galton–Watson tree with the
-generation-dependent offspring laws `μ̃_k, μ̃_{k-1}, …, μ̃_1`. -/
+generation-dependent offspring laws `μ_tilt_k, μ_tilt_{k-1}, …, μ_tilt_1`. -/
 theorem cond_rootDegree_children_mem_tilt (hc : IsCritical μ) (h1 : μ 1 ≠ 1) {s : ℕ}
     (hs : 1 ≤ s) (j : ℕ) (A : ℕ → Set PlaneTree) :
     cond (bienayme μ) {T | s ≤ rootLeafHeight T}

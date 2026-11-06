@@ -136,7 +136,7 @@ theorem sum_range_forestSize {M : Type*} [AddCommMonoid M] :
       have := h (t :: pre) t' post q (by simp [h1]) h2
       simpa [add_assoc] using this
 
-/-- Replacement below the root preserves a declumped mark `Ĝ = 1{k_∅ ∈ B} 1{∃ child c, G(T_c)}`
+/-- Replacement below the root preserves a declumped mark `Ghat = 1{k_∅ ∈ B} 1{∃ child c, G(T_c)}`
 as soon as replacement inside the witnessing child preserves `G`: the root degree is unchanged,
 and a witnessing child either does not contain the replaced vertex or is modified only inside.
 (This is the common step of the proofs of Lemmas `lem:C_rary` and `lem:C_lh`.) -/

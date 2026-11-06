@@ -17,9 +17,9 @@ public import LeanPool.RareSubtreePatterns.RootDeclumping.LeafHeightSkeleton
 # Leaf-height marks: Assumptions (S) and (C) (Lemmas `lem:S_lh` and `lem:C_lh`)
 
 Section 7.2 of the paper, source lines 3029–3236 (inventory L7.3 (i), L7.5, P23 (use), P25).
-Marks: `G_k(T) = 1{λ_∅(T) ≥ k}` and `Ĝ_k = 1{k_∅ ≥ κ + 1} 1{∃ child c, λ_∅(T_c) ≥ k}`
+Marks: `G_k(T) = 1{λ_∅(T) ≥ k}` and `Ghat_k = 1{k_∅ ≥ κ + 1} 1{∃ child c, λ_∅(T_c) ≥ k}`
 (`RootDeclumping.lhDeclumpedMark μ k`), with `κ = min{j ≥ 1 : μ_j > 0}` (`LeafHeight.kappa μ`),
-`π_k = P(λ_∅(𝒯) ≥ k)` (`LeafHeight.piSeq μ k`), `π̂_k = P(Ĝ_k(𝒯) = 1)` and
+`π_k = P(λ_∅(𝒯) ≥ k)` (`LeafHeight.piSeq μ k`), `π̂_k = P(Ghat_k(𝒯) = 1)` and
 `c = 1 - κ μ_κ` (`LeafHeight.cConst μ`).
 
 ## Main statements
@@ -33,15 +33,15 @@ Marks: `G_k(T) = 1{λ_∅(T) ≥ k}` and `Ĝ_k = 1{k_∅ ≥ κ + 1} 1{∃ child
 * `le_rootLeafHeight_replaceAt`: if `λ_∅(T) ≥ k`, re-grafting at a vertex `u` a tree `S` with
   `λ_∅(S) ≥ min(λ_∅(T_u), k)` keeps `λ_∅ ≥ k` (P25, condition (a) of the cut-and-graft lemma).
 * `pair_lhDeclumped_le` (**P25**): one constant `C` with
-  `P(|𝒯| ≥ ℓ+1, Ĝ_k(𝒯) = 1, Ĝ_k(𝒯_{u_{ℓ+1}}) = 1) ≤ C π_k π̂_k` for all `k` and `ℓ ≥ 1`.
-* `lem_C_lh` (**Lemma `lem:C_lh`**): if `c > 0`, then `(Ĝ_k)` satisfies Assumption (C) for every
+  `P(|𝒯| ≥ ℓ+1, Ghat_k(𝒯) = 1, Ghat_k(𝒯_{u_{ℓ+1}}) = 1) ≤ C π_k π̂_k` for all `k` and `ℓ ≥ 1`.
+* `lem_C_lh` (**Lemma `lem:C_lh`**): if `c > 0`, then `(Ghat_k)` satisfies Assumption (C) for every
   level sequence and every cutoff with `M_n = o(n)`.
 
 ## Departure in the proof of P25
 
 The paper's selector is `τ(A) = 0` if a root child other than the one above `⋆` witnesses the
 root event, and `τ(A) = (k - h(A))_+` otherwise (`h(A)` the depth of `⋆` below that child). We use
-instead the *minimal admissible* selector `τ(A) = min{m ≤ k : λ_∅(S) ≥ m ⇒ A[S] ∈ {Ĝ_k = 1}}`.
+instead the *minimal admissible* selector `τ(A) = min{m ≤ k : λ_∅(S) ≥ m ⇒ A[S] ∈ {Ghat_k = 1}}`.
 Condition (a) of Lemma `lem:cut_graft` then holds by definition, and condition (b) follows from
 `le_rootLeafHeight_replaceAt`: on the double event `𝒯 = A[S]`, `m = min(λ_∅(S), k)` is admissible,
 so `τ(A) ≤ λ_∅(S)`. The rest (Lemma `lem:lh_conditional_mark` and `π̂_k ≥ b π_k`) is as in the
@@ -156,8 +156,8 @@ theorem lem_S_lh {α : ℝ} {a : ℕ → ℝ} (hT : StableToolkit μ α a) {η :
 
 /-- **P25** (source lines 3190–3234, before the final use of `c > 0`): there is one `C > 0` such
 that for all `k` and all `ℓ ≥ 1`,
-`P(|𝒯| ≥ ℓ+1, Ĝ_k(𝒯) = 1, Ĝ_k(𝒯_{u_{ℓ+1}(𝒯)}) = 1) ≤ C π_k π̂_k`. Lemma `lem:cut_graft` is
-applied with `𝓔 = {Ĝ_k = 1}`, `𝓠_m = {λ_∅ ≥ m}` (`0 ≤ m ≤ k`) and the minimal admissible
+`P(|𝒯| ≥ ℓ+1, Ghat_k(𝒯) = 1, Ghat_k(𝒯_{u_{ℓ+1}(𝒯)}) = 1) ≤ C π_k π̂_k`. Lemma `lem:cut_graft` is
+applied with `𝓔 = {Ghat_k = 1}`, `𝓠_m = {λ_∅ ≥ m}` (`0 ≤ m ≤ k`) and the minimal admissible
 selector, then Lemma `lem:lh_conditional_mark`. -/
 theorem pair_lhDeclumped_le (hc : IsCritical μ) (h1 : μ 1 ≠ 1) :
     ∃ C : ℝ, 0 < C ∧ ∀ k ℓ : ℕ, 1 ≤ ℓ →
@@ -206,7 +206,7 @@ theorem pair_lhDeclumped_le (hc : IsCritical μ) (h1 : μ 1 ≠ 1) :
 
 /-- **Lemma `lem:C_lh`** (source lines 3183–3236): if `c = 1 - κ μ_κ > 0`, then for every level
 sequence `(k_n)` and every cutoff sequence with `M_n = o(n)`, the declumped leaf-height marks
-`Ĝ_k` satisfy Assumption (C): `Â_n(ℓ) ≤ C' π̂_{k_n}²` uniformly in `ℓ ≥ 1` (with
+`Ghat_k` satisfy Assumption (C): `Â_n(ℓ) ≤ C' π̂_{k_n}²` uniformly in `ℓ ≥ 1` (with
 `C' = C / b`, `b = P(k_∅ ≥ κ + 1) > 0`), hence `∑_{ℓ=1}^{M_n} Â_n(ℓ) ≤ C' M_n π̂_{k_n}² =
 o(n π̂_{k_n}²)`. -/
 theorem lem_C_lh (hc : IsCritical μ) (h1 : μ 1 ≠ 1) (hcpos : 0 < cConst μ) (k M : ℕ → ℕ)

@@ -17,13 +17,13 @@ Work package WP3.5 of the bridge plan. Source lines 2197–2299 (Lemma 5.1, proo
 Parts (i), (ii) and the parent formula are in `RootDeclumping/ParentFormula.lean` and
 `RootDeclumping/Lemma51.lean`; this file proves part (iii).
 
-Notation: `Ĝ = declumpedMark B G` (root degree in `B` and some marked child), `D` the root
+Notation: `Ghat = declumpedMark B G` (root degree in `B` and some marked child), `D` the root
 degree, `𝒢_ℓ` a forest of `ℓ` independent Bienaymé trees, `c_B = cB μ B`.
 
 ## Main statements
 
 * `lintegral_declumped_le` (branching property and union bound over the marked child):
-  `E[1{Ĝ(𝒯)} Φ(|𝒯|)] ≤ ∑_{d ∈ B} d μ_d E[1{G(𝒯)} ∑_q P(|𝒢_{d-1}| = q) Φ(1 + |𝒯| + q)]`, and
+  `E[1{Ghat(𝒯)} Φ(|𝒯|)] ≤ ∑_{d ∈ B} d μ_d E[1{G(𝒯)} ∑_q P(|𝒢_{d-1}| = q) Φ(1 + |𝒯| + q)]`, and
   `lintegral_declumped_le_of_bound`, its form under a pointwise bound `A(t) + κ(d)`.
 * `tsum_forestSizeWeight_mul_walkProb` (`eq:parent_convolution`):
   `∑_q P(|𝒢_ℓ| = q) Ψ_{N-q}(0) = Ψ_N(-ℓ) ≤ sup_x Ψ_N(x)`.
@@ -32,7 +32,7 @@ degree, `𝒢_ℓ` a forest of `ℓ` independent Bienaymé trees, `c_B = cB μ B
   `1{|t| > M/4} (sup_x Ψ_{n-1-|t|}(x)) + (K / a_n) min(1, d / a_{⌊M/2⌋})`.
 * `tendsto_tsum_min_div`: `∑_{d ∈ B} d μ_d min(1, d / a_{m_n}) → 0` (dominated convergence).
 * `microscopic_declumped` (**Lemma `lem:root_declumping`(iii)**): (S) for `(G_k)` and
-  `c_B ∈ (0, ∞)` imply (M) for `(Ĝ_k)` with the same cutoff.
+  `c_B ∈ (0, ∞)` imply (M) for `(Ghat_k)` with the same cutoff.
 
 Departure from the paper (periodic case, correction F3): the bridge-weighted estimate is used in
 numerator form with the time shift `j = 1` of `consequenceM_weighted_sup`, instead of "replacing
@@ -105,7 +105,7 @@ theorem tsum_child_mark (μ : PMF ℕ) (d : ℕ) (i : Fin (d + 1)) (G : PlaneTre
   · simp [Set.indicator_of_notMem ht]
 
 /-- **The declumped mark and its marked children** (source lines 2236–2241, union bound over the
-marked child): `E[1{Ĝ(𝒯)} Φ(|𝒯|)] ≤ ∑_{d ∈ B} d μ_d E[1{G(𝒯)} ∑_q P(|𝒢_{d-1}| = q) Φ(1 + |𝒯| +
+marked child): `E[1{Ghat(𝒯)} Φ(|𝒯|)] ≤ ∑_{d ∈ B} d μ_d E[1{G(𝒯)} ∑_q P(|𝒢_{d-1}| = q) Φ(1 + |𝒯| +
   q)]`. -/
 theorem lintegral_declumped_le (μ : PMF ℕ) (B : Set ℕ) (G : PlaneTree → Prop)
     (Φ : ℕ → ℝ≥0∞) :
@@ -182,7 +182,7 @@ theorem lintegral_indicator_eq_mul_lintegral_cond (ν : Measure PlaneTree) [IsFi
 /-- **Union bound over the marked child, with a pointwise forest bound** (source lines
 2236–2241, 2247–2270): if for every `d ≥ 1` and every marked `t`,
 `∑_q P(|𝒢_{d-1}| = q) Φ(1 + |t| + q) ≤ A(t) + κ(d)`, then
-`E[1{Ĝ(𝒯)} Φ(|𝒯|)] ≤ π (c_B E[A(𝒯) | G(𝒯) = 1] + ∑_{d ∈ B} d μ_d κ(d))`. -/
+`E[1{Ghat(𝒯)} Φ(|𝒯|)] ≤ π (c_B E[A(𝒯) | G(𝒯) = 1] + ∑_{d ∈ B} d μ_d κ(d))`. -/
 theorem lintegral_declumped_le_of_bound (μ : PMF ℕ) (B : Set ℕ) (G : PlaneTree → Prop)
     (Φ : ℕ → ℝ≥0∞) (A : PlaneTree → ℝ≥0∞) (κ : ℕ → ℝ≥0∞)
     (hb : ∀ d t, 1 ≤ d → G t →
@@ -506,7 +506,7 @@ theorem tsum_indicator_min_nonneg (B : Set ℕ) (x : ℝ) (hx : 0 ≤ x) :
 
 /-- **Lemma `lem:root_declumping`(iii)** (source lines 2212–2214, 2231–2298, P16): if the raw
 marks `(G_k)` satisfy Assumption (S) along `(k_n)` with respect to the cutoff `(M_n)` and
-`c_B ∈ (0, ∞)`, then the declumped marks `Ĝ_k = declumpedMark B G_k` satisfy Assumption (M)
+`c_B ∈ (0, ∞)`, then the declumped marks `Ghat_k = declumpedMark B G_k` satisfy Assumption (M)
 along `(k_n)` with respect to the same cutoff. Periodic offspring laws are included: the paper's
 "replace `n` by `n - 1`" (line 2286) is replaced by the numerator form of Lemma
 `lem:consequenceM` with time shift `j = 1` (`consequenceM_weighted_sup`), so no `Ψ_{n-1}(-1)`
@@ -534,7 +534,7 @@ theorem microscopic_declumped (hT : StableToolkit μ α a) {G : ℕ → PlaneTre
     omega
   have hs := tendsto_tsum_min_div hT B hm'
   refine microscopic_of_large hT hM (fun ε hε => ?_) (fun ε hε => ?_)
-  · -- unweighted: `P(Ĝ(𝒯), |𝒯| > M_n) = o(π̂_n)` (`eq:parent_unweighted`)
+  · -- unweighted: `P(Ghat(𝒯), |𝒯| > M_n) = o(π̂_n)` (`eq:parent_unweighted`)
     have hδ : 0 < b * ε / (2 * (cBR + 1)) := by positivity
     have hδ2 : 0 < b * ε / (2 * KU) := by have : 0 < KU := by linarith
                                           positivity
@@ -579,7 +579,7 @@ theorem microscopic_declumped (hT : StableToolkit μ α a) {G : ℕ → PlaneTre
       _ ≤ ε * markProb μ (fun j => declumpedMark B (G j)) k n := by
           have := hdecl n
           nlinarith
-  · -- bridge-weighted: `a_n E[1{Ĝ(𝒯), |𝒯| > M_n} Ψ_{n-|𝒯|}(0)] = o(π̂_n)` (`eq:parent_bridge`)
+  · -- bridge-weighted: `a_n E[1{Ghat(𝒯), |𝒯| > M_n} Ψ_{n-|𝒯|}(0)] = o(π̂_n)` (`eq:parent_bridge`)
     have hδ : 0 < b * ε / (2 * (cBR + 1)) := by positivity
     have hδ2 : 0 < b * ε / (2 * (KW + 1)) := by positivity
     filter_upwards [eventually_cutoff_facts hT hM,

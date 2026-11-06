@@ -34,7 +34,7 @@ Lemma `lem:pnqn`, Lemma `lem:extreme_means` (`Bridge/ExtremeMeans.lean`), Lemma
 * `poissonApproximation_of_b3`: the two conclusions of `PoissonApproximationStatement` for one
   law with the toolkit, given (M), (C) and `hb3`.
 * `poissonApproximation2_of_b3`: the two conclusions of `PoissonApproximation2Statement` for one
-  law with the toolkit, given (S) for `G`, (C) for `Ĝ` and `hb3` for `Ĝ`.
+  law with the toolkit, given (S) for `G`, (C) for `Ghat` and `hb3` for `Ghat`.
 * `ErrorB3Statement`, `poissonApproximationStatement_of_b3`,
   `poissonApproximation2Statement_of_b3`: the paper-level statements from Proposition
   `prop:b3bis`.
@@ -276,9 +276,10 @@ theorem poissonApproximation_of_b3 (hT : StableToolkit μ α a) {G : ℕ → Pla
 
 /-- **Theorem `thm:PoissonApproximation2`** (source lines 396–442, proof 2305–2330) for one
 offspring law, conditional on Proposition `prop:b3bis` for the declumped marks
-`Ĝ_k = declumpedMark B G_k`: the two conclusions of `PoissonApproximation2Statement`. Proof:
-Lemma `lem:root_declumping`(iii) (`microscopic_declumped`) gives (M) for `Ĝ`; with (C) for `Ĝ`,
-Theorem `thm:PoissonApproximation` applies to `Ĝ`. If `(n π_n)` is bounded, then so is
+`Ghat_k = declumpedMark B G_k`: the two conclusions of `PoissonApproximation2Statement`. Proof:
+Lemma `lem:root_declumping`(iii) (`microscopic_declumped`) gives (M) for `Ghat`; with (C) for
+`Ghat`,
+Theorem `thm:PoissonApproximation` applies to `Ghat`. If `(n π_n)` is bounded, then so is
 `(n π̂_n)` and `n π̂_n - c_B n π_n → 0` (Lemma `lem:root_declumping`(i)), and
 `d_TV(Po(n π̂_n), Po(c_B n π_n)) ≤ |n π̂_n - c_B n π_n|`; if `n π_n → ∞`, then `n π̂_n → ∞`
 (Lemma `lem:root_declumping`(ii)) and the declumped count diverges in probability. -/

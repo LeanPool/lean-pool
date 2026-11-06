@@ -15,9 +15,9 @@ public import LeanPool.RareSubtreePatterns.LeafHeight.Tree
 Section 7.2 of the paper (source lines 3132–3181, 3236–3241; inventory U11 and Lemma
 `lem:lh_conditional_mark`). For the leaf-height marks `G_k(T) = 1{λ_∅(T) ≥ k}`, with
 `κ = min{j ≥ 1 : μ_j > 0}`, the declumped mark is
-`Ĝ_k(T) = 1{k_∅(T) ≥ κ + 1} 1{∃ u ∈ Γ_∅(T), λ_∅(T_u) ≥ k}` (`lhDeclumpedMark`).
+`Ghat_k(T) = 1{k_∅(T) ≥ κ + 1} 1{∃ u ∈ Γ_∅(T), λ_∅(T_u) ≥ k}` (`lhDeclumpedMark`).
 Write `π_k = P(λ_∅(𝒯) ≥ k)` (`piSeq`, identified by `bienayme_real_le_rootLeafHeight`) and
-`π̂_k = P(Ĝ_k(𝒯) = 1)`.
+`π̂_k = P(Ghat_k(𝒯) = 1)`.
 
 * U11: `lh_declumped_prob_eq`: `π̂_k = ∑_{j ≥ κ+1} μ_j (1 - (1 - π_k)^j)`;
   `lh_declumped_sub_isLittleO`, `lh_declumped_tendsto_div`: `π̂_k = c π_k + o(π_k)`,
@@ -25,7 +25,7 @@ Write `π_k = P(λ_∅(𝒯) ≥ k)` (`piSeq`, identified by `bienayme_real_le_r
   `bB_mul_le_lh_declumped`: `π̂_k ≥ b π_k` with `b = P(k_∅ ≥ κ + 1)` (`bB_lhDegrees_eq`),
   and `b > 0` when `c > 0` (`bB_lhDegrees_pos`).
 * Lemma `lem:lh_conditional_mark` (`lem_lh_conditional_mark`): one `C > 0` with
-  `P(Ĝ_k(𝒯) = 1, λ_∅(𝒯) ≥ m) ≤ C π_k π_m` for all `0 ≤ m ≤ k`. The proof computes the left
+  `P(Ghat_k(𝒯) = 1, λ_∅(𝒯) ≥ m) ≤ C π_k π_m` for all `0 ≤ m ≤ k`. The proof computes the left
   side exactly by the branching property, `∑_{d ≥ κ+1} μ_d (π_{m-1}^d - (π_{m-1} - π_k)^d)`,
   which gives the paper's union bound `π_k ∑_{d ≥ κ+1} d μ_d π_{m-1}^{d-1}`; then criticality and
   `π_m ≥ μ_κ π_{m-1}^κ`. The assumption `c > 0` of the surrounding subsection is not needed.
@@ -48,7 +48,7 @@ variable (μ) in
 def lhDegrees : Set ℕ := {j | kappa μ + 1 ≤ j}
 
 variable (μ) in
-/-- The declumped leaf-height mark `Ĝ_k(T) = 1{k_∅(T) ≥ κ + 1} 1{∃ u ∈ Γ_∅(T), λ_∅(T_u) ≥ k}`
+/-- The declumped leaf-height mark `Ghat_k(T) = 1{k_∅(T) ≥ κ + 1} 1{∃ u ∈ Γ_∅(T), λ_∅(T_u) ≥ k}`
 (source lines 3132–3137, with `G_k(T) = 1{λ_∅(T) ≥ k}` and `B = {j ≥ κ + 1}`). -/
 def lhDeclumpedMark (k : ℕ) : PlaneTree → Prop :=
   declumpedMark (lhDegrees μ) (fun T => k ≤ rootLeafHeight T)
@@ -134,7 +134,7 @@ theorem lh_declumped_le (hc : IsCritical μ) (h1 : μ 1 ≠ 1) (k : ℕ) :
 
 /-! ### Lemma `lem:lh_conditional_mark` -/
 
-/-- The event `{Ĝ_k(𝒯) = 1, λ_∅(𝒯) ≥ m + 1}` in product form: root degree `≥ κ + 1`, all
+/-- The event `{Ghat_k(𝒯) = 1, λ_∅(𝒯) ≥ m + 1}` in product form: root degree `≥ κ + 1`, all
 children with leaf-height `≥ m`, some child with leaf-height `≥ k`. -/
 theorem lh_mark_and_le_eq (k m : ℕ) :
     {T : PlaneTree | lhDeclumpedMark μ k T ∧ m + 1 ≤ rootLeafHeight T} =
@@ -167,7 +167,7 @@ theorem pow_sub_pow_le_of_le {a b : ℝ} (hb0 : 0 ≤ b) (hba : b ≤ a) (ha1 : 
 
 /-- **Lemma `lem:lh_conditional_mark`** (source lines 3148–3181): for a critical `μ` with
 `μ_1 ≠ 1`, there is one constant `C > 0` such that, for all `0 ≤ m ≤ k`,
-`P(Ĝ_k(𝒯) = 1, λ_∅(𝒯) ≥ m) ≤ C π_k π_m`. One can take `C = μ_κ⁻¹`. (The paper states it in a
+`P(Ghat_k(𝒯) = 1, λ_∅(𝒯) ≥ m) ≤ C π_k π_m`. One can take `C = μ_κ⁻¹`. (The paper states it in a
 subsection assuming `c > 0`; that assumption is not needed.) -/
 theorem lem_lh_conditional_mark (hc : IsCritical μ) (h1 : μ 1 ≠ 1) :
     ∃ C : ℝ, 0 < C ∧ ∀ m k : ℕ, m ≤ k →
@@ -180,7 +180,7 @@ theorem lem_lh_conditional_mark (hc : IsCritical μ) (h1 : μ 1 ≠ 1) :
   refine ⟨(mass μ (kappa μ))⁻¹, inv_pos.mpr hκ, fun m k hmk => ?_⟩
   have hπk0 := piSeq_pos hc h1 k
   rcases m with _ | m
-  · -- `m = 0`: `P(Ĝ_k = 1) = π̂_k ≤ c π_k ≤ π_k`.
+  · -- `m = 0`: `P(Ghat_k = 1) = π̂_k ≤ c π_k ≤ π_k`.
     simp only [Nat.zero_le, and_true, piSeq_zero, mul_one]
     calc (bienayme μ).real {T | lhDeclumpedMark μ k T} ≤ cConst μ * piSeq μ k :=
           lh_declumped_le hc h1 k

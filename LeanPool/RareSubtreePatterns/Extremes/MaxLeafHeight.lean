@@ -20,7 +20,7 @@ import LeanPool.RareSubtreePatterns.RootDeclumping.Lemma51
 
 Source: statement lines 533–586, proof lines 3253–3387 (inventory T1.4, P24). Marks
 `G_k(T) = 1{λ_∅(T) ≥ k}`, raw counts `N_k(T) = ∑_{v ∈ T} G_k(T_v)` (`markCount`), declumped marks
-`Ĝ_k = RootDeclumping.lhDeclumpedMark μ k` (degree set `B = {j ≥ κ + 1}`), `π_k = P(λ_∅(𝒯) ≥ k)`,
+`Ghat_k = RootDeclumping.lhDeclumpedMark μ k` (degree set `B = {j ≥ κ + 1}`), `π_k = P(λ_∅(𝒯) ≥ k)`,
 `c = 1 - κ μ_κ` (`LeafHeight.cConst μ`). The cutoff is `M_n = max 1 ⌊n^{1-η}⌋₊` with
 `η = (1 - 1/α)/2 ∈ (0, 1 - 1/α)`.
 
