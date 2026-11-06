@@ -737,3 +737,54 @@ def test_profiling_is_automatic_and_cache_pruning_is_scheduled() -> None:
             for job in workflow["jobs"].values()
             for step in job["steps"]
         )
+
+
+def test_cold_main_push_restores_the_merged_queue_build() -> None:
+    """Cold queue builds publish the full archive that a cold main push restores."""
+    workflow = (WORKFLOWS / "lean_action_ci.yml").read_text()
+    jobs = yaml.safe_load(workflow)["jobs"]
+    for name in ("build", "finalize"):
+        steps = {step.get("name"): step for step in jobs[name]["steps"]}
+        for producer in (
+            "Package build for documentation",
+            "Share build with documentation",
+        ):
+            condition = steps[producer]["if"]
+            assert (
+                "github.event_name == 'merge_group' && "
+                "steps.cache.outputs.cache-matched-key == ''"
+            ) in condition
+    plan = next(
+        step for step in jobs["plan"]["steps"] if step.get("name") == "Plan the build"
+    )
+    assert "ci_artifacts restore-queue" in plan["run"]
+    assert '--check; then\n  plan=\'{"mode":"single"' in plan["run"]
+    steps = jobs["build"]["steps"]
+    names = [step.get("name") for step in steps]
+    restore = steps[names.index("Restore the merge queue's full build")]
+    assert restore["continue-on-error"] is True
+    assert "ci_artifacts restore-queue" in restore["run"]
+    assert "--check" not in restore["run"]
+    assert names.index("Restore pool build") < names.index(
+        "Restore the merge queue's full build"
+    )
+    assert names.index("Restore the merge queue's full build") < names.index(
+        "Build project"
+    )
+    assert "needs.plan.outputs.queue_build == 'true'" in restore["if"]
+    assert "queue_build=true" in plan["run"]
+    assert jobs["plan"]["outputs"]["queue_build"]
+    fallback = steps[
+        names.index("Rebuild in shards when the queue build is unavailable")
+    ]
+    assert fallback["if"] == "steps.queue-full-build.outcome == 'failure'"
+    assert "-f force_full=true" in fallback["run"]
+    assert "exit 1" in fallback["run"]
+    assert names.index("Restore the merge queue's full build") < names.index(
+        "Rebuild in shards when the queue build is unavailable"
+    )
+    assert names.index(
+        "Rebuild in shards when the queue build is unavailable"
+    ) < names.index("Build project")
+    overlay = steps[names.index("Reuse compiled projects from merged PRs")]
+    assert "steps.queue-full-build.outcome != 'success'" in overlay["if"]

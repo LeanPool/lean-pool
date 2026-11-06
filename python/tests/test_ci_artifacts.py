@@ -557,3 +557,102 @@ def test_project_overlay_rejects_unowned_outputs_before_install(repository):
     assert (
         repository / ".lake/build/lib/lean/LeanPool.olean"
     ).read_bytes() == b"compiled"
+
+
+def _queue_responses(conclusion: str, artifacts: list[dict]):
+    def response(endpoint):
+        if "/artifacts?" in endpoint:
+            assert endpoint.startswith("repos/owner/repo/actions/runs/9/artifacts?")
+            return {"artifacts": artifacts}
+        assert "head_sha=abc123&event=merge_group&" in endpoint
+        return {
+            "workflow_runs": [
+                {"id": 3, "conclusion": "success"},
+                {"id": 9, "conclusion": conclusion},
+            ]
+        }
+
+    return response
+
+
+def test_queue_build_uses_latest_green_exact_head_run(monkeypatch) -> None:
+    """Main restores only an unexpired full build from the merged queue attempt."""
+    artifacts = [
+        {"id": 4, "name": "lean-pool-build", "expired": False},
+        {"id": 6, "name": "lean-pool-build", "expired": True},
+        {"id": 8, "name": "rebase-project-build", "expired": False},
+    ]
+    monkeypatch.setattr(
+        ci_artifacts, "github_json", _queue_responses("success", artifacts)
+    )
+    assert ci_artifacts.queue_build_artifact("owner/repo", "abc123") == 4
+
+
+def test_queue_build_ignores_failed_latest_attempt(monkeypatch) -> None:
+    """A newer failed attempt is never hidden by an older green one."""
+    artifacts = [{"id": 4, "name": "lean-pool-build", "expired": False}]
+    monkeypatch.setattr(
+        ci_artifacts, "github_json", _queue_responses("failure", artifacts)
+    )
+    assert ci_artifacts.queue_build_artifact("owner/repo", "abc123") is None
+
+
+def test_queue_build_check_does_not_download(repository: Path, monkeypatch) -> None:
+    """The planner only asks whether the archive exists; the build job installs it."""
+    monkeypatch.setattr(ci_artifacts, "queue_build_artifact", lambda *args: 4)
+
+    def unexpected(*args):
+        pytest.fail("checking must not download the build")
+
+    monkeypatch.setattr(ci_artifacts, "download_build", unexpected)
+    assert ci_artifacts.reuse_queue_build(
+        repository, "owner/repo", "abc123", check_only=True
+    )
+
+
+def test_queue_build_restore_installs_artifact(repository: Path, monkeypatch) -> None:
+    """The build job installs the queue's archive through the verified download."""
+    downloads = []
+    monkeypatch.setattr(ci_artifacts, "queue_build_artifact", lambda *args: 4)
+    monkeypatch.setattr(
+        ci_artifacts,
+        "download_build",
+        lambda root, repository, artifact: downloads.append(artifact) or True,
+    )
+    assert ci_artifacts.reuse_queue_build(repository, "owner/repo", "abc123")
+    assert downloads == [4]
+
+
+@pytest.mark.parametrize("failure", [None, subprocess.CalledProcessError(1, "gh")])
+def test_queue_build_miss_falls_back(repository: Path, monkeypatch, failure) -> None:
+    """A missing archive or API error leaves the ordinary build path in place."""
+
+    def lookup(*args):
+        if failure is not None:
+            raise failure
+
+    monkeypatch.setattr(ci_artifacts, "queue_build_artifact", lookup)
+    assert not ci_artifacts.reuse_queue_build(
+        repository, "owner/repo", "abc123", check_only=True
+    )
+
+
+@pytest.mark.parametrize("restored", [True, False])
+def test_restore_queue_command_reports_outcome(monkeypatch, restored: bool) -> None:
+    """The planner and build job branch on the command's exit status."""
+    calls = []
+
+    def reuse(root, repository, head, *, check_only):
+        calls.append((repository, head, check_only))
+        return restored
+
+    monkeypatch.setattr(ci_artifacts, "reuse_queue_build", reuse)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["ci_artifacts", "restore-queue", "--repository", "o/r", "--head", "h"],
+    )
+    with pytest.raises(SystemExit) as exit_info:
+        ci_artifacts.main()
+    assert exit_info.value.code == (0 if restored else 1)
+    assert calls == [("o/r", "h", False)]
