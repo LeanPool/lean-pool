@@ -18,6 +18,7 @@ public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePosition
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
 public import LeanPool.GoldbergSeymour.MixedNoClosedTransport
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation2
+public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
 
 /-!
 # Change Lemma Mixed No Closed
@@ -1959,13 +1960,8 @@ private theorem helper_continuation_4887.{u_1, u_2} :
       hsbase hsterminal hsnested hsstrict hsdivider hscore HB HS starEq storedEq
   have missingEq (j : Fin (count + 1)) :
       HierarchyStageMissingColors HS j = HierarchyStageMissingColors HB j := by
-    exact GoldbergSeymour.SharedFacts.MixedChangeTransport.missingColorsEquality (@G) (@k) (@e0)
-        (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
-        (@beta) (@TnToA) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB)
-        (@treeMissingEq) (@corr) (@baseS) (@count) (@stages) (@hbbase) (@hbterminal) (@hbnested)
-        (@hbstrict) (@positions) (@hbpositive) (@hbincreasing) (@hbdivider) (@hbcore)
-        (@stageBToA) (@positionsS) (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal)
-        (@hsnested) (@hsstrict) (@hsdivider) (@hscore) (@j)
+    exact HB.stageMissingColors_eq_of_agreement HS j j rfl
+      (treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageBToA j)))
   -- A change only at the last vertex leaves the totalized first position unchanged.
   have firstLe (psi : PartialEdgeColoring E k) (eta : Fin k)
       (i : Fin (B.length + 1)) (hc : eta ∈ MissingColors G psi (B.vertex i)) :
@@ -1984,13 +1980,13 @@ private theorem helper_continuation_4887.{u_1, u_2} :
   have segmentEq (j : Fin (count + 1)) (eta : Fin k)
       (he : eta ∈ HierarchyStoredColorsAt HB j) :
       HierarchySegmentColors HS j eta = HierarchySegmentColors HB j eta := by
-    exact GoldbergSeymour.SharedFacts.MixedChangeTransport.initialSegmentEquality (@G) (@k) (@e0)
-        (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
-        (@beta) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@edgesFixed)
-        (@corr) (@baseS) (@count) (@stages) (@hbbase) (@hbterminal) (@hbnested) (@hbstrict)
-        (@positions) (@hbpositive) (@hbincreasing) (@hbdivider) (@hbcore) (@stageBToB)
-        (@positionsS) (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested)
-        (@hsstrict) (@hsdivider) (@hscore) (@starEq) (@firstEq) (@j) (@eta)
+    apply HB.segmentColors_eq_of_agreement HS j j eta rfl (starEq j)
+      (congrArg Fin.val (firstEq eta))
+    intro index
+    have initial := stageBToB j.succ
+    have fixed := edgesFixed (Fin.castLE initial.1 index)
+    rw [initial.2.2] at fixed
+    exact fixed
   have refreshEq (i : Fin count) :
       ((TreeSequenceVertexSet (HS.stage i.succ.castSucc) \
         TreeSequenceVertexSet (HierarchyStarredStage HS i.castSucc)).biUnion
@@ -1998,13 +1994,9 @@ private theorem helper_continuation_4887.{u_1, u_2} :
       ((TreeSequenceVertexSet (HB.stage i.succ.castSucc) \
         TreeSequenceVertexSet (HierarchyStarredStage HB i.castSucc)).biUnion
           fun v => MissingColors G phi v) := by
-    exact GoldbergSeymour.SharedFacts.MixedChangeTransport.refreshedHierarchyEquality (@G) (@k)
-        (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
-        (@beta) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@missingA)
-        (@corr) (@baseS) (@count) (@stages) (@hbbase) (@hbterminal) (@hbnested) (@hbstrict)
-        (@positions) (@hbpositive) (@hbincreasing) (@hbdivider) (@hbcore) (@stageBToA)
-        (@positionsS) (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested)
-        (@hsstrict) (@hsdivider) (@hscore) (@starEq) (@i)
+    exact HB.segmentMissingColors_eq_of_agreement HS i i rfl (starEq i.castSucc)
+      (fun v hv => missingA v (TreeSequenceInitialSegmentVertexSetSubset (stageBToA i.succ)
+        (Finset.mem_sdiff.mp hv).1))
   let goodS : GoodHierarchy HS :=
     { gamma := goodB.gamma
       twoColors := by intro j eta he; exact goodB.twoColors j eta (storedEq j ▸ he)
@@ -2032,13 +2024,8 @@ private theorem helper_continuation_4887.{u_1, u_2} :
       maximum := hMPS
       notElementary := sigmaNotElementary }
   have hstarLast : HierarchyStarredStage HS (Fin.last count) = A := by
-    exact GoldbergSeymour.SharedFacts.MixedChangeTransport.lastStarredStageEquality (@G) (@k) (@e0)
-        (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
-        (@beta) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@corr) (@baseS)
-        (@count) (@stages) (@hbbase) (@hbterminal) (@hbnested) (@hbstrict) (@positions)
-        (@hbpositive) (@hbincreasing) (@hbdivider) (@hbcore) (@hcountB) (@hstagesB) (@positionsS)
-        (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested) (@hsstrict)
-        (@hsdivider) (@hscore) (@starEq)
+    exact (starEq _).trans
+      (H.lastStarredStage_eq_of_agreement HB hcountB (fun j => (hstagesB j).2))
   have hlastOrd : HS.stage (Fin.last count).castSucc = H.stage q.castSucc := by
     have hs := (hstagesB (Fin.last count)).1
     have hj : Fin.cast (congrArg (fun n : ℕ => n + 1) hcountB) (Fin.last count) = q :=
@@ -2159,14 +2146,8 @@ private theorem helper_continuation_5697.{u_1, u_2} :
     exact Fin.cases hcore.symm (fun i => rfl) j
   have storedEq (j : Fin (count + 1)) :
       HierarchyStoredColorsAt HS j = HierarchyStoredColorsAt HB j := by
-    exact @GoldbergSeymour.SharedFacts.MixedChangeTransport.storedColorsEquality (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta) (@hAib) (@rpB)
-        (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@treeMissingEq) (@corr) (@baseS)
-        (@storedS) (@count) (@stages) (@hbbase) (@hbterminal) (@hbnested) (@hbstrict)
-        (@positions) (@hbpositive) (@hbincreasing) (@hbdivider) (@hbcore) (@starBToA)
-        (@positionsS) (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested)
-        (@hsstrict) (@hsdivider) (@hscore) (@starEq) (@j)
+    exact HB.storedColors_eq_of_agreement HS j j storedS (starEq j)
+      (treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset (starBToA j)))
   exact @helper_continuation_4887 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hminimal) (@alpha)
       (@beta) (@hne) (@coreToA) (@TnToA) (@AToT) (@ordinaryToA) (@hAib) (@BToT) (@ABstrict)

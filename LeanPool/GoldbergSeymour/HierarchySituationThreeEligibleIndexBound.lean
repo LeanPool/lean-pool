@@ -18,6 +18,8 @@ public import LeanPool.GoldbergSeymour.EligibleIndexBoundConstruction
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTailAtLeastTwo
 public import LeanPool.GoldbergSeymour.StableChangeCaseThree
 public import LeanPool.GoldbergSeymour.TerminalKempeStageSwitch
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningProofs
 
 /-!
 # Hierarchy Situation Three Eligible Index Bound
@@ -255,10 +257,7 @@ private theorem helper_continuation_5697.{u_1, u_2} :
   have terminalStored : TashkinovStoredColors corr.replacementETT.series.data
       (Fin.last corr.replacementETT.rounds) = TashkinovStoredColors EB.series.data
         (Fin.last EB.rounds) := by
-    exact helper_terminalStored_647 G k e0 input T phi ett base C ctx P alpha hlenT hTnX S
-        hSBlen missingTree positiveB aboveB strictB belowB generatingB baseB HB corr hmaximum
-        bs hcore hpe hclosure baseStageK terminalStageK nestedK strictK coreInsideK positiveK
-        increasingK dividerStageK hstage hposition starredEq terminalTree
+    exact corr.terminalData.2.2
   exact @helper_continuation_5341 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@hpathLower)
       (@P) (@alpha) (@hp) (@hpUpper) (@htail) (@trans) (@hlenT) (@hBlength) (@hXlength) (@hBT)
@@ -403,8 +402,8 @@ private theorem helper_shortening_124.{u_1, u_2} :
     let sigma : PartialEdgeColoring E k := fun e => if e = f then some alpha else mu e
     have fixed (e : E) (hef : e ≠ f) : sigma e = mu e := by simp [sigma, hef]
     have hsproper : IsProperEdgeColoring G sigma := by
-      exact @helper_hsproper_329 V E inferInstance inferInstance inferInstance inferInstance G k
-          e0 input T phi ett base C ctx P alpha haT trans hlenT halphaB hends fixed
+      exact SharedFacts.ShorteningProofs.properRecoloring P.minimumContext.proper
+        f alpha y w hends halphaB haT (by simp [sigma]) fixed
     have hfe0 : f ≠ e0 := by
       apply helper_hfe0_1788 <;> assumption
     have hsone : IsOneEdgeUncolored sigma e0 := by

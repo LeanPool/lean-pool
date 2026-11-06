@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.EligibleIndexBoundPreparation
+public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
 
 /-!
 # Hierarchy Situation Three Eligible Index Bound
@@ -573,7 +574,11 @@ noncomputable abbrev helperGoodS3640.{u_1, u_2} :
       exact goodB.disjointPairs j c d (by rw [storedEq j] at hc; exact hc)
         (by rw [storedEq j] at hd; exact hd) hne
     uniqueRefresh := by
-      apply helper_uniqueRefresh_4523 <;> assumption
+      intro i
+      exact goodB.uniqueRefresh_transport KF i i (storedEq i.succ) rfl
+        (starredEq i.castSucc) (fun v hv => missingFixed v
+          (TreeSequenceInitialSegmentVertexSetSubset (stageBX i.succ)
+            (Finset.mem_sdiff.mp hv).1))
     parallelBase := by
       apply helper_parallelBase_4547 <;> assumption
     minusClosed := by

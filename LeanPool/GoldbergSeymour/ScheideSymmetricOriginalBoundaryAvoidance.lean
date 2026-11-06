@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorReturnIndexBoundaryAvoidance
+
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
 public import LeanPool.GoldbergSeymour.ScheideSymmetricOriginalPathOrder
 
@@ -106,270 +108,6 @@ private theorem helper_hxOutside_165.{u_1, u_2} :
     have := hqzMax qx hqxMem
     dsimp [qx, qe] at this
     omega
-
-private theorem helper_hreturn_one_242.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (C : ScheideReducedConfiguration G k e0 phi T)
-      (D : ScheideDefectiveSetup G k e0 phi T C)
-      (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T)))
-      (R : ScheideReplacementData G k e0 phi T C D d) (beta : Fin k) (v z : V)
-      (p : (TwoColorIncidenceGraph G phi (↑d : Fin k) beta).Walk (Sum.inl v) (Sum.inl z)),
-    let X : Finset V := TreeSequenceVertexSet T;
-    let U : Finset V :=
-      {C.blockVertex (D.gammaIndex d) (0 : Fin (2 : ℕ)),
-        C.blockVertex (D.gammaIndex d) (1 : Fin (2 : ℕ))};
-    let Z : Finset V := X \ U;
-    let _ : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi (↑d : Fin k) beta;
-    (∀ (j : Fin (2 : ℕ)), C.blockVertex (D.gammaIndex d) j ∈ U) →
-    ∀ (h : E) (i0 i1 i2 i3 i4 qv qf : Fin (p.length + (1 : ℕ))),
-    (↑i1 : ℕ) = (↑i0 : ℕ) + (1 : ℕ) →
-    (↑i2 : ℕ) = (↑i1 : ℕ) + (1 : ℕ) →
-    (↑i3 : ℕ) = (↑i2 : ℕ) + (1 : ℕ) →
-    (↑i4 : ℕ) = (↑i3 : ℕ) + (1 : ℕ) →
-    (↑i4 : ℕ) < (↑qv : ℕ) →
-    (↑qf : ℕ) = (↑qv : ℕ) + (1 : ℕ) →
-    p.IsPath →
-    (∀ (r : Fin (p.length + (1 : ℕ))), (↑r : ℕ) ≤ p.length) →
-    let blockIndices : Finset (Fin (p.length + (1 : ℕ))) :=
-      {r : Fin (p.length + (1 : ℕ)) |
-        ∃ (a : Fin (2 : ℕ)),
-          p.getVert (↑r : ℕ) = Sum.inl (C.blockVertex (D.gammaIndex d) a)};
-    ∀ (hblockIndices : blockIndices.Nonempty),
-    let t : Fin (p.length + (1 : ℕ)) := blockIndices.min' hblockIndices;
-    ∀ (jt : Fin (2 : ℕ)),
-    p.getVert (↑t : ℕ) = Sum.inl (C.blockVertex (D.gammaIndex d) jt) →
-    let zIndices : Finset (Fin (p.length + (1 : ℕ))) :=
-      {r : Fin (p.length + (1 : ℕ)) |
-        (↑r : ℕ) < (↑t : ℕ) ∧ ∃ w ∈ Z, p.getVert (↑r : ℕ) = Sum.inl w};
-    ∀ (hzIndices : zIndices.Nonempty),
-    let qz : Fin (p.length + (1 : ℕ)) := zIndices.max' hzIndices;
-    ∀ (hqzt : (↑qz : ℕ) < (↑t : ℕ)),
-    (∀ r ∈ zIndices, (↑r : ℕ) ≤ (↑qz : ℕ)) →
-    let qe : Fin (p.length + (1 : ℕ)) :=
-      (⟨(↑qz : ℕ) + (1 : ℕ),
-          Decidable.byContradiction fun (a : ¬(↑qz : ℕ) + (1 : ℕ) < p.length + (1 : ℕ)) =>
-            by omega⟩ :
-        Fin (p.length + (1 : ℕ)));
-    (↑qe : ℕ) < (↑t : ℕ) →
-    ∀ (f : E),
-    p.getVert (↑qe : ℕ) = Sum.inr f →
-    (∀ u ∉ X, ∀ (a : Fin (2 : ℕ)), u ≠ C.blockVertex (D.gammaIndex d) a) →
-    p.getVert (↑i0 : ℕ) = Sum.inr R.f1 →
-    p.getVert (↑i1 : ℕ) = Sum.inl R.u1 →
-    p.getVert (↑i2 : ℕ) = Sum.inr h →
-    p.getVert (↑i3 : ℕ) = Sum.inl R.u2 →
-    p.getVert (↑i4 : ℕ) = Sum.inr R.f2 →
-    f = R.f1 →
-    False := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R beta v z p X U Z H hblockU h i0 i1 i2 i3 i4 qv qf hi01
-      hi12 hi23 hi34 hi4qv hqfv hpath fin_le blockIndices hblockIndices t jt htNode zIndices
-      hzIndices qz hqzt hqzMax qe hqet f hqeNode hblockOutsideNe ha0 ha1 ha2 ha3 ha4 hf
-  have hqe0 : qe.val = i0.val := by
-    have hvEq : p.getVert qe.val = p.getVert i0.val := by
-      rw [hqeNode, hf, ha0]
-    exact hpath.getVert_injOn
-      (by simpa using fin_le qe) (by simpa using fin_le i0) hvEq
-  have hi1ne : t.val ≠ i1.val := by
-    intro heq
-    have he : C.blockVertex (D.gammaIndex d) jt = R.u1 := by
-      apply Sum.inl.inj
-      rw [← htNode, heq, ha1]
-    exact hblockOutsideNe R.u1 R.u1_outside jt he.symm
-  have hi2ne : t.val ≠ i2.val := by
-    intro heq
-    have : (Sum.inl (C.blockVertex (D.gammaIndex d) jt) : Sum V E) = Sum.inr h := by
-      rw [← htNode, heq, ha2]
-    simp at this
-  have hi3ne : t.val ≠ i3.val := by
-    intro heq
-    have he : C.blockVertex (D.gammaIndex d) jt = R.u2 := by
-      apply Sum.inl.inj
-      rw [← htNode, heq, ha3]
-    exact hblockOutsideNe R.u2 R.u2_outside jt he.symm
-  have hi4ne : t.val ≠ i4.val := by
-    intro heq
-    have : (Sum.inl (C.blockVertex (D.gammaIndex d) jt) : Sum V E) = Sum.inr R.f2 := by
-      rw [← htNode, heq, ha4]
-    simp at this
-  have hi4t : i4.val < t.val := by omega
-  let ir : Fin (p.length + 1) := ⟨i4.val + 1, by omega⟩
-  have hretAdj := p.adj_getVert_succ (i := i4.val) (by omega)
-  have hret : p.getVert ir.val = Sum.inl R.v2 := by
-    cases hn : p.getVert ir.val with
-    | inr e =>
-        have hadj : H.Adj (Sum.inr R.f2) (Sum.inr e) := by
-          simpa [H, ir, ha4, hn] using hretAdj
-        simp [H, TwoColorIncidenceGraph] at hadj
-    | inl y =>
-        have hyInc : Incident G y R.f2 := by
-          have hadj : H.Adj (Sum.inr R.f2) (Sum.inl y) := by
-            simpa [H, ir, ha4, hn] using hretAdj
-          have hpair : Incident G y R.f2 ∧
-              (phi R.f2 = some d.1 ∨ phi R.f2 = some beta) := by
-            simpa [H, TwoColorIncidenceGraph] using hadj
-          exact hpair.1
-        have hyEnds : y = R.v2 ∨ y = R.u2 := by
-          simpa [Incident, R.f2_ends] using hyInc
-        rcases hyEnds with hy | hy
-        · simp [hy]
-        · have hrepeat : p.getVert ir.val = p.getVert i3.val := by
-            rw [hn, hy, ha3]
-          have hind := hpath.getVert_injOn
-            (by simpa using fin_le ir) (by simpa using fin_le i3) hrepeat
-          dsimp [ir] at hind
-          omega
-  have hv2Z : R.v2 ∈ Z := by simpa [X, U, Z] using R.v2_in_remainder
-  have hirt : ir.val < t.val := by
-    have hirle : ir.val ≤ t.val := by dsimp [ir]; omega
-    have hirne : ir.val ≠ t.val := by
-      intro heq
-      have hv2Block : R.v2 = C.blockVertex (D.gammaIndex d) jt := by
-        apply Sum.inl.inj
-        rw [← hret, heq, htNode]
-      exact (Finset.mem_sdiff.mp hv2Z).2 (hv2Block ▸ hblockU jt)
-    omega
-  have hirMem : ir ∈ zIndices := by
-    simp only [zIndices, Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨hirt, R.v2, hv2Z, hret⟩
-  have hmax := hqzMax ir hirMem
-  dsimp [ir, qe] at hmax hqe0
-  omega
-
-private theorem helper_hreturn_two_319.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (C : ScheideReducedConfiguration G k e0 phi T)
-      (D : ScheideDefectiveSetup G k e0 phi T C)
-      (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T)))
-      (R : ScheideReplacementData G k e0 phi T C D d) (beta : Fin k) (v z : V)
-      (p : (TwoColorIncidenceGraph G phi (↑d : Fin k) beta).Walk (Sum.inl v) (Sum.inl z)),
-    let X : Finset V := TreeSequenceVertexSet T;
-    let U : Finset V :=
-      {C.blockVertex (D.gammaIndex d) (0 : Fin (2 : ℕ)),
-        C.blockVertex (D.gammaIndex d) (1 : Fin (2 : ℕ))};
-    let Z : Finset V := X \ U;
-    let _ : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi (↑d : Fin k) beta;
-    (∀ (j : Fin (2 : ℕ)), C.blockVertex (D.gammaIndex d) j ∈ U) →
-    ∀ (h : E) (i0 i1 i2 i3 i4 qv qf : Fin (p.length + (1 : ℕ))),
-    (↑i1 : ℕ) = (↑i0 : ℕ) + (1 : ℕ) →
-    (↑i2 : ℕ) = (↑i1 : ℕ) + (1 : ℕ) →
-    (↑i3 : ℕ) = (↑i2 : ℕ) + (1 : ℕ) →
-    (↑i4 : ℕ) = (↑i3 : ℕ) + (1 : ℕ) →
-    (↑i4 : ℕ) < (↑qv : ℕ) →
-    (↑qf : ℕ) = (↑qv : ℕ) + (1 : ℕ) →
-    p.IsPath →
-    (∀ (r : Fin (p.length + (1 : ℕ))), (↑r : ℕ) ≤ p.length) →
-    let blockIndices : Finset (Fin (p.length + (1 : ℕ))) :=
-      {r : Fin (p.length + (1 : ℕ)) |
-        ∃ (a : Fin (2 : ℕ)),
-          p.getVert (↑r : ℕ) = Sum.inl (C.blockVertex (D.gammaIndex d) a)};
-    ∀ (hblockIndices : blockIndices.Nonempty),
-    let t : Fin (p.length + (1 : ℕ)) := blockIndices.min' hblockIndices;
-    ∀ (jt : Fin (2 : ℕ)),
-    p.getVert (↑t : ℕ) = Sum.inl (C.blockVertex (D.gammaIndex d) jt) →
-    let zIndices : Finset (Fin (p.length + (1 : ℕ))) :=
-      {r : Fin (p.length + (1 : ℕ)) |
-        (↑r : ℕ) < (↑t : ℕ) ∧ ∃ w ∈ Z, p.getVert (↑r : ℕ) = Sum.inl w};
-    ∀ (hzIndices : zIndices.Nonempty),
-    let qz : Fin (p.length + (1 : ℕ)) := zIndices.max' hzIndices;
-    ∀ (hqzt : (↑qz : ℕ) < (↑t : ℕ)),
-    (∀ r ∈ zIndices, (↑r : ℕ) ≤ (↑qz : ℕ)) →
-    let qe : Fin (p.length + (1 : ℕ)) :=
-      (⟨(↑qz : ℕ) + (1 : ℕ),
-          Decidable.byContradiction fun (a : ¬(↑qz : ℕ) + (1 : ℕ) < p.length + (1 : ℕ)) =>
-            by omega⟩ :
-        Fin (p.length + (1 : ℕ)));
-    (↑qe : ℕ) < (↑t : ℕ) →
-    ∀ (f : E),
-    p.getVert (↑qe : ℕ) = Sum.inr f →
-    (∀ u ∉ X, ∀ (a : Fin (2 : ℕ)), u ≠ C.blockVertex (D.gammaIndex d) a) →
-    p.getVert (↑i0 : ℕ) = Sum.inr R.f2 →
-    p.getVert (↑i1 : ℕ) = Sum.inl R.u2 →
-    p.getVert (↑i2 : ℕ) = Sum.inr h →
-    p.getVert (↑i3 : ℕ) = Sum.inl R.u1 →
-    p.getVert (↑i4 : ℕ) = Sum.inr R.f1 →
-    f = R.f2 →
-    False := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R beta v z p X U Z H hblockU h i0 i1 i2 i3 i4 qv qf hi01
-      hi12 hi23 hi34 hi4qv hqfv hpath fin_le blockIndices hblockIndices t jt htNode zIndices
-      hzIndices qz hqzt hqzMax qe hqet f hqeNode hblockOutsideNe ha0 ha1 ha2 ha3 ha4 hf
-  have hqe0 : qe.val = i0.val := by
-    have hvEq : p.getVert qe.val = p.getVert i0.val := by
-      rw [hqeNode, hf, ha0]
-    exact hpath.getVert_injOn
-      (by simpa using fin_le qe) (by simpa using fin_le i0) hvEq
-  have hi1ne : t.val ≠ i1.val := by
-    intro heq
-    have he : C.blockVertex (D.gammaIndex d) jt = R.u2 := by
-      apply Sum.inl.inj
-      rw [← htNode, heq, ha1]
-    exact hblockOutsideNe R.u2 R.u2_outside jt he.symm
-  have hi2ne : t.val ≠ i2.val := by
-    intro heq
-    have : (Sum.inl (C.blockVertex (D.gammaIndex d) jt) : Sum V E) = Sum.inr h := by
-      rw [← htNode, heq, ha2]
-    simp at this
-  have hi3ne : t.val ≠ i3.val := by
-    intro heq
-    have he : C.blockVertex (D.gammaIndex d) jt = R.u1 := by
-      apply Sum.inl.inj
-      rw [← htNode, heq, ha3]
-    exact hblockOutsideNe R.u1 R.u1_outside jt he.symm
-  have hi4ne : t.val ≠ i4.val := by
-    intro heq
-    have : (Sum.inl (C.blockVertex (D.gammaIndex d) jt) : Sum V E) = Sum.inr R.f1 := by
-      rw [← htNode, heq, ha4]
-    simp at this
-  have hi4t : i4.val < t.val := by omega
-  let ir : Fin (p.length + 1) := ⟨i4.val + 1, by omega⟩
-  have hretAdj := p.adj_getVert_succ (i := i4.val) (by omega)
-  have hret : p.getVert ir.val = Sum.inl R.v1 := by
-    cases hn : p.getVert ir.val with
-    | inr e =>
-        have hadj : H.Adj (Sum.inr R.f1) (Sum.inr e) := by
-          simpa [H, ir, ha4, hn] using hretAdj
-        simp [H, TwoColorIncidenceGraph] at hadj
-    | inl y =>
-        have hyInc : Incident G y R.f1 := by
-          have hadj : H.Adj (Sum.inr R.f1) (Sum.inl y) := by
-            simpa [H, ir, ha4, hn] using hretAdj
-          have hpair : Incident G y R.f1 ∧
-              (phi R.f1 = some d.1 ∨ phi R.f1 = some beta) := by
-            simpa [H, TwoColorIncidenceGraph] using hadj
-          exact hpair.1
-        have hyEnds : y = R.v1 ∨ y = R.u1 := by
-          simpa [Incident, R.f1_ends] using hyInc
-        rcases hyEnds with hy | hy
-        · simp [hy]
-        · have hrepeat : p.getVert ir.val = p.getVert i3.val := by
-            rw [hn, hy, ha3]
-          have hind := hpath.getVert_injOn
-            (by simpa using fin_le ir) (by simpa using fin_le i3) hrepeat
-          dsimp [ir] at hind
-          omega
-  have hv1Z : R.v1 ∈ Z := by simpa [X, U, Z] using R.v1_in_remainder
-  have hirt : ir.val < t.val := by
-    have hirle : ir.val ≤ t.val := by dsimp [ir]; omega
-    have hirne : ir.val ≠ t.val := by
-      intro heq
-      have hv1Block : R.v1 = C.blockVertex (D.gammaIndex d) jt := by
-        apply Sum.inl.inj
-        rw [← hret, heq, htNode]
-      exact (Finset.mem_sdiff.mp hv1Z).2 (hv1Block ▸ hblockU jt)
-    omega
-  have hirMem : ir ∈ zIndices := by
-    simp only [zIndices, Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨hirt, R.v1, hv1Z, hret⟩
-  have hmax := hqzMax ir hirMem
-  dsimp [ir, qe] at hmax hqe0
-  omega
 
 private theorem helper_hfdelta_489.{u_1, u_2} :
     open scoped Classical in
@@ -509,160 +247,6 @@ private theorem helper_hfEnds_509.{u_1, u_2} :
     simpa [Incident, ha] using hxf
   have hxa : x = a := hmem.resolve_left hxw
   simpa [hxa] using ha
-
-private theorem helper_branch_563.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (C : ScheideReducedConfiguration G k e0 phi T)
-      (D : ScheideDefectiveSetup G k e0 phi T C)
-      (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T)))
-      (R : ScheideReplacementData G k e0 phi T C D d) (beta : Fin k) (v z : V)
-      (p : (TwoColorIncidenceGraph G phi (↑d : Fin k) beta).Walk (Sum.inl v) (Sum.inl z)),
-    let X : Finset V := TreeSequenceVertexSet T;
-    let U : Finset V :=
-      {C.blockVertex (D.gammaIndex d) (0 : Fin (2 : ℕ)),
-        C.blockVertex (D.gammaIndex d) (1 : Fin (2 : ℕ))};
-    let Z : Finset V := X \ U;
-    ∀ (h : E) (i0 i1 i2 i3 i4 _ _ : Fin (p.length + (1 : ℕ))),
-    (↑i4 : ℕ) = (↑i3 : ℕ) + (1 : ℕ) →
-    p.getVert (↑i0 : ℕ) = Sum.inr R.f1 ∧
-          p.getVert (↑i1 : ℕ) = Sum.inl R.u1 ∧
-            p.getVert (↑i2 : ℕ) = Sum.inr h ∧
-              p.getVert (↑i3 : ℕ) = Sum.inl R.u2 ∧ p.getVert (↑i4 : ℕ) = Sum.inr R.f2 ∨
-        p.getVert (↑i0 : ℕ) = Sum.inr R.f2 ∧
-          p.getVert (↑i1 : ℕ) = Sum.inl R.u2 ∧
-            p.getVert (↑i2 : ℕ) = Sum.inr h ∧
-              p.getVert (↑i3 : ℕ) = Sum.inl R.u1 ∧ p.getVert (↑i4 : ℕ) = Sum.inr R.f1 →
-    p.IsPath →
-    (∀ (r : Fin (p.length + (1 : ℕ))), (↑r : ℕ) ≤ p.length) →
-    let blockIndices : Finset (Fin (p.length + (1 : ℕ))) :=
-      {r : Fin (p.length + (1 : ℕ)) |
-        ∃ (a : Fin (2 : ℕ)),
-          p.getVert (↑r : ℕ) = Sum.inl (C.blockVertex (D.gammaIndex d) a)};
-    ∀ (hblockIndices : blockIndices.Nonempty),
-    let t : Fin (p.length + (1 : ℕ)) := blockIndices.min' hblockIndices;
-    let zIndices : Finset (Fin (p.length + (1 : ℕ))) :=
-      {r : Fin (p.length + (1 : ℕ)) |
-        (↑r : ℕ) < (↑t : ℕ) ∧ ∃ w ∈ Z, p.getVert (↑r : ℕ) = Sum.inl w};
-    ∀ (hzIndices : zIndices.Nonempty),
-    let qz : Fin (p.length + (1 : ℕ)) := zIndices.max' hzIndices;
-    ∀ (hqzt : (↑qz : ℕ) < (↑t : ℕ)),
-    ∀ w ∈ Z,
-    p.getVert (↑qz : ℕ) = Sum.inl w →
-    let qe : Fin (p.length + (1 : ℕ)) :=
-      (⟨(↑qz : ℕ) + (1 : ℕ),
-          Decidable.byContradiction fun (a : ¬(↑qz : ℕ) + (1 : ℕ) < p.length + (1 : ℕ)) =>
-            by omega⟩ :
-        Fin (p.length + (1 : ℕ)));
-    (↑qe : ℕ) < (↑t : ℕ) →
-    ∀ (f : E),
-    p.getVert (↑qe : ℕ) = Sum.inr f →
-    (p.getVert (↑i0 : ℕ) = Sum.inr R.f1 →
-        p.getVert (↑i1 : ℕ) = Sum.inl R.u1 →
-          p.getVert (↑i2 : ℕ) = Sum.inr h →
-            p.getVert (↑i3 : ℕ) = Sum.inl R.u2 →
-              p.getVert (↑i4 : ℕ) = Sum.inr R.f2 → f = R.f1 → False) →
-    f = R.f1 →
-    False := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R beta v z p X U Z h i0 i1 i2 i3 i4 qv qf hi34 horient
-      hpath fin_le blockIndices hblockIndices t zIndices hzIndices qz hqzt w hwZ hqw qe hqet f
-      hqeNode hreturn_one hf1
-  rcases horient with hfirst | hsecond
-  · exact hreturn_one hfirst.1 hfirst.2.1 hfirst.2.2.1
-      hfirst.2.2.2.1 hfirst.2.2.2.2 hf1
-  · have hqei4 : qe.val = i4.val := by
-      have hvEq : p.getVert qe.val = p.getVert i4.val := by
-        rw [hqeNode, hf1, hsecond.2.2.2.2]
-      exact hpath.getVert_injOn
-        (by simpa using fin_le qe) (by simpa using fin_le i4) hvEq
-    have hqzi3 : qz.val = i3.val := by
-      dsimp [qe] at hqei4
-      omega
-    have hwEq : w = R.u1 := by
-      apply Sum.inl.inj
-      rw [← hqw, hqzi3, hsecond.2.2.2.1]
-    exact R.u1_outside (by simpa [X, hwEq] using
-      (Finset.mem_sdiff.mp hwZ).1)
-
-private theorem helper_branch_579.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (C : ScheideReducedConfiguration G k e0 phi T)
-      (D : ScheideDefectiveSetup G k e0 phi T C)
-      (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T)))
-      (R : ScheideReplacementData G k e0 phi T C D d) (beta : Fin k) (v z : V)
-      (p : (TwoColorIncidenceGraph G phi (↑d : Fin k) beta).Walk (Sum.inl v) (Sum.inl z)),
-    let X : Finset V := TreeSequenceVertexSet T;
-    let U : Finset V :=
-      {C.blockVertex (D.gammaIndex d) (0 : Fin (2 : ℕ)),
-        C.blockVertex (D.gammaIndex d) (1 : Fin (2 : ℕ))};
-    let Z : Finset V := X \ U;
-    ∀ (h : E) (i0 i1 i2 i3 i4 _ _ : Fin (p.length + (1 : ℕ))),
-    (↑i4 : ℕ) = (↑i3 : ℕ) + (1 : ℕ) →
-    p.getVert (↑i0 : ℕ) = Sum.inr R.f1 ∧
-          p.getVert (↑i1 : ℕ) = Sum.inl R.u1 ∧
-            p.getVert (↑i2 : ℕ) = Sum.inr h ∧
-              p.getVert (↑i3 : ℕ) = Sum.inl R.u2 ∧ p.getVert (↑i4 : ℕ) = Sum.inr R.f2 ∨
-        p.getVert (↑i0 : ℕ) = Sum.inr R.f2 ∧
-          p.getVert (↑i1 : ℕ) = Sum.inl R.u2 ∧
-            p.getVert (↑i2 : ℕ) = Sum.inr h ∧
-              p.getVert (↑i3 : ℕ) = Sum.inl R.u1 ∧ p.getVert (↑i4 : ℕ) = Sum.inr R.f1 →
-    p.IsPath →
-    (∀ (r : Fin (p.length + (1 : ℕ))), (↑r : ℕ) ≤ p.length) →
-    let blockIndices : Finset (Fin (p.length + (1 : ℕ))) :=
-      {r : Fin (p.length + (1 : ℕ)) |
-        ∃ (a : Fin (2 : ℕ)),
-          p.getVert (↑r : ℕ) = Sum.inl (C.blockVertex (D.gammaIndex d) a)};
-    ∀ (hblockIndices : blockIndices.Nonempty),
-    let t : Fin (p.length + (1 : ℕ)) := blockIndices.min' hblockIndices;
-    let zIndices : Finset (Fin (p.length + (1 : ℕ))) :=
-      {r : Fin (p.length + (1 : ℕ)) |
-        (↑r : ℕ) < (↑t : ℕ) ∧ ∃ w ∈ Z, p.getVert (↑r : ℕ) = Sum.inl w};
-    ∀ (hzIndices : zIndices.Nonempty),
-    let qz : Fin (p.length + (1 : ℕ)) := zIndices.max' hzIndices;
-    ∀ (hqzt : (↑qz : ℕ) < (↑t : ℕ)),
-    ∀ w ∈ Z,
-    p.getVert (↑qz : ℕ) = Sum.inl w →
-    let qe : Fin (p.length + (1 : ℕ)) :=
-      (⟨(↑qz : ℕ) + (1 : ℕ),
-          Decidable.byContradiction fun (a : ¬(↑qz : ℕ) + (1 : ℕ) < p.length + (1 : ℕ)) =>
-            by omega⟩ :
-        Fin (p.length + (1 : ℕ)));
-    (↑qe : ℕ) < (↑t : ℕ) →
-    ∀ (f : E),
-    p.getVert (↑qe : ℕ) = Sum.inr f →
-    (p.getVert (↑i0 : ℕ) = Sum.inr R.f2 →
-        p.getVert (↑i1 : ℕ) = Sum.inl R.u2 →
-          p.getVert (↑i2 : ℕ) = Sum.inr h →
-            p.getVert (↑i3 : ℕ) = Sum.inl R.u1 →
-              p.getVert (↑i4 : ℕ) = Sum.inr R.f1 → f = R.f2 → False) →
-    f = R.f2 →
-    False := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R beta v z p X U Z h i0 i1 i2 i3 i4 qv qf hi34 horient
-      hpath fin_le blockIndices hblockIndices t zIndices hzIndices qz hqzt w hwZ hqw qe hqet f
-      hqeNode hreturn_two hf2
-  rcases horient with hfirst | hsecond
-  · have hqei4 : qe.val = i4.val := by
-      have hvEq : p.getVert qe.val = p.getVert i4.val := by
-        rw [hqeNode, hf2, hfirst.2.2.2.2]
-      exact hpath.getVert_injOn
-        (by simpa using fin_le qe) (by simpa using fin_le i4) hvEq
-    have hqzi3 : qz.val = i3.val := by
-      dsimp [qe] at hqei4
-      omega
-    have hwEq : w = R.u2 := by
-      apply Sum.inl.inj
-      rw [← hqw, hqzi3, hfirst.2.2.2.1]
-    exact R.u2_outside (by simpa [X, hwEq] using
-      (Finset.mem_sdiff.mp hwZ).1)
-  · exact hreturn_two hsecond.1 hsecond.2.1 hsecond.2.2.1
-      hsecond.2.2.2.1 hsecond.2.2.2.2 hf2
 
 private theorem helper_havoid_126.{u_1, u_2} :
     open scoped Classical in
@@ -830,14 +414,16 @@ private theorem helper_havoid_126.{u_1, u_2} :
       u ≠ C.blockVertex (D.gammaIndex d) a := by
     intro u hu a hua
     exact hu (hua ▸ hblockX a)
-  have hreturn_one := @helper_hreturn_one_242 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 phi T C D d R beta v z p hblockU h i0 i1 i2 i3 i4 qv qf hi01 hi12 hi23
-      hi34 hi4qv hqfv hpath fin_le hblockIndices jt htNode hzIndices hqzt hqzMax hqet f hqeNode
-      hblockOutsideNe
-  have hreturn_two := @helper_hreturn_two_319 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 phi T C D d R beta v z p hblockU h i0 i1 i2 i3 i4 qv qf hi01 hi12 hi23
-      hi34 hi4qv hqfv hpath fin_le hblockIndices jt htNode hzIndices hqzt hqzMax hqet f hqeNode
-      hblockOutsideNe
+  have blockNotZ : C.blockVertex (D.gammaIndex d) jt ∉ Z := by
+    intro member
+    exact (Finset.mem_sdiff.mp member).2 (hblockU jt)
+  have maximalReturn (index : Fin (p.length + 1)) (before : index.val < t.val)
+      (member : ∃ vertex ∈ Z, p.getVert index.val = Sum.inl vertex) : index.val ≤ qz.val :=
+    hqzMax index (Finset.mem_filter.mpr ⟨Finset.mem_univ _, before, member⟩)
+  have wNeOutside (outside : V) (missing : outside ∉ X) : w ≠ outside := by
+    intro same
+    apply missing
+    simpa only [same] using (Finset.mem_sdiff.mp hwZ).1
   rcases hfThree with hf0 | hf1 | hf2
   · have hqeqf : qe.val = qf.val := by
       have hvEq : p.getVert qe.val = p.getVert qf.val := by
@@ -849,12 +435,24 @@ private theorem helper_havoid_126.{u_1, u_2} :
       omega
     exact (hafter t hqvt (C.blockVertex (D.gammaIndex d) jt) htNode)
       (hblockX jt)
-  · exact @helper_branch_563 V E inferInstance inferInstance inferInstance inferInstance G k e0
-      phi T C D d R beta v z p h i0 i1 i2 i3 i4 qv qf hi34 horient hpath fin_le hblockIndices
-      hzIndices hqzt w hwZ hqw hqet f hqeNode hreturn_one hf1
-  · exact @helper_branch_579 V E inferInstance inferInstance inferInstance inferInstance G k e0
-      phi T C D d R beta v z p h i0 i1 i2 i3 i4 qv qf hi34 horient hpath fin_le hblockIndices
-      hzIndices hqzt w hwZ hqw hqet f hqeNode hreturn_two hf2
+  · rcases horient with first | second
+    · apply TwoColorReturnIndexBoundaryAvoidance p hpath hi01 hi12 hi23 hi34 rfl hqet htNode
+        first.1 first.2.1 first.2.2.1 first.2.2.2.1 first.2.2.2.2
+        (hblockOutsideNe _ R.u1_outside jt) (hblockOutsideNe _ R.u2_outside jt)
+        R.f2_ends (by simpa only [X, U, Z] using R.v2_in_remainder) blockNotZ maximalReturn
+      simpa only [hf1] using hqeNode
+    · apply ReturnIndexAvoidsOutsideEdge (query := qe) p hpath rfl hi34
+        second.2.2.2.2 second.2.2.2.1 hqw (wNeOutside _ R.u1_outside)
+      simpa only [hf1] using hqeNode
+  · rcases horient with first | second
+    · apply ReturnIndexAvoidsOutsideEdge (query := qe) p hpath rfl hi34
+        first.2.2.2.2 first.2.2.2.1 hqw (wNeOutside _ R.u2_outside)
+      simpa only [hf2] using hqeNode
+    · apply TwoColorReturnIndexBoundaryAvoidance p hpath hi01 hi12 hi23 hi34 rfl hqet htNode
+        second.1 second.2.1 second.2.2.1 second.2.2.2.1 second.2.2.2.2
+        (hblockOutsideNe _ R.u2_outside jt) (hblockOutsideNe _ R.u1_outside jt)
+        R.f1_ends (by simpa only [X, U, Z] using R.v1_in_remainder) blockNotZ maximalReturn
+      simpa only [hf2] using hqeNode
 theorem ScheideSymmetricOriginalBoundaryAvoidance {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
     (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)

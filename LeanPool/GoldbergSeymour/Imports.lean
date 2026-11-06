@@ -38,10 +38,6 @@ public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothInside
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation1
-public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation2
-public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation3
-public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation4
-public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation5
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation6
 public import LeanPool.GoldbergSeymour.ChangeLemmaInsideOutside
 public import LeanPool.GoldbergSeymour.ChangeLemmaMixedClosedFinal
@@ -216,6 +212,7 @@ public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTailAtLeastTwo
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTerminalCommonMissing
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTransport
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
+public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
@@ -357,6 +354,7 @@ public import LeanPool.GoldbergSeymour.MixedNoClosedTransport
 public import LeanPool.GoldbergSeymour.ModColoring
 public import LeanPool.GoldbergSeymour.NestedOddMissingPair
 public import LeanPool.GoldbergSeymour.NineN
+public import LeanPool.GoldbergSeymour.NonparallelPenultimateInterchangeability
 public import LeanPool.GoldbergSeymour.NormalCycleEdge
 public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.NormalTripleTrunk
@@ -803,4 +801,5 @@ public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
 public import LeanPool.GoldbergSeymour.TwoColorPathComponent
 public import LeanPool.GoldbergSeymour.TwoColorPathComponentNotCycle
+public import LeanPool.GoldbergSeymour.TwoColorReturnIndexBoundaryAvoidance
 public import LeanPool.GoldbergSeymour.TwoColorWalkConfinement

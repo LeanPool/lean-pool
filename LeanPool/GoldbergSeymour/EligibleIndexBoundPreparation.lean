@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningProofs
 
 public import LeanPool.GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
 
@@ -1493,12 +1492,6 @@ noncomputable abbrev helperKF3658.{u_1, u_2} :
       corr.replacementETT
       bs };
 
-/-- Dependent contract shared by the eligible-index bound proof modules.
-
-Keeping this interface separate avoids repeating its dependent hypotheses and data.
--/
-abbrev helperUniqueRefresh4523Conditions.{u_1, u_2} : Prop :=
-  SharedFacts.ShorteningProofs.uniqueRefreshTransportStatement.{u_1, u_2}
 
 
 /-- Dependent contract shared by the eligible-index bound proof modules.
@@ -2034,8 +2027,6 @@ theorem helper_coreA_200.{u_1, u_2} :
     exact trans H.coreInsideFirst (chain H.dividerCount (by omega) ⟨1, by omega⟩
       (by change 1 ≤ H.dividerCount; omega))
 
-alias helper_hsproper_329 :=
-  SharedFacts.ShorteningProofs.properRecoloring
 
 theorem helper_hdata_519.{u_1, u_2} :
     open scoped Classical in
@@ -2233,8 +2224,6 @@ theorem helper_hdata_519.{u_1, u_2} :
     · exact ⟨fun h => (hpe h).elim, fun h => (hpe (terminalKind.symm.trans h)).elim⟩
     · intro _; rfl
 
-alias helper_terminalStored_647 :=
-  SharedFacts.ShorteningProofs.terminalStoredColors
 
 theorem helper_hpS_844.{u_1, u_2} :
     open scoped Classical in
@@ -4423,8 +4412,6 @@ theorem helper_lastOrdinary_2387.{u_1, u_2} :
     Fin.ext hcountB
   simpa only [hi] using hh
 
-alias helper_uniqueRefresh_4523 :=
-  SharedFacts.ShorteningProofs.uniqueRefreshTransport
 
 theorem helper_parallelBase_4547.{u_1, u_2} :
     helperParallelBase4547Conditions.{u_1, u_2} := by

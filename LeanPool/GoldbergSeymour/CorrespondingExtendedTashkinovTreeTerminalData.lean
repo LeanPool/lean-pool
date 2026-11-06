@@ -51,9 +51,9 @@ theorem CorrespondingExtendedTashkinovTree.terminalTreeKind.{u_1, u_2} :
 /-- Corresponding extended trees agree on their terminal ladder tree, kind and stored colors. -/
 theorem CorrespondingExtendedTashkinovTree.terminalData {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
-    {input : PartialEdgeColoring E k} {T : TreeSequence G e0} {phi : PartialEdgeColoring E k}
+    {input : PartialEdgeColoring E k} {T : TreeSequence G e0} {phi sigma : PartialEdgeColoring E k}
     {ett : ExtendedTashkinovTree G k e0 input T phi} {U : TreeSequence G e0}
-    (corr : CorrespondingExtendedTashkinovTree G k e0 ett phi U) :
+    (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma U) :
     corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc =
         ett.series.data.tree (Fin.last ett.rounds).castSucc ∧
       corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
@@ -63,7 +63,7 @@ theorem CorrespondingExtendedTashkinovTree.terminalData {V E : Type*}
           TashkinovStoredColors ett.series.data (Fin.last ett.rounds) := by
   classical
   have terminalFacts := CorrespondingExtendedTashkinovTree.terminalTreeKind
-    G k e0 phi ett U corr
+    G k e0 sigma ett U corr
   rcases corr with ⟨newInput, newSeries, newETT, hr, hs, hf,
     ht, hd, he, hk, hp, ho, hstable⟩
   cases newETT with
@@ -71,6 +71,19 @@ theorem CorrespondingExtendedTashkinovTree.terminalData {V E : Type*}
     cases hr
     have hseries : data = newSeries := eq_of_heq hs
     cases hseries
+    let i : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
+    have hi : i.succ = Fin.last ett.rounds := Fin.ext (by
+      dsimp [i]
+      have := ett.roundsPositive
+      omega)
+    have finalStable := hstable i
+    rw [hi, ← hf, ← ett.generatingColoring] at finalStable
+    have missing : TreeMissingColors sigma
+        (ett.series.data.tree (Fin.last ett.rounds).castSucc) =
+        TreeMissingColors phi (ett.series.data.tree (Fin.last ett.rounds).castSucc) := by
+      unfold TreeMissingColors
+      apply Finset.biUnion_congr rfl
+      exact finalStable.2
     refine ⟨terminalFacts.1, terminalFacts.2, ?_⟩
     unfold TashkinovStoredColors
     have hn : (Fin.last ett.rounds).val ≠ 0 := by
@@ -78,7 +91,7 @@ theorem CorrespondingExtendedTashkinovTree.terminalData {V E : Type*}
       simpa using Nat.ne_of_gt (Nat.zero_lt_of_lt ett.roundsPositive)
     simp only [ite_eq_right hn]
     simp_rw [hd]
-    rw [← hf, ← ett.generatingColoring, terminalFacts.1]
+    rw [← hf, ← ett.generatingColoring, terminalFacts.1, missing]
 
 
 end GoldbergSeymour

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.NonparallelPenultimateInterchangeability
+
 public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
 public import LeanPool.GoldbergSeymour.StableHierarchyReplacement
 
@@ -18,6 +20,7 @@ public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePosition
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation2
+public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
 
 /-!
 # Change Lemma Mixed Closed Final
@@ -489,113 +492,6 @@ private theorem helper_branch_392.{u_1, u_2} :
     hlower hp base hproper hone hs alpha beta).2.2.1
     (by simpa [lastZero hz] using halphaA)
     (by simpa [lastZero hz] using halphaClosed)
-
-private theorem helper_branch_399.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base),
-    IsProperEdgeColoring G phi →
-    IsOneEdgeUncolored phi e0 →
-    LowerRoundInductionHypothesis G k e0 ett.rounds →
-    ∀ (alpha beta : Fin k),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let _ : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    (H.dividerCount = (0 : ℕ) → A = base.core) →
-    alpha ∈ TreeMissingColors phi A →
-    H.dividerCount = (0 : ℕ) →
-    ¬ett.series.data.kind n = some TashkinovExtensionKind.PE →
-    TreeInterchangeable G base.core phi alpha beta := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hproper hone hlower alpha beta H q A n Tn
-      lastZero halphaA hz hp
-  rw [base.nonparallel hp]
-  let j : Fin ett.rounds := ⟨ett.rounds - 1, by have := C.positive; omega⟩
-  have hj : j.succ = n := Fin.ext (by simp [j, n]; have := C.positive; omega)
-  have hprev : StableColoring Tn
-      (TashkinovStoredColors ett.series.data j.castSucc)
-      (ett.series.data.coloring j.castSucc) phi := by
-    have step := ett.series.certified n
-    generalize hi : n = i at step
-    cases step with
-    | initial =>
-      have hv := congrArg Fin.val hi
-      simp [n] at hv
-      have := C.positive
-      omega
-    | SE ji _ _ _ _ _ choice _ coloring stored edges kind vertex outside
-        delta gamma seed adjoin closure ordered strict =>
-      have hji : ji = j := Fin.ext (by
-        have hv := congrArg Fin.val hi
-        simp [n, j] at hv ⊢
-        omega)
-      subst ji
-      have hc : phi = choice.selected := by
-        simpa only [← hj, coloring, n] using ett.generatingColoring
-      simpa only [hj, Tn, hc] using choice.selectedStable
-    | RE ji _ _ _ _ available coloring stored edges kind vertex outside
-        delta gamma seed adjoin closure ordered strict =>
-      have hji : ji = j := Fin.ext (by
-        have hv := congrArg Fin.val hi
-        simp [n, j] at hv ⊢
-        omega)
-      subst ji
-      have hc : phi = ett.series.data.coloring j.castSucc := by
-        simpa only [← hj, coloring, n] using ett.generatingColoring
-      refine ⟨?_, ?_⟩
-      · intro f _ _
-        exact congrFun hc f
-      · intro v _
-        exact congrArg (fun psi => MissingColors G psi v) hc
-    | PE ji _ _ _ _ _ choice _ gamma _ second _ _ _ exit coloring proper
-        one stored edges kind vertex outside delta gammaEq closure ordered strict =>
-      exact (hp (by simpa [← hi] using kind)).elim
-  have hm : alpha ∈ TreeMissingColors phi Tn := by
-    simpa only [lastZero hz, base.nonparallel hp] using halphaA
-  by_cases hn : 1 < ett.rounds
-  · obtain ⟨lower, hr, hmax, htrees, hdata⟩ :=
-      CertifiedETTRestriction G k e0 input T phi ett C.maximum
-        (ett.rounds - 1) (by omega) (by omega)
-    let nl : Fin (lower.rounds + 1) := Fin.last lower.rounds
-    have hcidx : Fin.castLE (by omega) nl = j.castSucc :=
-      Fin.ext (by simp [nl, j, hr])
-    have htidx : Fin.castLE (by omega) (Fin.last (lower.rounds + 1)) =
-        n.castSucc := Fin.ext (by simp [n, hr]; omega)
-    have ht : lower.series.data.tree (Fin.last (lower.rounds + 1)) = Tn :=
-      (htrees _).trans (congrArg ett.series.data.tree htidx)
-    obtain ⟨hc, _, _, _, _, _, _, _, hd, _⟩ := hdata nl
-    rw [hcidx] at hc hd
-    have hs : StableColoring
-        (lower.series.data.tree (Fin.last (lower.rounds + 1)))
-        (TashkinovStoredColors lower.series.data nl)
-        (lower.series.data.coloring nl) phi := by
-      rw [ht, hc, hd]
-      exact hprev
-    have hi := (hlower lower (by omega) (by omega) hmax).2.1
-      phi hproper hone hs alpha beta (Or.inl (by rw [ht]; exact hm))
-    simpa only [ht] using hi
-  · have hn1 : ett.rounds = 1 := by have := C.positive; omega
-    have hj0 : j.castSucc = (0 : Fin (ett.rounds + 1)) :=
-      Fin.ext (by simp [j, hn1])
-    have ht1 : n.castSucc = (⟨1, by omega⟩ : Fin (ett.rounds + 2)) :=
-      Fin.ext (by simp [n, hn1])
-    have hs : StableColoring (ett.series.data.tree ⟨1, by omega⟩)
-        (TashkinovStoredColors ett.series.data 0)
-        (ett.series.data.coloring 0) phi := by
-      simpa only [Tn, ht1, hj0] using hprev
-    have hi := (TechnicalTheoremBase G k ett.rounds e0 input ett.series).2
-      phi hproper hone hs alpha beta
-      (Or.inl (by simpa only [Tn, ht1] using hm))
-    have hTn1 : Tn = ett.series.data.tree ⟨1, by omega⟩ :=
-      congrArg ett.series.data.tree ht1
-    change TreeInterchangeable G Tn phi alpha beta
-    rw [hTn1]
-    exact hi
 
 private theorem helper_branch_481.{u_1, u_2} :
     open scoped Classical in
@@ -1091,9 +987,9 @@ private theorem helper_hinter_3043.{u_1, u_2} :
     · exact @helper_branch_392 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper)
         (@hone) (@hlower) (@alpha) (@beta) (@lastZero) (@halphaA) (@halphaClosed) (@hz) (@hp)
-    · exact @helper_branch_399 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper)
-        (@hone) (@hlower) (@alpha) (@beta) (@lastZero) (@halphaA) (@hz) (@hp)
+    · rw [base.nonparallel hp]
+      apply ett.nonparallel_interchangeable C.maximum hproper hone hlower hp alpha beta
+      exact Or.inl (by simpa only [lastZero hz, base.nonparallel hp] using halphaA)
   · exact @helper_branch_481 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
       (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone) (@hlower)
       (@hfewer) (@hlarge) (@alpha) (@beta) (@hne) (@lastPositive) (@halphaA) (@halphaClosed) (@hz)
@@ -1138,24 +1034,12 @@ private theorem helper_continuation_5185.{u_1, u_2} :
     exact Fin.cases hcore.symm (fun i => rfl) j
   have storedEq (j : Fin (count + 1)) :
       HierarchyStoredColorsAt HS j = HierarchyStoredColorsAt HB j := by
-    exact @GoldbergSeymour.SharedFacts.MixedChangeTransport.storedColorsEquality (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta) (@hAib) (@rpB)
-        (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@treeMissingEq) (@corr) (@baseS)
-        (@storedS) (@count) (@stages) (@hbbase) (@hbterminal) (@hbnested) (@hbstrict)
-        (@positions) (@hbpositive) (@hbincreasing) (@hbdivider) (@hbcore) (@starBToA)
-        (@positionsS) (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested)
-        (@hsstrict) (@hsdivider) (@hscore) (@starEq) (@j)
+    exact HB.storedColors_eq_of_agreement HS j j storedS (starEq j)
+      (treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset (starBToA j)))
   have missingEq (j : Fin (count + 1)) :
       HierarchyStageMissingColors HS j = HierarchyStageMissingColors HB j := by
-    exact @GoldbergSeymour.SharedFacts.MixedChangeTransport.missingColorsEquality (@V) (@E)
-        inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@TnToA) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@treeMissingEq)
-        (@corr) (@baseS) (@count) (@stages) (@hbbase) (@hbterminal) (@hbnested) (@hbstrict)
-        (@positions) (@hbpositive) (@hbincreasing) (@hbdivider) (@hbcore) (@stageBToA)
-        (@positionsS) (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested)
-        (@hsstrict) (@hsdivider) (@hscore) (@j)
+    exact HB.stageMissingColors_eq_of_agreement HS j j rfl
+      (treeMissingEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageBToA j)))
   -- A change only at the last vertex leaves the totalized first position unchanged.
   have firstLe (psi : PartialEdgeColoring E k) (eta : Fin k)
       (i : Fin (B.length + 1)) (hc : eta ∈ MissingColors G psi (B.vertex i)) :
@@ -1174,14 +1058,13 @@ private theorem helper_continuation_5185.{u_1, u_2} :
   have segmentEq (j : Fin (count + 1)) (eta : Fin k)
       (he : eta ∈ HierarchyStoredColorsAt HB j) :
       HierarchySegmentColors HS j eta = HierarchySegmentColors HB j eta := by
-    exact @GoldbergSeymour.SharedFacts.MixedChangeTransport.initialSegmentEquality (@V) (@E)
-        inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@edgesFixed) (@corr)
-        (@baseS) (@count) (@stages) (@hbbase) (@hbterminal) (@hbnested) (@hbstrict) (@positions)
-        (@hbpositive) (@hbincreasing) (@hbdivider) (@hbcore) (@stageBToB) (@positionsS)
-        (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested) (@hsstrict)
-        (@hsdivider) (@hscore) (@starEq) (@firstEq) (@j) (@eta)
+    apply HB.segmentColors_eq_of_agreement HS j j eta rfl (starEq j)
+      (congrArg Fin.val (firstEq eta))
+    intro index
+    have initial := stageBToB j.succ
+    have fixed := edgesFixed (Fin.castLE initial.1 index)
+    rw [initial.2.2] at fixed
+    exact fixed
   have refreshEq (i : Fin count) :
       ((TreeSequenceVertexSet (HS.stage i.succ.castSucc) \
         TreeSequenceVertexSet (HierarchyStarredStage HS i.castSucc)).biUnion
@@ -1189,14 +1072,9 @@ private theorem helper_continuation_5185.{u_1, u_2} :
       ((TreeSequenceVertexSet (HB.stage i.succ.castSucc) \
         TreeSequenceVertexSet (HierarchyStarredStage HB i.castSucc)).biUnion
           fun v => MissingColors G phi v) := by
-    exact @GoldbergSeymour.SharedFacts.MixedChangeTransport.refreshedHierarchyEquality (@V) (@E)
-        inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@missingA) (@corr)
-        (@baseS) (@count) (@stages) (@hbbase) (@hbterminal) (@hbnested) (@hbstrict) (@positions)
-        (@hbpositive) (@hbincreasing) (@hbdivider) (@hbcore) (@stageBToA) (@positionsS)
-        (@hspositive) (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested) (@hsstrict)
-        (@hsdivider) (@hscore) (@starEq) (@i)
+    exact HB.segmentMissingColors_eq_of_agreement HS i i rfl (starEq i.castSucc)
+      (fun v hv => missingA v (TreeSequenceInitialSegmentVertexSetSubset (stageBToA i.succ)
+        (Finset.mem_sdiff.mp hv).1))
   let goodS : GoodHierarchy HS :=
     { gamma := goodB.gamma
       twoColors := by intro j eta he; exact goodB.twoColors j eta (storedEq j ▸ he)
@@ -1239,14 +1117,8 @@ private theorem helper_continuation_5185.{u_1, u_2} :
       maximum := hMPS
       notElementary := sigmaNotElementary }
   have hstarLast : HierarchyStarredStage HS (Fin.last count) = A := by
-    exact @GoldbergSeymour.SharedFacts.MixedChangeTransport.lastStarredStageEquality (@V) (@E)
-        inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@corr) (@baseS) (@count)
-        (@stages) (@hbbase) (@hbterminal) (@hbnested) (@hbstrict) (@positions) (@hbpositive)
-        (@hbincreasing) (@hbdivider) (@hbcore) (@hcountB) (@hstagesB) (@positionsS) (@hspositive)
-        (@hsincreasing) (@hsbase) (@hsterminal) (@hsnested) (@hsstrict) (@hsdivider) (@hscore)
-        (@starEq)
+    exact (starEq _).trans
+      (H.lastStarredStage_eq_of_agreement HB hcountB (fun j => (hstagesB j).2))
   have hlastOrd : HS.stage (Fin.last count).castSucc = H.stage q.castSucc := by
     have hs := (hstagesB (Fin.last count)).1
     have hj : Fin.cast (congrArg (fun n : ℕ => n + 1) hcountB) (Fin.last count) = q :=

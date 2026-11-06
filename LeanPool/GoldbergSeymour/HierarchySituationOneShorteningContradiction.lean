@@ -14,6 +14,9 @@ public import LeanPool.GoldbergSeymour.SharedFacts.OutsideAdvancement
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTailAtLeastTwo
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
+public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningProofs
 
 /-!
 # Hierarchy Situation One Shortening Contradiction
@@ -1491,13 +1494,11 @@ private theorem helper_continuation_6826.{u_1, u_2} :
         exact goodB.disjointPairs j c d (by rw [storedEq j] at hc; exact hc)
           (by rw [storedEq j] at hd; exact hd) hne
       uniqueRefresh := by
-        exact @EligibleIndexBound.helper_uniqueRefresh_4523 (@V) (@E) inferInstance inferInstance
-            inferInstance
-            inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
-            (@alpha) (@hlenT) (@missingFixed) (@positiveB) (@aboveB) (@strictB) (@belowB)
-            (@generatingB) (@baseB) (@HB) (@goodB) (@corr) (@bs) (@baseStageK) (@terminalStageK)
-            (@nestedK) (@strictK) (@coreInsideK) (@positiveK) (@increasingK) (@dividerStageK)
-            (@starredEq) (@stageBX) (@storedEq)
+        intro i
+        exact goodB.uniqueRefresh_transport KF i i (storedEq i.succ) rfl
+          (starredEq i.castSucc) (fun v hv => missingFixed v
+            (TreeSequenceInitialSegmentVertexSetSubset (stageBX i.succ)
+              (Finset.mem_sdiff.mp hv).1))
       parallelBase := by
         exact @helper_parallelBase_5019 (@V) (@E) inferInstance inferInstance inferInstance
             inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
@@ -1679,14 +1680,7 @@ private theorem helper_continuation_7103.{u_1, u_2} :
   have terminalStored : TashkinovStoredColors corr.replacementETT.series.data
       (Fin.last corr.replacementETT.rounds) = TashkinovStoredColors EB.series.data
         (Fin.last EB.rounds) := by
-    exact @EligibleIndexBound.helper_terminalStored_647 (@V) (@E) inferInstance inferInstance
-        inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
-        (@alpha)  (@hlenT) (@hTnX) (@S) (@hSBlen) (@missingTree) (@positiveB) (@aboveB)
-        (@strictB) (@belowB) (@generatingB) (@baseB) (@HB) (@corr) (@hmaximum) (@bs) (@hcore)
-        (@hpe) (@hclosure) (@baseStageK) (@terminalStageK) (@nestedK) (@strictK) (@coreInsideK)
-        (@positiveK) (@increasingK) (@dividerStageK) (@hstage) (@hposition) (@starredEq)
-        (@terminalTree)
+    exact corr.terminalData.2.2
   have storedEq (j : Fin (HB.dividerCount + 1)) :
       HierarchyStoredColorsAt KF j = HierarchyStoredColorsAt HB j := by
     unfold HierarchyStoredColorsAt
@@ -1850,9 +1844,8 @@ theorem HierarchySituationOneShorteningContradiction {V E : Type*}
     let sigma : PartialEdgeColoring E k := fun e => if e = f then some alpha else mu e
     have fixed (e : E) (hef : e ≠ f) : sigma e = mu e := by simp [sigma, hef]
     have hsproper : IsProperEdgeColoring G sigma := by
-      exact @EligibleIndexBound.helper_hsproper_329 V E inferInstance inferInstance inferInstance
-          inferInstance G k
-          e0 input T phi ett base C ctx P alpha haT trans hlenT halphaB hends fixed
+      exact SharedFacts.ShorteningProofs.properRecoloring P.minimumContext.proper
+        f alpha y w hends halphaB haT (by simp [sigma]) fixed
     have hfe0 : f ≠ e0 := by
       exact @helper_hfe0_1615 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
           (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@alpha) (@trans)
