@@ -30,6 +30,7 @@ public import LeanPool.GoldbergSeymour.BoundaryColorEdges
 public import LeanPool.GoldbergSeymour.BoundaryColorVertex
 public import LeanPool.GoldbergSeymour.BoundaryEdges
 public import LeanPool.GoldbergSeymour.BoundaryMissingColorAugmentation
+public import LeanPool.GoldbergSeymour.CertifiedETTPenultimateElementary
 public import LeanPool.GoldbergSeymour.CertifiedETTPredecessor
 public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
 public import LeanPool.GoldbergSeymour.CertifiedSeriesRoundsBound
@@ -594,6 +595,7 @@ public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 public import LeanPool.GoldbergSeymour.StableColoringExitExtension
 public import LeanPool.GoldbergSeymour.StableColoringFullCertificate
 public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
+public import LeanPool.GoldbergSeymour.StableHierarchyReplacement
 public import LeanPool.GoldbergSeymour.StableSeriesCycleComponentTransport
 public import LeanPool.GoldbergSeymour.StarredPrefixPreparation
 public import LeanPool.GoldbergSeymour.Step1CaseOneInsidePositiveDivider
@@ -687,6 +689,7 @@ public import LeanPool.GoldbergSeymour.TashkinovOrder
 public import LeanPool.GoldbergSeymour.TashkinovOrderBound
 public import LeanPool.GoldbergSeymour.TashkinovSeries
 public import LeanPool.GoldbergSeymour.TashkinovSeriesAppend
+public import LeanPool.GoldbergSeymour.TashkinovSeriesCast
 public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
 public import LeanPool.GoldbergSeymour.TashkinovSeriesData
 public import LeanPool.GoldbergSeymour.TashkinovSeriesDataAppend
@@ -775,6 +778,7 @@ public import LeanPool.GoldbergSeymour.TreeVerticesBefore
 public import LeanPool.GoldbergSeymour.TreeVerticesBeforeFacts
 public import LeanPool.GoldbergSeymour.TrunkRotation
 public import LeanPool.GoldbergSeymour.TwoColorComponent
+public import LeanPool.GoldbergSeymour.TwoColorComponentClosedColors
 public import LeanPool.GoldbergSeymour.TwoColorComponentColoringFacts
 public import LeanPool.GoldbergSeymour.TwoColorComponentCycle
 public import LeanPool.GoldbergSeymour.TwoColorComponentLeafPaths

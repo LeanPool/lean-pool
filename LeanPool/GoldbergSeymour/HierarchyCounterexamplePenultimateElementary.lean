@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CertifiedETTPenultimateElementary
+
 public import LeanPool.GoldbergSeymour.GoodHierarchyPrefixRepackage
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
@@ -59,69 +61,8 @@ private theorem helper_branch_111.{u_1, u_2} :
   rw [htree]
   have hprev : ColoredVertexSetElementary G
       (ett.series.data.coloring i.castSucc)
-      (TreeSequenceVertexSet (ett.series.data.tree i.succ.castSucc)) := by
-    have hi : i.succ = Fin.last ett.rounds := by
-      apply Fin.ext
-      have hz := congrArg Fin.val indexEquation
-      simp [finalIndex] at hz ⊢
-      omega
-    intro u hu v hv huv
-    by_cases honeRound : ett.rounds = 1
-    · have htech : ColoredVertexSetElementary G
-          (ett.series.data.coloring 0)
-          (TreeSequenceVertexSet (ett.series.data.tree ⟨1, by omega⟩)) :=
-        (TechnicalTheoremBase G k ett.rounds e0 input ett.series).1
-      have hi : i = ⟨0, by omega⟩ := by apply Fin.ext; omega
-      have hu' : u ∈ TreeSequenceVertexSet
-          (ett.series.data.tree ⟨1, by omega⟩) := by simpa [hi, honeRound] using hu
-      have hv' : v ∈ TreeSequenceVertexSet
-          (ett.series.data.tree ⟨1, by omega⟩) := by simpa [hi, honeRound] using hv
-      have hci : i.castSucc = (0 : Fin (ett.rounds + 1)) := by
-        apply Fin.ext
-        have hz := congrArg Fin.val hi
-        simp at hz ⊢
-        omega
-      rw [hci]
-      exact htech hu' hv' huv
-    · have hres := CertifiedETTRestriction G k e0 input T phi ett C.maximum
-        (ett.rounds - 1) (by omega) (by omega)
-      rcases hres with ⟨restricted, restrictedRounds, restrictedMaximum,
-        restrictedTrees, restrictedData⟩
-      have hl : ColoredVertexSetElementary G
-          (ett.series.data.coloring i.castSucc)
-          (TreeSequenceVertexSet (ett.series.data.tree (Fin.last ett.rounds).castSucc)) := by
-        have hlow :
-    ∀ {u}, u ∈ TreeSequenceVertexSet (ett.series.data.tree (⟨ett.rounds - 1 + 1,
-    by omega
-    ⟩ : Fin (ett.rounds + 2))) →
-    ∀ {v}, v ∈ TreeSequenceVertexSet (ett.series.data.tree (⟨ett.rounds - 1 + 1,
-    by omega
-    ⟩ : Fin (ett.rounds + 2))) → u ≠ v → Disjoint (MissingColors G (ett.series.data.coloring
-        (⟨ett.rounds - 1,
-    by omega
-    ⟩ : Fin (ett.rounds + 1))) u) (MissingColors G (ett.series.data.coloring (⟨ett.rounds - 1,
-    by omega
-    ⟩ : Fin (ett.rounds + 1))) v) := by
-          intro u hu v hv huv
-          exact (hlower (lower := restricted) (by omega) (by omega) restrictedMaximum).1 hu hv huv
-        have hc : (⟨ett.rounds - 1, by omega⟩ : Fin (ett.rounds + 1)) = i.castSucc := by
-          apply Fin.ext
-          have hz := congrArg Fin.val indexEquation
-          simp [finalIndex] at hz ⊢
-          omega
-        have ht : (⟨ett.rounds - 1 + 1, by omega⟩ : Fin (ett.rounds + 2)) =
-            (Fin.last ett.rounds).castSucc := by
-          apply Fin.ext
-          simp
-          omega
-        rw [hc, ht] at hlow
-        intro u hu v hv huv
-        exact hlow (u := u) hu hv huv
-      have hu' : u ∈ TreeSequenceVertexSet
-          (ett.series.data.tree (Fin.last ett.rounds).castSucc) := by simpa [hi] using hu
-      have hv' : v ∈ TreeSequenceVertexSet
-          (ett.series.data.tree (Fin.last ett.rounds).castSucc) := by simpa [hi] using hv
-      exact hl hu' hv' huv
+      (TreeSequenceVertexSet (ett.series.data.tree i.succ.castSucc)) :=
+    ett.penultimateElementary C.maximum hlower i indexEquation
   have hmiss :
     ∀ v, v ∈ TreeSequenceVertexSet (ett.series.data.tree i.succ.castSucc) → MissingColors G
         choice.selected v = MissingColors G (ett.series.data.coloring i.castSucc) v := by
@@ -174,69 +115,8 @@ private theorem helper_branch_216.{u_1, u_2} :
   rw [htree]
   have hprev : ColoredVertexSetElementary G
       (ett.series.data.coloring i.castSucc)
-      (TreeSequenceVertexSet (ett.series.data.tree i.succ.castSucc)) := by
-    have hi : i.succ = Fin.last ett.rounds := by
-      apply Fin.ext
-      have hz := congrArg Fin.val indexEquation
-      simp [finalIndex] at hz ⊢
-      omega
-    intro u hu v hv huv
-    by_cases honeRound : ett.rounds = 1
-    · have htech : ColoredVertexSetElementary G
-          (ett.series.data.coloring 0)
-          (TreeSequenceVertexSet (ett.series.data.tree ⟨1, by omega⟩)) :=
-        (TechnicalTheoremBase G k ett.rounds e0 input ett.series).1
-      have hi : i = ⟨0, by omega⟩ := by apply Fin.ext; omega
-      have hu' : u ∈ TreeSequenceVertexSet
-          (ett.series.data.tree ⟨1, by omega⟩) := by simpa [hi, honeRound] using hu
-      have hv' : v ∈ TreeSequenceVertexSet
-          (ett.series.data.tree ⟨1, by omega⟩) := by simpa [hi, honeRound] using hv
-      have hci : i.castSucc = (0 : Fin (ett.rounds + 1)) := by
-        apply Fin.ext
-        have hz := congrArg Fin.val hi
-        simp at hz ⊢
-        omega
-      rw [hci]
-      exact htech hu' hv' huv
-    · have hres := CertifiedETTRestriction G k e0 input T phi ett C.maximum
-        (ett.rounds - 1) (by omega) (by omega)
-      rcases hres with ⟨restricted, restrictedRounds, restrictedMaximum,
-        restrictedTrees, restrictedData⟩
-      have hl : ColoredVertexSetElementary G
-          (ett.series.data.coloring i.castSucc)
-          (TreeSequenceVertexSet (ett.series.data.tree (Fin.last ett.rounds).castSucc)) := by
-        have hlow :
-    ∀ {u}, u ∈ TreeSequenceVertexSet (ett.series.data.tree (⟨ett.rounds - 1 + 1,
-    by omega
-    ⟩ : Fin (ett.rounds + 2))) →
-    ∀ {v}, v ∈ TreeSequenceVertexSet (ett.series.data.tree (⟨ett.rounds - 1 + 1,
-    by omega
-    ⟩ : Fin (ett.rounds + 2))) → u ≠ v → Disjoint (MissingColors G (ett.series.data.coloring
-        (⟨ett.rounds - 1,
-    by omega
-    ⟩ : Fin (ett.rounds + 1))) u) (MissingColors G (ett.series.data.coloring (⟨ett.rounds - 1,
-    by omega
-    ⟩ : Fin (ett.rounds + 1))) v) := by
-          intro u hu v hv huv
-          exact (hlower (lower := restricted) (by omega) (by omega) restrictedMaximum).1 hu hv huv
-        have hc : (⟨ett.rounds - 1, by omega⟩ : Fin (ett.rounds + 1)) = i.castSucc := by
-          apply Fin.ext
-          have hz := congrArg Fin.val indexEquation
-          simp [finalIndex] at hz ⊢
-          omega
-        have ht : (⟨ett.rounds - 1 + 1, by omega⟩ : Fin (ett.rounds + 2)) =
-            (Fin.last ett.rounds).castSucc := by
-          apply Fin.ext
-          simp
-          omega
-        rw [hc, ht] at hlow
-        intro u hu v hv huv
-        exact hlow (u := u) hu hv huv
-      have hu' : u ∈ TreeSequenceVertexSet
-          (ett.series.data.tree (Fin.last ett.rounds).castSucc) := by simpa [hi] using hu
-      have hv' : v ∈ TreeSequenceVertexSet
-          (ett.series.data.tree (Fin.last ett.rounds).castSucc) := by simpa [hi] using hv
-      exact hl hu' hv' huv
+      (TreeSequenceVertexSet (ett.series.data.tree i.succ.castSucc)) :=
+    ett.penultimateElementary C.maximum hlower i indexEquation
   intro u hu v hv huv
   have hi := congrArg Fin.val indexEquation
   simp only [Fin.val_last, Fin.val_succ, finalIndex] at hi

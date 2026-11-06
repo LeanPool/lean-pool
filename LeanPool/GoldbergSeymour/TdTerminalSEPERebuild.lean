@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesCast
+
 
 
 public import LeanPool.GoldbergSeymour.TerminalSeriesRebuildTransport
@@ -1656,10 +1658,9 @@ private theorem helper_continuation_1015.{u_1, u_2} :
     simp [rawFinalColor]
   have hfinalColor : finalSeries.data.coloring
         (Fin.last ett.rounds) = sigma := by
-    exact @helper_hfinalColor_4432 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar) (@closureTree)
-        (@choice) (@sigmaPrev) (@originalPrefix) (@corr) (@extendedSeries) (@hextendedData)
-        (@hroundsEq) (@castSeriesColoring) (@hrawFinalColor)
+    change (extendedSeries.castRounds hroundsEq).data.coloring (Fin.last ett.rounds) = sigma
+    rw [TashkinovSeries.castRounds_finalColoring, hextendedData]
+    simp [TashkinovSeriesDataAppend]
   let rawDataIndex (i : Fin (ett.rounds + 1)) :
       Fin (originalPrefix.rounds + 2) :=
     Fin.cast
@@ -1669,19 +1670,23 @@ private theorem helper_continuation_1015.{u_1, u_2} :
       finalSeries.data.connectingEdges i =
         ett.series.data.connectingEdges i ∧
       finalSeries.data.kind i = ett.series.data.kind i := by
-    intro i
-    by_cases hi : i.val < ett.rounds
-    · exact @helper_branch_4454 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar) (@closureTree)
-        (@choice) (@sigmaPrev) (@hroundLarge) (@originalPrefix) (@hr) (@hprefixData) (@corr)
-        (@horiginalPositive) (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesStored)
-        (@castSeriesEdges) (@castSeriesKind) (@i) (@hi)
-    · exact @helper_branch_4512 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar) (@closureTree)
-        (@hqSucc) (@choice) (@currentStored) (@currentEdges) (@currentKind) (@sigmaPrev)
-        (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@horiginalPositive) (@extendedSeries)
-        (@hextendedData) (@hroundsEq) (@castSeriesStored) (@castSeriesEdges) (@castSeriesKind)
-        (@i) (@hi)
+    let appendedData := TashkinovSeriesDataAppend corr.replacementSeries.data closureTree
+      sigma newStored newEdges newKind newVertex newOutside newDelta newGamma
+    have dataEqual : finalSeries.data = appendedData.castRounds hroundsEq := by
+      change (extendedSeries.castRounds hroundsEq).data = appendedData.castRounds hroundsEq
+      rw [TashkinovSeries.castRounds_data, hextendedData]
+    simp only [dataEqual]
+    apply TashkinovSeriesData.castMetadataAgreement ett.series.data appendedData hroundsEq
+    · intro j
+      simp only [appendedData, TashkinovSeriesDataAppend, Fin.lastCases_castSucc]
+      exact ⟨(corr.storedColorsAgree j).trans (hprefixData j).2.1,
+        (corr.connectingEdgesAgree j).trans (hprefixData j).2.2.1,
+        (corr.extensionKindsAgree j).trans (hprefixData j).2.2.2.1⟩
+    · simp only [appendedData, TashkinovSeriesDataAppend, Fin.lastCases_last]
+      refine ⟨?_, ?_, ?_⟩
+      · simpa only [hqSucc] using currentStored.symm
+      · simpa only [hqSucc] using currentEdges.symm
+      · simpa only [hqSucc] using currentKind.symm
   let rawTreeIndex (i : Fin (ett.rounds + 2)) :
       Fin (originalPrefix.rounds + 3) :=
     Fin.cast
@@ -1834,11 +1839,15 @@ private theorem helper_caseContinuation_422.{u_1, u_2} :
         (⟨ett.rounds, by omega⟩ : Fin (ett.rounds + 2)) =
       ett.series.data.tree
         (Fin.last ett.rounds).castSucc := by
-    exact @helper_hfinalPenultimateTree_4384 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar)
-        (@closureTree) (@hqSucc) (@choice) (@sigmaPrev) (@hroundLarge) (@originalPrefix) (@hr)
-        (@corr) (@horiginalPositive) (@hreplacementCurrentTree) (@extendedSeries)
-        (@hextendedData) (@hroundsEq) (@castSeriesTree) (@hrawPenultimate)
+    calc
+      finalSeries.data.tree (⟨ett.rounds, by omega⟩ : Fin (ett.rounds + 2)) =
+          extendedSeries.data.tree rawPenultimate := extendedSeries.castRounds_tree hroundsEq _
+      _ = corr.replacementSeries.data.tree replacementLast.succ := by
+        rw [hextendedData, hrawPenultimate]
+        simp only [TashkinovSeriesDataAppend, Fin.lastCases_castSucc]
+      _ = ett.series.data.tree (Fin.last ett.rounds).castSucc :=
+        hreplacementCurrentTree.trans
+          (congrArg ett.series.data.tree (congrArg Fin.castSucc hqSucc))
   let rawFinalTree : Fin (originalPrefix.rounds + 3) :=
     Fin.cast
       (congrArg (fun m : ℕ => m + 2) hroundsEq.symm)
@@ -1849,10 +1858,9 @@ private theorem helper_caseContinuation_422.{u_1, u_2} :
     simp [rawFinalTree]
   have hfinalTree : finalSeries.data.tree
         (Fin.last (ett.rounds + 1)) = closureTree := by
-    exact @helper_hfinalTree_4414 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar) (@closureTree)
-        (@choice) (@sigmaPrev) (@originalPrefix) (@corr) (@extendedSeries) (@hextendedData)
-        (@hroundsEq) (@castSeriesTree) (@hrawFinalTree)
+    change (extendedSeries.castRounds hroundsEq).data.tree (Fin.last (ett.rounds + 1)) = closureTree
+    rw [TashkinovSeries.castRounds_finalTree, hextendedData]
+    simp [TashkinovSeriesDataAppend]
   exact @helper_continuation_1015 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
       (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper) (@hsigmaOne)
       (@hsigmaStable) (@Tstar) (@hTnTstar) (@hstrict) (@closureTree) (@hTstarClosure) (@hqSucc)
@@ -1881,10 +1889,9 @@ private theorem helper_continuation_1218.{u_1, u_2} :
     simp [rawFinalColor]
   have hfinalColor : finalSeries.data.coloring
         (Fin.last ett.rounds) = sigma := by
-    exact @helper_hfinalColor_6721 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar) (@closureTree)
-        (@gamma) (@choice) (@sigmaPrev) (@originalPrefix) (@corr) (@extendedSeries)
-        (@hextendedData) (@hroundsEq) (@castSeriesColoring) (@hrawFinalColor)
+    change (extendedSeries.castRounds hroundsEq).data.coloring (Fin.last ett.rounds) = sigma
+    rw [TashkinovSeries.castRounds_finalColoring, hextendedData]
+    simp [TashkinovSeriesDataAppend]
   let rawDataIndex (i : Fin (ett.rounds + 1)) :
       Fin (originalPrefix.rounds + 2) :=
     Fin.cast
@@ -1894,19 +1901,23 @@ private theorem helper_continuation_1218.{u_1, u_2} :
       finalSeries.data.connectingEdges i =
         ett.series.data.connectingEdges i ∧
       finalSeries.data.kind i = ett.series.data.kind i := by
-    intro i
-    by_cases hi : i.val < ett.rounds
-    · exact @helper_branch_6743 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar) (@closureTree)
-        (@gamma) (@choice) (@sigmaPrev) (@u) (@p) (@hroundLarge) (@originalPrefix) (@hr)
-        (@hprefixData) (@corr) (@horiginalPositive) (@extendedSeries) (@hextendedData)
-        (@hroundsEq) (@castSeriesStored) (@castSeriesEdges) (@castSeriesKind) (@i) (@hi)
-    · exact @helper_branch_6801 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar) (@closureTree)
-        (@hqSucc) (@gamma) (@choice) (@currentStored) (@currentEdges) (@currentKind) (@sigmaPrev)
-        (@u) (@p) (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@horiginalPositive)
-        (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesStored) (@castSeriesEdges)
-        (@castSeriesKind) (@i) (@hi)
+    let appendedData := TashkinovSeriesDataAppend corr.replacementSeries.data closureTree
+      sigma newStored newEdges newKind newVertex newOutside newDelta newGamma
+    have dataEqual : finalSeries.data = appendedData.castRounds hroundsEq := by
+      change (extendedSeries.castRounds hroundsEq).data = appendedData.castRounds hroundsEq
+      rw [TashkinovSeries.castRounds_data, hextendedData]
+    simp only [dataEqual]
+    apply TashkinovSeriesData.castMetadataAgreement ett.series.data appendedData hroundsEq
+    · intro j
+      simp only [appendedData, TashkinovSeriesDataAppend, Fin.lastCases_castSucc]
+      exact ⟨(corr.storedColorsAgree j).trans (hprefixData j).2.1,
+        (corr.connectingEdgesAgree j).trans (hprefixData j).2.2.1,
+        (corr.extensionKindsAgree j).trans (hprefixData j).2.2.2.1⟩
+    · simp only [appendedData, TashkinovSeriesDataAppend, Fin.lastCases_last]
+      refine ⟨?_, ?_, ?_⟩
+      · simpa only [hqSucc] using currentStored.symm
+      · simpa only [hqSucc] using currentEdges.symm
+      · simpa only [hqSucc] using currentKind.symm
   let rawTreeIndex (i : Fin (ett.rounds + 2)) :
       Fin (originalPrefix.rounds + 3) :=
     Fin.cast
@@ -2059,11 +2070,15 @@ private theorem helper_caseContinuation_1078.{u_1, u_2} :
         (⟨ett.rounds, by omega⟩ : Fin (ett.rounds + 2)) =
       ett.series.data.tree
         (Fin.last ett.rounds).castSucc := by
-    exact @helper_hfinalPenultimateTree_6673 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar)
-        (@closureTree) (@hqSucc) (@gamma) (@choice) (@sigmaPrev) (@u) (@p) (@hroundLarge)
-        (@originalPrefix) (@hr) (@corr) (@horiginalPositive) (@hreplacementCurrentTree)
-        (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesTree) (@hrawPenultimate)
+    calc
+      finalSeries.data.tree (⟨ett.rounds, by omega⟩ : Fin (ett.rounds + 2)) =
+          extendedSeries.data.tree rawPenultimate := extendedSeries.castRounds_tree hroundsEq _
+      _ = corr.replacementSeries.data.tree replacementLast.succ := by
+        rw [hextendedData, hrawPenultimate]
+        simp only [TashkinovSeriesDataAppend, Fin.lastCases_castSucc]
+      _ = ett.series.data.tree (Fin.last ett.rounds).castSucc :=
+        hreplacementCurrentTree.trans
+          (congrArg ett.series.data.tree (congrArg Fin.castSucc hqSucc))
   let rawFinalTree : Fin (originalPrefix.rounds + 3) :=
     Fin.cast
       (congrArg (fun m : ℕ => m + 2) hroundsEq.symm)
@@ -2074,10 +2089,9 @@ private theorem helper_caseContinuation_1078.{u_1, u_2} :
     simp [rawFinalTree]
   have hfinalTree : finalSeries.data.tree
         (Fin.last (ett.rounds + 1)) = closureTree := by
-    exact @helper_hfinalTree_6703 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar) (@closureTree)
-        (@gamma) (@choice) (@sigmaPrev) (@originalPrefix) (@corr) (@extendedSeries)
-        (@hextendedData) (@hroundsEq) (@castSeriesTree) (@hrawFinalTree)
+    change (extendedSeries.castRounds hroundsEq).data.tree (Fin.last (ett.rounds + 1)) = closureTree
+    rw [TashkinovSeries.castRounds_finalTree, hextendedData]
+    simp [TashkinovSeriesDataAppend]
   exact @helper_continuation_1218 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
       (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper) (@hsigmaOne)
       (@hsigmaStable) (@Tstar) (@hTnTstar) (@hstrict) (@closureTree) (@hTstarClosure) (@hqSucc)

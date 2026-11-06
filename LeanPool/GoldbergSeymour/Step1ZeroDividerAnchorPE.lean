@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+
+public import LeanPool.GoldbergSeymour.TwoColorComponentClosedColors
+
 public import LeanPool.GoldbergSeymour.TreeExitPathTransport
 
 public import LeanPool.GoldbergSeymour.HierarchyStarredStage
@@ -23,109 +26,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_exitBoundary_285.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (alpha beta : Fin k),
-    let X : Finset V := TreeSequenceVertexSet base.core; TreeColorSetClosed G phi base.core
-        { alpha } →
-    ∀ (u v : V) (P : (TwoColorIncidenceGraph G phi alpha beta).Walk (Sum.inl u) (Sum.inl v)),
-        TreeExitPath base.core phi alpha beta u v P →
-    ∃ f ∈ BoundaryColorEdges G phi X beta, Incident G v f ∧ Sum.inr f ∈ P.support := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base alpha beta X halphaClosed u v P hP
-  rcases hP with ⟨_, _, huX, hvX, _, honly⟩
-  let graph := TwoColorIncidenceGraph G phi alpha beta
-  let S : Set (Sum V E) := {y | match y with
-    | Sum.inl q => q ∈ X
-    | Sum.inr f => ∀ q, Incident G q f → q ∈ X}
-  have hSv : Sum.inl v ∈ S := by
-    simpa [S, X] using hvX
-  have hSu : Sum.inl u ∉ S := by
-    simpa [S, X] using huX
-  obtain ⟨d, hd, hds, hdt⟩ :=
-    P.reverse.exists_boundary_dart S hSv hSu
-  have hadj := d.adj
-  have hdmem : d.toProd.1 ∈ P.reverse.support :=
-    P.reverse.dart_fst_mem_support_of_mem_darts hd
-  have hdtmem : d.toProd.2 ∈ P.reverse.support :=
-    P.reverse.dart_snd_mem_support_of_mem_darts hd
-  have hfirst : ∃ q : V, d.toProd.1 = Sum.inl q ∧ q ∈ X := by
-    cases h : d.toProd.1 with
-    | inl q =>
-        rw [h] at hds
-        exact ⟨q, rfl, by simpa [S] using hds⟩
-    | inr f =>
-        exfalso
-        cases h2 : d.toProd.2 with
-        | inl r =>
-            rw [h, h2] at hadj
-            change Incident G r f ∧
-              (phi f = some alpha ∨ phi f = some beta) at hadj
-            rw [h] at hds
-            have hall : ∀ q, Incident G q f → q ∈ X := by
-              simpa [S] using hds
-            have hrnot : r ∉ X := by
-              intro hr
-              apply hdt
-              simpa [S, h2] using hr
-            exact hrnot (hall r hadj.1)
-        | inr e =>
-            rw [h, h2] at hadj
-            exact hadj.elim
-  obtain ⟨q, hq, hqX⟩ := hfirst
-  have hsecond : ∃ f : E, d.toProd.2 = Sum.inr f := by
-    cases h : d.toProd.2 with
-    | inl r =>
-        rw [hq, h] at hadj
-        exact False.elim hadj
-    | inr f => exact ⟨f, rfl⟩
-  obtain ⟨f, hf⟩ := hsecond
-  have hfadj : graph.Adj (Sum.inl q) (Sum.inr f) := by
-    rw [hq, hf] at hadj
-    exact hadj
-  have hfdata : Incident G q f ∧
-      (phi f = some alpha ∨ phi f = some beta) := by
-    simpa [graph, TwoColorIncidenceGraph] using hfadj
-  have hnotall : ¬ ∀ r, Incident G r f → r ∈ X := by
-    intro hall
-    apply hdt
-    simpa [S, hf, hall]
-  obtain ⟨r, hrf, hrX⟩ : ∃ r, Incident G r f ∧ r ∉ X := by
-    push Not at hnotall
-    exact hnotall
-  have hqr : q ≠ r := by
-    intro h
-    exact hrX (h ▸ hqX)
-  have hend : G.ends f = Sym2.mk q r :=
-    (Sym2.mem_and_mem_iff hqr).mp ⟨hfdata.1, hrf⟩
-  have hfb : f ∈ BoundaryEdges G X := by
-    simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨q, hqX, r, hrX, hend⟩
-  have hfcolor : phi f = some beta := by
-    rcases hfdata.2 with hfa | hfbeta
-    · have hfalpha : f ∈ BoundaryColorEdges G phi X alpha := by
-        simp [BoundaryColorEdges, hfb, hfa]
-      have hempty := halphaClosed alpha (by simp)
-      rw [hempty] at hfalpha
-      simp at hfalpha
-    · exact hfbeta
-  have hqP : Sum.inl q ∈ P.support := by
-    have hqrev : Sum.inl q ∈ P.reverse.support := by
-      rw [← hq]
-      exact hdmem
-    simpa [SimpleGraph.Walk.support_reverse] using hqrev
-  have hqv : q = v := (honly q (by simpa [X] using hqX)).mp hqP
-  have hfP : Sum.inr f ∈ P.support := by
-    have hfrev : Sum.inr f ∈ P.reverse.support := by
-      rw [← hf]
-      exact hdtmem
-    simpa [SimpleGraph.Walk.support_reverse] using hfrev
-  subst q
-  exact ⟨f, by simp [BoundaryColorEdges, hfb, hfcolor], hfdata.1, hfP⟩
 
 private theorem helper_finish_411.{u_1, u_2} :
     open scoped Classical in
@@ -298,99 +198,6 @@ private theorem helper_finish_411.{u_1, u_2} :
   · exact hneComp (hinter (Sum.inl x) (Sum.inl a₂)
       hpathX hpath₂ hmeetX hmeet₂)
 
-private theorem helper_componentOutside_422.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (alpha : Fin k),
-    let X : Finset V := TreeSequenceVertexSet base.core;
-    ∀ (c : Fin k), TreeColorSetClosed G phi base.core { c } → TreeColorSetClosed G phi base.core
-        { alpha } →
-    ∀ u ∉ X,
-    ∀ (v : V), Sum.inl v ∈ TwoColorComponent G phi alpha c (Sum.inl u) → v ∉ X := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base alpha X c hcClosed halphaClosed u hu v
-      hvComponent hv
-  let graph := TwoColorIncidenceGraph G phi alpha c
-  change graph.connectedComponentMk (Sum.inl v) =
-    graph.connectedComponentMk (Sum.inl u) at hvComponent
-  have reach : graph.Reachable (Sum.inl u) (Sum.inl v) :=
-    (SimpleGraph.ConnectedComponent.eq.mp hvComponent).symm
-  apply reach.elim
-  intro P
-  let S : Set (Sum V E) := {y | match y with
-    | Sum.inl q => q ∈ X
-    | Sum.inr f => ∀ q, Incident G q f → q ∈ X}
-  have hSv : Sum.inl v ∈ S := by simpa [S] using hv
-  have hSu : Sum.inl u ∉ S := by simpa [S] using hu
-  obtain ⟨d, hd, hds, hdt⟩ :=
-    P.reverse.exists_boundary_dart S hSv hSu
-  have hadj := d.adj
-  have hfirst : ∃ q : V, d.toProd.1 = Sum.inl q ∧ q ∈ X := by
-    cases h : d.toProd.1 with
-    | inl q =>
-        rw [h] at hds
-        exact ⟨q, rfl, by simpa [S] using hds⟩
-    | inr f =>
-        exfalso
-        cases h2 : d.toProd.2 with
-        | inl r =>
-            rw [h, h2] at hadj
-            change Incident G r f ∧
-              (phi f = some alpha ∨ phi f = some c) at hadj
-            rw [h] at hds
-            have hall : ∀ q, Incident G q f → q ∈ X := by
-              simpa [S] using hds
-            have hrnot : r ∉ X := by
-              intro hr
-              apply hdt
-              simpa [S, h2] using hr
-            exact hrnot (hall r hadj.1)
-        | inr e =>
-            rw [h, h2] at hadj
-            exact hadj.elim
-  obtain ⟨q, hq, hqX⟩ := hfirst
-  have hsecond : ∃ f : E, d.toProd.2 = Sum.inr f := by
-    cases h : d.toProd.2 with
-    | inl r =>
-        rw [hq, h] at hadj
-        exact False.elim hadj
-    | inr f => exact ⟨f, rfl⟩
-  obtain ⟨f, hf⟩ := hsecond
-  have hfadj : graph.Adj (Sum.inl q) (Sum.inr f) := by
-    rw [hq, hf] at hadj
-    exact hadj
-  have hfdata : Incident G q f ∧
-      (phi f = some alpha ∨ phi f = some c) := by
-    simpa [graph, TwoColorIncidenceGraph] using hfadj
-  have hnotall : ¬ ∀ r, Incident G r f → r ∈ X := by
-    intro hall
-    apply hdt
-    simpa [S, hf, hall]
-  obtain ⟨r, hrf, hrX⟩ : ∃ r, Incident G r f ∧ r ∉ X := by
-    push Not at hnotall
-    exact hnotall
-  have hqr : q ≠ r := by
-    intro h
-    exact hrX (h ▸ hqX)
-  have hend : G.ends f = Sym2.mk q r :=
-    (Sym2.mem_and_mem_iff hqr).mp ⟨hfdata.1, hrf⟩
-  have hfb : f ∈ BoundaryEdges G X := by
-    simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨q, hqX, r, hrX, hend⟩
-  rcases hfdata.2 with hfa | hfc
-  · have hfalpha : f ∈ BoundaryColorEdges G phi X alpha := by
-      simp [BoundaryColorEdges, hfb, hfa]
-    have hempty := halphaClosed alpha (by simp)
-    rw [hempty] at hfalpha
-    simp at hfalpha
-  · have hfcolor : f ∈ BoundaryColorEdges G phi X c := by
-      simp [BoundaryColorEdges, hfb, hfc]
-    have hempty := hcClosed c (by simp)
-    rw [hempty] at hfcolor
-    simp at hfcolor
-
 private theorem helper_hcClosedRho_796.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -468,8 +275,8 @@ private theorem helper_branch_588.{u_1, u_2} :
   have componentOutside : ∀ (u : V), u ∉ X → ∀ (v : V),
       Sum.inl v ∈ TwoColorComponent G phi alpha c (Sum.inl u) →
         v ∉ X := by
-    exact @helper_componentOutside_422 V E inferInstance inferInstance inferInstance
-        inferInstance G k e0 input T phi ett base alpha c hcClosed halphaClosed
+    intro u outside v member
+    exact halphaClosed.componentOutside hcClosed outside member
   let roots : Finset (Sum V E) := Finset.univ.filter fun z =>
     match z with
     | Sum.inl u => u ∉ X
@@ -803,8 +610,8 @@ lemma Step1ZeroDividerAnchorPE {V E : Type*}
     ∀ (u v : V) (P : (TwoColorIncidenceGraph G phi alpha beta).Walk (Sum.inl u) (Sum.inl v)),
         TreeExitPath base.core phi alpha beta u v P →
     ∃ f : E, f ∈ BoundaryColorEdges G phi X beta ∧ Incident G v f ∧ Sum.inr f ∈ P.support := by
-    exact @helper_exitBoundary_285 V E inferInstance inferInstance inferInstance inferInstance G
-        k e0 input T phi ett base alpha beta halphaClosed
+    intro u v path exit
+    exact ClosedColorExitPathBoundaryEdge G base.core phi alpha beta halphaClosed u v path exit
   obtain ⟨f₁, hf₁Boundary, hf₁Incident, hf₁Support⟩ :=
     exitBoundary a₁ b₁ P₁ hP1
   obtain ⟨f₂, hf₂Boundary, hf₂Incident, hf₂Support⟩ :=

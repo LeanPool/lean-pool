@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.StableHierarchyReplacement
+
 
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 
@@ -1002,173 +1004,6 @@ private theorem helper_edgesFixed_804.{u_1, u_2} :
         simpa [hi] using seedFixed f seed hadjoin
       · exact augmentationFixed seed hs t (by have := hadjoin.1; omega)
 
-private theorem helper_replacement_855.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    IsProperEdgeColoring G phi →
-    IsOneEdgeUncolored phi e0 →
-    LowerRoundInductionHypothesis G k e0 ett.rounds →
-    ∀ (alpha beta : Fin k),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    let vb : V := T.vertex ib;
-    TreeSequenceInitialSegment base.core A →
-    ∀ (hAib : A.length < (↑ib : ℕ)),
-    let B : TreeSequence G e0 :=
-      TreeSequencePrefix T (↑ib : ℕ)
-        (have this : (1 : ℕ) ≤ A.length := A.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-        (by omega);
-    ∀ (rpB : (1 : ℕ) ≤ ett.1)
-      (aboveB :
-        TreeSequenceInitialSegment
-          (ett.series.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))) B)
-      (strictB :
-        (ett.series.data.tree (⟨ett.1, by omega⟩ : Fin (ett.1 + (2 : ℕ)))).length <
-          B.length)
-      (belowB :
-        TreeSequenceInitialSegment B (ett.series.data.tree (Fin.last (ett.1 + (1 : ℕ)))))
-      (genB : phi = ett.series.data.coloring (Fin.last ett.1)),
-    MaximumProperty
-        { rounds := ett.1, roundsPositive := rpB, series := ett.series,
-          abovePenultimate := aboveB, strictAbovePenultimate := strictB,
-          belowFinal := belowB, generatingColoring := genB :
-          ExtendedTashkinovTree G k e0 input B phi } →
-    ∀
-      (baseB :
-        HierarchyBase
-          { rounds := ett.1, roundsPositive := rpB, series := ett.series,
-            abovePenultimate := aboveB, strictAbovePenultimate := strictB,
-            belowFinal := belowB, generatingColoring := genB :
-            ExtendedTashkinovTree G k e0 input B phi }
-          phi),
-    baseB.core = base.core →
-    ∀
-      (HB :
-        TashkinovHierarchy
-          { rounds := ett.1, roundsPositive := rpB, series := ett.series,
-            abovePenultimate := aboveB, strictAbovePenultimate := strictB,
-            belowFinal := belowB, generatingColoring := genB :
-            ExtendedTashkinovTree G k e0 input B phi }
-          baseB),
-    let ettB : ExtendedTashkinovTree G k e0 input B phi :=
-      { rounds := ett.rounds, roundsPositive := rpB, series := ett.series,
-        abovePenultimate := aboveB, strictAbovePenultimate := strictB, belowFinal := belowB,
-        generatingColoring := genB : ExtendedTashkinovTree G k e0 input B phi };
-    let sigma : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G phi alpha beta (Sum.inl vb);
-    IsProperEdgeColoring G sigma →
-    IsOneEdgeUncolored sigma e0 →
-    (∀ (S : TreeSequence G e0),
-        TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet A →
-          ∀ (D : Finset (Fin k)), StableColoring S D phi sigma) →
-    StableColoring Tn Dn phi sigma →
-    TreeSequenceInitialSegment Tn B →
-    Tn.length < B.length →
-    (ett.series.data.kind n = some TashkinovExtensionKind.PE ∧
-          TashkinovAugmentationSequence phi Tn B ∨
-        (ett.series.data.kind n = some TashkinovExtensionKind.SE ∨
-            ett.series.data.kind n = some TashkinovExtensionKind.RE) ∧
-          ∃ (f : E) (seed : TreeSequence G e0),
-            ett.series.data.connectingEdges n = ({ f } : Finset E) ∧
-              TreeSequenceAdjoinEdge Tn f seed ∧ TashkinovAugmentationSequence phi seed B) →
-    (∀ (S : TreeSequence G e0),
-        TashkinovAugmentationSequence phi S B → TashkinovAugmentationSequence sigma S B) →
-    ∃ (corr : CorrespondingExtendedTashkinovTree G k e0 ettB sigma B),
-    MaximumProperty corr.replacementETT ∧
-      ∃ (baseS : HierarchyBase corr.replacementETT sigma) (HS :
-        TashkinovHierarchy corr.replacementETT baseS), SameHierarchyStages HB HS := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hproper hone hlower alpha beta H q A n Tn Dn ib
-      vb coreToA hAib B rpB aboveB strictB belowB genB hMPB baseB hcoreB HB ettB sigma
-      sigmaProper sigmaOne stable stableTn TnToB TnStrictB terminalRoute routeTransport
-  by_cases hPE : ett.series.data.kind n = some TashkinovExtensionKind.PE
-  · have closureSubset : TreeSequenceVertexSet baseB.closure ⊆ TreeSequenceVertexSet A := by
-      obtain ⟨_, _, ⟨u⟩⟩ := baseB.parallel hPE
-      intro v hv
-      apply TreeSequenceInitialSegmentVertexSetSubset coreToA
-      rw [← hcoreB, u.vertexSet]
-      exact Finset.mem_union_right _ hv
-    have hcombined : CombinedStableColoring Tn baseB.closure Dn phi sigma :=
-      ⟨stableTn, stable baseB.closure closureSubset ∅⟩
-    have hseq : TashkinovAugmentationSequence sigma Tn B := by
-      rcases terminalRoute with ⟨_, hs⟩ | ⟨hk, _⟩
-      · exact routeTransport Tn hs
-      · rcases hk with hk | hk <;> rw [hPE] at hk <;> cases hk
-    exact HierarchySplitter G k e0 input B phi sigma ettB hMPB C.positive
-      hlower baseB HB hPE hproper hone sigmaProper sigmaOne hcombined hseq
-  · have hmod : ModColoring ettB sigma :=
-      Td G k e0 input B phi ettB hMPB C.positive hlower sigma sigmaProper sigmaOne
-        (by simpa only [ettB, ← ett.generatingColoring, n, Tn, Dn] using stableTn)
-    have hroute :
-        ((ettB.series.data.kind (Fin.last ettB.rounds) = some TashkinovExtensionKind.PE ∧
-          TashkinovAugmentationSequence sigma Tn B) ∨
-        ((ettB.series.data.kind (Fin.last ettB.rounds) = some TashkinovExtensionKind.SE ∨
-          ettB.series.data.kind (Fin.last ettB.rounds) = some TashkinovExtensionKind.RE) ∧
-          ∃ (f : E) (seed : TreeSequence G e0),
-            ettB.series.data.connectingEdges (Fin.last ettB.rounds) = {f} ∧
-            TreeSequenceAdjoinEdge Tn f seed ∧ TashkinovAugmentationSequence sigma seed B)) := by
-      rcases terminalRoute with ⟨hp, _⟩ | ⟨hk, f, seed, hedges, hadjoin, hs⟩
-      · exact (hPE hp).elim
-      · exact Or.inr ⟨hk, f, seed, hedges, hadjoin, routeTransport seed hs⟩
-    obtain ⟨corr⟩ := hmod.2.2 B TnToB TnStrictB hroute
-    have hMP := MaximumPropertyTransport G k e0 ettB sigma hmod B corr hMPB
-    refine ⟨corr, hMP, ?_⟩
-    rcases corr with ⟨newInput, newSeries, newETT, hr, hs, hgen, htrees, hstored,
-      hedges, hkinds, hproperSeries, honeSeries, hstableSeries⟩
-    rcases newETT with ⟨r, rp, series, above, strict, below, gen⟩
-    cases hr
-    have heq : series = newSeries := eq_of_heq hs
-    cases heq
-    let rep : ExtendedTashkinovTree G k e0 newInput B sigma :=
-      ⟨ett.rounds, rp, newSeries, above, strict, below, gen⟩
-    let j : Fin ett.rounds := ⟨ett.rounds - 1, by have := C.positive; omega⟩
-    have hj : j.succ = n := Fin.ext (by simp [j, n]; have := C.positive; omega)
-    have htree : newSeries.data.tree n.castSucc = Tn := by simpa [hj, ettB, Tn] using htrees j
-    have hkind := hkinds n
-    let pos : Fin ((newSeries.data.tree n.castSucc).length + 1) :=
-      Fin.cast (congrArg (fun S : TreeSequence G e0 => S.length + 1) htree.symm)
-        baseB.supportPosition
-    let baseS : HierarchyBase rep sigma :=
-      { core := baseB.core
-        closure := baseB.closure
-        supportPosition := pos
-        supportPositive := by simpa [pos] using baseB.supportPositive
-        terminalMissingColors := rfl
-        parallel := by
-          dsimp only [rep]
-          intro hp
-          exact (hPE (hkind.symm.trans hp)).elim
-        nonparallel := by
-          dsimp only [rep]
-          intro hp
-          exact (baseB.nonparallel hPE).trans htree.symm }
-    let HS : TashkinovHierarchy rep baseS :=
-      { dividerCount := HB.dividerCount
-        stage := HB.stage
-        baseStage := HB.baseStage.trans htree.symm
-        terminalStage := HB.terminalStage
-        nested := HB.nested
-        strict := HB.strict
-        dividerPosition := HB.dividerPosition
-        dividerPositive := HB.dividerPositive
-        dividerIncreasing := HB.dividerIncreasing
-        dividerStage := HB.dividerStage
-        coreInsideFirst := HB.coreInsideFirst }
-    refine ⟨baseS, HS, ?_⟩
-    refine ⟨rfl, rfl, HEq.rfl, HEq.rfl, ?_, ?_⟩
-    · exact ⟨fun hp => (hPE hp).elim, fun hp => (hPE (hkind.symm.trans hp)).elim⟩
-    · intro hp; exact (hPE hp).elim
-
 private theorem helper_minusEq_983.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -1523,11 +1358,9 @@ private theorem helper_continuation_5094.{u_1, u_2} :
         ∃ baseS : HierarchyBase corr.replacementETT sigma,
           ∃ HS : TashkinovHierarchy corr.replacementETT baseS,
             SameHierarchyStages HB HS := by
-    exact @helper_replacement_855 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
-        (@hlower) (@alpha) (@beta) (@coreToA) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB)
-        (@genB) (@hMPB) (@baseB) (@hcoreB) (@HB) (@sigmaProper) (@sigmaOne) (@stable) (@stableTn)
-        (@TnToB) (@TnStrictB) (@terminalRoute) (@routeTransport)
+    exact HB.stableReplacement hMPB hlower A
+      (by rw [hcoreB]; exact coreToA) sigma hproper hone sigmaProper sigmaOne
+      stable stableTn terminalRoute routeTransport
   obtain ⟨corr, hMPS, baseS, HS, hsame⟩ := replacement
   have storedS : TashkinovStoredColors corr.replacementETT.series.data
       (Fin.last corr.replacementETT.rounds) = Dn := by

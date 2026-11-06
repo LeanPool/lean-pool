@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesCast
+
 public import LeanPool.GoldbergSeymour.SharedFacts.TerminalRebuild
 
 public import LeanPool.GoldbergSeymour.SharedFacts.RevisitingTerminalPreparation
@@ -577,233 +579,6 @@ noncomputable abbrev helperReplacementChoice5196.{u_1, u_2} :=
 
 Keeping this interface separate avoids repeating its dependent hypotheses and data.
 -/
-abbrev helperBranch4454Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ closureTree : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-     have := GoldbergSeymour.TreeSequence.positive T
-     omega
-    ⟩ : Fin ett.rounds);
-    ∀ (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (sigmaPrev : PartialEdgeColoring E k), (1 : ℕ) < ett.rounds →
-    ∀ (originalPrefix : ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ),
-    by
-        have := GoldbergSeymour.TreeSequence.positive T
-        omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))) (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)), (
-    ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))), originalPrefix.series.data.coloring i =
-        ett.series.data.coloring (Fin.castLE (
-    by
-         have := GoldbergSeymour.TreeSequence.positive T
-         omega
-    ) i) ∧ originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE (
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ) i) ∧ originalPrefix.series.data.connectingEdges i = ett.series.data.connectingEdges
-        (Fin.castLE (
-    by
-           have := GoldbergSeymour.TreeSequence.positive T
-           omega
-    ) i) ∧ originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE (
-    by
-            have := GoldbergSeymour.TreeSequence.positive T
-            omega
-    ) i) ∧ TashkinovStoredColors originalPrefix.series.data i = TashkinovStoredColors
-        ett.series.data (Fin.castLE (
-    by
-            have := GoldbergSeymour.TreeSequence.positive T
-            omega
-    ) i)) →
-    ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc)), (0 : ℕ) < originalPrefix.rounds →
-    let newStored : Finset (Fin k) := ({ choice.color } : Finset (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.SE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := none;
-    let _ : TashkinovSeriesData G k (originalPrefix.rounds + (1 : ℕ)) e0 :=
-        TashkinovSeriesDataAppend corr.replacementSeries.data closureTree sigma newStored newEdges
-        newKind newVertex newOutside newDelta newGamma;
-    ∀ (extendedSeries : TashkinovSeries G k (originalPrefix.rounds + (1 : ℕ)) e0
-        corr.replacementInput), extendedSeries.data = TashkinovSeriesDataAppend
-        corr.replacementSeries.data closureTree sigma newStored newEdges newKind newVertex
-        newOutside newDelta newGamma →
-    ∀ (hroundsEq : originalPrefix.rounds + (1 : ℕ) = ett.rounds),
-    let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 corr.replacementInput →
-        TashkinovSeries G k b e0 corr.replacementInput := fun {a b : ℕ} (h : a = b) (S :
-        TashkinovSeries G k a e0 corr.replacementInput) ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦
-        @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1 inst_2 G k e0 input
-        (@TashkinovSeriesData.tree V E G k (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G
-        k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett) e0
-        input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0 input T generating
-        ett)) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (Fin.last
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett))))
-        (@TashkinovSeriesData.coloring V E G k (@ExtendedTashkinovTree.rounds V E inst inst_1
-        inst_2 G k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett) e0
-        input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0 input T generating
-        ett)) (@Fin.mk (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@HSub.hSub Nat Nat Nat
-        (@instHSub Nat instSubNat) (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0
-        input T generating ett) (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ))) originalPrefix sigmaPrev (@TashkinovSeriesData.tree V E G k (@ExtendedTashkinovTree.rounds
-        V E inst inst_1 inst_2 G k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst
-        inst_1 inst_2 G k (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T
-        generating ett) e0 input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0
-        input T generating ett)) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (Fin.last
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett))))
-        corr)) S b h; (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.stored i = S.data.stored (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.connectingEdges i = S.data.connectingEdges (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.kind i = S.data.kind (Fin.cast (
-    by omega
-    ) i)) →
-    let finalSeries : TashkinovSeries G k ett.rounds e0 corr.replacementInput := castSeries
-        hroundsEq extendedSeries;
-    let _ : Fin (ett.rounds + (1 : ℕ)) → Fin (originalPrefix.rounds + (2 : ℕ)) := fun (i : Fin
-        (ett.rounds + (1 : ℕ))) ↦ Fin.cast (
-    by
-     have := GoldbergSeymour.TreeSequence.positive T
-     omega
-    ) i;
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))), (↑i : ℕ) < ett.rounds → finalSeries.data.stored i =
-        ett.series.data.stored i ∧ finalSeries.data.connectingEdges i =
-        ett.series.data.connectingEdges i ∧ finalSeries.data.kind i = ett.series.data.kind i
-
-/-- Dependent contract shared by the terminal series reconstruction proof modules.
-
-Keeping this interface separate avoids repeating its dependent hypotheses and data.
--/
-abbrev helperBranch4512Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ closureTree : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-     have := GoldbergSeymour.TreeSequence.positive T
-     omega
-    ⟩ : Fin ett.rounds); q.succ = Fin.last ett.rounds →
-    ∀ (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)),
-        ett.series.data.stored q.succ = ({ choice.color } : Finset (Fin k)) →
-        ett.series.data.connectingEdges q.succ = ({ choice.edge } : Finset E) →
-        ett.series.data.kind q.succ = some TashkinovExtensionKind.SE →
-    ∀ (sigmaPrev : PartialEdgeColoring E k), (1 : ℕ) < ett.rounds →
-    ∀ (originalPrefix : ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ),
-    by
-        have := GoldbergSeymour.TreeSequence.positive T
-        omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))), originalPrefix.rounds = ett.rounds - (1 : ℕ) →
-    ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc)), (0 : ℕ) < originalPrefix.rounds →
-    let newStored : Finset (Fin k) := ({ choice.color } : Finset (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.SE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := none;
-    let _ : TashkinovSeriesData G k (originalPrefix.rounds + (1 : ℕ)) e0 :=
-        TashkinovSeriesDataAppend corr.replacementSeries.data closureTree sigma newStored newEdges
-        newKind newVertex newOutside newDelta newGamma;
-    ∀ (extendedSeries : TashkinovSeries G k (originalPrefix.rounds + (1 : ℕ)) e0
-        corr.replacementInput), extendedSeries.data = TashkinovSeriesDataAppend
-        corr.replacementSeries.data closureTree sigma newStored newEdges newKind newVertex
-        newOutside newDelta newGamma →
-    ∀ (hroundsEq : originalPrefix.rounds + (1 : ℕ) = ett.rounds),
-    let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 corr.replacementInput →
-        TashkinovSeries G k b e0 corr.replacementInput := fun {a b : ℕ} (h : a = b) (S :
-        TashkinovSeries G k a e0 corr.replacementInput) ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦
-        @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1 inst_2 G k e0 input
-        (@TashkinovSeriesData.tree V E G k (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G
-        k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett) e0
-        input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0 input T generating
-        ett)) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (Fin.last
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett))))
-        (@TashkinovSeriesData.coloring V E G k (@ExtendedTashkinovTree.rounds V E inst inst_1
-        inst_2 G k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett) e0
-        input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0 input T generating
-        ett)) (@Fin.mk (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@HSub.hSub Nat Nat Nat
-        (@instHSub Nat instSubNat) (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0
-        input T generating ett) (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ))) originalPrefix sigmaPrev (@TashkinovSeriesData.tree V E G k (@ExtendedTashkinovTree.rounds
-        V E inst inst_1 inst_2 G k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst
-        inst_1 inst_2 G k (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T
-        generating ett) e0 input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0
-        input T generating ett)) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (Fin.last
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett))))
-        corr)) S b h; (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.stored i = S.data.stored (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.connectingEdges i = S.data.connectingEdges (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.kind i = S.data.kind (Fin.cast (
-    by omega
-    ) i)) →
-    let finalSeries : TashkinovSeries G k ett.rounds e0 corr.replacementInput := castSeries
-        hroundsEq extendedSeries;
-    let _ : Fin (ett.rounds + (1 : ℕ)) → Fin (originalPrefix.rounds + (2 : ℕ)) := fun (i : Fin
-        (ett.rounds + (1 : ℕ))) ↦ Fin.cast (
-    by
-     have := GoldbergSeymour.TreeSequence.positive T
-     omega
-    ) i;
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))), ¬(↑i : ℕ) < ett.rounds → finalSeries.data.stored i =
-        ett.series.data.stored i ∧ finalSeries.data.connectingEdges i =
-        ett.series.data.connectingEdges i ∧ finalSeries.data.kind i = ett.series.data.kind i
-
-/-- Dependent contract shared by the terminal series reconstruction proof modules.
-
-Keeping this interface separate avoids repeating its dependent hypotheses and data.
--/
 abbrev helperBranch5026Conditions.{u_1, u_2} : Prop :=
  open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
@@ -1219,236 +994,6 @@ abbrev helperBranch5085Conditions.{u_1, u_2} : Prop :=
 
 Keeping this interface separate avoids repeating its dependent hypotheses and data.
 -/
-abbrev helperBranch6743Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ closureTree : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-     have := GoldbergSeymour.TreeSequence.positive T
-     omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (sigmaPrev : PartialEdgeColoring E k),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G sigmaPrev gamma choice.color;
-    ∀ (u : V) (_ : H.Walk (Sum.inl choice.vertex) (Sum.inl u)), (1 : ℕ) < ett.rounds →
-    ∀ (originalPrefix : ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ),
-    by
-        have := GoldbergSeymour.TreeSequence.positive T
-        omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))) (hr : originalPrefix.rounds = ett.rounds - (1 : ℕ)), (
-    ∀ (i : Fin (originalPrefix.rounds + (1 : ℕ))), originalPrefix.series.data.coloring i =
-        ett.series.data.coloring (Fin.castLE (
-    by
-         have := GoldbergSeymour.TreeSequence.positive T
-         omega
-    ) i) ∧ originalPrefix.series.data.stored i = ett.series.data.stored (Fin.castLE (
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ) i) ∧ originalPrefix.series.data.connectingEdges i = ett.series.data.connectingEdges
-        (Fin.castLE (
-    by
-           have := GoldbergSeymour.TreeSequence.positive T
-           omega
-    ) i) ∧ originalPrefix.series.data.kind i = ett.series.data.kind (Fin.castLE (
-    by
-            have := GoldbergSeymour.TreeSequence.positive T
-            omega
-    ) i) ∧ TashkinovStoredColors originalPrefix.series.data i = TashkinovStoredColors
-        ett.series.data (Fin.castLE (
-    by
-            have := GoldbergSeymour.TreeSequence.positive T
-            omega
-    ) i)) →
-    ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc)), (0 : ℕ) < originalPrefix.rounds →
-    let newStored : Finset (Fin k) := (insert choice.color ({ gamma } : Finset (Fin k)) : Finset
-        (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.PE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := some gamma;
-    let _ : TashkinovSeriesData G k (originalPrefix.rounds + (1 : ℕ)) e0 :=
-        TashkinovSeriesDataAppend corr.replacementSeries.data closureTree sigma newStored newEdges
-        newKind newVertex newOutside newDelta newGamma;
-    ∀ (extendedSeries : TashkinovSeries G k (originalPrefix.rounds + (1 : ℕ)) e0
-        corr.replacementInput), extendedSeries.data = TashkinovSeriesDataAppend
-        corr.replacementSeries.data closureTree sigma newStored newEdges newKind newVertex
-        newOutside newDelta newGamma →
-    ∀ (hroundsEq : originalPrefix.rounds + (1 : ℕ) = ett.rounds),
-    let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 corr.replacementInput →
-        TashkinovSeries G k b e0 corr.replacementInput := fun {a b : ℕ} (h : a = b) (S :
-        TashkinovSeries G k a e0 corr.replacementInput) ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦
-        @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1 inst_2 G k e0 input
-        (@TashkinovSeriesData.tree V E G k (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G
-        k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett) e0
-        input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0 input T generating
-        ett)) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (Fin.last
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett))))
-        (@TashkinovSeriesData.coloring V E G k (@ExtendedTashkinovTree.rounds V E inst inst_1
-        inst_2 G k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett) e0
-        input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0 input T generating
-        ett)) (@Fin.mk (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@HSub.hSub Nat Nat Nat
-        (@instHSub Nat instSubNat) (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0
-        input T generating ett) (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ))) originalPrefix sigmaPrev (@TashkinovSeriesData.tree V E G k (@ExtendedTashkinovTree.rounds
-        V E inst inst_1 inst_2 G k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst
-        inst_1 inst_2 G k (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T
-        generating ett) e0 input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0
-        input T generating ett)) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (Fin.last
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett))))
-        corr)) S b h; (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.stored i = S.data.stored (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.connectingEdges i = S.data.connectingEdges (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.kind i = S.data.kind (Fin.cast (
-    by omega
-    ) i)) →
-    let finalSeries : TashkinovSeries G k ett.rounds e0 corr.replacementInput := castSeries
-        hroundsEq extendedSeries;
-    let _ : Fin (ett.rounds + (1 : ℕ)) → Fin (originalPrefix.rounds + (2 : ℕ)) := fun (i : Fin
-        (ett.rounds + (1 : ℕ))) ↦ Fin.cast (
-    by
-     have := GoldbergSeymour.TreeSequence.positive T
-     omega
-    ) i;
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))), (↑i : ℕ) < ett.rounds → finalSeries.data.stored i =
-        ett.series.data.stored i ∧ finalSeries.data.connectingEdges i =
-        ett.series.data.connectingEdges i ∧ finalSeries.data.kind i = ett.series.data.kind i
-
-/-- Dependent contract shared by the terminal series reconstruction proof modules.
-
-Keeping this interface separate avoids repeating its dependent hypotheses and data.
--/
-abbrev helperBranch6801Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ closureTree : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-     have := GoldbergSeymour.TreeSequence.positive T
-     omega
-    ⟩ : Fin ett.rounds); q.succ = Fin.last ett.rounds →
-    ∀ (gamma : Fin k) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)),
-        ett.series.data.stored q.succ = (insert choice.color ({ gamma } : Finset (Fin k)) : Finset
-        (Fin k)) → ett.series.data.connectingEdges q.succ = ({ choice.edge } : Finset E) →
-        ett.series.data.kind q.succ = some TashkinovExtensionKind.PE →
-    ∀ (sigmaPrev : PartialEdgeColoring E k),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G sigmaPrev gamma choice.color;
-    ∀ (u : V) (_ : H.Walk (Sum.inl choice.vertex) (Sum.inl u)), (1 : ℕ) < ett.rounds →
-    ∀ (originalPrefix : ExtendedTashkinovTree G k e0 input (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ),
-    by
-        have := GoldbergSeymour.TreeSequence.positive T
-        omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))), originalPrefix.rounds = ett.rounds - (1 : ℕ) →
-    ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 originalPrefix sigmaPrev
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc)), (0 : ℕ) < originalPrefix.rounds →
-    let newStored : Finset (Fin k) := (insert choice.color ({ gamma } : Finset (Fin k)) : Finset
-        (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.PE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := some gamma;
-    let _ : TashkinovSeriesData G k (originalPrefix.rounds + (1 : ℕ)) e0 :=
-        TashkinovSeriesDataAppend corr.replacementSeries.data closureTree sigma newStored newEdges
-        newKind newVertex newOutside newDelta newGamma;
-    ∀ (extendedSeries : TashkinovSeries G k (originalPrefix.rounds + (1 : ℕ)) e0
-        corr.replacementInput), extendedSeries.data = TashkinovSeriesDataAppend
-        corr.replacementSeries.data closureTree sigma newStored newEdges newKind newVertex
-        newOutside newDelta newGamma →
-    ∀ (hroundsEq : originalPrefix.rounds + (1 : ℕ) = ett.rounds),
-    let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 corr.replacementInput →
-        TashkinovSeries G k b e0 corr.replacementInput := fun {a b : ℕ} (h : a = b) (S :
-        TashkinovSeries G k a e0 corr.replacementInput) ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦
-        @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        (@CorrespondingExtendedTashkinovTree.replacementInput V E inst inst_1 inst_2 G k e0 input
-        (@TashkinovSeriesData.tree V E G k (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G
-        k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett) e0
-        input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0 input T generating
-        ett)) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (Fin.last
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett))))
-        (@TashkinovSeriesData.coloring V E G k (@ExtendedTashkinovTree.rounds V E inst inst_1
-        inst_2 G k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett) e0
-        input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0 input T generating
-        ett)) (@Fin.mk (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@HSub.hSub Nat Nat Nat
-        (@instHSub Nat instSubNat) (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0
-        input T generating ett) (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ))) originalPrefix sigmaPrev (@TashkinovSeriesData.tree V E G k (@ExtendedTashkinovTree.rounds
-        V E inst inst_1 inst_2 G k e0 input T generating ett) e0 (@TashkinovSeries.data V E inst
-        inst_1 inst_2 G k (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T
-        generating ett) e0 input (@ExtendedTashkinovTree.series V E inst inst_1 inst_2 G k e0
-        input T generating ett)) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat)
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett)
-        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (Fin.last
-        (@ExtendedTashkinovTree.rounds V E inst inst_1 inst_2 G k e0 input T generating ett))))
-        corr)) S b h; (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.stored i = S.data.stored (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.connectingEdges i = S.data.connectingEdges (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (1
-        : ℕ))), (castSeries h S).data.kind i = S.data.kind (Fin.cast (
-    by omega
-    ) i)) →
-    let finalSeries : TashkinovSeries G k ett.rounds e0 corr.replacementInput := castSeries
-        hroundsEq extendedSeries;
-    let _ : Fin (ett.rounds + (1 : ℕ)) → Fin (originalPrefix.rounds + (2 : ℕ)) := fun (i : Fin
-        (ett.rounds + (1 : ℕ))) ↦ Fin.cast (
-    by
-     have := GoldbergSeymour.TreeSequence.positive T
-     omega
-    ) i;
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))), ¬(↑i : ℕ) < ett.rounds → finalSeries.data.stored i =
-        ett.series.data.stored i ∧ finalSeries.data.connectingEdges i =
-        ett.series.data.connectingEdges i ∧ finalSeries.data.kind i = ett.series.data.kind i
-
-/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_hTnClosure_112.{u_1, u_2} :
     SharedFacts.RevisitingTerminalPreparation.tnClosureStatement.{u_1, u_2} :=
   SharedFacts.RevisitingTerminalPreparation.tnClosure.{u_1, u_2}
@@ -1494,9 +1039,7 @@ theorem helper_hpenultimateTree_713.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
         (castSeries h S).data.tree i = S.data.tree (Fin.cast (
     by omega
@@ -1607,9 +1150,7 @@ theorem helper_hseriesDataAgree_772.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
         (castSeries h S).data.stored i = S.data.stored (Fin.cast (
     by omega
@@ -1771,9 +1312,7 @@ theorem helper_hseriesTreeAgree_874.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
         (castSeries h S).data.tree i = S.data.tree (Fin.cast (
     by omega
@@ -2872,9 +2411,7 @@ theorem helper_hpenultimateTree_3400.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
         (castSeries h S).data.tree i = S.data.tree (Fin.cast (
     by omega
@@ -2998,9 +2535,7 @@ theorem helper_hseriesDataAgree_3459.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
         (castSeries h S).data.stored i = S.data.stored (Fin.cast (
     by omega
@@ -3165,9 +2700,7 @@ theorem helper_hseriesTreeAgree_3561.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
         (castSeries h S).data.tree i = S.data.tree (Fin.cast (
     by omega
@@ -3766,9 +3299,7 @@ theorem helper_hfinalTree_3891.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
         (castSeries h S).data.tree i = S.data.tree (Fin.cast (
     by omega
@@ -3831,9 +3362,7 @@ theorem helper_hpenultimateTree_3903.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
         (castSeries h S).data.tree i = S.data.tree (Fin.cast (
     by omega
@@ -3896,9 +3425,7 @@ theorem helper_hfinalColor_3911.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
         (castSeries h S).data.coloring i = S.data.coloring (Fin.cast (
     by omega
@@ -3965,9 +3492,7 @@ theorem helper_hseriesDataAgree_3932.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
         (castSeries h S).data.stored i = S.data.stored (Fin.cast (
     by omega
@@ -4044,9 +3569,7 @@ theorem helper_hseriesTreeAgree_3944.{u_1, u_2} :
         newStored newEdges newKind newVertex newOutside newDelta newGamma →
     ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
     let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput)
-        ↦ @Eq.ndrec Nat a (fun {b : Nat} ↦ @TashkinovSeries V E inst inst_1 inst_2 G k b e0
-        prefixInput) S b h; (
+        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
     ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
         (castSeries h S).data.tree i = S.data.tree (Fin.cast (
     by omega
