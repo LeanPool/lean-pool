@@ -163,6 +163,24 @@ def test_resume_rechecks_only_changed_projects(repository: Path, monkeypatch) ->
     assert len(commands[3:]) == 1 and len(commands[3]) == 5
 
 
+def test_modules_compiled_during_analysis_are_recorded_as_analyzed(
+    repository: Path, monkeypatch
+) -> None:
+    """Lake may compile a stale module while analyzing; record what it analyzed."""
+    commands: list = []
+    record = recording_build(commands)
+
+    def build(command, directory, timeout):
+        record(command, directory, timeout)
+        compile_modules(repository)
+
+    monkeypatch.setattr(documentation, "run_build", build)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    documentation.require_complete(repository)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    assert len(commands) == 1
+
+
 def test_option_edit_reuses_projects_with_unchanged_compiled_modules(
     repository: Path, monkeypatch
 ) -> None:

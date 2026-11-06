@@ -114,28 +114,36 @@ def local_closure(root: Path, project: str, modules: set[str]) -> set[str] | Non
     return closure if own <= closure else None
 
 
-def project_fingerprints(root: Path) -> dict[str, str]:
+def project_fingerprints(
+    root: Path, projects: set[str] | None = None
+) -> dict[str, str]:
     """Hash the sources and compiled modules each project's pages depend on.
 
     That is the project's modules plus every pool module they import, from other
     projects too. Without Lake's import inventory the whole pool is included;
     without its compiled-module hashes the pool configuration stands in for them.
+    Only the closures of `projects` (default: all) are read.
     """
     sources = module_sources(root)
     modules = set(sources)
     configuration = hashlib.sha256((root / "lakefile.toml").read_bytes()).hexdigest()
-    digests = {}
-    for module, path in sources.items():
-        compiled = root / COMPILED / path.relative_to(root).with_suffix(".olean.hash")
-        source = hashlib.sha256(path.read_bytes()).hexdigest()
-        digests[module] = (
-            source,
-            compiled.read_text().strip() if compiled.is_file() else None,
-        )
+    digests: dict[str, tuple[str, str | None]] = {}
+
+    def digest(module: str) -> tuple[str, str | None]:
+        if module not in digests:
+            path = sources[module]
+            compiled = root / COMPILED / path.relative_to(root)
+            compiled = compiled.with_suffix(".olean.hash")
+            digests[module] = (
+                hashlib.sha256(path.read_bytes()).hexdigest(),
+                compiled.read_text().strip() if compiled.is_file() else None,
+            )
+        return digests[module]
+
     fingerprints = {}
-    for project in sorted({project_of(module) for module in modules}):
+    for project in sorted(projects or {project_of(module) for module in modules}):
         closure = local_closure(root, project, modules) or modules
-        entries = {module: digests[module] for module in sorted(closure)}
+        entries = {module: digest(module) for module in sorted(closure)}
         if any(compiled is None for _, compiled in entries.values()):
             entries["lakefile.toml"] = (configuration, None)
         encoded = json.dumps(entries, sort_keys=True).encode()
@@ -371,14 +379,18 @@ def build_batches(root: Path, lake: str, seconds: float, batch_size: int) -> boo
                 ) from None
             break
         position += len(batch)
+        finished = set()
         for module in batch:
-            project = project_of(module)
-            remaining[project] -= 1
-            if not remaining[project]:
-                done[project] = fingerprints[project]
+            remaining[project_of(module)] -= 1
+            if not remaining[project_of(module)]:
+                finished.add(project_of(module))
+        # Lake may have compiled modules during the batch, so fingerprint the
+        # finished projects as analyzed rather than as they were at the start.
+        if finished:
+            done.update(project_fingerprints(root, finished))
         write_progress(build, identity, done)
         LOGGER.info("Documentation analysis: %s/%s modules", position, len(pending))
-    return done == fingerprints
+    return done == project_fingerprints(root)
 
 
 def write_progress(build: Path, identity: str, done: dict[str, str]) -> None:
