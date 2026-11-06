@@ -87,8 +87,18 @@ def load_measured_costs(path: Path = BUILD_COSTS_PATH) -> dict[str, float]:
     """
     try:
         seconds = json.loads(path.read_text())["seconds"]
-        return {str(name): float(value) for name, value in seconds.items()}
-    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        costs = {str(name): float(value) for name, value in seconds.items()}
+        if any(not math.isfinite(cost) or cost < 0 for cost in costs.values()):
+            raise ValueError("build costs must be finite and non-negative")
+        return costs
+    except (
+        OSError,
+        ValueError,
+        OverflowError,
+        KeyError,
+        TypeError,
+        AttributeError,
+    ) as error:
         print(f"warning: ignoring build costs {path}: {error!r}", file=sys.stderr)
         return {}
 
@@ -102,13 +112,27 @@ def project_costs(
     times the measured units' aggregate seconds per byte, so estimates and
     measurements share a scale.
     """
-    known = [name for name in source_bytes if name in measured]
-    known_bytes = sum(source_bytes[name] for name in known)
-    rate = sum(measured[name] for name in known) / known_bytes if known_bytes else 1.0
-    return {
-        name: measured[name] if name in measured else size * rate
-        for name, size in source_bytes.items()
-    }
+    try:
+        known = [name for name in source_bytes if name in measured]
+        known_bytes = sum(source_bytes[name] for name in known)
+        rate = (
+            sum(measured[name] for name in known) / known_bytes if known_bytes else 1.0
+        )
+        costs = {
+            name: measured[name] if name in measured else size * rate
+            for name, size in source_bytes.items()
+        }
+        if any(not math.isfinite(cost) or cost < 0 for cost in costs.values()):
+            raise ValueError("build cost estimates must be finite and non-negative")
+        if not math.isfinite(math.fsum(costs.values())):
+            raise ValueError("aggregate build cost must be finite")
+        return costs
+    except (ValueError, OverflowError) as error:
+        print(
+            f"warning: ignoring build costs during calibration: {error!r}",
+            file=sys.stderr,
+        )
+        return {name: float(size) for name, size in source_bytes.items()}
 
 
 def dirty_projects(changed_files: list[str], known: set[str]) -> set[str]:
@@ -134,7 +158,10 @@ def assign_shards(
     loads = [0.0] * shard_count
     members: list[list[str]] = [[] for _ in range(shard_count)]
     for name, cost in sorted(targets.items(), key=lambda kv: (-kv[1], kv[0])):
-        index = min(range(shard_count), key=lambda shard: (loads[shard], shard))
+        index = min(
+            range(shard_count),
+            key=lambda shard: (loads[shard], len(members[shard]), shard),
+        )
         members[index].append(name)
         loads[index] += cost
     return [(load, names) for load, names in zip(loads, members) if names]

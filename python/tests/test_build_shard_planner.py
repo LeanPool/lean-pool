@@ -44,7 +44,18 @@ def test_without_measurements_costs_are_source_bytes() -> None:
 
 
 @pytest.mark.parametrize(
-    "content", [None, "not json", "[]", '{"seconds": [1, 2]}', '{"other": {}}']
+    "content",
+    [
+        None,
+        "not json",
+        "[]",
+        '{"seconds": [1, 2]}',
+        '{"other": {}}',
+        '{"seconds": {"A": "NaN"}}',
+        '{"seconds": {"A": 1e309}}',
+        json.dumps({"seconds": {"A": 10**400}}),
+        '{"seconds": {"A": -1}}',
+    ],
 )
 def test_unusable_cost_file_degrades_to_estimates(
     tmp_path: Path, content: str | None, capsys: pytest.CaptureFixture[str]
@@ -57,6 +68,58 @@ def test_unusable_cost_file_degrades_to_estimates(
     captured = capsys.readouterr()
     assert captured.out == ""
     assert "ignoring build costs" in captured.err
+
+
+@pytest.mark.parametrize(
+    ("source_bytes", "measured"),
+    [
+        ({"A": 1, "B": 1}, {"A": 1e308, "B": 1e308}),
+        ({"A": 1, "B": 1_000}, {"A": 1e308}),
+        ({"A": 100, "B": 100}, {"A": 1e308, "B": 1e308}),
+    ],
+)
+def test_overflowing_calibration_falls_back_to_source_bytes(
+    source_bytes: dict[str, int],
+    measured: dict[str, float],
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Finite inputs may overflow their sum or estimates; bytes remain usable."""
+    assert PLANNER["project_costs"](source_bytes, measured) == source_bytes
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "ignoring build costs during calibration" in captured.err
+
+
+@pytest.mark.parametrize("project_count", [2, 10, 23])
+def test_zero_costs_keep_requested_parallelism_and_exact_coverage(
+    project_count: int,
+) -> None:
+    """Zero-cost ties spread projects before reusing equally loaded bins."""
+    costs = {f"Project{index:02d}": 0.0 for index in range(project_count)}
+    shards = PLANNER["assign_shards"](costs, 10)
+    assert len(shards) == min(10, project_count)
+    assert all(load == 0 for load, _ in shards)
+    counts = [len(names) for _, names in shards]
+    assert max(counts) - min(counts) <= 1
+    assert sorted(name for _, names in shards for name in names) == sorted(costs)
+    assert shards == PLANNER["assign_shards"](dict(reversed(list(costs.items()))), 10)
+
+
+def test_zero_measured_costs_are_valid(tmp_path: Path) -> None:
+    """Subsecond measurements may round to zero without being malformed."""
+    path = tmp_path / "build-costs.json"
+    path.write_text('{"seconds": {"A": 0}}')
+    assert PLANNER["load_measured_costs"](path) == {"A": 0.0}
+
+
+def test_equal_positive_costs_keep_deterministic_coverage() -> None:
+    """Stable name and bin ties retain every project once."""
+    costs = {f"Project{index:02d}": 1.0 for index in range(23)}
+    shards = PLANNER["assign_shards"](costs, 10)
+    assert len(shards) == 10
+    assert sorted(name for _, names in shards for name in names) == sorted(costs)
+    assert max(load for load, _ in shards) - min(load for load, _ in shards) <= 1
+    assert shards == PLANNER["assign_shards"](dict(reversed(list(costs.items()))), 10)
 
 
 def test_assign_shards_isolates_expensive_few_file_project() -> None:
