@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.SharedFacts.TerminalKempeStageSwitch
 
 
@@ -827,43 +828,6 @@ private theorem helper_hnotElementary_588.{u_1, u_2} :
         have hh := congrArg Fin.val hh; dsimp [ja] at hh; omega))
       haNew (hterminalB hw)
 
-private theorem helper_chain_722.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (hTlen : (2 : ℕ) ≤
-        T.length) (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (_ :
-        TreeSequence G e0) (_ : Fin k) (_ : Fin ((TreeSequencePrefix T (T.length - (1 : ℕ))
-        (Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ T.length - (1 : ℕ)) => (
-    by omega
-    )) (Decidable.byContradiction fun (a : ¬T.length - (1 : ℕ) ≤ T.length) => (
-    by omega
-    ))).length + (1 : ℕ))), (
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-        → TreeSequenceInitialSegment X Z) →
-    let H : TashkinovHierarchy R.corresponding.replacementETT R.replacementBase :=
-        R.counterexample.hierarchy;
-    ∀ (j : ℕ) (hj : j < H.dividerCount + (2 : ℕ)) (i : Fin (H.dividerCount + (2 : ℕ))), (↑i : ℕ) ≤
-        j → TreeSequenceInitialSegment (H.stage i) (H.stage (⟨j, hj⟩ : Fin (H.dividerCount + (2 :
-        ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx hTlen R X eta jb trans H j
-  induction j with
-  | zero =>
-      intro hj i hi
-      have he : i = 0 := Fin.ext (Nat.eq_zero_of_le_zero hi)
-      subst i
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  | succ j ih =>
-      intro hj i hi
-      by_cases heq : i.val = j + 1
-      · have he : i = ⟨j + 1, hj⟩ := Fin.ext heq
-        subst i
-        exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-      · exact trans (ih (by omega) i (by omega)) (H.nested ⟨j, by omega⟩)
-
 private theorem helper_stageCase_765.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -1402,8 +1366,8 @@ private theorem helper_continuation_190.{u_1, u_2} :
   have chain : ∀ (j : ℕ) (hj : j < H.dividerCount + 2)
       (i : Fin (H.dividerCount + 2)), i.val ≤ j →
       TreeSequenceInitialSegment (H.stage i) (H.stage ⟨j, hj⟩) := by
-    exact @helper_chain_722 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        input T phi ett base C ctx hTlen R X eta jb trans
+    intro j hj i hi
+    exact H.stageInitialSegmentOfLE i ⟨j, hj⟩ hi
   have lastPositive (hq : H.dividerCount ≠ 0) :
       HierarchyStarredStage H q = H.stage ⟨H.dividerCount, by omega⟩ := by
     unfold HierarchyStarredStage

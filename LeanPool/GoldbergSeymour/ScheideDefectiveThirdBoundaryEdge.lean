@@ -6,7 +6,7 @@ Authors: Wesley Pegden
 module
 
 
-public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDefectiveThirdBoundaryEdge
+
 
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.ScheideDefectiveDeletedTreePair
@@ -760,9 +760,7 @@ private theorem helper_continuation_1024.{u_1, u_2} :
       exact (Finset.mem_sdiff.mp hz2Z).2
         (Finset.mem_union.mpr (Or.inl hz2Ui))
     · simp [Incident, hf2ends]
-  have tashkinov_adjoin := @SharedFacts.ScheideDefectiveThirdBoundaryEdge.tashkinov_adjoin V E
-      inferInstance inferInstance
-      inferInstance inferInstance G k e0 phi T C D d R
+  have tashkinov_adjoin := @TashkinovTree.adjoinEdge V E inferInstance G k e0
   have adjoin_vertex_set (A0 A1 : TreeSequence G e0) (f : E) (x y : V)
       (hxy : G.ends f = s(x, y)) (hxA : x ∈ TreeSequenceVertexSet A0)
       (hyA : y ∉ TreeSequenceVertexSet A0)

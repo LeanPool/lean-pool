@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovTreeAdjoin
+
 public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeVertexSet
 
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
@@ -360,147 +362,6 @@ private theorem helper_htreeGammaJ_291.{u_1, u_2} :
         simp [X, TreeSequenceVertexSet])
         (C.gamma r) hrgamma hrdelta).mpr hwmissing
 
-private theorem helper_tashkinov_adjoin_386.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))),
-    let i : Fin C.s := D.gammaIndex d;
-    let gamma : Fin k := C.gamma i;
-    let phi1 : PartialEdgeColoring E k := OutsideTreeColorSwap T phi D.alpha0 gamma;
-    let phi2 : PartialEdgeColoring E k := TwoColorComponentSwap G phi1 gamma (↑d : Fin k) (Sum.inl
-        (D.v0 d));
-    ∀ (_ _ S U : TreeSequence G e0) (f : E), TreeSequenceAdjoinEdge S f U → TashkinovTree G e0
-        phi2 S →
-    ∀ (c : Fin k), phi2 f = some c →
-    ∀ v ∈ TreeSequenceVertexSet S, c ∈ MissingColors G phi2 v → TashkinovTree G e0 phi2 U := by
-  classical
-  intro V E _ _ _ G k e0 phi T C D d i gamma phi1 phi2 Tgamma TgammaJ S U f hadjoin hS c hf v hv
-      hmiss
-  rcases hadjoin with ⟨hlen, hinitial, hlast⟩
-  rcases hinitial with ⟨hle, hvert, hedge⟩
-  intro q hq
-  by_cases hold : q.val < S.length
-  · let qS : Fin S.length := ⟨q.val, hold⟩
-    obtain ⟨a, color, hcolor, hcolorMissing⟩ :=
-      hS qS (by simpa [qS] using hq)
-    let aU : Fin (q.val + 1) := ⟨a.val, by simpa [qS] using a.isLt⟩
-    refine ⟨aU, color, ?_, ?_⟩
-    · have hqeq : Fin.castLE hle qS = q := by
-        apply Fin.ext
-        rfl
-      have hUedge : U.edge q = S.edge qS := by
-        rw [← hqeq]
-        exact hedge qS
-      rw [hUedge]
-      exact hcolor
-    · let oldVertexIndex : Fin (S.length + 1) :=
-        Fin.castLT a (Nat.lt_trans a.isLt (Nat.succ_lt_succ qS.isLt))
-      let newVertexIndex : Fin (U.length + 1) :=
-        Fin.castLT aU (Nat.lt_trans aU.isLt (Nat.succ_lt_succ q.isLt))
-      have hindex : Fin.castLE (Nat.succ_le_succ hle) oldVertexIndex =
-          newVertexIndex := by
-        apply Fin.ext
-        rfl
-      have hvertex : U.vertex newVertexIndex = S.vertex oldVertexIndex := by
-        rw [← hindex]
-        exact hvert oldVertexIndex
-      simpa [oldVertexIndex, newVertexIndex] using hvertex.symm ▸ hcolorMissing
-  · have hqval : q.val = S.length := by
-      have hqbound : q.val < S.length + 1 := by simpa [hlen] using q.isLt
-      omega
-    obtain ⟨a, ha⟩ : ∃ a : Fin (S.length + 1), S.vertex a = v := by
-      simpa [TreeSequenceVertexSet] using hv
-    let aU : Fin (q.val + 1) := ⟨a.val, by simpa [hqval] using a.isLt⟩
-    refine ⟨aU, c, ?_, ?_⟩
-    · have hqlast : q = Fin.cast hlen.symm (Fin.last S.length) := by
-        apply Fin.ext
-        simpa using hqval
-      rw [hqlast, hlast]
-      exact hf
-    · let newVertexIndex : Fin (U.length + 1) :=
-        Fin.castLT aU (Nat.lt_trans aU.isLt (Nat.succ_lt_succ q.isLt))
-      have hindex : Fin.castLE (Nat.succ_le_succ hle) a =
-          newVertexIndex := by
-        apply Fin.ext
-        rfl
-      have hvertex : U.vertex newVertexIndex = v := by
-        rw [← hindex, hvert a, ha]
-      simpa [newVertexIndex, hvertex] using hmiss
-
-private theorem helper_tashkinov_adjoinJ_443.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))) (R :
-        ScheideDefectiveReturnData G k e0 phi T C D d),
-    let i : Fin C.s := D.gammaIndex d;
-    let j : Fin C.s := R.blockIndex;
-    let gamma : Fin k := C.gamma i;
-    let gammaJ : Fin k := C.gamma j;
-    let psi1 : PartialEdgeColoring E k := OutsideTreeColorSwap T phi gamma gammaJ;
-    let psi2 : PartialEdgeColoring E k := TwoColorComponentSwap G psi1 gammaJ (↑d : Fin k)
-        (Sum.inl R.v1);
-    ∀ (_ _ S U : TreeSequence G e0) (f : E), TreeSequenceAdjoinEdge S f U → TashkinovTree G e0
-        psi2 S →
-    ∀ (c : Fin k), psi2 f = some c →
-    ∀ v ∈ TreeSequenceVertexSet S, c ∈ MissingColors G psi2 v → TashkinovTree G e0 psi2 U := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R i j gamma gammaJ psi1 psi2 Tgamma TgammaJ S U f hadjoin
-      hS c hf v hv hmiss
-  rcases hadjoin with ⟨hlen, hinitial, hlast⟩
-  rcases hinitial with ⟨hle, hvert, hedge⟩
-  intro q hq
-  by_cases hold : q.val < S.length
-  · let qS : Fin S.length := ⟨q.val, hold⟩
-    obtain ⟨a, color, hcolor, hcolorMissing⟩ :=
-      hS qS (by simpa [qS] using hq)
-    let aU : Fin (q.val + 1) := ⟨a.val, by simpa [qS] using a.isLt⟩
-    refine ⟨aU, color, ?_, ?_⟩
-    · have hqeq : Fin.castLE hle qS = q := by
-        apply Fin.ext
-        rfl
-      have hUedge : U.edge q = S.edge qS := by
-        rw [← hqeq]
-        exact hedge qS
-      rw [hUedge]
-      exact hcolor
-    · let oldVertexIndex : Fin (S.length + 1) :=
-        Fin.castLT a (Nat.lt_trans a.isLt (Nat.succ_lt_succ qS.isLt))
-      let newVertexIndex : Fin (U.length + 1) :=
-        Fin.castLT aU (Nat.lt_trans aU.isLt (Nat.succ_lt_succ q.isLt))
-      have hindex : Fin.castLE (Nat.succ_le_succ hle) oldVertexIndex =
-          newVertexIndex := by
-        apply Fin.ext
-        rfl
-      have hvertex : U.vertex newVertexIndex = S.vertex oldVertexIndex := by
-        rw [← hindex]
-        exact hvert oldVertexIndex
-      simpa [oldVertexIndex, newVertexIndex] using hvertex.symm ▸ hcolorMissing
-  · have hqval : q.val = S.length := by
-      have hqbound : q.val < S.length + 1 := by simpa [hlen] using q.isLt
-      omega
-    obtain ⟨a, ha⟩ : ∃ a : Fin (S.length + 1), S.vertex a = v := by
-      simpa [TreeSequenceVertexSet] using hv
-    let aU : Fin (q.val + 1) := ⟨a.val, by simpa [hqval] using a.isLt⟩
-    refine ⟨aU, c, ?_, ?_⟩
-    · have hqlast : q = Fin.cast hlen.symm (Fin.last S.length) := by
-        apply Fin.ext
-        simpa using hqval
-      rw [hqlast, hlast]
-      exact hf
-    · let newVertexIndex : Fin (U.length + 1) :=
-        Fin.castLT aU (Nat.lt_trans aU.isLt (Nat.succ_lt_succ q.isLt))
-      have hindex : Fin.castLE (Nat.succ_le_succ hle) a =
-          newVertexIndex := by
-        apply Fin.ext
-        rfl
-      have hvertex : U.vertex newVertexIndex = v := by
-        rw [← hindex, hvert a, ha]
-      simpa [newVertexIndex, hvertex] using hmiss
-
 private theorem helper_continuation_619.{u_1, u_2} :
     helperContinuation619Conditions.{u_1, u_2} := by
   classical
@@ -529,10 +390,8 @@ private theorem helper_continuation_619.{u_1, u_2} :
   have htreeGammaJ := @helper_htreeGammaJ_291 V E inferInstance inferInstance inferInstance
       inferInstance G k e0 phi T C D d R Tgamma TgammaJ hTgammaJLength hTgammaJBaseVertices
       hTgammaJEdgeCases htreeOld hunused edge_color_psi2 missing_unaffectedJ
-  have tashkinov_adjoin := @helper_tashkinov_adjoin_386 V E inferInstance inferInstance
-      inferInstance G k e0 phi T C D d Tgamma TgammaJ
-  have tashkinov_adjoinJ := @helper_tashkinov_adjoinJ_443 V E inferInstance inferInstance
-      inferInstance inferInstance G k e0 phi T C D d R Tgamma TgammaJ
+  have tashkinov_adjoin := TashkinovTree.adjoinEdge (G := G) (e0 := e0) phi2
+  have tashkinov_adjoinJ := TashkinovTree.adjoinEdge (G := G) (e0 := e0) psi2
   have adjoin_vertex_set (A B : TreeSequence G e0) (f : E) (x y : V)
       (hxy : G.ends f = s(x, y)) (hxA : x ∈ TreeSequenceVertexSet A)
       (hyA : y ∉ TreeSequenceVertexSet A)

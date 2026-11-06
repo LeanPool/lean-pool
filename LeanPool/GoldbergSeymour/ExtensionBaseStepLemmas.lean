@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseStepLemmas
 
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
@@ -3750,86 +3751,11 @@ theorem helper_huU_2850.{u_1, u_2} :
   rw [hindex]
   exact huPosition
 
-theorem helper_prefixSegment_2868.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-  (A : TreeSequence G e0) (r : ℕ) (hr : (1 : ℕ) ≤ r) (hrA : r ≤ A.length),
-  TreeSequenceInitialSegment (TreeSequencePrefix A r hr hrA) A := by
-  classical
-  intro V E G e0 A r hr hrA
-  refine ⟨hrA, ?_, ?_⟩
-  · intro i
-    simp [TreeSequencePrefix]
-  · intro i
-    simp [TreeSequencePrefix]
-
-theorem helper_prefixPrefix_2877.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-  [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-  (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-  (generating : PartialEdgeColoring E k)
-  (ett : ExtendedTashkinovTree G k e0 input T generating)
-  (hpositive : (0 : ℕ) < ett.rounds) (v : V),
-  let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds);
-  ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T)
-    (hfirstUpper : ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ))
-    (hfirstPositive : (0 : ℕ) < ETTFirstAppearanceIndex ett v hvFinal),
-  let jSlot : Fin ett.rounds :=
-    (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ), by omega⟩ : Fin ett.rounds);
-  ∀ (p0 : ℕ) (_ :
-  Fin (p0 + (1 : ℕ)) →
-  Fin ett.rounds)
-    (terminalPosition : Fin ((ett.series.data.tree jSlot.succ.castSucc).length + (1 : ℕ)))
-    (_ : (1 : ℕ) ≤ (↑terminalPosition : ℕ))
-    (_ : (↑terminalPosition : ℕ) ≤ (ett.series.data.tree jSlot.succ.castSucc).length)
-    (TjPrime : TreeSequence G e0) (_ : Fin (TjPrime.length + (1 : ℕ)))
-    (A : TreeSequence G e0) (r : ℕ) (hr : (1 : ℕ) ≤ r) (hrA : r + (1 : ℕ) ≤ A.length),
-  TreeSequenceInitialSegment
-    (TreeSequencePrefix A r hr (Nat.le_trans (Nat.le_succ r) hrA))
-    (TreeSequencePrefix A (r + (1 : ℕ)) (by omega) hrA) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v q hqTerminal hvFinal hfirstUpper
-      hfirstPositive jSlot p0 indices0 terminalPosition hterminalPositionPositive
-      hterminalPositionBound TjPrime uPosition A r hr hrA
-  refine ⟨Nat.le_succ r, ?_, ?_⟩
-  · intro i
-    change A.vertex _ = A.vertex _
-    congr 1
-  · intro i
-    change A.edge _ = A.edge _
-    congr 1
 
 /-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_prefixSelf_2890.{u_1, u_2} :
     SharedFacts.ExtensionBaseStepLemmas.prefixSelfStatement.{u_1, u_2} :=
   SharedFacts.ExtensionBaseStepLemmas.prefixSelf.{u_1, u_2}
-
-theorem helper_hleftX_3005.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E) (TjPrime : TreeSequence
-        G e0) (uPosition : Fin (TjPrime.length + (1 : ℕ))) (huPositionPositive : (1 : ℕ) ≤
-        (↑uPosition : ℕ)) (huPositionBound : (↑uPosition : ℕ) ≤ TjPrime.length),
-    let U : TreeSequence G e0 := TreeSequencePrefix TjPrime (↑uPosition : ℕ) huPositionPositive
-        huPositionBound;
-    ∀ (M : TreeSequence G e0), TreeSequenceInitialSegment U M →
-    ∀ (n : ℕ) (hnU : U.length ≤ n) (hnM' : n ≤ M.length),
-    let X : TreeSequence G e0 := TreeSequencePrefix M n (Nat.le_trans U.positive hnU) hnM';
-    ∀ {x : V}, x ∈ TreeSequenceVertexSet U → x ∈ TreeSequenceVertexSet X := by
-  classical
-  intro V E G e0 TjPrime uPosition huPositionPositive huPositionBound U M hleftSegment n hnU hnM'
-      X x hxU
-  simp only [TreeSequenceVertexSet, Finset.mem_image,
-    Finset.mem_univ, true_and] at hxU ⊢
-  obtain ⟨a, ha⟩ := hxU
-  refine ⟨Fin.castLE (Nat.succ_le_succ hnU) a, ?_⟩
-  change M.vertex _ = x
-  calc
-    M.vertex _ = M.vertex
-        (Fin.castLE (Nat.succ_le_succ hleftSegment.1) a) := by
-      congr 1
-    _ = U.vertex a := hleftSegment.2.1 a
-    _ = x := ha
 
 theorem helper_segmentVertexBeforeJ_3151.{u_1, u_2} :
     open scoped Classical in

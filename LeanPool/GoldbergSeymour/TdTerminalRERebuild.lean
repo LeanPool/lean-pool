@@ -6,6 +6,9 @@ Authors: Wesley Pegden
 
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesStability
+
+
 public import LeanPool.GoldbergSeymour.RevisitingTerminalStatements
 public import LeanPool.GoldbergSeymour.TashkinovSeriesAppend
 public import LeanPool.GoldbergSeymour.TdReplacementPrefixExact
@@ -5722,149 +5725,6 @@ theorem helper_hseriesTreeAgree_6351.{u_1, u_2} :
     rw [hindex]
     exact hfinalPenultimateTree
 
-theorem helper_hseriesColorProperties_6404.{u_1, u_2} :
-    coloringPropertiesStatement.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper hsigmaOne _
-      closureTree q hqCast available hroundLarge originalPrefix hr hprefixData corr
-      earlierPrefixBound earlierPrefix hearlierMap hearlierPositive hreplacementEarlierKind oldi
-      oldChoice oldGamma holdTarget newi newChoice _ newCurrentDelta newCurrentGamma hnewIndex htree
-      oldChoiceOnNew holdColorCast holdColorNe hnewColorNe hidentifiedDelta hidentifiedGamma
-      holdDeltaAvailable holdGammaAvailable hnewDeltaAvailable hnewGammaAvailable replacementLast
-      hreplacementLastMap hgammaDeltaNe sigmaReturnGraph returnEdgeTransfer sigmaReturnPath
-      hsigmaReturnIsPath hsigmaReturnSupport hreturnInNewEarlier replacementCycle hcycleFull
-      hreplacementCurrentTree havailableCurrentTree currentTree hreturnCycle houtsideCycle
-      rootedCycle outsideIndices outsideIndicesNonempty firstOutside firstOutsideNotOne
-      firstOutsideAtLeastTwo firstCrossingIndex beforeFirstCrossingIndex laterInsideIndices
-      laterInsideNonempty firstReturn hreturnNotNext hreturnGap returnCrossingIndex
-      beforeReturnCrossingIndex hreplacementColor castReturnWalk castReturnWalkIsPath
-      castReturnWalkSupport castCycle castCycleSupport hsigmaPathOnCycle newStored newEdges newKind
-      newVertex newOutside newDelta newGamma appendedData appendedCertificate extendedSeries
-      hextendedData hroundsEq castSeries castSeriesColoring finalSeries hfinalColor rawDataIndex i
-  by_cases hi : i.val < ett.rounds
-  · let j : Fin (originalPrefix.rounds + 1) :=
-      ⟨i.val, by rw [hroundsEq]; exact hi⟩
-    have hraw : rawDataIndex i = j.castSucc := by
-      apply Fin.ext
-      rfl
-    have hcolor : finalSeries.data.coloring i =
-        corr.replacementSeries.data.coloring j := by
-      calc
-        finalSeries.data.coloring i =
-            extendedSeries.data.coloring (rawDataIndex i) := by
-              exact castSeriesColoring hroundsEq
-                extendedSeries i
-        _ = appendedData.coloring (rawDataIndex i) := by
-              rw [hextendedData]
-        _ = corr.replacementSeries.data.coloring j := by
-              rw [hraw]
-              simp [appendedData, TashkinovSeriesDataAppend]
-    rw [hcolor]
-    exact ⟨corr.replacementProper j,
-      corr.replacementOneUncolored j⟩
-  · have hilast : i = Fin.last ett.rounds := by
-      apply Fin.ext
-      simp
-      have hiBound := i.isLt
-      omega
-    rw [hilast, hfinalColor]
-    exact ⟨hsigmaProper, hsigmaOne⟩
-
-theorem helper_hseriesStable_6436.{u_1, u_2} :
-    coloringStabilityStatement.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T generating ett hpositive sigma hsigmaStable _ closureTree q
-      hqCast available hroundLarge originalPrefix hr hprefixTrees hprefixData corr
-      earlierPrefixBound earlierPrefix hearlierMap hearlierPositive hreplacementEarlierKind oldi
-      oldChoice oldGamma holdTarget newi newChoice _ newCurrentDelta newCurrentGamma hnewIndex htree
-      oldChoiceOnNew holdColorCast holdColorNe hnewColorNe hidentifiedDelta hidentifiedGamma
-      holdDeltaAvailable holdGammaAvailable hnewDeltaAvailable hnewGammaAvailable replacementLast
-      hreplacementLastMap hgammaDeltaNe sigmaReturnGraph returnEdgeTransfer sigmaReturnPath
-      hsigmaReturnIsPath hsigmaReturnSupport hreturnInNewEarlier replacementCycle hcycleFull
-      hreplacementCurrentTree havailableCurrentTree currentTree hreturnCycle houtsideCycle
-      rootedCycle outsideIndices outsideIndicesNonempty firstOutside firstOutsideNotOne
-      firstOutsideAtLeastTwo firstCrossingIndex beforeFirstCrossingIndex laterInsideIndices
-      laterInsideNonempty firstReturn hreturnNotNext hreturnGap returnCrossingIndex
-      beforeReturnCrossingIndex hreplacementColor castReturnWalk castReturnWalkIsPath
-      castReturnWalkSupport castCycle castCycleSupport hsigmaPathOnCycle newStored newEdges newKind
-      newVertex newOutside newDelta newGamma appendedData appendedCertificate extendedSeries
-      hextendedData hroundsEq castSeries castSeriesColoring finalSeries hfinalColor rawDataIndex i
-  by_cases hi : i.val < originalPrefix.rounds
-  · let j : Fin originalPrefix.rounds := ⟨i.val, hi⟩
-    have hmap : Fin.castLE (by omega) j.succ = i.succ := by
-      apply Fin.ext
-      rfl
-    have htreeMap : Fin.castLE (by omega)
-        j.succ.castSucc = i.succ.castSucc := by
-      apply Fin.ext
-      rfl
-    have htreeEq : originalPrefix.series.data.tree
-          j.succ.castSucc =
-        ett.series.data.tree i.succ.castSucc := by
-      calc
-        originalPrefix.series.data.tree j.succ.castSucc =
-            ett.series.data.tree
-              (Fin.castLE (by omega) j.succ.castSucc) :=
-          hprefixTrees j.succ.castSucc
-        _ = ett.series.data.tree i.succ.castSucc := by
-          rw [htreeMap]
-    have hstoredEq : TashkinovStoredColors
-          originalPrefix.series.data j.succ =
-        TashkinovStoredColors ett.series.data i.succ := by
-      calc
-        TashkinovStoredColors originalPrefix.series.data
-            j.succ =
-            TashkinovStoredColors ett.series.data
-              (Fin.castLE (by omega) j.succ) :=
-          (hprefixData j.succ).2.2.2.2
-        _ = TashkinovStoredColors ett.series.data i.succ := by
-          rw [hmap]
-    have holdColorEq : originalPrefix.series.data.coloring
-          j.succ = ett.series.data.coloring i.succ := by
-      calc
-        originalPrefix.series.data.coloring j.succ =
-            ett.series.data.coloring
-              (Fin.castLE (by omega) j.succ) :=
-          (hprefixData j.succ).1
-        _ = ett.series.data.coloring i.succ := by rw [hmap]
-    have hraw : rawDataIndex i.succ =
-        j.succ.castSucc := by
-      apply Fin.ext
-      rfl
-    have hnewColorEq : finalSeries.data.coloring i.succ =
-        corr.replacementSeries.data.coloring j.succ := by
-      calc
-        finalSeries.data.coloring i.succ =
-            extendedSeries.data.coloring
-              (rawDataIndex i.succ) := by
-              exact castSeriesColoring hroundsEq
-                extendedSeries i.succ
-        _ = appendedData.coloring
-              (rawDataIndex i.succ) := by rw [hextendedData]
-        _ = corr.replacementSeries.data.coloring j.succ := by
-              rw [hraw]
-              simp only [appendedData,
-                TashkinovSeriesDataAppend]
-              exact Fin.lastCases_castSucc j.succ
-    have hstable := corr.replacementStable j
-    rw [htreeEq, hstoredEq, holdColorEq] at hstable
-    rw [hnewColorEq]
-    exact hstable
-  · let ilast : Fin ett.rounds :=
-      ⟨ett.rounds - 1, by omega⟩
-    have hilast : i = ilast := by
-      apply Fin.ext
-      have hiBound := i.isLt
-      have hprefixRounds := hr
-      simp [ilast]
-      omega
-    have hindex : ilast.succ = Fin.last ett.rounds := by
-      apply Fin.ext
-      simp [ilast]
-      omega
-    rw [hilast, hindex, hfinalColor]
-    exact hsigmaStable
-
 private theorem revisitingSeriesAgreement.{u_1, u_2} : revisitingSeriesAgreementStatement.{u_1, u_2}
     := by
   classical
@@ -5937,46 +5797,26 @@ private theorem revisitingSeriesAgreement.{u_1, u_2} : revisitingSeriesAgreement
   have hseriesColorProperties : ∀ i : Fin (ett.rounds + 1),
       IsProperEdgeColoring G (finalSeries.data.coloring i) ∧
         IsOneEdgeUncolored (finalSeries.data.coloring i) e0 := by
-    exact @helper_hseriesColorProperties_6404 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-        (@hsigmaProper) (@hsigmaOne) (@Tstar) (@closureTree) (@hqCast) (@available) (@hroundLarge)
-        (@originalPrefix) (@hr) (@hprefixData) (@corr) (@earlierPrefixBound) (@hearlierMap)
-        (@hearlierPositive) (@hreplacementEarlierKind) (@oldi) (@oldChoice) (@oldGamma)
-        (@holdTarget) (@newi) (@newChoice) _ (@newCurrentDelta) (@newCurrentGamma) (@hnewIndex)
-        (@htree) (@holdColorCast) (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta)
-        (@hidentifiedGamma) (@holdDeltaAvailable) (@holdGammaAvailable) (@hnewDeltaAvailable)
-        (@hnewGammaAvailable) (@hreplacementLastMap) (@hgammaDeltaNe) (@returnEdgeTransfer)
-        (@hsigmaReturnIsPath) (@hsigmaReturnSupport) (@hreturnInNewEarlier) (@replacementCycle)
-        (@hcycleFull) (@hreplacementCurrentTree) (@havailableCurrentTree) (@hreturnCycle)
-        (@houtsideCycle) (@outsideIndicesNonempty) (@firstOutsideNotOne) (@firstOutsideAtLeastTwo)
-        (@firstCrossingIndex) (@beforeFirstCrossingIndex) (@laterInsideNonempty) (@hreturnNotNext)
-        (@hreturnGap) (@returnCrossingIndex) (@beforeReturnCrossingIndex) (@hreplacementColor)
-        (@castReturnWalkIsPath) (@castReturnWalkSupport) (@castCycleSupport) (@hsigmaPathOnCycle)
-        (@appendedCertificate) (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesColoring)
-        (@hfinalColor)
+    exact finalSeries.coloringProperties
   have hseriesStable : ∀ i : Fin ett.rounds,
       StableColoring
         (ett.series.data.tree i.succ.castSucc)
         (TashkinovStoredColors ett.series.data i.succ)
         (ett.series.data.coloring i.succ)
         (finalSeries.data.coloring i.succ) := by
-    exact @helper_hseriesStable_6436 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-        (@hsigmaStable) (@Tstar) (@closureTree) (@hqCast) (@available) (@hroundLarge)
-        (@originalPrefix) (@hr) (@hprefixTrees) (@hprefixData) (@corr) (@earlierPrefixBound)
-        (@hearlierMap) (@hearlierPositive) (@hreplacementEarlierKind) (@oldi) (@oldChoice)
-        (@oldGamma) (@holdTarget) (@newi) (@newChoice) _ (@newCurrentDelta) (@newCurrentGamma)
-        (@hnewIndex) (@htree) (@holdColorCast) (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta)
-        (@hidentifiedGamma) (@holdDeltaAvailable) (@holdGammaAvailable) (@hnewDeltaAvailable)
-        (@hnewGammaAvailable) (@hreplacementLastMap) (@hgammaDeltaNe) (@returnEdgeTransfer)
-        (@hsigmaReturnIsPath) (@hsigmaReturnSupport) (@hreturnInNewEarlier) (@replacementCycle)
-        (@hcycleFull) (@hreplacementCurrentTree) (@havailableCurrentTree) (@hreturnCycle)
-        (@houtsideCycle) (@outsideIndicesNonempty) (@firstOutsideNotOne) (@firstOutsideAtLeastTwo)
-        (@firstCrossingIndex) (@beforeFirstCrossingIndex) (@laterInsideNonempty) (@hreturnNotNext)
-        (@hreturnGap) (@returnCrossingIndex) (@beforeReturnCrossingIndex) (@hreplacementColor)
-        (@castReturnWalkIsPath) (@castReturnWalkSupport) (@castCycleSupport) (@hsigmaPathOnCycle)
-        (@appendedCertificate) (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesColoring)
-        (@hfinalColor)
+    exact TashkinovSeriesData.stabilityOfPrefix
+      ett.series.data finalSeries.data.coloring originalPrefix.series.data
+      corr.replacementSeries.data.coloring hroundsEq hprefixTrees
+      (fun j => (hprefixData j).2.2.2.2) (fun j => (hprefixData j).1)
+      (TashkinovSeriesData.prefixColoringOfCast hroundsEq
+        corr.replacementSeries.data.coloring sigma finalSeries.data.coloring (by
+          intro j
+          calc
+            finalSeries.data.coloring j = extendedSeries.data.coloring
+                (Fin.cast (congrArg (fun n => n + 1) hroundsEq.symm) j) :=
+              castSeriesColoring hroundsEq extendedSeries j
+            _ = _ := by rw [hextendedData]; rfl))
+      corr.replacementStable (by rw [hfinalColor]; exact hsigmaStable)
   let replacementETT : ExtendedTashkinovTree G k e0
       corr.replacementInput Tstar sigma := {
     rounds := ett.rounds

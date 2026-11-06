@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 
+
 public import LeanPool.GoldbergSeymour.SharedFacts.OutsideAdvancement
 
 
@@ -318,7 +319,8 @@ private theorem helper_shortening_124.{u_1, u_2} :
     have chain : ∀ (j : ℕ) (hj : j < H.dividerCount + 2)
         (i : Fin (H.dividerCount + 2)), i.val ≤ j →
         TreeSequenceInitialSegment (H.stage i) (H.stage ⟨j, hj⟩) := by
-      apply helper_chain_775; assumption
+      intro j hj i hi
+      exact H.stageInitialSegmentOfLE i ⟨j, hj⟩ hi
     have starNext (j : Fin (H.dividerCount + 1)) :
         TreeSequenceInitialSegment (HierarchyStarredStage H j) (H.stage j.succ) := by
       refine Fin.cases H.coreInsideFirst (fun i => H.nested i.succ) j

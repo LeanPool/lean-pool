@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationBeforeVertex
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBranches
 
 
@@ -31,75 +33,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_transportStep_250.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring
-    E k} {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett :
-    ExtendedTashkinovTree G k e0 input T generating) {lowerInput : PartialEdgeColoring E k}
-    {lowerTree : TreeSequence G e0} {lowerGenerating : PartialEdgeColoring E k} (_ :
-    ExtendedTashkinovTree G k e0 lowerInput lowerTree lowerGenerating) (_ : Fin ett.rounds)
-    (Tj seed TjPrime : TreeSequence G e0) (phiJ rho3 : PartialEdgeColoring E k) (Dprev :
-    Finset (Fin k)) (terminalSupport : V) (hterminalTj : terminalSupport ∈
-    TreeSequenceVertexSet Tj) (_ : Fin (Tj.length + (1 : ℕ))) (_ : Fin (TjPrime.length + (1 :
-    ℕ))), StableColoringBeforeVertex Tj terminalSupport hterminalTj Dprev phiJ rho3 → (∀ {A B
-    C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B C →
-    TreeSequenceInitialSegment A C) → (∀ {A : TreeSequence G e0}, TreeSequenceInitialSegment A
-    seed → A.length < seed.length → ∀ {v : V}, v ∈ TreeSequenceVertexSet A → v ∈
-    TreeVerticesBefore Tj terminalSupport hterminalTj) → ∀ {A B : TreeSequence G e0},
-    TashkinovAugmentation phiJ A B → TreeSequenceInitialSegment B seed → TashkinovAugmentation
-    rho3 A B := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett lowerInput lowerTree lowerGenerating lower jSlot
-      Tj seed TjPrime phiJ rho3 Dprev terminalSupport hterminalTj zPosition uPosition hd1
-      segmentTrans hsegmentVertexBefore A B hstep hBseed
-  rcases hstep with ⟨hlen, hAB, c, hcolor, hcMissing⟩
-  have hAseed : TreeSequenceInitialSegment A seed := segmentTrans hAB hBseed
-  have hAlen : A.length < seed.length :=
-    lt_of_lt_of_le (by omega) hBseed.1
-  have hcMissingRho : c ∈ TreeMissingColors rho3 A := by
-    unfold TreeMissingColors at hcMissing ⊢
-    obtain ⟨w, hwA, hcw⟩ := Finset.mem_biUnion.mp hcMissing
-    refine Finset.mem_biUnion.mpr ⟨w, hwA, ?_⟩
-    rw [hd1.2 w (hsegmentVertexBefore hAseed hAlen hwA)]
-    exact hcw
-  let added : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
-  obtain ⟨q, hq⟩ := B.attaches added
-  let oldPos : Fin (B.length + 1) :=
-    Fin.castLT q (Nat.lt_trans q.isLt (Nat.succ_lt_succ added.isLt))
-  have holdVal : oldPos.val < A.length + 1 := by
-    have hqBound := q.isLt
-    dsimp [oldPos, added] at *
-    omega
-  let oldA : Fin (A.length + 1) := ⟨oldPos.val, holdVal⟩
-  have holdEq : B.vertex oldPos = A.vertex oldA := by
-    have hcast : Fin.castLE (Nat.succ_le_succ hAB.1) oldA = oldPos := by
-      apply Fin.ext
-      rfl
-    rw [← hcast]
-    exact hAB.2.1 oldA
-  have holdA : A.vertex oldA ∈ TreeSequenceVertexSet A := by
-    simp [TreeSequenceVertexSet]
-  have holdBefore : B.vertex oldPos ∈
-      TreeVerticesBefore Tj terminalSupport hterminalTj := by
-    rw [holdEq]
-    exact hsegmentVertexBefore hAseed hAlen holdA
-  have holdIncident : Incident G (B.vertex oldPos) (B.edge added) := by
-    unfold Incident
-    rw [hq]
-    simp [oldPos]
-  have haddedFixed : rho3 (B.edge added) = phiJ (B.edge added) := by
-    apply hd1.1 (B.edge added) ⟨B.vertex oldPos, holdBefore, holdIncident⟩
-    refine ⟨c, ?_, ?_⟩
-    · apply Finset.mem_union_left
-      unfold TreeMissingColors at hcMissing
-      obtain ⟨w, hwA, hcw⟩ := Finset.mem_biUnion.mp hcMissing
-      exact Finset.mem_biUnion.mpr
-        ⟨w, hsegmentVertexBefore hAseed hAlen hwA, hcw⟩
-    · exact hcolor
-  refine ⟨hlen, hAB, c, ?_, hcMissingRho⟩
-  change rho3 (B.edge added) = some c
-  exact haddedFixed.trans hcolor
 
 private theorem helper_hiSeed_234.{u_1, u_2} :
     open scoped Classical in
@@ -1434,10 +1367,11 @@ theorem ExtensionBaseCaseTwoContradiction {V E : Type*}
       omega
     rw [← hAseedVertices i]
     exact hseedVertexBefore _ hi
-  have transportStep := @helper_transportStep_250 V E inferInstance inferInstance inferInstance G k
-      e0 input T generating ett lowerInput lowerTree lowerGenerating lower jSlot Tj seed TjPrime
-      phiJ rho3 Dprev terminalSupport hterminalTj zPosition uPosition hd1 segmentTrans
-      hsegmentVertexBefore
+  have transportStep {A B : TreeSequence G e0}
+      (step : TashkinovAugmentation phiJ A B) (withinSeed : TreeSequenceInitialSegment B seed) :
+      TashkinovAugmentation rho3 A B :=
+    TashkinovAugmentation.transportBeforeVertex Tj seed phiJ rho3 Dprev terminalSupport
+      hterminalTj hd1 hsegmentVertexBefore step withinSeed
   have transportSeedRoute (S : TreeSequence G e0)
       (hroute : TashkinovAugmentationSequence phiJ S seed) :
       TashkinovAugmentationSequence rho3 S seed := by

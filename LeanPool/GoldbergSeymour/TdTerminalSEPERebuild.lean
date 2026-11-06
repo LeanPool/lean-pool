@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+
+
 public import LeanPool.GoldbergSeymour.TerminalSeriesRebuildTransport
 public import LeanPool.GoldbergSeymour.TdReplacementPrefixExact
 
@@ -1695,22 +1697,26 @@ private theorem helper_continuation_1015.{u_1, u_2} :
   have hseriesColorProperties : ∀ i : Fin (ett.rounds + 1),
       IsProperEdgeColoring G (finalSeries.data.coloring i) ∧
         IsOneEdgeUncolored (finalSeries.data.coloring i) e0 := by
-    exact @helper_hseriesColorProperties_4631 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper)
-        (@hsigmaOne) (@Tstar) (@closureTree) (@choice) (@sigmaPrev) (@hroundLarge)
-        (@originalPrefix) (@hr) (@corr) (@horiginalPositive) (@extendedSeries) (@hextendedData)
-        (@hroundsEq) (@castSeriesColoring) (@hfinalColor)
+    exact finalSeries.coloringProperties
   have hseriesStable : ∀ i : Fin ett.rounds,
       StableColoring
         (ett.series.data.tree i.succ.castSucc)
         (TashkinovStoredColors ett.series.data i.succ)
         (ett.series.data.coloring i.succ)
         (finalSeries.data.coloring i.succ) := by
-    exact @helper_hseriesStable_4663 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaStable)
-        (@Tstar) (@closureTree) (@choice) (@sigmaPrev) (@hroundLarge) (@originalPrefix) (@hr)
-        (@hprefixTrees) (@hprefixData) (@corr) (@horiginalPositive) (@extendedSeries)
-        (@hextendedData) (@hroundsEq) (@castSeriesColoring) (@hfinalColor)
+    exact TashkinovSeriesData.stabilityOfPrefix
+      ett.series.data finalSeries.data.coloring originalPrefix.series.data
+      corr.replacementSeries.data.coloring hroundsEq hprefixTrees
+      (fun j => (hprefixData j).2.2.2.2) (fun j => (hprefixData j).1)
+      (TashkinovSeriesData.prefixColoringOfCast hroundsEq
+        corr.replacementSeries.data.coloring sigma finalSeries.data.coloring (by
+          intro j
+          calc
+            finalSeries.data.coloring j = extendedSeries.data.coloring
+                (Fin.cast (congrArg (fun n => n + 1) hroundsEq.symm) j) :=
+              castSeriesColoring hroundsEq extendedSeries j
+            _ = _ := by rw [hextendedData]; rfl))
+      corr.replacementStable (by rw [hfinalColor]; exact hsigmaStable)
   let replacementETT : ExtendedTashkinovTree G k e0
       corr.replacementInput Tstar sigma := by
     exact {
@@ -1916,22 +1922,26 @@ private theorem helper_continuation_1218.{u_1, u_2} :
   have hseriesColorProperties : ∀ i : Fin (ett.rounds + 1),
       IsProperEdgeColoring G (finalSeries.data.coloring i) ∧
         IsOneEdgeUncolored (finalSeries.data.coloring i) e0 := by
-    exact @helper_hseriesColorProperties_6920 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper)
-        (@hsigmaOne) (@Tstar) (@closureTree) (@gamma) (@choice) (@sigmaPrev) (@u) (@p)
-        (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@horiginalPositive) (@extendedSeries)
-        (@hextendedData) (@hroundsEq) (@castSeriesColoring) (@hfinalColor)
+    exact finalSeries.coloringProperties
   have hseriesStable : ∀ i : Fin ett.rounds,
       StableColoring
         (ett.series.data.tree i.succ.castSucc)
         (TashkinovStoredColors ett.series.data i.succ)
         (ett.series.data.coloring i.succ)
         (finalSeries.data.coloring i.succ) := by
-    exact @helper_hseriesStable_6952 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaStable)
-        (@Tstar) (@closureTree) (@gamma) (@choice) (@sigmaPrev) (@u) (@p) (@hroundLarge)
-        (@originalPrefix) (@hr) (@hprefixTrees) (@hprefixData) (@corr) (@horiginalPositive)
-        (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesColoring) (@hfinalColor)
+    exact TashkinovSeriesData.stabilityOfPrefix
+      ett.series.data finalSeries.data.coloring originalPrefix.series.data
+      corr.replacementSeries.data.coloring hroundsEq hprefixTrees
+      (fun j => (hprefixData j).2.2.2.2) (fun j => (hprefixData j).1)
+      (TashkinovSeriesData.prefixColoringOfCast hroundsEq
+        corr.replacementSeries.data.coloring sigma finalSeries.data.coloring (by
+          intro j
+          calc
+            finalSeries.data.coloring j = extendedSeries.data.coloring
+                (Fin.cast (congrArg (fun n => n + 1) hroundsEq.symm) j) :=
+              castSeriesColoring hroundsEq extendedSeries j
+            _ = _ := by rw [hextendedData]; rfl))
+      corr.replacementStable (by rw [hfinalColor]; exact hsigmaStable)
   let replacementETT : ExtendedTashkinovTree G k e0
       corr.replacementInput Tstar sigma := by
     exact {

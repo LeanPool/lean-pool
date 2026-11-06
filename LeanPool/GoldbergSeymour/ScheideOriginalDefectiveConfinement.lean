@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorWalkConfinement
+
 public import LeanPool.GoldbergSeymour.ScheideLastExitPath
 public import LeanPool.GoldbergSeymour.ScheideReplacementUnionClosed
 
@@ -166,37 +168,13 @@ private theorem helper_hnoDeparture_298.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 phi T C D R alpha L hdef d VT XA y0 hy0XA hunique hXAclosed hcrossEq n
       y x e hnl hny hy hne hexc hx
-  have ha1 := L.path.adj_getVert_succ (i := n) (by
-    have h := L.followingVertex
-    omega)
-  have ha2 := L.path.adj_getVert_succ (i := n + 1) (by
-    have h := L.followingVertex
-    omega)
-  rw [show n + 1 + 1 = n + 2 by omega] at ha2
-  rw [hny, hne] at ha1
-  rw [hne, hexc] at ha2
-  simp only [TwoColorIncidenceGraph, Incident] at ha1 ha2
-  have hvne : y ≠ x := by
-    intro heq
-    have hinj := L.pathSimple.getVert_injOn
-      (show n ≤ L.path.length by
-        have h := L.followingVertex
-        omega)
-      (show n + 2 ≤ L.path.length by
-        have h := L.followingVertex
-        omega)
-      (by rw [hny, hexc, heq])
-    omega
-  have hedge : e ∈ BoundaryEdges G XA := by
-    unfold BoundaryEdges
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    refine ⟨y, hy, x, hx, ?_⟩
-    exact (Sym2.mem_and_mem_iff hvne).mp ⟨ha1.1, ha2.1⟩
+  obtain ⟨hedge, edgeColor⟩ := TwoColorWalk.boundaryAtTwoStep L.path L.pathSimple
+    XA n y x e (by have := L.followingVertex; omega) hny hy hne hexc hx
   have hnotzero : phi e ≠ some D.alpha0 := by
     intro hezero
     exact (hXAclosed hedge hy0XA hezero) D.alpha0_missing_at_y0
   have hecolor : phi e = some alpha := by
-    rcases ha1.2 with hezero | healpha
+    rcases edgeColor with hezero | healpha
     · exact False.elim (hnotzero hezero)
     · exact healpha
   have heq : e = D.f0 d := hunique e (by
@@ -212,215 +190,6 @@ private theorem helper_hnoDeparture_298.{u_1, u_2} :
       omega)
     (by rw [hne, L.crossingAt, hpathEq])
   omega
-
-private theorem helper_hconf_350.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (R : (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))) →
-        ScheideReplacementData G k e0 phi T C D d) (alpha : Fin k) (L : ScheideLastExitPath G k e0
-        phi T C D R alpha) (hdef : alpha ∈ DefectiveColors G phi (TreeSequenceVertexSet T)),
-    let d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T)) := (⟨alpha, hdef⟩ :
-        ↥(DefectiveColors G phi (TreeSequenceVertexSet T)));
-    let VT : Finset V := TreeSequenceVertexSet T;
-    let XA : Finset V := VT ∪ {(R d).u1, (R d).u2};
-    let y0 : V := C.y (⟨(0 : ℕ), lt_of_lt_of_le Nat.zero_lt_two C.p_ge_two⟩ : Fin C.p); y0 ∈ XA →
-        (
-    ∀ (n : ℕ) (y x : V) (e : E), n + (2 : ℕ) ≤ (↑L.lastIndex : ℕ) → L.path.getVert n = Sum.inl y →
-        y ∈ XA → L.path.getVert (n + (1 : ℕ)) = Sum.inr e → L.path.getVert (n + (2 : ℕ)) = Sum.inl
-        x → x ∉ XA → False) →
-    ∀ n ≤ (↑L.lastIndex : ℕ),
-    ∀ (x : V), L.path.getVert n = Sum.inl x → x ∈ XA := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D R alpha L hdef d VT XA y0 hy0XA hnoDeparture n
-  induction n using Nat.strong_induction_on with
-  | h n ih =>
-      intro hn x hx
-      by_cases hn0 : n = 0
-      · subst n
-        rw [L.path.getVert_zero] at hx
-        injection hx with hxe
-        subst x
-        exact hy0XA
-      by_cases hn1 : n = 1
-      · have ha := L.path.adj_getVert_succ (i := 0) (by
-          have h := L.followingVertex
-          omega)
-        subst n
-        rw [L.path.getVert_zero, hx] at ha
-        simp [TwoColorIncidenceGraph] at ha
-      · have hprev := L.path.adj_getVert_succ (i := n - 1) (by
-          have h := L.followingVertex
-          omega)
-        rw [show n - 1 + 1 = n by omega, hx] at hprev
-        cases hmid : L.path.getVert (n - 1) with
-        | inl z =>
-            rw [hmid] at hprev
-            simp [TwoColorIncidenceGraph] at hprev
-        | inr e =>
-            have hbefore := L.path.adj_getVert_succ (i := n - 2) (by
-              have h := L.followingVertex
-              omega)
-            rw [show n - 2 + 1 = n - 1 by omega, hmid] at hbefore
-            cases hleft : L.path.getVert (n - 2) with
-            | inl y =>
-                rw [hleft] at hbefore
-                simp only [TwoColorIncidenceGraph] at hbefore
-                have hy := ih (n - 2) (by omega) (by omega) y hleft
-                by_cases hxXA : x ∈ XA
-                · exact hxXA
-                · exfalso
-                  apply hnoDeparture (n - 2) y x e (by omega)
-                    hleft hy
-                    (by simpa [show n - 2 + 1 = n - 1 by omega] using hmid)
-                    (by simpa [show n - 2 + 2 = n by omega] using hx) hxXA
-            | inr q =>
-                rw [hleft] at hbefore
-                simp [TwoColorIncidenceGraph] at hbefore
-
-private theorem helper_branch_400.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (R : (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))) →
-        ScheideReplacementData G k e0 phi T C D d) (alpha : Fin k) (L : ScheideLastExitPath G k e0
-        phi T C D R alpha) (hdef : alpha ∈ DefectiveColors G phi (TreeSequenceVertexSet T)),
-    let d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T)) := (⟨alpha, hdef⟩ :
-        ↥(DefectiveColors G phi (TreeSequenceVertexSet T)));
-    let VT : Finset V := TreeSequenceVertexSet T;
-    let XA : Finset V := VT ∪ {(R d).u1, (R d).u2};
-    let X : Finset V := ScheideEnlargedVertexSet R;
-    let y0 : V := C.y (⟨(0 : ℕ), lt_of_lt_of_le Nat.zero_lt_two C.p_ge_two⟩ : Fin C.p); XA ⊆ X → (
-    ∀ n ≤ (↑L.lastIndex : ℕ),
-    ∀ (x : V), L.path.getVert n = Sum.inl x → x ∈ XA) →
-    ∀ (f : E), f ∈ BoundaryEdges G X ∧ Sum.inr f ∈ TwoColorComponent G phi D.alpha0 alpha (Sum.inl
-        y0) → f = L.crossing := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D R alpha L hdef d VT XA X y0 hXAsubX hconf f hf
-  obtain ⟨u, hu, w, hw, hends⟩ : ∃ u ∈ X, ∃ w ∉ X, G.ends f = s(u, w) := by
-    simpa [X, BoundaryEdges] using hf.1
-  have hneuw : u ≠ w := by
-    intro h
-    exact G.loopless f u (h ▸ hends)
-  have hfsupport : Sum.inr f ∈ L.path.support := by
-    have hcomponent := hf.2
-    rw [← L.pathSpans] at hcomponent
-    exact hcomponent
-  obtain ⟨n, hnget, hnle⟩ :=
-    SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hfsupport
-  have hnpos : 0 < n := by
-    by_cases hnzero : n = 0
-    · subst n
-      rw [L.path.getVert_zero] at hnget
-      cases hnget
-    · omega
-  have hnlt : n < L.path.length := by
-    by_contra hnl
-    have heq : n = L.path.length := by omega
-    subst n
-    rw [L.path.getVert_length] at hnget
-    cases hnget
-  have hprev := L.path.adj_getVert_succ (i := n - 1) (by omega)
-  have hnext := L.path.adj_getVert_succ (i := n) hnlt
-  rw [show n - 1 + 1 = n by omega, hnget] at hprev
-  have hprevExists : ∃ vprev : V, L.path.getVert (n - 1) = Sum.inl vprev := by
-    cases hprevVert : L.path.getVert (n - 1) with
-    | inl vprev => exact ⟨vprev, rfl⟩
-    | inr q =>
-        rw [hprevVert] at hprev
-        simp [TwoColorIncidenceGraph] at hprev
-  obtain ⟨vprev, hprevVert⟩ := hprevExists
-  rw [hprevVert] at hprev
-  simp only [TwoColorIncidenceGraph, Incident] at hprev
-  rw [hnget] at hnext
-  have hnextExists : ∃ vnext : V, L.path.getVert (n + 1) = Sum.inl vnext := by
-    cases hnextVert : L.path.getVert (n + 1) with
-    | inl vnext => exact ⟨vnext, rfl⟩
-    | inr q =>
-        rw [hnextVert] at hnext
-        simp [TwoColorIncidenceGraph] at hnext
-  obtain ⟨vnext, hnextVert⟩ := hnextExists
-  rw [hnextVert] at hnext
-  simp only [TwoColorIncidenceGraph, Incident] at hnext
-  have hprevEnds : vprev = u ∨ vprev = w := by
-    rw [hends] at hprev
-    simpa [Sym2.mem_iff] using hprev.1
-  have hnextEnds : vnext = u ∨ vnext = w := by
-    rw [hends] at hnext
-    simpa [Sym2.mem_iff] using hnext.1
-  have hvne : vprev ≠ vnext := by
-    intro heq
-    have hidx := L.pathSimple.getVert_injOn
-      (show n - 1 ≤ L.path.length by omega)
-      (show n + 1 ≤ L.path.length by omega)
-      (by rw [hprevVert, hnextVert, heq])
-    omega
-  have hprevXor : (vprev ∈ X ∧ vnext ∉ X) ∨
-      (vprev ∉ X ∧ vnext ∈ X) := by
-    rcases hprevEnds with hpu | hpw <;> rcases hnextEnds with hnu | hnw
-    · exfalso
-      apply hvne
-      exact hpu.trans hnu.symm
-    · left
-      constructor
-      · simpa [hpu] using hu
-      · simpa [hnw] using hw
-    · right
-      constructor
-      · simpa [hpw] using hw
-      · simpa [hnu] using hu
-    · exfalso
-      apply hvne
-      exact hpw.trans hnw.symm
-  have hprevIn : n - 1 ≤ L.lastIndex.val := by
-    rcases hprevXor with hcase | hcase
-    · by_contra hnot
-      have hout := L.afterLastOutside ⟨n - 1, by
-        have h := hnlt
-        omega⟩ (by
-          change L.lastIndex.val < n - 1
-          omega)
-        vprev hprevVert
-      exact hout hcase.1
-    · have hnextIn : n + 1 ≤ L.lastIndex.val := by
-        by_contra hbad
-        have hout := L.afterLastOutside ⟨n + 1, by
-          have h := hnlt
-          omega⟩ (by
-            change L.lastIndex.val < n + 1
-            omega)
-          vnext hnextVert
-        exact hout hcase.2
-      exact False.elim (hcase.1 (hXAsubX (hconf (n - 1) (by omega)
-        vprev hprevVert)))
-  have hnextOut : ¬ n + 1 ≤ L.lastIndex.val := by
-    by_contra hnext
-    have hvnextX := hXAsubX (hconf (n + 1) hnext vnext hnextVert)
-    rcases hprevXor with hcase | hcase
-    · exact hcase.2 hvnextX
-    · exact hcase.1 (hXAsubX (hconf (n - 1) hprevIn vprev hprevVert))
-  have hidx : n = L.lastIndex.val + 1 := by
-    have hsub : n - 1 + 1 ≤ L.lastIndex.val + 1 :=
-      Nat.succ_le_succ hprevIn
-    have hle : n ≤ L.lastIndex.val + 1 := by
-      simpa [Nat.sub_add_cancel (by omega : 1 ≤ n)] using hsub
-    have hneq : n ≠ L.lastIndex.val := by
-      intro heq
-      have hbad := hnget
-      rw [heq, L.lastInsideAt] at hbad
-      cases hbad
-    have hgt : L.lastIndex.val < n := by
-      by_contra hnot
-      have hnle : n ≤ L.lastIndex.val := by omega
-      have hsucc : n + 1 ≤ L.lastIndex.val := by omega
-      exact hnextOut hsucc
-    have hge : L.lastIndex.val + 1 ≤ n := by omega
-    omega
-  have heq : (Sum.inr f : Sum V E) = Sum.inr L.crossing := by
-    rw [← hnget, hidx, L.crossingAt]
-  injection heq
 
 theorem ScheideOriginalDefectiveConfinement {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -578,13 +347,18 @@ theorem ScheideOriginalDefectiveConfinement {V E : Type*}
     exact ⟨hcrossXA, L.crossingColor⟩
   have hnoDeparture := @helper_hnoDeparture_298 V E inferInstance inferInstance inferInstance
       inferInstance G k e0 phi T C D R alpha L hdef hy0XA hunique hXAclosed hcrossEq
-  have hconf := @helper_hconf_350 V E inferInstance inferInstance inferInstance inferInstance G k e0
-      phi T C D R alpha L hdef hy0XA hnoDeparture
+  have hconf := TwoColorWalk.confinedBefore L.path XA L.lastIndex.val
+    (by have := L.followingVertex; omega) hy0XA hnoDeparture
   refine ⟨hf0BC, hunique, ?_, ?_⟩
   · intro j hj x hx
     exact hconf j.val hj x hx
-  · exact @helper_branch_400 V E inferInstance inferInstance inferInstance inferInstance G k e0
-      phi T C D R alpha L hdef hXAsubX hconf
+  · intro f hf
+    exact TwoColorWalk.lastBoundaryEdgeUnique L.path L.pathSimple X XA hXAsubX
+      L.lastIndex L.lastInside L.lastInsideAt L.crossing L.crossingAt
+      L.afterLastOutside hconf f hf.1 (by
+        have member := hf.2
+        rw [← L.pathSpans] at member
+        exact member)
 end GoldbergSeymour
 
 end

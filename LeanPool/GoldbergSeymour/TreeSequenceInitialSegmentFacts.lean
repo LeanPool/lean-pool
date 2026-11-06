@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequencePrefix
+
 public import LeanPool.GoldbergSeymour.TreeVertexOrder
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
@@ -115,6 +117,39 @@ theorem vertex_not_mem_after {initial tree : TreeSequence G e0}
   have bound := index.isLt
   change index.val = position.val at equal
   omega
+
+/-- Every nonempty prefix is an initial segment of its source tree. -/
+theorem prefix_segment (tree : TreeSequence G e0) (length : ℕ)
+    (positive : 1 ≤ length) (bound : length ≤ tree.length) :
+    TreeSequenceInitialSegment (TreeSequencePrefix tree length positive bound) tree := by
+  exact ⟨bound, fun _ => rfl, fun _ => rfl⟩
+
+/-- Prefixes of the same tree are nested in the order of their lengths. -/
+theorem prefix_prefix (tree : TreeSequence G e0) (first last : ℕ)
+    (firstPositive : 1 ≤ first) (lastPositive : 1 ≤ last)
+    (firstBound : first ≤ tree.length) (lastBound : last ≤ tree.length)
+    (ordered : first ≤ last) :
+    TreeSequenceInitialSegment
+      (TreeSequencePrefix tree first firstPositive firstBound)
+      (TreeSequencePrefix tree last lastPositive lastBound) := by
+  refine ⟨ordered, ?_, ?_⟩
+  · intro index
+    change tree.vertex _ = tree.vertex _
+    congr 1
+  · intro index
+    change tree.edge _ = tree.edge _
+    congr 1
+
+
+/-- A prefix of an extension contains an initial segment whose length is below its cutoff. -/
+theorem prefix_of_segment {initial tree : TreeSequence G e0}
+    (segment : TreeSequenceInitialSegment initial tree) (length : ℕ)
+    (lower : initial.length ≤ length) (upper : length ≤ tree.length) :
+    TreeSequenceInitialSegment initial
+      (TreeSequencePrefix tree length (initial.positive.trans lower) upper) := by
+  exact (prefix_segment tree length (initial.positive.trans lower) upper).of_common_extension
+    segment lower
+
 
 end GoldbergSeymour.TreeSequenceInitialSegment
 

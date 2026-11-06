@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesPrefixFacts
+
 public import LeanPool.GoldbergSeymour.TashkinovSeriesDataPrefix
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
 public import LeanPool.GoldbergSeymour.TashkinovStoredColorsPrefix
@@ -42,22 +44,6 @@ private abbrev helperBranch286Conditions.{u_1, u_2} : Prop :=
     ⟩ : Fin (m + (1 : ℕ)))), prefixCert ≍ TashkinovSeriesStep.initial triple seedLength
         initialColoring initialStored initialEdges initialKind initialVertex initialOutside
         initialDelta initialGamma initialClosure
-
-private abbrev helperNoRevisiting362Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] {G : LooplessMultigraph V E}
-        {k rounds : ℕ} {e0 : E} (data : TashkinovSeriesData G k rounds e0) (m : ℕ) (hm : m ≤
-        rounds) (idx : Fin rounds), ¬Nonempty (RevisitingExtensionCertificate data idx.castSucc) →
-    ∀ (_ : MaximumDefectiveChoice G e0 (data.tree idx.succ.castSucc) (TashkinovStoredColors data
-        idx.castSucc) (data.coloring idx.castSucc)) (_ : Fin k), (↑idx : ℕ) + (1 : ℕ) ≤ m →
-    ∀ (hidx : (↑idx : ℕ) < m),
-    let idx' : Fin m := (⟨(↑idx : ℕ), hidx⟩ : Fin m); (TashkinovSeriesDataPrefix m hm
-        data).coloring idx'.castSucc = data.coloring idx.castSucc → (TashkinovSeriesDataPrefix m
-        hm data).tree idx'.succ.castSucc = data.tree idx.succ.castSucc →
-        (TashkinovSeriesDataPrefix m hm data).tree idx'.castSucc.succ = data.tree
-        idx.castSucc.succ → TashkinovStoredColors (TashkinovSeriesDataPrefix m hm data)
-        idx'.castSucc = TashkinovStoredColors data idx.castSucc → ¬Nonempty
-        (RevisitingExtensionCertificate (TashkinovSeriesDataPrefix m hm data) idx'.castSucc)
 
 private noncomputable abbrev helperCycle365.{u_1, u_2} :
     open scoped Classical in
@@ -612,235 +598,6 @@ private abbrev helperPrefixCert1166Conditions.{u_1, u_2} : Prop :=
         idx'.castSucc choice'.selected choice'.vertex gamma), TashkinovSeriesStep G k m e0 input
         (TashkinovSeriesDataPrefix m hm data) idx'.succ
 
-private theorem helper_noRevisiting_120.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] {G : LooplessMultigraph V E}
-        {k rounds : ℕ} {e0 : E} (data : TashkinovSeriesData G k rounds e0) (m : ℕ) (hm : m ≤
-        rounds) (idx : Fin rounds), ¬Nonempty (RevisitingExtensionCertificate data idx.castSucc) →
-    ∀ (_ : MaximumDefectiveChoice G e0 (data.tree idx.succ.castSucc) (TashkinovStoredColors data
-        idx.castSucc) (data.coloring idx.castSucc)), (↑idx : ℕ) + (1 : ℕ) ≤ m →
-    ∀ (hidx : (↑idx : ℕ) < m),
-    let idx' : Fin m := (⟨(↑idx : ℕ), hidx⟩ : Fin m); (TashkinovSeriesDataPrefix m hm
-        data).coloring idx'.castSucc = data.coloring idx.castSucc → (TashkinovSeriesDataPrefix m
-        hm data).tree idx'.succ.castSucc = data.tree idx.succ.castSucc →
-        (TashkinovSeriesDataPrefix m hm data).tree idx'.castSucc.succ = data.tree
-        idx.castSucc.succ → TashkinovStoredColors (TashkinovSeriesDataPrefix m hm data)
-        idx'.castSucc = TashkinovStoredColors data idx.castSucc → ¬Nonempty
-        (RevisitingExtensionCertificate (TashkinovSeriesDataPrefix m hm data) idx'.castSucc) := by
-  classical
-  intro V E _ _ G k rounds e0 data m hm idx noRevisiting choice hidxSucc hidx idx' hprev htree
-      htreeCurrent hstored
-  rintro ⟨r⟩
-  apply noRevisiting
-  let earlier' : Fin (rounds + 1) := Fin.castLE (by omega) r.earlier
-  have hkindEarlier : (TashkinovSeriesDataPrefix m hm data).kind
-      r.earlier = data.kind earlier' := by rfl
-  have hgammaEarlier : (TashkinovSeriesDataPrefix m hm data).gamma
-      r.earlier = data.gamma earlier' := by rfl
-  have hdeltaEarlier : (TashkinovSeriesDataPrefix m hm data).delta
-      r.earlier = data.delta earlier' := by rfl
-  have htreeEarlier : (TashkinovSeriesDataPrefix m hm data).tree
-      r.earlier.castSucc = data.tree earlier'.castSucc := by rfl
-  let cycle' : TwoColorCycle G (data.coloring idx.castSucc)
-      r.gamma r.delta := {
-    base := r.cycle.base
-    walk := @Eq.ndrec (PartialEdgeColoring E k)
-      ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc)
-      (fun phi => (TwoColorIncidenceGraph G phi r.gamma r.delta).Walk
-        r.cycle.base r.cycle.base)
-      r.cycle.walk (data.coloring idx.castSucc) hprev
-    isCycle := by
-      dsimp
-      cases hprev
-      exact r.cycle.isCycle
-  }
-  let returnPath' : (TwoColorIncidenceGraph G (data.coloring idx.castSucc)
-      r.gamma r.delta).Walk (Sum.inr r.edge) (Sum.inl r.returnVertex) :=
-    @Eq.ndrec (PartialEdgeColoring E k)
-      ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc)
-      (fun phi => (TwoColorIncidenceGraph G phi r.gamma r.delta).Walk
-        (Sum.inr r.edge) (Sum.inl r.returnVertex))
-      r.returnPath (data.coloring idx.castSucc) hprev
-  refine ⟨{
-    earlier := earlier'
-    earlierPositive := by simpa [earlier'] using r.earlierPositive
-    earlierAtMost := by simpa [earlier', idx'] using r.earlierAtMost
-    earlierPE := by
-      simpa [hkindEarlier] using r.earlierPE
-    interveningRevisiting := ?_
-    gamma := r.gamma
-    delta := r.delta
-    earlierGamma := by
-      simpa [hgammaEarlier] using r.earlierGamma
-    earlierDelta := by
-      simpa [hdeltaEarlier] using r.earlierDelta
-    cycle := cycle'
-    meetsEarlier := by
-      rcases r.meetsEarlier with ⟨v, hv, hc⟩
-      refine ⟨v, ?_, ?_⟩
-      · rwa [htreeEarlier] at hv
-      · dsimp [cycle']
-        cases hprev
-        exact hc
-    leavesCurrent := by
-      rcases r.leavesCurrent with ⟨v, hv, hc⟩
-      refine ⟨v, ?_, ?_⟩
-      · rwa [htreeCurrent] at hv
-      · dsimp [cycle']
-        cases hprev
-        exact hc
-    edge := r.edge
-    edgeOnCycle := by
-      dsimp [cycle']
-      cases hprev
-      exact r.edgeOnCycle
-    edgeBoundary := by
-      simpa only [htreeCurrent] using r.edgeBoundary
-    insideEndpoint := r.insideEndpoint
-    outsideEndpoint := r.outsideEndpoint
-    insideInCurrent := by
-      simpa only [htreeCurrent] using r.insideInCurrent
-    outsideNotCurrent := by
-      simpa only [htreeCurrent] using r.outsideNotCurrent
-    edgeEnds := r.edgeEnds
-    returnVertex := r.returnVertex
-    returnInEarlier := by
-      simpa [htreeEarlier] using r.returnInEarlier
-    returnPath := returnPath'
-    returnPathIsPath := by
-      dsimp [returnPath']
-      cases hprev
-      exact r.returnPathIsPath
-    returnPathOnCycle := by
-      dsimp [returnPath', cycle']
-      cases hprev
-      exact r.returnPathOnCycle
-    returnPathInternal := by
-      intro v hv
-      have hv' : Sum.inl v ∈ r.returnPath.support := by
-        dsimp [returnPath'] at hv
-        cases hprev
-        exact hv
-      simpa only [htreeCurrent] using r.returnPathInternal v hv'
-  }⟩
-  intro j hjpos hjafter hjatMost
-  have hjle : j.val ≤ idx.val := by
-    simpa [idx'] using hjatMost
-  have hjm : j.val < m + 1 := by omega
-  let j' : Fin (m + 1) := ⟨j.val, hjm⟩
-  have hstep := r.interveningRevisiting j' (by simpa [j'] using hjpos)
-    (by simpa [j', earlier'] using hjafter)
-    (by simpa [j', idx'] using hjatMost)
-  have hkindJ : (TashkinovSeriesDataPrefix m hm data).kind j' =
-      data.kind j := by rfl
-  simpa [hkindJ] using hstep
-
-private theorem helper_noRevisiting_362.{u_1, u_2} :
-    helperNoRevisiting362Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ G k rounds e0 data m hm idx noRevisiting choice gamma hidxSucc hidx idx' hprev
-      htree htreeCurrent hstored
-  rintro ⟨r⟩
-  apply noRevisiting
-  let earlier' : Fin (rounds + 1) := Fin.castLE (by omega) r.earlier
-  have hkindEarlier : (TashkinovSeriesDataPrefix m hm data).kind
-      r.earlier = data.kind earlier' := by rfl
-  have hgammaEarlier : (TashkinovSeriesDataPrefix m hm data).gamma
-      r.earlier = data.gamma earlier' := by rfl
-  have hdeltaEarlier : (TashkinovSeriesDataPrefix m hm data).delta
-      r.earlier = data.delta earlier' := by rfl
-  have htreeEarlier : (TashkinovSeriesDataPrefix m hm data).tree
-      r.earlier.castSucc = data.tree earlier'.castSucc := by rfl
-  let cycle' : TwoColorCycle G (data.coloring idx.castSucc)
-      r.gamma r.delta := {
-    base := r.cycle.base
-    walk := @Eq.ndrec (PartialEdgeColoring E k)
-      ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc)
-      (fun phi => (TwoColorIncidenceGraph G phi r.gamma r.delta).Walk
-        r.cycle.base r.cycle.base)
-      r.cycle.walk (data.coloring idx.castSucc) hprev
-    isCycle := by
-      dsimp
-      cases hprev
-      exact r.cycle.isCycle
-  }
-  let returnPath' : (TwoColorIncidenceGraph G (data.coloring idx.castSucc)
-      r.gamma r.delta).Walk (Sum.inr r.edge) (Sum.inl r.returnVertex) :=
-    @Eq.ndrec (PartialEdgeColoring E k)
-      ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc)
-      (fun phi => (TwoColorIncidenceGraph G phi r.gamma r.delta).Walk
-        (Sum.inr r.edge) (Sum.inl r.returnVertex))
-      r.returnPath (data.coloring idx.castSucc) hprev
-  refine ⟨{
-    earlier := earlier'
-    earlierPositive := by simpa [earlier'] using r.earlierPositive
-    earlierAtMost := by simpa [earlier', idx'] using r.earlierAtMost
-    earlierPE := by simpa [hkindEarlier] using r.earlierPE
-    interveningRevisiting := ?_
-    gamma := r.gamma
-    delta := r.delta
-    earlierGamma := by simpa [hgammaEarlier] using r.earlierGamma
-    earlierDelta := by simpa [hdeltaEarlier] using r.earlierDelta
-    cycle := cycle'
-    meetsEarlier := by
-      rcases r.meetsEarlier with ⟨v, hv, hc⟩
-      refine ⟨v, ?_, ?_⟩
-      · rwa [htreeEarlier] at hv
-      · dsimp [cycle']
-        cases hprev
-        exact hc
-    leavesCurrent := by
-      rcases r.leavesCurrent with ⟨v, hv, hc⟩
-      refine ⟨v, ?_, ?_⟩
-      · rwa [htreeCurrent] at hv
-      · dsimp [cycle']
-        cases hprev
-        exact hc
-    edge := r.edge
-    edgeOnCycle := by
-      dsimp [cycle']
-      cases hprev
-      exact r.edgeOnCycle
-    edgeBoundary := by
-      simpa only [htreeCurrent] using r.edgeBoundary
-    insideEndpoint := r.insideEndpoint
-    outsideEndpoint := r.outsideEndpoint
-    insideInCurrent := by
-      simpa only [htreeCurrent] using r.insideInCurrent
-    outsideNotCurrent := by
-      simpa only [htreeCurrent] using r.outsideNotCurrent
-    edgeEnds := r.edgeEnds
-    returnVertex := r.returnVertex
-    returnInEarlier := by
-      simpa [htreeEarlier] using r.returnInEarlier
-    returnPath := returnPath'
-    returnPathIsPath := by
-      dsimp [returnPath']
-      cases hprev
-      exact r.returnPathIsPath
-    returnPathOnCycle := by
-      dsimp [returnPath', cycle']
-      cases hprev
-      exact r.returnPathOnCycle
-    returnPathInternal := by
-      intro v hv
-      have hv' : Sum.inl v ∈ r.returnPath.support := by
-        dsimp [returnPath'] at hv
-        cases hprev
-        exact hv
-      simpa only [htreeCurrent] using r.returnPathInternal v hv'
-  }⟩
-  intro j hjpos hjafter hjatMost
-  have hjle : j.val ≤ idx.val := by simpa [idx'] using hjatMost
-  have hjm : j.val < m + 1 := by omega
-  let j' : Fin (m + 1) := ⟨j.val, hjm⟩
-  have hstep := r.interveningRevisiting j' (by simpa [j'] using hjpos)
-    (by simpa [j', earlier'] using hjafter)
-    (by simpa [j', idx'] using hjatMost)
-  have hkindJ : (TashkinovSeriesDataPrefix m hm data).kind j' =
-      data.kind j := by rfl
-  simpa [hkindJ] using hstep
-
 private theorem helper_branch_286.{u_1, u_2} :
     helperBranch286Conditions.{u_1, u_2} := by
   classical
@@ -1175,7 +932,7 @@ private theorem helper_branch_1369.{u_1, u_2} :
     }
   have noRevisiting' : ¬ Nonempty (RevisitingExtensionCertificate
       (TashkinovSeriesDataPrefix m hm data) idx'.castSucc) := by
-    apply helper_noRevisiting_362 <;> assumption
+    exact TashkinovSeriesDataPrefix.noRevisiting data m hm idx noRevisiting hidx
   have gammaRule' : ParallelExtensionColor
       (TashkinovSeriesDataPrefix m hm data) idx'.castSucc
       choice'.selected choice'.vertex gamma := by
@@ -1336,7 +1093,7 @@ private theorem helper_branch_1414.{u_1, u_2} :
     }
   have noRevisiting' : ¬ Nonempty (RevisitingExtensionCertificate
       (TashkinovSeriesDataPrefix m hm data) idx'.castSucc) := by
-    apply helper_noRevisiting_120 <;> assumption
+    exact TashkinovSeriesDataPrefix.noRevisiting data m hm idx noRevisiting hidx
   have prefixCert : TashkinovSeriesStep G k m e0 input
       (TashkinovSeriesDataPrefix m hm data) idx'.succ := by
     apply TashkinovSeriesStep.SE (input := input) (i := idx') (choice := choice')

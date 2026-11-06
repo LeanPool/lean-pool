@@ -2384,41 +2384,6 @@ theorem helper_hpS_844.{u_1, u_2} :
   rw [dite_eq_left hn]
   exact Finset.min'_le candidates _ hm
 
-theorem helper_chain_775.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let old : HierarchyCounterexample P.replacementBase := P.counterexample;
-  let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-    old.hierarchy;
-  (∀ {X Y Z : TreeSequence G e0},
-      TreeSequenceInitialSegment X Y →
-        TreeSequenceInitialSegment Y Z → TreeSequenceInitialSegment X Z) →
-  ∀ (j : ℕ) (hj : j < H.dividerCount + (2 : ℕ)) (i : Fin (H.dividerCount + (2 : ℕ))),
-  (↑i : ℕ) ≤ j →
-  TreeSequenceInitialSegment (H.stage i)
-    (H.stage (⟨j, hj⟩ : Fin (H.dividerCount + (2 : ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P old H trans j
-  induction j with
-  | zero =>
-    intro hj i hi
-    have he : i = 0 := Fin.ext (Nat.eq_zero_of_le_zero hi)
-    subst i
-    exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  | succ j ih =>
-    intro hj i hi
-    by_cases heq : i.val = j + 1
-    · have he : i = ⟨j + 1, hj⟩ := Fin.ext heq
-      subst i
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    · exact trans (ih (by omega) i (by omega)) (H.nested ⟨j, by omega⟩)
-
 theorem helper_consecutive_852.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]

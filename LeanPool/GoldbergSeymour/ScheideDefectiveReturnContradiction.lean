@@ -8,6 +8,7 @@ module
 
 
 
+
 public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
 public import LeanPool.GoldbergSeymour.ScheideDefectiveThirdBoundaryEdge
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumMissingCounts
@@ -1110,9 +1111,7 @@ theorem ScheideDefectiveReturnContradiction {V E : Type*}
       (hf : rho f = some c) (v : V) (hv : v ∈ TreeSequenceVertexSet S)
       (hmiss : c ∈ MissingColors G rho v) :
       TashkinovTree G e0 rho U := by
-    exact @SharedFacts.ScheideDefectiveThirdBoundaryEdge.tashkinov_adjoin V E inferInstance
-        inferInstance inferInstance
-        inferInstance G k e0 phi T C D d R rho S U f hadjoin hS c hf v hv hmiss
+    exact TashkinovTree.adjoinEdge rho S U f hadjoin hS c hf v hv hmiss
   exact @helper_continuation_291 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 phi T C D d R hproper1 hone1 hstable1 hproperJ2 honeJ2 hdeltaMissingJ2 Sgamma SgammaJ
       hSgammaTash hSgammaVertices hSgammaJTash hSgammaJVertices f2 z2 u2 hf2ends hz2Z hu2X
