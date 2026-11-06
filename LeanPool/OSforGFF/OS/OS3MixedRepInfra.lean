@@ -375,7 +375,9 @@ private lemma heatKernelPositionSpace_comp_continuousOn :
       (fun p : ℝ × SpaceTime × SpaceTime => (p.1, ‖timeReflection p.2.1 - p.2.2‖))
       (Set.Ioi 0 ×ˢ Set.univ) (Set.Ioi 0 ×ˢ Set.univ) :=
     fun _ ⟨hs, _⟩ => ⟨hs, Set.mem_univ _⟩
-  exact heatKernelPositionSpace_continuousOn.comp h_proj h_maps
+  exact heatKernelPositionSpace_continuousOn.comp'
+    (f := fun p : ℝ × SpaceTime × SpaceTime =>
+      (p.1, ‖timeReflection p.2.1 - p.2.2‖)) h_proj h_maps
 
 /-- **Heat kernel composition is AEStronglyMeasurable.**
 
@@ -594,88 +596,34 @@ theorem schwinger_bound_integrable_fubini (m : ℝ) [Fact (0 < m)] (f : TestFunc
         ‖f p.2.1‖ * Cf * Real.exp (-p.1 * m^2) *
           heatKernelPositionSpace p.1 ‖timeReflection p.2.1 - p.2.2‖)
       ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) := by
-  classical
-  -- Mark unused parameters as used (they are part of the hypotheses contract).
+  -- These hypotheses are part of the existing statement.
   have _ := hCf
   have _ := h_y_eq_one
   let F : ℝ × SpaceTime × SpaceTime → ℝ := fun p =>
     ‖f p.2.1‖ * Cf * Real.exp (-p.1 * m^2) *
       heatKernelPositionSpace p.1 ‖timeReflection p.2.1 - p.2.2‖
   have h_meas : AEStronglyMeasurable F
-      ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) := by
-    have h_f : AEStronglyMeasurable (fun p : ℝ × SpaceTime × SpaceTime => ‖f p.2.1‖)
-        ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) := by
-      have hf_cont : Continuous (fun p : ℝ × SpaceTime × SpaceTime => f p.2.1) :=
-        (SchwartzMap.continuous f).comp (continuous_snd.fst)
-      exact hf_cont.aestronglyMeasurable.norm
-    have h_exp : AEStronglyMeasurable (fun p : ℝ × SpaceTime × SpaceTime =>
-        Real.exp (-p.1 * m^2)) ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) := by
-      have h_cont : Continuous (fun p : ℝ × SpaceTime × SpaceTime => Real.exp (-p.1 * m^2)) :=
-        (Real.continuous_exp.comp (continuous_fst.neg.mul continuous_const))
-      exact h_cont.aestronglyMeasurable
-    have h_heat : AEStronglyMeasurable
-        (fun p : ℝ × SpaceTime × SpaceTime =>
-          heatKernelPositionSpace p.1 ‖timeReflection p.2.1 - p.2.2‖)
-        ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) :=
+      ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) :=
+    ((((f.continuous.comp continuous_snd.fst).aestronglyMeasurable.norm).mul_const Cf).mul
+      (Real.continuous_exp.comp
+        (continuous_fst.neg.mul continuous_const)).aestronglyMeasurable).mul
       heatKernelPositionSpace_aestronglyMeasurable_real
-    have h_fCexp : AEStronglyMeasurable
-        (fun p : ℝ × SpaceTime × SpaceTime => (‖f p.2.1‖ * Cf) * Real.exp (-p.1 * m^2))
-        ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) :=
-      (h_f.mul_const Cf).mul h_exp
-    have h_all : AEStronglyMeasurable
-        (fun p : ℝ × SpaceTime × SpaceTime =>
-          (‖f p.2.1‖ * Cf) * Real.exp (-p.1 * m^2) *
-            heatKernelPositionSpace p.1 ‖timeReflection p.2.1 - p.2.2‖)
-        ((volume.restrict (Set.Ioi 0)).prod (volume.prod volume)) :=
-      h_fCexp.mul h_heat
-    simpa [F, mul_assoc, mul_left_comm, mul_comm] using h_all
   refine (MeasureTheory.integrable_prod_iff (μ := volume.restrict (Set.Ioi 0))
-    (ν := volume.prod volume) h_meas).2 ?_
-  constructor
-  · refine (ae_restrict_mem measurableSet_Ioi).mono ?_
-    intro s hs
-    have hs' : 0 < s := hs
-    exact schwinger_bound_integrable_xy s hs' f Cf m hCf_nonneg h_f_int
-  · -- integrable of s ↦ ∫_{x,y} ‖F(s,x,y)‖
-    have h_exp_ne_zero : (∫ s in Set.Ioi 0, Real.exp (-s * m^2)) ≠ 0 := by
+    (ν := volume.prod volume) h_meas).2 ⟨?_, ?_⟩
+  · exact (ae_restrict_mem measurableSet_Ioi).mono fun s hs =>
+      schwinger_bound_integrable_xy s hs f Cf m hCf_nonneg h_f_int
+  · have h_exp_ne_zero : (∫ s in Set.Ioi 0, Real.exp (-s * m^2)) ≠ 0 := by
       rw [h_exp_int]
-      have hm : m ≠ 0 := ne_of_gt (Fact.out : 0 < m)
-      exact one_div_ne_zero (pow_ne_zero 2 hm)
+      exact one_div_ne_zero (pow_ne_zero 2 (ne_of_gt (Fact.out : 0 < m)))
     have h_exp_intg : Integrable (fun s : ℝ => Real.exp (-s * m^2))
         (volume.restrict (Set.Ioi 0)) :=
       Integrable.of_integral_ne_zero h_exp_ne_zero
-    have h_const : Integrable (fun s : ℝ => (Cf * (∫ x : SpaceTime, ‖f x‖)) *
-        Real.exp (-s * m^2)) (volume.restrict (Set.Ioi 0)) := by
-      have h := h_exp_intg.const_mul (Cf * (∫ x : SpaceTime, ‖f x‖))
-      simpa [mul_comm, mul_left_comm, mul_assoc] using h
-    refine h_const.congr ?_
-    refine (ae_restrict_mem measurableSet_Ioi).mono ?_
-    intro s hs
-    have hs' : 0 < s := hs
-    have h_eq_norm :
-        ∫ p : SpaceTime × SpaceTime, ‖F (s, p.1, p.2)‖ =
-          ∫ p : SpaceTime × SpaceTime,
-            ‖f p.1‖ * Cf * Real.exp (-s * m^2) *
-              heatKernelPositionSpace s ‖timeReflection p.1 - p.2‖ := by
-      refine integral_congr_ae ?_
-      filter_upwards with p
-      have h_nonneg' : 0 ≤ F (s, p.1, p.2) := by
-        simpa [F] using
-          schwinger_bound_integrand_nonneg s hs' f Cf hCf_nonneg m p.1 p.2
-      have : ‖F (s, p.1, p.2)‖ = F (s, p.1, p.2) := by
-        simpa using (Real.norm_of_nonneg h_nonneg')
-      simpa [F, this, mul_assoc]
-    have h_eq :
-        ∫ p : SpaceTime × SpaceTime, ‖F (s, p.1, p.2)‖ =
-          (Cf * (∫ x : SpaceTime, ‖f x‖)) * Real.exp (-s * m^2) := by
-      calc
-        ∫ p : SpaceTime × SpaceTime, ‖F (s, p.1, p.2)‖
-            = ∫ p : SpaceTime × SpaceTime,
-                ‖f p.1‖ * Cf * Real.exp (-s * m^2) *
-                  heatKernelPositionSpace s ‖timeReflection p.1 - p.2‖ := h_eq_norm
-        _ = (Cf * (∫ x : SpaceTime, ‖f x‖)) * Real.exp (-s * m^2) :=
-              schwinger_bound_integrand_integral_xy s hs' f Cf m hCf_nonneg h_f_int
-    exact h_eq.symm
+    refine (h_exp_intg.const_mul (Cf * (∫ x : SpaceTime, ‖f x‖))).congr ?_
+    refine (ae_restrict_mem measurableSet_Ioi).mono fun s hs => ?_
+    exact (schwinger_bound_integrand_integral_xy s hs f Cf m hCf_nonneg h_f_int).symm.trans
+      (integral_congr_ae (Eventually.of_forall fun p =>
+        (Real.norm_of_nonneg
+          (schwinger_bound_integrand_nonneg s hs f Cf hCf_nonneg m p.1 p.2)).symm))
 
 /-- **Bound function for Schwinger integrability is integrable.**
 
@@ -2056,63 +2004,37 @@ lemma schwartz_iterated_integral_integrable (f : TestFunctionℂ)
     (c₁ c₂ : ℝ) (s : ℝ) (hs : 0 < s) :
     Integrable (fun x : SpaceTime => ∫ y : SpaceTime,
       ‖f x‖ * ‖f y‖ * c₁ * Real.exp (-(x 0 + y 0)^2 / (4 * s)) * c₂) volume := by
-  -- Work on the product space and use Fubini/Tonelli via Integrable.integral_prod_left.
   let G : SpaceTime × SpaceTime → ℝ := fun p =>
     ‖f p.1‖ * ‖f p.2‖ * c₁ * Real.exp (-(p.1 0 + p.2 0)^2 / (4 * s)) * c₂
-  have hG_meas : AEStronglyMeasurable G (volume.prod volume) := by
-    have hf : Continuous f := f.continuous
-    have h0 : Continuous (fun a : SpaceTime => a 0) :=
-      PiLp.continuous_apply 2 (fun _ : Fin STDimension => ℝ) 0
-    have hG_cont : Continuous G := by
-      simp only [G]
-      fun_prop (disch := assumption)
-    exact hG_cont.aestronglyMeasurable
-  have hG_int : Integrable G (volume.prod volume) := by
-    -- Bound by |c₁ c₂| * ‖f p.1‖ * ‖f p.2‖ using exp ≤ 1.
-    have h_bound : ∀ p, ‖G p‖ ≤ (|c₁| * |c₂|) * (‖f p.1‖ * ‖f p.2‖) := by
-      intro p
-      have h_exp_le : Real.exp (-(p.1 0 + p.2 0)^2 / (4 * s)) ≤ 1 := by
-        have h_nonneg : 0 ≤ (p.1 0 + p.2 0)^2 / (4 * s) := by
-          have hsq : 0 ≤ (p.1 0 + p.2 0)^2 := sq_nonneg _
-          have hden : 0 < (4 * s) := by linarith only [hs]
-          exact div_nonneg hsq (le_of_lt hden)
-        have hneg' : -(p.1 0 + p.2 0)^2 / (4 * s) = -((p.1 0 + p.2 0)^2 / (4 * s)) := by
-          ring
-        simp_all only [Fin.isValue, exp_le_one_iff, Left.neg_nonpos_iff]
-      have h1 : |Real.exp (-(p.1 0 + p.2 0)^2 / (4 * s))| ≤ 1 := by
-        simpa [abs_of_nonneg (Real.exp_nonneg _)] using h_exp_le
-      have h_nonneg : 0 ≤ (|c₁| * |c₂|) * (‖f p.1‖ * ‖f p.2‖) := by
-        apply mul_nonneg
-        · exact mul_nonneg (abs_nonneg _) (abs_nonneg _)
-        · exact mul_nonneg (norm_nonneg _) (norm_nonneg _)
-      have h2 : (|c₁| * |c₂|) * (‖f p.1‖ * ‖f p.2‖) *
-          |Real.exp (-(p.1 0 + p.2 0)^2 / (4 * s))| ≤
-          (|c₁| * |c₂|) * (‖f p.1‖ * ‖f p.2‖) * 1 := by
-        exact mul_le_mul_of_nonneg_left h1 h_nonneg
-      -- Convert to abs bound
-      have hnorm : ‖G p‖ = (‖f p.1‖ * ‖f p.2‖) * |c₁| *
-          |Real.exp (-(p.1 0 + p.2 0)^2 / (4 * s))| * |c₂| := by
-        simp [G, Real.norm_eq_abs, mul_assoc, abs_of_nonneg (Real.exp_nonneg _)]
-      have h2' : ((‖f p.1‖ * ‖f p.2‖) * |c₁| *
-          |Real.exp (-(p.1 0 + p.2 0)^2 / (4 * s))|) * |c₂| ≤
-          ((‖f p.1‖ * ‖f p.2‖) * |c₁| * 1) * |c₂| := by
-        have h_nonneg' : 0 ≤ (‖f p.1‖ * ‖f p.2‖) * |c₁| := by
-          exact mul_nonneg (mul_nonneg (norm_nonneg _) (norm_nonneg _)) (abs_nonneg _)
-        exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left h1 h_nonneg') (abs_nonneg _)
-      have h2'' : ((‖f p.1‖ * ‖f p.2‖) * |c₁| * 1) * |c₂| =
-          (|c₁| * |c₂|) * (‖f p.1‖ * ‖f p.2‖) := by
-        ring
-      simp_all only [Fin.isValue, exp_le_one_iff, abs_exp, mul_one, norm_eq_abs, ge_iff_le]
-    have h_bound_int : Integrable (fun p : SpaceTime × SpaceTime =>
-        (|c₁| * |c₂|) * (‖f p.1‖ * ‖f p.2‖)) (volume.prod volume) := by
-      have h_prod : Integrable (fun p : SpaceTime × SpaceTime => ‖f p.1‖ * ‖f p.2‖)
-          (volume.prod volume) := hf_int_norm.mul_prod hf_int_norm
-      simpa [mul_assoc] using h_prod.const_mul (|c₁| * |c₂|)
-    exact Integrable.mono' h_bound_int hG_meas (Eventually.of_forall h_bound)
-  -- Conclude by integrating out the second variable.
-  have h_int_left : Integrable (fun x : SpaceTime => ∫ y : SpaceTime, G (x, y)) volume :=
-    hG_int.integral_prod_left
-  simpa [G, mul_assoc, mul_left_comm, mul_comm] using h_int_left
+  have h0 : Continuous (fun a : SpaceTime => a 0) :=
+    PiLp.continuous_apply 2 (fun _ : Fin STDimension => ℝ) 0
+  have h_exp_cont : Continuous (fun p : SpaceTime × SpaceTime =>
+      Real.exp (-(p.1 0 + p.2 0)^2 / (4 * s))) :=
+    Real.continuous_exp.comp
+      ((((h0.comp continuous_fst).add (h0.comp continuous_snd)).pow 2).neg.div_const
+        (4 * s))
+  have hG_meas : AEStronglyMeasurable G (volume.prod volume) :=
+    (((((f.continuous.norm.comp continuous_fst).mul
+      (f.continuous.norm.comp continuous_snd)).mul_const c₁).mul
+      h_exp_cont).mul_const c₂).aestronglyMeasurable
+  have h_bound : ∀ p, ‖G p‖ ≤ (|c₁| * |c₂|) * (‖f p.1‖ * ‖f p.2‖) := by
+    intro p
+    have h_exp : Real.exp (-(p.1 0 + p.2 0)^2 / (4 * s)) ≤ 1 := by
+      apply Real.exp_le_one_iff.mpr
+      exact div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (sq_nonneg _)) (by positivity)
+    calc
+      ‖G p‖ = ‖f p.1‖ * ‖f p.2‖ * |c₁| *
+          Real.exp (-(p.1 0 + p.2 0)^2 / (4 * s)) * |c₂| := by
+        simp only [G, norm_mul, Real.norm_eq_abs, abs_norm, abs_exp]
+      _ ≤ ‖f p.1‖ * ‖f p.2‖ * |c₁| * 1 * |c₂| :=
+        mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left h_exp
+            (mul_nonneg (mul_nonneg (norm_nonneg _) (norm_nonneg _)) (abs_nonneg _)))
+          (abs_nonneg _)
+      _ = (|c₁| * |c₂|) * (‖f p.1‖ * ‖f p.2‖) := by ring
+  exact (Integrable.mono'
+    ((hf_int_norm.mul_prod hf_int_norm).const_mul (|c₁| * |c₂|))
+    hG_meas (Eventually.of_forall h_bound)).integral_prod_left
 
 /-- Bound on F(s, k_sp) using linear vanishing of f.
 
