@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Setup.Walk
 public import LeanPool.RareSubtreePatterns.RegularVariation.Defs
-public import Mathlib.Analysis.Asymptotics.Defs
 
 import LeanPool.RareSubtreePatterns.RegularVariation.Consequences
 
@@ -251,32 +250,34 @@ theorem eventually_abs_mul_sub_le (hT : StableToolkit μ α a) {d : ℕ} {L : �
   have h2m : 2 * m n ≤ N n := by
     have h2 : ((2 * m n : ℕ) : ℝ) ≤ N n := by
       push_cast
-      have := min_le_right δ (1 / 2)
-      have : (0 : ℝ) ≤ N n := by positivity
-      nlinarith
+      have hmin := min_le_right δ (1 / 2)
+      have hnonnegative : (0 : ℝ) ≤ N n := by positivity
+      nlinarith only [hmn', hmin, hnonnegative]
     exact_mod_cast h2
   have hNj : N₀ ≤ N n - j := by omega
   have hj1 : 1 ≤ N n - j := by omega
   have hlow : (1 - ε₂) * a (N n) ≤ a (N n - j) := by
     refine hRVn j ?_
-    have := min_le_left δ (1 / 2)
-    have : (0 : ℝ) ≤ N n := by positivity
-    nlinarith
+    have hmin := min_le_left δ (1 / 2)
+    have hnonnegative : (0 : ℝ) ≤ N n := by positivity
+    nlinarith only [hjR, hmn', hmin, hnonnegative]
   have hup : a (N n - j) ≤ a (N n) := hT.monotone (Nat.sub_le _ _)
   have hb : 0 < a (N n - j) := hT.pos _ hj1
   have hzle : z n ≤ η / 2 * a (N n) := by
     have h := hzn
     rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_pos han] at h
     exact (le_abs_self _).trans h
-  have hhalf : a (N n) / 2 ≤ a (N n - j) := by nlinarith
-  have hxη : |(x : ℝ)| ≤ η * a (N n - j) := by nlinarith
+  have hhalf : a (N n) / 2 ≤ a (N n - j) := by
+    nlinarith only [hlow, hε₂half, han]
+  have hxη : |(x : ℝ)| ≤ η * a (N n - j) := by
+    nlinarith only [hx, hzle, hhalf, hη]
   have hu := hN₀ (N n - j) hNj x hdx hxη
   set B := a (N n - j) with hB
   set A := a (N n) with hA
   set P := walkProb μ ((N n - j : ℕ) : ℤ) x with hP
   have hAB : A / B - 1 ≤ 2 * ε₂ := by
     rw [div_sub_one hb.ne', div_le_iff₀ hb]
-    nlinarith
+    nlinarith only [hlow, hhalf, hε₂pos]
   have hAB0 : 0 ≤ A / B - 1 := by
     rw [sub_nonneg, le_div_iff₀ hb]
     linarith
@@ -295,7 +296,7 @@ theorem eventually_abs_mul_sub_le (hT : StableToolkit μ α a) {d : ℕ} {L : �
       ≤ |(A / B - 1) * (B * P)| + |B * P - L| := abs_add_le _ _
     _ = (A / B - 1) * |B * P| + |B * P - L| := by rw [abs_mul, abs_of_nonneg hAB0]
     _ ≤ (2 * ε₂) * (L + ε / 2) + ε / 2 := by gcongr
-    _ ≤ ε := by nlinarith
+    _ ≤ ε := by nlinarith only [hε₂L, hε₂pos, hε]
 
 /-- Two-sided local bounds `L / (2 a_{N_n}) ≤ Ψ_{N_n - j}(x) ≤ 2L / a_{N_n}`, uniformly over
 `j ≤ m_n` (`m_n = o(N_n)`) and compatible `|x| ≤ z_n` (`z_n = o(a_{N_n})`); e.g.

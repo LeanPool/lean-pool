@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Bridge.ExtremeMeans
 public import LeanPool.RareSubtreePatterns.Bridge.RootMicroscopic
-public import LeanPool.RareSubtreePatterns.Statements.Main
 
 import LeanPool.RareSubtreePatterns.Stable.ToolkitProof
 

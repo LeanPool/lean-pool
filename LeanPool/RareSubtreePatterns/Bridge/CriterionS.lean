@@ -10,7 +10,6 @@ public import LeanPool.RareSubtreePatterns.Setup.Toolkit
 public import LeanPool.RareSubtreePatterns.Setup.Marks
 
 import LeanPool.RareSubtreePatterns.RegularVariation.Consequences
-import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 
 /-!
 # A criterion for Assumption (S): Lemma `lem:critM`

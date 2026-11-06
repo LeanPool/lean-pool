@@ -9,7 +9,6 @@ module
 public import LeanPool.RareSubtreePatterns.DirectApplications.Criteria
 public import LeanPool.RareSubtreePatterns.Patterns.NonFringe
 public import LeanPool.RareSubtreePatterns.Applications.TreeCriteria
-public import LeanPool.RareSubtreePatterns.Stable.Lattice
 
 /-!
 # Raw non-fringe counts: Corollary `cor:Non-fringe Poisson`

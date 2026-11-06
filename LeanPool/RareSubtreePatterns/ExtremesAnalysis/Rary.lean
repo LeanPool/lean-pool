@@ -7,10 +7,7 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.ExtremesAnalysis.Unary
-public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.FieldSimp
 
 /-!
 # Doubly exponential level intensities: centering, thresholds, two-point levels

@@ -6,11 +6,9 @@ Authors: Igor Kortchemski
 
 module
 
-public import LeanPool.RareSubtreePatterns.Statements.Main
 public import LeanPool.RareSubtreePatterns.Bridge.MainTheorems
 public import LeanPool.RareSubtreePatterns.Bridge.EndpointSmoothing
 public import LeanPool.RareSubtreePatterns.Extremes.MaxString
-public import LeanPool.RareSubtreePatterns.Extremes.MaxLeafHeight
 public import LeanPool.RareSubtreePatterns.Extremes.MaxLeafHeightFirstOrder
 
 /-!

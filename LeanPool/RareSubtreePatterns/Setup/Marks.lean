@@ -8,9 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Setup.Walk
 public import LeanPool.RareSubtreePatterns.Declumping.Probability
-public import LeanPool.RareSubtreePatterns.Statements.Defs
-public import Mathlib.Probability.UniformOn
-public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 
 /-!
 # Marks, cutoffs and Assumptions (M), (S), (C)

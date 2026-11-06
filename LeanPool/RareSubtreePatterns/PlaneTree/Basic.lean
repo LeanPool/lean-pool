@@ -7,7 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Statements.Defs
-public import Mathlib.Data.List.Count
 
 /-!
 # Finite plane trees and marked fringe counts

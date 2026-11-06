@@ -10,7 +10,6 @@ public import LeanPool.RareSubtreePatterns.LeafHeight.Consequences
 public import LeanPool.RareSubtreePatterns.Bienayme.Normalization
 public import LeanPool.RareSubtreePatterns.PlaneTree.Patterns
 
-import Mathlib.MeasureTheory.Measure.Real
 
 /-!
 # Leaf-heights of plane trees and the root leaf-height law

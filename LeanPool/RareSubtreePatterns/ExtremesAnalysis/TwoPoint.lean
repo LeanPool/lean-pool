@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Statements.Main
 
-import Mathlib.Tactic.Linarith
 
 /-!
 # Two-point sets, integer levels and subsequence splitting

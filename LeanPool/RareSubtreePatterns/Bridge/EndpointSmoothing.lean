@@ -319,12 +319,15 @@ private theorem abs_div_sub_div_le {π π' β β' L δ₁ δ₂ C : ℝ} (hL : 0
   rw [key]
   have h1 : |(π - π') / β| ≤ 2 * δ₁ / L := by
     rw [abs_div, abs_of_pos hβ0, div_le_div_iff₀ hβ0 hL]
-    nlinarith [abs_nonneg (π - π')]
+    calc |π - π'| * L ≤ δ₁ * L := mul_le_mul_of_nonneg_right hπ hL.le
+      _ = (2 * δ₁) * (L / 2) := by ring
+      _ ≤ (2 * δ₁) * β := mul_le_mul_of_nonneg_left hβ
+        (mul_nonneg (by norm_num) ((abs_nonneg _).trans hπ))
   have h2 : |π' * (β' - β) / (β * β')| ≤ 8 * C * δ₂ / L ^ 2 := by
     rw [abs_div, abs_mul, abs_of_nonneg hπ'0, abs_of_pos (mul_pos hβ0 hβ'0),
       div_le_div_iff₀ (mul_pos hβ0 hβ'0) (by positivity)]
     have hb : |β' - β| ≤ 2 * δ₂ := by rw [abs_sub_comm]; exact hββ'
-    have hbb : L ^ 2 / 4 ≤ β * β' := by nlinarith
+    have hbb : L ^ 2 / 4 ≤ β * β' := by nlinarith only [hβ, hβ', hL]
     calc π' * |β' - β| * L ^ 2 ≤ C * (2 * δ₂) * L ^ 2 := by gcongr
       _ = 8 * C * δ₂ * (L ^ 2 / 4) := by ring
       _ ≤ 8 * C * δ₂ * (β * β') := by gcongr
@@ -550,7 +553,7 @@ theorem eventually_abs_endpointMean_sub_le (hT : StableToolkit μ α a)
     have h2t : ((2 * t : ℕ) : ℝ) ≤ n := by
       push_cast
       have : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-      nlinarith
+      nlinarith only [ht_up, he1, this]
     have : 2 * t ≤ n := by exact_mod_cast h2t
     omega
   have hN1 : 1 ≤ N := le_trans ht1 htN
@@ -636,7 +639,7 @@ theorem eventually_abs_endpointMean_sub_le (hT : StableToolkit μ α a)
       constructor <;> linarith
     have h3 : η / (2 * Ce) * a n ≤ η / (2 * Ce) * (Ce * a t) := by gcongr
     have h4 : η / (2 * Ce) * (Ce * a t) = η * a t / 2 := by field_simp
-    nlinarith
+    linarith only [h2, h1.trans (h3.trans_eq h4)]
   have hB := abs_walkProb_div_sub_div_le (C := Cs) (η := η) hloc hat haN (hβ s hdN hsr)
     (hβ s' hdN' hsr') hδ₂1 hδ₁0.le hds
     (fun x y hx hy hxy => hN₁ t hN₁n x y hx hy hxy) hss'
@@ -652,7 +655,7 @@ theorem eventually_abs_endpointMean_sub_le (hT : StableToolkit μ α a)
       have h3 : δ₂ * (48 * Ce * (Cs + 1)) ≤ ε * L ^ 2 := by
         rw [le_div_iff₀ (by positivity)] at hδ₂2
         exact hδ₂2
-      nlinarith
+      nlinarith only [h3, hδ₂0, hCe0]
     calc a N / a t * (2 * δ₁ / L + 8 * Cs * δ₂ / L ^ 2)
         ≤ Ce * (ε / (6 * Ce) + ε / (6 * Ce)) := by
           rw [h1]
@@ -940,7 +943,7 @@ theorem abs_walkIntegral_le (μ : PMF ℕ) (G : PlaneTree → Prop) {M n : ℕ} 
     have a1 := mul_le_mul_of_nonneg_left h0.2 hε'
     have a2 := mul_le_mul_of_nonneg_left hq1 hε'
     have a4 := mul_le_mul hq1 h2.2 h2.1 zero_le_one
-    nlinarith [h1.2]
+    linarith only [a1, a2, a4, h1.2]
   have hint : ∀ S : Set (Fin M → ℤ), Integrable (S.indicator (1 : (Fin M → ℤ) → ℝ))
       (walkVecLaw μ M) := fun S => integrable_of_abs_le _ 1 fun b => by
     rw [abs_of_nonneg (hI S b).1]

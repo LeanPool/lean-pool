@@ -6,11 +6,8 @@ Authors: Igor Kortchemski
 
 module
 
-public import LeanPool.RareSubtreePatterns.Statements.Main
 public import LeanPool.RareSubtreePatterns.Bridge.CriterionS
 public import LeanPool.RareSubtreePatterns.Bridge.Microscopic
-public import LeanPool.RareSubtreePatterns.Cyclic.UniformVertex
-public import LeanPool.RareSubtreePatterns.Stable.ToolkitProof
 public import LeanPool.RareSubtreePatterns.DirectApplications.FringeCorollary
 
 /-!

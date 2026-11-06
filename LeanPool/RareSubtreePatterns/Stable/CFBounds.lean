@@ -155,7 +155,10 @@ theorem exists_norm_stepCF_pow_le_exp (h : StableDomain μ α a) :
     have h1 := hN₂ (m - 1) hN2
     have hpos' : 0 < a (m - 1) := h.pos _ (by omega)
     rw [show m - 1 + 1 = m by omega, div_lt_iff₀ hpos'] at h1
-    nlinarith
+    calc θ * a m ≤ θ * (2 * a (m - 1)) :=
+          mul_le_mul_of_nonneg_left h1.le hθ0.le
+      _ = 2 * (θ * a (m - 1)) := by ring
+      _ ≤ 2 := by linarith only [hmpred]
   have hm0 : 1 ≤ m := by omega
   have ham : 0 < a m := h.pos m hm0
   have hNm : N₀ ≤ m := by
@@ -171,13 +174,15 @@ theorem exists_norm_stepCF_pow_le_exp (h : StableDomain μ α a) :
     by_contra hlt
     push Not at hlt
     have : a n ≤ a m := h.monotone hlt.le
-    have : |t| ≤ 2 := by rw [hta]; nlinarith
+    have : |t| ≤ 2 := by
+      rw [hta]
+      exact (mul_le_mul_of_nonneg_left this hθ0.le).trans hm2
     have : (2 : ℝ) < A := by
       have : (1 : ℝ) ≤ C := by
         have := (hCP 1 1 le_rfl le_rfl).1
         have ha1 := h.pos 1 le_rfl
-        simp at this
-        nlinarith
+        simp only [Nat.cast_one, div_self one_ne_zero, Real.one_rpow, mul_one] at this
+        nlinarith only [this, ha1]
       rw [hA]; linarith
     linarith
   have hPot := (hCP m n hm0 hmn).1

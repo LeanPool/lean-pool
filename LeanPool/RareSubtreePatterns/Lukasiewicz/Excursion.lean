@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Lukasiewicz.CyclicShift
 
-import Mathlib.Tactic.Linarith
 
 /-!
 # Excursions, the first-passage decomposition, and weighted cyclic-shift identities

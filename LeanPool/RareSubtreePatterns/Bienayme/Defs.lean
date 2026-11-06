@@ -7,9 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.PlaneTree.Countable
-public import LeanPool.RareSubtreePatterns.Statements.Defs
-public import Mathlib.Probability.ProbabilityMassFunction.Basic
-public import Mathlib.Probability.ConditionalProbability
 
 /-!
 # Bienaymé trees: definitions

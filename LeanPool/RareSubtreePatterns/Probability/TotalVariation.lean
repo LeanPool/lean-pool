@@ -7,9 +7,7 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Statements.Defs
-public import Mathlib.MeasureTheory.Measure.TotalVariation.Basic
 import Mathlib.MeasureTheory.VectorMeasure.Variation.Basic
-import Mathlib.Tactic.Linarith
 
 /-!
 # Probability-normalized total variation

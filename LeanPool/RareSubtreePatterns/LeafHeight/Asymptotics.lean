@@ -7,9 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.LeafHeight.Recursion
-public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Topology.Order.MonotoneConvergence
 
 /-!
 # Asymptotics of the root leaf-height tail

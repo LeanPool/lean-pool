@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.RegularVariation.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
-public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # Uniform ratio bounds and Potter bounds for regularly varying sequences
@@ -101,7 +100,7 @@ theorem eventually_ratio_bounds (hrv : RegularlyVaryingSeq ρ a) (hmono : Monoto
     have hc2 : c ≤ 2 := by
       rw [hc, div_le_iff₀ hnR]
       exact_mod_cast hm2n
-    nlinarith
+    nlinarith only [hc2, hKR]
   have hti : t i ≤ c := by
     have h := Nat.floor_le hc1K
     rw [← hi] at h
@@ -124,11 +123,10 @@ theorem eventually_ratio_bounds (hrv : RegularlyVaryingSeq ρ a) (hmono : Monoto
   have hup_t : t (i + 1) ≤ (1 + 1 / (K : ℝ)) * c := by
     have : 1 / (K : ℝ) ≤ c * (1 / K) := le_mul_of_one_le_left (by positivity) hc1
     rw [htsucc]
-    nlinarith
+    nlinarith only [hti, this]
   have hc_up : c ≤ (1 + 1 / (K : ℝ)) * t i := by
     have : 1 / (K : ℝ) ≤ t i * (1 / K) := le_mul_of_one_le_left (by positivity) (ht1 i)
-    have := htsucc
-    nlinarith
+    nlinarith only [hti1, htsucc, this]
   have hpow_le : ∀ u v : ℝ, 0 ≤ u → u ≤ (1 + 1 / (K : ℝ)) * v → 0 ≤ v →
       u ^ ρ ≤ (1 + ε₁) * v ^ ρ := by
     intro u v hu huv hv
@@ -152,9 +150,9 @@ theorem eventually_ratio_bounds (hrv : RegularlyVaryingSeq ρ a) (hmono : Monoto
       _ ≤ (1 + ε₁) * t (i + 1) ^ ρ * a n := h1.le
       _ ≤ (1 + ε₁) * ((1 + ε₁) * c ^ ρ) * a n := by gcongr
       _ ≤ (1 + ε) * c ^ ρ * a n := by
-          have : (1 + ε₁) * (1 + ε₁) ≤ 1 + ε := by nlinarith
-          have := mul_le_mul_of_nonneg_right this (mul_nonneg hcρ han.le)
-          nlinarith
+          have hεbound : (1 + ε₁) * (1 + ε₁) ≤ 1 + ε := by
+            nlinarith only [hε₁pos, hε₁le, hε₁le']
+          convert mul_le_mul_of_nonneg_right hεbound (mul_nonneg hcρ han.le) using 1 <;> ring
   · -- lower bound through the grid point `t i`
     have hm_ge : ⌊t i * n⌋₊ ≤ m := by
       apply Nat.floor_le_of_le
@@ -169,7 +167,8 @@ theorem eventually_ratio_bounds (hrv : RegularlyVaryingSeq ρ a) (hmono : Monoto
               mul_le_mul_of_nonneg_left h2 (by linarith)
           _ = ((1 - ε) * (1 + ε₁)) * t i ^ ρ := by ring
           _ ≤ (1 - ε₁) * t i ^ ρ := by
-              have : (1 - ε) * (1 + ε₁) ≤ 1 - ε₁ := by nlinarith
+              have : (1 - ε) * (1 + ε₁) ≤ 1 - ε₁ := by
+                nlinarith only [hε, hε₁pos, hε₁le]
               exact mul_le_mul_of_nonneg_right this htiρ
       · have : (1 - ε) * c ^ ρ ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) hcρ
         have : 0 ≤ (1 - ε₁) * t i ^ ρ := mul_nonneg (by linarith) htiρ
@@ -400,9 +399,9 @@ theorem exists_potter_global (hrv : RegularlyVaryingSeq ρ a) (hmono : Monotone 
     exact hmono hB1
   have hBR : (1 : ℝ) ≤ B := by exact_mod_cast hB1
   have hBρ : 1 ≤ (B : ℝ) ^ ρ := Real.one_le_rpow hBR hρ
-  have hC1 : 2 ≤ 2 * K * (B : ℝ) ^ ρ := by nlinarith
-  have hC2 : K ≤ 2 * K * (B : ℝ) ^ ρ := by nlinarith
-  have hC3 : (B : ℝ) ^ ρ ≤ 2 * K * (B : ℝ) ^ ρ := by nlinarith
+  have hC1 : 2 ≤ 2 * K * (B : ℝ) ^ ρ := by nlinarith only [hK, hBρ]
+  have hC2 : K ≤ 2 * K * (B : ℝ) ^ ρ := by nlinarith only [hK, hBρ]
+  have hC3 : (B : ℝ) ^ ρ ≤ 2 * K * (B : ℝ) ^ ρ := by nlinarith only [hK, hBρ]
   refine ⟨2 * K * (B : ℝ) ^ ρ, by positivity, fun x y hx hxy => ?_⟩
   have hax := hpos x hx
   have hay := hpos y (hx.trans hxy)
@@ -420,7 +419,7 @@ theorem exists_potter_global (hrv : RegularlyVaryingSeq ρ a) (hmono : Monotone 
     · calc a y ≤ 2 * ((y : ℝ) / x) ^ (ρ + δ) * a x := (hB x y hBx hxy).1
         _ ≤ 2 * K * (B : ℝ) ^ ρ * ((y : ℝ) / x) ^ (ρ + δ) * a x := by
             have : 0 ≤ ((y : ℝ) / x) ^ (ρ + δ) * a x := by positivity
-            nlinarith
+            nlinarith only [hC1, this]
     rcases le_or_gt B y with hBy | hyB
     · have h1 := (hB B y le_rfl hBy).1
       have h2 : ((y : ℝ) / B) ^ (ρ + δ) ≤ ((y : ℝ) / x) ^ (ρ + δ) := by
@@ -438,12 +437,10 @@ theorem exists_potter_global (hrv : RegularlyVaryingSeq ρ a) (hmono : Monotone 
     · calc a y ≤ a B := hmono hyB.le
         _ ≤ K * a x := hKx
         _ ≤ 2 * K * (B : ℝ) ^ ρ * ((y : ℝ) / x) ^ (ρ + δ) * a x := by
-            have h0 : 0 ≤ K * a x := by positivity
-            have : K * a x ≤ (2 * K * (B : ℝ) ^ ρ) * a x := by gcongr
-            have : (2 * K * (B : ℝ) ^ ρ) * a x ≤
-                (2 * K * (B : ℝ) ^ ρ) * a x * ((y : ℝ) / x) ^ (ρ + δ) :=
-              le_mul_of_one_le_right (by positivity) hpp
-            nlinarith
+            calc K * a x ≤ (2 * K * (B : ℝ) ^ ρ) * a x := by gcongr
+              _ ≤ (2 * K * (B : ℝ) ^ ρ) * a x * ((y : ℝ) / x) ^ (ρ + δ) :=
+                le_mul_of_one_le_right (by positivity) hpp
+              _ = _ := by ring
   · have hle : ((y : ℝ) / x) ^ (ρ - δ) ≤ ((y : ℝ) / x) ^ ρ :=
       Real.rpow_le_rpow_of_exponent_le hyx (by linarith)
     rcases le_or_gt B x with hBx | hxB

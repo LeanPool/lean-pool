@@ -7,7 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Stable.Analytic
-public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 
 /-!
 # The limit law `Y_α`: characteristic function and uniqueness (Stage 1)

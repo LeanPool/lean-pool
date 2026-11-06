@@ -7,7 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Order.Filter.AtTopBot.Basic
 
 /-!
 # Regularly varying sequences

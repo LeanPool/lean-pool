@@ -9,9 +9,6 @@ module
 public import LeanPool.RareSubtreePatterns.ChenStein.SteinSolution
 public import LeanPool.RareSubtreePatterns.Probability.PoissonTV
 
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.Linarith
 
 /-!
 # The Arratia–Goldstein–Gordon Chen–Stein bound

@@ -6,7 +6,6 @@ Authors: Igor Kortchemski
 
 module
 
-public import LeanPool.RareSubtreePatterns.Statements.Main
 public import LeanPool.RareSubtreePatterns.ExtremesAnalysis.Rary
 public import LeanPool.RareSubtreePatterns.Extremes.Ineqs
 public import LeanPool.RareSubtreePatterns.Declumping.Conditioned

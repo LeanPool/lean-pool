@@ -8,10 +8,6 @@ module
 
 public import Mathlib.Probability.Distributions.Poisson.Basic
 
-import Mathlib.Analysis.Normed.Group.InfiniteSum
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Tactic.Linarith
 
 /-!
 # The Stein solution for the Poisson law

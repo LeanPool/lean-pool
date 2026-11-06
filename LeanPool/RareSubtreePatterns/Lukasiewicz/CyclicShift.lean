@@ -10,7 +10,6 @@ public import LeanPool.RareSubtreePatterns.Lukasiewicz.Coding
 public import LeanPool.RareSubtreePatterns.Bienayme.Defs
 public import Mathlib.Data.Set.Finite.List
 
-import Mathlib.Tactic.Linarith
 
 /-!
 # Cyclic shifts of DFS sequences and the walk bridge

@@ -7,10 +7,7 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.ExtremesAnalysis.TwoPoint
-public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.FieldSimp
 
 /-!
 # Unary centering: the lattice-modulated Gumbel exponent

@@ -11,7 +11,6 @@ public import LeanPool.RareSubtreePatterns.Bridge.Kemperman
 
 import LeanPool.RareSubtreePatterns.RegularVariation.Karamata
 import LeanPool.RareSubtreePatterns.RegularVariation.Consequences
-import LeanPool.RareSubtreePatterns.Bienayme.Normalization
 
 /-!
 # Forest estimates: Lemma `lem:forest_estimates`

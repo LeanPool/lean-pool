@@ -9,12 +9,7 @@ module
 public import LeanPool.RareSubtreePatterns.RootDeclumping.Generations
 public import LeanPool.RareSubtreePatterns.RootDeclumping.ParentFormula
 public import LeanPool.RareSubtreePatterns.LeafHeight.Tree
-public import Mathlib.Probability.ConditionalProbability
-public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
-public import Mathlib.Analysis.SpecialFunctions.Exp
 
-import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 
 /-!
 # The tree conditioned on `λ_∅ ≥ k`: tilted offspring laws and generation sizes

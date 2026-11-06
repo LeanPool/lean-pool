@@ -9,7 +9,6 @@ module
 public import LeanPool.RareSubtreePatterns.Lukasiewicz.Coding
 public import LeanPool.RareSubtreePatterns.Bienayme.Basic
 
-import Mathlib.Tactic.Linarith
 
 /-!
 # Cutting and grafting at a DFS position

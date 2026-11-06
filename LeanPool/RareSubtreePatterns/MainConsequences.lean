@@ -7,16 +7,9 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.MainTheorems
-public import LeanPool.RareSubtreePatterns.DirectApplications.FringeCorollary
-public import LeanPool.RareSubtreePatterns.DirectApplications.Criteria
 public import LeanPool.RareSubtreePatterns.DirectApplications.DeclumpZero
-public import LeanPool.RareSubtreePatterns.DirectApplications.NonFringe
 public import LeanPool.RareSubtreePatterns.DirectApplications.Outdegree
-public import LeanPool.RareSubtreePatterns.Applications.CompleteArySC
-public import LeanPool.RareSubtreePatterns.Applications.LeafHeightSC
 
-import LeanPool.RareSubtreePatterns.Bridge.Microscopic
-import LeanPool.RareSubtreePatterns.Stable.ToolkitProof
 
 /-!
 # Unconditional consequences of the four Introduction theorems

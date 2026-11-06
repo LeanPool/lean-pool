@@ -7,10 +7,7 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Lukasiewicz.Coding
-public import Mathlib.Data.ENat.Basic
-public import Mathlib.Algebra.BigOperators.Fin
 
-import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Cyclic indicators (Definition `def:indicators`)

@@ -7,11 +7,7 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Probability.TotalVariation
-public import Mathlib.Probability.Distributions.Poisson.Basic
 
-import Mathlib.MeasureTheory.Group.Convolution
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.Tactic.Linarith
 
 /-!
 # Couplings and Poisson laws in total variation

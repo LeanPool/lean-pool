@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Setup.Marks
 
-import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
 # Elementary criteria used in the applications (Sections 6–7)

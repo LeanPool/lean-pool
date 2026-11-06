@@ -9,8 +9,6 @@ module
 public import LeanPool.RareSubtreePatterns.Bridge.Microscopic
 public import LeanPool.RareSubtreePatterns.RootDeclumping.Lemma51
 
-import LeanPool.RareSubtreePatterns.Bienayme.Normalization
-import Mathlib.Analysis.Normed.Group.Tannery
 
 /-!
 # Inherited microscopicity for declumped marks: Lemma `lem:root_declumping`(iii)

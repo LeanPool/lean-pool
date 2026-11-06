@@ -7,12 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Bienayme.Defs
-public import LeanPool.RareSubtreePatterns.Statements.Defs
-public import Mathlib.MeasureTheory.Group.Convolution
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.Topology.ContinuousMap.Bounded.Basic
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-!
 # The Łukasiewicz walk and the stable-domain hypothesis `(H_α)`

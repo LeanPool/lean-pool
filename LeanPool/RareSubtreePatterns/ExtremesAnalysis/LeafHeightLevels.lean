@@ -9,7 +9,6 @@ module
 public import LeanPool.RareSubtreePatterns.ExtremesAnalysis.Rary
 public import LeanPool.RareSubtreePatterns.LeafHeight.Tree
 
-import Mathlib.Tactic.Linarith
 
 /-!
 # Level intensities for the leaf-height and the complete `r`-ary heights

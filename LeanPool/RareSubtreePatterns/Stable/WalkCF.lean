@@ -7,9 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Setup.Walk
-public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
-public import Mathlib.MeasureTheory.Integral.Prod
-public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # Characteristic function of the walk and Fourier inversion on `ℤ`

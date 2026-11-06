@@ -8,8 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Stable.ToolkitProof
 public import Mathlib.Probability.CentralLimitTheorem
-public import Mathlib.MeasureTheory.Measure.LevyConvergence
-public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 /-!

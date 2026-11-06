@@ -7,9 +7,7 @@ Authors: Igor Kortchemski
 module
 
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Mathlib.MeasureTheory.Measure.Real
-public import Mathlib.Order.Filter.Basic
 public import Mathlib.Topology.Algebra.Order.LiminfLimsup
 
 /-!

@@ -7,9 +7,7 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Bienayme.Normalization
-public import Mathlib.Order.Filter.Cofinite
 
-import Mathlib.Data.Set.Finite.Basic
 
 /-!
 # Size-conditioned Bienaymé trees and admissible sizes

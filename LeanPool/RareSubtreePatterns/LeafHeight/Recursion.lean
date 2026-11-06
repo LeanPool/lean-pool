@@ -7,7 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Bienayme.Defs
-public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # The root leaf-height recursion

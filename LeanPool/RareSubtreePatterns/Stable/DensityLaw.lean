@@ -7,7 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Stable.LocalLimit
-public import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
 public import Mathlib.Analysis.Fourier.Inversion
 
 /-!
@@ -80,8 +79,9 @@ theorem stableDensity_nonneg (h : StableDomain μ α a) (x : ℝ) : 0 ≤ stable
   have h1 := abs_le.1 (hN n (le_trans (le_max_left _ _) hn.2) k hkd)
   have hP : 0 ≤ walkProb μ n k := by rw [walkProb_coe_nat]; exact measureReal_nonneg
   have h2 : -ε / 2 ≤ stableDensity α (k / a n) := by
-    have : -(d * ε / 2) ≤ d * stableDensity α (k / a n) := by nlinarith
-    by_contra hc; push Not at hc; nlinarith
+    have hbound : -(d * ε / 2) ≤ d * stableDensity α (k / a n) := by
+      nlinarith only [h1.2, hP, han]
+    exact (mul_le_mul_iff_right₀ hd0).mp (by convert hbound using 1; ring)
   have h3 := abs_le.1 (abs_stableDensity_sub_le hα x (k / a n))
   have h4 : K * |x - k / a n| < ε / 2 := by
     calc K * |x - k / a n| ≤ K * (d / a n) := by gcongr
@@ -89,8 +89,8 @@ theorem stableDensity_nonneg (h : StableDomain μ α a) (x : ℝ) : 0 ≤ stable
           rw [mul_div_assoc', div_lt_iff₀ han]
           have := hn.1
           rw [div_lt_iff₀ hε] at this
-          nlinarith
-  linarith [h3.1]
+          linarith only [this]
+  linarith only [h3.1, h4, h2, hεdef]
 
 
 lemma integral_cexp_mul_gaussian {b : ℝ} (hb : 0 < b) (θ : ℝ) :

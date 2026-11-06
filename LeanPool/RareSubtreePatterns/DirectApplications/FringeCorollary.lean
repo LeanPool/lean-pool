@@ -9,9 +9,7 @@ module
 public import LeanPool.RareSubtreePatterns.Statements.Main
 public import LeanPool.RareSubtreePatterns.Bridge.CriterionM
 public import LeanPool.RareSubtreePatterns.Cyclic.UniformVertex
-public import LeanPool.RareSubtreePatterns.Lukasiewicz.Coding
 public import LeanPool.RareSubtreePatterns.Stable.ToolkitProof
-public import Mathlib.Data.Finsupp.Multiset
 
 /-!
 # Fringe subtree counts: Corollary `cor:Poisson_fringe` and Remark `rem:implication_fringe`

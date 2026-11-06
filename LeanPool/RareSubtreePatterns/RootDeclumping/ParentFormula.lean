@@ -8,14 +8,8 @@ module
 
 public import LeanPool.RareSubtreePatterns.Bienayme.Normalization
 public import LeanPool.RareSubtreePatterns.LeafHeight.Recursion
-public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.Analysis.Normed.Group.Tannery
-public import Mathlib.Analysis.Asymptotics.Lemmas
-public import Mathlib.Analysis.Asymptotics.Ring
 
-import Mathlib.Algebra.Order.Ring.Pow
-import Mathlib.Tactic.LinearCombination
-import Mathlib.Analysis.Normed.Ring.Lemmas
 
 /-!
 # The root-declumping parent formula

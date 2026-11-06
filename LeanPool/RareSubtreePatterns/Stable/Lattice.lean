@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Stable.WalkCF
 public import LeanPool.RareSubtreePatterns.Bienayme.Normalization
-public import Mathlib.RingTheory.PrincipalIdealDomain
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
 
 /-!

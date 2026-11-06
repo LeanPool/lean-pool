@@ -7,10 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.RegularVariation.Potter
-public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
-public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Analysis.Asymptotics.Lemmas
-public import Mathlib.Topology.Algebra.Order.Field
 
 /-!
 # Analytic consequences of regular variation of the normalizing sequence

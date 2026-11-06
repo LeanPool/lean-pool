@@ -6,7 +6,6 @@ Authors: Igor Kortchemski
 
 module
 
-public import LeanPool.RareSubtreePatterns.Statements.Main
 public import LeanPool.RareSubtreePatterns.ExtremesAnalysis.LeafHeightLevels
 public import LeanPool.RareSubtreePatterns.Applications.LeafHeightSC
 
@@ -15,7 +14,6 @@ import LeanPool.RareSubtreePatterns.Declumping.Conditioned
 import LeanPool.RareSubtreePatterns.Patterns.Complete
 import LeanPool.RareSubtreePatterns.Stable.ToolkitProof
 import LeanPool.RareSubtreePatterns.RootDeclumping.Lemma51
-import LeanPool.RareSubtreePatterns.Cyclic.UniformVertex
 
 /-!
 # Theorem `thm:max_lh`: the maximum leaf-height

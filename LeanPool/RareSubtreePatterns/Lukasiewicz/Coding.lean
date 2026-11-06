@@ -9,7 +9,6 @@ module
 public import LeanPool.RareSubtreePatterns.PlaneTree.Countable
 public import LeanPool.RareSubtreePatterns.Lukasiewicz.FirstPassage
 
-import Mathlib.Tactic.Linarith
 
 /-!
 # The Łukasiewicz coding of plane trees

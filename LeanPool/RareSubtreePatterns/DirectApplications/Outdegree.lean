@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.DirectApplications.NonFringe
 public import LeanPool.RareSubtreePatterns.Patterns.Complete
-public import LeanPool.RareSubtreePatterns.Cyclic.Markov
 public import LeanPool.RareSubtreePatterns.Probability.PoissonTV
 
 /-!

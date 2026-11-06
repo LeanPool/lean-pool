@@ -8,12 +8,9 @@ module
 
 public import LeanPool.RareSubtreePatterns.Bridge.ForestEstimates
 public import LeanPool.RareSubtreePatterns.Bridge.CriterionM
-public import LeanPool.RareSubtreePatterns.Setup.Marks
 
 import LeanPool.RareSubtreePatterns.RegularVariation.Karamata
 import LeanPool.RareSubtreePatterns.RegularVariation.Consequences
-import LeanPool.RareSubtreePatterns.Bienayme.Normalization
-import LeanPool.RareSubtreePatterns.Cyclic.UniformVertex
 
 /-!
 # Consequences of Assumption (S): Lemma `lem:consequenceM` and Corollary `cor:SM`
@@ -941,7 +938,7 @@ theorem conditioned_mark_tendsto_zero (hT : StableToolkit μ α a) {G : ℕ → 
           rw [mul_div_assoc', div_le_iff₀ hden]
           have : K * (B' * C₅) * (ε * c) ≤ ε / 2 * c * (2 * B' * (K * C₅ + 1)) := by
             have hε2 : 0 ≤ ε * c * B' := by positivity
-            nlinarith
+            nlinarith only [hε2]
           linarith
   calc ((bienayme μ).real {T | T.vertexCount = n})⁻¹ * (markProb μ G k n * Y)
       ≤ n * a n / c * (markProb μ G k n * (r + K * a (M n) / (n * a n) * δ)) := by

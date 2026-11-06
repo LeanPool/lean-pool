@@ -6,20 +6,7 @@ Authors: Igor Kortchemski
 
 module
 
-public import Mathlib.Data.List.Count
-public import Mathlib.MeasureTheory.MeasurableSpace.Defs
-public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
-public import Mathlib.Order.Lattice.Nat
-public import Mathlib.Probability.ProbabilityMassFunction.Basic
-public import Mathlib.Probability.ConditionalProbability
 public import Mathlib.MeasureTheory.Measure.TotalVariation.Basic
-public import Mathlib.MeasureTheory.Group.Convolution
-public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.Topology.ContinuousMap.Bounded.Basic
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Analysis.SpecialFunctions.Exp
-public import Mathlib.Probability.UniformOn
-public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.Probability.Distributions.Poisson.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 

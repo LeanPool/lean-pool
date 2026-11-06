@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Bridge.ErrorTerms
 
-import LeanPool.RareSubtreePatterns.Bridge.CriterionM
 import LeanPool.RareSubtreePatterns.Bridge.Microscopic
 import LeanPool.RareSubtreePatterns.RegularVariation.Consequences
 

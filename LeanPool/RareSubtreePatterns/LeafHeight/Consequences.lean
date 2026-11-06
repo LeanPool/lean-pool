@@ -7,7 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.LeafHeight.Asymptotics
-public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-!
 # Consequences of the root leaf-height asymptotics

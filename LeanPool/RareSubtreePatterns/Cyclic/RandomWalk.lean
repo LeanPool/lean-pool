@@ -9,7 +9,6 @@ module
 public import LeanPool.RareSubtreePatterns.Cyclic.Indicators
 public import LeanPool.RareSubtreePatterns.Cyclic.WalkBridge
 public import LeanPool.RareSubtreePatterns.Setup.Marks
-public import Mathlib.Logic.Equiv.Fin.Rotate
 
 /-!
 # Lemma `lem:RW`: cyclic indicator sums under the walk bridge

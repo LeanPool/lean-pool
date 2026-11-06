@@ -7,9 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.PlaneTree.Basic
-public import Mathlib.Logic.Encodable.Basic
-public import Mathlib.MeasureTheory.MeasurableSpace.Defs
-public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 
 /-!
 # Countability of finite plane trees and the discrete measurable structure

@@ -8,10 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Bienayme.Basic
 
-import Mathlib.Algebra.Order.Ring.Pow
-import Mathlib.MeasureTheory.Measure.Dirac.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Positivity
 
 /-!
 # Normalization of the critical Bienaymé law

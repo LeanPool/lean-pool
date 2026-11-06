@@ -9,8 +9,6 @@ module
 public import LeanPool.RareSubtreePatterns.RegularVariation.Potter
 public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 public import Mathlib.Analysis.PSeries
-public import Mathlib.Algebra.BigOperators.Intervals
-public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import Mathlib.Algebra.Order.Group.Indicator
 
 /-!

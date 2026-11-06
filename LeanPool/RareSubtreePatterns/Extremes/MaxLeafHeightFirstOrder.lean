@@ -9,7 +9,6 @@ module
 public import LeanPool.RareSubtreePatterns.Extremes.MaxLeafHeight
 
 import LeanPool.RareSubtreePatterns.Bridge.Microscopic
-import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
 /-!
 # First-order consequences of Theorem `thm:max_lh` (inventory U03)
@@ -62,7 +61,7 @@ theorem tendsto_div_log_of_latticeGumbel {H : PlaneTree → ℕ} {q c : ℝ}
     obtain ⟨t, ht⟩ := eventually_atTop.1 (h.eventually (ge_mem_nhds (by positivity :
       (0 : ℝ) < q * η / 4)))
     exact ⟨max t 0, le_max_right _ _, ht _ (le_max_left _ _)⟩
-  have hqt : q ^ t ≤ η / 4 := ht.trans (by nlinarith)
+  have hqt : q ^ t ≤ η / 4 := ht.trans (by nlinarith only [hq1, hη])
   have hup := (Metric.tendsto_nhds.1 (hG t)) (η / 4) (by positivity)
   have hlo := (Metric.tendsto_nhds.1 (hG (-t))) (η / 4) (by positivity)
   have hlog := tendsto_log_natCast_admissible μ
@@ -95,11 +94,11 @@ theorem tendsto_div_log_of_latticeGumbel {H : PlaneTree → ℕ} {q c : ℝ}
     have hqtpos : 0 < q ^ t := Real.rpow_pos_of_pos hq0 _
     have : q / q ^ t ≥ 4 / η := by
       rw [ge_iff_le, div_le_div_iff₀ hη hqtpos]
-      nlinarith
+      nlinarith only [ht]
     have : 4 / η ≤ Real.exp (q ^ (-t + 1 - Int.fract (x n + -t))) := by
       linarith
     rw [div_le_iff₀ hη] at this
-    nlinarith
+    nlinarith only [this]
   have hP2 : (conditioned μ n).real {T | ((H T : ℕ) : ℤ) ≤ ⌊x n + -t⌋} ≤ η / 2 := by
     linarith
   -- inclusion
@@ -127,7 +126,8 @@ theorem tendsto_div_log_of_latticeGumbel {H : PlaneTree → ℕ} {q c : ℝ}
       have h3 : x n + t ≤ (1 / L + ε) * ℓ := by
         rw [hxn]
         have : ℓ / L = 1 / L * ℓ := by ring
-        nlinarith [abs_le.1 (le_of_eq hcL)]
+        nlinarith only [hεℓ, this, (abs_le.1 (le_of_eq hcL)).1,
+          (abs_le.1 (le_of_eq hcL)).2]
       linarith
     · right
       have h2 : (H T : ℝ) < (1 / L - ε) * ℓ := by
@@ -136,7 +136,8 @@ theorem tendsto_div_log_of_latticeGumbel {H : PlaneTree → ℕ} {q c : ℝ}
       have h3 : (1 / L - ε) * ℓ ≤ x n + -t - 1 := by
         rw [hxn]
         have : ℓ / L = 1 / L * ℓ := by ring
-        nlinarith [abs_le.1 (le_of_eq hcL)]
+        nlinarith only [hεℓ, this, (abs_le.1 (le_of_eq hcL)).1,
+          (abs_le.1 (le_of_eq hcL)).2]
       have h4 : x n + -t - 1 < (⌊x n + -t⌋ : ℝ) := Int.sub_one_lt_floor _
       have h5 : ((H T : ℕ) : ℝ) < (⌊x n + -t⌋ : ℝ) := by linarith
       have h6 : (((H T : ℕ) : ℤ) : ℝ) < (⌊x n + -t⌋ : ℝ) := by exact_mod_cast h5

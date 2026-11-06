@@ -8,10 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Setup.Marks
 public import LeanPool.RareSubtreePatterns.PlaneTree.Patterns
-public import LeanPool.RareSubtreePatterns.Probability.TotalVariation
-public import LeanPool.RareSubtreePatterns.Statements.Defs
-public import Mathlib.Probability.Distributions.Poisson.Basic
-public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-!
 # Statements of the four Introduction theorems (statement level)

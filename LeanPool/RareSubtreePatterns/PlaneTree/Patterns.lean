@@ -7,8 +7,6 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.PlaneTree.Countable
-public import LeanPool.RareSubtreePatterns.Statements.Defs
-public import Mathlib.Order.Lattice.Nat
 
 /-!
 # Complete `r`-ary patterns, non-fringe embeddings and leaf-height

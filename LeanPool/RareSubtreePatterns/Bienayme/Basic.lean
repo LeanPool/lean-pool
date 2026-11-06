@@ -7,12 +7,7 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Bienayme.Defs
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Data.List.OfFn
-public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 
-import Mathlib.MeasureTheory.Measure.Continuity
-import Mathlib.MeasureTheory.Measure.Dirac.Basic
 
 /-!
 # Bienaymé trees: weights, the branching property and forests

@@ -11,8 +11,6 @@ public import LeanPool.RareSubtreePatterns.Applications.TreeCriteria
 public import LeanPool.RareSubtreePatterns.Patterns.CutGraftBound
 public import LeanPool.RareSubtreePatterns.Bridge.CriterionS
 
-import LeanPool.RareSubtreePatterns.LeafHeight.Recursion
-import Mathlib.Analysis.SpecificLimits.Normed
 
 /-!
 # Complete `r`-ary marks: Assumptions (S) and (C) (Lemmas `lem:S_rary` and `lem:C_rary`)

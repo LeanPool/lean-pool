@@ -9,9 +9,7 @@ module
 public import LeanPool.RareSubtreePatterns.Setup.Toolkit
 public import LeanPool.RareSubtreePatterns.Setup.Marks
 
-import LeanPool.RareSubtreePatterns.Bienayme.Basic
 import LeanPool.RareSubtreePatterns.Cyclic.UniformVertex
-import LeanPool.RareSubtreePatterns.Cyclic.WalkBridge
 
 /-!
 # A criterion for Assumption (M): Lemma `lem:M`

@@ -8,9 +8,7 @@ module
 
 public import LeanPool.RareSubtreePatterns.Declumping.Deterministic
 public import LeanPool.RareSubtreePatterns.Probability.TotalVariation
-public import Mathlib.Probability.Distributions.Poisson.Basic
 
-import Mathlib.Tactic.Linarith
 
 /-!
 # From declumped Poisson counts to raw zero events

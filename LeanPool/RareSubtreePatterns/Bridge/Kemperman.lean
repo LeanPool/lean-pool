@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Bridge.WalkCalculus
 
-import Mathlib.Tactic.Linarith
 
 /-!
 # Kemperman's formula for forests and the first-passage decomposition

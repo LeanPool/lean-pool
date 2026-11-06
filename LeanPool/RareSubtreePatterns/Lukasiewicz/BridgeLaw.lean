@@ -7,13 +7,9 @@ Authors: Igor Kortchemski
 module
 
 public import LeanPool.RareSubtreePatterns.Lukasiewicz.Excursion
-public import LeanPool.RareSubtreePatterns.Bienayme.Basic
 public import LeanPool.RareSubtreePatterns.Bienayme.Conditioned
-public import Mathlib.MeasureTheory.Constructions.Pi
-public import Mathlib.MeasureTheory.Measure.Prod
 public import Mathlib.Probability.Distributions.Uniform
 
-import Mathlib.Tactic.Linarith
 
 /-!
 # The DFS law of `𝒯^n` and the cyclic-shift law `eq:shifts`

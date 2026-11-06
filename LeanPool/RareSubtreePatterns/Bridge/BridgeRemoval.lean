@@ -8,7 +8,6 @@ module
 
 public import LeanPool.RareSubtreePatterns.Bridge.PairBound
 public import LeanPool.RareSubtreePatterns.Setup.Toolkit
-public import LeanPool.RareSubtreePatterns.Setup.Marks
 
 /-!
 # Removing the bridge conditioning: Lemma `lem:error_est` and Corollary `cor:pip`
