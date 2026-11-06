@@ -171,7 +171,7 @@ lemma gff_mgf_formula (m : ℝ) [Fact (0 < m)] (J : TestFunctionℂ) :
     simp only [negI]
     ring_nf
     simp [Complex.I_sq]
-  simp_all
+  simp_all only [one_div, mul_neg, neg_mul, neg_neg]
 
 /-- The GFF generating function is invariant under time translation. -/
 lemma gff_generating_time_invariant (m : ℝ) [Fact (0 < m)] (s : ℝ) (f : TestFunctionℂ) :

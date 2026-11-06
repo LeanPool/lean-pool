@@ -136,7 +136,7 @@ lemma glasser_integral_substitution_identity (c : ℝ) (hc : 0 < c) :
 
 /-- Split (0, ∞) = (0, 1] ∪ (1, ∞) -/
 private lemma Ioi_zero_eq_Ioc_union_Ioi : Ioi (0 : ℝ) = Ioc 0 1 ∪ Ioi 1 := by
-  simp_all
+  simp_all only [zero_le_one, Ioc_union_Ioi_eq_Ioi]
 
 /-- The Glasser integrand is integrable on (0, ∞).
     Proof: On (0, 1], bounded by 1 on finite measure set.
@@ -221,7 +221,7 @@ theorem glasser_weighted_integrable (c : ℝ) (hc : 0 < c) :
         · field_simp
     have h_int_image : IntegrableOn (fun v => exp (-(c/v - v)^2)) (Ici c) := by
       apply h_base.mono_set
-      simp_all
+      simp_all only [Ici_subset_Ioi]
     -- f(u) = c/u is antitone on (0, 1]
     have h_anti : AntitoneOn (fun u => c / u) (Ioc 0 1) := by
       intro x hx y hy hxy
@@ -357,7 +357,7 @@ lemma glasser_strictAntiOn (c : ℝ) (hc : 0 < c) : StrictAntiOn (fun u => c / u
   -- c(y - x)/(xy) > 0 > x - y ✓
   have h1 : c / x - c / y = c * (y - x) / (x * y) := by field_simp
   have h2 : 0 < c * (y - x) / (x * y) := by
-    simp_all
+    simp_all only [ne_eq, mul_pos_iff_of_pos_left, sub_pos, div_pos_iff_of_pos_left]
   have h3 : x - y < 0 := sub_neg_of_lt hxy
   calc c / y - y = c / x - (c / x - c / y) - y := by ring
     _ = c / x - c * (y - x) / (x * y) - y := by rw [h1]
@@ -386,7 +386,7 @@ lemma glasser_image_eq_univ (c : ℝ) (hc : 0 < c) :
   have hbot := glasser_tendsto_atBot_at_top c hc
   have h_at_sqrt : f (sqrt c) = 0 := by
     simp only [f]
-    simp_all
+    simp_all only [div_sqrt, sub_self]
   have h_sqrt_pos : sqrt c ∈ Ioi 0 := sqrt_pos.mpr hc
   have hpc : IsPreconnected (Ioi (0 : ℝ)) := isPreconnected_Ioi
   have hatTop_le : (atTop : Filter ℝ) ≤ 𝓟 (Ioi 0) := le_principal_iff.mpr (Ioi_mem_atTop 0)
@@ -433,7 +433,7 @@ theorem weighted_glasser_integral_eq_gaussian (c : ℝ) (hc : 0 < c) :
   -- The LHS of h_cov is ∫_ℝ exp(-w²) = √π
   have h_gaussian : ∫ w : ℝ, exp (-w^2) = sqrt π := by
     have h := integral_gaussian (1 : ℝ)
-    simp_all
+    simp_all only [Measure.restrict_univ, smul_eq_mul, neg_mul, one_mul, div_one]
   -- Transform h_cov: ∫_ℝ g = ∫_{Ioi 0} |f'| • (g ∘ f)
   -- i.e., √π = ∫_{Ioi 0} |f' u| * exp(-(c/u - u)²)
   simp only [smul_eq_mul, f, f', g] at h_cov

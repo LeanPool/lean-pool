@@ -767,7 +767,7 @@ private theorem buildHilbertianFamily_hs
     f c hc_nn hc_sum hf_le_r
     (fun x => by
       -- r(n) ≤ sup(r(n), q₀(n+1)) = p ≤ Σ|fₖ|cₖ
-      simp_all)
+      simp_all only [Seminorm.coe_sup, Pi.sup_apply, sup_le_iff])
 
 /-- The Hilbertian family generates the same topology as `q₀`.
 

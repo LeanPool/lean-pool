@@ -160,13 +160,13 @@ lemma timeShift_hasTemperateGrowth (s : ℝ) : Function.HasTemperateGrowth (time
     have h_eq : fderiv ℝ (timeShift s) = fun _ => ContinuousLinearMap.id ℝ SpaceTime := by
       ext x v
       have h : timeShift s = fun u => u + timeShiftConst s := funext (timeShift_eq_add_const s)
-      simp_all
-    simp_all
+      simp_all only [fderiv_add_const, fderiv_fun_id, ContinuousLinearMap.id_apply]
+    simp_all only [Function.HasTemperateGrowth.const]
   -- timeShift is differentiable
   have h_diff : Differentiable ℝ (timeShift s) := by
     intro x
     have h : timeShift s = fun u => u + timeShiftConst s := funext (timeShift_eq_add_const s)
-    simp_all
+    simp_all only [differentiableAt_fun_id, differentiableAt_const, DifferentiableAt.fun_add]
   -- Polynomial bound: ‖timeShift s x‖ ≤ C * (1 + ‖x‖)^k
   have h_bound : ∀ x : SpaceTime, ‖timeShift s x‖ ≤ (1 + ‖timeShiftConst s‖) * (1 + ‖x‖) ^ 1 := by
     intro x
@@ -327,7 +327,8 @@ lemma iteratedFDeriv_timeTranslationSchwartz (n : ℕ) (h : ℝ)
   have h_shift_eq : timeShiftConst h = h • unitTimeDir := by
     ext i
     simp only [timeShiftConst, unitTimeDir, EuclideanSpace.single, timeIndex]
-    simp_all
+    simp_all only [Fin.val_eq_zero_iff, Fin.isValue, Fin.zero_eta, PiLp.smul_apply,
+      PiLp.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero]
   have h_eq : ∀ z, timeTranslationSchwartz h f z = f (z + h • unitTimeDir) := by
     intro z
     rw [timeTranslationSchwartz_apply, timeShift_eq_add_const, h_shift_eq]
@@ -838,6 +839,7 @@ lemma timeTranslationDistribution_add (s t : ℝ) (ω : FieldConfiguration) :
 lemma timeTranslationDistribution_zero (ω : FieldConfiguration) :
     timeTranslationDistribution 0 ω = ω := by
   apply DFunLike.ext
-  simp_all
+  simp_all only [timeTranslationDistribution_apply, neg_zero, timeTranslationSchwartz_zero,
+    implies_true]
 
 end TimeTranslation

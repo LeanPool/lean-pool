@@ -317,9 +317,10 @@ theorem memLp_prod_of_uniform_slicewise_bound (μ : Measure Ω) [SFinite μ]
       filter_upwards with s
       have h := (h_memLp s).integrable_norm_rpow
         (by simp : (2 : ℝ≥0∞) ≠ 0) (by simp : (2 : ℝ≥0∞) ≠ ⊤)
-      simp_all
+      simp_all only [ENNReal.toReal_ofNat, Real.rpow_ofNat]
     · -- Integral of slices is constant, hence integrable on bounded [0,T]
-      simp_all
+      simp_all only [norm_pow, norm_norm, ne_eq, enorm_ne_top, not_false_eq_true,
+        integrable_const_enorm]
   -- Now use the integrability to get MemLp 2
   rwa [memLp_two_iff_integrable_sq_norm h_meas]
 
@@ -535,7 +536,8 @@ theorem double_integral_polynomial_decay_bound_proved (α : ℝ) (hα : α > 1) 
     ≤ ∫ s in Icc 0 T, (∫ t, g t) := by
         apply integral_mono_of_nonneg
         · filter_upwards with s; exact integral_nonneg (fun u => h_nonneg _)
-        · simp_all
+        · simp_all only [gt_iff_lt, ne_eq, enorm_ne_top, not_false_eq_true,
+            integrable_const_enorm]
         · filter_upwards with s; exact h_inner s
     _ = (∫ t, g t) * T := by
         rw [setIntegral_const, Measure.real, Real.volume_Icc, sub_zero,

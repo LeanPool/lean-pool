@@ -125,14 +125,14 @@ lemma integral_neg_invariance
         (fun ω => starRingEnd ℂ (Complex.exp (Complex.I * (distributionPairing ω g : ℂ)))) := by
       funext ω
       rw [negMap, h_neg_eq, ← Complex.exp_conj]
-      simp_all
+      simp_all only [one_div, neg_mul, ofReal_neg, mul_neg, map_mul, conj_I, conj_ofReal]
     conv_lhs => rw [h_integrand_conj]
     rw [integral_conj]
     simp only [distributionPairing] at *
     rw [h_realCF g]
     have h_CF_is_real : (Complex.exp (-(1/2 : ℂ) * (C.Q g g : ℂ))).im = 0 := by
       have h_eq : (-(1/2 : ℂ) * (C.Q g g : ℂ)) = ((-(1/2 : ℝ) * C.Q g g : ℝ) : ℂ) := by
-        simp_all
+        simp_all only [one_div, neg_mul, ofReal_neg, ofReal_mul, ofReal_inv, ofReal_ofNat]
       rw [h_eq]
       exact Complex.exp_ofReal_im (-(1/2) * C.Q g g)
     rw [Complex.conj_eq_iff_im.mpr h_CF_is_real]

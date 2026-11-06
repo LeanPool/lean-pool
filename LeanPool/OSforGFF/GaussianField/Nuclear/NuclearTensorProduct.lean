@@ -1505,7 +1505,7 @@ theorem _root_.GaussianField.NuclearTensorProduct.basisVec_eq_pure
         apply h
         rw [← Nat.pair_unpair n, ← Nat.pair_unpair m, h₁, h₂]
       · simp only [h₂, ite_false]
-    · simp_all
+    · simp_all only [↓reduceIte, ite_self]
 
 end NuclearTensorProduct
 

@@ -259,7 +259,7 @@ lemma one_add_half_pow_le (x : ℝ) (hx : x ≥ 0) (N : ℝ) (hN : N > 0) :
   have h2_rpow_pos : 0 < (1 + x) ^ N := Real.rpow_pos_of_pos h2 N
   have h_two_rpow_pos : 0 < (2:ℝ) ^ N := Real.rpow_pos_of_pos h2_pos N
   rw [inv_eq_one_div, inv_eq_one_div, mul_one_div, div_le_div_iff₀ h1_rpow_pos h2_rpow_pos]
-  simp_all
+  simp_all only [ge_iff_le, gt_iff_lt, Nat.ofNat_pos, one_mul]
 
 /-- Core lemma: If u, v both have polynomial decay of order N > dim(E),
     then their convolution also has polynomial decay of order N.
@@ -777,7 +777,9 @@ theorem schwartz_bilinear_translation_decay_polynomial_proof
         _ ≤ C_K * Real.exp 0 := by gcongr; nlinarith only [hm, hR₀, hz', norm_nonneg z]
         _ = C_K := by simp
         _ ≤ max C_K 1 := le_max_left _ _
-    · simp_all
+    · simp_all only [gt_iff_lt, ge_iff_le, neg_mul, mem_compl_iff, mem_closedBall,
+        dist_zero_right, not_le, not_lt, not_true_eq_false, not_false_eq_true,
+        indicator_of_notMem, mul_zero, abs_zero, le_max_iff, zero_le_one, or_true]
   -- Step 4: Build H(y) = ∫ f(x) K(x-y) dx and show it has polynomial decay
   -- For the full proof, we need:
   -- 1. H_sing has polynomial decay (convolutionCompactSupportDecay)
@@ -868,7 +870,8 @@ theorem schwartz_bilinear_translation_decay_polynomial_proof
           (fun x => (kernelTail K R₀ (x - y) : ℂ)) volume :=
         hK_tail_shift_meas.complex_ofReal.aestronglyMeasurable
       have hK_tail_shift_bdd : ∀ x, ‖(kernelTail K R₀ (x - y) : ℂ)‖ ≤ M_tail := fun x => by
-        simp_all
+        simp_all only [gt_iff_lt, ge_iff_le, neg_mul, Real.rpow_natCast, norm_real,
+          Real.norm_eq_abs]
       exact hf_int.mul_bdd (c := M_tail) hK_tail_shift_aesm
         (Eventually.of_forall hK_tail_shift_bdd)
     have hbound1 : ‖∫ x, f x * (kernelSingular K R₀ (x - y) : ℂ)‖ ≤ C_Hsing / (1 + ‖y‖)^N := by

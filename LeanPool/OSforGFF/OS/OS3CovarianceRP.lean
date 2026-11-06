@@ -185,7 +185,7 @@ omit [Fact (0 < m)] in
 lemma spatialDot_neg_left (k_sp x_sp : SpatialCoords) :
     spatialDot (-k_sp) x_sp = -spatialDot k_sp x_sp := by
   simp only [spatialDot]
-  simp_all
+  simp_all only [Nat.add_one_sub_one, PiLp.neg_apply, neg_mul, Finset.sum_neg_distrib]
 
 omit [Fact (0 < m)] in
 lemma xIntegralFactor_eq_conj_neg (f : TestFunctionℂ) (k_sp : SpatialCoords)
@@ -209,9 +209,11 @@ lemma xIntegralFactor_eq_conj_neg (f : TestFunctionℂ) (k_sp : SpatialCoords)
   rw [h_ic]
   congr 1; ext x; simp only [map_mul]
   have h_star_exp : ∀ z : ℂ, starRingEnd ℂ (Complex.exp z) = Complex.exp (starRingEnd ℂ z) := by
-    simp_all
+    simp_all only [Fin.isValue, norm_neg, mul_neg, neg_mul, neg_neg, implies_true, map_mul,
+      exp_conj]
   simp only [h_star_exp]
-  simp_all
+  simp_all only [Fin.isValue, norm_neg, mul_neg, neg_mul, neg_neg, implies_true, map_mul, map_neg,
+    conj_ofReal, conj_I, exp_conj]
 
 omit [Fact (0 < m)] in
 lemma yIntegralFactor_eq_neg (f : TestFunctionℂ) (k_sp : SpatialCoords) :
@@ -220,7 +222,7 @@ lemma yIntegralFactor_eq_neg (f : TestFunctionℂ) (k_sp : SpatialCoords) :
   simp only [yIntegralFactor, weightedLaplaceFourier]
   have h_norm : ‖-k_sp‖ = ‖k_sp‖ := norm_neg_eq k_sp
   have h_dot : ∀ x_sp, spatialDot (-k_sp) x_sp = -spatialDot k_sp x_sp := spatialDot_neg_left k_sp
-  simp_all
+  simp_all only [norm_neg, Fin.isValue, neg_mul, ofReal_neg, mul_neg, neg_neg]
 
 /-! ## Part 6: Factorization to Squared Norm (Direct Approach) -/
 
@@ -446,7 +448,7 @@ theorem freeCovariance_reflection_positive_bilinear_real (m : ℝ) [Fact (0 < m)
   0 ≤ ∫ x, ∫ y, (QFT.compTimeReflectionReal f) x * freeCovariance m x y * f y := by
   -- Use the complex theorem for toComplex f
   have h_complex := freeCovariance_reflection_positive_bilinear m (toComplex f) (by
-    simp_all)
+    simp_all only [Fin.isValue, toComplex_apply, ofReal_zero, implies_true])
   -- Connect the real integral to the complex one via real_integral_eq_complex_re
   rw [real_integral_eq_complex_re m f]
   -- Show that the complex integral equals rpInnerProduct
@@ -455,7 +457,7 @@ theorem freeCovariance_reflection_positive_bilinear_real (m : ℝ) [Fact (0 < m)
       = rpInnerProduct m (toComplex f) := by
     rw [rpInnerProduct_toComplex_eq]
     rfl
-  simp_all
+  simp_all only [Fin.isValue, toComplex_apply]
 
 /-- Alias for `freeCovariance_reflection_positive_bilinear_real` to match expected name. -/
 theorem freeCovariance_reflection_positive_real (m : ℝ) [Fact (0 < m)] (f : OSforGFF.TestFunction)

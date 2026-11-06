@@ -94,7 +94,8 @@ lemma gaussian_complex_pairing_abs_sq_integrable
     -- Final simplification: a + (-0) = a
     simp only [neg_zero, add_zero]
   -- Finish by using integrability of the individual squares
-  simp_all
+  simp_all only [distributionPairingCLM, ContinuousLinearMap.coe_mk', LinearMap.coe_mk,
+    AddHom.coe_mk, integrable_add_iff_integrable_right']
 
 end GaussianMoments
 
@@ -222,7 +223,8 @@ theorem gaussian_pairing_product_integrable_free_2point
       distributionPairing ω φIm * distributionPairing ω ψIm : ℂ)) =
                   (fun ω => ↑(distributionPairing ω φRe * distributionPairing ω ψRe -
                      distributionPairing ω φIm * distributionPairing ω ψIm)) := by
-      simp_all
+      simp_all only [distributionPairingCLM, ContinuousLinearMap.coe_mk', LinearMap.coe_mk,
+        AddHom.coe_mk, ofReal_sub, ofReal_mul]
     rw [h_cast]
     exact Integrable.ofReal h_ac_bd
   have h_imag_part : Integrable (fun ω => Complex.I * (distributionPairing ω φRe *
@@ -235,7 +237,8 @@ theorem gaussian_pairing_product_integrable_free_2point
       distributionPairing ω φIm * distributionPairing ω ψRe : ℂ)) =
                   (fun ω => ↑(distributionPairing ω φRe * distributionPairing ω ψIm +
                      distributionPairing ω φIm * distributionPairing ω ψRe)) := by
-      simp_all
+      simp_all only [distributionPairingCLM, ContinuousLinearMap.coe_mk', LinearMap.coe_mk,
+        AddHom.coe_mk, ofReal_add, ofReal_mul]
     rw [h_cast]
     exact Integrable.ofReal h_ad_bc
   exact Integrable.add h_real_part h_imag_part

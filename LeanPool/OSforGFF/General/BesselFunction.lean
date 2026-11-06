@@ -369,7 +369,11 @@ lemma besselK1_mul_self_le (z : ℝ) (hz : 0 < z) (hz_le : z ≤ 1) :
     have h_mono : ∫ t in Icc 0 1, f t ≤ ∫ _ in Icc (0:ℝ) 1, cosh 1 := by
       apply setIntegral_mono_on hf_int_Icc h_const_int measurableSet_Icc
       exact h_pointwise
-    simp_all
+    simp_all only [neg_mul, mem_Icc, and_imp, volume_Icc, sub_zero, ENNReal.ofReal_one,
+      ENNReal.one_lt_top, ne_eq, ENNReal.one_ne_top, not_false_eq_true, enorm_ne_top,
+      integrableOn_const_iff, enorm_eq_zero, or_true, integral_const, MeasurableSet.univ,
+      measureReal_restrict_apply, univ_inter, volume_real_Icc, zero_le_one, sup_of_le_left,
+      smul_eq_mul, one_mul]
   -- Part 2: Bound z * ∫₁^∞ f(t) dt ≤ 2 via the shared tail-integral helper
   have h_part2 : z * ∫ t in Ici 1, f t ≤ 2 := by
     rw [hf_def]
@@ -383,12 +387,13 @@ lemma besselK1_mul_self_le (z : ℝ) (hz : 0 < z) (hz_le : z ≤ 1) :
       _ = 2 := by ring
   -- Combine: Use Ico instead of Icc for proper disjointness
   have h_union' : Ici (0 : ℝ) = Ico 0 1 ∪ Ici 1 := by
-    simp_all
+    simp_all only [neg_mul, zero_le_one, Ico_union_Ici_eq_Ici]
   have hf_int_Ico : IntegrableOn f (Ico 0 1) := hf_int_Icc.mono_set Ico_subset_Icc_self
   -- Disjointness: Ico 0 1 and Ici 1 are disjoint since x < 1 and x ≥ 1 are contradictory
   have h_disjoint : Disjoint (Ico (0:ℝ) 1) (Ici 1) := by
     rw [Set.disjoint_left]
-    simp_all
+    simp_all only [neg_mul, zero_le_one, Ico_union_Ici_eq_Ici, mem_Ico, mem_Ici, not_le,
+      implies_true]
   -- The integrals over Ico and Icc are equal (they differ by a null set)
   have h_Ico_eq_Icc : ∫ t in Ico 0 1, f t = ∫ t in Icc 0 1, f t :=
     setIntegral_congr_set Ico_ae_eq_Icc
@@ -565,7 +570,7 @@ lemma radial_besselK1_integrable (m : ℝ) (hm : 0 < m) :
         intro r hr; simp only [mem_Ioi] at hr ⊢; exact mul_pos hm hr
       -- Ioi (1/m) ⊆ Ioi 0 for the restriction
       have hsub : Ioi (1 / m) ⊆ Ioi 0 := fun r hr => by
-        simp_all
+        simp_all only [one_div, mem_Ioi, neg_mul, mem_union, mem_Ioc, or_true]
       exact (hcont.mono hsub).aestronglyMeasurable measurableSet_Ioi
     have h_nonneg : ∀ r ∈ Ioi (1/m : ℝ), 0 ≤ r ^ 2 * besselK1 (m * r) := by
       intro r hr

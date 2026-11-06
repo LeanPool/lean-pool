@@ -156,11 +156,15 @@ lemma gff_generating_norm_le_one_real (m : ℝ) [Fact (0 < m)] (f : OSforGFF.Tes
   have heq : freeCovarianceℂBilinear m (toComplex f) (toComplex f) =
              freeCovarianceℂ m (toComplex f) (toComplex f) := by
     unfold freeCovarianceℂBilinear freeCovarianceℂ
-    simp_all
+    simp_all only [one_div, neg_mul, neg_re, mul_re, inv_re, re_ofNat, normSq_ofNat,
+      div_self_mul_self', inv_im, im_ofNat, neg_zero, zero_div, zero_mul, sub_zero,
+      toComplex_apply, conj_ofReal]
   rw [heq]
   have h_nonneg : 0 ≤ (freeCovarianceℂ m (toComplex f) (toComplex f)).re :=
     freeCovarianceℂ_positive m (toComplex f)
-  simp_all
+  simp_all only [one_div, neg_mul, neg_re, mul_re, inv_re, re_ofNat, normSq_ofNat,
+    div_self_mul_self', inv_im, im_ofNat, neg_zero, zero_div, zero_mul, sub_zero,
+    Real.exp_le_one_iff, Left.neg_nonpos_iff, inv_pos, Nat.ofNat_pos, mul_nonneg_iff_of_pos_left]
 
 /-! ## Technical Lemma for OS4 (Real Test Functions) -/
 
@@ -253,7 +257,7 @@ lemma GFF_OS4_from_small_decay_real (m : ℝ) [Fact (0 < m)]
       -- fC = toComplex f and T_a_gC = toComplex (g.translate a)
       change distributionPairingℂReal ω (toComplex f) * distributionPairingℂReal ω (toComplex
         (g.translate a)) = _
-      simp_all
+      simp_all only [gt_iff_lt, Real.norm_eq_abs, distributionPairingℂ_real_toComplex, ofReal_mul]
     rw [h_fun_eq]
     exact integral_complex_ofReal
   have h_S2_norm : ‖S₂ fC T_a_gC‖ = |SchwingerFunction₂ (gaussianFreeFieldFree m) f (g.translate
@@ -276,7 +280,8 @@ lemma GFF_OS4_from_small_decay_real (m : ℝ) [Fact (0 < m)]
     _ = 2 * |SchwingerFunction₂ (gaussianFreeFieldFree m) f (g.translate a)| := by
         simp [norm_neg, h_S2_norm]
     _ < 2 * δ := by
-        simp_all
+        simp_all only [gt_iff_lt, Real.norm_eq_abs, norm_real, norm_neg, Nat.ofNat_pos,
+          mul_lt_mul_iff_right₀]
 
 /-! ## Main Theorem: OS4 for Gaussian Free Field -/
 

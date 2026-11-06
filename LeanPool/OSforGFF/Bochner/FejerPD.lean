@@ -403,7 +403,7 @@ private lemma inner_integral_sub (ψ : V → ℂ) (x : V) (R : ℝ) :
       (Metric.closedBall x R).indicator ψ (x - y) := by
     intro y
     simp only [Set.indicator, Metric.mem_closedBall]
-    simp_all
+    simp_all only [dist_zero_right, dist_self_sub_left]
   simp_rw [hind]
   simp_rw [sub_eq_add_neg]
   have h1 : ∫ y : V, (Metric.closedBall x R).indicator ψ (x + -y) =
@@ -495,7 +495,8 @@ private lemma fejer_avg_eq_integral (ψ : V → ℂ) (hcont : Continuous ψ)
       by_cases hx : x ∈ B
       · rw [Set.indicator_of_mem hx]; congr 1; funext v
         rw [← indicator_closedBall_inter ψ R x v, Set.indicator_of_mem hx]
-      · simp_all
+      · simp_all only [ne_eq, not_false_eq_true, Set.indicator_of_notMem, Set.mem_inter_iff,
+          Metric.mem_closedBall, false_and, integral_zero]
   -- Suffices: prove the unscaled Fubini identity, then handle scaling
   suffices h_fubini : ∫ x in B, ∫ v in Metric.closedBall x R, ψ v =
       ∫ v, (volume (B ∩ Metric.closedBall v R)).toReal • ψ v by
@@ -592,7 +593,7 @@ theorem pd_l1_fourier_re_nonneg_theorem
     change ∫ v, 𝐞 (-(innerSL ℝ v ξ)) • φ v = _
     congr 1; ext v
     rw [Circle.smul_def, Real.fourierChar_apply, smul_eq_mul, mul_comm]
-    simp_all
+    simp_all only [coe_innerSL_apply, mul_neg, ofReal_neg, ofReal_mul, ofReal_ofNat, neg_mul]
   rw [hF]
   -- Step 2: The integrand is ψ(v) where ψ = φ · exp(2πi⟨·,-ξ⟩) is PD
   have hψ_eq : (fun v => φ v * cexp (-(2 * ↑π * ↑⟪v, ξ⟫_ℝ * I))) =
