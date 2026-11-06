@@ -78,7 +78,7 @@ theorem lyapunov_coercivity_gen
     calc a < Real.sqrt 1 :=
           Real.sqrt_lt_sqrt (le_of_lt (mul_pos hμ' hη_pos)) hμη_lt1
       _ = 1 := Real.sqrt_one
-  have h1a : (0 : ℝ) < 1 - a := by linarith
+  have h1a : (0 : ℝ) < 1 - a := sub_pos.mpr ha_lt1
   have h1a_sq : (0 : ℝ) < (1 - a) ^ 2 := pow_pos h1a 2
   -- C_coer = 60/(1-a)², C_Ψ = 2
   refine ⟨60 / (1 - a) ^ 2, 2, div_pos (by norm_num) h1a_sq, two_pos, ?_⟩
@@ -100,11 +100,10 @@ theorem lyapunov_coercivity_gen
     have hV_nn : 0 ≤ ‖s.v‖ := norm_nonneg _
     -- Lyapunov setup
     have hlam_pos : 0 < (1 + a) ^ 2 / (2 * (1 - a)) :=
-      div_pos (by positivity) (by linarith)
+      div_pos (by positivity) (mul_pos two_pos h1a)
     have hgap_nn : 0 ≤ f s.x - fStar f := by
-      linarith [hQG s.x hx,
-        mul_nonneg (div_nonneg (le_of_lt hμ') two_pos.le)
-          (sq_nonneg (Metric.infDist s.x S))]
+      exact (mul_nonneg (div_nonneg hμ'.le two_pos.le)
+        (sq_nonneg (Metric.infDist s.x S))).trans (hQG s.x hx)
     -- Lyapunov bounds
     have hgap_le : f s.x - fStar f ≤ Ln :=
       lyapunov_gap_bound (f s.x - fStar f) (U ^ 2) ((1 + a) ^ 2 / (2 * (1 - a)))
@@ -112,11 +111,11 @@ theorem lyapunov_coercivity_gen
     have hu_le : U ^ 2 ≤ 2 * Ln :=
       lyapunov_u_bound (f s.x - fStar f) (U ^ 2) ((1 + a) ^ 2 / (2 * (1 - a)))
         (T ^ 2) Ln hgap_nn (sq_nonneg _) hlam_pos (sq_nonneg _) rfl
-    have hLn_nn : 0 ≤ Ln := by linarith [hu_le, sq_nonneg U]
+    have hLn_nn : 0 ≤ Ln := hgap_nn.trans hgap_le
     have hPv_le : T ^ 2 ≤ 2 * Ln := by
       have hlam_ge : (1 : ℝ) / 2 ≤ (1 + a) ^ 2 / (2 * (1 - a)) := by
-        rw [div_le_div_iff₀ (by norm_num : (0 : ℝ) < 2) (by linarith : (0 : ℝ) < 2 * (1 - a))]
-        nlinarith [sq_nonneg a]
+        rw [div_le_div_iff₀ two_pos (mul_pos two_pos h1a)]
+        linarith only [ha_nn, sq_nonneg a]
       have hPv_bound := lyapunov_Pv_bound (f s.x - fStar f) (U ^ 2)
         ((1 + a) ^ 2 / (2 * (1 - a))) (T ^ 2) Ln hgap_nn (sq_nonneg _) hlam_pos (sq_nonneg _) rfl
       calc T ^ 2 ≤ Ln / ((1 + a) ^ 2 / (2 * (1 - a))) := hPv_bound
@@ -124,7 +123,9 @@ theorem lyapunov_coercivity_gen
             apply div_le_div_of_nonneg_left hLn_nn (by norm_num : (0 : ℝ) < 1 / 2) hlam_ge
         _ = 2 * Ln := by ring
     -- QG at x_n: μ'·D² ≤ 2Ln
-    have hD_sq : μ' * D ^ 2 ≤ 2 * Ln := by nlinarith [hQG s.x hx]
+    have hD_sq : μ' * D ^ 2 ≤ 2 * Ln := by
+      dsimp only [D]
+      linarith only [hQG s.x hx, hgap_le]
     -- A ≤ U + √μ'·E  (from u = P⊥v + √μ'·e)
     have hperp : A ≤ U + Real.sqrt μ' * EE := by
       have h := perp_v_bound_from_u (auxVarOfState P μ' π η s)
@@ -146,7 +147,7 @@ theorem lyapunov_coercivity_gen
               rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg η)]
           _ = dist s.x (π s.x) + Real.sqrt η * ‖s.v‖ := by rw [dist_eq_norm]
           _ = D + Real.sqrt η * ‖s.v‖ := by rw [hD_def, hπ_metric s.x hx]
-      linarith
+      exact h_eq.trans_le (h_le.trans h_tri)
     -- ‖v‖ ≤ A + T  (triangle)
     have hV_ub : ‖s.v‖ ≤ A + T := by
       have := norm_add_le (s.v - P s.v) (P s.v)
@@ -165,23 +166,23 @@ theorem lyapunov_coercivity_gen
       hPv_le hu_le hD_sq hv_ortho hperp hE_tri hV_ub
     -- Convert: goal is ‖v‖²+μ'E² ≤ 60/(1-a)²·Ln, i.e., (1-a)²(‖v‖²+μ'E²) ≤ 60Ln
     rw [div_mul_eq_mul_div, le_div_iff₀ h1a_sq]
-    linarith [hcore]
+    linarith only [hcore]
   · -- (2) Ψ(x_n) ≤ 2 · L_n
     have hqg := hQG s.x hx
     have hgap_nn : 0 ≤ f s.x - fStar f := by
       have := mul_nonneg (div_nonneg (le_of_lt hμ') two_pos.le)
         (sq_nonneg (Metric.infDist s.x S))
-      linarith
+      exact this.trans hqg
     have hlam_pos : 0 < (1 + a) ^ 2 / (2 * (1 - a)) :=
-      div_pos (by positivity) (by linarith)
+      div_pos (by positivity) (mul_pos two_pos h1a)
     have hpsi_le : psi f μ' S s.x ≤ 2 * (f s.x - fStar f) := by
-      simp only [psi]; linarith
+      simp only [psi]; linarith only [hqg]
     have hgap_le_Ln : f s.x - fStar f ≤ Ln :=
       lyapunov_gap_bound (f s.x - fStar f) (‖auxVarOfState P μ' π η s‖ ^ 2)
         ((1 + a) ^ 2 / (2 * (1 - a)))
         (‖P s.v‖ ^ 2) Ln
         hgap_nn (sq_nonneg _) hlam_pos (sq_nonneg _) rfl
-    linarith
+    linarith only [hpsi_le, hgap_le_Ln]
 
 /-- **Coercivity of the Lyapunov function.**
 

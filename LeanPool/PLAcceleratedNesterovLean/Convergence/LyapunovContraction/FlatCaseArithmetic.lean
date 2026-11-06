@@ -6,12 +6,8 @@ Authors: Max Obreiter, Tobias Steinbrecher, Robert Foerster
 module
 
 public import Mathlib.Basic.Real.Basic
-import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith.Frontend
-import Mathlib.Tactic.NormNum.Abs
-import Mathlib.Tactic.NormNum.DivMod
-import Mathlib.Tactic.NormNum.OfScientific
 
 /-!
 # Flat-Case Lyapunov Contraction: Arithmetic Core
@@ -105,7 +101,7 @@ theorem flat_case_arithmetic
     :
     Fn1 + wn_sq / 2 + Tn1 ≤ (1 - a) * (Fn + Un / 2 + Tn) + a * proj_error := by
   -- Positivity of 1-a
-  have h1a : (0 : ℝ) < 1 - a := by linarith
+  have h1a : (0 : ℝ) < 1 - a := sub_pos.mpr ha_lt1
   -- Clear the division in Tn: 2·(1-a)·Tn = (1+a)²·PVsq
   have hTn' : 2 * (1 - a) * Tn = (1 + a) ^ 2 * PVsq := by
     rw [hTn]; field_simp
@@ -118,18 +114,20 @@ theorem flat_case_arithmetic
   -- Scale aiming by a > 0: a·ip_PperpG_en ≥ a·(Fnprime + μ/2·Esq − proj_error)
   have h_aim_sc : a * ip_PperpG_en ≥ a * Fnprime + a * (μ / 2) * Esq - a * proj_error := by
     have := mul_le_mul_of_nonneg_left h_aiming (le_of_lt ha_pos)
-    nlinarith
+    linarith only [this]
   -- Coefficient of PperpVsq: (1-a)·(a − εη)·PperpVsq ≥ 0
   have hc_ppv : (1 - a) * (a - εη) * PperpVsq ≥ 0 := by
-    apply mul_nonneg _ hPperpVsq_nn
-    apply mul_nonneg <;> linarith
+    exact mul_nonneg (mul_nonneg h1a.le (sub_nonneg.mpr hεη_le)) hPperpVsq_nn
   -- Coefficient of PVsq: (3a + a² − (1-a)·εη)·PVsq ≥ 0
   have hc_pv : (3 * a + a ^ 2 - (1 - a) * εη) * PVsq ≥ 0 := by
-    apply mul_nonneg _ hPVsq_nn; nlinarith [sq_nonneg a]
+    apply mul_nonneg _ hPVsq_nn
+    have hεη_scaled := mul_le_mul_of_nonneg_left hεη_le h1a.le
+    have ha_nonneg : 0 ≤ a := hεη_nn.trans hεη_le
+    linarith only [ha_nonneg, hεη_scaled, sq_nonneg a]
   -- Coefficient of PGsq: a·η·PGsq ≥ 0
-  have hc_pg : a * η * PGsq ≥ 0 := by
-    simp_all
+  have hc_pg : a * η * PGsq ≥ 0 :=
+    mul_nonneg (mul_nonneg ha_pos.le hη_pos.le) hPGsq_nn
   -- Main closure: combine all bounds and coefficient signs
-  nlinarith [hTn', h_descent, h_seg_sc, h_aim_sc, hc_ppv, hc_pv, hc_pg]
+  linarith only [hTn', h_descent, h_seg_sc, h_aim_sc, hc_ppv, hc_pv, hc_pg]
 
 end PLAcceleratedNesterovLean

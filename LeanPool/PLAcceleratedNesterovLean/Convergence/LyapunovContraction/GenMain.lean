@@ -44,7 +44,8 @@ private theorem descent_at_lookahead {d : ℕ} (f : E d → ℝ)
     (x'n : E d) (hx'_r09 : dist x'n m_star < r₀ / 9) :
     f (x'n - η • gradient f x'n) ≤ f x'n - η / 2 * ‖gradient f x'n‖ ^ 2 := by
   have hdist_nn := dist_nonneg (x := x'n) (y := m_star)
-  have hx'_Up : x'n ∈ U_plus := hball_sub (Metric.mem_ball.mpr (by linarith))
+  have hx'_Up : x'n ∈ U_plus :=
+    hball_sub (Metric.mem_ball.mpr (by linarith only [hx'_r09, hdist_nn]))
   have hgrad_lip' : ‖gradient f x'n‖ ≤ (↑L : ℝ) * dist x'n m_star := by
     have h := hf_lip.dist_le_mul x'n hx'_Up m_star hm_star_Up
     rwa [hg_zero, dist_zero_right] at h
@@ -73,9 +74,9 @@ private theorem descent_at_lookahead {d : ℕ} (f : E d → ℝ)
         ≤ dist (x'n + t • (-(((1 : ℝ) / (↑L : ℝ)) • gradient f x'n))) x'n +
             dist x'n m_star :=
           dist_triangle _ _ _
-      _ ≤ 2 * dist x'n m_star := by linarith [h_step_bound]
-      _ < 2 * (r₀ / 9) := by linarith [hx'_r09]
-      _ < r₀ := by linarith
+      _ ≤ 2 * dist x'n m_star := by linarith only [h_step_bound]
+      _ < 2 * (r₀ / 9) := by linarith only [hx'_r09]
+      _ < r₀ := by linarith only [hx'_r09, hdist_nn]
   exact lsmooth_descent_at f L hL hU_open hf_diff_on hf_lip x'n hx'_Up hseg_x'n η hη
 
 /-- The gradient step moves the position by at most the distance of the look-ahead point
@@ -101,11 +102,11 @@ private theorem nesterovStep_dist_le_two_mul {d : ℕ} (f : E d → ℝ)
       ≤ dist (x'n - η • gradient f x'n) x'n + dist x'n m_star := dist_triangle _ _ _
     _ = η * ‖gradient f x'n‖ + dist x'n m_star := by rw [h_step_dist]
     _ ≤ η * ((L : ℝ) * dist x'n m_star) + dist x'n m_star := by
-        linarith [mul_le_mul_of_nonneg_left hgrad_lip (le_of_lt hη_pos)]
+        linarith only [hη_pos, hgrad_lip, mul_le_mul_of_nonneg_left hgrad_lip (le_of_lt hη_pos)]
     _ = 2 * dist x'n m_star := by
         have : η * ((L : ℝ) * dist x'n m_star) = dist x'n m_star := by
           rw [← mul_assoc, hηL, one_mul]
-        linarith
+        linarith only [this]
 
 /-- Distance bound for the next look-ahead point. Uses the identity
 `x'_{n+1} = (1+ρ)·x_{n+1} - ρ·x_n` and the triangle inequality:
@@ -145,19 +146,20 @@ private theorem nesterovStep_lookahead_dist_lt {d : ℕ} (f : E d → ℝ)
     _ ≤ ‖(1 + ρ) • (sn1.x - m_star)‖ + ‖ρ • (sn.x - m_star)‖ :=
         norm_sub_le _ _
     _ = (1 + ρ) * ‖sn1.x - m_star‖ + ρ * ‖sn.x - m_star‖ := by
-        rw [norm_smul, norm_smul, Real.norm_eq_abs, abs_of_pos (by linarith : (0:ℝ) < 1 + ρ),
+        rw [norm_smul, norm_smul, Real.norm_eq_abs,
+            abs_of_pos (by linarith only [hρ_pos] : (0:ℝ) < 1 + ρ),
             Real.norm_eq_abs, abs_of_pos hρ_pos]
     _ = (1 + ρ) * dist sn1.x m_star + ρ * dist sn.x m_star := by
         simp only [dist_eq_norm]
     _ < (1 + ρ) * (2 * r) + ρ * r := by
         have h1 : (1 + ρ) * dist sn1.x m_star < (1 + ρ) * (2 * r) :=
-          mul_lt_mul_of_pos_left hx1 (by linarith : (0:ℝ) < 1 + ρ)
+          mul_lt_mul_of_pos_left hx1 (by linarith only [hρ_pos, hρ_lt1] : (0:ℝ) < 1 + ρ)
         have h2 : ρ * dist sn.x m_star < ρ * r :=
           mul_lt_mul_of_pos_left hx hρ_pos
-        linarith
+        linarith only [h1, h2]
     _ < 5 * r := by
         have h3 : ρ * r < r := mul_lt_of_lt_one_left hr_pos hρ_lt1
-        linarith
+        linarith only [h3]
 
 /-- **Flat-case assembly.** The heart of the Lyapunov contraction in the flat case:
 with `w = (1-a)·P⊥v + √μ'·e - √η·P⊥g`, combining descent, aiming, the segment estimate
@@ -221,12 +223,12 @@ private theorem flat_case_bound {d : ℕ} (P : E d →L[ℝ] E d)
     rw [inner_smul_right, norm_smul, Real.norm_eq_abs,
       abs_of_nonneg (Real.sqrt_nonneg η), mul_pow, Real.sq_sqrt (le_of_lt hη_pos)] at h1
     rw [h_ip_decomp, hV_pyth] at h1
-    linarith
+    linarith only [h1]
   -- Aiming: ⟨P⊥g, e⟩ ≥ Fnprime + μ'/2·‖e‖² − |⟨g, Pe⟩| (projector-freezing error)
   have h_aiming_arith : @inner ℝ _ _ (g - P g) e ≥
       Fnprime + μ' / 2 * ‖e‖ ^ 2 - abs (@inner ℝ _ _ g (P e)) := by
     have hle := le_abs_self (@inner ℝ _ _ g (P e))
-    linarith [h_ipGE_decomp]
+    linarith only [h_aim, h_ipGE_decomp, hle]
   -- w norm identity (with √μ'·√η = a)
   have hwn_sq_arith : ‖w‖ ^ 2 =
       (1 - a) ^ 2 * ‖v - P v‖ ^ 2 + μ' * ‖e‖ ^ 2 +
@@ -295,18 +297,20 @@ private theorem lyapunovOfState_step_le {d : ℕ} (f : E d → ℝ)
   set x'n := sn.lookahead η with hx'n
   set gn := gradient f x'n with hgn
   have ha_pos : 0 < a := Real.sqrt_pos_of_pos (mul_pos hμ' hη_pos)
-  have hρ_pos : 0 < ρ := by rw [hρ]; apply div_pos <;> linarith
+  have hρ_pos : 0 < ρ := by
+    rw [hρ]
+    exact div_pos (sub_pos.mpr ha_lt1) (by linarith only [ha_pos])
   have hgap_nn : 0 ≤ f sn.x - fStar f :=
     sub_nonneg.mpr (ciInf_le hbdd sn.x)
   have hgap'_nn : 0 ≤ f sn1.x - fStar f :=
     sub_nonneg.mpr (ciInf_le hbdd sn1.x)
   -- Parameter positivity
-  have h1a_pos : (0 : ℝ) < 1 + a := by linarith
+  have h1a_pos : (0 : ℝ) < 1 + a := by linarith only [hθ_pos, hθ_lt1, ha_pos]
   have h1a_ne : (1 + a : ℝ) ≠ 0 := ne_of_gt h1a_pos
-  have h1ma_ne : (1 - a : ℝ) ≠ 0 := ne_of_gt (by linarith)
+  have h1ma_ne : (1 - a : ℝ) ≠ 0 := ne_of_gt (by linarith only [ha_lt1])
   -- λ = (1+a)²/(2(1-a)) > 0
   have hlam_pos : (0 : ℝ) < (1 + a) ^ 2 / (2 * (1 - a)) :=
-    div_pos (sq_pos_of_pos h1a_pos) (by linarith)
+    div_pos (sq_pos_of_pos h1a_pos) (by linarith only [ha_lt1])
   -- Ln ≥ 0
   have hLn_nn : 0 ≤ lyapunovOfState P μ' π f η sn := by
     simp only [lyapunovOfState]
@@ -314,7 +318,7 @@ private theorem lyapunovOfState_step_le {d : ℕ} (f : E d → ℝ)
       le_of_lt hlam_pos
     have h1 := sq_nonneg ‖auxVarOfState P μ' π η sn‖
     have h2 := mul_nonneg hlam_nn (sq_nonneg ‖P sn.v‖)
-    linarith
+    linarith only [hgap_nn, h1, h2]
   -- ══════════════ Tangential velocity identity ══════════════
   -- P is a CLM, so P(sn1.v) = ρ • (P sn.v - √η • P gn)
   have hPv1 : P sn1.v = ρ • (P sn.v - Real.sqrt η • P gn) := by
@@ -380,15 +384,16 @@ private theorem lyapunovOfState_step_le {d : ℕ} (f : E d → ℝ)
     rw [hTn1_val]
     refine flat_case_bound P hP_self_adj hP_idem μ' η ε a hμ' hη_pos hε_pos hε_bound rfl
       ha_lt1 sn.v gn (x'n - π x'n) wn hwn_eq Fn Fn1 (f x'n - fStar f) hgap_nn hgap'_nn
-      (sub_nonneg.mpr (ciInf_le hbdd x'n)) (by linarith [h_descent]) (by linarith [h_aim]) ?_
-    rw [← h_diff_eq]; linarith [h_seg]
+      (sub_nonneg.mpr (ciInf_le hbdd x'n)) (by linarith only [h_descent])
+      (by linarith only [h_aim]) ?_
+    rw [← h_diff_eq]; linarith only [h_seg]
   -- ── Final assembly ──
   apply two_step_contraction_general a θ _ _
     (δ_curv + a * abs (@inner ℝ _ _ gn (P (x'n - π x'n))))
     ha_pos ha_lt1 hθ_pos hθ_lt1 hLn_nn
   · -- Goal: Ln' ≤ (1-a) * Ln + (δ_curv + proj_err_n)
     rw [hLn'_eq, hLn_eq]
-    linarith [h_Un1_half, h_flat]
+    linarith only [h_Un1_expand, hδ_def, h_flat, h_Un1_half]
   · -- Goal: (δ_curv + proj_err_n) ≤ θ * a * Ln
     exact h_absorb
 
@@ -477,7 +482,7 @@ theorem lyapunov_contraction_of_state
   obtain ⟨r₀, hr₀_pos, hball_sub⟩ : ∃ r₀ > 0, Metric.ball m_star r₀ ⊆ U_plus := by
     exact Metric.isOpen_iff.mp hU_open m_star hm_star_Up
   -- Auxiliary inequalities for the chosen radii
-  have hr₀9 : (0 : ℝ) < r₀ / 9 := by linarith
+  have hr₀9 : (0 : ℝ) < r₀ / 9 := by linarith only [hr₀_pos]
   have hR_min : (0 : ℝ) < min (r₀ / 9) R_abs := lt_min hr₀9 hR_abs
   -- Ω = B(m⋆, min(r₀/9, R_abs)) — ensures iterates are in B(m⋆, R_abs) for the absorption
   have hΩ_sub_r09 : Metric.ball m_star (min (r₀ / 9) R_abs) ⊆
@@ -488,8 +493,8 @@ theorem lyapunov_contraction_of_state
     Metric.ball_subset_ball (min_le_right _ _)
   have hΩ_sub_Ωp : Metric.ball m_star (min (r₀ / 9) R_abs) ⊆
       Metric.ball m_star (2 * r₀ / 3) :=
-    hΩ_sub_r09.trans (Metric.ball_subset_ball (by linarith))
-  have h23_le : 2 * r₀ / 3 ≤ r₀ := by linarith
+    hΩ_sub_r09.trans (Metric.ball_subset_ball (by linarith only [hr₀_pos]))
+  have h23_le : 2 * r₀ / 3 ≤ r₀ := by linarith only [hr₀_pos]
   have hΩp_sub_Up : Metric.ball m_star (2 * r₀ / 3) ⊆ U_plus :=
     (Metric.ball_subset_ball h23_le).trans hball_sub
   -- Provide the existential witnesses:
@@ -523,7 +528,9 @@ theorem lyapunov_contraction_of_state
     calc a = Real.sqrt (μ' * η) := rfl
       _ < Real.sqrt 1 := Real.sqrt_lt_sqrt hle hμη_lt1
       _ = 1 := Real.sqrt_one
-  have hρ_pos : 0 < ρ := by rw [hρ]; apply div_pos <;> linarith
+  have hρ_pos : 0 < ρ := by
+    rw [hρ]
+    exact div_pos (sub_pos.mpr ha_lt1) (by linarith only [ha_pos])
   -- Step 1 (Descent): f(x_{n+1}) ≤ f(x'_n) − (η/2)·‖g_n‖²
   have h_descent := descent_at_lookahead f L hL η hη U_plus hU_open hf_diff_on hf_lip
     m_star hm_star_Up hg_zero_mstar r₀ hball_sub (sn.lookahead η) hx'_ball_r09
@@ -542,7 +549,8 @@ theorem lyapunov_contraction_of_state
       intro t ht0 ht1
       exact hΩp_sub_Up (hΩ_sub_Ωp
         ((convex_ball m_star (min (r₀ / 9) R_abs)) hx_in hx'_in
-          (by linarith : (0 : ℝ) ≤ 1 - t) ht0 (by linarith : (1 : ℝ) - t + t = 1)))
+          (by linarith only [ht1] : (0 : ℝ) ≤ 1 - t) ht0
+          (by linarith only [] : (1 : ℝ) - t + t = 1)))
     -- Derive Ln ≤ R_abs² from Ln ≤ (min(r₀/9, R_abs))² ≤ R_abs²
     have hLn_le_Rabs : Ln ≤ R_abs ^ 2 := by
       calc Ln ≤ (min (r₀ / 9) R_abs) ^ 2 := hLn_bound
@@ -555,13 +563,15 @@ theorem lyapunov_contraction_of_state
       (h_curv_absorb (hΩ_sub_Rabs hx_in) (hΩ_sub_Rabs hx'_in) hLn_le_Rabs)
   case x_next_in =>
     rw [Metric.mem_ball]
-    exact h_sn1_dist.trans_lt (by linarith)
+    exact h_sn1_dist.trans_lt (by linarith only [hr₀_pos, hx'_ball_r09])
   case x'_next_in =>
     rw [Metric.mem_ball]
     have hρ_lt1 : ρ < 1 := by
-      rw [hρ]; rw [div_lt_one (by linarith : (0 : ℝ) < 1 + a)]; linarith
+      rw [hρ, div_lt_one (by linarith only [ha_pos] : (0 : ℝ) < 1 + a)]
+      linarith only [ha_pos]
     exact (nesterovStep_lookahead_dist_lt f η ρ hη_pos hρ_pos hρ_lt1 m_star (r₀ / 9) sn
-      hx_ball_r09 (h_sn1_dist.trans_lt (by linarith))).trans_le (by linarith)
+      hx_ball_r09 (h_sn1_dist.trans_lt (by linarith only [hx'_ball_r09]))).trans_le
+        (by linarith only [hr₀_pos])
 
 /-- **State-based Lyapunov contraction along `nesterovSeqGen`.**
 

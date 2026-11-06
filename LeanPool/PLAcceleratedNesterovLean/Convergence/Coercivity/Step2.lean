@@ -6,11 +6,7 @@ Authors: Max Obreiter, Tobias Steinbrecher, Robert Foerster
 module
 
 public import Mathlib.Basic.Real.Basic
-import Mathlib.Algebra.Order.Algebra
-import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-import Mathlib.Data.Sym.Sym2.Init
-import Mathlib.Tactic.NormNum.GCD
-import Mathlib.Tactic.Positivity.Finset
+import Mathlib.Tactic.Linarith.Frontend
 
 /-!
 # Coercivity Step 2: Resolve Coupled Bounds on A_n and B_n
@@ -47,11 +43,11 @@ theorem resolve_coupled_bounds (A B T c₁ c₂ a : ℝ)
     (hB : B ≤ c₂ + a * (A + T))
     (_hc₁ : 0 ≤ c₁) (_hc₂ : 0 ≤ c₂) (_hT : 0 ≤ T) :
     B ≤ (c₂ + a * c₁ + a * T) / (1 - a) := by
-  have h1 : B ≤ c₂ + a * (c₁ + B + T) := by nlinarith
-  have h2 : (1 - a) * B ≤ c₂ + a * c₁ + a * T := by nlinarith
-  have h3 : (0 : ℝ) < 1 - a := by linarith
-  rw [le_div_iff₀ h3]
-  nlinarith
+  have h1 : B ≤ c₂ + a * (c₁ + B + T) :=
+    hB.trans (add_le_add le_rfl
+      (mul_le_mul_of_nonneg_left (add_le_add hA le_rfl) ha_nn))
+  have h2 : (1 - a) * B ≤ c₂ + a * c₁ + a * T := by linarith only [h1]
+  exact (le_div_iff₀ (sub_pos.mpr ha_lt)).mpr ((mul_comm B (1 - a)).trans_le h2)
 
 /-- After resolving the coupled system, get a bound on A. -/
 theorem resolve_coupled_A_bound (A B c₁ c₂_prime : ℝ)
@@ -59,11 +55,11 @@ theorem resolve_coupled_A_bound (A B c₁ c₂_prime : ℝ)
     (hB : B ≤ c₂_prime)
     (_hc₁ : 0 ≤ c₁) :
     A ≤ c₁ + c₂_prime := by
-  linarith
+  exact hA.trans (add_le_add le_rfl hB)
 
 /-- For Ψ: dist(x, M)² ≤ 2(η‖v‖² + ‖e‖²) from (a+b)² ≤ 2(a²+b²). -/
 theorem dist_bound_from_v_e (a b : ℝ) (_ha : 0 ≤ a) (_hb : 0 ≤ b) :
     (a + b) ^ 2 ≤ 2 * (a ^ 2 + b ^ 2) := by
-  nlinarith [sq_nonneg (a - b)]
+  linarith only [sq_nonneg (a - b)]
 
 end PLAcceleratedNesterovLean

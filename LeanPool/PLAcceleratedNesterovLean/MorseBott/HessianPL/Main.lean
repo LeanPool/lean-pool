@@ -51,7 +51,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
   set Hvv := H v v
   set normHv := ‖H v‖
   set gap := μ * Hvv - normHv ^ 2 with hgap_def
-  have hgap_pos : 0 < gap := by linarith
+  have hgap_pos : 0 < gap := by linarith only [h_contra]
   -- Derivative of fderiv at x₀ is the hessian
   have hhess_deriv : HasFDerivAt (fderiv ℝ f) H x₀ :=
     ((hf.fderiv_right le_rfl).differentiableAt one_ne_zero).hasFDerivAt
@@ -59,7 +59,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
   -- Gradient approximation: fderiv ℝ f (x₀ + h) - H h =o[𝓝 0] h
   have hgrad_o : (fun h => fderiv ℝ f (x₀ + h) - H h) =o[𝓝 (0 : E)] fun h => h := by
     have := hasFDerivAt_iff_isLittleO_nhds_zero.mp hhess_deriv
-    simp_all
+    simpa only [hdf0, sub_zero] using this
   -- Compose with ray t ↦ t • v
   have hray_tend : Tendsto (fun t : ℝ => t • v) (𝓝 0) (𝓝 (0 : E)) := by
     rw [show (0 : E) = (0 : ℝ) • v from (zero_smul ℝ v).symm]
@@ -74,7 +74,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
     have htend : Tendsto (fun t : ℝ => x₀ + t • v) (𝓝 0) (𝓝 x₀) := by
       have key : Tendsto (fun t : ℝ => x₀ + t • v) (𝓝 0) (𝓝 (x₀ + (0 : ℝ) • v)) :=
         tendsto_const_nhds.add (tendsto_id.smul tendsto_const_nhds)
-      simp_all
+      simpa only [zero_smul, add_zero] using key
     exact (htend.eventually hPL).filter_mono nhdsWithin_le_nhds
   -- Taylor bound
   have hTaylor := taylor_ray_isLittleO_pl f x₀ v hf hmin
@@ -94,7 +94,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
   -- Taylor lower bound: f(x₀+tv) - f(x₀) ≥ t²/2 · Hvv - gap/(4μ) · t²
   rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (sq_nonneg t)] at hT
   have hT_lower : t ^ 2 / 2 * Hvv - gap / (4 * μ) * t ^ 2 ≤
-      f (x₀ + t • v) - f x₀ := by linarith [abs_le.mp hT]
+      f (x₀ + t • v) - f x₀ := by linarith only [hT, abs_le.mp hT]
   -- Gradient upper bound: ‖fderiv(x₀+tv)‖ ≤ t·‖Hv‖ + ε'·t·‖v‖
   have hG_upper : ‖fderiv ℝ f (x₀ + t • v)‖ ≤ t * normHv + ε' * t * ‖v‖ := by
     have h1 : ‖fderiv ℝ f (x₀ + t • v)‖ ≤ ‖t • H v‖ +
@@ -109,7 +109,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
           ≤ ε' * ‖t • v‖ := hG
         _ = ε' * (|t| * ‖v‖) := by rw [norm_smul, Real.norm_eq_abs]
         _ = ε' * (t * ‖v‖) := by rw [abs_of_pos ht_pos]
-    linarith [h1, h2, h3]
+    linarith only [h1, h2, h3]
   -- PŁ gives upper bound using gradient
   have hPL_upper : f (x₀ + t • v) - f x₀ ≤
       (2 * μ)⁻¹ * (t * normHv + ε' * t * ‖v‖) ^ 2 := by
@@ -117,7 +117,8 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
         ≤ (2 * μ)⁻¹ * ‖fderiv ℝ f (x₀ + t • v)‖ ^ 2 := hPLt
       _ ≤ (2 * μ)⁻¹ * (t * normHv + ε' * t * ‖v‖) ^ 2 := by
           apply mul_le_mul_of_nonneg_left _ (by positivity)
-          exact sq_le_sq' (by linarith [norm_nonneg (fderiv ℝ f (x₀ + t • v))]) hG_upper
+          exact sq_le_sq'
+            (by linarith only [hG_upper, norm_nonneg (fderiv ℝ f (x₀ + t • v))]) hG_upper
   -- Combine and factor out t²
   have h_sq_factor : (t * normHv + ε' * t * ‖v‖) ^ 2 =
       t ^ 2 * (normHv + ε' * ‖v‖) ^ 2 := by ring
@@ -127,14 +128,11 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
   have hv_ne : v ≠ 0 := by
     intro h
     have : (H v) v = 0 := by simp only [h, map_zero]
-    linarith [show Hvv = (H v) v from rfl]
+    linarith only [hvv_pos, this, show Hvv = (H v) v from rfl]
   have hv_norm_pos : 0 < ‖v‖ := norm_pos_iff.mpr hv_ne
   have h_final : gap / 2 ≤ 2 * normHv * (ε' * ‖v‖) + (ε' * ‖v‖) ^ 2 := by
-    have h_combined : t ^ 2 / 2 * Hvv - gap / (4 * μ) * t ^ 2 ≤
-        (2 * μ)⁻¹ * (t ^ 2 * (normHv + ε' * ‖v‖) ^ 2) := by
-      linarith [h_sq_factor ▸ hPL_upper]
     have h_factored : t ^ 2 * (Hvv / 2 - gap / (4 * μ)) ≤
-        t ^ 2 * ((2 * μ)⁻¹ * (normHv + ε' * ‖v‖) ^ 2) := by linarith
+        t ^ 2 * ((2 * μ)⁻¹ * (normHv + ε' * ‖v‖) ^ 2) := by linarith only [hT_lower, hPL_upper]
     have h_div : Hvv / 2 - gap / (4 * μ) ≤ (2 * μ)⁻¹ * (normHv + ε' * ‖v‖) ^ 2 :=
       le_of_mul_le_mul_left h_factored ht_sq_pos
     have h_eq1 : μ * (Hvv / 2 - gap / (4 * μ)) = μ * Hvv / 2 - gap / 4 := by
@@ -143,11 +141,10 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
         (normHv + ε' * ‖v‖) ^ 2 / 2 := by field_simp
     have h_mul_mu : μ * Hvv / 2 - gap / 4 ≤ (normHv + ε' * ‖v‖) ^ 2 / 2 := by
       have := mul_le_mul_of_nonneg_left h_div hμ.le
-      linarith [h_eq1, h_eq2]
-    have h_gap_eq : μ * Hvv = gap + normHv ^ 2 := by linarith [hgap_def]
+      linarith only [h_eq1, h_eq2, this]
     have h_expand : (normHv + ε' * ‖v‖) ^ 2 =
         normHv ^ 2 + 2 * normHv * (ε' * ‖v‖) + (ε' * ‖v‖) ^ 2 := by ring
-    linarith [h_expand]
+    linarith only [h_mul_mu, h_expand]
   -- But ε' is too small for this to hold
   have hε'v_bound : ε' * ‖v‖ < gap / (4 * (normHv + 1) * (gap + 1)) := by
     calc ε' * ‖v‖
@@ -160,9 +157,7 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
   have hBlt1 : gap / (4 * (normHv + 1) * (gap + 1)) < 1 := by
     rw [div_lt_one (by positivity : (0:ℝ) < 4 * (normHv + 1) * (gap + 1))]
     have h_prod := mul_nonneg hNHv hgap_pos.le
-    have h_exp : 4 * (normHv + 1) * (gap + 1) =
-        4 * normHv * gap + 4 * normHv + 4 * gap + 4 := by ring
-    linarith
+    linarith only [h_contra, hNHv, h_prod]
   have hδp : (0 : ℝ) < ε' * ‖v‖ := mul_pos hε'_pos hv_norm_pos
   have hδlt1 : ε' * ‖v‖ < 1 := lt_trans hε'v_bound hBlt1
   have hstep1 : (ε' * ‖v‖) ^ 2 < ε' * ‖v‖ := by
@@ -172,19 +167,21 @@ lemma muPL_norm_sq_bound (f : E → ℝ) (μ : ℝ) (x₀ v : E)
       (2 * normHv + 1) * (gap / (4 * (normHv + 1) * (gap + 1))) := by
     have h1 : 2 * normHv * (ε' * ‖v‖) ≤
         2 * normHv * (gap / (4 * (normHv + 1) * (gap + 1))) :=
-      mul_le_mul_of_nonneg_left hε'v_bound.le (by linarith)
+      mul_le_mul_of_nonneg_left hε'v_bound.le (by linarith only [hNHv])
     have h2 : (ε' * ‖v‖) ^ 2 < gap / (4 * (normHv + 1) * (gap + 1)) :=
       lt_trans hstep1 hε'v_bound
-    linarith [show (2 * normHv + 1) * (gap / (4 * (normHv + 1) * (gap + 1))) =
+    linarith only [hε'v_bound, hstep1, h1,
+      show (2 * normHv + 1) * (gap / (4 * (normHv + 1) * (gap + 1))) =
         2 * normHv * (gap / (4 * (normHv + 1) * (gap + 1))) +
         gap / (4 * (normHv + 1) * (gap + 1)) from by ring]
-  have hstep3 : (2 * normHv + 1) ≤ 2 * (normHv + 1) := by linarith
+  have hstep3 : (2 * normHv + 1) ≤ 2 * (normHv + 1) := by linarith only []
   have hstep4 : 2 * (normHv + 1) * (gap / (4 * (normHv + 1) * (gap + 1))) =
       gap / (2 * (gap + 1)) := by field_simp; ring
   have hstep5 : gap / (2 * (gap + 1)) < gap / 2 := by
     rw [div_lt_div_iff₀ (by positivity : (0:ℝ) < 2 * (gap + 1)) two_pos]
-    linarith [mul_pos hgap_pos hgap_pos]
-  linarith [mul_le_mul_of_nonneg_right hstep3 hBp.le]
+    linarith only [hgap_pos, mul_pos hgap_pos hgap_pos]
+  linarith only [h_final, hε'v_bound, hδp, hstep2, hstep4, hstep5,
+    mul_le_mul_of_nonneg_right hstep3 hBp.le]
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- § F. Rayleigh quotient minimizer argument
@@ -231,7 +228,8 @@ theorem hessian_coercive_on_orthogonal_of_MuPL_impl (f : E → ℝ) (μ : ℝ) (
     rcases eq_or_lt_of_le hc_nonneg with hc0 | hc_pos
     · -- c = 0, so H(w₀,w₀) = 0, then w₀ ∈ ker(H), but w₀ ∈ ker(H)⊥
       exfalso
-      have : w₀ ∈ K := mem_hessianKer_of_zero_quad f x₀ w₀ hf hmin (by linarith)
+      have : w₀ ∈ K :=
+        mem_hessianKer_of_zero_quad f x₀ w₀ hf hmin (by linarith only [hc_nonneg, hc0])
       have : w₀ ∈ K ⊓ K.orthogonal := ⟨this, hw₀_orth⟩
       rw [K.orthogonal_disjoint.eq_bot] at this
       have hw0_ne : w₀ ≠ 0 := by rw [ne_eq, ← norm_eq_zero, hw₀_norm]; exact one_ne_zero
@@ -255,8 +253,8 @@ theorem hessian_coercive_on_orthogonal_of_MuPL_impl (f : E → ℝ) (μ : ℝ) (
       have hv_ne : (‖v‖ : ℝ) ≠ 0 := ne_of_gt hv_norm_pos
       have h2 : ‖v‖⁻¹ * (‖v‖⁻¹ * (H v) v) * ‖v‖ ^ 2 = (H v) v := by
         field_simp
-      linarith
-    linarith [mul_le_mul_of_nonneg_right hc_bound (sq_nonneg ‖v‖)]
+      linarith only [h1, h2]
+    linarith only [hc_bound, this, mul_le_mul_of_nonneg_right hc_bound (sq_nonneg ‖v‖)]
   -- Step 6: Prove μ ≤ c
   -- The minimizer w₀ is an eigenvector: H(w₀) = c · innerSL ℝ w₀
   -- This gives ‖H(w₀)‖ = c, and then PŁ gives μ ≤ c.
@@ -294,7 +292,7 @@ theorem hessian_coercive_on_orthogonal_of_MuPL_impl (f : E → ℝ) (μ : ℝ) (
         have h0 : ‖w₀ + t • z‖ = 0 := by rw [htz, norm_zero]
         have h1 : ‖w₀ + t • z‖ ^ 2 = 0 := by rw [h0]; ring
         have h2 := hnorm_sq t
-        linarith [mul_nonneg (sq_nonneg t) (sq_nonneg ‖z‖)]
+        linarith only [h1, h2, mul_nonneg (sq_nonneg t) (sq_nonneg ‖z‖)]
       · have hw_in_S : (‖w₀ + t • z‖⁻¹ • (w₀ + t • z)) ∈ S := by
           constructor
           · exact K.orthogonal.smul_mem _
@@ -327,7 +325,7 @@ theorem hessian_coercive_on_orthogonal_of_MuPL_impl (f : E → ℝ) (μ : ℝ) (
       intro t
       have h1 := hRQ t
       rw [hexpand] at h1
-      linarith
+      linarith only [h1]
     -- If a ≠ 0, choosing t small with sign opposite to a gives contradiction
     -- t(2a + t(Hzz - c‖z‖²)) ≥ 0 for all t
     -- At t = 0: value = 0, derivative in t = 2a ≠ 0
@@ -350,8 +348,8 @@ theorem hessian_coercive_on_orthogonal_of_MuPL_impl (f : E → ℝ) (μ : ℝ) (
     have h_sq := sq_nonneg (2 * d - 1)
     have h_sq_exp : (2 * d - 1) ^ 2 = 4 * d ^ 2 - 4 * d + 1 := by ring
     rw [h_sq_exp] at h_sq
-    have h_neg : d - 2 * den₂ < 0 := by linarith [sq_nonneg d]
-    linarith [mul_neg_of_pos_of_neg ha2 h_neg]
+    have h_neg : d - 2 * den₂ < 0 := by linarith only [hden₂_pos, ha2, h_sq, sq_nonneg d]
+    linarith only [h2, ha2, h_neg, mul_neg_of_pos_of_neg ha2 h_neg]
   -- Eigenvector equation: H(w₀) = c • innerSL ℝ w₀
   have h_eig : H w₀ = c • innerSL ℝ w₀ := by
     ext e
