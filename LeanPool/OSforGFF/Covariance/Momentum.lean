@@ -847,7 +847,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
         Complex.exp (-Complex.I * ⟪k, r⟫_ℝ) =
       (normalisation : ℂ) * (heatKernelPositionSpace (α + t) ‖r‖ : ℂ) := by
     intro t ht
-    have hαt : 0 < α + t := by linarith
+    have hαt : 0 < α + t := by linarith only [hα, ht]
     rw [hnorm_def]
     exact gaussianFT_eq_heatKernel_times_norm (α + t) hαt r
   -- Key identity: heat kernel equals k-integral (inverse of gaussFT)
@@ -877,7 +877,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
         Complex.exp (-Complex.I * ⟪k, x - y⟫_ℝ)) =
       Complex.ofReal (Real.exp (-t * m^2) * heatKernelPositionSpace (α + t) ‖x - y‖) := by
     intro t ht
-    have hαt : 0 < α + t := by linarith
+    have hαt : 0 < α + t := by linarith only [hα, ht]
     -- Factor out the constant exp(-tm²)/norm
     calc ∫ k : SpaceTime, ↑(Real.exp (-(α + t) * ‖k‖^2) * Real.exp (-t * m^2) / normalisation) *
           Complex.exp (-Complex.I * ⟪k, x - y⟫_ℝ)
@@ -922,7 +922,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
         · exact (Real.continuous_exp.comp (continuous_neg.mul continuous_const)).continuousOn
         · intro t ht
           have ht_pos : 0 < t := Set.mem_Ioi.mp ht
-          have hαt : 0 < α + t := by linarith
+          have hαt : 0 < α + t := by linarith only [hα, ht_pos]
           have h_add_cont : ContinuousAt (fun s => α + s) t := continuousAt_const.add
             continuousAt_id
           exact (heatKernelPositionSpace_continuous_at (α + t) hαt ‖x - y‖).comp h_add_cont
@@ -933,7 +933,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
       intro t ht
       rw [Real.norm_eq_abs, Real.norm_eq_abs]
       have ht_pos : t > 0 := Set.mem_Ioi.mp ht
-      have hαt : α + t > 0 := by linarith
+      have hαt : α + t > 0 := by linarith only [hα, ht_pos]
       have h_heat_nonneg : 0 ≤ heatKernelPositionSpace (α + t) ‖x - y‖ :=
         heatKernelPositionSpace_nonneg (α + t) hαt ‖x - y‖
       have h_exp_nonneg : 0 ≤ Real.exp (-t * m^2) := Real.exp_nonneg _
@@ -1004,7 +1004,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
     refine MeasureTheory.setIntegral_congr_fun measurableSet_Ioi ?_
     intro t ht
     have ht_pos : 0 < t := Set.mem_Ioi.mp ht
-    have hαt : 0 < α + t := by linarith
+    have hαt : 0 < α + t := by linarith only [hα, ht_pos]
     -- Use h_gaussFT to get the k-integral equals normalisation * H
     have h_gaussft := h_gaussFT t ht_pos
     -- ∫_k exp(-(α+t)‖k‖²) * phase = norm * H(α+t, r)
@@ -1029,7 +1029,7 @@ theorem fubini_schwinger_fourier (α : ℝ) (hα : 0 < α) (m : ℝ) (hm : 0 < m
         := by
         rw [h]
       field_simp at h1
-      linarith
+      linarith only [h1]
     · intro h
       rw [h, mul_comm]
   rw [h_norm_factor]

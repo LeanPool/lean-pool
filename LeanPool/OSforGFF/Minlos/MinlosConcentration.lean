@@ -937,7 +937,7 @@ private lemma joint_kernel_bound_finite
       refine ⟨m, ?_⟩
       rw [div_le_iff₀ (show (0 : ℝ) < ↑m + 1 from by positivity)]
       have := (div_lt_iff₀ hS).mp hm
-      linarith
+      linarith only [hS, this]
     · rintro ⟨m, hm⟩; exact lt_of_lt_of_le (by positivity) hm
   have h_mono : Monotone (fun m : ℕ => {ω : E → ℝ | (1 : ℝ) / (↑m + 1) ≤ S ω}) := by
     intro m₁ m₂ h ω hω; simp only [Set.mem_ofPred_eq] at hω ⊢
@@ -981,8 +981,8 @@ private lemma joint_kernel_bound_finite
               fun ω hω => by
                 simp only [Set.mem_ofPred_eq] at hω
                 have : Real.exp (-(σ ^ 2 * (S ω) / 2)) ≤ Real.exp (-(σ ^ 2 * δ / 2)) :=
-                  Real.exp_le_exp_of_le (by nlinarith [sq_nonneg σ])
-                linarith
+                  Real.exp_le_exp_of_le (by nlinarith only [hω, sq_nonneg σ])
+                linarith only [this]
         _ ≤ ∫ ω, (1 - Real.exp (-(σ ^ 2 * (S ω) / 2))) ∂ν :=
             setIntegral_le_integral h_f_int (Filter.Eventually.of_forall h_nn)
         _ ≤ ε_q := h_int_σ
@@ -990,7 +990,7 @@ private lemma joint_kernel_bound_finite
     intro η hη
     set target := Real.log ((ε_q + η) / η) with h_target
     have h_target_pos : 0 < target := by
-      rw [h_target]; exact Real.log_pos (by rw [lt_div_iff₀ hη]; linarith)
+      rw [h_target]; exact Real.log_pos (by rw [lt_div_iff₀ hη]; linarith only [hε_q])
     set σ₀ := Real.sqrt (2 * target / δ + 1)
     have hσ₀_pos : 0 < σ₀ := Real.sqrt_pos_of_pos (by positivity)
     have hσ₀_sq : σ₀ ^ 2 = 2 * target / δ + 1 := by
@@ -1004,11 +1004,11 @@ private lemma joint_kernel_bound_finite
       have h_ratio_pos : (0 : ℝ) < η / (ε_q + η) := by positivity
       rw [← Real.lt_log_iff_exp_lt h_ratio_pos]
       have h_log_ratio : Real.log (η / (ε_q + η)) = -target := by
-        rw [Real.log_div (by linarith) (by linarith : ε_q + η ≠ 0)]
+        rw [Real.log_div (by linarith only [hη]) (by linarith only [hε_q, hη] : ε_q + η ≠ 0)]
         have : Real.log (ε_q + η) - Real.log η = target := by
-          rw [← Real.log_div (by linarith) (by linarith : η ≠ 0), h_target]
-        linarith
-      linarith [h_log_ratio]
+          rw [← Real.log_div (by linarith) (by linarith only [hη] : η ≠ 0), h_target]
+        linarith only [this]
+      linarith only [hδ_pos, h_log_ratio]
     have h_bound := h_cheb σ₀ hσ₀_pos
     have h_sum_one : ε_q / (ε_q + η) + η / (ε_q + η) = 1 := by field_simp
     have h_c_lb : ε_q / (ε_q + η) < 1 - Real.exp (-(σ₀ ^ 2 * δ / 2)) := by linarith
@@ -1469,7 +1469,7 @@ private lemma tail_bound_uniform
     ε_q K hK hε_q h_quad C_HS hC_HS p_outer h_HS
   -- Step 2: Choose σ and R (depending on ε_q, K, C_HS, δ, not on k)
   set gap := δ - ε_q
-  have h_gap_pos : 0 < gap := by linarith
+  have h_gap_pos : 0 < gap := by linarith only [hε_q_lt_δ]
   set σ₀ : ℝ := if K * C_HS = 0 then 1 else Real.sqrt (gap / (2 * (K * C_HS)))
   have hσ₀_pos : 0 < σ₀ := by
     simp only [σ₀]; split_ifs with h
@@ -1490,7 +1490,7 @@ private lemma tail_bound_uniform
             rw [show K * C_HS * (gap / (2 * (K * C_HS))) =
               gap * (K * C_HS) / (2 * (K * C_HS)) from by ring]
             rw [mul_div_mul_right gap 2 (ne_of_gt hKC_pos)]
-        _ < δ := by simp only [gap]; linarith
+        _ < δ := by simp only [gap]; linarith only [hε_q_lt_δ]
   set bound_σ := ε_q + K * σ₀ ^ 2 * C_HS
   have h_bound_σ_pos : 0 < bound_σ := by positivity
   -- Choose R so that bound_σ / (1 - exp(-σ₀²R²/2)) ≤ δ
@@ -1498,14 +1498,14 @@ private lemma tail_bound_uniform
   have h_dt_pos : 0 < denom_target := by
     simp only [denom_target]; rw [sub_pos, div_lt_one hδ]; exact h_bound_σ
   have h_dt_le_one : denom_target ≤ 1 := by
-    simp only [denom_target]; linarith [div_nonneg h_bound_σ_pos.le hδ.le]
+    simp only [denom_target]; linarith only [hδ, h_bound_σ_pos, div_nonneg h_bound_σ_pos.le hδ.le]
   have hlog_nn : 0 ≤ -Real.log denom_target := by
     rw [neg_nonneg]; exact Real.log_nonpos h_dt_pos.le h_dt_le_one
   set R := Real.sqrt (2 * (-Real.log denom_target) / σ₀ ^ 2 + 1)
   have hR_pos : 0 < R := by
     apply Real.sqrt_pos_of_pos
     have : 0 ≤ 2 * (-Real.log denom_target) / σ₀ ^ 2 := by positivity
-    linarith
+    linarith only [this]
   refine ⟨R, hR_pos, fun k e he => ?_⟩
   -- Step 3: For k = 0, the set is empty
   rcases k with _ | k
@@ -1552,8 +1552,8 @@ private lemma tail_bound_uniform
             fun ω hω => by
               simp only [Set.mem_ofPred_eq] at hω
               have : Real.exp (-(σ₀ ^ 2 * (T ω) / 2)) ≤ Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2)) :=
-                Real.exp_le_exp_of_le (by nlinarith [sq_nonneg σ₀])
-              linarith
+                Real.exp_le_exp_of_le (by nlinarith only [hω, sq_nonneg σ₀])
+              linarith only [this]
       _ ≤ ∫ ω, (1 - Real.exp (-(σ₀ ^ 2 * (T ω) / 2))) ∂ν :=
           setIntegral_le_integral h_f_int (Filter.Eventually.of_forall h_nn)
       _ ≤ bound_σ := h_int
@@ -1565,16 +1565,16 @@ private lemma tail_bound_uniform
     have h1 : σ₀ ^ 2 * (2 * (-Real.log denom_target) / σ₀ ^ 2 + 1) / 2 =
         -Real.log denom_target + σ₀ ^ 2 / 2 := by
       field_simp
-    linarith [hσ₀_sq_pos]
+    linarith only [hσ₀_sq_pos, h1]
   have h_exp_bound : Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2)) ≤ denom_target := by
-    rw [← Real.le_log_iff_exp_le h_dt_pos]; linarith [hσR_bound]
+    rw [← Real.le_log_iff_exp_le h_dt_pos]; linarith only [hσR_bound]
   have h_dt_lt_one : denom_target < 1 := by
-    simp only [denom_target]; linarith [div_pos h_bound_σ_pos hδ]
+    simp only [denom_target]; linarith only [hδ, h_bound_σ_pos, div_pos h_bound_σ_pos hδ]
   have h_denom_pos : 0 < 1 - Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2)) := by
-    linarith [h_exp_bound, h_dt_lt_one]
+    linarith only [h_exp_bound, h_dt_lt_one]
   have h_denom_bound : bound_σ / δ ≤ 1 - Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2)) := by
     have : 1 - denom_target = bound_σ / δ := by simp only [denom_target]; ring
-    linarith [h_exp_bound]
+    linarith only [h_exp_bound]
   calc (ν {ω | R ^ 2 < T ω}).toReal
       ≤ bound_σ / (1 - Real.exp (-(σ₀ ^ 2 * R ^ 2 / 2))) := by
         rw [le_div_iff₀ h_denom_pos, mul_comm]; exact h_cheb_σ₀

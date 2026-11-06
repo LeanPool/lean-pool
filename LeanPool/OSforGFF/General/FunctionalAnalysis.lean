@@ -1086,8 +1086,8 @@ theorem double_mollifier_convergence
                    rcases htv with ⟨ht, _⟩
                    calc ‖a‖ ≤ 2 * (φ i).rOut := ht
                         _ < 2 * (‖a‖ / 3) := mul_lt_mul_of_pos_left hr (by norm_num)
-                        _ < ‖a‖ := by linarith [norm_nonneg a]
-                linarith
+                        _ < ‖a‖ := by linarith only [hr_pos, hr, ht, norm_nonneg a]
+                linarith only [hr_pos, htv, hr]
          change Integrable F (volume.prod volume)
          rw [← MeasureTheory.integrableOn_iff_integrable_of_support_subset h_supp_F]
          exact h_cont_F.integrableOn_compact hK_compact

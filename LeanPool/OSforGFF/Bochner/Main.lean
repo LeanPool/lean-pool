@@ -1085,15 +1085,15 @@ theorem gaussianRegularize_measures_tight (φ : V → ℂ)
     have hR1 : 2 * ‖y‖ / η + 1 ≤ r := (le_max_left _ _).trans hr
     -- 2‖y‖ < η * r since 2‖y‖/η + 1 ≤ r and η > 0
     have h1 : 2 * ‖y‖ < η * r := by
-      have h2 : 2 * ‖y‖ / η < r := by linarith
-      rw [div_lt_iff₀ hη] at h2; linarith
+      have h2 : 2 * ‖y‖ / η < r := by linarith only [hR1]
+      rw [div_lt_iff₀ hη] at h2; linarith only [h2]
     rwa [mul_inv_lt_iff₀ hr_pos]
   -- For r ≥ R: 8‖y‖²/r² < δ/2
   have hsmall2 : 8 * ‖y‖ ^ 2 * r⁻¹ ^ 2 < δ / 2 := by
     have hR2 : Real.sqrt (16 * ‖y‖ ^ 2 / δ) + 1 ≤ r :=
       (le_max_left _ _ |>.trans (le_max_right _ _)).trans hr
     -- r² > 16‖y‖²/δ since r > sqrt(16‖y‖²/δ)
-    have hsqrt_le : Real.sqrt (16 * ‖y‖ ^ 2 / δ) < r := by linarith
+    have hsqrt_le : Real.sqrt (16 * ‖y‖ ^ 2 / δ) < r := by linarith only [hR2]
     have hr_sq : 16 * ‖y‖ ^ 2 / δ < r ^ 2 := by
       calc 16 * ‖y‖ ^ 2 / δ
           ≤ Real.sqrt (16 * ‖y‖ ^ 2 / δ) ^ 2 :=
@@ -1102,7 +1102,7 @@ theorem gaussianRegularize_measures_tight (φ : V → ℂ)
     rw [inv_pow, mul_inv_lt_iff₀ (sq_pos_of_pos hr_pos)]
     -- hr_sq: 16 * ‖y‖² / δ < r², i.e. 16 * ‖y‖² < δ * r²
     rw [div_lt_iff₀ hδ_pos] at hr_sq
-    linarith
+    linarith only [hr_sq]
   -- Bound for each μ ∈ S
   have hmu_bound : ∀ μ ∈ S, μ {x | r < ‖⟪y, x⟫_ℝ‖} ≤ ENNReal.ofReal δ := by
     intro μ hμS
@@ -1122,9 +1122,9 @@ theorem gaussianRegularize_measures_tight (φ : V → ℂ)
       calc |t| * ‖y‖ ≤ 2 * r⁻¹ * ‖y‖ := by
             gcongr
             -- t ∈ uIoc (-(2*r⁻¹)) (2*r⁻¹) implies |t| ≤ 2*r⁻¹
-            have hle : -(2 * r⁻¹) ≤ 2 * r⁻¹ := by linarith [inv_pos.mpr hr_pos]
+            have hle : -(2 * r⁻¹) ≤ 2 * r⁻¹ := by linarith only [hr_pos, inv_pos.mpr hr_pos]
             rw [Set.uIoc_of_le hle] at ht
-            exact abs_le.mpr ⟨by linarith [ht.1.le], ht.2⟩
+            exact abs_le.mpr ⟨by linarith only [ht, ht.1.le], ht.2⟩
         _ = 2 * ‖y‖ * r⁻¹ := by ring
         _ < η := hsmall
     have hreal_bound := charFun_measure_inner_bound φ hpd hnorm hε hε1 hcf hr_pos
@@ -1132,9 +1132,10 @@ theorem gaussianRegularize_measures_tight (φ : V → ℂ)
     -- μ.real {r < |⟪y,x⟫|} ≤ 2*(δ/4) + 8‖y‖²/r² = δ/2 + 8‖y‖²/r² < δ
     -- Convert from μ.real to μ (ENNReal)
     rw [show μ {x | r < |⟪y, x⟫_ℝ|} = ENNReal.ofReal (μ.real {x | r < |⟪y, x⟫_ℝ|}) from by
-      simp_all]
+      simp_all only [gt_iff_lt, inv_pow, Real.norm_eq_abs, ne_eq, measure_ne_top,
+        not_false_eq_true, ofReal_measureReal]]
     apply ENNReal.ofReal_le_ofReal
-    linarith
+    linarith only [hsmall2, hreal_bound]
   -- Step 5: Conclude iSup ≤ ENNReal.ofReal δ < a
   calc ⨆ μ ∈ S, μ {x | r < ‖⟪y, x⟫_ℝ‖}
       ≤ ENNReal.ofReal δ := iSup₂_le hmu_bound
