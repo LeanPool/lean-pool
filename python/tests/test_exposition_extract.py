@@ -12,13 +12,19 @@ from pathlib import Path
 import pytest
 
 from lean_pool.exposition import extract as extraction
-from lean_pool.exposition.extract import GLOBAL_INPUTS, OUTPUTS, run_extraction
+from lean_pool.exposition.extract import (
+    BUILD_CONFIGURATION,
+    COMPILED,
+    GLOBAL_INPUTS,
+    OUTPUTS,
+    run_extraction,
+)
 
 
 @pytest.fixture
 def repository(tmp_path: Path) -> Path:
     """Create two projects and a fake Lean process producing valid extractor JSONL."""
-    for name in GLOBAL_INPUTS:
+    for name in (*GLOBAL_INPUTS, BUILD_CONFIGURATION):
         path = tmp_path / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("configuration\n")
@@ -106,6 +112,33 @@ def test_global_input_invalidates_every_project(repository: Path, name: str) -> 
     _run(repository)
     (repository / name).write_text("changed configuration\n")
     assert not any(item.cached for item in _run(repository))
+
+
+def _compile(root: Path, project: str, digest: str = "0") -> None:
+    path = root / COMPILED / f"LeanPool/{project}.olean.hash"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(digest)
+
+
+def test_missing_compiled_hashes_fall_back_to_build_configuration(
+    repository: Path,
+) -> None:
+    """A project without Lake's module hashes is invalidated by any option edit."""
+    _compile(repository, "A")
+    _run(repository)
+    (repository / BUILD_CONFIGURATION).write_text("changed configuration\n")
+    assert [item.cached for item in _run(repository)] == [True, False]
+
+
+def test_compiled_hashes_replace_build_configuration(repository: Path) -> None:
+    """An option edit that leaves compiled modules identical keeps their extraction."""
+    for project in ("A", "B"):
+        _compile(repository, project)
+    _run(repository)
+    (repository / BUILD_CONFIGURATION).write_text("changed configuration\n")
+    assert all(item.cached for item in _run(repository))
+    _compile(repository, "B", "1")
+    assert [item.cached for item in _run(repository)] == [True, False]
 
 
 @pytest.mark.parametrize("contents", [None, "broken", "{}", '{"name": "wrong"}'])

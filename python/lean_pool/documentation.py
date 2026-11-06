@@ -1,9 +1,11 @@
 """Build resumable local API documentation outside pull-request CI.
 
-Only successful batches advance the cursor. A timed-out or failed subprocess
-is stopped together with its children before its database and Lake markers are
-rolled back to the preceding consistent checkpoint. Lake still checks its own
-traces when a new source snapshot invalidates the cursor.
+Progress is recorded per project: a project whose sources and compiled modules
+are unchanged is never handed to Lake again, so routine merges, option edits and
+helper changes do not restart the whole pool. Only successful batches record
+progress. A timed-out or failed subprocess is stopped together with its children
+before its database and Lake markers are rolled back to the preceding consistent
+checkpoint. Lake still checks its own traces for every project it is given.
 """
 
 from __future__ import annotations
@@ -32,7 +34,16 @@ IMPORTS = re.compile(
     r"(?m)^\s*(?:(?:public|private|meta)\s+)*import\s+(?:all\s+)?([^\n]+)"
 )
 STATE = "documentation-progress.json"
+# Bump when stored analysis must be discarded, e.g. a changed database contract.
+STATE_VERSION = 2
 TOOLCHAIN_ROOTS = frozenset({"Init", "Std", "Lean", "Lake"})
+COMPILED = Path(".lake/build/lib/lean")
+IR = Path(".lake/build/ir")
+LINK_POLICY = (
+    "DOCGEN_LOCAL_MODULE_ROOTS",
+    "DOCGEN_DEPS_DOCS_URL",
+    "DOCGEN_DEPS_DOCS_URLS",
+)
 
 
 def module_sources(root: Path) -> dict[str, Path]:
@@ -43,39 +54,119 @@ def module_sources(root: Path) -> dict[str, Path]:
     }
 
 
-def input_identity(root: Path) -> str:
-    """Invalidate the cursor on changes to sources, pins, helpers or link policy."""
-    digest = hashlib.sha256()
-    paths = [
-        *module_sources(root).values(),
-        *(
-            root / name
-            for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
-        ),
-        *(
-            root / "docbuild" / name
-            for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
-        ),
-        Path(__file__),
-        Path(__file__).with_name("indexes.py"),
-        Path(__file__).parent / "exposition" / "source_text.py",
-    ]
-    for path in paths:
-        name = path.relative_to(root) if path.is_relative_to(root) else Path(path.name)
-        digest.update(str(name).encode())
+def _digest_files(digest, root: Path, paths: list[Path]) -> None:
+    for path in sorted(paths):
+        digest.update(str(path.relative_to(root)).encode())
         digest.update(b"\0" + path.read_bytes() + b"\0")
-    for name in (
-        "DOCGEN_LOCAL_MODULE_ROOTS",
-        "DOCGEN_DEPS_DOCS_URL",
-        "DOCGEN_DEPS_DOCS_URLS",
-    ):
+
+
+def input_identity(root: Path) -> str:
+    """Name the toolchain, dependency, doc-gen and link-policy inputs of every page.
+
+    The pool's own `lakefile.toml` is left out: its options reach the analysis
+    only through compiled modules, which `project_fingerprints` hashes directly.
+    """
+    digest = hashlib.sha256(f"version={STATE_VERSION}\0".encode())
+    _digest_files(
+        digest,
+        root,
+        [
+            root / "lean-toolchain",
+            root / "lake-manifest.json",
+            *(
+                root / "docbuild" / name
+                for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
+            ),
+        ],
+    )
+    for name in LINK_POLICY:
         digest.update(name.encode() + b"=" + os.environ.get(name, "").encode() + b"\0")
     return digest.hexdigest()
 
 
-def ordered_modules(root: Path) -> list[str]:
-    """Visit dependencies first so one target cannot hide an unbounded cold closure."""
+def project_of(module: str) -> str:
+    """Group `LeanPool.<Project>...` modules; the empty library root is its own."""
+    parts = module.split(".")
+    return parts[1] if len(parts) > 1 else ""
+
+
+def local_closure(root: Path, project: str, modules: set[str]) -> set[str] | None:
+    """Read the project's local transitive imports from Lake's setup files.
+
+    The entry module and `Imports` aggregate together import every project
+    source, so their inventories cover modules borrowed from other projects.
+    Return None unless they cover all of the project's own modules.
+    """
+    entry = "LeanPool" + (f".{project}" if project else "")
+    own = {module for module in modules if project_of(module) == project}
+    closure = own & {entry, f"{entry}.Imports"}
+    for module in sorted(closure):
+        setup = root / IR / (module.replace(".", "/") + ".setup.json")
+        try:
+            inventory = json.loads(setup.read_text())
+            if inventory["name"] != module or not isinstance(
+                inventory["importArts"], dict
+            ):
+                return None
+        except (OSError, ValueError, KeyError, TypeError):
+            return None
+        closure |= modules & set(inventory["importArts"])
+    return closure if own <= closure else None
+
+
+def project_fingerprints(root: Path) -> dict[str, str]:
+    """Hash the sources and compiled modules each project's pages depend on.
+
+    That is the project's modules plus every pool module they import, from other
+    projects too. Without Lake's import inventory the whole pool is included;
+    without its compiled-module hashes the pool configuration stands in for them.
+    """
     sources = module_sources(root)
+    modules = set(sources)
+    configuration = hashlib.sha256((root / "lakefile.toml").read_bytes()).hexdigest()
+    digests = {}
+    for module, path in sources.items():
+        compiled = root / COMPILED / path.relative_to(root).with_suffix(".olean.hash")
+        source = hashlib.sha256(path.read_bytes()).hexdigest()
+        digests[module] = (
+            source,
+            compiled.read_text().strip() if compiled.is_file() else None,
+        )
+    fingerprints = {}
+    for project in sorted({project_of(module) for module in modules}):
+        closure = local_closure(root, project, modules) or modules
+        entries = {module: digests[module] for module in sorted(closure)}
+        if any(compiled is None for _, compiled in entries.values()):
+            entries["lakefile.toml"] = (configuration, None)
+        encoded = json.dumps(entries, sort_keys=True).encode()
+        fingerprints[project] = hashlib.sha256(encoded).hexdigest()
+    return fingerprints
+
+
+def read_progress(build: Path, identity: str) -> dict[str, str]:
+    """Return completed project fingerprints saved under the same shared inputs."""
+    path = build / STATE
+    state = json.loads(path.read_text()) if path.exists() else {}
+    if state.get("identity") != identity:
+        return {}
+    projects = state.get("projects")
+    if not isinstance(projects, dict):
+        raise ValueError("invalid documentation checkpoint progress")
+    return projects
+
+
+def ordered_modules(root: Path, projects: set[str] | None = None) -> list[str]:
+    """Visit dependencies first so one target cannot hide an unbounded cold closure.
+
+    Restricting to `projects` skips parsing the rest. Lake still fetches the
+    analysis of any module imported from another project; that project's own
+    record says whether its pages are already current.
+    """
+    sources = {
+        name: path
+        for name, path in module_sources(root).items()
+        if projects is None or project_of(name) in projects
+    }
     graph = {}
     for name, path in sources.items():
         imports = {
@@ -135,6 +226,35 @@ def compiled_dependencies(root: Path) -> list[str]:
         for name in external_modules(root)
         if name.split(".")[0] not in TOOLCHAIN_ROOTS
     ]
+
+
+def prune_modules(build: Path, modules: set[str]) -> list[str]:
+    """Delete analysis of local modules that no longer exist, with their markers.
+
+    doc-gen cascades every table from `modules`. Removing the marker too keeps a
+    module that later reappears unchanged from being skipped by Lake's trace.
+    """
+    database = build / "api-docs.db"
+    if not database.is_file():
+        return []
+    with sqlite3.connect(database) as connection:
+        connection.execute("PRAGMA foreign_keys = ON")
+        stored = [
+            name
+            for (name,) in connection.execute(
+                "SELECT name FROM modules WHERE name = 'LeanPool' "
+                "OR name LIKE 'LeanPool.%'"
+            )
+        ]
+        stale = sorted(set(stored) - modules)
+        connection.executemany(
+            "DELETE FROM modules WHERE name = ?", [(name,) for name in stale]
+        )
+    connection.close()
+    for name in stale:
+        for marker in (build / "doc-data").glob(f"{name}.doc*"):
+            marker.unlink()
+    return stale
 
 
 def validate_database(build: Path) -> None:
@@ -207,21 +327,36 @@ def run_build(command: list[str], directory: Path, timeout: float) -> None:
 
 
 def build_batches(root: Path, lake: str, seconds: float, batch_size: int) -> bool:
-    """Advance verified module batches until complete or the time allowance ends."""
+    """Analyze changed projects in verified batches until done or out of time."""
     if seconds <= 0 or batch_size <= 0:
         raise ValueError("batch size and time allowance must be positive")
     build = root / "docbuild" / ".lake" / "build"
-    state_path = build / STATE
     identity = input_identity(root)
-    modules = ordered_modules(root)
-    state = json.loads(state_path.read_text()) if state_path.exists() else {}
-    cursor = state.get("cursor", 0) if state.get("identity") == identity else 0
-    if not isinstance(cursor, int) or not 0 <= cursor <= len(modules):
-        raise ValueError("invalid documentation checkpoint cursor")
-    started = cursor
+    fingerprints = project_fingerprints(root)
+    done = {
+        project: value
+        for project, value in read_progress(build, identity).items()
+        if fingerprints.get(project) == value
+    }
+    with batch_checkpoint(build):
+        if stale := prune_modules(build, set(module_sources(root))):
+            validate_database(build)
+            LOGGER.info("Removed %s deleted modules", len(stale))
+    pending = ordered_modules(root, set(fingerprints) - set(done))
+    remaining: dict[str, int] = {}
+    for module in pending:
+        remaining[project_of(module)] = remaining.get(project_of(module), 0) + 1
+    LOGGER.info(
+        "Documentation analysis: %s/%s projects reused, %s modules to check",
+        len(done),
+        len(fingerprints),
+        len(pending),
+    )
+    write_progress(build, identity, done)
     deadline = time.monotonic() + seconds
-    while cursor < len(modules) and time.monotonic() < deadline:
-        batch = modules[cursor : cursor + batch_size]
+    position = 0
+    while position < len(pending) and time.monotonic() < deadline:
+        batch = pending[position : position + batch_size]
         command = [lake, "build", *(f"+{name}:docInfo" for name in batch)]
         try:
             with batch_checkpoint(build):
@@ -230,24 +365,33 @@ def build_batches(root: Path, lake: str, seconds: float, batch_size: int) -> boo
                 )
                 validate_database(build)
         except subprocess.TimeoutExpired:
-            if cursor == started:
+            if position == 0:
                 raise RuntimeError(
                     "no batch completed within the time allowance"
                 ) from None
             break
-        cursor += len(batch)
-        state_path.write_text(
-            json.dumps({"identity": identity, "cursor": cursor}) + "\n"
-        )
-        LOGGER.info("Documentation analysis: %s/%s modules", cursor, len(modules))
-    return cursor == len(modules)
+        position += len(batch)
+        for module in batch:
+            project = project_of(module)
+            remaining[project] -= 1
+            if not remaining[project]:
+                done[project] = fingerprints[project]
+        write_progress(build, identity, done)
+        LOGGER.info("Documentation analysis: %s/%s modules", position, len(pending))
+    return done == fingerprints
+
+
+def write_progress(build: Path, identity: str, done: dict[str, str]) -> None:
+    """Record completed projects, dropping those that no longer exist."""
+    build.mkdir(parents=True, exist_ok=True)
+    state = {"identity": identity, "projects": dict(sorted(done.items()))}
+    (build / STATE).write_text(json.dumps(state) + "\n")
 
 
 def require_complete(root: Path) -> None:
     """Refuse to render or publish an incomplete or different source snapshot."""
     build = root / "docbuild" / ".lake" / "build"
-    state = json.loads((build / STATE).read_text())
-    if state != {"identity": input_identity(root), "cursor": len(module_sources(root))}:
+    if read_progress(build, input_identity(root)) != project_fingerprints(root):
         raise ValueError("documentation analysis is incomplete for this snapshot")
     validate_database(build)
 

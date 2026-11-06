@@ -60,6 +60,8 @@ jobs:
           }}-${{ inputs.build_revision }}
         restore-keys: |
           LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+    # Keyed only by inputs that change every page. Per-project progress inside
+    # the checkpoint decides which projects a pool edit sends back to Lake.
     - name: Restore documentation checkpoint
       id: docs-cache
       uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -71,11 +73,11 @@ jobs:
           .lake/packages/UnicodeBasic
           .lake/packages/BibtexQuery
           .lake/packages/MD4Lean
-        key: DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json',
+        key: DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json',
           'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ github.run_id }}-${{ github.run_attempt
           }}-${{ inputs.stage }}
         restore-keys: |
-          DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lakefile.toml', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-
+          DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-
     - name: Install Lean
       uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
       with:

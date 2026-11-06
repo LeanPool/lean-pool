@@ -30,18 +30,64 @@ def repository(tmp_path: Path) -> Path:
         (tmp_path / name).write_text("pinned\n")
     for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json"):
         (tmp_path / "docbuild" / name).write_text("pinned\n")
+    for module, imports in (
+        ("LeanPool", {}),
+        ("LeanPool.A", {"LeanPool.Z": {}, "Mathlib.Logic.Basic": {}}),
+        ("LeanPool.Z", {}),
+    ):
+        inventory(tmp_path, module, imports)
     return tmp_path
 
 
-def populate(build: Path, value: str = "previous") -> None:
-    """Write a real consistent SQLite database and its corresponding marker."""
+def inventory(root: Path, module: str, imports: dict) -> None:
+    """Write Lake's transitive import inventory for one module."""
+    path = root / documentation.IR / (module.replace(".", "/") + ".setup.json")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"name": module, "importArts": imports}))
+
+
+def populate(build: Path, value: str = "previous", modules: tuple = ()) -> None:
+    """Write a consistent SQLite database shaped like doc-gen's, with a marker."""
     build.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(build / "api-docs.db") as connection:
+        connection.execute("PRAGMA foreign_keys = ON")
         connection.execute("CREATE TABLE IF NOT EXISTS contents (value TEXT)")
+        connection.execute("CREATE TABLE IF NOT EXISTS modules (name TEXT PRIMARY KEY)")
+        connection.execute(
+            "CREATE TABLE IF NOT EXISTS name_info (module_name TEXT NOT NULL, "
+            "FOREIGN KEY (module_name) REFERENCES modules(name) ON DELETE CASCADE)"
+        )
         connection.execute("DELETE FROM contents")
         connection.execute("INSERT INTO contents VALUES (?)", (value,))
+        for name in modules:
+            connection.execute("INSERT OR IGNORE INTO modules VALUES (?)", (name,))
+            connection.execute("INSERT INTO name_info VALUES (?)", (name,))
+    connection.close()
     (build / "doc-data").mkdir(exist_ok=True)
     (build / "doc-data" / "module.doc").write_text(value)
+
+
+def compile_modules(root: Path, digest: str = "0", *modules: str) -> None:
+    """Write Lake's compiled-module content hashes for the named modules."""
+    for module in modules or tuple(documentation.module_sources(root)):
+        path = (
+            root / documentation.COMPILED / (module.replace(".", "/") + ".olean.hash")
+        )
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(digest)
+
+
+def recording_build(commands: list):
+    """Stand in for Lake: record each batch and store its modules in the database."""
+
+    def build(command, directory, timeout):
+        commands.append(command)
+        names = tuple(
+            item.removeprefix("+").removesuffix(":docInfo") for item in command[2:]
+        )
+        populate(directory / ".lake" / "build", modules=names)
+
+    return build
 
 
 def test_import_order_ignores_comments_and_strings(repository: Path) -> None:
@@ -93,17 +139,10 @@ def test_first_failed_batch_leaves_no_checkpoint(tmp_path: Path) -> None:
     assert not (tmp_path / "doc-data").exists()
 
 
-def test_resume_skips_verified_batches_but_rechecks_changed_sources(
-    repository: Path, monkeypatch
-) -> None:
-    """Only the same source and policy snapshot may reuse the saved cursor."""
-    commands = []
-
-    def build(command, directory, timeout):
-        commands.append(command)
-        populate(directory / ".lake" / "build")
-
-    monkeypatch.setattr(documentation, "run_build", build)
+def test_resume_rechecks_only_changed_projects(repository: Path, monkeypatch) -> None:
+    """An edit sends its project and importers back to Lake; shared inputs reset all."""
+    commands: list = []
+    monkeypatch.setattr(documentation, "run_build", recording_build(commands))
     assert documentation.build_batches(repository, "lake", 60, 2)
     assert len(commands) == 2
     documentation.require_complete(repository)
@@ -113,10 +152,89 @@ def test_resume_skips_verified_batches_but_rechecks_changed_sources(
     with pytest.raises(ValueError, match="incomplete"):
         documentation.require_complete(repository)
     assert documentation.build_batches(repository, "lake", 60, 2)
-    assert len(commands) == 4
+    assert commands[2:] == [
+        ["lake", "build", "+LeanPool.Z:docInfo", "+LeanPool.A:docInfo"]
+    ]
+    documentation.require_complete(repository)
     monkeypatch.setenv("DOCGEN_DEPS_DOCS_URL", "https://example.com/new-docs")
     with pytest.raises(ValueError, match="incomplete"):
         documentation.require_complete(repository)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    assert len(commands[3:]) == 1 and len(commands[3]) == 5
+
+
+def test_option_edit_reuses_projects_with_unchanged_compiled_modules(
+    repository: Path, monkeypatch
+) -> None:
+    """Pool options reach pages only through compiled modules, so hash those instead."""
+    commands: list = []
+    monkeypatch.setattr(documentation, "run_build", recording_build(commands))
+    compile_modules(repository)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    (repository / "lakefile.toml").write_text("changed options\n")
+    documentation.require_complete(repository)
+    compile_modules(repository, "1", "LeanPool.A")
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    assert commands[1:] == [["lake", "build", "+LeanPool.A:docInfo"]]
+
+
+@pytest.mark.parametrize("contents", [None, "broken", '{"name": "LeanPool.Z"}'])
+def test_missing_inventory_hashes_the_whole_pool(
+    repository: Path, monkeypatch, contents
+) -> None:
+    """Without Lake's import inventory, any pool edit re-checks the project."""
+    path = repository / documentation.IR / "LeanPool/A.setup.json"
+    if contents is None:
+        path.unlink()
+    else:
+        path.write_text(contents)
+    commands: list = []
+    monkeypatch.setattr(documentation, "run_build", recording_build(commands))
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    (repository / "LeanPool.lean").write_text("module\n-- changed\n")
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    assert commands[1:] == [
+        ["lake", "build", "+LeanPool:docInfo", "+LeanPool.A:docInfo"]
+    ]
+
+
+def test_option_edit_without_compiled_hashes_rechecks_everything(
+    repository: Path, monkeypatch
+) -> None:
+    """Missing Lake hashes conservatively tie every project to the pool options."""
+    commands: list = []
+    monkeypatch.setattr(documentation, "run_build", recording_build(commands))
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    (repository / "lakefile.toml").write_text("changed options\n")
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    assert len(commands) == 2 and len(commands[1]) == 5
+
+
+def test_deleted_modules_leave_the_database_and_markers(
+    repository: Path, monkeypatch
+) -> None:
+    """A removed module cannot keep a page, and its return is analyzed again."""
+    commands: list = []
+    monkeypatch.setattr(documentation, "run_build", recording_build(commands))
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    build = repository / "docbuild" / ".lake" / "build"
+    populate(build, modules=("Mathlib.Logic.Basic",))
+    (build / "doc-data" / "LeanPool.Z.doc").write_text("marker")
+    (build / "doc-data" / "LeanPool.Z.doc.trace").write_text("trace")
+    (repository / "LeanPool" / "Z.lean").unlink()
+    (repository / "LeanPool" / "A.lean").write_text("module\n")
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    with sqlite3.connect(build / "api-docs.db") as connection:
+        modules = {name for (name,) in connection.execute("SELECT name FROM modules")}
+        orphans = connection.execute(
+            "SELECT COUNT(*) FROM name_info WHERE module_name = 'LeanPool.Z'"
+        ).fetchone()
+    assert modules == {"LeanPool", "LeanPool.A", "Mathlib.Logic.Basic"}
+    assert orphans == (0,)
+    assert not list((build / "doc-data").glob("LeanPool.Z.doc*"))
+    documentation.require_complete(repository)
 
 
 def test_timeout_advances_only_completed_batches(repository: Path, monkeypatch) -> None:
@@ -133,7 +251,8 @@ def test_timeout_advances_only_completed_batches(repository: Path, monkeypatch) 
     monkeypatch.setattr(documentation, "run_build", build)
     assert not documentation.build_batches(repository, "lake", 60, 2)
     build_path = repository / "docbuild" / ".lake" / "build"
-    assert json.loads((build_path / documentation.STATE).read_text())["cursor"] == 2
+    progress = json.loads((build_path / documentation.STATE).read_text())
+    assert len(progress["projects"]) == 2
     assert (build_path / "doc-data" / "module.doc").read_text() == "1"
     with pytest.raises(ValueError, match="incomplete"):
         documentation.require_complete(repository)
