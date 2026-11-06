@@ -14,6 +14,10 @@ from lean_pool.sofa_certificates.__main__ import (
     validate_witnesses,
     verify_outputs,
 )
+from lean_pool.sofa_certificates.stages.fast_rejection import (
+    ORIGINAL_IMPORT,
+    transform,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures/sofa_certificates"
 
@@ -104,3 +108,49 @@ def test_visibility_and_attribution_preserve_upstream_body() -> None:
         "\n@[expose] public section\n"
         "/- Original attribution. -/\ntheorem example : True := trivial\n"
     )
+
+
+def test_fast_rejection_preserves_real_leaf_statements() -> None:
+    """A production fragment changes only its rejection tactic and import."""
+    original = (FIXTURES / "fast-rejection.input.txt").read_text()
+    expected = (FIXTURES / "fast-rejection.expected.txt").read_text()
+    transformed, count = transform(original)
+    assert count == 1
+    assert transformed == expected
+    assert transformed.count("\n") == original.count("\n")
+
+
+def test_fast_rejection_handles_deeply_nested_inline_cells() -> None:
+    """Nested subdivision paths retain their exact source and statement."""
+    cell = "childLL (" * 20 + "cellRoot" + ")" * 20
+    original = (
+        ORIGINAL_IMPORT
+        + "\nexact adaptiveCoverCheck_true_of_rejected 3 ("
+        + cell
+        + ") (by decide +kernel)\n"
+    )
+    transformed, count = transform(original)
+    assert count == 1
+    assert f"({cell}) (by sofa_reject)" in transformed
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        "have h : physicallyIrrelevant cell = true := by\n  decide +kernel\n",
+        "have h : cellInsideLocal cell = true := by\n  decide +kernel\n",
+        "exact adaptiveCoverCheck_true_of_rejected 3 cell h)\n  (by decide +kernel)\n",
+        "exact adaptiveCoverCheck_true_of_rejected 3 cell (by another_tactic)\n",
+        "adaptiveCoverCheck_true_of_rejected 3 ",
+    ],
+)
+def test_fast_rejection_preserves_other_decisions(body: str) -> None:
+    """A nearby rejection call cannot redirect an unrelated proof argument."""
+    original = ORIGINAL_IMPORT + "\n" + body
+    assert transform(original) == (original, 0)
+
+
+def test_fast_rejection_requires_the_semantic_import() -> None:
+    """A transformed proof must have an explicit source for its evaluator."""
+    with pytest.raises(ValueError, match="lacks its evaluator import"):
+        transform("have h : cell.rejected = true := by\n  decide +kernel\n")

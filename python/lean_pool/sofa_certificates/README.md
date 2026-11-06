@@ -2,11 +2,13 @@
 
 This recipe regenerates all **32** files in
 `LeanPool/MovingSofa/GerverSofa/KernelOnly/PartE/Certificates/`, byte for byte,
-at content commit `9ac84ed0910d4615a0238a6d465b471d7cee53a0` in PR #548
-(see `data/outputs.json`).
+with the optimized proof tactics recorded in `data/outputs.json`.
 That corpus contains 323,037 lines and 25,086 named declarations. The recipe
-also verifies the intermediate 47-file layout at content commit
-`0f0182131407cb4e2f7b1234f07f34271982d46a` against its original digests.
+also verifies two historical layouts against their original digests: the 47-file
+layout at content commit `0f0182131407cb4e2f7b1234f07f34271982d46a`
+(`data/intermediate-outputs.json`) and the original 32 bundles at
+`9ac84ed0910d4615a0238a6d465b471d7cee53a0` in PR #548
+(`data/original-bundle-outputs.json`).
 The recipe contains transformations, subdivision witnesses, module assignments,
 and checksums; it does not embed the final Lean files or a compressed copy of them.
 
@@ -48,6 +50,12 @@ files are under the workspace's `pool/LeanPool/MovingSofa/.../Certificates/`.
 wall time. Intermediate source and audit reports remain available for inspection.
 The command never writes to the content checkout.
 
+Compiling the optimized output requires the content checkout's
+`GerverSofa/KernelOnly/PartE/FastRejection.lean` and its exact product-equality
+lemma in the interval foundation. These hand-written semantic modules remain
+outside the generator's scope. The fast evaluator is proved equal to the original
+one for every expression, interval environment and Taylor depth.
+
 To compare a content checkout directly against the expected corpus:
 
 ```bash
@@ -58,13 +66,15 @@ uv run python -m lean_pool.sofa_certificates verify \
 ## Recompute the subdivision witnesses
 
 The checked-in witnesses are search results, not trusted mathematical premises.
-Every generated terminal proof uses `decide +kernel`; every internal node uses
-the proved four-child cover lemma. An incorrect numerical witness fails Lean's
+Rejection leaves use `sofa_reject`, which rewrites through the proved equality of
+the fast and original evaluators before `decide +kernel`. Other numerical leaves
+also use `decide +kernel`; internal nodes use the proved four-child cover lemma.
+An incorrect numerical witness fails Lean's
 kernel check. Structural validation also rejects missing quadrants, overlapping
 leaves, wrong remaining depths and invalid path digits before source generation.
 
 The separate search command recomputes all **10,801 leaves across 550 roots**.
-It requires the content checkout at the pinned commit, Lean v4.34.0 and Mathlib
+It requires the original content checkout at the pinned commit, Lean v4.34.0 and Mathlib
 `5ed2965256430c3649e86755f9576b54eca72435`, with the semantic prerequisites built:
 
 ```bash
@@ -105,7 +115,12 @@ trust assumptions to the imported library.
 7. Repack those modules into 32 certificate bundles, moving closed cell definitions
    before proof bodies, removing vacuous namespaces and preserving all names.
    This keeps the combined pool index below its size limit after main gained a
-   further project. Check every final output digest.
+   further project. Check the original 32 bundle digests.
+8. Route 36,608 closed rejection decisions in 30 bundles through `sofa_reject`.
+   Preserve every statement, cell expression, non-rejection decision and source
+   line count. Change their import to the exact fast evaluator and check every
+   optimized output digest. The stage records each module's replacement count
+   in `fast-rejection-applied.json`.
 
 `data/batch-assignment.json` records ordered source fragments;
 `data/module-consolidation-map.json` records import relocation, including semantic
@@ -119,13 +134,13 @@ GitHub credentials, machine-specific source paths or private generator are neede
 This is a reproduction of the **imported and optimized certificate corpus from
 public upstream source**, not a claim to recover the upstream author's private
 search history or regenerate the whole MovingSofa project from the paper alone.
-The 22 other imported modules contain semantic and geometric proofs and are
+The remaining project modules contain semantic and geometric proofs and are
 outside this recipe. Mathematical changes to a cover domain or evaluator require
 new witness search, reviewed source changes and the usual full Lean validation;
 updating a checksum alone does not certify such a change. The expected digests
 are tied to this content version and intentionally fail after an unrecorded port.
 
-The initial clean replay verified all 47 intermediate modules in 25.42 seconds;
-the complete replay including all 32 final bundles took 70.14 seconds on the
+The initial historical replay verified all 47 intermediate modules in 25.42 seconds;
+its complete replay including all 32 original bundles took 70.14 seconds on the
 shared Azure VM. These measure source generation only. The import PR separately records
 controlled Lean compile benchmarks and complete CI validation.

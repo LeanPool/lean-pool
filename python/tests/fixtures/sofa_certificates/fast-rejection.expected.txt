@@ -1,0 +1,24 @@
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastRejection
+
+theorem e24KC2PhiAboveLeaf00000 :
+    adaptiveCoverCheck 11 (childLL phiAboveCell0000) = true := by
+  have h : physicallyIrrelevant (childLL phiAboveCell0000) = true := by
+    decide +kernel
+  exact adaptiveCoverCheck_true_of_physicallyIrrelevant 11 (childLL phiAboveCell0000) h
+theorem e24KC2PhiAboveLeaf00001 :
+    adaptiveCoverCheck 11 (childLH phiAboveCell0000) = true := by
+  have h : ((childLH phiAboveCell0000)).rejected = true := by
+    sofa_reject
+  exact adaptiveCoverCheck_true_of_rejected 11 (childLH phiAboveCell0000) h
+
+theorem e24KC2PhiAboveLeaf00002 :
+    adaptiveCoverCheck 11 (childHL phiAboveCell0000) = true := by
+  have h : physicallyIrrelevant (childHL phiAboveCell0000) = true := by
+    decide +kernel
+  exact adaptiveCoverCheck_true_of_physicallyIrrelevant 11 (childHL phiAboveCell0000) h
+
+theorem e24KC2PhiAboveLeaf00003 :
+    adaptiveCoverCheck 11 (childHH phiAboveCell0000) = true := by
+  have h : physicallyIrrelevant (childHH phiAboveCell0000) = true := by
+    decide +kernel
+  exact adaptiveCoverCheck_true_of_physicallyIrrelevant 11 (childHH phiAboveCell0000) h

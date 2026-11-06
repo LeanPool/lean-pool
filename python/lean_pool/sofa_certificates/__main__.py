@@ -34,6 +34,7 @@ STAGES = (
     "public_root",
     "separate_joins",
     "bundle_certificates",
+    "fast_rejection",
 )
 
 
@@ -166,6 +167,10 @@ def reproduce(archive: Path, workspace: Path) -> None:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(prepare_source(source))
     for name in STAGES:
+        if name == "fast_rejection":
+            verify_outputs(
+                workspace / "pool" / CERTIFICATES, DATA / "original-bundle-outputs.json"
+            )
         if name == "bundle_certificates":
             for path in (workspace / "pool" / CERTIFICATES).glob("*.lean"):
                 path.write_text(path.read_text().rstrip() + "\n")
