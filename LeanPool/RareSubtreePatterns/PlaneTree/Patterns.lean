@@ -22,6 +22,6 @@ Definitions of Sections 1.3–1.4 and 2.1 of the paper (source lines 464–473, 
   (zero for a leaf), and `leafHeight T = max_v λ_v(T)`.
 
 All five are defined in `PoissonDeclumping.Statements.Defs` (namespace
-`PoissonDeclumping.PlaneTree`), whose text is shared verbatim with `Challenge.lean`; this module
+`PoissonDeclumping.PlaneTree`), which originate in the upstream statement contract; this module
 only re-exports them under its historical name.
 -/

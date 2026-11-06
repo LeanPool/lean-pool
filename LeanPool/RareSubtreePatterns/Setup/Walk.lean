@@ -23,7 +23,7 @@ characterization is not included as a redundant assumption. The normalizing sequ
 data because Assumption (S) mentions `a_n`.
 
 The definitions `stepLaw`, `walkLaw`, `SlowlyVarying`, `StableDomain` and `InStableDomain` are
-in `PoissonDeclumping.Statements.Defs` (shared verbatim with `Challenge.lean`); this module adds
+in `PoissonDeclumping.Statements.Defs` (from the upstream statement contract); this module adds
 `walkProb`.
 -/
 

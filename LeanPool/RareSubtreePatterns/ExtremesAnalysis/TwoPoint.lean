@@ -36,6 +36,34 @@ open Filter
 open scoped Topology
 
 namespace PoissonDeclumping
+
+/-- The strengthened localization contract retains the original full-filter refinement. -/
+theorem TwoPointLocalization.tendsto_singlePoint {μ : PMF ℕ} {H : PlaneTree → ℕ}
+    {x : ℕ → ℝ} (h : TwoPointLocalization μ H x)
+    (hphase : ∃ δ : ℝ, 0 < δ ∧ ∀ᶠ n in admissibleSizes μ,
+      δ ≤ min (Int.fract (x n)) (1 - Int.fract (x n))) :
+    Tendsto (fun n => (PlaneTree.conditioned μ n).real
+      {T | ((H T : ℕ) : ℤ) = ⌊x n⌋}) (admissibleSizes μ) (𝓝 1) := by
+  rcases (admissibleSizes μ).eq_or_neBot with hbot | hne
+  · rw [hbot]
+    exact tendsto_bot
+  · exact h.2 _ le_rfl hne hphase
+
+/-- Single-point localization along any cofinal admissible subsequence with interior phases. -/
+theorem TwoPointLocalization.tendsto_singlePoint_subsequence {μ : PMF ℕ}
+    {H : PlaneTree → ℕ} {x : ℕ → ℝ} (h : TwoPointLocalization μ H x)
+    {s : ℕ → ℕ} (hs : Tendsto s atTop atTop)
+    (hadm : ∀ᶠ n in atTop, PlaneTree.Admissible μ (s n))
+    (hphase : ∃ δ : ℝ, 0 < δ ∧ ∀ᶠ n in atTop,
+      δ ≤ min (Int.fract (x (s n))) (1 - Int.fract (x (s n)))) :
+    Tendsto (fun n => (PlaneTree.conditioned μ (s n)).real
+      {T | ((H T : ℕ) : ℤ) = ⌊x (s n)⌋}) atTop (𝓝 1) := by
+  have hl : map s atTop ≤ admissibleSizes μ :=
+    tendsto_inf.mpr ⟨hs, tendsto_principal.mpr hadm⟩
+  obtain ⟨δ, hδ, hphase⟩ := hphase
+  exact (h.2 (map s atTop) hl inferInstance ⟨δ, hδ, hphase⟩).comp
+    (show Tendsto s atTop (map s atTop) from le_rfl)
+
 namespace ExtremesAnalysis
 
 /-! ### The two-point set as an integer interval -/
@@ -117,6 +145,25 @@ theorem add_le_floor_add_one_of_le_min {x δ : ℝ} (h : δ ≤ min (Int.fract x
   have := h.trans (min_le_right _ _)
   push_cast
   linarith
+
+/-- A lower level shifted away from the centering equals the floor in an interior phase. -/
+theorem floor_sub_eq_floor_of_phase {x δ : ℝ} (hδ : 0 < δ)
+    (h : δ ≤ min (Int.fract x) (1 - Int.fract x)) : ⌊x - δ⌋ = ⌊x⌋ := by
+  apply Int.floor_eq_iff.mpr
+  have hf := Int.floor_add_fract x
+  have h1 := Int.fract_lt_one x
+  have hlow := h.trans (min_le_left _ _)
+  constructor <;> linarith only [hf, h1, hlow, hδ]
+
+/-- An upper level shifted away from the centering equals the next integer in an interior phase. -/
+theorem ceil_add_eq_floor_add_one_of_phase {x δ : ℝ} (hδ : 0 < δ)
+    (h : δ ≤ min (Int.fract x) (1 - Int.fract x)) : ⌈x + δ⌉ = ⌊x⌋ + 1 := by
+  apply Int.ceil_eq_iff.mpr
+  have hf := Int.floor_add_fract x
+  have h0 := Int.fract_nonneg x
+  have hup := h.trans (min_le_right _ _)
+  push_cast
+  constructor <;> linarith only [hf, h0, hup, hδ]
 
 /-! ### Integer levels and natural mark indices -/
 

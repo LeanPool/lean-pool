@@ -5,7 +5,8 @@ summary: >-
   non-fringe r-ary height and maximum leaf-height for critical Bienaymé trees
   conditioned on their size, under the stated stable-domain, marking, cutoff
   and non-clustering hypotheses. Periodic offspring laws are included through
-  admissible-size limits. The dependency closure preserves tree coding,
+  admissible-size limits. Single-point phase refinements are formulated along
+  phase-separated admissible subsequences. The dependency closure preserves tree coding,
   Chen–Stein bounds, regular variation, stable densities and lattice local
   limit estimates, with concrete offspring examples and direct consequences.
 branch: probability
@@ -46,12 +47,14 @@ main_results:
       For critical offspring laws in a stable domain, the maximum non-fringe
       complete r-ary height has a lattice-Gumbel law for unary strings and
       two-point localization for r at least two, with the stated offspring
-      probabilities and phase-dependent refinements.
+      probabilities and single-point refinements along phase-separated
+      admissible subsequences.
   - declaration: PoissonDeclumping.maxLeafHeight
     informal: >-
       The maximum leaf-height has the stated lattice-Gumbel behavior when the
       unary offspring probability is positive, and the two-point behavior
-      when it is zero, with the stated nondegeneracy and stable-domain conditions.
+      when it is zero, with single-point refinements along phase-separated
+      admissible subsequences and the stated nondegeneracy and stable-domain conditions.
 tags:
   - probability
   - branching-processes

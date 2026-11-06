@@ -224,10 +224,12 @@ theorem twoPointLocalization_congr {H H' : PlaneTree → ℕ} {x : ℕ → ℝ}
   constructor
   · rintro ⟨h1, h2⟩
     exact ⟨h1.congr fun n => key n (fun z => ((z : ℕ) : ℤ) ∈ twoPointSet (x n)),
-      fun hθ => (h2 hθ).congr fun n => key n (fun z => ((z : ℕ) : ℤ) = ⌊x n⌋)⟩
+      fun l hl hne hθ => (h2 l hl hne hθ).congr fun n =>
+        key n (fun z => ((z : ℕ) : ℤ) = ⌊x n⌋)⟩
   · rintro ⟨h1, h2⟩
     exact ⟨h1.congr fun n => (key n (fun z => ((z : ℕ) : ℤ) ∈ twoPointSet (x n))).symm,
-      fun hθ => (h2 hθ).congr fun n => (key n (fun z => ((z : ℕ) : ℤ) = ⌊x n⌋)).symm⟩
+      fun l hl hne hθ => (h2 l hl hne hθ).congr fun n =>
+        (key n (fun z => ((z : ℕ) : ℤ) = ⌊x n⌋)).symm⟩
 
 
 /-- An exponent `η ∈ (0, 1 - 1/α)` (namely `η = (1 - 1/α)/2`) for the cutoff
@@ -335,7 +337,7 @@ theorem maxLeafHeight_superexp_of_cConst_pos (h2 : PoissonApproximation2Statemen
       StructuralMicroscopic μ a (fun j T => j ≤ rootLeafHeight T) h M := fun h hlev =>
     Applications.lem_S_lh hT hη (fun hκ1 => by omega)
       (fun _ δ hδ => (hlev δ hδ).filter_mono inf_le_left)
-  obtain ⟨hlo, hhi, hfl⟩ := ExtremesAnalysis.lh_levels_le_rpow hc h1 h0 hx
+  obtain ⟨hlo, hhi, -⟩ := ExtremesAnalysis.lh_levels_le_rpow hc h1 h0 hx
   have hadm := eventually_admissible_sizes μ
   constructor
   · obtain ⟨hinf, hzero⟩ := ExtremesAnalysis.lh_twoPoint_thresholds hc h1 h0 hx
@@ -346,15 +348,19 @@ theorem maxLeafHeight_superexp_of_cConst_pos (h2 : PoissonApproximation2Statemen
     congr 1
     ext T
     exact (ExtremesAnalysis.natCast_mem_twoPointSet_iff (x n) (leafHeight T)).symm
-  · rintro ⟨δ, hδ, hθ⟩
-    obtain ⟨hinf, hzero⟩ := ExtremesAnalysis.lh_interior_thresholds hc h1 h0 hx
-      (l := admissibleSizes μ) inf_le_left hδ hθ
-    have hlev0 : ∀ δ : ℝ, 0 < δ → ∀ᶠ n in atTop,
-        (kappa μ : ℝ) ^ (⌊x n⌋).toNat ≤ (n : ℝ) ^ δ := fun δ hδ => by
-      simpa using hfl 0 (by norm_num) δ hδ
-    have hA := tendsto_conditioned_le_leafHeight_one h2 hD hcpos hM (hSof _ hlev0) hinf
-    have hB := tendsto_conditioned_le_leafHeight_zero hT hM (hSof _ (hfl 1 (by norm_num))) hzero
-    refine (tendsto_le_and_not_le hadm leafHeight hA hB).congr fun n => ?_
+  · intro l hlsub _hne
+    rintro ⟨δ, hδ, hθ⟩
+    obtain ⟨-, hD0, hD1, -, hp⟩ := lem_ell_asymp_ii_tree hc h1 h0
+    obtain ⟨hlevlow, hlevup, hinf, hzero⟩ := ExtremesAnalysis.shifted_thresholds hκ2
+      hD0 hD1 hx hp (Real.rpow_pos_of_pos ((mass_pos_iff _).mpr (kappa_mem hc h1).2) _) hδ
+    have hA := tendsto_conditioned_le_leafHeight_one h2 hD hcpos hM
+      (hSof _ hlevlow) (hinf.mono_left inf_le_left)
+    have hB := tendsto_conditioned_le_leafHeight_zero hT hM
+      (hSof _ hlevup) (hzero.mono_left inf_le_left)
+    refine ((tendsto_le_and_not_le hadm leafHeight hA hB).mono_left hlsub).congr' ?_
+    filter_upwards [hθ] with n hn
+    rw [ExtremesAnalysis.floor_sub_eq_floor_of_phase hδ hn,
+      ExtremesAnalysis.ceil_add_eq_floor_add_one_of_phase hδ hn]
     congr 1
     ext T
     exact (ExtremesAnalysis.natCast_eq_iff (leafHeight T) ⌊x n⌋).symm

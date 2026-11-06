@@ -16,8 +16,8 @@ trees records one entry for each vertex in depth-first order. Equal subtrees at
 different vertices remain separate entries, so counting does not lose multiplicity.
 
 The definitions `PlaneTree`, `children`, `rootDegree`, `fringeTrees`, `vertexCount`,
-`markCount` and `declumpedMark` are in `PoissonDeclumping.Statements.Defs` (shared verbatim
-with `Challenge.lean`); this file proves their basic properties.
+`markCount` and `declumpedMark` are in `PoissonDeclumping.Statements.Defs`, from the upstream
+statement contract; this file proves their basic properties.
 -/
 
 @[expose] public section

@@ -317,7 +317,7 @@ theorem maxString_rary_of (h1 : PoissonApproximationStatement) (μ : PMF ℕ)
   have hπ : ∀ (k : ℕ → ℕ) (n : ℕ),
       markProb μ (fun j => Embeds (completeTree r j)) k n = q ^ ((r ^ k n - 1) / (r - 1)) :=
     fun k n => bienayme_real_embeds_completeTree_of_two_le hT.critical hT.nondegenerate hr (k n)
-  obtain ⟨hlev1, hlev2, hlev3⟩ := ExtremesAnalysis.rary_levels_le_rpow hr hq0 hq1
+  obtain ⟨hlev1, hlev2, -⟩ := ExtremesAnalysis.rary_levels_le_rpow hr hq0 hq1
   constructor
   · -- two-point localization, with `J_n = {a_n, a_n + 1}`, `a_n = twoPointLow t_n^{**}`
     obtain ⟨hlow, hup⟩ := ExtremesAnalysis.rary_twoPoint_thresholds hr hq0 hq1 hl
@@ -332,16 +332,26 @@ theorem maxString_rary_of (h1 : PoissonApproximationStatement) (μ : PMF ℕ)
     ext T
     simp only [Set.mem_sdiff, Set.mem_ofPred_eq, ExtremesAnalysis.natCast_mem_twoPointSet_iff]
   · -- interior phase
+    intro l hlsub _hne
     rintro ⟨δ, hδ, hθ⟩
-    obtain ⟨hlow, hup⟩ := ExtremesAnalysis.rary_interior_thresholds hr hq0 hq1 hl hδ hθ
+    have hr' : (2 : ℝ) ≤ r := by exact_mod_cast hr
+    obtain ⟨hlevlow, hlevup, hlow, hup⟩ := ExtremesAnalysis.shifted_thresholds hr
+      (Real.rpow_pos_of_pos hq0 _)
+      (Real.rpow_lt_one hq0.le hq1 (by apply div_pos one_pos; linarith))
+      (ExtremesAnalysis.tStarStar_eq hq0) (ExtremesAnalysis.rary_isEquivalent hr hq0)
+      (Real.rpow_pos_of_pos hq0 _) hδ
     have hA := tendsto_le_maxCompleteHeight_one h1 hμ hT hr hμr
-      (k := fun n => (⌊tStarStar r q n⌋).toNat)
-      (fun δ hδ => (hlev3 0 (by norm_num) δ hδ).filter_mono hl |>.mono fun n hn => by
-        simpa only [add_zero] using hn) (hlow.congr fun n => by rw [hπ])
+      (k := fun n => (⌊tStarStar r q n - δ⌋).toNat)
+      (fun ε hε => (hlevlow ε hε).filter_mono hl)
+      ((hlow.mono_left hl).congr fun n => by rw [hπ])
     have hB := tendsto_le_maxCompleteHeight_zero hT hr
-      (k := fun n => (⌊tStarStar r q n⌋ + 1).toNat)
-      (fun δ hδ => (hlev3 1 (by norm_num) δ hδ).filter_mono hl) (hup.congr fun n => by rw [hπ])
-    refine (tendsto_diff_one hA hB).congr fun n => ?_
+      (k := fun n => (⌈tStarStar r q n + δ⌉).toNat)
+      (fun ε hε => (hlevup ε hε).filter_mono hl)
+      ((hup.mono_left hl).congr fun n => by rw [hπ])
+    refine ((tendsto_diff_one hA hB).mono_left hlsub).congr' ?_
+    filter_upwards [hθ] with n hn
+    rw [ExtremesAnalysis.floor_sub_eq_floor_of_phase hδ hn,
+      ExtremesAnalysis.ceil_add_eq_floor_add_one_of_phase hδ hn]
     congr 1
     ext T
     simp only [Set.mem_sdiff, Set.mem_ofPred_eq, ExtremesAnalysis.natCast_eq_iff]

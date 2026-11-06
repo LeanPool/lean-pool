@@ -26,5 +26,5 @@ paper excludes ("we work along subsequences on which the marking probability is 
 The definitions (the discrete σ-algebra on `List PlaneTree`, `admissibleSizes`, `IsCutoff`,
 `markProb`, `uniformFringeLaw`, `Microscopic`, `Skeleton`, `StructuralMicroscopic`, `pairProb`,
 `NonClustering`, `markedCountLaw`) are in `PoissonDeclumping.Statements.Defs`, whose text is
-shared verbatim with `Challenge.lean`; this module only re-exports them under its historical name.
+from the upstream statement contract; this module only re-exports them under its historical name.
 -/

@@ -353,16 +353,16 @@ theorem firstMarked_pair_take_iff {G : PlaneTree → Prop} {M ℓ K : ℕ} {x : 
 theorem errorB2_nonneg (μ : PMF ℕ) (G : PlaneTree → Prop) (M n : ℕ) : 0 ≤ errorB2 μ G M n :=
   Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => measureReal_nonneg
 
-/-- **Lemma `lem:boundb2`** (source lines 1815–1857, audit finding 5): under Assumption (C)
-and bounded `n π_n`, `b_2^n → 0` along admissible sizes. Proof: cyclic exchangeability
-(`errorB2_le`), bridge removal (Lemma `lem:error_est` with `N_n = n`, window `2 M_n`, endpoint
-`-1`), the two-start bound `P(I_1 I_{1+ℓ}) ≤ π_n² + A_n(ℓ)` (`walkVecLaw_real_pair_le_markProb`,
-proved by conditioning on `ζ`), and `∑_{ℓ ≤ M_n} A_n(ℓ) = o(n π_n²)`. -/
-theorem tendsto_errorB2 (hT : StableToolkit μ α a) {G : ℕ → PlaneTree → Prop} {k M : ℕ → ℕ}
-    (hM : IsCutoff M) (hC : NonClustering μ G k M)
-    (hbd : ∃ C : ℝ, ∀ᶠ n : ℕ in admissibleSizes μ, (n : ℝ) * markProb μ G k n ≤ C) :
-    Tendsto (fun n => errorB2 μ (G (k n)) (M n) n) (admissibleSizes μ) (𝓝 0) := by
+/-- The bound on `b_2` from the proof of Lemma `lem:boundb2` (source lines 1815–1857), without
+the bounded-mean hypothesis: eventually along admissible sizes,
+`b_2 ≤ 2 C₀ (n M_n π_n² + n ∑_{ℓ=1}^{M_n} A_n(ℓ))`. -/
+theorem exists_eventually_errorB2_le (hT : StableToolkit μ α a) {G : ℕ → PlaneTree → Prop}
+    {k M : ℕ → ℕ} (hM : IsCutoff M) :
+    ∃ C₀ : ℝ, 0 < C₀ ∧ ∀ᶠ n in admissibleSizes μ, errorB2 μ (G (k n)) (M n) n ≤
+      2 * C₀ * ((n : ℝ) * M n * markProb μ G k n ^ 2 +
+        (n : ℝ) * ∑ ℓ ∈ Finset.Icc 1 (M n), pairProb μ G k n ℓ) := by
   obtain ⟨C₀, hC₀, hbr⟩ := exists_cond_take_le hT
+  refine ⟨C₀, hC₀, ?_⟩
   have hl : admissibleSizes μ ≤ atTop := inf_le_left
   have hadm : ∀ᶠ n in admissibleSizes μ, Admissible μ n :=
     mem_inf_of_right (mem_principal_self _)
@@ -379,58 +379,65 @@ theorem tendsto_errorB2 (hT : StableToolkit μ α a) {G : ℕ → PlaneTree → 
     rw [Real.norm_natCast, Real.norm_natCast] at hn
     have : ((2 * M n : ℕ) : ℝ) ≤ n := by push_cast; linarith
     exact_mod_cast this
-  -- the eventual bound `b_2 ≤ 2 C₀ (n M_n π_n² + n ∑_{ℓ ≤ M_n} A_n(ℓ))`
-  have hbound : ∀ᶠ n in admissibleSizes μ, errorB2 μ (G (k n)) (M n) n ≤
-      2 * C₀ * ((n : ℝ) * M n * markProb μ G k n ^ 2 +
-        (n : ℝ) * ∑ ℓ ∈ Finset.Icc 1 (M n), pairProb μ G k n ℓ) := by
-    filter_upwards [hl (hbr (N := fun n => n) (m := fun n => 2 * M n) (z := fun _ => 1)
-      tendsto_id h2Mo hz), hl h2M, hadm] with n hn h2Mn hadmn
-    have hψ : walkProb μ n (-1) ≠ 0 := ((walkProb_neg_one_pos_iff μ n).2 hadmn).ne'
-    have hpair : ∀ ℓ ∈ Finset.Icc 1 (M n - 1), pairBridge μ (G (k n)) (M n) n ℓ ≤
-        C₀ * (markProb μ G k n ^ 2 + pairProb μ G k n ℓ) := by
-      intro ℓ hℓ
-      have hℓM : ℓ + M n ≤ 2 * M n := by
-        have := (Finset.mem_Icc.mp hℓ).2
-        omega
-      have h := hn (-1) (by simp) hψ
-        (fun y => FirstMarked (G (k n)) (M n) y ∧ FirstMarked (G (k n)) (M n) (y.rotate ℓ))
-      have hset : {ω : Fin n → ℤ | FirstMarked (G (k n)) (M n) ((List.ofFn ω).take (2 * M n)) ∧
-          FirstMarked (G (k n)) (M n) (((List.ofFn ω).take (2 * M n)).rotate ℓ)} =
+  filter_upwards [hl (hbr (N := fun n => n) (m := fun n => 2 * M n) (z := fun _ => 1)
+    tendsto_id h2Mo hz), hl h2M, hadm] with n hn h2Mn hadmn
+  have hψ : walkProb μ n (-1) ≠ 0 := ((walkProb_neg_one_pos_iff μ n).2 hadmn).ne'
+  have hpair : ∀ ℓ ∈ Finset.Icc 1 (M n - 1), pairBridge μ (G (k n)) (M n) n ℓ ≤
+      C₀ * (markProb μ G k n ^ 2 + pairProb μ G k n ℓ) := by
+    intro ℓ hℓ
+    have hℓM : ℓ + M n ≤ 2 * M n := by
+      have := (Finset.mem_Icc.mp hℓ).2
+      omega
+    have h := hn (-1) (by simp) hψ
+      (fun y => FirstMarked (G (k n)) (M n) y ∧ FirstMarked (G (k n)) (M n) (y.rotate ℓ))
+    have hset : {ω : Fin n → ℤ | FirstMarked (G (k n)) (M n) ((List.ofFn ω).take (2 * M n)) ∧
+        FirstMarked (G (k n)) (M n) (((List.ofFn ω).take (2 * M n)).rotate ℓ)} =
+        {ω | FirstMarked (G (k n)) (M n) (List.ofFn ω) ∧
+          FirstMarked (G (k n)) (M n) ((List.ofFn ω).rotate ℓ)} := by
+      ext ω
+      simp only [Set.mem_ofPred_eq]
+      exact firstMarked_pair_take_iff hℓM (by rw [List.length_ofFn]; exact h2Mn)
+    rw [hset] at h
+    calc pairBridge μ (G (k n)) (M n) n ℓ ≤ C₀ * (walkVecLaw μ (2 * M n)).real
           {ω | FirstMarked (G (k n)) (M n) (List.ofFn ω) ∧
-            FirstMarked (G (k n)) (M n) ((List.ofFn ω).rotate ℓ)} := by
-        ext ω
-        simp only [Set.mem_ofPred_eq]
-        exact firstMarked_pair_take_iff hℓM (by rw [List.length_ofFn]; exact h2Mn)
-      rw [hset] at h
-      calc pairBridge μ (G (k n)) (M n) n ℓ ≤ C₀ * (walkVecLaw μ (2 * M n)).real
-            {ω | FirstMarked (G (k n)) (M n) (List.ofFn ω) ∧
-              FirstMarked (G (k n)) (M n) ((List.ofFn ω).rotate ℓ)} := h
-        _ ≤ C₀ * (markProb μ G k n ^ 2 + pairProb μ G k n ℓ) :=
-          mul_le_mul_of_nonneg_left (walkVecLaw_real_pair_le_markProb μ G k n hℓM) hC₀.le
-    have hA0 : ∀ ℓ, 0 ≤ pairProb μ G k n ℓ := fun _ => measureReal_nonneg
-    have hsumA : ∑ ℓ ∈ Finset.Icc 1 (M n - 1), pairProb μ G k n ℓ ≤
-        ∑ ℓ ∈ Finset.Icc 1 (M n), pairProb μ G k n ℓ :=
-      Finset.sum_le_sum_of_subset_of_nonneg (Finset.Icc_subset_Icc le_rfl (Nat.sub_le _ _))
-        fun ℓ _ _ => hA0 ℓ
-    have hcard : ((Finset.Icc 1 (M n - 1)).card : ℝ) ≤ M n := by
-      rw [Nat.card_Icc]
-      exact_mod_cast (show M n - 1 + 1 - 1 ≤ M n by omega)
-    have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-    calc errorB2 μ (G (k n)) (M n) n
-        ≤ n * (2 * ∑ ℓ ∈ Finset.Icc 1 (M n - 1), pairBridge μ (G (k n)) (M n) n ℓ) :=
-          errorB2_le μ _ _ n
-      _ ≤ n * (2 * ∑ ℓ ∈ Finset.Icc 1 (M n - 1),
-            C₀ * (markProb μ G k n ^ 2 + pairProb μ G k n ℓ)) := by
-          gcongr with ℓ hℓ
-          exact hpair ℓ hℓ
-      _ = 2 * C₀ * ((n : ℝ) * ((Finset.Icc 1 (M n - 1)).card * markProb μ G k n ^ 2) +
-            n * ∑ ℓ ∈ Finset.Icc 1 (M n - 1), pairProb μ G k n ℓ) := by
-          rw [← Finset.mul_sum, Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul]
-          ring
-      _ ≤ 2 * C₀ * ((n : ℝ) * (M n * markProb μ G k n ^ 2) +
-            n * ∑ ℓ ∈ Finset.Icc 1 (M n), pairProb μ G k n ℓ) := by
-          gcongr
-      _ = _ := by ring
+            FirstMarked (G (k n)) (M n) ((List.ofFn ω).rotate ℓ)} := h
+      _ ≤ C₀ * (markProb μ G k n ^ 2 + pairProb μ G k n ℓ) :=
+        mul_le_mul_of_nonneg_left (walkVecLaw_real_pair_le_markProb μ G k n hℓM) hC₀.le
+  have hA0 : ∀ ℓ, 0 ≤ pairProb μ G k n ℓ := fun _ => measureReal_nonneg
+  have hsumA : ∑ ℓ ∈ Finset.Icc 1 (M n - 1), pairProb μ G k n ℓ ≤
+      ∑ ℓ ∈ Finset.Icc 1 (M n), pairProb μ G k n ℓ :=
+    Finset.sum_le_sum_of_subset_of_nonneg (Finset.Icc_subset_Icc le_rfl (Nat.sub_le _ _))
+      fun ℓ _ _ => hA0 ℓ
+  have hcard : ((Finset.Icc 1 (M n - 1)).card : ℝ) ≤ M n := by
+    rw [Nat.card_Icc]
+    exact_mod_cast (show M n - 1 + 1 - 1 ≤ M n by omega)
+  have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
+  calc errorB2 μ (G (k n)) (M n) n
+      ≤ n * (2 * ∑ ℓ ∈ Finset.Icc 1 (M n - 1), pairBridge μ (G (k n)) (M n) n ℓ) :=
+        errorB2_le μ _ _ n
+    _ ≤ n * (2 * ∑ ℓ ∈ Finset.Icc 1 (M n - 1),
+          C₀ * (markProb μ G k n ^ 2 + pairProb μ G k n ℓ)) := by
+        gcongr with ℓ hℓ
+        exact hpair ℓ hℓ
+    _ = 2 * C₀ * ((n : ℝ) * ((Finset.Icc 1 (M n - 1)).card * markProb μ G k n ^ 2) +
+          n * ∑ ℓ ∈ Finset.Icc 1 (M n - 1), pairProb μ G k n ℓ) := by
+        rw [← Finset.mul_sum, Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul]
+        ring
+    _ ≤ 2 * C₀ * ((n : ℝ) * (M n * markProb μ G k n ^ 2) +
+          n * ∑ ℓ ∈ Finset.Icc 1 (M n), pairProb μ G k n ℓ) := by
+        gcongr
+    _ = _ := by ring
+
+/-- **Lemma `lem:boundb2`** (source lines 1815–1857, audit finding 5): under Assumption (C)
+and bounded `n π_n`, `b_2^n → 0` along admissible sizes. Proof: cyclic exchangeability
+(`errorB2_le`), bridge removal (Lemma `lem:error_est` with `N_n = n`, window `2 M_n`, endpoint
+`-1`), the two-start bound `P(I_1 I_{1+ℓ}) ≤ π_n² + A_n(ℓ)` (`walkVecLaw_real_pair_le_markProb`,
+proved by conditioning on `ζ`), and `∑_{ℓ ≤ M_n} A_n(ℓ) = o(n π_n²)`. -/
+theorem tendsto_errorB2 (hT : StableToolkit μ α a) {G : ℕ → PlaneTree → Prop} {k M : ℕ → ℕ}
+    (hM : IsCutoff M) (hC : NonClustering μ G k M)
+    (hbd : ∃ C : ℝ, ∀ᶠ n : ℕ in admissibleSizes μ, (n : ℝ) * markProb μ G k n ≤ C) :
+    Tendsto (fun n => errorB2 μ (G (k n)) (M n) n) (admissibleSizes μ) (𝓝 0) := by
+  obtain ⟨C₀, -, hbound⟩ := exists_eventually_errorB2_le hT hM
   -- the bound tends to zero
   have hA : Tendsto (fun n : ℕ => (n : ℝ) * ∑ ℓ ∈ Finset.Icc 1 (M n), pairProb μ G k n ℓ)
       (admissibleSizes μ) (𝓝 0) :=

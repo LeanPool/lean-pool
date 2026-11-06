@@ -72,7 +72,7 @@ theorem neg_one_le_of_mem_dfsSeq {T : PlaneTree} {a : ℤ} (ha : a ∈ T.dfsSeq)
   linarith
 
 /-- Excursion property of forests, given the excursion property of every tree. -/
-private theorem forestSeq_excursion {ts : List PlaneTree}
+theorem forestSeq_excursion {ts : List PlaneTree}
     (h : ∀ t ∈ ts, t.dfsSeq.sum = -1 ∧ ∀ j < t.dfsSeq.length, 0 ≤ (t.dfsSeq.take j).sum) :
     (forestSeq ts).sum = -(ts.length : ℤ) ∧
       ∀ j < (forestSeq ts).length, -(ts.length : ℤ) < ((forestSeq ts).take j).sum := by

@@ -11,7 +11,7 @@ public import Mathlib.Probability.Distributions.Poisson.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-!
-# Statement-level definitions (shared verbatim with `Challenge.lean`)
+# Statement-level definitions
 
 Every definition on which the statements of the four Introduction theorems depend: finite plane
 trees, fringe subtrees and marked counts, Bienaymé laws and size conditioning, total variation,
@@ -19,13 +19,10 @@ the Łukasiewicz walk and hypothesis `(H_α)`, cutoffs and Assumptions (M), (S),
 statement propositions (`PoissonApproximationStatement`, `PoissonApproximation2Statement`,
 `MaxStringStatement`, `MaxLeafHeightStatement`), proved in `PoissonDeclumping.MainTheorems`.
 
-The text of this module, apart from this docstring, is identical to `Challenge.lean` without its
-final theorem section (same imports in the same order, same `open`s, same declarations in the same
-order); `verification/check-challenge-defs.sh` enforces this. Elaborating identical text against
-identical imports produces identical constants, including the auxiliary ones (matchers,
-abstracted proofs, instance paths) that Comparator compares. Do not edit one file without the
-other. Lemmas about these objects live in the library modules named in the section headers
-(`PlaneTree/Basic.lean`, `PlaneTree/Countable.lean`, `Probability/TotalVariation.lean`, …).
+These definitions originate in the upstream statement contract. The phase refinement in
+`TwoPointLocalization` is strengthened here to every nontrivial filter of admissible sizes,
+so that it applies to phase-separated subsequences even when the full sequence approaches
+integer phases. The remaining definitions retain the upstream statements.
 -/
 
 @[expose] public section
@@ -384,17 +381,17 @@ where `m_n = ⌊x⌋` and `θ_n = {x}` for the centering `x`. -/
 def twoPointSet (x : ℝ) : Set ℤ :=
   if Int.fract x ≤ 1 / 2 then {⌊x⌋ - 1, ⌊x⌋} else {⌊x⌋, ⌊x⌋ + 1}
 
-/-- Localization on `J_n` and, in the interior phase (`∃ δ > 0` with `δ ≤ min(θ_n, 1 − θ_n)`
-eventually along admissible sizes, i.e. the paper's `liminf min(θ_n, 1 − θ_n) > 0`), on `m_n`, for a
-statistic `H` of trees and a
-centering sequence `x`. -/
+/-- Localization on `J_n` along all admissible sizes, and on `m_n` along every nontrivial
+filter of admissible sizes whose phases stay a positive distance from the integers.
+In particular, the single-point refinement applies to every such admissible subsequence. -/
 def TwoPointLocalization (μ : PMF ℕ) (H : PlaneTree → ℕ) (x : ℕ → ℝ) : Prop :=
   Tendsto (fun n : ℕ => (PlaneTree.conditioned μ n).real {T | ((H T : ℕ) : ℤ) ∈ twoPointSet (x n)})
     (admissibleSizes μ) (𝓝 1) ∧
-  ((∃ δ : ℝ, 0 < δ ∧ ∀ᶠ n : ℕ in admissibleSizes μ,
+  (∀ l : Filter ℕ, l ≤ admissibleSizes μ → l.NeBot →
+    (∃ δ : ℝ, 0 < δ ∧ ∀ᶠ n : ℕ in l,
       δ ≤ min (Int.fract (x n)) (1 - Int.fract (x n))) →
     Tendsto (fun n : ℕ => (PlaneTree.conditioned μ n).real {T | ((H T : ℕ) : ℤ) = ⌊x n⌋})
-      (admissibleSizes μ) (𝓝 1))
+      l (𝓝 1))
 
 /-- The lattice-modulated Gumbel limit `P(H(𝒯^n) ≤ ⌊x_n + t⌋) − exp(−μ₁^{t+1−{x_n+t}}) → 0`
 for every real `t`. -/

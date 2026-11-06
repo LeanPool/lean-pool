@@ -214,29 +214,11 @@ forests of `ℓ` trees with `q` vertices in total. -/
 def forestSet (ℓ q : ℕ) : Set (List ℤ) :=
   {x | x.length = q ∧ (∀ a ∈ x, -1 ≤ a) ∧ FirstPassageAt ℓ x}
 
-/-- Excursion property of forest sequences (a public copy of a private lemma of
-`Lukasiewicz/Coding.lean`). -/
+/-- Excursion property of forest sequences, specialized from the common coding lemma. -/
 theorem excursion_forestSeq (ts : List PlaneTree) :
     (forestSeq ts).sum = -(ts.length : ℤ) ∧
-      ∀ j < (forestSeq ts).length, -(ts.length : ℤ) < ((forestSeq ts).take j).sum := by
-  induction ts with
-  | nil => simp
-  | cons t ts ih =>
-    obtain ⟨hs, hp⟩ := ih
-    obtain ⟨hts, htp⟩ := dfsSeq_excursion t
-    simp only [forestSeq_cons, List.sum_append, List.length_cons, hs, hts, List.length_append]
-    refine ⟨by push_cast; omega, fun j hj => ?_⟩
-    rw [List.take_append, List.sum_append]
-    rcases lt_or_ge j t.dfsSeq.length with hjt | hjt
-    · have h1 := htp j hjt
-      rw [Nat.sub_eq_zero_of_le hjt.le]
-      simp only [List.take_zero, List.sum_nil]
-      push_cast
-      linarith
-    · rw [List.take_of_length_le hjt, hts]
-      have h2 := hp (j - t.dfsSeq.length) (by omega)
-      push_cast
-      linarith
+      ∀ j < (forestSeq ts).length, -(ts.length : ℤ) < ((forestSeq ts).take j).sum :=
+  PlaneTree.forestSeq_excursion fun t _ => dfsSeq_excursion t
 
 theorem length_forestSeq_eq_sum (ts : List PlaneTree) :
     (forestSeq ts).length = (ts.map vertexCount).sum := by

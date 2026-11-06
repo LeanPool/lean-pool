@@ -19,7 +19,7 @@ events. The event bound and its attained converse justify the normalization.
 
 This is a general library bridge, not a proof of a Poisson approximation or of
 any conditioned-tree theorem from the paper. The definition `paperTVDist` itself is in
-`PoissonDeclumping.Statements.Defs` (shared verbatim with `Challenge.lean`).
+`PoissonDeclumping.Statements.Defs` (from the upstream statement contract).
 -/
 
 @[expose] public section

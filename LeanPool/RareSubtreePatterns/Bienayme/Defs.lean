@@ -18,6 +18,6 @@ function `μ` on `ℕ`. The Bienaymé tree law gives a finite plane tree `T` the
 `PoissonDeclumping.Bienayme.Normalization`, not part of the definition.
 
 The definitions `IsCritical`, `PlaneTree.weight`, `PlaneTree.bienayme`, `PlaneTree.Admissible`
-and `PlaneTree.conditioned` are in `PoissonDeclumping.Statements.Defs`, whose text is shared
-verbatim with `Challenge.lean`; this module only re-exports them under its historical name.
+and `PlaneTree.conditioned` are in `PoissonDeclumping.Statements.Defs`, which originate in the
+upstream statement contract; this module only re-exports them under its historical name.
 -/

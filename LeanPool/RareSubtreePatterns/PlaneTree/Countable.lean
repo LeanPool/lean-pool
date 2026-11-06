@@ -16,7 +16,7 @@ numbers. They carry the discrete σ-algebra, so every set of trees is measurable
 Their laws are therefore ordinary probability measures determined by point masses.
 
 The discrete `MeasurableSpace PlaneTree` instance and the outdegree sequence `degSeq` are
-defined in `PoissonDeclumping.Statements.Defs` (shared verbatim with `Challenge.lean`).
+defined in `PoissonDeclumping.Statements.Defs` (from the upstream statement contract).
 -/
 
 @[expose] public section

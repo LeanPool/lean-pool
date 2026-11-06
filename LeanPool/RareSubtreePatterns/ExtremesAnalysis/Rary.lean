@@ -310,6 +310,30 @@ theorem interior_thresholds (hA : 0 < A) {l : Filter ℕ} (hl : l ≤ atTop) {δ
     filter_upwards [hθ] with n hn
     exact add_le_floor_add_one_of_le_min hn
 
+/-- Shifted levels have global intensity limits and subpolynomial size. On phase-separated
+subsequences they agree with the floor and the next integer, respectively. -/
+theorem shifted_thresholds (hA : 0 < A) {δ : ℝ} (hδ : 0 < δ) :
+    (∀ ε : ℝ, 0 < ε → ∀ᶠ n in atTop,
+      (r : ℝ) ^ (⌊x n - δ⌋).toNat ≤ (n : ℝ) ^ ε) ∧
+    (∀ ε : ℝ, 0 < ε → ∀ᶠ n in atTop,
+      (r : ℝ) ^ (⌈x n + δ⌉).toNat ≤ (n : ℝ) ^ ε) ∧
+    Tendsto (fun n : ℕ => (n : ℝ) * p (⌊x n - δ⌋).toNat) atTop atTop ∧
+    Tendsto (fun n : ℕ => (n : ℝ) * p (⌈x n + δ⌉).toNat) atTop (𝓝 0) := by
+  have hfloor : ∀ n, (⌊x n - δ⌋ : ℝ) ≤ x n - δ := fun n => Int.floor_le _
+  have hceil : ∀ n, x n + δ ≤ (⌈x n + δ⌉ : ℝ) := fun n => Int.le_ceil _
+  refine ⟨pow_level_le_rpow hr hD0 hD1 hx (K := -δ)
+      (Eventually.of_forall fun n => by simpa only [sub_eq_add_neg] using hfloor n),
+    pow_level_le_rpow hr hD0 hD1 hx (K := δ + 1) (Eventually.of_forall fun n => ?_),
+    tendsto_mul_atTop_of_isEquivalent hr hD0 hD1 hx hp hA le_rfl
+      (K := δ + 1) hδ (Eventually.of_forall fun n => ?_)
+      (Eventually.of_forall hfloor),
+    tendsto_mul_zero_of_isEquivalent hr hD0 hD1 hx hp le_rfl hδ
+      (Eventually.of_forall hceil)⟩
+  · have := Int.ceil_lt_add_one (x n + δ)
+    linarith only [this]
+  · have := Int.sub_one_lt_floor (x n - δ)
+    linarith only [this]
+
 omit hp in
 /-- Level sizes for all levels used: `r^{a_n}`, `r^{a_n + 2}`, `r^{m_n + j}` (`j ≤ 2`) are
 `≤ n^δ` eventually, for every `δ > 0`. -/

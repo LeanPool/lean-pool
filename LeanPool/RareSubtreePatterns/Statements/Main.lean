@@ -16,9 +16,9 @@ The propositions `PoissonApproximationStatement` (Theorem 1.1), `PoissonApproxim
 (Theorem 1.2), `MaxStringStatement` (Theorem 1.3) and `MaxLeafHeightStatement` (Theorem 1.4),
 with their auxiliary definitions `cB`, `tStar`, `tStarStar`, `twoPointSet`,
 `TwoPointLocalization` and `LatticeGumbel`, are defined in `PoissonDeclumping.Statements.Defs`,
-whose text is shared verbatim with the Comparator `Challenge.lean`. They are propositions, not
-theorems; `PoissonDeclumping.MainTheorems` proves them. This module only re-exports them under
-its historical name.
+which originate in the upstream statement contract. The phase refinement is strengthened here
+to nontrivial filters of admissible sizes. They are propositions, not theorems;
+`PoissonDeclumping.MainTheorems` proves them. This module re-exports them under its historical name.
 
 All limits run along admissible sizes through `admissibleSizes μ`. Periodic offspring laws are
 included (no aperiodicity hypothesis).
