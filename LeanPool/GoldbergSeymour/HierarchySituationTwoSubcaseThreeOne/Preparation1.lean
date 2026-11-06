@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
+
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseOneData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeOneData
@@ -1346,44 +1348,15 @@ theorem helper_hAT_359.{u_1, u_2} :
     have hs : H.stage q.succ = T := by convert H.terminalStage using 1; congr 1
     simpa only [hs] using H.nested q
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_firstLe_400.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
-  (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (X : TreeSequence G e0) (c : Fin k)
-  (i : Fin (X.length + (1 : ℕ))),
-  c ∈ MissingColors G phi (X.vertex i) →
-  (↑(HierarchyFirstMissingPosition phi X c) : ℕ) ≤ (↑i : ℕ) := by
-  classical
-  intro V E _ _ G k e0 phi X c i hi
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    unfold HierarchyFirstMissingPosition
-    dsimp only
-    have hm : i ∈ Finset.univ.filter
-        (fun j => c ∈ MissingColors G phi (X.vertex j)) :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩
-    rw [dite_eq_left ⟨i, hm⟩]
-    exact Finset.min'_le _ _ hm
+    SharedFacts.SubcaseThreeOnePreparation1.firstMissingPositionUpperBoundStatement.{u_1, u_2} :=
+  SharedFacts.SubcaseThreeOnePreparation1.firstMissingPositionUpperBound.{u_1, u_2}
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_firstMissing_411.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
-  (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (X : TreeSequence G e0),
-  ∀ c ∈ TreeMissingColors phi X,
-  c ∈ MissingColors G phi (X.vertex (HierarchyFirstMissingPosition phi X c)) := by
-  classical
-  intro V E _ _ G k e0 phi X c hc
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-    obtain ⟨i, _, rfl⟩ := (@Finset.mem_image _ _ (Classical.decEq V)).mp hv
-    unfold HierarchyFirstMissingPosition
-    dsimp only
-    have hm : i ∈ Finset.univ.filter
-        (fun j => c ∈ MissingColors G phi (X.vertex j)) :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hcv⟩
-    rw [dite_eq_left ⟨i, hm⟩]
-    exact (Finset.mem_filter.mp (Finset.min'_mem _ ⟨i, hm⟩)).2
+    SharedFacts.SubcaseThreeOnePreparation1.firstMissingPositionWitnessStatement.{u_1, u_2} :=
+  SharedFacts.SubcaseThreeOnePreparation1.firstMissingPositionWitness.{u_1, u_2}
 
 theorem helper_oldAvoid_453.{u_1, u_2} :
     open scoped Classical in
@@ -1634,44 +1607,15 @@ theorem helper_hABplusouter_986.{u_1, u_2} :
   · intro i
     exact hATouter.2.2 i
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_firstMissingOuter_1008.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
-  (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (X : TreeSequence G e0),
-  ∀ c ∈ TreeMissingColors phi X,
-  c ∈ MissingColors G phi (X.vertex (HierarchyFirstMissingPosition phi X c)) := by
-  classical
-  intro V E _ _ G k e0 phi X c hc
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-    obtain ⟨i, _, rfl⟩ := (@Finset.mem_image _ _ (Classical.decEq V)).mp hv
-    unfold HierarchyFirstMissingPosition
-    dsimp only
-    have hm : i ∈ Finset.univ.filter
-        (fun j => c ∈ MissingColors G phi (X.vertex j)) :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hcv⟩
-    rw [dite_eq_left ⟨i, hm⟩]
-    exact (Finset.mem_filter.mp (Finset.min'_mem _ ⟨i, hm⟩)).2
+    SharedFacts.SubcaseThreeOnePreparation1.firstMissingPositionWitnessStatement.{u_1, u_2} :=
+  SharedFacts.SubcaseThreeOnePreparation1.firstMissingPositionWitness.{u_1, u_2}
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_firstLeOuter_1021.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
-  (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (X : TreeSequence G e0) (c : Fin k)
-  (i : Fin (X.length + (1 : ℕ))),
-  c ∈ MissingColors G phi (X.vertex i) →
-  (↑(HierarchyFirstMissingPosition phi X c) : ℕ) ≤ (↑i : ℕ) := by
-  classical
-  intro V E _ _ G k e0 phi X c i hi
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    unfold HierarchyFirstMissingPosition
-    dsimp only
-    have hm : i ∈ Finset.univ.filter
-        (fun j => c ∈ MissingColors G phi (X.vertex j)) :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩
-    rw [dite_eq_left ⟨i, hm⟩]
-    exact Finset.min'_le _ _ hm
+    SharedFacts.SubcaseThreeOnePreparation1.firstMissingPositionUpperBoundStatement.{u_1, u_2} :=
+  SharedFacts.SubcaseThreeOnePreparation1.firstMissingPositionUpperBound.{u_1, u_2}
 
 theorem helper_firstBoundByPrefix_1032.{u_1, u_2} :
     open scoped Classical in
@@ -2721,20 +2665,10 @@ theorem helper_hlastEdgeInOne_1608.{u_1, u_2} :
     (Sum.inr (T.edge lastIndex)) = _
   exact SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_segTrans_1626.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-  {X Y Z : TreeSequence G e0},
-  TreeSequenceInitialSegment X Y →
-  TreeSequenceInitialSegment Y Z →
-  TreeSequenceInitialSegment X Z := by
-  classical
-  intro V E G e0 X Y Z hXY hYZ
-  refine ⟨hXY.1.trans hYZ.1, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
+    SharedFacts.SubcaseThreeOnePreparation1.initialSegmentTransitiveStatement.{u_1, u_2} :=
+  SharedFacts.SubcaseThreeOnePreparation1.initialSegmentTransitive.{u_1, u_2}
 
 theorem helper_stageSegment_1634.{u_1, u_2} :
     open scoped Classical in

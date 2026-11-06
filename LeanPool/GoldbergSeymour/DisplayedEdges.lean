@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.BaseControl
+
 public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
 public import LeanPool.GoldbergSeymour.BaseDisplayedEdges
 public import LeanPool.GoldbergSeymour.TerminalRoute
@@ -152,20 +154,6 @@ private theorem P2813_T1_DisplayedEdges_branch_320.{u_1, u_2} :
             rw [hf]
             exact hnStable.1 f hincident hcontrol
     · exact fixedValue _ ha hb
-
-private theorem helper_trans_227.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {U W Z : TreeSequence G e0}, TreeSequenceInitialSegment U W → TreeSequenceInitialSegment W
-        Z → TreeSequenceInitialSegment U Z := by
-  classical
-  intro V E G e0 U W Z hUW hWZ
-  refine ⟨hUW.1.trans hWZ.1, ?_, ?_⟩
-  · intro j
-    exact (hWZ.2.1 (Fin.castLE (Nat.succ_le_succ hUW.1) j)).trans
-      (hUW.2.1 j)
-  · intro j
-    exact (hWZ.2.2 (Fin.castLE hUW.1 j)).trans (hUW.2.2 j)
 
 private theorem helper_stageChain_238.{u_1, u_2} :
     open scoped Classical in
@@ -422,7 +410,7 @@ theorem P2813_T1_DisplayedEdges {V E : Type*}
     (min (A.length + ((T.length - A.length) - 1)) T.length)
     (by have hA := A.positive; have hT := T.positive; omega)
     (Nat.min_le_right _ _)
-  have trans := @helper_trans_227 (@V) (@E) (@G) (@e0)
+  have trans := @SharedFacts.BaseControl.trans (@V) (@E) (@G) (@e0)
   have stageChain := @helper_stageChain_238 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@H) (@trans)
   have starStage (r : Fin (H.dividerCount + 1)) :

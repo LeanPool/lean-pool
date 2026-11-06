@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.StoredExceptionTransport
+
+
+
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseOneData
 public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
@@ -26,88 +30,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private noncomputable abbrev helperSelfCorr425.{u_1, u_2} :
-    open scoped Classical in
-  {V : Type u_1} →
-  {E : Type u_2} →
-  [Fintype V] →
-  [Fintype E] →
-  [DecidableEq E] →
-  (G : LooplessMultigraph V E) →
-  (k : ℕ) →
-  (e0 : E) →
-  (input : PartialEdgeColoring E k) →
-  (T : TreeSequence G e0) →
-  (phi : PartialEdgeColoring E k) →
-  (ett : ExtendedTashkinovTree G k e0 input T phi) →
-  (
-  ∀ (j : Fin (ett.rounds + (1 : ℕ))),
-  IsProperEdgeColoring G (ett.series.data.coloring j)) →
-  (
-  ∀ (j : Fin (ett.rounds + (1 : ℕ))),
-  IsOneEdgeUncolored (ett.series.data.coloring j) e0) →
-  CorrespondingExtendedTashkinovTree G k e0 ett phi T := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett seriesProper seriesOne
-  exact {
-    replacementInput := input
-    replacementSeries := ett.series
-    replacementETT := ett
-    rungAgreement := rfl
-    seriesPresentation := HEq.rfl
-    finalGeneratingColoring := ett.generatingColoring
-    ladderTreesAgree := fun _ => rfl
-    storedColorsAgree := fun _ => rfl
-    connectingEdgesAgree := fun _ => rfl
-    extensionKindsAgree := fun _ => rfl
-    replacementProper := seriesProper
-    replacementOneUncolored := seriesOne
-    replacementStable := fun _ => ⟨fun _ _ _ => rfl, fun _ _ => rfl⟩ }
-
-private noncomputable abbrev helperP0462.{u_1, u_2} :
-    open scoped Classical in
-  {V : Type u_1} →
-  {E : Type u_2} →
-  [Fintype V] →
-  [Fintype E] →
-  [DecidableEq V] →
-  [DecidableEq E] →
-  (G : LooplessMultigraph V E) →
-  (k : ℕ) →
-  (e0 : E) →
-  (input : PartialEdgeColoring E k) →
-  (T : TreeSequence G e0) →
-  (phi : PartialEdgeColoring E k) →
-  (ett : ExtendedTashkinovTree G k e0 input T phi) →
-  (base : HierarchyBase ett phi) →
-  (C : HierarchyCounterexample base) →
-  (ctx :
-      HierarchyMinimumCounterexampleContext G k e0 input T phi ett
-        base C) →
-  (seriesProper :
-  ∀ (j : Fin (ett.rounds + (1 : ℕ))),
-  IsProperEdgeColoring G (ett.series.data.coloring j)) →
-  (seriesOne :
-  ∀ (j : Fin (ett.rounds + (1 : ℕ))),
-  IsOneEdgeUncolored (ett.series.data.coloring j) e0) →
-  let _ :
-    CorrespondingExtendedTashkinovTree G k e0 ett phi T :=
-    helperSelfCorr425 G k e0 input T phi ett seriesProper
-      seriesOne;
-  HierarchyReplacementPresentation G k e0 input T phi ett
-    base C ctx := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx seriesProper seriesOne selfCorr
-  exact {
-    coloring := phi
-    corresponding := selfCorr
-    maximum := C.maximum
-    replacementBase := base
-    counterexample := C
-    sameGood := ⟨⟨rfl, rfl, HEq.rfl, HEq.rfl, Iff.rfl, fun _ => rfl⟩,
-      rfl, fun _ => ⟨rfl, fun _ _ => rfl⟩⟩
-    minimumContext := ctx }
 
 private noncomputable abbrev helperD41837.{u_1, u_2} :
     open scoped Classical in
@@ -282,7 +204,8 @@ private abbrev helperContinuation3592Conditions.{u_1, u_2} : Prop :=
     ∀ (j : Fin (ett.rounds + (1 : ℕ))), IsProperEdgeColoring G (ett.series.data.coloring j))
         (seriesOne :
     ∀ (j : Fin (ett.rounds + (1 : ℕ))), IsOneEdgeUncolored (ett.series.data.coloring j) e0),
-    let P0 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx := helperP0462 G k
+    let P0 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx :=
+        SharedFacts.StoredExceptionTransport.p0462 G k
         e0 input T phi ett base C ctx seriesProper seriesOne; (
     ∀ (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
     ∀ a ∈ HierarchyStageMissingColors P.counterexample.hierarchy (Fin.last
@@ -363,7 +286,8 @@ private abbrev helperContinuation3568Conditions.{u_1, u_2} : Prop :=
     ∀ (j : Fin (ett.rounds + (1 : ℕ))), IsProperEdgeColoring G (ett.series.data.coloring j))
         (seriesOne :
     ∀ (j : Fin (ett.rounds + (1 : ℕ))), IsOneEdgeUncolored (ett.series.data.coloring j) e0),
-    let P0 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx := helperP0462 G k
+    let P0 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx :=
+        SharedFacts.StoredExceptionTransport.p0462 G k
         e0 input T phi ett base C ctx seriesProper seriesOne; (
     ∀ (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
     ∀ a ∈ HierarchyStageMissingColors P.counterexample.hierarchy (Fin.last
@@ -847,97 +771,6 @@ private abbrev storedExceptionSwapStepStatement.{u_1, u_2} : Prop :=
     ∀ v ∈ TreeSequenceVertexSet X, MissingColors G P'.coloring v = MissingColors G P.coloring v) ∧
     ∀ (t : Fin T.length), A.length ≤ (↑t : ℕ) → P'.coloring (T.edge t) = P.coloring (T.edge t)
 
-private theorem helper_segmentTrans_302.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y
-        Z → TreeSequenceInitialSegment X Z := by
-  classical
-  intro V E G e0 X Y Z hXY hYZ
-  refine ⟨le_trans hXY.1 hYZ.1, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
-
-private theorem helper_commonPrefix_311.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Z → TreeSequenceInitialSegment Y
-        Z → X.length ≤ Y.length → TreeSequenceInitialSegment X Y := by
-  classical
-  intro V E G e0 X Y Z hXZ hYZ hXY
-  refine ⟨hXY, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
-
-private theorem helper_hierarchyGeometry_320.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (T : TreeSequence G e0), (
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-        → TreeSequenceInitialSegment X Z) →
-    ∀ {inp col : PartialEdgeColoring E k} {J : ExtendedTashkinovTree G k e0 inp T col}
-        {b : HierarchyBase J col} (H : TashkinovHierarchy J b), TreeSequenceInitialSegment
-        (HierarchyStarredStage H (Fin.last H.dividerCount)) T ∧ TreeSequenceInitialSegment
-        (J.series.data.tree (Fin.last J.rounds).castSucc) (HierarchyStarredStage H (Fin.last
-        H.dividerCount)) := by
-  classical
-  intro V E _ _ _ _ G k e0 T segmentTrans inp col J b H
-  have forward : ∀ (a d : ℕ), (hbound : a + d ≤ H.dividerCount + 1) →
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    intro a d
-    induction d with
-    | zero => intro h; exact ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-    | succ d ih =>
-      intro h
-      exact segmentTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
-  let A := HierarchyStarredStage H (Fin.last H.dividerCount)
-  let Tn := J.series.data.tree (Fin.last J.rounds).castSucc
-  change TreeSequenceInitialSegment A T ∧ TreeSequenceInitialSegment Tn A
-  have hTnCore : TreeSequenceInitialSegment Tn b.core := by
-    by_cases hp : J.series.data.kind (Fin.last J.rounds) =
-        some TashkinovExtensionKind.PE
-    · exact (b.parallel hp).2.2.some.leftSegment
-    · rw [b.nonparallel hp]
-      exact ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-  by_cases hq : H.dividerCount = 0
-  · have hA : A = b.core := by
-      simp [A, HierarchyStarredStage, Fin.last, hq]
-    have hlast : H.stage ⟨1, by omega⟩ = T := by
-      convert H.terminalStage using 1
-      apply congrArg H.stage
-      apply Fin.ext
-      simp [hq]
-    constructor
-    · rw [hA]
-      exact Eq.mp (congrArg (fun W : TreeSequence G e0 =>
-        TreeSequenceInitialSegment b.core W) hlast) H.coreInsideFirst
-    · rw [hA]
-      exact hTnCore
-  · have hpos : 0 < H.dividerCount := Nat.pos_of_ne_zero hq
-    have hindex : (Fin.last H.dividerCount : Fin (H.dividerCount + 1)) =
-        (⟨H.dividerCount - 1, by omega⟩ : Fin H.dividerCount).succ := by
-      apply Fin.ext
-      simp
-      omega
-    have hA : A = H.stage ⟨H.dividerCount, by omega⟩ := by
-      dsimp [A, HierarchyStarredStage]
-      rw [hindex]
-      dsimp
-      apply congrArg H.stage
-      apply Fin.ext
-      simp
-      omega
-    have hlast : H.stage ⟨H.dividerCount + 1, by omega⟩ = T := H.terminalStage
-    have hTnStage : H.stage (0 : Fin (H.dividerCount + 2)) = Tn := H.baseStage
-    refine ⟨?_, ?_⟩
-    · simpa [hA, hlast] using forward H.dividerCount 1 (by omega)
-    · simpa [hA, hTnStage] using forward 0 H.dividerCount (by omega)
-
 private theorem helper_firstMissing_387.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
@@ -1085,30 +918,7 @@ private theorem helper_seriesProper_562.{u_1, u_2} :
   IsProperEdgeColoring G (ett.series.data.coloring j) := by
   classical
   intro V E _ _ _ G k e0 input T phi ett gamma j
-  cases ett.series.certified j with
-  | initial triple seedLength initialColoring initialStored initialEdges initialKind
-      initialVertex initialOutside initialDelta initialGamma initialClosure =>
-    simpa [initialColoring] using triple.2.2.2.1
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    rw [currentColoring]
-    exact choice.selectedProper
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension => exact currentProper
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored currentEdges
-      currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-      adjoinedExactly closedExtension orderedExtension strictExtension =>
-    rw [currentColoring]
-    exact previousProper
+  exact (ett.series.coloringProperties j).1
 
 private theorem helper_seriesOne_589.{u_1, u_2} :
     open scoped Classical in
@@ -1120,30 +930,7 @@ private theorem helper_seriesOne_589.{u_1, u_2} :
   IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by
   classical
   intro V E _ _ _ G k e0 input T phi ett gamma j
-  cases ett.series.certified j with
-  | initial triple seedLength initialColoring initialStored initialEdges initialKind
-      initialVertex initialOutside initialDelta initialGamma initialClosure =>
-    simpa [initialColoring] using triple.2.2.2.2
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    rw [currentColoring]
-    exact choice.selectedOneUncolored
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension => exact currentOneUncolored
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored currentEdges
-      currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-      adjoinedExactly closedExtension orderedExtension strictExtension =>
-    rw [currentColoring]
-    exact previousOneUncolored
+  exact (ett.series.coloringProperties j).2
 
 private theorem helper_caseFor_622.{u_1, u_2} :
     open scoped Classical in
@@ -2276,7 +2063,8 @@ private theorem helper_gammaTerminal1_1366.{u_1, u_2} :
     ∀ (j : Fin (ett.rounds + (1 : ℕ))), IsProperEdgeColoring G (ett.series.data.coloring j))
         (seriesOne :
     ∀ (j : Fin (ett.rounds + (1 : ℕ))), IsOneEdgeUncolored (ett.series.data.coloring j) e0),
-    let P0 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx := helperP0462 G k
+    let P0 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx :=
+        SharedFacts.StoredExceptionTransport.p0462 G k
         e0 input T phi ett base C ctx seriesProper seriesOne;
     ∀ (P1 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx), P1.coloring =
         TwoColorComponentSwap G P0.coloring gamma D.alpha (Sum.inl (T.vertex
@@ -2371,7 +2159,8 @@ private theorem helper_pairMissing2_1439.{u_1, u_2} :
     ∀ (j : Fin (ett.rounds + (1 : ℕ))), IsProperEdgeColoring G (ett.series.data.coloring j))
         (seriesOne :
     ∀ (j : Fin (ett.rounds + (1 : ℕ))), IsOneEdgeUncolored (ett.series.data.coloring j) e0),
-    let P0 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx := helperP0462 G k
+    let P0 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx :=
+        SharedFacts.StoredExceptionTransport.p0462 G k
         e0 input T phi ett base C ctx seriesProper seriesOne;
     ∀ (P1 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx), (
     ∀ v ∈ TreeSequenceVertexSet X, MissingColors G P1.coloring v = MissingColors G P0.coloring v)
@@ -4121,10 +3910,12 @@ private theorem helper_continuation_3406.{u_1, u_2} :
     exact @helper_seriesOne_589 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
         (@e0) (@input) (@T) (@phi) (@ett) (@gamma)
   let selfCorr : CorrespondingExtendedTashkinovTree G k e0 ett phi T := by
-    exact @helperSelfCorr425 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
+    exact @SharedFacts.StoredExceptionTransport.selfCorr425 (@V) (@E) inferInstance
+        inferInstance inferInstance (@G) (@k)
         (@e0) (@input) (@T) (@phi) (@ett) (@seriesProper) (@seriesOne)
   let P0 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx := by
-    exact @helperP0462 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
+    exact @SharedFacts.StoredExceptionTransport.p0462 (@V) (@E) inferInstance inferInstance
+        inferInstance inferInstance (@G)
         (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@seriesProper) (@seriesOne)
   have caseFor
       (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
@@ -4208,12 +3999,14 @@ theorem HierarchySituationTwoSubcaseOneOneStoredException {V E : Type*}
       (hXY : TreeSequenceInitialSegment X Y)
       (hYZ : TreeSequenceInitialSegment Y Z) :
       TreeSequenceInitialSegment X Z := by
-    exact @helper_segmentTrans_302 (@V) (@E) (@G) (@e0) (@X) (@Y) (@Z) (@hXY) (@hYZ)
+    exact @SharedFacts.StoredExceptionTransport.segmentTrans (@V) (@E) (@G) (@e0) (@X) (@Y)
+        (@Z) (@hXY) (@hYZ)
   have commonPrefix {X Y Z : TreeSequence G e0}
       (hXZ : TreeSequenceInitialSegment X Z)
       (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
       TreeSequenceInitialSegment X Y := by
-    exact @helper_commonPrefix_311 (@V) (@E) (@G) (@e0) (@X) (@Y) (@Z) (@hXZ) (@hYZ) (@hXY)
+    exact @SharedFacts.ZeroNonclosedTransport.comparableInitialSegments (@V) (@E) (@G) (@e0)
+        (@X) (@Y) (@Z) (@hXZ) (@hYZ) (@hXY)
   have hierarchyGeometry
       {inp col : PartialEdgeColoring E k}
       {J : ExtendedTashkinovTree G k e0 inp T col}
@@ -4223,7 +4016,8 @@ theorem HierarchySituationTwoSubcaseOneOneStoredException {V E : Type*}
       TreeSequenceInitialSegment
         (J.series.data.tree (Fin.last J.rounds).castSucc)
         (HierarchyStarredStage H (Fin.last H.dividerCount)) := by
-    exact @helper_hierarchyGeometry_320 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @SharedFacts.StoredExceptionTransport.hierarchyGeometry (@V) (@E) inferInstance
+        inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@T) (@segmentTrans) (@inp) (@col) (@J) (@b) (@H)
   have missingMono {X Y : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y) (col : PartialEdgeColoring E k) :

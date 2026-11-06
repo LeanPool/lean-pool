@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.HkuUnsupportedVertexColors
 public import LeanPool.GoldbergSeymour.SupportingPEColorChain
 public import LeanPool.GoldbergSeymour.TashkinovSeries
@@ -323,53 +324,6 @@ private theorem helper_hlocal_273.{u_1, u_2} :
   · exact hp.2.1
   · exact hp.2.2
   · exact hstored
-
-private theorem helper_next_segment_336.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (j : Fin (rounds + (1 : ℕ))) (i : Fin rounds), j =
-        i.succ → TreeSequenceInitialSegment (series.data.tree i.succ.castSucc) (series.data.tree
-        i.succ.succ) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series j i hj
-  cases series.certified j with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    exact (Fin.succ_ne_zero i) hj.symm |>.elim
-  | SE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hvals := congrArg Fin.val hj
-    simp at hvals
-    have hieq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
-  | RE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hvals := congrArg Fin.val hj
-    simp at hvals
-    have hieq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
-  | PE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have hvals := congrArg Fin.val hj
-    simp at hvals
-    have hieq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
 
 private theorem helper_hgap_377.{u_1, u_2} :
     open scoped Classical in
@@ -791,7 +745,8 @@ theorem SupportingPEStoredIntersection {V E : Type*}
     obtain ⟨i, hi, rfl⟩ := hx
     rcases h with ⟨hlen, hvertex, hedge⟩
     exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, by simpa using hvertex i⟩
-  have next_segment := @helper_next_segment_336 V E inferInstance inferInstance inferInstance G k
+  have next_segment := @SharedFacts.UnsupportedVertexColors.next_segment V E inferInstance
+      inferInstance inferInstance G k
       rounds e0 input series
   have hgap := @helper_hgap_377 V E inferInstance inferInstance inferInstance G k rounds p e0 input
       series q u indices hincreasing henumerates support_tree transfer_tree next_segment

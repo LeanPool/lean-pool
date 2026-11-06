@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.ParallelSupportClosureProperties
+
 public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
 public import LeanPool.GoldbergSeymour.HierarchyBase
 public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
@@ -1195,33 +1197,6 @@ private theorem helper_stageToStage_923.{u_1, u_2} :
   have hchain := chain (b - a) (by omega)
   convert hchain using 1; congr 1; apply Fin.ext; simp; omega
 
-private theorem helper_commonPrefix_1011.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A C → TreeSequenceInitialSegment B
-        C → A.length ≤ B.length → TreeSequenceInitialSegment A B := by
-  classical
-  intro V E G e0 A B C hAC hBC hlen
-  rcases hAC with ⟨hACLen, hACVertices, hACEdges⟩
-  rcases hBC with ⟨hBCLen, hBCVertices, hBCEdges⟩
-  refine ⟨hlen, ?_, ?_⟩
-  · intro i
-    calc
-      B.vertex (Fin.castLE (Nat.succ_le_succ hlen) i) =
-          C.vertex (Fin.castLE (Nat.succ_le_succ hBCLen)
-            (Fin.castLE (Nat.succ_le_succ hlen) i)) :=
-        (hBCVertices _).symm
-      _ = C.vertex (Fin.castLE (Nat.succ_le_succ hACLen) i) := by
-        congr 1
-      _ = A.vertex i := hACVertices i
-  · intro i
-    calc
-      B.edge (Fin.castLE hlen i) =
-          C.edge (Fin.castLE hBCLen (Fin.castLE hlen i)) :=
-        (hBCEdges _).symm
-      _ = C.edge (Fin.castLE hACLen i) := by congr 1
-      _ = A.edge i := hACEdges i
-
 private theorem helper_hvStage_1145.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -1592,7 +1567,8 @@ theorem ParallelSupportClosureProperties {V E : Type*}
         (hvbc (Fin.castLE (Nat.succ_le_succ hab) i)).trans (hvab i)
     · intro i
       simpa using (hebc (Fin.castLE hab i)).trans (heab i)
-  have commonPrefix := @helper_commonPrefix_1011 V E G e0
+  have commonPrefix := @SharedFacts.ParallelSupportClosureProperties.comparableInitialSegments
+      V E G e0
   have vertexTransfer {A B : TreeSequence G e0}
       (hAB : TreeSequenceInitialSegment A B) :
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by

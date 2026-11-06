@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseClaim45Singleton
+
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.ETTStrongInterchangeable
 public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoObservation19
@@ -1300,39 +1302,6 @@ private theorem helper_before_seed_1330.{u_1, u_2} :
   rw [← hvertices iSeed, hiCast]
   exact hiw
 
-private theorem helper_rho0_unaffected_1392.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Finite E] {G : LooplessMultigraph V E}
-      {k : ℕ} {e0 : E} (TjPrime : TreeSequence G e0) (rho1 : PartialEdgeColoring E k)
-      (deltaN beta : Fin k),
-    let rho0 : PartialEdgeColoring E k := OutsideTreeColorSwap TjPrime rho1 beta deltaN;
-    ∀ (c : Fin k) (_ : c ≠ beta) (_ : c ≠ deltaN) (f : E),
-    rho0 f = some c ↔ rho1 f = some c := by
-  classical
-  intro V E _ _ G k e0 TjPrime rho1 deltaN beta rho0 c hcb hcd f
-  let _ := Fintype.ofFinite V
-  let _ := Fintype.ofFinite E
-  unfold rho0 OutsideTreeColorSwap
-  by_cases ht : TreeIncidentEdge TjPrime f
-  · simp [ht]
-  · simp only [ite_eq_right ht]
-    by_cases hfb : rho1 f = some beta
-    · rw [ite_eq_left hfb]
-      constructor
-      · intro h
-        exact False.elim (hcd (Option.some.inj h).symm)
-      · intro h
-        exact False.elim (hcb (Option.some.inj (h.symm.trans hfb)))
-    · rw [ite_eq_right hfb]
-      by_cases hfd : rho1 f = some deltaN
-      · rw [ite_eq_left hfd]
-        constructor
-        · intro h
-          exact False.elim (hcb (Option.some.inj h).symm)
-        · intro h
-          exact False.elim (hcd (Option.some.inj (h.symm.trans hfd)))
-      · rw [ite_eq_right hfd]
-
 private theorem helper_initial_trans_1331.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0 : E}
@@ -1587,7 +1556,8 @@ private theorem helper_continuation_1644.{u_1, u_2} :
         htreeEdgeFixed
   have rho0_unaffected : ∀ (c : Fin k), c ≠ beta → c ≠ deltaN →
       ∀ f : E, (rho0 f = some c ↔ rho1 f = some c) := by
-    exact @helper_rho0_unaffected_1392 V E inferInstance inferInstance G k e0 TjPrime rho1 deltaN
+    exact @SharedFacts.ExtensionBaseClaim45Singleton.rho0_unaffected V E inferInstance
+        inferInstance G k e0 TjPrime rho1 deltaN
         beta
   have hE4 :
     ∀ (s : Fin ett.rounds) (gammaS deltaS : Fin k), s ∈ (ExtensionBaseSupportClass ett

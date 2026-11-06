@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.BaseControl
 public import LeanPool.GoldbergSeymour.DisplayedEdges
 public import LeanPool.GoldbergSeymour.RecoloredPrefixReconstruction
@@ -617,48 +618,6 @@ private theorem helper_corrData_414.{u_1, u_2} :
       TashkinovStoredColors old.series.data (Fin.last old.rounds)
     simp only [TashkinovStoredColors, storedColorsAgree, hm, hmOld]
 
-private theorem helper_branch_267.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    ∀ {u : V},
-    ett.rounds = (1 : ℕ) →
-    u ∈ TreeSequenceVertexSet Tn →
-    ∀ {v : V},
-    v ∈ TreeSequenceVertexSet Tn →
-    u ≠ v →
-    Disjoint
-      (MissingColors G
-        (ett.series.data.coloring
-          (⟨ett.rounds - (1 : ℕ),
-                have this : (0 : ℕ) < ett.rounds := C.positive;
-                Decidable.byContradiction fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds) ↦ by
-                  omega⟩ :
-              Fin ett.rounds).castSucc)
-        u)
-      (MissingColors G
-        (ett.series.data.coloring
-          (⟨ett.rounds - (1 : ℕ),
-                have this : (0 : ℕ) < ett.rounds := C.positive;
-                Decidable.byContradiction fun (a : ¬ett.rounds - (1 : ℕ) < ett.rounds) ↦ by
-                  omega⟩ :
-              Fin ett.rounds).castSucc)
-        v) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C n Tn _ hn
-  have hcolor : (⟨ett.rounds - 1, by have := C.positive; omega⟩ : Fin ett.rounds).castSucc = 0 :=
-    Fin.ext (by simp [hn])
-  have htree : n.castSucc = (⟨1, by omega⟩ : Fin (ett.rounds + 2)) :=
-    Fin.ext (by simp [n, hn])
-  dsimp only [Tn]
-  rw [hcolor, htree]
-  exact (TechnicalTheoremBase G k ett.rounds e0 input ett.series).1
-
 private theorem helper_branch_274.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -786,54 +745,6 @@ private theorem helper_hweak_291.{u_1, u_2} :
         MissingColors G sigma v = MissingColors G phi v := by
       simpa only [hA] using hmissing
     exact ⟨fun t _ => he t, hm⟩
-
-private theorem helper_trans_321.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-      {U W Z : TreeSequence G e0},
-    TreeSequenceInitialSegment U W →
-    TreeSequenceInitialSegment W Z →
-    TreeSequenceInitialSegment U Z := by
-  classical
-  intro V E G e0 U W Z hUW hWZ
-  refine ⟨hUW.1.trans hWZ.1, ?_, ?_⟩
-  · intro j
-    exact (hWZ.2.1 (Fin.castLE (Nat.succ_le_succ hUW.1) j)).trans
-      (hUW.2.1 j)
-  · intro j
-    exact (hWZ.2.2 (Fin.castLE hUW.1 j)).trans (hUW.2.2 j)
-
-private theorem helper_stageChain_332.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    (∀ {U W Z : TreeSequence G e0},
-        TreeSequenceInitialSegment U W →
-          TreeSequenceInitialSegment W Z → TreeSequenceInitialSegment U Z) →
-    ∀ (j : ℕ) (hj : j < H.dividerCount + (2 : ℕ)) (i : Fin (H.dividerCount + (2 : ℕ))),
-    (↑i : ℕ) ≤ j →
-    TreeSequenceInitialSegment (H.stage i)
-      (H.stage (⟨j, hj⟩ : Fin (H.dividerCount + (2 : ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H trans j
-  induction j with
-  | zero =>
-      intro hj i hi
-      have hi0 : i = 0 := Fin.ext (Nat.eq_zero_of_le_zero hi)
-      subst i
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  | succ j ih =>
-      intro hj i hi
-      by_cases heq : i.val = j + 1
-      · have heq' : i = ⟨j + 1, hj⟩ := Fin.ext heq
-        subst i
-        exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-      · exact trans (ih (by omega) i (by omega))
-          (H.nested ⟨j, by omega⟩)
 
 private theorem helper_starPositive_351.{u_1, u_2} :
     open scoped Classical in
@@ -967,7 +878,7 @@ private theorem helper_preStepElementary_574.{u_1, u_2} :
   intro V E _ _ _ _ G k e0 input T phi ett base C hproper hone hlower hfewer hminimal hlarge n Tn
   dsimp only
   by_cases hn : ett.rounds = 1
-  · apply helper_branch_267 <;> assumption
+  · apply SharedFacts.BaseControl.branch <;> assumption
   · apply helper_branch_274 <;> assumption
 private theorem helper_caseContinuation_868.{u_1, u_2} :
     helperCaseContinuation868Conditions.{u_1, u_2} := by
@@ -1435,11 +1346,11 @@ theorem StableChangeCasesOneTwo {V E : Type*}
         (hUW : TreeSequenceInitialSegment U W)
         (hWZ : TreeSequenceInitialSegment W Z) :
         TreeSequenceInitialSegment U Z := by
-      exact helper_trans_321 (@G) (@e0) (@hUW) (@hWZ)
+      exact SharedFacts.BaseControl.trans (@G) (@e0) (@hUW) (@hWZ)
     have stageChain : ∀ (j : ℕ) (hj : j < H.dividerCount + 2)
         (i : Fin (H.dividerCount + 2)), i.val ≤ j →
         TreeSequenceInitialSegment (H.stage i) (H.stage ⟨j, hj⟩) := by
-      apply helper_stageChain_332; assumption
+      apply SharedFacts.BaseControl.stageChain; assumption
     have starPositive := helper_starPositive_351 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base)
         (@C)
     have hA : A = H.stage q.castSucc := starPositive q hq

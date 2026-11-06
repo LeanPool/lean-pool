@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoSplitTail
 public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
@@ -592,59 +593,11 @@ private theorem helper_continuation_769.{u_1, u_2} :
   have seriesProper : ∀ j : Fin (ett.rounds + 1),
       IsProperEdgeColoring G (ett.series.data.coloring j) := by
     intro j
-    cases ett.series.certified j with
-    | initial triple seedLength initialColoring initialStored initialEdges initialKind
-        initialVertex initialOutside initialDelta initialGamma initialClosure =>
-      simpa [initialColoring] using triple.2.2.2.1
-    | SE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternative
-        currentColoring currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma adjoined adjoinedExactly
-        closedExtension orderedExtension strictExtension =>
-      rw [currentColoring]
-      exact choice.selectedProper
-    | PE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-        gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-        secondStableRelation exitWitness currentColoring currentProper
-        currentOneUncolored currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma closedExtension orderedExtension
-        strictExtension => exact currentProper
-    | RE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed available currentColoring currentStored
-        currentEdges currentKind currentVertex currentOutside currentDelta
-        currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-        strictExtension =>
-      rw [currentColoring]
-      exact previousProper
+    exact (ett.series.coloringProperties j).1
   have seriesOne : ∀ j : Fin (ett.rounds + 1),
       IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by
     intro j
-    cases ett.series.certified j with
-    | initial triple seedLength initialColoring initialStored initialEdges initialKind
-        initialVertex initialOutside initialDelta initialGamma initialClosure =>
-      simpa [initialColoring] using triple.2.2.2.2
-    | SE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternative
-        currentColoring currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma adjoined adjoinedExactly
-        closedExtension orderedExtension strictExtension =>
-      rw [currentColoring]
-      exact choice.selectedOneUncolored
-    | PE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-        gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-        secondStableRelation exitWitness currentColoring currentProper
-        currentOneUncolored currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma closedExtension orderedExtension
-        strictExtension => exact currentOneUncolored
-    | RE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed available currentColoring currentStored
-        currentEdges currentKind currentVertex currentOutside currentDelta
-        currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-        strictExtension =>
-      rw [currentColoring]
-      exact previousOneUncolored
+    exact (ett.series.coloringProperties j).2
   let selfCorr : CorrespondingExtendedTashkinovTree G k e0 ett phi T := {
     replacementInput := input
     replacementSeries := ett.series

@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
+
+
 public import LeanPool.GoldbergSeymour.TerminalRoute
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
 public import LeanPool.GoldbergSeymour.HierarchySplitter
@@ -3295,20 +3298,10 @@ theorem helper_hpUpper_1652.{u_1, u_2} :
   rw [hAold] at hh
   exact hh
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_trans_1665.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-    {X Y Z : TreeSequence G e0},
-  TreeSequenceInitialSegment X Y →
-  TreeSequenceInitialSegment Y Z →
-  TreeSequenceInitialSegment X Z := by
-  classical
-  intro V E G e0 X Y Z hXY hYZ
-  refine ⟨hXY.1.trans hYZ.1, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
+    SharedFacts.SubcaseThreeOnePreparation1.initialSegmentTransitiveStatement.{u_1, u_2} :=
+  SharedFacts.SubcaseThreeOnePreparation1.initialSegmentTransitive.{u_1, u_2}
 
 theorem helper_hTnCore_1684.{u_1, u_2} :
     open scoped Classical in
@@ -4234,119 +4227,6 @@ theorem helper_earlyMissing_2244.{u_1, u_2} :
   apply missingFixed
   simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
   exact ⟨i, by rw [← he, hXB.2.1 i]⟩
-
-theorem helper_firstLe_2252.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-    [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (_ : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
-    (hlenT : (3 : ℕ) ≤ T.length),
-  let B : TreeSequence G e0 :=
-    TreeSequencePrefix T (T.length - (1 : ℕ))
-      (by
-        have := TreeSequence.positive T
-        omega)
-      (by
-        have := TreeSequence.positive T
-        omega);
-  ∀ (psi : PartialEdgeColoring E k) (c : Fin k) (j : Fin (B.length + (1 : ℕ))),
-  c ∈ MissingColors G psi (B.vertex j) →
-  (↑(HierarchyFirstMissingPosition psi B c) : ℕ) ≤ (↑j : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P hlenT B psi c j hj
-  let candidates := Finset.univ.filter fun j : Fin (B.length + 1) =>
-    c ∈ MissingColors G psi (B.vertex j)
-  have hm : j ∈ candidates := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hj⟩
-  have hn : candidates.Nonempty := ⟨j, hm⟩
-  unfold HierarchyFirstMissingPosition
-  rw [dite_eq_left hn]
-  exact Finset.min'_le candidates j hm
-
-theorem helper_firstMem_2262.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-    [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let mu : PartialEdgeColoring E k := P.coloring;
-  ∀ (hlenT : (3 : ℕ) ≤ T.length),
-  let B : TreeSequence G e0 :=
-    TreeSequencePrefix T (T.length - (1 : ℕ))
-      (by
-        have := TreeSequence.positive T
-        omega)
-      (by
-        have := TreeSequence.positive T
-        omega);
-  B.length = T.length - (1 : ℕ) →
-  ∀ (S : TreeSequence G e0),
-  S.length ≤ B.length →
-  ∀ (positiveB : (1 : ℕ) ≤ P.corresponding.replacementETT.rounds)
-    (aboveB :
-      TreeSequenceInitialSegment
-        (P.corresponding.replacementETT.series.data.tree
-          (⟨P.corresponding.replacementETT.rounds,
-              by
-              have := TreeSequence.positive T
-              omega⟩ :
-            Fin (P.corresponding.replacementETT.rounds + (2 : ℕ))))
-        B)
-    (strictB :
-      (P.corresponding.replacementETT.series.data.tree
-            (⟨P.corresponding.replacementETT.rounds,
-                by
-                have := TreeSequence.positive T
-                omega⟩ :
-              Fin (P.corresponding.replacementETT.rounds + (2 : ℕ)))).length <
-        B.length)
-    (belowB :
-      TreeSequenceInitialSegment B
-        (P.corresponding.replacementETT.series.data.tree
-          (Fin.last (P.corresponding.replacementETT.rounds + (1 : ℕ)))))
-    (generatingB :
-      mu =
-        P.corresponding.replacementETT.series.data.coloring
-          (Fin.last P.corresponding.replacementETT.rounds))
-    (baseB :
-      HierarchyBase
-        { rounds := P.corresponding.replacementETT.rounds, roundsPositive := positiveB,
-          series := P.corresponding.replacementETT.series, abovePenultimate := aboveB,
-          strictAbovePenultimate := strictB, belowFinal := belowB,
-          generatingColoring := generatingB :
-          ExtendedTashkinovTree G k e0 P.corresponding.replacementInput B mu }
-        mu)
-    (_ :
-      TashkinovHierarchy
-        { rounds := P.corresponding.replacementETT.rounds, roundsPositive := positiveB,
-          series := P.corresponding.replacementETT.series, abovePenultimate := aboveB,
-          strictAbovePenultimate := strictB, belowFinal := belowB,
-          generatingColoring := generatingB :
-          ExtendedTashkinovTree G k e0 P.corresponding.replacementInput B mu }
-        baseB)
-    (psi : PartialEdgeColoring E k) (c : Fin k),
-  (↑(HierarchyFirstMissingPosition psi B c) : ℕ) < B.length →
-  c ∈ MissingColors G psi (B.vertex (HierarchyFirstMissingPosition psi B c)) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P mu hlenT B hBlength S hSBlen positiveB
-      aboveB strictB belowB generatingB baseB HB psi c hlt
-  let candidates := Finset.univ.filter fun j : Fin (B.length + 1) =>
-    c ∈ MissingColors G psi (B.vertex j)
-  by_cases hn : candidates.Nonempty
-  · unfold HierarchyFirstMissingPosition
-    rw [dite_eq_left hn]
-    exact (Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2
-  · have hh : (HierarchyFirstMissingPosition psi B c).val = B.length := by
-      unfold HierarchyFirstMissingPosition
-      rw [dite_eq_right hn]
-      rfl
-    omega
 
 theorem helper_segmentEq_2283.{u_1, u_2} :
     open scoped Classical in

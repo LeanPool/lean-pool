@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.ScheideDefectiveNoCross
+
 public import LeanPool.GoldbergSeymour.ScheideDefectiveCrossingSelection
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
 public import LeanPool.GoldbergSeymour.ScheideDefectiveTerminalComponent
@@ -184,20 +186,6 @@ private theorem helper_adjoin_vertex_set_343.{u_1, u_2} :
       (insert y (TreeSequenceVertexSet A)).card := by
     rw [hBcard, Finset.card_insert_of_notMem hyA, hAcard, hlen]
   exact (Finset.eq_of_subset_of_card_le hinsert hcard).symm
-
-private theorem helper_tree_edge_incident_279.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Finite E]
-      (G : LooplessMultigraph V E) (e0 : E) (T : TreeSequence G e0) (q : Fin T.length),
-    TreeIncidentEdge T (T.edge q) := by
-  classical
-  intro V E _ _ G e0 T q
-  let _ := Fintype.ofFinite V
-  let _ := Fintype.ofFinite E
-  obtain ⟨a, ha⟩ := T.attaches q
-  refine ⟨T.vertex q.succ, ?_, ?_⟩
-  · simp [TreeSequenceVertexSet]
-  · simp [Incident, ha]
 
 private theorem helper_component_vertex_of_edge_285.{u_1, u_2} :
     open scoped Classical in
@@ -614,7 +602,8 @@ theorem ScheideDefectiveNoCross {V E : Type*}
     ⟨hproper1, hone1, hstable1, hfixed1, htailK, hf0K, hKtree,
       htreeEdgesOutside, hKcolors⟩
   have tree_edge_incident : ∀ q : Fin T.length, TreeIncidentEdge T (T.edge q) := by
-    exact @helper_tree_edge_incident_279 (@V) (@E) inferInstance inferInstance (@G) (@e0) (@T)
+    exact @SharedFacts.ScheideDefectiveNoCross.tree_edge_incident (@V) (@E) inferInstance
+        inferInstance (@G) (@e0) (@T)
   have component_vertex_of_edge {v : V} {e : E}
       (heK : Sum.inr e ∈ K) (hve : Incident G v e)
       (hecolor : phi1 e = some gamma ∨ phi1 e = some d.1) :

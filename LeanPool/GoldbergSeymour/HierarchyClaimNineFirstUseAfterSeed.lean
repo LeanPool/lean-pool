@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
 public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
@@ -234,19 +235,6 @@ private theorem helper_hAT_246.{u_1, u_2} :
     · exact H.nested i.succ
   have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
   simpa only [hlast, H.terminalStage] using hs
-
-private theorem helper_commonPrefix_268.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {S U W : TreeSequence G e0}, TreeSequenceInitialSegment S W → TreeSequenceInitialSegment U
-        W → S.length ≤ U.length → TreeSequenceInitialSegment S U := by
-  classical
-  intro V E G e0 S U W hSW hUW hlen
-  refine ⟨hlen, ?_, ?_⟩
-  · intro i
-    exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans (hSW.2.1 i)
-  · intro i
-    exact (hUW.2.2 (Fin.castLE hlen i)).symm.trans (hSW.2.2 i)
 
 private theorem helper_hyNotB_289.{u_1, u_2} :
     open scoped Classical in
@@ -1623,7 +1611,8 @@ theorem HierarchyClaimNineFirstUseAfterSeed {V E : Type*}
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
   have hXT : TreeSequenceInitialSegment X T :=
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
-  have commonPrefix := @helper_commonPrefix_268 (@V) (@E) (@G) (@e0)
+  have commonPrefix := @SharedFacts.MixedChangeTransport.comparableInitialSegments (@V) (@E)
+      (@G) (@e0)
   have hAX : TreeSequenceInitialSegment A X := commonPrefix hAT hXT (by omega)
   have hXB : TreeSequenceInitialSegment X B := commonPrefix hXT hBT hXleB
   have hAB : TreeSequenceInitialSegment A B := commonPrefix hAT hBT (by omega)

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.StableChangeCasesOneTwoSplitTail
+
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
 public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
@@ -614,30 +616,6 @@ private theorem helper_preStepElementary_566.{u_1, u_2} :
     rw [htree]
     exact (ctx.lowerRung predecessor (by omega) (by omega) hmaximum).1
 
-private theorem helper_equalTrees_615.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-      {S U : TreeSequence G e0},
-    TreeSequenceInitialSegment S U →
-    S.length = U.length →
-    S = U := by
-  classical
-  intro V E G e0 S U hSU hlen
-  cases S with
-  | mk ls ps vs es vis eis fs aas =>
-    cases U with
-    | mk lu pu vu eu viu eiu fu aau =>
-      simp only at hlen
-      subst lu
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext i
-        simpa only [Fin.castLE] using (hSU.2.1 i).symm
-      · apply heq_of_eq
-        funext i
-        simpa only [Fin.castLE] using (hSU.2.2 i).symm
-
 private theorem helper_branch_846.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -1130,7 +1108,7 @@ theorem StableChangeCasesOneTwoSplitTail {V E : Type*}
       exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hSU.1) i)).trans (hSU.2.1 i)
     · intro i
       exact (hUW.2.2 (Fin.castLE hSU.1 i)).trans (hSU.2.2 i)
-  have equalTrees := @helper_equalTrees_615 V E G e0
+  have equalTrees := @SharedFacts.StableChangeCasesOneTwoSplitTail.equalTrees V E G e0
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by

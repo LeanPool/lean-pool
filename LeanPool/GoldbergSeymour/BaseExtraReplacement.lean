@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoStarredTail
 public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
@@ -591,30 +592,7 @@ private theorem helper_seriesProper_846.{u_1, u_2} :
     IsProperEdgeColoring G (ett.series.data.coloring j) := by
   classical
   intro V E _ _ _ G k e0 input T phi ett j
-  cases ett.series.certified j with
-  | initial triple seedLength initialColoring initialStored initialEdges initialKind
-      initialVertex initialOutside initialDelta initialGamma initialClosure =>
-    simpa [initialColoring] using triple.2.2.2.1
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    rw [currentColoring]
-    exact choice.selectedProper
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension => exact currentProper
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored currentEdges
-      currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-      adjoinedExactly closedExtension orderedExtension strictExtension =>
-    rw [currentColoring]
-    exact previousProper
+  exact (ett.series.coloringProperties j).1
 
 private theorem helper_seriesOne_873.{u_1, u_2} :
     open scoped Classical in
@@ -626,30 +604,7 @@ private theorem helper_seriesOne_873.{u_1, u_2} :
     IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by
   classical
   intro V E _ _ _ G k e0 input T phi ett j
-  cases ett.series.certified j with
-  | initial triple seedLength initialColoring initialStored initialEdges initialKind
-      initialVertex initialOutside initialDelta initialGamma initialClosure =>
-    simpa [initialColoring] using triple.2.2.2.2
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    rw [currentColoring]
-    exact choice.selectedOneUncolored
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension => exact currentOneUncolored
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored currentEdges
-      currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-      adjoinedExactly closedExtension orderedExtension strictExtension =>
-    rw [currentColoring]
-    exact previousOneUncolored
+  exact (ett.series.coloringProperties j).2
 
 private theorem helper_hMdis_717.{u_1, u_2} :
     open scoped Classical in

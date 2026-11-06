@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseStepLemmas
+
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
 
 public import LeanPool.GoldbergSeymour.ExtensionBasePreparations
@@ -3662,20 +3664,10 @@ theorem helper_hprefixSubset_2691.{u_1, u_2} :
   obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp ht
   exact Finset.mem_biUnion.mpr ⟨a, Finset.mem_univ _, hct⟩
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_hUPrime_2738.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E) (TjPrime : TreeSequence
-        G e0) (uPosition : Fin (TjPrime.length + (1 : ℕ))) (huPositionPositive : (1 : ℕ) ≤
-        (↑uPosition : ℕ)) (huPositionBound : (↑uPosition : ℕ) ≤ TjPrime.length),
-    let U : TreeSequence G e0 := TreeSequencePrefix TjPrime (↑uPosition : ℕ) huPositionPositive
-        huPositionBound; TreeSequenceInitialSegment U TjPrime := by
-  classical
-  intro V E G e0 TjPrime uPosition huPositionPositive huPositionBound U
-  refine ⟨huPositionBound, ?_, ?_⟩
-  · intro i
-    simp [U, TreeSequencePrefix]
-  · intro i
-    simp [U, TreeSequencePrefix]
+    SharedFacts.ExtensionBaseStepLemmas.uPrimeStatement.{u_1, u_2} :=
+  SharedFacts.ExtensionBaseStepLemmas.uPrime.{u_1, u_2}
 
 theorem helper_hprimeVertexBefore_2750.{u_1, u_2} :
     open scoped Classical in
@@ -3848,23 +3840,10 @@ theorem helper_prefixPrefix_2877.{u_1, u_2} :
     change A.edge _ = A.edge _
     congr 1
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_prefixSelf_2890.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-  (A : TreeSequence G e0),
-  TreeSequencePrefix A A.length A.positive le_rfl = A := by
-  classical
-  intro V E G e0 A
-  cases A with
-  | mk len pos vertex edge vinj einj first attach =>
-    rw [TreeSequence.mk.injEq]
-    refine ⟨rfl, ?_, ?_⟩
-    · apply heq_of_eq
-      funext i
-      rfl
-    · apply heq_of_eq
-      funext i
-      rfl
+    SharedFacts.ExtensionBaseStepLemmas.prefixSelfStatement.{u_1, u_2} :=
+  SharedFacts.ExtensionBaseStepLemmas.prefixSelf.{u_1, u_2}
 
 theorem helper_hleftX_3005.{u_1, u_2} :
     open scoped Classical in

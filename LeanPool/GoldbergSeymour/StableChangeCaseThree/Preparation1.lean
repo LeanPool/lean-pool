@@ -5,12 +5,13 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.ChangeLemmaBothOutsidePreparation1
+
 public import LeanPool.GoldbergSeymour.HierarchySplitter
 public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePosition
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceComponentSwap
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
-public import LeanPool.GoldbergSeymour.HierarchyCounterexample
 
 /-!
 # StableChangeCaseThree: supporting constructions, part 1
@@ -420,36 +421,15 @@ theorem helper_fullBase_847.{u_1, u_2} :
     exact ⟨corr, MaximumPropertyTransport G k e0 ett sigma hmod T corr C.maximum,
       baseT, rfl, rfl⟩
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_segTrans_511.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-      {S U W : TreeSequence G e0},
-    TreeSequenceInitialSegment S U →
-    TreeSequenceInitialSegment U W →
-    TreeSequenceInitialSegment S W := by
-  classical
-  intro V E G e0 S U W hSU hUW
-  refine ⟨le_trans hSU.1 hUW.1, ?_, ?_⟩
-  · intro i
-    exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hSU.1) i)).trans (hSU.2.1 i)
-  · intro i
-    exact (hUW.2.2 (Fin.castLE hSU.1 i)).trans (hSU.2.2 i)
+    SharedFacts.ChangeLemmaBothOutsidePreparation1.initialSegmentTransitiveStatement.{u_1, u_2} :=
+  SharedFacts.ChangeLemmaBothOutsidePreparation1.initialSegmentTransitive.{u_1, u_2}
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_commonPrefix_520.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-      {S U W : TreeSequence G e0},
-    TreeSequenceInitialSegment S W →
-    TreeSequenceInitialSegment U W →
-    S.length ≤ U.length →
-    TreeSequenceInitialSegment S U := by
-  classical
-  intro V E G e0 S U W hSW hUW hlen
-  refine ⟨hlen, ?_, ?_⟩
-  · intro i
-    exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans (hSW.2.1 i)
-  · intro i
-    exact (hUW.2.2 (Fin.castLE hlen i)).symm.trans (hSW.2.2 i)
+    SharedFacts.ChangeLemmaBothOutsidePreparation1.comparableInitialSegmentsStatement.{u_1, u_2} :=
+  SharedFacts.ChangeLemmaBothOutsidePreparation1.comparableInitialSegments.{u_1, u_2}
 
 theorem helper_equalTrees_536.{u_1, u_2} :
     open scoped Classical in
@@ -724,28 +704,11 @@ theorem helper_hout_642.{u_1, u_2} :
     change j.val = ia.val at hvj
     omega
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_outsideIndex_658.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (_ _ : Fin k),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    TreeSequenceInitialSegment A T →
-    ∀ (i : Fin (T.length + (1 : ℕ))),
-    T.vertex i ∉ TreeSequenceVertexSet A →
-    A.length < (↑i : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A AToT i hi
-  by_contra h
-  have hle : i.val ≤ A.length := by omega
-  apply hi
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
-  exact ⟨⟨i.val, by omega⟩, (AToT.2.1 ⟨i.val, by omega⟩).symm⟩
+    SharedFacts.ChangeLemmaBothOutsidePreparation1.missingPositionOutsidePrefixStatement.{u_1,
+        u_2} :=
+  SharedFacts.ChangeLemmaBothOutsidePreparation1.missingPositionOutsidePrefix.{u_1, u_2}
 
 theorem helper_missingNotA_674.{u_1, u_2} :
     open scoped Classical in

@@ -5,9 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.FirstSubcaseTransport
+
 public import LeanPool.GoldbergSeymour.TwoColorComponentColoringFacts
 
-public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseOneTwoData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseTwoOne
@@ -592,23 +593,6 @@ private abbrev helperContinuation2860Conditions.{u_1, u_2} : Prop :=
     let qOne : Fin (HOne.dividerCount + (1 : ℕ)) := Fin.last HOne.dividerCount; (
     ∀ v ∈ TreeSequenceVertexSet B, MissingColors G rho v = MissingColors G phi v) → False
 
-private theorem helper_hBT_109.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let B : TreeSequence G e0 := HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1 : ℕ));
-        B.length + (1 : ℕ) = T.length → TreeSequenceInitialSegment B T := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C B hBlen
-  refine ⟨?_, ?_, ?_⟩
-  · omega
-  · intro i
-    rfl
-  · intro i
-    rfl
-
 private theorem helper_hApositive_116.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -1186,34 +1170,6 @@ private theorem helper_hstoredOne_643.{u_1, u_2} :
   · subst c
     exact firstPreserved phi muOne D.alpha hmissingOne hmissing.2
   · exact firstUnaffected phi D.gammaOne D.alpha c hgammaAlpha ctx.proper hcg hca
-
-private theorem helper_sameStar_734.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    ∀ (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-        HierarchyStarredStage P.counterexample.hierarchy (Fin.last
-        P.counterexample.hierarchy.dividerCount) = A := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx H q A P
-  have helper :
-    ∀ (n m : ℕ) (X Y : TreeSequence G e0) (s : Fin (n + 2) → TreeSequence G e0) (t : Fin (m + 2) →
-        TreeSequence G e0), n = m → X = Y → HEq s t → Fin.cases (motive := fun _ => TreeSequence G
-        e0) X (fun i : Fin n => s i.succ.castSucc) (Fin.last n) = Fin.cases (motive := fun _ =>
-        TreeSequence G e0) Y (fun i : Fin m => t i.succ.castSucc) (Fin.last m) := by
-    intro n m X Y s t hnm hXY hst
-    subst m
-    have he := eq_of_heq hst
-    simp [hXY, he]
-  exact (helper _ _ base.core P.replacementBase.core H.stage
-    P.counterexample.hierarchy.stage P.sameGood.1.2.1 P.sameGood.1.1
-    P.sameGood.1.2.2.1).symm
 
 private theorem helper_hpairDataOne_800.{u_1, u_2} :
     open scoped Classical in
@@ -2700,7 +2656,8 @@ private theorem helper_continuation_1912.{u_1, u_2} :
   have sameStar (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) :
       HierarchyStarredStage P.counterexample.hierarchy
         (Fin.last P.counterexample.hierarchy.dividerCount) = A := by
-    exact @helper_sameStar_734 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
+    exact @SharedFacts.FirstSubcaseTransport.sameStar (@V) (@E) inferInstance inferInstance
+        inferInstance inferInstance
         (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
   have samePrefix (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) :
       HierarchyFullTailPrefix P.counterexample (HierarchyFullTailLength P.counterexample - 1) = B
@@ -2751,7 +2708,8 @@ theorem HierarchySituationTwoSubcaseOneTwo {V E : Type*}
     change min (A.length + (T.length - A.length - 1)) T.length + 1 = T.length
     omega
   have hBT : TreeSequenceInitialSegment B T := by
-    exact @helper_hBT_109 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
+    exact @SharedFacts.FirstSubcaseTransport.bT (@V) (@E) inferInstance inferInstance
+        inferInstance inferInstance (@G)
         (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hBlen)
   have hApositive (hq : 0 < H.dividerCount) :
       A = H.stage ⟨H.dividerCount, by omega⟩ := by

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.FullTailTransport
+
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
 public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
@@ -529,41 +531,6 @@ private theorem helper_segmentEq_708.{u_1, u_2} :
   · have he : sigma ((H.stage j.succ).edge r) = phi ((H.stage j.succ).edge r) := by
       rw [← hUA.2.2 r]; exact hfixed _
     exact he.trans hcol
-
-private theorem helper_preStepElementary_508.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C →
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let i : Fin ett.rounds :=
-      (⟨ett.rounds - (1 : ℕ), by have this : (0 : ℕ) < ett.rounds := C.positive; omega⟩ :
-        Fin ett.rounds);
-    ColoredVertexSetElementary G (ett.series.data.coloring i.castSucc)
-      (TreeSequenceVertexSet Tn) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx n Tn
-  dsimp only
-  by_cases hn : ett.rounds = 1
-  · have hcolor : (⟨ett.rounds - 1, by have := C.positive; omega⟩ : Fin ett.rounds).castSucc = 0 :=
-      Fin.ext (by simp [hn])
-    have htree : n.castSucc = (⟨1, by omega⟩ : Fin (ett.rounds + 2)) :=
-      Fin.ext (by simp [n, hn])
-    dsimp only [Tn]
-    rw [hcolor, htree]
-    exact (TechnicalTheoremBase G k ett.rounds e0 input ett.series).1
-  · have hmore : 1 < ett.rounds := by have := C.positive; omega
-    obtain ⟨predecessor, hr, hmaximum, _, _⟩ :=
-      CertifiedETTPredecessor G k e0 input T phi ett C.maximum hmore
-    have htree : n.castSucc = (⟨ett.rounds, by omega⟩ : Fin (ett.rounds + 2)) :=
-      Fin.ext rfl
-    dsimp only [Tn]
-    rw [htree]
-    exact (ctx.lowerRung predecessor (by omega) (by omega) hmaximum).1
 
 private theorem helper_weak_543.{u_1, u_2} :
     open scoped Classical in
@@ -1147,7 +1114,8 @@ theorem StableChangeCasesOneTwoStarredTail {V E : Type*}
   have controls := P2813_T1_BaseControl G k e0 input T phi ett base C ctx
     helem alpha beta hne hmissingPrefix z hpath sigma hsigma hcase hdisjoint
   rcases controls with ⟨hbase, hmissing, hsproper, hsone, houtside⟩
-  have preStepElementary := @helper_preStepElementary_508 V E inferInstance inferInstance
+  have preStepElementary := @SharedFacts.FullTailTransport.preStepElementary V E inferInstance
+      inferInstance
       inferInstance inferInstance G k e0 input T phi ett base C ctx
   have hfixed := P2813_T1_DisplayedEdges G k e0 input T phi ett base H C.good
     ctx.proper ctx.oneEdgeUncolored preStepElementary helem alpha beta z sigma hsigma

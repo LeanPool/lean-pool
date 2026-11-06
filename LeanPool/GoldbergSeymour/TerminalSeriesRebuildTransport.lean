@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.TerminalRebuildTransport
+
+
+
 public import LeanPool.GoldbergSeymour.TerminalSeriesRebuildPreparation
 public import LeanPool.GoldbergSeymour.TashkinovSeriesAppend
 public import LeanPool.GoldbergSeymour.ExtensionBase
@@ -1410,25 +1414,10 @@ theorem helper_hseriesStable_4663.{u_1, u_2} :
     rw [hilast, hindex, hfinalColor]
     exact hsigmaStable
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_hi_4786.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (i : Fin ett.rounds), Fin.last ett.rounds = i.succ → i = q := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q i htarget
-  apply Fin.ext
-  have hv : ett.rounds = i.val + 1 := by
-    simpa using congrArg Fin.val htarget
-  change i.val = ett.rounds - 1
-  omega
+    SharedFacts.RevisitingTerminalPreparation.hiStatement.{u_1, u_2} :=
+  SharedFacts.RevisitingTerminalPreparation.hi.{u_1, u_2}
 
 theorem helper_hcomponent_4809.{u_1, u_2} :
     open scoped Classical in
@@ -1886,94 +1875,20 @@ theorem helper_stableSelected_5146.{u_1, u_2} :
       (@secondStableOneUncolored) (@choice) (@secondStableRelation) (@undoneProper)
       (@undoneOne) (@treeSecondSelected) (@stableSecond)
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_hchoiceDefective_5167.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (sigmaPrev : PartialEdgeColoring E k), BoundaryColorEdges G choice.selected
-        (TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc)) choice.color =
-        BoundaryColorEdges G sigmaPrev (TreeSequenceVertexSet (ett.series.data.tree
-        q.succ.castSucc)) choice.color → DefectiveColor G sigmaPrev (TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.castSucc)) choice.color := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q choice sigmaPrev hdeltaBoundary
-  obtain ⟨oldColor, holdDefective, holdEdge⟩ := choice.edgeDefective
-  have holdColor : oldColor = choice.color := by
-    have holdEdgeColor := (Finset.mem_filter.mp holdEdge).2
-    exact Option.some.inj (holdEdgeColor.symm.trans choice.edgeColor)
-  subst oldColor
-  unfold DefectiveColor
-  rw [← hdeltaBoundary]
-  exact holdDefective
+    SharedFacts.TerminalRebuild.hchoiceDefectiveStatement.{u_1, u_2} :=
+  SharedFacts.TerminalRebuild.hchoiceDefective.{u_1, u_2}
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_hchoiceEdgeNew_5178.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (sigmaPrev : PartialEdgeColoring E k), BoundaryColorEdges G choice.selected
-        (TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc)) choice.color =
-        BoundaryColorEdges G sigmaPrev (TreeSequenceVertexSet (ett.series.data.tree
-        q.succ.castSucc)) choice.color → choice.edge ∈ BoundaryColorEdges G sigmaPrev
-        (TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc)) choice.color := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q choice sigmaPrev hdeltaBoundary
-  rw [← hdeltaBoundary]
-  obtain ⟨oldColor, holdDefective, holdEdge⟩ := choice.edgeDefective
-  have holdColor : oldColor = choice.color := by
-    have holdEdgeColor := (Finset.mem_filter.mp holdEdge).2
-    exact Option.some.inj (holdEdgeColor.symm.trans choice.edgeColor)
-  simpa [holdColor] using holdEdge
+    SharedFacts.TerminalRebuild.hchoiceEdgeNewStatement.{u_1, u_2} :=
+  SharedFacts.TerminalRebuild.hchoiceEdgeNew.{u_1, u_2}
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_hnotStrongPrev_5207.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds);
-    ∀ (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc))
-        (sigmaPrev : PartialEdgeColoring E k), DefectiveColor G sigmaPrev (TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.castSucc)) choice.color → ¬ColoredVertexSetStronglyClosed G
-        sigmaPrev (TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc)) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q choice sigmaPrev
-      hchoiceDefective hstrong
-  have hone : 1 < (BoundaryColorEdges G sigmaPrev
-      (TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc))
-      choice.color).card := by
-    have htwo : 2 ≤ (BoundaryColorEdges G sigmaPrev
-        (TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc))
-        choice.color).card := hchoiceDefective
-    omega
-  obtain ⟨f, hf, g, hg, hfg⟩ := Finset.one_lt_card.mp hone
-  have hfBoundary := (Finset.mem_filter.mp hf).1
-  have hgBoundary := (Finset.mem_filter.mp hg).1
-  have hfColor := (Finset.mem_filter.mp hf).2
-  have hgColor := (Finset.mem_filter.mp hg).2
-  exact (hstrong.2 hfBoundary hgBoundary hfg hfColor) hgColor
+    SharedFacts.TerminalRebuild.hnotStrongPrevStatement.{u_1, u_2} :=
+  SharedFacts.TerminalRebuild.hnotStrongPrev.{u_1, u_2}
 
 theorem helper_hnewAlternativeFails_5223.{u_1, u_2} :
     open scoped Classical in
@@ -3039,65 +2954,15 @@ theorem helper_hseriesStable_5785.{u_1, u_2} :
   rw [hj, hfinalColor]
   exact hsigmaStable
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_branch_5820.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (Tstar : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds); q.succ = Fin.last ett.rounds → ett.series.data.kind q.succ = some
-        TashkinovExtensionKind.PE → ((ett.series.data.kind (Fin.last ett.rounds) = some
-        TashkinovExtensionKind.SE ∨ ett.series.data.kind (Fin.last ett.rounds) = some
-        TashkinovExtensionKind.RE) ∧
-    ∃ (f : E) (seed : TreeSequence G e0), ett.series.data.connectingEdges (Fin.last ett.rounds) =
-        ({ f } : Finset E) ∧ TreeSequenceAdjoinEdge (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) f seed ∧ TashkinovAugmentationSequence sigma seed Tstar) → Nonempty
-        (CorrespondingExtendedTashkinovTree G k e0 ett sigma Tstar) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q hqSucc hpeKind hsimple
-  rcases hsimple.1 with hse | hre
-  · have hbad := hpeKind.symm.trans (by simpa [hqSucc] using hse)
-    cases hbad
-  · have hbad := hpeKind.symm.trans (by simpa [hqSucc] using hre)
-    cases hbad
+    SharedFacts.TerminalRebuildTransport.branchStatement.{u_1, u_2} :=
+  SharedFacts.TerminalRebuildTransport.branch.{u_1, u_2}
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_hreplacementCurrentTree_5844.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (_ : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds); q.succ = Fin.last ett.rounds →
-    ∀ (sigmaPrev : PartialEdgeColoring E k) (originalPrefix : ExtendedTashkinovTree G k e0 input
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc) (ett.series.data.coloring
-        (⟨ett.rounds - (1 : ℕ),
-    by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))) (corr : CorrespondingExtendedTashkinovTree G k e0
-        originalPrefix sigmaPrev (ett.series.data.tree (Fin.last ett.rounds).castSucc)),
-        corr.replacementSeries.data.tree (Fin.last (originalPrefix.rounds + (1 : ℕ))) =
-        ett.series.data.tree (Fin.last ett.rounds).castSucc →
-    let replacementLast : Fin (originalPrefix.rounds + (1 : ℕ)) := Fin.last originalPrefix.rounds;
-        corr.replacementSeries.data.tree replacementLast.succ = ett.series.data.tree
-        q.succ.castSucc := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive _ q hqSucc sigmaPrev originalPrefix
-      corr hcorrFinalTree replacementLast
-  have hlastTree : replacementLast.succ =
-      Fin.last (originalPrefix.rounds + 1) := by
-    apply Fin.ext
-    simp [replacementLast]
-  rw [hlastTree, hcorrFinalTree, hqSucc]
+    SharedFacts.TerminalRebuild.hreplacementCurrentTreeStatement.{u_1, u_2} :=
+  SharedFacts.TerminalRebuild.hreplacementCurrentTree.{u_1, u_2}
 
 theorem helper_horiginalCurrentTree_5852.{u_1, u_2} :
     open scoped Classical in
@@ -3460,21 +3325,10 @@ theorem helper_hpeAlternativeReplacement_5946.{u_1, u_2} :
     rw [hreplacementCurrentTree]
     simpa [replacementChoice, newChoice] using hrhoNotDisjoint
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_hne_6004.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (X : TreeSequence G e0) (C : Finset (Fin k)) (phi : PartialEdgeColoring E k) (ch
-        : MaximumDefectiveChoice G e0 X C phi) (g : Fin k) (second : PartialEdgeColoring E k), g ∈
-        MissingColors G second ch.vertex → second ch.edge = some ch.color → g ≠ ch.color := by
-  classical
-  intro V E _ _ G k e0 X C phi ch g second hgSecond hedgeSecond heq
-  have hpresent : g ∈ PresentColors G second ch.vertex := by
-    simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-      true_and]
-    exact ⟨ch.edge, ch.edgeIncident, by simpa [heq] using hedgeSecond⟩
-  have hnotPresent : g ∉ PresentColors G second ch.vertex := by
-    simpa [MissingColors] using hgSecond
-  exact hnotPresent hpresent
+    SharedFacts.RevisitingTerminalPreparation.hneStatement.{u_1, u_2} :=
+  SharedFacts.RevisitingTerminalPreparation.hne.{u_1, u_2}
 
 theorem helper_hindexMap_6123.{u_1, u_2} :
     open scoped Classical in
@@ -4752,32 +4606,10 @@ theorem helper_hseriesStable_6952.{u_1, u_2} :
     rw [hilast, hindex, hfinalColor]
     exact hsigmaStable
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_branch_7068.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (Tstar : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin ett.rounds); q.succ = Fin.last ett.rounds → ett.series.data.kind q.succ = some
-        TashkinovExtensionKind.PE → ((ett.series.data.kind (Fin.last ett.rounds) = some
-        TashkinovExtensionKind.SE ∨ ett.series.data.kind (Fin.last ett.rounds) = some
-        TashkinovExtensionKind.RE) ∧
-    ∃ (f : E) (seed : TreeSequence G e0), ett.series.data.connectingEdges (Fin.last ett.rounds) =
-        ({ f } : Finset E) ∧ TreeSequenceAdjoinEdge (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) f seed ∧ TashkinovAugmentationSequence sigma seed Tstar) → Nonempty
-        (CorrespondingExtendedTashkinovTree G k e0 ett sigma Tstar) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q hqSucc hpeKind hsimple
-  rcases hsimple.1 with hse | hre
-  · have hbad := hpeKind.symm.trans (by simpa [hqSucc] using hse)
-    cases hbad
-  · have hbad := hpeKind.symm.trans (by simpa [hqSucc] using hre)
-    cases hbad
+    SharedFacts.TerminalRebuildTransport.branchStatement.{u_1, u_2} :=
+  SharedFacts.TerminalRebuildTransport.branch.{u_1, u_2}
 
 private theorem helper_continuation_4951.{u_1, u_2} :
     helperContinuation4951Conditions.{u_1, u_2} := by

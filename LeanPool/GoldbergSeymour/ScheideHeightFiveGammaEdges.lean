@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.ScheideHeightFiveGammaEdges
+
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.ScheideGraphHeight
 public import LeanPool.GoldbergSeymour.ScheideKempePathHeightBound
@@ -900,32 +902,6 @@ private theorem helper_gamma_present_127.{u_1, u_2} :
     exact (Finset.disjoint_left.mp hd) hxmiss hgamma0
   simpa [MissingColors] using hnot
 
-private theorem helper_hqends_222.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let q : E := N.closingEdge; G.ends q = s(y4, y0) := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight y0 y4 q
-  have hlast : N.lastIndex = ⟨4, by have := N.height_upper; omega⟩ := by
-    apply Fin.ext
-    have := N.lastIndex_height
-    simp
-    rw [hNheight] at this
-    omega
-  simpa [q, y0, y4, hlast] using N.closing_ends
-
 private theorem helper_missing_excludes_231.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
@@ -1127,42 +1103,6 @@ private theorem helper_ha3q_313.{u_1, u_2} :
   · rw [hqends]
     simp
 
-private theorem helper_ha3qne_319.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let r3 : Fin T.length := (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let a3 : E := T.edge r3;
-    let q : E := N.closingEdge; y0 ≠ y3 → y3 ≠ y4 → G.ends a3 = s(y3, y4) → G.ends q = s(y4, y0) →
-        a3 ≠ q := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight y0 y3 y4 r3 a3 q hy03 hy34 ha3ends hqends h
-  have hpairs : s(y3, y4) = s(y4, y0) := by
-    rw [← ha3ends, h, hqends]
-  rcases Sym2.eq_iff.mp hpairs with hd | hs
-  · exact hy34 hd.1
-  · exact hy03 hs.1.symm
-
 private theorem helper_halpha_beta_330.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -1235,47 +1175,6 @@ private theorem helper_hqa1_406.{u_1, u_2} :
   rcases Sym2.eq_iff.mp hpairs with hd | hs
   · exact hy14 hd.1.symm
   · exact hy24 hs.1.symm
-
-private theorem helper_hqa2_413.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let r2 : Fin T.length := (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let a2 : E := T.edge r2;
-    let q : E := N.closingEdge; y2 ≠ y4 → y3 ≠ y4 → G.ends a2 = s(y2, y3) → G.ends q = s(y4, y0) →
-        q ≠ a2 := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight y0 y2 y3 y4 r2 a2 q hy24 hy34 ha2ends hqends h
-  have hpairs : s(y4, y0) = s(y2, y3) := by
-    rw [← hqends, h, ha2ends]
-  rcases Sym2.eq_iff.mp hpairs with hd | hs
-  · exact hy24 hd.1.symm
-  · exact hy34 hs.1.symm
 
 private theorem helper_hgamma_alpha_425.{u_1, u_2} :
     open scoped Classical in
@@ -2890,7 +2789,8 @@ private theorem helper_caseContinuation_3777.{u_1, u_2} :
     edge_step_C1 hy1C1 hbinc (Or.inl hbcolor)
   have hqa1 := @helper_hqa1_406 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
       (@phi) (@T) (@N) (@hNheight) (@hy14) (@hy24) (@ha1ends) (@hqends)
-  have hqa2 := @helper_hqa2_413 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
+  have hqa2 := @SharedFacts.ScheideHeightFiveGammaEdges.hqa2 (@V) (@E) inferInstance
+      inferInstance inferInstance (@G) (@k) (@e0)
       (@phi) (@T) (@N) (@hNheight) (@hy24) (@hy34) (@ha2ends) (@hqends)
   have hqa3 : q ≠ a3 := ha3qne.symm
   have ha13ne : a1 ≠ a3 := by
@@ -3019,7 +2919,8 @@ private theorem helper_caseContinuation_4022.{u_1, u_2} :
     · exact False.elim ((hproper ha23ne ha2a3 ha2color) h)
   have ha3q := @helper_ha3q_313 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
       (@phi) (@T) (@N) (@hNheight) (@ha3ends) (@hqends)
-  have ha3qne := @helper_ha3qne_319 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
+  have ha3qne := @SharedFacts.ScheideHeightFiveGammaEdges.ha3qne (@V) (@E) inferInstance
+      inferInstance inferInstance (@G) (@k)
       (@e0) (@phi) (@T) (@N) (@hNheight) (@hy03) (@hy34) (@ha3ends) (@hqends)
   have hqcolor : phi q = some N.beta := by
     rcases edge_color_of_closing_support q hqsupport with h | h
@@ -3264,7 +3165,8 @@ theorem ScheideHeightFiveGammaEdges {V E : Type*}
     have ha3ends : G.ends a3 = s(y3, y4) := by
       simpa [a3, r3, y3, y4, hNheight] using N.trunk_edge_ends r3 (by simp [r3])
         (by simp [r3, hNheight])
-    have hqends := @helper_hqends_222 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
+    have hqends := @SharedFacts.ScheideHeightFiveGammaEdges.hqends (@V) (@E) inferInstance
+        inferInstance inferInstance (@G) (@k)
         (@e0) (@phi) (@T) (@N) (@hNheight)
     have hproper : IsProperEdgeColoring G phi := N.global.1.2.2.2.1
     have missing_excludes := @helper_missing_excludes_231 (@V) (@E) inferInstance inferInstance (@G)

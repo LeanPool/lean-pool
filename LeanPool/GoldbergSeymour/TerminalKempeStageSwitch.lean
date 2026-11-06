@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.TerminalKempeStageSwitch
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
@@ -826,27 +828,6 @@ private theorem helper_hnotElementary_588.{u_1, u_2} :
         have hh := congrArg Fin.val hh; dsimp [ja] at hh; omega))
       haNew (hterminalB hw)
 
-private theorem helper_firstMem_689.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
-      (k : ℕ) (e0 : E) (T : TreeSequence G e0) (psi : PartialEdgeColoring E k) (c : Fin k),
-    (↑(HierarchyFirstMissingPosition psi T c) : ℕ) < T.length →
-    c ∈ MissingColors G psi (T.vertex (HierarchyFirstMissingPosition psi T c)) := by
-  classical
-  intro V E _ _ G k e0 T psi c hlt
-  let _ := Fintype.ofFinite V
-  let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-    c ∈ MissingColors G psi (T.vertex j)
-  by_cases hn : candidates.Nonempty
-  · unfold HierarchyFirstMissingPosition
-    rw [dite_eq_left hn]
-    exact (Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2
-  · have hh : (HierarchyFirstMissingPosition psi T c).val = T.length := by
-      unfold HierarchyFirstMissingPosition
-      rw [dite_eq_right hn]
-      rfl
-    omega
-
 private theorem helper_chain_722.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -974,31 +955,6 @@ private theorem helper_hbOutside_792.{u_1, u_2} :
     omega
   exact Finset.disjoint_left.mp (elementary R
     (TreeSequenceInitialSegmentVertexSetSubset hAB hvA) (vertexMem B jb) hne) hmv hb
-
-private theorem helper_hsone_900.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (R :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (a b : Fin k), a ≠ b →
-    let sigma : PartialEdgeColoring E k := TwoColorComponentSwap G R.coloring a b (Sum.inl
-        (T.vertex (Fin.last T.length))); IsOneEdgeUncolored sigma e0 := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx R a b hne sigma
-  refine ⟨?_, ?_⟩
-  · simp [sigma, TwoColorComponentSwap, R.minimumContext.oneEdgeUncolored.1]
-  · intro e he
-    obtain ⟨c, hc⟩ := R.minimumContext.oneEdgeUncolored.2 e he
-    by_cases hm : Sum.inr e ∈ TwoColorComponent G R.coloring a b
-        (Sum.inl (T.vertex (Fin.last T.length)))
-    · by_cases hca : c = a
-      · subst c; exact ⟨b, by simp [sigma, TwoColorComponentSwap, hm, hc]⟩
-      · by_cases hcb : c = b
-        · subst c; exact ⟨a, by simp [sigma, TwoColorComponentSwap, hm, hc, hne.symm]⟩
-        · exact ⟨c, by simp [sigma, TwoColorComponentSwap, hm, hc, hca, hcb]⟩
-    · exact ⟨c, by simp [sigma, TwoColorComponentSwap, hm, hc]⟩
 
 private theorem helper_fixedA_949.{u_1, u_2} :
     open scoped Classical in
@@ -1296,7 +1252,8 @@ private theorem helper_continuation_1225.{u_1, u_2} :
   have hsproper : IsProperEdgeColoring G sigma :=
     TwoColorComponentSwapProper G R.coloring a b hne R.minimumContext.proper _
   have hsone : IsOneEdgeUncolored sigma e0 := by
-    exact @helper_hsone_900 V E inferInstance inferInstance inferInstance inferInstance G k e0
+    exact @SharedFacts.TerminalKempeStageSwitch.hsone V E inferInstance inferInstance
+        inferInstance inferInstance G k e0
         input T phi ett base C ctx R a b hne
   have hcase :
       (0 < H.dividerCount ∧ a ∈ TreeMissingColors R.coloring (H.stage ⟨H.dividerCount, by omega⟩)) ∨
@@ -1426,7 +1383,7 @@ private theorem helper_continuation_190.{u_1, u_2} :
   have firstMem (psi : PartialEdgeColoring E k) (c : Fin k)
       (hlt : (HierarchyFirstMissingPosition psi T c).val < T.length) :
       c ∈ MissingColors G psi (T.vertex (HierarchyFirstMissingPosition psi T c)) := by
-    exact @helper_firstMem_689 V E inferInstance inferInstance G k e0 T psi c hlt
+    exact TreeSequenceFirstMissingPositionMem hlt
   have firstAt (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
       (c : Fin k) (j : Fin (B.length + 1))
       (hc : c ∈ MissingColors G R.coloring (B.vertex j)) :

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.BaseControl
+
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothInside
 public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
@@ -238,49 +240,6 @@ private abbrev helperContinuation1245Conditions.{u_1, u_2} : Prop :=
         TreeMissingColors phi (HierarchyStarredStage H r) → TreeColorSetClosed G phi
         (HierarchyStarredStage H r) ({ c } : Finset (Fin k)) → OutsideKempeRecoloring
         (HierarchyStarredStage H r) phi sigma alpha beta
-
-private theorem helper_trans_125.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {U W Z : TreeSequence G e0}, TreeSequenceInitialSegment U W → TreeSequenceInitialSegment W
-        Z → TreeSequenceInitialSegment U Z := by
-  classical
-  intro V E G e0 U W Z hUW hWZ
-  refine ⟨hUW.1.trans hWZ.1, ?_, ?_⟩
-  · intro j
-    exact (hWZ.2.1 (Fin.castLE (Nat.succ_le_succ hUW.1) j)).trans
-      (hUW.2.1 j)
-  · intro j
-    exact (hWZ.2.2 (Fin.castLE hUW.1 j)).trans (hUW.2.2 j)
-
-private theorem helper_stageChain_136.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy; (
-    ∀ {U W Z : TreeSequence G e0}, TreeSequenceInitialSegment U W → TreeSequenceInitialSegment W Z
-        → TreeSequenceInitialSegment U Z) →
-    ∀ (j : ℕ) (hj : j < H.dividerCount + (2 : ℕ)) (i : Fin (H.dividerCount + (2 : ℕ))), (↑i : ℕ) ≤
-        j → TreeSequenceInitialSegment (H.stage i) (H.stage (⟨j, hj⟩ : Fin (H.dividerCount + (2 :
-        ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H trans j
-  induction j with
-  | zero =>
-      intro hj i hi
-      have hi0 : i = 0 := Fin.ext (Nat.eq_zero_of_le_zero hi)
-      subst i
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  | succ j ih =>
-      intro hj i hi
-      by_cases heq : i.val = j + 1
-      · have heq' : i = ⟨j + 1, hj⟩ := Fin.ext heq
-        subst i
-        exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-      · exact trans (ih (by omega) i (by omega))
-          (H.nested ⟨j, by omega⟩)
 
 private theorem helper_starChain_162.{u_1, u_2} :
     open scoped Classical in
@@ -1001,39 +960,6 @@ private theorem helper_missingAtMax_731.{u_1, u_2} :
     subst d
     exact hnew
 
-private theorem helper_branch_773.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    ∀ {u : V}, ett.rounds = (1 : ℕ) → u ∈ TreeSequenceVertexSet Tn →
-    ∀ {v : V}, v ∈ TreeSequenceVertexSet Tn → u ≠ v → Disjoint (MissingColors G
-        (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ),
-    have this : (0 : ℕ) < ett.rounds := C.positive; Decidable.byContradiction fun (a : ¬ett.rounds
-        - (1 : ℕ) < ett.rounds) ↦
-    by
-                  omega
-    ⟩ : Fin ett.rounds).castSucc) u) (MissingColors G (ett.series.data.coloring (⟨ett.rounds - (1
-        : ℕ),
-    have this : (0 : ℕ) < ett.rounds := C.positive; Decidable.byContradiction fun (a : ¬ett.rounds
-        - (1 : ℕ) < ett.rounds) ↦
-    by
-                  omega
-    ⟩ : Fin ett.rounds).castSucc) v) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C n Tn _ hn
-  have hcolor : (⟨ett.rounds - 1, by have := C.positive; omega⟩ : Fin ett.rounds).castSucc =
-    0 :=
-    Fin.ext (by simp [hn])
-  have htree : n.castSucc = (⟨1, by omega⟩ : Fin (ett.rounds + 2)) :=
-    Fin.ext (by simp [n, hn])
-  dsimp only [Tn]
-  rw [hcolor, htree]
-  exact (TechnicalTheoremBase G k ett.rounds e0 input ett.series).1
-
 private theorem helper_branch_781.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -1472,7 +1398,8 @@ private theorem helper_continuation_1245.{u_1, u_2} :
         (TreeSequenceVertexSet Tn) := by
     dsimp only
     by_cases hn : ett.rounds = 1
-    · exact @helper_branch_773 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
+    · exact @SharedFacts.BaseControl.branch (@V) (@E) inferInstance inferInstance
+        inferInstance inferInstance
         (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) _ (@hn)
     · exact @helper_branch_781 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
         (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hlower) _ (@hn)
@@ -1565,8 +1492,9 @@ theorem P2813_T1_BaseControl {V E : Type*}
     (min (A.length + ((T.length - A.length) - 1)) T.length)
     (by have hA := A.positive; have hT := T.positive; omega)
     (Nat.min_le_right _ _)
-  have trans := @helper_trans_125 (@V) (@E) (@G) (@e0)
-  have stageChain := @helper_stageChain_136 (@V) (@E) inferInstance inferInstance inferInstance
+  have trans := @SharedFacts.BaseControl.trans (@V) (@E) (@G) (@e0)
+  have stageChain := @SharedFacts.BaseControl.stageChain (@V) (@E) inferInstance inferInstance
+      inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@trans)
   have starStage (r : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H r)

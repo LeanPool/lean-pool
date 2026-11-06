@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
 public import LeanPool.GoldbergSeymour.ScheideReplacementBoundaryParity
@@ -65,20 +66,6 @@ private theorem helper_hdeltaNotMissing_146.{u_1, u_2} :
     change 2 ≤ (BoundaryColorEdges G phi X d.1).card at this
     omega)
   exact hclosed (Finset.mem_filter.mp hb).1 hv (Finset.mem_filter.mp hb).2 hm
-
-private theorem helper_tree_edge_incident_157.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Finite E]
-      (G : LooplessMultigraph V E) (e0 : E) (T : TreeSequence G e0) (q : Fin T.length),
-    TreeIncidentEdge T (T.edge q) := by
-  classical
-  intro V E _ _ G e0 T q
-  let _ := Fintype.ofFinite V
-  let _ := Fintype.ofFinite E
-  obtain ⟨a, ha⟩ := T.attaches q
-  refine ⟨T.vertex q.succ, ?_, ?_⟩
-  · simp [TreeSequenceVertexSet]
-  · simp [Incident, ha]
 
 private theorem helper_edge_color_D_163.{u_1, u_2} :
     open scoped Classical in
@@ -673,7 +660,7 @@ theorem ScheideReplacementBoundaryAtMostThree {V E : Type*}
   have hdeltaNotMissing : ∀ v, v ∈ X → d.1 ∉ MissingColors G phi v := by
     apply helper_hdeltaNotMissing_146 <;> assumption
   have tree_edge_incident : ∀ q : Fin T.length, TreeIncidentEdge T (T.edge q) := by
-    apply helper_tree_edge_incident_157
+    apply SharedFacts.ScheideDefectiveNoCross.tree_edge_incident
   have edge_color_D (q : Fin T.length) (c : Fin k)
       (hc : phi (T.edge q) = some c) : phiD (T.edge q) = some c := by
     apply helper_edge_color_D_163 <;> assumption

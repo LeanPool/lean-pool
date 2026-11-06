@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+
+
 public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
 public import LeanPool.GoldbergSeymour.ScheideDefectiveThirdBoundaryEdge
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumMissingCounts
@@ -118,129 +120,6 @@ private abbrev helperContinuation291Conditions.{u_1, u_2} : Prop :=
                                   ∀ v ∈ TreeSequenceVertexSet S,
                                    c ∈ MissingColors G rho v → TashkinovTree G e0 rho U) →
                              False
-
-private theorem helper_tashkinov_adjoin_165.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (C : ScheideReducedConfiguration G k e0 phi T)
-      (D : ScheideDefectiveSetup G k e0 phi T C)
-      (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T)))
-      (_ : ScheideDefectiveReturnData G k e0 phi T C D d) (rho : PartialEdgeColoring E k)
-      (S U : TreeSequence G e0) (f : E),
-    TreeSequenceAdjoinEdge S f U →
-    TashkinovTree G e0 rho S →
-    ∀ (c : Fin k),
-    rho f = some c →
-    ∀ v ∈ TreeSequenceVertexSet S,
-    c ∈ MissingColors G rho v →
-    TashkinovTree G e0 rho U := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R rho S U f hadjoin hS c hf v hv hmiss
-  rcases hadjoin with ⟨hlen, hinitial, hlast⟩
-  rcases hinitial with ⟨hle, hvert, hedge⟩
-  intro q hq
-  by_cases hold : q.val < S.length
-  · let qS : Fin S.length := ⟨q.val, hold⟩
-    obtain ⟨a, color, hcolor, hcolorMissing⟩ :=
-      hS qS (by simpa [qS] using hq)
-    let aU : Fin (q.val + 1) := ⟨a.val, by simpa [qS] using a.isLt⟩
-    refine ⟨aU, color, ?_, ?_⟩
-    · have hqeq : Fin.castLE hle qS = q := by
-        apply Fin.ext
-        rfl
-      have hUedge : U.edge q = S.edge qS := by
-        rw [← hqeq]
-        exact hedge qS
-      rw [hUedge]
-      exact hcolor
-    · let oldVertexIndex : Fin (S.length + 1) :=
-        Fin.castLT a (Nat.lt_trans a.isLt (Nat.succ_lt_succ qS.isLt))
-      let newVertexIndex : Fin (U.length + 1) :=
-        Fin.castLT aU (Nat.lt_trans aU.isLt (Nat.succ_lt_succ q.isLt))
-      have hindex : Fin.castLE (Nat.succ_le_succ hle) oldVertexIndex =
-          newVertexIndex := by
-        apply Fin.ext
-        rfl
-      have hvertex : U.vertex newVertexIndex = S.vertex oldVertexIndex := by
-        rw [← hindex]
-        exact hvert oldVertexIndex
-      simpa [oldVertexIndex, newVertexIndex] using
-        hvertex.symm ▸ hcolorMissing
-  · have hqval : q.val = S.length := by
-      have hqbound : q.val < S.length + 1 := by simpa [hlen] using q.isLt
-      omega
-    obtain ⟨a, ha⟩ : ∃ a : Fin (S.length + 1), S.vertex a = v := by
-      simpa [TreeSequenceVertexSet] using hv
-    let aU : Fin (q.val + 1) := ⟨a.val, by simpa [hqval] using a.isLt⟩
-    refine ⟨aU, c, ?_, ?_⟩
-    · have hqlast : q = Fin.cast hlen.symm (Fin.last S.length) := by
-        apply Fin.ext
-        simpa using hqval
-      rw [hqlast, hlast]
-      exact hf
-    · let newVertexIndex : Fin (U.length + 1) :=
-        Fin.castLT aU (Nat.lt_trans aU.isLt (Nat.succ_lt_succ q.isLt))
-      have hindex : Fin.castLE (Nat.succ_le_succ hle) a =
-          newVertexIndex := by
-        apply Fin.ext
-        rfl
-      have hvertex : U.vertex newVertexIndex = v := by
-        rw [← hindex, hvert a, ha]
-      simpa [newVertexIndex, hvertex] using hmiss
-
-private theorem helper_adjoin_vertex_set_223.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [DecidableEq V] (G : LooplessMultigraph V E) (e0 : E)
-      (A B : TreeSequence G e0) (f : E) (x y : V),
-    G.ends f = s(x, y) →
-    y ∉ TreeSequenceVertexSet A →
-    TreeSequenceAdjoinEdge A f B →
-    TreeSequenceVertexSet B = insert y (TreeSequenceVertexSet A) := by
-  classical
-  intro V E _ G e0 A B f x y hxy hyA hAB
-  rcases hAB with ⟨hlen, hinit, hlast⟩
-  rcases hinit with ⟨hle, hvertices, hedges⟩
-  have holdSubset : TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hv ⊢
-    obtain ⟨q, hq⟩ := hv
-    refine ⟨Fin.castLE (Nat.succ_le_succ hle) q, ?_⟩
-    rw [hvertices]
-    exact hq
-  have hyB : y ∈ TreeSequenceVertexSet B := by
-    let q : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
-    obtain ⟨a, ha⟩ := B.attaches q
-    have hyEnds : y ∈ G.ends (B.edge q) := by
-      rw [hlast, hxy]
-      simp
-    rw [ha] at hyEnds
-    rcases (by simpa only [Sym2.mem_iff] using hyEnds) with hynew | hyold
-    · simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-        true_and]
-      exact ⟨q.succ, hynew.symm⟩
-    · simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-        true_and]
-      exact ⟨Fin.castLT a (Nat.lt_trans a.isLt
-        (Nat.succ_lt_succ q.isLt)), hyold.symm⟩
-  have hinsert : insert y (TreeSequenceVertexSet A) ⊆
-      TreeSequenceVertexSet B := by
-    intro v hv
-    simp only [Finset.mem_insert] at hv
-    rcases hv with rfl | hv
-    · exact hyB
-    · exact holdSubset hv
-  have hAcard : (TreeSequenceVertexSet A).card = A.length + 1 := by
-    simp [TreeSequenceVertexSet, Finset.card_image_of_injective,
-      A.vertex_injective]
-  have hBcard : (TreeSequenceVertexSet B).card = B.length + 1 := by
-    simp [TreeSequenceVertexSet, Finset.card_image_of_injective,
-      B.vertex_injective]
-  have hcard : (TreeSequenceVertexSet B).card ≤
-      (insert y (TreeSequenceVertexSet A)).card := by
-    rw [hBcard, Finset.card_insert_of_notMem hyA, hAcard, hlen]
-  exact (Finset.eq_of_subset_of_card_le hinsert hcard).symm
 
 private theorem helper_hone2_388.{u_1, u_2} :
     open scoped Classical in
@@ -1016,7 +895,8 @@ private theorem helper_continuation_291.{u_1, u_2} :
       (hyA : y ∉ TreeSequenceVertexSet A)
       (hAB : TreeSequenceAdjoinEdge A f B) :
       TreeSequenceVertexSet B = insert y (TreeSequenceVertexSet A) := by
-    exact @helper_adjoin_vertex_set_223 V E inferInstance G e0 A B f x y hxy hyA hAB
+    exact @SharedFacts.ScheideDefectiveDeletedTreePair.adjoin_vertex_set V E inferInstance G
+        e0 A B f x y hxy hyA hAB
   have hz2Sgamma : z2 ∈ TreeSequenceVertexSet Sgamma := by
     rw [hSgammaVertices]
     apply Finset.mem_union.mpr
@@ -1229,7 +1109,8 @@ theorem ScheideDefectiveReturnContradiction {V E : Type*}
       (hf : rho f = some c) (v : V) (hv : v ∈ TreeSequenceVertexSet S)
       (hmiss : c ∈ MissingColors G rho v) :
       TashkinovTree G e0 rho U := by
-    exact @helper_tashkinov_adjoin_165 V E inferInstance inferInstance inferInstance
+    exact @SharedFacts.ScheideDefectiveThirdBoundaryEdge.tashkinov_adjoin V E inferInstance
+        inferInstance inferInstance
         inferInstance G k e0 phi T C D d R rho S U f hadjoin hS c hf v hv hmiss
   exact @helper_continuation_291 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 phi T C D d R hproper1 hone1 hstable1 hproperJ2 honeJ2 hdeltaMissingJ2 Sgamma SgammaJ

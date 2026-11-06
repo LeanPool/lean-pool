@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.GoodHierarchyPrefixPreparation
+
 public import LeanPool.GoldbergSeymour.HierarchyStarredStage
 
 /-!
@@ -21,22 +23,10 @@ namespace GoldbergSeymour.TerminalHierarchyPrefixPreparation
 
 open scoped Sym2
 
+/-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_segmentTrans_81.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B
-        C → TreeSequenceInitialSegment A C := by
-  classical
-  intro V E G e0 A B C hAB hBC
-  rcases hAB with ⟨hab, hvab, heab⟩
-  rcases hBC with ⟨hbc, hvbc, hebc⟩
-  refine ⟨le_trans hab hbc, ?_, ?_⟩
-  · intro i
-    have hmid := hvbc (Fin.castLE (Nat.succ_le_succ hab) i)
-    simpa using hmid.trans (hvab i)
-  · intro i
-    have hmid := hebc (Fin.castLE hab i)
-    simpa using hmid.trans (heab i)
+    SharedFacts.GoodHierarchyPrefixPreparation.segmentTransStatement.{u_1, u_2} :=
+  SharedFacts.GoodHierarchyPrefixPreparation.segmentTrans.{u_1, u_2}
 
 theorem helper_stageSegment_94.{u_1, u_2} :
     open scoped Classical in

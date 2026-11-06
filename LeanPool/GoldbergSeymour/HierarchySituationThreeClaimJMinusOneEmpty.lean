@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.StoredExceptionTransport
+
+
 public import LeanPool.GoldbergSeymour.EmptyCommonMissingLocation
 public import LeanPool.GoldbergSeymour.BaseExtraReplacement
 public import LeanPool.GoldbergSeymour.AbsentOwnerReplacement
@@ -807,86 +810,6 @@ private theorem helper_continuation_671.{u_1, u_2} :
       alpha haTerminal haA hextra hgamma
     exact ⟨P, beta, hterm, missingMono P.coloring hAY hbA, Or.inl hbad⟩
 
-private noncomputable abbrev helperSelfCorr880.{u_1, u_2} :
-    open scoped Classical in
-      {V : Type u_1} →
-        {E : Type u_2} →
-          [Fintype V] →
-            [Fintype E] →
-              [DecidableEq E] →
-                (G : LooplessMultigraph V E) →
-                  (k : ℕ) →
-                    (e0 : E) →
-                      (input : PartialEdgeColoring E k) →
-                        (T : TreeSequence G e0) →
-                          (phi : PartialEdgeColoring E k) →
-                            (ett : ExtendedTashkinovTree G k e0 input T phi) →
-                              (∀ (j : Fin (ett.rounds + (1 : ℕ))),
-                                  IsProperEdgeColoring G (ett.series.data.coloring j)) →
-                                (∀ (j : Fin (ett.rounds + (1 : ℕ))),
-                                    IsOneEdgeUncolored (ett.series.data.coloring j) e0) →
-                                  CorrespondingExtendedTashkinovTree G k e0 ett phi T := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett seriesProper seriesOne
-  exact {
-    replacementInput := input
-    replacementSeries := ett.series
-    replacementETT := ett
-    rungAgreement := rfl
-    seriesPresentation := HEq.rfl
-    finalGeneratingColoring := ett.generatingColoring
-    ladderTreesAgree := fun _ => rfl
-    storedColorsAgree := fun _ => rfl
-    connectingEdgesAgree := fun _ => rfl
-    extensionKindsAgree := fun _ => rfl
-    replacementProper := seriesProper
-    replacementOneUncolored := seriesOne
-    replacementStable := fun _ => ⟨fun _ _ _ => rfl, fun _ _ => rfl⟩ }
-
-private noncomputable abbrev helperP0917.{u_1, u_2} :
-    open scoped Classical in
-      {V : Type u_1} →
-        {E : Type u_2} →
-          [Fintype V] →
-            [Fintype E] →
-              [DecidableEq V] →
-                [DecidableEq E] →
-                  (G : LooplessMultigraph V E) →
-                    (k : ℕ) →
-                      (e0 : E) →
-                        (input : PartialEdgeColoring E k) →
-                          (T : TreeSequence G e0) →
-                            (phi : PartialEdgeColoring E k) →
-                              (ett : ExtendedTashkinovTree G k e0 input T phi) →
-                                (base : HierarchyBase ett phi) →
-                                  (C : HierarchyCounterexample base) →
-                                    (ctx :
-                                        HierarchyMinimumCounterexampleContext G k e0 input T phi ett
-                                          base C) →
-                                      (seriesProper :
-                                          ∀ (j : Fin (ett.rounds + (1 : ℕ))),
-                                            IsProperEdgeColoring G (ett.series.data.coloring j)) →
-                                        (seriesOne :
-                                            ∀ (j : Fin (ett.rounds + (1 : ℕ))),
-                                              IsOneEdgeUncolored (ett.series.data.coloring j) e0) →
-                                          let _ :
-                                            CorrespondingExtendedTashkinovTree G k e0 ett phi T :=
-                                            helperSelfCorr880 G k e0 input T phi ett seriesProper
-                                              seriesOne;
-                                          HierarchyReplacementPresentation G k e0 input T phi ett
-                                            base C ctx := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx seriesProper seriesOne selfCorr
-  exact {
-    coloring := phi
-    corresponding := selfCorr
-    maximum := C.maximum
-    replacementBase := base
-    counterexample := C
-    sameGood := ⟨⟨rfl, rfl, HEq.rfl, HEq.rfl, Iff.rfl, fun _ => rfl⟩,
-      rfl, fun _ => ⟨rfl, fun _ _ => rfl⟩⟩
-    minimumContext := ctx }
-
 theorem HierarchySituationThreeClaimJMinusOneEmpty {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
     (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
@@ -937,62 +860,18 @@ theorem HierarchySituationThreeClaimJMinusOneEmpty {V E : Type*}
     · intro i
       exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
   have seriesProper : ∀ j : Fin (ett.rounds + 1),
-      IsProperEdgeColoring G (ett.series.data.coloring j) := by as_aux_lemma =>
+      IsProperEdgeColoring G (ett.series.data.coloring j) := by
     intro j
-    cases ett.series.certified j with
-    | initial triple seedLength initialColoring initialStored initialEdges initialKind
-        initialVertex initialOutside initialDelta initialGamma initialClosure =>
-      simpa [initialColoring] using triple.2.2.2.1
-    | SE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternative
-        currentColoring currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma adjoined adjoinedExactly
-        closedExtension orderedExtension strictExtension =>
-      rw [currentColoring]
-      exact choice.selectedProper
-    | PE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-        gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-        secondStableRelation exitWitness currentColoring currentProper
-        currentOneUncolored currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma closedExtension orderedExtension
-        strictExtension => exact currentProper
-    | RE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed available currentColoring currentStored currentEdges
-        currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-        adjoinedExactly closedExtension orderedExtension strictExtension =>
-      rw [currentColoring]
-      exact previousProper
+    exact (ett.series.coloringProperties j).1
   have seriesOne : ∀ j : Fin (ett.rounds + 1),
-      IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by as_aux_lemma =>
+      IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by
     intro j
-    cases ett.series.certified j with
-    | initial triple seedLength initialColoring initialStored initialEdges initialKind
-        initialVertex initialOutside initialDelta initialGamma initialClosure =>
-      simpa [initialColoring] using triple.2.2.2.2
-    | SE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternative
-        currentColoring currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma adjoined adjoinedExactly
-        closedExtension orderedExtension strictExtension =>
-      rw [currentColoring]
-      exact choice.selectedOneUncolored
-    | PE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-        gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-        secondStableRelation exitWitness currentColoring currentProper
-        currentOneUncolored currentStored currentEdges currentKind currentVertex
-        currentOutside currentDelta currentGamma closedExtension orderedExtension
-        strictExtension => exact currentOneUncolored
-    | RE i previousProper previousOneUncolored previousClosed
-        previousNotStronglyClosed available currentColoring currentStored currentEdges
-        currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-        adjoinedExactly closedExtension orderedExtension strictExtension =>
-      rw [currentColoring]
-      exact previousOneUncolored
-  let selfCorr := @helperSelfCorr880 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
+    exact (ett.series.coloringProperties j).2
+  let selfCorr := @SharedFacts.StoredExceptionTransport.selfCorr425 (@V) (@E) inferInstance
+      inferInstance inferInstance (@G) (@k)
       (@e0) (@input) (@T) (@phi) (@ett) (@seriesProper) (@seriesOne)
-  let P0 := @helperP0917 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
+  let P0 := @SharedFacts.StoredExceptionTransport.p0462 (@V) (@E) inferInstance inferInstance
+      inferInstance inferInstance (@G)
       (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@seriesProper) (@seriesOne)
   let j := HierarchyPathNumber C.hierarchy
   let ell := HierarchyFullTailLength C

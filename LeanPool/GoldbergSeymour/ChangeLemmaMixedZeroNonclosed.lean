@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.ZeroNonclosedTransport
+
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
@@ -1295,19 +1297,6 @@ private theorem helper_hcombined_604.{u_1, u_2} :
         (fun hm => Finset.disjoint_left.mp hd (by simp) hm),
       stableOutside base.closure ∅ (outsideFromInterchange base.closure hvaR hi)⟩
 
-private theorem helper_commonPrefix_629.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Z → TreeSequenceInitialSegment Y
-        Z → X.length ≤ Y.length → TreeSequenceInitialSegment X Y := by
-  classical
-  intro V E G e0 X Y Z hXZ hYZ hXY
-  refine ⟨hXY, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
-
 private theorem helper_hroute_652.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
@@ -2453,7 +2442,8 @@ private theorem helper_caseContinuation_2060.{u_1, u_2} :
   have commonPrefix {X Y Z : TreeSequence G e0}
       (hXZ : TreeSequenceInitialSegment X Z) (hYZ : TreeSequenceInitialSegment Y Z)
       (hXY : X.length ≤ Y.length) : TreeSequenceInitialSegment X Y := by
-    exact helper_commonPrefix_629 (@G) (@e0) (@hXZ) (@hYZ) (@hXY)
+    exact SharedFacts.ZeroNonclosedTransport.comparableInitialSegments (@G) (@e0) (@hXZ)
+        (@hYZ) (@hXY)
   have hAib : A.length < ib.val := by
     have hi := (prefixPosition hAT ib).not.mp hvbA
     omega

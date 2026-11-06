@@ -1,0 +1,97 @@
+/-
+Copyright (c) 2026 Wesley Pegden. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Wesley Pegden
+-/
+module
+
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
+public import LeanPool.GoldbergSeymour.TreeMissingColors
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
+public import Mathlib.Combinatorics.SimpleGraph.Init
+public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Tactic.Bound.Init
+
+/-!
+# Shared facts for Preparation1
+
+These interfaces and proofs are shared across the imported proof branches.
+Extracted from Wesley Pegden’s Trellis formalization at
+88d98c1d1a59d1f1bf7c4eb58e73f3945f6daf12 during the Lean Pool port.
+-/
+
+@[expose] public section
+
+namespace GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
+
+/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
+abbrev firstMissingPositionUpperBoundStatement.{u_1, u_2} : Prop :=
+  open scoped Classical in
+    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
+    (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (X : TreeSequence G e0) (c : Fin k)
+    (i : Fin (X.length + (1 : ℕ))),
+    c ∈ MissingColors G phi (X.vertex i) →
+    (↑(HierarchyFirstMissingPosition phi X c) : ℕ) ≤ (↑i : ℕ)
+
+/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
+abbrev firstMissingPositionWitnessStatement.{u_1, u_2} : Prop :=
+  open scoped Classical in
+    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
+    (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (X : TreeSequence G e0),
+    ∀ c ∈ TreeMissingColors phi X,
+    c ∈ MissingColors G phi (X.vertex (HierarchyFirstMissingPosition phi X c))
+
+/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
+abbrev initialSegmentTransitiveStatement.{u_1, u_2} : Prop :=
+  open scoped Classical in
+    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
+    {X Y Z : TreeSequence G e0},
+    TreeSequenceInitialSegment X Y →
+    TreeSequenceInitialSegment Y Z →
+    TreeSequenceInitialSegment X Z
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem firstMissingPositionUpperBound.{u_1, u_2} :
+    firstMissingPositionUpperBoundStatement.{u_1, u_2} := by
+  classical
+  intro V E _ _ G k e0 phi X c i hi
+  let _ := Fintype.ofFinite V
+  as_aux_lemma =>
+    unfold HierarchyFirstMissingPosition
+    dsimp only
+    have hm : i ∈ Finset.univ.filter
+        (fun j => c ∈ MissingColors G phi (X.vertex j)) :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩
+    rw [dite_eq_left ⟨i, hm⟩]
+    exact Finset.min'_le _ _ hm
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem firstMissingPositionWitness.{u_1, u_2} : firstMissingPositionWitnessStatement.{u_1,
+    u_2} := by
+  classical
+  intro V E _ _ G k e0 phi X c hc
+  let _ := Fintype.ofFinite V
+  as_aux_lemma =>
+    obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
+    obtain ⟨i, _, rfl⟩ := (@Finset.mem_image _ _ (Classical.decEq V)).mp hv
+    unfold HierarchyFirstMissingPosition
+    dsimp only
+    have hm : i ∈ Finset.univ.filter
+        (fun j => c ∈ MissingColors G phi (X.vertex j)) :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hcv⟩
+    rw [dite_eq_left ⟨i, hm⟩]
+    exact (Finset.mem_filter.mp (Finset.min'_mem _ ⟨i, hm⟩)).2
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem initialSegmentTransitive.{u_1, u_2} : initialSegmentTransitiveStatement.{u_1, u_2} := by
+  classical
+  intro V E G e0 X Y Z hXY hYZ
+  refine ⟨hXY.1.trans hYZ.1, ?_, ?_⟩
+  · intro i
+    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
+  · intro i
+    exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
+
+end GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
+
+end
