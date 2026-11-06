@@ -44,10 +44,14 @@ private theorem contraction_factor_bounds {μ' η θ : ℝ} (hμ' : 0 < μ') (h�
   have ha_lt1 : Real.sqrt (μ' * η) < 1 := by
     calc Real.sqrt (μ' * η) < Real.sqrt 1 := Real.sqrt_lt_sqrt (le_of_lt hμη_pos) hμη_lt1
       _ = 1 := Real.sqrt_one
-  have hc_pos : 0 < 1 - (1 - θ) * Real.sqrt (μ' * η) := by
-    nlinarith [mul_pos (sub_pos.mpr hθ_lt1) ha_pos]
-  have hc_lt1 : 1 - (1 - θ) * Real.sqrt (μ' * η) < 1 := by
-    nlinarith [mul_pos (sub_pos.mpr hθ_lt1) ha_pos]
+  have hprod_lt1 : (1 - θ) * Real.sqrt (μ' * η) < 1 := by
+    calc (1 - θ) * Real.sqrt (μ' * η) ≤ 1 * Real.sqrt (μ' * η) :=
+          mul_le_mul_of_nonneg_right (sub_le_self 1 hθ_pos.le) ha_pos.le
+      _ = Real.sqrt (μ' * η) := one_mul _
+      _ < 1 := ha_lt1
+  have hc_pos : 0 < 1 - (1 - θ) * Real.sqrt (μ' * η) := sub_pos.mpr hprod_lt1
+  have hc_lt1 : 1 - (1 - θ) * Real.sqrt (μ' * η) < 1 :=
+    sub_lt_self 1 (mul_pos (sub_pos.mpr hθ_lt1) ha_pos)
   refine ⟨le_of_lt hc_pos, le_of_lt hc_lt1, ?_⟩
   calc Real.sqrt (1 - (1 - θ) * Real.sqrt (μ' * η)) < Real.sqrt 1 :=
         Real.sqrt_lt_sqrt (le_of_lt hc_pos) hc_lt1
@@ -101,27 +105,28 @@ private theorem bootstrap_displacement_induction {d : ℕ}
     (hvel : B * Real.sqrt (Lf 0) ≤ r / 4) (n : ℕ) :
     (X n ∈ Ω ∧ Y n ∈ Ω) ∧ (dist (X n) m_star < r ∧ dist (Y n) m_star < r) ∧
       Lf n ≤ c ^ n * Lf 0 := by
-  have hr_pos : 0 < r := by linarith [dist_nonneg (x := X 0) (y := m_star)]
+  have hr_pos : 0 < r := by linarith only [hX0, dist_nonneg (x := X 0) (y := m_star)]
   -- While the displacement-sum bound holds, the look-ahead stays within `r / 2` of `m_star`.
   have hY_half : ∀ k, dist (Y k) m_star ≤ dist (Y 0) m_star + A * Real.sqrt (Lf 0) *
       (Finset.range k).sum (fun j => Real.sqrt c ^ j) → dist (Y k) m_star < r / 2 := by
     intro k hk
-    linarith [geometric_displacement_le hA hsqrt_c_lt1 hdisp k]
+    linarith only [hk, hY0, geometric_displacement_le hA hsqrt_c_lt1 hdisp k]
   have hinv : ∀ n, dist (X n) m_star < r ∧ Lf n ≤ c ^ n * Lf 0 ∧
       dist (Y n) m_star ≤ dist (Y 0) m_star + A * Real.sqrt (Lf 0) *
         (Finset.range n).sum (fun k => Real.sqrt c ^ k) := by
     intro n
     induction n with
     | zero =>
-      refine ⟨by linarith, by simp only [pow_zero, one_mul, le_refl], ?_⟩
+      refine ⟨by linarith only [hX0, hr_pos], by simp only [pow_zero, one_mul, le_refl], ?_⟩
       simp only [Finset.range_zero, Finset.sum_empty, mul_zero, add_zero, le_refl]
     | succ n ih =>
       obtain ⟨hXn, hLn, hYn⟩ := ih
       have hXn_Ω : X n ∈ Ω := hball_Ω (Metric.mem_ball.mpr hXn)
-      have hYn_Ω : Y n ∈ Ω := hball_Ω (Metric.mem_ball.mpr (by linarith [hY_half n hYn]))
+      have hYn_Ω : Y n ∈ Ω :=
+        hball_Ω (Metric.mem_ball.mpr (by linarith only [hr_pos, hY_half n hYn]))
       have hLn_le : Lf n ≤ Lf 0 := by
         have := mul_le_of_le_one_left hL0_nonneg (pow_le_one₀ hc_nonneg hc_le_one (n := n))
-        linarith
+        exact hLn.trans this
       have hLn_R : Lf n ≤ R ^ 2 := le_trans hLn_le hL0_R
       have hsqrt_Ln : Real.sqrt (Lf n) ≤ Real.sqrt c ^ n * Real.sqrt (Lf 0) := by
         calc Real.sqrt (Lf n) ≤ Real.sqrt (c ^ n * Lf 0) := Real.sqrt_le_sqrt hLn
@@ -138,7 +143,7 @@ private theorem bootstrap_displacement_induction {d : ℕ}
               rw [hY_step n]; exact dist_add_le_dist_add_norm _ _ _
           _ ≤ (dist (Y 0) m_star + A * Real.sqrt (Lf 0) *
                 (Finset.range n).sum (fun k => Real.sqrt c ^ k)) +
-              A * Real.sqrt (Lf 0) * Real.sqrt c ^ n := by linarith
+              A * Real.sqrt (Lf 0) * Real.sqrt c ^ n := add_le_add hYn hH_geom
           _ = dist (Y 0) m_star + A * Real.sqrt (Lf 0) *
                 (Finset.range (n + 1)).sum (fun k => Real.sqrt c ^ k) := by
               rw [Finset.sum_range_succ]; ring
@@ -150,12 +155,12 @@ private theorem bootstrap_displacement_induction {d : ℕ}
       refine ⟨?_, ?_, hYn1⟩
       · calc dist (X (n + 1)) m_star ≤ dist (Y (n + 1)) m_star + ‖V (n + 1)‖ := by
               rw [hX_eq (n + 1)]; exact dist_sub_le_dist_add_norm _ _ _
-          _ < r := by linarith [hY_half (n + 1) hYn1]
+          _ < r := by linarith only [hr_pos, hV_small, hY_half (n + 1) hYn1]
       · calc Lf (n + 1) ≤ c * Lf n := hcontract n hXn_Ω hYn_Ω hLn_R
           _ ≤ c * (c ^ n * Lf 0) := mul_le_mul_of_nonneg_left hLn hc_nonneg
           _ = c ^ (n + 1) * Lf 0 := by ring
   obtain ⟨hXn, hLn, hYn⟩ := hinv n
-  have hYn_lt : dist (Y n) m_star < r := by linarith [hY_half n hYn]
+  have hYn_lt : dist (Y n) m_star < r := by linarith only [hr_pos, hY_half n hYn]
   exact ⟨⟨hball_Ω (Metric.mem_ball.mpr hXn), hball_Ω (Metric.mem_ball.mpr hYn_lt)⟩,
     ⟨hXn, hYn_lt⟩, hLn⟩
 
@@ -246,7 +251,7 @@ private theorem bootstrapTotalDisplacementProof
     contraction_factor_bounds hμ' hη_pos hμη_lt1 hθ_pos hθ_lt1
   set a := Real.sqrt (μ' * η) with ha_def
   set c := 1 - (1 - θ) * a with hc_def
-  have h1_sub_sqrt_c_pos : (0 : ℝ) < 1 - Real.sqrt c := by linarith
+  have h1_sub_sqrt_c_pos : (0 : ℝ) < 1 - Real.sqrt c := sub_pos.mpr hsqrt_c_lt1
   -- ── Step 1: Get r from Ω being open at m⋆ ──────────────────────────────
   obtain ⟨r, hr_pos, hball_Ω⟩ := Metric.isOpen_iff.mp hΩ_open m_star hm_star_Ω
   -- ── Step 2: Displacement bound constant ─────────────────────────────────
@@ -262,14 +267,14 @@ private theorem bootstrapTotalDisplacementProof
     hΨ_cont hΨ_zero T hT_pos
   -- ── Step 5: Set α = min(α₁, r/4) ───────────────────────────────────────
   set α := min α₁ (r / 4) with hα_def
-  refine ⟨α, lt_min hα₁_pos (by linarith), fun x₁ hx₁ => ?_⟩
+  refine ⟨α, lt_min hα₁_pos (by linarith only [hr_pos]), fun x₁ hx₁ => ?_⟩
   -- ── Base‑case setup ─────────────────────────────────────────────────────
   have hx₁_ball : x₁ ∈ Metric.ball m_star α₁ :=
     Metric.ball_subset_ball (min_le_left α₁ (r / 4)) hx₁.1
   have hx₁_dist : dist x₁ m_star < r / 4 :=
     lt_of_lt_of_le (Metric.mem_ball.mp hx₁.1) (min_le_right α₁ (r / 4))
   have hx₁_Ω : x₁ ∈ Ω := by
-    apply hball_Ω; exact Metric.mem_ball.mpr (by linarith)
+    apply hball_Ω; exact Metric.mem_ball.mpr (by linarith only [hr_pos, hx₁_dist])
   have hx₁_U : x₁ ∈ U := hx₁.2
   -- Ψ(x₁) < T²
   have hΨ_small : psi f μ' S x₁ < T ^ 2 :=
@@ -285,11 +290,11 @@ private theorem bootstrapTotalDisplacementProof
     rw [dist_eq_norm] at hπ_dist
     rw [norm_smul, Real.norm_of_nonneg (Real.sqrt_nonneg μ')]
     rw [mul_pow, Real.sq_sqrt (le_of_lt hμ'), hπ_dist]
-    linarith [sq_nonneg ((1 + Real.sqrt (μ' * η)) ^ 2 / (2 * (1 - Real.sqrt (μ' * η))))]
+    linarith only []
   -- L 0 ≤ T² ≤ R²
   have hL0_le_T2 : L 0 ≤ T ^ 2 := le_of_lt (lt_of_le_of_lt hL0_le_Ψ hΨ_small)
   have hT_le_R : T ≤ R := min_le_left R _
-  have hL0_bound : L 0 ≤ R ^ 2 := le_trans hL0_le_T2 (by nlinarith)
+  have hL0_bound : L 0 ≤ R ^ 2 := hL0_le_T2.trans (pow_le_pow_left₀ hT_pos.le hT_le_R 2)
   -- L 0 ≥ 0
   have hL0_nonneg : (0 : ℝ) ≤ L 0 := by
     have hmin : ∀ y, f m_star ≤ f y := by
@@ -301,7 +306,7 @@ private theorem bootstrapTotalDisplacementProof
     change 0 ≤ lyapunov P μ' π f η ρ x₁ 0
     simp only [lyapunov, nesterovSeq, auxVar, normalDisp, NesterovState.lookahead,
       map_zero, smul_zero, sub_self, zero_add, add_zero, norm_zero]
-    linarith [sq_nonneg ‖Real.sqrt μ' • (x₁ - π x₁)‖]
+    linarith only [h1, sq_nonneg ‖Real.sqrt μ' • (x₁ - π x₁)‖]
   -- Key bound: √(L 0) ≤ T
   have hsqrt_L0_le_T : Real.sqrt (L 0) ≤ T := by
     calc Real.sqrt (L 0) ≤ Real.sqrt (T ^ 2) := Real.sqrt_le_sqrt hL0_le_T2
@@ -421,7 +426,7 @@ private theorem bootstrapTotalDisplacementGenProof
     contraction_factor_bounds hμ' hη_pos hμη_lt1 hθ_pos hθ_lt1
   set a := Real.sqrt (μ' * η) with ha_def
   set c := 1 - (1 - θ) * a with hc_def
-  have h1_sub_sqrt_c_pos : (0 : ℝ) < 1 - Real.sqrt c := by linarith
+  have h1_sub_sqrt_c_pos : (0 : ℝ) < 1 - Real.sqrt c := sub_pos.mpr hsqrt_c_lt1
   -- ── Step 1: Get r from Ω being open at m⋆ ──────────────────────────────
   obtain ⟨r, hr_pos, hball_Ω⟩ := Metric.isOpen_iff.mp hΩ_open m_star hm_star_Ω
   -- ── Step 2: Displacement bound constant ─────────────────────────────────
@@ -430,7 +435,7 @@ private theorem bootstrapTotalDisplacementGenProof
   -- ── Step 3: Choose δ so that iterates stay within ball(m⋆, r) ⊆ Ω ──────
   set δ := min R (min (r / 4) (r / (4 * K))) with hδ_def
   have hδ_pos : (0 : ℝ) < δ := by
-    apply lt_min hR; apply lt_min (by linarith) (by positivity)
+    apply lt_min hR; apply lt_min (by linarith only [hr_pos]) (by positivity)
   have hδ_le_R : δ ≤ R := min_le_left R _
   have hδ_le_r4 : δ ≤ r / 4 := le_trans (min_le_right R _) (min_le_left _ _)
   have hδ_le_rK : δ ≤ r / (4 * K) := le_trans (min_le_right R _) (min_le_right _ _)
@@ -442,7 +447,7 @@ private theorem bootstrapTotalDisplacementGenProof
     lt_of_lt_of_le (Metric.mem_ball.mp hs₀_la) hδ_le_r4
   -- L₀ ≤ R²
   have hL₀_R : lyapunovOfState P μ' π f η s₀ ≤ R ^ 2 :=
-    le_trans hL₀_small (by nlinarith [hδ_le_R])
+    hL₀_small.trans (pow_le_pow_left₀ hδ_pos.le hδ_le_R 2)
   -- L₀ ≥ 0
   have hbdd : BddBelow (Set.range f) := by
     refine ⟨f m_star, ?_⟩
