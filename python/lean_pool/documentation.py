@@ -114,29 +114,49 @@ def local_closure(root: Path, project: str, modules: set[str]) -> set[str] | Non
     return closure if own <= closure else None
 
 
+def compiled_module_hashes(root: Path, source: Path) -> dict[str, str | None]:
+    """Identify each consumed module artifact, including absent legacy companions.
+
+    Lake's cached content hash is used when available. Otherwise stream the
+    artifact itself, so a missing hash never hides a changed companion.
+    """
+    identities = {}
+    for suffix in ("olean", "olean.server", "olean.private"):
+        artifact = root / COMPILED / source.relative_to(root).with_suffix(f".{suffix}")
+        if not artifact.is_file():
+            identities[suffix] = None
+            continue
+        cached = Path(f"{artifact}.hash")
+        identity = cached if cached.is_file() and cached.stat().st_size else artifact
+        with identity.open("rb") as stream:
+            digest = hashlib.file_digest(stream, "sha256").hexdigest()
+        kind = "cached" if identity == cached else "artifact"
+        identities[suffix] = f"{kind}:{digest}"
+    return identities
+
+
 def project_fingerprints(
     root: Path, projects: set[str] | None = None
 ) -> dict[str, str]:
     """Hash the sources and compiled modules each project's pages depend on.
 
     That is the project's modules plus every pool module they import, from other
-    projects too. Without Lake's import inventory the whole pool is included;
-    without its compiled-module hashes the pool configuration stands in for them.
-    Only the closures of `projects` (default: all) are read.
+    projects too. Without Lake's import inventory the whole pool is included.
+    Missing public artifacts retain the pool configuration as a fallback; present
+    artifacts use cached or directly computed content hashes. Only the closures
+    of `projects` (default: all) are read.
     """
     sources = module_sources(root)
     modules = set(sources)
     configuration = hashlib.sha256((root / "lakefile.toml").read_bytes()).hexdigest()
-    digests: dict[str, tuple[str, str | None]] = {}
+    digests: dict[str, tuple[str, dict[str, str | None]]] = {}
 
-    def digest(module: str) -> tuple[str, str | None]:
+    def digest(module: str) -> tuple[str, dict[str, str | None]]:
         if module not in digests:
             path = sources[module]
-            compiled = root / COMPILED / path.relative_to(root)
-            compiled = compiled.with_suffix(".olean.hash")
             digests[module] = (
                 hashlib.sha256(path.read_bytes()).hexdigest(),
-                compiled.read_text().strip() if compiled.is_file() else None,
+                compiled_module_hashes(root, path),
             )
         return digests[module]
 
@@ -144,7 +164,7 @@ def project_fingerprints(
     for project in sorted(projects or {project_of(module) for module in modules}):
         closure = local_closure(root, project, modules) or modules
         entries = {module: digest(module) for module in sorted(closure)}
-        if any(compiled is None for _, compiled in entries.values()):
+        if any(compiled["olean"] is None for _, compiled in entries.values()):
             entries["lakefile.toml"] = (configuration, None)
         encoded = json.dumps(entries, sort_keys=True).encode()
         fingerprints[project] = hashlib.sha256(encoded).hexdigest()
