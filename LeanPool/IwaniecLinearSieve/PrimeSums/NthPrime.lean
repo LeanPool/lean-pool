@@ -25,12 +25,12 @@ open Real Filter Topology
 namespace IwaniecLinearSieve
 
 theorem log_le_div_eight {K : ℝ} (hK : 256 ≤ K) : log K ≤ K / 8 := by
-  have hK0 : 0 < K := by linarith
-  have hs : 16 ≤ √K := (le_sqrt (by norm_num) hK0.le).2 (by linarith)
+  have hK0 : 0 < K := by linarith only [hK]
+  have hs : 16 ≤ √K := (le_sqrt (by norm_num) hK0.le).2 (by linarith only [hK])
   have h1 : log K = 2 * log √K := by rw [log_sqrt hK0.le]; ring
   have h2 := log_le_sub_one_of_pos (sqrt_pos.2 hK0)
   have h3 := sq_sqrt hK0.le
-  nlinarith
+  nlinarith only [hK, h1, h2, h3, hs]
 
 /-- The `r`-th prime `p_r = Nat.nth Nat.Prime (r - 1)` satisfies `p_r ≤ C r log r`. -/
 theorem nth_prime_le : ∃ C, ∀ r : ℕ, 2 ≤ r → (Nat.nth Nat.Prime (r - 1) : ℝ) ≤ C * r * log r := by

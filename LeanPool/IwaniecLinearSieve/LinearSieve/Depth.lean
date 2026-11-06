@@ -67,7 +67,7 @@ theorem LeProdPrimesLT.succ (h : LeProdPrimesLT r y z) : LeProdPrimesLT (r + 1) 
   have h1 := h (T.erase a) ((erase_subset a T).trans hT) (by rw [card_erase_of_mem ha, hcard]; rfl)
   have h2 : (1 : ℝ) ≤ a := by exact_mod_cast (prime_of_mem_primesLT (hT ha)).one_lt.le
   have h3 := one_le_prod_primes ((erase_subset a T).trans hT)
-  nlinarith
+  nlinarith only [h1, h2, h3]
 
 theorem LeProdPrimesLT.mono {s : ℕ} (h : LeProdPrimesLT r y z) (hrs : r ≤ s) :
     LeProdPrimesLT s y z := by
@@ -210,7 +210,7 @@ theorem card_primeFactors_le_of_mem_rosserSet (hr : 1 ≤ r) (h : LeProdPrimesLT
     have h' := (Nat.cast_le (α := ℝ)).2 hTd
     push_cast at h'
     exact h'
-  linarith
+  linarith only [hdy, hyT, this]
 
 theorem card_filter_rosserSet_add_eq (hr : 1 ≤ r) (h : LeProdPrimesLT (r + 1) y z) (j : ℕ) :
     #((rosserSet lower y z).filter fun d ↦ #d.primeFactors ≤ r + j) =
@@ -232,13 +232,13 @@ theorem mul_log_sub_one_le_log_factorial (n : ℕ) :
   rw [div_le_iff₀ hf] at h
   have := log_le_log (by positivity) h
   rw [log_pow, log_mul (exp_pos _).ne' hf.ne', log_exp] at this
-  linarith
+  linarith only [this]
 
 /-- `log x ≤ 2 √x`. -/
 theorem log_le_two_mul_sqrt {x : ℝ} (hx : 0 ≤ x) : log x ≤ 2 * √x := by
   have := log_le_rpow_div hx (by norm_num : (0 : ℝ) < 1 / 2)
   rw [← sqrt_eq_rpow] at this
-  linarith
+  linarith only [this]
 
 /-- [I71, p. 23]: if `r + 2 > 2 log y / log log y` and `y` is large then `y ≤ (r + 1)!`, so every
 product of `r` distinct primes is at least `y`; moreover `r ≥ 2`. -/
@@ -251,21 +251,21 @@ theorem exists_le_factorial : ∃ y₀ : ℝ, ∀ y ≥ y₀, ∀ r : ℕ,
   have hL49 : exp 49 ≤ L := by rw [hL, le_log_iff_exp_le hy0]; exact hy
   have hL0 : 0 < L := (exp_pos _).trans_le hL49
   have hℓ49 : 49 ≤ ℓ := by rw [hℓ, le_log_iff_exp_le hL0]; exact hL49
-  have hℓ0 : 0 < ℓ := by linarith
+  have hℓ0 : 0 < ℓ := by linarith only [hℓ49]
   -- `ℓ ≤ L / 4`
   have hsqrtL : 64 ≤ L := by
     have := quadratic_le_exp_of_nonneg (by norm_num : (0 : ℝ) ≤ 49)
-    linarith
+    linarith only [hL49, this]
   have hℓL : 4 * ℓ ≤ L := by
     have h1 := log_le_two_mul_sqrt hL0.le
     have h2 : 8 ≤ √L := by
       rw [show (8 : ℝ) = √64 by rw [show (64 : ℝ) = 8 ^ 2 by norm_num, sqrt_sq (by norm_num)]]
       exact sqrt_le_sqrt hsqrtL
     have h3 : √L * √L = L := mul_self_sqrt hL0.le
-    nlinarith
-  have hratio : 4 ≤ L / ℓ := by rw [le_div_iff₀ hℓ0]; linarith
+    nlinarith only [hℓ49, h1, h3]
+  have hratio : 4 ≤ L / ℓ := by rw [le_div_iff₀ hℓ0]; linarith only [hℓL]
   have h2Lℓ : 2 * L / ℓ = 2 * (L / ℓ) := by ring
-  refine ⟨by exact_mod_cast (by linarith : (2 : ℝ) ≤ r), ?_⟩
+  refine ⟨by exact_mod_cast (by linarith only [hr, hratio, h2Lℓ] : (2 : ℝ) ≤ r), ?_⟩
   -- `log ℓ ≤ (ℓ - 3) / 3`
   have hlogℓ : 3 * log ℓ + 3 ≤ ℓ := by
     have h1 := log_le_two_mul_sqrt hℓ0.le
@@ -273,7 +273,7 @@ theorem exists_le_factorial : ∃ y₀ : ℝ, ∀ y ≥ y₀, ∀ r : ℕ,
       rw [show (7 : ℝ) = √49 by rw [show (49 : ℝ) = 7 ^ 2 by norm_num, sqrt_sq (by norm_num)]]
       exact sqrt_le_sqrt hℓ49
     have h3 : √ℓ * √ℓ = ℓ := mul_self_sqrt hℓ0.le
-    nlinarith
+    nlinarith only [hℓ49, h1, h3, h2]
   set m := 3 * L / (2 * ℓ) with hm
   have hm0 : 0 < m := by positivity
   set n : ℕ := r + 1 with hn
@@ -282,14 +282,14 @@ theorem exists_le_factorial : ∃ y₀ : ℝ, ∀ y ≥ y₀, ∀ r : ℕ,
     rw [hn_cast, hm]
     have : 3 * L / (2 * ℓ) = 3 / 2 * (L / ℓ) := by field_simp
     rw [this]
-    linarith
+    linarith only [hr, hratio, h2Lℓ]
   have hlogm : ℓ - log ℓ ≤ log m := by
     rw [hm, log_div (by positivity) (by positivity), log_mul (by norm_num) hL0.ne',
       log_mul (by norm_num) hℓ0.ne', ← hℓ]
     have : log 2 ≤ log 3 := log_le_log (by norm_num) (by norm_num)
-    linarith
+    linarith only [this]
   have hkey : L ≤ m * (log m - 1) := by
-    have h1 : 2 * ℓ / 3 ≤ log m - 1 := by linarith
+    have h1 : 2 * ℓ / 3 ≤ log m - 1 := by linarith only [hlogℓ, hlogm]
     calc L = m * (2 * ℓ / 3) := by rw [hm]; field_simp
       _ ≤ m * (log m - 1) := by gcongr
   have hmono : m * (log m - 1) ≤ n * (log n - 1) := by
@@ -297,10 +297,10 @@ theorem exists_le_factorial : ∃ y₀ : ℝ, ∀ y ≥ y₀, ∀ r : ℕ,
     have h2 : 0 ≤ log m - 1 := by
       by_contra h
       have : m * (log m - 1) < 0 := mul_neg_of_pos_of_neg hm0 (not_le.1 h)
-      linarith
-    nlinarith
+      linarith only [hℓ49, hlogℓ, hlogm, h]
+    nlinarith only [hmn, h1, hℓ49, hlogℓ, hlogm]
   have hfact := mul_log_sub_one_le_log_factorial n
-  have : L ≤ log n.factorial := by linarith
+  have : L ≤ log n.factorial := by linarith only [hkey, hmono, hfact]
   rw [hL, ← exp_le_exp, exp_log hy0, exp_log (by exact_mod_cast n.factorial_pos)] at this
   exact this
 

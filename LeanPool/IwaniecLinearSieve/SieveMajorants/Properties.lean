@@ -29,16 +29,16 @@ namespace IwaniecLinearSieve
 theorem initW_mem {s : ℝ} (hs : s ≤ 3) : -(1 / 2) ≤ initW s ∧ initW s ≤ 1 := by
   unfold initW
   set y := max s 2 - 1 with hy
-  have hy1 : 1 ≤ y := by have := le_max_right s 2; linarith
-  have hy2 : y ≤ 2 := by have : max s 2 ≤ 3 := max_le hs (by norm_num); linarith
+  have hy1 : 1 ≤ y := by have := le_max_right s 2; linarith only [this]
+  have hy2 : y ≤ 2 := by have : max s 2 ≤ 3 := max_le hs (by norm_num); linarith only [this]
   have hlog0 : 0 ≤ log y := log_nonneg hy1
-  have hlog1 : log y ≤ y - 1 := log_le_sub_one_of_pos (by linarith)
-  have h1 : 1 / y ≤ 1 := by rw [div_le_one (by linarith)]; exact hy1
-  have h2 : 1 / 2 ≤ 1 / y := one_div_le_one_div_of_le (by linarith) hy2
+  have hlog1 : log y ≤ y - 1 := log_le_sub_one_of_pos (by linarith only [hy1])
+  have h1 : 1 / y ≤ 1 := by rw [div_le_one (by linarith only [hy1])]; exact hy1
+  have h2 : 1 / 2 ≤ 1 / y := one_div_le_one_div_of_le (by linarith only [hy1]) hy2
   constructor <;> linarith
 
 theorem bigM_pos_of_le_three {s : ℝ} (hs : s ≤ 3) : 0 < bigM s := by
-  rw [bigM_of_le_three hs]; linarith [(initW_mem hs).1]
+  rw [bigM_of_le_three hs]; linarith only [(initW_mem hs).1, hs]
 
 theorem abs_bigW_le_of_le_three {s : ℝ} (hs : s ≤ 3) : |bigW s| ≤ bigM s / 3 := by
   rw [bigW_of_le_three hs, bigM_of_le_three hs, abs_le]
@@ -49,7 +49,7 @@ theorem abs_bigW_le_of_le_three {s : ℝ} (hs : s ≤ 3) : |bigW s| ≤ bigM s /
 theorem weight_mem {x : ℝ} (hx : 1 ≤ x) : 0 < 1 - 1 / (2 * x ^ 2) ∧ 1 - 1 / (2 * x ^ 2) ≤ 1 := by
   have : 1 / (2 * x ^ 2) ≤ 1 / 2 := by
     apply one_div_le_one_div_of_le (by norm_num)
-    nlinarith
+    nlinarith only [hx]
   have : 0 < 1 / (2 * x ^ 2) := by positivity
   constructor <;> linarith
 
@@ -73,18 +73,18 @@ theorem bigM_pos (s : ℝ) : 0 < bigM s := by
     · exact bigM_pos_of_le_three h
     · exact hpos x ⟨h, hx⟩
   have hI : 0 < ∫ x in (t - 1)..t, (1 - 1 / (2 * x ^ 2)) * bigM x := by
-    refine intervalIntegral.intervalIntegral_pos_of_pos_on ?_ (fun x hx => ?_) (by linarith)
+    refine intervalIntegral.intervalIntegral_pos_of_pos_on ?_ (fun x hx => ?_) (by linarith only [])
     · exact (continuousOn_weight_mul continuous_bigM (by linarith)).intervalIntegrable_of_Icc
-        (by linarith)
-    · exact mul_pos (weight_mem (by linarith [hx.1])).1 (hpos' x hx.2)
+        (by linarith only [])
+    · exact mul_pos (weight_mem (by linarith only [hx.1, ht, hx])).1 (hpos' x hx.2)
   rw [← bigM_integral_identity ht.le] at hI
-  have hr : 0 < (t - 1) ^ 2 - 1 / 2 := by nlinarith
-  have ht0 : 0 < t := by linarith
+  have hr : 0 < (t - 1) ^ 2 - 1 / 2 := by nlinarith only [ht]
+  have ht0 : 0 < t := by linarith only [ht]
   by_contra h
   push Not at h
   have : ((t - 1) ^ 2 - 1 / 2) * bigM t / t ≤ 0 :=
     div_nonpos_of_nonpos_of_nonneg (mul_nonpos_of_nonneg_of_nonpos hr.le h) ht0.le
-  linarith
+  linarith only [hI, this]
 
 /-- An antitone function on `(-∞, a]` and on `[a, ∞)` is antitone. -/
 theorem antitone_of_antitoneOn_Iic_Ici {f : ℝ → ℝ} {a : ℝ} (h₁ : AntitoneOn f (Iic a))
@@ -99,19 +99,19 @@ theorem antitone_of_antitoneOn_Iic_Ici {f : ℝ → ℝ} {a : ℝ} (h₁ : Antit
 theorem antitoneOn_initW : AntitoneOn initW (Iic 3) := by
   intro s _ t _ hst
   unfold initW
-  have h1 : 1 ≤ max s 2 - 1 := by have := le_max_right s 2; linarith
+  have h1 : 1 ≤ max s 2 - 1 := by have := le_max_right s 2; linarith only [this]
   have h2 : max s 2 ≤ max t 2 := max_le_max hst le_rfl
   have h3 : log (max s 2 - 1) ≤ log (max t 2 - 1) := log_le_log (by linarith) (by linarith)
   have h4 : 1 / (max t 2 - 1) ≤ 1 / (max s 2 - 1) :=
     one_div_le_one_div_of_le (by linarith) (by linarith)
-  linarith
+  linarith only [h3, h4]
 
 theorem continuousOn_kernel_mul {g : ℝ → ℝ} (hg : Continuous g) :
     ContinuousOn (fun x => x / (x - 1) ^ 2 * g (x - 1)) (Ici 2) := by
   refine ContinuousOn.mul (continuousOn_id.div ((continuousOn_id.sub continuousOn_const).pow 2)
     fun x hx => ?_) (hg.comp (continuous_sub_right 1)).continuousOn
   have : (2 : ℝ) ≤ x := hx
-  have : 0 < x - 1 := by linarith
+  have : 0 < x - 1 := by linarith only [this]
   positivity
 
 theorem intervalIntegrable_kernel_mul {g : ℝ → ℝ} (hg : Continuous g) {a b : ℝ} (ha : 2 ≤ a)
@@ -122,7 +122,7 @@ theorem intervalIntegrable_kernel_mul {g : ℝ → ℝ} (hg : Continuous g) {a b
   · rw [uIcc_of_ge h] at hx; exact hb.trans hx.1
 
 theorem kernel_pos {x : ℝ} (hx : 1 < x) : 0 < x / (x - 1) ^ 2 := by
-  have : 0 < x - 1 := by linarith
+  have : 0 < x - 1 := by linarith only [hx]
   positivity
 
 /-- `𝔐` is antitone (on all of `ℝ`). -/
@@ -130,7 +130,7 @@ theorem bigM_antitone : Antitone bigM := by
   refine antitone_of_antitoneOn_Iic_Ici (a := 3) ?_ ?_
   · intro s hs t ht hst
     rw [bigM_of_le_three hs, bigM_of_le_three ht]
-    linarith [antitoneOn_initW hs ht hst]
+    linarith only [antitoneOn_initW hs ht hst, hs, ht, hst]
   · intro s hs t ht hst
     have hs' : (3 : ℝ) ≤ s := hs
     have ht' : (3 : ℝ) ≤ t := ht
@@ -140,8 +140,8 @@ theorem bigM_antitone : Antitone bigM := by
         (intervalIntegrable_kernel_mul continuous_bigM (by linarith) (by linarith))]
     have : 0 ≤ ∫ x in s..t, x / (x - 1) ^ 2 * bigM (x - 1) :=
       intervalIntegral.integral_nonneg hst fun x hx =>
-        (mul_pos (kernel_pos (by linarith [hx.1])) (bigM_pos _)).le
-    linarith
+        (mul_pos (kernel_pos (by linarith only [hx.1, hs', hx])) (bigM_pos _)).le
+    linarith only [this]
 
 theorem bigM_le_three (s : ℝ) : bigM s ≤ 3 := by
   rcases le_total s 2 with h | h
@@ -151,15 +151,15 @@ theorem bigM_le_three (s : ℝ) : bigM s ≤ 3 := by
 /-- From (3.12) and monotonicity: `𝔐(s) ≤ s/((s-1)² - 1/2) 𝔐(s-1)` for `s ≥ 3`. -/
 theorem bigM_le_ratio {s : ℝ} (hs : 3 ≤ s) :
     bigM s ≤ s / ((s - 1) ^ 2 - 1 / 2) * bigM (s - 1) := by
-  have hr : 0 < (s - 1) ^ 2 - 1 / 2 := by nlinarith
-  have hs0 : 0 < s := by linarith
+  have hr : 0 < (s - 1) ^ 2 - 1 / 2 := by nlinarith only [hs]
+  have hs0 : 0 < s := by linarith only [hs]
   have h := bigM_integral_identity hs
   have hle : ∫ x in (s - 1)..s, (1 - 1 / (2 * x ^ 2)) * bigM x ≤
       ∫ _ in (s - 1)..s, bigM (s - 1) := by
-    refine intervalIntegral.integral_mono_on (by linarith)
-      ((continuousOn_weight_mul continuous_bigM (by linarith)).intervalIntegrable_of_Icc
-        (by linarith)) intervalIntegrable_const fun x hx => ?_
-    obtain ⟨h0, h1⟩ := weight_mem (x := x) (by linarith [hx.1])
+    refine intervalIntegral.integral_mono_on (by linarith only [])
+      ((continuousOn_weight_mul continuous_bigM (by linarith only [hs])).intervalIntegrable_of_Icc
+        (by linarith only [])) intervalIntegrable_const fun x hx => ?_
+    obtain ⟨h0, h1⟩ := weight_mem (x := x) (by linarith only [hx.1, hs, hx])
     calc (1 - 1 / (2 * x ^ 2)) * bigM x ≤ 1 * bigM x :=
           mul_le_mul_of_nonneg_right h1 (bigM_pos x).le
       _ ≤ bigM (s - 1) := by rw [one_mul]; exact bigM_antitone hx.1
@@ -167,29 +167,29 @@ theorem bigM_le_ratio {s : ℝ} (hs : 3 ≤ s) :
   simp only [sub_sub_cancel, smul_eq_mul, one_mul] at hle
   rw [div_mul_eq_mul_div, le_div_iff₀ hr]
   rw [div_le_iff₀ hs0] at hle
-  linarith
+  linarith only [hle]
 
 /-- `𝔐(s) = O(e^{-s})`. -/
 theorem bigM_le_exp (s : ℝ) : bigM s ≤ 3 * exp 5 * exp (-s) := by
   have base : ∀ s : ℝ, s ≤ 5 → bigM s ≤ 3 * exp 5 * exp (-s) := by
     intro s hs
     have : 1 ≤ exp 5 * exp (-s) := by
-      rw [← exp_add]; exact one_le_exp (by linarith)
-    nlinarith [bigM_le_three s]
+      rw [← exp_add]; exact one_le_exp (by linarith only [hs])
+    nlinarith only [bigM_le_three s, this]
   have key : ∀ n : ℕ, ∀ s : ℝ, s ≤ n → bigM s ≤ 3 * exp 5 * exp (-s) := by
     intro n
     induction n with
-    | zero => intro s hs; exact base s (by simp at hs; linarith)
+    | zero => intro s hs; exact base s (by simp at hs; linarith only [hs])
     | succ n ih =>
       intro s hs
       rcases le_total s 5 with h5 | h5
       · exact base s h5
-      have h1 := bigM_le_ratio (s := s) (by linarith)
-      have h2 := ih (s - 1) (by push_cast at hs; linarith)
-      have hr : 0 < (s - 1) ^ 2 - 1 / 2 := by nlinarith
+      have h1 := bigM_le_ratio (s := s) (by linarith only [h5])
+      have h2 := ih (s - 1) (by push_cast at hs; linarith only [hs])
+      have hr : 0 < (s - 1) ^ 2 - 1 / 2 := by nlinarith only [h5]
       have hc : s / ((s - 1) ^ 2 - 1 / 2) ≤ exp (-1) := by
         rw [div_le_iff₀ hr, exp_neg, ← div_eq_inv_mul, le_div_iff₀ (exp_pos 1)]
-        nlinarith [exp_one_lt_d9]
+        nlinarith only [exp_one_lt_d9, hr, h5]
       calc bigM s ≤ s / ((s - 1) ^ 2 - 1 / 2) * bigM (s - 1) := h1
         _ ≤ exp (-1) * (3 * exp 5 * exp (-(s - 1))) :=
           mul_le_mul hc h2 (bigM_pos _).le (exp_pos _).le
@@ -213,43 +213,43 @@ theorem abs_bigW_lt {s : ℝ} (hs : 3 ≤ s) : |bigW s| < bigM s / 3 := by
   refine sub_pos.1 <| pos_of_first_crossing (f := fun s => bigM s / 3 - |bigW s|) (a₀ := 2)
     (a := 3) ((continuous_bigM.div_const 3).sub continuous_bigW.abs).continuousOn
     (fun x hx => sub_nonneg.2 (abs_bigW_le_of_le_three hx.2)) ?_ ?_ s hs
-  · rw [bigM_three, bigW_three, abs_of_neg (by linarith [log_two_gt_d9])]
-    linarith [log_two_lt_d9]
+  · rw [bigM_three, bigW_three, abs_of_neg (by linarith only [log_two_gt_d9])]
+    linarith only [log_two_lt_d9]
   intro t ht hall _
-  have ht0 : 0 < t := by linarith
-  have hr : 0 < (t - 1) ^ 2 - 1 / 2 := by nlinarith
+  have ht0 : 0 < t := by linarith only [ht]
+  have hr : 0 < (t - 1) ^ 2 - 1 / 2 := by nlinarith only [ht]
   have hx0 : ∀ x ∈ Icc (t - 1) t, x ^ 2 ≠ 0 := fun x hx =>
-    pow_ne_zero 2 (by linarith [hx.1])
+    pow_ne_zero 2 (by linarith only [hx.1, ht, hx])
   have hcW : ContinuousOn (fun x => |bigW x / x ^ 2|) (Icc (t - 1) t) :=
     (continuous_bigW.continuousOn.div (continuousOn_id.pow 2) hx0).abs
   have hcM : ContinuousOn (fun x => bigM x / 3 / x ^ 2) (Icc (t - 1) t) :=
     (continuous_bigM.div_const 3).continuousOn.div (continuousOn_id.pow 2) hx0
   have hcM' : ContinuousOn (fun x => 1 / (3 * ((t - 1) ^ 2 - 1 / 2)) *
       ((1 - 1 / (2 * x ^ 2)) * bigM x)) (Icc (t - 1) t) :=
-    continuousOn_const.mul (continuousOn_weight_mul continuous_bigM (by linarith))
+    continuousOn_const.mul (continuousOn_weight_mul continuous_bigM (by linarith only [ht]))
   have h1 : |bigW t| ≤ t * ∫ x in (t - 1)..t, |bigW x / x ^ 2| := by
     rw [bigW_eq_neg_mul_integral ht.le, abs_mul, abs_neg, abs_of_pos ht0]
     exact mul_le_mul_of_nonneg_left (intervalIntegral.abs_integral_le_integral_abs
-      (by linarith)) ht0.le
+      (by linarith only [])) ht0.le
   have h2 : ∫ x in (t - 1)..t, |bigW x / x ^ 2| ≤ ∫ x in (t - 1)..t, bigM x / 3 / x ^ 2 := by
-    refine intervalIntegral.integral_mono_on (by linarith) (hcW.intervalIntegrable_of_Icc
+    refine intervalIntegral.integral_mono_on (by linarith only []) (hcW.intervalIntegrable_of_Icc
       (by linarith)) (hcM.intervalIntegrable_of_Icc (by linarith)) fun x hx => ?_
-    have hx2 : 0 < x ^ 2 := pow_pos (by linarith [hx.1]) 2
+    have hx2 : 0 < x ^ 2 := pow_pos (by linarith only [hx.1, ht, hx]) 2
     rw [abs_div, abs_of_pos hx2]
-    have := hall x ⟨by linarith [hx.1], hx.2⟩
-    exact div_le_div_of_nonneg_right (by linarith) hx2.le
+    have := hall x ⟨by linarith only [hx.1, ht, hx], hx.2⟩
+    exact div_le_div_of_nonneg_right (by linarith only [this]) hx2.le
   have hpt : ∀ x, t - 1 < x → 0 < 1 / (3 * ((t - 1) ^ 2 - 1 / 2)) *
       ((1 - 1 / (2 * x ^ 2)) * bigM x) - bigM x / 3 / x ^ 2 := by
     intro x hx
-    have hx' : 0 < x := by linarith
+    have hx' : 0 < x := by linarith only [ht, hx]
     rw [lemma6_aux hr.ne' hx'.ne']
-    have : 0 < x ^ 2 - 1 / 2 - ((t - 1) ^ 2 - 1 / 2) := by nlinarith
+    have : 0 < x ^ 2 - 1 / 2 - ((t - 1) ^ 2 - 1 / 2) := by nlinarith only [hx, ht]
     have := bigM_pos x
     positivity
   have h3 : ∫ x in (t - 1)..t, bigM x / 3 / x ^ 2 < ∫ x in (t - 1)..t,
       1 / (3 * ((t - 1) ^ 2 - 1 / 2)) * ((1 - 1 / (2 * x ^ 2)) * bigM x) := by
     refine intervalIntegral.integral_lt_integral_of_continuousOn_of_le_of_exists_lt
-      (by linarith) hcM hcM' (fun x hx => (sub_pos.1 (hpt x hx.1)).le)
+      (by linarith only []) hcM hcM' (fun x hx => (sub_pos.1 (hpt x hx.1)).le)
       ⟨t, ⟨by linarith, le_rfl⟩, sub_pos.1 (hpt t (by linarith))⟩
   rw [intervalIntegral.integral_const_mul, ← bigM_integral_identity ht.le] at h3
   have h4 : t * (1 / (3 * ((t - 1) ^ 2 - 1 / 2)) * (((t - 1) ^ 2 - 1 / 2) * bigM t / t)) =
@@ -270,6 +270,6 @@ theorem abs_bigW_le (s : ℝ) : |bigW s| ≤ bigM s / 3 := by
 /-- `𝔚(s) = O(e^{-s})`. -/
 theorem abs_bigW_le_exp (s : ℝ) : |bigW s| ≤ exp 5 * exp (-s) := by
   have := bigM_le_exp s
-  linarith [abs_bigW_le s]
+  linarith only [abs_bigW_le s, this]
 
 end IwaniecLinearSieve

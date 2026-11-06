@@ -50,7 +50,7 @@ theorem mainMaj_antitone : ∀ lower, Antitone (mainMaj lower)
   | true => fSieve_antitone
   | false => fun u v h => by
     simp only [mainMaj_false]
-    exact add_le_add (FSieve_antitone h) (max_le_max (by linarith) le_rfl)
+    exact add_le_add (FSieve_antitone h) (max_le_max (by linarith only [h]) le_rfl)
 
 theorem mainMaj_le_MSieve : ∀ (lower : Bool) (s : ℝ), mainMaj lower s ≤ MSieve s
   | true, s => by
@@ -58,24 +58,24 @@ theorem mainMaj_le_MSieve : ∀ (lower : Bool) (s : ℝ), mainMaj lower s ≤ MS
     simp only [mainMaj_true, MSieve]; linarith
   | false, s => by
     have := fSieve_nonneg s
-    simp only [mainMaj_false, MSieve]; linarith
+    simp only [mainMaj_false, MSieve]; linarith only [this]
 
 /-- `g₂(s) = ∫_s^∞ (3 - (t-1))⁺/(t-1) dt` for `s ≥ 2`. -/
 theorem g_two_eq_integral {s : ℝ} (hs : 2 ≤ s) :
     IntegrableOn (fun t => max (3 - (t - 1)) 0 / (t - 1)) (Ioi s) ∧
       g 2 s = ∫ t in Ioi s, max (3 - (t - 1)) 0 / (t - 1) := by
   have hz : ∀ t : ℝ, 4 ≤ t → max (3 - (t - 1)) 0 / (t - 1) = 0 := fun t ht => by
-    rw [max_eq_right (by linarith), zero_div]
+    rw [max_eq_right (by linarith only [ht]), zero_div]
   rcases le_or_gt s 4 with hs4 | hs4
   · have heq : EqOn (fun t : ℝ => max (3 - (t - 1)) 0 / (t - 1)) (fun t => 3 / (t - 1) - 1)
         (Icc s 4) := fun t ht => by
-      have : 0 < t - 1 := by linarith [ht.1]
+      have : 0 < t - 1 := by linarith only [ht.1, hs, ht]
       simp only
-      rw [max_eq_left (by linarith [ht.2])]
+      rw [max_eq_left (by linarith only [ht.2, ht])]
       field_simp
     have hcont : ContinuousOn (fun t : ℝ => 3 / (t - 1) - 1) (Icc s 4) :=
       (continuousOn_const.div (continuousOn_id.sub continuousOn_const) fun t ht => by
-        simp only [Pi.sub_apply, id]; linarith [ht.1]).sub continuousOn_const
+        simp only [Pi.sub_apply, id]; linarith only [ht.1, hs, ht]).sub continuousOn_const
     obtain ⟨hI, hE⟩ := integral_Ioi_eq_of_eq_zero hs4
       (((hcont.congr heq).integrableOn_Icc).mono_set Ioc_subset_Icc_self) hz
     refine ⟨hI, ?_⟩
@@ -83,12 +83,12 @@ theorem g_two_eq_integral {s : ℝ} (hs : 2 ≤ s) :
     have hderiv : ∀ t ∈ uIcc s 4, HasDerivAt (fun t => 3 * log (t - 1) - t) (3 / (t - 1) - 1) t :=
       fun t ht => by
         rw [uIcc_of_le hs4] at ht
-        have h1 : t - 1 ≠ 0 := by linarith [ht.1]
+        have h1 : t - 1 ≠ 0 := by linarith only [ht.1, hs, ht]
         have := ((((hasDerivAt_id' t).sub_const 1).log h1).const_mul 3).sub (hasDerivAt_id' t)
         convert this using 1; field_simp
     rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv
       (hcont.mono (uIcc_of_le hs4).subset |>.intervalIntegrable), g_two_eq ⟨hs, hs4⟩,
-      log_div (by norm_num) (by linarith)]
+      log_div (by norm_num) (by linarith only [hs])]
     norm_num; ring
   · obtain ⟨hI, hE⟩ := integral_Ioi_eq_of_eq_zero le_rfl (by simp) fun t ht => hz t (by linarith)
     exact ⟨hI, by rw [hE, intervalIntegral.integral_same, g_two_of_four_le hs4.le]⟩
@@ -117,7 +117,7 @@ theorem mainMaj_false_eq_integral (s : ℝ) :
 
 /-- `mainMaj` in terms of `fr`: `M true = f` and, on `s ≥ 3`, `M false = F`. -/
 theorem mainMaj_false_of_three_le {s : ℝ} (hs : 3 ≤ s) : mainMaj false s = FSieve s := by
-  rw [mainMaj_false, max_eq_right (by linarith), add_zero]
+  rw [mainMaj_false, max_eq_right (by linarith only [hs]), add_zero]
 
 /-! ### `errMaj` -/
 
@@ -172,7 +172,7 @@ theorem errMaj_mem : ∀ (lower : Bool) (s : ℝ),
   | false, s => majF_mem s
 
 theorem errMaj_le_two (lower : Bool) (s : ℝ) : errMaj lower s ≤ 2 := by
-  linarith [(errMaj_mem lower s).2, bigM_le_three s]
+  linarith only [(errMaj_mem lower s).2, bigM_le_three s]
 
 theorem errMaj_false_of_le_three {s : ℝ} (hs : s ≤ 3) : errMaj false s = 1 :=
   majF_of_le_three hs
@@ -190,9 +190,9 @@ theorem tendsto_errMaj_atTop : ∀ lower, Tendsto (errMaj lower) atTop (𝓝 0)
 
 theorem errMaj_shift_pos (lower : Bool) {t : ℝ} (ht : 1 < t) :
     0 < errMaj lower (t - 1) * t / (t - 1) ^ 2 := by
-  have h1 : 0 < t - 1 := by linarith
+  have h1 : 0 < t - 1 := by linarith only [ht]
   have := errMaj_pos lower (t - 1)
-  have : 0 < t := by linarith
+  have : 0 < t := by linarith only [ht]
   positivity
 
 /-- (3.13), (3.14): for `s ≥ 2` (`lower = true`) or `s ≥ 3` (`lower = false`),
@@ -207,7 +207,7 @@ theorem errMaj_eq_integral (lower : Bool) {s : ℝ} (hs : errLower lower ≤ s) 
       (errMaj (!lower) (t - 1) * t / (t - 1) ^ 2) t := fun t ht =>
     (hasDerivAt_errMaj lower (hs.trans_lt ht)).neg.congr_deriv (by ring)
   have hpos : ∀ t ∈ Ioi s, 0 ≤ errMaj (!lower) (t - 1) * t / (t - 1) ^ 2 := fun t ht =>
-    (errMaj_shift_pos _ (by linarith [ht.out])).le
+    (errMaj_shift_pos _ (by linarith only [ht.out, hs, h2, ht])).le
   have hlim : Tendsto (fun t => -errMaj lower t) atTop (𝓝 0) := by
     simpa using (tendsto_errMaj_atTop lower).neg
   refine ⟨integrableOn_Ioi_deriv_of_nonneg hcont hderiv hpos hlim, ?_⟩

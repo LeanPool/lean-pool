@@ -47,14 +47,14 @@ theorem rpow_one_div_log_div {y z : ℝ} (hy : 0 < y) (hz : 1 < z) (hyl : log y 
     y ^ (1 / (log y / log z)) = z := by
   have hlz : log z ≠ 0 := (log_pos hz).ne'
   rw [rpow_def_of_pos hy, show log y * (1 / (log y / log z)) = log z by field_simp,
-    exp_log (by linarith)]
+    exp_log (by linarith only [hz])]
 
 /-- `log (1 + x) ≥ x / (1 + x)` for `x ≥ 0`. -/
 theorem div_one_add_le_log_one_add {x : ℝ} (hx : 0 ≤ x) : x / (1 + x) ≤ log (1 + x) := by
   have h := log_le_sub_one_of_pos (show 0 < (1 + x)⁻¹ by positivity)
   rw [log_inv] at h
   have : (1 + x)⁻¹ - 1 = -(x / (1 + x)) := by field_simp; ring
-  linarith
+  linarith only [h, this]
 
 /-- If `0 ≤ x ≤ 1/2` and `s ≥ 2 + x`, then `log(s - 1) ≥ 2x/3`.
 This supplies the logarithmic gain in the linear sieve estimate and Theorem 2. -/

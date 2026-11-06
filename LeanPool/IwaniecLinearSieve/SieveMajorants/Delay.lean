@@ -52,7 +52,7 @@ theorem step_congr {y y' : ℝ → ℝ} {m : ℝ} (h : ∀ x ≤ m, y x = y' x) 
     congr 1
     refine intervalIntegral.integral_congr fun x hx => ?_
     rw [uIcc_of_le h3] at hx
-    rw [h (x - 1) (by linarith [hx.2])]
+    rw [h (x - 1) (by linarith only [hx.2, hs, hx])]
 
 theorem iter_succ_eq (n : ℕ) {s : ℝ} (hs : s ≤ n + 3) :
     iter k y₀ (n + 1) s = iter k y₀ n s := by
@@ -64,14 +64,14 @@ theorem iter_succ_eq (n : ℕ) {s : ℝ} (hs : s ≤ n + 3) :
     change step k y₀ (iter k y₀ (n + 1)) s = step k y₀ (iter k y₀ n) s
     refine step_congr (m := n + 3) (fun x hx => ih hx) ?_
     push_cast at hs
-    linarith
+    linarith only [hs]
 
 theorem iter_add_eq (n j : ℕ) {s : ℝ} (hs : s ≤ n + 3) :
     iter k y₀ (n + j) s = iter k y₀ n s := by
   induction j with
   | zero => rfl
   | succ j ih =>
-    rw [← add_assoc, iter_succ_eq _ (by push_cast; linarith), ih]
+    rw [← add_assoc, iter_succ_eq _ (by push_cast; linarith only [hs]), ih]
 
 theorem iter_eq_of_le {m n : ℕ} (hmn : m ≤ n) {s : ℝ} (hs : s ≤ m + 3) :
     iter k y₀ n s = iter k y₀ m s := by
@@ -82,15 +82,15 @@ theorem sol_eq_iter {n : ℕ} {s : ℝ} (hs : s ≤ n + 3) : sol k y₀ s = iter
   unfold sol
   rcases le_total n ⌈s⌉₊ with h | h
   · exact iter_eq_of_le h hs
-  · exact (iter_eq_of_le h (by linarith [Nat.le_ceil s])).symm
+  · exact (iter_eq_of_le h (by linarith only [Nat.le_ceil s])).symm
 
 /-- `sol` is a fixed point of `step`. -/
 theorem sol_eq_step (s : ℝ) : sol k y₀ s = step k y₀ (sol k y₀) s := by
   set n := ⌈s⌉₊
   have hn : s ≤ n := Nat.le_ceil s
-  rw [sol_eq_iter (n := n + 1) (by push_cast; linarith)]
+  rw [sol_eq_iter (n := n + 1) (by push_cast; linarith only [hn])]
   change step k y₀ (iter k y₀ n) s = _
-  exact step_congr (m := n + 3) (fun x hx => (sol_eq_iter hx).symm) (by linarith)
+  exact step_congr (m := n + 3) (fun x hx => (sol_eq_iter hx).symm) (by linarith only [hn])
 
 theorem sol_of_le {s : ℝ} (hs : s ≤ 3) : sol k y₀ s = y₀ s := by
   rw [sol_eq_step, step_of_le hs]
@@ -119,7 +119,7 @@ theorem continuous_sol (hk : Continuous k) (hy₀ : Continuous y₀) : Continuou
   set n := ⌈s⌉₊
   have hn : s ≤ n := Nat.le_ceil s
   have hev : iter k y₀ n =ᶠ[𝓝 s] sol k y₀ := by
-    filter_upwards [Iio_mem_nhds (show s < n + 3 by linarith)] with x hx
+    filter_upwards [Iio_mem_nhds (show s < n + 3 by linarith only [hn])] with x hx
     exact (sol_eq_iter hx.le).symm
   exact ((continuous_iter hk hy₀ n).continuousAt).congr hev
 
@@ -165,7 +165,7 @@ theorem pos_of_first_crossing {f : ℝ → ℝ} {a₀ a : ℝ} (hf : ContinuousO
   have htB : t ∈ B := hBc.csInf_mem hBne hBb
   have hat : a ≤ t := htB.1
   have hft : f t ≤ 0 := htB.2
-  have hat' : a < t := lt_of_le_of_ne hat fun h => by rw [← h] at hft; linarith
+  have hat' : a < t := lt_of_le_of_ne hat fun h => by rw [← h] at hft; linarith only [ha, hft]
   have hpos : ∀ x ∈ Ico a t, 0 < f x := by
     intro x hx
     by_contra hx'
@@ -184,6 +184,6 @@ theorem pos_of_first_crossing {f : ℝ → ℝ} {a₀ a : ℝ} (hf : ContinuousO
     rcases le_total x a with hxa | hxa
     · exact hinit x ⟨hx.1, hxa⟩
     · exact hnn x ⟨hxa, hx.2⟩
-  linarith [hstep t hat' hall hpos]
+  linarith only [hstep t hat' hall hpos, hft, hstep, hat', hall, hpos]
 
 end IwaniecLinearSieve
