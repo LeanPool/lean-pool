@@ -11,11 +11,21 @@ Lean Pool uses deterministic CI for mechanical quality checks and LLM review for
 - `lake exe mk_all --module --check` (the pool and project indexes must use `module` and `public import`)
 - `lake build LeanPool`
 - a warning scan over the build log
+- the `LeanPoolLinters` compiler plugin, loaded by Lake for every LeanPool module
 - `lake exe runLinter` on `LeanPool`
 - `lake exe lint-style` on `LeanPool`
 - `python -m lean_pool.quality --repo ..`
 
 The Lean workflow runs on Lean, Lake, project metadata, quality-checker, and workflow changes. It restores and saves Lake caches and pulls Mathlib oleans with `lake exe cache get` when the cache is cold.
+
+The compiler plugin enforces the 200-line proof cap during the normal build, using original
+source syntax and elaborated types rather than a Python text heuristic. Both tactic and term
+proofs are checked, including proofs embedded in definitions, instances, and examples; tactic
+blocks constructing data are not proofs. Declaration headers and comment-only lines are
+excluded. Blank lines count, except inside block comments. Only the outermost overlong proof
+is reported when proof ranges overlap. The existing build-warning gate rejects these warnings.
+The plugin is build tooling under `scripts/ci/`, not a mathematical import of project modules.
+Its pinned-Lean regression test runs in all three compiled-artifact CI test steps.
 
 Lean Pool uses one `public import LeanPool.<Project>.Imports` per project in
 `LeanPool.lean`. Each generated `LeanPool/<Project>/Imports.lean` publicly imports
@@ -41,7 +51,6 @@ Current checks:
 - Lake configuration does not pass forbidden option overrides, trace options, linter disables, or heartbeat / recursion-depth overrides
 - the style-linter allowlist `scripts/nolints-style.txt` has no active entries
 - no Lean content file exceeds 10000 non-blank, non-comment code lines
-- no theorem/lemma proof body exceeds 200 non-blank, non-comment code lines, using the current text heuristic
 - `LeanPool/projects/` contains one valid YAML mapping per project, with its filename matching the unique slug; duplicate fields, nested cards, and mixed old/new registries fail validation
 - project entries have required fields: `slug`, `title`, `entry_module`, `authors`, `source`, `status`, `provenance`, `main_declarations`, and `tags`
 - project entries also carry documentation metadata: `summary`, `branch`, `main_results`, and `msc`
@@ -156,5 +165,4 @@ The following items are documented goals but are not fully implemented or enforc
 - controlled tag vocabulary for `LeanPool/projects/*.yaml`; tags are currently only checked as nonempty strings
 - generated domain/status indexes
 - directory index-file policy: every directory under `LeanPool/` containing Lean files should have an import-only index file with a module docstring
-- AST-aware proof-size measurement; the current 200-line proof cap uses a text heuristic
 - repository-wide slowest-proof reports and persisted performance trend artifacts
