@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 
 public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
+public import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # P2813_T1_Prefix Segment Transport

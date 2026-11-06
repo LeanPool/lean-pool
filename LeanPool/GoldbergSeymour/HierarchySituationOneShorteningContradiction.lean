@@ -9,7 +9,6 @@ public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningTransport
 
 public import LeanPool.GoldbergSeymour.SharedFacts.OutsideAdvancement
 
-public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTailAtLeastTwo
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices

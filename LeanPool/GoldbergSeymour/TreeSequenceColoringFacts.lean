@@ -143,6 +143,41 @@ theorem TreeSequenceInitialSegment.treeMissingColors_subset {V E : Type*} [Finty
   obtain ⟨vertex, inInitial, missing⟩ := Finset.mem_biUnion.mp membership
   exact Finset.mem_biUnion.mpr ⟨vertex, segment.vertexSet_subset inInitial, missing⟩
 
+
+/-- Pointwise equality of missing colors on a tree preserves its missing-color union. -/
+theorem TreeMissingColors.congr {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {tree : TreeSequence G e0}
+    {first second : PartialEdgeColoring E k}
+    (equal : ∀ vertex ∈ TreeSequenceVertexSet tree,
+      MissingColors G first vertex = MissingColors G second vertex) :
+    TreeMissingColors first tree = TreeMissingColors second tree := by
+  classical
+  unfold TreeMissingColors
+  apply Finset.biUnion_congr rfl
+  exact equal
+
+/-- Pointwise equality of missing colors preserves the first missing position. -/
+theorem TreeSequenceFirstMissingPositionCongr {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {tree : TreeSequence G e0}
+    {first second : PartialEdgeColoring E k}
+    (equal : ∀ vertex ∈ TreeSequenceVertexSet tree,
+      MissingColors G first vertex = MissingColors G second vertex) (color : Fin k) :
+    HierarchyFirstMissingPosition first tree color =
+      HierarchyFirstMissingPosition second tree color := by
+  classical
+  let firstCandidates := Finset.univ.filter
+    fun index : Fin (tree.length + 1) => color ∈ MissingColors G first (tree.vertex index)
+  let secondCandidates := Finset.univ.filter
+    fun index : Fin (tree.length + 1) => color ∈ MissingColors G second (tree.vertex index)
+  have candidatesEqual : firstCandidates = secondCandidates := by
+    ext index
+    simp only [firstCandidates, secondCandidates, Finset.mem_filter, Finset.mem_univ, true_and]
+    rw [equal (tree.vertex index) (by simp [TreeSequenceVertexSet])]
+  unfold HierarchyFirstMissingPosition
+  change (if h : firstCandidates.Nonempty then firstCandidates.min' h else Fin.last tree.length) =
+    (if h : secondCandidates.Nonempty then secondCandidates.min' h else Fin.last tree.length)
+  rw [candidatesEqual]
+
 end GoldbergSeymour
 
 end

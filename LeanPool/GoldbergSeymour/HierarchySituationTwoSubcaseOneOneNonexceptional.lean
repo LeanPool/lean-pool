@@ -7,7 +7,6 @@ module
 
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 
-public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary

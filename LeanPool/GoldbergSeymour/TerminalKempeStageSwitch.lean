@@ -7,7 +7,6 @@ module
 
 public import LeanPool.GoldbergSeymour.SharedFacts.TerminalKempeStageSwitch
 
-public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
 public import LeanPool.GoldbergSeymour.ElementaryTerminalComponent

@@ -7,7 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
-public import Mathlib.Data.Fintype.EquivFin
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 /-!
 # Hierarchy First Missing Position Prefix Cutoff
@@ -22,7 +22,7 @@ Adapted from Wesley Pegden’s Trellis formalization at
 namespace GoldbergSeymour
 
 lemma HierarchyFirstMissingPositionPrefixCutoff {V E : Type*}
-    [Finite V] [Fintype E]
+    [Fintype E]
     {G : LooplessMultigraph V E} {k : Nat} {e0 : E}
     (phi : PartialEdgeColoring E k) (A T : TreeSequence G e0)
     (hAT : TreeSequenceInitialSegment A T) (eta : Fin k)
@@ -30,7 +30,6 @@ lemma HierarchyFirstMissingPositionPrefixCutoff {V E : Type*}
     min (HierarchyFirstMissingPosition phi A eta).val uLength =
       min (HierarchyFirstMissingPosition phi T eta).val uLength := by
   classical
-  let _ := Fintype.ofFinite V
   let candidatesA : Finset (Fin (A.length + 1)) :=
     {i | eta ∈ MissingColors G phi (A.vertex i)}
   let candidatesT : Finset (Fin (T.length + 1)) :=
@@ -107,6 +106,33 @@ lemma HierarchyFirstMissingPositionPrefixCutoff {V E : Type*}
       simp only [Fin.val_last]
       have hlen := hAT.1
       omega
+
+
+/-- Preserving missing colors on a prefix preserves first positions of its missing colors. -/
+theorem TreeSequenceFirstMissingPositionCongrOfPrefix {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {initial tree : TreeSequence G e0}
+    {first second : PartialEdgeColoring E k}
+    (segment : TreeSequenceInitialSegment initial tree)
+    (equal : ∀ vertex ∈ TreeSequenceVertexSet initial,
+      MissingColors G first vertex = MissingColors G second vertex)
+    {color : Fin k} (missing : color ∈ TreeMissingColors second initial) :
+    HierarchyFirstMissingPosition first tree color =
+      HierarchyFirstMissingPosition second tree color := by
+  have missingFirst : color ∈ TreeMissingColors first initial := by
+    rwa [TreeMissingColors.congr equal]
+  have firstCut := HierarchyFirstMissingPositionPrefixCutoff first initial tree segment
+    color initial.length le_rfl
+  have secondCut := HierarchyFirstMissingPositionPrefixCutoff second initial tree segment
+    color initial.length le_rfl
+  have positionsEqual := TreeSequenceFirstMissingPositionCongr equal color
+  have truncated := firstCut.symm.trans
+    ((congrArg (fun position : Fin (initial.length + 1) => min position.val initial.length)
+      positionsEqual).trans secondCut)
+  have firstBound := TreeSequenceFirstMissingPositionLePrefix segment missingFirst
+  have secondBound := TreeSequenceFirstMissingPositionLePrefix segment missing
+  apply Fin.ext
+  rw [min_eq_left firstBound, min_eq_left secondBound] at truncated
+  exact truncated
 
 end GoldbergSeymour
 
