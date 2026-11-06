@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.DegreeTwoPaths
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseClaim45Singleton
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
@@ -624,88 +626,6 @@ private theorem helper_u_neighbor_unique_448.{u_1, u_2} :
         exact (hrho0Proper hne ⟨u, huz.1, hug⟩ heGamma) hgRho0
       exact (congrArg Sum.inr heg).trans hgLast.symm
 
-private theorem helper_support_closed_473.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Finite E] {G : LooplessMultigraph V E} {k : ℕ}
-        {e0 : E} (Tj TjPrime : TreeSequence G e0) (rho1 : PartialEdgeColoring E k) (gammaN deltaN
-        : Fin k) (x u : V) (exitPath : (TwoColorIncidenceGraph G rho1 gammaN deltaN).Walk (Sum.inl
-        x) (Sum.inl u)) (_ : exitPath.IsPath) (_ : (2 : ℕ) ≤ exitPath.length) (beta : Fin k),
-    ∀ z ∈ TreeSequenceVertexSet Tj,
-    let rho0 : PartialEdgeColoring E k := OutsideTreeColorSwap TjPrime rho1 beta deltaN;
-        IsProperEdgeColoring G rho0 →
-    let H0 : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G rho0 gammaN beta; (
-    ∀ i < exitPath.length, H0.Adj (exitPath.getVert i) (exitPath.getVert (i + (1 : ℕ)))) → (
-    ∀ (z : V ⊕ E), H0.Adj (Sum.inl x) z → z = exitPath.getVert (1 : ℕ)) → (
-    ∀ (z : V ⊕ E), H0.Adj (Sum.inl u) z → z = exitPath.getVert (exitPath.length - (1 : ℕ))) →
-    ∀ w ∈ exitPath.support,
-    ∀ (z : V ⊕ E), H0.Adj w z → z ∈ exitPath.support := by
-  classical
-  intro V E _ _ G k e0 Tj TjPrime rho1 gammaN deltaN x u exitPath hexitPath hexitLength beta z hz
-      rho0 hrho0Proper H0 exit_adj_rho0 x_neighbor_unique u_neighbor_unique w hw z hwz
-  let _ := Fintype.ofFinite V
-  let _ := Fintype.ofFinite E
-  obtain ⟨n, hn, hnle⟩ :=
-    SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hw
-  by_cases hn0 : n = 0
-  · subst n
-    have hwstart : w = Sum.inl x := by simpa using hn.symm
-    have hz := x_neighbor_unique z (by simpa [hwstart] using hwz)
-    simp [hz]
-  by_cases hnend : n = exitPath.length
-  · have hwend : w = Sum.inl u := by
-      rw [← hn, hexitPath.getVert_eq_end_iff hnle]
-      exact hnend
-    have hz := u_neighbor_unique z (by simpa [hwend] using hwz)
-    simp [hz]
-  have hleft : H0.Adj (exitPath.getVert n)
-      (exitPath.getVert (n - 1)) := by
-    rw [← show n - 1 + 1 = n by omega]
-    exact (exit_adj_rho0 (n - 1) (by omega)).symm
-  have hright : H0.Adj (exitPath.getVert n)
-      (exitPath.getVert (n + 1)) :=
-    exit_adj_rho0 n (by omega)
-  by_contra hznot
-  have hwz' := hwz
-  rw [← hn] at hwz'
-  have hneleft : exitPath.getVert (n - 1) ≠ z := by
-    intro he
-    apply hznot
-    rw [← he]
-    exact exitPath.getVert_mem_support _
-  have hneright : exitPath.getVert (n + 1) ≠ z := by
-    intro he
-    apply hznot
-    rw [← he]
-    exact exitPath.getVert_mem_support _
-  have hnelr : exitPath.getVert (n - 1) ≠
-      exitPath.getVert (n + 1) := by
-    intro he
-    have hindex := hexitPath.getVert_injOn
-      (show n - 1 ≤ exitPath.length by omega)
-      (show n + 1 ≤ exitPath.length by omega) he
-    omega
-  let : Fintype (H0.neighborSet (exitPath.getVert n)) :=
-    Fintype.ofFinite _
-  have hthree : 3 ≤ H0.degree (exitPath.getVert n) := by
-    rw [← SimpleGraph.card_neighborFinset_eq_degree]
-    let s : Finset (Sum V E) :=
-      {z, exitPath.getVert (n - 1), exitPath.getVert (n + 1)}
-    have hs : s ⊆ H0.neighborFinset (exitPath.getVert n) := by
-      intro t ht
-      simp only [s, Finset.mem_insert, Finset.mem_singleton] at ht
-      rcases ht with rfl | rfl | rfl
-      · simpa [SimpleGraph.mem_neighborFinset] using hwz'
-      · simpa [SimpleGraph.mem_neighborFinset] using hleft
-      · simpa [SimpleGraph.mem_neighborFinset] using hright
-    have hcard : 3 ≤ s.card := by
-      simp [s, hnelr, hneleft.symm,
-        hneright.symm]
-    exact hcard.trans (Finset.card_le_card hs)
-  have hupper : H0.degree (exitPath.getVert n) ≤ 2 := by
-    simpa [H0] using TwoColorIncidenceDegreeAtMostTwo
-      G rho0 gammaN beta hrho0Proper (exitPath.getVert n)
-  omega
-
 private theorem helper_branch_340.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -769,9 +689,9 @@ private theorem helper_branch_340.{u_1, u_2} :
         gammaN deltaN x u exitPath beta z hz hrho0Proper hbetaRho0 g hug hgRho0 hgLast
   have support_closed : ∀ w : Sum V E, w ∈ exitPath.support →
       ∀ z : Sum V E, H0.Adj w z → z ∈ exitPath.support := by
-    exact @helper_support_closed_473 V E inferInstance inferInstance G k e0 Tj TjPrime rho1
-        gammaN deltaN x u exitPath hexitPath hexitLength beta z hz hrho0Proper exit_adj_rho0
-        x_neighbor_unique u_neighbor_unique
+    exact degreeTwoPathSupportClosed exitPath hexitPath
+      (TwoColorIncidenceDegreeAtMostTwo G rho0 gammaN beta hrho0Proper)
+      exit_adj_rho0 x_neighbor_unique u_neighbor_unique
   have reach : H0.Reachable (Sum.inl u) y := by
     change H0.connectedComponentMk y =
         H0.connectedComponentMk (Sum.inl u) at hy

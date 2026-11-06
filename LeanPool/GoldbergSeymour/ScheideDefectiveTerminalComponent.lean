@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.DegreeTwoPaths
+
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
@@ -673,76 +675,8 @@ private theorem helper_continuation_826.{u_1, u_2} :
         by_cases hef : e = f
         · exact congrArg Sum.inr hef
         · exact False.elim ((hproper hef ⟨y0, ha.1, hb.1⟩ hea) hfa)
-  have adjacent_indices_forward : ∀ (n m : ℕ), n ≤ p.length → m ≤ p.length →
-      n < m → H0.Adj (p.getVert n) (p.getVert m) → m = n + 1 := by
-    intro n m hn hm hnm hadj
-    by_contra hne
-    have hgap : n + 1 < m := by omega
-    by_cases hn0 : n = 0
-    · subst n
-      have hfirstAdj := p.adj_getVert_succ (by omega : 0 < p.length)
-      have hstart : p.getVert 0 = Sum.inl y0 := by simp [p, y0]
-      have hneigh : p.getVert 1 ≠ p.getVert m := by
-        intro heq
-        have := hpathIs.getVert_injOn (show 1 ≤ p.length by omega) hm heq
-        omega
-      have htwo : 2 ≤ (@SimpleGraph.neighborFinset (Sum V E) H0 (Sum.inl y0)
-          (Fintype.ofFinite _)).card := by
-        have hs : ({p.getVert 1, p.getVert m} : Finset (Sum V E)) ⊆
-            @SimpleGraph.neighborFinset (Sum V E) H0 (Sum.inl y0)
-              (Fintype.ofFinite _) := by
-          intro q hq
-          simp only [Finset.mem_insert, Finset.mem_singleton] at hq
-          rcases hq with rfl | rfl
-          · simpa [SimpleGraph.mem_neighborFinset, H0, hstart] using hfirstAdj
-          · simpa [SimpleGraph.mem_neighborFinset, H0, hstart] using hadj
-        have hc : ({p.getVert 1, p.getVert m} : Finset (Sum V E)).card = 2 := by
-          simp [hneigh]
-        rw [← hc]
-        exact Finset.card_le_card hs
-      rw [← SimpleGraph.card_neighborFinset_eq_degree] at hy0Degree
-      omega
-    · have hnlt : n < p.length := by omega
-      have hleft : H0.Adj (p.getVert n) (p.getVert (n - 1)) := by
-        have h := p.adj_getVert_succ (i := n - 1) (by omega)
-        have heq : n - 1 + 1 = n := by omega
-        simpa [H0, heq] using h.symm
-      have hright : H0.Adj (p.getVert n) (p.getVert (n + 1)) := by
-        simpa [H0] using p.adj_getVert_succ hnlt
-      have hnm1 : p.getVert (n - 1) ≠ p.getVert (n + 1) := by
-        intro heq
-        have := hpathIs.getVert_injOn (Nat.sub_le n 1 |>.trans hn)
-          (Nat.succ_le_of_lt hnlt) heq
-        omega
-      have hnm2 : p.getVert (n - 1) ≠ p.getVert m := by
-        intro heq
-        have := hpathIs.getVert_injOn (Nat.sub_le n 1 |>.trans hn) hm heq
-        omega
-      have hnm3 : p.getVert (n + 1) ≠ p.getVert m := by
-        intro heq
-        have := hpathIs.getVert_injOn (Nat.succ_le_of_lt hnlt) hm heq
-        omega
-      have hthree : 3 ≤ (@SimpleGraph.neighborFinset (Sum V E) H0 (p.getVert n)
-          (Fintype.ofFinite _)).card := by
-        let S : Finset (Sum V E) :=
-          {p.getVert (n - 1), p.getVert (n + 1), p.getVert m}
-        have hs : S ⊆ @SimpleGraph.neighborFinset (Sum V E) H0 (p.getVert n)
-            (Fintype.ofFinite _) := by
-          intro q hq
-          simp only [S, Finset.mem_insert, Finset.mem_singleton] at hq
-          rcases hq with rfl | rfl | rfl
-          · simpa [SimpleGraph.mem_neighborFinset] using hleft
-          · simpa [SimpleGraph.mem_neighborFinset] using hright
-          · simpa [SimpleGraph.mem_neighborFinset] using hadj
-        have hc : S.card = 3 := by
-          simp [S, hnm1, hnm2, hnm3]
-        rw [← hc]
-        exact Finset.card_le_card hs
-      have hdeg := TwoColorIncidenceDegreeAtMostTwo G phi D.alpha0 d.1 hproper
-        (p.getVert n)
-      change @SimpleGraph.degree _ H0 (p.getVert n) (Fintype.ofFinite _) ≤ 2 at hdeg
-      rw [← SimpleGraph.card_neighborFinset_eq_degree] at hdeg
-      omega
+  have adjacent_indices_forward := degreeTwoPathAdjacentIndices p hpathIs
+    (TwoColorIncidenceDegreeAtMostTwo G phi D.alpha0 d.1 hproper) hy0Degree
   exact @helper_continuation_351 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
       (@e0) (@phi) (@T) (@C) (@D) (@d) (@hproper) (@hclosed) (@hy0X) (@hv0X) (@hpathIs)
       (@hsupport) (@halphaDelta) (@hgammaDelta) (@halphaGamma) (@hproper1) (@hone1) (@hstable1)

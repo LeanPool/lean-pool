@@ -24,6 +24,25 @@ def ColoredVertexSetElementary {V E : Type*} [Fintype E] (G : LooplessMultigraph
   {k : ℕ} (phi : PartialEdgeColoring E k) (X : Finset V) : Prop :=
  ∀ {u}, u ∈ X → ∀ {v}, v ∈ X → u ≠ v → Disjoint (MissingColors G phi u) (MissingColors G phi v)
 
+/-- Elementarity is inherited by subsets of the vertex set. -/
+theorem ColoredVertexSetElementary.mono {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {phi : PartialEdgeColoring E k} {X Y : Finset V}
+    (elementary : ColoredVertexSetElementary G phi Y) (subset : X ⊆ Y) :
+    ColoredVertexSetElementary G phi X :=
+  fun {_} hu {_} hv different => elementary (subset hu) (subset hv) different
+
+/-- A missing color at an outside vertex of an elementary set is absent from an inside subset. -/
+theorem ColoredVertexSetElementary.missing_not_mem_biUnion {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {phi : PartialEdgeColoring E k} {X Y : Finset V}
+    (elementary : ColoredVertexSetElementary G phi Y) (subset : X ⊆ Y)
+    {v : V} (member : v ∈ Y) (outside : v ∉ X) {c : Fin k}
+    (missing : c ∈ MissingColors G phi v) : c ∉ X.biUnion (MissingColors G phi) := by
+  classical
+  intro shared
+  obtain ⟨u, inside, color⟩ := Finset.mem_biUnion.mp shared
+  have different : u ≠ v := by intro equal; exact outside (equal ▸ inside)
+  exact (Finset.disjoint_left.mp (elementary (subset inside) member different)) color missing
+
 end GoldbergSeymour
 
 end

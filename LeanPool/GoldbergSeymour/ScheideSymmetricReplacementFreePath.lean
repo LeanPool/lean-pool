@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.DisjointFamilyCardinality
+
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
 public import LeanPool.GoldbergSeymour.ScheideSymmetricReplacementBoundaryConfiguration
 public import LeanPool.GoldbergSeymour.TreeFreeColors
@@ -120,118 +122,6 @@ private theorem helper_hendsAvoidU_129.{u_1, u_2} :
     have hi' := T.vertex_injective heq
     have := congrArg Fin.val hi'
     simp [] at this
-
-private theorem helper_hmissing_227.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))) (_ : ScheideReplacementData
-        G k e0 phi T C D d),
-    let gamma : Fin k := C.gamma (D.gammaIndex d);
-    let phiD : PartialEdgeColoring E k := TwoColorComponentSwap G phi gamma (↑d : Fin k) (Sum.inl
-        (D.v0 d));
-    let X : Finset V := TreeSequenceVertexSet T;
-    let r : Fin C.s := D.gammaIndex d;
-    let u0 : V := C.blockVertex r (0 : Fin (2 : ℕ));
-    let u1 : V := C.blockVertex r (1 : Fin (2 : ℕ));
-    let U : Finset V := { u0, u1 };
-    let Z : Finset V := X \ U;
-    let ends0 : Finset V := (G.ends e0).toFinset; Z.card = C.p + (2 : ℕ) * C.s - (2 : ℕ) →
-    ∀ (hendsSubZ : ends0 ⊆ Z), ends0.card = (2 : ℕ) → ((↑Z : Set V).PairwiseDisjoint fun (v : V)
-        => MissingColors G phiD v) →
-    ∀ (hnonempty :
-    ∀ v ∈ Z, (MissingColors G phiD v).Nonempty),
-    let firstColor : (v : V) → v ∈ Z → Fin k := fun (v : V) (hv : v ∈ Z) => Classical.choose
-        (hnonempty v hv); (
-    ∀ (v : V) (hv : v ∈ Z), firstColor v hv ∈ MissingColors G phiD v) →
-    ∀ (hsecond :
-    ∀ (v : V) (hv : v ∈ ends0), ((MissingColors G phiD v).erase (firstColor v (hendsSubZ
-        hv))).Nonempty),
-    let extraColor : (v : V) → v ∈ ends0 → Fin k := fun (v : V) (hv : v ∈ ends0) =>
-        Classical.choose (hsecond v hv); (
-    ∀ (v : V) (hv : v ∈ ends0), extraColor v hv ∈ (MissingColors G phiD v).erase (firstColor v
-        (hendsSubZ hv))) →
-    let M : Finset (Fin k) := Z.biUnion fun (v : V) => MissingColors G phiD v; Z.card + (2 : ℕ) ≤
-        M.card := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R gamma phiD X r u0 u1 U Z ends0 hZcard hendsSubZ
-      hendsCard hdisj hnonempty firstColor firstMem hsecond extraColor extraMem M
-  let domain := Sum {v : V // v ∈ Z} {v : V // v ∈ ends0}
-  let color : domain → Fin k := fun q => match q with
-    | Sum.inl v => firstColor v.1 v.2
-    | Sum.inr v => extraColor v.1 v.2
-  have hmap : ∀ q : domain, color q ∈ M := by
-    intro q
-    rcases q with q | q
-    · apply Finset.mem_biUnion.mpr
-      exact ⟨q.1, q.2, firstMem q.1 q.2⟩
-    · apply Finset.mem_biUnion.mpr
-      exact ⟨q.1, hendsSubZ q.2,
-        Finset.mem_erase.mp (extraMem q.1 q.2) |>.2⟩
-  have hinj : Function.Injective color := by
-    intro a b hab
-    rcases a with a | a <;> rcases b with b | b
-    · have huv : a.1 = b.1 := by
-        by_contra hn
-        have hd := hdisj a.2 b.2 hn
-        have hc : firstColor a.1 a.2 = firstColor b.1 b.2 := by
-          simpa [color] using hab
-        exact (Finset.disjoint_left.mp hd) (firstMem a.1 a.2)
-          (by simpa only [hc] using firstMem b.1 b.2)
-      cases Subtype.ext huv
-      rfl
-    · have huv : a.1 = b.1 := by
-        by_contra hn
-        have hd := hdisj a.2 (hendsSubZ b.2) hn
-        have hc : firstColor a.1 a.2 = extraColor b.1 b.2 := by
-          simpa [color] using hab
-        exact (Finset.disjoint_left.mp hd) (firstMem a.1 a.2)
-          (by simpa only [hc] using Finset.mem_erase.mp (extraMem b.1 b.2) |>.2)
-      have he := Finset.mem_erase.mp (extraMem b.1 b.2)
-      exact False.elim (he.1 (by simpa [color, huv] using hab.symm))
-    · have huv : a.1 = b.1 := by
-        by_contra hn
-        have hd := hdisj (hendsSubZ a.2) b.2 hn
-        have hc : extraColor a.1 a.2 = firstColor b.1 b.2 := by
-          simpa [color] using hab
-        exact (Finset.disjoint_left.mp hd)
-          (Finset.mem_erase.mp (extraMem a.1 a.2) |>.2)
-          (by simpa only [hc] using firstMem b.1 b.2)
-      have he := Finset.mem_erase.mp (extraMem a.1 a.2)
-      exact False.elim (he.1 (by simpa [color, huv] using hab))
-    · have huv : a.1 = b.1 := by
-        by_contra hn
-        have hd := hdisj (hendsSubZ a.2) (hendsSubZ b.2) hn
-        have hc : extraColor a.1 a.2 = extraColor b.1 b.2 := by
-          simpa [color] using hab
-        exact (Finset.disjoint_left.mp hd)
-          (Finset.mem_erase.mp (extraMem a.1 a.2) |>.2)
-          (by simpa only [hc] using Finset.mem_erase.mp (extraMem b.1 b.2) |>.2)
-      cases Subtype.ext huv
-      rfl
-  let A : Finset domain :=
-    Z.attach.map ⟨Sum.inl, Sum.inl_injective⟩ ∪
-      ends0.attach.map ⟨Sum.inr, Sum.inr_injective⟩
-  have hAdisj : Disjoint
-      (Z.attach.map ⟨Sum.inl, Sum.inl_injective⟩)
-      (ends0.attach.map ⟨Sum.inr, Sum.inr_injective⟩) := by
-    rw [Finset.disjoint_left]
-    intro q hq1 hq2
-    rw [Finset.mem_map] at hq1 hq2
-    rcases hq1 with ⟨a, ha, rfl⟩
-    rcases hq2 with ⟨b, hb, h⟩
-    cases h
-  have hAcard : A.card = Z.card + 2 := by
-    dsimp [A]
-    rw [Finset.card_union_of_disjoint hAdisj]
-    simp [hendsCard]
-  have hle : A.card ≤ M.card := by
-    apply Finset.card_le_card_of_injOn color
-    · intro q hq
-      exact hmap q
-    · exact hinj.injOn
-  omega
 
 private theorem helper_husedSub_369.{u_1, u_2} :
     open scoped Classical in
@@ -554,8 +444,9 @@ private theorem helper_continuation_495.{u_1, u_2} :
     exact Classical.choose_spec (hsecond v hv)
   let M := Z.biUnion fun v => MissingColors G phiD v
   have hmissing : Z.card + 2 ≤ M.card := by
-    exact @helper_hmissing_227 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        phi T C D d R hZcard hendsSubZ hendsCard hdisj hnonempty firstMem hsecond extraMem
+    simpa only [hendsCard] using
+      Finset.card_biUnion_ge_card_add Z ends0 (fun v => MissingColors G phiD v)
+        hendsSubZ hdisj firstColor firstMem extraColor extraMem
   have hmissingBound : C.p + 2 * C.s ≤ M.card := by
     omega
   have htreeD : TashkinovTree G e0 phiD R.replacementTree := hglobalD.2.1

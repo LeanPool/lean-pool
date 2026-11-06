@@ -78,12 +78,14 @@ public import LeanPool.GoldbergSeymour.DefectiveColors
 public import LeanPool.GoldbergSeymour.DefectiveEdge
 public import LeanPool.GoldbergSeymour.DefectiveVertex
 public import LeanPool.GoldbergSeymour.Degree
+public import LeanPool.GoldbergSeymour.DegreeTwoPaths
 public import LeanPool.GoldbergSeymour.DeleteEdge
 public import LeanPool.GoldbergSeymour.Density
 public import LeanPool.GoldbergSeymour.DensityCeil
 public import LeanPool.GoldbergSeymour.DensityLowerBound
 public import LeanPool.GoldbergSeymour.DensityMonotone
 public import LeanPool.GoldbergSeymour.DensityValue
+public import LeanPool.GoldbergSeymour.DisjointFamilyCardinality
 public import LeanPool.GoldbergSeymour.DisplayedEdges
 public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
 public import LeanPool.GoldbergSeymour.ETTStrongInterchangeable
@@ -224,6 +226,7 @@ public import LeanPool.GoldbergSeymour.HierarchyNormalizationLemmas
 public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
 public import LeanPool.GoldbergSeymour.HierarchyOutsideKempeStable
 public import LeanPool.GoldbergSeymour.HierarchyPathNumber
+public import LeanPool.GoldbergSeymour.HierarchyPathNumberFacts
 public import LeanPool.GoldbergSeymour.HierarchyPrefixData
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
@@ -685,6 +688,7 @@ public import LeanPool.GoldbergSeymour.TashkinovSeriesData
 public import LeanPool.GoldbergSeymour.TashkinovSeriesDataAppend
 public import LeanPool.GoldbergSeymour.TashkinovSeriesDataPrefix
 public import LeanPool.GoldbergSeymour.TashkinovSeriesFinalETTExists
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 public import LeanPool.GoldbergSeymour.TashkinovSeriesPrefix
 public import LeanPool.GoldbergSeymour.TashkinovSeriesPrefixFacts
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStability

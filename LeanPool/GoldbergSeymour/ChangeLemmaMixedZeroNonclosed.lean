@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ZeroNonclosedTransport
 
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
@@ -1678,67 +1680,6 @@ private theorem helper_hfirstEq_900.{u_1, u_2} :
     unfold HierarchyFirstMissingPosition
     rw [hcandidates]
 
-private theorem helper_hnextHB_935.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-    [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (_ : HierarchyCounterexample base) (_ beta : Fin k),
-  let A : TreeSequence G e0 := base.core;
-  let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-  ∀ (hAib : A.length < (↑ib : ℕ)),
-  let B : TreeSequence G e0 :=
-    TreeSequencePrefix T (↑ib : ℕ)
-      (have this : (1 : ℕ) ≤ A.length := A.positive;
-      Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-      (by omega);
-  ∀ (ettB : ExtendedTashkinovTree G k e0 input B phi) (baseB : HierarchyBase ettB phi)
-    (HB : TashkinovHierarchy ettB baseB),
-  HB.dividerCount = (0 : ℕ) →
-  HB.stage (Fin.succ (0 : Fin (HB.dividerCount + (1 : ℕ)))) = B := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta A ib hAib B ettB baseB HB hcountHB
-  clear * - hcountHB
-  have hi : (0 : Fin (HB.dividerCount + 1)).succ = Fin.last (HB.dividerCount + 1) := by
-    apply Fin.ext
-    simp only [Fin.val_succ, Fin.val_zero, Fin.val_last, hcountHB]
-  rw [hi, HB.terminalStage]
-
-private theorem helper_hnextK_941.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-    [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (_ : HierarchyCounterexample base)
-    (alpha beta : Fin k),
-  let A : TreeSequence G e0 := base.core;
-  let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-  let vb : V := T.vertex ib;
-  let root : V ⊕ E := Sum.inl vb;
-  let sigma : PartialEdgeColoring E k := TwoColorComponentSwap G phi alpha beta root;
-  ∀ (hAib : A.length < (↑ib : ℕ)),
-  let B : TreeSequence G e0 :=
-    TreeSequencePrefix T (↑ib : ℕ)
-      (have this : (1 : ℕ) ≤ A.length := A.positive;
-      Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-      (by omega);
-  ∀ (ettB : ExtendedTashkinovTree G k e0 input B phi)
-    (corr : CorrespondingExtendedTashkinovTree G k e0 ettB sigma B)
-    (baseSigma : HierarchyBase corr.replacementETT sigma)
-    (K : TashkinovHierarchy corr.replacementETT baseSigma),
-  K.dividerCount = (0 : ℕ) →
-  K.stage (Fin.succ (0 : Fin (K.dividerCount + (1 : ℕ)))) = B := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta A ib vb root sigma hAib B ettB corr
-      baseSigma K hcountK
-  clear * - hcountK
-  have hi : (0 : Fin (K.dividerCount + 1)).succ = Fin.last (K.dividerCount + 1) := by
-    apply Fin.ext
-    simp only [Fin.val_succ, Fin.val_zero, Fin.val_last, hcountK]
-  rw [hi, K.terminalStage]
-
 private theorem helper_hsegmentSubset_947.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -2063,13 +2004,9 @@ private theorem helper_continuation_2160.{u_1, u_2} :
         (@beta)
         (@hbehavior) (@hAib) (@hBT) (@hbetaNone) (@eta) (@hena)
   have hnextHB : HB.stage (0 : Fin (HB.dividerCount + 1)).succ = B := by
-    exact helper_hnextHB_935 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
-        (@beta) (@hAib)
-        (@ettB) (@baseB) (@HB) (@hcountHB)
+    exact HB.firstStageOfNoDividers hcountHB
   have hnextK : K.stage (0 : Fin (K.dividerCount + 1)).succ = B := by
-    exact helper_hnextK_941 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
-        (@beta) (@hAib)
-        (@ettB) (@corr) (@baseSigma) (@K) (@hcountK)
+    exact K.firstStageOfNoDividers hcountK
   have hsegmentSubset (eta : Fin k) (heta : eta ∈ HierarchyStoredColorsAt K 0) :
       HierarchySegmentColors K 0 eta ⊆ HierarchySegmentColors HB 0 eta := by
     exact helper_hsegmentSubset_947 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)

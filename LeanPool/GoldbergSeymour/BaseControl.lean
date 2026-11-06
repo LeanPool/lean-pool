@@ -7,6 +7,7 @@ module
 
 
 
+
 public import LeanPool.GoldbergSeymour.SharedFacts.BaseControl
 
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
@@ -291,104 +292,6 @@ private theorem helper_interchangeableSwap_258.{u_1, u_2} :
   apply hi z w (pathSwap z hz) (pathSwap w hw)
   · simpa only [componentSwap c d] using hzB
   · simpa only [componentSwap c d] using hwB
-
-private theorem helper_hnonPEClosed_278.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (_ : HierarchyCounterexample base),
-        IsProperEdgeColoring G phi → IsOneEdgeUncolored phi e0 →
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc; (
-    ∀ {U W Z : TreeSequence G e0}, TreeSequenceInitialSegment U W → TreeSequenceInitialSegment W Z
-        → TreeSequenceInitialSegment U Z) → ett.series.data.kind n ≠ some
-        TashkinovExtensionKind.PE → ColoredVertexSetClosed G phi (TreeSequenceVertexSet Tn) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hproper hone n Tn trans hnonPE
-  have hp : 0 < ett.rounds := C.positive
-  clear * - ett phi n Tn G hproper hone hnonPE hp
-  have stableClosed (B : TreeSequence G e0) (D : Finset (Fin k))
-      (psi : PartialEdgeColoring E k)
-      (hppsi : IsProperEdgeColoring G psi)
-      (hopsi : IsOneEdgeUncolored psi e0)
-      (hcpsi : ColoredVertexSetClosed G psi (TreeSequenceVertexSet B))
-      (hs : StableColoring B D psi phi) :
-      ColoredVertexSetClosed G phi (TreeSequenceVertexSet B) := by
-    clear * - G phi e0 hproper hone B D psi hppsi hopsi hcpsi hs
-    intro f c x hf hx hfc hcm
-    have hincident : TreeIncidentEdge B f := by
-      obtain ⟨u, hu, v, hv, huv⟩ := by
-        simpa [BoundaryEdges] using hf
-      refine ⟨u, hu, ?_⟩
-      change u ∈ G.ends f
-      rw [huv]
-      exact Sym2.mem_mk_left _ _
-    have hcmPrev : c ∈ MissingColors G psi x := by
-      rw [← hs.2 x hx]
-      exact hcm
-    have hcTree : c ∈ TreeMissingColors psi B :=
-      Finset.mem_biUnion.mpr ⟨x, hx, hcmPrev⟩
-    have hfixed : phi f = psi f :=
-      (sc1 G e0 B D psi phi hppsi hopsi hproper hone).mp hs
-        f hincident (Or.inr ⟨c, Finset.mem_union_left _ hcTree, hfc⟩)
-    exact hcpsi hf hx (hfixed.symm.trans hfc) hcmPrev
-  have hphi : phi = ett.series.data.coloring n := ett.generatingColoring
-  have hstep := ett.series.certified n
-  generalize targetEq : n = target at hstep
-  cases hstep with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-      have hn : n ≠ 0 := by
-        intro hh
-        have hv := congrArg Fin.val hh
-        simp [n] at hv
-        omega
-      exact (hn targetEq).elim
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-      exact (hnonPE (by rw [targetEq]; exact currentKind)).elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-      have hi : i.succ = n := targetEq.symm
-      have htree : ett.series.data.tree i.succ.castSucc = Tn := by
-        simp [Tn, hi]
-      have hselected : choice.selected = phi :=
-        currentColoring.symm.trans
-          ((congrArg ett.series.data.coloring hi).trans hphi.symm)
-      have hs : StableColoring Tn
-          (TashkinovStoredColors ett.series.data i.castSucc)
-          (ett.series.data.coloring i.castSucc) phi := by
-        simpa only [htree, hselected] using choice.selectedStable
-      exact @stableClosed Tn _ _ previousProper previousOneUncolored
-        (by rw [← htree]; exact previousClosed) hs
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-      have hi : i.succ = n := targetEq.symm
-      have htree : ett.series.data.tree i.succ.castSucc = Tn := by
-        simp [Tn, hi]
-      have hcol : ett.series.data.coloring i.castSucc = phi :=
-        currentColoring.symm.trans
-          ((congrArg ett.series.data.coloring hi).trans hphi.symm)
-      have hc : ColoredVertexSetClosed G (ett.series.data.coloring i.castSucc)
-          (TreeSequenceVertexSet Tn) := by
-        rw [← htree]
-        exact previousClosed
-      exact @Eq.mp _ _
-        (congrArg (fun psi => ColoredVertexSetClosed G psi
-          (TreeSequenceVertexSet Tn)) hcol) hc
 
 private theorem helper_nonPEMissingClosed_364.{u_1, u_2} :
     open scoped Classical in
@@ -1437,9 +1340,8 @@ theorem P2813_T1_BaseControl {V E : Type*}
   have hcombined : CombinedStableColoring Tn base.closure
       (TashkinovStoredColors ett.series.data n) phi phi :=
     ⟨stableRefl _ _, stableRefl _ _⟩
-  have hnonPEClosed := @helper_hnonPEClosed_278 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
-      (@trans)
+  have hnonPEClosed := ett.series.closedOfNonParallel n
+    (by simpa only [n, Fin.val_last] using C.positive) phi hproper hone ett.generatingColoring
   have nonPEMissingClosed := @helper_nonPEMissingClosed_364 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hnonPEClosed)
   have coreChain : TreeSequenceInitialSegment Tn base.core := by

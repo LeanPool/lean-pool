@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.DegreeTwoPaths
+
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
 public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
 public import LeanPool.GoldbergSeymour.ScheideDepartureReturn
@@ -22,99 +24,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_adjacent_indices_forward_225.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G :
-    LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-    G e0) (alpha gamma : Fin k), gamma ∈ TreeFreeColors phi T → ∀ (u : V), gamma ∈
-    MissingColors G phi u → ∀ (z : V) (p : (TwoColorIncidenceGraph G phi alpha gamma).Walk
-    (Sum.inl u) (Sum.inl z)), ScheideDefectiveChainPath T phi alpha gamma u z p → ∀ (i2 : Fin
-    (p.length + (1 : ℕ))), IsProperEdgeColoring G phi → alpha ≠ gamma → (↑i2 : ℕ) + (1 : ℕ) <
-    p.length → let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi alpha gamma; ∀ (n m
-    : ℕ), n ≤ p.length → m ≤ p.length → n < m → H.Adj (p.getVert n) (p.getVert m) → m = n + (1
-    : ℕ) := by
-  classical
-  intro V E _ _ G k e0 phi T alpha gamma _ u hgamma z p hp i2 hproper hag hfirstlt H n m hn hm hnm
-      hadj
-  let _ := Fintype.ofFinite V
-  by_contra hne
-  have hgap : n + 1 < m := by omega
-  by_cases hn0 : n = 0
-  · subst n
-    have hfirstAdj := p.adj_getVert_succ (by omega : 0 < p.length)
-    have hdeg : @SimpleGraph.degree _ H (Sum.inl u) (Fintype.ofFinite _) ≤ 1 := by
-      have hd := MissingColorIncidenceEndpoint G phi gamma alpha hag.symm
-        hproper u hgamma
-      have hgraph : TwoColorIncidenceGraph G phi gamma alpha = H := by
-        ext x y
-        cases x <;> cases y <;> simp [H, TwoColorIncidenceGraph, or_comm]
-      rw [← hgraph]
-      exact hd
-    have hstart : p.getVert 0 = Sum.inl u := by simp
-    have hneigh : p.getVert 1 ≠ p.getVert m := by
-      intro heq
-      have h1m : 1 ≤ m := by omega
-      have := hp.2.1.getVert_injOn (h1m.trans hm) hm heq
-      omega
-    have htwo : 2 ≤ (@SimpleGraph.neighborFinset (Sum V E) H (Sum.inl u)
-        (Fintype.ofFinite _)).card := by
-      have hs : ({p.getVert 1, p.getVert m} : Finset (Sum V E)) ⊆
-          @SimpleGraph.neighborFinset (Sum V E) H (Sum.inl u)
-            (Fintype.ofFinite _) := by
-        intro q hq
-        simp only [Finset.mem_insert, Finset.mem_singleton] at hq
-        rcases hq with rfl | rfl
-        · simpa [SimpleGraph.mem_neighborFinset, H, hstart] using hfirstAdj
-        · simpa [SimpleGraph.mem_neighborFinset, H, hstart] using hadj
-      have hc : ({p.getVert 1, p.getVert m} : Finset (Sum V E)).card = 2 := by
-        simp [hneigh]
-      rw [← hc]
-      exact Finset.card_le_card hs
-    rw [← SimpleGraph.card_neighborFinset_eq_degree] at hdeg
-    have : 2 ≤ 1 := htwo.trans hdeg
-    omega
-  · have hnlt : n < p.length := by omega
-    have hleft : H.Adj (p.getVert n) (p.getVert (n - 1)) := by
-      have h := p.adj_getVert_succ (i := n - 1) (by omega)
-      have heq : n - 1 + 1 = n := by omega
-      simpa [H, heq] using h.symm
-    have hright : H.Adj (p.getVert n) (p.getVert (n + 1)) := by
-      simpa [H] using p.adj_getVert_succ hnlt
-    have hnm1 : p.getVert (n - 1) ≠ p.getVert (n + 1) := by
-      intro heq
-      have := hp.2.1.getVert_injOn (Nat.sub_le n 1 |>.trans hn)
-        (Nat.succ_le_of_lt hnlt) heq
-      omega
-    have hnm2 : p.getVert (n - 1) ≠ p.getVert m := by
-      intro heq
-      have := hp.2.1.getVert_injOn (Nat.sub_le n 1 |>.trans hn) hm heq
-      omega
-    have hnm3 : p.getVert (n + 1) ≠ p.getVert m := by
-      intro heq
-      have := hp.2.1.getVert_injOn (Nat.succ_le_of_lt hnlt) hm heq
-      omega
-    have hthree : 3 ≤ (@SimpleGraph.neighborFinset (Sum V E) H (p.getVert n)
-        (Fintype.ofFinite _)).card := by
-      let S : Finset (Sum V E) :=
-        {p.getVert (n - 1), p.getVert (n + 1), p.getVert m}
-      have hs : S ⊆ @SimpleGraph.neighborFinset (Sum V E) H (p.getVert n)
-          (Fintype.ofFinite _) := by
-        intro q hq
-        simp only [S, Finset.mem_insert, Finset.mem_singleton] at hq
-        rcases hq with rfl | rfl | rfl
-        · simpa [SimpleGraph.mem_neighborFinset] using hleft
-        · simpa [SimpleGraph.mem_neighborFinset] using hright
-        · simpa [SimpleGraph.mem_neighborFinset, H] using hadj
-      have hc : S.card = 3 := by
-        simp [S, hnm1, hnm2, hnm3]
-      rw [← hc]
-      exact Finset.card_le_card hs
-    have hdeg := TwoColorIncidenceDegreeAtMostTwo G phi alpha gamma hproper
-      (p.getVert n)
-    change @SimpleGraph.degree _ H (p.getVert n) (Fintype.ofFinite _) ≤ 2 at hdeg
-    rw [← SimpleGraph.card_neighborFinset_eq_degree] at hdeg
-    have : 3 ≤ 2 := hthree.trans hdeg
-    omega
 
 private theorem helper_new_adj_old_344.{u_1, u_2} :
     open scoped Classical in
@@ -704,11 +613,15 @@ private theorem helper_continuation_700.{u_1, u_2} :
       rw [hgammaBoundary] at this
       simp at this
   let H := TwoColorIncidenceGraph G phi alpha gamma
-  have adjacent_indices_forward : ∀ (n m : ℕ), n ≤ p.length → m ≤ p.length →
-      n < m → H.Adj (p.getVert n) (p.getVert m) → m = n + 1 := by
-    exact @helper_adjacent_indices_forward_225 V E inferInstance inferInstance
-         G k e0 phi T alpha gamma (by assumption) u hgamma z p hp i2 hproper hag
-        hfirstlt
+  have startDegree : @SimpleGraph.degree _ H (Sum.inl u) (Fintype.ofFinite _) ≤ 1 := by
+    have bound := MissingColorIncidenceEndpoint G phi gamma alpha hag.symm hproper u hgamma
+    have equal : TwoColorIncidenceGraph G phi gamma alpha = H := by
+      ext x y
+      cases x <;> cases y <;> simp [H, TwoColorIncidenceGraph, or_comm]
+    rw [← equal]
+    exact bound
+  have adjacent_indices_forward := degreeTwoPathAdjacentIndices p hp.2.1
+    (TwoColorIncidenceDegreeAtMostTwo G phi alpha gamma hproper) startDegree
   have old_adjacent_indices : ∀ (n m : ℕ), n ≤ p.length → m ≤ p.length →
       H.Adj (p.getVert n) (p.getVert m) → n + 1 = m ∨ m + 1 = n := by
     intro n m hn hm hadj

@@ -103,6 +103,16 @@ theorem TashkinovHierarchy.starredStageInitialSegmentOfLE
       (hierarchy.stageInitialSegmentOfLE first.succ last.castSucc
         (by change first.val + 1 ≤ last.val; omega))
 
+/-- With no internal divider the first stage is the terminal tree. -/
+theorem TashkinovHierarchy.firstStageOfNoDividers (hierarchy : TashkinovHierarchy ett base)
+    (count : hierarchy.dividerCount = 0) :
+    hierarchy.stage (0 : Fin (hierarchy.dividerCount + 1)).succ = tree := by
+  have index : (0 : Fin (hierarchy.dividerCount + 1)).succ =
+      Fin.last (hierarchy.dividerCount + 1) := by
+    apply Fin.ext
+    simp only [Fin.val_succ, Fin.val_zero, Fin.val_last, count]
+  rw [index, hierarchy.terminalStage]
+
 end GoldbergSeymour
 
 end

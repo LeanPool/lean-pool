@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.DegreeTwoPaths
+
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
 public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
@@ -85,99 +87,6 @@ private abbrev helperContinuation880Conditions.{u_1, u_2} : Prop :=
         TwoColorComponentSwap G (OutsideTreeColorSwap T phi (C.gamma (D.gammaIndex d)) (C.gamma
         R.blockIndex)) (C.gamma R.blockIndex) (↑d : Fin k) (Sum.inl R.v1) (D.f0 d) = some (↑d :
         Fin k)
-
-private theorem helper_adjacent_indices_forward_225.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [DecidableEq V]
-        [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E
-        k) (T : TreeSequence G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D :
-        ScheideDefectiveSetup G k e0 phi T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet
-        T))) (R : ScheideDefectiveReturnData G k e0 phi T C D d),
-    let v0 : V := D.v0 d;
-    let gamma : Fin k := C.gamma (D.gammaIndex d);
-    let p : (TwoColorIncidenceGraph G phi (C.gamma (D.gammaIndex d)) (↑d : Fin k)).Walk (Sum.inl
-        (D.v0 d)) (Sum.inl (D.replacementZ d)) := D.replacementPath d;
-    let i : Fin ((D.replacementPath d).length + (1 : ℕ)) := R.pathIndex;
-    let H0 : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi gamma (↑d : Fin k);
-    let _ : Set (V ⊕ E) := {q : V ⊕ E |
-    ∃ (r : Fin (p.length + (1 : ℕ))), (↑i : ℕ) ≤ (↑r : ℕ) ∧ p.getVert (↑r : ℕ) = q};
-        IsProperEdgeColoring G phi → p.IsPath → @SimpleGraph.degree (Sum V E) H0 (@Sum.inl V E v0)
-        (@Fintype.ofFinite (@Set.Elem (Sum V E) (@SimpleGraph.neighborSet (Sum V E) H0 (@Sum.inl V
-        E v0))) (@Subtype.finite (Sum V E) (@Finite.of_fintype (Sum V E) (@instFintypeSum V E inst
-        inst_1)) (@Membership.mem (Sum V E) (Set (Sum V E)) (@Set.instMembership (Sum V E))
-        (@SimpleGraph.neighborSet (Sum V E) H0 (@Sum.inl V E v0))))) ≤ (1 : ℕ) →
-    ∀ (n m : ℕ), n ≤ p.length → m ≤ p.length → n < m → H0.Adj (p.getVert n) (p.getVert m) → m = n
-        + (1 : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R v0 gamma p i H0 S hproper hpathIs hy0Degree n m hn hm
-      hnm hadj
-  by_contra hne
-  have hgap : n + 1 < m := by omega
-  by_cases hn0 : n = 0
-  · subst n
-    have hfirstAdj := p.adj_getVert_succ (by omega : 0 < p.length)
-    have hstart : p.getVert 0 = Sum.inl v0 := by simp [p, v0]
-    have hneigh : p.getVert 1 ≠ p.getVert m := by
-      intro heq
-      have := hpathIs.getVert_injOn (show 1 ≤ p.length by omega) hm heq
-      omega
-    have htwo : 2 ≤ (@SimpleGraph.neighborFinset (Sum V E) H0 (Sum.inl v0)
-        (Fintype.ofFinite _)).card := by
-      have hs : ({p.getVert 1, p.getVert m} : Finset (Sum V E)) ⊆
-          @SimpleGraph.neighborFinset (Sum V E) H0 (Sum.inl v0)
-            (Fintype.ofFinite _) := by
-        intro q hq
-        simp only [Finset.mem_insert, Finset.mem_singleton] at hq
-        rcases hq with rfl | rfl
-        · simpa [SimpleGraph.mem_neighborFinset, H0, hstart] using hfirstAdj
-        · simpa [SimpleGraph.mem_neighborFinset, H0, hstart] using hadj
-      have hc : ({p.getVert 1, p.getVert m} : Finset (Sum V E)).card = 2 := by
-        simp [hneigh]
-      rw [← hc]
-      exact Finset.card_le_card hs
-    rw [← SimpleGraph.card_neighborFinset_eq_degree] at hy0Degree
-    omega
-  · have hnlt : n < p.length := by omega
-    have hleft : H0.Adj (p.getVert n) (p.getVert (n - 1)) := by
-      have h := p.adj_getVert_succ (i := n - 1) (by omega)
-      have heq : n - 1 + 1 = n := by omega
-      simpa [H0, heq] using h.symm
-    have hright : H0.Adj (p.getVert n) (p.getVert (n + 1)) := by
-      simpa [H0] using p.adj_getVert_succ hnlt
-    have hnm1 : p.getVert (n - 1) ≠ p.getVert (n + 1) := by
-      intro heq
-      have := hpathIs.getVert_injOn (Nat.sub_le n 1 |>.trans hn)
-        (Nat.succ_le_of_lt hnlt) heq
-      omega
-    have hnm2 : p.getVert (n - 1) ≠ p.getVert m := by
-      intro heq
-      have := hpathIs.getVert_injOn (Nat.sub_le n 1 |>.trans hn) hm heq
-      omega
-    have hnm3 : p.getVert (n + 1) ≠ p.getVert m := by
-      intro heq
-      have := hpathIs.getVert_injOn (Nat.succ_le_of_lt hnlt) hm heq
-      omega
-    have hthree : 3 ≤ (@SimpleGraph.neighborFinset (Sum V E) H0 (p.getVert n)
-        (Fintype.ofFinite _)).card := by
-      let S : Finset (Sum V E) :=
-        {p.getVert (n - 1), p.getVert (n + 1), p.getVert m}
-      have hs : S ⊆ @SimpleGraph.neighborFinset (Sum V E) H0 (p.getVert n)
-          (Fintype.ofFinite _) := by
-        intro q hq
-        simp only [S, Finset.mem_insert, Finset.mem_singleton] at hq
-        rcases hq with rfl | rfl | rfl
-        · simpa [SimpleGraph.mem_neighborFinset] using hleft
-        · simpa [SimpleGraph.mem_neighborFinset] using hright
-        · simpa [SimpleGraph.mem_neighborFinset] using hadj
-      have hc : S.card = 3 := by
-        simp [S, hnm1, hnm2, hnm3]
-      rw [← hc]
-      exact Finset.card_le_card hs
-    have hdeg := TwoColorIncidenceDegreeAtMostTwo G phi gamma d.1 hproper
-      (p.getVert n)
-    change @SimpleGraph.degree _ H0 (p.getVert n) (Fintype.ofFinite _) ≤ 2 at hdeg
-    rw [← SimpleGraph.card_neighborFinset_eq_degree] at hdeg
-    omega
 
 private theorem helper_tail_step_new_323.{u_1, u_2} :
     open scoped Classical in
@@ -894,9 +803,8 @@ private theorem helper_continuation_880.{u_1, u_2} :
       simpa [X, p, i] using R.after_last_tree_vertex r hlt w (by simpa [p] using hget)
   have hy0Degree := @helper_hy0Degree_676 (@V) (@E) inferInstance inferInstance inferInstance (@G)
       (@k) (@e0) (@phi) (@T) (@C) (@D) (@d) (@hproper) (@missing_no_incident)
-  have adjacent_indices_forward := @helper_adjacent_indices_forward_225 (@V) (@E) inferInstance
-      inferInstance inferInstance inferInstance (@G) (@k) (@e0) (@phi) (@T) (@C) (@D) (@d) (@R)
-      (@hproper) (@hpathIs) (@hy0Degree)
+  have adjacent_indices_forward := degreeTwoPathAdjacentIndices p hpathIs
+    (TwoColorIncidenceDegreeAtMostTwo G phi gamma d.1 hproper) hy0Degree
   have old_adjacent_indices : ∀ (n m : ℕ), n ≤ p.length → m ≤ p.length →
       H0.Adj (p.getVert n) (p.getVert m) → n + 1 = m ∨ m + 1 = n := by
     intro n m hn hm hadj

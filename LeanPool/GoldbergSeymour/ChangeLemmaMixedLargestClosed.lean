@@ -1128,81 +1128,6 @@ private theorem helper_firstMissing_354.{u_1, u_2} :
     have hval : (candidates.min' hnon).val ≤ it.val := hle
     simpa [HierarchyFirstMissingPosition, candidates, hnon] using le_trans hval hiv
 
-private theorem helper_missingNotA_397.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (alpha beta : Fin k),
-    alpha ≠ beta →
-    ∀ (_ : Fin (C.hierarchy.dividerCount + (1 : ℕ))),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := T.length - A.length;
-    let yLength : ℕ := min (A.length + (ell - (1 : ℕ))) T.length;
-    let Y : TreeSequence G e0 :=
-      TreeSequencePrefix T yLength
-        (have hA : (1 : ℕ) ≤ A.length := A.positive;
-        have hT : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ yLength) ↦ by omega)
-        (by omega);
-    ColoredVertexSetElementary G phi (TreeSequenceVertexSet Y) →
-    TreeSequenceInitialSegment A Y →
-    ∀ (c : Fin k) (i : Fin (T.length + (1 : ℕ))),
-    c ∈ MissingColors G phi (T.vertex i) →
-    T.vertex i ∈ TreeSequenceVertexSet Y →
-    T.vertex i ∉ TreeSequenceVertexSet A →
-    c ∉ TreeMissingColors phi A := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta hne r H q A ell yLength Y
-      hElementaryY AToY c i hmi hiy hia
-  clear * - hmi hiy hia AToY hElementaryY
-  intro hc
-  obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-  have hne : v ≠ T.vertex i := by intro he; exact hia (he ▸ hv)
-  exact (Finset.disjoint_left.mp
-    (hElementaryY (TreeSequenceInitialSegmentVertexSetSubset AToY hv) hiy hne)) hcv hmi
-
-private theorem helper_elementaryStar_409.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (_ : Fin (C.hierarchy.dividerCount + (1 : ℕ))),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := T.length - A.length;
-    let yLength : ℕ := min (A.length + (ell - (1 : ℕ))) T.length;
-    let Y : TreeSequence G e0 :=
-      TreeSequencePrefix T yLength
-        (have hA : (1 : ℕ) ≤ A.length := A.positive;
-        have hT : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ yLength) ↦ by omega)
-        (by omega);
-    (∀ {S U W : TreeSequence G e0},
-        TreeSequenceInitialSegment S U →
-          TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W) →
-    (∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-        TreeSequenceInitialSegment (HierarchyStarredStage H j) A) →
-    ColoredVertexSetElementary G phi (TreeSequenceVertexSet Y) →
-    TreeSequenceInitialSegment A Y →
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-    ColoredVertexSetElementary G phi (TreeSequenceVertexSet (HierarchyStarredStage H j)) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C r H q A ell yLength Y segTrans starredToA
-      hElementaryY AToY j
-  clear * - j starredToA AToY hElementaryY segTrans
-  intro u hu v hv huv
-  have hs := segTrans (starredToA j) AToY
-  exact hElementaryY (TreeSequenceInitialSegmentVertexSetSubset hs hu)
-    (TreeSequenceInitialSegmentVertexSetSubset hs hv) huv
-
 private theorem helper_descend_417.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -4139,16 +4064,18 @@ private theorem helper_continuation_4549.{u_1, u_2} :
   have hAib := outsideIndex ib hout.2
   have AToY : TreeSequenceInitialSegment A Y :=
     commonPrefix AToT YToT (by omega)
-  have missingNotA :=
-    helper_missingNotA_397 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
-        (@alpha) (@beta)
-        (@hne) (@r) (@hElementaryY) (@AToY)
+  have missingNotA : ∀ (c : Fin k) (i : Fin (T.length + 1)),
+      c ∈ MissingColors G phi (T.vertex i) → T.vertex i ∈ TreeSequenceVertexSet Y →
+      T.vertex i ∉ TreeSequenceVertexSet A → c ∉ TreeMissingColors phi A := by
+    intro c i missing member outside
+    exact hElementaryY.missing_not_mem_biUnion
+      (TreeSequenceInitialSegmentVertexSetSubset AToY) member outside missing
   have halphaA : alpha ∈ TreeMissingColors phi A :=
     Finset.mem_biUnion.mpr ⟨va, hout.1, ha.1⟩
   have elementaryStar (j : Fin (H.dividerCount + 1)) :
       ColoredVertexSetElementary G phi (TreeSequenceVertexSet (HierarchyStarredStage H j)) := by
-    exact helper_elementaryStar_409 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@r)
-        (@segTrans) (@starredToA) (@hElementaryY) (@AToY) (@j)
+    exact hElementaryY.mono
+      (TreeSequenceInitialSegmentVertexSetSubset ((starredToA j).trans AToY))
   -- Missingness descends from an actual final-stage witness.
   have descend : ∀ d (j : Fin (H.dividerCount + 1)),
       H.dividerCount ≤ j.val + d → r.val ≤ j.val →
