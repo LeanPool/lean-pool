@@ -744,21 +744,9 @@ theorem unconditionalMatchedVerifierEffect_tensor_complement
     (1 : Matrix (s × t) (s × t) ℂ) -
         (effect ⊗ₖ (1 : Matrix t t ℂ)) =
       (1 - effect) ⊗ₖ (1 : Matrix t t ℂ) := by
-  classical
-  ext ⟨i, k⟩ ⟨j, l⟩
-  by_cases same_target : i = j
-  · subst j
-    by_cases same_work : k = l
-    · subst l
-      simp only [Matrix.sub_apply, one_apply_eq, kroneckerMap_apply, mul_one]
-    · simp only [Matrix.sub_apply, ne_eq, Prod.mk.injEq, same_work, and_false, not_false_eq_true,
-        one_apply_ne, kroneckerMap_apply, mul_zero, sub_self, one_apply_eq]
-  · by_cases same_work : k = l
-    · subst l
-      simp only [Matrix.sub_apply, ne_eq, Prod.mk.injEq, same_target, and_true, not_false_eq_true,
-        one_apply_ne, kroneckerMap_apply, one_apply_eq, mul_one, zero_sub]
-    · simp only [Matrix.sub_apply, ne_eq, Prod.mk.injEq, same_target, same_work, and_self,
-        not_false_eq_true, one_apply_ne, kroneckerMap_apply, mul_zero, sub_self, zero_sub]
+  with_reducible
+    apply (sub_eq_iff_eq_add).mpr
+    rw [← Matrix.add_kronecker, sub_add_cancel, Matrix.one_kronecker_one]
 
 theorem unconditionalMatchedVerifierEffect_tensor_posSemidef
     {s t : Type*} [Finite s] [Finite t] [DecidableEq t]
@@ -1504,8 +1492,7 @@ theorem unconditionalConjugateBobBasisOverlap_sum
   have identity := congrArg
     (fun M : Matrix (Fin d) (Fin d) ℂ => M i b)
     (unconditionalConjugateBobBasisOverlapCancellation U V)
-  simpa only [unitaryBasisOverlap_apply, Matrix.mul_apply, conjTranspose_apply, RCLike.star_def,
-    transpose_apply, conjugateUnitary_apply] using identity
+  exact identity
 
 theorem unconditionalRationalMixedConjugateBobSpectral_sum
     {d : ℕ} (ξ ζ : BipartiteUnitVector d)
@@ -5296,34 +5283,35 @@ theorem unconditionalClippedConjugateUnitTarget_distance_sq_le
           width grid fine gamma).val‖ ^ 2 ≤
       2 * ‖psi - gamma.val‖ ^ 2 +
         8 * (1 / w + (d : ℝ) * w / (N : ℝ)) := by
-  rw [unconditionalConjugatePureVector_sub_norm]
-  let accepted : BipartiteUnitVector d :=
-    dSVDensityRationalCanonicalAcceptedUnitTarget
-      width grid fine gamma
-  have triangle : ‖psi - accepted.val‖ ≤
-      ‖psi - gamma.val‖ + ‖gamma.val - accepted.val‖ := by
-    calc
-      ‖psi - accepted.val‖ =
-          ‖(psi - gamma.val) + (gamma.val - accepted.val)‖ := by
-            congr 1
-            abel
-      _ ≤ _ := norm_add_le _ _
-  have clipping :=
-    dSVDensityRationalCanonicalAcceptedUnitTarget_distance_le
-      width grid fine gamma
-  have clipping_nonnegative :
-      0 ≤ 1 / w + (d : ℝ) * w / (N : ℝ) := by
-    positivity
-  have clipping_squared :
-      ‖gamma.val - accepted.val‖ ^ 2 ≤
-        4 * (1 / w + (d : ℝ) * w / (N : ℝ)) := by
-    change
-      ‖gamma.val -
-        (dSVDensityRationalCanonicalAcceptedUnitTarget
-          width grid fine gamma).val‖ ^ 2 ≤ _
-    have squared := pow_le_pow_left₀ (norm_nonneg _) clipping 2
-    simpa only [mul_pow, Real.sq_sqrt clipping_nonnegative,
-      show (2 : ℝ) ^ 2 = 4 by norm_num] using squared
+  with_reducible_and_instances
+    rw [unconditionalConjugatePureVector_sub_norm]
+    let accepted : BipartiteUnitVector d :=
+      dSVDensityRationalCanonicalAcceptedUnitTarget
+        width grid fine gamma
+    have triangle : ‖psi - accepted.val‖ ≤
+        ‖psi - gamma.val‖ + ‖gamma.val - accepted.val‖ := by
+      calc
+        ‖psi - accepted.val‖ =
+            ‖(psi - gamma.val) + (gamma.val - accepted.val)‖ := by
+              congr 1
+              abel
+        _ ≤ _ := norm_add_le _ _
+    have clipping :=
+      dSVDensityRationalCanonicalAcceptedUnitTarget_distance_le
+        width grid fine gamma
+    have clipping_nonnegative :
+        0 ≤ 1 / w + (d : ℝ) * w / (N : ℝ) := by
+      positivity
+    have clipping_squared :
+        ‖gamma.val - accepted.val‖ ^ 2 ≤
+          4 * (1 / w + (d : ℝ) * w / (N : ℝ)) := by
+      change
+        ‖gamma.val -
+          (dSVDensityRationalCanonicalAcceptedUnitTarget
+            width grid fine gamma).val‖ ^ 2 ≤ _
+      have squared := pow_le_pow_left₀ (norm_nonneg _) clipping 2
+      simpa only [mul_pow, Real.sq_sqrt clipping_nonnegative,
+        show (2 : ℝ) ^ 2 = 4 by norm_num] using squared
   change ‖psi - accepted.val‖ ^ 2 ≤ _
   nlinarith [norm_nonneg (psi - accepted.val),
     norm_nonneg (psi - gamma.val),
@@ -5612,15 +5600,16 @@ theorem unconditionalExactFairStoppedPhaseHarmonicClippedUnit_le
         8 * martingaleRate G n S D := by
     simpa only [unconditionalExactFairGammaUnit, norm_sub_rev]
       using source
-  have result :=
-    unconditionalWeightedStoppedPhaseHarmonicClippedUnit_le
-      width grid fine phases harmonic
-      (exactLocallySampleableLaw G n S D)
-      (exactLocallySampleableLaw_nonneg G n S D positive)
-      (exactLocallySampleableLaw_sum G n S D remaining positive)
-      (unconditionalExactFairGammaUnit G n S D)
-      (exactSourceTuplePsi G n S D)
-      (8 * martingaleRate G n S D) energy work work_row
+  with_reducible_and_instances
+    have result :=
+      unconditionalWeightedStoppedPhaseHarmonicClippedUnit_le
+        width grid fine phases harmonic
+        (exactLocallySampleableLaw G n S D)
+        (exactLocallySampleableLaw_nonneg G n S D positive)
+        (exactLocallySampleableLaw_sum G n S D remaining positive)
+        (unconditionalExactFairGammaUnit G n S D)
+        (exactSourceTuplePsi G n S D)
+        (8 * martingaleRate G n S D) energy work work_row
   convert result using 1
   ring
 
@@ -6226,18 +6215,19 @@ theorem unconditionalActualC485CleanDeviation_sq
           N width schedule ξ ζ j.val *
         dSVDensityRationalHeterogeneousCommonStopGaugeStageError
           Q (width (schedule j)) m ξ ζ A C := by
-  classical
-  rw [unconditionalActualC485CanonicalVector_eq_correctedIdeal
-    schedule ξ ζ j positive grid dimension fine]
-  unfold integratorActualC485CleanedVector
-  rw [unconditionalActualSelectedBranchLocalAction_sub,
-    unconditionalActualSelectedBranchLocalAction_norm]
-  exact unconditionalSelectedCopyMatchedBranch_deviation_sq
-    Q width schedule ξ ζ A C j
-    (unconditionalActualCanonicalRetainedPhaseTail
-      (S := S) (B := B) (N := N) (d := d) (L := L) j)
-    (integratorActualCanonicalRetainedPhaseTail_norm
-      phases grid dimension j)
+  with_reducible
+    classical
+    rw [unconditionalActualC485CanonicalVector_eq_correctedIdeal
+      schedule ξ ζ j positive grid dimension fine]
+    unfold integratorActualC485CleanedVector
+    rw [unconditionalActualSelectedBranchLocalAction_sub,
+      unconditionalActualSelectedBranchLocalAction_norm]
+    exact unconditionalSelectedCopyMatchedBranch_deviation_sq
+      Q width schedule ξ ζ A C j
+      (unconditionalActualCanonicalRetainedPhaseTail
+        (S := S) (B := B) (N := N) (d := d) (L := L) j)
+      (integratorActualCanonicalRetainedPhaseTail_norm
+        phases grid dimension j)
 
 theorem unconditionalActualC485CleanDeviation_eq_hazard
     {S B N d L m : ℕ}

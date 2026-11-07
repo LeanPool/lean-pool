@@ -2417,6 +2417,11 @@ end
 
 section
 
+-- Do not expand the context-selection branches during later elaboration.
+attribute [local irreducible] exactReverseBobContextAt exactReverseAliceContextAt
+
+section
+
 open scoped BigOperators
 
 
@@ -7477,6 +7482,8 @@ theorem exactSourceStateDistanceBound_of_fair_operator_entropy
           ‖exactSourceTuplePsi G n S D t -
             exactSourceTuplePhi G n S D t‖ ^ 2) ≤ 8 * η
     nlinarith only [hv, hj, ha, positive]
+
+end
 
 end
 

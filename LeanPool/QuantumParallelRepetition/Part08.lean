@@ -15,6 +15,11 @@ noncomputable section
 
 namespace QuantumParallelRepetition
 
+section
+
+-- Keep the chosen side contexts abstract except at explicit unfolding steps.
+attribute [local irreducible] exactReverseBobContextAt exactReverseAliceContextAt
+
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 
@@ -1148,58 +1153,59 @@ private theorem exactSourceAcceptedCoordinateMass_sum_eq_remaining_average
             (FiniteEventLaw.winEvent
               (repeatedCoordinateWin G n) (insert i.val D)) /
             repeatedPostselectionMass G n S D) := by
-  classical
-  rw [exactSourceAcceptedCoordinateMass_sum]
-  unfold exactPostselectedJointLaw
-  rw [Fintype.sum_prod_type, Finset.sum_comm]
-  calc
-    (∑ outcome : ExactOutcome X Y A B n,
-      ∑ seed : ExactRemainingSeed D,
-        if repeatedCoordinateWin G n seed.coordinate.val outcome = true
-        then exactSeedWeight seed *
-          repeatedConditionedOutcomeLaw G n S D outcome
-        else 0) =
-      ∑ outcome : ExactOutcome X Y A B n,
+  with_reducible
+    classical
+    rw [exactSourceAcceptedCoordinateMass_sum]
+    unfold exactPostselectedJointLaw
+    rw [Fintype.sum_prod_type, Finset.sum_comm]
+    calc
+      (∑ outcome : ExactOutcome X Y A B n,
         ∑ seed : ExactRemainingSeed D,
-          exactSeedWeight seed *
-            (if repeatedCoordinateWin G n seed.coordinate.val outcome = true
-             then repeatedConditionedOutcomeLaw G n S D outcome
-             else 0) := by
-          apply Finset.sum_congr rfl
-          intro outcome _
-          apply Finset.sum_congr rfl
-          intro seed _
-          split <;> simp only [mul_zero]
-    _ = ∑ outcome : ExactOutcome X Y A B n,
-        ∑ i : SourceRemainingCoordinate D,
-          (1 / (Fintype.card (SourceRemainingCoordinate D) : ℝ)) *
-            (if repeatedCoordinateWin G n i.val outcome = true
-             then repeatedConditionedOutcomeLaw G n S D outcome
-             else 0) := by
-          apply Finset.sum_congr rfl
-          intro outcome _
-          exact exactSeedWeight_coordinate_sum
-            (M := SourceRemainingCoordinate D)
-            (fun i =>
+          if repeatedCoordinateWin G n seed.coordinate.val outcome = true
+          then exactSeedWeight seed *
+            repeatedConditionedOutcomeLaw G n S D outcome
+          else 0) =
+        ∑ outcome : ExactOutcome X Y A B n,
+          ∑ seed : ExactRemainingSeed D,
+            exactSeedWeight seed *
+              (if repeatedCoordinateWin G n seed.coordinate.val outcome = true
+               then repeatedConditionedOutcomeLaw G n S D outcome
+               else 0) := by
+            apply Finset.sum_congr rfl
+            intro outcome _
+            apply Finset.sum_congr rfl
+            intro seed _
+            split <;> simp only [mul_zero]
+      _ = ∑ outcome : ExactOutcome X Y A B n,
+          ∑ i : SourceRemainingCoordinate D,
+            (1 / (Fintype.card (SourceRemainingCoordinate D) : ℝ)) *
+              (if repeatedCoordinateWin G n i.val outcome = true
+               then repeatedConditionedOutcomeLaw G n S D outcome
+               else 0) := by
+            apply Finset.sum_congr rfl
+            intro outcome _
+            exact exactSeedWeight_coordinate_sum
+              (M := SourceRemainingCoordinate D)
+              (fun i =>
+                if repeatedCoordinateWin G n i.val outcome = true
+                then repeatedConditionedOutcomeLaw G n S D outcome
+                else 0)
+      _ = (1 / (Fintype.card (SourceRemainingCoordinate D) : ℝ)) *
+          (∑ i : SourceRemainingCoordinate D,
+            ∑ outcome : ExactOutcome X Y A B n,
               if repeatedCoordinateWin G n i.val outcome = true
               then repeatedConditionedOutcomeLaw G n S D outcome
-              else 0)
-    _ = (1 / (Fintype.card (SourceRemainingCoordinate D) : ℝ)) *
-        (∑ i : SourceRemainingCoordinate D,
-          ∑ outcome : ExactOutcome X Y A B n,
-            if repeatedCoordinateWin G n i.val outcome = true
-            then repeatedConditionedOutcomeLaw G n S D outcome
-            else 0) := by
-          rw [Finset.sum_comm, Finset.mul_sum]
-          apply Finset.sum_congr rfl
-          intro i _
-          rw [Finset.mul_sum]
-    _ = _ := by
-      congr 1
-      apply Finset.sum_congr rfl
-      intro i _
-      exact exactRepeatedConditionedCoordinateWin
-        G n S D i.val
+              else 0) := by
+            rw [Finset.sum_comm, Finset.mul_sum]
+            apply Finset.sum_congr rfl
+            intro i _
+            rw [Finset.mul_sum]
+      _ = _ := by
+        congr 1
+        apply Finset.sum_congr rfl
+        intro i _
+        exact exactRepeatedConditionedCoordinateWin
+          G n S D i.val
 
 theorem exactSourceConditionalWinningProbability_eq_accepted_average
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -1575,30 +1581,31 @@ private theorem exactSourceConditionalWinningProbability_eq_fine_born_ratio
         (history.seed.coordinate, x, y, history) =
       exactFairWinningOutcomeBornMass G n S D history x y /
         exactFairFullOutcomeBornMass G n S D history x y := by
-  have seed_positive : 0 < exactSeedWeight history.seed := by
-    unfold exactSeedWeight
-    have coordinate_positive :
-        0 < Fintype.card (SourceRemainingCoordinate D) :=
-      Fintype.card_pos_iff.mpr ⟨history.seed.coordinate⟩
-    positivity
-  have posterior :
-      exactLocallySampleableLaw G n S D
-        (history.seed.coordinate, x, y, history) =
-        (exactSeedWeight history.seed *
-          exactFairFullOutcomeBornMass
-            G n S D history x y) /
-          repeatedPostselectionMass G n S D := by
-    rw [exactLocallySampleableLaw_eq_fair_born,
-      ite_eq_left accepted,
-      exactFairFullOutcomeBornMass_eq_reveal_question_norm]
-    ac_rfl
-  unfold exactSourceConditionalWinningProbability
-  rw [exactSourceAcceptedCoordinateMass_eq_seeded_fair_born
-    G n S D positive history x y, ite_eq_left accepted, posterior]
-  by_cases mass_zero :
-      exactFairFullOutcomeBornMass G n S D history x y = 0
-  · simp only [mass_zero, mul_zero, zero_div, div_zero]
-  · field_simp [positive.ne', seed_positive.ne', mass_zero]
+  with_reducible
+    have seed_positive : 0 < exactSeedWeight history.seed := by
+      unfold exactSeedWeight
+      have coordinate_positive :
+          0 < Fintype.card (SourceRemainingCoordinate D) :=
+        Fintype.card_pos_iff.mpr ⟨history.seed.coordinate⟩
+      positivity
+    have posterior :
+        exactLocallySampleableLaw G n S D
+          (history.seed.coordinate, x, y, history) =
+          (exactSeedWeight history.seed *
+            exactFairFullOutcomeBornMass
+              G n S D history x y) /
+            repeatedPostselectionMass G n S D := by
+      rw [exactLocallySampleableLaw_eq_fair_born,
+        ite_eq_left accepted,
+        exactFairFullOutcomeBornMass_eq_reveal_question_norm]
+      ac_rfl
+    unfold exactSourceConditionalWinningProbability
+    rw [exactSourceAcceptedCoordinateMass_eq_seeded_fair_born
+      G n S D positive history x y, ite_eq_left accepted, posterior]
+    by_cases mass_zero :
+        exactFairFullOutcomeBornMass G n S D history x y = 0
+    · simp only [mass_zero, mul_zero, zero_div, div_zero]
+    · field_simp [positive.ne', seed_positive.ne', mass_zero]
 
 end
 
@@ -2407,8 +2414,7 @@ theorem matrixQuadraticExpectation_expand
       (Matrix.toEuclideanCLM (n := d) (𝕜 := ℂ) M) z =
       (∑ i : d, (∑ j : d, M i j * z j) * star (z i)).re := by
   simp only [quadraticExpectation, EuclideanSpace.inner_eq_star_dotProduct, dotProduct,
-    ofLp_toEuclideanCLM, mulVec, Pi.star_apply, RCLike.star_def, re_sum, mul_re, sum_sub_distrib,
-    conj_re, im_sum, mul_im, conj_im, mul_neg, sub_neg_eq_add]
+    ofLp_toEuclideanCLM, Matrix.mulVec, Pi.star_apply]
 
 theorem finiteSum_injective_support
     {d e K : Type*} [Fintype d] [Fintype e] [AddCommMonoid K]
@@ -3423,24 +3429,25 @@ theorem exactSeedWeight_pos_of_seed
     {M : Type*} [Fintype M] [DecidableEq M]
     (seed : ExactForwardSeed M) :
     0 < exactSeedWeight seed := by
-  have nonempty : 0 < Fintype.card M :=
-    Fintype.card_pos_iff.mpr ⟨seed.coordinate⟩
-  have bits : 0 < Fintype.card (M → Bool) :=
-    Fintype.card_pos_iff.mpr ⟨fun _ => false⟩
-  have left :
-      0 < Fintype.card
-        (Equiv.Perm
-          {j : M // j ∈
-            exactLeft seed.coordinate seed.partition}) :=
-    Fintype.card_pos_iff.mpr ⟨Equiv.refl _⟩
-  have right :
-      0 < Fintype.card
-        (Equiv.Perm
-          {j : M // j ∈
-            exactRight seed.coordinate seed.partition}) :=
-    Fintype.card_pos_iff.mpr ⟨Equiv.refl _⟩
-  unfold exactSeedWeight
-  positivity
+  with_reducible
+    have nonempty : 0 < Fintype.card M :=
+      Fintype.card_pos_iff.mpr ⟨seed.coordinate⟩
+    have bits : 0 < Fintype.card (M → Bool) :=
+      Fintype.card_pos_iff.mpr ⟨fun _ => false⟩
+    have left :
+        0 < Fintype.card
+          (Equiv.Perm
+            {j : M // j ∈
+              exactLeft seed.coordinate seed.partition}) :=
+      Fintype.card_pos_iff.mpr ⟨Equiv.refl _⟩
+    have right :
+        0 < Fintype.card
+          (Equiv.Perm
+            {j : M // j ∈
+              exactRight seed.coordinate seed.partition}) :=
+      Fintype.card_pos_iff.mpr ⟨Equiv.refl _⟩
+    unfold exactSeedWeight
+    positivity
 
 theorem jointConditional_product_context_seed
     {K Ω C V : Type*}
@@ -5032,42 +5039,43 @@ theorem exactReverseAliceSideMarkedPosteriorConditional_eq_fixedSeedFiber
         (exactReverseAliceMarkedHistoryContext
           G n S D default seed reference) := by
   classical
-  let side := exactReverseLeftSide seed
-  let marker : Fin side.card :=
-    (exactReverseAliceContext seed).sideRank
-      ⟨seed.coordinate,
-        exactReverseLeftSide_coordinate_mem seed⟩
-  let law := exactReverseAliceConditionalSeedLaw
-    (remainingCoordinate_card_pos D remaining) side
-  let index : ExactRemainingSeed D →
-      ExactReverseSideContext
-        (SourceRemainingCoordinate D) side :=
-    exactReverseAliceContextAt side
-  let context :
-      ExactReverseSideContext
-        (SourceRemainingCoordinate D) side →
-          ExactOutcome X Y A B n →
-            ExactReverseAliceNextContext X Y A B D side :=
-    exactReverseAliceMaskedOutcomeContext
-      G n S D side default marker
-  let next :
-      ExactReverseSideContext
-        (SourceRemainingCoordinate D) side →
-          ExactOutcome X Y A B n → Y :=
-    fun current outcome =>
-      outcome.2.1 (current.sideRank.symm marker).val.val
-  let extract :
-      ExactReverseAliceNextContext X Y A B D side →
+  with_reducible_and_instances
+    let side := exactReverseLeftSide seed
+    let marker : Fin side.card :=
+      (exactReverseAliceContext seed).sideRank
+        ⟨seed.coordinate,
+          exactReverseLeftSide_coordinate_mem seed⟩
+    let law := exactReverseAliceConditionalSeedLaw
+      (remainingCoordinate_card_pos D remaining) side
+    let index : ExactRemainingSeed D →
         ExactReverseSideContext
           (SourceRemainingCoordinate D) side :=
-    fun current => current.1.1.1
-  let target := exactReverseAliceMarkedHistoryContext
-    G n S D default seed reference
-  have extracts : ∀ current outcome,
-      extract (context current outcome) = current := by
-    intro current outcome
-    exact exactReverseAliceMaskedOutcomeContext_extract
-      G n S D side default marker current outcome
+      exactReverseAliceContextAt side
+    let context :
+        ExactReverseSideContext
+          (SourceRemainingCoordinate D) side →
+            ExactOutcome X Y A B n →
+              ExactReverseAliceNextContext X Y A B D side :=
+      exactReverseAliceMaskedOutcomeContext
+        G n S D side default marker
+    let next :
+        ExactReverseSideContext
+          (SourceRemainingCoordinate D) side →
+            ExactOutcome X Y A B n → Y :=
+      fun current outcome =>
+        outcome.2.1 (current.sideRank.symm marker).val.val
+    let extract :
+        ExactReverseAliceNextContext X Y A B D side →
+          ExactReverseSideContext
+            (SourceRemainingCoordinate D) side :=
+      fun current => current.1.1.1
+    let target := exactReverseAliceMarkedHistoryContext
+      G n S D default seed reference
+    have extracts : ∀ current outcome,
+        extract (context current outcome) = current := by
+      intro current outcome
+      exact exactReverseAliceMaskedOutcomeContext_extract
+        G n S D side default marker current outcome
   have target_index : extract target = index seed := by
     rfl
   have positive :
@@ -5076,26 +5084,27 @@ theorem exactReverseAliceSideMarkedPosteriorConditional_eq_fixedSeedFiber
       index law.weight law.weight_nonneg seed
     exact exactReverseAliceActualConditionalSeedWeight_pos
       D remaining seed
-  have stable :=
-    jointConditional_product_stable_context_seed
-      index context next extract extracts law.weight
-      (repeatedConditionedOutcomeLaw G n S D)
-      seed target target_index (ne_of_gt positive)
-  have actual :
-      (fun outcome : ExactOutcome X Y A B n =>
-        (context (index seed) outcome, next (index seed) outcome)) =
-      (fun outcome : ExactOutcome X Y A B n =>
-        (exactReverseAliceMarkedHistoryContext G n S D default seed outcome,
-          outcome.2.1 seed.coordinate.val)) := by
-    funext outcome
-    apply Prod.ext
-    · exact exactReverseAliceMaskedOutcomeContext_actual
-        G n S D default seed outcome
-    · simp only [exactReverseAliceContextAt_actual, Equiv.symm_apply_apply, next, side,
-        marker, index]
-  rw [exactConditionedReverseAliceNextJoint_marked_mixture
-    G n S D remaining side default marker]
-  simpa only [actual, groupedMass_eq_classical] using stable
+  with_reducible_and_instances
+    have stable :=
+      jointConditional_product_stable_context_seed
+        index context next extract extracts law.weight
+        (repeatedConditionedOutcomeLaw G n S D)
+        seed target target_index (ne_of_gt positive)
+    have actual :
+        (fun outcome : ExactOutcome X Y A B n =>
+          (context (index seed) outcome, next (index seed) outcome)) =
+        (fun outcome : ExactOutcome X Y A B n =>
+          (exactReverseAliceMarkedHistoryContext G n S D default seed outcome,
+            outcome.2.1 seed.coordinate.val)) := by
+      funext outcome
+      apply Prod.ext
+      · exact exactReverseAliceMaskedOutcomeContext_actual
+          G n S D default seed outcome
+      · simp only [exactReverseAliceContextAt_actual, Equiv.symm_apply_apply, next, side,
+          marker, index]
+    rw [exactConditionedReverseAliceNextJoint_marked_mixture
+      G n S D remaining side default marker]
+    simpa only [actual, groupedMass_eq_classical] using stable
 
 theorem exactReverseAliceSideMarkedPosteriorConditional_eq_sourcePosterior
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -5275,6 +5284,10 @@ private def exactReverseAliceContextMarkerInformation
           (exactReverseAliceMaskedOutcomeContext
             G n S D side default marker context outcome))
 
+section
+
+attribute [local irreducible] QuantumParallelRepetition.repeatedConditionedOutcomeLaw
+
 private theorem exactReverseAlicePrefixIncrement_eq_contextMarkerInformation
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -5342,6 +5355,8 @@ private theorem exactReverseAlicePrefixIncrement_eq_contextMarkerInformation
         (repeatedConditionedOutcomeLaw G n S D outcome * _)
   ac_rfl
 
+end
+
 private theorem exactReverseAlicePrefixInformation_eq_seedMarkerAverage
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -5360,37 +5375,38 @@ private theorem exactReverseAlicePrefixInformation_eq_seedMarkerAverage
                 (exactReverseLeftSide seed) seed)
               marker) /
             ((exactReverseLeftSide seed).card : ℝ)) := by
-  classical
-  calc
-    exactConditionedReverseAlicePrefixInformation
-        G n S D remaining default =
-      ∑ side : Finset (SourceRemainingCoordinate D),
-        reversePartitionWeight side *
-          ((∑ marker : Fin side.card,
-            ∑ seed : ExactRemainingSeed D,
-              (exactReverseAliceConditionalSeedLaw
-                (remainingCoordinate_card_pos
-                  D remaining) side).weight seed *
-                exactReverseAliceContextMarkerInformation
-                  G n S D remaining default side
-                  (exactReverseAliceContextAt side seed)
-                  marker) / (side.card : ℝ)) := by
-      unfold exactConditionedReverseAlicePrefixInformation
-      apply Finset.sum_congr rfl
-      intro side _
-      congr 1
-      apply congrArg (fun total : ℝ => total / (side.card : ℝ))
-      apply Finset.sum_congr rfl
-      intro marker _
-      exact exactReverseAlicePrefixIncrement_eq_contextMarkerInformation
-        G n S D remaining positive side default marker
-    _ = _ := by
-      exact exactReverseAliceSideWeightedPrefix_sum
-        (remainingCoordinate_card_pos D remaining)
-        (fun side seed marker =>
-          exactReverseAliceContextMarkerInformation
-            G n S D remaining default side
-            (exactReverseAliceContextAt side seed) marker)
+  with_reducible
+    classical
+    calc
+      exactConditionedReverseAlicePrefixInformation
+          G n S D remaining default =
+        ∑ side : Finset (SourceRemainingCoordinate D),
+          reversePartitionWeight side *
+            ((∑ marker : Fin side.card,
+              ∑ seed : ExactRemainingSeed D,
+                (exactReverseAliceConditionalSeedLaw
+                  (remainingCoordinate_card_pos
+                    D remaining) side).weight seed *
+                  exactReverseAliceContextMarkerInformation
+                    G n S D remaining default side
+                    (exactReverseAliceContextAt side seed)
+                    marker) / (side.card : ℝ)) := by
+        unfold exactConditionedReverseAlicePrefixInformation
+        apply Finset.sum_congr rfl
+        intro side _
+        congr 1
+        apply congrArg (fun total : ℝ => total / (side.card : ℝ))
+        apply Finset.sum_congr rfl
+        intro marker _
+        exact exactReverseAlicePrefixIncrement_eq_contextMarkerInformation
+          G n S D remaining positive side default marker
+      _ = _ := by
+        exact exactReverseAliceSideWeightedPrefix_sum
+          (remainingCoordinate_card_pos D remaining)
+          (fun side seed marker =>
+            exactReverseAliceContextMarkerInformation
+              G n S D remaining default side
+              (exactReverseAliceContextAt side seed) marker)
 
 private theorem exactReverseAlicePrefixInformation_eq_markedSeedAverage
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -5480,33 +5496,34 @@ theorem exactReverseAliceMarkedPriorMarginal_ne_zero_of_outcome
             (exactReverseLeftSide seed)))
         (exactReverseAliceMarkedHistoryContext
           G n S D default seed outcome) ≠ 0 := by
-  classical
-  let side := exactReverseLeftSide seed
-  let marker : Fin side.card :=
-    (exactReverseAliceContext seed).sideRank
-      ⟨seed.coordinate,
-        exactReverseLeftSide_coordinate_mem seed⟩
-  let law := exactReverseAliceConditionalSeedLaw
-    (remainingCoordinate_card_pos D remaining) side
-  let projection := exactReverseAliceSourceProjection
-    (X := X) (Y := Y) (A := A) (B := B) D side
-  have atom_positive :
-      0 < reweightedSeedPosterior
-        law G n S D (seed, outcome) := by
-    rw [reweightedSeedPosterior_eq_product]
-    exact mul_pos
-      (exactReverseAliceActualConditionalSeedWeight_pos
-        D remaining seed)
-      (repeatedConditionedOutcomeLaw_pos_of_ne_zero
-        G n S D positive outcome outcome_nonzero)
-  have supported :=
-    reweightedSeedPrefixPriorMarginal_ne_zero_of_positive_atom
-      law G n S D positive projection default marker
-      (seed, outcome) atom_positive
-  simpa [law, projection, side, marker,
-    exactConditionedReverseAliceNextPrior,
-    exactReverseAliceMarkedHistoryContext,
-    exactReverseAliceSourceProjection] using supported
+  with_reducible
+    classical
+    let side := exactReverseLeftSide seed
+    let marker : Fin side.card :=
+      (exactReverseAliceContext seed).sideRank
+        ⟨seed.coordinate,
+          exactReverseLeftSide_coordinate_mem seed⟩
+    let law := exactReverseAliceConditionalSeedLaw
+      (remainingCoordinate_card_pos D remaining) side
+    let projection := exactReverseAliceSourceProjection
+      (X := X) (Y := Y) (A := A) (B := B) D side
+    have atom_positive :
+        0 < reweightedSeedPosterior
+          law G n S D (seed, outcome) := by
+      rw [reweightedSeedPosterior_eq_product]
+      exact mul_pos
+        (exactReverseAliceActualConditionalSeedWeight_pos
+          D remaining seed)
+        (repeatedConditionedOutcomeLaw_pos_of_ne_zero
+          G n S D positive outcome outcome_nonzero)
+    have supported :=
+      reweightedSeedPrefixPriorMarginal_ne_zero_of_positive_atom
+        law G n S D positive projection default marker
+        (seed, outcome) atom_positive
+    simpa [law, projection, side, marker,
+      exactConditionedReverseAliceNextPrior,
+      exactReverseAliceMarkedHistoryContext,
+      exactReverseAliceSourceProjection] using supported
 
 private def exactAliceSourceSeedBornInformation
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -6138,47 +6155,48 @@ theorem exactConditionedReverseBobNextJoint_marked_conditional_eq_fixedOutcome
         (exactReverseBobMarkedHistoryContext
           G n S D default seed reference) := by
   classical
-  let side := exactReverseRightSide seed
-  let marker : Fin side.card :=
-    (exactReverseBobContext seed).sideRank
-      ⟨seed.coordinate,
-        exactReverseRightSide_coordinate_mem seed⟩
-  let law := exactReverseBobConditionalSeedLaw
-    (remainingCoordinate_card_pos D remaining) side
-  let index : ExactRemainingSeed D →
-      ExactReverseSideContext
-        (SourceRemainingCoordinate D) side :=
-    exactReverseBobContextAt side
-  let context :
-      ExactReverseSideContext
-        (SourceRemainingCoordinate D) side →
-          ExactOutcome X Y A B n →
-            ExactReverseBobNextContext X Y A B D side :=
-    exactReverseBobMaskedOutcomeContext
-      G n S D side default marker
-  let next :
-      ExactReverseSideContext
-        (SourceRemainingCoordinate D) side →
-          ExactOutcome X Y A B n → X :=
-    fun reverseContext outcome =>
-      outcome.1
-        ((reverseContext.sideRank.symm marker).val.val)
-  let extract :
-      ExactReverseBobNextContext X Y A B D side →
+  with_reducible_and_instances
+    let side := exactReverseRightSide seed
+    let marker : Fin side.card :=
+      (exactReverseBobContext seed).sideRank
+        ⟨seed.coordinate,
+          exactReverseRightSide_coordinate_mem seed⟩
+    let law := exactReverseBobConditionalSeedLaw
+      (remainingCoordinate_card_pos D remaining) side
+    let index : ExactRemainingSeed D →
         ExactReverseSideContext
           (SourceRemainingCoordinate D) side :=
-    fun target => target.1.1.1
-  let target :=
-    exactReverseBobMarkedHistoryContext
-      G n S D default seed reference
-  have extract_context :
-      ∀ (reverseContext : ExactReverseSideContext
-          (SourceRemainingCoordinate D) side)
-        (outcome : ExactOutcome X Y A B n),
-        extract (context reverseContext outcome) = reverseContext := by
-    intro reverseContext outcome
-    exact exactReverseBobMaskedOutcomeContext_extract
-      G n S D side default marker reverseContext outcome
+      exactReverseBobContextAt side
+    let context :
+        ExactReverseSideContext
+          (SourceRemainingCoordinate D) side →
+            ExactOutcome X Y A B n →
+              ExactReverseBobNextContext X Y A B D side :=
+      exactReverseBobMaskedOutcomeContext
+        G n S D side default marker
+    let next :
+        ExactReverseSideContext
+          (SourceRemainingCoordinate D) side →
+            ExactOutcome X Y A B n → X :=
+      fun reverseContext outcome =>
+        outcome.1
+          ((reverseContext.sideRank.symm marker).val.val)
+    let extract :
+        ExactReverseBobNextContext X Y A B D side →
+          ExactReverseSideContext
+            (SourceRemainingCoordinate D) side :=
+      fun target => target.1.1.1
+    let target :=
+      exactReverseBobMarkedHistoryContext
+        G n S D default seed reference
+    have extract_context :
+        ∀ (reverseContext : ExactReverseSideContext
+            (SourceRemainingCoordinate D) side)
+          (outcome : ExactOutcome X Y A B n),
+          extract (context reverseContext outcome) = reverseContext := by
+      intro reverseContext outcome
+      exact exactReverseBobMaskedOutcomeContext_extract
+        G n S D side default marker reverseContext outcome
   have target_index : extract target = index seed := by
     rfl
   have positive :
@@ -6187,25 +6205,26 @@ theorem exactConditionedReverseBobNextJoint_marked_conditional_eq_fixedOutcome
       index law.weight law.weight_nonneg seed
     exact exactReverseBobConditionalSeedLaw_actual_pos
       (remainingCoordinate_card_pos D remaining) seed
-  have stable := jointConditional_product_stable_context_seed
-    index context next extract extract_context
-    law.weight (repeatedConditionedOutcomeLaw G n S D)
-    seed target target_index (ne_of_gt positive)
-  have actual :
-      (fun outcome : ExactOutcome X Y A B n =>
-        (context (index seed) outcome, next (index seed) outcome)) =
-      (fun outcome : ExactOutcome X Y A B n =>
-        (exactReverseBobMarkedHistoryContext G n S D default seed outcome,
-          outcome.1 seed.coordinate.val)) := by
-    funext outcome
-    apply Prod.ext
-    · exact exactReverseBobMaskedOutcomeContext_actual
-        G n S D default seed outcome
-    · simp only [exactReverseBobContextAt_actual, Equiv.symm_apply_apply, next, side,
-        marker, index]
-  rw [exactConditionedReverseBobNextJoint_marked_mixture
-    G n S D remaining side default marker]
-  simpa only [actual, groupedMass_eq_classical] using stable
+  with_reducible_and_instances
+    have stable := jointConditional_product_stable_context_seed
+      index context next extract extract_context
+      law.weight (repeatedConditionedOutcomeLaw G n S D)
+      seed target target_index (ne_of_gt positive)
+    have actual :
+        (fun outcome : ExactOutcome X Y A B n =>
+          (context (index seed) outcome, next (index seed) outcome)) =
+        (fun outcome : ExactOutcome X Y A B n =>
+          (exactReverseBobMarkedHistoryContext G n S D default seed outcome,
+            outcome.1 seed.coordinate.val)) := by
+      funext outcome
+      apply Prod.ext
+      · exact exactReverseBobMaskedOutcomeContext_actual
+          G n S D default seed outcome
+      · simp only [exactReverseBobContextAt_actual, Equiv.symm_apply_apply, next, side,
+          marker, index]
+    rw [exactConditionedReverseBobNextJoint_marked_mixture
+      G n S D remaining side default marker]
+    simpa only [actual, groupedMass_eq_classical] using stable
 
 theorem exactConditionedReverseBobNextJoint_marked_conditional_eq_sourcePosterior
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -6310,6 +6329,10 @@ private theorem exactReverseBobActualMarkedEntropyScore_eq_context
         marker outcome := by
   rfl
 
+section
+
+attribute [local irreducible] QuantumParallelRepetition.repeatedConditionedOutcomeLaw
+
 private theorem exactConditionedReverseBobPrefixEntropyIncrement_eq_markedOutcomeScore
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -6355,6 +6378,8 @@ private theorem exactConditionedReverseBobPrefixEntropyIncrement_eq_markedOutcom
           exactReverseBobActualMarkedEntropyScore
             G n S D remaining default side seed marker outcome)
   ac_rfl
+
+end
 
 private theorem exactConditionedReverseBobPrefixInformation_eq_sourceMarkerAverage
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
@@ -6455,15 +6480,16 @@ theorem exactReverseBobMarkedPriorMarginal_ne_zero_of_outcome
             (exactReverseRightSide seed)))
         (exactReverseBobMarkedHistoryContext
           G n S D default seed outcome) ≠ 0 := by
-  let side := exactReverseRightSide seed
-  let marker : Fin side.card :=
-    (exactReverseBobContext seed).sideRank
-      ⟨seed.coordinate,
-        exactReverseRightSide_coordinate_mem seed⟩
-  let law := exactReverseBobConditionalSeedLaw
-    (remainingCoordinate_card_pos D remaining) side
-  let projection := exactReverseBobSourceProjection
-    (X := X) (Y := Y) (A := A) (B := B) D side
+  with_reducible_and_instances
+    let side := exactReverseRightSide seed
+    let marker : Fin side.card :=
+      (exactReverseBobContext seed).sideRank
+        ⟨seed.coordinate,
+          exactReverseRightSide_coordinate_mem seed⟩
+    let law := exactReverseBobConditionalSeedLaw
+      (remainingCoordinate_card_pos D remaining) side
+    let projection := exactReverseBobSourceProjection
+      (X := X) (Y := Y) (A := A) (B := B) D side
   have outcome_nonnegative :
       0 ≤ repeatedConditionedOutcomeLaw
         G n S D outcome :=
@@ -6475,18 +6501,19 @@ theorem exactReverseBobMarkedPriorMarginal_ne_zero_of_outcome
       0 < repeatedConditionedOutcomeLaw
         G n S D outcome :=
     lt_of_le_of_ne outcome_nonnegative (Ne.symm supported)
-  have seed_positive :
-      0 < law.weight seed :=
-    exactReverseBobConditionalSeedLaw_actual_pos
-      (remainingCoordinate_card_pos D remaining) seed
-  have atom_positive :
-      0 < reweightedSeedPosterior
-        law G n S D (seed, outcome) := by
-    rw [reweightedSeedPosterior_eq_product]
-    exact mul_pos seed_positive outcome_positive
-  have actual := reweightedSeedPrefixPriorMarginal_ne_zero_of_positive_atom
-    law G n S D positive projection default marker
-    (seed, outcome) atom_positive
+  with_reducible_and_instances
+    have seed_positive :
+        0 < law.weight seed :=
+      exactReverseBobConditionalSeedLaw_actual_pos
+        (remainingCoordinate_card_pos D remaining) seed
+    have atom_positive :
+        0 < reweightedSeedPosterior
+          law G n S D (seed, outcome) := by
+      rw [reweightedSeedPosterior_eq_product]
+      exact mul_pos seed_positive outcome_positive
+    have actual := reweightedSeedPrefixPriorMarginal_ne_zero_of_positive_atom
+      law G n S D positive projection default marker
+      (seed, outcome) atom_positive
   exact actual
 
 private theorem exactReverseBobActualMarkedEntropy_eq_source
@@ -6541,6 +6568,10 @@ private theorem exactReverseBobActualMarkedEntropy_eq_source
   rw [exactReverseBobMarkedPriorConditional_eq_game
     G n S D remaining default seed outcome prior_supported]
 
+section
+
+attribute [local irreducible] QuantumParallelRepetition.repeatedConditionedOutcomeLaw
+
 theorem exactReverseBobConditionalHistoryIdentification_proved
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -6570,6 +6601,8 @@ theorem exactReverseBobConditionalHistoryIdentification_proved
       G n S D remaining positive default seed outcome zero]
     unfold exactPostselectedJointLaw
     ac_rfl
+
+end
 
 end
 
@@ -6776,6 +6809,8 @@ theorem
       G n S D remaining positive base information)
     (exact_source_bob_pinsker_of_classical_information
       G n S D remaining positive base information)
+
+end
 
 end
 
