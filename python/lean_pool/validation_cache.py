@@ -3,6 +3,8 @@
 CI restores receipts from main or earlier runs of the same PR. Every receipt
 covers module inventories, transitive local imports, dependency pins, and code.
 Static repository invariants and text style lint still run on every checkout.
+Missed checks run as concurrent Lean processes; receipts and reported errors
+keep the sequential check order.
 """
 
 from __future__ import annotations
@@ -11,8 +13,12 @@ import argparse
 import hashlib
 import json
 import logging
+import os
 import subprocess
-from collections.abc import Callable
+import time
+from collections.abc import Callable, Sequence
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -36,6 +42,49 @@ QUALITY_INPUTS = (
     "python/lean_pool/indexes.py",
 )
 GLOBAL_INPUTS = SHARED_INPUTS + LINT_INPUTS + QUALITY_INPUTS
+WORKERS_VARIABLE = "LEAN_POOL_VALIDATION_WORKERS"
+# Each Lean check process is single-threaded with about 1 GB of private memory;
+# imported .olean files are memory-mapped and shared between processes.
+DEFAULT_WORKERS = 4
+
+
+def validation_workers() -> int:
+    """Return the number of concurrent Lean check processes to run."""
+    configured = os.environ.get(WORKERS_VARIABLE)
+    if configured:
+        workers = int(configured)
+        if workers < 1:
+            raise ValueError(f"{WORKERS_VARIABLE} must be positive: {configured}")
+        return workers
+    return max(1, min(DEFAULT_WORKERS, os.cpu_count() or 1))
+
+
+def run_ordered[T](tasks: Sequence[Callable[[], T]], workers: int) -> list[T]:
+    """Run independent tasks concurrently and return their results in task order.
+
+    The first task in order that raises re-raises here, after unstarted tasks are
+    cancelled and running ones finish, exactly as a sequential loop would.
+    """
+    if workers <= 1 or len(tasks) <= 1:
+        return [task() for task in tasks]
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = [executor.submit(task) for task in tasks]
+        try:
+            return [future.result() for future in futures]
+        except BaseException:
+            for future in futures:
+                future.cancel()
+            raise
+
+
+@dataclass(frozen=True)
+class Check[T]:
+    """One cacheable validation of a module group."""
+
+    kind: str
+    modules: list[str]
+    validate: Callable[[], list[T]]
+    metadata: Any = None
 
 
 def checker_inputs(kind: str | None) -> tuple[str, ...]:
@@ -118,11 +167,19 @@ def source_inventory(
 class ValidationCache:
     """Store pass receipts only, with content fingerprints and atomic publication."""
 
-    def __init__(self, root: Path, directory: Path, *, refresh: bool = False) -> None:
+    def __init__(
+        self,
+        root: Path,
+        directory: Path,
+        *,
+        refresh: bool = False,
+        workers: int | None = None,
+    ) -> None:
         """Load optional receipts; a missing or corrupt cache is a cold run."""
         self.root = root
         self.directory = directory
         self.refresh = refresh
+        self.workers = validation_workers() if workers is None else workers
         self.digests: dict[Path, str] = {}
         # Compilation finishes before validation; reuse inventories and path
         # lookups only within this immutable checkout, never across CI runs.
@@ -188,20 +245,42 @@ class ValidationCache:
         metadata: Any = None,
     ) -> list[T]:
         """Run on a miss and retain only passes; failures never create receipts."""
-        digest = self.fingerprint(modules, metadata, kind=kind)
-        key = f"{kind}:{modules[0]}"
-        expected = {"fingerprint": digest, "modules": modules, "passed": True}
-        if not self.refresh and self.receipts.get(key) == expected:
-            self.hits += 1
-            self.used[key] = expected
-            LOGGER.info("%s: cache hit", key)
-            return []
-        self.misses += 1
-        LOGGER.info("%s: validating", key)
-        errors = validate()
-        if not errors:
-            self.used[key] = expected
-        return errors
+        return self.check_all([Check(kind, modules, validate, metadata)], workers=1)[0]
+
+    def check_all[T](
+        self, checks: Sequence[Check[T]], *, workers: int | None = None
+    ) -> list[list[T]]:
+        """Run every missed check concurrently; return errors in check order.
+
+        Fingerprints, hit/miss counts and receipts are computed and recorded on
+        the calling thread, so worker threads only run the validators.
+        """
+        keys: list[str] = []
+        expected: list[dict[str, Any]] = []
+        missed: list[int] = []
+        for index, check in enumerate(checks):
+            digest = self.fingerprint(check.modules, check.metadata, kind=check.kind)
+            keys.append(f"{check.kind}:{check.modules[0]}")
+            expected.append(
+                {"fingerprint": digest, "modules": check.modules, "passed": True}
+            )
+            if not self.refresh and self.receipts.get(keys[index]) == expected[index]:
+                self.hits += 1
+                LOGGER.info("%s: cache hit", keys[index])
+            else:
+                self.misses += 1
+                missed.append(index)
+        outcomes = run_ordered(
+            [_timed(keys[index], checks[index].validate) for index in missed],
+            self.workers if workers is None else workers,
+        )
+        results: list[list[T]] = [[] for _ in checks]
+        for index, errors in zip(missed, outcomes, strict=True):
+            results[index] = errors
+        for index, errors in enumerate(results):
+            if not errors:
+                self.used[keys[index]] = expected[index]
+        return results
 
     def save(self) -> None:
         """Publish only receipts used in this run, pruning deleted/changed projects."""
@@ -214,26 +293,48 @@ class ValidationCache:
         )
 
 
-def lint_pool(root: Path, cache: ValidationCache) -> None:
+def _timed[T](key: str, validate: Callable[[], list[T]]) -> Callable[[], list[T]]:
+    def run() -> list[T]:
+        LOGGER.info("%s: validating", key)
+        start = time.monotonic()
+        errors = validate()
+        LOGGER.info(
+            "%s: %s in %.1fs",
+            key,
+            "failed" if errors else "passed",
+            time.monotonic() - start,
+        )
+        return errors
+
+    return run
+
+
+def _lint_unit(root: Path, modules: list[str]) -> list[str]:
+    """Lint one unit; output is buffered so concurrent units stay readable."""
+    process = subprocess.run(
+        ["lake", "env", "lean", "--run", "scripts/ci/lint-project.lean", *modules],
+        cwd=root,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    if process.returncode == 0:
+        LOGGER.info("lint:%s: %s", modules[0], process.stdout.strip())
+        return []
+    return [
+        f"{modules[0]}: lint failed with exit code {process.returncode}\n"
+        + process.stdout.rstrip()
+    ]
+
+
+def lint_pool(root: Path, cache: ValidationCache) -> list[str]:
     """Lint owned declarations once per unit, importing every owned module."""
-    for modules in pool_units(root):
-
-        def validate() -> list[str]:
-            subprocess.run(
-                [
-                    "lake",
-                    "env",
-                    "lean",
-                    "--run",
-                    "scripts/ci/lint-project.lean",
-                    *modules,
-                ],
-                cwd=root,
-                check=True,
-            )
-            return []
-
-        cache.check("lint", modules, validate)
+    checks = [
+        Check("lint", modules, lambda modules=modules: _lint_unit(root, modules))
+        for modules in pool_units(root)
+    ]
+    return [error for errors in cache.check_all(checks) for error in errors]
 
 
 def main() -> int:
@@ -248,14 +349,13 @@ def main() -> int:
     root = arguments.repo.resolve()
     cache = ValidationCache(root, root / arguments.cache, refresh=arguments.refresh)
     if arguments.check == "lint":
-        lint_pool(root, cache)
+        errors = lint_pool(root, cache)
         # Keep quality receipts for the subsequent step.
         cache.used = {
             key: receipt
             for key, receipt in cache.receipts.items()
             if not key.startswith("lint:")
         } | cache.used
-        errors = []
     else:
         from lean_pool.quality import run_checks
 
@@ -266,7 +366,7 @@ def main() -> int:
             if key.startswith("lint:")
         }
     for error in errors:
-        print(error.format(root))
+        print(error if isinstance(error, str) else error.format(root))
     if errors:
         return 1
     cache.save()
