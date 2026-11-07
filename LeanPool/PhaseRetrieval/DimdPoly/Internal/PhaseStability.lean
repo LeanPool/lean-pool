@@ -110,34 +110,12 @@ private theorem gaussianL2Norm_eq_lpNorm
     (hF : AEStronglyMeasurable F (gammaD d)) :
     Real.sqrt (∫ z : Cd d, ‖F z‖ ^ (2 : ℝ) ∂ gammaD d) =
       lpNorm F 2 (gammaD d) := by
-  have htwo : (2 : NNReal) ≠ 0 := by norm_num
-  have hlp := MeasureTheory.lpNorm_nnreal_eq_integral_norm_rpow
-    (μ := gammaD d) (p := (2 : NNReal)) (f := F) htwo hF
-  change
-    Real.sqrt (∫ z : Cd d, ‖F z‖ ^ (2 : ℝ) ∂ gammaD d) =
-      lpNorm F (↑(2 : NNReal)) (gammaD d)
-  rw [hlp]
-  change
-    Real.sqrt (∫ z : Cd d, ‖F z‖ ^ (2 : ℝ) ∂ gammaD d) =
-      (∫ z : Cd d, ‖F z‖ ^ (2 : ℝ) ∂ gammaD d) ^ ((2 : ℝ)⁻¹)
-  rw [Real.sqrt_eq_rpow]
-  norm_num
+  exact gaussianL2Norm_eq_lpNorm_from_measurability F hF
 
 theorem evalPkappa_lpNorm_eq_norm
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (F : Pkappa d kappa) :
     lpNorm (evalPkappa kappa F) 2 (gammaD d) = ‖F‖ := by
-  calc
-    lpNorm (evalPkappa kappa F) 2 (gammaD d)
-        = Real.sqrt (∫ z : Cd d, ‖evalPkappa kappa F z‖ ^ (2 : ℝ) ∂ gammaD d) :=
-          (gaussianL2Norm_eq_lpNorm (evalPkappa kappa F)
-            (memLp_two_evalPkappa hd kappa F).aestronglyMeasurable).symm
-    _ = ‖F‖ := by
-          have hpow :
-              (∫ z : Cd d, ‖evalPkappa kappa F z‖ ^ (2 : ℝ) ∂ gammaD d) =
-                ∫ z : Cd d, ‖evalPkappa kappa F z‖ ^ 2 ∂ gammaD d := by
-            simp_all
-          rw [hpow, evalPkappa_total_mass hd kappa F, Real.sqrt_sq_eq_abs]
-          exact abs_of_nonneg (Real.sqrt_nonneg _)
+  exact evalPkappa_lpNorm_eq_coefficient_norm hd kappa F
 
 theorem evalPkappaL2_norm
     {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) (F : Pkappa d kappa) :
