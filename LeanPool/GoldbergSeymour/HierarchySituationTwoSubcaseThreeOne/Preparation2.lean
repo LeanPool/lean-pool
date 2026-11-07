@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseThreeOne.Preparation1
@@ -398,20 +400,10 @@ theorem helper_stageSegment_5688.{u_1, u_2} :
         (⟨a + d, by
             omega⟩ :
           Fin (H.dividerCount + (2 : ℕ)))) := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx D theta lastIndex penIndex endIndex H
-      lastColor lastPosition penPosition endPosition thetaPresent tail R corrMinus baseMinus
-      HMinus corrStar baseStar HStar transSegment
-  as_aux_lemma =>
-    clear * - H transSegment
-    intro a d
-    induction d with
-    | zero => intro hb; exact ⟨le_rfl, by intro i; rfl, by intro i; rfl⟩
-    | succ d ih =>
-        intro hb
-        have hp := ih (by omega)
-        have hn := H.nested ⟨a + d, by omega⟩
-        exact transSegment hp (by simpa [Nat.add_assoc] using hn)
+      lastColor lastPosition penPosition endPosition thetaPresent tail R corrMinus baseMinus HMinus
+      corrStar baseStar HStar transSegment a d bound
+  exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
 
 theorem helper_nextBound_5702.{u_1, u_2} :
     open scoped Classical in

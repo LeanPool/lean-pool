@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
@@ -1867,13 +1869,6 @@ theorem P2940_T1_OneDividerRefresh
   let stageW : Fin (N + 2) → TreeSequence G e0 := fun j =>
     if hj : j.val = d + 2 then W else H.stage ⟨j.val, by omega⟩
   rcases hadjoin with ⟨hsize, hUW, hedge⟩
-  have segmentTrans {A B C : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B)
-      (hBC : TreeSequenceInitialSegment B C) :
-      TreeSequenceInitialSegment A C := by
-    exact hAB.trans hBC
-  have segmentRefl (A : TreeSequence G e0) : TreeSequenceInitialSegment A A :=
-    ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
   have segmentEqRight {A B C : TreeSequence G e0}
       (hAB : TreeSequenceInitialSegment A B) (hBC : B = C) :
       TreeSequenceInitialSegment A C := by
@@ -1909,15 +1904,8 @@ theorem P2940_T1_OneDividerRefresh
       TreeSequenceInitialSegment
         (H.stage ⟨a, by have := h; omega⟩)
         (H.stage ⟨a + r, by exact Nat.lt_succ_of_le h⟩) := by
-    intro a r
-    induction r with
-    | zero =>
-        intro h
-        exact segmentRefl _
-    | succ r ih =>
-        intro h
-        have hprev : a + r ≤ d + 1 := by omega
-        exact segmentTrans (ih hprev) (H.nested ⟨a + r, by omega⟩)
+    intro first offset bound
+    exact H.stageInitialSegmentOfLE _ _ (Nat.le_add_right first offset)
   have stageToU (j : Fin (d + 2)) (hj : j.val ≤ d + 1) :
       TreeSequenceInitialSegment (H.stage j) U := by
     have hseg := stageSegment j.val (d + 1 - j.val) (by omega)

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
@@ -35,23 +37,16 @@ alias comparableInitialSegments :=
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem stageInitialSegment.{u_1, u_2} : stageInitialSegmentStatement.{u_1, u_2} := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H segRefl segTrans a d hbound
-  induction d with
-  | zero => simpa using segRefl (H.stage ⟨a, by omega⟩)
-  | succ d ih =>
-    exact segTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
+  exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem stageInitialSegmentOfFinalTree.{u_1, u_2} :
     stageInitialSegmentOfFinalTreeStatement.{u_1, u_2} := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H stageSegment j
-  have hs := stageSegment j.val (H.dividerCount + 1 - j.val) (by omega)
-  have he : (⟨j.val + (H.dividerCount + 1 - j.val), by omega⟩ :
-      Fin (H.dividerCount + 2)) = Fin.last (H.dividerCount + 1) :=
-    Fin.ext (by simp only [Fin.val_last]; have := j.isLt; omega)
-  simpa [he, H.terminalStage] using hs
+  exact H.stageInitialSegment j
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem lastStagePositive.{u_1, u_2} : lastStagePositiveStatement.{u_1, u_2} := by
@@ -70,52 +65,32 @@ theorem lastStagePositive.{u_1, u_2} : lastStagePositiveStatement.{u_1, u_2} := 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem coreInitialSegmentOfStarredStage.{u_1, u_2} :
     coreInitialSegmentOfStarredStageStatement.{u_1, u_2} := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H q A segRefl segTrans stageSegment lastZero
       lastPositive
-  by_cases hz : H.dividerCount = 0
-  · rw [lastZero hz]
-    exact segRefl _
-  · rw [lastPositive hz]
-    have hs := stageSegment 1 (H.dividerCount - 1) (by omega)
-    have he : 1 + (H.dividerCount - 1) = H.dividerCount := by omega
-    simpa [he] using segTrans H.coreInsideFirst hs
+  exact H.coreInitialSegmentOfStarredStage q
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem terminalStageInitialSegmentOfCore.{u_1, u_2} :
     terminalStageInitialSegmentOfCoreStatement.{u_1, u_2} := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base n Tn segRefl
-  by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-  · exact (Classical.choice (base.parallel hp).2.2).leftSegment
-  · rw [base.nonparallel hp]
-    exact segRefl _
+  exact base.lastRoundInitialSegmentCore
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem starredStageInitialSegmentOfFinalTree.{u_1, u_2} :
     starredStageInitialSegmentOfFinalTreeStatement.{u_1, u_2} := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H q A segTrans stageToT lastZero lastPositive
-  by_cases hz : H.dividerCount = 0
-  · rw [lastZero hz]
-    exact segTrans H.coreInsideFirst (stageToT ⟨1, by omega⟩)
-  · rw [lastPositive hz]
-    exact stageToT _
+  exact H.lastStarredInitialSegment
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem ordinaryStageInitialSegmentOfStarredStage.{u_1, u_2} :
     ordinaryStageInitialSegmentOfStarredStageStatement.{u_1, u_2} := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H q A n Tn stageSegment lastZero lastPositive
       TnToA j
-  by_cases hz : H.dividerCount = 0
-  · have hj : j.castSucc = (0 : Fin (H.dividerCount + 2)) := Fin.ext (by simp; omega)
-    rw [hj, H.baseStage]
-    exact TnToA
-  · have hs := stageSegment j.val (H.dividerCount - j.val) (by omega)
-    rw [lastPositive hz]
-    convert hs using 1 <;> apply congrArg H.stage <;> apply Fin.ext <;>
-      simp only [Fin.val_castSucc]; omega
+  exact H.stageInitialSegmentOfStarredStage j q (Fin.le_last _)
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem firstMissingPositionWitness.{u_1, u_2} : firstMissingPositionWitnessStatement.{u_1,

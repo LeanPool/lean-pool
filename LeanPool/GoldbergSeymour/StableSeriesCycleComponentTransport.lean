@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
 
 public import LeanPool.GoldbergSeymour.SameColorSeriesPreserved
@@ -199,62 +201,6 @@ private theorem helper_reColoring_228.{u_1, u_2} :
         omega
       subst i
       simpa [hslot] using currentColoring
-
-private theorem helper_stepSegment_310.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq E] {G : LooplessMultigraph V E} {k rounds : ℕ} {e0 : E}
-      {input : PartialEdgeColoring E k} (series : TashkinovSeries G k rounds e0 input)
-      (_ _ _ r : Fin rounds),
-    TreeSequenceInitialSegment (series.data.tree r.succ.castSucc)
-      (series.data.tree r.succ.succ) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series t epsilon terminal r
-  have cert := series.certified r.succ
-  generalize hslot : r.succ = slot at cert
-  cases cert with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-      exact (Fin.succ_ne_zero r hslot).elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-      have hi : i = r := by
-        apply Fin.ext
-        have := congrArg Fin.val hslot
-        simp only [Fin.val_succ] at this
-        omega
-      subst i
-      simpa [hslot] using orderedExtension
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      actualGamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-      have hi : i = r := by
-        apply Fin.ext
-        have := congrArg Fin.val hslot
-        simp only [Fin.val_succ] at this
-        omega
-      subst i
-      simpa [hslot] using orderedExtension
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-      have hi : i = r := by
-        apply Fin.ext
-        have := congrArg Fin.val hslot
-        simp only [Fin.val_succ] at this
-        omega
-      subst i
-      simpa [hslot] using orderedExtension
 
 private theorem helper_terminalClosed_552.{u_1, u_2} :
     open scoped Classical in
@@ -1131,8 +1077,10 @@ theorem StableSeriesCycleComponentTransport {V E : Type*}
   have hepsilonColoring :
       series.data.coloring epsilon.castSucc = oldColoring :=
     coloringAlong epsilon.val (by omega) le_rfl epsilon.castSucc rfl
-  have stepSegment := @helper_stepSegment_310 V E inferInstance inferInstance inferInstance G k
-      rounds e0 input series t epsilon terminal
+  have stepSegment (index : Fin rounds) :
+      TreeSequenceInitialSegment (series.data.tree index.succ.castSucc)
+        (series.data.tree index.succ.succ) :=
+    series.positiveStepInitialSegment index.succ (Nat.zero_lt_succ _)
   have vertexTransfer {A B : TreeSequence G e0}
       (hAB : TreeSequenceInitialSegment A B) :
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by

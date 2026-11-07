@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
 
 public import LeanPool.GoldbergSeymour.TashkinovSeriesCast
@@ -6726,29 +6728,12 @@ theorem helper_continuation_2808.{u_1, u_2} :
     intro heq
     apply hnewColorNe
     rw [hnewGammaAvailable, hnewDeltaAvailable, heq]
-  have stepSegment :=
-    helper_stepSegment_2938 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive)
-        (@sigma) (@Tstar) (@adjoined) (@available) (@adjoinedExactly) (@hroundLarge)
-        (@originalPrefix) (@hr) (@corr) (@earlierPrefixBound) (@oldi) (@oldChoice) (@oldGamma)
-        (@newi) (@newChoice) (@newGamma) (@htree) (@holdColorCast) (@holdColorNe) (@hnewColorNe)
-        (@hidentifiedDelta) (@hidentifiedGamma) (@holdDeltaAvailable) (@holdGammaAvailable)
-  have segmentTrans :=
-    @helper_segmentTrans_778 (@V) (@E) (@G) (@e0)
-  have treeToFinal :=
-    helper_treeToFinal_2987 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive)
-        (@sigma) (@Tstar) (@available) (@hroundLarge) (@originalPrefix) (@hr) (@corr)
-        (@earlierPrefixBound) (@oldi) (@oldChoice) (@oldGamma) (@newi) (@newChoice) (@newGamma)
-        (@htree) (@holdColorCast) (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta)
-        (@hidentifiedGamma) (@holdDeltaAvailable) (@holdGammaAvailable) (@stepSegment)
-        (@segmentTrans)
   have hnewTreeFinal : TreeSequenceInitialSegment
       (corr.replacementSeries.data.tree newi.succ.castSucc)
       (corr.replacementSeries.data.tree
         (Fin.last (originalPrefix.rounds + 1))) := by
-    apply treeToFinal (originalPrefix.rounds - newi.val)
-    · simp
-      omega
-    · simp
+    exact corr.replacementSeries.stageInitialSegmentOfLE newi.succ.castSucc (Fin.last _)
+      (Nat.zero_lt_succ _) (Fin.le_last _)
   have hnewVertexTn :=
     helper_hnewVertexTn_1347 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett)
         (@hpositive) (@sigma) (@originalPrefix) (@corr) (@hcorrFinalTree) (@newi) (@newChoice)

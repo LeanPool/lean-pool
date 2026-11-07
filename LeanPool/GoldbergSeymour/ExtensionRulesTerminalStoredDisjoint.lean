@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseStepLemmas
@@ -108,46 +110,6 @@ private abbrev helperContinuation1661Conditions.{u_1, u_2} : Prop :=
         TwoColorIncidenceGraph G (ett.series.data.coloring r.succ) gammaR choiceR.color =
         TwoColorIncidenceGraph G secondStableR gammaR choiceR.color → Disjoint
         (ett.series.data.stored q.succ) (ett.series.data.stored r.succ)
-
-private theorem helper_stageToStage_128.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (vn vr : V) (_ : vn ∈ TreeSequenceVertexSet T) (_ : vr ∈
-        TreeSequenceVertexSet T), (
-    ∀ (A : TreeSequence G e0), TreeSequenceInitialSegment A A) → (
-    ∀ {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B C
-        → TreeSequenceInitialSegment A C) → (
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))), (0 : ℕ) < (↑i : ℕ) → TreeSequenceInitialSegment
-        (ett.series.data.tree i.castSucc) (ett.series.data.tree i.succ)) →
-    ∀ (a b : ℕ), (1 : ℕ) ≤ a →
-    ∀ (hab : a ≤ b) (hb : b ≤ ett.rounds), TreeSequenceInitialSegment (ett.series.data.tree (⟨a,
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) (ett.series.data.tree (⟨b,
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett vn vr hvn hvr segmentRefl segmentTrans
-      stepSegment a b ha hab hb
-  have chain (d : ℕ) (hd : a + d ≤ b) :
-      TreeSequenceInitialSegment
-        (ett.series.data.tree ⟨a, by omega⟩)
-        (ett.series.data.tree ⟨a + d, by omega⟩) := by
-    induction d with
-    | zero => simpa using segmentRefl (ett.series.data.tree ⟨a, by omega⟩)
-    | succ d ih =>
-        have hprev := ih (by omega)
-        let idx : Fin (ett.rounds + 1) := ⟨a + d, by omega⟩
-        have hnext := stepSegment idx (by dsimp [idx]; omega)
-        have hnext' : TreeSequenceInitialSegment
-            (ett.series.data.tree ⟨a + d, by omega⟩)
-            (ett.series.data.tree ⟨a + (d + 1), by omega⟩) := by
-          simpa [idx, Nat.add_assoc] using hnext
-        exact segmentTrans hprev hnext'
-  have hchain := chain (b - a) (by omega)
-  convert hchain using 1; apply congrArg ett.series.data.tree;
-    apply Fin.ext; simp; omega
 
 private theorem helper_controlCarry_158.{u_1, u_2} :
     open scoped Classical in
@@ -1671,20 +1633,14 @@ theorem ExtensionRulesTerminalStoredDisjoint {V E : Type*}
     Disjoint (ett.series.data.stored (Fin.last ett.rounds)) (ett.series.data.stored r.succ) := by
   classical
   let : DecidableEq V := Classical.decEq V
-  have segmentRefl (A : TreeSequence G e0) : TreeSequenceInitialSegment A A :=
-    ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-  have segmentTrans {A B C : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B)
-      (hBC : TreeSequenceInitialSegment B C) :
-      TreeSequenceInitialSegment A C := by
-    apply TreeSequenceInitialSegment.trans <;> assumption
-  have stepSegment :=
-    @_root_.GoldbergSeymour.ExtensionBaseProof.helper_stepSegment_2099 (@V) (@E) inferInstance
-        inferInstance inferInstance (@G) (@k) (@e0)
-        (@input) (@T) (@generating) (@ett)
-  have stageToStage := @helper_stageToStage_128 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@vn) (@vr) (@hvn) (@hvr) (@segmentRefl)
-      (@segmentTrans) (@stepSegment)
+  have stageToStage (first last : ℕ) (positive : 1 ≤ first)
+      (ordered : first ≤ last) (bounded : last ≤ ett.rounds) :
+      TreeSequenceInitialSegment
+        (ett.series.data.tree
+          ⟨first, lt_of_le_of_lt ordered (Nat.lt_succ_of_le (Nat.le_succ_of_le bounded))⟩)
+        (ett.series.data.tree ⟨last, Nat.lt_succ_of_le (Nat.le_succ_of_le bounded)⟩) :=
+    ett.series.stageInitialSegmentOfLE _ _
+      (Nat.lt_of_lt_of_le Nat.zero_lt_one positive) ordered
   have boundaryIncident {A : TreeSequence G e0} {f : E}
       (hf : f ∈ BoundaryEdges G (TreeSequenceVertexSet A)) :
       TreeIncidentEdge A f := by

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 
 public import LeanPool.GoldbergSeymour.SharedFacts.FirstSubcaseTransport
@@ -622,35 +624,6 @@ private theorem helper_hApositive_116.{u_1, u_2} :
   apply Fin.ext
   simp
   omega
-
-private theorem helper_hAT_134.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q; ((0 : ℕ) < H.dividerCount → A =
-        H.stage (⟨H.dividerCount,
-    by
-                have := TreeSequence.positive T
-                omega
-    ⟩ : Fin (H.dividerCount + (2 : ℕ)))) → (H.dividerCount = (0 : ℕ) → A = base.core) →
-        TreeSequenceInitialSegment A T := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A hApositive hAzero
-  by_cases hz : H.dividerCount = 0
-  · have hi : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-        Fin.last (H.dividerCount + 1) := by apply Fin.ext; simp [hz]
-    simpa [hAzero hz, hi, H.terminalStage] using H.coreInsideFirst
-  · rw [hApositive (Nat.pos_of_ne_zero hz)]
-    have hi : (⟨H.dividerCount, by omega⟩ : Fin (H.dividerCount + 2)) =
-        q.castSucc := Fin.ext rfl
-    have hj : H.stage q.succ = T := by
-      convert H.terminalStage using 1
-      congr 1
-    simpa only [hi, hj] using H.nested q
 
 private theorem helper_hAB_146.{u_1, u_2} :
     open scoped Classical in
@@ -2612,8 +2585,7 @@ theorem HierarchySituationTwoSubcaseOneTwo {V E : Type*}
     rw [hi]
     rfl
   have hAT : TreeSequenceInitialSegment A T := by
-    exact @helper_hAT_134 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hApositive) (@hAzero)
+    exact H.lastStarredInitialSegment
   have hAB : TreeSequenceInitialSegment A B := by
     exact @helper_hAB_146 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
         (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@htail) (@hBlen) (@hApositive)

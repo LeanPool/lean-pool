@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.RevisitingTerminalPreparation
 
 public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
@@ -2389,47 +2391,11 @@ theorem helper_stepSegment_2938.{u_1, u_2} :
         (_ : oldChoice.color = available.delta) (_ : oldGamma = available.gamma) (r : Fin
         originalPrefix.rounds), TreeSequenceInitialSegment (corr.replacementSeries.data.tree
         r.succ.castSucc) (corr.replacementSeries.data.tree r.succ.succ) := by
-  classical
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q adjoined available
-    adjoinedExactly hroundLarge originalPrefix hr corr earlierPrefixBound oldi oldChoice oldGamma
-    newi newChoice newGamma htree oldChoiceOnNew holdColorCast holdColorNe hnewColorNe
-    hidentifiedDelta hidentifiedGamma holdDeltaAvailable holdGammaAvailable r
-  have hstep := corr.replacementSeries.certified r.succ
-  generalize hslot : r.succ = slot at hstep
-  cases hstep with
-  | initial triple seedLength initialColoring initialStored initialEdges initialKind initialVertex
-    initialOutside initialDelta initialGamma initialClosure => exact (Fin.succ_ne_zero r hslot).elim
-  | SE i prevProper prevOne prevClosed prevNotStrong noRE choice alternative coloring stored edges
-    kind vertex outside delta gamma adjoined adjoinedExactly closed ordered
-    strict =>
-    have hi : i = r := by
-      apply Fin.ext
-      have hv := congrArg Fin.val hslot
-      simp only [Fin.val_succ] at hv
-      omega
-    subst i
-    simpa [hslot] using ordered
-  | PE i prevProper prevOne prevClosed prevNotStrong noRE choice alternativeFails gamma gammaRule
-    second secondProper secondOne secondStable exit coloring coloringProper coloringOne stored edges
-    kind vertex outside delta gammaValue closed ordered
-    strict =>
-    have hi : i = r := by
-      apply Fin.ext
-      have hv := congrArg Fin.val hslot
-      simp only [Fin.val_succ] at hv
-      omega
-    subst i
-    simpa [hslot] using ordered
-  | RE i prevProper prevOne prevClosed prevNotStrong cert coloring stored edges kind vertex outside
-    delta gamma adjoined adjoinedExactly closed ordered
-    strict =>
-    have hi : i = r := by
-      apply Fin.ext
-      have hv := congrArg Fin.val hslot
-      simp only [Fin.val_succ] at hv
-      omega
-    subst i
-    simpa [hslot] using ordered
+      adjoinedExactly hroundLarge originalPrefix hr corr earlierPrefixBound oldi oldChoice oldGamma
+      newi newChoice newGamma htree oldChoiceOnNew holdColorCast holdColorNe hnewColorNe
+      hidentifiedDelta hidentifiedGamma holdDeltaAvailable holdGammaAvailable r
+  exact corr.replacementSeries.positiveStepInitialSegment r.succ (Nat.zero_lt_succ _)
 
 theorem helper_treeToFinal_2987.{u_1, u_2} :
     open scoped Classical in
@@ -2471,41 +2437,13 @@ theorem helper_treeToFinal_2987.{u_1, u_2} :
         → TreeSequenceInitialSegment A C) (d : ℕ) (idx : Fin (originalPrefix.rounds + (2 : ℕ))),
         (↑idx : ℕ) + d = originalPrefix.rounds + (1 : ℕ) → (1 : ℕ) ≤ (↑idx : ℕ) →
         TreeSequenceInitialSegment (corr.replacementSeries.data.tree idx)
-        (corr.replacementSeries.data.tree (Fin.last (originalPrefix.rounds + (1 : ℕ)))) :=
-  by
-  classical
+        (corr.replacementSeries.data.tree (Fin.last (originalPrefix.rounds + (1 : ℕ)))) := by
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q available hroundLarge
-    originalPrefix hr corr earlierPrefixBound oldi oldChoice oldGamma newi newChoice newGamma htree
-    oldChoiceOnNew holdColorCast holdColorNe hnewColorNe hidentifiedDelta hidentifiedGamma
-    holdDeltaAvailable holdGammaAvailable stepSegment segmentTrans d
-  induction d with
-  | zero =>
-    intro idx hidx hpos
-    have hi : idx = Fin.last (originalPrefix.rounds + 1) := by
-      apply Fin.ext
-      simp
-      omega
-    rw [hi]
-    exact ⟨le_rfl, (fun _ => rfl), (fun _ => rfl)⟩
-  | succ d ih =>
-    intro idx hidx hpos
-    have hlt : idx.val < originalPrefix.rounds + 1 := by omega
-    let r : Fin originalPrefix.rounds := ⟨idx.val - 1, by omega⟩
-    have hleft : idx = r.succ.castSucc := by
-      apply Fin.ext
-      simp [r]
-      omega
-    let next : Fin (originalPrefix.rounds + 2) := ⟨idx.val + 1, by omega⟩
-    have hright : next = r.succ.succ := by
-      apply Fin.ext
-      simp [next, r]
-      omega
-    have hfirst :
-      TreeSequenceInitialSegment (corr.replacementSeries.data.tree idx)
-        (corr.replacementSeries.data.tree next) := by
-      rw [hleft, hright]
-      exact stepSegment r
-    exact segmentTrans _ _ _ hfirst (ih next (by simp [next]; omega) (by simp [next]))
+      originalPrefix hr corr earlierPrefixBound oldi oldChoice oldGamma newi newChoice newGamma
+      htree oldChoiceOnNew holdColorCast holdColorNe hnewColorNe hidentifiedDelta hidentifiedGamma
+      holdDeltaAvailable holdGammaAvailable stepSegment segmentTrans d index distance positive
+  exact corr.replacementSeries.stageInitialSegmentOfLE index (Fin.last _)
+    (Nat.lt_of_lt_of_le Nat.zero_lt_one positive) (Fin.le_last _)
 
 theorem helper_hclosedSigma_3647.{u_1, u_2} :
     open scoped Classical in

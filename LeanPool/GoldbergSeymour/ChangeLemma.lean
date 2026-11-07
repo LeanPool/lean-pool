@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothInside
@@ -118,61 +120,11 @@ theorem ChangeLemma {V E : Type*}
   let H := C.hierarchy
   let q : Fin (H.dividerCount + 1) := Fin.last H.dividerCount
   let A := HierarchyStarredStage H q
-  have segmentTrans : ∀ X Y Z : TreeSequence G e0,
-      TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z →
-        TreeSequenceInitialSegment X Z := by
-    intro X Y Z hxy hyz
-    rcases hxy with ⟨hxy, hvxy, hexy⟩
-    rcases hyz with ⟨hyz, hvyz, heyz⟩
-    have h : X.length ≤ Z.length := by omega
-    refine ⟨h, ?_, ?_⟩
-    · intro i
-      have hi := hvyz (Fin.castLE (Nat.succ_le_succ hxy) i)
-      have hj := hvxy i
-      have he : Fin.castLE (Nat.succ_le_succ h) i =
-          Fin.castLE (Nat.succ_le_succ hyz) (Fin.castLE (Nat.succ_le_succ hxy) i) := by
-        apply Fin.ext
-        rfl
-      rw [he]
-      exact hi.trans hj
-    · intro i
-      have hi := heyz (Fin.castLE hxy i)
-      have hj := hexy i
-      have he : Fin.castLE h i = Fin.castLE hyz (Fin.castLE hxy i) := by
-        apply Fin.ext
-        rfl
-      rw [he]
-      exact hi.trans hj
   have stageToEnd : ∀ i : Fin (H.dividerCount + 1),
       TreeSequenceInitialSegment (H.stage i.castSucc)
         (H.stage (Fin.last (H.dividerCount + 1))) := by
-    have forward : ∀ i : Fin (H.dividerCount + 1), ∀ r : ℕ,
-        ∀ hbound : i.val + r ≤ H.dividerCount + 1,
-        TreeSequenceInitialSegment (H.stage i.castSucc)
-          (H.stage ⟨i.val + r, by omega⟩) := by
-      intro i r
-      induction r with
-      | zero =>
-          intro h
-          exact ⟨Nat.le_refl _, by intro j; rfl, by intro j; rfl⟩
-      | succ r ih =>
-          intro hbound
-          let j : Fin (H.dividerCount + 1) := ⟨i.val + r, by omega⟩
-          have hfirst := ih (by omega)
-          have hstep := H.nested j
-          have hmid : H.stage j.castSucc = H.stage ⟨i.val + r, by omega⟩ := by
-            congr 1
-          have hlast : H.stage j.succ =
-              H.stage ⟨i.val + Nat.succ r, by omega⟩ := by
-            apply congrArg H.stage
-            apply Fin.ext
-            rfl
-          rw [← hmid] at hfirst
-          rw [hlast] at hstep
-          exact segmentTrans _ _ _ hfirst hstep
-    intro i
-    have hf := forward i (H.dividerCount + 1 - i.val) (by omega)
-    simpa [Fin.last] using hf
+    intro index
+    exact H.stageInitialSegmentOfLE _ _ (Fin.le_last _)
   have hAsegment : TreeSequenceInitialSegment A T := by
     rw [show T = H.stage (Fin.last (H.dividerCount + 1)) from H.terminalStage.symm]
     by_cases hq : H.dividerCount = 0

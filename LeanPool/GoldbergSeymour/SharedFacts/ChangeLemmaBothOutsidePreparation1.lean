@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexample
@@ -133,13 +135,9 @@ theorem ordinaryStageInitialSegmentOfTerminal.{u_1, u_2} :
               Fin (H.dividerCount + (2 : ℕ))))) →
     ∀ (j : Fin (H.dividerCount + (2 : ℕ))),
     TreeSequenceInitialSegment (H.stage j) T := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H stageSegment j
-  have hs := stageSegment j.val (H.dividerCount + 1 - j.val) (by omega)
-  have he : (⟨j.val + (H.dividerCount + 1 - j.val), by omega⟩ :
-      Fin (H.dividerCount + 2)) = Fin.last (H.dividerCount + 1) :=
-    Fin.ext (by simp only [Fin.val_last]; have := j.isLt; omega)
-  simpa [he, H.terminalStage] using hs
+  exact H.stageInitialSegment j
+
 
 /-- A preparation fact shared by the coloring-change constructions. -/
 theorem missingColorOutsideStarredPrefix.{u_1, u_2} :

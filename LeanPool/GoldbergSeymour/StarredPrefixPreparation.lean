@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.GoodHierarchyElementaryLarge
 public import LeanPool.GoldbergSeymour.PredecessorElementary
 public import LeanPool.GoldbergSeymour.TechnicalInductionContext
@@ -1204,57 +1206,6 @@ private theorem helper_hkindReplacement_1362.{u_1, u_2} :
     _ = ett.series.data.kind (Fin.last ett.rounds) :=
       corrU.extensionKindsAgree (Fin.last ett.rounds)
 
-private theorem helper_stageSegment_1552.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (U : TreeSequence G e0) (corrU : CorrespondingExtendedTashkinovTree G k e0 ett phi U)
-      (baseU : HierarchyBase corrU.replacementETT phi)
-      (H : TashkinovHierarchy corrU.replacementETT baseU),
-    (∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
-        {generating' : PartialEdgeColoring E k}
-        (current : ExtendedTashkinovTree G k e0 input' T' generating'),
-        current.rounds = corrU.replacementETT.rounds →
-          MaximumProperty current →
-            ∀ (x : HierarchyBase current generating') (x_1 : TashkinovHierarchy current x)
-              (_ : GoodHierarchy x_1),
-              (2 : ℕ) * current.rounds + (11 : ℕ) ≤
-                (TreeMissingColors generating'
-                    (current.series.data.tree (Fin.last current.rounds).castSucc)).card) →
-    (∀ (X : TreeSequence G e0), TreeSequenceInitialSegment X X) →
-    (∀ {X Y Z : TreeSequence G e0},
-        TreeSequenceInitialSegment X Y →
-          TreeSequenceInitialSegment Y Z → TreeSequenceInitialSegment X Z) →
-    ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)),
-    TreeSequenceInitialSegment
-      (H.stage
-        (⟨a,
-            Decidable.byContradiction fun (a_1 : ¬a < H.dividerCount + (2 : ℕ)) ↦ by
-              omega⟩ :
-          Fin (H.dividerCount + (2 : ℕ))))
-      (H.stage
-        (⟨a + d,
-            Decidable.byContradiction fun (a_1 : ¬a + d < H.dividerCount + (2 : ℕ)) ↦ by
-              omega⟩ :
-          Fin (H.dividerCount + (2 : ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett U corrU baseU H hbound segmentRefl segmentTrans a d
-  induction d with
-  | zero =>
-      intro hbound
-      simpa using segmentRefl (H.stage ⟨a, by omega⟩)
-  | succ d ih =>
-      intro hbound
-      have hprev := ih (by omega)
-      have hnext := H.nested ⟨a + d, by omega⟩
-      have hnext' : TreeSequenceInitialSegment
-          (H.stage ⟨a + d, by omega⟩)
-          (H.stage ⟨a + (d + 1), by omega⟩) := by
-        simpa [Nat.add_assoc] using hnext
-      exact segmentTrans hprev hnext'
-
 private theorem helper_hRplus_1583.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -1402,23 +1353,11 @@ private theorem helper_continuation_1569.{u_1, u_2} :
   have helemA := @helper_helemA_372 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 input T phi ett base hlargeOrder hmissingBound U corrU hMPU baseU hcore H good
       hkindReplacement hlower hcurrent hUelem hpreElem htermMissing
-  have segmentRefl (X : TreeSequence G e0) : TreeSequenceInitialSegment X X :=
-    ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-  have segmentTrans {X Y Z : TreeSequence G e0}
-      (hXY : TreeSequenceInitialSegment X Y)
-      (hYZ : TreeSequenceInitialSegment Y Z) :
-      TreeSequenceInitialSegment X Z := by
-    rcases hXY with ⟨hxy, hvxy, hexy⟩
-    rcases hYZ with ⟨hyz, hvyz, heyz⟩
-    refine ⟨le_trans hxy hyz, ?_, ?_⟩
-    · intro i
-      have hmid := hvyz (Fin.castLE (Nat.succ_le_succ hxy) i)
-      simpa using hmid.trans (hvxy i)
-    · intro i
-      have hmid := heyz (Fin.castLE hxy i)
-      simpa using hmid.trans (hexy i)
-  have stageSegment := @helper_stageSegment_1552 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 input T phi ett U corrU baseU H hbound segmentRefl segmentTrans
+  have stageSegment (a d : ℕ) (bound : a + d ≤ H.dividerCount + 1) :
+      TreeSequenceInitialSegment
+        (H.stage ⟨a, lt_of_le_of_lt (Nat.le_add_right a d) (Nat.lt_succ_of_le bound)⟩)
+        (H.stage ⟨a + d, Nat.lt_succ_of_le bound⟩) :=
+    H.stageInitialSegmentOfLE _ _ (Nat.le_add_right a d)
   have hAU := @helper_hAU_497 V E inferInstance inferInstance inferInstance inferInstance G k e0
       input T phi ett base U corrU baseU hcore H treeOfSeriesEq hqterminal stageSegment
   have hstrictA := @helper_hstrictA_584 V E inferInstance inferInstance inferInstance inferInstance

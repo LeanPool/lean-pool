@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
@@ -1509,45 +1511,6 @@ private theorem helper_firstMissingEq_961.{u_1, u_2} :
     intro index
     exact hswap.2.2.2 (T.vertex index) c
       (fun equal => hc (Or.inl equal)) (fun equal => hc (Or.inr equal))
-private theorem helper_stagesNested_818.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base) (_ : (0 : ℕ) < C.hierarchy.dividerCount),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    ∀
-      (_ :
-        (∀ {X Y Z : TreeSequence G e0} (_ : TreeSequenceInitialSegment X Y)
-          (_ : TreeSequenceInitialSegment Y Z), TreeSequenceInitialSegment X Z))
-      (a b : Fin (H.dividerCount + (2 : ℕ))) (_ : (↑a : ℕ) ≤ (↑b : ℕ)),
-    TreeSequenceInitialSegment (H.stage a) (H.stage b) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hpositive H segmentTrans
-  have chain : ∀ r : ℕ, ∀ a : Fin (H.dividerCount + 2),
-      ∀ hr : a.val + r < H.dividerCount + 2,
-        TreeSequenceInitialSegment (H.stage a) (H.stage ⟨a.val + r, hr⟩) := by
-    intro r
-    induction r with
-    | zero =>
-        intro a hr
-        exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    | succ r ih =>
-        intro a hr
-        have hprev := ih a (by omega)
-        have hstep := H.nested ⟨a.val + r, by omega⟩
-        exact segmentTrans hprev hstep
-  intro a b hab
-  have h := chain (b.val - a.val) a (by omega)
-  have he : (⟨a.val + (b.val - a.val), by omega⟩ :
-      Fin (H.dividerCount + 2)) = b := by
-    apply Fin.ext
-    change a.val + (b.val - a.val) = b.val
-    omega
-  rw [he] at h
-  exact h
-
 private theorem helper_hvertices_896.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -3009,8 +2972,8 @@ theorem HierarchyCounterexampleOneAdditionPositiveDividerImpossible
     exact h
   have stagesNested : ∀ a b : Fin (H.dividerCount + 2),
       a.val ≤ b.val → TreeSequenceInitialSegment (H.stage a) (H.stage b) := by
-    exact @helper_stagesNested_818 V E inferInstance inferInstance inferInstance inferInstance G
-        k e0 input T phi ett base C hpositive segmentTrans
+    intro first last ordered
+    exact H.stageInitialSegmentOfLE first last ordered
   have hTnA : TreeSequenceInitialSegment Tn A := by
     rw [hA]
     have h := stagesNested 0 q.castSucc (by simp)

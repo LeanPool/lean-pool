@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
@@ -1013,12 +1015,8 @@ private theorem helper_rebuild_367.{u_1, u_2} :
   have stageSegment : ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1),
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
-    intro a d
-    induction d with
-    | zero => intro h; exact segRefl _
-    | succ d ih =>
-      intro h
-      exact segTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
+    intro a d bound
+    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   let A := HierarchyStarredStage H (Fin.last H.dividerCount)
   let Tn := ett.series.data.tree (Fin.last ett.rounds).castSucc
   have lastZero (h : H.dividerCount = 0) : A = base.core := by
@@ -1042,11 +1040,7 @@ private theorem helper_rebuild_367.{u_1, u_2} :
           (H.stage ⟨H.dividerCount, by omega⟩) := by simpa only [he] using hs
       exact segTrans H.coreInsideFirst hs'
   have TnToCore : TreeSequenceInitialSegment Tn base.core := by
-    by_cases hp : ett.series.data.kind (Fin.last ett.rounds) =
-        some TashkinovExtensionKind.PE
-    · obtain ⟨_, _, ⟨u⟩⟩ := base.parallel hp
-      exact u.leftSegment
-    · rw [base.nonparallel hp]; exact segRefl _
+    exact base.lastRoundInitialSegmentCore
   have coreToB := segTrans coreToA hAB
   have TnToB := segTrans TnToCore coreToB
   obtain ⟨g, hattach⟩ := hBCadjoin
@@ -1356,12 +1350,8 @@ lemma Step1CaseOneOutsideStar {V E : Type*}
   have stage_segment : ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1),
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
-    intro a d
-    induction d with
-    | zero => intro h; exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    | succ d ih =>
-      intro h
-      exact segment_trans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
+    intro a d bound
+    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   let A := HierarchyStarredStage H (Fin.last H.dividerCount)
   have hAT : TreeSequenceInitialSegment A T := by
     by_cases hz : H.dividerCount = 0

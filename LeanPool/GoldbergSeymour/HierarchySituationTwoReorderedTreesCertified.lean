@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified.Preparation2
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTrees
 
@@ -151,15 +153,8 @@ theorem HierarchySituationTwoReorderedTreesCertified {V E : Type*}
   have stageSegment : ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1),
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
-    intro a d
-    induction d with
-    | zero => intro hbound; exact segmentRefl _
-    | succ d ih =>
-      intro hbound
-      exact segmentTrans (ih (by omega))
-        (by
-          convert H.nested ⟨a + d, by omega⟩ using 1 <;>
-            congr 1)
+    intro a d bound
+    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have stageToT (i : Fin (H.dividerCount + 2)) :
       TreeSequenceInitialSegment (H.stage i) T := by
     have hs := stageSegment i.val (H.dividerCount + 1 - i.val) (by omega)

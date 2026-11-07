@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
@@ -1962,12 +1964,7 @@ theorem P2905_T2_AbsentOwnerReplacement {V E : Type*}
       exact (TreeSequenceInitialSegmentVertexSetSubset H.coreInsideFirst).trans
         (stageMono (by change 1 ≤ r.val + 1; omega))
   have hTnCore : TreeSequenceVertexSet Tn ⊆ TreeSequenceVertexSet base.core := by
-    by_cases hp : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE
-    · obtain ⟨_, _, ⟨u⟩⟩ := base.parallel hp
-      exact TreeSequenceInitialSegmentVertexSetSubset u.leftSegment
-    · have hc := base.nonparallel hp
-      change base.core = Tn at hc
-      rw [hc]
+    exact TreeSequenceInitialSegmentVertexSetSubset base.lastRoundInitialSegmentCore
   have hcoreB : TreeSequenceVertexSet base.core ⊆ TreeSequenceVertexSet B := by
     exact hcoreA.trans (TreeSequenceInitialSegmentVertexSetSubset
       (commonPrefix hA hBprefix (by rw [hlenB]; omega)))

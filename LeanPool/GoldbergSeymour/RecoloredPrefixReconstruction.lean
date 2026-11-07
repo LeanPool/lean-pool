@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.TerminalRoute
@@ -155,22 +157,8 @@ theorem P2813_T1_PrefixReconstruction {V E : Type*}
   have stageChain : ∀ (j : ℕ) (hj : j < H.dividerCount + 2)
       (i : Fin (H.dividerCount + 2)), i.val ≤ j →
       TreeSequenceInitialSegment (H.stage i) (H.stage ⟨j, hj⟩) := by
-    clear * - H trans
-    intro j
-    induction j with
-    | zero =>
-        intro hj i hi
-        have hi0 : i = 0 := Fin.ext (Nat.eq_zero_of_le_zero hi)
-        subst i
-        exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    | succ j ih =>
-        intro hj i hi
-        by_cases heq : i.val = j + 1
-        · have heq' : i = ⟨j + 1, hj⟩ := Fin.ext heq
-          subst i
-          exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-        · exact trans (ih (by omega) i (by omega))
-            (H.nested ⟨j, by omega⟩)
+    intro last bound first ordered
+    exact H.stageInitialSegmentOfLE first ⟨last, bound⟩ ordered
   have starStage (r : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H r)
         (H.stage r.succ) := by
@@ -231,10 +219,7 @@ theorem P2813_T1_PrefixReconstruction {V E : Type*}
           funext i
           simpa only [Fin.castLE] using (hSU.2.2 i).symm
   have coreChain : TreeSequenceInitialSegment Tn base.core := by
-    by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-    · exact (base.parallel hp).2.2.some.leftSegment
-    · rw [base.nonparallel hp]
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
+    exact base.lastRoundInitialSegmentCore
   have coreA : TreeSequenceInitialSegment base.core A := starChain 0 q (Fin.zero_le _)
   have TnA := trans coreChain coreA
   have hnStable : StableColoring Tn

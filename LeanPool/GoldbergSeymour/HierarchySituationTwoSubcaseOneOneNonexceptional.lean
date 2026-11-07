@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
@@ -2832,14 +2834,8 @@ theorem HierarchySituationTwoSubcaseOneOneNonexceptional {V E : Type*}
   have stageSegment : ∀ a d : ℕ, ∀ hb : a + d ≤ H.dividerCount + 1,
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
-    intro a d
-    induction d with
-    | zero => intro hb; exact ⟨le_rfl, by intro i; rfl, by intro i; rfl⟩
-    | succ d ih =>
-      intro hb
-      have hp := ih (by omega)
-      have hn := H.nested ⟨a + d, by omega⟩
-      exact transSegment hp (by simpa [Nat.add_assoc] using hn)
+    intro a d bound
+    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have starredAt (j : Fin (H.dividerCount + 1)) (hj : j.val ≠ 0) :
       HierarchyStarredStage H j = H.stage j.castSucc := by
     obtain hz | ⟨i, rfl⟩ := Fin.eq_zero_or_eq_succ j

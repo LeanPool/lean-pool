@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -112,6 +112,48 @@ theorem TashkinovHierarchy.firstStageOfNoDividers (hierarchy : TashkinovHierarch
     apply Fin.ext
     simp only [Fin.val_succ, Fin.val_zero, Fin.val_last, count]
   rw [index, hierarchy.terminalStage]
+
+
+/-- The penultimate certified tree is contained in the hierarchy base core. -/
+theorem HierarchyBase.lastRoundInitialSegmentCore (base : HierarchyBase ett phi) :
+    TreeSequenceInitialSegment (ett.series.data.tree (Fin.last ett.rounds).castSucc) base.core := by
+  classical
+  by_cases parallel : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE
+  · exact (Classical.choice (base.parallel parallel).2.2).leftSegment
+  · rw [base.nonparallel parallel]
+    exact TreeSequenceInitialSegment.refl _
+
+/-- The base core is an initial segment of every starred hierarchy stage. -/
+theorem TashkinovHierarchy.coreInitialSegmentOfStarredStage
+    (hierarchy : TashkinovHierarchy ett base) (index : Fin (hierarchy.dividerCount + 1)) :
+    TreeSequenceInitialSegment base.core (HierarchyStarredStage hierarchy index) := by
+  change TreeSequenceInitialSegment (HierarchyStarredStage hierarchy 0)
+    (HierarchyStarredStage hierarchy index)
+  exact hierarchy.starredStageInitialSegmentOfLE 0 index (Fin.zero_le _)
+
+/-- An ordinary stage is contained in every later starred stage, including the base core. -/
+theorem TashkinovHierarchy.stageInitialSegmentOfStarredStage
+    (hierarchy : TashkinovHierarchy ett base) (first last : Fin (hierarchy.dividerCount + 1))
+    (ordered : first ≤ last) :
+    TreeSequenceInitialSegment (hierarchy.stage first.castSucc)
+      (HierarchyStarredStage hierarchy last) := by
+  change first.val ≤ last.val at ordered
+  by_cases zero : last = 0
+  · have firstZero : first = 0 := by
+      apply Fin.ext
+      have bound : first.val ≤ 0 := by simpa only [zero, Fin.val_zero] using ordered
+      exact Nat.eq_zero_of_le_zero bound
+    subst first
+    subst last
+    change TreeSequenceInitialSegment (hierarchy.stage 0) base.core
+    rw [hierarchy.baseStage]
+    exact base.lastRoundInitialSegmentCore
+  · have starred : HierarchyStarredStage hierarchy last = hierarchy.stage last.castSucc := by
+      rw [← Fin.succ_pred last zero]
+      rfl
+    rw [starred]
+    exact hierarchy.stageInitialSegmentOfLE first.castSucc last.castSucc
+      (by change first.val ≤ last.val; exact ordered)
 
 end GoldbergSeymour
 

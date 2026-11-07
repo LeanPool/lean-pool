@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.StableChangeCasesOneTwoSplitTail
@@ -1030,10 +1032,7 @@ theorem StableChangeCasesOneTwoSplitTail {V E : Type*}
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
-    induction d with
-    | zero => simpa using segRefl (H.stage ⟨a, by omega⟩)
-    | succ d ih =>
-      exact segTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
+    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have lastZero (hz : H.dividerCount = 0) : A = base.core := by
     simp [A, q, HierarchyStarredStage, hz, Fin.last]
   have lastPositive (hz : H.dividerCount ≠ 0) :
@@ -1055,9 +1054,7 @@ theorem StableChangeCasesOneTwoSplitTail {V E : Type*}
       have he : 1 + (H.dividerCount - 1) = H.dividerCount := by omega
       simpa [he] using segTrans H.coreInsideFirst hs
   have TnToCore : TreeSequenceInitialSegment Tn base.core := by
-    by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-    · exact (Classical.choice (base.parallel hp).2.2).leftSegment
-    · rw [base.nonparallel hp]; exact segRefl _
+    exact base.lastRoundInitialSegmentCore
   have TnToA := segTrans TnToCore coreToA
   have ordinaryToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (H.stage j.castSucc) A := by

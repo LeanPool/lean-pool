@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.NonparallelHierarchyCorrespondence
@@ -2003,29 +2005,8 @@ theorem helper_coreA_200.{u_1, u_2} :
         TreeSequenceInitialSegment (H.stage i)
           (H.stage (⟨j, hj⟩ : Fin (H.dividerCount + (2 : ℕ))))) →
   TreeSequenceInitialSegment P.replacementBase.core A := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx P old H A trans chain
-  by_cases hq : H.dividerCount = 0
-  · have he : A = P.replacementBase.core := by
-      simp [A, HierarchyStarredStage, hq, Fin.last]
-    rw [he]
-    exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  · have he : A = H.stage ⟨H.dividerCount, by omega⟩ := by
-      unfold A HierarchyStarredStage
-      obtain hz | ⟨i, hi⟩ := Fin.eq_zero_or_eq_succ (Fin.last H.dividerCount)
-      · have hv := congrArg Fin.val hz
-        simp only [Fin.val_last, Fin.val_zero] at hv
-        contradiction
-      · rw [hi]
-        simp only [Fin.cases_succ]
-        congr 1
-        apply Fin.ext
-        have hv := congrArg Fin.val hi
-        simp only [Fin.val_last, Fin.val_succ] at hv
-        exact hv.symm
-    rw [he]
-    exact trans H.coreInsideFirst (chain H.dividerCount (by omega) ⟨1, by omega⟩
-      (by change 1 ≤ H.dividerCount; omega))
+  exact H.coreInitialSegmentOfStarredStage (Fin.last _)
 
 theorem helper_hdata_519.{u_1, u_2} :
     open scoped Classical in
@@ -2644,13 +2625,8 @@ theorem helper_hTnCore_1684.{u_1, u_2} :
   let Tn : TreeSequence G e0 :=
     P.corresponding.replacementETT.series.data.tree n.castSucc;
   TreeSequenceInitialSegment Tn P.replacementBase.core := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx P n Tn
-  by_cases hpe : P.corresponding.replacementETT.series.data.kind n =
-      some TashkinovExtensionKind.PE
-  · exact (P.replacementBase.parallel hpe).2.2.some.leftSegment
-  · rw [P.replacementBase.nonparallel hpe]
-    exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
+  exact P.replacementBase.lastRoundInitialSegmentCore
 
 theorem helper_common_1702.{u_1, u_2} :
     open scoped Classical in

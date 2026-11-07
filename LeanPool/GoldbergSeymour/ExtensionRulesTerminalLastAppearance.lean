@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
 public import LeanPool.GoldbergSeymour.HkuMissingStoredMonotone
 public import LeanPool.GoldbergSeymour.MaximumProperty
@@ -630,12 +632,7 @@ theorem ExtensionRulesTerminalLastAppearance {V E : Type*}
       TreeSequenceInitialSegment (ett.series.data.tree a.castSucc)
         (ett.series.data.tree a.succ) := by
     intro a ha
-    have certified := ett.series.certified a
-    cases certified with
-    | initial => simp at ha
-    | SE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-    | PE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-    | RE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
+    exact ett.series.positiveStepInitialSegment a ha
   have orderTransfer : ∀ {A B : TreeSequence G e0},
       TreeSequenceInitialSegment A B → ∀ u w,
         TreeVertexOrder A u w → TreeVertexOrder B u w := by

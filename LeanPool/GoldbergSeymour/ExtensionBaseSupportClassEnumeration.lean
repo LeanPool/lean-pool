@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClass
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
@@ -73,53 +75,6 @@ private theorem ExtensionBaseSupportClassEnumeration_peVertex_63.{u_1, u_2} :
     have vertexEq : choice.vertex = w :=
       Option.some.inj (currentVertex.symm.trans hvertex)
     simpa [vertexEq] using choice.vertexDefective.1
-
-private theorem ExtensionBaseSupportClassEnumeration_nextSegment_239.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] {G :
-    LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k} {T :
-    TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett : ExtendedTashkinovTree G k
-    e0 input T generating), ∀ terminalSupport ∈ TreeSequenceVertexSet T, ∀ (_ : Fin
-    ett.rounds) (w : V) (_ : Fin ett.rounds), ∀ v0 ∈ TreeSequenceVertexSet T, w ∈
-    TreeSequenceVertexSet T → ∀ (r : Fin ett.rounds), TreeSequenceInitialSegment
-    (ett.series.data.tree r.succ.castSucc) (ett.series.data.tree r.succ.succ) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett terminalSupport hterminalSupport q w r0 v0
-      hv0Final hwFinal r
-  generalize targetEq : r.succ = target
-  cases ett.series.certified target with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    exact (Fin.succ_ne_zero r targetEq).elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have values := congrArg Fin.val targetEq
-    simp at values
-    have hi : i = r := by apply Fin.ext; omega
-    simpa [hi] using orderedExtension
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have values := congrArg Fin.val targetEq
-    simp at values
-    have hi : i = r := by apply Fin.ext; omega
-    simpa [hi] using orderedExtension
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have values := congrArg Fin.val targetEq
-    simp at values
-    have hi : i = r := by apply Fin.ext; omega
-    simpa [hi] using orderedExtension
 
 theorem ExtensionBaseSupportClassEnumeration {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq E]
@@ -285,12 +240,10 @@ theorem ExtensionBaseSupportClassEnumeration {V E : Type*}
           List.perm_insertionSort (· ≤ ·) supportClass.toList
         exact hperm.mem_iff.mp hiSorted
       exact Finset.mem_toList.mp hiList
-  have nextSegment :
-    ∀ r : Fin ett.rounds, TreeSequenceInitialSegment (ett.series.data.tree r.succ.castSucc)
-        (ett.series.data.tree r.succ.succ) := by
-    exact @ExtensionBaseSupportClassEnumeration_nextSegment_239 V E inferInstance inferInstance
-        inferInstance G k e0 input T generating ett terminalSupport hterminalSupport q w r0 v0
-        hv0Final hwFinal
+  have nextSegment (index : Fin ett.rounds) :
+      TreeSequenceInitialSegment (ett.series.data.tree index.succ.castSucc)
+        (ett.series.data.tree index.succ.succ) :=
+    ett.series.positiveStepInitialSegment index.succ (Nat.zero_lt_succ _)
   have seriesVertexLater :
     ∀ (a b : Fin ett.rounds), a.val ≤ b.val →
     ∀ x, x ∈ TreeSequenceVertexSet (ett.series.data.tree a.succ.castSucc) → x ∈

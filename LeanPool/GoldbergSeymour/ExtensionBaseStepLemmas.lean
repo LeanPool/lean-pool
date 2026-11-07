@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseStepLemmas
@@ -3186,13 +3187,8 @@ theorem helper_stepSegment_2099.{u_1, u_2} :
         e0 input T generating) (i : Fin (ett.rounds + (1 : ℕ))), (0 : ℕ) < (↑i : ℕ) →
         TreeSequenceInitialSegment (ett.series.data.tree i.castSucc) (ett.series.data.tree i.succ)
   := by
-  classical
   intro V E _ _ _ G k e0 input T generating ett i hi
-  cases ett.series.certified i with
-  | initial => simp at hi
-  | SE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-  | PE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-  | RE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
+  exact ett.series.positiveStepInitialSegment i hi
 
 theorem helper_vertexTransfer_2114.{u_1, u_2} :
     open scoped Classical in

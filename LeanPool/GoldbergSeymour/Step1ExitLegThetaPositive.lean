@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsCardinality
 public import LeanPool.GoldbergSeymour.Step1ExitLegMinimum
 
@@ -357,15 +359,8 @@ lemma Step1ExitLegThetaPositive {V E : Type*}
   have stage_chain : ∀ (r : ℕ) (hr : r ≤ d + 1),
       TreeSequenceInitialSegment (H.stage 0)
       (H.stage ⟨r, by omega⟩) := by
-    intro r hr
-    induction r with
-    | zero => exact ⟨Nat.le_refl _, by simp, by simp⟩
-    | succ r ih =>
-        change r + 1 ≤ H.dividerCount + 1 at hr
-        change TreeSequenceInitialSegment (H.stage 0)
-          (H.stage ⟨r + 1, by omega⟩)
-        exact segment_trans (ih (by omega))
-          (H.nested ⟨r, by omega⟩)
+    intro index bound
+    exact H.stageInitialSegmentOfLE _ _ (Fin.zero_le _)
   let i : Fin H.dividerCount := ⟨H.dividerCount - 1, by omega⟩
   have last_split : Fin.last H.dividerCount =
       (Fin.cast (by omega) (Fin.last (H.dividerCount - 1))).succ := by

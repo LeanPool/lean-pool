@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.StableChangeCasesOneTwoSplitTail
@@ -406,15 +408,9 @@ theorem helper_coreToA_572.{u_1, u_2} :
                 omega⟩ :
               Fin (H.dividerCount + (2 : ℕ)))) →
     TreeSequenceInitialSegment base.core A := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H q A segRefl segTrans stageSegment lastZero
       lastPositive
-  by_cases hz : H.dividerCount = 0
-  · rw [lastZero hz]; exact segRefl _
-  · rw [lastPositive hz]
-    have hs := stageSegment 1 (H.dividerCount - 1) (by omega)
-    have he : 1 + (H.dividerCount - 1) = H.dividerCount := by omega
-    simpa [he] using segTrans H.coreInsideFirst hs
+  exact H.coreInitialSegmentOfStarredStage q
 
 theorem helper_ordinaryToA_589.{u_1, u_2} :
     open scoped Classical in
@@ -451,15 +447,8 @@ theorem helper_ordinaryToA_589.{u_1, u_2} :
     TreeSequenceInitialSegment Tn A →
     ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
     TreeSequenceInitialSegment (H.stage j.castSucc) A := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H q A n Tn stageSegment lastPositive TnToA j
-  by_cases hz : H.dividerCount = 0
-  · have hj : j.castSucc = (0 : Fin (H.dividerCount + 2)) := Fin.ext (by simp; omega)
-    rw [hj, H.baseStage]; exact TnToA
-  · have hs := stageSegment j.val (H.dividerCount - j.val) (by omega)
-    rw [lastPositive hz]
-    convert hs using 1 <;> apply congrArg H.stage <;> apply Fin.ext <;>
-      simp only [Fin.val_castSucc]; omega
+  exact H.stageInitialSegmentOfStarredStage j q (Fin.le_last _)
 
 theorem helper_firstMissing_607.{u_1, u_2} :
     open scoped Classical in

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.GoodHierarchyPrefixPreparation
 
 public import LeanPool.GoldbergSeymour.HierarchyStarredStage
@@ -43,18 +45,8 @@ theorem helper_stageSegment_94.{u_1, u_2} :
     ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)),
     TreeSequenceInitialSegment (H.stage (⟨a, by omega⟩ : Fin (H.dividerCount + (2 : ℕ))))
       (H.stage (⟨a + d, by omega⟩ : Fin (H.dividerCount + (2 : ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T generating phi ett base H B segmentRefl segmentTrans a d
-  induction d with
-  | zero => intro h; simpa using segmentRefl (H.stage ⟨a, by omega⟩)
-  | succ d ih =>
-    intro h
-    have hp := ih (by omega)
-    have hn := H.nested ⟨a + d, by omega⟩
-    have hn' : TreeSequenceInitialSegment
-        (H.stage ⟨a+d, by omega⟩) (H.stage ⟨a+(d+1), by omega⟩) := by
-      simpa [Nat.add_assoc] using hn
-    exact segmentTrans hp hn'
+  intro V E _ _ _ _ G k e0 input T generating phi ett base H B segmentRefl segmentTrans a d bound
+  exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
 
 theorem helper_lastPositive_115.{u_1, u_2} :
     open scoped Classical in
@@ -119,23 +111,10 @@ theorem helper_stageToLast_135.{u_1, u_2} :
         lastStage = H.stage (⟨H.dividerCount, by omega⟩ : Fin (H.dividerCount + (2 : ℕ)))) →
     TreeSequenceInitialSegment (ett.series.data.tree (Fin.last ett.rounds).castSucc)
       lastStage := by
-  classical
   intro V E _ _ _ _ G k e0 input T generating phi ett base H B segmentRefl stageSegment lastStage
       lastZero lastPositive
-  by_cases hq : H.dividerCount = 0
-  · by_cases hk : ett.series.data.kind (Fin.last ett.rounds) =
-        some TashkinovExtensionKind.PE
-    · obtain ⟨_, _, ⟨u⟩⟩ := base.parallel hk
-      rw [lastZero hq]
-      exact u.leftSegment
-    · have hc : base.core = ett.series.data.tree (Fin.last ett.rounds).castSucc :=
-        base.nonparallel hk
-      rw [lastZero hq, hc]
-      exact segmentRefl _
-  · have hs := stageSegment 0 H.dividerCount (by omega)
-    rw [lastPositive hq]
-    rw [← H.baseStage]
-    convert hs using 1 <;> apply congrArg H.stage <;> apply Fin.ext <;> simp
+  exact base.lastRoundInitialSegmentCore.trans
+    (H.coreInitialSegmentOfStarredStage (Fin.last _))
 
 theorem helper_hbNested_194.{u_1, u_2} :
     open scoped Classical in

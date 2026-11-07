@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 
@@ -503,28 +505,9 @@ private theorem helper_continuation_783.{u_1, u_2} :
         · rw [← hYT.2.2 t]
           exact hfixedTail (Fin.castLE hYT.1 t) (by change A.length ≤ t.val; omega) t.isLt
       have coreToA : TreeSequenceInitialSegment R.replacementBase.core A := by
-        by_cases hz : H.dividerCount = 0
-        · have he : A = R.replacementBase.core := by simp [A, q, HierarchyStarredStage, hz,
-            Fin.last]
-          rw [he]
-          exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-        · have stageSegment (a m : Nat) (hb : a + m ≤ H.dividerCount + 1) :
-              TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩) (H.stage ⟨a + m, by omega⟩) := by
-            induction m with
-            | zero => exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-            | succ m ih => exact segTrans (ih (by omega)) (H.nested ⟨a + m, by omega⟩)
-          rw [lastPositive hz]
-          have hs := stageSegment 1 (H.dividerCount - 1) (by omega)
-          have he : 1 + (H.dividerCount - 1) = H.dividerCount := by omega
-          simpa [he] using segTrans H.coreInsideFirst hs
+        exact H.coreInitialSegmentOfStarredStage (Fin.last _)
       have TnToA : TreeSequenceInitialSegment Tn A := by
-        have TnToCore : TreeSequenceInitialSegment Tn R.replacementBase.core := by
-          by_cases hp : R.corresponding.replacementETT.series.data.kind n = some
-              TashkinovExtensionKind.PE
-          · exact (Classical.choice (R.replacementBase.parallel hp).2.2).leftSegment
-          · rw [R.replacementBase.nonparallel hp]
-            exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-        exact segTrans TnToCore coreToA
+        exact R.replacementBase.lastRoundInitialSegmentCore.trans coreToA
       have routes :
           (R.corresponding.replacementETT.series.data.kind n = some TashkinovExtensionKind.PE ∧
             TashkinovAugmentationSequence tau Tn Y) ∨

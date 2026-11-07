@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
@@ -76,139 +78,6 @@ private abbrev helperContinuation903Conditions.{u_1, u_2} : Prop :=
         P.corresponding.replacementETT.rounds).castSucc; beta ∉ (HierarchyStoredColorsAt H
         q).biUnion (P.counterexample.good.gamma q) ∪ (TreeSequenceVertexSet P.replacementBase.core
         \ TreeSequenceVertexSet Tn).biUnion fun (v : V) ↦ MissingColors G P.coloring v
-
-private theorem helper_hCoreB_124.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    ∀ alpha ∈ TreeMissingColors phi (HierarchyStarredStage C.hierarchy (Fin.last
-        C.hierarchy.dividerCount)),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := HierarchyFullTailLength C;
-    let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (1 : ℕ)); (
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-        → TreeSequenceInitialSegment X Z) → TreeSequenceInitialSegment A B →
-        TreeSequenceInitialSegment base.core B := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha hstar H q A ell B segTrans hAB
-  have hcoreA : TreeSequenceInitialSegment base.core A := by
-    by_cases hq : H.dividerCount = 0
-    · have hA : A = base.core := by
-        simp [A, q, HierarchyStarredStage, hq, Fin.last]
-      rw [hA]
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    · have hstar : A = H.stage q.castSucc := by
-        have hAstage : A = H.stage ⟨H.dividerCount, by omega⟩ := by
-          have hlast : (Fin.last H.dividerCount : Fin (H.dividerCount + 1)) =
-              (⟨H.dividerCount - 1, by omega⟩ : Fin H.dividerCount).succ := by
-            apply Fin.ext
-            simp
-            omega
-          dsimp [A, q, HierarchyStarredStage]
-          rw [hlast]
-          simp only [Fin.cases]
-          apply congrArg H.stage
-          apply Fin.ext
-          simp
-          omega
-        have hidx : (⟨H.dividerCount, by omega⟩ : Fin (H.dividerCount + 2)) = q.castSucc := by
-          apply Fin.ext
-          rfl
-        rw [hAstage, hidx]
-      have chain : TreeSequenceInitialSegment (H.stage 1) A := by
-        have reach : ∀ (m : ℕ) (hm : m ≤ H.dividerCount) (hlow : 1 ≤ m),
-            TreeSequenceInitialSegment (H.stage 1) (H.stage ⟨m, by omega⟩) := by
-          intro m
-          induction m with
-          | zero => intro hm hlow; omega
-          | succ m ih =>
-              intro hm hlow
-              by_cases hm : m = 0
-              · subst m
-                have hidx : (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) =
-                    (⟨1, by omega⟩ : Fin (H.dividerCount + 2)) := rfl
-                exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-              · have hprev := ih (by omega) (by omega)
-                let j : Fin (H.dividerCount + 1) := ⟨m, by omega⟩
-                have hstep := H.nested j
-                have heq₁ : j.castSucc = (⟨m, by omega⟩ : Fin (H.dividerCount + 2)) := by
-                  apply Fin.ext
-                  rfl
-                have heq₂ : j.succ = (⟨m + 1, by omega⟩ : Fin (H.dividerCount + 2)) := by
-                  apply Fin.ext
-                  rfl
-                rw [heq₁, heq₂] at hstep
-                exact segTrans hprev hstep
-        have hf := reach H.dividerCount (by omega) (by omega)
-        rw [hstar]
-        have hidx : (⟨H.dividerCount, by omega⟩ : Fin (H.dividerCount + 2)) = q.castSucc := by
-          apply Fin.ext
-          rfl
-        rw [← hidx]
-        exact hf
-      exact segTrans H.coreInsideFirst chain
-  exact segTrans hcoreA hAB
-
-private theorem helper_hcoreA_183.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q; (
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-        → TreeSequenceInitialSegment X Z) → TreeSequenceInitialSegment base.core A := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A segTrans
-  by_cases hq : H.dividerCount = 0
-  · have hA : A = base.core := by simp [A, q, HierarchyStarredStage, hq, Fin.last]
-    rw [hA]
-    exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  · have hAstage : A = H.stage ⟨H.dividerCount, by omega⟩ := by
-      have hlast : (Fin.last H.dividerCount : Fin (H.dividerCount + 1)) =
-          (⟨H.dividerCount - 1, by omega⟩ : Fin H.dividerCount).succ := by
-        apply Fin.ext
-        simp
-        omega
-      dsimp [A, q, HierarchyStarredStage]
-      rw [hlast]
-      simp only [Fin.cases]
-      apply congrArg H.stage
-      apply Fin.ext
-      simp
-      omega
-    have chain : TreeSequenceInitialSegment (H.stage 1) A := by
-      have reach : ∀ (m : ℕ) (hm : m ≤ H.dividerCount) (hlow : 1 ≤ m),
-          TreeSequenceInitialSegment (H.stage 1) (H.stage ⟨m, by omega⟩) := by
-        intro m
-        induction m with
-        | zero => intro hm hlow; omega
-        | succ m ih =>
-            intro hm hlow
-            by_cases hm0 : m = 0
-            · subst m
-              exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-            · have hprev := ih (by omega) (by omega)
-              let j : Fin (H.dividerCount + 1) := ⟨m, by omega⟩
-              have hstep := H.nested j
-              have heq₁ : j.castSucc = (⟨m, by omega⟩ : Fin (H.dividerCount + 2)) := by
-                apply Fin.ext
-                rfl
-              have heq₂ : j.succ = (⟨m + 1, by omega⟩ : Fin (H.dividerCount + 2)) := by
-                apply Fin.ext
-                rfl
-              rw [heq₁, heq₂] at hstep
-              exact segTrans hprev hstep
-      have hf := reach H.dividerCount (by omega) (by omega)
-      rw [hAstage]
-      exact hf
-    exact segTrans H.coreInsideFirst chain
 
 private theorem helper_hfinalTree_741.{u_1, u_2} :
     open scoped Classical in
@@ -905,20 +774,12 @@ theorem P2905_T2_BaseExtraReplacement {V E : Type*}
   have hAB : TreeSequenceInitialSegment A B := commonPrefix hAT
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩ hlenAB
   have hTnCore : TreeSequenceInitialSegment Tn base.core := by
-    by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-    · obtain ⟨_, _, hu⟩ := base.parallel hp
-      rcases hu with ⟨u⟩
-      exact u.leftSegment
-    · have heq : base.core = Tn := base.nonparallel hp
-      rw [heq]
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
+    exact base.lastRoundInitialSegmentCore
   have hCoreB : TreeSequenceInitialSegment base.core B := by
-    exact @helper_hCoreB_124 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        input T phi ett base C alpha hstar segTrans hAB
+    exact (H.coreInitialSegmentOfStarredStage (Fin.last _)).trans hAB
   have hTnB : TreeSequenceInitialSegment Tn B := segTrans hTnCore hCoreB
   have hcoreA : TreeSequenceInitialSegment base.core A := by
-    exact @helper_hcoreA_183 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        input T phi ett base C segTrans
+    exact H.coreInitialSegmentOfStarredStage (Fin.last _)
   have hTnA : TreeSequenceInitialSegment Tn A := segTrans hTnCore hcoreA
   have treeMissingMono {X Y : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y) :

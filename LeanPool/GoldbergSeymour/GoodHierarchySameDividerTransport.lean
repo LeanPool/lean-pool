@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
@@ -296,31 +298,12 @@ theorem GoodHierarchySameDividerTransport {V E : Type*}
   have missingEq (j : Fin (KU.dividerCount + 1)) :
       HierarchyStageMissingColors KU j = HierarchyStageMissingColors KJ (index j) :=
     (hstages j).2.2.2
-  have segmentTrans {A B C : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B)
-      (hBC : TreeSequenceInitialSegment B C) :
-      TreeSequenceInitialSegment A C := by
-    apply TreeSequenceInitialSegment.trans <;> assumption
   have stageSegment : ∀ (a d : ℕ)
       (hbound : a + d ≤ KJ.dividerCount + 1),
       TreeSequenceInitialSegment (KJ.stage ⟨a, by omega⟩)
         (KJ.stage ⟨a + d, by omega⟩) := by
-    intro a d
-    induction d with
-    | zero =>
-        intro hbound
-        simpa using (show TreeSequenceInitialSegment
-          (KJ.stage ⟨a, by omega⟩) (KJ.stage ⟨a, by omega⟩) from
-          ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩)
-    | succ d ih =>
-        intro hbound
-        have hprev := ih (by omega)
-        have hnext := KJ.nested ⟨a + d, by omega⟩
-        have hnext' : TreeSequenceInitialSegment
-            (KJ.stage ⟨a + d, by omega⟩)
-            (KJ.stage ⟨a + (d + 1), by omega⟩) := by
-          simpa [Nat.add_assoc] using hnext
-        exact segmentTrans hprev hnext'
+    intro a d bound
+    exact KJ.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have prefixJU : TreeSequenceInitialSegment J U :=
     TashkinovAugmentationSequenceInitialSegment sigma J U hJU
   have nextSegment (j : Fin KU.dividerCount) :

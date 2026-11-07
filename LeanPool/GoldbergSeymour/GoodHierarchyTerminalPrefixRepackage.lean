@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 
 public import LeanPool.GoldbergSeymour.TerminalHierarchyPrefixConstruction
@@ -211,10 +213,9 @@ theorem GoodHierarchyTerminalPrefixRepackage {V E : Type*}
     @helper_stageLastPositive_128 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@phi) (@ett) (@base) (@H) (@B)
         (@lastPositive)
-  have stageToLast :=
-    @helper_stageToLast_135 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@phi) (@ett) (@base) (@H) (@B)
-        (@segmentRefl) (@stageSegment) (@lastZero) (@lastPositive)
+  have stageToLast := by
+    exact base.lastRoundInitialSegmentCore.trans
+      (H.coreInitialSegmentOfStarredStage (Fin.last _))
   have lastToB : TreeSequenceInitialSegment lastStage B := hAB
   have firstToB := segmentTrans stageToLast lastToB
   have strictFirst :

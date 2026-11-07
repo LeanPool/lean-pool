@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
@@ -78,106 +80,6 @@ private theorem helper_hsigmaOne_150.{u_1, u_2} :
   refine ⟨?_, ?_⟩
   · simp [TwoColorComponentSwap, P.minimumContext.oneEdgeUncolored.1]
   · apply helper_branch_51; exact hne
-private theorem helper_branch_110.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-        P.counterexample.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    ∀ (_ : H.dividerCount = (0 : ℕ)), TreeSequenceInitialSegment P.replacementBase.core A := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P H q A hz
-  have hAeq : A = P.replacementBase.core := by
-    obtain hq0 | ⟨i, hi⟩ := Fin.eq_zero_or_eq_succ q
-    · change HierarchyStarredStage H q = P.replacementBase.core
-      rw [hq0]
-      rfl
-    · have hcount : H.dividerCount ≠ 0 := by
-        intro h
-        have hv := congrArg Fin.val hi
-        simp [q, h] at hv
-      exact False.elim (hcount hz)
-  rw [hAeq]
-  exact ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-
-private theorem helper_branch_122.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-        P.counterexample.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    ∀ (_ : (
-    ∀ {S U W : TreeSequence G e0} (_ : TreeSequenceInitialSegment S U) (_ :
-        TreeSequenceInitialSegment U W), TreeSequenceInitialSegment S W)) (_ : (
-    ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)), TreeSequenceInitialSegment (H.stage
-        (⟨a,
-    by omega
-    ⟩ : Fin (H.dividerCount + (2 : ℕ)))) (H.stage (⟨a + d,
-    by omega
-    ⟩ : Fin (H.dividerCount + (2 : ℕ)))))) (_ : ¬H.dividerCount = (0 : ℕ)),
-        TreeSequenceInitialSegment P.replacementBase.core A := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P H q A prefixTrans stageSegment hz
-  have hstarStage : A = H.stage ⟨H.dividerCount, by omega⟩ := by
-    obtain hzero | ⟨i, hi⟩ := Fin.eq_zero_or_eq_succ q
-    · have hcount : H.dividerCount = 0 := by
-        have hv := congrArg Fin.val hzero
-        simp [q] at hv
-        omega
-      exact False.elim (hz hcount)
-    · change HierarchyStarredStage H q = H.stage ⟨H.dividerCount, by omega⟩
-      rw [hi]
-      unfold HierarchyStarredStage
-      simp only [Fin.cases_succ]
-      congr 1
-      apply Fin.ext
-      simpa [q] using (congrArg Fin.val hi).symm
-  rw [hstarStage]
-  have hfirst : TreeSequenceInitialSegment P.replacementBase.core
-      (H.stage ⟨1, by omega⟩) := H.coreInsideFirst
-  have hrest := stageSegment 1 (H.dividerCount - 1) (by omega)
-  convert prefixTrans hfirst hrest using 1;
-    apply congrArg H.stage; apply Fin.ext; simp; omega
-
-private theorem helper_coreA_303.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-        P.counterexample.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    ∀ (_ : (
-    ∀ {S U W : TreeSequence G e0} (_ : TreeSequenceInitialSegment S U) (_ :
-        TreeSequenceInitialSegment U W), TreeSequenceInitialSegment S W)) (_ : (
-    ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)), TreeSequenceInitialSegment (H.stage
-        (⟨a,
-    by omega
-    ⟩ : Fin (H.dividerCount + (2 : ℕ)))) (H.stage (⟨a + d,
-    by omega
-    ⟩ : Fin (H.dividerCount + (2 : ℕ)))))), TreeSequenceInitialSegment P.replacementBase.core A
-  := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P H q A prefixTrans stageSegment
-  by_cases hz : H.dividerCount = 0
-  · apply helper_branch_110; exact hz
-  · apply helper_branch_122 <;> assumption
 private theorem helper_hlenBX_410.{u_1, u_2} :
     open scoped Classical in
       ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
@@ -467,39 +369,6 @@ private theorem helper_hY_T_548.{u_1, u_2} :
       (Fin.last C.hierarchy.dividerCount)).positive
     omega
   · exact T.positive
-
-private theorem helper_stageSegment_583.{u_1, u_2} :
-    open scoped Classical in
-      ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-        [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E)
-        (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-        (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-        (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-        (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-        (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-        let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-          P.counterexample.hierarchy;
-        ∀
-          (_ :
-            (∀ {S U W : TreeSequence G e0} (_ : TreeSequenceInitialSegment S U)
-              (_ : TreeSequenceInitialSegment U W), TreeSequenceInitialSegment S W))
-          (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)),
-          TreeSequenceInitialSegment
-            (H.stage (⟨a, by omega⟩ : Fin (H.dividerCount + (2 : ℕ))))
-            (H.stage (⟨a + d, by omega⟩ : Fin (H.dividerCount + (2 : ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P H prefixTrans a d
-  induction d with
-  | zero => intro _; exact ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-  | succ d ih =>
-    intro hbound
-    have hp := ih (by omega)
-    have hn := H.nested ⟨a + d, by omega⟩
-    have hn' : TreeSequenceInitialSegment
-        (H.stage ⟨a + d, by omega⟩)
-        (H.stage ⟨a + (d + 1), by omega⟩) := by
-      simpa [Nat.add_assoc] using hn
-    exact prefixTrans hp hn'
 
 private theorem helper_hX_Z_634.{u_1, u_2} :
     open scoped Classical in
@@ -1406,12 +1275,14 @@ private theorem helper_continuation_1137.{u_1, u_2} :
     have routeToX := @helper_routeToX_714 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@alpha)
         (@beta) (@hX_T) (@hTnX) (@terminalRoute) (@seedPrefixX) (@switchedRoute)
-    have hAlphaMissingX : alpha ∈ TreeMissingColors sigma X := by
-      apply TreeSequenceInitialSegment.treeMissingColors_subset hprefixB_X
+    have hAlphaMissingB : alpha ∈ TreeMissingColors sigma B := by
       rwa [TreeMissingColors.congr hB_missingEq]
-    have hBetaMissingX : beta ∈ TreeMissingColors sigma X := by
-      apply TreeSequenceInitialSegment.treeMissingColors_subset hprefixB_X
+    have hBetaMissingB : beta ∈ TreeMissingColors sigma B := by
       rwa [TreeMissingColors.congr hB_missingEq]
+    have hAlphaMissingX : alpha ∈ TreeMissingColors sigma X :=
+      TreeSequenceInitialSegment.treeMissingColors_subset hprefixB_X hAlphaMissingB
+    have hBetaMissingX : beta ∈ TreeMissingColors sigma X :=
+      TreeSequenceInitialSegment.treeMissingColors_subset hprefixB_X hBetaMissingB
     have hsplitMissing : alpha ∈ TreeMissingColors sigma X ∧
         beta ∈ TreeMissingColors sigma X := ⟨hAlphaMissingX, hBetaMissingX⟩
     have switchedSuffix : TashkinovAugmentationSequence sigma X T :=
@@ -1591,19 +1462,10 @@ theorem P2880_T1_CommonPreparation
   have prefixTrans {S U W : TreeSequence G e0}
       (hSU : TreeSequenceInitialSegment S U) (hUW : TreeSequenceInitialSegment U W) :
       TreeSequenceInitialSegment S W := hSU.trans hUW
-  have stageSegment := @helper_stageSegment_583 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
-      (@prefixTrans)
-  have coreA := @helper_coreA_303 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@prefixTrans)
-      (@stageSegment)
+  have coreA := by
+    exact H.coreInitialSegmentOfStarredStage (Fin.last _)
   have hTnCore : TreeSequenceInitialSegment Tn P.replacementBase.core := by
-    by_cases hpe : P.corresponding.replacementETT.series.data.kind n =
-        some TashkinovExtensionKind.PE
-    · obtain ⟨_, _, ⟨u⟩⟩ := P.replacementBase.parallel hpe
-      simpa [Tn, n] using u.leftSegment
-    · rw [P.replacementBase.nonparallel hpe]
-      exact ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
+    exact P.replacementBase.lastRoundInitialSegmentCore
   exact @helper_continuation_1137 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@alpha)
       (@beta) (@hpathLower) (@hpathUpper) (@hAlphaTerminal) (@hAlphaB) (@hAlphaChoice) (@hBetaB)

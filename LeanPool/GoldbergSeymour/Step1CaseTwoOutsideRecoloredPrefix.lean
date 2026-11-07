@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
@@ -1004,37 +1006,11 @@ lemma Step1CaseTwoOutsideRecoloredPrefix {V E : Type*}
       exact (hBC.2.2 (Fin.castLE hAB.1 i)).trans (hAB.2.2 i)
   have stage_segment : ∀ (i j : Fin (H.dividerCount + 2)), i ≤ j →
       TreeSequenceInitialSegment (H.stage i) (H.stage j) := by
-    intro i j hij
-    have aux : ∀ n (hn : n < H.dividerCount + 2), i.val ≤ n →
-        TreeSequenceInitialSegment (H.stage i) (H.stage ⟨n, hn⟩) := by
-      intro n
-      induction n with
-      | zero =>
-          intro hn hi
-          have heq : i = ⟨0, hn⟩ := by
-            apply Fin.ext
-            change i.val = 0
-            omega
-          rw [heq]
-          exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-      | succ n ih =>
-          intro hn hi
-          by_cases heq : i.val = n + 1
-          · have heq' : i = ⟨n + 1, hn⟩ := Fin.ext heq
-            rw [heq']
-            exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-          · exact segment_trans (ih (by omega) (by omega))
-              (H.nested ⟨n, by omega⟩)
-    exact aux j.val j.isLt hij
+    exact H.stageInitialSegmentOfLE
   let A := HierarchyStarredStage H (Fin.last H.dividerCount)
   let Tn := ett.series.data.tree (Fin.last ett.rounds).castSucc
   have hTncore : TreeSequenceInitialSegment Tn base.core := by
-    by_cases hp : ett.series.data.kind (Fin.last ett.rounds) =
-        some TashkinovExtensionKind.PE
-    · obtain ⟨_, _, ⟨u⟩⟩ := base.parallel hp
-      exact u.leftSegment
-    · rw [base.nonparallel hp]
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
+    exact base.lastRoundInitialSegmentCore
   have hTnA : TreeSequenceInitialSegment Tn A := by
     by_cases hz : H.dividerCount = 0
     · have hl : Fin.last H.dividerCount = (0 : Fin (H.dividerCount + 1)) :=

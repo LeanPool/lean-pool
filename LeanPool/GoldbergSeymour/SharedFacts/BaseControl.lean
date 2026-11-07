@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyCounterexample
 public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
 
@@ -78,22 +80,9 @@ theorem trans.{u_1, u_2} : transStatement.{u_1, u_2} := by
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem stageChain.{u_1, u_2} : stageChainStatement.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H trans j
-  induction j with
-  | zero =>
-      intro hj i hi
-      have hi0 : i = 0 := Fin.ext (Nat.eq_zero_of_le_zero hi)
-      subst i
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  | succ j ih =>
-      intro hj i hi
-      by_cases heq : i.val = j + 1
-      · have heq' : i = ⟨j + 1, hj⟩ := Fin.ext heq
-        subst i
-        exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-      · exact trans (ih (by omega) i (by omega))
-          (H.nested ⟨j, by omega⟩)
+  intro V E _ _ _ _ G k e0 input T phi ett base C H trans last bound first ordered
+  exact H.stageInitialSegmentOfLE first ⟨last, bound⟩ ordered
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem branch.{u_1, u_2} : branchStatement.{u_1, u_2} := by

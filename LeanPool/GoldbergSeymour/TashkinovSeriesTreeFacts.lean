@@ -1,11 +1,12 @@
 /-
 Copyright (c) 2026 Wesley Pegden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
 public import LeanPool.GoldbergSeymour.TashkinovSeries
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Tree Facts for Certified Tashkinov Series
@@ -64,6 +65,47 @@ theorem TashkinovSeries.stepInitialSegment.{u_1, u_2} :
     have hieq : ci = i := by apply Fin.ext; omega
     subst ci
     exact orderedExtension
+
+
+/-- Every positive certified stage extends the preceding tree. -/
+theorem TashkinovSeries.positiveStepInitialSegment {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k rounds : ℕ} {e0 : E}
+    {input : PartialEdgeColoring E k} (series : TashkinovSeries G k rounds e0 input)
+    (index : Fin (rounds + 1)) (positive : 0 < index.val) :
+    TreeSequenceInitialSegment (series.data.tree index.castSucc) (series.data.tree index.succ) := by
+  let before : Fin rounds := ⟨index.val - 1, by omega⟩
+  have next : before.succ = index := Fin.ext (by simp [before]; omega)
+  have segment := TashkinovSeries.stepInitialSegment G k rounds e0 input series
+    index before next.symm
+  simpa only [next] using segment
+
+/-- Ordered noninitial trees in a certified series are nested. -/
+theorem TashkinovSeries.stageInitialSegmentOfLE {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k rounds : ℕ} {e0 : E}
+    {input : PartialEdgeColoring E k} (series : TashkinovSeries G k rounds e0 input)
+    (first last : Fin (rounds + 2)) (positive : 0 < first.val) (ordered : first ≤ last) :
+    TreeSequenceInitialSegment (series.data.tree first) (series.data.tree last) := by
+  have nested : ∀ last : Fin (rounds + 2), ∀ first, 0 < first.val → first ≤ last →
+      TreeSequenceInitialSegment (series.data.tree first) (series.data.tree last) := by
+    intro last
+    induction last using Fin.induction with
+    | zero =>
+      intro first positive ordered
+      change first.val ≤ 0 at ordered
+      omega
+    | succ index induction =>
+      intro first positive ordered
+      by_cases equal : first = index.succ
+      · subst first
+        exact TreeSequenceInitialSegment.refl _
+      · have different : first.val ≠ index.val + 1 := fun same => equal (Fin.ext same)
+        change first.val ≤ index.val + 1 at ordered
+        have previous : first.val ≤ index.val := by omega
+        exact (induction first positive (by change first.val ≤ index.val; exact previous)).trans
+          (series.positiveStepInitialSegment index (by omega))
+  exact nested last first positive ordered
 
 end GoldbergSeymour
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.BaseControl
 
 public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
@@ -154,34 +156,6 @@ private theorem P2813_T1_DisplayedEdges_branch_320.{u_1, u_2} :
             rw [hf]
             exact hnStable.1 f hincident hcontrol
     · exact fixedValue _ ha hb
-
-private theorem helper_stageChain_238.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (H : TashkinovHierarchy ett base), (
-    ∀ {U W Z : TreeSequence G e0}, TreeSequenceInitialSegment U W → TreeSequenceInitialSegment W Z
-        → TreeSequenceInitialSegment U Z) →
-    ∀ (j : ℕ) (hj : j < H.dividerCount + (2 : ℕ)) (i : Fin (H.dividerCount + (2 : ℕ))), (↑i : ℕ) ≤
-        j → TreeSequenceInitialSegment (H.stage i) (H.stage (⟨j, hj⟩ : Fin (H.dividerCount + (2 :
-        ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base H trans j
-  induction j with
-  | zero =>
-      intro hj i hi
-      have hi0 : i = 0 := Fin.ext (Nat.eq_zero_of_le_zero hi)
-      subst i
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  | succ j ih =>
-      intro hj i hi
-      by_cases heq : i.val = j + 1
-      · have heq' : i = ⟨j + 1, hj⟩ := Fin.ext heq
-        subst i
-        exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-      · exact trans (ih (by omega) i (by omega))
-          (H.nested ⟨j, by omega⟩)
 
 private theorem helper_starChain_264.{u_1, u_2} :
     open scoped Classical in
@@ -411,8 +385,10 @@ theorem P2813_T1_DisplayedEdges {V E : Type*}
     (by have hA := A.positive; have hT := T.positive; omega)
     (Nat.min_le_right _ _)
   have trans := @SharedFacts.BaseControl.trans (@V) (@E) (@G) (@e0)
-  have stageChain := @helper_stageChain_238 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@H) (@trans)
+  have stageChain (last : ℕ) (bound : last < H.dividerCount + 2)
+      (first : Fin (H.dividerCount + 2)) (ordered : first.val ≤ last) :
+      TreeSequenceInitialSegment (H.stage first) (H.stage ⟨last, bound⟩) :=
+    H.stageInitialSegmentOfLE first ⟨last, bound⟩ ordered
   have starStage (r : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H r)
         (H.stage r.succ) := by
@@ -459,10 +435,7 @@ theorem P2813_T1_DisplayedEdges {V E : Type*}
         inferInstance G k e0 input T phi ett base H good starChain helemStar missingSubset c hcA
         r hmax
   have coreChain : TreeSequenceInitialSegment Tn base.core := by
-    by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-    · exact (base.parallel hp).2.2.some.leftSegment
-    · rw [base.nonparallel hp]
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
+    exact base.lastRoundInitialSegmentCore
   have coreA : TreeSequenceInitialSegment base.core A := starChain 0 q (Fin.zero_le _)
   have TnA := trans coreChain coreA
   have hnStable := @helper_hnStable_349 (@V) (@E) inferInstance inferInstance inferInstance

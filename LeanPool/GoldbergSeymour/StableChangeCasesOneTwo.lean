@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.BaseControl
 public import LeanPool.GoldbergSeymour.DisplayedEdges
 public import LeanPool.GoldbergSeymour.RecoloredPrefixReconstruction
@@ -692,40 +694,6 @@ private theorem helper_starPositive_351.{u_1, u_2} :
   rw [← Fin.succ_pred j hn]
   rfl
 
-private theorem helper_coreToStar_371.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (alpha beta : Fin k),
-    alpha ≠ beta →
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    (∀ {U W Z : TreeSequence G e0},
-        TreeSequenceInitialSegment U W →
-          TreeSequenceInitialSegment W Z → TreeSequenceInitialSegment U Z) →
-    (∀ (j : ℕ) (hj : j < H.dividerCount + (2 : ℕ)) (i : Fin (H.dividerCount + (2 : ℕ))),
-        (↑i : ℕ) ≤ j →
-          TreeSequenceInitialSegment (H.stage i)
-            (H.stage (⟨j, hj⟩ : Fin (H.dividerCount + (2 : ℕ))))) →
-    (∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-        (0 : ℕ) < (↑j : ℕ) → HierarchyStarredStage H j = H.stage j.castSucc) →
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-    TreeSequenceInitialSegment base.core (HierarchyStarredStage H j) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta hne H trans stageChain starPositive j
-  clear * - H trans stageChain starPositive
-  by_cases hj : j = 0
-  · subst j
-    exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  · have hjp : 0 < j.val := by
-      have hne : j.val ≠ 0 := fun hh => hj (Fin.ext hh)
-      omega
-    rw [starPositive j hjp]
-    exact trans H.coreInsideFirst
-      (stageChain j.val (by omega) ⟨1, by omega⟩ (by simp; omega))
-
 private theorem helper_preStepElementary_574.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -1260,13 +1228,10 @@ theorem StableChangeCasesOneTwo {V E : Type*}
       exact stageChain H.dividerCount (by omega) j hj
     have coreToStar (j : Fin (H.dividerCount + 1)) :
         TreeSequenceInitialSegment base.core (HierarchyStarredStage H j) := by
-      apply helper_coreToStar_371 <;> assumption
+      exact H.coreInitialSegmentOfStarredStage j
     have coreA : TreeSequenceInitialSegment base.core A := coreToStar q
     have TnCore : TreeSequenceInitialSegment Tn base.core := by
-      by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-      · exact (base.parallel hp).2.2.some.leftSegment
-      · rw [base.nonparallel hp]
-        exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
+      exact base.lastRoundInitialSegmentCore
     exact @helper_caseContinuation_1561 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
         (@hprefixElementary) (@alpha) (@beta) (@hne) (@hmissingPrefix) (@z) (@hpath) (@sigma)

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
@@ -1150,10 +1152,7 @@ theorem P2813_T1_BaseControl {V E : Type*}
   have nonPEMissingClosed := @helper_nonPEMissingClosed_364 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hnonPEClosed)
   have coreChain : TreeSequenceInitialSegment Tn base.core := by
-    by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-    · exact (base.parallel hp).2.2.some.leftSegment
-    · rw [base.nonparallel hp]
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
+    exact base.lastRoundInitialSegmentCore
   have coreA : TreeSequenceInitialSegment base.core A := starChain 0 q (Fin.zero_le _)
   have TnA := trans coreChain coreA
   have closureA := @helper_closureA_384 (@V) (@E) inferInstance inferInstance inferInstance

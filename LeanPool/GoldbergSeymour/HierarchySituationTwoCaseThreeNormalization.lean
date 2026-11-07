@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
@@ -821,21 +823,8 @@ private theorem helper_continuation_547.{u_1, u_2} :
     commonPrefix hAT hBT
         (by have hp := D.tailAtLeastTwo; change 2 ≤ T.length - A.length at hp; omega)
   have hTnA : TreeSequenceInitialSegment Tn A := by
-    by_cases hz : H.dividerCount = 0
-    · have hq : q = 0 := Fin.ext (by simp [q, hz])
-      have hA : A = base.core := by simp [A, HierarchyStarredStage, hq]
-      rw [hA]
-      by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-      · exact (Classical.choice (base.parallel hp).2.2).leftSegment
-      · rw [base.nonparallel hp]
-        exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    · rw [lastPositive hz]
-      have hs := stageSegment 0 H.dividerCount (by omega)
-      have hi0 : (⟨0, by omega⟩ : Fin (H.dividerCount + 2)) = 0 := Fin.ext rfl
-      have hiq : (⟨0 + H.dividerCount, by omega⟩ : Fin (H.dividerCount + 2)) =
-          q.castSucc := Fin.ext (by simp [q])
-      rw [hi0, H.baseStage, hiq] at hs
-      exact hs
+    exact base.lastRoundInitialSegmentCore.trans
+      (H.coreInitialSegmentOfStarredStage (Fin.last _))
   have halphaMissingB : D.alpha ∈ TreeMissingColors phi B := by
     let i : Fin (B.length + 1) := ⟨D.earlierVertexIndex.val, hindex⟩
     apply Finset.mem_biUnion.mpr
@@ -1133,11 +1122,7 @@ private theorem helper_branch_402.{u_1, u_2} :
           simpa only [Fin.castLE] using (hSU.2.2 i).symm
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩) (H.stage ⟨a + d, by omega⟩) := by
-    clear * - H a d hbound segTrans
-    induction d with
-    | zero => exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    | succ d ih =>
-      exact segTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
+    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have stageToT (j : Fin (H.dividerCount + 2)) :
       TreeSequenceInitialSegment (H.stage j) T := by
     have hs := stageSegment j.val (H.dividerCount + 1 - j.val) (by omega)

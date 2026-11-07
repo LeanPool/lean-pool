@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
@@ -565,12 +567,7 @@ theorem NineN {V E : Type*}
       exact (TreeSequenceInitialSegmentVertexSetSubset H.coreInsideFirst).trans
         (stageMono (by change 1 ≤ r.val + 1; omega))
   have hTnCore : TreeSequenceVertexSet Tn ⊆ TreeSequenceVertexSet base.core := by
-    by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-    · obtain ⟨_, _, ⟨u⟩⟩ := base.parallel hp
-      exact TreeSequenceInitialSegmentVertexSetSubset u.leftSegment
-    · have hc := base.nonparallel hp
-      change base.core = Tn at hc
-      rw [hc]
+    exact TreeSequenceInitialSegmentVertexSetSubset base.lastRoundInitialSegmentCore
   have hdegree : MaximumDegree G + 1 ≤ k := by
     have hzero := ett.series.certified 0
     cases hzero with

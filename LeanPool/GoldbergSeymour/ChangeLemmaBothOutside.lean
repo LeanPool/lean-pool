@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation6
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
@@ -148,42 +150,20 @@ theorem ChangeLemmaBothOutside {V E : Type*}
       (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
       TreeSequenceInitialSegment S U := by
     exact @helper_commonPrefix_982 (@V) (@E) (@G) (@e0) (@S) (@U) (@W) (@hSW) (@hUW) (@hlen)
-  have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    induction d with
-    | zero => simpa using segRefl (H.stage ⟨a, by omega⟩)
-    | succ d ih =>
-      exact segTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
-  have stageToT (j : Fin (H.dividerCount + 2)) :
-      TreeSequenceInitialSegment (H.stage j) T := by
-    exact @helper_stageToT_998 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@stageSegment) (@j)
-  have lastZero (hz : H.dividerCount = 0) : A = base.core := by
-    simp [A, q, HierarchyStarredStage, hz, Fin.last]
   have lastPositive (hz : H.dividerCount ≠ 0) :
       A = H.stage ⟨H.dividerCount, by omega⟩ := by
     exact @helper_lastPositive_1007 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hz)
   have coreToA : TreeSequenceInitialSegment base.core A := by
-    exact @helper_coreToA_1018 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@segRefl) (@segTrans)
-        (@stageSegment) (@lastZero) (@lastPositive)
+    exact H.coreInitialSegmentOfStarredStage (Fin.last _)
   have TnToCore : TreeSequenceInitialSegment Tn base.core := by
-    by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-    · exact (Classical.choice (base.parallel hp).2.2).leftSegment
-    · rw [base.nonparallel hp]
-      exact segRefl _
+    exact base.lastRoundInitialSegmentCore
   have TnToA := segTrans TnToCore coreToA
   have AToT : TreeSequenceInitialSegment A T := by
-    exact @helper_AToT_1032 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@segTrans) (@stageToT)
-        (@lastZero) (@lastPositive)
+    exact H.lastStarredInitialSegment
   have ordinaryToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (H.stage j.castSucc) A := by
-    exact @helper_ordinaryToA_1038 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@stageSegment)
-        (@lastPositive) (@TnToA) (@j)
+    exact H.stageInitialSegmentOfStarredStage j (Fin.last _) (Fin.le_last _)
   have starredToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H j) A := by
     exact Fin.cases coreToA (fun i => ordinaryToA i.succ) j

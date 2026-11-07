@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAntitone
@@ -94,13 +96,7 @@ theorem GoodHierarchyNewMissingClosed {V E : Type*}
     Fin.cases_zero] at hc
       have hseg : TreeSequenceInitialSegment
           (ett.series.data.tree (Fin.last ett.rounds).castSucc) base.core := by
-        by_cases hk : ett.series.data.kind (Fin.last ett.rounds) =
-            some TashkinovExtensionKind.PE
-        · obtain ⟨_, _, hu⟩ := base.parallel hk
-          obtain ⟨u⟩ := hu
-          exact u.leftSegment
-        · rw [base.nonparallel hk]
-          exact ⟨le_rfl, (fun j => rfl), (fun j => rfl)⟩
+        exact base.lastRoundInitialSegmentCore
       unfold TreeMissingColors at hc
       obtain ⟨u, hu, hcu⟩ := Finset.mem_biUnion.mp hc
       refine ⟨u, ?_, hcu⟩

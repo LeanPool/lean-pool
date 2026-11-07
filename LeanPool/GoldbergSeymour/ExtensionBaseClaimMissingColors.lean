@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClass
 
 public import LeanPool.GoldbergSeymour.SupportingPEMissingTransport
@@ -21,52 +23,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_next_segment_98.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring
-    E k} {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett :
-    ExtendedTashkinovTree G k e0 input T generating) (j : Fin (ett.rounds + (1 : ℕ))) (i : Fin
-    ett.rounds), j = i.succ → TreeSequenceInitialSegment (ett.series.data.tree
-    i.succ.castSucc) (ett.series.data.tree i.succ.succ) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett j i hj
-  cases ett.series.certified j with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma initialClosure =>
-    exact (Fin.succ_ne_zero i hj.symm).elim
-  | SE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have value := congrArg Fin.val hj
-    simp at value
-    have ci_eq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
-  | RE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have value := congrArg Fin.val hj
-    simp at value
-    have ci_eq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
-  | PE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-    have value := congrArg Fin.val hj
-    simp at value
-    have ci_eq : ci = i := by apply Fin.ext; omega
-    subst ci
-    exact orderedExtension
 
 private theorem helper_hstart_177.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -591,8 +547,7 @@ theorem ExtensionBaseClaimMissingColors {V E : Type*}
     obtain ⟨i, hi, rfl⟩ := hv
     rcases hseg with ⟨hlen, hvertex, hedge⟩
     exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, by simpa using hvertex i⟩
-  have next_segment := @helper_next_segment_98 V E inferInstance inferInstance inferInstance G k e0
-      input T generating ett
+  have next_segment := TashkinovSeries.stepInitialSegment G k ett.rounds e0 input ett.series
   have stage_vertices : ∀ a b : Fin ett.rounds, a.val ≤ b.val → ∀ v,
       v ∈ TreeSequenceVertexSet (ett.series.data.tree a.succ.castSucc) →
       v ∈ TreeSequenceVertexSet (ett.series.data.tree b.succ.castSucc) := by

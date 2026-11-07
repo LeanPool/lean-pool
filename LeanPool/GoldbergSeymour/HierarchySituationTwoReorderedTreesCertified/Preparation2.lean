@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified.Preparation1
@@ -388,12 +390,7 @@ theorem helper_continuation_891.{u_1, u_2} :
   have hBP : TreeSequenceInitialSegment B P := commonPrefix hBT hPT (by omega)
   have hAB : TreeSequenceInitialSegment A B := commonPrefix hAT hBT (by omega)
   have hTnB : TreeSequenceInitialSegment Tn B := by
-    have hncore : TreeSequenceInitialSegment Tn base.core := by
-      by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-      · obtain ⟨U⟩ := (base.parallel hp).2.2
-        exact U.leftSegment
-      · rw [base.nonparallel hp]; exact segmentRefl _
-    exact segmentTrans hncore (segmentTrans hcoreA hAB)
+    exact base.lastRoundInitialSegmentCore.trans (hcoreA.trans hAB)
   let r : Fin T.length := ⟨T.length - 2, by omega⟩
   let f := T.edge r
   let g := T.edge D.lastEdgeIndex

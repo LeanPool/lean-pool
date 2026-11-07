@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
 public import LeanPool.GoldbergSeymour.StableChangeCaseThree.Preparation5
 public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
@@ -157,10 +159,7 @@ theorem StableChangeCaseThree {V E : Type*}
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
-    induction d with
-    | zero => simpa using segRefl (H.stage ⟨a, by omega⟩)
-    | succ d ih =>
-      exact segTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
+    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have equalTrees {S U : TreeSequence G e0}
       (hSU : TreeSequenceInitialSegment S U) (hlen : S.length = U.length) : S = U := by
     apply helper_equalTrees_536 <;> assumption
@@ -175,9 +174,7 @@ theorem StableChangeCaseThree {V E : Type*}
   have coreToA : TreeSequenceInitialSegment base.core A := by
     apply helper_coreToA_572 <;> assumption
   have TnToCore : TreeSequenceInitialSegment Tn base.core := by
-    by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-    · exact (Classical.choice (base.parallel hp).2.2).leftSegment
-    · rw [base.nonparallel hp]; exact segRefl _
+    exact base.lastRoundInitialSegmentCore
   have TnToA := segTrans TnToCore coreToA
   have AToT : TreeSequenceInitialSegment A T := by
     by_cases hz : H.dividerCount = 0

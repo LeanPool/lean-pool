@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
@@ -1323,11 +1325,7 @@ private theorem helper_continuation_190.{u_1, u_2} :
       congr 1
       exact Fin.ext (by simpa [q] using (congrArg Fin.val hi).symm)
   have hTnCore : TreeSequenceInitialSegment Tn R.replacementBase.core := by
-    by_cases hpe : R.corresponding.replacementETT.series.data.kind n =
-        some TashkinovExtensionKind.PE
-    · exact (R.replacementBase.parallel hpe).2.2.some.leftSegment
-    · rw [R.replacementBase.nonparallel hpe]
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
+    exact R.replacementBase.lastRoundInitialSegmentCore
   have coreA : TreeSequenceInitialSegment R.replacementBase.core A := by
     rw [← starEq R]
     by_cases hq : H.dividerCount = 0

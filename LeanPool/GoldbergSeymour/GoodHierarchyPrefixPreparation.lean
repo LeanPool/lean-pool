@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 
 public import LeanPool.GoldbergSeymour.SharedFacts.GoodHierarchyPrefixPreparation
@@ -45,21 +47,8 @@ theorem helper_stageSegment_77.{u_1, u_2} :
     ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)),
     TreeSequenceInitialSegment (H.stage (⟨a, by omega⟩ : Fin (H.dividerCount + (2 : ℕ))))
       (H.stage (⟨a + d, by omega⟩ : Fin (H.dividerCount + (2 : ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T generating phi ett base H r segmentRefl segmentTrans a d
-  induction d with
-  | zero =>
-      intro hbound
-      simpa using segmentRefl (H.stage ⟨a, by omega⟩)
-  | succ d ih =>
-      intro hbound
-      have hprev := ih (by omega)
-      have hnext := H.nested ⟨a + d, by omega⟩
-      have hnext' : TreeSequenceInitialSegment
-          (H.stage ⟨a + d, by omega⟩)
-          (H.stage ⟨a + (d + 1), by omega⟩) := by
-        simpa [Nat.add_assoc] using hnext
-      exact segmentTrans hprev hnext'
+  intro V E _ _ _ _ G k e0 input T generating phi ett base H r segmentRefl segmentTrans a d bound
+  exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
 
 theorem helper_prefixEqOfSegment_95.{u_1, u_2} :
     open scoped Classical in

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
 public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
@@ -48,8 +50,6 @@ theorem P2880_T1_ThetaExclusion
     HierarchyCounterexamplePenultimateElementary G k e0 input T mu ett base C
       ctx.proper ctx.oneEdgeUncolored ctx.lowerRung ctx.fewerDividers
       ctx.lexicographicMinimality ctx.largeMissingSet
-  have reflSegment (U : TreeSequence G e0) : TreeSequenceInitialSegment U U :=
-    ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
   have hAT : TreeSequenceInitialSegment A T := by
     have hnext : TreeSequenceInitialSegment (HierarchyStarredStage H q)
         (H.stage q.succ) := by
@@ -59,16 +59,7 @@ theorem P2880_T1_ThetaExclusion
     have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
     simpa only [hlast, H.terminalStage] using hnext
   have hordinary : TreeSequenceInitialSegment (H.stage q.castSucc) A := by
-    change TreeSequenceInitialSegment (H.stage q.castSucc) (HierarchyStarredStage H q)
-    refine Fin.cases ?_ (fun i => ?_) q
-    · change TreeSequenceInitialSegment (H.stage 0) base.core
-      rw [H.baseStage]
-      by_cases hp : ett.series.data.kind (Fin.last ett.rounds) =
-          some TashkinovExtensionKind.PE
-      · exact (Classical.choice (base.parallel hp).2.2).leftSegment
-      · rw [base.nonparallel hp]
-        exact reflSegment _
-    · exact reflSegment _
+    exact H.stageInitialSegmentOfStarredStage q q le_rfl
   have hstageMissing :
       HierarchyStageMissingColors H q =
         TreeMissingColors mu (H.stage q.castSucc) := by

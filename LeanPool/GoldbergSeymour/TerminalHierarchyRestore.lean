@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 public import LeanPool.GoldbergSeymour.HierarchyPrefixData
@@ -61,55 +63,6 @@ private theorem helper_commonBase_214.{u_1, u_2} :
         replacementStable := cp.replacementStable }
     exact GoodHierarchyCommonOriginalBaseTransport G k e0 input T phi sigma
       ett Bplus T cp' bp corr
-
-private theorem helper_stageBelow_335.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
-      [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring
-          E k)
-      (T : TreeSequence G e0) (phi sigma : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree
-          G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (F : HierarchyPrefixData C (HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1 :
-          ℕ))) sigma)
-      (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T),
-      let Bplus : TreeSequence G e0 := HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1
-          : ℕ));
-      ∀ (_ : HierarchyBase corr.replacementETT sigma) (A : TreeSequence G e0)
-        (HA : TashkinovHierarchy F.corresponding.replacementETT F.newBase) (j : Fin
-            (HA.dividerCount + (1 : ℕ))),
-        A = HA.stage j.castSucc → TreeSequenceInitialSegment A Bplus := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi sigma ett base C F corr Bplus newBase A HA j heq
-  have trans {A B U : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B) (hBU : TreeSequenceInitialSegment B U) :
-      TreeSequenceInitialSegment A U := by
-    refine ⟨le_trans hAB.1 hBU.1, ?_, ?_⟩
-    · intro i
-      exact (hBU.2.1 (Fin.castLE (Nat.succ_le_succ hAB.1) i)).trans (hAB.2.1 i)
-    · intro i
-      exact (hBU.2.2 (Fin.castLE hAB.1 i)).trans (hAB.2.2 i)
-  have stages : ∀ (a d : ℕ) (hb : a + d ≤ HA.dividerCount + 1),
-      TreeSequenceInitialSegment (HA.stage ⟨a, by omega⟩)
-        (HA.stage ⟨a+d, by omega⟩) := by
-    intro a d
-    induction d with
-    | zero => intro hb; exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    | succ d ih =>
-      intro hb
-      exact trans (ih (by omega)) (HA.nested ⟨a+d, by omega⟩)
-  have hs := stages j.val (HA.dividerCount + 1 - j.val) (by omega)
-  have hl : (⟨j.val + (HA.dividerCount + 1 - j.val), by omega⟩ :
-      Fin (HA.dividerCount + 2)) = Fin.last (HA.dividerCount + 1) := by
-    apply Fin.ext
-    have := j.isLt
-    simp
-  rw [hl, HA.terminalStage] at hs
-  have hj : (⟨j.val, by omega⟩ : Fin (HA.dividerCount + 2)) = j.castSucc :=
-    Fin.ext rfl
-  rw [hj] at hs
-  rw [heq]
-  exact hs
 
 private theorem helper_segmentOriginal_459.{u_1, u_2} :
     open scoped Classical in
@@ -220,47 +173,6 @@ private theorem helper_oldMetadata_391.{u_1, u_2} :
       cases eq_of_heq hs
       exact ⟨rfl, rfl, rfl⟩
   exact transport F.oldETT F.oldRung F.oldSeries
-
-private theorem helper_coreBelow_472.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
-      [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring
-          E k)
-      (T : TreeSequence G e0) (phi sigma : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree
-          G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (F : HierarchyPrefixData C (HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1 :
-          ℕ))) sigma)
-      (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T),
-      let Bplus : TreeSequence G e0 := HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1
-          : ℕ));
-      let H : TashkinovHierarchy ett base := C.hierarchy;
-      ∀ (newBase : HierarchyBase corr.replacementETT sigma),
-        newBase.core = F.newBase.core →
-          F.newHierarchy.dividerCount = H.dividerCount →
-            (∀ (A : TreeSequence G e0) (HA : TashkinovHierarchy F.corresponding.replacementETT
-                F.newBase)
-                (j : Fin (HA.dividerCount + (1 : ℕ))), A = HA.stage j.castSucc →
-                    TreeSequenceInitialSegment A Bplus) →
-              TreeSequenceInitialSegment newBase.core Bplus := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi sigma ett base C F corr Bplus H newBase hcoreP hcount
-      stageBelow
-  rw [hcoreP]
-  have first := F.newHierarchy.coreInsideFirst
-  by_cases hq : F.newHierarchy.dividerCount = 0
-  · have hi : (⟨1, by omega⟩ : Fin (F.newHierarchy.dividerCount + 2)) =
-        Fin.last (F.newHierarchy.dividerCount + 1) := by apply Fin.ext; simp [hq]
-    rw [hi, F.newHierarchy.terminalStage] at first
-    exact first
-  · have next := stageBelow _ F.newHierarchy ⟨1, by omega⟩ rfl
-    refine ⟨le_trans first.1 next.1, ?_, ?_⟩
-    · intro i
-      exact
-        (next.2.1 (Fin.castLE (Nat.succ_le_succ first.1) i)).trans (first.2.1 i)
-    · intro i
-      exact
-        (next.2.2 (Fin.castLE first.1 i)).trans (first.2.2 i)
 
 private theorem helper_gammaOriginal_542.{u_1, u_2} :
     open scoped Classical in
@@ -400,8 +312,10 @@ private theorem helper_continuation_562.{u_1, u_2} :
   have ordinaryBelow (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (H.stage j.castSucc) Bplus :=
     stageBelow _ F.newHierarchy (index j) (prefixStage j).symm
-  have coreBelow := @helper_coreBelow_472 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 input T phi sigma ett base C F corr newBase hcoreP hcount stageBelow
+  have coreBelow : TreeSequenceInitialSegment newBase.core Bplus := by
+    rw [hcoreP]
+    exact (F.newHierarchy.coreInitialSegmentOfStarredStage (Fin.last _)).trans
+      F.newHierarchy.lastStarredInitialSegment
   have starredBelow (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage K j) Bplus := by
     cases j using Fin.cases with
@@ -609,8 +523,12 @@ theorem P2752_T2_TerminalHierarchyRestore {V E : Type*}
       have hs := prefixStage i.succ
       rw [hi] at hs
       exact hs.symm
-  have stageBelow := @helper_stageBelow_335 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 input T phi sigma ett base C F corr newBase
+  have stageBelow (A : TreeSequence G e0)
+      (HA : TashkinovHierarchy F.corresponding.replacementETT F.newBase)
+      (index : Fin (HA.dividerCount + 1)) (equal : A = HA.stage index.castSucc) :
+      TreeSequenceInitialSegment A Bplus := by
+    rw [equal]
+    exact HA.stageInitialSegment index.castSucc
   exact @helper_continuation_562 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 input T phi sigma ett base C ctx D beta hmissing hsigma F hfixed corr terminalData
       newBase hcoreP hclosureP hcore htree hkind oldMetadata oldKind sameStages hcount

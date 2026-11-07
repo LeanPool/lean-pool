@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
 public import LeanPool.GoldbergSeymour.ExtensionRulesPEFirstAppearanceBound
 public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
@@ -21,59 +23,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_stageToStage_147.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating), (
-    ∀ (A : TreeSequence G e0), TreeSequenceInitialSegment A A) → (
-    ∀ {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B C
-        → TreeSequenceInitialSegment A C) → (
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))), (0 : ℕ) < (↑i : ℕ) → TreeSequenceInitialSegment
-        (ett.series.data.tree i.castSucc) (ett.series.data.tree i.succ)) →
-    ∀ (a b : ℕ), (1 : ℕ) ≤ a →
-    ∀ (_hab : a ≤ b) (_hb : b ≤ ett.rounds), TreeSequenceInitialSegment (ett.series.data.tree (⟨a,
-        Decidable.byContradiction fun (a_1 : ¬a < ett.rounds + (2 : ℕ)) =>
-    by
-                          omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) (ett.series.data.tree (⟨b, Decidable.byContradiction fun (a_1
-        : ¬b < ett.rounds + (2 : ℕ)) =>
-    by
-                          omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett segmentRefl segmentTrans stepSegment a b ha hab hb
-  have chain : ∀ (d : ℕ) (_hd : a + d ≤ b),
-      TreeSequenceInitialSegment
-        (ett.series.data.tree ⟨a, by omega⟩)
-        (ett.series.data.tree ⟨a + d, by omega⟩) := by
-    intro d hd
-    induction d with
-    | zero => simpa using segmentRefl (ett.series.data.tree ⟨a, by omega⟩)
-    | succ d ih =>
-        have hprev := ih (by omega)
-        have had : a + d < ett.rounds + 1 := by omega
-        let idx : Fin (ett.rounds + 1) := ⟨a + d, had⟩
-        have hidxPositive : 0 < idx.val := by
-          dsimp [idx]
-          omega
-        have hone := stepSegment idx hidxPositive
-        have hone' : TreeSequenceInitialSegment
-            (ett.series.data.tree ⟨a + d, by omega⟩)
-            (ett.series.data.tree ⟨a + (d + 1), by omega⟩) := by
-          simpa [idx, Nat.add_assoc] using hone
-        exact segmentTrans hprev hone'
-  have hchain := chain (b - a) (by omega)
-  have hend :
-      (⟨a + (b - a), by omega⟩ : Fin (ett.rounds + 2)) =
-        ⟨b, by omega⟩ := by
-    apply Fin.ext
-    simp
-    omega
-  rw [hend] at hchain
-  exact hchain
 
 private theorem helper_supportInFollowingTree_188.{u_1, u_2} :
     open scoped Classical in
@@ -729,9 +678,6 @@ theorem ExtensionRulesEarlierIndices {V E : Type*} [Fintype V] [Fintype E]
             (ett.series.data.stored r.succ)) := by
   classical
   let : DecidableEq V := Classical.decEq V
-  have segmentRefl (A : TreeSequence G e0) :
-      TreeSequenceInitialSegment A A :=
-    ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
   have segmentTrans {A B C : TreeSequence G e0}
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
@@ -745,18 +691,14 @@ theorem ExtensionRulesEarlierIndices {V E : Type*} [Fintype V] [Fintype E]
     · intro i
       have hmid := hebc (Fin.castLE hab i)
       exact (by simpa using hmid.trans (heab i))
-  have stepSegment : ∀ i : Fin (ett.rounds + 1), 0 < i.val →
-      TreeSequenceInitialSegment (ett.series.data.tree i.castSucc)
-        (ett.series.data.tree i.succ) := by
-    intro i hi
-    have cert := ett.series.certified i
-    cases cert with
-    | initial => exact (by simp at hi)
-    | SE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-    | PE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-    | RE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-  have stageToStage := @helper_stageToStage_147 V E inferInstance inferInstance inferInstance G k e0
-      input T generating ett segmentRefl segmentTrans stepSegment
+  have stageToStage (first last : ℕ) (positive : 1 ≤ first)
+      (ordered : first ≤ last) (bounded : last ≤ ett.rounds) :
+      TreeSequenceInitialSegment
+        (ett.series.data.tree
+          ⟨first, lt_of_le_of_lt ordered (Nat.lt_succ_of_le (Nat.le_succ_of_le bounded))⟩)
+        (ett.series.data.tree ⟨last, Nat.lt_succ_of_le (Nat.le_succ_of_le bounded)⟩) :=
+    ett.series.stageInitialSegmentOfLE _ _
+      (Nat.lt_of_lt_of_le Nat.zero_lt_one positive) ordered
   have stageToT : ∀ (a : ℕ) (_ha : 1 ≤ a) (_hround : a ≤ ett.rounds),
       TreeSequenceInitialSegment
         (ett.series.data.tree ⟨a, by omega⟩) T := by

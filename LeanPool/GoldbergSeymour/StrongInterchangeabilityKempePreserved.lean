@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.ETTStrongInterchangeable
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapDisjointPairGraph
@@ -24,95 +26,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_stepSegment_97.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-      {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k}
-      {T : TreeSequence G e0} {generating : PartialEdgeColoring E k}
-      (ett : ExtendedTashkinovTree G k e0 input T generating),
-    let slotTree : Fin ett.rounds → TreeSequence G e0 := fun (q : Fin ett.rounds) =>
-      ett.series.data.tree q.succ.castSucc;
-    ∀ (q : Fin ett.rounds) (hq : (↑q : ℕ) + (1 : ℕ) < ett.rounds),
-    TreeSequenceInitialSegment (slotTree q)
-      (slotTree (⟨(↑q : ℕ) + (1 : ℕ), hq⟩ : Fin ett.rounds)) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett slotTree q hq
-  have cert := ett.series.certified q.succ
-  generalize hi : q.succ = j at cert
-  cases cert with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    simp_all
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hiq : i = q := by
-      apply Fin.ext
-      simpa using (congrArg Fin.val hi).symm
-    subst i
-    have hcurrent : q.castSucc.succ = q.succ.castSucc := by
-      apply Fin.ext
-      rfl
-    have hnext : q.succ.succ =
-        (⟨q.val + 1, hq⟩ : Fin ett.rounds).succ.castSucc := by
-      apply Fin.ext
-      rfl
-    change TreeSequenceInitialSegment
-      (ett.series.data.tree q.succ.castSucc)
-      (ett.series.data.tree
-        (⟨q.val + 1, hq⟩ : Fin ett.rounds).succ.castSucc)
-    rw [← hcurrent, ← hnext]
-    exact orderedExtension
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-    have hiq : i = q := by
-      apply Fin.ext
-      simpa using (congrArg Fin.val hi).symm
-    subst i
-    have hcurrent : q.castSucc.succ = q.succ.castSucc := by
-      apply Fin.ext
-      rfl
-    have hnext : q.succ.succ =
-        (⟨q.val + 1, hq⟩ : Fin ett.rounds).succ.castSucc := by
-      apply Fin.ext
-      rfl
-    change TreeSequenceInitialSegment
-      (ett.series.data.tree q.succ.castSucc)
-      (ett.series.data.tree
-        (⟨q.val + 1, hq⟩ : Fin ett.rounds).succ.castSucc)
-    rw [← hcurrent, ← hnext]
-    exact orderedExtension
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hiq : i = q := by
-      apply Fin.ext
-      simpa using (congrArg Fin.val hi).symm
-    subst i
-    have hcurrent : q.castSucc.succ = q.succ.castSucc := by
-      apply Fin.ext
-      rfl
-    have hnext : q.succ.succ =
-        (⟨q.val + 1, hq⟩ : Fin ett.rounds).succ.castSucc := by
-      apply Fin.ext
-      rfl
-    change TreeSequenceInitialSegment
-      (ett.series.data.tree q.succ.castSucc)
-      (ett.series.data.tree
-        (⟨q.val + 1, hq⟩ : Fin ett.rounds).succ.castSucc)
-    rw [← hcurrent, ← hnext]
-    exact orderedExtension
 
 private theorem helper_finishActive_227.{u_1, u_2} :
     open scoped Classical in
@@ -372,52 +285,9 @@ private theorem helper_branch_124.{u_1, u_2} :
     simp at htRE
   let slotTree (q : Fin ett.rounds) : TreeSequence G e0 :=
     ett.series.data.tree q.succ.castSucc
-  have segmentTrans {A B C : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B)
-      (hBC : TreeSequenceInitialSegment B C) :
-      TreeSequenceInitialSegment A C := by
-    rcases hAB with ⟨hab, hvab, heab⟩
-    rcases hBC with ⟨hbc, hvbc, hebc⟩
-    refine ⟨le_trans hab hbc, ?_, ?_⟩
-    · intro i
-      exact (hvbc (Fin.castLE (Nat.succ_le_succ hab) i)).trans (hvab i)
-    · intro i
-      exact (hebc (Fin.castLE hab i)).trans (heab i)
-  have stepSegment := @helper_stepSegment_97 V E inferInstance inferInstance inferInstance G k e0
-      input T generating ett
-  have chainFrom : ∀ d : ℕ, (hd : r.val + d ≤ t.val) →
-      TreeSequenceInitialSegment (slotTree r)
-        (slotTree ⟨r.val + d, lt_of_le_of_lt hd t.isLt⟩) := by
-    intro d hd
-    induction d with
-    | zero =>
-        exact ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-    | succ d ih =>
-        have hprev := ih (by omega)
-        let q : Fin ett.rounds := ⟨r.val + d, by omega⟩
-        have hqbound : q.val + 1 < ett.rounds := by
-          dsimp [q]
-          omega
-        have hstep := stepSegment q hqbound
-        have htarget : (⟨q.val + 1, hqbound⟩ : Fin ett.rounds) =
-            ⟨r.val + Nat.succ d, lt_of_le_of_lt hd t.isLt⟩ := by
-          apply Fin.ext
-          dsimp [q]
-          omega
-        rw [← htarget]
-        exact segmentTrans hprev hstep
   have hrtSegment : TreeSequenceInitialSegment (slotTree r) (slotTree t) := by
-    have hval : r.val + (t.val - r.val) = t.val := Nat.add_sub_of_le hrt
-    have hd : r.val + (t.val - r.val) ≤ t.val := by omega
-    let qEnd : Fin ett.rounds :=
-      ⟨r.val + (t.val - r.val), lt_of_le_of_lt hd t.isLt⟩
-    have hchain := chainFrom (t.val - r.val) hd
-    have hindex : qEnd = t := by
-      apply Fin.ext
-      exact hval
-    change TreeSequenceInitialSegment (slotTree r) (slotTree qEnd) at hchain
-    rw [hindex] at hchain
-    exact hchain
+    exact ett.series.stageInitialSegmentOfLE r.succ.castSucc t.succ.castSucc
+      (Nat.zero_lt_succ _) (Nat.succ_le_succ hrt)
   have hvertexSubset : TreeSequenceVertexSet (slotTree r) ⊆
       TreeSequenceVertexSet (slotTree t) :=
     TreeSequenceInitialSegmentVertexSetSubset hrtSegment

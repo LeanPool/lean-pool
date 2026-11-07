@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyClaimNineFirstUseAfterSeed
@@ -529,28 +531,6 @@ private abbrev helperContinuation2398Conditions.{u_1, u_2} : Prop :=
     ∀ (v : V), Sum.inl v ∈ TwoColorComponent G mu gamma alpha (Sum.inl v)) →
         (HierarchyEligibleCommonMissingIndices G k e0 input T phi ett base C ctx).Nonempty
 
-private theorem helper_hAT_245.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx), HierarchyPathNumber
-        P.counterexample.hierarchy = (1 : ℕ) →
-    let Cm : HierarchyCounterexample P.replacementBase := P.counterexample;
-    let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase := Cm.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q; TreeSequenceInitialSegment A T := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P hsituation Cm H q A
-  have hs : TreeSequenceInitialSegment (HierarchyStarredStage H q) (H.stage q.succ) := by
-    refine Fin.cases ?_ (fun i => ?_) q
-    · exact H.coreInsideFirst
-    · exact H.nested i.succ
-  have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
-  simpa only [hlast, H.terminalStage] using hs
-
 private theorem helper_hAB_259.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -732,29 +712,6 @@ private theorem helper_segTrans_533.{u_1, u_2} :
     exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hSU.1) j)).trans (hSU.2.1 j)
   · intro j
     exact (hUW.2.2 (Fin.castLE hSU.1 j)).trans (hSU.2.2 j)
-
-private theorem helper_TnToCore_553.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-    let em : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-      P.corresponding.replacementETT;
-    let bm : HierarchyBase P.corresponding.replacementETT P.coloring := P.replacementBase;
-    let n : Fin (em.rounds + (1 : ℕ)) := Fin.last em.rounds;
-    let Tn : TreeSequence G e0 := em.series.data.tree n.castSucc;
-    TreeSequenceInitialSegment Tn bm.core := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P em bm n Tn
-  by_cases hpe : em.series.data.kind n = some TashkinovExtensionKind.PE
-  · obtain ⟨u⟩ := (bm.parallel hpe).2.2
-    exact u.leftSegment
-  · rw [bm.nonparallel hpe]
-    exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
 
 private theorem helper_hRsub_564.{u_1, u_2} :
     open scoped Classical in
@@ -1934,60 +1891,6 @@ private theorem helper_hfixedX_1181.{u_1, u_2} :
     rw [← hXT.2.2 t, he, hAT.2.2 tA]
     exact hfixedA tA
 
-private theorem helper_coreToA_1217.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-    HierarchyPathNumber P.counterexample.hierarchy = (1 : ℕ) →
-    ∀ (_ : Fin k) (_ : Fin T.length),
-    let bm : HierarchyBase P.corresponding.replacementETT P.coloring := P.replacementBase;
-    let Cm : HierarchyCounterexample P.replacementBase := P.counterexample;
-    let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-      Cm.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := HierarchyFullTailLength Cm;
-    let B : TreeSequence G e0 := HierarchyFullTailPrefix Cm (ell - (1 : ℕ));
-    ∀ (_ : (2 : ℕ) ≤ ell) (hsum : A.length + ell = T.length)
-      (_ : B.length = T.length - (1 : ℕ)),
-    (H.dividerCount = (0 : ℕ) → A = bm.core) →
-    ∀ (_ : Fin k) (htaildiff : T.length - A.length = ell),
-    let Ty : TreeSequence G e0 :=
-      TreeSequencePrefix T (min (A.length + (T.length - A.length - (1 : ℕ))) T.length)
-        (have this : (1 : ℕ) ≤ A.length := A.positive;
-        have this_1 : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction
-          fun (a : ¬(1 : ℕ) ≤ min (A.length + (T.length - A.length - (1 : ℕ))) T.length) ↦
-          by omega)
-        (by omega);
-    ∀ (_ : A.length + (T.length - A.length - (1 : ℕ)) = T.length - (1 : ℕ))
-      (_ : Ty.length = B.length) (_ : A.length + (1 : ℕ) < T.length),
-    ((0 : ℕ) < H.dividerCount →
-        A = H.stage (⟨H.dividerCount, by omega⟩ : Fin (H.dividerCount + (2 : ℕ)))) →
-    (∀ {S U W : TreeSequence G e0},
-        TreeSequenceInitialSegment S U →
-          TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W) →
-    (∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)),
-        TreeSequenceInitialSegment
-          (H.stage (⟨a, by omega⟩ : Fin (H.dividerCount + (2 : ℕ))))
-          (H.stage (⟨a + d, by omega⟩ : Fin (H.dividerCount + (2 : ℕ))))) →
-    TreeSequenceInitialSegment bm.core A := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P hsituation alpha e1 bm Cm H q A ell B
-      htwo hsum hBlen hAcore gamma htaildiff Ty hidx hTyLen hAshort hAstage segTrans stageSegment
-  by_cases hz : H.dividerCount = 0
-  · rw [hAcore hz]
-    exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  · rw [hAstage (Nat.pos_of_ne_zero hz)]
-    have hs := stageSegment 1 (H.dividerCount - 1) (by omega)
-    have he : 1 + (H.dividerCount - 1) = H.dividerCount := by omega
-    simpa [he] using segTrans H.coreInsideFirst hs
-
 private theorem helper_branch_1237.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -2742,23 +2645,9 @@ private theorem helper_continuation_2492.{u_1, u_2} :
       (hSU : TreeSequenceInitialSegment S U)
       (hUW : TreeSequenceInitialSegment U W) : TreeSequenceInitialSegment S W := by
     exact hSU.trans hUW
-  have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    induction d with
-    | zero => exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    | succ d ih =>
-      exact segTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
-  have coreToA : TreeSequenceInitialSegment bm.core A := by
-    exact @helper_coreToA_1217 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@hsituation)
-        (@alpha) (@e1) (@htwo) (@hsum) (@hBlen) (@hAcore) (@gamma) (@htaildiff) (@hidx) (@hTyLen)
-        (@hAshort) (@hAstage) (@segTrans) (@stageSegment)
+  have coreToA := H.coreInitialSegmentOfStarredStage (Fin.last H.dividerCount)
   have TnToCore : TreeSequenceInitialSegment Tn bm.core := by
-    by_cases hp : em.series.data.kind n = some TashkinovExtensionKind.PE
-    · exact (Classical.choice (bm.parallel hp).2.2).leftSegment
-    · rw [bm.nonparallel hp]
-      exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
+    exact bm.lastRoundInitialSegmentCore
   have hTnA : TreeSequenceInitialSegment Tn A := segTrans TnToCore coreToA
   have transportRoute (S : TreeSequence G e0)
       (hroute : TashkinovAugmentationSequence mu S X) :
@@ -3168,18 +3057,14 @@ private theorem helper_continuation_2508.{u_1, u_2} :
     have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
         TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
           (H.stage ⟨a + d, by omega⟩) := by
-      induction d with
-      | zero => exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-      | succ d ih =>
-        exact segTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
+      exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
     have coreToA : TreeSequenceInitialSegment bm.core A := by
       rw [hAeq]
       have hs := stageSegment 1 (H.dividerCount - 1) (by omega)
       have he : 1 + (H.dividerCount - 1) = H.dividerCount := by omega
       simpa [he] using segTrans H.coreInsideFirst hs
     have TnToCore : TreeSequenceInitialSegment Tn bm.core := by
-      exact @helper_TnToCore_553 (@V) (@E) inferInstance inferInstance inferInstance
-          inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
+      exact bm.lastRoundInitialSegmentCore
     have hTnA := segTrans TnToCore coreToA
     let Dprev := HierarchyStoredColorsAt H i.succ
     let Rprev := Dprev.biUnion (Cm.good.gamma i.castSucc)
@@ -3551,9 +3436,7 @@ theorem HierarchyClaimNineFirstUseSeed {V E : Type*}
     HierarchyCounterexamplePenultimateElementary G k e0
       P.corresponding.replacementInput T mu em bm Cm cm.proper cm.oneEdgeUncolored
       cm.lowerRung cm.fewerDividers cm.lexicographicMinimality cm.largeMissingSet
-  have hAT : TreeSequenceInitialSegment A T := by
-    exact @helper_hAT_245 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@hsituation)
+  have hAT := H.lastStarredInitialSegment
   have hsum : A.length + ell = T.length := Nat.add_sub_of_le hAT.1
   have hBlen : B.length = T.length - 1 := by
     dsimp [B, HierarchyFullTailPrefix]

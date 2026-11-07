@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import Mathlib.Data.Finset.Sort
 
 public import LeanPool.GoldbergSeymour.MissingColorsNonemptyOfMaximumDegree
@@ -110,40 +112,7 @@ private theorem helper_seriesVertexLater_163.{u_1, u_2} :
       have nextSegment : TreeSequenceInitialSegment
           (series.data.tree a.succ.castSucc)
           (series.data.tree a.succ.succ) := by
-        generalize targetEq : a.succ = target
-        cases series.certified target with
-        | initial triple seedLength initialColoring initialStored initialEdges
-            initialKind initialVertex initialOutside initialDelta initialGamma
-            initialClosure => exact (Fin.succ_ne_zero a targetEq).elim
-        | SE r previousProper previousOneUncolored previousClosed
-            previousNotStronglyClosed noRevisiting selected seriesAlternative
-            currentColoring currentStored currentEdges currentKind currentVertex
-            currentOutside currentDelta currentGamma adjoined adjoinedExactly
-            closedExtension orderedExtension strictExtension =>
-          have values := congrArg Fin.val targetEq
-          simp at values
-          have rEq : r = a := by apply Fin.ext; omega
-          simpa [rEq] using orderedExtension
-        | RE r previousProper previousOneUncolored previousClosed
-            previousNotStronglyClosed available currentColoring currentStored
-            currentEdges currentKind currentVertex currentOutside currentDelta
-            currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-            strictExtension =>
-          have values := congrArg Fin.val targetEq
-          simp at values
-          have rEq : r = a := by apply Fin.ext; omega
-          simpa [rEq] using orderedExtension
-        | PE r previousProper previousOneUncolored previousClosed
-            previousNotStronglyClosed noRevisiting selected seriesAlternativeFails
-            gamma gammaRule secondStable secondStableProper
-            secondStableOneUncolored secondStableRelation exitWitness
-            currentColoring currentProper currentOneUncolored currentStored
-            currentEdges currentKind currentVertex currentOutside currentDelta
-            currentGamma closedExtension orderedExtension strictExtension =>
-          have values := congrArg Fin.val targetEq
-          simp at values
-          have rEq : r = a := by apply Fin.ext; omega
-          simpa [rEq] using orderedExtension
+        exact series.positiveStepInitialSegment a.succ (Nat.zero_lt_succ _)
       have hxm : x ∈ TreeSequenceVertexSet
           (series.data.tree mid.succ.castSucc) := by
         have treeEq : mid.succ.castSucc = a.succ.succ := by

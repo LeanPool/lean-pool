@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.Basic2TerminalPE
 
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
@@ -686,57 +688,14 @@ theorem Basic2TerminalSERE {V E : Type*} [Fintype V] [Fintype E]
             v = vi ∨ TreeVertexOrder T v vi := by
   classical
   let : DecidableEq V := Classical.decEq V
-  have segmentRefl (A : TreeSequence G e0) :
-      TreeSequenceInitialSegment A A :=
-    ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-  have segmentTrans {A B C : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B)
-      (hBC : TreeSequenceInitialSegment B C) :
-      TreeSequenceInitialSegment A C := by
-    rcases hAB with ⟨hab, hvab, heab⟩
-    rcases hBC with ⟨hbc, hvbc, hebc⟩
-    refine ⟨hab.trans hbc, ?_, ?_⟩
-    · intro i
-      have hmid := hvbc (Fin.castLE (Nat.succ_le_succ hab) i)
-      exact (by simpa using hmid.trans (hvab i))
-    · intro i
-      have hmid := hebc (Fin.castLE hab i)
-      exact (by simpa using hmid.trans (heab i))
-  have stepSegment : ∀ i : Fin (ett.rounds + 1), 0 < i.val →
-      TreeSequenceInitialSegment (ett.series.data.tree i.castSucc)
-        (ett.series.data.tree i.succ) := by
-    intro i hi
-    have cert := ett.series.certified i
-    cases cert with
-    | initial => exact (by simp at hi)
-    | SE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-    | PE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-    | RE _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => assumption
-  have stageToStage : ∀ (a b : ℕ) (_ha : 1 ≤ a) (_hab : a ≤ b)
-      (_hb : b ≤ ett.rounds),
+  have stageToStage (first last : ℕ) (positive : 1 ≤ first)
+      (ordered : first ≤ last) (bounded : last ≤ ett.rounds) :
       TreeSequenceInitialSegment
-        (ett.series.data.tree ⟨a, by omega⟩)
-        (ett.series.data.tree ⟨b, by omega⟩) := by
-    intro a b ha hab hb
-    have chain : ∀ (d : ℕ) (_hd : a + d ≤ b),
-        TreeSequenceInitialSegment
-          (ett.series.data.tree ⟨a, by omega⟩)
-          (ett.series.data.tree ⟨a + d, by omega⟩) := by
-      intro d hd
-      induction d with
-      | zero => simpa using segmentRefl (ett.series.data.tree ⟨a, by omega⟩)
-      | succ d ih =>
-          have hprev := ih (by omega)
-          let idx : Fin (ett.rounds + 1) := ⟨a + d, by omega⟩
-          have hone := stepSegment idx (by dsimp [idx]; omega)
-          have hone' : TreeSequenceInitialSegment
-              (ett.series.data.tree ⟨a + d, by omega⟩)
-              (ett.series.data.tree ⟨a + (d + 1), by omega⟩) := by
-            simpa [idx, Nat.add_assoc] using hone
-          exact segmentTrans hprev hone'
-    have hchain := chain (b - a) (by omega)
-    convert hchain using 1; apply congrArg ett.series.data.tree;
-      apply Fin.ext; simp; omega
+        (ett.series.data.tree
+          ⟨first, lt_of_le_of_lt ordered (Nat.lt_succ_of_le (Nat.le_succ_of_le bounded))⟩)
+        (ett.series.data.tree ⟨last, Nat.lt_succ_of_le (Nat.le_succ_of_le bounded)⟩) :=
+    ett.series.stageInitialSegmentOfLE _ _
+      (Nat.lt_of_lt_of_le Nat.zero_lt_one positive) ordered
   have orderTransfer : ∀ {A B : TreeSequence G e0},
       TreeSequenceInitialSegment A B → ∀ u w,
         TreeVertexOrder A u w → TreeVertexOrder B u w := by

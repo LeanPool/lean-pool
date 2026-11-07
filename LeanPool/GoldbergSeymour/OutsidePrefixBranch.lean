@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.SplitSwapData
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyLEMStable
@@ -357,28 +359,6 @@ private theorem helper_segmentTrans_194.{u_1, u_2} :
       C.edge (Fin.castLE hbc (Fin.castLE hab i)) = B.edge (Fin.castLE hab i) :=
         hebc _
       _ = A.edge i := heab i
-
-private theorem helper_hTnCore_213.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let m : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-    P.corresponding.replacementETT;
-  let n : Fin (m.rounds + (1 : ℕ)) := Fin.last m.rounds;
-  let Tn : TreeSequence G e0 := m.series.data.tree n.castSucc;
-  TreeSequenceInitialSegment Tn P.replacementBase.core := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P m n Tn
-  by_cases hpe : m.series.data.kind n = some TashkinovExtensionKind.PE
-  · obtain ⟨_, _, ⟨u⟩⟩ := P.replacementBase.parallel hpe
-    exact u.leftSegment
-  · rw [P.replacementBase.nonparallel hpe]
-    exact ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
 
 private theorem helper_hstableTn_223.{u_1, u_2} :
     open scoped Classical in
@@ -1568,7 +1548,7 @@ private theorem helper_continuation_1969.{u_1, u_2} :
       TreeSequenceInitialSegment A C := by
     apply helper_segmentTrans_194 <;> assumption
   have hTnCore : TreeSequenceInitialSegment Tn P.replacementBase.core := by
-    apply helper_hTnCore_213
+    exact P.replacementBase.lastRoundInitialSegmentCore
   have hTnX : TreeSequenceInitialSegment Tn X :=
     segmentTrans hTnCore S.coreInSplit
   have hTnXvertices : TreeSequenceVertexSet Tn ⊆ TreeSequenceVertexSet X :=

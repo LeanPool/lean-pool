@@ -247,52 +247,6 @@ theorem ExtendedTashkinovTree.pe_chosenVertex_mem_previousTree
         (currentVertex.symm.trans (by simpa [htarget] using hqVertex))
     simpa [hvChoice] using choice.vertexDefective.1
 
-private theorem helper_stageToStage_226.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (generating : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T generating)
-      (hpositive : (0 : ℕ) < ett.rounds) (v : V),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds);
-    ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T)
-      (_ : ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ))
-      (_ : (0 : ℕ) < ETTFirstAppearanceIndex ett v hvFinal)
-      (_ : (∀ (A : TreeSequence G e0), TreeSequenceInitialSegment A A))
-      (_ :
-        (∀ {A B C : TreeSequence G e0} (_ : TreeSequenceInitialSegment A B)
-          (_ : TreeSequenceInitialSegment B C), TreeSequenceInitialSegment A C))
-      (_ :
-        (∀ (i : Fin (ett.rounds + (1 : ℕ))) (_ : (0 : ℕ) < (↑i : ℕ)),
-          TreeSequenceInitialSegment (ett.series.data.tree i.castSucc)
-            (ett.series.data.tree i.succ)))
-      (a b : ℕ) (_ : (1 : ℕ) ≤ a) (_hab : a ≤ b) (_hb : b ≤ ett.rounds),
-    TreeSequenceInitialSegment
-      (ett.series.data.tree (⟨a, by omega⟩ : Fin (ett.rounds + (2 : ℕ))))
-      (ett.series.data.tree (⟨b, by omega⟩ : Fin (ett.rounds + (2 : ℕ)))) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v q hqTerminal hvFinal hfirstUpper
-      hfirstPositive segmentRefl segmentTrans stepSegment a b ha hab hb
-  have chain : ∀ (d : ℕ) (_hd : a + d ≤ b),
-      TreeSequenceInitialSegment
-        (ett.series.data.tree ⟨a, by omega⟩)
-        (ett.series.data.tree ⟨a + d, by omega⟩) := by
-    intro d hd
-    induction d with
-    | zero => simpa using segmentRefl (ett.series.data.tree ⟨a, by omega⟩)
-    | succ d ih =>
-        have hprev := ih (by omega)
-        let idx : Fin (ett.rounds + 1) := ⟨a + d, by omega⟩
-        have hone := stepSegment idx (by dsimp [idx]; omega)
-        have hone' : TreeSequenceInitialSegment
-            (ett.series.data.tree ⟨a + d, by omega⟩)
-            (ett.series.data.tree ⟨a + (d + 1), by omega⟩) := by
-          simpa [idx, Nat.add_assoc] using hone
-        exact segmentTrans hprev hone'
-  have hchain := chain (b - a) (by omega)
-  convert hchain using 1; congr 1; apply Fin.ext; simp; omega
-
 private theorem helper_hLowerElementary_277.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]

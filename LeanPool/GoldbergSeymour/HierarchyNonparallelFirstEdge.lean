@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TashkinovHierarchy
 
 /-!
@@ -55,20 +57,8 @@ theorem HierarchyNonparallelFirstEdge {V E : Type*}
   have chain : ∀ q : ℕ, (hq : q ≤ H.dividerCount) →
       TreeSequenceInitialSegment (H.stage ⟨1, by omega⟩)
         (H.stage ⟨1 + q, by omega⟩) := by
-    intro q
-    induction q with
-    | zero =>
-        intro hq
-        exact ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-    | succ q ih =>
-        intro hq
-        have hprev := ih (by omega)
-        have hnext := H.nested ⟨1 + q, by omega⟩
-        have hnext' : TreeSequenceInitialSegment
-            (H.stage ⟨1 + q, by omega⟩)
-            (H.stage ⟨1 + (q + 1), by omega⟩) := by
-          simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hnext
-        exact segmentTrans hprev hnext'
+    intro index bound
+    exact H.stageInitialSegmentOfLE _ _ (Nat.le_add_right 1 index)
   have stageToT : TreeSequenceInitialSegment
       (H.stage ⟨1, by omega⟩) T := by
     have hc := chain H.dividerCount (le_rfl)

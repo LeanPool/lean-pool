@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.InsideAdvancement
@@ -325,9 +327,9 @@ private theorem helper_shortening_124.{u_1, u_2} :
       have hh := starNext (Fin.last H.dividerCount)
       simpa only [Fin.succ_last, H.terminalStage] using hh
     have hTnCore : TreeSequenceInitialSegment Tn P.replacementBase.core := by
-      exact helper_hTnCore_1684 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
+      exact P.replacementBase.lastRoundInitialSegmentCore
     have coreA : TreeSequenceInitialSegment P.replacementBase.core A := by
-      apply helper_coreA_200 <;> assumption
+      exact H.coreInitialSegmentOfStarredStage (Fin.last _)
     have hTnA := trans hTnCore coreA
     have hlenT : 3 ≤ T.length := by have := A.positive; omega
     let B := TreeSequencePrefix T (T.length - 1) (by omega) (by omega)

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.CertifiedETTPenultimateElementary
 
 public import LeanPool.GoldbergSeymour.GoodHierarchyPrefixRepackage
@@ -548,32 +550,11 @@ theorem HierarchyCounterexamplePenultimateElementary {V E : Type*}
       inferInstance G k e0 input T phi ett base C hproper hone hlower hfinalIndex
   have segmentRefl (X : TreeSequence G e0) : TreeSequenceInitialSegment X X :=
     ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
-  have segmentTrans {X Y Z : TreeSequence G e0}
-      (hXY : TreeSequenceInitialSegment X Y)
-      (hYZ : TreeSequenceInitialSegment Y Z) :
-      TreeSequenceInitialSegment X Z := by
-    rcases hXY with ⟨hxy, vxy, exy⟩
-    rcases hYZ with ⟨hyz, vyz, eyz⟩
-    refine ⟨le_trans hxy hyz, ?_, ?_⟩
-    · intro i
-      have hm := vyz (Fin.castLE (Nat.succ_le_succ hxy) i)
-      simpa using hm.trans (vxy i)
-    · intro i
-      have hm := eyz (Fin.castLE hxy i)
-      simpa using hm.trans (exy i)
   have stageSegment : ∀ (a d : ℕ), (hbound : a + d ≤ H.dividerCount + 1) →
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
-    intro a d hbound
-    induction d with
-    | zero => simpa using segmentRefl (H.stage ⟨a, by omega⟩)
-    | succ d ih =>
-      have hp := ih (by omega)
-      have hn := H.nested ⟨a + d, by omega⟩
-      have hn' : TreeSequenceInitialSegment (H.stage ⟨a+d, by omega⟩)
-          (H.stage ⟨a+(d+1), by omega⟩) := by
-        simpa [Nat.add_assoc] using hn
-      exact segmentTrans hp hn'
+    intro a d bound
+    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have aSegment : TreeSequenceInitialSegment A T := by
     by_cases hq : H.dividerCount = 0
     · have hc := H.coreInsideFirst

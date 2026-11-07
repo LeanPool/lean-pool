@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
@@ -42,31 +44,6 @@ private theorem helper_segmentTrans_101.{u_1, u_2} :
   · intro i
     exact (eyz (Fin.castLE hxy i)).trans (exy i)
 
-private theorem helper_stageSegment_112.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (H : TashkinovHierarchy ett base), (
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-        → TreeSequenceInitialSegment X Z) →
-    ∀ (a d : ℕ) (hb : a + d ≤ H.dividerCount + (1 : ℕ)), TreeSequenceInitialSegment (H.stage (⟨a,
-    by
-            have := GoldbergSeymour.TreeSequence.positive T
-            omega
-    ⟩ : Fin (H.dividerCount + (2 : ℕ)))) (H.stage (⟨a + d,
-    by
-            have := GoldbergSeymour.TreeSequence.positive T
-            omega
-    ⟩ : Fin (H.dividerCount + (2 : ℕ)))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base H segmentTrans a d
-  induction d with
-  | zero => intro hb; exact ⟨le_rfl, (fun _ => rfl), (fun _ => rfl)⟩
-  | succ d ih =>
-    intro hb
-    exact segmentTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
-
 private theorem helper_starPositive_127.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -84,43 +61,6 @@ private theorem helper_starPositive_127.{u_1, u_2} :
   unfold HierarchyStarredStage
   rw [← Fin.succ_pred j hn]
   rfl
-
-private theorem helper_starMono_140.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (H : TashkinovHierarchy ett base), (
-    ∀ (a b : Fin (H.dividerCount + (2 : ℕ))), (↑a : ℕ) ≤ (↑b : ℕ) → TreeSequenceInitialSegment
-        (H.stage a) (H.stage b)) → (
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))), (0 : ℕ) < (↑j : ℕ) → HierarchyStarredStage H j =
-        H.stage j.castSucc) → (
-    ∀ (j : Fin (H.dividerCount + (2 : ℕ))), (0 : ℕ) < (↑j : ℕ) → TreeSequenceInitialSegment
-        base.core (H.stage j)) →
-    ∀ (i j : Fin (H.dividerCount + (1 : ℕ))), (↑i : ℕ) ≤ (↑j : ℕ) → TreeSequenceInitialSegment
-        (HierarchyStarredStage H i) (HierarchyStarredStage H j) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base H stageMono starPositive coreStage i j hij
-  by_cases hi : i = 0
-  · subst i
-    by_cases hj : j = 0
-    · subst j; exact ⟨le_rfl, (fun _ => rfl), (fun _ => rfl)⟩
-    · have hjp : 0 < j.val := by
-        by_contra hh
-        apply hj
-        apply Fin.ext
-        change j.val = 0
-        omega
-      rw [starPositive j hjp]
-      exact coreStage j.castSucc hjp
-  · have hip : 0 < i.val := by
-      by_contra hh
-      apply hi
-      apply Fin.ext
-      change i.val = 0
-      omega
-    rw [starPositive i hip, starPositive j (by omega)]
-    exact stageMono i.castSucc j.castSucc hij
 
 private theorem helper_hATy_179.{u_1, u_2} :
     open scoped Classical in
@@ -152,23 +92,6 @@ private theorem helper_hATy_179.{u_1, u_2} :
     exact hAT.2.1 i
   · intro i
     exact hAT.2.2 i
-
-private theorem helper_coreSegment_197.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi),
-    let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc;
-    TreeSequenceInitialSegment Tn base.core := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base Tn
-  by_cases hp : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE
-  · obtain ⟨union⟩ := (base.parallel hp).2.2
-    exact union.leftSegment
-  · rw [base.nonparallel hp]
-    exact ⟨le_rfl, (fun _ => rfl), (fun _ => rfl)⟩
 
 private theorem helper_descend_206.{u_1, u_2} :
     open scoped Classical in
@@ -842,10 +765,11 @@ theorem rutcor {V E : Type*}
       (hXY : TreeSequenceInitialSegment X Y)
       (hYZ : TreeSequenceInitialSegment Y Z) : TreeSequenceInitialSegment X Z := by
     apply helper_segmentTrans_101 <;> assumption
-  have stageSegment : ∀ (a d : ℕ) (hb : a + d ≤ H.dividerCount + 1),
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    apply helper_stageSegment_112; assumption
+  have stageSegment (a d : ℕ) (bound : a + d ≤ H.dividerCount + 1) :
+      TreeSequenceInitialSegment
+        (H.stage ⟨a, lt_of_le_of_lt (Nat.le_add_right a d) (Nat.lt_succ_of_le bound)⟩)
+        (H.stage ⟨a + d, Nat.lt_succ_of_le bound⟩) :=
+    H.stageInitialSegmentOfLE _ _ (Nat.le_add_right a d)
   have stageMono (a b : Fin (H.dividerCount + 2)) (hab : a.val ≤ b.val) :
       TreeSequenceInitialSegment (H.stage a) (H.stage b) := by
     clear * - stageSegment hab
@@ -854,13 +778,10 @@ theorem rutcor {V E : Type*}
   have starPositive (j : Fin (H.dividerCount + 1)) (hj : 0 < j.val) :
       HierarchyStarredStage H j = H.stage j.castSucc := by
     apply helper_starPositive_127; assumption
-  have coreStage (j : Fin (H.dividerCount + 2)) (hj : 0 < j.val) :
-      TreeSequenceInitialSegment base.core (H.stage j) :=
-    segmentTrans H.coreInsideFirst (stageMono ⟨1, by omega⟩ j (by change 1 ≤ j.val; omega))
   have starMono (i j : Fin (H.dividerCount + 1)) (hij : i.val ≤ j.val) :
       TreeSequenceInitialSegment (HierarchyStarredStage H i)
         (HierarchyStarredStage H j) := by
-    apply helper_starMono_140 <;> assumption
+    exact H.starredStageInitialSegmentOfLE i j hij
   have hA : A = H.stage q.castSucc := starPositive q hq
   have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
   have hAT : TreeSequenceInitialSegment A T := by
@@ -889,7 +810,7 @@ theorem rutcor {V E : Type*}
     exact elementaryA (TreeSequenceInitialSegmentVertexSetSubset hs hu)
       (TreeSequenceInitialSegmentVertexSetSubset hs hv) huv
   have coreSegment : TreeSequenceInitialSegment Tn base.core := by
-    apply helper_coreSegment_197
+    exact base.lastRoundInitialSegmentCore
   have TnT : TreeSequenceInitialSegment Tn T :=
     segmentTrans coreSegment (segmentTrans (starMono 0 q (by simp)) hAT)
   -- A newly missing color would close the next stage, so missingness descends.

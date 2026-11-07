@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.ExtensionBaseActiveIndices
 public import LeanPool.GoldbergSeymour.ExtensionRulesPEFirstAppearanceBound
 public import LeanPool.GoldbergSeymour.HkuUnsupportedVertexColors
@@ -22,62 +24,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem ExtensionBaseLeastActiveDeltaTransport_nextSegment_68.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] {G :
-    LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k} {T :
-    TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett : ExtendedTashkinovTree G k
-    e0 input T generating), ∀ terminalSupport ∈ TreeSequenceVertexSet T, ∀ (_ _ : Fin
-    ett.rounds), let series := ett.series; ∀ (i : Fin ett.rounds), TreeSequenceInitialSegment
-    (series.data.tree i.succ.castSucc) (series.data.tree i.succ.succ) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett terminalSupport hterminalSupport q jSlot series i
-  have step := series.certified i.succ
-  generalize hz : i.succ = z at step
-  cases step with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-      have hv := congrArg Fin.val hz
-      simp at hv
-  | SE r previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-      have hri : r = i := by
-        apply Fin.ext
-        have hv := congrArg Fin.val hz
-        simp at hv ⊢
-        omega
-      subst r
-      exact orderedExtension
-  | PE r previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-      have hri : r = i := by
-        apply Fin.ext
-        have hv := congrArg Fin.val hz
-        simp at hv ⊢
-        omega
-      subst r
-      exact orderedExtension
-  | RE r previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-      have hri : r = i := by
-        apply Fin.ext
-        have hv := congrArg Fin.val hz
-        simp at hv ⊢
-        omega
-      subst r
-      exact orderedExtension
 
 private theorem ExtensionBaseLeastActiveDeltaTransport_branch_235.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
@@ -184,11 +130,10 @@ theorem ExtensionBaseLeastActiveDeltaTransport {V E : Type*}
         (ett.series.data.tree jSlot.succ.castSucc) := by
   classical
   let series := ett.series
-  have nextSegment (i : Fin ett.rounds) :
-      TreeSequenceInitialSegment (series.data.tree i.succ.castSucc)
-        (series.data.tree i.succ.succ) := by
-    exact @ExtensionBaseLeastActiveDeltaTransport_nextSegment_68 V E inferInstance inferInstance
-        inferInstance G k e0 input T generating ett terminalSupport hterminalSupport q jSlot i
+  have nextSegment (index : Fin ett.rounds) :
+      TreeSequenceInitialSegment (ett.series.data.tree index.succ.castSucc)
+        (ett.series.data.tree index.succ.succ) :=
+    ett.series.positiveStepInitialSegment index.succ (Nat.zero_lt_succ _)
   have segmentRefl (A : TreeSequence G e0) :
       TreeSequenceInitialSegment A A :=
     ⟨le_rfl, by intro i; rfl, by intro i; rfl⟩

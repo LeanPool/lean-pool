@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
@@ -1332,18 +1334,9 @@ theorem helper_hAT_359.{u_1, u_2} :
   (↑j : ℕ) ≠ (0 : ℕ) →
   HierarchyStarredStage H j = H.stage j.castSucc) →
   TreeSequenceInitialSegment A T := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H q A starredAt
-  by_cases hz : H.dividerCount = 0
-  · have hq : q = 0 := Fin.ext (by simp [q, hz])
-    have hs : (⟨1, Nat.lt_succ_of_le (Nat.succ_le_succ (Nat.zero_le _))⟩ : Fin
-        (H.dividerCount + 2)) =
-        Fin.last (H.dividerCount + 1) := Fin.ext (by simp [hz])
-    simpa [A, hq, HierarchyStarredStage, hs, H.terminalStage] using H.coreInsideFirst
-  · have ha : A = H.stage q.castSucc := starredAt q (by simpa [q] using hz)
-    rw [ha]
-    have hs : H.stage q.succ = T := by convert H.terminalStage using 1; congr 1
-    simpa only [hs] using H.nested q
+  exact H.lastStarredInitialSegment
+
 
 /-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_firstLe_400.{u_1, u_2} :
@@ -2687,14 +2680,8 @@ theorem helper_stageSegment_1634.{u_1, u_2} :
           have := TreeSequence.positive T
           omega⟩ :
         Fin (H.dividerCount + (2 : ℕ)))) := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H B Bplus eta segTrans a d hb
-  as_aux_lemma =>
-    clear * - H a d hb segTrans
-    induction d with
-    | zero => exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-    | succ d ih =>
-        exact segTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
+  exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
 
 theorem helper_lastPositive_1645.{u_1, u_2} :
     open scoped Classical in
@@ -2776,16 +2763,9 @@ theorem helper_coreToA_1660.{u_1, u_2} :
           omega⟩ :
         Fin (H.dividerCount + (2 : ℕ)))) →
   TreeSequenceInitialSegment base.core A := by
-  classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A B Bplus eta segTrans stageSegment
       lastZero lastPositive
-  by_cases hz : H.dividerCount = 0
-  · rw [lastZero hz]
-    exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
-  · rw [lastPositive hz]
-    have hs := stageSegment 1 (H.dividerCount - 1) (by omega)
-    have he : 1 + (H.dividerCount - 1) = H.dividerCount := by omega
-    simpa [he] using segTrans H.coreInsideFirst hs
+  exact H.coreInitialSegmentOfStarredStage q
 
 theorem helper_hTnBplus_1668.{u_1, u_2} :
     open scoped Classical in

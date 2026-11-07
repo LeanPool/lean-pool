@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
@@ -978,42 +980,6 @@ private theorem helper_positivePackage_887.{u_1, u_2} :
         (⟨H.dividerCount, by omega⟩ : Fin (H.dividerCount + 2)) := Fin.ext rfl
     simpa [K, goodT, storedEq, q, he] using hminusA
 
-private theorem helper_ordinaryToA_1012.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    (∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)),
-        TreeSequenceInitialSegment
-          (H.stage (⟨a, by omega⟩ : Fin (H.dividerCount + (2 : ℕ))))
-          (H.stage (⟨a + d, by omega⟩ : Fin (H.dividerCount + (2 : ℕ))))) →
-    (H.dividerCount ≠ (0 : ℕ) → A = H.stage q.castSucc) →
-    TreeSequenceInitialSegment Tn A →
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-    TreeSequenceInitialSegment (H.stage j.castSucc) A := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A n Tn stageSegment lastPositive TnToA j
-  by_cases hj : j.val = 0
-  · have he : j.castSucc = (0 : Fin (H.dividerCount + 2)) := Fin.ext hj
-    rw [he, H.baseStage]; exact TnToA
-  · have hz : H.dividerCount ≠ 0 := by have := j.isLt; omega
-    rw [lastPositive hz]
-    have hs := stageSegment j.val (H.dividerCount - j.val) (by omega)
-    have he : (⟨j.val + (H.dividerCount - j.val), by omega⟩ :
-        Fin (H.dividerCount + 2)) = q.castSucc := Fin.ext (by simp [q]; omega)
-    rw [he] at hs
-    convert hs using 1
-    apply congrArg H.stage
-    apply Fin.ext
-    rfl
-
 private theorem helper_sigmaRoute_1064.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -1182,8 +1148,9 @@ private theorem helper_continuation_1123.{u_1, u_2} :
       hpenultimateMissing hstoredFirst H q A n Tn Dn B htwo hbase sigmaProper sigmaOne outside
       hmod prefixPresentation fixedA missingA htailEdges segTrans commonPrefix equalTrees
       stageSegment stageToT lastZero lastPositive coreToA TnToCore TnToA AToT
-  have ordinaryToA := @helper_ordinaryToA_1012 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 input T phi ett base C stageSegment lastPositive TnToA
+  have ordinaryToA (index : Fin (H.dividerCount + 1)) :
+      TreeSequenceInitialSegment (H.stage index.castSucc) A :=
+    H.stageInitialSegmentOfStarredStage index (Fin.last _) (Fin.le_last _)
   have starredToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H j) A := by
     exact Fin.cases coreToA (fun i => ordinaryToA i.succ) j
@@ -1404,11 +1371,7 @@ theorem StableChangeCasesOneTwoFullTail {V E : Type*}
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
-    clear * - H a d hbound segRefl segTrans
-    induction d with
-    | zero => simpa using segRefl (H.stage ⟨a, by omega⟩)
-    | succ d ih =>
-      exact segTrans (ih (by omega)) (H.nested ⟨a + d, by omega⟩)
+    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have stageToT (j : Fin (H.dividerCount + 2)) :
       TreeSequenceInitialSegment (H.stage j) T := by
     have hs := stageSegment j.val (H.dividerCount + 1 - j.val) (by omega)
@@ -1439,9 +1402,7 @@ theorem StableChangeCasesOneTwoFullTail {V E : Type*}
       rw [he] at hs
       exact segTrans H.coreInsideFirst hs
   have TnToCore : TreeSequenceInitialSegment Tn base.core := by
-    by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-    · exact (base.parallel hp).2.2.some.leftSegment
-    · rw [base.nonparallel hp]; exact segRefl _
+    exact base.lastRoundInitialSegmentCore
   have TnToA := segTrans TnToCore coreToA
   have AToT : TreeSequenceInitialSegment A T := by
     by_cases hz : H.dividerCount = 0

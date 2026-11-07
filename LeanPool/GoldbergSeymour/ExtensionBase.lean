@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+
 public import LeanPool.GoldbergSeymour.ExtensionBaseBranchLemmas
 public import LeanPool.GoldbergSeymour.ExtensionBaseBranchPreparation
 public import LeanPool.GoldbergSeymour.ExtensionBaseStoredPairOverlap
@@ -112,16 +114,17 @@ theorem ExtensionBase {V E : Type*} [Fintype V] [Fintype E]
       jSlot.castSucc (by simpa using hjSlot.symm) sigma hsigmaProper hsigmaOne
       hsigmaTerminal
     have hsigmaBefore := hcurrentTerminal.1
-    have segmentRefl (A : TreeSequence G e0) :
-        TreeSequenceInitialSegment A A :=
-      ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
     have segmentTrans := @helper_segmentTrans_2087 (@V) (@E) (@G) (@e0)
     have stepSegment := @helper_stepSegment_2099 (@V) (@E) inferInstance inferInstance inferInstance
         (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett)
-    have stageToStage := @helper_stageToStage_226 (@V) (@E) inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v)
-        (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@segmentRefl) (@segmentTrans)
-        (@stepSegment)
+    have stageToStage (first last : ℕ) (positive : 1 ≤ first)
+        (ordered : first ≤ last) (bounded : last ≤ ett.rounds) :
+        TreeSequenceInitialSegment
+          (ett.series.data.tree
+            ⟨first, lt_of_le_of_lt ordered (Nat.lt_succ_of_le (Nat.le_succ_of_le bounded))⟩)
+          (ett.series.data.tree ⟨last, Nat.lt_succ_of_le (Nat.le_succ_of_le bounded)⟩) :=
+      ett.series.stageInitialSegmentOfLE _ _
+        (Nat.lt_of_lt_of_le Nat.zero_lt_one positive) ordered
     have vertexTransfer := @helper_vertexTransfer_2114 (@V) (@E) (@G) (@e0)
     have orderRestrict := @helper_orderRestrict_1438 (@V) (@E) (@G) (@e0)
     have hLowerElementary := @helper_hLowerElementary_277 (@V) (@E) inferInstance inferInstance
