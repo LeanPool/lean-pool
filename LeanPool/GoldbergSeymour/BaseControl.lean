@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.NonparallelPenultimateInterchangeability
 
 
@@ -202,11 +204,7 @@ private abbrev helperContinuation1245Conditions.{u_1, u_2} : Prop :=
         (TreeSequenceVertexSet (HierarchyStarredStage H r))) (haMissing : alpha ∈ MissingColors G
         phi a) (hbMissing : beta ∈ MissingColors G phi b) (pathMissing :
     ∀ (c d : Fin k) (hcd : c ≠ d) (v : V) (hc : c ∈ MissingColors G phi v), TwoColorPathComponent
-        G phi c d (Sum.inl v)) (graphSwap :
-    ∀ (c d : Fin k), TwoColorIncidenceGraph G phi c d = TwoColorIncidenceGraph G phi d c)
-        (componentSwap :
-    ∀ (c d : Fin k) (z : V ⊕ E), TwoColorComponent G phi c d z = TwoColorComponent G phi d c z)
-        (interchangeableSwap :
+        G phi c d (Sum.inl v)) (interchangeableSwap :
     ∀ (B : TreeSequence G e0) (c d : Fin k) (hi : TreeInterchangeable G B phi c d),
         TreeInterchangeable G B phi d c) (hcombined : CombinedStableColoring Tn base.closure
         (TashkinovStoredColors ett.series.data n) phi phi) (nonPEMissingClosed :
@@ -245,55 +243,6 @@ private abbrev helperContinuation1245Conditions.{u_1, u_2} : Prop :=
         TreeMissingColors phi (HierarchyStarredStage H r) → TreeColorSetClosed G phi
         (HierarchyStarredStage H r) ({ c } : Finset (Fin k)) → OutsideKempeRecoloring
         (HierarchyStarredStage H r) phi sigma alpha beta
-
-private theorem helper_pathMissing_230.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (phi : PartialEdgeColoring E k), IsProperEdgeColoring G phi →
-    ∀ (c d : Fin k), c ≠ d →
-    ∀ (v : V), c ∈ MissingColors G phi v → TwoColorPathComponent G phi c d (Sum.inl v) := by
-  classical
-  intro V E _ _ G k phi hproper c d hcd v hc
-  let _ := Fintype.ofFinite V
-  refine ⟨hcd, Sum.inl v, ?_, ?_⟩
-  · change (TwoColorIncidenceGraph G phi c d).connectedComponentMk
-        (Sum.inl v) =
-      (TwoColorIncidenceGraph G phi c d).connectedComponentMk (Sum.inl v)
-    rfl
-  · let : Fintype
-        ((TwoColorIncidenceGraph G phi c d).neighborSet (Sum.inl v)) :=
-      Fintype.ofFinite _
-    have hcard : Fintype.card
-        ((TwoColorIncidenceGraph G phi c d).neighborSet (Sum.inl v)) ≤ 1 := by
-      rw [SimpleGraph.card_neighborSet_eq_degree]
-      exact MissingColorIncidenceEndpoint G phi c d hcd hproper v hc
-    intro x hx y hy
-    exact congrArg Subtype.val
-      (Fintype.card_le_one_iff.mp hcard ⟨x, hx⟩ ⟨y, hy⟩)
-
-private theorem helper_interchangeableSwap_258.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Finite E] (G : LooplessMultigraph V E) (k : ℕ) (e0
-        : E) (phi : PartialEdgeColoring E k) (_ : V ⊕ E), (
-    ∀ (c d : Fin k), TwoColorIncidenceGraph G phi c d = TwoColorIncidenceGraph G phi d c) → (
-    ∀ (c d : Fin k) (z : V ⊕ E), TwoColorComponent G phi c d z = TwoColorComponent G phi d c z) →
-    ∀ (B : TreeSequence G e0) (c d : Fin k), TreeInterchangeable G B phi c d → TreeInterchangeable
-        G B phi d c := by
-  classical
-  intro V E _ _ G k e0 phi z graphSwap componentSwap B c d hi
-  let _ := Fintype.ofFinite V
-  let _ := Fintype.ofFinite E
-  clear * - hi componentSwap graphSwap
-  intro z w hz hw hzB hwB
-  have pathSwap (z : Sum V E)
-      (hz : TwoColorPathComponent G phi d c z) :
-      TwoColorPathComponent G phi c d z := by
-    refine ⟨hz.1.symm, ?_⟩
-    simpa only [componentSwap c d, graphSwap c d] using hz.2
-  rw [← componentSwap c d z, ← componentSwap c d w]
-  apply hi z w (pathSwap z hz) (pathSwap w hw)
-  · simpa only [componentSwap c d] using hzB
-  · simpa only [componentSwap c d] using hwB
 
 private theorem helper_nonPEMissingClosed_364.{u_1, u_2} :
     open scoped Classical in
@@ -1035,8 +984,8 @@ private theorem helper_continuation_1245.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C hprefixElementary alpha beta hne hmissingPrefix
       z hpath sigma hsigma hcase hdisjoint hproper hone hlower hfewer hlarge H q A n Tn a b trans
-      starChain hAT helemStar haMissing hbMissing pathMissing graphSwap componentSwap
-      interchangeableSwap hcombined nonPEMissingClosed coreChain TnA closureA firstIn halphaA haA
+      starChain hAT helemStar haMissing hbMissing pathMissing interchangeableSwap hcombined
+      nonPEMissingClosed coreChain TnA closureA firstIn halphaA haA
       hsame haOutside hbOutside missingUnique edgeOfVertex
   have fixedValue (f : E) (ha : phi f ≠ some alpha) (hb : phi f ≠ some beta) :
       sigma f = phi f := by
@@ -1075,10 +1024,8 @@ private theorem helper_continuation_1245.{u_1, u_2} :
   have closedStar := @helper_closedStar_669 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
       (@hlower) (@hfewer) (@hlarge) (@hcombined) (@nonPEInter)
-  have betaPath : TwoColorPathComponent G phi alpha beta (Sum.inl b) := by
-    have hp := pathMissing beta alpha hne.symm b hbMissing
-    refine ⟨hne, ?_⟩
-    simpa only [componentSwap alpha beta, graphSwap alpha beta] using hp.2
+  have betaPath : TwoColorPathComponent G phi alpha beta (Sum.inl b) :=
+    TwoColorPathComponent.swap G phi beta alpha _ (pathMissing beta alpha hne.symm b hbMissing)
   have closedOutside := @helper_closedOutside_690 (@V) (@E) inferInstance inferInstance
       inferInstance inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
       (@beta) (@hne) (@z) (@sigma) (@trans) (@starChain) (@hAT) (@haMissing) (@pathMissing)
@@ -1224,19 +1171,12 @@ theorem P2813_T1_BaseControl {V E : Type*}
     missingFirst alpha hmissingPrefix.1
   have hbMissing : beta ∈ MissingColors G phi b :=
     missingFirst beta hmissingPrefix.2
-  have pathMissing := @helper_pathMissing_230 (@V) (@E) inferInstance inferInstance (@G) (@k) (@phi)
-      (@hproper)
-  have graphSwap (c d : Fin k) :
-      TwoColorIncidenceGraph G phi c d = TwoColorIncidenceGraph G phi d c := by
-    clear * - G phi c d
-    ext x y
-    cases x <;> cases y <;> simp [TwoColorIncidenceGraph, or_comm]
-  have componentSwap (c d : Fin k) (z : Sum V E) :
-      TwoColorComponent G phi c d z = TwoColorComponent G phi d c z := by
-    unfold TwoColorComponent
-    rw [graphSwap]
-  have interchangeableSwap := @helper_interchangeableSwap_258 (@V) (@E) inferInstance inferInstance
-      (@G) (@k) (@e0) (@phi) (@z) (@graphSwap) (@componentSwap)
+  have pathMissing (c d : Fin k) (different : c ≠ d) (v : V)
+      (missing : c ∈ MissingColors G phi v) : TwoColorPathComponent G phi c d (Sum.inl v) :=
+    TwoColorPathComponent.of_missing hproper different missing
+  have interchangeableSwap (B : TreeSequence G e0) (c d : Fin k)
+      (interchange : TreeInterchangeable G B phi c d) : TreeInterchangeable G B phi d c :=
+    interchange.symm
   have stableRefl (B : TreeSequence G e0) (D : Finset (Fin k)) :
       StableColoring B D phi phi :=
     ⟨fun _ _ _ => rfl, fun _ _ => rfl⟩
@@ -1311,8 +1251,8 @@ theorem P2813_T1_BaseControl {V E : Type*}
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hprefixElementary)
       (@alpha) (@beta) (@hne) (@hmissingPrefix) (@z) (@hpath) (@sigma) (@hsigma) (@hcase)
       (@hdisjoint) (@hproper) (@hone) (@hlower) (@hfewer) (@hlarge) (@trans) (@starChain) (@hAT)
-      (@helemStar) (@haMissing) (@hbMissing) (@pathMissing) (@graphSwap) (@componentSwap)
-      (@interchangeableSwap) (@hcombined) (@nonPEMissingClosed) (@coreChain) (@TnA) (@closureA)
+      (@helemStar) (@haMissing) (@hbMissing) (@pathMissing) (@interchangeableSwap) (@hcombined)
+      (@nonPEMissingClosed) (@coreChain) (@TnA) (@closureA)
       (@firstIn) (@halphaA) (@haA) (@hsame) (@haOutside) (@hbOutside) (@missingUnique)
       (@edgeOfVertex)
 end GoldbergSeymour

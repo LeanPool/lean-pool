@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeExitPathOutsideSwap
+
 public import LeanPool.GoldbergSeymour.CertifiedETTPredecessor
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
@@ -189,275 +191,6 @@ private theorem helper_outside_recolor_267.{u_1, u_2} :
         by_cases ht : TreeIncidentEdge S f <;>
           simp [OutsideTreeColorSwap, ht, hc, hs]
       · simp [OutsideTreeColorSwap, ha, hc]
-
-private theorem helper_path_boundary_354.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi), (0 : ℕ) < ett.rounds →
-    ∀ (base : HierarchyBase ett phi) (H : TashkinovHierarchy ett base) (good : GoodHierarchy H) (q
-        : ℕ), H.dividerCount < q → (
-    ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
-        {generating' : PartialEdgeColoring E k} (other : ExtendedTashkinovTree G k e0 input' T'
-        generating'), other.rounds = ett.rounds → MaximumProperty other →
-    ∀ (base' : HierarchyBase other generating') (K : TashkinovHierarchy other base') (_ :
-        GoodHierarchy K), K.dividerCount < q → ColoredVertexSetElementary G generating'
-        (TreeSequenceVertexSet T')) → TreeColorSetMinusClosed G phi T
-        ((HierarchyTerminalStoredColors H).biUnion (good.gamma (Fin.last H.dividerCount))) →
-        ColoredVertexSetElementary G phi (TreeSequenceVertexSet T) →
-    ∀ (alpha beta : Fin k), alpha ∈ TreeMissingColors phi T → beta ∉ TreeMissingColors phi T →
-    ∀ (a₁ b₁ a₂ b₂ a₃ b₃ : V) (P₁ : (TwoColorIncidenceGraph G phi alpha beta).Walk (Sum.inl a₁)
-        (Sum.inl b₁)) (P₂ : (TwoColorIncidenceGraph G phi alpha beta).Walk (Sum.inl a₂) (Sum.inl
-        b₂)) (P₃ : (TwoColorIncidenceGraph G phi alpha beta).Walk (Sum.inl a₃) (Sum.inl b₃)), b₁ ≠
-        b₂ → b₁ ≠ b₃ → b₂ ≠ b₃ →
-    ∀ (f₁ f₂ f₃ : E), f₁ ∈ BoundaryColorEdges G phi (TreeSequenceVertexSet T) beta → f₂ ∈
-        BoundaryColorEdges G phi (TreeSequenceVertexSet T) beta → Incident G b₁ f₁ → Incident G b₂
-        f₂ → Sum.inr f₁ ∈ P₁.support → Sum.inr f₂ ∈ P₂.support → Sum.inr f₃ ∈ P₃.support →
-    ∀ (theta : Fin k), theta ≠ alpha → theta ∈ TreeMissingColors phi (HierarchyStarredStage H
-        (Fin.last H.dividerCount)) → (
-    ∀ (sigma : PartialEdgeColoring E k) (T' : TreeSequence G e0) (corr :
-        CorrespondingExtendedTashkinovTree G k e0 ett sigma T'), IsProperEdgeColoring G sigma →
-        IsOneEdgeUncolored sigma e0 → StableColoring (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) (TashkinovStoredColors ett.series.data (Fin.last ett.rounds)) phi
-        sigma → MaximumProperty corr.replacementETT →
-    ∀ (base' : HierarchyBase corr.replacementETT sigma) (K : TashkinovHierarchy
-        corr.replacementETT base') (good' : GoodHierarchy K), K.dividerCount < H.dividerCount → (2
-        : ℕ) * corr.replacementETT.rounds + (11 : ℕ) ≤ (TreeMissingColors sigma
-        (corr.replacementETT.series.data.tree (Fin.last
-        corr.replacementETT.rounds).castSucc)).card → TreeColorSetMinusClosed G sigma T'
-        ((HierarchyTerminalStoredColors K).biUnion (good'.gamma (Fin.last K.dividerCount))) →
-    ∀ (a b : Fin k), a ≠ b → a ∈ TreeMissingColors sigma T' → TreeColorSetClosed G sigma T' { a }
-        →
-    ∀ (u₁ v₁ u₂ v₂ : V) (Q₁ : (TwoColorIncidenceGraph G sigma a b).Walk (Sum.inl u₁) (Sum.inl v₁))
-        (Q₂ : (TwoColorIncidenceGraph G sigma a b).Walk (Sum.inl u₂) (Sum.inl v₂)), TreeExitPath
-        T' sigma a b u₁ v₁ Q₁ → TreeExitPath T' sigma a b u₂ v₂ Q₂ → (
-    ∀ x ∈ Q₁.support, x ∉ Q₂.support) → u₁ ≠ u₂ → False) → (
-    ∀ {S : TreeSequence G e0} {f : E} {v w : V}, v ∈ TreeSequenceVertexSet S → w ∉
-        TreeSequenceVertexSet S → Incident G v f → Incident G w f → f ∈ BoundaryEdges G
-        (TreeSequenceVertexSet S)) →
-    ∀ {S : TreeSequence G e0} {psi : PartialEdgeColoring E k} {a d : Fin k} {u v : V} (P :
-        (TwoColorIncidenceGraph G psi a d).Walk (Sum.inl u) (Sum.inl v)), TreeExitPath S psi a d u
-        v P →
-    ∀ {f : E}, Sum.inr f ∈ P.support → TreeIncidentEdge S f → f ∈ BoundaryEdges G
-        (TreeSequenceVertexSet S) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive base H good q _ _ _ _ alpha beta _ _ a₁ b₁
-      a₂ b₂ a₃ b₃ P₁ P₂ P₃ _ _ _ f₁ f₂ f₃ _ _ _ _ _ _ _ theta _ _ _ boundary_crossing S psi a d u
-      v P he f hf hftree
-  obtain ⟨n, hn, hnle⟩ := SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hf
-  have hnpos : 0 < n := by
-    by_contra h
-    have hz : n = 0 := by omega
-    rw [hz] at hn
-    simp at hn
-  have hnlt : n < P.length := by
-    by_contra h
-    have hz : n = P.length := by omega
-    rw [hz] at hn
-    simp at hn
-  have hprev := P.adj_getVert_succ (i := n - 1) (by omega)
-  have hnext := P.adj_getVert_succ (i := n) hnlt
-  have hnsub : n - 1 + 1 = n := by omega
-  rw [hnsub, hn] at hprev
-  rw [hn] at hnext
-  cases hy : P.getVert (n - 1) with
-  | inr g => rw [hy] at hprev; simp [TwoColorIncidenceGraph] at hprev
-  | inl y =>
-    rw [hy] at hprev
-    cases hz : P.getVert (n + 1) with
-    | inr g => rw [hz] at hnext; simp [TwoColorIncidenceGraph] at hnext
-    | inl z =>
-      rw [hz] at hnext
-      have hyz : y ≠ z := by
-        intro hyz
-        have heq : P.getVert (n - 1) = P.getVert (n + 1) := by rw [hy, hz, hyz]
-        have hi := he.1.getVert_injOn (show n - 1 ≤ P.length by omega)
-          (show n + 1 ≤ P.length by omega) heq
-        omega
-      have hyS : Sum.inl y ∈ P.support := by rw [← hy]; exact P.getVert_mem_support _
-      have hzS : Sum.inl z ∈ P.support := by rw [← hz]; exact P.getVert_mem_support _
-      have hends : G.ends f = Sym2.mk y z :=
-        (Sym2.mem_and_mem_iff hyz).mp ⟨hprev.1, hnext.1⟩
-      obtain ⟨x, hx, hxf⟩ := hftree
-      have hxy : x = y ∨ x = z := by simpa [Incident, hends] using hxf
-      rcases hxy with hxy | hxz
-      · subst x
-        refine boundary_crossing hx ?_ hprev.1 hnext.1
-        intro hzT
-        exact hyz (((he.2.2.2.2.2 y hx).mp hyS).trans
-          ((he.2.2.2.2.2 z hzT).mp hzS).symm)
-      · subst x
-        refine boundary_crossing hx ?_ hnext.1 hprev.1
-        intro hyT
-        exact hyz (((he.2.2.2.2.2 y hyT).mp hyS).trans
-          ((he.2.2.2.2.2 z hx).mp hzS).symm)
-
-private theorem helper_transfer_exit_407.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (H : TashkinovHierarchy ett base) (good :
-        GoodHierarchy H) (q : ℕ), H.dividerCount < q → (
-    ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
-        {generating' : PartialEdgeColoring E k} (other : ExtendedTashkinovTree G k e0 input' T'
-        generating'), other.rounds = ett.rounds → MaximumProperty other →
-    ∀ (base' : HierarchyBase other generating') (K : TashkinovHierarchy other base') (_ :
-        GoodHierarchy K), K.dividerCount < q → ColoredVertexSetElementary G generating'
-        (TreeSequenceVertexSet T')) → TreeColorSetMinusClosed G phi T
-        ((HierarchyTerminalStoredColors H).biUnion (good.gamma (Fin.last H.dividerCount))) →
-        ColoredVertexSetElementary G phi (TreeSequenceVertexSet T) →
-    ∀ (alpha beta : Fin k), alpha ∈ TreeMissingColors phi T → beta ∉ TreeMissingColors phi T →
-    ∀ (a₁ b₁ a₂ b₂ a₃ b₃ : V) (P₁ : (TwoColorIncidenceGraph G phi alpha beta).Walk (Sum.inl a₁)
-        (Sum.inl b₁)) (P₂ : (TwoColorIncidenceGraph G phi alpha beta).Walk (Sum.inl a₂) (Sum.inl
-        b₂)) (P₃ : (TwoColorIncidenceGraph G phi alpha beta).Walk (Sum.inl a₃) (Sum.inl b₃)), b₁ ≠
-        b₂ → b₁ ≠ b₃ → b₂ ≠ b₃ →
-    ∀ (f₁ f₂ f₃ : E), f₁ ∈ BoundaryColorEdges G phi (TreeSequenceVertexSet T) beta → f₂ ∈
-        BoundaryColorEdges G phi (TreeSequenceVertexSet T) beta → Incident G b₁ f₁ → Incident G b₂
-        f₂ → Sum.inr f₁ ∈ P₁.support → Sum.inr f₂ ∈ P₂.support → Sum.inr f₃ ∈ P₃.support →
-    ∀ (theta : Fin k), theta ≠ alpha → theta ∈ TreeMissingColors phi (HierarchyStarredStage H
-        (Fin.last H.dividerCount)) → (
-    ∀ (sigma : PartialEdgeColoring E k) (T' : TreeSequence G e0) (corr :
-        CorrespondingExtendedTashkinovTree G k e0 ett sigma T'), IsProperEdgeColoring G sigma →
-        IsOneEdgeUncolored sigma e0 → StableColoring (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) (TashkinovStoredColors ett.series.data (Fin.last ett.rounds)) phi
-        sigma → MaximumProperty corr.replacementETT →
-    ∀ (base' : HierarchyBase corr.replacementETT sigma) (K : TashkinovHierarchy
-        corr.replacementETT base') (good' : GoodHierarchy K), K.dividerCount < H.dividerCount → (2
-        : ℕ) * corr.replacementETT.rounds + (11 : ℕ) ≤ (TreeMissingColors sigma
-        (corr.replacementETT.series.data.tree (Fin.last
-        corr.replacementETT.rounds).castSucc)).card → TreeColorSetMinusClosed G sigma T'
-        ((HierarchyTerminalStoredColors K).biUnion (good'.gamma (Fin.last K.dividerCount))) →
-    ∀ (a b : Fin k), a ≠ b → a ∈ TreeMissingColors sigma T' → TreeColorSetClosed G sigma T' { a }
-        →
-    ∀ (u₁ v₁ u₂ v₂ : V) (Q₁ : (TwoColorIncidenceGraph G sigma a b).Walk (Sum.inl u₁) (Sum.inl v₁))
-        (Q₂ : (TwoColorIncidenceGraph G sigma a b).Walk (Sum.inl u₂) (Sum.inl v₂)), TreeExitPath
-        T' sigma a b u₁ v₁ Q₁ → TreeExitPath T' sigma a b u₂ v₂ Q₂ → (
-    ∀ x ∈ Q₁.support, x ∉ Q₂.support) → u₁ ≠ u₂ → False) → (
-    ∀ {S : TreeSequence G e0} {f : E} {v w : V}, v ∈ TreeSequenceVertexSet S → w ∉
-        TreeSequenceVertexSet S → Incident G v f → Incident G w f → f ∈ BoundaryEdges G
-        (TreeSequenceVertexSet S)) → (
-    ∀ {S : TreeSequence G e0} {psi : PartialEdgeColoring E k} {d : Fin k}, TreeColorSetClosed G
-        psi S { d } →
-    ∀ {f : E}, f ∈ BoundaryEdges G (TreeSequenceVertexSet S) → psi f ≠ some d) → (
-    ∀ {S : TreeSequence G e0} {psi : PartialEdgeColoring E k} {a d : Fin k} {u v : V} (P :
-        (TwoColorIncidenceGraph G psi a d).Walk (Sum.inl u) (Sum.inl v)), TreeExitPath S psi a d u
-        v P →
-    ∀ {f : E}, Sum.inr f ∈ P.support → TreeIncidentEdge S f → f ∈ BoundaryEdges G
-        (TreeSequenceVertexSet S)) →
-    ∀ (S U : TreeSequence G e0) (psi : PartialEdgeColoring E k) (a c d : Fin k),
-        TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet U → a ≠ d → c ≠ d → TreeColorSetClosed G
-        psi U { a } → TreeColorSetClosed G psi U { c } →
-    ∀ {u v : V} (P : (TwoColorIncidenceGraph G psi a d).Walk (Sum.inl u) (Sum.inl v)),
-        TreeExitPath U psi a d u v P → v ∈ TreeSequenceVertexSet S →
-    ∃ (Q : (TwoColorIncidenceGraph G (OutsideTreeColorSwap U psi a c) c d).Walk (Sum.inl u)
-        (Sum.inl v)), TreeExitPath S (OutsideTreeColorSwap U psi a c) c d u v Q ∧ Q.support =
-        P.support := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base H good q _ _ _ _ alpha beta _ _ a₁ b₁ a₂ b₂ a₃ b₃
-      P₁ P₂ P₃ _ _ _ f₁ f₂ f₃ _ _ _ _ _ _ _ theta _ _ _ boundary_crossing no_boundary
-      path_boundary S U psi a c d hSU had hcd ha hc u v P he hv
-  let mu := OutsideTreeColorSwap U psi a c
-  have fixed {f : E} (hf : TreeIncidentEdge U f) : mu f = psi f := by
-    simp [mu, OutsideTreeColorSwap, hf]
-  have outside_color (f : E) (hf : ¬ TreeIncidentEdge U f) :
-      (mu f = some c → psi f = some a) ∧
-      (mu f = some d ↔ psi f = some d) := by
-    constructor
-    · intro hmc
-      by_cases hfa : psi f = some a
-      · exact hfa
-      · by_cases hfc : psi f = some c
-        · have hca : c ≠ a := by
-            intro heq
-            exact hfa (hfc.trans (congrArg some heq))
-          have hac : a = c := by
-            apply Option.some.inj
-            simpa [mu, OutsideTreeColorSwap, hf, hfa, hfc, hca] using hmc
-          exact hfc.trans (congrArg some hac.symm)
-        · have hfc' : psi f = some c := by
-            simp [mu, OutsideTreeColorSwap, hf, hfa, hfc] at hmc
-          exact (hfc hfc').elim
-    · by_cases hfa : psi f = some a
-      · simp [mu, OutsideTreeColorSwap, hf, hfa, had, hcd]
-      · by_cases hfc : psi f = some c
-        · have hca : c ≠ a := by
-            intro heq
-            exact hfa (hfc.trans (congrArg some heq))
-          simp [mu, OutsideTreeColorSwap, hf, hfc, hca, had, hcd]
-        · simp [mu, OutsideTreeColorSwap, hf, hfa, hfc]
-  have remote_missing : c ∈ MissingColors G mu u ∨ d ∈ MissingColors G mu u := by
-    rcases he.2.2.2.2.1 with hua | hud
-    · left
-      have hnot : a ∉ PresentColors G psi u := by simpa [MissingColors] using hua
-      change c ∈ Finset.univ \ PresentColors G mu u
-      refine Finset.mem_sdiff.mpr ⟨Finset.mem_univ _, ?_⟩
-      intro hpres
-      obtain ⟨f, hinc, hfc⟩ : ∃ f, Incident G u f ∧ mu f = some c := by
-        simpa [PresentColors] using hpres
-      by_cases hf : TreeIncidentEdge U f
-      · obtain ⟨w, hw, hwf⟩ := hf
-        exact no_boundary hc (boundary_crossing hw he.2.2.1 hwf hinc)
-          ((fixed ⟨w, hw, hwf⟩).symm.trans hfc)
-      · apply hnot
-        simpa [PresentColors] using (show ∃ f, Incident G u f ∧ psi f = some a from
-          ⟨f, hinc, (outside_color f hf).1 hfc⟩)
-    · right
-      have hnot : d ∉ PresentColors G psi u := by simpa [MissingColors] using hud
-      change d ∈ Finset.univ \ PresentColors G mu u
-      refine Finset.mem_sdiff.mpr ⟨Finset.mem_univ _, ?_⟩
-      intro hpres
-      obtain ⟨f, hinc, hfd⟩ : ∃ f, Incident G u f ∧ mu f = some d := by
-        simpa [PresentColors] using hpres
-      have hfd' : psi f = some d := by
-        by_cases hf : TreeIncidentEdge U f
-        · exact (fixed hf).symm.trans hfd
-        · exact (outside_color f hf).2.mp hfd
-      apply hnot
-      simpa [PresentColors] using (show ∃ f, Incident G u f ∧ psi f = some d from
-        ⟨f, hinc, hfd'⟩)
-  have preserve : ∀ {v : V} {f : E}, Sum.inr f ∈ P.support →
-      (TwoColorIncidenceGraph G psi a d).Adj (Sum.inl v) (Sum.inr f) →
-      (TwoColorIncidenceGraph G mu c d).Adj (Sum.inl v) (Sum.inr f) := by
-    intro w f hf hadj
-    refine ⟨hadj.1, ?_⟩
-    by_cases ht : TreeIncidentEdge U f
-    · have hfd := hadj.2.resolve_left (no_boundary ha (path_boundary P he hf ht))
-      exact Or.inr ((fixed ht).trans hfd)
-    · rcases hadj.2 with hfa | hfd
-      · exact Or.inl (by simp [mu, OutsideTreeColorSwap, ht, hfa])
-      · exact Or.inr ((outside_color f ht).2.mpr hfd)
-  have hedges : ∀ z, z ∈ P.edges → z ∈ (TwoColorIncidenceGraph G mu c d).edgeSet := by
-    intro z hz
-    induction z using Sym2.inductionOn with
-    | _ x y =>
-      have hadj := (SimpleGraph.mem_edgeSet _).mp (P.edges_subset_edgeSet hz)
-      have hx := P.fst_mem_support_of_mem_edges hz
-      have hy := P.snd_mem_support_of_mem_edges hz
-      apply (SimpleGraph.mem_edgeSet _).mpr
-      cases x with
-      | inl w =>
-        cases y with
-        | inl w' => simp [TwoColorIncidenceGraph] at hadj
-        | inr f => exact preserve hy hadj
-      | inr f =>
-        cases y with
-        | inl w => exact (preserve hx hadj.symm).symm
-        | inr g => simp [TwoColorIncidenceGraph] at hadj
-  let Q := P.transfer (TwoColorIncidenceGraph G mu c d) hedges
-  have hlength : Q.length = P.length := P.length_transfer hedges
-  have hsupport : Q.support = P.support := P.support_transfer hedges
-  refine ⟨Q, ⟨he.1.transfer hedges, ?_, ?_, hv, remote_missing, ?_⟩, ?_⟩
-  · change 2 ≤ Q.length
-    rw [hlength]
-    exact he.2.1
-  · exact fun hu => he.2.2.1 (hSU hu)
-  · intro w hw
-    change Sum.inl w ∈ Q.support ↔ w = v
-    rw [hsupport]
-    exact he.2.2.2.2.2 w (hSU hw)
-  · exact hsupport
 
 private theorem helper_terminal_534.{u_1, u_2} :
     open scoped Classical in
@@ -1072,17 +805,6 @@ lemma Step1CaseTwoInsideZeroNonPE {V E : Type*}
     · obtain ⟨hp', ho', hs, _, hf⟩ := OutsideKempeRecoloringStable G e0 S C psi
         (OutsideTreeColorSwap S psi a c) a c hp ho (outside_recolor S psi a c hac ha hc)
       exact ⟨hp', ho', hs, hf⟩
-  have path_boundary : ∀ {S : TreeSequence G e0} {psi : PartialEdgeColoring E k}
-      {a d : Fin k} {u v : V}
-      (P : (TwoColorIncidenceGraph G psi a d).Walk (Sum.inl u) (Sum.inl v)),
-      TreeExitPath S psi a d u v P → ∀ {f}, Sum.inr f ∈ P.support →
-      TreeIncidentEdge S f → f ∈ BoundaryEdges G (TreeSequenceVertexSet S) := by
-    exact @helper_path_boundary_354 V E inferInstance inferInstance inferInstance inferInstance G
-        k e0 input T phi ett hpositive base H good q (by assumption) (by assumption)
-        (by assumption) (by assumption) alpha beta (by assumption) (by assumption) a₁ b₁ a₂ b₂ a₃
-        b₃ P₁ P₂ P₃ (by assumption) (by assumption) (by assumption) f₁ f₂ f₃ (by assumption)
-        (by assumption) (by assumption) (by assumption) (by assumption) (by assumption)
-        (by assumption) theta (by assumption) (by assumption) (by assumption) boundary_crossing
   have transfer_exit :
     ∀ (S U : TreeSequence G e0) (psi : PartialEdgeColoring E k) (a c d : Fin k),
         TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet U → a ≠ d → c ≠ d → TreeColorSetClosed G
@@ -1090,14 +812,12 @@ lemma Step1CaseTwoInsideZeroNonPE {V E : Type*}
     ∀ {u v : V} (P : (TwoColorIncidenceGraph G psi a d).Walk (Sum.inl u) (Sum.inl v)),
         TreeExitPath U psi a d u v P → v ∈ TreeSequenceVertexSet S →
     ∃ Q : (TwoColorIncidenceGraph G (OutsideTreeColorSwap U psi a c) c d).Walk (Sum.inl u)
-        (Sum.inl v), TreeExitPath S (OutsideTreeColorSwap U psi a c) c d u v Q ∧ Q.support =
-        P.support := by
-    exact @helper_transfer_exit_407 V E inferInstance inferInstance inferInstance inferInstance G
-        k e0 input T phi ett base H good q (by assumption) (by assumption) (by assumption)
-        (by assumption) alpha beta (by assumption) (by assumption) a₁ b₁ a₂ b₂ a₃ b₃ P₁ P₂ P₃
-        (by assumption) (by assumption) (by assumption) f₁ f₂ f₃ (by assumption) (by assumption)
-        (by assumption) (by assumption) (by assumption) (by assumption) (by assumption) theta
-        (by assumption) (by assumption) (by assumption) boundary_crossing no_boundary path_boundary
+        (Sum.inl v), TreeExitPath S (OutsideTreeColorSwap U psi a c) c d u v Q ∧
+        Q.support = P.support := by
+    intro S U psi a c d subset first second closedFirst closedNew u v P exit inside
+    obtain ⟨Q, transported, support, _⟩ :=
+      TreeExitPath.outsideSwap S U psi a c d subset first second closedFirst closedNew P exit inside
+    exact ⟨Q, transported, support⟩
   let nu := OutsideTreeColorSwap T phi alpha theta
   obtain ⟨hnuProper, hnuOne, hnuStable, hnuFixed⟩ :=
     stable_outside T D phi alpha theta hproper hone hclosed hthetaClosed

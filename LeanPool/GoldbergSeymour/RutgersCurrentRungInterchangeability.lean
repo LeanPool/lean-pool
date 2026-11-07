@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.RutgersCounterexampleMinimumExists
 public import LeanPool.GoldbergSeymour.RutgersMiddleExitOutsideTerminalLadder
 public import LeanPool.GoldbergSeymour.RutgersStrictShortening
@@ -102,64 +104,12 @@ theorem RutgersCurrentRungInterchangeability
   classical
   dsimp
   intro sigma hproper hone hstable alpha beta hmissing
-  have graphSwap :
-      TwoColorIncidenceGraph G sigma alpha beta =
-        TwoColorIncidenceGraph G sigma beta alpha := by
-    ext x y
-    cases x <;> cases y <;> simp [TwoColorIncidenceGraph, or_comm]
-  have componentSwap (z : Sum V E) :
-      TwoColorComponent G sigma alpha beta z =
-        TwoColorComponent G sigma beta alpha z := by
-    unfold TwoColorComponent
-    rw [graphSwap]
-  have pathSwap (z : Sum V E) :
-      TwoColorPathComponent G sigma alpha beta z ↔
-        TwoColorPathComponent G sigma beta alpha z := by
-    simp [TwoColorPathComponent, componentSwap, graphSwap, ne_comm]
   have interchangeSwap :
-      TreeInterchangeable G
-          (original.series.data.tree (Fin.last (original.rounds + 1)))
-          sigma alpha beta ↔
-        TreeInterchangeable G
-          (original.series.data.tree (Fin.last (original.rounds + 1)))
-          sigma beta alpha := by
-    constructor
-    · intro h z w hz hw hzT hwT
-      have hz' : TwoColorPathComponent G sigma alpha beta z :=
-        pathSwap z |>.mpr hz
-      have hw' : TwoColorPathComponent G sigma alpha beta w :=
-        pathSwap w |>.mpr hw
-      have hzT' : ∃ v ∈ TreeSequenceVertexSet
-          (original.series.data.tree (Fin.last (original.rounds + 1))),
-          Sum.inl v ∈ TwoColorComponent G sigma alpha beta z := by
-        obtain ⟨v, hv, hvz⟩ := hzT
-        exact ⟨v, hv, by rw [componentSwap z]; exact hvz⟩
-      have hwT' : ∃ v ∈ TreeSequenceVertexSet
-          (original.series.data.tree (Fin.last (original.rounds + 1))),
-          Sum.inl v ∈ TwoColorComponent G sigma alpha beta w := by
-        obtain ⟨v, hv, hvw⟩ := hwT
-        exact ⟨v, hv, by rw [componentSwap w]; exact hvw⟩
-      have result := h z w hz' hw' hzT' hwT'
-      exact (componentSwap z).symm.trans
-        (result.trans (componentSwap w))
-    · intro h z w hz hw hzT hwT
-      have hz' : TwoColorPathComponent G sigma beta alpha z :=
-        pathSwap z |>.mp hz
-      have hw' : TwoColorPathComponent G sigma beta alpha w :=
-        pathSwap w |>.mp hw
-      have hzT' : ∃ v ∈ TreeSequenceVertexSet
-          (original.series.data.tree (Fin.last (original.rounds + 1))),
-          Sum.inl v ∈ TwoColorComponent G sigma beta alpha z := by
-        obtain ⟨v, hv, hvz⟩ := hzT
-        exact ⟨v, hv, by rw [componentSwap z] at hvz; exact hvz⟩
-      have hwT' : ∃ v ∈ TreeSequenceVertexSet
-          (original.series.data.tree (Fin.last (original.rounds + 1))),
-          Sum.inl v ∈ TwoColorComponent G sigma beta alpha w := by
-        obtain ⟨v, hv, hvw⟩ := hwT
-        exact ⟨v, hv, by rw [componentSwap w] at hvw; exact hvw⟩
-      have result := h z w hz' hw' hzT' hwT'
-      exact (componentSwap z).trans
-        (result.trans (componentSwap w).symm)
+      TreeInterchangeable G (original.series.data.tree (Fin.last (original.rounds + 1)))
+        sigma alpha beta ↔
+      TreeInterchangeable G (original.series.data.tree (Fin.last (original.rounds + 1)))
+        sigma beta alpha :=
+    ⟨TreeInterchangeable.symm, TreeInterchangeable.symm⟩
   by_cases heq : alpha = beta
   · subst alpha
     simp [TreeInterchangeable, TwoColorPathComponent]

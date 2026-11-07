@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeExitPathOutsideSwap
+
 public import LeanPool.GoldbergSeymour.CertifiedETTPredecessor
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.HkuParallelBoundaryStructure
@@ -78,15 +80,7 @@ private abbrev helperBranch661Conditions.{u_1, u_2} : Prop :=
         G mu → IsOneEdgeUncolored mu e0 → StableColoring U (TashkinovStoredColors R.series.data
         q.succ) sigma mu → (
     ∀ (f : E), TreeIncidentEdge U f → mu f = sigma f) → StableColoring N (TashkinovStoredColors
-        R.series.data q.succ) (R.series.data.coloring q.succ) mu → c ∈ TreeMissingColors mu N → (
-    ∀ (f : E), ¬TreeIncidentEdge U f → (mu f = some c → sigma f = some alpha) ∧ (mu f = some beta
-        ↔ sigma f = some beta)) → (
-    ∀ {v : V}, v ∉ TreeSequenceVertexSet U → alpha ∈ MissingColors G sigma v ∨ beta ∈
-        MissingColors G sigma v → c ∈ MissingColors G mu v ∨ beta ∈ MissingColors G mu v) → (
-    ∀ {a b : V} (P : (TwoColorIncidenceGraph G sigma alpha beta).Walk (Sum.inl a) (Sum.inl b)),
-        TreeExitPath U sigma alpha beta a b P → b ∈ TreeSequenceVertexSet N →
-    ∃ (Q : (TwoColorIncidenceGraph G mu c beta).Walk (Sum.inl a) (Sum.inl b)), TreeExitPath N mu c
-        beta a b Q) →
+        R.series.data q.succ) (R.series.data.coloring q.succ) mu → c ∈ TreeMissingColors mu N →
     ∀ (P1 : (TwoColorIncidenceGraph G mu c beta).Walk (Sum.inl counterexample.a1) (Sum.inl
         counterexample.b1)), TreeExitPath N mu c beta counterexample.a1 counterexample.b1 P1 →
     ∀ (P2 : (TwoColorIncidenceGraph G mu c beta).Walk (Sum.inl counterexample.a2) (Sum.inl
@@ -381,217 +375,6 @@ private theorem helper_noninterchangeable_276.{u_1, u_2} :
       · exact hx2 (ex.trans e2.symm)
     · exact hx1 (ex.trans e1.symm)
 
-private theorem helper_path_boundary_419.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) {input : PartialEdgeColoring E k}
-        {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (original :
-        ExtendedTashkinovTree G k e0 input T generating) (presentation : RutgersClosedPresentation
-        G k e0 original) (counterexample : RutgersCounterexample G k e0 original presentation),
-    let sigma : PartialEdgeColoring E k := presentation.sigma;
-    let U : TreeSequence G e0 := presentation.U;
-    let alpha : Fin k := counterexample.alpha;
-    let beta : Fin k := counterexample.beta;
-    ∀ (_ : (
-    ∀ {z : Sym2 V} {x y : V} (_ : x ∈ z) (_ : y ∈ z) (_ : x ≠ y), z = s(x, y))) {a b : V} (P :
-        (TwoColorIncidenceGraph G sigma alpha beta).Walk (Sum.inl a) (Sum.inl b)) (_ :
-        TreeExitPath U sigma alpha beta a b P) {f : E} (_ : Sum.inr f ∈ P.support) (_ :
-        TreeIncidentEdge U f), f ∈ BoundaryEdges G (TreeSequenceVertexSet U) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T generating original presentation counterexample sigma U alpha
-      beta ends_eq_of_mem a b P hexit f hf hftree
-  obtain ⟨n, hn, hnle⟩ := SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hf
-  have hnpos : 0 < n := by
-    by_contra h
-    have hz : n = 0 := by omega
-    rw [hz] at hn
-    simp at hn
-  have hnlt : n < P.length := by
-    by_contra h
-    have hz : n = P.length := by omega
-    rw [hz] at hn
-    simp at hn
-  have hprev := P.adj_getVert_succ (i := n - 1) (by omega)
-  have hnext := P.adj_getVert_succ (i := n) hnlt
-  have hnsub : n - 1 + 1 = n := by omega
-  rw [hnsub, hn] at hprev
-  rw [hn] at hnext
-  cases hy : P.getVert (n - 1) with
-  | inr g =>
-    rw [hy] at hprev
-    simp [TwoColorIncidenceGraph] at hprev
-  | inl y =>
-    rw [hy] at hprev
-    cases hz : P.getVert (n + 1) with
-    | inr g =>
-      rw [hz] at hnext
-      simp [TwoColorIncidenceGraph] at hnext
-    | inl z =>
-      rw [hz] at hnext
-      have hyf : Incident G y f := hprev.1
-      have hzf : Incident G z f := hnext.1
-      have hyz : y ≠ z := by
-        intro hyz
-        have heq : P.getVert (n - 1) = P.getVert (n + 1) := by rw [hy, hz, hyz]
-        have hleft : n - 1 ≤ P.length := by omega
-        have hright : n + 1 ≤ P.length := by omega
-        have hi := hexit.1.getVert_injOn hleft hright heq
-        omega
-      have hySupport : Sum.inl y ∈ P.support := by rw [← hy]; exact P.getVert_mem_support _
-      have hzSupport : Sum.inl z ∈ P.support := by rw [← hz]; exact P.getVert_mem_support _
-      have he : G.ends f = Sym2.mk y z := ends_eq_of_mem hyf hzf hyz
-      obtain ⟨x, hx, hxf⟩ := hftree
-      have hxy : x = y ∨ x = z := by simpa [Incident, he] using hxf
-      simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and]
-      rcases hxy with hxy | hxz
-      · subst x
-        refine ⟨y, hx, z, ?_, he⟩
-        intro hzT
-        exact hyz ((hexit.2.2.2.2.2 y hx).mp hySupport |>.trans
-          ((hexit.2.2.2.2.2 z hzT).mp hzSupport).symm)
-      · subst x
-        refine ⟨z, hx, y, ?_, ?_⟩
-        · intro hyT
-          exact hyz ((hexit.2.2.2.2.2 y hyT).mp hySupport |>.trans
-            ((hexit.2.2.2.2.2 z hx).mp hzSupport).symm)
-        · exact he.trans (Sym2.eq_swap ..)
-
-private theorem helper_remote_missing_506.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) {input : PartialEdgeColoring E k}
-        {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (original :
-        ExtendedTashkinovTree G k e0 input T generating) (presentation : RutgersClosedPresentation
-        G k e0 original) (counterexample : RutgersCounterexample G k e0 original presentation),
-    let sigma : PartialEdgeColoring E k := presentation.sigma;
-    let U : TreeSequence G e0 := presentation.U;
-    let alpha : Fin k := counterexample.alpha;
-    let beta : Fin k := counterexample.beta;
-    ∀ c ∈ TreeMissingColors sigma U,
-    let mu : PartialEdgeColoring E k := OutsideTreeColorSwap U sigma alpha c; (
-    ∀ (f : E), TreeIncidentEdge U f → mu f = sigma f) → (
-    ∀ {z : Sym2 V} {x y : V}, x ∈ z → y ∈ z → x ≠ y → z = s(x, y)) → (
-    ∀ d ∈ TreeMissingColors sigma U,
-    ∀ {f : E}, f ∈ BoundaryEdges G (TreeSequenceVertexSet U) → sigma f ≠ some d) → (
-    ∀ (f : E), ¬TreeIncidentEdge U f → (mu f = some c → sigma f = some alpha) ∧ (mu f = some beta
-        ↔ sigma f = some beta)) →
-    ∀ {v : V}, v ∉ TreeSequenceVertexSet U → alpha ∈ MissingColors G sigma v ∨ beta ∈
-        MissingColors G sigma v → c ∈ MissingColors G mu v ∨ beta ∈ MissingColors G mu v := by
-  classical
-  intro V E _ _ _ _ G k e0 input T generating original presentation counterexample sigma U alpha
-      beta c hcU mu hfixed ends_eq_of_mem closed_color outside_color v hv hm
-  have outside_boundary {f : E} (hinc : Incident G v f) (hf : TreeIncidentEdge U f) :
-      f ∈ BoundaryEdges G (TreeSequenceVertexSet U) := by
-    obtain ⟨w, hw, hwf⟩ := hf
-    have hwv : w ≠ v := by intro heq; exact hv (heq ▸ hw)
-    simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨w, hw, v, hv, ends_eq_of_mem hwf hinc hwv⟩
-  rcases hm with ha | hb
-  · left
-    have hnot : alpha ∉ PresentColors G sigma v := by simpa [MissingColors] using ha
-    change c ∈ Finset.univ \ PresentColors G mu v
-    refine Finset.mem_sdiff.mpr ⟨Finset.mem_univ _, ?_⟩
-    intro hpres
-    obtain ⟨f, hinc, hfc⟩ : ∃ f, Incident G v f ∧ mu f = some c := by
-      simpa [PresentColors] using hpres
-    by_cases hf : TreeIncidentEdge U f
-    -- A fixed edge at an outside endpoint is a boundary edge of U.
-    · exact closed_color c hcU (outside_boundary hinc hf) ((hfixed f hf).symm.trans hfc)
-    · apply hnot
-      simpa [PresentColors] using
-        (show ∃ f, Incident G v f ∧ sigma f = some alpha from
-          ⟨f, hinc, (outside_color f hf).1 hfc⟩)
-  · right
-    have hnot : beta ∉ PresentColors G sigma v := by simpa [MissingColors] using hb
-    change beta ∈ Finset.univ \ PresentColors G mu v
-    refine Finset.mem_sdiff.mpr ⟨Finset.mem_univ _, ?_⟩
-    intro hpres
-    obtain ⟨f, hinc, hfb⟩ : ∃ f, Incident G v f ∧ mu f = some beta := by
-      simpa [PresentColors] using hpres
-    have hfb' : sigma f = some beta := by
-      by_cases hf : TreeIncidentEdge U f
-      · exact (hfixed f hf).symm.trans hfb
-      · exact (outside_color f hf).2.mp hfb
-    apply hnot
-    simpa [PresentColors] using
-      (show ∃ f, Incident G v f ∧ sigma f = some beta from ⟨f, hinc, hfb'⟩)
-
-private theorem helper_transfer_exit_545.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) {input : PartialEdgeColoring E k}
-        {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (original :
-        ExtendedTashkinovTree G k e0 input T generating) (presentation : RutgersClosedPresentation
-        G k e0 original) (counterexample : RutgersCounterexample G k e0 original presentation),
-    let R : ExtendedTashkinovTree G k e0 presentation.corresponding.replacementInput
-        presentation.U presentation.sigma := presentation.corresponding.replacementETT;
-    let q : Fin R.rounds := (⟨R.rounds - (1 : ℕ),
-    by have this : (1 : ℕ) ≤ R.rounds := R.roundsPositive; omega
-    ⟩ : Fin R.rounds);
-    let N : TreeSequence G e0 := R.series.data.tree q.succ.castSucc;
-    let sigma : PartialEdgeColoring E k := presentation.sigma;
-    let U : TreeSequence G e0 := presentation.U;
-    let alpha : Fin k := counterexample.alpha;
-    let beta : Fin k := counterexample.beta;
-    ∀ (_ : TreeSequenceVertexSet N ⊆ TreeSequenceVertexSet U) (c : Fin k),
-    let mu : PartialEdgeColoring E k := OutsideTreeColorSwap U sigma alpha c;
-    ∀ (_ : (
-    ∀ (f : E) (_ : TreeIncidentEdge U f), mu f = sigma f)) (_ : (
-    ∀ d ∈ TreeMissingColors sigma U,
-    ∀ {f : E}, f ∈ BoundaryEdges G (TreeSequenceVertexSet U) → sigma f ≠ some d)) (_ : (
-    ∀ {a b : V} (P : (TwoColorIncidenceGraph G sigma alpha beta).Walk (Sum.inl a) (Sum.inl b)) (_
-        : TreeExitPath U sigma alpha beta a b P) {f : E} (_ : Sum.inr f ∈ P.support) (_ :
-        TreeIncidentEdge U f), f ∈ BoundaryEdges G (TreeSequenceVertexSet U))) (_ : (
-    ∀ (f : E) (_ : ¬TreeIncidentEdge U f), (mu f = some c → sigma f = some alpha) ∧ (mu f = some
-        beta ↔ sigma f = some beta))) (_ : (
-    ∀ {v : V} (_ : v ∉ TreeSequenceVertexSet U) (_ : alpha ∈ MissingColors G sigma v ∨ beta ∈
-        MissingColors G sigma v), c ∈ MissingColors G mu v ∨ beta ∈ MissingColors G mu v))
-        {a b : V} (P : (TwoColorIncidenceGraph G sigma alpha beta).Walk (Sum.inl a) (Sum.inl b))
-        (_ : TreeExitPath U sigma alpha beta a b P) (_ : b ∈ TreeSequenceVertexSet N),
-    ∃ (Q : (TwoColorIncidenceGraph G mu c beta).Walk (Sum.inl a) (Sum.inl b)), TreeExitPath N mu c
-        beta a b Q := by
-  classical
-  intro V E _ _ _ _ G k e0 input T generating original presentation counterexample R q N sigma U
-      alpha beta hsub c mu hfixed closed_color path_boundary outside_color remote_missing a b P
-      hexit hb
-  have preserve : ∀ {v : V} {f : E}, Sum.inr f ∈ P.support →
-      (TwoColorIncidenceGraph G sigma alpha beta).Adj (Sum.inl v) (Sum.inr f) →
-      (TwoColorIncidenceGraph G mu c beta).Adj (Sum.inl v) (Sum.inr f) := by
-    intro v f hf hadj
-    have hold : Incident G v f ∧ (sigma f = some alpha ∨ sigma f = some beta) := hadj
-    refine ⟨hold.1, ?_⟩
-    by_cases ht : TreeIncidentEdge U f
-    · have hfb : sigma f = some beta := hold.2.resolve_left
-        (closed_color alpha counterexample.alphaMissing (path_boundary P hexit hf ht))
-      exact Or.inr ((hfixed f ht).trans hfb)
-    · rcases hold.2 with ha | hb
-      · exact Or.inl (by simp [mu, OutsideTreeColorSwap, ht, ha])
-      · exact Or.inr ((outside_color f ht).2.mpr hb)
-  have hedges : ∀ z, z ∈ P.edges → z ∈ (TwoColorIncidenceGraph G mu c beta).edgeSet := by
-    intro z hz
-    induction z using Sym2.inductionOn with
-    | _ x y =>
-      have hadj := (SimpleGraph.mem_edgeSet _).mp (P.edges_subset_edgeSet hz)
-      have hx := P.fst_mem_support_of_mem_edges hz
-      have hy := P.snd_mem_support_of_mem_edges hz
-      apply (SimpleGraph.mem_edgeSet _).mpr
-      cases x with
-      | inl v =>
-        cases y with
-        | inl w => simp [TwoColorIncidenceGraph] at hadj
-        | inr f => exact preserve hy hadj
-      | inr f =>
-        cases y with
-        | inl v => exact (preserve hx hadj.symm).symm
-        | inr g => simp [TwoColorIncidenceGraph] at hadj
-  let Q := P.transfer (TwoColorIncidenceGraph G mu c beta) hedges
-  refine ⟨Q, hexit.1.transfer hedges, ?_, ?_, hb, ?_, ?_⟩
-  · simpa [Q] using hexit.2.1
-  · exact fun ha => hexit.2.2.1 (hsub ha)
-  · exact remote_missing hexit.2.2.1 hexit.2.2.2.2.1
-  · intro w hw
-    simpa [Q] using hexit.2.2.2.2.2 w (hsub hw)
-
 private theorem helper_htOne_808.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -686,7 +469,7 @@ private theorem helper_branch_661.{u_1, u_2} :
   intro V E _ _ _ _ G k e0 input T generating original hcurrentFour presentation counterexample R
       q hq N sigma U alpha beta hcolor hsub forbidden c hc hcN hcAvoid hcU hcb
       lowerInterchangeable noninterchangeable mu hmuProper hmuOne hmuStable hfixed hstableN hcMu
-      outside_color remote_missing transfer_exit P1 he1 P2 he2 hnot stableAfter hf1 hf2 hfne i
+      P1 he1 P2 he2 hnot stableAfter hf1 hf2 hfne i
       previousProper previousOneUncolored previousClosed previousNotStronglyClosed noRevisiting
       choice seriesAlternativeFails gamma gammaRule secondStable secondStableProper
       secondStableRelation exitWitness currentColoring currentProper currentOneUncolored
@@ -790,56 +573,6 @@ private theorem helper_branch_661.{u_1, u_2} :
   obtain ⟨Q2, hQ2⟩ := transferTau P2 he2
   exact noninterchangeable tau htProper hcTau Q1 Q2 hQ1 hQ2
     (lowerInterchangeable tau htProper htOne hundone hcTau)
-
-private theorem helper_outside_color_1093.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) {input : PartialEdgeColoring E k}
-        {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (original :
-        ExtendedTashkinovTree G k e0 input T generating) (presentation : RutgersClosedPresentation
-        G k e0 original) (counterexample : RutgersCounterexample G k e0 original presentation),
-    let R : ExtendedTashkinovTree G k e0 presentation.corresponding.replacementInput
-        presentation.U presentation.sigma := presentation.corresponding.replacementETT;
-    let q : Fin R.rounds := (⟨R.rounds - (1 : ℕ),
-    by have this : (1 : ℕ) ≤ R.rounds := R.roundsPositive; omega
-    ⟩ : Fin R.rounds);
-    let N : TreeSequence G e0 := R.series.data.tree q.succ.castSucc;
-    let sigma : PartialEdgeColoring E k := presentation.sigma;
-    let U : TreeSequence G e0 := presentation.U;
-    let alpha : Fin k := counterexample.alpha;
-    let beta : Fin k := counterexample.beta;
-    let forbidden : Finset (Fin k) := (R.series.data.gamma q.succ).toFinset ∪ (R.series.data.delta
-        q.succ).toFinset;
-    ∀ c ∈ TreeMissingColors sigma N \ forbidden, c ≠ beta → alpha ≠ beta →
-    let mu : PartialEdgeColoring E k := OutsideTreeColorSwap U sigma alpha c;
-    ∀ (f : E), ¬TreeIncidentEdge U f → (mu f = some c → sigma f = some alpha) ∧ (mu f = some beta
-        ↔ sigma f = some beta) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T generating original presentation counterexample R q N sigma U
-      alpha beta forbidden c hc hcb hab mu f hf
-  constructor
-  · intro hmc
-    by_cases ha : sigma f = some alpha
-    · exact ha
-    · by_cases hc : sigma f = some c
-      · have hca : c ≠ alpha := by
-          intro heq
-          exact ha (hc.trans (congrArg some heq))
-        have hac : alpha = c := by
-          apply Option.some.inj
-          simpa [mu, OutsideTreeColorSwap, hf, ha, hc, hca] using hmc
-        exact hc.trans (congrArg some hac.symm)
-      · have hc' : sigma f = some c := by
-          simp [mu, OutsideTreeColorSwap, hf, ha, hc] at hmc
-        exact (hc hc').elim
-  · by_cases ha : sigma f = some alpha
-    · simp [mu, OutsideTreeColorSwap, hf, ha, hab, hcb]
-    · by_cases hc : sigma f = some c
-      · have hca : c ≠ alpha := by
-          intro heq
-          exact ha (hc.trans (congrArg some heq))
-        simp [mu, OutsideTreeColorSwap, hf, hc, hca, hab, hcb]
-      · simp [mu, OutsideTreeColorSwap, hf, ha, hc]
 
 private theorem helper_hprefix_1002.{u_1, u_2} :
     open scoped Classical in
@@ -1105,34 +838,15 @@ private theorem helper_continuation_1450.{u_1, u_2} :
   intro V E _ _ _ _ G k e0 input T generating original hcurrentFour presentation counterexample R
       q hq N sigma U alpha beta hcolor hb2 hprefix hsub hb1 forbidden c hc hcN hcAvoid hcU hcb
       hab lowerInterchangeable noninterchangeable mu hmuProper hmuOne hmuStable hfixed hstableN hcMu
-  have ends_eq_of_mem : ∀ {z : Sym2 V} {x y : V}, x ∈ z → y ∈ z → x ≠ y →
-      z = Sym2.mk x y := by
-    intro z x y hx hy hxy
-    induction z using Sym2.inductionOn with
-    | _ a b =>
-      simp only [Sym2.mem_iff] at hx hy
-      rcases hx with hx | hx <;> rcases hy with hy | hy
-      · exact (hxy (hx.trans hy.symm)).elim
-      · rw [hx, hy]
-      · rw [hx, hy]
-        exact Sym2.eq_swap ..
-      · exact (hxy (hx.trans hy.symm)).elim
-  have closed_color (d : Fin k) (hd : d ∈ TreeMissingColors sigma U) :
-      ∀ {f}, f ∈ BoundaryEdges G (TreeSequenceVertexSet U) → sigma f ≠ some d := by
-    intro f hf hfd
-    obtain ⟨v, hv, hm⟩ : ∃ v ∈ TreeSequenceVertexSet U, d ∈ MissingColors G sigma v := by
-      simpa [TreeMissingColors] using hd
-    exact (hprefix.2 hf hv hfd) hm
-  have path_boundary := @helper_path_boundary_419 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 input T generating original presentation counterexample ends_eq_of_mem
-  have outside_color := @helper_outside_color_1093 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 input T generating original presentation counterexample c hc hcb hab
-  have remote_missing := @helper_remote_missing_506 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 input T generating original presentation counterexample c hcU hfixed
-      ends_eq_of_mem closed_color outside_color
-  have transfer_exit := @helper_transfer_exit_545 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 input T generating original presentation counterexample hsub c hfixed
-      closed_color path_boundary outside_color remote_missing
+  have transfer_exit {a b : V}
+      (P : (TwoColorIncidenceGraph G sigma alpha beta).Walk (Sum.inl a) (Sum.inl b))
+      (exit : TreeExitPath U sigma alpha beta a b P) (inside : b ∈ TreeSequenceVertexSet N) :
+      ∃ Q : (TwoColorIncidenceGraph G mu c beta).Walk (Sum.inl a) (Sum.inl b),
+        TreeExitPath N mu c beta a b Q := by
+    obtain ⟨Q, transported, _, _⟩ := TreeExitPath.outsideSwap N U sigma alpha c beta hsub hab hcb
+      (ColoredVertexSetClosed.treeColorSetClosed hprefix.2 counterexample.alphaMissing)
+      (ColoredVertexSetClosed.treeColorSetClosed hprefix.2 hcU) P exit inside
+    exact ⟨Q, transported⟩
   obtain ⟨P1, he1⟩ := transfer_exit counterexample.Q1 counterexample.exit1 hb1
   obtain ⟨P2, he2⟩ := transfer_exit counterexample.Q2 counterexample.exit2 hb2
   have hnot := noninterchangeable mu hmuProper hcMu P1 P2 he1 he2
@@ -1204,7 +918,7 @@ private theorem helper_continuation_1450.{u_1, u_2} :
           exact @helper_branch_661 V E inferInstance inferInstance inferInstance inferInstance G
               k e0 input T generating original hcurrentFour presentation counterexample hq hcolor
               hsub c hc hcN hcAvoid hcU hcb lowerInterchangeable noninterchangeable hmuProper
-              hmuOne hmuStable hfixed hstableN hcMu outside_color remote_missing transfer_exit P1
+              hmuOne hmuStable hfixed hstableN hcMu P1
               he1 P2 he2 hnot stableAfter hf1 hf2 hfne i previousProper previousOneUncolored
               previousClosed previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
               gamma gammaRule secondStable secondStableProper secondStableRelation exitWitness

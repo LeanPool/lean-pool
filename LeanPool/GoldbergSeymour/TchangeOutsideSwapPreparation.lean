@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeExitPathOutsideSwap
+
 public import LeanPool.GoldbergSeymour.MissingColorsNonemptyOfMaximumDegree
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
@@ -148,297 +150,6 @@ private theorem helper_hnormalized_63.{u_1, u_2} :
       · simp [N, TchangeCounterexampleMeasure, Nat.add_comm,
           Nat.add_left_comm, Nat.add_assoc]
 
-private theorem helper_incident_vertex_mem_support_205.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-        {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} (_ N : TchangeCounterexample G k e0), (
-    ∀ {z : Sym2 V} {x y : V}, x ∈ z → y ∈ z → x ≠ y → z = s(x, y)) →
-    ∀ {u v : V} {p : (TwoColorIncidenceGraph G N.phi N.a N.b).Walk (Sum.inl u) (Sum.inl v)}
-        {f : E} {x : V}, p.IsPath → Sum.inr f ∈ p.support → Incident G x f → Sum.inl x ∈ p.support
-  := by
-  classical
-  intro V E _ _ _ _ G k e0 C N ends_eq_of_mem u v p f x hp hf hxf
-  obtain ⟨n, hn, hnle⟩ :=
-    SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hf
-  have hnpos : 0 < n := by
-    by_contra h
-    have hnzero : n = 0 := by omega
-    rw [hnzero] at hn
-    simp at hn
-  have hnlt : n < p.length := by
-    by_contra h
-    have hneq : n = p.length := by omega
-    rw [hneq] at hn
-    simp at hn
-  have hprev := p.adj_getVert_succ (i := n - 1) (by omega)
-  have hnext := p.adj_getVert_succ (i := n) hnlt
-  have hnsub : n - 1 + 1 = n := by omega
-  rw [hnsub, hn] at hprev
-  rw [hn] at hnext
-  cases hpreveq : p.getVert (n - 1) with
-  | inr g =>
-      rw [hpreveq] at hprev
-      simp [TwoColorIncidenceGraph] at hprev
-  | inl y =>
-      rw [hpreveq] at hprev
-      cases hnexteq : p.getVert (n + 1) with
-      | inr g =>
-          rw [hnexteq] at hnext
-          simp [TwoColorIncidenceGraph] at hnext
-      | inl z =>
-          rw [hnexteq] at hnext
-          have hyf : Incident G y f := by
-            simpa [TwoColorIncidenceGraph] using hprev.1
-          have hzf : Incident G z f := by
-            simpa [TwoColorIncidenceGraph] using hnext.1
-          have hyz : y ≠ z := by
-            intro hyz
-            have hverts : p.getVert (n - 1) = p.getVert (n + 1) := by
-              rw [hpreveq, hnexteq, hyz]
-            have hleft : n - 1 ≤ p.length := by omega
-            have hright : n + 1 ≤ p.length := by omega
-            have hidx : n - 1 = n + 1 :=
-              hp.getVert_injOn hleft hright hverts
-            omega
-          have hends : G.ends f = s(y, z) :=
-            ends_eq_of_mem hyf hzf hyz
-          rw [Incident, hends] at hxf
-          have hx : x = y ∨ x = z := by simpa using hxf
-          rcases hx with rfl | rfl
-          · rw [← hpreveq]
-            exact p.getVert_mem_support (n - 1)
-          · rw [← hnexteq]
-            exact p.getVert_mem_support (n + 1)
-
-private theorem helper_path_tree_incident_boundary_263.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
-      [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} (_ N :
-          TchangeCounterexample G k e0),
-      (∀ {z : Sym2 V} {x y : V}, x ∈ z → y ∈ z → x ≠ y → z = s(x, y)) →
-        (∀ {u v : V} {p : (TwoColorIncidenceGraph G N.phi N.a N.b).Walk (Sum.inl u) (Sum.inl v)}
-            {f : E} {x : V},
-            p.IsPath → Sum.inr f ∈ p.support → Incident G x f → Sum.inl x ∈ p.support) →
-          ∀ {u v : V} {p : (TwoColorIncidenceGraph G N.phi N.a N.b).Walk (Sum.inl u) (Sum.inl v)},
-            TreeExitPath N.T N.phi N.a N.b u v p →
-              ∀ {f : E}, Sum.inr f ∈ p.support → TreeIncidentEdge N.T f → f ∈ BoundaryEdges G
-                  (TreeSequenceVertexSet N.T) := by
-  classical
-  intro V E _ _ _ _ G k e0 C N ends_eq_of_mem incident_vertex_mem_support u v p hexit f hf hftree
-  obtain ⟨x, hxT, hxf⟩ := hftree
-  have hxSupport := incident_vertex_mem_support hexit.1 hf hxf
-  have hxv : x = v := (hexit.2.2.2.2.2 x hxT).mp hxSupport
-  obtain ⟨n, hn, hnle⟩ :=
-    SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hf
-  have hnpos : 0 < n := by
-    by_contra h
-    have hnzero : n = 0 := by omega
-    rw [hnzero] at hn
-    simp at hn
-  have hnlt : n < p.length := by
-    by_contra h
-    have hneq : n = p.length := by omega
-    rw [hneq] at hn
-    simp at hn
-  have hprev := p.adj_getVert_succ (i := n - 1) (by omega)
-  have hnext := p.adj_getVert_succ (i := n) hnlt
-  have hnsub : n - 1 + 1 = n := by omega
-  rw [hnsub, hn] at hprev
-  rw [hn] at hnext
-  cases hpreveq : p.getVert (n - 1) with
-  | inr g =>
-      rw [hpreveq] at hprev
-      simp [TwoColorIncidenceGraph] at hprev
-  | inl y =>
-      rw [hpreveq] at hprev
-      cases hnexteq : p.getVert (n + 1) with
-      | inr g =>
-          rw [hnexteq] at hnext
-          simp [TwoColorIncidenceGraph] at hnext
-      | inl z =>
-          rw [hnexteq] at hnext
-          have hyf : Incident G y f := by
-            simpa [TwoColorIncidenceGraph] using hprev.1
-          have hzf : Incident G z f := by
-            simpa [TwoColorIncidenceGraph] using hnext.1
-          have hyz : y ≠ z := by
-            intro hyz
-            have hverts : p.getVert (n - 1) = p.getVert (n + 1) := by
-              rw [hpreveq, hnexteq, hyz]
-            have hleft : n - 1 ≤ p.length := by omega
-            have hright : n + 1 ≤ p.length := by omega
-            have hidx : n - 1 = n + 1 :=
-              hexit.1.getVert_injOn hleft hright hverts
-            omega
-          have chooseOutside : ∃ w : V,
-              Incident G w f ∧ w ∉ TreeSequenceVertexSet N.T ∧ x ≠ w := by
-            by_cases hxy : x = y
-            · refine ⟨z, hzf, ?_, ?_⟩
-              · intro hzT
-                have hzv := (hexit.2.2.2.2.2 z hzT).mp (by
-                  rw [← hnexteq]
-                  exact p.getVert_mem_support (n + 1))
-                exact hyz (hxy.symm.trans (hxv.trans hzv.symm))
-              · intro hxz
-                exact hyz (hxy.symm.trans hxz)
-            · refine ⟨y, hyf, ?_, hxy⟩
-              intro hyT
-              have hyv := (hexit.2.2.2.2.2 y hyT).mp (by
-                rw [← hpreveq]
-                exact p.getVert_mem_support (n - 1))
-              exact hxy (hxv.trans hyv.symm)
-          obtain ⟨w, hwf, hwout, hxw⟩ := chooseOutside
-          simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ,
-            true_and]
-          exact ⟨x, hxT, w, hwout, ends_eq_of_mem hxf hwf hxw⟩
-
-private theorem helper_swapped_remote_missing_384.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-        {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} (N : TchangeCounterexample G k e0),
-    ∀ gamma ∈ MissingColors G N.phi N.b3, gamma ≠ N.b → ¬N.a = gamma →
-    let sigma : PartialEdgeColoring E k := OutsideTreeColorSwap N.T N.phi N.a gamma; (
-    ∀ (f : E), TreeIncidentEdge N.T f → sigma f = N.phi f) → (
-    ∀ {u : V} {f : E}, u ∉ TreeSequenceVertexSet N.T → Incident G u f → TreeIncidentEdge N.T f → f
-        ∈ BoundaryEdges G (TreeSequenceVertexSet N.T)) →
-    ∀ {u : V}, u ∉ TreeSequenceVertexSet N.T → N.a ∈ MissingColors G N.phi u ∨ N.b ∈ MissingColors
-        G N.phi u → gamma ∈ MissingColors G sigma u ∨ N.b ∈ MissingColors G sigma u := by
-  classical
-  intro V E _ _ _ _ G k e0 N gamma hgamma hgammaB hag sigma hfixed boundary_of_tree_incident_outside
-      u huout hmissing
-  rcases hmissing with haMissing | hbMissing
-  · left
-    have hnotA : N.a ∉ PresentColors G N.phi u := by
-      simpa [MissingColors] using haMissing
-    change gamma ∈ Finset.univ \ PresentColors G sigma u
-    rw [Finset.mem_sdiff]
-    refine ⟨Finset.mem_univ _, ?_⟩
-    intro hpresent
-    unfold PresentColors at hpresent
-    obtain ⟨_, ⟨f, huf, hsf⟩⟩ := Finset.mem_filter.mp hpresent
-    by_cases hftree : TreeIncidentEdge N.T f
-    · have hphif : N.phi f = some gamma := by
-        rw [← hfixed f hftree]
-        exact hsf
-      have hfboundary := boundary_of_tree_incident_outside huout huf hftree
-      exact (N.closed hfboundary N.exit3.2.2.2.1 hphif) hgamma
-    · by_cases hfa : N.phi f = some N.a
-      · exact hnotA (by
-          unfold PresentColors
-          exact Finset.mem_filter.mpr
-            ⟨Finset.mem_univ _, ⟨f, huf, hfa⟩⟩)
-      · by_cases hfg : N.phi f = some gamma
-        · have hbad : some N.a = some gamma := by
-            simp [sigma, OutsideTreeColorSwap, hftree, hfg, hag, Ne.symm hag] at hsf
-          exact hag (Option.some.inj hbad)
-        · have : N.phi f = some gamma := by
-            simp [sigma, OutsideTreeColorSwap, hftree, hfa, hfg] at hsf
-          exact hfg this
-  · right
-    have hnotB : N.b ∉ PresentColors G N.phi u := by
-      simpa [MissingColors] using hbMissing
-    change N.b ∈ Finset.univ \ PresentColors G sigma u
-    rw [Finset.mem_sdiff]
-    refine ⟨Finset.mem_univ _, ?_⟩
-    intro hpresent
-    unfold PresentColors at hpresent
-    obtain ⟨_, ⟨f, huf, hsf⟩⟩ := Finset.mem_filter.mp hpresent
-    have hphif : N.phi f = some N.b := by
-      by_cases hftree : TreeIncidentEdge N.T f
-      · rw [← hfixed f hftree]
-        exact hsf
-      · by_cases hfa : N.phi f = some N.a
-        · have hbad : some gamma = some N.b := by
-            simpa [sigma, OutsideTreeColorSwap, hftree, hfa, hag] using hsf
-          exact False.elim (hgammaB (Option.some.inj hbad))
-        · by_cases hfg : N.phi f = some gamma
-          · have hbad : some N.a = some N.b := by
-              simpa [sigma, OutsideTreeColorSwap, hftree, hfa, hfg, hag,
-                Ne.symm hag] using hsf
-            exact False.elim (N.colorsDistinct (Option.some.inj hbad))
-          · simpa [sigma, OutsideTreeColorSwap, hftree, hfa, hfg] using hsf
-    exact hnotB (by
-      unfold PresentColors
-      exact Finset.mem_filter.mpr
-        ⟨Finset.mem_univ _, ⟨f, huf, hphif⟩⟩)
-
-private theorem helper_transfer_exit_446.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-        {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} (N : TchangeCounterexample G k e0) (gamma :
-        Fin k), gamma ≠ N.b →
-    let sigma : PartialEdgeColoring E k := OutsideTreeColorSwap N.T N.phi N.a gamma; (
-    ∀ (f : E), TreeIncidentEdge N.T f → sigma f = N.phi f) → (
-    ∀ {u v : V} {p : (TwoColorIncidenceGraph G N.phi N.a N.b).Walk (Sum.inl u) (Sum.inl v)},
-        TreeExitPath N.T N.phi N.a N.b u v p →
-    ∀ {f : E}, Sum.inr f ∈ p.support → TreeIncidentEdge N.T f → f ∈ BoundaryEdges G
-        (TreeSequenceVertexSet N.T)) → (
-    ∀ {u : V}, u ∉ TreeSequenceVertexSet N.T → N.a ∈ MissingColors G N.phi u ∨ N.b ∈ MissingColors
-        G N.phi u → gamma ∈ MissingColors G sigma u ∨ N.b ∈ MissingColors G sigma u) →
-    ∀ {u v : V} (p : (TwoColorIncidenceGraph G N.phi N.a N.b).Walk (Sum.inl u) (Sum.inl v)),
-        TreeExitPath N.T N.phi N.a N.b u v p →
-    ∃ (q : (TwoColorIncidenceGraph G sigma gamma N.b).Walk (Sum.inl u) (Sum.inl v)), TreeExitPath
-        N.T sigma gamma N.b u v q ∧ q.support = p.support ∧ q.length = p.length := by
-  classical
-  intro V E _ _ _ _ G k e0 N gamma hgammaB sigma hfixed path_tree_incident_boundary
-      swapped_remote_missing u v p hexit
-  have preserve_adj :
-    ∀ {w : V} {f : E}, Sum.inr f ∈ p.support → (TwoColorIncidenceGraph G N.phi N.a N.b).Adj
-        (Sum.inl w) (Sum.inr f) → (TwoColorIncidenceGraph G sigma gamma N.b).Adj (Sum.inl w)
-        (Sum.inr f) := by
-    intro w f hf hadj
-    have hold : Incident G w f ∧
-        (N.phi f = some N.a ∨ N.phi f = some N.b) := by
-      simpa [TwoColorIncidenceGraph] using hadj
-    refine ⟨hold.1, ?_⟩
-    by_cases hftree : TreeIncidentEdge N.T f
-    · have hfboundary := path_tree_incident_boundary hexit hf hftree
-      have hfNotA : N.phi f ≠ some N.a := by
-        intro hfa
-        have haTree := N.aMissing
-        obtain ⟨x, hx, hax⟩ := by
-          unfold TreeMissingColors at haTree
-          simpa only [Finset.mem_biUnion] using haTree
-        exact (N.closed hfboundary hx hfa) hax
-      have hfb : N.phi f = some N.b := hold.2.resolve_left hfNotA
-      exact Or.inr (by rw [hfixed f hftree, hfb])
-    · rcases hold.2 with hfa | hfb
-      · exact Or.inl (by
-          simp [sigma, OutsideTreeColorSwap, hftree, hfa])
-      · exact Or.inr (by
-          simp [sigma, OutsideTreeColorSwap, hftree, hfb,
-            N.colorsDistinct.symm, hgammaB.symm])
-  have hedges : ∀ z, z ∈ p.edges →
-      z ∈ (TwoColorIncidenceGraph G sigma gamma N.b).edgeSet := by
-    intro z hz
-    induction z using Sym2.inductionOn with
-    | _ q r =>
-      have hadj : (TwoColorIncidenceGraph G N.phi N.a N.b).Adj q r :=
-        (SimpleGraph.mem_edgeSet _).mp (p.edges_subset_edgeSet hz)
-      have hq : q ∈ p.support := p.fst_mem_support_of_mem_edges hz
-      have hr : r ∈ p.support := p.snd_mem_support_of_mem_edges hz
-      apply (SimpleGraph.mem_edgeSet _).mpr
-      cases q with
-      | inl w =>
-          cases r with
-          | inl x => simp [TwoColorIncidenceGraph] at hadj
-          | inr f => exact preserve_adj hr hadj
-      | inr f =>
-          cases r with
-          | inl w => exact (preserve_adj hq hadj.symm).symm
-          | inr g => simp [TwoColorIncidenceGraph] at hadj
-  let q := p.transfer (TwoColorIncidenceGraph G sigma gamma N.b) hedges
-  refine ⟨q, ?_, ?_, ?_⟩
-  · unfold TreeExitPath
-    refine ⟨hexit.1.transfer hedges, ?_, hexit.2.2.1,
-      hexit.2.2.2.1, ?_, ?_⟩
-    · simpa [q] using hexit.2.1
-    · exact swapped_remote_missing hexit.2.2.1 hexit.2.2.2.2.1
-    · intro w hw
-      simpa [q] using hexit.2.2.2.2.2 w hw
-  · simp [q]
-  · simp [q]
-
 private theorem helper_branch_199.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -462,19 +173,6 @@ private theorem helper_branch_199.{u_1, u_2} :
     StableColoring N.T ∅ N.phi sigma ∧
     ∀ f : E, TreeIncidentEdge N.T f → sigma f = N.phi f at hswap
   obtain ⟨hsProper, hsOne, hstable, hfixed⟩ := hswap
-  have ends_eq_of_mem : ∀ {z : Sym2 V} {x y : V},
-      x ∈ z → y ∈ z → x ≠ y → z = s(x, y) := by
-    intro z x y hx hy hxy
-    induction z using Sym2.inductionOn with
-    | _ a b =>
-      simp only [Sym2.mem_iff] at hx hy
-      rcases hx with rfl | rfl <;> rcases hy with rfl | rfl <;>
-        simp_all []
-  have incident_vertex_mem_support := @helper_incident_vertex_mem_support_205 V E inferInstance
-      inferInstance inferInstance inferInstance G k e0 C N ends_eq_of_mem
-  have path_tree_incident_boundary := @helper_path_tree_incident_boundary_263 V E inferInstance
-      inferInstance inferInstance inferInstance G k e0 C N ends_eq_of_mem
-      incident_vertex_mem_support
   have hsTriple : KTriple G k e0 sigma :=
     ⟨N.triple.1, N.triple.2.1, N.triple.2.2.1, hsProper, hsOne⟩
   have hsTree : TashkinovTree G e0 sigma N.T := by
@@ -511,21 +209,13 @@ private theorem helper_branch_199.{u_1, u_2} :
       rw [← hstable.2 v hv]
       exact hc
     exact (N.closed hf hv hphif) hcmissing
-  have boundary_of_tree_incident_outside :
-    ∀ {u : V} {f : E}, u ∉ TreeSequenceVertexSet N.T → Incident G u f → TreeIncidentEdge N.T f → f
-        ∈ BoundaryEdges G (TreeSequenceVertexSet N.T) := by
-    intro u f huout huf hftree
-    obtain ⟨x, hx, hxf⟩ := hftree
-    have hxu : x ≠ u := by
-      intro h
-      exact huout (h ▸ hx)
-    simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨x, hx, u, huout, ends_eq_of_mem hxf huf hxu⟩
-  have swapped_remote_missing := @helper_swapped_remote_missing_384 V E inferInstance inferInstance
-      inferInstance inferInstance G k e0 N gamma hgamma hgammaB hag hfixed
-      boundary_of_tree_incident_outside
-  have transfer_exit := @helper_transfer_exit_446 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 N gamma hgammaB hfixed path_tree_incident_boundary swapped_remote_missing
+  have transfer_exit {u v : V}
+      (P : (TwoColorIncidenceGraph G N.phi N.a N.b).Walk (Sum.inl u) (Sum.inl v))
+      (exit : TreeExitPath N.T N.phi N.a N.b u v P) :=
+    TreeExitPath.outsideSwap N.T N.T N.phi N.a gamma N.b
+      (fun _ member => member) N.colorsDistinct hgammaB
+      (ColoredVertexSetClosed.treeColorSetClosed N.closed N.aMissing)
+      (ColoredVertexSetClosed.treeColorSetClosed N.closed hgammaTree) P exit exit.2.2.2.1
   obtain ⟨Q1, hQ1, hQ1support, hQ1length⟩ := transfer_exit N.P1 N.exit1
   obtain ⟨Q2, hQ2, hQ2support, hQ2length⟩ := transfer_exit N.P2 N.exit2
   obtain ⟨Q3, hQ3, hQ3support, hQ3length⟩ := transfer_exit N.P3 N.exit3

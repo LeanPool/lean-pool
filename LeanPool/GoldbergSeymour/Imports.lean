@@ -753,6 +753,7 @@ public import LeanPool.GoldbergSeymour.TreeColoringInvariant
 public import LeanPool.GoldbergSeymour.TreeExit
 public import LeanPool.GoldbergSeymour.TreeExitComponentMeetsTreeOnlyAtExit
 public import LeanPool.GoldbergSeymour.TreeExitPath
+public import LeanPool.GoldbergSeymour.TreeExitPathOutsideSwap
 public import LeanPool.GoldbergSeymour.TreeExitPathTransport
 public import LeanPool.GoldbergSeymour.TreeFreeColors
 public import LeanPool.GoldbergSeymour.TreeIncidentEdge

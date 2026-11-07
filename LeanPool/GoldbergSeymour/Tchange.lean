@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.ElementaryClosedExitPairExtendsTriple
 public import LeanPool.GoldbergSeymour.ElementaryClosedNoninterchangeableExitPair
 
@@ -42,50 +44,9 @@ theorem Tchange {V E : Type*} [Fintype V] [Fintype E] [DecidableEq E]
   have helementary :
       ColoredVertexSetElementary G phi (TreeSequenceVertexSet T) :=
     TashTree G k e0 phi T htriple hT
-  have graphSwap :
-      TwoColorIncidenceGraph G phi alpha beta =
-        TwoColorIncidenceGraph G phi beta alpha := by
-    ext x y
-    cases x <;> cases y <;> simp [TwoColorIncidenceGraph, or_comm]
-  have componentSwap (z : Sum V E) :
-      TwoColorComponent G phi alpha beta z =
-        TwoColorComponent G phi beta alpha z := by
-    unfold TwoColorComponent
-    rw [graphSwap]
-  have pathSwap (z : Sum V E) :
-      TwoColorPathComponent G phi alpha beta z ↔
-        TwoColorPathComponent G phi beta alpha z := by
-    simp [TwoColorPathComponent, componentSwap, graphSwap, ne_comm]
-  have interchangeSwap :
-      TreeInterchangeable G T phi alpha beta ↔
-        TreeInterchangeable G T phi beta alpha := by
-    constructor
-    · intro h z w hz hw hzT hwT
-      have hz' := (pathSwap z).mpr hz
-      have hw' := (pathSwap w).mpr hw
-      obtain ⟨vz, hvz, hzmem⟩ := hzT
-      obtain ⟨vw, hvw, hwmem⟩ := hwT
-      have hzT' : ∃ v ∈ TreeSequenceVertexSet T,
-          Sum.inl v ∈ TwoColorComponent G phi alpha beta z :=
-        ⟨vz, hvz, by rw [componentSwap z]; exact hzmem⟩
-      have hwT' : ∃ v ∈ TreeSequenceVertexSet T,
-          Sum.inl v ∈ TwoColorComponent G phi alpha beta w :=
-        ⟨vw, hvw, by rw [componentSwap w]; exact hwmem⟩
-      exact (componentSwap z).symm.trans
-        ((h z w hz' hw' hzT' hwT').trans (componentSwap w))
-    · intro h z w hz hw hzT hwT
-      have hz' := (pathSwap z).mp hz
-      have hw' := (pathSwap w).mp hw
-      obtain ⟨vz, hvz, hzmem⟩ := hzT
-      obtain ⟨vw, hvw, hwmem⟩ := hwT
-      have hzT' : ∃ v ∈ TreeSequenceVertexSet T,
-          Sum.inl v ∈ TwoColorComponent G phi beta alpha z :=
-        ⟨vz, hvz, by rw [← componentSwap z]; exact hzmem⟩
-      have hwT' : ∃ v ∈ TreeSequenceVertexSet T,
-          Sum.inl v ∈ TwoColorComponent G phi beta alpha w :=
-        ⟨vw, hvw, by rw [← componentSwap w]; exact hwmem⟩
-      exact (componentSwap z).trans
-        ((h z w hz' hw' hzT' hwT').trans (componentSwap w).symm)
+  have interchangeSwap : TreeInterchangeable G T phi alpha beta ↔
+      TreeInterchangeable G T phi beta alpha :=
+    ⟨TreeInterchangeable.symm, TreeInterchangeable.symm⟩
   have boundaryEmpty (c : Fin k) (hc : c ∈ TreeMissingColors phi T) :
       BoundaryColorEdges G phi (TreeSequenceVertexSet T) c = ∅ := by
     apply Finset.eq_empty_iff_forall_notMem.mpr
