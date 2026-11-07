@@ -2423,58 +2423,6 @@ theorem helper_continuation_11325.{u_1, u_2} :
       hexitLength hexitSupport hexitIntersection hexitBoundary huNotFN huPrime huOutside hdegree
       beta hbeta huErase hbetaSupport Tprevious hpreviousTj hpreviousStrict hpreviousSeed
       haugmentation z hz zPosition hzPosition hzAfter hzChoice hzBefore hzEdges
-  have hcaseTwoObservationPackage :
-      (u ∈ TreeSequenceVertexSet TjPrime ∧
-        u ∉ TreeSequenceVertexSet
-          (ett.series.data.tree q.succ.castSucc)) ∧
-      (exitPath.IsPath ∧ 2 ≤ exitPath.length ∧
-        (∀ y : Sum V E, y ∈ exitPath.support →
-          y ∈ componentPath.support) ∧
-        (∀ y : V,
-          y ∈ TreeSequenceVertexSet
-              (ett.series.data.tree q.succ.castSucc) ∪
-                TreeSequenceVertexSet TjPrime →
-          (Sum.inl y ∈ exitPath.support ↔ y = u)) ∧
-        (∃ g ∈ BoundaryColorEdges G rho1
-            (TreeSequenceVertexSet
-                (ett.series.data.tree q.succ.castSucc) ∪
-              TreeSequenceVertexSet TjPrime) gamma,
-          Incident G u g ∧ Sum.inr g ∈ exitPath.support) ∧
-        ¬ Incident G u fN) ∧
-      (beta ∈ MissingColors G rho1 u ∧ beta ∉ supportColors) ∧
-      (z ∈ TreeSequenceVertexSet
-          (ett.series.data.tree jSlot.succ.castSucc) ∧
-        (ett.series.data.tree jSlot.succ.castSucc).vertex zPosition = z ∧
-        seed.length ≤ zPosition.val ∧
-        ((seed.length < zPosition.val ∧
-            beta ∈ MissingColors G rho1 z ∧
-            ∀ r : Fin
-                ((ett.series.data.tree jSlot.succ.castSucc).length + 1),
-              seed.length < r.val → r.val < zPosition.val →
-              beta ∉ MissingColors G rho1
-                ((ett.series.data.tree jSlot.succ.castSucc).vertex r)) ∨
-          (zPosition = Fin.last
-              (ett.series.data.tree jSlot.succ.castSucc).length ∧
-            ∀ r : Fin
-                ((ett.series.data.tree jSlot.succ.castSucc).length + 1),
-              seed.length < r.val →
-              beta ∉ MissingColors G rho1
-                ((ett.series.data.tree jSlot.succ.castSucc).vertex r))) ∧
-        (∀ y ∈ TreeVerticesBefore
-            (ett.series.data.tree jSlot.succ.castSucc) z hz,
-          beta ∉ MissingColors G rho1 y) ∧
-        ∀ a : Fin (ett.series.data.tree jSlot.succ.castSucc).length,
-          seed.length ≤ a.val → a.val < zPosition.val →
-          rho1 ((ett.series.data.tree jSlot.succ.castSucc).edge a) ≠
-            some beta) := by
-    exact @helper_hcaseTwoObservationPackage_6796 (@V) (@E) inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v)
-        (@gamma) (@delta) (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive)
-        (@trace) (@p0) (@indices0) (@terminalPosition) (@hterminalPositionPositive)
-        (@hterminalPositionBound) (@TjPrime) (@fN) (@x) (@componentPath) (@u) (@exitPath)
-        (@hexitPath) (@hexitLength) (@hexitSupport) (@hexitIntersection) (@hexitBoundary)
-        (@huNotFN) (@huPrime) (@huOutside) (@beta) (@hbeta) (@hbetaSupport) (@z) (@hz)
-        (@zPosition) (@hzPosition) (@hzAfter) (@hzChoice) (@hzBefore) (@hzEdges)
   have hpreterminalGammaPresent : ∀ (u : V) (beta : Fin k),
       u ∈ TreeSequenceVertexSet TjPrime →
       u ∉ TreeSequenceVertexSet

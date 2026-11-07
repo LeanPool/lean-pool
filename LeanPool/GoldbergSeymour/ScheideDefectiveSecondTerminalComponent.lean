@@ -905,22 +905,6 @@ theorem ScheideDefectiveSecondTerminalComponent {V E : Type*}
   have hpathIs : p.IsPath := hpath.2.1
   have hsupport : {q | q ∈ p.support} =
       TwoColorComponent G phi gamma d.1 (Sum.inl v0) := hpath.2.2.2
-  have hdefective : DefectiveColor G phi X d.1 := by
-    have hd := d.2
-    change d.1 ∈ (Finset.univ.filter fun delta =>
-      DefectiveColor G phi X delta) at hd
-    exact (Finset.mem_filter.mp hd).2
-  have hdeltaPresent : ∀ v, v ∈ X → d.1 ∈ PresentColors G phi v := by
-    intro v hv
-    have hcard : 0 < (BoundaryColorEdges G phi X d.1).card := by
-      change 2 ≤ (BoundaryColorEdges G phi X d.1).card at hdefective
-      omega
-    obtain ⟨b, hb⟩ := Finset.card_pos.mp hcard
-    have hnot : d.1 ∉ MissingColors G phi v := by
-      intro hm
-      exact hclosed (Finset.mem_filter.mp hb).1 hv
-        (Finset.mem_filter.mp hb).2 hm
-    simpa [MissingColors] using hnot
   have hgammaDelta : gamma ≠ d.1 := by
     simpa [gamma] using R.gamma_ne_delta
   have hgammaJDelta : gammaJ ≠ d.1 := by

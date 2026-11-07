@@ -1635,71 +1635,6 @@ private theorem helper_edgesFixed_981.{u_1, u_2} :
         simpa [hi] using seedFixed f seed hadjoin
       · exact augmentationFixed seed hs t (by have := hadjoin.1; omega)
 
-private theorem helper_routeTransport_1000.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (alpha beta : Fin k)
-      (_ : Fin (C.hierarchy.dividerCount + (1 : ℕ))),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    let vb : V := T.vertex ib;
-    (∀ {S U W : TreeSequence G e0},
-        TreeSequenceInitialSegment S U →
-          TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W) →
-    ∀ (hAib : A.length < (↑ib : ℕ)),
-    let B : TreeSequence G e0 :=
-      TreeSequencePrefix T (↑ib : ℕ)
-        (have this : (1 : ℕ) ≤ A.length := A.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-        (by omega);
-    TreeSequenceInitialSegment B T →
-    let sigma : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G phi alpha beta (Sum.inl vb);
-    (∀ v ∈ TreeSequenceVertexSet B,
-        v ≠ vb → MissingColors G sigma v = MissingColors G phi v) →
-    (∀ (t : Fin B.length), sigma (B.edge t) = phi (B.edge t)) →
-    ∀ (S : TreeSequence G e0),
-    TashkinovAugmentationSequence phi S B →
-    TashkinovAugmentationSequence sigma S B := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta r H q A ib vb segTrans hAib B BToT
-      sigma missingBefore edgesFixed S hs
-  clear * - S hs edgesFixed BToT segTrans missingBefore
-  unfold TashkinovAugmentationSequence at hs ⊢
-  induction hs using Relation.ReflTransGen.head_induction_on with
-  | refl => exact Relation.ReflTransGen.refl
-  | @head U W hstep htail ih =>
-    have hWB := TashkinovAugmentationSequenceInitialSegment phi W B htail
-    obtain ⟨hlen, hUW, c, hcol, hm⟩ := hstep
-    have hUB := segTrans hUW hWB
-    have hlt : U.length < B.length := by have := hWB.1; omega
-    refine Relation.ReflTransGen.head ⟨hlen, hUW, c, ?_, ?_⟩ ih
-    · have hf := edgesFixed (Fin.castLE hWB.1 (Fin.cast hlen.symm (Fin.last U.length)))
-      rw [hWB.2.2] at hf
-      exact hf.trans hcol
-    · obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hm
-      have hvB := TreeSequenceInitialSegmentVertexSetSubset hUB hv
-      have hvb : v ≠ vb := by
-        intro he
-        simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-        obtain ⟨i, hi⟩ := hv
-        have ht := hUB.2.1 i
-        have htT := BToT.2.1 (Fin.castLE (Nat.succ_le_succ hUB.1) i)
-        have eqv : T.vertex (Fin.castLE (Nat.succ_le_succ BToT.1)
-            (Fin.castLE (Nat.succ_le_succ hUB.1) i)) = T.vertex ib := htT.trans (ht.trans
-                (hi.trans he))
-        have hh := congrArg Fin.val (T.vertex_injective eqv)
-        have := i.isLt
-        change i.val = ib.val at hh
-        change U.length < ib.val at hlt
-        omega
-      exact Finset.mem_biUnion.mpr ⟨v, hv, by rw [missingBefore v hvB hvb]; exact hcv⟩
-
 private theorem helper_minusEq_1160.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -2115,8 +2050,9 @@ private theorem helper_continuation_4559.{u_1, u_2} :
         (@displayedIncident)
         (@augmentationFixed) (@seedFixed)
   have routeTransport :=
-    helper_routeTransport_1000 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
-        (@alpha) (@beta) (@r) (@segTrans) (@hAib) (@BToT) (@missingBefore) (@edgesFixed)
+    SharedFacts.MixedChangeTransport.routeTransport (@G) (@k) (@e0) (@input) (@T) (@phi)
+      (@ett) (@base) (@C) (@alpha) (@beta) (@segTrans) (@hAib) (@BToT) (@missingBefore)
+      (@edgesFixed)
   have replacement := HB.stableReplacement hMPB hlower R
     (by rw [hcoreB]; exact coreToR) sigma hproper hone sigmaProper sigmaOne
     stable stableTn terminalRoute routeTransport

@@ -1234,16 +1234,6 @@ private theorem helper_second_ne_of_matching_4215.{u_1, u_2} :
   classical
   intro V E _ _ _ G k e psi S M hlen hproper helem y7 c0 hvertex_ne hmem missing_excludes p0 p1 r6'
       w g1 hc0color' hwmissing' pc pc' hc0ends c m hcmiss hcover hEq
-  have hwEq : w.val = m.val := by
-    by_contra hne
-    have hvne : S.vertex ⟨w.val, by omega⟩ ≠
-        S.vertex ⟨m.val, by omega⟩ := by
-      apply hvertex_ne
-      exact Fin.ne_of_val_ne hne
-    have hd := helem (hmem (⟨w.val, by omega⟩ : Fin (S.length + 1)))
-      (hmem (⟨m.val, by omega⟩ : Fin (S.length + 1))) hvne
-    exact (Finset.disjoint_left.mp hd) hwmissing'
-      (by simpa [hEq] using hcmiss)
   have hpcne : pc' ≠ m := by
     intro hpm
     have hinc : Incident G (S.vertex ⟨m.val, by omega⟩) c0 := by

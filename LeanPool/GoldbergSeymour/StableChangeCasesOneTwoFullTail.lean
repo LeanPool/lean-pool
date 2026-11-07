@@ -1022,15 +1022,6 @@ private theorem helper_sigmaRoute_1064.{u_1, u_2} :
   · exact Or.inl ⟨hp, TashkinovAugmentationSequenceColoringTransport phi sigma
       Tn B T hseq BToT hBlen (fun t _ => fixedT t) hpenultimateMissing⟩
   · obtain ⟨c, hc, hcol⟩ := hcontrol
-    have seedFixed : sigma f = phi f := by
-      have hs : StableColoring Tn Dn phi sigma := by
-        change (if ett.series.data.kind n = some TashkinovExtensionKind.PE then
-          CombinedStableColoring Tn base.closure Dn phi sigma else StableColoring Tn Dn phi
-              sigma) at hbase
-        split at hbase
-        · exact hbase.1
-        · exact hbase
-      exact hs.1 f hincident ⟨c, hc, hcol⟩
     exact Or.inr ⟨hp, f, seed, hedges, hseed,
       TashkinovAugmentationSequenceColoringTransport phi sigma seed B T
         hseq BToT hBlen (fun t _ => fixedT t) hpenultimateMissing⟩

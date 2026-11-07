@@ -34,19 +34,6 @@ private theorem helper_hsegOuter_88.{u_1, u_2} :
     TreeSequenceInitialSegment (ett.series.data.tree (Fin.last ett.rounds).castSucc) T := by
   classical
   intro V E _ _ _ G k e0 input T phi ett hpositive
-  have segmentTrans {A B C : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B)
-      (hBC : TreeSequenceInitialSegment B C) :
-      TreeSequenceInitialSegment A C := by
-    rcases hAB with ⟨hab, hvab, heab⟩
-    rcases hBC with ⟨hbc, hvbc, hebc⟩
-    refine ⟨le_trans hab hbc, ?_, ?_⟩
-    · intro i
-      have hmid := hvbc (Fin.castLE (Nat.succ_le_succ hab) i)
-      simpa using hmid.trans (hvab i)
-    · intro i
-      have hmid := hebc (Fin.castLE hab i)
-      simpa using hmid.trans (heab i)
   exact ett.abovePenultimate
 
 private theorem helper_hsub_104.{u_1, u_2} :

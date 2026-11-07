@@ -2277,78 +2277,6 @@ private theorem helper_continuation_2177.{u_1, u_2} :
       exact hpe
     exact hclosureTA.trans
       ((hsamePrefixSigma.1.2.2.2.2.2 hpeOld).symm.trans hclosurePrefix)
-  let goodT : GoodHierarchy K := by
-    exact {
-      gamma := C.good.gamma
-      twoColors := by
-        intro j c hc
-        exact C.good.twoColors j c (by rw [storedEq j] at hc; exact hc)
-      avoidance := by
-        intro j c hc
-        rw [stageMissingEq j, segmentEq j c]
-        exact C.good.avoidance j c (by rw [storedEq j] at hc; exact hc)
-      disjointPairs := by
-        intro j c d hc hd hne
-        exact C.good.disjointPairs j c d
-          (by rw [storedEq j] at hc; exact hc)
-          (by rw [storedEq j] at hd; exact hd) hne
-      uniqueRefresh := by
-        intro a
-        have hnew :
-            ((TreeSequenceVertexSet (H.stage a.succ.castSucc) \
-              TreeSequenceVertexSet (HierarchyStarredStage H a.castSucc)).biUnion
-                fun v => MissingColors G sigma v) =
-            ((TreeSequenceVertexSet (H.stage a.succ.castSucc) \
-              TreeSequenceVertexSet (HierarchyStarredStage H a.castSucc)).biUnion
-                fun v => MissingColors G phi v) := by
-          exact @helper_hnew_2064 V E inferInstance inferInstance inferInstance inferInstance G k
-              e0 input T phi ett base C alpha theta hstableA corrT baseT hcoreT hterminalTree
-              stageInsideA a
-        change ∃! c : Fin k,
-          c ∈ HierarchyStoredColorsAt K a.succ ∧
-            C.good.gamma a.succ c ⊆
-              ((TreeSequenceVertexSet (H.stage a.succ.castSucc) \
-                TreeSequenceVertexSet (HierarchyStarredStage K a.castSucc)).biUnion
-                  fun v => MissingColors G sigma v) ∧
-            ∀ d ∈ HierarchyStoredColorsAt K a.succ, d ≠ c →
-              C.good.gamma a.succ d = C.good.gamma a.castSucc d
-        rw [starredEq a.castSucc, hnew]
-        simp only [storedEq]
-        exact C.good.uniqueRefresh a
-      parallelBase := by
-        dsimp only
-        intro hpe
-        have hpeOld : ett.series.data.kind n = some TashkinovExtensionKind.PE := by
-          rw [← terminalColors.1]
-          exact hpe
-        have hcl : TreeSequenceVertexSet base.closure ⊆ TreeSequenceVertexSet A := by
-          obtain ⟨_, _, ⟨ordered⟩⟩ := base.parallel hpeOld
-          intro v hv
-          apply coreInsideA
-          rw [ordered.vertexSet]
-          exact Finset.mem_union_right _ hv
-        obtain ⟨hnot, hcard⟩ := C.good.parallelBase hpeOld
-        constructor
-        · change ¬ TreeColorSetMinusClosed G sigma baseT.core
-            ((HierarchyStoredColorsAt K 0).biUnion (C.good.gamma 0))
-          rw [hcoreT, storedEq 0, minusEq base.core coreInsideA]
-          exact hnot
-        · change 4 ≤ ((TreeMissingColors sigma
-            (corrT.replacementETT.series.data.tree
-              (Fin.last corrT.replacementETT.rounds).castSucc) ∩
-            TreeMissingColors sigma baseT.closure) \
-              (HierarchyStoredColorsAt K 0).biUnion (C.good.gamma 0)).card
-          rw [hterminalTree, closureEq hpe, storedEq 0,
-            missingTree Tn (TreeSequenceInitialSegmentVertexSetSubset hTnA),
-            missingTree base.closure hcl]
-          exact hcard
-      minusClosed := by
-        intro a
-        change TreeColorSetMinusClosed G sigma (H.stage a.succ.castSucc)
-          ((HierarchyStoredColorsAt K a.succ).biUnion (C.good.gamma a.castSucc))
-        rw [storedEq a.succ, minusEq _
-          (TreeSequenceInitialSegmentVertexSetSubset (stageInsideA a.succ))]
-        exact C.good.minusClosed a }
   exact @helper_continuation_2653 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 input T phi ett base C hproper hlower hfewer hminimal hlarge hpositive hlen commonPrefix
       equalTrees hAT hTnA prefixSegment hAElem hyOutside alpha halphay gamma hgammaA hgammaf
@@ -2818,22 +2746,6 @@ private theorem helper_continuation_2056.{u_1, u_2} :
   have hfEnds : ∃ u ∈ TreeSequenceVertexSet A, G.ends f = Sym2.mk u y := by
     exact @helper_hfEnds_1651 V E inferInstance inferInstance inferInstance inferInstance G k e0
         input T phi ett base C hpositive hlen hAT
-  have hfBoundary : f ∈ BoundaryColorEdges G phi (TreeSequenceVertexSet A) gamma := by
-    obtain ⟨u, hu, he⟩ := hfEnds
-    simp only [BoundaryColorEdges, Finset.mem_filter, BoundaryEdges, Finset.mem_univ,
-      true_and]
-    exact ⟨⟨u, hu, y, hyOutside, he⟩, hgammaf⟩
-  have hgammaReserved : gamma ∈
-      (HierarchyStoredColorsAt H q).biUnion (C.good.gamma i.castSucc) := by
-    by_contra hnot
-    have hstage : H.stage i.succ.castSucc = A := by rw [hiq, ← hA]
-    have hminus := C.good.minusClosed i
-    change TreeColorSetMinusClosed G phi (H.stage i.succ.castSucc)
-      ((HierarchyStoredColorsAt H i.succ).biUnion (C.good.gamma i.castSucc)) at hminus
-    rw [hstage, hiq] at hminus
-    have hc := hminus gamma (Finset.mem_sdiff.mpr ⟨hgammaA, hnot⟩)
-    rw [hc] at hfBoundary
-    simp at hfBoundary
   have firstMissingAfter (eta : Fin k) (heta : eta ∉ TreeMissingColors phi A) :
       (HierarchyFirstMissingPosition phi T eta).val = T.length := by
     exact congrArg Fin.val

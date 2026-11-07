@@ -356,20 +356,6 @@ private theorem helper_continuation_562.{u_1, u_2} :
     unfold HierarchyStoredColorsAt
     dsimp only
     rw [P2752_T2_TerminalStoredColors ett corr, prefixComputed, starredP j]
-  have missingP (j : Fin (H.dividerCount + 1)) :
-      HierarchyStageMissingColors K j =
-        HierarchyStageMissingColors F.newHierarchy (index j) := by
-    cases j using Fin.cases with
-    | zero =>
-      have hi : index 0 = 0 := Fin.ext rfl
-      simp only [hi, HierarchyStageMissingColors, Fin.cases_zero]
-      rw [htree, prefixTree]
-    | succ i =>
-      have hi : index i.succ = (internal i).succ := Fin.ext rfl
-      simp only [hi, HierarchyStageMissingColors, Fin.cases_succ]
-      have hs := prefixStage i.succ
-      rw [hi] at hs
-      exact congrArg (TreeMissingColors sigma) hs.symm
   have gammaOriginal := @helper_gammaOriginal_542 V E inferInstance inferInstance inferInstance
       inferInstance G k e0 input T phi sigma ett base C F hcount
   have firstMissing (eta : Fin k) :

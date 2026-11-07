@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.SecondSubcaseTransport
@@ -2121,63 +2123,6 @@ private theorem helper_hfixedPrefix_1144.{u_1, u_2} :
     exact hfixedCore ta
   · exact hfixedTailTwo t (Nat.le_of_not_gt ha) ht
 
-private theorem helper_transportRoute_1153.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (D : HierarchySituationTwoCaseTwoTwoData G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let B : TreeSequence G e0 :=
-      HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1 : ℕ));
-    (2 : ℕ) ≤ T.length - A.length →
-    TreeSequenceInitialSegment B T →
-    (∀ {X Y F : TreeSequence G e0},
-        TreeSequenceInitialSegment X F →
-          TreeSequenceInitialSegment Y F →
-            X.length ≤ Y.length → TreeSequenceInitialSegment X Y) →
-    ∀ (beta : Fin k),
-    let z : V ⊕ E := Sum.inl (T.vertex D.terminalVertexIndex);
-    ∀ (POne : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-    let rho : PartialEdgeColoring E k := POne.coloring;
-    let muTwo : PartialEdgeColoring E k := TwoColorComponentSwap G rho beta D.theta z;
-    (∀ w ∈ TreeSequenceVertexSet B,
-        MissingColors G (TwoColorComponentSwap G rho beta D.theta z) w =
-          MissingColors G rho w) →
-    beta ∈ TreeMissingColors phi A →
-    (∀ (t : Fin T.length), (↑t : ℕ) < B.length → muTwo (T.edge t) = rho (T.edge t)) →
-    ∀ (S : TreeSequence G e0),
-    TashkinovAugmentationSequence rho S B →
-    TashkinovAugmentationSequence muTwo S B := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A B htail hBT commonPrefix beta z
-      POne rho muTwo hmissingTwo hm hfixedPrefix S hs
-  clear * - G T B rho muTwo hBT hfixedPrefix hmissingTwo commonPrefix hs
-  unfold TashkinovAugmentationSequence at hs ⊢
-  induction hs using Relation.ReflTransGen.head_induction_on with
-  | refl => exact Relation.ReflTransGen.refl
-  | @head X Y hstep htail ih =>
-    have hYB := TashkinovAugmentationSequenceInitialSegment rho Y B htail
-    obtain ⟨hlen, hXY, c, hedge, hm⟩ := hstep
-    have hXB : TreeSequenceInitialSegment X B :=
-      ⟨hXY.1.trans hYB.1,
-        fun i => (hYB.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i),
-        fun i => (hYB.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)⟩
-    refine Relation.ReflTransGen.head ⟨hlen, hXY, c, ?_, ?_⟩ ih
-    · let tY : Fin Y.length := Fin.cast hlen.symm (Fin.last X.length)
-      let tB : Fin B.length := Fin.castLE hYB.1 tY
-      have hf := hfixedPrefix (Fin.castLE hBT.1 tB) tB.isLt
-      rw [hBT.2.2 tB, hYB.2.2 tY] at hf
-      exact hf.trans hedge
-    · obtain ⟨v, hv, hvc⟩ := Finset.mem_biUnion.mp hm
-      exact Finset.mem_biUnion.mpr ⟨v, hv,
-        (hmissingTwo v (TreeSequenceInitialSegmentVertexSetSubset hXB hv)).symm ▸ hvc⟩
-
 private theorem helper_hrouteTwo_1176.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -2984,10 +2929,13 @@ private theorem helper_branch_3242.{u_1, u_2} :
   have transportRoute (S : TreeSequence G e0)
       (hs : TashkinovAugmentationSequence rho S B) :
       TashkinovAugmentationSequence muTwo S B := by
-    exact @helper_transportRoute_1153 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-        (@htail) (@hBT) (@commonPrefix) (@beta) (@POne) (@hmissingTwo) (@hm) (@hfixedPrefix) (@S)
-        (@hs)
+    have fixedEdges (index : Fin B.length) :
+        muTwo (B.edge index) = rho (B.edge index) := by
+      have fixed := hfixedPrefix (Fin.castLE hBT.1 index) index.isLt
+      rwa [hBT.2.2 index] at fixed
+    apply TashkinovAugmentationSequence.transport_of_fixed fixedEdges ?_ hs
+    intro initial segment _ vertex member
+    exact hmissingTwo vertex (TreeSequenceInitialSegmentVertexSetSubset segment member)
   have hrouteTwo :
       (ettOne.series.data.kind (Fin.last ettOne.rounds) = some TashkinovExtensionKind.PE ∧
         TashkinovAugmentationSequence muTwo
@@ -3694,29 +3642,6 @@ private theorem helper_continuation_4157.{u_1, u_2} :
       IsProperEdgeColoring G (ett.series.data.coloring j) ∧
         IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by
     exact ett.series.coloringProperties
-  let corrRefl : CorrespondingExtendedTashkinovTree G k e0 ett phi T :=
-    { replacementInput := input
-      replacementSeries := ett.series
-      replacementETT := ett
-      rungAgreement := rfl
-      seriesPresentation := HEq.rfl
-      finalGeneratingColoring := ett.generatingColoring
-      ladderTreesAgree := fun _ => rfl
-      storedColorsAgree := fun _ => rfl
-      connectingEdgesAgree := fun _ => rfl
-      extensionKindsAgree := fun _ => rfl
-      replacementProper := fun j => (seriesFacts j).1
-      replacementOneUncolored := fun j => (seriesFacts j).2
-      replacementStable := fun _ => ⟨fun _ _ _ => rfl, fun _ _ => rfl⟩ }
-  let PRefl : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx :=
-    { coloring := phi
-      corresponding := corrRefl
-      maximum := C.maximum
-      replacementBase := base
-      counterexample := C
-      sameGood := ⟨⟨rfl, rfl, HEq.rfl, HEq.rfl, Iff.rfl, fun _ => rfl⟩,
-        rfl, fun _ => ⟨rfl, fun _ _ => rfl⟩⟩
-      minimumContext := ctx }
   have sameStar (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) :
       HierarchyStarredStage P.counterexample.hierarchy
         (Fin.last P.counterexample.hierarchy.dividerCount) = A := by

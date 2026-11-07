@@ -652,15 +652,6 @@ theorem TashTreeLastIndexFirstNormalForm {V E : Type*}
   let P : TreeSequence G e0 :=
     TreeSequencePrefix T (T.length - 2) (by omega) (by omega)
   have hPlen : P.length = T.length - 2 := rfl
-  have hPelem : ColoredVertexSetElementary G phi (TreeSequenceVertexSet P) := by
-    apply TashTreeProperPrefixElementary G k e0 phi T P hmin
-    · refine ⟨by rw [hPlen]; omega, ?_, ?_⟩
-      · intro i
-        rfl
-      · intro i
-        rfl
-    · rw [hPlen]
-      omega
   have hfour : 4 ≤ (TreeFreeColors phi P).card := by
     simpa [P] using TashTreeFourUnusedColors G k e0 phi T hmin
       (T.length - 2) (by omega) (by omega)

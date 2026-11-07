@@ -64,10 +64,6 @@ theorem sc2 {V E : Type*} [Finite V] [Fintype E]
         MissingColors G b.1 v = MissingColors G a.1 v := by
       intro v hv
       exact hab.2 v hv
-    have hmissBC : ∀ v, v ∈ TreeSequenceVertexSet T →
-        MissingColors G c.1 v = MissingColors G b.1 v := by
-      intro v hv
-      exact hbc.2 v hv
     have htreeAB : TreeMissingColors b.1 T = TreeMissingColors a.1 T := by
       ext x
       unfold TreeMissingColors
@@ -77,15 +73,6 @@ theorem sc2 {V E : Type*} [Finite V] [Fintype E]
         exact ⟨v, hv, by rw [← hmissAB v hv]; exact hx⟩
       · rintro ⟨v, hv, hx⟩
         exact ⟨v, hv, by rw [hmissAB v hv]; exact hx⟩
-    have htreeBC : TreeMissingColors c.1 T = TreeMissingColors b.1 T := by
-      ext x
-      unfold TreeMissingColors
-      simp only [Finset.mem_biUnion]
-      constructor
-      · rintro ⟨v, hv, hx⟩
-        exact ⟨v, hv, by rw [← hmissBC v hv]; exact hx⟩
-      · rintro ⟨v, hv, hx⟩
-        exact ⟨v, hv, by rw [hmissBC v hv]; exact hx⟩
     apply (sc1 G e0 T C a.1 c.1 a.2.1 a.2.2 c.2.1 c.2.2).2
     have hcritAB := (sc1 G e0 T C a.1 b.1 a.2.1 a.2.2 b.2.1 b.2.2).mp hab
     have hcritBC := (sc1 G e0 T C b.1 c.1 b.2.1 b.2.2 c.2.1 c.2.2).mp hbc

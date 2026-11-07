@@ -843,15 +843,6 @@ private theorem helper_branch_98.{u_1, u_2} :
     have heold : series.data.coloring q.castSucc e = some c := by
       exact hstable.symm ▸ hec
     exact previousClosed he hx heold hmissOld
-  have htree : TreeMissingColors secondStable tree =
-      TreeMissingColors choice.selected tree := by
-    ext a
-    simp only [TreeMissingColors, Finset.mem_biUnion]
-    constructor <;> rintro ⟨x, hx, ha⟩ <;> refine ⟨x, hx, ?_⟩
-    · rw [(secondStableRelation.2 x hx)] at ha
-      exact ha
-    · rw [← (secondStableRelation.2 x hx)] at ha
-      exact ha
   have hclosedSecond : ColoredVertexSetClosed G secondStable vertices := by
     intro e c x he hx hec hmiss
     have hmissSel : c ∈ MissingColors G choice.selected x :=

@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
+
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
+
 public import LeanPool.GoldbergSeymour.CombinedStableColoring
 public import LeanPool.GoldbergSeymour.HierarchyBase
 public import LeanPool.GoldbergSeymour.HkuTreeColorsControlled
@@ -90,12 +94,9 @@ theorem CombinedStableClosurePreserved {V E : Type*}
   have vertexInclusion {A B : TreeSequence G e0}
       (hseq : TashkinovAugmentationSequence phi A B) :
       ∀ v, v ∈ TreeSequenceVertexSet A → v ∈ TreeSequenceVertexSet B := by
-    unfold TashkinovAugmentationSequence at hseq
-    induction hseq using Relation.ReflTransGen.head_induction_on with
-    | refl => intro v hv; exact hv
-    | head hstep htail ih =>
-      intro v hv
-      exact ih v (vertexTransfer hstep.2.1 hv)
+    intro vertex member
+    exact TreeSequenceInitialSegmentVertexSetSubset
+      (TashkinovAugmentationSequenceInitialSegment phi A B hseq) member
   have hclosurePhi : TashkinovClosure phi seed base.closure :=
     (base.parallel hPE).2.1
   have hseqPhi : TashkinovAugmentationSequence phi seed base.closure :=
@@ -115,40 +116,36 @@ theorem CombinedStableClosurePreserved {V E : Type*}
     have hba := (sc2 G e0 base.closure ∅).symm hab
     exact hba
   have hseqSigma : TashkinovAugmentationSequence sigma seed base.closure := by
-    have transport : ∀ {A : TreeSequence G e0},
-        Relation.ReflTransGen (TashkinovAugmentation phi) A base.closure →
-        Relation.ReflTransGen (TashkinovAugmentation sigma) A base.closure := by
-      intro A hs
-      induction hs using Relation.ReflTransGen.head_induction_on with
-      | refl => exact Relation.ReflTransGen.refl
-      | @head A B hstep htail ih =>
-      have htailVertex := vertexInclusion htail
-      have hnew : TashkinovAugmentation sigma A B := by
-        rcases hstep with ⟨hlen, hseg, c, hcolor, hmiss⟩
-        refine ⟨hlen, hseg, c, ?_, ?_⟩
-        · let hlast : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
-          have hcolor' : phi (B.edge hlast) = some c := by
-            dsimp [hlast]
-            exact hcolor
-          have hinc : TreeIncidentEdge base.closure (B.edge hlast) := by
-            rcases edgeIncident hlast with ⟨v, hv, he⟩
-            exact ⟨v, htailVertex v hv, he⟩
-          have hcR : c ∈ TreeMissingColors phi base.closure := by
-            unfold TreeMissingColors at hmiss ⊢
-            rcases Finset.mem_biUnion.mp hmiss with ⟨v, hv, hvc⟩
-            exact Finset.mem_biUnion.mpr ⟨v, htailVertex v (vertexTransfer hseg hv), hvc⟩
-          have heq := hstable.2.1 _ hinc
-            ⟨c, Finset.mem_union_left _ hcR, by
-              exact hcolor'⟩
-          exact heq.trans (by
-            exact hcolor')
-        · unfold TreeMissingColors at hmiss ⊢
+    apply TashkinovAugmentationSequence.transport ?_ hseqPhi
+    intro A B hstep segment
+    have htailVertex (vertex : V) (member : vertex ∈ TreeSequenceVertexSet B) :
+        vertex ∈ TreeSequenceVertexSet base.closure :=
+      TreeSequenceInitialSegmentVertexSetSubset segment member
+    have hnew : TashkinovAugmentation sigma A B := by
+      rcases hstep with ⟨hlen, hseg, c, hcolor, hmiss⟩
+      refine ⟨hlen, hseg, c, ?_, ?_⟩
+      · let hlast : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
+        have hcolor' : phi (B.edge hlast) = some c := by
+          dsimp [hlast]
+          exact hcolor
+        have hinc : TreeIncidentEdge base.closure (B.edge hlast) := by
+          rcases edgeIncident hlast with ⟨v, hv, he⟩
+          exact ⟨v, htailVertex v hv, he⟩
+        have hcR : c ∈ TreeMissingColors phi base.closure := by
+          unfold TreeMissingColors at hmiss ⊢
           rcases Finset.mem_biUnion.mp hmiss with ⟨v, hv, hvc⟩
-          refine Finset.mem_biUnion.mpr ⟨v, hv, ?_⟩
-          rw [hstable.2.2 v (htailVertex v (vertexTransfer hseg hv))]
-          exact hvc
-      exact Relation.ReflTransGen.head hnew ih
-    exact transport (A := seed) hseqPhi
+          exact Finset.mem_biUnion.mpr ⟨v, htailVertex v (vertexTransfer hseg hv), hvc⟩
+        have heq := hstable.2.1 _ hinc
+          ⟨c, Finset.mem_union_left _ hcR, by
+            exact hcolor'⟩
+        exact heq.trans (by
+          exact hcolor')
+      · unfold TreeMissingColors at hmiss ⊢
+        rcases Finset.mem_biUnion.mp hmiss with ⟨v, hv, hvc⟩
+        refine Finset.mem_biUnion.mpr ⟨v, hv, ?_⟩
+        rw [hstable.2.2 v (htailVertex v (vertexTransfer hseg hv))]
+        exact hvc
+    exact hnew
   exact ⟨hterminal, by
     have equalityReach : ∀ {A : TreeSequence G e0},
         Relation.ReflTransGen (TashkinovAugmentation phi) A base.closure →

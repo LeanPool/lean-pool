@@ -763,25 +763,6 @@ theorem SupportingPEStoredIntersection {V E : Type*}
   have residual_transport := @helper_residual_transport_478 V E inferInstance inferInstance
       inferInstance G k rounds p e0 input series q u hu indices hincreasing henumerates deltaLast
       hdeltaLast hlocal hgap gammaLast hgammaLast
-  have residual_last :
-    ∀ a : Fin (p + 1),
-    ∀ ga da : Fin k, series.data.gamma (indices a).succ = some ga → series.data.delta (indices
-        a).succ = some da → MissingColors G (series.data.coloring (indices a).castSucc) u \ {ga} =
-        MissingColors G (series.data.coloring (indices a).succ) u \ {da} → ga = gammaLast → da =
-        deltaLast → MissingColors G (series.data.coloring (indices a).castSucc) u \ {ga} =
-        MissingColors G (series.data.coloring (indices (Fin.last p)).castSucc) u \ {gammaLast}
-             := by
-    intro a ga da hga hda hdata ega eda
-    subst ga
-    subst da
-    have ha_lt := a.isLt
-    have hp_last : (Fin.last p).val = p := rfl
-    by_cases ha : a.val = p
-    · have hae : a = Fin.last p := Fin.ext (by omega)
-      subst a
-      exact hdata.trans hresLast.symm
-    · apply residual_transport a (Fin.last p) gammaLast deltaLast
-        (by omega) (by omega) hga hda hdata hresLast rfl
   have hfinal := @helper_hfinal_571 V E inferInstance inferInstance inferInstance G k rounds p e0
       input series q u indices hincreasing henumerates support_tree transfer_tree next_segment
   have hsubset := @helper_hsubset_630 V E inferInstance inferInstance inferInstance G k rounds p e0

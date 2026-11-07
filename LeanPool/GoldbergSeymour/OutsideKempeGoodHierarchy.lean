@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
+
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.OutsideKempeRecoloringStable
@@ -577,19 +581,11 @@ theorem OutsideKempeGoodHierarchy {V E : Type*}
   have stageSubset₁ : ∀ j : Fin (H₁.dividerCount + 2),
       TreeSequenceVertexSet (H₁.stage j) ⊆ TreeSequenceVertexSet T := by
     intro j
-    exact Fin.reverseInduction (motive := fun q =>
-      TreeSequenceVertexSet (H₁.stage q) ⊆ TreeSequenceVertexSet T) (by
-      simp [H₁.terminalStage]) (by
-      intro i hi
-      exact (initialSubset (H₁.nested i)).trans hi) j
+    exact TreeSequenceInitialSegmentVertexSetSubset (H₁.stageInitialSegment j)
   have stageSubset₂ : ∀ j : Fin (H₂.dividerCount + 2),
       TreeSequenceVertexSet (H₂.stage j) ⊆ TreeSequenceVertexSet T := by
     intro j
-    exact Fin.reverseInduction (motive := fun q =>
-      TreeSequenceVertexSet (H₂.stage q) ⊆ TreeSequenceVertexSet T) (by
-      simp [H₂.terminalStage]) (by
-      intro i hi
-      exact (initialSubset (H₂.nested i)).trans hi) j
+    exact TreeSequenceInitialSegmentVertexSetSubset (H₂.stageInitialSegment j)
   have missingTree : ∀ {A : TreeSequence G e0},
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet T →
       TreeMissingColors phi A = TreeMissingColors sigma A := by

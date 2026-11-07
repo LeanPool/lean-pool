@@ -239,26 +239,6 @@ theorem OrderedTreeUnionAugmentationSequence
     ⟨hleftSegment, hunionVertices, hnewEntryFromRight,
       heveryNewRightEntry, hrightOrder⟩
   classical
-  have segmentTrans {A B C : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B)
-      (hBC : TreeSequenceInitialSegment B C) :
-      TreeSequenceInitialSegment A C := by
-    rcases hAB with ⟨hlenAB, hvertexAB, hedgeAB⟩
-    rcases hBC with ⟨hlenBC, hvertexBC, hedgeBC⟩
-    refine ⟨hlenAB.trans hlenBC, ?_, ?_⟩
-    · intro i
-      calc
-        C.vertex (Fin.castLE (Nat.succ_le_succ (hlenAB.trans hlenBC)) i) =
-            C.vertex (Fin.castLE (Nat.succ_le_succ hlenBC)
-              (Fin.castLE (Nat.succ_le_succ hlenAB) i)) := by congr 1
-        _ = B.vertex (Fin.castLE (Nat.succ_le_succ hlenAB) i) := hvertexBC _
-        _ = A.vertex i := hvertexAB i
-    · intro i
-      calc
-        C.edge (Fin.castLE (hlenAB.trans hlenBC) i) =
-            C.edge (Fin.castLE hlenBC (Fin.castLE hlenAB i)) := by congr 1
-        _ = B.edge (Fin.castLE hlenAB i) := hedgeBC _
-        _ = A.edge i := hedgeAB i
   have prefixSegment (T : TreeSequence G e0) (q : Nat)
       (hq : 1 ≤ q) (hqT : q ≤ T.length) :
       TreeSequenceInitialSegment (TreeSequencePrefix T q hq hqT) T := by

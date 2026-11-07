@@ -645,17 +645,6 @@ private theorem helper_branch_291.{u_1, u_2} :
     have := x.isLt
     omega
   have hmFirst := firstMem phi eta hfLt
-  have hnotA : eta ∉ TreeMissingColors phi A := (Finset.mem_sdiff.mp heta).2
-  have hfPos : A.length < (HierarchyFirstMissingPosition phi T eta).val := by
-    by_contra hh
-    have hle : (HierarchyFirstMissingPosition phi T eta).val ≤ A.length := by omega
-    let a : Fin (A.length + 1) := ⟨(HierarchyFirstMissingPosition phi T eta).val, by omega⟩
-    have hidx : Fin.castLE (Nat.succ_le_succ hAT.1) a =
-        HierarchyFirstMissingPosition phi T eta := Fin.ext rfl
-    apply hnotA
-    refine Finset.mem_biUnion.mpr ⟨A.vertex a, vertexMem A a, ?_⟩
-    rw [← hAT.2.1 a, hidx]
-    exact hmFirst
   by_cases hsmall : (HierarchyFirstMissingPosition phi T eta).val ≤ Y.length
   · exact ⟨P0, alpha, haTerminal, haY, Or.inr ⟨eta, heta, haGamma, hsmall⟩⟩
   let t := (HierarchyFirstMissingPosition phi T eta).val - A.length

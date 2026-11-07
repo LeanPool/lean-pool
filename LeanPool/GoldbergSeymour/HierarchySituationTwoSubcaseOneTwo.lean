@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
@@ -1411,53 +1413,6 @@ private theorem helper_hcoreLength_1080.{u_1, u_2} :
     rw [he] at hle
     exact HOne.coreInsideFirst.1.trans hle
 
-private theorem helper_transportRoute_1105.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (D :
-        HierarchySituationTwoCaseOneTwoData G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let B : TreeSequence G e0 := HierarchyFullTailPrefix C (HierarchyFullTailLength C - (1 : ℕ));
-        (2 : ℕ) ≤ T.length - A.length → TreeSequenceInitialSegment B T →
-    let z : V ⊕ E := Sum.inl (T.vertex D.terminalVertexIndex);
-    ∀ (POne : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-    let rho : PartialEdgeColoring E k := POne.coloring;
-    let muTwo : PartialEdgeColoring E k := TwoColorComponentSwap G rho D.gammaOne D.theta z; (
-    ∀ w ∈ TreeSequenceVertexSet B, MissingColors G (TwoColorComponentSwap G rho D.gammaOne D.theta
-        z) w = MissingColors G rho w) → (
-    ∀ (t : Fin T.length), (↑t : ℕ) < B.length → muTwo (T.edge t) = rho (T.edge t)) → (
-    ∀ {X Y F : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y F
-        → TreeSequenceInitialSegment X F) →
-    ∀ (S : TreeSequence G e0), TashkinovAugmentationSequence rho S B →
-        TashkinovAugmentationSequence muTwo S B := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A B htail hBT z POne rho muTwo
-      hmissingTwo hfixedPrefixTwo segmentTrans S hs
-  unfold TashkinovAugmentationSequence at hs ⊢
-  induction hs using Relation.ReflTransGen.head_induction_on with
-  | refl => exact Relation.ReflTransGen.refl
-  | @head X Y hstep htail ih =>
-    have hYB := TashkinovAugmentationSequenceInitialSegment rho Y B htail
-    rcases hstep with ⟨hlen, hXY, c, hedge, hm⟩
-    have hXB := segmentTrans hXY hYB
-    refine Relation.ReflTransGen.head ⟨hlen, hXY, c, ?_, ?_⟩ ih
-    · let tY : Fin Y.length := Fin.cast hlen.symm (Fin.last X.length)
-      let tB : Fin B.length := Fin.castLE hYB.1 tY
-      have hfixed := hfixedPrefixTwo (Fin.castLE hBT.1 tB) (by
-        simp only [Fin.val_castLE]
-        exact tB.isLt)
-      rw [hBT.2.2 tB, hYB.2.2 tY] at hfixed
-      exact hfixed.trans hedge
-    · rcases Finset.mem_biUnion.mp hm with ⟨v, hv, hvc⟩
-      refine Finset.mem_biUnion.mpr ⟨v, hv, ?_⟩
-      rw [hmissingTwo v (TreeSequenceInitialSegmentVertexSetSubset hXB hv)]
-      exact hvc
-
 private theorem helper_hrouteTwo_1126.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -2083,9 +2038,13 @@ private theorem helper_continuation_3192.{u_1, u_2} :
         (@POne) (@sameStar)
   have transportRoute (S : TreeSequence G e0) (hs : TashkinovAugmentationSequence rho S B) :
       TashkinovAugmentationSequence muTwo S B := by
-    exact @helper_transportRoute_1105 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-        (@htail) (@hBT) (@POne) (@hmissingTwo) (@hfixedPrefixTwo) (@segmentTrans) (@S) (@hs)
+    have fixedEdges (index : Fin B.length) :
+        muTwo (B.edge index) = rho (B.edge index) := by
+      have fixed := hfixedPrefixTwo (Fin.castLE hBT.1 index) index.isLt
+      rwa [hBT.2.2 index] at fixed
+    apply TashkinovAugmentationSequence.transport_of_fixed fixedEdges ?_ hs
+    intro initial segment _ vertex member
+    exact hmissingTwo vertex (TreeSequenceInitialSegmentVertexSetSubset segment member)
   have hrouteTwo :
       (ettOne.series.data.kind (Fin.last ettOne.rounds) = some TashkinovExtensionKind.PE ∧
         TashkinovAugmentationSequence muTwo

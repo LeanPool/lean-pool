@@ -719,7 +719,6 @@ private theorem helper_advance_481.{u_1, u_2} :
   have hAXlt : A.length < X.length := by dsimp [X, TreeSequencePrefix]; omega
   let jm : Fin (B.length + 1) := ⟨A.length + m, by dsimp [B, TreeSequencePrefix]; omega⟩
   let jnext : Fin (B.length + 1) := ⟨A.length + (m + 1), by dsimp [B, TreeSequencePrefix]; omega⟩
-  let tnext : Fin T.length := ⟨A.length + m, by omega⟩
   have hfullY : HierarchyFullTailPrefix C m = Y := by
     have hn : min (A.length + m) T.length = A.length + m := min_eq_left (by omega)
     simp only [HierarchyFullTailPrefix]
@@ -780,23 +779,6 @@ private theorem helper_advance_481.{u_1, u_2} :
     apply gammaUnused R eta a heta ha t hlo
     rw [firstAt R eta jnext he]
     exact hhi
-  have avoidM (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
-      (eta a : Fin k)
-      (heta : eta ∈ HierarchyStoredColorsAt R.counterexample.hierarchy
-        (Fin.last R.counterexample.hierarchy.dividerCount))
-      (ha : a ∈ R.counterexample.good.gamma (Fin.last R.counterexample.hierarchy.dividerCount) eta)
-      (he : eta ∈ MissingColors G R.coloring (B.vertex jm))
-      (hgap : R.coloring (T.edge tnext) ≠ some a) :
-      ∀ t : Fin T.length, A.length ≤ t.val → t.val < X.length →
-        R.coloring (T.edge t) ≠ some a := by
-    intro t hlo hhi
-    by_cases ht : t.val < A.length + m
-    · apply gammaUnused R eta a heta ha t hlo
-      rw [firstAt R eta jm he]
-      exact ht
-    · have htEq : t = tnext := Fin.ext
-        (by change t.val < A.length + (m + 1) at hhi; dsimp [tnext]; omega)
-      simpa only [htEq] using hgap
   by_cases hThetaStored : theta ∈ HierarchyStoredColorsAt P.counterexample.hierarchy
       (Fin.last P.counterexample.hierarchy.dividerCount)
   · exact @helper_branch_520 V E inferInstance inferInstance inferInstance inferInstance G k e0

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation2
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
@@ -1140,35 +1142,10 @@ theorem helper_routeTransport_711.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A ib vb segTrans hAib B BToT rpB
       aboveB strictB belowB genB baseB HB sigma missingBefore edgesFixed S hs
-  unfold TashkinovAugmentationSequence at hs ⊢
-  induction hs using Relation.ReflTransGen.head_induction_on with
-  | refl => exact Relation.ReflTransGen.refl
-  | @head U W hstep htail ih =>
-    have hWB := TashkinovAugmentationSequenceInitialSegment phi W B htail
-    obtain ⟨hlen, hUW, c, hcol, hm⟩ := hstep
-    have hUB := segTrans hUW hWB
-    have hlt : U.length < B.length := by have := hWB.1; omega
-    refine Relation.ReflTransGen.head ⟨hlen, hUW, c, ?_, ?_⟩ ih
-    · have hf := edgesFixed (Fin.castLE hWB.1 (Fin.cast hlen.symm (Fin.last U.length)))
-      rw [hWB.2.2] at hf
-      exact hf.trans hcol
-    · obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hm
-      have hvB := TreeSequenceInitialSegmentVertexSetSubset hUB hv
-      have hvb : v ≠ vb := by
-        intro he
-        simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-        obtain ⟨i, hi⟩ := hv
-        have ht := hUB.2.1 i
-        have htT := BToT.2.1 (Fin.castLE (Nat.succ_le_succ hUB.1) i)
-        have eqv : T.vertex (Fin.castLE (Nat.succ_le_succ BToT.1)
-            (Fin.castLE (Nat.succ_le_succ hUB.1) i)) = T.vertex ib := htT.trans (ht.trans
-                (hi.trans he))
-        have hh := congrArg Fin.val (T.vertex_injective eqv)
-        have := i.isLt
-        change i.val = ib.val at hh
-        change U.length < ib.val at hlt
-        omega
-      exact Finset.mem_biUnion.mpr ⟨v, hv, by rw [missingBefore v hvB hvb]; exact hcv⟩
+  exact @SharedFacts.MixedChangeTransport.routeTransport (@V) (@E) inferInstance
+    inferInstance inferInstance inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett)
+    (@base) (@C) (@alpha) (@beta) (@segTrans) (@hAib) (@BToT) (@missingBefore)
+    (@edgesFixed) (@S) (@hs)
 
 theorem helper_replacement_742.{u_1, u_2} :
     open scoped Classical in

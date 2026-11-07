@@ -90,17 +90,6 @@ theorem HierarchyCounterexampleTerminalCommonMissing {V E : Type*}
   have hTyLen : Ty.length = T.length - 1 := by
     rw [hTy]
     rfl
-  have hlastNot : T.vertex (Fin.last T.length) ∉ TreeSequenceVertexSet Ty := by
-    intro hlast
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hlast
-    rcases hlast with ⟨i, hi⟩
-    have hv := T.vertex_injective hi
-    have hvval := congrArg Fin.val hv
-    simp only [Nat.succ_eq_add_one, Fin.val_last] at hvval
-    change i.val = T.length at hvval
-    have hvval' : i.val = T.length := hvval
-    have hii := i.isLt
-    omega
   by_contra hnone
   have hnone' : ∀ alpha, alpha ∈ TreeMissingColors phi Ty →
       alpha ∉ MissingColors G phi (T.vertex (Fin.last T.length)) := by
@@ -114,7 +103,6 @@ theorem HierarchyCounterexampleTerminalCommonMissing {V E : Type*}
     rcases (by simpa [TreeSequenceVertexSet] using hu) with ⟨i, hi⟩
     have hival : i.val < T.length := by
       by_contra hival
-      have hii := i.isLt
       have hiLast : i = Fin.last T.length := by
         apply Fin.ext
         simp

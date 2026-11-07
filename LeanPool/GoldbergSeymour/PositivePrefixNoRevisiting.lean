@@ -3663,14 +3663,6 @@ private theorem helper_branch_1721.{u_1, u_2} :
       exact fullChoice.otherOutside
         (hcross.1 ▸
           prefixChoiceOnFull.vertexDefective.1)
-  have hfullOtherIdentity : fullChoice.otherEndpoint =
-      prefixChoiceOnFull.otherEndpoint := by
-    rcases Sym2.eq_iff.mp hfullEnds with
-        hstraight | hcross
-    · exact hstraight.2.symm
-    · exfalso
-      exact prefixChoiceOnFull.otherOutside
-        (hcross.2 ▸ fullChoice.vertexDefective.1)
   obtain ⟨hfullDeltaMissing, hfullGammaNotMissing,
       hfullColorNe⟩ := pePostStatus
     (ett.series.data.tree fulli.succ.castSucc)

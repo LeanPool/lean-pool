@@ -586,17 +586,6 @@ theorem HkuTreeColorsControlled {V E : Type*} [Fintype V] [Fintype E]
     simp only [TreeMissingColors, Finset.mem_biUnion] at hc ⊢
     rcases hc with ⟨v, hv, hvc⟩
     exact ⟨v, vertexTransfer hab hv, hvc⟩
-  have usedSegment {A B : TreeSequence G e0}
-      (hab : TreeSequenceInitialSegment A B) {phi : PartialEdgeColoring E k} :
-      TreeUsedColors phi A ⊆ TreeUsedColors phi B := by
-    intro c hc
-    simp only [TreeUsedColors, Finset.mem_filter, Finset.mem_univ, true_and] at hc ⊢
-    rcases hab with ⟨hlen, hvertices, hedges⟩
-    rcases hc with ⟨j, hj, hcolor⟩
-    refine ⟨Fin.castLE hlen j, ?_, ?_⟩
-    · exact hj
-    · rw [hedges j]
-      exact hcolor
   have augmentationUsed := @helper_augmentationUsed_86 V E inferInstance inferInstance G k e0
       missingTransfer
   have closureMissing {A B : TreeSequence G e0}

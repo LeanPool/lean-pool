@@ -478,17 +478,6 @@ private theorem helper_branch_101.{u_1, u_2} :
   have hcomponent := @helper_hcomponent_179 V E inferInstance inferInstance inferInstance G k rounds
       e0 input series q c hc gamma secondStable secondStableProper choice exitWitness hdegree
       hvdegree
-  have htree : TreeMissingColors secondStable
-      (series.data.tree q.succ.castSucc) =
-      TreeMissingColors choice.selected
-        (series.data.tree q.succ.castSucc) := by
-    ext a
-    simp only [TreeMissingColors, Finset.mem_biUnion]
-    constructor <;> rintro ⟨v, hv, ha⟩ <;> refine ⟨v, hv, ?_⟩
-    · rw [(secondStableRelation.2 v hv)] at ha
-      exact ha
-    · rw [← (secondStableRelation.2 v hv)] at ha
-      exact ha
   have hbase := @helper_hbase_286 V E inferInstance inferInstance inferInstance G k rounds e0 input
       series q f c hf hfc hc secondStable choice secondStableRelation
   have hincident := @helper_hincident_309 V E inferInstance inferInstance inferInstance G k rounds

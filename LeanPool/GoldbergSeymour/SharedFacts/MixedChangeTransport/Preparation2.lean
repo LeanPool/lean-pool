@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
@@ -199,35 +201,23 @@ theorem routeTransport.{u_1, u_2} : routeTransportStatement.{u_1, u_2} := by
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A ib vb segTrans hAib B BToT
       sigma missingBefore edgesFixed S hs
-  unfold TashkinovAugmentationSequence at hs ⊢
-  induction hs using Relation.ReflTransGen.head_induction_on with
-  | refl => exact Relation.ReflTransGen.refl
-  | @head U W hstep htail ih =>
-    have hWB := TashkinovAugmentationSequenceInitialSegment phi W B htail
-    obtain ⟨hlen, hUW, c, hcol, hm⟩ := hstep
-    have hUB := segTrans hUW hWB
-    have hlt : U.length < B.length := by have := hWB.1; omega
-    refine Relation.ReflTransGen.head ⟨hlen, hUW, c, ?_, ?_⟩ ih
-    · have hf := edgesFixed (Fin.castLE hWB.1 (Fin.cast hlen.symm (Fin.last U.length)))
-      rw [hWB.2.2] at hf
-      exact hf.trans hcol
-    · obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hm
-      have hvB := TreeSequenceInitialSegmentVertexSetSubset hUB hv
-      have hvb : v ≠ vb := by
-        intro he
-        simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-        obtain ⟨i, hi⟩ := hv
-        have ht := hUB.2.1 i
-        have htT := BToT.2.1 (Fin.castLE (Nat.succ_le_succ hUB.1) i)
-        have eqv : T.vertex (Fin.castLE (Nat.succ_le_succ BToT.1)
-            (Fin.castLE (Nat.succ_le_succ hUB.1) i)) = T.vertex ib := htT.trans (ht.trans
-                (hi.trans he))
-        have hh := congrArg Fin.val (T.vertex_injective eqv)
-        have := i.isLt
-        change i.val = ib.val at hh
-        change U.length < ib.val at hlt
-        omega
-      exact Finset.mem_biUnion.mpr ⟨v, hv, by rw [missingBefore v hvB hvb]; exact hcv⟩
+  apply TashkinovAugmentationSequence.transport_of_fixed edgesFixed ?_ hs
+  intro initial segment strict vertex member
+  apply missingBefore vertex (TreeSequenceInitialSegmentVertexSetSubset segment member)
+  intro equal
+  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at member
+  obtain ⟨index, atVertex⟩ := member
+  have inTarget := segment.2.1 index
+  have inTree := BToT.2.1 (Fin.castLE (Nat.succ_le_succ segment.1) index)
+  have sameVertex : T.vertex (Fin.castLE (Nat.succ_le_succ BToT.1)
+      (Fin.castLE (Nat.succ_le_succ segment.1) index)) = T.vertex ib :=
+    inTree.trans (inTarget.trans (atVertex.trans equal))
+  have sameIndex := congrArg Fin.val (T.vertex_injective sameVertex)
+  have := index.isLt
+  change index.val = ib.val at sameIndex
+  change initial.length < ib.val at strict
+  omega
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem replacementStageInitialSegmentOfPrefix.{u_1, u_2} :
@@ -235,11 +225,7 @@ theorem replacementStageInitialSegmentOfPrefix.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A ib segRefl segTrans hAib B rpB
       aboveB strictB belowB genB baseB HB j
-  clear * - HB j B segRefl segTrans
-  exact Fin.reverseInduction
-    (motive := fun j => TreeSequenceInitialSegment (HB.stage j) B)
-    (by simpa only [HB.terminalStage] using segRefl B)
-    (fun i hi => segTrans (HB.nested i) hi) j
+  exact HB.stageInitialSegment j
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem closureInitialSegmentOfStarredStage.{u_1, u_2} :

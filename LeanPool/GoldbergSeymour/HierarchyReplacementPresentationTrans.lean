@@ -500,21 +500,6 @@ lemma HierarchyReplacementPresentationTrans
   revert baseSecond CSecond sameGoodSecond
   cases ettEq
   intro baseSecond CSecond sameGoodSecond
-  let second : CorrespondingExtendedTashkinovTree
-      G k e0 P.corresponding.replacementETT tau T := {
-    replacementInput := compositeInput
-    replacementSeries := secondSeries
-    replacementETT := compositeETT
-    rungAgreement := secondRung
-    seriesPresentation := secondPresentation
-    finalGeneratingColoring := secondFinal
-    ladderTreesAgree := secondLadder
-    storedColorsAgree := secondStored
-    connectingEdgesAgree := secondEdges
-    extensionKindsAgree := secondKinds
-    replacementProper := secondProper
-    replacementOneUncolored := secondOne
-    replacementStable := secondStable }
   let composite : CorrespondingExtendedTashkinovTree G k e0 ett tau T := {
     replacementInput := compositeInput
     replacementSeries := compositeSeries

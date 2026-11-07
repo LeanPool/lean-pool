@@ -495,34 +495,6 @@ private theorem helper_branch_92.{u_1, u_2} :
       appended.gamma i.castSucc.succ = appended.gamma i.succ.castSucc :=
         congrArg appended.gamma slotIndexEq
       _ = data.gamma i.succ := (slotsOld i.succ).2.2.2.2.2.2.2
-  let Package (previousColor currentColor : PartialEdgeColoring E k)
-      (previousTree outputTree : TreeSequence G e0)
-      (storedColors currentStoredValue : Finset (Fin k))
-      (currentEdgesValue : Finset E)
-      (currentKindValue : Option TashkinovExtensionKind)
-      (currentVertexValue currentOutsideValue : Option V)
-      (currentDeltaValue currentGammaValue : Option (Fin k)) : Prop :=
-    ∃ selectedChoice : MaximumDefectiveChoice G e0 previousTree
-        storedColors previousColor,
-      (∀ pi : PartialEdgeColoring E k,
-        IsProperEdgeColoring G pi → IsOneEdgeUncolored pi e0 →
-          StableColoring previousTree (insert selectedChoice.color storedColors)
-            selectedChoice.selected pi →
-          Disjoint (MissingColors G pi selectedChoice.otherEndpoint)
-            (TreeMissingColors pi previousTree)) ∧
-      currentColor = selectedChoice.selected ∧
-      currentStoredValue = {selectedChoice.color} ∧
-      currentEdgesValue = {selectedChoice.edge} ∧
-      currentKindValue = some TashkinovExtensionKind.SE ∧
-      currentVertexValue = some selectedChoice.vertex ∧
-      currentOutsideValue = some selectedChoice.otherEndpoint ∧
-      currentDeltaValue = some selectedChoice.color ∧
-      currentGammaValue = none ∧
-      ∃ exactAdjoined : TreeSequence G e0,
-        TreeSequenceAdjoinEdge previousTree selectedChoice.edge exactAdjoined ∧
-        TashkinovClosure currentColor exactAdjoined outputTree ∧
-        TreeSequenceInitialSegment previousTree outputTree ∧
-        previousTree.length < outputTree.length
   exact @helper_continuation_310 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
       (@rounds) (@e0) (@input) (@data) (@newTree) (@newColoring) (@newStored)
       (@newConnectingEdges) (@newKind) (@newChosenVertex) (@newOutsideVertex) (@newDelta)
@@ -1127,45 +1099,6 @@ private theorem helper_branch_265.{u_1, u_2} :
     exact ParallelExtensionColorAppend data newTree newColoring newStored
       newConnectingEdges newKind newChosenVertex newOutsideVertex
       newDelta newGamma i.castSucc selected v gamma
-  let Package (rule : PartialEdgeColoring E k → V → Fin k → Prop)
-      (previousColor currentColor : PartialEdgeColoring E k)
-      (previousTree outputTree : TreeSequence G e0)
-      (storedColors currentStoredValue : Finset (Fin k))
-      (currentEdgesValue : Finset E)
-      (currentKindValue : Option TashkinovExtensionKind)
-      (currentVertexValue currentOutsideValue : Option V)
-      (currentDeltaValue currentGammaValue : Option (Fin k)) : Prop :=
-    ∃ selectedChoice : MaximumDefectiveChoice G e0 previousTree
-        storedColors previousColor,
-      (∃ rho : PartialEdgeColoring E k,
-        IsProperEdgeColoring G rho ∧ IsOneEdgeUncolored rho e0 ∧
-          StableColoring previousTree (insert selectedChoice.color storedColors)
-            selectedChoice.selected rho ∧
-          ¬ Disjoint (MissingColors G rho selectedChoice.otherEndpoint)
-            (TreeMissingColors rho previousTree)) ∧
-      ∃ selectedGamma : Fin k,
-        rule selectedChoice.selected selectedChoice.vertex selectedGamma ∧
-        ∃ stableColoring : PartialEdgeColoring E k,
-          IsProperEdgeColoring G stableColoring ∧
-          IsOneEdgeUncolored stableColoring e0 ∧
-          StableColoring previousTree (insert selectedChoice.color storedColors)
-            selectedChoice.selected stableColoring ∧
-          TreeExit previousTree stableColoring selectedGamma
-            selectedChoice.color selectedChoice.vertex ∧
-          currentColor = TwoColorComponentSwap G stableColoring selectedGamma
-            selectedChoice.color (Sum.inl selectedChoice.vertex) ∧
-          IsProperEdgeColoring G currentColor ∧
-          IsOneEdgeUncolored currentColor e0 ∧
-          currentStoredValue = {selectedChoice.color, selectedGamma} ∧
-          currentEdgesValue = {selectedChoice.edge} ∧
-          currentKindValue = some TashkinovExtensionKind.PE ∧
-          currentVertexValue = some selectedChoice.vertex ∧
-          currentOutsideValue = some selectedChoice.otherEndpoint ∧
-          currentDeltaValue = some selectedChoice.color ∧
-          currentGammaValue = some selectedGamma ∧
-          TashkinovClosure currentColor previousTree outputTree ∧
-          TreeSequenceInitialSegment previousTree outputTree ∧
-          previousTree.length < outputTree.length
   exact @helper_continuation_615 V E inferInstance inferInstance inferInstance G k rounds e0
       input data newTree newColoring newStored newConnectingEdges newKind newChosenVertex
       newOutsideVertex newDelta newGamma i previousProper previousOneUncolored previousClosed

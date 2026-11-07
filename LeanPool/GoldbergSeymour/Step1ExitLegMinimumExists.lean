@@ -948,87 +948,8 @@ theorem Step1ExitLegMinimumExists {V E : Type*}
   have hs0_spec : SecondaryRealized s0 := Nat.find_spec hSecondaryRealized
   have hs0_min {s : ℕ} (hs : SecondaryRealized s) : s0 ≤ s :=
     Nat.find_min' hSecondaryRealized hs
-  let PrimaryMinimal (S : Step1ExitLegPresentation G k e0 n q) : Prop :=
-    ∀ (sigma : PartialEdgeColoring E k) (U : TreeSequence G e0)
-      (corr : CorrespondingExtendedTashkinovTree G k e0 S.ett sigma U),
-      IsProperEdgeColoring G sigma → IsOneEdgeUncolored sigma e0 →
-      StableColoring
-        (S.ett.series.data.tree (Fin.last S.ett.rounds).castSucc)
-        (TashkinovStoredColors S.ett.series.data (Fin.last S.ett.rounds))
-        S.phi sigma →
-      MaximumProperty corr.replacementETT →
-      ∀ (baseU : HierarchyBase corr.replacementETT sigma)
-        (L : TashkinovHierarchy corr.replacementETT baseU)
-        (goodU : GoodHierarchy L),
-        L.dividerCount < S.hierarchy.dividerCount →
-        2 * corr.replacementETT.rounds + 11 ≤
-          (TreeMissingColors sigma
-            (corr.replacementETT.series.data.tree
-              (Fin.last corr.replacementETT.rounds).castSucc)).card →
-        TreeColorSetMinusClosed G sigma U
-          ((HierarchyTerminalStoredColors L).biUnion
-            (goodU.gamma (Fin.last L.dividerCount))) →
-        ∀ (c d : Fin k), c ≠ d →
-          c ∈ TreeMissingColors sigma U →
-          TreeColorSetClosed G sigma U {c} →
-          ∀ (u1 v1 u2 v2 : V)
-            (Q1 : (TwoColorIncidenceGraph G sigma c d).Walk
-              (Sum.inl u1) (Sum.inl v1))
-            (Q2 : (TwoColorIncidenceGraph G sigma c d).Walk
-              (Sum.inl u2) (Sum.inl v2)),
-            TreeExitPath U sigma c d u1 v1 Q1 →
-            TreeExitPath U sigma c d u2 v2 Q2 →
-            (∀ x, x ∈ Q1.support → x ∉ Q2.support) →
-            u1 ≠ u2 → False
   have primaryFor := @helper_primaryFor_128 V E inferInstance inferInstance inferInstance
       inferInstance G k e0 n q hDividerRealized hd0_spec hd0_min hSecondaryRealized hs0_spec
-  let SecondaryMinimal (S : Step1ExitLegPresentation G k e0 n q)
-      {a3 b3 : V}
-      (P3 : (TwoColorIncidenceGraph G S.phi S.a S.b).Walk
-        (Sum.inl a3) (Sum.inl b3)) : Prop :=
-    ∀ (sigma : PartialEdgeColoring E k) (U : TreeSequence G e0)
-      (corr : CorrespondingExtendedTashkinovTree G k e0 S.ett sigma U),
-      IsProperEdgeColoring G sigma → IsOneEdgeUncolored sigma e0 →
-      StableColoring
-        (S.ett.series.data.tree (Fin.last S.ett.rounds).castSucc)
-        (TashkinovStoredColors S.ett.series.data (Fin.last S.ett.rounds))
-        S.phi sigma →
-      MaximumProperty corr.replacementETT →
-      ∀ (baseU : HierarchyBase corr.replacementETT sigma)
-        (L : TashkinovHierarchy corr.replacementETT baseU)
-        (goodU : GoodHierarchy L),
-        L.dividerCount = S.hierarchy.dividerCount →
-        2 * corr.replacementETT.rounds + 11 ≤
-          (TreeMissingColors sigma
-            (corr.replacementETT.series.data.tree
-              (Fin.last corr.replacementETT.rounds).castSucc)).card →
-        TreeColorSetMinusClosed G sigma U
-          ((HierarchyTerminalStoredColors L).biUnion
-            (goodU.gamma (Fin.last L.dividerCount))) →
-        ∀ (c d : Fin k), c ≠ d →
-          c ∈ TreeMissingColors sigma U →
-          TreeColorSetClosed G sigma U {c} →
-          ∀ (u1 v1 u2 v2 : V)
-            (Q1 : (TwoColorIncidenceGraph G sigma c d).Walk
-              (Sum.inl u1) (Sum.inl v1))
-            (Q2 : (TwoColorIncidenceGraph G sigma c d).Walk
-              (Sum.inl u2) (Sum.inl v2)),
-            TreeExitPath U sigma c d u1 v1 Q1 →
-            TreeExitPath U sigma c d u2 v2 Q2 →
-            (∀ x, x ∈ Q1.support → x ∉ Q2.support) →
-            u1 ≠ u2 →
-            (d ∈ TreeMissingColors sigma U ∨
-              (d ∉ TreeMissingColors sigma U ∧
-                ∃ (u3 v3 : V)
-                  (Q3 : (TwoColorIncidenceGraph G sigma c d).Walk
-                    (Sum.inl u3) (Sum.inl v3)),
-                  TreeExitPath U sigma c d u3 v3 Q3 ∧
-                  (∀ x, x ∈ Q1.support → x ∉ Q3.support) ∧
-                  (∀ x, x ∈ Q2.support → x ∉ Q3.support) ∧
-                  u1 ≠ u3 ∧ u2 ≠ u3 ∧
-                  Q1.length + Q2.length + Q3.length <
-                    S.P1.length + S.P2.length + P3.length)) →
-            False
   have secondaryFor := @helper_secondaryFor_298 V E inferInstance inferInstance inferInstance
       inferInstance G k e0 n q hDividerRealized hd0_spec hSecondaryRealized hs0_spec hs0_min
   have finishPositive (S : Step1ExitLegPresentation G k e0 n q)

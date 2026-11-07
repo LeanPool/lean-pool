@@ -2598,29 +2598,6 @@ private theorem helper_continuation_2163.{u_1, u_2} :
     maximumHEq h40input h40ETT (maximumHEq h4input h4ETT max4)
   have agree40 := terminalAgreement original A40
   have agree0 := terminalAgreement original presentation.corresponding
-  let newPresentation : RutgersClosedPresentation G k e0 original := {
-    sigma := mu4
-    U := W
-    corresponding := A40
-    maximum := max40
-    terminalRoute := by
-      dsimp only
-      have htree : A40.replacementETT.series.data.tree
-          (Fin.last A40.replacementETT.rounds).castSucc = Tn :=
-        agree40.1.trans agree0.1.symm
-      have hkind : A40.replacementETT.series.data.kind
-          (Fin.last A40.replacementETT.rounds) = R.series.data.kind n :=
-        agree40.2.1.trans agree0.2.1.symm
-      have hedges : A40.replacementETT.series.data.connectingEdges
-          (Fin.last A40.replacementETT.rounds) = R.series.data.connectingEdges n :=
-        agree40.2.2.trans agree0.2.2.symm
-      rcases hseed with hPE | hSER
-      · exact Or.inl ⟨hkind.trans hPE.1, by
-          rw [htree, ← hPE.2]
-          exact ⟨route4W, hW.2⟩⟩
-      · obtain ⟨f, he, ha⟩ := hSER.2
-        exact Or.inr ⟨by simpa [hkind] using hSER.1, f, seed,
-          hedges.trans he, by simpa [htree] using ha, route4W, hW.2⟩ }
   have elementary4 : ColoredVertexSetElementary G mu4 (TreeSequenceVertexSet W) :=
     hcurrentOne A40.replacementETT A40.rungAgreement max40
   have colorPair4 (f : E) :

@@ -153,23 +153,6 @@ theorem HkuMissingStoredMonotone {V E : Type*} [Fintype V] [Fintype E]
     rcases hab with ⟨hlen, hvertices, hedges⟩
     refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, ?_⟩
     exact (hvertices i).trans hi
-  have augmentationTransfer {A B : TreeSequence G e0}
-      {phi : PartialEdgeColoring E k}
-      (hab : TashkinovAugmentation phi A B) {v : V}
-      (hv : v ∈ TreeSequenceVertexSet A) :
-      v ∈ TreeSequenceVertexSet B := by
-    rcases hab with ⟨hlen, hseg, hc⟩
-    exact vertexTransfer hseg hv
-  have closureTransfer {A B : TreeSequence G e0}
-      {phi : PartialEdgeColoring E k}
-      (hab : TashkinovAugmentationSequence phi A B) {v : V}
-      (hv : v ∈ TreeSequenceVertexSet A) :
-      v ∈ TreeSequenceVertexSet B := by
-    unfold TashkinovAugmentationSequence at hab
-    induction hab using Relation.ReflTransGen.head_induction_on with
-    | refl => exact hv
-    | head hstep htail ih =>
-      exact ih (augmentationTransfer hstep hv)
   have segment : ∀ (j : Fin (rounds + 1)) (i : Fin rounds), j = i.succ →
       TreeSequenceInitialSegment (series.data.tree i.succ.castSucc)
         (series.data.tree i.succ.succ) := by
@@ -184,34 +167,6 @@ theorem HkuMissingStoredMonotone {V E : Type*} [Fintype V] [Fintype E]
     rcases hc with ⟨v, hv, hvc⟩
     exact ⟨v, hab v hv, hvc⟩
   have secondSegment := segment q.succ q (by rfl)
-  have oldVertices : ∀ v, v ∈ TreeSequenceVertexSet (series.data.tree q.castSucc.castSucc) →
-      v ∈ TreeSequenceVertexSet (series.data.tree q.succ.castSucc) := by
-    intro v hv
-    by_cases hq : q.val = 0
-    · have hzero : q = ⟨0, by omega⟩ := by apply Fin.ext; exact hq
-      cases series.certified 0 with
-      | initial triple seedLength initialColoring initialStored initialEdges
-          initialKind initialVertex initialOutside initialDelta initialGamma
-          initialClosure =>
-        have hidx : q.castSucc.castSucc = (0 : Fin (rounds + 2)) := by
-          apply Fin.ext
-          simp [hq]
-        have hv' : v ∈ TreeSequenceVertexSet (series.data.tree 0) := by
-          rw [hidx] at hv
-          exact hv
-        have hres := closureTransfer initialClosure.1 hv'
-        have hnext : q.succ.castSucc = (1 : Fin (rounds + 2)) := by
-          apply Fin.ext
-          simp [hq]
-        rw [hnext]
-        exact hres
-    · let i : Fin rounds := ⟨q.val - 1, by omega⟩
-      have hi : i.succ = q.castSucc := by apply Fin.ext; simp [i]; omega
-      have hs := segment q.castSucc i hi.symm
-      have hv' : v ∈ TreeSequenceVertexSet (series.data.tree i.succ.castSucc) := by
-        simpa [hi] using hv
-      have hres := vertexTransfer hs hv'
-      simpa [hi] using hres
   have laterMissing := missingTransfer (fun v hv => vertexTransfer secondSegment hv)
       (series.data.coloring q.succ)
   have swapMissing {phi : PartialEdgeColoring E k} (alpha beta : Fin k)

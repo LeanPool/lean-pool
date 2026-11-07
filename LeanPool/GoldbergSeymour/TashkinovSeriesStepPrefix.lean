@@ -956,17 +956,6 @@ private theorem helper_branch_1559.{u_1, u_2} :
       cases hprev
       exact available.cycle.isCycle
   }
-  let returnPath' : (TwoColorIncidenceGraph G
-      ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc)
-      available.gamma available.delta).Walk (Sum.inr available.edge)
-      (Sum.inl available.returnVertex) :=
-    @Eq.ndrec (PartialEdgeColoring E k) (data.coloring idx.castSucc)
-      (fun phi => (TwoColorIncidenceGraph G phi available.gamma
-        available.delta).Walk (Sum.inr available.edge)
-        (Sum.inl available.returnVertex))
-      available.returnPath
-      ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc)
-      hprev.symm
   let available' : RevisitingExtensionCertificate
       (TashkinovSeriesDataPrefix m hm data) idx'.castSucc := by
     exact @helperAvailable754 (@V) (@E) inferInstance inferInstance (@G) (@k) (@rounds) (@e0)

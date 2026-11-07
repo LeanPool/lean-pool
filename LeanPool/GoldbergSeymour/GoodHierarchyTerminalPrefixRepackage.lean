@@ -233,14 +233,6 @@ theorem GoodHierarchyTerminalPrefixRepackage {V E : Type*}
       generatingColoring := ett.generatingColoring }
   have mpB : MaximumProperty ettB := by
     simpa [MaximumProperty, ettB] using hMP
-  let baseB : HierarchyBase ettB phi :=
-    { core := base.core
-      closure := base.closure
-      supportPosition := base.supportPosition
-      supportPositive := base.supportPositive
-      terminalMissingColors := by simpa [ettB] using base.terminalMissingColors
-      parallel := by simpa [ettB] using base.parallel
-      nonparallel := by simpa [ettB] using base.nonparallel }
   let hbStage : Fin (H.dividerCount + 2) → TreeSequence G e0 :=
     fun j => if j.val = H.dividerCount + 1 then B
       else H.stage ⟨j.val, by omega⟩

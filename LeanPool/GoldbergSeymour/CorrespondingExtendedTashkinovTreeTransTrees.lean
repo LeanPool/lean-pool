@@ -131,16 +131,6 @@ private theorem correspondingStoredColors
     rw [firstSeriesEq]
     exact (eq_of_heq (projectTree first.rungAgreement.symm
       first.replacementSeries i)).trans (first.ladderTreesAgree i)
-  have storedBridge :
-      first.replacementETT.series.data.stored middleIndex.succ =
-        ett.series.data.stored i.succ := by
-    have middleSucc : middleIndex.succ = first.rungAgreement.symm ▸ i.succ := by
-      exact succCast first.rungAgreement.symm i
-    rw [middleSucc]
-    rw [firstSeriesEq]
-    exact (eq_of_heq (projectStored first.rungAgreement.symm
-      first.replacementSeries i.succ)).trans
-      (first.storedColorsAgree i.succ)
   have middleColorBridge :
       first.replacementETT.series.data.coloring middleIndex.succ =
         first.replacementSeries.data.coloring i.succ := by
@@ -233,16 +223,6 @@ private theorem correspondingStableComposition
     rw [firstSeriesEq]
     exact (eq_of_heq (projectTree first.rungAgreement.symm
       first.replacementSeries i)).trans (first.ladderTreesAgree i)
-  have storedBridge :
-      first.replacementETT.series.data.stored middleIndex.succ =
-        ett.series.data.stored i.succ := by
-    have middleSucc : middleIndex.succ = first.rungAgreement.symm ▸ i.succ := by
-      exact succCast first.rungAgreement.symm i
-    rw [middleSucc]
-    rw [firstSeriesEq]
-    exact (eq_of_heq (projectStored first.rungAgreement.symm
-      first.replacementSeries i.succ)).trans
-      (first.storedColorsAgree i.succ)
   have middleColorBridge :
       first.replacementETT.series.data.coloring middleIndex.succ =
         first.replacementSeries.data.coloring i.succ := by

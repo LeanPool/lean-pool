@@ -1086,10 +1086,7 @@ private theorem helper_continuation_7103.{u_1, u_2} :
     exact TreeSequenceInitialSegmentVertexSetSubset (trans (starA _) hAX)
   have allStageB (j : Fin (HB.dividerCount + 2)) :
       TreeSequenceInitialSegment (HB.stage j) B := by
-    exact Fin.reverseInduction (motive := fun j =>
-      TreeSequenceInitialSegment (HB.stage j) B)
-      (by rw [HB.terminalStage]; exact ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩)
-      (fun i hi => trans (HB.nested i) hi) j
+    exact HB.stageInitialSegment j
   have terminalTree : corr.replacementETT.series.data.tree
       (Fin.last corr.replacementETT.rounds).castSucc = Tn := by
     exact corr.terminalData.1

@@ -879,10 +879,10 @@ theorem helper_continuation_4653.{u_1, u_2} :
     fixedValue _ (allControlled t).1 (allControlled t).2
   have routeTransport (S : TreeSequence G e0) (hs : TashkinovAugmentationSequence phi S B) :
       TashkinovAugmentationSequence sigma S B := by
-    exact @helper_routeTransport_711 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@segTrans) (@hAib) (@BToT) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB)
-        (@HB) (@missingBefore) (@edgesFixed) (@S) (@hs)
+    exact @SharedFacts.MixedChangeTransport.routeTransport (@V) (@E) inferInstance
+      inferInstance inferInstance inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett)
+      (@base) (@C) (@alpha) (@beta) (@segTrans) (@hAib) (@BToT) (@missingBefore)
+      (@edgesFixed) (@S) (@hs)
   have replacement :
       ∃ corr : CorrespondingExtendedTashkinovTree G k e0 ettB sigma B,
         MaximumProperty corr.replacementETT ∧
@@ -909,10 +909,7 @@ theorem helper_continuation_4653.{u_1, u_2} :
     exact starredToA _
   have stageBToB (j : Fin (HB.dividerCount + 2)) :
       TreeSequenceInitialSegment (HB.stage j) B := by
-    exact Fin.reverseInduction
-      (motive := fun j => TreeSequenceInitialSegment (HB.stage j) B)
-      (by simpa only [HB.terminalStage] using segRefl B)
-      (fun i hi => segTrans (HB.nested i) hi) j
+    exact HB.stageInitialSegment j
   have closureBToA (hp : ett.series.data.kind n = some TashkinovExtensionKind.PE) :
       TreeSequenceVertexSet baseB.closure ⊆ TreeSequenceVertexSet A := by
     exact @helper_closureBToA_1398 (@V) (@E) inferInstance inferInstance inferInstance

@@ -305,18 +305,6 @@ private theorem helper_advance_428.{u_1, u_2} :
   have excM := @helper_excM_401 V E inferInstance inferInstance inferInstance inferInstance G k e0
       input T phi ett base C ctx hsituation hAT hlen tailException consecutive m hmLower hm hmT
       hfullY hYvertex
-  have avoidNext (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
-      (eta a : Fin k)
-      (heta : eta ∈ HierarchyStoredColorsAt R.counterexample.hierarchy
-        (Fin.last R.counterexample.hierarchy.dividerCount))
-      (ha : a ∈ R.counterexample.good.gamma (Fin.last R.counterexample.hierarchy.dividerCount) eta)
-      (he : eta ∈ MissingColors G R.coloring (B.vertex jnext)) :
-      ∀ t : Fin T.length, A.length ≤ t.val → t.val < X.length →
-        R.coloring (T.edge t) ≠ some a := by
-    intro t hlo hhi
-    apply gammaUnused R eta a heta ha t hlo
-    rw [firstAt R eta jnext he]
-    exact hhi
   have avoidM (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
       (eta a : Fin k)
       (heta : eta ∈ HierarchyStoredColorsAt R.counterexample.hierarchy

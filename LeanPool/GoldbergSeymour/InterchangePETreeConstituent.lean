@@ -65,14 +65,6 @@ private theorem helper_sharedCore_164.{u_1, u_2} :
       ⟨choice.color, Finset.mem_union_right _ (Finset.mem_insert_self _ _),
         choice.edgeColor⟩
     exact hs.trans choice.edgeColor
-  have hdn : choice.color ∉ MissingColors G secondStable choice.vertex := by
-    intro hm
-    have hp : choice.color ∈ PresentColors G secondStable choice.vertex := by
-      simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨choice.edge, choice.edgeIncident, hse⟩
-    have hn : choice.color ∉ PresentColors G secondStable choice.vertex := by
-      simpa [MissingColors] using hm
-    exact hn hp
   have hswap : choice.color ∈ MissingColors G
       (TwoColorComponentSwap G secondStable gamma choice.color
         (Sum.inl choice.vertex)) choice.vertex := by

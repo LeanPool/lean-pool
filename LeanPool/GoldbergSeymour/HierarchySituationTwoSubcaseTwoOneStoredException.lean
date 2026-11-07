@@ -1500,29 +1500,6 @@ private theorem helper_continuation_1111.{u_1, u_2} :
       IsOneEdgeUncolored (ett.series.data.coloring j) e0 := by
     intro j
     exact (ett.series.coloringProperties j).2
-  let selfCorr : CorrespondingExtendedTashkinovTree G k e0 ett phi T := {
-    replacementInput := input
-    replacementSeries := ett.series
-    replacementETT := ett
-    rungAgreement := rfl
-    seriesPresentation := HEq.rfl
-    finalGeneratingColoring := ett.generatingColoring
-    ladderTreesAgree := fun _ => rfl
-    storedColorsAgree := fun _ => rfl
-    connectingEdgesAgree := fun _ => rfl
-    extensionKindsAgree := fun _ => rfl
-    replacementProper := seriesProper
-    replacementOneUncolored := seriesOne
-    replacementStable := fun _ => ⟨fun _ _ _ => rfl, fun _ _ => rfl⟩ }
-  let P0 : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx := {
-    coloring := phi
-    corresponding := selfCorr
-    maximum := C.maximum
-    replacementBase := base
-    counterexample := C
-    sameGood := ⟨⟨rfl, rfl, HEq.rfl, HEq.rfl, Iff.rfl, fun _ => rfl⟩,
-      rfl, fun _ => ⟨rfl, fun _ _ => rfl⟩⟩
-    minimumContext := ctx }
   have swapStep := @helper_swapStep_439 V E inferInstance inferInstance inferInstance inferInstance
       G k e0 input T phi ett base C ctx D eta missingMono firstMissing hAT hell hXlen hPenVal
       hLastVal hTlen hXexact hEllone hElllt hXT hAX hyp hetaFirst presentationGeometry

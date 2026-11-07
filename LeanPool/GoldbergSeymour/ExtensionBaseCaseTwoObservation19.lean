@@ -54,15 +54,6 @@ theorem ExtensionBaseCaseTwoObservation19 {V E : Type*}
     obtain ⟨v, hv, hvc⟩ := Finset.mem_biUnion.mp hc
     apply Finset.mem_biUnion.mpr
     exact ⟨v, hab hv, hvc⟩
-  have tree_subset : ∀ {A : TreeSequence G e0},
-      TashkinovAugmentationSequence rho1 seed A →
-      TreeSequenceVertexSet seed ⊆ TreeSequenceVertexSet A := by
-    intro A hA
-    unfold TashkinovAugmentationSequence at hA
-    induction hA with
-    | refl => exact Finset.Subset.rfl
-    | tail hreach hstep ih =>
-        exact ih.trans (initial_subset hstep.2.1)
   have set_result : TreeMissingColors rho1 TjPrime ∩ supportColors =
       {deltaN} := by
     apply Finset.ext

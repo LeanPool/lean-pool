@@ -1098,21 +1098,6 @@ theorem ScheideSymmetricReplacementBoundaryAvoidance {V E : Type*}
     rcases u_mem_cases hj with hj1 | hj2
     · exact R.u1_outside (hj1.symm ▸ hblockOld j)
     · exact R.u2_outside (hj2.symm ▸ hblockOld j)
-  have hblockNotX : ∀ j : Fin 2,
-      C.blockVertex (D.gammaIndex d) j ∉ X := by
-    intro j hj
-    rw [hXeq] at hj
-    rcases Finset.mem_union.mp hj with hjZ | hjU
-    · exact (Finset.mem_sdiff.mp hjZ).2 (by
-        have hjval : j.val = 0 ∨ j.val = 1 := by omega
-        rcases hjval with hjval | hjval
-        · have heq : j = (0 : Fin 2) := Fin.ext hjval
-          subst j
-          simp
-        · have heq : j = (1 : Fin 2) := Fin.ext hjval
-          subst j
-          simp)
-    · exact hblockNotU j hjU
   have hbaseZ : ∀ q : Fin C.p, C.y q ∈ Z := by
     intro q
     simp only [Z, Finset.mem_sdiff]

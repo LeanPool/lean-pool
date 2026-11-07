@@ -315,50 +315,6 @@ private theorem helper_continuation_315.{u_1, u_2} :
   have hg3BoundaryColor :
       g3 ∈ BoundaryColorEdges G D.sigma U C.a := by
     simp [BoundaryColorEdges, hg3Boundary, hg3a]
-  let C' : TchangeCounterexample G k e0 := {
-    phi := D.sigma
-    T := D.closedTree
-    a := C.b
-    b := C.a
-    colorsDistinct := C.colorsDistinct.symm
-    triple := D.triple
-    tree := D.closureTree
-    closed := D.closureClosed
-    aMissing := hbTree
-    bNotMissing := haNotTree
-    a1 := C.a1
-    b1 := c1
-    a2 := C.a2
-    b2 := c2
-    a3 := C.a3
-    b3 := c3
-    P1 := L1'
-    P2 := L2'
-    P3 := L3'
-    exit1 := hExit1'
-    exit2 := hExit2'
-    exit3 := hExit3'
-    disjoint12 := hdis12'
-    disjoint13 := hdis13'
-    disjoint23 := hdis23'
-    remote12 := C.remote12
-    remote13 := C.remote13
-    remote23 := C.remote23
-    tree12 := hc12
-    tree13 := hc13
-    tree23 := hc23
-    f1 := g1
-    f2 := g2
-    f3 := g3
-    boundary1 := hg1BoundaryColor
-    boundary2 := hg2BoundaryColor
-    boundary3 := hg3BoundaryColor
-    incident1 := hg1c
-    incident2 := hg2c
-    incident3 := hg3c
-    support1 := by rw [hL1Support]; exact hg1L
-    support2 := by rw [hL2Support]; exact hg2L
-    support3 := by rw [hL3Support]; exact hg3L }
   exact @helper_continuation_388 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 C D c1 hc1Q hExit1 g1 hg1L hg1c c2 hc2Q g2 hg2L hg2c c3 hc3Q g3 hg3L hg3c hc12 hc13 hc23
       hbTree haNotTree hGraph hL1Support hL2Support hL3Support hL1Length hL2Length hL3Length

@@ -188,18 +188,6 @@ theorem P2813_T1_PrefixReconstruction {V E : Type*}
     have hh := starStage q
     have hlast : q.succ = Fin.last (H.dividerCount + 1) := Fin.ext rfl
     simpa [hlast, H.terminalStage] using hh
-  have hATy : TreeSequenceInitialSegment A Ty := by
-    clear * - hAT A Ty
-    have hlen : A.length ≤ Ty.length := by
-      change A.length ≤ min (A.length + ((T.length - A.length) - 1)) T.length
-      exact Nat.le_min.mpr ⟨Nat.le_add_right _ _, hAT.1⟩
-    refine ⟨hlen, ?_, ?_⟩
-    · intro j
-      change T.vertex _ = A.vertex j
-      exact hAT.2.1 j
-    · intro j
-      change T.edge _ = A.edge j
-      exact hAT.2.2 j
   have hTyT : TreeSequenceInitialSegment Ty T :=
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
   have equalTrees {S U : TreeSequence G e0}
