@@ -119,7 +119,8 @@ private theorem helper_continuation_5341.{u_1, u_2} :
         (@strictK) (@coreInsideK) (@positiveK) (@increasingK) (@dividerStageK) (@starredEq)
         (@stageBX) (@terminalTree) (@storedEq) (@stageMissingEq) (@segmentEq)
   have hbetaY : beta ∈ MissingColors G sigma y := by
-    apply helper_hbetaY_2355 <;> assumption
+    exact P.minimumContext.proper.missingAfterSingleEdgeChange hyf hbetaF
+      (by simpa only [sigma, ite_eq_left rfl, ne_eq, Option.some.injEq] using hab) fixed
   have hnotElementary : ¬ ColoredVertexSetElementary G sigma (TreeSequenceVertexSet B) := by
     exact helper_hnotElementary_2365 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
         (@ctx) (@P) (@alpha) (@hlenT) (@beta) (@z) (@hzB) (@hbetaz) (@hzy) (@hzX)
@@ -219,7 +220,9 @@ private theorem helper_continuation_5697.{u_1, u_2} :
       ∃ bs : HierarchyBase corr.replacementETT sigma,
         ∃ K : TashkinovHierarchy corr.replacementETT bs,
           SameHierarchyStages HB K := by
-    apply helper_hdata_519 <;> assumption
+    exact HB.transportOfFixedPrefix hmaxB P.minimumContext.lowerRung
+      P.minimumContext.proper P.minimumContext.oneEdgeUncolored sigma hsproper hsone stable X
+      incidentFixed missingFixed closureBX hrouteB
   obtain ⟨corr, hmaximum, bs, K, hsame⟩ := hdata
   let KF := K
   rcases hsame with ⟨hcore, hcount, hstage, hposition, hpe, hclosure⟩

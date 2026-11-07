@@ -9,7 +9,8 @@ public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
-public import LeanPool.GoldbergSeymour.NonparallelHierarchyCorrespondence
+public import LeanPool.GoldbergSeymour.HierarchyFullBaseTransport
+public import LeanPool.GoldbergSeymour.HierarchyTailContinuationFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
 
@@ -2122,37 +2123,9 @@ theorem helper_hdata_519.{u_1, u_2} :
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha old H n Tn mu hp trans hlenT B X r
       f S hSBlen sigma hsproper hsone incidentFixed missingFixed stable hrouteB positiveB aboveB
       strictB belowB generatingB hmaxB baseB HB EB closureBX
-  by_cases hpe : EB.series.data.kind (Fin.last EB.rounds) =
-      some TashkinovExtensionKind.PE
-  · have hb : TashkinovAugmentationSequence sigma Tn B := by
-      rcases hrouteB with h | h
-      · exact h.2
-      · rcases h.1 with h | h <;> rw [hpe] at h <;> cases h
-    have hcomb : CombinedStableColoring Tn baseB.closure
-        (TashkinovStoredColors EB.series.data (Fin.last EB.rounds)) mu sigma := by
-      refine ⟨?_, ?_⟩
-      · have hh := stable
-        change StableColoring Tn
-          (TashkinovStoredColors EB.series.data (Fin.last EB.rounds))
-          (P.corresponding.replacementETT.series.data.coloring
-            (Fin.last P.corresponding.replacementETT.rounds)) sigma at hh
-        rw [← P.corresponding.replacementETT.generatingColoring] at hh
-        exact hh
-      · refine ⟨?_, ?_⟩
-        · intro edge he _
-          obtain ⟨v, hv, hi⟩ := he
-          exact incidentFixed edge ⟨v, closureBX hpe hv, hi⟩
-        · intro v hv
-          exact missingFixed v (closureBX hpe hv)
-    exact HierarchySplitter G k e0 P.corresponding.replacementInput B mu sigma EB
-      hmaxB old.positive P.minimumContext.lowerRung baseB HB hpe
-      P.minimumContext.proper P.minimumContext.oneEdgeUncolored hsproper hsone hcomb hb
-  · have hmodB := Td G k e0 P.corresponding.replacementInput B mu EB hmaxB
-      old.positive P.minimumContext.lowerRung sigma hsproper hsone stable
-    obtain ⟨corr⟩ := hmodB.2.2 B aboveB strictB hrouteB
-    have hmaximum := MaximumPropertyTransport G k e0 EB sigma hmodB B corr hmaxB
-    obtain ⟨bs, K, same⟩ := HB.nonparallelCorrespondence corr hpe
-    exact ⟨corr, hmaximum, bs, K, same⟩
+  exact HB.transportOfFixedPrefix hmaxB P.minimumContext.lowerRung
+    P.minimumContext.proper P.minimumContext.oneEdgeUncolored sigma hsproper hsone stable X
+    incidentFixed missingFixed closureBX hrouteB
 
 theorem helper_hpS_844.{u_1, u_2} :
     open scoped Classical in
@@ -3918,15 +3891,9 @@ theorem helper_hbetaY_2355.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha old H mu hp trans hlenT B r f y hyf
       beta hbetaF hab sigma fixed
-  simp only [MissingColors, Finset.mem_sdiff, Finset.mem_univ, true_and]
-  intro hp
-  obtain ⟨edge, hi, hc⟩ := (Finset.mem_filter.mp hp).2
-  by_cases hef : edge = f
-  · subst edge
-    have he : alpha = beta := by simpa [sigma] using hc
-    exact hab he
-  · have hcOld : mu edge = some beta := (fixed edge hef).symm.trans hc
-    exact P.minimumContext.proper hef ⟨y, hi, hyf⟩ hcOld hbetaF
+  exact P.minimumContext.proper.missingAfterSingleEdgeChange hyf hbetaF
+      (by simpa only [sigma, ite_eq_left rfl, ne_eq, Option.some.injEq] using hab) fixed
+
 
 theorem helper_hnotElementary_2365.{u_1, u_2} :
     open scoped Classical in

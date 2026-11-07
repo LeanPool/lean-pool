@@ -222,6 +222,7 @@ public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
 public import LeanPool.GoldbergSeymour.HierarchyLEMStable
 public import LeanPool.GoldbergSeymour.HierarchyMeasures
 public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
+public import LeanPool.GoldbergSeymour.HierarchyNonparallelBaseTransport
 public import LeanPool.GoldbergSeymour.HierarchyNonparallelFirstEdge
 public import LeanPool.GoldbergSeymour.HierarchyNormalizationLemmas
 public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
@@ -279,6 +280,7 @@ public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseTwoOneNonexce
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseTwoOneStoredException
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseTwoTwo
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoTailData
+public import LeanPool.GoldbergSeymour.HierarchySituationTwoTailTransport
 public import LeanPool.GoldbergSeymour.HierarchySplitter
 public import LeanPool.GoldbergSeymour.HierarchyStageInterchangeability
 public import LeanPool.GoldbergSeymour.HierarchyStageMissingColors
@@ -287,6 +289,7 @@ public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAntitone
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsCardinality
 public import LeanPool.GoldbergSeymour.HierarchyTailColorFacts
+public import LeanPool.GoldbergSeymour.HierarchyTailContinuationFacts
 public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
 public import LeanPool.GoldbergSeymour.HierarchyTailPrefix
 public import LeanPool.GoldbergSeymour.HierarchyTailSwapData
