@@ -90,3 +90,28 @@ jobs:
 
       - name: Ensure Actions are pinned
         uses: zgosalvez/github-actions-ensure-sha-pinned-actions@fc87bb5b5a97953d987372e74478de634726b3e5
+
+  disk-cleanup:
+    needs: scope
+    if: always() && (needs.scope.result != 'success' || needs.scope.outputs.applicable != 'false')
+    runs-on: ubuntu-latest
+    name: Free disk before pool-build restores
+    steps:
+      - name: Require successful change classification
+        env:
+          SCOPE_RESULT: ${{ needs.scope.result }}
+          APPLICABLE: ${{ needs.scope.outputs.applicable }}
+        run: |
+          if [ "$SCOPE_RESULT" != success ] || [ "$APPLICABLE" != true ]; then
+            echo "::error::Change classification failed; required validation cannot be skipped."
+            exit 1
+          fi
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Check disk cleanup precedes every pool-build restore
+        run: |
+          python3 -c 'import yaml' 2>/dev/null || sudo apt-get install -y python3-yaml
+          PYTHONPATH=python python3 -m lean_pool.workflow_disk
