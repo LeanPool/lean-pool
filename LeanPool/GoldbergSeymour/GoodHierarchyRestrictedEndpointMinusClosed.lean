@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.BoundaryMissingColorAugmentation
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 
@@ -130,32 +132,7 @@ theorem GoodHierarchyRestrictedEndpointMinusClosed {V E : Type*}
   · have hetaMissing := hnewMissing eta heta hetaTerminal
     have hFirstWBound :
         (HierarchyFirstMissingPosition sigma W eta).val ≤ U.length := by
-      simp only [TreeMissingColors, Finset.mem_biUnion] at hetaMissing
-      obtain ⟨v, hvU, hetaV⟩ := hetaMissing
-      simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-        true_and] at hvU
-      obtain ⟨i, hi⟩ := hvU
-      let iW : Fin (W.length + 1) :=
-        Fin.castLE (Nat.succ_le_succ hInitial.1) i
-      have hiW : eta ∈ MissingColors G sigma (W.vertex iW) := by
-        rw [hInitial.2.1 i]
-        simpa [hi] using hetaV
-      let candidates : Finset (Fin (W.length + 1)) :=
-        Finset.univ.filter fun j => eta ∈ MissingColors G sigma (W.vertex j)
-      have hiCand : iW ∈ candidates := by
-        exact Finset.mem_filter.mpr ⟨Finset.mem_univ iW, hiW⟩
-      have hCand : candidates.Nonempty := ⟨iW, hiCand⟩
-      have hFirst : HierarchyFirstMissingPosition sigma W eta =
-          candidates.min' hCand := by
-        simp [HierarchyFirstMissingPosition, candidates, hCand]
-      have hle := Finset.min'_le candidates iW hiCand
-      rw [hFirst]
-      change (candidates.min' hCand).val ≤ U.length
-      change (candidates.min' hCand).val ≤ iW.val at hle
-      have hiBound : iW.val ≤ U.length := by
-        dsimp [iW]
-        omega
-      omega
+      exact TreeSequenceFirstMissingPositionLePrefix hInitial hetaMissing
     have hCutoff := HierarchyFirstMissingPositionPrefixCutoff sigma U W
       hInitial eta U.length (le_refl U.length)
     have hrOld : r.val < U.length := by

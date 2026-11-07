@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.StableChangeCasesOneTwoSplitTail
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
@@ -332,29 +334,8 @@ private theorem helper_coreNotClosed_479.{u_1, u_2} :
       (hfixedPrefix tT le_rfl hAXstrict).symm.trans hcolT
     have firstAfter (eta : Fin k) (heta : eta ∉ TreeMissingColors phi A) :
         A.length < (HierarchyFirstMissingPosition phi T eta).val := by
-      clear * - eta heta hAT hAXstrict hXT
-      let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-        eta ∈ MissingColors G phi (T.vertex j)
-      have hfirst : HierarchyFirstMissingPosition phi T eta =
-          if h : candidates.Nonempty then candidates.min' h else Fin.last T.length := rfl
-      rw [hfirst]
-      by_cases hnon : candidates.Nonempty
-      · rw [dite_eq_left hnon]
-        have hmem := (Finset.mem_filter.mp (Finset.min'_mem candidates hnon)).2
-        by_contra hle
-        have hv : (candidates.min' hnon).val ≤ A.length := by omega
-        let a : Fin (A.length + 1) := ⟨(candidates.min' hnon).val, by omega⟩
-        have ha : Fin.castLE (Nat.succ_le_succ hAT.1) a =
-            candidates.min' hnon := Fin.ext rfl
-        rw [← ha, hAT.2.1 a] at hmem
-        apply heta
-        refine Finset.mem_biUnion.mpr ⟨A.vertex a, ?_, hmem⟩
-        simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
-        exact ⟨a, rfl⟩
-      · rw [dite_eq_right hnon]
-        simp only [Fin.val_last]
-        have := hXT.1
-        omega
+      exact TreeSequenceFirstMissingPositionAfterPrefix hAT
+        (hAXstrict.trans_le hXT.1) heta
     have hcUnreserved : c ∉ (HierarchyStoredColorsAt H 0).biUnion (C.good.gamma 0) := by
       intro hcReserved
       obtain ⟨eta, heta, hcGamma⟩ := Finset.mem_biUnion.mp hcReserved

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.StableChangeCasesOneTwoSplitTail
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ChangeLemmaBothOutsidePreparation1
@@ -486,39 +488,18 @@ theorem helper_firstMissing_607.{u_1, u_2} :
     (↑(HierarchyFirstMissingPosition phi T c) : ℕ) ≤ Y.length := by
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H q A ell Y YToT c hc
-  obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-  obtain ⟨i, hi⟩ := hv
-  let it := Fin.castLE (Nat.succ_le_succ YToT.1) i
-  have hci : c ∈ MissingColors G phi (T.vertex it) := by
-    rw [YToT.2.1 i, hi]; exact hcv
-  let candidates := Finset.univ.filter fun j => c ∈ MissingColors G phi (T.vertex j)
-  have hit : it ∈ candidates := by simp [candidates, hci]
-  have hnon : candidates.Nonempty := ⟨it, hit⟩
-  have hmem := Finset.min'_mem candidates hnon
-  have hle := Finset.min'_le candidates it hit
-  refine ⟨?_, ?_⟩
-  · simpa [HierarchyFirstMissingPosition, candidates, hnon] using
-      (Finset.mem_filter.mp hmem).2
-  · have hiv : it.val ≤ Y.length := Nat.le_of_lt_succ i.isLt
-    have hval : (candidates.min' hnon).val ≤ it.val := hle
-    simpa [HierarchyFirstMissingPosition, candidates, hnon] using le_trans hval hiv
+  exact TreeSequenceFirstMissingPositionPrefixWitness YToT hc
 
 theorem helper_firstLe_627.{u_1, u_2} :
     open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E]
+    ∀ {V : Type u_1} {E : Type u_2} [Fintype E]
       (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (T : TreeSequence G e0)
       (phi : PartialEdgeColoring E k) (c : Fin k) (i : Fin (T.length + (1 : ℕ))),
     c ∈ MissingColors G phi (T.vertex i) →
     (↑(HierarchyFirstMissingPosition phi T c) : ℕ) ≤ (↑i : ℕ) := by
   classical
-  intro V E _ _ G k e0 T phi c i hc
-  let _ := Fintype.ofFinite V
-  let candidates := Finset.univ.filter fun j => c ∈ MissingColors G phi (T.vertex j)
-  have hi : i ∈ candidates := by simp [candidates, hc]
-  have hn : candidates.Nonempty := ⟨i, hi⟩
-  simpa [HierarchyFirstMissingPosition, candidates, hn] using
-    (Finset.min'_le candidates i hi)
+  intro V E _ G k e0 T phi c i hc
+  exact TreeSequenceFirstMissingPositionLe hc
 
 theorem helper_hout_642.{u_1, u_2} :
     open scoped Classical in
@@ -1426,7 +1407,7 @@ theorem helper_stageMissingEq_1044.{u_1, u_2} :
 
 theorem helper_firstEq_1065.{u_1, u_2} :
     open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E]
+    ∀ {V : Type u_1} {E : Type u_2} [Fintype E]
       (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (T : TreeSequence G e0)
       (phi : PartialEdgeColoring E k) (alpha beta : Fin k)
       (sigma : PartialEdgeColoring E k),
@@ -1437,18 +1418,9 @@ theorem helper_firstEq_1065.{u_1, u_2} :
     c ≠ beta →
     HierarchyFirstMissingPosition sigma T c = HierarchyFirstMissingPosition phi T c := by
   classical
-  intro V E _ _ G k e0 T phi alpha beta sigma missingUnaffected c hca hcb
-  let _ := Fintype.ofFinite V
-  have hsets :
-      (Finset.univ.filter fun j : Fin (T.length + 1) =>
-        c ∈ MissingColors G sigma (T.vertex j)) =
-      (Finset.univ.filter fun j : Fin (T.length + 1) =>
-        c ∈ MissingColors G phi (T.vertex j)) := by
-    ext j
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    exact missingUnaffected _ c hca hcb
-  unfold HierarchyFirstMissingPosition
-  rw [hsets]
+  intro V E _ G k e0 T phi alpha beta sigma missingUnaffected c hca hcb
+  exact TreeSequenceFirstMissingPositionMembershipCongr
+    (fun index => missingUnaffected (T.vertex index) c hca hcb)
 
 theorem helper_segmentTransfer_1077.{u_1, u_2} :
     open scoped Classical in

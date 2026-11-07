@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothInside
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside
 public import LeanPool.GoldbergSeymour.ChangeLemmaInsideOutside
@@ -20,54 +22,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem ChangeLemma_missing_to_vertex_211.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G
-    : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-    TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-    input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base), let H :=
-    C.hierarchy; let q := Fin.last H.dividerCount; let A := HierarchyStarredStage H q;
-    TreeSequenceInitialSegment A T → ∀ c ∈ TreeMissingColors phi A, T.vertex
-    (HierarchyFirstMissingPosition phi T c) ∈ TreeSequenceVertexSet A := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A hAsegment c hc
-  unfold TreeMissingColors at hc
-  simp only [Finset.mem_biUnion] at hc
-  rcases hc with ⟨v, hv, hvc⟩
-  unfold HierarchyFirstMissingPosition
-  unfold TreeSequenceVertexSet at hv
-  simp only [Finset.mem_image, Finset.mem_univ, true_and] at hv
-  rcases hv with ⟨ia, hia⟩
-  rcases hAsegment with ⟨hlen, hvseg, heseg⟩
-  let iaT : Fin (T.length + 1) := Fin.castLE (Nat.succ_le_succ hlen) ia
-  have hvertex : T.vertex iaT = A.vertex ia := by
-    exact hvseg ia
-  have hca : c ∈ MissingColors G phi (T.vertex iaT) := by
-    rw [hvertex, hia]
-    exact hvc
-  let candidates : Finset (Fin (T.length + 1)) :=
-    Finset.univ.filter fun i => c ∈ MissingColors G phi (T.vertex i)
-  have hcand : candidates.Nonempty := ⟨iaT, by simp [candidates, hca]⟩
-  have hpos : HierarchyFirstMissingPosition phi T c = candidates.min' hcand := by
-    simp [HierarchyFirstMissingPosition, candidates, hcand]
-  have hmin : HierarchyFirstMissingPosition phi T c ≤ iaT := by
-    rw [hpos]
-    exact Finset.min'_le candidates iaT (by simp [candidates, hca])
-  have hbound : (HierarchyFirstMissingPosition phi T c).val ≤ A.length := by
-    dsimp [iaT] at hmin
-    change (HierarchyFirstMissingPosition phi T c).val ≤ iaT.val at hmin
-    exact le_trans hmin (Nat.le_of_lt_succ ia.isLt)
-  let x : Fin (A.length + 1) :=
-    ⟨(HierarchyFirstMissingPosition phi T c).val, Nat.lt_succ_of_le hbound⟩
-  have hx : T.vertex (Fin.castLE (Nat.succ_le_succ hlen) x) =
-      T.vertex (HierarchyFirstMissingPosition phi T c) := by
-    apply congrArg T.vertex
-    apply Fin.ext
-    rfl
-  simp only [TreeSequenceVertexSet, Finset.mem_image]
-  refine ⟨x, Finset.mem_univ _, ?_⟩
-  rw [← hvseg x]
-  simpa [HierarchyFirstMissingPosition, candidates, hcand] using hx
 
 theorem ChangeLemma {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -250,8 +204,8 @@ theorem ChangeLemma {V E : Type*}
   have missing_to_vertex :
     ∀ c : Fin k, c ∈ TreeMissingColors phi A → T.vertex (HierarchyFirstMissingPosition phi T c) ∈
         TreeSequenceVertexSet A := by
-    exact @ChangeLemma_missing_to_vertex_211 V E inferInstance inferInstance inferInstance
-        inferInstance G k e0 input T phi ett base C hAsegment
+    intro c missing
+    exact TreeSequenceFirstMissingVertexMemOfPrefix hAsegment missing
   have prefixClosed : ∀ u v : V, TreeVertexOrder T u v →
       v ∈ TreeSequenceVertexSet A → u ∈ TreeSequenceVertexSet A := by
     intro u v huv hv

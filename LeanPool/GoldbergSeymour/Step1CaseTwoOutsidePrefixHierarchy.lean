@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
+
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
 public import LeanPool.GoldbergSeymour.MaximumProperty
@@ -1352,77 +1354,6 @@ private theorem helper_closureMu_809.{u_1, u_2} :
   rw [← hmissingFixed v (sub hv)]
   exact hmiss
 
-private theorem helper_cutoffEq_906.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-    (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi),
-  (0 : ℕ) < ett.rounds →
-  ∀ (mu : PartialEdgeColoring E k) (Bminus C : TreeSequence G e0),
-  (∀ v ∈ TreeSequenceVertexSet Bminus, MissingColors G mu v = MissingColors G phi v) →
-  C.length = Bminus.length + (1 : ℕ) →
-  TreeSequenceInitialSegment Bminus C →
-  (∀ (S : TreeSequence G e0) (i : Fin (S.length + (1 : ℕ))),
-      S.vertex i ∈ TreeSequenceVertexSet S) →
-  ∀ (newInput : PartialEdgeColoring E k)
-    (_ : TashkinovSeries G k ett.rounds e0 newInput) (eta : Fin k),
-  (↑(HierarchyFirstMissingPosition mu C eta) : ℕ) =
-    (↑(HierarchyFirstMissingPosition phi C eta) : ℕ) := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett hpositive mu Bminus C hmissingFixed hlenC hBtoC
-      vertexMem newInput newSeries eta
-  have h (i : Fin (C.length + 1)) (hi : i.val < C.length) :
-      eta ∈ MissingColors G mu (C.vertex i) ↔
-        eta ∈ MissingColors G phi (C.vertex i) := by
-    let ib : Fin (Bminus.length + 1) := ⟨i.val, by omega⟩
-    have hv : C.vertex i = Bminus.vertex ib := hBtoC.2.1 ib
-    rw [hv, hmissingFixed _ (vertexMem _ _)]
-  let dm : Finset (Fin (C.length + 1)) :=
-    Finset.univ.filter fun i => eta ∈ MissingColors G mu (C.vertex i)
-  let dp : Finset (Fin (C.length + 1)) :=
-    Finset.univ.filter fun i => eta ∈ MissingColors G phi (C.vertex i)
-  change (if h : dm.Nonempty then dm.min' h else Fin.last C.length).val =
-    (if h : dp.Nonempty then dp.min' h else Fin.last C.length).val
-  by_cases hm : dm.Nonempty
-  · rw [dite_eq_left hm]
-    by_cases hp : dp.Nonempty
-    · rw [dite_eq_left hp]
-      apply Nat.le_antisymm
-      · by_cases hj : (dp.min' hp).val < C.length
-        · have hi : dp.min' hp ∈ dm := Finset.mem_filter.mpr
-            ⟨Finset.mem_univ _, (h _ hj).mpr
-              ((Finset.mem_filter.mp (Finset.min'_mem dp hp)).2)⟩
-          exact Finset.min'_le dm _ hi
-        · have := (dm.min' hm).isLt; omega
-      · by_cases hj : (dm.min' hm).val < C.length
-        · have hi : dm.min' hm ∈ dp := Finset.mem_filter.mpr
-            ⟨Finset.mem_univ _, (h _ hj).mp
-              ((Finset.mem_filter.mp (Finset.min'_mem dm hm)).2)⟩
-          exact Finset.min'_le dp _ hi
-        · have := (dp.min' hp).isLt; omega
-    · rw [dite_eq_right hp]
-      have hb : ¬(dm.min' hm).val < C.length := by
-        intro hj
-        apply hp
-        exact ⟨dm.min' hm, Finset.mem_filter.mpr
-          ⟨Finset.mem_univ _, (h _ hj).mp
-            ((Finset.mem_filter.mp (Finset.min'_mem dm hm)).2)⟩⟩
-      have := (dm.min' hm).isLt
-      simp only [Fin.val_last]; omega
-  · rw [dite_eq_right hm]
-    by_cases hp : dp.Nonempty
-    · rw [dite_eq_left hp]
-      have hb : ¬(dp.min' hp).val < C.length := by
-        intro hj
-        apply hm
-        exact ⟨dp.min' hp, Finset.mem_filter.mpr
-          ⟨Finset.mem_univ _, (h _ hj).mpr
-            ((Finset.mem_filter.mp (Finset.min'_mem dp hp)).2)⟩⟩
-      have := (dp.min' hp).isLt
-      simp only [Fin.val_last]; omega
-    · rw [dite_eq_right hp]
-
 private theorem helper_segmentSubset_970.{u_1, u_2} :
     helperSegmentSubset970Conditions.{u_1, u_2} := by
   classical
@@ -1485,7 +1416,8 @@ private theorem helper_caseContinuation_955.{u_1, u_2} :
   have cutoffEq (eta : Fin k) :
       (HierarchyFirstMissingPosition mu C eta).val =
         (HierarchyFirstMissingPosition phi C eta).val := by
-    apply helper_cutoffEq_906 <;> assumption
+    exact congrArg Fin.val
+      (C.firstMissingPosition_eq_of_prefix_agreement hBtoC hlenC.le hmissingFixed eta)
   have nextPrefix (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (KC.stage j.succ) (H.stage j.succ) ∧
         TreeSequenceInitialSegment (KC.stage j.succ) C := by

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.FullTailTransport
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
@@ -684,17 +686,7 @@ private theorem helper_continuation_835.{u_1, u_2} :
       stageMissingEq unaffected
   have firstEqA (eta : Fin k) :
       HierarchyFirstMissingPosition sigma A eta = HierarchyFirstMissingPosition phi A eta := by
-    have hc : (Finset.univ.filter fun j : Fin (A.length + 1) =>
-        eta ∈ MissingColors G sigma (A.vertex j)) =
-        (Finset.univ.filter fun j : Fin (A.length + 1) =>
-          eta ∈ MissingColors G phi (A.vertex j)) := by
-      apply Finset.filter_congr
-      intro j _
-      rw [hmissing _ (by
-        simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
-        exact ⟨j, rfl⟩)]
-    unfold HierarchyFirstMissingPosition
-    rw [hc]
+    exact TreeSequenceFirstMissingPositionCongr hmissing eta
   have segmentEq := @helper_segmentEq_708 V E inferInstance inferInstance inferInstance
       inferInstance G k e0 input T phi ett base C sigma hfixed AToT ordinaryToA corrT baseT hcoreT
       terminalData starredEq firstEqA

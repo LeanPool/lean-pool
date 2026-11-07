@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.GoodHierarchyNewMissingClosed
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
@@ -518,45 +520,6 @@ private theorem helper_terminalPE_393.{u_1, u_2} :
         choice.selectedProper choice.selectedOneUncolored choice.selectedStable previousClosed
     · exact missingTn
 
-private theorem helper_witness_459.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (alpha : Fin k),
-    let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc;
-        TreeSequenceInitialSegment Tn T → alpha ∈ TreeMissingColors phi Tn →
-    let a : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T alpha;
-    let va : V := T.vertex a; va ∈ TreeSequenceVertexSet Tn ∧ alpha ∈ MissingColors G phi va := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett alpha Tn TnT missingTn a va
-  obtain ⟨v, hv, hvm⟩ := Finset.mem_biUnion.mp missingTn
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-  obtain ⟨i, hi⟩ := hv
-  let iT := Fin.castLE (Nat.succ_le_succ TnT.1) i
-  have hmi : alpha ∈ MissingColors G phi (T.vertex iT) := by
-    rw [TnT.2.1 i, hi]
-    exact hvm
-  let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-    alpha ∈ MissingColors G phi (T.vertex j)
-  have hiC : iT ∈ candidates := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hmi⟩
-  have hC : candidates.Nonempty := ⟨iT, hiC⟩
-  have ha : a = candidates.min' hC := by
-    dsimp [a, HierarchyFirstMissingPosition]
-    rw [dite_eq_left hC]
-  have hma : alpha ∈ MissingColors G phi va := by
-    have hmA : a ∈ candidates := ha.symm ▸ Finset.min'_mem candidates hC
-    exact (Finset.mem_filter.mp hmA).2
-  have hai : a.val ≤ i.val := by
-    rw [ha]
-    exact Finset.min'_le candidates iT hiC
-  let aN : Fin (Tn.length + 1) := ⟨a.val, by have := i.isLt; omega⟩
-  have hcast : Fin.castLE (Nat.succ_le_succ TnT.1) aN = a := Fin.ext rfl
-  refine ⟨?_, hma⟩
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
-  refine ⟨aN, ?_⟩
-  exact (TnT.2.1 aN).symm.trans (congrArg T.vertex hcast)
-
 private theorem helper_noMissingClosure_505.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -758,7 +721,8 @@ private theorem helper_continuation_896.{u_1, u_2} :
     let a := HierarchyFirstMissingPosition phi T alpha
     let va := T.vertex a
     have witness : va ∈ TreeSequenceVertexSet Tn ∧ alpha ∈ MissingColors G phi va := by
-      apply helper_witness_459 <;> assumption
+      exact ⟨TreeSequenceFirstMissingVertexMemOfPrefix TnT missingTn,
+        (TreeSequenceFirstMissingPositionPrefixWitness TnT missingTn).1⟩
     have outside : va ∉ TreeSequenceVertexSet base.closure := by
       intro hv
       have commonClosed := ParallelCommonMissingClosed G k e0 input T phi phi ett

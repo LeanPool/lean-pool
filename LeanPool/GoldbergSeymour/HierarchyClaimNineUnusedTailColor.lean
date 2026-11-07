@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
+
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
 public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
@@ -315,71 +319,6 @@ private theorem helper_seedIncident_571.{u_1, u_2} :
       refine ⟨available.insideEndpoint, available.insideInCurrent, ?_⟩
       simp only [Incident, available.edgeEnds, Sym2.mem_iff, true_or]
 
-private theorem helper_hstoredFirst_629.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (alpha : Fin k),
-    let mu : PartialEdgeColoring E k := P.coloring;
-    let Cm : HierarchyCounterexample P.replacementBase := P.counterexample;
-    let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase := Cm.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := HierarchyFullTailLength Cm;
-    let B : TreeSequence G e0 := HierarchyFullTailPrefix Cm (ell - (1 : ℕ));
-    let y : V := T.vertex (Fin.last T.length); ColoredVertexSetElementary G mu
-        (TreeSequenceVertexSet B) →
-    ∀ (hBlen : B.length = T.length - (1 : ℕ)) (hBT : TreeSequenceInitialSegment B T),
-    let ip : Fin (T.length + (1 : ℕ)) := (⟨B.length,
-    by have this : B.length ≤ T.length := hBT.1; omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let yp : V := T.vertex ip; yp ∈ TreeSequenceVertexSet B →
-    ∀ beta ∈ MissingColors G mu yp, alpha ∈ TreeMissingColors mu A → (
-    ∀ (rho : PartialEdgeColoring E k) (c : Fin k) (i : Fin (T.length + (1 : ℕ))), c ∈
-        MissingColors G rho (T.vertex i) → c ∈ MissingColors G rho (T.vertex
-        (HierarchyFirstMissingPosition rho T c)) ∧ HierarchyFirstMissingPosition rho T c ≤ i) →
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition mu T beta; ib = ip →
-    let sigma : PartialEdgeColoring E k := TwoColorComponentSwap G mu alpha beta (Sum.inl y); (
-    ∀ (v : V) (c : Fin k), c ≠ alpha → c ≠ beta → (c ∈ MissingColors G (TwoColorComponentSwap G mu
-        alpha beta (Sum.inl y)) v ↔ c ∈ MissingColors G mu v)) → (
-    ∀ v ∈ TreeSequenceVertexSet B, MissingColors G sigma v = MissingColors G mu v) →
-    ∀ eta ∈ HierarchyStoredColorsAt H q, HierarchyFirstMissingPosition sigma T eta =
-        HierarchyFirstMissingPosition mu T eta := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha mu Cm H q A ell B y helem hBlen hBT
-      ip yp hypB beta hbeta haA firstSpec ib hib sigma missingOther hmissingB eta heta
-  have hnotA : eta ∉ TreeMissingColors mu A := (Finset.mem_sdiff.mp heta).2
-  have hna : eta ≠ alpha := by intro he; exact hnotA (he.symm ▸ haA)
-  by_cases heb : eta = beta
-  · subst eta
-    have hbnew : beta ∈ MissingColors G sigma yp := by rw [hmissingB yp hypB]; exact hbeta
-    have hs := firstSpec sigma beta ip hbnew
-    let is := HierarchyFirstMissingPosition sigma T beta
-    have hbound : is.val ≤ B.length := hs.2
-    let j : Fin (B.length + 1) := ⟨is.val, by omega⟩
-    have hj : Fin.castLE (Nat.succ_le_succ hBT.1) j = is := Fin.ext rfl
-    have hvB : T.vertex is ∈ TreeSequenceVertexSet B := by
-      simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
-      exact ⟨j, (hBT.2.1 j).symm.trans (congrArg T.vertex hj)⟩
-    have hbOld : beta ∈ MissingColors G mu (T.vertex is) := by
-      rw [← hmissingB _ hvB]
-      exact hs.1
-    have hv : T.vertex is = yp := by
-      by_contra hn
-      exact Finset.disjoint_left.mp (helem hvB hypB hn) hbOld hbeta
-    exact (T.vertex_injective hv).trans hib.symm
-  · have heq : (Finset.univ.filter fun i : Fin (T.length + 1) =>
-          eta ∈ MissingColors G sigma (T.vertex i)) =
-        (Finset.univ.filter fun i : Fin (T.length + 1) =>
-          eta ∈ MissingColors G mu (T.vertex i)) := by
-      ext i
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-      exact missingOther _ eta hna heb
-    simp only [HierarchyFirstMissingPosition, heq]
-
 private theorem helper_leaf_681.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -590,10 +529,11 @@ private theorem helper_continuation_770.{u_1, u_2} :
         input T phi ett base C ctx P alpha hunused htwo helem hsum hBlen hBT hyp beta hbeta hne
         changeResult hcase hbaseStable seedIncident hlastEnds
   -- Stored colors other than beta are unaffected; beta's first vertex remains yp.
-  have hstoredFirst :=
-    @helper_hstoredFirst_629 V E inferInstance inferInstance inferInstance inferInstance G
-        k e0 input T phi ett base C ctx P alpha helem hBlen hBT hypB beta hbeta haA firstSpec hib
-        missingOther hmissingB
+  have hstoredFirst (eta : Fin k) (_ : eta ∈ HierarchyStoredColorsAt H q) :
+      HierarchyFirstMissingPosition sigma T eta = HierarchyFirstMissingPosition mu T eta := by
+    exact T.firstMissingPosition_eq_of_prefix_agreement hBT
+      (by simpa only [hBlen, Nat.sub_add_cancel T.positive] using (le_refl T.length))
+      hmissingB eta
   -- Reconstruct only after the exact tail and first-position agreements hold.
   obtain ⟨_, _, _, _, corr, hmax, bs, K, good, same⟩ :=
     StableChangeCasesOneTwoFullTail G k e0 P.corresponding.replacementInput T mu em bm Cm cm
@@ -925,14 +865,7 @@ theorem HierarchyClaimNineUnusedTailColor {V E : Type*}
       (i : Fin (T.length + 1)) (hi : c ∈ MissingColors G rho (T.vertex i)) :
       c ∈ MissingColors G rho (T.vertex (HierarchyFirstMissingPosition rho T c)) ∧
         HierarchyFirstMissingPosition rho T c ≤ i := by
-    let s : Finset (Fin (T.length + 1)) :=
-      Finset.univ.filter fun j => c ∈ MissingColors G rho (T.vertex j)
-    have his : i ∈ s := by simp [s, hi]
-    have hs : s.Nonempty := ⟨i, his⟩
-    have hp : HierarchyFirstMissingPosition rho T c = s.min' hs := by
-      simp only [HierarchyFirstMissingPosition, s, dite_eq_left hs]
-    rw [hp]
-    exact ⟨(Finset.mem_filter.mp (Finset.min'_mem s hs)).2, Finset.min'_le s i his⟩
+    exact TreeSequenceFirstMissingPositionWitness hi
   obtain ⟨va, hvaA, hava⟩ := Finset.mem_biUnion.mp haA
   simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hvaA
   obtain ⟨iaA, hiaA⟩ := hvaA

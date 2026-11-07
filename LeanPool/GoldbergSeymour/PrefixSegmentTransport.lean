@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 
 public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
@@ -43,20 +45,7 @@ theorem P2813_T1_PrefixSegmentTransport {V E : Type*}
   let _ := Fintype.ofFinite V
   have firstEq : HierarchyFirstMissingPosition sigma A eta =
       HierarchyFirstMissingPosition phi A eta := by
-    have candidates :
-        (Finset.univ.filter fun j : Fin (A.length + 1) =>
-          eta ∈ MissingColors G sigma (A.vertex j)) =
-        (Finset.univ.filter fun j : Fin (A.length + 1) =>
-          eta ∈ MissingColors G phi (A.vertex j)) := by
-      apply Finset.filter_congr
-      intro j _
-      have hj : A.vertex j ∈ TreeSequenceVertexSet A := by
-        simp only [TreeSequenceVertexSet, Finset.mem_image,
-          Finset.mem_univ, true_and]
-        exact ⟨j, rfl⟩
-      rw [hmissing _ hj]
-    unfold HierarchyFirstMissingPosition
-    rw [candidates]
+    exact TreeSequenceFirstMissingPositionCongr hmissing eta
   have cutoff := HierarchyFirstMissingPositionPrefixCutoff phi A T hAT eta U.length hUA.1
   rw [firstEq, cutoff]
   apply Finset.filter_congr

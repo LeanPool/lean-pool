@@ -5,10 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
+
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ReplacementPrefixes
-
-
 
 
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
@@ -1337,73 +1337,6 @@ private theorem helper_branch_256 :
     exact Finset.disjoint_left.mp hgd (Finset.mem_biUnion.mpr ⟨eta m, (heta m).1, hbGamma⟩) hc
   · intro hc
     exact Finset.disjoint_left.mp hpairUsed (Finset.mem_union_left _ hbGamma) hc
-
-private theorem helper_branch_410.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
-      (k : ℕ) (e0 : E) (T : TreeSequence G e0) (psi : PartialEdgeColoring E k) (c : Fin k),
-    (↑(HierarchyFirstMissingPosition psi T c) : ℕ) < T.length →
-    let candidates : Finset (Fin (T.length + (1 : ℕ))) :=
-      ({j : Fin (T.length + (1 : ℕ)) | c ∈ MissingColors G psi (T.vertex j)} :
-        Finset (Fin (T.length + (1 : ℕ))));
-    ¬candidates.Nonempty →
-    c ∈ MissingColors G psi (T.vertex (HierarchyFirstMissingPosition psi T c)) := by
-  classical
-  intro V E _ _ G k e0 T psi c hlt candidates hn
-  let _ := Fintype.ofFinite V
-  have hh : (HierarchyFirstMissingPosition psi T c).val = T.length := by
-    unfold HierarchyFirstMissingPosition
-    rw [dite_eq_right hn]
-    rfl
-  omega
-
-private theorem helper_branch_454.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (T : TreeSequence G e0), (
-    ∀ (psi : PartialEdgeColoring E k) (c : Fin k) (j : Fin (T.length + (1 : ℕ))), c ∈
-        MissingColors G psi (T.vertex j) → HierarchyFirstMissingPosition psi T c ≤ j) → (
-    ∀ (psi : PartialEdgeColoring E k) (c : Fin k), (↑(HierarchyFirstMissingPosition psi T c) : ℕ)
-        < T.length → c ∈ MissingColors G psi (T.vertex (HierarchyFirstMissingPosition psi T c))) →
-    ∀ (psi tau : PartialEdgeColoring E k) (c : Fin k), (
-    ∀ (j : Fin (T.length + (1 : ℕ))), (↑j : ℕ) < T.length → MissingColors G tau (T.vertex j) =
-        MissingColors G psi (T.vertex j)) → (↑(HierarchyFirstMissingPosition tau T c) : ℕ) ≤
-        (↑(HierarchyFirstMissingPosition psi T c) : ℕ) := by
-  classical
-  intro V E _ _ G k e0 T firstLe firstMem psi tau c early
-  let _ := Fintype.ofFinite V
-  by_contra hn
-  have hlt : (HierarchyFirstMissingPosition psi T c).val < T.length := by
-    have := (HierarchyFirstMissingPosition tau T c).isLt
-    omega
-  have hm := firstMem psi c hlt
-  rw [← early _ hlt] at hm
-  have := firstLe tau c _ hm
-  omega
-
-private theorem helper_branch_462.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (T : TreeSequence G e0), (
-    ∀ (psi : PartialEdgeColoring E k) (c : Fin k) (j : Fin (T.length + (1 : ℕ))), c ∈
-        MissingColors G psi (T.vertex j) → HierarchyFirstMissingPosition psi T c ≤ j) → (
-    ∀ (psi : PartialEdgeColoring E k) (c : Fin k), (↑(HierarchyFirstMissingPosition psi T c) : ℕ)
-        < T.length → c ∈ MissingColors G psi (T.vertex (HierarchyFirstMissingPosition psi T c))) →
-    ∀ (psi tau : PartialEdgeColoring E k) (c : Fin k), (
-    ∀ (j : Fin (T.length + (1 : ℕ))), (↑j : ℕ) < T.length → MissingColors G tau (T.vertex j) =
-        MissingColors G psi (T.vertex j)) → (↑(HierarchyFirstMissingPosition psi T c) : ℕ) ≤
-        (↑(HierarchyFirstMissingPosition tau T c) : ℕ) := by
-  classical
-  intro V E _ _ G k e0 T firstLe firstMem psi tau c early
-  let _ := Fintype.ofFinite V
-  by_contra hn
-  have hlt : (HierarchyFirstMissingPosition tau T c).val < T.length := by
-    have := (HierarchyFirstMissingPosition psi T c).isLt
-    omega
-  have hm := firstMem tau c hlt
-  rw [early _ hlt] at hm
-  have := firstLe psi c _ hm
-  omega
 
 private theorem helper_lastPositive_528.{u_1, u_2} :
     open scoped Classical in
@@ -4042,71 +3975,23 @@ theorem HierarchySituationThreeClaimJMinusOneNonempty {V E : Type*}
     exact ⟨j, rfl⟩
   have firstLe (psi : PartialEdgeColoring E k) (c : Fin k)
       (j : Fin (T.length + 1)) (hj : c ∈ MissingColors G psi (T.vertex j)) :
-      HierarchyFirstMissingPosition psi T c ≤ j := by as_aux_lemma =>
-    clear * - G T psi c j hj
-    let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-      c ∈ MissingColors G psi (T.vertex j)
-    have hm : j ∈ candidates := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hj⟩
-    have hn : candidates.Nonempty := ⟨j, hm⟩
-    unfold HierarchyFirstMissingPosition
-    rw [dite_eq_left hn]
-    exact Finset.min'_le candidates j hm
+      HierarchyFirstMissingPosition psi T c ≤ j := by
+    exact TreeSequenceFirstMissingPositionLe hj
   have firstMem (psi : PartialEdgeColoring E k) (c : Fin k)
       (hlt : (HierarchyFirstMissingPosition psi T c).val < T.length) :
       c ∈ MissingColors G psi (T.vertex (HierarchyFirstMissingPosition psi T c)) := by
-          as_aux_lemma =>
-    clear * - G T psi c hlt
-    let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-      c ∈ MissingColors G psi (T.vertex j)
-    by_cases hn : candidates.Nonempty
-    · unfold HierarchyFirstMissingPosition
-      rw [dite_eq_left hn]
-      exact (Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2
-    · exact helper_branch_410 (@G) (@k) (@e0) (@T) (@psi) (@c) (@hlt) (@hn)
+    exact TreeSequenceFirstMissingPositionMem hlt
   have firstAt (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
       (c : Fin k) (j : Fin (B.length + 1))
       (hc : c ∈ MissingColors G R.coloring (B.vertex j)) :
-      (HierarchyFirstMissingPosition R.coloring T c).val = j.val := by as_aux_lemma =>
-    clear * - G T B R c j hc elementary vertexMem firstLe firstMem hBT
-    have hcT : c ∈ MissingColors G R.coloring
-        (T.vertex (Fin.castLE (Nat.succ_le_succ hBT.1) j)) := by
-      rw [hBT.2.1 j]; exact hc
-    have hle := firstLe R.coloring c _ hcT
-    have hlt : (HierarchyFirstMissingPosition R.coloring T c).val < T.length := by
-      have := j.isLt
-      change (HierarchyFirstMissingPosition R.coloring T c).val ≤ j.val at hle
-      have hblen : B.length = T.length - 1 := rfl
-      omega
-    let x : Fin (B.length + 1) := ⟨(HierarchyFirstMissingPosition R.coloring T c).val, by
-      change (HierarchyFirstMissingPosition R.coloring T c).val ≤ j.val at hle
-      omega⟩
-    have hxT : Fin.castLE (Nat.succ_le_succ hBT.1) x =
-        HierarchyFirstMissingPosition R.coloring T c := Fin.ext rfl
-    have hcx : c ∈ MissingColors G R.coloring (B.vertex x) := by
-      rw [← hBT.2.1 x, hxT]
-      exact firstMem R.coloring c hlt
-    have he : B.vertex x = B.vertex j := by
-      by_contra hn
-      exact Finset.disjoint_left.mp (elementary R (vertexMem B x) (vertexMem B j) hn) hcx hc
-    exact congrArg Fin.val (B.vertex_injective he)
+      (HierarchyFirstMissingPosition R.coloring T c).val = j.val := by
+    exact TreeSequenceFirstMissingPositionEqCast hBT (elementary R) hc
   have firstFixed (psi tau : PartialEdgeColoring E k)
       (hmissing : ∀ v ∈ TreeSequenceVertexSet B,
         MissingColors G tau v = MissingColors G psi v) (c : Fin k) :
       HierarchyFirstMissingPosition tau T c = HierarchyFirstMissingPosition psi T c := by
-          as_aux_lemma =>
-    clear * - G T B psi tau hmissing c firstLe firstMem hBT vertexMem
-    have early (j : Fin (T.length + 1)) (hj : j.val < T.length) :
-        MissingColors G tau (T.vertex j) = MissingColors G psi (T.vertex j) := by
-      let x : Fin (B.length + 1) := ⟨j.val, by dsimp [B, TreeSequencePrefix]; omega⟩
-      have hx : Fin.castLE (Nat.succ_le_succ hBT.1) x = j := Fin.ext rfl
-      rw [← hx, hBT.2.1 x]
-      exact hmissing _ (vertexMem B x)
-    apply Fin.ext
-    apply Nat.le_antisymm
-    · exact helper_branch_454 (@G) (@k) (@e0) (@T) (@firstLe) (@firstMem) (@psi) (@tau) (@c)
-        (@early)
-    · exact helper_branch_462 (@G) (@k) (@e0) (@T) (@firstLe) (@firstMem) (@psi) (@tau) (@c)
-        (@early)
+    exact T.firstMissingPosition_eq_of_prefix_agreement hBT
+      (Nat.sub_add_cancel T.positive).ge hmissing c
   exact helper_continuation_3692 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx)
       (@hvertexMissing) (@hnonempty) (@j) (@hj) (@hpathLower) (@hpathUpper) (@finiteChoice)
       (@componentData) (@trans) (@common) (@starEq) (@hAT) (@htail) (@hlen) (@hBT) (@hAB)

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningTransport
 
 
@@ -54,33 +56,15 @@ theorem firstMissingPositionUpperBound.{u_1, u_2} :
     firstMissingPositionUpperBoundStatement.{u_1, u_2} := by
   classical
   intro V E _ _ G k e0 phi X c i hi
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    unfold HierarchyFirstMissingPosition
-    dsimp only
-    have hm : i ∈ Finset.univ.filter
-        (fun j => c ∈ MissingColors G phi (X.vertex j)) :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩
-    rw [dite_eq_left ⟨i, hm⟩]
-    exact Finset.min'_le _ _ hm
+  exact TreeSequenceFirstMissingPositionLe hi
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem firstMissingPositionWitness.{u_1, u_2} : firstMissingPositionWitnessStatement.{u_1,
     u_2} := by
   classical
   intro V E _ _ G k e0 phi X c hc
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-    obtain ⟨i, _, rfl⟩ := (@Finset.mem_image _ _ (Classical.decEq V)).mp hv
-    unfold HierarchyFirstMissingPosition
-    dsimp only
-    have hm : i ∈ Finset.univ.filter
-        (fun j => c ∈ MissingColors G phi (X.vertex j)) :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hcv⟩
-    rw [dite_eq_left ⟨i, hm⟩]
-    exact (Finset.mem_filter.mp (Finset.min'_mem _ ⟨i, hm⟩)).2
-
+  exact TreeSequenceFirstMissingPositionMemOfMissing hc
 
 end GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
 

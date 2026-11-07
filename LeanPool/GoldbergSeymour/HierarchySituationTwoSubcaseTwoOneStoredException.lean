@@ -5,7 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoData
@@ -683,44 +685,10 @@ private theorem helper_continuation_834.{u_1, u_2} :
   have hbNew : b ∈ MissingColors G mu (T.vertex D.penultimateVertexIndex) := by
     rw [hprefix _ hyp]
     exact hb
-  have hbNewFirst : HierarchyFirstMissingPosition mu T b =
-      D.penultimateVertexIndex := by
-    have hm := firstMissing mu b D.penultimateVertexIndex hbNew
-    let i : Fin (X.length + 1) := ⟨(HierarchyFirstMissingPosition mu T b).val, by
-      exact Nat.lt_succ_of_le (hm.2.trans (Nat.le_of_eq hPenVal))⟩
-    have hv : T.vertex (HierarchyFirstMissingPosition mu T b) ∈
-        TreeSequenceVertexSet X :=
-      (@Finset.mem_image _ _ (Classical.decEq V)).mpr ⟨i, Finset.mem_univ _, rfl⟩
-    have hmOld : b ∈ MissingColors G col
-        (T.vertex (HierarchyFirstMissingPosition mu T b)) := by
-      rw [← hprefix _ hv]
-      exact hm.1
-    by_contra hn
-    exact Finset.disjoint_left.mp
-      (hxElem hv hyp (fun he => hn (T.vertex_injective he))) hmOld hb
   have hstoredFirst : ∀ c, c ∈ HierarchyStoredColorsAt H' q' →
       HierarchyFirstMissingPosition mu T c = HierarchyFirstMissingPosition col T c := by
-    intro c hc
-    have hca : c ≠ a := by
-      intro he
-      have hnot := (Finset.mem_sdiff.mp hc).2
-      apply hnot
-      change c ∈ TreeMissingColors col (HierarchyStarredStage H' q')
-      rw [hstar', he]
-      exact haA
-    by_cases hcb : c = b
-    · subst c
-      exact hbNewFirst.trans hbFirst.symm
-    · have hcandidates :
-          (Finset.univ.filter fun i : Fin (T.length + 1) =>
-            c ∈ MissingColors G mu (T.vertex i)) =
-          (Finset.univ.filter fun i : Fin (T.length + 1) =>
-            c ∈ MissingColors G col (T.vertex i)) := by
-        ext i
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-        exact hbehavior.2.2.2 _ c hca hcb
-      unfold HierarchyFirstMissingPosition
-      simp only [hcandidates]
+    intro c _
+    exact T.firstMissingPosition_eq_of_prefix_agreement hXT hTlen.ge hprefix c
   have hfull := StableChangeCasesOneTwoFullTail G k e0
     P.corresponding.replacementInput T col J P.replacementBase C' P.minimumContext
     a b hne hmissingP
@@ -1631,14 +1599,7 @@ theorem HierarchySituationTwoSubcaseTwoOneStoredException {V E : Type*}
       c ∈ MissingColors G col
           (T.vertex (HierarchyFirstMissingPosition col T c)) ∧
         (HierarchyFirstMissingPosition col T c).val ≤ i.val := by
-    let S := Finset.univ.filter fun j : Fin (T.length + 1) =>
-      c ∈ MissingColors G col (T.vertex j)
-    have hs : S.Nonempty := ⟨i, by simp [S, hc]⟩
-    have heq : HierarchyFirstMissingPosition col T c = S.min' hs := by
-      simp [HierarchyFirstMissingPosition, S, hs]
-    rw [heq]
-    exact ⟨(Finset.mem_filter.mp (Finset.min'_mem S hs)).2,
-      Finset.min'_le S i (by simp [S, hc])⟩
+    exact TreeSequenceFirstMissingPositionWitness hc
   let H := C.hierarchy
   let q := Fin.last H.dividerCount
   let A := HierarchyStarredStage H q
@@ -1698,19 +1659,7 @@ theorem HierarchySituationTwoSubcaseTwoOneStoredException {V E : Type*}
   have uniquePenultimate (c : Fin k)
       (hc : c ∈ MissingColors G phi (T.vertex D.penultimateVertexIndex)) :
       HierarchyFirstMissingPosition phi T c = D.penultimateVertexIndex := by
-    have hm := firstMissing phi c D.penultimateVertexIndex hc
-    have hv : T.vertex (HierarchyFirstMissingPosition phi T c) ∈
-        TreeSequenceVertexSet X := by
-      apply (@Finset.mem_image _ _ (Classical.decEq V)).mpr
-      refine ⟨⟨(HierarchyFirstMissingPosition phi T c).val, by
-        have hp := D.penultimateVertexPosition
-        rw [hXlen]
-        omega⟩, Finset.mem_univ _, ?_⟩
-      rfl
-    by_contra hi
-    have hn : T.vertex (HierarchyFirstMissingPosition phi T c) ≠
-        T.vertex D.penultimateVertexIndex := fun h => hi (T.vertex_injective h)
-    exact Finset.disjoint_left.mp (helem hv hyp hn) hm.1 hc
+    exact TreeSequenceFirstMissingPositionEq hXT helem hPenVal.le hc
   have hetaFirst := uniquePenultimate eta hetaMissing
   have hcard : (C.good.gamma q eta).card = 2 :=
     C.good.twoColors q eta hetaStored

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 
 public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
@@ -739,21 +740,10 @@ private theorem helper_continuation_590.{u_1, u_2} :
     exact hbetaAt
   have hstoredFirst : ∀ eta, eta ∈ D →
       HierarchyFirstMissingPosition tau T eta = HierarchyFirstMissingPosition R.coloring T eta := by
-    clear * - houtside hthetaUnstored hne
-    intro eta heta
-    have heb : eta ≠ beta := fun he => houtside.1 (he ▸ heta)
-    have het : eta ≠ theta := fun he => hthetaUnstored (he ▸ heta)
-    have hmissing := (TwoColorComponentSwapMissingBehavior G R.coloring beta theta hne
-      R.minimumContext.proper (Sum.inl vl)).2.2.2
-    have hcandidates :
-        (Finset.univ.filter fun i : Fin (T.length + 1) => eta ∈ MissingColors G tau (T.vertex i)) =
-        (Finset.univ.filter fun i : Fin (T.length + 1) =>
-            eta ∈ MissingColors G R.coloring (T.vertex i)) := by
-      ext i
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-      exact hmissing (T.vertex i) eta heb het
-    unfold HierarchyFirstMissingPosition
-    simp only [hcandidates]
+    intro eta _
+    exact T.firstMissingPosition_eq_of_prefix_agreement hZT
+      (by simpa only [hZlen, Nat.sub_add_cancel T.positive] using (le_refl T.length))
+      hmissingPenultimate eta
   have hgammaCutoff : ∀ eta, eta ∈ D →
       (beta ∈ R.counterexample.good.gamma q eta ∨
         theta ∈ R.counterexample.good.gamma q eta) →

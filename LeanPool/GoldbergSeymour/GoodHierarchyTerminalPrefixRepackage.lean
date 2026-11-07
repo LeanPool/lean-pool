@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
+
 public import LeanPool.GoldbergSeymour.TerminalHierarchyPrefixConstruction
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.MaximumProperty
@@ -294,44 +296,11 @@ theorem GoodHierarchyTerminalPrefixRepackage {V E : Type*}
     unfold HierarchyStoredColorsAt
     rw [starredEq]
   have beforeFirstMissing {A B : TreeSequence G e0}
-      (hAB : TreeSequenceInitialSegment A B) (eta : Fin k)
-      (i : Fin (A.length + 1)) (hiEnd : i.val < A.length)
-      (hi : i.val < (HierarchyFirstMissingPosition phi A eta).val) :
-      let iB : Fin (B.length + 1) :=
-        Fin.castLE (Nat.succ_le_succ hAB.1) i
-      iB.val < (HierarchyFirstMissingPosition phi B eta).val := by
-    let candidatesA : Finset (Fin (A.length + 1)) :=
-      Finset.univ.filter fun x => eta ∈ MissingColors G phi (A.vertex x)
-    let candidatesB : Finset (Fin (B.length + 1)) :=
-      Finset.univ.filter fun x => eta ∈ MissingColors G phi (B.vertex x)
-    change i.val < (if h : candidatesA.Nonempty then candidatesA.min' h
-      else Fin.last A.length).val at hi
-    change (Fin.castLE (Nat.succ_le_succ hAB.1) i).val <
-      (if h : candidatesB.Nonempty then candidatesB.min' h
-      else Fin.last B.length).val
-    by_cases hB : candidatesB.Nonempty
-    · rw [dite_eq_left hB]
-      by_contra hnot
-      have hle : (candidatesB.min' hB).val ≤ i.val := by simpa using hnot
-      let ia : Fin (A.length + 1) := ⟨(candidatesB.min' hB).val, by omega⟩
-      have hmemB := Finset.min'_mem candidatesB hB
-      have hmissingB := (Finset.mem_filter.mp hmemB).2
-      have hcast : Fin.castLE (Nat.succ_le_succ hAB.1) ia =
-          candidatesB.min' hB := Fin.ext rfl
-      have hmissingA : eta ∈ MissingColors G phi (A.vertex ia) := by
-        rw [← hAB.2.1 ia, hcast]
-        exact hmissingB
-      have hmemA : ia ∈ candidatesA :=
-        Finset.mem_filter.mpr ⟨Finset.mem_univ _, hmissingA⟩
-      by_cases hA : candidatesA.Nonempty
-      · rw [dite_eq_left hA] at hi
-        have hminA := Finset.min'_le candidatesA ia hmemA
-        change (candidatesA.min' hA).val ≤ ia.val at hminA
-        dsimp [ia] at hminA
-        omega
-      · exact hA ⟨ia, hmemA⟩
-    · rw [dite_eq_right hB]
-      simpa using lt_of_lt_of_le hiEnd hAB.1
+      (segment : TreeSequenceInitialSegment A B) (eta : Fin k)
+      (index : Fin (A.length + 1)) (beforeEnd : index.val < A.length)
+      (before : index.val < (HierarchyFirstMissingPosition phi A eta).val) :
+      index.val < (HierarchyFirstMissingPosition phi B eta).val := by
+    exact TreeSequenceFirstMissingPositionBeforeInExtension segment beforeEnd before
   have missingEq (j : Fin (H.dividerCount + 1)) :
       HierarchyStageMissingColors HB j = HierarchyStageMissingColors H j := by
     refine Fin.cases ?_ (fun i => ?_) j

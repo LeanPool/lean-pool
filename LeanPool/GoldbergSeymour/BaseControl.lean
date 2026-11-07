@@ -5,11 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
 
 public import LeanPool.GoldbergSeymour.NonparallelPenultimateInterchangeability
-
-
 
 
 public import LeanPool.GoldbergSeymour.SharedFacts.BaseControl
@@ -285,44 +285,6 @@ private theorem helper_closureA_384.{u_1, u_2} :
   apply TreeSequenceInitialSegmentVertexSetSubset coreA
   rw [u.vertexSet]
   exact Finset.mem_union_right _ hv
-
-private theorem helper_firstIn_391.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (T : TreeSequence G e0) (phi : PartialEdgeColoring E k), (
-    ∀ {U W Z : TreeSequence G e0}, TreeSequenceInitialSegment U W → TreeSequenceInitialSegment W Z
-        → TreeSequenceInitialSegment U Z) →
-    ∀ (B : TreeSequence G e0), TreeSequenceInitialSegment B T →
-    ∀ c ∈ TreeMissingColors phi B, T.vertex (HierarchyFirstMissingPosition phi T c) ∈
-        TreeSequenceVertexSet B := by
-  classical
-  intro V E _ _ G k e0 T phi trans B hBT c hc
-  let _ := Fintype.ofFinite V
-  clear * - B hBT c hc
-  obtain ⟨v, hv, hvc⟩ := Finset.mem_biUnion.mp hc
-  obtain ⟨i, hi⟩ : ∃ i, B.vertex i = v := by
-    simpa [TreeSequenceVertexSet] using hv
-  let iT := Fin.castLE (Nat.succ_le_succ hBT.1) i
-  let S := Finset.univ.filter fun j : Fin (T.length + 1) =>
-    c ∈ MissingColors G phi (T.vertex j)
-  have hiS : iT ∈ S := by
-    apply Finset.mem_filter.mpr
-    refine ⟨Finset.mem_univ _, ?_⟩
-    simpa only [iT, hBT.2.1 i, hi] using hvc
-  have hS : S.Nonempty := ⟨iT, hiS⟩
-  have hpos : HierarchyFirstMissingPosition phi T c = S.min' hS := by
-    simp only [HierarchyFirstMissingPosition, S, dite_eq_left hS]
-  have hbound : (HierarchyFirstMissingPosition phi T c).val ≤ B.length := by
-    have hh := Finset.min'_le S iT hiS
-    rw [← hpos] at hh
-    have := i.isLt
-    change (HierarchyFirstMissingPosition phi T c).val ≤ i.val at hh
-    omega
-  let j : Fin (B.length + 1) := ⟨(HierarchyFirstMissingPosition phi T c).val, by omega⟩
-  have hj : Fin.castLE (Nat.succ_le_succ hBT.1) j =
-      HierarchyFirstMissingPosition phi T c := Fin.ext rfl
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
-  exact ⟨j, (hBT.2.1 j).symm.trans (congrArg T.vertex hj)⟩
 
 private theorem helper_halphaA_419.{u_1, u_2} :
     open scoped Classical in
@@ -1196,8 +1158,10 @@ theorem P2813_T1_BaseControl {V E : Type*}
   have TnA := trans coreChain coreA
   have closureA := @helper_closureA_384 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@coreA)
-  have firstIn := @helper_firstIn_391 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0) (@T)
-      (@phi) (@trans)
+  have firstIn (B : TreeSequence G e0) (segment : TreeSequenceInitialSegment B T)
+      (c : Fin k) (missing : c ∈ TreeMissingColors phi B) :
+      T.vertex (HierarchyFirstMissingPosition phi T c) ∈ TreeSequenceVertexSet B := by
+    exact TreeSequenceFirstMissingVertexMemOfPrefix segment missing
   have halphaA := @helper_halphaA_419 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
       (@hcase) (@TnA)

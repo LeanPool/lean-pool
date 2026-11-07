@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.FullTailTransport
 
 public import LeanPool.GoldbergSeymour.SharedFacts.StableChangeCasesOneTwoSplitTail
@@ -860,24 +862,7 @@ private theorem helper_parallelNotClosed_549.{u_1, u_2} :
     obtain ⟨eta, heta, hcg⟩ := Finset.mem_biUnion.mp hc
     have hn : eta ∉ TreeMissingColors phi base.core := (Finset.mem_sdiff.mp heta).2
     have hfirst : base.core.length < (HierarchyFirstMissingPosition phi T eta).val := by
-      let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-        eta ∈ MissingColors G phi (T.vertex j)
-      unfold HierarchyFirstMissingPosition
-      change base.core.length < (if h : candidates.Nonempty then candidates.min' h
-        else Fin.last T.length).val
-      split
-      · rename_i hnon
-        by_contra hh
-        have hle : (candidates.min' hnon).val ≤ base.core.length := by omega
-        let j : Fin (base.core.length + 1) := ⟨(candidates.min' hnon).val, by omega⟩
-        have he : Fin.castLE (Nat.succ_le_succ coreToT.1) j = candidates.min' hnon := Fin.ext rfl
-        have hm := (Finset.mem_filter.mp (Finset.min'_mem candidates hnon)).2
-        apply hn
-        refine Finset.mem_biUnion.mpr ⟨base.core.vertex j, ?_, ?_⟩
-        · simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
-          exact ⟨j, rfl⟩
-        · rw [← coreToT.2.1 j, he]; exact hm
-      · exact t.isLt
+      exact TreeSequenceFirstMissingPositionAfterPrefix coreToT t.isLt hn
     have hseg : c ∈ HierarchySegmentColors H 0 eta := by
       let r : Fin (H.stage (0 : Fin (H.dividerCount + 1)).succ).length :=
         ⟨base.core.length, coreStrict⟩

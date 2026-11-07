@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
 
 /-!
@@ -135,14 +137,8 @@ theorem firstMissingPositionUpperBound.{u_1, u_2} :
     firstMissingPositionUpperBoundStatement.{u_1, u_2} := by
   classical
   intro V E _ _ G k e0 T psi c j hj
-  let _ := Fintype.ofFinite V
-  let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-    c ∈ MissingColors G psi (T.vertex j)
-  have hm : j ∈ candidates := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hj⟩
-  have hn : candidates.Nonempty := ⟨j, hm⟩
-  unfold HierarchyFirstMissingPosition
-  rw [dite_eq_left hn]
-  exact Finset.min'_le candidates j hm
+  exact TreeSequenceFirstMissingPositionLe hj
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem lastData.{u_1, u_2} : lastDataStatement.{u_1, u_2} := by

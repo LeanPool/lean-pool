@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
+
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
@@ -277,96 +279,6 @@ private theorem helper_divBound_489.{u_1, u_2} :
   have hs := stageToB i.succ
   rw [← hl]
   exact le_trans hs.1 hBtoC.1
-
-private theorem helper_cutoffEq_570.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi),
-    (0 : ℕ) < ett.rounds →
-    ∀ (beta : Fin k) (b₂ : V) (gamma : Fin k) (sigma : PartialEdgeColoring E k)
-      (i₁ i₂ : Fin (T.length + (1 : ℕ))) (hiorder : (↑i₁ : ℕ) < (↑i₂ : ℕ))
-      (hspos : (1 : ℕ) ≤ (↑i₂ : ℕ) - (1 : ℕ)) (hsT : (↑i₂ : ℕ) ≤ T.length),
-    let Bminus : TreeSequence G e0 :=
-      TreeSequencePrefix T ((↑i₂ : ℕ) - (1 : ℕ)) hspos
-        (by
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := Fin.isLt i₂
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega);
-    let C : TreeSequence G e0 :=
-      TreeSequencePrefix T (↑i₂ : ℕ)
-        (by
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := Fin.isLt i₂
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega)
-        hsT;
-    let mu : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G sigma gamma beta (Sum.inl b₂);
-    (∀ v ∈ TreeSequenceVertexSet Bminus, MissingColors G mu v = MissingColors G phi v) →
-    C.length = Bminus.length + (1 : ℕ) →
-    TreeSequenceInitialSegment Bminus C →
-    (∀ (S : TreeSequence G e0) (i : Fin (S.length + (1 : ℕ))),
-        S.vertex i ∈ TreeSequenceVertexSet S) →
-    ∀ (newInput : PartialEdgeColoring E k)
-      (_ : TashkinovSeries G k ett.rounds e0 newInput) (eta : Fin k),
-    (↑(HierarchyFirstMissingPosition mu C eta) : ℕ) =
-      (↑(HierarchyFirstMissingPosition phi C eta) : ℕ) := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett hpositive beta b₂ gamma sigma i₁ i₂ hiorder hspos hsT
-      Bminus C mu hmissingFixed hlenC hBtoC vertexMem newInput newSeries eta
-  have h (i : Fin (C.length + 1)) (hi : i.val < C.length) :
-      eta ∈ MissingColors G mu (C.vertex i) ↔
-        eta ∈ MissingColors G phi (C.vertex i) := by
-    let ib : Fin (Bminus.length + 1) := ⟨i.val, by omega⟩
-    have hv : C.vertex i = Bminus.vertex ib := hBtoC.2.1 ib
-    rw [hv, hmissingFixed _ (vertexMem _ _)]
-  let dm : Finset (Fin (C.length + 1)) :=
-    Finset.univ.filter fun i => eta ∈ MissingColors G mu (C.vertex i)
-  let dp : Finset (Fin (C.length + 1)) :=
-    Finset.univ.filter fun i => eta ∈ MissingColors G phi (C.vertex i)
-  change (if h : dm.Nonempty then dm.min' h else Fin.last C.length).val =
-    (if h : dp.Nonempty then dp.min' h else Fin.last C.length).val
-  by_cases hm : dm.Nonempty
-  · rw [dite_eq_left hm]
-    by_cases hp : dp.Nonempty
-    · rw [dite_eq_left hp]
-      apply Nat.le_antisymm
-      · by_cases hj : (dp.min' hp).val < C.length
-        · have hi : dp.min' hp ∈ dm := Finset.mem_filter.mpr
-            ⟨Finset.mem_univ _, (h _ hj).mpr
-              ((Finset.mem_filter.mp (Finset.min'_mem dp hp)).2)⟩
-          exact Finset.min'_le dm _ hi
-        · have := (dm.min' hm).isLt; omega
-      · by_cases hj : (dm.min' hm).val < C.length
-        · have hi : dm.min' hm ∈ dp := Finset.mem_filter.mpr
-            ⟨Finset.mem_univ _, (h _ hj).mp
-              ((Finset.mem_filter.mp (Finset.min'_mem dm hm)).2)⟩
-          exact Finset.min'_le dp _ hi
-        · have := (dp.min' hp).isLt; omega
-    · rw [dite_eq_right hp]
-      have hb : ¬(dm.min' hm).val < C.length := by
-        intro hj
-        apply hp
-        exact ⟨dm.min' hm, Finset.mem_filter.mpr
-          ⟨Finset.mem_univ _, (h _ hj).mp
-            ((Finset.mem_filter.mp (Finset.min'_mem dm hm)).2)⟩⟩
-      have := (dm.min' hm).isLt
-      simp only [Fin.val_last]; omega
-  · rw [dite_eq_right hm]
-    by_cases hp : dp.Nonempty
-    · rw [dite_eq_left hp]
-      have hb : ¬(dp.min' hp).val < C.length := by
-        intro hj
-        apply hm
-        exact ⟨dp.min' hp, Finset.mem_filter.mpr
-          ⟨Finset.mem_univ _, (h _ hj).mpr
-            ((Finset.mem_filter.mp (Finset.min'_mem dp hp)).2)⟩⟩
-      have := (dp.min' hp).isLt
-      simp only [Fin.val_last]; omega
-    · rw [dite_eq_right hp]
 
 private theorem helper_boundaryFixed_658.{u_1, u_2} :
     open scoped Classical in
@@ -965,11 +877,6 @@ private theorem helper_branch_366.{u_1, u_2} :
       rw [ordinaryEq]
       exact missingEq _ (TreeSequenceInitialSegmentVertexSetSubset (stageToB i.succ))
   refine ⟨KC, ?_⟩
-  -- Changing missingness only at the final position leaves the capped cutoff unchanged.
-  have cutoffEq :=
-    helper_cutoffEq_570 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hpositive) (@beta) (@b₂)
-        (@gamma) (@sigma) (@i₁) (@i₂) (@hiorder) (@hspos) (@hsT) (@hmissingFixed) (@hlenC)
-        (@hBtoC) (@vertexMem) (@newInput) (@newSeries)
   have nextPrefix (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (KC.stage j.succ) (H.stage j.succ) ∧
         TreeSequenceInitialSegment (KC.stage j.succ) C := by
@@ -984,7 +891,9 @@ private theorem helper_branch_366.{u_1, u_2} :
   have segmentSubset (j : Fin (H.dividerCount + 1)) (eta : Fin k) :
       HierarchySegmentColors KC j eta ⊆ HierarchySegmentColors H j eta := by
     exact hierarchySegmentColorsMono H KC j j eta (starredEq j)
-      (nextPrefix j).1 (nextPrefix j).2 hCT (cutoffEq eta) fixedC
+      (nextPrefix j).1 (nextPrefix j).2 hCT
+      (congrArg Fin.val
+        (C.firstMissingPosition_eq_of_prefix_agreement hBtoC hlenC.le hmissingFixed eta)) fixedC
   have boundaryFixed :=
     helper_boundaryFixed_658 (@G) (@k) (@e0) (@T) (@phi) (@beta) (@b₂) (@gamma) (@sigma) (@i₁)
         (@i₂) (@hiorder) (@hspos) (@hfixed)

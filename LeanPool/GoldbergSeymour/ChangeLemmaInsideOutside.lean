@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.ChangeLemmaMixedClosedFinal
 public import LeanPool.GoldbergSeymour.ChangeLemmaMixedLargestClosed
 public import LeanPool.GoldbergSeymour.ChangeLemmaMixedNoClosed
@@ -140,27 +142,10 @@ theorem ChangeLemmaInsideOutside {V E : Type*}
   have firstMissingIsMissing :
     ∀ c : Fin k, c ∈ TreeMissingColors phi Ty → c ∈ MissingColors G phi (T.vertex
         (HierarchyFirstMissingPosition phi T c)) := by
-    intro c hc
-    unfold TreeMissingColors at hc
-    simp only [Finset.mem_biUnion] at hc
-    obtain ⟨v, hv, hcv⟩ := hc
-    unfold TreeSequenceVertexSet at hv
-    simp only [Finset.mem_image, Finset.mem_univ, true_and] at hv
-    obtain ⟨i, rfl⟩ := hv
-    let iT : Fin (T.length + 1) := Fin.castLE
-      (Nat.succ_le_succ (Nat.min_le_right _ _)) i
-    have hci : c ∈ MissingColors G phi (T.vertex iT) := by
-      simpa [Ty, prefixLength, TreeSequencePrefix, iT] using hcv
-    let candidates : Finset (Fin (T.length + 1)) :=
-      Finset.univ.filter fun j => c ∈ MissingColors G phi (T.vertex j)
-    have hcandidates : candidates.Nonempty := by
-      refine ⟨iT, ?_⟩
-      simp [candidates, hci]
-    have hmin := Finset.min'_mem candidates hcandidates
-    have hmin' : c ∈ MissingColors G phi
-        (T.vertex (candidates.min' hcandidates)) :=
-      (Finset.mem_filter.mp hmin).2
-    simpa [HierarchyFirstMissingPosition, candidates, hcandidates] using hmin'
+    intro c missing
+    have segment : TreeSequenceInitialSegment Ty T :=
+      ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
+    exact (TreeSequenceFirstMissingPositionPrefixWitness segment missing).1
   have hlocation' : va ∈ TreeSequenceVertexSet A ∧
       vb ∉ TreeSequenceVertexSet A := by
     simpa [H, q, A, va, vb] using hlocation

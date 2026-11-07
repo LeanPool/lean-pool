@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.NonparallelPenultimateInterchangeability
 
 public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
@@ -1090,51 +1092,6 @@ private theorem helper_ordinaryToR_330.{u_1, u_2} :
       simp only [Fin.val_castSucc]
       omega
 
-private theorem helper_firstMissing_354.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (_ : Fin (C.hierarchy.dividerCount + (1 : ℕ))),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := T.length - A.length;
-    let yLength : ℕ := min (A.length + (ell - (1 : ℕ))) T.length;
-    let Y : TreeSequence G e0 :=
-      TreeSequencePrefix T yLength
-        (have hA : (1 : ℕ) ≤ A.length := A.positive;
-        have hT : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ yLength) ↦ by omega)
-        (by omega);
-    TreeSequenceInitialSegment Y T →
-    ∀ c ∈ TreeMissingColors phi Y,
-    c ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T c)) ∧
-    (↑(HierarchyFirstMissingPosition phi T c) : ℕ) ≤ Y.length := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C r H q A ell yLength Y YToT c hc
-  clear * - hc YToT
-  obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-  obtain ⟨i, hi⟩ := hv
-  let it := Fin.castLE (Nat.succ_le_succ YToT.1) i
-  have hci : c ∈ MissingColors G phi (T.vertex it) := by
-    rw [YToT.2.1 i, hi]
-    exact hcv
-  let candidates := Finset.univ.filter fun j => c ∈ MissingColors G phi (T.vertex j)
-  have hit : it ∈ candidates := by simp [candidates, hci]
-  have hnon : candidates.Nonempty := ⟨it, hit⟩
-  have hmem := Finset.min'_mem candidates hnon
-  have hle := Finset.min'_le candidates it hit
-  refine ⟨?_, ?_⟩
-  · simpa [HierarchyFirstMissingPosition, candidates, hnon] using
-      (Finset.mem_filter.mp hmem).2
-  · have hiv : it.val ≤ Y.length := Nat.le_of_lt_succ i.isLt
-    have hval : (candidates.min' hnon).val ≤ it.val := hle
-    simpa [HierarchyFirstMissingPosition, candidates, hnon] using le_trans hval hiv
-
 private theorem helper_descend_417.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -1196,58 +1153,6 @@ private theorem helper_descend_417.{u_1, u_2} :
       have : c = alpha := Finset.mem_singleton.mp hc'
       subst c
       exact hc
-
-private theorem helper_haR_458.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (alpha : Fin k)
-      (r : Fin (C.hierarchy.dividerCount + (1 : ℕ))),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let R : TreeSequence G e0 := HierarchyStarredStage H r;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ia : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T alpha;
-    let va : V := T.vertex ia;
-    let ell : ℕ := T.length - A.length;
-    let yLength : ℕ := min (A.length + (ell - (1 : ℕ))) T.length;
-    let Y : TreeSequence G e0 :=
-      TreeSequencePrefix T yLength
-        (have hA : (1 : ℕ) ≤ A.length := A.positive;
-        have hT : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ yLength) ↦ by omega)
-        (by omega);
-    (∀ {S U W : TreeSequence G e0},
-        TreeSequenceInitialSegment S U →
-          TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W) →
-    TreeSequenceInitialSegment A T →
-    TreeSequenceInitialSegment R A →
-    alpha ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T alpha)) ∧
-        (↑(HierarchyFirstMissingPosition phi T alpha) : ℕ) ≤ Y.length →
-    alpha ∈ TreeMissingColors phi R →
-    va ∈ TreeSequenceVertexSet R := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha r H R q A ia va ell yLength Y segTrans
-      AToT RToA ha halphaR
-  have hRT := segTrans RToA AToT
-  obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp halphaR
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-  obtain ⟨i, hi⟩ := hv
-  let it := Fin.castLE (Nat.succ_le_succ hRT.1) i
-  have hci : alpha ∈ MissingColors G phi (T.vertex it) := by
-    rw [hRT.2.1 i, hi]
-    exact hcv
-  let candidates := Finset.univ.filter fun j => alpha ∈ MissingColors G phi (T.vertex j)
-  have hit : it ∈ candidates := by simp [candidates, hci]
-  have hn : candidates.Nonempty := ⟨it, hit⟩
-  have hle : ia.val ≤ R.length := by
-    have hmin : (candidates.min' hn).val ≤ it.val := Finset.min'_le candidates it hit
-    have hiv : it.val ≤ R.length := Nat.le_of_lt_succ i.isLt
-    simpa [ia, HierarchyFirstMissingPosition, candidates, hn] using le_trans hmin hiv
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
-  exact ⟨⟨ia.val, by omega⟩, (hRT.2.1 ⟨ia.val, by omega⟩).symm⟩
 
 private theorem helper_branch_487.{u_1, u_2} :
     open scoped Classical in
@@ -2580,9 +2485,8 @@ private theorem helper_continuation_4549.{u_1, u_2} :
       alpha ∈ TreeMissingColors phi (HierarchyStarredStage H j) :=
     descend H.dividerCount j (by omega) hj
   have halphaR : alpha ∈ TreeMissingColors phi R := missingStar r le_rfl
-  have haR :=
-    helper_haR_458 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@r)
-        (@segTrans) (@AToT) (@RToA) (@ha) (@halphaR)
+  have haR : va ∈ TreeSequenceVertexSet R := by
+    exact TreeSequenceFirstMissingVertexMemOfPrefix (segTrans RToA AToT) halphaR
   have preStepElementary :
       let j : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
       ColoredVertexSetElementary G (ett.series.data.coloring j.castSucc)
@@ -2821,9 +2725,10 @@ theorem ChangeLemmaMixedLargestClosed {V E : Type*}
     hmissingPrefix
   have hElementaryY : ColoredVertexSetElementary G phi (TreeSequenceVertexSet Y) :=
     hprefixElementary
-  have firstMissing :=
-    helper_firstMissing_354 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@r)
-        (@YToT)
+  have firstMissing (c : Fin k) (missing : c ∈ TreeMissingColors phi Y) :
+      c ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T c)) ∧
+        (HierarchyFirstMissingPosition phi T c).val ≤ Y.length := by
+    exact TreeSequenceFirstMissingPositionPrefixWitness YToT missing
   exact helper_continuation_4549 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
       (@hproper) (@hone) (@hlower) (@hfewer) (@hminimal) (@hprefixElementary) (@hlarge) (@alpha)
       (@beta) (@hne) (@horderedUnused) (@hlocation) (@r) (@hq) (@hrq) (@hclosed) (@hmaximal)

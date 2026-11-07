@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
+
 public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeNormalizedData
@@ -1059,52 +1061,10 @@ theorem HierarchyCaseThreePreparation.helper_caseContinuation_1264.{u_1, u_2} :
     · exact behavior.1 v hvQ
   have storedFirst : ∀ eta, eta ∈ Dnq →
       HierarchyFirstMissingPosition sigma T eta = HierarchyFirstMissingPosition phi T eta := by
-    intro eta heta
-    have hneA : eta ≠ D.alpha := by
-      intro he
-      exact Finset.disjoint_left.mp (GoodHierarchyReservedDisjoint C.good q).2 haGamma (he ▸ heta)
-    by_cases hneB : eta = beta
-    · subst eta
-      have hfirstPrefix : HierarchyFirstMissingPosition sigma Bplus beta =
-          HierarchyFirstMissingPosition phi Bplus beta := by
-        have hfilters :
-            ((Finset.univ : Finset (Fin (Bplus.length + 1))).filter fun i =>
-              beta ∈ MissingColors G sigma (Bplus.vertex i)) =
-            ((Finset.univ : Finset (Fin (Bplus.length + 1))).filter fun i =>
-              beta ∈ MissingColors G phi (Bplus.vertex i)) := by
-          apply Finset.filter_congr
-          intro i _
-          rw [missingPenultimate (Bplus.vertex i) (by simp [TreeSequenceVertexSet])]
-        unfold HierarchyFirstMissingPosition
-        rw [hfilters]
-      have hcutS := HierarchyFirstMissingPositionPrefixCutoff sigma Bplus T hplusT beta
-          Bplus.length le_rfl
-      have hcutP := HierarchyFirstMissingPositionPrefixCutoff phi Bplus T hplusT beta
-          Bplus.length le_rfl
-      rw [hfirstPrefix] at hcutS
-      have hbLt : ib.val < Bplus.length := by
-        have hlength : B.length < Bplus.length := by
-          rw [hlenB, hlenPlus]
-          have hp : 2 ≤ T.length := le_trans D.tailAtLeastTwo (Nat.sub_le _ _)
-          clear * - hp
-          omega
-        exact lt_of_le_of_lt hbFirstB hlength
-      apply Fin.ext
-      change (HierarchyFirstMissingPosition sigma T beta).val = ib.val
-      change min (HierarchyFirstMissingPosition phi Bplus beta).val Bplus.length =
-        min ib.val Bplus.length at hcutP
-      clear * - hcutS hcutP hbLt
-      omega
-    · have hfilters :
-          ((Finset.univ : Finset (Fin (T.length + 1))).filter fun i =>
-            eta ∈ MissingColors G sigma (T.vertex i)) =
-          ((Finset.univ : Finset (Fin (T.length + 1))).filter fun i =>
-            eta ∈ MissingColors G phi (T.vertex i)) := by
-        apply Finset.filter_congr
-        intro i _
-        exact behavior.2.2.2 _ eta hneA hneB
-      unfold HierarchyFirstMissingPosition
-      rw [hfilters]
+    intro eta _
+    exact T.firstMissingPosition_eq_of_prefix_agreement hplusT
+      (by simpa only [hlenPlus, Nat.sub_add_cancel T.positive] using (le_refl T.length))
+      missingPenultimate eta
   have tailFixed : ∀ t : Fin T.length, A.length ≤ t.val →
       sigma (T.edge t) = phi (T.edge t) := by
     intro t ht

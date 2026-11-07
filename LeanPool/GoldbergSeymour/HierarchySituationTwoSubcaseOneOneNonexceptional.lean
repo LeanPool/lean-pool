@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTransport
 
 public import LeanPool.GoldbergSeymour.ChangeLemma
@@ -1011,43 +1013,6 @@ private theorem helper_branch_199.{u_1, u_2} :
     have hi : index i.succ = io.succ := Fin.ext rfl
     simp only [HierarchyStageMissingColors, Fin.cases_succ]
     exact congrArg (TreeMissingColors phi) (hs i.succ)
-
-private theorem helper_firstMissingBelow_215.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (D : HierarchySituationTwoCaseOneData G k e0 input T phi ett base C ctx)
-      (R :
-        HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-          D.toHierarchySituationTwoTailData)
-      (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus)
-      (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-      (_ : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-      (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-      (baseStar : HierarchyBase corrStar.replacementETT phi)
-      (_ : TashkinovHierarchy corrStar.replacementETT baseStar) (X : TreeSequence G e0)
-      (c : Fin k),
-    (↑(HierarchyFirstMissingPosition phi X c) : ℕ) < X.length →
-    c ∈ MissingColors G phi (X.vertex (HierarchyFirstMissingPosition phi X c)) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D R corrMinus baseMinus HMinus corrStar
-      baseStar HStar X c hlt
-  let candidates := Finset.univ.filter fun i : Fin (X.length + 1) =>
-    c ∈ MissingColors G phi (X.vertex i)
-  by_cases hn : candidates.Nonempty
-  · have he : HierarchyFirstMissingPosition phi X c = candidates.min' hn := by
-      simp only [HierarchyFirstMissingPosition, candidates, dite_eq_left hn]
-    rw [he]
-    exact (Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2
-  · have he : HierarchyFirstMissingPosition phi X c = Fin.last X.length := by
-      simp only [HierarchyFirstMissingPosition, candidates, dite_eq_right hn]
-    rw [he] at hlt
-    simp only [Fin.val_last] at hlt
-    omega
 
 private theorem helper_oldAvoid_230.{u_1, u_2} :
     open scoped Classical in
@@ -2739,9 +2704,7 @@ private theorem helper_continuation_227.{u_1, u_2} :
   have firstMissingBelow (X : TreeSequence G e0) (c : Fin k)
       (hlt : (HierarchyFirstMissingPosition phi X c).val < X.length) :
       c ∈ MissingColors G phi (X.vertex (HierarchyFirstMissingPosition phi X c)) := by
-    exact helper_firstMissingBelow_215 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
-        (@ctx) (@D) (@R) (@corrMinus) (@baseMinus) (@HMinus) (@corrStar) (@baseStar) (@HStar)
-        (@X) (@c) (@hlt)
+    exact TreeSequenceFirstMissingPositionMem hlt
   have oldAvoid (eta c : Fin k) (hs : eta ∈ HierarchyStoredColorsAt H q)
       (hc : c ∈ C.good.gamma q eta) :
       c ∉ Finset.univ.filter (fun c => ∃ r : Fin T.length,
@@ -2919,25 +2882,11 @@ theorem HierarchySituationTwoSubcaseOneOneNonexceptional {V E : Type*}
   have firstLe (X : TreeSequence G e0) (c : Fin k)
       (i : Fin (X.length + 1)) (hi : c ∈ MissingColors G phi (X.vertex i)) :
       (HierarchyFirstMissingPosition phi X c).val ≤ i.val := by
-    unfold HierarchyFirstMissingPosition
-    dsimp only
-    have hm : i ∈ Finset.univ.filter
-        (fun j => c ∈ MissingColors G phi (X.vertex j)) :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩
-    rw [dite_eq_left ⟨i, hm⟩]
-    exact Finset.min'_le _ _ hm
+    exact TreeSequenceFirstMissingPositionLe hi
   have firstMissing (X : TreeSequence G e0) (c : Fin k)
       (hc : c ∈ TreeMissingColors phi X) :
       c ∈ MissingColors G phi (X.vertex (HierarchyFirstMissingPosition phi X c)) := by
-    obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-    obtain ⟨i, _, rfl⟩ := (@Finset.mem_image _ _ (Classical.decEq V)).mp hv
-    unfold HierarchyFirstMissingPosition
-    dsimp only
-    have hm : i ∈ Finset.univ.filter
-        (fun j => c ∈ MissingColors G phi (X.vertex j)) :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hcv⟩
-    rw [dite_eq_left ⟨i, hm⟩]
-    exact (Finset.mem_filter.mp (Finset.min'_mem _ ⟨i, hm⟩)).2
+    exact TreeSequenceFirstMissingPositionMemOfMissing hc
   have firstBefore (X : TreeSequence G e0) (c : Fin k)
       (i : Fin (X.length + 1))
       (hi : i.val < (HierarchyFirstMissingPosition phi X c).val) :
@@ -2950,21 +2899,7 @@ theorem HierarchySituationTwoSubcaseOneOneNonexceptional {V E : Type*}
       (hn : ∀ i : Fin (X.length + 1), i.val < t →
         c ∉ MissingColors G phi (X.vertex i)) :
       t ≤ (HierarchyFirstMissingPosition phi X c).val := by
-    by_contra hlt
-    have hp : (HierarchyFirstMissingPosition phi X c).val < t := by omega
-    have hm : c ∈ TreeMissingColors phi X := by
-      by_contra hm
-      have he : HierarchyFirstMissingPosition phi X c = Fin.last X.length := by
-        unfold HierarchyFirstMissingPosition
-        dsimp only
-        rw [dite_eq_right]
-        rintro ⟨i, hi⟩
-        exact hm (Finset.mem_biUnion.mpr
-          ⟨X.vertex i, vertexMem X i, (Finset.mem_filter.mp hi).2⟩)
-      have := congrArg Fin.val he
-      simp only [Fin.val_last] at this
-      omega
-    exact hn _ hp (firstMissing X c hm)
+    exact TreeSequenceFirstMissingPositionLowerBound ht hn
   have alphaNotB : D.alpha ∉ TreeMissingColors phi B := by
     intro hm
     obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hm

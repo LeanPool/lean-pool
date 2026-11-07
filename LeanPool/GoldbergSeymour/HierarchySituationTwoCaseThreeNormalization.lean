@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyCaseThreePreparation
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoOutsidePenultimateReconstruction
 
@@ -682,28 +684,10 @@ private theorem helper_continuation_647.{u_1, u_2} :
   have firstBound (S : TreeSequence G e0) (c : Fin k) (i : Fin (S.length + 1))
       (hc : c ∈ MissingColors G phi (S.vertex i)) :
       (HierarchyFirstMissingPosition phi S c).val ≤ i.val := by
-    clear * - S c i hc phi
-    let W := (Finset.univ : Finset (Fin (S.length + 1))).filter fun j =>
-      c ∈ MissingColors G phi (S.vertex j)
-    have hi : i ∈ W := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hc⟩
-    have hw : W.Nonempty := ⟨i, hi⟩
-    change (if h : W.Nonempty then W.min' h else Fin.last S.length).val ≤ i.val
-    rw [dite_eq_left hw]
-    exact Finset.min'_le W i hi
+    exact TreeSequenceFirstMissingPositionLe hc
   have firstWitness (c : Fin k) (hc : (HierarchyFirstMissingPosition phi T c).val < T.length) :
       c ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T c)) := by
-    clear * - phi T c hc
-    let W := (Finset.univ : Finset (Fin (T.length + 1))).filter fun j =>
-      c ∈ MissingColors G phi (T.vertex j)
-    by_cases hw : W.Nonempty
-    · have he : HierarchyFirstMissingPosition phi T c = W.min' hw := by
-        simp only [HierarchyFirstMissingPosition, W, dite_eq_left hw]
-      rw [he]
-      exact (Finset.mem_filter.mp (Finset.min'_mem W hw)).2
-    · have he : HierarchyFirstMissingPosition phi T c = Fin.last T.length := by
-        simp only [HierarchyFirstMissingPosition, W, dite_eq_right hw]
-      rw [he] at hc
-      exact (Nat.lt_irrefl _ hc).elim
+    exact TreeSequenceFirstMissingPositionMem hc
   have goodShort := @helperGoodShort1489 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@beta)
       (@hlenB) (@hBT) (@hne) (@segTrans) (@equalTrees) (@m) (@hm) (@pv) (@hBR) (@hRT) (@Utree)

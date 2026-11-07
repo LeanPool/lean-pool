@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.StoredExceptionTransport
 
 
@@ -730,42 +732,20 @@ private theorem helper_continuation_671.{u_1, u_2} :
     change j < ell at hpathUpper; omega)
   have missingMono {X Z : TreeSequence G e0}
       (psi : PartialEdgeColoring E k) (hXZ : TreeSequenceInitialSegment X Z) :
-      TreeMissingColors psi X ⊆ TreeMissingColors psi Z := by as_aux_lemma =>
-    intro c hc
-    obtain ⟨v, hv, hm⟩ := Finset.mem_biUnion.mp hc
-    exact Finset.mem_biUnion.mpr
-      ⟨v, TreeSequenceInitialSegmentVertexSetSubset hXZ hv, hm⟩
+      TreeMissingColors psi X ⊆ TreeMissingColors psi Z := by
+    exact hXZ.treeMissingColors_subset
   have vertexMem (U : TreeSequence G e0) (i : Fin (U.length + 1)) :
       U.vertex i ∈ TreeSequenceVertexSet U := by
     simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
     exact ⟨i, rfl⟩
   have firstLe (psi : PartialEdgeColoring E k) (c : Fin k)
       (j : Fin (T.length + 1)) (hj : c ∈ MissingColors G psi (T.vertex j)) :
-      HierarchyFirstMissingPosition psi T c ≤ j := by as_aux_lemma =>
-    clear * - G T psi c j hj
-    let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-      c ∈ MissingColors G psi (T.vertex j)
-    have hm : j ∈ candidates := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hj⟩
-    have hn : candidates.Nonempty := ⟨j, hm⟩
-    unfold HierarchyFirstMissingPosition
-    rw [dite_eq_left hn]
-    exact Finset.min'_le candidates j hm
+      HierarchyFirstMissingPosition psi T c ≤ j := by
+    exact TreeSequenceFirstMissingPositionLe hj
   have firstMem (psi : PartialEdgeColoring E k) (c : Fin k)
       (hlt : (HierarchyFirstMissingPosition psi T c).val < T.length) :
       c ∈ MissingColors G psi (T.vertex (HierarchyFirstMissingPosition psi T c)) := by
-          as_aux_lemma =>
-    clear * - G T psi c hlt
-    let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-      c ∈ MissingColors G psi (T.vertex j)
-    by_cases hn : candidates.Nonempty
-    · unfold HierarchyFirstMissingPosition
-      rw [dite_eq_left hn]
-      exact (Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2
-    · have hh : (HierarchyFirstMissingPosition psi T c).val = T.length := by
-        unfold HierarchyFirstMissingPosition
-        rw [dite_eq_right hn]
-        rfl
-      omega
+    exact TreeSequenceFirstMissingPositionMem hlt
   have eligible
       (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
       (c : Fin k) (i : ℕ) (hi : 1 ≤ i ∧ i ≤ ell - 1)

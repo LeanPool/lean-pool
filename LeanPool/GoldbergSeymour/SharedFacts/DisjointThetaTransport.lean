@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchySituationThreeDisjointData
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
@@ -626,29 +628,8 @@ theorem hthetaFirstIndex.{u_1, u_2} : hthetaFirstIndexStatement.{u_1, u_2} := by
 theorem firstWitness.{u_1, u_2} : firstWitnessStatement.{u_1, u_2} := by
   classical
   intro V E _ _ G k e0 T rho W hWT c hc
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    rcases Finset.mem_biUnion.mp hc with ⟨v, hv, hcv⟩
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hv
-    rcases hv with ⟨i, rfl⟩
-    let candidates := Finset.univ.filter fun a : Fin (T.length + 1) =>
-      c ∈ MissingColors G rho (T.vertex a)
-    have hi : Fin.castLE (Nat.succ_le_succ hWT.1) i ∈ candidates := by
-      simp [candidates, hWT.2.1 i, hcv]
-    have hn : candidates.Nonempty := ⟨_, hi⟩
-    have hmin := Finset.min'_le candidates _ hi
-    have hmiss : c ∈ MissingColors G rho (T.vertex (candidates.min' hn)) :=
-      (Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2
-    have hpos : HierarchyFirstMissingPosition rho T c = candidates.min' hn := by
-      simp [HierarchyFirstMissingPosition, candidates, hn]
-    constructor
-    · simpa [HierarchyFirstMissingPosition, candidates, hn] using hmiss
-    · rw [hpos]
-      have hle : (candidates.min' hn).val ≤ i.val := by
-        change (candidates.min' hn).val ≤ (Fin.castLE (Nat.succ_le_succ hWT.1) i).val at hmin
-        simpa using hmin
-      exact le_trans hle (Nat.le_of_lt_succ i.isLt)
+  exact TreeSequenceFirstMissingPositionPrefixWitness hWT hc
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem hthetaMissingY.{u_1, u_2} : hthetaMissingYStatement.{u_1, u_2} := by

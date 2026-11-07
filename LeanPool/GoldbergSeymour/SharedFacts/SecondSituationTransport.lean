@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.BaseDisplayedEdges
 public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
@@ -256,28 +258,8 @@ theorem aB.{u_1, u_2} : aBStatement.{u_1, u_2} := by
 theorem firstWitness.{u_1, u_2} : firstWitnessStatement.{u_1, u_2} := by
   classical
   intro V E _ _ G k e0 T rho X hXT c hc
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    rcases Finset.mem_biUnion.mp hc with ⟨v, hv, hvc⟩
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-    rcases hv with ⟨i, rfl⟩
-    let candidates := Finset.univ.filter fun j : Fin (T.length + 1) =>
-      c ∈ MissingColors G rho (T.vertex j)
-    have hi : Fin.castLE (Nat.succ_le_succ hXT.1) i ∈ candidates := by
-      simp only [candidates, Finset.mem_filter, Finset.mem_univ, true_and]
-      rw [hXT.2.1 i]
-      exact hvc
-    have hn : candidates.Nonempty := ⟨_, hi⟩
-    have hm := (Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2
-    have hle := Finset.min'_le candidates _ hi
-    have hib := i.isLt
-    unfold HierarchyFirstMissingPosition
-    change (c ∈ MissingColors G rho (T.vertex (if h : candidates.Nonempty then
-      candidates.min' h else Fin.last T.length))) ∧ _
-    rw [dite_eq_left hn]
-    refine ⟨hm, ?_⟩
-    change (candidates.min' hn).val ≤ i.val at hle
-    omega
+  exact TreeSequenceFirstMissingPositionPrefixWitness hXT hc
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem missingSubset.{u_1, u_2} : missingSubsetStatement.{u_1, u_2} := by
@@ -319,17 +301,10 @@ theorem firstPreserved.{u_1, u_2} : firstPreservedStatement.{u_1, u_2} := by
 theorem firstUnaffected.{u_1, u_2} : firstUnaffectedStatement.{u_1, u_2} := by
   classical
   intro V E _ _ G k e0 T z rho a b c hne hp hca hcb
-  let _ := Fintype.ofFinite V
-  have hb := TwoColorComponentSwapMissingBehavior G rho a b hne hp z
-  have he : (Finset.univ.filter fun i : Fin (T.length + 1) =>
-      c ∈ MissingColors G (TwoColorComponentSwap G rho a b z) (T.vertex i)) =
-      (Finset.univ.filter fun i : Fin (T.length + 1) =>
-        c ∈ MissingColors G rho (T.vertex i)) := by
-    ext i
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    exact hb.2.2.2 _ c hca hcb
-  unfold HierarchyFirstMissingPosition
-  rw [he]
+  exact TreeSequenceFirstMissingPositionMembershipCongr
+    (fun index => (TwoColorComponentSwapMissingBehavior G rho a b hne hp z).2.2.2
+      (T.vertex index) c hca hcb)
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem comparableInitialSegments.{u_1, u_2} : comparableInitialSegmentsStatement.{u_1, u_2} := by

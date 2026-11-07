@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.SplitSwapData
 public import LeanPool.GoldbergSeymour.ElementaryPrefixSwap
 public import LeanPool.GoldbergSeymour.HierarchyMeasures
@@ -687,36 +689,6 @@ private theorem helper_routeToX_714.{u_1, u_2} :
           hroute (seedPrefixX hadjoin hroute)
           hX_T)⟩
 
-private theorem helper_firstPositionGloballyEqual_786.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (alpha beta : Fin k),
-    let sigma : PartialEdgeColoring E k := TwoColorComponentSwap G P.coloring alpha beta (Sum.inl
-        (T.vertex (Fin.last T.length)));
-    ∀ (_ : alpha ≠ beta) (eta : Fin k) (_ : eta ≠ alpha) (_ : eta ≠ beta),
-        HierarchyFirstMissingPosition sigma T eta = HierarchyFirstMissingPosition P.coloring T eta
-  := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha beta sigma hne eta hα hβ
-  let cs : Finset (Fin (T.length + 1)) := Finset.univ.filter
-    fun i => eta ∈ MissingColors G sigma (T.vertex i)
-  let cp : Finset (Fin (T.length + 1)) := Finset.univ.filter
-    fun i => eta ∈ MissingColors G P.coloring (T.vertex i)
-  have hsets : cs = cp := by
-    ext i
-    simp only [cs, cp, Finset.mem_filter, Finset.mem_univ, true_and]
-    exact (TwoColorComponentSwapMissingBehavior G P.coloring alpha beta hne
-      P.minimumContext.proper (Sum.inl (T.vertex (Fin.last T.length)))).2.2.2
-        (T.vertex i) eta hα hβ
-  unfold HierarchyFirstMissingPosition
-  change (if h : cs.Nonempty then cs.min' h else Fin.last T.length) =
-    (if h : cp.Nonempty then cp.min' h else Fin.last T.length)
-  rw [hsets]
-
 private theorem helper_fixedUntilSplitEnd_822.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -1227,9 +1199,15 @@ private theorem helper_continuation_2539.{u_1, u_2} :
       hAXstrict oldSuffix routeToX hsplitMissing switchedSuffix firstPositionBoundOnT
       firstPositionEqualOnTail
   with_reducible_and_instances
-    have firstPositionGloballyEqual := @helper_firstPositionGloballyEqual_786 (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi)
-        (@ett) (@base) (@C) (@ctx) (@P) (@alpha) (@beta) (@hne)
+    have firstPositionGloballyEqual (eta : Fin k) (first : eta ≠ alpha) (second : eta ≠ beta) :
+        HierarchyFirstMissingPosition
+            (TwoColorComponentSwap G P.coloring alpha beta (Sum.inl (T.vertex (Fin.last T.length))))
+            T eta = HierarchyFirstMissingPosition P.coloring T eta := by
+      apply TreeSequenceFirstMissingPositionMembershipCongr
+      intro index
+      exact (TwoColorComponentSwapMissingBehavior G P.coloring alpha beta hne
+        P.minimumContext.proper (Sum.inl (T.vertex (Fin.last T.length)))).2.2.2
+          (T.vertex index) eta first second
     have hstoredFirst : ∀ eta ∈ D, HierarchyFirstMissingPosition sigma T eta =
         HierarchyFirstMissingPosition P.coloring T eta := by
       intro eta _

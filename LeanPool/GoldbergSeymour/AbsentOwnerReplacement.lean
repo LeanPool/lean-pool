@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoFullTail
@@ -1975,34 +1977,8 @@ theorem P2905_T2_AbsentOwnerReplacement {V E : Type*}
   have hownerAbsent : eta ∉ TreeMissingColors phi B := by
     simpa [B, ell] using habsent
   have hfirstEta : HierarchyFirstMissingPosition phi T eta = Fin.last T.length := by
-    classical
-    unfold HierarchyFirstMissingPosition
-    dsimp only
-    split
-    · rename_i hc
-      have candidateLast (i : Fin (T.length + 1))
-          (hi : i ∈ Finset.univ.filter
-            (fun i => eta ∈ MissingColors G phi (T.vertex i))) :
-          i = Fin.last T.length := by
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
-        apply Fin.ext
-        by_cases heq : i.val = T.length
-        · exact heq
-        · have hlt : i.val < T.length := by have := i.isLt; omega
-          have hiBval : i.val < B.length + 1 := by rw [hlenB]; omega
-          let j : Fin (B.length + 1) := ⟨i.val, hiBval⟩
-          have hij : Fin.castLE (Nat.succ_le_succ hBprefix.1) j = i := Fin.ext rfl
-          have hvB : T.vertex i ∈ TreeSequenceVertexSet B := by
-            simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
-            exact ⟨j, by rw [← hBprefix.2.1 j, hij]⟩
-          have hmB : eta ∈ TreeMissingColors phi B :=
-            Finset.mem_biUnion.mpr ⟨T.vertex i, hvB, hi⟩
-          exact False.elim (hownerAbsent hmB)
-      have hm := Finset.min'_mem
-        (Finset.univ.filter fun i : Fin (T.length + 1) =>
-          eta ∈ MissingColors G phi (T.vertex i)) hc
-      rw [candidateLast _ hm]
-    · rfl
+    exact TreeSequenceFirstMissingPositionEqLastOfNotMemPrefix hBprefix
+      (by simpa only [hlenB, Nat.sub_add_cancel T.positive] using (le_refl T.length)) hownerAbsent
   have hAlphaAvoid : ∀ r : Fin T.length, A.length ≤ r.val →
       phi (T.edge r) ≠ some alpha := by
     intro r hr hcol

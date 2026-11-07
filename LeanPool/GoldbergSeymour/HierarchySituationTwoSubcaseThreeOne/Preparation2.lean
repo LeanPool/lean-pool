@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseThreeOne.Preparation1
 
 /-!
@@ -283,22 +285,7 @@ theorem helper_firstLower_5578.{u_1, u_2} :
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx D theta lastIndex penIndex endIndex
       lastColor lastPosition penPosition endPosition thetaPresent tail R corrMinus baseMinus
       HMinus corrStar baseStar HStar vertexMem firstMissing X c t ht hn
-  as_aux_lemma =>
-    by_contra hlt
-    have hp : (HierarchyFirstMissingPosition phi X c).val < t := by omega
-    have hm : c ∈ TreeMissingColors phi X := by
-      by_contra hm
-      have he : HierarchyFirstMissingPosition phi X c = Fin.last X.length := by
-        unfold HierarchyFirstMissingPosition
-        dsimp only
-        rw [dite_eq_right]
-        rintro ⟨i, hi⟩
-        exact hm (Finset.mem_biUnion.mpr ⟨X.vertex i, vertexMem X i,
-          (Finset.mem_filter.mp hi).2⟩)
-      have := congrArg Fin.val he
-      simp only [Fin.val_last] at this
-      omega
-    exact hn _ hp (firstMissing X c hm)
+  exact TreeSequenceFirstMissingPositionLowerBound ht hn
 
 theorem helper_hstar_5654.{u_1, u_2} :
     open scoped Classical in
@@ -606,18 +593,7 @@ theorem helper_firstWitness_5737.{u_1, u_2} :
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx D theta lastIndex penIndex endIndex
       lastColor lastPosition penPosition endPosition thetaPresent tail R corrMinus baseMinus
       HMinus corrStar baseStar HStar X c hc
-  let W := Finset.univ.filter fun i : Fin (X.length + 1) =>
-    c ∈ MissingColors G phi (X.vertex i)
-  by_cases hw : W.Nonempty
-  · have he : HierarchyFirstMissingPosition phi X c = W.min' hw := by
-      simp only [HierarchyFirstMissingPosition, W, dite_eq_left hw]
-    rw [he]
-    exact (Finset.mem_filter.mp (Finset.min'_mem W hw)).2
-  · have he : HierarchyFirstMissingPosition phi X c = Fin.last X.length := by
-      simp only [HierarchyFirstMissingPosition, W, dite_eq_right hw]
-    rw [he] at hc
-    simp only [Fin.val_last] at hc
-    omega
+  exact TreeSequenceFirstMissingPositionMem hc
 
 theorem helper_terminalAvoid_5752.{u_1, u_2} :
     open scoped Classical in

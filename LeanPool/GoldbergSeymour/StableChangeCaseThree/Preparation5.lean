@@ -323,7 +323,7 @@ private theorem helper_continuation_370.{u_1, u_2} :
     exact ⟨fun he => halphaA (he ▸ hm), fun he => hbetaA (he ▸ hm)⟩
   have firstEq (c : Fin k) (hca : c ≠ alpha) (hcb : c ≠ beta) :
       HierarchyFirstMissingPosition sigma T c = HierarchyFirstMissingPosition phi T c := by
-    exact @helper_firstEq_1065 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0) (@T) (@phi)
+    exact @helper_firstEq_1065 (@V) (@E) inferInstance (@G) (@k) (@e0) (@T) (@phi)
         (@alpha) (@beta) (@sigma) (@missingUnaffected) (@c) (@hca) (@hcb)
   have segmentTransfer (j : Fin (H.dividerCount + 1)) (eta : Fin k)
       (heta : eta ∈ HierarchyStoredColorsAt H j) (c : Fin k)

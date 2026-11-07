@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ChangeLemmaBothOutsidePreparation1
 
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation1
@@ -118,24 +120,8 @@ theorem firstMissingPositionWitness.{u_1, u_2} : firstMissingPositionWitnessStat
     u_2} := by
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C H q A ell yLength Y YToT c hc
-  obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-  obtain ⟨i, hi⟩ := hv
-  let it := Fin.castLE (Nat.succ_le_succ YToT.1) i
-  have hci : c ∈ MissingColors G phi (T.vertex it) := by
-    rw [YToT.2.1 i, hi]
-    exact hcv
-  let candidates := Finset.univ.filter fun j => c ∈ MissingColors G phi (T.vertex j)
-  have hit : it ∈ candidates := by simp [candidates, hci]
-  have hnon : candidates.Nonempty := ⟨it, hit⟩
-  have hmem := Finset.min'_mem candidates hnon
-  have hle := Finset.min'_le candidates it hit
-  refine ⟨?_, ?_⟩
-  · simpa [HierarchyFirstMissingPosition, candidates, hnon] using
-      (Finset.mem_filter.mp hmem).2
-  · have hiv : it.val ≤ Y.length := Nat.le_of_lt_succ i.isLt
-    have hval : (candidates.min' hnon).val ≤ it.val := hle
-    simpa [HierarchyFirstMissingPosition, candidates, hnon] using le_trans hval hiv
+  exact TreeSequenceFirstMissingPositionPrefixWitness YToT hc
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem missingPositionOutsidePrefix.{u_1, u_2} : missingPositionOutsidePrefixStatement.{u_1,

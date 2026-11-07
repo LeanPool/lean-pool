@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Wesley Pegden. All rights reserved.
+Copyright (c) 2026 Wesley Pegden and Lean Pool contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -42,6 +42,20 @@ theorem TreeSequence.firstMissingPosition_eq_of_agreement {V E : Type*} [Fintype
       exact TreeSequenceFirstMissingPositionMem before
     · have := (HierarchyFirstMissingPosition phi tree color).isLt
       omega
+
+/-- Agreement on a prefix containing every vertex before the last preserves first positions. -/
+theorem TreeSequence.firstMissingPosition_eq_of_prefix_agreement {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} (tree : TreeSequence G e0)
+    {initial : TreeSequence G e0} (segment : TreeSequenceInitialSegment initial tree)
+    (last : tree.length ≤ initial.length + 1) {phi sigma : PartialEdgeColoring E k}
+    (agreement : ∀ vertex ∈ TreeSequenceVertexSet initial,
+      MissingColors G sigma vertex = MissingColors G phi vertex) (color : Fin k) :
+    HierarchyFirstMissingPosition sigma tree color =
+      HierarchyFirstMissingPosition phi tree color := by
+  apply tree.firstMissingPosition_eq_of_agreement (color := color)
+  intro index before
+  exact agreement _ (TreeSequenceInitialSegmentVertexMem segment
+    (Nat.le_of_lt_succ (before.trans_le last)))
 
 /-- Vertex-wise agreement away from the final vertex preserves every first position. -/
 theorem TreeSequence.firstMissingPosition_eq_of_except_last {V E : Type*} [Fintype E]

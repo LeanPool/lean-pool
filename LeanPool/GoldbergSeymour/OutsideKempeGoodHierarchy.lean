@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.OutsideKempeRecoloringStable
 
 public import LeanPool.GoldbergSeymour.SameGoodHierarchy
@@ -435,16 +437,7 @@ private theorem helper_continuation_155.{u_1, u_2} :
   have firstMissingAt : ∀ eta : Fin k,
       HierarchyFirstMissingPosition phi T eta = HierarchyFirstMissingPosition sigma T eta := by
     intro eta
-    unfold HierarchyFirstMissingPosition
-    have candidatesEq :
-        (Finset.univ.filter fun i => eta ∈ MissingColors G phi (T.vertex i)) =
-        (Finset.univ.filter fun i => eta ∈ MissingColors G sigma (T.vertex i)) := by
-      ext i
-      have hv := hmissing (T.vertex i) (by simp [TreeSequenceVertexSet])
-      simpa only [Finset.mem_filter, Finset.mem_univ, true_and] using
-        (show (eta ∈ MissingColors G phi (T.vertex i)) ↔
-          eta ∈ MissingColors G sigma (T.vertex i) from by rw [hv])
-    rw [candidatesEq]
+    exact TreeSequenceFirstMissingPositionCongr hmissing eta
   have edgeFixed : ∀ {A : TreeSequence G e0},
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet T →
       ∀ r : Fin A.length, sigma (A.edge r) = phi (A.edge r) := by

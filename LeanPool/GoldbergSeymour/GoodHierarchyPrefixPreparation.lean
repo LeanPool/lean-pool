@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
+
 public import LeanPool.GoldbergSeymour.SharedFacts.GoodHierarchyPrefixPreparation
 
 public import LeanPool.GoldbergSeymour.GoodHierarchy
@@ -229,20 +231,7 @@ theorem helper_beforeFirstMissing_386.{u_1, u_2} :
         (↑(HierarchyFirstMissingPosition phi B eta) : ℕ) := by
   classical
   intro V E _ _ _ _ G k e0 input T generating phi ett base H r A B hAB eta i hiEnd hi
-  let candidatesA : Finset (Fin (A.length + 1)) :=
-    Finset.univ.filter fun x => eta ∈ MissingColors G phi (A.vertex x)
-  let candidatesB : Finset (Fin (B.length + 1)) :=
-    Finset.univ.filter fun x => eta ∈ MissingColors G phi (B.vertex x)
-  change i.val < (if h : candidatesA.Nonempty then candidatesA.min' h
-    else Fin.last A.length).val at hi
-  change (Fin.castLE (Nat.succ_le_succ hAB.1) i).val <
-    (if h : candidatesB.Nonempty then candidatesB.min' h
-    else Fin.last B.length).val
-  by_cases hB : candidatesB.Nonempty
-  · exact helper_branch_233 (@G) (@k) (@e0) (@input) (@T) (@generating) (@phi) (@ett) (@base)
-      (@H) (@r) (@hAB) (@eta) (@i) (@hiEnd) (@hi) (@hB)
-  · rw [dite_eq_right hB]
-    simpa using lt_of_lt_of_le hiEnd hAB.1
+  exact TreeSequenceFirstMissingPositionBeforeInExtension hAB hiEnd hi
 
 theorem helper_strictAbovePenultimate_337.{u_1, u_2} :
     open scoped Classical in

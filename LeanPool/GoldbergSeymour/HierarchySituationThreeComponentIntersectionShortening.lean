@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningTransport
 
 public import LeanPool.GoldbergSeymour.ChangeLemma
@@ -1186,65 +1188,6 @@ private theorem helper_branch_317.{u_1, u_2} :
     subst uv
     subst ue
     rfl
-
-private theorem helper_branch_348.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-  (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-  (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-  (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-  (C : HierarchyCounterexample base)
-  (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-  (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let mu : PartialEdgeColoring E k := P.coloring;
-  ∀ (W : TreeSequence G e0) (c : Fin k),
-  (↑(HierarchyFirstMissingPosition mu W c) : ℕ) < W.length →
-  let candidates : Finset (Fin (W.length + (1 : ℕ))) :=
-    ({t : Fin (W.length + (1 : ℕ)) | c ∈ MissingColors G mu (W.vertex t)} :
-      Finset (Fin (W.length + (1 : ℕ))));
-  ¬candidates.Nonempty →
-  c ∈ MissingColors G mu (W.vertex (HierarchyFirstMissingPosition mu W c)) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P mu W c hlt candidates hn
-  have hh : (HierarchyFirstMissingPosition mu W c).val = W.length := by
-    unfold HierarchyFirstMissingPosition
-    rw [dite_eq_right hn]
-    rfl
-  omega
-
-private theorem helper_firstBound_353.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-  (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-  (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-  (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-  (C : HierarchyCounterexample base)
-  (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-  (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let mu : PartialEdgeColoring E k := P.coloring;
-  (
-  ∀ {S U W : TreeSequence G e0},
-  TreeSequenceInitialSegment S U →
-  TreeSequenceInitialSegment U W →
-  TreeSequenceInitialSegment S W) →
-  (
-  ∀ (W : TreeSequence G e0) (c : Fin k) (i : Fin (W.length + (1 : ℕ))),
-  c ∈ MissingColors G mu (W.vertex i) →
-  (↑(HierarchyFirstMissingPosition mu W c) : ℕ) ≤ (↑i : ℕ)) →
-  ∀ {W Z : TreeSequence G e0},
-  TreeSequenceInitialSegment W Z →
-  ∀ c ∈ TreeMissingColors mu W,
-  (↑(HierarchyFirstMissingPosition mu Z c) : ℕ) ≤ W.length := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P mu trans firstLe W Z hWT c hc
-  obtain ⟨v, hv, hm⟩ := Finset.mem_biUnion.mp hc
-  obtain ⟨i, hi⟩ : ∃ i, W.vertex i = v := by
-    simpa only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] using hv
-  have hmT : c ∈ MissingColors G mu
-      (Z.vertex (Fin.castLE (Nat.succ_le_succ hWT.1) i)) := by
-    rw [hWT.2.1, hi]
-    exact hm
-  exact (firstLe Z c _ hmT).trans (Nat.le_of_lt_succ i.isLt)
 
 private theorem helper_hinc_377.{u_1, u_2} :
     open scoped Classical in
@@ -2503,30 +2446,6 @@ private theorem helper_prefixEq_2316.{u_1, u_2} :
     have ht := hBT.2.2 (Fin.castLE hpB i)
     exact hu.trans ht.symm
 
-private theorem helper_firstLe_2171.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
-  [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E
-      k)
-  (T : TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-      input T phi)
-  (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-  (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-  (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let mu : PartialEdgeColoring E k := P.coloring;
-  ∀ (W : TreeSequence G e0) (c : Fin k) (i : Fin (W.length + (1 : ℕ))) (_ : c ∈ MissingColors G
-      mu (W.vertex i)),
-  (↑(HierarchyFirstMissingPosition mu W c) : ℕ) ≤ (↑i : ℕ) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P mu W c i hi
-  let candidates := Finset.univ.filter fun t : Fin (W.length + 1) =>
-    c ∈ MissingColors G mu (W.vertex t)
-  have hm : i ∈ candidates := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩
-  have hn : candidates.Nonempty := ⟨i, hm⟩
-  unfold HierarchyFirstMissingPosition
-  rw [dite_eq_left hn]
-  exact Finset.min'_le candidates i hm
-
 private theorem helper_ownerBound_2434.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
@@ -3051,30 +2970,17 @@ private theorem componentIntersectionFromMissingColors.{u_1, u_2} :
       exact @helper_equalSeg_2078 (@V) (@E) (@G) (@e0) (@S) (@U) (@hSU) (@hlen)
     have firstLe (W : TreeSequence G e0) (c : Fin k)
         (i : Fin (W.length + 1)) (hi : c ∈ MissingColors G mu (W.vertex i)) :
-        (HierarchyFirstMissingPosition mu W c).val ≤ i.val := by as_aux_lemma =>
-      exact @helper_firstLe_2171 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-          (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@W) (@c) (@i) (@hi)
+        (HierarchyFirstMissingPosition mu W c).val ≤ i.val := by
+      exact TreeSequenceFirstMissingPositionLe hi
     have firstMem (W : TreeSequence G e0) (c : Fin k)
         (hlt : (HierarchyFirstMissingPosition mu W c).val < W.length) :
         c ∈ MissingColors G mu (W.vertex (HierarchyFirstMissingPosition mu W c)) := by
-            as_aux_lemma =>
-      clear * - W c hlt mu
-      let candidates := Finset.univ.filter fun t : Fin (W.length + 1) =>
-        c ∈ MissingColors G mu (W.vertex t)
-      by_cases hn : candidates.Nonempty
-      · unfold HierarchyFirstMissingPosition
-        rw [dite_eq_left hn]
-        exact (Finset.mem_filter.mp (Finset.min'_mem candidates hn)).2
-      · exact @helper_branch_348 (@V) (@E) inferInstance inferInstance inferInstance
-          inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@W)
-          (@c) (@hlt) (@hn)
+      exact TreeSequenceFirstMissingPositionMem hlt
     have firstBound {W Z : TreeSequence G e0}
         (hWT : TreeSequenceInitialSegment W Z) (c : Fin k)
         (hc : c ∈ TreeMissingColors mu W) :
         (HierarchyFirstMissingPosition mu Z c).val ≤ W.length := by
-      exact @helper_firstBound_353 (@V) (@E) inferInstance inferInstance inferInstance
-          inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
-          (@trans) (@firstLe) (@W) (@Z) (@hWT) (@c) (@hc)
+      exact TreeSequenceFirstMissingPositionLePrefix hWT hc
     have stableClosed (W : TreeSequence G e0) (D : Finset (Fin k))
         (rho sigma : PartialEdgeColoring E k)
         (hp : IsProperEdgeColoring G rho) (ho : IsOneEdgeUncolored rho e0)

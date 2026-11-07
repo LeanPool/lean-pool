@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.NonparallelHierarchyCorrespondence
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ChangeLemmaBothOutsidePreparation1
@@ -2177,13 +2179,9 @@ theorem helper_firstEq_1458.{u_1, u_2} :
       behavior eta he
   have hea : eta ≠ alpha := by intro h; exact hDn.1 (h ▸ he)
   have heb : eta ≠ beta := by intro h; exact hDn.2 (h ▸ he)
-  have hcandidates : (Finset.univ.filter fun i => eta ∈ MissingColors G sigma (B.vertex i)) =
-      (Finset.univ.filter fun i => eta ∈ MissingColors G phi (B.vertex i)) := by
-    ext i
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    exact behavior.2.2.2 _ eta hea heb
-  unfold HierarchyFirstMissingPosition
-  rw [hcandidates]
+  apply TreeSequenceFirstMissingPositionMembershipCongr
+  intro index
+  exact behavior.2.2.2 (B.vertex index) eta hea heb
 
 theorem helper_augmentationControlled_3288.{u_1, u_2} :
     open scoped Classical in

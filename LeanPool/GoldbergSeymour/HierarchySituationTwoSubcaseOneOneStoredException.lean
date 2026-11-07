@@ -5,10 +5,11 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyTailColorFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.StoredExceptionTransport
-
 
 
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
@@ -772,26 +773,6 @@ private abbrev storedExceptionSwapStepStatement.{u_1, u_2} : Prop :=
     ∀ v ∈ TreeSequenceVertexSet X, MissingColors G P'.coloring v = MissingColors G P.coloring v) ∧
     ∀ (t : Fin T.length), A.length ≤ (↑t : ℕ) → P'.coloring (T.edge t) = P.coloring (T.edge t)
 
-private theorem helper_firstMissing_387.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
-  (k : ℕ) (e0 : E) (T : TreeSequence G e0) (col : PartialEdgeColoring E k) (c : Fin k)
-  (i : Fin (T.length + (1 : ℕ))),
-  c ∈ MissingColors G col (T.vertex i) →
-  c ∈ MissingColors G col (T.vertex (HierarchyFirstMissingPosition col T c)) ∧
-    (↑(HierarchyFirstMissingPosition col T c) : ℕ) ≤ (↑i : ℕ) := by
-  classical
-  intro V E _ _ G k e0 T col c i hc
-  let _ := Fintype.ofFinite V
-  let S := Finset.univ.filter fun j : Fin (T.length + 1) =>
-    c ∈ MissingColors G col (T.vertex j)
-  have hs : S.Nonempty := ⟨i, by simp [S, hc]⟩
-  have heq : HierarchyFirstMissingPosition col T c = S.min' hs := by
-    simp [HierarchyFirstMissingPosition, S, hs]
-  rw [heq]
-  exact ⟨(Finset.mem_filter.mp (Finset.min'_mem S hs)).2,
-    Finset.min'_le S i (by simp [S, hc])⟩
-
 private theorem helper_hyp_446.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -1377,60 +1358,6 @@ private theorem helper_hbNewFirst_959.{u_1, u_2} :
   by_contra hn
   exact Finset.disjoint_left.mp
     (hxElem hv hvbX (fun he => hn (T.vertex_injective he))) hmOld hbFirst.1
-
-private theorem helper_hstoredFirst_974.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (D :
-        HierarchySituationTwoCaseOneData G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    ∀ (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (a b : Fin k), a ∈
-        TreeMissingColors P.coloring A →
-    let C' : HierarchyCounterexample P.replacementBase := P.counterexample;
-    let col : PartialEdgeColoring E k := P.coloring;
-    let H' : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase := C'.hierarchy;
-    let q' : Fin (H'.dividerCount + (1 : ℕ)) := Fin.last H'.dividerCount;
-    let z : V ⊕ E := Sum.inl (T.vertex D.terminalVertexIndex);
-    let mu : PartialEdgeColoring E k := TwoColorComponentSwap G col a b z; HierarchyStarredStage
-        H' q' = A →
-    ∀ (_ : Fin (A.length + (1 : ℕ))), (
-    have C : Set (V ⊕ E) := TwoColorComponent G col a b z;
-    have phi' : PartialEdgeColoring E k := TwoColorComponentSwap G col a b z; (
-    ∀ (v : V), Sum.inl v ∉ C → MissingColors G phi' v = MissingColors G col v) ∧ (
-    ∀ (v : V), Sum.inl v ∈ C → a ∈ MissingColors G col v → b ∈ MissingColors G phi' v) ∧ (
-    ∀ (v : V), Sum.inl v ∈ C → b ∈ MissingColors G col v → a ∈ MissingColors G phi' v) ∧
-    ∀ (v : V) (c : Fin k), c ≠ a → c ≠ b → (c ∈ MissingColors G phi' v ↔ c ∈ MissingColors G col
-        v)) → HierarchyFirstMissingPosition mu T b = HierarchyFirstMissingPosition col T b →
-    ∀ c ∈ HierarchyStoredColorsAt H' q', HierarchyFirstMissingPosition mu T c =
-        HierarchyFirstMissingPosition col T c := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A P a b haA C' col H' q' z mu hstar'
-      i hbehavior hbNewFirst c hc
-  have hca : c ≠ a := by
-    intro he
-    have hnot := (Finset.mem_sdiff.mp hc).2
-    apply hnot
-    change c ∈ TreeMissingColors col (HierarchyStarredStage H' q')
-    rw [hstar', he]
-    exact haA
-  by_cases hcb : c = b
-  · subst c
-    exact hbNewFirst
-  · have hcandidates :
-        (Finset.univ.filter fun i : Fin (T.length + 1) =>
-          c ∈ MissingColors G mu (T.vertex i)) =
-        (Finset.univ.filter fun i : Fin (T.length + 1) =>
-          c ∈ MissingColors G col (T.vertex i)) := by
-      ext i
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-      exact hbehavior.2.2.2 _ c hca hcb
-    unfold HierarchyFirstMissingPosition
-    simp only [hcandidates]
 
 private theorem helper_hnonElem_997.{u_1, u_2} :
     open scoped Classical in
@@ -3685,9 +3612,19 @@ private theorem helper_prepareLater_5223.{u_1, u_2} :
           (@hv) (@hvbX) (@hprefix) (@hbNew)
     have hstoredFirst : ∀ c, c ∈ HierarchyStoredColorsAt H' q' →
         HierarchyFirstMissingPosition mu T c = HierarchyFirstMissingPosition col T c := by
-      exact @helper_hstoredFirst_974 (@V) (@E) inferInstance inferInstance inferInstance
-          inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-          (@P) (@a) (@b) (@haA) (@hstar') (@i) (@hbehavior) (@hbNewFirst)
+      intro c member
+      have notFirst : c ≠ a := by
+        intro equal
+        have absent := (Finset.mem_sdiff.mp member).2
+        apply absent
+        change c ∈ TreeMissingColors col (HierarchyStarredStage H' q')
+        rw [hstar', equal]
+        exact haA
+      by_cases second : c = b
+      · subst c
+        exact hbNewFirst
+      · exact TreeSequenceFirstMissingPositionMembershipCongr
+          (fun index => hbehavior.2.2.2 (T.vertex index) c notFirst second)
     have hnonElem : ¬ ColoredVertexSetElementary G mu (TreeSequenceVertexSet T) := by
       exact @helper_hnonElem_997 (@V) (@E) inferInstance inferInstance inferInstance
           inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
@@ -3920,8 +3857,7 @@ theorem HierarchySituationTwoSubcaseOneOneStoredException {V E : Type*}
       c ∈ MissingColors G col
           (T.vertex (HierarchyFirstMissingPosition col T c)) ∧
         (HierarchyFirstMissingPosition col T c).val ≤ i.val := by
-    exact @helper_firstMissing_387 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0) (@T)
-        (@col) (@c) (@i) (@hc)
+    exact TreeSequenceFirstMissingPositionWitness hc
   let H := C.hierarchy
   let q := Fin.last H.dividerCount
   let A := HierarchyStarredStage H q

@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Wesley Pegden. All rights reserved.
+Copyright (c) 2026 Wesley Pegden and Lean Pool contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -162,6 +162,104 @@ theorem TreeSequenceInitialSegment.treeMissingColors_subset {V E : Type*} [Finty
   exact Finset.mem_biUnion.mpr ⟨vertex, segment.vertexSet_subset inInitial, missing⟩
 
 
+/-- An actual missing-color witness gives both the first witness and its least-position bound. -/
+theorem TreeSequenceFirstMissingPositionWitness {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {phi : PartialEdgeColoring E k}
+    {tree : TreeSequence G e0} {color : Fin k} {index : Fin (tree.length + 1)}
+    (missing : color ∈ MissingColors G phi (tree.vertex index)) :
+    color ∈ MissingColors G phi (tree.vertex (HierarchyFirstMissingPosition phi tree color)) ∧
+      (HierarchyFirstMissingPosition phi tree color).val ≤ index.val := by
+  classical
+  exact ⟨TreeSequenceFirstMissingPositionMemOfMissing
+    (Finset.mem_biUnion.mpr ⟨tree.vertex index, by simp [TreeSequenceVertexSet], missing⟩),
+    TreeSequenceFirstMissingPositionLe missing⟩
+
+/-- A color missing on a prefix has an actual first witness no later than that prefix. -/
+theorem TreeSequenceFirstMissingPositionPrefixWitness {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {phi : PartialEdgeColoring E k}
+    {initial tree : TreeSequence G e0} (segment : TreeSequenceInitialSegment initial tree)
+    {color : Fin k} (missing : color ∈ TreeMissingColors phi initial) :
+    color ∈ MissingColors G phi (tree.vertex (HierarchyFirstMissingPosition phi tree color)) ∧
+      (HierarchyFirstMissingPosition phi tree color).val ≤ initial.length := by
+  exact ⟨TreeSequenceFirstMissingPositionMemOfMissing (segment.treeMissingColors_subset missing),
+    TreeSequenceFirstMissingPositionLePrefix segment missing⟩
+
+/-- A color missing on a prefix has its first missing vertex in that prefix. -/
+theorem TreeSequenceFirstMissingVertexMemOfPrefix {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {phi : PartialEdgeColoring E k}
+    {initial tree : TreeSequence G e0} (segment : TreeSequenceInitialSegment initial tree)
+    {color : Fin k} (missing : color ∈ TreeMissingColors phi initial) :
+    tree.vertex (HierarchyFirstMissingPosition phi tree color) ∈ TreeSequenceVertexSet initial := by
+  exact TreeSequenceInitialSegmentVertexMem segment
+    (TreeSequenceFirstMissingPositionLePrefix segment missing)
+
+/-- Absence before a bounded threshold gives a lower bound on the totalized first position. -/
+theorem TreeSequenceFirstMissingPositionLowerBound {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {phi : PartialEdgeColoring E k}
+    {tree : TreeSequence G e0} {color : Fin k} {threshold : ℕ}
+    (bound : threshold ≤ tree.length)
+    (absent : ∀ index : Fin (tree.length + 1), index.val < threshold →
+      color ∉ MissingColors G phi (tree.vertex index)) :
+    threshold ≤ (HierarchyFirstMissingPosition phi tree color).val := by
+  by_contra notBound
+  have before : (HierarchyFirstMissingPosition phi tree color).val < threshold :=
+    Nat.lt_of_not_ge notBound
+  exact absent _ before (TreeSequenceFirstMissingPositionMem (before.trans_le bound))
+
+/-- A color absent from a strict prefix first goes missing strictly after that prefix. -/
+theorem TreeSequenceFirstMissingPositionAfterPrefix {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {phi : PartialEdgeColoring E k}
+    {initial tree : TreeSequence G e0} (segment : TreeSequenceInitialSegment initial tree)
+    (strict : initial.length < tree.length) {color : Fin k}
+    (absent : color ∉ TreeMissingColors phi initial) :
+    initial.length < (HierarchyFirstMissingPosition phi tree color).val := by
+  classical
+  by_contra notAfter
+  have bound : (HierarchyFirstMissingPosition phi tree color).val ≤ initial.length :=
+    le_of_not_gt notAfter
+  exact absent (Finset.mem_biUnion.mpr ⟨_, TreeSequenceInitialSegmentVertexMem segment bound,
+    TreeSequenceFirstMissingPositionMem (bound.trans_lt strict)⟩)
+
+/-- A color absent from a prefix containing every vertex before the last has final first
+position. -/
+theorem TreeSequenceFirstMissingPositionEqLastOfNotMemPrefix {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {phi : PartialEdgeColoring E k}
+    {initial tree : TreeSequence G e0} (segment : TreeSequenceInitialSegment initial tree)
+    (last : tree.length ≤ initial.length + 1) {color : Fin k}
+    (absent : color ∉ TreeMissingColors phi initial) :
+    HierarchyFirstMissingPosition phi tree color = Fin.last tree.length := by
+  classical
+  apply Fin.ext
+  simp only [Fin.val_last]
+  refine Nat.le_antisymm (Nat.le_of_lt_succ (HierarchyFirstMissingPosition phi tree color).isLt) ?_
+  apply TreeSequenceFirstMissingPositionLowerBound le_rfl
+  intro index before missing
+  exact absent (Finset.mem_biUnion.mpr ⟨_, TreeSequenceInitialSegmentVertexMem segment
+    (Nat.le_of_lt_succ (before.trans_le last)), missing⟩)
+
+/-- Color-wise missing-membership agreement preserves the totalized first position. -/
+theorem TreeSequenceFirstMissingPositionMembershipCongr {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {tree : TreeSequence G e0}
+    {first second : PartialEdgeColoring E k} {color : Fin k}
+    (agreement : ∀ index : Fin (tree.length + 1),
+      color ∈ MissingColors G first (tree.vertex index) ↔
+        color ∈ MissingColors G second (tree.vertex index)) :
+    HierarchyFirstMissingPosition first tree color =
+      HierarchyFirstMissingPosition second tree color := by
+  classical
+  let firstCandidates := Finset.univ.filter
+    fun index : Fin (tree.length + 1) => color ∈ MissingColors G first (tree.vertex index)
+  let secondCandidates := Finset.univ.filter
+    fun index : Fin (tree.length + 1) => color ∈ MissingColors G second (tree.vertex index)
+  have equal : firstCandidates = secondCandidates := by
+    ext index
+    simp only [firstCandidates, secondCandidates, Finset.mem_filter, Finset.mem_univ, true_and]
+    exact agreement index
+  unfold HierarchyFirstMissingPosition
+  change (if h : firstCandidates.Nonempty then firstCandidates.min' h else Fin.last tree.length) =
+    (if h : secondCandidates.Nonempty then secondCandidates.min' h else Fin.last tree.length)
+  rw [equal]
+
 /-- Pointwise equality of missing colors on a tree preserves its missing-color union. -/
 theorem TreeMissingColors.congr {V E : Type*} [Fintype E]
     {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {tree : TreeSequence G e0}
@@ -182,19 +280,9 @@ theorem TreeSequenceFirstMissingPositionCongr {V E : Type*} [Fintype E]
       MissingColors G first vertex = MissingColors G second vertex) (color : Fin k) :
     HierarchyFirstMissingPosition first tree color =
       HierarchyFirstMissingPosition second tree color := by
-  classical
-  let firstCandidates := Finset.univ.filter
-    fun index : Fin (tree.length + 1) => color ∈ MissingColors G first (tree.vertex index)
-  let secondCandidates := Finset.univ.filter
-    fun index : Fin (tree.length + 1) => color ∈ MissingColors G second (tree.vertex index)
-  have candidatesEqual : firstCandidates = secondCandidates := by
-    ext index
-    simp only [firstCandidates, secondCandidates, Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [equal (tree.vertex index) (by simp [TreeSequenceVertexSet])]
-  unfold HierarchyFirstMissingPosition
-  change (if h : firstCandidates.Nonempty then firstCandidates.min' h else Fin.last tree.length) =
-    (if h : secondCandidates.Nonempty then secondCandidates.min' h else Fin.last tree.length)
-  rw [candidatesEqual]
+  apply TreeSequenceFirstMissingPositionMembershipCongr
+  intro index
+  rw [equal (tree.vertex index) (by simp [TreeSequenceVertexSet])]
 
 end GoldbergSeymour
 

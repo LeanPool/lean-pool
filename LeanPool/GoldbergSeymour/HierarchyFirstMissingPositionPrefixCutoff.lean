@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Wesley Pegden. All rights reserved.
+Copyright (c) 2026 Wesley Pegden and Lean Pool contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -107,6 +107,20 @@ lemma HierarchyFirstMissingPositionPrefixCutoff {V E : Type*}
       have hlen := hAT.1
       omega
 
+
+/-- An index before a prefix's first missing position remains before it in every extension. -/
+theorem TreeSequenceFirstMissingPositionBeforeInExtension {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {phi : PartialEdgeColoring E k}
+    {initial tree : TreeSequence G e0} (segment : TreeSequenceInitialSegment initial tree)
+    {color : Fin k} {position : ℕ} (beforeEnd : position < initial.length)
+    (before : position < (HierarchyFirstMissingPosition phi initial color).val) :
+    position < (HierarchyFirstMissingPosition phi tree color).val := by
+  have cutoff := HierarchyFirstMissingPositionPrefixCutoff phi initial tree segment color
+    (position + 1) (Nat.succ_le_of_lt beforeEnd)
+  have bound : position + 1 ≤ min (HierarchyFirstMissingPosition phi initial color).val
+      (position + 1) := le_min (Nat.succ_le_of_lt before) le_rfl
+  rw [cutoff] at bound
+  exact Nat.lt_of_succ_le (bound.trans (Nat.min_le_left _ _))
 
 /-- Preserving missing colors on a prefix preserves first positions of its missing colors. -/
 theorem TreeSequenceFirstMissingPositionCongrOfPrefix {V E : Type*} [Fintype E]
