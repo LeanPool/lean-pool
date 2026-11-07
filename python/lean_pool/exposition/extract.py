@@ -28,12 +28,16 @@ OUTPUTS = ("declarations.jsonl", "commands.jsonl")
 GLOBAL_INPUTS = (
     "lean-toolchain",
     "lake-manifest.json",
-    "lakefile.toml",
     "scripts/exposition/Extract.lean",
     "scripts/exposition/extract-all.sh",
     "python/lean_pool/exposition/extract.py",
     "python/lean_pool/exposition/source_text.py",
 )
+
+# Build options reach the extractor through all consumed module artifacts.
+# Missing public artifacts conservatively retain the build configuration.
+BUILD_CONFIGURATION = "lakefile.toml"
+COMPILED = Path(".lake/build/lib/lean")
 
 
 def file_digest(path: Path) -> str:
@@ -87,14 +91,55 @@ def project_sources(root: Path, project: str) -> set[Path]:
     return sources
 
 
+def compiled_hashes(
+    root: Path, sources: set[Path], digests: dict[Path, str] | None = None
+) -> dict[Path, str | None]:
+    """Identify present artifacts and absent companions; stream uncached content."""
+    if digests is None:
+        digests = {}
+    identities = {}
+    for source in sorted(sources):
+        for suffix in ("olean", "olean.server", "olean.private"):
+            artifact = (
+                root / COMPILED / source.relative_to(root).with_suffix(f".{suffix}")
+            )
+            if not artifact.is_file():
+                identities[artifact] = None
+                continue
+            cached = Path(f"{artifact}.hash")
+            identity = (
+                cached if cached.is_file() and cached.stat().st_size else artifact
+            )
+            if identity not in digests:
+                digests[identity] = file_digest(identity)
+            kind = "cached" if identity == cached else "artifact"
+            identities[artifact] = f"{kind}:{digests[identity]}"
+    return identities
+
+
 def fingerprint(root: Path, project: str, digests: dict[Path, str]) -> str:
-    """Hash source contents, dependencies, build configuration, and extractor code."""
-    paths = project_sources(root, project) | {root / name for name in GLOBAL_INPUTS}
+    """Hash sources, compiled modules, dependency pins, and extractor code.
+
+    Hashing public, server and private artifacts instead of the configuration
+    preserves reuse only when every consumed compiled artifact stays identical.
+    """
+    sources = project_sources(root, project)
+    paths = sources | {root / name for name in GLOBAL_INPUTS}
+    compiled = compiled_hashes(root, sources, digests)
+    if any(
+        compiled[root / COMPILED / source.relative_to(root).with_suffix(".olean")]
+        is None
+        for source in sources
+    ):
+        paths.add(root / BUILD_CONFIGURATION)
     inputs = {}
     for path in sorted(paths):
         if path not in digests:
             digests[path] = file_digest(path)
         inputs[path.relative_to(root).as_posix()] = digests[path]
+    inputs.update(
+        {path.relative_to(root).as_posix(): value for path, value in compiled.items()}
+    )
     return hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
 
 

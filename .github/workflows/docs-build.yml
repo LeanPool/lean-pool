@@ -60,6 +60,8 @@ jobs:
           }}-${{ inputs.build_revision }}
         restore-keys: |
           LeanPoolBuild-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+    # Keyed only by inputs that change every page. Per-project progress inside
+    # the checkpoint decides which projects a pool edit sends back to Lake.
     - name: Restore documentation checkpoint
       id: docs-cache
       uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
@@ -71,9 +73,9 @@ jobs:
           .lake/packages/UnicodeBasic
           .lake/packages/BibtexQuery
           .lake/packages/MD4Lean
-        # Most pool lakefile edits leave many docInfo traces valid, so fall back to a
-        # checkpoint from an older lakefile; Lake rebuilds only what changed and the
-        # cursor identity still includes lakefile.toml.
+        # Prefer a checkpoint from the same pool lakefile, then fall back to an older
+        # one: Lake rebuilds only stale docInfo, and per-project progress rechecks
+        # only projects whose compiled modules changed.
         key: DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml',
           'docbuild/lake-manifest.json') }}-${{ hashFiles('lakefile.toml') }}-${{ github.run_id }}-${{
           github.run_attempt }}-${{ inputs.stage }}
