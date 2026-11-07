@@ -114,10 +114,22 @@ def test_global_input_invalidates_every_project(repository: Path, name: str) -> 
     assert not any(item.cached for item in _run(repository))
 
 
-def _compile(root: Path, project: str, digest: str = "0") -> None:
-    path = root / COMPILED / f"LeanPool/{project}.olean.hash"
+def _compile(
+    root: Path,
+    project: str,
+    digest: str = "0",
+    *,
+    artifact: str = "olean",
+    cache_hash: bool = True,
+) -> None:
+    path = root / COMPILED / f"LeanPool/{project}.{artifact}"
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(digest)
+    path.write_text(f"compiled {digest}\n")
+    cached = Path(f"{path}.hash")
+    if cache_hash:
+        cached.write_text(digest)
+    else:
+        cached.unlink(missing_ok=True)
 
 
 def test_missing_compiled_hashes_fall_back_to_build_configuration(
@@ -384,3 +396,58 @@ def test_failed_timing_write_cannot_replace_original_failure(
     assert error.value is failure
     assert "Could not write failed extraction timings" in caplog.text
     assert not (repository / "calls").exists()
+
+
+@pytest.mark.parametrize("artifact", ["olean.server", "olean.private"])
+def test_companion_only_changes_invalidate_extraction(
+    repository: Path, artifact: str
+) -> None:
+    """Public module stability does not make changed companion metadata reusable."""
+    for project in ("A", "B"):
+        _compile(repository, project)
+    _compile(repository, "B", "old", artifact=artifact)
+    _run(repository)
+    (repository / BUILD_CONFIGURATION).write_text("changed documentation options\n")
+    _compile(repository, "B", "new", artifact=artifact)
+    assert [item.cached for item in _run(repository)] == [True, False]
+    assert all(item.cached for item in _run(repository))
+
+
+@pytest.mark.parametrize("artifact", ["olean.server", "olean.private"])
+def test_companion_presence_and_absence_invalidate_extraction(
+    repository: Path, artifact: str
+) -> None:
+    """A legacy absent companion and a newly present one have different identities."""
+    for project in ("A", "B"):
+        _compile(repository, project)
+    _run(repository)
+    _compile(repository, "B", "new", artifact=artifact)
+    assert [item.cached for item in _run(repository)] == [True, False]
+    (repository / COMPILED / f"LeanPool/B.{artifact}").unlink()
+    assert [item.cached for item in _run(repository)] == [True, False]
+    assert all(item.cached for item in _run(repository))
+
+
+@pytest.mark.parametrize("artifact", ["olean", "olean.server", "olean.private"])
+def test_missing_cached_hash_still_tracks_extraction_artifact(
+    repository: Path, artifact: str
+) -> None:
+    """An uncached companion is hashed directly instead of being ignored."""
+    for project in ("A", "B"):
+        _compile(repository, project)
+    _compile(repository, "B", "old", artifact=artifact, cache_hash=False)
+    _run(repository)
+    _compile(repository, "B", "new", artifact=artifact, cache_hash=False)
+    assert [item.cached for item in _run(repository)] == [True, False]
+
+
+def test_missing_public_artifact_keeps_extraction_configuration_fallback(
+    repository: Path,
+) -> None:
+    """A stale public hash with no artifact cannot disable the options fallback."""
+    for project in ("A", "B"):
+        _compile(repository, project)
+    (repository / COMPILED / "LeanPool/B.olean").unlink()
+    _run(repository)
+    (repository / BUILD_CONFIGURATION).write_text("changed options\n")
+    assert [item.cached for item in _run(repository)] == [True, False]

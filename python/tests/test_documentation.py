@@ -67,14 +67,25 @@ def populate(build: Path, value: str = "previous", modules: tuple = ()) -> None:
     (build / "doc-data" / "module.doc").write_text(value)
 
 
-def compile_modules(root: Path, digest: str = "0", *modules: str) -> None:
-    """Write Lake's compiled-module content hashes for the named modules."""
+def compile_modules(
+    root: Path,
+    digest: str = "0",
+    *modules: str,
+    artifact: str = "olean",
+    cache_hash: bool = True,
+) -> None:
+    """Write real artifact presence and optional Lake content-hash sidecars."""
     for module in modules or tuple(documentation.module_sources(root)):
         path = (
-            root / documentation.COMPILED / (module.replace(".", "/") + ".olean.hash")
+            root / documentation.COMPILED / (module.replace(".", "/") + f".{artifact}")
         )
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(digest)
+        path.write_text(f"compiled {digest}\n")
+        cached = Path(f"{path}.hash")
+        if cache_hash:
+            cached.write_text(digest)
+        else:
+            cached.unlink(missing_ok=True)
 
 
 def recording_build(commands: list):
@@ -353,3 +364,84 @@ def test_reused_analysis_propagates_completion(
     assert (process.returncode == 0) == expected
     if expected:
         assert output.read_text() == "complete=true\n"
+
+
+@pytest.mark.parametrize("artifact", ["olean.server", "olean.private"])
+def test_companion_only_changes_invalidate_completion_and_reanalyze(
+    repository: Path, monkeypatch, artifact: str
+) -> None:
+    """Unchanged public oleans cannot conceal new documentation metadata."""
+    commands: list = []
+    monkeypatch.setattr(documentation, "run_build", recording_build(commands))
+    compile_modules(repository)
+    compile_modules(repository, "old", "LeanPool.A", artifact=artifact)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    documentation.require_complete(repository)
+    (repository / "lakefile.toml").write_text("changed documentation options\n")
+    compile_modules(repository, "new", "LeanPool.A", artifact=artifact)
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    assert commands[1:] == [["lake", "build", "+LeanPool.A:docInfo"]]
+    documentation.require_complete(repository)
+
+
+@pytest.mark.parametrize("artifact", ["olean.server", "olean.private"])
+def test_companion_presence_and_absence_invalidate_completed_projects(
+    repository: Path, monkeypatch, artifact: str
+) -> None:
+    """Legacy modules may omit companions, but their later appearance matters."""
+    commands: list = []
+    monkeypatch.setattr(documentation, "run_build", recording_build(commands))
+    compile_modules(repository)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    documentation.require_complete(repository)
+    compile_modules(repository, "new", "LeanPool.A", artifact=artifact)
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    path = repository / documentation.COMPILED / f"LeanPool/A.{artifact}"
+    path.unlink()  # A leftover hash must not stand in for an absent artifact.
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    assert commands[1:] == [["lake", "build", "+LeanPool.A:docInfo"]] * 2
+    documentation.require_complete(repository)
+
+
+@pytest.mark.parametrize("artifact", ["olean", "olean.server", "olean.private"])
+def test_missing_cached_hash_still_tracks_actual_artifact_content(
+    repository: Path, monkeypatch, artifact: str
+) -> None:
+    """Hash actual output when Lake's sidecar is absent, without guessing validity."""
+    commands: list = []
+    monkeypatch.setattr(documentation, "run_build", recording_build(commands))
+    compile_modules(repository)
+    compile_modules(
+        repository, "old", "LeanPool.A", artifact=artifact, cache_hash=False
+    )
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    compile_modules(
+        repository, "new", "LeanPool.A", artifact=artifact, cache_hash=False
+    )
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    assert commands[1:] == [["lake", "build", "+LeanPool.A:docInfo"]]
+    documentation.require_complete(repository)
+
+
+def test_missing_public_artifact_keeps_conservative_configuration_identity(
+    repository: Path, monkeypatch
+) -> None:
+    """An old hash alone is not evidence of a current compiled public module."""
+    commands: list = []
+    monkeypatch.setattr(documentation, "run_build", recording_build(commands))
+    compile_modules(repository)
+    (repository / documentation.COMPILED / "LeanPool/A.olean").unlink()
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    (repository / "lakefile.toml").write_text("changed options\n")
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+    assert documentation.build_batches(repository, "lake", 60, 3)
+    assert commands[1:] == [["lake", "build", "+LeanPool.A:docInfo"]]
