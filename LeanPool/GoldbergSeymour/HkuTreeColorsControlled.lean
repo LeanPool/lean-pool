@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
+
 public import LeanPool.GoldbergSeymour.HkuIncidentColorPreserved
 public import LeanPool.GoldbergSeymour.TashkinovSeries
 public import LeanPool.GoldbergSeymour.TreeUsedColors
@@ -337,50 +339,6 @@ private theorem helper_firstColored_439.{u_1, u_2} :
             some available.gamma := by simpa [currentColoring] using hcol
         simpa [currentColoring] using (sequenceColored closedExtension.1
           (adjoinColored adjoinedExactly hcol' ih) j hj)
-
-private theorem helper_hp_736.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input :
-    PartialEdgeColoring E k) (series : TashkinovSeries G k rounds e0 input) (q : Fin rounds),
-    IsOneEdgeUncolored (series.data.coloring q.castSucc) e0 := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q
-  have cert := series.certified q.succ
-  generalize hj : q.succ = z at cert
-  cases cert with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma initialClosure =>
-    exact (Fin.succ_ne_zero q) hj |>.elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hv := congrArg Fin.val hj
-    simp at hv
-    have hi : i = q := by apply Fin.ext; omega
-    subst i
-    simpa using previousOneUncolored
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper currentOneUncolored
-      currentStored currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have hv := congrArg Fin.val hj
-    simp at hv
-    have hi : i = q := by apply Fin.ext; omega
-    subst i
-    simpa using previousOneUncolored
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored currentEdges
-      currentKind currentVertex currentOutside currentDelta currentGamma adjoined
-      adjoinedExactly closedExtension orderedExtension strictExtension =>
-    have hv := congrArg Fin.val hj
-    simp at hv
-    have hi : i = q := by apply Fin.ext; omega
-    subst i
-    simpa using previousOneUncolored
 
 private theorem helper_branch_776.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -759,8 +717,7 @@ theorem HkuTreeColorsControlled {V E : Type*} [Fintype V] [Fintype E]
       rounds e0 input series edgeIncident sequenceColored adjoinColored firstClaim
       stableMissingTransfer
   exact ⟨firstClaim q.castSucc, by
-    have hp := @helper_hp_736 V E inferInstance inferInstance inferInstance G k rounds e0 input
-        series q
+    have hp := (series.coloringProperties q.castSucc).2
     exact fun d hd => colorTransport hp (firstClaim q.castSucc) hd, by
     intro sigma hproper hone hstable j
     by_cases hj : j.val = 0

@@ -9,8 +9,6 @@ public import LeanPool.GoldbergSeymour.SharedFacts.RevisitingTerminalPreparation
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
-public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
-
 public import LeanPool.GoldbergSeymour.Preamble
 
 public import LeanPool.GoldbergSeymour.CertifiedETTRestriction

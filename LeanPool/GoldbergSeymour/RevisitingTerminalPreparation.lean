@@ -6,8 +6,6 @@ Authors: Wesley Pegden
 
 module
 
-public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
-
 public import LeanPool.GoldbergSeymour.SharedFacts.RevisitingTerminalPreparation
 
 public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent

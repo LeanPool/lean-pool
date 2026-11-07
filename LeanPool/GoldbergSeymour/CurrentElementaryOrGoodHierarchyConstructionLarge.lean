@@ -25,65 +25,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
-private theorem helper_terminalFacts_87.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (generating : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T generating),
-    let _ : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    IsProperEdgeColoring G generating ∧
-    IsOneEdgeUncolored generating e0 := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett terminal
-  have cert := ett.series.certified terminal
-  generalize ht : terminal = z at cert
-  cases cert with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma initialClosure =>
-    have hz : terminal = 0 := by simp [ht]
-    have : False := by
-      have hv := congrArg Fin.val hz
-      simp [terminal] at hv
-      have hp := ett.roundsPositive
-      omega
-    exact this.elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hi : i.succ = terminal := by simp [ht]
-    have hg : generating = choice.selected := by
-      calc
-        generating = ett.series.data.coloring terminal := ett.generatingColoring
-        _ = choice.selected := by rw [← currentColoring, hi]
-    rw [hg]
-    exact ⟨choice.selectedProper, choice.selectedOneUncolored⟩
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-    have hi : i.succ = terminal := by simp [ht]
-    have hg : generating = ett.series.data.coloring terminal := ett.generatingColoring
-    rw [hg, ← hi]
-    exact ⟨currentProper, currentOneUncolored⟩
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hi : i.succ = terminal := by simp [ht]
-    have hg : generating = ett.series.data.coloring i.castSucc := by
-      calc
-        generating = ett.series.data.coloring terminal := ett.generatingColoring
-        _ = ett.series.data.coloring i.succ := by rw [hi]
-        _ = ett.series.data.coloring i.castSucc := currentColoring
-    rw [hg]
-    exact ⟨previousProper, previousOneUncolored⟩
-
 private theorem helper_branch_193.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
@@ -455,9 +396,7 @@ theorem CurrentElementaryOrGoodHierarchyConstructionLarge
   let terminal : Fin (ett.rounds + 1) := Fin.last ett.rounds
   let Tn : TreeSequence G e0 := ett.series.data.tree terminal.castSucc
   let F : TreeSequence G e0 := ett.series.data.tree terminal.succ
-  have terminalFacts :=
-    @helper_terminalFacts_87 V E inferInstance inferInstance inferInstance G k e0 input T
-        generating ett
+  have terminalFacts := ett.coloringProperties
   have stable : StableColoring Tn
       (TashkinovStoredColors ett.series.data terminal) generating generating := by
     unfold StableColoring

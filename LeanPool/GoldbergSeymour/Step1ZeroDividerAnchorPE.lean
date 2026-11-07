@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.ColorDegreeBounds
+
 public import LeanPool.GoldbergSeymour.InterchangeableExitPaths
 
 public import LeanPool.GoldbergSeymour.TwoColorComponentClosedColors
@@ -213,42 +215,6 @@ private theorem helper_branch_588.{u_1, u_2} :
   exact finish rho hrhoProper hrhoOne hrhoCombined hcMissingRho hcClosedRho
     Q₁ Q₂ hQ₁ hQ₂
 
-private theorem helper_presentBound_921.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi),
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let x : V := Tn.vertex base.supportPosition; (PresentColors G phi x).card ≤ Degree G x := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base n Tn x
-  have chooseEdge (d : {d : Fin k // d ∈ PresentColors G phi x}) :
-      ∃ f, Incident G x f ∧ phi f = some d.1 := by
-    simpa [PresentColors] using d.property
-  let select : {d : Fin k // d ∈ PresentColors G phi x} →
-      {f : E // Incident G x f} := fun d =>
-    ⟨Classical.choose (chooseEdge d),
-      (Classical.choose_spec (chooseEdge d)).1⟩
-  have selectColor : ∀ d, phi (select d).1 = some d.1 := by
-    intro d
-    exact (Classical.choose_spec (chooseEdge d)).2
-  have selectInjective : Function.Injective select := by
-    intro d e hde
-    apply Subtype.ext
-    apply Option.some.inj
-    calc
-      some (d : Fin k) = phi (select d).1 := (selectColor d).symm
-      _ = phi (select e).1 := by rw [hde]
-      _ = some (e : Fin k) := selectColor e
-  let : Fintype {d : Fin k // d ∈ PresentColors G phi x} :=
-    Fintype.ofFinite _
-  have hcard := Fintype.card_le_of_injective select selectInjective
-  change (PresentColors G phi x).card ≤
-    (Finset.univ.filter (fun f => Incident G x f)).card
-  simpa [Fintype.card_subtype] using hcard
-
 private theorem helper_hlowerElem_973.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -387,9 +353,7 @@ lemma Step1ZeroDividerAnchorPE {V E : Type*}
     have step := ett.series.certified 0
     cases step with
     | initial triple => exact triple.2.2.1
-  have presentBound : (PresentColors G phi x).card ≤ Degree G x := by
-    exact @helper_presentBound_921 V E inferInstance inferInstance inferInstance inferInstance G
-        k e0 input T phi ett base
+  have presentBound := PresentColors.card_le_degree G phi x
   have degreeAt : Degree G x ≤ MaximumDegree G := by
     unfold MaximumDegree
     exact Finset.le_max' _ _ (Finset.mem_insert.mpr (Or.inr

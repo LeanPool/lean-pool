@@ -407,69 +407,6 @@ private theorem helper_hpredecessor_156.{u_1, u_2} :
       exact ⟨choice.vertex, gamma, choice.color, currentVertex,
         currentGamma, currentDelta, rfl⟩
 
-private theorem helper_hreferenceGood_368.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (generating : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T generating)
-      (hpositive : (0 : ℕ) < ett.rounds),
-    let q : Fin ett.rounds :=
-      (⟨ett.rounds - (1 : ℕ),
-          Nat.sub_lt (Nat.zero_lt_of_lt hpositive)
-            (Decidable.byContradiction fun (a : ¬(0 : ℕ) < (1 : ℕ)) ↦ by omega)⟩ :
-        Fin ett.rounds);
-    IsProperEdgeColoring G (ett.series.data.coloring q.castSucc) ∧
-      IsOneEdgeUncolored (ett.series.data.coloring q.castSucc) e0 := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive q
-  have hstep := ett.series.certified q.succ
-  generalize htarget : q.succ = target at hstep
-  cases hstep with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    exact (Fin.succ_ne_zero q htarget).elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hi : i = q := by
-      apply Fin.ext
-      have hv := congrArg Fin.val htarget
-      simp at hv
-      omega
-    subst i
-    exact ⟨previousProper, previousOneUncolored⟩
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have hi : i = q := by
-      apply Fin.ext
-      have hv := congrArg Fin.val htarget
-      simp at hv
-      omega
-    subst i
-    exact ⟨previousProper, previousOneUncolored⟩
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hi : i = q := by
-      apply Fin.ext
-      have hv := congrArg Fin.val htarget
-      simp at hv
-      omega
-    subst i
-    exact ⟨previousProper, previousOneUncolored⟩
-
 private theorem helper_copyClosure_416.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -1632,8 +1569,7 @@ theorem TdReplacementPrefixExact {V E : Type*} [Fintype V] [Fintype E]
   have hreferenceGood :
       IsProperEdgeColoring G (ett.series.data.coloring q.castSucc) ∧
       IsOneEdgeUncolored (ett.series.data.coloring q.castSucc) e0 := by
-    exact @helper_hreferenceGood_368 V E inferInstance inferInstance inferInstance G k e0 input T
-        generating ett hpositive
+    exact ett.series.coloringProperties q.castSucc
   have copyClosure {seed : TreeSequence G e0}
       (hclosure : TashkinovClosure
         (ett.series.data.coloring q.castSucc) seed

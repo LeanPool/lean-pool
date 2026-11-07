@@ -24,104 +24,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
-private theorem InterchangePECommonMissingClosed_hproperGen_91.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-    LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-    TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-    e0 input T generating), 0 < ett.rounds → ett.series.data.kind (Fin.last ett.rounds) = some
-    TashkinovExtensionKind.PE → let _ := Fin.last ett.rounds; generating =
-    ett.series.data.coloring (Fin.last ett.rounds) → IsProperEdgeColoring G generating := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive hPE n hgen
-  have hstep := ett.series.certified n
-  generalize targetEq : n = target at hstep
-  cases hstep with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    have hn : n ≠ 0 := by simp [n]; omega
-    exact (hn targetEq).elim
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-    have hi : i.succ = n := by
-      apply Fin.ext
-      have hv := congrArg Fin.val targetEq
-      simp at hv
-      omega
-    simpa [hgen, n, hi] using currentProper
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hlast : ett.series.data.kind n =
-        some TashkinovExtensionKind.PE := by simpa [n] using hPE
-    rw [targetEq, currentKind] at hlast
-    contradiction
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hlast : ett.series.data.kind n =
-        some TashkinovExtensionKind.PE := by simpa [n] using hPE
-    rw [targetEq, currentKind] at hlast
-    contradiction
-
-private theorem InterchangePECommonMissingClosed_honeGen_131.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-    LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-    TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-    e0 input T generating), 0 < ett.rounds → ett.series.data.kind (Fin.last ett.rounds) = some
-    TashkinovExtensionKind.PE → let _ := Fin.last ett.rounds; generating =
-    ett.series.data.coloring (Fin.last ett.rounds) → IsOneEdgeUncolored generating e0 := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive hPE n hgen
-  have hstep := ett.series.certified n
-  generalize targetEq : n = target at hstep
-  cases hstep with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    have hn : n ≠ 0 := by simp [n]; omega
-    exact (hn targetEq).elim
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-    have hi : i.succ = n := by
-      apply Fin.ext
-      have hv := congrArg Fin.val targetEq
-      simp at hv
-      omega
-    simpa [hgen, n, hi] using currentOneUncolored
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hlast : ett.series.data.kind n =
-        some TashkinovExtensionKind.PE := by simpa [n] using hPE
-    rw [targetEq, currentKind] at hlast
-    contradiction
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hlast : ett.series.data.kind n =
-        some TashkinovExtensionKind.PE := by simpa [n] using hPE
-    rw [targetEq, currentKind] at hlast
-    contradiction
-
 theorem InterchangePECommonMissingClosed {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
     (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
@@ -156,11 +58,9 @@ theorem InterchangePECommonMissingClosed {V E : Type*}
       (TashkinovStoredColors ett.series.data n) generating sigma := by
     simpa [Tn, n] using hstable.1
   have hproperGen : IsProperEdgeColoring G generating := by
-    exact @InterchangePECommonMissingClosed_hproperGen_91 V E inferInstance inferInstance
-        inferInstance G k e0 input T generating ett hpositive hPE hgen
+    exact ett.coloringProperties.1
   have honeGen : IsOneEdgeUncolored generating e0 := by
-    exact @InterchangePECommonMissingClosed_honeGen_131 V E inferInstance inferInstance
-        inferInstance G k e0 input T generating ett hpositive hPE hgen
+    exact ett.coloringProperties.2
   have hlowerElem : ColoredVertexSetElementary G
       (ett.series.data.coloring ⟨ett.rounds - 1, by omega⟩)
       (TreeSequenceVertexSet Tn) := by

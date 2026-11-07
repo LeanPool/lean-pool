@@ -50,6 +50,7 @@ public import LeanPool.GoldbergSeymour.ChromaticIndexSpec
 public import LeanPool.GoldbergSeymour.ClosedColorExitPathBoundaryEdge
 public import LeanPool.GoldbergSeymour.ClosedCoreElementary
 public import LeanPool.GoldbergSeymour.ClosedSetTwoColorComponentAvoidance
+public import LeanPool.GoldbergSeymour.ColorDegreeBounds
 public import LeanPool.GoldbergSeymour.ColoredVertexSetClosed
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.ColoredVertexSetStronglyClosed

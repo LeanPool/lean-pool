@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
+
 public import LeanPool.GoldbergSeymour.SameColorSeriesPreserved
 public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 public import LeanPool.GoldbergSeymour.TashkinovSeries
@@ -253,66 +255,6 @@ private theorem helper_stepSegment_310.{u_1, u_2} :
         omega
       subst i
       simpa [hslot] using orderedExtension
-
-private theorem helper_hterminalData_392.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq E] {G : LooplessMultigraph V E} {k rounds : ℕ} {e0 : E}
-      {input : PartialEdgeColoring E k} (series : TashkinovSeries G k rounds e0 input)
-      (_ _ terminal : Fin rounds),
-    series.data.kind terminal.succ = some TashkinovExtensionKind.PE →
-    let terminalColoring : PartialEdgeColoring E k := series.data.coloring terminal.succ;
-    IsProperEdgeColoring G terminalColoring ∧ IsOneEdgeUncolored terminalColoring e0 := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series t epsilon terminal hterminalKind terminalColoring
-  have cert := series.certified terminal.succ
-  generalize hslot : terminal.succ = slot at cert
-  cases cert with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-      exact (Fin.succ_ne_zero terminal hslot).elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-      have hi : i = terminal := by
-        apply Fin.ext
-        have := congrArg Fin.val hslot
-        simp only [Fin.val_succ] at this
-        omega
-      subst i
-      rw [currentKind] at hterminalKind
-      simp at hterminalKind
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      actualGamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-      have hi : i = terminal := by
-        apply Fin.ext
-        have := congrArg Fin.val hslot
-        simp only [Fin.val_succ] at this
-        omega
-      subst i
-      exact ⟨by simpa [terminalColoring] using currentProper,
-        by simpa [terminalColoring] using currentOneUncolored⟩
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-      have hi : i = terminal := by
-        apply Fin.ext
-        have := congrArg Fin.val hslot
-        simp only [Fin.val_succ] at this
-        omega
-      subst i
-      rw [currentKind] at hterminalKind
-      simp at hterminalKind
 
 private theorem helper_terminalClosed_552.{u_1, u_2} :
     open scoped Classical in
@@ -1114,7 +1056,7 @@ theorem StableSeriesCycleComponentTransport {V E : Type*}
     (hintervening : ∀ r : Fin rounds,
       t.val < r.val → r.val < epsilon.val →
       series.data.kind r.succ = some TashkinovExtensionKind.RE)
-    (hterminalKind : series.data.kind terminal.succ =
+    (_ : series.data.kind terminal.succ =
       some TashkinovExtensionKind.PE)
     (sigma : PartialEdgeColoring E k)
     (hsigmaProper : IsProperEdgeColoring G sigma)
@@ -1203,8 +1145,7 @@ theorem StableSeriesCycleComponentTransport {V E : Type*}
   have vertexToTerminal := @helper_vertexToTerminal_689 V E inferInstance inferInstance
       inferInstance G k rounds e0 input series t epsilon terminal hepsilonTerminal stepSegment
       vertexTransfer
-  have hterminalData := @helper_hterminalData_392 V E inferInstance inferInstance inferInstance G k
-      rounds e0 input series t epsilon terminal hterminalKind
+  have hterminalData := series.coloringProperties terminal.succ
   rcases hterminalData with ⟨hterminalProper, hterminalOne⟩
   rcases hcycle with ⟨cycle, hfull⟩
   have edgeOldActive (f : E) (hf : Sum.inr f ∈ cycle.walk.support) :

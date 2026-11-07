@@ -7,7 +7,6 @@ module
 
 public import LeanPool.GoldbergSeymour.TchangeCounterexampleMeasure
 public import LeanPool.GoldbergSeymour.TchangeKempeClosureData
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Subgraph
 
 /-!
 # Tchange Strict Shortening
@@ -22,117 +21,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 namespace GoldbergSeymour
 
 open scoped Sym2
-
-private theorem helper_firstEntry_48.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} (C : TchangeCounterexample G k e0)
-      (D : TchangeKempeClosureData C),
-    let U : Finset V := TreeSequenceVertexSet D.closedTree;
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G D.sigma C.a C.b;
-    ∀ (a b : V) (Q : H.Walk (Sum.inl a) (Sum.inl b)),
-    Q.IsPath →
-    C.a ∈ MissingColors G D.sigma a ∨ C.b ∈ MissingColors G D.sigma a →
-    a ∉ U →
-    b ∈ U →
-    ∃ (c : V) (_ : c ∈ U) (hcQ : Sum.inl c ∈ Q.support),
-    let L : H.Walk (Sum.inl a) (Sum.inl c) := Q.takeUntil (Sum.inl c) hcQ;
-    TreeExitPath D.closedTree D.sigma C.a C.b a c L ∧
-      ∃ (g : E) (x : V),
-        Sum.inr g ∈ L.support ∧
-          Incident G c g ∧
-            Incident G x g ∧
-              x ∉ U ∧ g ∈ BoundaryEdges G U ∧ (D.sigma g = some C.a ∨ D.sigma g = some C.b) := by
-  classical
-  intro V E _ _ _ _ G k e0 C D U H a b Q hQ hmissing haU hbU
-  let S : Finset (Sum V E) := U.image Sum.inl
-  obtain ⟨z, hzS, hzQ, hzfirst⟩ :=
-    Q.exists_mem_support_forall_mem_support_imp_eq S (by
-      refine ⟨Sum.inl b, ?_⟩
-      simp [S, hbU])
-  obtain ⟨c, hcU, hcz⟩ : ∃ c, c ∈ U ∧ Sum.inl c = z := by
-    simpa [S] using hzS
-  subst z
-  let L := Q.takeUntil (Sum.inl c) hzQ
-  have hLc : ∀ w ∈ U, (Sum.inl w ∈ L.support ↔ w = c) := by
-    intro w hwU
-    constructor
-    · intro hwL
-      have heq := hzfirst (Sum.inl w) (by simp [S, hwU]) hwL
-      exact Sum.inl.inj heq
-    · rintro rfl
-      exact L.end_mem_support
-  have hac : a ≠ c := by
-    intro hac
-    apply haU
-    simpa [hac] using hcU
-  have hLpath : L.IsPath := hQ.takeUntil _
-  have hLlen : 2 ≤ L.length := by
-    have hpos : 0 < L.length := by
-      apply Nat.pos_of_ne_zero
-      intro hn
-      have hnil : L.Nil := SimpleGraph.Walk.length_eq_zero_iff.mp hn
-      exact hac (Sum.inl.inj hnil.eq)
-    by_contra hnot
-    have hlen : L.length = 1 := by omega
-    have hadj := L.adj_getVert_succ (i := 0) (by omega)
-    have hend : L.getVert 1 = Sum.inl c := by
-      have := L.getVert_length
-      rwa [hlen] at this
-    rw [L.getVert_zero, hend] at hadj
-    simp [H, TwoColorIncidenceGraph] at hadj
-  have hExit : TreeExitPath D.closedTree D.sigma C.a C.b a c L := by
-    unfold TreeExitPath
-    refine ⟨hLpath, hLlen, haU, hcU, ?_, hLc⟩
-    exact hmissing
-  have hlastAdj := L.adj_getVert_succ (i := L.length - 1) (by omega)
-  have hlastSucc : L.length - 1 + 1 = L.length := by omega
-  rw [hlastSucc, L.getVert_length] at hlastAdj
-  cases hlast : L.getVert (L.length - 1) with
-  | inl v =>
-      rw [hlast] at hlastAdj
-      simp [H, TwoColorIncidenceGraph] at hlastAdj
-  | inr g =>
-      rw [hlast] at hlastAdj
-      have hgc : Incident G c g ∧
-          (D.sigma g = some C.a ∨ D.sigma g = some C.b) := by
-        simpa [H, TwoColorIncidenceGraph] using hlastAdj
-      have hprevAdj := L.adj_getVert_succ (i := L.length - 2) (by omega)
-      have hprevSucc : L.length - 2 + 1 = L.length - 1 := by omega
-      rw [hprevSucc, hlast] at hprevAdj
-      cases hprev : L.getVert (L.length - 2) with
-      | inr f =>
-          rw [hprev] at hprevAdj
-          simp [H, TwoColorIncidenceGraph] at hprevAdj
-      | inl x =>
-          rw [hprev] at hprevAdj
-          have hxg : Incident G x g := by
-            have hdata : Incident G x g ∧
-                (D.sigma g = some C.a ∨ D.sigma g = some C.b) := by
-              simpa [H, TwoColorIncidenceGraph] using hprevAdj
-            exact hdata.1
-          have hxout : x ∉ U := by
-            intro hxU
-            have hxc := (hLc x hxU).mp (by
-              rw [← hprev]
-              exact L.getVert_mem_support (L.length - 2))
-            have heq : L.getVert (L.length - 2) = L.getVert L.length := by
-              rw [hprev, L.getVert_length, hxc]
-            have := hLpath.getVert_injOn (Nat.sub_le _ _) (by simp) heq
-            omega
-          have hcg : c ≠ x := by
-            intro hcx
-            exact hxout (hcx ▸ hcU)
-          have hends : G.ends g = s(c, x) :=
-            (Sym2.mem_and_mem_iff hcg).mp ⟨hgc.1, hxg⟩
-          have hboundary : g ∈ BoundaryEdges G U := by
-            simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ,
-              true_and]
-            exact ⟨c, hcU, x, hxout, hends⟩
-          refine ⟨c, hcU, hzQ, hExit, g, x, ?_, hgc.1, hxg,
-            hxout, hboundary, hgc.2⟩
-          rw [← hlast]
-          exact L.getVert_mem_support (L.length - 1)
 
 private theorem helper_hf1NotL_369.{u_1, u_2} :
     open scoped Classical in
@@ -486,8 +374,22 @@ theorem TchangeStrictShortening {V E : Type*}
   classical
   let U := TreeSequenceVertexSet D.closedTree
   let H := TwoColorIncidenceGraph G D.sigma C.a C.b
-  have firstEntry := @helper_firstEntry_48 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 C D
+  have firstEntry (a b : V) (Q : H.Walk (Sum.inl a) (Sum.inl b))
+      (path : Q.IsPath)
+      (missing : C.a ∈ MissingColors G D.sigma a ∨ C.b ∈ MissingColors G D.sigma a)
+      (outside : a ∉ U) (inside : b ∈ U) :
+      ∃ (c : V) (_ : c ∈ U) (member : Sum.inl c ∈ Q.support),
+        let L := Q.takeUntil (Sum.inl c) member
+        TreeExitPath D.closedTree D.sigma C.a C.b a c L ∧
+        ∃ (edge : E) (other : V), Sum.inr edge ∈ L.support ∧ Incident G c edge ∧
+          Incident G other edge ∧ other ∉ U ∧ edge ∈ BoundaryEdges G U ∧
+          (D.sigma edge = some C.a ∨ D.sigma edge = some C.b) := by
+    obtain ⟨c, hcU, member, exit⟩ :=
+      TreeExitPath.firstEntry D.closedTree Q path missing outside ⟨b, inside, Q.end_mem_support⟩
+    obtain ⟨edge, other, _, support, incident, otherIncident, otherOutside, boundary, colors⟩ :=
+      exit.lastBoundaryEdge
+    exact ⟨c, hcU, member, exit, edge, other, support, incident, otherIncident,
+      otherOutside, boundary, colors⟩
   obtain ⟨c1, hc1U, hc1Q, hExit1, g1, x1, hg1L, hg1c, hg1x,
       hx1out, hg1Boundary, hg1Color⟩ :=
     firstEntry C.a1 C.b1 D.Q1 D.exit1.1 D.exit1.2.2.2.2.1

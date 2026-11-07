@@ -23,7 +23,6 @@ public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 public import LeanPool.GoldbergSeymour.TreeExitComponentMeetsTreeOnlyAtExit
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
 public import LeanPool.GoldbergSeymour.ClosedColorExitPathBoundaryEdge
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Subgraph
 
 /-!
 # Rutgers Strict Shortening
@@ -1811,88 +1810,6 @@ private theorem helper_transfer3_406.{u_1, u_2} :
   · intro w hw
     simpa [q] using hexit.2.2.2.2.2 w hw
 
-private theorem helper_firstEntry_790.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) {input : PartialEdgeColoring E k}
-      {T : TreeSequence G e0} {generating : PartialEdgeColoring E k}
-      (original : ExtendedTashkinovTree G k e0 input T generating)
-      (presentation : RutgersClosedPresentation G k e0 original)
-      (counterexample : RutgersCounterexample G k e0 original presentation),
-    let U : TreeSequence G e0 := presentation.U;
-    let sigma : PartialEdgeColoring E k := presentation.sigma;
-    ∀ (gamma : Fin k),
-    let mu3 : PartialEdgeColoring E k :=
-      OutsideTreeColorSwap U sigma counterexample.alpha gamma;
-    ∀
-      (_ :
-        (TwoColorIncidenceGraph G mu3 gamma counterexample.beta).Walk
-          (Sum.inl counterexample.a1) (Sum.inl counterexample.b1))
-      (_ :
-        (TwoColorIncidenceGraph G mu3 gamma counterexample.beta).Walk
-          (Sum.inl counterexample.a2) (Sum.inl counterexample.b2))
-      (_ :
-        (TwoColorIncidenceGraph G mu3 gamma counterexample.beta).Walk
-          (Sum.inl counterexample.a3) (Sum.inl counterexample.b3))
-      (_ _ i3 : Fin (presentation.U.length + (1 : ℕ))) (_ : (1 : ℕ) ≤ (↑i3 : ℕ))
-      (_ : (↑i3 : ℕ) ≤ U.length) (_ : (1 : ℕ) ≤ (↑i3 : ℕ) - (1 : ℕ)),
-    let mu4 : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G mu3 gamma counterexample.beta (Sum.inl counterexample.b3);
-    ∀ (W : TreeSequence G e0)
-      (_ :
-        (TwoColorIncidenceGraph G mu4 counterexample.beta gamma).Walk
-          (Sum.inl counterexample.a1) (Sum.inl counterexample.b1))
-      (_ :
-        (TwoColorIncidenceGraph G mu4 counterexample.beta gamma).Walk
-          (Sum.inl counterexample.a2) (Sum.inl counterexample.b2))
-      (_ :
-        (TwoColorIncidenceGraph G mu4 counterexample.beta gamma).Walk
-          (Sum.inl counterexample.a3) (Sum.inl counterexample.b3))
-      (_ : TreeColorSetClosed G mu4 W { counterexample.beta }) {u v : V}
-      (p :
-        (TwoColorIncidenceGraph G mu4 counterexample.beta gamma).Walk (Sum.inl u)
-          (Sum.inl v))
-      (_ : p.IsPath) (_ : u ∉ TreeSequenceVertexSet W) (_ : v ∈ TreeSequenceVertexSet W)
-      (_ : counterexample.beta ∈ MissingColors G mu4 u ∨ gamma ∈ MissingColors G mu4 u),
-    ∃ (c : V) (hc : Sum.inl c ∈ p.support),
-    TreeExitPath W mu4 counterexample.beta gamma u c (p.takeUntil (Sum.inl c) hc) ∧
-      ∃ f ∈ BoundaryColorEdges G mu4 (TreeSequenceVertexSet W) gamma,
-        Incident G c f ∧ Sum.inr f ∈ (p.takeUntil (Sum.inl c) hc).support := by
-  classical
-  intro V E _ _ _ _ G k e0 input T generating original presentation counterexample U sigma gamma
-      mu3 P1 P2 P3 i1 i2 i3 hi3pos hi3le hi3prevpos mu4 W Q1 Q2 Q3 betaClosed u v p hp hu hv hm
-  let S : Finset (Sum V E) := (TreeSequenceVertexSet W).image Sum.inl
-  obtain ⟨z, hzS, hzP, hzFirst⟩ :=
-    p.exists_mem_support_forall_mem_support_imp_eq S (by
-      refine ⟨Sum.inl v, ?_⟩
-      simp [S, hv])
-  obtain ⟨c, hcW, hcz⟩ : ∃ c, c ∈ TreeSequenceVertexSet W ∧ Sum.inl c = z := by
-    simpa [S] using hzS
-  subst z
-  let L := p.takeUntil (Sum.inl c) hzP
-  have huc : u ≠ c := by intro h; exact hu (h ▸ hcW)
-  have hlen : 2 ≤ L.length := by
-    have hpos : 0 < L.length := by
-      apply Nat.pos_of_ne_zero
-      intro h
-      exact huc (Sum.inl.inj (SimpleGraph.Walk.length_eq_zero_iff.mp h).eq)
-    by_contra h
-    have h1 : L.length = 1 := by omega
-    have hadj := L.adj_getVert_succ (i := 0) (by omega)
-    have hend : L.getVert 1 = Sum.inl c := by simpa [h1] using L.getVert_length
-    rw [L.getVert_zero, hend] at hadj
-    exact hadj.elim
-  have hexit : TreeExitPath W mu4 counterexample.beta gamma u c L := by
-    refine ⟨hp.takeUntil _, hlen, hu, hcW, hm, ?_⟩
-    intro w hw
-    constructor
-    · intro hwp
-      exact Sum.inl.inj (hzFirst (Sum.inl w) (by simp [S, hw]) hwp)
-    · rintro rfl
-      exact L.end_mem_support
-  exact ⟨c, hzP, hexit, ClosedColorExitPathBoundaryEdge G W mu4
-    counterexample.beta gamma betaClosed u c L hexit⟩
-
 private theorem helper_finish_912.{u_1, u_2} :
     helperFinish912Conditions.{u_1, u_2} := by
   classical
@@ -2522,9 +2439,10 @@ private theorem helper_continuation_2244.{u_1, u_2} :
         TreeExitPath W mu4 counterexample.beta gamma u c (p.takeUntil (Sum.inl c) hc) ∧
         ∃ f, f ∈ BoundaryColorEdges G mu4 (TreeSequenceVertexSet W) gamma ∧
           Incident G c f ∧ Sum.inr f ∈ (p.takeUntil (Sum.inl c) hc).support := by
-    exact @helper_firstEntry_790 V E inferInstance inferInstance inferInstance inferInstance G k
-        e0 input T generating original presentation counterexample gamma P1 P2 P3 i1 i2 i3 hi3pos
-        hi3le hi3prevpos W Q1 Q2 Q3 betaClosed u v p hp hu hv hm
+    obtain ⟨c, _, member, exit⟩ :=
+      TreeExitPath.firstEntry W p hp hm hu ⟨v, hv, p.end_mem_support⟩
+    obtain ⟨edge, _, boundary, incident, support⟩ := exit.closedLastBoundaryEdge betaClosed
+    exact ⟨c, member, exit, edge, boundary, incident, support⟩
   obtain ⟨c1, hc1, hL1, g1, hg1, hiG1, hsG1⟩ :=
     firstEntry Q1 hQ1.1 ha1W hb1W hQ1.2.2.2.2.1
   obtain ⟨c2, hc2, hL2, g2, hg2, hiG2, hsG2⟩ :=

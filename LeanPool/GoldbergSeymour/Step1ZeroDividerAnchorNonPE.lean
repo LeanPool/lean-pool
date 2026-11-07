@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.ColorDegreeBounds
+
 public import LeanPool.GoldbergSeymour.InterchangeableExitPaths
 public import LeanPool.GoldbergSeymour.TwoColorComponentClosedColors
 
@@ -599,31 +601,7 @@ lemma Step1ZeroDividerAnchorNonPE {V E : Type*}
     have step := ett.series.certified 0
     cases step with
     | initial triple => exact triple.2.2.1
-  have presentBound : (PresentColors G phi x).card ≤ Degree G x := by
-    have chooseEdge (d : {d : Fin k // d ∈ PresentColors G phi x}) :
-        ∃ f, Incident G x f ∧ phi f = some d.1 := by
-      simpa [PresentColors] using d.property
-    let select : {d : Fin k // d ∈ PresentColors G phi x} →
-        {f : E // Incident G x f} := fun d =>
-      ⟨Classical.choose (chooseEdge d),
-        (Classical.choose_spec (chooseEdge d)).1⟩
-    have selectColor : ∀ d, phi (select d).1 = some d.1 := by
-      intro d
-      exact (Classical.choose_spec (chooseEdge d)).2
-    have selectInjective : Function.Injective select := by
-      intro d e hde
-      apply Subtype.ext
-      apply Option.some.inj
-      calc
-        some (d : Fin k) = phi (select d).1 := (selectColor d).symm
-        _ = phi (select e).1 := by rw [hde]
-        _ = some (e : Fin k) := selectColor e
-    let : Fintype {d : Fin k // d ∈ PresentColors G phi x} :=
-      Fintype.ofFinite _
-    have hcard := Fintype.card_le_of_injective select selectInjective
-    change (PresentColors G phi x).card ≤
-      (Finset.univ.filter (fun f => Incident G x f)).card
-    simpa [Fintype.card_subtype] using hcard
+  have presentBound := PresentColors.card_le_degree G phi x
   exact @helper_continuation_1146 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@hMP) (@hpositive) (@hproper)
       (@hone) (@hlower) (@base) (@H) (@alpha) (@beta) (@hne) (@halpha) (@hclosed) (@a₁) (@b₁)

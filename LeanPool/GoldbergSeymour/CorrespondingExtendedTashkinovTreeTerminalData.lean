@@ -72,8 +72,7 @@ theorem CorrespondingExtendedTashkinovTree.coloringProperties {V E : Type*}
     {ett : ExtendedTashkinovTree G k e0 input T phi} {U : TreeSequence G e0}
     (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma U) :
     IsProperEdgeColoring G sigma ∧ IsOneEdgeUncolored sigma e0 := by
-  rw [corr.finalGeneratingColoring]
-  exact ⟨corr.replacementProper _, corr.replacementOneUncolored _⟩
+  exact corr.replacementETT.coloringProperties
 
 /-- The terminal replacement coloring is stable on the original penultimate tree. -/
 theorem CorrespondingExtendedTashkinovTree.terminalStability {V E : Type*}

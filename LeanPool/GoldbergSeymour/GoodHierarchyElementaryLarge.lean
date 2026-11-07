@@ -319,7 +319,7 @@ private abbrev helperCtx623Conditions.{u_1, u_2} : Prop :=
         GoodHierarchy K),
     let n : Fin (current.rounds + (1 : ℕ)) := Fin.last current.rounds;
     let Tn : TreeSequence G e0 := current.series.data.tree n.castSucc; (2 : ℕ) * current.rounds +
-        (11 : ℕ) ≤ (TreeMissingColors generating' Tn).card) → IsProperEdgeColoring G phi →
+        (11 : ℕ) ≤ (TreeMissingColors generating' Tn).card) →
     let candidate : ℕ → ℕ → Prop := fun (a b : ℕ) =>
     ∃ (input' : PartialEdgeColoring E k) (T' : TreeSequence G e0) (generating' :
         PartialEdgeColoring E k) (other : ExtendedTashkinovTree G k e0 input' T' generating')
@@ -342,10 +342,7 @@ private abbrev helperCtx623Conditions.{u_1, u_2} : Prop :=
         {base' : HierarchyBase other generating'} (C' : HierarchyCounterexample base'),
         other.rounds = ettMin.rounds → C'.hierarchy.dividerCount = CMin.hierarchy.dividerCount →
         ¬HierarchyCounterexampleLess (HierarchyCounterexampleMeasure C')
-        (HierarchyCounterexampleMeasure CMin)) → (
-    ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
-        {generating' : PartialEdgeColoring E k} (_ : ExtendedTashkinovTree G k e0 input' T'
-        generating'), IsProperEdgeColoring G generating' ∧ IsOneEdgeUncolored generating' e0) →
+        (HierarchyCounterexampleMeasure CMin)) →
         HierarchyMinimumCounterexampleContext G k e0 inputMin TMin generatingMin ettMin baseMin
         CMin
 
@@ -487,80 +484,6 @@ private abbrev helperBranch281Conditions.{u_1, u_2} : Prop :=
         (11 : ℕ) ≤ (TreeMissingColors generating' Tn).card) → H.dividerCount = q →
         ColoredVertexSetElementary G phi (TreeSequenceVertexSet T)
 
-private theorem helper_finalProperties_437.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (_ : ℕ)
-      (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (_ : TashkinovHierarchy ett base),
-    IsProperEdgeColoring G phi ∧ IsOneEdgeUncolored phi e0 := by
-  classical
-  intro V E _ _ _ _ G k e0 q input T phi ett base H
-  have hr : 1 ≤ ett.rounds := ett.roundsPositive
-  let q : Fin ett.rounds := ⟨ett.rounds - 1, by omega⟩
-  have qlast : q.succ = Fin.last ett.rounds := by
-    apply Fin.ext
-    simp [q]
-    omega
-  generalize targetEq : q.succ = target
-  cases ett.series.certified target with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure => exact (Fin.succ_ne_zero q targetEq).elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-      have hi : i = q := by
-        apply Fin.ext
-        have hv := congrArg Fin.val targetEq
-        simp at hv
-        omega
-      subst i
-      have hgen : phi = ett.series.data.coloring q.succ := by
-        calc
-          phi = ett.series.data.coloring (Fin.last ett.rounds) := ett.generatingColoring
-          _ = ett.series.data.coloring q.succ := congrArg _ qlast.symm
-      simpa [hgen, currentColoring] using
-        And.intro choice.selectedProper choice.selectedOneUncolored
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-      have hi : i = q := by
-        apply Fin.ext
-        have hv := congrArg Fin.val targetEq
-        simp at hv
-        omega
-      subst i
-      have hgen : phi = ett.series.data.coloring q.succ := by
-        calc
-          phi = ett.series.data.coloring (Fin.last ett.rounds) := ett.generatingColoring
-          _ = ett.series.data.coloring q.succ := congrArg _ qlast.symm
-      simpa [hgen] using And.intro currentProper currentOneUncolored
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-      have hi : i = q := by
-        apply Fin.ext
-        have hv := congrArg Fin.val targetEq
-        simp at hv
-        omega
-      subst i
-      have hgen : phi = ett.series.data.coloring q.succ := by
-        calc
-          phi = ett.series.data.coloring (Fin.last ett.rounds) := ett.generatingColoring
-          _ = ett.series.data.coloring q.succ := congrArg _ qlast.symm
-      simpa [hgen, currentColoring] using
-        And.intro previousProper previousOneUncolored
-
 private theorem helper_minMinimal_526.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -617,95 +540,6 @@ private theorem helper_minMinimal_526.{u_1, u_2} :
       · omega
     · omega
 
-private theorem helper_certifiedProperties_558.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (q : ℕ) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (_ : TashkinovHierarchy ett base),
-    let candidate : ℕ → ℕ → Prop := fun (a b : ℕ) =>
-    ∃ (input' : PartialEdgeColoring E k) (T' : TreeSequence G e0) (generating' :
-        PartialEdgeColoring E k) (other : ExtendedTashkinovTree G k e0 input' T' generating')
-        (base' : HierarchyBase other generating') (C' : HierarchyCounterexample base'),
-        other.rounds = ett.rounds ∧ C'.hierarchy.dividerCount = q ∧ HierarchyCounterexampleMeasure
-        C' = (a, b); (
-    ∃ (a : ℕ) (b : ℕ), candidate a b) →
-    ∀ (firstExists :
-    ∃ (a : ℕ) (b : ℕ), candidate a b),
-    let first : ℕ := Nat.find firstExists; (
-    ∃ (b : ℕ), candidate first b) →
-    ∀ (inputMin : PartialEdgeColoring E k) (TMin : TreeSequence G e0) (generatingMin :
-        PartialEdgeColoring E k) (ettMin : ExtendedTashkinovTree G k e0 inputMin TMin
-        generatingMin) (baseMin : HierarchyBase ettMin generatingMin) (_ : HierarchyCounterexample
-        baseMin) {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
-        {generating' : PartialEdgeColoring E k} (_ : ExtendedTashkinovTree G k e0 input' T'
-        generating'), IsProperEdgeColoring G generating' ∧ IsOneEdgeUncolored generating' e0 := by
-  classical
-  intro V E _ _ _ _ G k e0 q input T phi ett base H candidate candidateExists firstExists first
-      firstSpec inputMin TMin generatingMin ettMin baseMin CMin input' T' generating' other
-  have hr : 1 ≤ other.rounds := other.roundsPositive
-  let q : Fin other.rounds := ⟨other.rounds - 1, by omega⟩
-  have qlast : q.succ = Fin.last other.rounds := by
-    apply Fin.ext
-    simp [q]
-    omega
-  generalize targetEq : q.succ = target
-  cases other.series.certified target with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma initialClosure =>
-      exact (Fin.succ_ne_zero q targetEq).elim
-  | SE i previousProper previousOneUncolored previousClosed previousNotStronglyClosed
-      noRevisiting choice seriesAlternative currentColoring currentStored currentEdges currentKind
-      currentVertex currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-      have hi : i = q := by
-        apply Fin.ext
-        have hv := congrArg Fin.val targetEq
-        simp at hv
-        omega
-      subst i
-      have hgen : generating' = other.series.data.coloring q.succ := by
-        calc
-          generating' = other.series.data.coloring (Fin.last other.rounds) :=
-              other.generatingColoring
-          _ = other.series.data.coloring q.succ := congrArg _ qlast.symm
-      simpa [hgen, currentColoring] using
-        And.intro choice.selectedProper choice.selectedOneUncolored
-  | PE i previousProper previousOneUncolored previousClosed previousNotStronglyClosed
-      noRevisiting choice seriesAlternativeFails gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex currentOutside
-      currentDelta currentGamma closedExtension orderedExtension strictExtension =>
-      have hi : i = q := by
-        apply Fin.ext
-        have hv := congrArg Fin.val targetEq
-        simp at hv
-        omega
-      subst i
-      have hgen : generating' = other.series.data.coloring q.succ := by
-        calc
-          generating' = other.series.data.coloring (Fin.last other.rounds) :=
-              other.generatingColoring
-          _ = other.series.data.coloring q.succ := congrArg _ qlast.symm
-      simpa [hgen] using And.intro currentProper currentOneUncolored
-  | RE i previousProper previousOneUncolored previousClosed previousNotStronglyClosed available
-      currentColoring currentStored currentEdges currentKind currentVertex currentOutside
-      currentDelta currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-      have hi : i = q := by
-        apply Fin.ext
-        have hv := congrArg Fin.val targetEq
-        simp at hv
-        omega
-      subst i
-      have hgen : generating' = other.series.data.coloring q.succ := by
-        calc
-          generating' = other.series.data.coloring (Fin.last other.rounds) :=
-              other.generatingColoring
-          _ = other.series.data.coloring q.succ := congrArg _ qlast.symm
-      simpa [hgen, currentColoring] using
-        And.intro previousProper previousOneUncolored
-
 private theorem helper_branch_670.{u_1, u_2} :
     helperBranch670Conditions.{u_1, u_2} := by
   classical
@@ -739,9 +573,9 @@ private theorem helper_branch_670.{u_1, u_2} :
 private theorem helper_ctx_623.{u_1, u_2} :
     helperCtx623Conditions.{u_1, u_2} := by
   classical
-  intro V E _ _ _ _ G k e0 q ih input T phi ett base H hgood hlower hcurrent hlarge proper
+  intro V E _ _ _ _ G k e0 q ih input T phi ett base H hgood hlower hcurrent hlarge
       candidate candidateExists firstExists first firstSpec inputMin TMin generatingMin ettMin
-      baseMin CMin roundsMin dividerMin minMinimal certifiedProperties
+      baseMin CMin roundsMin dividerMin minMinimal
   refine
     { proper := ?_
       oneEdgeUncolored := ?_
@@ -749,8 +583,8 @@ private theorem helper_ctx_623.{u_1, u_2} :
       fewerDividers := ?_
       lexicographicMinimality := ?_
       largeMissingSet := ?_ }
-  · exact (certifiedProperties ettMin).1
-  · exact (certifiedProperties ettMin).2
+  · exact ettMin.coloringProperties.1
+  · exact ettMin.coloringProperties.2
   · intro input' T' generating' lower positiveLower lowerLess maximumLower
     exact @hlower _ _ _ lower positiveLower (by omega) maximumLower
   · exact @helper_branch_670 V E inferInstance inferInstance inferInstance inferInstance G k e0 q
@@ -758,84 +592,6 @@ private theorem helper_ctx_623.{u_1, u_2} :
       firstSpec inputMin TMin generatingMin ettMin baseMin CMin roundsMin dividerMin
   · exact minMinimal
   · exact hlarge ettMin roundsMin CMin.maximum baseMin CMin.hierarchy CMin.good
-
-private theorem helper_missing_656.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (q : ℕ) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (_ : TashkinovHierarchy ett base),
-    let candidate : ℕ → ℕ → Prop := fun (a b : ℕ) =>
-    ∃ (input' : PartialEdgeColoring E k) (T' : TreeSequence G e0) (generating' :
-        PartialEdgeColoring E k) (other : ExtendedTashkinovTree G k e0 input' T' generating')
-        (base' : HierarchyBase other generating') (C' : HierarchyCounterexample base'),
-        other.rounds = ett.rounds ∧ C'.hierarchy.dividerCount = q ∧ HierarchyCounterexampleMeasure
-        C' = (a, b); (
-    ∃ (a : ℕ) (b : ℕ), candidate a b) →
-    ∀ (firstExists :
-    ∃ (a : ℕ) (b : ℕ), candidate a b),
-    let first : ℕ := Nat.find firstExists; (
-    ∃ (b : ℕ), candidate first b) →
-    ∀ (inputMin : PartialEdgeColoring E k) (TMin : TreeSequence G e0) (generatingMin :
-        PartialEdgeColoring E k) (ettMin : ExtendedTashkinovTree G k e0 inputMin TMin
-        generatingMin) (baseMin : HierarchyBase ettMin generatingMin) (_ : HierarchyCounterexample
-        baseMin) (mu : PartialEdgeColoring E k), IsProperEdgeColoring G mu → IsOneEdgeUncolored mu
-        e0 →
-    ∀ (v : V), (MissingColors G mu v).Nonempty := by
-  classical
-  intro V E _ _ _ _ G k e0 q input T phi ett base H candidate candidateExists firstExists first
-      firstSpec inputMin TMin generatingMin ettMin baseMin CMin mu hmu hmuone v
-  have triple : KTriple G k e0 input := by
-    have step := ett.series.certified 0
-    cases step with
-    | initial triple => exact triple
-  have degreeBound : MaximumDegree G + 1 ≤ k := triple.2.2.1
-  have presentBound : ∀ w : V, (PresentColors G mu w).card ≤ Degree G w := by
-    intro w
-    have chooseEdge (c : {c : Fin k // c ∈ PresentColors G mu w}) :
-        ∃ e, Incident G w e ∧ mu e = some c.1 := by
-      simpa [PresentColors] using c.property
-    let select : {c : Fin k // c ∈ PresentColors G mu w} →
-        {e : E // Incident G w e} := fun c =>
-      ⟨Classical.choose (chooseEdge c), (Classical.choose_spec (chooseEdge c)).1⟩
-    have selectColor : ∀ c, mu (select c).1 = some c.1 := by
-      intro c
-      exact (Classical.choose_spec (chooseEdge c)).2
-    have injective : Function.Injective select := by
-      intro a b hab
-      apply Subtype.ext
-      apply Option.some.inj
-      calc
-        some (a : Fin k) = mu (select a).1 := (selectColor a).symm
-        _ = mu (select b).1 := by rw [hab]
-        _ = some (b : Fin k) := selectColor b
-    let : Fintype {c : Fin k // c ∈ PresentColors G mu w} := Fintype.ofFinite _
-    have cardBound := Fintype.card_le_of_injective select injective
-    change (PresentColors G mu w).card ≤
-      (Finset.univ.filter (fun e => Incident G w e)).card
-    simpa [Fintype.card_subtype] using cardBound
-  have degreeBoundAt : ∀ w : V, Degree G w ≤ MaximumDegree G := by
-    intro w
-    unfold MaximumDegree
-    exact Finset.le_max' _ _ (Finset.mem_insert.mpr (Or.inr
-      (Finset.mem_image.mpr ⟨w, by simp⟩)))
-  by_contra missingEmpty
-  have empty : MissingColors G mu v = ∅ :=
-    Finset.not_nonempty_iff_eq_empty.mp missingEmpty
-  have allPresent : PresentColors G mu v = Finset.univ := by
-    apply Finset.eq_univ_of_forall
-    intro c
-    by_contra absent
-    have memMissing : c ∈ MissingColors G mu v := by
-      simp [MissingColors, absent]
-    simp [empty] at memMissing
-  have paletteBound : k ≤ (PresentColors G mu v).card := by
-      rw [allPresent, Finset.card_univ]
-      simp only [Fintype.card_fin]
-      exact le_rfl
-  have presentDegree := presentBound v
-  have degreeAt := degreeBoundAt v
-  omega
 
 private theorem helper_branch_281.{u_1, u_2} :
     helperBranch281Conditions.{u_1, u_2} := by
@@ -848,11 +604,6 @@ private theorem helper_branch_281.{u_1, u_2} :
       good := hgood
       maximum := hMP
       notElementary := hne }
-  have finalProperties :=
-    @helper_finalProperties_437 V E inferInstance inferInstance inferInstance inferInstance
-        G k e0 q input T phi ett base H
-  have proper : IsProperEdgeColoring G phi := finalProperties.1
-  have oneEdge : IsOneEdgeUncolored phi e0 := finalProperties.2
   let candidate : ℕ → ℕ → Prop := fun a b =>
     ∃ (input' : PartialEdgeColoring E k) (T' : TreeSequence G e0)
       (generating' : PartialEdgeColoring E k)
@@ -879,19 +630,22 @@ private theorem helper_branch_281.{u_1, u_2} :
     @helper_minMinimal_526 V E inferInstance inferInstance inferInstance inferInstance G k
         e0 q input T phi ett base H candidateExists firstExists firstSpec inputMin TMin
         generatingMin ettMin baseMin CMin roundsMin dividerMin measureMin
-  have certifiedProperties :=
-    @helper_certifiedProperties_558 V E inferInstance inferInstance inferInstance
-        inferInstance G k e0 q input T phi ett base H candidateExists firstExists firstSpec
-        inputMin TMin generatingMin ettMin baseMin CMin
   have ctx :=
     @helper_ctx_623 V E inferInstance inferInstance inferInstance inferInstance G k e0 q ih
-        input T phi ett base H hgood hlower hcurrent hlarge proper candidateExists firstExists
+        input T phi ett base H hgood hlower hcurrent hlarge candidateExists firstExists
         firstSpec inputMin TMin generatingMin ettMin baseMin CMin roundsMin dividerMin minMinimal
-        certifiedProperties
-  have missing :=
-    @helper_missing_656 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        q input T phi ett base H candidateExists firstExists firstSpec inputMin TMin
-        generatingMin ettMin baseMin CMin
+  have missing (mu : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G mu)
+      (_ : IsOneEdgeUncolored mu e0) (v : V) : (MissingColors G mu v).Nonempty := by
+    apply MissingColors.nonempty_of_degree_lt G mu v
+    have triple : KTriple G k e0 input := by
+      cases ett.series.certified 0 with
+      | initial triple => exact triple
+    have degreeBound : Degree G v ≤ MaximumDegree G := by
+      unfold MaximumDegree
+      exact Finset.le_max' _ _ (Finset.mem_insert.mpr (Or.inr
+        (Finset.mem_image.mpr ⟨v, by simp⟩)))
+    have paletteBound := triple.2.2.1
+    omega
   have lower := HierarchyCounterexampleTailAtLeastTwo G k e0 inputMin TMin generatingMin ettMin
       baseMin CMin
     ctx.proper ctx.oneEdgeUncolored ctx.lowerRung ctx.fewerDividers

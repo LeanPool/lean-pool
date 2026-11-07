@@ -5,8 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
-
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 
 public import LeanPool.GoldbergSeymour.StableColoringEquivalence

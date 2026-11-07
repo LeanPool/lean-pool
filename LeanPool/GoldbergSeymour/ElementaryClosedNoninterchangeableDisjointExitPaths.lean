@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.ClosedColorExitPathBoundaryEdge
+
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.TreeColorSetClosed
 public import LeanPool.GoldbergSeymour.TreeExitPath
@@ -379,188 +381,12 @@ private theorem helper_analyze_95.{u_1, u_2} :
     exact ⟨r, s, p, hp, hps, hrs, endpoint_missing r hlow,
       endpoint_missing s hendLeaf⟩
 
-private theorem helper_chooseFirst_365.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E)
-        {k : ℕ} (phi : PartialEdgeColoring E k) (a b : Fin k),
-    ∀ {u v : V ⊕ E} (p : (TwoColorIncidenceGraph G phi a b : SimpleGraph (V ⊕ E)).Walk u v) (S :
-        Finset (V ⊕ E)), {x ∈ S | x ∈ p.support}.Nonempty →
-    ∃ x ∈ S,
-    ∃ (hx : x ∈ p.support),
-    ∀ t ∈ S, t ∈ (p.takeUntil x hx).support → t = x := by
-  classical
-  intro V E _ _ G k phi a b
-  set H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi a b
-  intro u v p S hnonempty
-  have firstErase : ∃ x ∈ S, ∃ (hx : x ∈ p.support),
-      {t ∈ S.erase x | t ∈ (p.takeUntil x hx).support} = ∅ := by
-    simp only [← Finset.subset_empty]
-    induction hn : p.length + S.card using Nat.strong_induction_on
-        generalizing S v with
-    | _ n ih =>
-        simp only [Finset.Nonempty, Finset.mem_filter] at hnonempty
-        obtain ⟨x, hxS, hxP⟩ := hnonempty
-        obtain hempty | hmore := Finset.eq_empty_or_nonempty
-          {t ∈ S.erase x | t ∈ (p.takeUntil x hxP).support}
-        · exact ⟨x, hxS, hxP, hempty.le⟩
-        · have hlt : (p.takeUntil x hxP).length + (S.erase x).card < n := by
-            rw [← Finset.card_erase_add_one hxS] at hn
-            have hle := p.length_takeUntil_le_length hxP
-            omega
-          obtain ⟨y, hyS, hyP, hyempty⟩ :=
-            ih _ hlt (p.takeUntil x hxP) (S.erase x) hmore rfl
-          refine ⟨y, Finset.mem_of_mem_erase hyS,
-            p.support_takeUntil_subset_support hxP hyP, ?_⟩
-          rwa [p.takeUntil_takeUntil, Finset.erase_right_comm,
-            Finset.filter_erase, Finset.erase_eq_of_notMem] at hyempty
-          simp only [Finset.mem_filter, Finset.mem_erase, ne_eq, not_and,
-            and_imp]
-          rintro hxy -
-          exact p.notMem_support_takeUntil_support_takeUntil_subset
-            (Ne.symm hxy) hxP hyP
-  obtain ⟨x, hxS, hxP, hempty⟩ := firstErase
-  refine ⟨x, hxS, hxP, ?_⟩
-  suffices {t ∈ S | t ∈ (p.takeUntil x hxP).support} ⊆ {x} by
-    simpa [Finset.subset_iff] using this
-  rwa [Finset.filter_erase, ← Finset.subset_empty,
-    ← Finset.subset_insert_iff, LawfulSingleton.insert_empty_eq] at hempty
-
-private theorem helper_firstEntry_403.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) {k : ℕ} {e0 : E} (T : TreeSequence G e0) (phi :
-        PartialEdgeColoring E k) (a b : Fin k) (_ : TreeColorSetClosed G phi T { a }) (_ : (
-    ∀ {u v : V ⊕ E} (p : (TwoColorIncidenceGraph G phi a b : SimpleGraph (V ⊕ E)).Walk u v) (S :
-        Finset (V ⊕ E)) (_ : {x ∈ S | x ∈ p.support}.Nonempty),
-    ∃ x ∈ S,
-    ∃ (hx : x ∈ p.support),
-    ∀ t ∈ S, t ∈ (p.takeUntil x hx).support → t = x)) (r s : V) (Q : (TwoColorIncidenceGraph G phi
-        a b : SimpleGraph (V ⊕ E)).Walk (Sum.inl r) (Sum.inl s)) (_ : Q.IsPath) (_ : a ∈
-        MissingColors G phi r ∨ b ∈ MissingColors G phi r) (_ : r ∉ (TreeSequenceVertexSet T :
-        Finset V)) (_ : (
-    ∃ x ∈ (TreeSequenceVertexSet T : Finset V), Sum.inl x ∈ Q.support)),
-    ∃ (c : V) (_ : c ∈ (TreeSequenceVertexSet T : Finset V)) (hcQ : Sum.inl c ∈ Q.support),
-    let L : (TwoColorIncidenceGraph G phi a b : SimpleGraph (V ⊕ E)).Walk (Sum.inl r) (Sum.inl c)
-        := Q.takeUntil (Sum.inl c) hcQ; TreeExitPath T phi a b r c L ∧
-    ∃ (g : E), L.getVert (L.length - (1 : ℕ)) = Sum.inr g ∧ Incident G c g ∧ g ∈ BoundaryEdges G
-        (TreeSequenceVertexSet T : Finset V) ∧ phi g = some b := by
-  classical
-  intro V E _ _ _ _ G k e0 T phi a b hclosed
-  set H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi a b
-  set X : Finset V := TreeSequenceVertexSet T
-  intro chooseFirst r s Q hQ hmissing hrX hmeet
-  let S : Finset (Sum V E) := X.image Sum.inl
-  obtain ⟨q, hqS, hqQ, hqfirst⟩ :=
-    chooseFirst Q S (by
-      obtain ⟨x, hxX, hxQ⟩ := hmeet
-      exact ⟨Sum.inl x, by simp [S, hxX, hxQ]⟩)
-  obtain ⟨c, hcX, hcq⟩ : ∃ c, c ∈ X ∧ Sum.inl c = q := by
-    simpa [S] using hqS
-  subst q
-  let L := Q.takeUntil (Sum.inl c) hqQ
-  have hLc : ∀ x ∈ X, (Sum.inl x ∈ L.support ↔ x = c) := by
-    intro x hxX
-    constructor
-    · intro hxL
-      have heq := hqfirst (Sum.inl x) (by simp [S, hxX]) hxL
-      exact Sum.inl.inj heq
-    · rintro rfl
-      exact L.end_mem_support
-  have hrc : r ≠ c := by
-    intro hrc
-    apply hrX
-    simpa [hrc] using hcX
-  have hLpath : L.IsPath := hQ.takeUntil _
-  have hLlen : 2 ≤ L.length := by
-    have hpos : 0 < L.length := by
-      apply Nat.pos_of_ne_zero
-      intro hn
-      have hnil : L.Nil := SimpleGraph.Walk.length_eq_zero_iff.mp hn
-      exact hrc (Sum.inl.inj hnil.eq)
-    by_contra hnotTwo
-    have hlen : L.length = 1 := by omega
-    have hadj := L.adj_getVert_succ (i := 0) (by omega)
-    have hend : L.getVert 1 = Sum.inl c := by
-      have heq := L.getVert_length
-      rwa [hlen] at heq
-    rw [L.getVert_zero, hend] at hadj
-    simp [TwoColorIncidenceGraph] at hadj
-  have hExit : TreeExitPath T phi a b r c L := by
-    unfold TreeExitPath
-    exact ⟨hLpath, hLlen, hrX, hcX, hmissing, hLc⟩
-  have hlastAdj := L.adj_getVert_succ (i := L.length - 1) (by omega)
-  have hlastSucc : L.length - 1 + 1 = L.length := by omega
-  rw [hlastSucc, L.getVert_length] at hlastAdj
-  cases hlast : L.getVert (L.length - 1) with
-  | inl v =>
-      rw [hlast] at hlastAdj
-      simp [TwoColorIncidenceGraph] at hlastAdj
-  | inr g =>
-      rw [hlast] at hlastAdj
-      have hgc : Incident G c g ∧
-          (phi g = some a ∨ phi g = some b) := by
-        simpa [H, TwoColorIncidenceGraph] using hlastAdj
-      have hprevAdj := L.adj_getVert_succ (i := L.length - 2) (by omega)
-      have hprevSucc : L.length - 2 + 1 = L.length - 1 := by omega
-      rw [hprevSucc, hlast] at hprevAdj
-      cases hprev : L.getVert (L.length - 2) with
-      | inr f =>
-          rw [hprev] at hprevAdj
-          simp [TwoColorIncidenceGraph] at hprevAdj
-      | inl x =>
-          rw [hprev] at hprevAdj
-          have hxg : Incident G x g := by
-            have hdata : Incident G x g ∧
-                (phi g = some a ∨ phi g = some b) := by
-              simpa [H, TwoColorIncidenceGraph] using hprevAdj
-            exact hdata.1
-          have hxout : x ∉ X := by
-            intro hxX
-            have hxc := (hLc x hxX).mp (by
-              rw [← hprev]
-              exact L.getVert_mem_support (L.length - 2))
-            have heq : L.getVert (L.length - 2) =
-                L.getVert L.length := by
-              rw [hprev, L.getVert_length, hxc]
-            have := hLpath.getVert_injOn (Nat.sub_le _ _) (by simp) heq
-            omega
-          have hcx : c ≠ x := by
-            intro hcx
-            exact hxout (hcx ▸ hcX)
-          have hends : G.ends g = s(c, x) :=
-            (Sym2.mem_and_mem_iff hcx).mp ⟨hgc.1, hxg⟩
-          have hboundary : g ∈ BoundaryEdges G X := by
-            simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ,
-              true_and]
-            exact ⟨c, hcX, x, hxout, hends⟩
-          have hga : phi g ≠ some a := by
-            intro hga
-            have hgColor : g ∈ BoundaryColorEdges G phi X a := by
-              simp [BoundaryColorEdges, hboundary, hga]
-            have hclosedA : BoundaryColorEdges G phi X a = ∅ := by
-              dsimp [X]
-              exact hclosed a (by simp)
-            rw [hclosedA] at hgColor
-            simp at hgColor
-          refine ⟨c, hcX, hqQ, hExit, g, hlast, hgc.1,
-            hboundary, ?_⟩
-          exact hgc.2.resolve_left hga
-
 private theorem helper_differentExits_540.{u_1, u_2} :
     open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
+    ∀ {V : Type u_1} {E : Type u_2} [Fintype E] (G :
         LooplessMultigraph V E) {k : ℕ} {e0 : E} (T : TreeSequence G e0) (phi :
         PartialEdgeColoring E k) (a b : Fin k) (z w : V ⊕ E) (_ : Disjoint (TwoColorComponent G
-        phi a b z) (TwoColorComponent G phi a b w)) (_ : (
-    ∀ (r s : V) (Q : (TwoColorIncidenceGraph G phi a b : SimpleGraph (V ⊕ E)).Walk (Sum.inl r)
-        (Sum.inl s)) (_ : Q.IsPath) (_ : a ∈ MissingColors G phi r ∨ b ∈ MissingColors G phi r) (_
-        : r ∉ (TreeSequenceVertexSet T : Finset V)) (_ : (
-    ∃ x ∈ (TreeSequenceVertexSet T : Finset V), Sum.inl x ∈ Q.support)),
-    ∃ (c : V) (_ : c ∈ (TreeSequenceVertexSet T : Finset V)) (hcQ : Sum.inl c ∈ Q.support),
-    let L : (TwoColorIncidenceGraph G phi a b : SimpleGraph (V ⊕ E)).Walk (Sum.inl r) (Sum.inl c)
-        := Q.takeUntil (Sum.inl c) hcQ; TreeExitPath T phi a b r c L ∧
-    ∃ (g : E), L.getVert (L.length - (1 : ℕ)) = Sum.inr g ∧ Incident G c g ∧ g ∈ BoundaryEdges G
-        (TreeSequenceVertexSet T : Finset V) ∧ phi g = some b)) (r1 s1 r2 s2 : V) (p1 :
+        phi a b z) (TwoColorComponent G phi a b w)) (r1 s1 r2 s2 : V) (p1 :
         (TwoColorIncidenceGraph G phi a b : SimpleGraph (V ⊕ E)).Walk (Sum.inl r1) (Sum.inl s1))
         (p2 : (TwoColorIncidenceGraph G phi a b : SimpleGraph (V ⊕ E)).Walk (Sum.inl r2) (Sum.inl
         s2)) (_ : p1.IsPath) (_ : p2.IsPath) (_ : {q : V ⊕ E | q ∈ p1.support} = TwoColorComponent
@@ -576,14 +402,14 @@ private theorem helper_differentExits_540.{u_1, u_2} :
         a b r2 c2 L2 ∧ (
     ∀ q ∈ L1.support, q ∉ L2.support) ∧ r1 ≠ r2 ∧ c1 ≠ c2 := by
   classical
-  intro V E _ _ _ _ G k e0 T phi a b
+  intro V E _ G k e0 T phi a b
   set H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi a b
   set X : Finset V := TreeSequenceVertexSet T
-  intro z w hdisj firstEntry r1 s1 r2 s2 p1 p2 hp1 hp2 hps1 hps2 hm1 hm2 hr1X hr2X hmeet1 hmeet2
-  obtain ⟨c1, hc1X, hc1P, hExit1, g1, hg1last, hg1c,
-    hg1B, hg1col⟩ := firstEntry r1 s1 p1 hp1 hm1 hr1X hmeet1
-  obtain ⟨c2, hc2X, hc2P, hExit2, g2, hg2last, hg2c,
-    hg2B, hg2col⟩ := firstEntry r2 s2 p2 hp2 hm2 hr2X hmeet2
+  intro z w hdisj r1 s1 r2 s2 p1 p2 hp1 hp2 hps1 hps2 hm1 hm2 hr1X hr2X hmeet1 hmeet2
+  obtain ⟨c1, hc1X, hc1P, hExit1⟩ :=
+    TreeExitPath.firstEntry T p1 hp1 hm1 hr1X hmeet1
+  obtain ⟨c2, hc2X, hc2P, hExit2⟩ :=
+    TreeExitPath.firstEntry T p2 hp2 hm2 hr2X hmeet2
   let L1 := p1.takeUntil (Sum.inl c1) hc1P
   let L2 := p2.takeUntil (Sum.inl c2) hc2P
   have hL1sub : L1.support ⊆ p1.support :=
@@ -611,18 +437,10 @@ private theorem helper_differentExits_540.{u_1, u_2} :
 
 private theorem helper_sameExits_588.{u_1, u_2} :
     open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
+    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G :
         LooplessMultigraph V E) {k : ℕ} {e0 : E} (T : TreeSequence G e0) (phi :
-        PartialEdgeColoring E k) (_ : IsProperEdgeColoring G phi) (a b : Fin k) (_ : (
-    ∀ (r s : V) (Q : (TwoColorIncidenceGraph G phi a b : SimpleGraph (V ⊕ E)).Walk (Sum.inl r)
-        (Sum.inl s)) (_ : Q.IsPath) (_ : a ∈ MissingColors G phi r ∨ b ∈ MissingColors G phi r) (_
-        : r ∉ (TreeSequenceVertexSet T : Finset V)) (_ : (
-    ∃ x ∈ (TreeSequenceVertexSet T : Finset V), Sum.inl x ∈ Q.support)),
-    ∃ (c : V) (_ : c ∈ (TreeSequenceVertexSet T : Finset V)) (hcQ : Sum.inl c ∈ Q.support),
-    let L : (TwoColorIncidenceGraph G phi a b : SimpleGraph (V ⊕ E)).Walk (Sum.inl r) (Sum.inl c)
-        := Q.takeUntil (Sum.inl c) hcQ; TreeExitPath T phi a b r c L ∧
-    ∃ (g : E), L.getVert (L.length - (1 : ℕ)) = Sum.inr g ∧ Incident G c g ∧ g ∈ BoundaryEdges G
-        (TreeSequenceVertexSet T : Finset V) ∧ phi g = some b)) (r s : V) (p :
+        PartialEdgeColoring E k) (_ : IsProperEdgeColoring G phi) (a b : Fin k)
+        (_ : TreeColorSetClosed G phi T {a}) (r s : V) (p :
         (TwoColorIncidenceGraph G phi a b : SimpleGraph (V ⊕ E)).Walk (Sum.inl r) (Sum.inl s)) (_
         : p.IsPath) (_ : r ≠ s) (_ : a ∈ MissingColors G phi r ∨ b ∈ MissingColors G phi r) (_ : a
         ∈ MissingColors G phi s ∨ b ∈ MissingColors G phi s) (_ : r ∉ (TreeSequenceVertexSet T :
@@ -634,19 +452,19 @@ private theorem helper_sameExits_588.{u_1, u_2} :
         b s c2 L2 ∧ (
     ∀ q ∈ L1.support, q ∉ L2.support) ∧ r ≠ s ∧ c1 ≠ c2 := by
   classical
-  intro V E _ _ _ _ G k e0 T phi hproper a b
+  intro V E _ _ G k e0 T phi hproper a b
   set H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi a b
   set X : Finset V := TreeSequenceVertexSet T
-  intro firstEntry r s p hp hrs hrm hsm hrX hsX hmeet
+  intro hclosed r s p hp hrs hrm hsm hrX hsX hmeet
   have hmeetRev : ∃ x ∈ X, Sum.inl x ∈ p.reverse.support := by
     obtain ⟨x, hxX, hxP⟩ := hmeet
     refine ⟨x, hxX, ?_⟩
     simpa only [SimpleGraph.Walk.support_reverse, List.mem_reverse] using hxP
   obtain ⟨c1, hc1X, hc1P, hExit1, g1, hg1last, hg1c,
-    hg1B, hg1col⟩ := firstEntry r s p hp hrm hrX hmeet
+    hg1B, hg1col⟩ := TreeExitPath.firstEntryClosed T p hp hrm hrX hmeet hclosed
   obtain ⟨c2, hc2X, hc2P, hExit2, g2, hg2last, hg2c,
     hg2B, hg2col⟩ :=
-    firstEntry s r p.reverse hp.reverse hsm hsX hmeetRev
+    TreeExitPath.firstEntryClosed T p.reverse hp.reverse hsm hsX hmeetRev hclosed
   let L1 := p.takeUntil (Sum.inl c1) hc1P
   let L2 := p.reverse.takeUntil (Sum.inl c2) hc2P
   have hL1le : L1.length ≤ p.length :=
@@ -1055,11 +873,6 @@ lemma ElementaryClosedNoninterchangeableDisjointExitPaths {V E : Type*}
   have analyze :=
     @helper_analyze_95 V E inferInstance inferInstance G k e0 T
         phi hproper a b endpoint_missing
-  have chooseFirst :=
-    @helper_chooseFirst_365 V E inferInstance inferInstance G k phi a b
-  have firstEntry :=
-    @helper_firstEntry_403 V E inferInstance inferInstance inferInstance inferInstance G k
-        e0 T phi a b hclosed chooseFirst
   have helementaryX : ColoredVertexSetElementary G phi X := by
     dsimp [X]
     exact helementary
@@ -1085,11 +898,11 @@ lemma ElementaryClosedNoninterchangeableDisjointExitPaths {V E : Type*}
     · exact no_repeat huX hvX huv hub hvb
     · exact no_repeat huX hvX huv hub hvb
   have differentExits :=
-    @helper_differentExits_540 V E inferInstance inferInstance inferInstance inferInstance
-        G k e0 T phi a b z w hdisj firstEntry
+    @helper_differentExits_540 V E inferInstance
+        G k e0 T phi a b z w hdisj
   have sameExits :=
-    @helper_sameExits_588 V E inferInstance inferInstance inferInstance inferInstance G k
-        e0 T phi hproper a b firstEntry
+    @helper_sameExits_588 V E inferInstance inferInstance G k
+        e0 T phi hproper a b hclosed
   have separated {u v : V}
       (hu : Sum.inl u ∈ TwoColorComponent G phi a b z)
       (hv : Sum.inl v ∈ TwoColorComponent G phi a b w) : u ≠ v := by

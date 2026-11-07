@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TashkinovSeries
+public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
 
 /-!
 # Extended Tashkinov Tree
@@ -34,6 +34,16 @@ structure ExtendedTashkinovTree {V E : Type*} [Fintype V] [Fintype E] [Decidable
   strictAbovePenultimate : (series.data.tree ⟨rounds, by omega⟩).length < T.length
   belowFinal : TreeSequenceInitialSegment T (series.data.tree (Fin.last (rounds + 1)))
   generatingColoring : generating = series.data.coloring (Fin.last rounds)
+
+/-- The generating coloring is proper and leaves precisely the distinguished edge uncolored. -/
+theorem ExtendedTashkinovTree.coloringProperties {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input phi : PartialEdgeColoring E k} {T : TreeSequence G e0}
+    (ett : ExtendedTashkinovTree G k e0 input T phi) :
+    IsProperEdgeColoring G phi ∧ IsOneEdgeUncolored phi e0 := by
+  rw [ett.generatingColoring]
+  exact ett.series.coloringProperties _
 
 end GoldbergSeymour
 
