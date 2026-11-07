@@ -16,10 +16,12 @@ from lean_pool.quality import (
     _parse_declarations,
     _parse_option_audit_output,
     _project_card,
+    _QualityError,
     _strip_lean_comments,
     _write_project_card,
     run_checks,
 )
+from lean_pool.validation_cache import ValidationCache
 
 HEADER = """/-
 Copyright (c) 2026 Test Author. All rights reserved.
@@ -727,6 +729,42 @@ def test_quality_check_accepts_project_card_after_imports(tmp_path: Path) -> Non
     # The project-card position check must accept this layout. (lake env lean
     # for the declarations check fails in the test sandbox; that's unrelated.)
     assert not any("project card for p is out of date" in e.message for e in errors)
+
+
+def test_project_declarations_are_queued_once_with_and_without_cache(
+    tmp_path: Path,
+) -> None:
+    """Queued declaration checks still run per project and only passes are reused."""
+    _write_minimal_repo(tmp_path)
+    (tmp_path / "LeanPool.lean").write_text(
+        "import LeanPool.Basic\nimport LeanPool.MyProj\n"
+    )
+    card = _project_card(_PROJECT_FIXTURE)
+    (tmp_path / "LeanPool" / "MyProj.lean").write_text(
+        f"{HEADER}\nimport LeanPool.Basic\n\n{card}\ndef hello : Nat := 1\n"
+    )
+    _write_project_yaml(tmp_path, [{"slug": "p", "entry_module": "LeanPool.MyProj"}])
+    failure = _QualityError(tmp_path / "card.yaml", 1, "declarations do not check")
+    directory = tmp_path / ".lake/validation-cache/v1"
+    with patch(
+        "lean_pool.quality._check_project_declarations", return_value=[failure]
+    ) as declarations:
+        assert run_checks(tmp_path, skip_lean_axioms=True) == [failure]
+        cache = ValidationCache(tmp_path, directory)
+        assert run_checks(tmp_path, skip_lean_axioms=True, validation_cache=cache) == [
+            failure
+        ]
+        assert "declarations:LeanPool.MyProj" not in cache.used
+        assert declarations.call_count == 2
+        assert {call.args[2]["slug"] for call in declarations.call_args_list} == {"p"}
+        declarations.return_value = []
+        cache = ValidationCache(tmp_path, directory)
+        assert run_checks(tmp_path, skip_lean_axioms=True, validation_cache=cache) == []
+        cache.save()
+        cache = ValidationCache(tmp_path, directory)
+        assert run_checks(tmp_path, skip_lean_axioms=True, validation_cache=cache) == []
+        assert declarations.call_count == 3
+        assert cache.hits == 1
 
 
 def test_quality_check_falls_back_when_lake_missing(tmp_path: Path) -> None:
