@@ -26,8 +26,9 @@ namespace KloostermanWeil.Stepanov
 open scoped BigOperators
 open KloostermanWeil.Carlitz
 
+/-- The two-coefficient Kloosterman sum over units of the chosen finite extension. -/
 noncomputable def extensionKloostermanAB
-    (p n : ℕ) [Fact p.Prime] [NeZero n]
+    (p n : ℕ) [Fact p.Prime]
     (A B : GaloisField p n) : ℂ := by
   classical
   letI := Fintype.ofFinite (GaloisField p n)
@@ -36,7 +37,7 @@ noncomputable def extensionKloostermanAB
       (A * (u : GaloisField p n) + B * (u : GaloisField p n)⁻¹)
 
 theorem scalarTraceSum_eq_extensionKloostermanAB
-    (p n : ℕ) [Fact p.Prime] [NeZero n]
+    (p n : ℕ) [Fact p.Prime]
     (c : GaloisField p n) (m : ZMod p) :
     extensionKloostermanScalarSum p n c m =
       extensionKloostermanAB p n
@@ -56,7 +57,7 @@ theorem scalarTraceSum_eq_extensionKloostermanAB
   field_simp
 
 theorem Kext_eq_extensionKloostermanAB_one
-    (p n : ℕ) [Fact p.Prime] [NeZero n] (t : ZMod p) :
+    (p n : ℕ) [Fact p.Prime] (t : ZMod p) :
     Kext p n t =
       extensionKloostermanAB p n
         1 (algebraMap (ZMod p) (GaloisField p n) t) := by
@@ -110,8 +111,9 @@ theorem scale_arg
         rw [mul_inv_cancel₀ hM, one_mul]
   rw [htail]
 
+/-- The extension Kloosterman sum written over the whole field with zero omitted. -/
 noncomputable def extensionKloostermanAB0
-    (p n : ℕ) [Fact p.Prime] [NeZero n]
+    (p n : ℕ) [Fact p.Prime]
     (A B : GaloisField p n) : ℂ := by
   classical
   letI := Fintype.ofFinite (GaloisField p n)
@@ -120,7 +122,7 @@ noncomputable def extensionKloostermanAB0
     else psiExt p n (A * x + B * x⁻¹)
 
 theorem extensionKloostermanAB_eq_AB0
-    (p n : ℕ) [Fact p.Prime] [NeZero n]
+    (p n : ℕ) [Fact p.Prime]
     (A B : GaloisField p n) :
     extensionKloostermanAB p n A B =
       extensionKloostermanAB0 p n A B := by
@@ -150,7 +152,7 @@ theorem extensionKloostermanAB_eq_AB0
     (fun _ => rfl)
 
 theorem Kext_eq_AB0_one
-    (p n : ℕ) [Fact p.Prime] [NeZero n] (t : ZMod p) :
+    (p n : ℕ) [Fact p.Prime] (t : ZMod p) :
     Kext p n t =
       extensionKloostermanAB0 p n
         1 (algebraMap (ZMod p) (GaloisField p n) t) := by
@@ -164,7 +166,7 @@ theorem Kext_eq_AB0_one
   · simp [h0]
 
 theorem extensionKloostermanAB0_scaling
-    (p n : ℕ) [Fact p.Prime] [NeZero n]
+    (p n : ℕ) [Fact p.Prime]
     (c m : ZMod p) (hm : m ≠ 0) :
     extensionKloostermanAB0 p n
         (algebraMap (ZMod p) (GaloisField p n) m)
@@ -216,7 +218,7 @@ theorem extensionKloostermanAB0_scaling
       (algebraMap (ZMod p) (GaloisField p n) c) x hM0
 
 theorem extensionKloostermanAB_scaling
-    (p n : ℕ) [Fact p.Prime] [NeZero n]
+    (p n : ℕ) [Fact p.Prime]
     (c m : ZMod p) (hm : m ≠ 0) :
     extensionKloostermanAB p n
         (algebraMap (ZMod p) (GaloisField p n) m)
@@ -228,7 +230,7 @@ theorem extensionKloostermanAB_scaling
   exact extensionKloostermanAB0_scaling p n c m hm
 
 theorem scalarTraceSum_eq_Kext_sq
-    (p n : ℕ) [Fact p.Prime] [NeZero n]
+    (p n : ℕ) [Fact p.Prime]
     (c m : ZMod p) (hm : m ≠ 0) :
     extensionKloostermanScalarSum p n
         (algebraMap (ZMod p) (GaloisField p n) c) m =

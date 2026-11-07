@@ -6,14 +6,7 @@ Authors: Charlie Dorsey
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-public import Mathlib.Algebra.Polynomial.Monic
-public import Mathlib.RingTheory.UniqueFactorizationDomain.NormalizedFactors
-public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.RingTheory.Polynomial.Dickson
-public import Mathlib.Algebra.Polynomial.Reverse
-public import Mathlib.FieldTheory.Finite.Extension
-public import Mathlib.FieldTheory.Minpoly.ConjRootClass
-public import Mathlib.RingTheory.Trace.Basic
 
 
 /-!
@@ -32,10 +25,12 @@ namespace KloostermanWeil.Dickson
 
 open Polynomial
 
+/-- The prime residue ring used as the base field when `p` is prime. -/
 abbrev Fp (p : ℕ) := ZMod p
+/-- Polynomials over the prime residue ring. -/
 abbrev FpPoly (p : ℕ) := Polynomial (Fp p)
 
-/-- Base-field one-parameter Kloosterman sum, in the the earlier application sign convention. -/
+/-- Base-field one-parameter Kloosterman sum in the source-normalized sign convention. -/
 noncomputable def baseKloosterman
     (p : ℕ) [Fact p.Prime] (t : Fp p) : ℂ :=
   ∑ x : Fp p,
@@ -147,6 +142,7 @@ theorem A_zero_eq_one
   unfold A monicFromCoeffs
   simp [etaPoly_one]
 
+/-- The monic quadratic with linear coefficient `b` and constant coefficient `c`. -/
 noncomputable def monicQuadratic
     {p : ℕ} [Fact p.Prime] (b c : Fp p) : FpPoly p :=
   X ^ 2 + C b * X + C c
@@ -249,14 +245,15 @@ end KloostermanWeil.Dickson
 
 namespace KloostermanWeil.Dickson
 
+/-- Identify a two-entry coefficient vector with an ordered pair. -/
 noncomputable def finTwoCoeffEquiv
-    (p : ℕ) [Fact p.Prime] :
+    (p : ℕ) :
     (Fin 2 → Fp p) ≃ (Fp p × Fp p) :=
   (Fin.consEquiv (fun _ : Fin 2 => Fp p)).symm |>.trans
     (Equiv.prodCongr (Equiv.refl (Fp p)) (Equiv.funUnique (Fin 1) (Fp p)))
 
 lemma finTwoCoeffEquiv_apply
-    (p : ℕ) [Fact p.Prime] (a : Fin 2 → Fp p) :
+    (p : ℕ) (a : Fin 2 → Fp p) :
     finTwoCoeffEquiv p a = (a 0, a 1) := by
   rfl
 
@@ -341,6 +338,7 @@ lemma monicFromCoeffs_coeff_lt
     _ = a idx := Fintype.sum_ite_eq' idx a
     _ = a ⟨j, hj⟩ := rfl
 
+/-- The index of the final lower coefficient of a positive-degree monic polynomial. -/
 noncomputable def lastIndex (n : ℕ) (hn : 0 < n) : Fin n :=
   ⟨n - 1, Nat.sub_lt hn (by norm_num)⟩
 
@@ -359,6 +357,7 @@ end KloostermanWeil.Dickson
 
 namespace KloostermanWeil.Dickson
 
+/-- Translate the final lower coefficient by `u`, keeping the other coefficients fixed. -/
 noncomputable def shiftLastEquiv
     (p n : ℕ) [Fact p.Prime] (hn : 0 < n) (u : Fp p) :
     (Fin n → Fp p) ≃ (Fin n → Fp p) where

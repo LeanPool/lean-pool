@@ -12,3 +12,8 @@ public import LeanPool.KloostermanWeil.Weil.ChineseRemainderAndCompletion
 /-!
 # Public Kloosterman–Weil theorem imports
 -/
+
+/-!
+Adapted from Charlie Dorsey’s Apache-2.0 Weil Bounds Toolkit for Lean Pool’s
+module system and pinned Mathlib version.
+-/

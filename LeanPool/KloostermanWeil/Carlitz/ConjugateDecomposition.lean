@@ -5,7 +5,6 @@ Authors: Charlie Dorsey
 -/
 module
 
-public import LeanPool.KloostermanWeil.Carlitz.ExtensionDefinitions
 public import Mathlib.FieldTheory.Minpoly.ConjRootClass
 
 
@@ -25,6 +24,7 @@ namespace KloostermanWeil.Carlitz
 
 open Polynomial
 
+/-- Partition an algebra extension into its conjugacy classes over the base field. -/
 noncomputable def conjSigmaEquiv
     (F L : Type*) [Field F] [Field L] [Algebra F L] :
     (Σ c : ConjRootClass F L, c.carrier) ≃ L where

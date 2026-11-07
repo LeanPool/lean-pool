@@ -56,7 +56,7 @@ lemma trace_carlitz_arg
 
 
 theorem psiExt_carlitz_arg_eq_etaPoly_pow
-    (p n : ℕ) [Fact p.Prime] [NeZero n]
+    (p n : ℕ) [Fact p.Prime]
     (t : Fp p) {x : Ext p n} (hx : x ≠ 0) :
     psiExt p n
         (x + algebraMap (Fp p) (Ext p n) t * x⁻¹) =

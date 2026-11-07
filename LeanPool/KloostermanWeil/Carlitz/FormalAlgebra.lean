@@ -26,10 +26,12 @@ namespace KloostermanWeil.Carlitz
 
 open PowerSeries
 
+/-- The formal series with positive-degree coefficients `K n / n` and constant term zero. -/
 noncomputable def KSeries (K : ℕ → ℂ) : ℂ⟦X⟧ :=
   PowerSeries.mk fun n =>
     if n = 0 then 0 else K n / (n : ℂ)
 
+/-- The quadratic formal series `1 + K1 * X + q * X²`. -/
 noncomputable def quadraticL (K1 q : ℂ) : ℂ⟦X⟧ :=
   1 + C K1 * X + C q * X ^ 2
 
@@ -185,6 +187,7 @@ theorem K_two_eq_of_generating_identity
 
 open Polynomial PowerSeries
 
+/-- The quadratic polynomial whose two roots encode the extension-sum recurrence. -/
 noncomputable def spectralPoly (K1 q : ℂ) : ℂ[X] :=
   Polynomial.X ^ 2 +
     (Polynomial.C K1 * Polynomial.X +

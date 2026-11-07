@@ -24,6 +24,7 @@ namespace KloostermanWeil.Carlitz
 
 open Polynomial
 
+/-- The extension-sum ghost component indexed by relevant irreducible polynomials. -/
 noncomputable def irredGhost
     (p n : ℕ) [Fact p.Prime] [NeZero n] (t : Fp p) : ℂ := by
   classical
@@ -41,7 +42,7 @@ noncomputable def irredGhost
         (n / P.1.natDegree)
 
 lemma minpoly_zero_class_eq_X
-    (p n : ℕ) [Fact p.Prime] [NeZero n] :
+    (p n : ℕ) [Fact p.Prime] :
     (0 : ConjRootClass (Fp p) (Ext p n)).minpoly =
       (X : Polynomial (Fp p)) := by
   change minpoly (Fp p) (0 : Ext p n) = X

@@ -5,7 +5,7 @@ Authors: Charlie Dorsey
 -/
 module
 
-public import LeanPool.KloostermanWeil.Stepanov.SpecializedCurve
+public import Mathlib.FieldTheory.Finite.GaloisField
 public import Mathlib.FieldTheory.Finite.Trace
 
 

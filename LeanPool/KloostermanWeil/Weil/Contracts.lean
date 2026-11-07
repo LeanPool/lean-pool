@@ -14,7 +14,7 @@ module system, Mathlib version, quality requirements and compilation performance
 
 # Unconditional bounds derived from the prime theorem
 
-The underlying general lemmas in `rml.weil.crt_and_completion` accept a
+The general lemmas in `LeanPool.KloostermanWeil.Weil.ChineseRemainderAndCompletion` accept a
 `PrimeNondegenerateWeil` proof explicitly. Here they are instantiated with
 `prime_bound`; callers do not need to supply that argument.
 -/

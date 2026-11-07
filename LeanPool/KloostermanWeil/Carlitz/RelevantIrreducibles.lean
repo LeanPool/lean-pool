@@ -26,11 +26,13 @@ namespace KloostermanWeil.Carlitz
 
 open Polynomial
 
+/-- Monic irreducibles whose degree divides the extension degree. -/
 def RelevantIrred
     (p n : ℕ) [Fact p.Prime] :=
   {P : Polynomial (Fp p) //
     P.Monic ∧ Irreducible P ∧ P.natDegree ∣ n}
 
+/-- Associate to a conjugacy class its monic irreducible minimal polynomial. -/
 noncomputable def classToRelevant
     (p n : ℕ) [Fact p.Prime] [NeZero n]
     (c : ConjRootClass (Fp p) (Ext p n)) :
@@ -94,6 +96,7 @@ lemma classToRelevant_surjective
   rw [ConjRootClass.minpoly_mk]
   exact (minpoly.eq_of_irreducible_of_monic hirr hx hmonic).symm
 
+/-- Conjugacy classes in a finite extension parametrized by relevant irreducibles. -/
 noncomputable def classRelevantEquiv
     (p n : ℕ) [Fact p.Prime] [NeZero n] :
     ConjRootClass (Fp p) (Ext p n) ≃ RelevantIrred p n :=

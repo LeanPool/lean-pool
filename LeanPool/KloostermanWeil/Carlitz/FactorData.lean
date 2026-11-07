@@ -5,7 +5,8 @@ Authors: Charlie Dorsey
 -/
 module
 
-public import LeanPool.KloostermanWeil.Carlitz.DicksonFiniteAlgebra
+public import Mathlib.Algebra.Field.ZMod
+public import Mathlib.RingTheory.Polynomial.UniqueFactorization
 public import Mathlib.Algebra.Polynomial.BigOperators
 public import Mathlib.Algebra.Polynomial.Div
 public import Mathlib.Algebra.Polynomial.FieldDivision
@@ -29,16 +30,20 @@ namespace KloostermanWeil.Carlitz
 open Polynomial
 open UniqueFactorizationMonoid
 
+/-- Polynomials over the prime residue ring. -/
 abbrev FpPoly (p : ℕ) := Polynomial (ZMod p)
 
-def MonicDeg (p n : ℕ) [Fact p.Prime] :=
+/-- Monic polynomials of the specified natural degree. -/
+def MonicDeg (p n : ℕ) :=
   {f : FpPoly p // f.Monic ∧ f.natDegree = n}
 
-def FactorData (p n : ℕ) [Fact p.Prime] :=
+/-- Multisets of monic irreducibles whose degrees sum to the specified total degree. -/
+def FactorData (p n : ℕ) :=
   {s : Multiset (FpPoly p) //
     (∀ q ∈ s, Irreducible q ∧ q.Monic) ∧
     (s.map Polynomial.natDegree).sum = n}
 
+/-- The normalized irreducible factor multiset of a monic polynomial. -/
 noncomputable def factorDataOf
     (p n : ℕ) [Fact p.Prime] :
     MonicDeg p n → FactorData p n := by
@@ -65,6 +70,7 @@ noncomputable def factorDataOf
     _ = f.1.natDegree := by rw [hprod]
     _ = n := f.2.2
 
+/-- Reconstruct a monic polynomial by multiplying its irreducible factor data. -/
 noncomputable def monicDegOfFactorData
     (p n : ℕ) [Fact p.Prime] :
     FactorData p n → MonicDeg p n := by
@@ -98,6 +104,7 @@ theorem factorData_right_inv
       exact (s.2.1 q hq).2.normalize_eq_self
     _ = s.1 := Multiset.map_id _
 
+/-- Unique factorization as an equivalence between monic polynomials and factor data. -/
 noncomputable def monicFactorEquiv
     (p n : ℕ) [Fact p.Prime] :
     MonicDeg p n ≃ FactorData p n where

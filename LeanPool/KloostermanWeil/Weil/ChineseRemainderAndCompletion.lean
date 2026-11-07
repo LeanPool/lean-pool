@@ -5,7 +5,7 @@ Authors: Charlie Dorsey
 -/
 module
 
-public import LeanPool.KloostermanWeil.Weil.PrimeKloosterman
+public import LeanPool.KloostermanWeil.Weil.PrimeFoundation
 public import Mathlib.Analysis.Fourier.ZMod
 public import Mathlib.NumberTheory.Harmonic.Bounds
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
@@ -53,8 +53,10 @@ theorem kloostermanSumPrime_le_two_sqrt_of_not_both_zero
 /-! **CRT region**: exact unit-sum splitting via the chosen Bézout coefficients;
 standard CRT, locally proved. No additional analytic hypothesis is hidden here. -/
 
+/-- The Bezout coefficient of `n` in the identity for the coprime pair `m, n`. -/
 def crtLeftCoeff (m n : ℕ) : ℤ := n.gcdA m
 
+/-- The Bezout coefficient of `m` in the identity for the coprime pair `m, n`. -/
 def crtRightCoeff (m n : ℕ) : ℤ := n.gcdB m
 
 lemma crt_bezout
@@ -100,6 +102,7 @@ lemma stdAddChar_mul_eq_crt
     _ = 2 * ↑Real.pi * Complex.I * ↑t / (↑m * ↑n) := by ring
 
 
+/-- The standard additive character of `b*x + a/x`, summed over residue-class units. -/
 noncomputable def kloostermanUnitSum
     (N : ℕ) [NeZero N] (a b : ZMod N) : ℂ :=
   ∑ x : (ZMod N)ˣ,
@@ -129,6 +132,7 @@ lemma stdAddChar_mul_eq_crt_zmod
   simpa using (stdAddChar_mul_eq_crt hcop (z.val : ℤ))
 
 
+/-- The Chinese remainder equivalence on unit groups of coprime residue rings. -/
 noncomputable def crtUnitsEquiv
     {m n : ℕ} (hcop : m.Coprime n) :
     (ZMod (m * n))ˣ ≃* (ZMod m)ˣ × (ZMod n)ˣ :=
@@ -302,7 +306,7 @@ lemma crtRightCoeff_isUnit
   exact IsUnit.of_mul_eq_one (m : ZMod n) (by simpa [mul_comm] using hmul)
 
 lemma crt_local_left_isUnit
-    {m n : ℕ} [NeZero m] [NeZero n] [NeZero (m * n)]
+    {m n : ℕ} [NeZero m]
     (hcop : m.Coprime n) {a : ZMod (m * n)} (ha : IsUnit a) :
     IsUnit
       ((((crtLeftCoeff m n : ℤ) : ZMod m) *
@@ -314,7 +318,7 @@ lemma crt_local_left_isUnit
   exact (crtLeftCoeff_isUnit hcop).mul hproj
 
 lemma crt_local_right_isUnit
-    {m n : ℕ} [NeZero m] [NeZero n] [NeZero (m * n)]
+    {m n : ℕ} [NeZero n]
     (hcop : m.Coprime n) {a : ZMod (m * n)} (ha : IsUnit a) :
     IsUnit
       ((((crtRightCoeff m n : ℤ) : ZMod n) *
@@ -430,10 +434,13 @@ theorem kloostermanUnitSum_squarefree_unit_le
 /-! **Reduction region**: bound for a source-defined reduced modulus/sum.
 No theorem here identifies that reduced sum with a full-modulus sum. -/
 
+/-- The common divisor removed from the numerator and modulus. -/
 def reducedDivisor (A q : ℕ) : ℕ := Nat.gcd A q
 
+/-- The modulus after division by `gcd(A, q)`. -/
 def reducedModulus (A q : ℕ) : ℕ := q / reducedDivisor A q
 
+/-- The numerator after division by `gcd(A, q)`. -/
 def reducedNumerator (A q : ℕ) : ℕ := A / reducedDivisor A q
 
 lemma reducedNumerator_coprime_reducedModulus
@@ -488,7 +495,8 @@ theorem kloostermanUnitSum_reduced_le
 /-! **Completion region**: character orthogonality, full finite DFT and
 sharp interval Fourier completion; method context [IwaniecKowalski2004]. -/
 
-def zmodFrequencyDistance {N : ℕ} [NeZero N] (h : ZMod N) : ℕ :=
+/-- The smaller distance of a residue's representative to zero or to the modulus. -/
+def zmodFrequencyDistance {N : ℕ} (h : ZMod N) : ℕ :=
   min h.val (N - h.val)
 
 lemma zmodFrequencyDistance_pos
@@ -605,6 +613,7 @@ lemma stdAddChar_chord_lower
       mul_le_mul_of_nonneg_left hsin (by norm_num)
 
 
+/-- Identify units with the subtype of elements satisfying `IsUnit`. -/
 noncomputable def unitsEquivIsUnitSubtype (M : Type*) [Monoid M] :
     Mˣ ≃ {x : M // IsUnit x} where
   toFun u := ⟨u, u.isUnit⟩
@@ -616,14 +625,17 @@ noncomputable def unitsEquivIsUnitSubtype (M : Type*) [Monoid M] :
     apply Subtype.ext
     exact x.2.unit_spec
 
+/-- The reciprocal additive phase on units, extended by zero on nonunits. -/
 noncomputable def reciprocalPhase
     (N : ℕ) [NeZero N] (a x : ZMod N) : ℂ :=
   if IsUnit x then ZMod.stdAddChar (a * x⁻¹) else 0
 
+/-- The average of the reciprocal phase over all residue classes. -/
 noncomputable def reciprocalMean
     (N : ℕ) [NeZero N] (a : ZMod N) : ℂ :=
   (N : ℂ)⁻¹ * ∑ x : ZMod N, reciprocalPhase N a x
 
+/-- Subtract the full residue-class average from the reciprocal phase. -/
 noncomputable def centeredReciprocalPhase
     (N : ℕ) [NeZero N] (a x : ZMod N) : ℂ :=
   reciprocalPhase N a x - reciprocalMean N a
@@ -978,6 +990,7 @@ theorem frequencyReciprocalMass_le_log
       exact mul_le_mul_of_nonneg_left (harmonic_le_one_add_log N) (by norm_num)
 
 
+/-- The additive-character sum over `L` consecutive residue classes starting at `x`. -/
 noncomputable def intervalCharacterKernel
     (N : ℕ) [NeZero N] (h x : ZMod N) (L : ℕ) : ℂ :=
   ∑ j ∈ Finset.range L,
@@ -1010,6 +1023,7 @@ theorem intervalCharacterKernel_norm_le
   rw [intervalCharacterKernel_eq, norm_mul, norm_stdAddChar_eq_one, one_mul]
   exact geometricKernel_norm_le hh L
 
+/-- Sum the mean-centered reciprocal phase along a consecutive interval. -/
 noncomputable def centeredIntervalSum
     (N : ℕ) [NeZero N] (a x : ZMod N) (L : ℕ) : ℂ :=
   ∑ j ∈ Finset.range L,
@@ -1180,6 +1194,7 @@ theorem centeredReducedIntervalSum_le
 /-! **Weighted region**: discrete partial summation with reciprocal
 weights, an explicit consequence of the preceding centered interval bound. -/
 
+/-- The reciprocal weight `1 / (Y + i)`, viewed as a complex number. -/
 noncomputable def reciprocalNatWeight (Y i : ℕ) : ℂ :=
   ((((Y + i : ℕ) : ℝ)⁻¹ : ℝ) : ℂ)
 
@@ -1283,6 +1298,7 @@ theorem partialSummation_reciprocal_weight_le
           ring
 
 
+/-- The centered reciprocal-phase interval sum with weights `1 / (Y + j)`. -/
 noncomputable def weightedCenteredIntervalSum
     (N : ℕ) [NeZero N] (a x : ZMod N) (Y L : ℕ) : ℂ :=
   ∑ j ∈ Finset.range L,

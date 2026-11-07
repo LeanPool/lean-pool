@@ -59,7 +59,7 @@ theorem stepanov_constraint_dimension_bound
     (∑ k : Fin l, (d + (k : ℕ) * (m - 1) + J)) < 2 * J * d := by
   dsimp
   rw [stepanov_constraint_sum_eq]
-  have hqm : m < q := by nlinarith
+  have hqm : m < q := by nlinarith only [hm, hl, hq]
   have hqmsub : q - m + m = q := by omega
   have hdlo : q - m ≤ 2 * ((q - m) ⌈/⌉ 2) := by
     exact (ceilDiv_le_iff_le_mul (by omega)).1 le_rfl
@@ -71,26 +71,18 @@ theorem stepanov_constraint_dimension_bound
   have hJhi : 2 * ((l + 1) / 2 + 10 * (m + 1)) ≤
       l + 1 + 20 * (m + 1) := by omega
   have hmone : m - 1 + 1 = m := by omega
-  have hlone : l - 1 + 1 = l := by omega
-  have hMpos : 0 < m + 1 := by omega
-  have hqM := Nat.mul_lt_mul_of_pos_left hq hMpos
-  have hlsqM := Nat.mul_le_mul_left (m + 1) hlsq
-  have hlsqm := Nat.mul_le_mul_left (m - 1) hlsq
-  have hMMl : (m + 1) * (m + 1) ≤
-      (m + 1) * (m + 1) * l := by
-    nlinarith
   have hbasele : 100 * (m + 1) ≤ 100 * (m + 1) * l := by
-    nlinarith
+    simpa only [Nat.mul_one] using Nat.mul_le_mul_left (100 * (m + 1)) hl
   have hqbase : 100 * (m + 1) < q := hbasele.trans_lt hq
-  have hqsmall : 25 * (m + 1) * l < q := by nlinarith
+  have hqsmall : 25 * (m + 1) * l < q := by nlinarith only [hq]
   have hqscaled := Nat.mul_lt_mul_of_pos_left hqbase
     (by positivity : 0 < 19 * m)
   have hmsmall : 20 * m * (m + 1) + (m - 1) < 19 * m * q := by
-    nlinarith
+    nlinarith only [hqscaled, hm, hmone]
   have hbudget :
       20 * m * (m + 1) + 25 * (m + 1) * l + m <
         (19 * m + 20) * q := by
-    nlinarith
+    nlinarith only [hmsmall, hqsmall, hmone]
   have htri : 2 * (l * (l - 1) / 2) ≤ l * (l - 1) :=
     Nat.mul_div_le _ _
   have hprodLower :
@@ -100,11 +92,11 @@ theorem stepanov_constraint_dimension_bound
     Nat.mul_le_mul hJlo hdlo
   have hdterm :
       2 * (l * ((q - m) ⌈/⌉ 2)) ≤ l * (q - m + 1) := by
-    nlinarith
+    nlinarith only [Nat.mul_le_mul_left l hdhi]
   have hJterm :
       2 * (l * ((l + 1) / 2 + 10 * (m + 1))) ≤
         l * (l + 1 + 20 * (m + 1)) := by
-    nlinarith
+    nlinarith only [Nat.mul_le_mul_left l hJhi]
   have hmterm :
       2 * ((m - 1) * (l * (l - 1) / 2)) ≤
         (m - 1) * (l * (l - 1)) := by
@@ -161,17 +153,17 @@ theorem stepanov_sqrt_parameters
       2 * (d - 1) + m < q ∧
       (∑ k : Fin l, (d + (k : ℕ) * (m - 1) + J)) < 2 * J * d := by
   dsimp
-  have hqm : m < q := by nlinarith
+  have hqm : m < q := by nlinarith only [hm, hq]
   have hspos : 0 < Nat.sqrt q + 1 := by omega
   have hsle : Nat.sqrt q + 1 ≤ q := by
     have hscale : Nat.sqrt q + 1 ≤
         100 * (m + 1) * (Nat.sqrt q + 1) := by
-      nlinarith
+      nlinarith only [hm]
     exact hscale.trans (Nat.le_of_lt hq)
   have hlsq : (Nat.sqrt q + 1) * (Nat.sqrt q + 1) ≤
       q + 2 * (Nat.sqrt q + 1) + 1 := by
     have hs := Nat.sqrt_le q
-    nlinarith
+    nlinarith only [hs]
   have hdpos : 0 < (q - m) ⌈/⌉ 2 := by
     rw [Nat.ceilDiv_eq_add_pred_div]
     have : 2 ≤ q - m + 1 := by omega
@@ -221,9 +213,9 @@ theorem stepanov_raw_bound_to_sqrt
   let l := Nat.sqrt q + 1
   let d := (q - m) ⌈/⌉ 2
   let J := (l + 1) / 2 + 10 * (m + 1)
-  have hqpos : 0 < q := by nlinarith
+  have hqpos : 0 < q := by nlinarith only [hlarge]
   have hlpos : 0 < l := by dsimp [l]; omega
-  have hqm : m < q := by nlinarith
+  have hqm : m < q := by nlinarith only [hm, hlarge]
   have hsqrt : q < l * l := by
     dsimp [l]
     exact Nat.lt_succ_sqrt q
@@ -266,7 +258,7 @@ theorem stepanov_raw_bound_to_sqrt
     have hlq : l ≤ q := by
       dsimp [l] at hlarge ⊢
       have : Nat.sqrt q + 1 ≤
-          100 * (m + 1) * (Nat.sqrt q + 1) := by nlinarith
+          100 * (m + 1) * (Nat.sqrt q + 1) := by nlinarith only [hm]
       exact this.trans (Nat.le_of_lt hlarge)
     have hmlq := Nat.mul_le_mul_left (2 * m) hlq
     have hmhalf : m * (q - 1) ≤ m * q :=
@@ -280,9 +272,6 @@ theorem stepanov_raw_bound_to_sqrt
   have htarget :
       m * (l + ((q - 1) / 2)) + d + J * q ≤
         l * ((q + 1) / 2 + 40 * (m + 1) * l) := by
-    have hlarge' : 50 * (m + 1) * l < q := by
-      dsimp [l] at hlarge ⊢
-      nlinarith
     nlinarith only [hRdouble, hBdouble, hRtoB]
   exact (Nat.mul_lt_mul_left hlpos).mp (hraw.trans_le htarget)
 

@@ -7,8 +7,6 @@ module
 
 public import Mathlib.NumberTheory.GaussSum
 public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
-public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.Tactic
 
 
 /-!
@@ -25,10 +23,12 @@ References: Weil (1948); Harcos (2015), equation (1).
 
 namespace KloostermanWeil
 
+/-- The prime-modulus sum of the additive phase `b*x + a/x` over nonzero residues. -/
 noncomputable def kloostermanSumPrime (p : ℕ) [Fact p.Prime]
     (a b : ZMod p) : ℂ :=
   ∑ x : ZMod p, if x = 0 then 0 else ZMod.stdAddChar (b * x + a * x⁻¹)
 
+/-- Inversion as an involutive permutation of a prime residue field, including zero. -/
 noncomputable def zmodInvEquiv (p : ℕ) [Fact p.Prime] : ZMod p ≃ ZMod p where
   toFun := Inv.inv
   invFun := Inv.inv
@@ -91,6 +91,7 @@ lemma kloostermanSumPrime_zero_zero (p : ℕ) [Fact p.Prime] :
           rw [hone]
           simp
 
+/-- The prime Kloosterman bound with both coefficients nonzero, proved by `prime_bound`. -/
 def PrimeNondegenerateWeil : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (a b : ZMod p),
     a ≠ 0 → b ≠ 0 →
@@ -113,7 +114,7 @@ theorem kloostermanSumPrime_eq_weilKloostermanPrime
   rfl
 
 /-- Classical prime Kloosterman–Weil bound in conventional coefficient order.
-This proposition is proved in `rml.weil.prime_kloosterman` using a
+This proposition is proved in `LeanPool.KloostermanWeil.Weil.PrimeKloosterman` using a
 Carlitz recurrence and a Stepanov point-count estimate.
 
 Source: André Weil, "On Some Exponential Sums",
@@ -175,6 +176,7 @@ theorem kloostermanSumPrime_scaling
   rw [weilKloostermanPrime_scaling p b a hb]
   rfl
 
+/-- The prime Kloosterman bound after normalizing the linear coefficient to one. -/
 def OneParameterPrimeWeil : Prop :=
   ∀ (p : ℕ) [Fact p.Prime] (a : ZMod p),
     a ≠ 0 →

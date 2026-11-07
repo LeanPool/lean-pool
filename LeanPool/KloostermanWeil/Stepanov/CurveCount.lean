@@ -5,7 +5,7 @@ Authors: Charlie Dorsey
 -/
 module
 
-public import LeanPool.KloostermanWeil.Stepanov.Algebra
+public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.NumberTheory.LegendreSymbol.QuadraticChar.Basic
 
 

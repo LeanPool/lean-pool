@@ -24,11 +24,13 @@ namespace KloostermanWeil.Stepanov
 
 open KloostermanWeil.Carlitz
 
+/-- A chosen first spectral root for nonzero `t`, extended by zero at `t = 0`. -/
 noncomputable def carlitzAlpha
     (p : ℕ) [Fact p.Prime] (t : ZMod p) : ℂ :=
   if ht : t = 0 then 0
   else Classical.choose (carlitz_spectral_roots_Kext p ht)
 
+/-- The matching second spectral root, extended by zero at `t = 0`. -/
 noncomputable def carlitzBeta
     (p : ℕ) [Fact p.Prime] (t : ZMod p) : ℂ :=
   if ht : t = 0 then 0

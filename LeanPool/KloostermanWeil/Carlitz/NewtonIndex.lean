@@ -70,18 +70,21 @@ noncomputable instance relevantIrredFintype
     (ConjRootClass (Fp p) (Ext p n))
     (classRelevantEquiv p n)
 
+/-- Factor data with a chosen irreducible factor and one occurrence of that factor. -/
 abbrev PointedFactorData
     (p n : ℕ) [Fact p.Prime] :=
   Σ s : FactorData p n,
     Σ q : {q : Polynomial (ZMod p) // q ∈ s.1.toFinset},
       Fin (s.1.count q.1)
 
+/-- An irreducible prime-power contribution together with complementary factor data. -/
 abbrev PrimePowerDecomp
     (p n : ℕ) [Fact p.Prime] :=
   Σ j : Fin n,
     RelevantIrred p (j.1 + 1) ×
       FactorData p (n - (j.1 + 1))
 
+/-- Insert the indicated irreducible power and mark its final occurrence. -/
 noncomputable def primePowerToPointed
     (p n : ℕ) [Fact p.Prime] :
     PrimePowerDecomp p n → PointedFactorData p n := by
@@ -130,6 +133,7 @@ noncomputable def primePowerToPointed
     omega
   exact ⟨s, qsub, ⟨r - 1, hcount⟩⟩
 
+/-- Remove the irreducible power ending at the marked occurrence. -/
 noncomputable def pointedToPrimePower
     (p n : ℕ) [Fact p.Prime] :
     PointedFactorData p n → PrimePowerDecomp p n := by
@@ -357,6 +361,7 @@ theorem primePower_pointed_left
       out.2.2 k hK
   exact Sigma.ext hs hsnd
 
+/-- Reindex prime-power contributions as factor multisets with a marked occurrence. -/
 noncomputable def primePowerPointedEquiv
     (p n : ℕ) [Fact p.Prime] :
     PrimePowerDecomp p n ≃ PointedFactorData p n where

@@ -26,13 +26,15 @@ the definitions below.
 
 namespace KloostermanWeil.Carlitz
 
+/-- The prime residue ring used as the base field when `p` is prime. -/
 abbrev Fp (p : ℕ) := ZMod p
-abbrev Ext (p n : ℕ) [Fact p.Prime] [NeZero n] := GaloisField p n
+/-- The chosen finite Galois extension of the prime field. -/
+abbrev Ext (p n : ℕ) [Fact p.Prime] := GaloisField p n
 
 /-- Canonical additive character on the chosen degree-n extension:
 the base standard additive character composed with algebra trace. -/
 noncomputable def psiExt
-    (p n : ℕ) [Fact p.Prime] [NeZero n] :
+    (p n : ℕ) [Fact p.Prime] :
     AddChar (Ext p n) ℂ where
   toFun x := ZMod.stdAddChar (Algebra.trace (Fp p) (Ext p n) x)
   map_zero_eq_one' := by simp
@@ -41,7 +43,7 @@ noncomputable def psiExt
 
 /-- Carlitz extension-field Kloosterman sum in prime-modulus argument/sign convention. -/
 noncomputable def Kext
-    (p n : ℕ) [Fact p.Prime] [NeZero n] (t : Fp p) : ℂ := by
+    (p n : ℕ) [Fact p.Prime] (t : Fp p) : ℂ := by
   classical
   letI := Fintype.ofFinite (Ext p n)
   exact ∑ x : Ext p n,

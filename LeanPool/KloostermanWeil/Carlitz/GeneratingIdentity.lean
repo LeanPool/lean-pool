@@ -44,6 +44,7 @@ noncomputable def Kseq
     Kseq p t (n + 1) = Kext p (n + 1) t := by
   rfl
 
+/-- The formal generating series of the weighted monic-polynomial sums `A`. -/
 noncomputable def LSeriesA
     (p : ℕ) [Fact p.Prime] (t : Fp p) : ℂ⟦X⟧ :=
   PowerSeries.mk fun n => A p t n

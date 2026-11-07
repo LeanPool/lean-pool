@@ -44,6 +44,7 @@ theorem etaPoly_multiset_prod_of_monic
       rw [Multiset.prod_cons, etaPoly_mul_of_monic p t hf hprod,
         Multiset.map_cons, Multiset.prod_cons, ih hs']
 
+/-- The product of the additive-character weights of the irreducible factors. -/
 noncomputable def factorWeight
     (p : ℕ) [Fact p.Prime] (t : ZMod p) {n : ℕ}
     (s : FactorData p n) : ℂ :=
@@ -82,6 +83,7 @@ theorem etaPoly_eq_factorWeight
           (etaPoly p t)).prod := by
       rfl
 
+/-- Parametrize irreducible factor data by the lower coefficients of its product. -/
 noncomputable def coeffFactorEquiv
     (p n : ℕ) [Fact p.Prime] :
     (Fin n → ZMod p) ≃ FactorData p n :=

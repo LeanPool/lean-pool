@@ -5,7 +5,7 @@ Authors: Charlie Dorsey
 -/
 module
 
-public import LeanPool.KloostermanWeil.Carlitz.ExtensionDefinitions
+public import Mathlib.FieldTheory.Minpoly.Basic
 public import Mathlib.Algebra.Polynomial.Div
 public import Mathlib.Algebra.Polynomial.RingDivision
 public import Mathlib.Algebra.Polynomial.Reverse
@@ -86,6 +86,7 @@ lemma minpoly_inv_natDegree_eq
     _ = (minpoly K x).natDegree :=
       IntermediateField.adjoin.finrank hxint
 
+/-- The reciprocal minimal polynomial normalized using its constant coefficient. -/
 noncomputable def invMinpolyCandidate
     (K L : Type*) [Field K] [Field L] [Algebra K L]
     (x : L) : Polynomial K :=
@@ -107,7 +108,7 @@ lemma invMinpolyCandidate_monic
 
 lemma invMinpolyCandidate_aeval_inv
     {K L : Type*} [Field K] [Field L] [Algebra K L]
-    [FiniteDimensional K L] {x : L} (hx : x ≠ 0) :
+    {x : L} (hx : x ≠ 0) :
     Polynomial.aeval x⁻¹ (invMinpolyCandidate K L x) = 0 := by
   let : Invertible x := invertibleOfNonzero hx
   unfold invMinpolyCandidate

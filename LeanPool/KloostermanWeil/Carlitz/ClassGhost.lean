@@ -28,7 +28,7 @@ namespace KloostermanWeil.Carlitz
 open Polynomial
 
 lemma conjCarrier_card_eq_minpoly_natDegree
-    (p n : ℕ) [Fact p.Prime] [NeZero n]
+    (p n : ℕ) [Fact p.Prime]
     (c : ConjRootClass (Fp p) (Ext p n))
     [Fintype c.carrier] :
     Fintype.card c.carrier = c.minpoly.natDegree := by
@@ -51,7 +51,7 @@ lemma conjCarrier_card_eq_minpoly_natDegree
         c.separable_minpoly c.splits_minpoly
 
 lemma minpoly_eq_class_minpoly
-    (p n : ℕ) [Fact p.Prime] [NeZero n]
+    (p n : ℕ) [Fact p.Prime]
     {c : ConjRootClass (Fp p) (Ext p n)}
     (y : c.carrier) :
     minpoly (Fp p) (y : Ext p n) = c.minpoly := by
@@ -105,8 +105,9 @@ lemma relative_finrank_eq_total_div_classDegree
 
 
 
+/-- The conjugacy-class expansion of the extension sum, weighted by class cardinality. -/
 noncomputable def classGhost
-    (p n : ℕ) [Fact p.Prime] [NeZero n] (t : Fp p) : ℂ := by
+    (p n : ℕ) [Fact p.Prime] (t : Fp p) : ℂ := by
   classical
   letI : Finite (ConjRootClass (Fp p) (Ext p n)) := by
     unfold ConjRootClass

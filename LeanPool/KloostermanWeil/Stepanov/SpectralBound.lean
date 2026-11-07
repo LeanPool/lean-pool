@@ -28,9 +28,11 @@ namespace KloostermanWeil.Stepanov
 open scoped BigOperators
 open KloostermanWeil.Carlitz
 
+/-- Index the two spectral roots for each nonzero scalar in the base field. -/
 abbrev CarlitzRootIndex (p : ℕ) :=
   {m : ZMod p // m ≠ 0} × Bool
 
+/-- The selected spectral root for parameter `m²c`, squared and divided by `p`. -/
 noncomputable def normalizedCarlitzSquaredRoot
     (p : ℕ) [Fact p.Prime] (c : ZMod p)
     (x : CarlitzRootIndex p) : ℂ :=

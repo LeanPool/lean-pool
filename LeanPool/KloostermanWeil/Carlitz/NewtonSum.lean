@@ -25,6 +25,7 @@ namespace KloostermanWeil.Carlitz
 open Polynomial
 open KloostermanWeil.Dickson
 
+/-- The degree-weighted character contribution of an irreducible prime power. -/
 noncomputable def primePowerWeight
     (p n : ℕ) [Fact p.Prime] (t : ZMod p)
     (z : PrimePowerDecomp p n) : ℂ :=
@@ -35,6 +36,7 @@ noncomputable def primePowerWeight
     etaPoly p t P.1 ^ ((j.1 + 1) / P.1.natDegree) *
       factorWeight p t u
 
+/-- The factor weight multiplied by the degree of the marked irreducible. -/
 noncomputable def pointedWeight
     (p n : ℕ) [Fact p.Prime] (t : ZMod p)
     (z : PointedFactorData p n) : ℂ :=

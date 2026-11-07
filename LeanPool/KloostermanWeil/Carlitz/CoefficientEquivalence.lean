@@ -6,6 +6,7 @@ Authors: Charlie Dorsey
 module
 
 public import LeanPool.KloostermanWeil.Carlitz.FactorData
+public import LeanPool.KloostermanWeil.Carlitz.DicksonFiniteAlgebra
 
 
 /-!
@@ -25,6 +26,7 @@ namespace KloostermanWeil.Carlitz
 open Polynomial
 open KloostermanWeil.Dickson
 
+/-- Adjoin a leading coefficient of one to a vector of lower coefficients. -/
 noncomputable def coeffVectorToMonic
     (p n : ℕ) [Fact p.Prime] :
     (Fin n → ZMod p) → MonicDeg p n := by
@@ -33,8 +35,9 @@ noncomputable def coeffVectorToMonic
   exact natDegree_eq_of_degree_eq_some
     (monicFromCoeffs_degree p n a)
 
+/-- Extract the coefficients below the leading term of a monic polynomial. -/
 noncomputable def monicToCoeffVector
-    (p n : ℕ) [Fact p.Prime] :
+    (p n : ℕ) :
     MonicDeg p n → (Fin n → ZMod p) :=
   fun f i => f.1.coeff i
 
@@ -81,6 +84,7 @@ theorem coeffVector_right_inv
         coeff_eq_zero_of_natDegree_lt (by simpa [hgDeg] using hlt)
       exact hg0.trans hf0.symm
 
+/-- Monic degree-`n` polynomials parametrized by their `n` lower coefficients. -/
 noncomputable def coeffVectorEquivMonicDeg
     (p n : ℕ) [Fact p.Prime] :
     (Fin n → ZMod p) ≃ MonicDeg p n where
