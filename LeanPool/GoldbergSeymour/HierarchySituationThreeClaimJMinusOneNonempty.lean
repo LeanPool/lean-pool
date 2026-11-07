@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 
@@ -3907,23 +3909,13 @@ theorem HierarchySituationThreeClaimJMinusOneNonempty {V E : Type*}
   have trans {X Y Z : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y)
       (hYZ : TreeSequenceInitialSegment Y Z) :
-      TreeSequenceInitialSegment X Z := by as_aux_lemma =>
-    clear * - hXY hYZ
-    refine ⟨hXY.1.trans hYZ.1, ?_, ?_⟩
-    · intro i
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-    · intro i
-      exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
+      TreeSequenceInitialSegment X Z := by
+    exact hXY.trans hYZ
   have common {X Y Z : TreeSequence G e0}
       (hXZ : TreeSequenceInitialSegment X Z)
       (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
-      TreeSequenceInitialSegment X Y := by as_aux_lemma =>
-    clear * - hXZ hYZ hXY
-    refine ⟨hXY, ?_, ?_⟩
-    · intro i
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-    · intro i
-      exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
+      TreeSequenceInitialSegment X Y := by
+    exact hYZ.of_common_extension hXZ hXY
   have sameLast :
     ∀ {a b : ℕ} (s : Fin (a + 2) → TreeSequence G e0) (t : Fin (b + 2) → TreeSequence G e0) (u v :
         TreeSequence G e0), a = b → HEq s t → u = v → Fin.cases (motive := fun _ => TreeSequence G

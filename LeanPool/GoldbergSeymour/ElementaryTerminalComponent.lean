@@ -5,8 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
-public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
 public import LeanPool.GoldbergSeymour.TwoColorComponentsDisjoint
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
@@ -46,21 +47,7 @@ theorem P2905_T2_ElementaryTerminalComponent {V E : Type*}
   let J := TwoColorIncidenceGraph G psi a b
   have leaf (x : V) (hx : a ∈ MissingColors G psi x ∨ b ∈ MissingColors G psi x) :
       (J.neighborSet (Sum.inl x)).Subsingleton := by
-    have hd : @SimpleGraph.degree _ J (Sum.inl x) (Fintype.ofFinite _) ≤ 1 := by
-      rcases hx with hx | hx
-      · exact MissingColorIncidenceEndpoint G psi a b hne hproper x hx
-      · have hJ : TwoColorIncidenceGraph G psi b a = J := by
-          ext z z'
-          cases z <;> cases z' <;> simp [J, TwoColorIncidenceGraph, or_comm]
-        rw [← hJ]
-        exact MissingColorIncidenceEndpoint G psi b a hne.symm hproper x hx
-    let : Fintype (J.neighborSet (Sum.inl x)) := Fintype.ofFinite _
-    have hc : Fintype.card (J.neighborSet (Sum.inl x)) ≤ 1 := by
-      rw [SimpleGraph.card_neighborSet_eq_degree]
-      exact hd
-    intro z hz z' hz'
-    exact congrArg Subtype.val
-      (Fintype.card_le_one_iff.mp hc ⟨z, hz⟩ ⟨z', hz'⟩)
+    exact TwoColorIncidenceGraph.neighborSet_subsingleton_of_missing hproper hx
   have hnot : Sum.inl w ∉ TwoColorComponent G psi a b (Sum.inl u) := by
     intro hwC
     by_cases huv : u = v

@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ShorteningTransport
@@ -1485,16 +1489,7 @@ private theorem helper_exceptional_436.{u_1, u_2} :
     elemA va vb y vaA vbA (fun he => hyB (he ▸ vaB))
     (fun he => hyB (he ▸ vbB)) hva hvb (Or.inl hay) hsame
   have vaPath : TwoColorPathComponent G mu alpha beta (Sum.inl va) := by
-    let J := TwoColorIncidenceGraph G mu alpha beta
-    let : Fintype (J.neighborSet (Sum.inl va)) := Fintype.ofFinite _
-    have hd := MissingColorIncidenceEndpoint G mu alpha beta hab
-      P.minimumContext.proper va hva
-    have hc : Fintype.card (J.neighborSet (Sum.inl va)) ≤ 1 := by
-      rw [SimpleGraph.card_neighborSet_eq_degree]
-      exact hd
-    refine ⟨hab, Sum.inl va, by rfl, ?_⟩
-    intro z hz w hw
-    exact congrArg Subtype.val (Fintype.card_le_one_iff.mp hc ⟨z, hz⟩ ⟨w, hw⟩)
+    exact TwoColorPathComponent.of_missing P.minimumContext.proper hab hva
   have hmeetA : ∃ u ∈ TreeSequenceVertexSet A,
       Sum.inl u ∈ TwoColorComponent G mu alpha beta (Sum.inl y) := by
     rw [hABeq]
@@ -2393,59 +2388,6 @@ private theorem helper_stableClosed_2136.{u_1, u_2} :
       (Finset.mem_biUnion.mpr ⟨v, hv, hm⟩), hfc⟩)
   exact hcl hf hv (heq.symm.trans hfc) hm
 
-private theorem helper_common_2010.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-      (_ :
-  ∀ {S U W : TreeSequence G e0} (_ : TreeSequenceInitialSegment S U) (_ :
-      TreeSequenceInitialSegment U W),
-  TreeSequenceInitialSegment S W)
-      {S U W : TreeSequence G e0} (_ : TreeSequenceInitialSegment S W) (_ :
-          TreeSequenceInitialSegment U W)
-      (_ : S.length ≤ U.length),
-  TreeSequenceInitialSegment S U := by
-  classical
-  intro V E G e0 trans S U W hSW hUW hlen
-  clear * - hSW hUW hlen
-  refine ⟨hlen, ?_, ?_⟩
-  · intro i
-    exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans (hSW.2.1 i)
-  · intro i
-    exact (hUW.2.2 (Fin.castLE hlen i)).symm.trans (hSW.2.2 i)
-
-private theorem helper_prefixEq_2316.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
-  [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E
-      k)
-  (T : TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-      input T phi)
-  (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (j : ℕ),
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (j - (2 : ℕ));
-  ∀
-    (_ :
-  ∀ {S U W : TreeSequence G e0} (_ : TreeSequenceInitialSegment S U) (_ :
-      TreeSequenceInitialSegment U W),
-  TreeSequenceInitialSegment S W)
-    (hBT : TreeSequenceInitialSegment (HierarchyFullTailPrefix C (j - (2 : ℕ))) T) (U :
-        TreeSequence G e0)
-    (hBU : TreeSequenceInitialSegment B U) (p : ℕ) (hp : (1 : ℕ) ≤ p) (hpB : p ≤ B.length),
-  TreeSequencePrefix U p hp (LE.le.trans hpB hBU.1) = TreeSequencePrefix T p hp (LE.le.trans
-      hpB hBT.1) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C j B trans hBT U hBU p hp hpB
-  clear * - hBU hBT p hp hpB
-  unfold TreeSequencePrefix
-  congr
-  · funext i
-    have hu := hBU.2.1 (Fin.castLE (Nat.succ_le_succ hpB) i)
-    have ht := hBT.2.1 (Fin.castLE (Nat.succ_le_succ hpB) i)
-    exact hu.trans ht.symm
-  · funext i
-    have hu := hBU.2.2 (Fin.castLE hpB i)
-    have ht := hBT.2.2 (Fin.castLE hpB i)
-    exact hu.trans ht.symm
-
 private theorem helper_ownerBound_2434.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
@@ -2919,10 +2861,17 @@ private theorem componentIntersectionFromSpliceFacts.{u_1, u_2} :
           (@below) (@generating) (@hseries) (@baseU) (@stageB) (@i)
     have prefixEq (p : ℕ) (hp : 1 ≤ p) (hpB : p ≤ B.length) :
         TreeSequencePrefix U p hp (hpB.trans hBU.1) =
-          TreeSequencePrefix T p hp (hpB.trans hBT.1) := by as_aux_lemma =>
-      exact @helper_prefixEq_2316 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-          (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@j) (@trans) (@hBT) (@U) (@hBU)
-          (@p) (@hp) (@hpB)
+          TreeSequencePrefix T p hp (hpB.trans hBT.1) := by
+      unfold TreeSequencePrefix
+      congr
+      · funext i
+        have hu := hBU.2.1 (Fin.castLE (Nat.succ_le_succ hpB) i)
+        have ht := hBT.2.1 (Fin.castLE (Nat.succ_le_succ hpB) i)
+        exact hu.trans ht.symm
+      · funext i
+        have hu := hBU.2.2 (Fin.castLE hpB i)
+        have ht := hBT.2.2 (Fin.castLE hpB i)
+        exact hu.trans ht.symm
     -- Only the terminal hierarchy stage changes.
     let newStage : Fin (H.dividerCount + 2) → TreeSequence G e0 :=
       fun i => if i.val = H.dividerCount + 1 then U else H.stage i
@@ -3144,8 +3093,8 @@ theorem HierarchySituationThreeComponentIntersectionShortening
     have common {S U W : TreeSequence G e0}
         (hSW : TreeSequenceInitialSegment S W)
         (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
-        TreeSequenceInitialSegment S U := by as_aux_lemma =>
-      exact @helper_common_2010 (@V) (@E) (@G) (@e0) (@trans) (@S) (@U) (@W) (@hSW) (@hUW) (@hlen)
+        TreeSequenceInitialSegment S U := by
+      exact hUW.of_common_extension hSW hlen
     have sameLast : ∀ {a b : ℕ}
         (s : Fin (a + 2) → TreeSequence G e0)
         (t : Fin (b + 2) → TreeSequence G e0)

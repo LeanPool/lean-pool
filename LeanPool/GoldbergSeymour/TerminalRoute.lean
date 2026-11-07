@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
@@ -50,12 +52,7 @@ theorem P2813_T1_TerminalRoute {V E : Type*}
       (hSW : TreeSequenceInitialSegment S W)
       (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
       TreeSequenceInitialSegment S U := by
-    refine ⟨hlen, ?_, ?_⟩
-    · intro i
-      exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans
-        (hSW.2.1 i)
-    · intro i
-      exact (hUW.2.2 (Fin.castLE hlen i)).symm.trans (hSW.2.2 i)
+    exact hUW.of_common_extension hSW hlen
   have storedOrMissing (c : Fin k) (hc : c ∈ ett.series.data.stored n) :
       c ∈ TreeMissingColors phi Tn ∪ Dn := by
     by_cases hm : c ∈ TreeMissingColors phi Tn

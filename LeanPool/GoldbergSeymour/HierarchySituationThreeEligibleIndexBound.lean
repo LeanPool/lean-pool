@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.SharedFacts.InsideAdvancement
 
 public import LeanPool.GoldbergSeymour.HierarchyTailSwapData
@@ -340,7 +342,7 @@ private theorem helper_shortening_124.{u_1, u_2} :
         (hSW : TreeSequenceInitialSegment S W)
         (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
         TreeSequenceInitialSegment S U := by
-      apply helper_common_1702 <;> assumption
+      exact hUW.of_common_extension hSW hlen
     have hAX : TreeSequenceInitialSegment A X := common hAT hXT (by omega)
     have hXB : TreeSequenceInitialSegment X B := common hXT hBT (by omega)
     have hTnX := trans hTnA hAX
@@ -922,22 +924,6 @@ private theorem helper_consecutive_2671.{u_1, u_2} :
   rw [hm] at hh
   exact hh t ht
 
-private theorem helper_common_3354.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E), (
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-        → TreeSequenceInitialSegment X Z) →
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Z → TreeSequenceInitialSegment Y Z
-        → X.length ≤ Y.length → TreeSequenceInitialSegment X Y := by
-  classical
-  intro V E G e0 trans X Y Z hXZ hYZ hXY
-  clear * - hXZ hYZ hXY
-  refine ⟨hXY, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
-
 private theorem helper_hAT_3385.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -1082,7 +1068,7 @@ theorem HierarchySituationThreeEligibleIndexBound {V E : Type*}
         (hXZ : TreeSequenceInitialSegment X Z)
         (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
         TreeSequenceInitialSegment X Y := by
-      apply helper_common_3354 <;> assumption
+      exact hYZ.of_common_extension hXZ hXY
     have sameLast :
     ∀ {a b : ℕ} (s : Fin (a + 2) → TreeSequence G e0) (t : Fin (b + 2) → TreeSequence G e0) (u v :
         TreeSequence G e0), a = b → HEq s t → u = v → Fin.cases (motive := fun _ => TreeSequence G

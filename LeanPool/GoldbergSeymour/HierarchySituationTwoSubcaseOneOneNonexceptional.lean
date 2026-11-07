@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTransport
@@ -1724,6 +1726,7 @@ private theorem helper_hPSL_709.{u_1, u_2} :
     (R.star.length - (HierarchyStarredStage HStar (Fin.last HStar.dividerCount)).length - 1))
         R.star.length = _
   rw [lastStar]
+  clear * - starLength minusLength hBL hPL htail
   omega
 
 private theorem helper_thetaNe_723.{u_1, u_2} :
@@ -1902,16 +1905,21 @@ private theorem helper_gammaStarFirst_2196.{u_1, u_2} :
       thetaNe jg isg gammaStarVertex
   apply Fin.ext
   have hu := firstLe R.star D.gammaOne isg (gammaStarVertex.symm ▸ gammaAt)
-  have hl := firstLower R.star D.gammaOne ig.val (by omega) (by
+  have hl := firstLower R.star D.gammaOne ig.val (by
+    have hlength := hBS.1
+    clear * - igBound htail hBL hlength
+    omega) (by
     intro i hi
-    let j : Fin (B.length + 1) := ⟨i.val, by omega⟩
+    let j : Fin (B.length + 1) := ⟨i.val, by
+      clear * - hi igBound htail hBL
+      omega⟩
     have he : Fin.castLE (Nat.succ_le_succ hBS.1) j = i := Fin.ext rfl
     have hn := firstBefore T D.gammaOne (Fin.castLE (Nat.succ_le_succ hBT.1) j) (by
       simp only [Fin.val_castLE]; exact hi)
     rwa [hBT.2.1 j, ← hBS.2.1 j, he] at hn)
   change (HierarchyFirstMissingPosition phi R.star D.gammaOne).val = ig.val
   change (HierarchyFirstMissingPosition phi R.star D.gammaOne).val ≤ ig.val at hu
-  omega
+  exact Nat.le_antisymm hu hl
 
 private theorem helper_newOrderedUnused_2212.{u_1, u_2} :
     helperNewOrderedUnused2212Conditions.{u_1, u_2} := by
@@ -1923,6 +1931,7 @@ private theorem helper_newOrderedUnused_2212.{u_1, u_2} :
   rw [gammaStarFirst, alphaStarFirst]
   refine ⟨⟨isg, ia, rfl, rfl, ?_⟩, ?_⟩
   · change ig.val < R.minus.length
+    clear * - igBound htail hBL minusLength
     omega
   · intro hm
     obtain ⟨_, r, hlo, hhi, hcol⟩ := Finset.mem_filter.mp hm
@@ -2010,7 +2019,9 @@ private theorem helper_continuation_3550.{u_1, u_2} :
         (@ctx) (@D) (@hBL) (@hPL) (@vertexMem) (@firstLe) (@firstLower) (@alphaNotB) (@R)
         (@corrMinus) (@baseMinus) (@HMinus) (@corrStar) (@mpStar) (@baseStar) (@HStar)
         (@starLength) (@hMS) (@minusLength) (@hBS) (@goodStar) (@hPSL) (@alphaStarAt)
-  let jg : Fin (B.length + 1) := ⟨ig.val, by omega⟩
+  let jg : Fin (B.length + 1) := ⟨ig.val, by
+    clear * - igBound htail hBL
+    omega⟩
   let isg : Fin (R.star.length + 1) := Fin.castLE (Nat.succ_le_succ hBS.1) jg
   have gammaStarVertex : R.star.vertex isg = vg := by
     rw [hBS.2.1 jg, ← hBT.2.1 jg]
@@ -2817,11 +2828,7 @@ theorem HierarchySituationTwoSubcaseOneOneNonexceptional {V E : Type*}
       (hXY : TreeSequenceInitialSegment X Y)
       (hYZ : TreeSequenceInitialSegment Y Z) :
       TreeSequenceInitialSegment X Z := by
-    refine ⟨le_trans hXY.1 hYZ.1, ?_, ?_⟩
-    · intro i
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-    · intro i
-      exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
+    exact hXY.trans hYZ
   have stageSegment : ∀ a d : ℕ, ∀ hb : a + d ≤ H.dividerCount + 1,
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
@@ -2865,11 +2872,7 @@ theorem HierarchySituationTwoSubcaseOneOneNonexceptional {V E : Type*}
       (hXZ : TreeSequenceInitialSegment X Z)
       (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
       TreeSequenceInitialSegment X Y := by
-    refine ⟨hXY, ?_, ?_⟩
-    · intro i
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-    · intro i
-      exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
+    exact hYZ.of_common_extension hXZ hXY
   have hAB : TreeSequenceInitialSegment A B := restrictSegment hAT hBT (by omega)
   have hBP : TreeSequenceInitialSegment B P := restrictSegment hBT hPT (by omega)
   have hPE : ColoredVertexSetElementary G phi (TreeSequenceVertexSet P) :=
@@ -2892,8 +2895,7 @@ theorem HierarchySituationTwoSubcaseOneOneNonexceptional {V E : Type*}
       (hi : i.val < (HierarchyFirstMissingPosition phi X c).val) :
       c ∉ MissingColors G phi (X.vertex i) := by
     intro hm
-    have := firstLe X c i hm
-    omega
+    exact (not_lt_of_ge (firstLe X c i hm)) hi
   have firstLower (X : TreeSequence G e0) (c : Fin k) (t : ℕ)
       (ht : t ≤ X.length)
       (hn : ∀ i : Fin (X.length + 1), i.val < t →

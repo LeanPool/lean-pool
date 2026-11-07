@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
@@ -1312,14 +1314,8 @@ theorem helper_restrictSegment_343.{u_1, u_2} :
   TreeSequenceInitialSegment Y Z →
   X.length ≤ Y.length →
   TreeSequenceInitialSegment X Y := by
-  classical
   intro V E G e0 X Y Z hXZ hYZ hXY
-  as_aux_lemma =>
-    refine ⟨hXY, ?_, ?_⟩
-    · intro i
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-    · intro i
-      exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
+  exact hYZ.of_common_extension hXZ hXY
 
 theorem helper_hAT_359.{u_1, u_2} :
     open scoped Classical in

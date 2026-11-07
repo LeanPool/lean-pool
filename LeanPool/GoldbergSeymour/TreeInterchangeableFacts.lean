@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Wesley Pegden. All rights reserved.
+Copyright (c) 2026 Wesley Pegden and Lean Pool contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -13,25 +13,25 @@ public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
 # Restriction and symmetry of tree interchangeability
 
 General facts extracted from the credited Trellis proof families at
-88d98c1d1a59d1f1bf7c4eb58e73f3945f6daf12.
+88d98c1d1a59d1f1bf7c4eb58e73f3945f6daf12 and generalized during the Lean Pool port.
 -/
 
 @[expose] public section
 
 namespace GoldbergSeymour
 
-/-- A missing color makes the vertex an endpoint of its two-color component. -/
-theorem TwoColorPathComponent.of_missing {V E : Type*} [Fintype E]
+/-- Missing either selected color leaves at most one neighbor at the vertex. -/
+theorem TwoColorIncidenceGraph.neighborSet_subsingleton_of_missing {V E : Type*} [Fintype E]
     {G : LooplessMultigraph V E} {k : ℕ} {phi : PartialEdgeColoring E k} {a b : Fin k}
-    (proper : IsProperEdgeColoring G phi) (different : a ≠ b) {v : V}
-    (missing : a ∈ MissingColors G phi v) : TwoColorPathComponent G phi a b (Sum.inl v) := by
+    (proper : IsProperEdgeColoring G phi) {v : V}
+    (missing : a ∈ MissingColors G phi v ∨ b ∈ MissingColors G phi v) :
+    ((TwoColorIncidenceGraph G phi a b).neighborSet (Sum.inl v)).Subsingleton := by
   classical
-  have absent : a ∉ PresentColors G phi v := by simpa [MissingColors] using missing
-  have notFirst {f : E} (incident : Incident G v f) : phi f ≠ some a := by
+  have absent {c : Fin k} (missing : c ∈ MissingColors G phi v) {f : E}
+      (incident : Incident G v f) : phi f ≠ some c := by
     intro color
-    exact absent (by simpa [PresentColors] using
-      (show ∃ f, Incident G v f ∧ phi f = some a from ⟨f, incident, color⟩))
-  refine ⟨different, Sum.inl v, rfl, ?_⟩
+    exact (Finset.mem_sdiff.mp missing).2
+      (Finset.mem_filter.mpr ⟨Finset.mem_univ _, f, incident, color⟩)
   intro x first y second
   cases x with
   | inl w => exact first.elim
@@ -39,12 +39,24 @@ theorem TwoColorPathComponent.of_missing {V E : Type*} [Fintype E]
     cases y with
     | inl w => exact second.elim
     | inr g =>
-      have firstColor := first.2.resolve_left (notFirst first.1)
-      have secondColor := second.2.resolve_left (notFirst second.1)
-      have equal : f = g := by
-        by_contra differentEdges
-        exact proper differentEdges ⟨v, first.1, second.1⟩ firstColor secondColor
-      exact congrArg Sum.inr equal
+      apply congrArg Sum.inr
+      by_contra differentEdges
+      rcases missing with missing | missing
+      · exact proper differentEdges ⟨v, first.1, second.1⟩
+          (first.2.resolve_left (absent missing first.1))
+          (second.2.resolve_left (absent missing second.1))
+      · exact proper differentEdges ⟨v, first.1, second.1⟩
+          (first.2.resolve_right (absent missing first.1))
+          (second.2.resolve_right (absent missing second.1))
+
+/-- A missing color makes the vertex an endpoint of its two-color component. -/
+theorem TwoColorPathComponent.of_missing {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {phi : PartialEdgeColoring E k} {a b : Fin k}
+    (proper : IsProperEdgeColoring G phi) (different : a ≠ b) {v : V}
+    (missing : a ∈ MissingColors G phi v) : TwoColorPathComponent G phi a b (Sum.inl v) := by
+  exact ⟨different, Sum.inl v, rfl,
+    TwoColorIncidenceGraph.neighborSet_subsingleton_of_missing proper (Or.inl missing)⟩
+
 
 /-- Reversing the two selected colors preserves their incidence graph. -/
 theorem TwoColorIncidenceGraph.swap {V E : Type*} (G : LooplessMultigraph V E)

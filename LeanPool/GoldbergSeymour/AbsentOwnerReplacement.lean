@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
@@ -1932,11 +1934,7 @@ theorem P2905_T2_AbsentOwnerReplacement {V E : Type*}
       (hSW : TreeSequenceInitialSegment S W)
       (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
       TreeSequenceInitialSegment S U := by
-    refine ⟨hlen, ?_, ?_⟩
-    · intro i
-      exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans (hSW.2.1 i)
-    · intro i
-      exact (hUW.2.2 (Fin.castLE hlen i)).symm.trans (hSW.2.2 i)
+    exact hUW.of_common_extension hSW hlen
   have hAB : TreeSequenceInitialSegment A B := by
     apply commonPrefix hA hBprefix
     rw [hlenB]

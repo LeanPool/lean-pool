@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothInside
@@ -2994,12 +2996,7 @@ theorem HierarchyCounterexampleOneAdditionPositiveDividerImpossible
       (hYZ : TreeSequenceInitialSegment Y Z)
       (hXY : X.length ≤ Y.length) :
       TreeSequenceInitialSegment X Y := by
-    refine ⟨hXY, ?_, ?_⟩
-    · intro j
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) j)).symm.trans
-        (hXZ.2.1 j)
-    · intro j
-      exact (hYZ.2.2 (Fin.castLE hXY j)).symm.trans (hXZ.2.2 j)
+    exact hYZ.of_common_extension hXZ hXY
   have equalTrees {X Y : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y)
       (hlenXY : X.length = Y.length) : X = Y := by

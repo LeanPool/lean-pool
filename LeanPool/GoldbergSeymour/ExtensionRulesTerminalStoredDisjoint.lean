@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.ExtensionBaseStepLemmas
 
 public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
@@ -502,51 +504,6 @@ private theorem helper_hcompDistinct_441.{u_1, u_2} :
     rw [heq]
     rfl
   exact hvnvr ((hcomponentOnly choiceN.vertex hvnTh).mp hmem)
-
-private theorem helper_hpathR_452.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (r : Fin ett.rounds) (gammaR : Fin k) (secondStableR :
-        PartialEdgeColoring E k), IsProperEdgeColoring G secondStableR →
-    ∀ (choiceR : MaximumDefectiveChoice G e0 (ett.series.data.tree r.succ.castSucc)
-        (TashkinovStoredColors ett.series.data r.castSucc) (ett.series.data.coloring r.castSucc)),
-        gammaR ∈ MissingColors G secondStableR choiceR.vertex → gammaR ≠ choiceR.color →
-        TwoColorPathComponent G secondStableR gammaR choiceR.color (Sum.inl choiceR.vertex) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett r gammaR secondStableR secondProperR choiceR
-      hgammaMissingR hgammaNeR
-  refine ⟨hgammaNeR, Sum.inl choiceR.vertex, rfl, ?_⟩
-  intro x hx y hy
-  cases x with
-  | inl x => simp [SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] at hx
-  | inr ex =>
-    cases y with
-    | inl y => simp [SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] at hy
-    | inr ey =>
-      simp only [SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] at hx hy
-      have hex : secondStableR ex = some choiceR.color :=
-        hx.2.resolve_left (by
-          intro he
-          have hnot : gammaR ∉ PresentColors G secondStableR
-              choiceR.vertex := by
-            simpa [MissingColors] using hgammaMissingR
-          exact hnot (by
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨ex, hx.1, he⟩))
-      have hey : secondStableR ey = some choiceR.color :=
-        hy.2.resolve_left (by
-          intro he
-          have hnot : gammaR ∉ PresentColors G secondStableR
-              choiceR.vertex := by
-            simpa [MissingColors] using hgammaMissingR
-          exact hnot (by
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨ey, hy.1, he⟩))
-      by_cases he : ex = ey
-      · exact congrArg Sum.inr he
-      · exact (secondProperR he ⟨choiceR.vertex, hx.1, hy.1⟩ hex hey).elim
 
 private theorem helper_swapColorsR_484.{u_1, u_2} :
     open scoped Classical in
@@ -1646,10 +1603,9 @@ private theorem helper_branch_1399.{u_1, u_2} :
     @helper_hcompDistinct_441 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
         (@input) (@T) (@generating) (@ett) (@r) (@gammaR) (@secondStableR) (@choiceR) (@q)
         (@choiceN) (@hvnvr) (@hvnTh) (@hcomponentOnly)
-  have hpathR :=
-    @helper_hpathR_452 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-        (@input) (@T) (@generating) (@ett) (@r) (@gammaR) (@secondStableR) (@secondProperR)
-        (@choiceR) (@hgammaMissingR) (@hgammaNeR)
+  have hpathR : TwoColorPathComponent G secondStableR gammaR choiceR.color
+      (Sum.inl choiceR.vertex) :=
+    TwoColorPathComponent.of_missing secondProperR hgammaNeR hgammaMissingR
   have swapColorsR := @helper_swapColorsR_484 (@V) (@E) inferInstance inferInstance inferInstance
       (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@r) (@gammaR) (@secondStableR) (@choiceR)
       (@hgammaNeR)

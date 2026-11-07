@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapPresentColors
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmCInvariant
@@ -480,8 +482,6 @@ private theorem helper_single_step_295.{u_1, u_2} :
   let H := TwoColorIncidenceGraph G phi alpha beta
   let C := TwoColorComponent G phi alpha beta (Sum.inl u)
   have hne : alpha ≠ beta := hSI.1
-  have hbetaNotPresent : beta ∉ PresentColors G phi u :=
-    (Finset.mem_sdiff.mp hbetaMissing).2
   obtain ⟨eAlpha, heAlphaIncident, heAlphaColor⟩ := by
     simpa only [PresentColors, Finset.mem_filter, Finset.mem_univ,
       true_and] using halphaPresent
@@ -495,40 +495,8 @@ private theorem helper_single_step_295.{u_1, u_2} :
       heAlphaAdj).symm
   have huComponent : Sum.inl u ∈ C := by rfl
   have huSubsingleton : Set.Subsingleton (H.neighborSet (Sum.inl u)) := by
-    intro x hx y hy
-    cases x with
-    | inl x =>
-        simp [SimpleGraph.mem_neighborSet, H, TwoColorIncidenceGraph] at hx
-    | inr e =>
-        cases y with
-        | inl y =>
-            simp [SimpleGraph.mem_neighborSet, H, TwoColorIncidenceGraph] at hy
-        | inr f =>
-            have hxData : Incident G u e ∧
-                (phi e = some alpha ∨ phi e = some beta) := by
-              simpa [SimpleGraph.mem_neighborSet, H, TwoColorIncidenceGraph]
-                using hx
-            have hyData : Incident G u f ∧
-                (phi f = some alpha ∨ phi f = some beta) := by
-              simpa [SimpleGraph.mem_neighborSet, H, TwoColorIncidenceGraph]
-                using hy
-            have heColor : phi e = some alpha := by
-              rcases hxData.2 with he | he
-              · exact he
-              · exact False.elim (hbetaNotPresent (by
-                  simp only [PresentColors, Finset.mem_filter,
-                    Finset.mem_univ, true_and]
-                  exact ⟨e, hxData.1, he⟩))
-            have hfColor : phi f = some alpha := by
-              rcases hyData.2 with hf | hf
-              · exact hf
-              · exact False.elim (hbetaNotPresent (by
-                  simp only [PresentColors, Finset.mem_filter,
-                    Finset.mem_univ, true_and]
-                  exact ⟨f, hyData.1, hf⟩))
-            congr 1
-            by_contra hef
-            exact (hproperPhi hef ⟨u, hxData.1, hyData.1⟩ heColor) hfColor
+    exact TwoColorIncidenceGraph.neighborSet_subsingleton_of_missing hproperPhi
+      (Or.inr hbetaMissing)
   have hpath : TwoColorPathComponent G phi alpha beta (Sum.inl u) := by
     refine ⟨hne, Sum.inl u, huComponent, ?_⟩
     simpa [H] using huSubsingleton

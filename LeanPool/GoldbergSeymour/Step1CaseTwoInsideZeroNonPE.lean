@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.TreeExitPathOutsideSwap
 
 public import LeanPool.GoldbergSeymour.CertifiedETTPredecessor
@@ -354,53 +356,6 @@ private theorem helper_earlier_inside_802.{u_1, u_2} :
     exact hi
   simpa [TreeSequenceVertexSet] using (show ∃ s, N.vertex s = u from ⟨s, hs⟩)
 
-private theorem helper_leaf_1000.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (hpositive : (0 : ℕ) < ett.rounds) (base : HierarchyBase ett phi)
-      (_ : TashkinovHierarchy ett base) (_ : ℕ) (alpha beta theta : Fin k),
-    let r : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), by omega⟩ : Fin ett.rounds);
-    let N : TreeSequence G e0 := ett.series.data.tree r.succ.castSucc;
-    let nu : PartialEdgeColoring E k := OutsideTreeColorSwap T phi alpha theta;
-    ∀ (c : Fin k),
-    let rho : PartialEdgeColoring E k := OutsideTreeColorSwap N nu theta c;
-    IsProperEdgeColoring G (OutsideTreeColorSwap N nu theta c) →
-    let J : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G rho c beta;
-    ∀ (v : V),
-    c ∈ MissingColors G rho v ∨ beta ∈ MissingColors G rho v →
-    (J.neighborSet (Sum.inl v)).Subsingleton := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive base H q alpha beta theta r N nu c rho
-      hrhoProper J v hm z hz w hw
-  cases z with
-  | inl y => simp [J, SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] at hz
-  | inr e =>
-    cases w with
-    | inl y => simp [J, SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] at hw
-    | inr f =>
-      have he : Incident G v e ∧ (rho e = some c ∨ rho e = some beta) := by
-        simpa [J, SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] using hz
-      have hf : Incident G v f ∧ (rho f = some c ∨ rho f = some beta) := by
-        simpa [J, SimpleGraph.mem_neighborSet, TwoColorIncidenceGraph] using hw
-      apply congrArg Sum.inr
-      by_contra hef
-      have absent (d : Fin k) (hd : d ∈ MissingColors G rho v) :
-          ∀ e, Incident G v e → rho e ≠ some d := by
-        intro e he hco
-        have hn : d ∉ PresentColors G rho v := by simpa [MissingColors] using hd
-        exact hn (by simpa [PresentColors] using
-          (show ∃ f, Incident G v f ∧ rho f = some d from ⟨e, he, hco⟩))
-      rcases hm with hm | hm
-      · exact (hrhoProper hef ⟨v, he.1, hf.1⟩
-          (he.2.resolve_left (absent c hm e he.1)))
-          (hf.2.resolve_left (absent c hm f hf.1))
-      · exact (hrhoProper hef ⟨v, he.1, hf.1⟩
-          (he.2.resolve_right (absent beta hm e he.1)))
-          (hf.2.resolve_right (absent beta hm f hf.1))
-
 private theorem helper_hthetaClosedN_1001.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -621,8 +576,10 @@ private theorem helper_continuation_992.{u_1, u_2} :
       hstablePrevious
   -- Missing colors give degree at most one; the retained beta edge makes x a leaf.
   let J := TwoColorIncidenceGraph G rho c beta
-  have leaf := @helper_leaf_1000 V E inferInstance inferInstance inferInstance inferInstance G k e0
-      input T phi ett hpositive base H q alpha beta theta c hrhoProper
+  have leaf (v : V)
+      (missing : c ∈ MissingColors G rho v ∨ beta ∈ MissingColors G rho v) :
+      (J.neighborSet (Sum.inl v)).Subsingleton :=
+    TwoColorIncidenceGraph.neighborSet_subsingleton_of_missing hrhoProper missing
   have lx := leaf x (Or.inl hcxRho)
   have l1 := leaf a₁ hL1.2.2.2.2.1
   have l2 := leaf a₂ hL2.2.2.2.2.1

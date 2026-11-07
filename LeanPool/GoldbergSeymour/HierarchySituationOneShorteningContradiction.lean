@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.EligibleIndexBoundPreparation
 
 public import LeanPool.GoldbergSeymour.SharedFacts.OutsideAdvancement
@@ -1193,8 +1195,7 @@ theorem HierarchySituationOneShorteningContradiction {V E : Type*}
         (hSW : TreeSequenceInitialSegment S W)
         (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
         TreeSequenceInitialSegment S U := by
-      exact @EligibleIndexBound.helper_common_1702 (@V) (@E) (@G) (@e0) (@trans) (@S) (@U) (@W)
-          (@hSW) (@hUW) (@hlen)
+      exact hUW.of_common_extension hSW hlen
     have hAX : TreeSequenceInitialSegment A X := common hAT hXT (by omega)
     have hXB : TreeSequenceInitialSegment X B := common hXT hBT (by omega)
     have hTnX := trans hTnA hAX

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
 
 /-!
@@ -44,13 +46,8 @@ theorem P2905_T2_EmptyCommonMissingLocation {V E : Type*}
   have common {X Y Z : TreeSequence G e0}
       (hXZ : TreeSequenceInitialSegment X Z)
       (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
-      TreeSequenceInitialSegment X Y := by as_aux_lemma =>
-    clear * - hXZ hYZ hXY
-    refine ⟨hXY, ?_, ?_⟩
-    · intro i
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-    · intro i
-      exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
+      TreeSequenceInitialSegment X Y := by
+    exact hYZ.of_common_extension hXZ hXY
   let j := HierarchyPathNumber C.hierarchy
   let ell := HierarchyFullTailLength C
   let A := HierarchyStarredStage C.hierarchy (Fin.last C.hierarchy.dividerCount)

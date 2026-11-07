@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.NonparallelPenultimateInterchangeability
 
 public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
@@ -538,55 +540,6 @@ private theorem helper_branch_481.{u_1, u_2} :
   · simpa [hi, ← lastPositive hz] using halphaA
   · exact hne
   · simpa [hi, ← lastPositive hz] using halphaClosed
-
-private theorem helper_pathB_520.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-    IsProperEdgeColoring G phi →
-    ∀ (alpha beta : Fin k),
-    alpha ≠ beta →
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    let vb : V := T.vertex ib;
-    let ell : ℕ := T.length - A.length;
-    let yLength : ℕ := min (A.length + (ell - (1 : ℕ))) T.length;
-    let Y : TreeSequence G e0 :=
-      TreeSequencePrefix T yLength
-        (have hA : (1 : ℕ) ≤ A.length := A.positive;
-        have hT : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ yLength) ↦ by omega)
-        (by omega);
-    beta ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T beta)) ∧
-        (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ Y.length →
-    TwoColorPathComponent G phi alpha beta (Sum.inl vb) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hproper alpha beta hne H q A ib vb ell yLength
-      Y hb
-  refine ⟨hne, Sum.inl vb, rfl, ?_⟩
-  intro x hx y hy
-  cases x with
-  | inr f =>
-    cases y with
-    | inr g =>
-      have hfc : phi f = some alpha := hx.2.resolve_right (by
-        intro he
-        exact (Finset.mem_sdiff.mp hb.1).2
-          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, f, hx.1, he⟩))
-      have hgc : phi g = some alpha := hy.2.resolve_right (by
-        intro he
-        exact (Finset.mem_sdiff.mp hb.1).2
-          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, g, hy.1, he⟩))
-      congr 1
-      by_contra hfg
-      exact hproper hfg ⟨vb, hx.1, hy.1⟩ hfc hgc
-    | inl w => exact False.elim hy
-  | inl w => exact False.elim hx
 
 private theorem helper_incidentFixed_651.{u_1, u_2} :
     open scoped Classical in
@@ -1303,18 +1256,11 @@ private theorem helper_continuation_5074.{u_1, u_2} :
   by_contra hcomponents
   let K := TwoColorComponent G phi alpha beta (Sum.inl vb)
   let sigma := TwoColorComponentSwap G phi alpha beta (Sum.inl vb)
-  have pathMissing (v : V) (c d : Fin k) (hcd : c ≠ d)
-      (hc : c ∈ MissingColors G phi v) :
-      TwoColorPathComponent G phi c d (Sum.inl v) := by
-    exact @SharedFacts.MixedChangeTransport.pathMissing (@V) (@E) inferInstance inferInstance
-        (@G) (@k)
-        (@phi) (@hproper) (@v) (@c) (@d) (@hcd) (@hc)
   have pathA : TwoColorPathComponent G phi alpha beta (Sum.inl va) :=
-    pathMissing va alpha beta hne ha.1
-  have pathB : TwoColorPathComponent G phi alpha beta (Sum.inl vb) := by
-    exact @helper_pathB_520 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@alpha) (@beta)
-        (@hne) (@hb)
+    TwoColorPathComponent.of_missing hproper hne ha.1
+  have pathB : TwoColorPathComponent G phi alpha beta (Sum.inl vb) :=
+    TwoColorPathComponent.swap G phi beta alpha (Sum.inl vb)
+      (TwoColorPathComponent.of_missing hproper hne.symm hb.1)
   have avoidA (v : V) (hv : v ∈ TreeSequenceVertexSet A) : Sum.inl v ∉ K := by
     clear * - hcomponents hinter hout pathA pathB K hv
     intro hK

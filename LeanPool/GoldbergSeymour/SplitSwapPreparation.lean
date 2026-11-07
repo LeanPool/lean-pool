@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.SplitSwapData
@@ -337,32 +339,6 @@ private theorem helper_hseparated_657.{u_1, u_2} :
     (TwoColorIncidenceGraph G P.coloring alpha beta).connectedComponentMk
       (Sum.inl (T.vertex p)) at hy
   exact hy.symm.trans hx
-
-private theorem helper_hpath_458.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (alpha beta : Fin k)
-        (_ : alpha ∈ MissingColors G P.coloring (T.vertex (Fin.last T.length))) (_ : alpha ≠
-        beta), TwoColorPathComponent G P.coloring alpha beta (Sum.inl (T.vertex (Fin.last
-        T.length))) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha beta hAlphaTerminal hne
-  refine ⟨hne, Sum.inl (T.vertex (Fin.last T.length)), rfl, ?_⟩
-  have hd := MissingColorIncidenceEndpoint G P.coloring alpha beta hne
-    P.minimumContext.proper (T.vertex (Fin.last T.length)) hAlphaTerminal
-  rw [← SimpleGraph.card_neighborFinset_eq_degree] at hd
-  intro x hx y hy
-  change (TwoColorIncidenceGraph G P.coloring alpha beta).Adj
-    (Sum.inl (T.vertex (Fin.last T.length))) x at hx
-  change (TwoColorIncidenceGraph G P.coloring alpha beta).Adj
-    (Sum.inl (T.vertex (Fin.last T.length))) y at hy
-  exact Finset.card_le_one.mp hd x
-    (by simpa only [SimpleGraph.mem_neighborFinset] using hx) y
-    (by simpa only [SimpleGraph.mem_neighborFinset] using hy)
 
 private theorem helper_hstarToTOriginal_485.{u_1, u_2} :
     open scoped Classical in
@@ -1554,9 +1530,9 @@ theorem P2880_T1_CommonPreparation
   have hne : alpha ≠ beta := by
     intro he
     exact hBetaNe he.symm
-  have hpath := @helper_hpath_458 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@alpha) (@beta)
-      (@hAlphaTerminal) (@hne)
+  have hpath : TwoColorPathComponent G P.coloring alpha beta
+      (Sum.inl (T.vertex (Fin.last T.length))) :=
+    TwoColorPathComponent.of_missing P.minimumContext.proper hne hAlphaTerminal
   have hsigma : sigma = TwoColorComponentSwap G P.coloring alpha beta
       (Sum.inl (T.vertex (Fin.last T.length))) := rfl
   have hsigmaProper : IsProperEdgeColoring G sigma := by

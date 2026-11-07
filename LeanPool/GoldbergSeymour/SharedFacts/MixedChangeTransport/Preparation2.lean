@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ChangeLemmaBothOutsidePreparation1
@@ -172,28 +174,9 @@ theorem prefixStrictlyShorterThanFinalTree.{u_1, u_2} :
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem pathMissing.{u_1, u_2} : pathMissingStatement.{u_1, u_2} := by
-  classical
   intro V E _ _ G k phi hproper v c d hcd hc
-  let _ := Fintype.ofFinite V
-  refine ⟨hcd, Sum.inl v, rfl, ?_⟩
-  intro x hx y hy
-  cases x with
-  | inr f =>
-    cases y with
-    | inr g =>
-      have hfc : phi f = some d := hx.2.resolve_left (by
-        intro he
-        exact (Finset.mem_sdiff.mp hc).2
-          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, f, hx.1, he⟩))
-      have hgc : phi g = some d := hy.2.resolve_left (by
-        intro he
-        exact (Finset.mem_sdiff.mp hc).2
-          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, g, hy.1, he⟩))
-      congr 1
-      by_contra hfg
-      exact hproper hfg ⟨v, hx.1, hy.1⟩ hfc hgc
-    | inl w => exact False.elim hy
-  | inl w => exact False.elim hx
+  exact TwoColorPathComponent.of_missing hproper hcd hc
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem notMissingBeforeFirstPosition.{u_1, u_2} :

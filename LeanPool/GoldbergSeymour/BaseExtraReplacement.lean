@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 
@@ -871,22 +873,12 @@ theorem P2905_T2_BaseExtraReplacement {V E : Type*}
   have segTrans {X Y Z : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y)
       (hYZ : TreeSequenceInitialSegment Y Z) : TreeSequenceInitialSegment X Z := by
-    rcases hXY with ⟨hxy, hvxy, hexy⟩
-    rcases hYZ with ⟨hyz, hvyz, heyz⟩
-    refine ⟨hxy.trans hyz, ?_, ?_⟩
-    · intro i
-      exact (hvyz (Fin.castLE (Nat.succ_le_succ hxy) i)).trans (hvxy i)
-    · intro i
-      exact (heyz (Fin.castLE hxy i)).trans (hexy i)
+    exact hXY.trans hYZ
   have commonPrefix {X Y Z : TreeSequence G e0}
       (hXZ : TreeSequenceInitialSegment X Z)
       (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
       TreeSequenceInitialSegment X Y := by
-    refine ⟨hXY, ?_, ?_⟩
-    · intro i
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-    · intro i
-      exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
+    exact hYZ.of_common_extension hXZ hXY
   have hpen : ColoredVertexSetElementary G phi (TreeSequenceVertexSet B) := by
     intro u hu v hv huv
     exact HierarchyCounterexamplePenultimateElementary G k e0 input T phi

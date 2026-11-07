@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
 public import Mathlib.Combinatorics.SimpleGraph.Init
 public import Mathlib.Tactic.Bound.Init
@@ -30,13 +32,8 @@ abbrev comparableInitialSegmentsStatement.{u_1, u_2} : Prop :=
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem comparableInitialSegments.{u_1, u_2} : comparableInitialSegmentsStatement.{u_1, u_2} := by
-  classical
   intro V E G e0 X Y Z hXZ hYZ hXY
-  refine ⟨hXY, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
+  exact hYZ.of_common_extension hXZ hXY
 
 end GoldbergSeymour.SharedFacts.ZeroNonclosedTransport
 

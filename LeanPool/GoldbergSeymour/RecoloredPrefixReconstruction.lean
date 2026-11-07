@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TerminalRoute
 public import LeanPool.GoldbergSeymour.CombinedStableColoring
 public import LeanPool.GoldbergSeymour.HierarchyMinimumCounterexampleContext
@@ -58,11 +60,7 @@ private theorem P2813_T1_PrefixReconstruction_branch_184.{u_1, u_2} :
       (hSW : TreeSequenceInitialSegment S W)
       (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
       TreeSequenceInitialSegment S U := by
-    refine ⟨hlen, ?_, ?_⟩
-    · intro i
-      exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans (hSW.2.1 i)
-    · intro i
-      exact (hUW.2.2 (Fin.castLE hlen i)).symm.trans (hSW.2.2 i)
+    exact hUW.of_common_extension hSW hlen
   have transport (S : TreeSequence G e0) :
       ∀ (X : TreeSequence G e0), TashkinovAugmentationSequence phi S X →
         TreeSequenceInitialSegment X A → TashkinovAugmentationSequence sigma S X := by
@@ -153,13 +151,7 @@ theorem P2813_T1_PrefixReconstruction {V E : Type*}
       (hUW : TreeSequenceInitialSegment U W)
       (hWZ : TreeSequenceInitialSegment W Z) :
       TreeSequenceInitialSegment U Z := by
-    clear * - hUW hWZ
-    refine ⟨hUW.1.trans hWZ.1, ?_, ?_⟩
-    · intro j
-      exact (hWZ.2.1 (Fin.castLE (Nat.succ_le_succ hUW.1) j)).trans
-        (hUW.2.1 j)
-    · intro j
-      exact (hWZ.2.2 (Fin.castLE hUW.1 j)).trans (hUW.2.2 j)
+    exact hUW.trans hWZ
   have stageChain : ∀ (j : ℕ) (hj : j < H.dividerCount + 2)
       (i : Fin (H.dividerCount + 2)), i.val ≤ j →
       TreeSequenceInitialSegment (H.stage i) (H.stage ⟨j, hj⟩) := by

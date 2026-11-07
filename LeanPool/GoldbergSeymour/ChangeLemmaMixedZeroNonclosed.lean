@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
@@ -830,69 +832,6 @@ private theorem helper_hsplit_403.{u_1, u_2} :
   rcases Finset.mem_union.mp hv with ht | hr
   · exact Or.inl ⟨ht, fun hr => hnotcommon ⟨ht, hr⟩⟩
   · exact Or.inr ⟨hr, fun ht => hnotcommon ⟨ht, hr⟩⟩
-
-private theorem helper_pathMissing_411.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (phi : PartialEdgeColoring E k), IsProperEdgeColoring G phi →
-    ∀ (c d : Fin k), c ≠ d →
-    ∀ (v : V), c ∈ MissingColors G phi v → TwoColorPathComponent G phi c d (Sum.inl v) := by
-  classical
-  intro V E _ _ G k phi hproper c d hcd v hvm
-  let _ := Fintype.ofFinite V
-  refine ⟨hcd, Sum.inl v, ?_, ?_⟩
-  · change (TwoColorIncidenceGraph G phi c d).connectedComponentMk (Sum.inl v) =
-      (TwoColorIncidenceGraph G phi c d).connectedComponentMk (Sum.inl v)
-    rfl
-  · let : Fintype ((TwoColorIncidenceGraph G phi c d).neighborSet (Sum.inl v)) :=
-      Fintype.ofFinite _
-    intro x hx y hy
-    have hcard : Fintype.card ((TwoColorIncidenceGraph G phi c d).neighborSet
-        (Sum.inl v)) ≤ 1 := by
-      rw [SimpleGraph.card_neighborSet_eq_degree]
-      exact MissingColorIncidenceEndpoint G phi c d hcd hproper v hvm
-    exact congrArg Subtype.val
-      (Fintype.card_le_one_iff.mp hcard ⟨x, hx⟩ ⟨y, hy⟩)
-
-private theorem helper_hpathB_430.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (_ : HierarchyCounterexample base) (alpha beta
-        : Fin k), alpha ≠ beta →
-    let A : TreeSequence G e0 := base.core;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    let vb : V := T.vertex ib;
-    let Ty : TreeSequence G e0 := TreeSequencePrefix T (min (A.length + (T.length - A.length - (1
-        : ℕ))) T.length) (
-    have this : (1 : ℕ) ≤ A.length := A.positive;
-    have this_1 : (1 : ℕ) ≤ T.length := T.positive; Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤
-        min (A.length + (T.length - A.length - (1 : ℕ))) T.length) ↦
-    by omega
-    ) (
-    by omega
-    ); (beta ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T beta)) ∧
-        (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ Ty.length ∧
-    ∀ (j : Fin (T.length + (1 : ℕ))), beta ∈ MissingColors G phi (T.vertex j) →
-        (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ (↑j : ℕ)) → (
-    ∀ (c d : Fin k), c ≠ d →
-    ∀ (v : V), c ∈ MissingColors G phi v → TwoColorPathComponent G phi c d (Sum.inl v)) →
-        TwoColorPathComponent G phi alpha beta (Sum.inl vb) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta hne A ib vb Ty hb pathMissing
-  have hbpath := pathMissing beta alpha hne.symm vb hb.1
-  have hgraph : TwoColorIncidenceGraph G phi beta alpha =
-      TwoColorIncidenceGraph G phi alpha beta := by
-    ext x y
-    cases x <;> cases y <;> simp [TwoColorIncidenceGraph, or_comm]
-  refine ⟨hne, ?_⟩
-  have hp := hbpath.2
-  change ∃ x ∈ ((TwoColorIncidenceGraph G phi beta alpha).connectedComponentMk
-    (Sum.inl vb) : Set (Sum V E)),
-    ((TwoColorIncidenceGraph G phi beta alpha).neighborSet x).Subsingleton at hp
-  rw [hgraph] at hp
-  exact hp
 
 private theorem helper_hsOne_451.{u_1, u_2} :
     open scoped Classical in
@@ -2275,17 +2214,11 @@ private theorem helper_branch_2767.{u_1, u_2} :
     exact helper_hsplit_403 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@alpha)
         (@hvaA) (@union)
         (@hnotcommon)
-  have pathMissing (c d : Fin k) (hcd : c ≠ d) (v : V)
-      (hvm : c ∈ MissingColors G phi v) :
-      TwoColorPathComponent G phi c d (Sum.inl v) := by
-    exact helper_pathMissing_411 (@G) (@k) (@phi)
-        (@hproper) (@c) (@d) (@hcd) (@v) (@hvm)
   have hpathA : TwoColorPathComponent G phi alpha beta (Sum.inl va) :=
-    pathMissing alpha beta hne va ha.1
-  have hpathB : TwoColorPathComponent G phi alpha beta (Sum.inl vb) := by
-    exact helper_hpathB_430 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
-        (@beta) (@hne) (@hb)
-        (@pathMissing)
+    TwoColorPathComponent.of_missing hproper hne ha.1
+  have hpathB : TwoColorPathComponent G phi alpha beta (Sum.inl vb) :=
+    TwoColorPathComponent.swap G phi beta alpha (Sum.inl vb)
+      (TwoColorPathComponent.of_missing hproper hne.symm hb.1)
   change TwoColorComponent G phi alpha beta (Sum.inl va) =
     TwoColorComponent G phi alpha beta (Sum.inl vb)
   by_contra hdistinct

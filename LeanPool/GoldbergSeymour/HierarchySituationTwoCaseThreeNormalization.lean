@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyCaseThreePreparation
@@ -1107,19 +1109,11 @@ private theorem helper_branch_402.{u_1, u_2} :
   have segTrans {S U W : TreeSequence G e0}
       (hSU : TreeSequenceInitialSegment S U) (hUW : TreeSequenceInitialSegment U W) :
       TreeSequenceInitialSegment S W := by
-    refine ⟨hSU.1.trans hUW.1, ?_, ?_⟩
-    · intro i
-      exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hSU.1) i)).trans (hSU.2.1 i)
-    · intro i
-      exact (hUW.2.2 (Fin.castLE hSU.1 i)).trans (hSU.2.2 i)
+    exact hSU.trans hUW
   have commonPrefix {S U W : TreeSequence G e0}
       (hSW : TreeSequenceInitialSegment S W) (hUW : TreeSequenceInitialSegment U W)
       (hle : S.length ≤ U.length) : TreeSequenceInitialSegment S U := by
-    refine ⟨hle, ?_, ?_⟩
-    · intro i
-      exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hle) i)).symm.trans (hSW.2.1 i)
-    · intro i
-      exact (hUW.2.2 (Fin.castLE hle i)).symm.trans (hSW.2.2 i)
+    exact hUW.of_common_extension hSW hle
   have equalTrees {S U : TreeSequence G e0}
       (hSU : TreeSequenceInitialSegment S U) (hlen : S.length = U.length) : S = U := by
     clear * - hSU hlen

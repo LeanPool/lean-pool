@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.HierarchyTailSwapData
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ReplacementPrefixes
@@ -848,36 +850,6 @@ private theorem helper_outsideA_1255.{u_1, u_2} :
   exact Finset.disjoint_left.mp (elementary R
     (TreeSequenceInitialSegmentVertexSetSubset hAB hv) (vertexMem B j) hne) hcv hc
 
-private theorem helper_trans_1517.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E) (_ : ℕ)
-        {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y
-        Z → TreeSequenceInitialSegment X Z := by
-  classical
-  intro V E G e0 i X Y Z hXY hYZ
-  clear * - hXY hYZ
-  refine ⟨hXY.1.trans hYZ.1, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
-
-private theorem helper_common_1527.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E) (_ : ℕ), (
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-        → TreeSequenceInitialSegment X Z) →
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Z → TreeSequenceInitialSegment Y Z
-        → X.length ≤ Y.length → TreeSequenceInitialSegment X Y := by
-  classical
-  intro V E G e0 i trans X Y Z hXZ hYZ hXY
-  clear * - hXZ hYZ hXY
-  refine ⟨hXY, ?_, ?_⟩
-  · intro i
-    exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-  · intro i
-    exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
-
 theorem HierarchySituationOneAdvanceOutsideStored {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
     (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
@@ -936,13 +908,12 @@ theorem HierarchySituationOneAdvanceOutsideStored {V E : Type*}
         (hXY : TreeSequenceInitialSegment X Y)
         (hYZ : TreeSequenceInitialSegment Y Z) :
         TreeSequenceInitialSegment X Z := by
-      exact helper_trans_1517 (@G) (@e0) (@i) (@hXY) (@hYZ)
+      exact hXY.trans hYZ
     have common {X Y Z : TreeSequence G e0}
         (hXZ : TreeSequenceInitialSegment X Z)
         (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
         TreeSequenceInitialSegment X Y := by
-      exact @helper_common_1527 (@V) (@E) (@G) (@e0) (@i) (@trans) (@X) (@Y) (@Z) (@hXZ) (@hYZ)
-          (@hXY)
+      exact hYZ.of_common_extension hXZ hXY
     have sameLast :
     ∀ {a b : ℕ} (s : Fin (a + 2) → TreeSequence G e0) (t : Fin (b + 2) → TreeSequence G e0) (u v :
         TreeSequence G e0), a = b → HEq s t → u = v → Fin.cases (motive := fun _ => TreeSequence G

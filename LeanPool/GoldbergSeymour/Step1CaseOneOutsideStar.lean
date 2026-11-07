@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 public import LeanPool.GoldbergSeymour.GoodHierarchy
@@ -1002,22 +1004,12 @@ private theorem helper_rebuild_367.{u_1, u_2} :
       (hSU : TreeSequenceInitialSegment S U)
       (hUW : TreeSequenceInitialSegment U W) :
       TreeSequenceInitialSegment S W := by
-    refine ⟨le_trans hSU.1 hUW.1, ?_, ?_⟩
-    · intro i
-      exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hSU.1) i)).trans
-        (hSU.2.1 i)
-    · intro i
-      exact (hUW.2.2 (Fin.castLE hSU.1 i)).trans (hSU.2.2 i)
+    exact hSU.trans hUW
   have commonPrefix {S U W : TreeSequence G e0}
       (hSW : TreeSequenceInitialSegment S W)
       (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
       TreeSequenceInitialSegment S U := by
-    refine ⟨hlen, ?_, ?_⟩
-    · intro i
-      exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans
-        (hSW.2.1 i)
-    · intro i
-      exact (hUW.2.2 (Fin.castLE hlen i)).symm.trans (hSW.2.2 i)
+    exact hUW.of_common_extension hSW hlen
   have stageSegment : ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1),
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by

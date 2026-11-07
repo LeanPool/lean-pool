@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 
 module
 
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
 public import LeanPool.GoldbergSeymour.TashkinovSeriesCast
 
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStability
@@ -6763,40 +6765,13 @@ theorem helper_continuation_2808.{u_1, u_2} :
     apply SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
     simp [TwoColorIncidenceGraph,
       hpathEdgeIncident, hpathEdgeColor]
-  have hleafDegree : @SimpleGraph.degree _
-      (TwoColorIncidenceGraph G sigma available.gamma
-        available.delta) (Sum.inl newChoice.vertex)
-      (Fintype.ofFinite _) ≤ 1 := by
-    have hgraphSwapOrder :
-        TwoColorIncidenceGraph G sigma available.delta
-            available.gamma =
-          TwoColorIncidenceGraph G sigma available.gamma
-            available.delta := by
-      ext x y
-      cases x <;> cases y <;>
-        simp [TwoColorIncidenceGraph, or_comm]
-    rw [← hgraphSwapOrder]
-    exact MissingColorIncidenceEndpoint G sigma available.delta
-      available.gamma hgammaDeltaNe.symm hsigmaProper
-      newChoice.vertex hnewDeltaSigma
-  have hleaf : Set.Subsingleton
-      ((TwoColorIncidenceGraph G sigma available.gamma
-        available.delta).neighborSet
-          (Sum.inl newChoice.vertex)) := by
-    let : Fintype
-        ((TwoColorIncidenceGraph G sigma available.gamma
-          available.delta).neighborSet
-            (Sum.inl newChoice.vertex)) := Fintype.ofFinite _
-    rw [← SimpleGraph.card_neighborSet_eq_degree] at hleafDegree
-    have hsub := Fintype.card_le_one_iff.mp hleafDegree
-    intro a ha b hb
-    exact congrArg Subtype.val
-      (hsub ⟨a, ha⟩ ⟨b, hb⟩)
   have hpathComponent : TwoColorNontrivialPathComponent G sigma
       available.gamma available.delta
       (Sum.inl newChoice.vertex) := by
-    refine ⟨⟨hgammaDeltaNe, Sum.inl newChoice.vertex, rfl,
-      hleaf⟩, pathEdge, hpathEdgeComponent⟩
+    exact ⟨TwoColorPathComponent.swap G sigma available.delta available.gamma
+      (Sum.inl newChoice.vertex)
+      (TwoColorPathComponent.of_missing hsigmaProper hgammaDeltaNe.symm hnewDeltaSigma),
+      pathEdge, hpathEdgeComponent⟩
   have hpathMeetsTn : ∃ v ∈ TreeSequenceVertexSet
       (ett.series.data.tree (Fin.last ett.rounds).castSucc),
       Sum.inl v ∈ TwoColorComponent G sigma available.gamma

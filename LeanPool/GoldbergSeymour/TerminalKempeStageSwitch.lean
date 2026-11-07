@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 
@@ -1420,22 +1422,12 @@ theorem P2963_T1_TerminalKempeStageSwitch {V E : Type*}
       (hXY : TreeSequenceInitialSegment X Y)
       (hYZ : TreeSequenceInitialSegment Y Z) :
       TreeSequenceInitialSegment X Z := by
-    clear * - hXY hYZ
-    refine ⟨hXY.1.trans hYZ.1, ?_, ?_⟩
-    · intro i
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-    · intro i
-      exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
+    exact hXY.trans hYZ
   have common {X Y Z : TreeSequence G e0}
       (hXZ : TreeSequenceInitialSegment X Z)
       (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
       TreeSequenceInitialSegment X Y := by
-    clear * - hXZ hYZ hXY
-    refine ⟨hXY, ?_, ?_⟩
-    · intro i
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) i)).symm.trans (hXZ.2.1 i)
-    · intro i
-      exact (hYZ.2.2 (Fin.castLE hXY i)).symm.trans (hXZ.2.2 i)
+    exact hYZ.of_common_extension hXZ hXY
   have componentData (psi : PartialEdgeColoring E k) (a b : Fin k)
       (hne : a ≠ b) (hproper : IsProperEdgeColoring G psi)
       (B : Finset V) (helem : ColoredVertexSetElementary G psi B)

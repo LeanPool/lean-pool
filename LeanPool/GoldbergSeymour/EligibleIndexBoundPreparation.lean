@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+
 public import LeanPool.GoldbergSeymour.NonparallelHierarchyCorrespondence
 
 public import LeanPool.GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
@@ -2653,21 +2655,13 @@ theorem helper_hTnCore_1684.{u_1, u_2} :
 theorem helper_common_1702.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E),
-  (∀ {X Y Z : TreeSequence G e0},
-      TreeSequenceInitialSegment X Y →
-        TreeSequenceInitialSegment Y Z → TreeSequenceInitialSegment X Z) →
   ∀ {S U W : TreeSequence G e0},
   TreeSequenceInitialSegment S W →
   TreeSequenceInitialSegment U W →
   S.length ≤ U.length →
   TreeSequenceInitialSegment S U := by
-  classical
-  intro V E G e0 trans S U W hSW hUW hlen
-  refine ⟨hlen, ?_, ?_⟩
-  · intro i
-    exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hlen) i)).symm.trans (hSW.2.1 i)
-  · intro i
-    exact (hUW.2.2 (Fin.castLE hlen i)).symm.trans (hSW.2.2 i)
+  intro V E G e0 S U W hSW hUW hlen
+  exact hUW.of_common_extension hSW hlen
 
 theorem helper_hfull_1715.{u_1, u_2} :
     open scoped Classical in
