@@ -8,7 +8,6 @@ module
 
 import Mathlib.Algebra.Polynomial.Basis
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.GroupTheory.FiniteAbelian.Duality
 import Mathlib.LinearAlgebra.TensorProduct.Pi
 public import LeanPool.InfiniteConnesRigidity.SpectralAndPropertyT
@@ -22,7 +21,7 @@ noncomputable section
 -- `instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent` applies to `F = ZMod 2` and, winning instance
 -- search for `AddCommGroup F`, yields an `AddCommMonoid F` that does not match the one carried by
 -- `Module F F`; that breaks `AddCommGroup (X × Y)` and everything built on it.
-attribute [local instance low] instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent
+attribute [-instance] instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent
 
 namespace ConnesRigidity
 section
@@ -383,7 +382,7 @@ private theorem cornulier_proposition4_corelativeFH
       exact cornulierHilbertLength_mul_le α x a₁ a₂
     _ ≤ 2 * ‖x - x₁‖ + 2 * ‖x - x₂‖ +
           2 * ‖x - x₁‖ + C + 2 * ‖x - x₂‖ := by
-      linarith
+      linarith only [ha₁', ha₂', hb₁', hh', hb₂']
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem cornulier_relativeAffineFixedPoints_of_shalom_gaussian
@@ -646,7 +645,7 @@ private theorem markedAffineOrbitPoint_le_wordBound
             α K₁ K₂ S hgen hS x y hx hy C hC g
         _ ≤ affineMarkedPointWordBound S hgen C (g, true) := by
           unfold affineMarkedPointWordBound
-          linarith
+          linarith only [hCnonneg]
 
 omit [CompleteSpace V] in
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -1421,7 +1420,7 @@ private theorem gromov_rescaled_generator_displacement_at_zero_le_two
   let D : ℝ := generatorMaxDisplacement α S x
   have hr : 0 < D / 2 := by
     dsimp [D]
-    linarith
+    linarith only [hpositive]
   calc
     ‖gromovRescaledAffineAction α x (D / 2) s 0‖ =
         (D / 2)⁻¹ * ‖α s x - x‖ := by
@@ -1466,7 +1465,8 @@ private theorem gromov_rescaled_generator_displacement_ge_one_on_ball
         exact mul_le_mul_of_nonneg_left hz hr.le
       _ ≤ (N : ℝ) * D x := by
         have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
-        nlinarith
+        exact (mul_le_mul_of_nonneg_right (half_le_self (hpositive x).le) hN).trans_eq
+          (mul_comm _ _)
   obtain ⟨s, hs, heq⟩ :=
     exists_generator_eq_max α S y (hpositive y)
   refine ⟨s, hs, ?_⟩
@@ -1820,7 +1820,7 @@ private theorem circle_nonpositive_real_energy (z : Circle)
   rw [Complex.sq_norm, Complex.normSq_apply]
   rw [Complex.normSq_apply] at hnorm
   simp only [Complex.sub_re, Complex.one_re, Complex.sub_im, Complex.one_im, sub_zero, ge_iff_le]
-  linarith
+  linarith only [hz, hnorm]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private def spectralNonpositiveRealSet (a : A) : Set (DiscreteCharacterSpace A) :=
@@ -1892,7 +1892,7 @@ private theorem spectralTorusWindow_compl_measureReal_mul_two_le_energy_sum
   have hbad : 2 * (μ : Measure (DiscreteCharacterSpace A)).real
       (spectralNonpositiveRealSet a ∪ spectralNonpositiveRealSet b) ≤
       spectralDetectionEnergy μ a + spectralDetectionEnergy μ b := by
-    linarith
+    linarith only [ha, hb, hunion]
   simpa only [spectralTorusWindow, compl_compl] using hbad
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -1905,7 +1905,7 @@ private theorem spectralTorusWindow_compl_measureReal_le_sq
       (spectralTorusWindow a b)ᶜ ≤ ε ^ 2 := by
   have hwindow :=
     spectralTorusWindow_compl_measureReal_mul_two_le_energy_sum μ a b
-  linarith
+  linarith only [ha, hb, hwindow]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem spectralTorusWindow_measureReal_ge_one_sub_sq
@@ -1920,7 +1920,7 @@ private theorem spectralTorusWindow_measureReal_ge_one_sub_sq
     (spectralTorusWindow_measurable a b)
   rw [probReal_univ] at hsum
   have hbad := spectralTorusWindow_compl_measureReal_le_sq μ a b ha hb
-  linarith
+  linarith only [hsum, hbad]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem spectralTorusWindow_measureReal_pos
@@ -1954,7 +1954,7 @@ private theorem shalom_conditioned_variation_lt_one_fourth
     have htotal := measureReal_add_measureReal_compl
       (μ := (μ : Measure Ω)) hUmeas
     rw [probReal_univ] at htotal
-    linarith
+    linarith only [hdiscard, htotal]
   have hnum : 0 ≤ 2 * ε + ε ^ 2 := by positivity
   calc
     |(conditionedProbability μ U hU : Measure Ω).real s -
@@ -2225,7 +2225,7 @@ private theorem integerDual_spectralArgCoordinates_origin_preimage :
     spectralArgCoordinates (Pi.single 0 1)
       (Pi.single 1 1) ⁻¹' {(0, 0)} =
         ({1} : Set (DiscreteCharacterSpace IntegerRankTwo)) := by
-  ext χ
+  ext χ : 1
   simp only [Set.mem_preimage, Set.mem_singleton_iff,
     integerDual_spectralArgCoordinates_eq_zero_iff]
 
@@ -2256,7 +2256,7 @@ private theorem shalom_four_sector_mass_gap
   have hd : d ≤ |z - (d + c)| := by
     linarith [neg_le_abs (z - (d + c))]
   norm_num at hu' hv' hw' hz'
-  linarith
+  linarith only [hmass, ha, hb, hc, hd, hu', hv', hw', hz']
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem shalom_three_sector_mass_gap
@@ -2276,7 +2276,7 @@ private theorem shalom_three_sector_mass_gap
   have hA : a ≤ b + |w - a| := by
     linarith [neg_le_abs (w - a)]
   norm_num at hu' hv' hw'
-  linarith
+  linarith only [hmass, hAB, hCB, hA, hu', hv', hw']
 
 end
 
@@ -2360,7 +2360,7 @@ private theorem regular_measureReal_le_add_of_testFunctions
     measureReal_mono (μ := ν) hKs
   have htest' := htest fc hfbounds
   dsimp [ε] at hUreal
-  linarith
+  linarith only [hUreal, hleft, hright, hKν, htest']
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem abs_regular_measureReal_sub_le_of_testFunctions
@@ -2379,13 +2379,13 @@ private theorem abs_regular_measureReal_sub_le_of_testFunctions
         have hbound := (abs_le.mp (htest f hf)).1
         linarith)
       hs
-    linarith
+    linarith only [h]
   · have h := regular_measureReal_le_add_of_testFunctions μ ν c hc
       (fun f hf => by
         have hbound := (abs_le.mp (htest f hf)).2
         linarith)
       hs
-    linarith
+    linarith only [h]
 
 end RegularSpectralMeasure
 
@@ -2532,7 +2532,10 @@ private theorem trivialCharacterProjection_ne_zero_of_joint_atom_pos
   have hzatom : ‖z‖ < (Φ.measure x).real {1} :=
     lt_of_lt_of_le hsmall (min_le_right _ _)
   have hznorm : 0 ≤ ‖z‖ := norm_nonneg _
-  linarith [mul_nonneg hznorm (sub_nonneg.mpr (le_of_lt hzone))]
+  have hsquare : ‖z‖ ^ 2 ≤ ‖z‖ := by
+    rw [pow_two]
+    exact mul_le_of_le_one_right hznorm hzone.le
+  exact (not_lt_of_ge hbound) (hsquare.trans_lt hzatom)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem exists_kernel_fixed_of_joint_atom_pos
@@ -2770,7 +2773,7 @@ private theorem integerShalomRelativeKazhdanPair_of_fourierAtomGap
     change
       ‖(π (E.splitting h) : W →L[ℂ] W) ξ - ξ‖ <
         shalomPolynomialKazhdanConstant 0 at hdisplacement
-    linarith
+    linarith only [hbound, hdisplacement]
   have htranslations :
       ∀ a ∈ integerShalomTranslations,
         spectralDetectionEnergy μ a <
@@ -2788,9 +2791,8 @@ private theorem integerShalomRelativeKazhdanPair_of_fourierAtomGap
     change
       ‖(π (E.inclusion (Multiplicative.ofAdd a)) : W →L[ℂ] W) ξ - ξ‖ <
         shalomPolynomialKazhdanConstant 0 at hdisplacement
-    nlinarith [norm_nonneg
-      ((π (E.inclusion (Multiplicative.ofAdd a)) : W →L[ℂ] W) ξ - ξ),
-      shalomPolynomialKazhdanConstant_pos 0]
+    exact (sq_lt_sq₀ (norm_nonneg _)
+      (shalomPolynomialKazhdanConstant_pos 0).le).mpr hdisplacement
   have hpositive : 0 < spectralTrivialAtom μ :=
     hatom μ hshears htranslations
   obtain ⟨η, hη, hfixed⟩ :=
@@ -2904,9 +2906,9 @@ private theorem abs_sub_of_mul_nonpos {x y : ℝ} (h : x * y ≤ 0) :
     |y - x| = |y| + |x| := by
   rcases (mul_nonpos_iff.mp h) with ⟨hx, hy⟩ | ⟨hx, hy⟩
   · rw [abs_of_nonpos hy, abs_of_nonneg hx, abs_of_nonpos (by linarith)]
-    linarith
+    linarith only []
   · rw [abs_of_nonneg hy, abs_of_nonpos hx, abs_of_nonneg (by linarith)]
-    linarith
+    linarith only []
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem abs_add_of_mul_nonneg {x y : ℝ} (h : 0 ≤ x * y) :
@@ -3125,19 +3127,14 @@ open ConnesRigidity Matrix MeasureTheory
 
 
 
+-- Coordinate lists keep these concrete two-dimensional action computations small.
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem integerUpperShear_inv_action_zero :
     (Multiplicative.toAdd
       (integerElementaryRankTwoSplitAbelianExtension.action
         integerUpperShear⁻¹)) integerTranslationZero =
       integerTranslationZero := by
-  change
-    (Matrix.SpecialLinearGroup.transvection
-      (show (0 : Fin 2) ≠ 1 by decide) (1 : ℤ))⁻¹ •
-      (Pi.single (0 : Fin 2) 1 : Fin 2 → ℤ) =
-      Pi.single (0 : Fin 2) 1
-  rw [Matrix.SpecialLinearGroup.transvection_inv,
-    Matrix.SpecialLinearGroup.transvection_smul_single_fst]
+  exact List.ofFn_inj.mp rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem integerUpperShear_inv_action_one :
@@ -3145,14 +3142,7 @@ private theorem integerUpperShear_inv_action_one :
       (integerElementaryRankTwoSplitAbelianExtension.action
         integerUpperShear⁻¹)) integerTranslationOne =
       integerTranslationOne - integerTranslationZero := by
-  change
-    (Matrix.SpecialLinearGroup.transvection
-      (show (0 : Fin 2) ≠ 1 by decide) (1 : ℤ))⁻¹ •
-      (Pi.single (1 : Fin 2) 1 : Fin 2 → ℤ) =
-      Pi.single (1 : Fin 2) 1 - Pi.single (0 : Fin 2) 1
-  rw [Matrix.SpecialLinearGroup.transvection_inv,
-    Matrix.SpecialLinearGroup.transvection_smul_single_snd]
-  simp only [Fin.isValue, Int.reduceNeg, neg_smul, one_smul, sub_eq_add_neg]
+  exact List.ofFn_inj.mp rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem integerLowerShear_inv_action_zero :
@@ -3160,14 +3150,7 @@ private theorem integerLowerShear_inv_action_zero :
       (integerElementaryRankTwoSplitAbelianExtension.action
         integerLowerShear⁻¹)) integerTranslationZero =
       integerTranslationZero - integerTranslationOne := by
-  change
-    (Matrix.SpecialLinearGroup.transvection
-      (show (1 : Fin 2) ≠ 0 by decide) (1 : ℤ))⁻¹ •
-      (Pi.single (0 : Fin 2) 1 : Fin 2 → ℤ) =
-      Pi.single (0 : Fin 2) 1 - Pi.single (1 : Fin 2) 1
-  rw [Matrix.SpecialLinearGroup.transvection_inv,
-    Matrix.SpecialLinearGroup.transvection_smul_single_snd]
-  simp only [Fin.isValue, Int.reduceNeg, neg_smul, one_smul, sub_eq_add_neg]
+  exact List.ofFn_inj.mp rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem integerLowerShear_inv_action_one :
@@ -3175,13 +3158,7 @@ private theorem integerLowerShear_inv_action_one :
       (integerElementaryRankTwoSplitAbelianExtension.action
         integerLowerShear⁻¹)) integerTranslationOne =
       integerTranslationOne := by
-  change
-    (Matrix.SpecialLinearGroup.transvection
-      (show (1 : Fin 2) ≠ 0 by decide) (1 : ℤ))⁻¹ •
-      (Pi.single (1 : Fin 2) 1 : Fin 2 → ℤ) =
-      Pi.single (1 : Fin 2) 1
-  rw [Matrix.SpecialLinearGroup.transvection_inv,
-    Matrix.SpecialLinearGroup.transvection_smul_single_fst]
+  exact List.ofFn_inj.mp rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem integerUpperShear_action_zero :
@@ -3189,12 +3166,7 @@ private theorem integerUpperShear_action_zero :
       (integerElementaryRankTwoSplitAbelianExtension.action
         integerUpperShear)) integerTranslationZero =
       integerTranslationZero := by
-  change
-    (Matrix.SpecialLinearGroup.transvection
-      (show (0 : Fin 2) ≠ 1 by decide) (1 : ℤ)) •
-      (Pi.single (0 : Fin 2) 1 : Fin 2 → ℤ) =
-      Pi.single (0 : Fin 2) 1
-  rw [Matrix.SpecialLinearGroup.transvection_smul_single_fst]
+  exact List.ofFn_inj.mp rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem integerUpperShear_action_one :
@@ -3202,13 +3174,7 @@ private theorem integerUpperShear_action_one :
       (integerElementaryRankTwoSplitAbelianExtension.action
         integerUpperShear)) integerTranslationOne =
       integerTranslationOne + integerTranslationZero := by
-  change
-    (Matrix.SpecialLinearGroup.transvection
-      (show (0 : Fin 2) ≠ 1 by decide) (1 : ℤ)) •
-      (Pi.single (1 : Fin 2) 1 : Fin 2 → ℤ) =
-      Pi.single (1 : Fin 2) 1 + Pi.single (0 : Fin 2) 1
-  rw [Matrix.SpecialLinearGroup.transvection_smul_single_snd]
-  simp only [Fin.isValue, one_smul]
+  exact List.ofFn_inj.mp rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem integerLowerShear_action_zero :
@@ -3216,13 +3182,7 @@ private theorem integerLowerShear_action_zero :
       (integerElementaryRankTwoSplitAbelianExtension.action
         integerLowerShear)) integerTranslationZero =
       integerTranslationZero + integerTranslationOne := by
-  change
-    (Matrix.SpecialLinearGroup.transvection
-      (show (1 : Fin 2) ≠ 0 by decide) (1 : ℤ)) •
-      (Pi.single (0 : Fin 2) 1 : Fin 2 → ℤ) =
-      Pi.single (0 : Fin 2) 1 + Pi.single (1 : Fin 2) 1
-  rw [Matrix.SpecialLinearGroup.transvection_smul_single_snd]
-  simp only [Fin.isValue, one_smul]
+  exact List.ofFn_inj.mp rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem integerLowerShear_action_one :
@@ -3230,12 +3190,7 @@ private theorem integerLowerShear_action_one :
       (integerElementaryRankTwoSplitAbelianExtension.action
         integerLowerShear)) integerTranslationOne =
       integerTranslationOne := by
-  change
-    (Matrix.SpecialLinearGroup.transvection
-      (show (1 : Fin 2) ≠ 0 by decide) (1 : ℤ)) •
-      (Pi.single (1 : Fin 2) 1 : Fin 2 → ℤ) =
-      Pi.single (1 : Fin 2) 1
-  rw [Matrix.SpecialLinearGroup.transvection_smul_single_fst]
+  exact List.ofFn_inj.mp rfl
 
 end
 
@@ -3259,7 +3214,7 @@ private theorem shalom_conditioned_image_variation_lt_one_fourth
       (conditionedProbability μ U hU : Measure Ω).real s| <
         (1 / 4 : ℝ) := by
   have himage : f '' s = f.symm ⁻¹' s := by
-    ext x
+    ext x : 1
     constructor
     · rintro ⟨y, hy, rfl⟩
       simpa only [mem_preimage, MeasurableEquiv.symm_apply_apply] using hy
@@ -3336,15 +3291,15 @@ private theorem shalom_measureReal_inter_support_eq
     have htotal := measureReal_add_measureReal_compl
       (μ := μ) hsupport
     rw [probReal_univ, hmass] at htotal
-    linarith
+    linarith only [htotal]
   have hdiff : μ.real (s \ support) = 0 := by
     have hle := measureReal_mono (μ := μ)
       (Set.sdiff_subset_compl s support)
     have hnonneg := measureReal_nonneg (μ := μ) (s := s \ support)
-    linarith
+    linarith only [hcompl, hle, hnonneg]
   have hdecomp := measureReal_inter_add_sdiff
     (μ := μ) (s := s) hsupport
-  linarith
+  linarith only [hdiff, hdecomp]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem shalom_three_sector_supported_probability_gap
@@ -3691,7 +3646,7 @@ private theorem shalomSpectralSector_cover (a b : A) :
     shalomSpectralSectorA a b ∪ shalomSpectralSectorB a b ∪
       shalomSpectralSectorC a b ∪ shalomSpectralSectorD a b =
         shalomSpectralPuncturedWindow a b := by
-  ext χ
+  ext χ : 1
   constructor
   · intro hχ
     rcases hχ with ((hA | hB) | hC) | hD
@@ -4043,7 +3998,7 @@ private theorem shalomSpectral_zeroFiber_positive_of_variation
       exact hvariation h hh s hs
     exact spectralTorusWindow_conditioned_image_variation_lt_one_fourth
       μ a b hε hsmall ha hb f s hs hvar
-  linarith
+  linarith only [hgap, hstrict]
 
 end
 
@@ -4170,7 +4125,7 @@ private theorem dualCharacterAction_preimage_eq_image_inv
     (s : Set (DiscreteCharacterSpace A)) :
     dualCharacterAction action h ⁻¹' s =
       dualCharacterAction action h⁻¹ '' s := by
-  ext χ
+  ext χ : 1
   constructor
   · intro hχ
     refine ⟨dualCharacterAction action h χ, hχ, ?_⟩
@@ -4457,7 +4412,7 @@ private theorem measurableSet_polynomialFirstNontrivial_lt :
           ({p : PolynomialCirclePair | p.1 n ≠ 1} ∩
             ⋂ m : {m : ℕ // m < n}, {p : PolynomialCirclePair | p.1 m = 1}) ∩
             ⋂ m : {m : ℕ // m ≤ n}, {p : PolynomialCirclePair | p.2 m = 1} := by
-    ext p
+    ext p : 1
     simp only [mem_ofPred_eq, mem_iUnion, mem_inter_iff, mem_iInter]
     constructor
     · intro h
@@ -4510,7 +4465,7 @@ private theorem measurableSet_polynomialPunctured :
     have hrepr :
         {x : PolynomialCircleSequence | x = 1} =
           ⋂ n : ℕ, {x : PolynomialCircleSequence | x n = 1} := by
-      ext x
+      ext x : 1
       simp only [mem_ofPred_eq, mem_iInter]
       constructor
       · intro h n
@@ -4553,7 +4508,7 @@ private theorem measurableSet_polynomialRawSectorB :
   have hrepr :
       polynomialRawSectorB =
         (polynomialRawSectorA ∪ polynomialRawSectorC)ᶜ := by
-    ext z
+    ext z : 1
     change
       (polynomialFirstNontrivial z.1 = polynomialFirstNontrivial z.2) ↔
         ¬ (polynomialFirstNontrivial z.2 < polynomialFirstNontrivial z.1 ∨
@@ -4691,7 +4646,7 @@ private theorem polynomialShearN_image_sector_inter_support :
 private theorem polynomialSector_cover :
     polynomialSectorA ∪ polynomialSectorB ∪ polynomialSectorC =
       polynomialSectorSupport := by
-  ext z
+  ext z : 1
   constructor
   · intro hz
     rcases hz with (⟨_, h⟩ | ⟨_, h⟩) | ⟨_, h⟩
@@ -4780,17 +4735,13 @@ private def polynomialCharacterCoefficientPair
 @[simp]
 private theorem polynomialCharacterCoefficient_one (i : Fin 2) (n : ℕ) :
     polynomialCharacterCoefficient (1 : PolynomialRankTwoCharacter) i n = 1 := by
-  simp only [polynomialCharacterCoefficient, PontryaginDual.one_apply]
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[simp]
 private theorem polynomialCharacterCoefficientPair_one :
     polynomialCharacterCoefficientPair (1 : PolynomialRankTwoCharacter) = 1 := by
-  apply Prod.ext
-  · funext n
-    exact polynomialCharacterCoefficient_one 0 n
-  · funext n
-    exact polynomialCharacterCoefficient_one 1 n
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem continuous_polynomialCharacterCoefficient
@@ -4840,7 +4791,7 @@ private theorem polynomialCharacter_monomial
         Fin 2 → IntegralPolynomial) =
           z • (Pi.single i ((Polynomial.X : IntegralPolynomial) ^ n) :
             Fin 2 → IntegralPolynomial) := by
-    ext j
+    ext j : 2
     by_cases hji : j = i <;> simp only [hji, zsmul_eq_mul, Pi.single_eq_same,
                                Polynomial.coeff_intCast_mul, Int.cast_eq, Polynomial.coeff_X_pow,
                                mul_ite, mul_one, mul_zero, Pi.smul_apply, ne_eq,
@@ -4869,7 +4820,7 @@ private theorem polynomialCharacter_ext
         have hsingle :
             (Pi.single i (p + q) : Fin 2 → IntegralPolynomial) =
               Pi.single i p + Pi.single i q := by
-          ext j
+          ext j : 2
           by_cases hji : j = i <;> simp only [hji, Pi.single_eq_same, Polynomial.coeff_add,
                                      Pi.add_apply, ne_eq, not_false_eq_true, Pi.single_eq_of_ne,
                                      Polynomial.coeff_zero, add_zero]
@@ -4891,7 +4842,7 @@ private theorem polynomialCharacter_ext
   let w : Fin 2 → IntegralPolynomial := Multiplicative.toAdd v
   have hw : w = Pi.single (0 : Fin 2) (w 0) +
       Pi.single (1 : Fin 2) (w 1) := by
-    ext i
+    ext i : 2
     fin_cases i <;> simp only [Fin.zero_eta, Fin.isValue, Pi.add_apply, Pi.single_eq_same, ne_eq,
                       zero_ne_one, not_false_eq_true, Pi.single_eq_of_ne, add_zero, Fin.mk_one,
                       one_ne_zero, zero_add]
@@ -4929,7 +4880,7 @@ private theorem polynomialCharacterNoFree_measurable :
     (⋂ i : Fin 2,
       {χ : PolynomialRankTwoCharacter |
         polynomialCharacterCoefficient χ i 0 = 1}) := by
-    ext χ
+    ext χ : 1
     simp only [polynomialCharacterNoFree, Fin.forall_fin_two,
       Fin.isValue, mem_ofPred_eq, mem_iInter]
   rw [hset]
@@ -4943,7 +4894,7 @@ private theorem polynomialCharacterNoFree_measurable :
 private theorem polynomialCharacterNoFree_eq_preimage :
     polynomialCharacterNoFree =
       polynomialCharacterCoefficientPair ⁻¹' polynomialNoFree := by
-  ext χ
+  ext χ : 1
   change
     (∀ i : Fin 2, polynomialCharacterCoefficient χ i 0 = 1) ↔
       polynomialCharacterCoefficient χ 0 0 = 1 ∧
@@ -5144,7 +5095,7 @@ private theorem elementaryRankTwoRoot_smul_single_target
   change
     Matrix.SpecialLinearGroup.transvection hij a •
       (Pi.single i b : Fin 2 → A) = Pi.single i b
-  ext k
+  ext k : 1
   simp only [Matrix.SpecialLinearGroup.smul_def, SpecialLinearGroup.transvection_coe,
     smul_eq_mulVec, mulVec_single, Pi.smul_apply, col_apply, Matrix.add_apply, Matrix.one_apply,
     hij.symm, and_false, not_false_eq_true, single_apply_of_ne, add_zero, smul_ite,
@@ -5358,7 +5309,7 @@ private def polynomialCharacterSectorSupport : Set PolynomialRankTwoCharacter :=
 private theorem polynomialCharacterCoefficientPair_preimage_sectorSupport :
     polynomialCharacterCoefficientPair ⁻¹' polynomialSectorSupport =
       polynomialCharacterSectorSupport := by
-  ext χ
+  ext χ : 1
   change
     (polynomialCharacterCoefficientPair χ ∈ polynomialNoFree ∧
       polynomialCharacterCoefficientPair χ ∈ polynomialPunctured) ↔
@@ -5399,7 +5350,7 @@ private theorem polynomialCharacterSector_preimage_redundant
         polynomialCharacterNoFree) ∩
       ({1} : Set PolynomialRankTwoCharacter)ᶜ =
       polynomialCharacterCoefficientPair ⁻¹' S := by
-  ext χ
+  ext χ : 1
   constructor
   · exact fun h => h.1.1
   · intro h
@@ -5762,7 +5713,7 @@ private theorem polynomialTrivialAtom_pos_of_constantFixed_smallShears_of_covari
       π η hη (polynomialShearTActing⁻¹) hU
     have hdisplacement := hsmall _
       polynomialShearTActing_inv_mem_kazhdanGenerators
-    linarith
+    linarith only [hbound, hdisplacement]
   · change
       |(μ : Measure PolynomialRankTwoCharacter).real
           (dualCharacterAction action polynomialShearSActing '' U) -
@@ -5773,7 +5724,7 @@ private theorem polynomialTrivialAtom_pos_of_constantFixed_smallShears_of_covari
       π η hη (polynomialShearSActing⁻¹) hU
     have hdisplacement := hsmall _
       polynomialShearSActing_inv_mem_kazhdanGenerators
-    linarith
+    linarith only [hbound, hdisplacement]
   · change
       |(μ : Measure PolynomialRankTwoCharacter).real
           (dualCharacterAction action polynomialShearNActing '' U) -
@@ -5784,7 +5735,7 @@ private theorem polynomialTrivialAtom_pos_of_constantFixed_smallShears_of_covari
       π η hη (polynomialShearNActing⁻¹) hU
     have hdisplacement := hsmall _
       polynomialShearNActing_inv_mem_kazhdanGenerators
-    linarith
+    linarith only [hbound, hdisplacement]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem polynomialKernelFixed_of_constantFixed_smallShears_of_covariance
@@ -5843,7 +5794,7 @@ private theorem shalomConstantVector_single
     (i : Fin 2) (a : ℤ) :
     shalomConstantVector (Pi.single i a) =
       (Pi.single i (Polynomial.C a) : Fin 2 → IntegralPolynomial) := by
-  ext j
+  ext j : 2
   by_cases h : i = j <;> simp only [shalomConstantVector, h, eq_intCast, AddMonoidHom.coe_mk,
                            ZeroHom.coe_mk, Pi.single_eq_same, ne_eq, not_false_eq_true,
                            Pi.single_eq_of_ne', Int.cast_zero, Polynomial.coeff_zero]
@@ -6170,7 +6121,7 @@ private theorem shalom_normalizedFixedVector_of_relativePair
       N₀ f hpair hδ W π ξ hsmall
   have hden : 0 < 1 - δ / κ := by
     have hratio : δ / κ < 1 := (div_lt_one hκ).mpr hδκ
-    linarith
+    linarith only [hratio]
   have hpbig : 1 - δ / κ < ‖p‖ := by
     have htriangle : ‖ξ‖ ≤ ‖(p : W)‖ + ‖z‖ := by
       calc
@@ -6181,7 +6132,7 @@ private theorem shalom_normalizedFixedVector_of_relativePair
         _ ≤ ‖(p : W)‖ + ‖z‖ := norm_add_le _ _
     change 1 - δ / κ < ‖(p : W)‖
     rw [hξ] at htriangle
-    linarith
+    linarith only [hzsmall, htriangle]
   have hppos : 0 < ‖p‖ := lt_trans hden hpbig
   have hpzero : p ≠ 0 := norm_pos_iff.mp hppos
   let η : W := ((‖p‖ : ℂ)⁻¹) • (p : W)
@@ -6216,10 +6167,10 @@ private theorem shalom_normalizedFixedVector_of_relativePair
     have hpdisplt :
         ‖(π g : W →L[ℂ] W) (p : W) - (p : W)‖ <
           δ + 2 * (δ / κ) := by
-      linarith
+      linarith only [hzsmall, hg, hpdisp]
     have hnumpos : 0 < δ + 2 * (δ / κ) := by
       have hratio : 0 < δ / κ := div_pos hδ hκ
-      linarith
+      linarith only [hδ, hratio]
     have hfrac :
         ‖(π g : W →L[ℂ] W) (p : W) - (p : W)‖ / ‖(p : W)‖ <
           (δ + 2 * (δ / κ)) / (1 - δ / κ) := by
@@ -6460,7 +6411,7 @@ private theorem conj_image_centralizer
         (e.conjStarAlgEquiv '' S) : Set (K →L[ℂ] K)) =
       e.conjStarAlgEquiv ''
         (StarSubalgebra.centralizer ℂ S : Set (H →L[ℂ] H)) := by
-  ext y
+  ext y : 1
   constructor
   · intro hy
     refine ⟨e.conjStarAlgEquiv.symm y, ?_, ?_⟩
@@ -6581,23 +6532,16 @@ private theorem crossedGeneratorSet_image
     (e : EquivariantHaarEquiv X Y) :
     (crossedHaarHilbertEquiv e).conjStarAlgEquiv '' crossedGeneratorSet X =
       crossedGeneratorSet Y := by
-  ext T
-  constructor
-  · rintro ⟨S, hS, rfl⟩
-    rcases hS with ⟨f, rfl⟩ | ⟨k, rfl⟩
-    · exact Or.inl ⟨_, (crossedHaarHilbertEquiv_multiplier_conj e f).symm⟩
-    · exact Or.inr ⟨k, (crossedHaarHilbertEquiv_group_conj e k).symm⟩
-  · rintro (⟨f, rfl⟩ | ⟨k, rfl⟩)
-    · let g : crossedCoefficient X :=
-        Lp.compMeasurePreserving e.toMeasurableEquiv
-          e.measure_preserving f
-      refine ⟨crossedMultiplier X g, Or.inl ⟨g, rfl⟩, ?_⟩
-      rw [crossedHaarHilbertEquiv_multiplier_conj]
-      congr 1
-      exact crossedCoefficient_pullback_symm_apply e f
-    · exact ⟨(crossedGroupUnitary X k).toContinuousLinearEquiv.toContinuousLinearMap,
-        Or.inr ⟨k, rfl⟩,
-        crossedHaarHilbertEquiv_group_conj e k⟩
+  let pullback : crossedCoefficient X → crossedCoefficient Y :=
+    Lp.compMeasurePreserving e.toMeasurableEquiv.symm
+      (EquivariantHaarEquiv.symm e).measure_preserving
+  have hsurjective : Function.Surjective pullback := fun f =>
+    ⟨Lp.compMeasurePreserving e.toMeasurableEquiv e.measure_preserving f,
+      crossedCoefficient_pullback_symm_apply e f⟩
+  simp only [crossedGeneratorSet, Set.image_union, ← Set.range_comp',
+    crossedHaarHilbertEquiv_multiplier_conj, crossedHaarHilbertEquiv_group_conj]
+  congr 1
+  exact hsurjective.range_comp (crossedMultiplier Y)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -7648,7 +7592,7 @@ private theorem shiftKernelRestriction_surjective (n : ℕ) :
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem dualCarryPullback_range_eq_shiftKernelRestriction_ker (n : ℕ) :
     (dualCarryPullback n).range = (shiftKernelRestriction n).ker := by
-  ext η
+  ext η : 1
   constructor
   · rintro ⟨χ, rfl⟩
     change shiftKernelRestriction n (dualCarryPullback n χ) = 0
@@ -7743,7 +7687,7 @@ private theorem semidirectMap_range_index
     SemidirectProduct.map f (MonoidHom.id H) hequiv
   let j : N₂ →* (N₂ ⋊[φ₂] H) := SemidirectProduct.inl
   have hcomap : F.range.comap j = f.range := by
-    ext x
+    ext x : 1
     constructor
     · rintro ⟨z, hz⟩
       exact ⟨z.left, congrArg SemidirectProduct.left hz⟩
@@ -7882,7 +7826,7 @@ private theorem additiveLeftRegularUnitary_single
       GroupL2 (Multiplicative A) →L[ℂ] GroupL2 (Multiplicative A))
       (lp.single 2 (Multiplicative.ofAdd b) c) =
       lp.single 2 (Multiplicative.ofAdd (a + b)) c := by
-  ext k
+  ext k : 2
   simp only [leftRegularUnitary_apply, lp.single_apply, Pi.single_apply, inv_mul_eq_iff_eq_mul,
     ofAdd_add]
 
@@ -8009,9 +7953,6 @@ private def tensorCoords : T ≃ₗ[F] Fin 4 → Fin 4 → TensorProduct F R R :
 @[simp]
 private theorem tensorCoords_tmul (u v : V) (i j : Fin 4) :
     tensorCoords (u ⊗ₜ[F] v) i j = u i ⊗ₜ[F] v j := by
-  change
-    (TensorProduct.piRight F F R (fun _ : Fin 4 ↦ R)
-      (u i ⊗ₜ[F] v)) j = u i ⊗ₜ[F] v j
   rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -8484,16 +8425,7 @@ private theorem gamma_isICC_of_additive_infinite_orbits
     (horbit : ∀ η : E n, η ≠ 0 →
       (Set.range fun k : K => carryEAddAction n k η).Infinite) :
     IsICC (gammaGroup n) := by
-  apply gamma_isICC_of_infinite_orbits n
-  intro η hη
-  have hzero : Multiplicative.toAdd η ≠ 0 := by
-    intro h
-    apply hη
-    exact congrArg Multiplicative.ofAdd h
-  apply Set.Infinite.of_image Multiplicative.toAdd
-  exact (horbit (Multiplicative.toAdd η) hzero).mono (by
-    rintro _ ⟨k, rfl⟩
-    exact ⟨kEAction n k η, ⟨k, rfl⟩, rfl⟩)
+  exact gamma_isICC_of_infinite_orbits n horbit
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem gamma_isICC_of_exact
@@ -8514,15 +8446,7 @@ private theorem carryEAddAction_quadratic_value (n : ℕ) (k : K)
       Additive.toMul η
         (Multiplicative.ofAdd
           (⟨0, kYLinear k⁻¹ q⟩ : CarryGroup n)) := by
-  change
-    (kEAction n k (Multiplicative.ofAdd η) :
-      PontryaginDual (Multiplicative (CarryGroup n)))
-      (Multiplicative.ofAdd (⟨0, q⟩ : CarryGroup n)) =
-    (Additive.toMul η)
-      (Multiplicative.ofAdd
-        (⟨0, kYLinear k⁻¹ q⟩ : CarryGroup n))
-  rw [kEAction_apply]
-  congr 1
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem sigma_equivariant_of_characterization
