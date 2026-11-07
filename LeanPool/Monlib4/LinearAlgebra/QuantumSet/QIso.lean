@@ -164,10 +164,9 @@ theorem LinearMap.rTensor_lid_symm_comp_eq_assoc_symm_comp_lTensor_comp_lid_symm
   ext a b
   obtain ⟨S, hS⟩ := TensorProduct.exists_finset (R := R) (f (a ⊗ₜ[R] b))
   simp only [TensorProduct.AlgebraTensorModule.curry_apply, restrictScalars_self,
-    TensorProduct.curry_apply,
-      coe_comp, Function.comp_apply, hS, map_sum, rTensor_tmul, LinearEquiv.coe_coe,
-    TensorProduct.lid_symm_apply,
-      lTensor_tmul, TensorProduct.tmul_sum, TensorProduct.assoc_symm_tmul]
+    TensorProduct.curry_apply, coe_comp, Function.comp_apply, hS, map_sum, rTensor_tmul,
+    LinearEquiv.coe_coe, TensorProduct.lid_symm_apply, lTensor_tmul, TensorProduct.tmul_sum,
+    TensorProduct.assoc_symm_tmul]
 
 theorem LinearMap.rTensor_tensor_eq_assoc_comp_rTensor_rTensor_comp_assoc_symm
   {A B C D : Type*} [AddCommMonoid A]
@@ -188,10 +187,8 @@ theorem LinearMap.rTensor_rTensor_eq_assoc_symm_comp_rTensor_comp_assoc
   rw [rTensor_tensor_eq_assoc_comp_rTensor_rTensor_comp_assoc_symm]
   ext
   simp only [TensorProduct.AlgebraTensorModule.curry_apply, restrictScalars_self,
-    TensorProduct.curry_apply,
-      rTensor_tmul, coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
-    TensorProduct.assoc_tmul,
-      TensorProduct.assoc_symm_tmul]
+    TensorProduct.curry_apply, rTensor_tmul, coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
+    TensorProduct.assoc_tmul, TensorProduct.assoc_symm_tmul]
 
 theorem TensorProduct.lTensor_lTensor_comp_assoc {A B C D : Type*}
   [AddCommMonoid A] [AddCommMonoid B] [AddCommMonoid C] [AddCommMonoid D]
@@ -222,8 +219,8 @@ theorem FrobeniusAlgebra.snake_equation_2 {A : Type*} [Semiring A] [FrobeniusAlg
   rw [lTensor_counit_mul_comp_rTensor_comul_unit]
   ext
   simp only [LinearEquiv.comp_coe, LinearEquiv.coe_coe, LinearEquiv.trans_apply,
-    TensorProduct.lid_symm_apply,
-      TensorProduct.comm_tmul, TensorProduct.rid_tmul, one_smul, Module.End.one_apply]
+    TensorProduct.lid_symm_apply, TensorProduct.comm_tmul, TensorProduct.rid_tmul, one_smul,
+    Module.End.one_apply]
 
 end
 
@@ -310,8 +307,8 @@ theorem QFun.adjoint_comp_self_eq_id_of_map_counit
     = lT _ (ϰ _ _ _).symm.toLinearMap ∘ₗ (ϰ _ _ _).toLinearMap := by
     apply TensorProduct.ext_fourfold'
     simp_all only [LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
-      TensorProduct.assoc_symm_tmul,
-        LinearMap.rTensor_tmul, TensorProduct.assoc_tmul, LinearMap.lTensor_tmul, implies_true]
+      TensorProduct.assoc_symm_tmul, LinearMap.rTensor_tmul, TensorProduct.assoc_tmul,
+      LinearMap.lTensor_tmul, implies_true]
   calc (τ' (B₁ ⊗[ℂ] H)).toLinearMap ∘ₗ lT (B₁ ⊗[ℂ] H) Coalgebra.counit
         ∘ₗ lT (B₁ ⊗[ℂ] H) (LinearMap.mul' ℂ B₂)
         ∘ₗ (ϰ B₁ H (B₂ ⊗[ℂ] B₂)).symm.toLinearMap
@@ -389,22 +386,18 @@ theorem QFun.adjoint_comp_self_eq_id_of_map_counit
           Algebra.linearMap_apply, map_one]
         rw [hS]
         simp only [TensorProduct.sum_tmul, map_sum, TensorProduct.assoc_tmul,
-          LinearMap.lTensor_tmul,
-            LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
-          TensorProduct.assoc_symm_tmul, LinearMap.rTensor_tmul,
-            LinearMap.mul'_apply, TensorProduct.lid_tmul, TensorProduct.tmul_smul,
-          TensorProduct.rid_tmul,
-            TensorProduct.smul_tmul]
+          LinearMap.lTensor_tmul, LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
+          TensorProduct.assoc_symm_tmul, LinearMap.rTensor_tmul, LinearMap.mul'_apply,
+          TensorProduct.lid_tmul, TensorProduct.tmul_smul, TensorProduct.rid_tmul,
+          TensorProduct.smul_tmul]
     _ = rT H 1 := by
         convert congrArg (rT H) (@FrobeniusAlgebra.snake_equation_2 ℂ _ B₁ _
           (QuantumSet.isFrobeniusAlgebra (A := B₁))) using 2
         congr 4
         ext r
-        simp only [TensorProduct.AlgebraTensorModule.curry_apply,
-          LinearMap.restrictScalars_self,
-            TensorProduct.curry_apply, LinearMap.rTensor_tmul, LinearMap.coe_comp,
-          Function.comp_apply, Algebra.linearMap_apply,
-            Algebra.algebraMap_eq_smul_one, one_smul]
+        simp only [TensorProduct.AlgebraTensorModule.curry_apply, LinearMap.restrictScalars_self,
+          TensorProduct.curry_apply, LinearMap.rTensor_tmul, LinearMap.coe_comp,
+          Function.comp_apply, Algebra.linearMap_apply, Algebra.algebraMap_eq_smul_one, one_smul]
     _ = 1 := by ext; simp
 
 theorem QFun.map_counit_of_adjoint_comp_self_eq_id
@@ -502,9 +495,8 @@ theorem QFun.qBijective_iso_id
       (rT _ 1) ∘ₗ h.toLinearEquiv.symm.toLinearMap = lT _ 1 := by
   ext
   simp only [LinearMap.rTensor_one, TensorProduct.AlgebraTensorModule.curry_apply,
-      LinearMap.restrictScalars_self, TensorProduct.curry_apply, LinearMap.coe_comp,
-    LinearEquiv.coe_coe,
-      Function.comp_apply, Module.End.one_apply, LinearEquiv.apply_symm_apply,
+    LinearMap.restrictScalars_self, TensorProduct.curry_apply, LinearMap.coe_comp,
+    LinearEquiv.coe_coe, Function.comp_apply, Module.End.one_apply, LinearEquiv.apply_symm_apply,
     LinearMap.lTensor_one]
 
 theorem rankOne_one_one_eq :
@@ -512,9 +504,8 @@ theorem rankOne_one_one_eq :
   rw [Coalgebra.counit_eq_bra_one]
   ext
   simp only [ContinuousLinearMap.coe_coe, rankOne_apply_apply_apply,
-      ContinuousLinearMap.toLinearMap_innerSL_apply, LinearMap.coe_comp, coe_innerₛₗ_apply,
-    Function.comp_apply,
-      Algebra.linearMap_apply, Algebra.algebraMap_eq_smul_one]
+    ContinuousLinearMap.toLinearMap_innerSL_apply, LinearMap.coe_comp, coe_innerₛₗ_apply,
+    Function.comp_apply, Algebra.linearMap_apply, Algebra.algebraMap_eq_smul_one]
 
 lemma QFun.mapUnit'' {P : (B₁ ⊗[ℂ] H) →ₗ[ℂ] (H ⊗[ℂ] B₂)} (hp : QFun H P) :
   P ∘ₗ rT H (η B₁) = lT H (η B₂) ∘ₗ (TensorProduct.comm ℂ _ _).toLinearMap :=

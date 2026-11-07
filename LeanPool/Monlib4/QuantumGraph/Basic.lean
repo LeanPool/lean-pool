@@ -225,10 +225,9 @@ theorem QuantumSet.comm_op_modAut_map_comul_one_eq_Psi (r : ℝ) (f : A →ₗ[�
     revert x
     rw [← LinearMap.ext_iff, TensorProduct.ext_iff']
     simp_all only [LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
-      LinearEquiv.trans_apply,
-        TensorProduct.comm_tmul, LinearEquiv.TensorProduct.map_apply, TensorProduct.map_tmul,
-          unop_apply, op_apply,
-        MulOpposite.op_unop, MulOpposite.unop_op, LinearMap.id_coe, id_eq, implies_true]
+      LinearEquiv.trans_apply, TensorProduct.comm_tmul, LinearEquiv.TensorProduct.map_apply,
+      TensorProduct.map_tmul, unop_apply, op_apply, MulOpposite.op_unop, MulOpposite.unop_op,
+      LinearMap.id_coe, id_eq, implies_true]
 
 open scoped TensorProduct
 
@@ -302,10 +301,8 @@ theorem real_Upsilon_toBimodule {f : A →ₗ[ℂ] B} (gns₁ : hA.k = 0)
       rmul_adjoint, QuantumSet.modAut_star, QuantumSet.modAut_apply_modAut,
       lmul_adjoint,]
     simp_all only [zero_add, mul_zero, neg_zero, zero_sub, neg_neg, neg_add_cancel,
-      starAlgebra.modAut_zero,
-        star_star, AlgEquiv.one_apply, LinearEquiv.coe_coe, unop_apply, MulOpposite.unop_op,
-          op_apply, MulOpposite.op_star,
-        MulOpposite.unop_star]
+      starAlgebra.modAut_zero, star_star, AlgEquiv.one_apply, LinearEquiv.coe_coe, unop_apply,
+      MulOpposite.unop_op, op_apply, MulOpposite.op_star, MulOpposite.unop_star]
   obtain ⟨α, β, rfl⟩ := LinearMap.exists_sum_rankOne f
   simp only [map_sum, LinearMap.real_sum, Submodule.coe_sum, this]
 
@@ -676,8 +673,8 @@ theorem orthogonalProjection_submoduleMap_isometry {E E' :
       ∘ₗ f.symm.toLinearMap := by
   let f' : E ≃ₗᵢ[ℂ] E' := ⟨f, (isometry_iff_norm _).mp hf⟩
   simpa only [orthogonalProjection'_eq, ContinuousLinearMap.toLinearMap_comp,
-    Submodule.toLinearMap_subtypeL,
-      LinearIsometryEquiv.toLinearEquiv_symm] using orthogonalProjection_submoduleMap f'
+    Submodule.toLinearMap_subtypeL, LinearIsometryEquiv.toLinearEquiv_symm] using
+    orthogonalProjection_submoduleMap f'
 
 instance
    StarAlgEquivClass.instLinearMapClass
@@ -1030,12 +1027,11 @@ theorem Upsilon_apply_comp {C D : Type*} [starAlgebra C] [QuantumSet C]
     congr
     rw [TensorProduct.ext_iff']
     simp_all only [LinearEquiv.coe_coe, symmMap_symm_apply, LinearEquiv.coe_lTensor,
-      LinearMap.map_comp_lTensor,
-        LinearMap.coe_comp, Function.comp_apply, LinearEquiv.TensorProduct.map_apply,
-          TensorProduct.map_tmul, unop_apply,
-        op_apply, LinearMap.real_apply, MulOpposite.coe_opLinearEquiv_symm, MulOpposite.unop_op,
-          LinearMap.op_apply,
-        MulOpposite.op_star, MulOpposite.unop_star, LinearMap.lTensor_tmul, implies_true]
+      LinearMap.map_comp_lTensor, LinearMap.coe_comp, Function.comp_apply,
+      LinearEquiv.TensorProduct.map_apply, TensorProduct.map_tmul, unop_apply, op_apply,
+      LinearMap.real_apply, MulOpposite.coe_opLinearEquiv_symm, MulOpposite.unop_op,
+      LinearMap.op_apply, MulOpposite.op_star, MulOpposite.unop_star, LinearMap.lTensor_tmul,
+      implies_true]
   · simp only [starAlgebra.modAut_zero, AlgEquiv.one_toLinearMap]; rfl
   · rw [hcd] at h; exact h
 

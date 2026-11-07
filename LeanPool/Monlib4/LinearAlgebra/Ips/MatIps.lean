@@ -1311,6 +1311,5 @@ theorem LinearMap.pi_mul'_comp_mul'_adjoint_eq_smul_id_iff [hψ : ∀ i, (ψ i).
   · intro h
     specialize h (1 : PiMat ℂ k s)
     simp_all only [Pi.smul_apply, Pi.one_apply, ne_eq, one_ne_zero, not_false_eq_true,
-      smul_left_inj,
-        implies_true]
+      smul_left_inj, implies_true]
   · simp_all

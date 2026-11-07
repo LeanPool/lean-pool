@@ -198,8 +198,7 @@ theorem rankOne_psi_transpose_to_lin {n : Type _} [DecidableEq n] [Fintype n]
       LinearMap.mulLeft ℂ x * (LinearMap.adjoint (LinearMap.mulRight ℂ y) : l(Matrix n n ℂ))) := by
   withMatrixQuantumCtx[φ]
   rw [← Function.Injective.eq_iff hφ.toMatrix.injective]
-  simp_rw [_root_.map_mul, LinearMap.matrix.mulRight_adjoint, LinearMap.mulRight_toMatrix
-   ,
+  simp_rw [_root_.map_mul, LinearMap.matrix.mulRight_adjoint, LinearMap.mulRight_toMatrix,
     LinearMap.mulLeft_toMatrix, ← mul_kronecker_mul, Matrix.one_mul,
     Matrix.mul_one, Module.Dual.IsFaithfulPosMap.sig_apply_sig]
   have : (1 / 2 : ℝ) + -1 = -(1 / 2) := by norm_num

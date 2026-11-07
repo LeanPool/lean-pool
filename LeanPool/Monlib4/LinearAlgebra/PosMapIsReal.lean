@@ -73,7 +73,8 @@ lemma selfAdjointDecompositionRight_eq_zero_iff
         (by norm_num : (1 / 2 : ℂ) ≠ 0)
     exact sub_eq_zero.mp h2
   · intro h
-    simp only [selfAdjointDecompositionRight, RCLike.I_to_complex, one_div, h, sub_self, smul_zero]
+    simp only [selfAdjointDecompositionRight, RCLike.I_to_complex, one_div, h, sub_self,
+      smul_zero]
 
 theorem selfAdjointDecompositionLeft_isSelfAdjoint
   {B : Type*} [AddCommMonoid B] [StarAddMonoid B] [SMul ℂ B] [StarModule ℂ B] (a : B) :
@@ -285,8 +286,8 @@ lemma Matrix.IsHermitian.sqSqrt_isPosSemidef {x : Matrix n n ℂ} (hx : x.IsHerm
   hx.sqSqrt.PosSemidef := by
   rw [sqSqrt_eq]
   apply (innerAut_posSemidef_iff _).mpr
-  simp_all only [Complex.coe_algebraMap, posSemidef_diagonal_iff, Function.comp_apply, Pi.abs_apply,
-      Complex.zero_le_real, abs_nonneg, implies_true]
+  simp_all only [Complex.coe_algebraMap, posSemidef_diagonal_iff, Function.comp_apply,
+    Pi.abs_apply, Complex.zero_le_real, abs_nonneg, implies_true]
 
 /-- the square of the positive square root of a Hermitian matrix is equal to the square of the
   matrix -/
@@ -799,7 +800,7 @@ theorem selfAdjointDecompositionRight_of
     neg_add, add_add_add_comm, add_neg_cancel, zero_add, ← two_smul ℂ]
   simp only [smul_smul, smul_neg]
   simp_all only [RCLike.I_to_complex, one_div, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
-      inv_mul_cancel_left₀, Complex.I_mul_I, neg_smul, one_smul, neg_neg]
+    inv_mul_cancel_left₀, Complex.I_mul_I, neg_smul, one_smul, neg_neg]
 
 theorem complex_decomposition_mul_decomposition
   {B : Type*} [Ring B]

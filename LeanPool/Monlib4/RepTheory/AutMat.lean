@@ -625,8 +625,7 @@ theorem Matrix.one_ne_zero_iff {𝕜 n : Type*} [DecidableEq n]
     (1 : Matrix n n 𝕜) ≠ (0 : Matrix n n 𝕜) ↔ Nonempty n := by
   simp_rw [ne_eq, ← Matrix.ext_iff, one_apply, zero_apply, not_forall]
   simp_all only [ite_eq_right_iff, one_ne_zero, imp_false, Decidable.not_not, exists_eq',
-    exists_const_iff,
-      and_true]
+    exists_const_iff, and_true]
 
 theorem Matrix.one_eq_zero_iff {𝕜 n : Type*} [DecidableEq n]
     [Zero 𝕜] [One 𝕜] [NeZero (1 : 𝕜)] :
@@ -651,20 +650,16 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
     simp only [he₁, he₂, Prod.mk_mul_mk, mul_one, mul_zero, Prod.mk_eq_zero, and_self]
   have h₄ : e₁ * e₁ = e₁ := by
     simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
-      mul_zero,
-        mul_one, Prod.mk_eq_zero]
+      mul_zero, mul_one, Prod.mk_eq_zero]
   have h₅ : e₂ * e₂ = e₂ := by
     simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
-      mul_zero,
-        mul_one, Prod.mk_eq_zero]
+      mul_zero, mul_one, Prod.mk_eq_zero]
   have h10 : ∀ a : 𝕜, a • e₁ = (a • 1, 0) := by
     simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
-      mul_zero,
-        mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true]
+      mul_zero, mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true]
   have h11 : ∀ a : 𝕜, a • e₂ = (0, a • 1) := by
     simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
-      mul_zero,
-        mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true]
+      mul_zero, mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true]
   have he₁' :
       e₁ ∈
         (Submodule.span 𝕜 {((1 : Mat 𝕜 n), (0 : Mat 𝕜 m)), (0, 1)} :
@@ -674,8 +669,8 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
       Prod.mk_add_mk, add_zero]
     use 1, 0
     simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
-      mul_zero,
-        mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true, one_smul, zero_smul]
+      mul_zero, mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true, one_smul,
+      zero_smul]
   have he₂' :
       e₂ ∈
         (Submodule.span 𝕜 {((1 : Mat 𝕜 n), (0 : Mat 𝕜 m)), (0, 1)} :
@@ -685,8 +680,7 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
       Prod.mk_add_mk, add_zero]
     use 0, 1
     simp_all only [Prod.mk_add_mk, add_zero, zero_add, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
-      mul_zero,
-        mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true, SetLike.mem_coe,
+      mul_zero, mul_one, Prod.mk_eq_zero, Prod.smul_mk, smul_zero, implies_true, SetLike.mem_coe,
       zero_smul, one_smul]
   have center_eq :
       Set.center (Matrix n n 𝕜 × Matrix m m 𝕜) =
@@ -780,10 +774,9 @@ theorem AlgEquiv.matrix_prod_aut {𝕜 n m : Type*} [Field 𝕜] [Fintype n]
         · simp_all
         · rw [← @Matrix.one_eq_zero_iff 𝕜] at h92
           simp_all only [Prod.mk_add_mk, add_zero, Prod.mk_eq_one, and_self, Prod.mk_mul_mk,
-            mul_zero, Prod.mk_eq_zero,
-              mul_one, Prod.smul_mk, smul_zero, implies_true, SetLike.mem_coe, exists_const,
-            Prod.forall, one_ne_zero,
-              not_false_eq_true, ne_eq, EmbeddingLike.apply_eq_iff_eq, and_true, or_true]
+            mul_zero, Prod.mk_eq_zero, mul_one, Prod.smul_mk, smul_zero, implies_true,
+            SetLike.mem_coe, exists_const, Prod.forall, one_ne_zero, not_false_eq_true, ne_eq,
+            EmbeddingLike.apply_eq_iff_eq, and_true, or_true]
       · simp_rw [he₁, he₂, h82, ← Prod.zero_eq_mk, ← h82,
           ← Prod.one_eq_mk, _root_.map_one, _root_.map_zero,
           Prod.ext_iff, Prod.fst_one, Prod.snd_one, Prod.fst_zero,

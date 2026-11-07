@@ -913,8 +913,7 @@ theorem pi_lmul_toMatrix [hψ : ∀ i, (ψ i).IsFaithfulPosMap] (x : PiMat ℂ k
     by_cases h₂ : r₂ = l₂
     · subst r₂
       simp only [single, Matrix.mul_apply, of_apply, and_true, mul_ite, mul_one, mul_zero,
-        Finset.sum_ite_eq,
-          Finset.mem_univ, ↓reduceIte, one_apply_eq]
+        Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte, one_apply_eq]
     · simp [Matrix.mul_apply, Matrix.single, h₂, Ne.symm h₂]
   · simp only [includeBlock_apply]
     simp only [Ne.symm h, ↓reduceDIte, one_div, zero_mul, Matrix.zero_apply, h]
@@ -944,8 +943,7 @@ theorem pi_rmul_toMatrix [hψ : ∀ i, (ψ i).IsFaithfulPosMap] (x : PiMat ℂ k
     by_cases h₁ : r₁ = l₁
     · subst r₁
       simp only [single, one_div, sig_apply, Matrix.mul_apply, of_apply, true_and, ite_mul,
-        one_mul, zero_mul,
-          Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
+        one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
     · simp [Matrix.mul_apply, Matrix.single, h₁, Ne.symm h₁]
   · simp only [includeBlock_apply]
     simp only [Ne.symm h, ↓reduceDIte, one_div, zero_mul, Matrix.zero_apply, h]
@@ -973,9 +971,8 @@ theorem pi_inner_aut_toMatrix
         (rmul (star (fun i => (U i : Matrix (s i) (s i) ℂ) : PiMat ℂ k s))) := by
     ext x i
     simp only [LinearMap.coe_comp, LinearMap.coe_single, Function.comp_apply,
-      StarAlgEquiv.toLinearMap_apply,
-        Unitary.conjStarAlgAut_apply, Pi.mul_apply, Pi.star_apply, mul_assoc,
-          Module.End.mul_apply, rmul_apply, lmul_apply]
+      StarAlgEquiv.toLinearMap_apply, Unitary.conjStarAlgAut_apply, Pi.mul_apply, Pi.star_apply,
+      mul_assoc, Module.End.mul_apply, rmul_apply, lmul_apply]
   rw [this, _root_.map_mul, pi_lmul_toMatrix, pi_rmul_toMatrix, ← blockDiagonal'_mul]
   simp_rw [← mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul, Pi.star_apply,
     star_eq_conjTranspose, blockDiagonal'_inj]
