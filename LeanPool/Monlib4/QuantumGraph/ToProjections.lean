@@ -639,7 +639,7 @@ theorem Qam.completeGraph_edges [hφ : φ.IsFaithfulPosMap] :
   ((@completeGraphRealQam p _ _ φ hφ).edges =
     FiniteDimensional.finrank ℂ (⊤ : Submodule ℂ ℍ)) := by
   withProjectionMatrixCoalgebraQuantumCtx[φ]
-  have this : (RealQam.edges completeGraphRealQam : ℂ) =
+  have this : (RealQam.edges (φ := φ) (completeGraphRealQam (φ := φ)) : ℂ) =
     (Qam.completeGraph ℍ ℍ φ.matrix⁻¹).trace := RealQam.edges_eq _
   have ig := hφ.matrixIsPosDef.invertible
   simp_rw [Qam.completeGraph, ContinuousLinearMap.coe_coe, rankOne_apply,

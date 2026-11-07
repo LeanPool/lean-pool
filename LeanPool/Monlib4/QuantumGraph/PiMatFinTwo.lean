@@ -6,10 +6,10 @@ Authors: Monica Omar
 module
 
 public import LeanPool.Monlib4.QuantumGraph.PiMat
-public import LeanPool.Monlib4.RepTheory.AutMat
 import LeanPool.Monlib4.LinearAlgebra.Ips.Nontracial
 import LeanPool.Monlib4.LinearAlgebra.TensorProduct.BasicLemmas
 import LeanPool.Monlib4.Preq.Finset
+public import LeanPool.Monlib4.QuantumGraph.PiMatFinTwoAlgebra
 
 /-!
 # LeanPool.Monlib4.QuantumGraph.PiMatFinTwo
@@ -65,114 +65,8 @@ macro_rules
         withPiBlockQuantumCtx[$ψ];
         let := PiMat.finiteDimensionalHilbertCoalgebraStruct (φ := $ψ))
 
-/-- The algebra equivalence between a two-block product of matrix algebras and the matching
-  `PiMat`. -/
-def MatProdAlgEquivPiMat (n' : Fin 2 → Type*) [Π i, Fintype (n' i)] [Π i, DecidableEq (n' i)] :
-  (Matrix (n' 0) (n' 0) ℂ × Matrix (n' 1) (n' 1) ℂ)
-    ≃ₐ[ℂ]
-  PiMat ℂ (Fin 2) n' :=
-matrixPiFinTwoAlgEquivProd.symm
-
-/-- Swap the two types in a `Fin 2`-indexed family. -/
-abbrev PiFinTwo.swap (n' : Fin 2 → Type*) :
-  Fin 2 → Type _ :=
-fun i => if i = 0 then (n' 1) else (n' 0)
-
-instance {n' : Fin 2 → Type*} [Π i, Fintype (n' i)] :
-  Π i, Fintype ((PiFinTwo.swap n') i) :=
-fun i => by
-  unfold PiFinTwo.swap
-  split_ifs <;> infer_instance
-instance {n' : Fin 2 → Type*} [Π i, DecidableEq (n' i)] :
-  Π i, DecidableEq ((PiFinTwo.swap n') i) :=
-fun i => by
-  unfold PiFinTwo.swap
-  split_ifs <;> infer_instance
-
-/-- The swapped product-to-`PiMat` equivalence for two matrix blocks. -/
-def MatProdAlgEquivPiMatSwap (n' : Fin 2 → Type*) [Π i, Fintype (n' i)] [Π i,
-  DecidableEq (n' i)] :
-  (Matrix (n' 1) (n' 1) ℂ × Matrix (n' 0) (n' 0) ℂ)
-    ≃ₐ[ℂ]
-  PiMat ℂ (Fin 2) (PiFinTwo.swap n') :=
-MatProdAlgEquivPiMat (PiFinTwo.swap n')
-
-/-- Swap the two factors of a product as an algebra equivalence. -/
-@[simps]
-def Prod.swapAlgEquiv
-  (α β : Type*) [Semiring α] [Semiring β] [Algebra ℂ α] [Algebra ℂ β] :
-    (α × β) ≃ₐ[ℂ] (β × α) where
-  toFun x := x.swap
-  invFun x := x.swap
-  left_inv _ := by simp
-  right_inv _ := by simp
-  map_add' _ _ := by simp
-  map_mul' _ _ := by simp
-  commutes' _ := by simp
-
-/-- Swap the two blocks of a `PiMat` indexed by `Fin 2`. -/
-def PiMatFinTwoSwapAlgEquiv
-  {n' : Fin 2 → Type*} [Π i, Fintype (n' i)] [Π i, DecidableEq (n' i)] :
-    PiMat ℂ (Fin 2) n' ≃ₐ[ℂ] PiMat ℂ (Fin 2) (PiFinTwo.swap n') :=
-(MatProdAlgEquivPiMat n').symm.trans ((Prod.swapAlgEquiv _ _).trans
-  (MatProdAlgEquivPiMatSwap n'))
-
-/-- The constant `Fin 2`-indexed family with value `n`. -/
-abbrev PiFinTwoSame (n : Type*) :
-  Fin 2 → Type _ :=
-fun i => let _ := i; n
-
-instance {n : Type*} [Fintype n] :
-  Π i, Fintype ((PiFinTwoSame n) i) :=
-fun i => by infer_instance
-instance {n : Type*} [DecidableEq n] :
-  Π i, DecidableEq ((PiFinTwoSame n) i) :=
-fun i => by infer_instance
-
-theorem PiMatFinTwoSwapAlgEquiv_apply {n' : Fin 2 → Type*} [Π i, Fintype (n' i)] [Π i,
-  DecidableEq (n' i)]
-  (x : Matrix (n' 0) (n' 0) ℂ) (y : Matrix (n' 1) (n' 1) ℂ) :
-  PiMatFinTwoSwapAlgEquiv (MatProdAlgEquivPiMat n' (x, y))
-    = MatProdAlgEquivPiMat _ (y, x) :=
-rfl
-
-lemma PiFinTwoSame_swap {n : Type*} :
-  PiFinTwo.swap (PiFinTwoSame n) = PiFinTwoSame n :=
-by ext; simp only [ite_self, Fin.isValue]
-
-/-- Swap the two identical matrix blocks of a `PiMat` indexed by `Fin 2`. -/
-def PiMatFinTwoSameSwapAlgEquiv
-  {n : Type*} [Fintype n] [DecidableEq n] :
-    PiMat ℂ (Fin 2) (PiFinTwoSame n) ≃ₐ[ℂ] PiMat ℂ (Fin 2) (PiFinTwoSame n) :=
-(MatProdAlgEquivPiMat (PiFinTwoSame n)).symm.trans ((Prod.swapAlgEquiv _ _).trans
-  (MatProdAlgEquivPiMat (PiFinTwoSame n)))
-
-
-theorem PiMatFinTwoSameSwapAlgEquiv_apply {n : Type*} [Fintype n] [DecidableEq n]
-  (x : Matrix n n ℂ) (y : Matrix n n ℂ) :
-  PiMatFinTwoSameSwapAlgEquiv (MatProdAlgEquivPiMat (PiFinTwoSame n) (x, y))
-    = MatProdAlgEquivPiMat _ (y, x) :=
-rfl
-
 variable {n : Type*}
   [Fintype n] [DecidableEq n]
-
-theorem AlgEquiv.prodMap_inner_of {K R₁ R₂ : Type*} [CommSemiring K]
-  [Semiring R₁] [Semiring R₂] [Algebra K R₁] [Algebra K R₂]
-  {f : R₁ ≃ₐ[K] R₁} (hf : f.IsInner) {g : R₂ ≃ₐ[K] R₂} (hg : g.IsInner) :
-  (f.prodMap g).IsInner := by
-  rw [AlgEquiv.prod_isInner_iff_prodMap]
-  obtain ⟨U, hU, rfl⟩ := hf
-  obtain ⟨V, hV, rfl⟩ := hg
-  exact ⟨U, hU, V, hV, rfl⟩
-
-/-- Invertibility is preserved by the product-to-`PiMat` equivalence in the same-block case. -/
-@[reducible]
-def MatProdAlgEquivPiMatSameInvertibleOf {U : Matrix n n ℂ × Matrix n n ℂ}
-  (hU : Invertible U) :
-  Invertible ((MatProdAlgEquivPiMat (PiFinTwoSame n)) U) := by
-  use (MatProdAlgEquivPiMat _ ⅟U) <;>
-  simp only [← map_mul, invOf_mul_self, mul_invOf_self, map_one]
 
 theorem AlgEquiv.toPiMat_finTwo_same_inner_of_matrix_prod_inner
   {f : (Matrix n n ℂ × Matrix n n ℂ) ≃ₐ[ℂ] (Matrix n n ℂ × Matrix n n ℂ)}
@@ -646,9 +540,9 @@ theorem QuantumGraph.Real.conj_proj_isReal
   simp only [QuantumGraph.real_iff, LinearMap.isReal_iff,
     LinearMap.real_comp]
   simp only [LinearMap.proj_adjoint,
-    LinearMap.real_of_isReal (LinearMap.single_isReal (R := ℂ) (ι := ι) (φ := fun r =>
+    LinearMap.real_of_isReal (LinearMap.single_isReal  (R := ℂ) (ι := ι) (φ := fun r =>
       Mat ℂ (p r)) _),
-    LinearMap.real_of_isReal (LinearMap.proj_isReal (R := ℂ) (ι := ι)
+    LinearMap.real_of_isReal (LinearMap.proj_isReal  (R := ℂ) (ι := ι)
       (φ := fun r => Mat ℂ (p r)) _), LinearMap.real_of_isReal hf.2, and_true]
   rw [← LinearMap.proj_adjoint,
     ← AlgHom.proj_toLinearMap]
@@ -765,7 +659,7 @@ by
               (NonUnitalAlgHom.single ℂ (fun r => Mat ℂ (p r)) i) :
                 Mat ℂ (p i) →ₗ[ℂ] PiMat ℂ ι p) =
           LinearMap.proj (R := ℂ) (φ := fun r => Mat ℂ (p r)) i := by
-      rw [NonUnitalAlgHom.single_toLinearMap, ← LinearMap.proj_adjoint]
+      rw [NonUnitalAlgHom.single_toLinearMap, ← LinearMap.proj_adjoint (φ := φ)]
       exact LinearMap.adjoint_adjoint _
     have hadjPi :
         LinearMap.adjoint (Coalgebra.comul :
@@ -800,10 +694,10 @@ theorem QuantumGraph.isReal_iff_conj_proj_adjoint_isReal
   rw [schurMul_comp_proj, schurMul_proj_adjoint_comp, LinearMap.proj_adjoint]
   nth_rw 2 [LinearMap.real_of_isReal (LinearMap.single_isReal i)]
   nth_rw 3 [LinearMap.real_of_isReal (LinearMap.proj_isReal i)]
-  rw [LinearMap.comp_proj_inj (R := ℂ) (ι := ι) (φ := fun r => Mat ℂ (p r)) i,
-    LinearMap.comp_proj_inj (R := ℂ) (ι := ι) (φ := fun r => Mat ℂ (p r)) i]
-  rw [LinearMap.single_comp_inj (R := ℂ) (φ := fun r => Mat ℂ (p r)) i,
-    LinearMap.single_comp_inj (R := ℂ) (φ := fun r => Mat ℂ (p r)) i]
+  rw [LinearMap.comp_proj_inj  (R := ℂ) (ι := ι) (φ := fun r => Mat ℂ (p r)) i,
+    LinearMap.comp_proj_inj  (R := ℂ) (ι := ι) (φ := fun r => Mat ℂ (p r)) i]
+  rw [LinearMap.single_comp_inj  (R := ℂ) (φ := fun r => Mat ℂ (p r)) i,
+    LinearMap.single_comp_inj  (R := ℂ) (φ := fun r => Mat ℂ (p r)) i]
 
 theorem QuantumGraph.Real.proj_adjoint_comp_proj_conj_isRealQuantumGraph
   : withPiBlockCoalgebraQuantum[φ]
@@ -824,8 +718,9 @@ theorem QuantumGraph.Real.proj_adjoint_comp_proj_conj_isRealQuantumGraph
     simp only [LinearMap.comp_assoc, hf.1]
   · simp only [LinearMap.isReal_iff, LinearMap.real_comp,
       LinearMap.proj_adjoint, LinearMap.real_of_isReal
-        (LinearMap.single_isReal (R := ℂ) (φ := fun r => Mat ℂ (p r)) _),
-      LinearMap.real_of_isReal (LinearMap.proj_isReal (R := ℂ) (φ := fun r => Mat ℂ (p r)) _),
+        (LinearMap.single_isReal  (R := ℂ) (φ := fun r => Mat ℂ (p r)) _),
+      LinearMap.real_of_isReal (LinearMap.proj_isReal  (R := ℂ) (φ := fun r => Mat ℂ (p r))
+        _),
       LinearMap.real_of_isReal hf.2]
 
 open scoped Classical in
