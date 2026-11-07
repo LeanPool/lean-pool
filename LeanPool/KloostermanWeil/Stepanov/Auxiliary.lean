@@ -157,6 +157,38 @@ theorem polynomial_block_sum_eq_zero_iff
     intro j hj
     rw [hzero j (Finset.mem_range.1 hj), zero_mul]
 
+/-- In a finite base-`q` block sum, if all earlier blocks vanish, the
+first remaining block is divisible by `X^q`. -/
+theorem X_pow_dvd_first_fin_polynomial_block
+    {F : Type*} [Field F]
+    {J q : ℕ} (P : Fin J → F[X]) (i : Fin J)
+    (hprev : ∀ j : Fin J, (j : ℕ) < i → P j = 0)
+    (hsum : ∑ j : Fin J, P j * X ^ ((j : ℕ) * q) = 0) :
+    X ^ q ∣ P i := by
+  rw [X_pow_dvd_iff]
+  intro n hn
+  have hc := congrArg (Polynomial.lcoeff F (n + (i : ℕ) * q)) hsum
+  simp only [map_sum, Polynomial.lcoeff_apply, coeff_zero] at hc
+  rw [Finset.sum_eq_single i] at hc
+  · simpa [coeff_mul_X_pow', Nat.le_add_left,
+      Nat.add_sub_cancel_right] using hc
+  · intro j _hj hji
+    by_cases hji_lt : (j : ℕ) < i
+    · rw [hprev j hji_lt, zero_mul, coeff_zero]
+    · rw [coeff_mul_X_pow', ite_eq_right]
+      have hij : (i : ℕ) < j := lt_of_le_of_ne
+        (Nat.le_of_not_gt hji_lt) (fun h ↦ hji (Fin.ext h.symm))
+      have hmul : ((i : ℕ) + 1) * q ≤ (j : ℕ) * q :=
+        Nat.mul_le_mul_right q (Nat.succ_le_iff.2 hij)
+      have hlt : n + (i : ℕ) * q < (j : ℕ) * q := by
+        calc
+          n + (i : ℕ) * q < q + (i : ℕ) * q :=
+            Nat.add_lt_add_right hn _
+          _ = ((i : ℕ) + 1) * q := by ring
+          _ ≤ (j : ℕ) * q := hmul
+      exact Nat.not_le_of_lt hlt
+  · simp
+
 /-- If every earlier block vanishes and a base-`q` block sum is zero, its
 first remaining block is divisible by `X^q`.  Unlike block uniqueness, this
 statement requires no degree bound and is the congruence actually used in
@@ -166,28 +198,9 @@ theorem X_pow_dvd_first_nonzero_polynomial_block
     (hi : i < J) (hprev : ∀ j < i, P j = 0)
     (hsum : ∑ j ∈ Finset.range J, P j * X ^ (j * q) = 0) :
     X ^ q ∣ P i := by
-  rw [X_pow_dvd_iff]
-  intro n hn
-  have hc := congrArg (Polynomial.lcoeff F (n + i * q)) hsum
-  simp only [map_sum, Polynomial.lcoeff_apply, coeff_zero] at hc
-  rw [Finset.sum_eq_single_of_mem i (Finset.mem_range.2 hi)] at hc
-  · simpa [coeff_mul_X_pow', Nat.le_add_left,
-      Nat.add_sub_cancel_right] using hc
-  · intro j hj hji
-    simp only [Finset.mem_range] at hj
-    by_cases hji_lt : j < i
-    · rw [hprev j hji_lt, zero_mul, coeff_zero]
-    · rw [coeff_mul_X_pow', ite_eq_right]
-      have hij : i < j :=
-        lt_of_le_of_ne (Nat.le_of_not_gt hji_lt) hji.symm
-      have hmul : (i + 1) * q ≤ j * q :=
-        Nat.mul_le_mul_right q (Nat.succ_le_iff.2 hij)
-      have hlt : n + i * q < j * q := by
-        calc
-          n + i * q < q + i * q := Nat.add_lt_add_right hn _
-          _ = (i + 1) * q := by ring
-          _ ≤ j * q := hmul
-      exact Nat.not_le_of_lt hlt
+  exact X_pow_dvd_first_fin_polynomial_block
+    (fun j : Fin J => P j) ⟨i, hi⟩ (fun j hj => hprev j hj)
+    (by simpa only [Finset.sum_range] using hsum)
 
 /-- Over a finite field, `f^q` is congruent to its constant coefficient
 modulo `X^q`.  This is the Frobenius congruence used verbatim in the
@@ -317,38 +330,6 @@ theorem stepanovCoefficientPair_eq_zero_of_X_card_pow_dvd
     exact eq_zero_of_pow_eq_zero
       (mul_eq_zero.mp heq.symm |>.resolve_right hc)
   exact ⟨Subtype.ext hr, Subtype.ext hs⟩
-
-/-- In a finite base-`q` block sum, if all earlier blocks vanish, the
-first remaining block is divisible by `X^q`. -/
-theorem X_pow_dvd_first_fin_polynomial_block
-    {F : Type*} [Field F]
-    {J q : ℕ} (P : Fin J → F[X]) (i : Fin J)
-    (hprev : ∀ j : Fin J, (j : ℕ) < i → P j = 0)
-    (hsum : ∑ j : Fin J, P j * X ^ ((j : ℕ) * q) = 0) :
-    X ^ q ∣ P i := by
-  rw [X_pow_dvd_iff]
-  intro n hn
-  have hc := congrArg (Polynomial.lcoeff F (n + (i : ℕ) * q)) hsum
-  simp only [map_sum, Polynomial.lcoeff_apply, coeff_zero] at hc
-  rw [Finset.sum_eq_single i] at hc
-  · simpa [coeff_mul_X_pow', Nat.le_add_left,
-      Nat.add_sub_cancel_right] using hc
-  · intro j _hj hji
-    by_cases hji_lt : (j : ℕ) < i
-    · rw [hprev j hji_lt, zero_mul, coeff_zero]
-    · rw [coeff_mul_X_pow', ite_eq_right]
-      have hij : (i : ℕ) < j := lt_of_le_of_ne
-        (Nat.le_of_not_gt hji_lt) (fun h ↦ hji (Fin.ext h.symm))
-      have hmul : ((i : ℕ) + 1) * q ≤ (j : ℕ) * q :=
-        Nat.mul_le_mul_right q (Nat.succ_le_iff.2 hij)
-      have hlt : n + (i : ℕ) * q < (j : ℕ) * q := by
-        calc
-          n + (i : ℕ) * q < q + (i : ℕ) * q :=
-            Nat.add_lt_add_right hn _
-          _ = ((i : ℕ) + 1) * q := by ring
-          _ ≤ (j : ℕ) * q := hmul
-      exact Nat.not_le_of_lt hlt
-  · simp
 
 /-- The polynomial inside the leading factor `f^l` in Stepanov equation
 (18). -/

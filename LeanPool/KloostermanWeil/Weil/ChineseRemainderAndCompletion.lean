@@ -734,21 +734,7 @@ theorem stdAddChar_crt_bezout
     ZMod.stdAddChar (y : ZMod (m * n)) =
       ZMod.stdAddChar ((n.gcdA m * y : ℤ) : ZMod m) *
       ZMod.stdAddChar ((n.gcdB m * y : ℤ) : ZMod n) := by
-  rw [ZMod.stdAddChar_coe, ZMod.stdAddChar_coe, ZMod.stdAddChar_coe]
-  rw [← Complex.exp_add]
-  congr 1
-  have hm0 : (m : ℂ) ≠ 0 := by exact_mod_cast (NeZero.ne m)
-  have hn0 : (n : ℂ) ≠ 0 := by exact_mod_cast (NeZero.ne n)
-  have hbez : (1 : ℤ) =
-      (n : ℤ) * n.gcdA m + (m : ℤ) * n.gcdB m := by
-    simpa [hcop.symm.gcd_eq_one] using (Nat.gcd_eq_gcd_ab n m)
-  have hbezC : (1 : ℂ) =
-      (n : ℂ) * (n.gcdA m : ℂ) + (m : ℂ) * (n.gcdB m : ℂ) := by
-    exact_mod_cast hbez
-  push_cast
-  field_simp [hm0, hn0]
-  rw [← hbezC]
-  ring
+  simpa only [crtLeftCoeff, crtRightCoeff] using (stdAddChar_mul_eq_crt hcop y).symm
 
 
 lemma norm_stdAddChar_eq_one
@@ -1029,46 +1015,45 @@ noncomputable def centeredIntervalSum
   ∑ j ∈ Finset.range L,
     centeredReciprocalPhase N a (x + (j : ZMod N))
 
-lemma centeredReciprocalPhase_fourier_inversion
-    (N : ℕ) [NeZero N] (a y : ZMod N) :
-    centeredReciprocalPhase N a y =
+lemma finiteFourier_inversion
+    {N : ℕ} [NeZero N] (f : ZMod N → ℂ) (y : ZMod N) :
+    f y =
       (N : ℂ)⁻¹ *
         ∑ h : ZMod N,
           ZMod.stdAddChar (h * y) *
-            ZMod.dft (centeredReciprocalPhase N a) h := by
+            ZMod.dft f h := by
   have hInv := congrFun
-    (ZMod.dft.symm_apply_apply (centeredReciprocalPhase N a)) y
+    (ZMod.dft.symm_apply_apply f) y
   rw [ZMod.invDFT_apply] at hInv
   simpa [smul_eq_mul, mul_comm, mul_left_comm, mul_assoc] using hInv.symm
 
-lemma centeredIntervalSum_fourier
-    (N : ℕ) [NeZero N] (a x : ZMod N) (L : ℕ) :
-    centeredIntervalSum N a x L =
+lemma intervalSum_fourier
+    {N : ℕ} [NeZero N] (f : ZMod N → ℂ) (x : ZMod N) (L : ℕ) :
+    (∑ j ∈ Finset.range L, f (x + (j : ZMod N))) =
       (N : ℂ)⁻¹ *
         ∑ h : ZMod N,
-          ZMod.dft (centeredReciprocalPhase N a) h *
+          ZMod.dft f h *
             intervalCharacterKernel N h x L := by
-  unfold centeredIntervalSum
   calc
     (∑ j ∈ Finset.range L,
-      centeredReciprocalPhase N a (x + (j : ZMod N))) =
+      f (x + (j : ZMod N))) =
         ∑ j ∈ Finset.range L,
           ((N : ℂ)⁻¹ *
             ∑ h : ZMod N,
               ZMod.stdAddChar (h * (x + (j : ZMod N))) *
-                ZMod.dft (centeredReciprocalPhase N a) h) := by
+                ZMod.dft f h) := by
           apply Finset.sum_congr rfl
           intro j hj
-          rw [centeredReciprocalPhase_fourier_inversion]
+          rw [finiteFourier_inversion f (x + (j : ZMod N))]
     _ = (N : ℂ)⁻¹ *
         ∑ j ∈ Finset.range L,
           ∑ h : ZMod N,
             ZMod.stdAddChar (h * (x + (j : ZMod N))) *
-              ZMod.dft (centeredReciprocalPhase N a) h := by
+              ZMod.dft f h := by
           rw [Finset.mul_sum]
     _ = (N : ℂ)⁻¹ *
         ∑ h : ZMod N,
-          ZMod.dft (centeredReciprocalPhase N a) h *
+          ZMod.dft f h *
             intervalCharacterKernel N h x L := by
           congr 1
           rw [Finset.sum_comm]
@@ -1081,31 +1066,50 @@ lemma centeredIntervalSum_fourier
           ring
 
 
-/-- Generic centered finite Fourier completion. The analytic input is only a
-uniform bound on nonzero Fourier coefficients. -/
-theorem centeredIntervalSum_norm_le_of_dft_bound
-    {N : ℕ} [NeZero N] (a x : ZMod N) (L : ℕ)
+lemma centeredReciprocalPhase_fourier_inversion
+    (N : ℕ) [NeZero N] (a y : ZMod N) :
+    centeredReciprocalPhase N a y =
+      (N : ℂ)⁻¹ *
+        ∑ h : ZMod N,
+          ZMod.stdAddChar (h * y) *
+            ZMod.dft (centeredReciprocalPhase N a) h :=
+  finiteFourier_inversion (centeredReciprocalPhase N a) y
+
+lemma centeredIntervalSum_fourier
+    (N : ℕ) [NeZero N] (a x : ZMod N) (L : ℕ) :
+    centeredIntervalSum N a x L =
+      (N : ℂ)⁻¹ *
+        ∑ h : ZMod N,
+          ZMod.dft (centeredReciprocalPhase N a) h *
+            intervalCharacterKernel N h x L :=
+  intervalSum_fourier (centeredReciprocalPhase N a) x L
+
+/-- Finite Fourier completion for any mean-zero function, using only a uniform
+bound on its nonzero Fourier coefficients. -/
+theorem intervalSum_norm_le_of_dft_bound
+    {N : ℕ} [NeZero N] (f : ZMod N → ℂ) (hmean : ∑ y, f y = 0)
+    (x : ZMod N) (L : ℕ)
     {B : ℝ} (hB0 : 0 ≤ B)
     (hB : ∀ h : ZMod N, h ≠ 0 →
-      ‖ZMod.dft (centeredReciprocalPhase N a) h‖ ≤ B) :
-    ‖centeredIntervalSum N a x L‖ ≤
+      ‖ZMod.dft f h‖ ≤ B) :
+    ‖∑ j ∈ Finset.range L, f (x + (j : ZMod N))‖ ≤
       B * (1 + Real.log N) := by
   have hzero :
-      ZMod.dft (centeredReciprocalPhase N a) 0 = 0 := by
-    rw [ZMod.dft_apply_zero, sum_centeredReciprocalPhase_eq_zero]
+      ZMod.dft f 0 = 0 := by
+    rw [ZMod.dft_apply_zero, hmean]
   have hsum :
       ‖∑ h : ZMod N,
-          ZMod.dft (centeredReciprocalPhase N a) h *
+          ZMod.dft f h *
             intervalCharacterKernel N h x L‖ ≤
         ∑ h : ZMod N,
           if h = 0 then 0
           else B * ((N : ℝ) / (2 * zmodFrequencyDistance h)) := by
     calc
       ‖∑ h : ZMod N,
-          ZMod.dft (centeredReciprocalPhase N a) h *
+          ZMod.dft f h *
             intervalCharacterKernel N h x L‖ ≤
         ∑ h : ZMod N,
-          ‖ZMod.dft (centeredReciprocalPhase N a) h *
+          ‖ZMod.dft f h *
             intervalCharacterKernel N h x L‖ := by
               exact norm_sum_le _ _
       _ ≤ ∑ h : ZMod N,
@@ -1148,11 +1152,11 @@ theorem centeredIntervalSum_norm_le_of_dft_bound
             apply mul_le_mul_of_nonneg_left
               (frequencyReciprocalMass_le_log N)
             positivity
-  rw [centeredIntervalSum_fourier, norm_mul, norm_inv, Complex.norm_natCast]
+  rw [intervalSum_fourier f x L, norm_mul, norm_inv, Complex.norm_natCast]
   calc
     (N : ℝ)⁻¹ *
         ‖∑ h : ZMod N,
-          ZMod.dft (centeredReciprocalPhase N a) h *
+          ZMod.dft f h *
             intervalCharacterKernel N h x L‖ ≤
       (N : ℝ)⁻¹ *
         (B * ((N : ℝ) / 2) * (2 * (1 + Real.log N))) := by
@@ -1160,6 +1164,17 @@ theorem centeredIntervalSum_norm_le_of_dft_bound
     _ = B * (1 + Real.log N) := by
           have hN : (N : ℝ) ≠ 0 := by exact_mod_cast (NeZero.ne N)
           field_simp [hN]
+
+
+/-- Centered reciprocal-phase completion as an instance of mean-zero Fourier completion. -/
+theorem centeredIntervalSum_norm_le_of_dft_bound
+    {N : ℕ} [NeZero N] (a x : ZMod N) (L : ℕ)
+    {B : ℝ} (hB0 : 0 ≤ B)
+    (hB : ∀ h : ZMod N, h ≠ 0 →
+      ‖ZMod.dft (centeredReciprocalPhase N a) h‖ ≤ B) :
+    ‖centeredIntervalSum N a x L‖ ≤ B * (1 + Real.log N) :=
+  intervalSum_norm_le_of_dft_bound (centeredReciprocalPhase N a)
+    (sum_centeredReciprocalPhase_eq_zero N a) x L hB0 hB
 
 
 /-- Centered incomplete reciprocal-phase completion at the reduced squarefree modulus.
