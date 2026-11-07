@@ -8,7 +8,6 @@ module
 public import LeanPool.OSforGFF.OS.Axioms
 public import LeanPool.OSforGFF.Measure.Construct
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Calculus.ParametricIntegral
 import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 import Mathlib.Data.Nat.Choose.Multinomial
@@ -73,7 +72,7 @@ private lemma young_ineq (c α : ℝ) (hα : 0 < α) (x : ℝ) :
     c * |x| ≤ c ^ 2 / (4 * α) + α * x ^ 2 := by
   rw [show c ^ 2 / (4 * α) + α * x ^ 2 = (c ^ 2 + 4 * α ^ 2 * x ^ 2) / (4 * α) from by field_simp,
     le_div_iff₀ (by positivity : (0:ℝ) < 4 * α)]
-  nlinarith [sq_nonneg (c - 2 * α * |x|), sq_abs x]
+  nlinarith only [sq_nonneg (c - 2 * α * |x|), sq_abs x]
 
 variable (m : ℝ) [Fact (0 < m)]
 
@@ -155,7 +154,8 @@ lemma norm_exp_I_distributionPairingℂ_real (f : TestFunctionℂ) (ω : FieldCo
   simp only [distributionPairingℂReal, complexTestFunctionDecompose]
   -- I * ((ω f_re : ℂ) + I * (ω f_im : ℂ)) = I * (ω f_re) - (ω f_im)
   -- The real part is -(ω f_im)
-  simp_all
+  simp_all only [mul_re, I_re, add_re, ofReal_re, zero_mul, I_im, ofReal_im, mul_zero, sub_self,
+    add_zero, add_im, mul_im, one_mul, zero_add, zero_sub]
 
 /-- Integrability of exp(-ω f) for a real test function f under the GFF measure.
     This follows from the Gaussian nature: for centered Gaussian X with variance σ²,
@@ -175,7 +175,7 @@ lemma gff_exp_neg_pairing_integrable (f : OSforGFF.TestFunction) :
   refine Real.exp_le_exp.mpr ?_
   have := young_ineq 1 α hα_pos (ω f)
   rw [one_mul] at this
-  linarith [neg_abs_le (ω f), this]
+  linarith only [this, neg_abs_le (ω f)]
 
 /-- exp(|ω f|) is in L^2 (and in fact all L^p) under the GFF measure.
     This follows from Fernique's theorem: if exp(α x²) is integrable, then exp(|x|)^p is integrable
@@ -204,7 +204,9 @@ lemma gff_exp_abs_pairing_memLp (f : OSforGFF.TestFunction) (p : ENNReal) (hp : 
         h_fernique.const_mul (Real.exp (p.toReal^2 / (4 * α)))
     apply h_dom.mono' ((Real.continuous_exp.measurable.comp (measurable_const.mul
       (continuous_abs.measurable.comp (WeakDual.eval_measurable f)))).aestronglyMeasurable)
-    simp_all
+    simp_all only [ne_eq, distributionPairingCLM, ContinuousLinearMap.coe_mk', LinearMap.coe_mk,
+      AddHom.coe_mk, muGFF, Function.comp_apply, Pi.mul_apply, Real.norm_eq_abs, Real.abs_exp,
+      Filter.eventually_true]
   rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp_pos hp h_aesm]
   -- ‖exp(|x|)‖ₑ^p = exp(p|x|), reducing finiteness to h_exp_p_integrable.
   have h_eq : ∀ ω : FieldConfiguration,
@@ -380,7 +382,7 @@ lemma gff_cf_slice_entire (f_re f_im : OSforGFF.TestFunction) :
     rw [dist_eq_norm] at h_dist
     have h1 := Complex.abs_im_le_norm (t - t₀)
     simp only [Complex.sub_im] at h1
-    linarith [abs_sub_abs_le_abs_sub t.im t₀.im]
+    linarith only [h_dist, h1, abs_sub_abs_le_abs_sub t.im t₀.im]
   -- Integrability of F(t₀, ·)
   have hF_int : Integrable (F t₀) (muGFF m).toMeasure := by
     apply (fernique_dom (|t₀.im|) (abs_nonneg _)).mono (hF_meas t₀)
@@ -436,7 +438,7 @@ lemma gff_cf_slice_entire (f_re f_im : OSforGFF.TestFunction) :
       calc |ω f_im| * Real.exp (c * |ω f_im|)
           ≤ Real.exp |ω f_im| * Real.exp (c * |ω f_im|) := by
             apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
-            calc |ω f_im| ≤ |ω f_im| + 1 := by linarith
+            calc |ω f_im| ≤ |ω f_im| + 1 := by linarith only []
               _ ≤ Real.exp |ω f_im| := Real.add_one_le_exp _
         _ = Real.exp ((c + 1) * |ω f_im|) := by rw [← Real.exp_add]; ring_nf
   -- Apply parametric integral differentiation
@@ -520,9 +522,9 @@ theorem gff_complex_CF_covariance (f : TestFunctionℂ) :
     have h_mem_V : ((ε / 2 : ℝ) : ℂ) ∈ V := hε_ball (by
       simp only [Metric.mem_ball, Complex.dist_eq, sub_zero, Complex.norm_real]
       rw [Real.norm_eq_abs, abs_of_pos h_half_pos]
-      linarith)
+      linarith only [hε_pos])
     have h_ne : ((ε / 2 : ℝ) : ℂ) ≠ 0 := by
-      simp only [ne_eq, Complex.ofReal_eq_zero]; linarith
+      simp only [ne_eq, Complex.ofReal_eq_zero]; linarith only [hε_pos]
     exact hV_sub ⟨h_mem_V, h_ne⟩ (h_agree (ε / 2))
   -- Step 5: Evaluate at t = I
   have h_eval : L Complex.I = R Complex.I := congrFun h_eq Complex.I

@@ -109,7 +109,7 @@ lemma exists_CLF_le_seminorm
       constructor
       · have h1 := hg_le (-x)
         rw [map_neg, map_neg_eq_map] at h1
-        linarith
+        linarith only [h1]
       · exact hg_le x
     -- g is continuous: bounded by continuous seminorm, hence continuous at 0
     have hg_cont : Continuous g := by
@@ -145,10 +145,10 @@ lemma finset_sup_poly_bound {E : Type*} [AddCommGroup E] [Module ℝ E]
     have ih' := ih (fun i hi => hx i (Finset.mem_cons.mpr (Or.inr hi)))
     obtain ⟨D₁, hD₁, S₁, hbound₁⟩ := ih'
     obtain ⟨Ca, hCa, ta, hbounda⟩ := hx a (Finset.mem_cons.mpr (Or.inl rfl))
-    refine ⟨Ca + D₁, by linarith, max ta S₁, fun m => ?_⟩
+    refine ⟨Ca + D₁, by linarith only [hD₁, hCa], max ta S₁, fun m => ?_⟩
     rw [Finset.sup_cons]
     have h1m : (0 : ℝ) < 1 + (m : ℝ) := by positivity
-    have h1m_le : (1 : ℝ) ≤ 1 + (m : ℝ) := by linarith
+    have h1m_le : (1 : ℝ) ≤ 1 + (m : ℝ) := by linarith only []
     have hpow_le_left : (1 + (m : ℝ)) ^ ta ≤ (1 + (m : ℝ)) ^ (max ta S₁) :=
       pow_le_pow_right₀ h1m_le (le_max_left ta S₁)
     have hpow_le_right : (1 + (m : ℝ)) ^ S₁ ≤ (1 + (m : ℝ)) ^ (max ta S₁) :=
@@ -158,13 +158,13 @@ lemma finset_sup_poly_bound {E : Type*} [AddCommGroup E] [Module ℝ E]
         _ ≤ Ca * (1 + (m : ℝ)) ^ (max ta S₁) :=
             mul_le_mul_of_nonneg_left hpow_le_left (le_of_lt hCa)
         _ ≤ (Ca + D₁) * (1 + (m : ℝ)) ^ (max ta S₁) :=
-            mul_le_mul_of_nonneg_right (by linarith) (pow_nonneg (le_of_lt h1m) _)
+            mul_le_mul_of_nonneg_right (by linarith only [hD₁]) (pow_nonneg (le_of_lt h1m) _)
     have hle_sup_right : (s.sup p') (x m) ≤ (Ca + D₁) * (1 + (m : ℝ)) ^ (max ta S₁) := by
       calc (s.sup p') (x m) ≤ D₁ * (1 + (m : ℝ)) ^ S₁ := hbound₁ m
         _ ≤ D₁ * (1 + (m : ℝ)) ^ (max ta S₁) :=
             mul_le_mul_of_nonneg_left hpow_le_right (le_of_lt hD₁)
         _ ≤ (Ca + D₁) * (1 + (m : ℝ)) ^ (max ta S₁) :=
-            mul_le_mul_of_nonneg_right (by linarith) (pow_nonneg (le_of_lt h1m) _)
+            mul_le_mul_of_nonneg_right (by linarith only [hCa]) (pow_nonneg (le_of_lt h1m) _)
     exact sup_le hle_sup_left hle_sup_right
 
 /-- **Seminorm bound from Schauder expansion.**
@@ -322,7 +322,9 @@ private lemma schauder_remainder_le
         set t' := t.map ⟨Subtype.val, Subtype.val_injective⟩ with ht'_def
         have h_disj : Disjoint t' s := by
           rw [Finset.disjoint_left]
-          simp_all
+          simp_all only [norm_mul, Real.norm_eq_abs, Finset.mem_map, Function.Embedding.coeFn_mk,
+            Subtype.exists, Set.mem_compl_iff, SetLike.mem_coe, exists_and_right, exists_eq_right,
+            forall_exists_index, not_false_eq_true, implies_true]
         have h_le := h_vanish t' h_disj
         rwa [ht'_def, Finset.sum_map] at h_le
 

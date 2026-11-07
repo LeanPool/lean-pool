@@ -315,11 +315,11 @@ private lemma closedBall_sub_norm_subset (v : V) (R : ℝ) :
   intro x hx
   simp only [Metric.mem_closedBall, dist_zero_right] at hx
   constructor
-  · exact Metric.mem_closedBall.mpr (by rw [dist_zero_right]; linarith [norm_nonneg v])
+  · exact Metric.mem_closedBall.mpr (by rw [dist_zero_right]; linarith only [hx, norm_nonneg v])
   · refine Metric.mem_closedBall.mpr ?_
     have h1 : dist x v ≤ dist x 0 + dist 0 v := dist_triangle x 0 v
     simp only [dist_zero_right, dist_zero_left] at h1
-    linarith
+    linarith only [hx, h1]
 
 /-- The real volume of a centered closed ball as a power of the radius. -/
 private lemma volume_closedBall_toReal_eq (r : ℝ) (hr : 0 ≤ r) :
@@ -355,8 +355,8 @@ private lemma overlapRatio_tendsto_one (v : V) :
     (by filter_upwards [Filter.eventually_gt_atTop (⌈‖v‖⌉₊)] with n hn
         have hn_gt : ‖v‖ < (n : ℝ) :=
           lt_of_le_of_lt (Nat.le_ceil _) (Nat.cast_lt.mpr hn)
-        have hn_pos : (0 : ℝ) < n := by linarith [norm_nonneg v]
-        have hsub_nn : (0 : ℝ) ≤ ↑n - ‖v‖ := by linarith
+        have hn_pos : (0 : ℝ) < n := by linarith only [hn_gt, norm_nonneg v]
+        have hsub_nn : (0 : ℝ) ≤ ↑n - ‖v‖ := by linarith only [hn_gt]
         have hvol_pos := Metric.measure_closedBall_pos (volume : Measure V) 0 hn_pos
         have hvol_ne_top : volume (Metric.closedBall (0 : V) (↑n)) ≠ ⊤ :=
           ne_of_lt measure_closedBall_lt_top
@@ -403,7 +403,7 @@ private lemma inner_integral_sub (ψ : V → ℂ) (x : V) (R : ℝ) :
       (Metric.closedBall x R).indicator ψ (x - y) := by
     intro y
     simp only [Set.indicator, Metric.mem_closedBall]
-    simp_all
+    simp_all only [dist_zero_right, dist_self_sub_left]
   simp_rw [hind]
   simp_rw [sub_eq_add_neg]
   have h1 : ∫ y : V, (Metric.closedBall x R).indicator ψ (x + -y) =
@@ -455,10 +455,10 @@ private lemma integrable_indicator_prod (ψ : V → ℂ) (hcont : Continuous ψ)
     simp only [Metric.mem_closedBall, Prod.dist_eq] at hdist ⊢
     simp only [Prod.fst_zero, Prod.snd_zero, dist_zero_right]
     apply max_le
-    · linarith [le_abs_self R, abs_nonneg R]
+    · linarith only [hx, le_abs_self R, abs_nonneg R]
     · have hv : ‖v‖ ≤ ‖x‖ + ‖v - x‖ := norm_le_insert' v x
       rw [← dist_eq_norm, dist_comm] at hv
-      linarith [le_abs_self R]
+      linarith only [hdist, hx, hv, le_abs_self R]
   exact ((hcont.comp continuous_snd).continuousOn.integrableOn_compact
     (Metric.isCompact_of_isClosed_isBounded hS_closed hS_bdd)).integrable_indicator
     hS_closed.measurableSet
@@ -495,7 +495,8 @@ private lemma fejer_avg_eq_integral (ψ : V → ℂ) (hcont : Continuous ψ)
       by_cases hx : x ∈ B
       · rw [Set.indicator_of_mem hx]; congr 1; funext v
         rw [← indicator_closedBall_inter ψ R x v, Set.indicator_of_mem hx]
-      · simp_all
+      · simp_all only [ne_eq, not_false_eq_true, Set.indicator_of_notMem, Set.mem_inter_iff,
+          Metric.mem_closedBall, false_and, integral_zero]
   -- Suffices: prove the unscaled Fubini identity, then handle scaling
   suffices h_fubini : ∫ x in B, ∫ v in Metric.closedBall x R, ψ v =
       ∫ v, (volume (B ∩ Metric.closedBall v R)).toReal • ψ v by
@@ -592,7 +593,7 @@ theorem pd_l1_fourier_re_nonneg_theorem
     change ∫ v, 𝐞 (-(innerSL ℝ v ξ)) • φ v = _
     congr 1; ext v
     rw [Circle.smul_def, Real.fourierChar_apply, smul_eq_mul, mul_comm]
-    simp_all
+    simp_all only [coe_innerSL_apply, mul_neg, ofReal_neg, ofReal_mul, ofReal_ofNat, neg_mul]
   rw [hF]
   -- Step 2: The integrand is ψ(v) where ψ = φ · exp(2πi⟨·,-ξ⟩) is PD
   have hψ_eq : (fun v => φ v * cexp (-(2 * ↑π * ↑⟪v, ξ⟫_ℝ * I))) =

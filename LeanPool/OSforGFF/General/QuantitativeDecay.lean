@@ -154,7 +154,7 @@ lemma exp_decay_implies_polynomial_decay (m α : ℝ) (hm : m > 0) (hα : α > 0
       _ = (α / m)^α * Real.exp m * (1 + x)^(-α) := by rw [h_exp_combine]
       _ ≤ ((α / m)^α * Real.exp m + 1) * (1 + x)^(-α) := by
           have hrpow : (1 + x)^(-α) ≥ 0 := Real.rpow_nonneg h_one_plus_nonneg _
-          nlinarith
+          linarith only [hrpow]
 
 /-- Exponential decay of norms implies polynomial decay bounds. -/
 def normExpDecayImpliesPolynomialDecay {F : Type*} [NormedAddCommGroup F]
@@ -234,14 +234,14 @@ This follows from 1 + x ≤ 2 + x = 2(1 + x/2), so (1+x)^N ≤ 2^N(1+x/2)^N.
 -/
 lemma one_add_half_pow_le (x : ℝ) (hx : x ≥ 0) (N : ℝ) (hN : N > 0) :
     (1 + x/2)^(-N) ≤ (2:ℝ)^N * (1 + x)^(-N) := by
-  have h1 : 0 < 1 + x/2 := by linarith
+  have h1 : 0 < 1 + x/2 := by linarith only [hx]
   have h2 : 0 < 1 + x := by positivity
   have h1_nonneg : 0 ≤ 1 + x/2 := h1.le
   have h2_nonneg : 0 ≤ 1 + x := h2.le
   have h2_pos : (0 : ℝ) < 2 := by norm_num
   -- Key: 1 + x ≤ 2 * (1 + x/2) = 2 + x, so (1+x)^N ≤ (2*(1+x/2))^N = 2^N * (1+x/2)^N
   -- Therefore (1+x/2)^{-N} = 1/(1+x/2)^N ≤ 2^N/(1+x)^N = 2^N * (1+x)^{-N}
-  have h_base : 1 + x ≤ 2 * (1 + x / 2) := by linarith
+  have h_base : 1 + x ≤ 2 * (1 + x / 2) := by linarith only []
   have h_rpow_le : (1 + x)^N ≤ (2 * (1 + x / 2))^N :=
     Real.rpow_le_rpow h2_nonneg h_base hN.le
   have h_mul_rpow : (2 * (1 + x / 2))^N = 2^N * (1 + x/2)^N :=
@@ -259,7 +259,7 @@ lemma one_add_half_pow_le (x : ℝ) (hx : x ≥ 0) (N : ℝ) (hN : N > 0) :
   have h2_rpow_pos : 0 < (1 + x) ^ N := Real.rpow_pos_of_pos h2 N
   have h_two_rpow_pos : 0 < (2:ℝ) ^ N := Real.rpow_pos_of_pos h2_pos N
   rw [inv_eq_one_div, inv_eq_one_div, mul_one_div, div_le_div_iff₀ h1_rpow_pos h2_rpow_pos]
-  simp_all
+  simp_all only [ge_iff_le, gt_iff_lt, Nat.ofNat_pos, one_mul]
 
 /-- Core lemma: If u, v both have polynomial decay of order N > dim(E),
     then their convolution also has polynomial decay of order N.
@@ -325,7 +325,7 @@ private lemma convolution_polynomial_decay_exists
               apply div_le_div_of_nonneg_left (le_of_lt hC_u_pos)
               · positivity
               · simp only [A, mem_ofPred_eq] at hy
-                exact Real.rpow_le_rpow (by positivity) (by linarith) (lt_of_le_of_lt
+                exact Real.rpow_le_rpow (by positivity) (by linarith only [hy]) (lt_of_le_of_lt
                   (Nat.cast_nonneg _) hN_dim).le
       _ = c_A * ∫ y in A, ‖v (x - y)‖ := by rw [MeasureTheory.integral_const_mul]
       _ ≤ c_A * ∫ y, ‖v (x - y)‖ := by
@@ -365,15 +365,15 @@ private lemma convolution_polynomial_decay_exists
           -- ‖x - y‖ ≥ ‖x‖ - ‖y‖ > ‖x‖ - ‖x‖/2 = ‖x‖/2
           have h_xy : ‖x - y‖ ≥ ‖x‖ / 2 := by
             have h1 : ‖x - y‖ ≥ ‖x‖ - ‖y‖ := norm_sub_norm_le x y
-            have h2 : ‖x‖ - ‖y‖ > ‖x‖ - ‖x‖ / 2 := by linarith
+            have h2 : ‖x‖ - ‖y‖ > ‖x‖ - ‖x‖ / 2 := by linarith only [hy]
             have h3 : ‖x‖ - ‖x‖ / 2 = ‖x‖ / 2 := by ring
-            linarith
+            linarith only [hy, h1]
           have hN_pos : N > 0 := lt_of_le_of_lt (Nat.cast_nonneg _) hN_dim
           calc ‖v (x - y)‖ ≤ C_v / (1 + ‖x - y‖)^N := hv_bound (x - y)
             _ ≤ c_Ac := by
               apply div_le_div_of_nonneg_left (le_of_lt hC_v_pos)
               · positivity
-              · exact Real.rpow_le_rpow (by positivity) (by linarith) hN_pos.le
+              · exact Real.rpow_le_rpow (by positivity) (by linarith only [h_xy]) hN_pos.le
       _ = (∫ y in Aᶜ, ‖u y‖) * c_Ac := by rw [MeasureTheory.integral_mul_const]
       _ ≤ I_u * c_Ac := by
           have h_set_le := setIntegral_le_integral (s := Aᶜ) hu_int.norm
@@ -405,15 +405,15 @@ private lemma convolution_polynomial_decay_exists
     _ = 2^N * (C_u * I_v + C_v * I_u) / (1 + ‖x‖)^N := by ring
     _ ≤ 2^N * (C_u * (I_v + 1) + C_v * (I_u + 1)) / (1 + ‖x‖)^N := by
         gcongr
-        · linarith
-        · linarith
+        · linarith only []
+        · linarith only []
     _ = (2^N * (C_u * (I_v + 1) + C_v * (I_u + 1))) * (1 + ‖x‖)^(-N) := by
         rw [Real.rpow_neg (le_of_lt h_one_plus_pos)]
         ring
     _ ≤ C * (1 + ‖x‖)^(-N) := by
         gcongr
         simp only [C]
-        linarith
+        linarith only []
     _ = C / (1 + ‖x‖)^N := by
         rw [Real.rpow_neg (le_of_lt h_one_plus_pos)]
         ring
@@ -486,12 +486,12 @@ private lemma convolution_compactSupport_decay_exists (f : SchwartzMap E ℂ) (K
           _ ≤ ‖y - x‖ + ‖x‖ := norm_add_le _ _
           _ = ‖x - y‖ + ‖x‖ := by rw [norm_sub_rev]
           _ = ‖x‖ + ‖x - y‖ := by ring
-      calc 1 + ‖y‖ ≤ 1 + ‖x‖ + ‖x - y‖ := by linarith
-        _ ≤ 1 + ‖x‖ + R₀ := by linarith
-        _ ≤ (1 + ‖x‖) * (1 + R₀) := by nlinarith [norm_nonneg x]
+      calc 1 + ‖y‖ ≤ 1 + ‖x‖ + ‖x - y‖ := by linarith only [h1]
+        _ ≤ 1 + ‖x‖ + R₀ := by linarith only [h_xy_le]
+        _ ≤ (1 + ‖x‖) * (1 + R₀) := by nlinarith only [hR₀, norm_nonneg x]
     -- Raise to power N and rearrange
     have h_pow : (1 + ‖y‖)^(N : ℝ) ≤ ((1 + ‖x‖) * (1 + R₀))^(N : ℝ) := by
-      apply Real.rpow_le_rpow (by linarith : 0 ≤ 1 + ‖y‖) h_peetre_base
+      apply Real.rpow_le_rpow (by linarith only [h_one_plus_y_pos] : 0 ≤ 1 + ‖y‖) h_peetre_base
       exact Nat.cast_nonneg N
     rw [Real.mul_rpow (le_of_lt h_one_plus_x_pos) (le_of_lt h_one_plus_R₀_pos)] at h_pow
     -- h_pow : (1 + ‖y‖)^N ≤ (1 + ‖x‖)^N * (1 + R₀)^N
@@ -522,7 +522,7 @@ private lemma convolution_compactSupport_decay_exists (f : SchwartzMap E ℂ) (K
           -- C_f / (1 + ‖x‖)^N ≤ C_f since (1 + ‖x‖)^N ≥ 1
           -- So integrand ≤ C_f * |K_sing(x - y)|, which is integrable
           have hbdd : ∀ x : E, C_f / (1 + ‖x‖)^(N : ℝ) ≤ C_f := fun x => by
-            have h1 : 1 ≤ 1 + ‖x‖ := by linarith [norm_nonneg x]
+            have h1 : 1 ≤ 1 + ‖x‖ := by linarith only [norm_nonneg x]
             have h2 : 1 ≤ (1 + ‖x‖)^(N : ℝ) :=
               Real.one_le_rpow h1 (Nat.cast_nonneg N)
             calc C_f / (1 + ‖x‖)^(N : ℝ) ≤ C_f / 1 := by
@@ -536,9 +536,9 @@ private lemma convolution_compactSupport_decay_exists (f : SchwartzMap E ℂ) (K
               apply Continuous.div continuous_const
               · refine Continuous.rpow_const ?_ (fun x => Or.inl ?_)
                 · exact continuous_const.add continuous_norm
-                · have := norm_nonneg x; linarith
+                · have := norm_nonneg x; linarith only [this]
               · intro x
-                have hpos : 0 < 1 + ‖x‖ := by have := norm_nonneg x; linarith
+                have hpos : 0 < 1 + ‖x‖ := by have := norm_nonneg x; linarith only [this]
                 exact ne_of_gt (Real.rpow_pos_of_pos hpos N)
             exact h_cont.aestronglyMeasurable.mul hK_shift_int.aestronglyMeasurable
           · -- Bound: ‖(C_f / ...) * |...|‖ ≤ ‖C_f * |...|‖
@@ -590,9 +590,9 @@ private lemma convolution_compactSupport_decay_exists (f : SchwartzMap E ℂ) (K
         rw [heq]
         apply div_le_div_of_nonneg_right _ (le_of_lt h_rpow_pos)
         calc C_f * (1 + R₀) ^ (N : ℝ) * I_Ksing
-            ≤ C_f * (1 + R₀) ^ (N : ℝ) * (I_Ksing + 1) := by gcongr; linarith
+            ≤ C_f * (1 + R₀) ^ (N : ℝ) * (I_Ksing + 1) := by gcongr; linarith only []
           _ = C_f * (1 + R₀) ^ N * (I_Ksing + 1) := by rw [Real.rpow_natCast]
-          _ ≤ C := by simp only [C]; linarith
+          _ ≤ C := by simp only [C]; linarith only []
 
 /-- Convolution of a Schwartz function with the compactly supported singular kernel part has
 polynomial decay. -/
@@ -669,7 +669,7 @@ private lemma convolution_expDecay_polynomial_decay_exists (f : SchwartzMap E �
     have h_bound : ∀ z : E, ‖K_refl z‖ ≤ C_poly * (1 + ‖z‖)^(-N) := by
       intro z
       have hb := hK_refl_bound z
-      rw [Real.rpow_neg (by linarith [norm_nonneg z] : 0 ≤ 1 + ‖z‖)]
+      rw [Real.rpow_neg (by linarith only [norm_nonneg z] : 0 ≤ 1 + ‖z‖)]
       calc ‖K_refl z‖ ≤ C_poly / (1 + ‖z‖)^N := hb
         _ = C_poly * ((1 + ‖z‖)^N)⁻¹ := by ring
     -- Use Integrable.mono with bounding integrable function
@@ -696,7 +696,7 @@ private lemma convolution_expDecay_polynomial_decay_exists (f : SchwartzMap E �
         have hb := h_bound z
         have h_nonneg : 0 ≤ C_poly * (1 + ‖z‖)^(-N) := by
           apply mul_nonneg (le_of_lt hC_poly_pos)
-          exact Real.rpow_nonneg (by linarith [norm_nonneg z]) _
+          exact Real.rpow_nonneg (by linarith only [norm_nonneg z]) _
         rwa [Real.norm_eq_abs, abs_of_nonneg h_nonneg]
   -- The integral ∫ f(x) K_tail(x - y) dx equals (f ⋆ K_refl)(y)
   have h_conv_eq : ∀ y, ∫ x, f x * (kernelTail K R₀ (x - y) : ℂ) =
@@ -760,9 +760,9 @@ theorem schwartz_bilinear_translation_decay_polynomial_proof
   let d := Module.finrank ℝ E
   -- Choose N > max(α, d) for integrability
   let N := max α d + 1
-  have hN_pos : N > 0 := by simp only [N]; linarith [le_max_left α d, hα]
-  have hN_gt_α : N > α := by simp only [N]; linarith [le_max_left α d]
-  have hN_gt_d : N > d := by simp only [N]; linarith [le_max_right α d]
+  have hN_pos : N > 0 := by simp only [N]; linarith only [hα, le_max_left α d]
+  have hN_gt_α : N > α := by simp only [N]; linarith only [le_max_left α d]
+  have hN_gt_d : N > d := by simp only [N]; linarith only [le_max_right α d]
   -- Step 3: K_tail is bounded (from the decay bound on the complement)
   have hK_tail_bdd : ∃ M : ℝ, ∀ z : E, |kernelTail K R₀ z| ≤ M := by
     use max C_K 1
@@ -772,12 +772,14 @@ theorem schwartz_bilinear_translation_decay_polynomial_proof
     · rw [indicator_of_mem hz, mul_one]
       have hz' : ‖z‖ ≥ R₀ := by
         simp only [mem_compl_iff, mem_closedBall, dist_zero_right, not_le] at hz
-        linarith
+        linarith only [hz]
       calc |K z| ≤ C_K * Real.exp (-m * ‖z‖) := hK_decay z hz'
-        _ ≤ C_K * Real.exp 0 := by gcongr; nlinarith [norm_nonneg z]
+        _ ≤ C_K * Real.exp 0 := by gcongr; nlinarith only [hm, hR₀, hz', norm_nonneg z]
         _ = C_K := by simp
         _ ≤ max C_K 1 := le_max_left _ _
-    · simp_all
+    · simp_all only [gt_iff_lt, ge_iff_le, neg_mul, mem_compl_iff, mem_closedBall,
+        dist_zero_right, not_le, not_lt, not_true_eq_false, not_false_eq_true,
+        indicator_of_notMem, mul_zero, abs_zero, le_max_iff, zero_le_one, or_true]
   -- Step 4: Build H(y) = ∫ f(x) K(x-y) dx and show it has polynomial decay
   -- For the full proof, we need:
   -- 1. H_sing has polynomial decay (convolutionCompactSupportDecay)
@@ -851,7 +853,7 @@ theorem schwartz_bilinear_translation_decay_polynomial_proof
     obtain ⟨M_tail, hM_tail⟩ := hK_tail_bdd
     -- f is bounded by C_f (from Schwartz decay with denominator ≥ 1)
     have hf_bdd : ∀ x, ‖f x‖ ≤ C_f := fun x => by
-      have h1 : 1 ≤ 1 + ‖x‖ := by linarith [norm_nonneg x]
+      have h1 : 1 ≤ 1 + ‖x‖ := by linarith only [norm_nonneg x]
       have h2 : 1 ≤ (1 + ‖x‖)^N := Real.one_le_rpow h1 hN_pos.le
       calc ‖f x‖ ≤ C_f / (1 + ‖x‖)^N := hf_bound x
         _ ≤ C_f / 1 := by apply div_le_div_of_nonneg_left (le_of_lt hC_f_pos) one_pos h2
@@ -868,13 +870,14 @@ theorem schwartz_bilinear_translation_decay_polynomial_proof
           (fun x => (kernelTail K R₀ (x - y) : ℂ)) volume :=
         hK_tail_shift_meas.complex_ofReal.aestronglyMeasurable
       have hK_tail_shift_bdd : ∀ x, ‖(kernelTail K R₀ (x - y) : ℂ)‖ ≤ M_tail := fun x => by
-        simp_all
+        simp_all only [gt_iff_lt, ge_iff_le, neg_mul, Real.rpow_natCast, norm_real,
+          Real.norm_eq_abs]
       exact hf_int.mul_bdd (c := M_tail) hK_tail_shift_aesm
         (Eventually.of_forall hK_tail_shift_bdd)
     have hbound1 : ‖∫ x, f x * (kernelSingular K R₀ (x - y) : ℂ)‖ ≤ C_Hsing / (1 + ‖y‖)^N := by
       have h1 := hHsing_bound y
       have hle : N ≤ (⌈N⌉₊ : ℝ) := Nat.le_ceil N
-      have hbase : 1 ≤ 1 + ‖y‖ := by linarith [norm_nonneg y]
+      have hbase : 1 ≤ 1 + ‖y‖ := by linarith only [norm_nonneg y]
       have hpow : (1 + ‖y‖)^N ≤ (1 + ‖y‖)^(⌈N⌉₊ : ℝ) :=
         Real.rpow_le_rpow_of_exponent_le hbase hle
       have hdenom_pos : 0 < (1 + ‖y‖)^N := by positivity
@@ -939,7 +942,7 @@ theorem schwartz_bilinear_translation_decay_polynomial_proof
       have hbound := hH_combined y
       have h_eq : (C_Hsing + C_Htail) / (1 + ‖y‖)^N =
           (C_Hsing + C_Htail) * (1 + ‖y‖)^(-N) := by
-        have h1plus_pos : 0 ≤ 1 + ‖y‖ := by linarith [norm_nonneg y]
+        have h1plus_pos : 0 ≤ 1 + ‖y‖ := by linarith only [norm_nonneg y]
         rw [div_eq_mul_inv, Real.rpow_neg h1plus_pos]
       exact le_trans hbound (le_of_eq h_eq)
     exact Integrable.mono' h_bound_int hH_meas hH_bound_ae
@@ -957,7 +960,7 @@ theorem schwartz_bilinear_translation_decay_polynomial_proof
   · exact le_of_lt hC_conv_pos
   · intro a
     have h_one_plus_pos : 0 < 1 + ‖a‖ := by positivity
-    have h_base_ge_one : 1 ≤ 1 + ‖a‖ := by linarith [norm_nonneg a]
+    have h_base_ge_one : 1 ≤ 1 + ‖a‖ := by linarith only [norm_nonneg a]
     -- The bound from convolutionPolynomialDecay gives us:
     -- ‖∫ H(y) g_flip(a-y) dy‖ ≤ C_conv / (1 + ‖a‖)^N ≤ C_conv * (1 + ‖a‖)^(-α)
     have h_conv_to_goal : ‖∫ y, H y * g_flip (a - y)‖ ≤ C_conv * (1 + ‖a‖)^(-α) := by

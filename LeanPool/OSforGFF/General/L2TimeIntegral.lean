@@ -99,7 +99,7 @@ theorem sq_setIntegral_le_measure_mul_setIntegral_sq_proved
     rw [show (∫ x in Icc a b, ‖(fun _ => (1:ℂ)) x‖ * ‖f x‖) =
         ∫ x in Icc a b, ‖f x‖ from by congr 1; ext x; simp] at h_holder
     rw [show (∫ x in Icc a b, ‖(fun _ => (1:ℂ)) x‖ ^ (2:ℝ)) = b - a from by
-      simp; linarith] at h_holder
+      simp; linarith only [hab]] at h_holder
     -- Chain: ‖∫f‖ ≤ ∫‖f‖ ≤ (b-a)^(1/2) * (∫‖f‖²)^(1/2), then square
     have h_sq := pow_le_pow_left₀ (norm_nonneg _)
       (le_trans (norm_integral_le_integral_norm (f := f)) h_holder) 2
@@ -317,9 +317,10 @@ theorem memLp_prod_of_uniform_slicewise_bound (μ : Measure Ω) [SFinite μ]
       filter_upwards with s
       have h := (h_memLp s).integrable_norm_rpow
         (by simp : (2 : ℝ≥0∞) ≠ 0) (by simp : (2 : ℝ≥0∞) ≠ ⊤)
-      simp_all
+      simp_all only [ENNReal.toReal_ofNat, Real.rpow_ofNat]
     · -- Integral of slices is constant, hence integrable on bounded [0,T]
-      simp_all
+      simp_all only [norm_pow, norm_norm, ne_eq, enorm_ne_top, not_false_eq_true,
+        integrable_const_enorm]
   -- Now use the integrability to get MemLp 2
   rwa [memLp_two_iff_integrable_sq_norm h_meas]
 
@@ -535,11 +536,12 @@ theorem double_integral_polynomial_decay_bound_proved (α : ℝ) (hα : α > 1) 
     ≤ ∫ s in Icc 0 T, (∫ t, g t) := by
         apply integral_mono_of_nonneg
         · filter_upwards with s; exact integral_nonneg (fun u => h_nonneg _)
-        · simp_all
+        · simp_all only [gt_iff_lt, ne_eq, enorm_ne_top, not_false_eq_true,
+            integrable_const_enorm]
         · filter_upwards with s; exact h_inner s
     _ = (∫ t, g t) * T := by
         rw [setIntegral_const, Measure.real, Real.volume_Icc, sub_zero,
-            ENNReal.toReal_ofReal (by linarith : 0 ≤ T), smul_eq_mul, mul_comm]
+            ENNReal.toReal_ofReal (by linarith only [hT] : 0 ≤ T), smul_eq_mul, mul_comm]
 
 /-! ## Minkowski Inequality for Weighted L² Sums
 
@@ -585,7 +587,7 @@ private lemma integrable_mul_of_sq_integrable
   simp only [Real.norm_eq_abs, Pi.add_apply, Pi.mul_apply]
   calc |f x * g x| ≤ ((f x) ^ 2 + (g x) ^ 2) / 2 := by
         rw [abs_mul]
-        nlinarith [sq_abs (f x), sq_abs (g x), sq_nonneg (|f x| - |g x|)]
+        linarith only [sq_abs (f x), sq_abs (g x), sq_nonneg (|f x| - |g x|)]
     _ ≤ |((f x) ^ 2 + (g x) ^ 2) / 2| := le_abs_self _
 
 private lemma sqrt_integral_sq_add_le
@@ -622,8 +624,8 @@ private lemma sqrt_integral_sq_add_le
       integral_add hf_int (hfg_int.const_mul 2)
     have i3 : ∫ x, 2 * (f x * g x) ∂μ = 2 * ∫ x, f x * g x ∂μ :=
       integral_const_mul ..
-    linarith
-  linarith [h_cs, hA_sq, hB_sq]
+    linarith only [i1, i2, i3]
+  linarith only [hA_sq, hB_sq, h_cs, h_split]
 
 private lemma sqrt_integral_sq_mul (c : ℝ) (hc : 0 ≤ c) (f : α → ℝ) :
     Real.sqrt (∫ x, (c * f x) ^ 2 ∂μ) = c * Real.sqrt (∫ x, (f x) ^ 2 ∂μ) := by
@@ -765,7 +767,7 @@ theorem _root_.OSforGFF.L2_variance_time_average_bound (μ : Measure Ω) [IsProb
     have h_sum : ∫ s in Icc 0 T, (A s ω - EA) =
         (∫ s in Icc 0 T, A s ω) - ↑T * EA := by
       rw [integral_sub hω (integrable_const EA), integral_const, measureReal_def,
-        Measure.restrict_apply_univ, Real.volume_Icc, ENNReal.toReal_ofReal (by linarith),
+        Measure.restrict_apply_univ, Real.volume_Icc, ENNReal.toReal_ofReal (by linarith only [hT]),
         sub_zero]; congr 1
     rw [← h_sum]
     have : starRingEnd ℂ (∫ s in Icc 0 T, A s ω - EA) =

@@ -228,7 +228,7 @@ lemma gff_generating_bound_by_imaginary (m : ℝ) [Fact (0 < m)] (f : TestFuncti
   set fRe := (complexTestFunctionDecompose f).1
   -- Equivalently: -Re C(f,f) ≤ Re C(toComplex fIm, toComplex fIm)
   suffices h : -(freeCovarianceℂBilinear m f f).re ≤
-               (freeCovarianceℂBilinear m (toComplex fIm) (toComplex fIm)).re by linarith
+               (freeCovarianceℂBilinear m (toComplex fIm) (toComplex fIm)).re by linarith only [h]
   -- Expand using toComplex to connect with the bilinear expansion
   let frC := toComplex fRe
   let fiC := toComplex fIm
@@ -286,7 +286,7 @@ lemma gff_generating_bound_by_imaginary (m : ℝ) [Fact (0 < m)] (f : TestFuncti
     -- so freeCovarianceℂBilinear agrees with freeCovarianceℂ
     rw [← freeCovarianceℂ_eq_bilinear_on_reals m]
     exact freeCovarianceℂ_positive m frC
-  linarith
+  linarith only [h_pos]
 
 /-
 The covariance of the imaginary part is bounded by (1/m²) times the L² norm squared.
@@ -324,7 +324,7 @@ lemma covariance_imaginary_L2_bound (m : ℝ) [Fact (0 < m)] (f : TestFunction�
     have hm2pos : 0 < m^2 := sq_pos_of_pos hmpos
     have hden : m^2 ≤ (2 * Real.pi)^2 * ‖k‖^2 + m^2 := by
       have : 0 ≤ (2 * Real.pi)^2 * ‖k‖^2 := by positivity
-      linarith
+      linarith only [this]
     -- 0 < m^2 and m^2 ≤ (2π)²‖k‖² + m^2 ⇒ 1 / ((2π)²‖k‖² + m^2) ≤ 1 / m^2
     have := one_div_le_one_div_of_le (a := m^2) (b := (2 * Real.pi)^2 * ‖k‖^2 + m^2) (by exact
       hm2pos) hden

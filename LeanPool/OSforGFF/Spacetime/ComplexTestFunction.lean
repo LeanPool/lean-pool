@@ -89,7 +89,7 @@ lemma ω_re_decompose_linear
       add_re, mul_re, imCLM_apply]
     ring
   -- Apply ω (a real-linear functional) to both sides
-  simp_all
+  simp_all only [map_sub, map_add, map_smul, smul_eq_mul]
 
 /-- ω-linearity of the imaginary component of the complex test-function decomposition under
     complex linear combinations.
@@ -118,7 +118,7 @@ lemma ω_im_decompose_linear
       add_im, mul_im, reCLM_apply]
     ring
   -- Apply ω (a real-linear functional) to both sides
-  simp_all
+  simp_all only [map_add, map_smul, smul_eq_mul]
 
 /-- Linearity of the complex pairing in the test-function argument. -/
 lemma pairing_linear_combo
@@ -150,7 +150,9 @@ lemma pairing_linear_combo
     -- Use ω-linearity identity on the LHS
     have hre := ω_re_decompose_linear ω f g t s
     -- Finish by rewriting both sides to the same expression
-    simp_all
+    simp_all only [add_re, mul_re, ofReal_re, I_re, zero_mul, I_im, ofReal_im, mul_zero, sub_self,
+      add_zero, add_im, mul_im, one_mul, zero_add, ofReal_sub, ofReal_add, ofReal_mul, sub_re,
+      sub_zero]
   · -- Imag parts
     simp only [distributionPairingℂReal, add_im, mul_im]
     have him_rhs :
@@ -168,7 +170,8 @@ lemma pairing_linear_combo
         ((ω ((complexTestFunctionDecompose g).1) : ℂ) + I * (ω ((complexTestFunctionDecompose
             g).2) : ℂ))
     have him := ω_im_decompose_linear ω f g t s
-    simp_all
+    simp_all only [add_im, mul_im, ofReal_im, I_re, mul_zero, I_im, ofReal_re, one_mul, zero_add,
+      add_re, mul_re, zero_mul, sub_self, add_zero, ofReal_add, ofReal_mul, sub_zero]
 
 
 /-! ## Helper lemmas for real→complex Schwartz embedding -/
@@ -190,7 +193,8 @@ lemma norm_compContinuousMultilinearMap_ofReal {n : ℕ} {E : Fin n → Type*}
       _ = ‖m‖ := by rw [Complex.norm_ofRealCLM, one_mul]
   · refine ContinuousMultilinearMap.opNorm_le_bound (norm_nonneg _) (fun v => ?_)
     rw [show ‖m v‖ = ‖(Complex.ofRealCLM.compContinuousMultilinearMap m) v‖ from by
-      simp_all]
+      simp_all only [Real.norm_eq_abs, ContinuousLinearMap.compContinuousMultilinearMap_coe,
+        Function.comp_apply, ofRealCLM_apply, norm_real]]
     exact (Complex.ofRealCLM.compContinuousMultilinearMap m).le_opNorm v
 
 /-- The norm of the n-th iterated derivative of a Schwartz function composed with
@@ -363,9 +367,10 @@ lemma distributionPairingℂ_real_conj (ω : FieldConfiguration) (f : TestFuncti
   have h_conj_re : (complexTestFunctionDecompose (conjSchwartz f)).1 =
       (complexTestFunctionDecompose f).1 := by
     ext x
-    simp_all
+    simp_all only [complex_testfunction_decompose_fst_apply, conjSchwartz_apply, conj_re]
   have h_conj_im : (complexTestFunctionDecompose (conjSchwartz f)).2 =
       -(complexTestFunctionDecompose f).2 := by
     ext x
-    simp_all
-  simp_all
+    simp_all only [complex_testfunction_decompose_snd_apply, conjSchwartz_apply, conj_im,
+      neg_apply]
+  simp_all only [map_add, conj_ofReal, map_mul, conj_I, neg_mul, map_neg, ofReal_neg, mul_neg]

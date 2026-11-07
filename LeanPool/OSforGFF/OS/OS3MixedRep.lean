@@ -258,7 +258,8 @@ theorem heatKernel_bilinear_fourier_form (m : ℝ) (f : TestFunctionℂ) :
            ∫ k : SpaceTime, Complex.exp (-Complex.I * ⟪k, timeReflection x - y⟫_ℝ) *
                             Complex.exp (-(s : ℂ) * ‖k‖^2)) := by
     apply MeasureTheory.setIntegral_congr_ae measurableSet_Ioi
-    simp_all
+    simp_all only [one_div, ofReal_inv, ofReal_pow, ofReal_mul, ofReal_ofNat, neg_mul,
+      Set.mem_Ioi, ofReal_exp, ofReal_neg, implies_true, eventually_true]
   -- Step 3: Apply k_integral_after_k0_eval to evaluate the k-integral
   -- For each (s, x, y), this replaces the k-integral with:
   -- √(π/s) exp(-z₀²/(4s)) × ∫_{k_sp} exp(-I k_sp·z_sp) exp(-s‖k_sp‖²)
@@ -519,7 +520,8 @@ lemma s_integral_eval_complex (t : ℝ) (ω : ℝ) (hω : 0 < ω) :
       (Real.sqrt (π / s) : ℂ) * Complex.exp (-(t^2 / (4 * s) : ℝ)) *
         Complex.exp (-(s * ω^2 : ℝ)) =
       (((Real.sqrt (π / s) * Real.exp (-(t^2 / (4 * s))) * Real.exp (-(s * ω^2))) : ℝ) : ℂ) := by
-    simp_all
+    simp_all only [Set.mem_Ioi, ofReal_div, ofReal_pow, ofReal_mul, ofReal_ofNat, ofReal_exp,
+      ofReal_neg, implies_true]
   rw [setIntegral_congr_fun measurableSet_Ioi h_integrand]
   -- Step 2: Normalize -(x * ω²) to -x * ω² to match s_integral_eval
   have h_form : ∀ x : ℝ, -(x * ω^2) = -x * ω^2 := by intro x; ring
@@ -580,11 +582,12 @@ lemma s_integral_complex_eval (k_sp : SpatialCoords) (x y : SpaceTime) (m : ℝ)
   -- using ω² = ‖k_sp‖² + m²
   have h_omega_sq : ω^2 = ‖k_sp‖^2 + m^2 := by
     simp only [ω]
-    exact Real.sq_sqrt (by nlinarith [sq_nonneg ‖k_sp‖, sq_pos_of_pos hm])
+    exact Real.sq_sqrt (by linarith only [hm, sq_nonneg ‖k_sp‖, sq_pos_of_pos hm])
   have h_exp_conv : ∀ a ∈ Set.Ioi (0:ℝ),
       Complex.exp (-(a : ℂ) * ((‖k_sp‖^2 : ℂ) + (m^2 : ℂ))) =
       Complex.exp (-(a * ω^2 : ℝ)) := by
-    simp_all
+    simp_all only [Set.mem_Ioi, Fin.isValue, ofReal_div, ofReal_pow, ofReal_sub, ofReal_neg,
+      ofReal_mul, ofReal_ofNat, neg_mul, ofReal_add, implies_true]
   have h_integrand_conv : ∀ a ∈ Set.Ioi (0:ℝ),
       (Real.sqrt (π / a) : ℂ) * Complex.exp (-((-(x 0) - y 0)^2 / (4 * a) : ℝ)) *
         Complex.exp (-(a : ℂ) * ((‖k_sp‖^2 : ℂ) + (m^2 : ℂ))) =
@@ -1030,7 +1033,7 @@ lemma freeCovariance_eq_schwingerRep (m : ℝ) (hm : 0 < m) (x y : SpaceTime)
   -- Goal: ↑(∫ t in Ioi 0, f t) = ∫ s in Ioi 0, ↑(f s)
   -- Use integral_complex_ofReal (reversed)
   rw [← integral_complex_ofReal]
-  simp_all
+  simp_all only [ne_eq, neg_mul, ofReal_mul, ofReal_exp, ofReal_neg, ofReal_pow]
 
 /-- **Bessel bilinear form equals the Schwinger heat kernel form.**
 
@@ -1193,7 +1196,7 @@ lemma mixed_rep_to_k0_inside_integrand (k_spatial : SpatialCoords) (m : ℝ) [Fa
     simp only [ω]
     apply Real.sqrt_pos_of_pos
     have hm : 0 < m := Fact.out
-    nlinarith [sq_nonneg ‖k_spatial‖]
+    nlinarith only [hm, sq_nonneg ‖k_spatial‖]
   -- By fourier_lorentzian_1d_neg: ∫ exp(-ik₀t)/(k₀²+ω²) = (π/ω) exp(-ω|t|)
   have h_fourier := fourier_lorentzian_1d_neg ω hω_pos t
   -- Rearrange: (1/ω) exp(-ω|t|) = (1/π) * (π/ω) exp(-ω|t|) = (1/π) * ∫...
@@ -1297,7 +1300,8 @@ theorem bilinear_to_k0_inside (m : ℝ) [Fact (0 < m)] (f : TestFunctionℂ)
   -- h_key says: (1/ω) exp(-|t|ω) = (1/π) ∫_{k₀} exp(-ik₀t)/(k₀²+ω²)
   -- First, convert the RHS to use t instead of the explicit expression
   have ht_eq : (-↑(x.ofLp 0) - ↑(y.ofLp 0) : ℂ) = (t : ℂ) := by
-    simp_all
+    simp_all only [Fin.isValue, Nat.add_one_sub_one, one_div, mul_inv_rev, ofReal_mul, ofReal_inv,
+      ofReal_pow, ofReal_ofNat, neg_mul, ofReal_sub, ofReal_neg]
   -- Rewrite the RHS to use t
   conv_rhs => rw [ht_eq]
   -- Substitute RHS using h_integral_factor

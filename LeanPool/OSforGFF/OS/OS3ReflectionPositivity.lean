@@ -261,7 +261,7 @@ lemma freeCovarianceFormR_reflection_expansion
     have h_negneg :
         freeCovarianceFormR m (-θg) (-θg)
           = freeCovarianceFormR m θg θg := by
-      simp_all
+      simp_all only [neg_neg]
     calc
       freeCovarianceFormR m (-θg) (f - θg)
           = freeCovarianceFormR m (f - θg) (-θg) := freeCovarianceFormR_symm m (-θg) (f - θg)
@@ -309,7 +309,7 @@ lemma gaussianFreeField_real_generating_re
       (Complex.exp (-(1 / 2 : ℂ) * (freeCovarianceFormR m h h : ℝ))).re
         = Real.exp r := by
     simpa [h_arg, r] using (Complex.exp_ofReal_re r)
-  simp_all
+  simp_all only [one_div, neg_mul]
 
 /-- Factorisation of OS3 matrix entries in the purely real setting. -/
 lemma gaussianFreeField_real_entry_factor
@@ -449,7 +449,7 @@ lemma gaussianFreeField_OS3_matrix_real
     classical
     simp [Matrix.mulVec, dotProduct, Finset.mul_sum, mul_comm, mul_assoc]
   have hy_nonneg : 0 ≤ y ⬝ᵥ (E.mulVec y) := h_E_psd.dotProduct_mulVec_nonneg y
-  simp_all
+  simp_all only
 
 /-- Main theorem: the Gaussian free field satisfies OS3_real (reflection positivity,
 real version). -/
@@ -731,7 +731,7 @@ private lemma entrywiseExp_IsRePSD
     apply posSemidef_sum
     intro k _
     have hcoeff : (0 : ℂ) ≤ (↑(Nat.factorial k : ℕ) : ℂ)⁻¹ := by
-      simp_all
+      simp_all only [Finset.mem_range, Order.lt_add_one_iff, inv_nonneg, Nat.cast_nonneg]
     exact (hHP_psd k).smul hcoeff
   -- S N i j = ∑_{k=0}^N (k!)⁻¹ * (M i j)^k
   have hS_entry : ∀ N i j, S N i j =
@@ -767,7 +767,10 @@ private lemma entrywiseExp_IsRePSD
         (Complex.exp (M i j)) := by
       rw [Complex.exp_eq_exp_ℂ]
       have h' := NormedSpace.exp_series_hasSum_exp' (𝕂 := ℂ) (M i j)
-      simp_all
+      simp_all only [re_sum, mul_re, conj_re, conj_im, neg_mul, sub_neg_eq_add, inv_re,
+        natCast_re, normSq_natCast, div_self_mul_self', inv_im, natCast_im, neg_zero, zero_div,
+        zero_mul, sub_zero, mul_im, im_sum, add_zero, Finset.sum_sub_distrib, sub_nonneg,
+        smul_eq_mul]
     rw [HasSum] at h
     exact h.comp (Filter.tendsto_finset_range.comp (Filter.tendsto_atTop_atTop_of_monotone
       (fun a b hab => Nat.add_le_add_right hab 1) (fun b => ⟨b, Nat.le_succ b⟩)))

@@ -104,7 +104,7 @@ private lemma gaussian_cexp_integrable (t : ℝ) (ht : 0 < t) :
     Integrable (fun x : V => cexp (-(t : ℂ) * ↑(‖x‖ ^ 2))) := by
   have := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add
     (V := V) (b := (t : ℂ)) (show 0 < ((t : ℂ)).re from by simp [ht]) 0 (0 : V)
-  simp_all
+  simp_all only [neg_mul, inner_zero_left, ofReal_zero, mul_zero, add_zero, ofReal_pow]
 
 /-- The double sum ∑ᵢ ∑ⱼ conj(aᵢ) * aⱼ equals normSq(∑ₖ aₖ). -/
 private lemma sum_star_mul_eq_normSq {m : ℕ} (a : Fin m → ℂ) :
@@ -133,7 +133,7 @@ omit [FiniteDimensional ℝ V] in
 lemma isPositiveDefinite_charFun (μ : Measure V) [IsFiniteMeasure μ] :
     IsPositiveDefinite (fun t : V => charFun μ t) where
   hermitian t := by
-    simp_all
+    simp_all only [charFun_neg]
   nonneg m t c := by
     -- Step 1: Unfold charFun
     simp only [charFun_apply]
@@ -212,7 +212,7 @@ lemma isPositiveDefinite_charFun (μ : Measure V) [IsFiniteMeasure μ] :
     -- hre_swap : ∫ reCLM ↑(normSq ...) = reCLM (∫ ↑(normSq ...))
     -- LHS simplifies: reCLM ↑r = r, so LHS = ∫ normSq ...
     -- RHS is reCLM applied to integral, which = (integral).re
-    simp_all
+    simp_all only [ofReal_neg, neg_mul, reCLM_apply, ofReal_re]
 
 omit [FiniteDimensional ℝ V] in
 /-- Pointwise product of a PD function and the characteristic function of a
@@ -226,7 +226,7 @@ lemma isPositiveDefinite_mul_charFun {φ : V → ℂ} (hpd : IsPositiveDefinite 
   hermitian t := by
     change φ (-t) * charFun μ (-t) = (starRingEnd ℂ) (φ t * charFun μ t)
     rw [map_mul, ← hpd.hermitian t]
-    simp_all
+    simp_all only [charFun_neg]
   nonneg m t c := by
     simp only [charFun_apply]
     -- Integrability of exponentials on a finite measure (norm ≤ 1)
@@ -425,7 +425,7 @@ lemma gaussianRegularize_pd (φ : V → ℂ) (hpd : IsPositiveDefinite φ)
   hermitian x := by
     simp only [gaussianRegularize, norm_neg]
     rw [hpd.hermitian x, starRingEnd_apply, star_def, map_mul, ← Complex.exp_conj]
-    simp_all
+    simp_all only [ofReal_pow, neg_mul, map_neg, map_mul, conj_ofReal, map_pow]
   nonneg m x c := by
     -- gaussianRegularize φ ε = fun t => φ t * cexp(...)
     -- By gaussian_eq_charFun, cexp(-ε‖t‖²) = charFun μ t for some Gaussian μ
@@ -534,7 +534,7 @@ lemma pd_l1_fourier_nonneg (φ : V → ℂ) (hpd : IsPositiveDefinite φ)
     -- Change variables: v → -v
     have hsub := integral_neg_eq_self
       (fun v => (↑(𝐞 (⟪v, ξ⟫_ℝ)) : ℂ) * φ (-v)) (volume : Measure V)
-    simp_all
+    simp_all only [inner_neg_left, neg_neg]
   have him : (𝓕 φ ξ).im = 0 := by
     have := congr_arg Complex.im hft_conj
     simp only [Complex.conj_im] at this
@@ -770,7 +770,8 @@ private lemma integral_norm_ft_gaussian_eq_one (t : ℝ) (ht : 0 < t) :
   have hnorm_eq_re : ∀ w : V, ‖𝓕 g w‖ = (𝓕 g w).re := by
     intro w; have ⟨hre, him⟩ := hft_nonneg w
     rw [← RCLike.sqrt_normSq_eq_norm, RCLike.normSq_apply]
-    simp_all
+    simp_all only [RCLike.re_to_complex, RCLike.im_to_complex, mul_zero, add_zero,
+      Real.sqrt_mul_self]
   -- ∫ ‖𝓕 g‖ = ∫ (𝓕 g).re = Re(∫ 𝓕 g) = Re(1) = 1
   simp_rw [hnorm_eq_re, show ∀ x : V, (𝓕 g x).re = RCLike.re (𝓕 g x) from fun _ => rfl]
   rw [integral_re hft_int]
@@ -937,7 +938,7 @@ theorem gaussianRegularize_ft_integrable (φ : V → ℂ)
 
 /-- 1 - exp(-x) ≤ x for x ≥ 0. From Mathlib: 1 - x ≤ exp(-x) rearranged. -/
 private lemma one_sub_exp_neg_le {x : ℝ} (_hx : 0 ≤ x) : 1 - Real.exp (-x) ≤ x := by
-  linarith [Real.one_sub_le_exp_neg x]
+  linarith only [Real.one_sub_le_exp_neg x]
 
 omit [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] in
 /-- Bound on ‖1 - gaussianRegularize φ ε v‖ in terms of ‖1 - φ v‖ and ‖v‖².
@@ -1004,12 +1005,12 @@ private lemma charFun_measure_inner_bound (φ : V → ℂ)
       _ = C + t ^ 2 * ‖y‖ ^ 2 := by
           rw [norm_smul, Real.norm_eq_abs, mul_pow, sq_abs]
       _ ≤ C + (2 * r⁻¹) ^ 2 * ‖y‖ ^ 2 := by
-          have hle : -(2 * r⁻¹) ≤ 2 * r⁻¹ := by linarith [inv_pos.mpr hr]
+          have hle : -(2 * r⁻¹) ≤ 2 * r⁻¹ := by linarith only [hr, inv_pos.mpr hr]
           rw [Set.uIoc_of_le hle] at ht
-          have h_abs : |t| ≤ 2 * r⁻¹ := abs_le.mpr ⟨by linarith [ht.1.le], ht.2⟩
+          have h_abs : |t| ≤ 2 * r⁻¹ := abs_le.mpr ⟨by linarith only [ht, ht.1.le], ht.2⟩
           have h_sq : t ^ 2 ≤ (2 * r⁻¹) ^ 2 := by
             rw [← sq_abs t]; exact pow_le_pow_left₀ (abs_nonneg t) h_abs 2
-          nlinarith [sq_nonneg ‖y‖]
+          nlinarith only [h_sq, sq_nonneg ‖y‖]
       _ = C + 4 * ‖y‖ ^ 2 * r⁻¹ ^ 2 := by ring
   have hnorm_bound := intervalIntegral.norm_integral_le_of_norm_le_const hdeviation_bound
   -- Combine: μ.real ≤ 2⁻¹ * r * ‖∫...‖ ≤ 2⁻¹ * r * ((C + 4‖y‖²/r²) * (4/r))
@@ -1084,15 +1085,15 @@ theorem gaussianRegularize_measures_tight (φ : V → ℂ)
     have hR1 : 2 * ‖y‖ / η + 1 ≤ r := (le_max_left _ _).trans hr
     -- 2‖y‖ < η * r since 2‖y‖/η + 1 ≤ r and η > 0
     have h1 : 2 * ‖y‖ < η * r := by
-      have h2 : 2 * ‖y‖ / η < r := by linarith
-      rw [div_lt_iff₀ hη] at h2; linarith
+      have h2 : 2 * ‖y‖ / η < r := by linarith only [hR1]
+      rw [div_lt_iff₀ hη] at h2; linarith only [h2]
     rwa [mul_inv_lt_iff₀ hr_pos]
   -- For r ≥ R: 8‖y‖²/r² < δ/2
   have hsmall2 : 8 * ‖y‖ ^ 2 * r⁻¹ ^ 2 < δ / 2 := by
     have hR2 : Real.sqrt (16 * ‖y‖ ^ 2 / δ) + 1 ≤ r :=
       (le_max_left _ _ |>.trans (le_max_right _ _)).trans hr
     -- r² > 16‖y‖²/δ since r > sqrt(16‖y‖²/δ)
-    have hsqrt_le : Real.sqrt (16 * ‖y‖ ^ 2 / δ) < r := by linarith
+    have hsqrt_le : Real.sqrt (16 * ‖y‖ ^ 2 / δ) < r := by linarith only [hR2]
     have hr_sq : 16 * ‖y‖ ^ 2 / δ < r ^ 2 := by
       calc 16 * ‖y‖ ^ 2 / δ
           ≤ Real.sqrt (16 * ‖y‖ ^ 2 / δ) ^ 2 :=
@@ -1101,7 +1102,7 @@ theorem gaussianRegularize_measures_tight (φ : V → ℂ)
     rw [inv_pow, mul_inv_lt_iff₀ (sq_pos_of_pos hr_pos)]
     -- hr_sq: 16 * ‖y‖² / δ < r², i.e. 16 * ‖y‖² < δ * r²
     rw [div_lt_iff₀ hδ_pos] at hr_sq
-    linarith
+    linarith only [hr_sq]
   -- Bound for each μ ∈ S
   have hmu_bound : ∀ μ ∈ S, μ {x | r < ‖⟪y, x⟫_ℝ‖} ≤ ENNReal.ofReal δ := by
     intro μ hμS
@@ -1121,9 +1122,9 @@ theorem gaussianRegularize_measures_tight (φ : V → ℂ)
       calc |t| * ‖y‖ ≤ 2 * r⁻¹ * ‖y‖ := by
             gcongr
             -- t ∈ uIoc (-(2*r⁻¹)) (2*r⁻¹) implies |t| ≤ 2*r⁻¹
-            have hle : -(2 * r⁻¹) ≤ 2 * r⁻¹ := by linarith [inv_pos.mpr hr_pos]
+            have hle : -(2 * r⁻¹) ≤ 2 * r⁻¹ := by linarith only [hr_pos, inv_pos.mpr hr_pos]
             rw [Set.uIoc_of_le hle] at ht
-            exact abs_le.mpr ⟨by linarith [ht.1.le], ht.2⟩
+            exact abs_le.mpr ⟨by linarith only [ht, ht.1.le], ht.2⟩
         _ = 2 * ‖y‖ * r⁻¹ := by ring
         _ < η := hsmall
     have hreal_bound := charFun_measure_inner_bound φ hpd hnorm hε hε1 hcf hr_pos
@@ -1131,9 +1132,10 @@ theorem gaussianRegularize_measures_tight (φ : V → ℂ)
     -- μ.real {r < |⟪y,x⟫|} ≤ 2*(δ/4) + 8‖y‖²/r² = δ/2 + 8‖y‖²/r² < δ
     -- Convert from μ.real to μ (ENNReal)
     rw [show μ {x | r < |⟪y, x⟫_ℝ|} = ENNReal.ofReal (μ.real {x | r < |⟪y, x⟫_ℝ|}) from by
-      simp_all]
+      simp_all only [gt_iff_lt, inv_pow, Real.norm_eq_abs, ne_eq, measure_ne_top,
+        not_false_eq_true, ofReal_measureReal]]
     apply ENNReal.ofReal_le_ofReal
-    linarith
+    linarith only [hsmall2, hreal_bound]
   -- Step 5: Conclude iSup ≤ ENNReal.ofReal δ < a
   calc ⨆ μ ∈ S, μ {x | r < ‖⟪y, x⟫_ℝ‖}
       ≤ ENNReal.ofReal δ := iSup₂_le hmu_bound
@@ -1174,7 +1176,7 @@ private theorem bochner_charFun_eq (φ : V → ℂ) {μ : ProbabilityMeasure V}
   -- So charFun(μ_seq (f n))(ξ) → charFun(μ)(ξ)
   have hcharfun_conv : Tendsto (fun n => charFun (μ_seq (f n) : Measure V) ξ) atTop
       (𝓝 (charFun (μ : Measure V) ξ)) := by
-    simp_all
+    simp_all only [one_div, BoundedContinuousFunction.coe_ofNormedAddCommGroup]
   -- Also charFun(μ_seq (f n))(ξ) = gaussianRegularize φ (1/(f n + 1)) ξ → φ ξ
   have hcharfun_vals : ∀ n, charFun (μ_seq (f n) : Measure V) ξ =
       gaussianRegularize φ (1 / (↑(f n) + 1)) ξ :=
@@ -1193,7 +1195,7 @@ private theorem bochner_charFun_eq (φ : V → ℂ) {μ : ProbabilityMeasure V}
     (gaussianRegularize_tendsto φ ξ).comp heps_tendsto
   -- The same sequence also → charFun(μ)(ξ) by weak convergence
   have hgr_conv' : Tendsto (fun n => charFun (μ_seq (f n) : Measure V) ξ) atTop (𝓝 (φ ξ)) := by
-    simp_all
+    simp_all only [one_div, BoundedContinuousFunction.coe_ofNormedAddCommGroup, implies_true]
   -- By uniqueness of limits: charFun μ ξ = φ ξ
   exact tendsto_nhds_unique hcharfun_conv hgr_conv'
 
@@ -1234,7 +1236,7 @@ private theorem bochner_mem_tight (φ : V → ℂ) {μ_seq : ℕ → Probability
   · positivity
   · have h1 : (0 : ℝ) < (n : ℝ) + 1 := by positivity
     rw [div_le_one₀ h1]
-    linarith [n.cast_nonneg (α := ℝ)]
+    linarith only [n.cast_nonneg (α := ℝ)]
   · exact (μ_seq n).prop
   · exact hμ_seq n
 

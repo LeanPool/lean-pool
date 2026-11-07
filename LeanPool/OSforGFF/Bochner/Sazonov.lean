@@ -90,7 +90,7 @@ lemma quadForm_add (hS : S.IsPositive) (x y : H) :
   simp only [quadForm, map_add, inner_add_left, inner_add_right]
   have : @inner ℝ H _ y (S x) = @inner ℝ H _ x (S y) := by
     rw [← hS.inner_left_eq_inner_right x y, real_inner_comm]
-  linarith
+  linarith only [this]
 
 /-- Cauchy-Schwarz inequality for the semi-inner product ⟪·, S·⟫:
     ⟪x, Sy⟫² ≤ ⟪x, Sx⟫ · ⟪y, Sy⟫ when S is positive.
@@ -107,7 +107,7 @@ lemma inner_sq_le_quadForm_mul (hS : S.IsPositive) (x y : H) :
       intro t
       have := quadForm_nonneg hS (x + t • y)
       rw [quadForm_add hS, inner_S_smul_right, quadForm_smul, hy] at this
-      linarith
+      linarith only [this]
     have hpos := h0 (-(quadForm S x + 1) / (2 * @inner ℝ H _ x (S y)))
     have hneg := h0 (-(quadForm S x - 1) / (2 * @inner ℝ H _ x (S y)))
     have hne2 : (2 : ℝ) * @inner ℝ H _ x (S y) ≠ 0 := by positivity
@@ -117,14 +117,14 @@ lemma inner_sq_le_quadForm_mul (hS : S.IsPositive) (x y : H) :
     have e2 : 2 * @inner ℝ H _ x (S y) *
         (-(quadForm S x - 1) / (2 * @inner ℝ H _ x (S y))) = -(quadForm S x - 1) := by
       field_simp
-    linarith
+    linarith only [hpos, e1]
   · have hcpos : 0 < quadForm S y := lt_of_le_of_ne (quadForm_nonneg hS y) (Ne.symm hy)
     have h0 : ∀ t : ℝ, 0 ≤ quadForm S x + 2 * @inner ℝ H _ x (S y) * t +
         quadForm S y * t ^ 2 := by
       intro t
       have := quadForm_nonneg hS (x + t • y)
       rw [quadForm_add hS, inner_S_smul_right, quadForm_smul] at this
-      linarith
+      linarith only [this]
     have key := h0 (-@inner ℝ H _ x (S y) / quadForm S y)
     have hc : quadForm S y ≠ 0 := ne_of_gt hcpos
     have : quadForm S x + 2 * @inner ℝ H _ x (S y) *
@@ -133,7 +133,7 @@ lemma inner_sq_le_quadForm_mul (hS : S.IsPositive) (x y : H) :
         quadForm S x - (@inner ℝ H _ x (S y)) ^ 2 / quadForm S y := by
       field_simp; ring
     rw [this] at key
-    have h1 : (@inner ℝ H _ x (S y)) ^ 2 / quadForm S y ≤ quadForm S x := by linarith
+    have h1 : (@inner ℝ H _ x (S y)) ^ 2 / quadForm S y ≤ quadForm S x := by linarith only [key]
     calc (@inner ℝ H _ x (S y)) ^ 2
         = (@inner ℝ H _ x (S y)) ^ 2 / quadForm S y * quadForm S y := by field_simp
       _ ≤ quadForm S x * quadForm S y := mul_le_mul_of_nonneg_right h1 (le_of_lt hcpos)
@@ -157,7 +157,7 @@ lemma sqrt_quadForm_add_le (hS : S.IsPositive) (x y : H) :
     · push Not at hb
       rw [← Real.sqrt_mul ha]
       exact Real.le_sqrt_of_sq_le h_cs
-  nlinarith [Real.sq_sqrt ha, Real.sq_sqrt hc]
+  linarith only [ha, hc, h_bound, Real.sq_sqrt ha, Real.sq_sqrt hc]
 
 end QuadFormLemmas
 

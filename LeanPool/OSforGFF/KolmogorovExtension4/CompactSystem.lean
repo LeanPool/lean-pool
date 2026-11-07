@@ -215,7 +215,7 @@ theorem nonempty_iInter_projCylinder_inter_piCylinderSet (hs : ∀ n, s n ∈ cl
       congr
     rw [this]
     have hyi : y ∈ projCylinder hs i := by
-      simp_all
+      simp_all only [nonempty_iInter, mem_iInter]
     rwa [mem_projCylinder] at hyi
   · rw [mem_piCylinderSet]
     intro i
