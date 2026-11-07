@@ -30,231 +30,81 @@ private abbrev helperContinuation2789Conditions.{u_1, u_2} : Prop :=
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
-        : Fin k) (g : E) (v : V) (hgcolor : phi g = some gamma) (hgends : G.ends g = s(T.vertex
+        : Fin k) (g : E) (v : V) (_ : phi g = some gamma) (_ : G.ends g = s(T.vertex
         (⟨(0 : ℕ),
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(1 : ℕ),
-    by
-           first
-           | omega
-           | (
-             have := GoldbergSeymour.TreeSequence.positive T
-             have := GoldbergSeymour.TreeSequence.positive T
-             have := N.height_upper
-             all_goals omega)
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(2 : ℕ),
-    by
-            first
-            | omega
-            | (
-              have := GoldbergSeymour.TreeSequence.positive T
-              have := GoldbergSeymour.TreeSequence.positive T
-              have := N.height_upper
-              all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(3 : ℕ),
-    by
-             first
-             | omega
-             | (
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := N.height_upper
-               all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(4 : ℕ),
-    by
-             first
-             | omega
-             | (
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := N.height_upper
-               all_goals omega)
-    ⟩ : Fin (T.length + (1 : ℕ))), v)) (x : v ∈ TreeSequenceVertexSet T) (hv1 : v ≠ T.vertex (⟨(1
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
+    ⟩ : Fin (T.length + (1 : ℕ))), v)) (_ : v ∈ TreeSequenceVertexSet T) (_ : v ≠ T.vertex (⟨(1
         : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := N.height_upper
-          all_goals omega)
-    ⟩ : Fin (T.length + (1 : ℕ)))) (hv2 : v ≠ T.vertex (⟨(2 : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := N.height_upper
-          all_goals omega)
-    ⟩ : Fin (T.length + (1 : ℕ)))) (hv3 : v ≠ T.vertex (⟨(3 : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := N.height_upper
-          all_goals omega)
-    ⟩ : Fin (T.length + (1 : ℕ)))) (hv4 : v ≠ T.vertex (⟨(4 : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := N.height_upper
-          all_goals omega)
+      Nat.lt_succ_of_le T.positive
+    ⟩ : Fin (T.length + (1 : ℕ)))) (_ : v ≠ T.vertex (⟨(2 : ℕ),
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
+    ⟩ : Fin (T.length + (1 : ℕ)))) (_ : v ≠ T.vertex (⟨(3 : ℕ),
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
+    ⟩ : Fin (T.length + (1 : ℕ)))) (_ : v ≠ T.vertex (⟨(4 : ℕ),
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
-    ∀ (hgamma0 : gamma ∈ MissingColors G phi y0) (f1 : E) (hf1inc : Incident G y1 f1) (hf1color :
-        phi f1 = some gamma) (f2 : E) (hf2inc : Incident G y2 f2) (hf2color : phi f2 = some gamma)
-        (f3 : E) (hf3inc : Incident G y3 f3) (hf3color : phi f3 = some gamma) (f4 : E) (hf4inc :
-        Incident G y4 f4) (hf4color : phi f4 = some gamma) (z1 : V) (hf1ends : G.ends f1 = s(y1,
-        z1)) (z2 : V) (hf2ends : G.ends f2 = s(y2, z2)) (z3 : V) (hf3ends : G.ends f3 = s(y3, z3))
-        (z4 : V) (hf4ends : G.ends f4 = s(y4, z4)) (hz2trunk : z2 = y0 ∨ z2 = y1 ∨ z2 = y2 ∨ z2 =
-        y3 ∨ z2 = y4) (hz3trunk : z3 = y0 ∨ z3 = y1 ∨ z3 = y2 ∨ z3 = y3 ∨ z3 = y4) (hz1T : z1 ∈
-        TreeSequenceVertexSet T) (hz4T : z4 ∈ TreeSequenceVertexSet T) (hy12 : y1 ≠ y2) (hy13 : y1
-        ≠ y3) (hy14 : y1 ≠ y4) (hy23 : y2 ≠ y3) (hy24 : y2 ≠ y4) (hy34 : y3 ≠ y4),
+    ∀ (_ : gamma ∈ MissingColors G phi y0) (f1 : E) (_ : Incident G y1 f1) (_ :
+        phi f1 = some gamma) (f2 : E) (_ : Incident G y2 f2) (_ : phi f2 = some gamma)
+        (f3 : E) (_ : Incident G y3 f3) (_ : phi f3 = some gamma) (f4 : E) (_ :
+        Incident G y4 f4) (_ : phi f4 = some gamma) (z1 : V) (_ : G.ends f1 = s(y1,
+        z1)) (z2 : V) (_ : G.ends f2 = s(y2, z2)) (z3 : V) (_ : G.ends f3 = s(y3, z3))
+        (z4 : V) (_ : G.ends f4 = s(y4, z4)) (_ : z2 = y0 ∨ z2 = y1 ∨ z2 = y2 ∨ z2 =
+        y3 ∨ z2 = y4) (_ : z3 = y0 ∨ z3 = y1 ∨ z3 = y2 ∨ z3 = y3 ∨ z3 = y4) (_ : z1 ∈
+        TreeSequenceVertexSet T) (_ : z4 ∈ TreeSequenceVertexSet T) (_ : y1 ≠ y2) (_ : y1
+        ≠ y3) (_ : y1 ≠ y4) (_ : y2 ≠ y3) (_ : y2 ≠ y4) (_ : y3 ≠ y4),
     ∃ (f1 : E) (f2 : E) (f3 : E) (v1 : V) (v2 : V), G.ends f1 = s(T.vertex (⟨(1 : ℕ),
-    by
-           first
-           | omega
-           | (
-             have := GoldbergSeymour.TreeSequence.positive T
-             have := GoldbergSeymour.TreeSequence.positive T
-             have := N.height_upper
-             all_goals omega)
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))), v1) ∧ G.ends f2 = s(T.vertex (⟨(4 : ℕ),
-    by
-            first
-            | omega
-            | (
-              have := GoldbergSeymour.TreeSequence.positive T
-              have := GoldbergSeymour.TreeSequence.positive T
-              have := N.height_upper
-              all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), v2) ∧ G.ends f3 = s(T.vertex (⟨(2 : ℕ),
-    by
-             first
-             | omega
-             | (
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := N.height_upper
-               all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), T.vertex (⟨(3 : ℕ),
-    by
-             first
-             | omega
-             | (
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := N.height_upper
-               all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))) ∧ phi f1 = some gamma ∧ phi f2 = some gamma ∧ phi f3 = some
         gamma ∧ v1 ∈ TreeSequenceVertexSet T ∧ v2 ∈ TreeSequenceVertexSet T ∧ v1 ≠ T.vertex (⟨(0 :
         ℕ),
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v1 ≠ T.vertex (⟨(1 : ℕ),
-    by
-                   first
-                   | omega
-                   | (
-                     have := GoldbergSeymour.TreeSequence.positive T
-                     have := GoldbergSeymour.TreeSequence.positive T
-                     have := N.height_upper
-                     all_goals omega)
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v1 ≠ T.vertex (⟨(2 : ℕ),
-    by
-                    first
-                    | omega
-                    | (
-                      have := GoldbergSeymour.TreeSequence.positive T
-                      have := GoldbergSeymour.TreeSequence.positive T
-                      have := N.height_upper
-                      all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v1 ≠ T.vertex (⟨(3 : ℕ),
-    by
-                     first
-                     | omega
-                     | (
-                       have := GoldbergSeymour.TreeSequence.positive T
-                       have := GoldbergSeymour.TreeSequence.positive T
-                       have := N.height_upper
-                       all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v1 ≠ T.vertex (⟨(4 : ℕ),
-    by
-                      first
-                      | omega
-                      | (
-                        have := GoldbergSeymour.TreeSequence.positive T
-                        have := GoldbergSeymour.TreeSequence.positive T
-                        have := N.height_upper
-                        all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v2 ≠ T.vertex (⟨(0 : ℕ),
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v2 ≠ T.vertex (⟨(1 : ℕ),
-    by
-                        first
-                        | omega
-                        | (
-                          have := GoldbergSeymour.TreeSequence.positive T
-                          have := GoldbergSeymour.TreeSequence.positive T
-                          have := N.height_upper
-                          all_goals omega)
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v2 ≠ T.vertex (⟨(2 : ℕ),
-    by
-                         first
-                         | omega
-                         | (
-                           have := GoldbergSeymour.TreeSequence.positive T
-                           have := GoldbergSeymour.TreeSequence.positive T
-                           have := N.height_upper
-                           all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v2 ≠ T.vertex (⟨(3 : ℕ),
-    by
-                          first
-                          | omega
-                          | (
-                            have := GoldbergSeymour.TreeSequence.positive T
-                            have := GoldbergSeymour.TreeSequence.positive T
-                            have := N.height_upper
-                            all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v2 ≠ T.vertex (⟨(4 : ℕ),
-    by
-                          first
-                          | omega
-                          | (
-                            have := GoldbergSeymour.TreeSequence.positive T
-                            have := GoldbergSeymour.TreeSequence.positive T
-                            have := N.height_upper
-                            all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))
 
 private abbrev helperContinuation3161Conditions.{u_1, u_2} : Prop :=
@@ -262,260 +112,96 @@ private abbrev helperContinuation3161Conditions.{u_1, u_2} : Prop :=
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
-        : Fin k) (g : E) (v : V) (hgcolor : phi g = some gamma) (hgends : G.ends g = s(T.vertex
+        : Fin k) (g : E) (v : V) (_ : phi g = some gamma) (_ : G.ends g = s(T.vertex
         (⟨(0 : ℕ),
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(1 : ℕ),
-    by
-           first
-           | omega
-           | (
-             have := GoldbergSeymour.TreeSequence.positive T
-             have := NormalGlobalMaximumTriple.height_upper N
-             have := GoldbergSeymour.TreeSequence.positive T
-             all_goals omega)
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(2 : ℕ),
-    by
-            first
-            | omega
-            | (
-              have := GoldbergSeymour.TreeSequence.positive T
-              have := NormalGlobalMaximumTriple.height_upper N
-              have := GoldbergSeymour.TreeSequence.positive T
-              all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(3 : ℕ),
-    by
-             first
-             | omega
-             | (
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := NormalGlobalMaximumTriple.height_upper N
-               have := GoldbergSeymour.TreeSequence.positive T
-               all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(4 : ℕ),
-    by
-             first
-             | omega
-             | (
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := NormalGlobalMaximumTriple.height_upper N
-               have := GoldbergSeymour.TreeSequence.positive T
-               all_goals omega)
-    ⟩ : Fin (T.length + (1 : ℕ))), v)) (x : v ∈ TreeSequenceVertexSet T) (hv1 : v ≠ T.vertex (⟨(1
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
+    ⟩ : Fin (T.length + (1 : ℕ))), v)) (_ : v ∈ TreeSequenceVertexSet T) (_ : v ≠ T.vertex (⟨(1
         : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := NormalGlobalMaximumTriple.height_upper N
-          have := GoldbergSeymour.TreeSequence.positive T
-          all_goals omega)
-    ⟩ : Fin (T.length + (1 : ℕ)))) (hv2 : v ≠ T.vertex (⟨(2 : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := NormalGlobalMaximumTriple.height_upper N
-          have := GoldbergSeymour.TreeSequence.positive T
-          all_goals omega)
-    ⟩ : Fin (T.length + (1 : ℕ)))) (hv3 : v ≠ T.vertex (⟨(3 : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := NormalGlobalMaximumTriple.height_upper N
-          have := GoldbergSeymour.TreeSequence.positive T
-          all_goals omega)
-    ⟩ : Fin (T.length + (1 : ℕ)))) (hv4 : v ≠ T.vertex (⟨(4 : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := NormalGlobalMaximumTriple.height_upper N
-          have := GoldbergSeymour.TreeSequence.positive T
-          all_goals omega)
+      Nat.lt_succ_of_le T.positive
+    ⟩ : Fin (T.length + (1 : ℕ)))) (_ : v ≠ T.vertex (⟨(2 : ℕ),
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
+    ⟩ : Fin (T.length + (1 : ℕ)))) (_ : v ≠ T.vertex (⟨(3 : ℕ),
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
+    ⟩ : Fin (T.length + (1 : ℕ)))) (_ : v ≠ T.vertex (⟨(4 : ℕ),
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
-    ∀ (hclosed : ColoredVertexSetClosed G phi (TreeSequenceVertexSet T)) (hy0T : y0 ∈
-        TreeSequenceVertexSet T) (hy1T : y1 ∈ TreeSequenceVertexSet T) (hy4T : y4 ∈
-        TreeSequenceVertexSet T) (hgamma0 : gamma ∈ MissingColors G phi y0) (f1 : E) (hf1inc :
-        Incident G y1 f1) (hf1color : phi f1 = some gamma) (f2 : E) (hf2inc : Incident G y2 f2)
-        (hf2color : phi f2 = some gamma) (f3 : E) (hf3inc : Incident G y3 f3) (hf3color : phi f3 =
-        some gamma) (f4 : E) (hf4inc : Incident G y4 f4) (hf4color : phi f4 = some gamma) (z1 : V)
-        (hf1ends : G.ends f1 = s(y1, z1)) (z2 : V) (hf2ends : G.ends f2 = s(y2, z2)) (z3 : V)
-        (hf3ends : G.ends f3 = s(y3, z3)) (z4 : V) (hf4ends : G.ends f4 = s(y4, z4))
-        (middle_no_escape :
-    ∀ (r : E) (w : V) (hrcolor : phi r = some gamma) (hrends : G.ends r = s(T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+    ∀ (_ : ColoredVertexSetClosed G phi (TreeSequenceVertexSet T)) (_ : y0 ∈
+        TreeSequenceVertexSet T) (_ : y1 ∈ TreeSequenceVertexSet T) (_ : y4 ∈
+        TreeSequenceVertexSet T) (_ : gamma ∈ MissingColors G phi y0) (f1 : E) (_ :
+        Incident G y1 f1) (_ : phi f1 = some gamma) (f2 : E) (_ : Incident G y2 f2)
+        (_ : phi f2 = some gamma) (f3 : E) (_ : Incident G y3 f3) (_ : phi f3 =
+        some gamma) (f4 : E) (_ : Incident G y4 f4) (_ : phi f4 = some gamma) (z1 : V)
+        (_ : G.ends f1 = s(y1, z1)) (z2 : V) (_ : G.ends f2 = s(y2, z2)) (z3 : V)
+        (_ : G.ends f3 = s(y3, z3)) (z4 : V) (_ : G.ends f4 = s(y4, z4))
+        (_ :
+    ∀ (r : E) (w : V) (_ : phi r = some gamma) (_ : G.ends r = s(T.vertex (⟨(2 : ℕ),
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), w) ∨ G.ends r = s(T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), w)), w = T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))),
     ∃ (f1 : E) (f2 : E) (f3 : E) (v1 : V) (v2 : V), G.ends f1 = s(T.vertex (⟨(1 : ℕ),
-    by
-           first
-           | omega
-           | (
-             have := GoldbergSeymour.TreeSequence.positive T
-             have := NormalGlobalMaximumTriple.height_upper N
-             have := GoldbergSeymour.TreeSequence.positive T
-             all_goals omega)
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))), v1) ∧ G.ends f2 = s(T.vertex (⟨(4 : ℕ),
-    by
-            first
-            | omega
-            | (
-              have := GoldbergSeymour.TreeSequence.positive T
-              have := NormalGlobalMaximumTriple.height_upper N
-              have := GoldbergSeymour.TreeSequence.positive T
-              all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), v2) ∧ G.ends f3 = s(T.vertex (⟨(2 : ℕ),
-    by
-             first
-             | omega
-             | (
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := NormalGlobalMaximumTriple.height_upper N
-               have := GoldbergSeymour.TreeSequence.positive T
-               all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), T.vertex (⟨(3 : ℕ),
-    by
-             first
-             | omega
-             | (
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := NormalGlobalMaximumTriple.height_upper N
-               have := GoldbergSeymour.TreeSequence.positive T
-               all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))) ∧ phi f1 = some gamma ∧ phi f2 = some gamma ∧ phi f3 = some
         gamma ∧ v1 ∈ TreeSequenceVertexSet T ∧ v2 ∈ TreeSequenceVertexSet T ∧ v1 ≠ T.vertex (⟨(0 :
         ℕ),
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v1 ≠ T.vertex (⟨(1 : ℕ),
-    by
-                   first
-                   | omega
-                   | (
-                     have := GoldbergSeymour.TreeSequence.positive T
-                     have := NormalGlobalMaximumTriple.height_upper N
-                     have := GoldbergSeymour.TreeSequence.positive T
-                     all_goals omega)
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v1 ≠ T.vertex (⟨(2 : ℕ),
-    by
-                    first
-                    | omega
-                    | (
-                      have := GoldbergSeymour.TreeSequence.positive T
-                      have := NormalGlobalMaximumTriple.height_upper N
-                      have := GoldbergSeymour.TreeSequence.positive T
-                      all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v1 ≠ T.vertex (⟨(3 : ℕ),
-    by
-                     first
-                     | omega
-                     | (
-                       have := GoldbergSeymour.TreeSequence.positive T
-                       have := NormalGlobalMaximumTriple.height_upper N
-                       have := GoldbergSeymour.TreeSequence.positive T
-                       all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v1 ≠ T.vertex (⟨(4 : ℕ),
-    by
-                      first
-                      | omega
-                      | (
-                        have := GoldbergSeymour.TreeSequence.positive T
-                        have := NormalGlobalMaximumTriple.height_upper N
-                        have := GoldbergSeymour.TreeSequence.positive T
-                        all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v2 ≠ T.vertex (⟨(0 : ℕ),
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v2 ≠ T.vertex (⟨(1 : ℕ),
-    by
-                        first
-                        | omega
-                        | (
-                          have := GoldbergSeymour.TreeSequence.positive T
-                          have := NormalGlobalMaximumTriple.height_upper N
-                          have := GoldbergSeymour.TreeSequence.positive T
-                          all_goals omega)
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v2 ≠ T.vertex (⟨(2 : ℕ),
-    by
-                         first
-                         | omega
-                         | (
-                           have := GoldbergSeymour.TreeSequence.positive T
-                           have := NormalGlobalMaximumTriple.height_upper N
-                           have := GoldbergSeymour.TreeSequence.positive T
-                           all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v2 ≠ T.vertex (⟨(3 : ℕ),
-    by
-                          first
-                          | omega
-                          | (
-                            have := GoldbergSeymour.TreeSequence.positive T
-                            have := NormalGlobalMaximumTriple.height_upper N
-                            have := GoldbergSeymour.TreeSequence.positive T
-                            all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∧ v2 ≠ T.vertex (⟨(4 : ℕ),
-    by
-                          first
-                          | omega
-                          | (
-                            have := GoldbergSeymour.TreeSequence.positive T
-                            have := NormalGlobalMaximumTriple.height_upper N
-                            have := GoldbergSeymour.TreeSequence.positive T
-                            all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))
 
 private abbrev helperCaseContinuation3625Conditions.{u_1, u_2} : Prop :=
@@ -526,29 +212,19 @@ private abbrev helperCaseContinuation3625Conditions.{u_1, u_2} : Prop :=
         (hGheight : ScheideGraphHeight G = (5 : ℕ)) (gamma : Fin k) (v : V) (x : v ∈
         TreeSequenceVertexSet T) (r : E) (w : V) (hrcolor : phi r = some gamma),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r1 : Fin T.length := (⟨(1 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -578,12 +254,10 @@ private abbrev helperCaseContinuation3625Conditions.{u_1, u_2} : Prop :=
         (hw3 : w ≠ y3) (hw4 : w ≠ y4) (hrincw : Incident G w r) (hrmiddle : Incident G y2 r ∨
         Incident G y3 r) (hrq : r ≠ q) (hrnotC1 : Sum.inr r ∉ C1),
     let i0 : Fin (T.length + (1 : ℕ)) := (⟨(0 : ℕ),
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let i1 : Fin (T.length + (1 : ℕ)) := (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     ∀ (pmax : (TwoColorIncidenceGraph G phi gamma N.beta).Walk (Sum.inl (T.vertex i0)) (Sum.inl
         (T.vertex i1))) (hchangedata : IsProperEdgeColoring G (TwoColorComponentSwap G phi gamma
@@ -602,38 +276,24 @@ private abbrev helperCaseContinuation3777Conditions.{u_1, u_2} : Prop :=
         MissingColors G phi (T.vertex (⟨(0 : ℕ), Nat.zero_lt_succ T.length⟩ : Fin (T.length + (1 :
         ℕ))))) (g : E) (v : V) (hgcolor : phi g = some gamma) (x : v ∈ TreeSequenceVertexSet T) (r
         : E) (w : V) (hrcolor : phi r = some gamma) (hrends : G.ends r = s(T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), w) ∨ G.ends r = s(T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), w)),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r1 : Fin T.length := (⟨(1 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -678,25 +338,15 @@ private abbrev helperCaseContinuation3777Conditions.{u_1, u_2} : Prop :=
         (hqC1 : Sum.inr q ∈ C1) (hy4C1 : Sum.inl y4 ∈ C1) (hy1C1 : Sum.inl y1 ∈ C1) (helem :
         ColoredVertexSetElementary G phi (TreeSequenceVertexSet T)) (hy0T : y0 ∈
         TreeSequenceVertexSet T) (hy1T : y1 ∈ TreeSequenceVertexSet T), w = T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))
 
 private abbrev helperCaseContinuation4022Conditions.{u_1, u_2} : Prop :=
@@ -708,128 +358,54 @@ private abbrev helperCaseContinuation4022Conditions.{u_1, u_2} : Prop :=
         MissingColors G phi (T.vertex (⟨(0 : ℕ), Nat.zero_lt_succ T.length⟩ : Fin (T.length + (1 :
         ℕ))))) (g : E) (v : V) (hgcolor : phi g = some gamma) (hgends : G.ends g = s(T.vertex (⟨(0
         : ℕ),
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(1 : ℕ),
-    by
-           first
-           | omega
-           | (
-             have := GoldbergSeymour.TreeSequence.positive T
-             have := NormalGlobalMaximumTriple.height_upper N
-             have := GoldbergSeymour.TreeSequence.positive T
-             all_goals omega)
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(2 : ℕ),
-    by
-            first
-            | omega
-            | (
-              have := GoldbergSeymour.TreeSequence.positive T
-              have := NormalGlobalMaximumTriple.height_upper N
-              have := GoldbergSeymour.TreeSequence.positive T
-              all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(3 : ℕ),
-    by
-             first
-             | omega
-             | (
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := NormalGlobalMaximumTriple.height_upper N
-               have := GoldbergSeymour.TreeSequence.positive T
-               all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), v) ∨ G.ends g = s(T.vertex (⟨(4 : ℕ),
-    by
-             first
-             | omega
-             | (
-               have := GoldbergSeymour.TreeSequence.positive T
-               have := NormalGlobalMaximumTriple.height_upper N
-               have := GoldbergSeymour.TreeSequence.positive T
-               all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), v)) (x : v ∈ TreeSequenceVertexSet T) (hv0 : v ≠ T.vertex (⟨(0
         : ℕ),
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)))) (hv1 : v ≠ T.vertex (⟨(1 : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := NormalGlobalMaximumTriple.height_upper N
-          have := GoldbergSeymour.TreeSequence.positive T
-          all_goals omega)
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)))) (hv2 : v ≠ T.vertex (⟨(2 : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := NormalGlobalMaximumTriple.height_upper N
-          have := GoldbergSeymour.TreeSequence.positive T
-          all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))) (hv3 : v ≠ T.vertex (⟨(3 : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := NormalGlobalMaximumTriple.height_upper N
-          have := GoldbergSeymour.TreeSequence.positive T
-          all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))) (hv4 : v ≠ T.vertex (⟨(4 : ℕ),
-    by
-        first
-        | omega
-        | (
-          have := GoldbergSeymour.TreeSequence.positive T
-          have := NormalGlobalMaximumTriple.height_upper N
-          have := GoldbergSeymour.TreeSequence.positive T
-          all_goals omega)
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))),
     let y0_1 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1_1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     ∀ (helem : ColoredVertexSetElementary G phi (TreeSequenceVertexSet T)) (hy0T : y0_1 ∈
         TreeSequenceVertexSet T) (hy1T : y1_1 ∈ TreeSequenceVertexSet T) (r : E) (w : V) (hrcolor
         : phi r = some gamma) (hrends : G.ends r = s(T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), w) ∨ G.ends r = s(T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))), w)),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r1 : Fin T.length := (⟨(1 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -860,47 +436,16 @@ private abbrev helperCaseContinuation4022Conditions.{u_1, u_2} : Prop :=
         N.beta) (ha1support : Sum.inr a1 ∈ N.closingPath.support) (ha2support : Sum.inr a2 ∈
         N.closingPath.support) (ha3support : Sum.inr a3 ∈ N.closingPath.support), w = T.vertex
         (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))) ∨ w = T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)))
-
-private theorem helper_gamma_present_127.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
-        : Fin k),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ))); ColoredVertexSetElementary G phi (TreeSequenceVertexSet T) → y0
-        ∈ TreeSequenceVertexSet T → gamma ∈ MissingColors G phi y0 →
-    ∀ {x : V}, x ∈ TreeSequenceVertexSet T → x ≠ y0 → gamma ∈ PresentColors G phi x := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight gamma y0 helem hy0T hgamma0 x hxT hx0
-  have hnot : gamma ∉ MissingColors G phi x := by
-    intro hxmiss
-    have hd := helem hxT hy0T hx0
-    exact (Finset.disjoint_left.mp hd) hxmiss hgamma0
-  simpa [MissingColors] using hnot
 
 private theorem helper_missing_excludes_231.{u_1, u_2} :
     open scoped Classical in
@@ -953,14 +498,10 @@ private theorem helper_ha1color_275.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r1 : Fin T.length := (⟨(1 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -991,19 +532,13 @@ private theorem helper_ha1a2_285.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r1 : Fin T.length := (⟨(1 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -1032,19 +567,13 @@ private theorem helper_ha2a3_299.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r2 : Fin T.length := (⟨(2 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -1073,19 +602,13 @@ private theorem helper_ha3q_313.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r3 : Fin T.length := (⟨(3 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -1109,14 +632,10 @@ private theorem helper_halpha_beta_330.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r1 : Fin T.length := (⟨(1 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -1141,24 +660,16 @@ private theorem helper_hqa1_406.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r1 : Fin T.length := (⟨(1 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -1184,29 +695,19 @@ private theorem helper_hgamma_alpha_425.{u_1, u_2} :
         ScheideGraphHeight G = (5 : ℕ) →
     ∀ (gamma : Fin k) (g : E) (v : V), phi g = some gamma →
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r1 : Fin T.length := (⟨(1 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -1337,14 +838,10 @@ private theorem helper_hrmiddle_523.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (r : E)
         (w : V),
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))); G.ends r = s(y2, w) ∨ G.ends r = s(y3, w) → Incident G y2 r ∨
         Incident G y3 r := by
   classical
@@ -1366,19 +863,13 @@ private theorem helper_hbr_549.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (r : E)
         (w : V),
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))); y1 ≠ y2 → y1 ≠ y3 →
     ∀ (b : E), Incident G y1 b → G.ends r = s(y2, w) ∨ G.ends r = s(y3, w) → w ≠ y1 → b ≠ r := by
   classical
@@ -1402,29 +893,19 @@ private theorem helper_middle_too_large_561.{u_1, u_2} :
         ScheideGraphHeight G = (5 : ℕ) →
     ∀ (gamma : Fin k) (r : E) (w : V), phi r = some gamma →
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r2 : Fin T.length := (⟨(2 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -1494,19 +975,13 @@ private theorem helper_hy2notC1_600.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
         : Fin k) (r : E) (w : V), phi r = some gamma →
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r2 : Fin T.length := (⟨(2 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -1533,68 +1008,6 @@ private theorem helper_hy2notC1_600.{u_1, u_2} :
   have hwC := vertex_step_C1 hrC hrincw (Or.inl hrcolor)
   exact middle_too_large hy2C hy3C hwC
 
-private theorem helper_hwnotC1_614.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
-        : Fin k) (r : E) (w : V), phi r = some gamma →
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let C1 : Set (V ⊕ E) := TwoColorComponent G phi gamma N.beta (Sum.inl y0); (
-    ∀ {x : V} {f : E}, Sum.inl x ∈ C1 → Incident G x f → phi f = some gamma ∨ phi f = some N.beta
-        → Sum.inr f ∈ C1) → (
-    ∀ {f : E} {x : V}, Sum.inr f ∈ C1 → Incident G x f → phi f = some gamma ∨ phi f = some N.beta
-        → Sum.inl x ∈ C1) → Incident G w r → Incident G y2 r ∨ Incident G y3 r → Sum.inl y2 ∉ C1 →
-        Sum.inl y3 ∉ C1 → Sum.inl w ∉ C1 := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight gamma r w hrcolor y0 y2 y3 C1 edge_step_C1
-      vertex_step_C1 hrincw hrmiddle hy2notC1 hy3notC1 hwC
-  have hrC := edge_step_C1 hwC hrincw (Or.inl hrcolor)
-  rcases hrmiddle with h | h
-  · exact hy2notC1 (vertex_step_C1 hrC h (Or.inl hrcolor))
-  · exact hy3notC1 (vertex_step_C1 hrC h (Or.inl hrcolor))
-
-private theorem helper_alpha_fixed_657.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
-        : Fin k),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ))); N.alpha ≠ N.beta →
-    let _ : Set (V ⊕ E) := TwoColorComponent G phi gamma N.beta (Sum.inl y0); gamma ≠ N.alpha →
-        gamma ≠ N.beta →
-    let phi' : PartialEdgeColoring E k := TwoColorComponentSwap G phi gamma N.beta (Sum.inl y0);
-    ∀ (f : E), phi' f = some N.alpha ↔ phi f = some N.alpha := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight gamma y0 halpha_beta C1 hgamma_alpha hgamma_beta phi' f
-  by_cases hfC : Sum.inr f ∈ C1
-  · by_cases hfg : phi f = some gamma
-    · simp [phi', TwoColorComponentSwap, C1, hfC, hfg, hgamma_alpha,
-        Ne.symm halpha_beta]
-    · by_cases hfb : phi f = some N.beta
-      · simp [phi', TwoColorComponentSwap, C1, hfC, hfb,
-          hgamma_alpha, Ne.symm halpha_beta, Ne.symm hgamma_beta]
-      · simp [phi', TwoColorComponentSwap, C1, hfC, hfg, hfb]
-  · simp [phi', TwoColorComponentSwap, C1, hfC]
-
 private theorem helper_hM10sub_738.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -1602,29 +1015,19 @@ private theorem helper_hM10sub_738.{u_1, u_2} :
         TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5
         : ℕ)) (gamma : Fin k) (r : E) (w : V),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let r1 : Fin T.length := (⟨(1 : ℕ),
     have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
@@ -1670,28 +1073,6 @@ private theorem helper_hM10sub_738.{u_1, u_2} :
   · exact support_of_C2 ha3C2
   · exact support_of_C2 hrC2
 
-private theorem helper_endpoint_in_tree_768.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
-        : Fin k),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ))); ColoredVertexSetClosed G phi (TreeSequenceVertexSet T) → y0 ∈
-        TreeSequenceVertexSet T → gamma ∈ MissingColors G phi y0 →
-    ∀ {x z : V} {f : E}, x ∈ TreeSequenceVertexSet T → G.ends f = s(x, z) → phi f = some gamma → z
-        ∈ TreeSequenceVertexSet T := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight gamma y0 hclosed hy0T hgamma0 x z f hxT hfends hfcolor
-  by_contra hzT
-  have hboundary : f ∈ BoundaryEdges G (TreeSequenceVertexSet T) := by
-    simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨x, hxT, z, hzT, hfends⟩
-  exact (hclosed hboundary hy0T hfcolor) hgamma0
-
 private theorem helper_missing_excludes_806.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
@@ -1714,14 +1095,10 @@ private theorem helper_hz20_822.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
         : Fin k),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))); gamma ∈ MissingColors G phi y0 →
     ∀ (f2 : E), phi f2 = some gamma →
     ∀ (z2 : V), G.ends f2 = s(y2, z2) → (
@@ -1743,14 +1120,10 @@ private theorem helper_hz30_829.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
         : Fin k),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))); gamma ∈ MissingColors G phi y0 →
     ∀ (f3 : E), phi f3 = some gamma →
     ∀ (z3 : V), G.ends f3 = s(y3, z3) → (
@@ -1772,14 +1145,10 @@ private theorem helper_hz23_849.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
         : Fin k),
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     ∀ (f2 : E), phi f2 = some gamma →
     ∀ (f3 : E), Incident G y3 f3 → phi f3 = some gamma →
@@ -1800,14 +1169,10 @@ private theorem helper_hz32_856.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
         : Fin k),
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     ∀ (f2 : E), Incident G y2 f2 → phi f2 = some gamma →
     ∀ (f3 : E), phi f3 = some gamma →
@@ -1827,29 +1192,19 @@ private theorem helper_hz2cases_863.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     ∀ (z2 : V), z2 = y0 ∨ z2 = y1 ∨ z2 = y2 ∨ z2 = y3 ∨ z2 = y4 → z2 ≠ y2 → z2 ≠ y0 → z2 ≠ y3 → z2
         = y1 ∨ z2 = y4 := by
@@ -1868,29 +1223,19 @@ private theorem helper_hz3cases_870.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     ∀ (z3 : V), z3 = y0 ∨ z3 = y1 ∨ z3 = y2 ∨ z3 = y3 ∨ z3 = y4 → z3 ≠ y3 → z3 ≠ y0 → z3 ≠ y2 → z3
         = y1 ∨ z3 = y4 := by
@@ -1910,29 +1255,19 @@ private theorem helper_crossing_contra_877.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
         : Fin k) (g : E) (v : V), phi g = some gamma →
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))); gamma ∈ MissingColors G phi y0 →
     ∀ (f2 : E), Incident G y2 f2 → phi f2 = some gamma →
     ∀ (f3 : E), Incident G y3 f3 → phi f3 = some gamma →
@@ -2034,14 +1369,10 @@ private theorem helper_hz2eq_964.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     ∀ (f2 : E) (z2 : V), G.ends f2 = s(y2, z2) → y2 ≠ y3 → Incident G y3 f2 → z2 = y3 := by
   classical
@@ -2060,19 +1391,13 @@ private theorem helper_hf1ne2_973.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     ∀ (f1 : E), Incident G y1 f1 →
     ∀ (f2 : E), y1 ≠ y2 → y1 ≠ y3 → G.ends f2 = s(y2, y3) → f1 ≠ f2 := by
@@ -2093,29 +1418,19 @@ private theorem helper_hz14_997.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
         : Fin k) (g : E) (v : V), phi g = some gamma →
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))); gamma ∈ MissingColors G phi y0 →
     ∀ (f1 : E), Incident G y1 f1 → phi f1 = some gamma →
     ∀ (f2 : E), Incident G y2 f2 → phi f2 = some gamma →
@@ -2164,19 +1479,13 @@ private theorem helper_hf4ne2_1035.{u_1, u_2} :
         LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     ∀ (f2 f4 : E), Incident G y4 f4 → y2 ≠ y4 → y3 ≠ y4 → G.ends f2 = s(y2, y3) → f4 ≠ f2 := by
   classical
@@ -2196,14 +1505,10 @@ private theorem helper_hz41_1052.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
         : Fin k),
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     ∀ (f1 : E), Incident G y1 f1 → phi f1 = some gamma →
     ∀ (f4 : E), phi f4 = some gamma →
@@ -2236,29 +1541,19 @@ private theorem helper_f2_eq_f3_2262.{u_1, u_2} :
         G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
         : Fin k) (g : E) (v : V), phi g = some gamma →
     let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.zero_lt_succ T.length
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      Nat.lt_succ_of_le T.positive
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (2 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (3 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ)));
     let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
+      (Fin.castLE (hNheight ▸ N.height_upper) (4 : Fin 5)).isLt
     ⟩ : Fin (T.length + (1 : ℕ))); gamma ∈ MissingColors G phi y0 →
     ∀ (f2 : E), Incident G y2 f2 → phi f2 = some gamma →
     ∀ (f3 : E), Incident G y3 f3 → phi f3 = some gamma →
@@ -2406,9 +1701,10 @@ private theorem helper_continuation_3161.{u_1, u_2} :
     simpa [y0, y1, y2, y3, y4] using
       (middle_no_escape f3 z3 hf3color
         (Or.inr (by simpa [y3] using hf3ends)))
-  have endpoint_in_tree := @helper_endpoint_in_tree_768 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@gamma) (@hclosed) (@hy0T)
-      (@hgamma0)
+  have endpoint_in_tree {x z : V} {f : E} (inside : x ∈ TreeSequenceVertexSet T)
+      (endpoints : G.ends f = s(x, z)) (colored : phi f = some gamma) :
+      z ∈ TreeSequenceVertexSet T :=
+    hclosed.endpoint_mem hy0T hgamma0 inside endpoints colored
   have hz1T : z1 ∈ TreeSequenceVertexSet T :=
     endpoint_in_tree hy1T (by simpa [y1] using hf1ends) hf1color
   have hz4T : z4 ∈ TreeSequenceVertexSet T :=
@@ -2466,9 +1762,9 @@ private theorem helper_caseContinuation_3625.{u_1, u_2} :
     simpa [y0] using N.alpha_missing
   have hqcolor' : phi' q = some gamma := by
     simp [phi', TwoColorComponentSwap, C1, hqC1, hqcolor]
-  have alpha_fixed := @helper_alpha_fixed_657 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@gamma) (@halpha_beta) (@hgamma_alpha)
-      (@hgamma_beta)
+  have alpha_fixed (f : E) : phi' f = some N.alpha ↔ phi f = some N.alpha :=
+    TwoColorComponentSwap.otherColor_iff (G := G) (phi := phi) (z := Sum.inl y0)
+      hgamma_alpha.symm halpha_beta f
   have ha1color' : phi' a1 = some N.alpha := (alpha_fixed a1).2 ha1color
   have ha3color' : phi' a3 = some N.alpha := (alpha_fixed a3).2 ha3color
   have hrcolor' : phi' r = some gamma := by
@@ -2635,9 +1931,6 @@ private theorem helper_caseContinuation_3777.{u_1, u_2} :
     intro hy3C
     have ha2C := edge_step_C1 hy3C ha2inc3 (Or.inr ha2color)
     exact hy2notC1 (vertex_step_C1 ha2C ha2inc2 (Or.inr ha2color))
-  have hwnotC1 := @helper_hwnotC1_614 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-      (@e0) (@phi) (@T) (@N) (@hNheight) (@gamma) (@r) (@w) (@hrcolor) (@edge_step_C1)
-      (@vertex_step_C1) (@hrincw) (@hrmiddle) (@hy2notC1) (@hy3notC1)
   have hrnotC1 : Sum.inr r ∉ C1 := by
     intro hrC
     rcases hrmiddle with h | h
@@ -2858,9 +2151,9 @@ theorem ScheideHeightFiveGammaEdges {V E : Type*}
     simp [y4, TreeSequenceVertexSet]
   have hgamma0 : gamma ∈ MissingColors G phi y0 := by
     simpa [y0] using hgamma
-  have gamma_present := @helper_gamma_present_127 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@gamma) (@helem) (@hy0T)
-      (@hgamma0)
+  have gamma_present {x : V} (inside : x ∈ TreeSequenceVertexSet T)
+      (different : x ≠ y0) : gamma ∈ PresentColors G phi x :=
+    helem.presentColor_of_missing hy0T hgamma0 inside different
   obtain ⟨f1, hf1inc, hf1color⟩ : ∃ f1 : E,
       Incident G y1 f1 ∧ phi f1 = some gamma := by
     simpa [PresentColors] using gamma_present hy1T hy01.symm

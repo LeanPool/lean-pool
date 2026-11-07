@@ -212,33 +212,6 @@ private theorem helper_htrunk_edge_eq_213.{u_1, u_2} :
   change i.val = (j.val + r.val) % N.height
   exact hi
 
-private theorem helper_hpred_before_230.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (j : Fin N.height), (1 : ℕ) ≤ (↑j : ℕ)
-        →
-    ∀ (_ _ : Fin k) (_ : TreeSequence G (NormalCycleEdge N j)) (hp3 : (3 : ℕ) ≤ N.height),
-    let rho : Fin N.height → Fin N.height := fun (r : Fin N.height) ↦ j + r; rho (⟨(0 : ℕ),
-    by
-              have := GoldbergSeymour.TreeSequence.positive T
-              omega
-    ⟩ : Fin N.height) = j →
-    let last : Fin N.height := (⟨N.height - (1 : ℕ),
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ⟩ : Fin N.height);
-    let pred : Fin N.height := rho last; (↑pred : ℕ) = ((↑j : ℕ) + N.height - (1 : ℕ)) % N.height
-        → (↑pred : ℕ) = (↑j : ℕ) - (1 : ℕ) := by
-  classical
-  intro V E _ _ _ G k e0 phi T N j hj A B T' hp3 rho hrho_zero last pred hpred_val
-  rw [hpred_val]
-  have heq : j.val + N.height - 1 = (j.val - 1) + N.height := by
-    omega
-  rw [heq, Nat.add_mod_right, Nat.mod_eq_of_lt]
-  omega
-
 private theorem helper_hchain_398.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -1057,8 +1030,6 @@ theorem ScheideTrunkRotationNormal {V E : Type*}
     change (j.val + (N.height - 1)) % N.height = _
     congr 1
     omega
-  have hpred_before : pred.val = j.val - 1 := by
-    apply helper_hpred_before_230 <;> assumption
   let H := TwoColorIncidenceGraph G psi A B
   let pathNode : Fin (2 * (N.height - 1) + 1) → Sum V E := fun n =>
     if he : n.val % 2 = 0 then

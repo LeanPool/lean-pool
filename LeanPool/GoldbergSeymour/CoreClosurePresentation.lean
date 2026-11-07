@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.CorrespondingTerminalClosureEq
 
 public import LeanPool.GoldbergSeymour.HierarchyBaseCorrespondingTransport
@@ -81,21 +83,8 @@ theorem P2634_T1_CoreClosurePresentation
       corr.replacementETT.series.data.kind
           (Fin.last corr.replacementETT.rounds) =
         some TashkinovExtensionKind.PE := by
-    rcases corr with ⟨inputZ, seriesZ, ettZ, hr, hs, hc, ht, hd, he, hk,
-      hp, ho, hstable⟩
-    cases ettZ with
-    | mk rounds positive series above strict below generating =>
-      cases hr
-      have hseries : series = seriesZ := eq_of_heq hs
-      cases hseries
-      have hn : 0 < ett.rounds := by have := ett.roundsPositive; omega
-      let q : Fin ett.rounds := ⟨ett.rounds - 1, by omega⟩
-      have hq : q.succ = Fin.last ett.rounds := by
-        apply Fin.ext
-        simp [q]
-        omega
-      refine ⟨hfinal, ?_, (hk (Fin.last ett.rounds)).trans hPE⟩
-      simpa only [hq] using ht q
+    exact ⟨corr.finalTreePresentation.trans hfinal, corr.terminalData.1,
+      corr.terminalData.2.1.trans hPE⟩
   exact ⟨Z, corr, hmax, hclosure, hindices.1, hindices.2.1,
     hindices.2.2, baseZ, hcore, hcl, hsupport⟩
 

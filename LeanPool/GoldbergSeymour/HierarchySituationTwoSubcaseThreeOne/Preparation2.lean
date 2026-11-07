@@ -300,92 +300,6 @@ theorem helper_firstLower_5578.{u_1, u_2} :
       omega
     exact hn _ hp (firstMissing X c hm)
 
-theorem helper_terminalData_5614.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (D : HierarchySituationTwoCaseThreeOneData G k e0 input T phi ett base C ctx),
-    let theta : Fin k := D.theta;
-    let lastIndex : Fin T.length := D.lastEdgeIndex;
-    let penIndex : Fin (T.length + (1 : ℕ)) := D.penultimateVertexIndex;
-    let endIndex : Fin (T.length + (1 : ℕ)) := D.terminalVertexIndex;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    ∀ (lastColor : phi (T.edge lastIndex) = some theta)
-      (lastPosition : (↑lastIndex : ℕ) + (1 : ℕ) = T.length)
-      (penPosition : (↑penIndex : ℕ) + (1 : ℕ) = T.length)
-      (endPosition : (↑endIndex : ℕ) = T.length)
-      (thetaPresent : theta ∉ MissingColors G phi (T.vertex penIndex)),
-    let tail : HierarchySituationTwoTailData G k e0 input T phi ett base C ctx :=
-      { tailAtLeastTwo := D.tailAtLeastTwo, pathNumberFull := D.pathNumberFull,
-        lastEdgeIndex := lastIndex, penultimateVertexIndex := penIndex,
-        terminalVertexIndex := endIndex, lastEdgePosition := lastPosition,
-        penultimateVertexPosition := penPosition, terminalVertexPosition := endPosition,
-        lastEdgeNotIncidentPenultimate := D.lastEdgeNotIncidentPenultimate, theta := theta,
-        thetaOnLastEdge := lastColor, thetaPresentPenultimate := thetaPresent :
-        HierarchySituationTwoTailData G k e0 input T phi ett base C ctx };
-    ∀ (R : HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx tail)
-      (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus),
-    MaximumProperty corrMinus.replacementETT →
-    ∀ (baseMinus : HierarchyBase corrMinus.replacementETT phi),
-    baseMinus.core = base.core →
-    baseMinus.closure = base.closure →
-    (↑baseMinus.supportPosition : ℕ) = (↑base.supportPosition : ℕ) →
-    ∀ (HMinus : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-      (hcountMinus : HMinus.dividerCount = C.hierarchy.dividerCount),
-    (∀ (j : Fin (HMinus.dividerCount + (1 : ℕ))),
-        HMinus.stage j.castSucc =
-          C.hierarchy.stage
-            (Fin.cast
-                (by
-                  omega)
-                j).castSucc) →
-    (∀ (j : Fin HMinus.dividerCount),
-        (↑(HMinus.dividerPosition j) : ℕ) =
-          (↑(C.hierarchy.dividerPosition (Fin.cast hcountMinus j)) : ℕ)) →
-    ∀ (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-      (baseStar : HierarchyBase corrStar.replacementETT phi)
-      (_ : TashkinovHierarchy corrStar.replacementETT baseStar),
-    corrMinus.replacementETT.series.data.tree
-          (Fin.last corrMinus.replacementETT.rounds).castSucc =
-        Tn ∧
-      corrMinus.replacementETT.series.data.kind (Fin.last corrMinus.replacementETT.rounds) =
-          ett.series.data.kind n ∧
-        TashkinovStoredColors corrMinus.replacementETT.series.data
-            (Fin.last corrMinus.replacementETT.rounds) =
-          TashkinovStoredColors ett.series.data n := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D theta lastIndex penIndex endIndex n Tn
-      lastColor lastPosition penPosition endPosition thetaPresent tail R corrMinus maxMinus
-      baseMinus hcoreMinus hclosureMinus hsupportMinus HMinus hcountMinus hstageMinus
-      hpositionMinus corrStar baseStar HStar
-  as_aux_lemma =>
-    rcases corrMinus with ⟨newInput, newSeries, newETT, hr, hs, hf,
-      ht, hd, he, hk, hp, ho, hstable⟩
-    cases newETT with
-    | mk rounds positive data above strict below generating =>
-      cases hr
-      have hseries : data = newSeries := eq_of_heq hs
-      cases hseries
-      let i : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
-      have hi : i.succ = Fin.last ett.rounds := Fin.ext (by
-        simp [i]; have := ett.roundsPositive; omega)
-      have htree : newSeries.data.tree (Fin.last ett.rounds).castSucc = Tn := by
-        simpa [Tn, n, hi] using ht i
-      refine ⟨htree, hk _, ?_⟩
-      have hstored :
-          TashkinovStoredColors newSeries.data (Fin.last ett.rounds) =
-            TashkinovStoredColors ett.series.data (Fin.last ett.rounds) := by
-        unfold TashkinovStoredColors
-        simp only [Fin.val_last]
-        simp_rw [hd]
-        rw [← hf, ← ett.generatingColoring, htree]
-      simpa [n] using hstored
-
 theorem helper_hstar_5654.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -1559,11 +1473,7 @@ theorem helper_h_exception_6390.{u_1, u_2} :
         TashkinovStoredColors corrMinus.replacementETT.series.data
             (Fin.last corrMinus.replacementETT.rounds) =
           TashkinovStoredColors ett.series.data n := by
-      exact helper_terminalData_5614 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
-          (@ctx) (@D)
-          (@lastColor) (@lastPosition) (@penPosition) (@endPosition) (@thetaPresent) (@R)
-          (@corrMinus) (@maxMinus) (@baseMinus) (@hcoreMinus) (@hclosureMinus) (@hsupportMinus)
-          (@HMinus) (@hcountMinus) (@hstageMinus) (@hpositionMinus) (@corrStar) (@baseStar) (@HStar)
+      exact corrMinus.terminalData
     have hierarchyInfo : ∀ j : Fin (HMinus.dividerCount + 1),
         let jo := Fin.cast (congrArg (fun d => d + 1) hcountMinus) j
         HierarchyStarredStage HMinus j = HierarchyStarredStage H jo ∧

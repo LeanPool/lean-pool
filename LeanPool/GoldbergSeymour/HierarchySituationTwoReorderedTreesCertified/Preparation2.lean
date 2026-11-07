@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified.Preparation1
 public import LeanPool.GoldbergSeymour.Td
 
@@ -180,7 +182,7 @@ theorem helper_continuation_1782.{u_1, u_2} :
       (corr : CorrespondingExtendedTashkinovTree G k e0 ett phi X) :
       corr.replacementETT.series.data.tree
         (Fin.last corr.replacementETT.rounds).castSucc = Tn := by
-    exact helper_terminalTree_1121 G k e0 input T phi ett base C ctx D hm ig M if_ S X corr
+    exact corr.terminalData.1
   have copyHierarchy (X : TreeSequence G e0)
       (corr : CorrespondingExtendedTashkinovTree G k e0 ett phi X)
       (hBX : TreeSequenceInitialSegment B X) (hstrictBX : B.length < X.length) :

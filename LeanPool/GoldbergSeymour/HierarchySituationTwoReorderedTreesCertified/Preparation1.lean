@@ -772,48 +772,6 @@ theorem helper_hfinalAug_1019.{u_1, u_2} :
     have hseqP := TashkinovAugmentationSequenceSuffix phi seed P T hseqT hseedP hPT
     exact oneStep hseqP (by omega)
 
-theorem helper_terminalTree_1121.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-    [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (D : HierarchySituationTwoTailData G k e0 input T phi ett base C ctx),
-  let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-  let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-  ∀ (hm : (3 : ℕ) ≤ T.length),
-  let r : Fin T.length :=
-    (⟨T.length - (2 : ℕ),
-        Decidable.byContradiction fun (a : ¬T.length - (2 : ℕ) < T.length) ↦ by omega⟩ :
-      Fin T.length);
-  ∀ (_ : Fin ((↑D.lastEdgeIndex : ℕ) + (1 : ℕ))) (_ : TreeSequence G e0)
-    (_ : Fin ((↑r : ℕ) + (1 : ℕ))) (_ X : TreeSequence G e0)
-    (corr : CorrespondingExtendedTashkinovTree G k e0 ett phi X),
-  corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc = Tn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D n Tn hm r ig M if_ S X corr
-  rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-    rungAgreement, seriesPresentation, finalGeneratingColoring,
-    ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-    extensionKindsAgree, replacementProper, replacementOneUncolored,
-    replacementStable⟩
-  cases replacementETT with
-  | mk rounds roundsPositive replacementData above strict below generating =>
-    cases rungAgreement
-    have hseries : replacementData = replacementSeries := eq_of_heq seriesPresentation
-    cases hseries
-    let i : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
-    have hi : i.succ = n := by
-      apply Fin.ext
-      dsimp [i, n]
-      have := ett.roundsPositive
-      omega
-    change replacementSeries.data.tree n.castSucc = ett.series.data.tree n.castSucc
-    rw [← hi]
-    exact ladderTreesAgree i
-
 theorem helper_hgends_1058.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G

@@ -152,69 +152,6 @@ private abbrev helperContinuation777Conditions.{u_1, u_2} : Prop :=
                                        TashkinovHierarchy corrT.replacementETT baseT) (goodT :
                                        GoodHierarchy K), SameGoodHierarchy C.good goodT
 
-private theorem helper_corrData_311.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (sigma : PartialEdgeColoring E k) (_ : TreeSequence G e0),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    TreeSequenceInitialSegment Tn A →
-    (∀ (S : TreeSequence G e0),
-        TreeSequenceInitialSegment S A →
-          TreeMissingColors sigma S = TreeMissingColors phi S) →
-    ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T),
-    corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc =
-        Tn ∧
-      corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
-          ett.series.data.kind n ∧
-        TashkinovStoredColors corr.replacementETT.series.data
-            (Fin.last corr.replacementETT.rounds) =
-          Dn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C sigma X H q A n Tn Dn TnToA treeMissingEq corr
-  rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-    rungAgreement, seriesPresentation, finalGeneratingColoring,
-    ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-    extensionKindsAgree, replacementProper, replacementOneUncolored,
-    replacementStable⟩
-  cases replacementETT with
-  | mk rounds roundsPositive replacementData above strict below generating =>
-    cases rungAgreement
-    have hs : replacementData = replacementSeries := eq_of_heq seriesPresentation
-    cases hs
-    let a : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
-    have ha : a.succ = Fin.last ett.rounds := by
-      apply Fin.ext
-      change ett.rounds - 1 + 1 = ett.rounds
-      have := ett.roundsPositive
-      omega
-    have ht : replacementSeries.data.tree (Fin.last ett.rounds).castSucc = Tn := by
-      change replacementSeries.data.tree (Fin.last ett.rounds).castSucc =
-        ett.series.data.tree (Fin.last ett.rounds).castSucc
-      rw [← ha]
-      exact ladderTreesAgree a
-    have hm : TreeMissingColors (replacementSeries.data.coloring (Fin.last ett.rounds))
-        (replacementSeries.data.tree (Fin.last ett.rounds).castSucc) =
-        TreeMissingColors phi Tn := by
-      rw [← finalGeneratingColoring, ht]
-      exact treeMissingEq Tn TnToA
-    have hmOld : TreeMissingColors (ett.series.data.coloring (Fin.last ett.rounds))
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc) =
-        TreeMissingColors phi Tn := by
-      rw [← ett.generatingColoring]
-    refine ⟨ht, extensionKindsAgree (Fin.last ett.rounds), ?_⟩
-    change TashkinovStoredColors replacementSeries.data (Fin.last ett.rounds) =
-      TashkinovStoredColors ett.series.data (Fin.last ett.rounds)
-    simp only [TashkinovStoredColors, storedColorsAgree, hm, hmOld]
-
 private theorem helper_fullBase_358.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -896,8 +833,8 @@ private theorem helper_continuation_777.{u_1, u_2} :
     rcases hrouteX with ⟨hp, hseq⟩ | ⟨hp, f, seed, hedges, hseed, hseq⟩
     · exact Or.inl ⟨hp, hseq.trans hsuffixSigma⟩
     · exact Or.inr ⟨hp, f, seed, hedges, hseed, hseq.trans hsuffixSigma⟩
-  have corrData := @helper_corrData_311 V E inferInstance inferInstance inferInstance inferInstance
-      G k e0 input T phi ett base C sigma X TnToA treeMissingEq
+  have corrData (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T) :=
+    corr.terminalData
   have combined (hp : ett.series.data.kind n = some TashkinovExtensionKind.PE) :
       CombinedStableColoring Tn base.closure Dn phi sigma := by
     change (if ett.series.data.kind n = some TashkinovExtensionKind.PE then

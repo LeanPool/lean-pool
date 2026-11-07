@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.GoodHierarchyReservedDisjoint
@@ -1559,74 +1561,6 @@ private abbrev helperContinuation694Conditions.{u_1, u_2} : Prop :=
     ∀ theta ∈ HierarchyTerminalStoredColors H, theta ≠ eta → goodW.gamma (Fin.last
         HW.dividerCount) theta = good.gamma (Fin.last H.dividerCount) theta
 
-private theorem helper_corrTerminal_89.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (X : TreeSequence G e0) (corr : CorrespondingExtendedTashkinovTree G k e0 ett
-        phi X), corr.replacementETT.series.data.tree (Fin.last
-        corr.replacementETT.rounds).castSucc = ett.series.data.tree (Fin.last ett.rounds).castSucc
-        ∧ corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
-        ett.series.data.kind (Fin.last ett.rounds) ∧ TashkinovStoredColors
-        corr.replacementETT.series.data (Fin.last corr.replacementETT.rounds) =
-        TashkinovStoredColors ett.series.data (Fin.last ett.rounds) := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett X corr
-  rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-    rungAgreement, seriesPresentation, finalGeneratingColoring,
-    ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-    extensionKindsAgree, replacementProper, replacementOneUncolored,
-    replacementStable⟩
-  cases replacementETT with
-  | mk rounds roundsPositive replacementData above strict below generating =>
-    cases rungAgreement
-    have seriesSame : replacementData = replacementSeries :=
-      eq_of_heq seriesPresentation
-    cases seriesSame
-    let q : Fin ett.rounds :=
-      ⟨ett.rounds - 1,
-        Nat.sub_lt (Nat.zero_lt_of_lt ett.roundsPositive) (by omega)⟩
-    have hq : q.succ = Fin.last ett.rounds := by
-      apply Fin.ext
-      exact Nat.sub_add_cancel ett.roundsPositive
-    refine ⟨?_, ?_, ?_⟩
-    · rw [← hq]
-      exact (ladderTreesAgree q).trans rfl
-    · exact extensionKindsAgree (Fin.last ett.rounds)
-    · unfold TashkinovStoredColors
-      have hnonzero : (Fin.last ett.rounds).val ≠ 0 := by
-        simpa using Nat.ne_of_gt (Nat.zero_lt_of_lt ett.roundsPositive)
-      simp only [ite_eq_right hnonzero]
-      have hfinalColor : replacementSeries.data.coloring (Fin.last ett.rounds) =
-          ett.series.data.coloring (Fin.last ett.rounds) := by
-        calc
-          _ = phi := finalGeneratingColoring.symm
-          _ = _ := ett.generatingColoring
-      have hfinalTree : replacementSeries.data.tree
-            (Fin.last ett.rounds).castSucc =
-          ett.series.data.tree (Fin.last ett.rounds).castSucc :=
-        by rw [← hq]; exact (ladderTreesAgree q).trans rfl
-      ext c
-      simp only [Finset.mem_sdiff, Finset.mem_biUnion]
-      constructor
-      · rintro ⟨⟨i, hi, hc⟩, hn⟩
-        refine ⟨⟨i, hi, ?_⟩, ?_⟩
-        · have hle : i.val ≤ ett.rounds := Nat.le_of_lt_succ i.isLt
-          have hle' : i.val ≤ (Fin.last ett.1).val := by simpa using hle
-          rw [ite_eq_left hle'] at hc ⊢
-          rw [storedColorsAgree i] at hc
-          exact hc
-        · simpa [hfinalColor, hfinalTree] using hn
-      · rintro ⟨⟨i, hi, hc⟩, hn⟩
-        refine ⟨⟨i, hi, ?_⟩, ?_⟩
-        · have hle : i.val ≤ ett.rounds := Nat.le_of_lt_succ i.isLt
-          have hle' : i.val ≤ (Fin.last ett.1).val := by simpa using hle
-          rw [ite_eq_left hle'] at hc ⊢
-          rw [(storedColorsAgree i).symm] at hc
-          exact hc
-        · simpa [hfinalColor, hfinalTree] using hn
-
 private theorem helper_starToU_526.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -1929,7 +1863,7 @@ theorem P2940_T1_OneDividerRefresh
         TashkinovStoredColors corr.replacementETT.series.data
             (Fin.last corr.replacementETT.rounds) =
           TashkinovStoredColors ett.series.data (Fin.last ett.rounds) := by
-    apply helper_corrTerminal_89
+    exact corr.terminalData
   let stageW : Fin (N + 2) → TreeSequence G e0 := fun j =>
     if hj : j.val = d + 2 then W else H.stage ⟨j.val, by omega⟩
   rcases hadjoin with ⟨hsize, hUW, hedge⟩
@@ -1937,12 +1871,7 @@ theorem P2940_T1_OneDividerRefresh
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    refine ⟨hAB.1.trans hBC.1, ?_, ?_⟩
-    · intro i
-      exact (hBC.2.1 (Fin.castLE (Nat.succ_le_succ hAB.1) i)).trans
-        (hAB.2.1 i)
-    · intro i
-      exact (hBC.2.2 (Fin.castLE hAB.1 i)).trans (hAB.2.2 i)
+    exact hAB.trans hBC
   have segmentRefl (A : TreeSequence G e0) : TreeSequenceInitialSegment A A :=
     ⟨le_rfl, (by intro i; rfl), (by intro i; rfl)⟩
   have segmentEqRight {A B C : TreeSequence G e0}

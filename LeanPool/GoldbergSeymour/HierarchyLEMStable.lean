@@ -69,24 +69,6 @@ private theorem helper_hsub_104.{u_1, u_2} :
   refine ⟨j, ?_⟩
   exact hvertex i
 
-private theorem helper_segmentCombine_122.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi), (0 : ℕ) < ett.rounds →
-    ∀ {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B C
-        → TreeSequenceInitialSegment A C := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett hpositive A B C hAB hBC
-  rcases hAB with ⟨hab, hvab, heab⟩
-  rcases hBC with ⟨hbc, hvbc, hebc⟩
-  refine ⟨le_trans hab hbc, ?_, ?_⟩
-  · intro i
-    simpa using (hvbc (Fin.castLE (Nat.succ_le_succ hab) i)).trans (hvab i)
-  · intro i
-    simpa using (hebc (Fin.castLE hab i)).trans (heab i)
-
 private theorem helper_commonSegment_134.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -957,9 +939,6 @@ theorem HierarchyLEMStable {V E : Type*}
     intro f hf
     rcases hf with ⟨v, hv, hi⟩
     exact ⟨v, hsub hv, hi⟩
-  have segmentCombine :=
-    @helper_segmentCombine_122 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@phi) (@ett) (@hpositive)
   have commonSegment :=
     @helper_commonSegment_134 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
         (@input) (@T) (@phi) (@ett) (@hpositive)

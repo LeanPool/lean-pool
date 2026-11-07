@@ -1583,23 +1583,7 @@ private theorem helper_continuation_2632.{u_1, u_2} :
       (c : CorrespondingExtendedTashkinovTree G k e0 ett rho T) :
       c.replacementETT.series.data.tree
         (Fin.last c.replacementETT.rounds).castSucc = Tn := by
-    rcases c with ⟨replacementInput, replacementSeries, replacementETT,
-      rungAgreement, seriesPresentation, finalGeneratingColoring,
-      ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-      extensionKindsAgree, replacementProper, replacementOneUncolored,
-      replacementStable⟩
-    cases replacementETT with
-    | mk rounds roundsPositive series above strict below generating =>
-      cases rungAgreement
-      have hseries : series = replacementSeries := eq_of_heq seriesPresentation
-      cases hseries
-      let i : Fin ett.rounds :=
-        ⟨ett.rounds - 1, by have hp := ett.roundsPositive; omega⟩
-      have hi : i.succ = Fin.last ett.rounds := by
-        apply Fin.ext
-        change ett.rounds - 1 + 1 = ett.rounds
-        exact Nat.sub_add_cancel ett.roundsPositive
-      simpa [Tn, hi] using ladderTreesAgree i
+    exact c.terminalData.1
   have hterminalTree := terminalTreeOf P.coloring P.corresponding
   have hcoreEq : base.core = P.replacementBase.core := P.sameGood.1.1
   have hcount : H.dividerCount = P.counterexample.hierarchy.dividerCount :=

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
 
 public import LeanPool.GoldbergSeymour.OrderedExitCounterexample
@@ -110,31 +112,9 @@ theorem RutgersCounterexampleMinimumExists
             replacement.series.data.connectingEdges n = {f} ∧
               TreeSequenceAdjoinEdge Tn f seed ∧
               TashkinovClosure sigma seed F) := by
-    rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-      rungAgreement, seriesPresentation, finalGeneratingColoring,
-      ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-      extensionKindsAgree, replacementProper, replacementOneUncolored,
-      replacementStable⟩
-    cases replacementETT with
-    | mk rounds roundsPositive replacementData above strict below generating =>
-      cases rungAgreement
-      have seriesSame : replacementData = replacementSeries := eq_of_heq seriesPresentation
-      cases seriesSame
-      let q : Fin original.rounds := ⟨original.rounds - 1, by
-        have := original.roundsPositive
-        omega⟩
-      have hq : q.succ = Fin.last original.rounds := by
-        apply Fin.ext
-        dsimp [q]
-        have := original.roundsPositive
-        omega
-      have ladderEq : replacementSeries.data.tree
-          (Fin.last original.rounds).castSucc =
-          original.series.data.tree (Fin.last original.rounds).castSucc := by
-        rw [← hq]
-        exact ladderTreesAgree q
-      dsimp
-      simpa only [ladderEq, extensionKindsAgree, connectingEdgesAgree] using hroute
+    dsimp only
+    simpa only [corr.terminalData.1, corr.terminalData.2.1,
+      corr.terminalConnectingEdges] using hroute
   let presentation : RutgersClosedPresentation G k e0 original :=
     ⟨sigma, F, corr, hmaximum, replacementRoute⟩
   have hsigma : presentation.sigma = sigma := rfl

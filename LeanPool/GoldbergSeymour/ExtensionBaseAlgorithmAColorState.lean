@@ -516,28 +516,6 @@ private theorem helper_slot_ne_q_673.{u_1, u_2} :
   rw [h] at hcv
   exact hcv.symm.trans hqVertex
 
-private theorem helper_trace_injective_690.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-      {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k}
-      {T : TreeSequence G e0} {generating : PartialEdgeColoring E k}
-      (ett : ExtendedTashkinovTree G k e0 input T generating) (terminalSupport : V)
-      (hterminalSupport : terminalSupport ∈ TreeSequenceVertexSet T)
-      (sigmaN : PartialEdgeColoring E k)
-      (trace : ExtensionBaseRestorationTrace ett terminalSupport hterminalSupport sigmaN),
-    Function.Injective trace.slot := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett terminalSupport hterminalSupport sigmaN trace a b h
-  apply Fin.ext
-  by_contra hab
-  rcases lt_or_gt_of_ne hab with hab | hab
-  · have hd := trace.strictlyDescending a b hab
-    rw [h] at hd
-    exact (Nat.lt_irrefl _ hd)
-  · have hd := trace.strictlyDescending b a hab
-    rw [h] at hd
-    exact (Nat.lt_irrefl _ hd)
-
 private theorem helper_class_subset_701.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
@@ -792,10 +770,6 @@ theorem ExtensionBaseAlgorithmAColorState {V E : Type*}
     exact @helper_stored_pair_128 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
         (@e0) (@input) (@T) (@generating) (@ett) (@terminalSupport) (by assumption) (@sigmaN)
         (@trace) (by assumption) (@a)
-  have trace_injective :=
-    @helper_trace_injective_690 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@terminalSupport) (@hterminalSupport) (@sigmaN)
-        (@trace)
   have class_subset := @helper_class_subset_701 (@V) (@E) inferInstance inferInstance inferInstance
       (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@terminalSupport) (@hterminalSupport)
       (@sigmaN) (@trace) (@support_ne_terminal)

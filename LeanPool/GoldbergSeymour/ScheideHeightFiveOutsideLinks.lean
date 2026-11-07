@@ -1039,75 +1039,6 @@ private theorem helper_hv1notC0_629.{u_1, u_2} :
     simpa using hvp
   simp [K0, hv10', hv11', hv12', hv13', hv14'] at hvK
 
-private theorem helper_hv2notC0_636.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5
-        : ℕ)) (v2 : V),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let r1 : Fin T.length := (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let r2 : Fin T.length := (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let r3 : Fin T.length := (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let a1 : E := T.edge r1;
-    let a2 : E := T.edge r2;
-    let a3 : E := T.edge r3;
-    let q : E := N.closingEdge; v2 ≠ y0 → v2 ≠ y1 → v2 ≠ y2 → v2 ≠ y3 → v2 ≠ y4 →
-    let C0 : Set (V ⊕ E) := TwoColorComponent G phi N.alpha N.beta (Sum.inl y0);
-    ∀ (p0 : (TwoColorIncidenceGraph G phi N.alpha N.beta).Walk (Sum.inl (T.vertex (⟨(0 : ℕ),
-        Nat.zero_lt_succ T.length⟩ : Fin (T.length + (1 : ℕ))))) (Sum.inl (T.vertex (⟨(1 : ℕ),
-        Nat.succ_lt_succ T.positive⟩ : Fin (T.length + (1 : ℕ)))))), (
-    ∀ {z : V ⊕ E}, z ∈ C0 → z ∈ p0.support) →
-    let K0 : Finset (V ⊕ E) := (insert (Sum.inl y0) (insert (Sum.inl y1) (insert (Sum.inl y2)
-        (insert (Sum.inl y3) (insert (Sum.inl y4) (insert (Sum.inr q) (insert (Sum.inr a1) (insert
-        (Sum.inr a2) ({Sum.inr a3} : Finset (V ⊕ E)) : Finset (V ⊕ E)) : Finset (V ⊕ E)) : Finset
-        (V ⊕ E)) : Finset (V ⊕ E)) : Finset (V ⊕ E)) : Finset (V ⊕ E)) : Finset (V ⊕ E)) : Finset
-        (V ⊕ E)); K0 = p0.support.toFinset → Sum.inl v2 ∉ C0 := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T N hNheight v2 y0 y1 y2 y3 y4 r1 r2 r3 a1 a2 a3 q hv20' hv21'
-      hv22' hv23' hv24' C0 p0 support_of_C0 K0 hK0eq hv
-  have hvp := support_of_C0 hv
-  have hvK : Sum.inl v2 ∈ K0 := by
-    rw [hK0eq]
-    simpa using hvp
-  simp [K0, hv20', hv21', hv22', hv23', hv24'] at hvK
-
 private theorem helper_hgamma_alpha_643.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -1139,32 +1070,6 @@ private theorem helper_hgamma_alpha_643.{u_1, u_2} :
     simp [H0, TwoColorIncidenceGraph, Incident, hf1ends', hf1color, h,
       Sym2.mem_iff]
   exact hv1notC0 (C0_of_adj hf1C hv1adj)
-
-private theorem helper_hgamma_fixed_663.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)) (gamma
-        : Fin k),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ))); gamma ≠ N.beta → N.alpha ≠ N.beta →
-    let _ : Set (V ⊕ E) := TwoColorComponent G phi N.alpha N.beta (Sum.inl y0); gamma ≠ N.alpha →
-    let phi' : PartialEdgeColoring E k := TwoColorComponentSwap G phi N.alpha N.beta (Sum.inl y0);
-    ∀ (e : E), phi' e = some gamma ↔ phi e = some gamma := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight gamma y0 hgamma_beta hab C0 hgamma_alpha phi' e
-  by_cases heC : Sum.inr e ∈ C0
-  · by_cases hea : phi e = some N.alpha
-    · simp [phi', TwoColorComponentSwap, C0, heC, hea, Ne.symm hgamma_alpha, Ne.symm hgamma_beta]
-    · by_cases heb : phi e = some N.beta
-      · simp [phi', TwoColorComponentSwap, C0, heC, heb,
-          Ne.symm hab, Ne.symm hgamma_alpha,
-          Ne.symm hgamma_beta]
-      · simp [phi', TwoColorComponentSwap, C0, heC, hea, heb]
-  · simp [phi', TwoColorComponentSwap, C0, heC]
 
 private theorem helper_hgamma_677.{u_1, u_2} :
     open scoped Classical in
@@ -1939,10 +1844,6 @@ private theorem helper_continuation_2127.{u_1, u_2} :
     exact @helper_hv1notC0_629 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
         (@G) (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@v1) (@hv10') (@hv11') (@hv12') (@hv13')
         (@hv14') (@p0) (@support_of_C0) (@hK0eq)
-  have hv2notC0 : Sum.inl v2 ∉ C0 := by
-    exact @helper_hv2notC0_636 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@phi) (@T) (@N) (@hNheight) (@v2) (@hv20') (@hv21') (@hv22') (@hv23')
-        (@hv24') (@p0) (@support_of_C0) (@hK0eq)
   have hgamma_alpha : gamma ≠ N.alpha := by
     exact @helper_hgamma_alpha_643 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
         (@e0) (@phi) (@T) (@N) (@hNheight) (@gamma) (@f1) (@v1) (@hf1color) (@hf1ends')
@@ -1958,8 +1859,8 @@ private theorem helper_continuation_2127.{u_1, u_2} :
     refine ⟨⟨N.global.1.1, N.global.1.2.1, N.global.1.2.2.1,
       hproper', hone'⟩, hTash', N.global.2.2⟩
   have hgamma_fixed (e : E) : phi' e = some gamma ↔ phi e = some gamma := by
-    exact @helper_hgamma_fixed_663 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@phi) (@T) (@N) (@hNheight) (@gamma) (@hgamma_beta) (@hab) (@hgamma_alpha) (@e)
+    exact TwoColorComponentSwap.otherColor_iff (G := G) (phi := phi)
+      (z := Sum.inl y0) hgamma_alpha hgamma_beta e
   have hf1color' : phi' f1 = some gamma := (hgamma_fixed f1).2 hf1color
   have hf2color' : phi' f2 = some gamma := (hgamma_fixed f2).2 hf2color
   have hqcolor' : phi' q = some N.alpha := by

@@ -29,10 +29,7 @@ theorem TwoColorComponentSwapPreservesOther {V E : Type*} [Fintype E]
   classical
   simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and] at hc ⊢
   rcases hc with ⟨edge, incident, colored⟩
-  refine ⟨edge, incident, ?_⟩
-  by_cases member : Sum.inr edge ∈ TwoColorComponent G phi alpha beta z
-  · simp [TwoColorComponentSwap, member, colored, hca, hcb]
-  · simpa [TwoColorComponentSwap, member] using colored
+  exact ⟨edge, incident, (TwoColorComponentSwap.otherColor_iff hca hcb edge).mpr colored⟩
 
 /-- If both swap colors occur at a vertex, every present color survives the component swap. -/
 theorem TwoColorComponentSwapPreservesPresent {V E : Type*} [Fintype E]
@@ -121,7 +118,6 @@ theorem TwoColorComponentSwapPreservesPresent {V E : Type*} [Fintype E]
         exact ⟨e, hev, by
           simpa [TwoColorComponentSwap, heK] using heColor⟩
     · exact TwoColorComponentSwapPreservesOther hc hca hcb
-
 
 /-- Swapping at a root exchanges a present color with a missing color there. -/
 theorem TwoColorComponentSwapExchangesRootColors.{u_1, u_2} :

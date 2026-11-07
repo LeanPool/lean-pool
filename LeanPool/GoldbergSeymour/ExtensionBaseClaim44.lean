@@ -803,29 +803,6 @@ private theorem helper_hslotInjective_840.{u_1, u_2} :
     rw [hac] at hstrict
     exact (Nat.lt_irrefl _ hstrict)
 
-private theorem helper_hpositionSurjectiveBelow_859.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-        {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k}
-        {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett :
-        ExtendedTashkinovTree G k e0 input T generating) (terminalSupport : V) (rho1 :
-        PartialEdgeColoring E k) (u : V) (p : ℕ) (indices : Fin (p + (1 : ℕ)) → Fin ett.rounds) (b
-        : Fin (p + (1 : ℕ))) (trace : ExtensionBaseAlgorithmBTrace ett terminalSupport rho1 u p
-        indices b), Function.Injective indices →
-    ∀ (q : Fin (p + (1 : ℕ))), (↑q : ℕ) < (↑b : ℕ) →
-    ∃ (a : Fin trace.steps), trace.position a = q := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett terminalSupport rho1 u p indices b trace
-      hindicesInjective q hqb
-  have hmem : indices q ∈ Finset.univ.image trace.slot := by
-    rw [trace.enumerates]
-    unfold ExtensionBaseCaseOneIndices
-    exact Finset.mem_image.mpr ⟨q, by simpa using hqb, rfl⟩
-  obtain ⟨a, -, ha⟩ := Finset.mem_image.mp hmem
-  refine ⟨a, hindicesInjective ?_⟩
-  rw [← trace.slotIdentity a]
-  exact ha
-
 private theorem helper_hgammaDeltaNe_915 :
     open scoped Classical in
     ∀ {k : ℕ} (p : ℕ) (gamma delta : Fin (p + (1 : ℕ)) → Fin k),
@@ -1519,10 +1496,6 @@ theorem ExtensionBaseClaim44 {V E : Type*}
     intro a c hac
     apply hslotInjective
     rw [trace.slotIdentity, trace.slotIdentity, hac]
-  have hpositionSurjectiveBelow :=
-    @helper_hpositionSurjectiveBelow_859 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@terminalSupport) (@rho1) (@u) (@p)
-        (@indices) (@b) (@trace) (@hindicesInjective)
   let positionBelow : Fin b.val → Fin b.val := fun a =>
     ⟨(trace.position (Fin.cast hsteps.symm a)).val,
       trace.positionBefore (Fin.cast hsteps.symm a)⟩

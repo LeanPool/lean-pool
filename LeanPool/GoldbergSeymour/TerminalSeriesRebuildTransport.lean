@@ -5,13 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
-
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStability
 
-
 public import LeanPool.GoldbergSeymour.SharedFacts.TerminalRebuildTransport
-
-
 
 public import LeanPool.GoldbergSeymour.TerminalSeriesRebuildPreparation
 public import LeanPool.GoldbergSeymour.TashkinovSeriesAppend
@@ -725,7 +721,6 @@ theorem helper_hseriesTreeAgree_4578.{u_1, u_2} :
       omega
     rw [hindex]
     exact hfinalPenultimateTree
-
 
 /-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_hi_4786.{u_1, u_2} :
@@ -2028,7 +2023,6 @@ theorem helper_hseriesTreeAgree_5768.{u_1, u_2} :
       (@sigma) (@Tstar) (@closureTree) (@hqSucc) (@gamma) (@choice) (@sigmaPrev) (@u)
       (@p) (@hroundOne) (@prefixInput) (@zeroPrefix) (@happendTree) (@extendedSeries)
       (@hextendedData) (@hroundsEq) (@castSeriesTree)
-
 
 /-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_branch_5820.{u_1, u_2} :
@@ -3967,40 +3961,6 @@ private theorem helper_hvertexIdentity_6865.{u_1, u_2} :
     exact newChoice.otherOutside
       (hcross.1 ▸ fullChoiceOnNew.vertexDefective.1)
 
-private theorem helper_hotherIdentity_6872.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (sigmaPrev : PartialEdgeColoring E k) (hroundLarge : (1 : ℕ) <
-        ett.rounds) (originalPrefix : ExtendedTashkinovTree G k e0 input (ett.series.data.tree
-        (Fin.last ett.rounds).castSucc) (ett.series.data.coloring (⟨ett.rounds - (1 : ℕ),
-    by
-                omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))) (corr : CorrespondingExtendedTashkinovTree G k e0
-        originalPrefix sigmaPrev (ett.series.data.tree (Fin.last ett.rounds).castSucc)) (fulli :
-        Fin ett.rounds) (fullChoice : MaximumDefectiveChoice G e0 (ett.series.data.tree
-        fulli.succ.castSucc) (TashkinovStoredColors ett.series.data fulli.castSucc)
-        (ett.series.data.coloring fulli.castSucc)) (newi : Fin originalPrefix.rounds) (newChoice :
-        MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree newi.succ.castSucc)
-        (TashkinovStoredColors corr.replacementSeries.data newi.castSucc)
-        (corr.replacementSeries.data.coloring newi.castSucc)) (htree :
-        corr.replacementSeries.data.tree newi.succ.castSucc = ett.series.data.tree
-        fulli.succ.castSucc),
-    let fullChoiceOnNew : MaximumDefectiveChoice G e0 (corr.replacementSeries.data.tree
-        newi.succ.castSucc) (TashkinovStoredColors ett.series.data fulli.castSucc)
-        (ett.series.data.coloring fulli.castSucc) := (Eq.symm htree ▸ fullChoice);
-    ∀ (_ : s(fullChoiceOnNew.vertex, fullChoiceOnNew.otherEndpoint) = s(newChoice.vertex,
-        newChoice.otherEndpoint)), newChoice.otherEndpoint = fullChoiceOnNew.otherEndpoint := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett sigmaPrev hroundLarge originalPrefix corr fulli
-      fullChoice newi newChoice htree fullChoiceOnNew hends
-  rcases Sym2.eq_iff.mp hends with hstraight | hcross
-  · exact hstraight.2.symm
-  · exfalso
-    exact fullChoiceOnNew.otherOutside
-      (hcross.2 ▸ newChoice.vertexDefective.1)
-
 private theorem helper_hmissing_6909.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -4118,9 +4078,6 @@ theorem helper_branch_12991.{u_1, u_2} :
   have hvertexIdentity : newChoice.vertex =
       fullChoiceOnNew.vertex := by
     apply helper_hvertexIdentity_6865 <;> assumption
-  have hotherIdentity : newChoice.otherEndpoint =
-      fullChoiceOnNew.otherEndpoint := by
-    apply helper_hotherIdentity_6872 <;> assumption
   obtain ⟨hfullDeltaMissing, hfullGammaNotMissing, -⟩ :=
     pePostStatus
       (ett.series.data.tree fulli.succ.castSucc)

@@ -10,9 +10,7 @@ public import LeanPool.GoldbergSeymour.NonparallelPenultimateInterchangeability
 public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
 public import LeanPool.GoldbergSeymour.StableHierarchyReplacement
 
-
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
-
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
 public import LeanPool.GoldbergSeymour.HierarchyStageInterchangeability
@@ -21,7 +19,6 @@ public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation2
 public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 /-!
@@ -1334,10 +1331,8 @@ private theorem helper_continuation_5074.{u_1, u_2} :
     exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj).trans hv
   have unaffected (f : E) (c : Fin k) (hca : c ≠ alpha) (hcb : c ≠ beta) :
       sigma f = some c ↔ phi f = some c := by
-    exact @SharedFacts.MixedChangeTransport.otherColorsUnaffected (@V) (@E) inferInstance
-        inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@hne) (@ha) (@hb) (@f) (@c) (@hca) (@hcb)
+    exact TwoColorComponentSwap.otherColor_iff (G := G) (phi := phi)
+      (z := Sum.inl vb) hca hcb f
   have fixedValue (f : E) (ha : phi f ≠ some alpha) (hb : phi f ≠ some beta) :
       sigma f = phi f := by
     clear * - ha hb sigma
@@ -1345,10 +1340,7 @@ private theorem helper_continuation_5074.{u_1, u_2} :
   have sigmaProper : IsProperEdgeColoring G sigma :=
     TwoColorComponentSwapProper G phi alpha beta hne hproper _
   have sigmaOne : IsOneEdgeUncolored sigma e0 := by
-    exact @SharedFacts.MixedChangeTransport.swappedColoringOneUncolored (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hone) (@alpha) (@beta) (@hne)
-        (@ha) (@hb) (@unaffected)
+    exact IsOneEdgeUncolored.componentSwap hone
   have vertexB (i : Fin (T.length + 1)) (hi : i.val ≤ B.length) :
       T.vertex i ∈ TreeSequenceVertexSet B := by
     clear * - i hi B

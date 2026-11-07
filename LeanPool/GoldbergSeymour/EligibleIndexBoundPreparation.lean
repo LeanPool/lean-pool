@@ -5,9 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.NonparallelHierarchyCorrespondence
 
 public import LeanPool.GoldbergSeymour.SharedFacts.SubcaseThreeOnePreparation1
-
 
 public import LeanPool.GoldbergSeymour.TerminalRoute
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
@@ -1492,8 +1492,6 @@ noncomputable abbrev helperKF3658.{u_1, u_2} :
       corr.replacementETT
       bs };
 
-
-
 /-- Dependent contract shared by the eligible-index bound proof modules.
 
 Keeping this interface separate avoids repeating its dependent hypotheses and data.
@@ -2027,7 +2025,6 @@ theorem helper_coreA_200.{u_1, u_2} :
     exact trans H.coreInsideFirst (chain H.dividerCount (by omega) ⟨1, by omega⟩
       (by change 1 ≤ H.dividerCount; omega))
 
-
 theorem helper_hdata_519.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -2171,59 +2168,8 @@ theorem helper_hdata_519.{u_1, u_2} :
       old.positive P.minimumContext.lowerRung sigma hsproper hsone stable
     obtain ⟨corr⟩ := hmodB.2.2 B aboveB strictB hrouteB
     have hmaximum := MaximumPropertyTransport G k e0 EB sigma hmodB B corr hmaxB
-    have terminalTree : corr.replacementETT.series.data.tree
-        (Fin.last corr.replacementETT.rounds).castSucc = Tn := by
-      rcases corr with ⟨ri, rs, re, hr, hp, hc, hl, hstored, he, hk, hpr, ho, hst⟩
-      rcases re with ⟨rounds, positive, data, above, strict, below, generating⟩
-      cases hr
-      have hs : data = rs := eq_of_heq hp
-      cases hs
-      let j : Fin EB.rounds := ⟨EB.rounds - 1, by have := EB.roundsPositive; omega⟩
-      have hj : j.succ = Fin.last EB.rounds := Fin.ext (by
-        dsimp [j]; have := EB.roundsPositive; omega)
-      change rs.data.tree (Fin.last EB.rounds).castSucc =
-        EB.series.data.tree (Fin.last EB.rounds).castSucc
-      rw [← hj]
-      exact hl j
-    have terminalKind : corr.replacementETT.series.data.kind
-        (Fin.last corr.replacementETT.rounds) = EB.series.data.kind (Fin.last EB.rounds) := by
-      rcases corr with ⟨ri, rs, re, hr, hp, hc, hl, hstored, he, hk, hpr, ho, hst⟩
-      rcases re with ⟨rounds, positive, data, above, strict, below, generating⟩
-      cases hr
-      have hs : data = rs := eq_of_heq hp
-      cases hs
-      exact hk _
-    let bs : HierarchyBase corr.replacementETT sigma := {
-      core := baseB.core
-      closure := baseB.closure
-      supportPosition := Fin.cast (congrArg (fun U : TreeSequence G e0 => U.length + 1)
-        terminalTree.symm) baseB.supportPosition
-      supportPositive := baseB.supportPositive
-      terminalMissingColors := rfl
-      parallel := by
-        dsimp only
-        intro hp
-        exact (hpe (terminalKind.symm.trans hp)).elim
-      nonparallel := by
-        dsimp only
-        intro _
-        exact (baseB.nonparallel hpe).trans terminalTree.symm }
-    let K : TashkinovHierarchy corr.replacementETT bs := {
-      dividerCount := HB.dividerCount
-      stage := HB.stage
-      baseStage := HB.baseStage.trans terminalTree.symm
-      terminalStage := HB.terminalStage
-      nested := HB.nested
-      strict := HB.strict
-      dividerPosition := HB.dividerPosition
-      dividerPositive := HB.dividerPositive
-      dividerIncreasing := HB.dividerIncreasing
-      dividerStage := HB.dividerStage
-      coreInsideFirst := HB.coreInsideFirst }
-    refine ⟨corr, hmaximum, bs, K, rfl, rfl, heq_of_eq rfl, heq_of_eq rfl, ?_, ?_⟩
-    · exact ⟨fun h => (hpe h).elim, fun h => (hpe (terminalKind.symm.trans h)).elim⟩
-    · intro _; rfl
-
+    obtain ⟨bs, K, same⟩ := HB.nonparallelCorrespondence corr hpe
+    exact ⟨corr, hmaximum, bs, K, same⟩
 
 theorem helper_hpS_844.{u_1, u_2} :
     open scoped Classical in
@@ -2556,183 +2502,6 @@ theorem helper_hrouteB_979.{u_1, u_2} :
     exact Or.inr ⟨hkind, edge, seed, hedges, hseed,
       TashkinovAugmentationSequenceColoringTransport mu sigma seed X B hpre hXB
         (by omega) (fun t _ => fixedB t) missingFixed⟩
-
-theorem helper_terminalTree_1110.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-    [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
-    (alpha : Fin k),
-  let old : HierarchyCounterexample P.replacementBase := P.counterexample;
-  let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-    old.hierarchy;
-  let n : Fin (P.corresponding.replacementETT.rounds + (1 : ℕ)) :=
-    Fin.last P.corresponding.replacementETT.rounds;
-  let Tn : TreeSequence G e0 :=
-    P.corresponding.replacementETT.series.data.tree n.castSucc;
-  let mu : PartialEdgeColoring E k := P.coloring;
-  HierarchyPathNumber H = HierarchyPathNumber C.hierarchy →
-  ∀ (hlenT : (3 : ℕ) ≤ T.length),
-  let B : TreeSequence G e0 :=
-    TreeSequencePrefix T (T.length - (1 : ℕ))
-      (Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ T.length - (1 : ℕ)) ↦ by omega)
-      (Decidable.byContradiction fun (a : ¬T.length - (1 : ℕ) ≤ T.length) ↦ by omega);
-  let r : Fin T.length :=
-    (⟨T.length - (1 : ℕ),
-        Decidable.byContradiction fun (a : ¬T.length - (1 : ℕ) < T.length) ↦ by omega⟩ :
-      Fin T.length);
-  let f : E := T.edge r;
-  ∀ (S : TreeSequence G e0),
-  S.length ≤ B.length →
-  let sigma : PartialEdgeColoring E k := fun (e : E) ↦ if e = f then some alpha else mu e;
-  ∀ (positiveB : (1 : ℕ) ≤ P.corresponding.replacementETT.rounds)
-    (aboveB :
-      TreeSequenceInitialSegment
-        (P.corresponding.replacementETT.series.data.tree
-          (⟨P.corresponding.replacementETT.rounds, by omega⟩ :
-            Fin (P.corresponding.replacementETT.rounds + (2 : ℕ))))
-        B)
-    (strictB :
-      (P.corresponding.replacementETT.series.data.tree
-            (⟨P.corresponding.replacementETT.rounds, by omega⟩ :
-              Fin (P.corresponding.replacementETT.rounds + (2 : ℕ)))).length <
-        B.length)
-    (belowB :
-      TreeSequenceInitialSegment B
-        (P.corresponding.replacementETT.series.data.tree
-          (Fin.last (P.corresponding.replacementETT.rounds + (1 : ℕ)))))
-    (generatingB :
-      mu =
-        P.corresponding.replacementETT.series.data.coloring
-          (Fin.last P.corresponding.replacementETT.rounds))
-    (baseB :
-      HierarchyBase
-        { rounds := P.corresponding.replacementETT.rounds, roundsPositive := positiveB,
-          series := P.corresponding.replacementETT.series, abovePenultimate := aboveB,
-          strictAbovePenultimate := strictB, belowFinal := belowB,
-          generatingColoring := generatingB :
-          ExtendedTashkinovTree G k e0 P.corresponding.replacementInput B mu }
-        mu)
-    (HB :
-      TashkinovHierarchy
-        { rounds := P.corresponding.replacementETT.rounds, roundsPositive := positiveB,
-          series := P.corresponding.replacementETT.series, abovePenultimate := aboveB,
-          strictAbovePenultimate := strictB, belowFinal := belowB,
-          generatingColoring := generatingB :
-          ExtendedTashkinovTree G k e0 P.corresponding.replacementInput B mu }
-        baseB),
-  let EB : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput B mu :=
-    { rounds := P.corresponding.replacementETT.rounds, roundsPositive := positiveB,
-      series := P.corresponding.replacementETT.series, abovePenultimate := aboveB,
-      strictAbovePenultimate := strictB, belowFinal := belowB,
-      generatingColoring := generatingB :
-      ExtendedTashkinovTree G k e0 P.corresponding.replacementInput B mu };
-  ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 EB sigma B),
-  MaximumProperty corr.replacementETT →
-  ∀ (bs : HierarchyBase corr.replacementETT sigma),
-  baseB.core = bs.core →
-  ({ rounds := P.corresponding.replacementETT.rounds, roundsPositive := positiveB,
-              series := P.corresponding.replacementETT.series, abovePenultimate := aboveB,
-              strictAbovePenultimate := strictB, belowFinal := belowB,
-              generatingColoring := generatingB :
-              ExtendedTashkinovTree G k e0 P.corresponding.replacementInput B
-                mu }.series.data.kind
-          (Fin.last
-            { rounds := P.corresponding.replacementETT.rounds,
-                roundsPositive := positiveB,
-                series := P.corresponding.replacementETT.series,
-                abovePenultimate := aboveB, strictAbovePenultimate := strictB,
-                belowFinal := belowB, generatingColoring := generatingB :
-                ExtendedTashkinovTree G k e0 P.corresponding.replacementInput B
-                  mu }.rounds) =
-        some TashkinovExtensionKind.PE ↔
-      corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
-        some TashkinovExtensionKind.PE) →
-  ({ rounds := P.corresponding.replacementETT.rounds, roundsPositive := positiveB,
-              series := P.corresponding.replacementETT.series, abovePenultimate := aboveB,
-              strictAbovePenultimate := strictB, belowFinal := belowB,
-              generatingColoring := generatingB :
-              ExtendedTashkinovTree G k e0 P.corresponding.replacementInput B
-                mu }.series.data.kind
-          (Fin.last
-            { rounds := P.corresponding.replacementETT.rounds,
-                roundsPositive := positiveB,
-                series := P.corresponding.replacementETT.series,
-                abovePenultimate := aboveB, strictAbovePenultimate := strictB,
-                belowFinal := belowB, generatingColoring := generatingB :
-                ExtendedTashkinovTree G k e0 P.corresponding.replacementInput B
-                  mu }.rounds) =
-        some TashkinovExtensionKind.PE →
-      baseB.closure = bs.closure) →
-  ∀
-    (baseStageK :
-      HB.stage (0 : Fin (HB.dividerCount + (2 : ℕ))) =
-        corr.replacementETT.series.data.tree
-          (Fin.last corr.replacementETT.rounds).castSucc)
-    (terminalStageK : HB.stage (Fin.last (HB.dividerCount + (1 : ℕ))) = B)
-    (nestedK :
-      ∀ (j : Fin (HB.dividerCount + (1 : ℕ))),
-        TreeSequenceInitialSegment (HB.stage j.castSucc) (HB.stage j.succ))
-    (strictK :
-      ∀ (j : Fin (HB.dividerCount + (1 : ℕ))),
-        (HB.stage j.castSucc).length < (HB.stage j.succ).length)
-    (coreInsideK :
-      TreeSequenceInitialSegment bs.core
-        (HB.stage (⟨(1 : ℕ), by omega⟩ : Fin (HB.dividerCount + (2 : ℕ)))))
-    (positiveK : ∀ (i : Fin HB.dividerCount), (1 : ℕ) ≤ (↑(HB.dividerPosition i) : ℕ))
-    (increasingK :
-      ∀ (i j : Fin HB.dividerCount),
-        (↑i : ℕ) < (↑j : ℕ) →
-          (↑(HB.dividerPosition i) : ℕ) < (↑(HB.dividerPosition j) : ℕ))
-    (dividerStageK :
-      ∀ (i : Fin HB.dividerCount),
-        HB.stage (⟨(↑i : ℕ) + (1 : ℕ), by omega⟩ : Fin (HB.dividerCount + (2 : ℕ))) =
-          TreeSequencePrefix B (↑(HB.dividerPosition i) : ℕ) (positiveK i)
-            (Nat.le_of_lt_succ (HB.dividerPosition i).isLt)),
-  let KF : TashkinovHierarchy corr.replacementETT bs :=
-    { dividerCount := HB.dividerCount, stage := HB.stage, baseStage := baseStageK,
-      terminalStage := terminalStageK, nested := nestedK, strict := strictK,
-      dividerPosition := HB.dividerPosition, dividerPositive := positiveK,
-      dividerIncreasing := increasingK, dividerStage := dividerStageK,
-      coreInsideFirst := coreInsideK : TashkinovHierarchy corr.replacementETT bs };
-  HB.stage ≍
-      { dividerCount := HB.dividerCount, stage := HB.stage, baseStage := baseStageK,
-          terminalStage := terminalStageK, nested := nestedK, strict := strictK,
-          dividerPosition := HB.dividerPosition, dividerPositive := positiveK,
-          dividerIncreasing := increasingK, dividerStage := dividerStageK,
-          coreInsideFirst := coreInsideK :
-          TashkinovHierarchy corr.replacementETT bs }.stage →
-  HB.dividerPosition ≍
-      { dividerCount := HB.dividerCount, stage := HB.stage, baseStage := baseStageK,
-          terminalStage := terminalStageK, nested := nestedK, strict := strictK,
-          dividerPosition := HB.dividerPosition, dividerPositive := positiveK,
-          dividerIncreasing := increasingK, dividerStage := dividerStageK,
-          coreInsideFirst := coreInsideK :
-          TashkinovHierarchy corr.replacementETT bs }.dividerPosition →
-  (∀ (j : Fin (HB.dividerCount + (1 : ℕ))),
-      HierarchyStarredStage KF j = HierarchyStarredStage HB j) →
-  corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc = Tn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha old H n Tn mu hp hlenT B r f S
-      hSBlen sigma positiveB aboveB strictB belowB generatingB baseB HB EB corr hmaximum bs hcore
-      hpe hclosure baseStageK terminalStageK nestedK strictK coreInsideK positiveK increasingK
-      dividerStageK KF hstage hposition starredEq
-  rcases corr with ⟨ri, rs, re, hr, hp, hc, hl, hstored, he, hk, hpr, ho, hst⟩
-  rcases re with ⟨rounds, positive, data, above, strict, below, generating⟩
-  cases hr
-  have hs : data = rs := eq_of_heq hp
-  cases hs
-  let j : Fin EB.rounds := ⟨EB.rounds - 1, by have := EB.roundsPositive; omega⟩
-  have hj : j.succ = Fin.last EB.rounds := Fin.ext (by
-    dsimp [j]; have := EB.roundsPositive; omega)
-  change rs.data.tree (Fin.last EB.rounds).castSucc =
-    EB.series.data.tree (Fin.last EB.rounds).castSucc
-  rw [← hj]
-  exact hl j
 
 theorem helper_firstEq_1174.{u_1, u_2} :
     open scoped Classical in
@@ -4411,7 +4180,6 @@ theorem helper_lastOrdinary_2387.{u_1, u_2} :
       (Fin.last HB.dividerCount) = Fin.last H.dividerCount :=
     Fin.ext hcountB
   simpa only [hi] using hh
-
 
 theorem helper_parallelBase_4547.{u_1, u_2} :
     helperParallelBase4547Conditions.{u_1, u_2} := by

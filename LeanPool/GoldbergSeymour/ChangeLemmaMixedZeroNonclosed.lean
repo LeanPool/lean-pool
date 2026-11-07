@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ZeroNonclosedTransport
@@ -1392,88 +1394,6 @@ private theorem helper_hBdata_792.{u_1, u_2} :
     cases he
     exact ⟨rfl, rfl, terminalPE⟩
 
-private theorem helper_hnewdata_812.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (_ : HierarchyCounterexample base) (alpha beta
-        : Fin k),
-    let A : TreeSequence G e0 := base.core;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    let vb : V := T.vertex ib;
-    let root : V ⊕ E := Sum.inl vb;
-    let sigma : PartialEdgeColoring E k := TwoColorComponentSwap G phi alpha beta root;
-    ∀ (hAib : A.length < (↑ib : ℕ)),
-    let B : TreeSequence G e0 := TreeSequencePrefix T (↑ib : ℕ) (
-    have this : (1 : ℕ) ≤ A.length := A.positive; Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤
-        (↑ib : ℕ)) ↦
-    by omega
-    ) (
-    by omega
-    );
-    ∀ (ettB : ExtendedTashkinovTree G k e0 input B phi), ettB.series.data.tree (Fin.last
-        ettB.rounds).castSucc = Tn ∧ TashkinovStoredColors ettB.series.data (Fin.last ettB.rounds)
-        = Dn ∧ ettB.series.data.kind (Fin.last ettB.rounds) = some TashkinovExtensionKind.PE →
-    ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 ettB sigma B),
-        corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc = Tn ∧
-        TashkinovStoredColors corr.replacementETT.series.data (Fin.last
-        corr.replacementETT.rounds) = Dn ∧ corr.replacementETT.series.data.kind (Fin.last
-        corr.replacementETT.rounds) = some TashkinovExtensionKind.PE := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta A n Tn Dn ib vb root sigma hAib B
-      ettB hBdata corr
-  clear * - hBdata
-  rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-    rungAgreement, seriesPresentation, finalGeneratingColoring,
-    ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-    extensionKindsAgree, replacementProper, replacementOneUncolored, replacementStable⟩
-  cases replacementETT with
-  | mk r rp series above strict below generating =>
-    cases rungAgreement
-    have he : series = replacementSeries := eq_of_heq seriesPresentation
-    cases he
-    let p : Fin ettB.rounds := ⟨ettB.rounds - 1, by have := ettB.roundsPositive; omega⟩
-    have hp : p.succ = Fin.last ettB.rounds := by
-      apply Fin.ext
-      change p.val + 1 = ettB.rounds
-      dsimp [p]
-      have := ettB.roundsPositive
-      omega
-    have htree : replacementSeries.data.tree (Fin.last ettB.rounds).castSucc =
-        ettB.series.data.tree (Fin.last ettB.rounds).castSucc := by
-      rw [← hp]
-      exact ladderTreesAgree p
-    have hstable : StableColoring
-        (ettB.series.data.tree (Fin.last ettB.rounds).castSucc)
-        (TashkinovStoredColors ettB.series.data (Fin.last ettB.rounds))
-        (ettB.series.data.coloring (Fin.last ettB.rounds))
-        (replacementSeries.data.coloring (Fin.last ettB.rounds)) := by
-      simpa only [hp] using replacementStable p
-    have hmissing : TreeMissingColors (replacementSeries.data.coloring (Fin.last ettB.rounds))
-        (replacementSeries.data.tree (Fin.last ettB.rounds).castSucc) =
-        TreeMissingColors (ettB.series.data.coloring (Fin.last ettB.rounds))
-          (ettB.series.data.tree (Fin.last ettB.rounds).castSucc) := by
-      rw [htree]
-      unfold TreeMissingColors
-      exact Finset.biUnion_congr rfl (fun v hv => hstable.2 v hv)
-    have hstored : TashkinovStoredColors replacementSeries.data (Fin.last ettB.rounds) =
-        TashkinovStoredColors ettB.series.data (Fin.last ettB.rounds) := by
-      unfold TashkinovStoredColors
-      have hn : (Fin.last ettB.rounds).val ≠ 0 := by
-        simpa only [Fin.val_last] using Nat.ne_of_gt ettB.roundsPositive
-      simp only [ite_eq_right hn]
-      rw [hmissing]
-      congr 1
-      apply Finset.biUnion_congr rfl
-      intro i hi
-      rw [storedColorsAgree i]
-    exact ⟨htree.trans hBdata.1, hstored.trans hBdata.2.1,
-      (extensionKindsAgree (Fin.last ettB.rounds)).trans hBdata.2.2⟩
-
 private theorem helper_hstoredEq_870.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -1968,9 +1888,9 @@ private theorem helper_continuation_2160.{u_1, u_2} :
         (Fin.last corr.replacementETT.rounds) = Dn ∧
       corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
         some TashkinovExtensionKind.PE := by
-    exact helper_hnewdata_812 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha)
-        (@beta)
-        (@hAib) (@ettB) (@hBdata) (@corr)
+    have data := corr.terminalData
+    exact ⟨data.1.trans hBdata.1, data.2.2.trans hBdata.2.1,
+      data.2.1.trans hBdata.2.2⟩
   have hcountHB : HB.dividerCount = 0 := hcountB.trans hzero
   have hcountK : K.dividerCount = 0 := hsame.2.1.symm.trans hcountHB
   have hcoreNew : baseSigma.core = A := hsame.1.symm.trans hcoreB

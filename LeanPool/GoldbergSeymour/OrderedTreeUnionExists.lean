@@ -268,33 +268,6 @@ private theorem helper_first_in_left_366.{u_1, u_2} :
     convert hm.symm using 1
     exact congrArg A.vertex (by apply Fin.ext; rfl)
 
-private theorem helper_first_next_in_left_386.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0 : E} (A B : TreeSequence G e0),
-      (1 : ℕ) < A.length + (1 : ℕ) →
-        ∀ (hB2 : (1 : ℕ) < B.length + (1 : ℕ)),
-          B.vertex (⟨(1 : ℕ), hB2⟩ : Fin (B.length + (1 : ℕ))) ∈ TreeSequenceVertexSet A := by
-  classical
-  intro V E G e0 A B hA2 hB2
-  obtain ⟨i, hi⟩ := B.attaches ⟨0, B.positive⟩
-  have hi0 : i = ⟨0, Nat.zero_lt_succ _⟩ := Fin.eq_zero i
-  subst i
-  rw [B.first_edge] at hi
-  obtain ⟨j, hj⟩ := A.attaches ⟨0, A.positive⟩
-  have hj0 : j = ⟨0, Nat.zero_lt_succ _⟩ := Fin.eq_zero j
-  subst j
-  rw [A.first_edge] at hj
-  have hm : B.vertex ⟨1, hB2⟩ ∈ G.ends e0 := by
-    rw [hi]
-    simp
-  rw [hj] at hm
-  rcases Sym2.mem_iff.mp hm with hm | hm
-  · refine Finset.mem_image.mpr ⟨⟨1, hA2⟩, Finset.mem_univ _, ?_⟩
-    convert hm.symm using 1
-    exact congrArg A.vertex (by apply Fin.ext; rfl)
-  · refine Finset.mem_image.mpr ⟨⟨0, Nat.zero_lt_succ _⟩, Finset.mem_univ _, ?_⟩
-    exact hm.symm
-
 private theorem helper_hedge_452.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0 : E} (A B : TreeSequence G
@@ -812,8 +785,6 @@ theorem OrderedTreeUnionExists
   have hB2 : 1 < B.length + 1 := by
     exact Nat.lt_of_lt_of_le (Nat.lt_succ_self 1) (Nat.succ_le_succ B.positive)
   have first_in_left := @helper_first_in_left_366 (@V) (@E) (@G) (@e0) (@A) (@B) (@hA2)
-  have first_next_in_left := @helper_first_next_in_left_386 (@V) (@E) (@G) (@e0) (@A) (@B) (@hA2)
-      (@hB2)
   let Good : ℕ → TreeSequence G e0 → Prop := fun n T =>
     TreeSequenceInitialSegment A T ∧
     (∀ i : Fin (B.length + 1), i.val ≤ n → B.vertex i ∈ TreeSequenceVertexSet T) ∧

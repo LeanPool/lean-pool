@@ -5,8 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
-
 public import LeanPool.GoldbergSeymour.HierarchyPrefixData
 public import LeanPool.GoldbergSeymour.TerminalStoredColors
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseThreeData

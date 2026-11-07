@@ -1857,40 +1857,6 @@ private theorem helper_branch_636.{u_1, u_2} :
   exact Or.inr ⟨hkind, f, seed, hedges, hadjoin,
     (TashkinovAugmentationSequenceRestrict mu seed S T haug hseedS hST).trans hSUaug⟩
 
-private theorem helper_branch_699.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-  (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-  (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-  (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-  (C : HierarchyCounterexample base)
-  (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-  (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let R : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-    P.corresponding.replacementETT;
-  let n : Fin (R.rounds + (1 : ℕ)) := Fin.last R.rounds;
-  let Tn : TreeSequence G e0 := R.series.data.tree n.castSucc;
-  ∀ (newInput : PartialEdgeColoring E k)
-    (newSeries : TashkinovSeries G k R.rounds e0 newInput),
-  (
-  ∀ (i : Fin (R.rounds + (1 : ℕ))),
-  newSeries.data.stored i = R.series.data.stored i) →
-  TreeMissingColors (newSeries.data.coloring n) (newSeries.data.tree n.castSucc) =
-      TreeMissingColors (R.series.data.coloring n) Tn →
-  (Finset.univ.biUnion fun (h : Fin (R.rounds + (1 : ℕ))) ↦
-        if (↑h : ℕ) ≤ (↑n : ℕ) then newSeries.data.stored h else ∅) \
-      TreeMissingColors (newSeries.data.coloring n) (newSeries.data.tree n.castSucc) =
-    (Finset.univ.biUnion fun (h : Fin (R.rounds + (1 : ℕ))) ↦
-        if (↑h : ℕ) ≤ (↑n : ℕ) then R.series.data.stored h else ∅) \
-      TreeMissingColors (R.series.data.coloring n) (R.series.data.tree n.castSucc) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P R n Tn newInput newSeries hstored hmissing
-  rw [hmissing]
-  congr 1
-  apply congrArg (Finset.univ.biUnion)
-  funext i
-  rw [hstored i]
-
 private theorem helper_stageA_704.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -2606,42 +2572,6 @@ private theorem helper_ownerBound_2434.{u_1, u_2} :
   simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
   exact ⟨i, rfl⟩
 
-private theorem helper_hstoredEq_2380.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
-  [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E
-      k)
-  (T : TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-      input T phi)
-  (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-  (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-  (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx),
-  let R : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-      P.corresponding.replacementETT;
-  let mu : PartialEdgeColoring E k := P.coloring;
-  let n : Fin (R.rounds + (1 : ℕ)) := Fin.last R.rounds;
-  let Tn : TreeSequence G e0 := R.series.data.tree n.castSucc;
-  ∀ (newInput : PartialEdgeColoring E k) (newSeries : TashkinovSeries G k R.rounds e0 newInput)
-    (_ : mu = newSeries.data.coloring (Fin.last R.rounds))
-    (_ :
-  ∀ (i : Fin (R.rounds + (1 : ℕ))),
-  newSeries.data.stored i = R.series.data.stored i)
-    (_ : newSeries.data.tree n.castSucc = Tn),
-  TashkinovStoredColors newSeries.data n = TashkinovStoredColors R.series.data n := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P R mu n Tn newInput newSeries hgen hstored
-      hTnEq
-  have hmissing : TreeMissingColors (newSeries.data.coloring n)
-      (newSeries.data.tree n.castSucc) =
-      TreeMissingColors (R.series.data.coloring n) Tn := by
-    rw [← hgen, ← R.generatingColoring, hTnEq]
-  unfold TashkinovStoredColors
-  split
-  · rfl
-  · exact @helper_branch_699 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P)
-      (@newInput) (@newSeries) (@hstored) (@hmissing)
-
 private theorem helper_prefixLen_2218.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
@@ -3028,6 +2958,7 @@ private theorem componentIntersectionFromSpliceFacts.{u_1, u_2} :
     have hMP := MaximumPropertyTransport G k e0 R mu hmod U corr P.maximum
     obtain ⟨baseU, hcore, hclosure, hsupport⟩ := HierarchyBaseCorrespondingTransport
       G k e0 P.corresponding.replacementInput T U mu R corr P.replacementBase
+    have correspondenceData := corr.terminalData
     rcases corr with ⟨newInput, newSeries, newETT, hround, hseries, hgen,
       htrees, hstored, hedges, hkinds, hproper, hone, hstable⟩
     rcases newETT with ⟨rounds, roundsPositive, replacementSeries,
@@ -3046,15 +2977,10 @@ private theorem componentIntersectionFromSpliceFacts.{u_1, u_2} :
     change HierarchyBase RU mu at baseU
     change MaximumProperty RU at hMP
     have hTnEq : newSeries.data.tree n.castSucc = Tn := by
-      let z : Fin R.rounds := ⟨R.rounds - 1, by have := R.roundsPositive; omega⟩
-      have hz : z.succ = n := Fin.ext (by have := R.roundsPositive; dsimp [z, n]; omega)
-      rw [← hz]
-      simpa only [Tn, ← hz] using htrees z
+      exact correspondenceData.1
     have hstoredEq : TashkinovStoredColors newSeries.data n =
-        TashkinovStoredColors R.series.data n := by as_aux_lemma =>
-      exact @helper_hstoredEq_2380 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-          (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@newInput)
-          (@newSeries) (@hgen) (@hstored) (@hTnEq)
+        TashkinovStoredColors R.series.data n := by
+      exact correspondenceData.2.2
     have stageA (i : Fin (H.dividerCount + 1)) :
         TreeSequenceInitialSegment (H.stage i.castSucc) A := by
       exact @helper_stageA_704 (@V) (@E) inferInstance inferInstance inferInstance inferInstance

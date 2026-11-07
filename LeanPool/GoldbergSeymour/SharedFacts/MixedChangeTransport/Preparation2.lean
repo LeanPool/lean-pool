@@ -210,44 +210,6 @@ theorem pathMissing.{u_1, u_2} : pathMissingStatement.{u_1, u_2} := by
   | inl w => exact False.elim hx
 
 /-- A common proof used by the branches of this transport or construction argument. -/
-theorem otherColorsUnaffected.{u_1, u_2} : otherColorsUnaffectedStatement.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta hne H q A ib vb ell yLength Y ha hb
-      K sigma f c hca hcb
-  clear * - hca hcb K sigma hne
-  by_cases hf : Sum.inr f ∈ K
-  · by_cases ha : phi f = some alpha
-    · simp [sigma, TwoColorComponentSwap, K, hf, ha, hca.symm, hcb.symm]
-    · by_cases hb : phi f = some beta
-      · simp [sigma, TwoColorComponentSwap, K, hf, hb, hne.symm,
-          hca.symm, hcb.symm]
-      · simp [sigma, TwoColorComponentSwap, K, hf, ha, hb]
-  · simp [sigma, TwoColorComponentSwap, K, hf]
-
-/-- A common proof used by the branches of this transport or construction argument. -/
-theorem swappedColoringOneUncolored.{u_1, u_2} : swappedColoringOneUncoloredStatement.{u_1,
-    u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hone alpha beta hne H q A ib vb ell yLength Y
-      ha hb K sigma unaffected
-  clear * - hone sigma K unaffected hne
-  refine ⟨?_, ?_⟩
-  · simp [sigma, TwoColorComponentSwap, hone.1]
-  · intro f hf
-    obtain ⟨c, hc⟩ := hone.2 f hf
-    by_cases ha : c = alpha
-    · subst c
-      by_cases hK : Sum.inr f ∈ K
-      · exact ⟨beta, by simp [sigma, TwoColorComponentSwap, K, hK, hc]⟩
-      · exact ⟨alpha, by simp [sigma, TwoColorComponentSwap, K, hK, hc]⟩
-    · by_cases hb : c = beta
-      · subst c
-        by_cases hK : Sum.inr f ∈ K
-        · exact ⟨alpha, by simp [sigma, TwoColorComponentSwap, K, hK, hc, hne.symm]⟩
-        · exact ⟨beta, by simp [sigma, TwoColorComponentSwap, K, hK, hc]⟩
-      · exact ⟨c, (unaffected f c ha hb).mpr hc⟩
-
-/-- A common proof used by the branches of this transport or construction argument. -/
 theorem notMissingBeforeFirstPosition.{u_1, u_2} :
     notMissingBeforeFirstPositionStatement.{u_1, u_2} := by
   classical

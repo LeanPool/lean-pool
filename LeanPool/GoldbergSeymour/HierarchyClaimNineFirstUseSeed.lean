@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-
 public import LeanPool.GoldbergSeymour.HierarchyClaimNineFirstUseAfterSeed
 public import LeanPool.GoldbergSeymour.HierarchyClaimNineUnusedTailColor
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
@@ -2738,45 +2737,13 @@ private theorem helper_continuation_2461.{u_1, u_2} :
     exact Finset.mem_biUnion.mpr ⟨v, hv, (hmissingBEquality v hvB).symm ▸ hmv⟩
   have hterminalTree : corr.replacementETT.series.data.tree
       (Fin.last corr.replacementETT.rounds).castSucc = Tn := by
-    rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-      rungAgreement, seriesPresentation, finalGeneratingColoring,
-      ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-      extensionKindsAgree, replacementProper, replacementOneUncolored,
-      replacementStable⟩
-    cases replacementETT with
-    | mk rounds roundsPositive series above strict below generating =>
-      cases rungAgreement
-      have hseries : series = replacementSeries := eq_of_heq seriesPresentation
-      cases hseries
-      let i : Fin em.rounds := ⟨em.rounds - 1, by have hp := em.roundsPositive; omega⟩
-      have hi : i.succ = Fin.last em.rounds := by
-        apply Fin.ext
-        change em.rounds - 1 + 1 = em.rounds
-        exact Nat.sub_add_cancel em.roundsPositive
-      simpa [Tn, n, hi] using ladderTreesAgree i
+    exact corr.terminalData.1
   have terminalTreeOf (coloring : PartialEdgeColoring E k)
       (c : CorrespondingExtendedTashkinovTree G k e0 ett coloring T) :
       c.replacementETT.series.data.tree
           (Fin.last c.replacementETT.rounds).castSucc =
-        ett.series.data.tree (Fin.last ett.rounds).castSucc := by as_aux_lemma =>
-    rcases c with ⟨replacementInput, replacementSeries, replacementETT,
-      rungAgreement, seriesPresentation, finalGeneratingColoring,
-      ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-      extensionKindsAgree, replacementProper, replacementOneUncolored,
-      replacementStable⟩
-    cases replacementETT with
-    | mk rounds roundsPositive series above strict below generating =>
-      cases rungAgreement
-      have hseries : series = replacementSeries := eq_of_heq seriesPresentation
-      cases hseries
-      let i : Fin ett.rounds := ⟨ett.rounds - 1, by
-        have hp := ett.roundsPositive
-        omega⟩
-      have hi : i.succ = Fin.last ett.rounds := by
-        apply Fin.ext
-        change ett.rounds - 1 + 1 = ett.rounds
-        exact Nat.sub_add_cancel ett.roundsPositive
-      simpa [hi] using ladderTreesAgree i
+        ett.series.data.tree (Fin.last ett.rounds).castSucc := by
+    exact c.terminalData.1
   exact @helper_continuation_2476 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx)
       (@hvertexMissing) (@P) (@hsituation) (@alpha) (@e1) (@he1) (@hfirst) (@hell) (@htwo)

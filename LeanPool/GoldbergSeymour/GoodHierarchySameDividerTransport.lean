@@ -5,13 +5,14 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
-
 
 /-!
 # Good Hierarchy Same Divider Transport
@@ -94,27 +95,7 @@ private theorem helper_continuation_174.{u_1, u_2} :
           ett.series.data.tree (Fin.last ett.rounds).castSucc ∧
       corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
           ett.series.data.kind (Fin.last ett.rounds) := by
-    rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-      rungAgreement, seriesPresentation, finalGeneratingColoring,
-      ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-      extensionKindsAgree, replacementProper, replacementOneUncolored,
-      replacementStable⟩
-    cases replacementETT with
-    | mk rounds roundsPositive replacementData above strict below generating =>
-      cases rungAgreement
-      have seriesSame : replacementData = replacementSeries :=
-        eq_of_heq seriesPresentation
-      cases seriesSame
-      let q : Fin ett.rounds :=
-        ⟨ett.rounds - 1,
-          Nat.sub_lt (Nat.zero_lt_of_lt ett.roundsPositive) (by omega)⟩
-      have hq : q.succ = Fin.last ett.rounds := by
-        apply Fin.ext
-        exact Nat.sub_add_cancel ett.roundsPositive
-      refine ⟨?_, ?_⟩
-      · rw [← hq]
-        exact (ladderTreesAgree q).trans rfl
-      · exact extensionKindsAgree (Fin.last ett.rounds)
+    exact ⟨corr.terminalData.1, corr.terminalData.2.1⟩
   let goodU : GoodHierarchy KU :=
     { gamma := gammaU
       twoColors := by

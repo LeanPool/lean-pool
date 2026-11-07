@@ -48,6 +48,66 @@ theorem CorrespondingExtendedTashkinovTree.terminalTreeKind.{u_1, u_2} :
       omega
     exact ⟨by simpa [hi] using ht i, hk _⟩
 
+/-- The final tree is independent of the chosen presentation of the replacement series. -/
+theorem CorrespondingExtendedTashkinovTree.finalTreePresentation {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input : PartialEdgeColoring E k} {T : TreeSequence G e0} {phi sigma : PartialEdgeColoring E k}
+    {ett : ExtendedTashkinovTree G k e0 input T phi} {U : TreeSequence G e0}
+    (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma U) :
+    corr.replacementETT.series.data.tree (Fin.last (corr.replacementETT.rounds + 1)) =
+      corr.replacementSeries.data.tree (Fin.last (ett.rounds + 1)) := by
+  rcases corr with ⟨newInput, newSeries, newETT, hr, hs, hf,
+    ht, hd, he, hk, hp, ho, hstable⟩
+  cases newETT with
+  | mk rounds positive data above strict below generating =>
+    cases hr
+    have hseries : data = newSeries := eq_of_heq hs
+    cases hseries
+    rfl
+
+/-- The final replacement coloring is proper and leaves exactly the distinguished edge uncolored. -/
+theorem CorrespondingExtendedTashkinovTree.coloringProperties {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input : PartialEdgeColoring E k} {T : TreeSequence G e0} {phi sigma : PartialEdgeColoring E k}
+    {ett : ExtendedTashkinovTree G k e0 input T phi} {U : TreeSequence G e0}
+    (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma U) :
+    IsProperEdgeColoring G sigma ∧ IsOneEdgeUncolored sigma e0 := by
+  rw [corr.finalGeneratingColoring]
+  exact ⟨corr.replacementProper _, corr.replacementOneUncolored _⟩
+
+/-- The terminal replacement coloring is stable on the original penultimate tree. -/
+theorem CorrespondingExtendedTashkinovTree.terminalStability {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input : PartialEdgeColoring E k} {T : TreeSequence G e0} {phi sigma : PartialEdgeColoring E k}
+    {ett : ExtendedTashkinovTree G k e0 input T phi} {U : TreeSequence G e0}
+    (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma U) :
+    StableColoring (ett.series.data.tree (Fin.last ett.rounds).castSucc)
+      (TashkinovStoredColors ett.series.data (Fin.last ett.rounds)) phi sigma := by
+  let i : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
+  have hi : i.succ = Fin.last ett.rounds := Fin.ext (by
+    dsimp [i]
+    have := ett.roundsPositive
+    omega)
+  have stable := corr.replacementStable i
+  simpa only [hi, ← corr.finalGeneratingColoring, ← ett.generatingColoring] using stable
+
+/-- Correspondence preserves the connecting edges of the terminal extension. -/
+theorem CorrespondingExtendedTashkinovTree.terminalConnectingEdges {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input : PartialEdgeColoring E k} {T : TreeSequence G e0} {phi sigma : PartialEdgeColoring E k}
+    {ett : ExtendedTashkinovTree G k e0 input T phi} {U : TreeSequence G e0}
+    (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma U) :
+    corr.replacementETT.series.data.connectingEdges (Fin.last corr.replacementETT.rounds) =
+      ett.series.data.connectingEdges (Fin.last ett.rounds) := by
+  rcases corr with ⟨newInput, newSeries, newETT, hr, hs, hf,
+    ht, hd, he, hk, hp, ho, hstable⟩
+  cases newETT with
+  | mk rounds positive data above strict below generating =>
+    cases hr
+    have hseries : data = newSeries := eq_of_heq hs
+    cases hseries
+    exact he _
+
 /-- Corresponding extended trees agree on their terminal ladder tree, kind and stored colors. -/
 theorem CorrespondingExtendedTashkinovTree.terminalData {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
@@ -64,6 +124,7 @@ theorem CorrespondingExtendedTashkinovTree.terminalData {V E : Type*}
   classical
   have terminalFacts := CorrespondingExtendedTashkinovTree.terminalTreeKind
     G k e0 sigma ett U corr
+  have stability := corr.terminalStability
   rcases corr with ⟨newInput, newSeries, newETT, hr, hs, hf,
     ht, hd, he, hk, hp, ho, hstable⟩
   cases newETT with
@@ -71,19 +132,12 @@ theorem CorrespondingExtendedTashkinovTree.terminalData {V E : Type*}
     cases hr
     have hseries : data = newSeries := eq_of_heq hs
     cases hseries
-    let i : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
-    have hi : i.succ = Fin.last ett.rounds := Fin.ext (by
-      dsimp [i]
-      have := ett.roundsPositive
-      omega)
-    have finalStable := hstable i
-    rw [hi, ← hf, ← ett.generatingColoring] at finalStable
     have missing : TreeMissingColors sigma
         (ett.series.data.tree (Fin.last ett.rounds).castSucc) =
         TreeMissingColors phi (ett.series.data.tree (Fin.last ett.rounds).castSucc) := by
       unfold TreeMissingColors
       apply Finset.biUnion_congr rfl
-      exact finalStable.2
+      exact stability.2
     refine ⟨terminalFacts.1, terminalFacts.2, ?_⟩
     unfold TashkinovStoredColors
     have hn : (Fin.last ett.rounds).val ≠ 0 := by
@@ -92,7 +146,6 @@ theorem CorrespondingExtendedTashkinovTree.terminalData {V E : Type*}
     simp only [ite_eq_right hn]
     simp_rw [hd]
     rw [← hf, ← ett.generatingColoring, terminalFacts.1, missing]
-
 
 end GoldbergSeymour
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTransTrees
 public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
@@ -2101,38 +2103,6 @@ private theorem helper_commonPrefix_945.{u_1, u_2} :
       _ = X.edge (Fin.castLE _ i) := by congr 1
       _ = A.edge i := hAX.2.2 _
 
-private theorem helper_terminalAgreement_962.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) {i : PartialEdgeColoring E k}
-      {A : TreeSequence G e0} {phi : PartialEdgeColoring E k}
-      (base : ExtendedTashkinovTree G k e0 i A phi) {psi : PartialEdgeColoring E k}
-      {B : TreeSequence G e0} (corr : CorrespondingExtendedTashkinovTree G k e0 base psi B),
-    corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc =
-        base.series.data.tree (Fin.last base.rounds).castSucc ∧
-      corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
-          base.series.data.kind (Fin.last base.rounds) ∧
-        corr.replacementETT.series.data.connectingEdges
-            (Fin.last corr.replacementETT.rounds) =
-          base.series.data.connectingEdges (Fin.last base.rounds) := by
-  classical
-  intro V E _ _ _ G k e0 i A phi base psi B corr
-  rcases corr with ⟨ri, rs, re, hr, hs, _, ht, _, he, hk, _⟩
-  cases re with
-  | mk r hp series above strict below gen =>
-    cases hr
-    have hseries : series = rs := eq_of_heq hs
-    subst series
-    let q : Fin base.rounds := ⟨base.rounds - 1, by
-      have := base.roundsPositive
-      omega⟩
-    have hq : q.succ = Fin.last base.rounds := by
-      apply Fin.ext
-      simp [q]
-      have := base.roundsPositive
-      omega
-    exact ⟨by simpa [hq] using ht q, hk _, he _⟩
-
 private theorem helper_transportRoute_1070.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -3156,8 +3126,7 @@ theorem RutgersStrictShortening
       corr.replacementETT.series.data.connectingEdges
           (Fin.last corr.replacementETT.rounds) =
         base.series.data.connectingEdges (Fin.last base.rounds) := by
-    exact @helper_terminalAgreement_962 V E inferInstance inferInstance inferInstance G k e0 i A
-        phi base psi B corr
+    exact ⟨corr.terminalData.1, corr.terminalData.2.1, corr.terminalConnectingEdges⟩
   let R := presentation.corresponding.replacementETT
   let U := presentation.U
   let sigma := presentation.sigma

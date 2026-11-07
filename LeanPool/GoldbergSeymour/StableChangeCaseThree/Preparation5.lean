@@ -516,8 +516,7 @@ theorem helper_continuation_3662.{u_1, u_2} :
           ett.series.data.kind n ∧
       TashkinovStoredColors corr.replacementETT.series.data
           (Fin.last corr.replacementETT.rounds) = Dn := by
-    exact @helper_corrData_806 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        input T phi ett base C alpha beta sigma TnToA ha treeMissingEq corr
+    exact corr.terminalData
   have fullBase :
       ∃ corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T,
         MaximumProperty corr.replacementETT ∧

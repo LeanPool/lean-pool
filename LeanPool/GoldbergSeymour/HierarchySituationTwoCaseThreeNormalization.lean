@@ -601,17 +601,7 @@ private theorem helper_continuation_647.{u_1, u_2} :
       corrU.replacementETT.series.data.tree (Fin.last corrU.replacementETT.rounds).castSucc = Tn ∧
       corrU.replacementETT.series.data.kind (Fin.last corrU.replacementETT.rounds) =
         ett.series.data.kind n := by
-    clear * - corrU ett Tn n
-    rcases corrU with ⟨ri, rs, re, hr, hs, hg, ht, hstored, he, hk, hp, ho, hstable⟩
-    cases re with
-    | mk rounds positive series above strict below generating =>
-      cases hr
-      have hseries : series = rs := eq_of_heq hs
-      cases hseries
-      let i : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
-      have hi : i.succ = Fin.last ett.rounds := Fin.ext (by
-        dsimp [i]; have := ett.roundsPositive; omega)
-      exact ⟨by simpa only [hi] using ht i, hk _⟩
+    exact ⟨corrU.terminalData.1, corrU.terminalData.2.1⟩
   have ordinaryToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (H.stage j.castSucc) A := by
     clear * - H j A hTnA lastPositive stageSegment

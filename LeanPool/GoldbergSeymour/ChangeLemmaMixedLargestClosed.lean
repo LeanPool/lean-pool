@@ -10,12 +10,9 @@ public import LeanPool.GoldbergSeymour.NonparallelPenultimateInterchangeability
 public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
 public import LeanPool.GoldbergSeymour.StableHierarchyReplacement
 
-
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
-
-
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
 public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
@@ -25,7 +22,6 @@ public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation2
 public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
-public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
 
 /-!

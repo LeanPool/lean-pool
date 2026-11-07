@@ -9,10 +9,7 @@ public import LeanPool.GoldbergSeymour.SharedFacts.InsideAdvancement
 
 public import LeanPool.GoldbergSeymour.HierarchyTailSwapData
 
-
-
 public import LeanPool.GoldbergSeymour.SharedFacts.OutsideAdvancement
-
 
 public import LeanPool.GoldbergSeymour.EligibleIndexBoundConstruction
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTailAtLeastTwo
@@ -249,10 +246,7 @@ private theorem helper_continuation_5697.{u_1, u_2} :
       (fun i hi => trans (HB.nested i) hi) j
   have terminalTree : corr.replacementETT.series.data.tree
       (Fin.last corr.replacementETT.rounds).castSucc = Tn := by
-    exact helper_terminalTree_1110 G k e0 input T phi ett base C ctx P alpha hp hlenT S hSBlen
-        positiveB aboveB strictB belowB generatingB baseB HB corr hmaximum bs hcore hpe
-        hclosure baseStageK terminalStageK nestedK strictK coreInsideK positiveK increasingK
-        dividerStageK hstage hposition starredEq
+    exact corr.terminalData.1
   have terminalStored : TashkinovStoredColors corr.replacementETT.series.data
       (Fin.last corr.replacementETT.rounds) = TashkinovStoredColors EB.series.data
         (Fin.last EB.rounds) := by

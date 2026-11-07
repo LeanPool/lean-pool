@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.BoundaryMissingColorAugmentation
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.GoodHierarchy
@@ -58,18 +60,7 @@ theorem AlgorithmFiveFiveParallelStrictGrowth {V E : Type*}
       corrJ.replacementETT.series.data.kind
           (Fin.last corrJ.replacementETT.rounds) =
         some TashkinovExtensionKind.PE := by
-    rcases corrJ with ⟨replacementInput, replacementSeries, replacementETT,
-      rungAgreement, seriesPresentation, finalGeneratingColoring,
-      ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-      extensionKindsAgree, replacementProper, replacementOneUncolored,
-      replacementStable⟩
-    cases replacementETT with
-    | mk rounds roundsPositive replacementData above strict below generating =>
-      cases rungAgreement
-      have seriesSame : replacementData = replacementSeries :=
-        eq_of_heq seriesPresentation
-      cases seriesSame
-      exact (extensionKindsAgree (Fin.last ett.rounds)).trans hPE
+    exact corrJ.terminalData.2.1.trans hPE
   have hnot := (goodJ.parallelBase hpeReplacement).1
   have hlast : Fin.last KJ.dividerCount = 0 := by
     apply Fin.ext

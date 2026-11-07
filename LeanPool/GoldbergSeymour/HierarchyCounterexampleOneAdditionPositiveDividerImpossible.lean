@@ -1460,151 +1460,6 @@ private abbrev helperContinuation2110Conditions.{u_1, u_2} : Prop :=
                                 ¬ColoredVertexSetElementary G sigma (TreeSequenceVertexSet T) →
                                  False
 
-private theorem helper_terminalColors_890.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (_ : (0 : ℕ) < C.hierarchy.dividerCount),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    ∀ (_ : TreeSequenceInitialSegment Tn A),
-    let y : V := T.vertex (Fin.last T.length);
-    ∀ (alpha _ theta : Fin k),
-    let sigma : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G phi theta alpha (Sum.inl y);
-    ∀ (corrT : CorrespondingExtendedTashkinovTree G k e0 ett sigma T)
-      (_ : MaximumProperty corrT.replacementETT) (positivePrefix : (1 : ℕ) ≤ ett.rounds)
-      (abovePrefix :
-        TreeSequenceInitialSegment
-          (ett.series.data.tree (⟨ett.rounds, by omega⟩ : Fin (ett.rounds + (2 : ℕ))))
-          (H.stage q.castSucc))
-      (strictPrefix :
-        (ett.series.data.tree
-              (⟨ett.rounds, by omega⟩ : Fin (ett.rounds + (2 : ℕ)))).length <
-          (H.stage q.castSucc).length)
-      (belowPrefix :
-        TreeSequenceInitialSegment (H.stage q.castSucc)
-          (ett.series.data.tree (Fin.last (ett.rounds + (1 : ℕ)))))
-      (generatingPrefix : phi = ett.series.data.coloring (Fin.last ett.rounds))
-      (basePrefix :
-        HierarchyBase
-          { rounds := ett.rounds, roundsPositive := positivePrefix, series := ett.series,
-            abovePenultimate := abovePrefix, strictAbovePenultimate := strictPrefix,
-            belowFinal := belowPrefix, generatingColoring := generatingPrefix :
-            ExtendedTashkinovTree G k e0 input (H.stage q.castSucc) phi }
-          phi)
-      (_ :
-        TashkinovHierarchy
-          { rounds := ett.rounds, roundsPositive := positivePrefix, series := ett.series,
-            abovePenultimate := abovePrefix, strictAbovePenultimate := strictPrefix,
-            belowFinal := belowPrefix, generatingColoring := generatingPrefix :
-            ExtendedTashkinovTree G k e0 input (H.stage q.castSucc) phi }
-          basePrefix)
-      (corrPrefix :
-        CorrespondingExtendedTashkinovTree G k e0
-          { rounds := ett.rounds, roundsPositive := positivePrefix, series := ett.series,
-            abovePenultimate := abovePrefix, strictAbovePenultimate := strictPrefix,
-            belowFinal := belowPrefix, generatingColoring := generatingPrefix :
-            ExtendedTashkinovTree G k e0 input (H.stage q.castSucc) phi }
-          sigma (H.stage q.castSucc))
-      (basePrefixSigma : HierarchyBase corrPrefix.replacementETT sigma),
-    let _ : CorrespondingExtendedTashkinovTree G k e0 ett sigma (H.stage q.castSucc) :=
-      { replacementInput := corrPrefix.replacementInput,
-        replacementSeries := corrPrefix.replacementSeries,
-        replacementETT := corrPrefix.replacementETT,
-        rungAgreement := corrPrefix.rungAgreement,
-        seriesPresentation := corrPrefix.seriesPresentation,
-        finalGeneratingColoring := corrPrefix.finalGeneratingColoring,
-        ladderTreesAgree := corrPrefix.ladderTreesAgree,
-        storedColorsAgree := corrPrefix.storedColorsAgree,
-        connectingEdgesAgree := corrPrefix.connectingEdgesAgree,
-        extensionKindsAgree := corrPrefix.extensionKindsAgree,
-        replacementProper := corrPrefix.replacementProper,
-        replacementOneUncolored := corrPrefix.replacementOneUncolored,
-        replacementStable := corrPrefix.replacementStable :
-        CorrespondingExtendedTashkinovTree G k e0 ett sigma (H.stage q.castSucc) };
-    ∀ (baseT : HierarchyBase corrT.replacementETT sigma)
-      (_ : baseT.core = basePrefixSigma.core) (_ : baseT.closure = basePrefixSigma.closure)
-      (_ : (↑baseT.supportPosition : ℕ) = (↑basePrefixSigma.supportPosition : ℕ))
-      (hcoreT : baseT.core = base.core)
-      (hterminalTree :
-        corrT.replacementETT.series.data.tree
-            (Fin.last corrT.replacementETT.rounds).castSucc =
-          Tn),
-    let K : TashkinovHierarchy corrT.replacementETT baseT :=
-      { dividerCount := H.dividerCount, stage := H.stage,
-        baseStage := Eq.trans H.baseStage (Eq.symm hterminalTree),
-        terminalStage := H.terminalStage, nested := H.nested, strict := H.strict,
-        dividerPosition := H.dividerPosition, dividerPositive := H.dividerPositive,
-        dividerIncreasing := H.dividerIncreasing, dividerStage := H.dividerStage,
-        coreInsideFirst :=
-          Eq.mpr
-            (id
-              (congrArg
-                (fun (_a : TreeSequence G e0) ↦
-                  TreeSequenceInitialSegment _a
-                    (H.stage (⟨(1 : ℕ), by omega⟩ : Fin (H.dividerCount + (2 : ℕ)))))
-                hcoreT))
-            H.coreInsideFirst :
-        TashkinovHierarchy corrT.replacementETT baseT };
-    ∀
-      (_ :
-        (∀ (B : TreeSequence G e0) (_ : TreeSequenceVertexSet B ⊆ TreeSequenceVertexSet A),
-          TreeMissingColors sigma B = TreeMissingColors phi B))
-      (_ :
-        (∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-          HierarchyStarredStage K j = HierarchyStarredStage H j)),
-    corrT.replacementETT.series.data.kind (Fin.last corrT.replacementETT.rounds) =
-        ett.series.data.kind n ∧
-      TashkinovStoredColors corrT.replacementETT.series.data
-          (Fin.last corrT.replacementETT.rounds) =
-        TashkinovStoredColors ett.series.data n := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hpositive H q A n Tn hTnA y alpha eta theta
-      sigma corrT hmaximumT positivePrefix abovePrefix strictPrefix belowPrefix generatingPrefix
-      basePrefix HP corrPrefix basePrefixSigma corrA baseT hcoreTA hclosureTA hsupportTA hcoreT
-      hterminalTree K missingTree starredEq
-  rcases corrT with ⟨replacementInput, replacementSeries, replacementETT,
-    rungAgreement, seriesPresentation, finalGeneratingColoring,
-    ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-    extensionKindsAgree, replacementProper, replacementOneUncolored,
-    replacementStable⟩
-  cases replacementETT with
-  | mk rounds roundsPositive replacementData above strict below generating =>
-    cases rungAgreement
-    have hs : replacementData = replacementSeries := eq_of_heq seriesPresentation
-    cases hs
-    let a : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
-    have ha : a.succ = Fin.last ett.rounds := by
-      apply Fin.ext
-      change ett.rounds - 1 + 1 = ett.rounds
-      have := ett.roundsPositive
-      omega
-    have ht : replacementSeries.data.tree (Fin.last ett.rounds).castSucc = Tn := by
-      change replacementSeries.data.tree (Fin.last ett.rounds).castSucc =
-        ett.series.data.tree (Fin.last ett.rounds).castSucc
-      rw [← ha]
-      exact ladderTreesAgree a
-    have hm : TreeMissingColors (replacementSeries.data.coloring (Fin.last ett.rounds))
-        (replacementSeries.data.tree (Fin.last ett.rounds).castSucc) =
-        TreeMissingColors phi Tn := by
-      rw [← finalGeneratingColoring, ht]
-      exact missingTree Tn (TreeSequenceInitialSegmentVertexSetSubset hTnA)
-    have hmOld : TreeMissingColors (ett.series.data.coloring (Fin.last ett.rounds))
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc) =
-        TreeMissingColors phi Tn := by
-      rw [← ett.generatingColoring]
-    refine ⟨extensionKindsAgree (Fin.last ett.rounds), ?_⟩
-    change TashkinovStoredColors replacementSeries.data (Fin.last ett.rounds) =
-      TashkinovStoredColors ett.series.data (Fin.last ett.rounds)
-    simp only [TashkinovStoredColors, storedColorsAgree, hm, hmOld]
-
 private theorem helper_hfirstA_654.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -2054,107 +1909,6 @@ private theorem helper_hfixedEdges_1244.{u_1, u_2} :
     change u ∈ G.ends f
     rw [hends]
     exact Sym2.mem_mk_left _ _
-
-private theorem helper_hterminalTree_1357.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (_ : (0 : ℕ) < C.hierarchy.dividerCount),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let y : V := T.vertex (Fin.last T.length);
-    ∀ (alpha _ theta : Fin k),
-    let sigma : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G phi theta alpha (Sum.inl y);
-    ∀ (corrT : CorrespondingExtendedTashkinovTree G k e0 ett sigma T)
-      (_ : MaximumProperty corrT.replacementETT) (positivePrefix : (1 : ℕ) ≤ ett.rounds)
-      (abovePrefix :
-        TreeSequenceInitialSegment
-          (ett.series.data.tree (⟨ett.rounds, by omega⟩ : Fin (ett.rounds + (2 : ℕ))))
-          (H.stage q.castSucc))
-      (strictPrefix :
-        (ett.series.data.tree
-              (⟨ett.rounds, by omega⟩ : Fin (ett.rounds + (2 : ℕ)))).length <
-          (H.stage q.castSucc).length)
-      (belowPrefix :
-        TreeSequenceInitialSegment (H.stage q.castSucc)
-          (ett.series.data.tree (Fin.last (ett.rounds + (1 : ℕ)))))
-      (generatingPrefix : phi = ett.series.data.coloring (Fin.last ett.rounds))
-      (basePrefix :
-        HierarchyBase
-          { rounds := ett.rounds, roundsPositive := positivePrefix, series := ett.series,
-            abovePenultimate := abovePrefix, strictAbovePenultimate := strictPrefix,
-            belowFinal := belowPrefix, generatingColoring := generatingPrefix :
-            ExtendedTashkinovTree G k e0 input (H.stage q.castSucc) phi }
-          phi)
-      (_ :
-        TashkinovHierarchy
-          { rounds := ett.rounds, roundsPositive := positivePrefix, series := ett.series,
-            abovePenultimate := abovePrefix, strictAbovePenultimate := strictPrefix,
-            belowFinal := belowPrefix, generatingColoring := generatingPrefix :
-            ExtendedTashkinovTree G k e0 input (H.stage q.castSucc) phi }
-          basePrefix)
-      (corrPrefix :
-        CorrespondingExtendedTashkinovTree G k e0
-          { rounds := ett.rounds, roundsPositive := positivePrefix, series := ett.series,
-            abovePenultimate := abovePrefix, strictAbovePenultimate := strictPrefix,
-            belowFinal := belowPrefix, generatingColoring := generatingPrefix :
-            ExtendedTashkinovTree G k e0 input (H.stage q.castSucc) phi }
-          sigma (H.stage q.castSucc))
-      (basePrefixSigma : HierarchyBase corrPrefix.replacementETT sigma),
-    let _ : CorrespondingExtendedTashkinovTree G k e0 ett sigma (H.stage q.castSucc) :=
-      { replacementInput := corrPrefix.replacementInput,
-        replacementSeries := corrPrefix.replacementSeries,
-        replacementETT := corrPrefix.replacementETT,
-        rungAgreement := corrPrefix.rungAgreement,
-        seriesPresentation := corrPrefix.seriesPresentation,
-        finalGeneratingColoring := corrPrefix.finalGeneratingColoring,
-        ladderTreesAgree := corrPrefix.ladderTreesAgree,
-        storedColorsAgree := corrPrefix.storedColorsAgree,
-        connectingEdgesAgree := corrPrefix.connectingEdgesAgree,
-        extensionKindsAgree := corrPrefix.extensionKindsAgree,
-        replacementProper := corrPrefix.replacementProper,
-        replacementOneUncolored := corrPrefix.replacementOneUncolored,
-        replacementStable := corrPrefix.replacementStable :
-        CorrespondingExtendedTashkinovTree G k e0 ett sigma (H.stage q.castSucc) };
-    ∀ (baseT : HierarchyBase corrT.replacementETT sigma)
-      (_ : baseT.core = basePrefixSigma.core) (_ : baseT.closure = basePrefixSigma.closure)
-      (_ : (↑baseT.supportPosition : ℕ) = (↑basePrefixSigma.supportPosition : ℕ))
-      (_ : baseT.core = base.core),
-    corrT.replacementETT.series.data.tree (Fin.last corrT.replacementETT.rounds).castSucc =
-      Tn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hpositive H q n Tn y alpha eta theta sigma
-      corrT hmaximumT positivePrefix abovePrefix strictPrefix belowPrefix generatingPrefix
-      basePrefix HP corrPrefix basePrefixSigma corrA baseT hcoreTA hclosureTA hsupportTA hcoreT
-  rcases corrT with ⟨replacementInput, replacementSeries, replacementETT,
-    rungAgreement, seriesPresentation, finalGeneratingColoring,
-    ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-    extensionKindsAgree, replacementProper, replacementOneUncolored,
-    replacementStable⟩
-  cases replacementETT with
-  | mk rounds roundsPositive replacementData above strict below generating =>
-    cases rungAgreement
-    have hs : replacementData = replacementSeries := eq_of_heq seriesPresentation
-    cases hs
-    let lastRung : Fin ett.rounds := ⟨ett.rounds - 1, by
-      have := ett.roundsPositive
-      omega⟩
-    have he : lastRung.succ = Fin.last ett.rounds := by
-      apply Fin.ext
-      change ett.rounds - 1 + 1 = ett.rounds
-      have := ett.roundsPositive
-      omega
-    change replacementSeries.data.tree (Fin.last ett.rounds).castSucc = Tn
-    change replacementSeries.data.tree (Fin.last ett.rounds).castSucc =
-      ett.series.data.tree (Fin.last ett.rounds).castSucc
-    rw [← he]
-    exact ladderTreesAgree lastRung
 
 private theorem helper_equalTrees_1506.{u_1, u_2} :
     open scoped Classical in
@@ -2895,10 +2649,7 @@ private theorem helper_continuation_2110.{u_1, u_2} :
   have hterminalTree :
       corrT.replacementETT.series.data.tree
         (Fin.last corrT.replacementETT.rounds).castSucc = Tn := by
-    exact @helper_hterminalTree_1357 V E inferInstance inferInstance inferInstance inferInstance
-        G k e0 input T phi ett base C hpositive alpha eta theta corrT hmaximumT positivePrefix
-        abovePrefix strictPrefix belowPrefix generatingPrefix basePrefix HP corrPrefix
-        basePrefixSigma baseT hcoreTA hclosureTA hsupportTA hcoreT
+    exact corrT.terminalData.1
   let K : TashkinovHierarchy corrT.replacementETT baseT := by
     exact {
       dividerCount := H.dividerCount
@@ -2946,11 +2697,7 @@ private theorem helper_continuation_2110.{u_1, u_2} :
       TashkinovStoredColors corrT.replacementETT.series.data
           (Fin.last corrT.replacementETT.rounds) =
         TashkinovStoredColors ett.series.data n := by
-    exact @helper_terminalColors_890 V E inferInstance inferInstance inferInstance inferInstance
-        G k e0 input T phi ett base C hpositive hTnA alpha eta theta corrT hmaximumT
-        positivePrefix abovePrefix strictPrefix belowPrefix generatingPrefix basePrefix HP
-        corrPrefix basePrefixSigma baseT hcoreTA hclosureTA hsupportTA hcoreT hterminalTree
-        missingTree starredEq
+    exact ⟨corrT.terminalData.2.1, corrT.terminalData.2.2⟩
   have storedEq (j : Fin (H.dividerCount + 1)) :
       HierarchyStoredColorsAt K j = HierarchyStoredColorsAt H j := by
     unfold HierarchyStoredColorsAt

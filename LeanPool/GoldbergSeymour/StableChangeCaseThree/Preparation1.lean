@@ -264,80 +264,6 @@ theorem helper_missingA_629.{u_1, u_2} :
   · rw [hsigma]
     exact behavior.1 v hvQ
 
-theorem helper_corrData_806.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (alpha _ : Fin k)
-      (sigma : PartialEdgeColoring E k),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    let ell : ℕ := T.length - A.length;
-    let Y : TreeSequence G e0 :=
-      TreeSequencePrefix T (min (A.length + (ell - (1 : ℕ))) T.length)
-        (have this : (1 : ℕ) ≤ A.length := A.positive;
-        have this_1 : (1 : ℕ) ≤ T.length := T.positive;
-        Decidable.byContradiction
-          fun (a : ¬(1 : ℕ) ≤ min (A.length + (ell - (1 : ℕ))) T.length) ↦ by omega)
-        (Nat.min_le_right (A.length + (ell - (1 : ℕ))) T.length);
-    TreeSequenceInitialSegment Tn A →
-    alpha ∈ MissingColors G phi (T.vertex (HierarchyFirstMissingPosition phi T alpha)) ∧
-        (↑(HierarchyFirstMissingPosition phi T alpha) : ℕ) ≤ Y.length →
-    (∀ (S : TreeSequence G e0),
-        TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet A →
-          TreeMissingColors sigma S = TreeMissingColors phi S) →
-    ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T),
-    corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc =
-        Tn ∧
-    corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
-        ett.series.data.kind n ∧
-    TashkinovStoredColors corr.replacementETT.series.data
-        (Fin.last corr.replacementETT.rounds) =
-      Dn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta sigma H q A n Tn Dn ell Y TnToA ha
-      treeMissingEq corr
-  rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-    rungAgreement, seriesPresentation, finalGeneratingColoring,
-    ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-    extensionKindsAgree, replacementProper, replacementOneUncolored,
-    replacementStable⟩
-  cases replacementETT with
-  | mk rounds roundsPositive replacementData above strict below generating =>
-    cases rungAgreement
-    have hs : replacementData = replacementSeries := eq_of_heq seriesPresentation
-    cases hs
-    let a : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
-    have ha : a.succ = Fin.last ett.rounds := by
-      apply Fin.ext
-      change ett.rounds - 1 + 1 = ett.rounds
-      have := ett.roundsPositive
-      omega
-    have ht : replacementSeries.data.tree (Fin.last ett.rounds).castSucc = Tn := by
-      change replacementSeries.data.tree (Fin.last ett.rounds).castSucc =
-        ett.series.data.tree (Fin.last ett.rounds).castSucc
-      rw [← ha]
-      exact ladderTreesAgree a
-    have hm : TreeMissingColors (replacementSeries.data.coloring (Fin.last ett.rounds))
-        (replacementSeries.data.tree (Fin.last ett.rounds).castSucc) =
-        TreeMissingColors phi Tn := by
-      rw [← finalGeneratingColoring, ht]
-      exact treeMissingEq Tn (TreeSequenceInitialSegmentVertexSetSubset TnToA)
-    have hmOld : TreeMissingColors (ett.series.data.coloring (Fin.last ett.rounds))
-        (ett.series.data.tree (Fin.last ett.rounds).castSucc) =
-        TreeMissingColors phi Tn := by
-      rw [← ett.generatingColoring]
-    refine ⟨ht, extensionKindsAgree (Fin.last ett.rounds), ?_⟩
-    change TashkinovStoredColors replacementSeries.data (Fin.last ett.rounds) =
-      TashkinovStoredColors ett.series.data (Fin.last ett.rounds)
-    simp only [TashkinovStoredColors, storedColorsAgree, hm, hmOld]
-
 theorem helper_fullBase_847.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -435,7 +361,6 @@ theorem helper_segTrans_511.{u_1, u_2} :
 theorem helper_commonPrefix_520.{u_1, u_2} :
     SharedFacts.ChangeLemmaBothOutsidePreparation1.comparableInitialSegmentsStatement.{u_1, u_2} :=
   SharedFacts.ChangeLemmaBothOutsidePreparation1.comparableInitialSegments.{u_1, u_2}
-
 
 alias helper_stageToT_552 :=
   SharedFacts.ChangeLemmaBothOutsidePreparation1.ordinaryStageInitialSegmentOfTerminal

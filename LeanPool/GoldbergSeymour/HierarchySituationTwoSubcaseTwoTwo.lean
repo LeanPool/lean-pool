@@ -11,9 +11,7 @@ public import LeanPool.GoldbergSeymour.SharedFacts.SecondSituationTransport
 
 public import LeanPool.GoldbergSeymour.SharedFacts.FirstSubcaseTransport
 
-
 public import LeanPool.GoldbergSeymour.TwoColorComponentColoringFacts
-
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoTwoData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseTwoOne
@@ -3013,82 +3011,6 @@ private theorem helper_hchoice_1574.{u_1, u_2} :
       fun hs => houtside (Finset.mem_union_right _ hs),
       Or.inl (fun hg => houtside (Finset.mem_union_left _ hg))⟩
 
-private theorem helper_hseventeenPositive_1664.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (_ : HierarchySituationTwoCaseTwoTwoData G k e0 input T phi ett base C ctx),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    ((0 : ℕ) < H.dividerCount →
-        A =
-          H.stage
-            (⟨H.dividerCount,
-                by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin (H.dividerCount + (2 : ℕ)))) →
-    let Bshort : TreeSequence G e0 :=
-      HierarchyFullTailPrefix C (HierarchyFullTailLength C - (2 : ℕ));
-    ∀ (_ : Bshort.length + (2 : ℕ) = T.length),
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    let stored : Finset (Fin k) := HierarchyStoredColorsAt H q;
-    ∀ beta ∉ stored,
-    (0 : ℕ) < H.dividerCount →
-    beta ∈
-        TreeMissingColors phi
-          (H.stage
-            (⟨H.dividerCount,
-                by
-                have := GoldbergSeymour.TreeSequence.positive T
-                omega⟩ :
-              Fin (H.dividerCount + (2 : ℕ)))) ∨
-      beta ∉ Dn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A hApositive Bshort hshortLen n Dn
-      stored beta hbetaStored hq
-  by_cases hd : beta ∈ Dn
-  · left
-    rw [← hApositive hq]
-    by_contra hm
-    exact hbetaStored (Finset.mem_sdiff.mpr ⟨hd, hm⟩)
-  · exact Or.inr hd
-
-private theorem helper_hseventeenZero_1672.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    let stored : Finset (Fin k) := HierarchyStoredColorsAt H q;
-    ∀ beta ∉ stored,
-    (H.dividerCount = (0 : ℕ) →
-        beta ∈ TreeMissingColors phi A → beta ∈ TreeMissingColors phi Tn) →
-    H.dividerCount = (0 : ℕ) →
-    beta ∈ TreeMissingColors phi Tn ∨ beta ∉ Dn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C H q A n Tn Dn stored beta hbetaStored hzeroBeta hq
-  by_cases hd : beta ∈ Dn
-  · left
-    have hm : beta ∈ TreeMissingColors phi A := by
-      by_contra hm
-      exact hbetaStored (Finset.mem_sdiff.mpr ⟨hd, hm⟩)
-    exact hzeroBeta hq hm
-  · exact Or.inr hd
-
 private theorem helper_branch_1685.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -3400,16 +3322,6 @@ private theorem helper_branch_3441.{u_1, u_2} :
       beta ∈ TreeMissingColors phi Tn := by
     rw [hAzero hq] at hm
     exact missingWithoutExtra phi base.core Tn beta hbetaExtra hm
-  have hseventeenPositive (hq : 0 < H.dividerCount) :
-      beta ∈ TreeMissingColors phi (H.stage ⟨H.dividerCount, by omega⟩) ∨ beta ∉ Dn := by
-    exact @helper_hseventeenPositive_1664 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-        (@hApositive) (@hshortLen) (@beta) (@hbetaStored) (@hq)
-  have hseventeenZero (hq : H.dividerCount = 0) :
-      beta ∈ TreeMissingColors phi Tn ∨ beta ∉ Dn := by
-    exact @helper_hseventeenZero_1672 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@beta)
-        (@hbetaStored) (@hzeroBeta) (@hq)
   apply reduction beta hbetaMissing hbetaUnused hbetaStored
   · exact hzeroBeta
   · intro _

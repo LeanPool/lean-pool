@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-
+public import LeanPool.GoldbergSeymour.NonparallelHierarchyCorrespondence
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ChangeLemmaBothOutsidePreparation1
 
@@ -1286,52 +1286,8 @@ theorem helper_replacement_742.{u_1, u_2} :
       · exact Or.inr ⟨hk, f, seed, hedges, hadjoin, routeTransport seed hs⟩
     obtain ⟨corr⟩ := hmod.2.2 B TnToB TnStrictB hroute
     have hMP := MaximumPropertyTransport G k e0 ettB sigma hmod B corr hMPB
-    refine ⟨corr, hMP, ?_⟩
-    rcases corr with ⟨newInput, newSeries, newETT, hr, hs, hgen, htrees, hstored,
-      hedges, hkinds, hproperSeries, honeSeries, hstableSeries⟩
-    rcases newETT with ⟨r, rp, series, above, strict, below, gen⟩
-    cases hr
-    have heq : series = newSeries := eq_of_heq hs
-    cases heq
-    let rep : ExtendedTashkinovTree G k e0 newInput B sigma :=
-      ⟨ett.rounds, rp, newSeries, above, strict, below, gen⟩
-    let j : Fin ett.rounds := ⟨ett.rounds - 1, by have := C.positive; omega⟩
-    have hj : j.succ = n := Fin.ext (by simp [j, n]; have := C.positive; omega)
-    have htree : newSeries.data.tree n.castSucc = Tn := by simpa [hj, ettB, Tn] using htrees j
-    have hkind := hkinds n
-    let pos : Fin ((newSeries.data.tree n.castSucc).length + 1) :=
-      Fin.cast (congrArg (fun S : TreeSequence G e0 => S.length + 1) htree.symm)
-        baseB.supportPosition
-    let baseS : HierarchyBase rep sigma :=
-      { core := baseB.core
-        closure := baseB.closure
-        supportPosition := pos
-        supportPositive := by simpa [pos] using baseB.supportPositive
-        terminalMissingColors := rfl
-        parallel := by
-          dsimp only [rep]
-          intro hp
-          exact (hPE (hkind.symm.trans hp)).elim
-        nonparallel := by
-          dsimp only [rep]
-          intro hp
-          exact (baseB.nonparallel hPE).trans htree.symm }
-    let HS : TashkinovHierarchy rep baseS :=
-      { dividerCount := HB.dividerCount
-        stage := HB.stage
-        baseStage := HB.baseStage.trans htree.symm
-        terminalStage := HB.terminalStage
-        nested := HB.nested
-        strict := HB.strict
-        dividerPosition := HB.dividerPosition
-        dividerPositive := HB.dividerPositive
-        dividerIncreasing := HB.dividerIncreasing
-        dividerStage := HB.dividerStage
-        coreInsideFirst := HB.coreInsideFirst }
-    refine ⟨baseS, HS, ?_⟩
-    refine ⟨rfl, rfl, HEq.rfl, HEq.rfl, ?_, ?_⟩
-    · exact ⟨fun hp => (hPE hp).elim, fun hp => (hPE (hkind.symm.trans hp)).elim⟩
-    · intro hp; exact (hPE hp).elim
+    obtain ⟨baseS, HS, same⟩ := HB.nonparallelCorrespondence corr hPE
+    exact ⟨corr, hMP, baseS, HS, same⟩
 
 /-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_segTrans_973.{u_1, u_2} :
@@ -1342,7 +1298,6 @@ theorem helper_segTrans_973.{u_1, u_2} :
 theorem helper_commonPrefix_982.{u_1, u_2} :
     SharedFacts.ChangeLemmaBothOutsidePreparation1.comparableInitialSegmentsStatement.{u_1, u_2} :=
   SharedFacts.ChangeLemmaBothOutsidePreparation1.comparableInitialSegments.{u_1, u_2}
-
 
 theorem helper_coreToA_1018.{u_1, u_2} :
     open scoped Classical in
@@ -1439,7 +1394,6 @@ theorem helper_outsideIndex_1087.{u_1, u_2} :
     SharedFacts.ChangeLemmaBothOutsidePreparation1.missingPositionOutsidePrefixStatement.{u_1,
         u_2} :=
   SharedFacts.ChangeLemmaBothOutsidePreparation1.missingPositionOutsidePrefix.{u_1, u_2}
-
 
 theorem helper_BstrictT_1127.{u_1, u_2} :
     open scoped Classical in

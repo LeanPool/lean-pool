@@ -7,7 +7,6 @@ module
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleTransport
 
-
 public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoExclusions
@@ -2484,103 +2483,6 @@ private theorem helper_pathLeFull_765.{u_1, u_2} :
   · exact (Finset.mem_Icc.mp (Finset.mem_filter.mp (Finset.min'_mem _ _)).1).2
   · exact le_rfl
 
-private theorem helper_hbetaPresentTerminal_783.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-    [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-    (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-    (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-    (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-    (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-    (D : HierarchySituationTwoCaseTwoData G k e0 input T phi ett base C ctx),
-  let H : TashkinovHierarchy ett base := C.hierarchy;
-  let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-  let A : TreeSequence G e0 := HierarchyStarredStage H q;
-  let ell : ℕ := HierarchyFullTailLength C;
-  let B : TreeSequence G e0 := HierarchyFullTailPrefix C (ell - (2 : ℕ));
-  (2 : ℕ) ≤ ell →
-  ell = T.length - A.length →
-  A.length + ell = T.length →
-  ∀ (hBlen : B.length = T.length - (2 : ℕ)),
-  TreeSequenceInitialSegment B T →
-  ∀
-    (R :
-      HierarchySituationTwoReorderedTrees G k e0 input T phi ett base C ctx
-        D.toHierarchySituationTwoTailData)
-    (corrMinus : CorrespondingExtendedTashkinovTree G k e0 ett phi R.minus),
-  MaximumProperty corrMinus.replacementETT →
-  ∀ (baseMinus : HierarchyBase corrMinus.replacementETT phi)
-    (HMinus : TashkinovHierarchy corrMinus.replacementETT baseMinus)
-    (_ : HMinus.dividerCount = C.hierarchy.dividerCount)
-    (corrStar : CorrespondingExtendedTashkinovTree G k e0 ett phi R.star)
-    (baseStar : HierarchyBase corrStar.replacementETT phi)
-    (HStar : TashkinovHierarchy corrStar.replacementETT baseStar)
-    (_ : HStar.dividerCount = C.hierarchy.dividerCount),
-  TreeSequenceInitialSegment
-      (HierarchyFullTailPrefix C (HierarchyFullTailLength C - (2 : ℕ))) R.minus →
-  R.star.length = R.minus.length + (1 : ℕ) →
-  ∀ (hminusLen : R.minus.length = B.length + (1 : ℕ)),
-  R.star.length = T.length →
-  ∀ (beta : Fin k),
-  (
-  ∀ (S : TreeSequence G e0) (i : Fin (S.length + (1 : ℕ))),
-  S.vertex i ∈ TreeSequenceVertexSet S) →
-  ∀ (hbetaFirstBound : (↑(HierarchyFirstMissingPosition phi T beta) : ℕ) ≤ B.length)
-    (_ : GoodHierarchy HMinus),
-  HierarchyStarredStage HMinus (Fin.last HMinus.dividerCount) = A →
-  (
-  ∀ {inputU : PartialEdgeColoring E k} {U : TreeSequence G e0}
-     {ettU : ExtendedTashkinovTree G k e0 inputU U phi} {baseU : HierarchyBase ettU phi}
-     (K : TashkinovHierarchy ettU baseU),
-  HierarchyPathNumber K ≤
-    U.length - (HierarchyStarredStage K (Fin.last K.dividerCount)).length) →
-  let ibeta : Fin (B.length + (1 : ℕ)) :=
-    (⟨(↑(HierarchyFirstMissingPosition phi T beta) : ℕ),
-        by
-        have := GoldbergSeymour.TreeSequence.positive T
-        have := GoldbergSeymour.TreeSequence.positive B
-        omega⟩ :
-      Fin (B.length + (1 : ℕ)));
-  beta ∈ MissingColors G phi (B.vertex ibeta) →
-  beta ∉ MissingColors G phi (T.vertex D.terminalVertexIndex) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D H q A ell B htail hell hsum hBlen hBT R
-      corrMinus hminusMP baseMinus HMinus hminusCount corrStar baseStar HStar hstarCount hBminus
-      hstarLen hminusLen hstarLength beta vertexMem hbetaFirstBound goodMinus hminusStarred
-      pathLeFull ibeta hbetaAtB hm
-  let im : Fin (R.minus.length + 1) :=
-    Fin.castLE (Nat.succ_le_succ hBminus.1) ibeta
-  have hbetaMinus : beta ∈ MissingColors G phi (R.minus.vertex im) := by
-    rw [hBminus.2.1 ibeta]
-    exact hbetaAtB
-  have hne : R.minus.vertex im ≠ R.minus.vertex (Fin.last R.minus.length) := by
-    intro heq
-    have hv := congrArg Fin.val (R.minus.vertex_injective heq)
-    change ibeta.val = R.minus.length at hv
-    have hi := ibeta.isLt
-    omega
-  have hnot : ¬ ColoredVertexSetElementary G phi
-      (TreeSequenceVertexSet R.minus) := by
-    intro helem
-    have hd := helem (vertexMem R.minus im)
-      (vertexMem R.minus (Fin.last R.minus.length)) hne
-    apply Finset.disjoint_left.mp hd hbetaMinus
-    rw [R.minusTerminalVertex]
-    exact hm
-  let CMinus : HierarchyCounterexample baseMinus := {
-    positive := by simpa [corrMinus.rungAgreement] using C.positive
-    hierarchy := HMinus
-    good := goodMinus
-    maximum := hminusMP
-    notElementary := hnot }
-  apply ctx.lexicographicMinimality CMinus corrMinus.rungAgreement hminusCount
-  apply Or.inl
-  change HierarchyPathNumber HMinus < HierarchyPathNumber H
-  rw [D.pathNumberFull]
-  have hp := pathLeFull HMinus
-  rw [hminusStarred] at hp
-  omega
-
 private theorem helper_hstarPath_824.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E]
@@ -3569,14 +3471,6 @@ private theorem helper_continuation_4102.{u_1, u_2} :
   have hbetaAtB : beta ∈ MissingColors G phi (B.vertex ibeta) := by
     rw [← hBT.2.1 ibeta, hibeta]
     exact firstMissingMem T beta hbetaT
-  have hbetaPresentTerminal : beta ∉ MissingColors G phi
-      (T.vertex D.terminalVertexIndex) := by
-    exact @helper_hbetaPresentTerminal_783 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)
-        (@htail) (@hell) (@hsum) (@hBlen) (@hBT) (@R) (@corrMinus) (@hminusMP) (@baseMinus)
-        (@HMinus) (@hminusCount) (@corrStar) (@baseStar) (@HStar) (@hstarCount) (@hBminus)
-        (@hstarLen) (@hminusLen) (@hstarLength) (@beta) (@vertexMem) (@hbetaFirstBound)
-        (@goodMinus) (@hminusStarred) (@pathLeFull) (@hbetaAtB)
   let CStar : HierarchyCounterexample baseStar :=
     (C.transport HStar goodStar hstarMP corrStar.rungAgreement R.starVertexSet)
   have hstarPath : HierarchyPathNumber HStar = HierarchyPathNumber H := by

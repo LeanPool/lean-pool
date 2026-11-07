@@ -31,6 +31,18 @@ theorem ColoredVertexSetElementary.mono {V E : Type*} [Fintype E]
     ColoredVertexSetElementary G phi X :=
   fun {_} hu {_} hv different => elementary (subset hu) (subset hv) different
 
+/-- A color missing at one vertex of an elementary set is present at every other vertex. -/
+theorem ColoredVertexSetElementary.presentColor_of_missing {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {phi : PartialEdgeColoring E k} {X : Finset V}
+    (elementary : ColoredVertexSetElementary G phi X) {u v : V} {c : Fin k}
+    (root : u ∈ X) (missing : c ∈ MissingColors G phi u)
+    (inside : v ∈ X) (different : v ≠ u) : c ∈ PresentColors G phi v := by
+  classical
+  have absent : c ∉ MissingColors G phi v := by
+    intro shared
+    exact Finset.disjoint_left.mp (elementary inside root different) shared missing
+  simpa [MissingColors] using absent
+
 /-- A missing color at an outside vertex of an elementary set is absent from an inside subset. -/
 theorem ColoredVertexSetElementary.missing_not_mem_biUnion {V E : Type*} [Fintype E]
     {G : LooplessMultigraph V E} {k : ℕ} {phi : PartialEdgeColoring E k} {X Y : Finset V}

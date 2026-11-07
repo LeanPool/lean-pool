@@ -1570,69 +1570,6 @@ private theorem helper_newCore_790.{u_1, u_2} :
           exact hvc⟩
   exact transport Tn A oldCore ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
 
-private theorem helper_corrData_823.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
-      (alpha : Fin k),
-    let mu : PartialEdgeColoring E k := P.coloring;
-    let F : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-      P.corresponding.replacementETT;
-    let _ : HierarchyBase P.corresponding.replacementETT P.coloring := P.replacementBase;
-    let X : HierarchyCounterexample P.replacementBase := P.counterexample;
-    let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-      X.hierarchy;
-    let n : Fin (F.rounds + (1 : ℕ)) := Fin.last F.rounds;
-    let Tn : TreeSequence G e0 := F.series.data.tree n.castSucc;
-    let y : V := T.vertex (Fin.last T.length);
-    ∀ (beta : Fin k),
-    let sigma : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G mu beta alpha (Sum.inl y);
-    TreeMissingColors sigma Tn = TreeMissingColors mu Tn →
-    ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 F sigma T),
-    MaximumProperty corr.replacementETT →
-    ∀ (bs : HierarchyBase corr.replacementETT sigma)
-      (K : TashkinovHierarchy corr.replacementETT bs),
-    SameHierarchyStages H K →
-    corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc =
-        Tn ∧
-      corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
-          F.series.data.kind n ∧
-        TashkinovStoredColors corr.replacementETT.series.data
-            (Fin.last corr.replacementETT.rounds) =
-          TashkinovStoredColors F.series.data n := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha mu F b X H n Tn y beta sigma hmTn
-      corr hmaximum bs K hsame
-  rcases corr with ⟨ri, rs, re, hr, hs, hgen, ht, hd, he, hk, hproper, hone, hstable⟩
-  cases re with
-  | mk rounds positive data above strict below generating =>
-    cases hr
-    have hs' : data = rs := eq_of_heq hs
-    cases hs'
-    let a : Fin F.rounds := ⟨F.rounds - 1, by have := F.roundsPositive; omega⟩
-    have ha : a.succ = Fin.last F.rounds := Fin.ext (by have := F.roundsPositive; simp [a]; omega)
-    have htree : rs.data.tree (Fin.last F.rounds).castSucc = Tn := by
-      change rs.data.tree (Fin.last F.rounds).castSucc = F.series.data.tree (Fin.last
-          F.rounds).castSucc
-      rw [← ha]
-      exact ht a
-    have hmnew : TreeMissingColors (rs.data.coloring (Fin.last F.rounds))
-        (rs.data.tree (Fin.last F.rounds).castSucc) = TreeMissingColors mu Tn := by
-      rw [← hgen, htree, hmTn]
-    have hmold : TreeMissingColors (F.series.data.coloring (Fin.last F.rounds))
-        (F.series.data.tree (Fin.last F.rounds).castSucc) = TreeMissingColors mu Tn := by
-      rw [← F.generatingColoring]
-    refine ⟨htree, hk _, ?_⟩
-    change TashkinovStoredColors rs.data (Fin.last F.rounds) = TashkinovStoredColors
-        F.series.data (Fin.last F.rounds)
-    simp only [TashkinovStoredColors, hd, hmnew, hmold]
-
 private theorem helper_endpoint_894.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -2243,9 +2180,7 @@ private theorem helper_continuation_1486.{u_1, u_2} :
   obtain ⟨corr, hmaximum, bs, K, hsame⟩ := HierarchySplitter G k e0
     P.corresponding.replacementInput T mu sigma F X.maximum X.positive mctx.lowerRung
     b H hp mctx.proper mctx.oneEdgeUncolored hsproper hsone hcombined newRoute
-  have corrData :=
-    @helper_corrData_823 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        input T phi ett base C ctx P alpha beta hmTn corr hmaximum bs K hsame
+  have corrData := corr.terminalData
   exact @helper_continuation_1545 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 input T phi ett base C ctx P alpha hzero hnoCommon hz hp hA hAT hBlen hBT helem hyB haA
       hay beta hbR hne haRnot hbA hvb hvbA hvbB hi hsproper hsone behavior missingB hmA hmTn hmR

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.NonparallelHierarchyCorrespondence
+
 public import LeanPool.GoldbergSeymour.HierarchySplitter
 
 /-!
@@ -88,53 +90,8 @@ theorem TashkinovHierarchy.stableReplacement {V E : Type*}
       · exact Or.inr ⟨hk, f, seed, hedges, hadjoin, routeTransport seed hs⟩
     obtain ⟨corr⟩ := hmod.2.2 B TnToB TnStrictB hroute
     have hMP := MaximumPropertyTransport G k e0 ett sigma hmod B corr maximum
-    refine ⟨corr, hMP, ?_⟩
-    rcases corr with ⟨newInput, newSeries, newETT, hr, hs, hgen, htrees, hstored,
-      hedges, hkinds, hproperSeries, honeSeries, hstableSeries⟩
-    rcases newETT with ⟨r, rp, series, above, strict, below, gen⟩
-    cases hr
-    have heq : series = newSeries := eq_of_heq hs
-    cases heq
-    let rep : ExtendedTashkinovTree G k e0 newInput B sigma :=
-      ⟨ett.rounds, rp, newSeries, above, strict, below, gen⟩
-    let j : Fin ett.rounds := ⟨ett.rounds - 1, by have := ett.roundsPositive; omega⟩
-    have hj : j.succ = n := Fin.ext (by simp [j, n]; have := ett.roundsPositive; omega)
-    have htree : newSeries.data.tree n.castSucc = Tn := by simpa [hj, Tn] using htrees j
-    have hkind := hkinds n
-    let pos : Fin ((newSeries.data.tree n.castSucc).length + 1) :=
-      Fin.cast (congrArg (fun S : TreeSequence G e0 => S.length + 1) htree.symm)
-        base.supportPosition
-    let baseS : HierarchyBase rep sigma :=
-      { core := base.core
-        closure := base.closure
-        supportPosition := pos
-        supportPositive := by simpa [pos] using base.supportPositive
-        terminalMissingColors := rfl
-        parallel := by
-          dsimp only [rep]
-          intro hp
-          exact (hPE (hkind.symm.trans hp)).elim
-        nonparallel := by
-          dsimp only [rep]
-          intro hp
-          exact (base.nonparallel hPE).trans htree.symm }
-    let HS : TashkinovHierarchy rep baseS :=
-      { dividerCount := HB.dividerCount
-        stage := HB.stage
-        baseStage := HB.baseStage.trans htree.symm
-        terminalStage := HB.terminalStage
-        nested := HB.nested
-        strict := HB.strict
-        dividerPosition := HB.dividerPosition
-        dividerPositive := HB.dividerPositive
-        dividerIncreasing := HB.dividerIncreasing
-        dividerStage := HB.dividerStage
-        coreInsideFirst := HB.coreInsideFirst }
-    refine ⟨baseS, HS, ?_⟩
-    refine ⟨rfl, rfl, HEq.rfl, HEq.rfl, ?_, ?_⟩
-    · exact ⟨fun hp => (hPE hp).elim, fun hp => (hPE (hkind.symm.trans hp)).elim⟩
-    · intro hp; exact (hPE hp).elim
-
+    obtain ⟨baseS, HS, same⟩ := HB.nonparallelCorrespondence corr hPE
+    exact ⟨corr, hMP, baseS, HS, same⟩
 
 end GoldbergSeymour
 

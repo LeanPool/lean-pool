@@ -489,50 +489,6 @@ private theorem helper_hy0Degree_676.{u_1, u_2} :
       · exact congrArg Sum.inr hef
       · exact False.elim ((hproper hef ⟨v0, ha.1, hb.1⟩ hea) hfa)
 
-private theorem helper_hKcolors_795.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))) (R :
-        ScheideDefectiveReturnData G k e0 phi T C D d),
-    let gamma : Fin k := C.gamma (D.gammaIndex d);
-    let gammaJ : Fin k := C.gamma R.blockIndex;
-    let phi1 : PartialEdgeColoring E k := OutsideTreeColorSwap T phi gamma gammaJ;
-    let p : (TwoColorIncidenceGraph G phi (C.gamma (D.gammaIndex d)) (↑d : Fin k)).Walk (Sum.inl
-        (D.v0 d)) (Sum.inl (D.replacementZ d)) := D.replacementPath d;
-    let i : Fin ((D.replacementPath d).length + (1 : ℕ)) := R.pathIndex;
-    let H1 : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi1 gammaJ (↑d : Fin k);
-    let S : Set (V ⊕ E) := {q : V ⊕ E |
-    ∃ (r : Fin (p.length + (1 : ℕ))), (↑i : ℕ) ≤ (↑r : ℕ) ∧ p.getVert (↑r : ℕ) = q};
-    let K : Set (V ⊕ E) := TwoColorComponent G phi1 gammaJ (↑d : Fin k) (Sum.inl R.v1);
-        (↑R.edgeIndex : ℕ) = (↑R.pathIndex : ℕ) + (1 : ℕ) ∧ (↑R.outsideIndex : ℕ) = (↑R.pathIndex
-        : ℕ) + (2 : ℕ) → p.getVert (↑i : ℕ) = Sum.inl R.v1 → (
-    ∀ (n : ℕ), (↑i : ℕ) ≤ n → n < p.length → H1.Adj (p.getVert n) (p.getVert (n + (1 : ℕ)))) → S =
-        K →
-    ∀ (f : E), Sum.inr f ∈ K → phi1 f = some gammaJ ∨ phi1 f = some (↑d : Fin k) := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R gamma gammaJ phi1 p i H1 S K hsucc hv1At tail_step_new
-      hRK f hfK
-  have hfR : Sum.inr f ∈ S := by rw [hRK]; exact hfK
-  obtain ⟨r, hir, hget⟩ := hfR
-  have hstrict : i.val < r.val := by
-    by_contra hn
-    have hre : r.val = i.val := by omega
-    have : Sum.inr f = Sum.inl (R.v1) := by
-      rw [← hget, hre, hv1At]
-    simp at this
-  have hadj := tail_step_new (r.val - 1) (by omega) (by omega)
-  have hidx : r.val - 1 + 1 = r.val := by omega
-  rw [hidx, hget] at hadj
-  cases hprev : p.getVert (r.val - 1) with
-  | inr e =>
-    rw [hprev] at hadj
-    simp [H1, TwoColorIncidenceGraph] at hadj
-  | inl w =>
-    rw [hprev] at hadj
-    simpa [H1, TwoColorIncidenceGraph] using hadj.2
-
 private theorem helper_outside_edge_effect_777.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -856,9 +812,6 @@ private theorem helper_continuation_880.{u_1, u_2} :
       exact ⟨i, le_rfl, hv1At⟩
   have htreeEdges := @helper_htreeEdges_565 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@phi) (@T) (@C) (@D) (@d) (@R) (@hKtree)
-  have hKcolors := @helper_hKcolors_795 (@V) (@E) inferInstance inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@phi) (@T) (@C) (@D) (@d) (@R) (@hsucc) (@hv1At)
-      (@tail_step_new) (@hRK)
   have hf1color : phi1 R.f1 = some d.1 := by
     apply (hfixed R.f1 ?_).trans R.f1_color
     exact ⟨R.v1, by simpa [X] using hv1X, by simp [Incident, R.f1_ends]⟩

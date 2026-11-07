@@ -5,7 +5,6 @@ Authors: Wesley Pegden
 -/
 module
 
-
 public import LeanPool.GoldbergSeymour.BaseControl
 public import LeanPool.GoldbergSeymour.DisplayedEdges
 public import LeanPool.GoldbergSeymour.RecoloredPrefixReconstruction
@@ -544,80 +543,6 @@ private abbrev helperCaseContinuation1561Conditions.{u_1, u_2} : Prop :=
                 (⟨C.hierarchy.dividerCount - (1 : ℕ), by omega⟩ :
                  Fin (C.hierarchy.dividerCount + (1 : ℕ)))))
 
-private theorem helper_corrData_414.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (sigma : PartialEdgeColoring E k),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    (∀ {U W Z : TreeSequence G e0},
-        TreeSequenceInitialSegment U W →
-          TreeSequenceInitialSegment W Z → TreeSequenceInitialSegment U Z) →
-    TreeSequenceInitialSegment Tn A →
-    (∀ (U : TreeSequence G e0),
-        TreeSequenceInitialSegment U A →
-          TreeMissingColors sigma U = TreeMissingColors phi U) →
-    ∀ {input0 : PartialEdgeColoring E k} {T0 : TreeSequence G e0}
-      (old : ExtendedTashkinovTree G k e0 input0 T0 phi),
-    old.series.data.tree (Fin.last old.rounds).castSucc = Tn →
-    old.series.data.kind (Fin.last old.rounds) = ett.series.data.kind n →
-    TashkinovStoredColors old.series.data (Fin.last old.rounds) = Dn →
-    ∀ (corr : CorrespondingExtendedTashkinovTree G k e0 old sigma A),
-    corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc =
-        Tn ∧
-      corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
-          ett.series.data.kind n ∧
-        TashkinovStoredColors corr.replacementETT.series.data
-            (Fin.last corr.replacementETT.rounds) =
-          Dn := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C sigma H q A n Tn Dn trans TnA treeMissingEq
-      input0 T0 old holdTree holdKind holdStored corr
-  clear * - old holdTree holdKind holdStored treeMissingEq TnA
-  rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-    rungAgreement, seriesPresentation, finalGeneratingColoring,
-    ladderTreesAgree, storedColorsAgree, connectingEdgesAgree,
-    extensionKindsAgree, replacementProper, replacementOneUncolored,
-    replacementStable⟩
-  cases replacementETT with
-  | mk rounds roundsPositive replacementData above strict below generating =>
-    cases rungAgreement
-    have hs : replacementData = replacementSeries := eq_of_heq seriesPresentation
-    cases hs
-    let a : Fin old.rounds := ⟨old.rounds - 1, by have := old.roundsPositive; omega⟩
-    have ha : a.succ = Fin.last old.rounds := by
-      apply Fin.ext
-      change old.rounds - 1 + 1 = old.rounds
-      have := old.roundsPositive
-      omega
-    have ht : replacementSeries.data.tree (Fin.last old.rounds).castSucc = Tn := by
-      rw [← ha]
-      have hold := holdTree
-      rw [← ha] at hold
-      exact (ladderTreesAgree a).trans hold
-    have hm : TreeMissingColors (replacementSeries.data.coloring (Fin.last old.rounds))
-        (replacementSeries.data.tree (Fin.last old.rounds).castSucc) =
-        TreeMissingColors phi Tn := by
-      rw [← finalGeneratingColoring, ht]
-      exact treeMissingEq Tn TnA
-    have hmOld : TreeMissingColors (old.series.data.coloring (Fin.last old.rounds))
-        (old.series.data.tree (Fin.last old.rounds).castSucc) =
-        TreeMissingColors phi Tn := by
-      rw [← old.generatingColoring, holdTree]
-    refine ⟨ht, (extensionKindsAgree (Fin.last old.rounds)).trans holdKind, ?_⟩
-    rw [← holdStored]
-    change TashkinovStoredColors replacementSeries.data (Fin.last old.rounds) =
-      TashkinovStoredColors old.series.data (Fin.last old.rounds)
-    simp only [TashkinovStoredColors, storedColorsAgree, hm, hmOld]
-
 private theorem helper_branch_274.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -801,37 +726,6 @@ private theorem helper_coreToStar_371.{u_1, u_2} :
     exact trans H.coreInsideFirst
       (stageChain j.val (by omega) ⟨1, by omega⟩ (by simp; omega))
 
-private theorem helper_starToA_383.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-      [DecidableEq V] [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base)
-      (alpha beta : Fin k),
-    alpha ≠ beta →
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    (∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-        (0 : ℕ) < (↑j : ℕ) → HierarchyStarredStage H j = H.stage j.castSucc) →
-    (∀ (j : Fin (H.dividerCount + (2 : ℕ))),
-        (↑j : ℕ) ≤ H.dividerCount → TreeSequenceInitialSegment (H.stage j) A) →
-    (∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-        TreeSequenceInitialSegment base.core (HierarchyStarredStage H j)) →
-    ∀ (j : Fin (H.dividerCount + (1 : ℕ))),
-    TreeSequenceInitialSegment (HierarchyStarredStage H j) A := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta hne H q A starPositive ordinaryToA
-      coreToStar j
-  by_cases hj : j = 0
-  · subst j
-    exact coreToStar q
-  · rw [starPositive j (by
-      have hne : j.val ≠ 0 := fun hh => hj (Fin.ext hh)
-      omega)]
-    exact ordinaryToA j.castSucc (by have := j.isLt; simp only [Fin.val_castSucc]; omega)
-
 private theorem helper_preStepElementary_574.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -989,7 +883,8 @@ private theorem helper_caseContinuation_1156.{u_1, u_2} :
           ett.series.data.kind n ∧
         TashkinovStoredColors corr.replacementETT.series.data
           (Fin.last corr.replacementETT.rounds) = Dn := by
-    apply helper_corrData_414 <;> assumption
+    have data := corr.terminalData
+    exact ⟨data.1.trans holdTree, data.2.1.trans holdKind, data.2.2.trans holdStored⟩
   have fullBase :
       ∃ inputA : PartialEdgeColoring E k,
         ∃ ettA : ExtendedTashkinovTree G k e0 inputA A sigma,
@@ -1366,8 +1261,6 @@ theorem StableChangeCasesOneTwo {V E : Type*}
     have coreToStar (j : Fin (H.dividerCount + 1)) :
         TreeSequenceInitialSegment base.core (HierarchyStarredStage H j) := by
       apply helper_coreToStar_371 <;> assumption
-    have starToA := helper_starToA_383 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
-        (@alpha) (@beta) (@hne) (@starPositive) (@ordinaryToA) (@coreToStar)
     have coreA : TreeSequenceInitialSegment base.core A := coreToStar q
     have TnCore : TreeSequenceInitialSegment Tn base.core := by
       by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE

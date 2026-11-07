@@ -20,10 +20,25 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
+open scoped Sym2
+
 /-- Every boundary-edge color is present at every vertex of the set. -/
 def ColoredVertexSetClosed {V E : Type*} [Fintype V] [Fintype E] (G : LooplessMultigraph V E)
   {k : ℕ} (phi : PartialEdgeColoring E k) (X : Finset V) : Prop :=
  ∀ {f c v}, f ∈ BoundaryEdges G X → v ∈ X → phi f = some c → c ∉ MissingColors G phi v
+
+/-- An edge in a color missing in a closed set cannot leave the set. -/
+theorem ColoredVertexSetClosed.endpoint_mem {V E : Type*} [Fintype V] [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {phi : PartialEdgeColoring E k} {X : Finset V}
+    (closed : ColoredVertexSetClosed G phi X) {u v w : V} {edge : E} {color : Fin k}
+    (root : u ∈ X) (missing : color ∈ MissingColors G phi u) (inside : v ∈ X)
+    (endpoints : G.ends edge = s(v, w)) (colored : phi edge = some color) : w ∈ X := by
+  classical
+  by_contra outside
+  have boundary : edge ∈ BoundaryEdges G X := by
+    simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and]
+    exact ⟨v, inside, w, outside, endpoints⟩
+  exact (closed boundary root colored) missing
 
 end GoldbergSeymour
 

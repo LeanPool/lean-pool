@@ -1023,38 +1023,6 @@ private theorem helper_hstableRev_920.{u_1, u_2} :
     (TashkinovStoredColors ett.series.data n)).symm forward
   simpa [left, right] using reverse
 
-private theorem helper_hbad_970.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating sigma : PartialEdgeColoring E k) (ett :
-        ExtendedTashkinovTree G k e0 input T generating),
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    ∀ (i : Fin ett.rounds) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree
-        i.succ.castSucc) (TashkinovStoredColors ett.series.data i.castSucc)
-        (ett.series.data.coloring i.castSucc)),
-    ∀ terminalGamma ∈ TashkinovStoredColors ett.series.data n, StableColoring Tn
-        (TashkinovStoredColors ett.series.data n) sigma generating → choice.edge ∈ BoundaryEdges G
-        (TreeSequenceVertexSet Tn) ∧ sigma choice.edge = some terminalGamma → choice.edge ∈
-        BoundaryColorEdges G generating (TreeSequenceVertexSet Tn) terminalGamma := by
-  classical
-  intro V E _ _ _ G k e0 input T generating sigma ett n Tn i choice terminalGamma hgammaStored
-      hstableRev hnonemptyData
-  have hinc : TreeIncidentEdge Tn choice.edge := by
-    unfold TreeIncidentEdge
-    have hb := hnonemptyData.1
-    obtain ⟨u, hu, v, hv, he⟩ := by simpa [BoundaryEdges] using hb
-    refine ⟨u, hu, ?_⟩
-    change u ∈ G.ends choice.edge
-    rw [he]
-    simp
-  have hc : generating choice.edge = sigma choice.edge := by
-    exact hstableRev.1 choice.edge hinc
-      ⟨terminalGamma, Finset.mem_union_right _ hgammaStored,
-        hnonemptyData.2⟩
-  simp [BoundaryColorEdges, hnonemptyData.1, hc, hnonemptyData.2]
-
 private theorem helper_continuation_1320.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -1113,8 +1081,6 @@ private theorem helper_continuation_1320.{u_1, u_2} :
       (TreeSequenceVertexSet Tn) ∧
       sigma choice.edge = some terminalGamma := by
     simpa [BoundaryColorEdges] using hnonempty
-  have hbad := @helper_hbad_970 V E inferInstance inferInstance inferInstance G k e0 input T
-      generating sigma ett i choice terminalGamma hgammaStored hstableRev hnonemptyData
   have hmissEq : TreeMissingColors sigma Tn =
       TreeMissingColors generating Tn := by
     unfold TreeMissingColors

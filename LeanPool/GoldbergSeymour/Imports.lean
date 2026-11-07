@@ -354,6 +354,7 @@ public import LeanPool.GoldbergSeymour.MixedNoClosedTransport
 public import LeanPool.GoldbergSeymour.ModColoring
 public import LeanPool.GoldbergSeymour.NestedOddMissingPair
 public import LeanPool.GoldbergSeymour.NineN
+public import LeanPool.GoldbergSeymour.NonparallelHierarchyCorrespondence
 public import LeanPool.GoldbergSeymour.NonparallelPenultimateInterchangeability
 public import LeanPool.GoldbergSeymour.NormalCycleEdge
 public import LeanPool.GoldbergSeymour.NormalGlobalMaximumTriple

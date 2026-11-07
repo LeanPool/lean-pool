@@ -697,32 +697,6 @@ private theorem helper_hBsingleton_734.{u_1, u_2} :
     simp [Ne.symm hne]
   omega
 
-private theorem helper_hu01_771.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))),
-    let i : Fin C.s := D.gammaIndex d;
-    let u0 : V := C.blockVertex i (0 : Fin (2 : ℕ));
-    let u1 : V := C.blockVertex i (1 : Fin (2 : ℕ)); u0 ≠ u1 := by
-  classical
-  intro V E _ _ _ G k e0 phi T C D d i u0 u1 hu
-  let q0 : Fin (T.length + 1) := ⟨C.p + 2 * i.val, by
-    have hi := i.isLt
-    have hl := C.length_eq
-    omega⟩
-  let q1 : Fin (T.length + 1) := ⟨C.p + 2 * i.val + 1, by
-    have hi := i.isLt
-    have hl := C.length_eq
-    omega⟩
-  have hv : T.vertex q0 = T.vertex q1 := by
-    rw [show T.vertex q0 = u0 by simpa [q0, u0] using C.block_vertex_position i 0]
-    rw [show T.vertex q1 = u1 by simpa [q1, u1] using C.block_vertex_position i 1]
-    exact hu
-  have := congrArg Fin.val (T.vertex_injective hv)
-  simp [q0, q1] at this
-
 private theorem helper_edge_colors_of_mem_K_853.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -1087,7 +1061,6 @@ theorem ScheideReplacementBoundaryAtLeastThree {V E : Type*}
   obtain ⟨h, hhcolor, hhends⟩ :=
     ScheideStructuralInternalPair G k e0 phi T C i alpha hAlphaGamma
       ⟨y0, hp.2.1, hy0Missing⟩
-  have hu01 := @helper_hu01_771 V E inferInstance inferInstance inferInstance G k e0 phi T C D d
   have hu0X : u0 ∈ X := by
     unfold u0 X
     rw [← C.block_vertex_position i 0]

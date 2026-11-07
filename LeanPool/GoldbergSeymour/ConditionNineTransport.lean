@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
+
 public import LeanPool.GoldbergSeymour.SplitSwapData
 public import LeanPool.GoldbergSeymour.HierarchyMeasures
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
@@ -95,23 +97,7 @@ theorem P2880_T1_ConditionNineTransport
       (corr : CorrespondingExtendedTashkinovTree G k e0 original nu T) :
       corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc =
         original.series.data.tree (Fin.last original.rounds).castSucc := by
-    rcases corr with ⟨replacementInput, replacementSeries, replacementETT,
-      rungAgreement, seriesPresentation, finalGeneratingColoring, ladderTreesAgree,
-      storedColorsAgree, connectingEdgesAgree, extensionKindsAgree, replacementProper,
-      replacementOneUncolored, replacementStable⟩
-    cases replacementETT with
-    | mk rounds roundsPositive series above strict below generating =>
-      cases rungAgreement
-      have hseries : series = replacementSeries := eq_of_heq seriesPresentation
-      cases hseries
-      let i : Fin original.rounds := ⟨original.rounds - 1, by
-        have := original.roundsPositive
-        omega⟩
-      have hi : i.succ = Fin.last original.rounds := by
-        apply Fin.ext
-        change original.rounds - 1 + 1 = original.rounds
-        exact Nat.sub_add_cancel original.roundsPositive
-      simpa only [hi] using ladderTreesAgree i
+    exact corr.terminalData.1
   have hterminal :
       R.corresponding.replacementETT.series.data.tree
           (Fin.last R.corresponding.replacementETT.rounds).castSucc =

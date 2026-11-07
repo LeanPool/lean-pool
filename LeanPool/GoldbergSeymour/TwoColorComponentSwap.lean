@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TwoColorComponent
+public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
 
 /-!
 # Two Color Component Swap
@@ -47,6 +48,37 @@ theorem TwoColorComponentSwapColored {V E : Type*} {G : LooplessMultigraph V E} 
       · exact ⟨alpha, rfl⟩
       · exact ⟨color, colored⟩
   · exact ⟨color, colored⟩
+
+/-- A component swap preserves the assignment of each color outside its two swap colors. -/
+theorem TwoColorComponentSwap.otherColor_iff {V E : Type*} {G : LooplessMultigraph V E}
+    {k : ℕ} {phi : PartialEdgeColoring E k} {alpha beta color : Fin k} {z : Sum V E}
+    (first : color ≠ alpha) (second : color ≠ beta) (edge : E) :
+    TwoColorComponentSwap G phi alpha beta z edge = some color ↔ phi edge = some color := by
+  classical
+  unfold TwoColorComponentSwap
+  by_cases member : Sum.inr edge ∈ TwoColorComponent G phi alpha beta z
+  · rw [ite_eq_left member]
+    by_cases left : phi edge = some alpha
+    · rw [ite_eq_left left, left]
+      simp [first.symm, second.symm]
+    · rw [ite_eq_right left]
+      by_cases right : phi edge = some beta
+      · rw [ite_eq_left right, right]
+        simp [first.symm, second.symm]
+      · rw [ite_eq_right right]
+  · rw [ite_eq_right member]
+
+/-- A component swap preserves the unique uncolored edge, even for coincident swap colors. -/
+theorem IsOneEdgeUncolored.componentSwap {V E : Type*} {G : LooplessMultigraph V E}
+    {k : ℕ} {phi : PartialEdgeColoring E k} {alpha beta : Fin k} {z : Sum V E} {e0 : E}
+    (one : IsOneEdgeUncolored phi e0) :
+    IsOneEdgeUncolored (TwoColorComponentSwap G phi alpha beta z) e0 := by
+  classical
+  refine ⟨?_, ?_⟩
+  · simp [TwoColorComponentSwap, one.1]
+  · intro edge different
+    obtain ⟨color, colored⟩ := one.2 edge different
+    exact TwoColorComponentSwapColored (color := color) colored
 
 end GoldbergSeymour
 
