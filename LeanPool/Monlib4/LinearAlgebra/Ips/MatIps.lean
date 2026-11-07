@@ -771,7 +771,7 @@ theorem includeBlock_inner_ne_same [hψ : ∀ i, (ψ i).IsFaithfulPosMap] {i j :
     withPiInner[ψ] (⟪includeBlock x, includeBlock y⟫_ℂ = 0) := by
   pi_inner_instances ψ
   simp only [includeBlock_left_inner, includeBlock_apply_ne_same _ h.symm]
-  simp
+  simp only [inner_zero_right]
 
 omit [Fintype k] [DecidableEq k] in
 theorem _root_.Module.Dual.pi.IsFaithfulPosMap.basis.apply_cast_eq_mpr
@@ -1018,17 +1018,24 @@ theorem LinearMap.mul'_adjoint [hφ : φ.IsFaithfulPosMap] (x : Matrix n n ℂ) 
       * (b * φ.matrix * xᴴ) x_3 x_1 := ?_
     _ = ∑ x_1, (a * b * φ.matrix * xᴴ) x_1 x_1 := ?_
     _ = ⟪x, a * b⟫_ℂ := ?_
-  · congr
-    ext
+  · apply Finset.sum_congr rfl
+    intro i _
     rw [Finset.sum_comm]
-    congr
-    ext
+    apply Finset.sum_congr rfl
+    intro j _
     simp_rw [Finset.mul_sum, Finset.sum_mul]
-    repeat congr; ext
-    ring_nf
-  · repeat congr 1; ext1
+    apply Finset.sum_congr rfl
+    intro k _
+    apply Finset.sum_congr rfl
+    intro l _
+    ac_rfl
+  · apply Finset.sum_congr rfl
+    intro i _
+    apply Finset.sum_congr rfl
+    intro j _
     rw [← mul_assoc, Matrix.mul_apply, Matrix.mul_apply, mul_comm]
-  · congr; ext
+  · apply Finset.sum_congr rfl
+    intro i _
     let := hφ.matrixIsPosDef.invertible
     rw [← Matrix.mul_apply, mul_inv_of_invertible, mul_one]
     simp_rw [← mul_assoc]
@@ -1124,7 +1131,8 @@ theorem LinearMap.mulLeft_toMatrix (hφ : φ.IsFaithfulPosMap) (x : Matrix n n �
   ext ij kl
   simp_rw [Module.Dual.IsFaithfulPosMap.toMatrix, LinearMap.toMatrixAlgEquiv_apply,
     LinearMap.mulLeft_apply, IsFaithfulPosMap.basis_repr_apply,
-    Module.Dual.IsFaithfulPosMap.inner_coord', IsFaithfulPosMap.basis_apply, Matrix.mul_assoc,
+    Module.Dual.IsFaithfulPosMap.inner_coord', IsFaithfulPosMap.basis_apply,
+      Matrix.mul_assoc,
     PosDef.rpow_mul_rpow, neg_add_cancel, PosDef.rpow_zero, Matrix.mul_one, Matrix.mul_apply,
     Matrix.single_eq, kroneckerMap, of_apply, Matrix.one_apply, mul_boole, ite_and,
       Finset.sum_ite_eq,
@@ -1302,5 +1310,7 @@ theorem LinearMap.pi_mul'_comp_mul'_adjoint_eq_smul_id_iff [hψ : ∀ i, (ψ i).
   constructor
   · intro h
     specialize h (1 : PiMat ℂ k s)
-    simp_all
+    simp_all only [Pi.smul_apply, Pi.one_apply, ne_eq, one_ne_zero, not_false_eq_true,
+      smul_left_inj,
+        implies_true]
   · simp_all

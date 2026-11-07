@@ -73,7 +73,7 @@ lemma selfAdjointDecompositionRight_eq_zero_iff
         (by norm_num : (1 / 2 : ℂ) ≠ 0)
     exact sub_eq_zero.mp h2
   · intro h
-    simp [selfAdjointDecompositionRight, h]
+    simp only [selfAdjointDecompositionRight, RCLike.I_to_complex, one_div, h, sub_self, smul_zero]
 
 theorem selfAdjointDecompositionLeft_isSelfAdjoint
   {B : Type*} [AddCommMonoid B] [StarAddMonoid B] [SMul ℂ B] [StarModule ℂ B] (a : B) :
@@ -154,7 +154,7 @@ lemma orthogonalProjection_ker_comp_eq_of_comp_eq_zero {T S : B →L[ℂ] B} (h 
     intro x ⟨y, hy⟩
     rw [← hy, LinearMap.mem_ker]
     have hfun := congrArg (fun f : B →L[ℂ] B => f y) h
-    simpa [mul_apply_eq_comp] using hfun
+    simpa only [ContinuousLinearMap.coe_coe, mul_apply_eq_comp, zero_apply] using hfun
   rw [← orthogonalProjection.range (LinearMap.ker T.toLinearMap)] at this
   rw [← ContinuousLinearMap.coe_inj, ContinuousLinearMap.mul_def,
     ContinuousLinearMap.toLinearMap_comp, IsIdempotentElem.comp_idempotent_iff]
@@ -285,7 +285,8 @@ lemma Matrix.IsHermitian.sqSqrt_isPosSemidef {x : Matrix n n ℂ} (hx : x.IsHerm
   hx.sqSqrt.PosSemidef := by
   rw [sqSqrt_eq]
   apply (innerAut_posSemidef_iff _).mpr
-  simp_all
+  simp_all only [Complex.coe_algebraMap, posSemidef_diagonal_iff, Function.comp_apply, Pi.abs_apply,
+      Complex.zero_le_real, abs_nonneg, implies_true]
 
 /-- the square of the positive square root of a Hermitian matrix is equal to the square of the
   matrix -/
@@ -604,7 +605,7 @@ theorem LinearMap.isPosMap_iff_comp_starAlgEquiv
   simp only [forall_exists_index, forall_eq_apply_imp_iff, map_mul,
     map_star]
   refine ⟨fun h _ => h _, fun h x => ?_⟩
-  simpa using h (EquivLike.inv ψ x)
+  simpa only [EquivLike.apply_inv_apply] using h (EquivLike.inv ψ x)
 
 theorem LinearMap.isReal_iff_comp_starEquiv
   {K A B : Type*}
@@ -617,7 +618,7 @@ theorem LinearMap.isReal_iff_comp_starEquiv
   · intro h _
     exact h _
   · intro h x
-    simpa using h (EquivLike.inv ψ x)
+    simpa only [EquivLike.apply_inv_apply] using h (EquivLike.inv ψ x)
 
 /-- if a map preserves positivity, then it is star-preserving -/
 theorem isReal_of_isPosMap
@@ -797,7 +798,8 @@ theorem selfAdjointDecompositionRight_of
     Complex.star_def, Complex.conj_I, neg_smul, sub_eq_add_neg,
     neg_add, add_add_add_comm, add_neg_cancel, zero_add, ← two_smul ℂ]
   simp only [smul_smul, smul_neg]
-  simp_all
+  simp_all only [RCLike.I_to_complex, one_div, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
+      inv_mul_cancel_left₀, Complex.I_mul_I, neg_smul, one_smul, neg_neg]
 
 theorem complex_decomposition_mul_decomposition
   {B : Type*} [Ring B]
@@ -936,7 +938,7 @@ theorem LinearMap.IsPositive'.add_ker_eq_inf_ker
     (hS.2 x)
   obtain ⟨f, rfl⟩ := (LinearMap.isPositive'_iff_exists_adjoint_hMul_self _).mp hS
   simp only [Module.End.mul_apply, LinearMap.adjoint_inner_right, inner_self_eq_zero] at this
-  simp_all
+  simp_all only [Module.End.mul_apply, map_zero, zero_eq_neg]
 
 theorem mem_unitary_iff_isStarNormal_and_decomposition_left_sq_add_right_sq_eq_one
   {B : Type*} [Ring B] [StarRing B]
@@ -1080,7 +1082,8 @@ theorem LinearMap.exists_scalar_isometry_iff_preserves_ortho
         obtain ⟨α, hα⟩ :=
           (LinearMap.exists_scalar_isometry_iff_preserves_ortho_of_ne_zero this hT).mpr h
         use (α⁻¹ : 𝕜ˣ), ⟨((α : 𝕜) • T), (isometry_iff_norm _).mp hα⟩
-        simp_all
+        simp_all only [Units.val_inv_eq_inv_val, ne_eq, Units.ne_zero, not_false_eq_true,
+          inv_smul_smul₀]
 
 theorem LinearMap.isSymmetric_adjoint_mul_self'
   {𝕜 V W : Type*} [RCLike 𝕜] [NormedAddCommGroup V] [InnerProductSpace 𝕜 V]

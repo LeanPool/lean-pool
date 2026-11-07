@@ -73,7 +73,8 @@ theorem Module.Dual.IsFaithfulPosMap.basis_apply' [hφ : Module.Dual.IsFaithfulP
 
 theorem sig_apply_pos_def_matrix [hφ : Module.Dual.IsFaithfulPosMap φ] (t s : ℝ) :
     hφ.sig t (hφ.matrixIsPosDef.rpow s) = hφ.matrixIsPosDef.rpow s := by
-  simp_rw [Module.Dual.IsFaithfulPosMap.sig_apply, PosDef.rpow_mul_rpow, neg_add_cancel_comm]
+  simp_rw [Module.Dual.IsFaithfulPosMap.sig_apply, PosDef.rpow_mul_rpow,
+    neg_add_cancel_comm]
 
 theorem sig_apply_pos_def_matrix' [hφ : Module.Dual.IsFaithfulPosMap φ] (t : ℝ) :
     hφ.sig t φ.matrix = φ.matrix := by
@@ -369,7 +370,7 @@ theorem Module.Dual.pi.IsFaithfulPosMap.toMatrixLinEquiv_apply'' [hψ : ∀ i, (
       (f (includeBlock ((hψ l.1).basis l.2)) *
           Pi.PosDef.rpow (Module.Dual.pi.IsFaithfulPosMap.matrixIsPosDef hψ₂) (1 / 2 : ℝ))
         r.1 r.2.1 r.2.2 := by
-  rw [Module.Dual.pi.IsFaithfulPosMap.toMatrixLinEquiv_apply']
+  rw [Module.Dual.pi.IsFaithfulPosMap.toMatrixLinEquiv_apply' (φ := ψ₂)]
   rfl
 theorem Module.Dual.pi.IsFaithfulPosMap.toMatrix_apply'' [hψ : ∀ i, (ψ i).IsFaithfulPosMap]
     (f : (PiMat ℂ k s) →ₗ[ℂ] PiMat ℂ k s) (r l : Σ r, s r × s r) :
@@ -763,7 +764,7 @@ theorem Pi.rankOneLm_real_apply {k₂ : Type*} [Fintype k₂]
   simp only [LinearMap.real_apply, ContinuousLinearMap.coe_coe, rankOne_apply,
     star_smul, ← starRingEnd_apply]
   have := Pi.inner_symm (ψ := φ) (x := star x_1) (y := y)
-  simp_all
+  simp_all only [pi.IsFaithfulPosMap.sig_apply, neg_neg, star_star, inner_conj_symm]
 
 omit [Fintype k] [DecidableEq k] in
 theorem Pi.PosDef.rpow_one_eq_self {Q : PiMat ℂ k s} (hQ : ∀ i,
@@ -911,10 +912,12 @@ theorem pi_lmul_toMatrix [hψ : ∀ i, (ψ i).IsFaithfulPosMap] (x : PiMat ℂ k
     simp only [PosDef.rpow_zero, Matrix.mul_one]
     by_cases h₂ : r₂ = l₂
     · subst r₂
-      simp [Matrix.mul_apply, Matrix.single]
+      simp only [single, Matrix.mul_apply, of_apply, and_true, mul_ite, mul_one, mul_zero,
+        Finset.sum_ite_eq,
+          Finset.mem_univ, ↓reduceIte, one_apply_eq]
     · simp [Matrix.mul_apply, Matrix.single, h₂, Ne.symm h₂]
   · simp only [includeBlock_apply]
-    simp [h, Ne.symm h]
+    simp only [Ne.symm h, ↓reduceDIte, one_div, zero_mul, Matrix.zero_apply, h]
 
 example [hψ : ∀ i, (ψ i).IsFaithfulPosMap] (x : PiMat ℂ k s) :
     (Module.Dual.pi.IsFaithfulPosMap.toMatrix hψ (lmul x) :
@@ -940,10 +943,12 @@ theorem pi_rmul_toMatrix [hψ : ∀ i, (ψ i).IsFaithfulPosMap] (x : PiMat ℂ k
       ← Module.Dual.IsFaithfulPosMap.sig_apply (hψ ri) (1 / 2) (x ri)]
     by_cases h₁ : r₁ = l₁
     · subst r₁
-      simp [Matrix.mul_apply, Matrix.single]
+      simp only [single, one_div, sig_apply, Matrix.mul_apply, of_apply, true_and, ite_mul,
+        one_mul, zero_mul,
+          Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
     · simp [Matrix.mul_apply, Matrix.single, h₁, Ne.symm h₁]
   · simp only [includeBlock_apply]
-    simp [h, Ne.symm h]
+    simp only [Ne.symm h, ↓reduceDIte, one_div, zero_mul, Matrix.zero_apply, h]
 
 omit [Fintype k] [DecidableEq k] in
 theorem unitary.coe_pi (U : ∀ i, unitaryGroup (s i) ℂ) :
@@ -967,7 +972,10 @@ theorem pi_inner_aut_toMatrix
       (lmul (fun i => (U i : Matrix (s i) (s i) ℂ) : PiMat ℂ k s)) *
         (rmul (star (fun i => (U i : Matrix (s i) (s i) ℂ) : PiMat ℂ k s))) := by
     ext x i
-    simp [Module.End.mul_apply, lmul_apply, rmul_apply, mul_assoc]
+    simp only [LinearMap.coe_comp, LinearMap.coe_single, Function.comp_apply,
+      StarAlgEquiv.toLinearMap_apply,
+        Unitary.conjStarAlgAut_apply, Pi.mul_apply, Pi.star_apply, mul_assoc,
+          Module.End.mul_apply, rmul_apply, lmul_apply]
   rw [this, _root_.map_mul, pi_lmul_toMatrix, pi_rmul_toMatrix, ← blockDiagonal'_mul]
   simp_rw [← mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul, Pi.star_apply,
     star_eq_conjTranspose, blockDiagonal'_inj]
