@@ -92,6 +92,14 @@ theorem eval_word {G : Type*} [Group G] (x : Fin 3 → G)
       Word.eval (fun i => Word.eval x (generatorWord i)) u :=
   Word.eval_substitute x generatorWord u
 
+/-- Evaluate a conjugated word without expanding either substituted word. -/
+private theorem eval_conjugated_word {G : Type*} [Group G]
+    (x : Fin 3 → G) (u v : HostWord) :
+    Word.eval x (Word.product [Word.inverse u, v, u]) =
+      (Word.eval x u)⁻¹ * Word.eval x v * Word.eval x u := by
+  simp only [Word.eval_product, Word.eval_inverse, List.map_cons, List.map_nil,
+    List.prod_cons, List.prod_nil, mul_one, mul_assoc]
+
 private theorem commute_inv_left {G : Type*} [Group G]
     {a b : G} (h : a * b = b * a) : a⁻¹ * b = b * a⁻¹ :=
   (Commute.inv_left_iff.mpr h).eq
@@ -264,17 +272,19 @@ theorem relator_eq_one (datum : Thue.StandingDatum) (i : Fin 14) :
       (Y⁻¹ * E * Y) * D⁻¹ = Y⁻¹ * (E * Y) * D⁻¹ := by group
       _ = 1 := h8raw
   have hTdef : T = Z⁻¹ * D * Z := by
-    simp [T, Z, D, tWord, Word.eval_product, mul_assoc]
+    exact eval_conjugated_word x zWord dWord
   have hCdef : C = Z⁻¹ * T * Z := by
-    simp [C, Z, T, cWord, tWord, Word.eval_product, mul_assoc]
+    exact eval_conjugated_word x zWord tWord
   have hYdef : Y = Z⁻¹ * C * Z := by
-    simp [Y, Z, C, yWord, cWord, tWord, Word.eval_product, mul_assoc]
+    exact eval_conjugated_word x zWord cWord
   have hEdef : E = Y⁻¹ * D⁻¹ * Y := by
-    simp [E, Y, D, eWord, yWord, cWord, tWord, Word.eval_product, mul_assoc]
+    simpa only [E, Y, D, eWord, Word.eval_inverse] using
+      eval_conjugated_word x yWord (Word.inverse dWord)
   have hKdef : K = Y⁻¹ * T * Y := by
-    simp [K, Y, T, kWord, yWord, cWord, tWord, Word.eval_product, mul_assoc]
+    exact eval_conjugated_word x yWord tWord
   have hRdef : R = Y⁻¹ * S⁻¹ * Y := by
-    simp [R, Y, S, s2Word, yWord, cWord, tWord, Word.eval_product, mul_assoc]
+    simpa only [R, Y, S, s2Word, Word.eval_inverse] using
+      eval_conjugated_word x yWord (Word.inverse sWord)
   obtain ⟨hRd, hRe, hRCC, hKCC, hKEcomm, hTc⟩ :=
     transported_relations D E S R C T K Y Z
       hTdef hCdef hYdef hEdef hKdef hRdef hSd hSe hSc hDt hYe
