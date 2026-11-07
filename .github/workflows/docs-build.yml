@@ -73,10 +73,14 @@ jobs:
           .lake/packages/UnicodeBasic
           .lake/packages/BibtexQuery
           .lake/packages/MD4Lean
-        key: DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json',
-          'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ github.run_id }}-${{ github.run_attempt
-          }}-${{ inputs.stage }}
+        # Prefer a checkpoint from the same pool lakefile, then fall back to an older
+        # one: Lake rebuilds only stale docInfo, and per-project progress rechecks
+        # only projects whose compiled modules changed.
+        key: DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml',
+          'docbuild/lake-manifest.json') }}-${{ hashFiles('lakefile.toml') }}-${{ github.run_id }}-${{
+          github.run_attempt }}-${{ inputs.stage }}
         restore-keys: |
+          DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-${{ hashFiles('lakefile.toml') }}-
           DocsState-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'docbuild/lakefile.toml', 'docbuild/lake-manifest.json') }}-
     - name: Install Lean
       uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
