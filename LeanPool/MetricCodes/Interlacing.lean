@@ -7,10 +7,7 @@ module
 
 public import LeanPool.MetricCodes.Branching
 import Mathlib.Algebra.MvPolynomial.Monad
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Star.Real
 import Mathlib.RingTheory.MvPolynomial.EulerIdentity
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Arbitrary-rank interlacing
@@ -564,8 +561,7 @@ theorem lowerPolarizationPath_toggle_second_factor
         (polarization r n b i
           (polarization r n j b
             (lowerPolarizationPath (j :: tail) p))) := by
-  rw [lowerPolarizationPath_append_cons_apply front i (b :: j :: tail) p]
-  rfl
+  exact lowerPolarizationPath_toggle_first_factor front i b j tail p
 
 theorem lowerPolarizationPath_toggle_both_factor
     {r n : ℕ} (front : List (Fin (r + 1)))
@@ -1768,8 +1764,7 @@ theorem arbitraryRowAxialRaise_eq_sum_pathTerm
       ∑ S ∈ (precedingRows row).powerset,
         polarizationPathCoefficient lam row S •
           arbitraryRowMickelssonPathTerm row k S p := by
-  rw [arbitraryRowAxialRaise_apply]
-  rfl
+  exact arbitraryRowAxialRaise_apply lam row k p
 
 theorem arbitraryRowAxialRaise_polarization_initial_simpleRoot_of_states
     {r n : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -3774,7 +3769,7 @@ theorem ambientRotation_rowAxisPolynomial {r n : ℕ}
     simp only [rowAxisPolynomial_eq_sum, PiLp.sub_apply, map_sub, sub_mul, Finset.sum_sub_distrib]
   rw [ambientRotation_apply, rowAxisPolynomial_eq_sum, map_sum, map_sum]
   simp_rw [hterm]
-  simp only [mul_ite, mul_zero, ]
+  simp only [mul_ite, mul_zero]
   rw [euclideanAmbientRotation_apply, hsub,
     rowAxisPolynomial_smul, rowAxisPolynomial_smul,
     haxis, haxis]
@@ -5047,7 +5042,7 @@ theorem adjacentCasimirEigenvalue_lowerWeight_lt {r n : ℕ}
     exact_mod_cast hdominant (le_of_lt hij)
   have hindices : (i.val : ℝ) < j.val := by
     exact_mod_cast hij
-  linarith
+  linarith only [hindices, hrows, htjr, htir, hcj, hci]
 
 theorem adjacentCasimirEigenvalue_lower_lt_raise {r n : ℕ}
     (hn : 2 * r + 2 ≤ n)
@@ -6307,7 +6302,8 @@ theorem reverseInterlacingHarmonicBranchGram_scalar_pos
   have hfactor : ⟪c • p, p⟫_ℝ = c * ⟪p, p⟫_ℝ :=
     real_inner_smul_left p p c
   have hself : 0 < ⟪p, p⟫_ℝ := real_inner_self_pos.mpr hp
-  nlinarith
+  rw [hfactor] at hpositive
+  exact (mul_pos_iff_of_pos_right hself).mp hpositive
 
 end HigherYoungAllRankGelfandTsetlinGramRotationCommutation
 
@@ -8370,7 +8366,7 @@ theorem downstreamCorrectedDerivative_simpleRoot
               · simp only [ite_eq_left hij, map_smul]
                 rw [simpleRoot_downstreamPolarization_of_left
                   lam a i c hic p k j (hrec j hij)]
-              · simp only [hij, ↓reduceIte, map_zero, ]
+              · simp only [hij, ↓reduceIte, map_zero]
         _ = 0 :=
           sum_downstream_two_root_terms_eq_zero
             (downstreamShift lam a) i c.castSucc c.succ
@@ -8431,7 +8427,7 @@ theorem downstreamCorrectedDerivative_simpleRoot
                 rw [ite_eq_right hcj] at hroot
                 rw [simpleRoot_downstreamPolarization_of_self
                   lam a c p k j hij hroot]
-              · simp only [hij, ↓reduceIte, map_zero, ]
+              · simp only [hij, ↓reduceIte, map_zero]
           _ = _ :=
             sum_downstream_adjacent_root_eq_selected_sub_tail
               (downstreamShift lam a) c.castSucc c.succ
@@ -8491,7 +8487,7 @@ theorem downstreamCorrectedDerivative_simpleRoot
         rw [dite_eq_left hij, map_smul,
           simpleRoot_downstreamPolarization_of_right
             lam a i c hci p k j hij hroot, smul_zero]
-      · simp only [hij, ↓reduceDIte, map_zero, ]
+      · simp only [hij, ↓reduceDIte, map_zero]
 
 theorem downstreamCorrectedDerivative_source_simpleRoot_eq_zero
     {r n : ℕ} (lam : Fin (r + 1) → ℕ)
