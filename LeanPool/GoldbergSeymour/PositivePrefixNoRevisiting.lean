@@ -4921,7 +4921,13 @@ private theorem helper_continuation_4070.{u_1, u_2} :
   have hreplacementRootAvoidsReturn :
       Sum.inl available.returnVertex ∉ TwoColorComponent G sigmaPrev
         available.gamma available.delta (Sum.inl oldChoice.vertex) := by
-    apply helper_hreplacementRootAvoidsReturn_2970 <;> assumption
+    apply helper_hreplacementRootAvoidsReturn_2970
+    · exact holdIndex
+    · exact hbaseTree
+    · exact hreturnInOldEarlier
+    · exact hreturnNeOld
+    · exact hreplacementComponentOnly
+    · exact hroundLarge
   have hcomponentDistinct :=
     helper_hcomponentDistinct_2345 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett)
         (@hroundLarge) (@sigmaPrev) (@originalPrefix) (@corr) (@available) (@oldi) (@oldChoice)
