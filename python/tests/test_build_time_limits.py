@@ -111,11 +111,14 @@ def test_check_fails_on_slow_added_file(tmp_path: Path, capsys) -> None:
 
 
 def test_check_ignores_slow_unchanged_files(tmp_path: Path) -> None:
-    """A slow file the PR did not touch passes."""
+    """A slow file the PR did not touch passes while changed files are fast."""
     root, base = _repository(tmp_path)
     log = tmp_path / "build.log"
-    log.write_text(LAKE_LOG)
-    assert limits.check(log, base, root, limit=900) == 0
+    log.write_text(
+        "✔ [1/2] Built LeanPool.MovingSofa.Certificates.Bundle023 (900s)\n"
+        f"✔ [2/2] Built {BUNDLE_MODULE} (300s)\n"
+    )
+    assert limits.check(log, base, root, limit=600) == 0
 
 
 def test_watch_stops_a_lean_process_past_the_limit(tmp_path: Path) -> None:

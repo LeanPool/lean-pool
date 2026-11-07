@@ -48,6 +48,7 @@ def rebased(tmp_path: Path) -> tuple[Path, str, str, str, str]:
     (root / "LeanPool/A.lean").write_text("module\n")
     (root / "LeanPool/projects.yml").write_text("projects:\n  - slug: a\n")
     for name in rebase_fastpath.PINNED_INPUTS:
+        (root / name).parent.mkdir(parents=True, exist_ok=True)
         (root / name).write_text('name = "test"\n' if name == "lakefile.toml" else name)
     _index(root)
     old_base = _commit(root, "base")

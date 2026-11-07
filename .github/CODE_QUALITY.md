@@ -27,7 +27,10 @@ Build-time limits follow Tau Ceti's CI performance gate.
 the build. After the build, it reads Lake's per-module times from the log and fails
 when a file the PR adds or modifies took more than 600 s. Times are Lake's
 wall-clock times on GitHub's 4-vCPU runners. Existing files are checked only once a
-PR changes them.
+PR changes them. A changed file that CI reuses from an earlier run instead of compiling
+was checked in the run that compiled it: reused builds must match
+`build_time_limits.py`, so output compiled before the gate, or under different
+limits, is never reused.
 
 The Lean workflow runs on Lean, Lake, project metadata, quality-checker, and workflow changes. It restores and saves Lake caches and pulls Mathlib oleans with `lake exe cache get` when the cache is cold.
 
