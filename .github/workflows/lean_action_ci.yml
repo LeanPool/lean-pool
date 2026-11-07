@@ -36,6 +36,7 @@ on:
       - 'lake-manifest.json'
       - 'LeanPool/projects/**'
       - 'LeanPool/projects.yml'
+      - 'python/lean_pool/build_time_limits.py'
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/registry.py'
       - 'python/lean_pool/indexes.py'
@@ -380,12 +381,21 @@ jobs:
 
       - name: Build project
         id: compilation
+        env:
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
+          fi
+          # Added or modified files must build in under 600 s; the watch wrapper
+          # above stops any Lean process that runs past 60 minutes.
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log lean-build.log --base "$BUILD_TIME_BASE"
           fi
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
@@ -596,6 +606,7 @@ jobs:
       - name: Build this shard's projects
         env:
           PROJECTS: ${{ matrix.projects }}
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
           touch "$RUNNER_TEMP/build-stamp"
@@ -609,10 +620,17 @@ jobs:
             modules="$modules $project_modules"
           done
           # shellcheck disable=SC2086 # modules is a space-separated list on purpose
-          ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
           if grep -nE '(^|: )warning:' shard-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
+          fi
+          # Added or modified files must build in under 600 s; the watch wrapper
+          # above stops any Lean process that runs past 60 minutes.
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log shard-build.log --base "$BUILD_TIME_BASE"
           fi
 
       # Ship only what this build produced; unchanged (cache-replayed)
@@ -771,12 +789,21 @@ jobs:
 
       - name: Build project
         id: compilation
+        env:
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
+          fi
+          # Added or modified files must build in under 600 s; the watch wrapper
+          # above stops any Lean process that runs past 60 minutes.
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log lean-build.log --base "$BUILD_TIME_BASE"
           fi
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
@@ -1019,12 +1046,21 @@ jobs:
         run: PYTHONPATH=python uv run --project python --locked python -m lean_pool.rebase_fastpath check-index
 
       - name: Build combined Lean root
+        env:
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
+          fi
+          # Added or modified files must build in under 600 s; the watch wrapper
+          # above stops any Lean process that runs past 60 minutes.
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log lean-build.log --base "$BUILD_TIME_BASE"
           fi
 
       - name: Install validation dependencies
