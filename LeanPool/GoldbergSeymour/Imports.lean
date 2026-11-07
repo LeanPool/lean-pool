@@ -216,6 +216,7 @@ public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
 public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPosition
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
+public import LeanPool.GoldbergSeymour.HierarchyFullBaseTransport
 public import LeanPool.GoldbergSeymour.HierarchyFullTailLength
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
 public import LeanPool.GoldbergSeymour.HierarchyLEMStable

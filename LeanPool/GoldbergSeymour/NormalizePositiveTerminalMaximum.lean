@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
+
 public import LeanPool.GoldbergSeymour.MaximumStableClosureExists
 public import LeanPool.GoldbergSeymour.TechnicalTheoremLarge
 public import LeanPool.GoldbergSeymour.TerminalClosureMaximum
@@ -38,90 +40,12 @@ private theorem NormalizePositiveTerminalMaximum_terminalSeedAndClosure_63.{u_1,
         (ett.series.data.tree (Fin.last (ett.rounds + 1))) := by
   classical
   intro V E _ _ _ G k e0 input T generating ett
-  let q : Fin ett.rounds :=
-    ⟨ett.rounds - 1,
-      Nat.sub_lt (Nat.zero_lt_of_lt ett.roundsPositive) (by omega)⟩
-  have hq : q.succ = Fin.last ett.rounds := by
-    apply Fin.ext
-    exact Nat.sub_add_cancel ett.roundsPositive
-  have hq2 : q.succ.succ = Fin.last (ett.rounds + 1) := by
-    rw [hq]
-    rfl
-  have step := ett.series.certified (Fin.last ett.rounds)
-  generalize hidx : Fin.last ett.rounds = target at step
-  cases step with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    have hv : ett.rounds = 0 := by
-      simpa using congrArg Fin.val hidx
-    have hp := ett.roundsPositive
-    omega
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hi : i = q := by
-      apply Fin.ext
-      have hv := congrArg Fin.val hidx
-      simp [q] at hv ⊢
-      omega
-    subst i
-    refine ⟨adjoined, ?_, ?_, Or.inr ?_, ?_⟩
-    · rw [currentColoring]
-      exact choice.selectedProper
-    · rw [currentColoring]
-      exact choice.selectedOneUncolored
-    · refine ⟨Or.inl ?_, choice.edge, ?_, ?_⟩
-      · exact currentKind
-      · exact currentEdges
-      · exact adjoinedExactly
-    · rw [← hq2]
-      exact closedExtension
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-    have hi : i = q := by
-      apply Fin.ext
-      have hv := congrArg Fin.val hidx
-      simp [q] at hv ⊢
-      omega
-    subst i
-    refine ⟨ett.series.data.tree (Fin.last ett.rounds).castSucc,
-      ?_, ?_, Or.inl ?_, ?_⟩
-    · exact currentProper
-    · exact currentOneUncolored
-    · refine ⟨currentKind, ?_⟩
-      rw [← hq]
-    · rw [← hq, ← hq2]
-      exact closedExtension
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hi : i = q := by
-      apply Fin.ext
-      have hv := congrArg Fin.val hidx
-      simp [q] at hv ⊢
-      omega
-    subst i
-    refine ⟨adjoined, ?_, ?_, Or.inr ?_, ?_⟩
-    · rw [currentColoring]
-      exact previousProper
-    · rw [currentColoring]
-      exact previousOneUncolored
-    · refine ⟨Or.inr ?_, available.edge, ?_, ?_⟩
-      · exact currentKind
-      · exact currentEdges
-      · exact adjoinedExactly
-    · rw [← hq2]
-      exact closedExtension
+  obtain ⟨seed, proper, one, terminal, closure⟩ := ett.series.terminalCertificate
+    (by have := ett.roundsPositive; omega) (ett.series.data.coloring (Fin.last ett.rounds)) rfl
+  refine ⟨seed, proper, one, ?_, closure⟩
+  rcases terminal with parallel | ⟨kind, f, edges, adjoin, _, _⟩
+  · exact Or.inl parallel
+  · exact Or.inr ⟨kind, f, edges, adjoin⟩
 
 private theorem NormalizePositiveTerminalMaximum_terminalMaximum_253.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :

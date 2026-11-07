@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFullBaseTransport
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.BaseControl
@@ -923,24 +925,7 @@ private theorem helper_caseContinuation_1156.{u_1, u_2} :
         have : Tn.length < (H.stage ⟨1, by omega⟩).length := hstrict
         exact False.elim ((Nat.ne_of_lt (lt_of_lt_of_le this hle.1)) hlen.symm)
       · have hd := corrData ett rfl rfl rfl corr
-        let pos : Fin ((corr.replacementETT.series.data.tree
-            (Fin.last corr.replacementETT.rounds).castSucc).length + 1) :=
-          Fin.cast (congrArg (fun W : TreeSequence G e0 => W.length + 1) hd.1.symm)
-            base.supportPosition
-        let baseA : HierarchyBase corr.replacementETT sigma :=
-          { core := base.core
-            closure := base.closure
-            supportPosition := pos
-            supportPositive := by simpa only [pos, Fin.val_cast] using base.supportPositive
-            terminalMissingColors := rfl
-            parallel := by
-              dsimp only
-              intro hPE
-              exact False.elim (hp (hd.2.1.symm.trans hPE))
-            nonparallel := by
-              dsimp only
-              intro _
-              exact (base.nonparallel hp).trans hd.1.symm }
+        let baseA := base.ofNonparallelCorresponding corr hp
         exact ⟨corr.replacementInput, corr.replacementETT, hMP, hd.1, hd.2.1, hd.2.2,
           baseA, rfl, rfl⟩
   exact @helper_caseContinuation_868 (@V) (@E) inferInstance inferInstance inferInstance

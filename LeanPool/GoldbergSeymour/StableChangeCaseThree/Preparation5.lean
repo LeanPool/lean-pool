@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFullBaseTransport
+
 public import LeanPool.GoldbergSeymour.StableChangeCaseThree.Preparation4
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside
 
@@ -522,9 +524,8 @@ theorem helper_continuation_3662.{u_1, u_2} :
         MaximumProperty corr.replacementETT ∧
         ∃ baseT : HierarchyBase corr.replacementETT sigma,
           baseT.core = base.core ∧ baseT.closure = base.closure := by
-    exact @helper_fullBase_847 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        input T phi ett base C hproper hone hlower beta sigma hb sigmaProper sigmaOne combined
-        hmod sigmaRoute corrData
+    exact base.fullTransport C.maximum hlower H hproper hone sigma sigmaProper sigmaOne hmod
+      combined sigmaRoute
   exact @helper_continuation_370 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
       (@hne) (@sigma) (@commonPrefix) (@equalTrees) (@lastPositive) (@coreToA) (@TnToA) (@AToT)

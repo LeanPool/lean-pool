@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TerminalRoute
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyFullTailPrefix
@@ -246,9 +248,6 @@ theorem StableChangeCaseThree {V E : Type*}
     · rcases hc with rfl | rfl
       · exact hDn.1 hm
       · exact hDn.2 hm
-  have storedOrMissing (c : Fin k) (hc : c ∈ ett.series.data.stored n) :
-      c ∈ TreeMissingColors phi Tn ∪ Dn := by
-    apply helper_storedOrMissing_706 <;> assumption
   -- The route includes the actual connecting seed, not merely a vertex-set extension.
   have terminalRoute :
       (ett.series.data.kind n = some TashkinovExtensionKind.PE ∧
@@ -259,7 +258,7 @@ theorem StableChangeCaseThree {V E : Type*}
           ett.series.data.connectingEdges n = {f} ∧ TreeSequenceAdjoinEdge Tn f seed ∧
           TashkinovAugmentationSequence phi seed T ∧
           phi f ≠ some alpha ∧ phi f ≠ some beta) := by
-    apply helper_terminalRoute_392 <;> assumption
+    exact ett.terminalRouteAvoiding alpha beta notControlled
   have treeControlled (t : Fin Tn.length) :
       phi (Tn.edge t) ≠ some alpha ∧ phi (Tn.edge t) ≠ some beta := by
     apply helper_treeControlled_729 <;> assumption
@@ -277,7 +276,13 @@ theorem StableChangeCaseThree {V E : Type*}
           ∃ t : Fin T.length, A.length ≤ t.val ∧ t.val < ib.val ∧
             phi (T.edge t) = some c) := by
     apply helper_horderedUnused_800 <;> assumption
-  apply helper_continuation_3662 <;> assumption
+  exact @helper_continuation_3662 V E inferInstance inferInstance inferInstance inferInstance G k
+    e0 input T phi ett base C hproper hone hlower hfewer hminimal hprefixElementary hlarge alpha
+    beta hne hmissingPrefix z sigma hsigma hAprecedes hordered hnotStored hunused (@segTrans)
+    (@commonPrefix) (@equalTrees) (@lastPositive) coreToA TnToA AToT (@ordinaryToA) (@starredToA)
+    hmissingY ha hb habIndex hout hAia hAib haY halphaA hbetaA (@missingSubset) hDn
+    (@notControlled) terminalRoute (@treeControlled) (@augmentationControlled) (@prefixControlled)
+    horderedUnused
 end GoldbergSeymour
 
 end

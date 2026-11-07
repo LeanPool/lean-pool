@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TerminalRoute
+
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
@@ -1412,58 +1414,6 @@ private theorem helper_noCommonSigma_783.{u_1, u_2} :
     · exact Finset.disjoint_left.mp (hnoCommon i hi) holdv
         ((behavior.2.2.2 y c hcb hca).1 hcy)
 
-private theorem helper_oldRoute_743.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-      (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
-      (alpha : Fin k),
-    let mu : PartialEdgeColoring E k := P.coloring;
-    let F : ExtendedTashkinovTree G k e0 P.corresponding.replacementInput T P.coloring :=
-      P.corresponding.replacementETT;
-    let X : HierarchyCounterexample P.replacementBase := P.counterexample;
-    let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase :=
-      X.hierarchy;
-    let n : Fin (F.rounds + (1 : ℕ)) := Fin.last F.rounds;
-    let Tn : TreeSequence G e0 := F.series.data.tree n.castSucc;
-    let A : TreeSequence G e0 := HierarchyStarredStage H (Fin.last H.dividerCount);
-    F.series.data.kind n = some TashkinovExtensionKind.PE →
-    TreeSequenceInitialSegment Tn T →
-    ∀ (beta : Fin k),
-    TreeInterchangeable G A mu beta alpha →
-    TashkinovAugmentationSequence mu Tn T := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha mu F X H n Tn A hp hTnT beta hi
-  have step := F.series.certified n
-  generalize hi : n = i at step
-  cases step with
-  | initial =>
-    have hv := congrArg Fin.val hi
-    simp [n] at hv
-    have := F.roundsPositive
-    omega
-  | SE j _ _ _ _ _ choice _ coloring stored edges kind vertex outside delta gamma
-      seed adjoin closure ordered strict =>
-    have hk : F.series.data.kind n = some TashkinovExtensionKind.SE := by simpa [hi] using kind
-    rw [hp] at hk
-    cases hk
-  | RE j _ _ _ _ available coloring stored edges kind vertex outside delta gamma
-      seed adjoin closure ordered strict =>
-    have hk : F.series.data.kind n = some TashkinovExtensionKind.RE := by simpa [hi] using kind
-    rw [hp] at hk
-    cases hk
-  | PE j _ _ _ _ _ choice _ gamma _ second _ _ _ exit coloring proper one stored
-      edges kind vertex outside delta gammaEq closure ordered strict =>
-    have hj : j.succ = n := hi.symm
-    have hlast : j.succ.succ = Fin.last (F.rounds + 1) :=
-      Fin.ext (by have hv := congrArg Fin.val hj; simp [n] at hv ⊢; omega)
-    apply TashkinovAugmentationSequenceRestrict mu Tn T _ _ hTnT F.belowFinal
-    simpa [Tn, hj, hlast, ← F.generatingColoring, n] using closure.1
-
 private theorem helper_newCore_790.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -2117,9 +2067,7 @@ private theorem helper_continuation_1486.{u_1, u_2} :
   have hbetaTn : beta ∈ TreeMissingColors sigma Tn := hmTn ▸ hbTn
   have hbetay : beta ∈ MissingColors G sigma y := behavior.2.2.1 y (selfMem _) hay
   -- Extract the actual PE route; only its core part needs fixed displayed values.
-  have oldRoute :=
-    @helper_oldRoute_743 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        input T phi ett base C ctx P alpha hp hTnT beta hi
+  have oldRoute := F.parallelTerminalRoute hp
   have oldCore := TashkinovAugmentationSequenceRestrict mu Tn A T oldRoute hTnA hAT
   have oldSuffix := TashkinovAugmentationSequenceSuffix mu Tn A T oldRoute hTnA hAT
   have displayed := CombinedStableClosurePreserved G k e0 P.corresponding.replacementInput

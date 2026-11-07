@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
+
 public import LeanPool.GoldbergSeymour.AlgorithmThreeOneStepExists
 public import LeanPool.GoldbergSeymour.MaximumPropertyAppend
 public import LeanPool.GoldbergSeymour.NormalizePositiveTerminalMaximum
@@ -133,80 +135,9 @@ theorem PositiveWellDefinedness
         (series.data.coloring (Fin.last rounds)) (TreeSequenceVertexSet (series.data.tree
         (Fin.last (rounds + 1)))) := by
         intro rounds series hrounds
-        let q : Fin rounds :=
-          ⟨rounds - 1, Nat.sub_lt hrounds (by omega)⟩
-        have hq : q.succ = Fin.last rounds := by
-          apply Fin.ext
-          exact Nat.sub_add_cancel hrounds
-        have hq2 : q.succ.succ = Fin.last (rounds + 1) := by
-          rw [hq]
-          rfl
-        have step := series.certified (Fin.last rounds)
-        generalize hidx : Fin.last rounds = target at step
-        cases step with
-        | initial triple seedLength initialColoring initialStored initialEdges
-            initialKind initialVertex initialOutside initialDelta initialGamma
-            initialClosure =>
-          have hv : rounds = 0 := by
-            simpa using congrArg Fin.val hidx
-          omega
-        | SE i previousProper previousOneUncolored previousClosed
-            previousNotStronglyClosed noRevisiting choice seriesAlternative
-            currentColoring currentStored currentEdges currentKind currentVertex
-            currentOutside currentDelta currentGamma adjoined adjoinedExactly
-            closedExtension orderedExtension strictExtension =>
-          have hi : i = q := by
-            apply Fin.ext
-            have hv := congrArg Fin.val hidx
-            simp [q] at hv ⊢
-            omega
-          subst i
-          constructor
-          · rw [currentColoring]
-            exact choice.selectedProper
-          constructor
-          · rw [currentColoring]
-            exact choice.selectedOneUncolored
-          · rw [← hq2]
-            exact closedExtension.2
-        | PE i previousProper previousOneUncolored previousClosed
-            previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-            gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-            secondStableRelation exitWitness currentColoring currentProper
-            currentOneUncolored currentStored currentEdges currentKind currentVertex
-            currentOutside currentDelta currentGamma closedExtension orderedExtension
-            strictExtension =>
-          have hi : i = q := by
-            apply Fin.ext
-            have hv := congrArg Fin.val hidx
-            simp [q] at hv ⊢
-            omega
-          subst i
-          constructor
-          · exact currentProper
-          constructor
-          · exact currentOneUncolored
-          · rw [← hq2]
-            exact closedExtension.2
-        | RE i previousProper previousOneUncolored previousClosed
-            previousNotStronglyClosed available currentColoring currentStored
-            currentEdges currentKind currentVertex currentOutside currentDelta
-            currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-            strictExtension =>
-          have hi : i = q := by
-            apply Fin.ext
-            have hv := congrArg Fin.val hidx
-            simp [q] at hv ⊢
-            omega
-          subst i
-          constructor
-          · rw [currentColoring]
-            exact previousProper
-          constructor
-          · rw [currentColoring]
-            exact previousOneUncolored
-          · rw [← hq2]
-            exact closedExtension.2
+        obtain ⟨seed, proper, one, _, closure⟩ := series.terminalCertificate hrounds
+          (series.data.coloring (Fin.last rounds)) rfl
+        exact ⟨proper, one, closure.2⟩
       obtain ⟨hextProper, hextOne, hextClosed⟩ :=
         terminalFacts (ett.rounds + 1) extended (by omega)
       exact Or.inr ⟨replacementInput, extended, extendedETT, hettRounds,

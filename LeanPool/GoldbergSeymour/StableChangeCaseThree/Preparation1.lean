@@ -5,6 +5,10 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TerminalRoute
+
+public import LeanPool.GoldbergSeymour.HierarchyFullBaseTransport
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
@@ -104,95 +108,7 @@ theorem helper_terminalRoute_392.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta n Tn Dn commonPrefix notControlled
       storedOrMissing
-  have step := ett.series.certified n
-  generalize hi : n = i at step
-  cases step with
-  | initial => have hv := congrArg Fin.val hi; simp [n] at hv; have := C.positive; omega
-  | SE j _ _ _ _ _ choice _ coloring stored edges kind vertex outside delta gamma
-      seed adjoin closure ordered strict =>
-    have hj : j.succ = n := hi.symm
-    have hlast : j.succ.succ = Fin.last (ett.rounds + 1) :=
-      Fin.ext (by have hv := congrArg Fin.val hj; simp [n] at hv ⊢; omega)
-    have hroute : TashkinovAugmentationSequence phi seed
-        (ett.series.data.tree (Fin.last (ett.rounds + 1))) := by
-      simpa [hj, hlast, ← ett.generatingColoring, n] using closure.1
-    have hseedT : TreeSequenceInitialSegment seed T :=
-      commonPrefix (TashkinovAugmentationSequenceInitialSegment phi _ _ hroute)
-        ett.belowFinal (by
-          have hl := adjoin.1; rw [hj] at hl
-          change seed.length = Tn.length + 1 at hl
-          have hs := ett.strictAbovePenultimate
-          change Tn.length < T.length at hs
-          omega)
-    have hcol : phi choice.edge = some choice.color := by
-      have hg : phi = choice.selected := by
-        simpa only [← hj, coloring, n] using ett.generatingColoring
-      simpa only [hg] using choice.edgeColor
-    have hc : choice.color ∈ ett.series.data.stored n := by rw [← hj, stored]; simp
-    have hnot (c : Fin k) (he : c = alpha ∨ c = beta) : phi choice.edge ≠ some c := by
-      intro hc'
-      have heq := Option.some.inj (hcol.symm.trans hc')
-      exact notControlled c he (heq ▸ storedOrMissing choice.color hc)
-    exact Or.inr ⟨Or.inl (by simpa [hj] using kind), choice.edge, seed,
-      by simpa [hj] using edges, by simpa [Tn, hj] using adjoin,
-      TashkinovAugmentationSequenceRestrict phi seed T _ hroute hseedT ett.belowFinal,
-      hnot alpha (Or.inl rfl), hnot beta (Or.inr rfl)⟩
-  | PE j _ _ _ _ _ choice _ gamma _ second _ _ _ exit coloring proper one stored
-      edges kind vertex outside delta gammaEq closure ordered strict =>
-    have hj : j.succ = n := hi.symm
-    have hlast : j.succ.succ = Fin.last (ett.rounds + 1) :=
-      Fin.ext (by have hv := congrArg Fin.val hj; simp [n] at hv ⊢; omega)
-    refine Or.inl ⟨by simpa [hj] using kind, ?_⟩
-    apply TashkinovAugmentationSequenceRestrict phi Tn T _ _ ett.abovePenultimate ett.belowFinal
-    simpa [Tn, hj, hlast, ← ett.generatingColoring, n] using closure.1
-  | RE j _ _ _ _ available coloring stored edges kind vertex outside delta gamma
-      seed adjoin closure ordered strict =>
-    have hj : j.succ = n := hi.symm
-    have hlast : j.succ.succ = Fin.last (ett.rounds + 1) :=
-      Fin.ext (by have hv := congrArg Fin.val hj; simp [n] at hv ⊢; omega)
-    have hroute : TashkinovAugmentationSequence phi seed
-        (ett.series.data.tree (Fin.last (ett.rounds + 1))) := by
-      simpa [hj, hlast, ← ett.generatingColoring, n] using closure.1
-    have hseedT : TreeSequenceInitialSegment seed T :=
-      commonPrefix (TashkinovAugmentationSequenceInitialSegment phi _ _ hroute)
-        ett.belowFinal (by
-          have hl := adjoin.1; rw [hj] at hl
-          change seed.length = Tn.length + 1 at hl
-          have hs := ett.strictAbovePenultimate
-          change Tn.length < T.length at hs
-          omega)
-    have hcol : phi available.edge = some available.gamma ∨
-        phi available.edge = some available.delta := by
-      have hg : phi = ett.series.data.coloring j.castSucc := by
-        simpa only [← hj, coloring, n] using ett.generatingColoring
-      simp only [hg]
-      have hadj := available.returnPath.adj_snd
-        (SimpleGraph.Walk.not_nil_of_ne (by intro he; cases he))
-      cases hh : available.returnPath.snd with
-      | inl v =>
-        have hc : (TwoColorIncidenceGraph G (ett.series.data.coloring j.castSucc)
-            available.gamma available.delta).Adj (Sum.inr available.edge) (Sum.inl v) :=
-          hh ▸ hadj
-        exact hc.2
-      | inr f =>
-        have hc : (TwoColorIncidenceGraph G (ett.series.data.coloring j.castSucc)
-            available.gamma available.delta).Adj (Sum.inr available.edge) (Sum.inr f) :=
-          hh ▸ hadj
-        exact False.elim hc
-    have hcontrol : ∃ c, phi available.edge = some c ∧
-        c ∈ TreeMissingColors phi Tn ∪ Dn := by
-      rcases hcol with h | h
-      · exact ⟨available.gamma, h, storedOrMissing _ (by rw [← hj, stored]; simp)⟩
-      · exact ⟨available.delta, h, storedOrMissing _ (by rw [← hj, stored]; simp)⟩
-    have hnot (c : Fin k) (he : c = alpha ∨ c = beta) : phi available.edge ≠ some c := by
-      intro hc'
-      obtain ⟨d, hd, hdmem⟩ := hcontrol
-      have heq := Option.some.inj (hd.symm.trans hc')
-      exact notControlled c he (heq ▸ hdmem)
-    exact Or.inr ⟨Or.inr (by simpa [hj] using kind), available.edge, seed,
-      by simpa [hj] using edges, by simpa [Tn, hj] using adjoin,
-      TashkinovAugmentationSequenceRestrict phi seed T _ hroute hseedT ett.belowFinal,
-      hnot alpha (Or.inl rfl), hnot beta (Or.inr rfl)⟩
+  exact ett.terminalRouteAvoiding alpha beta notControlled
 
 theorem helper_missingA_629.{u_1, u_2} :
     open scoped Classical in
@@ -325,36 +241,9 @@ theorem helper_fullBase_847.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C hproper hone hlower beta sigma H q A n Tn Dn
       ell Y hb sigmaProper sigmaOne combined hmod sigmaRoute corrData
-  by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-  · have hb : TashkinovAugmentationSequence sigma Tn T := by
-      rcases sigmaRoute with ⟨_, hseq⟩ | ⟨hk, rest⟩
-      · exact hseq
-      · rcases hk with hk | hk <;> rw [hp] at hk <;> cases hk
-    obtain ⟨corr, hMP, baseT, K0, hsame⟩ := HierarchySplitter G k e0 input T phi sigma
-      ett C.maximum C.positive hlower base H hp hproper hone sigmaProper sigmaOne (combined hp) hb
-    exact ⟨corr, hMP, baseT, hsame.1.symm, (hsame.2.2.2.2.2 hp).symm⟩
-  · obtain ⟨corr⟩ := hmod.2.2 T ett.abovePenultimate ett.strictAbovePenultimate sigmaRoute
-    have hd := corrData corr
-    let pos : Fin ((corr.replacementETT.series.data.tree
-        (Fin.last corr.replacementETT.rounds).castSucc).length + 1) :=
-      Fin.cast (congrArg (fun W : TreeSequence G e0 => W.length + 1) hd.1.symm)
-        base.supportPosition
-    let baseT : HierarchyBase corr.replacementETT sigma := {
-      core := base.core
-      closure := base.closure
-      supportPosition := pos
-      supportPositive := by simpa [pos] using base.supportPositive
-      terminalMissingColors := rfl
-      parallel := by
-        dsimp only
-        intro hPE
-        exact False.elim (hp (hd.2.1.symm.trans hPE))
-      nonparallel := by
-        dsimp only
-        intro _
-        exact (base.nonparallel hp).trans hd.1.symm }
-    exact ⟨corr, MaximumPropertyTransport G k e0 ett sigma hmod T corr C.maximum,
-      baseT, rfl, rfl⟩
+  exact base.fullTransport C.maximum hlower H hproper hone sigma sigmaProper sigmaOne hmod
+    combined sigmaRoute
+
 
 /-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_segTrans_511.{u_1, u_2} :

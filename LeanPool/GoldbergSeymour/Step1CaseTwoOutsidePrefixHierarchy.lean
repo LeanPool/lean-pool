@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
@@ -1702,11 +1704,6 @@ lemma Step1CaseTwoOutsidePrefixHierarchy {V E : Type*}
       (hUW : TreeSequenceInitialSegment U W) :
       TreeSequenceInitialSegment S W := by
     exact hSU.trans hUW
-  have commonPrefix {S U W : TreeSequence G e0}
-      (hSW : TreeSequenceInitialSegment S W)
-      (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
-      TreeSequenceInitialSegment S U := by
-    exact hUW.of_common_extension hSW hlen
   have stageSegment : ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1),
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
@@ -1795,71 +1792,9 @@ lemma Step1CaseTwoOutsidePrefixHierarchy {V E : Type*}
           ett.series.data.connectingEdges (Fin.last ett.rounds) = {f} ∧
           TreeSequenceAdjoinEdge Tn f seed ∧
           TashkinovAugmentationSequence mu seed C) := by
-    have hCF := segTrans hCT ett.belowFinal
-    have transport (S : TreeSequence G e0)
-        (hSF : TashkinovAugmentationSequence phi S
-          (ett.series.data.tree (Fin.last (ett.rounds + 1))))
-        (hSC : TreeSequenceInitialSegment S C) :
-        TashkinovAugmentationSequence mu S C := by
-      exact TashkinovAugmentationSequenceColoringTransport phi mu S Bminus C
-        (TashkinovAugmentationSequenceRestrict phi S C _ hSF hSC hCF)
-        hBtoC hlenC (fun j _ => fixedC j) hmissingFixed
-    have step := ett.series.certified (Fin.last ett.rounds)
-    generalize hi : Fin.last ett.rounds = i at step
-    cases step with
-    | initial => have hv := congrArg Fin.val hi; simp at hv; omega
-    | SE q _ _ _ _ _ choice _ coloring stored edges kind vertex outside delta gamma
-        seed adjoin closure ordered strict =>
-      have hq : q.succ = Fin.last ett.rounds := hi.symm
-      have hlast : q.succ.succ = Fin.last (ett.rounds + 1) :=
-        Fin.ext (by
-          have hv := congrArg Fin.val hq
-          simp only [Fin.val_succ, Fin.val_last] at hv ⊢
-          omega)
-      have hroute : TashkinovAugmentationSequence phi seed
-          (ett.series.data.tree (Fin.last (ett.rounds + 1))) := by
-        simpa [hq, hlast, ← ett.generatingColoring] using closure.1
-      have hseedC : TreeSequenceInitialSegment seed C :=
-        commonPrefix (TashkinovAugmentationSequenceInitialSegment phi _ _ hroute)
-          hCF (by
-            obtain ⟨ha, _, _⟩ := adjoin
-            rw [hq] at ha
-            change seed.length = Tn.length + 1 at ha
-            omega)
-      refine Or.inr ⟨Or.inl (by simpa [hq] using kind), choice.edge, seed,
-        by simpa [hq] using edges, by simpa [Tn, hq] using adjoin,
-        transport seed hroute hseedC⟩
-    | PE q _ _ _ _ _ choice _ gamma _ second _ _ _ exit coloring proper one stored
-        edges kind vertex outside delta gammaEq closure ordered strict =>
-      have hq : q.succ = Fin.last ett.rounds := hi.symm
-      have hlast : q.succ.succ = Fin.last (ett.rounds + 1) :=
-        Fin.ext (by
-          have hv := congrArg Fin.val hq
-          simp only [Fin.val_succ, Fin.val_last] at hv ⊢
-          omega)
-      refine Or.inl ⟨by simpa [hq] using kind, transport Tn ?_ TnToC⟩
-      simpa [Tn, hq, hlast, ← ett.generatingColoring] using closure.1
-    | RE q _ _ _ _ available coloring stored edges kind vertex outside delta gamma
-        seed adjoin closure ordered strict =>
-      have hq : q.succ = Fin.last ett.rounds := hi.symm
-      have hlast : q.succ.succ = Fin.last (ett.rounds + 1) :=
-        Fin.ext (by
-          have hv := congrArg Fin.val hq
-          simp only [Fin.val_succ, Fin.val_last] at hv ⊢
-          omega)
-      have hroute : TashkinovAugmentationSequence phi seed
-          (ett.series.data.tree (Fin.last (ett.rounds + 1))) := by
-        simpa [hq, hlast, ← ett.generatingColoring] using closure.1
-      have hseedC : TreeSequenceInitialSegment seed C :=
-        commonPrefix (TashkinovAugmentationSequenceInitialSegment phi _ _ hroute)
-          hCF (by
-            obtain ⟨ha, _, _⟩ := adjoin
-            rw [hq] at ha
-            change seed.length = Tn.length + 1 at ha
-            omega)
-      refine Or.inr ⟨Or.inr (by simpa [hq] using kind), available.edge, seed,
-        by simpa [hq] using edges, by simpa [Tn, hq] using adjoin,
-        transport seed hroute hseedC⟩
+    exact ett.series.terminalRouteColoringTransport hpositive phi ett.generatingColoring
+      C TnToC TnStrictC (segTrans hCT ett.belowFinal) mu Bminus hBtoC hlenC
+      (fun t _ => fixedC t) hmissingFixed
   apply helper_continuation_906 <;> assumption
 end GoldbergSeymour
 

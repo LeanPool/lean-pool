@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TerminalRoute
+
 public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
@@ -1247,60 +1249,6 @@ private theorem helper_incidentFixed_582.{u_1, u_2} :
       · exact fixedValue f ha hb
   · simp [sigma, TwoColorComponentSwap, K, hK]
 
-private theorem helper_terminalRoute_605.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (_ beta : Fin k),
-    let H : TashkinovHierarchy ett base := C.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let ib : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T beta;
-    ∀ (hAib : A.length < (↑ib : ℕ)),
-    let B : TreeSequence G e0 :=
-      TreeSequencePrefix T (↑ib : ℕ)
-        (have this : (1 : ℕ) ≤ A.length := A.positive;
-        Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑ib : ℕ)) ↦ by omega)
-        (by omega);
-    ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE →
-    TreeSequenceInitialSegment Tn B →
-    TreeSequenceInitialSegment B (ett.series.data.tree (Fin.last (ett.rounds + (1 : ℕ)))) →
-    TashkinovAugmentationSequence phi Tn B := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A n Tn ib hAib B hPE TnToB BToFinal
-  clear * - ett C n Tn B BToFinal TnToB hPE
-  have step := ett.series.certified n
-  generalize hi : n = i at step
-  cases step with
-  | initial =>
-    have hv := congrArg Fin.val hi
-    simp [n] at hv
-    have := C.positive
-    omega
-  | SE j _ _ _ _ _ choice _ coloring stored edges kind vertex outside delta gamma
-      seed adjoin closure ordered strict =>
-    have hp := hPE
-    change ett.series.data.kind n = some TashkinovExtensionKind.PE at hp
-    rw [hi, kind] at hp
-    cases hp
-  | RE j _ _ _ _ available coloring stored edges kind vertex outside delta gamma
-      seed adjoin closure ordered strict =>
-    have hp := hPE
-    change ett.series.data.kind n = some TashkinovExtensionKind.PE at hp
-    rw [hi, kind] at hp
-    cases hp
-  | PE j _ _ _ _ _ choice _ gamma _ second _ _ _ exit coloring proper one stored
-      edges kind vertex outside delta gammaEq closure ordered strict =>
-    have hj : j.succ = n := hi.symm
-    have hlast : j.succ.succ = Fin.last (ett.rounds + 1) :=
-      Fin.ext (by have hv := congrArg Fin.val hj; simp [n] at hv ⊢; omega)
-    apply TashkinovAugmentationSequenceRestrict phi Tn B _ _ TnToB BToFinal
-    simpa [Tn, hj, hlast, ← ett.generatingColoring, n] using closure.1
-
 private theorem helper_displayedIncident_634.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
@@ -2205,11 +2153,9 @@ private theorem helper_continuation_2989.{u_1, u_2} :
     exact missingA v (TreeSequenceInitialSegmentVertexSetSubset TnToA hv)
   have TnToB := segTrans TnToA AToB
   have TnStrictB : Tn.length < B.length := lt_of_le_of_lt TnToA.1 ABstrict
-  have BToFinal := segTrans BToT ett.belowFinal
   have terminalRoute : TashkinovAugmentationSequence phi Tn B := by
-    exact helper_terminalRoute_605 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
-        (@alpha) (@beta)
-        (@hAib) (@hPE) (@TnToB) (@BToFinal)
+    exact TashkinovAugmentationSequenceRestrict phi Tn B T (ett.parallelTerminalRoute hPE)
+      TnToB BToT
   have displayedIncident (S : TreeSequence G e0)
       (hSTn : TreeSequenceInitialSegment S Tn) (t : Fin S.length) :
       TreeIncidentEdge Tn (S.edge t) := by

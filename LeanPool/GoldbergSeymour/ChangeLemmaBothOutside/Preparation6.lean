@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TerminalRoute
+
 public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation1
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
@@ -1097,7 +1099,6 @@ theorem helper_finish_4308.{u_1, u_2} :
     stable Tn (TreeSequenceInitialSegmentVertexSetSubset TnToA) Dn hDn
   have TnToB := segTrans TnToA AToB
   have TnStrictB : Tn.length < B.length := lt_of_le_of_lt TnToA.1 ABstrict
-  have BToFinal := segTrans BToT ett.belowFinal
   have notControlled (c : Fin k) (hc : c = alpha ∨ c = beta) :
       c ∉ TreeMissingColors phi Tn ∪ Dn := by
     intro hm
@@ -1108,11 +1109,6 @@ theorem helper_finish_4308.{u_1, u_2} :
     · rcases hc with rfl | rfl
       · exact hDn.1 hm
       · exact hDn.2 hm
-  have storedOrMissing (c : Fin k) (hc : c ∈ ett.series.data.stored n) :
-      c ∈ TreeMissingColors phi Tn ∪ Dn := by
-    exact @helper_storedOrMissing_1276 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@HB) (@c) (@hc)
   -- Nonparallel extensions retain the certified connecting edge and one-edge seed.
   have terminalRoute :
       (ett.series.data.kind n = some TashkinovExtensionKind.PE ∧
@@ -1123,10 +1119,15 @@ theorem helper_finish_4308.{u_1, u_2} :
           ett.series.data.connectingEdges n = {f} ∧ TreeSequenceAdjoinEdge Tn f seed ∧
           TashkinovAugmentationSequence phi seed B ∧
           phi f ≠ some alpha ∧ phi f ≠ some beta) := by
-    exact @helper_terminalRoute_532 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
-        (@commonPrefix) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@HB)
-        (@TnToB) (@TnStrictB) (@BToFinal) (@notControlled) (@storedOrMissing)
+    let terminalTree : ExtendedTashkinovTree G k e0 input B phi :=
+      { rounds := ett.rounds
+        roundsPositive := rpB
+        series := ett.series
+        abovePenultimate := aboveB
+        strictAbovePenultimate := strictB
+        belowFinal := belowB
+        generatingColoring := genB }
+    exact terminalTree.terminalRouteAvoiding alpha beta notControlled
   exact @helper_continuation_4653 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
       (@hlower) (@hminimal) (@alpha) (@beta) (@hne) (@segRefl) (@segTrans) (@coreToA) (@TnToA)

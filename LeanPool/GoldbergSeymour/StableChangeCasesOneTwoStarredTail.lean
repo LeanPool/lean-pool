@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFullBaseTransport
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
@@ -161,80 +163,6 @@ private abbrev helperContinuation835Conditions.{u_1, u_2} : Prop :=
                                           ∃ (baseT : HierarchyBase corrT.replacementETT sigma) (K :
                                            TashkinovHierarchy corrT.replacementETT baseT) (goodT :
                                            GoodHierarchy K), SameGoodHierarchy C.good goodT
-
-private theorem helper_fullBase_401.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base),
-    HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C →
-    ∀ (sigma : PartialEdgeColoring E k),
-    let _ : TashkinovHierarchy ett base := C.hierarchy;
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let Dn : Finset (Fin k) := TashkinovStoredColors ett.series.data n;
-    IsProperEdgeColoring G sigma →
-    IsOneEdgeUncolored sigma e0 →
-    ModColoring ett sigma →
-    (ett.series.data.kind n = some TashkinovExtensionKind.PE →
-        CombinedStableColoring Tn base.closure Dn phi sigma) →
-    (ett.series.data.kind n = some TashkinovExtensionKind.PE ∧
-          TashkinovAugmentationSequence sigma Tn T ∨
-        (ett.series.data.kind n = some TashkinovExtensionKind.SE ∨
-            ett.series.data.kind n = some TashkinovExtensionKind.RE) ∧
-          ∃ (f : E) (seed : TreeSequence G e0),
-            ett.series.data.connectingEdges n = { f } ∧
-              TreeSequenceAdjoinEdge Tn f seed ∧
-                TashkinovAugmentationSequence sigma seed T) →
-    (∀ (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T),
-        corr.replacementETT.series.data.tree
-              (Fin.last corr.replacementETT.rounds).castSucc =
-            Tn ∧
-          corr.replacementETT.series.data.kind (Fin.last corr.replacementETT.rounds) =
-              ett.series.data.kind n ∧
-            TashkinovStoredColors corr.replacementETT.series.data
-                (Fin.last corr.replacementETT.rounds) =
-              Dn) →
-    ∃ (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T),
-    MaximumProperty corr.replacementETT ∧
-      ∃ (baseT : HierarchyBase corr.replacementETT sigma),
-        baseT.core = base.core ∧ baseT.closure = base.closure := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx sigma H n Tn Dn hsproper hsone hmod
-      combined sigmaRoute corrData
-  by_cases hp : ett.series.data.kind n = some TashkinovExtensionKind.PE
-  · have hb : TashkinovAugmentationSequence sigma Tn T := by
-      rcases sigmaRoute with ⟨_, hseq⟩ | ⟨hk, rest⟩
-      · exact hseq
-      · rcases hk with hk | hk <;> rw [hp] at hk <;> cases hk
-    obtain ⟨corr, hMP, baseT, K0, hsame⟩ := HierarchySplitter G k e0 input T phi sigma
-      ett C.maximum C.positive ctx.lowerRung base H hp ctx.proper ctx.oneEdgeUncolored
-      hsproper hsone (combined hp) hb
-    exact ⟨corr, hMP, baseT, hsame.1.symm, (hsame.2.2.2.2.2 hp).symm⟩
-  · obtain ⟨corr⟩ := hmod.2.2 T ett.abovePenultimate ett.strictAbovePenultimate sigmaRoute
-    have hd := corrData corr
-    let pos : Fin ((corr.replacementETT.series.data.tree
-        (Fin.last corr.replacementETT.rounds).castSucc).length + 1) :=
-      Fin.cast (congrArg (fun W : TreeSequence G e0 => W.length + 1) hd.1.symm)
-        base.supportPosition
-    let baseT : HierarchyBase corr.replacementETT sigma := {
-      core := base.core
-      closure := base.closure
-      supportPosition := pos
-      supportPositive := by simpa [pos] using base.supportPositive
-      terminalMissingColors := rfl
-      parallel := by
-        dsimp only
-        intro hPE
-        exact False.elim (hp (hd.2.1.symm.trans hPE))
-      nonparallel := by
-        dsimp only
-        intro _
-        exact (base.nonparallel hp).trans hd.1.symm }
-    exact ⟨corr, MaximumPropertyTransport G k e0 ett sigma hmod T corr C.maximum,
-      baseT, rfl, rfl⟩
 
 private theorem helper_parallelGood_530.{u_1, u_2} :
     open scoped Classical in
@@ -920,8 +848,8 @@ private theorem helper_continuation_817.{u_1, u_2} :
       commonPrefix TnToA AToT missingSubset transportSuffix
   have corrData (corr : CorrespondingExtendedTashkinovTree G k e0 ett sigma T) :=
     corr.terminalData
-  have fullBase := @helper_fullBase_401 V E inferInstance inferInstance inferInstance inferInstance
-      G k e0 input T phi ett base C ctx sigma hsproper hsone hmod combined sigmaRoute corrData
+  have fullBase := base.fullTransport C.maximum ctx.lowerRung H ctx.proper
+      ctx.oneEdgeUncolored sigma hsproper hsone hmod combined sigmaRoute
   obtain ⟨corrT, hmaximumT, baseT, hcoreT, hclosureT⟩ := fullBase
   have terminalData := corrData corrT
   let K : TashkinovHierarchy corrT.replacementETT baseT := {

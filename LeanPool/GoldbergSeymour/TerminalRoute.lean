@@ -5,11 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
-
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
-public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 
 /-!
 # P2813_T1_Terminal Route
@@ -44,115 +41,46 @@ theorem P2813_T1_TerminalRoute {V E : Type*}
         TreeIncidentEdge Tn f ∧
         (∃ c ∈ TreeMissingColors phi Tn ∪ Dn, phi f = some c) ∧
         TashkinovAugmentationSequence phi seed T) := by
-  classical
-  let n := Fin.last ett.rounds
-  let Tn := ett.series.data.tree n.castSucc
-  let Dn := TashkinovStoredColors ett.series.data n
-  have commonPrefix {S U W : TreeSequence G e0}
-      (hSW : TreeSequenceInitialSegment S W)
-      (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
-      TreeSequenceInitialSegment S U := by
-    exact hUW.of_common_extension hSW hlen
-  have storedOrMissing (c : Fin k) (hc : c ∈ ett.series.data.stored n) :
-      c ∈ TreeMissingColors phi Tn ∪ Dn := by
-    by_cases hm : c ∈ TreeMissingColors phi Tn
-    · exact Finset.mem_union_left _ hm
-    · apply Finset.mem_union_right
-      unfold Dn TashkinovStoredColors
-      have hn : n.val ≠ 0 := by dsimp [n]; have := ett.roundsPositive; omega
-      simp only [ite_eq_right hn]
-      refine Finset.mem_sdiff.mpr ⟨?_, ?_⟩
-      · exact Finset.mem_biUnion.mpr ⟨n, Finset.mem_univ _, by simp [hc]⟩
-      · simpa only [← ett.generatingColoring, Tn, n] using hm
-  have step := ett.series.certified n
-  generalize hi : n = i at step
-  cases step with
-  | initial => have hv := congrArg Fin.val hi; simp [n] at hv; have := ett.roundsPositive; omega
-  | SE j _ _ _ _ _ choice _ coloring stored edges kind vertex outside delta gamma
-      seed adjoin closure ordered strict =>
-    have hj : j.succ = n := hi.symm
-    have hlast : j.succ.succ = Fin.last (ett.rounds + 1) :=
-      Fin.ext (by have hv := congrArg Fin.val hj; simp [n] at hv ⊢; omega)
-    have hroute : TashkinovAugmentationSequence phi seed
-        (ett.series.data.tree (Fin.last (ett.rounds + 1))) := by
-      simpa [hj, hlast, ← ett.generatingColoring, n] using closure.1
-    have hseedT : TreeSequenceInitialSegment seed T :=
-      commonPrefix (TashkinovAugmentationSequenceInitialSegment phi _ _ hroute)
-        ett.belowFinal (by
-          have hl := adjoin.1; rw [hj] at hl
-          change seed.length = Tn.length + 1 at hl
-          have hs := ett.strictAbovePenultimate
-          change Tn.length < T.length at hs
-          omega)
-    have hcol : phi choice.edge = some choice.color := by
-      have hg : phi = choice.selected := by
-        simpa only [← hj, coloring, n] using ett.generatingColoring
-      simpa only [hg] using choice.edgeColor
-    have hc : choice.color ∈ ett.series.data.stored n := by rw [← hj, stored]; simp
-    exact Or.inr ⟨Or.inl (by simpa [hj] using kind), choice.edge, seed,
-      by simpa [hj] using edges, by simpa [Tn, hj] using adjoin,
-      ⟨choice.vertex, by simpa [Tn, hj] using choice.vertexDefective.1,
-        choice.edgeIncident⟩,
-      ⟨choice.color, storedOrMissing choice.color hc, hcol⟩,
-      TashkinovAugmentationSequenceRestrict phi seed T _ hroute hseedT ett.belowFinal⟩
-  | PE j _ _ _ _ _ choice _ gamma _ second _ _ _ exit coloring proper one stored
-      edges kind vertex outside delta gammaEq closure ordered strict =>
-    have hj : j.succ = n := hi.symm
-    have hlast : j.succ.succ = Fin.last (ett.rounds + 1) :=
-      Fin.ext (by have hv := congrArg Fin.val hj; simp [n] at hv ⊢; omega)
-    refine Or.inl ⟨by simpa [hj] using kind, ?_⟩
-    apply TashkinovAugmentationSequenceRestrict phi Tn T _ _ ett.abovePenultimate ett.belowFinal
-    simpa [Tn, hj, hlast, ← ett.generatingColoring, n] using closure.1
-  | RE j _ _ _ _ available coloring stored edges kind vertex outside delta gamma
-      seed adjoin closure ordered strict =>
-    have hj : j.succ = n := hi.symm
-    have hlast : j.succ.succ = Fin.last (ett.rounds + 1) :=
-      Fin.ext (by have hv := congrArg Fin.val hj; simp [n] at hv ⊢; omega)
-    have hroute : TashkinovAugmentationSequence phi seed
-        (ett.series.data.tree (Fin.last (ett.rounds + 1))) := by
-      simpa [hj, hlast, ← ett.generatingColoring, n] using closure.1
-    have hseedT : TreeSequenceInitialSegment seed T :=
-      commonPrefix (TashkinovAugmentationSequenceInitialSegment phi _ _ hroute)
-        ett.belowFinal (by
-          have hl := adjoin.1; rw [hj] at hl
-          change seed.length = Tn.length + 1 at hl
-          have hs := ett.strictAbovePenultimate
-          change Tn.length < T.length at hs
-          omega)
-    have hcol : phi available.edge = some available.gamma ∨
-        phi available.edge = some available.delta := by
-      have hg : phi = ett.series.data.coloring j.castSucc := by
-        simpa only [← hj, coloring, n] using ett.generatingColoring
-      simp only [hg]
-      have hadj := available.returnPath.adj_snd
-        (SimpleGraph.Walk.not_nil_of_ne (by intro he; cases he))
-      cases hh : available.returnPath.snd with
-      | inl v =>
-        have hc : (TwoColorIncidenceGraph G (ett.series.data.coloring j.castSucc)
-            available.gamma available.delta).Adj (Sum.inr available.edge) (Sum.inl v) :=
-          hh ▸ hadj
-        exact hc.2
-      | inr f =>
-        have hc : (TwoColorIncidenceGraph G (ett.series.data.coloring j.castSucc)
-            available.gamma available.delta).Adj (Sum.inr available.edge) (Sum.inr f) :=
-          hh ▸ hadj
-        exact False.elim hc
-    have hcontrol : ∃ c, phi available.edge = some c ∧
-        c ∈ TreeMissingColors phi Tn ∪ Dn := by
-      rcases hcol with h | h
-      · exact ⟨available.gamma, h, storedOrMissing _ (by rw [← hj, stored]; simp)⟩
-      · exact ⟨available.delta, h, storedOrMissing _ (by rw [← hj, stored]; simp)⟩
-    have hincident : TreeIncidentEdge Tn available.edge := by
-      refine ⟨available.insideEndpoint, ?_, ?_⟩
-      · have hidx : j.castSucc.succ = n.castSucc := Fin.ext (by
-          simpa only [Fin.val_succ, Fin.val_castSucc] using congrArg Fin.val hj)
-        simpa only [Tn, hidx] using available.insideInCurrent
-      · rw [Incident, available.edgeEnds]
-        exact Sym2.mem_mk_left _ _
-    exact Or.inr ⟨Or.inr (by simpa [hj] using kind), available.edge, seed,
-      by simpa [hj] using edges, by simpa [Tn, hj] using adjoin, hincident,
-      by obtain ⟨c, hcol, hc⟩ := hcontrol; exact ⟨c, hc, hcol⟩,
-      TashkinovAugmentationSequenceRestrict phi seed T _ hroute hseedT ett.belowFinal⟩
+  exact ett.series.terminalRouteWithControl (by have := ett.roundsPositive; omega)
+    phi ett.generatingColoring T ett.abovePenultimate ett.strictAbovePenultimate ett.belowFinal
+
+/-- A parallel terminal extension gives the route from its penultimate tree. -/
+theorem ExtendedTashkinovTree.parallelTerminalRoute {V E : Type*} [Fintype V] [Fintype E]
+    [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input : PartialEdgeColoring E k} {T : TreeSequence G e0} {phi : PartialEdgeColoring E k}
+    (ett : ExtendedTashkinovTree G k e0 input T phi)
+    (parallel : ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE) :
+    TashkinovAugmentationSequence phi (ett.series.data.tree (Fin.last ett.rounds).castSucc) T := by
+  rcases P2813_T1_TerminalRoute G k e0 input T phi ett with ⟨_, route⟩ | ⟨kind, _⟩
+  · exact route
+  · rcases kind with kind | kind <;> rw [parallel] at kind <;> cases kind
+
+/-- Colors absent from the terminal control set cannot color its connecting edge. -/
+theorem ExtendedTashkinovTree.terminalRouteAvoiding {V E : Type*} [Fintype V] [Fintype E]
+    [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {input : PartialEdgeColoring E k} {T : TreeSequence G e0} {phi : PartialEdgeColoring E k}
+    (ett : ExtendedTashkinovTree G k e0 input T phi) (alpha beta : Fin k)
+    (excluded : ∀ c : Fin k, c = alpha ∨ c = beta →
+      c ∉ TreeMissingColors phi (ett.series.data.tree (Fin.last ett.rounds).castSucc) ∪
+        TashkinovStoredColors ett.series.data (Fin.last ett.rounds)) :
+    let n := Fin.last ett.rounds
+    let Tn := ett.series.data.tree n.castSucc
+    (ett.series.data.kind n = some TashkinovExtensionKind.PE ∧
+      TashkinovAugmentationSequence phi Tn T) ∨
+    ((ett.series.data.kind n = some TashkinovExtensionKind.SE ∨
+        ett.series.data.kind n = some TashkinovExtensionKind.RE) ∧
+      ∃ (f : E) (seed : TreeSequence G e0), ett.series.data.connectingEdges n = {f} ∧
+        TreeSequenceAdjoinEdge Tn f seed ∧ TashkinovAugmentationSequence phi seed T ∧
+        phi f ≠ some alpha ∧ phi f ≠ some beta) := by
+  rcases P2813_T1_TerminalRoute G k e0 input T phi ett with route |
+    ⟨kind, f, seed, edges, adjoin, _, ⟨c, controlled, colored⟩, route⟩
+  · exact Or.inl route
+  · have avoid (d : Fin k) (which : d = alpha ∨ d = beta) : phi f ≠ some d := by
+      intro equal
+      have same := Option.some.inj (colored.symm.trans equal)
+      exact excluded d which (same ▸ controlled)
+    exact Or.inr ⟨kind, f, seed, edges, adjoin, route,
+      avoid alpha (Or.inl rfl), avoid beta (Or.inr rfl)⟩
 
 end GoldbergSeymour
 

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
+
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
@@ -32,115 +34,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_terminalRoute_259.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi),
-    (0 : ℕ) < ett.rounds →
-    ∀ (_ : ℕ) (beta : Fin k) (b₂ : V) (gamma : Fin k) (sigma : PartialEdgeColoring E k)
-      (i₁ i₂ : Fin (T.length + (1 : ℕ))) (hiorder : (↑i₁ : ℕ) < (↑i₂ : ℕ))
-      (hspos : (1 : ℕ) ≤ (↑i₂ : ℕ) - (1 : ℕ)) (hsT : (↑i₂ : ℕ) ≤ T.length),
-    let Bminus : TreeSequence G e0 :=
-      TreeSequencePrefix T ((↑i₂ : ℕ) - (1 : ℕ)) hspos
-        (Decidable.byContradiction fun (a : ¬(↑i₂ : ℕ) - (1 : ℕ) ≤ T.length) ↦ by omega);
-    let C : TreeSequence G e0 :=
-      TreeSequencePrefix T (↑i₂ : ℕ)
-        (Decidable.byContradiction fun (a : ¬(1 : ℕ) ≤ (↑i₂ : ℕ)) ↦ by omega) hsT;
-    TreeSequenceInitialSegment C T →
-    let mu : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G sigma gamma beta (Sum.inl b₂);
-    (∀ v ∈ TreeSequenceVertexSet Bminus, MissingColors G mu v = MissingColors G phi v) →
-    (∀ {S U W : TreeSequence G e0},
-        TreeSequenceInitialSegment S U →
-          TreeSequenceInitialSegment U W → TreeSequenceInitialSegment S W) →
-    (∀ {S U W : TreeSequence G e0},
-        TreeSequenceInitialSegment S W →
-          TreeSequenceInitialSegment U W →
-            S.length ≤ U.length → TreeSequenceInitialSegment S U) →
-    let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc;
-    C.length = Bminus.length + (1 : ℕ) →
-    TreeSequenceInitialSegment Bminus C →
-    TreeSequenceInitialSegment Tn C →
-    Tn.length < C.length →
-    (∀ (j : Fin C.length), mu (C.edge j) = phi (C.edge j)) →
-    ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE ∧
-        TashkinovAugmentationSequence mu Tn C ∨
-      (ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.SE ∨
-          ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.RE) ∧
-        ∃ (f : E) (seed : TreeSequence G e0),
-          ett.series.data.connectingEdges (Fin.last ett.rounds) = { f } ∧
-            TreeSequenceAdjoinEdge Tn f seed ∧ TashkinovAugmentationSequence mu seed C := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett hpositive q beta b₂ gamma sigma i₁ i₂ hiorder hspos hsT
-      Bminus C hCT mu hmissingFixed segTrans commonPrefix Tn hlenC hBtoC TnToC TnStrictC fixedC
-  have hCF := segTrans hCT ett.belowFinal
-  have transport (S : TreeSequence G e0)
-      (hSF : TashkinovAugmentationSequence phi S
-        (ett.series.data.tree (Fin.last (ett.rounds + 1))))
-      (hSC : TreeSequenceInitialSegment S C) :
-      TashkinovAugmentationSequence mu S C := by
-    exact TashkinovAugmentationSequenceColoringTransport phi mu S Bminus C
-      (TashkinovAugmentationSequenceRestrict phi S C _ hSF hSC hCF)
-      hBtoC hlenC (fun j _ => fixedC j) hmissingFixed
-  have step := ett.series.certified (Fin.last ett.rounds)
-  generalize hi : Fin.last ett.rounds = i at step
-  cases step with
-  | initial => have hv := congrArg Fin.val hi; simp at hv; omega
-  | SE q _ _ _ _ _ choice _ coloring stored edges kind vertex outside delta gamma
-      seed adjoin closure ordered strict =>
-    have hq : q.succ = Fin.last ett.rounds := hi.symm
-    have hlast : q.succ.succ = Fin.last (ett.rounds + 1) :=
-      Fin.ext (by
-        have hv := congrArg Fin.val hq
-        simp only [Fin.val_succ, Fin.val_last] at hv ⊢
-        omega)
-    have hroute : TashkinovAugmentationSequence phi seed
-        (ett.series.data.tree (Fin.last (ett.rounds + 1))) := by
-      simpa [hq, hlast, ← ett.generatingColoring] using closure.1
-    have hseedC : TreeSequenceInitialSegment seed C :=
-      commonPrefix (TashkinovAugmentationSequenceInitialSegment phi _ _ hroute)
-        hCF (by
-          obtain ⟨ha, _, _⟩ := adjoin
-          rw [hq] at ha
-          change seed.length = Tn.length + 1 at ha
-          omega)
-    refine Or.inr ⟨Or.inl (by simpa [hq] using kind), choice.edge, seed,
-      by simpa [hq] using edges, by simpa [Tn, hq] using adjoin,
-      transport seed hroute hseedC⟩
-  | PE q _ _ _ _ _ choice _ gamma _ second _ _ _ exit coloring proper one stored
-      edges kind vertex outside delta gammaEq closure ordered strict =>
-    have hq : q.succ = Fin.last ett.rounds := hi.symm
-    have hlast : q.succ.succ = Fin.last (ett.rounds + 1) :=
-      Fin.ext (by
-        have hv := congrArg Fin.val hq
-        simp only [Fin.val_succ, Fin.val_last] at hv ⊢
-        omega)
-    refine Or.inl ⟨by simpa [hq] using kind, transport Tn ?_ TnToC⟩
-    simpa [Tn, hq, hlast, ← ett.generatingColoring] using closure.1
-  | RE q _ _ _ _ available coloring stored edges kind vertex outside delta gamma
-      seed adjoin closure ordered strict =>
-    have hq : q.succ = Fin.last ett.rounds := hi.symm
-    have hlast : q.succ.succ = Fin.last (ett.rounds + 1) :=
-      Fin.ext (by
-        have hv := congrArg Fin.val hq
-        simp only [Fin.val_succ, Fin.val_last] at hv ⊢
-        omega)
-    have hroute : TashkinovAugmentationSequence phi seed
-        (ett.series.data.tree (Fin.last (ett.rounds + 1))) := by
-      simpa [hq, hlast, ← ett.generatingColoring] using closure.1
-    have hseedC : TreeSequenceInitialSegment seed C :=
-      commonPrefix (TashkinovAugmentationSequenceInitialSegment phi _ _ hroute)
-        hCF (by
-          obtain ⟨ha, _, _⟩ := adjoin
-          rw [hq] at ha
-          change seed.length = Tn.length + 1 at ha
-          omega)
-    refine Or.inr ⟨Or.inr (by simpa [hq] using kind), available.edge, seed,
-      by simpa [hq] using edges, by simpa [Tn, hq] using adjoin,
-      transport seed hroute hseedC⟩
 
 private theorem helper_chosenAgree_381.{u_1, u_2} :
     open scoped Classical in
@@ -1007,11 +900,6 @@ private theorem helper_rebuild_367.{u_1, u_2} :
       (hUW : TreeSequenceInitialSegment U W) :
       TreeSequenceInitialSegment S W := by
     exact hSU.trans hUW
-  have commonPrefix {S U W : TreeSequence G e0}
-      (hSW : TreeSequenceInitialSegment S W)
-      (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
-      TreeSequenceInitialSegment S U := by
-    exact hUW.of_common_extension hSW hlen
   have stageSegment : ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1),
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by
@@ -1098,10 +986,9 @@ private theorem helper_rebuild_367.{u_1, u_2} :
   have hmod : ModColoring ett mu :=
     Td G k e0 input T phi ett hMP hpositive hlower mu hproperMu honeMu
       (by simpa [ett.generatingColoring] using hstable)
-  have terminalRoute :=
-    @helper_terminalRoute_259 V E inferInstance inferInstance inferInstance G k e0 input T
-        phi ett hpositive q beta b₂ gamma sigma i₁ i₂ hiorder hspos hsT hCT hmissingFixed
-        segTrans commonPrefix hlenC hBtoC TnToC TnStrictC fixedC
+  have terminalRoute := ett.series.terminalRouteColoringTransport hpositive phi
+    ett.generatingColoring C TnToC TnStrictC (segTrans hCT ett.belowFinal)
+    mu Bminus hBtoC hlenC (fun t _ => fixedC t) hmissingFixed
   obtain ⟨corrC⟩ := hmod.2.2 C TnToC TnStrictC terminalRoute
   have hMPC := MaximumPropertyTransport G k e0 ett mu hmod C corrC hMP
   refine ⟨corrC, ?_⟩
