@@ -508,10 +508,10 @@ theorem rosserMain_false_eq {r : ℕ} (hr : #(primesLT z) < r) (y : ℝ) :
 
 theorem rosserMain_true_le_R (y z : ℝ) : rosserMain true y z ≤ R z := by
   rw [rosserMain_true_eq (Nat.lt_succ_self _) y]
-  linarith [fail_nonneg true (#(primesLT z) + 1) y z]
+  linarith only [fail_nonneg true (#(primesLT z) + 1) y z]
 
 theorem R_le_rosserMain_false (y z : ℝ) : R z ≤ rosserMain false y z := by
   rw [rosserMain_false_eq (Nat.lt_succ_self _) y]
-  linarith [fail_nonneg false (#(primesLT z) + 1) y z]
+  linarith only [fail_nonneg false (#(primesLT z) + 1) y z]
 
 end IwaniecLinearSieve

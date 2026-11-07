@@ -30,10 +30,10 @@ namespace IwaniecLinearSieve
 /-! ### Elementary facts about `log ∘ log` -/
 theorem continuousOn_inv_mul_log {u v : ℝ} (hu : 1 < u) :
     ContinuousOn (fun x ↦ (x * log x)⁻¹) (Set.Icc u v) := by
-  have hpos : ∀ x ∈ Set.Icc u v, 1 < x := fun x hx ↦ by linarith [hx.1]
+  have hpos : ∀ x ∈ Set.Icc u v, 1 < x := fun x hx ↦ by linarith only [hx.1, hu, hx]
   refine ContinuousOn.inv₀ (ContinuousOn.mul continuousOn_id ?_) fun x hx ↦ ?_
   · exact continuousOn_log.mono fun x hx ↦ by
-      simp only [Set.mem_compl_iff, Set.mem_singleton_iff]; linarith [hpos x hx]
+      simp only [Set.mem_compl_iff, Set.mem_singleton_iff]; linarith only [hpos x hx, hpos, hx]
   · have := hpos x hx
     have := log_pos this
     positivity
@@ -41,7 +41,7 @@ theorem continuousOn_inv_mul_log {u v : ℝ} (hu : 1 < u) :
 theorem integral_inv_mul_log {u v : ℝ} (hu : 1 < u) (huv : u ≤ v) :
     ∫ x in u..v, (x * log x)⁻¹ = log (log v) - log (log u) := by
   have hpos : ∀ x ∈ Set.uIcc u v, 1 < x := fun x hx ↦ by
-    rw [Set.uIcc_of_le huv] at hx; linarith [hx.1]
+    rw [Set.uIcc_of_le huv] at hx; linarith only [hx.1, hu, hx]
   refine integral_eq_sub_of_hasDerivAt (f := fun x ↦ log (log x)) (fun x hx ↦ ?_) ?_
   · have hx := hpos x hx
     have h := (hasDerivAt_log (by linarith : x ≠ 0)).log (log_pos hx).ne'
@@ -53,15 +53,15 @@ theorem integral_inv_mul_log {u v : ℝ} (hu : 1 < u) (huv : u ≤ v) :
 
 theorem log_log_sub_log_log_le {u v : ℝ} (hu : 1 < u) (huv : u ≤ v) :
     log (log v) - log (log u) ≤ (v - u) / (u * log u) := by
-  have hu0 : 0 < u := by linarith
+  have hu0 : 0 < u := by linarith only [hu]
   have hlu : 0 < log u := log_pos hu
-  have hlv : 0 < log v := log_pos (by linarith)
+  have hlv : 0 < log v := log_pos (by linarith only [hu, huv])
   have h1 : log (log v) - log (log u) ≤ log v / log u - 1 := by
     rw [← log_div hlv.ne' hlu.ne']
     exact log_le_sub_one_of_pos (div_pos hlv hlu)
   have h2 : log v - log u ≤ v / u - 1 := by
-    rw [← log_div (by linarith) hu0.ne']
-    exact log_le_sub_one_of_pos (div_pos (by linarith) hu0)
+    rw [← log_div (by linarith only [hu, huv]) hu0.ne']
+    exact log_le_sub_one_of_pos (div_pos (by linarith only [hu, huv]) hu0)
   calc log (log v) - log (log u) ≤ log v / log u - 1 := h1
     _ = (log v - log u) / log u := by field_simp
     _ ≤ (v / u - 1) / log u := by gcongr
@@ -146,14 +146,14 @@ theorem le_floor_iff_of_prime {p : ℕ} (hp : p.Prime) {A : ℝ} : p ≤ ⌊A⌋
     have : (0 : ℝ) < p := by exact_mod_cast hp.pos
     constructor <;> intro h
     · exact absurd h (by have := hp.pos; omega)
-    · linarith
+    · linarith only [hA, this, h]
 
 theorem floor_lt_iff_of_prime {p : ℕ} (hp : p.Prime) {B : ℝ} : ⌊B⌋₊ < p ↔ B < p := by
   rcases le_or_gt 0 B with hB | hB
   · exact Nat.floor_lt hB
   · rw [Nat.floor_of_nonpos hB.le]
     have : (0 : ℝ) < p := by exact_mod_cast hp.pos
-    exact ⟨fun _ ↦ by linarith, fun _ ↦ hp.pos⟩
+    exact ⟨fun _ ↦ by linarith only [hB, this], fun _ ↦ hp.pos⟩
 
 theorem mem_primesIoc {B A : ℝ} {p : ℕ} : p ∈ primesIoc B A ↔ p.Prime ∧ B < p ∧ (p : ℝ) ≤ A := by
   simp only [primesIoc, mem_filter, mem_Ioc]
@@ -215,47 +215,47 @@ theorem lemma13_Ioc : ∃ C, 0 ≤ C ∧ ∀ (b : ℝ → ℝ) (A B : ℝ), 2 �
     MonotoneOn b (Set.Icc B A) → (∀ x ∈ Set.Icc B A, 0 ≤ b x) →
     |∑ p ∈ primesIoc B A, b p / p - ∫ x in B..A, b x / (x * log x)| ≤ C * b A * pntE B := by
   obtain ⟨c₅, C, hC0, hC⟩ := S_asymp_nonneg
-  refine ⟨2 + 2 * C, by linarith, fun b A B hB hBA hb hb0 ↦ ?_⟩
+  refine ⟨2 + 2 * C, by linarith only [hC0], fun b A B hB hBA hb hb0 ↦ ?_⟩
   set n := ⌊A⌋₊ - ⌊B⌋₊ + 1
-  have h0 : clampPt B A 0 = B := clampPt_zero (by linarith)
+  have h0 : clampPt B A 0 = B := clampPt_zero (by linarith only [hB])
   have hn : clampPt B A n = A := clampPt_last hBA
   have h2 : ∀ j, 2 ≤ clampPt B A j := fun j ↦ hB.trans (le_clampPt B A j)
   have hE : ∀ j, pntE (clampPt B A j) ≤ pntE B := fun j ↦
-    pntE_le_pntE (by linarith) (le_clampPt B A j)
+    pntE_le_pntE (by linarith only [hB]) (le_clampPt B A j)
   have hFf : ∀ j < n, ∫ x in clampPt B A j..clampPt B A (j + 1), (x * log x)⁻¹ =
       (log (log (clampPt B A (j + 1))) + c₅) - (log (log (clampPt B A j)) + c₅) := by
     intro j _
-    rw [integral_inv_mul_log (by linarith [h2 j]) (clampPt_mono B A (Nat.le_succ j))]
+    rw [integral_inv_mul_log (by linarith only [h2 j, h2]) (clampPt_mono B A (Nat.le_succ j))]
     ring
   have hδ : ∀ j < n, (log (log (clampPt B A (j + 1))) + c₅) - (log (log (clampPt B A j)) + c₅) ≤
       2 * pntE B := by
     intro j _
     have hj := h2 j
-    have hlog : 0 < log (clampPt B A j) := log_pos (by linarith)
+    have hlog : 0 < log (clampPt B A j) := log_pos (by linarith only [hj])
     calc _ = log (log (clampPt B A (j + 1))) - log (log (clampPt B A j)) := by ring
       _ ≤ (clampPt B A (j + 1) - clampPt B A j) / (clampPt B A j * log (clampPt B A j)) :=
-          log_log_sub_log_log_le (by linarith) (clampPt_mono B A (Nat.le_succ j))
+          log_log_sub_log_log_le (by linarith only [hj]) (clampPt_mono B A (Nat.le_succ j))
       _ ≤ 1 / (clampPt B A j * log (clampPt B A j)) := by
           gcongr
-          linarith [clampPt_succ_le B A j]
+          linarith only [clampPt_succ_le B A j]
       _ ≤ 2 * pntE (clampPt B A j) := one_div_mul_log_le_pntE hj
-      _ ≤ 2 * pntE B := by linarith [hE j]
+      _ ≤ 2 * pntE B := by linarith only [hE j, hE]
   have hε : ∀ j ≤ n, |S (clampPt B A j) - (log (log (clampPt B A j)) + c₅)| ≤ C * pntE B := by
     intro j _
     rw [← sub_sub]
     exact (hC _ (h2 j)).trans (mul_le_mul_of_nonneg_left (hE j) hC0)
   have key := abs_sum_sub_integral_le (n := n) (a := clampPt B A) (clampPt_mono B A)
     (b := b) (f := fun x ↦ (x * log x)⁻¹) (F := fun x ↦ log (log x) + c₅)
-    (g := fun j ↦ S (clampPt B A j)) (by linarith [pntE_pos B]) (by rw [h0, hn]; exact hb)
+    (g := fun j ↦ S (clampPt B A j)) (by linarith only [pntE_pos B]) (by rw [h0, hn]; exact hb)
     (by rw [h0]; exact hb0 B ⟨le_rfl, hBA⟩)
     (by
       rw [h0, hn]
       intro x hx
-      have : 0 < log x := log_pos (by linarith [hx.1])
-      have : 0 < x := by linarith [hx.1]
+      have : 0 < log x := log_pos (by linarith only [hx.1, hB, hx])
+      have : 0 < x := by linarith only [hx.1, hB, hx]
       positivity)
-    (by rw [h0, hn]; exact continuousOn_inv_mul_log (by linarith)) hFf hδ hε
-  rw [h0, hn, sum_clampPt_eq b (by linarith) hBA] at key
+    (by rw [h0, hn]; exact continuousOn_inv_mul_log (by linarith only [hB])) hFf hδ hε
+  rw [h0, hn, sum_clampPt_eq b (by linarith only [hB]) hBA] at key
   simp_rw [div_eq_mul_inv (b _)]
   calc _ ≤ (2 * pntE B + 2 * (C * pntE B)) * b A := key
     _ = (2 + 2 * C) * b A * pntE B := by ring
@@ -266,7 +266,7 @@ theorem sum_of_forall_cast_eq {t : Finset ℕ} {v : ℝ} (h : ∀ p ∈ t, (p : 
     exact_mod_cast (h a ha).trans (h b hb).symm
   have hcard' : (t.card : ℝ) ≤ 1 := by exact_mod_cast hcard
   rw [sum_congr rfl fun p hp ↦ by rw [h p hp], sum_const, nsmul_eq_mul]
-  exact ⟨by positivity, by nlinarith⟩
+  exact ⟨by positivity, by nlinarith only [hφ, hcard']⟩
 
 /-- [I71, Lemma 13], increasing case, for any set of primes between those in `(B, A)` and
 those in `[B, A]`. -/
@@ -275,8 +275,8 @@ theorem lemma13_mono_of_subset : ∃ C, 0 ≤ C ∧ ∀ (b : ℝ → ℝ) (A B :
     (∀ p ∈ s, p.Prime ∧ B ≤ p ∧ (p : ℝ) ≤ A) → (∀ p : ℕ, p.Prime → B < p → (p : ℝ) < A → p ∈ s) →
     |∑ p ∈ s, b p / p - ∫ x in B..A, b x / (x * log x)| ≤ C * b A * pntE B := by
   obtain ⟨C, hC0, hC⟩ := lemma13_Ioc
-  refine ⟨C + 1, by linarith, fun b A B s hB hBA hb hb0 hs1 hs2 ↦ ?_⟩
-  have hB0 : 0 < B := by linarith
+  refine ⟨C + 1, by linarith only [hC0], fun b A B s hB hBA hb hb0 hs1 hs2 ↦ ?_⟩
+  have hB0 : 0 < B := by linarith only [hB]
   have hbA : 0 ≤ b A := hb0 A ⟨hBA, le_rfl⟩
   have hbB : 0 ≤ b B := hb0 B ⟨le_rfl, hBA⟩
   have hbBA : b B ≤ b A := hb ⟨le_rfl, hBA⟩ ⟨hBA, le_rfl⟩ hBA
@@ -290,7 +290,7 @@ theorem lemma13_mono_of_subset : ∃ C, 0 ≤ C ∧ ∀ (b : ℝ → ℝ) (A B :
       rw [Finset.mem_sdiff, mem_primesIoc] at hp
       obtain ⟨⟨hpp, hBp, hpA⟩, hp2⟩ := hp
       exact le_antisymm hpA (not_lt.1 fun h ↦ hp2 (hs2 p hpp hBp h)))
-    (fun x ↦ b x / x) (div_nonneg hbA (by linarith))
+    (fun x ↦ b x / x) (div_nonneg hbA (by linarith only [hB, hBA]))
   have h3 : b B / B ≤ b A * pntE B := by
     calc b B / B ≤ b A / B := by gcongr
       _ = b A * B⁻¹ := div_eq_mul_inv _ _
@@ -330,29 +330,29 @@ theorem lemma13_anti_of_subset : ∃ C, 0 ≤ C ∧ ∀ (b : ℝ → ℝ) (A B :
     (∀ p ∈ s, p.Prime ∧ B ≤ p ∧ (p : ℝ) ≤ A) → (∀ p : ℕ, p.Prime → B < p → (p : ℝ) < A → p ∈ s) →
     |∑ p ∈ s, b p / p - ∫ x in B..A, b x / (x * log x)| ≤ C * b B * pntE B := by
   obtain ⟨C, hC0, hC⟩ := lemma13_mono_of_subset
-  refine ⟨2 * C, by linarith, fun b A B s hB hBA hb hb0 hs1 hs2 ↦ ?_⟩
+  refine ⟨2 * C, by linarith only [hC0], fun b A B s hB hBA hb hb0 hs1 hs2 ↦ ?_⟩
   set c := b B
   have hc : 0 ≤ c := hb0 B ⟨le_rfl, hBA⟩
   have hbA : 0 ≤ b A := hb0 A ⟨hBA, le_rfl⟩
   have hbA' : b A ≤ c := hb ⟨le_rfl, hBA⟩ ⟨hBA, le_rfl⟩ hBA
   have hb' : MonotoneOn (fun x ↦ c - b x) (Set.Icc B A) := fun x hx y hy hxy ↦ by
-    simp only; linarith [hb hx hy hxy]
+    simp only; linarith only [hb hx hy hxy, hb, hx, hy, hxy]
   have hb'0 : ∀ x ∈ Set.Icc B A, 0 ≤ c - b x := fun x hx ↦ by
-    simp only [c]; linarith [hb ⟨le_rfl, hBA⟩ hx hx.1]
+    simp only [c]; linarith only [hb ⟨le_rfl, hBA⟩ hx hx.1, hb, hBA, hx]
   have e1 := hC (fun _ ↦ c) A B s hB hBA (fun _ _ _ _ _ ↦ le_rfl) (fun _ _ ↦ hc) hs1 hs2
   have e2 := hC (fun x ↦ c - b x) A B s hB hBA hb' hb'0 hs1 hs2
   have hsum : ∑ p ∈ s, b p / p = ∑ p ∈ s, c / p - ∑ p ∈ s, (c - b p) / p := by
     rw [← sum_sub_distrib]; exact sum_congr rfl fun p _ ↦ by ring
   have hint : ∫ x in B..A, b x / (x * log x) =
       (∫ x in B..A, c / (x * log x)) - ∫ x in B..A, (c - b x) / (x * log x) := by
-    rw [← integral_sub (intervalIntegrable_div_mul_log (by linarith) hBA
-      (Or.inl fun _ _ _ _ _ ↦ le_rfl)) (intervalIntegrable_div_mul_log (by linarith) hBA
+    rw [← integral_sub (intervalIntegrable_div_mul_log (by linarith only [hB]) hBA
+      (Or.inl fun _ _ _ _ _ ↦ le_rfl)) (intervalIntegrable_div_mul_log (by linarith only [hB]) hBA
       (Or.inl hb'))]
     exact integral_congr fun x _ ↦ by ring
   rw [hsum, hint]
   have h5 : 0 ≤ C * b A * pntE B := mul_nonneg (mul_nonneg hC0 hbA) (pntE_pos B).le
   rw [abs_le] at e1 e2 ⊢
-  constructor <;> linarith
+  constructor <;> linarith only [e1, e2, h5]
 
 /-- [I71, Lemma 13], decreasing case: for `b ≥ 0` decreasing on `[B, A]`, `2 ≤ B ≤ A`,
 `|∑_{B ≤ p ≤ A} b(p)/p - ∫_B^A b(x)/(x log x) dx| ≤ C b(B) exp(-κ √(log B))`. -/
@@ -367,7 +367,7 @@ theorem lemma13_anti : ∃ C, ∀ (b : ℝ → ℝ) (A B : ℝ), 2 ≤ B → B �
 theorem integral_inv_log_div_mul_log {u v : ℝ} (hu : 1 < u) (huv : u ≤ v) :
     ∫ x in u..v, (log x)⁻¹ / (x * log x) = 1 / log u - 1 / log v := by
   have hpos : ∀ x ∈ Set.uIcc u v, 1 < x := fun x hx ↦ by
-    rw [Set.uIcc_of_le huv] at hx; linarith [hx.1]
+    rw [Set.uIcc_of_le huv] at hx; linarith only [hx.1, hu, hx]
   have hderiv : ∀ x ∈ Set.uIcc u v,
       HasDerivAt (fun x ↦ -(log x)⁻¹) ((log x)⁻¹ / (x * log x)) x := fun x hx ↦ by
     have hx := hpos x hx
@@ -378,8 +378,8 @@ theorem integral_inv_log_div_mul_log {u v : ℝ} (hu : 1 < u) (huv : u ≤ v) :
     have hc := continuousOn_inv_mul_log (v := v) hu
     have hl : ContinuousOn (fun x ↦ (log x)⁻¹) (Set.Icc u v) :=
       ContinuousOn.inv₀ (continuousOn_log.mono fun x hx ↦ by
-        simp only [Set.mem_compl_iff, Set.mem_singleton_iff]; linarith [hx.1])
-        fun x hx ↦ (log_pos (by linarith [hx.1])).ne'
+        simp only [Set.mem_compl_iff, Set.mem_singleton_iff]; linarith only [hx.1, hu, hx])
+        fun x hx ↦ (log_pos (by linarith only [hx.1, hu, hx])).ne'
     simp_rw [div_eq_mul_inv ((log _)⁻¹)]
     exact (hl.mul hc).intervalIntegrable_of_Icc huv
   rw [integral_eq_sub_of_hasDerivAt hderiv hint]
@@ -394,12 +394,12 @@ theorem lemma14_of_subset : ∃ C, ∀ (A B : ℝ) (s : Finset ℕ), 2 ≤ B →
   refine ⟨2 * C, fun A B s hB hBA hs1 hs2 ↦ ?_⟩
   have hlogB : 1 / 2 ≤ log B := half_le_log hB
   have hb : AntitoneOn (fun x ↦ (log x)⁻¹) (Set.Icc B A) := fun x hx y hy hxy ↦ by
-    have hx0 : 0 < log x := log_pos (by linarith [hx.1])
-    exact inv_anti₀ hx0 (log_le_log (by linarith [hx.1]) hxy)
+    have hx0 : 0 < log x := log_pos (by linarith only [hx.1, hB, hx])
+    exact inv_anti₀ hx0 (log_le_log (by linarith only [hx.1, hB, hx]) hxy)
   have hb0 : ∀ x ∈ Set.Icc B A, 0 ≤ (log x)⁻¹ := fun x hx ↦
-    inv_nonneg.2 (log_nonneg (by linarith [hx.1]))
+    inv_nonneg.2 (log_nonneg (by linarith only [hx.1, hB, hx]))
   have h := hC _ A B s hB hBA hb hb0 hs1 hs2
-  rw [integral_inv_log_div_mul_log (by linarith) hBA] at h
+  rw [integral_inv_log_div_mul_log (by linarith only [hB]) hBA] at h
   have hsum : ∑ p ∈ s, (log (p : ℝ))⁻¹ / p = ∑ p ∈ s, 1 / (p * log p) :=
     sum_congr rfl fun p _ ↦ by ring
   rw [hsum] at h

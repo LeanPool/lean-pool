@@ -53,7 +53,7 @@ theorem pow_succ_add_mul_le_add_pow {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (n
         ≤ (a + b) * (a ^ (n + 1) + (n + 1) * a ^ n * b) := by
           push_cast
           rw [pow_succ a (n + 1), pow_succ a n]
-          nlinarith [mul_nonneg h1 hb]
+          nlinarith only [mul_nonneg h1 hb, h2]
       _ ≤ (a + b) * (a + b) ^ (n + 1) := by gcongr
       _ = (a + b) ^ (n + 1 + 1) := by ring
 
@@ -92,7 +92,7 @@ theorem sum_pow_sum_lt_mul_le (s : Finset ℕ) {w : ℕ → ℝ} (hw : ∀ p ∈
           exact ih hw'
       _ ≤ (w a + ∑ q ∈ s, w q) ^ (n + 1) / (n + 1) := by
           rw [add_comm (w a), le_div_iff₀ hn, add_mul, div_mul_cancel₀ _ hn.ne']
-          nlinarith
+          nlinarith only [this]
 
 /-- `∑_{p < z} SLT(p)^n / p ≤ SLT(z)^{n+1} / (n+1)`. -/
 theorem sum_SLT_pow_div_le (n : ℕ) (z : ℝ) :
@@ -240,7 +240,7 @@ theorem sum_pow_div_factorial_le {X u : ℝ} (hX : 0 ≤ X) (hu : 0 < u) (h : 2 
     rw [hk, Nat.add_one_le_iff, Nat.floor_lt hu.le]
     exact hs l hl
   have he : 1 ≤ exp 1 := one_le_exp zero_le_one
-  have h2X : 2 * X ≤ k + 1 := by nlinarith
+  have h2X : 2 * X ≤ k + 1 := by nlinarith only [h, huk, hX, he]
   have hf : (0 : ℝ) < k.factorial := by exact_mod_cast k.factorial_pos
   -- each term is at most `X^k/k! · 2^{-(l-k)}`
   have hterm : ∀ j : ℕ, X ^ (k + j) / (k + j).factorial ≤
@@ -259,7 +259,7 @@ theorem sum_pow_div_factorial_le {X u : ℝ} (hX : 0 ≤ X) (hu : 0 < u) (h : 2 
           refine mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (by positivity) ?_ j)
             (by positivity)
           rw [div_le_iff₀ (by positivity)]
-          linarith
+          linarith only [h2X]
   set N := s.sup id + 1
   have hsub : s ⊆ Ico k N := fun l hl ↦
     mem_Ico.2 ⟨hks l hl, Nat.lt_succ_of_le (le_sup (f := id) hl)⟩
@@ -284,7 +284,7 @@ theorem sum_pow_div_factorial_le {X u : ℝ} (hX : 0 ≤ X) (hu : 0 < u) (h : 2 
         refine mul_le_mul_of_nonneg_right ?_ (by norm_num)
         refine rpow_le_rpow_of_exponent_ge' (by positivity) ?_ hu.le huk.le
         rw [div_le_one hu]
-        nlinarith [exp_pos 1]
+        nlinarith only [exp_pos 1, hu, h]
     _ = 2 * (exp 1 * X / u) ^ u := mul_comm _ _
 
 /-- `(e X / u)^u = exp (-(u log u) + u log X + u)`. -/
@@ -307,22 +307,22 @@ theorem fail_le_tail {lower : Bool} {r : ℕ} {y z X u : ℝ} (hz : 1 < z) (hu :
     rw [← rpow_natCast] at hl
     have := (rpow_lt_rpow_left_iff hz).1 (hyz.trans_lt hl)
     push_cast at this
-    linarith
+    linarith only [this]
 
 /-- `fail_le_tail` with `z = y^{1/s}`: for `y > 1`, `s > 2`, `SLT (y^{1/s}) ≤ X` and
 `2 e X ≤ s - 2`, `fail lower r y y^{1/s} ≤ 2 (e X / (s - 2))^{s - 2}`. -/
 theorem fail_rpow_le_tail {lower : Bool} {r : ℕ} {y s X : ℝ} (hy : 1 < y) (hs : 2 < s)
     (hX : SLT (y ^ s⁻¹) ≤ X) (h : 2 * exp 1 * X ≤ s - 2) :
     fail lower r y (y ^ s⁻¹) ≤ 2 * (exp 1 * X / (s - 2)) ^ (s - 2) := by
-  have hs0 : 0 < s := by linarith
-  refine fail_le_tail (one_lt_rpow hy (inv_pos.2 hs0)) (by linarith) ?_ hX h
-  rw [sub_add_cancel, ← rpow_mul (by linarith), inv_mul_cancel₀ hs0.ne', rpow_one]
+  have hs0 : 0 < s := by linarith only [hs]
+  refine fail_le_tail (one_lt_rpow hy (inv_pos.2 hs0)) (by linarith only [hs]) ?_ hX h
+  rw [sub_add_cancel, ← rpow_mul (by linarith only [hy]), inv_mul_cancel₀ hs0.ne', rpow_one]
 
 /-- `SLT z ≤ log log z + C` for `z ≥ 2`. -/
 theorem SLT_le_loglog : ∃ C : ℝ, ∀ z ≥ 2, SLT z ≤ log (log z) + C := by
   obtain ⟨c₅, C, hC⟩ := S_asymp
   refine ⟨c₅ + |C|, fun z hz ↦ ?_⟩
-  have h1 := (S_sub_SLT (by linarith : (0 : ℝ) < z)).1
+  have h1 := (S_sub_SLT (by linarith only [hz] : (0 : ℝ) < z)).1
   have h2 := (abs_le.1 (hC z hz)).2
   have h3 : C * pntE z ≤ |C| := by
     calc
@@ -330,7 +330,7 @@ theorem SLT_le_loglog : ∃ C : ℝ, ∀ z ≥ 2, SLT z ≤ log (log z) + C := b
         mul_le_mul_of_nonneg_right (le_abs_self C) (pntE_nonneg z)
       _ ≤ |C| * 1 := mul_le_mul_of_nonneg_left (pntE_le_one z) (abs_nonneg C)
       _ = |C| := mul_one _
-  linarith
+  linarith only [h1, h2, h3]
 
 /-! ### Counts -/
 

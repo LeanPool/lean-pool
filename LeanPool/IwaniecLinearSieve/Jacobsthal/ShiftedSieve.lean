@@ -323,7 +323,7 @@ theorem abs_card_filter_dvd_sub_le (x : ℤ) (X : ℕ) {d : ℕ} (hd : 0 < d) :
     push_cast
     ring
   have hX : (0 : ℚ) ≤ X / d := by positivity
-  have hle : ⌈u⌉ ≤ ⌈v⌉ := Int.ceil_mono (by rw [hvu]; linarith)
+  have hle : ⌈u⌉ ≤ ⌈v⌉ := Int.ceil_mono (by rw [hvu]; linarith only [hX])
   rw [max_eq_left (sub_nonneg.2 hle)] at h
   have hq : |((⌈v⌉ - ⌈u⌉ : ℤ) : ℚ) - X / d| ≤ 1 := by
     have h1 := Int.le_ceil v
@@ -437,7 +437,7 @@ theorem shiftedSieve_of_bijOn (y : ℝ) {S : Finset ℕ} {e : ℕ → ℕ}
       ∑ A ∈ T.powerset, w A * #((range X).filter fun k : ℕ ↦ (n A : ℤ) ∣ x + k) := by
     rw [← sum_sub_distrib]
     exact sum_le_sum hc
-  linarith
+  linarith only [hb, hd, he', hsum]
 
 
 /-- Any `π(z)` primes can be matched with the primes below `z` so that each prime below `z` is

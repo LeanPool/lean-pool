@@ -61,8 +61,8 @@ theorem hasDerivAt_growth (L a : ℝ) {t : ℝ} (ht : 1 ≤ t) :
           ((2 * t * log t ^ 5 + 5 * t * log t ^ 4) / L ^ 2) /
             (1 + t ^ 2 * log t ^ 5 / L ^ 2))) t := by
   set x := t ^ 2 * log t ^ 5 / L ^ 2
-  have hx : 0 < 1 + x := by linarith [lsx_nonneg L ht]
-  have h := ((hasDerivAt_lsx L (by linarith)).const_add 1).rpow
+  have hx : 0 < 1 + x := by linarith only [lsx_nonneg L ht, ht]
+  have h := ((hasDerivAt_lsx L (by linarith only [ht])).const_add 1).rpow
     (((hasDerivAt_id' t).sub_const a).const_mul 5) hx
   convert h using 1
   rw [rpow_sub_one hx.ne']
@@ -132,11 +132,11 @@ theorem rate_bound {L a t : ℝ} (ha : 0 ≤ a) (ha1 : a ≤ 1) (ht1 : 1 ≤ t) 
 theorem majG_succ_mul_log_lt (r : ℕ) {t : ℝ} (ht : 2 ≤ t) :
     majG (r + 1) t * log t < 4 * (majG r (t - 1) * t / (t - 1) ^ 2) := by
   have h := majG_succ_mul_log_div_lt r ht
-  have hK : 0 < majG r (t - 1) * t := mul_pos (majG_pos r _) (by linarith)
-  have h1 : 0 < (t - 1) ^ 2 := by nlinarith
+  have hK : 0 < majG r (t - 1) * t := mul_pos (majG_pos r _) (by linarith only [ht])
+  have h1 : 0 < (t - 1) ^ 2 := by nlinarith only [ht]
   rw [div_lt_iff₀ hK] at h
   rw [mul_div_assoc', lt_div_iff₀ h1]
-  linarith
+  linarith only [h]
 
 theorem five_add_neg_one_pow_div_le (r : ℕ) : (5 + (-1 : ℝ) ^ r) / 2 ≤ 3 := by
   rcases Nat.even_or_odd r with hr | hr
@@ -149,19 +149,19 @@ theorem five_add_neg_one_pow_div_le (r : ℕ) : (5 + (-1 : ℝ) ^ r) / 2 ≤ 3 :
 theorem range_facts {L t b : ℝ} (ht : exp 32 ≤ t) (htb : t ≤ b)
     (hb : b ^ 2 * log b ^ 4 ≤ L ^ 2 / 160) :
     1 ≤ t ∧ 32 ≤ log t ∧ t ^ 2 * log t ^ 4 / L ^ 2 ≤ 1 / 160 ∧ 0 < L ^ 2 := by
-  have ht1 : 1 ≤ t := le_trans (by linarith [add_one_le_exp (32 : ℝ)]) ht
-  have hlt : 32 ≤ log t := (le_log_iff_exp_le (by linarith)).2 ht
-  have hlb : log t ≤ log b := log_le_log (by linarith) htb
+  have ht1 : 1 ≤ t := le_trans (by linarith only [add_one_le_exp (32 : ℝ)]) ht
+  have hlt : 32 ≤ log t := (le_log_iff_exp_le (by linarith only [ht1])).2 ht
+  have hlb : log t ≤ log b := log_le_log (by linarith only [ht1]) htb
   have h4 : t ^ 2 * log t ^ 4 ≤ b ^ 2 * log b ^ 4 := by
-    have : 0 ≤ log t := by linarith
+    have : 0 ≤ log t := by linarith only [hlt]
     gcongr
   have hpos : 0 < t ^ 2 * log t ^ 4 := by
-    have : 0 < log t := by linarith
-    have : 0 < t := by linarith
+    have : 0 < log t := by linarith only [hlt]
+    have : 0 < t := by linarith only [ht1]
     positivity
-  have hL : 0 < L ^ 2 := by linarith
+  have hL : 0 < L ^ 2 := by linarith only [hb, h4, hpos]
   refine ⟨ht1, hlt, ?_, hL⟩
-  rw [div_le_iff₀ hL]; linarith
+  rw [div_le_iff₀ hL]; linarith only [hb, h4]
 
 /-- `(1 + x)^{5(t-1)} = (1 + x)^{5t} / (1 + x)^5`. -/
 theorem rpow_five_mul_sub_one {x : ℝ} (hx : 0 < x) (t : ℝ) :
@@ -177,8 +177,8 @@ theorem continuousOn_lemma11_integrand (L : ℝ) (r : ℕ) {s b : ℝ} (hs : 2 �
     ContinuousOn (fun t => (1 + t ^ 2 * log t ^ 5 / L ^ 2) ^ (5 * (t - 1)) * majG r (t - 1) * t /
       (t - 1) ^ 2) (Icc s b) := by
   refine continuousOn_of_forall_continuousAt fun t ht => ?_
-  have ht1 : t - 1 ≠ 0 := by linarith [ht.1]
-  exact (((continuousAt_growth L 1 (by linarith [ht.1])).mul
+  have ht1 : t - 1 ≠ 0 := by linarith only [ht.1, hs, ht]
+  exact (((continuousAt_growth L 1 (by linarith only [ht.1, hs, ht])).mul
     ((continuous_majG r).continuousAt.comp (continuous_sub_right 1).continuousAt)).mul
     continuousAt_id).div ((continuous_sub_right 1).continuousAt.pow 2) (pow_ne_zero 2 ht1)
 
@@ -188,7 +188,7 @@ theorem delta_eq_growth (s y : ℝ) :
 
 theorem delta_pos {s : ℝ} (hs : 1 ≤ s) (y : ℝ) : 0 < delta s y := by
   have := lsx_nonneg (log y) hs
-  exact rpow_pos_of_pos (by linarith) _
+  exact rpow_pos_of_pos (by linarith only [this]) _
 
 /-- The algebraic decay estimate in Lemma 11: the bound on the growth rate `E`
 and `G ℓ ≤ 4K` imply `K / (1 + x)⁵ ≤ K - EG`. -/
@@ -219,7 +219,7 @@ theorem lemma11 (r : ℕ) {y s b : ℝ} (hs : exp 32 ≤ s) (hsb : s ≤ b)
     ∫ t in s..b, (1 + t ^ 2 * log t ^ 5 / log y ^ 2) ^ (5 * (t - 1)) * majG r (t - 1) * t /
       (t - 1) ^ 2 < delta s y * majG (r + 1) s := by
   set L := log y
-  have hs3 : 3 < s := by linarith [add_one_le_exp (32 : ℝ)]
+  have hs3 : 3 < s := by linarith only [add_one_le_exp (32 : ℝ), hs]
   -- `τ(t) = δ(t) G_{r+1}(t)` and its derivative
   set τ : ℝ → ℝ := fun t => delta t y * majG (r + 1) t
   have hτd : ∀ t, 3 < t → HasDerivAt τ
@@ -229,7 +229,7 @@ theorem lemma11 (r : ℕ) {y s b : ℝ} (hs : exp 32 ≤ s) (hsb : s ≤ b)
             (1 + t ^ 2 * log t ^ 5 / L ^ 2)) * majG (r + 1) t +
         (1 + t ^ 2 * log t ^ 5 / L ^ 2) ^ (5 * (t - 0)) *
           (-(majG r (t - 1) * t / (t - 1) ^ 2))) t := fun t ht => by
-    have h1 := hasDerivAt_growth L 0 (t := t) (by linarith)
+    have h1 := hasDerivAt_growth L 0 (t := t) (by linarith only [ht])
     have h2 := hasDerivAt_majG_succ r (t := t) (by linarith [five_add_neg_one_pow_div_le r])
     have := h1.mul h2
     simp only [τ, delta_eq_growth]
@@ -238,14 +238,14 @@ theorem lemma11 (r : ℕ) {y s b : ℝ} (hs : exp 32 ≤ s) (hsb : s ≤ b)
     (φ := fun t => (1 + t ^ 2 * log t ^ 5 / L ^ 2) ^ (5 * (t - 1)) * majG r (t - 1) * t /
       (t - 1) ^ 2) hsb
     (continuousOn_of_forall_continuousAt fun t ht => (hτd t (by linarith [ht.1])).continuousAt.neg)
-    (fun t ht => (hτd t (by linarith [ht.1])).neg.hasDerivWithinAt)
-    ((continuousOn_lemma11_integrand L r (by linarith)).integrableOn_Icc) ?_
-  · have hτb : 0 < τ b := mul_pos (delta_pos (by linarith) y) (majG_pos _ _)
+    (fun t ht => (hτd t (by linarith only [ht.1, hs3, ht])).neg.hasDerivWithinAt)
+    ((continuousOn_lemma11_integrand L r (by linarith only [hs3])).integrableOn_Icc) ?_
+  · have hτb : 0 < τ b := mul_pos (delta_pos (by linarith only [hsb, hs3]) y) (majG_pos _ _)
     simp only [τ] at key hτb ⊢
-    linarith
+    linarith only [key, hτb]
   -- the pointwise inequality `-τ' ≥ (1 + x)^{5(t-1)} G_r(t-1) t/(t-1)²`
   intro t ht
-  have ht3 : 3 < t := by linarith [ht.1]
+  have ht3 : 3 < t := by linarith only [ht.1, hs3, ht]
   obtain ⟨ht1, hlt, hw, hL⟩ := range_facts (L := L) (hs.trans ht.1.le) ht.2.le hb
   obtain ⟨hE0, -, hE2⟩ := rate_bound (L := L) (a := 0) le_rfl zero_le_one ht1 hlt hw
   set x := t ^ 2 * log t ^ 5 / L ^ 2
@@ -263,7 +263,7 @@ theorem lemma11 (r : ℕ) {y s b : ℝ} (hs : exp 32 ≤ s) (hsb : s ≤ b)
     (by linarith only [hlt] : 0 < log t) hG.le hE2
   change (1 + x) ^ (5 * (t - 1)) * majG r (t - 1) * t / (t - 1) ^ 2 ≤
     -((1 + x) ^ (5 * (t - 0)) * E * G + (1 + x) ^ (5 * (t - 0)) * -K)
-  rw [rpow_five_mul_sub_one (by linarith)]
+  rw [rpow_five_mul_sub_one (by linarith only [hx0])]
   simp only [sub_zero] at hP ⊢
   calc (1 + x) ^ (5 * t) / (1 + x) ^ 5 * majG r (t - 1) * t / (t - 1) ^ 2
       = (1 + x) ^ (5 * t) * (K / (1 + x) ^ 5) := by rw [hK]; ring
@@ -272,7 +272,7 @@ theorem lemma11 (r : ℕ) {y s b : ℝ} (hs : exp 32 ≤ s) (hsb : s ≤ b)
 
 /-! ### Lemma 12 and the monotonicity used in Corollary 3 -/
 theorem four_lt_of_exp_le {t : ℝ} (ht : exp 32 ≤ t) : 4 < t := by
-  linarith [add_one_le_exp (32 : ℝ)]
+  linarith only [add_one_le_exp (32 : ℝ), ht]
 
 /-- If the growth rate satisfies `4E ≤ ℓ` and the decay satisfies `Gℓ ≤ 4K`, then
 `EG ≤ K` for `G ≥ 0`. This is the scalar comparison used in Lemma 12. -/
@@ -320,26 +320,26 @@ theorem lemma12 (r : ℕ) {L s b : ℝ} (hs : exp 32 ≤ s) (hb : b ^ 2 * log b 
     AntitoneOn (fun t => (1 + t ^ 2 * log t ^ 5 / L ^ 2) ^ (5 * (t - 1)) * majG (r + 1) t)
       (Icc s b) := by
   refine antitoneOn_growth_mul (k := fun t => majG r (t - 1) * t / (t - 1) ^ 2) (ℓ := log) hs hb
-    (fun t ht => ?_) (fun t _ => (majG_pos _ _).le) (fun t ht => ?_) fun t _ => by linarith
+    (fun t ht => ?_) (fun t _ => (majG_pos _ _).le) (fun t ht => ?_) fun t _ => by linarith only []
   · exact hasDerivAt_majG_succ r (by
-      linarith [five_add_neg_one_pow_div_le r, four_lt_of_exp_le (hs.trans ht.1)])
-  · exact (majG_succ_mul_log_lt r (by linarith [four_lt_of_exp_le (hs.trans ht.1)])).le
+      linarith only [five_add_neg_one_pow_div_le r, four_lt_of_exp_le (hs.trans ht.1), hs, ht])
+  · exact (majG_succ_mul_log_lt r (by linarith only [four_lt_of_exp_le (hs.trans ht.1), hs, ht])).le
 
 theorem log_sub_one_ge {t : ℝ} (ht : 2 ≤ t) : log t - 1 ≤ log (t - 1) := by
-  have h1 : 0 < t - 1 := by linarith
-  have h := log_le_sub_one_of_pos (div_pos (by linarith : (0 : ℝ) < t) h1)
-  rw [log_div (by linarith) h1.ne'] at h
+  have h1 : 0 < t - 1 := by linarith only [ht]
+  have h := log_le_sub_one_of_pos (div_pos (by linarith only [ht] : (0 : ℝ) < t) h1)
+  rw [log_div (by linarith only [ht]) h1.ne'] at h
   have : t / (t - 1) - 1 ≤ 1 := by
-    rw [div_sub_one h1.ne', div_le_one h1]; linarith
-  linarith
+    rw [div_sub_one h1.ne', div_le_one h1]; linarith only [ht]
+  linarith only [h, this]
 
 theorem antitoneOn_sq_div_sq_sub_one : AntitoneOn (fun t : ℝ => t ^ 2 / (t - 1) ^ 2) (Ioi 1) := by
   intro u hu v hv huv
-  have hu1 : 0 < u - 1 := by linarith [hu.out]
-  have hv1 : 0 < v - 1 := by linarith [hv.out]
+  have hu1 : 0 < u - 1 := by linarith only [hu.out, hu]
+  have hv1 : 0 < v - 1 := by linarith only [hv.out, huv, hu1]
   have h : v / (v - 1) ≤ u / (u - 1) := by
-    rw [div_le_div_iff₀ hv1 hu1]; nlinarith
-  have h0 : 0 ≤ v / (v - 1) := div_nonneg (by linarith) hv1.le
+    rw [div_le_div_iff₀ hv1 hu1]; nlinarith only [huv]
+  have h0 : 0 ≤ v / (v - 1) := div_nonneg (by linarith only [huv, hu1]) hv1.le
   simp only
   rw [← div_pow, ← div_pow]
   exact pow_le_pow_left₀ h0 h 2
@@ -361,9 +361,9 @@ theorem antitoneOn_cor3Weight (r : ℕ) {L s b : ℝ} (hs : exp 32 ≤ s)
     refine antitoneOn_growth_mul
       (k := fun t => majG (r + 1) (t - 1 - 1) * (t - 1) / (t - 1 - 1) ^ 2)
       (ℓ := fun t => log (t - 1)) hs hb (fun t ht => ?_) (fun t _ => (majG_pos _ _).le)
-      (fun t ht => ?_) fun t ht => log_sub_one_ge (by linarith [hfacts t ht])
+      (fun t ht => ?_) fun t ht => log_sub_one_ge (by linarith only [hfacts t ht, hfacts, ht])
     · have h := hasDerivAt_majG_succ (r + 1) (t := t - 1)
-        (by linarith [five_add_neg_one_pow_div_le (r + 1), hfacts t ht])
+        (by linarith only [five_add_neg_one_pow_div_le (r + 1), hfacts t ht, hfacts, ht])
       rw [majG_add_two] at h
       exact h.comp_sub_const t 1
     · have h := majG_succ_mul_log_lt (r + 1) (t := t - 1) (by linarith [hfacts t ht])
@@ -372,8 +372,8 @@ theorem antitoneOn_cor3Weight (r : ℕ) {L s b : ℝ} (hs : exp 32 ≤ s)
   refine antitoneOn_mul_of_nonneg hψ
     (antitoneOn_sq_div_sq_sub_one.mono fun t ht => show (1 : ℝ) < t by linarith [hfacts t ht])
     (fun t ht => ?_) fun t _ => by positivity
-  have := lsx_nonneg L (by linarith [hfacts t ht] : (1 : ℝ) ≤ t)
-  exact mul_nonneg (rpow_pos_of_pos (by linarith) _).le (majG_pos _ _).le
+  have := lsx_nonneg L (by linarith only [hfacts t ht, hfacts, ht] : (1 : ℝ) ≤ t)
+  exact mul_nonneg (rpow_pos_of_pos (by linarith only [this]) _).le (majG_pos _ _).le
 
 /-! ### The size of `ξ` -/
 
@@ -384,7 +384,7 @@ theorem xi_sq_mul_log_pow_four_div_le {y : ℝ} (hy : 1 < y) (hℓ : 1 ≤ log (
   set ℓ := log (log (3 * y)) with hℓdef
   set L := log y with hL
   have hL0 : 0 < L := log_pos hy
-  have hℓ0 : 0 < ℓ := by linarith
+  have hℓ0 : 0 < ℓ := by linarith only [hℓ]
   have hP : 1 ≤ ℓ ^ (11 / 5 : ℝ) := one_le_rpow hℓ (by norm_num)
   have hξL : xi y ≤ L := by
     rw [xi]; exact div_le_self hL0.le hP
@@ -418,13 +418,13 @@ theorem tendsto_xi : Tendsto xi atTop atTop := by
     filter_upwards [hv.eventually ho, hv.eventually (eventually_ge_atTop (exp 1)),
       hv.eventually (eventually_ge_atTop (2 * log 3)), eventually_gt_atTop 1] with y h1 h2 h3 hy
     simp only [one_mul] at h1 h2 h3
-    have hv0 : 0 < log (3 * y) := by linarith [exp_pos 1]
+    have hv0 : 0 < log (3 * y) := by linarith only [exp_pos 1, h2]
     have hℓ : 1 ≤ log (log (3 * y)) := (le_log_iff_exp_le hv0).2 h2
-    rw [norm_of_nonneg (rpow_nonneg (by linarith) _),
+    rw [norm_of_nonneg (rpow_nonneg (by linarith only [hℓ]) _),
       norm_of_nonneg (rpow_nonneg hv0.le _)] at h1
     have hL : log y = log (3 * y) - log 3 := by
-      rw [log_mul (by norm_num) (by linarith)]; ring
-    have hP : 0 < log (log (3 * y)) ^ (11 / 5 : ℝ) := rpow_pos_of_pos (by linarith) _
+      rw [log_mul (by norm_num) (by linarith only [hy])]; ring
+    have hP : 0 < log (log (3 * y)) ^ (11 / 5 : ℝ) := rpow_pos_of_pos (by linarith only [hℓ]) _
     have hsq : 0 < log (3 * y) ^ (1 / 2 : ℝ) := rpow_pos_of_pos hv0 _
     have hsq2 : log (3 * y) ^ (1 / 2 : ℝ) * log (3 * y) ^ (1 / 2 : ℝ) = log (3 * y) := by
       rw [← rpow_add hv0]; norm_num
@@ -432,7 +432,7 @@ theorem tendsto_xi : Tendsto xi atTop atTop := by
     calc log (3 * y) ^ (1 / 2 : ℝ) / 2 * log (log (3 * y)) ^ (11 / 5 : ℝ)
         ≤ log (3 * y) ^ (1 / 2 : ℝ) / 2 * log (3 * y) ^ (1 / 2 : ℝ) := by gcongr
       _ = log (3 * y) / 2 := by rw [div_mul_eq_mul_div, hsq2]
-      _ ≤ log (3 * y) - log 3 := by linarith
+      _ ≤ log (3 * y) - log 3 := by linarith only [h3]
   exact tendsto_atTop_mono' atTop hbound
     (((tendsto_rpow_atTop (by norm_num : (0 : ℝ) < 1 / 2)).comp hv).atTop_div_const (by norm_num))
 
@@ -448,16 +448,16 @@ theorem exists_xi_large : ∃ y₀ : ℝ, ∀ y ≥ y₀, 1 < y ∧ exp 32 ≤ x
       (eventually_ge_atTop 1)).and (eventually_gt_atTop 1))))
   refine ⟨y₀, fun y hy => ?_⟩
   obtain ⟨h1, h2, h3, h4⟩ := hy₀ y hy
-  have hξ1 : 1 ≤ xi y := le_trans (by linarith [add_one_le_exp (32 : ℝ)]) h2
+  have hξ1 : 1 ≤ xi y := le_trans (by linarith only [add_one_le_exp (32 : ℝ)]) h2
   have hL0 : 0 < log y := log_pos h4
   refine ⟨h4, h2, ?_, ?_⟩
   · have := (xi_sq_mul_log_pow_four_div_le h4 h3 hξ1).trans h1
     rwa [div_le_iff₀ (by positivity), div_mul_eq_mul_div, one_mul] at this
-  · have hℓ0 : 0 < log (log (3 * y)) := by linarith
+  · have hℓ0 : 0 < log (log (3 * y)) := by linarith only [h3]
     have hP : 0 < log (log (3 * y)) ^ (11 / 5 : ℝ) := rpow_pos_of_pos hℓ0 _
-    rw [rpow_def_of_pos (by linarith), xi, mul_one_div, div_div_cancel₀ hL0.ne']
+    rw [rpow_def_of_pos (by linarith only [h4]), xi, mul_one_div, div_div_cancel₀ hL0.ne']
     have : 1 ≤ log (log (3 * y)) ^ (11 / 5 : ℝ) := one_le_rpow h3 (by norm_num)
-    calc (2 : ℝ) ≤ exp 1 := by linarith [exp_one_gt_d9]
+    calc (2 : ℝ) ≤ exp 1 := by linarith only [exp_one_gt_d9]
       _ ≤ _ := exp_le_exp.2 this
 
 end IwaniecLinearSieve

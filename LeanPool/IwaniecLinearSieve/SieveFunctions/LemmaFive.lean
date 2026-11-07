@@ -67,12 +67,12 @@ theorem hasDerivAt_integral_Ioi {k : ℝ → ℝ} {a s : ℝ} (hint : Integrable
   refine hd.congr_of_eventuallyEq ?_
   filter_upwards [Ioi_mem_nhds has] with u hu
   have := integral_Ioi_sub_Ioi hint (le_of_lt hu)
-  linarith
+  linarith only [this]
 
 theorem continuousOn_shift {h : ℝ → ℝ} (hh : Continuous h) :
     ContinuousOn (fun t => h (t - 1) / (t - 1)) (Ioi 1) :=
   (hh.comp (continuous_sub_right 1)).continuousOn.div (continuous_sub_right 1).continuousOn
-    fun t ht => by have : (1 : ℝ) < t := ht; linarith
+    fun t ht => by have : (1 : ℝ) < t := ht; linarith only [this]
 
 /-- `F'(s) = -f(s-1)/(s-1)` for `s > 3`. -/
 theorem hasDerivAt_FSieve {s : ℝ} (hs : 3 < s) :
@@ -91,12 +91,12 @@ theorem hasDerivAt_fSieve_of_four_lt {s : ℝ} (hs : 4 < s) :
   refine hd.congr_of_eventuallyEq ?_
   filter_upwards [Ioi_mem_nhds hs] with u hu
   have hu' : (4 : ℝ) < u := hu
-  rw [fSieve_eq_integral (by linarith), g_two_of_four_le hu'.le, add_zero]
+  rw [fSieve_eq_integral (by linarith only [hu']), g_two_of_four_le hu'.le, add_zero]
 
 /-- `f'(s) = 1 - (F(3) + 3)/(s-1)` for `2 < s < 4`. -/
 theorem hasDerivAt_fSieve_of_lt_four {s : ℝ} (hs2 : 2 < s) (hs4 : s < 4) :
     HasDerivAt fSieve (1 - (FSieve 3 + 3) / (s - 1)) s := by
-  have hne : s - 1 ≠ 0 := by linarith
+  have hne : s - 1 ≠ 0 := by linarith only [hs2]
   have hd : HasDerivAt
       (fun u => fSieve 4 + (FSieve 3 + 3) * (log 3 - log (u - 1)) + u - 4)
       (1 - (FSieve 3 + 3) / (s - 1)) s := by
@@ -107,7 +107,7 @@ theorem hasDerivAt_fSieve_of_lt_four {s : ℝ} (hs2 : 2 < s) (hs4 : s < 4) :
     ring
   refine hd.congr_of_eventuallyEq ?_
   filter_upwards [Ioo_mem_nhds hs2 hs4] with u hu
-  rw [fSieve_eq_on_Icc' ⟨hu.1.le, hu.2.le⟩, log_div (by norm_num) (by linarith [hu.1])]
+  rw [fSieve_eq_on_Icc' ⟨hu.1.le, hu.2.le⟩, log_div (by norm_num) (by linarith only [hu.1, hu])]
 
 /-! ### Iwaniec's `M` -/
 
@@ -116,10 +116,10 @@ theorem hasDerivAt_fSieve_of_lt_four {s : ℝ} (hs2 : 2 < s) (hs4 : s < 4) :
 noncomputable def MSieve (s : ℝ) : ℝ := fSieve s + FSieve s + max (3 - s) 0
 
 theorem MSieve_of_three_le {s : ℝ} (hs : 3 ≤ s) : MSieve s = fSieve s + FSieve s := by
-  rw [MSieve, max_eq_right (by linarith), add_zero]
+  rw [MSieve, max_eq_right (by linarith only [hs]), add_zero]
 
 theorem MSieve_of_le_three {s : ℝ} (hs : s ≤ 3) : MSieve s = 3 + FSieve 3 - s + fSieve s := by
-  rw [MSieve, max_eq_left (by linarith), FSieve_of_le_three hs]; ring
+  rw [MSieve, max_eq_left (by linarith only [hs]), FSieve_of_le_three hs]; ring
 
 theorem continuous_MSieve : Continuous MSieve :=
   (continuous_fSieve.add continuous_FSieve).add ((continuous_const.sub continuous_id).max
@@ -131,7 +131,7 @@ theorem MSieve_nonneg (s : ℝ) : 0 ≤ MSieve s := by
 
 theorem MSieve_antitone : Antitone MSieve := fun u v h => by
   have := fSieve_antitone h; have := FSieve_antitone h
-  have : max (3 - v) 0 ≤ max (3 - u) 0 := max_le_max (by linarith) le_rfl
+  have : max (3 - v) 0 ≤ max (3 - u) 0 := max_le_max (by linarith only [h]) le_rfl
   rw [MSieve, MSieve]; linarith
 
 /-- `Σ_{k ≥ 2} g_k(s) = M(s)` for `s ≥ 3`. -/
@@ -147,26 +147,26 @@ theorem fr_lt_MSieve (r : ℕ) (s : ℝ) : fr r s < MSieve s := by
 theorem MSieve_le {s : ℝ} (hs : 3 ≤ s) :
     MSieve s ≤ (gLead * (1 - gRatio)⁻¹ + gLead * (exp 1 / 3) * (1 - gRatio)⁻¹) * s * exp (-s) := by
   rw [MSieve_of_three_le hs]
-  have := fSieve_le (by linarith : (2 : ℝ) ≤ s)
-  have := FSieve_le (by linarith : (1 : ℝ) ≤ s)
+  have := fSieve_le (by linarith only [hs] : (2 : ℝ) ≤ s)
+  have := FSieve_le (by linarith only [hs] : (1 : ℝ) ≤ s)
   linarith
 
 /-- The derivative of `M` for `s > 3`, `s ≠ 4`: `(s - 1) M'(s) = -M(s - 1)`. -/
 theorem hasDerivAt_MSieve {s : ℝ} (hs3 : 3 < s) (hs4 : s ≠ 4) :
     HasDerivAt MSieve (-(MSieve (s - 1) / (s - 1))) s := by
-  have hne : s - 1 ≠ 0 := by linarith
+  have hne : s - 1 ≠ 0 := by linarith only [hs3]
   have hev : MSieve =ᶠ[𝓝 s] fun u => fSieve u + FSieve u := by
     filter_upwards [Ioi_mem_nhds hs3] with u hu
     exact MSieve_of_three_le (le_of_lt hu)
   rcases lt_or_gt_of_ne hs4 with h4 | h4
   · have hd := (hasDerivAt_fSieve_of_lt_four (by linarith) h4).add (hasDerivAt_FSieve hs3)
     refine (hd.congr_of_eventuallyEq hev).congr_deriv ?_
-    rw [MSieve_of_le_three (by linarith)]
+    rw [MSieve_of_le_three (by linarith only [h4])]
     field_simp
     ring
   · have hd := (hasDerivAt_fSieve_of_four_lt h4).add (hasDerivAt_FSieve hs3)
     refine (hd.congr_of_eventuallyEq hev).congr_deriv ?_
-    rw [MSieve_of_three_le (by linarith)]
+    rw [MSieve_of_three_le (by linarith only [h4])]
     field_simp
     ring
 
@@ -196,7 +196,7 @@ theorem hasDerivAt_lemma5Q {s : ℝ} (hs3 : 3 < s) (hs4 : s ≠ 4) : HasDerivAt 
   have hd := (((hasDerivAt_id' s).sub_const 1).mul hM).sub ((hP s).sub hP1)
   rw [funext lemma5Q_eq]
   refine hd.congr_deriv ?_
-  have hne : s - 1 ≠ 0 := by linarith
+  have hne : s - 1 ≠ 0 := by linarith only [hs3]
   field_simp
   ring
 
@@ -206,15 +206,15 @@ theorem lemma5Q_eq_of_deriv {a b : ℝ} (hab : a ≤ b) (hd : ∀ x ∈ Ioo a b,
   · rw [h]
   · obtain ⟨c, _, hc⟩ := exists_hasDerivAt_eq_slope lemma5Q (fun _ => (0 : ℝ)) h
       continuous_lemma5Q.continuousOn hd
-    have hba : b - a ≠ 0 := by linarith
+    have hba : b - a ≠ 0 := by linarith only [h]
     rw [eq_div_iff hba, zero_mul] at hc
-    linarith
+    linarith only [hc]
 
 theorem lemma5Q_const {b : ℝ} (hb : 3 ≤ b) : lemma5Q b = lemma5Q 3 := by
   rcases le_total b 4 with h4 | h4
   · exact lemma5Q_eq_of_deriv hb fun x hx => hasDerivAt_lemma5Q hx.1 (by linarith [hx.2])
-  · rw [lemma5Q_eq_of_deriv h4 fun x hx => hasDerivAt_lemma5Q (by linarith [hx.1])
-      (by linarith [hx.1]),
+  · rw [lemma5Q_eq_of_deriv h4 fun x hx => hasDerivAt_lemma5Q (by linarith only [hx.1, hx])
+      (by linarith only [hx.1, hx]),
       lemma5Q_eq_of_deriv (by norm_num) fun x hx => hasDerivAt_lemma5Q hx.1 (by linarith [hx.2])]
 
 theorem abs_lemma5Q_le {b : ℝ} (hb : 4 ≤ b) :
@@ -222,11 +222,11 @@ theorem abs_lemma5Q_le {b : ℝ} (hb : 4 ≤ b) :
       (b ^ 2 * exp (-b)) := by
   set C := gLead * (1 - gRatio)⁻¹ + gLead * (exp 1 / 3) * (1 - gRatio)⁻¹
   have hM1 : MSieve (b - 1) ≤ C * (b - 1) * exp (-(b - 1)) := MSieve_le (s := b - 1) (by linarith)
-  have hMb : MSieve b ≤ MSieve (b - 1) := MSieve_antitone (by linarith)
+  have hMb : MSieve b ≤ MSieve (b - 1) := MSieve_antitone (by linarith only [])
   have hI0 : 0 ≤ ∫ x in (b - 1)..b, MSieve x :=
-    integral_nonneg (by linarith) fun x _ => MSieve_nonneg x
+    integral_nonneg (by linarith only []) fun x _ => MSieve_nonneg x
   have hI1 : ∫ x in (b - 1)..b, MSieve x ≤ MSieve (b - 1) := by
-    have := integral_mono_on (μ := volume) (by linarith : b - 1 ≤ b)
+    have := integral_mono_on (μ := volume) (by linarith only [] : b - 1 ≤ b)
       (continuous_MSieve.intervalIntegrable _ _)
       (intervalIntegrable_const (c := MSieve (b - 1))) fun x hx => MSieve_antitone hx.1
     simpa using this
@@ -237,14 +237,14 @@ theorem abs_lemma5Q_le {b : ℝ} (hb : 4 ≤ b) :
   have he : exp (-(b - 1)) = exp 1 * exp (-b) := by rw [← exp_add]; ring_nf
   rw [he] at hM1
   refine hQ.trans ?_
-  have := mul_le_mul_of_nonneg_left hM1 (by linarith : (0 : ℝ) ≤ b)
+  have := mul_le_mul_of_nonneg_left hM1 (by linarith only [hb] : (0 : ℝ) ≤ b)
   have hb' : 0 ≤ C * exp 1 * exp (-b) * b := by
     have : 0 ≤ C := by
       have := gLead_nonneg; have := gRatio_lt_one; have := exp_pos 1
       have : 0 ≤ (1 - gRatio)⁻¹ := inv_nonneg.2 (by linarith)
       positivity
     have := exp_pos 1; have := exp_pos (-b); positivity
-  nlinarith
+  nlinarith only [this, hb']
 
 theorem lemma5Q_three : lemma5Q 3 = 0 := by
   set C := (gLead * (1 - gRatio)⁻¹ + gLead * (exp 1 / 3) * (1 - gRatio)⁻¹) * exp 1
@@ -271,8 +271,8 @@ theorem integral_MSieve_two_three :
       ∫ x in (2 : ℝ)..3, MSieve x = ∫ x in (2 : ℝ)..3, (c + K * (log 3 - log (x - 1))) := by
     refine integral_congr fun x hx => ?_
     rw [uIcc_of_le (by norm_num)] at hx
-    rw [MSieve_of_le_three hx.2, fSieve_eq_on_Icc' ⟨hx.1, by linarith [hx.2]⟩,
-      log_div (by norm_num) (by linarith [hx.1])]
+    rw [MSieve_of_le_three hx.2, fSieve_eq_on_Icc' ⟨hx.1, by linarith only [hx.2, hx]⟩,
+      log_div (by norm_num) (by linarith only [hx.1, hx])]
     ring
   rw [hcongr, integral_eq_sub_of_hasDerivAt
     (f := fun x => c * x + K * ((x - 1) * (log 3 - log (x - 1)) + x))]
@@ -280,7 +280,7 @@ theorem integral_MSieve_two_three :
     ring
   · intro x hx
     rw [uIcc_of_le (by norm_num)] at hx
-    have hne : x - 1 ≠ 0 := by linarith [hx.1]
+    have hne : x - 1 ≠ 0 := by linarith only [hx.1, hx]
     have := ((hasDerivAt_id' x).const_mul c).add
       (((((hasDerivAt_id' x).sub_const 1).mul
         ((((hasDerivAt_id' x).sub_const 1).log hne).const_sub (log 3))).add
@@ -292,7 +292,7 @@ theorem integral_MSieve_two_three :
     refine continuousOn_const.add (continuousOn_const.mul (continuousOn_const.sub ?_))
     refine ((continuous_sub_right 1).continuousOn).log fun x hx => ?_
     rw [uIcc_of_le (by norm_num)] at hx
-    linarith [hx.1]
+    linarith only [hx.1, hx]
 
 /-- The key identity `f(4) + (F(3) + 3) log 3 = 4`. -/
 theorem fSieve_four_add : fSieve 4 + (FSieve 3 + 3) * log 3 = 4 := by
@@ -300,14 +300,14 @@ theorem fSieve_four_add : fSieve 4 + (FSieve 3 + 3) * log 3 = 4 := by
   rw [lemma5Q, show (3 : ℝ) - 1 = 2 by norm_num, integral_MSieve_two_three,
     MSieve_of_three_le le_rfl, fSieve_eq_on_Icc' ⟨by norm_num, by norm_num⟩,
     show (3 : ℝ) / (3 - 1) = 3 / 2 by norm_num, log_div (by norm_num) (by norm_num)] at h
-  linarith
+  linarith only [h]
 
 /-- [I71, Lemma 5] in the form we need: `f(s) = s - (F(3) + 3) log (s - 1)` for `2 ≤ s ≤ 4`
 (Iwaniec: `F(3) + 3 = 2e^γ`). -/
 theorem fSieve_eq_on_Icc {s : ℝ} (hs : s ∈ Icc (2 : ℝ) 4) :
     fSieve s = s - (FSieve 3 + 3) * log (s - 1) := by
-  rw [fSieve_eq_on_Icc' hs, log_div (by norm_num) (by linarith [hs.1])]
-  linarith [fSieve_four_add]
+  rw [fSieve_eq_on_Icc' hs, log_div (by norm_num) (by linarith only [hs.1, hs])]
+  linarith only [fSieve_four_add]
 
 /-- [I71, (3.10)]: `f(2) = 2`. -/
 theorem fSieve_two : fSieve 2 = 2 := by
@@ -316,11 +316,11 @@ theorem fSieve_two : fSieve 2 = 2 := by
 /-- The consequence of Lemma 5 used for the sieve: `1 - f(s)/s ≥ 3 log (s - 1) / s` on `[2, 4]`. -/
 theorem le_one_sub_fSieve_div {s : ℝ} (hs : s ∈ Icc (2 : ℝ) 4) :
     3 * log (s - 1) / s ≤ 1 - fSieve s / s := by
-  have hs0 : 0 < s := by linarith [hs.1]
-  have hlog : 0 ≤ log (s - 1) := log_nonneg (by linarith [hs.1])
+  have hs0 : 0 < s := by linarith only [hs.1, hs]
+  have hlog : 0 ≤ log (s - 1) := log_nonneg (by linarith only [hs.1, hs])
   have hF := FSieve_nonneg 3
   rw [fSieve_eq_on_Icc hs, div_le_iff₀ hs0, sub_mul, div_mul_cancel₀ _ hs0.ne']
-  nlinarith
+  nlinarith only [hlog, hF]
 
 /-- `le_one_sub_fSieve_div` in the form used by the linear-sieve modules. -/
 theorem one_sub_fSieve_div_ge : ∀ s ∈ Icc (2 : ℝ) 4, 1 - fSieve s / s ≥ 3 * Real.log (s - 1) / s :=
