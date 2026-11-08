@@ -233,6 +233,86 @@ theorem degreeTwoPathSupportEqComponent {W : Type*} [Finite W]
           w (by simpa using hw) z hadj, hadj⟩)
       (by simp)
 
+/-- The end of a full component path from a leaf has only its preceding neighbor. -/
+theorem degreeTwoComponentPathEndNeighbor {W : Type*} [Finite W]
+    {H : SimpleGraph W} {a b c : W} (p : H.Walk a b) (hpath : p.IsPath)
+    (degreeBound : ∀ v, @SimpleGraph.degree W H v (Fintype.ofFinite _) ≤ 2)
+    (startLeaf : (H.neighborSet a).Subsingleton)
+    (component : {v | v ∈ p.support} =
+      {v | H.connectedComponentMk v = H.connectedComponentMk c})
+    (z : W) (adjacent : H.Adj b z) : z = p.getVert (p.length - 1) := by
+  classical
+  have startDegree : @SimpleGraph.degree W H a (Fintype.ofFinite _) ≤ 1 := by
+    rw [← SimpleGraph.card_neighborFinset_eq_degree]
+    apply Finset.card_le_one_iff.mpr
+    intro x y hx hy
+    exact startLeaf
+      (by simpa only [SimpleGraph.mem_neighborFinset, SimpleGraph.mem_neighborSet] using hx)
+      (by simpa only [SimpleGraph.mem_neighborFinset, SimpleGraph.mem_neighborSet] using hy)
+  have endComponent : H.connectedComponentMk b = H.connectedComponentMk c := by
+    have member : b ∈ {v | v ∈ p.support} := p.end_mem_support
+    rwa [component] at member
+  have neighborComponent : H.connectedComponentMk z = H.connectedComponentMk c :=
+    (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj adjacent).symm.trans
+      endComponent
+  have neighborSupport : z ∈ p.support := by
+    change z ∈ {v | v ∈ p.support}
+    rw [component]
+    exact neighborComponent
+  obtain ⟨i, vertex, within⟩ :=
+    SimpleGraph.Walk.mem_support_iff_exists_getVert.mp neighborSupport
+  have beforeEnd : i < p.length := by
+    have different : i ≠ p.length := by
+      intro equal
+      have sameVertex : z = b := by rw [← vertex, equal, p.getVert_length]
+      exact adjacent.ne sameVertex.symm
+    omega
+  have consecutive : p.length = i + 1 :=
+    degreeTwoPathAdjacentIndices p hpath degreeBound startDegree i p.length within le_rfl
+      beforeEnd (by simpa only [vertex, p.getVert_length] using adjacent.symm)
+  have index : i = p.length - 1 := by omega
+  simpa only [index] using vertex.symm
+
+/-- A nontrivial incidence walk ending at a leaf ends at a vertex rather than an edge. -/
+theorem incidenceLeafEndVertex {V E : Type*} {G : LooplessMultigraph V E} {k : ℕ}
+    {rho : PartialEdgeColoring E k} {alpha beta : Fin k} {a b : Sum V E}
+    (p : (TwoColorIncidenceGraph G rho alpha beta).Walk a b) (positive : 0 < p.length)
+    (leaf : ((TwoColorIncidenceGraph G rho alpha beta).neighborSet b).Subsingleton) :
+    ∃ v : V, b = Sum.inl v := by
+  classical
+  let H := TwoColorIncidenceGraph G rho alpha beta
+  cases endpoint : b with
+  | inl v => exact ⟨v, rfl⟩
+  | inr e =>
+    have previousAdjacent : H.Adj (p.getVert (p.length - 1)) b := by
+      simpa only [Nat.sub_add_cancel (by omega : 1 ≤ p.length), p.getVert_length] using
+        p.adj_getVert_succ (i := p.length - 1) (by omega)
+    have color : rho e = some alpha ∨ rho e = some beta := by
+      cases previous : p.getVert (p.length - 1) with
+      | inl v =>
+        rw [previous, endpoint] at previousAdjacent
+        change Incident G v e ∧ (rho e = some alpha ∨ rho e = some beta) at previousAdjacent
+        exact previousAdjacent.2
+      | inr f =>
+        rw [previous, endpoint] at previousAdjacent
+        simp [H, TwoColorIncidenceGraph] at previousAdjacent
+    induction ends : G.ends e using Sym2.inductionOn with
+    | _ v w =>
+      have different : v ≠ w := by
+        intro same
+        subst w
+        exact G.loopless e v ends
+      have adjacentAt (x : V) (incident : Incident G x e) : H.Adj b (Sum.inl x) := by
+        rw [endpoint]
+        exact ⟨incident, color⟩
+      have same : (Sum.inl v : Sum V E) = Sum.inl w :=
+        leaf
+          (by simpa only [SimpleGraph.mem_neighborSet] using
+            adjacentAt v (by simp [Incident, ends]))
+          (by simpa only [SimpleGraph.mem_neighborSet] using
+            adjacentAt w (by simp [Incident, ends]))
+      exact False.elim (different (Sum.inl.inj same))
+
 end GoldbergSeymour
 
 end

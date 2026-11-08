@@ -410,7 +410,11 @@ private noncomputable def helperGoodShort1489.{u_1, u_2} :
     firstWitness firstBound betaOutsideGamma Dnq beta D hlenB
   have terminalAvoid (eta : Fin k) (heta : eta ∈ Dnq) :
       Disjoint (C.good.gamma q eta) (HierarchySegmentColors K q eta) := by
-    apply HierarchyCaseThreePreparation.helper_terminalAvoid_1779 <;> assumption
+    exact HierarchyCaseThreePreparation.helper_terminalAvoid_1779
+      G k e0 input T phi ett base C ctx D beta hlenB hBT segTrans equalTrees m pv hBR hRT
+      Utree hRU hnew hBU hAU corrU baseU hcoreU terminalData ordinaryToA hAUstrict
+      stageOld stageLast stageAt divBound starredEq betaOutsideGamma firstBound firstWitness
+      control eta heta
   exact {
     gamma := C.good.gamma
     twoColors := by intro j eta heta; exact C.good.twoColors j eta ((storedEq j) ▸ heta)
@@ -547,7 +551,10 @@ private theorem helper_continuation_850.{u_1, u_2} :
       hUterminal corrU hMPU baseU hcoreU terminalData ordinaryToA hAUstrict newStage stageOld
       stageLast stageAt divBound K starredEq firstBound firstWitness goodShort
   have pathShort : HierarchyPathNumber K < HierarchyPathNumber H := by
-    apply HierarchyCaseThreePreparation.helper_pathShort_734 <;> assumption
+    exact HierarchyCaseThreePreparation.helper_pathShort_734
+      G k e0 input T phi ett base C ctx D beta hlenB hlenPlus hBT hplusT segTrans equalTrees
+      hAT m hm pv hBR Utree hRU hUlen hRUstrict hnew hBU hAU corrU baseU hcoreU terminalData
+      ordinaryToA hAUstrict stageOld stageLast stageAt divBound starredEq
   have shorteningContradiction
       (control : ∀ eta, eta ∈ Dnq → D.alpha ∈ C.good.gamma q eta →
         (HierarchyFirstMissingPosition phi T eta).val ≤ B.length) : False := by
@@ -583,7 +590,10 @@ private theorem helper_continuation_850.{u_1, u_2} :
       exact (haOutside (Finset.mem_biUnion.mpr ⟨eta, heta, ha⟩)).elim)).elim
   · have haGamma : D.alpha ∈ Gamma := not_not.mp haOutside
     by_cases haUsed : D.alpha ∈ tailUsed
-    · apply HierarchyCaseThreePreparation.helper_branch_1316 <;> assumption
+    · exact HierarchyCaseThreePreparation.helper_branch_1316
+        G k e0 input T phi ett base C ctx D beta hlenB hlenPlus hBT hne segTrans equalTrees
+        lastPositive m pv Utree hBU hAU corrU baseU hcoreU terminalData ordinaryToA hAUstrict
+        stageOld stageLast stageAt divBound shorteningContradiction haUsed
     -- An unused reserved color requires a genuinely recolored certificate.
     · exact @HierarchyCaseThreePreparation.helper_branch_1551 (@V) (@E) inferInstance
         inferInstance inferInstance inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett)
@@ -959,7 +969,8 @@ private theorem helper_continuation_547.{u_1, u_2} :
         ∃ f seed, ett.series.data.connectingEdges n = {f} ∧
           TreeSequenceAdjoinEdge Tn f seed ∧
           TashkinovAugmentationSequence phi seed Utree) := by
-    apply helper_heligible_1741 <;> assumption
+    exact helper_heligible_1741 G k e0 input T phi ett base C ctx D segTrans m pv hRT Utree
+      hRUroute hTnR stableClosed seededRoute
   exact @helper_continuation_647 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@beta)
       (@hmissing) (@hunused) (@halternative) (@hbetaPresent) (@hlenB) (@hlenPlus) (@hBT)
@@ -1191,7 +1202,8 @@ private theorem helper_branch_348.{u_1, u_2} :
       (T.vertex D.terminalVertexIndex) := hterminal
   by_cases hhit : ∃ v ∈ TreeSequenceVertexSet Bplus,
       Sum.inl v ∈ Q
-  · apply helper_branch_402 <;> assumption
+  · exact helper_branch_402 G k e0 input T phi ett base C ctx D beta hmissing hunused
+      halternative hterminal hbetaPresent hhit
   · have houtside : ∀ v : V, Sum.inl v ∈ Q →
         v ∉ TreeSequenceVertexSet Bplus := by
       intro v hv hvB
@@ -1247,12 +1259,14 @@ theorem HierarchySituationTwoCaseThreeNormalization {V E : Type*}
       ((0 < H.dividerCount ∧ beta ∉ Dnq ∧ beta ∉ Gamma) ∨
         (H.dividerCount = 0 ∧ beta ∉ Dn ∧ beta ∉ Gamma) ∨
         (beta ∈ Dnq ∧ Disjoint (C.good.gamma q beta) tailUsed)) := by
-    apply HierarchyCaseThreePreparation.helper_hchoice_125 <;> assumption
+    exact HierarchyCaseThreePreparation.helper_hchoice_125 G k e0 input T phi ett base C ctx D
   obtain ⟨beta, hmissing, hunused, halternative⟩ := hchoice
   by_cases hterminal : beta ∈ MissingColors G phi
       (T.vertex D.terminalVertexIndex)
-  · apply HierarchyCaseThreePreparation.helper_branch_304 <;> assumption
-  · apply helper_branch_348 <;> assumption
+  · exact HierarchyCaseThreePreparation.helper_branch_304 G k e0 input T phi ett base C ctx D
+      beta hmissing hunused halternative hterminal
+  · exact helper_branch_348 G k e0 input T phi ett base C ctx D beta hmissing hunused
+      halternative hterminal
 end GoldbergSeymour
 
 end

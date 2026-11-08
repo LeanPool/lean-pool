@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.IncidencePathFacts
 public import LeanPool.GoldbergSeymour.MissingColors
 
 public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
@@ -69,144 +70,16 @@ theorem TwoColorComponent.pathFromLeaf.{u_1, u_2} :
       exact heC
     rw [SimpleGraph.Walk.nil_iff_support_eq.mp hnil] at heQ
     simp at heQ
-  have hend_neighbor : ∀ y, H.Adj t y →
-      y = q.getVert (q.length - 1) := by
-    intro y hty
-    have hyC : y ∈ TwoColorComponent G phi a b c := by
-      have htC : t ∈ TwoColorComponent G phi a b c := by
-        rw [← hqs]
-        change t ∈ q.support
-        simpa only [q.getVert_length] using
-          q.getVert_mem_support q.length
-      change H.connectedComponentMk y = H.connectedComponentMk c
-      change H.connectedComponentMk t = H.connectedComponentMk c at htC
-      exact
-        (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-          hty).symm.trans htC
-    have hySupport : y ∈ q.support := by
-      change y ∈ {z | z ∈ q.support}
-      rw [hqs]
-      exact hyC
-    obtain ⟨n, hn, hnle⟩ :=
-      SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hySupport
-    have hnlt : n < q.length := by
-      have hnne : n ≠ q.length := by
-        intro heq
-        have hyt : y = t := by rw [← hn, heq, q.getVert_length]
-        exact hty.ne hyt.symm
-      omega
-    by_cases hpen : n + 1 = q.length
-    · rw [← hn]
-      congr 1
-      omega
-    by_cases hn0 : n = 0
-    · have hnext : H.Adj (Sum.inl v) (q.getVert 1) := by
-        simpa [hn0, q.getVert_zero] using q.adj_getVert_succ hnlt
-      have htstart : H.Adj (Sum.inl v) t := by
-        rw [← hn, hn0, q.getVert_zero] at hty
-        exact hty.symm
-      have hneNext : q.getVert 1 ≠ t := by
-        intro heq
-        have hindices := hq.getVert_injOn
-          (show 1 ≤ q.length by omega) (show q.length ≤ q.length by rfl)
-          (heq.trans q.getVert_length.symm)
-        omega
-      exact False.elim (hneNext (hvleaf hnext htstart))
-    · have hleft : H.Adj y (q.getVert (n - 1)) := by
-        rw [← hn]
-        have hadj := q.adj_getVert_succ (i := n - 1) (by omega)
-        simpa only [Nat.sub_add_cancel (by omega : 1 ≤ n)] using
-          hadj.symm
-      have hright : H.Adj y (q.getVert (n + 1)) := by
-        rw [← hn]
-        exact q.adj_getVert_succ hnlt
-      have htneLeft : t ≠ q.getVert (n - 1) := by
-        intro heq
-        have hindices := hq.getVert_injOn
-          (show q.length ≤ q.length by rfl)
-          (show n - 1 ≤ q.length by omega)
-          (q.getVert_length.trans heq)
-        omega
-      have htneRight : t ≠ q.getVert (n + 1) := by
-        intro heq
-        have hindices := hq.getVert_injOn
-          (show q.length ≤ q.length by rfl)
-          (show n + 1 ≤ q.length by omega)
-          (q.getVert_length.trans heq)
-        omega
-      have hlrne : q.getVert (n - 1) ≠ q.getVert (n + 1) := by
-        intro heq
-        have hindices := hq.getVert_injOn
-          (show n - 1 ≤ q.length by omega)
-          (show n + 1 ≤ q.length by omega) heq
-        omega
-      let : Fintype (H.neighborSet y) := Fintype.ofFinite _
-      have hthree : 3 ≤ @SimpleGraph.degree _ H y
-          (Fintype.ofFinite _) := by
-        rw [← SimpleGraph.card_neighborFinset_eq_degree]
-        let ss : Finset (Sum V E) :=
-          {t, q.getVert (n - 1), q.getVert (n + 1)}
-        have hss : ss ⊆ H.neighborFinset y := by
-          intro r hr
-          simp only [ss, Finset.mem_insert, Finset.mem_singleton] at hr
-          rcases hr with rfl | rfl | rfl
-          · simpa [SimpleGraph.mem_neighborFinset] using hty.symm
-          · simpa [SimpleGraph.mem_neighborFinset] using hleft
-          · simpa [SimpleGraph.mem_neighborFinset] using hright
-        have hc3 : 3 ≤ ss.card := by
-          simp [ss, htneLeft, htneRight, hlrne]
-        exact hc3.trans (Finset.card_le_card hss)
-      have htwo : @SimpleGraph.degree _ H y
-          (Fintype.ofFinite _) ≤ 2 := by
-        simpa [H] using
-          TwoColorIncidenceDegreeAtMostTwo G phi a b hproper y
-      omega
+  have hend_neighbor : ∀ y, H.Adj t y → y = q.getVert (q.length - 1) :=
+    degreeTwoComponentPathEndNeighbor q hq
+      (TwoColorIncidenceDegreeAtMostTwo G phi a b hproper)
+      hvleaf hqs
   have hendLeaf : Set.Subsingleton (H.neighborSet t) := by
     intro y hy y' hy'
     exact (hend_neighbor y hy).trans (hend_neighbor y' hy').symm
   have hqpos : 0 < q.length :=
     SimpleGraph.Walk.not_nil_iff_lt_length.mp hqnon
-  have hendVertex : ∃ s : V, t = Sum.inl s := by
-    cases ht : t with
-    | inl s => exact ⟨s, rfl⟩
-    | inr e =>
-        have hlastAdj : H.Adj (q.getVert (q.length - 1)) t := by
-          simpa only [Nat.sub_add_cancel (by omega : 1 ≤ q.length),
-            q.getVert_length] using
-            q.adj_getVert_succ (i := q.length - 1) (by omega)
-        have hecolor : phi e = some a ∨ phi e = some b := by
-          cases hprev : q.getVert (q.length - 1) with
-          | inl r =>
-              rw [hprev, ht] at hlastAdj
-              have hdata : Incident G r e ∧
-                  (phi e = some a ∨ phi e = some b) := by
-                simpa [H, TwoColorIncidenceGraph] using hlastAdj
-              exact hdata.2
-          | inr f =>
-              rw [hprev, ht] at hlastAdj
-              have : False := by
-                simp [H, TwoColorIncidenceGraph] at hlastAdj
-              exact this.elim
-        induction hends : G.ends e using Sym2.inductionOn with
-        | _ r s =>
-            have hrs : r ≠ s := by
-              intro hrs
-              subst s
-              exact G.loopless e r hends
-            have hrAdj : H.Adj t (Sum.inl r) := by
-              rw [ht]
-              simpa [H, TwoColorIncidenceGraph, Incident, hends] using
-                (show Incident G r e ∧
-                    (phi e = some a ∨ phi e = some b) from
-                  ⟨by simp [Incident, hends], hecolor⟩)
-            have hsAdj : H.Adj t (Sum.inl s) := by
-              rw [ht]
-              simpa [H, TwoColorIncidenceGraph, Incident, hends] using
-                (show Incident G s e ∧
-                    (phi e = some a ∨ phi e = some b) from
-                  ⟨by simp [Incident, hends], hecolor⟩)
-            exact False.elim
-              (hrs (Sum.inl.inj (hendLeaf hrAdj hsAdj)))
+  have hendVertex : ∃ s : V, t = Sum.inl s := incidenceLeafEndVertex q hqpos hendLeaf
   obtain ⟨s, hs⟩ := hendVertex
   subst t
   have hvs : v ≠ s := by

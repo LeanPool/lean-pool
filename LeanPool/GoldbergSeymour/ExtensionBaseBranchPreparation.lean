@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 
+public import LeanPool.GoldbergSeymour.IncidencePathFacts
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBranchPreparation
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseStepLemmas
@@ -2837,12 +2838,9 @@ theorem helper_hendpointNeighbor_6578.{u_1, u_2} :
       hvFinal hfirstUpper hfirstPositive jSlot trace p0 indices0 gamma0 delta0 rho1 hrho1Proper
       terminalPosition H C hvSub endpoint componentPath hcomponentPath hcomponentSupport
       hcomponentNonempty hcomponentPositive hendpointC
-  exact @helper_hendpointNeighbor_4002 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@gamma)
-      (@delta) (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace)
-      (@p0) (@indices0) (@gamma0) (@delta0) (@hrho1Proper) (@terminalPosition) (@hvSub)
-      (@endpoint) (@componentPath) (@hcomponentPath) (@hcomponentSupport)
-      (@hcomponentNonempty) (@hcomponentPositive) (@hendpointC)
+  exact degreeTwoComponentPathEndNeighbor componentPath hcomponentPath
+    (TwoColorIncidenceDegreeAtMostTwo G rho1 gamma delta hrho1Proper)
+    hvSub hcomponentSupport
 
 theorem helper_hendpointVertex_6586.{u_1, u_2} :
     open scoped Classical in
@@ -2878,11 +2876,10 @@ theorem helper_hendpointVertex_6586.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive v gamma delta sigma q hqTerminal
       hvFinal hfirstUpper hfirstPositive jSlot trace p0 indices0 gamma0 delta0 rho1
       terminalPosition H endpoint componentPath hcomponentPositive hendpointNeighbor
-  exact @helper_hendpointVertex_4095 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@gamma)
-      (@delta) (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace)
-      (@p0) (@indices0) (@gamma0) (@delta0) (@terminalPosition) (@endpoint)
-      (@componentPath) (@hcomponentPositive) (@hendpointNeighbor)
+  exact incidenceLeafEndVertex componentPath hcomponentPositive (by
+    intro x hx y hy
+    simp only [SimpleGraph.mem_neighborSet] at hx hy
+    exact (hendpointNeighbor x hx).trans (hendpointNeighbor y hy).symm)
 
 theorem helper_hTnElementary_6609.{u_1, u_2} :
     open scoped Classical in

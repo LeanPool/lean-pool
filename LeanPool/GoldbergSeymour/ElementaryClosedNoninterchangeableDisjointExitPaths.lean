@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.IncidencePathFacts
 public import LeanPool.GoldbergSeymour.ClosedColorExitPathBoundaryEdge
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
@@ -108,205 +109,6 @@ private theorem helper_branch_85.{u_1, u_2} :
   exact ⟨x, hxX, hCsingle, hmissing a (Or.inl rfl),
     hmissing b (Or.inr rfl)⟩
 
-private theorem helper_branch_132.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) {k : ℕ} (phi :
-        PartialEdgeColoring E k) (a b : Fin k),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi a b;
-    ∀ (v : V ⊕ E) (e : E), ((TwoColorIncidenceGraph G phi a b).neighborSet (Sum.inr
-        e)).Subsingleton →
-    ∀ (p : H.Walk (Sum.inr e) v), ¬p.Nil →
-    ∃ (r : V), Sum.inr e = Sum.inl r := by
-  classical
-  intro V E G k phi a b H v e hlow p hnil
-  have hadj := p.adj_snd hnil
-  have hecolor : phi e = some a ∨ phi e = some b := by
-    cases hsnd : p.snd with
-    | inl q =>
-        rw [hsnd] at hadj
-        have hdata : Incident G q e ∧
-            (phi e = some a ∨ phi e = some b) := by
-          simpa [H, TwoColorIncidenceGraph] using hadj
-        exact hdata.2
-    | inr f =>
-        rw [hsnd] at hadj
-        have : False := by
-          simp [H, TwoColorIncidenceGraph] at hadj
-        exact this.elim
-  induction hends : G.ends e using Sym2.inductionOn with
-  | _ q t =>
-      have hqt : q ≠ t := by
-        intro hqt
-        subst t
-        exact G.loopless e q hends
-      have hqAdj : H.Adj (Sum.inr e) (Sum.inl q) := by
-        simpa [H, TwoColorIncidenceGraph, Incident, hends] using
-          (show Incident G q e ∧
-              (phi e = some a ∨ phi e = some b) from
-            ⟨by simp [Incident, hends], hecolor⟩)
-      have htAdj : H.Adj (Sum.inr e) (Sum.inl t) := by
-        simpa [H, TwoColorIncidenceGraph, Incident, hends] using
-          (show Incident G t e ∧
-              (phi e = some a ∨ phi e = some b) from
-            ⟨by simp [Incident, hends], hecolor⟩)
-      exact False.elim (hqt (Sum.inl.inj (hlow hqAdj htAdj)))
-
-private theorem helper_hend_neighbor_166.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Finite E] (G : LooplessMultigraph V E) {k : ℕ}
-        (phi : PartialEdgeColoring E k), IsProperEdgeColoring G phi →
-    ∀ (a b : Fin k),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi a b;
-    ∀ (c v : V ⊕ E) (r : V), ((TwoColorIncidenceGraph G phi a b).neighborSet (Sum.inl
-        r)).Subsingleton →
-    ∀ (p : H.Walk (Sum.inl r) v), p.IsPath → {y : V ⊕ E | y ∈ p.support} = TwoColorComponent G phi
-        a b c → ¬p.Nil →
-    ∀ (y : V ⊕ E), H.Adj v y → y = p.getVert (p.length - (1 : ℕ)) := by
-  classical
-  intro V E _ _ G k phi hproper a b H c v r hlow p hp hps hnil y hvy
-  let := Fintype.ofFinite V
-  let := Fintype.ofFinite E
-  have hyC : y ∈ TwoColorComponent G phi a b c := by
-    have hvC : v ∈ TwoColorComponent G phi a b c := by
-      rw [← hps]
-      change v ∈ p.support
-      simpa only [p.getVert_length] using
-        p.getVert_mem_support p.length
-    change H.connectedComponentMk y = H.connectedComponentMk c
-    change H.connectedComponentMk v = H.connectedComponentMk c at hvC
-    exact
-      (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-        hvy).symm.trans hvC
-  have hySupport : y ∈ p.support := by
-    change y ∈ {q | q ∈ p.support}
-    rw [hps]
-    exact hyC
-  obtain ⟨n, hn, hnle⟩ :=
-    SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hySupport
-  have hnlt : n < p.length := by
-    have hnne : n ≠ p.length := by
-      intro heq
-      have hyv : y = v := by rw [← hn, heq, p.getVert_length]
-      exact hvy.ne hyv.symm
-    omega
-  by_cases hpen : n + 1 = p.length
-  · rw [← hn]
-    congr 1
-    omega
-  by_cases hn0 : n = 0
-  · have hnext : H.Adj (Sum.inl r) (p.getVert 1) := by
-      simpa [hn0, p.getVert_zero] using p.adj_getVert_succ hnlt
-    have hvstart : H.Adj (Sum.inl r) v := by
-      rw [← hn, hn0, p.getVert_zero] at hvy
-      exact hvy.symm
-    have hneNext : p.getVert 1 ≠ v := by
-      intro heq
-      have hindices := hp.getVert_injOn
-        (show 1 ≤ p.length by omega) (show p.length ≤ p.length by rfl)
-        (heq.trans p.getVert_length.symm)
-      omega
-    exact False.elim (hneNext (hlow hnext hvstart))
-  · have hleft : H.Adj y (p.getVert (n - 1)) := by
-      rw [← hn]
-      have hadj := p.adj_getVert_succ (i := n - 1) (by omega)
-      simpa only [Nat.sub_add_cancel (by omega : 1 ≤ n)] using
-        hadj.symm
-    have hright : H.Adj y (p.getVert (n + 1)) := by
-      rw [← hn]
-      exact p.adj_getVert_succ hnlt
-    have hvneLeft : v ≠ p.getVert (n - 1) := by
-      intro heq
-      have hindices := hp.getVert_injOn
-        (show p.length ≤ p.length by rfl)
-        (show n - 1 ≤ p.length by omega)
-        (p.getVert_length.trans heq)
-      omega
-    have hvneRight : v ≠ p.getVert (n + 1) := by
-      intro heq
-      have hindices := hp.getVert_injOn
-        (show p.length ≤ p.length by rfl)
-        (show n + 1 ≤ p.length by omega)
-        (p.getVert_length.trans heq)
-      omega
-    have hlrne : p.getVert (n - 1) ≠ p.getVert (n + 1) := by
-      intro heq
-      have hindices := hp.getVert_injOn
-        (show n - 1 ≤ p.length by omega)
-        (show n + 1 ≤ p.length by omega) heq
-      omega
-    let : Fintype (H.neighborSet y) := Fintype.ofFinite _
-    have hthree : 3 ≤ @SimpleGraph.degree _ H y
-        (Fintype.ofFinite _) := by
-      rw [← SimpleGraph.card_neighborFinset_eq_degree]
-      let ss : Finset (Sum V E) :=
-        {v, p.getVert (n - 1), p.getVert (n + 1)}
-      have hss : ss ⊆ H.neighborFinset y := by
-        intro t ht
-        simp only [ss, Finset.mem_insert, Finset.mem_singleton] at ht
-        rcases ht with rfl | rfl | rfl
-        · simpa [SimpleGraph.mem_neighborFinset] using hvy.symm
-        · simpa [SimpleGraph.mem_neighborFinset] using hleft
-        · simpa [SimpleGraph.mem_neighborFinset] using hright
-      have hc3 : 3 ≤ ss.card := by
-        simp [ss, hvneLeft, hvneRight, hlrne]
-      exact hc3.trans (Finset.card_le_card hss)
-    have htwo : @SimpleGraph.degree _ H y
-        (Fintype.ofFinite _) ≤ 2 := by
-      simpa [H] using
-        TwoColorIncidenceDegreeAtMostTwo G phi a b hproper y
-    omega
-
-private theorem helper_hendVertex_263.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) {k : ℕ} (phi :
-        PartialEdgeColoring E k) (a b : Fin k),
-    let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi a b;
-    ∀ (v : V ⊕ E) (r : V) (p : H.Walk (Sum.inl r) v), (H.neighborSet v).Subsingleton → (0 : ℕ) <
-        p.length →
-    ∃ (s : V), v = Sum.inl s := by
-  classical
-  intro V E G k phi a b H v r p hendLeaf hp_pos
-  cases hv : v with
-  | inl s => exact ⟨s, rfl⟩
-  | inr e =>
-      have hlastAdj : H.Adj (p.getVert (p.length - 1)) v := by
-        simpa only [Nat.sub_add_cancel (by omega : 1 ≤ p.length),
-          p.getVert_length] using
-          p.adj_getVert_succ (i := p.length - 1) (by omega)
-      have hecolor : phi e = some a ∨ phi e = some b := by
-        cases hprev : p.getVert (p.length - 1) with
-        | inl q =>
-            rw [hprev, hv] at hlastAdj
-            have hdata : Incident G q e ∧
-                (phi e = some a ∨ phi e = some b) := by
-              simpa [H, TwoColorIncidenceGraph] using hlastAdj
-            exact hdata.2
-        | inr f =>
-            rw [hprev, hv] at hlastAdj
-            have : False := by
-              simp [H, TwoColorIncidenceGraph] at hlastAdj
-            exact this.elim
-      induction hends : G.ends e using Sym2.inductionOn with
-      | _ q t =>
-          have hqt : q ≠ t := by
-            intro hqt
-            subst t
-            exact G.loopless e q hends
-          have hqAdj : H.Adj v (Sum.inl q) := by
-            rw [hv]
-            simpa [H, TwoColorIncidenceGraph, Incident, hends] using
-              (show Incident G q e ∧
-                  (phi e = some a ∨ phi e = some b) from
-                ⟨by simp [Incident, hends], hecolor⟩)
-          have htAdj : H.Adj v (Sum.inl t) := by
-            rw [hv]
-            simpa [H, TwoColorIncidenceGraph, Incident, hends] using
-              (show Incident G t e ∧
-                  (phi e = some a ∨ phi e = some b) from
-                ⟨by simp [Incident, hends], hecolor⟩)
-          exact False.elim
-            (hqt (Sum.inl.inj (hendLeaf hqAdj htAdj)))
-
 private theorem helper_analyze_95.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) {k : ℕ}
@@ -352,25 +154,21 @@ private theorem helper_analyze_95.{u_1, u_2} :
   by_cases hnil : p.Nil
   · exact @helper_branch_85 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0) (@T) (@phi)
       (@a) (@b) (@c) (@hcX) (@low) (@v) (@p) (@hps) (@hnil)
-  · have hstartVertex : ∃ r : V, low = Sum.inl r := by
-      cases low with
-      | inl r => exact ⟨r, rfl⟩
-      | inr e =>
-          exact @helper_branch_132 (@V) (@E) (@G) (@k) (@phi) (@a) (@b) (@v) (@e) (@hlow) (@p)
-              (@hnil)
+  · have hstartVertex : ∃ r : V, low = Sum.inl r :=
+      incidenceLeafEndVertex p.reverse
+        (by simpa only [SimpleGraph.Walk.length_reverse] using
+          (SimpleGraph.Walk.not_nil_iff_lt_length.mp hnil)) hlow
     obtain ⟨r, hr⟩ := hstartVertex
     subst low
-    have hend_neighbor :=
-      @helper_hend_neighbor_166 (@V) (@E) inferInstance inferInstance (@G) (@k) (@phi) (@hproper)
-          (@a) (@b) (@c) (@v) (@r) (@hlow) (@p) (@hp) (@hps) (@hnil)
+    have hend_neighbor := degreeTwoComponentPathEndNeighbor p hp
+      (TwoColorIncidenceDegreeAtMostTwo G phi a b hproper)
+      hlow hps
     have hendLeaf : Set.Subsingleton (H.neighborSet v) := by
       intro y hy y' hy'
       exact (hend_neighbor y hy).trans (hend_neighbor y' hy').symm
     have hp_pos : 0 < p.length :=
       SimpleGraph.Walk.not_nil_iff_lt_length.mp hnil
-    have hendVertex :=
-      @helper_hendVertex_263 (@V) (@E) (@G) (@k) (@phi) (@a) (@b) (@v) (@r) (@p) (@hendLeaf)
-          (@hp_pos)
+    have hendVertex := incidenceLeafEndVertex p hp_pos hendLeaf
     obtain ⟨s, hs⟩ := hendVertex
     subst v
     have hrs : r ≠ s := by
