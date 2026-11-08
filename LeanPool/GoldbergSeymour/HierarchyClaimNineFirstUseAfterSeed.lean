@@ -21,6 +21,7 @@ public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoSplitTail
 public import LeanPool.GoldbergSeymour.HierarchyMeasures
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Hierarchy Claim Nine First Use After Seed
@@ -414,51 +415,6 @@ private theorem helper_hsame_386.{u_1, u_2} :
     · exact changeResult.1 ⟨hp.1, Or.inl hp.2⟩
     · exact changeResult.2.1 ⟨hz.1, Or.inl hz.2⟩
   simpa only [hib] using hc
-
-private theorem helper_leaf_399.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (alpha : Fin k) (j :
-        ℕ) (_ : Fin T.length),
-    let mu : PartialEdgeColoring E k := P.coloring;
-    let Cm : HierarchyCounterexample P.replacementBase := P.counterexample;
-    let _ : HierarchyMinimumCounterexampleContext G k e0 P.corresponding.replacementInput T
-        P.coloring P.corresponding.replacementETT P.replacementBase P.counterexample :=
-        P.minimumContext;
-    let H : TashkinovHierarchy P.corresponding.replacementETT P.replacementBase := Cm.hierarchy;
-    let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    let A : TreeSequence G e0 := HierarchyStarredStage H q;
-    let ell : ℕ := HierarchyFullTailLength Cm;
-    let X : TreeSequence G e0 := HierarchyFullTailPrefix Cm (j - (1 : ℕ)); j ≤ ell →
-    ∀ (_ : A.length + ell = T.length) (hXT : TreeSequenceInitialSegment X T),
-    let ip : Fin (T.length + (1 : ℕ)) := (⟨X.length,
-    by have this : X.length ≤ T.length := hXT.1; omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let x : V := T.vertex ip; X.vertex (Fin.last X.length) = x →
-    ∀ (beta : Fin k), alpha ≠ beta →
-    let J : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G mu alpha beta;
-    ∀ (v : V), alpha ∈ MissingColors G mu v ∨ beta ∈ MissingColors G mu v → (J.neighborSet
-        (Sum.inl v)).Subsingleton := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha j ej mu Cm cm H q A ell X hj hsum
-      hXT ip x hx beta hne J v hv
-  have hd : @SimpleGraph.degree _ J (Sum.inl v) (Fintype.ofFinite _) ≤ 1 := by
-    rcases hv with hv | hv
-    · exact MissingColorIncidenceEndpoint G mu alpha beta hne cm.proper v hv
-    · have hj : J = TwoColorIncidenceGraph G mu beta alpha := by
-        ext x z
-        cases x <;> cases z <;> simp [J, TwoColorIncidenceGraph, or_comm]
-      rw [hj]
-      exact MissingColorIncidenceEndpoint G mu beta alpha hne.symm cm.proper v hv
-  rw [← SimpleGraph.card_neighborFinset_eq_degree] at hd
-  intro x hx z hz
-  exact Finset.card_le_one_iff.mp hd
-    (by simpa only [SimpleGraph.mem_neighborFinset, SimpleGraph.mem_neighborSet] using hx)
-    (by simpa only [SimpleGraph.mem_neighborFinset, SimpleGraph.mem_neighborSet] using hz)
 
 private theorem helper_hdisjoint_416.{u_1, u_2} :
     open scoped Classical in
@@ -1255,9 +1211,7 @@ private theorem helper_continuation_1420.{u_1, u_2} :
   have self (v : V) : Sum.inl v ∈ TwoColorComponent G mu alpha beta (Sum.inl v) := by
     change J.connectedComponentMk (Sum.inl v) = J.connectedComponentMk (Sum.inl v)
     rfl
-  have leaf := @helper_leaf_399 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@alpha) (@j) (@ej) (@hj)
-      (@hsum) (@hXT) (@hx) (@beta) (@hne)
+  have leaf := TwoColorMissingVertexNeighborsSubsingleton G mu cm.proper alpha beta
   have hay : a ≠ y := fun he => hyNotB (he ▸ haB)
   have hxy : x ≠ y := fun he => hyNotB (he ▸ hxB)
   have hdisjoint :=

@@ -16,6 +16,7 @@ public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColorsSubsetLast
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # P2940_T1_One Divider Refresh
@@ -1798,18 +1799,7 @@ theorem P2940_T1_OneDividerRefresh
   have prefixEqOfSegment {A B : TreeSequence G e0}
       (hAB : TreeSequenceInitialSegment A B) :
       A = TreeSequencePrefix B A.length A.positive hAB.1 := by
-    cases A with
-    | mk la pa va ea via eia fea aa =>
-      cases B with
-      | mk lb pb vb eb vib eib feb ab =>
-        rw [TreeSequence.mk.injEq]
-        refine ⟨rfl, ?_, ?_⟩
-        · apply heq_of_eq
-          funext i
-          simpa [TreeSequencePrefix] using (hAB.2.1 i).symm
-        · apply heq_of_eq
-          funext i
-          simpa [TreeSequencePrefix] using (hAB.2.2 i).symm
+    exact hAB.eq_prefix
   have prefixTransfer (p : Nat) (hp : 1 ≤ p) (hpU : p ≤ U.length) :
       TreeSequencePrefix U p hp hpU =
         TreeSequencePrefix W p hp (by omega) := by

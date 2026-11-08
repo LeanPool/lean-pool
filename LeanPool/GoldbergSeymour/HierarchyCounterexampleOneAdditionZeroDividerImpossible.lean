@@ -11,6 +11,8 @@ public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 public import LeanPool.GoldbergSeymour.HierarchyNonparallelFirstEdge
 public import LeanPool.GoldbergSeymour.ParallelInterchangeability
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Hierarchy Counterexample One Addition Zero Divider Impossible
@@ -243,93 +245,6 @@ private theorem helper_outsideEndpoint_233.{u_1, u_2} :
   have hyCases : y = u ∨ y = v := by
     simpa only [Incident, hends, Sym2.mem_iff] using hyIncident
   exact hyCases.resolve_left (by intro hyu; exact hyNot (by simpa only [hyu] using hu))
-
-private theorem helper_commonPrefix_250.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-        C.hierarchy.dividerCount = (0 : ℕ) →
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Z → TreeSequenceInitialSegment Y Z
-        → X.length ≤ Y.length → TreeSequenceInitialSegment X Y := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hzero X Y Z hXZ hYZ hXY
-  refine ⟨hXY, ?_, ?_⟩
-  · intro j
-    have hx := hXZ.2.1 j
-    have hy := hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY) j)
-    exact hy.symm.trans (by simpa only [Fin.castLE] using hx)
-  · intro j
-    have hx := hXZ.2.2 j
-    have hy := hYZ.2.2 (Fin.castLE hXY j)
-    exact hy.symm.trans (by simpa only [Fin.castLE] using hx)
-
-private theorem helper_equalTrees_263.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-        C.hierarchy.dividerCount = (0 : ℕ) →
-    ∀ {X Y : TreeSequence G e0}, TreeSequenceInitialSegment X Y → X.length = Y.length → X = Y := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hzero X Y hXY hl
-  cases X with
-  | mk lx px vx ex vix eix fx ax =>
-    cases Y with
-    | mk ly py vy ey viy eiy fy ay =>
-      simp only at hl
-      subst ly
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext j
-        simpa only [Fin.castLE] using (hXY.2.1 j).symm
-      · apply heq_of_eq
-        funext j
-        simpa only [Fin.castLE] using (hXY.2.2 j).symm
-
-private theorem helper_leaf_279.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base),
-        C.hierarchy.dividerCount = (0 : ℕ) →
-    ∀ (psi : PartialEdgeColoring E k) (a b : Fin k), IsProperEdgeColoring G psi →
-    ∀ (u : V), a ∈ MissingColors G psi u ∨ b ∈ MissingColors G psi u → ((TwoColorIncidenceGraph G
-        psi a b).neighborSet (Sum.inl u)).Subsingleton := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C hzero psi a b hp u hm
-  by_cases hab : a = b
-  · subst b
-    have ha : a ∈ MissingColors G psi u := hm.elim id id
-    have hn : a ∉ PresentColors G psi u := by simpa [MissingColors] using ha
-    intro z hz w hw
-    exfalso
-    cases z with
-    | inl z => simp [TwoColorIncidenceGraph] at hz
-    | inr f =>
-      have hf : Incident G u f ∧ psi f = some a := by
-        simpa [TwoColorIncidenceGraph] using hz
-      exact hn (by simpa [PresentColors] using
-        (show ∃ e, Incident G u e ∧ psi e = some a from ⟨f, hf⟩))
-  · let : Fintype ((TwoColorIncidenceGraph G psi a b).neighborSet (Sum.inl u)) :=
-      Fintype.ofFinite _
-    have hd : (TwoColorIncidenceGraph G psi a b).degree (Sum.inl u) ≤ 1 := by
-      rcases hm with hm | hm
-      · exact MissingColorIncidenceEndpoint G psi a b hab hp u hm
-      · have hd := MissingColorIncidenceEndpoint G psi b a (Ne.symm hab) hp u hm
-        have hgraph : TwoColorIncidenceGraph G psi b a = TwoColorIncidenceGraph G psi a b := by
-          ext z w
-          cases z <;> cases w <;> simp [TwoColorIncidenceGraph, or_comm]
-        rw [hgraph] at hd
-        exact hd
-    rw [← SimpleGraph.card_neighborSet_eq_degree] at hd
-    have hsub := Fintype.card_le_one_iff.mp hd
-    intro z hz w hw
-    exact congrArg Subtype.val (hsub ⟨z, hz⟩ ⟨w, hw⟩)
 
 private theorem helper_cycleEndpoint_314.{u_1, u_2} :
     open scoped Classical in
@@ -1551,21 +1466,15 @@ theorem HierarchyCounterexampleOneAdditionZeroDividerImpossible
       (hXZ : TreeSequenceInitialSegment X Z)
       (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :
       TreeSequenceInitialSegment X Y := by
-    exact @helper_commonPrefix_250 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hzero) (@X) (@Y)
-        (@Z) (@hXZ) (@hYZ) (@hXY)
+    exact hYZ.of_common_extension hXZ hXY
   have equalTrees {X Y : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y) (hl : X.length = Y.length) : X = Y := by
-    exact @helper_equalTrees_263 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hzero) (@X) (@Y)
-        (@hXY) (@hl)
+    exact hXY.eq_of_length_eq hl
   have leaf (psi : PartialEdgeColoring E k) (a b : Fin k)
       (hp : IsProperEdgeColoring G psi) (u : V)
       (hm : a ∈ MissingColors G psi u ∨ b ∈ MissingColors G psi u) :
       Set.Subsingleton ((TwoColorIncidenceGraph G psi a b).neighborSet (Sum.inl u)) := by
-    exact @helper_leaf_279 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hzero) (@psi) (@a) (@b) (@hp) (@u)
-        (@hm)
+    exact TwoColorMissingVertexNeighborsSubsingleton G psi hp a b u hm
   have selfMem (psi : PartialEdgeColoring E k) (a b : Fin k) (u : V) :
       Sum.inl u ∈ TwoColorComponent G psi a b (Sum.inl u) :=
     SimpleGraph.ConnectedComponent.eq.mpr (SimpleGraph.Reachable.refl _)

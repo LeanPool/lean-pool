@@ -192,20 +192,7 @@ theorem P2813_T1_PrefixReconstruction {V E : Type*}
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
   have equalTrees {S U : TreeSequence G e0}
       (hSU : TreeSequenceInitialSegment S U) (hlen : S.length = U.length) : S = U := by
-    cases S with
-    | mk ls ps vs es vis eis fs aas =>
-      cases U with
-      | mk lu pu vu eu viu eiu fu aau =>
-        simp only at hlen
-        subst lu
-        rw [TreeSequence.mk.injEq]
-        refine ⟨rfl, ?_, ?_⟩
-        · apply heq_of_eq
-          funext i
-          simpa only [Fin.castLE] using (hSU.2.1 i).symm
-        · apply heq_of_eq
-          funext i
-          simpa only [Fin.castLE] using (hSU.2.2 i).symm
+    exact hSU.eq_of_length_eq hlen
   have coreChain : TreeSequenceInitialSegment Tn base.core := by
     exact base.lastRoundInitialSegmentCore
   have coreA : TreeSequenceInitialSegment base.core A := starChain 0 q (Fin.zero_le _)

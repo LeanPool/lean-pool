@@ -15,6 +15,7 @@ public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoExclusions
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseOneOne
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Hierarchy Situation Two Subcase Two One Stored Exception
@@ -1266,24 +1267,7 @@ private theorem helper_swapStep_439.{u_1, u_2} :
   have leaf (w : V)
       (hm : a ∈ MissingColors G col w ∨ b ∈ MissingColors G col w) :
       ((TwoColorIncidenceGraph G col a b).neighborSet (Sum.inl w)).Subsingleton := by
-    have hd : @SimpleGraph.degree _ (TwoColorIncidenceGraph G col a b)
-        (Sum.inl w) (Fintype.ofFinite _) ≤ 1 := by
-      rcases hm with hm | hm
-      · exact MissingColorIncidenceEndpoint G col a b hne hp w hm
-      · have hs : TwoColorIncidenceGraph G col b a =
-            TwoColorIncidenceGraph G col a b := by
-          ext x y
-          cases x <;> cases y <;> simp [TwoColorIncidenceGraph, or_comm]
-        rw [← hs]
-        exact MissingColorIncidenceEndpoint G col b a hne.symm hp w hm
-    let : Fintype ((TwoColorIncidenceGraph G col a b).neighborSet (Sum.inl w)) :=
-      Fintype.ofFinite _
-    have hc : Fintype.card
-        ((TwoColorIncidenceGraph G col a b).neighborSet (Sum.inl w)) ≤ 1 := by
-      rw [SimpleGraph.card_neighborSet_eq_degree]
-      exact hd
-    intro x hx y hy
-    exact congrArg Subtype.val (Fintype.card_le_one_iff.mp hc ⟨x, hx⟩ ⟨y, hy⟩)
+    exact TwoColorMissingVertexNeighborsSubsingleton G col hp a b w hm
   exact @helper_continuation_404 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@eta)
       (@firstMissing) (@hAT) (@hell) (@hXlen) (@hPenVal) (@hLastVal) (@hTlen) (@hXexact)

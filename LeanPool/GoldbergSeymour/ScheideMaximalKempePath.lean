@@ -11,6 +11,7 @@ public import LeanPool.GoldbergSeymour.KTriple
 public import LeanPool.GoldbergSeymour.ScheideMaximalContainsEveryTree
 public import LeanPool.GoldbergSeymour.TreeColorUnusedThrough
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Scheide Maximal Kempe Path
@@ -554,17 +555,8 @@ theorem ScheideMaximalKempePath {V E : Type*}
     change Good (Sum.inl v) at hvHG
     simpa [Good] using hvHG
   have hiSub : Set.Subsingleton (H.neighborSet (Sum.inl (S.vertex i))) := by
-    let : Fintype (H.neighborSet (Sum.inl (S.vertex i))) :=
-      Fintype.ofFinite _
-    have hdeg := MissingColorIncidenceEndpoint G phi gamma delta hne hproper
-      (S.vertex i) hgamma
-    have hcard : (H.neighborFinset (Sum.inl (S.vertex i))).card ≤ 1 := by
-      rw [SimpleGraph.card_neighborFinset_eq_degree]
-      simpa [H] using hdeg
-    intro z hz w hw
-    exact (Finset.card_le_one.mp hcard) z
-      (by simpa [SimpleGraph.mem_neighborFinset] using hz) w
-      (by simpa [SimpleGraph.mem_neighborFinset] using hw)
+    exact TwoColorMissingVertexNeighborsSubsingleton G phi hproper gamma delta
+      (S.vertex i) (Or.inl hgamma)
   obtain ⟨a, b, q, hq, hqs⟩ :=
     TwoColorComponentSpanningPath G phi gamma delta hproper
       (Sum.inl (S.vertex i))

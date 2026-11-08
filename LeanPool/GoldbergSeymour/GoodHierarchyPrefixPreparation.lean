@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.SharedFacts.GoodHierarchyPrefixPreparation
 
 public import LeanPool.GoldbergSeymour.GoodHierarchy
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Good Hierarchy Prefix Repackage
@@ -55,20 +56,8 @@ theorem helper_prefixEqOfSegment_95.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
       {A B : TreeSequence G e0} (hAB : TreeSequenceInitialSegment A B),
     A = TreeSequencePrefix B A.length A.positive hAB.1 := by
-  classical
   intro V E G e0 A B hAB
-  cases A with
-  | mk la pa va ea via eia fea aa =>
-    cases B with
-    | mk lb pb vb eb vib eib feb ab =>
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext i
-        simpa [TreeSequencePrefix] using (hAB.2.1 i).symm
-      · apply heq_of_eq
-        funext i
-        simpa [TreeSequencePrefix] using (hAB.2.2 i).symm
+  exact hAB.eq_prefix
 
 theorem helper_firstToPrefix_111.{u_1, u_2} :
     open scoped Classical in

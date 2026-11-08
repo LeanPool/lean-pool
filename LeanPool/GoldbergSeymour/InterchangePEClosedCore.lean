@@ -10,6 +10,7 @@ public import LeanPool.GoldbergSeymour.InterchangePECommonMissingClosed
 public import LeanPool.GoldbergSeymour.InterchangePETreeAwayFromDelta
 
 public import LeanPool.GoldbergSeymour.ParallelBaseFourCommonMissingColors
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Interchange PEClosed Core
@@ -410,35 +411,6 @@ private theorem helper_missingOutside_524.{u_1, u_2} :
       exact hn e he ((colorOutside r hr e he).2.mp hd)
     simpa [MissingColors, PresentColors] using hn'
 
-private theorem helper_leaf_543.{u_1, u_2} :
-    open scoped Classical in
-      ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
-        [DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-        (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-        (generating sigma : PartialEdgeColoring E k)
-        (ett : ExtendedTashkinovTree G k e0 input T generating)
-        (base : HierarchyBase ett generating) (alpha beta c : Fin k) (_ : c ≠ beta),
-        let psi : PartialEdgeColoring E k := OutsideTreeColorSwap base.core sigma alpha c;
-        ∀ (_ : IsProperEdgeColoring G psi),
-          let H : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G psi c beta;
-          ∀ (r : V) (_ : c ∈ MissingColors G psi r ∨ beta ∈ MissingColors G psi r),
-            (H.neighborSet (Sum.inl r)).Subsingleton := by
-  classical
-  intro V E _ _ _ _ G k e0 input T generating sigma ett base alpha beta c hcb psi hproperPsi H r hm
-  have hd : @SimpleGraph.degree _ H (Sum.inl r) (Fintype.ofFinite _) ≤ 1 := by
-    rcases hm with hm | hm
-    · exact MissingColorIncidenceEndpoint G psi c beta hcb hproperPsi r hm
-    · have hgraph : H = TwoColorIncidenceGraph G psi beta c := by
-        ext x y
-        cases x <;> cases y <;> simp [H, TwoColorIncidenceGraph, or_comm]
-      rw [hgraph]
-      exact MissingColorIncidenceEndpoint G psi beta c hcb.symm hproperPsi r hm
-  rw [← SimpleGraph.card_neighborFinset_eq_degree] at hd
-  intro x hx y hy
-  exact Finset.card_le_one_iff.mp hd
-    (by simpa [SimpleGraph.mem_neighborFinset] using hx)
-    (by simpa [SimpleGraph.mem_neighborFinset] using hy)
-
 private theorem helper_equalRoot_593.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -758,8 +730,7 @@ private theorem helper_continuation_462.{u_1, u_2} :
   have leaf (r : V)
       (hm : c ∈ MissingColors G psi r ∨ beta ∈ MissingColors G psi r) :
       Set.Subsingleton (H.neighborSet (Sum.inl r)) := by
-    exact @helper_leaf_543 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        input T generating sigma ett base alpha beta c hcb hproperPsi r hm
+    exact TwoColorMissingVertexNeighborsSubsingleton G psi hproperPsi c beta r hm
   -- Transport exact incidence segments; no old full component is reused after the swap.
   exact @helper_continuation_720 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 input T generating sigma ett hMP hpositive hlower hPE base hproper alpha beta hchosen hU

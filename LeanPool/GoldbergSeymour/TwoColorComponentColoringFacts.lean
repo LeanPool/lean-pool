@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 public import LeanPool.GoldbergSeymour.TwoColorComponentsDisjoint
 public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
@@ -26,27 +26,13 @@ namespace GoldbergSeymour
 /-- A vertex missing either swap color has at most one incidence-graph neighbor. -/
 theorem TwoColorMissingVertexLeaf.{u_1, u_2} :
     open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
+    ∀ {V : Type u_1} {E : Type u_2} [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
         (rho : PartialEdgeColoring E k) (a b : Fin k), a ≠ b → IsProperEdgeColoring G rho →
     ∀ (v : V), a ∈ MissingColors G rho v ∨ b ∈ MissingColors G rho v → ((TwoColorIncidenceGraph G
         rho a b).neighborSet (Sum.inl v)).Subsingleton := by
   classical
-  intro V E _ _ G k rho a b hne hp v hm
-  let _ := Fintype.ofFinite V
-  have hd : @SimpleGraph.degree _ (TwoColorIncidenceGraph G rho a b)
-      (Sum.inl v) (Fintype.ofFinite _) ≤ 1 := by
-    rcases hm with ha | hb
-    · exact MissingColorIncidenceEndpoint G rho a b hne hp v ha
-    · have he : TwoColorIncidenceGraph G rho a b = TwoColorIncidenceGraph G rho b a := by
-        ext x y
-        cases x <;> cases y <;> simp [TwoColorIncidenceGraph, or_comm]
-      rw [he]
-      exact MissingColorIncidenceEndpoint G rho b a hne.symm hp v hb
-  rw [← SimpleGraph.card_neighborFinset_eq_degree] at hd
-  intro x hx y hy
-  exact Finset.card_le_one_iff.mp hd
-    (by simpa [SimpleGraph.mem_neighborFinset] using hx)
-    (by simpa [SimpleGraph.mem_neighborFinset] using hy)
+  intro V E _ G k rho a b hne hp v hm
+  exact TwoColorMissingVertexNeighborsSubsingleton G rho hp a b v hm
 
 /-- Three distinct missing-color endpoints cannot lie in the same two-color path component. -/
 theorem TwoColorMissingVerticesDisjoint {V E : Type*} [Finite V] [Fintype E]

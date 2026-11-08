@@ -15,6 +15,7 @@ public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceComponentSwa
 public import LeanPool.GoldbergSeymour.BaseControl
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTrans
 public import LeanPool.GoldbergSeymour.HierarchyNormalizationLemmas
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Hierarchy Claim Nine PENormalization
@@ -1479,48 +1480,6 @@ private theorem helper_newCore_790.{u_1, u_2} :
           exact hvc⟩
   exact transport Tn A oldCore ⟨le_rfl, fun _ => rfl, fun _ => rfl⟩
 
-private theorem helper_endpoint_894.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-      (C : HierarchyCounterexample base)
-      (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C),
-    (∀ (mu : PartialEdgeColoring E k),
-        IsProperEdgeColoring G mu →
-          IsOneEdgeUncolored mu e0 → ∀ (v : V), (MissingColors G mu v).Nonempty) →
-    ∀ (P : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx)
-      (alpha : Fin k),
-    let mu : PartialEdgeColoring E k := P.coloring;
-    let _ :
-      HierarchyMinimumCounterexampleContext G k e0 P.corresponding.replacementInput T
-        P.coloring P.corresponding.replacementETT P.replacementBase P.counterexample :=
-      P.minimumContext;
-    let _ : V := T.vertex (Fin.last T.length);
-    ∀ (beta : Fin k),
-    beta ≠ alpha →
-    let J : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G mu beta alpha;
-    ∀ (v : V),
-    beta ∈ MissingColors G mu v ∨ alpha ∈ MissingColors G mu v →
-    (J.neighborSet (Sum.inl v)).Subsingleton := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx _ P alpha mu mctx y beta hne J v hm
-  have hdeg : @SimpleGraph.degree _ J (Sum.inl v) (Fintype.ofFinite _) ≤ 1 := by
-    rcases hm with hm | hm
-    · exact MissingColorIncidenceEndpoint G mu beta alpha hne mctx.proper v hm
-    · have hg : TwoColorIncidenceGraph G mu alpha beta = J := by
-        ext x y
-        cases x <;> cases y <;> simp [J, TwoColorIncidenceGraph, or_comm]
-      rw [← hg]
-      exact MissingColorIncidenceEndpoint G mu alpha beta hne.symm mctx.proper v hm
-  let : Fintype (J.neighborSet (Sum.inl v)) := Fintype.ofFinite _
-  have hc : Fintype.card (J.neighborSet (Sum.inl v)) ≤ 1 := by
-    rw [SimpleGraph.card_neighborSet_eq_degree]
-    exact hdeg
-  intro x hx w hw
-  exact congrArg Subtype.val (Fintype.card_le_one_iff.mp hc ⟨x, hx⟩ ⟨w, hw⟩)
-
 private theorem helper_hend_920.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -2014,8 +1973,7 @@ private theorem helper_continuation_1486.{u_1, u_2} :
     rfl
   have endpoint (v : V) (hm : beta ∈ MissingColors G mu v ∨ alpha ∈ MissingColors G mu v) :
       Set.Subsingleton (J.neighborSet (Sum.inl v)) := by
-    exact @helper_endpoint_894 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        input T phi ett base C ctx (by assumption) P alpha beta hne v hm
+    exact TwoColorMissingVertexNeighborsSubsingleton G mu mctx.proper beta alpha v hm
   have pathMissing (v : V) (hm : beta ∈ MissingColors G mu v ∨ alpha ∈ MissingColors G mu v) :
       TwoColorPathComponent G mu beta alpha (Sum.inl v) :=
     ⟨hne, Sum.inl v, selfMem _, endpoint v hm⟩

@@ -10,6 +10,7 @@ public import LeanPool.GoldbergSeymour.TashTreeFourUnusedColors
 public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPair
 public import LeanPool.GoldbergSeymour.TreeFreeColors
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Tash Tree Early Beta Normalization
@@ -99,20 +100,8 @@ private theorem helper_hnone_387.{u_1, u_2} :
       have hsSubNew : Set.Subsingleton
           ((TwoColorIncidenceGraph G phi' alpha beta).neighborSet
             (Sum.inl (T.vertex s))) := by
-        let : Fintype
-            ((TwoColorIncidenceGraph G phi' alpha beta).neighborSet
-              (Sum.inl (T.vertex s))) := Fintype.ofFinite _
-        have hdegree := MissingColorIncidenceEndpoint G phi' alpha beta hab
-          hproper' (T.vertex s) hcs
-        have hcard :
-            ((TwoColorIncidenceGraph G phi' alpha beta).neighborFinset
-              (Sum.inl (T.vertex s))).card ≤ 1 := by
-          rw [SimpleGraph.card_neighborFinset_eq_degree]
-          exact hdegree
-        intro x hx y hy
-        exact (Finset.card_le_one.mp hcard) x
-          (by simpa [SimpleGraph.mem_neighborFinset] using hx) y
-          (by simpa [SimpleGraph.mem_neighborFinset] using hy)
+        exact TwoColorMissingVertexNeighborsSubsingleton G phi' hproper' alpha beta
+          (T.vertex s) (Or.inl hcs)
       have hsSubOld : Set.Subsingleton
           ((TwoColorIncidenceGraph G phi alpha beta).neighborSet
             (Sum.inl (T.vertex s))) := by
@@ -132,32 +121,8 @@ private theorem helper_hnone_387.{u_1, u_2} :
         have hsSubNew : Set.Subsingleton
             ((TwoColorIncidenceGraph G phi' alpha beta).neighborSet
               (Sum.inl (T.vertex s))) := by
-          let : Fintype
-              ((TwoColorIncidenceGraph G phi' beta alpha).neighborSet
-                (Sum.inl (T.vertex s))) := Fintype.ofFinite _
-          have hdegree := MissingColorIncidenceEndpoint G phi' beta alpha
-            hab.symm hproper' (T.vertex s) hcs
-          have hcard :
-              ((TwoColorIncidenceGraph G phi' beta alpha).neighborFinset
-                (Sum.inl (T.vertex s))).card ≤ 1 := by
-            rw [SimpleGraph.card_neighborFinset_eq_degree]
-            exact hdegree
-          intro x hx y hy
-          have hx' : x ∈
-              (TwoColorIncidenceGraph G phi' beta alpha).neighborFinset
-                (Sum.inl (T.vertex s)) := by
-            apply (SimpleGraph.mem_neighborFinset
-              (TwoColorIncidenceGraph G phi' beta alpha)
-              (Sum.inl (T.vertex s)) x).2
-            simpa [TwoColorIncidenceGraph, or_comm] using hx
-          have hy' : y ∈
-              (TwoColorIncidenceGraph G phi' beta alpha).neighborFinset
-                (Sum.inl (T.vertex s)) := by
-            apply (SimpleGraph.mem_neighborFinset
-              (TwoColorIncidenceGraph G phi' beta alpha)
-              (Sum.inl (T.vertex s)) y).2
-            simpa [TwoColorIncidenceGraph, or_comm] using hy
-          exact (Finset.card_le_one.mp hcard) x hx' y hy'
+          exact TwoColorMissingVertexNeighborsSubsingleton G phi' hproper' alpha beta
+            (T.vertex s) (Or.inr hcs)
         have hsSubOld : Set.Subsingleton
             ((TwoColorIncidenceGraph G phi alpha beta).neighborSet
               (Sum.inl (T.vertex s))) := by
@@ -275,44 +240,6 @@ private theorem helper_hbetaUnused_395.{u_1, u_2} :
     omega
   have hd := hBelem hwB hpenB hwne
   exact (Finset.disjoint_left.mp hd) hw hbetaPen
-
-private theorem helper_hlastSub_476.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence G e0), IsProperEdgeColoring G
-        phi →
-    ∀ beta ∈ MissingColors G phi (T.vertex (Fin.last T.length)),
-    ∀ (alpha : Fin k), alpha ≠ beta → ((TwoColorIncidenceGraph G phi alpha beta).neighborSet
-        (Sum.inl (T.vertex (Fin.last T.length)))).Subsingleton := by
-  classical
-  intro V E _ _ G k e0 phi T hproper beta hbetaLast alpha hab
-  let _ := Fintype.ofFinite V
-  let : Fintype
-      ((TwoColorIncidenceGraph G phi beta alpha).neighborSet
-        (Sum.inl (T.vertex (Fin.last T.length)))) := Fintype.ofFinite _
-  have hdegree := MissingColorIncidenceEndpoint G phi beta alpha hab.symm
-    hproper (T.vertex (Fin.last T.length)) hbetaLast
-  have hcard :
-      ((TwoColorIncidenceGraph G phi beta alpha).neighborFinset
-        (Sum.inl (T.vertex (Fin.last T.length)))).card ≤ 1 := by
-    rw [SimpleGraph.card_neighborFinset_eq_degree]
-    exact hdegree
-  intro x hx y hy
-  have hx' : x ∈
-      (TwoColorIncidenceGraph G phi beta alpha).neighborFinset
-        (Sum.inl (T.vertex (Fin.last T.length))) := by
-    apply (SimpleGraph.mem_neighborFinset
-      (TwoColorIncidenceGraph G phi beta alpha)
-      (Sum.inl (T.vertex (Fin.last T.length))) x).2
-    simpa [TwoColorIncidenceGraph, or_comm] using hx
-  have hy' : y ∈
-      (TwoColorIncidenceGraph G phi beta alpha).neighborFinset
-        (Sum.inl (T.vertex (Fin.last T.length))) := by
-    apply (SimpleGraph.mem_neighborFinset
-      (TwoColorIncidenceGraph G phi beta alpha)
-      (Sum.inl (T.vertex (Fin.last T.length))) y).2
-    simpa [TwoColorIncidenceGraph, or_comm] using hy
-  exact (Finset.card_le_one.mp hcard) x hx' y hy'
 
 private theorem helper_hgraph_526.{u_1, u_2} :
     open scoped Classical in
@@ -598,8 +525,8 @@ private theorem helper_continuation_699.{u_1, u_2} :
       · exact Or.inr (hxA.trans hpA.symm)
       · exact Or.inl (hxB.trans hmB.symm)
     · exact False.elim (hm_ne_pen (hmB.trans hpB.symm))
-  have hlastSub := @helper_hlastSub_476 V E inferInstance inferInstance G k e0 phi T hproper beta
-      hbetaLast alpha hab
+  have hlastSub := TwoColorMissingVertexNeighborsSubsingleton G phi hproper alpha beta
+    (T.vertex (Fin.last T.length)) (Or.inr hbetaLast)
   have hlastOutside := @helper_hlastOutside_622 V E inferInstance inferInstance G k e0 phi T hq
       hbefore beta j hv i hiBefore hiearly hiEq alpha m hBlength hmpen hpenLength a b
       endpoint_of_subsingleton endpoint_is_m_or_pen hlastSub

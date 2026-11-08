@@ -17,6 +17,7 @@ public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchyCounterexamplePenultimateElementary
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseOneData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Hierarchy Situation Two Subcase One One Nonexceptional
@@ -401,26 +402,6 @@ private abbrev helperHPSL709Conditions.{u_1, u_2} : Prop :=
              let PS : TreeSequence G e0 :=
               HierarchyFullTailPrefix CS (HierarchyFullTailLength CS - (1 : ℕ));
              PS.length = R.minus.length
-
-private abbrev helperEndpoint830Conditions.{u_1, u_2} : Prop :=
- open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
-   (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-   (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-   (ett : ExtendedTashkinovTree G k e0 input T phi) (base : HierarchyBase ett phi)
-   (C : HierarchyCounterexample base)
-   (ctx : HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C)
-   (D : HierarchySituationTwoCaseOneData G k e0 input T phi ett base C ctx),
-   D.gammaOne ≠ D.alpha →
-    let ig : Fin (T.length + (1 : ℕ)) := HierarchyFirstMissingPosition phi T D.gammaOne;
-    let vg : V := T.vertex ig;
-    ∀ (u v : V ⊕ E) (path : (TwoColorIncidenceGraph G phi D.gammaOne D.alpha).Walk u v),
-     path.IsPath →
-      {x : V ⊕ E | x ∈ path.support} = TwoColorComponent G phi D.gammaOne D.alpha (Sum.inl vg) →
-       ∀ (w : V),
-        Sum.inl w ∈ TwoColorComponent G phi D.gammaOne D.alpha (Sum.inl vg) →
-         D.gammaOne ∈ MissingColors G phi w ∨ D.alpha ∈ MissingColors G phi w →
-          Sum.inl w = u ∨ Sum.inl w = v
 
 private noncomputable abbrev helperCS2799.{u_1, u_2} :
     open scoped Classical in
@@ -1798,35 +1779,6 @@ private theorem helper_newPrefixMissing_769.{u_1, u_2} :
   · exact Finset.mem_biUnion.mpr
       ⟨_, TreeSequenceInitialSegmentVertexSetSubset hMPS terminalMinus, D.alphaMissingTerminal⟩
 
-private theorem helper_endpoint_830.{u_1, u_2} :
-    helperEndpoint830Conditions.{u_1, u_2} := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx D gammaNe ig vg u v path hpath hsupport w
-      hw hm
-  let graph := TwoColorIncidenceGraph G phi D.gammaOne D.alpha
-  have hdegree : @SimpleGraph.degree _ graph (Sum.inl w) (Fintype.ofFinite _) ≤ 1 := by
-    rcases hm with hm | hm
-    · exact MissingColorIncidenceEndpoint G phi D.gammaOne D.alpha gammaNe ctx.proper w hm
-    · have he : graph = TwoColorIncidenceGraph G phi D.alpha D.gammaOne := by
-        ext x y
-        cases x <;> cases y <;> simp [graph, TwoColorIncidenceGraph, or_comm]
-      rw [he]
-      exact MissingColorIncidenceEndpoint G phi D.alpha D.gammaOne gammaNe.symm ctx.proper w hm
-  have hleaf : (graph.neighborSet (Sum.inl w)).Subsingleton := by
-    let : Fintype (graph.neighborSet (Sum.inl w)) := Fintype.ofFinite _
-    intro x hx y hy
-    have hcard : Fintype.card (graph.neighborSet (Sum.inl w)) ≤ 1 := by
-      rw [SimpleGraph.card_neighborSet_eq_degree]
-      exact hdegree
-    exact congrArg Subtype.val (Fintype.card_le_one_iff.mp hcard ⟨x, hx⟩ ⟨y, hy⟩)
-  have hmem : Sum.inl w ∈ path.support := by
-    change Sum.inl w ∈ {x | x ∈ path.support}
-    rw [hsupport]
-    exact hw
-  by_contra hn
-  push Not at hn
-  exact (hpath.isTrail.notMem_support_of_subsingleton_neighborSet hn.1 hn.2 hleaf) hmem
-
 private theorem helper_alphaStarFirst_2178.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -2064,7 +2016,16 @@ private theorem helper_continuation_3550.{u_1, u_2} :
       (hw : Sum.inl w ∈ TwoColorComponent G phi D.gammaOne D.alpha (Sum.inl vg))
       (hm : D.gammaOne ∈ MissingColors G phi w ∨ D.alpha ∈ MissingColors G phi w) :
       Sum.inl w = u ∨ Sum.inl w = v := by
-    apply helper_endpoint_830 <;> assumption
+    have leaf := TwoColorMissingVertexNeighborsSubsingleton G phi ctx.proper
+      D.gammaOne D.alpha w hm
+    have member : Sum.inl w ∈ path.support := by
+      change Sum.inl w ∈ {x | x ∈ path.support}
+      rw [hsupport]
+      exact hw
+    by_contra outside
+    push Not at outside
+    exact (hpath.isTrail.notMem_support_of_subsingleton_neighborSet
+      outside.1 outside.2 leaf) member
   have gammaComponent : Sum.inl vg ∈ TwoColorComponent G phi D.gammaOne D.alpha (Sum.inl vg) := by
     change (TwoColorIncidenceGraph G phi D.gammaOne D.alpha).connectedComponentMk (Sum.inl vg) = _
     rfl

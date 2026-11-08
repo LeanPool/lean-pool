@@ -15,6 +15,7 @@ public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoFullTail
 public import LeanPool.GoldbergSeymour.HierarchyMeasures
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Hierarchy Claim Nine Unused Tail Color
@@ -318,38 +319,6 @@ private theorem helper_seedIncident_571.{u_1, u_2} :
       rw [← he]
       refine ⟨available.insideEndpoint, available.insideInCurrent, ?_⟩
       simp only [Incident, available.edgeEnds, Sym2.mem_iff, true_or]
-
-private theorem helper_leaf_681.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (alpha : Fin k),
-    let mu : PartialEdgeColoring E k := P.coloring;
-    let _ : HierarchyMinimumCounterexampleContext G k e0 P.corresponding.replacementInput T
-        P.coloring P.corresponding.replacementETT P.replacementBase P.counterexample :=
-        P.minimumContext;
-    ∀ (beta : Fin k), alpha ≠ beta →
-    let J : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G mu alpha beta;
-    ∀ (v : V), alpha ∈ MissingColors G mu v ∨ beta ∈ MissingColors G mu v → (J.neighborSet
-        (Sum.inl v)).Subsingleton := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P alpha mu cm beta hne J v hv
-  have hd : @SimpleGraph.degree _ J (Sum.inl v) (Fintype.ofFinite _) ≤ 1 := by
-    rcases hv with hv | hv
-    · exact MissingColorIncidenceEndpoint G mu alpha beta hne cm.proper v hv
-    · have hj : J = TwoColorIncidenceGraph G mu beta alpha := by
-        ext x z
-        cases x <;> cases z <;> simp [J, TwoColorIncidenceGraph, or_comm]
-      rw [hj]
-      exact MissingColorIncidenceEndpoint G mu beta alpha hne.symm cm.proper v hv
-  rw [← SimpleGraph.card_neighborFinset_eq_degree] at hd
-  intro x hx z hz
-  exact Finset.card_le_one_iff.mp hd
-    (by simpa only [SimpleGraph.mem_neighborFinset, SimpleGraph.mem_neighborSet] using hx)
-    (by simpa only [SimpleGraph.mem_neighborFinset, SimpleGraph.mem_neighborSet] using hz)
 
 private theorem helper_hlastEnds_743.{u_1, u_2} :
     open scoped Classical in
@@ -691,8 +660,7 @@ private theorem helper_continuation_739.{u_1, u_2} :
   have self (v : V) : Sum.inl v ∈ TwoColorComponent G mu alpha beta (Sum.inl v) := by
     change J.connectedComponentMk (Sum.inl v) = J.connectedComponentMk (Sum.inl v)
     rfl
-  have leaf := @helper_leaf_681 V E inferInstance inferInstance inferInstance inferInstance G k e0
-      input T phi ett base C ctx P alpha beta hne
+  have leaf := TwoColorMissingVertexNeighborsSubsingleton G mu cm.proper alpha beta
   have hay : a ≠ y := fun he => hyNotB (he ▸ haB)
   have hypy : yp ≠ y := fun he => hyNotB (he ▸ hypB)
   -- Three distinct missing-color endpoints cannot share one spanning path.

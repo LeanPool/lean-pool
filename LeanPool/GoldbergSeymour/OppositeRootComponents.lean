@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 public import LeanPool.GoldbergSeymour.OrderedTreeUnion
 public import LeanPool.GoldbergSeymour.TreeInterchangeable
 
@@ -55,19 +55,7 @@ theorem P2668_T2_OppositeRootComponents
   have leaf (x : V)
       (hm : alpha ∈ MissingColors G phi x ∨ beta ∈ MissingColors G phi x) :
       Set.Subsingleton (H.neighborSet (Sum.inl x)) := by
-    have hd : @SimpleGraph.degree _ H (Sum.inl x) (Fintype.ofFinite _) ≤ 1 := by
-      rcases hm with ha | hb
-      · exact MissingColorIncidenceEndpoint G phi alpha beta hab hproper x ha
-      · have hgraph : H = TwoColorIncidenceGraph G phi beta alpha := by
-          ext a b
-          cases a <;> cases b <;> simp [H, TwoColorIncidenceGraph, or_comm]
-        rw [hgraph]
-        exact MissingColorIncidenceEndpoint G phi beta alpha hab.symm hproper x hb
-    rw [← SimpleGraph.card_neighborFinset_eq_degree] at hd
-    intro a ha b hb
-    exact Finset.card_le_one_iff.mp hd
-      (by simpa [SimpleGraph.mem_neighborFinset] using ha)
-      (by simpa [SimpleGraph.mem_neighborFinset] using hb)
+    exact TwoColorMissingVertexNeighborsSubsingleton G phi hproper alpha beta x hm
   have pu : TwoColorPathComponent G phi alpha beta (Sum.inl u) :=
     ⟨hab, Sum.inl u, self u, leaf u (Or.inl hua)⟩
   have pv : TwoColorPathComponent G phi alpha beta (Sum.inl v) :=

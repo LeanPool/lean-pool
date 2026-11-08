@@ -10,6 +10,7 @@ public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
 public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Shared facts for ExtensionBaseAuxiliary
@@ -226,35 +227,8 @@ theorem branch.{u_1, u_2} : branchStatement.{u_1, u_2} := by
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem equalPrefixes.{u_1, u_2} : equalPrefixesStatement.{u_1, u_2} := by
-  classical
   intro V E G e0 A B D hAD hBD hlen
-  rcases hAD with ⟨hlenAD, hvertexAD, hedgeAD⟩
-  rcases hBD with ⟨hlenBD, hvertexBD, hedgeBD⟩
-  cases A with
-  | mk alen apos avertex aedge avinj aeinf afirst aattach =>
-    cases B with
-    | mk blen bpos bvertex bedge bvinj beinj bfirst battach =>
-      simp only at hlen
-      subst blen
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext i
-        calc
-          avertex i = D.vertex
-              (Fin.castLE (Nat.succ_le_succ hlenAD) i) :=
-            (hvertexAD i).symm
-          _ = D.vertex
-              (Fin.castLE (Nat.succ_le_succ hlenBD) i) := by
-            congr 1
-          _ = bvertex i := hvertexBD i
-      · apply heq_of_eq
-        funext i
-        calc
-          aedge i = D.edge (Fin.castLE hlenAD i) :=
-            (hedgeAD i).symm
-          _ = D.edge (Fin.castLE hlenBD i) := by congr 1
-          _ = bedge i := hedgeBD i
+  exact (hBD.of_common_extension hAD hlen.le).eq_of_length_eq hlen
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem branch3050.{u_1, u_2} : branch3050Statement.{u_1, u_2} := by

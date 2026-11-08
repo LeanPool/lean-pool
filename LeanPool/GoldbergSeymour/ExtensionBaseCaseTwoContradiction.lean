@@ -21,6 +21,7 @@ public import LeanPool.GoldbergSeymour.TreeSequencePrefix
 public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Extension Base Case Two Contradiction
@@ -548,35 +549,17 @@ private theorem helper_hrouteUM_530.{u_1, u_2} :
   have prefixSegment (A : TreeSequence G e0) (q : Nat)
       (hq : 1 ≤ q) (hqA : q ≤ A.length) :
       TreeSequenceInitialSegment (TreeSequencePrefix A q hq hqA) A := by
-    refine ⟨hqA, ?_, ?_⟩
-    · intro i
-      simp [TreeSequencePrefix]
-    · intro i
-      simp [TreeSequencePrefix]
+    exact TreeSequenceInitialSegment.prefix_segment A q hq hqA
   have prefixPrefix (A : TreeSequence G e0) (q : Nat)
       (hq : 1 ≤ q) (hqA : q + 1 ≤ A.length) :
       TreeSequenceInitialSegment
         (TreeSequencePrefix A q hq (Nat.le_trans (Nat.le_succ q) hqA))
         (TreeSequencePrefix A (q + 1) (by omega) hqA) := by
-    refine ⟨Nat.le_succ q, ?_, ?_⟩
-    · intro i
-      change A.vertex _ = A.vertex _
-      congr 1
-    · intro i
-      change A.edge _ = A.edge _
-      congr 1
+    exact TreeSequenceInitialSegment.prefix_prefix A q (q + 1) hq (by omega)
+      (Nat.le_trans (Nat.le_succ q) hqA) hqA (Nat.le_succ q)
   have prefixSelf (A : TreeSequence G e0) :
       TreeSequencePrefix A A.length A.positive le_rfl = A := by
-    cases A with
-    | mk len pos vertex edge vinj einj first attach =>
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext i
-        rfl
-      · apply heq_of_eq
-        funext i
-        rfl
+    exact TreeSequenceInitialSegment.prefix_self A
   have equalPrefixes := @SharedFacts.ExtensionBranches.equalPrefixes V E G e0
   have prefixAtLeft :
       TreeSequencePrefix M U.length U.positive hleftSegment.1 = U := by

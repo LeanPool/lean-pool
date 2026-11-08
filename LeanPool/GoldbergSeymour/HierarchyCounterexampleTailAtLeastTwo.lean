@@ -10,6 +10,7 @@ public import LeanPool.GoldbergSeymour.HierarchyCounterexampleOneAdditionPositiv
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleOneAdditionZeroDividerImpossible
 
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Hierarchy Counterexample Tail At Least Two
@@ -139,21 +140,7 @@ theorem HierarchyCounterexampleTailAtLeastTwo {V E : Type*}
       have equalTrees : ∀ {X Y : TreeSequence G e0},
           TreeSequenceInitialSegment X Y → X.length = Y.length → X = Y := by
         intro X Y hXY hlen
-        rcases hXY with ⟨hle, hv, he⟩
-        cases X with
-        | mk lx px vx ex vix eix fx ax =>
-          cases Y with
-          | mk ly py vy ey viy eiy fy ay =>
-            simp only at hlen
-            subst ly
-            rw [TreeSequence.mk.injEq]
-            refine ⟨rfl, ?_, ?_⟩
-            · apply heq_of_eq
-              funext j
-              simpa only [Fin.castLE] using (hv j).symm
-            · apply heq_of_eq
-              funext j
-              simpa only [Fin.castLE] using (he j).symm
+        exact hXY.eq_of_length_eq hlen
       have htrees :
           HierarchyStarredStage C.hierarchy
             (Fin.last C.hierarchy.dividerCount) = T := by
@@ -166,17 +153,7 @@ theorem HierarchyCounterexampleTailAtLeastTwo {V E : Type*}
           (hq : X.length ≤ X.length),
           TreeSequencePrefix X X.length hp hq = X := by
         intro X hp hq
-        apply equalTrees
-        · refine ⟨le_rfl, ?_, ?_⟩
-          · intro i
-            apply congrArg X.vertex
-            apply Fin.ext
-            rfl
-          · intro i
-            apply congrArg X.edge
-            apply Fin.ext
-            rfl
-        · rfl
+        exact TreeSequenceInitialSegment.prefix_self X
       have helem : ColoredVertexSetElementary G phi
           (TreeSequenceVertexSet T) := by
         dsimp only at hprefixElementary

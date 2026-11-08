@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.SharedFacts.TerminalRebuildTransport
 public import LeanPool.GoldbergSeymour.TerminalSeriesRebuildPreparation
 public import LeanPool.GoldbergSeymour.TashkinovSeriesAppend
 public import LeanPool.GoldbergSeymour.ExtensionBase
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Transport lemmas for terminal extension reconstruction
@@ -1377,19 +1378,8 @@ theorem helper_hrootLeaf_5339.{u_1, u_2} :
   classical
   intro V E _ _ _ G k e0 input T generating ett hpositive _ q gamma choice sigmaPrev
       hsigmaPrevProper hgammaDeltaNe hgammaPrevMissing H
-  have hdegree : @SimpleGraph.degree _ H (Sum.inl choice.vertex)
-      (Fintype.ofFinite _) ≤ 1 := by
-    simpa [H] using MissingColorIncidenceEndpoint G sigmaPrev gamma
-      choice.color hgammaDeltaNe hsigmaPrevProper choice.vertex
-        hgammaPrevMissing
-  let : Fintype (H.neighborSet (Sum.inl choice.vertex)) :=
-    Fintype.ofFinite _
-  intro x hx y hy
-  have hcard : Fintype.card (H.neighborSet (Sum.inl choice.vertex)) ≤ 1 := by
-    rw [SimpleGraph.card_neighborSet_eq_degree]
-    exact hdegree
-  exact congrArg Subtype.val
-    (Fintype.card_le_one_iff.mp hcard ⟨x, hx⟩ ⟨y, hy⟩)
+  exact TwoColorMissingVertexNeighborsSubsingleton G sigmaPrev hsigmaPrevProper
+    gamma choice.color choice.vertex (Or.inl hgammaPrevMissing)
 
 theorem helper_branch_5387.{u_1, u_2} :
     open scoped Classical in

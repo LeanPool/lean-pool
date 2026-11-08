@@ -6,7 +6,7 @@ Authors: Wesley Pegden
 module
 
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
 public import Mathlib.Combinatorics.SimpleGraph.Init
 public import Mathlib.Tactic.Bound.Init
@@ -41,28 +41,14 @@ abbrev prefixSelfStatement.{u_1, u_2} : Prop :=
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem uPrime.{u_1, u_2} : uPrimeStatement.{u_1, u_2} := by
-  classical
   intro V E G e0 TjPrime uPosition huPositionPositive huPositionBound U
-  refine ⟨huPositionBound, ?_, ?_⟩
-  · intro i
-    simp [U, TreeSequencePrefix]
-  · intro i
-    simp [U, TreeSequencePrefix]
+  exact TreeSequenceInitialSegment.prefix_segment TjPrime uPosition.val
+    huPositionPositive huPositionBound
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem prefixSelf.{u_1, u_2} : prefixSelfStatement.{u_1, u_2} := by
-  classical
   intro V E G e0 A
-  cases A with
-  | mk len pos vertex edge vinj einj first attach =>
-    rw [TreeSequence.mk.injEq]
-    refine ⟨rfl, ?_, ?_⟩
-    · apply heq_of_eq
-      funext i
-      rfl
-    · apply heq_of_eq
-      funext i
-      rfl
+  exact TreeSequenceInitialSegment.prefix_self A
 
 end GoldbergSeymour.SharedFacts.ExtensionBaseStepLemmas
 

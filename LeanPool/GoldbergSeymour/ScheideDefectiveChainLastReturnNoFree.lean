@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
 public import LeanPool.GoldbergSeymour.ScheideDepartureReturn
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumUnused
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumBoundaryFacts
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Scheide Defective Chain Last Return No Free

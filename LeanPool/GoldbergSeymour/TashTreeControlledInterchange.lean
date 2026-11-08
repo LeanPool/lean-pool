@@ -14,6 +14,7 @@ public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapNonElementary
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 public import LeanPool.GoldbergSeymour.TwoColorPathComponent
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Tash Tree Controlled Interchange
@@ -84,51 +85,15 @@ theorem TashTreeControlledInterchange {V E : Type*}
         Set.Subsingleton
           ((TwoColorIncidenceGraph G phi alpha beta).neighborSet (Sum.inl v)) := by
     intro v hv
-    let : Fintype
-        ((TwoColorIncidenceGraph G phi alpha beta).neighborSet (Sum.inl v)) :=
-      Fintype.ofFinite _
-    have hdeg := MissingColorIncidenceEndpoint G phi alpha beta hne hproper v hv
-    have hcard :
-        ((TwoColorIncidenceGraph G phi alpha beta).neighborFinset
-          (Sum.inl v)).card ≤ 1 := by
-      rw [SimpleGraph.card_neighborFinset_eq_degree]
-      exact hdeg
-    intro x hx y hy
-    exact (Finset.card_le_one.mp hcard) x
-      (by simpa [SimpleGraph.mem_neighborFinset] using hx) y
-      (by simpa [SimpleGraph.mem_neighborFinset] using hy)
+    exact TwoColorMissingVertexNeighborsSubsingleton G phi hproper alpha beta v (Or.inl hv)
   have hiSub : Set.Subsingleton
       ((TwoColorIncidenceGraph G phi alpha beta).neighborSet
         (Sum.inl (T.vertex i))) := incidence_subsingleton_alpha _ ha
   have hjSub : Set.Subsingleton
       ((TwoColorIncidenceGraph G phi alpha beta).neighborSet
         (Sum.inl (T.vertex j))) := by
-    let : Fintype
-        ((TwoColorIncidenceGraph G phi beta alpha).neighborSet
-          (Sum.inl (T.vertex j))) := Fintype.ofFinite _
-    have hdeg := MissingColorIncidenceEndpoint G phi beta alpha hne.symm
-      hproper (T.vertex j) hb
-    have hcard :
-        ((TwoColorIncidenceGraph G phi beta alpha).neighborFinset
-          (Sum.inl (T.vertex j))).card ≤ 1 := by
-      rw [SimpleGraph.card_neighborFinset_eq_degree]
-      exact hdeg
-    intro x hx y hy
-    have hx' : x ∈ (TwoColorIncidenceGraph G phi beta alpha).neighborFinset
-        (Sum.inl (T.vertex j)) := by
-      apply (SimpleGraph.mem_neighborFinset
-        (TwoColorIncidenceGraph G phi beta alpha) (Sum.inl (T.vertex j)) x).2
-      cases x with
-      | inl x => simp [TwoColorIncidenceGraph] at hx
-      | inr x => simpa [TwoColorIncidenceGraph, or_comm] using hx
-    have hy' : y ∈ (TwoColorIncidenceGraph G phi beta alpha).neighborFinset
-        (Sum.inl (T.vertex j)) := by
-      apply (SimpleGraph.mem_neighborFinset
-        (TwoColorIncidenceGraph G phi beta alpha) (Sum.inl (T.vertex j)) y).2
-      cases y with
-      | inl y => simp [TwoColorIncidenceGraph] at hy
-      | inr y => simpa [TwoColorIncidenceGraph, or_comm] using hy
-    exact (Finset.card_le_one.mp hcard) x hx' y hy'
+    exact TwoColorMissingVertexNeighborsSubsingleton G phi hproper alpha beta
+      (T.vertex j) (Or.inr hb)
   have hpath : TwoColorPathComponent G phi alpha beta
       (Sum.inl (T.vertex j)) := by
     exact ⟨hne, Sum.inl (T.vertex j), hvjC, hjSub⟩

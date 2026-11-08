@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.TashTreeControlledInterchange
 public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPair
 public import LeanPool.GoldbergSeymour.TashTreeProperPrefixElementary
 public import LeanPool.GoldbergSeymour.TreeUsedColors
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Tash Tree Last Index Second Normal Form
@@ -155,29 +156,8 @@ private theorem helper_branch_158.{u_1, u_2} :
     have hlSub : Set.Subsingleton
         ((TwoColorIncidenceGraph G phi beta gamma).neighborSet
           (Sum.inl (T.vertex (Fin.last T.length)))) := by
-      let : Fintype
-          ((TwoColorIncidenceGraph G phi beta gamma).neighborSet
-            (Sum.inl (T.vertex (Fin.last T.length)))) := Fintype.ofFinite _
-      have hd := MissingColorIncidenceEndpoint G phi beta gamma
-        hbeta_gamma hproper (T.vertex (Fin.last T.length)) hblast
-      intro x hx y hy
-      have hx' : x ∈ (TwoColorIncidenceGraph G phi beta gamma).neighborFinset
-          (Sum.inl (T.vertex (Fin.last T.length))) := by
-        apply (SimpleGraph.mem_neighborFinset
-          (TwoColorIncidenceGraph G phi beta gamma)
-          (Sum.inl (T.vertex (Fin.last T.length))) x).2
-        simpa [TwoColorIncidenceGraph, or_comm] using hx
-      have hy' : y ∈ (TwoColorIncidenceGraph G phi beta gamma).neighborFinset
-          (Sum.inl (T.vertex (Fin.last T.length))) := by
-        apply (SimpleGraph.mem_neighborFinset
-          (TwoColorIncidenceGraph G phi beta gamma)
-          (Sum.inl (T.vertex (Fin.last T.length))) y).2
-        simpa [TwoColorIncidenceGraph, or_comm] using hy
-      have hc : ((TwoColorIncidenceGraph G phi beta gamma).neighborFinset
-          (Sum.inl (T.vertex (Fin.last T.length)))).card ≤ 1 := by
-        rw [SimpleGraph.card_neighborFinset_eq_degree]
-        exact hd
-      exact (Finset.card_le_one.mp hc) x hx' y hy'
+      exact TwoColorMissingVertexNeighborsSubsingleton G phi hproper beta gamma
+        (T.vertex (Fin.last T.length)) (Or.inl hblast)
     have hlEnd := endpoint_of_subsingleton hlastC hlSub
     have hm_ne_last : (Sum.inl (T.vertex p) : Sum V E) ≠
         Sum.inl (T.vertex (Fin.last T.length)) := by

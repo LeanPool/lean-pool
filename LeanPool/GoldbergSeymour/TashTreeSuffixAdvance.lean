@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.MissingColorsNonemptyOfMaximumDegree
 public import LeanPool.GoldbergSeymour.TashTreeControlledInterchange
 public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPair
 public import LeanPool.GoldbergSeymour.TashTreeProperPrefixElementary
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Tash Tree Suffix Advance
@@ -202,20 +203,8 @@ theorem TashTreeSuffixAdvance {V E : Type*}
   have hlastSubsingleton : Set.Subsingleton
       ((TwoColorIncidenceGraph G phi beta gamma).neighborSet
         (Sum.inl (T.vertex (Fin.last T.length)))) := by
-    let : Fintype
-        ((TwoColorIncidenceGraph G phi beta gamma).neighborSet
-          (Sum.inl (T.vertex (Fin.last T.length)))) := Fintype.ofFinite _
-    have hlastDegree := MissingColorIncidenceEndpoint G phi beta gamma hne
-      hproper (T.vertex (Fin.last T.length)) hlast
-    have hcard :
-        ((TwoColorIncidenceGraph G phi beta gamma).neighborFinset
-          (Sum.inl (T.vertex (Fin.last T.length)))).card ≤ 1 := by
-      rw [SimpleGraph.card_neighborFinset_eq_degree]
-      exact hlastDegree
-    intro x hx y hy
-    exact (Finset.card_le_one.mp hcard) x
-      (by simpa [SimpleGraph.mem_neighborFinset] using hx) y
-      (by simpa [SimpleGraph.mem_neighborFinset] using hy)
+    exact TwoColorMissingVertexNeighborsSubsingleton G phi hproper beta gamma
+      (T.vertex (Fin.last T.length)) (Or.inl hlast)
   obtain ⟨a, b, p, hp, hsupport⟩ :=
     TwoColorComponentSpanningPath G phi beta gamma hproper
       (Sum.inl (T.vertex i.succ))

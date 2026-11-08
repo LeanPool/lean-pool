@@ -16,6 +16,7 @@ public import LeanPool.GoldbergSeymour.ExtensionBasePreparations
 public import LeanPool.GoldbergSeymour.ExtensionBaseClosure
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBInvariant
 public import LeanPool.GoldbergSeymour.ParallelStepRootComponentSetup
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Preparatory lemmas for the extension base

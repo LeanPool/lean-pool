@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.ScheideDefectiveChainLastReturnNoFree
 public import LeanPool.GoldbergSeymour.ScheideDefectiveChainPathExists
 public import LeanPool.GoldbergSeymour.ScheideExitVertices
 public import LeanPool.GoldbergSeymour.TreeFreeColors
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Scheide Exit No Free

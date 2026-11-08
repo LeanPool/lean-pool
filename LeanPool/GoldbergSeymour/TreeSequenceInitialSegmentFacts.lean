@@ -25,6 +25,28 @@ namespace GoldbergSeymour.TreeSequenceInitialSegment
 
 variable {V E : Type*} {G : LooplessMultigraph V E} {e0 : E}
 
+/-- An initial segment with the same length is the entire tree. -/
+theorem eq_of_length_eq {initial tree : TreeSequence G e0}
+    (segment : TreeSequenceInitialSegment initial tree)
+    (equalLength : initial.length = tree.length) : initial = tree := by
+  obtain ⟨_, vertices, edges⟩ := segment
+  cases initial with
+  | mk initialLength initialPositive initialVertex initialEdge initialVertexInjective
+      initialEdgeInjective initialFirst initialAttaches =>
+    cases tree with
+    | mk treeLength treePositive treeVertex treeEdge treeVertexInjective
+        treeEdgeInjective treeFirst treeAttaches =>
+      simp only at equalLength
+      subst treeLength
+      rw [TreeSequence.mk.injEq]
+      refine ⟨rfl, ?_, ?_⟩
+      · apply heq_of_eq
+        funext index
+        simpa only [Fin.castLE] using (vertices index).symm
+      · apply heq_of_eq
+        funext index
+        simpa only [Fin.castLE] using (edges index).symm
+
 theorem refl (tree : TreeSequence G e0) : TreeSequenceInitialSegment tree tree := by
   exact ⟨le_rfl, fun _ ↦ rfl, fun _ ↦ rfl⟩
 
@@ -123,6 +145,18 @@ theorem prefix_segment (tree : TreeSequence G e0) (length : ℕ)
     (positive : 1 ≤ length) (bound : length ≤ tree.length) :
     TreeSequenceInitialSegment (TreeSequencePrefix tree length positive bound) tree := by
   exact ⟨bound, fun _ => rfl, fun _ => rfl⟩
+
+/-- An initial segment is the corresponding prefix of its extension. -/
+theorem eq_prefix {initial tree : TreeSequence G e0}
+    (segment : TreeSequenceInitialSegment initial tree) :
+    initial = TreeSequencePrefix tree initial.length initial.positive segment.1 := by
+  exact ((prefix_segment tree initial.length initial.positive segment.1).of_common_extension
+    segment le_rfl).eq_of_length_eq rfl
+
+/-- Keeping the full length of a tree leaves it unchanged. -/
+theorem prefix_self (tree : TreeSequence G e0) :
+    TreeSequencePrefix tree tree.length tree.positive le_rfl = tree := by
+  exact (prefix_segment tree tree.length tree.positive le_rfl).eq_of_length_eq rfl
 
 /-- Prefixes of the same tree are nested in the order of their lengths. -/
 theorem prefix_prefix (tree : TreeSequence G e0) (first last : ℕ)

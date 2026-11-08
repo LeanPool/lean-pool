@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.TashTreeCaseRepeatedOnPath
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Tash Tree Controlled Repeated Suffix Contradiction
@@ -74,20 +75,8 @@ theorem TashTreeControlledRepeatedSuffixContradiction {V E : Type*}
     have hlastSub : Set.Subsingleton
         ((TwoColorIncidenceGraph G phi alpha beta).neighborSet
           (Sum.inl (T.vertex (Fin.last T.length)))) := by
-      let : Fintype
-          ((TwoColorIncidenceGraph G phi alpha beta).neighborSet
-            (Sum.inl (T.vertex (Fin.last T.length)))) := Fintype.ofFinite _
-      have hdegree := MissingColorIncidenceEndpoint G phi alpha beta hne hproper
-        (T.vertex (Fin.last T.length)) hlast
-      have hcard :
-          ((TwoColorIncidenceGraph G phi alpha beta).neighborFinset
-            (Sum.inl (T.vertex (Fin.last T.length)))).card ≤ 1 := by
-        rw [SimpleGraph.card_neighborFinset_eq_degree]
-        exact hdegree
-      intro x hx y hy
-      exact (Finset.card_le_one.mp hcard) x
-        (by simpa [SimpleGraph.mem_neighborFinset] using hx) y
-        (by simpa [SimpleGraph.mem_neighborFinset] using hy)
+      exact TwoColorMissingVertexNeighborsSubsingleton G phi hproper alpha beta
+        (T.vertex (Fin.last T.length)) (Or.inl hlast)
     have hiEnd := endpoint_of_subsingleton hiComponent hiSub
     have hjEnd := endpoint_of_subsingleton hjComponent hjSub
     have hlastEnd := endpoint_of_subsingleton hlastComponent hlastSub

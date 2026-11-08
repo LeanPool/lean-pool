@@ -14,6 +14,7 @@ public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
 public import LeanPool.GoldbergSeymour.ParallelClosureUnionElementary
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Hierarchy Counterexample Penultimate Elementary
@@ -581,18 +582,7 @@ theorem HierarchyCounterexamplePenultimateElementary {V E : Type*}
   have prefixEqOfSegment {X Y : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y) :
       X = TreeSequencePrefix Y X.length X.positive hXY.1 := by
-    cases X with
-    | mk lx px vx ex vix eix fx ax =>
-      cases Y with
-      | mk ly py vy ey vyiy eiy fy ay =>
-        rw [TreeSequence.mk.injEq]
-        refine ⟨rfl, ?_, ?_⟩
-        · apply heq_of_eq
-          funext i
-          simpa [TreeSequencePrefix] using (hXY.2.1 i).symm
-        · apply heq_of_eq
-          funext i
-          simpa [TreeSequencePrefix] using (hXY.2.2 i).symm
+    exact hXY.eq_prefix
   have prefixFull (X : TreeSequence G e0) :
       TreeSequencePrefix X X.length X.positive le_rfl = X := by
     symm

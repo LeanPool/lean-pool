@@ -20,6 +20,7 @@ public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoFullTail
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwoSplitTail
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseOneOneNonexceptional
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Hierarchy Situation Two Subcase One One Stored Exception
@@ -1086,38 +1087,6 @@ private theorem helper_branch_803.{u_1, u_2} :
   rcases hcond with hn | hn
   · exact (hn haA).elim
   · exact hn
-
-private theorem helper_leaf_820.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (P :
-        HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (a b : Fin k), a ≠ b →
-    let col : PartialEdgeColoring E k := P.coloring; IsProperEdgeColoring G col →
-    ∀ (w : V), a ∈ MissingColors G col w ∨ b ∈ MissingColors G col w → ((TwoColorIncidenceGraph G
-        col a b).neighborSet (Sum.inl w)).Subsingleton := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx P a b hne col hp w hm
-  have hd : @SimpleGraph.degree _ (TwoColorIncidenceGraph G col a b)
-      (Sum.inl w) (Fintype.ofFinite _) ≤ 1 := by
-    rcases hm with hm | hm
-    · exact MissingColorIncidenceEndpoint G col a b hne hp w hm
-    · have hs : TwoColorIncidenceGraph G col b a =
-          TwoColorIncidenceGraph G col a b := by
-        ext x y
-        cases x <;> cases y <;> simp [TwoColorIncidenceGraph, or_comm]
-      rw [← hs]
-      exact MissingColorIncidenceEndpoint G col b a hne.symm hp w hm
-  let : Fintype ((TwoColorIncidenceGraph G col a b).neighborSet (Sum.inl w)) :=
-    Fintype.ofFinite _
-  have hc : Fintype.card
-      ((TwoColorIncidenceGraph G col a b).neighborSet (Sum.inl w)) ≤ 1 := by
-    rw [SimpleGraph.card_neighborSet_eq_degree]
-    exact hd
-  intro x hx y hy
-  exact congrArg Subtype.val (Fintype.card_le_one_iff.mp hc ⟨x, hx⟩ ⟨y, hy⟩)
 
 private theorem helper_hdis_841.{u_1, u_2} :
     open scoped Classical in
@@ -3576,9 +3545,7 @@ private theorem helper_prepareLater_5223.{u_1, u_2} :
     have leaf (w : V)
         (hm : a ∈ MissingColors G col w ∨ b ∈ MissingColors G col w) :
         ((TwoColorIncidenceGraph G col a b).neighborSet (Sum.inl w)).Subsingleton := by
-      exact @helper_leaf_820 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-          (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@a) (@b) (@hne)
-          (@hp) (@w) (@hm)
+      exact TwoColorMissingVertexNeighborsSubsingleton G col hp a b w hm
     have hdis : Disjoint (TwoColorComponent G col a b z)
         (TwoColorComponent G col a b (Sum.inl va)) := by
       exact @helper_hdis_841 (@V) (@E) inferInstance inferInstance inferInstance inferInstance

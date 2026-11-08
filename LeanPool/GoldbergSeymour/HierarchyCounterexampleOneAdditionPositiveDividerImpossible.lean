@@ -1708,31 +1708,6 @@ private theorem helper_hfixedEdges_1244.{u_1, u_2} :
     rw [hends]
     exact Sym2.mem_mk_left _ _
 
-private theorem helper_equalTrees_1506.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-      {X Y : TreeSequence G e0},
-    TreeSequenceInitialSegment X Y →
-    X.length = Y.length →
-    X = Y := by
-  classical
-  intro V E G e0 X Y hXY hlenXY
-  rcases hXY with ⟨hle, hv, he⟩
-  cases X with
-  | mk lx px vx ex vix eix fx ax =>
-    cases Y with
-    | mk ly py vy ey viy eiy fy ay =>
-      simp only at hlenXY
-      subst ly
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext j
-        simpa only [Fin.castLE] using (hv j).symm
-      · apply heq_of_eq
-        funext j
-        simpa only [Fin.castLE] using (he j).symm
-
 private theorem helper_hcommon_1589.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -2875,7 +2850,7 @@ theorem HierarchyCounterexampleOneAdditionPositiveDividerImpossible
   have equalTrees {X Y : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y)
       (hlenXY : X.length = Y.length) : X = Y := by
-    exact @helper_equalTrees_1506 V E G e0 X Y hXY hlenXY
+    exact hXY.eq_of_length_eq hlenXY
   have hAT : TreeSequenceInitialSegment A T := by
     rw [hA]
     have ht : H.stage q.succ = T := H.terminalStage

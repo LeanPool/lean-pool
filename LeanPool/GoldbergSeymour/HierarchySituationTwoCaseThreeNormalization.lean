@@ -1116,21 +1116,7 @@ private theorem helper_branch_402.{u_1, u_2} :
     exact hUW.of_common_extension hSW hle
   have equalTrees {S U : TreeSequence G e0}
       (hSU : TreeSequenceInitialSegment S U) (hlen : S.length = U.length) : S = U := by
-    clear * - hSU hlen
-    cases S with
-    | mk ls ps vs es vis eis fs aas =>
-      cases U with
-      | mk lu pu vu eu viu eiu fu aau =>
-        simp only at hlen
-        subst lu
-        rw [TreeSequence.mk.injEq]
-        refine ⟨rfl, ?_, ?_⟩
-        · apply heq_of_eq
-          funext i
-          simpa only [Fin.castLE] using (hSU.2.1 i).symm
-        · apply heq_of_eq
-          funext i
-          simpa only [Fin.castLE] using (hSU.2.2 i).symm
+    exact hSU.eq_of_length_eq hlen
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩) (H.stage ⟨a + d, by omega⟩) := by
     exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)

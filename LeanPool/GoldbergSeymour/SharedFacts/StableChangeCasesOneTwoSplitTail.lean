@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import Mathlib.Combinatorics.SimpleGraph.Init
 public import Mathlib.Tactic.Bound.Init
 
@@ -32,22 +32,8 @@ abbrev equalTreesStatement.{u_1, u_2} : Prop :=
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem equalTrees.{u_1, u_2} : equalTreesStatement.{u_1, u_2} := by
-  classical
   intro V E G e0 S U hSU hlen
-  cases S with
-  | mk ls ps vs es vis eis fs aas =>
-    cases U with
-    | mk lu pu vu eu viu eiu fu aau =>
-      simp only at hlen
-      subst lu
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext i
-        simpa only [Fin.castLE] using (hSU.2.1 i).symm
-      · apply heq_of_eq
-        funext i
-        simpa only [Fin.castLE] using (hSU.2.2 i).symm
+  exact hSU.eq_of_length_eq hlen
 
 end GoldbergSeymour.SharedFacts.StableChangeCasesOneTwoSplitTail
 

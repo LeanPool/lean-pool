@@ -14,6 +14,7 @@ public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeUnique
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # HierarchySituationTwoReorderedTreesCertified: supporting constructions, part 1
@@ -642,22 +643,8 @@ theorem helper_equalTrees_631.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
         {X Y : TreeSequence G e0}, TreeSequenceInitialSegment X Y → X.length = Y.length → X = Y
   := by
-  classical
   intro V E G e0 X Y hXY hlen
-  cases X with
-  | mk lx px vx ex vix eix fx ax =>
-    cases Y with
-    | mk ly py vy ey viy eiy fy ay =>
-      simp only at hlen
-      subst ly
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext i
-        simpa only [Fin.castLE] using (hXY.2.1 i).symm
-      · apply heq_of_eq
-        funext i
-        simpa only [Fin.castLE] using (hXY.2.2 i).symm
+  exact hXY.eq_of_length_eq hlen
 
 theorem helper_hAstage_679.{u_1, u_2} :
     open scoped Classical in

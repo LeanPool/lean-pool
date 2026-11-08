@@ -6,6 +6,8 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.HierarchyOutsideKempeStable
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.HierarchySplitter
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
 public import LeanPool.GoldbergSeymour.OutsideKempeGoodHierarchy
@@ -23,66 +25,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_hsegOuter_88.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (phi : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T phi),
-    (0 : ℕ) < ett.rounds →
-    TreeSequenceInitialSegment (ett.series.data.tree (Fin.last ett.rounds).castSucc) T := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett hpositive
-  exact ett.abovePenultimate
-
-private theorem helper_hsub_104.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi), (0 : ℕ) < ett.rounds → TreeSequenceInitialSegment (ett.series.data.tree
-        (Fin.last ett.rounds).castSucc) T → TreeSequenceVertexSet (ett.series.data.tree (Fin.last
-        ett.rounds).castSucc) ⊆ TreeSequenceVertexSet T := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett hpositive hsegOuter
-  rcases hsegOuter with ⟨hlen, hvertex, hedge⟩
-  intro v hv
-  classical
-  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv ⊢
-  rcases hv with ⟨i, rfl⟩
-  let j : Fin (T.length + 1) := Fin.castLE (m := T.length + 1)
-    (Nat.succ_le_succ hlen) i
-  refine ⟨j, ?_⟩
-  exact hvertex i
-
-private theorem helper_commonSegment_134.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi), (0 : ℕ) < ett.rounds →
-    ∀ {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A C → TreeSequenceInitialSegment B C
-        → B.length ≤ A.length → TreeSequenceInitialSegment B A := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett hpositive A B C hAC hBC hBA
-  rcases hAC with ⟨hac, hvac, heac⟩
-  rcases hBC with ⟨hbc, hvbc, hebc⟩
-  refine ⟨hBA, ?_, ?_⟩
-  · intro i
-    calc
-      A.vertex (Fin.castLE (Nat.succ_le_succ hBA) i) =
-          C.vertex (Fin.castLE (Nat.succ_le_succ hac)
-            (Fin.castLE (Nat.succ_le_succ hBA) i)) :=
-        (hvac _).symm
-      _ = C.vertex (Fin.castLE (Nat.succ_le_succ hbc) i) := by congr 1
-      _ = B.vertex i := hvbc i
-  · intro i
-    calc
-      A.edge (Fin.castLE hBA i) =
-          C.edge (Fin.castLE hac (Fin.castLE hBA i)) := (heac _).symm
-      _ = C.edge (Fin.castLE hbc i) := by congr 1
-      _ = B.edge i := hebc i
 
 private theorem helper_hladder_156.{u_1, u_2} :
     open scoped Classical in
@@ -107,77 +49,6 @@ private theorem helper_hladder_156.{u_1, u_2} :
   · intro v hv
     simpa [hgen] using hstab.2 v (hsub hv)
 
-private theorem helper_restrictSequence_167.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi), (0 : ℕ) < ett.rounds →
-    ∀ (coloring : PartialEdgeColoring E k) (A B C : TreeSequence G e0),
-        TashkinovAugmentationSequence coloring A C → TreeSequenceInitialSegment A B →
-        TreeSequenceInitialSegment B C → TashkinovAugmentationSequence coloring A B := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett hpositive coloring A B C hseq hAB hBC
-  have equalTrees : ∀ {X Y : TreeSequence G e0},
-      TreeSequenceInitialSegment X Y → X.length = Y.length → X = Y := by
-    intro X Y hXY hlen
-    rcases hXY with ⟨hle, hv, he⟩
-    cases X with
-    | mk lx px vx ex vix eix fx ax =>
-      cases Y with
-      | mk ly py vy ey viy eiy fy ay =>
-        simp only at hlen
-        subst ly
-        rw [TreeSequence.mk.injEq]
-        refine ⟨rfl, ?_, ?_⟩
-        · apply heq_of_eq
-          funext i
-          simpa only [Fin.castLE] using (hv i).symm
-        · apply heq_of_eq
-          funext i
-          simpa only [Fin.castLE] using (he i).symm
-  have commonExtension :
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Z → TreeSequenceInitialSegment Y Z
-        → Y.length ≤ X.length → TreeSequenceInitialSegment Y X := by
-    intro X Y Z hXZ hYZ hYX
-    rcases hXZ with ⟨hx, hvx, hex⟩
-    rcases hYZ with ⟨hy, hvy, hey⟩
-    refine ⟨hYX, ?_, ?_⟩
-    · intro i
-      calc
-        X.vertex (Fin.castLE (Nat.succ_le_succ hYX) i) =
-            Z.vertex (Fin.castLE (Nat.succ_le_succ hx)
-              (Fin.castLE (Nat.succ_le_succ hYX) i)) :=
-          (hvx (Fin.castLE (Nat.succ_le_succ hYX) i)).symm
-        _ = Z.vertex (Fin.castLE (Nat.succ_le_succ hy) i) := by
-          congr 1
-        _ = Y.vertex i := hvy i
-    · intro i
-      calc
-        X.edge (Fin.castLE hYX i) =
-            Z.edge (Fin.castLE hx (Fin.castLE hYX i)) :=
-          (hex (Fin.castLE hYX i)).symm
-        _ = Z.edge (Fin.castLE hy i) := by congr 1
-        _ = Y.edge i := hey i
-  unfold TashkinovAugmentationSequence at hseq ⊢
-  induction hseq generalizing B with
-  | refl =>
-      have hlen : B.length = A.length :=
-        Nat.le_antisymm hBC.1 hAB.1
-      have heq : B = A := equalTrees hBC hlen
-      subst B
-      exact Relation.ReflTransGen.refl
-  | @tail X C hAX hXC ih =>
-      rcases hXC with ⟨hlen, hinit, hcolor⟩
-      by_cases hBA : B.length ≤ X.length
-      · exact ih B hAB (commonExtension hinit hBC hBA)
-      · have hBlen : B.length = C.length := by
-          rcases hBC with ⟨hBCle, _, _⟩
-          omega
-        have heq : B = C := equalTrees hBC hBlen
-        subst B
-        exact Relation.ReflTransGen.tail hAX ⟨hlen, hinit, hcolor⟩
-
 private theorem helper_transportSequence_234.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -194,14 +65,8 @@ private theorem helper_transportSequence_234.{u_1, u_2} :
   have vertexTransfer : ∀ {X Y : TreeSequence G e0},
       TashkinovAugmentation phi X Y →
       ∀ v, v ∈ TreeSequenceVertexSet X → v ∈ TreeSequenceVertexSet Y := by
-    intro X Y hstep v hv
-    rcases hstep.2.1 with ⟨_, hvertices, _⟩
-    unfold TreeSequenceVertexSet at hv ⊢
-    simp only [Finset.mem_image] at hv ⊢
-    rcases hv with ⟨i, hi, rfl⟩
-    refine ⟨Fin.castLE (Nat.succ_le_succ hstep.2.1.1) i, ?_, ?_⟩
-    · exact Finset.mem_univ _
-    · exact hvertices i
+    intro X Y step v member
+    exact step.2.1.vertexSet_subset member
   have vertexInclusion : ∀ {X Y : TreeSequence G e0},
       TashkinovAugmentationSequence phi X Y →
       ∀ v, v ∈ TreeSequenceVertexSet X → v ∈ TreeSequenceVertexSet Y := by
@@ -216,13 +81,8 @@ private theorem helper_transportSequence_234.{u_1, u_2} :
   have segmentVertices : ∀ {X Y : TreeSequence G e0},
       TreeSequenceInitialSegment X Y →
       ∀ v, v ∈ TreeSequenceVertexSet X → v ∈ TreeSequenceVertexSet Y := by
-    intro X Y hxy v hv
-    rcases hxy with ⟨hbound, hvertices, hedges⟩
-    unfold TreeSequenceVertexSet at hv ⊢
-    simp only [Finset.mem_image] at hv ⊢
-    rcases hv with ⟨i, hi, rfl⟩
-    exact ⟨Fin.castLE (Nat.succ_le_succ hbound) i, Finset.mem_univ _,
-      hvertices i⟩
+    intro X Y segment v member
+    exact segment.vertexSet_subset member
   unfold TashkinovAugmentationSequence at hseq ⊢
   induction hseq using Relation.ReflTransGen.head_induction_on with
   | refl => exact Relation.ReflTransGen.refl
@@ -257,31 +117,6 @@ private theorem helper_transportSequence_234.{u_1, u_2} :
       refine Finset.mem_biUnion.mpr ⟨v, hv, ?_⟩
       rw [hstab.2 v (htailVertex v hvY)]
       exact hvc
-
-private theorem helper_sequenceSegment_304.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi), (0 : ℕ) < ett.rounds →
-    ∀ {A B : TreeSequence G e0}, TashkinovAugmentationSequence phi A B →
-        TreeSequenceInitialSegment A B := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett hpositive A B hseq
-  unfold TashkinovAugmentationSequence at hseq
-  induction hseq using Relation.ReflTransGen.head_induction_on with
-  | refl => exact ⟨le_rfl, by intro i; rfl, by intro i; rfl⟩
-  | @head X Y hstep htail ih =>
-    rcases hstep with ⟨hlen, hsegment, c, hcolor, hmiss⟩
-    rcases ih with ⟨hfirst, hvfirst, hefirst⟩
-    refine ⟨le_trans hsegment.1 hfirst, ?_, ?_⟩
-    · intro i
-      simpa using (hvfirst (Fin.castLE (m := Y.length + 1)
-          (Nat.succ_le_succ hsegment.1) i)).trans
-        (hsegment.2.1 i)
-    · intro i
-      simpa using (hefirst (Fin.castLE (m := Y.length) hsegment.1 i)).trans
-        (hsegment.2.2 i)
 
 private theorem helper_branch_346.{u_1, u_2} :
     open scoped Classical in
@@ -914,33 +749,26 @@ theorem HierarchyLEMStable {V E : Type*}
     hproper hone hrecolor
   rcases hstable with ⟨hsigma, honeSigma, hstab, hinv, hcomb⟩
   rcases hdetail with ⟨_, _, _, _, hfixed⟩
-  have hsegOuter :=
-    @helper_hsegOuter_88 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-        (@input) (@T) (@phi) (@ett) (@hpositive)
-  have hsub :=
-    @helper_hsub_104 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0) (@input)
-        (@T) (@phi) (@ett) (@hpositive) (@hsegOuter)
+  have hsegOuter := ett.abovePenultimate
+  have hsub := hsegOuter.vertexSet_subset
   have hinc : ∀ f, TreeIncidentEdge
       (ett.series.data.tree (Fin.last ett.rounds).castSucc) f →
       TreeIncidentEdge T f := by
     intro f hf
     rcases hf with ⟨v, hv, hi⟩
     exact ⟨v, hsub hv, hi⟩
-  have commonSegment :=
-    @helper_commonSegment_134 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-        (@input) (@T) (@phi) (@ett) (@hpositive)
+  have commonSegment := @TreeSequenceInitialSegment.of_common_extension V E G e0
   have hladder :=
     @helper_hladder_156 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
         (@input) (@T) (@phi) (@sigma) (@ett) (@hpositive) (@hstab) (@hfixed) (@hsub) (@hinc)
   have restrictSequence :=
-    @helper_restrictSequence_167 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@phi) (@ett) (@hpositive)
+    @TashkinovAugmentationSequenceRestrict V E inferInstance G k e0
   have transportSequence :=
     @helper_transportSequence_234 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
         (@e0) (@input) (@T) (@phi) (@sigma) (@ett) (@hpositive) (@hstab) (@hinc)
-  have sequenceSegment :=
-    @helper_sequenceSegment_304 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@phi) (@ett) (@hpositive)
+  have sequenceSegment {A B : TreeSequence G e0}
+      (sequence : TashkinovAugmentationSequence phi A B) : TreeSequenceInitialSegment A B :=
+    TashkinovAugmentationSequenceInitialSegment phi A B sequence
   have eligible :
       (ett.series.data.kind (Fin.last ett.rounds) =
           some TashkinovExtensionKind.PE ∧

@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.TashTreeControlledInterchange
 public import LeanPool.GoldbergSeymour.TashTreeFourUnusedColors
 public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPair
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Tash Tree Last Index Third Normal Form
@@ -242,41 +243,6 @@ private theorem helper_halpha_unused_246.{u_1, u_2} :
       exact ⟨⟨s.val, by omega⟩, hs1, by
         simpa [Q, TreeSequencePrefix, Fin.castLE] using heq⟩
 
-private theorem helper_hlSub_448.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence G e0), IsProperEdgeColoring G
-        phi →
-    ∀ beta ∈ MissingColors G phi (T.vertex (Fin.last T.length)),
-    ∀ (alpha : Fin k), alpha ≠ beta → ((TwoColorIncidenceGraph G phi alpha beta).neighborSet
-        (Sum.inl (T.vertex (Fin.last T.length)))).Subsingleton := by
-  classical
-  intro V E _ _ G k e0 phi T hproper beta hbeta_last alpha halpha_ne_beta
-  let _ := Fintype.ofFinite V
-  let : Fintype
-      ((TwoColorIncidenceGraph G phi beta alpha).neighborSet
-        (Sum.inl (T.vertex (Fin.last T.length)))) := Fintype.ofFinite _
-  have hd := MissingColorIncidenceEndpoint G phi beta alpha
-    halpha_ne_beta.symm hproper (T.vertex (Fin.last T.length)) hbeta_last
-  intro x hx y hy
-  have hx' : x ∈ (TwoColorIncidenceGraph G phi beta alpha).neighborFinset
-      (Sum.inl (T.vertex (Fin.last T.length))) := by
-    apply (SimpleGraph.mem_neighborFinset
-      (TwoColorIncidenceGraph G phi beta alpha)
-      (Sum.inl (T.vertex (Fin.last T.length))) x).2
-    simpa [TwoColorIncidenceGraph, or_comm] using hx
-  have hy' : y ∈ (TwoColorIncidenceGraph G phi beta alpha).neighborFinset
-      (Sum.inl (T.vertex (Fin.last T.length))) := by
-    apply (SimpleGraph.mem_neighborFinset
-      (TwoColorIncidenceGraph G phi beta alpha)
-      (Sum.inl (T.vertex (Fin.last T.length))) y).2
-    simpa [TwoColorIncidenceGraph, or_comm] using hy
-  have hc : ((TwoColorIncidenceGraph G phi beta alpha).neighborFinset
-      (Sum.inl (T.vertex (Fin.last T.length)))).card ≤ 1 := by
-    rw [SimpleGraph.card_neighborFinset_eq_degree]
-    exact hd
-  exact (Finset.card_le_one.mp hc) x hx' y hy'
-
 private theorem helper_houtside_414.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -381,8 +347,8 @@ private theorem helper_houtside_414.{u_1, u_2} :
             (Sum.inl (T.vertex ⟨T.length - 1, by omega⟩))).supp
         rw [SimpleGraph.ConnectedComponent.mem_supp_iff])
     hswap.2.2.2.1
-  have hlSub := @helper_hlSub_448 V E inferInstance inferInstance G k e0 phi T hproper beta
-      hbeta_last alpha halpha_ne_beta
+  have hlSub := TwoColorMissingVertexNeighborsSubsingleton G phi hproper alpha beta
+    (T.vertex (Fin.last T.length)) (Or.inr hbeta_last)
   have hlEnd := endpoint_of_subsingleton hin hlSub
   have hm_ne_last : (Sum.inl (T.vertex ⟨mi.val, by omega⟩) : Sum V E) ≠
       Sum.inl (T.vertex (Fin.last T.length)) := by

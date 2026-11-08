@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.OrderedTreeUnion
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Ordered Tree Union Augmentation Sequence
@@ -242,49 +243,20 @@ theorem OrderedTreeUnionAugmentationSequence
   have prefixSegment (T : TreeSequence G e0) (q : Nat)
       (hq : 1 ≤ q) (hqT : q ≤ T.length) :
       TreeSequenceInitialSegment (TreeSequencePrefix T q hq hqT) T := by
-    refine ⟨hqT, ?_, ?_⟩
-    · intro i
-      simp [TreeSequencePrefix]
-    · intro i
-      simp [TreeSequencePrefix]
+    exact TreeSequenceInitialSegment.prefix_segment T q hq hqT
   have prefixPrefix (T : TreeSequence G e0) (q : Nat)
       (hq : 1 ≤ q) (hqT : q + 1 ≤ T.length) :
       TreeSequenceInitialSegment
         (TreeSequencePrefix T q hq (Nat.le_trans (Nat.le_succ q) hqT))
         (TreeSequencePrefix T (q + 1) (by omega) hqT) := by
-    refine ⟨Nat.le_succ q, ?_, ?_⟩
-    · intro i
-      change T.vertex _ = T.vertex _
-      congr 1
-    · intro i
-      change T.edge _ = T.edge _
-      congr 1
+    exact TreeSequenceInitialSegment.prefix_prefix T q (q + 1) hq (by omega)
+      (Nat.le_trans (Nat.le_succ q) hqT) hqT (Nat.le_succ q)
   have prefixSelf (T : TreeSequence G e0) :
       TreeSequencePrefix T T.length T.positive le_rfl = T := by
-    cases T with
-    | mk len pos vertex edge vinj einj first attach =>
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext i
-        rfl
-      · apply heq_of_eq
-        funext i
-        rfl
+    exact TreeSequenceInitialSegment.prefix_self T
   have prefixAtLeft :
       TreeSequencePrefix U L.length L.positive hleftSegment.1 = L := by
-    cases L with
-    | mk llen lpos lvertex ledge lvinj leinj lfirst lattach =>
-      cases U with
-      | mk ulen upos uvertex uedge uvinj ueinj ufirst uattach =>
-        rw [TreeSequence.mk.injEq]
-        refine ⟨rfl, ?_, ?_⟩
-        · apply heq_of_eq
-          funext i
-          simpa [TreeSequencePrefix] using hleftSegment.2.1 i
-        · apply heq_of_eq
-          funext i
-          simpa [TreeSequencePrefix] using hleftSegment.2.2 i
+    exact hleftSegment.eq_prefix.symm
   have hPRSegment : TreeSequenceInitialSegment P R :=
     TashkinovAugmentationSequenceInitialSegment phi P R hPR
   have firstStep {A B : TreeSequence G e0}

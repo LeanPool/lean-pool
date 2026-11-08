@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TreeSequenceVertexSet
 public import Mathlib.Data.Fintype.Card
 
@@ -37,21 +37,7 @@ theorem TreeSequenceInitialSegmentVertexSetEq
     have := congrArg Finset.card hvertices
     rw [hcard A, hcard B] at this
     omega
-  rcases hAB with ⟨hlen, hvertex, hedge⟩
-  cases A with
-  | mk la pa va ea via eia fa aa =>
-    cases B with
-    | mk lb pb vb eb vib eib fb ab =>
-      simp only at hlength
-      subst lb
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext i
-        simpa only [Fin.castLE] using (hvertex i).symm
-      · apply heq_of_eq
-        funext i
-        simpa only [Fin.castLE] using (hedge i).symm
+  exact hAB.eq_of_length_eq hlength
 
 end GoldbergSeymour
 

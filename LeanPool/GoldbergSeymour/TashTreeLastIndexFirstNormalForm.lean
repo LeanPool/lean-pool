@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.TashTreeLastIndexIntersectionShortening
 public import LeanPool.GoldbergSeymour.TashTreeMinimumBadPair
 public import LeanPool.GoldbergSeymour.TreeFreeColors
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 
 /-!
 # Tash Tree Last Index First Normal Form
@@ -263,22 +264,8 @@ private theorem helper_hlastOutside_444.{u_1, u_2} :
   have hdeg : Set.Subsingleton
       ((TwoColorIncidenceGraph G phi alpha beta).neighborSet
         (Sum.inl (T.vertex (Fin.last T.length)))) := by
-    let : Fintype ((TwoColorIncidenceGraph G phi beta alpha).neighborSet
-        (Sum.inl (T.vertex (Fin.last T.length)))) := Fintype.ofFinite _
-    have hd := MissingColorIncidenceEndpoint G phi beta alpha hab.symm
-      hmin.1.1.2.2.2.1 (T.vertex (Fin.last T.length)) hbetaLast
-    intro x hx y hy
-    have hx' := (SimpleGraph.mem_neighborFinset
-      (TwoColorIncidenceGraph G phi beta alpha)
-      (Sum.inl (T.vertex (Fin.last T.length))) x).2
-      (by simpa [TwoColorIncidenceGraph, or_comm] using hx)
-    have hy' := (SimpleGraph.mem_neighborFinset
-      (TwoColorIncidenceGraph G phi beta alpha)
-      (Sum.inl (T.vertex (Fin.last T.length))) y).2
-      (by simpa [TwoColorIncidenceGraph, or_comm] using hy)
-    exact (Finset.card_le_one.mp (by
-      rw [SimpleGraph.card_neighborFinset_eq_degree]
-      exact hd)) x hx' y hy'
+    exact TwoColorMissingVertexNeighborsSubsingleton G phi hmin.1.1.2.2.2.1 alpha beta
+      (T.vertex (Fin.last T.length)) (Or.inr hbetaLast)
   have hmEnd := hend hswap.2.1 hswap.2.2.1
   have hpEnd := hend (by
     change Sum.inl (T.vertex pen) ∈

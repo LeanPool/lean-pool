@@ -16,7 +16,7 @@ public import LeanPool.GoldbergSeymour.Preamble
 public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.MaximumProperty
-public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 public import LeanPool.GoldbergSeymour.TdEarlierPEWitnessIdentification
 public import LeanPool.GoldbergSeymour.TreeInterchangeable
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
@@ -4954,41 +4954,14 @@ private theorem helper_continuation_4611.{u_1, u_2} :
     apply SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
     simp [TwoColorIncidenceGraph,
       hpathEdgeIncident, hpathEdgeColor]
-  have hleafDegree : @SimpleGraph.degree _
-      (TwoColorIncidenceGraph G
-        (ett.series.data.coloring q.castSucc)
-        available.gamma available.delta)
-      (Sum.inl oldChoice.vertex) (Fintype.ofFinite _) ≤ 1 := by
-    have hgraphSwapOrder :
-        TwoColorIncidenceGraph G
-            (ett.series.data.coloring q.castSucc)
-            available.delta available.gamma =
-          TwoColorIncidenceGraph G
-            (ett.series.data.coloring q.castSucc)
-            available.gamma available.delta := by
-      ext x y
-      cases x <;> cases y <;>
-        simp [TwoColorIncidenceGraph, or_comm]
-    rw [← hgraphSwapOrder]
-    exact MissingColorIncidenceEndpoint G
-      (ett.series.data.coloring q.castSucc) available.delta
-      available.gamma hgammaDeltaNe.symm previousProper
-      oldChoice.vertex holdDeltaOriginal
   have hleaf : Set.Subsingleton
       ((TwoColorIncidenceGraph G
         (ett.series.data.coloring q.castSucc)
         available.gamma available.delta).neighborSet
           (Sum.inl oldChoice.vertex)) := by
-    let : Fintype
-        ((TwoColorIncidenceGraph G
-          (ett.series.data.coloring q.castSucc)
-          available.gamma available.delta).neighborSet
-            (Sum.inl oldChoice.vertex)) := Fintype.ofFinite _
-    rw [← SimpleGraph.card_neighborSet_eq_degree] at hleafDegree
-    have hsub := Fintype.card_le_one_iff.mp hleafDegree
-    intro a ha b hb
-    exact congrArg Subtype.val
-      (hsub ⟨a, ha⟩ ⟨b, hb⟩)
+    exact TwoColorMissingVertexNeighborsSubsingleton G
+      (ett.series.data.coloring q.castSucc) previousProper available.gamma available.delta
+      oldChoice.vertex (Or.inr holdDeltaOriginal)
   have hpathComponent : TwoColorNontrivialPathComponent G
       (ett.series.data.coloring q.castSucc)
       available.gamma available.delta
@@ -5003,49 +4976,16 @@ private theorem helper_continuation_4611.{u_1, u_2} :
         available.gamma available.delta
         (Sum.inl oldChoice.vertex) :=
     ⟨oldChoice.vertex, holdVertexFinal, rfl⟩
-  have hreplacementLeafDegree : @SimpleGraph.degree _
-      (TwoColorIncidenceGraph G
-        (corr.replacementSeries.data.coloring replacementLast)
-        available.gamma available.delta)
-      (Sum.inl newChoicePE.vertex) (Fintype.ofFinite _) ≤ 1 := by
-    have hgraphSwapOrder :
-        TwoColorIncidenceGraph G sigmaPrev available.delta
-            available.gamma =
-          TwoColorIncidenceGraph G sigmaPrev available.gamma
-            available.delta := by
-      ext x y
-      cases x <;> cases y <;>
-        simp [TwoColorIncidenceGraph, or_comm]
-    have hdegree : @SimpleGraph.degree _
-        (TwoColorIncidenceGraph G sigmaPrev available.gamma
-          available.delta) (Sum.inl newChoicePE.vertex)
-          (Fintype.ofFinite _) ≤ 1 := by
-      rw [← hgraphSwapOrder]
-      exact MissingColorIncidenceEndpoint G sigmaPrev
-        available.delta available.gamma hgammaDeltaNe.symm
-        hsigmaPrevProper newChoicePE.vertex hnewDeltaSigmaPrev
-    have hcolorEq :
-        corr.replacementSeries.data.coloring replacementLast =
-          sigmaPrev := by
-      simpa [replacementLast] using hcorrFinalColor
-    rw [hcolorEq]
-    exact hdegree
   have hreplacementLeaf : Set.Subsingleton
       ((TwoColorIncidenceGraph G
         (corr.replacementSeries.data.coloring replacementLast)
         available.gamma available.delta).neighborSet
           (Sum.inl newChoicePE.vertex)) := by
-    let : Fintype
-        ((TwoColorIncidenceGraph G
-          (corr.replacementSeries.data.coloring replacementLast)
-          available.gamma available.delta).neighborSet
-            (Sum.inl newChoicePE.vertex)) := Fintype.ofFinite _
-    rw [← SimpleGraph.card_neighborSet_eq_degree] at hreplacementLeafDegree
-    have hsub := Fintype.card_le_one_iff.mp
-      hreplacementLeafDegree
-    intro a ha b hb
-    exact congrArg Subtype.val
-      (hsub ⟨a, ha⟩ ⟨b, hb⟩)
+    have coloringEquality : corr.replacementSeries.data.coloring replacementLast = sigmaPrev := by
+      simpa [replacementLast] using hcorrFinalColor
+    rw [coloringEquality]
+    exact TwoColorMissingVertexNeighborsSubsingleton G sigmaPrev hsigmaPrevProper
+      available.gamma available.delta newChoicePE.vertex (Or.inr hnewDeltaSigmaPrev)
   exact helper_continuation_4070 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett)
       (@hroundLarge) (@hlower) (@sigmaPrev) (@previousProper) (@previousOneUncolored)
       (@originalPrefix) (@hr) (@hprefixMP) (@hprefixTrees) (@hprefixData) (@corr) (@hcorrMP)

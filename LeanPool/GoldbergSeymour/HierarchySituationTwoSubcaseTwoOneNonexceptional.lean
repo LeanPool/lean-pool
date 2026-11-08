@@ -14,6 +14,7 @@ public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseTwoExclusions
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified
 public import LeanPool.GoldbergSeymour.NineN
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Hierarchy Situation Two Subcase Two One Nonexceptional
@@ -2463,27 +2464,6 @@ private theorem helper_hstarMeasure_839.{u_1, u_2} :
       T.length - (H.stage ⟨H.dividerCount, by omega⟩).length)
   rw [hstarPath, hstarLength, hstarLastStage]
 
-private theorem helper_prefixOfSegment_876.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E) {S U : TreeSequence G e0}
-  (hSU : TreeSequenceInitialSegment S U),
-  TreeSequencePrefix U S.length S.positive hSU.1 = S
-         := by
-  classical
-  intro V E G e0 S U hSU
-  cases S with
-  | mk ls ps vs es vis eis fs ats =>
-    cases U with
-    | mk lu pu vu eu viu eiu fu atu =>
-      rw [TreeSequence.mk.injEq]
-      refine ⟨rfl, ?_, ?_⟩
-      · apply heq_of_eq
-        funext i
-        exact hSU.2.1 i
-      · apply heq_of_eq
-        funext i
-        exact hSU.2.2 i
-
 private theorem helper_hstarPrefix_896.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -3201,7 +3181,7 @@ private theorem helper_continuation_3898.{u_1, u_2} :
   have prefixOfSegment {S U : TreeSequence G e0}
       (hSU : TreeSequenceInitialSegment S U) :
       TreeSequencePrefix U S.length S.positive hSU.1 = S := by
-    exact @helper_prefixOfSegment_876 (@V) (@E) (@G) (@e0) (@S) (@U) (@hSU)
+    exact hSU.eq_prefix.symm
   have prefixLengthEq (S : TreeSequence G e0) (i j : ℕ)
       (hi : 1 ≤ i) (hj : 1 ≤ j) (hiS : i ≤ S.length) (hjS : j ≤ S.length)
       (hij : i = j) : TreeSequencePrefix S i hi hiS = TreeSequencePrefix S j hj hjS := by

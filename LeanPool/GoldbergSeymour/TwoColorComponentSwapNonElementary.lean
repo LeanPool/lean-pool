@@ -7,7 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.IsProperEdgeColoring
-public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
+public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
 public import LeanPool.GoldbergSeymour.TwoColorComponentSpanningPath
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
@@ -159,47 +159,18 @@ theorem TwoColorComponentSwapNonElementary {V E : Type*}
     exact hwC
   have hpu : Sum.inl u ∈ p.support := support_of_component huC
   have hpv : Sum.inl v ∈ p.support := support_of_component hvC
-  have endpoint_of_missing_alpha {w : V} (hwC : Sum.inl w ∈ C)
-      (hw : alpha ∈ MissingColors G phi w) : Sum.inl w = a ∨ Sum.inl w = b := by
-    have hdegree : @SimpleGraph.degree _ H (Sum.inl w) (Fintype.ofFinite _) ≤ 1 := by
-      simpa [H] using
-        MissingColorIncidenceEndpoint G phi alpha beta hne hproper w hw
-    have hleaf : (H.neighborSet (Sum.inl w)).Subsingleton := by
-      let : Fintype (H.neighborSet (Sum.inl w)) := Fintype.ofFinite _
-      intro x hx y hy
-      have hcard : Fintype.card (H.neighborSet (Sum.inl w)) ≤ 1 := by
-        rw [SimpleGraph.card_neighborSet_eq_degree]
-        exact hdegree
-      exact congrArg Subtype.val
-        (Fintype.card_le_one_iff.mp hcard ⟨x, hx⟩ ⟨y, hy⟩)
-    by_contra hend
-    push Not at hend
+  have endpoint_of_missing {w : V} (hwC : Sum.inl w ∈ C)
+      (hw : alpha ∈ MissingColors G phi w ∨ beta ∈ MissingColors G phi w) :
+      Sum.inl w = a ∨ Sum.inl w = b := by
+    have leaf := TwoColorMissingVertexNeighborsSubsingleton G phi hproper alpha beta w hw
+    by_contra outside
+    push Not at outside
     exact (hp.isTrail.notMem_support_of_subsingleton_neighborSet
-      hend.1 hend.2 hleaf) (support_of_component hwC)
-  have endpoint_of_missing_beta {w : V} (hwC : Sum.inl w ∈ C)
-      (hw : beta ∈ MissingColors G phi w) : Sum.inl w = a ∨ Sum.inl w = b := by
-    have hgraph : TwoColorIncidenceGraph G phi beta alpha = H := by
-      ext x y
-      cases x <;> cases y <;> simp [H, TwoColorIncidenceGraph, or_comm]
-    have hdegree : @SimpleGraph.degree _ H (Sum.inl w) (Fintype.ofFinite _) ≤ 1 := by
-      rw [← hgraph]
-      exact MissingColorIncidenceEndpoint G phi beta alpha hne.symm hproper w hw
-    have hleaf : (H.neighborSet (Sum.inl w)).Subsingleton := by
-      let : Fintype (H.neighborSet (Sum.inl w)) := Fintype.ofFinite _
-      intro x hx y hy
-      have hcard : Fintype.card (H.neighborSet (Sum.inl w)) ≤ 1 := by
-        rw [SimpleGraph.card_neighborSet_eq_degree]
-        exact hdegree
-      exact congrArg Subtype.val
-        (Fintype.card_le_one_iff.mp hcard ⟨x, hx⟩ ⟨y, hy⟩)
-    by_contra hend
-    push Not at hend
-    exact (hp.isTrail.notMem_support_of_subsingleton_neighborSet
-      hend.1 hend.2 hleaf) (support_of_component hwC)
+      outside.1 outside.2 leaf) (support_of_component hwC)
   have hu_end : Sum.inl u = a ∨ Sum.inl u = b :=
-    endpoint_of_missing_alpha huC hua
+    endpoint_of_missing huC (Or.inl hua)
   have hv_end : Sum.inl v = a ∨ Sum.inl v = b :=
-    endpoint_of_missing_beta hvC hvb
+    endpoint_of_missing hvC (Or.inr hvb)
   have hab : a ≠ b := by
     intro hab
     rcases hu_end with hua' | hub'
@@ -278,12 +249,12 @@ theorem TwoColorComponentSwapNonElementary {V E : Type*}
       · exact False.elim (huv (Sum.inl.inj (hub'.trans hvb'.symm)))
   have unique_alpha {w : V} (hwC : Sum.inl w ∈ C)
       (hw : alpha ∈ MissingColors G phi w) : w = u := by
-    rcases endpoint_is_u_or_v (endpoint_of_missing_alpha hwC hw) with rfl | rfl
+    rcases endpoint_is_u_or_v (endpoint_of_missing hwC (Or.inl hw)) with rfl | rfl
     · rfl
     · exact False.elim (alpha_not_missing_v hw)
   have unique_beta {w : V} (hwC : Sum.inl w ∈ C)
       (hw : beta ∈ MissingColors G phi w) : w = v := by
-    rcases endpoint_is_u_or_v (endpoint_of_missing_beta hwC hw) with rfl | rfl
+    rcases endpoint_is_u_or_v (endpoint_of_missing hwC (Or.inr hw)) with rfl | rfl
     · exact False.elim (beta_not_missing_u hw)
     · rfl
   have edge_of_vertex {w : V} {e : E} (hwC : Sum.inl w ∈ C)
