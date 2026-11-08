@@ -9,7 +9,6 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Powerset
 
@@ -125,9 +124,6 @@ lemma flipSet_diffSet (x y : Cube ι) : flipSet x (diffSet x y) = y := by
   · have h' : (!(x i)) = y i := by
       cases hx : x i <;> cases hy : y i <;> simp_all
     simp [flipSet, diffSet, h, h']
-
-lemma card_cube : Fintype.card (Cube ι) = 2 ^ Fintype.card ι := by
-  simp [Cube]
 
 end Basic
 

@@ -39,4 +39,7 @@ lemma mem_zone {g : Cube ι → Bool} {u : Cube ι} :
     u ∈ zone g ↔ g u = true ∧ g (antipode u) = false := by
   simp [zone]
 
+lemma card_cube : Fintype.card (Cube ι) = 2 ^ Fintype.card ι := by
+  simp [Cube]
+
 end AaronsonAmbainis
