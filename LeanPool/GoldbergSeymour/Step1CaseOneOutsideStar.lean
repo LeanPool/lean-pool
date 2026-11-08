@@ -900,33 +900,12 @@ private theorem helper_rebuild_367.{u_1, u_2} :
       (hUW : TreeSequenceInitialSegment U W) :
       TreeSequenceInitialSegment S W := by
     exact hSU.trans hUW
-  have stageSegment : ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1),
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    intro a d bound
-    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   let A := HierarchyStarredStage H (Fin.last H.dividerCount)
   let Tn := ett.series.data.tree (Fin.last ett.rounds).castSucc
   have lastZero (h : H.dividerCount = 0) : A = base.core := by
     simp [A, HierarchyStarredStage, h, Fin.last]
-  have lastPositive (h : H.dividerCount ≠ 0) :
-      A = H.stage ⟨H.dividerCount, by omega⟩ := by
-    unfold A HierarchyStarredStage
-    obtain hz | ⟨i, hi⟩ := Fin.eq_zero_or_eq_succ (Fin.last H.dividerCount)
-    · exact False.elim (h (by simpa using congrArg Fin.val hz))
-    · rw [hi, Fin.cases_succ]
-      congr 1
-      apply Fin.ext
-      simpa using (congrArg Fin.val hi).symm
   have coreToA : TreeSequenceInitialSegment base.core A := by
-    by_cases h : H.dividerCount = 0
-    · rw [lastZero h]; exact segRefl _
-    · rw [lastPositive h]
-      have hs := stageSegment 1 (H.dividerCount - 1) (by omega)
-      have he : 1 + (H.dividerCount - 1) = H.dividerCount := by omega
-      have hs' : TreeSequenceInitialSegment (H.stage ⟨1, by omega⟩)
-          (H.stage ⟨H.dividerCount, by omega⟩) := by simpa only [he] using hs
-      exact segTrans H.coreInsideFirst hs'
+    exact H.coreInitialSegmentOfStarredStage (Fin.last H.dividerCount)
   have TnToCore : TreeSequenceInitialSegment Tn base.core := by
     exact base.lastRoundInitialSegmentCore
   have coreToB := segTrans coreToA hAB
@@ -937,23 +916,12 @@ private theorem helper_rebuild_367.{u_1, u_2} :
   have TnStrictC : Tn.length < C.length := lt_of_le_of_lt TnToB.1 hBCstrict
   have stageToB (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (H.stage j.castSucc) Bminus := by
-    by_cases h : H.dividerCount = 0
-    · have hj : j.castSucc = (0 : Fin (H.dividerCount + 2)) :=
-        Fin.ext (by have := j.isLt; simp only [Fin.val_castSucc, Fin.val_zero]; omega)
-      rw [hj, H.baseStage]
-      exact TnToB
-    · have hs := stageSegment j.val (H.dividerCount - j.val) (by omega)
-      have he : j.val + (H.dividerCount - j.val) = H.dividerCount := by omega
-      have hs' : TreeSequenceInitialSegment (H.stage j.castSucc)
-          (H.stage ⟨H.dividerCount, by omega⟩) := by
-        convert hs using 1
-        · apply congrArg H.stage; apply Fin.ext; rfl
-        · apply congrArg H.stage; apply Fin.ext; exact he.symm
-      exact segTrans hs' (by rw [← lastPositive h]; exact hAB)
+    exact (H.stageInitialSegmentOfStarredStage j (Fin.last H.dividerCount) (Fin.le_last _)).trans
+      hAB
   have starredToB (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H j) Bminus := by
-    refine Fin.cases coreToB (fun i => ?_) j
-    exact stageToB i.succ
+    exact (H.starredStageInitialSegmentOfLE j (Fin.last H.dividerCount) (Fin.le_last _)).trans
+      hAB
   have vertexMem (S : TreeSequence G e0) (i : Fin (S.length + 1)) :
       S.vertex i ∈ TreeSequenceVertexSet S := by
     simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]

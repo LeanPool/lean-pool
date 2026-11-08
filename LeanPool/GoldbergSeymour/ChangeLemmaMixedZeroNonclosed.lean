@@ -22,6 +22,7 @@ public import LeanPool.GoldbergSeymour.HierarchySplitter
 public import LeanPool.GoldbergSeymour.ParallelInterchangeability
 public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 
 /-!
 # Change Lemma Mixed Zero Nonclosed
@@ -644,31 +645,6 @@ private theorem helper_hbetaA_293.{u_1, u_2} :
   have := i.isLt
   simp only [Fin.val_castLE] at hle
   omega
-
-private theorem helper_stableClosed_307.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (X : TreeSequence G e0) (D : Finset (Fin k)) (psi pi : PartialEdgeColoring E k),
-        IsProperEdgeColoring G psi → IsOneEdgeUncolored psi e0 → IsProperEdgeColoring G pi →
-        IsOneEdgeUncolored pi e0 → StableColoring X D psi pi → ColoredVertexSetClosed G psi
-        (TreeSequenceVertexSet X) → ColoredVertexSetClosed G pi (TreeSequenceVertexSet X) := by
-  classical
-  intro V E _ _ G k e0 X D psi pi hpsi hpsiOne hpi hpiOne hs hc
-  have hr : StableColoring X D pi psi :=
-    (sc2 G e0 X D).symm
-      (x := ⟨psi, hpsi, hpsiOne⟩) (y := ⟨pi, hpi, hpiOne⟩) hs
-  intro f c v hf hv hfc hvm
-  have hboundary := hf
-  simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and] at hboundary
-  obtain ⟨u, hu, w, hw, he⟩ := hboundary
-  have hinc : TreeIncidentEdge X f := by
-    refine ⟨u, hu, ?_⟩
-    change u ∈ G.ends f
-    rw [he]
-    exact Sym2.mem_mk_left _ _
-  have hm : c ∈ TreeMissingColors pi X := Finset.mem_biUnion.mpr ⟨v, hv, hvm⟩
-  have hfixed := hr.1 f hinc ⟨c, Finset.mem_union_left _ hm, hfc⟩
-  exact hc hf hv (hfixed.trans hfc) (by rw [hr.2 v hv]; exact hvm)
 
 private theorem helper_closedSingleton_330.{u_1, u_2} :
     open scoped Classical in
@@ -2186,8 +2162,7 @@ private theorem helper_branch_2767.{u_1, u_2} :
       (hs : StableColoring X D psi pi)
       (hc : ColoredVertexSetClosed G psi (TreeSequenceVertexSet X)) :
       ColoredVertexSetClosed G pi (TreeSequenceVertexSet X) := by
-    exact helper_stableClosed_307 (@G) (@k) (@e0) (@X) (@D) (@psi) (@pi) (@hpsi) (@hpsiOne)
-        (@hpi) (@hpiOne) (@hs) (@hc)
+    exact StableColoring.closed X D psi pi hpsi hpsiOne hpi hpiOne hc hs
   have closedSingleton (hc : ColoredVertexSetClosed G phi (TreeSequenceVertexSet A)) :
       TreeColorSetClosed G phi A {alpha} := by
     exact helper_closedSingleton_330 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)

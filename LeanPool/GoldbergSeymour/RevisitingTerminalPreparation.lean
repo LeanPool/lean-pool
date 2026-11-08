@@ -17,6 +17,7 @@ public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
 public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 
 /-!
 # Preparation for a revisiting terminal rebuild
@@ -2468,28 +2469,11 @@ theorem helper_hclosedSigma_3647.{u_1, u_2} :
   classical
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper hsigmaOne _ q
       previousProper previousOneUncolored previousClosed hroundLarge originalPrefix corr oldi
-      oldChoice newi newChoice htree oldChoiceOnNew hends hsigmaPrevStableQ f c v hf hv hsf hcm
-  obtain ⟨x, hx, y, hy, hends⟩ := by simpa [BoundaryEdges] using hf
-  have hxf : Incident G x f := by
-    unfold Incident
-    rw [hends]
-    exact Sym2.mem_mk_left _ _
-  have hmissingEq := hsigmaPrevStableQ.2 v hv
-  have hcTree :
-    c ∈
-      TreeMissingColors (ett.series.data.coloring q.castSucc)
-        (ett.series.data.tree q.succ.castSucc) := by
-    simp only [TreeMissingColors, Finset.mem_biUnion]
-    exact ⟨v, hv, hmissingEq ▸ hcm⟩
-  have hcriterion :=
-    (sc1 G e0 (ett.series.data.tree q.succ.castSucc)
-          (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)
-          sigma previousProper previousOneUncolored hsigmaProper hsigmaOne).mp
-      hsigmaPrevStableQ
-  have hcopy := hcriterion f ⟨x, hx, hxf⟩ (Or.inr ⟨c, Finset.mem_union_left _ hcTree, hsf⟩)
-  have holdf : ett.series.data.coloring q.castSucc f = some c := hcopy.symm.trans hsf
-  have hnotOld := previousClosed hf hv holdf
-  exact hnotOld (hmissingEq ▸ hcm)
+      oldChoice newi newChoice htree oldChoiceOnNew hends hsigmaPrevStableQ
+  exact StableColoring.closed (ett.series.data.tree q.succ.castSucc)
+    (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)
+    sigma previousProper previousOneUncolored hsigmaProper hsigmaOne previousClosed
+    hsigmaPrevStableQ
 
 theorem helper_outsideIndicesNonempty_4016.{u_1, u_2} :
     open scoped Classical in

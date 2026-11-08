@@ -1068,11 +1068,11 @@ private theorem helper_continuation_1123.{u_1, u_2} :
       hmod prefixPresentation fixedA missingA htailEdges segTrans commonPrefix equalTrees
       stageSegment stageToT lastZero lastPositive coreToA TnToCore TnToA AToT
   have ordinaryToA (index : Fin (H.dividerCount + 1)) :
-      TreeSequenceInitialSegment (H.stage index.castSucc) A :=
-    H.stageInitialSegmentOfStarredStage index (Fin.last _) (Fin.le_last _)
+      TreeSequenceInitialSegment (H.stage index.castSucc) A := by
+    exact H.stageInitialSegmentOfStarredStage index (Fin.last H.dividerCount) (Fin.le_last _)
   have starredToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H j) A := by
-    exact Fin.cases coreToA (fun i => ordinaryToA i.succ) j
+    exact H.starredStageInitialSegmentOfLE j (Fin.last H.dividerCount) (Fin.le_last _)
   have BToT : TreeSequenceInitialSegment B T :=
     ⟨Nat.min_le_right _ _, fun _ => rfl, fun _ => rfl⟩
   have hBlen : T.length = B.length + 1 := by
@@ -1293,11 +1293,7 @@ theorem StableChangeCasesOneTwoFullTail {V E : Type*}
     exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have stageToT (j : Fin (H.dividerCount + 2)) :
       TreeSequenceInitialSegment (H.stage j) T := by
-    have hs := stageSegment j.val (H.dividerCount + 1 - j.val) (by omega)
-    have he : (⟨j.val + (H.dividerCount + 1 - j.val), by omega⟩ :
-        Fin (H.dividerCount + 2)) = Fin.last (H.dividerCount + 1) :=
-      Fin.ext (by have := j.isLt; simp only [Fin.val_last]; omega)
-    simpa [he, H.terminalStage] using hs
+    exact H.stageInitialSegment j
   have lastZero (hz : H.dividerCount = 0) : A = base.core := by
     have hq : q = 0 := Fin.ext (by simpa [q] using hz)
     simp only [A, hq, HierarchyStarredStage]
@@ -1312,22 +1308,12 @@ theorem StableChangeCasesOneTwoFullTail {V E : Type*}
     rw [← Fin.succ_pred q hq]
     rfl
   have coreToA : TreeSequenceInitialSegment base.core A := by
-    by_cases hz : H.dividerCount = 0
-    · rw [lastZero hz]; exact segRefl _
-    · rw [lastPositive hz]
-      have hs := stageSegment 1 (H.dividerCount - 1) (by omega)
-      have he : (⟨1 + (H.dividerCount - 1), by omega⟩ :
-          Fin (H.dividerCount + 2)) = q.castSucc := Fin.ext (by simp [q]; omega)
-      rw [he] at hs
-      exact segTrans H.coreInsideFirst hs
+    exact H.coreInitialSegmentOfStarredStage (Fin.last H.dividerCount)
   have TnToCore : TreeSequenceInitialSegment Tn base.core := by
     exact base.lastRoundInitialSegmentCore
   have TnToA := segTrans TnToCore coreToA
   have AToT : TreeSequenceInitialSegment A T := by
-    by_cases hz : H.dividerCount = 0
-    · rw [lastZero hz]
-      exact segTrans H.coreInsideFirst (stageToT _)
-    · rw [lastPositive hz]; exact stageToT _
+    exact H.lastStarredInitialSegment
   exact @helper_continuation_1123 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 input T phi ett base C ctx alpha beta hne z sigma hsigma hpenultimateMissing
       hstoredFirst htwo hbase sigmaProper sigmaOne outside hmod prefixPresentation fixedA

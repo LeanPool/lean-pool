@@ -13,6 +13,7 @@ public import LeanPool.GoldbergSeymour.TerminalSeriesRebuildPreparation
 public import LeanPool.GoldbergSeymour.TashkinovSeriesAppend
 public import LeanPool.GoldbergSeymour.ExtensionBase
 public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
+public import LeanPool.GoldbergSeymour.TashkinovSeriesSwapComponentEdgeUnique
 
 /-!
 # Transport lemmas for terminal extension reconstruction
@@ -915,11 +916,8 @@ theorem helper_hsigmaEdge_4922.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma hsigmaProper Tstar q
       hsigmaStableQ gamma secondStable secondStableProper choice currentColoring currentStored
       hchoiceVertex hcomponent hmissing u hcompEdge hchoiceSecond hneq hfcomponent
-  exact @helper_hsigmaEdge_2047 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper)
-      (@Tstar) (@hsigmaStableQ) (@gamma) (@secondStable) (@secondStableProper) (@choice)
-      (@currentColoring) (@currentStored) (@hchoiceVertex) (@hcomponent) (@hmissing) (@u)
-      (@hcompEdge) (@hchoiceSecond) (@hneq) (@hfcomponent)
+  exact ett.series.stableSwapComponentIncidentEdgeUnique q sigma hsigmaProper hsigmaStableQ
+    gamma secondStable choice currentColoring currentStored hcomponent hmissing hchoiceSecond hneq
 
 theorem helper_treeMissingTransport_4940.{u_1, u_2} :
     open scoped Classical in
@@ -3239,11 +3237,9 @@ theorem helper_hsigmaPrevEnlarged_12232.{u_1, u_2} :
       (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar) (@gamma) (@secondStable)
       (@secondStableProper) (@choice) (@hmissing) (@u) (@path) (@endOnly) (@hpathComponent)
       (@hcompEdge) (@hchoiceSecond)
-  have hsigmaEdge := @helper_hsigmaEdge_4922 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@hsigmaProper)
-      (@Tstar) (@hsigmaStableQ) (@gamma) (@secondStable) (@secondStableProper) (@choice)
-      (@currentColoring) (@currentStored) (@hchoiceVertex) (@hcomponent) (@hmissing) (@u)
-      (@hcompEdge) (@hchoiceSecond) (@hneq) (@hfcomponent)
+  have hsigmaEdge := ett.series.stableSwapComponentIncidentEdgeUnique q sigma hsigmaProper
+    hsigmaStableQ gamma secondStable choice currentColoring currentStored hcomponent hmissing
+    hchoiceSecond hneq
   let undone := TwoColorComponentSwap G sigma gamma choice.color
     (Sum.inl choice.vertex)
   have undoneProper : IsProperEdgeColoring G undone := by

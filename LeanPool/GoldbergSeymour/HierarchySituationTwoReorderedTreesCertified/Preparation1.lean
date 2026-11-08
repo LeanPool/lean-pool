@@ -15,6 +15,7 @@ public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceSuffix
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 
 /-!
 # HierarchySituationTwoReorderedTreesCertified: supporting constructions, part 1
@@ -681,24 +682,8 @@ theorem helper_stableClosed_938.{u_1, u_2} :
         → IsOneEdgeUncolored new e0 → StableColoring X colors old new → ColoredVertexSetClosed G
         old (TreeSequenceVertexSet X) → ColoredVertexSetClosed G new (TreeSequenceVertexSet X) := by
   classical
-  intro V E _ _ G k e0 X colors old new ho huo hn hun hstable hclosed e c v he hv hc hmissing
-  have hmold : c ∈ MissingColors G old v := by
-    rw [← hstable.2 v hv]
-    exact hmissing
-  have hmTree : c ∈ TreeMissingColors old X := by
-    simp only [TreeMissingColors, Finset.mem_biUnion]
-    exact ⟨v, hv, hmold⟩
-  obtain ⟨u, hu, w, hw, hends⟩ := by
-    simpa only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ,
-      true_and] using he
-  have hinc : TreeIncidentEdge X e := by
-    refine ⟨u, hu, ?_⟩
-    change u ∈ G.ends e
-    rw [hends]
-    exact Sym2.mem_iff.mpr (Or.inl rfl)
-  have heq := (sc1 G e0 X colors old new ho huo hn hun).mp hstable e hinc
-    (Or.inr ⟨c, Finset.mem_union_left _ hmTree, hc⟩)
-  exact hclosed he hv (heq.symm.trans hc) hmold
+  intro V E _ _ G k e0 X colors old new ho huo hn hun hstable hclosed
+  exact StableColoring.closed X colors old new ho huo hn hun hclosed hstable
 
 theorem helper_hfinalAug_1019.{u_1, u_2} :
     open scoped Classical in

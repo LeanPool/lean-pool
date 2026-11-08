@@ -19,6 +19,7 @@ public import LeanPool.GoldbergSeymour.RevisitingTerminalStatements
 public import LeanPool.GoldbergSeymour.TashkinovSeriesAppend
 public import LeanPool.GoldbergSeymour.TdReplacementPrefixExact
 public import LeanPool.GoldbergSeymour.TdEarlierPEWitnessIdentification
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 
 /-!
 # Rebuilding a revisiting terminal extension
@@ -6407,10 +6408,10 @@ theorem helper_continuation_3762.{u_1, u_2} :
   have hclosedSigma : ColoredVertexSetClosed G sigma
       (TreeSequenceVertexSet
         (ett.series.data.tree q.succ.castSucc)) := by
-    exact helper_hclosedSigma_3647 (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett)
-        (@hpositive) (@sigma) (@hsigmaProper) (@hsigmaOne) (@Tstar) (@previousProper)
-        (@previousOneUncolored) (@previousClosed) (@hroundLarge) (@originalPrefix) (@corr)
-        (@oldi) (@oldChoice) (@newi) (@newChoice) (@htree) (@hends) (@hsigmaPrevStableQ)
+    exact StableColoring.closed (ett.series.data.tree q.succ.castSucc)
+      (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)
+      sigma previousProper previousOneUncolored hsigmaProper hsigmaOne previousClosed
+      hsigmaPrevStableQ
   have hclosedFinal : ColoredVertexSetClosed G sigma
       (TreeSequenceVertexSet
         (ett.series.data.tree

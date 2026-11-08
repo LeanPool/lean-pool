@@ -606,6 +606,7 @@ public import LeanPool.GoldbergSeymour.StableColoringFullCertificate
 public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
 public import LeanPool.GoldbergSeymour.StableHierarchyReplacement
 public import LeanPool.GoldbergSeymour.StableSeriesCycleComponentTransport
+public import LeanPool.GoldbergSeymour.StableSwapComponentEdgeUnique
 public import LeanPool.GoldbergSeymour.StarredPrefixPreparation
 public import LeanPool.GoldbergSeymour.Step1CaseOneInsidePositiveDivider
 public import LeanPool.GoldbergSeymour.Step1CaseOneInsideStar
@@ -711,6 +712,7 @@ public import LeanPool.GoldbergSeymour.TashkinovSeriesStability
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStep
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStepAppend
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStepPrefix
+public import LeanPool.GoldbergSeymour.TashkinovSeriesSwapComponentEdgeUnique
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 public import LeanPool.GoldbergSeymour.TashkinovStepDataAgreement

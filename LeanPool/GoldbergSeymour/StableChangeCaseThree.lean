@@ -158,37 +158,27 @@ theorem StableChangeCaseThree {V E : Type*}
       (hUW : TreeSequenceInitialSegment U W) (hlen : S.length ≤ U.length) :
       TreeSequenceInitialSegment S U := by
     apply helper_commonPrefix_520 <;> assumption
-  have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have equalTrees {S U : TreeSequence G e0}
       (hSU : TreeSequenceInitialSegment S U) (hlen : S.length = U.length) : S = U := by
     apply helper_equalTrees_536 <;> assumption
-  have stageToT (j : Fin (H.dividerCount + 2)) :
-      TreeSequenceInitialSegment (H.stage j) T := by
-    apply helper_stageToT_552; assumption
   have lastZero (hz : H.dividerCount = 0) : A = base.core := by
     simp [A, q, HierarchyStarredStage, hz, Fin.last]
   have lastPositive (hz : H.dividerCount ≠ 0) :
       A = H.stage ⟨H.dividerCount, by omega⟩ := by
     apply helper_lastPositive_561; assumption
   have coreToA : TreeSequenceInitialSegment base.core A := by
-    apply helper_coreToA_572 <;> assumption
+    exact H.coreInitialSegmentOfStarredStage (Fin.last H.dividerCount)
   have TnToCore : TreeSequenceInitialSegment Tn base.core := by
     exact base.lastRoundInitialSegmentCore
   have TnToA := segTrans TnToCore coreToA
   have AToT : TreeSequenceInitialSegment A T := by
-    by_cases hz : H.dividerCount = 0
-    · rw [lastZero hz]
-      exact segTrans H.coreInsideFirst (stageToT ⟨1, by omega⟩)
-    · rw [lastPositive hz]; exact stageToT _
+    exact H.lastStarredInitialSegment
   have ordinaryToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (H.stage j.castSucc) A := by
-    apply helper_ordinaryToA_589 <;> assumption
+    exact H.stageInitialSegmentOfStarredStage j (Fin.last H.dividerCount) (Fin.le_last _)
   have starredToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H j) A := by
-    exact Fin.cases coreToA (fun i => ordinaryToA i.succ) j
+    exact H.starredStageInitialSegmentOfLE j (Fin.last H.dividerCount) (Fin.le_last _)
   have YToT : TreeSequenceInitialSegment Y T :=
     ⟨Nat.min_le_right _ _, (by intro i; rfl), (by intro i; rfl)⟩
   have hmissingY : alpha ∈ TreeMissingColors phi Y ∧ beta ∈ TreeMissingColors phi Y :=

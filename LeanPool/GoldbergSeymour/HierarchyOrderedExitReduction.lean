@@ -17,6 +17,7 @@ public import LeanPool.GoldbergSeymour.TreeSequenceEdgeSet
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 
 /-!
 # rutcor
@@ -322,33 +323,6 @@ private theorem helper_closedSingleton_356.{u_1, u_2} :
   obtain ⟨hb, hcol⟩ := Finset.mem_filter.mp hf
   exact hc hb hv hcol hvm
 
-private theorem helper_stableClosed_368.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (B : TreeSequence G e0) (C : Finset (Fin k)) (psi pi : PartialEdgeColoring E k),
-        IsProperEdgeColoring G psi → IsOneEdgeUncolored psi e0 → IsProperEdgeColoring G pi →
-        IsOneEdgeUncolored pi e0 → StableColoring B C psi pi → ColoredVertexSetClosed G psi
-        (TreeSequenceVertexSet B) → ColoredVertexSetClosed G pi (TreeSequenceVertexSet B) := by
-  classical
-  intro V E _ _ G k e0 B C psi pi hpsi hpsiOne hpi hpiOne hs hc
-  have hr : StableColoring B C pi psi :=
-    (sc2 G e0 B C).symm
-      (x := ⟨psi, hpsi, hpsiOne⟩) (y := ⟨pi, hpi, hpiOne⟩) hs
-  intro f c v hb hv hcol hvm
-  have hf : TreeIncidentEdge B f := by
-    have hb' : ∃ u ∈ TreeSequenceVertexSet B, ∃ w ∉ TreeSequenceVertexSet B,
-        G.ends f = Sym2.mk u w := by
-      simpa only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and] using hb
-    obtain ⟨u, hu, w, hw, he⟩ := hb'
-    refine ⟨u, hu, ?_⟩
-    change u ∈ G.ends f
-    rw [he]
-    simp
-  have hm : c ∈ TreeMissingColors pi B := Finset.mem_biUnion.mpr ⟨v, hv, hvm⟩
-  have hsame := hr.1 f hf ⟨c, Finset.mem_union_left _ hm, hcol⟩
-  have hvm' : c ∈ MissingColors G psi v := by rw [hr.2 v hv]; exact hvm
-  exact hc hb hv (hsame.trans hcol) hvm'
-
 private theorem helper_terminalPE_393.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -621,8 +595,13 @@ private theorem helper_continuation_896.{u_1, u_2} :
         (hc : ColoredVertexSetClosed G phi (TreeSequenceVertexSet B))
         (hm : alpha ∈ TreeMissingColors phi B) : TreeColorSetClosed G phi B {alpha} := by
       apply helper_closedSingleton_356 <;> assumption
-    have stableClosed := @helper_stableClosed_368 (@V) (@E) inferInstance inferInstance (@G) (@k)
-        (@e0)
+    have stableClosed (B : TreeSequence G e0) (D : Finset (Fin k))
+        (psi pi : PartialEdgeColoring E k) (hpsi : IsProperEdgeColoring G psi)
+        (hpsiOne : IsOneEdgeUncolored psi e0) (hpi : IsProperEdgeColoring G pi)
+        (hpiOne : IsOneEdgeUncolored pi e0) (hs : StableColoring B D psi pi)
+        (hc : ColoredVertexSetClosed G psi (TreeSequenceVertexSet B)) :
+        ColoredVertexSetClosed G pi (TreeSequenceVertexSet B) :=
+      StableColoring.closed B D psi pi hpsi hpsiOne hpi hpiOne hc hs
     have terminalPE : ett.series.data.kind (Fin.last ett.rounds) =
         some TashkinovExtensionKind.PE := by
       apply helper_terminalPE_393 <;> assumption

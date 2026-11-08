@@ -15,6 +15,7 @@ public import LeanPool.GoldbergSeymour.HierarchyClaimNineFirstUseAfterSeed
 public import LeanPool.GoldbergSeymour.HierarchyClaimNineUnusedTailColor
 public import LeanPool.GoldbergSeymour.HierarchyEligibleCommonMissingIndices
 public import LeanPool.GoldbergSeymour.TwoColorMissingVertexNeighbors
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 
 /-!
 # Hierarchy Claim Nine First Use Seed
@@ -647,33 +648,6 @@ private theorem helper_closedSingleton_400.{u_1, u_2} :
   intro f hf
   obtain ⟨hb, hcol⟩ := Finset.mem_filter.mp hf
   exact hc hb hv hcol hvm
-
-private theorem helper_stableClosed_412.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ)
-        (e0 : E) (U : TreeSequence G e0) (S : Finset (Fin k)) (psi pi : PartialEdgeColoring E k),
-        IsProperEdgeColoring G psi → IsOneEdgeUncolored psi e0 → IsProperEdgeColoring G pi →
-        IsOneEdgeUncolored pi e0 → StableColoring U S psi pi → ColoredVertexSetClosed G psi
-        (TreeSequenceVertexSet U) → ColoredVertexSetClosed G pi (TreeSequenceVertexSet U) := by
-  classical
-  intro V E _ _ G k e0 U S psi pi hpsi hpsiOne hpi hpiOne hs hc
-  have hr : StableColoring U S pi psi :=
-    (sc2 G e0 U S).symm
-      (x := ⟨psi, hpsi, hpsiOne⟩) (y := ⟨pi, hpi, hpiOne⟩) hs
-  intro f c v hb hv hcol hvm
-  have hf : TreeIncidentEdge U f := by
-    have hb' : ∃ u ∈ TreeSequenceVertexSet U, ∃ w ∉ TreeSequenceVertexSet U,
-        G.ends f = Sym2.mk u w := by
-      simpa only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and] using hb
-    obtain ⟨u, hu, w, hw, he⟩ := hb'
-    refine ⟨u, hu, ?_⟩
-    change u ∈ G.ends f
-    rw [he]
-    simp
-  have hm : c ∈ TreeMissingColors pi U := Finset.mem_biUnion.mpr ⟨v, hv, hvm⟩
-  have hsame := hr.1 f hf ⟨c, Finset.mem_union_left _ hm, hcol⟩
-  have hvm' : c ∈ MissingColors G psi v := by rw [hr.2 v hv]; exact hvm
-  exact hc hb hv (hsame.trans hcol) hvm'
 
 private theorem helper_hAeq_523.{u_1, u_2} :
     open scoped Classical in
@@ -2938,8 +2912,7 @@ private theorem helper_branch_4070.{u_1, u_2} :
       (hs : StableColoring U S psi pi)
       (hc : ColoredVertexSetClosed G psi (TreeSequenceVertexSet U)) :
       ColoredVertexSetClosed G pi (TreeSequenceVertexSet U) := by
-    exact @helper_stableClosed_412 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0) (@U)
-        (@S) (@psi) (@pi) (@hpsi) (@hpsiOne) (@hpi) (@hpiOne) (@hs) (@hc)
+    exact StableColoring.closed U S psi pi hpsi hpsiOne hpi hpiOne hc hs
   let p : Fin em.rounds := ⟨em.rounds - 1, by have := em.roundsPositive; omega⟩
   have hp : p.succ = n := by
     apply Fin.ext

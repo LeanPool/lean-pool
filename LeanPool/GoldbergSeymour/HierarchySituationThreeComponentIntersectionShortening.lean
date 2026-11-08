@@ -23,6 +23,7 @@ public import LeanPool.GoldbergSeymour.HierarchyNonparallelFirstEdge
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentation
 public import LeanPool.GoldbergSeymour.TerminalRoute
 public import LeanPool.GoldbergSeymour.ElementaryTerminalComponent
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 
 /-!
 # Hierarchy Situation Three Component Intersection Shortening
@@ -1145,23 +1146,6 @@ private theorem helper_branch_317.{u_1, u_2} :
     subst ue
     rfl
 
-private theorem helper_hinc_377.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G : LooplessMultigraph V E)
-  (e0 : E) (W : TreeSequence G e0) {f : E},
-  f ∈ BoundaryEdges G (TreeSequenceVertexSet W) →
-  TreeIncidentEdge W f := by
-  classical
-  intro V E _ _ G e0 W f hf
-  have hfData : ∃ u ∈ TreeSequenceVertexSet W,
-      ∃ w ∉ TreeSequenceVertexSet W, G.ends f = s(u, w) := by
-    simpa only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and] using hf
-  obtain ⟨u, hu, w, hw, he⟩ := hfData
-  refine ⟨u, hu, ?_⟩
-  change u ∈ G.ends f
-  rw [he]
-  exact Sym2.mem_mk_left _ _
-
 private theorem helper_branch_397.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
@@ -1914,35 +1898,6 @@ private theorem helper_equalSeg_2078.{u_1, u_2} :
       exact @helper_branch_317 (@V) (@E) (@G) (@e0) (@U) (@sl) (@sp) (@sv) (@se) (@svi)
           (@sei) (@sf) (@sa) (@hSU) (@hlen)
 
-private theorem helper_stableClosed_2136.{u_1, u_2} :
-    open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] (G : LooplessMultigraph V E) (k : ℕ) (e0
-        : E)
-      (_ :
-  ∀ {S U W : TreeSequence G e0} (_ : TreeSequenceInitialSegment S U) (_ :
-      TreeSequenceInitialSegment U W),
-  TreeSequenceInitialSegment S W)
-      (W : TreeSequence G e0) (D : Finset (Fin k)) (rho sigma : PartialEdgeColoring E k) (_ :
-          IsProperEdgeColoring G rho)
-      (_ : IsOneEdgeUncolored rho e0) (_ : IsProperEdgeColoring G sigma) (_ : IsOneEdgeUncolored
-          sigma e0)
-      (_ : StableColoring W D rho sigma) (_ : ColoredVertexSetClosed G rho (TreeSequenceVertexSet
-          W)),
-  ColoredVertexSetClosed G sigma (TreeSequenceVertexSet W) := by
-  classical
-  intro V E _ _ G k e0 trans W D rho sigma hp ho hps hos hst hcl
-  clear * - W D rho sigma hp ho hps hos hst hcl
-  intro f c v hf hv hfc hmissing
-  have hm : c ∈ MissingColors G rho v := by
-    rw [← hst.2 v hv]
-    exact hmissing
-  have hinc : TreeIncidentEdge W f := by
-    exact @helper_hinc_377 (@V) (@E) inferInstance inferInstance (@G) (@e0) (@W) (@f) (@hf)
-  have heq := (sc1 G e0 W D rho sigma hp ho hps hos).mp hst f hinc
-    (Or.inr ⟨c, Finset.mem_union_left _
-      (Finset.mem_biUnion.mpr ⟨v, hv, hm⟩), hfc⟩)
-  exact hcl hf hv (heq.symm.trans hfc) hm
-
 private theorem helper_ownerBound_2434.{u_1, u_2} :
     open scoped Classical in
   ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V]
@@ -2475,8 +2430,7 @@ private theorem componentIntersectionFromMissingColors.{u_1, u_2} :
         (hst : StableColoring W D rho sigma)
         (hcl : ColoredVertexSetClosed G rho (TreeSequenceVertexSet W)) :
         ColoredVertexSetClosed G sigma (TreeSequenceVertexSet W) := by as_aux_lemma =>
-      exact @helper_stableClosed_2136 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0) (@trans)
-          (@W) (@D) (@rho) (@sigma) (@hp) (@ho) (@hps) (@hos) (@hst) (@hcl)
+      exact StableColoring.closed W D rho sigma hp ho hps hos hcl hst
     have nonparallelClosed
         (hk : R.series.data.kind n ≠ some TashkinovExtensionKind.PE) :
         ColoredVertexSetClosed G mu (TreeSequenceVertexSet Tn) := by as_aux_lemma =>

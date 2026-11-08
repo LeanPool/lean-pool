@@ -11,6 +11,7 @@ public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTermina
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified.Preparation1
 public import LeanPool.GoldbergSeymour.Td
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 
 /-!
 # HierarchySituationTwoReorderedTreesCertified: supporting constructions, part 2
@@ -281,8 +282,7 @@ theorem helper_continuation_941.{u_1, u_2} :
       (hstable : StableColoring X colors old new)
       (hclosed : ColoredVertexSetClosed G old (TreeSequenceVertexSet X)) :
       ColoredVertexSetClosed G new (TreeSequenceVertexSet X) := by
-    exact helper_stableClosed_938 G k e0 X colors old new ho huo
-        hn hun hstable hclosed
+    exact StableColoring.closed X colors old new ho huo hn hun hclosed hstable
   have stepRoute (j : Fin (ett.rounds + 1)) (hj : j ≠ 0) :
       (ett.series.data.kind j = some TashkinovExtensionKind.PE ∧
         TashkinovAugmentationSequence (ett.series.data.coloring j)

@@ -13,6 +13,7 @@ public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyCaseThreePreparation
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoOutsidePenultimateReconstruction
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 
 /-!
 # Hierarchy Situation Two Case Three Normalization
@@ -620,26 +621,7 @@ private theorem helper_continuation_647.{u_1, u_2} :
     exact ⟨corrU.terminalData.1, corrU.terminalData.2.1⟩
   have ordinaryToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (H.stage j.castSucc) A := by
-    clear * - H j A hTnA lastPositive stageSegment
-    by_cases hz : H.dividerCount = 0
-    · have hj : j = 0 := Fin.ext (by
-        have hlt := j.isLt
-        change j.val = 0
-        clear * - hlt hz
-        omega)
-      rw [hj]
-      change TreeSequenceInitialSegment (H.stage 0) A
-      rw [H.baseStage]
-      exact hTnA
-    · rw [lastPositive hz]
-      have hs := stageSegment j.val (H.dividerCount - j.val) (by have := j.isLt; omega)
-      convert hs using 1
-      · exact congrArg H.stage (Fin.ext rfl)
-      · apply congrArg H.stage
-        apply Fin.ext
-        change H.dividerCount = j.val + (H.dividerCount - j.val)
-        have := j.isLt
-        omega
+    exact H.stageInitialSegmentOfStarredStage j (Fin.last H.dividerCount) (Fin.le_last _)
   have hAUstrict : A.length < Utree.length := lt_of_le_of_lt (segTrans hAB hBR).1 hRUstrict
   let newStage : Fin (H.dividerCount + 2) → TreeSequence G e0 := fun j =>
     if j.val = H.dividerCount + 1 then Utree else H.stage j
@@ -911,22 +893,8 @@ private theorem helper_continuation_547.{u_1, u_2} :
       (hcpsi : ColoredVertexSetClosed G psi (TreeSequenceVertexSet S))
       (hs : StableColoring S colors psi phi) :
       ColoredVertexSetClosed G phi (TreeSequenceVertexSet S) := by
-    clear * - G e0 ctx phi S colors psi hppsi hopsi hcpsi hs
-    intro f c x hf hx hfc hcm
-    have hincident : TreeIncidentEdge S f := by
-      obtain ⟨u, hu, v, hv, huv⟩ := by simpa [BoundaryEdges] using hf
-      refine ⟨u, hu, ?_⟩
-      change u ∈ G.ends f
-      rw [huv]
-      exact Sym2.mem_mk_left _ _
-    have hcmPrev : c ∈ MissingColors G psi x := by
-      rw [← hs.2 x hx]
-      exact hcm
-    have hcTree : c ∈ TreeMissingColors psi S := Finset.mem_biUnion.mpr ⟨x, hx, hcmPrev⟩
-    have hfixed : phi f = psi f :=
-      (sc1 G e0 S colors psi phi hppsi hopsi ctx.proper ctx.oneEdgeUncolored).mp hs
-        f hincident (Or.inr ⟨c, Finset.mem_union_left _ hcTree, hfc⟩)
-    exact hcpsi hf hx (hfixed.symm.trans hfc) hcmPrev
+    exact StableColoring.closed S colors psi phi hppsi hopsi ctx.proper ctx.oneEdgeUncolored
+      hcpsi hs
   -- The splice must retain the exact terminal SE/RE connecting seed.
   have seededRoute (f : E) (seed : TreeSequence G e0)
       (hclosed : ColoredVertexSetClosed G phi (TreeSequenceVertexSet Tn))
@@ -1122,11 +1090,7 @@ private theorem helper_branch_402.{u_1, u_2} :
     exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have stageToT (j : Fin (H.dividerCount + 2)) :
       TreeSequenceInitialSegment (H.stage j) T := by
-    have hs := stageSegment j.val (H.dividerCount + 1 - j.val) (by omega)
-    have hi : (⟨j.val + (H.dividerCount + 1 - j.val), by omega⟩ :
-        Fin (H.dividerCount + 2)) = Fin.last (H.dividerCount + 1) :=
-      Fin.ext (by change j.val + (H.dividerCount + 1 - j.val) = H.dividerCount + 1; omega)
-    simpa only [hi, H.terminalStage] using hs
+    exact H.stageInitialSegment j
   have lastPositive (hp : H.dividerCount ≠ 0) : A = H.stage q.castSucc := by
     let i : Fin H.dividerCount := ⟨H.dividerCount - 1, by omega⟩
     have hi : q = i.succ := Fin.ext (by dsimp [q, i]; omega)

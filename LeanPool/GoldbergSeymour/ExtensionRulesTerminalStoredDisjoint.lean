@@ -22,6 +22,7 @@ public import LeanPool.GoldbergSeymour.SameColorSeriesPreserved
 public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
 public import LeanPool.GoldbergSeymour.TreeInterchangeable
 public import LeanPool.GoldbergSeymour.TwoColorInterchangeableDistinctComponentCycle
+public import LeanPool.GoldbergSeymour.TashkinovSeriesNonParallelClosed
 
 /-!
 # Extension Rules Terminal Stored Disjoint
@@ -295,78 +296,6 @@ private theorem helper_hgammaNeR_342.{u_1, u_2} :
   have hnot : gammaR ∉ PresentColors G secondStableR choiceR.vertex := by
     simpa [MissingColors] using hgammaMissingR
   exact hnot hp
-
-private theorem helper_hclosedSelectedR_350.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (r : Fin ett.rounds), (
-    ∀ {A : TreeSequence G e0} {f : E}, f ∈ BoundaryEdges G (TreeSequenceVertexSet A) →
-        TreeIncidentEdge A f) → IsProperEdgeColoring G (ett.series.data.coloring r.castSucc) →
-        IsOneEdgeUncolored (ett.series.data.coloring r.castSucc) e0 → ColoredVertexSetClosed G
-        (ett.series.data.coloring r.castSucc) (TreeSequenceVertexSet (ett.series.data.tree
-        r.succ.castSucc)) →
-    ∀ (choiceR : MaximumDefectiveChoice G e0 (ett.series.data.tree r.succ.castSucc)
-        (TashkinovStoredColors ett.series.data r.castSucc) (ett.series.data.coloring r.castSucc)),
-    let Th : TreeSequence G e0 := ett.series.data.tree r.succ.castSucc; ColoredVertexSetClosed G
-        choiceR.selected (TreeSequenceVertexSet Th) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett r boundaryIncident previousProperR previousOneR
-      previousClosedR choiceR Th f c x hf hx hfc hmiss
-  have hmissOld : c ∈ MissingColors G
-      (ett.series.data.coloring r.castSucc) x := by
-    rw [← choiceR.selectedStable.2 x (by simpa [Th] using hx)]
-    exact hmiss
-  have htreeOld : c ∈ TreeMissingColors
-      (ett.series.data.coloring r.castSucc) Th := by
-    simp only [TreeMissingColors, Finset.mem_biUnion]
-    exact ⟨x, hx, hmissOld⟩
-  have heq := (sc1 G e0 Th
-    (TashkinovStoredColors ett.series.data r.castSucc)
-    (ett.series.data.coloring r.castSucc) choiceR.selected
-    previousProperR previousOneR choiceR.selectedProper
-    choiceR.selectedOneUncolored).mp choiceR.selectedStable f
-      (boundaryIncident hf)
-      (Or.inr ⟨c, Finset.mem_union_left _ htreeOld, hfc⟩)
-  exact previousClosedR (by simpa [Th] using hf) hx (heq.symm.trans hfc)
-    hmissOld
-
-private theorem helper_hclosedSecondR_370.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (r : Fin ett.rounds), (
-    ∀ {A : TreeSequence G e0} {f : E}, f ∈ BoundaryEdges G (TreeSequenceVertexSet A) →
-        TreeIncidentEdge A f) →
-    ∀ (secondStableR : PartialEdgeColoring E k), IsProperEdgeColoring G secondStableR →
-        IsOneEdgeUncolored secondStableR e0 →
-    ∀ (choiceR : MaximumDefectiveChoice G e0 (ett.series.data.tree r.succ.castSucc)
-        (TashkinovStoredColors ett.series.data r.castSucc) (ett.series.data.coloring r.castSucc)),
-        StableColoring (ett.series.data.tree r.succ.castSucc) (insert choiceR.color
-        (TashkinovStoredColors ett.series.data r.castSucc) : Finset (Fin k)) choiceR.selected
-        secondStableR →
-    let Th : TreeSequence G e0 := ett.series.data.tree r.succ.castSucc; ColoredVertexSetClosed G
-        choiceR.selected (TreeSequenceVertexSet Th) → ColoredVertexSetClosed G secondStableR
-        (TreeSequenceVertexSet Th) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett r boundaryIncident secondStableR secondProperR
-      secondOneR choiceR secondRelationR Th hclosedSelectedR f c x hf hx hfc hmiss
-  have hmissSel : c ∈ MissingColors G choiceR.selected x := by
-    rw [← secondRelationR.2 x hx]
-    exact hmiss
-  have htreeSel : c ∈ TreeMissingColors choiceR.selected Th := by
-    simp only [TreeMissingColors, Finset.mem_biUnion]
-    exact ⟨x, hx, hmissSel⟩
-  have heq := (sc1 G e0 Th
-    (insert choiceR.color
-      (TashkinovStoredColors ett.series.data r.castSucc))
-    choiceR.selected secondStableR choiceR.selectedProper
-    choiceR.selectedOneUncolored secondProperR secondOneR).mp
-    secondRelationR f (boundaryIncident hf)
-      (Or.inr ⟨c, Finset.mem_union_left _ htreeSel, hfc⟩)
-  exact hclosedSelectedR hf hx (heq.symm.trans hfc) hmissSel
 
 private theorem helper_helemPrevR_387.{u_1, u_2} :
     open scoped Classical in
@@ -1524,14 +1453,16 @@ private theorem helper_branch_1399.{u_1, u_2} :
     @helper_hgammaNeR_342 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
         (@input) (@T) (@generating) (@ett) (@r) (@gammaR) (@secondStableR) (@choiceR)
         (@hgammaMissingR) (@hchoiceSecondR)
-  have hclosedSelectedR :=
-    @helper_hclosedSelectedR_350 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@r) (@boundaryIncident) (@previousProperR)
-        (@previousOneR) (@previousClosedR) (@choiceR)
-  have hclosedSecondR :=
-    @helper_hclosedSecondR_370 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@r) (@boundaryIncident) (@secondStableR)
-        (@secondProperR) (@secondOneR) (@choiceR) (@secondRelationR) (@hclosedSelectedR)
+  have hclosedSelectedR : ColoredVertexSetClosed G choiceR.selected
+      (TreeSequenceVertexSet Th) := StableColoring.closed Th
+    (TashkinovStoredColors ett.series.data r.castSucc) (ett.series.data.coloring r.castSucc)
+    choiceR.selected previousProperR previousOneR choiceR.selectedProper
+    choiceR.selectedOneUncolored previousClosedR choiceR.selectedStable
+  have hclosedSecondR : ColoredVertexSetClosed G secondStableR
+      (TreeSequenceVertexSet Th) := StableColoring.closed Th
+    (insert choiceR.color (TashkinovStoredColors ett.series.data r.castSucc))
+    choiceR.selected secondStableR choiceR.selectedProper choiceR.selectedOneUncolored
+    secondProperR secondOneR hclosedSelectedR secondRelationR
   have helemPrevR :=
     @helper_helemPrevR_387 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
         (@input) (@T) (@generating) (@ett) (@hMP) (@hpositive) (@hLowerOne) (@r) (@choiceR)

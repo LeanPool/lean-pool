@@ -954,45 +954,19 @@ theorem StableChangeCasesOneTwoSplitTail {V E : Type*}
       (hUW : TreeSequenceInitialSegment U W) : TreeSequenceInitialSegment S W := by
     exact hSU.trans hUW
   have equalTrees := @SharedFacts.StableChangeCasesOneTwoSplitTail.equalTrees V E G e0
-  have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
   have lastZero (hz : H.dividerCount = 0) : A = base.core := by
     simp [A, q, HierarchyStarredStage, hz, Fin.last]
-  have lastPositive (hz : H.dividerCount ≠ 0) :
-      A = H.stage ⟨H.dividerCount, by omega⟩ := by
-    obtain hzero | ⟨i, hi⟩ := Fin.eq_zero_or_eq_succ q
-    · have hv := congrArg Fin.val hzero
-      simp only [Fin.val_last, Fin.coe_ofNat_eq_mod, Nat.zero_mod, q] at hv
-      exact (hz hv).elim
-    · simp only [A, HierarchyStarredStage, hi, Fin.cases_succ]
-      congr 1
-      apply Fin.ext
-      have hv := congrArg Fin.val hi
-      simpa [q] using hv.symm
   have coreToA : TreeSequenceInitialSegment base.core A := by
-    by_cases hz : H.dividerCount = 0
-    · rw [lastZero hz]; exact segRefl _
-    · rw [lastPositive hz]
-      have hs := stageSegment 1 (H.dividerCount - 1) (by omega)
-      have he : 1 + (H.dividerCount - 1) = H.dividerCount := by omega
-      simpa [he] using segTrans H.coreInsideFirst hs
+    exact H.coreInitialSegmentOfStarredStage (Fin.last H.dividerCount)
   have TnToCore : TreeSequenceInitialSegment Tn base.core := by
     exact base.lastRoundInitialSegmentCore
   have TnToA := segTrans TnToCore coreToA
   have ordinaryToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (H.stage j.castSucc) A := by
-    by_cases hz : H.dividerCount = 0
-    · have hj : j.castSucc = (0 : Fin (H.dividerCount + 2)) := Fin.ext (by simp; omega)
-      rw [hj, H.baseStage]; exact TnToA
-    · have hs := stageSegment j.val (H.dividerCount - j.val) (by omega)
-      rw [lastPositive hz]
-      convert hs using 1 <;> apply congrArg H.stage <;> apply Fin.ext <;>
-      simp only [Fin.val_castSucc]; omega
+    exact H.stageInitialSegmentOfStarredStage j (Fin.last H.dividerCount) (Fin.le_last _)
   have starredToA (j : Fin (H.dividerCount + 1)) :
-      TreeSequenceInitialSegment (HierarchyStarredStage H j) A :=
-    Fin.cases coreToA (fun i => ordinaryToA i.succ) j
+      TreeSequenceInitialSegment (HierarchyStarredStage H j) A := by
+    exact H.starredStageInitialSegmentOfLE j (Fin.last H.dividerCount) (Fin.le_last _)
   have hXT : TreeSequenceInitialSegment X T :=
     TashkinovAugmentationSequenceInitialSegment phi X T hsuffix
   have hAT := segTrans hAX hXT

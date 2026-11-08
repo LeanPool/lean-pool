@@ -11,6 +11,7 @@ public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
 public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
 public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
+public import LeanPool.GoldbergSeymour.TashkinovSeriesSwapComponentEdgeUnique
 
 /-!
 # Parallel Extension Undo Stable
@@ -223,130 +224,6 @@ private theorem helper_hclosed_201.{u_1, u_2} :
     exact hc.trans (Finset.card_le_card hs)
   have upper : graph.degree (path.getVert n) ≤ 2 := hdegreeBound (path.getVert n)
   omega
-
-private theorem helper_hsigmaEdge_358.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (sigma : PartialEdgeColoring E k),
-        IsProperEdgeColoring G sigma → StableColoring (series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors series.data q.succ) (series.data.coloring q.succ) sigma →
-    ∀ (chosenGamma : Fin k) (secondStable : PartialEdgeColoring E k), IsProperEdgeColoring G
-        secondStable →
-    ∀ (choice : MaximumDefectiveChoice G e0 (series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors series.data q.castSucc) (series.data.coloring q.castSucc)),
-        series.data.coloring q.succ = TwoColorComponentSwap G secondStable chosenGamma
-        choice.color (Sum.inl choice.vertex) → series.data.stored q.succ = (insert choice.color
-        ({ chosenGamma } : Finset (Fin k)) : Finset (Fin k)) → series.data.gamma q.succ = some
-        chosenGamma → choice.vertex ∈ TreeSequenceVertexSet (series.data.tree q.succ.castSucc) → (
-    ∀ w ∈ TreeSequenceVertexSet (series.data.tree q.succ.castSucc), Sum.inl w ∈ TwoColorComponent
-        G sigma chosenGamma choice.color (Sum.inl choice.vertex) ↔ w = choice.vertex) →
-        chosenGamma ∈ MissingColors G secondStable choice.vertex →
-    ∀ (_ : V), (
-    ∀ (e : E), Sum.inr e ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl
-        choice.vertex) → secondStable e = some chosenGamma ∨ secondStable e = some choice.color) →
-        secondStable choice.edge = some choice.color → chosenGamma ≠ choice.color → Sum.inr
-        choice.edge ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl
-        choice.vertex) →
-    ∀ (e : E), TreeIncidentEdge (series.data.tree q.succ.castSucc) e → Sum.inr e ∈
-        TwoColorComponent G sigma chosenGamma choice.color (Sum.inl choice.vertex) → e =
-        choice.edge := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q sigma hsigmaProper hsigmaStable chosenGamma
-      secondStable secondStableProper choice currentColoring currentStored hgamma hv hcomponent
-      hmissing u hcompEdge hchoiceSecond hneq hfcomponent e heT heC
-  rcases heT with ⟨w, hw, hwe⟩
-  have hgamma : sigma choice.edge = some chosenGamma := by
-    have hsc := hsigmaStable.1 choice.edge
-      ⟨choice.vertex, choice.vertexDefective.1, choice.edgeIncident⟩
-    have hctrl : ∃ c ∈ TreeMissingColors (series.data.coloring q.succ)
-        (series.data.tree q.succ.castSucc) ∪ TashkinovStoredColors series.data q.succ,
-        series.data.coloring q.succ choice.edge = some c := by
-      refine ⟨chosenGamma, ?_, ?_⟩
-      · by_cases hm : chosenGamma ∈ TreeMissingColors (series.data.coloring q.succ)
-            (series.data.tree q.succ.castSucc)
-        · exact Finset.mem_union.mpr (Or.inl hm)
-        · apply Finset.mem_union.mpr
-          right
-          unfold TashkinovStoredColors
-          split
-          · simp_all
-          simp only [Finset.mem_sdiff, Finset.mem_biUnion]
-          constructor
-          · refine ⟨q.succ, ?_, ?_⟩
-            · simp
-            · simp [currentStored]
-          · simpa using hm
-      · rw [currentColoring]
-        simp [TwoColorComponentSwap, hfcomponent, hchoiceSecond]
-    exact (hsc hctrl).trans (by
-      rw [currentColoring]
-      simp [TwoColorComponentSwap, hfcomponent, hchoiceSecond])
-  have hecol : sigma e = some chosenGamma ∨ sigma e = some choice.color := by
-    have hs : Sum.inr e ∈
-        (TwoColorIncidenceGraph G sigma chosenGamma choice.color).support := by
-      apply SimpleGraph.mem_support_of_reachable
-        (G := TwoColorIncidenceGraph G sigma chosenGamma choice.color)
-        (u := Sum.inr e) (v := Sum.inl choice.vertex) (by simp)
-      exact SimpleGraph.ConnectedComponent.eq.mp heC
-    obtain ⟨r, hr⟩ :=
-      (TwoColorIncidenceGraph G sigma chosenGamma choice.color).mem_support.mp hs
-    cases r with
-    | inl x => exact hr.2
-    | inr x => simp [TwoColorIncidenceGraph] at hr
-  have hwC : Sum.inl w ∈ TwoColorComponent G sigma chosenGamma choice.color
-      (Sum.inl choice.vertex) := by
-    have hadj : (TwoColorIncidenceGraph G sigma chosenGamma choice.color).Adj
-        (Sum.inl w) (Sum.inr e) := by
-      simp [TwoColorIncidenceGraph, hwe, hecol]
-    change (TwoColorIncidenceGraph G sigma chosenGamma choice.color).connectedComponentMk
-        (Sum.inl w) = _
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj).trans heC
-  have hwv := (hcomponent w hw).mp hwC
-  subst w
-  rcases hecol with hec | hec
-  · have hp : chosenGamma ∈ PresentColors G sigma choice.vertex := by
-      simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨e, hwe, hec⟩
-    by_contra hne
-    exact (hsigmaProper hne ⟨choice.vertex, hwe, choice.edgeIncident⟩ hec hgamma).elim
-  · by_contra hne
-    have hcolor : sigma e = some choice.color := hec
-    have hmissColor : choice.color ∈ MissingColors G sigma choice.vertex := by
-      rw [hsigmaStable.2 choice.vertex hv]
-      rw [MissingColors]
-      simp only [Finset.mem_sdiff]
-      refine ⟨?_, ?_⟩
-      · exact Finset.mem_univ _
-      · intro hp
-        simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and] at hp
-        rcases hp with ⟨a, hae, hac⟩
-        by_cases ha : Sum.inr a ∈
-            TwoColorComponent G secondStable chosenGamma choice.color
-              (Sum.inl choice.vertex)
-        · rcases hcompEdge a ha with hag | hacs
-          · have hn : chosenGamma ∉ PresentColors G secondStable choice.vertex := by
-              simpa [MissingColors] using hmissing
-            exact hn (by
-              simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-              exact ⟨a, hae, hag⟩)
-          · rw [currentColoring] at hac
-            simp [TwoColorComponentSwap, ha, hacs, hneq, hneq.symm] at hac
-        · rw [currentColoring] at hac
-          have hac' : secondStable a = some choice.color := by
-            simpa [TwoColorComponentSwap, ha] using hac
-          have hne : a ≠ choice.edge := by
-            intro heq
-            apply ha
-            exact heq ▸ hfcomponent
-          exact (secondStableProper hne ⟨choice.vertex, hae, choice.edgeIncident⟩
-            hac' hchoiceSecond).elim
-    have hnot : choice.color ∉ PresentColors G sigma choice.vertex := by
-      change choice.color ∈ Finset.univ \ PresentColors G sigma choice.vertex at hmissColor
-      exact (Finset.mem_sdiff.mp hmissColor).2
-    exact (hnot (by
-      simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ⟨e, hwe, hcolor⟩)).elim
 
 private theorem helper_stableSecond_588.{u_1, u_2} :
     open scoped Classical in
@@ -1256,11 +1133,9 @@ theorem ParallelExtensionUndoStable {V E : Type*}
     ∀ e, TreeIncidentEdge (series.data.tree q.succ.castSucc) e → Sum.inr e ∈ TwoColorComponent G
         secondStable chosenGamma choice.color (Sum.inl choice.vertex) → e = choice.edge := by
       apply helper_htreeEdge_1211 <;> assumption
-    have hsigmaEdge := @helper_hsigmaEdge_358 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@rounds) (@e0) (@input) (@series) (@q) (@sigma) (@hsigmaProper) (@hsigmaStable)
-        (@chosenGamma) (@secondStable) (@secondStableProper) (@choice) (@currentColoring)
-        (@currentStored) (@hgamma) (@hv) (@hcomponent) (@hmissing) (@u) (@hcompEdge)
-        (@hchoiceSecond) (@hneq) (@hfcomponent)
+    have hsigmaEdge := series.stableSwapComponentIncidentEdgeUnique q sigma hsigmaProper
+      hsigmaStable chosenGamma secondStable choice currentColoring currentStored hcomponent
+      hmissing hchoiceSecond hneq
     let undone := TwoColorComponentSwap G sigma chosenGamma choice.color
       (Sum.inl choice.vertex)
     have undoneProper : IsProperEdgeColoring G undone := by

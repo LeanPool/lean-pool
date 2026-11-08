@@ -22,6 +22,7 @@ public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
 public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation2
 public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
 public import LeanPool.GoldbergSeymour.TreeSequenceFirstMissingPositionInvariant
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 /-!
 # Change Lemma Mixed Closed Final
@@ -1435,18 +1436,6 @@ theorem ChangeLemmaMixedClosedFinal {V E : Type*}
       TreeSequenceInitialSegment S U := by
     exact @SharedFacts.MixedChangeTransport.comparableInitialSegments (@V) (@E) (@G) (@e0)
         (@S) (@U) (@W) (@hSW) (@hUW) (@hlen)
-  have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
-      TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
-        (H.stage ⟨a + d, by omega⟩) := by
-    exact @SharedFacts.MixedChangeTransport.stageInitialSegment (@V) (@E) inferInstance
-        inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@segRefl)
-        (@segTrans) (@a) (@d) (@hbound)
-  have stageToT (j : Fin (H.dividerCount + 2)) :
-      TreeSequenceInitialSegment (H.stage j) T := by
-    exact @SharedFacts.MixedChangeTransport.stageInitialSegmentOfFinalTree (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@stageSegment) (@j)
   have lastZero (hz : H.dividerCount = 0) : A = base.core := by
     clear * - hz A q
     simp [A, q, HierarchyStarredStage, hz, Fin.last]
@@ -1456,29 +1445,20 @@ theorem ChangeLemmaMixedClosedFinal {V E : Type*}
         inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hz)
   have coreToA : TreeSequenceInitialSegment base.core A := by
-    exact @SharedFacts.MixedChangeTransport.coreInitialSegmentOfStarredStage (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@segRefl) (@segTrans)
-        (@stageSegment) (@lastZero) (@lastPositive)
+    exact H.coreInitialSegmentOfStarredStage (Fin.last H.dividerCount)
   have TnToCore : TreeSequenceInitialSegment Tn base.core := by
     exact @SharedFacts.MixedChangeTransport.terminalStageInitialSegmentOfCore (@V) (@E)
         inferInstance inferInstance inferInstance inferInstance
         (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@segRefl)
   have TnToA := segTrans TnToCore coreToA
   have AToT : TreeSequenceInitialSegment A T := by
-    exact @SharedFacts.MixedChangeTransport.starredStageInitialSegmentOfFinalTree (@V) (@E)
-        inferInstance inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@segTrans) (@stageToT) (@lastZero)
-        (@lastPositive)
+    exact H.lastStarredInitialSegment
   have ordinaryToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (H.stage j.castSucc) A := by
-    exact @SharedFacts.MixedChangeTransport.ordinaryStageInitialSegmentOfStarredStage (@V)
-        (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@stageSegment)
-        (@lastZero) (@lastPositive) (@TnToA) (@j)
+    exact H.stageInitialSegmentOfStarredStage j (Fin.last H.dividerCount) (Fin.le_last _)
   have starredToA (j : Fin (H.dividerCount + 1)) :
       TreeSequenceInitialSegment (HierarchyStarredStage H j) A := by
-    exact Fin.cases coreToA (fun i => ordinaryToA i.succ) j
+    exact H.starredStageInitialSegmentOfLE j (Fin.last H.dividerCount) (Fin.le_last _)
   have YToT : TreeSequenceInitialSegment Y T :=
     ⟨Nat.min_le_right _ _, (by intro i; rfl), (by intro i; rfl)⟩
   have hmissingY : alpha ∈ TreeMissingColors phi Y ∧ beta ∈ TreeMissingColors phi Y :=
