@@ -67,7 +67,7 @@ theorem printedConjecture : PrintedConjecture :=
   fun N d p hp hrange ε hε hvar =>
     zo_pow_of_mainTheorem AaronsonAmbainis.mainTheorem N d p hp hrange ε hε hvar
 
-/-- Theorem 1.1 of the paper of this repository on `{-1,1}^n` (`true ↦ 1`, `false ↦ -1`), without
+/-- Theorem 1.1 of the upstream paper on `{-1,1}^n` (`true ↦ 1`, `false ↦ -1`), without
 square roots: `3 ε^5 ≤ 50000 π^8 d^12 Inf_i(p)²`, no hypothesis. -/
 theorem explicitBoundPM_sq (n d : ℕ) (p : MvPolynomial (Fin n) ℝ) (hp : p.totalDegree ≤ d)
     (hbd : ∀ X, |evPMt p X| ≤ 1) (ε : ℝ) (hε : 0 < ε)
@@ -76,7 +76,7 @@ theorem explicitBoundPM_sq (n d : ℕ) (p : MvPolynomial (Fin n) ℝ) (hp : p.to
       * Ex (fun X => ((evPMt p X - evPMt p (flipBit X i)) / 2) ^ 2) ^ 2 :=
   pmt_sq_of_mainTheorem AaronsonAmbainis.mainTheorem n d p hp hbd ε hε hvar
 
-/-- Theorem 1.1 of the paper of this repository on `{-1,1}^n` (`true ↦ 1`, `false ↦ -1`):
+/-- Theorem 1.1 of the upstream paper on `{-1,1}^n` (`true ↦ 1`, `false ↦ -1`):
 `Inf_i(p) ≥ (√15 / (500 π^4)) ε^{5/2} / d^6`, no hypothesis. -/
 theorem explicitBoundPM : ExplicitBoundPM := by
   intro n d p hp hbd ε hε hvar

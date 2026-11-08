@@ -20,7 +20,7 @@ the meaning of the statements below depends on Mathlib alone: `MvPolynomial.eval
 `ℝ`.
 
 It contains statements only (`def … : Prop`); nothing is proved here. The theorems are in
-`AaronsonAmbainis/Main.lean`. To know what has been proved it is enough to read this file.
+`LeanPool/AaronsonAmbainis/Main.lean`. To know what has been proved it is enough to read this file.
 
 The first definition, `PrintedConjecture`, is the conjecture as printed, in the normalisation of
 Aaronson and Ambainis, with the number `7` for `O(1)`. `PrintedConjecture` is the statement of
@@ -28,8 +28,8 @@ the theorem `aaronson_ambainis` of `Main.lean`, so to check that the statement p
 conjecture, a reader needs to read only `PrintedConjecture`. Like `PrintedConjecture`,
 `ExplicitBound` and `ExplicitBoundImproved` are stated on the cube `{0,1}^N` in the normalisation
 of Aaronson and Ambainis; `FbsDegreeBound` is stated on the cube `{0,1}^n`. The last definition,
-`ExplicitBoundPM`, is the main theorem (Theorem 1.1) of the paper of this repository,
-`paper/aaronson_ambainis_paper.pdf`, on the cube `{-1,1}^n`, in the form with a lower bound `ε`
+`ExplicitBoundPM`, is the main theorem (Theorem 1.1) of the upstream paper,
+on the cube `{-1,1}^n`, in the form with a lower bound `ε`
 for the variance; a reader who checks `PrintedConjecture` does not need `ExplicitBoundPM`.
 
 ## Encoding
@@ -134,7 +134,7 @@ def ExplicitBoundImproved : Prop :=
                 (fun k => if Function.update X i (!X i) k then (1 : ℝ) else 0) p) ^ 2) / 2 ^ N
           ≥ 32 * Real.sqrt 15 / (125 * Real.pi ^ 4) * ε ^ ((5 : ℝ) / 2) / (d : ℝ) ^ 6
 
-/-- The main theorem (Theorem 1.1) of the paper of this repository, on the cube `{-1,1}^n`, in the
+/-- The main theorem (Theorem 1.1) of the upstream paper, on the cube `{-1,1}^n`, in the
 form with a lower bound `ε` for the variance (Theorem 1.1 with `Var(p) > 0` is the case
 `ε = Var(p)`): range `[-1,1]`, influence `Inf_i(p) = E[((p(x) − p(x^i))/2)²]`, explicit lower
 bound `(√15 / (500 π^4)) ε^{5/2} / d^6`. The bit `true` is the number `1`, and the bit `false` is
