@@ -1,0 +1,67 @@
+slug: arithmetic-triangle-removal-in-vector-spaces
+title: A tight bound for Green's arithmetic triangle removal lemma in vector spaces
+summary: Proves the arithmetic triangle removal lemma in F_p^n with the polynomial
+  bound of Fox and Lovász. If X × Y × Z contains fewer than (ε/3)^(C_p) N^2
+  solutions of x + y + z = 0, where N = p^n, C_p = 1 + 1/c_p and c_p is the
+  Kleinberg–Sawin–Speyer exponent, then removing at most εN elements leaves none.
+  Also proves the Kleinberg–Sawin–Speyer slice-rank bound p^((1 - c_p) n) on
+  multicolored sum-free families, the lower bound (m/N)^(C_p) N^2 on the number of
+  triangles spanned by m vertex-disjoint triangles, and that the exponent C_p is
+  optimal, with an explicit threshold ε₀. The tightness construction formalizes
+  Pebody's coupling theorem for decreasing mass functions and the
+  Kleinberg–Sawin–Speyer construction of large multicolored sum-free families,
+  using Behrend's three-term-progression-free sets.
+branch: additive combinatorics
+entry_module: LeanPool.ArithmeticTriangleRemovalInVectorSpaces
+authors:
+- Gabriel Dahia
+source:
+  title: A tight bound for Green's arithmetic triangle removal lemma in vector spaces
+  authors:
+  - Jacob Fox
+  - László Miklós Lovász
+  arxiv: '1606.01230'
+  url: https://github.com/gdahia/ArithmeticTriangleRemovalInVectorSpaces/tree/3bddc92e8027badc994ba8993f7c625e60c7b13a
+  github_repo: gdahia/ArithmeticTriangleRemovalInVectorSpaces
+  commit: 3bddc92e8027badc994ba8993f7c625e60c7b13a
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- ArithmeticTriangleRemovalInVectorSpaces.exists_subset_card_sdiff_add_le_forall_add_ne_zero
+- ArithmeticTriangleRemovalInVectorSpaces.card_le_rpow_one_sub_c_mul
+- ArithmeticTriangleRemovalInVectorSpaces.div_pow_rpow_C_mul_sq_le_card_triangles
+- ArithmeticTriangleRemovalInVectorSpaces.le_rpow_C_sub_of_forall_exists_subset
+main_results:
+- declaration: ArithmeticTriangleRemovalInVectorSpaces.exists_subset_card_sdiff_add_le_forall_add_ne_zero
+  informal: For a prime p, ε ≥ 0 and X, Y, Z ⊆ F_p^n, if fewer than
+    (ε/3)^(C_p) p^(2n) triples (x, y, z) ∈ X × Y × Z satisfy x + y + z = 0, then
+    there are X' ⊆ X, Y' ⊆ Y, Z' ⊆ Z with |X \ X'| + |Y \ Y'| + |Z \ Z'| ≤ ε p^n
+    such that no triple in X' × Y' × Z' sums to zero.
+  source_ref: Theorem 1.
+- declaration: ArithmeticTriangleRemovalInVectorSpaces.card_le_rpow_one_sub_c_mul
+  informal: For a prime p, a finite family of triples (x_i, y_i, z_i) in F_p^n with
+    x_i + y_j + z_k = 0 exactly when i = j = k has at most p^((1 - c_p) n) members,
+    where p^(1 - c_p) is the infimum over 0 < x < 1 of
+    x^(-(p-1)/3) (1 + x + ... + x^(p-1)).
+  source_ref: Theorem 2 (Kleinberg, Sawin and Speyer).
+- declaration: ArithmeticTriangleRemovalInVectorSpaces.div_pow_rpow_C_mul_sq_le_card_triangles
+  informal: For a prime p and X, Y, Z ⊆ F_p^n, if X × Y × Z contains m
+    vertex-disjoint triples summing to zero, then it contains at least
+    (m/N)^(C_p) N^2 triples summing to zero, where N = p^n.
+  source_ref: Theorem 3.
+- declaration: ArithmeticTriangleRemovalInVectorSpaces.le_rpow_C_sub_of_forall_exists_subset
+  informal: For a prime p, η > 0 and 0 < ε < ε₀(p, η), every δ such that, in every
+    dimension n, fewer than δ p^(2n) zero-sum triples can be destroyed by removing
+    ε p^n elements, satisfies δ ≤ ε^(C_p - η); ε₀ is an explicit function of p and η.
+  source_ref: Theorem 1, second part, via the construction of Section 3.
+tags:
+- additive-combinatorics
+- removal-lemma
+- slice-rank
+- finite-fields
+- sum-free-sets
+msc:
+- 11B30
+- 05D40
+- 11T99
