@@ -56,7 +56,8 @@ main_results:
     κ - 1 + κ(2κ - 1)/|X|.
 - declaration: SumOfSetsInSeveralDimensions.card_add_sum_min_le_of_freimanDim_union
   informal: Ruzsa's lower bound holds for finite A, B in a commutative monoid with
-    d replaced by r - 1, where r ≥ 1 is the Freiman dimension of A ∪ B.
+    B nonempty and |B| ≤ |A|, with d replaced by r - 1, where r ≥ 1 is the Freiman
+    dimension of A ∪ B.
 tags:
 - additive-combinatorics
 - sumsets
