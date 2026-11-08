@@ -33,6 +33,19 @@ theorem TashkinovAugmentationSequence.transport {V E : Type*} [Fintype E]
       have segment := TashkinovAugmentationSequenceInitialSegment first B target remainder
       exact Relation.ReflTransGen.head (transportStep step segment) transported
 
+/-- A route that strictly increases length has a first augmentation and a remaining route. -/
+theorem TashkinovAugmentationSequence.first_step {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
+    {coloring : PartialEdgeColoring E k} {source target : TreeSequence G e0}
+    (route : TashkinovAugmentationSequence coloring source target)
+    (lengthLt : source.length < target.length) :
+    ∃ next, TashkinovAugmentation coloring source next ∧
+      TashkinovAugmentationSequence coloring next target := by
+  unfold TashkinovAugmentationSequence at route ⊢
+  induction route using Relation.ReflTransGen.head_induction_on with
+  | refl => exact (Nat.lt_irrefl _ lengthLt).elim
+  | @head A B step remainder _ => exact ⟨B, step, remainder⟩
+
 /-- Fixed edge colors and preserved missing colors on strict prefixes transport a route. -/
 theorem TashkinovAugmentationSequence.transport_of_fixed {V E : Type*} [Fintype E]
     {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}

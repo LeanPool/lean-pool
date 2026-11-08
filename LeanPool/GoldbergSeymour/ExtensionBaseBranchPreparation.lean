@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
+
 
 public import LeanPool.GoldbergSeymour.IncidencePathFacts
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBranchPreparation
@@ -942,11 +944,10 @@ theorem helper_hgammaFirstZero_3790.{u_1, u_2} :
       hvFinal hfirstUpper hfirstPositive jSlot trace p0 indices0 gamma0 delta0 rho1
       terminalPosition hterminalPositionPositive hterminalPositionBound hgammaLast gammaFirst H x
       componentPath u exitPath zPosition hp0
-  unfold gammaFirst
-  rw [← hgammaLast]
-  congr 1
-  apply Fin.ext
-  omega
+  have hindex : (0 : Fin (p0 + 1)) = Fin.last p0 := by
+    apply Fin.ext
+    exact hp0.symm
+  exact (congrArg gamma0 hindex).trans hgammaLast
 
 theorem helper_hvBeforePrime_3939.{u_1, u_2} :
     open scoped Classical in
@@ -1076,14 +1077,7 @@ theorem helper_transportSeedRoute_4083.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive v q hqTerminal hvFinal hfirstUpper
       hfirstPositive jSlot terminalPosition hterminalPositionPositive hterminalPositionBound seed
       rho3 transportSeedStep S hroute
-  unfold TashkinovAugmentationSequence at hroute ⊢
-  induction hroute using Relation.ReflTransGen.head_induction_on with
-  | refl => exact Relation.ReflTransGen.refl
-  | @head A B hAB hBseed ih =>
-      have hBsegment : TreeSequenceInitialSegment B seed :=
-        TashkinovAugmentationSequenceInitialSegment _ B seed hBseed
-      exact Relation.ReflTransGen.head
-        (transportSeedStep hAB hBsegment) ih
+  exact TashkinovAugmentationSequence.transport transportSeedStep hroute
 
 theorem helper_hzChoiceForContradiction_4107.{u_1, u_2} :
     open scoped Classical in
@@ -2406,11 +2400,7 @@ theorem helper_transportSeedRoute2_6212.{u_1, u_2} :
       hfirstUpper hfirstPositive jSlot trace p0 indices0 rho1 terminalPosition
       hterminalPositionPositive hterminalPositionBound seed u b traceB rho2 transportSeedStep2 S
       hroute
-  exact @helper_transportSeedRoute2_3173 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v)
-      (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace) (@p0)
-      (@indices0) (@terminalPosition) (@hterminalPositionPositive)
-      (@hterminalPositionBound) (@u) (@b) (@traceB) (@transportSeedStep2) (@S) (@hroute)
+  exact TashkinovAugmentationSequence.transport transportSeedStep2 hroute
 
 theorem helper_branch_6243.{u_1, u_2} :
     open scoped Classical in
@@ -3535,12 +3525,10 @@ theorem helper_hgammaFirstZero_6905.{u_1, u_2} :
       hvFinal hfirstUpper hfirstPositive jSlot trace p0 indices0 gamma0 delta0 rho1
       terminalPosition hterminalPositionPositive hterminalPositionBound hgammaLast gammaFirst H x
       componentPath u exitPath zPosition hp0
-  exact @helper_hgammaFirstZero_3790 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@gamma)
-      (@delta) (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace)
-      (@p0) (@indices0) (@gamma0) (@delta0) (@terminalPosition)
-      (@hterminalPositionPositive) (@hterminalPositionBound) (@hgammaLast) (@x)
-      (@componentPath) (@u) (@exitPath) (@zPosition) (@hp0)
+  have hindex : (0 : Fin (p0 + 1)) = Fin.last p0 := by
+    apply Fin.ext
+    exact hp0.symm
+  exact (congrArg gamma0 hindex).trans hgammaLast
 
 theorem helper_hclaim45Package_6912.{u_1, u_2} :
     helperHclaim45Package6912Conditions.{u_1, u_2} := by

@@ -574,10 +574,7 @@ private theorem helper_hrouteUM_530.{u_1, u_2} :
       (hlt : A.length < B.length) :
       ∃ C, TashkinovAugmentation phiJ A C ∧
         TashkinovAugmentationSequence phiJ C B := by
-    unfold TashkinovAugmentationSequence at hAB ⊢
-    induction hAB using Relation.ReflTransGen.head_induction_on with
-    | refl => omega
-    | @head A C hAC hCB ih => exact ⟨C, hAC, hCB⟩
+    exact TashkinovAugmentationSequence.first_step hAB hlt
   have replay := @helper_replay_227 V E inferInstance inferInstance G k e0 Tj seed TjPrime phiJ rho1
       rho3 terminalSupport u z hzTj zPosition uPosition hzPosition hb2Edges hd2Edges
       huPositionPositive huPositionBound hzPositionPositive hzPositionBound hZTj hseedU
@@ -1333,13 +1330,7 @@ theorem ExtensionBaseCaseTwoContradiction {V E : Type*}
   have transportSeedRoute (S : TreeSequence G e0)
       (hroute : TashkinovAugmentationSequence phiJ S seed) :
       TashkinovAugmentationSequence rho3 S seed := by
-    unfold TashkinovAugmentationSequence at hroute ⊢
-    induction hroute using Relation.ReflTransGen.head_induction_on with
-    | refl => exact Relation.ReflTransGen.refl
-    | @head A B hAB hBseed ih =>
-        have hBsegment : TreeSequenceInitialSegment B seed :=
-          TashkinovAugmentationSequenceInitialSegment phiJ B seed hBseed
-        exact Relation.ReflTransGen.head (transportStep hAB hBsegment) ih
+    exact TashkinovAugmentationSequence.transport transportStep hroute
   have hseedBuildRho :
       (ett.series.data.kind jSlot.castSucc =
           some TashkinovExtensionKind.PE ∧

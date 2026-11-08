@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
+
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ParallelSupportClosureProperties
@@ -1328,13 +1330,7 @@ private theorem helper_continuation_1407.{u_1, u_2} :
       (hroute : TashkinovAugmentationSequence
         (ett.series.data.coloring j.castSucc) S P) :
       TashkinovAugmentationSequence sigma S P := by
-    unfold TashkinovAugmentationSequence at hroute ⊢
-    induction hroute using Relation.ReflTransGen.head_induction_on with
-    | refl => exact Relation.ReflTransGen.refl
-    | @head A B hAB hBP ih =>
-        have hBsegment : TreeSequenceInitialSegment B P :=
-          sequenceSegment hBP
-        exact Relation.ReflTransGen.head (transportStep hAB hBsegment) ih
+    exact TashkinovAugmentationSequence.transport transportStep hroute
   have hPClosure : TreeSequenceInitialSegment P base.closure :=
     sequenceSegment hparallel.2.1.1
   have hclosed : ColoredVertexSetClosed G sigma
@@ -1433,11 +1429,7 @@ theorem ParallelSupportClosureProperties {V E : Type*}
       {rho : PartialEdgeColoring E k}
       (hAB : TashkinovAugmentationSequence rho A B) :
       TreeSequenceInitialSegment A B := by
-    unfold TashkinovAugmentationSequence at hAB
-    induction hAB using Relation.ReflTransGen.head_induction_on with
-    | refl => exact segmentRefl _
-    | @head A B hstep htail ih =>
-        exact segmentTrans hstep.2.1 ih
+    exact TashkinovAugmentationSequenceInitialSegment rho A B hAB
   have missingTransfer {A B : TreeSequence G e0}
       {rho : PartialEdgeColoring E k}
       (hAB : TreeSequenceInitialSegment A B) :

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
+
 
 
 
@@ -246,11 +248,7 @@ theorem helper_transportSeedRoute_7209.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive v q hqTerminal hvFinal hfirstUpper
       hfirstPositive jSlot terminalPosition hterminalPositionPositive hterminalPositionBound seed
       rho3 transportSeedStep S hroute
-  exact @helper_transportSeedRoute_4083 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v)
-      (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@terminalPosition)
-      (@hterminalPositionPositive) (@hterminalPositionBound) (@rho3) (@transportSeedStep)
-      (@S) (@hroute)
+  exact TashkinovAugmentationSequence.transport transportSeedStep hroute
 
 theorem helper_hzChoiceForContradiction_7230.{u_1, u_2} :
     open scoped Classical in
@@ -761,11 +759,7 @@ theorem helper_caseContinuation_10294.{u_1, u_2} :
       (hroute : TashkinovAugmentationSequence
         (ett.series.data.coloring jSlot.castSucc) S seed) :
       TashkinovAugmentationSequence rho2 S seed := by
-    exact @helper_transportSeedRoute2_6212 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@sigma)
-        (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace) (@p0) (@indices0)
-        (@terminalPosition) (@hterminalPositionPositive) (@hterminalPositionBound) (@u) (@b)
-        (@traceB) (@transportSeedStep2) (@S) (@hroute)
+    exact TashkinovAugmentationSequence.transport transportSeedStep2 hroute
   have huM : u ∈ TreeSequenceVertexSet M := by
     rw [hunion.vertexSet]
     exact Finset.mem_union_left _ huU
@@ -908,16 +902,7 @@ theorem helper_caseContinuation_11664.{u_1, u_2} :
           (hroute : TashkinovAugmentationSequence
             (ett.series.data.coloring jSlot.castSucc) S seed) :
           TashkinovAugmentationSequence rho3 S seed := by
-        unfold TashkinovAugmentationSequence at hroute ⊢
-        induction hroute using
-            Relation.ReflTransGen.head_induction_on with
-        | refl => exact Relation.ReflTransGen.refl
-        | @head A B hAB hBseed ih =>
-            have hBsegment : TreeSequenceInitialSegment B seed :=
-              TashkinovAugmentationSequenceInitialSegment _ B seed
-                hBseed
-            exact Relation.ReflTransGen.head
-              (transportSeedStep hAB hBsegment) ih
+        exact TashkinovAugmentationSequence.transport transportSeedStep hroute
       have hrouteBaseC : TashkinovAugmentationSequence rho3
           (ett.series.data.tree 0) C :=
         Relation.ReflTransGen.trans
@@ -1098,11 +1083,7 @@ theorem helper_branch_13441.{u_1, u_2} :
       (hroute : TashkinovAugmentationSequence
         (ett.series.data.coloring jSlot.castSucc) S seed) :
       TashkinovAugmentationSequence rho3 S seed := by
-    exact @helper_transportSeedRoute_7209 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal)
-        (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@terminalPosition)
-        (@hterminalPositionPositive) (@hterminalPositionBound) (@rho3) (@transportSeedStep) (@S)
-        (@hroute)
+    exact TashkinovAugmentationSequence.transport transportSeedStep hroute
   by_cases hjPositive : 0 < jSlot.val
   · exact @helper_branch_2914 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
       (@input) (@T) (@generating) (@ett) (@hMP) (@hpositive) (@v) (@gamma) (@delta) (@sigma)
@@ -1974,10 +1955,7 @@ private theorem helper_hrouteUM_6564.{u_1, u_2} :
           (ett.series.data.coloring jSlot.castSucc) A C ∧
         TashkinovAugmentationSequence
           (ett.series.data.coloring jSlot.castSucc) C B := by
-    unfold TashkinovAugmentationSequence at hAB ⊢
-    induction hAB using Relation.ReflTransGen.head_induction_on with
-    | refl => omega
-    | @head A C hAC hCB ih => exact ⟨C, hAC, hCB⟩
+    exact TashkinovAugmentationSequence.first_step hAB hlt
   have replay : ∀ n (hnU : U.length ≤ n) (hnM : n ≤ M.length),
       TashkinovAugmentationSequence rho3 U
         (TreeSequencePrefix M n
@@ -2477,12 +2455,10 @@ theorem helper_continuation_11325.{u_1, u_2} :
       hgamma0 hdelta0 hstored0 hchain0 hinjective0 rfl
       hTjInitialEarlier rfl hpreterminalGammaPresent
   have hgammaFirstZero (hp0 : p0 = 0) : gammaFirst = gamma := by
-    exact @helper_hgammaFirstZero_6905 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@gamma) (@delta)
-        (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace) (@p0)
-        (@indices0) (@gamma0) (@delta0) (@terminalPosition) (@hterminalPositionPositive)
-        (@hterminalPositionBound) (@hgammaLast) (@x) (@componentPath) (@u) (@exitPath)
-        (@zPosition) (@hp0)
+    have hindex : (0 : Fin (p0 + 1)) = Fin.last p0 := by
+      apply Fin.ext
+      exact hp0.symm
+    exact (congrArg gamma0 hindex).trans hgammaLast
   exact @helper_continuation_8265 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hMP) (@hpositive)
       (@hlower) (@v) (@gamma) (@delta) (@sigma) (@hqTerminal) (@hvStage) (@hvFinal)
@@ -2629,10 +2605,8 @@ theorem helper_continuation_10517.{u_1, u_2} :
       hcomponentPath hcomponentSupport hcomponentNonempty hcomponentPositive hendpointC
       hendpointNeighbor
   have hxNe : x ≠ v := by
-    exact @helper_hxNe_3545 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@v) (@gamma) (@delta) (@sigma) (@hvFinal)
-        (@trace) (@x) (@componentPath) (@hcomponentPath) (@hcomponentSupport)
-        (@hcomponentNonempty) (@hcomponentPositive) (@hendpointC) (@hendpointNeighbor)
+    intro hxv
+    exact hcomponentNonempty (hcomponentPath.nil_iff_eq.mpr (congrArg Sum.inl hxv.symm))
   have swapBothPresent (phi : PartialEdgeColoring E k)
       (alpha beta : Fin k) (hne : alpha ≠ beta) (root : Sum V E)
       (y : V) (halpha : alpha ∈ PresentColors G phi y)
@@ -2938,10 +2912,10 @@ theorem helper_caseContinuation_10866.{u_1, u_2} :
         (@k) (@e0) (@input) (@T) (@generating) (@ett) (@v) (@gamma) (@delta) (@sigma)
         (@hvFinal) (@trace) (@fN) (@hfNAdj)
   have hcomponentNonempty : ¬ componentPath.Nil := by
-    exact @helper_hcomponentNonempty_3523 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@v) (@gamma) (@delta) (@sigma)
-        (@hvFinal) (@trace) (@fN) (@endpoint) (@componentPath) (@hcomponentPath)
-        (@hcomponentSupport) (@hfNComponent)
+    intro hnil
+    simp only [← hcomponentSupport, Set.mem_ofPred_eq,
+      SimpleGraph.Walk.nil_iff_support_eq.mp hnil, List.mem_singleton,
+      Sum.inr_ne_inl] at hfNComponent
   have hcomponentPositive : 0 < componentPath.length :=
     SimpleGraph.Walk.not_nil_iff_lt_length.mp hcomponentNonempty
   have hendpointC : endpoint ∈ C := by
@@ -3719,10 +3693,7 @@ private theorem helper_caseContinuation_8566.{u_1, u_2} :
             (ett.series.data.coloring jSlot.castSucc) A C ∧
           TashkinovAugmentationSequence
             (ett.series.data.coloring jSlot.castSucc) C B := by
-      unfold TashkinovAugmentationSequence at hAB ⊢
-      induction hAB using Relation.ReflTransGen.head_induction_on with
-      | refl => omega
-      | @head A C hAC hCB ih => exact ⟨C, hAC, hCB⟩
+      exact TashkinovAugmentationSequence.first_step hAB hlt
     have replay : ∀ n (hnU : U.length ≤ n) (hnM : n ≤ M.length),
         TashkinovAugmentationSequence rho2 U
           (TreeSequencePrefix M n
@@ -4164,10 +4135,7 @@ theorem helper_continuation_14264.{u_1, u_2} :
       (hroute : TashkinovAugmentationSequence
         (ett.series.data.coloring jSlot.castSucc) S seed) :
       TashkinovAugmentationSequence rho1 S seed := by
-    exact @helper_transportSeedRoute_2514 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@sigma)
-        (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace) (@terminalPosition)
-        (@hterminalPositionPositive) (@hterminalPositionBound) (@transportStep) (@S) (@hroute)
+    exact TashkinovAugmentationSequence.transport transportStep hroute
   have commonPrefix {A B C : TreeSequence G e0}
       (hAC : TreeSequenceInitialSegment A C)
       (hBC : TreeSequenceInitialSegment B C)

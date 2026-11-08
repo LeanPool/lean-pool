@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
+
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovLadderRestriction
 
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
@@ -3483,14 +3485,7 @@ theorem helper_transportSeedRoute_2514.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive v sigma q hqTerminal hvFinal
       hfirstUpper hfirstPositive jSlot trace rho1 terminalPosition hterminalPositionPositive
       hterminalPositionBound seed transportStep S hroute
-  unfold TashkinovAugmentationSequence at hroute ⊢
-  induction hroute using Relation.ReflTransGen.head_induction_on with
-  | refl => exact Relation.ReflTransGen.refl
-  | @head A B hAB hBseed ih =>
-    have hBsegment : TreeSequenceInitialSegment B seed :=
-      TashkinovAugmentationSequenceInitialSegment
-        (ett.series.data.coloring jSlot.castSucc) B seed hBseed
-    exact Relation.ReflTransGen.head (transportStep hAB hBsegment) ih
+  exact TashkinovAugmentationSequence.transport transportStep hroute
 
 theorem helper_hqLast_2554.{u_1, u_2} :
     open scoped Classical in
@@ -3827,14 +3822,7 @@ theorem helper_transportSeedRoute2_3173.{u_1, u_2} :
       hfirstUpper hfirstPositive jSlot trace p0 indices0 rho1 terminalPosition
       hterminalPositionPositive hterminalPositionBound seed u b traceB rho2 transportSeedStep2 S
       hroute
-  unfold TashkinovAugmentationSequence at hroute ⊢
-  induction hroute using Relation.ReflTransGen.head_induction_on with
-  | refl => exact Relation.ReflTransGen.refl
-  | @head A B hAB hBseed ih =>
-      have hBsegment : TreeSequenceInitialSegment B seed :=
-        TashkinovAugmentationSequenceInitialSegment _ B seed hBseed
-      exact Relation.ReflTransGen.head
-        (transportSeedStep2 hAB hBsegment) ih
+  exact TashkinovAugmentationSequence.transport transportSeedStep2 hroute
 
 theorem helper_hsupportSet_3222.{u_1, u_2} :
     open scoped Classical in
