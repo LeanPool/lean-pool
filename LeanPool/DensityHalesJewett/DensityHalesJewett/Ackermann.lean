@@ -5,9 +5,9 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.Insensitive
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Insensitive
 public import Mathlib.Computability.Ackermann
-import LeanPool.DensityHalesJewett.Induction
+import LeanPool.DensityHalesJewett.DensityHalesJewett.Induction
 import LeanPool.ShelahHalesJewett.Ackermann
 
 /-!

@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Data.Finset.Max
 public import LeanPool.ShelahHalesJewett.HalesJewett
-import LeanPool.DensityHalesJewett.HalesJewett
+import LeanPool.DensityHalesJewett.DensityHalesJewett.HalesJewett
 import Mathlib.Combinatorics.Pigeonhole
 import Mathlib.Data.Finset.Sort
 

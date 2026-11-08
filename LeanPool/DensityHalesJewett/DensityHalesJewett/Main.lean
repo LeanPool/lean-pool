@@ -5,10 +5,10 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.Varnavides
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Varnavides
 public import Mathlib.Computability.Ackermann
 public import Mathlib.Order.Lattice.Nat
-import LeanPool.DensityHalesJewett.Ackermann
+import LeanPool.DensityHalesJewett.DensityHalesJewett.Ackermann
 import Mathlib.Algebra.Order.BigOperators.Expect
 import Mathlib.Analysis.Real.Sqrt
 

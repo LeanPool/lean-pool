@@ -5,7 +5,7 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.DensityIncrement.StructuredCorrelation
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement.StructuredCorrelation
 import Mathlib.Algebra.Order.BigOperators.Expect
 
 /-!

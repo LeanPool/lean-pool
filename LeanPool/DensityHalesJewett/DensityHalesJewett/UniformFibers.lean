@@ -5,8 +5,8 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.Subspace
-public import LeanPool.DensityHalesJewett.Word
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Subspace
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Word
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import Mathlib.Combinatorics.Pigeonhole
 public import Mathlib.Logic.Equiv.Fin.Basic

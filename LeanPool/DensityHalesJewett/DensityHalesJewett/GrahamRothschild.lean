@@ -5,8 +5,8 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.Canonization
-public import LeanPool.DensityHalesJewett.FiniteUnions
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Canonization
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.FiniteUnions
 
 /-!
 # The Graham--Rothschild theorem for combinatorial lines

@@ -5,7 +5,7 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.Szemeredi
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Szemeredi
 import Mathlib.Algebra.Order.BigOperators.Expect
 
 /-!

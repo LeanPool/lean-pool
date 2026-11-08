@@ -5,7 +5,7 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.DensityIncrement
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Nat.Choose.Central
 import Mathlib.Tactic.LinearCombination

@@ -5,8 +5,8 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.DensityIncrement.CorrelatedFibers
-public import LeanPool.DensityHalesJewett.Insensitive
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement.CorrelatedFibers
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Insensitive
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.Ring.Pow
 import Mathlib.Data.NNRat.BigOperators

@@ -5,9 +5,9 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.DensityIncrement.Parameters
-public import LeanPool.DensityHalesJewett.GrahamRothschild
-public import LeanPool.DensityHalesJewett.UniformFibers
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.DensityIncrement.Parameters
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.GrahamRothschild
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.UniformFibers
 import Mathlib.Algebra.Order.BigOperators.Expect
 
 /-!

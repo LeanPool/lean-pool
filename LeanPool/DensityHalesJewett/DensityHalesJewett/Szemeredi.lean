@@ -6,7 +6,7 @@ Authors: Gabriel Dahia
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
-public import LeanPool.DensityHalesJewett.UniformFibers
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.UniformFibers
 import Mathlib.Algebra.Order.BigOperators.Expect
 import Mathlib.Algebra.Order.Interval.Finset.Basic
 import Mathlib.Combinatorics.Pigeonhole

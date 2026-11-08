@@ -5,7 +5,7 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.UniformFibers
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.UniformFibers
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Data.Set.Finite.Lattice
 import Mathlib.Algebra.Order.BigOperators.Expect

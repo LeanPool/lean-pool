@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Combinatorics.HalesJewett
 public import Mathlib.Data.Finset.Density
+public import LeanPool.ShelahHalesJewett.Line
 
 /-!
 # Combinatorial subspaces
@@ -128,22 +129,16 @@ def Lines [Fintype (η → α)] [DecidableEq (ι → α)]
     (V : Combinatorics.Subspace η α ι) :=
   {l : Combinatorics.Line α ι // ∀ a, l a ∈ range V}
 
-/-- Compose a parameter-cube line with a combinatorial subspace. -/
+/-- Compose a parameter-cube line with a combinatorial subspace: an alias of
+`Combinatorics.Subspace.compLine`. -/
 def composeLine (V : Combinatorics.Subspace η α ι) (l : Combinatorics.Line α η) :
-    Combinatorics.Line α ι where
-  idxFun i := (V.idxFun i).elim some l.idxFun
-  proper := by
-    obtain ⟨e, he⟩ := l.proper
-    obtain ⟨i, hi⟩ := V.proper e
-    refine ⟨i, ?_⟩
-    simp only [hi, Sum.elim_inr, he]
+    Combinatorics.Line α ι :=
+  V.compLine l
 
 @[simp]
 lemma composeLine_apply (V : Combinatorics.Subspace η α ι) (l : Combinatorics.Line α η)
-    (a : α) : composeLine V l a = V (l a) := by
-  funext i
-  cases hi : V.idxFun i <;>
-    simp [composeLine, Combinatorics.Line.coe_apply, Combinatorics.Subspace.coe_apply, hi]
+    (a : α) : composeLine V l a = V (l a) :=
+  V.compLine_apply l a
 
 /-- Regard the composite of a parameter line with a subspace as a line in that subspace. -/
 def composeLineToLines [Fintype (η → α)] [DecidableEq (ι → α)]

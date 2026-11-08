@@ -5,7 +5,7 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.Subspace
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.Subspace
 public import LeanPool.ShelahHalesJewett.HalesJewett
 import Mathlib.Tactic.Ring.RingNF
 
