@@ -7,7 +7,11 @@ summary: 'A Lean 4 formalization of the density Hales–Jewett theorem: for ever
   and Tyros. As a consequence, we also formalize Szemerédi''s theorem on the integers:
   for every k ≥ 3 and δ > 0, the following holds for all sufficiently large n. Any
   subset of {0, …, n−1} of size at least δ·n contains a nonconstant arithmetic progression
-  of length k.'
+  of length k. The thresholds are explicit: the density Hales–Jewett theorem holds for
+  n ≥ A(4|α|, |α| + ⌈1/δ⌉) and Szemerédi''s theorem for n ≥ A(4k + 1, k + ⌈1/δ⌉), where A
+  is the Ackermann function, built on Shelah''s bound for the Hales–Jewett numbers from the
+  ShelahHalesJewett project. Varnavides'' theorem gives at least n²/A(4k + 1, k + ⌈1/δ⌉)
+  such progressions.'
 branch: combinatorics
 entry_module: LeanPool.DensityHalesJewett
 authors:
@@ -15,11 +19,13 @@ authors:
 source:
   url: https://github.com/gdahia/densityhalesjewett
   github_repo: gdahia/densityhalesjewett
-  commit: 1c2f5aa1b99caa8e2a87beacf80f07f066c309d3
+  commit: 478533c44dbfbb286362cb37e19b0ba53fdc5120
 license: Apache-2.0
 status: verified
 main_declarations:
 - Combinatorics.Line.exists_of_density_atTop
+- Combinatorics.Line.exists_of_density
+- Combinatorics.ArithmeticProgression.exists_of_density_nat
 main_results:
 - declaration: Combinatorics.Line.exists_of_density_atTop
   informal: Every positive-density subset of sufficiently long words over a finite
@@ -28,6 +34,19 @@ main_results:
   informal: Every positive-density subset of a sufficiently long initial interval
     of the natural numbers contains an arithmetic progression of any prescribed length
     at least three with nonzero common difference.
+- declaration: Combinatorics.Line.exists_of_density
+  informal: For a finite alphabet α of k letters, δ > 0 and n ≥ A(4k, k + ⌈1/δ⌉), every
+    set of at least δ·k^n words of length n over α contains a combinatorial line.
+- declaration: Combinatorics.Line.dhjNumber_le_ack
+  informal: For δ > 0, the density Hales–Jewett number of k letters and density δ is
+    at most A(4k, k + ⌈1/δ⌉).
+- declaration: Combinatorics.ArithmeticProgression.exists_of_density_nat
+  informal: For k ≥ 3, δ > 0 and n ≥ A(4k + 1, k + ⌈1/δ⌉), every subset of
+    {0, …, n − 1} with at least δn elements contains a nonconstant arithmetic
+    progression of length k.
+- declaration: Combinatorics.ArithmeticProgression.exists_many_of_density_nat
+  informal: Under the same hypotheses, the subset contains at least
+    n²/A(4k + 1, k + ⌈1/δ⌉) arithmetic progressions of length k.
 tags:
 - combinatorics
 msc:

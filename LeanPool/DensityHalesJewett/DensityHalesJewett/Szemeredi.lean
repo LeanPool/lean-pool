@@ -6,15 +6,18 @@ Authors: Gabriel Dahia
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Algebra.Order.Archimedean.Real.Basic
-public import Mathlib.Combinatorics.Pigeonhole
-public import LeanPool.DensityHalesJewett.DensityHalesJewett.Main
+public import LeanPool.DensityHalesJewett.DensityHalesJewett.UniformFibers
+import Mathlib.Algebra.Order.BigOperators.Expect
+import Mathlib.Algebra.Order.Interval.Finset.Basic
+import Mathlib.Combinatorics.Pigeonhole
 
 /-!
 # Arithmetic progressions from combinatorial lines
 
-The digital transfer from density Hales--Jewett to Szemeredi's theorem on finite intervals, using
-mathlib's fixed-length base encoding `finFunctionFinEquiv`.
+The digital transfer from density Hales--Jewett to Szemerédi's theorem on finite intervals, using
+Mathlib's fixed-length base encoding `finFunctionFinEquiv`. It turns a dimension `m` in which
+density Hales--Jewett holds for `k` letters into the threshold `2 * k ^ m / δ` for progressions of
+length `k`.
 -/
 
 @[expose] public section
@@ -40,9 +43,10 @@ def term {α : Type*} [AddMonoid α] {k : ℕ} (P : ArithmeticProgression α k)
     (i : Fin k) : α :=
   P.start + (i : ℕ) • P.diff
 
-/-- The proposition that every term of `P` belongs to `s`. -/
-def IsSubset {α : Type*} [AddMonoid α] {k : ℕ} (P : ArithmeticProgression α k)
-    (s : Set α) : Prop :=
+/-- The proposition that every term of `P` belongs to `s`, for `s` of any type with a membership
+relation, such as `Set α` or `Finset α`. -/
+def IsSubset {α S : Type*} [AddMonoid α] [Membership α S] {k : ℕ} (P : ArithmeticProgression α k)
+    (s : S) : Prop :=
   ∀ i, P.term i ∈ s
 
 end ArithmeticProgression
@@ -53,7 +57,7 @@ namespace DensityHalesJewett
 namespace Line
 
 /-- A base-encoded combinatorial line gives an arithmetic progression with nonzero common
-difference. The encoding is mathlib's `finFunctionFinEquiv`, which reads a word as the base-`k`
+difference. The encoding is Mathlib's `finFunctionFinEquiv`, which reads a word as the base-`k`
 digits of a natural number. -/
 lemma baseEncode_isArithmeticProgression {k m : ℕ} (hk : 1 ≤ k)
     (l : Combinatorics.Line (Fin k) (Fin m)) :
@@ -64,158 +68,94 @@ lemma baseEncode_isArithmeticProgression {k m : ℕ} (hk : 1 ≤ k)
     { start := (finFunctionFinEquiv (l ⟨0, hk⟩) : ℕ)
       diff := d
       diff_ne_zero := ?_ }, ?_⟩
-  · refine Nat.ne_of_gt (Finset.sum_pos' ?_ ?_)
-    · intro i _
-      exact Nat.zero_le _
-    · obtain ⟨i, hi⟩ := l.proper
-      exact ⟨i, Finset.mem_univ i, by simp [hi, Nat.zero_lt_of_lt hk]⟩
+  · obtain ⟨i, hi⟩ := l.proper
+    exact Nat.ne_of_gt (sum_pos' (fun _ _ ↦ Nat.zero_le _)
+      ⟨i, mem_univ i, by simp [hi, Nat.zero_lt_of_lt hk]⟩)
   · intro a
     change (finFunctionFinEquiv (l ⟨0, hk⟩) : ℕ) + (a : ℕ) • d
       = (finFunctionFinEquiv (l a) : ℕ)
     simp only [finFunctionFinEquiv_apply]
-    rw [nsmul_eq_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
-    apply Finset.sum_congr rfl
+    rw [nsmul_eq_mul, mul_sum, ← sum_add_distrib]
+    apply sum_congr rfl
     intro i _
     cases hli : l.idxFun i <;> simp [Combinatorics.Line.coe_apply, hli]
 
 end Line
 
-/-- A sufficiently dense initial interval has a complete digit block with at least half the
-ambient density. -/
-lemma exists_dense_digitBlock {K : ℕ} (hK : 1 ≤ K) {δ : ℝ} (hδ : 0 < δ)
-    {N : ℕ} (hN : 2 * K / δ ≤ N) (A : Finset ℕ) (hAN : A ⊆ Finset.range N)
+/-- Fewer than `K` elements of `A ⊆ range N` lie beyond the last complete block of length `K`. -/
+lemma card_sdiff_range_div_mul_lt {K N : ℕ} (hK : 0 < K) {A : Finset ℕ} (hAN : A ⊆ range N) :
+    #(A \ range (N / K * K)) < K := by
+  have h : A \ range (N / K * K) ⊆ Ico (N / K * K) N := fun x hx ↦ by
+    rw [mem_sdiff, mem_range] at hx
+    exact mem_Ico.2 ⟨not_lt.1 hx.2, mem_range.1 (hAN hx.1)⟩
+  refine (card_le_card h).trans_lt ?_
+  rw [Nat.card_Ico]
+  have := Nat.mod_add_div' N K
+  have := Nat.mod_lt N hK
+  omega
+
+/-- The elements of `A` below `Q * K` with quotient `q < Q` by `K` form the block of `A` between
+`q * K` and `q * K + K`. -/
+lemma filter_inter_range_div_eq {K Q q : ℕ} (hK : 0 < K) (A : Finset ℕ) (hq : q < Q) :
+    {x ∈ A ∩ range (Q * K) | x / K = q} = A ∩ Ico (q * K) (q * K + K) := by
+  have := Nat.mul_le_mul_right K hq
+  rw [Nat.succ_mul] at this
+  ext x
+  have hx : x / K = q ↔ q * K ≤ x ∧ x < q * K + K := by
+    rw [Nat.div_eq_iff hK]
+    omega
+  simp only [mem_filter, mem_inter, mem_range, mem_Ico, hx]
+  exact ⟨fun h ↦ ⟨h.1.1, h.2⟩, fun h ↦ ⟨⟨h.1, by omega⟩, h.2⟩⟩
+
+/-- A sufficiently dense initial interval has a block of `K` consecutive numbers with at least
+half the ambient density. -/
+lemma exists_dense_digitBlock {K : ℕ} (hK : 0 < K) {δ : ℝ} (hδ : 0 < δ)
+    {N : ℕ} (hN : 2 * K / δ ≤ N) {A : Finset ℕ} (hAN : A ⊆ range N)
     (hA : δ * N ≤ #A) :
-    ∃ q : ℕ, (q + 1) * K ≤ N ∧
-      δ / 2 * K ≤ #(A ∩ Finset.Ico (q * K) ((q + 1) * K)) := by
-  let Q := N / K
-  let S := A ∩ Finset.range (Q * K)
-  have htail : (#(A \ Finset.range (Q * K)) : ℝ) < K := by
-    norm_cast
-    refine (Finset.card_le_card (t := Finset.Ico (Q * K) N) ?_).trans_lt ?_
-    · intro x hx
-      rw [Finset.mem_Ico]
-      rw [Finset.mem_sdiff, Finset.mem_range] at hx
-      exact ⟨Nat.le_of_not_gt hx.2, Finset.mem_range.mp (hAN hx.1)⟩
-    · rw [Nat.card_Ico]
-      simpa only [Q, Nat.mod_eq_sub_mul_div, Nat.mul_comm] using
-        Nat.mod_lt N (Nat.zero_lt_of_lt hK)
-  have hS : δ / 2 * N ≤ (#S : ℝ) := by
-    rw [← Finset.card_inter_add_card_sdiff A (Finset.range (Q * K))] at hA
+    ∃ q : ℕ, δ / 2 * K ≤ #(A ∩ Ico (q * K) (q * K + K)) := by
+  have hS : δ / 2 * N ≤ #(A ∩ range (N / K * K)) := by
+    rw [← card_inter_add_card_sdiff A (range (N / K * K))] at hA
     push_cast at hA
-    dsimp only [S]
-    nlinarith [htail, (div_le_iff₀ hδ).mp hN]
-  have hmap : ∀ x ∈ S, x / K ∈ Finset.range Q := by
-    intro x hx
-    rw [Finset.mem_inter, Finset.mem_range] at hx
-    exact Finset.mem_range.mpr ((Nat.div_lt_iff_lt_mul (Nat.zero_lt_of_lt hK)).2 hx.2)
-  obtain ⟨q, hqQ, hq⟩ : ∃ q ∈ Finset.range Q,
-      δ / 2 * K ≤ ∑ x ∈ S with x / K = q, (1 : ℝ) := by
-    apply Finset.exists_le_sum_fiber_of_maps_to_of_nsmul_le_sum
-      (M := ℝ) (s := S) (t := Finset.range Q) (f := fun x ↦ x / K)
-      (w := fun _ ↦ 1) (b := δ / 2 * K) hmap
-    · obtain ⟨x, hx⟩ : S.Nonempty := by
-        rw [Finset.nonempty_iff_ne_empty]
-        intro hSempty
-        rw [hSempty, Finset.card_empty, Nat.cast_zero] at hS
-        exact not_lt_of_ge hS (mul_pos (by positivity) (lt_of_lt_of_le (by positivity) hN))
-      exact ⟨x / K, hmap x hx⟩
-    · simp only [Finset.card_range, nsmul_eq_mul, Finset.sum_const, mul_one]
-      refine le_trans ?_ hS
-      rw [← mul_assoc, mul_comm (Q : ℝ) (δ / 2), mul_assoc]
-      exact mul_le_mul_of_nonneg_left (by exact_mod_cast Nat.div_mul_le_self N K) (by positivity)
-  refine ⟨q, ?_, ?_⟩
-  · exact (Nat.mul_le_mul_right K (Nat.succ_le_iff.mp (Finset.mem_range.mp hqQ))).trans
-      (Nat.div_mul_le_self N K)
-  · convert hq using 1
-    norm_cast
-    simp only [Finset.sum_const, nsmul_eq_mul, mul_one]
-    congr 1
-    ext x
-    dsimp only [S]
-    simp only [Finset.mem_filter, Finset.mem_inter, Finset.mem_range, Finset.mem_Ico]
-    constructor
-    · rintro ⟨hxA, hxlo, hxhi⟩
-      refine ⟨⟨hxA, hxhi.trans_le ?_⟩, ?_⟩
-      · exact Nat.mul_le_mul_right K
-          (Nat.succ_le_iff.mp (Finset.mem_range.mp hqQ))
-      · apply Nat.le_antisymm
-        · exact Nat.lt_succ_iff.mp
-            ((Nat.div_lt_iff_lt_mul (Nat.zero_lt_of_lt hK)).2 hxhi)
-        · exact (Nat.le_div_iff_mul_le (Nat.zero_lt_of_lt hK)).2 hxlo
-    · rintro ⟨⟨hxA, _⟩, hxq⟩
-      refine ⟨hxA, ?_, ?_⟩
-      · rw [← hxq]
-        simpa [Nat.mul_comm] using Nat.mul_div_le x K
-      · rw [← hxq]
-        exact (Nat.div_lt_iff_lt_mul (Nat.zero_lt_of_lt hK)).mp (Nat.lt_succ_self _)
+    nlinarith [(div_le_iff₀ hδ).1 hN, (Nat.cast_lt (α := ℝ)).2 (card_sdiff_range_div_mul_lt hK hAN)]
+  have hmaps (x) (hx : x ∈ A ∩ range (N / K * K)) : x / K ∈ range (N / K) :=
+    mem_range.2 ((Nat.div_lt_iff_lt_mul hK).2 (mem_range.1 (mem_inter.1 hx).2))
+  obtain ⟨x, hx⟩ : (A ∩ range (N / K * K)).Nonempty := card_pos.1 <| mod_cast
+    (mul_pos (half_pos hδ) ((div_pos (by positivity) hδ).trans_le hN)).trans_le hS
+  obtain ⟨q, hq, hcard⟩ := exists_le_card_fiber_of_nsmul_le_card_of_maps_to hmaps ⟨_, hmaps x hx⟩
+    (b := δ / 2 * K) (by
+      rw [card_range, nsmul_eq_mul]
+      nlinarith [mul_le_mul_of_nonneg_left
+        (by exact_mod_cast Nat.div_mul_le_self N K : ((N / K : ℕ) : ℝ) * K ≤ N) (half_pos hδ).le])
+  exact ⟨q, hcard.trans_eq (by rw [filter_inter_range_div_eq hK A (mem_range.1 hq)])⟩
 
 end DensityHalesJewett
 
 namespace Combinatorics.ArithmeticProgression
 
-/-- A threshold for the density theorem for arithmetic progressions of length `k`. -/
-noncomputable def densityTheoremBound (k : ℕ) (δ : ℝ) : ℕ :=
-  ⌈2 * (k ^ Combinatorics.Line.densityTheoremBound k (δ / 2) : ℕ) / δ⌉₊
-
-theorem exists_of_density_nat (k : ℕ) (hk : 3 ≤ k) (δ : ℝ) (hδ : 0 < δ)
-    (n : ℕ) (hn : densityTheoremBound k δ ≤ n) (A : Finset ℕ)
-    (hAn : A ⊆ range n) (hAδ : δ * n ≤ #A) :
-    ∃ P : ArithmeticProgression ℕ k, P.IsSubset (A : Set ℕ) := by
+/-- The digital transfer from density Hales--Jewett to Szemerédi's theorem: if density
+Hales--Jewett holds for `k` letters and density `δ / 2` in dimension `m`, then for
+`n ≥ 2 * k ^ m / δ` every subset of `range n` with at least `δ * n` elements contains an
+arithmetic progression of length `k`. -/
+theorem exists_of_isDHJDimension {k m : ℕ} (hk : 1 ≤ k) {δ : ℝ} (hδ : 0 < δ)
+    (hm : DensityHalesJewett.IsDHJDimension k (δ / 2) m) {n : ℕ} (hn : 2 * (k : ℝ) ^ m / δ ≤ n)
+    (A : Finset ℕ) (hAn : A ⊆ range n) (hAδ : δ * n ≤ #A) :
+    ∃ P : ArithmeticProgression ℕ k, P.IsSubset A := by
   classical
-  have hk_one : 1 ≤ k := by grind
-  let m := Combinatorics.Line.densityTheoremBound k (δ / 2)
-  let K := k ^ m
-  obtain ⟨q, _, hqA⟩ : ∃ q : ℕ, (q + 1) * K ≤ n ∧
-      δ / 2 * K ≤ #(A ∩ Finset.Ico (q * K) ((q + 1) * K)) := by
-    refine DensityHalesJewett.exists_dense_digitBlock (one_le_pow₀ hk_one) hδ ?_ A hAn hAδ
-    · apply Nat.le_of_ceil_le
-      simpa only [densityTheoremBound, m, K] using hn
-  let encode (x : Fin m → Fin k) := q * K + (finFunctionFinEquiv x : ℕ)
-  let B := Finset.univ.filter fun x : Fin m → Fin k ↦ encode x ∈ A
-  let encodeOnB (x : Fin m → Fin k) (_ : x ∈ B) := encode x
-  have hBcard : #B = #(A ∩ Finset.Ico (q * K) ((q + 1) * K)) := by
-    apply Finset.card_bij encodeOnB
-    · intro x hx
-      dsimp only [encodeOnB, encode]
-      rw [Finset.mem_filter] at hx
-      refine Finset.mem_inter.mpr ⟨hx.2, Finset.mem_Ico.mpr ⟨Nat.le_add_right _ _, ?_⟩⟩
-      rw [add_mul, one_mul]
-      apply Nat.add_lt_add_left
-      exact (finFunctionFinEquiv x).isLt
-    · intro x _ y _ hxy
-      dsimp only [encodeOnB, encode] at hxy
-      exact finFunctionFinEquiv.injective (Fin.ext (Nat.add_left_cancel hxy))
-    · intro y hy
-      rw [Finset.mem_inter, Finset.mem_Ico] at hy
-      have hz : y - q * K < K := by
-        rw [Nat.sub_lt_iff_lt_add hy.2.1]
-        simpa only [add_mul, one_mul, Nat.add_comm] using hy.2.2
-      let z : Fin K := ⟨y - q * K, hz⟩
-      let x := finFunctionFinEquiv.symm z
-      have hxencode : (finFunctionFinEquiv x : ℕ) = y - q * K :=
-        congrArg Fin.val (Equiv.apply_symm_apply finFunctionFinEquiv z)
-      dsimp only [encodeOnB, encode]
-      refine ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩, ?_⟩
-      · dsimp only [encode]
-        rw [hxencode, Nat.add_sub_of_le hy.2.1]
-        exact hy.1
-      · rw [hxencode, Nat.add_sub_of_le hy.2.1]
-  obtain ⟨l, hl⟩ : ∃ l : Combinatorics.Line (Fin k) (Fin m), ∀ x : Fin k, l x ∈ B := by
-    apply Combinatorics.Line.exists_of_density (Fin k) (δ / 2)
-    · positivity
-    · simp [m]
-    · rw [Fintype.card_fin, hBcard]
-      simpa only [K, Nat.cast_pow] using hqA
-  obtain ⟨P, hP⟩ := DensityHalesJewett.Line.baseEncode_isArithmeticProgression hk_one l
-  refine ⟨
-    { start := q * K + P.start
-      diff := P.diff
-      diff_ne_zero := P.diff_ne_zero }, ?_⟩
+  obtain ⟨q, hq⟩ := DensityHalesJewett.exists_dense_digitBlock (pow_pos hk m) hδ
+    (by simpa using hn) hAn hAδ
+  let e : (Fin m → Fin k) ↪ ℕ :=
+    finFunctionFinEquiv.toEmbedding.trans (Fin.valEmbedding.trans (addLeftEmbedding (q * k ^ m)))
+  have he : univ.map e = Ico (q * k ^ m) (q * k ^ m + k ^ m) := by
+    rw [← map_map, ← map_map, map_univ_equiv, Fin.map_valEmbedding_univ, Nat.Iio_eq_range,
+      ← Nat.Ico_zero_eq_range, map_add_left_Ico, add_zero]
+  obtain ⟨l, hl⟩ := hm (univ.filter ((· ∈ A) ∘ e)) <| by
+    rwa [← card_map e, ← filter_map, he, filter_mem_eq_inter, inter_comm, ← Nat.cast_pow]
+  obtain ⟨P, hP⟩ := DensityHalesJewett.Line.baseEncode_isArithmeticProgression hk l
+  refine ⟨⟨q * k ^ m + P.start, P.diff, P.diff_ne_zero⟩, ?_⟩
   intro a
-  change (q * K + P.start) + (a : ℕ) • P.diff ∈ A
-  rw [add_assoc]
-  change q * K + P.term a ∈ A
-  rw [hP]
-  exact (Finset.mem_filter.mp (hl a)).2
+  have h := (mem_filter.1 (hl a)).2
+  simp only [e, Function.comp_apply, Function.Embedding.trans_apply, Equiv.coe_toEmbedding,
+    Fin.valEmbedding_apply, addLeftEmbedding_apply, ← hP] at h
+  simpa [term, add_assoc] using h
 
 end Combinatorics.ArithmeticProgression

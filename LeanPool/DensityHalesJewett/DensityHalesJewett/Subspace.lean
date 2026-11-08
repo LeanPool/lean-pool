@@ -5,13 +5,14 @@ Authors: Gabriel Dahia
 -/
 module
 
-public import LeanPool.DensityHalesJewett.DensityHalesJewett.Word
-public import Mathlib.Logic.Equiv.Fin.Basic
+public import Mathlib.Combinatorics.HalesJewett
+public import Mathlib.Data.Finset.Density
+public import LeanPool.ShelahHalesJewett.Line
 
 /-!
 # Combinatorial subspaces
 
-Ranges, containment, relative density, alphabet restriction, and lines inside mathlib's
+Ranges, containment, relative density, alphabet restriction, and lines inside Mathlib's
 `Combinatorics.Subspace`.
 -/
 
@@ -31,12 +32,12 @@ lemma injective (V : Combinatorics.Subspace η α ι) :
   intro x y hxy
   funext e
   obtain ⟨i, hi⟩ := V.proper e
-  simpa only [V.apply_inr hi] using congrFun hxy i
+  simpa [V.apply_inr hi] using congrFun hxy i
 
 /-- The finite range of a combinatorial subspace. -/
 def range [Fintype (η → α)] [DecidableEq (ι → α)]
     (V : Combinatorics.Subspace η α ι) : Finset (ι → α) :=
-  Finset.univ.image V
+  univ.image V
 
 @[simp]
 lemma mem_range [Fintype (η → α)] [DecidableEq (ι → α)]
@@ -74,7 +75,7 @@ def repeatInitial {m M : ℕ} (α : Type*) (hm : 1 ≤ m) (hmM : m ≤ M) :
     simp only [Fin.castLE, e.isLt, ↓reduceDIte]
 
 @[simp]
-lemma repeatInitial_map {β : Type*} {m M : ℕ} (α : Type*) (hm : 1 ≤ m) (hmM : m ≤ M)
+lemma repeatInitial_map {β : Type*} {m M : ℕ} {α : Type*} (hm : 1 ≤ m) (hmM : m ≤ M)
     (f : β → α) (x : Fin m → β) :
     repeatInitial α hm hmM (f ∘ x) = f ∘ repeatInitial β hm hmM x := by
   funext i
@@ -121,29 +122,23 @@ lemma lineToSubspaceFinOne_apply (l : Combinatorics.Line α ι) (x : Fin 1 → �
 /-- Relative density on a subspace, defined on its parameter cube. -/
 def relativeDensity [Fintype (η → α)] [DecidableEq (ι → α)]
     (V : Combinatorics.Subspace η α ι) (A : Finset (ι → α)) : ℚ≥0 :=
-  (Finset.univ.filter fun x ↦ V x ∈ A).dens
+  (univ.filter fun x ↦ V x ∈ A).dens
 
 /-- Ambient line structures whose evaluations are contained in a subspace. -/
 def Lines [Fintype (η → α)] [DecidableEq (ι → α)]
     (V : Combinatorics.Subspace η α ι) :=
   {l : Combinatorics.Line α ι // ∀ a, l a ∈ range V}
 
-/-- Compose a parameter-cube line with a combinatorial subspace. -/
+/-- Compose a parameter-cube line with a combinatorial subspace: an alias of
+`Combinatorics.Subspace.compLine`. -/
 def composeLine (V : Combinatorics.Subspace η α ι) (l : Combinatorics.Line α η) :
-    Combinatorics.Line α ι where
-  idxFun i := (V.idxFun i).elim some l.idxFun
-  proper := by
-    obtain ⟨e, he⟩ := l.proper
-    obtain ⟨i, hi⟩ := V.proper e
-    refine ⟨i, ?_⟩
-    simp only [hi, Sum.elim_inr, he]
+    Combinatorics.Line α ι :=
+  V.compLine l
 
 @[simp]
 lemma composeLine_apply (V : Combinatorics.Subspace η α ι) (l : Combinatorics.Line α η)
-    (a : α) : composeLine V l a = V (l a) := by
-  funext i
-  cases hi : V.idxFun i <;>
-    simp [composeLine, Combinatorics.Line.coe_apply, Combinatorics.Subspace.coe_apply, hi]
+    (a : α) : composeLine V l a = V (l a) :=
+  V.compLine_apply l a
 
 /-- Regard the composite of a parameter line with a subspace as a line in that subspace. -/
 def composeLineToLines [Fintype (η → α)] [DecidableEq (ι → α)]
@@ -156,7 +151,7 @@ noncomputable def parameterWord [Fintype (η → α)] [DecidableEq (ι → α)]
   Classical.choose <| mem_range.mp (q.2 a)
 
 lemma parameterWord_apply [Fintype (η → α)] [DecidableEq (ι → α)]
-    (V : Combinatorics.Subspace η α ι) (q : Lines V) (a : α) :
+    {V : Combinatorics.Subspace η α ι} (q : Lines V) (a : α) :
     V (parameterWord V q a) = q.1 a :=
   Classical.choose_spec <| mem_range.mp (q.2 a)
 
@@ -178,7 +173,7 @@ noncomputable def uncomposeLine [Fintype (η → α)] [DecidableEq (ι → α)] 
     | inl b =>
       obtain ⟨a, hab⟩ := exists_ne b
       refine absurd ?_ hab
-      rw [← q.1.apply_none a j hj, ← parameterWord_apply V q a]
+      rw [← q.1.apply_none a j hj, ← parameterWord_apply q a]
       exact V.apply_inl hVj
     | inr e =>
       cases hq : q.1.idxFun (properCoordinate V e) with
@@ -186,19 +181,19 @@ noncomputable def uncomposeLine [Fintype (η → α)] [DecidableEq (ι → α)] 
       | some c =>
         obtain ⟨a, hac⟩ := exists_ne c
         exact absurd (by rw [← q.1.apply_none a j hj, ← q.1.apply_some hq,
-          ← parameterWord_apply V q a, V.apply_inr (properCoordinate_spec V e),
+          ← parameterWord_apply q a, V.apply_inr (properCoordinate_spec V e),
           V.apply_inr hVj]) hac
 
 lemma uncomposeLine_apply [Fintype (η → α)] [DecidableEq (ι → α)] [Nontrivial α]
-    (V : Combinatorics.Subspace η α ι) (q : Lines V) (a : α) :
+    {V : Combinatorics.Subspace η α ι} (q : Lines V) (a : α) :
     V (uncomposeLine V q a) = q.1 a := by
   funext i
   cases hi : V.idxFun i with
-  | inl b => rw [V.apply_inl hi, ← parameterWord_apply V q a, V.apply_inl hi]
+  | inl b => rw [V.apply_inl hi, ← parameterWord_apply q a, V.apply_inl hi]
   | inr e =>
     rw [V.apply_inr hi]
     change q.1 a (properCoordinate V e) = q.1 a i
-    rw [← parameterWord_apply V q a, V.apply_inr (properCoordinate_spec V e), V.apply_inr hi]
+    rw [← parameterWord_apply q a, V.apply_inr (properCoordinate_spec V e), V.apply_inr hi]
 
 /-- Composition with a subspace identifies parameter-cube lines with ambient lines contained in
 the subspace. -/
@@ -221,7 +216,7 @@ noncomputable def linesEquiv [Fintype (η → α)] [DecidableEq (ι → α)]
     apply Combinatorics.Line.coe_injective
     funext a
     rw [composeLine_apply]
-    exact uncomposeLine_apply V q a
+    exact uncomposeLine_apply q a
 
 /-- Map a parameter-cube line to the corresponding ambient line in a subspace. -/
 def mapLine (V : Combinatorics.Subspace η α ι) (l : Combinatorics.Line α η) :
@@ -240,7 +235,46 @@ lemma mapLine_apply (V : Combinatorics.Subspace η α ι) (l : Combinatorics.Lin
 /-- Restrict the variable letters of a subspace along an alphabet embedding. -/
 def restrictAlphabet {β : Type*} [Fintype (η → β)] [DecidableEq (ι → α)]
     (V : Combinatorics.Subspace η α ι) (e : β ↪ α) : Finset (ι → α) :=
-  Finset.univ.image fun x ↦ V (e ∘ x)
+  univ.image fun x ↦ V (e ∘ x)
+
+/-- Apply a map to the fixed letters of a subspace. -/
+def map {β : Type*} (f : α → β) (V : Combinatorics.Subspace η α ι) :
+    Combinatorics.Subspace η β ι where
+  idxFun i := (V.idxFun i).map f id
+  proper e := by
+    obtain ⟨i, hi⟩ := V.proper e
+    exact ⟨i, by simp [hi]⟩
+
+@[simp]
+lemma map_apply {β : Type*} (f : α → β) (V : Combinatorics.Subspace η α ι) (x : η → α) :
+    map f V (f ∘ x) = f ∘ V x := by
+  funext i
+  cases hi : V.idxFun i <;> simp [map, Combinatorics.Subspace.coe_apply, hi]
+
+/-- Fix suffix coordinates of a subspace. -/
+def fixSuffix {κ : Type*} (V : Combinatorics.Subspace η α ι) (y : κ → α) :
+    Combinatorics.Subspace η α (ι ⊕ κ) where
+  idxFun := Sum.elim V.idxFun (Sum.inl ∘ y)
+  proper e := by
+    obtain ⟨i, hi⟩ := V.proper e
+    exact ⟨Sum.inl i, hi⟩
+
+@[simp]
+lemma fixSuffix_apply {κ : Type*} (V : Combinatorics.Subspace η α ι) (y : κ → α) (x : η → α) :
+    fixSuffix V y x = Sum.elim (V x) y := by
+  funext i
+  cases i <;> simp [fixSuffix, Combinatorics.Subspace.coe_apply]
+
+/-- Fix suffix coordinates and transport the ambient coordinates along an equivalence. -/
+def fixSuffixReindex {κ ζ : Type*} (e : ι ⊕ κ ≃ ζ) (V : Combinatorics.Subspace η α ι)
+    (y : κ → α) : Combinatorics.Subspace η α ζ :=
+  (fixSuffix V y).reindex (Equiv.refl _) (Equiv.refl _) e
+
+@[simp]
+lemma fixSuffixReindex_apply {κ ζ : Type*} (e : ι ⊕ κ ≃ ζ) (V : Combinatorics.Subspace η α ι)
+    (y : κ → α) (x : η → α) : fixSuffixReindex e V y x = Sum.elim (V x) y ∘ e.symm := by
+  funext i
+  simp [fixSuffixReindex, Combinatorics.Subspace.reindex_apply]
 
 end Subspace
 
@@ -264,7 +298,7 @@ lemma transportSubspace_apply {α η ι ω ν : Type*} (e : ι ≃ ω ⊕ ν) (z
 noncomputable def parameterPreimage {η α ι : Type*} [Fintype (η → α)]
     (V : Combinatorics.Subspace η α ι) (D : Finset (ι → α)) : Finset (η → α) := by
   classical
-  apply Finset.univ.filter
+  apply univ.filter
   intro x
   exact V x ∈ D
 
