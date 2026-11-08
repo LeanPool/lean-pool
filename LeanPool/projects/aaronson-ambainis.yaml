@@ -1,0 +1,55 @@
+slug: aaronson-ambainis
+title: The Aaronson–Ambainis influence conjecture
+summary: Proves that a real polynomial of degree at most d, bounded between zero
+  and one on the Boolean cube and with variance at least epsilon > 0, has a
+  coordinate of squared-difference influence at least (epsilon/d)^7. Also proves
+  explicit bounds with epsilon^(5/2)/d^6, together with determinant pairings,
+  fractional-certificate inequalities and coordinate averaging. The internal
+  packing-cover duality supports the proof; generic finite LP duality is already
+  pooled as StandardLP.strongDuality. The sharper constant is conditional on the
+  stated Agarwal–Ben-David fractional block-sensitivity bound. Quantum simulation
+  consequences are outside this formalization.
+branch: theoretical computer science
+entry_module: LeanPool.AaronsonAmbainis
+authors:
+- David Turturean
+source:
+  title: A proof of the Aaronson–Ambainis conjecture
+  url: https://github.com/physical-superintelligence/aaronson-ambainis/tree/2a6ceaef872ae993708950f951989134084b851a
+  github_repo: physical-superintelligence/aaronson-ambainis
+  commit: 2a6ceaef872ae993708950f951989134084b851a
+  announcement_url: https://psi.inc/research/aaronson-ambainis/
+  announcement_date: '2026-11-06'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- AaronsonAmbainis.aaronson_ambainis
+- AaronsonAmbainis.aaronson_ambainis_explicit
+- AaronsonAmbainis.aaronson_ambainis_pm
+main_results:
+- declaration: AaronsonAmbainis.aaronson_ambainis
+  informal: For every real polynomial in N variables of total degree at most d,
+    bounded between zero and one on the Boolean cube, positive variance at least
+    epsilon guarantees a coordinate whose uniform mean squared change under a bit
+    flip is at least (epsilon/d)^7.
+- declaration: AaronsonAmbainis.aaronson_ambainis_explicit
+  informal: Under the same hypotheses, a coordinate has squared-difference
+    influence at least 8 sqrt(15) epsilon^(5/2) / (125 pi^4 d^6).
+- declaration: AaronsonAmbainis.aaronson_ambainis_pm
+  informal: For a real polynomial of degree at most d bounded in absolute value
+    by one on the sign cube, positive variance at least epsilon guarantees a
+    coordinate whose uniform mean squared half-difference under a bit flip is at
+    least sqrt(15) epsilon^(5/2) / (500 pi^4 d^6).
+- declaration: AaronsonAmbainis.aaronson_ambainis_of_fbsDegreeBound
+  informal: Assuming the explicitly stated Agarwal–Ben-David fractional
+    block-sensitivity bound, the zero-one cube influence bound improves to
+    32 sqrt(15) epsilon^(5/2) / (125 pi^4 d^6).
+tags:
+- boolean-functions
+- influence
+- fractional-certificates
+msc:
+- 68Q12
+- 60C05
+- 05D40
