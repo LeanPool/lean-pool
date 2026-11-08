@@ -41,6 +41,15 @@ variable {ι : Type} [Fintype ι]
 def IsLowest (q : MvPolynomial ι ℤ) (m : ι →₀ ℕ) : Prop :=
   m ∈ q.support ∧ ∀ m' ∈ q.support, ∑ i, m i ≤ ∑ i, m' i
 
+/-- A nonzero polynomial has a monomial of least total degree. -/
+theorem exists_isLowest (q : MvPolynomial ι ℤ) (hq : q ≠ 0) : ∃ m, IsLowest q m := by
+  have hne : q.support.Nonempty := by
+    rw [Finset.nonempty_iff_ne_empty]
+    exact fun h => hq (MvPolynomial.support_eq_empty.mp h)
+  obtain ⟨m, hm, hmin⟩ :=
+    Finset.exists_min_image q.support (fun m : ι →₀ ℕ => ∑ i, m i) hne
+  exact ⟨m, hm, hmin⟩
+
 /-- `agMon x z = ∏_{i : x_i = z_i} s_i`: the monomial of the agreement set of `x` and `z`. -/
 noncomputable def agMon (x z : Cube ι) : MvPolynomial ι ℤ :=
   ∏ i, if x i = z i then X i else 1

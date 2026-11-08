@@ -15,6 +15,7 @@ public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Positivity
 public import Mathlib.Tactic.Ring
 public import LeanPool.AaronsonAmbainis.Bridge.Basic
+public import LeanPool.AaronsonAmbainis.Row.Chi
 
 /-!
 # The Fourier expansion on the cube and the meaning of `HasDegreeLE`
@@ -35,16 +36,16 @@ namespace AaronsonAmbainis.Bridge
 open Finset
 
 /-- Sign of a bit: `false ↦ 1`, `true ↦ -1`. -/
-noncomputable def sg (b : Bool) : ℝ := if b then -1 else 1
+noncomputable def sg (b : Bool) : ℝ := Row.sgn b
 
 theorem sg_mul_self (b : Bool) : sg b * sg b = 1 := by
-  cases b <;> simp [sg]
+  exact Row.sgn_mul_self b
 
 theorem sg_not (b : Bool) : sg (!b) = -sg b := by
-  cases b <;> simp [sg]
+  exact Row.sgn_not b
 
 theorem sg_mul_of_ne {a b : Bool} (h : a ≠ b) : sg a * sg b = -1 := by
-  cases a <;> cases b <;> simp_all [sg]
+  cases a <;> cases b <;> simp_all [sg, Row.sgn]
 
 theorem chi_eq_prod_sg {ι : Type*} (S : Finset ι) (x : Cube ι) : chi S x = ∏ i ∈ S, sg (x i) :=
   rfl
@@ -59,13 +60,7 @@ omit [Fintype ι] in
 /-- `χ_S χ_T = χ_{S Δ T}`. -/
 theorem chi_mul_chi [Finite ι] (S T : Finset ι) (x : Cube ι) :
     chi S x * chi T x = chi (symmDiff S T) x := by
-  classical
-  let := Fintype.ofFinite ι
-  rw [chi_eq_prod_univ S, chi_eq_prod_univ T, chi_eq_prod_univ (symmDiff S T),
-    ← Finset.prod_mul_distrib]
-  refine Finset.prod_congr rfl (fun i _ => ?_)
-  by_cases hS : i ∈ S <;> by_cases hT : i ∈ T <;>
-    simp [Finset.mem_symmDiff, hS, hT, sg_mul_self]
+  exact Row.chi_mul_chi S T x
 
 omit [Fintype ι] in
 /-- Flipping a coordinate in `U` negates `χ_U`. -/

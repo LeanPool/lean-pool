@@ -37,12 +37,7 @@ variable {ι : Type} [Fintype ι] [DecidableEq ι]
 omit [DecidableEq ι] in
 /-- A nonzero polynomial has a monomial of least total degree. -/
 theorem exists_isLowest (q : MvPolynomial ι ℤ) (hq : q ≠ 0) : ∃ m, IsLowest q m := by
-  have hne : q.support.Nonempty := by
-    rw [Finset.nonempty_iff_ne_empty]
-    exact fun h => hq (MvPolynomial.support_eq_empty.mp h)
-  obtain ⟨m, hm, hmin⟩ :=
-    Finset.exists_min_image q.support (fun m : ι →₀ ℕ => ∑ i, m i) hne
-  exact ⟨m, hm, hmin⟩
+  exact AaronsonAmbainis.exists_isLowest q hq
 
 /-- `det P * det M = det U * det Q'`. -/
 theorem det_Pmat_mul_det_agMatrix (g : Cube ι → Bool) (A : Cube ι → Finset ι)

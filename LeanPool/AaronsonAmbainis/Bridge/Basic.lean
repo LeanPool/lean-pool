@@ -36,12 +36,10 @@ section NoFintype
 variable {ι : Type*} [DecidableEq ι]
 
 theorem flipSet_flipSet (x : Cube ι) (S : Finset ι) : flipSet (flipSet x S) S = x := by
-  funext i
-  by_cases h : i ∈ S <;> simp [flipSet, h]
+  exact AaronsonAmbainis.flipSet_flipSet_self x S
 
 theorem flipSet_empty (x : Cube ι) : flipSet x ∅ = x := by
-  funext i
-  simp [flipSet]
+  exact AaronsonAmbainis.flipSet_empty x
 
 theorem flipSet_singleton_self (x : Cube ι) (j : ι) : flipSet x {j} j = !(x j) := by
   simp [flipSet]
@@ -77,22 +75,15 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- `Δ(x, x^S) = S`. -/
 theorem diffSet_flipSet (x : Cube ι) (S : Finset ι) : diffSet x (flipSet x S) = S := by
-  ext i
-  by_cases h : i ∈ S <;> simp [diffSet, flipSet, h]
+  exact AaronsonAmbainis.diffSet_flipSet x S
 
 /-- `x^{Δ(x,y)} = y`. -/
 theorem flipSet_diffSet (x y : Cube ι) : flipSet x (diffSet x y) = y := by
-  funext i
-  by_cases h : x i = y i
-  · simp [flipSet, diffSet, h]
-  · have h' : (!(x i)) = y i := by
-      cases hx : x i <;> cases hy : y i <;> simp_all
-    simp [flipSet, diffSet, h, h']
+  exact AaronsonAmbainis.flipSet_diffSet x y
 
 /-- `antipode x = x^{[n]}`. -/
 theorem antipode_eq_flipSet_univ (x : Cube ι) : antipode x = flipSet x univ := by
-  funext i
-  simp [antipode, flipSet]
+  exact AaronsonAmbainis.antipode_eq_flipSet_univ x
 
 /-- The cube over `ι` has `2^n` points. -/
 theorem card_cube : (Fintype.card (Cube ι) : ℝ) = 2 ^ Fintype.card ι := by

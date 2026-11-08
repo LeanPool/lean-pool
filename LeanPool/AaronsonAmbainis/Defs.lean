@@ -9,6 +9,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Powerset
 
@@ -96,5 +97,38 @@ noncomputable def chi (S : Finset ι) (x : Cube ι) : ℝ :=
 its expansion in characters uses only sets of size at most `d`. -/
 def HasDegreeLE (f : Cube ι → ℝ) (d : ℕ) : Prop :=
   ∃ c : Finset ι → ℝ, (∀ S, d < S.card → c S = 0) ∧ ∀ x, f x = ∑ S, c S * chi S x
+
+section Basic
+
+omit [Fintype ι] in
+lemma flipSet_empty (x : Cube ι) : flipSet x ∅ = x := by
+  funext i
+  simp [flipSet]
+
+omit [Fintype ι] in
+lemma flipSet_flipSet_self (x : Cube ι) (S : Finset ι) : flipSet (flipSet x S) S = x := by
+  funext i
+  by_cases h : i ∈ S <;> simp [flipSet, h]
+
+lemma antipode_eq_flipSet_univ (x : Cube ι) : antipode x = flipSet x univ := by
+  funext i
+  simp [flipSet, antipode]
+
+lemma diffSet_flipSet (x : Cube ι) (S : Finset ι) : diffSet x (flipSet x S) = S := by
+  ext i
+  by_cases h : i ∈ S <;> simp [diffSet, flipSet, h]
+
+lemma flipSet_diffSet (x y : Cube ι) : flipSet x (diffSet x y) = y := by
+  funext i
+  by_cases h : x i = y i
+  · simp [flipSet, diffSet, h]
+  · have h' : (!(x i)) = y i := by
+      cases hx : x i <;> cases hy : y i <;> simp_all
+    simp [flipSet, diffSet, h, h']
+
+lemma card_cube : Fintype.card (Cube ι) = 2 ^ Fintype.card ι := by
+  simp [Cube]
+
+end Basic
 
 end AaronsonAmbainis

@@ -84,12 +84,7 @@ theorem isLowest_unit_mul {ι : Type} [Fintype ι] (u q : MvPolynomial ι ℤ)
 /-- A nonzero polynomial has a monomial of least total degree. -/
 theorem exists_isLowest {ι : Type} [Fintype ι] (q : MvPolynomial ι ℤ) (hq : q ≠ 0) :
     ∃ m, IsLowest q m := by
-  have hne : q.support.Nonempty := by
-    rw [Finset.nonempty_iff_ne_empty]
-    intro h
-    exact hq (support_eq_empty.mp h)
-  obtain ⟨m, hm, hmin⟩ := Finset.exists_min_image q.support (fun m => ∑ i, m i) hne
-  exact ⟨m, hm, hmin⟩
+  exact AaronsonAmbainis.exists_isLowest q hq
 
 /-- Backward direction of `LowestUnit`. -/
 theorem isLowest_of_unit_mul {ι : Type} [Fintype ι] (u q : MvPolynomial ι ℤ)

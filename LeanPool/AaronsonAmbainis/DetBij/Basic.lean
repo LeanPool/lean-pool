@@ -42,26 +42,15 @@ theorem flipSet_apply (x : Cube ι) (S : Finset ι) (i : ι) :
 
 omit [Fintype ι] in
 theorem flipSet_empty (x : Cube ι) : flipSet x ∅ = x := by
-  funext i
-  simp [flipSet_apply]
+  exact AaronsonAmbainis.flipSet_empty x
 
 /-- A point `w` with `diffSet x w = S` is `flipSet x S`: first half. -/
 theorem diffSet_flipSet (x : Cube ι) (S : Finset ι) : diffSet x (flipSet x S) = S := by
-  ext i
-  rw [mem_diffSet, flipSet_apply]
-  by_cases h : i ∈ S <;> cases x i <;> simp [h]
+  exact AaronsonAmbainis.diffSet_flipSet x S
 
 /-- A point `w` with `diffSet x w = S` is `flipSet x S`: second half. -/
 theorem flipSet_diffSet (x w : Cube ι) : flipSet x (diffSet x w) = w := by
-  funext i
-  rw [flipSet_apply]
-  by_cases h : x i = w i
-  · have hi : i ∉ diffSet x w := fun hh => (mem_diffSet.mp hh) h
-    rw [ite_eq_right hi, h]
-  · have hi : i ∈ diffSet x w := mem_diffSet.mpr h
-    rw [ite_eq_left hi]
-    revert h
-    cases x i <;> cases w i <;> simp
+  exact AaronsonAmbainis.flipSet_diffSet x w
 
 omit [DecidableEq ι] in
 theorem diffSet_eq_empty_iff {x w : Cube ι} : diffSet x w = ∅ ↔ x = w := by
