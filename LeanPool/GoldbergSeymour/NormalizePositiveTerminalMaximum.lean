@@ -10,6 +10,7 @@ public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 public import LeanPool.GoldbergSeymour.MaximumStableClosureExists
 public import LeanPool.GoldbergSeymour.TechnicalTheoremLarge
 public import LeanPool.GoldbergSeymour.TerminalClosureMaximum
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Normalize Positive Terminal Maximum
@@ -335,22 +336,7 @@ theorem NormalizePositiveTerminalMaximum
       TreeSequenceInitialSegment A B -> TreeSequenceInitialSegment B D ->
         TreeSequenceInitialSegment A D := by
     intro A B D hab hbd
-    rcases hab with ⟨hab, hvab, heab⟩
-    rcases hbd with ⟨hbd, hvbd, hebd⟩
-    refine ⟨Nat.le_trans hab hbd, ?_, ?_⟩
-    · intro j
-      calc
-        D.vertex (Fin.castLE (Nat.succ_le_succ (Nat.le_trans hab hbd)) j) =
-            D.vertex (Fin.castLE (Nat.succ_le_succ hbd)
-              (Fin.castLE (Nat.succ_le_succ hab) j)) := by congr 1
-        _ = B.vertex (Fin.castLE (Nat.succ_le_succ hab) j) := hvbd _
-        _ = A.vertex j := hvab _
-    · intro j
-      calc
-        D.edge (Fin.castLE (Nat.le_trans hab hbd) j) =
-            D.edge (Fin.castLE hbd (Fin.castLE hab j)) := by congr 1
-        _ = B.edge (Fin.castLE hab j) := hebd _
-        _ = A.edge j := heab _
+    exact hab.trans hbd
   have hseg : TreeSequenceInitialSegment Tn Tstar := by
     have seedToStar :=
       TashkinovAugmentationSequenceInitialSegment sigmaN seed Tstar hclosure.1

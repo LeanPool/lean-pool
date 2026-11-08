@@ -21,6 +21,20 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
+/-- A missing color bounds the incidence degree, for any enumeration of the neighbors. -/
+theorem TwoColorMissingVertexDegreeAtMostOne {V E : Type*} [Fintype E]
+    (G : LooplessMultigraph V E) {k : ℕ} (phi : PartialEdgeColoring E k)
+    (hproper : IsProperEdgeColoring G phi) (alpha beta : Fin k) (v : V)
+    [neighborEnumeration :
+      Fintype ((TwoColorIncidenceGraph G phi alpha beta).neighborSet (Sum.inl v))]
+    (hmissing : alpha ∈ MissingColors G phi v ∨ beta ∈ MissingColors G phi v) :
+    (TwoColorIncidenceGraph G phi alpha beta).degree (Sum.inl v) ≤ 1 := by
+  rw [← SimpleGraph.card_neighborSet_eq_degree]
+  apply Fintype.card_le_one_iff.mpr
+  intro first second
+  exact Subtype.ext (TwoColorMissingVertexNeighborsSubsingleton G phi hproper alpha beta v
+    hmissing first.property second.property)
+
 theorem MissingColorIncidenceEndpoint {V E : Type*}
      [Finite V] [Fintype E] (G : LooplessMultigraph V E) {k : ℕ} (phi : PartialEdgeColoring E k)
     (alpha beta : Fin k) (_ : alpha ≠ beta)
@@ -29,15 +43,8 @@ theorem MissingColorIncidenceEndpoint {V E : Type*}
     @SimpleGraph.degree _ (TwoColorIncidenceGraph G phi alpha beta) (Sum.inl v)
       (Fintype.ofFinite _) ≤ 1 := by
   classical
-  let _ := Fintype.ofFinite V
-  have neighbors := TwoColorMissingVertexNeighborsSubsingleton G phi hproper alpha beta v
-    (Or.inl hmissing)
-  rw [← SimpleGraph.card_neighborFinset_eq_degree]
-  apply Finset.card_le_one.mpr
-  intro first firstMember second secondMember
-  exact neighbors
-    (by simpa only [SimpleGraph.mem_neighborFinset, SimpleGraph.mem_neighborSet] using firstMember)
-    (by simpa only [SimpleGraph.mem_neighborFinset, SimpleGraph.mem_neighborSet] using secondMember)
+  exact TwoColorMissingVertexDegreeAtMostOne G phi hproper alpha beta v
+    (neighborEnumeration := Fintype.ofFinite _) (Or.inl hmissing)
 
 end GoldbergSeymour
 

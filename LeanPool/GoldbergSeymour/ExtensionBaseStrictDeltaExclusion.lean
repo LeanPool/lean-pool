@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.ExtensionBaseSupportOrder
 public import LeanPool.GoldbergSeymour.SameColorSeriesPreserved
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.StableColoringEquivalence
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Extension Base Strict Delta Exclusion
@@ -1054,22 +1055,7 @@ theorem ExtensionBaseStrictDeltaExclusion {V E : Type*}
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    obtain ⟨hABlen, hABv, hABe⟩ := hAB
-    obtain ⟨hBClen, hBCv, hBCe⟩ := hBC
-    refine ⟨hABlen.trans hBClen, ?_, ?_⟩
-    · intro i
-      calc
-        C.vertex (Fin.castLE (Nat.succ_le_succ (hABlen.trans hBClen)) i) =
-            B.vertex (Fin.castLE (Nat.succ_le_succ hABlen) i) := by
-              simpa only [Fin.castLE] using
-                hBCv (Fin.castLE (Nat.succ_le_succ hABlen) i)
-        _ = A.vertex i := hABv i
-    · intro i
-      calc
-        C.edge (Fin.castLE (hABlen.trans hBClen) i) =
-            B.edge (Fin.castLE hABlen i) := by
-              simpa only [Fin.castLE] using hBCe (Fin.castLE hABlen i)
-        _ = A.edge i := hABe i
+    exact hAB.trans hBC
   have stageSegment := @helper_stageSegment_802 V E inferInstance inferInstance inferInstance G k e0
       input T generating ett q s t nextSegment segmentRefl segmentTrans
   have stageFinal (a : Fin ett.rounds) :

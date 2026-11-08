@@ -19,6 +19,7 @@ public import LeanPool.GoldbergSeymour.TwoColorComponentColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoCaseOneTwoData
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoSubcaseTwoOne
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Hierarchy Situation Two Subcase One Two
@@ -1197,19 +1198,6 @@ private theorem helper_commonPrefix_1062.{u_1, u_2} :
     rw [← hYF.2.2 (Fin.castLE hXY i)]
     exact hXF.2.2 i
 
-private theorem helper_segmentTrans_1072.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {X Y F : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y
-        F → TreeSequenceInitialSegment X F := by
-  classical
-  intro V E G e0 X Y F hXY hYF
-  refine ⟨hXY.1.trans hYF.1, ?_, ?_⟩
-  · intro i
-    exact (hYF.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-  · intro i
-    exact (hYF.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
-
 private theorem helper_hcoreLength_1080.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -1849,7 +1837,7 @@ private theorem helper_continuation_3192.{u_1, u_2} :
   have segmentTrans {X Y F : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y) (hYF : TreeSequenceInitialSegment Y F) :
       TreeSequenceInitialSegment X F := by
-    exact @helper_segmentTrans_1072 (@V) (@E) (@G) (@e0) (@X) (@Y) (@F) (@hXY) (@hYF)
+    exact @TreeSequenceInitialSegment.trans V E G e0 (@X) (@Y) (@F) (@hXY) (@hYF)
   have hcoreLength : baseOne'.core.length ≤ A.length := by
     exact @helper_hcoreLength_1080 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D)

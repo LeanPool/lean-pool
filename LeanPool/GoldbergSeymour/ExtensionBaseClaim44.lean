@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBInvariant
 public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClass
 public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Extension Base Claim44
@@ -1092,30 +1093,6 @@ private theorem helper_hstageEdgesPreserved_1169.{u_1, u_2} :
       intro q
       exact (hstageEdgeFixedStep a q).trans (ih q)
 
-private theorem helper_hinitialSegmentTrans_1187.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0 : E}
-        {A B D : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B
-        D → TreeSequenceInitialSegment A D := by
-  classical
-  intro V E G e0 A B D hAB hBD
-  obtain ⟨hlenAB, hverticesAB, hedgesAB⟩ := hAB
-  obtain ⟨hlenBD, hverticesBD, hedgesBD⟩ := hBD
-  refine ⟨hlenAB.trans hlenBD, ?_, ?_⟩
-  · intro i
-    rw [show Fin.castLE (Nat.succ_le_succ (hlenAB.trans hlenBD)) i =
-        Fin.castLE (Nat.succ_le_succ hlenBD)
-          (Fin.castLE (Nat.succ_le_succ hlenAB) i) by
-      apply Fin.ext
-      rfl]
-    rw [hverticesBD, hverticesAB]
-  · intro q
-    rw [show Fin.castLE (hlenAB.trans hlenBD) q =
-        Fin.castLE hlenBD (Fin.castLE hlenAB q) by
-      apply Fin.ext
-      rfl]
-    rw [hedgesBD, hedgesAB]
-
 private theorem helper_hsequenceInitialSegment_1207.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] {G : LooplessMultigraph V E} {k : ℕ}
@@ -1379,7 +1356,7 @@ private theorem helper_continuation_1854.{u_1, u_2} :
     @helper_hfinalGammaMissing_734 V E inferInstance inferInstance inferInstance G k e0
         input T generating ett terminalSupport hterminalSupport jSlot rho1 u terminalPosition p
         indices gamma b trace hselected hsteps hpositionReverse htraceGamma hswapMakesGammaMissing
-  have hinitialSegmentTrans := @helper_hinitialSegmentTrans_1187 (@V) (@E) (@G) (@e0)
+  have hinitialSegmentTrans := @TreeSequenceInitialSegment.trans V E G e0
   have hsequenceInitialSegment := @helper_hsequenceInitialSegment_1207 (@V) (@E) inferInstance
       inferInstance (@G) (@k) (@e0) (@rho1) (@hinitialSegmentTrans)
   have haugmentationEdgeMissing := @helper_haugmentationEdgeMissing_799 V E inferInstance

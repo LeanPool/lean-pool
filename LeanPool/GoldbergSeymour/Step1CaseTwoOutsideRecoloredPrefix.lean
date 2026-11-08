@@ -19,6 +19,7 @@ public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColorsSubsetLast
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Step1Case Two Outside Recolored Prefix
@@ -998,12 +999,7 @@ lemma Step1CaseTwoOutsideRecoloredPrefix {V E : Type*}
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    refine ⟨hAB.1.trans hBC.1, ?_, ?_⟩
-    · intro i
-      exact (hBC.2.1 (Fin.castLE (Nat.succ_le_succ hAB.1) i)).trans
-        (hAB.2.1 i)
-    · intro i
-      exact (hBC.2.2 (Fin.castLE hAB.1 i)).trans (hAB.2.2 i)
+    exact hAB.trans hBC
   have stage_segment : ∀ (i j : Fin (H.dividerCount + 2)), i ≤ j →
       TreeSequenceInitialSegment (H.stage i) (H.stage j) := by
     exact H.stageInitialSegmentOfLE

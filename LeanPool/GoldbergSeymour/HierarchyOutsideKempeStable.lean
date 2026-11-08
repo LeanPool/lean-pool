@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.CombinedStableColoring
 public import LeanPool.GoldbergSeymour.OutsideKempeRecoloringStable
 
 public import LeanPool.GoldbergSeymour.TashkinovHierarchy
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Hierarchy Outside Kempe Stable
@@ -59,15 +60,7 @@ theorem HierarchyOutsideKempeStable {V E : Type*}
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    rcases hAB with ⟨hab, hvab, heab⟩
-    rcases hBC with ⟨hbc, hvbc, hebc⟩
-    refine ⟨le_trans hab hbc, ?_, ?_⟩
-    · intro i
-      have hmid := hvbc (Fin.castLE (Nat.succ_le_succ hab) i)
-      simpa using hmid.trans (hvab i)
-    · intro i
-      have hmid := hebc (Fin.castLE hab i)
-      simpa using hmid.trans (heab i)
+    exact hAB.trans hBC
   have chain : ∀ q : ℕ, (hq : q ≤ H.dividerCount) →
       TreeSequenceInitialSegment (H.stage ⟨1, by omega⟩)
         (H.stage ⟨1 + q, by omega⟩) := by

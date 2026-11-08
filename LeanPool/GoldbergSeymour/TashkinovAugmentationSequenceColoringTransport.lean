@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
 public import Mathlib.Data.Fintype.EquivFin
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Tashkinov Augmentation Sequence Coloring Transport
@@ -46,25 +47,7 @@ theorem TashkinovAugmentationSequenceColoringTransport
       (hAC : TreeSequenceInitialSegment A C)
       (hCD : TreeSequenceInitialSegment C D) :
       TreeSequenceInitialSegment A D := by
-    rcases hAC with ⟨hACLen, hACVertex, hACEdge⟩
-    rcases hCD with ⟨hCDLen, hCDVertex, hCDEdge⟩
-    refine ⟨Nat.le_trans hACLen hCDLen, ?_, ?_⟩
-    · intro i
-      calc
-        D.vertex (Fin.castLE (Nat.succ_le_succ (Nat.le_trans hACLen hCDLen)) i) =
-            D.vertex (Fin.castLE (Nat.succ_le_succ hCDLen)
-              (Fin.castLE (Nat.succ_le_succ hACLen) i)) := by
-                congr 1
-        _ = C.vertex (Fin.castLE (Nat.succ_le_succ hACLen) i) :=
-          hCDVertex _
-        _ = A.vertex i := hACVertex i
-    · intro i
-      calc
-        D.edge (Fin.castLE (Nat.le_trans hACLen hCDLen) i) =
-            D.edge (Fin.castLE hCDLen (Fin.castLE hACLen i)) := by
-              congr 1
-        _ = C.edge (Fin.castLE hACLen i) := hCDEdge _
-        _ = A.edge i := hACEdge i
+    exact hAC.trans hCD
   have routeInitialSegment {A C : TreeSequence G e0}
       (hroute : TashkinovAugmentationSequence phi A C) :
       TreeSequenceInitialSegment A C := by

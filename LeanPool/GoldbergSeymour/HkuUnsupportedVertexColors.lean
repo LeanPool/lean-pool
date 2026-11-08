@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.SharedFacts.UnsupportedVertexColors
 
 public import LeanPool.GoldbergSeymour.TashkinovSeries
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Hku Unsupported Vertex Colors
@@ -21,69 +22,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_degree_one_of_missing_109.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input :
-    PartialEdgeColoring E k) (series : TashkinovSeries G k rounds e0 input) (i : Fin rounds)
-    (gamma : Fin k) (secondStable : PartialEdgeColoring E k), IsProperEdgeColoring G
-    secondStable → ∀ (choice : MaximumDefectiveChoice G e0 (series.data.tree i.succ.castSucc)
-    (TashkinovStoredColors series.data i.castSucc) (series.data.coloring i.castSucc)) (w : V),
-    gamma ∈ MissingColors G secondStable w ∨ choice.color ∈ MissingColors G secondStable w →
-    (TwoColorIncidenceGraph G secondStable gamma choice.color).degree (Sum.inl w) ≤ (1 : ℕ) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series i gamma secondStable secondStableProper choice w hwm
-  rw [← SimpleGraph.card_neighborFinset_eq_degree]
-  apply Finset.card_le_one.mpr
-  intro y hy z hz
-  simp only [SimpleGraph.mem_neighborFinset] at hy hz
-  cases y with
-  | inl y => simp [TwoColorIncidenceGraph] at hy
-  | inr e =>
-    cases z with
-    | inl z => simp [TwoColorIncidenceGraph] at hz
-    | inr f =>
-      have he0 := hy
-      have hf0 := hz
-      simp only [TwoColorIncidenceGraph] at he0 hf0
-      rcases hwm with hwm | hwm
-      · have no_gamma : ¬ secondStable e = some gamma := by
-          intro he
-          have hn : gamma ∉ PresentColors G secondStable w := by
-            simpa [MissingColors] using hwm
-          apply hn
-          simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨_, he0.1, he⟩
-        have no_gamma_f : ¬ secondStable f = some gamma := by
-          intro hf
-          have hn : gamma ∉ PresentColors G secondStable w := by simpa [MissingColors] using hwm
-          apply hn
-          simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨_, hf0.1, hf⟩
-        have he : secondStable e = some choice.color := he0.2.resolve_left no_gamma
-        have hf : secondStable f = some choice.color := hf0.2.resolve_left no_gamma_f
-        by_cases hef : e = f
-        · exact congrArg Sum.inr hef
-        · exact (secondStableProper hef (⟨w, he0.1, hf0.1⟩) he hf).elim
-      · have no_color : ¬ secondStable e = some choice.color := by
-          intro he
-          have hn : choice.color ∉ PresentColors G secondStable w := by
-            simpa [MissingColors] using hwm
-          apply hn
-          simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨_, he0.1, he⟩
-        have no_color_f : ¬ secondStable f = some choice.color := by
-          intro hf
-          have hn : choice.color ∉ PresentColors G secondStable w := by simpa [MissingColors]
-              using hwm
-          apply hn
-          simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-          exact ⟨_, hf0.1, hf⟩
-        have he : secondStable e = some gamma := he0.2.resolve_right no_color
-        have hf : secondStable f = some gamma := hf0.2.resolve_right no_color_f
-        by_cases hef : e = f
-        · exact congrArg Sum.inr hef
-        · exact (secondStableProper hef (⟨w, he0.1, hf0.1⟩) he hf).elim
 
 private theorem helper_hcomponent_167.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
@@ -312,8 +250,8 @@ private theorem helper_branch_71.{u_1, u_2} :
   have hmissing : gamma ∈ MissingColors G secondStable choice.vertex := by
     exact (secondStableRelation.2 choice.vertex choice.vertexDefective.1).symm ▸
       gammaRule.1
-  have degree_one_of_missing := @helper_degree_one_of_missing_109 V E inferInstance inferInstance
-      inferInstance G k rounds e0 input series i gamma secondStable secondStableProper choice
+  have degree_one_of_missing := fun w hw ↦ TwoColorMissingVertexDegreeAtMostOne G secondStable
+    secondStableProper gamma choice.color w hw
   have hdegree_one : (TwoColorIncidenceGraph G secondStable gamma choice.color).degree
       (Sum.inl choice.vertex) ≤ 1 :=
     degree_one_of_missing choice.vertex (Or.inl hmissing)

@@ -13,6 +13,7 @@ public import LeanPool.GoldbergSeymour.HierarchyLEMStable
 public import LeanPool.GoldbergSeymour.GoodHierarchySameDividerTransport
 public import LeanPool.GoldbergSeymour.GoodHierarchySameDividerReconstruction
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTransTrees
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # P2880_T1_Outside Prefix Branch
@@ -336,29 +337,6 @@ private theorem helper_hrecolorX_82.{u_1, u_2} :
     have hswap := S.swapped
     rw [hswap]
     simp [TwoColorComponentSwap]
-
-private theorem helper_segmentTrans_194.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B
-        C → TreeSequenceInitialSegment A C := by
-  classical
-  intro V E G e0 A B C hAB hBC
-  rcases hAB with ⟨hab, hvab, heab⟩
-  rcases hBC with ⟨hbc, hvbc, hebc⟩
-  refine ⟨le_trans hab hbc, ?_, ?_⟩
-  · intro i
-    calc
-      C.vertex (Fin.castLE (Nat.succ_le_succ hbc)
-          (Fin.castLE (Nat.succ_le_succ hab) i)) =
-          B.vertex (Fin.castLE (Nat.succ_le_succ hab) i) :=
-        hvbc (Fin.castLE (Nat.succ_le_succ hab) i)
-      _ = A.vertex i := hvab i
-  · intro i
-    calc
-      C.edge (Fin.castLE hbc (Fin.castLE hab i)) = B.edge (Fin.castLE hab i) :=
-        hebc _
-      _ = A.edge i := heab i
 
 private theorem helper_hstableTn_223.{u_1, u_2} :
     open scoped Classical in
@@ -1069,17 +1047,19 @@ private theorem helper_branch_1125.{u_1, u_2} :
       ⟨m.rounds - 1, by have hp := m.roundsPositive; omega⟩
   have htree : corr.replacementETT.series.data.tree
       terminalIndex.succ.castSucc = Tn := by
-    apply helper_htree_1031 <;> assumption
+    exact helper_htree_1031 G k e0 input T phi ett base C ctx P sigma ettX baseX HX corr castTree
+      hseries
   have hkindEq :
     ∀ i : Fin (corr.replacementETT.rounds + 1), corr.replacementETT.series.data.kind i =
         m.series.data.kind (Fin.cast (congrArg (fun r => r + 1) corr.rungAgreement) i) := by
-    apply helper_hkindEq_493 <;> assumption
+    exact helper_hkindEq_493 G k e0 input T phi ett base C ctx P sigma corr castKind hseries
   have htreeFinal : corr.replacementETT.series.data.tree
       (Fin.last corr.replacementETT.rounds).castSucc = Tn := by
-    apply helper_htreeFinal_1056 <;> assumption
+    exact helper_htreeFinal_1056 G k e0 input T phi ett base C ctx P sigma ettX baseX HX corr
+      htree
   have hkindP : m.series.data.kind (Fin.last m.rounds) ≠
         some TashkinovExtensionKind.PE := by
-    apply helper_hkindP_512; assumption
+    exact helper_hkindP_512 G k e0 input T phi ett base C ctx P hkind
   let newBase : HierarchyBase corr.replacementETT sigma := {
     core := Tn
     closure := basePrefix.closure
@@ -1197,10 +1177,13 @@ private theorem helper_hfull_1262.{u_1, u_2} :
       hNstrict corrPrefix basePrefix KPrefix goodPrefix samePrefix hkindX
   by_cases hpe : m.series.data.kind n =
       some TashkinovExtensionKind.PE
-  · apply helper_branch_392 <;> assumption
+  · exact helper_branch_392 G k e0 input T phi ett base C ctx P alpha beta sigma S ettX baseX
+      hclosureX HX goodX hsigmaProper hsigmaOne hstableX hstableTn hroute corrPrefix basePrefix
+      KPrefix goodPrefix samePrefix hkindX hpe
   · rcases hroute with hpeRoute | hnonpeRoute
     · exact False.elim (hpe hpeRoute.1)
-    · apply helper_branch_1125 <;> assumption
+    · exact helper_branch_1125 G k e0 input T phi ett base C ctx P sigma ettX baseX HX hmod hNT
+        hNstrict corrPrefix basePrefix hnonpeRoute
 private theorem helper_hlowerX_1128.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -1381,7 +1364,9 @@ private theorem helper_continuation_1844.{u_1, u_2} :
         ∃ newBase : HierarchyBase corr.replacementETT sigma,
           ∃ K : TashkinovHierarchy corr.replacementETT newBase,
             newBase.closure = basePrefix.closure ∧ SameHierarchyStages H K := by
-    apply helper_hfull_1262 <;> assumption
+    exact helper_hfull_1262 G k e0 input T phi ett base C ctx P alpha beta sigma S ettX baseX
+      hclosureX HX goodX hsigmaProper hsigmaOne hstableX hstableTn hmod hroute hNT hNstrict
+      corrPrefix basePrefix KPrefix goodPrefix samePrefix hkindX
   rcases hfull with ⟨corrFull, hmaximumFull, baseFull, KFull, hclosure, hsameFull⟩
   have hcoreFull : baseFull.core = basePrefix.core := by
     have hprefixCore := samePrefix.1.1
@@ -1546,7 +1531,7 @@ private theorem helper_continuation_1969.{u_1, u_2} :
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    apply helper_segmentTrans_194 <;> assumption
+    exact hAB.trans hBC
   have hTnCore : TreeSequenceInitialSegment Tn P.replacementBase.core := by
     exact P.replacementBase.lastRoundInitialSegmentCore
   have hTnX : TreeSequenceInitialSegment Tn X :=
@@ -1555,7 +1540,8 @@ private theorem helper_continuation_1969.{u_1, u_2} :
     TreeSequenceInitialSegmentVertexSetSubset hTnX
   have hstableTn : StableColoring Tn Dn
       P.coloring sigma := by
-    apply helper_hstableTn_223 <;> assumption
+    exact helper_hstableTn_223 G k e0 input T phi ett base C ctx P alpha beta sigma S ettX
+      hstableX hTnXvertices
   have hstableTn' : StableColoring Tn Dn
       (m.series.data.coloring n) sigma := by
     have hcolor : m.series.data.coloring n = P.coloring := by
@@ -1575,11 +1561,11 @@ private theorem helper_continuation_1969.{u_1, u_2} :
           m.series.data.connectingEdges n = {f} ∧
           TreeSequenceAdjoinEdge Tn f seed ∧
           TashkinovAugmentationSequence sigma seed T) := by
-    apply helper_hroute_241 <;> assumption
+    exact helper_hroute_241 G k e0 input T phi ett base C ctx P alpha beta sigma S
   have hNT : TreeSequenceInitialSegment Tn T := by
-    apply helper_hNT_259 <;> assumption
+    exact helper_hNT_259 G k e0 input T phi ett base C ctx P ettX baseX HX
   have hNstrict : Tn.length < T.length := by
-    apply helper_hNstrict_267 <;> assumption
+    exact helper_hNstrict_267 G k e0 input T phi ett base C ctx P ettX baseX HX
   let seriesCast := P.corresponding.rungAgreement.symm ▸
     P.corresponding.replacementSeries
   have hseriesCast : HEq seriesCast P.corresponding.replacementSeries := by
@@ -1629,7 +1615,7 @@ private theorem helper_continuation_1969.{u_1, u_2} :
   obtain ⟨basePrefix, KPrefix, goodPrefix, samePrefix⟩ := prefixPackage
   have hkindX : ettX.series.data.kind (Fin.last ettX.rounds) =
       m.series.data.kind n := by
-    apply helper_hkindX_358 <;> assumption
+    exact helper_hkindX_358 G k e0 input T phi ett base C ctx P ettX hroundX hseriesX
   exact @helper_continuation_1844 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@alpha)
       (@beta) (@sigma) (@S) (@ettX) (@baseX) (@hcoreX) (@hclosureX) (@HX) (@hcountX) (@hstagesX)
@@ -1687,7 +1673,7 @@ theorem P2880_T1_OutsidePrefixBranch
   obtain ⟨ettX, hMPX, hroundX, hseriesX, baseX, hcoreX, hclosureX,
     hsuppX, HX, hcountX, hstagesX, hpositionsX, goodX, hcolorsX⟩ := hprefix
   have hrecolorX : OutsideKempeRecoloring X P.coloring sigma alpha beta := by
-    apply helper_hrecolorX_82; assumption
+    exact helper_hrecolorX_82 G k e0 input T phi ett base C ctx P alpha beta sigma S
   have hlowerX :
     ∀ {input' : PartialEdgeColoring E k} {T' : TreeSequence G e0}
         {generating' : PartialEdgeColoring E k} (lower : ExtendedTashkinovTree G k e0 input' T'
@@ -1747,7 +1733,8 @@ theorem P2880_T1_OutsidePrefixBranch
     ∀ sigma : PartialEdgeColoring E k, IsProperEdgeColoring G sigma → IsOneEdgeUncolored sigma e0
         → StableColoring Tn (TashkinovStoredColors lower.series.data n)
         (lower.series.data.coloring n) sigma → ModColoring lower sigma) := by
-    apply helper_hlowerX_1128; assumption
+    exact @helper_hlowerX_1128 V E inferInstance inferInstance inferInstance inferInstance G k e0
+      input T phi ett base C ctx P ettX hroundX
   exact @helper_continuation_1969 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@alpha)
       (@beta) (@sigma) (@S) (@ettX) (@hMPX) (@hroundX) (@hseriesX) (@baseX) (@hcoreX)

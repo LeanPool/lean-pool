@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyCounterexample
 public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Shared facts for BaseControl
@@ -69,14 +70,9 @@ abbrev branchStatement.{u_1, u_2} : Prop :=
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem trans.{u_1, u_2} : transStatement.{u_1, u_2} := by
-  classical
   intro V E G e0 U W Z hUW hWZ
-  refine ⟨hUW.1.trans hWZ.1, ?_, ?_⟩
-  · intro j
-    exact (hWZ.2.1 (Fin.castLE (Nat.succ_le_succ hUW.1) j)).trans
-      (hUW.2.1 j)
-  · intro j
-    exact (hWZ.2.2 (Fin.castLE hUW.1 j)).trans (hUW.2.2 j)
+  exact hUW.trans hWZ
+
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem stageChain.{u_1, u_2} : stageChainStatement.{u_1, u_2} := by

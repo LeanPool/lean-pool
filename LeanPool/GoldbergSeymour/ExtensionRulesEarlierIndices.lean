@@ -11,6 +11,7 @@ public import LeanPool.GoldbergSeymour.CertifiedETTRestriction
 public import LeanPool.GoldbergSeymour.ExtensionRulesPEFirstAppearanceBound
 public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Extension Rules Earlier Indices
@@ -682,15 +683,7 @@ theorem ExtensionRulesEarlierIndices {V E : Type*} [Fintype V] [Fintype E]
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    rcases hAB with ⟨hab, hvab, heab⟩
-    rcases hBC with ⟨hbc, hvbc, hebc⟩
-    refine ⟨hab.trans hbc, ?_, ?_⟩
-    · intro i
-      have hmid := hvbc (Fin.castLE (Nat.succ_le_succ hab) i)
-      exact (by simpa using hmid.trans (hvab i))
-    · intro i
-      have hmid := hebc (Fin.castLE hab i)
-      exact (by simpa using hmid.trans (heab i))
+    exact hAB.trans hBC
   have stageToStage (first last : ℕ) (positive : 1 ≤ first)
       (ordered : first ≤ last) (bounded : last ≤ ett.rounds) :
       TreeSequenceInitialSegment

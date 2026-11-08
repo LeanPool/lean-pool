@@ -140,8 +140,6 @@ private theorem helper_branch_193.{u_1, u_2} :
     rcases hterminalX with ⟨UF, hXF, hclosedF⟩
     rcases hstateX with ⟨UX, hUX, corrX, hMPX, baseX, hbcX, hblX, hbsX, HX, goodX,
       hminusX, hrouteX, hsizeX⟩
-    have hsame : TreeSequenceVertexSet UF = TreeSequenceVertexSet UX :=
-      hXF.trans hUX.symm
     have hclosedUX : TreeColorSetClosed G generating UX
         (TreeMissingColors generating UX) := by
       simpa [TreeColorSetClosed, TreeMissingColors, hXF, hUX] using hclosedF
@@ -397,10 +395,6 @@ theorem CurrentElementaryOrGoodHierarchyConstructionLarge
   let Tn : TreeSequence G e0 := ett.series.data.tree terminal.castSucc
   let F : TreeSequence G e0 := ett.series.data.tree terminal.succ
   have terminalFacts := ett.coloringProperties
-  have stable : StableColoring Tn
-      (TashkinovStoredColors ett.series.data terminal) generating generating := by
-    unfold StableColoring
-    exact ⟨by intro f hf h; rfl, by intro v hv; rfl⟩
   have hmod : ModColoring ett generating := by
     apply ctx.currentSix ett rfl hMP
     · exact terminalFacts.1
@@ -424,34 +418,6 @@ theorem CurrentElementaryOrGoodHierarchyConstructionLarge
       (hBC : TashkinovAugmentationSequence generating B C) :
       TashkinovAugmentationSequence generating A C := by
     exact Relation.ReflTransGen.trans hAB hBC
-  let State (J : TreeSequence G e0) (X : Finset V) : Prop :=
-    ∃ U : TreeSequence G e0,
-      TreeSequenceVertexSet U = X ∧
-      ∃ corrU : CorrespondingExtendedTashkinovTree G k e0 ett generating U,
-        MaximumProperty corrU.replacementETT ∧
-        ∃ baseU : HierarchyBase corrU.replacementETT generating,
-          baseU.core = base.core ∧ baseU.closure = base.closure ∧
-          baseU.supportPosition.val = base.supportPosition.val ∧
-          ∃ H : TashkinovHierarchy corrU.replacementETT baseU,
-            ∃ good : GoodHierarchy H,
-              TreeColorSetMinusClosed G generating U
-                ((HierarchyTerminalStoredColors H).biUnion
-                  (good.gamma (Fin.last H.dividerCount))) ∧
-              TashkinovAugmentationSequence generating J U ∧
-              (ett.series.data.kind terminal = some TashkinovExtensionKind.PE →
-                base.core.length < U.length) ∧
-              (ett.series.data.kind terminal ≠ some TashkinovExtensionKind.PE →
-                Tn.length < U.length)
-  let Terminal (X : Finset V) : Prop :=
-    ∃ U : TreeSequence G e0, TreeSequenceVertexSet U = X ∧
-      TreeColorSetClosed G generating U (TreeMissingColors generating U)
-  have solve : ∀ (J : TreeSequence G e0) (anchor : Prop)
-      (strict : ∀ (U : TreeSequence G e0), State J (TreeSequenceVertexSet U) →
-        TreeSequenceVertexSet J ⊂ TreeSequenceVertexSet U),
-      ∀ X, State J X → Terminal X →
-      Terminal X := by
-    intro J anchor strict X hstate hterminal
-    exact hterminal
   by_cases hk : ett.series.data.kind terminal = some TashkinovExtensionKind.PE
   · exact @helper_branch_193 V E inferInstance inferInstance inferInstance inferInstance G k e0
       input T generating ett hMP ctx hdegree hlarge hbound routeTrans hk

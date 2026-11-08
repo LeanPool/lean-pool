@@ -10,6 +10,7 @@ public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
 public import LeanPool.GoldbergSeymour.ModColoring
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Restricted Augmentation Corresponding Endpoint
@@ -297,24 +298,7 @@ theorem RestrictedAugmentationCorrespondingEndpoint {V E : Type*}
       TreeSequenceInitialSegment B C →
       TreeSequenceInitialSegment A C := by
     intro A B C hAB hBC
-    rcases hAB with ⟨hlenAB, hvertexAB, hedgeAB⟩
-    rcases hBC with ⟨hlenBC, hvertexBC, hedgeBC⟩
-    refine ⟨Nat.le_trans hlenAB hlenBC, ?_, ?_⟩
-    · intro i
-      calc
-        C.vertex (Fin.castLE
-            (Nat.succ_le_succ (Nat.le_trans hlenAB hlenBC)) i) =
-            C.vertex (Fin.castLE (Nat.succ_le_succ hlenBC)
-              (Fin.castLE (Nat.succ_le_succ hlenAB) i)) := by congr 1
-        _ = B.vertex (Fin.castLE (Nat.succ_le_succ hlenAB) i) :=
-          hvertexBC _
-        _ = A.vertex i := hvertexAB i
-    · intro i
-      calc
-        C.edge (Fin.castLE (Nat.le_trans hlenAB hlenBC) i) =
-            C.edge (Fin.castLE hlenBC (Fin.castLE hlenAB i)) := by congr 1
-        _ = B.edge (Fin.castLE hlenAB i) := hedgeBC _
-        _ = A.edge i := hedgeAB i
+    exact hAB.trans hBC
   have initialSegmentOfCommonExtension : ∀ {A B C : TreeSequence G e0},
       TreeSequenceInitialSegment A C →
       TreeSequenceInitialSegment B C →

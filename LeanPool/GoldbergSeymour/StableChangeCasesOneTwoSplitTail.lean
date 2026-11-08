@@ -21,6 +21,7 @@ public import LeanPool.GoldbergSeymour.HierarchyWeaklyStable
 public import LeanPool.GoldbergSeymour.SameGoodHierarchy
 public import LeanPool.GoldbergSeymour.StableChangeCasesOneTwo
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceComponentSwap
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Stable Change Cases One Two Split Tail
@@ -951,11 +952,7 @@ theorem StableChangeCasesOneTwoSplitTail {V E : Type*}
   have segTrans {S U W : TreeSequence G e0}
       (hSU : TreeSequenceInitialSegment S U)
       (hUW : TreeSequenceInitialSegment U W) : TreeSequenceInitialSegment S W := by
-    refine ⟨hSU.1.trans hUW.1, ?_, ?_⟩
-    · intro i
-      exact (hUW.2.1 (Fin.castLE (Nat.succ_le_succ hSU.1) i)).trans (hSU.2.1 i)
-    · intro i
-      exact (hUW.2.2 (Fin.castLE hSU.1 i)).trans (hSU.2.2 i)
+    exact hSU.trans hUW
   have equalTrees := @SharedFacts.StableChangeCasesOneTwoSplitTail.equalTrees V E G e0
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)

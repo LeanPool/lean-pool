@@ -23,6 +23,7 @@ public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 public import LeanPool.GoldbergSeymour.TreeExitComponentMeetsTreeOnlyAtExit
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
 public import LeanPool.GoldbergSeymour.ClosedColorExitPathBoundaryEdge
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Rutgers Strict Shortening
@@ -1973,29 +1974,6 @@ private theorem helper_branch_1326.{u_1, u_2} :
       input T generating original presentation counterexample seed hseed gamma i3 hi3pos hi3le W
       hW route4W A40 max40 agree40 agree0 Q1 Q2 Q3 c1 hc1 g1 c2 hc2 g2 c3 hc3 g3 hdis12 hdis13
       hdis23 hmeasure good1 good2 good3 finish j1 hj1 j2 hj2 j3 hj3 hj12 hj13 hj23 h12 h13
-private theorem helper_segmentTrans_928.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-      {A B C : TreeSequence G e0},
-    TreeSequenceInitialSegment A B →
-    TreeSequenceInitialSegment B C →
-    TreeSequenceInitialSegment A C := by
-  classical
-  intro V E G e0 A B C hAB hBC
-  refine ⟨hAB.1.trans hBC.1, ?_, ?_⟩
-  · intro i
-    calc
-      C.vertex (Fin.castLE _ i) =
-          C.vertex (Fin.castLE _ (Fin.castLE _ i)) := by congr 1
-      _ = B.vertex (Fin.castLE _ i) := hBC.2.1 _
-      _ = A.vertex i := hAB.2.1 _
-  · intro i
-    calc
-      C.edge (Fin.castLE _ i) =
-          C.edge (Fin.castLE _ (Fin.castLE _ i)) := by congr 1
-      _ = B.edge (Fin.castLE _ i) := hBC.2.2 _
-      _ = A.edge i := hAB.2.2 _
-
 private theorem helper_commonPrefix_945.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
@@ -3001,7 +2979,7 @@ theorem RutgersStrictShortening
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    exact @helper_segmentTrans_928 V E G e0 A B C hAB hBC
+    exact @TreeSequenceInitialSegment.trans V E G e0 A B C hAB hBC
   have commonPrefix {A B X : TreeSequence G e0}
       (hAX : TreeSequenceInitialSegment A X)
       (hBX : TreeSequenceInitialSegment B X) (hlen : A.length ≤ B.length) :

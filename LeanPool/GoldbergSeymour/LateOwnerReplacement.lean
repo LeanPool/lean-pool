@@ -15,6 +15,7 @@ public import LeanPool.GoldbergSeymour.ChangeLemma
 public import LeanPool.GoldbergSeymour.HierarchyTailMissingColorExclusion
 public import LeanPool.GoldbergSeymour.HierarchyReplacementPresentationTrans
 public import LeanPool.GoldbergSeymour.ElementaryTerminalComponent
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # P2905_T2_Late Owner Replacement
@@ -650,11 +651,7 @@ private theorem helper_continuation_681.{u_1, u_2} :
   have segTrans {U W Z : TreeSequence G e0}
       (hUW : TreeSequenceInitialSegment U W)
       (hWZ : TreeSequenceInitialSegment W Z) : TreeSequenceInitialSegment U Z := by
-    refine ⟨hUW.1.trans hWZ.1, ?_, ?_⟩
-    · intro i
-      exact (hWZ.2.1 (Fin.castLE (Nat.succ_le_succ hUW.1) i)).trans (hUW.2.1 i)
-    · intro i
-      exact (hWZ.2.2 (Fin.castLE hUW.1 i)).trans (hUW.2.2 i)
+    exact hUW.trans hWZ
   have stageSegment (a d : ℕ) (hbound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment (H.stage ⟨a, by omega⟩)
         (H.stage ⟨a + d, by omega⟩) := by

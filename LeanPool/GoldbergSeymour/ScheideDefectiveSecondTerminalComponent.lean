@@ -13,6 +13,7 @@ public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.StableColoring
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Scheide Defective Second Terminal Component
@@ -450,45 +451,6 @@ private theorem helper_htreeEdges_565.{u_1, u_2} :
   apply G.loopless (T.edge q) R.v1
   simpa [newVertex, oldVertex, oldIndex, hnewEq, holdEq] using hends
 
-private theorem helper_hy0Degree_676.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))),
-    let v0 : V := D.v0 d;
-    let gamma : Fin k := C.gamma (D.gammaIndex d);
-    let H0 : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi gamma (↑d : Fin k);
-        IsProperEdgeColoring G phi → (
-    ∀ {c : Fin k} {v : V} {e : E}, c ∈ MissingColors G phi v → Incident G v e → phi e ≠ some c) →
-        @SimpleGraph.degree (Sum V E) H0 (@Sum.inl V E v0) (@Fintype.ofFinite (@Set.Elem (Sum V E)
-        (@SimpleGraph.neighborSet (Sum V E) H0 (@Sum.inl V E v0))) (@Subtype.finite (Sum V E)
-        (@Finite.of_fintype (Sum V E) (@instFintypeSum V E inst inst_1)) (@Membership.mem (Sum V
-        E) (Set (Sum V E)) (@Set.instMembership (Sum V E)) (@SimpleGraph.neighborSet (Sum V E) H0
-        (@Sum.inl V E v0))))) ≤ (1 : ℕ) := by
-  classical
-  intro V E _ _ _ G k e0 phi T C D d v0 gamma H0 hproper missing_no_incident
-  rw [← SimpleGraph.card_neighborFinset_eq_degree]
-  apply Finset.card_le_one.mpr
-  intro a ha b hb
-  simp only [SimpleGraph.mem_neighborFinset] at ha hb
-  cases a with
-  | inl a => simp [H0, TwoColorIncidenceGraph] at ha
-  | inr e =>
-    cases b with
-    | inl b => simp [H0, TwoColorIncidenceGraph] at hb
-    | inr f =>
-      simp only [H0, TwoColorIncidenceGraph] at ha hb
-      have hea : phi e = some d.1 := ha.2.resolve_left
-        (missing_no_incident
-          (by simpa [gamma, v0] using D.gamma_missing_at_v0 d) ha.1)
-      have hfa : phi f = some d.1 := hb.2.resolve_left
-        (missing_no_incident
-          (by simpa [gamma, v0] using D.gamma_missing_at_v0 d) hb.1)
-      by_cases hef : e = f
-      · exact congrArg Sum.inr hef
-      · exact False.elim ((hproper hef ⟨v0, ha.1, hb.1⟩ hea) hfa)
-
 private theorem helper_outside_edge_effect_777.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -757,8 +719,8 @@ private theorem helper_continuation_880.{u_1, u_2} :
       have hlt : i.val < r.val := by omega
       refine ⟨hlt, ?_⟩
       simpa [X, p, i] using R.after_last_tree_vertex r hlt w (by simpa [p] using hget)
-  have hy0Degree := @helper_hy0Degree_676 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@phi) (@T) (@C) (@D) (@d) (@hproper) (@missing_no_incident)
+  have hy0Degree := TwoColorMissingVertexDegreeAtMostOne G phi hproper gamma d.1 v0
+    (neighborEnumeration := Fintype.ofFinite _) (Or.inl (D.gamma_missing_at_v0 d))
   have adjacent_indices_forward := degreeTwoPathAdjacentIndices p hpathIs
     (TwoColorIncidenceDegreeAtMostTwo G phi gamma d.1 hproper) hy0Degree
   have old_adjacent_indices : ∀ (n m : ℕ), n ≤ p.length → m ≤ p.length →

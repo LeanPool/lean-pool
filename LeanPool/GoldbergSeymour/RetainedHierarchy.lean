@@ -11,6 +11,7 @@ public import LeanPool.GoldbergSeymour.MinusClosedTransport
 public import LeanPool.GoldbergSeymour.PrefixSegmentTransport
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.GoodHierarchy
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # P2813_T1_Retained Hierarchy
@@ -288,13 +289,7 @@ theorem P2813_T1_RetainedHierarchy {V E : Type*}
       (hUW : TreeSequenceInitialSegment U W)
       (hWZ : TreeSequenceInitialSegment W Z) :
       TreeSequenceInitialSegment U Z := by
-    clear * - hUW hWZ
-    refine ⟨hUW.1.trans hWZ.1, ?_, ?_⟩
-    · intro j
-      exact (hWZ.2.1 (Fin.castLE (Nat.succ_le_succ hUW.1) j)).trans
-        (hUW.2.1 j)
-    · intro j
-      exact (hWZ.2.2 (Fin.castLE hUW.1 j)).trans (hUW.2.2 j)
+    exact hUW.trans hWZ
   have stageChain : ∀ (j : ℕ) (hj : j < H.dividerCount + 2)
       (i : Fin (H.dividerCount + 2)), i.val ≤ j →
       TreeSequenceInitialSegment (H.stage i) (H.stage ⟨j, hj⟩) := by

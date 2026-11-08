@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.StableColoringEquivalence
 public import LeanPool.GoldbergSeymour.TashkinovSeries
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
 public import LeanPool.GoldbergSeymour.TwoColorPathComponent
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Parallel Step Root Component Setup
@@ -491,52 +492,8 @@ private theorem helper_branch_100.{u_1, u_2} :
     ∀ v : V, peGamma ∈ MissingColors G secondStable v ∨ choice.color ∈ MissingColors G
         secondStable v → @SimpleGraph.degree _ H (Sum.inl v) (Fintype.ofFinite _) ≤ 1 := by
     intro v hv
-    rw [← SimpleGraph.card_neighborFinset_eq_degree]
-    apply Finset.card_le_one.mpr
-    intro y hy z hz
-    simp only [SimpleGraph.mem_neighborFinset] at hy hz
-    cases y with
-    | inl y => simp [H, TwoColorIncidenceGraph] at hy
-    | inr e =>
-      cases z with
-      | inl z => simp [H, TwoColorIncidenceGraph] at hz
-      | inr f =>
-        simp only [H, TwoColorIncidenceGraph] at hy hz
-        rcases hv with hv | hv
-        · have he : secondStable e = some choice.color :=
-            hy.2.resolve_left (by
-              intro he
-              apply (by simpa [MissingColors] using hv)
-              simp only [PresentColors, Finset.mem_filter,
-                Finset.mem_univ, true_and]
-              exact ⟨e, hy.1, he⟩)
-          have hf : secondStable f = some choice.color :=
-            hz.2.resolve_left (by
-              intro hf
-              apply (by simpa [MissingColors] using hv)
-              simp only [PresentColors, Finset.mem_filter,
-                Finset.mem_univ, true_and]
-              exact ⟨f, hz.1, hf⟩)
-          by_cases hef : e = f
-          · exact congrArg Sum.inr hef
-          · exact (secondStableProper hef ⟨v, hy.1, hz.1⟩ he hf).elim
-        · have he : secondStable e = some peGamma :=
-            hy.2.resolve_right (by
-              intro he
-              apply (by simpa [MissingColors] using hv)
-              simp only [PresentColors, Finset.mem_filter,
-                Finset.mem_univ, true_and]
-              exact ⟨e, hy.1, he⟩)
-          have hf : secondStable f = some peGamma :=
-            hz.2.resolve_right (by
-              intro hf
-              apply (by simpa [MissingColors] using hv)
-              simp only [PresentColors, Finset.mem_filter,
-                Finset.mem_univ, true_and]
-              exact ⟨f, hz.1, hf⟩)
-          by_cases hef : e = f
-          · exact congrArg Sum.inr hef
-          · exact (secondStableProper hef ⟨v, hy.1, hz.1⟩ he hf).elim
+    exact TwoColorMissingVertexDegreeAtMostOne G secondStable secondStableProper
+      peGamma choice.color v (neighborEnumeration := Fintype.ofFinite _) hv
   exact @helper_continuation_253 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
       (@rounds) (@e0) (@input) (@series) (@t) (@peGamma) (@secondStable) (@secondStableProper)
       (@choice) (@exitWitness) (@currentColoring) (@currentProper) (@orderedExtension)

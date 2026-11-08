@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.TreeExit
 
 public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Tree Exit Component Meets Tree Only At Exit
@@ -38,44 +39,7 @@ theorem TreeExitComponentMeetsTreeOnlyAtExit
       beta ∈ MissingColors G phi w →
       (TwoColorIncidenceGraph G phi alpha beta).degree (Sum.inl w) ≤ 1 := by
     intro w hw
-    rw [← SimpleGraph.card_neighborFinset_eq_degree]
-    apply Finset.card_le_one.mpr
-    intro y hy z hz
-    simp only [SimpleGraph.mem_neighborFinset] at hy hz
-    cases y with
-    | inl y => simp [TwoColorIncidenceGraph] at hy
-    | inr e =>
-      cases z with
-      | inl z => simp [TwoColorIncidenceGraph] at hz
-      | inr f =>
-        simp only [TwoColorIncidenceGraph] at hy hz
-        rcases hw with hw | hw
-        · have he : phi e = some beta := hy.2.resolve_left (by
-            intro he
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨e, hy.1, he⟩)
-          have hf : phi f = some beta := hz.2.resolve_left (by
-            intro hf
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨f, hz.1, hf⟩)
-          by_cases h : e = f
-          · exact congrArg Sum.inr h
-          · exact (hproper h ⟨w, hy.1, hz.1⟩ he hf).elim
-        · have he : phi e = some alpha := hy.2.resolve_right (by
-            intro he
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨e, hy.1, he⟩)
-          have hf : phi f = some alpha := hz.2.resolve_right (by
-            intro hf
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨f, hz.1, hf⟩)
-          by_cases h : e = f
-          · exact congrArg Sum.inr h
-          · exact (hproper h ⟨w, hy.1, hz.1⟩ he hf).elim
+    exact TwoColorMissingVertexDegreeAtMostOne G phi hproper alpha beta w hw
   rcases hexit with ⟨u, path, pathData⟩
   rcases pathData with ⟨pathIs, pathLen, uOut, endTree, endOnly⟩
   have hdegreeBound : ∀ x, @SimpleGraph.degree _

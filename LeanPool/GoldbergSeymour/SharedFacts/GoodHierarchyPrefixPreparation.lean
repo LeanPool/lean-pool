@@ -5,7 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import Mathlib.Combinatorics.SimpleGraph.Init
 public import Mathlib.Tactic.Bound.Init
 
@@ -30,17 +30,8 @@ abbrev segmentTransStatement.{u_1, u_2} : Prop :=
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem segmentTrans.{u_1, u_2} : segmentTransStatement.{u_1, u_2} := by
-  classical
   intro V E G e0 A B C hAB hBC
-  rcases hAB with ⟨hab, hvab, heab⟩
-  rcases hBC with ⟨hbc, hvbc, hebc⟩
-  refine ⟨le_trans hab hbc, ?_, ?_⟩
-  · intro i
-    have hmid := hvbc (Fin.castLE (Nat.succ_le_succ hab) i)
-    simpa using hmid.trans (hvab i)
-  · intro i
-    have hmid := hebc (Fin.castLE hab i)
-    simpa using hmid.trans (heab i)
+  exact hAB.trans hBC
 
 end GoldbergSeymour.SharedFacts.GoodHierarchyPrefixPreparation
 

@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.ExtensionRulesPEFirstAppearanceBound
 public import LeanPool.GoldbergSeymour.HkuUnsupportedVertexColors
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Extension Base Least Active Delta Transport
@@ -141,22 +142,7 @@ theorem ExtensionBaseLeastActiveDeltaTransport {V E : Type*}
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    obtain ⟨hABlen, hABv, hABe⟩ := hAB
-    obtain ⟨hBClen, hBCv, hBCe⟩ := hBC
-    refine ⟨hABlen.trans hBClen, ?_, ?_⟩
-    · intro i
-      calc
-        C.vertex (Fin.castLE (Nat.succ_le_succ (hABlen.trans hBClen)) i) =
-            B.vertex (Fin.castLE (Nat.succ_le_succ hABlen) i) := by
-              simpa only [Fin.castLE] using
-                hBCv (Fin.castLE (Nat.succ_le_succ hABlen) i)
-        _ = A.vertex i := hABv i
-    · intro i
-      calc
-        C.edge (Fin.castLE (hABlen.trans hBClen) i) =
-            B.edge (Fin.castLE hABlen i) := by
-              simpa only [Fin.castLE] using hBCe (Fin.castLE hABlen i)
-        _ = A.edge i := hABe i
+    exact hAB.trans hBC
   have stageSegment : ∀ (a b : Fin ett.rounds), a.val ≤ b.val →
       TreeSequenceInitialSegment (series.data.tree a.succ.castSucc)
         (series.data.tree b.succ.castSucc) := by

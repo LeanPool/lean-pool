@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
 public import LeanPool.GoldbergSeymour.StableColoring
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Scheide Defective Terminal Component
@@ -657,24 +658,8 @@ private theorem helper_continuation_826.{u_1, u_2} :
       hv0At hf0At boundary_of_tree_incident_outside missing_no_incident tail_vertex
   have hy0Degree : @SimpleGraph.degree _ H0 (Sum.inl y0)
       (Fintype.ofFinite _) ≤ 1 := by
-    rw [← SimpleGraph.card_neighborFinset_eq_degree]
-    apply Finset.card_le_one.mpr
-    intro a ha b hb
-    simp only [SimpleGraph.mem_neighborFinset] at ha hb
-    cases a with
-    | inl a => simp [H0, TwoColorIncidenceGraph] at ha
-    | inr e =>
-      cases b with
-      | inl b => simp [H0, TwoColorIncidenceGraph] at hb
-      | inr f =>
-        simp only [H0, TwoColorIncidenceGraph] at ha hb
-        have hea : phi e = some d.1 := ha.2.resolve_left
-          (missing_no_incident D.alpha0_missing_at_y0 ha.1)
-        have hfa : phi f = some d.1 := hb.2.resolve_left
-          (missing_no_incident D.alpha0_missing_at_y0 hb.1)
-        by_cases hef : e = f
-        · exact congrArg Sum.inr hef
-        · exact False.elim ((hproper hef ⟨y0, ha.1, hb.1⟩ hea) hfa)
+    exact TwoColorMissingVertexDegreeAtMostOne G phi hproper D.alpha0 d.1 y0
+      (neighborEnumeration := Fintype.ofFinite _) (Or.inl D.alpha0_missing_at_y0)
   have adjacent_indices_forward := degreeTwoPathAdjacentIndices p hpathIs
     (TwoColorIncidenceDegreeAtMostTwo G phi D.alpha0 d.1 hproper) hy0Degree
   exact @helper_continuation_351 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)

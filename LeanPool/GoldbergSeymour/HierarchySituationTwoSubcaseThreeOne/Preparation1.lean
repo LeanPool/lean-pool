@@ -1300,14 +1300,8 @@ theorem helper_transSegment_333.{u_1, u_2} :
   TreeSequenceInitialSegment X Y →
   TreeSequenceInitialSegment Y Z →
   TreeSequenceInitialSegment X Z := by
-  classical
   intro V E G e0 X Y Z hXY hYZ
-  as_aux_lemma =>
-    refine ⟨le_trans hXY.1 hYZ.1, ?_, ?_⟩
-    · intro i
-      exact (hYZ.2.1 (Fin.castLE (Nat.succ_le_succ hXY.1) i)).trans (hXY.2.1 i)
-    · intro i
-      exact (hYZ.2.2 (Fin.castLE hXY.1 i)).trans (hXY.2.2 i)
+  exact hXY.trans hYZ
 
 theorem helper_restrictSegment_343.{u_1, u_2} :
     open scoped Classical in

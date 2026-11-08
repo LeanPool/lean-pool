@@ -16,6 +16,7 @@ public import LeanPool.GoldbergSeymour.PositivePrefixNoRevisiting
 public import LeanPool.GoldbergSeymour.HkuMissingStoredMonotone
 public import LeanPool.GoldbergSeymour.RevisitingExtensionCertificateAppend
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Preparatory lemmas for terminal extension reconstruction
@@ -37,14 +38,12 @@ noncomputable abbrev helperNewChoice2409.{u_1, u_2} :=
     @SharedFacts.TerminalRebuild.newChoice2409.{u_1, u_2}
 
 
-
 /-- Typed data construction shared by the terminal series reconstruction proof modules.
 
 Keeping this interface separate avoids repeating its dependent hypotheses and data.
 -/
 noncomputable abbrev helperNewChoice4049.{u_1, u_2} :=
     @SharedFacts.TerminalRebuild.newChoice2409.{u_1, u_2}
-
 
 
 /-- Typed data construction shared by the terminal series reconstruction proof modules.
@@ -566,14 +565,12 @@ noncomputable abbrev helperReplacementChoice3411.{u_1, u_2} :=
     @SharedFacts.TerminalRebuild.replacementChoice3411.{u_1, u_2}
 
 
-
 /-- Typed data construction shared by the terminal series reconstruction proof modules.
 
 Keeping this interface separate avoids repeating its dependent hypotheses and data.
 -/
 noncomputable abbrev helperReplacementChoice5196.{u_1, u_2} :=
     @SharedFacts.TerminalRebuild.replacementChoice3411.{u_1, u_2}
-
 
 
 /-- Dependent contract shared by the terminal series reconstruction proof modules.
@@ -1371,48 +1368,8 @@ theorem helper_hdegree_1837.{u_1, u_2} :
   classical
   intro V E _ _ _ G k e0 input T generating ett hpositive _ q gamma secondStable
       secondStableProper choice w hw
-  rw [← SimpleGraph.card_neighborFinset_eq_degree]
-  apply Finset.card_le_one.mpr
-  intro y hy z hz
-  simp only [SimpleGraph.mem_neighborFinset] at hy hz
-  cases y with
-  | inl y => simp [TwoColorIncidenceGraph] at hy
-  | inr e =>
-    cases z with
-    | inl z => simp [TwoColorIncidenceGraph] at hz
-    | inr f =>
-      simp only [TwoColorIncidenceGraph] at hy hz
-      rcases hw with hw | hw
-      · have he : secondStable e = some choice.color :=
-          hy.2.resolve_left (by
-            intro he
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨e, hy.1, he⟩)
-        have hf : secondStable f = some choice.color :=
-          hz.2.resolve_left (by
-            intro hf
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨f, hz.1, hf⟩)
-        by_cases h : e = f
-        · exact congrArg Sum.inr h
-        · exact (secondStableProper h ⟨w, hy.1, hz.1⟩ he hf).elim
-      · have he : secondStable e = some gamma :=
-          hy.2.resolve_right (by
-            intro he
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨e, hy.1, he⟩)
-        have hf : secondStable f = some gamma :=
-          hz.2.resolve_right (by
-            intro hf
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨f, hz.1, hf⟩)
-        by_cases h : e = f
-        · exact congrArg Sum.inr h
-        · exact (secondStableProper h ⟨w, hy.1, hz.1⟩ he hf).elim
+  exact TwoColorMissingVertexDegreeAtMostOne G secondStable secondStableProper gamma
+    choice.color w hw
 
 theorem helper_hclosed_1893.{u_1, u_2} :
     open scoped Classical in

@@ -24,6 +24,7 @@ public import LeanPool.GoldbergSeymour.OutsideSwapPrefixEffects
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Extension Base Claim46
@@ -589,33 +590,6 @@ private theorem helper_before_seed_1330.{u_1, u_2} :
   rw [← hvertices iSeed, hiCast]
   exact hiw
 
-private theorem helper_initial_trans_1331.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0 : E}
-        {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B
-        C → TreeSequenceInitialSegment A C := by
-  classical
-  intro V E G e0 A B C hAB hBC
-  obtain ⟨hABlen, hABvertices, hABedges⟩ := hAB
-  obtain ⟨hBClen, hBCvertices, hBCedges⟩ := hBC
-  refine ⟨hABlen.trans hBClen, ?_, ?_⟩
-  · intro i
-    calc
-      C.vertex (Fin.castLE (Nat.succ_le_succ (hABlen.trans hBClen)) i) =
-          C.vertex (Fin.castLE (Nat.succ_le_succ hBClen)
-            (Fin.castLE (Nat.succ_le_succ hABlen) i)) := by
-              congr 1
-      _ = B.vertex (Fin.castLE (Nat.succ_le_succ hABlen) i) :=
-        hBCvertices _
-      _ = A.vertex i := hABvertices i
-  · intro i
-    calc
-      C.edge (Fin.castLE (hABlen.trans hBClen) i) =
-          C.edge (Fin.castLE hBClen (Fin.castLE hABlen i)) := by
-            congr 1
-      _ = B.edge (Fin.castLE hABlen i) := hBCedges _
-      _ = A.edge i := hABedges i
-
 private theorem helper_hmu0One_1442.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Finite E] {G : LooplessMultigraph V E} {k : ℕ}
@@ -1065,7 +1039,7 @@ theorem ExtensionBaseClaim46 {V E : Type*}
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    exact @helper_initial_trans_1331 V E G e0 A B C hAB hBC
+    exact @TreeSequenceInitialSegment.trans V E G e0 A B C hAB hBC
   have hseedN : TreeSequenceInitialSegment seed Tn :=
     initial_trans hseedJ hTjN
   have hterminalN : terminalSupport ∈ TreeSequenceVertexSet Tn :=

@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTreesCertified.Preparation2
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoReorderedTrees
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Hierarchy Situation Two Reordered Trees Certified
@@ -118,13 +119,7 @@ theorem HierarchySituationTwoReorderedTreesCertified {V E : Type*}
       (hXY : TreeSequenceInitialSegment X Y)
       (hYZ : TreeSequenceInitialSegment Y Z) :
       TreeSequenceInitialSegment X Z := by
-    rcases hXY with ⟨hxy, vxy, exy⟩
-    rcases hYZ with ⟨hyz, vyz, eyz⟩
-    refine ⟨le_trans hxy hyz, ?_, ?_⟩
-    · intro i
-      simpa using (vyz (Fin.castLE (Nat.succ_le_succ hxy) i)).trans (vxy i)
-    · intro i
-      simpa using (eyz (Fin.castLE hxy i)).trans (exy i)
+    exact hXY.trans hYZ
   have commonPrefix {X Y Z : TreeSequence G e0}
       (hXZ : TreeSequenceInitialSegment X Z)
       (hYZ : TreeSequenceInitialSegment Y Z) (hXY : X.length ≤ Y.length) :

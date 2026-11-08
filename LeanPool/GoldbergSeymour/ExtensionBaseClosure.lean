@@ -10,6 +10,7 @@ public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
 
 public import LeanPool.GoldbergSeymour.TashkinovClosureExists
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Extension Base Closure
@@ -74,30 +75,7 @@ theorem ExtensionBaseClosure {V E : Type*}
     ∀ (A B C : TreeSequence G e0), TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B C
         → TreeSequenceInitialSegment A C := by
     intro A B C hab hbc
-    rcases hab with ⟨ab, hvab, heab⟩
-    rcases hbc with ⟨bc, hvbc, hebc⟩
-    have abc : A.length ≤ C.length := by omega
-    refine ⟨abc, ?_, ?_⟩
-    · intro i
-      have hfirst := hvbc (Fin.castLE (Nat.succ_le_succ ab) i)
-      have hsecond := hvab i
-      have indexMatch :
-          Fin.castLE (Nat.succ_le_succ abc) i =
-            Fin.castLE (Nat.succ_le_succ bc)
-              (Fin.castLE (Nat.succ_le_succ ab) i) := by
-        apply Fin.ext
-        rfl
-      rw [indexMatch]
-      exact hfirst.trans hsecond
-    · intro j
-      have hfirst := hebc (Fin.castLE ab j)
-      have hsecond := heab j
-      have indexMatch :
-          Fin.castLE abc j = Fin.castLE bc (Fin.castLE ab j) := by
-        apply Fin.ext
-        rfl
-      rw [indexMatch]
-      exact hfirst.trans hsecond
+    exact hab.trans hbc
   have sequenceSegment : ∀ (A B : TreeSequence G e0),
       TashkinovAugmentationSequence rho1 A B →
       TreeSequenceInitialSegment A B := by

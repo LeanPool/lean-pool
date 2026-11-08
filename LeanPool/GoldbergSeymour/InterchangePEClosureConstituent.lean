@@ -11,6 +11,7 @@ public import LeanPool.GoldbergSeymour.HierarchyBase
 public import LeanPool.GoldbergSeymour.ParallelTerminalFacts
 public import LeanPool.GoldbergSeymour.Td
 public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Interchange PEClosure Constituent
@@ -432,20 +433,6 @@ private theorem helper_hSlen_631.{u_1, u_2} :
     dsimp [P] at hstrict
     omega
 
-private theorem helper_segmentTrans_553.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B
-        C → TreeSequenceInitialSegment A C := by
-  classical
-  intro V E G e0 A B C hAB hBC
-  refine ⟨hAB.1.trans hBC.1, ?_, ?_⟩
-  · intro i
-    exact (hBC.2.1 (Fin.castLE (Nat.succ_le_succ hAB.1) i)).trans
-      (hAB.2.1 i)
-  · intro i
-    exact (hBC.2.2 (Fin.castLE hAB.1 i)).trans (hAB.2.2 i)
-
 private theorem helper_commonPrefix_563.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
@@ -669,7 +656,7 @@ theorem InterchangePEClosureConstituent {V E : Type*}
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    exact @helper_segmentTrans_553 (@V) (@E) (@G) (@e0) (@A) (@B) (@C) (@hAB) (@hBC)
+    exact @TreeSequenceInitialSegment.trans V E G e0 (@A) (@B) (@C) (@hAB) (@hBC)
   have commonPrefix {A B C : TreeSequence G e0}
       (hAC : TreeSequenceInitialSegment A C)
       (hBC : TreeSequenceInitialSegment B C) (hlen : A.length ≤ B.length) :

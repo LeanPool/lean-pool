@@ -10,6 +10,7 @@ public import LeanPool.GoldbergSeymour.ScheideBalancedCandidate
 public import LeanPool.GoldbergSeymour.TashTree
 public import LeanPool.GoldbergSeymour.TreeSequenceBoundaryEdgeAppendExists
 public import LeanPool.GoldbergSeymour.TashkinovOrderBound
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Scheide Balanced Candidate Maximum Order
@@ -637,92 +638,6 @@ private theorem helper_hIW_733.{u_1, u_2} :
     (hedgeMem e |>.mp (hgood e |>.mp he).1))
     (Finset.mem_filter.mp hf).2
 
-private theorem helper_hSPlusPlusInit_800.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (S : TreeSequence
-        G e0) (gamma : Fin k) (s : Fin (S.length + (1 : ℕ))) (Splus : TreeSequence G e0)
-        (hSPlusInit : TreeSequenceInitialSegment S Splus) (_ : (
-    ∀ (i : Fin (S.length + (1 : ℕ))), Splus.vertex (Fin.castLE (Nat.succ_le_succ hSPlusInit.1) i)
-        = S.vertex i)) (_ : (
-    ∀ (j : Fin S.length), Splus.edge (Fin.castLE hSPlusInit.1 j) = S.edge j)) (_ : gamma ∈
-        MissingColors G phi (Splus.vertex (Fin.castLE (Nat.succ_le_succ hSPlusInit.1) s))),
-    let U : Finset V := TreeSequenceVertexSet Splus;
-    let z : V := Splus.vertex (Fin.castLE (Nat.succ_le_succ hSPlusInit.1) s);
-    ∀ (_ : z ∈ U) (_ : gamma ∈ MissingColors G phi z) (_ : gamma ∉ PresentColors G phi z) (_ : (
-    ∀ v ∈ U, v ≠ z → gamma ∈ PresentColors G phi v)),
-    let B : Finset E := BoundaryColorEdges G phi U gamma;
-    let edges : Finset E := {e : E | phi e = some gamma};
-    let good : Finset E := {e ∈ edges |
-    ∀ (v : V), Incident G v e → v ∈ U};
-    let Y : Finset V := U.erase z;
-    ∀ (_ : (
-    ∀ v ∈ Y, (v ∈ good.biUnion fun (e : E) => (G.ends e).toFinset) ∨ v ∈ B.biUnion fun (e : E) =>
-        {v ∈ U | Incident G v e})),
-    let I : Finset V := good.biUnion fun (e : E) => (G.ends e).toFinset;
-    let W : Finset V := B.biUnion fun (e : E) => {v ∈ U | Incident G v e};
-    ∀ (_ : I ⊆ Y) (_ : W ⊆ Y) (_ : I ∪ W = Y) (_ : Y.card = (2 : ℕ) * good.card + B.card) (_ :
-        Y.card = S.length + (1 : ℕ)) (_ : Odd Y.card) (Splusplus : TreeSequence G e0)
-        (hPlusPlusInit : TreeSequenceInitialSegment Splus Splusplus) (_ : (
-    ∀ (i : Fin (Splus.length + (1 : ℕ))), Splusplus.vertex (Fin.castLE (Nat.succ_le_succ
-        hPlusPlusInit.1) i) = Splus.vertex i)) (_ : (
-    ∀ (j : Fin Splus.length), Splusplus.edge (Fin.castLE hPlusPlusInit.1 j) = Splus.edge j)),
-    let zIndex : Fin (Splus.length + (1 : ℕ)) := Fin.castLE (Nat.succ_le_succ hSPlusInit.1) s;
-    ∀ (_ : gamma ∈ MissingColors G phi (Splus.vertex zIndex)), TreeSequenceInitialSegment S
-        Splusplus := by
-  classical
-  intro V E _ _ _ G k e0 phi S gamma s Splus hSPlusInit hPlusVertex hPlusEdge hsGamma U z hzU
-      hzMissing hzNotPresent hpresent B edges good Y hcover I W hIY hWY hIYunion hYCardEq hYCard
-      hYOdd Splusplus hPlusPlusInit hPlusPlusVertex hPlusPlusEdge zIndex hzIndexMissing
-  rcases hSPlusInit with ⟨hSP, hvSP, heSP⟩
-  rcases hPlusPlusInit with ⟨hPP, hvPP, hePP⟩
-  refine ⟨le_trans hSP hPP, ?_, ?_⟩
-  · intro i
-    have hi : Fin.castLE (Nat.succ_le_succ (le_trans hSP hPP)) i =
-        Fin.castLE (Nat.succ_le_succ hPP)
-          (Fin.castLE (Nat.succ_le_succ hSP) i) := by
-      apply Fin.ext
-      rfl
-    rw [hi, hvPP]
-    exact hvSP i
-  · intro j
-    have hj : Fin.castLE (le_trans hSP hPP) j =
-        Fin.castLE hPP (Fin.castLE hSP j) := by
-      apply Fin.ext
-      rfl
-    rw [hj, hePP]
-    exact heSP j
-
-private theorem helper_hTrunkInit_819.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k)
-      (T S : TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T),
-    ScheideBalancedCandidate N S →
-    ∀ (Splusplus : TreeSequence G e0),
-    TreeSequenceInitialSegment S Splusplus →
-    TreeSequenceInitialSegment (NormalTripleTrunk N) Splusplus := by
-  classical
-  intro V E _ _ _ G k e0 phi T S N hS Splusplus hSPlusPlusInit
-  rcases hS.exactTrunk with ⟨hTS, hvTS, heTS⟩
-  rcases hSPlusPlusInit with ⟨hSS, hvSS, heSS⟩
-  refine ⟨le_trans hTS hSS, ?_, ?_⟩
-  · intro i
-    have hi : Fin.castLE (Nat.succ_le_succ (le_trans hTS hSS)) i =
-        Fin.castLE (Nat.succ_le_succ hSS)
-          (Fin.castLE (Nat.succ_le_succ hTS) i) := by
-      apply Fin.ext
-      rfl
-    rw [hi, hvSS]
-    exact hvTS i
-  · intro j
-    have hj : Fin.castLE (le_trans hTS hSS) j =
-        Fin.castLE hSS (Fin.castLE hTS j) := by
-      apply Fin.ext
-      rfl
-    rw [hj, heSS]
-    exact heTS j
-
 private theorem helper_continuation_951.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
@@ -799,14 +714,10 @@ private theorem helper_continuation_951.{u_1, u_2} :
         hUCard f hfColor Splusplus hPlusPlusLen hPlusPlusInit hPlusPlusLast hPlusPlusVertex
         hPlusPlusEdge hzIndexMissing
   have hSPlusPlusInit : TreeSequenceInitialSegment S Splusplus := by
-    exact @helper_hSPlusPlusInit_800 V E inferInstance inferInstance inferInstance G k e0 phi S
-        gamma s Splus hSPlusInit hPlusVertex hPlusEdge hsGamma hzU hzMissing hzNotPresent
-        hpresent hcover hIY hWY hIYunion hYCardEq hYCard hYOdd Splusplus hPlusPlusInit
-        hPlusPlusVertex hPlusPlusEdge hzIndexMissing
+    exact hSPlusInit.trans hPlusPlusInit
   have hTrunkInit :
       TreeSequenceInitialSegment (NormalTripleTrunk N) Splusplus := by
-    exact @helper_hTrunkInit_819 V E inferInstance inferInstance inferInstance G k e0 phi T S N
-        hS Splusplus hSPlusPlusInit
+    exact hS.exactTrunk.trans hSPlusPlusInit
   let firstNewPlus : Fin Splus.length :=
     Fin.cast hPlusLen.symm (Fin.last S.length)
   let firstNew : Fin Splusplus.length :=

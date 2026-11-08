@@ -16,6 +16,7 @@ public import LeanPool.GoldbergSeymour.LowerRoundInductionHypothesis
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapMissingBehavior
 public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Preparation for a revisiting terminal rebuild
@@ -1147,26 +1148,8 @@ theorem helper_segmentTrans_778.{u_1, u_2} :
         (A B C : TreeSequence G e0),
         TreeSequenceInitialSegment A B →
           TreeSequenceInitialSegment B C → TreeSequenceInitialSegment A C := by
-  classical
   intro V E G e0 A B C hAB hBC
-  rcases hAB with ⟨hlenAB, hvertexAB, hedgeAB⟩
-  rcases hBC with ⟨hlenBC, hvertexBC, hedgeBC⟩
-  refine ⟨hlenAB.trans hlenBC, ?_, ?_⟩
-  · intro x
-    calc
-      C.vertex (Fin.castLE (Nat.succ_le_succ (hlenAB.trans hlenBC)) x) =
-          C.vertex
-            (Fin.castLE (Nat.succ_le_succ hlenBC) (Fin.castLE (Nat.succ_le_succ hlenAB) x)) :=
-        by congr 1
-      _ = B.vertex (Fin.castLE (Nat.succ_le_succ hlenAB) x) := hvertexBC _
-      _ = A.vertex x := hvertexAB x
-  · intro x
-    calc
-      C.edge (Fin.castLE (hlenAB.trans hlenBC) x) =
-          C.edge (Fin.castLE hlenBC (Fin.castLE hlenAB x)) :=
-        by congr 1
-      _ = B.edge (Fin.castLE hlenAB x) := hedgeBC _
-      _ = A.edge x := hedgeAB x
+  exact hAB.trans hBC
 
 theorem helper_oldReturnEdgeData_978.{u_1, u_2} :
     open scoped Classical in

@@ -6,6 +6,7 @@ Authors: Wesley Pegden
 module
 
 public import LeanPool.GoldbergSeymour.GoodHierarchy
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Good Hierarchy Restricted Maximal Chain
@@ -313,22 +314,7 @@ theorem GoodHierarchyRestrictedMaximalChain {V E : Type*}
       (hXY : TreeSequenceInitialSegment X Y)
       (hYZ : TreeSequenceInitialSegment Y Z) :
       TreeSequenceInitialSegment X Z := by
-    rcases hXY with ⟨hxy, vxy, exy⟩
-    rcases hYZ with ⟨hyz, vyz, eyz⟩
-    refine ⟨hxy.trans hyz, ?_, ?_⟩
-    · intro i
-      calc
-        Z.vertex (Fin.castLE (Nat.succ_le_succ (hxy.trans hyz)) i) =
-            Z.vertex (Fin.castLE (Nat.succ_le_succ hyz)
-              (Fin.castLE (Nat.succ_le_succ hxy) i)) := by congr 1
-        _ = Y.vertex (Fin.castLE (Nat.succ_le_succ hxy) i) := vyz _
-        _ = X.vertex i := vxy _
-    · intro i
-      calc
-        Z.edge (Fin.castLE (hxy.trans hyz) i) =
-            Z.edge (Fin.castLE hyz (Fin.castLE hxy i)) := by congr 1
-        _ = Y.edge (Fin.castLE hxy i) := eyz _
-        _ = X.edge i := exy _
+    exact hXY.trans hYZ
   have strictOfAug {X Y : TreeSequence G e0}
       (h : TashkinovAugmentation sigma X Y) :
       TreeSequenceVertexSet X ⊂ TreeSequenceVertexSet Y := by

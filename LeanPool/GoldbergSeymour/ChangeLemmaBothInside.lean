@@ -16,6 +16,7 @@ public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
 public import LeanPool.GoldbergSeymour.HierarchyStageInterchangeability
 public import LeanPool.GoldbergSeymour.GoodHierarchyNewMissingClosed
 public import LeanPool.GoldbergSeymour.HierarchyCounterexampleMeasure
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Change Lemma Both Inside
@@ -260,21 +261,6 @@ private theorem helper_hsame_542.{u_1, u_2} :
             simpa only [hd'] using hnew
           exact equalFromInterchange (H.stage i.succ.castSucc) haCurrent hbCurrent
             (closedStar i.succ alpha beta hne ham hbm hclosed)
-
-private theorem helper_trans_800.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-      {U W Z : TreeSequence G e0} (_ : TreeSequenceInitialSegment U W)
-      (_ : TreeSequenceInitialSegment W Z),
-    TreeSequenceInitialSegment U Z := by
-  classical
-  intro V E G e0 U W Z hUW hWZ
-  refine ⟨hUW.1.trans hWZ.1, ?_, ?_⟩
-  · intro j
-    exact (hWZ.2.1 (Fin.castLE (Nat.succ_le_succ hUW.1) j)).trans
-      (hUW.2.1 j)
-  · intro j
-    exact (hWZ.2.2 (Fin.castLE hUW.1 j)).trans (hUW.2.2 j)
 
 private theorem helper_equalFromInterchange_881 {V E : Type*} [Fintype E]
     {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {phi : PartialEdgeColoring E k}
@@ -579,7 +565,7 @@ theorem ChangeLemmaBothInside {V E : Type*}
     (min (A.length + ((T.length - A.length) - 1)) T.length)
     (by have hA := A.positive; have hT := T.positive; omega)
     (Nat.min_le_right _ _)
-  have trans := @helper_trans_800 (@V) (@E) (@G) (@e0)
+  have trans := @TreeSequenceInitialSegment.trans V E G e0
   have starChain := H.starredStageInitialSegmentOfLE
   have hAT : TreeSequenceInitialSegment A T := H.lastStarredInitialSegment
   have hTyT : TreeSequenceInitialSegment Ty T :=

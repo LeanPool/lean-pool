@@ -7,7 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.FixedPairMaximalTashkinovTree
 public import LeanPool.GoldbergSeymour.ScheideMaximalContainsEveryTree
-public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Scheide Maximal Extends Every Tree
@@ -501,24 +501,7 @@ theorem ScheideMaximalExtendsEveryTree {V E : Type*}
       TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B C →
       TreeSequenceInitialSegment A C := by
     intro A B C hab hbc
-    rcases hab with ⟨hab, hvab, heab⟩
-    rcases hbc with ⟨hbc, hvbc, hebc⟩
-    refine ⟨le_trans hab hbc, ?_, ?_⟩
-    · intro i
-      have hi : Fin.castLE (Nat.succ_le_succ (le_trans hab hbc)) i =
-          Fin.castLE (Nat.succ_le_succ hbc)
-            (Fin.castLE (Nat.succ_le_succ hab) i) := by
-        apply Fin.ext
-        rfl
-      rw [hi, hvbc]
-      exact hvab i
-    · intro j
-      have hj : Fin.castLE (le_trans hab hbc) j =
-          Fin.castLE hbc (Fin.castLE hab j) := by
-        apply Fin.ext
-        rfl
-      rw [hj, hebc]
-      exact heab j
+    exact hab.trans hbc
   have vertex_card : ∀ U : TreeSequence G e0,
       (TreeSequenceVertexSet U).card = U.length + 1 := by
     intro U

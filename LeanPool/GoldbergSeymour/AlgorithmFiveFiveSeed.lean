@@ -10,6 +10,7 @@ public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
 public import LeanPool.GoldbergSeymour.MaximumProperty
 
 public import LeanPool.GoldbergSeymour.TashkinovHierarchy
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Algorithm Five Five Seed
@@ -500,22 +501,7 @@ theorem AlgorithmFiveFiveSeed {V E : Type*}
       TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B C →
         TreeSequenceInitialSegment A C := by
     intro A B C hab hbc
-    rcases hab with ⟨hab, hva, hea⟩
-    rcases hbc with ⟨hbc, hvb, heb⟩
-    refine ⟨Nat.le_trans hab hbc, ?_, ?_⟩
-    · intro i
-      calc
-        C.vertex (Fin.castLE (Nat.succ_le_succ (Nat.le_trans hab hbc)) i) =
-            C.vertex (Fin.castLE (Nat.succ_le_succ hbc)
-              (Fin.castLE (Nat.succ_le_succ hab) i)) := by congr 1
-        _ = B.vertex (Fin.castLE (Nat.succ_le_succ hab) i) := hvb _
-        _ = A.vertex i := hva _
-    · intro i
-      calc
-        C.edge (Fin.castLE (Nat.le_trans hab hbc) i) =
-            C.edge (Fin.castLE hbc (Fin.castLE hab i)) := by congr 1
-        _ = B.edge (Fin.castLE hab i) := heb _
-        _ = A.edge i := hea _
+    exact hab.trans hbc
   have initialFromSequence : ∀ (A B : TreeSequence G e0),
       TashkinovAugmentationSequence phi A B →
         TreeSequenceInitialSegment A B := by

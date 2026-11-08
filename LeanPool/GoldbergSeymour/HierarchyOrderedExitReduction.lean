@@ -16,6 +16,7 @@ public import LeanPool.GoldbergSeymour.ParallelCommonMissingClosed
 public import LeanPool.GoldbergSeymour.TreeSequenceEdgeSet
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 public import LeanPool.GoldbergSeymour.StableColoringEquivalence
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # rutcor
@@ -28,21 +29,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_segmentTrans_101.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
-        {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y
-        Z → TreeSequenceInitialSegment X Z := by
-  classical
-  intro V E G e0 X Y Z hXY hYZ
-  rcases hXY with ⟨hxy, vxy, exy⟩
-  rcases hYZ with ⟨hyz, vyz, eyz⟩
-  refine ⟨le_trans hxy hyz, ?_, ?_⟩
-  · intro i
-    exact (vyz (Fin.castLE (Nat.succ_le_succ hxy) i)).trans (vxy i)
-  · intro i
-    exact (eyz (Fin.castLE hxy i)).trans (exy i)
 
 private theorem helper_starPositive_127.{u_1, u_2} :
     open scoped Classical in
@@ -764,7 +750,7 @@ theorem rutcor {V E : Type*}
   have segmentTrans {X Y Z : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y)
       (hYZ : TreeSequenceInitialSegment Y Z) : TreeSequenceInitialSegment X Z := by
-    apply helper_segmentTrans_101 <;> assumption
+    exact hXY.trans hYZ
   have stageSegment (a d : ℕ) (bound : a + d ≤ H.dividerCount + 1) :
       TreeSequenceInitialSegment
         (H.stage ⟨a, lt_of_le_of_lt (Nat.le_add_right a d) (Nat.lt_succ_of_le bound)⟩)

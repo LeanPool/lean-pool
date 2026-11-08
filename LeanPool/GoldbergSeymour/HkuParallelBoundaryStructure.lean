@@ -9,6 +9,7 @@ public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.TashkinovSeries
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
 public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Hku Parallel Boundary Structure
@@ -21,70 +22,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_hdegree_159.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input :
-    PartialEdgeColoring E k) (series : TashkinovSeries G k rounds e0 input) (q : Fin rounds)
-    (_ : E) (chosenGamma : Fin k) (secondStable : PartialEdgeColoring E k),
-    IsProperEdgeColoring G secondStable → ∀ (choice : MaximumDefectiveChoice G e0
-    (series.data.tree q.succ.castSucc) (TashkinovStoredColors series.data q.castSucc)
-    (series.data.coloring q.castSucc)) (w : V), chosenGamma ∈ MissingColors G secondStable w ∨
-    choice.color ∈ MissingColors G secondStable w → (TwoColorIncidenceGraph G secondStable
-    chosenGamma choice.color).degree (Sum.inl w) ≤ (1 : ℕ) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q f chosenGamma secondStable secondStableProper
-      choice w hw
-  rw [← SimpleGraph.card_neighborFinset_eq_degree]
-  apply Finset.card_le_one.mpr
-  intro y hy z hz
-  simp only [SimpleGraph.mem_neighborFinset] at hy hz
-  cases y with
-  | inl y => simp [TwoColorIncidenceGraph] at hy
-  | inr e =>
-    cases z with
-    | inl z => simp [TwoColorIncidenceGraph] at hz
-    | inr f =>
-      simp only [TwoColorIncidenceGraph] at hy hz
-      rcases hw with hw | hw
-      · have he : secondStable e = some choice.color :=
-          hy.2.resolve_left (by
-            intro he
-            have hn : chosenGamma ∉ PresentColors G secondStable w := by
-              simpa [MissingColors] using hw
-            apply hn
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨_, hy.1, he⟩)
-        have hf : secondStable f = some choice.color :=
-          hz.2.resolve_left (by
-            intro hf
-            have hn : chosenGamma ∉ PresentColors G secondStable w := by
-              simpa [MissingColors] using hw
-            apply hn
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨_, hz.1, hf⟩)
-        by_cases h : e = f
-        · exact congrArg Sum.inr h
-        · exact (secondStableProper h ⟨w, hy.1, hz.1⟩ he hf).elim
-      · have he : secondStable e = some chosenGamma :=
-          hy.2.resolve_right (by
-            intro he
-            have hn : choice.color ∉ PresentColors G secondStable w := by
-              simpa [MissingColors] using hw
-            apply hn
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨_, hy.1, he⟩)
-        have hf : secondStable f = some chosenGamma :=
-          hz.2.resolve_right (by
-            intro hf
-            have hn : choice.color ∉ PresentColors G secondStable w := by
-              simpa [MissingColors] using hw
-            apply hn
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨_, hz.1, hf⟩)
-        by_cases h : e = f
-        · exact congrArg Sum.inr h
-        · exact (secondStableProper h ⟨w, hy.1, hz.1⟩ he hf).elim
 
 private theorem helper_hcomponent_214.{u_1, u_2} :
     open scoped Classical in
@@ -799,8 +736,9 @@ private theorem helper_branch_98.{u_1, u_2} :
       choice.color ∈ MissingColors G secondStable w →
       (TwoColorIncidenceGraph G secondStable chosenGamma choice.color).degree
         (Sum.inl w) ≤ 1 := by
-    exact @helper_hdegree_159 V E inferInstance inferInstance inferInstance G k rounds e0 input
-        series q f chosenGamma secondStable secondStableProper choice
+    intro w hw
+    exact TwoColorMissingVertexDegreeAtMostOne G secondStable secondStableProper
+      chosenGamma choice.color w hw
   have hcomponent : ∀ w, w ∈ vertices →
       Sum.inl w ∈ TwoColorComponent G secondStable chosenGamma choice.color
         (Sum.inl choice.vertex) → w = choice.vertex := by

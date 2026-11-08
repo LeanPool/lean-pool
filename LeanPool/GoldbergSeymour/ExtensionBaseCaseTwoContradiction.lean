@@ -728,31 +728,6 @@ private theorem helper_hstableLower_821.{u_1, u_2} :
   · intro v hvTjm1
     exact hd1.2 v (hTjm1Before hvTjm1)
 
-private theorem helper_segmentTrans_842.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0
-    : E} {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B →
-    TreeSequenceInitialSegment B C → TreeSequenceInitialSegment A C := by
-  classical
-  intro V E G e0 A B C hAB hBC
-  rcases hAB with ⟨hlenAB, hvertexAB, hedgeAB⟩
-  rcases hBC with ⟨hlenBC, hvertexBC, hedgeBC⟩
-  refine ⟨hlenAB.trans hlenBC, ?_, ?_⟩
-  · intro i
-    calc
-      C.vertex (Fin.castLE
-          (Nat.succ_le_succ (hlenAB.trans hlenBC)) i) =
-          C.vertex (Fin.castLE (Nat.succ_le_succ hlenBC)
-            (Fin.castLE (Nat.succ_le_succ hlenAB) i)) := by congr 1
-      _ = B.vertex (Fin.castLE (Nat.succ_le_succ hlenAB) i) :=
-        hvertexBC _
-      _ = A.vertex i := hvertexAB i
-  · intro i
-    calc
-      C.edge (Fin.castLE (hlenAB.trans hlenBC) i) =
-          C.edge (Fin.castLE hlenBC (Fin.castLE hlenAB i)) := by congr 1
-      _ = B.edge (Fin.castLE hlenAB i) := hedgeBC _
-      _ = A.edge i := hedgeAB i
-
 private theorem helper_commonPrefix_864.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0
     : E} {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A C →
@@ -1331,7 +1306,7 @@ theorem ExtensionBaseCaseTwoContradiction {V E : Type*}
       rho3 Dprev terminalSupport hterminalTj hTjm1Before hd1
   have hmod : ModColoring lower rho3 :=
     hLowerVI rho3 hrhoProper hrhoOne hstableLower
-  have segmentTrans := @helper_segmentTrans_842 V E G e0
+  have segmentTrans := @TreeSequenceInitialSegment.trans V E G e0
   have commonPrefix := @helper_commonPrefix_864 V E G e0
   have hseedVertexBefore := @helper_hseedVertexBefore_888 V E inferInstance G e0 Tj seed
       terminalSupport hterminalTj hseedJ hseedTerminal

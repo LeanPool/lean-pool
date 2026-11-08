@@ -10,6 +10,7 @@ public import LeanPool.GoldbergSeymour.TashkinovSeries
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwapProper
 public import LeanPool.GoldbergSeymour.TwoColorIncidenceDegreeAtMostTwo
 public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Parallel Extension Undo Stable
@@ -22,99 +23,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_hdegree_145.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k)
-        (series : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (chosenGamma : Fin k)
-        (secondStable : PartialEdgeColoring E k), IsProperEdgeColoring G secondStable →
-    ∀ (choice : MaximumDefectiveChoice G e0 (series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors series.data q.castSucc) (series.data.coloring q.castSucc)) (w : V),
-        chosenGamma ∈ MissingColors G secondStable w ∨ choice.color ∈ MissingColors G secondStable
-        w → @SimpleGraph.degree (Sum V E) (@TwoColorIncidenceGraph V E G k secondStable
-        chosenGamma (@MaximumDefectiveChoice.color V E inst inst_1 G k e0
-        (@TashkinovSeriesData.tree V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1 inst_2
-        G k rounds e0 input series) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat
-        instAddNat) rounds (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@Fin.succ
-        rounds q))) (@TashkinovStoredColors V E inst_1 G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q))
-        (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E inst inst_1
-        inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q)) choice)) (@Sum.inl V E w)
-        (@Subtype.fintype (Sum V E) (@Membership.mem (Sum V E) (Set (Sum V E))
-        (@Set.instMembership (Sum V E)) (@SimpleGraph.neighborSet (Sum V E)
-        (@TwoColorIncidenceGraph V E G k secondStable chosenGamma (@MaximumDefectiveChoice.color V
-        E inst inst_1 G k e0 (@TashkinovSeriesData.tree V E G k rounds e0 (@TashkinovSeries.data V
-        E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat
-        (@instHAdd Nat instAddNat) rounds (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit
-        1)))) (@Fin.succ rounds q))) (@TashkinovStoredColors V E inst_1 G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds q)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q)) choice))
-        (@Sum.inl V E w))) (fun (a : Sum V E) ↦ @SimpleGraph.neighborSet.memDecidable (Sum V E)
-        (@TwoColorIncidenceGraph V E G k secondStable chosenGamma (@MaximumDefectiveChoice.color V
-        E inst inst_1 G k e0 (@TashkinovSeriesData.tree V E G k rounds e0 (@TashkinovSeries.data V
-        E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat
-        (@instHAdd Nat instAddNat) rounds (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit
-        1)))) (@Fin.succ rounds q))) (@TashkinovStoredColors V E inst_1 G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds q)) (@TashkinovSeriesData.coloring V E G k rounds e0 (@TashkinovSeries.data V E
-        inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc rounds q)) choice))
-        (@Sum.inl V E w) (fun (a b : Sum V E) ↦ Classical.propDecidable (@SimpleGraph.Adj (Sum V
-        E) (@TwoColorIncidenceGraph V E G k secondStable chosenGamma
-        (@MaximumDefectiveChoice.color V E inst inst_1 G k e0 (@TashkinovSeriesData.tree V E G k
-        rounds e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series)
-        (@Fin.castSucc (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) rounds (@OfNat.ofNat Nat
-        (nat_lit 1) (instOfNatNat (nat_lit 1)))) (@Fin.succ rounds q))) (@TashkinovStoredColors V
-        E inst_1 G k rounds e0 (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input
-        series) (@Fin.castSucc rounds q)) (@TashkinovSeriesData.coloring V E G k rounds e0
-        (@TashkinovSeries.data V E inst inst_1 inst_2 G k rounds e0 input series) (@Fin.castSucc
-        rounds q)) choice)) a b)) a) (@instFintypeSum V E inst inst_1)) ≤ (1 : ℕ) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q chosenGamma secondStable secondStableProper choice
-      w hw
-  rw [← SimpleGraph.card_neighborFinset_eq_degree]
-  apply Finset.card_le_one.mpr
-  intro y hy z hz
-  simp only [SimpleGraph.mem_neighborFinset] at hy hz
-  cases y with
-  | inl y => simp [TwoColorIncidenceGraph] at hy
-  | inr e =>
-    cases z with
-    | inl z => simp [TwoColorIncidenceGraph] at hz
-    | inr f =>
-      simp only [TwoColorIncidenceGraph] at hy hz
-      rcases hw with hw | hw
-      · have he : secondStable e = some choice.color :=
-          hy.2.resolve_left (by
-            intro he
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨e, hy.1, he⟩)
-        have hf : secondStable f = some choice.color :=
-          hz.2.resolve_left (by
-            intro hf
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨f, hz.1, hf⟩)
-        by_cases h : e = f
-        · exact congrArg Sum.inr h
-        · exact (secondStableProper h ⟨w, hy.1, hz.1⟩ he hf).elim
-      · have he : secondStable e = some chosenGamma :=
-          hy.2.resolve_right (by
-            intro he
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨e, hy.1, he⟩)
-        have hf : secondStable f = some chosenGamma :=
-          hz.2.resolve_right (by
-            intro hf
-            apply (by simpa [MissingColors] using hw)
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-            exact ⟨f, hz.1, hf⟩)
-        by_cases h : e = f
-        · exact congrArg Sum.inr h
-        · exact (secondStableProper h ⟨w, hy.1, hz.1⟩ he hf).elim
 
 private theorem helper_hclosed_201.{u_1, u_2} :
     open scoped Classical in
@@ -1310,7 +1218,9 @@ theorem ParallelExtensionUndoStable {V E : Type*}
         choice.color ∈ MissingColors G secondStable w →
         (TwoColorIncidenceGraph G secondStable chosenGamma choice.color).degree
           (Sum.inl w) ≤ 1 := by
-      apply helper_hdegree_145; assumption
+      intro w hw
+      exact TwoColorMissingVertexDegreeAtMostOne G secondStable secondStableProper
+        chosenGamma choice.color w hw
     rcases exitWitness with ⟨u, path, pathData⟩
     rcases pathData with ⟨pathIs, pathLen, uOut, endTree, endOnly⟩
     have hdegreeBound : ∀ x, @SimpleGraph.degree _

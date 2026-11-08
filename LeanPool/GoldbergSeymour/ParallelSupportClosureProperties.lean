@@ -15,6 +15,7 @@ public import LeanPool.GoldbergSeymour.MaximumPropertyTransport
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
 public import LeanPool.GoldbergSeymour.TechnicalInductionContext
 public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Parallel Support Closure Properties
@@ -1501,14 +1502,7 @@ theorem ParallelSupportClosureProperties {V E : Type*}
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    rcases hAB with ⟨hab, hvab, heab⟩
-    rcases hBC with ⟨hbc, hvbc, hebc⟩
-    refine ⟨hab.trans hbc, ?_, ?_⟩
-    · intro i
-      simpa using
-        (hvbc (Fin.castLE (Nat.succ_le_succ hab) i)).trans (hvab i)
-    · intro i
-      simpa using (hebc (Fin.castLE hab i)).trans (heab i)
+    exact hAB.trans hBC
   have commonPrefix := @SharedFacts.ParallelSupportClosureProperties.comparableInitialSegments
       V E G e0
   have vertexTransfer {A B : TreeSequence G e0}

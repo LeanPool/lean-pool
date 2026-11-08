@@ -17,6 +17,7 @@ public import LeanPool.GoldbergSeymour.ExtensionBaseClosure
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmBInvariant
 public import LeanPool.GoldbergSeymour.ParallelStepRootComponentSetup
 public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Preparatory lemmas for the extension base
@@ -3169,16 +3170,8 @@ theorem helper_segmentTrans_2087.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} (G : LooplessMultigraph V E) (e0 : E)
         {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B
         C → TreeSequenceInitialSegment A C := by
-  classical
   intro V E G e0 A B C hAB hBC
-  rcases hAB with ⟨hab, hvab, heab⟩
-  rcases hBC with ⟨hbc, hvbc, hebc⟩
-  refine ⟨hab.trans hbc, ?_, ?_⟩
-  · intro i
-    simpa using
-      (hvbc (Fin.castLE (Nat.succ_le_succ hab) i)).trans (hvab i)
-  · intro i
-    simpa using (hebc (Fin.castLE hab i)).trans (heab i)
+  exact hAB.trans hBC
 
 theorem helper_stepSegment_2099.{u_1, u_2} :
     open scoped Classical in

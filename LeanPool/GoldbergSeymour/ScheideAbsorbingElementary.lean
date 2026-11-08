@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.AbsorbingVertices
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumFourFree
+public import LeanPool.GoldbergSeymour.MissingColorIncidenceEndpoint
 
 /-!
 # Scheide Absorbing Elementary
@@ -102,51 +103,6 @@ private theorem helper_hcross_39.{u_1, u_2} :
     simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨q, hqT, r, hrT, hend⟩
   exact ⟨f, hfb, hfdata.2⟩
-
-private theorem helper_endpoint_120.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Finite V] [
-    Fintype E] (G : LooplessMultigraph V E) (k : ℕ) (phi : PartialEdgeColoring E k),
-    IsProperEdgeColoring G phi → ∀ (a b : Fin k) (v : V), a ≠ b → a ∈ MissingColors G phi v →
-    @SimpleGraph.degree (Sum V E) (@TwoColorIncidenceGraph V E G k phi a b) (@Sum.inl V E v)
-    (@Fintype.ofFinite (@Set.Elem (Sum V E) (@SimpleGraph.neighborSet (Sum V E)
-    (@TwoColorIncidenceGraph V E G k phi a b) (@Sum.inl V E v))) (@Subtype.finite (Sum V E)
-    (inferInstance : Finite (Sum V E)) (@Membership.mem (Sum V
-    E) (Set (Sum V E)) (@Set.instMembership (Sum V E)) (@SimpleGraph.neighborSet (Sum V E)
-    (@TwoColorIncidenceGraph V E G k phi a b) (@Sum.inl V E v))))) ≤ (1 : ℕ) := by
-  classical
-  intro V E _ _ G k phi hproper a b v hab hmiss
-  let vertexEnumeration := Fintype.ofFinite V
-  classical
-  rw [← SimpleGraph.card_neighborFinset_eq_degree]
-  apply Finset.card_le_one.mpr
-  intro x hx y hy
-  have hx' : (TwoColorIncidenceGraph G phi a b).Adj (Sum.inl v) x := by
-    simpa [SimpleGraph.neighborFinset] using hx
-  have hy' : (TwoColorIncidenceGraph G phi a b).Adj (Sum.inl v) y := by
-    simpa [SimpleGraph.neighborFinset] using hy
-  cases x with
-  | inl x => simp [TwoColorIncidenceGraph] at hx'
-  | inr x =>
-    cases y with
-    | inl y => simp [TwoColorIncidenceGraph] at hy'
-    | inr y =>
-      by_contra hxy
-      simp only [TwoColorIncidenceGraph] at hx' hy'
-      rcases hx' with ⟨hxi, hxc⟩
-      rcases hy' with ⟨hyi, hyc⟩
-      have hxa : ¬ phi x = some a := by
-        intro hxa
-        apply (by simpa [MissingColors] using hmiss)
-        simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-        exact ⟨x, hxi, hxa⟩
-      have hya : ¬ phi y = some a := by
-        intro hya
-        apply (by simpa [MissingColors] using hmiss)
-        simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
-        exact ⟨y, hyi, hya⟩
-      have hxb : phi x = some b := hxc.resolve_left hxa
-      have hyb : phi y = some b := hyc.resolve_left hya
-      exact hproper (by simpa using hxy) ⟨v, hxi, hyi⟩ hxb hyb
 
 private theorem helper_branch_185.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [
@@ -282,8 +238,9 @@ theorem ScheideAbsorbingElementary {V E : Type*}
   have hfree : 4 ≤ (TreeFreeColors phi T).card :=
     ScheideGlobalMaximumFourFree G k e0 phi T ⟨htriple, htree, hcard⟩
   have hcross := @helper_hcross_39 (@V) (@E) inferInstance inferInstance (@G) (@k) (@e0) (@phi) (@T)
-  have endpoint := @helper_endpoint_120 (@V) (@E) inferInstance  inferInstance (@G) (@k) (@phi)
-      (@hproper)
+  have endpoint := fun a b v (_ : a ≠ b) hm ↦
+    TwoColorMissingVertexDegreeAtMostOne G phi hproper a b v
+      (neighborEnumeration := Fintype.ofFinite _) (Or.inl hm)
   unfold ColoredVertexSetElementary
   intro u hu v hv huv
   rw [Finset.mem_union] at hu hv

@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TashkinovHierarchy
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Hierarchy Nonparallel First Edge
@@ -43,17 +44,7 @@ theorem HierarchyNonparallelFirstEdge {V E : Type*}
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :
       TreeSequenceInitialSegment A C := by
-    rcases hAB with ⟨hab, hvab, heab⟩
-    rcases hBC with ⟨hbc, hvbc, hebc⟩
-    refine ⟨le_trans hab hbc, ?_, ?_⟩
-    · intro i
-      have hmid := hvbc (Fin.castLE (Nat.succ_le_succ hab) i)
-      have hfirst := hvab i
-      simpa using hmid.trans hfirst
-    · intro i
-      have hmid := hebc (Fin.castLE hab i)
-      have hfirst := heab i
-      simpa using hmid.trans hfirst
+    exact hAB.trans hBC
   have chain : ∀ q : ℕ, (hq : q ≤ H.dividerCount) →
       TreeSequenceInitialSegment (H.stage ⟨1, by omega⟩)
         (H.stage ⟨1 + q, by omega⟩) := by

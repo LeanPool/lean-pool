@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.ExtensionBaseRestorationInvariant
 
 public import LeanPool.GoldbergSeymour.StableColoringBeforeVertex
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 /-!
 # Extension Base Claim43Stability
@@ -267,21 +268,7 @@ theorem ExtensionBaseClaim43Stability {V E : Type*}
       TreeSequenceInitialSegment A B → TreeSequenceInitialSegment B D →
       TreeSequenceInitialSegment A D := by
     intro A B D hab hbd
-    rcases hab with ⟨hlab, vab, eab⟩
-    rcases hbd with ⟨hlbd, vbd, ebd⟩
-    refine ⟨le_trans hlab hlbd, ?_, ?_⟩
-    · intro i
-      calc
-        D.vertex (Fin.castLE (Nat.succ_le_succ (le_trans hlab hlbd)) i) =
-            B.vertex (Fin.castLE (Nat.succ_le_succ hlab) i) := by
-              simpa using vbd (Fin.castLE (Nat.succ_le_succ hlab) i)
-        _ = A.vertex i := vab i
-    · intro i
-      calc
-        D.edge (Fin.castLE (le_trans hlab hlbd) i) =
-            B.edge (Fin.castLE hlab i) := by
-              simpa using ebd (Fin.castLE hlab i)
-        _ = A.edge i := eab i
+    exact hab.trans hbd
   have storedToFinal := @helper_storedToFinal_78 V E inferInstance inferInstance inferInstance G k
       e0 input T generating ett jSlot segmentTrans
   let Tj := ett.series.data.tree jSlot.succ.castSucc
