@@ -12,6 +12,7 @@ module
 import all LeanPool.GoldbergSeymour.ExtensionBaseBranchPreparation
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
 public import LeanPool.GoldbergSeymour.ExtensionBaseStepLemmas
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationBeforeVertex
 public import LeanPool.GoldbergSeymour.ExtensionBaseClaim44
 public import LeanPool.GoldbergSeymour.ExtensionBaseClaim43
 public import LeanPool.GoldbergSeymour.ExtensionBaseCaseTwoContradiction
@@ -898,14 +899,11 @@ theorem helper_caseContinuation_11664.{u_1, u_2} :
             (ett.series.data.coloring jSlot.castSucc) A B)
           (hBseed : TreeSequenceInitialSegment B seed) :
           TashkinovAugmentation rho3 A B := by
-        exact @helper_transportSeedStep_6612 (@V) (@E) inferInstance inferInstance inferInstance
-            (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@gamma)
-            (@delta) (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive)
-            (@segmentTrans) (@trace) (@hterminalJ) (@p0) (@indices0) (@gamma0) (@delta0)
-            (@terminalPosition) (@hterminalPositionPositive) (@hterminalPositionBound) (@hseedTj)
-            (by assumption) (@TjPrime) (@x) (@componentPath) (@u) (@exitPath) (@zPosition) (@u0)
-            (@exitPath0) (@zPosition0) (@rho3) (@hd1) (@uPosition) (by assumption) (@A) (@B)
-            (@hstep) (@hBseed)
+        exact TashkinovAugmentation.transportBeforeVertex
+          (ett.series.data.tree jSlot.succ.castSucc) seed
+          (ett.series.data.coloring jSlot.castSucc) rho3
+          (TashkinovStoredColors ett.series.data jSlot.castSucc) v hterminalJ hd1
+          segmentVertexBefore hstep hBseed
       have transportSeedRoute (S : TreeSequence G e0)
           (hroute : TashkinovAugmentationSequence
             (ett.series.data.coloring jSlot.castSucc) S seed) :
@@ -1091,13 +1089,11 @@ theorem helper_branch_13441.{u_1, u_2} :
         (ett.series.data.coloring jSlot.castSucc) A B)
       (hBseed : TreeSequenceInitialSegment B seed) :
       TashkinovAugmentation rho3 A B := by
-    exact @helper_transportSeedStep_5350 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@gamma) (@delta)
-        (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@segmentTrans)
-        (@trace) (@hterminalJ) (@p0) (@indices0) (@gamma0) (@delta0) (@terminalPosition)
-        (@hterminalPositionPositive) (@hterminalPositionBound) (@hseedTj) (by assumption)
-        (@TjPrime) (@x) (@componentPath) (@u) (@exitPath) (@zPosition) (@u0) (@exitPath0)
-        (@zPosition0) (@rho3) (@hd1) (@uPosition) (by assumption) (@A) (@B) (@hstep) (@hBseed)
+    exact TashkinovAugmentation.transportBeforeVertex
+      (ett.series.data.tree jSlot.succ.castSucc) seed
+      (ett.series.data.coloring jSlot.castSucc) rho3
+      (TashkinovStoredColors ett.series.data jSlot.castSucc) v hterminalJ hd1
+      segmentVertexBefore hstep hBseed
   have transportSeedRoute (S : TreeSequence G e0)
       (hroute : TashkinovAugmentationSequence
         (ett.series.data.coloring jSlot.castSucc) S seed) :
@@ -4498,11 +4494,10 @@ theorem helper_continuation_13931.{u_1, u_2} :
         (ett.series.data.coloring jSlot.castSucc) A B)
       (hBseed : TreeSequenceInitialSegment B seed) :
       TashkinovAugmentation rho1 A B := by
-    exact @helper_transportStep_1463 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@sigma) (@hqTerminal)
-        (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@segmentTrans) (@trace) (@hb1Rho)
-        (@terminalPosition) (@hterminalPositionPositive) (@hterminalPositionBound)
-        (by assumption) (@A) (@B) (@hstep) (@hBseed)
+    exact TashkinovAugmentation.transportBeforeVertex T seed
+      (ett.series.data.coloring jSlot.castSucc) rho1
+      (TashkinovStoredColors ett.series.data jSlot.castSucc) v hvFinal hb1Rho
+      segmentVertexBefore hstep hBseed
   exact @helper_continuation_14264 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hMP) (@hpositive)
       (@hlower) (@v) (@gamma) (@delta) (@sigma) (@hsigmaProper) (@hsigmaOne) (@w) (@hw)

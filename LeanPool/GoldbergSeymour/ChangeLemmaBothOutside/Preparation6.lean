@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.TerminalRoute
 
 public import LeanPool.GoldbergSeymour.HierarchyPathNumberPrefix
+public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLessFacts
 public import LeanPool.GoldbergSeymour.ChangeLemmaBothOutside.Preparation1
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyFieldTransport
@@ -1009,13 +1010,7 @@ theorem helper_continuation_4653.{u_1, u_2} :
     omega
   have hless : HierarchyCounterexampleLess (HierarchyCounterexampleMeasure CS)
       (HierarchyCounterexampleMeasure C) := by
-    change HierarchyPathNumber HS < HierarchyPathNumber H ∨
-      (HierarchyPathNumber HS = HierarchyPathNumber H ∧
-        B.length - (HS.stage (Fin.last count).castSucc).length <
-          T.length - (H.stage q.castSucc).length)
-    rcases lt_or_eq_of_le pathLe with hlt | heq
-    · exact Or.inl hlt
-    · exact Or.inr ⟨heq, tailLess⟩
+    exact HierarchyCounterexampleLess.of_le_of_lt pathLe tailLess
   exact hminimal CS hrS hcountB hless
 
 theorem helper_finish_4308.{u_1, u_2} :

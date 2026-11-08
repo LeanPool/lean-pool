@@ -18,7 +18,7 @@ public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
+public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLessFacts
 public import LeanPool.GoldbergSeymour.HierarchyOrderedExitReduction
 public import LeanPool.GoldbergSeymour.HierarchyStageInterchangeability
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePosition
@@ -818,12 +818,6 @@ private abbrev helperParallelBase6126Conditions.{u_1, u_2} : Prop :=
     ((TreeMissingColors sigma Tn ∩ TreeMissingColors sigma baseS.closure : Finset (Fin k)) \
       (HierarchyStoredColorsAt HS (0 : Fin (HS.dividerCount + (1 : ℕ)))).biUnion
        (goodB.gamma (0 : Fin (HS.dividerCount + (1 : ℕ))))).card
-
-private theorem lexicographicMeasureDecreases {a b c d : ℕ}
-    (hab : a ≤ b) (hcd : c < d) : HierarchyCounterexampleLess (a, c) (b, d) := by
-  rcases lt_or_eq_of_le hab with h | h
-  · exact Or.inl h
-  · exact Or.inr ⟨h, hcd⟩
 
 private theorem helper_starPositive_301.{u_1, u_2} :
     open scoped Classical in
@@ -1936,7 +1930,7 @@ private theorem helper_continuation_5082.{u_1, u_2} :
     rw [hlastOrd]
     have hlen := (ordinaryToA q).1
     omega
-  exact hminimal CS hrS hcountB (lexicographicMeasureDecreases pathLe tailLess)
+  exact hminimal CS hrS hcountB (HierarchyCounterexampleLess.of_le_of_lt pathLe tailLess)
 
 private theorem helper_continuation_4559.{u_1, u_2} :
     helperContinuation4559Conditions.{u_1, u_2} := by

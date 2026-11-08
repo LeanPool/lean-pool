@@ -14,7 +14,7 @@ public import LeanPool.GoldbergSeymour.StableHierarchyReplacement
 
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 
-public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLess
+public import LeanPool.GoldbergSeymour.HierarchyCounterexampleLessFacts
 public import LeanPool.GoldbergSeymour.HierarchyStageInterchangeability
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequencePosition
 public import LeanPool.GoldbergSeymour.GoodHierarchyTerminalPrefixRepackage
@@ -1083,13 +1083,7 @@ private theorem helper_continuation_5185.{u_1, u_2} :
     omega
   have hless : HierarchyCounterexampleLess (HierarchyCounterexampleMeasure CS)
       (HierarchyCounterexampleMeasure C) := by
-    change HierarchyPathNumber HS < HierarchyPathNumber H ∨
-      (HierarchyPathNumber HS = HierarchyPathNumber H ∧
-        B.length - (HS.stage (Fin.last count).castSucc).length <
-          T.length - (H.stage q.castSucc).length)
-    rcases lt_or_eq_of_le pathLe with hlt | heq
-    · exact Or.inl hlt
-    · exact Or.inr ⟨heq, tailLess⟩
+    exact HierarchyCounterexampleLess.of_le_of_lt pathLe tailLess
   exact hminimal CS hrS hcountB hless
 
 private theorem helper_continuation_5094.{u_1, u_2} :

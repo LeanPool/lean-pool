@@ -14,6 +14,7 @@ public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseStepLemmas
 import all LeanPool.GoldbergSeymour.ExtensionBaseAuxiliary
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseStepLemmas
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationBeforeVertex
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 
 /-!
@@ -2359,12 +2360,11 @@ theorem helper_transportSeedStep2_6201.{u_1, u_2} :
       hfirstUpper hfirstPositive jSlot segmentTrans trace hterminalJ p0 indices0 rho1
       terminalPosition hterminalPositionPositive hterminalPositionBound seed TjPrime u b traceB
       rho2 c1 uPosition segmentVertexBeforeJ A B hstep hBseed
-  exact @helper_transportSeedStep2_2940 (@V) (@E) inferInstance inferInstance inferInstance
-      (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@sigma)
-      (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@segmentTrans) (@trace)
-      (@hterminalJ) (@p0) (@indices0) (@terminalPosition) (@hterminalPositionPositive)
-      (@hterminalPositionBound) (@TjPrime) (@u) (@b) (@traceB) (@c1) (@uPosition)
-      (@segmentVertexBeforeJ) (@A) (@B) (@hstep) (@hBseed)
+  exact TashkinovAugmentation.transportBeforeVertex
+    (ett.series.data.tree jSlot.succ.castSucc) seed
+    (ett.series.data.coloring jSlot.castSucc) rho2
+    (TashkinovStoredColors ett.series.data jSlot.castSucc) v hterminalJ c1
+    segmentVertexBeforeJ hstep hBseed
 
 theorem helper_transportSeedRoute2_6212.{u_1, u_2} :
     open scoped Classical in

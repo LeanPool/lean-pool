@@ -16,6 +16,7 @@ public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceRestrict
 public import LeanPool.GoldbergSeymour.TechnicalInductionContext
 public import LeanPool.GoldbergSeymour.TechnicalTheoremBase
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationBeforeVertex
 
 /-!
 # Parallel Support Closure Properties
@@ -164,95 +165,6 @@ private abbrev helperBranch413Conditions.{u_1, u_2} : Prop :=
         ColoredVertexSetClosed G sigma (TreeSequenceVertexSet base.closure) ∧
     ∀ (alpha beta : Fin k), alpha ∈ TreeMissingColors sigma base.closure ∨ beta ∈
         TreeMissingColors sigma base.closure → TreeInterchangeable G base.closure sigma alpha beta
-
-private theorem helper_transportStep_335.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E k) (base :
-        HierarchyBase ett sigma),
-    let n : Fin (ett.rounds + (1 : ℕ)) := Fin.last ett.rounds;
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ), Decidable.byContradiction fun (a :
-        ¬ett.rounds - (1 : ℕ) < ett.rounds) ↦
-    by
-            omega
-    ⟩ : Fin ett.rounds);
-    let Tn : TreeSequence G e0 := ett.series.data.tree n.castSucc;
-    let v : V := Tn.vertex base.supportPosition;
-    let P : TreeSequence G e0 := TreeSequencePrefix Tn (↑base.supportPosition : ℕ)
-        base.supportPositive (Nat.le_of_lt_succ base.supportPosition.isLt);
-    ∀ (_ : (
-    ∀ {A B C : TreeSequence G e0} (_ : TreeSequenceInitialSegment A B) (_ :
-        TreeSequenceInitialSegment B C), TreeSequenceInitialSegment A C)) (hvT : v ∈
-        TreeSequenceVertexSet T),
-    let candidates : Finset (Fin (ett.rounds + (1 : ℕ))) := {i : Fin (ett.rounds + (1 : ℕ)) | v ∈
-        TreeSequenceVertexSet (ExtendedTashkinovLadderStage ett i)};
-    ∀ (hqmem : q.castSucc ∈ candidates),
-    let candidatesNonempty : candidates.Nonempty := Exists.intro q.castSucc hqmem;
-    let minimum : Fin (ett.rounds + (1 : ℕ)) := candidates.min' candidatesNonempty;
-    ∀ (hfirstDef : ETTFirstAppearanceIndex ett v hvT = (↑minimum : ℕ) + (1 : ℕ)) (hfirstUpper :
-        ETTFirstAppearanceIndex ett v hvT ≤ (↑q : ℕ) + (1 : ℕ)),
-    let j : Fin ett.rounds := (⟨ETTFirstAppearanceIndex ett v hvT - (1 : ℕ),
-        Decidable.byContradiction fun (a : ¬ETTFirstAppearanceIndex ett v hvT - (1 : ℕ) <
-        ett.rounds) ↦
-    by
-            omega
-    ⟩ : Fin ett.rounds);
-    ∀ (_ : StableColoringBeforeVertex T v hvT (TashkinovStoredColors ett.series.data j.castSucc)
-        (ett.series.data.coloring j.castSucc) sigma) (_ : (
-    ∀ {A : TreeSequence G e0} (_ : TreeSequenceInitialSegment A P) (_ : A.length < P.length)
-        {x : V} (_ : x ∈ TreeSequenceVertexSet A), x ∈ TreeVerticesBefore T v hvT))
-        {A B : TreeSequence G e0} (_ : TashkinovAugmentation (ett.series.data.coloring j.castSucc)
-        A B) (_ : TreeSequenceInitialSegment B P), TashkinovAugmentation sigma A B := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett hpositive sigma base n q Tn v P segmentTrans hvT
-      candidates hqmem candidatesNonempty minimum hfirstDef hfirstUpper j hsigmaBefore
-      segmentVertexBefore A B hstep hBP
-  rcases hstep with ⟨hlen, hAB, c, hcolor, hcMissing⟩
-  have hAP : TreeSequenceInitialSegment A P := segmentTrans hAB hBP
-  have hAlen : A.length < P.length :=
-    lt_of_lt_of_le (by omega) hBP.1
-  have hcMissingSigma : c ∈ TreeMissingColors sigma A := by
-    unfold TreeMissingColors at hcMissing ⊢
-    obtain ⟨x, hxA, hcx⟩ := Finset.mem_biUnion.mp hcMissing
-    refine Finset.mem_biUnion.mpr ⟨x, hxA, ?_⟩
-    rw [hsigmaBefore.2 x (segmentVertexBefore hAP hAlen hxA)]
-    exact hcx
-  let added : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
-  obtain ⟨attach, hattach⟩ := B.attaches added
-  let oldPosition : Fin (B.length + 1) :=
-    Fin.castLT attach
-      (Nat.lt_trans attach.isLt (Nat.succ_lt_succ added.isLt))
-  have holdValue : oldPosition.val < A.length + 1 := by
-    dsimp [oldPosition, added]
-    omega
-  let oldA : Fin (A.length + 1) := ⟨oldPosition.val, holdValue⟩
-  have holdEq : B.vertex oldPosition = A.vertex oldA := by
-    have hcast : Fin.castLE (Nat.succ_le_succ hAB.1) oldA =
-        oldPosition := by
-      apply Fin.ext
-      rfl
-    rw [← hcast]
-    exact hAB.2.1 oldA
-  have holdBefore : B.vertex oldPosition ∈ TreeVerticesBefore T v hvT := by
-    rw [holdEq]
-    exact segmentVertexBefore hAP hAlen (by simp [TreeSequenceVertexSet])
-  have holdIncident : Incident G (B.vertex oldPosition) (B.edge added) := by
-    unfold Incident
-    rw [hattach]
-    simp [oldPosition]
-  have haddedFixed : sigma (B.edge added) =
-      ett.series.data.coloring j.castSucc (B.edge added) := by
-    apply hsigmaBefore.1 (B.edge added)
-      ⟨B.vertex oldPosition, holdBefore, holdIncident⟩
-    refine ⟨c, ?_, hcolor⟩
-    apply Finset.mem_union_left
-    unfold TreeMissingColors at hcMissing
-    obtain ⟨x, hxA, hcx⟩ := Finset.mem_biUnion.mp hcMissing
-    exact Finset.mem_biUnion.mpr
-      ⟨x, segmentVertexBefore hAP hAlen hxA, hcx⟩
-  exact ⟨hlen, hAB, c, haddedFixed.trans hcolor, hcMissingSigma⟩
 
 private theorem helper_hNotPrev_228.{u_1, u_2} :
     open scoped Classical in
@@ -1405,9 +1317,13 @@ private theorem helper_continuation_1407.{u_1, u_2} :
   have segmentVertexBefore := @helper_segmentVertexBefore_1187 V E inferInstance inferInstance
       inferInstance inferInstance G k e0 input T phi ett hpositive sigma base hTnT segmentTrans
       vertexTransfer hP_T hvT hqmem hfirstDef hfirstUpper hPLength
-  have transportStep := @helper_transportStep_335 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 input T phi ett hpositive sigma base segmentTrans hvT hqmem hfirstDef
-      hfirstUpper hsigmaBefore segmentVertexBefore
+  have transportStep {A B : TreeSequence G e0}
+      (hstep : TashkinovAugmentation (ett.series.data.coloring j.castSucc) A B)
+      (hBP : TreeSequenceInitialSegment B P) : TashkinovAugmentation sigma A B :=
+    TashkinovAugmentation.transportBeforeVertex T P
+      (ett.series.data.coloring j.castSucc) sigma
+      (TashkinovStoredColors ett.series.data j.castSucc) v hvT hsigmaBefore
+      segmentVertexBefore hstep hBP
   have transportRoute (S : TreeSequence G e0)
       (hroute : TashkinovAugmentationSequence
         (ett.series.data.coloring j.castSucc) S P) :
