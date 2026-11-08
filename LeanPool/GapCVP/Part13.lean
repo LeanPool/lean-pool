@@ -3586,8 +3586,10 @@ noncomputable def
         (physicalFormulaMomentCount formula) true := by
   unfold physicalFamilyMomentCountUnary
     paperVariableArityPhysicalFamilyMomentBudgetUnary
-  simp only [Polynomial.eval_pow, Polynomial.eval_X, Function.comp_apply,
-      paperVariableArityPhysicalFamilySizeUnary_valid, List.length_replicate, List.replicate_succ]
+  -- Avoid expanding the polynomial power when matching the successor length.
+  rw [Function.comp_apply, paperVariableArityPhysicalFamilySizeUnary_valid,
+    List.length_replicate, Polynomial.eval_pow, Polynomial.eval_X]
+  exact (List.replicate_succ (n := physicalFormulaSize formula ^ 30) (a := true)).symm
 
 /-- Encode the number of physical family tuples in unary form. -/
 def physicalFamilyTupleCountUnary :
