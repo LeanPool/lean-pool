@@ -1,0 +1,68 @@
+slug: sum-of-sets-in-several-dimensions
+title: Sum of sets in several dimensions
+summary: Proves Ruzsa's lower bound for sumsets in R^D. If A and B are finite with B
+  nonempty, |B| ≤ |A| and A + B of affine dimension d, then
+  |A + B| ≥ |A| + Σ_{t=1}^{|B|-1} min(d, |A| - t), and this bound is attained in R^d
+  whenever d ≥ 1 and |A| ≥ d + 1, so it is the exact minimum. Derives the asymmetric
+  form of Freiman's lemma, |A + B| ≥ |A| + d|B| - d(d+1)/2. Defines the Freiman
+  dimension of a finite subset of a commutative monoid, transfers the bound to sets
+  with a Freiman model in R^r, and shows that a set X with |X + X| ≤ κ|X| has Freiman
+  dimension at most 2κ - 1 and at most κ - 1 + κ(2κ - 1)/|X|.
+branch: additive combinatorics
+entry_module: LeanPool.SumOfSetsInSeveralDimensions
+authors:
+- Gabriel Dahia
+source:
+  title: Sum of sets in several dimensions
+  authors:
+  - Imre Z. Ruzsa
+  doi: 10.1007/BF01302969
+  url: https://github.com/gdahia/SumOfSetsInSeveralDimensions/tree/bd2694b89fbe18ee5c4365a6330eba36d9f7ed8e
+  github_repo: gdahia/SumOfSetsInSeveralDimensions
+  commit: bd2694b89fbe18ee5c4365a6330eba36d9f7ed8e
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- SumOfSetsInSeveralDimensions.card_add_sum_min_le_card_add_of_finrank_span_sub_eq
+- SumOfSetsInSeveralDimensions.card_add_mul_card_le_card_add_add_of_le_finrank_span_sub
+- SumOfSetsInSeveralDimensions.sInf_card_add_eq_add_sum_min
+- SumOfSetsInSeveralDimensions.freimanDim_le_two_mul_sub_one_of_card_add_le
+main_results:
+- declaration: SumOfSetsInSeveralDimensions.card_add_sum_min_le_card_add_of_finrank_span_sub_eq
+  informal: For finite A, B ⊆ R^D with B nonempty and |B| ≤ |A|, if the differences
+    of A + B span a space of dimension d, then
+    |A| + Σ_{t=1}^{|B|-1} min(d, |A| - t) ≤ |A + B|.
+  source_ref: Theorem 1.
+- declaration: SumOfSetsInSeveralDimensions.card_add_mul_card_le_card_add_add_of_le_finrank_span_sub
+  informal: For finite A, B ⊆ R^D with B nonempty and |B| ≤ |A|, and every d at most
+    the dimension of the span of the differences of A + B,
+    |A| + d|B| ≤ |A + B| + d(d+1)/2.
+  source_ref: Corollary 1.1.
+- declaration: SumOfSetsInSeveralDimensions.sInf_card_add_eq_add_sum_min
+  informal: For d ≥ 1, 1 ≤ m ≤ n and n ≥ d + 1, the least size of A + B over
+    A, B ⊆ R^d with |A| = m, |B| = n and A + B of affine dimension d is
+    n + Σ_{j=1}^{m-1} min(d, n - j).
+  source_ref: Theorem 2, F_d(m, n) = G_d(m, n).
+- declaration: SumOfSetsInSeveralDimensions.sInf_card_add_of_finrank_span_sub_right_eq_add_sum_min
+  informal: The same minimum n + Σ_{j=1}^{m-1} min(d, n - j) holds when only B is
+    required to have affine dimension d.
+  source_ref: Theorem 2, F'_d(m, n) = G_d(m, n).
+- declaration: SumOfSetsInSeveralDimensions.freimanDim_le_two_mul_sub_one_of_card_add_le
+  informal: A nonempty finite subset X of a cancellative commutative monoid with
+    |X + X| ≤ κ|X|, for a real κ, has Freiman dimension at most 2κ - 1.
+- declaration: SumOfSetsInSeveralDimensions.freimanDim_le_sub_one_add_mul_div_card_of_card_add_le
+  informal: Under the same hypotheses, the Freiman dimension of X is at most
+    κ - 1 + κ(2κ - 1)/|X|.
+- declaration: SumOfSetsInSeveralDimensions.card_add_sum_min_le_of_freimanDim_union
+  informal: Ruzsa's lower bound holds for finite A, B in a commutative monoid with
+    d replaced by r - 1, where r ≥ 1 is the Freiman dimension of A ∪ B.
+tags:
+- additive-combinatorics
+- sumsets
+- freiman-dimension
+- discrete-geometry
+msc:
+- 11P70
+- 11B13
+- 11B75
