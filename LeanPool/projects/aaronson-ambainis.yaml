@@ -4,10 +4,11 @@ summary: Proves that a real polynomial of degree at most d, bounded between zero
   and one on the Boolean cube and with variance at least epsilon > 0, has a
   coordinate of squared-difference influence at least (epsilon/d)^7. Also proves
   explicit bounds with epsilon^(5/2)/d^6, together with determinant pairings,
-  fractional-certificate inequalities, coordinate averaging, and packing-cover
-  duality. The sharper constant is conditional on the stated Agarwal–Ben-David
-  fractional block-sensitivity bound. Quantum simulation consequences are outside
-  this formalization.
+  fractional-certificate inequalities and coordinate averaging. The internal
+  packing-cover duality supports the proof; generic finite LP duality is already
+  pooled as StandardLP.strongDuality. The sharper constant is conditional on the
+  stated Agarwal–Ben-David fractional block-sensitivity bound. Quantum simulation
+  consequences are outside this formalization.
 branch: theoretical computer science
 entry_module: LeanPool.AaronsonAmbainis
 authors:
@@ -44,9 +45,6 @@ main_results:
   informal: Assuming the explicitly stated Agarwal–Ben-David fractional
     block-sensitivity bound, the zero-one cube influence bound improves to
     32 sqrt(15) epsilon^(5/2) / (125 pi^4 d^6).
-- declaration: AaronsonAmbainis.Dual.exists_cover
-  informal: If every nonnegative fractional packing of a finite set system has
-    demand value at most K, there is a nonnegative cover of total weight at most K.
 tags:
 - boolean-functions
 - influence
