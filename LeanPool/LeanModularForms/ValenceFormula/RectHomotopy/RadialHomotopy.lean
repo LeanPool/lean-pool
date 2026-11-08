@@ -12,7 +12,6 @@ import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.HomotopyDef
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.InnerProductSpace.Calculus
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Radial homotopy from polygon to unit circle
@@ -129,7 +128,9 @@ lemma fdPolygon_ne_p_everywhere (p : ℂ) (hp_norm : ‖p‖ > 1) (hp_re : |p.re
         · push Not at ht4
           simp only [fdPolygon, not_le.mpr ht1, not_le.mpr ht2, not_le.mpr ht3,
             not_le.mpr ht4, ↓reduceIte] at heq
-          have him : p.im = HHeight := by rw [← heq]; simp [Complex.add_im, Complex.mul_im]
+          have him : p.im = HHeight := by rw [← heq]; simp only [add_im, sub_im, ofReal_im,
+            div_ofNat_im, im_ofNat, zero_div, sub_self, mul_im, ofReal_re, I_im, mul_one, I_re,
+            mul_zero, add_zero, zero_add]
           linarith only [hp_im, him]
 
 /-- Radial homotopy is continuous. -/
@@ -383,7 +384,7 @@ lemma fdPolygon_right_deriv_norm_le (x : ℝ) :
   split_ifs with h1 h2 h3 h4
   · simp only [fdPolygon_deriv_seg1]
     have h1 : (↑HHeight : ℂ) - ↑(Real.sqrt 3) / 2 = 1 := by simp only [HHeight]; push_cast; ring
-    rw [h1]; simp [Complex.norm_I]
+    rw [h1]; simp only [neg_mul, one_mul, norm_neg, norm_I, Nat.one_le_ofNat]
   · rw [fdPolygon_deriv_seg2]
     calc ‖iPoint - rho'‖ ≤ ‖iPoint‖ + ‖rho'‖ := norm_sub_le _ _
       _ = 1 + 1 := by rw [i_point_norm, rho'_norm]
@@ -394,7 +395,7 @@ lemma fdPolygon_right_deriv_norm_le (x : ℝ) :
       _ ≤ 3 := by norm_num
   · simp only [fdPolygon_deriv_seg4]
     have h1 : (↑HHeight : ℂ) - ↑(Real.sqrt 3) / 2 = 1 := by simp only [HHeight]; push_cast; ring
-    rw [h1]; simp [Complex.norm_I]
+    rw [h1]; simp only [one_mul, norm_I, Nat.one_le_ofNat]
   · rw [fdPolygon_deriv_seg5]; simp only [norm_one]; norm_num
 
 /-- fdPolygon has a right derivative at every point. -/
@@ -415,7 +416,9 @@ lemma fdPolygon_hasDerivWithinAt_Ici (x : ℝ) :
       simp only [fdPolygon, fdPolygonSeg2]
       split_ifs with h'₁ h'₂ h'₃ h'₄
       · have : t = 1 := le_antisymm h'₁ (h1.trans ht_ge)
-        subst this; simp [chordSegment, rho', HHeight, iPoint]
+        subst this; simp only [one_div, HHeight, ofReal_add, ofReal_div, ofReal_ofNat, ofReal_one,
+          add_sub_cancel_left, mul_one, add_sub_cancel_right, chordSegment, sub_self, sub_zero,
+          rho', smul_add, one_smul, iPoint, zero_smul, add_zero]
       · rfl
       all_goals linarith only [ht_lt, h'₂]
     exact (fdPolygon_seg2_differentiable.differentiableAt.hasDerivAt.hasDerivWithinAt
@@ -423,7 +426,9 @@ lemma fdPolygon_hasDerivWithinAt_Ici (x : ℝ) :
       (by simp only [fdPolygon, fdPolygonSeg2]
           split_ifs with h'₁ h'₂ h'₃ h'₄
           · have : x = 1 := le_antisymm h'₁ h1; subst this
-            simp [chordSegment, rho', HHeight, iPoint]
+            simp only [one_div, HHeight, ofReal_add, ofReal_div, ofReal_ofNat, ofReal_one,
+              add_sub_cancel_left, mul_one, add_sub_cancel_right, chordSegment, sub_self, sub_zero,
+              rho', smul_add, one_smul, iPoint, zero_smul, add_zero]
           · rfl
           all_goals linarith only [h2, h'₂])
   · push Not at h1 h2
@@ -434,7 +439,8 @@ lemma fdPolygon_hasDerivWithinAt_Ici (x : ℝ) :
       split_ifs with h'₁ h'₂ h'₃ h'₄
       · linarith only [h2, ht_ge, h'₁, h2.trans ht_ge]
       · have : t = 2 := le_antisymm h'₂ (h2.trans ht_ge)
-        subst this; simp [chordSegment, rho, iPoint]; ring
+        subst this; simp only [chordSegment, real_smul, ofReal_sub, ofReal_one, ofReal_ofNat,
+          iPoint, sub_self, sub_zero, one_smul, rho, smul_add, zero_smul, add_zero]; ring
       · rfl
       all_goals linarith only [ht_lt, h'₃]
     exact (fdPolygon_seg3_differentiable.differentiableAt.hasDerivAt.hasDerivWithinAt
@@ -443,7 +449,8 @@ lemma fdPolygon_hasDerivWithinAt_Ici (x : ℝ) :
           split_ifs with h'₁ h'₂ h'₃ h'₄
           · linarith only [h2, h'₁]
           · have : x = 2 := le_antisymm h'₂ h2; subst this
-            simp [chordSegment, rho, iPoint]; ring
+            simp only [chordSegment, real_smul, ofReal_sub, ofReal_one, ofReal_ofNat, iPoint,
+              sub_self, sub_zero, one_smul, rho, smul_add, zero_smul, add_zero]; ring
           · rfl
           all_goals linarith only [h3, h'₃])
   · push Not at h1 h2 h3
@@ -456,7 +463,9 @@ lemma fdPolygon_hasDerivWithinAt_Ici (x : ℝ) :
       · linarith only [h3, ht_ge, h'₂, h3.trans ht_ge]
       · have : t = 3 := le_antisymm h'₃ (h3.trans ht_ge)
         subst this
-        simp [chordSegment, rho, iPoint, HHeight]; ring
+        simp only [chordSegment, iPoint, real_smul, ofReal_sub, ofReal_one, ofReal_ofNat, rho,
+          smul_add, sub_self, HHeight, ofReal_add, ofReal_div, add_sub_cancel_left, mul_one,
+          add_zero]; ring
       · rfl
       all_goals linarith only [ht_lt, h'₄]
     exact (fdPolygon_seg4_differentiable.differentiableAt.hasDerivAt.hasDerivWithinAt
@@ -466,7 +475,9 @@ lemma fdPolygon_hasDerivWithinAt_Ici (x : ℝ) :
           · linarith only [h2, h'₁]
           · linarith only [h3, h'₂]
           · have : x = 3 := le_antisymm h'₃ h3; subst this
-            simp [chordSegment, rho, iPoint, HHeight]; ring
+            simp only [chordSegment, iPoint, real_smul, ofReal_sub, ofReal_one, ofReal_ofNat, rho,
+              smul_add, sub_self, HHeight, ofReal_add, ofReal_div, add_sub_cancel_left, mul_one,
+              add_zero]; ring
           · rfl
           all_goals linarith only [h4, h'₄])
   · push Not at h1 h2 h3 h4
@@ -479,7 +490,8 @@ lemma fdPolygon_hasDerivWithinAt_Ici (x : ℝ) :
       · linarith only [h4, hxt, h'₂]
       · linarith only [h4, hxt, h'₃]
       · have : t = 4 := le_antisymm h'₄ (h4.trans hxt)
-        subst this; simp [HHeight]; ring
+        subst this; simp only [ofReal_ofNat, HHeight, ofReal_add, ofReal_div, ofReal_one,
+          add_sub_cancel_left, mul_one]; ring
       · rfl
     exact (fdPolygon_seg5_differentiable.differentiableAt.hasDerivAt.hasDerivWithinAt
       ).congr_of_eventuallyEq heq
@@ -489,7 +501,8 @@ lemma fdPolygon_hasDerivWithinAt_Ici (x : ℝ) :
           · linarith only [h4, h'₂]
           · linarith only [h4, h'₃]
           · have : x = 4 := le_antisymm h'₄ h4; subst this
-            simp [HHeight]; ring
+            simp only [ofReal_ofNat, HHeight, ofReal_add, ofReal_div, ofReal_one,
+              add_sub_cancel_left, mul_one]; ring
           · rfl)
 
 /-- fdPolygon is Lipschitz with constant 3. -/
@@ -530,7 +543,8 @@ lemma polygonToCircleRadial_deriv_bounded (p : ℂ) (hp_norm : ‖p‖ > 1)
       simp only [polygonToCircleRadial]
       set dir := fdPolygon t' - p with hdir
       by_cases hdir_ne : dir = 0
-      · simp [hdir_ne]
+      · simp only [hdir_ne, norm_zero, mul_zero, zero_add, ofReal_zero, div_zero, smul_zero,
+        add_zero]
       · have hnorm_ne : (‖dir‖ : ℂ) ≠ 0 :=
           Complex.ofReal_ne_zero.mpr (norm_ne_zero_iff.mpr hdir_ne)
         erw [RCLike.real_smul_eq_coe_mul, RCLike.real_smul_eq_coe_mul,
@@ -576,7 +590,7 @@ lemma polygonToCircleRadial_deriv_bounded (p : ℂ) (hp_norm : ‖p‖ > 1)
           apply add_le_add_right
           apply mul_le_mul_of_nonneg_left
           · have h_nsub := norm_normalize_sub_le (half_pos hδ_pos)
-              ht'_delta (le_trans (by linarith : δ / 2 ≤ δ) (hδ_le t ht))
+              ht'_delta (le_trans (by linarith only [hδ_pos] : δ / 2 ≤ δ) (hδ_le t ht))
             rw [show fdPolygon t' - p - (fdPolygon t - p) =
               fdPolygon t' - fdPolygon t from by ring] at h_nsub
             calc ‖(fdPolygon t' - p) / ↑‖fdPolygon t' - p‖ -
@@ -599,12 +613,12 @@ lemma polygonToCircleRadial_deriv_bounded (p : ℂ) (hp_norm : ‖p‖ > 1)
       _ = (1 + 4 / δ) * ‖fdPolygon t' - fdPolygon t‖ := by ring
       _ ≤ (3 + 4 / δ) * ‖fdPolygon t' - fdPolygon t‖ := by
           apply mul_le_mul_of_nonneg_right _ (norm_nonneg _)
-          linarith
+          linarith only []
       _ ≤ (3 + 4 / δ) * (3 * |t' - t|) := by
           apply mul_le_mul_of_nonneg_left _ (by positivity)
           have h_lip := fdPolygon_norm_sub_le t' t
           rwa [norm_sub_rev, abs_sub_comm] at h_lip
-      _ = (3 + 4 / δ) * 3 * |t' - t| := by ring
+      _ = (3 + 4 / δ) * 3 * |t' - t| := by ac_rfl
   · simp only [deriv_zero_of_not_differentiableAt hd, norm_zero]
     positivity
 

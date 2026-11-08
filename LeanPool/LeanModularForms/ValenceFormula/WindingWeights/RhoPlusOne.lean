@@ -14,7 +14,6 @@ import LeanPool.LeanModularForms.ValenceFormula.TrigLemmas
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Winding Number Weight at ρ+1
@@ -55,7 +54,7 @@ private lemma g_rho'_arc_value {t : ℝ} (ht1 : 1 < t) (ht3 : t < 3) :
     Complex.exp (↑(Real.pi * (1 + t) / 6) * I) - (↑(1/2 : ℝ) + ↑(Real.sqrt 3 / 2) * I) := by
   rw [fdBoundary_H_eq_arc ht1 ht3]
   simp only [ellipticPointRhoPlusOne, ellipticPointRhoPlusOne', UpperHalfPlane.coe_mk]
-  push_cast; ring
+  push_cast; ac_rfl
 
 private lemma g_rho'_seg3_value {t : ℝ} (ht3 : 3 < t) (ht4 : t ≤ 4) :
     fdBoundaryH H t - ellipticPointRhoPlusOne =
@@ -158,7 +157,7 @@ private lemma g_rho'_ne_zero (hH : Real.sqrt 3 / 2 < H)
         have : Real.sqrt 3 / 2 < Real.sin (Real.pi * (1 + t) / 6) :=
           sin_gt_sqrt3_div_2_of_mem (by nlinarith only [h1, Real.pi_pos]) (by
             nlinarith only [h3, Real.pi_pos])
-        linarith
+        linarith only [this]
       rw [h_eq] at him_pos; simp only [Complex.zero_im, lt_irrefl] at him_pos
     · rcases eq_or_lt_of_le h3 with rfl | h3'
       · rw [fdBoundary_H_at_three_eq_rho] at h_eq
@@ -179,7 +178,7 @@ private lemma g_rho'_ne_zero (hH : Real.sqrt 3 / 2 < H)
               H - Real.sqrt 3 / 2 := by
             simp [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.I_re,
               Complex.I_im, Complex.ofReal_re]
-          rw [h_eq] at him; simp only [Complex.zero_im] at him; linarith
+          rw [h_eq] at him; simp only [Complex.zero_im] at him; linarith only [hH, him]
 
 private lemma g_rho'_slitPlane (hH : Real.sqrt 3 / 2 < H)
     {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 5) (hne1 : t ≠ 1) (hne3 : t ≠ 3) :
@@ -359,20 +358,21 @@ private lemma hasDerivAt_rho'_arc (t : ℝ) :
       (↑(Real.pi / 6) * I * exp (↑(Real.pi * (1 + t) / 6) * I)) t := by
   have hf : HasDerivAt (fun s : ℝ => Real.pi * (1 + s) / 6) (Real.pi / 6) t :=
     ((hasDerivAt_id t).add_const (1 : ℝ) |>.const_mul (Real.pi / 6)).congr_of_eventuallyEq
-      (Eventually.of_forall fun s => show _ from by simp [id]; ring)
-      |>.congr_deriv (by ring)
+      (Eventually.of_forall fun s => show _ from by simp only [id]; ring)
+      |>.congr_deriv (by ac_rfl)
   have hci : HasDerivAt (fun s : ℝ => (↑(Real.pi * (1 + s) / 6) : ℂ) * I)
       ((↑(Real.pi / 6) : ℂ) * I) t :=
     (hf.ofReal_comp.mul_const I).congr_deriv (by norm_num [smul_eq_mul])
   exact (hci.cexp.sub (hasDerivAt_const t (ellipticPointRhoPlusOne : ℂ))).congr_deriv
-    (by simp only [sub_zero]; ring)
+    (by simp only [sub_zero]; ac_rfl)
 
 private lemma hasDerivAt_rho'_seg3 (H : ℝ) (t : ℝ) :
     HasDerivAt (fun s : ℝ => -1 + ↑((s - 3) * (H - Real.sqrt 3 / 2)) * I)
       ((↑(H - Real.sqrt 3 / 2) : ℂ) * I) t :=
   ((hasDerivAt_const t (-1 : ℂ)).add
     ((((hasDerivAt_id t).sub (hasDerivAt_const t 3)).mul_const
-    (H - Real.sqrt 3 / 2)).ofReal_comp.mul_const I)).congr_deriv (by simp [zero_add])
+    (H - Real.sqrt 3 / 2)).ofReal_comp.mul_const I)).congr_deriv (by simp only [sub_zero, one_mul,
+      ofReal_sub, ofReal_div, ofReal_ofNat, zero_add])
 
 private lemma hasDerivAt_rho'_seg4 (H : ℝ) (t : ℝ) :
     HasDerivAt (fun s : ℝ => ↑(s - 5) + ↑(H - Real.sqrt 3 / 2) * I) (1 : ℂ) t := by
@@ -617,7 +617,7 @@ private lemma rho'_norm_gt_right_of_arc (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
     · calc ε < 1 := hε_lt_one
         _ ≤ _ := g_rho'_norm_ge_one_seg3 (le_refl 3) (by norm_num)
     · rw [g_rho'_norm_arc_full (by linarith only [ht1, hδ_R_pos] : 1 < t) ht3',
-          ← h_norm_R, g_rho'_norm_arc hδ_R_pos (by linarith : δ_R < 2)]
+          ← h_norm_R, g_rho'_norm_arc hδ_R_pos (by linarith only [hδ_R_pos, hδ_R_lt_one] : δ_R < 2)]
       have hpi_pos := Real.pi_pos
       apply mul_lt_mul_of_pos_left _ (by norm_num : (0 : ℝ) < 2)
       exact Real.sin_lt_sin_of_lt_of_le_pi_div_two
@@ -695,7 +695,7 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
       then (fdBoundaryH H t - ellipticPointRhoPlusOne)⁻¹ *
            deriv (fun s => fdBoundaryH H s - ellipticPointRhoPlusOne) t
       else 0) (𝓝[>] 0) (𝓝 (-(I * ↑Real.pi / 3))) := by
-  have hH_gap : 0 < H - Real.sqrt 3 / 2 := by linarith
+  have hH_gap : 0 < H - Real.sqrt 3 / 2 := by linarith only [hH]
   have hpi_pos : 0 < Real.pi := Real.pi_pos
   have hsin_pos : 0 < Real.sin (Real.pi / 12) := sin_pi_12_pos
   have h2sin_pos : 0 < 2 * Real.sin (Real.pi / 12) := by positivity
@@ -738,7 +738,7 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
     have ht1 : t < 1 - ε / (H - Real.sqrt 3 / 2) := ht_mem.2
     have ht_lt_one : t < 1 := by linarith [div_pos hε_pos hH_gap]
     rw [g_rho'_norm_seg0 hH ht0 ht_lt_one]
-    have h_key : ε / (H - Real.sqrt 3 / 2) < 1 - t := by linarith
+    have h_key : ε / (H - Real.sqrt 3 / 2) < 1 - t := by linarith only [ht1]
     calc ε = ε / (H - Real.sqrt 3 / 2) * (H - Real.sqrt 3 / 2) :=
               (div_mul_cancel₀ ε (ne_of_gt hH_gap)).symm
         _ < (1 - t) * (H - Real.sqrt 3 / 2) := mul_lt_mul_of_pos_right h_key hH_gap
@@ -747,7 +747,7 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
     have hε_lt_gap : ε < H - Real.sqrt 3 / 2 := lt_of_lt_of_le hε_lt (min_le_left _ _)
     have hε_lt_2sin : ε < 2 * Real.sin (Real.pi / 12) :=
       lt_of_lt_of_le hε_lt (min_le_right _ _)
-    have hε_half_neg : (-1 : ℝ) ≤ ε / 2 := by linarith
+    have hε_half_neg : (-1 : ℝ) ≤ ε / 2 := by linarith only [hε_pos]
     have hε_half_le : ε / 2 ≤ 1 := by linarith [Real.sin_le_one (Real.pi / 12)]
     have hε_lt_one : ε < 1 := by linarith [sin_pi_12_lt_half]
     simp only [hδR_def] at ht_mem
@@ -760,7 +760,7 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
     have h_norm_R : ‖fdBoundaryH H (1 + δ_right ε) - ellipticPointRhoPlusOne‖ = ε := by
       rw [g_rho'_norm_arc hδR_pos (by linarith : δ_right ε < 2), hδR_angle,
           Real.sin_arcsin hε_half_neg hε_half_le]
-      linarith
+      linarith only []
     have h_ioo := rho'_norm_gt_right_of_arc H hH hε_lt_one hε_lt_gap
       hδR_pos hδR_lt_one h_norm_R
     rcases eq_or_lt_of_le ht_mem.2 with rfl | ht_lt5
@@ -778,12 +778,12 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
     have h_norm_L : ‖fdBoundaryH H (1 - δ_left ε) - ellipticPointRhoPlusOne‖ = ε := by
       rw [g_rho'_norm_seg0_at hH hδL_pos (le_of_lt hδL_lt_one)]
       field_simp
-      have : H * 2 - Real.sqrt 3 > 0 := by nlinarith
+      have : H * 2 - Real.sqrt 3 > 0 := by nlinarith only [hε_pos, hε_lt_gap]
       exact div_self (ne_of_gt this)
     have h_norm_R : ‖fdBoundaryH H (1 + δ_right ε) - ellipticPointRhoPlusOne‖ = ε := by
       rw [g_rho'_norm_arc hδR_pos (by linarith : δ_right ε < 2), hδR_angle,
           Real.sin_arcsin hε_half_neg hε_half_le]
-      linarith
+      linarith only []
     exact not_lt.mp (norm_le_middle_rho_plus_one H hH hε_pos hδL_pos hδL_lt_one
       hδR_pos hδR_lt_one h_norm_L h_norm_R hH_gap t ht_mem.1 ht_mem.2)
   · -- h_ftc: FTC gives the two-piece integral equals E ε
@@ -831,12 +831,12 @@ theorem pv_integral_at_rho_plus_one_tendsto (H : ℝ) (hH : Real.sqrt 3 / 2 < H)
     have h_norm_L : ‖fdBoundaryH H (1 - δ_left ε) - ellipticPointRhoPlusOne‖ = ε := by
       rw [g_rho'_norm_seg0_at hH hδL_pos (le_of_lt hδL_lt_one)]
       field_simp
-      have : H * 2 - Real.sqrt 3 > 0 := by nlinarith
+      have : H * 2 - Real.sqrt 3 > 0 := by nlinarith only [hε_mem, hε_lt_gap]
       exact div_self (ne_of_gt this)
     have h_norm_R : ‖fdBoundaryH H (1 + δ_right ε) - ellipticPointRhoPlusOne‖ = ε := by
       rw [g_rho'_norm_arc hδR_pos (by linarith : δ_right ε < 2), hδR_angle,
           Real.sin_arcsin hε_half_neg hε_half_le]
-      linarith
+      linarith only []
     simp only [hE_def]
     rw [show dist (Complex.log (fdBoundaryH H (1 - δ_left ε) - ↑ellipticPointRhoPlusOne) -
           Complex.log (fdBoundaryH H (1 + δ_right ε) - ↑ellipticPointRhoPlusOne))
@@ -873,7 +873,7 @@ theorem gWN_fdBoundary_H_at_rho_plus_one (H : ℝ) (hH : Real.sqrt 3 / 2 < H) :
     generalizedWindingNumber' (fdBoundaryH H) 0 5 ellipticPointRhoPlusOne = -1/6 := by
   apply ContourIntegral.gWN_eq_neg_sixth_of_pv_tendsto
   convert pv_integral_at_rho_plus_one_tendsto H hH using 2
-  · simp [sub_zero, gt_iff_lt]
+  · simp only [sub_zero, deriv_sub_const_fun, gt_iff_lt]
   · ring
 
 end

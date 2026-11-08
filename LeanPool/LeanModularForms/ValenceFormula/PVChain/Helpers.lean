@@ -12,8 +12,6 @@ import LeanPool.LeanModularForms.ValenceFormula.OnCurvePV.Main
 import LeanPool.LeanModularForms.ValenceFormula.OrbitSum
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # PV Chain Helpers
@@ -103,13 +101,21 @@ lemma sArcOfS_unit (S : Finset UpperHalfPlane) :
 omit f hf in
 private lemma neg_inv_rho_eq_rho_plus_one :
     -(1 : ℂ) / ellipticPointRho = ellipticPointRhoPlusOne := by
-  have hre : (ellipticPointRho : ℂ).re = -1/2 := by simp [ellipticPointRho, ellipticPointRho']
+  have hre : (ellipticPointRho : ℂ).re = -1/2 := by simp only [ellipticPointRho, ellipticPointRho',
+    add_re, div_ofNat_re, neg_re, one_re, mul_re, ofReal_re, I_re, mul_zero, div_ofNat_im,
+    ofReal_im, zero_div, I_im, mul_one, sub_self, add_zero]
   have him : (ellipticPointRho : ℂ).im = Real.sqrt 3 / 2 := by
-    simp [ellipticPointRho, ellipticPointRho']
+    simp only [ellipticPointRho, ellipticPointRho', add_im, div_ofNat_im, neg_im, one_im, neg_zero,
+      zero_div, mul_im, div_ofNat_re, ofReal_re, I_im, mul_one, ofReal_im, I_re, mul_zero, add_zero,
+      zero_add]
   have hre2 : (ellipticPointRhoPlusOne : ℂ).re = 1/2 := by
-    simp [ellipticPointRhoPlusOne, ellipticPointRhoPlusOne']
+    simp only [ellipticPointRhoPlusOne, ellipticPointRhoPlusOne', one_div, add_re, inv_re, re_ofNat,
+      normSq_ofNat, div_self_mul_self', mul_re, div_ofNat_re, ofReal_re, I_re, mul_zero,
+      div_ofNat_im, ofReal_im, zero_div, I_im, mul_one, sub_self, add_zero]
   have him2 : (ellipticPointRhoPlusOne : ℂ).im = Real.sqrt 3 / 2 := by
-    simp [ellipticPointRhoPlusOne, ellipticPointRhoPlusOne']
+    simp only [ellipticPointRhoPlusOne, ellipticPointRhoPlusOne', one_div, add_im, inv_im, im_ofNat,
+      neg_zero, normSq_ofNat, zero_div, mul_im, div_ofNat_re, ofReal_re, I_im, mul_one,
+      div_ofNat_im, ofReal_im, I_re, mul_zero, add_zero, zero_add]
   have hnormSq :
       -(1/2 : ℝ) * -(1/2) + Real.sqrt 3 / 2 * (Real.sqrt 3 / 2) = 1 := by
     nlinarith only [Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)]
@@ -125,12 +131,20 @@ omit f hf in
 private lemma neg_inv_rho_plus_one_eq_rho :
     -(1 : ℂ) / ellipticPointRhoPlusOne = ellipticPointRho := by
   have hre : (ellipticPointRhoPlusOne : ℂ).re = 1/2 := by
-    simp [ellipticPointRhoPlusOne, ellipticPointRhoPlusOne']
+    simp only [ellipticPointRhoPlusOne, ellipticPointRhoPlusOne', one_div, add_re, inv_re, re_ofNat,
+      normSq_ofNat, div_self_mul_self', mul_re, div_ofNat_re, ofReal_re, I_re, mul_zero,
+      div_ofNat_im, ofReal_im, zero_div, I_im, mul_one, sub_self, add_zero]
   have him : (ellipticPointRhoPlusOne : ℂ).im = Real.sqrt 3 / 2 := by
-    simp [ellipticPointRhoPlusOne, ellipticPointRhoPlusOne']
-  have hre2 : (ellipticPointRho : ℂ).re = -1/2 := by simp [ellipticPointRho, ellipticPointRho']
+    simp only [ellipticPointRhoPlusOne, ellipticPointRhoPlusOne', one_div, add_im, inv_im, im_ofNat,
+      neg_zero, normSq_ofNat, zero_div, mul_im, div_ofNat_re, ofReal_re, I_im, mul_one,
+      div_ofNat_im, ofReal_im, I_re, mul_zero, add_zero, zero_add]
+  have hre2 : (ellipticPointRho : ℂ).re = -1/2 := by simp only [ellipticPointRho, ellipticPointRho',
+    add_re, div_ofNat_re, neg_re, one_re, mul_re, ofReal_re, I_re, mul_zero, div_ofNat_im,
+    ofReal_im, zero_div, I_im, mul_one, sub_self, add_zero]
   have him2 : (ellipticPointRho : ℂ).im = Real.sqrt 3 / 2 := by
-    simp [ellipticPointRho, ellipticPointRho']
+    simp only [ellipticPointRho, ellipticPointRho', add_im, div_ofNat_im, neg_im, one_im, neg_zero,
+      zero_div, mul_im, div_ofNat_re, ofReal_re, I_im, mul_one, ofReal_im, I_re, mul_zero, add_zero,
+      zero_add]
   have hnormSq : (1/2 : ℝ) * (1/2) + Real.sqrt 3 / 2 * (Real.sqrt 3 / 2) = 1 := by
     nlinarith only [Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)]
   apply Complex.ext
@@ -149,7 +163,8 @@ lemma sArcOfS_closed (S : Finset UpperHalfPlane) :
     Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton] at hs ⊢
   rcases hs with ⟨⟨p, hp, rfl⟩ | ⟨p, hp, rfl⟩⟩ | hs
   · left; right; exact ⟨p, hp, rfl⟩
-  · simp_all
+  · simp_all only [ne_eq, neg_eq_zero, one_ne_zero, not_false_eq_true, div_div_cancel₀,
+    UpperHalfPlane.coe_inj, exists_eq_right, and_self, true_or]
   · rcases hs with rfl | rfl
     · right; right; exact neg_inv_rho_eq_rho_plus_one
     · right; left; exact neg_inv_rho_plus_one_eq_rho
@@ -172,9 +187,12 @@ lemma sVertOfS_pair_left (S : Finset UpperHalfPlane) :
   simp only [sVertOfS, Finset.mem_union, Finset.mem_image] at hs ⊢
   obtain ((⟨p, hp, rfl⟩ | ⟨p, hp, rfl⟩) | ⟨p, hp, rfl⟩) | ⟨p, hp, rfl⟩ := hs
   · exact Or.inl (Or.inl (Or.inr ⟨p, hp, rfl⟩))
-  · simp_all
+  · simp_all only [UpperHalfPlane.coe_re, one_div, gt_iff_lt, Finset.mem_filter, sub_re, one_re,
+    sub_eq_self, one_ne_zero]
   · exfalso; linarith [(Finset.mem_filter.mp hp).2.1, hre]
-  · simp_all
+  · simp_all only [UpperHalfPlane.coe_re, gt_iff_lt, Finset.mem_filter, add_re, one_re, one_div,
+    add_sub_cancel_right, UpperHalfPlane.coe_inj, exists_eq_right, and_true, true_and, and_self,
+    or_true, true_or]
 
 omit f hf in
 lemma sVertOfS_pair_right (S : Finset UpperHalfPlane) :
@@ -183,9 +201,11 @@ lemma sVertOfS_pair_right (S : Finset UpperHalfPlane) :
   simp only [sVertOfS, Finset.mem_union, Finset.mem_image] at hs ⊢
   obtain ((⟨p, hp, rfl⟩ | ⟨p, hp, rfl⟩) | ⟨p, hp, rfl⟩) | ⟨p, hp, rfl⟩ := hs
   · exfalso; linarith [(Finset.mem_filter.mp hp).2.1, hre]
-  · simp_all
+  · simp_all only [UpperHalfPlane.coe_re, one_div, gt_iff_lt, Finset.mem_filter, sub_re, one_re,
+    sub_add_cancel, UpperHalfPlane.coe_inj, exists_eq_right, and_self, true_or, and_true, true_and]
   · exact Or.inr ⟨p, hp, rfl⟩
-  · simp_all
+  · simp_all only [UpperHalfPlane.coe_re, gt_iff_lt, Finset.mem_filter, add_re, one_re, add_eq_left,
+    one_ne_zero]
 
 omit f hf in
 /-- There exists a height above √3/2 exceeding all points in `S`. -/
@@ -193,7 +213,8 @@ theorem exists_height_bound_S (S : Finset UpperHalfPlane) :
     ∃ H₁ : ℝ, Real.sqrt 3 / 2 < H₁ ∧ 1 < H₁ ∧ ∀ s ∈ S, (s : ℂ).im < H₁ := by
   rcases S.eq_empty_or_nonempty with h_empty | h_ne
   · exact ⟨2, by nlinarith only [Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)],
-      by norm_num, by simp [h_empty]⟩
+      by norm_num, by simp only [h_empty, Finset.notMem_empty, UpperHalfPlane.coe_im,
+        IsEmpty.forall_iff, implies_true]⟩
   · set M := S.sup' h_ne (fun s : ℍ => (s : ℂ).im) with hM_def
     have hM_pos : 0 < M := by
       obtain ⟨s, hs⟩ := h_ne
@@ -338,7 +359,7 @@ lemma fdBox_of_on_curve (S : Finset UpperHalfPlane) (hS : ∀ p ∈ S, p ∈ �
         Finset.mem_filter, Finset.mem_insert, Finset.mem_singleton] at h_arc
       rcases h_arc with ⟨⟨p, ⟨hp_mem, hp_norm⟩, rfl⟩ | ⟨p, ⟨hp_mem, hp_norm⟩, rfl⟩⟩ | h_ell
       · exact im_ge_sqrt3_half_of_re_half_and_norm_eq_one p (hS p hp_mem).2 hp_norm
-      · have hz_ne : (↑p : ℂ) ≠ 0 := by intro h; simp [h] at hp_norm
+      · have hz_ne : (↑p : ℂ) ≠ 0 := by intro h; simp only [h, norm_zero, zero_ne_one] at hp_norm
         have h_eq : (-(1 : ℂ) / (↑p : ℂ)).im = (↑p : ℂ).im := by
           rw [show -(1 : ℂ) / (↑p : ℂ) = (-(↑p : ℂ))⁻¹ from by field_simp, Complex.inv_im]
           simp only [neg_im, neg_neg]
@@ -348,7 +369,7 @@ lemma fdBox_of_on_curve (S : Finset UpperHalfPlane) (hS : ∀ p ∈ S, p ∈ �
             have : ‖(↑p : ℂ)‖ ^ 2 = (↑p : ℂ).re ^ 2 + (↑p : ℂ).im ^ 2 := by
               rw [Complex.sq_norm, Complex.normSq_apply]
               ring
-            have h_nsq : (↑p : ℂ).re ^ 2 + (↑p : ℂ).im ^ 2 = 1 := by linarith
+            have h_nsq : (↑p : ℂ).re ^ 2 + (↑p : ℂ).im ^ 2 = 1 := by linarith only [h_norm_sq, this]
             simp only [Complex.normSq_apply]
             nlinarith only [h_norm_sq, this, h_nsq]
           rw [h_nsq_val, div_one]
@@ -374,6 +395,6 @@ lemma fdBox_of_on_curve (S : Finset UpperHalfPlane) (hS : ∀ p ∈ S, p ∈ �
       rw [show (1 : ℝ) = Real.sqrt 1 from (Real.sqrt_one).symm]
       exact Real.sqrt_lt_sqrt (by norm_num) (by norm_num)
     exact ⟨by linarith [abs_le.mp h_re], by linarith [abs_le.mp h_re],
-      by linarith, by linarith⟩
+      by linarith only [h_im_gt, sqrt3_gt_one], by linarith only [hH_lt_M, h_im_lt]⟩
 
 end

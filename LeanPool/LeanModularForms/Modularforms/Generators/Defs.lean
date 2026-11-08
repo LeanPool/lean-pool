@@ -184,7 +184,8 @@ lemma evalE₄E₆_whc_eq_single (n : ℕ) (p : MvPolynomial (Fin 2) ℂ)
     have hd0 : MvPolynomial.monomial d (p.coeff d) =
         MvPolynomial.C (p.coeff d) * MvPolynomial.X 0 ^ d 0 *
           MvPolynomial.X 1 ^ d 1 := by
-      rw [MvPolynomial.monomial_eq, mul_assoc]; simp_all
+      rw [MvPolynomial.monomial_eq, mul_assoc]; simp_all only [MvPolynomial.mem_support_iff, ne_eq,
+        Finsupp.prod_pow, Fin.prod_univ_two, Fin.isValue]
     rw [hd0, show MvPolynomial.C (p.coeff d) *
         MvPolynomial.X (0 : Fin 2) ^ d 0 * MvPolynomial.X (1 : Fin 2) ^ d 1 =
         MvPolynomial.C (p.coeff d) *
@@ -202,7 +203,7 @@ lemma evalE₄E₆_whc_eq_single (n : ℕ) (p : MvPolynomial (Fin 2) ℂ)
         rw [d.sum_fintype (fun i a => a • E₄E₆Weight i) (fun i => by simp only [zero_smul])]
         simp only [Fin.sum_univ_two, E₄E₆Weight, Matrix.cons_val_zero, Matrix.cons_val_one,
           mul_comm, smul_eq_mul]
-      rw [this] at hweight; push_cast [← hweight]; ring), smul_zero]
+      rw [this] at hweight; push_cast [← hweight]; ac_rfl), smul_zero]
 
 /-- Weight casting for DirectSum elements. -/
 lemma DirectSum_of_cast_eq {k₁ k₂ : ℤ} (hk : k₁ = k₂)

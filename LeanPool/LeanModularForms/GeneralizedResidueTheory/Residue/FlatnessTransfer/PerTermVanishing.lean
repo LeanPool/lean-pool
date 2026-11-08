@@ -16,7 +16,6 @@ import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Per-Term PV Vanishing and CPV Helpers
@@ -372,7 +371,7 @@ private lemma aesm_zpow_on_singleFar
     ({t | ε < ‖γ.toFun t - s‖} ∩ Icc γ.a γ.b) Set.inter_subset_right
     (fun t ⟨ht_far, _⟩ => sub_ne_zero.mpr (fun heq => by
       have : ε < ‖γ.toFun t - s‖ := ht_far
-      rw [heq, sub_self, norm_zero] at this; linarith))
+      rw [heq, sub_self, norm_zero] at this; linarith only [hε, this]))
   exact (hf_cont.aestronglyMeasurable hSF_meas).mul
     ((aesm_deriv_on_Icc γ).mono_measure (Measure.restrict_mono Set.inter_subset_right le_rfl))
 
@@ -445,7 +444,7 @@ private lemma zpow_deriv_norm_bound_of_dist_ge
       B⁻¹ ^ m * (|Mγ'| + 1) := by
   refine (norm_mul_le _ _).trans (mul_le_mul ?_ ?_ (norm_nonneg _) (by positivity))
   · rw [norm_zpow, zpow_neg, zpow_natCast, inv_pow]
-    exact inv_anti₀ (by positivity) (pow_le_pow_left₀ hB.le h_far m)
+    exact inv_anti₀ (by exact pow_pos hB m) (pow_le_pow_left₀ hB.le h_far m)
   · exact ((hMγ' t ht).trans (le_abs_self _)).trans (le_add_of_nonneg_right one_pos.le)
 
 /-- Norm bound for the zpow integrand: if `‖γ(t) - s‖ > ε` then

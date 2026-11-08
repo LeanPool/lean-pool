@@ -108,20 +108,26 @@ theorem modular_negI_smul : negI.1 • z = z := by
 theorem modular_slash_negI_of_even (hk : Even k) : f ∣[k] negI.1 = f := by
   ext x
   rw [slash_action_eq'_iff, modular_negI_smul]
-  simp [negI, negIMatrix, hk.neg_one_zpow]
+  simp only [negI, negIMatrix, Int.reduceNeg, Fin.isValue, of_apply, cons_val', cons_val_zero,
+    cons_val_fin_one, cons_val_one, Int.cast_zero, zero_mul, Int.cast_neg, Int.cast_one, zero_add,
+    hk.neg_one_zpow, one_mul]
 
 theorem modular_slash_S_apply :
     (f ∣[k] S) z = f (UpperHalfPlane.mk (-z)⁻¹ z.im_inv_neg_coe_pos) * z ^ (-k) := by
   rw [SL_slash_apply, denom, UpperHalfPlane.modular_S_smul]
   simp only [SpecialLinearGroup.coe_GL_coe_matrix]
   rw [SpecialLinearGroup.map_apply_coe (Int.castRingHom ℝ) S]
-  simp [S, RingHom.mapMatrix_apply]
+  simp only [inv_neg, S, Int.reduceNeg, Fin.isValue, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+    map_apply, of_apply, cons_val', cons_val_zero, cons_val_fin_one, cons_val_one, Int.cast_one,
+    Complex.ofReal_one, one_mul, Int.cast_zero, Complex.ofReal_zero, add_zero, zpow_neg]
 
 theorem modular_slash_T_apply : (f ∣[k] T) z = f ((1 : ℝ) +ᵥ z) := by
   rw [SL_slash_apply, denom, UpperHalfPlane.modular_T_smul]
   simp only [SpecialLinearGroup.coe_GL_coe_matrix]
   rw [SpecialLinearGroup.map_apply_coe (Int.castRingHom ℝ) T]
-  simp [T, RingHom.mapMatrix_apply]
+  simp only [T, Fin.isValue, RingHom.mapMatrix_apply, Int.coe_castRingHom, map_apply, of_apply,
+    cons_val', cons_val_zero, cons_val_fin_one, cons_val_one, Int.cast_zero, Complex.ofReal_zero,
+    zero_mul, Int.cast_one, Complex.ofReal_one, zero_add, zpow_neg, one_zpow, inv_one, mul_one]
 
 end slash_action
 
@@ -343,7 +349,8 @@ theorem slashaction_generators_GL2R
   rw [←hA₂]
   change f ∣[k] A = f
   refine (slashaction_generators f ⊤ _ SL2Z_generate k).mpr ?_ ⟨A, by simp⟩
-  simp_all
+  simp_all only [Gamma_mem, Fin.isValue, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_eq_or_imp, implies_true, and_self]
 
 theorem slashaction_generators_Γ2
     (f : ℍ → ℂ) (k : ℤ) (hα : f ∣[k] α.1 = f) (hβ : f ∣[k] β.1 = f) (hnegI : f ∣[k] negI.1 = f) :
@@ -354,6 +361,7 @@ theorem slashaction_generators_Γ2
   rw [←hA₂]
   change f ∣[k] A = f
   refine (slashaction_generators' f {α, β, negI} Γ2_generate k).mpr ?_ ⟨_, hA₁⟩
-  simp_all
+  simp_all only [Gamma_mem, Fin.isValue, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_eq_or_imp, implies_true, and_self]
 
 end slashaction_generators

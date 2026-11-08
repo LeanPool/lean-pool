@@ -83,7 +83,7 @@ private lemma integral_t_mul_deriv_eq {f : ℂ → ℂ} {S : Set ℂ}
     have h3 : HasDerivAt (fun _ : ℝ => c) 0 t :=
       hasDerivAt_const t c
     convert h3.add h2 using 1
-    ring
+    ac_rfl
   have hv_deriv : ∀ x ∈ Set.Ioo (min 0 1) (max 0 1),
       HasDerivAt v (v' x) x := by
     intro t ht
@@ -96,7 +96,7 @@ private lemma integral_t_mul_deriv_eq {f : ℂ → ℂ} {S : Set ℂ}
     convert h_chain using 1
     · rfl
     · simp only [γ]
-      ring
+      ac_rfl
   have hu'_int : IntervalIntegrable u' MeasureTheory.volume 0 1 :=
     ContinuousOn.intervalIntegrable continuousOn_const
   have hv'_int : IntervalIntegrable v' MeasureTheory.volume 0 1 := by
@@ -235,7 +235,7 @@ private lemma segmentIntegrand_lipschitzOnWith {f : ℂ → ℂ}
         h_bound
     _ = M * ‖t • (x - y)‖ := by rw [h_diff]
     _ = M * (|t| * ‖x - y‖) := by rw [norm_smul]; simp only [Real.norm_eq_abs]
-    _ = |t| * M * ‖x - y‖ := by ring
+    _ = |t| * M * ‖x - y‖ := by ac_rfl
     _ = |t| * M * dist x y := by rw [dist_eq_norm]
     _ ≤ Real.toNNReal (|t| * M) * dist x y := by
         simp_all only [mem_Icc, Metric.mem_ball, real_smul, add_sub_add_left_eq_sub,
@@ -382,7 +382,7 @@ private lemma hasDerivAt_segmentIntegral {f : ℂ → ℂ}
       ∫ (t : ℝ) in (0 : ℝ)..1, ↑t * deriv f (c + t • (z - c)) * (z - c) from
       (intervalIntegral.integral_mul_const (𝕜 := ℂ) _ _).symm]
     convert h_ibp using 2
-    ext t; ring
+    ext t; ac_rfl
   suffices hH : HasDerivAt H (H' z) z by
     have h_prod := hH.mul h1
     refine h_prod.congr_deriv ?_

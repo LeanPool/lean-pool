@@ -12,7 +12,6 @@ import LeanPool.LeanModularForms.ValenceFormula.TrigLemmas
 import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Shared Infrastructure for Winding Weight Computations
@@ -49,7 +48,7 @@ theorem fdBoundary_H_at_two_eq_I (H : ℝ) :
   rw [show (↑(Real.pi : ℝ) / 3 + (↑(2 : ℝ) - 1) * (↑(Real.pi : ℝ) / 2 - ↑(Real.pi : ℝ) / 3)) * I =
     ↑(Real.pi / 2) * I from by push_cast; ring,
     exp_real_angle_I, Real.cos_pi_div_two, Real.sin_pi_div_two]
-  push_cast; ring
+  push_cast; ac_rfl
 
 theorem fdBoundary_H_at_three_eq_rho (H : ℝ) :
     fdBoundaryH H 3 = ellipticPointRho := by
@@ -61,7 +60,7 @@ theorem fdBoundary_H_at_three_eq_rho (H : ℝ) :
     ↑(2 * Real.pi / 3) * I from by push_cast; ring,
     exp_real_angle_I, cos_two_pi_div_three, sin_two_pi_div_three]
   simp only [ellipticPointRho, ellipticPointRho', UpperHalfPlane.coe_mk]
-  push_cast; ring
+  push_cast; ac_rfl
 
 theorem fdBoundary_H_seg0 (H : ℝ) {t : ℝ} (ht : t ≤ 1) :
     fdBoundaryH H t = 1/2 + (↑H - ↑t * (↑H - ↑(Real.sqrt 3) / 2)) * I := by
@@ -247,11 +246,11 @@ lemma hasDerivAt_arc (s : ℂ) :
   intro t
   have hf : HasDerivAt (fun s : ℝ => Real.pi * (1 + s) / 6) (Real.pi / 6) t :=
     ((hasDerivAt_id t).add_const (1 : ℝ) |>.const_mul (Real.pi / 6)).congr_of_eventuallyEq
-      (Eventually.of_forall fun s => show _ from by simp [id]; ring) |>.congr_deriv (by ring)
+      (Eventually.of_forall fun s => show _ from by simp only [id]; ring) |>.congr_deriv (by ac_rfl)
   have hci : HasDerivAt (fun s : ℝ => (↑(Real.pi * (1 + s) / 6) : ℂ) * I)
       ((↑(Real.pi / 6) : ℂ) * I) t :=
     (hf.ofReal_comp.mul_const I).congr_deriv (by norm_num [smul_eq_mul])
-  exact (hci.cexp.sub (hasDerivAt_const t s)).congr_deriv (by simp only [sub_zero]; ring)
+  exact (hci.cexp.sub (hasDerivAt_const t s)).congr_deriv (by simp only [sub_zero]; ac_rfl)
 
 /-- Continuity of the arc derivative. -/
 lemma continuous_arc_deriv (_ : ℂ) :

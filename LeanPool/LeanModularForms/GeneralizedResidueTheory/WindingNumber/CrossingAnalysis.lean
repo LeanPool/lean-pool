@@ -14,7 +14,6 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
@@ -56,7 +55,7 @@ valid even when `a = 0`. -/
 private lemma inner_div_norm_complex (a b : ℂ) :
     inner (𝕜 := ℝ) a b / ‖a‖ = inner (𝕜 := ℝ) (a / ↑‖a‖) b := by
   have ha : a / ↑‖a‖ = (‖a‖⁻¹ : ℝ) • a := by
-    simp only [div_eq_mul_inv, Complex.real_smul, Complex.ofReal_inv]; ring
+    simp only [div_eq_mul_inv, Complex.real_smul, Complex.ofReal_inv]; ac_rfl
   rw [ha]; erw [real_inner_smul_left]; ring
 
 /-- Polar form: a nonzero complex number divided by its norm equals `exp(arg · I)`. -/
@@ -228,7 +227,7 @@ lemma piecewiseC1Immersion_norm_strictMono_near_crossing
     have hLR_inner :
         ‖L_R‖ = inner (𝕜 := ℝ) (L_R / ↑‖L_R‖) L_R := by
       have hsmul : L_R / ↑‖L_R‖ = (‖L_R‖⁻¹ : ℝ) • L_R := by
-        simp only [div_eq_mul_inv, Complex.real_smul, Complex.ofReal_inv]; ring
+        simp only [div_eq_mul_inv, Complex.real_smul, Complex.ofReal_inv]; ac_rfl
       rw [hsmul]; erw [real_inner_smul_left]; rw [real_inner_self_eq_norm_sq]
       field_simp
     rw [hLR_inner]
@@ -758,7 +757,7 @@ private lemma crossing_sigma_tendsto_t₀
       exact absurd (show σ ε ∈ (∅ : Set ℝ) from hK_ne ▸ ⟨hε_in, hball⟩)
         (Set.notMem_empty _)
     simp only [Metric.mem_ball, Real.dist_eq] at hσ_ball
-    linarith
+    linarith only [hδ, hσ_ball]
 
 /-- Direction convergence: as ε → 0, the ratio (γ(σ₁(ε))-z₀)/(γ(σ₂(ε))-z₀)
 (where σ₁(ε), σ₂(ε) are the boundary times from `exists_cutoff_boundary_times`)
@@ -861,7 +860,7 @@ lemma crossing_ratio_tendsto
       rw [← hL_L_eq_LR]
       have hne : (‖L_L‖ : ℂ) ≠ 0 := by exact_mod_cast ne_of_gt hL_L_pos
       have hratio : (-L_L / ↑‖L_L‖) / (L_L / ↑‖L_L‖) = -1 := by field_simp [hne, hL_L_ne]
-      rw [hratio, show -(I * ↑Real.pi) = -(↑Real.pi * I) by ring,
+      rw [hratio, show -(I * ↑Real.pi) = -(↑Real.pi * I) by ac_rfl,
           Complex.exp_neg, Complex.exp_pi_mul_I]
       norm_num
   rw [← halg]

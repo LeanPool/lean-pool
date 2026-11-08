@@ -44,7 +44,8 @@ private lemma evalE₄E₆_mono_grade (a b : ℕ) (k : ℤ)
 private lemma monomial_fin2_eq (d : Fin 2 →₀ ℕ) (c : ℂ) :
     MvPolynomial.monomial d c =
     MvPolynomial.C c * MvPolynomial.X 0 ^ d 0 * MvPolynomial.X 1 ^ d 1 := by
-  rw [MvPolynomial.monomial_eq, mul_assoc]; simp_all
+  rw [MvPolynomial.monomial_eq, mul_assoc]; simp_all only [Finsupp.prod_pow, Fin.prod_univ_two,
+    Fin.isValue]
 
 private lemma evalE₄E₆_monomial_grade (d : Fin 2 →₀ ℕ) (c : ℂ) (k : ℤ)
     (hk : k ≠ (↑(d 0) * 4 + ↑(d 1) * 6 : ℤ)) :
@@ -66,7 +67,7 @@ private lemma weight_eq_4a_6b (d : Fin 2 →₀ ℕ) :
 
 private lemma weight_fin2_cast (d : Fin 2 →₀ ℕ) :
     (Finsupp.weight E₄E₆Weight d : ℤ) = ↑(d 0) * 4 + ↑(d 1) * 6 := by
-  rw [weight_eq_4a_6b]; push_cast; ring
+  rw [weight_eq_4a_6b]; push_cast; ac_rfl
 
 private lemma evalE₄E₆_component_eq (p : MvPolynomial (Fin 2) ℂ) (n : ℕ) :
     (evalE₄E₆ (MvPolynomial.weightedHomogeneousComponent E₄E₆Weight n p)) (↑n : ℤ) =

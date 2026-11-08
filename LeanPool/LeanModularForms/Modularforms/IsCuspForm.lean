@@ -169,7 +169,8 @@ lemma IsCuspForm_iff_coeffZero_eq_zero (k : ℤ) (f : ModularForm Γ(1) k) :
     simp only [Nat.factorial_zero, Nat.cast_one, inv_one, iteratedDeriv_zero, one_mul]
     rw [IsCuspForm, CuspFormSubmodule, LinearMap.mem_range] at h
     obtain ⟨g, hg⟩ := h
-    have := CuspFormClass.cuspFunction_apply_zero (h := 1) g (by positivity) (by simp)
+    have := CuspFormClass.cuspFunction_apply_zero (h := 1) g (by positivity) (by simp only [
+      CongruenceSubgroup.strictPeriods_Gamma, Nat.cast_one, AddSubgroup.mem_zmultiples])
     simp only [CuspFormToModularForm, ModFormMk, LinearMap.coe_mk, AddHom.coe_mk] at hg
     rw [← hg]
     exact this

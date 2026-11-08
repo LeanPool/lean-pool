@@ -10,8 +10,6 @@ import LeanPool.LeanModularForms.ValenceFormula.Boundary.Smooth
 import LeanPool.LeanModularForms.ValenceFormula.WindingWeights.Common
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Arc Contribution to the PV Chain
@@ -47,8 +45,8 @@ private lemma deriv_fdBoundary_H_arc (H : ℝ) {t : ℝ} (h1 : 1 < t) (h3 : t < 
     deriv (fdBoundaryH H) t = ↑(Real.pi / 6) * I * fdBoundaryH H t := by
   rw [fdBoundary_H_eq_arc h1 h3]; erw [(fdBoundary_H_hasDerivAt_arc H h1 h3).deriv]; rw [mul_comm]
   congr 1
-  · push_cast; ring
-  · congr 1; push_cast; ring
+  · push_cast; ac_rfl
+  · congr 1; push_cast; ac_rfl
 
 /-! ### LogDeriv S-transformation -/
 
@@ -73,7 +71,8 @@ lemma logDeriv_modform_S_transform (z : ℂ) (hz : 0 < z.im) (hz_ne : z ≠ 0)
     exact modform_comp_ofComplex_S_identity f w hw
   have h_neg_inv_im : 0 < (-(1 : ℂ)/z).im := by
     rw [show -(1 : ℂ)/z = (-z)⁻¹ from by field_simp]
-    rw [Complex.inv_im]; simp_all
+    rw [Complex.inv_im]; simp_all only [ne_eq, Function.comp_apply, neg_im, neg_neg, normSq_neg,
+      div_pos_iff_of_pos_left, normSq_pos, not_false_eq_true]
   have h_diffOn_g : DifferentiableOn ℂ g {w | 0 < w.im} :=
     UpperHalfPlane.mdifferentiable_iff.mp f.holo'
   have h_logDeriv_comp : logDeriv (fun w => g (-(1 : ℂ)/w)) z =
@@ -317,11 +316,11 @@ lemma arc_cpv_integral_S_identity (S : Finset UpperHalfPlane)
   have h_ind_1 : ind 1 :=
     ⟨_, sArcOfS_rho_plus_one_in S, by
       rw [show γ 1 = ellipticPointRhoPlusOne from fdBoundary_H_at_one H,
-          sub_self, norm_zero]; linarith⟩
+          sub_self, norm_zero]; exact le_of_lt hε⟩
   have h_ind_3 : ind 3 :=
     ⟨_, sArcOfS_rho_in S, by
       rw [show γ 3 = ellipticPointRho from fdBoundary_H_at_three H,
-          sub_self, norm_zero]; linarith⟩
+          sub_self, norm_zero]; exact le_of_lt hε⟩
   have h_cov : ∫ t in (1 : ℝ)..3, F (4 - t) = ∫ t in (1 : ℝ)..3, F t := by
     have h := @intervalIntegral.integral_comp_sub_left ℂ _ _ 1 3 F 4
     simpa only [show (4 : ℝ) - 3 = 1 from by norm_num,
@@ -360,7 +359,7 @@ lemma arc_cpv_integral_S_identity (S : Finset UpperHalfPlane)
       have h_F_4mt : F (4 - t) = 0 := by
         change cauchyPrincipalValueIntegrandOn _ _ _ _ _ = 0
         rw [cauchyPrincipalValueIntegrandOn, ite_eq_left h_ind_4mt]
-      rw [h_F_4mt, h_F_t]; simp [h_near]
+      rw [h_F_4mt, h_F_t]; simp only [add_zero, h_near, ↓reduceIte, ofReal_zero, mul_zero]
     · have ht_ioo : t ∈ Set.Ioo (1 : ℝ) 3 := by
         constructor
         · exact lt_of_le_of_ne ht.1 (fun h => h_near (h ▸ h_ind_1))
@@ -380,7 +379,7 @@ lemma arc_cpv_integral_S_identity (S : Finset UpperHalfPlane)
         intro h_zero
         have h_in : (γ t : ℂ) ∈ (↑S_arc : Set ℂ) := h_oncurve t ht_ioo h_zero
         rw [Finset.mem_coe] at h_in
-        exact h_near ⟨γ t, h_in, by rw [sub_self, norm_zero]; linarith⟩
+        exact h_near ⟨γ t, h_in, by rw [sub_self, norm_zero]; exact le_of_lt hε⟩
       have h_logD := logDeriv_modform_S_transform f (γ t) (h_arc_im_pos t ht_ioo)
         (h_arc_ne_zero t ht_ioo) hg_ne
       simp only [← hg_def] at h_logD

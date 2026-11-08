@@ -15,7 +15,6 @@ import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Higher-Order Cancellation Assembly
@@ -90,7 +89,7 @@ private theorem residueAt_eq_zero_of_analyticExpansion (f : ℂ → ℂ) (s : �
   have hf_ci : (∮ z in C(s, r), f z) =
       (∮ z in C(s, r), g_loc z) :=
     circleIntegral.integral_congr hr_pos.le h_eq_on
-  simp [hf_ci, hg_ci_zero]
+  simp only [mul_inv_rev, inv_I, neg_mul, hf_ci, hg_ci_zero, mul_zero]
 
 private theorem meromorphicAt_ppMinusRes (f : ℂ → ℂ) (s : ℂ) (hMero_s : MeromorphicAt f s) :
     MeromorphicAt (fun z => meromorphicPrincipalPart f s z - residueAt f s / (z - s)) s := by
@@ -146,7 +145,7 @@ private theorem laurent_coeff_le_poleOrder (f : ℂ → ℂ) (s : ℂ)
       · simp only [Nat.sub_self, pow_zero, mul_one]
       · intro k _ hk
         by_cases hkm : k.val < m_idx.val
-        · simp [zero_pow (by omega : m_idx.val - k.val ≠ 0)]
+        · simp only [zero_pow (by omega : m_idx.val - k.val ≠ 0), mul_zero]
         · push Not at hkm
           have hk_gt : m_idx < k :=
             lt_of_le_of_ne (Fin.mk_le_mk.mpr hkm) (Ne.symm hk)
@@ -173,7 +172,7 @@ private theorem laurent_coeff_le_poleOrder (f : ℂ → ℂ) (s : ℂ)
         show k.val + 1 + (m_idx.val - k.val) = m_idx.val + 1 from by omega]
     · push Not at hk_le
       by_cases ha_k : a_s k = 0
-      · simp [ha_k]
+      · simp only [ha_k, zero_div, zero_mul, mul_zero]
       · exact absurd (hm_max k ha_k) (not_le.mpr hk_le)
 
 private theorem residueAt_ppMinusRes_eq_zero (f : ℂ → ℂ) (s : ℂ)
@@ -324,7 +323,7 @@ private theorem assembly_regNF_differentiableWithinAt_pole
     · have hw_eq : w = z := by
         by_contra hne
         exact hw_compl (Finset.mem_coe.mpr (Finset.mem_erase.mpr ⟨hne, hw_S⟩))
-      rw [hw_eq]; simp [hz_S]
+      rw [hw_eq]; simp only [hz_S, sum_erase_eq_sub, ↓reduceDIte]
     · have hw_ne_z : w ≠ z := fun heq => hw_S (heq ▸ hz_S)
       have h_fw : f w - meromorphicPrincipalPart f z w = g_corr z hz_S w :=
         hV_eq ⟨hw_V, hw_ne_z⟩
@@ -582,10 +581,10 @@ private theorem cpv_perTerm_crossed_zero_order (S0 : Finset ℂ) (f : ℂ → �
     exact residueAt_eq_zero_of_analyticExpansion f s g_loc hg_loc_an hf_eq_g
   have h_term_eq_zero : (fun z => meromorphicPrincipalPart f s z -
       residueAt f s / (z - s)) = fun _ => 0 := by
-    ext z; simp only [h_pp_zero, h_res_zero]; simp [zero_div]
+    ext z; simp only [h_pp_zero, h_res_zero]; simp only [zero_div, sub_self]
   rw [h_term_eq_zero]
   simp only [cauchyPrincipalValueIntegrandOn, zero_mul, ite_self]
-  simp [intervalIntegral.integral_zero]
+  simp only [intervalIntegral.integral_zero, tendsto_const_nhds_iff]
 
 /-- When the curve does not cross `s`, the per-term CPV integral of
 `pp_s - res_s/(z-s)` tends to 0: the term is continuous on the image, has
@@ -789,7 +788,8 @@ private theorem assembly_polarHigher_differentiableOn
   have h_eq_sum : (fun w => ∑ k : Fin N_s,
       if k.val ≥ 1 then a_s k / (w - s) ^ (k.val + 1) else 0) =
     ∑ k : Fin N_s, fun w =>
-      if k.val ≥ 1 then a_s k / (w - s) ^ (k.val + 1) else 0 := by ext w; simp [Finset.sum_apply]
+      if k.val ≥ 1 then a_s k / (w - s) ^ (k.val + 1) else 0 := by ext w; simp only [ge_iff_le,
+        Finset.sum_apply]
   rw [h_eq_sum]
   exact (DifferentiableAt.sum fun k _ => h_each k).differentiableWithinAt
 
@@ -820,11 +820,11 @@ private theorem cpv_polarHigher_tendsto (U : Set ℂ) (S0 : Finset ℂ)
       by_cases hk : k.val ≥ 1
       · have h_eq : (fun z => if k.val ≥ 1 then
             a_s k / (z - s) ^ (k.val + 1) else 0) =
-          fun z => a_s k / (z - s) ^ (k.val + 1) := by ext z; simp [hk]
+          fun z => a_s k / (z - s) ^ (k.val + 1) := by ext z; simp only [ge_iff_le, hk, ↓reduceIte]
         simp_rw [h_eq]; exact h_polar_term_tendsto k hk
       · have h_eq : (fun z => if k.val ≥ 1 then
             a_s k / (z - s) ^ (k.val + 1) else 0) =
-          fun _ => (0 : ℂ) := by ext z; simp [hk]
+          fun _ => (0 : ℂ) := by ext z; simp only [ge_iff_le, hk, ↓reduceIte]
         simp_rw [h_eq, cauchyPrincipalValueIntegrandOn, zero_mul, ite_self,
           intervalIntegral.integral_zero]
         exact tendsto_const_nhds)

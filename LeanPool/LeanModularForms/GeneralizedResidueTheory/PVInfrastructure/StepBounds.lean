@@ -54,7 +54,7 @@ private lemma norm_integral_le_const_left {r : ℝ → ℂ} {t₀ a b B C : ℝ}
       ≤ C * |(t₀ - a) - (t₀ - b)| :=
         intervalIntegral.norm_integral_le_of_norm_le_const hb
     _ = C * (b - a) := by rw [show (t₀ - a) - (t₀ - b) = b - a by ring,
-        abs_of_pos (by linarith)]
+        abs_of_pos (by exact sub_pos.mpr hab)]
 
 /-- Norm bound for an integral over a right annulus segment `(t₀+a)..(t₀+b)`
 where `‖r‖ ≤ C` holds whenever `0 < |t-t₀| ≤ B` and `b ≤ B`. -/
@@ -72,7 +72,7 @@ private lemma norm_integral_le_const_right {r : ℝ → ℂ} {t₀ a b B C : ℝ
       ≤ C * |(t₀ + b) - (t₀ + a)| :=
         intervalIntegral.norm_integral_le_of_norm_le_const hb
     _ = C * (b - a) := by rw [show (t₀ + b) - (t₀ + a) = b - a by ring,
-        abs_of_pos (by linarith)]
+        abs_of_pos (by exact sub_pos.mpr hab)]
 
 /-- O(ε) step bound from bounded remainder. -/
 lemma remainder_integral_O_eps {r : ℝ → ℂ} {t₀ ε C : ℝ}
@@ -390,7 +390,7 @@ lemma summableSubseqAux_halving {γ : ℝ → ℂ}
   rw [show (ε n / 2) / 2 = ε n / 4 from by ring] at h_min_le
   have hε_pos := summableSubseqAux_pos hL
     hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos n
-  linarith
+  linarith only [hL, hγ_hasderiv, hγ_cont_deriv, h_min_le, hε_pos]
 
 lemma summableSubseqAux_lt_delta {γ : ℝ → ℂ}
     {t₀ : ℝ} {L : ℂ} (hL : L ≠ 0)
@@ -425,7 +425,7 @@ lemma summableSubseqAux_lt_delta {γ : ℝ → ℂ}
     have h_min_pos : 0 < min (ε m / 2) (δ (m + 1)) :=
       lt_min (by linarith [summableSubseqAux_pos hL hγ_hasderiv hγ_cont_deriv δ₀ hδ₀_pos m])
         (hδ_pos (m + 1))
-    linarith
+    linarith only [hL, hγ_hasderiv, hγ_cont_deriv, h_min_le, h_min_pos]
 
 lemma summableSubseqAux_error_bound {γ : ℝ → ℂ}
     {t₀ : ℝ} {L : ℂ} (hL : L ≠ 0)
@@ -858,7 +858,7 @@ lemma telescoping_sum_bound {X : Type*} [SeminormedAddCommGroup X]
     rw [(sub_add_sub_cancel (I (N + d' + 2)) (I (N + d' + 1)) (I N)).symm]
     have h_step_d' : ‖I (N + d' + 2) - I (N + d' + 1)‖ ≤
         K * δ / 2 ^ (N + d' + 1) := by
-      simp_all
+      simp_all only [gt_iff_lt, Order.lt_add_one_iff, le_add_iff_nonneg_right, zero_le, imp_self]
     calc ‖(I (N + d' + 2) - I (N + d' + 1)) + (I (N + d' + 1) - I N)‖
         ≤ ‖I (N + d' + 2) - I (N + d' + 1)‖ +
           ‖I (N + d' + 1) - I N‖ := norm_add_le _ _
@@ -866,7 +866,7 @@ lemma telescoping_sum_bound {X : Type*} [SeminormedAddCommGroup X]
           (2 * K * δ / 2 ^ N - 2 * K * δ / 2 ^ (N + d' + 1)) := by linarith [h_step_d', ih']
       _ = 2 * K * δ / 2 ^ N - K * δ / 2 ^ (N + d' + 1) := by ring
       _ = 2 * K * δ / 2 ^ N - 2 * K * δ / 2 ^ (N + d' + 2) := by
-        have h_pow : (2 : ℝ) ^ (N + d' + 2) = 2 * 2 ^ (N + d' + 1) := by rw [pow_succ]; ring
+        have h_pow : (2 : ℝ) ^ (N + d' + 2) = 2 * 2 ^ (N + d' + 1) := by rw [pow_succ]; ac_rfl
         field_simp [h_pow]; ring
 
 end

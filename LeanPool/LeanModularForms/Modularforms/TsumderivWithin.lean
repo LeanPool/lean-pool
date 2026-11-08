@@ -133,7 +133,7 @@ theorem iter_deriv_comp_bound2 (K : Set ℂ) (hK1 : K ⊆ ℍ') (hK2 : IsCompact
     · intro x; rw [BoundedContinuousFunction.mkOfCompact_apply]; simp_rw [ctsExpTwoPiN]
       simp only [ContinuousMap.coe_mk]
       apply exp_upperHalfPlane_lt_one ⟨x.1, hK1 x.2⟩
-    linarith
+    linarith only []
   have hr2 : 0 ≤ r := by apply norm_nonneg _
   have hu : Summable fun n : ℕ => ‖((2 * ↑π * Complex.I * n) ^ (k + 1) * r ^ n)‖ :=
     summable_two_pi_pow_geometric r (by rwa [Real.norm_of_nonneg hr2]) (k + 1)
@@ -168,9 +168,9 @@ theorem iter_deriv_comp_bound2 (K : Set ℂ) (hK1 : K ⊆ ℍ') (hK2 : IsCompact
       rw [norm_norm]
       simpa [ctsExpTwoPiN] using this
     apply mul_le_mul
-    · simp
-    · simp_all
-    · positivity
+    · simp only [Real.abs_pi, Std.le_refl]
+    · simp_all only [Real.abs_pi, BoundedContinuousFunction.norm_mkOfCompact, Real.norm_eq_abs]
+    · exact norm_nonneg (cexp (2 * ↑π * Complex.I * ↑n * ↑t))
     positivity
 
 
@@ -248,6 +248,7 @@ theorem iter_deriv_comp_bound3 (K : Set ℂ) (hK1 : K ⊆ ℍ') (hK2 : IsCompact
     simpa [ctsExpTwoPiN] using this
   apply mul_le_mul
   · simp
-  · simp_all
-  · positivity
+  · simp_all only [BoundedContinuousFunction.norm_mkOfCompact, Complex.norm_mul, norm_pow,
+    norm_ofNat, norm_real, Real.norm_eq_abs, Real.abs_pi, norm_I, mul_one, RCLike.norm_natCast]
+  · exact norm_nonneg (cexp (2 * ↑π * Complex.I * ↑n * ↑t))
   positivity

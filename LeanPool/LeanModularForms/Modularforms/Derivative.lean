@@ -130,13 +130,15 @@ theorem D_smul (c : ℂ) (F : ℍ → ℂ) (hF : MDiff F)
   change (2 * π * I)⁻¹ * deriv (c • (F ∘ ofComplex)) z
       = c * ((2 * π * I)⁻¹ * deriv (F ∘ ofComplex) z)
   rw [h, smul_eq_mul]
-  ring
+  ac_rfl
 
 @[simp]
 theorem D_neg (F : ℍ → ℂ) (hF : MDiff F) :
     D (-F) = -D F := by
-  have : -F = (-1 : ℂ) • F := by ext; simp
-  rw [this, D_smul _ _ hF]; ext; simp
+  have : -F = (-1 : ℂ) • F := by ext; simp only [Pi.neg_apply, Pi.smul_apply, smul_eq_mul, neg_mul,
+    one_mul]
+  rw [this, D_smul _ _ hF]; ext; simp only [Pi.smul_apply, smul_eq_mul, neg_mul, one_mul,
+    Pi.neg_apply]
 
 @[simp]
 theorem D_mul (F G : ℍ → ℂ) (hF : MDiff F) (hG : MDiff G)
@@ -171,12 +173,12 @@ lemma MDifferentiable_div {F G : ℍ → ℂ}
   intro τ
   suffices h : DifferentiableAt ℂ ((fun z => F z / G z) ∘ ofComplex) ↑τ by
     have h_eq : ((fun z => F z / G z) ∘ ofComplex) ∘ UpperHalfPlane.coe = fun z => F z / G z := by
-      ext x; simp [Function.comp, ofComplex_apply]
+      ext x; simp only [Function.comp, ofComplex_apply]
     rw [← h_eq]; exact DifferentiableAt_MDifferentiableAt h
   have h_eq : (fun z => F z / G z) ∘ ofComplex =ᶠ[nhds ↑τ]
       (F ∘ ofComplex) / (G ∘ ofComplex) := by
     filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds τ.2] with w hw
-    simp [Function.comp, Pi.div_apply, ofComplex_apply_of_im_pos hw]
+    simp only [Function.comp, ofComplex_apply_of_im_pos hw, Pi.div_apply]
   exact ((MDifferentiableAt_DifferentiableAt (hF τ)).div
     (MDifferentiableAt_DifferentiableAt (hG τ))
     (by simp_all only [ne_eq, Function.comp_apply, ofComplex_apply,
@@ -209,7 +211,7 @@ private lemma hasDerivAt_qexp (a c w : ℂ) :
   simp only [mul_one, id] at h
   have := ((Complex.hasDerivAt_exp _).scomp w h).const_mul a
   simp only [smul_eq_mul] at this ⊢
-  exact this.congr_deriv (by ring)
+  exact this.congr_deriv (by ac_rfl)
 
 /-- Helper: derivWithin for qexp term on upper half-plane. -/
 private lemma derivWithin_qexp (a c : ℂ) (w : ℂ) (hw : 0 < w.im) :
@@ -274,14 +276,14 @@ theorem D_qexp_tsum (a : ℕ → ℂ) (z : ℍ)
       have h_pos : (0 : ℝ) < 2 * π * n := by positivity
       have h_key : ‖a n * cexp (2 * π * I * n * y)‖ * (2 * π * n) =
           ‖a n * (2 * π * I * n) * cexp (2 * π * I * n * y)‖ := by
-        simp only [norm_mul, h_norm_2pin]; ring
+        simp only [norm_mul, h_norm_2pin]; ac_rfl
       calc ‖a n * cexp (2 * π * I * n * y)‖
           = ‖a n * cexp (2 * π * I * n * y)‖ * (2 * π * n) / (2 * π * n) := by field_simp
         _ = ‖a n * (2 * π * I * n) * cexp (2 * π * I * n * y)‖ / (2 * π * n) := by rw [h_key]
         _ ≤ u n / (2 * π * n) := div_le_div_of_nonneg_right h_deriv_bound h_pos.le
         _ ≤ u n / (2 * π) := by
             apply div_le_div_of_nonneg_left (le_trans (norm_nonneg _) h_deriv_bound)
-              (by positivity); nlinarith
+              (by positivity); nlinarith only [h_n_ge_1, h_pos]
     exact hn.not_ge h_bound
   have hu : ∀ K ⊆ {w : ℂ | 0 < w.im}, IsCompact K →
       ∃ u : ℕ → ℝ, Summable u ∧ ∀ n (k : K),
@@ -371,7 +373,7 @@ theorem serre_D_sub (k : ℤ) (F G : ℍ → ℂ) (hF : MDiff F)
 theorem serre_D_smul (k : ℤ) (c : ℂ) (F : ℍ → ℂ) (hF : MDiff F) :
     serreD k (c • F) = c • (serreD k F) := by
   simp only [serre_D_eq, D_smul c F hF]
-  ext z; simp [Pi.smul_apply]; ring
+  ext z; simp only [Pi.smul_apply, smul_eq_mul]; ring
 
 theorem serre_D_mul (k₁ k₂ : ℤ) (F G : ℍ → ℂ) (hF : MDiff F)
     (hG : MDiff G) :
@@ -410,13 +412,19 @@ variable (γ : SL(2, ℤ))
 lemma deriv_denom (z : ℂ) :
     deriv (fun w => denom γ w) z = ((γ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : ℂ) := by
   simp only [denom]
-  rw [deriv_add_const, deriv_const_mul _ differentiableAt_id, deriv_id'', mul_one]; simp
+  rw [deriv_add_const, deriv_const_mul _ differentiableAt_id, deriv_id'', mul_one]; simp only [
+    Fin.isValue, Matrix.SpecialLinearGroup.coe_GL_coe_matrix,
+    Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+    Matrix.map_apply, ofReal_intCast]
 
 /-- Derivative of the numerator function: d/dz[az + b] = a. -/
 lemma deriv_num (z : ℂ) :
     deriv (fun w => num γ w) z = ((γ : Matrix (Fin 2) (Fin 2) ℤ) 0 0 : ℂ) := by
   simp only [num]
-  rw [deriv_add_const, deriv_const_mul _ differentiableAt_id, deriv_id'', mul_one]; simp
+  rw [deriv_add_const, deriv_const_mul _ differentiableAt_id, deriv_id'', mul_one]; simp only [
+    Fin.isValue, Matrix.SpecialLinearGroup.coe_GL_coe_matrix,
+    Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+    Matrix.map_apply, ofReal_intCast]
 
 /-- Differentiability of denom. -/
 lemma differentiableAt_denom (z : ℂ) :
@@ -461,7 +469,7 @@ lemma deriv_denom_zpow (k : ℤ) (z : ℍ) :
     rw [← deriv_denom]; exact hdiff.hasDerivAt
   have hcomp := hderiv_zpow.comp (z : ℂ) hderiv_denom
   have heq : (fun w => w ^ (-k)) ∘ (fun w => denom γ w) = (fun w => (denom γ w) ^ (-k)) := rfl
-  rw [← heq, hcomp.deriv]; simp only [Int.cast_neg]; ring
+  rw [← heq, hcomp.deriv]; simp only [Int.cast_neg]; ac_rfl
 
 end DSlashHelpers
 
@@ -548,7 +556,7 @@ lemma D_slash (k : ℤ) (F : ℍ → ℂ) (hF : MDiff F) (γ : SL(2, ℤ)) :
   have hpow_m1 : (denom γ z) ^ (-k - 1) = (denom γ z) ^ (-1 : ℤ) * (denom γ z) ^ (-k) := by
     rw [← zpow_add₀ hz_denom_ne]
     congr 1
-    ring
+    ac_rfl
   conv_lhs =>
     rw [mul_assoc (deriv (F ∘ ofComplex) (num γ z / denom γ z)) (1 / denom γ z ^ 2) _,
       hpow_combine, hpow_m1]
@@ -619,11 +627,13 @@ The key computation is:
 -/
 theorem deriv_resToImagAxis_eq (F : ℍ → ℂ) (hF : MDiff F) {t : ℝ} (ht : 0 < t) :
     deriv F.resToImagAxis t = -2 * π * (D F).resToImagAxis t := by
-  let z : ℍ := ⟨I * t, by simp [ht]⟩
+  let z : ℍ := ⟨I * t, by simp only [mul_im, Complex.I_re, ofReal_im, mul_zero, Complex.I_im,
+    ofReal_re, one_mul, zero_add, ht]⟩
   let g : ℝ → ℂ := (I * ·)
   have h_eq : F.resToImagAxis =ᶠ[nhds t] ((F ∘ ofComplex) ∘ g) := by
     filter_upwards [lt_mem_nhds ht] with s hs
-    have him : 0 < (g s).im := by simp [g, hs]
+    have him : 0 < (g s).im := by simp only [mul_im, Complex.I_re, ofReal_im, mul_zero,
+      Complex.I_im, ofReal_re, one_mul, zero_add, hs, g]
     simp [Function.resToImagAxis_apply, ResToImagAxis, hs, Function.comp_apply, g,
       ofComplex_apply_of_im_pos him]
   suffices h : deriv ((F ∘ ofComplex) ∘ g) t = -2 * ↑π * (D F).resToImagAxis t by
@@ -756,8 +766,12 @@ lemma norm_D_le_of_sphere_bound {f : ℍ → ℂ} {z : ℍ} {r M : ℝ}
     (hr : 0 < r) (hDiff : DiffContOnCl ℂ (f ∘ ofComplex) (Metric.ball (z : ℂ) r))
     (hbdd : ∀ w ∈ Metric.sphere (z : ℂ) r, ‖(f ∘ ofComplex) w‖ ≤ M) :
     ‖D f z‖ ≤ M / (2 * π * r) := calc ‖D f z‖
-  _ = ‖(2 * π * I)⁻¹‖ * ‖deriv (f ∘ ofComplex) z‖ := by simp [D]
-  _ = (2 * π)⁻¹ * ‖deriv (f ∘ ofComplex) z‖ := by simp [abs_of_pos Real.pi_pos]
+  _ = ‖(2 * π * I)⁻¹‖ * ‖deriv (f ∘ ofComplex) z‖ := by simp only [D, mul_inv_rev, inv_I, neg_mul,
+    norm_neg, Complex.norm_mul, norm_I, norm_inv, norm_real, norm_eq_abs, abs_pi,
+    Complex.norm_ofNat, one_mul]
+  _ = (2 * π)⁻¹ * ‖deriv (f ∘ ofComplex) z‖ := by simp only [mul_inv_rev, inv_I, neg_mul, norm_neg,
+    Complex.norm_mul, norm_I, norm_inv, norm_real, norm_eq_abs, abs_of_pos Real.pi_pos,
+    Complex.norm_ofNat, one_mul]
   _ ≤ (2 * π)⁻¹ * (M / r) := by
         gcongr; exact norm_deriv_le_of_forall_mem_sphere_norm_le hr hDiff hbdd
   _ = M / (2 * π * r) := by ring
@@ -796,7 +810,7 @@ lemma D_isBoundedAtImInfty_of_bounded {f : ℍ → ℂ}
   calc ‖D f z‖ ≤ M / (2 * π * (z.im / 2)) := norm_D_le_of_sphere_bound hR_pos hDiff hf_bdd_sphere
     _ = M / (π * z.im) := by ring
     _ ≤ M / (π * 1) := by gcongr
-    _ = M / π := by ring
+    _ = M / π := by ac_rfl
 
 /-- The D-derivative of a bounded holomorphic function tends to zero at infinity.
 
@@ -849,7 +863,7 @@ theorem serre_D_isBoundedAtImInfty_of_bounded {f : ℍ → ℂ} (k : ℂ)
       Filter.const_boundedAtFilter _ _
     have hfun : (fun z => k * 12⁻¹ * E₂ z * f z) =
         ((fun _ : ℍ => k * 12⁻¹) * (E₂ * f)) := by
-      ext z; simp only [Pi.mul_apply]; ring
+      ext z; simp only [Pi.mul_apply]; ac_rfl
     rw [hfun]
     exact hconst.mul (E₂_isBoundedAtImInfty.mul hbdd)
   exact hD.sub hE₂f

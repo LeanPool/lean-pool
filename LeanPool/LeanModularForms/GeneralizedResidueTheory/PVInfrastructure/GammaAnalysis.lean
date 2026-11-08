@@ -43,7 +43,7 @@ private lemma hasDerivAt_remainder_bound
   obtain ⟨s, hs_mem, hs⟩ := (hγ hε).exists_mem
   obtain ⟨δ, hδ_pos, hδ_ball⟩ := Metric.mem_nhds_iff.mp hs_mem
   refine ⟨δ, hδ_pos, fun t _ ht_lt => ?_⟩
-  have h_bound := hs t (hδ_ball (by simp [Metric.mem_ball, Real.dist_eq, ht_lt]))
+  have h_bound := hs t (hδ_ball (by simp only [Metric.mem_ball, Real.dist_eq, ht_lt]))
   simpa only [Real.norm_eq_abs] using h_bound
 
 private lemma norm_real_smul (x : ℝ) (L : ℂ) : ‖x • L‖ = |x| * ‖L‖ := by
@@ -80,7 +80,8 @@ lemma integrand_times_t_tendsto_one
       have h_comp :
           (fun t => (t - t₀)⁻¹ • (γ t - γ t₀)) =
           (fun s => s⁻¹ • (γ (t₀ + s) - γ t₀)) ∘
-            (fun t => t - t₀) := by ext t; simp [add_sub_cancel]
+            (fun t => t - t₀) := by ext t; simp only [real_smul, ofReal_inv, ofReal_sub,
+              Function.comp_apply, add_sub_cancel]
       rw [h_comp]
       apply Tendsto.comp hγ_hasderiv
       apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
@@ -91,10 +92,11 @@ lemma integrand_times_t_tendsto_one
         simp only [Set.mem_compl_iff, Set.mem_singleton_iff, sub_ne_zero]; exact ht
     have h_slope' : Tendsto (fun t => (γ t - γ t₀) * (↑(t - t₀) : ℂ)⁻¹) (𝓝[≠] t₀) (𝓝 L) := by
       simp only [show ∀ t : ℝ, (γ t - γ t₀) * (↑(t - t₀) : ℂ)⁻¹ =
-        (t - t₀)⁻¹ • (γ t - γ t₀) from fun t => by rw [Algebra.smul_def]; simp [mul_comm]]
+        (t - t₀)⁻¹ • (γ t - γ t₀) from fun t => by rw [Algebra.smul_def]; simp only [ofReal_sub,
+          map_inv₀, coe_algebraMap, mul_comm] ]
       exact h_slope
     have h_recip := h_slope'.inv₀ hL
-    simp_all
+    simp_all only [ne_eq, real_smul, ofReal_inv, ofReal_sub, mul_inv_rev, inv_inv]
   have h_prod :
       Tendsto
         (fun t => (↑(t - t₀) : ℂ) *
@@ -102,7 +104,7 @@ lemma integrand_times_t_tendsto_one
         (𝓝[≠] t₀) (𝓝 (L⁻¹ * L)) :=
     Tendsto.mul h_ratio_tendsto
       (h_deriv_tendsto.mono_left nhdsWithin_le_nhds)
-  simp_all
+  simp_all only [ne_eq, ofReal_sub, not_false_eq_true, inv_mul_cancel₀]
 
 /-- Asymptotic control:
 ‖(γ-γ₀)⁻¹ * γ' - (t-t₀)⁻¹‖ ≤ ε / |t-t₀|. -/

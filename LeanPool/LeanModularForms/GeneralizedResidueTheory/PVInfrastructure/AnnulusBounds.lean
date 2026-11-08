@@ -10,7 +10,6 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.RemainderAnalysis
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.StepBounds
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # PV Infrastructure: Annulus Bounds
@@ -171,8 +170,8 @@ lemma remainder_integral_bound_on_annulus
       have h_far : R < |t - t₀| := by
         simp only [Icontain, Set.mem_Icc, not_and_or, not_le] at ht_in
         rcases ht_in with h | h
-        · rw [abs_of_neg (by linarith)]; linarith
-        · rw [abs_of_pos (by linarith)]; linarith
+        · rw [abs_of_neg (by linarith only [hR_pos, h])]; linarith only [h]
+        · rw [abs_of_pos (by linarith only [hR_pos, h])]; linarith only [h]
       rw [remainder_annulus_zero_of_far hL hε₁_pos hε₂_pos h_lower h_loc_δ₁ hab
         t (Set.uIoc_of_le hab.le ▸ ht) h_far, norm_zero]
   calc ‖∫ t in a..b,
@@ -228,13 +227,13 @@ lemma volume_shell_le {t₀ r₁ r₂ : ℝ}
       have habs : |t - t₀| = t - t₀ :=
         abs_of_nonneg (sub_nonneg.mpr ht)
       rw [habs] at h_lower h_upper
-      exact ⟨by linarith, by linarith⟩
+      exact ⟨by linarith only [h_lower], by linarith only [h_upper]⟩
     · left
       push Not at ht
       have habs : |t - t₀| = -(t - t₀) :=
         abs_of_neg (sub_neg.mpr ht)
       rw [habs] at h_lower h_upper
-      exact ⟨by linarith, by linarith⟩
+      exact ⟨by linarith only [h_upper], by linarith only [h_lower]⟩
   calc volume {t : ℝ |
       r₁ < |t - t₀| ∧ |t - t₀| ≤ r₂}
       ≤ volume (Set.Ico (t₀ - r₂) (t₀ - r₁) ∪
@@ -249,7 +248,7 @@ lemma volume_shell_le {t₀ r₁ r₂ : ℝ}
           Real.volume_Ioc]; ring_nf
     _ = ENNReal.ofReal (2 * (r₂ - r₁)) := by
         rw [← ENNReal.ofReal_add
-          (by linarith) (by linarith)]; ring_nf
+          (by exact sub_nonneg.mpr hr) (by exact sub_nonneg.mpr hr)]; ring_nf
 
 /-- If `g` and `x` are within `e` and straddle a threshold `ε`, then `|x - ε| ≤ e`. -/
 private lemma abs_sub_threshold_le {g x ε e : ℝ} (h_approx : |g - x| ≤ e)
@@ -340,8 +339,8 @@ private lemma volume_abs_eq_null {t₀ r₁ : ℝ} (hr₁_pos : 0 < r₁) :
     intro t ht; simp only [Set.mem_ofPred_eq] at ht
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
     rcases (abs_eq hr₁_pos.le).mp ht with h1 | h1
-    · right; linarith
-    · left; linarith
+    · right; linarith only [h1]
+    · left; linarith only [h1]
   exact le_antisymm (le_of_le_of_eq
     (MeasureTheory.measure_mono h_sub)
     ((Set.toFinite _).measure_zero volume)) (zero_le)

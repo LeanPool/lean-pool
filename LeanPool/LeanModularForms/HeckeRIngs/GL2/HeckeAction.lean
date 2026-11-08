@@ -137,7 +137,8 @@ lemma heckeSlash_smul (k : ℤ) (D : HeckeCoset (GLPair 2)) (c : ℂ) (f : ℍ �
   change ((c • f) ∣[k] glMap _) _ = (c • (f ∣[k] glMap _)) _
   have hA : 0 < (glMap (tRep D i)).det.val :=
     cosetRep_delta_transpose_det_pos ⟨i.out, SetLike.coe_mem _⟩ (HeckeCoset.rep D)
-  rw [ModularForm.smul_slash]; simp [sigma_eq_refl_of_pos_det hA]
+  rw [ModularForm.smul_slash]; simp only [sigma_eq_refl_of_pos_det hA,
+    ContinuousAlgEquiv.refl_apply, Pi.smul_apply, smul_eq_mul]
 
 section SlashInvariance
 
@@ -177,7 +178,8 @@ private lemma leftMulQuot_injective (D : HeckeCoset (GLPair 2)) (σ : (GLPair 2)
       (HeckeCoset.rep D : GL _ ℚ) ∈ (GLPair 2).H := by
     have := h_K
     rw [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def] at this
-    simp_all
+    simp_all only [Subgroup.coe_mul, InvMemClass.coe_inv, _root_.mul_inv_rev,
+      mul_inv_mul_mul_cancel, ConjAct.ofConjAct_inv, ConjAct.ofConjAct_toConjAct, inv_inv]
   exact decompQuot_coset_diff (GLPair 2) (HeckeCoset.rep D) i₁ i₂ hne
     (leftCoset_eq_of_not_disjoint (GLPair 2).H _ _ (by
       rw [Set.not_disjoint_iff]

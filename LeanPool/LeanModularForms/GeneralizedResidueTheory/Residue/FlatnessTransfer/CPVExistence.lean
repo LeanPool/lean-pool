@@ -11,7 +11,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.WindingNumber.Crossing
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 import Mathlib.Tactic.Positivity.Finset
 
@@ -227,7 +226,7 @@ lemma cpv_exists_inv_sub_of_closed_unique
       rw [Filter.Eventually, mem_nhdsWithin] at h_sp_ev
       obtain ⟨U, hU_open, h0_mem, hU_sub⟩ := h_sp_ev
       obtain ⟨r, hr, hr_ball⟩ := Metric.isOpen_iff.mp hU_open 0 h0_mem
-      exact ⟨min r δ, by positivity, min_le_right _ _, fun ε hε => hU_sub ⟨hr_ball (by
+      exact ⟨min r δ, by exact lt_min hr hδ, min_le_right _ _, fun ε hε => hU_sub ⟨hr_ball (by
         simp only [Metric.mem_ball, Real.dist_eq]
         rw [sub_zero, abs_of_pos hε.1]
         exact lt_of_lt_of_le hε.2 (min_le_left _ _)), hε.1⟩⟩

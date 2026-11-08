@@ -13,8 +13,6 @@ import LeanPool.LeanModularForms.ValenceFormula.OnCurvePV.Main
 import LeanPool.LeanModularForms.ValenceFormula.PVChain.OnCurveCapture
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # PV Chain Assembly: Residue Side

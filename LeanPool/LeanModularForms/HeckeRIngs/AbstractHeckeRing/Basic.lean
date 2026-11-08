@@ -60,7 +60,8 @@ lemma conjAct_smul_elt_eq (h : H) :
 /-- A left coset contained in another left coset is equal to it. -/
 lemma leftCoset_eq_of_subset (a b : G)
     (h : {a} * (H : Set G) ⊆ {b} * H) : {a} * (H : Set G) = {b} * H := by
-  have ha : a ∈ {a} * (H : Set G) := by rw [Set.mem_mul]; use a; simp
+  have ha : a ∈ {a} * (H : Set G) := by rw [Set.mem_mul]; use a; simp only [mem_singleton_iff,
+    SetLike.mem_coe, mul_eq_left, exists_eq_right, one_mem, and_self]
   have hb := h ha; rw [Set.mem_mul] at hb
   obtain ⟨b', hb', y, hy, hb_eq⟩ := hb; simp only [mem_singleton_iff] at hb'
   rw [← hb_eq, hb', ← Set.singleton_mul_singleton, mul_assoc,
@@ -274,7 +275,7 @@ lemma inter_mul_conjAct_eq_conjAct (g : G) :
   Subset.antisymm
     (le_trans (Set.inter_mul_subset (s₁ := (H : Set G))
       (s₂ := (ConjAct.toConjAct g • H)) (t := (ConjAct.toConjAct g • H)))
-      (by simp [conjAct_mul_self_eq_self]))
+      (by simp only [conjAct_mul_self_eq_self, inter_subset_right]))
     (subset_mul_right _ ⟨Subgroup.one_mem H, Subgroup.one_mem (ConjAct.toConjAct g • H)⟩)
 
 /-- Right multiplication by a singleton is cancellative. -/
@@ -300,7 +301,8 @@ lemma DoubleCoset.doubleCoset_eq_iUnion_leftCosets (g : G) :
   rw [conjAct_smul_coe_eq] at *; simp_rw [← mul_assoc] at h2; rw [h2]
   have : (Subgroup.map H.subtype
       ((ConjAct.toConjAct g • H).subgroupOf H)).subgroupOf H =
-    (ConjAct.toConjAct g • H).subgroupOf H := by simp
+    (ConjAct.toConjAct g • H).subgroupOf H := by simp only [subgroupOf_map_subtype,
+      inf_subgroupOf_right]
   rw [this]
   have h1 : ∀ (i : H ⧸ (ConjAct.toConjAct g • H).subgroupOf H),
       ((i.out) : G) • ((H : Set G) ∩ ({g} * ↑H * {g⁻¹})) *
@@ -355,7 +357,7 @@ lemma doubleCoset_mul_eq_iUnion_doubleCoset (g h : G) :
 lemma DoubleCoset.doubleCoset_one_mul (h : G) :
     DoubleCoset.doubleCoset h (H : Set G) H =
     ⋃ (_ : H ⧸ (ConjAct.toConjAct h • H).subgroupOf H),
-      DoubleCoset.doubleCoset h H H := by simp [Set.iUnion_const]
+      DoubleCoset.doubleCoset h H H := by simp only [iUnion_const]
 
 /-- The Hecke ring type: formal `Z`-linear combinations of double cosets `HeckeCoset P`.
     Changed from `def` to `abbrev` for transparency in instance resolution (Lean 4.29+). -/
