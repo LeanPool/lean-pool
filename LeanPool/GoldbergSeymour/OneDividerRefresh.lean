@@ -1563,84 +1563,6 @@ private abbrev helperContinuation694Conditions.{u_1, u_2} : Prop :=
     ∀ theta ∈ HierarchyTerminalStoredColors H, theta ≠ eta → goodW.gamma (Fin.last
         HW.dividerCount) theta = good.gamma (Fin.last H.dividerCount) theta
 
-private theorem helper_starToU_526.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (U W : TreeSequence G e0) (corrU : CorrespondingExtendedTashkinovTree G k e0
-        ett phi U) (corrW : CorrespondingExtendedTashkinovTree G k e0 ett phi W) (baseU :
-        HierarchyBase corrU.replacementETT phi) (baseW : HierarchyBase corrW.replacementETT phi)
-        (_ : baseW.core = baseU.core) (H : TashkinovHierarchy corrU.replacementETT baseU),
-    let d : ℕ := H.dividerCount;
-    let N : ℕ := d + (1 : ℕ);
-    ∀ (_ : (
-    ∀ (X : TreeSequence G e0) (corr : CorrespondingExtendedTashkinovTree G k e0 ett phi X),
-        corr.replacementETT.series.data.tree (Fin.last corr.replacementETT.rounds).castSucc =
-        ett.series.data.tree (Fin.last ett.rounds).castSucc ∧ corr.replacementETT.series.data.kind
-        (Fin.last corr.replacementETT.rounds) = ett.series.data.kind (Fin.last ett.rounds) ∧
-        TashkinovStoredColors corr.replacementETT.series.data (Fin.last
-        corr.replacementETT.rounds) = TashkinovStoredColors ett.series.data (Fin.last
-        ett.rounds))),
-    let stageW : Fin (N + (2 : ℕ)) → TreeSequence G e0 := fun (j : Fin (N + (2 : ℕ))) ↦ if hj :
-        (↑j : ℕ) = d + (2 : ℕ) then W else H.stage (⟨(↑j : ℕ), (
-    by omega
-    )⟩ : Fin (H.dividerCount + (2 : ℕ)));
-    ∀ (hsize : W.length = U.length + (1 : ℕ)) (_ : TreeSequenceInitialSegment U W) (_ : (
-    ∀ {A B C : TreeSequence G e0} (_ : TreeSequenceInitialSegment A B) (_ : B = C),
-        TreeSequenceInitialSegment A C)) (_ : (
-    ∀ {A B : TreeSequence G e0} (hAB : TreeSequenceInitialSegment A B), A = TreeSequencePrefix B
-        A.length A.positive hAB.1)) (_ : (
-    ∀ (p : ℕ) (hp : (1 : ℕ) ≤ p) (hpU : p ≤ U.length), TreeSequencePrefix U p hp hpU =
-        TreeSequencePrefix W p hp ((
-    by omega
-    )))) (_ : (
-    ∀ (j : Fin (N + (2 : ℕ))) (hj : (↑j : ℕ) ≤ d + (1 : ℕ)), stageW j = H.stage (⟨(↑j : ℕ), (
-    by omega
-    )⟩ : Fin (H.dividerCount + (2 : ℕ))))) (_ : (
-    ∀ (j : Fin (d + (2 : ℕ))), stageW (⟨(↑j : ℕ), (
-    by omega
-    )⟩ : Fin (N + (2 : ℕ))) = H.stage j)) (_ : stageW (⟨d + (2 : ℕ), (
-    by omega
-    )⟩ : Fin (N + (2 : ℕ))) = W) (_ : (
-    ∀ (i : Fin d), (↑(H.dividerPosition i) : ℕ) < U.length)), TreeSequenceInitialSegment
-        (HierarchyStarredStage H (Fin.last d)) U := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett U W corrU corrW baseU baseW hcore H d N corrTerminal
-      stageW hsize hUW segmentEqRight prefixEqOfSegment prefixTransfer stageAtOld stageOld
-      stageNew dividerBeforeTerminal
-  by_cases hd : d = 0
-  · have hstar : HierarchyStarredStage H (Fin.last d) = baseU.core := by
-      have hz : Fin.last d = (0 : Fin (d + 1)) := by
-        apply Fin.ext
-        simp [hd]
-      rw [hz]
-      simp [HierarchyStarredStage]
-    rw [hstar]
-    have hidx : (⟨1, by omega⟩ : Fin (d + 2)) = Fin.last (d + 1) := by
-      apply Fin.ext
-      simp [hd]
-    have hstage : H.stage ⟨1, by omega⟩ = U := by
-      rw [hidx, H.terminalStage]
-    exact segmentEqRight H.coreInsideFirst hstage
-  · let ii : Fin d := ⟨d - 1, by omega⟩
-    have hlast : ii.succ = Fin.last d := by
-      apply Fin.ext
-      simp [ii]
-      omega
-    have hstar : HierarchyStarredStage H (Fin.last d) =
-        H.stage ii.succ.castSucc := by
-      rw [← hlast]
-      simp [HierarchyStarredStage]
-    rw [hstar]
-    have hterm : H.stage ii.succ.succ = U := by
-      have hi : ii.succ.succ = Fin.last (d + 1) := by
-        apply Fin.ext
-        simp [ii]
-        omega
-      rw [hi, H.terminalStage]
-    exact segmentEqRight (H.nested ii.succ) hterm
-
 private theorem helper_continuation_694.{u_1, u_2} :
     helperContinuation694Conditions.{u_1, u_2} := by
   classical
@@ -1719,8 +1641,7 @@ private theorem helper_continuation_694.{u_1, u_2} :
       refine ⟨r, hlo, ?_, hcolor⟩
       simpa [hcut] using hhi
   have starToU : TreeSequenceInitialSegment
-      (HierarchyStarredStage H (Fin.last d)) U := by
-    apply helper_starToU_526 <;> assumption
+      (HierarchyStarredStage H (Fin.last d)) U := H.lastStarredInitialSegment
   let newIndex : Fin (N + 1) := Fin.last N
   let gammaW : Fin (N + 1) → Fin k → Finset (Fin k) := fun j theta =>
     if hj : j.val ≤ d then good.gamma ⟨j.val, by omega⟩ theta
@@ -1989,7 +1910,12 @@ theorem P2940_T1_OneDividerRefresh
     · change TreeMissingColors phi (HW.stage (⟨i.val + 1, by omega⟩ : Fin (N + 2))) =
         TreeMissingColors phi (H.stage (⟨i.val + 1, by omega⟩ : Fin (d + 2)))
       exact congrArg (TreeMissingColors phi) (stageCopy ⟨i.val + 1, by omega⟩)
-  apply helper_continuation_694 <;> assumption
+  exact @helper_continuation_694
+    V E inferInstance inferInstance inferInstance inferInstance G k e0 input T phi ett U W corrU
+    corrW baseU baseW hcore hclosure H good helem eta beta gammaOne gammaTwo f heta hbeta hfc hne
+    hg1 hg2 hfresh hminus corrTerminal hsize hUW hedge segmentEqRight prefixEqOfSegment
+    prefixTransfer stageToU stageAtOld stageOld stageNew dividerBeforeTerminal hcountW stageCopy
+    starredCopy missingCopy
 end GoldbergSeymour
 
 end

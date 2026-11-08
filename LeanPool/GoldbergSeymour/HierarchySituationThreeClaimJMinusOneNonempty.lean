@@ -2009,106 +2009,6 @@ private theorem helper_hsplit_801.{u_1, u_2} :
   · rw [hmissing _ (vertexMem B ja)]; exact haFirstB
   · rw [hmissing _ (vertexMem B jb)]; exact hb
 
-private theorem helper_hnotElementary_829.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq V] [ DecidableEq E] (G
-        : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (base : HierarchyBase ett phi) (C : HierarchyCounterexample base) (ctx :
-        HierarchyMinimumCounterexampleContext G k e0 input T phi ett base C) (_ : ℕ), (
-    ∀ {X Y Z : TreeSequence G e0}, TreeSequenceInitialSegment X Y → TreeSequenceInitialSegment Y Z
-        → TreeSequenceInitialSegment X Z) →
-    let A : TreeSequence G e0 := HierarchyStarredStage C.hierarchy (Fin.last
-        C.hierarchy.dividerCount);
-    ∀ (hlen : (4 : ℕ) ≤ T.length),
-    let B : TreeSequence G e0 := TreeSequencePrefix T (T.length - (1 : ℕ)) (
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    ) (
-    by
-          have := GoldbergSeymour.TreeSequence.positive T
-          omega
-    );
-    ∀ (hBT : TreeSequenceInitialSegment B T) (hAB : TreeSequenceInitialSegment A B), (
-    ∀ (U : TreeSequence G e0) (j : Fin (U.length + (1 : ℕ))), U.vertex j ∈ TreeSequenceVertexSet
-        U) →
-    ∀ (R : HierarchyReplacementPresentation G k e0 input T phi ett base C ctx) (_ : TreeSequence G
-        e0) (a b : Fin k) (jb : Fin (B.length + (1 : ℕ))), b ∈ MissingColors G R.coloring
-        (B.vertex jb) → a ∈ MissingColors G R.coloring (T.vertex (Fin.last T.length)) ∨ b ∈
-        MissingColors G R.coloring (T.vertex (Fin.last T.length)) →
-    ∀ (iaLe : (↑(HierarchyFirstMissingPosition R.coloring T a) : ℕ) ≤ A.length),
-        (↑(HierarchyFirstMissingPosition R.coloring T b) : ℕ) = (↑jb : ℕ) →
-    let ja : Fin (B.length + (1 : ℕ)) := (⟨(↑(HierarchyFirstMissingPosition R.coloring T a) : ℕ),
-    by
-          have this : A.length ≤ B.length := hAB.1; omega
-    ⟩ : Fin (B.length + (1 : ℕ))); Fin.castLE (Nat.succ_le_succ hBT.1) jb =
-        HierarchyFirstMissingPosition R.coloring T b → a ∈ MissingColors G R.coloring (B.vertex
-        ja) → (
-    let H : TashkinovHierarchy R.corresponding.replacementETT R.replacementBase :=
-        R.counterexample.hierarchy;
-    have q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;
-    have n : Fin (R.corresponding.replacementETT.rounds + (1 : ℕ)) := Fin.last
-        R.corresponding.replacementETT.rounds;
-    have A : TreeSequence G e0 := HierarchyStarredStage H q;
-    have Tnq : TreeSequence G e0 := H.stage (⟨H.dividerCount,
-    by
-              have := GoldbergSeymour.TreeSequence.positive T
-              omega
-    ⟩ : Fin (H.dividerCount + (2 : ℕ)));
-    have Tn : TreeSequence G e0 := R.corresponding.replacementETT.series.data.tree n.castSucc;
-    have Dn : Finset (Fin k) := TashkinovStoredColors R.corresponding.replacementETT.series.data
-        n;
-    have Dnq : Finset (Fin k) := HierarchyStoredColorsAt H q;
-    have va : V := T.vertex (HierarchyFirstMissingPosition R.coloring T a);
-    have vb : V := T.vertex (HierarchyFirstMissingPosition R.coloring T b);
-    have sameComponent : Prop := TwoColorComponent G R.coloring a b (Sum.inl va) =
-        TwoColorComponent G R.coloring a b (Sum.inl vb); ((0 : ℕ) < H.dividerCount ∧ (a ∈
-        TreeMissingColors R.coloring Tnq ∨ Disjoint (insert a ({ b } : Finset (Fin k)) : Finset
-        (Fin k)) Dnq) → sameComponent) ∧ (H.dividerCount = (0 : ℕ) ∧ (a ∈ TreeMissingColors
-        R.coloring Tn ∨ Disjoint (insert a ({ b } : Finset (Fin k)) : Finset (Fin k)) Dn) →
-        sameComponent) ∧ (a ∈ TreeMissingColors R.coloring A ∧ TreeColorSetClosed G R.coloring A
-        ({ a } : Finset (Fin k)) → sameComponent ∧ TreeInterchangeable G A R.coloring a b)) → (
-    ∀ x ∈ TreeSequenceVertexSet B, MissingColors G (TwoColorComponentSwap G R.coloring a b
-        (Sum.inl (T.vertex (Fin.last T.length)))) x = MissingColors G R.coloring x) →
-    let sigma : PartialEdgeColoring E k := TwoColorComponentSwap G R.coloring a b (Sum.inl
-        (T.vertex (Fin.last T.length))); (a ∈ MissingColors G R.coloring (T.vertex (Fin.last
-        T.length)) → b ∈ MissingColors G sigma (T.vertex (Fin.last T.length))) → (b ∈
-        MissingColors G R.coloring (T.vertex (Fin.last T.length)) → a ∈ MissingColors G sigma
-        (T.vertex (Fin.last T.length))) → ¬ColoredVertexSetElementary G sigma
-        (TreeSequenceVertexSet T) := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C ctx j trans A hlen B hBT hAB vertexMem R X a b
-      jb hb hw iaLe ibEq ja jbEq haFirstB change hmissing sigma hterminalA hterminalB he
-  rcases hw with hw | hw
-  · have hbNew : b ∈ MissingColors G sigma (B.vertex jb) := by
-      rw [hmissing _ (vertexMem B jb)]; exact hb
-    exact Finset.disjoint_left.mp (he
-      (TreeSequenceInitialSegmentVertexSetSubset hBT (vertexMem B jb))
-      (vertexMem T (Fin.last T.length)) (by
-        intro hh
-        have hh := T.vertex_injective ((hBT.2.1 jb).trans hh)
-        have hh := congrArg Fin.val hh
-        change jb.val = T.length at hh
-        have := jb.isLt
-        have hblen : B.length = T.length - 1 := rfl
-        omega))
-      hbNew (hterminalA hw)
-  · have haNew : a ∈ MissingColors G sigma (B.vertex ja) := by
-      rw [hmissing _ (vertexMem B ja)]; exact haFirstB
-    exact Finset.disjoint_left.mp (he
-      (TreeSequenceInitialSegmentVertexSetSubset hBT (vertexMem B ja))
-      (vertexMem T (Fin.last T.length)) (by
-        intro hh
-        have hh := T.vertex_injective ((hBT.2.1 ja).trans hh)
-        have hh := congrArg Fin.val hh
-        change ja.val = T.length at hh
-        have hja : ja.val ≤ A.length := iaLe
-        have hab := hAB.1
-        have hblen : B.length = T.length - 1 := rfl
-        omega))
-      haNew (hterminalB hw)
-
 private theorem helper_hAn_999.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -2992,7 +2892,10 @@ private theorem helper_continuation_3982.{u_1, u_2} :
           ∃ eta, eta ∈ D ∧ beta ∈ P.counterexample.good.gamma
             (Fin.last P.counterexample.hierarchy.dividerCount) eta ∧
             (HierarchyFirstMissingPosition P.coloring T eta).val ≤ Y.length) := by
-    apply helper_choice_1225 <;> assumption
+    exact @helper_choice_1225
+      V E inferInstance inferInstance inferInstance inferInstance G k e0 input T phi ett base C ctx
+      hnonempty j hpathLower hpathUpper finiteChoice trans htail hlen hBT firstLe gammaSub hYlen hYT
+      hAY hiUpper P hSlen hiEq hXlen hXB hYXlen hjaX freshCard usedStep nineY
   obtain ⟨beta, hbY, hbD, hbUsed, hbChoice⟩ := choice
   obtain ⟨vbeta, hvbeta, hbeta⟩ := Finset.mem_biUnion.mp hbY
   obtain ⟨yb, hyb⟩ : ∃ yb, Y.vertex yb = vbeta := by
@@ -3465,7 +3368,11 @@ private theorem helper_continuation_3823.{u_1, u_2} :
       TreeSequenceInitialSegment R.replacementBase.core A := by
     rw [← starEq R]
     exact R.counterexample.hierarchy.coreInitialSegmentOfStarredStage (Fin.last _)
-  apply helper_continuation_3797 <;> assumption
+  exact @helper_continuation_3797
+    V E inferInstance inferInstance inferInstance inferInstance G k e0 input T phi ett base C ctx
+    hvertexMissing hnonempty j hj hpathLower hpathUpper finiteChoice componentData trans common
+    starEq hAT htail hlen hBT hAB fullEq fullB elementary vertexMem firstLe firstAt firstFixed
+    stageSwitch gammaTransport gammaUnused outsideA notRaw tailException coreA
 private theorem helper_caseContinuation_5383.{u_1, u_2} :
     helperCaseContinuation5383Conditions.{u_1, u_2} := by
   classical
@@ -3532,7 +3439,10 @@ private theorem helper_caseContinuation_5383.{u_1, u_2} :
         ∃ f seed, R.corresponding.replacementETT.series.data.connectingEdges n = {f} ∧
           TreeSequenceAdjoinEdge Tn f seed ∧ TashkinovAugmentationSequence sigma seed X)) ∧
       TashkinovAugmentationSequence R.coloring X T := by
-    apply helper_routes_771 <;> assumption
+    exact @helper_routes_771
+      V E inferInstance inferInstance inferInstance inferInstance G k e0 input T phi ett base C ctx
+      j trans common hlen hBT hAB R X hAX hAXlt hXB a b jb hTnA iaLe change hmissing hXT hXMX
+      prefixFixed
   have hsplit : a ∈ TreeMissingColors sigma X ∧ b ∈ TreeMissingColors sigma X := by
     exact helper_hsplit_801 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx)
         (@j) (@hlen) (@hBT) (@hAB) (@vertexMem) (@R) (@X) (@hAXlt) (@hXB) (@a) (@b) (@jb)
@@ -3555,7 +3465,24 @@ private theorem helper_caseContinuation_5383.{u_1, u_2} :
       a ∈ MissingColors G sigma (T.vertex (Fin.last T.length)) :=
     terminal.2.2.1 _ (by rfl)
   have hnotElementary : ¬ ColoredVertexSetElementary G sigma (TreeSequenceVertexSet T) := by
-    apply helper_hnotElementary_829 <;> assumption
+    intro elementary
+    have shorter : B.length < T.length := by
+      change T.length - 1 < T.length
+      exact Nat.sub_lt (Nat.zero_lt_one.trans_le T.positive) Nat.zero_lt_one
+    have disjointTerminal (index : Fin (B.length + 1)) :
+        Disjoint (MissingColors G sigma (B.vertex index))
+          (MissingColors G sigma (T.vertex (Fin.last T.length))) :=
+      elementary (hBT.vertexSet_subset (vertexMem B index))
+        (vertexMem T (Fin.last T.length)) (hBT.last_vertex_ne shorter index).symm
+    rcases hw with terminalA | terminalB
+    · have missing : b ∈ MissingColors G sigma (B.vertex jb) := by
+        rw [hmissing _ (vertexMem B jb)]
+        exact hb
+      exact Finset.disjoint_left.mp (disjointTerminal jb) missing (hterminalA terminalA)
+    · have missing : a ∈ MissingColors G sigma (B.vertex ja) := by
+        rw [hmissing _ (vertexMem B ja)]
+        exact haFirstB
+      exact Finset.disjoint_left.mp (disjointTerminal ja) missing (hterminalB terminalB)
   let CS : HierarchyCounterexample bs := by
     exact @helperCS778 (@V) (@E) inferInstance inferInstance inferInstance inferInstance (@G)
         (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@R) (@a) (@b) (@corr)
@@ -3728,7 +3655,11 @@ private theorem helper_continuation_3692.{u_1, u_2} :
         (@R) (@X) (@hAX) (@hAXlt) (@hXB) (@a) (@b) (@hne) (@jb) (@hjbX) (@hb) (@hw) (@haUnused)
         (@hbException) (@gammaCut) (@hTnA) (@stageCase) (@hbB) (@haB) (@iaLe) (@ibEq) (@jaEq)
         (@jbEq) (@haFirstB) (@hprefixR) (@hmissingR) (@change) (@hdis) (@hpath) (@hmissing) (@hsone)
-  apply helper_continuation_3823 <;> assumption
+  exact @helper_continuation_3823
+    V E inferInstance inferInstance inferInstance inferInstance G k e0 input T phi ett base C ctx
+    hvertexMissing hnonempty j hj hpathLower hpathUpper finiteChoice componentData trans common
+    starEq hAT htail hlen hBT hAB fullEq fullB elementary vertexMem firstLe firstAt firstFixed
+    stageSwitch
 theorem HierarchySituationThreeClaimJMinusOneNonempty {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
     (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
@@ -3788,8 +3719,10 @@ theorem HierarchySituationThreeClaimJMinusOneNonempty {V E : Type*}
     clear * - M F D U W N g hstep hncard hgM hgcard hgdis hgd hnine
     let free := ((M \ F) \ U) \ (D.biUnion g ∪ D)
     by_cases hlarge : 5 ≤ free.card
-    · apply helper_branch_237 <;> assumption
-    · apply helper_branch_256 <;> assumption
+    · exact @helper_branch_237
+        k M F D U W N g hstep hncard hlarge
+    · exact @helper_branch_256
+        k M F D U W N g hstep hncard hgM hgcard hgdis hgd hnine hlarge
   have componentData := P2905_T2_ElementaryTerminalComponent (k := k) G
   have trans {X Y Z : TreeSequence G e0}
       (hXY : TreeSequenceInitialSegment X Y)

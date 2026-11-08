@@ -78,11 +78,9 @@ theorem OutsideKempeRecoloringStable {V E : Type*}
         · simp [changeColor, h, hb']
       · simp [changeColor, ha, hb']
   have swap_injective : Function.Injective changeColor := by
-    intro x y h
-    dsimp [changeColor] at h
-    by_cases xa : x = some alpha <;> by_cases xb : x = some beta <;>
-      by_cases ya : y = some alpha <;> by_cases yb : y = some beta <;>
-      simp_all []
+    intro x y equal
+    apply (Equiv.swap (some alpha) (some beta)).injective
+    simpa only [Equiv.swap_apply_def, changeColor] using equal
   have component_step :
     ∀ {e f : E}, (
     ∃ z ∈ roots, Sum.inr e ∈ TwoColorComponent G phi alpha beta z) → AdjacentEdges G e f → (phi e
@@ -133,30 +131,6 @@ theorem OutsideKempeRecoloringStable {V E : Type*}
             exact sf (component_step se hadj (Or.inr hb') (Or.inl hf))
           · have he : phi e = some c := by simpa [changeColor, ha', hb'] using hec
             exact (hproper hef hadj he) hfc
-      /-
-        have hce : phi e = some alpha ∨ phi e = some beta := by
-          rw [hswap e] at hec
-          simp only [se, ↓reduceIte] at hec
-          by_cases ha' : phi e = some alpha
-          · exact Or.inl ha'
-          · by_cases hb' : phi e = some beta
-            · exact Or.inr hb'
-            · simp [changeColor, ha', hb'] at hec
-        have hcc : c = alpha ∨ c = beta := by
-          rw [hswap e] at hec
-          rcases hce with ha' | hb'
-          · simp [changeColor, ha'] at hec
-            exact Or.inr (Option.some.inj hec).symm
-          · simp [changeColor, hb', hab] at hec
-            exact Or.inl (Option.some.inj hec).symm
-        have hfc' : phi f = some c := by
-          rw [hswap f] at hfc
-          simp [sf] at hfc
-        have hcf : phi f = some alpha ∨ phi f = some beta := by
-          rcases hcc with rfl | rfl
-          · exact Or.inl hfc'
-          · exact Or.inr hfc'
-        exact sf (component_step se hadj hce hcf) -/
     · by_cases sf : ∃ z ∈ roots, Sum.inr f ∈ TwoColorComponent G phi alpha beta z
       · rw [hswap e] at hec
         rw [ite_eq_right se] at hec
@@ -175,40 +149,6 @@ theorem OutsideKempeRecoloringStable {V E : Type*}
           · have hf : phi f = some c := by simpa [changeColor, ha', hb'] using hfc
             obtain ⟨v, hve, hvf⟩ := hadj
             exact (hproper hef.symm ⟨v, hvf, hve⟩ hf) hec
-      /-
-        have hce : phi e ≠ some alpha ∧ phi e ≠ some beta := by
-          constructor <;> intro hce
-          · have : se := by
-              rw [hswap e] at hec
-              simp [changeColor, hce] at hec
-              exact False.elim (by simpa [hce] using hec)
-            exact this
-          · have : se := by
-              rw [hswap e] at hec
-              simp [changeColor, hce] at hec
-              exact False.elim (by simpa [hce] using hec)
-            exact this
-        have hcc : c = alpha ∨ c = beta := by
-          rw [hswap f] at hfc
-          by_cases ha' : phi f = some alpha
-          · simp [changeColor, ha'] at hfc
-            exact Or.inl (Option.some.inj hfc).symm
-          · by_cases hb' : phi f = some beta
-            · simp [changeColor, ha', hb', hab] at hfc
-              exact Or.inr (Option.some.inj hfc).symm
-            · simp [changeColor, ha', hb'] at hfc
-        have hec' : phi e = some c := by
-          rw [hswap e] at hec
-          simp [se] at hec
-        have hce' : phi e = some alpha ∨ phi e = some beta := by
-          rcases hcc with rfl | rfl
-          · exact Or.inl hec'
-          · exact Or.inr hec'
-        have hcf' : phi f = some alpha ∨ phi f = some beta := by
-          rcases hcc with rfl | rfl
-          · exact Or.inl hfc'
-          · exact Or.inr hfc'
-        exact se (component_step sf hadj.symm hcf' hce') -/
       · rw [hswap e] at hec
         rw [ite_eq_right se] at hec
         rw [hswap f] at hfc

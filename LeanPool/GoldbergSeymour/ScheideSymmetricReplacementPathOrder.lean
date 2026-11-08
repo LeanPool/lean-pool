@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.DegreeTwoPaths
+
 public import LeanPool.GoldbergSeymour.ScheideReplacementData
 public import LeanPool.GoldbergSeymour.ScheideSymmetricReplacementBoundaryConfiguration
 public import LeanPool.GoldbergSeymour.TreeFreeColors
@@ -1079,61 +1081,20 @@ private theorem helper_continuation_264.{u_1, u_2} :
       hZsubXd hvXd hproper hglobalD helemD hclosedD hgammaDef hb0Color hb1Color hexact _
       hb0Support hb1Support h hhends heffect hhColor a0 ha0ends a1 ha1ends hb0u0 hu0h hhu1 hu1b1
       hu0Support hhSupport hu1Support hpath hlength startNeighborUnique
+  have startDegree : @SimpleGraph.degree _ H (Sum.inl v) (Fintype.ofFinite _) ≤ 1 := by
+    rw [← SimpleGraph.card_neighborFinset_eq_degree]
+    apply Finset.card_le_one_iff.mpr
+    intro x y hx hy
+    exact (startNeighborUnique x (by simpa only [SimpleGraph.mem_neighborFinset,
+      SimpleGraph.mem_neighborSet] using hx)).trans
+      (startNeighborUnique y (by simpa only [SimpleGraph.mem_neighborFinset,
+        SimpleGraph.mem_neighborSet] using hy)).symm
   have forwardAdjacent : ∀ i j : ℕ, i ≤ p.length → j ≤ p.length →
       i < j → H.Adj (p.getVert i) (p.getVert j) → i + 1 = j := by
     intro i j hi hj hijlt hij
-    by_contra hnot
-    have hgap : i + 1 < j := by omega
-    by_cases hi0 : i = 0
-    · subst i
-      have heq := startNeighborUnique (p.getVert j) (by simpa using hij)
-      have hinj := hpath.getVert_injOn (by omega : 1 ≤ p.length) hj heq.symm
-      omega
-    · have hprev := p.adj_getVert_succ (i := i - 1) (by omega)
-      have hnext := p.adj_getVert_succ (i := i) (by omega)
-      have hprev' : H.Adj (p.getVert i) (p.getVert (i - 1)) := by
-        have hieq : i - 1 + 1 = i := by omega
-        simpa [H, hieq] using hprev.symm
-      have hnext' : H.Adj (p.getVert i) (p.getVert (i + 1)) := by
-        simpa [H] using hnext
-      have hprevNext : p.getVert (i - 1) ≠ p.getVert (i + 1) := by
-        intro heq
-        have hindex := hpath.getVert_injOn
-          (by omega : i - 1 ≤ p.length) (by omega : i + 1 ≤ p.length) heq
-        omega
-      have hprevJ : p.getVert (i - 1) ≠ p.getVert j := by
-        intro heq
-        have hindex := hpath.getVert_injOn (by omega : i - 1 ≤ p.length) hj heq
-        omega
-      have hnextJ : p.getVert (i + 1) ≠ p.getVert j := by
-        intro heq
-        have hindex := hpath.getVert_injOn (by omega : i + 1 ≤ p.length) hj heq
-        omega
-      let S : Finset (Sum V E) :=
-        {p.getVert (i - 1), p.getVert (i + 1), p.getVert j}
-      have hScard : S.card = 3 := by
-        simp [S, hprevNext, hprevJ, hnextJ]
-      have hSsub : ∀ x ∈ S, x ∈ H.neighborSet (p.getVert i) := by
-        intro x hx
-        simp only [S, Finset.mem_insert, Finset.mem_singleton] at hx
-        rcases hx with rfl | rfl | rfl
-        · simpa only [SimpleGraph.mem_neighborSet] using hprev'
-        · simpa only [SimpleGraph.mem_neighborSet] using hnext'
-        · simpa only [SimpleGraph.mem_neighborSet] using hij
-      let inclusion : {x // x ∈ S} → H.neighborSet (p.getVert i) :=
-        fun x => ⟨x.1, hSsub x.1 x.2⟩
-      have hinclusion : Function.Injective inclusion := by
-        intro x y hxy
-        apply Subtype.ext
-        exact congrArg (fun q : H.neighborSet (p.getVert i) => q.1) hxy
-      let : Fintype (H.neighborSet (p.getVert i)) := Fintype.ofFinite _
-      have hcard := Fintype.card_le_of_injective inclusion hinclusion
-      rw [Fintype.card_coe, hScard, SimpleGraph.card_neighborSet_eq_degree] at hcard
-      have hdegree := TwoColorIncidenceDegreeAtMostTwo G phiD gamma beta hproper
-        (p.getVert i)
-      have hdegree' : H.degree (p.getVert i) ≤ 2 := by
-        simpa only [H] using hdegree
-      omega
+    exact (degreeTwoPathAdjacentIndices p hpath
+      (TwoColorIncidenceDegreeAtMostTwo G phiD gamma beta hproper) startDegree
+      i j hi hj hijlt hij).symm
   have adjacentIndices : ∀ i j : ℕ, i ≤ p.length → j ≤ p.length →
       H.Adj (p.getVert i) (p.getVert j) →
         i + 1 = j ∨ j + 1 = i := by
