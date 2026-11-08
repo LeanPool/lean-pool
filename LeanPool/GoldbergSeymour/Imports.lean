@@ -302,6 +302,7 @@ public import LeanPool.GoldbergSeymour.HkuMissingStoredMonotone
 public import LeanPool.GoldbergSeymour.HkuParallelBoundaryStructure
 public import LeanPool.GoldbergSeymour.HkuTreeColorsControlled
 public import LeanPool.GoldbergSeymour.HkuUnsupportedVertexColors
+public import LeanPool.GoldbergSeymour.IncidencePathFacts
 public import LeanPool.GoldbergSeymour.Incident
 public import LeanPool.GoldbergSeymour.IncidentCore
 public import LeanPool.GoldbergSeymour.IncidentCoreChromaticIndex
@@ -343,6 +344,7 @@ public import LeanPool.GoldbergSeymour.LowerRoundProperties
 public import LeanPool.GoldbergSeymour.MathlibGraph
 public import LeanPool.GoldbergSeymour.MaximumDefectiveChoice
 public import LeanPool.GoldbergSeymour.MaximumDefectiveChoiceExists
+public import LeanPool.GoldbergSeymour.MaximumDefectiveChoiceTransport
 public import LeanPool.GoldbergSeymour.MaximumDegree
 public import LeanPool.GoldbergSeymour.MaximumDegreeRestrict
 public import LeanPool.GoldbergSeymour.MaximumProperty
@@ -378,6 +380,7 @@ public import LeanPool.GoldbergSeymour.OutsideKempeGoodHierarchy
 public import LeanPool.GoldbergSeymour.OutsideKempeRecoloring
 public import LeanPool.GoldbergSeymour.OutsideKempeRecoloringStable
 public import LeanPool.GoldbergSeymour.OutsidePrefixBranch
+public import LeanPool.GoldbergSeymour.OutsideSwapExitPath
 public import LeanPool.GoldbergSeymour.OutsideSwapPrefixEffects
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwap
 public import LeanPool.GoldbergSeymour.OutsideTreeColorSwapStable
@@ -710,6 +713,7 @@ public import LeanPool.GoldbergSeymour.TashkinovSeriesStepAppend
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStepPrefix
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
+public import LeanPool.GoldbergSeymour.TashkinovStepDataAgreement
 public import LeanPool.GoldbergSeymour.TashkinovStoredColors
 public import LeanPool.GoldbergSeymour.TashkinovStoredColorsAppend
 public import LeanPool.GoldbergSeymour.TashkinovStoredColorsCardinality

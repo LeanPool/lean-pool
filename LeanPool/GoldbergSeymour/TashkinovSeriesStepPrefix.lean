@@ -5,6 +5,9 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovStepDataAgreement
+public import LeanPool.GoldbergSeymour.MaximumDefectiveChoiceTransport
+
 public import LeanPool.GoldbergSeymour.TashkinovSeriesPrefixFacts
 
 public import LeanPool.GoldbergSeymour.TashkinovSeriesDataPrefix
@@ -254,46 +257,7 @@ private abbrev helperPrefixCert1166Conditions.{u_1, u_2} : Prop :=
         idx'.succ.succ = data.tree idx.succ.succ) (hstored : TashkinovStoredColors
         (TashkinovSeriesDataPrefix m hm data) idx'.castSucc = TashkinovStoredColors data
         idx.castSucc),
-    let choice' : MaximumDefectiveChoice G e0 ((TashkinovSeriesDataPrefix m hm data).tree
-        idx'.succ.castSucc) (TashkinovStoredColors (TashkinovSeriesDataPrefix m hm data)
-        idx'.castSucc) ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc) := {
-        selected := choice.selected, selectedProper := choice.selectedProper, selectedOneUncolored
-        := choice.selectedOneUncolored, selectedStable := ((Eq.symm (id (congrArg (fun (_a :
-        TreeSequence G e0) ↦ StableColoring _a (TashkinovStoredColors (TashkinovSeriesDataPrefix m
-        hm data) idx'.castSucc) ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc)
-        choice.selected) htree))) ▸ ((Eq.symm (id (congrArg (fun (_a : Finset (Fin k)) ↦
-        StableColoring (data.tree idx.succ.castSucc) _a ((TashkinovSeriesDataPrefix m hm
-        data).coloring idx'.castSucc) choice.selected) hstored))) ▸ ((Eq.symm (id (congrArg (fun
-        (_a : PartialEdgeColoring E k) ↦ StableColoring (data.tree idx.succ.castSucc)
-        (TashkinovStoredColors data idx.castSucc) _a choice.selected) hprev))) ▸
-        choice.selectedStable))), vertex := choice.vertex, vertexDefective := ((Eq.symm (id
-        (congrArg (fun (_a : TreeSequence G e0) ↦ DefectiveVertex G choice.selected
-        (TreeSequenceVertexSet _a) choice.vertex) htree))) ▸ choice.vertexDefective), maximal :=
-        ((Eq.symm (id (congrArg (fun (_a : TreeSequence G e0) ↦
-    ∀ (pi : PartialEdgeColoring E k) (w : V), IsProperEdgeColoring G pi → IsOneEdgeUncolored pi e0
-        → StableColoring _a (TashkinovStoredColors (TashkinovSeriesDataPrefix m hm data)
-        idx'.castSucc) ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc) pi →
-        DefectiveVertex G pi (TreeSequenceVertexSet _a) w → w = choice.vertex ∨ TreeVertexOrder _a
-        w choice.vertex) htree))) ▸ ((Eq.symm (id (congrArg (fun (_a : Finset (Fin k)) ↦
-    ∀ (pi : PartialEdgeColoring E k) (w : V), IsProperEdgeColoring G pi → IsOneEdgeUncolored pi e0
-        → StableColoring (data.tree idx.succ.castSucc) _a ((TashkinovSeriesDataPrefix m hm
-        data).coloring idx'.castSucc) pi → DefectiveVertex G pi (TreeSequenceVertexSet (data.tree
-        idx.succ.castSucc)) w → w = choice.vertex ∨ TreeVertexOrder (data.tree idx.succ.castSucc)
-        w choice.vertex) hstored))) ▸ ((Eq.symm (id (congrArg (fun (_a : PartialEdgeColoring E k)
-        ↦
-    ∀ (pi : PartialEdgeColoring E k) (w : V), IsProperEdgeColoring G pi → IsOneEdgeUncolored pi e0
-        → StableColoring (data.tree idx.succ.castSucc) (TashkinovStoredColors data idx.castSucc)
-        _a pi → DefectiveVertex G pi (TreeSequenceVertexSet (data.tree idx.succ.castSucc)) w → w =
-        choice.vertex ∨ TreeVertexOrder (data.tree idx.succ.castSucc) w choice.vertex) hprev))) ▸
-        choice.maximal))), edge := choice.edge, edgeDefective := ((Eq.symm (id (congrArg (fun (_a
-        : TreeSequence G e0) ↦ DefectiveEdge G choice.selected (TreeSequenceVertexSet _a)
-        choice.edge) htree))) ▸ choice.edgeDefective), edgeIncident := choice.edgeIncident,
-        otherEndpoint := choice.otherEndpoint, otherOutside := ((Eq.symm (id (congrArg (fun (_a :
-        TreeSequence G e0) ↦ choice.otherEndpoint ∉ TreeSequenceVertexSet _a) htree))) ▸
-        choice.otherOutside), edgeEnds := choice.edgeEnds, color := choice.color, edgeColor :=
-        choice.edgeColor : MaximumDefectiveChoice G e0 ((TashkinovSeriesDataPrefix m hm data).tree
-        idx'.succ.castSucc) (TashkinovStoredColors (TashkinovSeriesDataPrefix m hm data)
-        idx'.castSucc) ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc) };
+    let choice' := choice.transport htree hstored hprev;
     ∀ (_ : ¬Nonempty (RevisitingExtensionCertificate (TashkinovSeriesDataPrefix m hm data)
         idx'.castSucc)) (_ : ParallelExtensionColor (TashkinovSeriesDataPrefix m hm data)
         idx'.castSucc choice'.selected choice'.vertex gamma), TashkinovSeriesStep G k m e0 input
@@ -571,66 +535,10 @@ private theorem helper_branch_1369.{u_1, u_2} :
   have hidxSucc : idx.val + 1 ≤ m := by simpa using hj
   have hidx : idx.val < m := by omega
   let idx' : Fin m := ⟨idx.val, hidx⟩
-  have hprev : (TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc =
-      data.coloring idx.castSucc := by rfl
-  have htree : (TashkinovSeriesDataPrefix m hm data).tree
-      idx'.succ.castSucc = data.tree idx.succ.castSucc := by rfl
-  have htreeCurrent : (TashkinovSeriesDataPrefix m hm data).tree
-      idx'.castSucc.succ = data.tree idx.castSucc.succ := by rfl
-  have hcur : (TashkinovSeriesDataPrefix m hm data).coloring idx'.succ =
-      data.coloring idx.succ := by rfl
-  have hcurStored : (TashkinovSeriesDataPrefix m hm data).stored idx'.succ =
-      data.stored idx.succ := by rfl
-  have hcurEdges : (TashkinovSeriesDataPrefix m hm data).connectingEdges
-      idx'.succ = data.connectingEdges idx.succ := by rfl
-  have hcurKind : (TashkinovSeriesDataPrefix m hm data).kind idx'.succ =
-      data.kind idx.succ := by rfl
-  have hcurVertex : (TashkinovSeriesDataPrefix m hm data).chosenVertex
-      idx'.succ = data.chosenVertex idx.succ := by rfl
-  have hcurOutside : (TashkinovSeriesDataPrefix m hm data).outsideVertex
-      idx'.succ = data.outsideVertex idx.succ := by rfl
-  have hcurDelta : (TashkinovSeriesDataPrefix m hm data).delta idx'.succ =
-      data.delta idx.succ := by rfl
-  have hcurGamma : (TashkinovSeriesDataPrefix m hm data).gamma idx'.succ =
-      data.gamma idx.succ := by rfl
-  have hnext : (TashkinovSeriesDataPrefix m hm data).tree idx'.succ.succ =
-      data.tree idx.succ.succ := by rfl
-  have hstored : TashkinovStoredColors
-      (TashkinovSeriesDataPrefix m hm data) idx'.castSucc =
-      TashkinovStoredColors data idx.castSucc := by
-    exact TashkinovStoredColorsPrefix m hm data idx'.castSucc
-  let choice' : MaximumDefectiveChoice G e0
-      ((TashkinovSeriesDataPrefix m hm data).tree idx'.succ.castSucc)
-      (TashkinovStoredColors (TashkinovSeriesDataPrefix m hm data)
-        idx'.castSucc)
-      ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc) := by
-    exact {
-      selected := choice.selected
-      selectedProper := choice.selectedProper
-      selectedOneUncolored := choice.selectedOneUncolored
-      selectedStable := by
-        rw [htree, hstored, hprev]
-        exact choice.selectedStable
-      vertex := choice.vertex
-      vertexDefective := by
-        rw [htree]
-        exact choice.vertexDefective
-      maximal := by
-        rw [htree, hstored, hprev]
-        exact choice.maximal
-      edge := choice.edge
-      edgeDefective := by
-        rw [htree]
-        exact choice.edgeDefective
-      edgeIncident := choice.edgeIncident
-      otherEndpoint := choice.otherEndpoint
-      otherOutside := by
-        rw [htree]
-        exact choice.otherOutside
-      edgeEnds := choice.edgeEnds
-      color := choice.color
-      edgeColor := choice.edgeColor
-    }
+  rcases TashkinovStepDataAgreement.prefix data m hm idx hidx with
+    ⟨hprev, htree, htreeCurrent, hcur, hcurStored, hcurEdges, hcurKind,
+      hcurVertex, hcurOutside, hcurDelta, hcurGamma, hnext, hstored⟩
+  let choice' := choice.transport htree hstored hprev
   have noRevisiting' : ¬ Nonempty (RevisitingExtensionCertificate
       (TashkinovSeriesDataPrefix m hm data) idx'.castSucc) := by
     exact TashkinovSeriesDataPrefix.noRevisiting data m hm idx noRevisiting hidx
@@ -732,66 +640,10 @@ private theorem helper_branch_1414.{u_1, u_2} :
   have hidxSucc : idx.val + 1 ≤ m := by simpa using hj
   have hidx : idx.val < m := by omega
   let idx' : Fin m := ⟨idx.val, hidx⟩
-  have hprev : (TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc =
-      data.coloring idx.castSucc := by rfl
-  have htree : (TashkinovSeriesDataPrefix m hm data).tree
-      idx'.succ.castSucc = data.tree idx.succ.castSucc := by rfl
-  have htreeCurrent : (TashkinovSeriesDataPrefix m hm data).tree
-      idx'.castSucc.succ = data.tree idx.castSucc.succ := by rfl
-  have hcur : (TashkinovSeriesDataPrefix m hm data).coloring idx'.succ =
-      data.coloring idx.succ := by rfl
-  have hcurStored : (TashkinovSeriesDataPrefix m hm data).stored idx'.succ =
-      data.stored idx.succ := by rfl
-  have hcurEdges : (TashkinovSeriesDataPrefix m hm data).connectingEdges
-      idx'.succ = data.connectingEdges idx.succ := by rfl
-  have hcurKind : (TashkinovSeriesDataPrefix m hm data).kind idx'.succ =
-      data.kind idx.succ := by rfl
-  have hcurVertex : (TashkinovSeriesDataPrefix m hm data).chosenVertex
-      idx'.succ = data.chosenVertex idx.succ := by rfl
-  have hcurOutside : (TashkinovSeriesDataPrefix m hm data).outsideVertex
-      idx'.succ = data.outsideVertex idx.succ := by rfl
-  have hcurDelta : (TashkinovSeriesDataPrefix m hm data).delta idx'.succ =
-      data.delta idx.succ := by rfl
-  have hcurGamma : (TashkinovSeriesDataPrefix m hm data).gamma idx'.succ =
-      data.gamma idx.succ := by rfl
-  have hnext : (TashkinovSeriesDataPrefix m hm data).tree idx'.succ.succ =
-      data.tree idx.succ.succ := by rfl
-  have hstored : TashkinovStoredColors
-      (TashkinovSeriesDataPrefix m hm data) idx'.castSucc =
-      TashkinovStoredColors data idx.castSucc := by
-    exact TashkinovStoredColorsPrefix m hm data idx'.castSucc
-  let choice' : MaximumDefectiveChoice G e0
-      ((TashkinovSeriesDataPrefix m hm data).tree idx'.succ.castSucc)
-      (TashkinovStoredColors (TashkinovSeriesDataPrefix m hm data)
-        idx'.castSucc)
-      ((TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc) := by
-    exact {
-      selected := choice.selected
-      selectedProper := choice.selectedProper
-      selectedOneUncolored := choice.selectedOneUncolored
-      selectedStable := by
-        rw [htree, hstored, hprev]
-        exact choice.selectedStable
-      vertex := choice.vertex
-      vertexDefective := by
-        rw [htree]
-        exact choice.vertexDefective
-      maximal := by
-        rw [htree, hstored, hprev]
-        exact choice.maximal
-      edge := choice.edge
-      edgeDefective := by
-        rw [htree]
-        exact choice.edgeDefective
-      edgeIncident := choice.edgeIncident
-      otherEndpoint := choice.otherEndpoint
-      otherOutside := by
-        rw [htree]
-        exact choice.otherOutside
-      edgeEnds := choice.edgeEnds
-      color := choice.color
-      edgeColor := choice.edgeColor
-    }
+  rcases TashkinovStepDataAgreement.prefix data m hm idx hidx with
+    ⟨hprev, htree, htreeCurrent, hcur, hcurStored, hcurEdges, hcurKind,
+      hcurVertex, hcurOutside, hcurDelta, hcurGamma, hnext, hstored⟩
+  let choice' := choice.transport htree hstored hprev
   have noRevisiting' : ¬ Nonempty (RevisitingExtensionCertificate
       (TashkinovSeriesDataPrefix m hm data) idx'.castSucc) := by
     exact TashkinovSeriesDataPrefix.noRevisiting data m hm idx noRevisiting hidx
@@ -904,30 +756,9 @@ private theorem helper_branch_1559.{u_1, u_2} :
   have hidxSucc : idx.val + 1 ≤ m := by simpa using hj
   have hidx : idx.val < m := by omega
   let idx' : Fin m := ⟨idx.val, hidx⟩
-  have hprev : (TashkinovSeriesDataPrefix m hm data).coloring idx'.castSucc =
-      data.coloring idx.castSucc := by rfl
-  have htree : (TashkinovSeriesDataPrefix m hm data).tree
-      idx'.succ.castSucc = data.tree idx.succ.castSucc := by rfl
-  have htreeCurrent : (TashkinovSeriesDataPrefix m hm data).tree
-      idx'.castSucc.succ = data.tree idx.castSucc.succ := by rfl
-  have hcur : (TashkinovSeriesDataPrefix m hm data).coloring idx'.succ =
-      data.coloring idx.succ := by rfl
-  have hcurStored : (TashkinovSeriesDataPrefix m hm data).stored idx'.succ =
-      data.stored idx.succ := by rfl
-  have hcurEdges : (TashkinovSeriesDataPrefix m hm data).connectingEdges
-      idx'.succ = data.connectingEdges idx.succ := by rfl
-  have hcurKind : (TashkinovSeriesDataPrefix m hm data).kind idx'.succ =
-      data.kind idx.succ := by rfl
-  have hcurVertex : (TashkinovSeriesDataPrefix m hm data).chosenVertex
-      idx'.succ = data.chosenVertex idx.succ := by rfl
-  have hcurOutside : (TashkinovSeriesDataPrefix m hm data).outsideVertex
-      idx'.succ = data.outsideVertex idx.succ := by rfl
-  have hcurDelta : (TashkinovSeriesDataPrefix m hm data).delta idx'.succ =
-      data.delta idx.succ := by rfl
-  have hcurGamma : (TashkinovSeriesDataPrefix m hm data).gamma idx'.succ =
-      data.gamma idx.succ := by rfl
-  have hnext : (TashkinovSeriesDataPrefix m hm data).tree idx'.succ.succ =
-      data.tree idx.succ.succ := by rfl
+  rcases TashkinovStepDataAgreement.prefix data m hm idx hidx with
+    ⟨hprev, htree, htreeCurrent, hcur, hcurStored, hcurEdges, hcurKind,
+      hcurVertex, hcurOutside, hcurDelta, hcurGamma, hnext, hstored⟩
   have haLe : available.earlier.val ≤ idx.val := by
     simpa using available.earlierAtMost
   have haBound : available.earlier.val < m + 1 := by omega
