@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.ExtendedTashkinovLadderRestriction
+
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 
@@ -1255,10 +1257,9 @@ theorem helper_hLowerPartV_179.{u_1, u_2} :
     exact hvertexA
   have hfirstLower : ETTFirstAppearanceIndex lower x hxLower ≤
       aLower.val + 1 := by
-    exact @helper_hfirstLower_539 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal) (@hvFinal)
-        (@hfirstUpper) (@hfirstPositive) (@r) (@a) (@har) (@x) (@hxFinal) (@hfirstR) (@lower)
-        (@hround) (@htrees) (@hxLower)
+    rw [ETTFirstAppearanceIndex.eq_of_series_restriction ett lower (by omega)
+      (by simp only [hround]) htrees x hxLower hxFinal (by omega)]
+    exact hfirstR
   have hpack := hlower lower (by omega) (by omega) hlowerMP
   have hresult := hpack.2.2.2.2.1 sigmaR hproperR honeR hstableLower
     deltaR hdefectiveLower x hboundaryLower hearlierLower hxLower aLower xa

@@ -62,6 +62,7 @@ public import LeanPool.GoldbergSeymour.ConditionNineTransport
 public import LeanPool.GoldbergSeymour.CopyAugmentationPrefix
 public import LeanPool.GoldbergSeymour.CoreClosurePresentation
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTree
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeAssembly
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTerminalData
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTrans
 public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeTransTrees
@@ -105,6 +106,7 @@ public import LeanPool.GoldbergSeymour.EligibleIndexBoundPreparation
 public import LeanPool.GoldbergSeymour.EligibleOddSet
 public import LeanPool.GoldbergSeymour.EmptyCommonMissingLocation
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovColoringSequence
+public import LeanPool.GoldbergSeymour.ExtendedTashkinovLadderRestriction
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovLadderStage
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovRungNumber
 public import LeanPool.GoldbergSeymour.ExtendedTashkinovTree
@@ -692,6 +694,7 @@ public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
 public import LeanPool.GoldbergSeymour.TashkinovClosure
 public import LeanPool.GoldbergSeymour.TashkinovClosureExists
 public import LeanPool.GoldbergSeymour.TashkinovClosureOfRouteAndAllMissingClosed
+public import LeanPool.GoldbergSeymour.TashkinovClosureTransport
 public import LeanPool.GoldbergSeymour.TashkinovClosureVertexSetUnique
 public import LeanPool.GoldbergSeymour.TashkinovExtensionKind
 public import LeanPool.GoldbergSeymour.TashkinovHierarchy

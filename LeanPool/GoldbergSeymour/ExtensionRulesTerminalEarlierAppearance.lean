@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.ExtendedTashkinovLadderRestriction
+
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 public import LeanPool.GoldbergSeymour.BoundaryColorVertex
@@ -378,172 +380,6 @@ private abbrev helperBranch409Conditions.{u_1, u_2} : Prop :=
         hvFinal (TashkinovStoredColors ett.series.data j) (ett.series.data.coloring j) sigma ∧ ((0
         : ℕ) < (↑j : ℕ) → StableColoring (ett.series.data.tree j.castSucc) (TashkinovStoredColors
         ett.series.data j) (ett.series.data.coloring j) sigma)
-
-private theorem helper_ladderStageEq_191.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (v : V) (_ : v ∈ TreeSequenceVertexSet T) (_ : Fin (ett.rounds + (1
-        : ℕ))) {T' : TreeSequence G e0} {generating' : PartialEdgeColoring E k} (lower :
-        ExtendedTashkinovTree G k e0 input T' generating') (s : ℕ) (hs : lower.rounds = s) (hsn :
-        s < ett.rounds), T' = ett.series.data.tree (⟨s + (1 : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ))) → (
-    ∀ (i : Fin (lower.rounds + (2 : ℕ))), lower.series.data.tree i = ett.series.data.tree
-        (Fin.castLE (Decidable.byContradiction fun (a : ¬lower.rounds + (2 : ℕ) ≤ ett.rounds + (2
-        : ℕ)) ↦
-    by omega
-    ) i)) →
-    ∀ (i : Fin (lower.rounds + (1 : ℕ))), ExtendedTashkinovLadderStage lower i =
-        ExtendedTashkinovLadderStage ett (⟨(↑i : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett v hvFinal j T' generating' lower s hs hsn
-      hdisplay htree i
-  refine Fin.lastCases ?_ (fun a => ?_) i
-  · have hdisplay' : T' = ett.series.data.tree
-        ⟨lower.rounds + 1, by omega⟩ := by
-      simpa [hs] using hdisplay
-    rw [show ExtendedTashkinovLadderStage lower
-        (Fin.last lower.rounds) = T' by
-      unfold ExtendedTashkinovLadderStage
-      exact Fin.lastCases_last]
-    have hidx : (⟨(Fin.last lower.rounds).val, by omega⟩ :
-        Fin (ett.rounds + 1)) =
-        (⟨lower.rounds, by omega⟩ : Fin ett.rounds).castSucc := by
-      apply Fin.ext
-      simp
-    rw [hidx]
-    rw [show ExtendedTashkinovLadderStage ett
-        (⟨lower.rounds, by omega⟩ : Fin ett.rounds).castSucc =
-        ett.series.data.tree
-          (⟨lower.rounds, by omega⟩ : Fin ett.rounds).succ.castSucc by
-      unfold ExtendedTashkinovLadderStage
-      exact @Fin.lastCases_castSucc ett.rounds
-        (fun _ : Fin (ett.rounds + 1) => TreeSequence G e0) T
-        (fun j => ett.series.data.tree j.succ.castSucc)
-        (⟨lower.rounds, by omega⟩ : Fin ett.rounds)]
-    exact hdisplay'.trans (congrArg ett.series.data.tree (by
-      apply Fin.ext
-      simp))
-  · rw [show ExtendedTashkinovLadderStage lower a.castSucc =
-        lower.series.data.tree a.succ.castSucc by
-      unfold ExtendedTashkinovLadderStage
-      exact @Fin.lastCases_castSucc lower.rounds
-        (fun _ : Fin (lower.rounds + 1) => TreeSequence G e0) T'
-        (fun j => lower.series.data.tree j.succ.castSucc) a]
-    have hidx : (⟨(a.castSucc).val, by omega⟩ : Fin (ett.rounds + 1)) =
-        (⟨a.val, by omega⟩ : Fin ett.rounds).castSucc := by
-      apply Fin.ext
-      rfl
-    rw [hidx]
-    rw [show ExtendedTashkinovLadderStage ett
-        (⟨a.val, by omega⟩ : Fin ett.rounds).castSucc =
-        ett.series.data.tree
-          (⟨a.val, by omega⟩ : Fin ett.rounds).succ.castSucc by
-      unfold ExtendedTashkinovLadderStage
-      exact @Fin.lastCases_castSucc ett.rounds
-        (fun _ : Fin (ett.rounds + 1) => TreeSequence G e0) T
-        (fun j => ett.series.data.tree j.succ.castSucc)
-        (⟨a.val, by omega⟩ : Fin ett.rounds)]
-    exact (htree a.succ.castSucc).trans (congrArg ett.series.data.tree (by
-      apply Fin.ext
-      rfl))
-
-private theorem helper_firstAppearanceEq_252.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (v : V) (_ : v ∈ TreeSequenceVertexSet T) (_ : Fin (ett.rounds + (1
-        : ℕ))) (sigma : PartialEdgeColoring E k) (_ : IsProperEdgeColoring G sigma) (_ :
-        IsOneEdgeUncolored sigma e0),
-    let _ : DecidableEq V := Classical.decEq V;
-    ∀ (_ : (
-    ∀ {T' : TreeSequence G e0} {generating' : PartialEdgeColoring E k} (lower :
-        ExtendedTashkinovTree G k e0 input T' generating') (s : ℕ) (hs : lower.rounds = s) (hsn :
-        s < ett.rounds) (_ : T' = ett.series.data.tree (⟨s + (1 : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) (_ : (
-    ∀ (i : Fin (lower.rounds + (2 : ℕ))), lower.series.data.tree i = ett.series.data.tree
-        (Fin.castLE (Decidable.byContradiction fun (a : ¬lower.rounds + (2 : ℕ) ≤ ett.rounds + (2
-        : ℕ)) ↦
-    by omega
-    ) i))) (i : Fin (lower.rounds + (1 : ℕ))), ExtendedTashkinovLadderStage lower i =
-        ExtendedTashkinovLadderStage ett (⟨(↑i : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (1 : ℕ))))) {T' : TreeSequence G e0}
-        {generating' : PartialEdgeColoring E k} (lower : ExtendedTashkinovTree G k e0 input T'
-        generating') (s : ℕ) (hs : lower.rounds = s) (hsn : s < ett.rounds) (_ : T' =
-        ett.series.data.tree (⟨s + (1 : ℕ),
-    by omega
-    ⟩ : Fin (ett.rounds + (2 : ℕ)))) (_ : (
-    ∀ (i : Fin (lower.rounds + (2 : ℕ))), lower.series.data.tree i = ett.series.data.tree
-        (Fin.castLE (Decidable.byContradiction fun (a : ¬lower.rounds + (2 : ℕ) ≤ ett.rounds + (2
-        : ℕ)) ↦
-    by omega
-    ) i))) (x : V) (hxLower : x ∈ TreeSequenceVertexSet T') (hxFinal : x ∈ TreeSequenceVertexSet
-        T) (_ : ETTFirstAppearanceIndex ett x hxFinal ≤ s), ETTFirstAppearanceIndex lower x
-        hxLower = ETTFirstAppearanceIndex ett x hxFinal := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett v hvFinal j sigma _ _ this ladderStageEq T'
-      generating' lower s hs hsn hdisplay htree x hxLower hxFinal hbound
-  have hladders := ladderStageEq lower s hs hsn hdisplay htree
-  unfold ETTFirstAppearanceIndex at hbound ⊢
-  dsimp at hbound ⊢
-  let lowerCandidates : Finset (Fin (lower.rounds + 1)) :=
-    Finset.univ.filter fun i =>
-      x ∈ TreeSequenceVertexSet (ExtendedTashkinovLadderStage lower i)
-  let fullCandidates : Finset (Fin (ett.rounds + 1)) :=
-    Finset.univ.filter fun i =>
-      x ∈ TreeSequenceVertexSet (ExtendedTashkinovLadderStage ett i)
-  have hlowerNonempty : lowerCandidates.Nonempty := by
-    refine ⟨Fin.last lower.rounds, ?_⟩
-    simp only [lowerCandidates, Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [show ExtendedTashkinovLadderStage lower
-        (Fin.last lower.rounds) = T' by
-      unfold ExtendedTashkinovLadderStage
-      exact Fin.lastCases_last]
-    exact hxLower
-  have hfullNonempty : fullCandidates.Nonempty := by
-    refine ⟨Fin.last ett.rounds, ?_⟩
-    simp only [fullCandidates, Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [show ExtendedTashkinovLadderStage ett
-        (Fin.last ett.rounds) = T by
-      unfold ExtendedTashkinovLadderStage
-      exact Fin.lastCases_last]
-    exact hxFinal
-  let ml := lowerCandidates.min' hlowerNonempty
-  let mf := fullCandidates.min' hfullNonempty
-  have hmfBound : mf.val < lower.rounds + 1 := by
-    have hb : mf.val + 1 ≤ s := by
-      dsimp [mf]
-      convert hbound using 1
-    omega
-  let mfLower : Fin (lower.rounds + 1) := ⟨mf.val, hmfBound⟩
-  have hmfMem : mfLower ∈ lowerCandidates := by
-    simp only [lowerCandidates, Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [hladders mfLower]
-    have hmem := Finset.min'_mem fullCandidates hfullNonempty
-    simpa [fullCandidates, mfLower] using hmem
-  have hmlMemFull : (⟨ml.val, by omega⟩ : Fin (ett.rounds + 1)) ∈
-      fullCandidates := by
-    simp only [fullCandidates, Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [← hladders ml]
-    exact (Finset.mem_filter.mp
-      (Finset.min'_mem lowerCandidates hlowerNonempty)).2
-  have hleOne := Finset.min'_le lowerCandidates mfLower hmfMem
-  have hleTwo := Finset.min'_le fullCandidates
-    (⟨ml.val, by omega⟩ : Fin (ett.rounds + 1)) hmlMemFull
-  have hvals : ml.val = mf.val := by
-    apply le_antisymm
-    · exact Fin.le_iff_val_le_val.mp hleOne
-    · exact Fin.le_iff_val_le_val.mp hleTwo
-  change (lowerCandidates.min' _).val + 1 =
-    (fullCandidates.min' _).val + 1
-  simpa [ml, mf] using congrArg (fun z : ℕ => z + 1) hvals
 
 private theorem helper_retainedOrder_612.{u_1, u_2} :
     open scoped Classical in
@@ -1637,12 +1473,17 @@ theorem ExtensionRulesTerminalEarlierAppearance {V E : Type*}
       apply B.vertex_injective
       exact hjw.trans ((hvertices iw).trans hiw).symm
     exact ⟨iu, iw, hiu, hiw, by rw [hjuEq, hjwEq] at hjlt; simpa using hjlt⟩
-  have ladderStageEq :=
-    @helper_ladderStageEq_191 V E inferInstance inferInstance inferInstance G k e0 input T
-        generating ett v hvFinal j
-  have firstAppearanceEq :=
-    @helper_firstAppearanceEq_252 V E inferInstance inferInstance inferInstance G k e0
-        input T generating ett v hvFinal j sigma (by assumption) (by assumption) ladderStageEq
+  have firstAppearanceEq {T' : TreeSequence G e0} {generating' : PartialEdgeColoring E k}
+      (lower : ExtendedTashkinovTree G k e0 input T' generating') (s : ℕ)
+      (hs : lower.rounds = s) (hsn : s < ett.rounds)
+      (hdisplay : T' = ett.series.data.tree ⟨s + 1, by omega⟩)
+      (htree : ∀ i : Fin (lower.rounds + 2), lower.series.data.tree i =
+        ett.series.data.tree (Fin.castLE (by omega) i))
+      (x : V) (hxLower : x ∈ TreeSequenceVertexSet T') (hxFinal : x ∈ TreeSequenceVertexSet T)
+      (hbound : ETTFirstAppearanceIndex ett x hxFinal ≤ s) :
+      ETTFirstAppearanceIndex lower x hxLower = ETTFirstAppearanceIndex ett x hxFinal := by
+    exact ETTFirstAppearanceIndex.eq_of_series_restriction ett lower (by omega)
+      (by simpa only [hs] using hdisplay) htree x hxLower hxFinal (by omega)
   let p : Fin ett.rounds := ⟨j.val, by omega⟩
   have hpj : p.castSucc = j := by
     apply Fin.ext

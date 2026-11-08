@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.CorrespondingExtendedTashkinovTreeAssembly
+
 public import LeanPool.GoldbergSeymour.TashkinovSeriesStability
 
 public import LeanPool.GoldbergSeymour.SharedFacts.TerminalRebuildTransport
@@ -3030,28 +3032,16 @@ private theorem helper_continuation_4951.{u_1, u_2} :
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
       (@Tstar) (@closureTree) (@hqSucc) (@choice) (@hroundOne) (@prefixInput) (@zeroPrefix)
       (@happendTree) (@extendedSeries) (@hextendedData) (@hroundsEq) (@castSeriesTree)
-  have hseriesColorProperties := finalSeries.coloringProperties
   have hseriesStable := TashkinovSeriesData.stabilityOfOneRound
     ett.series.data finalSeries.data.coloring hroundOne
     (by rw [hfinalColor]; exact hsigmaStable)
-  let replacementETT := @helperReplacementETT3160 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@sigma)
-      (@Tstar) (@hTnTstar) (@hstrict) (@closureTree) (@hTstarClosure) (@prefixInput)
-      (@extendedSeries) (@hroundsEq) (@hfinalTree) (@hpenultimateTree) (@hfinalColor)
-  refine ⟨{
-    replacementInput := prefixInput
-    replacementSeries := finalSeries
-    replacementETT := replacementETT
-    rungAgreement := rfl
-    seriesPresentation := by dsimp [replacementETT]; rfl
-    finalGeneratingColoring := hfinalColor.symm
-    ladderTreesAgree := hseriesTreeAgree
-    storedColorsAgree := fun i => (hseriesDataAgree i).1
-    connectingEdgesAgree := fun i => (hseriesDataAgree i).2.1
-    extensionKindsAgree := fun i => (hseriesDataAgree i).2.2
-    replacementProper := fun i => (hseriesColorProperties i).1
-    replacementOneUncolored := fun i => (hseriesColorProperties i).2
-    replacementStable := hseriesStable }⟩
+  have penultimate : finalSeries.data.tree (Fin.last ett.rounds).castSucc =
+      ett.series.data.tree (Fin.last ett.rounds).castSucc := hpenultimateTree
+  have terminal : finalSeries.data.tree (Fin.last (ett.rounds + 1)) = closureTree := hfinalTree
+  exact ⟨CorrespondingExtendedTashkinovTree.ofSeries ett finalSeries
+    (by rw [penultimate]; exact hTnTstar) (by rw [penultimate]; exact hstrict)
+    (by rw [terminal]; exact hTstarClosure)
+    hfinalColor.symm hseriesTreeAgree hseriesDataAgree hseriesStable⟩
 
 theorem helper_branch_11555.{u_1, u_2} :
     helperBranch11555Conditions.{u_1, u_2} := by
@@ -3379,29 +3369,16 @@ private theorem helper_continuation_7494.{u_1, u_2} :
       (@Tstar) (@closureTree) (@hqSucc) (@gamma) (@choice) (@sigmaPrev) (@u) (@p) (@hroundOne)
       (@prefixInput) (@zeroPrefix) (@happendTree) (@extendedSeries) (@hextendedData) (@hroundsEq)
       (@castSeriesTree)
-  have hseriesColorProperties := finalSeries.coloringProperties
   have hseriesStable := TashkinovSeriesData.stabilityOfOneRound
     ett.series.data finalSeries.data.coloring hroundOne
     (by rw [hfinalColor]; exact hsigmaStable)
-  let replacementETT := @helperReplacementETT4947 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-      (@Tstar) (@hTnTstar) (@hstrict) (@closureTree) (@hTstarClosure) (@gamma) (@choice)
-      (@sigmaPrev) (@u) (@p) (@prefixInput) (@extendedSeries) (@hroundsEq) (@hfinalTree)
-      (@hpenultimateTree) (@hfinalColor)
-  refine ⟨{
-    replacementInput := prefixInput
-    replacementSeries := finalSeries
-    replacementETT := replacementETT
-    rungAgreement := rfl
-    seriesPresentation := by dsimp [replacementETT]; rfl
-    finalGeneratingColoring := hfinalColor.symm
-    ladderTreesAgree := hseriesTreeAgree
-    storedColorsAgree := fun i => (hseriesDataAgree i).1
-    connectingEdgesAgree := fun i => (hseriesDataAgree i).2.1
-    extensionKindsAgree := fun i => (hseriesDataAgree i).2.2
-    replacementProper := fun i => (hseriesColorProperties i).1
-    replacementOneUncolored := fun i => (hseriesColorProperties i).2
-    replacementStable := hseriesStable }⟩
+  have penultimate : finalSeries.data.tree (Fin.last ett.rounds).castSucc =
+      ett.series.data.tree (Fin.last ett.rounds).castSucc := hpenultimateTree
+  have terminal : finalSeries.data.tree (Fin.last (ett.rounds + 1)) = closureTree := hfinalTree
+  exact ⟨CorrespondingExtendedTashkinovTree.ofSeries ett finalSeries
+    (by rw [penultimate]; exact hTnTstar) (by rw [penultimate]; exact hstrict)
+    (by rw [terminal]; exact hTstarClosure)
+    hfinalColor.symm hseriesTreeAgree hseriesDataAgree hseriesStable⟩
 
 theorem helper_branch_12554.{u_1, u_2} :
     helperBranch12554Conditions.{u_1, u_2} := by

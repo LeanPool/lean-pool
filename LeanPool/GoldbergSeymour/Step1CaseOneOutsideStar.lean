@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovClosureTransport
+
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTerminalRoute
 
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
@@ -244,75 +246,6 @@ private theorem helper_minusEq_668.{u_1, u_2} :
   unfold TreeColorSetMinusClosed TreeColorSetClosed
   rw [missingEq S hS]
   simp only [hb]
-
-private theorem helper_closureMu_658.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq V] [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ)
-      (e0 : E) (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0 input T phi)
-      (base : HierarchyBase ett phi) (beta : Fin k) (b₂ : V) (gamma : Fin k)
-      (sigma : PartialEdgeColoring E k) (i₁ i₂ : Fin (T.length + (1 : ℕ)))
-      (hiorder : (↑i₁ : ℕ) < (↑i₂ : ℕ)) (hspos : (1 : ℕ) ≤ (↑i₂ : ℕ) - (1 : ℕ)),
-    let Bminus : TreeSequence G e0 :=
-      TreeSequencePrefix T ((↑i₂ : ℕ) - (1 : ℕ)) hspos
-        (by
-          omega);
-    let mu : PartialEdgeColoring E k :=
-      TwoColorComponentSwap G sigma gamma beta (Sum.inl b₂);
-    (∀ (f : E), TreeIncidentEdge Bminus f → mu f = phi f) →
-    (∀ v ∈ TreeSequenceVertexSet Bminus, MissingColors G mu v = MissingColors G phi v) →
-    let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc;
-    (∀ (S : TreeSequence G e0) (i : Fin (S.length + (1 : ℕ))),
-        S.vertex i ∈ TreeSequenceVertexSet S) →
-    (ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE →
-        TreeSequenceVertexSet base.closure ⊆ TreeSequenceVertexSet Bminus) →
-    ett.series.data.kind (Fin.last ett.rounds) = some TashkinovExtensionKind.PE →
-    TashkinovClosure mu
-      (TreeSequencePrefix Tn (↑base.supportPosition : ℕ) base.supportPositive
-        (Nat.le_of_lt_succ base.supportPosition.isLt))
-      base.closure := by
-  classical
-  intro V E _ _ _ _ G k e0 input T phi ett base beta b₂ gamma sigma i₁ i₂ hiorder hspos Bminus mu
-      hfixed hmissingFixed Tn vertexMem closureVertices hp
-  have hc := (base.parallel hp).2.1
-  have sub := closureVertices hp
-  have transport {S : TreeSequence G e0}
-      (route : TashkinovAugmentationSequence phi S base.closure) :
-      TashkinovAugmentationSequence mu S base.closure := by
-    unfold TashkinovAugmentationSequence at route ⊢
-    induction route using Relation.ReflTransGen.head_induction_on with
-    | refl => exact Relation.ReflTransGen.refl
-    | @head S U step tail ih =>
-      have hUR := TashkinovAugmentationSequenceInitialSegment phi U base.closure tail
-      have hUV := TreeSequenceInitialSegmentVertexSetSubset hUR
-      obtain ⟨hlen, hSU, c, hcolor, hmiss⟩ := step
-      refine Relation.ReflTransGen.head ⟨hlen, hSU, c, ?_, ?_⟩ ih
-      · let j : Fin U.length := Fin.cast hlen.symm (Fin.last S.length)
-        obtain ⟨i, hi⟩ := U.attaches j
-        have hiB : TreeIncidentEdge Bminus (U.edge j) := by
-          refine ⟨U.vertex j.succ, sub (hUV (vertexMem _ _)), ?_⟩
-          change U.vertex j.succ ∈ G.ends (U.edge j)
-          rw [hi]; exact Sym2.mem_mk_left _ _
-        exact (hfixed (U.edge j) hiB).trans hcolor
-      · unfold TreeMissingColors at hmiss ⊢
-        obtain ⟨v, hv, hvc⟩ := Finset.mem_biUnion.mp hmiss
-        refine Finset.mem_biUnion.mpr ⟨v, hv, ?_⟩
-        rw [hmissingFixed v
-          (sub (hUV (TreeSequenceInitialSegmentVertexSetSubset hSU hv)))]
-        exact hvc
-  refine ⟨transport hc.1, ?_⟩
-  intro e c v he hv hcolor hmiss
-  have hb := he
-  simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and] at hb
-  obtain ⟨u, hu, w, hw, hends⟩ := hb
-  have hiB : TreeIncidentEdge Bminus e := by
-    refine ⟨u, sub hu, ?_⟩
-    change u ∈ G.ends e
-    rw [hends]; exact Sym2.mem_mk_left _ _
-  apply hc.2 he hv ((hfixed e hiB).symm.trans hcolor)
-  rw [← hmissingFixed v (sub hv)]
-  exact hmiss
 
 private theorem helper_strict_833.{u_1, u_2} :
     open scoped Classical in
@@ -672,10 +605,10 @@ private theorem helper_branch_366.{u_1, u_2} :
     helper_closureVertices_400 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@i₁) (@i₂)
         (@hiorder) (@hspos) (@coreToB)
   -- The closure need not be an ordered prefix of the core.
-  have closureMu :=
-    helper_closureMu_658 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@beta) (@b₂)
-        (@gamma) (@sigma) (@i₁) (@i₂) (@hiorder) (@hspos) (@hfixed) (@hmissingFixed) (@vertexMem)
-        (@closureVertices)
+  have closureMu (hp : ett.series.data.kind (Fin.last ett.rounds) =
+      some TashkinovExtensionKind.PE) :=
+    TashkinovClosure.transport_of_fixed hfixed hmissingFixed
+      (closureVertices hp) (base.parallel hp).2.1
   let pos : Fin ((newSeries.data.tree (Fin.last ett.rounds).castSucc).length + 1) :=
     Fin.cast (congrArg (fun S : TreeSequence G e0 => S.length + 1) htree.symm)
       base.supportPosition
