@@ -91,29 +91,11 @@ theorem ExtensionBaseClaim43TreeEdges {V E : Type*}
       change Tj.vertex earlier ∈ G.ends f
       rw [attachment]
       exact Sym2.mem_mk_right _ _
-    let H := TwoColorIncidenceGraph G (trace.coloring b.castSucc)
-      (trace.gamma b) (trace.delta b)
-    have activeColor : trace.coloring b.castSucc f = some (trace.gamma b) ∨
-        trace.coloring b.castSucc f = some (trace.delta b) := by
-      have edgeSupport : Sum.inr f ∈ H.support := by
-        apply SimpleGraph.mem_support_of_reachable
-          (G := H) (u := Sum.inr f) (v := Sum.inl (trace.support b))
-        · simp
-        · exact SimpleGraph.ConnectedComponent.eq.mp edgeMem
-      obtain ⟨neighbor, adjacency⟩ := H.mem_support.mp edgeSupport
-      cases neighbor with
-      | inl v => exact adjacency.2
-      | inr e => simp [H, TwoColorIncidenceGraph] at adjacency
     have endpointInComponent : ∀ v : V, Incident G v f →
         Sum.inl v ∈ TwoColorComponent G (trace.coloring b.castSucc)
           (trace.gamma b) (trace.delta b) (Sum.inl (trace.support b)) := by
       intro v incident
-      have adjacent : H.Adj (Sum.inl v) (Sum.inr f) := by
-        simp [H, TwoColorIncidenceGraph, incident, activeColor]
-      change H.connectedComponentMk (Sum.inl v) =
-        H.connectedComponentMk (Sum.inl (trace.support b))
-      exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-        adjacent).trans edgeMem
+      exact TwoColorComponent.vertex_mem_of_incident edgeMem incident
     have laterEq : Tj.vertex a.succ = trace.support b :=
       (exactIntersection (Tj.vertex a.succ) laterInTree).mp
         (endpointInComponent (Tj.vertex a.succ) laterIncident)

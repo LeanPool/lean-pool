@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.InternalEdges
 public import LeanPool.GoldbergSeymour.ScheideDefectiveNoCross
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Scheide Replacement Boundary Parity
@@ -109,92 +110,6 @@ private theorem helper_base_ne_block_156.{u_1, u_2} :
   have ha := a.isLt
   dsimp [qa, qb] at hq
   omega
-
-private theorem helper_hinternal_union_287.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))),
-    let X : Finset V := TreeSequenceVertexSet T;
-    let i : Fin C.s := D.gammaIndex d;
-    let U : Finset V := {C.blockVertex i (0 : Fin (2 : ℕ)), C.blockVertex i (1 : Fin (2 : ℕ))};
-    let Z : Finset V := X \ U;
-    let internal : Finset E := {e ∈ InternalEdges G Z | phi e = some (↑d : Fin k)}; (
-    ∀ (e : E), (G.ends e).toFinset.card = (2 : ℕ)) → (
-    ∀ ⦃e : E⦄, e ∈ internal →
-    ∀ ⦃f : E⦄, f ∈ internal → e ≠ f → Disjoint (G.ends e).toFinset (G.ends f).toFinset) →
-        (internal.biUnion fun (e : E) => (G.ends e).toFinset).card = (2 : ℕ) * internal.card := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d X i U Z internal hendcard hinternal_disjoint
-  as_aux_lemma =>
-  have aux : ∀ s : Finset E, s ⊆ internal →
-      (s.biUnion fun e => (G.ends e).toFinset).card = 2 * s.card := by
-    intro s hs
-    induction s using Finset.induction_on with
-    | empty => simp
-    | @insert e s hes ih =>
-      rw [Finset.biUnion_insert]
-      have hd : Disjoint (G.ends e).toFinset
-          (s.biUnion fun f => (G.ends f).toFinset) := by
-        rw [Finset.disjoint_left]
-        intro v hev hvs
-        obtain ⟨f, hf, hvf⟩ := Finset.mem_biUnion.mp hvs
-        have hh := hinternal_disjoint
-          (hs (Finset.mem_insert_self e s))
-          (hs (Finset.mem_insert_of_mem hf)) (by
-            intro heq
-            exact hes (by simpa [heq] using hf))
-        exact (Finset.disjoint_left.mp hh) hev hvf
-      rw [Finset.card_union_of_disjoint hd, hendcard]
-      rw [ih (fun x hx => hs (Finset.mem_insert_of_mem hx))]
-      rw [Finset.card_insert_of_notMem hes]
-      omega
-  exact aux internal (by intro e he; exact he)
-
-private theorem helper_hBunion_351.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))),
-    let X : Finset V := TreeSequenceVertexSet T;
-    let i : Fin C.s := D.gammaIndex d;
-    let U : Finset V := {C.blockVertex i (0 : Fin (2 : ℕ)), C.blockVertex i (1 : Fin (2 : ℕ))};
-    let Z : Finset V := X \ U;
-    let B : Finset E := {f ∈ BoundaryColorEdges G phi Z (↑d : Fin k) |
-    ∃ w ∉ X, Incident G w f}; (
-    ∀ e ∈ B, {v ∈ Z | Incident G v e}.card = (1 : ℕ)) → (
-    ∀ ⦃e : E⦄, e ∈ B →
-    ∀ ⦃f : E⦄, f ∈ B → e ≠ f → Disjoint ({v ∈ Z | Incident G v e}) ({v ∈ Z | Incident G v f})) →
-        (B.biUnion fun (e : E) => {v ∈ Z | Incident G v e}).card = B.card := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d X i U Z B hBfiber hBdisjoint
-  as_aux_lemma =>
-  have aux :
-    ∀ s : Finset E, s ⊆ B → (s.biUnion fun e => Z.filter (fun v => Incident G v e)).card = s.card
-  := by
-    intro s hs
-    induction s using Finset.induction_on with
-    | empty => simp
-    | @insert e s hes ih =>
-      rw [Finset.biUnion_insert]
-      have hd : Disjoint (Z.filter (fun v => Incident G v e))
-          (s.biUnion fun f => Z.filter (fun v => Incident G v f)) := by
-        rw [Finset.disjoint_left]
-        intro v hev hvs
-        obtain ⟨f, hf, hvf⟩ := Finset.mem_biUnion.mp hvs
-        exact (Finset.disjoint_left.mp
-          (hBdisjoint (hs (Finset.mem_insert_self e s))
-            (hs (Finset.mem_insert_of_mem hf)) (by
-              intro heq
-              exact hes (by simpa [heq] using hf)))) hev hvf
-      rw [Finset.card_union_of_disjoint hd,
-        hBfiber e (hs (Finset.mem_insert_self e s))]
-      rw [ih (fun x hx => hs (Finset.mem_insert_of_mem hx))]
-      rw [Finset.card_insert_of_notMem hes]
-      exact Nat.add_comm 1 s.card
-  exact aux B (by intro e he; exact he)
 
 private theorem helper_hpair_ne_287.{u_1, u_2} :
     open scoped Classical in
@@ -647,8 +562,8 @@ theorem ScheideReplacementBoundaryParity {V E : Type*}
   have hinternal_union :
       (internal.biUnion fun e => (G.ends e).toFinset).card =
         2 * internal.card := by
-    exact @helper_hinternal_union_287 V E inferInstance inferInstance inferInstance inferInstance
-        G k e0 phi T C D d hendcard hinternal_disjoint
+    rw [Finset.card_biUnion @hinternal_disjoint]
+    exact (Finset.sum_const_nat (fun edge _ => hendcard edge)).trans (Nat.mul_comm _ _)
   have hcover : ∀ v, v ∈ Z →
       v ∈ internal.biUnion (fun e => (G.ends e).toFinset) ∨
         v ∈ B.biUnion (fun e => Z.filter (fun w => Incident G w e)) := by
@@ -669,8 +584,8 @@ theorem ScheideReplacementBoundaryParity {V E : Type*}
   have hBunion :
       (B.biUnion fun e => Z.filter (fun v => Incident G v e)).card =
         B.card := by
-    exact @helper_hBunion_351 V E inferInstance inferInstance inferInstance inferInstance G k e0
-        phi T C D d hBfiber hBdisjoint
+    rw [Finset.card_biUnion @hBdisjoint]
+    simpa only [Nat.mul_one] using Finset.sum_const_nat hBfiber
   let A := internal.biUnion (fun e => (G.ends e).toFinset)
   let W := B.biUnion (fun e => Z.filter (fun v => Incident G v e))
   have hA : A ⊆ Z := by

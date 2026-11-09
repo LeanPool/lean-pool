@@ -162,35 +162,6 @@ private theorem helper_hcomponent_167.{u_1, u_2} :
       (by simp)
   exact (endpoint_only.2 y hyT).mp ypath
 
-private theorem helper_vertex_step_297.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input :
-    PartialEdgeColoring E k) (series : TashkinovSeries G k rounds e0 input) (_ : V) (i : Fin
-    rounds) (gamma : Fin k) (secondStable : PartialEdgeColoring E k) (choice :
-    MaximumDefectiveChoice G e0 (series.data.tree i.succ.castSucc) (TashkinovStoredColors
-    series.data i.castSucc) (series.data.coloring i.castSucc)) (a : V) (e : E), Incident G a e
-    → Sum.inr e ∈ TwoColorComponent G secondStable gamma choice.color (Sum.inl choice.vertex)
-    → Sum.inl a ∈ TwoColorComponent G secondStable gamma choice.color (Sum.inl choice.vertex) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series v i gamma secondStable choice a e hae hem
-  change (TwoColorIncidenceGraph G secondStable gamma choice.color).connectedComponentMk
-      (Sum.inl a) = _
-  have support : Sum.inr e ∈
-      (TwoColorIncidenceGraph G secondStable gamma choice.color).support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := TwoColorIncidenceGraph G secondStable gamma choice.color)
-      (u := Sum.inr e) (v := Sum.inl choice.vertex) (by simp)
-    exact SimpleGraph.ConnectedComponent.eq.mp hem
-  obtain ⟨r, hr⟩ := (TwoColorIncidenceGraph G secondStable gamma choice.color).mem_support.mp
-      support
-  have hcolors : secondStable e = some gamma ∨
-      secondStable e = some choice.color := by
-    cases r with
-    | inl a => exact hr.2
-    | inr r => simp [TwoColorIncidenceGraph] at hr
-  exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-    (by simp [TwoColorIncidenceGraph, hae, hcolors])).trans hem
-
 private theorem helper_branch_71.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
     [DecidableEq E] (G : LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input :
@@ -263,14 +234,12 @@ private theorem helper_branch_71.{u_1, u_2} :
     intro hyC
     exact hvneq (hcomponent x hx hyC).symm
   unfold MissingColors
-  have vertex_step := @helper_vertex_step_297 V E inferInstance inferInstance inferInstance G k
-      rounds e0 input series v i gamma secondStable choice
   have edge_out : ∀ e, Incident G x e →
       Sum.inr e ∉ TwoColorComponent G secondStable gamma choice.color
         (Sum.inl choice.vertex) := by
     intro e he hec
     apply hyout
-    exact vertex_step x e he hec
+    exact TwoColorComponent.vertex_mem_of_incident hec he
   ext c
   simp only [Finset.mem_sdiff, Finset.mem_univ, true_and]
   simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]

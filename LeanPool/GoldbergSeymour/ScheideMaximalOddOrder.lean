@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.ColorDegreeBounds
 
 public import LeanPool.GoldbergSeymour.ScheideMaximalElementaryClosed
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Scheide Maximal Odd Order
@@ -109,29 +110,10 @@ theorem ScheideMaximalOddOrder {V E : Type*}
     have hcf := (good_spec f).mp hf |>.1
     exact (hproper hef ⟨v, Sym2.mem_toFinset.mp hev, Sym2.mem_toFinset.mp hvf⟩
       (Finset.mem_filter.mp hce).2) (Finset.mem_filter.mp hcf).2
-  have union_card : (good.biUnion fun e => (G.ends e).toFinset).card = 2 * good.card := by
-    have aux : ∀ s : Finset E, s ⊆ good →
-        (s.biUnion fun e => (G.ends e).toFinset).card = 2 * s.card := by
-      intro s hs
-      induction s using Finset.induction_on with
-      | empty => simp
-      | @insert e s hes ih =>
-        rw [Finset.biUnion_insert]
-        have hd : Disjoint (G.ends e).toFinset
-            (s.biUnion fun f => (G.ends f).toFinset) := by
-          rw [Finset.disjoint_left]
-          intro v hev hvs
-          obtain ⟨f, hf, hvf⟩ := Finset.mem_biUnion.mp hvs
-          have hh := good_disjoint (hs (Finset.mem_insert_self e s))
-            (hs (Finset.mem_insert_of_mem hf)) (by
-              intro heq
-              exact hes (by simpa [heq] using hf))
-          exact (Finset.disjoint_left.mp hh) hev hvf
-        rw [Finset.card_union_of_disjoint hd, endpoint_card]
-        rw [ih (fun x hx => hs (Finset.mem_insert_of_mem hx))]
-        rw [Finset.card_insert_of_notMem hes]
-        omega
-    exact aux good (by intro e he; exact he)
+  have union_card : (good.biUnion fun edge => (G.ends edge).toFinset).card =
+      2 * good.card := by
+    rw [Finset.card_biUnion @good_disjoint]
+    exact (Finset.sum_const_nat (fun edge _ => endpoint_card edge)).trans (Nat.mul_comm _ _)
   have union_eq : good.biUnion (fun e => (G.ends e).toFinset) = Y := by
     ext v
     constructor

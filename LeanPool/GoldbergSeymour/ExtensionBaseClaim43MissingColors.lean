@@ -48,25 +48,7 @@ private theorem helper_edgeOutside_99.{u_1, u_2} :
   have endpoint : Sum.inl v ∈ TwoColorComponent G
       (trace.coloring a.castSucc) (trace.gamma a) (trace.delta a)
       (Sum.inl (trace.support a)) := by
-    let H := TwoColorIncidenceGraph G (trace.coloring a.castSucc)
-      (trace.gamma a) (trace.delta a)
-    have edgeSupport : Sum.inr f ∈ H.support := by
-      apply SimpleGraph.mem_support_of_reachable
-        (G := H) (u := Sum.inr f) (v := Sum.inl (trace.support a))
-      · simp
-      · exact SimpleGraph.ConnectedComponent.eq.mp hf
-    obtain ⟨x, hx⟩ := H.mem_support.mp edgeSupport
-    have active : trace.coloring a.castSucc f = some (trace.gamma a) ∨
-        trace.coloring a.castSucc f = some (trace.delta a) := by
-      cases x with
-      | inl x => exact hx.2
-      | inr x => simp [H, TwoColorIncidenceGraph] at hx
-    have adjacent : H.Adj (Sum.inl v) (Sum.inr f) := by
-      simp [H, TwoColorIncidenceGraph, hvf, active]
-    change H.connectedComponentMk (Sum.inl v) =
-      H.connectedComponentMk (Sum.inl (trace.support a))
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-      adjacent).trans hf
+    exact TwoColorComponent.vertex_mem_of_incident hf hvf
   exact hvSupport ((exactIntersection v hvCurrent).mp endpoint)
 
 private theorem helper_rootExchange_162.{u_1, u_2} :
@@ -97,27 +79,13 @@ private theorem helper_rootExchange_162.{u_1, u_2} :
     simpa [MissingColors] using deltaMissing
   have gammaPresent : gamma ∈ PresentColors G phi v := by
     obtain ⟨f, hf⟩ := pathComponent.2
-    let H := TwoColorIncidenceGraph G phi gamma delta
-    have rootSupport : Sum.inl v ∈ H.support := by
-      apply SimpleGraph.mem_support_of_reachable
-        (G := H) (u := Sum.inl v) (v := Sum.inr f)
-      · simp
-      · exact SimpleGraph.ConnectedComponent.eq.mp hf.symm
-    obtain ⟨x, hx⟩ := H.mem_support.mp rootSupport
-    cases x with
-    | inl x => simp [H, TwoColorIncidenceGraph] at hx
-    | inr e =>
-        have hxe : Incident G v e ∧
-            (phi e = some gamma ∨ phi e = some delta) := by
-          simpa [H, TwoColorIncidenceGraph] using hx
-        rcases hxe with ⟨hve, hcolor | hcolor⟩
-        · simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-            true_and]
-          exact ⟨e, hve, hcolor⟩
-        · exact (deltaNotPresent (by
-            simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-              true_and]
-            exact ⟨e, hve, hcolor⟩)).elim
+    obtain ⟨e, hve, hcolor | hcolor⟩ :=
+      TwoColorComponent.exists_colored_incident hf
+    · simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
+      exact ⟨e, hve, hcolor⟩
+    · exact (deltaNotPresent (by
+        simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
+        exact ⟨e, hve, hcolor⟩)).elim
   have gammaNeDelta : gamma ≠ delta := by
     intro h
     apply deltaNotPresent
@@ -289,29 +257,13 @@ private theorem helper_rootGammaPresent_371.{u_1, u_2} :
       PresentColors G (trace.coloring s.castSucc) (trace.support s) := by
     simpa [MissingColors] using deltaMissing
   obtain ⟨f, hf⟩ := pathComponent.2
-  let H := TwoColorIncidenceGraph G (trace.coloring s.castSucc)
-    (trace.gamma s) (trace.delta s)
-  have rootSupport : Sum.inl (trace.support s) ∈ H.support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := H) (u := Sum.inl (trace.support s)) (v := Sum.inr f)
-    · simp
-    · exact SimpleGraph.ConnectedComponent.eq.mp hf.symm
-  obtain ⟨x, hx⟩ := H.mem_support.mp rootSupport
-  cases x with
-  | inl x => simp [H, TwoColorIncidenceGraph] at hx
-  | inr e =>
-      have hxe : Incident G (trace.support s) e ∧
-          (trace.coloring s.castSucc e = some (trace.gamma s) ∨
-            trace.coloring s.castSucc e = some (trace.delta s)) := by
-        simpa [H, TwoColorIncidenceGraph] using hx
-      rcases hxe with ⟨hse, hcolor | hcolor⟩
-      · simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-          true_and]
-        exact ⟨e, hse, hcolor⟩
-      · exact (deltaNotPresent (by
-          simp only [PresentColors, Finset.mem_filter, Finset.mem_univ,
-            true_and]
-          exact ⟨e, hse, hcolor⟩)).elim
+  obtain ⟨e, hse, hcolor | hcolor⟩ :=
+    TwoColorComponent.exists_colored_incident hf
+  · simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
+    exact ⟨e, hse, hcolor⟩
+  · exact (deltaNotPresent (by
+      simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]
+      exact ⟨e, hse, hcolor⟩)).elim
 
 private theorem helper_offSupportInterval_409.{u_1, u_2} :
     open scoped Classical in

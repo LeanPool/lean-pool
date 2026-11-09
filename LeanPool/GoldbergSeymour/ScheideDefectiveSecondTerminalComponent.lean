@@ -399,22 +399,6 @@ private theorem helper_htreeEdges_565.{u_1, u_2} :
     ∀ (q : Fin T.length), Sum.inr (T.edge q) ∉ K := by
   classical
   intro V E _ _ _ _ G k e0 phi T C D d R X gamma gammaJ phi1 H1 K hKtree q hedge
-  have hreach : H1.Reachable (Sum.inl R.v1) (Sum.inr (T.edge q)) := by
-    apply SimpleGraph.ConnectedComponent.eq.mp
-    change H1.connectedComponentMk (Sum.inr (T.edge q)) =
-      H1.connectedComponentMk (Sum.inl R.v1) at hedge
-    exact hedge.symm
-  have hne : Sum.inl R.v1 ≠ Sum.inr (T.edge q) := by
-    intro h
-    cases h
-  have hsupp : Sum.inr (T.edge q) ∈ H1.support :=
-    SimpleGraph.mem_support_of_reachable hne.symm hreach.symm
-  obtain ⟨w, hw⟩ := H1.mem_support.mp hsupp
-  have hcolor : phi1 (T.edge q) = some gammaJ ∨
-      phi1 (T.edge q) = some d.1 := by
-    cases w with
-    | inl w => exact hw.2
-    | inr w => simp [H1, TwoColorIncidenceGraph] at hw
   obtain ⟨a, hends⟩ := T.attaches q
   let oldIndex : Fin (T.length + 1) :=
     Fin.castLT a (Nat.lt_trans a.isLt (Nat.succ_lt_succ q.isLt))
@@ -428,20 +412,10 @@ private theorem helper_htreeEdges_565.{u_1, u_2} :
     change oldVertex ∈ G.ends (T.edge q)
     rw [hends]
     simp [oldVertex, oldIndex]
-  have hnewAdj : H1.Adj (Sum.inl newVertex) (Sum.inr (T.edge q)) := by
-    simp [H1, TwoColorIncidenceGraph, hnewIncident, hcolor]
-  have holdAdj : H1.Adj (Sum.inl oldVertex) (Sum.inr (T.edge q)) := by
-    simp [H1, TwoColorIncidenceGraph, holdIncident, hcolor]
-  have hnewK : Sum.inl newVertex ∈ K := by
-    change H1.connectedComponentMk (Sum.inl newVertex) =
-      H1.connectedComponentMk (Sum.inl R.v1)
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-      hnewAdj).trans hedge
-  have holdK : Sum.inl oldVertex ∈ K := by
-    change H1.connectedComponentMk (Sum.inl oldVertex) =
-      H1.connectedComponentMk (Sum.inl R.v1)
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-      holdAdj).trans hedge
+  have hnewK : Sum.inl newVertex ∈ K :=
+    TwoColorComponent.vertex_mem_of_incident hedge hnewIncident
+  have holdK : Sum.inl oldVertex ∈ K :=
+    TwoColorComponent.vertex_mem_of_incident hedge holdIncident
   have hnewX : newVertex ∈ X := by
     simp [X, TreeSequenceVertexSet, newVertex]
   have holdX : oldVertex ∈ X := by

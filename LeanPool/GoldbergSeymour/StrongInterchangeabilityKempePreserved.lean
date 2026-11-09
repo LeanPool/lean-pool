@@ -298,15 +298,7 @@ private theorem helper_branch_124.{u_1, u_2} :
     intro hroot e heK
     by_cases hez : Sum.inr e = z
     · exact hroot e hez
-    · have hreach : (TwoColorIncidenceGraph G phi gammaT deltaT).Reachable
-          (Sum.inr e) z :=
-        SimpleGraph.ConnectedComponent.exact heK
-      have heSupport := SimpleGraph.mem_support_of_reachable hez hreach
-      rw [SimpleGraph.mem_support] at heSupport
-      obtain ⟨y, hey⟩ := heSupport
-      cases y with
-      | inl y => simpa [TwoColorIncidenceGraph] using hey.2
-      | inr f => simp [TwoColorIncidenceGraph] at hey
+    · exact TwoColorComponent.edge_colors_of_ne heK hez
   have finishActive := @helper_finishActive_227 V E inferInstance inferInstance inferInstance G k e0
       input T generating ett t vs vt gammaS deltaS gammaT deltaT phi z hpath r v hcycle havoid
       hcontained hsupportEq rt htComponents hvertexSubset

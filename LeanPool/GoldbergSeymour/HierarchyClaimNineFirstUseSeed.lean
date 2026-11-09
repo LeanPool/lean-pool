@@ -1436,24 +1436,8 @@ private theorem helper_branch_1162.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 input T phi ett base C ctx P hsituation alpha mu Cm H q A y gamma J Q
       hQoutsideA sigma t htVertex htIncident hQe
-  have hcolor : mu (A.edge t) = some gamma ∨ mu (A.edge t) = some alpha := by
-    have hsupp : Sum.inr (A.edge t) ∈ J.support := by
-      apply SimpleGraph.mem_support_of_reachable (G := J)
-        (u := Sum.inr (A.edge t)) (v := Sum.inl y) (by simp)
-      exact SimpleGraph.ConnectedComponent.eq.mp hQe
-    obtain ⟨z, hz⟩ := J.mem_support.mp hsupp
-    cases z with
-    | inl z => exact hz.2
-    | inr f => simp [J, TwoColorIncidenceGraph] at hz
-  have hadj : J.Adj (Sum.inl (A.vertex t.succ)) (Sum.inr (A.edge t)) := by
-    change Incident G (A.vertex t.succ) (A.edge t) ∧
-      (mu (A.edge t) = some gamma ∨ mu (A.edge t) = some alpha)
-    exact ⟨htIncident, hcolor⟩
-  have hvQ : Sum.inl (A.vertex t.succ) ∈ Q := by
-    change J.connectedComponentMk (Sum.inl (A.vertex t.succ)) =
-      J.connectedComponentMk (Sum.inl y)
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj).trans hQe
-  exact (hQoutsideA _ htVertex hvQ).elim
+  exact (hQoutsideA _ htVertex
+    (TwoColorComponent.vertex_mem_of_incident hQe htIncident)).elim
 
 private theorem helper_hfixedX_1181.{u_1, u_2} :
     open scoped Classical in

@@ -140,20 +140,9 @@ private theorem helper_qcolor_204.{u_1, u_2} :
   intro V E _ _ G k e0 phi T alpha gamma f h Q e he
   by_cases hef : e = f
   · exact Or.inl (by simpa [hef] using h.2)
-  · have hs : Sum.inr e ∈
-        (TwoColorIncidenceGraph G phi alpha gamma).support := by
-      apply SimpleGraph.mem_support_of_reachable
-      · intro hh
-        apply hef
-        exact Sum.inr.inj hh
-      · change (TwoColorIncidenceGraph G phi alpha gamma).connectedComponentMk
-          (Sum.inr e) = (TwoColorIncidenceGraph G phi alpha gamma).connectedComponentMk
-          (Sum.inr f) at he
-        exact SimpleGraph.ConnectedComponent.eq.mp he
-    obtain ⟨w, hw⟩ := (TwoColorIncidenceGraph G phi alpha gamma).mem_support.mp hs
-    cases w with
-    | inl v => exact hw.2
-    | inr e' => simp [TwoColorIncidenceGraph] at hw
+  · exact TwoColorComponent.edge_colors_of_ne he (by
+      intro hh
+      exact hef (Sum.inr.inj hh))
 
 private theorem helper_one_psi_274.{u_1, u_2} :
     open scoped Classical in

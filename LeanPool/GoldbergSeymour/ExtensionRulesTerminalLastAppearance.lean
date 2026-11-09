@@ -98,26 +98,10 @@ private theorem helper_swapFixed_204.{u_1, u_2} :
       TwoColorComponent G secondStable gamma choice.color
         (Sum.inl choice.vertex) := by
     intro hfComponent
-    let graph := TwoColorIncidenceGraph G secondStable gamma choice.color
-    have hfSupport : Sum.inr f ∈ graph.support := by
-      apply SimpleGraph.mem_support_of_reachable
-        (G := graph) (u := Sum.inr f) (v := Sum.inl choice.vertex)
-      · simp
-      · exact SimpleGraph.ConnectedComponent.eq.mp hfComponent
-    obtain ⟨z, hz⟩ := graph.mem_support.mp hfSupport
-    have hfColor : secondStable f = some gamma ∨
-        secondStable f = some choice.color := by
-      cases z with
-      | inl z => exact hz.2
-      | inr z => simp [graph, TwoColorIncidenceGraph] at hz
     have hwComponent : Sum.inl w ∈
         TwoColorComponent G secondStable gamma choice.color
-          (Sum.inl choice.vertex) := by
-      change graph.connectedComponentMk (Sum.inl w) =
-        graph.connectedComponentMk (Sum.inl choice.vertex)
-      exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-        (by simp [graph, TwoColorIncidenceGraph, hwf, hfColor])).trans
-          hfComponent
+          (Sum.inl choice.vertex) :=
+      TwoColorComponent.vertex_mem_of_incident hfComponent hwf
     exact beforeNe w hw
       ((componentOnly w (beforeInN w hw)).mp hwComponent)
   simp [TwoColorComponentSwap, hfOutside]

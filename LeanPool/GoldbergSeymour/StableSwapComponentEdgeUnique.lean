@@ -61,24 +61,10 @@ theorem StableColoring.componentIncidentEdgeUniqueOfSwap {V E : Type*} [Fintype 
     exact exchanged
   rcases candidateIncident with ⟨v, vInTree, vIncident⟩
   have candidateColor : sigma candidate = some alpha ∨ sigma candidate = some beta := by
-    have support : Sum.inr candidate ∈
-        (TwoColorIncidenceGraph G sigma alpha beta).support := by
-      apply SimpleGraph.mem_support_of_reachable
-        (G := TwoColorIncidenceGraph G sigma alpha beta)
-        (u := Sum.inr candidate) (v := Sum.inl vertex) (by simp)
-      exact SimpleGraph.ConnectedComponent.eq.mp candidateComponent
-    obtain ⟨neighbor, adjacent⟩ :=
-      (TwoColorIncidenceGraph G sigma alpha beta).mem_support.mp support
-    cases neighbor with
-    | inl v => exact adjacent.2
-    | inr e => simp [TwoColorIncidenceGraph] at adjacent
+    exact TwoColorComponent.edge_colors candidateComponent
   have vComponent : Sum.inl v ∈
-      TwoColorComponent G sigma alpha beta (Sum.inl vertex) := by
-    have adjacent : (TwoColorIncidenceGraph G sigma alpha beta).Adj
-        (Sum.inl v) (Sum.inr candidate) := by
-      simpa only [TwoColorIncidenceGraph] using And.intro vIncident candidateColor
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj adjacent).trans
-      candidateComponent
+      TwoColorComponent G sigma alpha beta (Sum.inl vertex) :=
+    TwoColorComponent.vertex_mem_of_incident candidateComponent vIncident
   have same := onlyRoot v vInTree vComponent
   subst v
   have neighbors := TwoColorMissingVertexNeighborsSubsingleton G sigma proper alpha beta

@@ -79,45 +79,6 @@ private theorem helper_htreeEdgeFixed_771.{u_1, u_2} :
   · exact hmuRho1PrimeFixed (TjPrime.vertex a.succ) hlaterSet hlu
       (TjPrime.edge a) hlaterInc
 
-private theorem helper_component_edge_avoids_763.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Finite E] [DecidableEq V]
-        {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} (Tn TjPrime : TreeSequence G e0) (rho1 :
-        PartialEdgeColoring E k) (gammaN deltaN beta : Fin k) (u : V),
-    let rho0 : PartialEdgeColoring E k := OutsideTreeColorSwap TjPrime rho1 beta deltaN;
-    ∀ (_ : (
-    ∀ w ∈ TreeSequenceVertexSet Tn ∪ TreeSequenceVertexSet TjPrime, Sum.inl w ∈ TwoColorComponent
-        G rho0 gammaN beta (Sum.inl u) ↔ w = u)),
-    ∀ w ∈ TreeSequenceVertexSet Tn ∪ TreeSequenceVertexSet TjPrime, w ≠ u →
-    ∀ (f : E), Incident G w f → Sum.inr f ∉ TwoColorComponent G rho0 gammaN beta (Sum.inl u) := by
-  classical
-  intro V E _ _ _ G k e0 Tn TjPrime rho1 gammaN deltaN beta u rho0 hcomponentIntersection w hw hwu f
-      hwf hf
-  let _ := Fintype.ofFinite V
-  let _ := Fintype.ofFinite E
-  let H := TwoColorIncidenceGraph G rho0 gammaN beta
-  have hfSupport : Sum.inr f ∈ H.support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := H) (u := Sum.inr f) (v := Sum.inl u)
-    · simp
-    · exact SimpleGraph.ConnectedComponent.eq.mp hf
-  obtain ⟨y, hy⟩ := H.mem_support.mp hfSupport
-  have hfColor : rho0 f = some gammaN ∨ rho0 f = some beta := by
-    cases y with
-    | inl y => exact hy.2
-    | inr y => simp [H, TwoColorIncidenceGraph] at hy
-  have hadj : H.Adj (Sum.inl w) (Sum.inr f) := by
-    simpa [H, TwoColorIncidenceGraph] using And.intro hwf hfColor
-  have hwComponent :
-      Sum.inl w ∈ TwoColorComponent G rho0 gammaN beta (Sum.inl u) := by
-    change H.connectedComponentMk (Sum.inl w) =
-      H.connectedComponentMk (Sum.inl u)
-    change H.connectedComponentMk (Sum.inr f) =
-      H.connectedComponentMk (Sum.inl u) at hf
-    exact
-      (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj).trans hf
-  exact hwu ((hcomponentIntersection w hw).mp hwComponent)
-
 private theorem helper_before_seed_817.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Finite V] {G :
     LooplessMultigraph V E} {k : ℕ} {e0 : E} (Tj seed : TreeSequence G e0) (rho1 :
@@ -209,8 +170,9 @@ private theorem helper_continuation_1155.{u_1, u_2} :
   have component_edge_avoids :
     ∀ (w : V), w ∈ TreeSequenceVertexSet Tn ∪ TreeSequenceVertexSet TjPrime → w ≠ u →
     ∀ f : E, Incident G w f → Sum.inr f ∉ TwoColorComponent G rho0 gammaN beta (Sum.inl u) := by
-    exact @helper_component_edge_avoids_763 V E inferInstance inferInstance inferInstance G k e0
-        Tn TjPrime rho1 gammaN deltaN beta u hcomponentIntersection
+    intro w hw hwu f hwf hf
+    exact hwu ((hcomponentIntersection w hw).mp
+      (TwoColorComponent.vertex_mem_of_incident hf hwf))
   have hmuRho0Fixed : ∀ (w : V),
       w ∈ TreeSequenceVertexSet Tn ∪ TreeSequenceVertexSet TjPrime →
       w ≠ u → ∀ f : E, Incident G w f → rho3 f = rho0 f := by

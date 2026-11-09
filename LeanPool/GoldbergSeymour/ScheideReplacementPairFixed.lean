@@ -157,31 +157,7 @@ theorem ScheideReplacementPairFixed {V E : Type*}
         d)) d.1 (Sum.inl (D.v0 d)) → Sum.inr e ∉ TwoColorComponent G phi (C.gamma (D.gammaIndex
         d)) d.1 (Sum.inl (D.v0 d)) := by
     intro u e hue huc hec
-    let H := TwoColorIncidenceGraph G phi (C.gamma (D.gammaIndex d)) d.1
-    have hr : H.Reachable (Sum.inl (D.v0 d)) (Sum.inr e) := by
-      apply SimpleGraph.ConnectedComponent.eq.mp
-      change H.connectedComponentMk (Sum.inr e) =
-        H.connectedComponentMk (Sum.inl (D.v0 d)) at hec
-      exact hec.symm
-    have hne : Sum.inl (D.v0 d) ≠ Sum.inr e := by
-      intro h
-      cases h
-    have hs : Sum.inr e ∈ H.support :=
-      SimpleGraph.mem_support_of_reachable hne.symm hr.symm
-    obtain ⟨w, hw⟩ := H.mem_support.mp hs
-    have hcol : phi e = some (C.gamma (D.gammaIndex d)) ∨
-        phi e = some d.1 := by
-      cases w with
-      | inl w =>
-          exact hw.2
-      | inr w =>
-          simp [H, TwoColorIncidenceGraph] at hw
-    have ha : H.Adj (Sum.inl u) (Sum.inr e) := by
-      simp [H, TwoColorIncidenceGraph, hue, hcol]
-    apply huc
-    change H.connectedComponentMk (Sum.inl u) =
-      H.connectedComponentMk (Sum.inl (D.v0 d))
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj ha).trans hec
+    exact huc (TwoColorComponent.vertex_mem_of_incident hec hue)
   unfold TwoColorComponentSwap
   rcases hf with hf | hf
   · simp [edge_not R.u1 f hf no_u1]

@@ -8,6 +8,7 @@ module
 public import LeanPool.GoldbergSeymour.ColoredVertexSetStronglyClosed
 public import LeanPool.GoldbergSeymour.DefectiveColors
 public import LeanPool.GoldbergSeymour.ScheideGlobalMaximumOrder
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Scheide Global Maximum Boundary Facts
@@ -66,29 +67,10 @@ private theorem ScheideGlobalMaximumBoundaryFacts_branch_90.{u_1, u_2} :
     exact (hproper hef ⟨v, Sym2.mem_toFinset.mp hev, Sym2.mem_toFinset.mp hvf⟩
       (hedge_mem e |>.mp (hgood e |>.mp he).1))
       (hedge_mem f |>.mp (hgood f |>.mp hf).1)
-  have hgood_union : (good.biUnion fun e => (G.ends e).toFinset).card = 2 * good.card := by
-    have aux : ∀ s : Finset E, s ⊆ good →
-        (s.biUnion fun e => (G.ends e).toFinset).card = 2 * s.card := by
-      intro s hs
-      induction s using Finset.induction_on with
-      | empty => simp
-      | @insert e s hes ih =>
-        rw [Finset.biUnion_insert]
-        have hd : Disjoint (G.ends e).toFinset
-            (s.biUnion fun f => (G.ends f).toFinset) := by
-          rw [Finset.disjoint_left]
-          intro v hev hvs
-          obtain ⟨f, hf, hvf⟩ := Finset.mem_biUnion.mp hvs
-          have hh := hgood_disjoint (hs (Finset.mem_insert_self e s))
-            (hs (Finset.mem_insert_of_mem hf)) (by
-              intro heq
-              exact hes (by simpa [heq] using hf))
-          exact (Finset.disjoint_left.mp hh) hev hvf
-        rw [Finset.card_union_of_disjoint hd, hendcard]
-        rw [ih (fun x hx => hs (Finset.mem_insert_of_mem hx))]
-        rw [Finset.card_insert_of_notMem hes]
-        omega
-    exact aux good (by intro e he; exact he)
+  have hgood_union : (good.biUnion fun edge => (G.ends edge).toFinset).card =
+      2 * good.card := by
+    rw [Finset.card_biUnion @hgood_disjoint]
+    exact (Finset.sum_const_nat (fun edge _ => hendcard edge)).trans (Nat.mul_comm _ _)
   have hgood_cover : ∀ v, v ∈ X →
       v ∈ good.biUnion (fun e => (G.ends e).toFinset) ∨
         v ∈ B.biUnion (fun e => X.filter (fun v => Incident G v e)) := by
@@ -148,28 +130,10 @@ private theorem ScheideGlobalMaximumBoundaryFacts_branch_90.{u_1, u_2} :
       (Finset.mem_filter.mp hvf).2⟩
       (Finset.mem_filter.mp he).2)
       (Finset.mem_filter.mp hf).2
-  have hb_union : (B.biUnion fun e => X.filter (fun v => Incident G v e)).card = B.card := by
-    have aux : ∀ s : Finset E, s ⊆ B →
-        (s.biUnion fun e => X.filter (fun v => Incident G v e)).card = s.card := by
-      intro s hs
-      induction s using Finset.induction_on with
-      | empty => simp
-      | @insert e s hes ih =>
-        rw [Finset.biUnion_insert]
-        have hd : Disjoint (X.filter (fun v => Incident G v e))
-            (s.biUnion fun f => X.filter (fun v => Incident G v f)) := by
-          rw [Finset.disjoint_left]
-          intro v hev hvs
-          obtain ⟨f, hf, hvf⟩ := Finset.mem_biUnion.mp hvs
-          exact (Finset.disjoint_left.mp (hb_disjoint (hs (Finset.mem_insert_self e s))
-            (hs (Finset.mem_insert_of_mem hf)) (by
-              intro heq
-              exact hes (by simpa [heq] using hf))) hev hvf)
-        rw [Finset.card_union_of_disjoint hd, hb_fiber e (hs (Finset.mem_insert_self e s))]
-        rw [ih (fun x hx => hs (Finset.mem_insert_of_mem hx))]
-        rw [Finset.card_insert_of_notMem hes]
-        exact Nat.add_comm 1 s.card
-    exact aux B (by intro e he; exact he)
+  have hb_union : (B.biUnion fun edge => X.filter (fun vertex => Incident G vertex edge)).card =
+      B.card := by
+    rw [Finset.card_biUnion @hb_disjoint]
+    simpa only [Nat.mul_one] using Finset.sum_const_nat hb_fiber
   let U := good.biUnion (fun e => (G.ends e).toFinset)
   let W := B.biUnion (fun e => X.filter (fun v => Incident G v e))
   have hU : U ⊆ X := by

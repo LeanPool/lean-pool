@@ -174,25 +174,7 @@ private theorem helper_edgeOutside_204.{u_1, u_2} :
   have endpoint : Sum.inl w ∈ TwoColorComponent G
       (trace.coloring a.castSucc) (trace.gamma a) (trace.delta a)
       (Sum.inl (trace.support a)) := by
-    let H := TwoColorIncidenceGraph G (trace.coloring a.castSucc)
-      (trace.gamma a) (trace.delta a)
-    have edgeSupport : Sum.inr f ∈ H.support := by
-      apply SimpleGraph.mem_support_of_reachable
-        (G := H) (u := Sum.inr f) (v := Sum.inl (trace.support a))
-      · simp
-      · exact SimpleGraph.ConnectedComponent.eq.mp hf
-    obtain ⟨x, hx⟩ := H.mem_support.mp edgeSupport
-    have active : trace.coloring a.castSucc f = some (trace.gamma a) ∨
-        trace.coloring a.castSucc f = some (trace.delta a) := by
-      cases x with
-      | inl x => exact hx.2
-      | inr x => simp [H, TwoColorIncidenceGraph] at hx
-    have adj : H.Adj (Sum.inl w) (Sum.inr f) := by
-      simp [H, TwoColorIncidenceGraph, hwf, active]
-    change H.connectedComponentMk (Sum.inl w) =
-      H.connectedComponentMk (Sum.inl (trace.support a))
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
-      adj).trans hf
+    exact TwoColorComponent.vertex_mem_of_incident hf hwf
   exact wne ((exactIntersection w win).mp endpoint)
 
 private theorem helper_preserved_244.{u_1, u_2} :

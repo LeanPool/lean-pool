@@ -13,6 +13,7 @@ public import LeanPool.GoldbergSeymour.ScheideDefectiveDeletedTreePair
 public import LeanPool.GoldbergSeymour.ScheideDefectiveNoCross
 public import LeanPool.GoldbergSeymour.ScheideDefectiveReturnData
 public import LeanPool.GoldbergSeymour.TwoColorComponentSwap
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Scheide Defective Third Boundary Edge
@@ -463,53 +464,6 @@ private theorem helper_base_ne_block_526.{u_1, u_2} :
   dsimp [qa, qb] at hq
   omega
 
-private theorem helper_hgood_union_640.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))) (R :
-        ScheideDefectiveReturnData G k e0 phi T C D d),
-    let X : Finset V := TreeSequenceVertexSet T;
-    let i : Fin C.s := D.gammaIndex d;
-    let j : Fin C.s := R.blockIndex;
-    let Ui : Finset V := {C.blockVertex i (0 : Fin (2 : ℕ)), C.blockVertex i (1 : Fin (2 : ℕ))};
-    let Uj : Finset V := {C.blockVertex j (0 : Fin (2 : ℕ)), C.blockVertex j (1 : Fin (2 : ℕ))};
-    let blocks : Finset V := Ui ∪ Uj;
-    let Z : Finset V := X \ blocks;
-    let edges : Finset E := {e : E | phi e = some (↑d : Fin k)};
-    let good : Finset E := {e ∈ edges |
-    ∀ (v : V), Incident G v e → v ∈ Z}; (
-    ∀ (e : E), (G.ends e).toFinset.card = (2 : ℕ)) → (
-    ∀ ⦃e : E⦄, e ∈ good →
-    ∀ ⦃f : E⦄, f ∈ good → e ≠ f → Disjoint (G.ends e).toFinset (G.ends f).toFinset) →
-        (good.biUnion fun (e : E) ↦ (G.ends e).toFinset).card = (2 : ℕ) * good.card := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R X i j Ui Uj blocks Z edges good hendcard hgood_disjoint
-  as_aux_lemma =>
-  have aux : ∀ s : Finset E, s ⊆ good →
-      (s.biUnion fun e => (G.ends e).toFinset).card = 2 * s.card := by
-    intro s hs
-    induction s using Finset.induction_on with
-    | empty => simp
-    | @insert e s hes ih =>
-      rw [Finset.biUnion_insert]
-      have hd : Disjoint (G.ends e).toFinset
-          (s.biUnion fun f => (G.ends f).toFinset) := by
-        rw [Finset.disjoint_left]
-        intro v hev hvs
-        obtain ⟨f, hf, hvf⟩ := Finset.mem_biUnion.mp hvs
-        have hh := hgood_disjoint (hs (Finset.mem_insert_self e s))
-          (hs (Finset.mem_insert_of_mem hf)) (by
-            intro heq
-            exact hes (by simpa [heq] using hf))
-        exact (Finset.disjoint_left.mp hh) hev hvf
-      rw [Finset.card_union_of_disjoint hd, hendcard]
-      rw [ih (fun x hx => hs (Finset.mem_insert_of_mem hx))]
-      rw [Finset.card_insert_of_notMem hes]
-      omega
-  exact aux good (by intro e he; exact he)
-
 private theorem helper_hgood_cover_665.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -563,53 +517,6 @@ private theorem helper_hgood_cover_665.{u_1, u_2} :
     exact Finset.mem_biUnion.mpr ⟨e,
       (Finset.mem_filter.mpr ⟨hbound, hve⟩),
       Finset.mem_filter.mpr ⟨hv, he⟩⟩
-
-private theorem helper_hb_union_724.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))) (R :
-        ScheideDefectiveReturnData G k e0 phi T C D d),
-    let X : Finset V := TreeSequenceVertexSet T;
-    let i : Fin C.s := D.gammaIndex d;
-    let j : Fin C.s := R.blockIndex;
-    let Ui : Finset V := {C.blockVertex i (0 : Fin (2 : ℕ)), C.blockVertex i (1 : Fin (2 : ℕ))};
-    let Uj : Finset V := {C.blockVertex j (0 : Fin (2 : ℕ)), C.blockVertex j (1 : Fin (2 : ℕ))};
-    let blocks : Finset V := Ui ∪ Uj;
-    let Z : Finset V := X \ blocks;
-    let B : Finset E := BoundaryColorEdges G phi Z (↑d : Fin k); (
-    ∀ e ∈ B, {v ∈ Z | Incident G v e}.card = (1 : ℕ)) → (
-    ∀ ⦃e : E⦄, e ∈ B →
-    ∀ ⦃f : E⦄, f ∈ B → e ≠ f → Disjoint ({v ∈ Z | Incident G v e}) ({v ∈ Z | Incident G v f})) →
-        (B.biUnion fun (e : E) ↦ {v ∈ Z | Incident G v e}).card = B.card := by
-  classical
-  intro V E _ _ _ _ G k e0 phi T C D d R X i j Ui Uj blocks Z B hb_fiber hb_disjoint
-  as_aux_lemma =>
-  have aux :
-    ∀ s : Finset E, s ⊆ B → (s.biUnion fun e => Z.filter (fun v => Incident G v e)).card = s.card
-  := by
-    intro s hs
-    induction s using Finset.induction_on with
-    | empty => simp
-    | @insert e s hes ih =>
-      rw [Finset.biUnion_insert]
-      have hd : Disjoint (Z.filter (fun v => Incident G v e))
-          (s.biUnion fun f => Z.filter (fun v => Incident G v f)) := by
-        rw [Finset.disjoint_left]
-        intro v hev hvs
-        obtain ⟨f, hf, hvf⟩ := Finset.mem_biUnion.mp hvs
-        exact (Finset.disjoint_left.mp
-          (hb_disjoint (hs (Finset.mem_insert_self e s))
-            (hs (Finset.mem_insert_of_mem hf)) (by
-              intro heq
-              exact hes (by simpa [heq] using hf)))) hev hvf
-      rw [Finset.card_union_of_disjoint hd,
-        hb_fiber e (hs (Finset.mem_insert_self e s))]
-      rw [ih (fun x hx => hs (Finset.mem_insert_of_mem hx))]
-      rw [Finset.card_insert_of_notMem hes]
-      exact Nat.add_comm 1 s.card
-  exact aux B (by intro e he; exact he)
 
 private theorem helper_hb_fiber_855.{u_1, u_2} :
     open scoped Classical in
@@ -1030,8 +937,10 @@ private theorem helper_continuation_919.{u_1, u_2} :
       ⟨v, Sym2.mem_toFinset.mp hev, Sym2.mem_toFinset.mp hvf⟩
       ((hedge_mem e).mp ((hgood e).mp he).1))
       ((hedge_mem f).mp ((hgood f).mp hf).1)
-  have hgood_union := @helper_hgood_union_640 V E inferInstance inferInstance inferInstance
-      inferInstance G k e0 phi T C D d R hendcard hgood_disjoint
+  have hgood_union : (good.biUnion fun edge => (G.ends edge).toFinset).card =
+      2 * good.card := by
+    rw [Finset.card_biUnion @hgood_disjoint]
+    exact (Finset.sum_const_nat (fun edge _ => hendcard edge)).trans (Nat.mul_comm _ _)
   have hgood_cover := @helper_hgood_cover_665 V E inferInstance inferInstance inferInstance
       inferInstance G k e0 phi T C D d R hpresent hedge_mem hgood
   have hb_fiber := @helper_hb_fiber_855 V E inferInstance inferInstance inferInstance inferInstance
@@ -1045,8 +954,10 @@ private theorem helper_continuation_919.{u_1, u_2} :
     exact (hproper hef ⟨v, (Finset.mem_filter.mp hev).2,
       (Finset.mem_filter.mp hvf).2⟩
       (Finset.mem_filter.mp he).2) (Finset.mem_filter.mp hf).2
-  have hb_union := @helper_hb_union_724 V E inferInstance inferInstance inferInstance inferInstance
-      G k e0 phi T C D d R hb_fiber hb_disjoint
+  have hb_union : (B.biUnion fun edge => Z.filter (fun vertex => Incident G vertex edge)).card =
+      B.card := by
+    rw [Finset.card_biUnion @hb_disjoint]
+    simpa only [Nat.mul_one] using Finset.sum_const_nat hb_fiber
   let A := good.biUnion (fun e => (G.ends e).toFinset)
   let W := B.biUnion (fun e => Z.filter (fun v => Incident G v e))
   have hA : A ⊆ Z := by

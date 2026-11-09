@@ -198,27 +198,11 @@ private theorem helper_hincident_309.{u_1, u_2} :
   intro V E _ _ _ G k rounds e0 input series q gamma secondStable secondStableProper choice
       secondStableRelation hmissing hcomponent g hgi hg
   rcases hgi with ⟨w, hw, hwg⟩
-  have hsupport : Sum.inr g ∈
-      (TwoColorIncidenceGraph G secondStable gamma choice.color).support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := TwoColorIncidenceGraph G secondStable gamma choice.color)
-      (u := Sum.inr g) (v := Sum.inl choice.vertex) (by simp)
-    exact SimpleGraph.ConnectedComponent.eq.mp hg
-  obtain ⟨r, hr⟩ :=
-    (TwoColorIncidenceGraph G secondStable gamma choice.color).mem_support.mp hsupport
-  have hcol : secondStable g = some gamma ∨ secondStable g = some choice.color := by
-    cases r with
-    | inl x => exact hr.2
-    | inr x => simp [TwoColorIncidenceGraph] at hr
+  have hcol : secondStable g = some gamma ∨ secondStable g = some choice.color :=
+    TwoColorComponent.edge_colors hg
   have hvertex : Sum.inl w ∈
-      TwoColorComponent G secondStable gamma choice.color
-        (Sum.inl choice.vertex) := by
-    change (TwoColorIncidenceGraph G secondStable gamma choice.color).connectedComponentMk
-        (Sum.inl w) = _
-    have hadj : (TwoColorIncidenceGraph G secondStable gamma choice.color).Adj
-        (Sum.inl w) (Sum.inr g) := by
-      simp [TwoColorIncidenceGraph, hwg, hcol]
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj).trans hg
+      TwoColorComponent G secondStable gamma choice.color (Sum.inl choice.vertex) :=
+    TwoColorComponent.vertex_mem_of_incident hg hwg
   have hw_eq : w = choice.vertex := hcomponent w hw hvertex
   subst w
   have hne : secondStable g = some gamma → False := by
@@ -273,27 +257,9 @@ private theorem helper_branch_364.{u_1, u_2} :
   intro V E _ _ _ G k rounds e0 input series q f c hfc hc gamma secondStable choice
       secondStableRelation currentColoring currentStored currentEdges currentKind currentDelta
       currentGamma hmissing hbase hincident v hv hvf hvertexComp hcomp
-  have hfcol : secondStable f = some gamma ∨
-      secondStable f = some choice.color := by
-    have hfsupport : Sum.inr f ∈
-        (TwoColorIncidenceGraph G secondStable gamma choice.color).support := by
-      apply SimpleGraph.mem_support_of_reachable
-        (G := TwoColorIncidenceGraph G secondStable gamma choice.color)
-        (u := Sum.inr f) (v := Sum.inl choice.vertex) (by simp)
-      exact SimpleGraph.ConnectedComponent.eq.mp hcomp
-    obtain ⟨r, hr⟩ :=
-      (TwoColorIncidenceGraph G secondStable gamma choice.color).mem_support.mp hfsupport
-    cases r with
-    | inl x => exact hr.2
-    | inr x => simp [TwoColorIncidenceGraph] at hr
   have hvcomp : Sum.inl v ∈ TwoColorComponent G secondStable gamma
-      choice.color (Sum.inl choice.vertex) := by
-    change (TwoColorIncidenceGraph G secondStable gamma choice.color).connectedComponentMk
-      (Sum.inl v) = _
-    have hadj : (TwoColorIncidenceGraph G secondStable gamma choice.color).Adj
-        (Sum.inl v) (Sum.inr f) := by
-      simp [TwoColorIncidenceGraph, hvf, hfcol]
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj hadj).trans hcomp
+      choice.color (Sum.inl choice.vertex) :=
+    TwoColorComponent.vertex_mem_of_incident hcomp hvf
   have hv_eq : v = choice.vertex := hvertexComp hvcomp
   have hfedge : f = choice.edge := hincident f ⟨v, hv, hvf⟩ hcomp
   subst f

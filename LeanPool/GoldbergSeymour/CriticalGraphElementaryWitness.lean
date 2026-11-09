@@ -12,6 +12,7 @@ public import LeanPool.GoldbergSeymour.Elementary
 public import LeanPool.GoldbergSeymour.IsOneEdgeUncolored
 public import LeanPool.GoldbergSeymour.MaximumDegree
 public import LeanPool.GoldbergSeymour.StronglyClosedWitnessElementary
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # egraph2
@@ -124,30 +125,10 @@ private theorem helper_continuation_315.{u_1, u_2} :
     have hce := (Finset.mem_filter.mp hee).2
     have hcf := (Finset.mem_filter.mp hef).2
     exact hp hne' ⟨z, Sym2.mem_toFinset.mp hze, Sym2.mem_toFinset.mp hzf⟩ hce hcf
-  have union_card : (edges.biUnion fun e => (G.ends e).toFinset).card =
+  have union_card : (edges.biUnion fun edge => (G.ends edge).toFinset).card =
       2 * edges.card := by
-    have aux : ∀ s : Finset E, s ⊆ edges →
-        (s.biUnion fun e => (G.ends e).toFinset).card = 2 * s.card := by
-      intro s hs
-      induction s using Finset.induction_on with
-      | empty => simp
-      | @insert e s hes ih =>
-          rw [Finset.biUnion_insert]
-          have hd : Disjoint (G.ends e).toFinset
-              (s.biUnion fun f => (G.ends f).toFinset) := by
-            rw [Finset.disjoint_left]
-            intro z hze hzs
-            obtain ⟨f, hf, hzf⟩ := Finset.mem_biUnion.mp hzs
-            have hh := edge_disjoint (hs (Finset.mem_insert_self e s))
-              (hs (Finset.mem_insert_of_mem hf)) (by
-                intro heq'
-                exact hes (by simpa [heq'] using hf))
-            exact (Finset.disjoint_left.mp hh) hze hzf
-          rw [Finset.card_union_of_disjoint hd, endpoint_card]
-          rw [ih (fun x hx => hs (Finset.mem_insert_of_mem hx))]
-          rw [Finset.card_insert_of_notMem hes]
-          omega
-    exact aux edges (by intro e hee; exact hee)
+    rw [Finset.card_biUnion @edge_disjoint]
+    exact (Finset.sum_const_nat (fun edge _ => endpoint_card edge)).trans (Nat.mul_comm _ _)
   have union_subset : edges.biUnion (fun e => (G.ends e).toFinset) ⊆
       (Finset.univ.erase u).erase v := by
     intro z hz
@@ -412,31 +393,10 @@ private theorem helper_matching_card_458.{u_1, u_2} :
       ⟨v, (Sym2.mem_toFinset.mp hev), (Sym2.mem_toFinset.mp hvf)⟩
     have hbad := hq hne hadj hce
     exact hbad hcf
-  have union_card_for : ∀ s : Finset E, s ⊆ edges →
-      (s.biUnion fun e => (G.ends e).toFinset).card = 2 * s.card := by
-    intro s hs
-    induction s using Finset.induction_on with
-    | empty => simp
-    | @insert e s hes ih =>
-      rw [Finset.biUnion_insert]
-      have hd : Disjoint (G.ends e).toFinset
-          (s.biUnion fun f => (G.ends f).toFinset) := by
-        rw [Finset.disjoint_left]
-        intro v hev hvs
-        obtain ⟨f, hf, hvf⟩ := Finset.mem_biUnion.mp hvs
-        have hde := disjoint_endpoints (hs (Finset.mem_insert_self e s))
-          (hs (Finset.mem_insert_of_mem hf)) (by
-            intro h
-            exact hes (by simpa [h] using hf))
-        exact (Finset.disjoint_left.mp hde) hev hvf
-      rw [Finset.card_union_of_disjoint hd, endpoint_card]
-      calc
-        2 + (s.biUnion fun e => (G.ends e).toFinset).card = 2 + 2 * s.card := by
-          rw [ih (fun x hx => hs (Finset.mem_insert_of_mem hx))]
-        _ = 2 * (insert e s).card := by
-          rw [Finset.card_insert_of_notMem hes]
-          omega
-  have union_card := union_card_for edges (by intro e hee; exact hee)
+  have union_card : (edges.biUnion fun edge => (G.ends edge).toFinset).card =
+      2 * edges.card := by
+    rw [Finset.card_biUnion @disjoint_endpoints]
+    exact (Finset.sum_const_nat (fun edge _ => endpoint_card edge)).trans (Nat.mul_comm _ _)
   have union_subset : edges.biUnion (fun e => (G.ends e).toFinset) ⊆ W := by
     intro v hv
     obtain ⟨e, hee, hev⟩ := Finset.mem_biUnion.mp hv

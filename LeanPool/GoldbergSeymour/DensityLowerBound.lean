@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoldbergSeymour.ChromaticIndexSpec
 public import LeanPool.GoldbergSeymour.DensityCeil
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Density Lower Bound
@@ -47,28 +48,10 @@ theorem DensityLowerBound {V E : Type*} [Fintype V] [Fintype E]
       have hadj : AdjacentEdges G e f := ⟨v, (Sym2.mem_toFinset.mp hev), (Sym2.mem_toFinset.mp hvf)⟩
       have hne := hproper hef hadj hce
       exact hne ((Finset.mem_filter.mp hf).2)
-    have union_card_for : ∀ s : Finset E, s ⊆ edges →
-        (s.biUnion fun e => (G.ends e).toFinset).card = 2 * s.card := by
-      intro s hs
-      induction s using Finset.induction_on with
-      | empty => simp
-      | @insert e s hes ih =>
-          rw [Finset.biUnion_insert]
-          have hd : Disjoint (G.ends e).toFinset (s.biUnion fun f => (G.ends f).toFinset) := by
-            rw [Finset.disjoint_left]
-            intro v hev hvs
-            obtain ⟨f, hf, hvf⟩ := Finset.mem_biUnion.mp hvs
-            have hde := disjoint_endpoints (hs (Finset.mem_insert_self e s))
-              (hs (Finset.mem_insert_of_mem hf)) (by intro h; exact hes (by simpa [h] using hf))
-            exact (Finset.disjoint_left.mp hde) hev hvf
-          rw [Finset.card_union_of_disjoint hd, endpoint_card]
-          calc
-            2 + (s.biUnion fun e => (G.ends e).toFinset).card = 2 + 2 * s.card := by
-              rw [ih (fun x hx => hs (Finset.mem_insert_of_mem hx))]
-            _ = 2 * (insert e s).card := by
-              rw [Finset.card_insert_of_notMem hes]
-              omega
-    have union_card := union_card_for edges (by intro e he; exact he)
+    have union_card : (edges.biUnion fun edge => (G.ends edge).toFinset).card =
+        2 * edges.card := by
+      rw [Finset.card_biUnion @disjoint_endpoints]
+      exact (Finset.sum_const_nat (fun edge _ => endpoint_card edge)).trans (Nat.mul_comm _ _)
     have union_subset : edges.biUnion (fun e => (G.ends e).toFinset) ⊆ U := by
       intro v hv
       obtain ⟨e, he, hev⟩ := Finset.mem_biUnion.mp hv

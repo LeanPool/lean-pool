@@ -133,24 +133,7 @@ theorem ScheideDefectiveSwitchEffect {V E : Type*}
   have vertex_step : ∀ v e, Incident G v e →
       Sum.inr e ∈ component → Sum.inl v ∈ component := by
     intro v e incident edge_member
-    change (TwoColorIncidenceGraph G phi alpha beta).connectedComponentMk
-        (Sum.inl v) =
-      (TwoColorIncidenceGraph G phi alpha beta).connectedComponentMk z
-    have edge_reach : (TwoColorIncidenceGraph G phi alpha beta).Adj
-        (Sum.inl v) (Sum.inr e) := by
-      have edge_colors : phi e = some alpha ∨ phi e = some beta := by
-        have support : Sum.inr e ∈
-            (TwoColorIncidenceGraph G phi alpha beta).support := by
-          apply SimpleGraph.mem_support_of_reachable (G := TwoColorIncidenceGraph G phi alpha beta)
-            (u := Sum.inr e) (v := z) (by simp [z])
-          exact SimpleGraph.ConnectedComponent.eq.mp edge_member
-        obtain ⟨q, hq⟩ := (TwoColorIncidenceGraph G phi alpha beta).mem_support.mp support
-        cases q with
-        | inl q => exact hq.2
-        | inr q => simp [TwoColorIncidenceGraph] at hq
-      simp [TwoColorIncidenceGraph, incident, edge_colors]
-    exact (SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj edge_reach).trans
-        edge_member
+    exact TwoColorComponent.vertex_mem_of_incident edge_member incident
   have outside_edge : ∀ v e, Incident G v e → Sum.inl v ∉ component →
       Sum.inr e ∉ component := by
     intro v e incident vertex_not edge_member
@@ -164,15 +147,7 @@ theorem ScheideDefectiveSwitchEffect {V E : Type*}
   have f0_unique : ∀ e, Incident G (D.v0 d) e → Sum.inr e ∈ component → e = D.f0 d := by
     intro e incident edge_member
     have color_choice : phi e = some alpha ∨ phi e = some beta := by
-      have support : Sum.inr e ∈
-          (TwoColorIncidenceGraph G phi alpha beta).support := by
-        apply SimpleGraph.mem_support_of_reachable (G := TwoColorIncidenceGraph G phi alpha beta)
-          (u := Sum.inr e) (v := z) (by simp [z])
-        exact SimpleGraph.ConnectedComponent.eq.mp edge_member
-      obtain ⟨q, hq⟩ := (TwoColorIncidenceGraph G phi alpha beta).mem_support.mp support
-      cases q with
-      | inl q => exact hq.2
-      | inr q => simp [TwoColorIncidenceGraph] at hq
+      exact TwoColorComponent.edge_colors edge_member
     rcases color_choice with ca | cb
     · exact False.elim (alpha_not_present (by
         simp only [PresentColors, Finset.mem_filter, Finset.mem_univ, true_and]

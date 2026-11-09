@@ -622,17 +622,7 @@ private theorem helper_continuation_891.{u_1, u_2} :
         choice.vertex) → secondStable e = some chosenGamma ∨ secondStable e = some choice.color
   := by
     intro e he
-    have hs : Sum.inr e ∈
-        (TwoColorIncidenceGraph G secondStable chosenGamma choice.color).support := by
-      apply SimpleGraph.mem_support_of_reachable
-        (G := TwoColorIncidenceGraph G secondStable chosenGamma choice.color)
-        (u := Sum.inr e) (v := Sum.inl choice.vertex) (by simp)
-      exact SimpleGraph.ConnectedComponent.eq.mp he
-    obtain ⟨r, hr⟩ :=
-      (TwoColorIncidenceGraph G secondStable chosenGamma choice.color).mem_support.mp hs
-    cases r with
-    | inl x => exact hr.2
-    | inr x => simp [TwoColorIncidenceGraph] at hr
+    exact TwoColorComponent.edge_colors he
   have hcurrentOutside :
     ∀ e, Sum.inr e ∉ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl
         choice.vertex) → series.data.coloring q.succ e = secondStable e := by

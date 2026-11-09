@@ -701,21 +701,9 @@ theorem ScheideEnlargedSwitchTransport {V E : Type*}
   have hcomponentColor : ∀ e : E, Sum.inr e ∈ K →
       ∃ c : Fin k, phi e = some c ∧ (c = D.alpha0 ∨ c = alpha) := by
     intro e he
-    change (TwoColorIncidenceGraph G phi D.alpha0 alpha).connectedComponentMk
-        (Sum.inr e) =
-      (TwoColorIncidenceGraph G phi D.alpha0 alpha).connectedComponentMk
-        (Sum.inl u) at he
-    have heq := (SimpleGraph.ConnectedComponent.mem_supp_iff _ _).mp he
-    have hp : (TwoColorIncidenceGraph G phi D.alpha0 alpha).Reachable
-        (Sum.inr e) (Sum.inl u) := SimpleGraph.ConnectedComponent.exact heq
-    have hsupp := SimpleGraph.mem_support_of_reachable (by simp) hp
-    obtain ⟨z, hz⟩ := ((TwoColorIncidenceGraph G phi D.alpha0 alpha).mem_support).mp hsupp
-    cases z with
-    | inl v =>
-      rcases hz.2 with h | h
-      · exact ⟨D.alpha0, h, Or.inl rfl⟩
-      · exact ⟨alpha, h, Or.inr rfl⟩
-    | inr g => simp [TwoColorIncidenceGraph] at hz
+    rcases TwoColorComponent.edge_colors he with h | h
+    · exact ⟨D.alpha0, h, Or.inl rfl⟩
+    · exact ⟨alpha, h, Or.inr rfl⟩
   exact @helper_continuation_593 V E inferInstance inferInstance inferInstance inferInstance G k
       e0 phi T C D R alpha d f w u hα hfends huX hwpair hfComp havoid hy0T h0gamma heffect
       hcomponent hQavoid hfD hmax hcomponentColor
