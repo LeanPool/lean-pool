@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBranches
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ParallelSupportClosureProperties
@@ -206,46 +207,7 @@ theorem ExtendedTashkinovTree.pe_chosenVertex_mem_previousTree
     (hqKind : ett.series.data.kind q.succ = some TashkinovExtensionKind.PE)
     (hqVertex : ett.series.data.chosenVertex q.succ = some v) :
     v ∈ TreeSequenceVertexSet (ett.series.data.tree q.succ.castSucc) := by
-  classical
-  generalize htarget : q.succ = target
-  cases ett.series.certified target with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    exact (Fin.succ_ne_zero q htarget).elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hbad : some TashkinovExtensionKind.SE =
-        some TashkinovExtensionKind.PE :=
-      currentKind.symm.trans (by simpa [htarget] using hqKind)
-    cases hbad
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hbad : some TashkinovExtensionKind.RE =
-        some TashkinovExtensionKind.PE :=
-      currentKind.symm.trans (by simpa [htarget] using hqKind)
-    cases hbad
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      chosenGamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have hi : i = q := by
-      apply Fin.ext
-      simpa using (congrArg Fin.val htarget).symm
-    subst i
-    have hvChoice : choice.vertex = v :=
-      Option.some.inj
-        (currentVertex.symm.trans (by simpa [htarget] using hqVertex))
-    simpa [hvChoice] using choice.vertexDefective.1
+  exact ett.series.pe_chosenVertex_mem_previousTree q.succ v hqKind hqVertex
 
 private theorem helper_hLowerElementary_277.{u_1, u_2} :
     open scoped Classical in

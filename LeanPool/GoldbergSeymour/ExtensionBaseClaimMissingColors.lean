@@ -163,78 +163,6 @@ private theorem helper_hfirst_227.{u_1, u_2} :
     rw [hzeq] at hz
     exact hz
 
-private theorem helper_hlastmem_268.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring
-    E k} {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett :
-    ExtendedTashkinovTree G k e0 input T generating) (terminalSupport : V) (hterminalSupport :
-    terminalSupport ∈ TreeSequenceVertexSet T) (_ q : Fin ett.rounds) (w : V) (p : ℕ) (indices
-    : Fin (p + (1 : ℕ)) → Fin ett.rounds), (ETTFirstAppearanceIndex ett terminalSupport
-    hterminalSupport ≤ (↑(indices (0 : Fin (p + (1 : ℕ)))) : ℕ) + (1 : ℕ) ∧
-    ett.series.data.kind (indices (0 : Fin (p + (1 : ℕ)))).succ = some
-    TashkinovExtensionKind.PE ∧ ∃ (v : V), ett.series.data.chosenVertex (indices (0 : Fin (p +
-    (1 : ℕ)))).succ = some v ∧ ∃ (x : v ∈ TreeSequenceVertexSet T), ETTFirstAppearanceIndex
-    ett v x ≤ ETTFirstAppearanceIndex ett terminalSupport hterminalSupport) ∧
-    ett.series.data.chosenVertex (indices (0 : Fin (p + (1 : ℕ)))).succ = some w → ∀ v0 ∈
-    TreeSequenceVertexSet T, w ∈ TreeSequenceVertexSet T → (↑(indices (Fin.last p)) : ℕ) ≤ (↑q
-    : ℕ) ∧ ett.series.data.kind (indices (Fin.last p)).succ = some TashkinovExtensionKind.PE ∧
-    ett.series.data.chosenVertex (indices (Fin.last p)).succ = some w → w ∈
-    TreeSequenceVertexSet (ett.series.data.tree (indices (Fin.last p)).succ.castSucc) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett terminalSupport hterminalSupport jSlot q w p
-      indices hclass0 v0 hchosenV0 hvT0 hlastinfo
-  have hcert := ett.series.certified (indices (Fin.last p)).succ
-  generalize targetEq : (indices (Fin.last p)).succ = target at hcert
-  cases hcert with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma initialClosure =>
-    have hv := congrArg Fin.val targetEq
-    simp at hv
-  | SE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hci : ci = indices (Fin.last p) := by
-      apply Fin.ext
-      have hv := congrArg Fin.val targetEq
-      simp at hv ⊢
-      omega
-    subst ci
-    rw [currentKind] at hlastinfo
-    simp at hlastinfo
-  | RE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hci : ci = indices (Fin.last p) := by
-      apply Fin.ext
-      have hv := congrArg Fin.val targetEq
-      simp at hv ⊢
-      omega
-    subst ci
-    rw [currentKind] at hlastinfo
-    simp at hlastinfo
-  | PE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper secondStableOneUncolored
-      secondStableRelation exitWitness currentColoring currentProper
-      currentOneUncolored currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma closedExtension orderedExtension
-      strictExtension =>
-    have hci : ci = indices (Fin.last p) := by
-      apply Fin.ext
-      have hv := congrArg Fin.val targetEq
-      simp at hv ⊢
-      omega
-    subst ci
-    have hvchoice : choice.vertex = w := by
-      apply Option.some.inj
-      exact currentVertex.symm.trans hlastinfo.2.2
-    rw [← hvchoice]
-    exact choice.vertexDefective.1
-
 private theorem helper_hlate_321.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
     [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring
@@ -414,9 +342,8 @@ private theorem helper_branch_144.{u_1, u_2} :
       generating ett terminalSupport hterminalSupport jSlot q hjle hqTerminal hjSlot w p indices
       hincreasing henumerates first_bound hclass0 hactive0' v0 hchosenV0 hvT0 hbound0 hstart
   have hlastinfo := (henumerates (indices (Fin.last p))).2 ⟨Fin.last p, rfl⟩
-  have hlastmem := @helper_hlastmem_268 V E inferInstance inferInstance inferInstance G k e0 input T
-      generating ett terminalSupport hterminalSupport jSlot q w p indices hclass0 v0 hchosenV0 hvT0
-      hlastinfo
+  have hlastmem := ett.series.pe_chosenVertex_mem_previousTree
+    (indices (Fin.last p)).succ w hlastinfo.2.1 hlastinfo.2.2
   have hlate := @helper_hlate_321 V E inferInstance inferInstance inferInstance G k e0 input T
       generating ett terminalSupport hterminalSupport jSlot q hjle hqTerminal hqKind hqVertex w hw p
       indices hincreasing henumerates deltaLast sigma hsigmaStable vertex_transfer next_segment

@@ -107,6 +107,44 @@ theorem TashkinovSeries.stageInitialSegmentOfLE {V E : Type*}
           (series.positiveStepInitialSegment index (by omega))
   exact nested last first positive ordered
 
+/-- A vertex chosen at a parallel-extension stage belongs to its previous tree. -/
+theorem TashkinovSeries.pe_chosenVertex_mem_previousTree {V E : Type*}
+    [Fintype V] [Fintype E] [DecidableEq E]
+    {G : LooplessMultigraph V E} {k rounds : ℕ} {e0 : E}
+    {input : PartialEdgeColoring E k} (series : TashkinovSeries G k rounds e0 input)
+    (index : Fin (rounds + 1)) (vertex : V)
+    (kind : series.data.kind index = some TashkinovExtensionKind.PE)
+    (chosen : series.data.chosenVertex index = some vertex) :
+    vertex ∈ TreeSequenceVertexSet (series.data.tree index.castSucc) := by
+  classical
+  cases series.certified index with
+  | initial triple seedLength initialColoring initialStored initialEdges
+      initialKind initialVertex initialOutside initialDelta initialGamma initialClosure =>
+    rw [initialKind] at kind
+    cases kind
+  | SE previous previousProper previousOneUncolored previousClosed
+      previousNotStronglyClosed noRevisiting choice seriesAlternative
+      currentColoring currentStored currentEdges currentKind currentVertex
+      currentOutside currentDelta currentGamma adjoined adjoinedExactly
+      closedExtension orderedExtension strictExtension =>
+    rw [currentKind] at kind
+    cases kind
+  | RE previous previousProper previousOneUncolored previousClosed
+      previousNotStronglyClosed available currentColoring currentStored
+      currentEdges currentKind currentVertex currentOutside currentDelta
+      currentGamma adjoined adjoinedExactly closedExtension orderedExtension strictExtension =>
+    rw [currentKind] at kind
+    cases kind
+  | PE previous previousProper previousOneUncolored previousClosed
+      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
+      actualGamma gammaRule secondStable secondStableProper
+      secondStableOneUncolored secondStableRelation exitWitness
+      currentColoring currentProper currentOneUncolored currentStored
+      currentEdges currentKind currentVertex currentOutside currentDelta
+      currentGamma closedExtension orderedExtension strictExtension =>
+    have equal : choice.vertex = vertex := Option.some.inj (currentVertex.symm.trans chosen)
+    simpa only [equal] using choice.vertexDefective.1
+
 end GoldbergSeymour
 
 end

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.HkuUnsupportedVertexColors
@@ -207,48 +208,6 @@ private theorem helper_pe_step_55.{u_1, u_2} :
       exact swap_gamma_no
     · rw [currentColoring]
       exact swap_delta_yes
-
-private theorem helper_support_tree_236.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (u : V) (j : Fin (rounds + (1 : ℕ))),
-        series.data.kind j = some TashkinovExtensionKind.PE → series.data.chosenVertex j = some u
-        → u ∈ TreeSequenceVertexSet (series.data.tree j.castSucc) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series u j hk hvj
-  cases series.certified j with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    rw [initialKind] at hk
-    simp at hk
-  | SE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    rw [currentKind] at hk
-    simp at hk
-  | RE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    rw [currentKind] at hk
-    simp at hk
-  | PE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      actualGamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    rw [currentKind] at hk
-    have hv : choice.vertex = u := by
-      rw [currentVertex] at hvj
-      simpa using Option.some.inj hvj
-    simpa [hv] using choice.vertexDefective.1
 
 private theorem helper_hlocal_273.{u_1, u_2} :
     open scoped Classical in
@@ -733,8 +692,11 @@ theorem SupportingPEStoredIntersection {V E : Type*}
   dsimp
   have pe_step := @helper_pe_step_55 V E inferInstance inferInstance inferInstance G k rounds e0
       input series
-  have support_tree := @helper_support_tree_236 V E inferInstance inferInstance inferInstance G k
-      rounds e0 input series u
+  have support_tree (index : Fin (rounds + 1))
+      (kind : series.data.kind index = some TashkinovExtensionKind.PE)
+      (chosen : series.data.chosenVertex index = some u) :
+      u ∈ TreeSequenceVertexSet (series.data.tree index.castSucc) :=
+    series.pe_chosenVertex_mem_previousTree index u kind chosen
   have hlocal := @helper_hlocal_273 V E inferInstance inferInstance inferInstance G k rounds p e0
       input series q u indices henumerates pe_step support_tree
   have transfer_tree : ∀ (T T' : TreeSequence G e0),

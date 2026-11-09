@@ -290,114 +290,6 @@ private theorem helper_boundaryEq_516.{u_1, u_2} :
           hfColor⟩)
     exact hfixed.symm.trans hfColor
 
-private theorem helper_hvsStage_628.{u_1, u_2} :
-    open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
-    [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring
-    E k} {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett :
-    ExtendedTashkinovTree G k e0 input T generating) (_ s t : Fin ett.rounds) (vs : V), (↑s :
-    ℕ) < (↑t : ℕ) → ett.series.data.chosenVertex s.succ = some vs → (ett.series :
-    TashkinovSeries G k ett.rounds e0 input).data.kind s.succ = some TashkinovExtensionKind.PE
-    → ∀ (gamma : Fin k) (rho : PartialEdgeColoring E k), IsProperEdgeColoring G ((ett.series :
-    TashkinovSeries G k ett.rounds e0 input).data.coloring t.castSucc) → IsOneEdgeUncolored
-    ((ett.series : TashkinovSeries G k ett.rounds e0 input).data.coloring t.castSucc) e0 →
-    ColoredVertexSetClosed G ((ett.series : TashkinovSeries G k ett.rounds e0
-    input).data.coloring t.castSucc) (TreeSequenceVertexSet ((ett.series : TashkinovSeries G k
-    ett.rounds e0 input).data.tree t.succ.castSucc)) → ¬ColoredVertexSetStronglyClosed G
-    ((ett.series : TashkinovSeries G k ett.rounds e0 input).data.coloring t.castSucc)
-    (TreeSequenceVertexSet ((ett.series : TashkinovSeries G k ett.rounds e0 input).data.tree
-    t.succ.castSucc)) → ¬Nonempty (RevisitingExtensionCertificate (ett.series :
-    TashkinovSeries G k ett.rounds e0 input).data t.castSucc) → ∀ (choice :
-    MaximumDefectiveChoice G e0 ((ett.series : TashkinovSeries G k ett.rounds e0
-    input).data.tree t.succ.castSucc) (TashkinovStoredColors (ett.series : TashkinovSeries G k
-    ett.rounds e0 input).data t.castSucc) ((ett.series : TashkinovSeries G k ett.rounds e0
-    input).data.coloring t.castSucc)), (∃ (rho : PartialEdgeColoring E k),
-    IsProperEdgeColoring G rho ∧ IsOneEdgeUncolored rho e0 ∧ StableColoring ((ett.series :
-    TashkinovSeries G k ett.rounds e0 input).data.tree t.succ.castSucc) (insert choice.color
-    (TashkinovStoredColors (ett.series : TashkinovSeries G k ett.rounds e0 input).data
-    t.castSucc)) choice.selected rho ∧ ¬Disjoint (MissingColors G rho choice.otherEndpoint)
-    (TreeMissingColors rho ((ett.series : TashkinovSeries G k ett.rounds e0 input).data.tree
-    t.succ.castSucc))) → (ett.series : TashkinovSeries G k ett.rounds e0 input).data.coloring
-    t.succ = TwoColorComponentSwap G rho gamma choice.color (Sum.inl choice.vertex) →
-    (ett.series : TashkinovSeries G k ett.rounds e0 input).data.stored t.succ = {choice.color,
-    gamma} → (ett.series : TashkinovSeries G k ett.rounds e0 input).data.connectingEdges
-    t.succ = {choice.edge} → (ett.series : TashkinovSeries G k ett.rounds e0 input).data.kind
-    t.succ = some TashkinovExtensionKind.PE → (ett.series : TashkinovSeries G k ett.rounds e0
-    input).data.chosenVertex t.succ = some choice.vertex → (ett.series : TashkinovSeries G k
-    ett.rounds e0 input).data.outsideVertex t.succ = some choice.otherEndpoint → (ett.series :
-    TashkinovSeries G k ett.rounds e0 input).data.delta t.succ = some choice.color →
-    (ett.series : TashkinovSeries G k ett.rounds e0 input).data.gamma t.succ = some gamma →
-    TashkinovClosure ((ett.series : TashkinovSeries G k ett.rounds e0 input).data.coloring
-    t.succ) ((ett.series : TashkinovSeries G k ett.rounds e0 input).data.tree t.succ.castSucc)
-    ((ett.series : TashkinovSeries G k ett.rounds e0 input).data.tree t.succ.succ) →
-    TreeSequenceInitialSegment ((ett.series : TashkinovSeries G k ett.rounds e0
-    input).data.tree t.succ.castSucc) ((ett.series : TashkinovSeries G k ett.rounds e0
-    input).data.tree t.succ.succ) → ((ett.series : TashkinovSeries G k ett.rounds e0
-    input).data.tree t.succ.castSucc).length < ((ett.series : TashkinovSeries G k ett.rounds
-    e0 input).data.tree t.succ.succ).length → vs ∈ TreeSequenceVertexSet ((ett.series :
-    TashkinovSeries G k ett.rounds e0 input).data.tree s.succ.castSucc) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett q s t vs hst hsVertex
-  set series : TashkinovSeries G k ett.rounds e0 input := ett.series
-  intro hsKind gamma rho previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails currentColoring
-      currentStored currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension
-  have stepS := series.certified s.succ
-  generalize hsZ : s.succ = z at stepS
-  cases stepS with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-      have hv := congrArg Fin.val hsZ
-      simp at hv
-  | SE r previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choiceS
-      seriesAlternative currentColoring currentStored currentEdges
-      currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension
-      orderedExtension strictExtension =>
-      have hrs : r = s := by
-        apply Fin.ext
-        have hv := congrArg Fin.val hsZ
-        simp at hv ⊢
-        omega
-      subst r
-      rw [currentKind] at hsKind
-      simp at hsKind
-  | RE r previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring
-      currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined
-      adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-      have hrs : r = s := by
-        apply Fin.ext
-        have hv := congrArg Fin.val hsZ
-        simp at hv ⊢
-        omega
-      subst r
-      rw [currentKind] at hsKind
-      simp at hsKind
-  | PE r previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choiceS
-      seriesAlternativeFails gammaS gammaRuleS secondStableS
-      secondStableProperS secondStableOneUncoloredS
-      secondStableRelationS exitWitnessS currentColoringS
-      currentProperS currentOneUncoloredS currentStoredS
-      currentEdgesS currentKindS currentVertexS currentOutsideS
-      currentDeltaS currentGammaS closedExtensionS
-      orderedExtensionS strictExtensionS =>
-      have hrs : r = s := by
-        apply Fin.ext
-        have hv := congrArg Fin.val hsZ
-        simp at hv ⊢
-        omega
-      subst r
-      have hvs : choiceS.vertex = vs := by
-        rw [currentVertexS] at hsVertex
-        exact Option.some.inj hsVertex
-      simpa [hvs] using choiceS.vertexDefective.1
-
 private theorem helper_continuation_764.{u_1, u_2} :
     open scoped Classical in ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E]
     [DecidableEq E] {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring
@@ -555,11 +447,8 @@ private theorem helper_continuation_764.{u_1, u_2} :
     hterminalSupport q hqTerminal hqKind hqVertex hLowerPartV).1
     s t vs choice.vertex hvsFinal hvtFinal hsActive htActive hst
     hsVertex htVertex
-  have hvsStage := @helper_hvsStage_628 V E inferInstance inferInstance inferInstance G k e0 input T
-      generating ett q s t vs hst hsVertex hsKind gamma rho previousProper previousOneUncolored
-      previousClosed previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      currentColoring currentStored currentEdges currentKind currentVertex currentOutside
-      currentDelta currentGamma closedExtension orderedExtension strictExtension
+  have hvsStage := ett.series.pe_chosenVertex_mem_previousTree
+    s.succ vs hsKind hsVertex
   have hchoiceInS : choice.vertex ∈
       TreeSequenceVertexSet (series.data.tree s.succ.castSucc) := by
     rcases hsupport with heq | horder

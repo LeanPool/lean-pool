@@ -23,59 +23,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
-private theorem ExtensionBaseSupportClassEnumeration_peVertex_63.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] {G :
-    LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k} {T :
-    TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett : ExtendedTashkinovTree G k
-    e0 input T generating) (_ : Fin ett.rounds) (w : V) (r : Fin ett.rounds),
-    ett.series.data.kind r.succ = some TashkinovExtensionKind.PE →
-    ett.series.data.chosenVertex r.succ = some w → w ∈ TreeSequenceVertexSet
-    (ett.series.data.tree r.succ.castSucc) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett q w r hkind hvertex
-  generalize targetEq : r.succ = target
-  cases ett.series.certified target with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    exact (Fin.succ_ne_zero r targetEq).elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have values := congrArg Fin.val targetEq
-    simp at values
-    have hi : i = r := by apply Fin.ext; omega
-    subst i
-    rw [currentKind] at hkind
-    simp at hkind
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have values := congrArg Fin.val targetEq
-    simp at values
-    have hi : i = r := by apply Fin.ext; omega
-    subst i
-    rw [currentKind] at hkind
-    simp at hkind
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have values := congrArg Fin.val targetEq
-    simp at values
-    have hi : i = r := by apply Fin.ext; omega
-    subst i
-    have vertexEq : choice.vertex = w :=
-      Option.some.inj (currentVertex.symm.trans hvertex)
-    simpa [vertexEq] using choice.vertexDefective.1
-
 theorem ExtensionBaseSupportClassEnumeration {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq E]
     {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
@@ -114,8 +61,8 @@ theorem ExtensionBaseSupportClassEnumeration {V E : Type*}
     ∀ (r : Fin ett.rounds), ett.series.data.kind r.succ = some TashkinovExtensionKind.PE →
         ett.series.data.chosenVertex r.succ = some w → w ∈ TreeSequenceVertexSet
         (ett.series.data.tree r.succ.castSucc) := by
-    exact @ExtensionBaseSupportClassEnumeration_peVertex_63 V E inferInstance inferInstance
-        inferInstance G k e0 input T generating ett q w
+    intro r kind chosen
+    exact ett.series.pe_chosenVertex_mem_previousTree r.succ w kind chosen
   have firstBound :
     ∀ (r : Fin ett.rounds) (hwFinal : w ∈ TreeSequenceVertexSet T), w ∈ TreeSequenceVertexSet
         (ett.series.data.tree r.succ.castSucc) → ETTFirstAppearanceIndex ett w hwFinal ≤ r.val + 1
@@ -240,39 +187,11 @@ theorem ExtensionBaseSupportClassEnumeration {V E : Type*}
           List.perm_insertionSort (· ≤ ·) supportClass.toList
         exact hperm.mem_iff.mp hiSorted
       exact Finset.mem_toList.mp hiList
-  have nextSegment (index : Fin ett.rounds) :
-      TreeSequenceInitialSegment (ett.series.data.tree index.succ.castSucc)
-        (ett.series.data.tree index.succ.succ) :=
-    ett.series.positiveStepInitialSegment index.succ (Nat.zero_lt_succ _)
-  have seriesVertexLater :
-    ∀ (a b : Fin ett.rounds), a.val ≤ b.val →
-    ∀ x, x ∈ TreeSequenceVertexSet (ett.series.data.tree a.succ.castSucc) → x ∈
-        TreeSequenceVertexSet (ett.series.data.tree b.succ.castSucc) := by
-    intro a b hab x hxa
-    induction distance : b.val - a.val using Nat.strong_induction_on
-        generalizing a b with
-    | h n ih =>
-      by_cases equal : a.val = b.val
-      · have : a = b := Fin.ext equal
-        simpa [this] using hxa
-      · have stepLe : a.val + 1 ≤ b.val := by omega
-        let mid : Fin ett.rounds := ⟨a.val + 1, by omega⟩
-        have midVal : mid.val = a.val + 1 := rfl
-        have hxm : x ∈ TreeSequenceVertexSet
-            (ett.series.data.tree mid.succ.castSucc) := by
-          have treeEq : mid.succ.castSucc = a.succ.succ := by
-            apply Fin.ext
-            simp [mid]
-          rw [treeEq]
-          exact TreeSequenceInitialSegmentVertexSetSubset
-            (nextSegment a) hxa
-        have hrest := ih (b.val - mid.val) (by omega) mid b (by omega) hxm
-          (by simp)
-        exact hrest
   have hr0Terminal := (classIff r0).mp hr0Class
   have hwCurrent : w ∈ TreeSequenceVertexSet
       (ett.series.data.tree q.succ.castSucc) :=
-    seriesVertexLater r0 q hr0Terminal.1 w
+    (ett.series.stageInitialSegmentOfLE r0.succ.castSucc q.succ.castSucc
+      (Nat.zero_lt_succ _) (Nat.succ_le_succ hr0Terminal.1)).vertexSet_subset
       (peVertex r0 hr0Terminal.2.1 hr0Terminal.2.2)
   refine ⟨p, indices, hwCurrent, indicesIncreasing, ?_, ?_⟩
   · intro r

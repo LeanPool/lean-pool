@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 public import LeanPool.GoldbergSeymour.ETTFirstAppearanceIndex
 
 /-!
@@ -31,60 +32,23 @@ theorem ExtensionRulesPEFirstAppearanceBound {V E : Type*}
     (hvFinal : v ∈ TreeSequenceVertexSet T) :
     ETTFirstAppearanceIndex ett v hvFinal ≤ q.val + 1 := by
   classical
-  generalize hindex : q.succ = target
-  cases ett.series.certified target with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma
-      initialClosure =>
-    exact (Fin.succ_ne_zero q hindex).elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hbad : some TashkinovExtensionKind.SE =
-        some TashkinovExtensionKind.PE :=
-      currentKind.symm.trans (by simpa [hindex] using hkind)
-    cases hbad
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hbad : some TashkinovExtensionKind.RE =
-        some TashkinovExtensionKind.PE :=
-      currentKind.symm.trans (by simpa [hindex] using hkind)
-    cases hbad
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have hi : i = q := by
-      apply Fin.ext
-      simpa using (congrArg Fin.val hindex).symm
-    subst i
-    have hv : v ∈ TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.castSucc) := by
-      have hvchoice : choice.vertex = v :=
-        Option.some.inj (currentVertex.symm.trans (by simpa [hindex] using hvertex))
-      simpa [hvchoice] using choice.vertexDefective.1
-    unfold ETTFirstAppearanceIndex
-    dsimp
-    have hmem : q.castSucc ∈
-        Finset.univ.filter (fun j : Fin (ett.rounds + 1) =>
-          v ∈ TreeSequenceVertexSet (ExtendedTashkinovLadderStage ett j)) := by
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-      simpa [ExtendedTashkinovLadderStage, Fin.lastCases_castSucc] using hv
-    have hle := Finset.min'_le
-      (Finset.univ.filter (fun j : Fin (ett.rounds + 1) =>
-        v ∈ TreeSequenceVertexSet (ExtendedTashkinovLadderStage ett j)))
-      q.castSucc hmem
-    have hnat := Fin.le_iff_val_le_val.mp hle
-    rw [Fin.val_castSucc] at hnat
-    convert Nat.succ_le_succ hnat using 1
+  have hv := ett.series.pe_chosenVertex_mem_previousTree q.succ v hkind hvertex
+  unfold ETTFirstAppearanceIndex
+  dsimp
+  have hmem : q.castSucc ∈
+      Finset.univ.filter (fun j : Fin (ett.rounds + 1) =>
+        v ∈ TreeSequenceVertexSet (ExtendedTashkinovLadderStage ett j)) := by
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    simpa [ExtendedTashkinovLadderStage, Fin.lastCases_castSucc] using hv
+  have hle := Finset.min'_le
+    (Finset.univ.filter (fun j : Fin (ett.rounds + 1) =>
+      v ∈ TreeSequenceVertexSet (ExtendedTashkinovLadderStage ett j)))
+    q.castSucc hmem
+  have hnat := Fin.le_iff_val_le_val.mp hle
+  rw [Fin.val_castSucc] at hnat
+  convert Nat.succ_le_succ hnat using 1
+
+
 end GoldbergSeymour
 
 end

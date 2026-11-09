@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
@@ -3015,7 +3016,7 @@ theorem helper_firstWitness_1779.{u_1, u_2} :
 
 theorem helper_firstPreserved_1805.{u_1, u_2} :
     open scoped Classical in
-  ∀ {V : Type u_1} {E : Type u_2} [Finite V] [Fintype E] (G : LooplessMultigraph V E)
+  ∀ {V : Type u_1} {E : Type u_2} [Fintype E] (G : LooplessMultigraph V E)
   (k : ℕ) (e0 : E) (T Bplus : TreeSequence G e0),
   TreeSequenceInitialSegment Bplus T →
   (
@@ -3029,26 +3030,8 @@ theorem helper_firstPreserved_1805.{u_1, u_2} :
   c ∈ TreeMissingColors rho Bplus →
   HierarchyFirstMissingPosition sigma T c = HierarchyFirstMissingPosition rho T c := by
   classical
-  intro V E _ _ G k e0 T Bplus hBplusTouter firstWitness rho sigma c helem hmiss hc
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    have hr := firstWitness rho c hc
-    have hc' : c ∈ TreeMissingColors sigma Bplus := by
-      obtain ⟨v, hv, hm⟩ := Finset.mem_biUnion.mp hc
-      exact Finset.mem_biUnion.mpr ⟨v, hv, (hmiss v hv).symm ▸ hm⟩
-    have hs := firstWitness sigma c hc'
-    have pref (i : Fin (T.length + 1)) (hi : i.val ≤ Bplus.length) :
-        T.vertex i ∈ TreeSequenceVertexSet Bplus := by
-      let j : Fin (Bplus.length + 1) := ⟨i.val, Nat.lt_succ_of_le hi⟩
-      have he : Fin.castLE (Nat.succ_le_succ hBplusTouter.1) j = i := Fin.ext rfl
-      exact (@Finset.mem_image _ _ (Classical.decEq V)).mpr
-        ⟨j, Finset.mem_univ _, (hBplusTouter.2.1 j).symm.trans (congrArg T.vertex he)⟩
-    by_contra hne
-    have hvne : T.vertex (HierarchyFirstMissingPosition sigma T c) ≠
-        T.vertex (HierarchyFirstMissingPosition rho T c) :=
-      fun he => hne (T.vertex_injective he)
-    have hsOld := (hmiss _ (pref _ hs.2)) ▸ hs.1
-    exact Finset.disjoint_left.mp (helem (pref _ hs.2) (pref _ hr.2) hvne) hsOld hr.1
+  intro V E _ G k e0 T Bplus hBplusTouter _ rho sigma c _ hmiss hc
+  exact TreeSequenceFirstMissingPositionCongrOfPrefix hBplusTouter hmiss hc
 
 theorem helper_firstFromMembership_1829.{u_1, u_2} :
     open scoped Classical in
@@ -4569,12 +4552,10 @@ theorem helper_continuation_3399.{u_1, u_2} :
         (HierarchyFirstMissingPosition rho T c).val ≤ Bplus.length := by
     exact helper_firstWitness_1779 (@G) (@k) (@e0) (@T) (@Bplus) (@hBplusTouter) (@rho) (@c) (@hc)
   have firstPreserved (rho sigma : PartialEdgeColoring E k) (c : Fin k)
-      (helem : ColoredVertexSetElementary G rho (TreeSequenceVertexSet Bplus))
       (hmiss : ∀ v ∈ TreeSequenceVertexSet Bplus, MissingColors G sigma v = MissingColors G rho v)
       (hc : c ∈ TreeMissingColors rho Bplus) :
       HierarchyFirstMissingPosition sigma T c = HierarchyFirstMissingPosition rho T c := by
-    exact helper_firstPreserved_1805 (@G) (@k) (@e0) (@T) (@Bplus) (@hBplusTouter)
-        (@firstWitness) (@rho) (@sigma) (@c) (@helem) (@hmiss) (@hc)
+    exact TreeSequenceFirstMissingPositionCongrOfPrefix hBplusTouter hmiss hc
   have firstFromMembership (rho sigma : PartialEdgeColoring E k) (c : Fin k)
       (hc : ∀ v, c ∈ MissingColors G sigma v ↔ c ∈ MissingColors G rho v) :
       HierarchyFirstMissingPosition sigma T c = HierarchyFirstMissingPosition rho T c := by
@@ -4584,7 +4565,8 @@ theorem helper_continuation_3399.{u_1, u_2} :
     exact helper_hstoredFirst_1843 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
         (@ctx) (@D)
         (@Bplus) (@hElemOuter) (@hthetaInA) (@hAlphaMissingBplus) (@behaviorOne)
-        (@hmissingPointwise) (@firstPreserved) (@firstFromMembership)
+        (@hmissingPointwise)
+      (fun rho sigma c _ => firstPreserved rho sigma c) (@firstFromMembership)
   have hAlphaNoGamma : alpha ∉ (HierarchyStoredColorsAt H q).biUnion (C.good.gamma q) := by
     exact helper_hAlphaNoGamma_1854 (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C)
         (@ctx) (@D)
@@ -4637,7 +4619,8 @@ theorem helper_continuation_3399.{u_1, u_2} :
       (@hmissingPointwise) (@htreeMissingEq) (@hfixedSplit) (@hlastOne) (@hthetaTerminalOne)
       (@hetaPenultimateOne) (@stageSegment) (@lastZero) (@hTnBplus) (@hfixedBplusAux)
       (@hfixedBplus) (@hBplusLength) (@transportOne) (@hrouteOne) (@firstWitness)
-      (@firstPreserved) (@firstFromMembership) (@hgammaCutoff) (@hmissingPairOne) (@hsuffixPhi)
+      (fun rho sigma c _ => firstPreserved rho sigma c)
+      (@firstFromMembership) (@hgammaCutoff) (@hmissingPairOne) (@hsuffixPhi)
       (@corrOne) (@maxOne) (@baseOne) (@KOne) (@goodOne) (@sameOne)
 theorem helper_continuation_3310.{u_1, u_2} :
     helperContinuation3310Conditions.{u_1, u_2} := by

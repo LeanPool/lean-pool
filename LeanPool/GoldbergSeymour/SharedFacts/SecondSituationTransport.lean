@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.BaseDisplayedEdges
@@ -275,27 +276,8 @@ theorem missingSubset.{u_1, u_2} : missingSubsetStatement.{u_1, u_2} := by
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem firstPreserved.{u_1, u_2} : firstPreservedStatement.{u_1, u_2} := by
   classical
-  intro V E _ _ _ _ G k e0 input T phi ett base C B hBT firstWitness rho sigma c helem hmiss hc
-  as_aux_lemma =>
-    clear_value B
-    clear * - G T B rho sigma c helem hmiss hc firstWitness hBT
-    have hr := firstWitness rho B hBT c hc
-    have hc' : c ∈ TreeMissingColors sigma B := by
-      obtain ⟨v, hv, hm⟩ := Finset.mem_biUnion.mp hc
-      exact Finset.mem_biUnion.mpr ⟨v, hv, (hmiss v hv).symm ▸ hm⟩
-    have hs := firstWitness sigma B hBT c hc'
-    have pref (i : Fin (T.length + 1)) (hi : i.val ≤ B.length) :
-        T.vertex i ∈ TreeSequenceVertexSet B := by
-      let j : Fin (B.length + 1) := ⟨i.val, Nat.lt_succ_of_le hi⟩
-      have he : Fin.castLE (Nat.succ_le_succ hBT.1) j = i := Fin.ext rfl
-      exact (@Finset.mem_image _ _ (Classical.decEq V)).mpr
-        ⟨j, Finset.mem_univ _, (hBT.2.1 j).symm.trans (congrArg T.vertex he)⟩
-    by_contra hne
-    have hvne : T.vertex (HierarchyFirstMissingPosition sigma T c) ≠
-        T.vertex (HierarchyFirstMissingPosition rho T c) :=
-      fun he => hne (T.vertex_injective he)
-    have hsOld := (hmiss _ (pref _ hs.2)) ▸ hs.1
-    exact Finset.disjoint_left.mp (helem (pref _ hs.2) (pref _ hr.2) hvne) hsOld hr.1
+  intro V E _ _ _ _ G k e0 input T phi ett base C B hBT _ rho sigma c _ hmiss hc
+  exact TreeSequenceFirstMissingPositionCongrOfPrefix hBT hmiss hc
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem firstUnaffected.{u_1, u_2} : firstUnaffectedStatement.{u_1, u_2} := by

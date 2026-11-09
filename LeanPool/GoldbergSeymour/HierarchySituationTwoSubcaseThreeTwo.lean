@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
 public import LeanPool.GoldbergSeymour.HierarchyTailContinuationFacts
 public import LeanPool.GoldbergSeymour.HierarchySituationTwoTailTransport
@@ -2840,14 +2841,10 @@ theorem HierarchySituationTwoSubcaseThreeTwo {V E : Type*}
     exact TwoColorComponentSwapMissingOnElementarySet (TreeSequenceVertexSet B) rho a b
       hne hp helem z u v huB hvB hu hv hdu hdv
   have firstPreserved (rho sigma : PartialEdgeColoring E k) (c : Fin k)
-      (helem : ColoredVertexSetElementary G rho (TreeSequenceVertexSet B))
       (hmiss : ∀ v ∈ TreeSequenceVertexSet B, MissingColors G sigma v = MissingColors G rho v)
       (hc : c ∈ TreeMissingColors rho B) :
       HierarchyFirstMissingPosition sigma T c = HierarchyFirstMissingPosition rho T c := by
-    exact @SharedFacts.SecondSituationTransport.firstPreserved (@V) (@E) inferInstance
-        inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hBT)
-        (@firstWitness) (@rho) (@sigma) (@c) (@helem) (@hmiss) (@hc)
+    exact TreeSequenceFirstMissingPositionCongrOfPrefix hBT hmiss hc
   have firstUnaffected (z : Sum V E) (rho : PartialEdgeColoring E k) (a b c : Fin k)
       (hne : a ≠ b) (hp : IsProperEdgeColoring G rho) (hca : c ≠ a) (hcb : c ≠ b) :
       HierarchyFirstMissingPosition (TwoColorComponentSwap G rho a b z) T c =
@@ -2864,7 +2861,8 @@ theorem HierarchySituationTwoSubcaseThreeTwo {V E : Type*}
       (@hBlen) (@hBT) (@hApositive) (@hAzero) (@hAT) (@hAB) (@hBterminal) (@hyB) (@hElementary)
       (@hfirstTheta) (@hnotA) (@hshortLen) (@hshortT) (@hshortB) (@hterminalIncident)
       (@firstWitness) (@self) (@missingSubset) (@leaf) (@separate) (@separateAny)
-      (@prefixMissing) (@firstPreserved) (@firstUnaffected) (@seriesFacts)
+      (@prefixMissing)
+      (fun rho sigma c _ => firstPreserved rho sigma c) (@firstUnaffected) (@seriesFacts)
 end GoldbergSeymour
 
 end

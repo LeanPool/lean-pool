@@ -241,63 +241,6 @@ private theorem helper_pe_step_143.{u_1, u_2} :
     exact ⟨by simpa [delta_eq, gamma_eq] using hmain,
       by simpa [delta_eq, gamma_eq] using hrev⟩
 
-private theorem helper_support_tree_256.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (u : V) (i : Fin rounds), series.data.kind i.succ =
-        some TashkinovExtensionKind.PE → series.data.chosenVertex i.succ = some u → u ∈
-        TreeSequenceVertexSet (series.data.tree i.succ.castSucc) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series u i hi hv
-  generalize target_eq : i.succ = target
-  have certificate := series.certified target
-  cases certificate with
-  | initial triple seedLength initialColoring initialStored initialEdges
-      initialKind initialVertex initialOutside initialDelta initialGamma initialClosure =>
-    exact (Fin.succ_ne_zero i target_eq).elim
-  | SE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hci : ci = i := by
-      apply Fin.ext
-      have value := congrArg Fin.val target_eq
-      simp at value
-      omega
-    subst ci
-    rw [currentKind] at hi
-    simp at hi
-  | RE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hci : ci = i := by
-      apply Fin.ext
-      have value := congrArg Fin.val target_eq
-      simp at value
-      omega
-    subst ci
-    rw [currentKind] at hi
-    simp at hi
-  | PE ci previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored currentEdges
-      currentKind currentVertex currentOutside currentDelta currentGamma
-      closedExtension orderedExtension strictExtension =>
-    have hci : ci = i := by
-      apply Fin.ext
-      have value := congrArg Fin.val target_eq
-      simp at value
-      omega
-    subst ci
-    have veq : choice.vertex = u := Option.some.inj (currentVertex.symm.trans hv)
-    simpa [veq] using choice.vertexDefective.1
-
 private theorem helper_bridge_357.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -490,8 +433,11 @@ theorem SupportingPEMissingTransport {V E : Type*}
   have swap_step := @helper_swap_step_57 V E inferInstance inferInstance G k
   have pe_step := @helper_pe_step_143 V E inferInstance inferInstance inferInstance G k rounds e0
       input series u swap_step
-  have support_tree := @helper_support_tree_256 V E inferInstance inferInstance inferInstance G k
-      rounds e0 input series u
+  have support_tree (index : Fin rounds)
+      (kind : series.data.kind index.succ = some TashkinovExtensionKind.PE)
+      (chosen : series.data.chosenVertex index.succ = some u) :
+      u ∈ TreeSequenceVertexSet (series.data.tree index.succ.castSucc) :=
+    series.pe_chosenVertex_mem_previousTree index.succ u kind chosen
   have vertex_transfer : ∀ (T T' : TreeSequence G e0),
       TreeSequenceInitialSegment T T' → ∀ x, x ∈ TreeSequenceVertexSet T →
       x ∈ TreeSequenceVertexSet T' := by

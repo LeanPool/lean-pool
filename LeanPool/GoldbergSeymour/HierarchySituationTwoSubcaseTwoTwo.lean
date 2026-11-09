@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
 public import LeanPool.GoldbergSeymour.HierarchyTailContinuationFacts
 
@@ -3281,20 +3282,17 @@ theorem HierarchySituationTwoSubcaseTwoTwo {V E : Type*}
     exact TwoColorComponentSwapMissingOnElementarySet (TreeSequenceVertexSet B) rho a b
       hne hp helem z u v huB hvB hu hv hdu hdv
   have firstPreserved (rho sigma : PartialEdgeColoring E k) (c : Fin k)
-      (helem : ColoredVertexSetElementary G rho (TreeSequenceVertexSet B))
       (hmiss : ∀ v ∈ TreeSequenceVertexSet B, MissingColors G sigma v = MissingColors G rho v)
       (hc : c ∈ TreeMissingColors rho B) :
       HierarchyFirstMissingPosition sigma T c = HierarchyFirstMissingPosition rho T c := by
-    exact @SharedFacts.SecondSituationTransport.firstPreserved (@V) (@E) inferInstance
-        inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hBT)
-        (@firstWitness) (@rho) (@sigma) (@c) (@helem) (@hmiss) (@hc)
+    exact TreeSequenceFirstMissingPositionCongrOfPrefix hBT hmiss hc
   exact @helper_continuation_4157 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@D) (@htail)
       (@hBlen) (@hBT) (@hApositive) (@hAzero) (@hAT) (@hAB) (@hBterminal) (@hyB) (@hElementary)
       (@hfirstAlpha) (@hfirstTheta) (@hnotA) (@halphaNotRaw) (@hshortLen) (@hshortT) (@hshortB)
       (@hnotShort) (@hterminalIncident) (@halphaUnused) (@firstWitness) (@self) (@missingSubset)
-      (@missingWithoutExtra) (@leaf) (@separate) (@prefixMissing) (@firstPreserved)
+      (@missingWithoutExtra) (@leaf) (@separate) (@prefixMissing)
+      (fun rho sigma c _ => firstPreserved rho sigma c)
 end GoldbergSeymour
 
 end

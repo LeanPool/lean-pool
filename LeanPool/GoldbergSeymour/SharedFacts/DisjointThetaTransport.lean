@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
 
 public import LeanPool.GoldbergSeymour.HierarchySituationThreeDisjointData
@@ -829,27 +830,8 @@ theorem hfirstBetaOutside.{u_1, u_2} : hfirstBetaOutsideStatement.{u_1, u_2} := 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem firstPreserved.{u_1, u_2} : firstPreservedStatement.{u_1, u_2} := by
   classical
-  intro V E _ _ G k e0 T j firstWitness W hWT rho sigma c helem hmiss hc
-  let _ := Fintype.ofFinite V
-  as_aux_lemma =>
-    clear * - G T W rho sigma c helem hmiss hc firstWitness hWT
-    have hr := firstWitness rho W hWT c hc
-    have hc' : c ∈ TreeMissingColors sigma W := by
-      obtain ⟨v, hv, hm⟩ := Finset.mem_biUnion.mp hc
-      exact Finset.mem_biUnion.mpr ⟨v, hv, (hmiss v hv).symm ▸ hm⟩
-    have hs := firstWitness sigma W hWT c hc'
-    have pref (i : Fin (T.length + 1)) (hi : i.val ≤ W.length) :
-        T.vertex i ∈ TreeSequenceVertexSet W := by
-      let j : Fin (W.length + 1) := ⟨i.val, Nat.lt_succ_of_le hi⟩
-      have he : Fin.castLE (Nat.succ_le_succ hWT.1) j = i := Fin.ext rfl
-      exact (@Finset.mem_image _ _ (Classical.decEq V)).mpr
-        ⟨j, Finset.mem_univ _, (hWT.2.1 j).symm.trans (congrArg T.vertex he)⟩
-    by_contra hne
-    have hvne : T.vertex (HierarchyFirstMissingPosition sigma T c) ≠
-        T.vertex (HierarchyFirstMissingPosition rho T c) :=
-      fun he => hne (T.vertex_injective he)
-    have hsOld := (hmiss _ (pref _ hs.2)) ▸ hs.1
-    exact Finset.disjoint_left.mp (helem (pref _ hs.2) (pref _ hr.2) hvne) hsOld hr.1
+  intro V E _ _ G k e0 T j _ W hWT rho sigma c _ hmiss hc
+  exact TreeSequenceFirstMissingPositionCongrOfPrefix hWT hmiss hc
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem missingTransport.{u_1, u_2} : missingTransportStatement.{u_1, u_2} := by

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaProofs
 
 
@@ -2145,13 +2146,10 @@ private theorem helper_continuation_2662.{u_1, u_2} :
       hne hp helem z u v huB hvB hu hv hdu hdv
   have firstPreserved (W : TreeSequence G e0)
       (hWT : TreeSequenceInitialSegment W T) (rho sigma : PartialEdgeColoring E k) (c : Fin k)
-      (helem : ColoredVertexSetElementary G rho (TreeSequenceVertexSet W))
       (hmiss : ∀ v ∈ TreeSequenceVertexSet W, MissingColors G sigma v = MissingColors G rho v)
       (hc : c ∈ TreeMissingColors rho W) :
       HierarchyFirstMissingPosition sigma T c = HierarchyFirstMissingPosition rho T c := by
-    exact SharedFacts.DisjointThetaTransport.firstPreserved (@G) (@k) (@e0) (@T) (@j)
-        (@firstWitness) (@W) (@hWT) (@rho)
-        (@sigma) (@c) (@helem) (@hmiss) (@hc)
+    exact TreeSequenceFirstMissingPositionCongrOfPrefix hWT hmiss hc
   have firstUnaffected (z : Sum V E) (rho : PartialEdgeColoring E k) (a b c : Fin k)
       (hne : a ≠ b) (hp : IsProperEdgeColoring G rho) (hca : c ≠ a) (hcb : c ≠ b) :
       HierarchyFirstMissingPosition (TwoColorComponentSwap G rho a b z) T c =
@@ -2186,7 +2184,8 @@ private theorem helper_continuation_2662.{u_1, u_2} :
       (@hgammaMissingZ) (@hbetaMissingZ) (@hchangeElementary) (@hchangeMissing) (@componentSelf)
       (@componentLeaf) (@separateComponents) (@hgammaTerminalDistinct) (@hterminalDisjoint)
       (@hmu2One) (@hgammaFirstMu2) (@hgammaTerminalMu2) (@hfixedThroughY) (@prefixMissing)
-      (@firstPreserved) (@firstUnaffected) (@hmissingMu2) (@missingTransport)
+      (fun W hWT rho sigma c _ => firstPreserved W hWT rho sigma c)
+      (@firstUnaffected) (@hmissingMu2) (@missingTransport)
 private theorem helper_continuation_2578.{u_1, u_2} :
     helperContinuation2578Conditions.{u_1, u_2} := by
   classical

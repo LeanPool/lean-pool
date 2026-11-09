@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmASingleStep
 public import LeanPool.GoldbergSeymour.ExtensionBaseRestorationInvariant
 public import LeanPool.GoldbergSeymour.StrongInterchangeabilityKempePreserved
@@ -20,54 +21,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 @[expose] public section
 
 namespace GoldbergSeymour
-
-private theorem helper_slot_tree_115.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-        {G : LooplessMultigraph V E} {k : ℕ} {e0 : E} {input : PartialEdgeColoring E k}
-        {T : TreeSequence G e0} {generating : PartialEdgeColoring E k} (ett :
-        ExtendedTashkinovTree G k e0 input T generating) (terminalSupport : V) (hterminalSupport :
-        terminalSupport ∈ TreeSequenceVertexSet T) (sigmaN : PartialEdgeColoring E k) (trace :
-        ExtensionBaseRestorationTrace ett terminalSupport hterminalSupport sigmaN), (
-    ∀ (a : Fin trace.steps), trace.slot a ∈ ExtensionBaseActiveIndices ett terminalSupport
-        hterminalSupport) →
-    ∀ (a : Fin trace.steps), trace.support a ∈ TreeSequenceVertexSet (ett.series.data.tree
-        (trace.slot a).succ.castSucc) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett terminalSupport hterminalSupport sigmaN trace
-      slot_active a
-  have ha := slot_active a
-  unfold ExtensionBaseActiveIndices at ha
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha
-  have hkind : ett.series.data.kind (trace.slot a).succ =
-      some TashkinovExtensionKind.PE := ha.2.1
-  have hc := ett.series.certified (trace.slot a).succ
-  generalize hn : (trace.slot a).succ = n at hc
-  cases hc with
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have hv := choice.vertexDefective.1
-    have heqIndex : i = trace.slot a := by
-      apply Fin.ext
-      have hh := congrArg Fin.val hn
-      simp at hh ⊢
-      omega
-    have heq : choice.vertex = trace.support a := by
-      apply Option.some.inj
-      have hcv : ett.series.data.chosenVertex (trace.slot a).succ =
-          some choice.vertex := by simpa [heqIndex] using currentVertex
-      exact hcv.symm.trans (trace.chosenVertex a)
-    simpa [heqIndex, heq] using hv
-  | initial => simp_all
-  | SE =>
-    simp_all
-  | RE =>
-    simp_all
 
 private theorem helper_branch_177.{u_1, u_2} :
     open scoped Classical in
@@ -324,9 +277,11 @@ theorem ExtensionBaseAlgorithmAInduction {V E : Type*}
   have slot_tree (a : Fin trace.steps) :
       trace.support a ∈ TreeSequenceVertexSet
         (ett.series.data.tree (trace.slot a).succ.castSucc) := by
-    exact @helper_slot_tree_115 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@terminalSupport) (by assumption) (@sigmaN)
-        (@trace) (by assumption) (@a)
+    have active := slot_active a
+    unfold ExtensionBaseActiveIndices at active
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at active
+    exact ett.series.pe_chosenVertex_mem_previousTree (trace.slot a).succ
+      (trace.support a) active.2.1 (trace.chosenVertex a)
   have slot_ne_q (a : Fin trace.steps) : trace.slot a ≠ q := by
     intro heq
     apply slot_not_class a

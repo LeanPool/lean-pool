@@ -27,55 +27,6 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
-private theorem helper_supportInFollowingTree_188.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating),
-    let _ : DecidableEq V := Classical.decEq V;
-    ∀ (q : Fin ett.rounds) (v : V), ett.series.data.kind q.succ = some TashkinovExtensionKind.PE →
-        ett.series.data.chosenVertex q.succ = some v → v ∈ TreeSequenceVertexSet
-        (ett.series.data.tree q.succ.succ) := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett this q v hkind hvertex
-  generalize hslot : q.succ = slot
-  cases ett.series.certified slot with
-  | initial => exact (Fin.succ_ne_zero q hslot).elim
-  | SE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternative
-      currentColoring currentStored currentEdges currentKind currentVertex
-      currentOutside currentDelta currentGamma adjoined adjoinedExactly
-      closedExtension orderedExtension strictExtension =>
-    have hbad : some TashkinovExtensionKind.SE =
-        some TashkinovExtensionKind.PE :=
-      currentKind.symm.trans (by simpa [hslot] using hkind)
-    cases hbad
-  | RE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed available currentColoring currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma adjoined adjoinedExactly closedExtension orderedExtension
-      strictExtension =>
-    have hbad : some TashkinovExtensionKind.RE =
-        some TashkinovExtensionKind.PE :=
-      currentKind.symm.trans (by simpa [hslot] using hkind)
-    cases hbad
-  | PE i previousProper previousOneUncolored previousClosed
-      previousNotStronglyClosed noRevisiting choice seriesAlternativeFails
-      gamma gammaRule secondStable secondStableProper
-      secondStableOneUncolored secondStableRelation exitWitness
-      currentColoring currentProper currentOneUncolored currentStored
-      currentEdges currentKind currentVertex currentOutside currentDelta
-      currentGamma closedExtension orderedExtension strictExtension =>
-    have hi : i = q := by
-      apply Fin.ext
-      simpa using (congrArg Fin.val hslot).symm
-    subst i
-    have hvchoice : choice.vertex = v :=
-      Option.some.inj (currentVertex.symm.trans (by simpa [hslot] using hvertex))
-    apply TreeSequenceInitialSegmentVertexSetSubset orderedExtension
-    simpa [hvchoice] using choice.vertexDefective.1
-
 private theorem helper_beforeEqOfSegment_356.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -542,8 +493,12 @@ theorem ExtensionRulesEarlierIndices {V E : Type*} [Fintype V] [Fintype E]
     intro a ha hround
     have hchain := stageToStage a ett.rounds ha hround le_rfl
     exact segmentTrans hchain ett.abovePenultimate
-  have supportInFollowingTree := @helper_supportInFollowingTree_188 V E inferInstance inferInstance
-      inferInstance G k e0 input T generating ett
+  have supportInFollowingTree (index : Fin ett.rounds) (vertex : V)
+      (kind : ett.series.data.kind index.succ = some TashkinovExtensionKind.PE)
+      (chosen : ett.series.data.chosenVertex index.succ = some vertex) :
+      vertex ∈ TreeSequenceVertexSet (ett.series.data.tree index.succ.succ) :=
+    (ett.series.positiveStepInitialSegment index.succ (Nat.zero_lt_succ _)).vertexSet_subset
+      (ett.series.pe_chosenVertex_mem_previousTree index.succ vertex kind chosen)
   have firstAppearanceEq :
     ∀ {T' : TreeSequence G e0} {generating' : PartialEdgeColoring E k} (lower :
         ExtendedTashkinovTree G k e0 input T' generating') (s : ℕ) (hs : lower.rounds = s) (hsn :

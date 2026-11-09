@@ -88,43 +88,6 @@ private theorem helper_peFields_108.{u_1, u_2} :
       by simpa [vertexEq] using selected.vertexDefective.1,
       orderedExtension⟩
 
-private theorem helper_seriesVertexLater_163.{u_1, u_2} :
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-    LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-    : TashkinovSeries G k rounds e0 input) (i : Fin (rounds + (1 : ℕ))) (_ :
-    MaximumDefectiveChoice G e0 (series.data.tree i.succ) (TashkinovStoredColors series.data
-    i) (series.data.coloring i)) (someSlot : Fin (rounds + (1 : ℕ))), (0 : ℕ) < (↑someSlot :
-    ℕ) → (0 : ℕ) < (↑i : ℕ) → (∀ (A B : TreeSequence G e0), TreeSequenceInitialSegment A B → ∀
-    x ∈ TreeSequenceVertexSet A, x ∈ TreeSequenceVertexSet B) → ∀ (a b : Fin rounds), (↑a : ℕ)
-    ≤ (↑b : ℕ) → ∀ x ∈ TreeSequenceVertexSet (series.data.tree a.succ.castSucc), x ∈
-    TreeSequenceVertexSet (series.data.tree b.succ.castSucc) := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series i choice someSlot somePositive iPositive
-      vertexTransfer a b hab x hxa
-  induction distance : b.val - a.val using Nat.strong_induction_on
-      generalizing a b with
-  | h n ih =>
-    by_cases equal : a.val = b.val
-    · have : a = b := Fin.ext equal
-      simpa [this] using hxa
-    · have stepLe : a.val + 1 ≤ b.val := by omega
-      let mid : Fin rounds := ⟨a.val + 1, by omega⟩
-      have midVal : mid.val = a.val + 1 := rfl
-      have nextSegment : TreeSequenceInitialSegment
-          (series.data.tree a.succ.castSucc)
-          (series.data.tree a.succ.succ) := by
-        exact series.positiveStepInitialSegment a.succ (Nat.zero_lt_succ _)
-      have hxm : x ∈ TreeSequenceVertexSet
-          (series.data.tree mid.succ.castSucc) := by
-        have treeEq : mid.succ.castSucc = a.succ.succ := by
-          apply Fin.ext
-          simp [mid]
-        rw [treeEq]
-        exact vertexTransfer _ _ nextSegment x hxa
-      have hrest := ih (b.val - mid.val) (by omega) mid b (by omega) hxm
-        (by simp)
-      exact hrest
-
 private theorem helper_deltaMissingCurrent_250.{u_1, u_2} :
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
         LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
@@ -262,9 +225,6 @@ private theorem ParallelExtensionColorExists_branch_51.{u_1, u_2} :
     exact hAB.vertexSet_subset hx
   have peFields := @helper_peFields_108 V E inferInstance inferInstance inferInstance G k rounds e0
       input series i choice someSlot somePositive iPositive
-  have seriesVertexLater := @helper_seriesVertexLater_163 V E inferInstance inferInstance
-      inferInstance G k rounds e0 input series i choice someSlot somePositive iPositive
-      vertexTransfer
   obtain ⟨deltaLast, gammaLast, deltaLastEq, gammaLastEq,
       lastVertex, lastSegment⟩ := peFields (indices (Fin.last p))
     ((indicesEnumerate (indices (Fin.last p))).2 ⟨Fin.last p, rfl⟩).2.1
@@ -277,7 +237,8 @@ private theorem ParallelExtensionColorExists_branch_51.{u_1, u_2} :
     ((indicesEnumerate (indices (Fin.last p))).2 ⟨Fin.last p, rfl⟩).1
   have currentTreeVertex : choice.vertex ∈ TreeSequenceVertexSet
       (series.data.tree q.succ.castSucc) :=
-    seriesVertexLater (indices (Fin.last p)) q lastLeQ choice.vertex lastVertex
+    (series.stageInitialSegmentOfLE (indices (Fin.last p)).succ.castSucc q.succ.castSucc
+      (Nat.zero_lt_succ _) (Nat.succ_le_succ lastLeQ)).vertexSet_subset lastVertex
   have transport := SupportingPEMissingTransport G k rounds p e0 input series q
     choice.vertex currentTreeVertex indices indicesIncreasing indicesEnumerate
     gammaFirst deltaLast gammaFirstEq deltaLastEq

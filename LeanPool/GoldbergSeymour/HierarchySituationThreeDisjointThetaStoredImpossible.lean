@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.HierarchyFirstMissingPositionPrefixCutoff
 public import LeanPool.GoldbergSeymour.SharedFacts.DisjointThetaProofs
 
 
@@ -1676,13 +1677,10 @@ private theorem helper_continuation_3542.{u_1, u_2} :
         (@alpha) (@beta) (@d) (@j) (@hbetaUnused) (@gamma) (@hYlen) (@hgammaUnused)
   have firstPreserved (W : TreeSequence G e0)
       (hWT : TreeSequenceInitialSegment W T) (rho sigma : PartialEdgeColoring E k) (c : Fin k)
-      (helem : ColoredVertexSetElementary G rho (TreeSequenceVertexSet W))
       (hmiss : ∀ v ∈ TreeSequenceVertexSet W, MissingColors G sigma v = MissingColors G rho v)
       (hc : c ∈ TreeMissingColors rho W) :
       HierarchyFirstMissingPosition sigma T c = HierarchyFirstMissingPosition rho T c := by
-    exact @SharedFacts.DisjointThetaTransport.firstPreserved (@V) (@E) inferInstance
-        inferInstance (@G) (@k) (@e0) (@T)
-        (@j) (@firstWitness) (@W) (@hWT) (@rho) (@sigma) (@c) (@helem) (@hmiss) (@hc)
+    exact TreeSequenceFirstMissingPositionCongrOfPrefix hWT hmiss hc
   exact @helper_continuation_2327 (@V) (@E) inferInstance inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@ctx) (@P) (@alpha)
       (@beta) (@hvertexMissing) (@d) (@j) (@hj) (@hpathLower) (@hpathUpper) (@hthetaStored')
@@ -1694,7 +1692,7 @@ private theorem helper_continuation_3542.{u_1, u_2} :
       (@treeMissingSubset) (@hgammaMissingZ) (@hbetaMissingZ) (@hchangeElementary)
       (@hchangeMissing) (@componentSelf) (@hgammaTerminalDistinct) (@separation1)
       (@hterminalDisjoint) (@hmu2One) (@hgammaFirstMu2) (@hgammaTerminalMu2) (@hfixedThroughY)
-      (@firstPreserved)
+      (fun W hWT rho sigma c _ => firstPreserved W hWT rho sigma c)
 
 private theorem helper_continuation_2252.{u_1, u_2} :
     helperContinuation2252Conditions.{u_1, u_2} := by
