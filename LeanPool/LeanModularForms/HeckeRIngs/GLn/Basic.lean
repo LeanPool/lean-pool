@@ -70,31 +70,35 @@ def HasIntEntries (g : GL (Fin n) ℚ) : Prop :=
 lemma SLnZ_subgroup_hasIntEntries {g : GL (Fin n) ℚ}
     (hg : g ∈ SLnZSubgroup n) : HasIntEntries n g := by
   obtain ⟨σ, rfl⟩ := hg
-  exact ⟨σ.val, by simp [mapGL_coe_matrix, algebraMap_int_eq]⟩
+  exact ⟨σ.val, by simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+    RingHom.mapMatrix_apply, Int.coe_castRingHom]⟩
 
 /-- The identity matrix has integer entries. -/
 @[simp]
 lemma hasIntEntries_one : HasIntEntries n (1 : GL (Fin n) ℚ) :=
-  ⟨1, by ext i j; simp [Matrix.map_apply, Matrix.one_apply]⟩
+  ⟨1, by ext i j; simp only [Units.val_one, Matrix.one_apply, map_apply, Int.cast_ite, Int.cast_one,
+    Int.cast_zero]⟩
 
 /-- Product of integer-entry matrices has integer entries. -/
 lemma HasIntEntries.mul {a b : GL (Fin n) ℚ} (ha : HasIntEntries n a) (hb : HasIntEntries n b) :
     HasIntEntries n (a * b) := by
   obtain ⟨A, hA⟩ := ha
   obtain ⟨B, hB⟩ := hb
-  exact ⟨A * B, by ext i j; simp [hA, hB, Matrix.mul_apply, Matrix.map_apply]⟩
+  exact ⟨A * B, by ext i j; simp only [Units.val_mul, hA, hB, Matrix.mul_apply, map_apply,
+    Int.cast_sum, Int.cast_mul]⟩
 
 /-- `det (A.map Int.cast) = ↑(det A)` for integer matrices cast to `ℚ`. -/
 lemma det_intMat_cast (A : Matrix (Fin n) (Fin n) ℤ) :
     (A.map (Int.cast : ℤ → ℚ)).det = (A.det : ℚ) := by
   rw [show A.map (Int.cast : ℤ → ℚ) = (Int.castRingHom ℚ).mapMatrix A from
-    by ext i j; simp [RingHom.mapMatrix_apply, Matrix.map_apply],
+    by ext i j; simp only [map_apply, RingHom.mapMatrix_apply, Int.coe_castRingHom],
     ← RingHom.map_det, Int.coe_castRingHom]
 
 /-- `(A.map cast) * (B.map cast) = (A * B).map cast` for integer matrices cast to `ℚ`. -/
 private lemma intMat_map_mul (A B : Matrix (Fin n) (Fin n) ℤ) :
     (A.map (Int.cast : ℤ → ℚ)) * (B.map (Int.cast : ℤ → ℚ)) =
-    (A * B).map (Int.cast : ℤ → ℚ) := by ext i j; simp [Matrix.mul_apply, Matrix.map_apply]
+    (A * B).map (Int.cast : ℤ → ℚ) := by ext i j; simp only [Matrix.mul_apply, map_apply,
+      Int.cast_sum, Int.cast_mul]
 
 /-- The submonoid of `GL_n(ℚ)` consisting of invertible matrices with integer entries
     and positive determinant. This is Shimura's `Δ`. -/
@@ -113,8 +117,10 @@ section Pair
 lemma SLnZ_le_posDetInt : (SLnZSubgroup n).toSubmonoid ≤ posDetIntSubmonoid n := by
   intro g hg; rw [Subgroup.mem_toSubmonoid, MonoidHom.mem_range] at hg
   obtain ⟨A, rfl⟩ := hg
-  exact ⟨⟨A.val, by simp [mapGL_coe_matrix, algebraMap_int_eq]⟩,
-    by simp [det_intMat_cast, A.prop]⟩
+  exact ⟨⟨A.val, by simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+    RingHom.mapMatrix_apply, Int.coe_castRingHom]⟩,
+    by simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+      Int.coe_castRingHom, det_intMat_cast, A.prop, Int.cast_one, zero_lt_one]⟩
 
 /-! ### Helper lemmas for the commensurator proof (Shimura Lemma 3.10) -/
 
@@ -171,7 +177,7 @@ private lemma det_entrywise_div_eq_one (d : ℤ) (P : Matrix (Fin n) (Fin n) ℤ
   rw [← det_intMat_cast, show (Matrix.of fun i j => P i j / d).map (Int.cast : ℤ → ℚ) =
       (d : ℚ)⁻¹ • (P.map (Int.cast : ℤ → ℚ)) from by
     ext i j; simp only [Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, Matrix.of_apply]
-    rw [Int.cast_div (hdvd i j) (Int.cast_ne_zero.mpr hd)]; ring,
+    rw [Int.cast_div (hdvd i j) (Int.cast_ne_zero.mpr hd)]; ac_rfl,
     det_smul, Fintype.card_fin, det_intMat_cast, hdet, inv_pow]
   exact inv_mul_cancel₀ (pow_ne_zero n hdQ)
 

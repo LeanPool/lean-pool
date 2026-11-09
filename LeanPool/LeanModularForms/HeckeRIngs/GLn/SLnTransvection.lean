@@ -37,7 +37,8 @@ private lemma slTransvecG_mul {m : ℕ} (i j : Fin m) (hij : i ≠ j) (a b : ℤ
 
 private lemma slTransvecG_zero {m : ℕ} (i j : Fin m) (hij : i ≠ j) :
     slTransvecG i j hij 0 = 1 :=
-  Subtype.ext (by simp [slTransvecG, Matrix.transvection_zero])
+  Subtype.ext (by simp only [slTransvecG, Matrix.transvection_zero,
+    Matrix.SpecialLinearGroup.coe_one])
 
 private lemma slTransvecG_mul_entry {m : ℕ} (i j : Fin m) (hij : i ≠ j) (c : ℤ)
     (σ : Matrix.SpecialLinearGroup (Fin m) ℤ) (a b : Fin m) :
@@ -47,8 +48,10 @@ private lemma slTransvecG_mul_entry {m : ℕ} (i j : Fin m) (hij : i ≠ j) (c :
     exact (Matrix.SpecialLinearGroup.coe_mul (slTransvecG i j hij c) σ).trans rfl
   rw [hcoe]
   split_ifs with hai
-  · subst hai; simp [Matrix.transvection, Matrix.add_mul]
-  · simp [Matrix.transvection, Matrix.add_mul, hai]
+  · subst hai; simp only [Matrix.transvection, Matrix.add_mul, one_mul, Matrix.add_apply,
+    Matrix.single_mul_apply_same]
+  · simp only [Matrix.transvection, Matrix.add_mul, one_mul, Matrix.add_apply, ne_eq, hai,
+    not_false_eq_true, Matrix.single_mul_apply_of_ne, add_zero]
 
 private lemma slTransvecG_mul_right_entry {m : ℕ}
      (i j : Fin m) (hij : i ≠ j) (c : ℤ) (σ : Matrix.SpecialLinearGroup (Fin m) ℤ)
@@ -58,8 +61,10 @@ private lemma slTransvecG_mul_right_entry {m : ℕ}
     exact (Matrix.SpecialLinearGroup.coe_mul σ (slTransvecG i j hij c)).trans rfl
   rw [hcoe]
   split_ifs with hbj
-  · subst hbj; simp [Matrix.transvection, Matrix.mul_add, mul_comm]
-  · simp [Matrix.transvection, Matrix.mul_add, hbj]
+  · subst hbj; simp only [Matrix.transvection, Matrix.mul_add, mul_one, Matrix.add_apply,
+    Matrix.mul_single_apply_same, mul_comm]
+  · simp only [Matrix.transvection, Matrix.mul_add, mul_one, Matrix.add_apply, ne_eq, hbj,
+    not_false_eq_true, Matrix.mul_single_apply_of_ne, add_zero]
 
 private lemma isTransvec_append {m : ℕ} (L₁ L₂ : List (Matrix.SpecialLinearGroup (Fin m) ℤ))
     (h₁ : ∀ E ∈ L₁, IsTransvec E) (h₂ : ∀ E ∈ L₂, IsTransvec E) :
@@ -76,8 +81,10 @@ private lemma slTransvecG_col0 {m : ℕ} (i j : Fin (m + 1)) (hij : i ≠ j) (c 
   have : (slTransvecG i j hij c * σ).1 = Matrix.transvection i j c * σ.1 := by
     exact (Matrix.SpecialLinearGroup.coe_mul (slTransvecG i j hij c) σ).trans rfl
   rw [this]; split_ifs with hai
-  · subst hai; simp [Matrix.transvection, Matrix.add_mul]
-  · simp [Matrix.transvection, Matrix.add_mul, hai]
+  · subst hai; simp only [Matrix.transvection, Matrix.add_mul, one_mul, Matrix.add_apply,
+    Matrix.single_mul_apply_same]
+  · simp only [Matrix.transvection, Matrix.add_mul, one_mul, Matrix.add_apply, ne_eq, hai,
+    not_false_eq_true, Matrix.single_mul_apply_of_ne, add_zero]
 
 private lemma col0_ne_zero {m : ℕ} (σ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ) :
     ∃ i, σ.1 i 0 ≠ 0 := by
@@ -214,7 +221,8 @@ private lemma blockLift_col0 {m : ℕ} (i j : Fin m) (hij : i ≠ j) (c : ℤ)
     (τ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ)
     (hcol : ∀ k : Fin (m + 1), k ≠ 0 → τ.1 k 0 = 0) (a : Fin (m + 1)) :
     (blockLift i j hij c * τ).1 a 0 = τ.1 a 0 := by
-  rw [blockLift_entry]; simp_all
+  rw [blockLift_entry]; simp_all only [ne_eq, Fin.succ_ne_zero, not_false_eq_true, mul_zero,
+    add_zero, ite_eq_right_iff, implies_true]
 
 private lemma det_lowerRight {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ)
     (h00 : τ.1 0 0 = 1) (h0j : ∀ j : Fin (m + 1), j ≠ 0 → τ.1 0 j = 0) :
@@ -224,7 +232,8 @@ private lemma det_lowerRight {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m +
       by ext i j; rfl]
   have hdet : τ.1.det = 1 := τ.2
   rw [Matrix.det_succ_row_zero, Finset.sum_eq_single (0 : Fin (m + 1))
-    (fun j _ hj => by simp [h0j j hj]) (fun h => absurd (Finset.mem_univ _) h)] at hdet
+    (fun j _ hj => by simp only [Int.reduceNeg, Nat.succ_eq_add_one, h0j j hj, mul_zero,
+      zero_mul]) (fun h => absurd (Finset.mem_univ _) h)] at hdet
   simpa [Fin.succAbove_zero, h00] using hdet
 
 private def extractBlock {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ)
@@ -339,7 +348,7 @@ private lemma nzCount_le_one_unique_nonzero {m : ℕ}
             simp only [Finset.mem_insert, Finset.mem_singleton] at hx
             simp only [Finset.mem_filter, Finset.mem_univ, true_and]
             exact hx.elim (· ▸ hi₀) (· ▸ hne)
-  linarith
+  linarith only [h_nz, this]
 
 private lemma sole_nonzero_col0_is_unit {m : ℕ} (τ : Matrix.SpecialLinearGroup (Fin (m + 1)) ℤ)
     (i₀ : Fin (m + 1)) (h_others : ∀ k, k ≠ i₀ → τ.1 k 0 = 0) :

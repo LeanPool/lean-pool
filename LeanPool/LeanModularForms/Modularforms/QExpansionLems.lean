@@ -121,7 +121,7 @@ lemma qExpansion_mul_coeff (a b : ℤ) (f : ModularForm Γ(n) a) (g : ModularFor
   simpa using
     (ModularForm.qExpansion_mul (Γ := Γ(n)) (h := n)
       (hh := by exact Nat.cast_pos.mpr (Nat.pos_of_neZero n))
-      (hΓ := by simp) f g)
+      (hΓ := by simp only [CongruenceSubgroup.strictPeriods_Gamma, AddSubgroup.mem_zmultiples]) f g)
 
 variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 variable {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
@@ -137,7 +137,8 @@ lemma IteratedDeriv_smul (a : ℂ) (f : ℂ → ℂ) (m : ℕ) :
 lemma qExpansion_smul2 (a : ℂ) (f : ModularForm Γ(n) k) [NeZero n] :
     (a • qExpansion n f) = (qExpansion n (a • f)) :=
   (ModularForm.qExpansion_smul (Γ := Γ(n)) (h := n)
-      (hh := Nat.cast_pos.mpr (Nat.pos_of_neZero n)) (hΓ := by simp) a f).symm
+      (hh := Nat.cast_pos.mpr (Nat.pos_of_neZero n)) (hΓ := by simp only [
+        CongruenceSubgroup.strictPeriods_Gamma, AddSubgroup.mem_zmultiples]) a f).symm
 
 instance instFunLikeUpperHalfPlaneFun :
     FunLike (ℍ → ℂ) ℍ ℂ := { coe := fun ⦃a₁⦄ ↦ a₁, coe_injective := fun ⦃_ _⦄ a ↦ a}
@@ -152,7 +153,7 @@ lemma cuspFunction_congr_funLike
 
 lemma qExpansion_ext2 {α β : Type*} [FunLike α ℍ ℂ] [FunLike β ℍ ℂ] (f : α) (g : β) (h : ⇑f = ⇑g) :
     qExpansion 1 f = qExpansion 1 g := by
-  ext m; simp [qExpansion_coeff, congrArg (cuspFunction 1) h]
+  ext m; simp only [qExpansion_coeff, congrArg (cuspFunction 1) h]
 
 --generalize this away from ℂ
 lemma IteratedDeriv_zero_fun (n : ℕ) (z : ℂ) : iteratedDeriv n (fun _ : ℂ => (0 : ℂ)) z = 0 := by
@@ -167,9 +168,11 @@ lemma qExpansion_pow (f : ModularForm Γ(1) k) (n : ℕ) :
   qExpansion 1 ((((DirectSum.of (ModularForm Γ(1)) k ) f) ^ n) (n * k)) = (qExpansion 1 f) ^ n := by
   exact_mod_cast
     (qExpansion_of_pow (Γ := Γ(1)) (h := (1 : ℕ))
-      (hh := by positivity) (hΓ := by simp) (f := f) (n := n))
+      (hh := by positivity) (hΓ := by simp only [CongruenceSubgroup.strictPeriods_Gamma,
+        Nat.cast_one, AddSubgroup.mem_zmultiples]) (f := f) (n := n))
 
 lemma qExpansion_injective [hn : NeZero n] (f : ModularForm Γ(n) k) :
     qExpansion n f = 0 ↔ f = 0 :=
   ModularForm.qExpansion_eq_zero_iff (Γ := Γ(n)) (h := n)
-    (Nat.cast_pos.mpr (Nat.pos_of_neZero n)) (by simp) f
+    (Nat.cast_pos.mpr (Nat.pos_of_neZero n)) (by simp only [CongruenceSubgroup.strictPeriods_Gamma,
+      AddSubgroup.mem_zmultiples]) f

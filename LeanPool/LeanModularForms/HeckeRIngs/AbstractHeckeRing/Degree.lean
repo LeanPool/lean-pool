@@ -66,7 +66,7 @@ noncomputable def HeckeCosetDeg (D : HeckeCoset P) : ℤ :=
   simp only [HeckeCosetDeg]; have := subsingleton_decompQuot_T_one P
   have : Unique (decompQuot P (HeckeCoset.one P).rep) :=
     uniqueOfSubsingleton (one_in_decompQuot_T_one P).some
-  simp [Fintype.card_unique]
+  simp only [Fintype.card_unique, Nat.cast_one]
 
 /-- Every double coset has positive degree. -/
 lemma HeckeCoset_deg_pos (D : HeckeCoset P) : 0 < HeckeCosetDeg P D := by
@@ -108,7 +108,7 @@ lemma smulOrbit_card (g : P.Δ) (β : P.Δ) :
 /-- The cardinality of a smul orbit cast to `ℤ` equals `HeckeCosetDeg`. -/
 lemma smulOrbit_card_intCast (D : HeckeCoset P) (β : P.Δ) :
     ((smulOrbit P (HeckeCoset.rep D) β).card : ℤ) = HeckeCosetDeg P D := by
-  simp [smulOrbit_card, HeckeCosetDeg]
+  simp only [smulOrbit_card, HeckeCosetDeg]
 
 end SmulOrbitCard
 
@@ -140,7 +140,7 @@ lemma coeffSum_single_smul_single (D : HeckeCoset P) (m₀ : HeckeLeftCoset P) (
     a * HeckeCosetDeg P D * b := by
   rw [T_single_smul_HeckeLeftCoset_single, coeffSum_finset_sum]
   simp only [coeffSum_single, Finset.sum_const, Int.nsmul_eq_mul,
-    smulOrbit_card_intCast P D (HeckeLeftCoset.rep m₀)]; ring
+    smulOrbit_card_intCast P D (HeckeLeftCoset.rep m₀)]; ac_rfl
 
 end CoeffSum
 
@@ -170,7 +170,7 @@ lemma deg_fun_add (f g : 𝕋 P ℤ) :
 lemma deg_fun_eq_coeffSum_smul_one (f : 𝕋 P ℤ) :
     degFun P f = coeffSum P (f • (1 : HeckeModule P ℤ)) := by
   induction f using Finsupp.induction_linear with
-  | zero => simp [zero_smul_HeckeModule]
+  | zero => simp only [deg_fun_zero, zero_smul_HeckeModule, map_zero]
   | add f g ihf ihg => rw [deg_fun_add, ihf, ihg, smul_add_left, coeffSum_add]
   | single D a =>
     rw [deg_fun_T_single, one_eq_HeckeLeftCoset_single, coeffSum_single_smul_single, mul_one]
@@ -179,12 +179,12 @@ lemma deg_fun_eq_coeffSum_smul_one (f : 𝕋 P ℤ) :
 lemma coeffSum_smul_eq (f : 𝕋 P ℤ) (m : HeckeModule P ℤ) :
     coeffSum P (f • m) = degFun P f * coeffSum P m := by
   induction f using Finsupp.induction_linear with
-  | zero => simp [zero_smul_HeckeModule]
+  | zero => simp only [zero_smul_HeckeModule, map_zero, deg_fun_zero, zero_mul]
   | add f₁ f₂ ih₁ ih₂ =>
     rw [smul_add_left, coeffSum_add, ih₁, ih₂, deg_fun_add]; ring
   | single D a =>
     induction m using Finsupp.induction_linear with
-    | zero => simp [smul_zero_HeckeModule]
+    | zero => simp only [smul_zero_HeckeModule, map_zero, deg_fun_T_single, mul_zero]
     | add m₁ m₂ ih₁ ih₂ =>
       rw [smul_add_right, coeffSum_add, ih₁, ih₂, coeffSum_add,
         deg_fun_T_single]; ring
@@ -197,7 +197,7 @@ lemma deg_fun_mul (f g : 𝕋 P ℤ) :
   have h := (instIsScalarTower P).smul_assoc g f (1 : HeckeModule P ℤ)
   simp only [smul_def] at h
   rw [deg_fun_eq_coeffSum_smul_one P (f * g), h, coeffSum_smul_eq,
-      ← deg_fun_eq_coeffSum_smul_one P f]; ring
+      ← deg_fun_eq_coeffSum_smul_one P f]; ac_rfl
 
 /-- The degree ring homomorphism `deg : 𝕋 P ℤ →+* ℤ`, sending each double coset to the
 number of left cosets it contains (Shimura Proposition 3.3). -/
@@ -228,7 +228,8 @@ lemma deg_add (f g : 𝕋 P ℤ) :
     deg P (f + g) = deg P f + deg P g := (deg P).map_add f g
 
 /-- The degree of an integer cast is the integer itself. -/
-lemma deg_intCast (n : ℤ) : deg P (n : 𝕋 P ℤ) = n := by simp [deg, degFun, HeckeCoset_deg_T_one]
+lemma deg_intCast (n : ℤ) : deg P (n : 𝕋 P ℤ) = n := by simp only [deg, intCast_eq, RingHom.coe_mk,
+  MonoidHom.coe_mk, OneHom.coe_mk, degFun, HeckeCoset_deg_T_one, mul_one, sum_single_index]
 
 end API
 

@@ -49,4 +49,8 @@ theorem ModularForm.slash_neg' {k : ℤ} (g : SL(2, ℤ)) (f : ℍ → ℂ) (hk 
   rw [SL_slash, ← slash_neg _ _ hk]
   congr
   ext
-  simp
+  simp only [Matrix.SpecialLinearGroup.coe_int_neg, Units.val_neg,
+    Matrix.SpecialLinearGroup.coe_GL_coe_matrix, Matrix.SpecialLinearGroup.coe_neg,
+    Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+    Matrix.neg_apply, Matrix.map_apply, neg_neg, Matrix.SpecialLinearGroup.mapGL_coe_matrix,
+    algebraMap_int_eq]

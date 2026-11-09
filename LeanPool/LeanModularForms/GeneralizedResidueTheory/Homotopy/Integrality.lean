@@ -211,8 +211,10 @@ private lemma exists_partition_free_subinterval
     exact ⟨by linarith [le_max_right a (t - ε / 2), hs.1],
            by linarith [min_le_right b (t + ε / 2), hs.2]⟩
   · intro x hx
-    simp_all
-  · simp_all
+    simp_all only [mem_Ioo, sub_lt_self_iff, lt_add_iff_pos_right, and_self, not_false_eq_true,
+      gt_iff_lt, and_imp, max_lt_iff, lt_min_iff]
+  · simp_all only [mem_Ioo, sub_lt_self_iff, lt_add_iff_pos_right, and_self, not_false_eq_true,
+    gt_iff_lt, and_imp, max_lt_iff, div_pos_iff_of_pos_left, Nat.ofNat_pos, lt_min_iff]
 
 private lemma logDeriv_integrand_bound
     {γ : ℝ → ℂ} {a b : ℝ} {z₀ : ℂ} {M δ : ℝ}
@@ -516,7 +518,7 @@ theorem winding_integrand_bounded_of_uniform_avoidance
       ≤ ‖(H (t, s) - z₀)⁻¹‖ * ‖deriv (fun t' => H (t', s)) t‖ := norm_mul_le _ _
     _ ≤ δ⁻¹ * M := mul_le_mul h_inv_bound (hM_bound t ht s hs)
         (norm_nonneg _) (le_of_lt (inv_pos.mpr hδ_pos))
-    _ = M / δ := by ring
+    _ = M / δ := by ac_rfl
 
 private lemma gFunc_constant_smooth
     {γ : ℝ → ℂ} {a b : ℝ} {z₀ : ℂ}
@@ -630,7 +632,7 @@ private theorem integral_closed_curve_eq_two_pi_int
       (hγ_avoid b (right_mem_Icc.mpr (le_of_lt hab))))
   rw [Complex.exp_eq_one_iff] at hexp
   obtain ⟨n, hn⟩ := hexp
-  exact ⟨n, by rw [hn]; ring⟩
+  exact ⟨n, by rw [hn]; ac_rfl⟩
 
 /-- The winding number of a smooth closed curve avoiding z₀
 is an integer. -/

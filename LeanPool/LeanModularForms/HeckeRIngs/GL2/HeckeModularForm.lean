@@ -270,7 +270,8 @@ noncomputable def heckeSlashExt (k : ℤ) (T : HeckeAlgebra 2) (f : ℍ → ℂ)
 /-- The extended action on a single double coset recovers `heckeSlash`. -/
 lemma heckeSlashExt_single (k : ℤ) (D : HeckeCoset (GLPair 2)) (f : ℍ → ℂ) :
     heckeSlashExt k (Finsupp.single D 1) f = heckeSlash k D f := by
-  simp [heckeSlashExt, Finsupp.sum_single_index]
+  simp only [heckeSlashExt, zsmul_eq_mul, Int.cast_zero, zero_mul, Finsupp.sum_single_index,
+    Int.cast_one, one_mul]
 
 /-- Multiplicativity of the Hecke slash for Γ-invariant functions:
     `T(D₁)(T(D₂)(f)) = (T(D₂) * T(D₁))(f)` where `f` is any Γ-invariant function.
@@ -283,7 +284,7 @@ private theorem heckeSlash_comp (k : ℤ) (D₁ D₂ : HeckeCoset (GLPair 2)) (f
       TSingle (GLPair 2) ℤ D₁ 1) f =
       (m (GLPair 2) (HeckeCoset.rep D₂) (HeckeCoset.rep D₁)).sum
         (fun D c => c • heckeSlash k D f) from by
-    unfold heckeSlashExt; rw [mul_singleton_𝕋]; simp]
+    unfold heckeSlashExt; rw [mul_singleton_𝕋]; simp only [one_smul, zsmul_eq_mul] ]
   have h_comm : m (GLPair 2) (HeckeCoset.rep D₂) (HeckeCoset.rep D₁) =
       m (GLPair 2) (HeckeCoset.rep D₁) (HeckeCoset.rep D₂) := by
     rw [← @T_single_one_mul_T_single_one _ _ (GLPair 2) D₂ D₁,

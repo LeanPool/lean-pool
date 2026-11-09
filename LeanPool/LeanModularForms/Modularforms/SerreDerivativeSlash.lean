@@ -111,4 +111,5 @@ lemma serre_DE₂_slash_invariant (γ : SL(2, ℤ)) :
       show α = 3 / π ^ 2 by simp only [hα_def, riemannZeta_two]; field_simp; ring]
   field_simp [UpperHalfPlane.denom_ne_zero γ z, Complex.ofReal_ne_zero.mpr Real.pi_ne_zero]
   ring_nf
-  simp_all
+  simp_all only [one_div, mul_inv_rev, Fin.isValue, I_sq, mul_neg, mul_one, neg_mul,
+    add_neg_cancel_right]

@@ -128,12 +128,12 @@ def arc2 (t : ℝ) : ℂ :=
 
 lemma arc1_on_unit_circle (t : ℝ) : ‖arc1 t‖ = 1 := by
   rw [arc1, show I * (↑θRho' + ↑t * (↑θI - ↑θRho')) =
-      ↑(θRho' + t * (θI - θRho')) * I by push_cast; ring]
+      ↑(θRho' + t * (θI - θRho')) * I by push_cast; ac_rfl]
   exact Complex.norm_exp_ofReal_mul_I _
 
 lemma arc2_on_unit_circle (t : ℝ) : ‖arc2 t‖ = 1 := by
   rw [arc2, show I * (↑θI + ↑t * (↑θRho - ↑θI)) =
-      ↑(θI + t * (θRho - θI)) * I by push_cast; ring]
+      ↑(θI + t * (θRho - θI)) * I by push_cast; ac_rfl]
   exact Complex.norm_exp_ofReal_mul_I _
 
 lemma arc1_in_closed_unit_ball (t : ℝ) (_ : t ∈ Icc 0 1) :
@@ -268,7 +268,7 @@ lemma segment2_arc_on_unit_circle (t : ℝ) :
   conv_lhs =>
     rw [show ((Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3)) * I : ℂ) =
       ↑(Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3)) * I by
-      push_cast; ring]
+      push_cast; ac_rfl]
   exact Complex.norm_exp_ofReal_mul_I _
 
 lemma segment3_arc_on_unit_circle (t : ℝ) :
@@ -277,7 +277,7 @@ lemma segment3_arc_on_unit_circle (t : ℝ) :
   conv_lhs =>
     rw [show ((Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2)) * I : ℂ) =
       ↑(Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2)) * I by
-      push_cast; ring]
+      push_cast; ac_rfl]
   exact Complex.norm_exp_ofReal_mul_I _
 
 lemma segment2_arc_in_closed_unit_ball (t : ℝ) :

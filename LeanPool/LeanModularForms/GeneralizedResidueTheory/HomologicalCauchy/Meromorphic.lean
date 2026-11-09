@@ -19,7 +19,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.WindingNumber.Proposit
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Meromorphic Contour Integral Vanishing (Null-Homologous)
@@ -426,7 +425,7 @@ theorem conditionsAB_imply_higherOrderCancel_nh (U : Set ℂ) (hU : IsOpen U)
       exact intervalIntegrable_cpvIntegrandOn_of_continuousOn_diff
         U S0 _ hfres_cont γ h_null.image_subset ε hε
     rw [← intervalIntegral.integral_sub h_int_f h_int_fres]
-    simp_all
+    simp_all only [ne_eq, mem_Icc, and_imp]
   exact higherOrderCancel_assembly_nh U hU S0 f hf γ h_null
     hMero hCondA hCondB hγ_meas h_no_endpt h_unique_cross hS0_in_U
 
@@ -489,6 +488,6 @@ lemma pv_res_tendsto_of_immersion_nullHomologous (U : Set ℂ) (S : Set ℂ)
       generalizedWindingNumber' γ.toFun γ.a γ.b s * residueAt f s := by
     have hL_eq : L = cauchyPrincipalValueOn S0 f_res γ.toFun γ.a γ.b :=
       hL.limUnder_eq.symm
-    simp_all
-  simp_all
+    simp_all only [gt_iff_lt, ne_eq, mem_Icc, and_imp]
+  simp_all only [gt_iff_lt, ne_eq, mem_Icc, and_imp]
 

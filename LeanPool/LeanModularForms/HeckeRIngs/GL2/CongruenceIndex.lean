@@ -44,7 +44,7 @@ private lemma ZMod_inv_mul_cancel (p : ℕ) (hp : Nat.Prime p) (a : ℤ)
 
 private lemma SL2_entry_mul (A B : SL(2, ℤ)) (i j : Fin 2) :
     (A * B).1 i j = A.1 i 0 * B.1 0 j + A.1 i 1 * B.1 1 j := by
-  change (A.1 * B.1) i j = _; simp [Matrix.mul_apply, Fin.sum_univ_two]
+  change (A.1 * B.1) i j = _; simp only [Matrix.mul_apply, Fin.sum_univ_two, Fin.isValue]
 
 private lemma TjS_inv_10 (j : ℤ) : ((T ^ j * S)⁻¹).1 1 0 = -1 := by
   simp [coe_T_zpow, coe_S, Matrix.SpecialLinearGroup.coe_inv, adjugate_fin_two_of]
@@ -54,14 +54,16 @@ private lemma TjS_inv_11 (j : ℤ) : ((T ^ j * S)⁻¹).1 1 1 = j := by
 
 private lemma TjS_00 (j : ℤ) : (T ^ j * S).1 0 0 = j := by simp [coe_T_zpow, coe_S]
 
-private lemma TjS_10 (j : ℤ) : (T ^ j * S).1 1 0 = 1 := by simp [coe_S]
+private lemma TjS_10 (j : ℤ) : (T ^ j * S).1 1 0 = 1 := by simp only [Fin.isValue,
+  T_pow_mul_apply_one, coe_S, Int.reduceNeg, of_apply, cons_val', cons_val_zero, cons_val_fin_one,
+  cons_val_one]
 
 private lemma TjS_inv_mul_10 (j : ℤ) (σ : SL(2, ℤ)) :
     ((T ^ j * S)⁻¹ * σ).1 1 0 = j * σ.1 1 0 - σ.1 0 0 := by
   rw [SL2_entry_mul, TjS_inv_10, TjS_inv_11]; ring
 
 private lemma rep_diff_10 (i j : ℤ) :
-    ((T ^ j * S)⁻¹ * (T ^ i * S)).1 1 0 = j - i := by rw [TjS_inv_mul_10, TjS_10, TjS_00]; ring
+    ((T ^ j * S)⁻¹ * (T ^ i * S)).1 1 0 = j - i := by rw [TjS_inv_mul_10, TjS_10, TjS_00]; ac_rfl
 
 section BaseCase
 
@@ -135,7 +137,8 @@ omit hp in
 private lemma lowerTriRep_mem_Gamma0 (k : ℕ) (_hk : 0 < k) (c : Fin p) :
     (lowerTriRep p k c : SL(2, ℤ)) ∈ Gamma0 (p ^ k) := by
   rw [Gamma0_mem, show (lowerTriRep p k c) 1 0 = (c : ℤ) * (p : ℤ) ^ k from by
-    simp [lowerTriRep], ZMod.intCast_zmod_eq_zero_iff_dvd]
+    simp only [lowerTriRep, Fin.isValue, of_apply, cons_val', cons_val_zero, cons_val_fin_one,
+      cons_val_one], ZMod.intCast_zmod_eq_zero_iff_dvd]
   exact_mod_cast dvd_mul_left (p ^ k : ℕ) (c.val)
 
 omit hp in
@@ -144,7 +147,8 @@ private lemma lowerTriRep_diff_entry (k : ℕ) (c₁ c₂ : Fin p) :
     ((c₂ : ℤ) - (c₁ : ℤ)) * (p : ℤ) ^ k := by
   change (Matrix.adjugate (!![1, 0; (c₁ : ℤ) * (p : ℤ) ^ k, 1]) *
     !![1, 0; (c₂ : ℤ) * (p : ℤ) ^ k, 1]) 1 0 = _
-  simp [Matrix.adjugate_fin_two, Matrix.mul_apply]
+  simp only [adjugate_fin_two, Fin.isValue, of_apply, cons_val', cons_val_one, cons_val_fin_one,
+    cons_val_zero, neg_zero, Matrix.mul_apply, Fin.sum_univ_two, mul_one, one_mul]
   ring
 
 omit hp in
@@ -152,7 +156,8 @@ private lemma lowerTriRep_inv_mul_10 (k : ℕ) (c : Fin p) (σ : SL(2, ℤ)) :
     ((lowerTriRep p k c)⁻¹ * σ).1 1 0 =
     σ.1 1 0 - (c : ℤ) * (p : ℤ) ^ k * σ.1 0 0 := by
   change (Matrix.adjugate (!![1, 0; (c : ℤ) * (p : ℤ) ^ k, 1]) * σ.val) 1 0 = _
-  simp [Matrix.adjugate_fin_two, Matrix.mul_apply]
+  simp only [adjugate_fin_two, Fin.isValue, of_apply, cons_val', cons_val_one, cons_val_fin_one,
+    cons_val_zero, neg_zero, Matrix.mul_apply, Fin.sum_univ_two, neg_mul, one_mul]
   ring
 
 private noncomputable def relindexRep (k : ℕ) (hk : 0 < k) (c : Fin p) :

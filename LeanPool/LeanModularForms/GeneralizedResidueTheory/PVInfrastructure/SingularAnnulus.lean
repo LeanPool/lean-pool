@@ -11,7 +11,6 @@ import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.Annul
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.GammaAnalysis
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.PVInfrastructure.StepBounds
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # PV Infrastructure: Singular Annulus Bounds
@@ -76,8 +75,8 @@ private lemma singular_annulus_final_ratio {Kmeas ε₁ ε₂ : ℝ} {L : ℂ}
   rw [show Kmeas * ε₁ ^ 2 / ‖L‖ ^ 3 * (2 * ‖L‖ / ε₂) =
       2 * Kmeas * ε₁ ^ 2 * ‖L‖ / (‖L‖ ^ 3 * ε₂) from by ring,
     show 4 * Kmeas / ‖L‖ ^ 2 * ε₁ = 4 * Kmeas * ε₁ / ‖L‖ ^ 2 from by ring,
-    div_le_div_iff₀ (mul_pos (by positivity : (0 : ℝ) < ‖L‖ ^ 3) hε₂_pos)
-      (by positivity : (0 : ℝ) < ‖L‖ ^ 2)]
+    div_le_div_iff₀ (mul_pos (by exact pow_pos hL_pos 3 : (0 : ℝ) < ‖L‖ ^ 3) hε₂_pos)
+      (by exact pow_pos hL_pos 2 : (0 : ℝ) < ‖L‖ ^ 2)]
   nlinarith only [hKmeas_pos, hL_pos, hε₁_pos, h_ratio, mul_pos hKmeas_pos (pow_pos hL_pos 3),
     show ε₁ ^ 2 ≤ ε₁ * (2 * ε₂) from by rw [sq]; exact mul_le_mul_of_nonneg_left h_ratio hε₁_pos.le]
 
@@ -125,7 +124,7 @@ private lemma singular_annulus_indicator_diff_zero
     have hlin_fail : ¬(ε₂ < ‖L‖ * |t - t₀| ∧ ‖L‖ * |t - t₀| ≤ ε₁) := by
       intro ⟨_, h_le⟩
       linarith [mul_le_mul_of_nonneg_left (not_lt.mp hδ) (le_of_lt hL_pos)]
-    simp [hγ_fail, hlin_fail]
+    simp only [hγ_fail, ↓reduceIte, hlin_fail, sub_self]
 
 /-- The annulus condition `ε₂ < ‖L‖ * |t - t₀| ∧ ‖L‖ * |t - t₀| ≤ ε₁` is equivalent to
     `c₁ < |t - t₀| ∧ |t - t₀| ≤ c₂` where `c₁ = ε₂/‖L‖` and `c₂ = ε₁/‖L‖`. -/
@@ -448,7 +447,7 @@ private lemma singular_annulus_diff_pointwise_bound
   · simp only [hγ, and_self, ↓reduceIte, ofReal_sub, hlin, sub_self, norm_zero, ge_iff_le]
     exact le_of_lt hbound_pos
   · simp only [hγ, hlin, ↓reduceIte, sub_zero]
-    have ht_ne : t ≠ t₀ := by intro heq; simp [heq] at hγ; linarith
+    have ht_ne : t ≠ t₀ := by intro heq; simp [heq] at hγ; linarith only [hε₂_pos, hγ]
     have ht_pos : 0 < |t - t₀| :=
       abs_pos.mpr (sub_ne_zero.mpr ht_ne)
     have ht_loc := h_localize t ht hγ.2
@@ -468,7 +467,7 @@ private lemma singular_annulus_diff_pointwise_bound
       le_of_lt (by
         calc ε₂ / (2 * ‖L‖) < ε₂ / ‖L‖ :=
               div_lt_div_of_pos_left hε₂_pos
-                hL_pos (by linarith)
+                hL_pos (by linarith only [hL_pos])
           _ ≤ |t - t₀| := by
               rw [div_le_iff₀ hL_pos, mul_comm]
               exact le_of_lt hlin.1)

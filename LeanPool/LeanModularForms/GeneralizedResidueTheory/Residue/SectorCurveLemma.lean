@@ -15,7 +15,6 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
@@ -151,7 +150,7 @@ private theorem sectorCurve_mem_ball (r : ℝ) (hr : 0 < r) (α : ℝ) :
   rcases le_or_gt t 1 with h1 | h1
   · rw [sectorCurve_seg1 r α t ⟨ht0, h1⟩, Complex.norm_real,
       Real.norm_eq_abs, abs_of_nonneg (mul_nonneg ht0 hr.le)]
-    nlinarith
+    nlinarith only [hr, h1]
   · rcases le_or_gt t 2 with h2 | h2
     · rw [sectorCurve_seg2 r α t ⟨le_of_lt h1, h2⟩, norm_mul,
         Complex.norm_real, Real.norm_eq_abs, abs_of_pos hr,
@@ -159,9 +158,9 @@ private theorem sectorCurve_mem_ball (r : ℝ) (hr : 0 < r) (α : ℝ) :
       linarith
     · rw [sectorCurve_seg3 r α t ⟨le_of_lt h2, ht3⟩, norm_mul,
         Complex.norm_real, Real.norm_eq_abs,
-        abs_of_nonneg (mul_nonneg (by linarith) hr.le),
+        abs_of_nonneg (mul_nonneg (by exact sub_nonneg.mpr ht3) hr.le),
         norm_exp_I, mul_one]
-      nlinarith
+      nlinarith only [hr, h2]
 
 private theorem φ_sectorCurve_integrableOn_01 (r : ℝ) (hr : 0 < r) (α : ℝ)
     (g : ℂ → ℂ) (hg : AnalyticOnNhd ℂ g (Metric.ball 0 (↑r + 1))) :
@@ -301,12 +300,13 @@ private theorem sectorCurve_zero_set_finite (r : ℝ) (hr : 0 < r) (α : ℝ) :
     simp [(mul_eq_zero.mp h0).resolve_right hr.ne']
   · rcases le_or_gt t 2 with h2 | h2
     · exfalso; rw [sectorCurve_seg2 r α t ⟨le_of_lt h1, h2⟩] at h0
-      simp_all
+      simp_all only [ofReal_mul, ofReal_sub, ofReal_one, mul_eq_zero, ofReal_eq_zero, exp_ne_zero,
+        or_false, lt_self_iff_false]
     · rw [sectorCurve_seg3 r α t ⟨le_of_lt h2, ht3⟩] at h0
       simp only [mul_eq_zero, Complex.ofReal_eq_zero] at h0
       exact h0.elim (fun h => by
         rcases h with h | h
-        · simp [show t = 3 from by linarith]
+        · simp [show t = 3 from by linarith only [ht3, h] ]
         · exact absurd h hr.ne') (fun h => absurd h (Complex.exp_ne_zero _))
 
 private theorem cauchyPV_g_intervalIntegrable (r : ℝ) (hr : 0 < r) (α : ℝ)
@@ -367,7 +367,7 @@ private theorem cauchyPV_inv_integrableOn_δ1 (r : ℝ) (hr : 0 < r) (α : ℝ)
     · rw [sectorCurve_norm_seg1 r hr α t ⟨le_of_lt (lt_trans hδ htδ), le_of_lt ht1⟩]
       have hδr : δ * r = ε := div_mul_cancel₀ ε (ne_of_gt hr)
       calc ε = δ * r := hδr.symm
-        _ < t * r := by nlinarith
+        _ < t * r := by nlinarith only [hr, htδ]
   have h1 : ∀ᵐ t ∂(volume.restrict (Ioo δ 1)),
       (fun t : ℝ => (↑(t⁻¹) : ℂ)) t =
       cauchyPrincipalValueIntegrand' (fun z => z⁻¹) (sectorCurve r α) 0 ε t :=
@@ -426,10 +426,10 @@ private theorem cauchyPV_inv_integrableOn_2_3δ (r : ℝ) (hr : 0 < r) (α : ℝ
       have : exp (I * ↑α) ≠ 0 := Complex.exp_ne_zero _
       have : (3 - t : ℝ) ≠ 0 := by linarith
       push_cast; field_simp
-    · rw [sectorCurve_norm_seg3' r hr α t ⟨le_of_lt ht2, by linarith⟩]
+    · rw [sectorCurve_norm_seg3' r hr α t ⟨le_of_lt ht2, by linarith only [hδ, ht3δ]⟩]
       have hδr : δ * r = ε := div_mul_cancel₀ ε (ne_of_gt hr)
       calc ε = δ * r := hδr.symm
-        _ < (3 - t) * r := by nlinarith
+        _ < (3 - t) * r := by nlinarith only [hr, ht3δ]
   have h1 : ∀ᵐ t ∂(volume.restrict (Ioo (2 : ℝ) (3 - δ))),
       (fun t : ℝ => -(↑((3 - t)⁻¹) : ℂ)) t =
       cauchyPrincipalValueIntegrand' (fun z => z⁻¹) (sectorCurve r α) 0 ε t :=
@@ -532,7 +532,7 @@ theorem cauchyPV_sectorCurve_simplePole (r : ℝ) (hr : 0 < r) (α : ℝ)
   have h_tendsto : Tendsto (fun ε => ∫ t in (0 : ℝ)..3,
       cauchyPrincipalValueIntegrand' (fun z => c / z + g z) (sectorCurve r α) 0 ε t)
       (𝓝[>] 0) (𝓝 (I * ↑α * c)) := by
-    rw [show I * ↑α * c = c * (I * ↑α) + 0 from by ring]
+    rw [show I * ↑α * c = c * (I * ↑α) + 0 from by ac_rfl]
     exact ((hL_inv.const_mul c).add (cauchyPV_g_tendsto_zero r hr α g hg)).congr'
       ((cauchyPV_simplePole_integral_split r hr α c g hg).mono (fun _ h => h.symm))
   exact ⟨⟨_, h_tendsto⟩, h_tendsto.limUnder_eq⟩
@@ -719,7 +719,7 @@ private theorem zpow_primitive_hasDerivAt (r : ℝ) (hr : 0 < r) (α : ℝ) (n :
       HasDerivAt F (f t) t := by
   intro m γ F f t ⟨ht, ht_not⟩
   have hm_ne : (m : ℂ) ≠ 0 := by
-    have : m ≠ 0 := by simp [m]; omega
+    have : m ≠ 0 := by simp only [ne_eq, m]; omega
     exact_mod_cast this
   have ht_not' : t ∉ ({1, 2} : Set ℝ) := fun h => ht_not ⟨h, ht⟩
   have hγ_ne := sectorCurve_ne_zero_of_Icc_δ r hr α δ hδ_pos
@@ -728,8 +728,8 @@ private theorem zpow_primitive_hasDerivAt (r : ℝ) (hr : 0 < r) (α : ℝ) (n :
       (((m : ℂ) * (γ t) ^ (m - 1)) • deriv γ t) t :=
     (hasDerivAt_zpow m (γ t) (Or.inl hγ_ne)).comp t
       (sectorCurve_differentiableAt_off_knots r α t
-        ⟨lt_trans hδ_pos ht.1, lt_of_lt_of_le ht.2 (by linarith)⟩ ht_not').hasDerivAt
-  have hm_sub : m - 1 = -(↑n : ℤ) := by simp [m]
+        ⟨lt_trans hδ_pos ht.1, lt_of_lt_of_le ht.2 (by linarith only [hδ_pos])⟩ ht_not').hasDerivAt
+  have hm_sub : m - 1 = -(↑n : ℤ) := by simp only [sub_sub_cancel_left, m]
   change HasDerivAt F ((γ t) ^ (-(↑n : ℤ)) * deriv γ t) t
   refine (h_zpow.div_const (m : ℂ)).congr_deriv ?_
   rw [smul_eq_mul, mul_assoc, mul_div_cancel_left₀ _ hm_ne, hm_sub]
@@ -749,7 +749,7 @@ private theorem zpow_ftc_vanishes (r : ℝ) (_hr : 0 < r) (α : ℝ) (n : ℕ) (
     simp only [show 3 - (3 - δ) = δ from by ring] at this; exact this
   simp only [F, hγ_δ, hγ_3δ, mul_zpow]
   rw [show (exp (I * ↑α)) ^ m = exp (I * ↑((1 - (↑n : ℤ)) * α)) from by
-    rw [← Complex.exp_int_mul]; congr 1; push_cast [m]; ring, h_exp_one, mul_one, sub_self]
+    rw [← Complex.exp_int_mul]; congr 1; push_cast [m]; ac_rfl, h_exp_one, mul_one, sub_self]
 
 private theorem angle_condition_exp_eq_one (n : ℕ) (hn : 2 ≤ n) (α : ℝ)
     (k : ℤ) (hk : (↑(n - 1) : ℤ) * α = k * (2 * Real.pi)) :
@@ -758,10 +758,10 @@ private theorem angle_condition_exp_eq_one (n : ℕ) (hn : 2 ≤ n) (α : ℝ)
     obtain ⟨j, hj⟩ := h; rw [hj]; exact Complex.exp_int_mul_two_pi_mul_I j
   exact ⟨-k, by
     have h1 : ((1 - (↑n : ℤ)) * α : ℝ) = ((-k : ℤ) : ℝ) * (2 * Real.pi) := by
-      push_cast [Nat.cast_sub (by omega : 1 ≤ n)] at hk ⊢; linarith
+      push_cast [Nat.cast_sub (by omega : 1 ≤ n)] at hk ⊢; linarith only [hk]
     rw [show (↑((1 - (↑n : ℤ)) * α) : ℂ) = ↑(((-k : ℤ) : ℝ) * (2 * Real.pi)) from
       congrArg _ h1]
-    push_cast; ring⟩
+    push_cast; ac_rfl⟩
 
 private theorem pv_cutoff_integral_eq_mid (r : ℝ) (hr : 0 < r) (α : ℝ) (n : ℕ)
     (ε : ℝ) (hε_pos : 0 < ε) (hε_lt_r : ε < r) :
@@ -790,7 +790,7 @@ private theorem pv_cutoff_integral_eq_mid (r : ℝ) (hr : 0 < r) (α : ℝ) (n :
     rw [ite_eq_right (not_lt.mpr (h_norm_le_0δ t ht))]
   have hg_zero_right : ∀ t ∈ Set.uIcc (3 - δ) 3, g t = 0 := fun t ht => by
     simp only [g, sub_zero]
-    rw [Set.uIcc_of_le (by linarith : 3 - δ ≤ 3)] at ht
+    rw [Set.uIcc_of_le (by linarith only [hδ_pos] : 3 - δ ≤ 3)] at ht
     rw [ite_eq_right (not_lt.mpr (h_norm_le_3δ3 t ht))]
   have hg_eq_f_mid : ∀ᵐ x ∂volume, x ∈ Ioc δ (3 - δ) → g x = f x := by
     rw [ae_iff]
@@ -811,9 +811,9 @@ private theorem pv_cutoff_integral_eq_mid (r : ℝ) (hr : 0 < r) (α : ℝ) (n :
       hg_zero_right t (Set.uIoc_subset_uIcc ht)))
   have h_mid : ∫ t in δ..(3 - δ), g t = ∫ t in δ..(3 - δ), f t :=
     intervalIntegral.integral_congr_ae (by
-      rw [Set.uIoc_of_le (by linarith : δ ≤ 3 - δ)]; exact hg_eq_f_mid)
+      rw [Set.uIoc_of_le (by linarith only [hδ_pos, hδ_lt_1] : δ ≤ 3 - δ)]; exact hg_eq_f_mid)
   have hg_eq_f_mid' : g =ᵐ[volume.restrict (Set.uIoc δ (3 - δ))] f := by
-    rw [Set.uIoc_of_le (by linarith : δ ≤ 3 - δ), Filter.EventuallyEq,
+    rw [Set.uIoc_of_le (by linarith only [hδ_pos, hδ_lt_1] : δ ≤ 3 - δ), Filter.EventuallyEq,
       ae_restrict_iff' measurableSet_Ioc]; exact hg_eq_f_mid
   have hg_0δ : IntervalIntegrable g volume 0 δ :=
     (intervalIntegrable_const (c := (0 : ℂ))).congr_ae

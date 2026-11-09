@@ -212,13 +212,13 @@ private lemma first_invariant_dvd_p_of_product (S : Matrix.SpecialLinearGroup (F
       ite_false, ite_true, mul_zero, zero_mul, add_zero, Matrix.cons_val_fin_one]; norm_num
   have h_cop : IsCoprime (S_ℤ 0 0) (S_ℤ 1 0) :=
     ⟨S.val 1 1, -(S.val 0 1), by
-      have := S.prop; rw [Matrix.det_fin_two] at this; linarith⟩
+      have := S.prop; rw [Matrix.det_fin_two] at this; linarith only [this]⟩
   have h1 : (a 0 : ℤ) ∣ S_ℤ 0 0 := h_M00 ▸ h_dvd_entry 0 0
   have h2 : (a 0 : ℤ) ∣ (p : ℤ) * S_ℤ 1 0 := h_M10 ▸ h_dvd_entry 1 0
   exact_mod_cast (by
     obtain ⟨u, v, huv⟩ := h_cop; obtain ⟨t, ht⟩ := h1
     exact ⟨u * t, v, by
-      rw [show u * t * ↑(a 0) = u * (↑(a 0) * t) from by ring, ← ht]; exact huv⟩
+      rw [show u * t * ↑(a 0) = u * (↑(a 0) * t) from by ac_rfl, ← ht]; exact huv⟩
     : IsCoprime (↑(a 0) : ℤ) (S_ℤ 1 0)).dvd_of_dvd_mul_right h2
 
 private lemma mulSupport_pp_det_eq (k : ℕ) (a : Fin 2 → ℕ) (ha_pos : ∀ i, 0 < a i)
@@ -305,7 +305,7 @@ private lemma mulSupport_pp_case_split (k : ℕ) (_hk : 0 < k) (a : Fin 2 → �
     · simp only [Fin.mk_one, Fin.isValue, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val_one,
       Matrix.cons_val_fin_one]
       have h1 : p * a 1 = p ^ (k + 1) := by rwa [ha0_p] at h_det_prod
-      exact Nat.eq_of_mul_eq_mul_left hp.pos (by rw [h1, pow_succ]; ring)
+      exact Nat.eq_of_mul_eq_mul_left hp.pos (by rw [h1, pow_succ]; ac_rfl)
 
 include hp in
 private lemma mulSupport_pp_subset (k : ℕ) (_hk : 0 < k) (A : HeckeCoset (GLPair 2))
@@ -342,13 +342,17 @@ private lemma mulSupport_pp_subset (k : ℕ) (_hk : 0 < k) (A : HeckeCoset (GLPa
         exact SLnZ_to_GLnQ_det SL_i₀)
     (by rw [hD1_eq, Units.val_mul, Units.val_mul, Matrix.det_mul, Matrix.det_mul,
           SLnZ_to_GLnQ_det, SLnZ_to_GLnQ_det, diagMat_det 2 (![1, p])
-          (by intro ⟨i, hi⟩; interval_cases i <;> simp [hp.pos])]; simp [Fin.prod_univ_two])
+          (by intro ⟨i, hi⟩; interval_cases i <;> simp [hp.pos])]; simp only [Fin.prod_univ_two,
+            Fin.isValue, Matrix.cons_val_zero, Nat.cast_one, Matrix.cons_val_one,
+            Matrix.cons_val_fin_one, one_mul, mul_one])
     (by rw [show (↑j₀.out : GL _ ℚ) = (SL_j₀ : GL (Fin 2) ℚ) from hSL_j₀.symm]
         exact SLnZ_to_GLnQ_det SL_j₀)
     (by rw [hD2_eq, Units.val_mul, Units.val_mul, Matrix.det_mul, Matrix.det_mul,
           SLnZ_to_GLnQ_det, SLnZ_to_GLnQ_det, diagMat_det 2 (![1, p ^ k])
           (by intro ⟨i,
-            hi⟩; interval_cases i <;> simp [pow_pos hp.pos k])]; simp [Fin.prod_univ_two])
+            hi⟩; interval_cases i <;> simp [pow_pos hp.pos k])]; simp only [Fin.prod_univ_two,
+              Fin.isValue, Matrix.cons_val_zero, Nat.cast_one, Matrix.cons_val_one,
+              Matrix.cons_val_fin_one, Nat.cast_pow, one_mul, mul_one])
     SL_La SL_Ra h_prod_eq
   have h_dvd := mulSupport_pp_dvd_p p hp k _hk a ha_pos hdiv (HeckeCoset.rep D1)
     (HeckeCoset.rep D2) (↑i₀.out) (↑j₀.out) SL_L₁ SL_R₁ SL_L₂ SL_R₂ SL_La SL_Ra SL_i₀
@@ -397,7 +401,7 @@ private lemma heckeMultiplicity_deg_sum_eq (D1 D2 D_out1 D_out2 : HeckeCoset (GL
       (HeckeRing.m (GLPair 2) (HeckeCoset.rep D1) (HeckeCoset.rep D2)) =
       HeckeCosetDeg (GLPair 2) D1 * HeckeCosetDeg (GLPair 2) D2 := by
     rw [← HeckeRing.T_single_one_mul_T_single_one, HeckeRing.deg_mul,
-      HeckeRing.deg_T_single, HeckeRing.deg_T_single]; ring
+      HeckeRing.deg_T_single, HeckeRing.deg_T_single]; ac_rfl
   have h2 : HeckeRing.deg (GLPair 2)
       (HeckeRing.m (GLPair 2) (HeckeCoset.rep D1) (HeckeCoset.rep D2)) =
       HeckeRing.heckeMultiplicity (GLPair 2) (HeckeCoset.rep D1) (HeckeCoset.rep D2)
@@ -417,7 +421,7 @@ private lemma heckeMultiplicity_deg_sum_eq (D1 D2 D_out1 D_out2 : HeckeCoset (GL
     exact Finset.sum_subset hsub (by
       intro A _ hA; rw [Finsupp.notMem_support_iff.mp hA]; simp) |>.trans
       (Finset.sum_pair h_ne)
-  linarith
+  linarith only [h1, h2]
 
 include hp in
 private lemma heckeMultiplicity_values (k : ℕ) (hk : 0 < k) :
@@ -519,12 +523,12 @@ private lemma heckeMultiplicity_values (k : ℕ) (hk : 0 < k) :
       have key : (p : ℤ) ^ (k - 2) * ((p : ℤ) + 1) ≠ 0 := by positivity
       have := mul_right_cancel₀ key (show
         (m1 * (p : ℤ) ^ 2 + m2) * ((p : ℤ) ^ (k - 2) * ((p : ℤ) + 1)) =
-        ((p : ℤ) * ((p : ℤ) + 1)) * ((p : ℤ) ^ (k - 2) * ((p : ℤ) + 1)) by nlinarith)
-      linarith
+        ((p : ℤ) * ((p : ℤ) + 1)) * ((p : ℤ) ^ (k - 2) * ((p : ℤ) + 1)) by nlinarith only [h])
+      exact this
     have h_m1_eq : m1 = 1 := by
       have h_le : m1 * (p : ℤ) ^ 2 ≤ (p : ℤ) ^ 2 + p := by linarith [h_eq, hm2_nn]
-      nlinarith [show (p : ℤ) ^ 2 ≥ 4 by nlinarith]
-    exact ⟨h_m1_eq, by rw [h_m1_eq] at h_eq; linarith⟩
+      nlinarith [show (p : ℤ) ^ 2 ≥ 4 by nlinarith only [hp2] ]
+    exact ⟨h_m1_eq, by rw [h_m1_eq] at h_eq; linarith only [h_eq]⟩
 
 /-- Theorem 3.24(5): `T(p) · T(1, pᵏ) = T(1, p^{k+1}) + m · T(p, pᵏ)` -/
 theorem T_sum_prime_mul_T_ad (k : ℕ) (hk : 0 < k) :
@@ -606,7 +610,9 @@ private lemma T_pp_comm_T_ad_one_p : TPp p * TAd 1 p = TAd 1 p * TPp p := by
   rw [T_ad_of_pos 1 p Nat.one_pos hp.pos (one_dvd _)]
   exact T_pp_comm_T_elem p hp _
     (fun i => by fin_cases i <;> first | exact Nat.one_pos | exact hp.pos)
-    (fun i hi => by (have : i = 0 := by omega); subst this; simp)
+    (fun i hi => by (have : i = 0 := by omega); subst this; simp only [Nat.succ_eq_add_one,
+      Nat.reduceAdd, Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, zero_add, Fin.mk_one,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, isUnit_iff_eq_one, IsUnit.dvd])
 
 /-- `TSum(p^0) = 1`. -/
 private lemma T_sum_ppow_zero : TSum ⟨p ^ 0, pow_pos hp.pos 0⟩ = 1 := by
@@ -726,16 +732,12 @@ private lemma T_pp_comm_T_sum_ppow (k : ℕ) : TPp p * TSum ⟨p ^ k, pow_pos hp
 
 private lemma T_pp_pow_comm_T_sum_ppow (i k : ℕ) : TPp p ^ i *
     TSum ⟨p ^ k, pow_pos hp.pos k⟩ = TSum ⟨p ^ k, pow_pos hp.pos k⟩ * TPp p ^ i := by
-  induction i with
-  | zero => simp
-  | succ i ih => rw [pow_succ', HA_mul_assoc, ih, ← HA_mul_assoc, T_pp_comm_T_sum_ppow p hp k,
-      HA_mul_assoc, ← pow_succ']
+  exact (show Commute (TPp p) (TSum ⟨p ^ k, pow_pos hp.pos k⟩) from
+    T_pp_comm_T_sum_ppow p hp k).pow_left i
 
 private lemma T_sum_p_comm_T_pp_pow (i : ℕ) : TSum ⟨p, hp.pos⟩ * TPp p ^ i =
     TPp p ^ i * TSum ⟨p, hp.pos⟩ := by
-  rw [show TSum ⟨p, hp.pos⟩ =
-    TSum ⟨p ^ 1, pow_pos hp.pos 1⟩ from by congr 1; exact (Subtype.ext (pow_one p)).symm]
-  exact (T_pp_pow_comm_T_sum_ppow p hp i 1).symm
+  simpa only [pow_one] using (T_pp_pow_comm_T_sum_ppow p hp i 1).symm
 
 private lemma T_sum_p_comm_T_pp_pow_T_sum (i k : ℕ) : TSum ⟨p, hp.pos⟩ *
     (TPp p ^ i * TSum ⟨p ^ k, pow_pos hp.pos k⟩) =
@@ -899,7 +901,8 @@ section CoprimeMultiplicativity
 open Finset in
 /-- `∏ i, (![a, d]) i (![a, d]) = a * d`. -/
 private lemma prod_mk2 (a d : ℕ) :
-    ∏ i, (![a, d]) i = a * d := by simp [Fin.prod_univ_two]
+    ∏ i, (![a, d]) i = a * d := by simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.prod_univ_two,
+      Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one]
 
 /-- Coprime factoring: `T(a,da) T(b,db) = T(ab,da*db)` when `a*da` and `b*db` are coprime. -/
 lemma T_ad_mul_of_coprime (a b da db : ℕ)
@@ -951,7 +954,8 @@ lemma mul_injOn_coprime_divisors (m n : ℕ) (hcop : Nat.Coprime m n) :
   have haeq : a₁ = a₂ := Nat.dvd_antisymm
     (hcop₁₂.dvd_of_dvd_mul_right (heq ▸ dvd_mul_right a₁ b₁))
     (hcop₂₁.dvd_of_dvd_mul_right (heq ▸ dvd_mul_right a₂ b₂))
-  have ha_pos : 0 < a₁ := Nat.pos_of_ne_zero fun h => by simp [h] at h₁
+  have ha_pos : 0 < a₁ := Nat.pos_of_ne_zero fun h => by simp only [h, zero_dvd_iff, ne_eq,
+    and_not_self, false_and] at h₁
   exact Prod.ext haeq (Nat.eq_of_mul_eq_mul_left ha_pos (haeq ▸ heq))
 
 /-- Theorem 3.24(3a): coprime multiplicativity `T(m) T(n) = T(mn)` when `gcd(m,n) = 1`. -/
@@ -1082,13 +1086,13 @@ private lemma T_sum_mul_peel_prime_summand_rhs (q : ℕ) (hq : q.Prime) (a b : �
           (Nat.Prime.coprime_pow_of_not_dvd hq hq_ndvd_quot).symm)]
       rfl]
   congr 1
-  have hrs_eq : r + s = a + b := by subst hr; subst hs; simp [min_def, max_def]; split <;> ring
+  have hrs_eq : r + s = a + b := by subst hr; subst hs; simp only [min_def, max_def]; split <;> ring
   rw [hrs_eq, show q ^ i * d' * (q ^ i * d') = q ^ (2 * i) * (d' * d') from by ring,
     show q ^ a * ↑m' * (q ^ b * ↑n') = q ^ (a + b) * (↑m' * ↑n') from by ring,
     show q ^ (a + b) = q ^ (a + b - 2 * i) * q ^ (2 * i) from by
       rw [← pow_add]; congr 1; omega,
     show q ^ (a + b - 2 * i) * q ^ (2 * i) * (↑m' * ↑n') =
-      q ^ (2 * i) * (q ^ (a + b - 2 * i) * (↑m' * ↑n')) from by ring,
+      q ^ (2 * i) * (q ^ (a + b - 2 * i) * (↑m' * ↑n')) from by ac_rfl,
     show q ^ (2 * i) * (d' * d') = q ^ (2 * i) * (d' * d') from rfl,
     Nat.mul_div_mul_left _ _ (pow_pos hq.pos (2 * i)),
     Nat.mul_div_assoc _ (Nat.mul_dvd_mul
@@ -1106,9 +1110,10 @@ private lemma T_sum_mul_peel_prime_summand (q : ℕ) (hq : q.Prime) (a b : ℕ) 
   have hd'_dvd : d' ∣ Nat.gcd (m' : ℕ) n' := (Nat.mem_divisors.mp hd').1
   have hqd' : ¬ q ∣ d' := fun h => hqm (dvd_trans h (dvd_trans hd'_dvd (Nat.gcd_dvd_left _ _)))
   have hcop_qi_d' : Nat.Coprime (q ^ i) d' := (Nat.Prime.coprime_pow_of_not_dvd hq hqd').symm
-  have hd'_pos : 0 < d' := Nat.pos_of_ne_zero fun h => by simp [h] at hd'_dvd
+  have hd'_pos : 0 < d' := Nat.pos_of_ne_zero fun h => by simp only [h, zero_dvd_iff,
+    Nat.gcd_eq_zero_iff, PNat.ne_zero, and_self] at hd'_dvd
   rw [mul_smul_comm, smul_smul,
-    show (↑(q ^ i) : ℤ) * ↑d' = ↑(q ^ i * d') from by push_cast; ring]
+    show (↑(q ^ i) : ℤ) * ↑d' = ↑(q ^ i * d') from by push_cast; ac_rfl]
   congr 1
   rw [T_pp_pow_eq_T_ad q hq i,
     show TAd (q ^ i) (q ^ i) * TSum ⟨q ^ (r + s - 2 * i), pow_pos hq.pos _⟩ *
@@ -1176,7 +1181,7 @@ private lemma T_sum_mul_peel_prime_aux (q : ℕ) (hq : q.Prime) (a b : ℕ) (_ha
   rw [Nat.sum_divisors_prime_pow hq]
   apply Finset.sum_congr rfl; intro i hi; rw [Finset.mem_range] at hi
   rw [Finset.smul_sum]; apply Finset.sum_congr rfl; intro d' hd'
-  rw [show (↑q : ℤ) ^ i = (↑(q ^ i) : ℤ) from by push_cast; ring]
+  rw [show (↑q : ℤ) ^ i = (↑(q ^ i) : ℤ) from by push_cast; ac_rfl]
   exact T_sum_mul_peel_prime_summand q hq a b m' n' hqm hqn r s hr_def hs_def i hi d' hd'
 
 /-- Theorem 3.24(3): `T(m) · T(n) = Σ_{d∣gcd(m,n)} d · T(d,d) · T(mn/d²)`.

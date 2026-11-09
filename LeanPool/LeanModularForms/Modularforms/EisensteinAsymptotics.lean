@@ -65,8 +65,10 @@ lemma modular_form_tendsto_atImInfty {k : ℤ} (f : ModularForm (Gamma 1) k) :
     Filter.Tendsto f.toFun atImInfty (nhds ((qExpansion 1 f).coeff 0)) := by
   obtain ⟨c, hc, hO⟩ := ModularFormClass.exp_decay_sub_atImInfty' f
   rw [qExpansion_coeff_zero (f := ⇑f) (by norm_num : (0 : ℝ) < 1)
-    (ModularFormClass.analyticAt_cuspFunction_zero f one_pos (by simp))
-    (SlashInvariantFormClass.periodic_comp_ofComplex f (by simp))]
+    (ModularFormClass.analyticAt_cuspFunction_zero f one_pos (by simp only [strictPeriods_Gamma,
+      Nat.cast_one, AddSubgroup.mem_zmultiples]))
+    (SlashInvariantFormClass.periodic_comp_ofComplex f (by simp only [strictPeriods_Gamma,
+      Nat.cast_one, AddSubgroup.mem_zmultiples]))]
   simpa using (tendsto_zero_of_exp_decay hc hO).add_const (valueAtInfty f.toFun)
 
 /-- E₂ - 1 = O(exp(-2π·Im z)) at infinity. -/
@@ -77,11 +79,12 @@ lemma E₂_sub_one_isBigO_exp : (fun z : ℍ => E₂ z - 1) =O[atImInfty]
   -- E₂ z - 1 = -24 * ∑' n, n·qⁿ/(1-qⁿ)
   have hsub : E₂ z - 1 = -24 * ∑' (n : ℕ+), ↑n * cexp (2 * π * Complex.I * ↑n * ↑z) /
       (1 - cexp (2 * π * Complex.I * ↑n * ↑z)) := by rw [E₂_eq z]; ring
-  rw [hsub, norm_mul, show ‖(-24 : ℂ)‖ = 24 by simp, Real.norm_of_nonneg (Real.exp_pos _).le]
+  rw [hsub, norm_mul, show ‖(-24 : ℂ)‖ = 24 by simp only [norm_neg,
+    Complex.norm_ofNat], Real.norm_of_nonneg (Real.exp_pos _).le]
   set q : ℂ := cexp (2 * π * Complex.I * z)
   -- Rewrite sum in terms of q^n
   simp_rw [show ∀ n : ℕ, cexp (2 * π * Complex.I * n * z) = q ^ n by
-    intro n; rw [← Complex.exp_nat_mul]; congr 1; ring]
+    intro n; rw [← Complex.exp_nat_mul]; congr 1; ac_rfl]
   -- Key bounds: ‖q‖ ≤ exp(-2π) < 1/2
   have hq_bound : ‖q‖ ≤ Real.exp (-2 * π) := norm_exp_two_pi_I_le_exp_neg_two_pi z hz
   have hexp_lt_half : Real.exp (-2 * π) < 1 / 2 := by
@@ -239,11 +242,11 @@ lemma summable_pow_shift (k : ℕ) :
       rexp (2 * π) * ((m + 1) ^ k * rexp (-2 * π * (m + 1))) := fun m => by
     have : rexp (-2 * π * m) = rexp (2 * π) * rexp (-2 * π * (m + 1)) := by
       rw [← Real.exp_add]; ring_nf
-    rw [this]; ring
+    rw [this]; ac_rfl
   simp_rw [h_eq]
   apply Summable.mul_left
   refine (h.comp_injective Nat.succ_injective).congr (fun m => ?_)
-  simp [Function.comp_apply, Nat.succ_eq_add_one]
+  simp only [neg_mul, Function.comp_apply, Nat.succ_eq_add_one, Nat.cast_add, Nat.cast_one]
 
 /-- Derivative bounds for q-expansion coefficients.
 Given `‖a n‖ ≤ n^k`, produces bounds
@@ -290,7 +293,10 @@ lemma qexp_deriv_bound_of_coeff_bound {a : ℕ+ → ℂ} {k : ℕ}
             gcongr; exact ha n
         _ ≤ (n : ℝ)^k * (2 * π * n) * rexp (-2 * π * n * k_min.im) := by
             apply mul_le_mul_of_nonneg_left _ (by positivity)
-            simp_all
+            simp_all only [mul_pos_iff_of_pos_right, Nat.ofNat_pos, mul_pos_iff_of_pos_left,
+              neg_mul, Nat.cast_pos, PNat.pos, Complex.norm_mul, Complex.norm_ofNat, norm_real,
+              norm_eq_abs, abs_pi, norm_I, mul_one, RCLike.norm_natCast, exp_le_exp, neg_le_neg_iff,
+              mul_le_mul_iff_right₀]
         _ = 2 * π * (n : ℝ)^(k + 1) * rexp (-2 * π * n * k_min.im) := by ring
   · use fun _ => 0
     constructor

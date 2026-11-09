@@ -11,7 +11,6 @@ public import LeanPool.LeanModularForms.GeneralizedResidueTheory.HomologicalCauc
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Null-Homologous Curves and the Cauchy Integral Theorem

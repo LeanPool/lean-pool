@@ -11,7 +11,6 @@ import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.HomotopyDef
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.WindingBase
 import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Winding number computation

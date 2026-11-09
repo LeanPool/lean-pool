@@ -98,7 +98,8 @@ lemma decompQuot_coset_diff (g : P.Δ)
   simp_rw [← Set.singleton_mul_singleton] at h
   have := conjAct_mem_of_leftCoset_eq P.H P.Δ g i.out j.out h
   rw [← @QuotientGroup.leftRel_apply, ← @Quotient.eq''] at this
-  simp_all
+  simp_all only [ne_eq, mul_singleton, image_singleton, singleton_mul, image_mul_left, mul_inv_rev,
+    Quotient.out_eq, not_true_eq_false]
 
 /-- Two left cosets that are not disjoint must be equal. -/
 lemma leftCoset_eq_of_not_disjoint (f g : G)

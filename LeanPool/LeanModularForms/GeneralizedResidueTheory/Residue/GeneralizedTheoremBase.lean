@@ -15,7 +15,6 @@ import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 
 /-!
 # Generalized Residue Theorem -- Base Infrastructure
@@ -169,7 +168,7 @@ private lemma cpv_cauchy_of_sum_and_regular (S0 : Finset ℂ) (f : ℂ → ℂ)
     exact multipointPV_diff_tendsto S0 f γ (cpv_crossing_null S0 γ)
       g_reg hg_decomp hg_reg_cont hS0_sep
   have h_M_tendsto : Tendsto M (𝓝[>] 0) (𝓝 (L + G)) := by
-    have h_eq : M = fun ε => S' ε + A ε := by ext ε; simp [M, A, S']
+    have h_eq : M = fun ε => S' ε + A ε := by ext ε; simp only [gt_iff_lt, add_sub_cancel, M, S', A]
     rw [h_eq]
     exact h_sum_tendsto.add h_A_tendsto
   exact h_M_tendsto.cauchy_map
@@ -402,7 +401,7 @@ private lemma generalizedResidueTheorem'_crossing_formula
     _ = 2 * Real.pi * I *
           ∑ s ∈ S0, generalizedWindingNumber' γ.toFun γ.a γ.b s *
             residueSimplePole f s := by
-        rw [Finset.mul_sum]; apply Finset.sum_congr rfl; intro s _; ring
+        rw [Finset.mul_sum]; apply Finset.sum_congr rfl; intro s _; ac_rfl
 
 /-- Generalized residue theorem: CPV equals `2πi · Σ winding ·
 residue` even when γ crosses poles. -/

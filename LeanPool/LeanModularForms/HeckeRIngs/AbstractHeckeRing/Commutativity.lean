@@ -57,10 +57,10 @@ def bar (g : G) : G := (ι.toFun g).unop
 lemma bar_mul (a b : G) : ι.bar (a * b) = ι.bar b * ι.bar a := by simp only [bar, map_mul, unop_mul]
 
 /-- The anti-involution fixes the identity. -/
-lemma bar_one : ι.bar 1 = 1 := by simp [bar]
+lemma bar_one : ι.bar 1 = 1 := by simp only [bar, map_one, unop_one]
 
 /-- The anti-involution commutes with inversion. -/
-lemma bar_inv (g : G) : ι.bar g⁻¹ = (ι.bar g)⁻¹ := by simp [bar]
+lemma bar_inv (g : G) : ι.bar g⁻¹ = (ι.bar g)⁻¹ := by simp only [bar, map_inv, unop_inv]
 
 /-- The anti-involution is injective. -/
 lemma bar_injective : Function.Injective ι.bar := by
@@ -211,7 +211,7 @@ private lemma decompQuot_eq_of_conj_mem (g₁ : P.Δ)
   rw [@Quotient.eq'', QuotientGroup.leftRel_apply,
     Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def]
   simp only [map_inv, ConjAct.ofConjAct_toConjAct, inv_inv]
-  convert hconj_H' using 1; simp [Subgroup.coe_mul]; group
+  convert hconj_H' using 1; simp only [coe_mul, InvMemClass.coe_inv, mul_left_inj]; group
 
 private lemma conj_kernel_mem_of_stabilizer_mem
     (a₁ a₂ : P.H) (g₂ : G)

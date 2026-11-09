@@ -103,7 +103,7 @@ private lemma coset_shift_fwd (q a b a' b' g₁ g₂ g_D n₁ n₂ : G)
   subst ha' hb'
   apply leftCoset_eq_of_not_disjoint; rw [@not_disjoint_iff]
   refine ⟨q⁻¹ * a * n₁ * g₂ * (g₂⁻¹ * n₁⁻¹ * g₂ * b * n₂ * g₁),
-    ⟨1, P.H.one_mem, by simp [smul_eq_mul]⟩, ?_⟩
+    ⟨1, P.H.one_mem, by simp only [smul_eq_mul, mul_one]⟩, ?_⟩
   have hmem : a * g₂ * (b * g₁) ∈ ({q * g_D} : Set G) * ↑P.H := by
     rw [← hcond]; exact ⟨_, rfl, 1, P.H.one_mem, by group⟩
   obtain ⟨_, h_eq, h₀, hh₀, hprod⟩ := hmem
@@ -188,12 +188,14 @@ lemma heckeMultiplicity_uniform (g₂ g₁ : P.Δ) (D : HeckeCoset P)
     have hi₁₂ : i₁ = i₂ := by
       rw [@Quotient.eq'', QuotientGroup.leftRel_apply] at hi
       exact decompQuot_eq_of_conjAct_rel P g₂ i₁ i₂
-        (by convert hi using 1; ext; simp [Subgroup.coe_mul])
+        (by convert hi using 1; ext; simp only [Subgroup.coe_mul, InvMemClass.coe_inv, mul_inv_rev,
+          inv_inv, mul_mul_inv_mul_cancel])
     subst hi₁₂
     have hj₁₂ : j₁ = j₂ := by
       rw [@Quotient.eq'', QuotientGroup.leftRel_apply] at hj
       exact decompQuot_eq_of_conjAct_rel P g₁ j₁ j₂
-        (by convert hj using 1; ext; simp [Subgroup.coe_mul]; group)
+        (by convert hj using 1; ext; simp only [Subgroup.coe_mul, InvMemClass.coe_inv, mul_inv_rev,
+          inv_inv]; group)
     subst hj₁₂; rfl
   · intro ⟨⟨i', j'⟩, (hcond'_tgt : _ = _)⟩
     let i₀ : decompQuot P g₂ :=
@@ -218,7 +220,8 @@ lemma heckeMultiplicity_uniform (g₂ g₁ : P.Δ) (D : HeckeCoset P)
         QuotientGroup.leftRel_apply]
       have h := Quotient.out_eq' i₀
       rw [@Quotient.eq'', QuotientGroup.leftRel_apply] at h
-      convert h using 1; ext; simp [Subgroup.coe_mul]; group
+      convert h using 1; ext; simp only [Subgroup.coe_mul, InvMemClass.coe_inv, mul_inv_rev,
+        inv_inv]; group
     have h_n₀_mi : (n₀ : G) = (m_i : G)⁻¹ := by
       have hn₀_spec := (QuotientGroup.mk_out_eq_mul
         ((ConjAct.toConjAct g₂' • P.H).subgroupOf P.H)
@@ -250,7 +253,8 @@ lemma heckeMultiplicity_uniform (g₂ g₁ : P.Δ) (D : HeckeCoset P)
         QuotientGroup.leftRel_apply]
       have h_j₀ := Quotient.out_eq' j₀
       rw [@Quotient.eq'', QuotientGroup.leftRel_apply] at h_j₀
-      convert h_j₀ using 1; ext; simp [Subgroup.coe_mul]; group; rfl⟩
+      convert h_j₀ using 1; ext; simp only [Subgroup.coe_mul, InvMemClass.coe_inv, mul_inv_rev,
+        inv_inv]; group; rfl⟩
 
 private lemma iter_mem_smulOrbit_mulMap (g₂ g₁ : P.Δ) (β : P.Δ)
     (i : decompQuot P g₂) (j : decompQuot P g₁) :
@@ -526,9 +530,9 @@ private lemma smul_assoc_key (g₁ g₂ : P.Δ) (β₀ : P.Δ) :
       ∑ j ∈ smulOrbit P g₂ β₀,
         if x₀ ∈ smulOrbit P g₁ (HeckeLeftCoset.rep j) then 1 else 0 := by
     rw [← Finsupp.sum_finsetSum_index
-      (h_zero := fun a => by simp)
+      (h_zero := fun a => by simp only [ite_self])
       (h_add := fun a b₁ b₂ => by split_ifs <;> simp [*])]
-    simp_all
+    simp_all only [ite_self, sum_single_index, Finset.sum_boole]
   rw [h_rhs]
   by_cases h_ex : ∃ D₀ ∈ (m P g₂ g₁).support, x₀ ∈ smulOrbit P (HeckeCoset.rep D₀) β₀
   · obtain ⟨D₀, hD₀, hx₀⟩ := h_ex
@@ -573,9 +577,11 @@ private lemma smul_assoc_singles (D₁ D₂ : HeckeCoset P) (a₁ a₂ : ℤ)
           Finsupp.single i (b * b₂)) =
       ∑ i ∈ smulOrbit P (HeckeCoset.rep D) (HeckeLeftCoset.rep m₀),
         Finsupp.single i (b * c₀) := by
-    simp_all
+    simp_all only [single_mul, single_zero, mul_zero, Finset.sum_const_zero, sum_single_index,
+      implies_true]
   simp_rw [hsi]
-  rw [Finsupp.sum_single_index (by simp [zero_mul, Finsupp.single_zero, Finset.sum_const_zero])]
+  rw [Finsupp.sum_single_index (by simp only [single_mul, zero_mul, single_zero,
+    Finset.sum_const_zero, sum_fun_zero])]
   apply Finsupp.ext; intro x₀
   simp only [Finsupp.sum_apply, Finsupp.finsetSum_apply, Finsupp.single_apply]
   simp_rw [Finset.sum_ite_eq']
@@ -637,7 +643,8 @@ private lemma smul_assoc_singles (D₁ D₂ : HeckeCoset P) (a₁ a₂ : ℤ)
     rw [← Finsupp.sum_finsetSum_index
       (h_zero := fun a => by simp)
       (h_add := fun a b₁ b₂ => by split_ifs <;> simp [*])]
-    simp_all
+    simp_all only [single_mul, single_zero, mul_zero, Finset.sum_const_zero, sum_single_index,
+      implies_true, ite_self, Finset.sum_boole]
   rwa [h_rhs2] at key_pt
 
 /-- The module action satisfies the scalar tower property `(x * y) • z = y • (x • z)`,

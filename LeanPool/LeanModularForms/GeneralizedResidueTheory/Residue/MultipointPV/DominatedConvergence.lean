@@ -9,7 +9,6 @@ public import LeanPool.LeanModularForms.GeneralizedResidueTheory.Residue
 import LeanPool.LeanModularForms.GeneralizedResidueTheory.Residue.MultipointPV
 import Mathlib.CategoryTheory.Category.Init
 import Mathlib.Combinatorics.Matroid.Init
-import Mathlib.MeasureTheory.Covering.Besicovitch
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
@@ -59,7 +58,7 @@ private lemma γt_not_mem_S0_of_all_far {S0 : Finset ℂ} {γ : ℝ → ℂ} {t 
     (hε : 0 < ε) (hall : ∀ s ∈ S0, ε < ‖γ t - s‖) :
     γ t ∉ (S0 : Set ℂ) := by
   intro h_in; simp only [Finset.mem_coe] at h_in
-  have := hall (γ t) h_in; simp only [sub_self, norm_zero] at this; linarith
+  have := hall (γ t) h_in; simp only [sub_self, norm_zero] at this; linarith only [hε, this]
 
 private lemma residue_sum_ifs_eq_mul_deriv {S0 : Finset ℂ} {f : ℂ → ℂ} {γ : ℝ → ℂ}
     {t : ℝ} {ε : ℝ} (hall : ∀ s ∈ S0, ε < ‖γ t - s‖) :
@@ -149,7 +148,8 @@ private lemma pointwise_ae_limit_off_crossing (S0 : Finset ℂ) (f g_reg : ℂ �
               f (γ.toFun t) * deriv γ.toFun t := by
             simp only [cauchyPrincipalValueIntegrandOn]; rw [ite_eq_right]; push Not; exact hall_far
           rw [hM_eval, residue_sum_ifs_eq_mul_deriv hall_far, ← sub_mul]
-          simp_all
+          simp_all only [ne_eq, mem_Icc, SetLike.mem_coe, not_false_eq_true, norm_pos_iff,
+            add_sub_cancel_right]
     _ = 0 := h_crossing_null
 
 /-! ## Dominated Convergence: Norm Bounds -/
@@ -238,7 +238,7 @@ private lemma norm_A_int_bound_some_near (S0 : Finset ℂ) (f : ℂ → ℂ) (γ
         then residueSimplePole f s / (γ.toFun t - s) * deriv γ.toFun t else 0) =
       (∑ s ∈ S0, if ‖γ.toFun t - s‖ > ε
         then residueSimplePole f s / (γ.toFun t - s) else 0) * deriv γ.toFun t := by
-    rw [Finset.sum_mul]; simp_all
+    rw [Finset.sum_mul]; simp_all only [mem_Icc, and_imp, ne_eq, gt_iff_lt, ite_mul, zero_mul]
   rw [h_factor]
   let singularBound := 2 * (S0.card : ℝ) * Mc / δ
   have h_sum_bound : ‖∑ s ∈ S0, if ‖γ.toFun t - s‖ > ε
@@ -348,7 +348,7 @@ private lemma pvIntegrand_intervalIntegrable_of_nonempty (S0 : Finset ℂ) (f g_
   have h_bound : ∀ t ∈ Icc γ.a γ.b,
       ‖cauchyPrincipalValueIntegrandOn S0 f γ.toFun ε t‖ ≤ Mb := by
     intro t ht; simp only [cauchyPrincipalValueIntegrandOn]; split_ifs with h
-    · simp only [norm_zero]; linarith
+    · simp only [norm_zero]; exact le_of_lt hMb_pos
     · push Not at h
       have hγt_notin : γ.toFun t ∉ (S0 : Set ℂ) := by
         intro hmem; simp only [Finset.mem_coe] at hmem
@@ -425,7 +425,9 @@ private lemma A_eq_integral_A_int (S0 : Finset ℂ) (f g_reg : ℂ → ℂ) (γ 
       intro S; induction S using Finset.induction_on with
       | empty => intro _; simp only [Finset.sum_empty]; exact intervalIntegrable_const
       | insert s' S'' hs'' ih =>
-        intro h_all; simp_all
+        intro h_all; simp_all only [ne_eq, SetLike.mem_coe, gt_iff_lt, Finset.mem_insert, or_true,
+          implies_true, forall_const, forall_eq_or_imp, not_false_eq_true, Finset.sum_insert,
+          IntervalIntegrable.add]
     exact this S0 hS_int
   rw [h_sum_eq, ← intervalIntegral.integral_sub hM_int hSum_int]
 

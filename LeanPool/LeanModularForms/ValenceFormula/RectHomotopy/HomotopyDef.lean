@@ -8,7 +8,6 @@ module
 public import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.Geometry
 import LeanPool.LeanModularForms.ValenceFormula.TrigLemmas
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Homotopy infrastructure for FD boundary → polygon deformation
@@ -105,7 +104,7 @@ lemma hasDerivAt_chordSegment_shift (a b : ℂ) (c t : ℝ) :
   have h2 : HasDerivAt (fun t' : ℝ => (t' - c) • b) b t := by
     have := h_shift.smul_const b
     simpa only [one_smul] using this
-  rw [show b - a = -a + b from by ring]
+  rw [show b - a = -a + b from by ac_rfl]
   exact h1.add h2
 
 lemma exp_pi_div_three_eq_rho' :
@@ -143,7 +142,7 @@ lemma H_match_at_t1 (p : ℝ × ℝ) (hp : p.1 = 1) :
     simp only [Complex.ofReal_one, sub_self,
       zero_mul, add_zero]
   simp only [hangle]
-  have hpi3 : (↑Real.pi / 3 : ℂ) = ↑(Real.pi / 3) := by push_cast; ring
+  have hpi3 : (↑Real.pi / 3 : ℂ) = ↑(Real.pi / 3) := by push_cast; ac_rfl
   rw [hpi3, exp_pi_div_three_eq_rho']
   simp only [sub_self, rho']
   simp only [Complex.real_smul,
@@ -170,7 +169,7 @@ lemma H_match_at_t3 (p : ℝ × ℝ) (hp : p.1 = 3) :
       Complex.exp (2 * ↑Real.pi / 3 * I) =
         -1/2 + ↑(Real.sqrt 3) / 2 * I := by
     have h : (2 * ↑Real.pi / 3 * I : ℂ) =
-        ↑(2 * Real.pi / 3) * I := by push_cast; ring
+        ↑(2 * Real.pi / 3) * I := by push_cast; ac_rfl
     rw [h, exp_two_pi_div_three_eq_rho, rho]
   simp only [hexp]; ring
 

@@ -7,7 +7,6 @@ module
 
 public import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.Geometry
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Polygon properties: values, segment functions, derivatives, differentiability
@@ -45,7 +44,7 @@ lemma fdPolygon_at_t3 : fdPolygon 3 = rho := by
     show ¬(3 : ℝ) ≤ 2 from by norm_num,
     show (3 : ℝ) ≤ 3 from le_refl 3, ↓reduceIte]
   simp only [chordSegment, rho, show (3 : ℝ) - 2 = 1 by ring, sub_self]
-  simp
+  simp only [zero_smul, smul_add, one_smul, zero_add]
 
 lemma fdPolygon_at_t4 :
     fdPolygon 4 = -1/2 + HHeight * I := by
@@ -94,7 +93,8 @@ lemma fdPolygon_match_t1 :
     fdPolygonSeg1 1 = fdPolygonSeg2 1 := by
   simp only [fdPolygonSeg1, fdPolygonSeg2,
     chordSegment, HHeight, rho', sub_self]
-  simp
+  simp only [one_div, ofReal_add, ofReal_div, ofReal_ofNat, ofReal_one, add_sub_cancel_left,
+    mul_one, add_sub_cancel_right, sub_zero, smul_add, one_smul, zero_smul, add_zero]
 
 lemma fdPolygon_match_t2 :
     fdPolygonSeg2 2 = fdPolygonSeg3 2 := by
@@ -107,7 +107,8 @@ lemma fdPolygon_match_t3 :
     fdPolygonSeg3 3 = fdPolygonSeg4 3 := by
   simp only [fdPolygonSeg3, fdPolygonSeg4,
     chordSegment, rho, HHeight, show (3 : ℝ) - 2 = 1 by ring, sub_self]
-  simp
+  simp only [zero_smul, smul_add, one_smul, zero_add, ofReal_ofNat, sub_self, ofReal_add,
+    ofReal_div, ofReal_one, add_sub_cancel_left, mul_one, add_zero]
 
 lemma fdPolygon_match_t4 :
     fdPolygonSeg4 4 = fdPolygonSeg5 4 := by

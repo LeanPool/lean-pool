@@ -10,7 +10,6 @@ import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.BoundaryHomotopyDer
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.BoundaryHomotopySmooth
 import LeanPool.LeanModularForms.ValenceFormula.RectHomotopy.HomotopyDef
 import Mathlib.CategoryTheory.Category.Init
-import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
 # Uniform derivative bound for the homotopy
@@ -103,7 +102,8 @@ private lemma not_diffAt_at_two (s : ℝ) (hs0 : s ≠ 0) :
       congr 1
       · congr 1; push_cast; ring_nf
       · rw [show (2 : ℝ) - 1 = 1 from by norm_num, show (2 : ℝ) - 2 = 0 from by norm_num]
-        simp [chordSegment]
+        simp only [sub_self, zero_smul, one_smul, zero_add, real_smul, chordSegment, sub_zero,
+          add_zero]
     have h_at_t'r : fdBoundaryToPolygonHomotopy (t', s) = g_right t' := by
       simp only [fdBoundaryToPolygonHomotopy,
         not_le.mpr (show (1 : ℝ) < t' by linarith only [ht', ht'.1]), not_le.mpr ht'.1, ite_false,
@@ -151,12 +151,12 @@ private lemma deriv_bound_at_two_zero :
     have h_raw := hasDerivAt_arc_exp (Real.pi / 3) (Real.pi / 6) 1 2
     rw [show ((↑(Real.pi / 3) : ℂ) + ((↑(2 : ℝ) : ℂ) - ↑(1 : ℝ)) * (↑(Real.pi / 6) : ℂ)) * I =
         ((Real.pi : ℝ) / 2 : ℂ) * I from by push_cast; ring] at h_raw
-    convert h_raw using 2 <;> push_cast <;> ring
+    convert h_raw using 2 <;> push_cast <;> ac_rfl
   rw [h_deriv.deriv]
   have h_exp_norm : ‖Complex.exp ((Real.pi / 2) * I)‖ = 1 := by
     simp_all only [exp_pi_div_two_mul_I, norm_I]
   rw [norm_mul, norm_mul, h_exp_norm, Complex.norm_I, mul_one, mul_one,
-    show (Real.pi / 6 : ℂ) = ((Real.pi / 6 : ℝ) : ℂ) from by push_cast; ring, Complex.norm_real,
+    show (Real.pi / 6 : ℂ) = ((Real.pi / 6 : ℝ) : ℂ) from by push_cast; ac_rfl, Complex.norm_real,
     Real.norm_eq_abs, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 6)]
   have := Real.pi_le_four; linarith only [this]
 

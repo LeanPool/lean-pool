@@ -78,7 +78,7 @@ lemma divChain_T_gen (k : Fin n) :
   by_cases h1 : i < n - 1 - (k : ℕ)
   · by_cases h2 : i + 1 < n - 1 - (k : ℕ) <;> simp [h1, h2]
   · have h2 : ¬ (i + 1 < n - 1 - (k : ℕ)) := by omega
-    simp [h1, h2]
+    simp only [h1, ↓reduceIte, h2, dvd_refl]
 
 variable [NeZero n]
 

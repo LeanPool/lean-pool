@@ -131,7 +131,7 @@ lemma single_smul_single (t : HeckeCoset P) (m : HeckeLeftCoset P) (a b : Z) :
     (∑ i ∈ smulOrbit P (HeckeCoset.rep t) (HeckeLeftCoset.rep m),
       Finsupp.single i (a * b : Z) : (HeckeLeftCoset P) →₀ Z) := by
   rw [smul_eq_sum]
-  simp [mul_zero, single_zero, Finset.sum_const_zero, sum_single_index, zero_mul]
+  simp only [single_mul, single_zero, mul_zero, Finset.sum_const_zero, sum_single_index, zero_mul]
 
 /-- Every finsupp is a sum of its basis elements. -/
 lemma single_basis {α : Type*} (t : Finsupp α Z) :
@@ -180,9 +180,9 @@ lemma smul_add_right (T : 𝕋 P Z) (m₁ m₂ : HeckeModule P Z) :
           Finsupp.single i (b * c)) := by
     intro D b
     exact Finsupp.sum_add_index'
-      (fun m => by simp [mul_zero, Finsupp.single_zero, Finset.sum_const_zero])
+      (fun m => by simp only [mul_zero, single_zero, Finset.sum_const_zero])
       (fun m c₁ c₂ => by simp only [← Finset.sum_add_distrib, mul_add, Finsupp.single_add])
-  simp_all
+  simp_all only [single_mul, sum_add]
 
 /-- The smul orbits of distinct double cosets acting on the same left coset are disjoint. -/
 lemma smulOrbit_disjoint_of_ne (g₁ g₂ : P.Δ) (β : P.Δ)
