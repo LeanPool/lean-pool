@@ -16,7 +16,6 @@ public import Mathlib.RingTheory.AdjoinRoot
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.RingTheory.KrullDimension.Basic
 public import Mathlib.RingTheory.Localization.AtPrime.Basic
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Data.Finsupp.Encodable
 import Mathlib.GroupTheory.Complement
 import Mathlib.RingTheory.HopkinsLevitzki
@@ -29,7 +28,7 @@ import Mathlib.RingTheory.KrullDimension.Polynomial
 noncomputable section
 
 -- Prefer concrete additive groups to the speculative simple/nilpotent group instance.
-attribute [local instance low] instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent
+attribute [-instance] instAddCommGroupOfIsSimpleAddGroupOfIsNilpotent
 
 namespace ConnesRigidity
 
@@ -648,7 +647,7 @@ private theorem inducedSpace_norm_le_sum_norm_apply
   classical
   have hξ :
       ξ = ∑ q : G ⧸ S, PiLp.single 2 q (ξ q) := by
-    ext q
+    ext q : 1
     simp only [WithLp.ofLp_sum, PiLp.ofLp_single, Finset.sum_apply, Finset.sum_pi_single,
       Finset.mem_univ, ↓reduceIte]
   calc
@@ -700,43 +699,36 @@ private theorem inducedRepresentation_hasAlmostInvariantUnitVectors
   have hcoordinate :
       ∀ q : G ⧸ S,
         ‖((inducedRepresentation S π g :
-            InducedSpace (H := H) S →L[ℂ] InducedSpace (H := H) S) ξ - ξ) q‖ < δ := by
+            InducedSpace (H := H) S →L[ℂ] InducedSpace (H := H) S) raw - raw) q‖ < δ := by
     intro q
     have hmem : correction S g (g⁻¹ • q) ∈ T := by
       apply Finset.mem_biUnion.mpr
       refine ⟨g, hg, ?_⟩
       apply Finset.mem_image.mpr
       exact ⟨q, Finset.mem_univ q, rfl⟩
-    have hclose := hvclose (correction S g (g⁻¹ • q)) hmem
-    have hformula :
-        ((inducedRepresentation S π g :
-            InducedSpace (H := H) S →L[ℂ] InducedSpace (H := H) S) ξ - ξ) q =
-          a •
-            ((π (correction S g (g⁻¹ • q)) : H →L[ℂ] H) v - v) := by
-      simp only [ξ, raw, map_smul, smul_sub, PiLp.sub_apply, PiLp.smul_apply,
-        inducedRepresentation_apply]
-    rw [hformula, norm_smul]
+    simpa only [PiLp.sub_apply, inducedRepresentation_apply, raw] using
+      hvclose (correction S g (g⁻¹ • q)) hmem
+  have hraw_close :
+      ‖(inducedRepresentation S π g :
+          InducedSpace (H := H) S →L[ℂ] InducedSpace (H := H) S) raw - raw‖ < ε := by
     calc
-      ‖a‖ * ‖(π (correction S g (g⁻¹ • q)) : H →L[ℂ] H) v - v‖ ≤
-          1 * ‖(π (correction S g (g⁻¹ • q)) : H →L[ℂ] H) v - v‖ :=
-        mul_le_mul_of_nonneg_right ha_le_one (norm_nonneg _)
-      _ < δ := by simpa only [one_mul] using hclose
-  calc
-    ‖(inducedRepresentation S π g :
-        InducedSpace (H := H) S →L[ℂ] InducedSpace (H := H) S) ξ - ξ‖ ≤
-        ∑ q : G ⧸ S,
+      _ ≤ ∑ q : G ⧸ S,
           ‖((inducedRepresentation S π g :
-              InducedSpace (H := H) S →L[ℂ] InducedSpace (H := H) S) ξ - ξ) q‖ :=
-      inducedSpace_norm_le_sum_norm_apply S _
-    _ < ∑ _q : G ⧸ S, δ :=
-      Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty
-        (fun q _ ↦ hcoordinate q)
-    _ = n * δ := by
-      simp only [n, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-    _ < ε := by
-      dsimp [δ]
-      rw [show n * (ε / (n + 1)) = (n * ε) / (n + 1) by ring]
-      exact (div_lt_iff₀ hden).2 (by linarith)
+              InducedSpace (H := H) S →L[ℂ] InducedSpace (H := H) S) raw - raw) q‖ :=
+        inducedSpace_norm_le_sum_norm_apply S _
+      _ < ∑ _q : G ⧸ S, δ :=
+        Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty (fun q _ => hcoordinate q)
+      _ = n * δ := by
+        simp only [n, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+      _ < ε := by
+        dsimp [δ]
+        rw [← mul_div_assoc]
+        exact (div_lt_iff₀ hden).2 (by linarith only [hε])
+  change ‖(inducedRepresentation S π g :
+    InducedSpace (H := H) S →L[ℂ] InducedSpace (H := H) S) (a • raw) - a • raw‖ < ε
+  rw [map_smul, ← smul_sub, norm_smul]
+  exact (mul_le_mul_of_nonneg_right ha_le_one (norm_nonneg _)).trans_lt
+    (by simpa only [one_mul] using hraw_close)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem inducedInvariant_baseCoset_ne_zero
@@ -751,7 +743,7 @@ private theorem inducedInvariant_baseCoset_ne_zero
     by_contra hall
     push Not at hall
     apply hη
-    ext q
+    ext q : 1
     exact hall q
   have hgq : Quotient.out q • q₀ = q := by
     calc
@@ -941,9 +933,7 @@ theorem diagonal_add (u v : V) :
 public
 theorem add_self_eq_zero {M : Type*} [AddCommGroup M] [Module F M]
     (x : M) : x + x = 0 := by
-  calc
-    x + x = ((1 : F) + 1) • x := by rw [add_smul, one_smul]
-    _ = 0 := by rw [show (1 : F) + 1 = 0 by decide, zero_smul]
+  exact ZModModule.add_self x
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -1374,8 +1364,6 @@ def levelThreeIntegerSubgroup : Subgroup IntegerSpecialLinearGroup :=
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem levelThreeIntegerReduction_constantTerm (g : IntegralSpecialLinearGroup) :
     levelThreeIntegerReduction (constantTermGroupHom g) = modThreeGroupHom g := by
-  apply Matrix.SpecialLinearGroup.ext
-  intro i j
   rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -1562,7 +1550,7 @@ private theorem finiteGeneratedCoset_l2Reindex_single
     {α β : Type u} (e : α ≃ β) [DecidableEq α] [DecidableEq β]
     (i : α) (z : ℂ) :
     l2Reindex e (lp.single 2 i z) = lp.single 2 (e i) z := by
-  ext j
+  ext j : 2
   simp only [l2Reindex_apply, lp.single_apply]
   by_cases h : e.symm j = i
   · have hj : j = e i := by
@@ -1681,7 +1669,7 @@ private theorem finiteGeneratedCosetInvariant_eq_zero
     (ξ : GroupL2 (finiteGeneratedCosetIndex G))
     (hξ : (finiteGeneratedCosetRepresentation G).IsInvariant ξ) :
     ξ = 0 := by
-  ext x
+  ext x : 2
   rcases x with ⟨F, q⟩
   change ξ ⟨F, q⟩ = 0
   by_contra hnonzero
@@ -2051,7 +2039,7 @@ private theorem suslinEvaluation_map_elementary :
           suslinEvaluation = _
   rw [MonoidHom.map_closure]
   congr 1
-  ext g
+  ext g : 1
   constructor
   · rintro ⟨_, ⟨i, j, h, p, rfl⟩, rfl⟩
     refine ⟨i, j, h, p.eval 0, ?_⟩
@@ -2704,11 +2692,6 @@ private theorem exists_suslin_opposite_conjugate_elementary_lift
   have hprod : f (d * d * p) = f (d * p) * f d := by
     simp only [map_mul]
     ring
-  have hcoeff : a * f (d * p) = f (c * p) := by
-    simp only [map_mul]
-    calc
-      a * (f d * f p) = (a * f d) * f p := by ring
-      _ = f c * f p := by rw [ha]
   have hreverse : f d * a = f c := by
     rw [mul_comm]
     exact ha
@@ -3555,7 +3538,7 @@ private theorem exists_third_coordinate_unit_mod_span_pair
   obtain ⟨tq, hu⟩ := exists_add_mul_isUnit_of_artinian hcoprime
   obtain ⟨t, rfl⟩ := Ideal.Quotient.mk_surjective tq
   refine ⟨t, ?_⟩
-  simpa only [map_add, map_mul] using hu
+  exact hu
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem unimodularRow_three_of_isUnit_quotient
@@ -4523,8 +4506,7 @@ private theorem stabilizedTwoMatrix_last_castSucc
 private theorem stabilizedTwoMatrix_last_last
     (b : Matrix (Fin 2) (Fin 2) R) :
     stabilizedTwoMatrix b (Fin.last 2) (Fin.last 2) = 1 := by
-  simp only [stabilizedTwoMatrix, Nat.reduceAdd, fromBlocks, Fin.reduceLast, reindex_apply,
-    Fin.isValue, submatrix_apply, finTwoPlusOne_symm_two, of_apply, Sum.elim_inr, one_apply_eq]
+  rfl
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem stabilizedTwoMatrix_det
@@ -5391,7 +5373,7 @@ private theorem suslinAwayToAtPrime_comp_productLeft
         (suslinAwayToProductLeft m d e) =
       suslinAwayToAtPrime m d := by
   apply IsLocalization.ringHom_ext (Submonoid.powers (d : A))
-  ext a
+  ext a : 1
   simp only [RingHom.comp_apply]
   rw [suslinAwayToProductLeft_algebraMap,
     suslinAwayToAtPrime_algebraMap,
@@ -5404,7 +5386,7 @@ private theorem suslinAwayToAtPrime_comp_productRight
         (suslinAwayToProductRight m d e) =
       suslinAwayToAtPrime m e := by
   apply IsLocalization.ringHom_ext (Submonoid.powers (e : A))
-  ext a
+  ext a : 1
   simp only [RingHom.comp_apply]
   rw [suslinAwayToProductRight_algebraMap,
     suslinAwayToAtPrime_algebraMap,
@@ -5506,67 +5488,42 @@ theorem suslin_exists_away_elementary_word_lift_atPrime
         (Polynomial (Localization.Away (d : A))) ∧
       Matrix.SpecialLinearGroup.map
         (Polynomial.mapRingHom (suslinAwayToAtPrime m d)) q = g := by
-  induction hg using Subgroup.closure_induction with
-  | mem g hg =>
-      obtain ⟨i, j, h, p, rfl⟩ := hg
-      obtain ⟨d, q, hq⟩ :=
-        suslin_exists_away_polynomial_lift_atPrime m p
-      refine ⟨d, Matrix.SpecialLinearGroup.transvection h q,
-        localGlobal_transvection_mem i j h q, ?_⟩
-      rw [specialLinear_map_transvection_baseChange
-        (Polynomial.mapRingHom (suslinAwayToAtPrime m d)) h q]
-      exact congrArg (Matrix.SpecialLinearGroup.transvection h) hq
-  | one =>
-      exact ⟨1, 1,
-        (localGlobalElementarySubgroup
-          (Polynomial (Localization.Away (1 : A)))).one_mem,
-        map_one _⟩
-  | @inv x hx ih =>
-      obtain ⟨d, q, hq, hmap⟩ := ih
-      exact ⟨d, q⁻¹,
-        (localGlobalElementarySubgroup _).inv_mem hq,
-        by rw [map_inv, hmap]⟩
-  | @mul x y hx hy ihx ihy =>
-      obtain ⟨d, q, hq, hmapq⟩ := ihx
-      obtain ⟨e, r, hr, hmapr⟩ := ihy
-      let q' :=
-        suslinPolynomialSpecialLinearMap (suslinAwayToProductLeft m d e) q
-      let r' :=
-        suslinPolynomialSpecialLinearMap (suslinAwayToProductRight m d e) r
-      have hq' : q' ∈ localGlobalElementarySubgroup
-          (Polynomial (Localization.Away
-            ((d * e : m.primeCompl) : A))) :=
+  let L (d : m.primeCompl) :
+      Subgroup (Matrix.SpecialLinearGroup Index (Polynomial (Localization.AtPrime m))) :=
+    (localGlobalElementarySubgroup (Polynomial (Localization.Away (d : A)))).map
+      (Matrix.SpecialLinearGroup.map (Polynomial.mapRingHom (suslinAwayToAtPrime m d)))
+  have hL : Directed (· ≤ ·) L := by
+    intro d e
+    refine ⟨d * e, ?_, ?_⟩
+    · rintro _ ⟨q, hq, rfl⟩
+      refine ⟨suslinPolynomialSpecialLinearMap (suslinAwayToProductLeft m d e) q,
         map_localGlobalElementarySubgroup_le
-          (Polynomial.mapRingHom (suslinAwayToProductLeft m d e))
-          ⟨q, hq, rfl⟩
-      have hr' : r' ∈ localGlobalElementarySubgroup
-          (Polynomial (Localization.Away
-            ((d * e : m.primeCompl) : A))) :=
+          (Polynomial.mapRingHom (suslinAwayToProductLeft m d e)) ⟨q, hq, rfl⟩, ?_⟩
+      change suslinPolynomialSpecialLinearMap (suslinAwayToAtPrime m (d * e))
+        (suslinPolynomialSpecialLinearMap (suslinAwayToProductLeft m d e) q) =
+          suslinPolynomialSpecialLinearMap (suslinAwayToAtPrime m d) q
+      rw [suslinPolynomialSpecialLinearMap_comp, suslinAwayToAtPrime_comp_productLeft]
+    · rintro _ ⟨q, hq, rfl⟩
+      refine ⟨suslinPolynomialSpecialLinearMap (suslinAwayToProductRight m d e) q,
         map_localGlobalElementarySubgroup_le
-          (Polynomial.mapRingHom (suslinAwayToProductRight m d e))
-          ⟨r, hr, rfl⟩
-      refine ⟨d * e, q' * r',
-        (localGlobalElementarySubgroup _).mul_mem hq' hr', ?_⟩
-      rw [map_mul]
-      change
-        suslinPolynomialSpecialLinearMap
-            (suslinAwayToAtPrime m (d * e)) q' *
-          suslinPolynomialSpecialLinearMap
-            (suslinAwayToAtPrime m (d * e)) r' = x * y
-      change
-        suslinPolynomialSpecialLinearMap
-            (suslinAwayToAtPrime m (d * e))
-            (suslinPolynomialSpecialLinearMap
-              (suslinAwayToProductLeft m d e) q) *
-          suslinPolynomialSpecialLinearMap
-            (suslinAwayToAtPrime m (d * e))
-            (suslinPolynomialSpecialLinearMap
-              (suslinAwayToProductRight m d e) r) = x * y
-      rw [suslinPolynomialSpecialLinearMap_comp,
-        suslinPolynomialSpecialLinearMap_comp,
-        suslinAwayToAtPrime_comp_productLeft,
-        suslinAwayToAtPrime_comp_productRight]
-      exact congrArg₂ (· * ·) hmapq hmapr
+          (Polynomial.mapRingHom (suslinAwayToProductRight m d e)) ⟨q, hq, rfl⟩, ?_⟩
+      change suslinPolynomialSpecialLinearMap (suslinAwayToAtPrime m (d * e))
+        (suslinPolynomialSpecialLinearMap (suslinAwayToProductRight m d e) q) =
+          suslinPolynomialSpecialLinearMap (suslinAwayToAtPrime m e) q
+      rw [suslinPolynomialSpecialLinearMap_comp, suslinAwayToAtPrime_comp_productRight]
+  have hle : localGlobalElementarySubgroup (Polynomial (Localization.AtPrime m)) ≤
+      ⨆ d, L d := by
+    apply (Subgroup.closure_le _).mpr
+    rintro _ ⟨i, j, h, p, rfl⟩
+    obtain ⟨d, q, hq⟩ := suslin_exists_away_polynomial_lift_atPrime m p
+    apply Subgroup.mem_iSup_of_mem d
+    refine ⟨Matrix.SpecialLinearGroup.transvection h q,
+      localGlobal_transvection_mem i j h q, ?_⟩
+    rw [specialLinear_map_transvection_baseChange
+      (Polynomial.mapRingHom (suslinAwayToAtPrime m d)) h q]
+    exact congrArg (Matrix.SpecialLinearGroup.transvection h) hq
+  obtain ⟨d, q, hq, hmap⟩ := (Subgroup.mem_iSup_of_directed hL).mp (hle hg)
+  exact ⟨d, q, hq, hmap⟩
 
 end
 
@@ -5749,11 +5706,11 @@ private theorem suslin_stableRangeThree_elementary_row_transitive
     change c 0 * (shorten • v) 0 +
       c 1 * (shorten • v) 1 + c 2 * (shorten • v) 2 = 1
     have h₀ : (shorten • v) 0 = v 0 + s 0 * v 3 := by
-      simpa only [Fin.isValue, Fin.castSucc_zero, Fin.reduceLast] using hshorten_first 0
+      exact hshorten_first 0
     have h₁ : (shorten • v) 1 = v 1 + s 1 * v 3 := by
-      simpa only [Fin.isValue, Fin.castSucc_one, Fin.reduceLast] using hshorten_first 1
+      exact hshorten_first 1
     have h₂ : (shorten • v) 2 = v 2 + s 2 * v 3 := by
-      simpa only [Fin.isValue, Fin.reduceCastSucc, Fin.reduceLast] using hshorten_first 2
+      exact hshorten_first 2
     rw [h₀, h₁, h₂]
     simpa only [Fin.isValue, add_assoc, Fin.reduceLast, Fin.sum_univ_succ, Fin.castSucc_zero,
       Fin.castSucc_succ, Nat.reduceAdd, Fin.succ_zero_eq_one, Finset.univ_unique,
@@ -6152,7 +6109,34 @@ private theorem mennickeWord_mem
       (mennicke_right_factor_det a ap b c d hdet) ∈ E) :
     mennickeWord a ap b c d hdet ∈ E := by
   unfold mennickeWord
-  repeat' first | assumption | apply E.mul_mem | apply hE
+  -- Follow the word's factors directly, avoiding subgroup-membership proof search.
+  exact E.mul_mem
+    (E.mul_mem
+      (E.mul_mem
+        (E.mul_mem
+          (E.mul_mem
+            (E.mul_mem
+              (E.mul_mem
+                (E.mul_mem
+                  (E.mul_mem
+                    (E.mul_mem
+                      (E.mul_mem
+                        (E.mul_mem
+                          (E.mul_mem
+                            (hE 1 0 (by decide) _)
+                            (hE 1 2 (by decide) _))
+                          (hE 2 1 (by decide) _))
+                        (hE 1 2 (by decide) _))
+                      hP)
+                    (hE 1 2 (by decide) _))
+                  (hE 2 1 (by decide) _))
+                (hE 1 2 (by decide) _))
+              hQ)
+            (hE 1 2 (by decide) _))
+          (hE 2 1 (by decide) _))
+        (hE 1 2 (by decide) _))
+      (hE 2 0 (by decide) _))
+    (hE 2 1 (by decide) _)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem mennicke_block_mem_of_factors
@@ -7253,9 +7237,7 @@ private theorem nonzero_eq_unit_mul_uniformizer_pow
     [IsDiscreteValuationRing A]
     {π a : A} (hπ : Irreducible π) (ha : a ≠ 0) :
     ∃ (n : ℕ) (u : Aˣ), a = (u : A) * π ^ n := by
-  obtain ⟨n, u, hu, _, _, _⟩ :=
-    dvr_uniformizer_factor_with_classification hπ ha
-  exact ⟨n, u, hu⟩
+  exact IsDiscreteValuationRing.eq_unit_mul_pow_irreducible ha hπ
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem mennickeBlock_mem_of_unit_mul_uniformizer_pow
@@ -7417,7 +7399,6 @@ private theorem polynomial_valuation_coefficient_ascent
     intro h
     simp only [h, coeff_zero, isUnit_zero_iff, zero_ne_one] at hunit
   have hshift : 0 < g.natDegree - f.natDegree := Nat.sub_pos_of_lt hdeg
-  have hm : m ≤ f.natDegree := le_natDegree_of_ne_zero hunit.ne_zero
   have hsdeg : f.natDegree + (g.natDegree - f.natDegree) = g.natDegree :=
     Nat.add_sub_of_le (Nat.le_of_lt hdeg)
   have hnonzero : c * g.leadingCoeff ≠ 0 := by
@@ -7702,7 +7683,7 @@ private theorem mennickeBlock_mem_of_primitive_ascent
         (mennicke_swapped_left_factor_det
           (Polynomial.X ^ s) r g p₁ f hswapdet) ∈
           elementaryThreeSubgroup (Polynomial A) := by
-    simpa only [p₁] using hmonic
+    exact hmonic
   have hright :
       mennickeBlock (Polynomial.X ^ s * f) g p₁ r
         (mennicke_swapped_right_factor_det
@@ -7712,7 +7693,7 @@ private theorem mennickeBlock_mem_of_primitive_ascent
       (Polynomial.X ^ s * f) g p₁ r (Polynomial.C c)
       (mennicke_swapped_right_factor_det
         (Polynomial.X ^ s) r g p₁ f hswapdet)).mp
-    simpa only [p₁] using hgood
+    exact hgood
   have htarget := mennicke_swapped_block_mem_of_factors
     (elementaryThreeSubgroup (Polynomial A))
     elementaryThree_contains_roots
@@ -8068,15 +8049,7 @@ private theorem mennickeBlock_mul_columnSubtract
           (show (1 : Fin 3) ≠ 0 by decide) (-t) =
       mennickeBlock (f - t * g) g (p - t * q) q
         (mennickeBlock_columnSubtract_det f g p q t hdet) := by
-  apply Matrix.SpecialLinearGroup.ext
-  intro i j
-  revert i j
-  refine MennickeIdentity.matrix_three_entrywise _ _ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
-    simp only [Fin.isValue,
-      MennickeIdentity.specialLinear_mul_transvection_apply, Fin.reduceEq, ↓reduceIte] <;>
-    simp only [MennickeIdentity.mennickeBlock, Matrix.of_apply, Matrix.cons_val',
-      Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val] <;>
-    ring
+  exact Eq.symm (mennickeBlock_columnFirst_sub_mul f g p q t hdet)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem mennickeBlock_columnSubtract_mem_iff
@@ -8384,7 +8357,7 @@ private theorem suslin_semilocalTriple_exists_coprime
   obtain ⟨t, rfl⟩ := Ideal.Quotient.mk_surjective tq
   refine ⟨t, (isUnit_quotient_span_singleton_iff_isCoprime
     f (g + t * h)).mp ?_⟩
-  simpa only [map_add, map_mul] using htq
+  exact htq
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem suslin_unimodularTriple_exists_coprime
@@ -8467,7 +8440,7 @@ private theorem dvr_elementaryThree_first_coordinate_one_add_uniformizer
   have hfirst :
       Polynomial.map (Ideal.Quotient.mk (Ideal.span ({π} : Set A)))
           ((e • v) 0) = 1 := by
-    simpa only [Fin.isValue, Pi.single_eq_same] using hreduce 0
+    exact hreduce 0
   obtain ⟨q, hq⟩ :=
     dvr_polynomial_eq_one_add_uniformizer_mul_of_residue_one
       hπ ((e • v) 0) hfirst
@@ -8657,21 +8630,14 @@ public
 theorem transvection_smul_same (i j : Index) (h : i ≠ j) (c : ℤ)
     (v : IVec) :
     (Matrix.SpecialLinearGroup.transvection h c • v) i = v i + c * v j := by
-  change ((Matrix.SpecialLinearGroup.transvection h c).val *ᵥ v) i = _
-  rw [Matrix.SpecialLinearGroup.transvection_coe, Matrix.add_mulVec,
-      Matrix.one_mulVec, Matrix.single_mulVec]
-  simp only [Pi.add_apply, Function.update_self]
+  exact LocalElementaryProof.transvection_smul_same i j h c v
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
 theorem transvection_smul_other (i j k : Index) (h : i ≠ j)
     (hk : k ≠ i) (c : ℤ) (v : IVec) :
     (Matrix.SpecialLinearGroup.transvection h c • v) k = v k := by
-  change ((Matrix.SpecialLinearGroup.transvection h c).val *ᵥ v) k = _
-  rw [Matrix.SpecialLinearGroup.transvection_coe, Matrix.add_mulVec,
-      Matrix.one_mulVec, Matrix.single_mulVec]
-  simp only [Pi.add_apply, ne_eq, hk, not_false_eq_true, Function.update_of_ne, Pi.zero_apply,
-    add_zero]
+  exact LocalElementaryProof.transvection_smul_other i j k h hk c v
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[expose]
