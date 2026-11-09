@@ -1,0 +1,53 @@
+slug: mirek-thiele
+title: Perfect multilinear local T(b) theorems
+summary: Proves the perfect multilinear local T(1) and T(b) theorems with
+  interdependent testing families. Develops dyadic stopping times, pruning,
+  outer-measure interpolation and Carleson embedding. Also proves a global
+  variant for locally dyadic testing functions with scale-normalized weak
+  boundedness and finite-Hardy-norm BMO testing.
+branch: analysis
+entry_module: LeanPool.MirekThiele
+authors:
+- Stefanos Lappas
+source:
+  title: A local T(b) theorem for perfect multilinear Calderón–Zygmund operators
+  arxiv: '1506.01264'
+  doi: 10.1112/plms.12000
+  url: https://github.com/slappas94/Mirek-Thiele-local-tb/tree/939d7c25149c80219fddfe356eb043fff4504dbd
+  github_repo: slappas94/Mirek-Thiele-local-tb
+  commit: 939d7c25149c80219fddfe356eb043fff4504dbd
+  completion_date: '2026-11-08'
+  completion_url: https://github.com/slappas94/Mirek-Thiele-local-tb/commit/9c5be2798e5a2eb0eb798dbc4441eb54b8a162bb
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- MirekThiele.localT1
+- MirekThiele.localTb_all
+- MirekThiele.globalTb_all
+- MirekThiele.carlesonEmbedding
+main_results:
+- declaration: MirekThiele.localT1
+  informal: In positive dimension, a perfect multilinear Calderón–Zygmund form satisfying the local
+    T(1) testing bound obeys a uniform Hölder bound on all dyadic test tuples,
+    with a constant depending only on dimension, arity, exponents and testing bound.
+- declaration: MirekThiele.localTb_all
+  informal: In positive dimension, admissible collections of paths and testing functions satisfying
+    the support, mean, norm, interdependence and local testing conditions imply
+    the uniform Hölder bound, for every path length between one and the arity.
+- declaration: MirekThiele.globalTb_all
+  informal: In positive dimension, locally dyadic, bounded pseudo-accretive testing functions satisfying
+    scale-normalized weak boundedness and BMO testing on functions with integrable
+    dyadic square function imply a uniform Hölder bound for the perfect form.
+- declaration: MirekThiele.carlesonEmbedding
+  informal: In positive dimension, dyadic martingale averages and differences satisfy outer Lp bounds
+    for every finite exponent greater than one, with constants depending only
+    on the dimension and exponent.
+tags:
+- harmonic-analysis
+- singular-integrals
+- dyadic-analysis
+- outer-measures
+msc:
+- 42B20
+- 42B25
