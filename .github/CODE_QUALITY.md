@@ -32,12 +32,16 @@ After the build, it reads Lake's per-module times from the log and fails when a 
 the PR adds or modifies took more than 600 s. Times are Lake's wall-clock times on
 GitHub's 4-vCPU runners. Existing files are checked only once a PR changes them.
 
-Before each build, after all cache and artifact restores, `prepare` removes the
-compiled outputs of the added or modified modules that job builds. This happens
+After all cache and artifact restores, `prepare` removes the compiled outputs
+of the added or modified modules that job is responsible for timing. This happens
 even for a cache produced under the same policy: an untouched file in that cache
-need not have passed the changed-file limit. Each changed module must then emit a
-fresh successful build timing; missing timings and cache replays fail the check.
-Shards check their assigned modules, while the assembled and rebased root builds
+need not have passed the changed-file limit. Each changed module must emit a
+fresh successful build timing in its responsible job; missing timings and cache
+replays fail that check.
+
+Shards check their assigned modules. Assembly excludes projects listed in the
+same run's shard matrix and checks all remaining changed modules; the canonical
+gate requires every shard and assembly to succeed. Single and rebased root builds
 check all changed modules. Untouched modules can still reuse compiled output.
 
 Reused PR, rebase and queue artifacts must still match `build_time_limits.py`.
