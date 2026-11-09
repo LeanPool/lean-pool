@@ -804,10 +804,11 @@ private theorem helper_hgamma_alpha_425.{u_1, u_2} :
     {Sum.inl y0, Sum.inl y1, Sum.inl y2, Sum.inl y3, Sum.inl y4,
       Sum.inl v, Sum.inr q, Sum.inr a1, Sum.inr a2, Sum.inr a3}
   have hK10card : K10.card = 10 := by
-    simp [K10, hy01, hy02, hy03, hy04, hy12, hy13, hy14, hy23, hy24,
-      hy34, hqa1, hqa2, hqa3,
-      ha12ne, ha13ne, ha23ne, Ne.symm hv0',
-      Ne.symm hv1', Ne.symm hv2', Ne.symm hv3', Ne.symm hv4']
+    simp only [Finset.mem_insert, Sum.inl.injEq, hy01, hy02, hy03, hy04, Ne.symm hv0',
+      reduceCtorEq, Finset.mem_singleton, or_self, not_false_eq_true,
+      Finset.card_insert_of_notMem, hy12, hy13, hy14, Ne.symm hv1', hy23, hy24, Ne.symm hv2',
+      hy34, Ne.symm hv3', Ne.symm hv4', Sum.inr.injEq, hqa1, hqa2, hqa3, ha12ne, ha13ne, ha23ne,
+      Finset.card_singleton, Nat.reduceAdd, K10]
   have hK10sub : K10 ⊆ p1.support.toFinset := by
     intro z hz
     simp only [K10, Finset.mem_insert, Finset.mem_singleton] at hz
@@ -941,10 +942,11 @@ private theorem helper_middle_too_large_561.{u_1, u_2} :
     {Sum.inl y0, Sum.inl y1, Sum.inl y2, Sum.inl y3, Sum.inl y4,
       Sum.inl w, Sum.inr q, Sum.inr a2, Sum.inr b, Sum.inr r}
   have hL10card : L10.card = 10 := by
-    simp [L10, hy01, hy02, hy03, hy04, hy12, hy13, hy14, hy23, hy24,
-      hy34, hqa2, hbr,
-      Ne.symm hw0, Ne.symm hw1,
-      Ne.symm hw2, Ne.symm hw3, Ne.symm hw4, Ne.symm hbq, Ne.symm hba2, Ne.symm hrq, Ne.symm hra2]
+    simp only [Finset.mem_insert, Sum.inl.injEq, hy01, hy02, hy03, hy04, Ne.symm hw0,
+      reduceCtorEq, Finset.mem_singleton, or_self, not_false_eq_true,
+      Finset.card_insert_of_notMem, hy12, hy13, hy14, Ne.symm hw1, hy23, hy24, Ne.symm hw2, hy34,
+      Ne.symm hw3, Ne.symm hw4, Sum.inr.injEq, hqa2, Ne.symm hbq, Ne.symm hrq, Ne.symm hba2,
+      Ne.symm hra2, hbr, Finset.card_singleton, Nat.reduceAdd, L10]
   have hL10sub : L10 ⊆ p1.support.toFinset := by
     intro z hz
     simp only [L10, Finset.mem_insert, Finset.mem_singleton] at hz

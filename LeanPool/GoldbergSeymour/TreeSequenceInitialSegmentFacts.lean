@@ -140,6 +140,23 @@ theorem vertex_not_mem_after {initial tree : TreeSequence G e0}
   change index.val = position.val at equal
   omega
 
+/-- A vertex outside another extension of a common prefix occurs after that prefix. -/
+theorem length_lt_of_vertex_not_mem {initial first second : TreeSequence G e0}
+    (firstSegment : TreeSequenceInitialSegment initial first)
+    (secondSegment : TreeSequenceInitialSegment initial second)
+    {position : Fin (first.length + 1)}
+    (outside : first.vertex position ∉ TreeSequenceVertexSet second) :
+    initial.length < position.val := by
+  classical
+  by_contra notLater
+  have positionBound : position.val < initial.length + 1 := by omega
+  let index : Fin (initial.length + 1) := ⟨position.val, positionBound⟩
+  have sameIndex : Fin.castLE (Nat.succ_le_succ firstSegment.1) index = position :=
+    Fin.ext rfl
+  apply outside (secondSegment.vertexSet_subset ?_)
+  exact Finset.mem_image.mpr ⟨index, Finset.mem_univ _,
+    (firstSegment.2.1 index).symm.trans (congrArg first.vertex sameIndex)⟩
+
 /-- Every nonempty prefix is an initial segment of its source tree. -/
 theorem prefix_segment (tree : TreeSequence G e0) (length : ℕ)
     (positive : 1 ≤ length) (bound : length ≤ tree.length) :

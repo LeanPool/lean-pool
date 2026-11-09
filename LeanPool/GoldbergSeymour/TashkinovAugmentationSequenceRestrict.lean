@@ -7,6 +7,8 @@ module
 
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
+public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdge
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
 public import Mathlib.Data.Fintype.EquivFin
 
 /-!
@@ -51,6 +53,33 @@ theorem TashkinovAugmentationSequenceRestrict
           TreeSequenceInitialSegment.eq_of_length_eq hBC hBlen
         subst B
         exact Relation.ReflTransGen.tail hSA ⟨hlen, hinitAC, hcolor⟩
+
+/-- A one-edge extension lies in every longer prefix reached by its augmentation route. -/
+theorem TreeSequenceAdjoinEdge.initialSegment_of_route {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 edge : E}
+    {initial adjoined intermediate extension : TreeSequence G e0}
+    {coloring : PartialEdgeColoring E k}
+    (adjoin : TreeSequenceAdjoinEdge initial edge adjoined)
+    (route : TashkinovAugmentationSequence coloring adjoined extension)
+    (prefixSegment : TreeSequenceInitialSegment intermediate extension)
+    (longer : initial.length < intermediate.length) :
+    TreeSequenceInitialSegment adjoined intermediate := by
+  obtain ⟨lengthEq, _, _⟩ := adjoin
+  exact prefixSegment.of_common_extension
+    (TashkinovAugmentationSequenceInitialSegment _ _ _ route) (by omega)
+
+/-- Restrict a route from a one-edge extension to an intermediate longer prefix. -/
+theorem TreeSequenceAdjoinEdge.restrict_route {V E : Type*} [Fintype E]
+    {G : LooplessMultigraph V E} {k : ℕ} {e0 edge : E}
+    {initial adjoined intermediate extension : TreeSequence G e0}
+    {coloring : PartialEdgeColoring E k}
+    (adjoin : TreeSequenceAdjoinEdge initial edge adjoined)
+    (route : TashkinovAugmentationSequence coloring adjoined extension)
+    (prefixSegment : TreeSequenceInitialSegment intermediate extension)
+    (longer : initial.length < intermediate.length) :
+    TashkinovAugmentationSequence coloring adjoined intermediate := by
+  exact TashkinovAugmentationSequenceRestrict _ _ _ _ route
+    (adjoin.initialSegment_of_route route prefixSegment longer) prefixSegment
 
 end GoldbergSeymour
 

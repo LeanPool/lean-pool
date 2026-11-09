@@ -503,16 +503,8 @@ theorem helper_hrightOutside_7601.{u_1, u_2} :
       terminalPosition hterminalPositionPositive hterminalPositionBound seed hseedTj TjPrime H a
       x componentPath u exitPath zPosition u0 exitPath0 zPosition0 uPosition huPositionPositive
       huPositionBound hzPositionPositive hzPositionBound U Z M hleftSegment n hnU hnM j i hvertexMZ
-  exact @helper_hrightOutside_3985 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett)
-      (@hpositive) (@v) (@gamma) (@delta) (@sigma) (@hqTerminal) (@hvFinal)
-      (@hfirstUpper) (@hfirstPositive) (@trace) (@p0) (@indices0) (@gamma0)
-      (@delta0) (@terminalPosition) (@hterminalPositionPositive)
-      (@hterminalPositionBound) (@hseedTj) (@TjPrime) (@a) (@x)
-      (@componentPath) (@u) (@exitPath) (@zPosition) (@u0) (@exitPath0)
-      (@zPosition0) (@uPosition) (@huPositionPositive) (@huPositionBound)
-      (@hzPositionPositive) (@hzPositionBound) (@M) (@hleftSegment) (@n) (@hnU)
-      (@hnM) (@i) (@hvertexMZ)
+  rw [← hvertexMZ]
+  exact hleftSegment.vertex_not_mem_after (Nat.lt_succ_of_le hnU)
 
 theorem helper_hXY_7786.{u_1, u_2} :
     open scoped Classical in
@@ -1685,48 +1677,16 @@ theorem helper_branch_15674.{u_1, u_2} :
     hnewEntryFromRight j hnU
   have hrightOutside :
       Z.vertex i.succ ∉ TreeSequenceVertexSet U := by
-    exact @helper_hrightOutside_7601 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@gamma) (@delta)
-        (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@trace) (@p0)
-        (@indices0) (@gamma0) (@delta0) (@terminalPosition) (@hterminalPositionPositive)
-        (@hterminalPositionBound) (@hseedTj) (@TjPrime) (@a) (@x) (@componentPath) (@u)
-        (@exitPath) (@zPosition) (@u0) (@exitPath0) (@zPosition0) (@uPosition)
-        (@huPositionPositive) (@huPositionBound) (@hzPositionPositive) (@hzPositionBound) (@M)
-        (@hleftSegment) (@n) (@hnU) (@hnM) (@i) (@hvertexMZ)
+    rw [← hvertexMZ]
+    exact hleftSegment.vertex_not_mem_after (Nat.lt_succ_of_le hnU)
   have hiSeed : seed.length ≤ i.val := by
-    by_contra hnot
-    have hi : i.val < seed.length := Nat.lt_of_not_ge hnot
-    let a : Fin (seed.length + 1) := ⟨i.val + 1, by omega⟩
-    have hZSeedA : Z.vertex
-          (Fin.castLE (Nat.succ_le_succ hseedZSegment.1) a) =
-        seed.vertex a := hseedZSegment.2.1 a
-    apply hrightOutside
-    simp only [TreeSequenceVertexSet, Finset.mem_image,
-      Finset.mem_univ, true_and]
-    refine ⟨Fin.castLE (Nat.succ_le_succ hseedU.1) a, ?_⟩
-    have hia : Fin.castLE
-        (Nat.succ_le_succ hseedZSegment.1) a = i.succ :=
-      Fin.ext (by simp [a])
-    rw [hia] at hZSeedA
-    exact (hseedU.2.1 a).trans hZSeedA.symm
+    exact Nat.lt_succ_iff.mp
+      (hseedZSegment.length_lt_of_vertex_not_mem hseedU hrightOutside)
   have hiZ : i.val < Z.length := i.isLt
   let ZX := TreeSequencePrefix Z i.val
     (Nat.le_trans seed.positive hiSeed) (Nat.le_of_lt hiZ)
-  have hseedZX : TreeSequenceInitialSegment seed ZX := by
-    refine ⟨hiSeed, ?_, ?_⟩
-    · intro a
-      change Z.vertex _ = seed.vertex a
-      calc
-        Z.vertex _ = Z.vertex (Fin.castLE
-            (Nat.succ_le_succ hseedZSegment.1) a) := by
-          congr 1
-        _ = seed.vertex a := hseedZSegment.2.1 a
-    · intro a
-      change Z.edge _ = seed.edge a
-      calc
-        Z.edge _ = Z.edge
-            (Fin.castLE hseedZSegment.1 a) := by congr 1
-        _ = seed.edge a := hseedZSegment.2.2 a
+  have hseedZX : TreeSequenceInitialSegment seed ZX :=
+    hseedZSegment.prefix_of_segment i.val hiSeed hiZ.le
   have hZXZ : TreeSequenceInitialSegment ZX Z :=
     prefixSegment Z i.val
       (Nat.le_trans seed.positive hiSeed) (Nat.le_of_lt hiZ)
@@ -3160,58 +3120,6 @@ private theorem helper_hmissingX_7828.{u_1, u_2} :
         (Finset.mem_erase.mpr ⟨hxTerminal, hxTj'⟩)]
     exact hcx
 
-private theorem helper_hseedRX_8219.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
-      [ DecidableEq E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E)
-      (input : PartialEdgeColoring E k) (T : TreeSequence G e0)
-      (generating : PartialEdgeColoring E k)
-      (ett : ExtendedTashkinovTree G k e0 input T generating)
-      (hpositive : (0 : ℕ) < ett.rounds) (v : V),
-    let q : Fin ett.rounds :=
-      (⟨ett.rounds - (1 : ℕ), by
-          omega⟩ :
-        Fin ett.rounds);
-    ∀ (hqTerminal : (↑q : ℕ) + (1 : ℕ) = ett.rounds) (hvFinal : v ∈ TreeSequenceVertexSet T)
-      (hfirstUpper : ETTFirstAppearanceIndex ett v hvFinal ≤ (↑q : ℕ) + (1 : ℕ))
-      (hfirstPositive : (0 : ℕ) < ETTFirstAppearanceIndex ett v hvFinal),
-    let jSlot : Fin ett.rounds :=
-      (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ), by
-          omega⟩ :
-        Fin ett.rounds);
-    ∀ (terminalPosition : Fin ((ett.series.data.tree jSlot.succ.castSucc).length + (1 : ℕ)))
-      (hterminalPositionPositive : (1 : ℕ) ≤ (↑terminalPosition : ℕ))
-      (hterminalPositionBound :
-        (↑terminalPosition : ℕ) ≤ (ett.series.data.tree jSlot.succ.castSucc).length),
-    let seed : TreeSequence G e0 :=
-      TreeSequencePrefix (ett.series.data.tree jSlot.succ.castSucc) (↑terminalPosition : ℕ)
-        hterminalPositionPositive hterminalPositionBound;
-    let Tj0 : TreeSequence G e0 := ett.series.data.tree jSlot.succ.castSucc;
-    ∀ (_ : TreeSequenceInitialSegment seed Tj0) (i : Fin Tj0.length)
-      (hiSeed : seed.length ≤ (↑i : ℕ)) (hiTj : (↑i : ℕ) < Tj0.length),
-    let RX : TreeSequence G e0 :=
-      TreeSequencePrefix Tj0 (↑i : ℕ) (Nat.le_trans seed.positive hiSeed)
-        (Nat.le_of_lt hiTj);
-    TreeSequenceInitialSegment seed RX := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v q hqTerminal hvFinal hfirstUpper
-      hfirstPositive jSlot terminalPosition hterminalPositionPositive hterminalPositionBound seed
-      Tj0 hseedTjSegment i hiSeed hiTj RX
-  refine ⟨hiSeed, ?_, ?_⟩
-  · intro a
-    change Tj0.vertex _ = seed.vertex a
-    calc
-      Tj0.vertex _ = Tj0.vertex
-          (Fin.castLE (Nat.succ_le_succ hseedTjSegment.1)
-            a) := by congr 1
-      _ = seed.vertex a := hseedTjSegment.2.1 a
-  · intro a
-    change Tj0.edge _ = seed.edge a
-    calc
-      Tj0.edge _ = Tj0.edge
-          (Fin.castLE hseedTjSegment.1 a) := by congr 1
-      _ = seed.edge a := hseedTjSegment.2.2 a
-
 private theorem helper_hcolorTj_8249.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E]
@@ -3307,27 +3215,16 @@ theorem helper_branch_15456.{u_1, u_2} :
     hnewEntryFromRight mIndex hnU
   have hrightOutside :
       Tj0.vertex i.succ ∉ TreeSequenceVertexSet U := by
-    exact @helper_hrightOutside_6001 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-        (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal) (@hvFinal)
-        (@hfirstUpper) (@hfirstPositive) (@p0) (@indices0) (@terminalPosition)
-        (@hterminalPositionPositive) (@hterminalPositionBound) (@TjPrime) (@uPosition)
-        (@huPositionPositive) (@huPositionBound) (@M) (@hleftSegment) (@n) (@hnU) (@hnM) (@i)
-        (@hvertexMTj)
+    rw [← hvertexMTj]
+    exact hleftSegment.vertex_not_mem_after (Nat.lt_succ_of_le hnU)
   have hiSeed : seed.length ≤ i.val := by
-    exact @helper_hiSeed_6009 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-        (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal) (@hvFinal)
-        (@hfirstUpper) (@hfirstPositive) (@p0) (@indices0) (@terminalPosition)
-        (@hterminalPositionPositive) (@hterminalPositionBound) (@TjPrime) (@uPosition)
-        (@huPositionPositive) (@huPositionBound) (@hseedU) (@M) (@hseedTjSegment) (@n) (@i)
-        (@hrightOutside)
+    exact Nat.lt_succ_iff.mp
+      (hseedTjSegment.length_lt_of_vertex_not_mem hseedU hrightOutside)
   have hiTj : i.val < Tj0.length := i.isLt
   let RX := TreeSequencePrefix Tj0 i.val
     (Nat.le_trans seed.positive hiSeed) (Nat.le_of_lt hiTj)
-  have hseedRX : TreeSequenceInitialSegment seed RX := by
-    exact @helper_hseedRX_8219 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
-        (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@hqTerminal) (@hvFinal)
-        (@hfirstUpper) (@hfirstPositive) (@terminalPosition) (@hterminalPositionPositive)
-        (@hterminalPositionBound) (@hseedTjSegment) (@i) (@hiSeed) (@hiTj)
+  have hseedRX : TreeSequenceInitialSegment seed RX :=
+    hseedTjSegment.prefix_of_segment i.val hiSeed hiTj.le
   have hRXTj : TreeSequenceInitialSegment RX Tj0 :=
     prefixSegment Tj0 i.val
       (Nat.le_trans seed.positive hiSeed) (Nat.le_of_lt hiTj)

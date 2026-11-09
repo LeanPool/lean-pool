@@ -290,23 +290,13 @@ private theorem helper_branch_280.{u_1, u_2} :
   have hroute : TashkinovAugmentationSequence
       (ett.series.data.coloring ci.succ) adjoined Tj := by
     simpa only [Tj, hnext] using closedExtension.1
-  have hseedStage : TreeSequenceInitialSegment adjoined Tj :=
-    sequenceSegment hroute
-  have hseedLe : adjoined.length ≤ P.length := by
-    rcases adjoinedExactly with ⟨hlen, _, _⟩
-    rw [hlen]
-    have hprevEq : ett.series.data.tree ci.succ.castSucc = Tprev := by
-      simp only [Tprev, hciSucc]
-    rw [hprevEq]
-    omega
-  have hseedP' : TreeSequenceInitialSegment adjoined P :=
-    commonPrefix hseedStage hPStage hseedLe
-  refine ⟨adjoined, ?_, hroute, hseedP'⟩
+  have hadjoin : TreeSequenceAdjoinEdge Tprev choice.edge adjoined := by
+    simpa only [Tprev, hciSucc] using adjoinedExactly
+  refine ⟨adjoined, ?_, hroute,
+    hadjoin.initialSegment_of_route hroute hPStage hPrevStrictP⟩
   right
-  refine ⟨Or.inl ?_, choice.edge, ?_, ?_⟩
-  · simpa only [hciSucc] using currentKind
-  · simpa only [hciSucc] using currentEdges
-  · simpa only [Tprev, hciSucc] using adjoinedExactly
+  exact ⟨Or.inl (by simpa only [hciSucc] using currentKind), choice.edge,
+    by simpa only [hciSucc] using currentEdges, hadjoin⟩
 
 private theorem helper_branch_332.{u_1, u_2} :
     open scoped Classical in
@@ -374,23 +364,13 @@ private theorem helper_branch_332.{u_1, u_2} :
   have hroute : TashkinovAugmentationSequence
       (ett.series.data.coloring ci.succ) adjoined Tj := by
     simpa only [Tj, hnext] using closedExtension.1
-  have hseedStage : TreeSequenceInitialSegment adjoined Tj :=
-    sequenceSegment hroute
-  have hseedLe : adjoined.length ≤ P.length := by
-    rcases adjoinedExactly with ⟨hlen, _, _⟩
-    rw [hlen]
-    have hprevEq : ett.series.data.tree ci.succ.castSucc = Tprev := by
-      simp only [Tprev, hciSucc]
-    rw [hprevEq]
-    omega
-  have hseedP' : TreeSequenceInitialSegment adjoined P :=
-    commonPrefix hseedStage hPStage hseedLe
-  refine ⟨adjoined, ?_, hroute, hseedP'⟩
+  have hadjoin : TreeSequenceAdjoinEdge Tprev available.edge adjoined := by
+    simpa only [Tprev, hciSucc] using adjoinedExactly
+  refine ⟨adjoined, ?_, hroute,
+    hadjoin.initialSegment_of_route hroute hPStage hPrevStrictP⟩
   right
-  refine ⟨Or.inr ?_, available.edge, ?_, ?_⟩
-  · simpa only [hciSucc] using currentKind
-  · simpa only [hciSucc] using currentEdges
-  · simpa only [Tprev, hciSucc] using adjoinedExactly
+  exact ⟨Or.inr (by simpa only [hciSucc] using currentKind), available.edge,
+    by simpa only [hciSucc] using currentEdges, hadjoin⟩
 
 private theorem helper_branch_490.{u_1, u_2} :
     open scoped Classical in

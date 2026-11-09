@@ -2750,19 +2750,9 @@ theorem helper_hrightOutside_2349.{u_1, u_2} :
       hfirstPositive jSlot p0 indices0 terminalPosition hterminalPositionPositive
       hterminalPositionBound TjPrime uPosition huPositionPositive huPositionBound U Tj0 M
       hleftSegment n hnU hnM mIndex i hvertexMTj hmem
-  simp only [TreeSequenceVertexSet, Finset.mem_image,
-    Finset.mem_univ, true_and] at hmem
-  obtain ⟨a, ha⟩ := hmem
-  have hmvertex : M.vertex
-        (Fin.castLE (Nat.succ_le_succ hleftSegment.1) a) =
-      U.vertex a := hleftSegment.2.1 a
-  have heq : M.vertex mIndex.succ =
-      M.vertex
-        (Fin.castLE (Nat.succ_le_succ hleftSegment.1) a) :=
-    hvertexMTj.trans (ha.symm.trans hmvertex.symm)
-  have hindex := congrArg Fin.val (M.vertex_injective heq)
-  simp [mIndex] at hindex
-  omega
+  apply hleftSegment.vertex_not_mem_after (position := mIndex.succ)
+    (Nat.lt_succ_of_le hnU)
+  rwa [hvertexMTj]
 
 theorem helper_hsupportColors_2684.{u_1, u_2} :
     open scoped Classical in
@@ -3141,7 +3131,7 @@ theorem helper_hrightOutside_3985.{u_1, u_2} :
       huPositionBound hzPositionPositive hzPositionBound U Z M hleftSegment n hnU hnM j i
       hvertexMZ hmem
   apply hleftSegment.vertex_not_mem_after (position := j.succ)
-    (by change U.length < n + 1; omega)
+    (Nat.lt_succ_of_le hnU)
   rwa [hvertexMZ]
 
 theorem helper_hvFinal_2051.{u_1, u_2} :

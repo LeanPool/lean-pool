@@ -244,51 +244,12 @@ theorem branch3050.{u_1, u_2} : branch3050Statement.{u_1, u_2} := by
     have h := closedExtension.1
     rw [hi, hjTreeIndex] at h
     exact h
-  have hadjoinedTj : TreeSequenceInitialSegment adjoined
-      (ett.series.data.tree jSlot.succ.castSucc) :=
-    TashkinovAugmentationSequenceInitialSegment _ _ _ hroute
-  have hadjoinedLength : adjoined.length ≤ seed.length := by
-    rcases adjoinedExactly with ⟨hlen, -, -⟩
-    have hiCast : i.succ.castSucc =
-        jSlot.castSucc.castSucc := by
-      apply Fin.ext
-      simpa using congrArg Fin.val hi
-    have hprev : ett.series.data.tree i.succ.castSucc =
-        Tprevious := by rw [hiCast]
-    rw [hprev] at hlen
-    rw [hlen]
-    exact Nat.succ_le_of_lt (hpreviousStrict hjPositive)
-  have hadjoinedSeed : TreeSequenceInitialSegment adjoined seed :=
-    commonPrefix hadjoinedTj hseedTj hadjoinedLength
+  have hadjoin : TreeSequenceAdjoinEdge Tprevious choice.edge adjoined := by
+    simpa only [Tprevious, hi] using adjoinedExactly
   right
-  refine ⟨Or.inl (by simpa [htarget] using currentKind),
-    choice.edge, adjoined, ?_, ?_, ?_⟩
-  · simpa [htarget] using currentEdges
-  · rcases adjoinedExactly with ⟨hlen, hsegment, hedge⟩
-    have hiCast : i.castSucc.succ =
-        jSlot.castSucc.castSucc := by
-      apply Fin.ext
-      simpa using congrArg Fin.val hi
-    have hlenNew : adjoined.length = Tprevious.length + 1 := by
-      simpa [Tprevious, hiCast] using hlen
-    have hsegmentNew :
-        TreeSequenceInitialSegment Tprevious adjoined := by
-      simpa [Tprevious, hiCast] using hsegment
-    refine ⟨hlenNew, hsegmentNew, ?_⟩
-    have haddedIndex :
-        Fin.cast hlenNew.symm (Fin.last Tprevious.length) =
-          Fin.cast hlen.symm
-            (Fin.last
-              (ett.series.data.tree i.succ.castSucc).length) := by
-      apply Fin.ext
-      simp [Tprevious, hiCast]
-    rw [haddedIndex]
-    exact hedge
-  · simpa [hi] using
-      (TashkinovAugmentationSequenceRestrict
-        (ett.series.data.coloring jSlot.castSucc) adjoined seed
-        (ett.series.data.tree jSlot.succ.castSucc) hroute
-        hadjoinedSeed hseedTj)
+  refine ⟨Or.inl (by simpa only [htarget] using currentKind),
+    choice.edge, adjoined, by simpa only [htarget] using currentEdges, hadjoin, ?_⟩
+  simpa only [hi] using hadjoin.restrict_route hroute hseedTj (hpreviousStrict hjPositive)
 
 /-- A common proof used by the branches of this transport or construction argument. -/
 theorem branch3107.{u_1, u_2} : branch3107Statement.{u_1, u_2} := by
@@ -325,52 +286,12 @@ theorem branch3129.{u_1, u_2} : branch3129Statement.{u_1, u_2} := by
     have h := closedExtension.1
     rw [hi, hjTreeIndex] at h
     exact h
-  have hadjoinedTj : TreeSequenceInitialSegment adjoined
-      (ett.series.data.tree jSlot.succ.castSucc) :=
-    TashkinovAugmentationSequenceInitialSegment _ _ _ hroute
-  have hadjoinedLength : adjoined.length ≤ seed.length := by
-    rcases adjoinedExactly with ⟨hlen, -, -⟩
-    have hiCast : i.succ.castSucc =
-        jSlot.castSucc.castSucc := by
-      apply Fin.ext
-      simpa using congrArg Fin.val hi
-    have hprev : ett.series.data.tree i.succ.castSucc =
-        Tprevious := by rw [hiCast]
-    rw [hprev] at hlen
-    rw [hlen]
-    exact Nat.succ_le_of_lt (hpreviousStrict hjPositive)
-  have hadjoinedSeed : TreeSequenceInitialSegment adjoined seed :=
-    commonPrefix hadjoinedTj hseedTj hadjoinedLength
+  have hadjoin : TreeSequenceAdjoinEdge Tprevious available.edge adjoined := by
+    simpa only [Tprevious, hi] using adjoinedExactly
   right
-  refine ⟨Or.inr (by simpa [htarget] using currentKind),
-    available.edge, adjoined, ?_, ?_, ?_⟩
-  · simpa [htarget] using currentEdges
-  · rcases adjoinedExactly with ⟨hlen, hsegment, hedge⟩
-    have hiCast : i.castSucc.succ =
-        jSlot.castSucc.castSucc := by
-      apply Fin.ext
-      simpa using congrArg Fin.val hi
-    have hlenNew : adjoined.length = Tprevious.length + 1 := by
-      simpa [Tprevious, hiCast] using hlen
-    have hsegmentNew :
-        TreeSequenceInitialSegment Tprevious adjoined := by
-      simpa [Tprevious, hiCast] using hsegment
-    refine ⟨hlenNew, hsegmentNew, ?_⟩
-    have haddedIndex :
-        Fin.cast hlenNew.symm (Fin.last Tprevious.length) =
-          Fin.cast hlen.symm
-            (Fin.last
-              (ett.series.data.tree i.succ.castSucc).length) := by
-      apply Fin.ext
-      simp [Tprevious, hiCast]
-    rw [haddedIndex]
-    exact hedge
-  · simpa [hi] using
-      (TashkinovAugmentationSequenceRestrict
-        (ett.series.data.coloring jSlot.castSucc) adjoined seed
-        (ett.series.data.tree jSlot.succ.castSucc) hroute
-        hadjoinedSeed hseedTj)
-
+  refine ⟨Or.inr (by simpa only [htarget] using currentKind),
+    available.edge, adjoined, by simpa only [htarget] using currentEdges, hadjoin, ?_⟩
+  simpa only [hi] using hadjoin.restrict_route hroute hseedTj (hpreviousStrict hjPositive)
 
 end GoldbergSeymour.SharedFacts.ExtensionBranches
 

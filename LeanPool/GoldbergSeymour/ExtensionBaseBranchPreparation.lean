@@ -2083,12 +2083,8 @@ theorem helper_hrightOutside_6001.{u_1, u_2} :
       hfirstPositive jSlot p0 indices0 terminalPosition hterminalPositionPositive
       hterminalPositionBound TjPrime uPosition huPositionPositive huPositionBound U Tj0 M
       hleftSegment n hnU hnM mIndex i hvertexMTj
-  exact @helper_hrightOutside_2349 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive)
-      (@v) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@p0)
-      (@indices0) (@terminalPosition) (@hterminalPositionPositive)
-      (@hterminalPositionBound) (@TjPrime) (@uPosition) (@huPositionPositive)
-      (@huPositionBound) (@M) (@hleftSegment) (@n) (@hnU) (@hnM) (@i) (@hvertexMTj)
+  rw [← hvertexMTj]
+  exact hleftSegment.vertex_not_mem_after (Nat.lt_succ_of_le hnU)
 
 theorem helper_hiSeed_6009.{u_1, u_2} :
     open scoped Classical in
