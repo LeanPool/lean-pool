@@ -821,3 +821,4 @@ public import LeanPool.GoldbergSeymour.TwoColorPathComponent
 public import LeanPool.GoldbergSeymour.TwoColorPathComponentNotCycle
 public import LeanPool.GoldbergSeymour.TwoColorReturnIndexBoundaryAvoidance
 public import LeanPool.GoldbergSeymour.TwoColorWalkConfinement
+public import LeanPool.GoldbergSeymour.WalkVertexRegion

@@ -667,30 +667,6 @@ private theorem helper_hpathComponent_1164.{u_1, u_2} :
     (fun x hx z hadj => ⟨by simpa using hx, hclosed x (by simpa using hx) z hadj, hadj⟩)
     (by simp)
 
-private theorem helper_hcompEdge_1176.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (chosenGamma : Fin k)
-        (secondStable : PartialEdgeColoring E k) (choice : MaximumDefectiveChoice G e0
-        (series.data.tree q.succ.castSucc) (TashkinovStoredColors series.data q.castSucc)
-        (series.data.coloring q.castSucc)) (_ : V) (e : E), Sum.inr e ∈ TwoColorComponent G
-        secondStable chosenGamma choice.color (Sum.inl choice.vertex) → secondStable e = some
-        chosenGamma ∨ secondStable e = some choice.color := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q chosenGamma secondStable choice u e he
-  have hs : Sum.inr e ∈
-      (TwoColorIncidenceGraph G secondStable chosenGamma choice.color).support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := TwoColorIncidenceGraph G secondStable chosenGamma choice.color)
-      (u := Sum.inr e) (v := Sum.inl choice.vertex) (by simp)
-    exact SimpleGraph.ConnectedComponent.eq.mp he
-  obtain ⟨r, hr⟩ :=
-    (TwoColorIncidenceGraph G secondStable chosenGamma choice.color).mem_support.mp hs
-  cases r with
-  | inl x => exact hr.2
-  | inr x => simp [TwoColorIncidenceGraph] at hr
-
 private theorem helper_hchoiceSecond_1192.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -829,30 +805,6 @@ private theorem helper_treeMissingTransport_1268.{u_1, u_2} :
     exact ⟨w, hw, by rw [hab w hw] at hc; exact hc⟩
   · rintro ⟨w, hw, hc⟩
     exact ⟨w, hw, by rw [hab w hw]; exact hc⟩
-
-private theorem helper_sigmaComponentColor_1288.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k rounds : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (series
-        : TashkinovSeries G k rounds e0 input) (q : Fin rounds) (sigma : PartialEdgeColoring E k)
-        (chosenGamma : Fin k) (choice : MaximumDefectiveChoice G e0 (series.data.tree
-        q.succ.castSucc) (TashkinovStoredColors series.data q.castSucc) (series.data.coloring
-        q.castSucc)) (_ : V) (e : E), Sum.inr e ∈ TwoColorComponent G sigma chosenGamma
-        choice.color (Sum.inl choice.vertex) → sigma e = some chosenGamma ∨ sigma e = some
-        choice.color := by
-  classical
-  intro V E _ _ _ G k rounds e0 input series q sigma chosenGamma choice u e he
-  have hs : Sum.inr e ∈
-      (TwoColorIncidenceGraph G sigma chosenGamma choice.color).support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := TwoColorIncidenceGraph G sigma chosenGamma choice.color)
-      (u := Sum.inr e) (v := Sum.inl choice.vertex) (by simp)
-    exact SimpleGraph.ConnectedComponent.eq.mp he
-  obtain ⟨r, hr⟩ :=
-    (TwoColorIncidenceGraph G sigma chosenGamma choice.color).mem_support.mp hs
-  cases r with
-  | inl x => exact hr.2
-  | inr x => simp [TwoColorIncidenceGraph] at hr
 
 private theorem helper_currentColorMissing_1304.{u_1, u_2} :
     open scoped Classical in
@@ -1119,7 +1071,8 @@ theorem ParallelExtensionUndoStable {V E : Type*}
     ∀ e, Sum.inr e ∈ TwoColorComponent G secondStable chosenGamma choice.color (Sum.inl
         choice.vertex) → secondStable e = some chosenGamma ∨ secondStable e = some choice.color
   := by
-      apply helper_hcompEdge_1176; assumption
+      intro edge member
+      exact TwoColorComponent.edge_colors member
     have hchoiceSecond : secondStable choice.edge = some choice.color := by
       apply helper_hchoiceSecond_1192; assumption
     have hneq : chosenGamma ≠ choice.color := by
@@ -1158,7 +1111,8 @@ theorem ParallelExtensionUndoStable {V E : Type*}
     have sigmaComponentColor :
     ∀ e, Sum.inr e ∈ TwoColorComponent G sigma chosenGamma choice.color (Sum.inl choice.vertex) →
         sigma e = some chosenGamma ∨ sigma e = some choice.color := by
-      apply helper_sigmaComponentColor_1288; assumption
+      intro edge member
+      exact TwoColorComponent.edge_colors member
     have currentColorMissing := @helper_currentColorMissing_1304 (@V) (@E) inferInstance
         inferInstance inferInstance (@G) (@k) (@rounds) (@e0) (@input) (@series) (@q) (@chosenGamma)
         (@secondStable) (@secondStableProper) (@choice) (@currentColoring) (@hmissing) (@hcompEdge)

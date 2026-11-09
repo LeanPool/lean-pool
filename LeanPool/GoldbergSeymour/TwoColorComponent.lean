@@ -25,6 +25,18 @@ def TwoColorComponent {V E : Type*} (G : LooplessMultigraph V E) {k : ℕ}
     (phi : PartialEdgeColoring E k) (alpha beta : Fin k) (z : Sum V E) : Set (Sum V E) :=
   (TwoColorIncidenceGraph G phi alpha beta).connectedComponentMk z
 
+/-- Every edge in a vertex-rooted component has one of the two selected colors. -/
+theorem TwoColorComponent.edge_colors {V E : Type*} {G : LooplessMultigraph V E} {k : ℕ}
+    {phi : PartialEdgeColoring E k} {alpha beta : Fin k} {vertex : V} {edge : E}
+    (member : Sum.inr edge ∈ TwoColorComponent G phi alpha beta (Sum.inl vertex)) :
+    phi edge = some alpha ∨ phi edge = some beta := by
+  have support : Sum.inr edge ∈ (TwoColorIncidenceGraph G phi alpha beta).support :=
+    SimpleGraph.mem_support_of_reachable (by simp)
+      (SimpleGraph.ConnectedComponent.eq.mp member)
+  obtain ⟨neighbor, adjacent⟩ :=
+    (TwoColorIncidenceGraph G phi alpha beta).mem_support.mp support
+  exact TwoColorIncidenceEdgeColors adjacent
+
 end GoldbergSeymour
 
 end

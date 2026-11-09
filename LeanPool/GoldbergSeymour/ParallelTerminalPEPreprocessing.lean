@@ -729,34 +729,6 @@ private theorem helper_hComponentCurrent_860.{u_1, u_2} :
     hCurrentStable
   simpa only [terminal] using hbase
 
-private theorem helper_hComponentEdgeColor_910.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (phi : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k e0
-        input T phi) (hpositive : (0 : ℕ) < ett.rounds),
-    let previous : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (secondStable : PartialEdgeColoring E k) (choice : MaximumDefectiveChoice G
-        e0 (ett.series.data.tree previous.succ.castSucc) (TashkinovStoredColors ett.series.data
-        previous.castSucc) (ett.series.data.coloring previous.castSucc)) (f : E), Sum.inr f ∈
-        TwoColorComponent G secondStable gamma choice.color (Sum.inl choice.vertex) → secondStable
-        f = some gamma ∨ secondStable f = some choice.color := by
-  classical
-  intro V E _ _ _ G k e0 input T phi ett hpositive previous gamma secondStable choice f hf
-  have hs : Sum.inr f ∈
-      (TwoColorIncidenceGraph G secondStable gamma choice.color).support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := TwoColorIncidenceGraph G secondStable gamma choice.color)
-      (u := Sum.inr f) (v := Sum.inl choice.vertex) (by simp)
-    exact SimpleGraph.ConnectedComponent.eq.mp hf
-  obtain ⟨r, hr⟩ :=
-    (TwoColorIncidenceGraph G secondStable gamma choice.color).mem_support.mp hs
-  cases r with
-  | inl x => exact hr.2
-  | inr x => simp [TwoColorIncidenceGraph] at hr
-
 private theorem helper_hMissingAway_947.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
@@ -1330,8 +1302,7 @@ private theorem helper_continuation_991.{u_1, u_2} :
   have hComponentEdgeColor :
     ∀ f, Sum.inr f ∈ TwoColorComponent G secondStable gamma choice.color (Sum.inl choice.vertex) →
         secondStable f = some gamma ∨ secondStable f = some choice.color := by
-    exact @helper_hComponentEdgeColor_910 V E inferInstance inferInstance inferInstance G k e0
-        input T phi ett hpositive gamma secondStable choice
+    exact (fun _ member => TwoColorComponent.edge_colors member)
   have hChoiceComponent : Sum.inr choice.edge ∈
       TwoColorComponent G secondStable gamma choice.color
         (Sum.inl choice.vertex) := by

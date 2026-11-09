@@ -697,37 +697,6 @@ private theorem helper_hBsingleton_734.{u_1, u_2} :
     simp [Ne.symm hne]
   omega
 
-private theorem helper_edge_colors_of_mem_K_853.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi
-        T C) (d : ↥(DefectiveColors G phi (TreeSequenceVertexSet T))),
-    let i : Fin C.s := D.gammaIndex d;
-    let u0 : V := C.blockVertex i (0 : Fin (2 : ℕ));
-    let alpha : Fin k := D.alpha0;
-    let delta : Fin k := (↑d : Fin k);
-    let _ : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi alpha delta;
-    let K : Set (V ⊕ E) := TwoColorComponent G phi alpha delta (Sum.inl u0);
-    ∀ {e : E}, Sum.inr e ∈ K → phi e = some alpha ∨ phi e = some delta := by
-  classical
-  intro V E _ _ _ G k e0 phi T C D d i u0 alpha delta H K e heK
-  have hsupp : Sum.inr e ∈ H.support := by
-    apply SimpleGraph.mem_support_of_reachable (G := H)
-      (u := Sum.inr e) (v := Sum.inl u0)
-    · simp
-    · exact SimpleGraph.ConnectedComponent.eq.mp heK
-  obtain ⟨z, hz⟩ := H.mem_support.mp hsupp
-  cases z with
-  | inl v =>
-      have hz' : Incident G v e ∧
-          (phi e = some alpha ∨ phi e = some delta) := by
-        simpa [H, TwoColorIncidenceGraph] using hz
-      exact hz'.2
-  | inr f =>
-      have : False := by simp [H, TwoColorIncidenceGraph] at hz
-      exact this.elim
-
 private theorem helper_hxU_895.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -917,8 +886,9 @@ private theorem helper_continuation_1038.{u_1, u_2} :
   have hKavoidsZ := @helper_hKavoidsZ_366 V E inferInstance inferInstance inferInstance
       inferInstance G k e0 phi T C D d hp hBsingleton hproper hclosed hy0Missing h hhcolor hhends
       hu0notZ hhInc0 hhInc1 hKI
-  have edge_colors_of_mem_K := @helper_edge_colors_of_mem_K_853 V E inferInstance inferInstance
-      inferInstance G k e0 phi T C D d
+  have edge_colors_of_mem_K := (fun {edge : E} member => TwoColorComponent.edge_colors
+      (G := G) (phi := phi) (alpha := alpha) (beta := delta)
+      (vertex := u0) (edge := edge) member)
   have tree_edges_outside_K := @helper_tree_edges_outside_K_506 V E inferInstance inferInstance
       inferInstance inferInstance G k e0 phi T C D d hone base_ne_block vertex_mem_of_edge hKavoidsZ
       edge_colors_of_mem_K

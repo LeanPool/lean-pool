@@ -2224,9 +2224,7 @@ private theorem helper_continuation_2339.{u_1, u_2} :
       Sum.inr f ∈ TwoColorComponent G sigma gamma choice.color
           (Sum.inl choice.vertex) →
         sigma f = some gamma ∨ sigma f = some choice.color := by
-    exact @helper_hsigmaComponentColor_5296 (@V) (@E) inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar)
-        (@gamma) (@choice)
+    exact (fun _ member => TwoColorComponent.edge_colors member)
   have hgammaPrevMissing : gamma ∈ MissingColors G sigmaPrev
       choice.vertex := by
     exact @helper_hgammaPrevMissing_2707 (@V) (@E) inferInstance inferInstance inferInstance

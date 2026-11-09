@@ -2325,16 +2325,12 @@ private theorem revisitingReturnCrossing.{u_1, u_2} :
       rw [beforeReturnCrossingIndex, hsecondEdgeAt, hnode] at beforeReturnCrossingAdj
       simp [TwoColorIncidenceGraph] at beforeReturnCrossingAdj
   have houtsideTwoNot : outsideTwo ∉ currentTree := by
-    exact
-      @helper_houtsideTwoNot_4210 (@V) (@E) inferInstance inferInstance inferInstance inferInstance
-        (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma) (@Tstar)
-        (@available) (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@earlierPrefixBound) (@oldi)
-        (@oldChoice) (@oldGamma) (@newi) (@newChoice) (@newGamma) (@htree) (@holdColorCast)
-        (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta) (@hidentifiedGamma) (@holdDeltaAvailable)
-        (@holdGammaAvailable) (@replacementCycle) (@hreturnCycle) (@outsideIndicesNonempty)
-        (@outsideOne) (@houtsideOneAt) (@houtsideOneNot) (@firstCrossingIndex)
-        (@beforeFirstCrossingIndex) (@laterInsideNonempty) (@hreturnGap) (@returnCrossingIndex)
-        (@beforeReturnCrossingIndex) (@outsideTwo) (@houtsideTwoAt)
+    exact WalkVertexRegion.not_mem_before_firstReturn rootedCycle currentTree firstOutside
+      houtsideOneAt houtsideOneNot laterInsideNonempty
+      (index := ⟨firstReturn.val - 2, by
+        have := firstReturn.isLt
+        omega⟩) (by change firstOutside.val ≤ firstReturn.val - 2; omega)
+      (by change firstReturn.val - 2 < firstReturn.val; omega) houtsideTwoAt
   have houtsideTwoIncident : Incident G outsideTwo secondEdge := by
     rw [beforeReturnCrossingIndex, hsecondEdgeAt, houtsideTwoAt] at beforeReturnCrossingAdj
     simpa [TwoColorIncidenceGraph] using beforeReturnCrossingAdj.1
@@ -2348,17 +2344,17 @@ private theorem revisitingReturnCrossing.{u_1, u_2} :
     simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨insideTwo, hinsideTwoCurrent, outsideTwo, houtsideTwoNot, hsecondEnds⟩
   have hcrossingEdgesNe : firstEdge ≠ secondEdge := by
-    exact
-      @helper_hcrossingEdgesNe_4255 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-        (@Tstar) (@available) (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@earlierPrefixBound)
-        (@oldi) (@oldChoice) (@oldGamma) (@newi) (@newChoice) (@newGamma) (@htree) (@holdColorCast)
-        (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta) (@hidentifiedGamma) (@holdDeltaAvailable)
-        (@holdGammaAvailable) (@replacementCycle) (@hreturnCycle) (@rootedIsCycle)
-        (@outsideIndicesNonempty) (@firstOutsideLt) (@firstOutsideAtLeastTwo) (@firstCrossingIndex)
-        (@firstEdge) (@hfirstEdgeAt) (@beforeFirstCrossingIndex) (@laterInsideNonempty)
-        (@hreturnGap) (@returnCrossingIndex) (@secondEdge) (@hsecondEdgeAt)
-        (@beforeReturnCrossingIndex)
+    intro equal
+    have indices := rootedIsCycle.getVert_injOn
+      (by change 1 ≤ firstOutside.val - 1 ∧ firstOutside.val - 1 ≤ rootedCycle.length
+          omega)
+      (by change 1 ≤ firstReturn.val - 1 ∧ firstReturn.val - 1 ≤ rootedCycle.length
+          have := firstReturn.isLt
+          omega)
+      (show rootedCycle.getVert (firstOutside.val - 1) =
+          rootedCycle.getVert (firstReturn.val - 1) by
+        rw [hfirstEdgeAt, hsecondEdgeAt, equal])
+    omega
   have hnewVertexCurrent : newChoice.vertex ∈ currentTree := by
     simpa [currentTree, hqSucc] using hnewVertexTn
   have hfirstGamma :=
@@ -2477,37 +2473,24 @@ private theorem revisitingFirstCrossing.{u_1, u_2} : revisitingFirstCrossingStat
       idx.val < firstOutside.val → ∀ v : V,
       rootedCycle.getVert idx.val = Sum.inl v →
         v ∈ currentTree := by
-    exact @helper_beforeFirstOutside_4031 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-        (@Tstar) (@available) (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@earlierPrefixBound)
-        (@oldi) (@oldChoice) (@oldGamma) (@newi) (@newChoice) (@newGamma) (@htree) (@holdColorCast)
-        (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta) (@hidentifiedGamma) (@holdDeltaAvailable)
-        (@holdGammaAvailable) (@replacementCycle) (@hreturnCycle) (@outsideIndicesNonempty)
+    intro index before vertex atVertex
+    exact WalkVertexRegion.mem_before_firstOutside rootedCycle currentTree
+      outsideIndicesNonempty before atVertex
   have firstOutsidePositive : 0 < firstOutside.val := by
-    exact @helper_firstOutsidePositive_4043 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-        (@Tstar) (@available) (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@earlierPrefixBound)
-        (@oldi) (@oldChoice) (@oldGamma) (@newi) (@newChoice) (@newGamma) (@htree) (@holdColorCast)
-        (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta) (@hidentifiedGamma) (@holdDeltaAvailable)
-        (@holdGammaAvailable) (@replacementCycle) (@hreturnCycle) (@hreturnCurrent)
-        (@outsideIndicesNonempty) (@outsideOne) (@houtsideOneAt) (@houtsideOneNot)
+    exact WalkVertexRegion.firstOutside_pos rootedCycle currentTree
+      hreturnCurrent outsideIndicesNonempty
   have firstOutsideLt : firstOutside.val <
       rootedCycle.length := by
-    exact @helper_firstOutsideLt_4055 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-        (@Tstar) (@available) (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@earlierPrefixBound)
-        (@oldi) (@oldChoice) (@oldGamma) (@newi) (@newChoice) (@newGamma) (@htree) (@holdColorCast)
-        (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta) (@hidentifiedGamma) (@holdDeltaAvailable)
-        (@holdGammaAvailable) (@replacementCycle) (@hreturnCycle) (@hreturnCurrent)
-        (@outsideIndicesNonempty) (@outsideOne) (@houtsideOneAt) (@houtsideOneNot)
+    exact WalkVertexRegion.firstOutside_lt_length rootedCycle currentTree
+      hreturnCurrent outsideIndicesNonempty
   have firstOutsideNotOne : firstOutside.val ≠ 1 := by
-    exact @helper_firstOutsideNotOne_4070 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-        (@Tstar) (@available) (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@earlierPrefixBound)
-        (@oldi) (@oldChoice) (@oldGamma) (@newi) (@newChoice) (@newGamma) (@htree) (@holdColorCast)
-        (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta) (@hidentifiedGamma) (@holdDeltaAvailable)
-        (@holdGammaAvailable) (@replacementCycle) (@hreturnCycle) (@outsideIndicesNonempty)
-        (@outsideOne) (@houtsideOneAt) (@firstOutsideLt)
+    intro one
+    have adjacent := rootedCycle.adj_getVert_succ (i := 0) (by omega)
+    have atOne : rootedCycle.getVert 1 = Sum.inl outsideOne := by
+      change rootedCycle.getVert firstOutside.val = Sum.inl outsideOne at houtsideOneAt
+      simpa only [one] using houtsideOneAt
+    rw [rootedCycle.getVert_zero, atOne] at adjacent
+    exact adjacent
   have firstOutsideAtLeastTwo : 2 ≤ firstOutside.val := by omega
   have firstCrossingAdj := rootedCycle.adj_getVert_succ
     (i := firstOutside.val - 1) (by omega)
@@ -2546,14 +2529,9 @@ private theorem revisitingFirstCrossing.{u_1, u_2} : revisitingFirstCrossingStat
         rw [beforeFirstCrossingIndex, hfirstEdgeAt, hnode] at beforeFirstCrossingAdj
         simp [TwoColorIncidenceGraph] at beforeFirstCrossingAdj
   have hinsideOneCurrent : insideOne ∈ currentTree := by
-    exact @helper_hinsideOneCurrent_4119 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-        (@Tstar) (@available) (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@earlierPrefixBound)
-        (@oldi) (@oldChoice) (@oldGamma) (@newi) (@newChoice) (@newGamma) (@htree) (@holdColorCast)
-        (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta) (@hidentifiedGamma) (@holdDeltaAvailable)
-        (@holdGammaAvailable) (@replacementCycle) (@hreturnCycle) (@outsideIndicesNonempty)
-        (@beforeFirstOutside) (@firstCrossingIndex) (@beforeFirstCrossingIndex) (@insideOne)
-        (@hinsideOneAt)
+    exact beforeFirstOutside (⟨firstOutside.val - 2, by
+      have := firstOutside.isLt
+      omega⟩) (by change firstOutside.val - 2 < firstOutside.val; omega) insideOne hinsideOneAt
   have hinsideOneIncident : Incident G insideOne firstEdge := by
     rw [beforeFirstCrossingIndex, hfirstEdgeAt, hinsideOneAt] at beforeFirstCrossingAdj
     simpa [TwoColorIncidenceGraph] using
@@ -2578,13 +2556,8 @@ private theorem revisitingFirstCrossing.{u_1, u_2} : revisitingFirstCrossingStat
       ∃ v : V, rootedCycle.getVert idx.val = Sum.inl v ∧
         v ∈ currentTree
   have laterInsideNonempty : laterInsideIndices.Nonempty := by
-    exact @helper_laterInsideNonempty_4150 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-        (@Tstar) (@available) (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@earlierPrefixBound)
-        (@oldi) (@oldChoice) (@oldGamma) (@newi) (@newChoice) (@newGamma) (@htree) (@holdColorCast)
-        (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta) (@hidentifiedGamma) (@holdDeltaAvailable)
-        (@holdGammaAvailable) (@replacementCycle) (@hreturnCycle) (@hreturnCurrent)
-        (@outsideIndicesNonempty) (@firstOutsideLt)
+    exact WalkVertexRegion.laterInsideIndices_nonempty rootedCycle currentTree
+      hreturnCurrent firstOutside firstOutsideLt
   let firstReturn : Fin (rootedCycle.length + 1) :=
     laterInsideIndices.min' laterInsideNonempty
   have hfirstReturnMem := Finset.min'_mem laterInsideIndices
@@ -2761,13 +2734,8 @@ theorem helper_continuation_3762.{u_1, u_2} :
       rootedCycle.getVert i.val = Sum.inl v ∧
         v ∉ currentTree
   have outsideIndicesNonempty : outsideIndices.Nonempty := by
-    exact @helper_outsideIndicesNonempty_4016 (@V) (@E) inferInstance inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-        (@Tstar) (@available) (@hroundLarge) (@originalPrefix) (@hr) (@corr) (@earlierPrefixBound)
-        (@oldi) (@oldChoice) (@oldGamma) (@newi) (@newChoice) (@newGamma) (@htree) (@holdColorCast)
-        (@holdColorNe) (@hnewColorNe) (@hidentifiedDelta) (@hidentifiedGamma) (@holdDeltaAvailable)
-        (@holdGammaAvailable) (@replacementCycle) (@hreturnCycle) (@houtsideNotCurrent)
-        (@houtsideRooted)
+    exact WalkVertexRegion.outsideIndices_nonempty rootedCycle currentTree
+      houtsideNotCurrent houtsideRooted
   exact @revisitingFirstCrossing (@«V») (@«E») inferInstance inferInstance inferInstance
       inferInstance (@«G») (@«k») (@«e0») (@«input») (@«T») (@«generating») (@«ett») (@«hpositive»)
       (@«hlower») (@«sigma») (@«hsigmaProper») (@«hsigmaOne») (@«hsigmaStable») (@«Tstar»)

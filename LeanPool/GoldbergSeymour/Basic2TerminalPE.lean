@@ -679,35 +679,6 @@ private theorem helper_hgammaBoundarySigma_844.{u_1, u_2} :
       (Or.inl ⟨gamma, hgammaControl, hfCurrent⟩)
     exact hfix.trans hfCurrent
 
-private theorem helper_hcomponentEdgeColor_904.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ : V),
-    let previous : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by omega
-    ⟩ : Fin ett.rounds);
-    ∀ (gamma : Fin k) (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree
-        previous.succ.castSucc) (TashkinovStoredColors ett.series.data previous.castSucc)
-        (ett.series.data.coloring previous.castSucc)) (f : E) (_ : Sum.inr f ∈ TwoColorComponent G
-        sigma gamma choice.color (Sum.inl choice.vertex)), sigma f = some gamma ∨ sigma f = some
-        choice.color := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma v previous gamma choice f hf
-  have hs : Sum.inr f ∈
-      (TwoColorIncidenceGraph G sigma gamma choice.color).support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := TwoColorIncidenceGraph G sigma gamma choice.color)
-      (u := Sum.inr f) (v := Sum.inl choice.vertex) (by simp)
-    exact SimpleGraph.ConnectedComponent.eq.mp hf
-  obtain ⟨r, hr⟩ :=
-    (TwoColorIncidenceGraph G sigma gamma choice.color).mem_support.mp hs
-  cases r with
-  | inl x => exact hr.2
-  | inr x => simp [TwoColorIncidenceGraph] at hr
-
 private theorem helper_branch_1001.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -831,8 +802,9 @@ private theorem helper_continuation_1207.{u_1, u_2} :
       (ett.series.data.coloring previous.castSucc) recovered := by
     simpa [recovered, hterminalEq] using hundonePrevious
   have hcomponentEdgeColor :=
-    @helper_hcomponentEdgeColor_904 V E inferInstance inferInstance inferInstance G k e0
-        input T generating ett hpositive sigma v gamma choice
+    (fun (edge : E) member => TwoColorComponent.edge_colors
+      (G := G) (phi := sigma) (alpha := gamma) (beta := choice.color)
+      (vertex := choice.vertex) (edge := edge) member)
   have targetEdgeOutside :=
     @helper_targetEdgeOutside_444 V E inferInstance inferInstance inferInstance G k e0
         input T generating ett hpositive sigma delta gamma choice hdeltaSigmaMissing

@@ -819,17 +819,7 @@ theorem helper_hcompEdge_4879.{u_1, u_2} :
         e = some gamma ∨ secondStable e = some choice.color := by
   classical
   intro V E _ _ _ G k e0 input T generating ett hpositive _ q gamma secondStable choice u e he
-  have hs : Sum.inr e ∈
-      (TwoColorIncidenceGraph G secondStable gamma choice.color).support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := TwoColorIncidenceGraph G secondStable gamma choice.color)
-      (u := Sum.inr e) (v := Sum.inl choice.vertex) (by simp)
-    exact SimpleGraph.ConnectedComponent.eq.mp he
-  obtain ⟨r, hr⟩ :=
-    (TwoColorIncidenceGraph G secondStable gamma choice.color).mem_support.mp hs
-  cases r with
-  | inl x => exact hr.2
-  | inr x => simp [TwoColorIncidenceGraph] at hr
+  exact TwoColorComponent.edge_colors he
 
 theorem helper_hchoiceSecond_4895.{u_1, u_2} :
     open scoped Classical in
@@ -965,17 +955,7 @@ theorem helper_sigmaComponentColor_4960.{u_1, u_2} :
         choice.vertex) → sigma e = some gamma ∨ sigma e = some choice.color := by
   classical
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q gamma choice u e he
-  have hs : Sum.inr e ∈
-      (TwoColorIncidenceGraph G sigma gamma choice.color).support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := TwoColorIncidenceGraph G sigma gamma choice.color)
-      (u := Sum.inr e) (v := Sum.inl choice.vertex) (by simp)
-    exact SimpleGraph.ConnectedComponent.eq.mp he
-  obtain ⟨r, hr⟩ :=
-    (TwoColorIncidenceGraph G sigma gamma choice.color).mem_support.mp hs
-  cases r with
-  | inl x => exact hr.2
-  | inr x => simp [TwoColorIncidenceGraph] at hr
+  exact TwoColorComponent.edge_colors he
 
 theorem helper_gammaControl_5005.{u_1, u_2} :
     open scoped Classical in
@@ -1346,17 +1326,7 @@ theorem helper_hsigmaComponentColor_5296.{u_1, u_2} :
         → sigma f = some gamma ∨ sigma f = some choice.color := by
   classical
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q gamma choice f hf
-  have hs : Sum.inr f ∈
-      (TwoColorIncidenceGraph G sigma gamma choice.color).support := by
-    apply SimpleGraph.mem_support_of_reachable
-      (G := TwoColorIncidenceGraph G sigma gamma choice.color)
-      (u := Sum.inr f) (v := Sum.inl choice.vertex) (by simp)
-    exact SimpleGraph.ConnectedComponent.eq.mp hf
-  obtain ⟨r, hr⟩ :=
-    (TwoColorIncidenceGraph G sigma gamma choice.color).mem_support.mp hs
-  cases r with
-  | inl x => exact hr.2
-  | inr x => simp [TwoColorIncidenceGraph] at hr
+  exact TwoColorComponent.edge_colors hf
 
 theorem helper_hrootLeaf_5339.{u_1, u_2} :
     open scoped Classical in
@@ -3161,9 +3131,9 @@ theorem helper_hsigmaPrevEnlarged_12232.{u_1, u_2} :
   have hpathComponent := @helper_hpathComponent_4867 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar)
       (@gamma) (@secondStable) (@choice) (@u) (@path) (@hclosed)
-  have hcompEdge := @helper_hcompEdge_4879 (@V) (@E) inferInstance inferInstance inferInstance (@G)
-      (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar) (@gamma) (@secondStable)
-      (@choice) (@u)
+  have hcompEdge := (fun (edge : E) member => TwoColorComponent.edge_colors
+      (G := G) (phi := secondStable) (alpha := gamma) (beta := choice.color)
+      (vertex := choice.vertex) (edge := edge) member)
   have hchoiceSecond := @helper_hchoiceSecond_4895 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar)
       (@secondStable) (@choice) (@secondStableRelation)
@@ -3199,9 +3169,9 @@ theorem helper_hsigmaPrevEnlarged_12232.{u_1, u_2} :
     treeMissingTransport secondStable choice.selected (by
       intro w hw
       exact secondStableRelation.2 w hw)
-  have sigmaComponentColor := @helper_sigmaComponentColor_4960 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@sigma)
-      (@Tstar) (@gamma) (@choice) (@u)
+  have sigmaComponentColor := (fun (edge : E) member => TwoColorComponent.edge_colors
+      (G := G) (phi := sigma) (alpha := gamma) (beta := choice.color)
+      (vertex := choice.vertex) (edge := edge) member)
   have currentColorMissing := @helper_currentColorMissing_2202 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@Tstar)
       (@gamma) (@secondStable) (@secondStableProper) (@choice) (@currentColoring) (@hmissing)

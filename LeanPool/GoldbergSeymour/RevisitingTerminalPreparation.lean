@@ -9,6 +9,7 @@ module
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 public import LeanPool.GoldbergSeymour.SharedFacts.RevisitingTerminalPreparation
+public import LeanPool.GoldbergSeymour.WalkVertexRegion
 
 public import LeanPool.GoldbergSeymour.TwoColorNontrivialPathComponent
 public import LeanPool.GoldbergSeymour.StableColoringIncidentEdgeCriterion
@@ -2526,10 +2527,8 @@ theorem helper_outsideIndicesNonempty_4016.{u_1, u_2} :
     oldChoiceOnNew holdColorCast holdColorNe hnewColorNe hidentifiedDelta hidentifiedGamma
     holdDeltaAvailable holdGammaAvailable replacementCycle currentTree hreturnCycle
     houtsideNotCurrent rootedCycle houtsideRooted outsideIndices
-  obtain ⟨m, hm, hmle⟩ := SimpleGraph.Walk.mem_support_iff_exists_getVert.mp houtsideRooted
-  let idx : Fin (rootedCycle.length + 1) := ⟨m, by omega⟩
-  refine ⟨idx, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩⟩
-  exact ⟨available.outsideEndpoint, by simpa [idx] using hm, houtsideNotCurrent⟩
+  exact WalkVertexRegion.outsideIndices_nonempty rootedCycle currentTree
+    houtsideNotCurrent houtsideRooted
 
 theorem helper_beforeFirstOutside_4031.{u_1, u_2} :
     open scoped Classical in
@@ -2585,10 +2584,8 @@ theorem helper_beforeFirstOutside_4031.{u_1, u_2} :
       htree oldChoiceOnNew holdColorCast holdColorNe hnewColorNe hidentifiedDelta hidentifiedGamma
       holdDeltaAvailable holdGammaAvailable replacementCycle currentTree hreturnCycle rootedCycle
       outsideIndices outsideIndicesNonempty firstOutside idx hidx v hv
-  by_contra hvNot
-  have hmem : idx ∈ outsideIndices := Finset.mem_filter.mpr ⟨Finset.mem_univ _, ⟨v, hv, hvNot⟩⟩
-  have hmin := Finset.min'_le outsideIndices idx hmem
-  omega
+  exact WalkVertexRegion.mem_before_firstOutside rootedCycle currentTree
+    outsideIndicesNonempty hidx hv
 
 theorem helper_firstOutsidePositive_4043.{u_1, u_2} :
     open scoped Classical in
@@ -2646,15 +2643,8 @@ theorem helper_firstOutsidePositive_4043.{u_1, u_2} :
     holdDeltaAvailable holdGammaAvailable replacementCycle currentTree hreturnCycle hreturnCurrent
     rootedCycle outsideIndices outsideIndicesNonempty firstOutside outsideOne houtsideOneAt
     houtsideOneNot
-  by_contra hnot
-  have hzero : firstOutside.val = 0 := by omega
-  have heq : outsideOne = available.returnVertex := by
-    apply Sum.inl.inj
-    calc
-      Sum.inl outsideOne = rootedCycle.getVert firstOutside.val := houtsideOneAt.symm
-      _ = rootedCycle.getVert 0 := by rw [hzero]
-      _ = Sum.inl available.returnVertex := rootedCycle.getVert_zero
-  exact houtsideOneNot (heq.symm ▸ hreturnCurrent)
+  exact WalkVertexRegion.firstOutside_pos rootedCycle currentTree
+    hreturnCurrent outsideIndicesNonempty
 
 theorem helper_firstOutsideLt_4055.{u_1, u_2} :
     open scoped Classical in
@@ -2713,17 +2703,8 @@ theorem helper_firstOutsideLt_4055.{u_1, u_2} :
     holdDeltaAvailable holdGammaAvailable replacementCycle currentTree hreturnCycle hreturnCurrent
     rootedCycle outsideIndices outsideIndicesNonempty firstOutside outsideOne houtsideOneAt
     houtsideOneNot
-  by_contra hnot
-  have hlast : firstOutside.val = rootedCycle.length := by
-    have := firstOutside.isLt
-    omega
-  have heq : outsideOne = available.returnVertex := by
-    apply Sum.inl.inj
-    calc
-      Sum.inl outsideOne = rootedCycle.getVert firstOutside.val := houtsideOneAt.symm
-      _ = rootedCycle.getVert rootedCycle.length := by rw [hlast]
-      _ = Sum.inl available.returnVertex := rootedCycle.getVert_length
-  exact houtsideOneNot (heq.symm ▸ hreturnCurrent)
+  exact WalkVertexRegion.firstOutside_lt_length rootedCycle currentTree
+    hreturnCurrent outsideIndicesNonempty
 
 theorem helper_firstOutsideNotOne_4070.{u_1, u_2} :
     open scoped Classical in
@@ -2849,15 +2830,9 @@ theorem helper_hinsideOneCurrent_4119.{u_1, u_2} :
     holdDeltaAvailable holdGammaAvailable replacementCycle currentTree hreturnCycle rootedCycle
     outsideIndices outsideIndicesNonempty firstOutside beforeFirstOutside firstCrossingIndex
     beforeFirstCrossingIndex insideOne hinsideOneAt
-  let idx : Fin (rootedCycle.length + 1) :=
-    ⟨firstOutside.val - 2, lt_of_le_of_lt (Nat.sub_le _ _) firstOutside.isLt⟩
-  apply
-    beforeFirstOutside idx
-      (by
-        change firstOutside.val - 2 < firstOutside.val
-        omega)
-      insideOne
-  simpa [idx] using hinsideOneAt
+  exact beforeFirstOutside (⟨firstOutside.val - 2, by
+    have := firstOutside.isLt
+    omega⟩) (by change firstOutside.val - 2 < firstOutside.val; omega) insideOne hinsideOneAt
 
 theorem helper_laterInsideNonempty_4150.{u_1, u_2} :
     open scoped Classical in
@@ -2917,9 +2892,8 @@ theorem helper_laterInsideNonempty_4150.{u_1, u_2} :
     oldChoiceOnNew holdColorCast holdColorNe hnewColorNe hidentifiedDelta hidentifiedGamma
     holdDeltaAvailable holdGammaAvailable replacementCycle currentTree hreturnCycle hreturnCurrent
     rootedCycle outsideIndices outsideIndicesNonempty firstOutside firstOutsideLt laterInsideIndices
-  let idx : Fin (rootedCycle.length + 1) := ⟨rootedCycle.length, by omega⟩
-  refine ⟨idx, Finset.mem_filter.mpr ⟨Finset.mem_univ _, firstOutsideLt, ?_⟩⟩
-  exact ⟨available.returnVertex, by simp [idx], hreturnCurrent⟩
+  exact WalkVertexRegion.laterInsideIndices_nonempty rootedCycle currentTree
+    hreturnCurrent firstOutside firstOutsideLt
 
 theorem helper_houtsideTwoNot_4210.{u_1, u_2} :
     open scoped Classical in
@@ -2990,26 +2964,12 @@ theorem helper_houtsideTwoNot_4210.{u_1, u_2} :
       outsideIndices outsideIndicesNonempty firstOutside outsideOne houtsideOneAt houtsideOneNot
       firstCrossingIndex beforeFirstCrossingIndex laterInsideIndices laterInsideNonempty firstReturn
       hreturnGap returnCrossingIndex beforeReturnCrossingIndex outsideTwo houtsideTwoAt
-      houtsideTwoCurrent
-  by_cases heq : firstReturn.val - 2 = firstOutside.val
-  · have hvertices : outsideTwo = outsideOne := by
-      apply Sum.inl.inj
-      calc
-        Sum.inl outsideTwo = rootedCycle.getVert (firstReturn.val - 2) := houtsideTwoAt.symm
-        _ = rootedCycle.getVert firstOutside.val := by rw [heq]
-        _ = Sum.inl outsideOne := houtsideOneAt
-    exact houtsideOneNot (hvertices.symm ▸ houtsideTwoCurrent)
-  · have hbetween : firstOutside.val < firstReturn.val - 2 := by omega
-    let idx : Fin (rootedCycle.length + 1) :=
-      ⟨firstReturn.val - 2, lt_of_le_of_lt (Nat.sub_le _ _) firstReturn.isLt⟩
-    have hmem : idx ∈ laterInsideIndices :=
-      Finset.mem_filter.mpr
-        ⟨Finset.mem_univ _, by simpa [idx], outsideTwo, by simpa [idx] using houtsideTwoAt,
-          houtsideTwoCurrent⟩
-    have hmin := Finset.min'_le laterInsideIndices idx hmem
-    have hmin' : firstReturn.val ≤ idx.val := by simpa [firstReturn] using hmin
-    simp [idx] at hmin'
-    omega
+  exact WalkVertexRegion.not_mem_before_firstReturn rootedCycle currentTree firstOutside
+    houtsideOneAt houtsideOneNot laterInsideNonempty
+    (index := ⟨firstReturn.val - 2, by
+      have := firstReturn.isLt
+      omega⟩) (by change firstOutside.val ≤ firstReturn.val - 2; omega)
+    (by change firstReturn.val - 2 < firstReturn.val; omega) houtsideTwoAt
 
 theorem helper_hcrossingEdgesNe_4255.{u_1, u_2} :
     open scoped Classical in

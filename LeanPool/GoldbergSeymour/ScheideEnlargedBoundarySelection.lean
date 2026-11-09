@@ -709,32 +709,6 @@ private theorem helper_boundaryOfIncidentSubset_877.{u_1, u_2} :
   simp only [BoundaryEdges, Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨v, hvS, z, fun hzS => hzX (hSX hzS), by simpa [hvx] using hexz⟩
 
-private theorem helper_edgeColorOfP_914.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T :
-          TreeSequence G e0)
-      (C : ScheideReducedConfiguration G k e0 phi T) (D : ScheideDefectiveSetup G k e0 phi T C),
-      let y0 : V := C.y (⟨(0 : ℕ), lt_of_lt_of_le Nat.zero_lt_two C.p_ge_two⟩ : Fin C.p);
-      ∀ (alpha : Fin k),
-        let _ : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi D.alpha0 alpha;
-        let P : Set (V ⊕ E) := TwoColorComponent G phi D.alpha0 alpha (Sum.inl y0);
-        ∀ (e : E), Sum.inr e ∈ P → phi e = some D.alpha0 ∨ phi e = some alpha := by
-  classical
-  intro V E _ _ _ G k e0 phi T C D y0 alpha H P e heP
-  have hs : Sum.inr e ∈ H.support := by
-    apply SimpleGraph.mem_support_of_reachable (v := Sum.inl y0)
-    · simp
-    · change (TwoColorIncidenceGraph G phi D.alpha0 alpha).connectedComponentMk
-        (Sum.inr e) =
-        (TwoColorIncidenceGraph G phi D.alpha0 alpha).connectedComponentMk
-          (Sum.inl y0) at heP
-      exact SimpleGraph.ConnectedComponent.eq.mp heP
-  obtain ⟨z, hz⟩ := H.mem_support.mp hs
-  cases z with
-  | inl v => simpa [H, TwoColorIncidenceGraph] using hz.2
-  | inr f => simp [H, TwoColorIncidenceGraph] at hz
-
 private theorem helper_continuation_896.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E] (G :
@@ -785,8 +759,7 @@ private theorem helper_continuation_896.{u_1, u_2} :
   have hpP : Sum.inr p ∈ P := by simpa [P, y0] using hp.2
   have edgeColorOfP : ∀ e : E, Sum.inr e ∈ P →
       phi e = some D.alpha0 ∨ phi e = some alpha := by
-    exact @helper_edgeColorOfP_914 V E inferInstance inferInstance inferInstance G k e0 phi T C D
-        alpha
+    exact (fun _ member => TwoColorComponent.edge_colors member)
   have hpColor : phi p = some alpha := by
     rcases edgeColorOfP p hpP with hp0 | hpa
     · exact False.elim ((hXclosed hpBoundary hy0X hp0)
