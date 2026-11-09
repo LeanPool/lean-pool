@@ -674,24 +674,28 @@ theorem ne_zero_of_lt_abs {z : ℝ} (hz : 1 / 8 < |z|) : z ≠ 0 := fun h => by
   rw [h, abs_zero] at hz
   norm_num at hz
 
-/-- `∫ θ^T w = φ_T ∑_ε (ψ_T − ψ_{T_ε}) [w]_{T_ε} |T_ε|`. [PROVED] -/
-theorem integral_thetaT_mul (T : DyadicCube d) (w : TestFun d) :
-    ∫ x, (D.thetaT hR hRs hFR T : (Fin d → ℝ) → ℝ) x * (w : (Fin d → ℝ) → ℝ) x =
-      D.phiT R T * ∑ ε : Fin d → Bool,
-        (D.psiT hR hRs hFR T - D.psiT hR hRs hFR (T.child ε)) * avg (T.child ε) w *
-          (T.child ε).vol := by
+/-- Pair a scaled cube difference with a test function by summing over its children. -/
+private theorem integral_smul_cube_difference_mul (T : DyadicCube d) (w : TestFun d)
+    (a : ℝ) (c : DyadicCube d → ℝ) :
+    ∫ x, ((a • (c T • TestFun.ind T -
+        ∑ P ∈ children T, c P • TestFun.ind P) : TestFun d) : (Fin d → ℝ) → ℝ) x *
+          (w : (Fin d → ℝ) → ℝ) x =
+      a * ∑ ε : Fin d → Bool, (c T - c (T.child ε)) * avg (T.child ε) w *
+        (T.child ε).vol := by
+  let θ : TestFun d := a • (c T • TestFun.ind T - ∑ P ∈ children T, c P • TestFun.ind P)
+  change ∫ x, (θ : (Fin d → ℝ) → ℝ) x * (w : (Fin d → ℝ) → ℝ) x = _
   have hint : ∀ P : DyadicCube d,
       Integrable (P.toSet.indicator (w : (Fin d → ℝ) → ℝ)) volume :=
     fun P => (TestFun.integrable w.2).indicator P.measurableSet_toSet
-  have e : ∀ x, (D.thetaT hR hRs hFR T : (Fin d → ℝ) → ℝ) x * (w : (Fin d → ℝ) → ℝ) x =
-      D.phiT R T * (D.psiT hR hRs hFR T * T.toSet.indicator (w : (Fin d → ℝ) → ℝ) x
-        - ∑ T' ∈ children T, D.psiT hR hRs hFR T' *
+  have e : ∀ x, (θ : (Fin d → ℝ) → ℝ) x * (w : (Fin d → ℝ) → ℝ) x =
+      a * (c T * T.toSet.indicator (w : (Fin d → ℝ) → ℝ) x
+        - ∑ T' ∈ children T, c T' *
             T'.toSet.indicator (w : (Fin d → ℝ) → ℝ) x) := by
     intro x
     have hi : ∀ P : DyadicCube d, P.toSet.indicator (1 : (Fin d → ℝ) → ℝ) x *
         (w : (Fin d → ℝ) → ℝ) x = P.toSet.indicator (w : (Fin d → ℝ) → ℝ) x := fun P => by
       by_cases hx : x ∈ P.toSet <;> simp [hx]
-    simp only [thetaT, Submodule.coe_smul, Pi.smul_apply, Submodule.coe_sub, Pi.sub_apply,
+    simp only [θ, Submodule.coe_smul, Pi.smul_apply, Submodule.coe_sub, Pi.sub_apply,
       Submodule.coe_sum, Finset.sum_apply, TestFun.coe_ind, smul_eq_mul]
     rw [mul_assoc, sub_mul, Finset.sum_mul]
     simp only [mul_assoc, hi]
@@ -706,6 +710,14 @@ theorem integral_thetaT_mul (T : DyadicCube d) (w : TestFun d) :
     Finset.sum_image fun ε _ ε' _ h => T.child_injective h, Finset.mul_sum,
     ← Finset.sum_sub_distrib]
   exact Finset.sum_congr rfl fun ε _ => by ring
+
+/-- `∫ θ^T w = φ_T ∑_ε (ψ_T − ψ_{T_ε}) [w]_{T_ε} |T_ε|`. [PROVED] -/
+theorem integral_thetaT_mul (T : DyadicCube d) (w : TestFun d) :
+    ∫ x, (D.thetaT hR hRs hFR T : (Fin d → ℝ) → ℝ) x * (w : (Fin d → ℝ) → ℝ) x =
+      D.phiT R T * ∑ ε : Fin d → Bool,
+        (D.psiT hR hRs hFR T - D.psiT hR hRs hFR (T.child ε)) * avg (T.child ε) w *
+          (T.child ε).vol := by
+  simpa only [thetaT] using integral_smul_cube_difference_mul T w (D.phiT R T) (D.psiT hR hRs hFR)
 
 /-- For `T ∈ 𝐓`, with `ψ = [𝔥]/[v]` on `T` and its children, the sum `∑_ε (ψ_T − ψ_{T_ε}) [w]_{T_ε}
 |T_ε|`
@@ -1964,31 +1976,7 @@ theorem integral_thetaGT_mul (T : DyadicCube d) (w : TestFun d) :
     ∫ x, (D.thetaGT hR hRs hFR T : (Fin d → ℝ) → ℝ) x * (w : (Fin d → ℝ) → ℝ) x =
       D.psiT hR hRs hFR T * ∑ ε : Fin d → Bool,
         (D.phiT R T - D.phiT R (T.child ε)) * avg (T.child ε) w * (T.child ε).vol := by
-  have hint : ∀ P : DyadicCube d,
-      Integrable (P.toSet.indicator (w : (Fin d → ℝ) → ℝ)) volume :=
-    fun P => (TestFun.integrable w.2).indicator P.measurableSet_toSet
-  have e : ∀ x, (D.thetaGT hR hRs hFR T : (Fin d → ℝ) → ℝ) x * (w : (Fin d → ℝ) → ℝ) x =
-      D.psiT hR hRs hFR T * (D.phiT R T * T.toSet.indicator (w : (Fin d → ℝ) → ℝ) x
-        - ∑ T' ∈ children T, D.phiT R T' * T'.toSet.indicator (w : (Fin d → ℝ) → ℝ) x) := by
-    intro x
-    have hi : ∀ P : DyadicCube d, P.toSet.indicator (1 : (Fin d → ℝ) → ℝ) x *
-        (w : (Fin d → ℝ) → ℝ) x = P.toSet.indicator (w : (Fin d → ℝ) → ℝ) x := fun P => by
-      by_cases hx : x ∈ P.toSet <;> simp [hx]
-    simp only [thetaGT, Submodule.coe_smul, Pi.smul_apply, Submodule.coe_sub, Pi.sub_apply,
-      Submodule.coe_sum, Finset.sum_apply, TestFun.coe_ind, smul_eq_mul]
-    rw [mul_assoc, sub_mul, Finset.sum_mul]
-    simp only [mul_assoc, hi]
-  simp_rw [e]
-  rw [integral_const_mul, integral_sub ((hint T).const_mul _)
-    (integrable_finsetSum _ fun T' _ => (hint T').const_mul _), integral_const_mul,
-    integral_finsetSum _ fun T' _ => (hint T').const_mul _]
-  simp only [integral_const_mul, integral_indicator_toSet, ← avg_mul_vol]
-  congr 1
-  rw [StoppingData.avg_mul_vol_children T w, children,
-    Finset.sum_image fun ε _ ε' _ h => T.child_injective h,
-    Finset.sum_image fun ε _ ε' _ h => T.child_injective h, Finset.mul_sum,
-    ← Finset.sum_sub_distrib]
-  exact Finset.sum_congr rfl fun ε _ => by ring
+  simpa only [thetaGT] using integral_smul_cube_difference_mul T w (D.psiT hR hRs hFR T) (D.phiT R)
 
 /-- For `T ∈ 𝐓'`, with `φ = [𝔤̂]/[u]` on `T` and its children,
 `∑_ε (φ_T − φ_{T_ε}) [w]_{T_ε} |T_ε| = ∑_ε ([𝔤̂]_T/[u]_T − [𝔤̂]_{T_ε}/[u]_{T_ε}) ([w]_{T_ε} −

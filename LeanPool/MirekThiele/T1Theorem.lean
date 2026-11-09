@@ -1253,57 +1253,19 @@ theorem sum_dsq_stopped_le_integral (hd : d ≠ 0) (hf : Integrable f volume) {l
           dsq Q f ≤
         2 ^ d * lam * (∫ x in T.toSet, |f x|) - avg T f ^ 2 * T.vol := by
   classical
-  induction n with
-  | zero =>
-    intro T hT hdepth
-    have hsplit := sum_filter_le_add_children hd F T
-      (fun Q => Q ∉ badTrees (fun x => |f x|) lam) (fun Q => dsq Q f) (fun _ => dsq_nonneg)
-    have hchild : ∀ ε : Fin d → Bool,
-        ∑ Q ∈ F.filter (fun Q => Q.toSet ⊆ (T.child ε).toSet ∧
-          Q ∉ badTrees (fun x => |f x|) lam), dsq Q f = 0 := by
-      intro ε
-      refine Finset.sum_eq_zero fun Q hQ => ?_
-      rw [Finset.mem_filter] at hQ
-      have h1 := hdepth Q hQ.1 (hQ.2.1.trans (T.child_subset ε))
-      have h2 := DyadicCube.m_le_of_subset hd hQ.2.1
-      simp only [DyadicCube.child] at h2
-      exfalso
-      omega
-    have hsum := Finset.sum_le_sum fun ε (_ : ε ∈ (Finset.univ : Finset (Fin d → Bool))) =>
-      energy_child_le_integral hd hf hlam hT ε
-    rw [← Finset.mul_sum, sum_setIntegral_abs_children T hf, sum_sq_avg_child T hf.integrableOn]
-      at hsum
-    simp only [hchild, Finset.sum_const_zero, add_zero] at hsplit
-    linarith
-  | succ n ih =>
-    intro T hT hdepth
-    have hsplit := sum_filter_le_add_children hd F T
-      (fun Q => Q ∉ badTrees (fun x => |f x|) lam) (fun Q => dsq Q f) (fun _ => dsq_nonneg)
-    have hchild : ∀ ε : Fin d → Bool,
-        ∑ Q ∈ F.filter (fun Q => Q.toSet ⊆ (T.child ε).toSet ∧
-          Q ∉ badTrees (fun x => |f x|) lam), dsq Q f ≤
-          2 ^ d * lam * (∫ x in (T.child ε).toSet, |f x|) -
-            avg (T.child ε) f ^ 2 * (T.child ε).vol := by
-      intro ε
-      by_cases hε : T.child ε ∈ badTrees (fun x => |f x|) lam
-      · have h0 : ∑ Q ∈ F.filter (fun Q => Q.toSet ⊆ (T.child ε).toSet ∧
-            Q ∉ badTrees (fun x => |f x|) lam), dsq Q f = 0 := by
-          refine Finset.sum_eq_zero fun Q hQ => ?_
-          rw [Finset.mem_filter] at hQ
-          obtain ⟨R, hR, hεR⟩ := hε
-          exact absurd ⟨R, hR, hQ.2.1.trans hεR⟩ hQ.2.2
-        rw [h0]
-        linarith [energy_child_le_integral hd hf hlam hT ε]
-      · apply ih (T.child ε) hε
-        intro Q hQ hQε
-        have := hdepth Q hQ (hQε.trans (T.child_subset ε))
-        simp only [DyadicCube.child]
-        omega
-    have hsum := Finset.sum_le_sum fun ε (_ : ε ∈ (Finset.univ : Finset (Fin d → Bool))) =>
-      hchild ε
-    rw [Finset.sum_sub_distrib, ← Finset.mul_sum, sum_setIntegral_abs_children T hf,
-      sum_sq_avg_child T hf.integrableOn] at hsum
-    linarith
+  intro T hT hdepth
+  convert sum_dsq_stopped_le_of_child_energy hd hf
+    (fun Q => Q ∉ badTrees (fun x => |f x|) lam) ?_
+    (fun T => 2 ^ d * lam * ∫ x in T.toSet, |f x|) ?_
+    (fun T hT ε => energy_child_le_integral hd hf hlam hT ε) F n T hT hdepth using 1
+  · refine Finset.sum_congr ?_ (fun _ _ => rfl)
+    ext Q
+    simp only [Finset.mem_filter]
+  · intro Q R hQR hQ hR
+    obtain ⟨P, hP, hRP⟩ := hR
+    exact hQ ⟨P, hP, hQR.trans hRP⟩
+  · intro T
+    rw [← Finset.mul_sum, sum_setIntegral_abs_children T hf]
 
 /-- The square-function integrand on a finite family `S` of cubes:
 `G_S h = ∑_{P ∈ S} ∑_ε ([h]_{P_ε} − [h]_P)² 𝟙_{P_ε}`. -/

@@ -3475,6 +3475,68 @@ theorem energy_child_le (hd : d ≠ 0) (hf : Integrable f volume) {lam : ℝ} (h
     ((abs_avg_le_avg_abs _ f).trans (avg_abs_child_le hd hf hlam hT ε)) 2
 
 open Classical in
+/-- A stopped Bessel bound from an additive child-energy majorant and an upward-closed
+predicate selecting the cubes retained in the sum. -/
+theorem sum_dsq_stopped_le_of_child_energy (hd : d ≠ 0) (hf : Integrable f volume)
+    (good : DyadicCube d → Prop)
+    (hgood : ∀ Q R : DyadicCube d, Q.toSet ⊆ R.toSet → good Q → good R)
+    (energy : DyadicCube d → ℝ)
+    (hadd : ∀ T : DyadicCube d, ∑ ε : Fin d → Bool, energy (T.child ε) = energy T)
+    (henergy : ∀ T : DyadicCube d, good T → ∀ ε : Fin d → Bool,
+      avg (T.child ε) f ^ 2 * (T.child ε).vol ≤ energy (T.child ε))
+    (F : Finset (DyadicCube d)) (n : ℕ) :
+    ∀ T : DyadicCube d, good T →
+      (∀ Q ∈ F, Q.toSet ⊆ T.toSet → T.m - (n : ℤ) ≤ Q.m) →
+      ∑ Q ∈ F.filter (fun Q => Q.toSet ⊆ T.toSet ∧ good Q), dsq Q f ≤
+        energy T - avg T f ^ 2 * T.vol := by
+  classical
+  induction n with
+  | zero =>
+    intro T hT hdepth
+    have hsplit := sum_filter_le_add_children hd F T good (fun Q => dsq Q f)
+      (fun _ => dsq_nonneg)
+    have hchild : ∀ ε : Fin d → Bool,
+        ∑ Q ∈ F.filter (fun Q => Q.toSet ⊆ (T.child ε).toSet ∧ good Q), dsq Q f = 0 := by
+      intro ε
+      refine Finset.sum_eq_zero fun Q hQ => ?_
+      rw [Finset.mem_filter] at hQ
+      have h₁ := hdepth Q hQ.1 (hQ.2.1.trans (T.child_subset ε))
+      have h₂ := DyadicCube.m_le_of_subset hd hQ.2.1
+      simp only [DyadicCube.child] at h₂
+      exfalso
+      omega
+    have hsum := Finset.sum_le_sum fun ε (_ : ε ∈ (Finset.univ : Finset (Fin d → Bool))) =>
+      henergy T hT ε
+    rw [hadd, sum_sq_avg_child T hf.integrableOn] at hsum
+    simp only [hchild, Finset.sum_const_zero, add_zero] at hsplit
+    linarith
+  | succ n ih =>
+    intro T hT hdepth
+    have hsplit := sum_filter_le_add_children hd F T good (fun Q => dsq Q f)
+      (fun _ => dsq_nonneg)
+    have hchild : ∀ ε : Fin d → Bool,
+        ∑ Q ∈ F.filter (fun Q => Q.toSet ⊆ (T.child ε).toSet ∧ good Q), dsq Q f ≤
+          energy (T.child ε) - avg (T.child ε) f ^ 2 * (T.child ε).vol := by
+      intro ε
+      by_cases hε : good (T.child ε)
+      · apply ih (T.child ε) hε
+        intro Q hQ hQε
+        have := hdepth Q hQ (hQε.trans (T.child_subset ε))
+        simp only [DyadicCube.child]
+        omega
+      · have hzero : ∑ Q ∈ F.filter (fun Q => Q.toSet ⊆ (T.child ε).toSet ∧ good Q),
+            dsq Q f = 0 := by
+          refine Finset.sum_eq_zero fun Q hQ => ?_
+          rw [Finset.mem_filter] at hQ
+          exact False.elim (hε (hgood Q (T.child ε) hQ.2.1 hQ.2.2))
+        rw [hzero]
+        exact sub_nonneg.mpr (henergy T hT ε)
+    have hsum := Finset.sum_le_sum fun ε (_ : ε ∈ (Finset.univ : Finset (Fin d → Bool))) =>
+      hchild ε
+    rw [Finset.sum_sub_distrib, hadd, sum_sq_avg_child T hf.integrableOn] at hsum
+    linarith
+
+open Classical in
 /-- The stopped Bessel inequality: for `T ∉ 𝒢` and a finite family `F` of cubes of bounded
 depth below `T`, `∑_{Q ∈ F, Q ⊆ T, Q ∉ 𝒢} ‖Δ_Q f‖² |Q| ≤ (2^d λ)² |T| − [f]_T² |T|`.
 Induction on the depth. [PROVED] -/
@@ -3486,55 +3548,19 @@ theorem sum_dsq_stopped_le (hd : d ≠ 0) (hf : Integrable f volume) {lam : ℝ}
           dsq Q f ≤
         (2 ^ d * lam) ^ 2 * T.vol - avg T f ^ 2 * T.vol := by
   classical
-  induction n with
-  | zero =>
-    intro T hT hdepth
-    have hsplit := sum_filter_le_add_children hd F T
-      (fun Q => Q ∉ badTrees (fun x => |f x|) lam) (fun Q => dsq Q f) (fun _ => dsq_nonneg)
-    have hchild : ∀ ε : Fin d → Bool,
-        ∑ Q ∈ F.filter (fun Q => Q.toSet ⊆ (T.child ε).toSet ∧
-          Q ∉ badTrees (fun x => |f x|) lam), dsq Q f = 0 := by
-      intro ε
-      refine Finset.sum_eq_zero fun Q hQ => ?_
-      rw [Finset.mem_filter] at hQ
-      have h1 := hdepth Q hQ.1 (hQ.2.1.trans (T.child_subset ε))
-      have h2 := DyadicCube.m_le_of_subset hd hQ.2.1
-      simp only [DyadicCube.child] at h2
-      exfalso
-      omega
-    have hsum := Finset.sum_le_sum fun ε (_ : ε ∈ (Finset.univ : Finset (Fin d → Bool))) =>
-      energy_child_le hd hf hlam hT ε
-    rw [← Finset.mul_sum, T.sum_vol_child, sum_sq_avg_child T hf.integrableOn] at hsum
-    simp only [hchild, Finset.sum_const_zero, add_zero] at hsplit
-    linarith
-  | succ n ih =>
-    intro T hT hdepth
-    have hsplit := sum_filter_le_add_children hd F T
-      (fun Q => Q ∉ badTrees (fun x => |f x|) lam) (fun Q => dsq Q f) (fun _ => dsq_nonneg)
-    have hchild : ∀ ε : Fin d → Bool,
-        ∑ Q ∈ F.filter (fun Q => Q.toSet ⊆ (T.child ε).toSet ∧
-          Q ∉ badTrees (fun x => |f x|) lam), dsq Q f ≤
-          (2 ^ d * lam) ^ 2 * (T.child ε).vol - avg (T.child ε) f ^ 2 * (T.child ε).vol := by
-      intro ε
-      by_cases hε : T.child ε ∈ badTrees (fun x => |f x|) lam
-      · have h0 : ∑ Q ∈ F.filter (fun Q => Q.toSet ⊆ (T.child ε).toSet ∧
-            Q ∉ badTrees (fun x => |f x|) lam), dsq Q f = 0 := by
-          refine Finset.sum_eq_zero fun Q hQ => ?_
-          rw [Finset.mem_filter] at hQ
-          obtain ⟨R, hR, hεR⟩ := hε
-          exact absurd ⟨R, hR, hQ.2.1.trans hεR⟩ hQ.2.2
-        rw [h0]
-        linarith [energy_child_le hd hf hlam hT ε]
-      · apply ih (T.child ε) hε
-        intro Q hQ hQε
-        have := hdepth Q hQ (hQε.trans (T.child_subset ε))
-        simp only [DyadicCube.child]
-        omega
-    have hsum := Finset.sum_le_sum fun ε (_ : ε ∈ (Finset.univ : Finset (Fin d → Bool))) =>
-      hchild ε
-    rw [Finset.sum_sub_distrib, ← Finset.mul_sum, T.sum_vol_child,
-      sum_sq_avg_child T hf.integrableOn] at hsum
-    linarith
+  intro T hT hdepth
+  convert sum_dsq_stopped_le_of_child_energy hd hf
+    (fun Q => Q ∉ badTrees (fun x => |f x|) lam) ?_
+    (fun T => (2 ^ d * lam) ^ 2 * T.vol) ?_
+    (fun T hT ε => energy_child_le hd hf hlam hT ε) F n T hT hdepth using 1
+  · refine Finset.sum_congr ?_ (fun _ _ => rfl)
+    ext Q
+    simp only [Finset.mem_filter]
+  · intro Q R hQR hQ hR
+    obtain ⟨P, hP, hRP⟩ := hR
+    exact hQ ⟨P, hP, hQR.trans hRP⟩
+  · intro T
+    rw [← Finset.mul_sum, T.sum_vol_child]
 
 open Classical in
 /-- The summands of `S_2(Δ(f) 𝟙_{𝒟∖𝒢})`. [PROVED] -/
@@ -4991,6 +5017,52 @@ end CarlesonProof
 
 /-! ### Lemma 2.71 -/
 
+/-- Convert a real four-term bound to the corresponding weighted enorm bound. -/
+private theorem enorm_le_four_term_bound {a a₁ a₂ a₃ a₄ C v : ℝ}
+    (hC : 0 ≤ C) (h₁ : 0 ≤ a₁) (h₂ : 0 ≤ a₂) (h₃ : 0 ≤ a₃) (h₄ : 0 ≤ a₄)
+    (h : |a| ≤ C * (a₁ + a₂ + a₃ + a₄) * v) :
+    ‖a‖ₑ ≤ ENNReal.ofReal C *
+      ((‖a₁‖ₑ + ‖a₂‖ₑ + ‖a₃‖ₑ + ‖a₄‖ₑ) * ENNReal.ofReal v) := by
+  have hsum : 0 ≤ a₁ + a₂ + a₃ + a₄ := add_nonneg (add_nonneg (add_nonneg h₁ h₂) h₃) h₄
+  calc ‖a‖ₑ = ENNReal.ofReal |a| := Real.enorm_eq_ofReal_abs _
+    _ ≤ ENNReal.ofReal (C * (a₁ + a₂ + a₃ + a₄) * v) := ENNReal.ofReal_le_ofReal h
+    _ = _ := by
+      simp only [Real.enorm_eq_ofReal_abs, abs_of_nonneg h₁, abs_of_nonneg h₂,
+        abs_of_nonneg h₃, abs_of_nonneg h₄]
+      rw [ENNReal.ofReal_mul (mul_nonneg hC hsum), ENNReal.ofReal_mul hC,
+        ENNReal.ofReal_add (add_nonneg (add_nonneg h₁ h₂) h₃) h₄,
+        ENNReal.ofReal_add (add_nonneg h₁ h₂) h₃, ENNReal.ofReal_add h₁ h₂, mul_assoc]
+
+/-- Sum four weighted cube coefficients using their common outer L1 bound. -/
+private theorem tsum_enorm_le_four_outer_bounds (R : DyadicCube d)
+    (α A B C D : DyadicCube d → ℝ) (C₀ : ℝ) (K : ENNReal)
+    (hpt : ∀ T : R.tree, ‖α T‖ₑ ≤ ENNReal.ofReal C₀ *
+      ((‖A T‖ₑ + ‖B T‖ₑ + ‖C T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal (T : DyadicCube d).vol))
+    (hA : outerLpNorm (sizeP 1) 1 A ≤ K) (hB : outerLpNorm (sizeP 1) 1 B ≤ K)
+    (hC : outerLpNorm (sizeP 1) 1 C ≤ K) (hD : outerLpNorm (sizeP 1) 1 D ≤ K) :
+    ∑' T : R.tree, ‖α T‖ₑ ≤ ENNReal.ofReal C₀ * (4 * K + 4 * K + 4 * K + 4 * K) := by
+  calc ∑' T : R.tree, ‖α T‖ₑ
+      ≤ ∑' T : R.tree, ENNReal.ofReal C₀ *
+          ((‖A T‖ₑ + ‖B T‖ₑ + ‖C T‖ₑ + ‖D T‖ₑ) *
+            ENNReal.ofReal (T : DyadicCube d).vol) := ENNReal.tsum_le_tsum hpt
+    _ ≤ ∑' T : DyadicCube d, ENNReal.ofReal C₀ *
+          ((‖A T‖ₑ + ‖B T‖ₑ + ‖C T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal T.vol) :=
+        ENNReal.tsum_comp_le_tsum_of_injective Subtype.val_injective
+          (fun T : DyadicCube d => ENNReal.ofReal C₀ *
+            ((‖A T‖ₑ + ‖B T‖ₑ + ‖C T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal T.vol))
+    _ = ENNReal.ofReal C₀ * (∑' T : DyadicCube d, ‖A T‖ₑ * ENNReal.ofReal T.vol +
+          ∑' T : DyadicCube d, ‖B T‖ₑ * ENNReal.ofReal T.vol +
+          ∑' T : DyadicCube d, ‖C T‖ₑ * ENNReal.ofReal T.vol +
+          ∑' T : DyadicCube d, ‖D T‖ₑ * ENNReal.ofReal T.vol) := by
+        rw [ENNReal.tsum_mul_left]
+        congr 1
+        simp only [add_mul]
+        rw [ENNReal.tsum_add, ENNReal.tsum_add, ENNReal.tsum_add]
+    _ ≤ ENNReal.ofReal C₀ * (4 * outerLpNorm (sizeP 1) 1 A + 4 * outerLpNorm (sizeP 1) 1 B +
+          4 * outerLpNorm (sizeP 1) 1 C + 4 * outerLpNorm (sizeP 1) 1 D) := by
+        gcongr <;> exact tsum_enorm_mul_vol_le _
+    _ ≤ _ := by gcongr
+
 section Lemma271Proof
 
 /-- The pointwise Cauchy–Schwarz inequality for sizes: `S₁(FG) ≤ S₂(F) S₂(G)`. [PROVED] -/
@@ -5210,9 +5282,6 @@ theorem lemma271 (hd : d ≠ 0) (p p' : ℝ) : Lemma271 d p p' := by
     mul_nonneg (martAvg_nonneg _ _) (mul_nonneg (martDiff_nonneg _ _) (martDiff_nonneg _ _))
   have hD0 : ∀ T, 0 ≤ D T := fun T =>
     mul_nonneg (martAvg_nonneg _ _) (mul_nonneg (martAvg_nonneg _ _) (sq_nonneg _))
-  have hnn : ∀ x : ℝ, ENNReal.ofReal x ≤ ‖x‖ₑ := fun x => by
-    rw [Real.enorm_eq_ofReal_abs]
-    exact ENNReal.ofReal_le_ofReal (le_abs_self x)
   -- the pointwise bound on `α`
   have hpt : ∀ T : R.tree, ‖α T‖ₑ ≤ ENNReal.ofReal C₀ *
       ((‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal (T : DyadicCube d).vol) := by
@@ -5224,47 +5293,11 @@ theorem lemma271 (hd : d ≠ 0) (p p' : ℝ) : Lemma271 d p p' := by
         ← martAvg_truncate_of_subset hT f₁, ← martAvg_truncate_of_subset hT f₂] at h0
       simp only [hAdef, hBdef, hCdef, hDdef, Pi.mul_apply]
       linarith [h0]
-    have hsum0 : 0 ≤ A T + B T + Cf T + D T := by
-      have := hA0 T; have := hB0 T; have := hC0 T; have := hD0 T
-      linarith
-    calc ‖α T‖ₑ = ENNReal.ofReal |α T| := Real.enorm_eq_ofReal_abs _
-      _ ≤ ENNReal.ofReal (C₀ * (A T + B T + Cf T + D T) * (T : DyadicCube d).vol) :=
-          ENNReal.ofReal_le_ofReal h
-      _ = ENNReal.ofReal C₀ *
-          (ENNReal.ofReal (A T + B T + Cf T + D T) * ENNReal.ofReal (T : DyadicCube d).vol) := by
-          rw [ENNReal.ofReal_mul (mul_nonneg hC₀ hsum0), ENNReal.ofReal_mul hC₀, mul_assoc]
-      _ ≤ _ := by
-          gcongr
-          calc ENNReal.ofReal (A T + B T + Cf T + D T)
-              = ENNReal.ofReal (A T) + ENNReal.ofReal (B T) + ENNReal.ofReal (Cf T) +
-                  ENNReal.ofReal (D T) := by
-                rw [ENNReal.ofReal_add (by linarith [hA0 T, hB0 T, hC0 T]) (hD0 T),
-                  ENNReal.ofReal_add (by linarith [hA0 T, hB0 T]) (hC0 T),
-                  ENNReal.ofReal_add (hA0 T) (hB0 T)]
-            _ ≤ ‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ :=
-                add_le_add (add_le_add (add_le_add (hnn _) (hnn _)) (hnn _)) (hnn _)
+    exact enorm_le_four_term_bound hC₀ (hA0 T) (hB0 T) (hC0 T) (hD0 T) h
   -- summation
   calc ∑' T : R.tree, ‖α T‖ₑ
-      ≤ ∑' T : R.tree, ENNReal.ofReal C₀ *
-          ((‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal (T : DyadicCube d).vol) :=
-        ENNReal.tsum_le_tsum hpt
-    _ ≤ ∑' T : DyadicCube d, ENNReal.ofReal C₀ *
-          ((‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal T.vol) :=
-        ENNReal.tsum_comp_le_tsum_of_injective Subtype.val_injective
-          (fun T : DyadicCube d => ENNReal.ofReal C₀ *
-            ((‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal T.vol))
-    _ = ENNReal.ofReal C₀ * (∑' T : DyadicCube d, ‖A T‖ₑ * ENNReal.ofReal T.vol +
-          ∑' T : DyadicCube d, ‖B T‖ₑ * ENNReal.ofReal T.vol +
-          ∑' T : DyadicCube d, ‖Cf T‖ₑ * ENNReal.ofReal T.vol +
-          ∑' T : DyadicCube d, ‖D T‖ₑ * ENNReal.ofReal T.vol) := by
-        rw [ENNReal.tsum_mul_left]
-        congr 1
-        simp only [add_mul]
-        rw [ENNReal.tsum_add, ENNReal.tsum_add, ENNReal.tsum_add]
-    _ ≤ ENNReal.ofReal C₀ * (4 * outerLpNorm (sizeP 1) 1 A + 4 * outerLpNorm (sizeP 1) 1 B +
-          4 * outerLpNorm (sizeP 1) 1 Cf + 4 * outerLpNorm (sizeP 1) 1 D) := by
-        gcongr <;> exact tsum_enorm_mul_vol_le _
-    _ ≤ ENNReal.ofReal C₀ * (4 * K + 4 * K + 4 * K + 4 * K) := by gcongr
+      ≤ ENNReal.ofReal C₀ * (4 * K + 4 * K + 4 * K + 4 * K) :=
+        tsum_enorm_le_four_outer_bounds R α A B Cf D C₀ K hpt hA hB hC hD
     _ = ENNReal.ofReal (32 * Cp * Cp' * C₀) * (N₁ * N₂) := by
         rw [hK, ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_mul (by positivity),
           ENNReal.ofReal_mul (by norm_num), ENNReal.ofReal_ofNat]
@@ -5363,22 +5396,6 @@ private theorem outerLpNorm_three_factor_le (S₂ S₃ : Size d)
     sizeP_one_mul_le_sizeInf hp hq hs hpqs F (G * H) hF
     (ne_top_of_le_ne_top hG hGH)).trans ?_
   exact mul_le_mul' le_rfl (mul_le_mul' le_rfl hGH)
-
-/-- Convert a real four-term bound to the corresponding weighted enorm bound. -/
-private theorem enorm_le_four_term_bound {a a₁ a₂ a₃ a₄ C v : ℝ}
-    (hC : 0 ≤ C) (h₁ : 0 ≤ a₁) (h₂ : 0 ≤ a₂) (h₃ : 0 ≤ a₃) (h₄ : 0 ≤ a₄)
-    (h : |a| ≤ C * (a₁ + a₂ + a₃ + a₄) * v) :
-    ‖a‖ₑ ≤ ENNReal.ofReal C *
-      ((‖a₁‖ₑ + ‖a₂‖ₑ + ‖a₃‖ₑ + ‖a₄‖ₑ) * ENNReal.ofReal v) := by
-  have hsum : 0 ≤ a₁ + a₂ + a₃ + a₄ := add_nonneg (add_nonneg (add_nonneg h₁ h₂) h₃) h₄
-  calc ‖a‖ₑ = ENNReal.ofReal |a| := Real.enorm_eq_ofReal_abs _
-    _ ≤ ENNReal.ofReal (C * (a₁ + a₂ + a₃ + a₄) * v) := ENNReal.ofReal_le_ofReal h
-    _ = _ := by
-      simp only [Real.enorm_eq_ofReal_abs, abs_of_nonneg h₁, abs_of_nonneg h₂,
-        abs_of_nonneg h₃, abs_of_nonneg h₄]
-      rw [ENNReal.ofReal_mul (mul_nonneg hC hsum), ENNReal.ofReal_mul hC,
-        ENNReal.ofReal_add (add_nonneg (add_nonneg h₁ h₂) h₃) h₄,
-        ENNReal.ofReal_add (add_nonneg h₁ h₂) h₃, ENNReal.ofReal_add h₁ h₂, mul_assoc]
 
 /-- **Lemma 2.72**, deduced from Theorem 2.68 (for the exponents `p`, `q` and
 `r = (pq/(p+q))'`), Hölder's inequality for outer measure spaces (with target exponents
@@ -5537,30 +5554,9 @@ theorem lemma272 (hd : d ≠ 0) (p q : ℝ) : Lemma272 d p q := by
     exact enorm_le_four_term_bound hC₀ (hA0 T) (hB0 T) (hC0 T) (hD0 T) h
   -- summation
   calc ∑' T : R.tree, ‖α T‖ₑ
-      ≤ ∑' T : R.tree, ENNReal.ofReal C₀ *
-          ((‖(A * G₃) T‖ₑ + ‖(B * G₃) T‖ₑ + ‖(Cf * G₃) T‖ₑ + ‖(D * G₃) T‖ₑ) *
-            ENNReal.ofReal (T : DyadicCube d).vol) :=
-        ENNReal.tsum_le_tsum hpt
-    _ ≤ ∑' T : DyadicCube d, ENNReal.ofReal C₀ *
-          ((‖(A * G₃) T‖ₑ + ‖(B * G₃) T‖ₑ + ‖(Cf * G₃) T‖ₑ + ‖(D * G₃) T‖ₑ) *
-            ENNReal.ofReal T.vol) :=
-        ENNReal.tsum_comp_le_tsum_of_injective Subtype.val_injective
-          (fun T : DyadicCube d => ENNReal.ofReal C₀ *
-            ((‖(A * G₃) T‖ₑ + ‖(B * G₃) T‖ₑ + ‖(Cf * G₃) T‖ₑ + ‖(D * G₃) T‖ₑ) *
-              ENNReal.ofReal T.vol))
-    _ = ENNReal.ofReal C₀ * (∑' T : DyadicCube d, ‖(A * G₃) T‖ₑ * ENNReal.ofReal T.vol +
-          ∑' T : DyadicCube d, ‖(B * G₃) T‖ₑ * ENNReal.ofReal T.vol +
-          ∑' T : DyadicCube d, ‖(Cf * G₃) T‖ₑ * ENNReal.ofReal T.vol +
-          ∑' T : DyadicCube d, ‖(D * G₃) T‖ₑ * ENNReal.ofReal T.vol) := by
-        rw [ENNReal.tsum_mul_left]
-        congr 1
-        simp only [add_mul]
-        rw [ENNReal.tsum_add, ENNReal.tsum_add, ENNReal.tsum_add]
-    _ ≤ ENNReal.ofReal C₀ * (4 * outerLpNorm (sizeP 1) 1 (A * G₃) +
-          4 * outerLpNorm (sizeP 1) 1 (B * G₃) + 4 * outerLpNorm (sizeP 1) 1 (Cf * G₃) +
-          4 * outerLpNorm (sizeP 1) 1 (D * G₃)) := by
-        gcongr <;> exact tsum_enorm_mul_vol_le _
-    _ ≤ ENNReal.ofReal C₀ * (4 * L + 4 * L + 4 * L + 4 * L) := by gcongr
+      ≤ ENNReal.ofReal C₀ * (4 * L + 4 * L + 4 * L + 4 * L) :=
+        tsum_enorm_le_four_outer_bounds R α (A * G₃) (B * G₃) (Cf * G₃) (D * G₃)
+          C₀ L hpt hA' hB' hC' hD'
     _ = ENNReal.ofReal C₀ * (32 * ((2 : ENNReal) ^ (1 / s) *
           (ENNReal.ofReal Cp * N₁ * (ENNReal.ofReal Cq * N₂) * (ENNReal.ofReal Cr * N₃)))) := by
         rw [hL, hK, hM]
@@ -5718,9 +5714,6 @@ theorem lemma272one (hd : d ≠ 0) (p q : ℝ) : Lemma272one d p q := by
   have hD0 : ∀ T, 0 ≤ D T := fun T =>
     mul_nonneg (martAvg_nonneg _ _) (mul_nonneg (martAvg_nonneg _ _)
       (mul_nonneg (martDiff_nonneg _ _) (martDiff_nonneg _ _)))
-  have hnn : ∀ x : ℝ, ENNReal.ofReal x ≤ ‖x‖ₑ := fun x => by
-    rw [Real.enorm_eq_ofReal_abs]
-    exact ENNReal.ofReal_le_ofReal (le_abs_self x)
   -- the pointwise bound on `α`
   have hpt : ∀ T : R.tree, ‖α T‖ₑ ≤ ENNReal.ofReal C₀ *
       ((‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal (T : DyadicCube d).vol) := by
@@ -5733,47 +5726,11 @@ theorem lemma272one (hd : d ≠ 0) (p q : ℝ) : Lemma272one d p q := by
       refine h0.trans_eq ?_
       simp only [hAdef, hBdef, hCdef, hDdef, Pi.mul_apply]
       ring
-    have hsum0 : 0 ≤ A T + B T + Cf T + D T := by
-      have := hA0 T; have := hB0 T; have := hC0 T; have := hD0 T
-      linarith
-    calc ‖α T‖ₑ = ENNReal.ofReal |α T| := Real.enorm_eq_ofReal_abs _
-      _ ≤ ENNReal.ofReal (C₀ * (A T + B T + Cf T + D T) * (T : DyadicCube d).vol) :=
-          ENNReal.ofReal_le_ofReal h
-      _ = ENNReal.ofReal C₀ *
-          (ENNReal.ofReal (A T + B T + Cf T + D T) * ENNReal.ofReal (T : DyadicCube d).vol) := by
-          rw [ENNReal.ofReal_mul (mul_nonneg hC₀ hsum0), ENNReal.ofReal_mul hC₀, mul_assoc]
-      _ ≤ _ := by
-          gcongr
-          calc ENNReal.ofReal (A T + B T + Cf T + D T)
-              = ENNReal.ofReal (A T) + ENNReal.ofReal (B T) + ENNReal.ofReal (Cf T) +
-                  ENNReal.ofReal (D T) := by
-                rw [ENNReal.ofReal_add (by linarith [hA0 T, hB0 T, hC0 T]) (hD0 T),
-                  ENNReal.ofReal_add (by linarith [hA0 T, hB0 T]) (hC0 T),
-                  ENNReal.ofReal_add (hA0 T) (hB0 T)]
-            _ ≤ ‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ :=
-                add_le_add (add_le_add (add_le_add (hnn _) (hnn _)) (hnn _)) (hnn _)
+    exact enorm_le_four_term_bound hC₀ (hA0 T) (hB0 T) (hC0 T) (hD0 T) h
   -- summation
   calc ∑' T : R.tree, ‖α T‖ₑ
-      ≤ ∑' T : R.tree, ENNReal.ofReal C₀ *
-          ((‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal (T : DyadicCube d).vol) :=
-        ENNReal.tsum_le_tsum hpt
-    _ ≤ ∑' T : DyadicCube d, ENNReal.ofReal C₀ *
-          ((‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal T.vol) :=
-        ENNReal.tsum_comp_le_tsum_of_injective Subtype.val_injective
-          (fun T : DyadicCube d => ENNReal.ofReal C₀ *
-            ((‖A T‖ₑ + ‖B T‖ₑ + ‖Cf T‖ₑ + ‖D T‖ₑ) * ENNReal.ofReal T.vol))
-    _ = ENNReal.ofReal C₀ * (∑' T : DyadicCube d, ‖A T‖ₑ * ENNReal.ofReal T.vol +
-          ∑' T : DyadicCube d, ‖B T‖ₑ * ENNReal.ofReal T.vol +
-          ∑' T : DyadicCube d, ‖Cf T‖ₑ * ENNReal.ofReal T.vol +
-          ∑' T : DyadicCube d, ‖D T‖ₑ * ENNReal.ofReal T.vol) := by
-        rw [ENNReal.tsum_mul_left]
-        congr 1
-        simp only [add_mul]
-        rw [ENNReal.tsum_add, ENNReal.tsum_add, ENNReal.tsum_add]
-    _ ≤ ENNReal.ofReal C₀ * (4 * outerLpNorm (sizeP 1) 1 A + 4 * outerLpNorm (sizeP 1) 1 B +
-          4 * outerLpNorm (sizeP 1) 1 Cf + 4 * outerLpNorm (sizeP 1) 1 D) := by
-        gcongr <;> exact tsum_enorm_mul_vol_le _
-    _ ≤ ENNReal.ofReal C₀ * (4 * K + 4 * K + 4 * K + 4 * K) := by gcongr
+      ≤ ENNReal.ofReal C₀ * (4 * K + 4 * K + 4 * K + 4 * K) :=
+        tsum_enorm_le_four_outer_bounds R α A B Cf D C₀ K hpt hA hB hC hD
     _ = ENNReal.ofReal (32 * Cp * Cq * C₀) * (N₁ * N₂) := by
         rw [hK, hM, h2s, ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_mul (by positivity),
           ENNReal.ofReal_mul (by norm_num), ENNReal.ofReal_ofNat]
