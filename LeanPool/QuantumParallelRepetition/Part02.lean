@@ -294,7 +294,7 @@ theorem harmonicSchmidtFiber_count_sq_le
         mul_nonneg hx (Real.sqrt_nonneg _)
       have hs :
           (x * Real.sqrt ((j.val : ℝ) + 1)) ^ 2 ≤ a ^ 2 := by
-        linarith only [mul_nonneg (sub_nonneg.mpr hscaled) (add_nonneg ha hnonneg)]
+        exact (sq_le_sq₀ hnonneg ha).mpr hscaled
       rw [mul_pow, Real.sq_sqrt hjpositive.le] at hs
       simpa only [mul_comm] using hs
     have hcardreal : (S.card : ℝ) ≤ (j.val : ℝ) + 1 := by
@@ -1663,7 +1663,50 @@ private theorem exists_proofTargetCanonicalSpectralSchmidtDecomposition
         (hF.isHermitian.eigenvalues i) • (ofLp (v i)) at spectral
     rw [spectral, ← hσsq]
     rfl
-  obtain ⟨u, nonzero_singular⟩ := linearMap_exists_left_singularBasis T σ v heigen
+  let s : Set (Fin d) := {i | σ i ≠ 0}
+  let f : Fin d → EuclideanSpace ℂ (Fin d) :=
+    fun i => ((σ i : ℂ)⁻¹) • T (v i)
+  have hGram (i j : Fin d) :
+      inner ℂ (T (v i)) (T (v j)) =
+        ((σ j ^ 2 : ℝ) : ℂ) * inner ℂ (v i) (v j) := by
+    calc
+      inner ℂ (T (v i)) (T (v j)) =
+          inner ℂ (v i) (T.adjoint (T (v j))) :=
+        (T.adjoint_inner_right (v i) (T (v j))).symm
+      _ = inner ℂ (v i) (((σ j ^ 2 : ℝ) : ℂ) • v j) := by
+        rw [← heigen j]
+        rfl
+      _ = _ := by rw [inner_smul_right]
+  have hf : Orthonormal ℂ (s.domRestrict f) := by
+    rw [orthonormal_iff_ite]
+    intro i j
+    have hi : (σ (i : Fin d) : ℂ) ≠ 0 := by
+      exact_mod_cast i.property
+    have hj : (σ (j : Fin d) : ℂ) ≠ 0 := by
+      exact_mod_cast j.property
+    change inner ℂ
+      (((σ (i : Fin d) : ℂ)⁻¹) • T (v i))
+      (((σ (j : Fin d) : ℂ)⁻¹) • T (v j)) = _
+    rw [inner_smul_left, inner_smul_right, hGram,
+      v.inner_eq_ite]
+    by_cases same : i = j
+    · subst j
+      simp only [ite_true, mul_one]
+      have real_star :
+          starRingEnd ℂ ((σ (i : Fin d) : ℂ)⁻¹) =
+            ((σ (i : Fin d) : ℂ)⁻¹) := by simp only [map_inv₀, conj_ofReal]
+      rw [real_star]
+      push_cast
+      field_simp
+    · have unequal : (i : Fin d) ≠ (j : Fin d) := by
+        intro equal
+        exact same (Subtype.ext equal)
+      simp only [map_inv₀, conj_ofReal, ofReal_pow, unequal, ↓reduceIte, mul_zero, same]
+  obtain ⟨u, hu⟩ :=
+    Orthonormal.exists_orthonormalBasis_extension_of_card_eq
+      (by
+        rw [Fintype.card_fin]
+        exact finrank_euclideanSpace_fin) hf
   have singular (i : Fin d) :
       T (v i) = (σ i : ℂ) • u i := by
     by_cases zero : σ i = 0
@@ -1676,7 +1719,13 @@ private theorem exists_proofTargetCanonicalSpectralSchmidtDecomposition
         rw [← T.ker_adjoint_comp_self]
         exact LinearMap.mem_ker.mpr kernel
       simp only [image, zero, ofReal_zero, zero_smul]
-    · exact nonzero_singular i zero
+    · have chosen : u i = f i := hu i zero
+      rw [chosen]
+      change T (v i) =
+        (σ i : ℂ) • (((σ i : ℂ)⁻¹) • T (v i))
+      rw [smul_smul, mul_inv_cancel₀]
+      · simp only [one_smul]
+      · exact_mod_cast zero
   refine ⟨orthonormalBasisUnitary u, ?_⟩
   have eigen_unitary :
       orthonormalBasisUnitary v =

@@ -5240,7 +5240,7 @@ theorem bornTracePairing_one_le_one
       bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ) G :=
     (bornTracePairing ρ.matrix (1 : Matrix dA dA ℂ)).map_sub 1 G
   rw [hdiff, bornTracePairing_one_one] at hpositive
-  linarith only [hpositive]
+  exact le_add_neg_iff_le.mp hpositive
 
 theorem positiveContraction_eigenvalue_le_one
     {d : Type*} [Fintype d] [DecidableEq d]
@@ -6906,16 +6906,34 @@ section
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 
-/-- Complete the nonzero singular vectors for a specified orthonormal eigenbasis. -/
-theorem linearMap_exists_left_singularBasis
+theorem linearMap_exists_singularBases
     {d : ℕ}
-    (T : EuclideanSpace ℂ (Fin d) →ₗ[ℂ] EuclideanSpace ℂ (Fin d))
-    (σ : Fin d → ℝ)
-    (v : OrthonormalBasis (Fin d) ℂ (EuclideanSpace ℂ (Fin d)))
-    (heigen : ∀ i, (T.adjoint ∘ₗ T) (v i) = ((σ i ^ 2 : ℝ) : ℂ) • v i) :
-    ∃ u : OrthonormalBasis (Fin d) ℂ (EuclideanSpace ℂ (Fin d)),
-      ∀ i, σ i ≠ 0 → T (v i) = (σ i : ℂ) • u i := by
+    (T : EuclideanSpace ℂ (Fin d) →ₗ[ℂ]
+      EuclideanSpace ℂ (Fin d)) :
+    ∃ (σ : Fin d → ℝ)
+      (u v : OrthonormalBasis (Fin d) ℂ
+        (EuclideanSpace ℂ (Fin d))),
+      (∀ i, 0 ≤ σ i) ∧
+        (∀ i, T (v i) = (σ i : ℂ) • u i) := by
   classical
+  let hT := T.isPositive_adjoint_comp_self
+  let v : OrthonormalBasis (Fin d) ℂ
+      (EuclideanSpace ℂ (Fin d)) :=
+    hT.isSymmetric.eigenvectorBasis finrank_euclideanSpace_fin
+  let σ : Fin d → ℝ := fun i =>
+    Real.sqrt
+      (hT.isSymmetric.eigenvalues finrank_euclideanSpace_fin i)
+  have hσ (i : Fin d) : 0 ≤ σ i := Real.sqrt_nonneg _
+  have hσsq (i : Fin d) :
+      σ i ^ 2 =
+        hT.isSymmetric.eigenvalues finrank_euclideanSpace_fin i := by
+    exact Real.sq_sqrt
+      (hT.nonneg_eigenvalues finrank_euclideanSpace_fin i)
+  have heigen (i : Fin d) :
+      (T.adjoint ∘ₗ T) (v i) = ((σ i ^ 2 : ℝ) : ℂ) • v i := by
+    rw [hσsq]
+    exact hT.isSymmetric.apply_eigenvectorBasis
+      finrank_euclideanSpace_fin i
   let s : Set (Fin d) := {i | σ i ≠ 0}
   let f : Fin d → EuclideanSpace ℂ (Fin d) :=
     fun i => ((σ i : ℂ)⁻¹) • T (v i)
@@ -6963,44 +6981,6 @@ theorem linearMap_exists_left_singularBasis
       (by
         rw [Fintype.card_fin]
         exact finrank_euclideanSpace_fin) hf
-  refine ⟨u, ?_⟩
-  intro i hi
-  have hui : u i = f i := hu i hi
-  rw [hui]
-  change T (v i) = (σ i : ℂ) • (((σ i : ℂ)⁻¹) • T (v i))
-  rw [smul_smul, mul_inv_cancel₀]
-  · simp only [one_smul]
-  · exact_mod_cast hi
-
-theorem linearMap_exists_singularBases
-    {d : ℕ}
-    (T : EuclideanSpace ℂ (Fin d) →ₗ[ℂ]
-      EuclideanSpace ℂ (Fin d)) :
-    ∃ (σ : Fin d → ℝ)
-      (u v : OrthonormalBasis (Fin d) ℂ
-        (EuclideanSpace ℂ (Fin d))),
-      (∀ i, 0 ≤ σ i) ∧
-        (∀ i, T (v i) = (σ i : ℂ) • u i) := by
-  classical
-  let hT := T.isPositive_adjoint_comp_self
-  let v : OrthonormalBasis (Fin d) ℂ
-      (EuclideanSpace ℂ (Fin d)) :=
-    hT.isSymmetric.eigenvectorBasis finrank_euclideanSpace_fin
-  let σ : Fin d → ℝ := fun i =>
-    Real.sqrt
-      (hT.isSymmetric.eigenvalues finrank_euclideanSpace_fin i)
-  have hσ (i : Fin d) : 0 ≤ σ i := Real.sqrt_nonneg _
-  have hσsq (i : Fin d) :
-      σ i ^ 2 =
-        hT.isSymmetric.eigenvalues finrank_euclideanSpace_fin i := by
-    exact Real.sq_sqrt
-      (hT.nonneg_eigenvalues finrank_euclideanSpace_fin i)
-  have heigen (i : Fin d) :
-      (T.adjoint ∘ₗ T) (v i) = ((σ i ^ 2 : ℝ) : ℂ) • v i := by
-    rw [hσsq]
-    exact hT.isSymmetric.apply_eigenvectorBasis
-      finrank_euclideanSpace_fin i
-  obtain ⟨u, hu⟩ := linearMap_exists_left_singularBasis T σ v heigen
   refine ⟨σ, u, v, hσ, ?_⟩
   intro i
   by_cases hi : σ i = 0
@@ -7012,7 +6992,13 @@ theorem linearMap_exists_singularBases
       rw [← T.ker_adjoint_comp_self]
       exact LinearMap.mem_ker.mpr hker
     simp only [hTv, hi, ofReal_zero, zero_smul]
-  · exact hu i hi
+  · have hui : u i = f i := hu i hi
+    rw [hui]
+    change T (v i) =
+      (σ i : ℂ) • (((σ i : ℂ)⁻¹) • T (v i))
+    rw [smul_smul, mul_inv_cancel₀]
+    · simp only [one_smul]
+    · exact_mod_cast hi
 
 end
 

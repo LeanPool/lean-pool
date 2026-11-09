@@ -1022,7 +1022,7 @@ theorem
   have denominator : 0 < w := width
   have ratio : (w + 1) / w ≤ 2 := by
     apply (div_le_iff₀ denominator).mpr
-    linarith only [large]
+    exact add_one_le_two_mul large
   calc
     dSVDensityRationalLeftProjectiveThresholdAtomMismatch
         w N ξ ζ /
@@ -1066,7 +1066,7 @@ theorem dSVDensityRationalLargeWidth_exists_fine_grid
   have crossed := (div_lt_iff₀ denominator).mp large
   have small : (d : ℝ) / N < ε / (2 * (w + 1)) := by
     apply (div_lt_iff₀ real_grid).mpr
-    linarith only [crossed]
+    exact (div_lt_iff₀' denominator).mp large
   have positive : 0 < 2 * (w + 1) := by positivity
   have scaled := (lt_div_iff₀ positive).mp small
   linarith only [scaled]
@@ -5085,7 +5085,7 @@ theorem
               N width schedule ξ ζ k)) * bound := by
       rw [Finset.sum_mul]
     _ ≤ bound := by
-      linarith only [mul_nonneg bound_nonnegative (sub_nonneg.mpr escape_budget)]
+      exact mul_le_of_le_one_left bound_nonnegative escape_budget
 
 /-- The error rate associated with DSV density rational heterogeneous physical uniform escape. -/
 def dSVDensityRationalHeterogeneousPhysicalUniformEscapeRate
@@ -5528,7 +5528,7 @@ theorem bornTracePairing_le_one_one
       bornTracePairing ρ.matrix F (1 : Matrix dB dB ℂ) := by
     simp only [map_sub (bornTracePairing ρ.matrix), LinearMap.sub_apply]
   rw [hdiff, bornTracePairing_one_one] at hpositive
-  linarith only [hpositive]
+  exact le_add_neg_iff_le.mp hpositive
 
 theorem matrixLogEntropy_born_lower_bound_right
     {dA dB : Type*}

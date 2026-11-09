@@ -5161,7 +5161,7 @@ private theorem exists_source_rounding_divisor
   have hsmall : C / (q : ℝ) < δ ^ 2 := by
     apply (div_lt_iff₀ hqreal).mpr
     have hcross := (div_lt_iff₀ hsquare).mp hthreshold
-    linarith only [hcross]
+    exact (div_lt_iff₀' hsquare).mp hthreshold
   refine ⟨q, hqnat, ?_⟩
   calc
     8 * K *

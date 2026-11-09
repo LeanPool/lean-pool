@@ -2316,7 +2316,7 @@ theorem pdfGreedyCeilingHorizon_pow_le_exp
   have base_nonnegative : 0 ≤ 1 - τ := sub_nonneg.mpr at_most_one
   have base_le : 1 - τ ≤ Real.exp (-τ) := by
     have actual := Real.add_one_le_exp (-τ)
-    linarith only [actual]
+    exact Real.one_sub_le_exp_neg τ
   have ceiling : d * (n : ℝ) / τ ≤ (T : ℝ) := by
     exact Nat.le_ceil (d * (n : ℝ) / τ)
   have exponent : -τ * (T : ℝ) ≤ -d * (n : ℝ) := by

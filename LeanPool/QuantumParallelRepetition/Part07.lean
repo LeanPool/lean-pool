@@ -1094,7 +1094,7 @@ theorem dSVDensityRationalPublicShiftedBucketMismatch_sum_le
               (((x + phase.val) / B : ℕ) : ℝ) + 1 ≤
                 (((y + phase.val) / B : ℕ) : ℝ) := by
             exact_mod_cast Nat.succ_le_of_lt strictly
-          linarith only [cast_bound]
+          exact le_tsub_of_add_le_left cast_bound
       _ = (y : ℝ) - (x : ℝ) := by
         rw [Finset.sum_sub_distrib,
           dSVDensityRationalPublicShiftedQuotient_real_sum
@@ -1275,7 +1275,7 @@ private theorem
           min (r.val : ℝ) (s.val : ℝ) / (B : ℝ) := by
       have scaled := mul_le_mul_of_nonneg_left logarithmic
         (div_nonneg (Nat.cast_nonneg Q) positive_real.le)
-      linarith only [scaled]
+      exact add_le_add_left scaled _
 
 end
 
@@ -1394,7 +1394,7 @@ theorem
         (representative.val : ℝ) <
       Real.exp (((B : ℝ) + 1) / (Q : ℝ)) - 1
   rw [sub_div, div_self positive_representative.ne']
-  linarith only [ratio]
+  exact (sub_lt_sub_iff_right 1).mpr ratio
 
 theorem
     dSVDensityRationalPublicLogRankBucketRepresentative_relative_abs_lt
@@ -2686,7 +2686,7 @@ theorem unconditionalPrefactor_balancedHazard_sqrt_le
           Real.sqrt a := by rw [coefficient_square, fourth_square]
   have quotient : (34 / Real.sqrt a) * a = 34 * Real.sqrt a := by
     field_simp [ne_of_gt root_positive]
-    linarith only [root_square]
+    exact root_square.symm
   apply Real.sqrt_le_iff.mpr
   constructor
   · positivity
@@ -3813,7 +3813,7 @@ private theorem finiteProductMarginal_relativeEntropy_le
       hp (finiteIndependentProductWeight_nonneg
         marginal hm_nonnegative)
   change (∑ i : ι, finiteRelativeEntropy (marginal i) (q i)) ≤ _
-  linarith only [hnonnegative]
+  exact le_add_of_nonneg_left hnonnegative
 
 end
 

@@ -2742,7 +2742,7 @@ theorem expectation_le_add_totalVariation
           ring
     _ ≤ (∑ i, q i * f i) +
           ∑ i, U * max (p i - q i) 0 := by
-      linarith only [hsum]
+      exact (add_le_add_iff_left (∑ i, q i * f i)).mpr hsum
     _ = (∑ i, q i * f i) +
           U * finiteTotalVariation p q := by
       rw [← Finset.mul_sum, hpositive]
@@ -2760,7 +2760,7 @@ theorem winning_expectation_transfer
     q p win hq hp (1 : ℝ) hzero hone
   rw [← finiteTotalVariation_comm p q] at h
   norm_num at h ⊢
-  linarith only [h]
+  exact h
 
 end
 
@@ -2957,7 +2957,7 @@ theorem matched_payoff_discard_le
     simp only [Bool.not_eq_true] at hi
     simp only [hi, Bool.false_eq_true, ↓reduceIte, mul_one, mul_zero, tsub_le_iff_right, zero_add,
       ge_iff_le]
-    linarith only [mul_nonneg (nonnegative i) (sub_nonneg.mpr hone)]
+    exact mul_le_of_le_one_right (nonnegative i) (payoff_le_one i)
 
 end
 
@@ -3478,7 +3478,7 @@ theorem greedy_terminal_of_log_cost
     (1 - η) ^ T < θ := by
   have hbase : 1 - η ≤ Real.exp (-η) := by
     have h := Real.add_one_le_exp (-η)
-    linarith only [h]
+    exact Real.one_sub_le_exp_neg η
   have hpow :
       (1 - η) ^ T ≤ Real.exp (-η) ^ T :=
     pow_le_pow_left₀ (sub_nonneg.mpr hη_one) hbase T
@@ -3529,7 +3529,7 @@ theorem sourceRate_mul_lt_divisorStopping
     _ < η * ((n / q : ℕ) : ℝ) := by
       have hpositive : 0 < η * ((n / q : ℕ) : ℝ) :=
         mul_pos hη hT
-      linarith only [hpositive]
+      exact half_lt_self hpositive
 
 theorem repeatedStrategy_exists_divisor_greedy_conditioning
     (G : Game X Y A B) (n : ℕ)

@@ -219,7 +219,7 @@ theorem exact_standardQuantumParallelRepetition_of_source_rounding
     apply exact_totalSamplingLoss_mono
       constant_nonnegative (rate_positive k).le (le_refl _)
       martingale_nonnegative martingale_small
-    linarith only [pinsker_small]
+    exact add_le_add_left pinsker_small (rate k)
   exact source_equation_twenty_nine_contradiction G rounded
     K₀ (rate k) (martingaleRate G n S D)
     (exactSourcePinskerRate G n S D + rate k)
@@ -862,6 +862,21 @@ theorem unconditionalMatchedVerifierEffect_tensor_quadratic
   rw [complex_factor, Complex.mul_re, Complex.ofReal_re,
     Complex.ofReal_im]
   ring
+
+/-- A unit target lets a tensor's Born value be expressed using the full tensor norm. -/
+private theorem matchedTensorBorn_of_unit
+    {s t : Type*} [Fintype s] [Fintype t]
+    [DecidableEq s] [DecidableEq t]
+    (effect : Matrix s s ℂ) (target : EuclideanSpace ℂ s)
+    (work : EuclideanSpace ℂ t) (value : ℝ)
+    (target_unit : ‖target‖ = 1)
+    (born : quadraticExpectation (Matrix.toEuclideanCLM (𝕜 := ℂ) effect) target = value) :
+    quadraticExpectation
+        (Matrix.toEuclideanCLM (𝕜 := ℂ) (effect ⊗ₖ (1 : Matrix t t ℂ)))
+        (unconditionalMatchedVerifierTensor target work) =
+      ‖unconditionalMatchedVerifierTensor target work‖ ^ 2 * value := by
+  rw [unconditionalMatchedVerifierEffect_tensor_quadratic, born,
+    unconditionalMatchedVerifierTensor_norm_sq, target_unit, one_pow, one_mul]
 
 variable {X Y A B : Type*}
 variable [Fintype X] [Fintype Y] [Fintype A] [Fintype B]
@@ -6982,28 +6997,12 @@ private theorem unconditionalActualFairSourceOuterBorn_of_base
     rw [unconditionalSelectedCopy_coherentPhaseConstantWork_norm phases,
       unconditionalConjugatePureVector_norm, ψ_unit,
       embezzlementState_norm (N * m) (Nat.mul_pos grid harmonic), mul_one]
-  change
-    quadraticExpectation
-      (Matrix.toEuclideanCLM
-        (n :=
-          (UnconditionalSelectedCopyLocalIndex P d N m ×
-           UnconditionalSelectedCopyLocalIndex P d N m) ×
-          IntegratorActualC485RetainedIndex 1 P N d L j)
-        (𝕜 := ℂ)
-        (directDSVActualLocalPOVMWinningEffect G
-          (integratorActualC485SelectedAlicePOVM
-            G n S D a₀ P N m x)
-          (integratorActualC485SelectedBobPOVM
-            G n S D b₀ P N m y) x y ⊗ₖ
-          (1 : Matrix
-            (IntegratorActualC485RetainedIndex 1 P N d L j)
-            (IntegratorActualC485RetainedIndex 1 P N d L j) ℂ)))
-      (unconditionalMatchedVerifierTensor stage retained) =
-        ‖unconditionalMatchedVerifierTensor stage retained‖ ^ 2 * value
-  rw [unconditionalMatchedVerifierEffect_tensor_quadratic,
-    selected_born, unconditionalMatchedVerifierTensor_norm_sq,
-    stage_unit]
-  ring
+  simpa only [integratorActualC485WinningEffect, integratorActualC485SourceVector] using!
+    matchedTensorBorn_of_unit
+      (directDSVActualLocalPOVMWinningEffect G
+        (integratorActualC485SelectedAlicePOVM G n S D a₀ P N m x)
+        (integratorActualC485SelectedBobPOVM G n S D b₀ P N m y) x y)
+      stage retained value stage_unit selected_born
 
 theorem unconditionalActualFairSourceSupportedBorn
     {X Y A B : Type}
