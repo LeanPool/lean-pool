@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.HierarchyLEMStable
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
@@ -350,10 +351,7 @@ lemma Step1CaseOneInsideZeroPE {V E : Type*}
       TreeSequenceInitialSegment S U →
       TreeSequenceVertexSet S ⊆ TreeSequenceVertexSet U := by
     intro S U hSU v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    obtain ⟨i, _, rfl⟩ := hv
-    obtain ⟨hlen, hverts, _⟩ := hSU
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _, hverts i⟩
+    exact hSU.vertexSet_subset hv
   have hAT : TreeSequenceInitialSegment A T := by simpa [hstar] using hcoreT
   have hsub := initialVertices hAT
   have hb2A : b₂ ∈ TreeSequenceVertexSet A := hinside

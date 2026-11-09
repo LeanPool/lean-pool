@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.HkuUnsupportedVertexColors
 public import LeanPool.GoldbergSeymour.SupportingPEColorChain
@@ -740,11 +741,7 @@ theorem SupportingPEStoredIntersection {V E : Type*}
       TreeSequenceInitialSegment T T' → ∀ x, x ∈ TreeSequenceVertexSet T →
         x ∈ TreeSequenceVertexSet T' := by
     intro T T' h x hx
-    unfold TreeSequenceVertexSet at hx ⊢
-    simp only [Finset.mem_image] at hx ⊢
-    obtain ⟨i, hi, rfl⟩ := hx
-    rcases h with ⟨hlen, hvertex, hedge⟩
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, by simpa using hvertex i⟩
+    exact h.vertexSet_subset hx
   have next_segment := @SharedFacts.UnsupportedVertexColors.next_segment V E inferInstance
       inferInstance inferInstance G k
       rounds e0 input series

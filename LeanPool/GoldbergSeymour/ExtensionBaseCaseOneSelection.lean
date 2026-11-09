@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ExtensionBaseCaseOneIndices
 public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClass
 public import LeanPool.GoldbergSeymour.TreeSequencePrefix
@@ -380,22 +382,10 @@ theorem ExtensionBaseCaseOneSelection {V E : Type*}
                 delta (Fin.last p) ∉ prefixColors ∧
                   MissingColors G rho1 terminalSupport ∩ prefixColors = ∅) := by
   classical
-  have initial_subset {A B : TreeSequence G e0}
-      (h : TreeSequenceInitialSegment A B) :
-      TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    obtain ⟨i, hi, hvi⟩ := hv
-    obtain ⟨hlen, hvertices, hedges⟩ := h
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _,
-      (hvertices i).trans hvi⟩
   have reach_subset {A B : TreeSequence G e0}
       (h : TashkinovAugmentationSequence rho1 A B) :
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    unfold TashkinovAugmentationSequence at h
-    induction h using Relation.ReflTransGen.head_induction_on with
-    | refl => exact Finset.Subset.rfl
-    | head hstep htail ih => exact (initial_subset hstep.2.1).trans ih
+    exact (TashkinovAugmentationSequenceInitialSegment rho1 A B h).vertexSet_subset
   have seed_prime : TreeSequenceVertexSet seed ⊆
       TreeSequenceVertexSet TjPrime := reach_subset hclosure.1
   have terminal_seed : terminalSupport ∈ TreeSequenceVertexSet seed := by

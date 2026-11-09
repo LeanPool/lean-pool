@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 public import LeanPool.GoldbergSeymour.TashkinovSeries
@@ -148,11 +149,7 @@ theorem HkuMissingStoredMonotone {V E : Type*} [Fintype V] [Fintype E]
       (hab : TreeSequenceInitialSegment A B) {v : V}
       (hv : v ∈ TreeSequenceVertexSet A) :
       v ∈ TreeSequenceVertexSet B := by
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv ⊢
-    rcases hv with ⟨i, hi⟩
-    rcases hab with ⟨hlen, hvertices, hedges⟩
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, ?_⟩
-    exact (hvertices i).trans hi
+    exact hab.vertexSet_subset hv
   have segment : ∀ (j : Fin (rounds + 1)) (i : Fin rounds), j = i.succ →
       TreeSequenceInitialSegment (series.data.tree i.succ.castSucc)
         (series.data.tree i.succ.succ) := by

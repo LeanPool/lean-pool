@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ExtensionBaseAlgorithmC
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseClaim46
@@ -1488,11 +1489,7 @@ private theorem helper_continuation_1438.{u_1, u_2} :
       (hAB : TreeSequenceInitialSegment A B) {v : V}
       (hv : v ∈ TreeSequenceVertexSet A) :
       v ∈ TreeSequenceVertexSet B := by
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    obtain ⟨i, -, hi⟩ := hv
-    obtain ⟨hlen, hvertices, -⟩ := hAB
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _,
-      (hvertices i).trans hi⟩
+    exact hAB.vertexSet_subset hv
   have hbeforeMemberAndNe {A : TreeSequence G e0} {v w : V}
       (hv : v ∈ TreeSequenceVertexSet A)
       (hw : w ∈ TreeVerticesBefore A v hv) :

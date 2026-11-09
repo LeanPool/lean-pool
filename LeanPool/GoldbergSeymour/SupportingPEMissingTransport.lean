@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 public import LeanPool.GoldbergSeymour.HkuUnsupportedVertexColors
@@ -495,11 +496,7 @@ theorem SupportingPEMissingTransport {V E : Type*}
       TreeSequenceInitialSegment T T' → ∀ x, x ∈ TreeSequenceVertexSet T →
       x ∈ TreeSequenceVertexSet T' := by
     intro T T' hseg x hx
-    unfold TreeSequenceVertexSet at hx ⊢
-    simp only [Finset.mem_image] at hx ⊢
-    obtain ⟨i, hi, rfl⟩ := hx
-    rcases hseg with ⟨hlen, hvertex, hedge⟩
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, by simpa using hvertex i⟩
+    exact hseg.vertexSet_subset hx
   have next_segment := TashkinovSeries.stepInitialSegment G k rounds e0 input series
   have bridge := @helper_bridge_357 V E inferInstance inferInstance inferInstance G k rounds p e0
       input series q u indices hincreasing henumerates support_tree vertex_transfer next_segment

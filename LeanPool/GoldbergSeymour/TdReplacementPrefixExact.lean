@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.CorrespondingTerminalClosureEq
 public import LeanPool.GoldbergSeymour.ExtensionBase
 public import LeanPool.GoldbergSeymour.ParallelExtensionUndoStable
@@ -1543,21 +1545,13 @@ theorem TdReplacementPrefixExact {V E : Type*} [Fintype V] [Fintype E]
       (hAB : TreeSequenceInitialSegment A B) {v : V}
       (hv : v ∈ TreeSequenceVertexSet A) :
       v ∈ TreeSequenceVertexSet B := by
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    rcases hv with ⟨i, hi, rfl⟩
-    rcases hAB with ⟨hlen, hvertices, hedges⟩
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i,
-      Finset.mem_univ _, hvertices i⟩
+    exact hAB.vertexSet_subset hv
   have vertexReach {A B : TreeSequence G e0}
       {phi : PartialEdgeColoring E k}
       (hAB : TashkinovAugmentationSequence phi A B) {v : V}
       (hv : v ∈ TreeSequenceVertexSet A) :
       v ∈ TreeSequenceVertexSet B := by
-    unfold TashkinovAugmentationSequence at hAB
-    induction hAB using Relation.ReflTransGen.head_induction_on with
-    | refl => exact hv
-    | @head A B hstep htail ih =>
-      exact ih (vertexSegment hstep.2.1 hv)
+    exact (TashkinovAugmentationSequenceInitialSegment phi A B hAB).vertexSet_subset hv
   have displayedEdgeIncident {A : TreeSequence G e0}
       (j : Fin A.length) : TreeIncidentEdge A (A.edge j) := by
     rcases A.attaches j with ⟨i, hi⟩

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ExtensionBase
 public import LeanPool.GoldbergSeymour.HierarchyBase
 public import LeanPool.GoldbergSeymour.TechnicalInductionContext
@@ -879,25 +881,11 @@ private theorem helper_continuation_963.{u_1, u_2} :
     (Nat.le_of_lt_succ base.supportPosition.isLt)
   have hPrefixClosure : TashkinovClosure sigma supportPrefix base.closure := by
     simpa only [supportPrefix, terminal] using hBaseParallel.2.1
-  have initialVertices : ∀ {A B : TreeSequence G e0},
-      TreeSequenceInitialSegment A B →
-        TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    intro A B hAB x hx
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hx ⊢
-    rcases hx with ⟨i, hi⟩
-    rcases hAB with ⟨hlen, hvertices, hedges⟩
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i,
-      (hvertices i).trans hi⟩
   have vertexReach : ∀ {A B : TreeSequence G e0},
       TashkinovAugmentationSequence sigma A B →
         TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro A B hAB
-    unfold TashkinovAugmentationSequence at hAB
-    induction hAB using Relation.ReflTransGen.head_induction_on with
-    | refl => exact Finset.Subset.rfl
-    | @head A B hstep htail ih =>
-      exact fun x hx => ih (initialVertices hstep.2.1 hx)
+    exact (TashkinovAugmentationSequenceInitialSegment sigma A B hAB).vertexSet_subset
   have hPrefixSubset : TreeSequenceVertexSet supportPrefix ⊆
       TreeSequenceVertexSet base.closure := vertexReach hPrefixClosure.1
   have hSupportPrefix : choice.vertex ∈ TreeSequenceVertexSet supportPrefix := by

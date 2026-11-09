@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyBase
 public import LeanPool.GoldbergSeymour.HkuParallelBoundaryStructure
 
@@ -376,16 +378,6 @@ private theorem helper_branch_69.{u_1, u_2} :
     rw [hqsucc]
     intro u hu v hv huv
     exact hlowerElementary hu hv huv
-  have initialVertices : ∀ {A B : TreeSequence G e0},
-      TreeSequenceInitialSegment A B →
-        TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    intro A B hab x hx
-    unfold TreeSequenceVertexSet at hx ⊢
-    simp only [Finset.mem_image] at hx ⊢
-    obtain ⟨i, hi, rfl⟩ := hx
-    obtain ⟨hlen, hvertices, hedges⟩ := hab
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _, ?_⟩
-    exact hvertices i
   have prefixClosure : TashkinovClosure phi
       (TreeSequencePrefix Tn base.supportPosition.val base.supportPositive
         (Nat.le_of_lt_succ base.supportPosition.isLt)) base.closure := by
@@ -394,15 +386,7 @@ private theorem helper_branch_69.{u_1, u_2} :
       TashkinovAugmentationSequence phi A B →
         TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro A B hab
-    unfold TashkinovAugmentationSequence at hab
-    induction hab using Relation.ReflTransGen.head_induction_on with
-    | refl => exact Finset.Subset.rfl
-    | @head A B hstep htail ih =>
-      intro x hx
-      obtain ⟨hlen, hvertices, hedges⟩ := hstep.2.1
-      apply ih
-      apply initialVertices hstep.2.1
-      exact hx
+    exact (TashkinovAugmentationSequenceInitialSegment phi A B hab).vertexSet_subset
   have prefixInClosure : TreeSequenceVertexSet
       (TreeSequencePrefix Tn base.supportPosition.val base.supportPositive
         (Nat.le_of_lt_succ base.supportPosition.isLt)) ⊆

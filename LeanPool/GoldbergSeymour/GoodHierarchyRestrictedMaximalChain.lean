@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetStrict
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
@@ -318,34 +319,9 @@ theorem GoodHierarchyRestrictedMaximalChain {V E : Type*}
   have strictOfAug {X Y : TreeSequence G e0}
       (h : TashkinovAugmentation sigma X Y) :
       TreeSequenceVertexSet X ⊂ TreeSequenceVertexSet Y := by
-    rcases h with ⟨hlen, hseg, hc⟩
-    rcases hseg with ⟨hle, hv, he⟩
-    let : DecidableEq V := Classical.decEq V
-    rw [TreeSequenceVertexSet, TreeSequenceVertexSet]
-    constructor
-    · intro v hvx
-      rcases Finset.mem_image.mp hvx with ⟨i, _, hi⟩
-      apply Finset.mem_image.mpr
-      refine ⟨Fin.castLE (Nat.succ_le_succ hle) i, Finset.mem_univ _, ?_⟩
-      exact (hv i).trans hi
-    · intro heq
-      have hlast : Y.vertex (Fin.last Y.length) ∈
-          Finset.univ.image Y.vertex := Finset.mem_image.mpr ⟨Fin.last Y.length,
-            Finset.mem_univ _, rfl⟩
-      have hback := heq hlast
-      rcases Finset.mem_image.mp hback with ⟨i, _, hi⟩
-      have hvi : Y.vertex (Fin.last Y.length) =
-          Y.vertex (Fin.castLE (Nat.succ_le_succ hle) i) :=
-        hi.symm.trans (hv i).symm
-      have hind := Y.vertex_injective hvi
-      have hval : Y.length = (Fin.castLE (Nat.succ_le_succ hle) i).val :=
-        congrArg Fin.val hind
-      have hile : (Fin.castLE (Nat.succ_le_succ hle) i).val ≤ X.length := by
-        have hi0 : i.val ≤ X.length := by omega
-        simpa using hi0
-      have : (Fin.castLE (Nat.succ_le_succ hle) i).val < Y.length := by
-        omega
-      omega
+    exact TreeSequenceInitialSegmentVertexSetStrict h.2.1 (by
+      rw [h.1]
+      exact Nat.lt_succ_self _)
   let Path (n : ℕ) (q : Fin (n + 1) → TreeSequence G e0) : Prop :=
     q 0 = J ∧
     (∀ r : Fin n,

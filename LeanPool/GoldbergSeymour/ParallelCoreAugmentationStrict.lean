@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyBase
 public import LeanPool.GoldbergSeymour.HkuParallelBoundaryStructure
 public import LeanPool.GoldbergSeymour.OrderedTreeUnionAugmentationSequence
@@ -413,10 +414,7 @@ theorem ParallelCoreAugmentationStrict
       (hAB : TreeSequenceInitialSegment A B) :
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro z hz
-    rw [TreeSequenceVertexSet] at hz ⊢
-    obtain ⟨i, -, rfl⟩ := (@Finset.mem_image _ _ (Classical.decEq V)).mp hz
-    exact (@Finset.mem_image _ _ (Classical.decEq V)).mpr
-      ⟨Fin.castLE (Nat.succ_le_succ hAB.1) i, Finset.mem_univ _, hAB.2.1 i⟩
+    exact hAB.vertexSet_subset hz
   have hprefixClosure : TreeSequenceVertexSet supportPrefix ⊆
       TreeSequenceVertexSet base.closure := by
     exact initialVertices

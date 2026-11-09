@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
 
 public import LeanPool.GoldbergSeymour.HkuIncidentColorPreserved
@@ -574,11 +576,7 @@ theorem HkuTreeColorsControlled {V E : Type*} [Fintype V] [Fintype E]
       (hab : TreeSequenceInitialSegment A B) {v : V}
       (hv : v ∈ TreeSequenceVertexSet A) :
       v ∈ TreeSequenceVertexSet B := by
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv ⊢
-    rcases hv with ⟨i, hi⟩
-    rcases hab with ⟨hlen, hvertices, hedges⟩
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, ?_⟩
-    exact (hvertices i).trans hi
+    exact hab.vertexSet_subset hv
   have missingTransfer {A B : TreeSequence G e0}
       (hab : TreeSequenceInitialSegment A B) {phi : PartialEdgeColoring E k} :
       TreeMissingColors phi A ⊆ TreeMissingColors phi B := by
@@ -592,12 +590,7 @@ theorem HkuTreeColorsControlled {V E : Type*} [Fintype V] [Fintype E]
       {phi : PartialEdgeColoring E k}
       (hseq : TashkinovAugmentationSequence phi A B) :
       TreeMissingColors phi A ⊆ TreeMissingColors phi B := by
-    unfold TashkinovAugmentationSequence at hseq
-    induction hseq using Relation.ReflTransGen.head_induction_on with
-    | refl => intro c hc; exact hc
-    | head hstep htail ih =>
-      intro c hc
-      exact ih (missingTransfer hstep.2.1 hc)
+    exact missingTransfer (TashkinovAugmentationSequenceInitialSegment phi A B hseq)
   have closureUsed {A B : TreeSequence G e0}
       {phi : PartialEdgeColoring E k}
       (hseq : TashkinovAugmentationSequence phi A B) :

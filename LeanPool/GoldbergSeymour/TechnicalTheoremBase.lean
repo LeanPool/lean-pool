@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.TashkinovSeries
 public import LeanPool.GoldbergSeymour.TreeInterchangeable
@@ -68,22 +70,13 @@ theorem TechnicalTheoremBase {V E : Type*} [Fintype V] [Fintype E]
         (hab : TreeSequenceInitialSegment X Y) {v : V}
         (hv : v ∈ TreeSequenceVertexSet X) :
         v ∈ TreeSequenceVertexSet Y := by
-      simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv ⊢
-      rcases hv with ⟨i, hi⟩
-      rcases hab with ⟨hlen, hvertices, hedges⟩
-      refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, ?_⟩
-      exact (hvertices i).trans hi
+      exact hab.vertexSet_subset hv
     have vertexReach {X Y : TreeSequence G e0}
         {phi : PartialEdgeColoring E k}
         (hab : TashkinovAugmentationSequence phi X Y) {v : V}
         (hv : v ∈ TreeSequenceVertexSet X) :
         v ∈ TreeSequenceVertexSet Y := by
-      unfold TashkinovAugmentationSequence at hab
-      induction hab using Relation.ReflTransGen.head_induction_on with
-      | refl => exact hv
-      | @head X Y hstep htail ih =>
-          rcases hstep with ⟨hlen, hseg, hcolor⟩
-          exact ih (vertexTransfer hseg hv)
+      exact (TashkinovAugmentationSequenceInitialSegment phi X Y hab).vertexSet_subset hv
     have incidentTransfer {X Y : TreeSequence G e0}
         (hab : TreeSequenceInitialSegment X Y) {f : E}
         (hf : TreeIncidentEdge X f) : TreeIncidentEdge Y f := by
@@ -93,12 +86,7 @@ theorem TechnicalTheoremBase {V E : Type*} [Fintype V] [Fintype E]
         {phi : PartialEdgeColoring E k}
         (hab : TashkinovAugmentationSequence phi X Y) {f : E}
         (hf : TreeIncidentEdge X f) : TreeIncidentEdge Y f := by
-      unfold TashkinovAugmentationSequence at hab
-      induction hab using Relation.ReflTransGen.head_induction_on with
-      | refl => exact hf
-      | @head X Y hstep htail ih =>
-          rcases hstep with ⟨hlen, hseg, hcolor⟩
-          exact ih (incidentTransfer hseg hf)
+      exact incidentTransfer (TashkinovAugmentationSequenceInitialSegment phi X Y hab) hf
     have closureReach {X Y : TreeSequence G e0}
         {phi : PartialEdgeColoring E k}
         (hab : TashkinovAugmentationSequence phi X Y) {v : V}

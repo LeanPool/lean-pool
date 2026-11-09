@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ExtensionBaseRestorationInvariant
 
 public import LeanPool.GoldbergSeymour.InternalEdges
@@ -228,11 +229,8 @@ private theorem helper_continuation_306.{u_1, u_2} :
       v ∈ TreeSequenceVertexSet (ett.series.data.tree jSlot.succ.castSucc) →
       v ∈ TreeSequenceVertexSet currentTree := by
     intro v hv
-    simp only [TreeSequenceVertexSet, Fin.castSucc_succ, Finset.mem_image, Finset.mem_univ,
-        true_and] at hv ⊢
-    rcases hv with ⟨i, hi⟩
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, ?_⟩
-    exact (vertexEntries i).trans hi
+    exact TreeSequenceInitialSegment.vertexSet_subset
+      ⟨hlen, vertexEntries, edgeEntries⟩ hv
   have edgeMem : Sum.inr f ∈ TwoColorComponent G
       (trace.coloring first.castSucc)
       (trace.gamma first) (trace.delta first)

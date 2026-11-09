@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsCardinality
@@ -290,11 +291,7 @@ private theorem helper_continuation_446.{u_1, u_2} :
       TreeSequenceInitialSegment A B →
         TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro A B h v hv
-    rcases h with ⟨hlen, heq, hedge⟩
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hv ⊢
-    rcases hv with ⟨j, rfl⟩
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) j, heq j⟩
+    exact h.vertexSet_subset hv
   have old_to_prev := @helper_old_to_prev_274 V E inferInstance inferInstance inferInstance
       inferInstance G k e0 n q M hpositive hd star_eq old_to_star prev_to_star base_to_old
       star_to_terminal stored_card stored_old excluded_card forbidden_card theta htheta

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
 
 public import LeanPool.GoldbergSeymour.CombinedStableColoring
@@ -157,22 +159,7 @@ private theorem helper_sharedCore_164.{u_1, u_2} :
           TashkinovAugmentationSequence generating A B →
           TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
         intro A B hab
-        have initialSubset : ∀ {C D : TreeSequence G e0},
-            TreeSequenceInitialSegment C D →
-            TreeSequenceVertexSet C ⊆ TreeSequenceVertexSet D := by
-          intro C D hCD x hx
-          unfold TreeSequenceVertexSet at hx ⊢
-          simp only [Finset.mem_image] at hx ⊢
-          obtain ⟨i, hi, rfl⟩ := hx
-          obtain ⟨hlen, hvertices, hedges⟩ := hCD
-          exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i,
-            Finset.mem_univ _, hvertices i⟩
-        unfold TashkinovAugmentationSequence at hab
-        induction hab using Relation.ReflTransGen.head_induction_on with
-        | refl => exact fun x hx => hx
-        | head hstep htail ih =>
-          intro x hx
-          exact ih (initialSubset hstep.2.1 hx)
+        exact (TashkinovAugmentationSequenceInitialSegment generating A B hab).vertexSet_subset
       obtain ⟨unionData⟩ := (base.parallel hPE).2.2
       have prefixSubset : TreeSequenceVertexSet
           (TreeSequencePrefix

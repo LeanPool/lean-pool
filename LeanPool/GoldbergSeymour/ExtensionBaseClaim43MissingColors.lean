@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ExtensionBaseRestorationInvariant
 
 /-!
@@ -917,11 +918,7 @@ theorem ExtensionBaseClaim43MissingColors {V E : Type*}
       TreeSequenceInitialSegment A B → ∀ v,
         v ∈ TreeSequenceVertexSet A → v ∈ TreeSequenceVertexSet B := by
     intro A B hAB v hv
-    rcases hAB with ⟨hlen, hvertex, hedge⟩
-    unfold TreeSequenceVertexSet at hv ⊢
-    simp only [Finset.mem_image, Finset.mem_univ, true_and] at hv ⊢
-    obtain ⟨i, rfl⟩ := hv
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, hvertex i⟩
+    exact hAB.vertexSet_subset hv
   have edgeOutside :=
     @helper_edgeOutside_99 V E inferInstance inferInstance  inferInstance G k
         e0 input T generating ett terminalSupport hterminalSupport jSlot q sigmaN trace

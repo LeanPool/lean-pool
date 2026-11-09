@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TashkinovSeries
 
 /-!
@@ -578,25 +580,13 @@ theorem TashkinovStoredColorsCardinality {V E : Type*}
       (hab : TreeSequenceInitialSegment A B) {v : V}
       (hv : v ∈ TreeSequenceVertexSet A) :
       v ∈ TreeSequenceVertexSet B := by
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv ⊢
-    rcases hv with ⟨j, hj⟩
-    rcases hab with ⟨hlen, hvertices, hedges⟩
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) j, (hvertices j).trans hj⟩
-  have augmentationTransfer {A B : TreeSequence G e0}
-      {phi : PartialEdgeColoring E k}
-      (hab : TashkinovAugmentation phi A B) {v : V}
-      (hv : v ∈ TreeSequenceVertexSet A) :
-      v ∈ TreeSequenceVertexSet B := by
-    exact vertexTransfer hab.2.1 hv
+    exact hab.vertexSet_subset hv
   have closureTransfer {A B : TreeSequence G e0}
       {phi : PartialEdgeColoring E k}
       (hab : TashkinovAugmentationSequence phi A B) {v : V}
       (hv : v ∈ TreeSequenceVertexSet A) :
       v ∈ TreeSequenceVertexSet B := by
-    unfold TashkinovAugmentationSequence at hab
-    induction hab using Relation.ReflTransGen.head_induction_on with
-    | refl => exact hv
-    | head hstep htail ih => exact ih (augmentationTransfer hstep hv)
+    exact (TashkinovAugmentationSequenceInitialSegment phi A B hab).vertexSet_subset hv
   have priorVertices := @helper_priorVertices_70 V E inferInstance inferInstance inferInstance G k
       rounds e0 input series vertexTransfer closureTransfer
   have oldVertices : ∀ q : Fin rounds, ∀ v : V,

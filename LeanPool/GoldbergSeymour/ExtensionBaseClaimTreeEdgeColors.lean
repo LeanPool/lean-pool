@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.HkuTreeColorsControlled
 
@@ -185,13 +186,7 @@ theorem ExtensionBaseClaimTreeEdgeColors {V E : Type*}
       (hab : TreeSequenceInitialSegment A B) {v : V}
       (hv : v ∈ TreeSequenceVertexSet A) :
       v ∈ TreeSequenceVertexSet B := by
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-    rcases hv with ⟨x, hx⟩
-    rcases hab with ⟨hlen, hvertices, hedges⟩
-    unfold TreeSequenceVertexSet
-    apply Finset.mem_image.mpr
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) x, Finset.mem_univ _, ?_⟩
-    exact (hvertices x).trans hx
+    exact hab.vertexSet_subset hv
   have incidentTransfer {A B : TreeSequence G e0}
       (hab : TreeSequenceInitialSegment A B) {f : E}
       (hf : TreeIncidentEdge A f) : TreeIncidentEdge B f := by

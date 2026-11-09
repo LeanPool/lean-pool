@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
 
 /-!
@@ -36,12 +37,7 @@ theorem HierarchyStoredColorsAntitone {V E : Type*}
       TreeSequenceInitialSegment A B →
         TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro A B hab v hv
-    unfold TreeSequenceVertexSet at hv ⊢
-    simp only [Finset.mem_image] at hv ⊢
-    obtain ⟨x, hx, rfl⟩ := hv
-    obtain ⟨hlen, hvertices, hedges⟩ := hab
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) x, Finset.mem_univ _, ?_⟩
-    exact hvertices x
+    exact hab.vertexSet_subset hv
   have hstage : TreeSequenceInitialSegment
       (HierarchyStarredStage H i.castSucc)
       (HierarchyStarredStage H i.succ) := by

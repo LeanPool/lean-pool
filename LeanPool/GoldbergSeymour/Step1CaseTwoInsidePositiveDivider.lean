@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.GoodHierarchy
 public import LeanPool.GoldbergSeymour.GoodHierarchyPrefixRepackage
 public import LeanPool.GoldbergSeymour.HierarchyLEMStable
@@ -550,10 +551,7 @@ lemma Step1CaseTwoInsidePositiveDivider {V E : Type*}
       (hs : TreeSequenceInitialSegment B C) :
       TreeSequenceVertexSet B ⊆ TreeSequenceVertexSet C := by
     intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hv ⊢
-    obtain ⟨i, rfl⟩ := hv
-    exact ⟨Fin.castLE (Nat.succ_le_succ hs.1) i, hs.2.1 i⟩
+    exact hs.vertexSet_subset hv
   have hsub := segmentSubset hAT
   obtain ⟨i₁, i₂, hi₁, hi₂, hi₁₂⟩ := horder₁₂
   obtain ⟨j₂, j₃, hj₂, hj₃, hj₂₃⟩ := horder₂₃

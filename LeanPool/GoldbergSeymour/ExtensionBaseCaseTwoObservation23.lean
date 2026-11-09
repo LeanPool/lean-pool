@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import Mathlib.Data.Finset.Max
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
 public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequence
@@ -347,19 +349,11 @@ theorem ExtensionBaseCaseTwoObservation23 {V E : Type*}
       (h : TreeSequenceInitialSegment A B) :
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    obtain ⟨i, hi, hvi⟩ := hv
-    obtain ⟨hlen, hvertices, hedges⟩ := h
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _,
-      (hvertices i).trans hvi⟩
+    exact h.vertexSet_subset hv
   have reach_subset {A B : TreeSequence G e0}
       (h : TashkinovAugmentationSequence phiJ A B) :
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    unfold TashkinovAugmentationSequence at h
-    induction h using Relation.ReflTransGen.head_induction_on with
-    | refl => exact Finset.Subset.rfl
-    | head hstep htail ih =>
-        exact (initial_subset hstep.2.1).trans ih
+    exact (TashkinovAugmentationSequenceInitialSegment phiJ A B h).vertexSet_subset
   have seed_subset_prime : TreeSequenceVertexSet seed ⊆
       TreeSequenceVertexSet TjPrime := initial_subset hseedPrime
   have seed_subset_j : TreeSequenceVertexSet seed ⊆

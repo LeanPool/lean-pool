@@ -992,11 +992,7 @@ theorem ExtensionBaseClaim46 {V E : Type*}
       (h : TreeSequenceInitialSegment A B) :
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    obtain ⟨i, hi, hvi⟩ := hv
-    obtain ⟨hlen, hvertices, hedges⟩ := h
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _,
-      (hvertices i).trans hvi⟩
+    exact h.vertexSet_subset hv
   have initial_trans {A B C : TreeSequence G e0}
       (hAB : TreeSequenceInitialSegment A B)
       (hBC : TreeSequenceInitialSegment B C) :

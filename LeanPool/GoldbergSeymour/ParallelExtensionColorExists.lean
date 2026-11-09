@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 public import Mathlib.Data.Finset.Sort
@@ -258,11 +259,7 @@ private theorem ParallelExtensionColorExists_branch_51.{u_1, u_2} :
       TreeSequenceInitialSegment A B → forall x,
         x ∈ TreeSequenceVertexSet A → x ∈ TreeSequenceVertexSet B := by
     intro A B hAB x hx
-    rcases hAB with ⟨hlen, hvertices, _⟩
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hx ⊢
-    obtain ⟨a, _, rfl⟩ := hx
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) a, Finset.mem_univ _,
-      hvertices a⟩
+    exact hAB.vertexSet_subset hx
   have peFields := @helper_peFields_108 V E inferInstance inferInstance inferInstance G k rounds e0
       input series i choice someSlot somePositive iPositive
   have seriesVertexLater := @helper_seriesVertexLater_163 V E inferInstance inferInstance

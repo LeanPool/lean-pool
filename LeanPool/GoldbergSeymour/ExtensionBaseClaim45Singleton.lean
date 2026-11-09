@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.OutsideSwapExitPath
 
 public import LeanPool.GoldbergSeymour.SharedFacts.ExtensionBaseClaim45Singleton
@@ -350,11 +351,7 @@ theorem ExtensionBaseClaim45Singleton {V E : Type*}
       (h : TreeSequenceInitialSegment A B) :
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    obtain ⟨i, hi, hvi⟩ := hv
-    obtain ⟨hlen, hvertices, hedges⟩ := h
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _,
-      (hvertices i).trans hvi⟩
+    exact h.vertexSet_subset hv
   have hterminalPrime : terminalSupport ∈ TreeSequenceVertexSet TjPrime :=
     initial_subset hseedPrime hterminalSeed
   have huSeed : u ∉ TreeSequenceVertexSet seed := by

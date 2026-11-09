@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TreeSequenceAdjoinEdgeVertexSet
 
 public import LeanPool.GoldbergSeymour.BoundaryMissingColorAugmentation
@@ -380,12 +381,7 @@ lemma Step1CaseTwoOutsideTwoEdgeExtension {V E : Type*}
   have hprefixCJ : TreeSequenceInitialSegment C J :=
     TashkinovAugmentationSequenceInitialSegment mu C J hJU
   have hsubsetCJ : TreeSequenceVertexSet C ⊆ TreeSequenceVertexSet J := by
-    intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hv ⊢
-    obtain ⟨i, rfl⟩ := hv
-    refine ⟨Fin.castLE (Nat.succ_le_succ hprefixCJ.1) i, ?_⟩
-    exact hprefixCJ.2.1 i
+    exact hprefixCJ.vertexSet_subset
   have hends₂ : ∃ x₂ y₂, x₂ ∈ TreeSequenceVertexSet C ∧
       y₂ ∉ TreeSequenceVertexSet C ∧ G.ends f₂ = s(x₂, y₂) := by
     simp only [BoundaryColorEdges, BoundaryEdges, Finset.mem_filter,

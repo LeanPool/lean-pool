@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TashkinovClosure
 
 /-!
@@ -41,11 +42,7 @@ theorem ExtensionBaseCaseTwoObservation19 {V E : Type*}
       TreeSequenceInitialSegment A B →
         TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro A B hinit v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    obtain ⟨i, hi, hvi⟩ := hv
-    obtain ⟨hlen, hvertices, hedges⟩ := hinit
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _, ?_⟩
-    exact (hvertices i).trans hvi
+    exact hinit.vertexSet_subset hv
   have missing_subset : ∀ {A B : TreeSequence G e0},
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B →
       TreeMissingColors rho1 A ⊆ TreeMissingColors rho1 B := by

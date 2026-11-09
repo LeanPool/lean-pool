@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.HkuIncidentColorPreserved
 
@@ -264,14 +265,7 @@ theorem SameColorSeriesPreserved {V E : Type*}
       (hab : TreeSequenceInitialSegment A B) {v : V}
       (hv : v ∈ TreeSequenceVertexSet A) :
       v ∈ TreeSequenceVertexSet B := by
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv
-    rcases hv with ⟨x, hx⟩
-    rcases hab with ⟨hlen, hvertices, hedges⟩
-    unfold TreeSequenceVertexSet
-    apply Finset.mem_image.mpr
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) x, ?_, ?_⟩
-    · exact Finset.mem_univ _
-    · exact (hvertices x).trans hx
+    exact hab.vertexSet_subset hv
   have incidentTransfer {A B : TreeSequence G e0}
       (hab : TreeSequenceInitialSegment A B) {e : E}
       (he : TreeIncidentEdge A e) : TreeIncidentEdge B e := by

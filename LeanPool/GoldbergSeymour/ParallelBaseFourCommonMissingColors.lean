@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.CommonMissingColorsAtUncoloredEndpoints
 public import LeanPool.GoldbergSeymour.HierarchyBase
 
@@ -84,13 +85,7 @@ theorem ParallelBaseFourCommonMissingColors
     TashkinovAugmentationSequenceInitialSegment phi supportPrefix base.closure hclosure.1
   have prefixInClosure : TreeSequenceVertexSet supportPrefix ⊆
       TreeSequenceVertexSet base.closure := by
-    intro z hz
-    rw [TreeSequenceVertexSet] at hz ⊢
-    obtain ⟨a, -, rfl⟩ :=
-      (@Finset.mem_image _ _ (Classical.decEq V)).mp hz
-    exact (@Finset.mem_image _ _ (Classical.decEq V)).mpr
-      ⟨Fin.castLE (Nat.succ_le_succ hprefixSegment.1) a,
-        Finset.mem_univ _, hprefixSegment.2.1 a⟩
+    exact hprefixSegment.vertexSet_subset
   have hxClosure : x ∈ TreeSequenceVertexSet base.closure :=
     prefixInClosure hxPrefix
   have hyClosure : y ∈ TreeSequenceVertexSet base.closure :=

@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ColorDegreeBounds
 
 public import LeanPool.GoldbergSeymour.InterchangeableExitPaths
@@ -311,27 +313,11 @@ lemma Step1ZeroDividerAnchorPE {V E : Type*}
   let x : V := Tn.vertex base.supportPosition
   have hxT : x ∈ TreeSequenceVertexSet Tn := by
     simp [x, TreeSequenceVertexSet]
-  have initialVertices : ∀ {A B : TreeSequence G e0},
-      TreeSequenceInitialSegment A B →
-        TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    intro A B hab y hy
-    unfold TreeSequenceVertexSet at hy ⊢
-    simp only [Finset.mem_image] at hy ⊢
-    obtain ⟨i, hi, rfl⟩ := hy
-    obtain ⟨hlen, hvertices, hedges⟩ := hab
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _, ?_⟩
-    exact hvertices i
   have augmentationVertices : ∀ {A B : TreeSequence G e0},
       TashkinovAugmentationSequence phi A B →
         TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro A B hab
-    unfold TashkinovAugmentationSequence at hab
-    induction hab using Relation.ReflTransGen.head_induction_on with
-    | refl => exact Finset.Subset.rfl
-    | @head A B hstep htail ih =>
-        intro y hy
-        apply ih
-        exact initialVertices hstep.2.1 hy
+    exact (TashkinovAugmentationSequenceInitialSegment phi A B hab).vertexSet_subset
   have hxPrefix : x ∈ TreeSequenceVertexSet
       (TreeSequencePrefix Tn base.supportPosition.val base.supportPositive
         (Nat.le_of_lt_succ base.supportPosition.isLt)) := by

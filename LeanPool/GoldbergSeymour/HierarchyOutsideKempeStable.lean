@@ -81,11 +81,7 @@ theorem HierarchyOutsideKempeStable {V E : Type*}
   obtain ⟨unionCert⟩ := unionExists
   have unionToT : TreeSequenceInitialSegment base.core T := coreToT
   have vertexCore : TreeSequenceVertexSet base.core ⊆ TreeSequenceVertexSet T := by
-    intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    rcases hv with ⟨i, hiuniv, hi⟩
-    exact ⟨Fin.castLE (Nat.succ_le_succ unionToT.1) i, by simp,
-      (unionToT.2.1 i).trans hi⟩
+    exact unionToT.vertexSet_subset
   have unionVertex : TreeSequenceVertexSet (ett.series.data.tree (Fin.last ett.rounds).castSucc) ∪
       TreeSequenceVertexSet base.closure = TreeSequenceVertexSet base.core := by
     exact unionCert.vertexSet.symm

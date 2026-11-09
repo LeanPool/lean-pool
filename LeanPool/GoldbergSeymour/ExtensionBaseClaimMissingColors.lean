@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 public import LeanPool.GoldbergSeymour.ExtensionBaseSupportClass
@@ -542,11 +543,7 @@ theorem ExtensionBaseClaimMissingColors {V E : Type*}
       TreeSequenceInitialSegment A B → ∀ v, v ∈ TreeSequenceVertexSet A →
       v ∈ TreeSequenceVertexSet B := by
     intro A B hseg v hv
-    unfold TreeSequenceVertexSet at hv ⊢
-    simp only [Finset.mem_image] at hv ⊢
-    obtain ⟨i, hi, rfl⟩ := hv
-    rcases hseg with ⟨hlen, hvertex, hedge⟩
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, by simpa using hvertex i⟩
+    exact hseg.vertexSet_subset hv
   have next_segment := TashkinovSeries.stepInitialSegment G k ett.rounds e0 input ett.series
   have stage_vertices : ∀ a b : Fin ett.rounds, a.val ≤ b.val → ∀ v,
       v ∈ TreeSequenceVertexSet (ett.series.data.tree a.succ.castSucc) →

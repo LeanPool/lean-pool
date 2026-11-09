@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TashkinovClosure
 
 /-!
@@ -27,26 +29,11 @@ theorem TashkinovClosureVertexSetUnique {V E : Type*}
   classical
   rcases h₁ with ⟨hseq₁, hclosed₁⟩
   rcases h₂ with ⟨hseq₂, hclosed₂⟩
-  have initial_subset : ∀ {A B : TreeSequence G e0},
-      TreeSequenceInitialSegment A B →
-        TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    intro A B hinit v hv
-    obtain ⟨i, hi, hvi⟩ := Finset.mem_image.mp hv
-    obtain ⟨hlen, hvertices, hedges⟩ := hinit
-    apply Finset.mem_image.mpr
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _, ?_⟩
-    show B.vertex (Fin.castLE (Nat.succ_le_succ hlen) i) = v
-    rw [hvertices i]
-    exact hvi
   have base_subset : ∀ {C : TreeSequence G e0},
       Relation.ReflTransGen (TashkinovAugmentation phi) T C →
         TreeSequenceVertexSet T ⊆ TreeSequenceVertexSet C := by
     intro C hreach
-    induction hreach with
-    | refl => exact Finset.Subset.rfl
-    | tail hreach hab ih =>
-        rename_i mid last
-        exact ih.trans (initial_subset hab.2.1)
+    exact (TashkinovAugmentationSequenceInitialSegment phi T C hreach).vertexSet_subset
   have contain :
     ∀ {C S : TreeSequence G e0}, Relation.ReflTransGen (TashkinovAugmentation phi) T C →
         ColoredVertexSetClosed G phi (TreeSequenceVertexSet C) → Relation.ReflTransGen

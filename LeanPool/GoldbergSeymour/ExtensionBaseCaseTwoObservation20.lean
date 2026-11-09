@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.BoundaryColorEdges
 
 public import LeanPool.GoldbergSeymour.TashkinovClosure
@@ -128,24 +130,10 @@ theorem ExtensionBaseCaseTwoObservation20 {V E : Type*}
       rw [← rho_transport gammaN hgammaRestored, ← boundary_transport gammaN hgammaControlled]
       exact hgammaBoundary
     refine ⟨first, ?_⟩
-    have initial_subset {A B : TreeSequence G e0}
-        (h : TreeSequenceInitialSegment A B) :
-        TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-      intro v hv
-      simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-      obtain ⟨i, hi, hvi⟩ := hv
-      obtain ⟨hlen, hvertices, hedges⟩ := h
-      exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _,
-        (hvertices i).trans hvi⟩
     have seed_prime : TreeSequenceVertexSet seed ⊆
         TreeSequenceVertexSet TjPrime := by
-      rcases hclosure with ⟨hseq, hclosed⟩
-      unfold TashkinovAugmentationSequence at hseq
-      clear * - hseq initial_subset
-      induction hseq using Relation.ReflTransGen.head_induction_on with
-      | refl => exact Finset.Subset.rfl
-      | head hstep htail ih =>
-          exact (initial_subset hstep.2.1).trans ih
+      exact (TashkinovAugmentationSequenceInitialSegment rho1 seed TjPrime
+        hclosure.1).vertexSet_subset
     rcases hclosure with ⟨hseq, hclosed⟩
     rw [← Finset.not_nonempty_iff_eq_empty]
     intro hnonempty

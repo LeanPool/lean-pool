@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyTerminalStoredColors
 public import LeanPool.GoldbergSeymour.HierarchyStoredColorsAt
 
@@ -79,12 +80,7 @@ theorem HierarchyTerminalStoredColorsSubsetLast {V E : Type*}
   have vertexSubset : TreeSequenceVertexSet
       (HierarchyStarredStage H (Fin.last H.dividerCount)) ⊆
         TreeSequenceVertexSet T := by
-    intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hv ⊢
-    obtain ⟨i, rfl⟩ := hv
-    exact ⟨Fin.castLE (Nat.succ_le_succ starToTerminal.1) i,
-      starToTerminal.2.1 i⟩
+    exact starToTerminal.vertexSet_subset
   have missingSubset : TreeMissingColors phi
       (HierarchyStarredStage H (Fin.last H.dividerCount)) ⊆
         TreeMissingColors phi T := by

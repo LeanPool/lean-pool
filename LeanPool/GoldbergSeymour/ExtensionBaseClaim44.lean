@@ -989,19 +989,6 @@ private theorem helper_hunaffectedValue_1026.{u_1, u_2} :
       · simp [TwoColorComponentSwap, hfComponent, hfg, hfd]
   · simp [TwoColorComponentSwap, hfComponent]
 
-private theorem helper_hvertexInitialSegment_1077.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} {G : LooplessMultigraph V E} {e0 : E}
-        {A B : TreeSequence G e0}, TreeSequenceInitialSegment A B →
-    ∀ {v : V}, v ∈ TreeSequenceVertexSet A → v ∈ TreeSequenceVertexSet B := by
-  classical
-  intro V E G e0 A B hAB v hv
-  simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-  obtain ⟨i, -, hi⟩ := hv
-  obtain ⟨hlen, hvertices, -⟩ := hAB
-  refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _, ?_⟩
-  exact (hvertices i).trans hi
-
 private theorem helper_hbeforeMemberAndNe_1086.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
@@ -1542,7 +1529,7 @@ theorem ExtensionBaseClaim44 {V E : Type*}
       trace.slot a ∈ ExtensionBaseCaseOneIndices ett p indices b := by
     rw [← trace.enumerates]
     exact Finset.mem_image.mpr ⟨a, Finset.mem_univ _, rfl⟩
-  have hvertexInitialSegment := @helper_hvertexInitialSegment_1077 (@V) (@E) (@G) (@e0)
+  have hvertexInitialSegment := @TreeSequenceInitialSegment.vertexSet_subset (@V) (@E) (@G) (@e0)
   have hbeforeMemberAndNe := @helper_hbeforeMemberAndNe_1086 (@V) (@E) inferInstance inferInstance
       inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@terminalSupport)
       (@hterminalSupport) (@jSlot) (@rho1) (@u) (@terminalPosition) (@p) (@indices) (@b) (@trace)

@@ -1401,10 +1401,7 @@ theorem ParallelSupportClosureProperties {V E : Type*}
       (hAB : TreeSequenceInitialSegment A B) :
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro x hx
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ,
-      true_and] at hx ⊢
-    obtain ⟨i, rfl⟩ := hx
-    exact ⟨Fin.castLE (Nat.succ_le_succ hAB.1) i, hAB.2.1 i⟩
+    exact hAB.vertexSet_subset hx
   have sequenceSegment {A B : TreeSequence G e0}
       {rho : PartialEdgeColoring E k}
       (hAB : TashkinovAugmentationSequence rho A B) :

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TashkinovSeriesTreeFacts
 
 public import LeanPool.GoldbergSeymour.TashkinovSeriesColoringProperties
@@ -1085,11 +1086,7 @@ theorem StableSeriesCycleComponentTransport {V E : Type*}
       (hAB : TreeSequenceInitialSegment A B) :
       TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    rcases hv with ⟨i, -, rfl⟩
-    rcases hAB with ⟨hlen, hvertices, hedges⟩
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _, ?_⟩
-    exact hvertices i
+    exact hAB.vertexSet_subset hv
   have vertexToTerminal := @helper_vertexToTerminal_689 V E inferInstance inferInstance
       inferInstance G k rounds e0 input series t epsilon terminal hepsilonTerminal stepSegment
       vertexTransfer

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentVertexSetSubset
 
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
@@ -573,11 +574,7 @@ theorem OutsideKempeGoodHierarchy {V E : Type*}
       TreeSequenceInitialSegment A B →
         TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro A B hab v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image] at hv ⊢
-    obtain ⟨i, hi, hvi⟩ := hv
-    obtain ⟨hlen, hvertices, hedges⟩ := hab
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _,
-      (hvertices i).trans hvi⟩
+    exact hab.vertexSet_subset hv
   have stageSubset₁ : ∀ j : Fin (H₁.dividerCount + 2),
       TreeSequenceVertexSet (H₁.stage j) ⊆ TreeSequenceVertexSet T := by
     intro j

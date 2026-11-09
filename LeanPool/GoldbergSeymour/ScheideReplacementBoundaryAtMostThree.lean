@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSetup
 public import LeanPool.GoldbergSeymour.ScheideDefectiveSwitchEffect
@@ -247,10 +248,7 @@ private theorem helper_adjoin_set_312.{u_1, u_2} :
   intro V E _ _ _ _ G k e0 phi T C D d g1 g2 S A B f x y hxy hy hab
   rcases hab with ⟨hlen, hinit, hlast⟩
   have sub : TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
-    intro v hv
-    simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at hv ⊢
-    obtain ⟨i, hi⟩ := hv
-    exact ⟨Fin.castLE (Nat.succ_le_succ hinit.1) i, hinit.2.1 i ▸ hi⟩
+    exact hinit.vertexSet_subset
   have hyB : y ∈ TreeSequenceVertexSet B := by
     let j : Fin B.length := Fin.cast hlen.symm (Fin.last A.length)
     obtain ⟨i, hi⟩ := B.attaches j

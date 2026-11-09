@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.SharedFacts.UnsupportedVertexColors
 
 public import LeanPool.GoldbergSeymour.TashkinovSeries
@@ -370,12 +371,7 @@ theorem HkuUnsupportedVertexColors {V E : Type*} [Fintype V] [Fintype E]
     ∀ (T T' : TreeSequence G e0), TreeSequenceInitialSegment T T' →
     ∀ x, x ∈ TreeSequenceVertexSet T → x ∈ TreeSequenceVertexSet T' := by
     intro T T' hseg x hx
-    unfold TreeSequenceVertexSet at hx ⊢
-    simp only [Finset.mem_image] at hx ⊢
-    obtain ⟨i, hi, rfl⟩ := hx
-    rcases hseg with ⟨hlen, hvertex, hedge⟩
-    exact ⟨Fin.castLE (Nat.succ_le_succ hlen) i, by
-      simpa using (hvertex i)⟩
+    exact hseg.vertexSet_subset hx
   have one_step := @helper_one_step_55 V E inferInstance inferInstance inferInstance G k rounds e0
       input series q p v
   have next_segment := @SharedFacts.UnsupportedVertexColors.next_segment V E inferInstance

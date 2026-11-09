@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
 
 public import LeanPool.GoldbergSeymour.ColoredVertexSetElementary
@@ -52,12 +53,7 @@ theorem GoodHierarchyNewMissingClosed {V E : Type*}
       TreeSequenceInitialSegment A B →
         TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro A B hab x hx
-    unfold TreeSequenceVertexSet at hx ⊢
-    simp only [Finset.mem_image] at hx ⊢
-    obtain ⟨a, ha, rfl⟩ := hx
-    obtain ⟨hlen, hvertices, hedges⟩ := hab
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) a, Finset.mem_univ _, ?_⟩
-    exact hvertices a
+    exact hab.vertexSet_subset hx
   have oldSegment : TreeSequenceInitialSegment
       (HierarchyStarredStage H i.castSucc)
       (H.stage i.succ.castSucc) := by

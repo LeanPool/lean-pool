@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TreeSequenceInitialSegmentFacts
 public import LeanPool.GoldbergSeymour.ParallelCommonMissingClosed
 public import LeanPool.GoldbergSeymour.Step1ExitLegPresentation
 
@@ -131,12 +132,7 @@ lemma Step1ExitLegThetaZeroParallel {V E : Type*}
       TreeSequenceInitialSegment A B →
         TreeSequenceVertexSet A ⊆ TreeSequenceVertexSet B := by
     intro A B hab x hx
-    unfold TreeSequenceVertexSet at hx ⊢
-    simp only [Finset.mem_image] at hx ⊢
-    obtain ⟨i, hi, rfl⟩ := hx
-    obtain ⟨hlen, hvertices, hedges⟩ := hab
-    refine ⟨Fin.castLE (Nat.succ_le_succ hlen) i, Finset.mem_univ _, ?_⟩
-    exact hvertices i
+    exact hab.vertexSet_subset hx
   have hXterm : TreeSequenceVertexSet X ⊆ TreeSequenceVertexSet P.T := by
     apply initialSubset
     have hidx : (⟨P.ett.rounds, by omega⟩ : Fin (P.ett.rounds + 2)) =
