@@ -75,6 +75,35 @@ theorem zero_notMem_arcCCW (u w : Plane) : (0 : Plane) ∉ arcCCW u w := by
   have h := (notMem_arcCCW_smul u w (le_refl (0 : ℝ))).1
   rwa [zero_smul] at h
 
+/-- A nonempty sector in a ball contains points arbitrarily close to its vertex. -/
+theorem exists_near_arcCCW_in_ball (v u w : Plane) {R ε : ℝ}
+    (hne : ({x : Plane | x - v ∈ arcCCW u w} ∩ Metric.ball v R).Nonempty)
+    (hε : 0 < ε) :
+    ∃ y ∈ {x : Plane | x - v ∈ arcCCW u w} ∩ Metric.ball v R, dist y v < ε := by
+  obtain ⟨z, harc, hzR⟩ := hne
+  change z - v ∈ arcCCW u w at harc
+  rw [Metric.mem_ball, dist_eq_norm] at hzR
+  have hwpos : 0 < ‖z - v‖ :=
+    norm_pos_iff.2 fun h => zero_notMem_arcCCW _ _ (h ▸ harc)
+  let δ := min 1 (ε / (2 * ‖z - v‖))
+  have hδpos : 0 < δ := lt_min one_pos (div_pos hε (mul_pos two_pos hwpos))
+  have hnorm : ‖v + δ • (z - v) - v‖ = δ * ‖z - v‖ := by
+    rw [add_sub_cancel_left, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
+  refine ⟨v + δ • (z - v), ⟨?_, ?_⟩, ?_⟩
+  · change v + δ • (z - v) - v ∈ arcCCW u w
+    rw [add_sub_cancel_left]
+    exact (smul_mem_arcCCW hδpos).2 harc
+  · rw [Metric.mem_ball, dist_eq_norm, hnorm]
+    exact lt_of_le_of_lt
+      (mul_le_of_le_one_left (norm_nonneg _) (min_le_left _ _)) hzR
+  · rw [dist_eq_norm, hnorm]
+    calc
+      δ * ‖z - v‖ ≤ ε / (2 * ‖z - v‖) * ‖z - v‖ :=
+        mul_le_mul_of_nonneg_right (min_le_right _ _) (norm_nonneg _)
+      _ = ε / 2 := by rw [div_mul_eq_div_div, div_mul_cancel₀ _ hwpos.ne']
+      _ < ε := half_lt_self hε
+
+
 end Plane
 
 open Plane
@@ -115,7 +144,7 @@ theorem off_sub_mem_arcR_start (hs : s < 0)
   have h : P.off i t s - P.vertex i = t • P.tang i - (-s) • perp (P.tang i) := by
     rw [off_sub_vertex]; module
   rw [h]
-  exact (germs_split' det_rays_ne_zero (by linarith) hsm).2.2
+  exact (germs_split' det_rays_ne_zero (by linarith only [hs]) hsm).2.2
 
 theorem off_sub_mem_arcL_finish (hs : 0 < s)
     (hsm : s * |inner ℝ (P.rayIn (i + 1)) (P.tang (i + 1))| <
@@ -132,13 +161,12 @@ theorem off_sub_mem_arcR_finish (hs : s < 0)
       (P.len i - t) • P.rayIn (i + 1) + (-s) • perp (P.rayIn (i + 1)) := by
     rw [off_sub_vertex_succ_ray]; module
   rw [h]
-  exact (germs_split' det_rays_ne_zero (by linarith) hsm).2.1
+  exact (germs_split' det_rays_ne_zero (by linarith only [hs]) hsm).2.1
 
 /-- Offsetting a point of an edge moves it exactly the offset. -/
 theorem dist_off_pt : dist (P.off i t s) (P.pt i t) = |s| := by
-  rw [ClosedPolygon.pt, dist_eq_norm, show P.off i t s - P.off i t 0 = s • perp (P.tang i) by
-    rw [off, off]; module, norm_smul, Real.norm_eq_abs, norm_perp, isDirection_tang.norm,
-    mul_one]
+  rw [dist_eq_norm, off, pt, off, zero_smul, add_zero, add_sub_cancel_left, norm_smul,
+    Real.norm_eq_abs, norm_perp, isDirection_tang.norm, mul_one]
 
 end ClosedPolygon
 
@@ -151,9 +179,10 @@ private theorem exists_common_bound {a b X₁ X₂ K₁ K₂ Y : ℝ} (ha : 0 < 
   refine ⟨min (min (a / 2) (b / 2)) (min (min (X₁ / K₁) (X₂ / K₂)) (Y / 2)),
     ?_, ?_, ?_, ?_, ?_, ?_⟩
   · rw [lt_min_iff, lt_min_iff, lt_min_iff, lt_min_iff]
-    exact ⟨⟨by linarith, by linarith⟩, ⟨div_pos hX₁ hK₁, div_pos hX₂ hK₂⟩, by linarith⟩
-  · exact lt_of_le_of_lt (le_trans (min_le_left _ _) (min_le_left _ _)) (by linarith)
-  · exact lt_of_le_of_lt (le_trans (min_le_left _ _) (min_le_right _ _)) (by linarith)
+    exact ⟨⟨half_pos ha, half_pos hb⟩, ⟨div_pos hX₁ hK₁, div_pos hX₂ hK₂⟩,
+      half_pos hY⟩
+  · exact lt_of_le_of_lt (le_trans (min_le_left _ _) (min_le_left _ _)) (half_lt_self ha)
+  · exact lt_of_le_of_lt (le_trans (min_le_left _ _) (min_le_right _ _)) (half_lt_self hb)
   · have h : min (min (a / 2) (b / 2)) (min (min (X₁ / K₁) (X₂ / K₂)) (Y / 2)) ≤ X₁ / K₁ :=
       le_trans (min_le_right _ _) (le_trans (min_le_left _ _) (min_le_left _ _))
     have h2 := mul_le_mul_of_nonneg_right h hK₁.le
@@ -162,7 +191,7 @@ private theorem exists_common_bound {a b X₁ X₂ K₁ K₂ Y : ℝ} (ha : 0 < 
       le_trans (min_le_right _ _) (le_trans (min_le_left _ _) (min_le_right _ _))
     have h2 := mul_le_mul_of_nonneg_right h hK₂.le
     rwa [div_mul_cancel₀ _ hK₂.ne'] at h2
-  · exact lt_of_le_of_lt (le_trans (min_le_right _ _) (min_le_right _ _)) (by linarith)
+  · exact lt_of_le_of_lt (le_trans (min_le_right _ _) (min_le_right _ _)) (half_lt_self hY)
 
 namespace StripData
 
@@ -201,14 +230,14 @@ theorem core_ball_trichotomy {c η : ℝ} (h1 : 2 * D.lam ≤ c) (h2 : c ≤ P.l
     linarith [h.1]
   have hthigh : t < P.len i - D.lam := by
     have h := abs_lt.1 (lt_of_le_of_lt hta hlam)
-    linarith [h.2]
+    linarith only [h, h2]
   refine ⟨fun hs => ?_, fun hs => ?_, fun hs => ?_⟩
   · rw [hyeq]
     exact D.mem_blockL_off.2 ⟨htlow, hthigh, hs, by
-      have h := abs_lt.1 (lt_of_le_of_lt hsa hrho); linarith [h.2]⟩
+      have h := abs_lt.1 (lt_of_le_of_lt hsa hrho); linarith only [h.right]⟩
   · rw [hyeq]
     exact D.mem_blockR_off.2 ⟨htlow, hthigh, by
-      have h := abs_lt.1 (lt_of_le_of_lt hsa hrho); linarith [h.1], hs⟩
+      have h := abs_lt.1 (lt_of_le_of_lt hsa hrho); linarith only [h.left], hs⟩
   · rw [hyeq, hs, ← ClosedPolygon.pt]
     exact ClosedPolygon.pt_mem_edge ⟨by linarith [D.lam_pos], by linarith [D.lam_pos]⟩
 
@@ -247,14 +276,18 @@ theorem local_two_sided {c η : ℝ} (h1 : 2 * D.lam ≤ c) (h2 : c ≤ P.len i 
     · exact Or.inr ⟨hs, (hsplit y hy).2.1 hs⟩
     · exact absurd (ClosedPolygon.edge_subset_carrier ((hsplit y hy).2.2 hs)) hyc
     · exact Or.inl ⟨hs, (hsplit y hy).1 hs⟩
-  · have hmem := hball (η / 2) (by rw [abs_of_pos (by linarith)]; linarith)
+  · have hmem := hball (η / 2) (by
+      rw [abs_of_pos (half_pos hηpos)]
+      exact half_lt_self hηpos)
     refine ⟨hmem, (hsplit _ hmem).1 ?_⟩
     rw [ClosedPolygon.coordAcross_off]
-    linarith
-  · have hmem := hball (-(η / 2)) (by rw [abs_of_neg (by linarith)]; linarith)
+    linarith only [h1, h2, hηpos, hη]
+  · have hmem := hball (-(η / 2)) (by
+      rw [abs_neg, abs_of_pos (half_pos hηpos)]
+      exact half_lt_self hηpos)
     refine ⟨hmem, (hsplit _ hmem).2.1 ?_⟩
     rw [ClosedPolygon.coordAcross_off]
-    linarith
+    linarith only [h1, h2, hηpos, hη]
 
 /-- **The two reference points of the parity argument.** On every edge there is a disk that meets
 the polygon only in that edge and contains a point of each side, on the two sides of the edge's
@@ -266,16 +299,17 @@ theorem exists_reference_points (i : ZMod (m + 3)) :
       (∃ zR ∈ ball p η, zR ∈ D.sideR ∧ coordAcross (P.vertex i) (P.tang i) zR < 0) := by
   have h4 := D.four_lam_lt_len i
   have hl := D.lam_pos
-  have hlow : 2 * D.lam ≤ P.len i / 2 := by linarith
-  have hhigh : P.len i / 2 ≤ P.len i - 2 * D.lam := by linarith
+  have hlow : 2 * D.lam ≤ P.len i / 2 := by linarith only [h4]
+  have hhigh : P.len i / 2 ≤ P.len i - 2 * D.lam := by linarith only [h4]
   have hηpos : 0 < min D.lam D.rho := lt_min hl D.rho_pos
   obtain ⟨h1, -, ⟨hbL, hsL⟩, ⟨hbR, hsR⟩⟩ :=
     D.local_two_sided (i := i) hlow hhigh hηpos (le_refl _)
   refine ⟨P.pt i (P.len i / 2), min D.lam D.rho, hηpos,
-    ClosedPolygon.pt_mem_edge ⟨by linarith, by linarith⟩, h1, ⟨_, hbL, hsL, ?_⟩,
+    ClosedPolygon.pt_mem_edge ⟨by linarith only [hl, h4], by linarith only [hl, h4]⟩, h1, ⟨_, hbL,
+      hsL, ?_⟩,
     ⟨_, hbR, hsR, ?_⟩⟩
-  · rw [ClosedPolygon.coordAcross_off]; linarith
-  · rw [ClosedPolygon.coordAcross_off]; linarith
+  · rw [ClosedPolygon.coordAcross_off]; linarith only [hηpos]
+  · rw [ClosedPolygon.coordAcross_off]; linarith only [hηpos]
 
 /-! ### Every point of the polygon is on the boundary of both sides -/
 
@@ -283,45 +317,11 @@ theorem exists_reference_points (i : ZMod (m + 3)) :
 stays in the arc because an arc of directions is a cone. -/
 theorem exists_near_sectorL {ε : ℝ} (hε : 0 < ε) (i : ZMod (m + 3)) :
     ∃ y ∈ D.sectorL i, dist y (P.vertex i) < ε := by
-  obtain ⟨z, hz⟩ := (D.isConnected_sectorL (i := i)).nonempty
-  have harc : z - P.vertex i ∈ arcCCW (P.tang i) (P.rayIn i) := hz.1
-  have hwne : z - P.vertex i ≠ 0 := fun h => zero_notMem_arcCCW _ _ (h ▸ harc)
-  have hwpos : 0 < ‖z - P.vertex i‖ := norm_pos_iff.2 hwne
-  have hzR : ‖z - P.vertex i‖ < D.R := by rw [← dist_eq_norm]; exact hz.2
-  refine ⟨P.vertex i + (min 1 (ε / (2 * ‖z - P.vertex i‖))) • (z - P.vertex i), ⟨?_, ?_⟩, ?_⟩ <;>
-    (have hδpos : 0 < min 1 (ε / (2 * ‖z - P.vertex i‖)) := lt_min one_pos (by positivity)
-     have hsub : P.vertex i + (min 1 (ε / (2 * ‖z - P.vertex i‖))) • (z - P.vertex i) -
-         P.vertex i = (min 1 (ε / (2 * ‖z - P.vertex i‖))) • (z - P.vertex i) := by module)
-  · rw [Set.mem_ofPred_eq, hsub]
-    exact (smul_mem_arcCCW hδpos).2 harc
-  · rw [mem_ball, dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
-    have h1 : min 1 (ε / (2 * ‖z - P.vertex i‖)) ≤ 1 := min_le_left _ _
-    nlinarith
-  · rw [dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
-    have h2 : min 1 (ε / (2 * ‖z - P.vertex i‖)) ≤ ε / (2 * ‖z - P.vertex i‖) := min_le_right _ _
-    have hkey : ε / (2 * ‖z - P.vertex i‖) * ‖z - P.vertex i‖ = ε / 2 := by field_simp
-    nlinarith [mul_le_mul_of_nonneg_right h2 hwpos.le]
+  exact exists_near_arcCCW_in_ball _ _ _ (D.isConnected_sectorL (i := i)).nonempty hε
 
 theorem exists_near_sectorR {ε : ℝ} (hε : 0 < ε) (i : ZMod (m + 3)) :
     ∃ y ∈ D.sectorR i, dist y (P.vertex i) < ε := by
-  obtain ⟨z, hz⟩ := (D.isConnected_sectorR (i := i)).nonempty
-  have harc : z - P.vertex i ∈ arcCCW (P.rayIn i) (P.tang i) := hz.1
-  have hwne : z - P.vertex i ≠ 0 := fun h => zero_notMem_arcCCW _ _ (h ▸ harc)
-  have hwpos : 0 < ‖z - P.vertex i‖ := norm_pos_iff.2 hwne
-  have hzR : ‖z - P.vertex i‖ < D.R := by rw [← dist_eq_norm]; exact hz.2
-  refine ⟨P.vertex i + (min 1 (ε / (2 * ‖z - P.vertex i‖))) • (z - P.vertex i), ⟨?_, ?_⟩, ?_⟩ <;>
-    (have hδpos : 0 < min 1 (ε / (2 * ‖z - P.vertex i‖)) := lt_min one_pos (by positivity)
-     have hsub : P.vertex i + (min 1 (ε / (2 * ‖z - P.vertex i‖))) • (z - P.vertex i) -
-         P.vertex i = (min 1 (ε / (2 * ‖z - P.vertex i‖))) • (z - P.vertex i) := by module)
-  · rw [Set.mem_ofPred_eq, hsub]
-    exact (smul_mem_arcCCW hδpos).2 harc
-  · rw [mem_ball, dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
-    have h1 : min 1 (ε / (2 * ‖z - P.vertex i‖)) ≤ 1 := min_le_left _ _
-    nlinarith
-  · rw [dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_pos hδpos]
-    have h2 : min 1 (ε / (2 * ‖z - P.vertex i‖)) ≤ ε / (2 * ‖z - P.vertex i‖) := min_le_right _ _
-    have hkey : ε / (2 * ‖z - P.vertex i‖) * ‖z - P.vertex i‖ = ε / 2 := by field_simp
-    nlinarith [mul_le_mul_of_nonneg_right h2 hwpos.le]
+  exact exists_near_arcCCW_in_ball _ _ _ (D.isConnected_sectorR (i := i)).nonempty hε
 
 /-- **Both sides come arbitrarily close to every point of the polygon.** Away from the vertices
 this is the block; at a vertex it is `exists_near_sectorL`; in between it is the germ with the
@@ -350,24 +350,30 @@ theorem exists_near_sides {x : Plane} (hx : x ∈ P.carrier) {ε : ℝ} (hε : 0
     abs_pos.2 ClosedPolygon.det_rays_ne_zero
   have hK₁ : (0 : ℝ) < 1 + |inner ℝ (P.rayIn i) (P.tang i)| := by positivity
   have hK₂ : (0 : ℝ) < 1 + |inner ℝ (P.rayIn (i + 1)) (P.tang (i + 1))| := by positivity
-  have hRlam : D.lam < D.R := by have := D.lam_pos; linarith [D.two_lam_lt_R]
+  have hRlam : D.lam < D.R := by have := D.lam_pos; linarith only [D.two_lam_lt_R, this]
   obtain ⟨σ, hσpos, hσε, hσrho, hσ1, hσ2, hσR⟩ := exists_common_bound hε D.rho_pos
-    (mul_pos hc0' hL₁) (mul_pos (show (0:ℝ) < P.len i - c by linarith) hL₂) hK₁ hK₂
-    (show (0:ℝ) < D.R - D.lam by linarith)
-  have hg1 : σ * |inner ℝ (P.rayIn i) (P.tang i)| < c * |det (P.rayIn i) (P.tang i)| := by
-    nlinarith
+    (mul_pos hc0' hL₁) (mul_pos (sub_pos.2 hc1') hL₂) hK₁ hK₂
+    (show (0:ℝ) < D.R - D.lam by linarith only [hRlam])
+  have hproduct (K X : ℝ) (h : σ * (1 + K) ≤ X) : σ * K < X :=
+    (mul_lt_mul_of_pos_left (lt_add_of_pos_left K zero_lt_one) hσpos).trans_le h
+  have hg1 : σ * |inner ℝ (P.rayIn i) (P.tang i)| <
+      c * |det (P.rayIn i) (P.tang i)| := hproduct _ _ hσ1
   have hg2 : σ * |inner ℝ (P.rayIn (i + 1)) (P.tang (i + 1))| <
-      (P.len i - c) * |det (P.rayIn (i + 1)) (P.tang (i + 1))| := by nlinarith
+      (P.len i - c) * |det (P.rayIn (i + 1)) (P.tang (i + 1))| := hproduct _ _ hσ2
+  have hsum : D.lam + σ < D.R := by
+    rw [add_comm]
+    exact lt_sub_iff_add_lt.1 hσR
   have hdistL : dist (P.pt i c) (P.off i c σ) < ε := by
-    rw [dist_comm, ClosedPolygon.dist_off_pt, abs_of_pos hσpos]; linarith
+    rw [dist_comm, ClosedPolygon.dist_off_pt, abs_of_pos hσpos]; exact hσε
   have hdistR : dist (P.pt i c) (P.off i c (-σ)) < ε := by
-    rw [dist_comm, ClosedPolygon.dist_off_pt, abs_of_neg (by linarith : -σ < 0)]; linarith
+    rw [dist_comm, ClosedPolygon.dist_off_pt, abs_neg, abs_of_pos hσpos]
+    exact hσε
   by_cases hmid : D.lam < c ∧ c < P.len i - D.lam
   · -- the block does it
     exact ⟨⟨P.off i c σ, Set.mem_iUnion.2 ⟨i, Or.inr
         (D.mem_blockL_off.2 ⟨hmid.1, hmid.2, hσpos, hσrho⟩)⟩, hdistL⟩,
       ⟨P.off i c (-σ), Set.mem_iUnion.2 ⟨i, Or.inr
-        (D.mem_blockR_off.2 ⟨hmid.1, hmid.2, by linarith, by linarith⟩)⟩, hdistR⟩⟩
+        (D.mem_blockR_off.2 ⟨hmid.1, hmid.2, neg_lt_neg hσrho, neg_neg_iff_pos.2 hσpos⟩)⟩, hdistR⟩⟩
   push Not at hmid
   by_cases hnear : c ≤ D.lam
   · -- near the initial vertex: the sector there, reached by the germ
@@ -375,27 +381,29 @@ theorem exists_near_sides {x : Plane} (hx : x ∈ P.carrier) {ε : ℝ} (hε : 0
       intro τ hτ
       have h := ClosedPolygon.dist_off_vertex_le (P := P) (i := i) (t := c) (s := τ)
       rw [abs_of_pos hc0'] at h
-      linarith
+      exact h.trans_lt ((add_le_add hnear hτ).trans_lt hsum)
     refine ⟨⟨P.off i c σ, Set.mem_iUnion.2 ⟨i, Or.inl
         ⟨ClosedPolygon.off_sub_mem_arcL_start hσpos hg1,
           hdv σ (by rw [abs_of_pos hσpos])⟩⟩, hdistL⟩,
       ⟨P.off i c (-σ), Set.mem_iUnion.2 ⟨i, Or.inl
-        ⟨ClosedPolygon.off_sub_mem_arcR_start (by linarith) (by rw [neg_neg]; exact hg1),
-          hdv (-σ) (by rw [abs_of_neg (by linarith : -σ < 0), neg_neg])⟩⟩, hdistR⟩⟩
+        ⟨ClosedPolygon.off_sub_mem_arcR_start (neg_neg_iff_pos.2 hσpos)
+            (by rw [neg_neg]; exact hg1),
+          hdv (-σ) (by rw [abs_neg, abs_of_pos hσpos])⟩⟩, hdistR⟩⟩
   · -- near the terminal vertex
     push Not at hnear
-    have hfar : P.len i - c ≤ D.lam := by have h := hmid hnear; linarith
+    have hfar : P.len i - c ≤ D.lam := by have h := hmid hnear; linarith only [h]
     have hdv : ∀ τ : ℝ, |τ| ≤ σ → dist (P.off i c τ) (P.vertex (i + 1)) < D.R := by
       intro τ hτ
       have h := ClosedPolygon.dist_off_vertex_succ_le (P := P) (i := i) (t := c) (s := τ)
-      rw [abs_sub_comm, abs_of_pos (by linarith : (0:ℝ) < P.len i - c)] at h
-      linarith
+      rw [abs_sub_comm, abs_of_pos (sub_pos.2 hc1')] at h
+      exact h.trans_lt ((add_le_add hfar hτ).trans_lt hsum)
     refine ⟨⟨P.off i c σ, Set.mem_iUnion.2 ⟨i + 1, Or.inl
         ⟨ClosedPolygon.off_sub_mem_arcL_finish hσpos hg2,
           hdv σ (by rw [abs_of_pos hσpos])⟩⟩, hdistL⟩,
       ⟨P.off i c (-σ), Set.mem_iUnion.2 ⟨i + 1, Or.inl
-        ⟨ClosedPolygon.off_sub_mem_arcR_finish (by linarith) (by rw [neg_neg]; exact hg2),
-          hdv (-σ) (by rw [abs_of_neg (by linarith : -σ < 0), neg_neg])⟩⟩, hdistR⟩⟩
+        ⟨ClosedPolygon.off_sub_mem_arcR_finish (neg_neg_iff_pos.2 hσpos)
+            (by rw [neg_neg]; exact hg2),
+          hdv (-σ) (by rw [abs_neg, abs_of_pos hσpos])⟩⟩, hdistR⟩⟩
 
 /-- Every point of the polygon is in the closure of the left side. With
 `StripData.sideL_disjoint_carrier` this says the polygon is contained in the boundary of the left

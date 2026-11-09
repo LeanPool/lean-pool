@@ -207,7 +207,7 @@ theorem notMem_arcCCW_swap (h : v ∈ arcCCW u w) : u ∉ arcCCW v w := by
   simp only [arcCCW, Set.mem_ofPred_eq] at h ⊢
   rw [e1, e3]
   rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ <;>
-    rintro (⟨g1, g2⟩ | ⟨g1, g2⟩ | ⟨g1, g2⟩) <;> linarith
+    rintro (⟨g1, g2⟩ | ⟨g1, g2⟩ | ⟨g1, g2⟩) <;> linarith only [g1, h1, g2, h2, e2]
 
 /-! #### The two transitivity laws
 
@@ -216,30 +216,54 @@ Write `p₁ = det u w`, `p₂ = det w v`, `p₃ = det v u` for the triple `(u, w
 `q₂ = det v d`, `q₃ = det d u` for the missing entries of `(u, v, d)`; note `det u v = -p₃`.
 The Grassmann identity turns into `p₃ * s₂ = q₃ * p₂ - p₁ * q₂` with `s₂ = det w d`. -/
 
+private theorem positive_pair_of_nonpositive_third {a b c : ℝ}
+    (h : (0 < a ∧ 0 < b) ∨ (0 < b ∧ 0 < c) ∨ (0 < c ∧ 0 < a)) (hc : c ≤ 0) :
+    0 < a ∧ 0 < b := by
+  rcases h with h | ⟨_, hc'⟩ | ⟨hc', _⟩
+  · exact h
+  · exact (not_lt_of_ge hc hc').elim
+  · exact (not_lt_of_ge hc hc').elim
+
+private theorem positive_pair_of_nonpositive_first {a b c : ℝ}
+    (h : (0 < a ∧ 0 < b) ∨ (0 < b ∧ 0 < c) ∨ (0 < c ∧ 0 < a)) (ha : a ≤ 0) :
+    0 < b ∧ 0 < c := by
+  rcases h with ⟨ha', _⟩ | h | ⟨_, ha'⟩
+  · exact (not_lt_of_ge ha ha').elim
+  · exact h
+  · exact (not_lt_of_ge ha ha').elim
+
+private theorem positive_pair_of_nonpositive_second {a b c : ℝ}
+    (h : (0 < a ∧ 0 < b) ∨ (0 < b ∧ 0 < c) ∨ (0 < c ∧ 0 < a)) (hb : b ≤ 0) :
+    0 < c ∧ 0 < a := by
+  rcases h with ⟨_, hb'⟩ | ⟨hb', _⟩ | h
+  · exact (not_lt_of_ge hb hb').elim
+  · exact (not_lt_of_ge hb hb').elim
+  · exact h
+
 private theorem trans_aux₁ {p₁ p₂ p₃ q₂ q₃ s₂ : ℝ}
     (hid : p₃ * s₂ = q₃ * p₂ - p₁ * q₂)
     (h1 : (0 < p₁ ∧ 0 < p₂) ∨ (0 < p₂ ∧ 0 < p₃) ∨ (0 < p₃ ∧ 0 < p₁))
     (h2 : (0 < -p₃ ∧ 0 < q₂) ∨ (0 < q₂ ∧ 0 < q₃) ∨ (0 < q₃ ∧ 0 < -p₃)) :
     (0 < p₁ ∧ 0 < s₂) ∨ (0 < s₂ ∧ 0 < q₃) ∨ (0 < q₃ ∧ 0 < p₁) := by
   rcases le_or_gt p₃ 0 with hp₃ | hp₃
-  · -- `p₃ ≤ 0` forces the first pair of `h1`, so `p₁` and `p₂` are both positive.
-    have hp₁ : 0 < p₁ := by rcases h1 with ⟨h, _⟩ | ⟨_, h⟩ | ⟨h, _⟩ <;> linarith
-    have hp₂ : 0 < p₂ := by rcases h1 with ⟨_, h⟩ | ⟨h, _⟩ | ⟨_, h⟩ <;> linarith
+  · obtain ⟨hp₁, hp₂⟩ := positive_pair_of_nonpositive_third h1 hp₃
     rcases lt_or_ge 0 q₃ with hq₃ | hq₃
     · exact Or.inr (Or.inr ⟨hq₃, hp₁⟩)
-    · -- `q₃ ≤ 0` forces the first pair of `h2`, and then the identity signs `s₂`.
-      have hq₂ : 0 < q₂ := by rcases h2 with ⟨_, h⟩ | ⟨h, _⟩ | ⟨_, h⟩ <;> linarith
-      have hp₃' : p₃ < 0 := by rcases h2 with ⟨h, _⟩ | ⟨_, h⟩ | ⟨_, h⟩ <;> linarith
-      have : 0 < s₂ := by nlinarith
-      exact Or.inl ⟨hp₁, this⟩
-  · -- `0 < p₃` forces the middle pair of `h2`.
-    have hq₂ : 0 < q₂ := by rcases h2 with ⟨h, _⟩ | ⟨h, _⟩ | ⟨_, h⟩ <;> linarith
-    have hq₃ : 0 < q₃ := by rcases h2 with ⟨_, h⟩ | ⟨_, h⟩ | ⟨h, _⟩ <;> linarith
+    · obtain ⟨_, hq₂⟩ := positive_pair_of_nonpositive_third h2 hq₃
+      have hprod : p₃ * s₂ < 0 := by
+        rw [hid]
+        exact sub_neg.mpr ((mul_nonpos_of_nonpos_of_nonneg hq₃ hp₂.le).trans_lt
+          (mul_pos hp₁ hq₂))
+      exact Or.inl ⟨hp₁, pos_of_mul_neg_right hprod hp₃⟩
+  · obtain ⟨hq₂, hq₃⟩ := positive_pair_of_nonpositive_first h2 (neg_nonpos.mpr hp₃.le)
     rcases lt_or_ge 0 p₁ with hp₁ | hp₁
     · exact Or.inr (Or.inr ⟨hq₃, hp₁⟩)
-    · have hp₂ : 0 < p₂ := by rcases h1 with ⟨h, _⟩ | ⟨h, _⟩ | ⟨_, h⟩ <;> linarith
-      have : 0 < s₂ := by nlinarith
-      exact Or.inr (Or.inl ⟨this, hq₃⟩)
+    · obtain ⟨hp₂, _⟩ := positive_pair_of_nonpositive_first h1 hp₁
+      have hprod : 0 < p₃ * s₂ := by
+        rw [hid]
+        exact sub_pos.mpr ((mul_nonpos_of_nonpos_of_nonneg hp₁ hq₂.le).trans_lt
+          (mul_pos hq₃ hp₂))
+      exact Or.inr (Or.inl ⟨(mul_pos_iff_of_pos_left hp₃).1 hprod, hq₃⟩)
 
 private theorem trans_aux₂ {p₁ p₂ p₃ q₂ q₃ s₂ : ℝ}
     (hid : p₃ * s₂ = q₃ * p₂ - p₁ * q₂)
@@ -247,21 +271,24 @@ private theorem trans_aux₂ {p₁ p₂ p₃ q₂ q₃ s₂ : ℝ}
     (h2 : (0 < -p₃ ∧ 0 < q₂) ∨ (0 < q₂ ∧ 0 < q₃) ∨ (0 < q₃ ∧ 0 < -p₃)) :
     (0 < p₂ ∧ 0 < q₂) ∨ (0 < q₂ ∧ 0 < -s₂) ∨ (0 < -s₂ ∧ 0 < p₂) := by
   rcases le_or_gt p₃ 0 with hp₃ | hp₃
-  · have hp₁ : 0 < p₁ := by rcases h1 with ⟨h, _⟩ | ⟨_, h⟩ | ⟨h, _⟩ <;> linarith
-    have hp₂ : 0 < p₂ := by rcases h1 with ⟨_, h⟩ | ⟨h, _⟩ | ⟨_, h⟩ <;> linarith
+  · obtain ⟨hp₁, hp₂⟩ := positive_pair_of_nonpositive_third h1 hp₃
     rcases lt_or_ge 0 q₂ with hq₂ | hq₂
     · exact Or.inl ⟨hp₂, hq₂⟩
-    · have hq₃ : 0 < q₃ := by rcases h2 with ⟨_, h⟩ | ⟨_, h⟩ | ⟨h, _⟩ <;> linarith
-      have hp₃' : p₃ < 0 := by rcases h2 with ⟨h, _⟩ | ⟨_, h⟩ | ⟨_, h⟩ <;> linarith
-      have : s₂ < 0 := by nlinarith
-      exact Or.inr (Or.inr ⟨by linarith, hp₂⟩)
-  · have hq₂ : 0 < q₂ := by rcases h2 with ⟨h, _⟩ | ⟨h, _⟩ | ⟨_, h⟩ <;> linarith
-    have hq₃ : 0 < q₃ := by rcases h2 with ⟨_, h⟩ | ⟨_, h⟩ | ⟨h, _⟩ <;> linarith
+    · obtain ⟨hq₃, _⟩ := positive_pair_of_nonpositive_second h2 hq₂
+      have hprod : 0 < p₃ * s₂ := by
+        rw [hid]
+        exact sub_pos.mpr ((mul_nonpos_of_nonneg_of_nonpos hp₁.le hq₂).trans_lt
+          (mul_pos hq₃ hp₂))
+      exact Or.inr (Or.inr ⟨neg_pos.mpr (neg_of_mul_pos_right hprod hp₃), hp₂⟩)
+  · obtain ⟨hq₂, hq₃⟩ := positive_pair_of_nonpositive_first h2 (neg_nonpos.mpr hp₃.le)
     rcases lt_or_ge 0 p₂ with hp₂ | hp₂
     · exact Or.inl ⟨hp₂, hq₂⟩
-    · have hp₁ : 0 < p₁ := by rcases h1 with ⟨h, _⟩ | ⟨_, h⟩ | ⟨_, h⟩ <;> linarith
-      have : s₂ < 0 := by nlinarith
-      exact Or.inr (Or.inl ⟨hq₂, by linarith⟩)
+    · obtain ⟨_, hp₁⟩ := positive_pair_of_nonpositive_second h1 hp₂
+      have hprod : p₃ * s₂ < 0 := by
+        rw [hid]
+        exact sub_neg.mpr ((mul_nonpos_of_nonneg_of_nonpos hq₃.le hp₂).trans_lt
+          (mul_pos hp₁ hq₂))
+      exact Or.inr (Or.inl ⟨hq₂, neg_pos.mpr (neg_of_mul_neg_right hprod hp₃.le)⟩)
 
 /-- The instance of `Plane.det_mul_det_add` that both transitivity laws run on. -/
 private theorem grassmann (u w v d : Plane) :
@@ -304,44 +331,38 @@ theorem eq_dir_or_eq_neg_dir (hu : u ≠ 0) (hv : IsDirection v) (h : det u v = 
   have hupos : 0 < ‖u‖ := norm_pos_iff.2 hu
   have hc : c = ‖u‖⁻¹ ∨ c = -‖u‖⁻¹ := by
     rcases abs_cases c with ⟨he, _⟩ | ⟨he, _⟩
-    · left; rw [he] at hn; field_simp; linarith
-    · right; rw [he] at hn; field_simp; linarith
+    · left; rw [he] at hn; field_simp; exact hn
+    · right; rw [he] at hn; field_simp; linarith only [hu, hv, h, hn]
   rcases hc with rfl | rfl
   · exact Or.inl rfl
-  · exact Or.inr (by rw [dir]; module)
+  · exact Or.inr (by rw [dir]; exact neg_smul _ _)
 
 private theorem total_aux {A B C : ℝ} (hA : A = 0 → 0 < B * C) (hB : B = 0 → 0 < A * C)
     (hC : C = 0 → 0 < A * B) :
     ((0 < A ∧ 0 < B) ∨ (0 < B ∧ 0 < C) ∨ (0 < C ∧ 0 < A)) ∨
       ((0 < -C ∧ 0 < -B) ∨ (0 < -B ∧ 0 < -A) ∨ (0 < -A ∧ 0 < -C)) := by
   rcases eq_or_ne A 0 with rfl | hA0
-  · have h := hA rfl
-    rcases lt_trichotomy B 0 with hb | rfl | hb
-    · exact Or.inr (Or.inl ⟨by nlinarith, by linarith⟩)
-    · simp at h
-    · exact Or.inl (Or.inr (Or.inl ⟨hb, by nlinarith⟩))
+  · rcases mul_pos_iff.1 (hA rfl) with ⟨hb, hc⟩ | ⟨hb, hc⟩
+    · exact Or.inl (Or.inr (Or.inl ⟨hb, hc⟩))
+    · exact Or.inr (Or.inl ⟨neg_pos.mpr hc, neg_pos.mpr hb⟩)
   rcases eq_or_ne B 0 with rfl | hB0
-  · have h := hB rfl
-    rcases lt_trichotomy A 0 with ha | rfl | ha
-    · exact Or.inr (Or.inr (Or.inr ⟨by linarith, by nlinarith⟩))
-    · exact absurd rfl hA0
-    · exact Or.inl (Or.inr (Or.inr ⟨by nlinarith, ha⟩))
+  · rcases mul_pos_iff.1 (hB rfl) with ⟨ha, hc⟩ | ⟨ha, hc⟩
+    · exact Or.inl (Or.inr (Or.inr ⟨hc, ha⟩))
+    · exact Or.inr (Or.inr (Or.inr ⟨neg_pos.mpr ha, neg_pos.mpr hc⟩))
   rcases eq_or_ne C 0 with rfl | hC0
-  · have h := hC rfl
-    rcases lt_trichotomy A 0 with ha | rfl | ha
-    · exact Or.inr (Or.inr (Or.inl ⟨by nlinarith, by linarith⟩))
-    · exact absurd rfl hA0
-    · exact Or.inl (Or.inl ⟨ha, by nlinarith⟩)
-  -- All three nonzero: whatever the signs, one of the two triples has two positives.
+  · rcases mul_pos_iff.1 (hC rfl) with ⟨ha, hb⟩ | ⟨ha, hb⟩
+    · exact Or.inl (Or.inl ⟨ha, hb⟩)
+    · exact Or.inr (Or.inr (Or.inl ⟨neg_pos.mpr hb, neg_pos.mpr ha⟩))
   rcases lt_or_gt_of_ne hA0 with ha | ha <;> rcases lt_or_gt_of_ne hB0 with hb | hb <;>
     rcases lt_or_gt_of_ne hC0 with hc | hc
-  all_goals first
-    | exact Or.inl (Or.inl ⟨by linarith, by linarith⟩)
-    | exact Or.inl (Or.inr (Or.inl ⟨by linarith, by linarith⟩))
-    | exact Or.inl (Or.inr (Or.inr ⟨by linarith, by linarith⟩))
-    | exact Or.inr (Or.inl ⟨by linarith, by linarith⟩)
-    | exact Or.inr (Or.inr (Or.inl ⟨by linarith, by linarith⟩))
-    | exact Or.inr (Or.inr (Or.inr ⟨by linarith, by linarith⟩))
+  · exact Or.inr (Or.inl ⟨neg_pos.mpr hc, neg_pos.mpr hb⟩)
+  · exact Or.inr (Or.inr (Or.inl ⟨neg_pos.mpr hb, neg_pos.mpr ha⟩))
+  · exact Or.inr (Or.inr (Or.inr ⟨neg_pos.mpr ha, neg_pos.mpr hc⟩))
+  · exact Or.inl (Or.inr (Or.inl ⟨hb, hc⟩))
+  · exact Or.inr (Or.inl ⟨neg_pos.mpr hc, neg_pos.mpr hb⟩)
+  · exact Or.inl (Or.inr (Or.inr ⟨hc, ha⟩))
+  · exact Or.inl (Or.inl ⟨ha, hb⟩)
+  · exact Or.inl (Or.inl ⟨ha, hb⟩)
 
 /-- **Totality.** Two distinct directions, neither of them the direction of `u`, are comparable
 in the counterclockwise order seen from `u`. The three degenerate configurations — one of them
@@ -385,7 +406,7 @@ theorem mem_arcCCW_total (hu : u ≠ 0) (hv : IsDirection v) (hw : IsDirection w
       have hne : det u v ≠ 0 := by
         intro h0
         have hv' : v = -dir u := (eq_dir_or_eq_neg_dir hu hv h0).resolve_left hvu
-        exact hwu (by rw [hw', hv']; module)
+        exact hwu (by rw [hw', hv']; exact neg_neg _)
       have hsm : (-v : Plane) = (-1 : ℝ) • v := by module
       have he : det w u = det u v := by
         rw [hw', hsm, det_smul_left, det_comm v u]; ring
@@ -393,7 +414,7 @@ theorem mem_arcCCW_total (hu : u ≠ 0) (hv : IsDirection v) (hw : IsDirection w
       exact mul_self_pos.2 hne
     · -- `det w u = 0`: then `w = -dir u`, so `det v w` and `det u v` agree up to `‖u‖ > 0`.
       intro h
-      have h' : det u w = 0 := by linarith [det_comm u w]
+      have h' : det u w = 0 := by linarith only [hCB, h]
       have hw' : w = -dir u := (eq_dir_or_eq_neg_dir hu hw h').resolve_left hwu
       have hne : det u v ≠ 0 := by
         intro h0
@@ -411,9 +432,9 @@ theorem mem_arcCCW_total (hu : u ≠ 0) (hv : IsDirection v) (hw : IsDirection w
   · exact Or.inl h
   · refine Or.inr ?_
     rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩
-    · exact Or.inl ⟨by linarith, by linarith⟩
-    · exact Or.inr (Or.inl ⟨by linarith, by linarith⟩)
-    · exact Or.inr (Or.inr ⟨by linarith, by linarith⟩)
+    · exact Or.inl ⟨by exact h1, by exact h2⟩
+    · exact Or.inr (Or.inl ⟨by exact h1, by exact h2⟩)
+    · exact Or.inr (Or.inr ⟨by exact h1, by exact h2⟩)
 
 /-! ### Consecutive directions, and the sector they bound
 
@@ -572,7 +593,7 @@ theorem mem_arcCCW_rev_of_notMem {d w z : Plane} (hd : IsDirection d) (hw : IsDi
     have hsm : (-d : Plane) = (-1 : ℝ) • d := by module
     rw [hsm, det_smul_left]
     have : det d z < 0 := lt_of_le_of_ne h hdz
-    linarith
+    linarith only [hwd, harc, harc', hdz, hsm, this]
   · rcases mem_ray_or_mem_arcCCW' hdet hz.ne_zero with ⟨c, hc, hcz⟩ | ⟨c, hc, hcz⟩ | harc | harc
     · exact absurd (eq_of_smul hc hd hz hcz) hzd
     · exact absurd (eq_of_smul hc hw hz hcz) hzw
@@ -673,7 +694,7 @@ theorem openSegment_subset_cone_arcCCW {d w : Plane}
   intro v hv
   rw [openSegment_eq_image'] at hv
   obtain ⟨θ, ⟨hθ0, hθ1⟩, rfl⟩ := hv
-  have hsub : x + θ • (z - x) - x = θ • (z - x) := by module
+  have hsub : x + θ • (z - x) - x = θ • (z - x) := by exact add_sub_cancel_left _ _
   refine Plane.mem_cone_iff.2 ⟨?_, ?_⟩
   · rw [hsub]
     exact (Plane.smul_mem_arcCCW hθ0).2 harc
@@ -797,9 +818,10 @@ theorem mem_openSegment_radial {d : Plane} (hd : Plane.IsDirection d) (hr : 0 < 
   obtain ⟨θ, ⟨hθ0, hθ1⟩, rfl⟩ := hz
   have hsub : x + θ • (x + r • d - x) - x = (θ * r) • d := by module
   have hdist : dist (x + θ • (x + r • d - x)) x = θ * r := by
-    rw [dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs, abs_of_nonneg (by positivity), hd.norm,
+    rw [dist_eq_norm, hsub, norm_smul, Real.norm_eq_abs,
+      abs_of_nonneg (by exact le_of_lt (mul_pos hθ0 hr)), hd.norm,
       mul_one]
-  refine ⟨fun hh => ?_, by rw [hdist]; nlinarith⟩
+  refine ⟨fun hh => ?_, by rw [hdist]; nlinarith only [hd, hr, hθ0, hθ1]⟩
   rw [← sub_eq_zero, hsub] at hh
   rcases smul_eq_zero.1 hh with h' | h'
   · nlinarith
@@ -962,12 +984,17 @@ private theorem three_intervals {J₁ J₂ J₃ : Set ℝ} {t₀ t₁ t₂ t₃ 
     (h₁ : t₁ ∈ J₁) (h₂ : t₂ ∈ J₂) (h₃ : t₃ ∈ J₃)
     (n₁ : t₁ ≠ t₀) (n₂ : t₂ ≠ t₀) (n₃ : t₃ ≠ t₀)
     (i₁₂ : J₁ ∩ J₂ ⊆ {t₀}) (i₁₃ : J₁ ∩ J₃ ⊆ {t₀}) (i₂₃ : J₂ ∩ J₃ ⊆ {t₀}) : False := by
-  rcases lt_or_gt_of_ne n₁ with s₁ | s₁ <;> rcases lt_or_gt_of_ne n₂ with s₂ | s₂ <;>
-    rcases lt_or_gt_of_ne n₃ with s₃ | s₃ <;>
-  first
-    | exact two_same_side hc₁ hc₂ h₀₁ h₀₂ h₁ h₂ n₁ n₂ i₁₂ (by tauto)
-    | exact two_same_side hc₁ hc₃ h₀₁ h₀₃ h₁ h₃ n₁ n₃ i₁₃ (by tauto)
-    | exact two_same_side hc₂ hc₃ h₀₂ h₀₃ h₂ h₃ n₂ n₃ i₂₃ (by tauto)
+  rcases lt_or_gt_of_ne n₁ with s₁ | s₁
+  · rcases lt_or_gt_of_ne n₂ with s₂ | s₂
+    · exact two_same_side hc₁ hc₂ h₀₁ h₀₂ h₁ h₂ n₁ n₂ i₁₂ (Or.inr ⟨s₁, s₂⟩)
+    · rcases lt_or_gt_of_ne n₃ with s₃ | s₃
+      · exact two_same_side hc₁ hc₃ h₀₁ h₀₃ h₁ h₃ n₁ n₃ i₁₃ (Or.inr ⟨s₁, s₃⟩)
+      · exact two_same_side hc₂ hc₃ h₀₂ h₀₃ h₂ h₃ n₂ n₃ i₂₃ (Or.inl ⟨s₂, s₃⟩)
+  · rcases lt_or_gt_of_ne n₂ with s₂ | s₂
+    · rcases lt_or_gt_of_ne n₃ with s₃ | s₃
+      · exact two_same_side hc₂ hc₃ h₀₂ h₀₃ h₂ h₃ n₂ n₃ i₂₃ (Or.inr ⟨s₂, s₃⟩)
+      · exact two_same_side hc₁ hc₃ h₀₁ h₀₃ h₁ h₃ n₁ n₃ i₁₃ (Or.inl ⟨s₁, s₃⟩)
+    · exact two_same_side hc₁ hc₂ h₀₁ h₀₂ h₁ h₂ n₁ n₂ i₁₂ (Or.inl ⟨s₁, s₂⟩)
 
 /-- **An edge carries at most two local branches at `x`** — the blueprint's "two of these radial
 segments with a common direction would have overlapping relative interiors, which is
@@ -1010,7 +1037,7 @@ theorem IsDrawing.not_three_localDirs_on_edge (h : IsDrawing G drawing)
     rw [this, hτ₀] at hτ
     have hz : r • dd = 0 := by
       have := sub_eq_zero.2 hτ.symm
-      rwa [show x + r • dd - x = r • dd by module] at this
+      rwa [show x + r • dd - x = r • dd by exact add_sub_cancel_left _ _] at this
     rcases smul_eq_zero.1 hz with h' | h'
     · exact absurd h' hr.pos.ne'
     · exact hdd.ne_zero h'

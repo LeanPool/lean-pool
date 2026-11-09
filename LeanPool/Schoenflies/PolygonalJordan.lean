@@ -93,15 +93,15 @@ private theorem not_isBounded_beyondSquare (r : ℝ) : ¬ IsBounded (Plane.beyon
   intro hb
   obtain ⟨s, -, hs⟩ := Plane.exists_closedSquare_of_isBounded hb
   set t : ℝ := max (max r s) 0 + 1 with ht
-  have ht0 : 0 ≤ t := by have := le_max_right (max r s) 0; simp only [ht]; linarith
+  have ht0 : 0 ≤ t := by have := le_max_right (max r s) 0; simp only [ht]; linarith only [this]
   have htr : r < t := by
     have h1 := le_max_left r s
     have h2 := le_max_left (max r s) 0
-    simp only [ht]; linarith
+    simp only [ht]; linarith only [h1, h2]
   have hts : s < t := by
     have h1 := le_max_right r s
     have h2 := le_max_left (max r s) 0
-    simp only [ht]; linarith
+    simp only [ht]; linarith only [h1, h2]
   have hmem : Plane.mk t 0 ∈ Plane.beyondSquare r :=
     Or.inl (show r < |t| by rw [abs_of_nonneg ht0]; exact htr)
   have hin : Plane.supDist (Plane.mk t 0) 0 ≤ s := hs hmem
@@ -109,7 +109,7 @@ private theorem not_isBounded_beyondSquare (r : ℝ) : ¬ IsBounded (Plane.beyon
   have h1 : |t| ≤ Plane.supNorm (Plane.mk t 0) := by
     simp only [Plane.supNorm]; exact le_max_left _ _
   rw [abs_of_nonneg ht0] at h1
-  linarith
+  linarith only [hts, hmem, hin, h1]
 
 /-- **A point far out along the ray direction, and outside a prescribed square.** One coordinate
 of a unit vector always exceeds `1/2` in absolute value, so a long enough multiple of the ray
@@ -117,32 +117,40 @@ direction leaves every square — which is how "far along the ray" and "in the u
 arranged at one and the same point. -/
 private theorem exists_beyond_of_fwd_lt {u : Plane} (hu : Plane.IsDirection u) (r M : ℝ) :
     ∃ q : Plane, q ∈ Plane.beyondSquare r ∧ M < fwd u q := by
-  have hnorm : u 0 ^ 2 + u 1 ^ 2 = 1 := norm_sq_one hu
   have hcoord : 1 / 2 < |u 0| ∨ 1 / 2 < |u 1| := by
-    by_contra hc
-    push Not at hc
-    obtain ⟨hc0, hc1⟩ := hc
-    nlinarith [sq_abs (u 0), sq_abs (u 1), abs_nonneg (u 0), abs_nonneg (u 1)]
+    have hbound := Plane.norm_le_sqrt_two_mul_supNorm u
+    rw [hu.norm] at hbound
+    have hsup : 0 < Plane.supNorm u :=
+      (mul_pos_iff_of_pos_left (Real.sqrt_pos.2 (by norm_num : (0 : ℝ) < 2))).1
+        (one_pos.trans_le hbound)
+    apply lt_max_iff.mp
+    apply (div_lt_iff₀ (by norm_num : (0 : ℝ) < 2)).2
+    exact (hbound.trans_lt
+      (mul_lt_mul_of_pos_right (show Real.sqrt 2 < 2 by norm_num) hsup)).trans_eq (mul_comm _ _)
   set s : ℝ := max (max (2 * r) M) 0 + 1 with hs
   have hs0 : 0 < s := by have := le_max_right (max (2 * r) M) 0; simp only [hs]; linarith
   have hsr : 2 * r < s := by
     have h1 := le_max_left (2 * r) M
     have h2 := le_max_left (max (2 * r) M) 0
-    simp only [hs]; linarith
+    simp only [hs]; linarith only [h1, h2]
   have hsM : M < s := by
     have h1 := le_max_right (2 * r) M
     have h2 := le_max_left (max (2 * r) M) 0
-    simp only [hs]; linarith
+    simp only [hs]; linarith only [h1, h2]
   have hfwd : fwd u (s • u) = s := by
-    rw [fwd_eq]
-    simp only [Plane.smul_apply]
-    linear_combination s * hnorm
+    simp only [fwd, real_inner_smul_left, real_inner_self_eq_norm_mul_norm, hu.norm, mul_one]
   have habs : ∀ i : Fin 2, |(s • u) i| = s * |u i| := fun i => by
     rw [Plane.smul_apply, abs_mul, abs_of_pos hs0]
   refine ⟨s • u, ?_, by rw [hfwd]; exact hsM⟩
   rcases hcoord with h | h
-  · exact Or.inl (by rw [habs 0]; nlinarith [mul_lt_mul_of_pos_left h hs0])
-  · exact Or.inr (by rw [habs 1]; nlinarith [mul_lt_mul_of_pos_left h hs0])
+  · refine Or.inl ?_
+    rw [habs 0]
+    exact (show r < s / 2 by linarith only [hsr]).trans
+      (by simpa only [mul_one_div] using mul_lt_mul_of_pos_left h hs0)
+  · refine Or.inr ?_
+    rw [habs 1]
+    exact (show r < s / 2 by linarith only [hsr]).trans
+      (by simpa only [mul_one_div] using mul_lt_mul_of_pos_left h hs0)
 
 /-! ### Small arithmetic and topology helpers -/
 
@@ -233,13 +241,13 @@ theorem exists_opposite_parity_sides (P : ClosedPolygon m) (D : StripData P)
   have hp : P.pt i (P.len i / 2) ∈ openSegment ℝ (P.vertex i) (P.vertex (i + 1)) := by
     rw [openSegment_eq_image' ℝ]
     exact ⟨(P.len i / 2) / P.len i,
-      ⟨div_pos (by linarith) hlen, by rw [div_lt_one hlen]; linarith⟩, hmid⟩
+      ⟨div_pos (by linarith) hlen, by rw [div_lt_one hlen]; linarith only [hlen]⟩, hmid⟩
   obtain ⟨δ, hδ, hflip⟩ := P.parity_flip_carrier hu hL i hp
-  have ht0 : 0 < min (δ / 2) (min D.lam D.rho / 2) := lt_min (by linarith) (by linarith)
+  have ht0 : 0 < min (δ / 2) (min D.lam D.rho / 2) := lt_min (by linarith only [hδ]) (by linarith)
   have htδ : min (δ / 2) (min D.lam D.rho / 2) < δ :=
-    lt_of_le_of_lt (min_le_left _ _) (by linarith)
+    lt_of_le_of_lt (min_le_left _ _) (by linarith only [hδ])
   have htη : min (δ / 2) (min D.lam D.rho / 2) < min D.lam D.rho :=
-    lt_of_le_of_lt (min_le_right _ _) (by linarith)
+    lt_of_le_of_lt (min_le_right _ _) (by linarith only [hηpos])
   set t : ℝ := min (δ / 2) (min D.lam D.rho / 2)
   obtain ⟨hbef, haft, hpar⟩ := hflip t ht0 htδ
   -- both test points lie in the disk of `local_two_sided`
@@ -252,14 +260,14 @@ theorem exists_opposite_parity_sides (P : ClosedPolygon m) (D : StripData P)
     exact hr
   have hbaft := hball t (by rw [abs_of_pos ht0]; exact htη)
   have hbbef : P.pt i (P.len i / 2) - t • u ∈ ball (P.pt i (P.len i / 2)) (min D.lam D.rho) := by
-    have h := hball (-t) (by rw [abs_of_neg (by linarith), neg_neg]; exact htη)
+    have h := hball (-t) (by rw [abs_of_neg (by linarith only [ht0]), neg_neg]; exact htη)
     rwa [neg_smul, ← sub_eq_add_neg] at h
   -- the transverse coordinate of a point offset from the edge in the ray direction
   have hkey : ∀ r : ℝ, coordAcross (P.vertex i) (P.tang i) (P.pt i (P.len i / 2) + r • u)
       = r * det (P.tang i) u := by
     intro r
     rw [coordAcross, show P.pt i (P.len i / 2) + r • u - P.vertex i
-        = (P.len i / 2) • P.tang i + r • u by rw [pt_eq]; module,
+        = (P.len i / 2) • P.tang i + r • u by rw [pt_eq]; abel,
       det_add_right, det_smul_right, det_self, mul_zero, zero_add, det_smul_right]
   have hcaaft := hkey t
   have hcabef : coordAcross (P.vertex i) (P.tang i) (P.pt i (P.len i / 2) - t • u)
@@ -275,18 +283,18 @@ theorem exists_opposite_parity_sides (P : ClosedPolygon m) (D : StripData P)
     refine ⟨P.pt i (P.len i / 2) - t • u, ?_, P.pt i (P.len i / 2) + t • u, ?_, ?_⟩
     · rcases hsbef with ⟨-, h⟩ | ⟨h, -⟩
       · exact h
-      · rw [hcabef] at h; linarith
+      · rw [hcabef] at h; linarith only [hlt, h]
     · rcases hsaft with ⟨h, -⟩ | ⟨-, h⟩
-      · rw [hcaaft] at h; linarith
+      · rw [hcaaft] at h; linarith only [hlt, h]
       · exact h
     · rw [hpar]; exact Ne.symm (zmod_two_ne_add_one _)
   · have hgt0 : 0 < t * det (P.tang i) u := mul_pos ht0 hpos
     refine ⟨P.pt i (P.len i / 2) + t • u, ?_, P.pt i (P.len i / 2) - t • u, ?_, ?_⟩
     · rcases hsaft with ⟨-, h⟩ | ⟨h, -⟩
       · exact h
-      · rw [hcaaft] at h; linarith
+      · rw [hcaaft] at h; linarith only [hgt0, h]
     · rcases hsbef with ⟨h, -⟩ | ⟨-, h⟩
-      · rw [hcabef] at h; linarith
+      · rw [hcabef] at h; linarith only [hgt0, h]
       · exact h
     · rw [hpar]; exact zmod_two_ne_add_one _
 
@@ -355,7 +363,7 @@ theorem exists_mem_sides_connectedComponentIn (P : ClosedPolygon m) (D : StripDa
     · intro h
       have h0 : (θ - 1) • (a - x) = 0 := by linear_combination (norm := module) h
       rcases smul_eq_zero.1 h0 with h1 | h1
-      · have := hθ.2; linarith
+      · have := hθ.2; linarith only [h1, this]
       · exact hvne h1
   have hSΩ : (fun θ : ℝ => x + θ • (a - x)) '' Ico 0 1 ⊆ P.carrierᶜ := by
     rintro z ⟨θ, hθ, rfl⟩
@@ -367,7 +375,7 @@ theorem exists_mem_sides_connectedComponentIn (P : ClosedPolygon m) (D : StripDa
   have hmpos : 0 < min (1 / 2 : ℝ) (ε / (2 * ‖a - x‖)) := lt_min (by norm_num) (by positivity)
   have hmhalf : min (1 / 2 : ℝ) (ε / (2 * ‖a - x‖)) ≤ 1 / 2 := min_le_left _ _
   have hθmem : (1 - min (1 / 2 : ℝ) (ε / (2 * ‖a - x‖))) ∈ Ico (0 : ℝ) 1 :=
-    ⟨by linarith, by linarith⟩
+    ⟨by linarith only [hεball, hmpos, hmhalf], by linarith only [hεball, hmpos]⟩
   have hprod : ε / (2 * ‖a - x‖) * ‖a - x‖ = ε / 2 := by
     field_simp
   have hdist : dist (x + (1 - min (1 / 2 : ℝ) (ε / (2 * ‖a - x‖))) • (a - x)) a < ε := by
@@ -553,7 +561,7 @@ theorem parity_eq_zero_of_mem_outside (P : ClosedPolygon m) {u : Plane}
     rw [P.cover_pieces] at hz
     have h1 : ‖z‖ ≤ R := by simpa using hR hz
     have h2 : fwd u z ≤ R := le_trans (le_trans (le_abs_self _) (abs_fwd_le_norm hu z)) h1
-    linarith
+    linarith only [hqfwd, hbeyC, hz, h1, h2]
   -- and `q` is in the unbounded region, since the outside of the square is
   have hqout : q ∈ outside P.carrier :=
     ⟨hbeyC hqbey, fun hb => not_isBounded_beyondSquare r (hb.subset

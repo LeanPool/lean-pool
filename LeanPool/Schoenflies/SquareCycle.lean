@@ -159,7 +159,7 @@ theorem const_add (h : G.IsIncWalk f u W v) (t : ℝ) :
     G.IsIncWalk (fun x => t + f x) u W v := by
   induction h with
   | nil hx => exact .nil hx
-  | cons hl hf _ ih => exact .cons hl (by linarith) ih
+  | cons hl hf _ ih => exact .cons hl (by linarith only [hf]) ih
 
 /-- An increasing walk from a vertex to itself is empty. -/
 theorem eq_nil_of_eq (h : G.IsIncWalk f u W u) : W = [] := h.isPath.eq_nil_of_eq
@@ -284,7 +284,7 @@ theorem notMem_interior (hab : a ≠ b) : ∀ Q ∈ E, p ∉ Q.interior := by
     exacts [left_mem_segment ℝ _ _, right_mem_segment ℝ _ _]
   have := dist_lt_of_mem_openSegment hab hu hv (ne_of_ordered_ends (hC.nondeg Q hQ) hends) huv
     (hint ▸ hmem)
-  linarith [this.1]
+  linarith only [hv, hup, this, this.left]
 
 end IsPieceChain
 
@@ -326,10 +326,10 @@ theorem exists_next_piece (hab : a ≠ b) (hfin : E.Finite)
   obtain ⟨x, hxseg, hxd⟩ := exists_mem_segment_dist hab
     (t := (dist a p + m) / 2) (by linarith [dist_nonneg (x := a) (y := p)]) (by linarith)
   have hxlt : dist a x < m := by rw [hxd]; linarith
-  have hxgt : dist a p < dist a x := by rw [hxd]; linarith
+  have hxgt : dist a p < dist a x := by rw [hxd]; linarith only [hmle, hxseg, hxd, hxlt]
   have hxpb : x ∈ segment ℝ p b :=
     mem_segment_of_dist_le hab hp hbseg hxseg hxgt.le (by linarith)
-  have hxb : x ≠ b := fun h => by rw [h] at hxlt; linarith
+  have hxb : x ≠ b := fun h => by rw [h] at hxlt; linarith only [hmle, hxseg, hxd, hxlt]
   obtain ⟨Q, hQE, hxQ⟩ := hcover x hxpb hxb
   obtain ⟨u, v, hends, huv, hseg, hint⟩ := exists_ordered_ends a Q
   have humem : u = Q.1 ∨ u = Q.2 := by
@@ -361,7 +361,7 @@ theorem exists_next_piece (hab : a ≠ b) (hfin : E.Finite)
       (by linarith))
   have hpu : u = p := eq_of_dist_left_eq hab hu hp (le_antisymm hulep hpleu)
   subst hpu
-  refine ⟨Q, hQE, v, ?_, by linarith⟩
+  refine ⟨Q, hQE, v, ?_, by linarith only [hxv, hxgt]⟩
   rcases hends with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
   exacts [Or.inl ⟨h₁, h₂⟩, Or.inr ⟨h₁, h₂⟩]
 
@@ -485,10 +485,10 @@ theorem exists_incWalk_of_chain {G : Graph Plane Piece} (hab : a ≠ b) (hbG : b
         exfalso
         obtain ⟨y', hy'seg, hy'd⟩ := exists_mem_segment_dist hab
           (t := (dist a u + dist a v) / 2) (by linarith [dist_nonneg (x := a) (y := u)])
-          (by linarith [dist_le_dist_of_mem_segment hab hv])
+          (by linarith only [huv', hwnot, hdi, dist_le_dist_of_mem_segment hab hv])
         refine hC.disj R hRE Q hQE hRQ y' ?_ ?_
         · exact hint ▸ mem_openSegment_of_dist_lt hab hu hv hy'seg
-            (by rw [hy'd]; linarith) (by rw [hy'd]; linarith)
+            (by rw [hy'd]; linarith only [huv']) (by rw [hy'd]; linarith)
         · exact hQint ▸ mem_openSegment_of_dist_lt hab hC.memP hwab hy'seg
             (by rw [hy'd]; linarith) (by rw [hy'd]; linarith)
     have hC' : IsPieceChain a b w (E \ {Q}) :=
@@ -542,22 +542,22 @@ theorem dist_eq_abs_snd {z w : Plane} (h : z 0 = w 0) : dist z w = |z 1 - w 1| :
 theorem dist_sqNE_sqNW (c : Plane) (hr : 0 ≤ r) : dist (sqNE c r) (sqNW c r) = 2 * r := by
   rw [dist_eq_abs_fst (by simp)]
   simp only [sqNE_zero, sqNW_zero]
-  rw [show c 0 + r - (c 0 - r) = 2 * r by ring, abs_of_nonneg (by linarith)]
+  rw [show c 0 + r - (c 0 - r) = 2 * r by ring, abs_of_nonneg (by linarith only [hr])]
 
 theorem dist_sqNW_sqSW (c : Plane) (hr : 0 ≤ r) : dist (sqNW c r) (sqSW c r) = 2 * r := by
   rw [dist_eq_abs_snd (by simp)]
   simp only [sqNW_one, sqSW_one]
-  rw [show c 1 + r - (c 1 - r) = 2 * r by ring, abs_of_nonneg (by linarith)]
+  rw [show c 1 + r - (c 1 - r) = 2 * r by ring, abs_of_nonneg (by linarith only [hr])]
 
 theorem dist_sqSW_sqSE (c : Plane) (hr : 0 ≤ r) : dist (sqSW c r) (sqSE c r) = 2 * r := by
   rw [dist_eq_abs_fst (by simp)]
   simp only [sqSW_zero, sqSE_zero]
-  rw [show c 0 - r - (c 0 + r) = -(2 * r) by ring, abs_neg, abs_of_nonneg (by linarith)]
+  rw [show c 0 - r - (c 0 + r) = -(2 * r) by ring, abs_neg, abs_of_nonneg (by linarith only [hr])]
 
 theorem dist_sqSE_sqNE (c : Plane) (hr : 0 ≤ r) : dist (sqSE c r) (sqNE c r) = 2 * r := by
   rw [dist_eq_abs_snd (by simp)]
   simp only [sqSE_one, sqNE_one]
-  rw [show c 1 - r - (c 1 + r) = -(2 * r) by ring, abs_neg, abs_of_nonneg (by linarith)]
+  rw [show c 1 - r - (c 1 + r) = -(2 * r) by ring, abs_neg, abs_of_nonneg (by linarith only [hr])]
 
 /-! ### The distance from a side's first corner, in coordinates -/
 
@@ -565,7 +565,7 @@ theorem dist_sqNE_of_mem_top (hr : 0 ≤ r) (hz : z ∈ segment ℝ (sqNE c r) (
     dist (sqNE c r) z = c 0 + r - z 0 := by
   rw [mem_seg_top hr] at hz
   rw [dist_eq_abs_fst (by simp [hz.1]), sqNE_zero,
-    abs_of_nonneg (by have := (abs_le.1 hz.2).2; linarith)]
+    abs_of_nonneg (by have := (abs_le.1 hz.2).2; linarith only [this])]
 
 theorem dist_sqNW_of_mem_left (hr : 0 ≤ r) (hz : z ∈ segment ℝ (sqNW c r) (sqSW c r)) :
     dist (sqNW c r) z = c 1 + r - z 1 := by
@@ -583,7 +583,7 @@ theorem dist_sqSE_of_mem_right (hr : 0 ≤ r) (hz : z ∈ segment ℝ (sqSE c r)
     dist (sqSE c r) z = z 1 - (c 1 - r) := by
   rw [mem_seg_right hr] at hz
   rw [dist_eq_abs_snd (by simp [hz.1]), sqSE_one, abs_sub_comm,
-    abs_of_nonneg (by have := (abs_le.1 hz.2).1; linarith)]
+    abs_of_nonneg (by have := (abs_le.1 hz.2).1; linarith only [this])]
 
 /-! ### Where two sides meet -/
 
@@ -601,7 +601,7 @@ theorem notMem_top_of_mem_bottom (hr : 0 < r) (h₁ : z ∈ segment ℝ (sqSW c 
   rw [mem_seg_top hr.le]
   rintro ⟨h, -⟩
   rw [h₁.1] at h
-  linarith
+  linarith only [hr, h]
 
 theorem eq_sqNE_of_mem_top_right (hr : 0 ≤ r) (h₁ : z ∈ segment ℝ (sqNE c r) (sqNW c r))
     (h₂ : z ∈ segment ℝ (sqSE c r) (sqNE c r)) : z = sqNE c r := by
@@ -625,7 +625,7 @@ theorem notMem_left_of_mem_right (hr : 0 < r) (h₁ : z ∈ segment ℝ (sqSE c 
   rw [mem_seg_left hr.le]
   rintro ⟨h, -⟩
   rw [h₁.1] at h
-  linarith
+  linarith only [hr, h]
 
 theorem eq_sqSE_of_mem_bottom_right (hr : 0 ≤ r) (h₁ : z ∈ segment ℝ (sqSW c r) (sqSE c r))
     (h₂ : z ∈ segment ℝ (sqSE c r) (sqNE c r)) : z = sqSE c r := by
@@ -757,26 +757,26 @@ theorem exists_side_of_mem_squareEdges (hr : 0 < r)
   rcases max_choice |(Q.1 0 + Q.2 0) / 2 - c 0| |(Q.1 1 + Q.2 1) / 2 - c 1| with hch | hch <;>
       rw [hch] at hmax <;> rcases (abs_eq hr.le).1 hmax with heq | heq
   · -- the east side
-    have e₁ : Q.1 0 = c 0 + r := by linarith [h1.1.2, h2.1.2]
-    have e₂ : Q.2 0 = c 0 + r := by linarith [h1.1.2, h2.1.2]
+    have e₁ : Q.1 0 = c 0 + r := by linarith only [h1.1.2, h2.1.2, heq]
+    have e₂ : Q.2 0 = c 0 + r := by linarith only [e₁, heq]
     exact ⟨(sqSE c r, sqNE c r), by simp [squarePieces], ⟨hQov, hQfr⟩, fun y hy =>
       (mem_seg_right hr.le).2 ⟨key 0 (c 0 + r) e₁ e₂ y hy,
         (abs_le_of_mem_frontier (hQfr hy)).2⟩⟩
   · -- the west side
-    have e₁ : Q.1 0 = c 0 - r := by linarith [h1.1.1, h2.1.1]
-    have e₂ : Q.2 0 = c 0 - r := by linarith [h1.1.1, h2.1.1]
+    have e₁ : Q.1 0 = c 0 - r := by linarith only [h1.1.1, h2.1.1, heq]
+    have e₂ : Q.2 0 = c 0 - r := by linarith only [e₁, heq]
     exact ⟨(sqNW c r, sqSW c r), by simp [squarePieces], ⟨hQov, hQfr⟩, fun y hy =>
       (mem_seg_left hr.le).2 ⟨key 0 (c 0 - r) e₁ e₂ y hy,
         (abs_le_of_mem_frontier (hQfr hy)).2⟩⟩
   · -- the north side
-    have e₁ : Q.1 1 = c 1 + r := by linarith [h1.2.2, h2.2.2]
-    have e₂ : Q.2 1 = c 1 + r := by linarith [h1.2.2, h2.2.2]
+    have e₁ : Q.1 1 = c 1 + r := by linarith only [h1.2.2, h2.2.2, heq]
+    have e₂ : Q.2 1 = c 1 + r := by linarith only [e₁, heq]
     exact ⟨(sqNE c r, sqNW c r), by simp [squarePieces], ⟨hQov, hQfr⟩, fun y hy =>
       (mem_seg_top hr.le).2 ⟨key 1 (c 1 + r) e₁ e₂ y hy,
         (abs_le_of_mem_frontier (hQfr hy)).1⟩⟩
   · -- the south side
-    have e₁ : Q.1 1 = c 1 - r := by linarith [h1.2.1, h2.2.1]
-    have e₂ : Q.2 1 = c 1 - r := by linarith [h1.2.1, h2.2.1]
+    have e₁ : Q.1 1 = c 1 - r := by linarith only [h1.2.1, h2.2.1, heq]
+    have e₂ : Q.2 1 = c 1 - r := by linarith only [e₁, heq]
     exact ⟨(sqSW c r, sqSE c r), by simp [squarePieces], ⟨hQov, hQfr⟩, fun y hy =>
       (mem_seg_bottom hr.le).2 ⟨key 1 (c 1 - r) e₁ e₂ y hy,
         (abs_le_of_mem_frontier (hQfr hy)).1⟩⟩
@@ -917,13 +917,13 @@ theorem sqNW_ne_sqNE (c : Plane) (hr : 0 < r) : sqNW c r ≠ sqNE c r := by
   intro h
   have h0 := congrArg (fun p : Plane => p 0) h
   simp only [sqNW_zero, sqNE_zero] at h0
-  linarith
+  linarith only [hr, h0]
 
 theorem sqSE_ne_sqNE (c : Plane) (hr : 0 < r) : sqSE c r ≠ sqNE c r := by
   intro h
   have h1 := congrArg (fun p : Plane => p 1) h
   simp only [sqSE_one, sqNE_one] at h1
-  linarith
+  linarith only [hr, h1]
 
 /-- **The boundary cycle of a subdivided square.**  The whole of `squareGraph` is a cycle: an
 edge `e`, a detour `D` running the other way round, and a third vertex.  The second clause is

@@ -562,14 +562,15 @@ blueprint's separation constants into square radii. -/
 
 theorem lt_supDist_of_le_dist {x y : Plane} {t : ℝ} (ht : 0 < t) (h : t ≤ dist x y) :
     t / 2 < Plane.supDist x y := by
-  have h2 : Real.sqrt 2 < 2 := by
-    nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2), Real.sqrt_nonneg 2]
-  have hs0 : (0 : ℝ) < Real.sqrt 2 := Real.sqrt_pos.2 (by norm_num)
   have hle : dist x y ≤ Real.sqrt 2 * Plane.supDist x y := by
     rw [dist_eq_norm]
     exact Plane.norm_le_sqrt_two_mul_supNorm _
-  have hsd : 0 < Plane.supDist x y := by nlinarith
-  nlinarith
+  have hsd : 0 < Plane.supDist x y :=
+    (mul_pos_iff_of_pos_left (Real.sqrt_pos.2 (by norm_num : (0 : ℝ) < 2))).1
+      (ht.trans_le (h.trans hle))
+  apply (div_lt_iff₀ (by norm_num : (0 : ℝ) < 2)).2
+  exact (h.trans hle).trans_lt
+    ((mul_lt_mul_of_pos_right (show Real.sqrt 2 < 2 by norm_num) hsd).trans_eq (mul_comm _ _))
 
 /-- The block of fine samples belonging to one coarse cell lies in that coarse cell. -/
 theorem sample_mem_Icc_of_block {K m j p : ℕ} (hm : 0 < m) (h₁ : p * m ≤ j)
