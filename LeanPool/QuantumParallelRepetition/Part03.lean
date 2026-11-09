@@ -2413,29 +2413,30 @@ theorem dSVBobTargetLocalHarmonicCleanup_stable
         (tensorEmbezzlementTarget (n := n) ξ) -
       embezzlementState (d * n)‖ ≤
         ‖ξ.val - ζ.val‖ + ε := by
-  let source := localUnitaryAction U V
-    (tensorEmbezzlementTarget (n := n) ξ)
-  let reference := localUnitaryAction U V
-    (tensorEmbezzlementTarget (n := n) ζ)
-  let residual := embezzlementState (d * n)
-  have preserved : ‖source - reference‖ = ‖ξ.val - ζ.val‖ := by
-    dsimp [source, reference]
-    rw [← localUnitaryAction_sub,
-      localUnitaryAction_norm,
-      tensorEmbezzlementTarget_sub_norm hn]
-  have triangle : ‖source - residual‖ ≤
-      ‖source - reference‖ + ‖reference - residual‖ := by
-    simpa only [dist_eq_norm] using dist_triangle source reference residual
-  change ‖source - residual‖ ≤ ‖ξ.val - ζ.val‖ + ε
-  calc
-    ‖source - residual‖ ≤
-        ‖source - reference‖ + ‖reference - residual‖ := triangle
-    _ ≤ ‖ξ.val - ζ.val‖ + ε := by
-      rw [preserved]
-      simpa only [add_comm] using add_le_add_left
-        (show ‖reference - residual‖ ≤ ε by
-          simpa only [reference, residual] using clean)
-        ‖ξ.val - ζ.val‖
+  with_reducible
+    let source := localUnitaryAction U V
+      (tensorEmbezzlementTarget (n := n) ξ)
+    let reference := localUnitaryAction U V
+      (tensorEmbezzlementTarget (n := n) ζ)
+    let residual := embezzlementState (d * n)
+    have preserved : ‖source - reference‖ = ‖ξ.val - ζ.val‖ := by
+      dsimp [source, reference]
+      rw [← localUnitaryAction_sub,
+        localUnitaryAction_norm,
+        tensorEmbezzlementTarget_sub_norm hn]
+    have triangle : ‖source - residual‖ ≤
+        ‖source - reference‖ + ‖reference - residual‖ := by
+      simpa only [dist_eq_norm] using dist_triangle source reference residual
+    change ‖source - residual‖ ≤ ‖ξ.val - ζ.val‖ + ε
+    calc
+      ‖source - residual‖ ≤
+          ‖source - reference‖ + ‖reference - residual‖ := triangle
+      _ ≤ ‖ξ.val - ζ.val‖ + ε := by
+        rw [preserved]
+        simpa only [add_comm] using add_le_add_left
+          (show ‖reference - residual‖ ≤ ε by
+            simpa only [reference, residual] using clean)
+          ‖ξ.val - ζ.val‖
 
 theorem dSVBobTargetLocalUniformHarmonicWorkCleanup
     {T : Type*}
