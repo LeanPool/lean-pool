@@ -8,7 +8,6 @@ module
 public import LeanPool.QuantumParallelRepetition.Part09
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
-import Mathlib.Analysis.InnerProductSpace.StarOrder
 
 /-! # Quantum parallel repetition, part 10 -/
 
@@ -17,6 +16,9 @@ import Mathlib.Analysis.InnerProductSpace.StarOrder
 noncomputable section
 
 namespace QuantumParallelRepetition
+
+-- Compare vector expressions without expanding their coordinate formulas.
+attribute [local irreducible] PiLp.instNorm Matrix.toEuclideanCLM
 
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset

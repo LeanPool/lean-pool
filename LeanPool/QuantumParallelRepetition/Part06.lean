@@ -6588,6 +6588,32 @@ section
 open WithLp
 open scoped BigOperators ComplexOrder Kronecker MatrixOrder
 
+/-- Contract the phase and work controls before applying a pair of system matrices. -/
+theorem controlledPairActionSum
+    {phase system work : Type*} [Fintype phase] [Fintype system] [Fintype work]
+    [DecidableEq phase] [DecidableEq work]
+    (U V : Matrix system system ℂ)
+    (shared : phase → phase → ℂ) (state : system → system → ℂ)
+    (residual : work → work → ℂ)
+    (φ ψ : phase) (i j : system) (a b : work) :
+    (∑ χ : phase, ∑ x : system, ∑ k : work,
+      ∑ υ : phase, ∑ y : system, ∑ l : work,
+        (if a = k then if φ = χ then U i x else 0 else 0) *
+          (if b = l then if ψ = υ then V j y else 0 else 0) *
+          (shared χ υ * state x y * residual k l)) =
+      shared φ ψ * (∑ x : system, ∑ y : system, U i x * V j y * state x y) *
+        residual a b := by
+  classical
+  simp only [mul_ite, ite_mul, zero_mul, mul_zero, sum_ite_irrel, sum_ite_eq,
+    mem_univ, ↓reduceIte, sum_const_zero]
+  rw [Finset.mul_sum, Finset.sum_mul]
+  apply Finset.sum_congr rfl
+  intro x _
+  rw [Finset.mul_sum, Finset.sum_mul]
+  apply Finset.sum_congr rfl
+  intro y _
+  ac_rfl
+
 theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
     (B N d L m : ℕ)
     (U V : Matrix.unitaryGroup
@@ -6687,12 +6713,8 @@ theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
           (D : Matrix (Fin (d * n)) (Fin (d * n)) ℂ))
           (e ((φ, a), i), e ((ψ, b), j)) (e q.1, e q.2) *
           source (e q.1, e q.2) :=
-      (Equiv.sum_comp (Equiv.prodCongr e e)
-        (fun q : Fin (d * n) × Fin (d * n) =>
-          ((A : Matrix (Fin (d * n)) (Fin (d * n)) ℂ) ⊗ₖ
-            (D : Matrix (Fin (d * n)) (Fin (d * n)) ℂ))
-            (e ((φ, a), i), e ((ψ, b), j)) q *
-            source q)).symm
+      (Finset.sum_equiv (Equiv.prodCongr e e)
+        (fun _ => by simp only [mem_univ]) (fun _ _ => rfl)).symm
     _ = _ := by
       simp only [Fintype.sum_prod_type, Matrix.kroneckerMap_apply]
       dsimp only [P, DSVDensityRationalPublicLogPhaseHistoryLocalIndex]
@@ -6709,17 +6731,8 @@ theorem dSVDensityRationalPublicLogPhasePhysicalAlignedLocalAction_apply
                       (D : Matrix (Fin (d * n)) (Fin (d * n)) ℂ)
                         (e ((ψ, b), j)) (e ((υ, y), l)) *
                       source (e ((χ, x), k), e ((υ, y), l))) = _
-      simp_rw [left, right, resource]
-      simp only [mul_ite, ite_mul, zero_mul, mul_zero, ofReal_inv, mul_assoc, sum_ite_irrel,
-        sum_ite_eq, mem_univ, ↓reduceIte, sum_const_zero, sum_mul]
-      split_ifs
-      · simp_rw [Finset.mul_sum]
-        apply Finset.sum_congr rfl
-        intro x _
-        apply Finset.sum_congr rfl
-        intro y _
-        ac_rfl
-      · rfl
+      simp only [left, right, resource]
+      rw [controlledPairActionSum]
 
 /--
 The DSV density rational heterogeneous target first spectral alice construction used in the

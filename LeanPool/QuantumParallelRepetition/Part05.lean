@@ -15,6 +15,9 @@ noncomputable section
 
 namespace QuantumParallelRepetition
 
+-- Compare vector expressions without expanding their coordinate formulas.
+attribute [local irreducible] PiLp.instNorm
+
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 
@@ -48,6 +51,46 @@ def exactFixedAliceQuestionMass
       (G.repeat n).questionWeight xs ys
     else 0
 
+/-- Factor a sum of product weights constrained at a fixed set of coordinates. -/
+theorem fixedCoordinateProductSum
+    {n : ℕ} {α : Type*} [Fintype α]
+    (fixed : Finset (Fin n)) (known : Fin n → α) (weight : Fin n → α → ℝ) :
+    (∑ assignment : Fin n → α,
+      if ∀ j, j ∈ fixed → assignment j = known j then
+        ∏ j, weight j (assignment j)
+      else 0) =
+      ∏ j, ∑ a : α,
+        if j ∈ fixed then if a = known j then weight j a else 0
+        else weight j a := by
+  classical
+  calc
+    _ = ∑ assignment : Fin n → α, ∏ j,
+        if j ∈ fixed then
+          if assignment j = known j then weight j (assignment j) else 0
+        else weight j (assignment j) := by
+      apply Finset.sum_congr rfl
+      intro assignment _
+      by_cases satisfies : ∀ j ∈ fixed, assignment j = known j
+      · rw [ite_eq_left satisfies]
+        apply Finset.prod_congr rfl
+        intro j _
+        by_cases fixed_coordinate : j ∈ fixed
+        · rw [ite_eq_left fixed_coordinate, ite_eq_left (satisfies j fixed_coordinate)]
+        · rw [ite_eq_right fixed_coordinate]
+      · rw [ite_eq_right satisfies]
+        obtain ⟨j, failure⟩ := not_forall.mp satisfies
+        obtain ⟨fixed_coordinate, unequal⟩ := not_imp.mp failure
+        symm
+        apply Finset.prod_eq_zero (Finset.mem_univ j)
+        rw [ite_eq_left fixed_coordinate, ite_eq_right unequal]
+    _ = ∏ j, ∑ a : α,
+        if j ∈ fixed then
+          if a = known j then weight j a else 0
+        else weight j a :=
+      (Fintype.prod_sum (fun j a =>
+        if j ∈ fixed then if a = known j then weight j a else 0
+        else weight j a)).symm
+
 theorem exactFixedBobQuestionMass_eq_product
     (G : Game X Y A B) (n : ℕ)
     (fixed : Finset (Fin n))
@@ -59,55 +102,12 @@ theorem exactFixedBobQuestionMass_eq_product
   classical
   unfold exactFixedBobQuestionMass
   simp only [Game.repeat_questionWeight]
-  calc
-    (∑ ys : Fin n → Y,
-      if ∀ j : Fin n, j ∈ fixed → ys j = known j then
-        ∏ j : Fin n, G.questionWeight (xs j) (ys j)
-      else 0) =
-      ∑ ys : Fin n → Y,
-        ∏ j : Fin n,
-          if j ∈ fixed then
-            if ys j = known j then
-              G.questionWeight (xs j) (ys j)
-            else 0
-          else G.questionWeight (xs j) (ys j) := by
-            apply Finset.sum_congr rfl
-            intro ys _
-            calc
-              (if ∀ j : Fin n,
-                  j ∈ fixed → ys j = known j then
-                  ∏ j : Fin n,
-                    G.questionWeight (xs j) (ys j)
-                else 0) =
-                ∏ j : Fin n,
-                  if j ∈ fixed → ys j = known j then
-                    G.questionWeight (xs j) (ys j)
-                  else 0 :=
-                  by
-                    simp only [Fintype.prod_ite_zero]
-                    split <;> simp_all
-              _ = _ := by
-                apply Finset.prod_congr rfl
-                intro j _
-                by_cases hj : j ∈ fixed <;>
-                  by_cases he : ys j = known j <;>
-                    simp [hj, he]
-    _ = ∏ j : Fin n,
-        ∑ y : Y,
-          if j ∈ fixed then
-            if y = known j then G.questionWeight (xs j) y else 0
-          else G.questionWeight (xs j) y :=
-      (Fintype.prod_sum
-        (fun (j : Fin n) (y : Y) =>
-          if j ∈ fixed then
-            if y = known j then G.questionWeight (xs j) y else 0
-          else G.questionWeight (xs j) y)).symm
-    _ = _ := by
-      apply Finset.prod_congr rfl
-      intro j _
-      by_cases hj : j ∈ fixed
-      · simp only [hj, ↓reduceIte, sum_ite_eq', mem_univ]
-      · simp only [hj, ↓reduceIte, Game.marginalX]
+  rw [fixedCoordinateProductSum fixed known (fun j y => G.questionWeight (xs j) y)]
+  apply Finset.prod_congr rfl
+  intro j _
+  by_cases hj : j ∈ fixed
+  · simp only [hj, ↓reduceIte, sum_ite_eq', mem_univ]
+  · simp only [hj, ↓reduceIte, Game.marginalX]
 
 theorem exactFixedAliceQuestionMass_eq_product
     (G : Game X Y A B) (n : ℕ)
@@ -120,55 +120,12 @@ theorem exactFixedAliceQuestionMass_eq_product
   classical
   unfold exactFixedAliceQuestionMass
   simp only [Game.repeat_questionWeight]
-  calc
-    (∑ xs : Fin n → X,
-      if ∀ j : Fin n, j ∈ fixed → xs j = known j then
-        ∏ j : Fin n, G.questionWeight (xs j) (ys j)
-      else 0) =
-      ∑ xs : Fin n → X,
-        ∏ j : Fin n,
-          if j ∈ fixed then
-            if xs j = known j then
-              G.questionWeight (xs j) (ys j)
-            else 0
-          else G.questionWeight (xs j) (ys j) := by
-            apply Finset.sum_congr rfl
-            intro xs _
-            calc
-              (if ∀ j : Fin n,
-                  j ∈ fixed → xs j = known j then
-                  ∏ j : Fin n,
-                    G.questionWeight (xs j) (ys j)
-                else 0) =
-                ∏ j : Fin n,
-                  if j ∈ fixed → xs j = known j then
-                    G.questionWeight (xs j) (ys j)
-                  else 0 :=
-                  by
-                    simp only [Fintype.prod_ite_zero]
-                    split <;> simp_all
-              _ = _ := by
-                apply Finset.prod_congr rfl
-                intro j _
-                by_cases hj : j ∈ fixed <;>
-                  by_cases he : xs j = known j <;>
-                    simp [hj, he]
-    _ = ∏ j : Fin n,
-        ∑ x : X,
-          if j ∈ fixed then
-            if x = known j then G.questionWeight x (ys j) else 0
-          else G.questionWeight x (ys j) :=
-      (Fintype.prod_sum
-        (fun (j : Fin n) (x : X) =>
-          if j ∈ fixed then
-            if x = known j then G.questionWeight x (ys j) else 0
-          else G.questionWeight x (ys j))).symm
-    _ = _ := by
-      apply Finset.prod_congr rfl
-      intro j _
-      by_cases hj : j ∈ fixed
-      · simp only [hj, ↓reduceIte, sum_ite_eq', mem_univ]
-      · simp only [hj, ↓reduceIte, Game.marginalY]
+  rw [fixedCoordinateProductSum fixed known (fun j x => G.questionWeight x (ys j))]
+  apply Finset.prod_congr rfl
+  intro j _
+  by_cases hj : j ∈ fixed
+  · simp only [hj, ↓reduceIte, sum_ite_eq', mem_univ]
+  · simp only [hj, ↓reduceIte, Game.marginalY]
 
 theorem exactFixedBobQuestionMass_insert
     (G : Game X Y A B) (n : ℕ)
@@ -7309,9 +7266,7 @@ private theorem exactFairPsiPhiDistance_mul_postselection_le
           apply Finset.sum_le_sum
           intro x _
           by_cases accepted : exactHistoryAccepted G n D r
-          · rw [ite_eq_left accepted,
-              exactLocallySampleableLaw_eq_fair_born,
-              ite_eq_left accepted]
+          · simp only [exactLocallySampleableLaw_eq_fair_born, ite_eq_left accepted]
             change
               ((_ / repeatedPostselectionMass G n S D) *
                 ‖(exactGlobalHistoryFinPsi
@@ -7333,9 +7288,7 @@ private theorem exactFairPsiPhiDistance_mul_postselection_le
             unfold exactFairHistoryPriorWeight at hscaled ⊢
             field_simp [positive.ne']
             linarith only [hscaled]
-          · rw [ite_eq_right accepted,
-              exactLocallySampleableLaw_eq_fair_born,
-              ite_eq_right accepted]
+          · simp only [exactLocallySampleableLaw_eq_fair_born, ite_eq_right accepted]
             simp only [zero_mul, Std.le_refl]
     _ = 4 * exactFairAcceptedAliceVariation G n S D := by
       unfold exactFairAcceptedAliceVariation
@@ -7390,9 +7343,7 @@ private theorem exactFairGammaPsiDistance_mul_postselection_le
           apply Finset.sum_le_sum
           intro x _
           by_cases accepted : exactHistoryAccepted G n D r
-          · rw [ite_eq_left accepted,
-              exactLocallySampleableLaw_eq_fair_born,
-              ite_eq_left accepted]
+          · simp only [exactLocallySampleableLaw_eq_fair_born, ite_eq_left accepted]
             change
               ((_ / repeatedPostselectionMass G n S D) *
                 ‖(exactGlobalHistoryFinGamma
@@ -7414,9 +7365,7 @@ private theorem exactFairGammaPsiDistance_mul_postselection_le
             unfold exactFairHistoryPriorWeight at hscaled ⊢
             field_simp [positive.ne']
             linarith only [hscaled]
-          · rw [ite_eq_right accepted,
-              exactLocallySampleableLaw_eq_fair_born,
-              ite_eq_right accepted]
+          · simp only [exactLocallySampleableLaw_eq_fair_born, ite_eq_right accepted]
             simp only [zero_mul, Std.le_refl]
     _ = 4 * exactFairAcceptedBobVariation G n S D := by
       unfold exactFairAcceptedBobVariation

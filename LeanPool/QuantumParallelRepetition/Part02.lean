@@ -6,12 +6,9 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.QuantumParallelRepetition.Part01
-public import Mathlib.Analysis.Matrix.Order -- shake: keep
 public import Mathlib.Analysis.Normed.Module.Normalize
 public import Mathlib.InformationTheory.KullbackLeibler.KLFun
 public import Mathlib.LinearAlgebra.Matrix.Permutation
-public import Mathlib.MeasureTheory.Function.L2Space
-public import Mathlib.MeasureTheory.SpecificCodomains.Pi -- shake: keep
 public import Mathlib.NumberTheory.Harmonic.Defs
 import Mathlib.NumberTheory.Harmonic.Bounds
 
@@ -1666,50 +1663,7 @@ private theorem exists_proofTargetCanonicalSpectralSchmidtDecomposition
         (hF.isHermitian.eigenvalues i) • (ofLp (v i)) at spectral
     rw [spectral, ← hσsq]
     rfl
-  let s : Set (Fin d) := {i | σ i ≠ 0}
-  let f : Fin d → EuclideanSpace ℂ (Fin d) :=
-    fun i => ((σ i : ℂ)⁻¹) • T (v i)
-  have hGram (i j : Fin d) :
-      inner ℂ (T (v i)) (T (v j)) =
-        ((σ j ^ 2 : ℝ) : ℂ) * inner ℂ (v i) (v j) := by
-    calc
-      inner ℂ (T (v i)) (T (v j)) =
-          inner ℂ (v i) (T.adjoint (T (v j))) :=
-        (T.adjoint_inner_right (v i) (T (v j))).symm
-      _ = inner ℂ (v i) (((σ j ^ 2 : ℝ) : ℂ) • v j) := by
-        rw [← heigen j]
-        rfl
-      _ = _ := by rw [inner_smul_right]
-  have hf : Orthonormal ℂ (s.domRestrict f) := by
-    rw [orthonormal_iff_ite]
-    intro i j
-    have hi : (σ (i : Fin d) : ℂ) ≠ 0 := by
-      exact_mod_cast i.property
-    have hj : (σ (j : Fin d) : ℂ) ≠ 0 := by
-      exact_mod_cast j.property
-    change inner ℂ
-      (((σ (i : Fin d) : ℂ)⁻¹) • T (v i))
-      (((σ (j : Fin d) : ℂ)⁻¹) • T (v j)) = _
-    rw [inner_smul_left, inner_smul_right, hGram,
-      v.inner_eq_ite]
-    by_cases same : i = j
-    · subst j
-      simp only [ite_true, mul_one]
-      have real_star :
-          starRingEnd ℂ ((σ (i : Fin d) : ℂ)⁻¹) =
-            ((σ (i : Fin d) : ℂ)⁻¹) := by simp only [map_inv₀, conj_ofReal]
-      rw [real_star]
-      push_cast
-      field_simp
-    · have unequal : (i : Fin d) ≠ (j : Fin d) := by
-        intro equal
-        exact same (Subtype.ext equal)
-      simp only [map_inv₀, conj_ofReal, ofReal_pow, unequal, ↓reduceIte, mul_zero, same]
-  obtain ⟨u, hu⟩ :=
-    Orthonormal.exists_orthonormalBasis_extension_of_card_eq
-      (by
-        rw [Fintype.card_fin]
-        exact finrank_euclideanSpace_fin) hf
+  obtain ⟨u, nonzero_singular⟩ := linearMap_exists_left_singularBasis T σ v heigen
   have singular (i : Fin d) :
       T (v i) = (σ i : ℂ) • u i := by
     by_cases zero : σ i = 0
@@ -1722,13 +1676,7 @@ private theorem exists_proofTargetCanonicalSpectralSchmidtDecomposition
         rw [← T.ker_adjoint_comp_self]
         exact LinearMap.mem_ker.mpr kernel
       simp only [image, zero, ofReal_zero, zero_smul]
-    · have chosen : u i = f i := hu i zero
-      rw [chosen]
-      change T (v i) =
-        (σ i : ℂ) • (((σ i : ℂ)⁻¹) • T (v i))
-      rw [smul_smul, mul_inv_cancel₀]
-      · simp only [one_smul]
-      · exact_mod_cast zero
+    · exact nonzero_singular i zero
   refine ⟨orthonormalBasisUnitary u, ?_⟩
   have eigen_unitary :
       orthonormalBasisUnitary v =
@@ -1755,12 +1703,12 @@ private theorem exists_proofTargetCanonicalSpectralSchmidtDecomposition
           (orthonormalBasisUnitary v) := by
     rw [eigen_unitary]
   rw [replace]
-  simpa [T, C, σ, targetCoefficientMatrix, Matrix.toLpLin_apply,
-    EuclideanSpace.basisFun_apply, Matrix.mulVec_single_one,
-    Matrix.col_apply, EuclideanSpace.inner_single_right,
-    conjugateUnitary_apply,
-    orthonormalBasisUnitary_apply, singular,
-    mul_assoc, mul_left_comm, mul_comm] using coordinate
+  simpa only [T, C, σ, conjugateUnitary_apply, orthonormalBasisUnitary_apply,
+    RCLike.star_def,
+    mul_comm, mul_left_comm, EuclideanSpace.basisFun_apply, toLpLin_apply, PiLp.ofLp_single,
+    mulVec_single, MulOpposite.op_one, one_smul, col_apply, targetCoefficientMatrix,
+    EuclideanSpace.inner_single_right, one_mul, singular, Complex.coe_smul, ofLp_sum,
+    ofLp_smul, Finset.sum_apply, Pi.smul_apply, real_smul, smul_eq_mul, mul_assoc] using coordinate
 
 end
 
@@ -5353,15 +5301,6 @@ theorem dSVUniformDensityCompletePureHistory_raw_norm
       if flag.val = 0 then (1 : ℝ) else 0)
   have hsquare : ‖single‖ ^ 2 = (d : ℝ) * (N : ℝ) :=
     dSVUniformDensityThresholdRaw_norm_sq N d
-  have hwhole :
-      ‖whole‖ ^ 2 = (((N * d) ^ (L + 1) : ℕ) : ℝ) := by
-    have original := sharedThresholdResourceRaw_norm_sq
-      (d := Fin (L + 1) →
-        DSVUniformDensityThresholdLocalIndex N d)
-      (fun flag : Fin (L + 1) =>
-        if flag.val = 0 then (1 : ℝ) else 0)
-    simpa [DSVUniformDensityThresholdLocalIndex,
-      whole] using original
   have hpower :
       (‖single‖ ^ (L + 1)) ^ 2 =
         (((N * d) ^ (L + 1) : ℕ) : ℝ) := by
@@ -5373,6 +5312,17 @@ theorem dSVUniformDensityCompletePureHistory_raw_norm
           rw [hsquare]
           push_cast
           ac_rfl
+  have hwhole :
+      ‖whole‖ ^ 2 = (((N * d) ^ (L + 1) : ℕ) : ℝ) := by
+    have original := sharedThresholdResourceRaw_norm_sq
+      (d := Fin (L + 1) →
+        DSVUniformDensityThresholdLocalIndex N d)
+      (fun flag : Fin (L + 1) =>
+        if flag.val = 0 then (1 : ℝ) else 0)
+    simpa only [whole, DSVUniformDensityThresholdLocalIndex, Fin.val_eq_zero_iff, Nat.cast_pow,
+      Nat.cast_mul, Fintype.card_pi, Fintype.card_sigma, Fintype.card_fin, sum_const,
+      card_univ, smul_eq_mul, prod_const, ite_pow, one_pow, ne_eq, OfNat.ofNat_ne_zero,
+      not_false_eq_true, zero_pow, sum_ite_eq', mem_univ, ↓reduceIte, mul_one] using original
   change ‖whole‖ = ‖single‖ ^ (L + 1)
   exact (sq_eq_sq₀ (norm_nonneg whole) (pow_nonneg (norm_nonneg single) _)).mp
     (hwhole.trans hpower.symm)

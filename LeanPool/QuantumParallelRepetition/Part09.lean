@@ -15,6 +15,9 @@ noncomputable section
 
 namespace QuantumParallelRepetition
 
+-- Compare vector expressions without expanding their coordinate formulas.
+attribute [local irreducible] PiLp.instNorm Matrix.toEuclideanCLM
+
 open scoped ComplexOrder Matrix BigOperators InnerProductSpace
 open Complex Matrix Finset
 
@@ -610,6 +613,21 @@ private theorem exactSourceGlobalCatalystWinningEffect_tensor_quadratic
       source residual
       (embezzlementState_norm e residual_positive)
 
+theorem exactPaddedVector_smul
+    (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
+    (D : Finset (Fin n))
+    (r : ExactHistoryFlag X Y A B D)
+    (c : ℂ) (z : EuclideanSpace ℂ
+      (ExactAliceLocalIndex G n S D r ×
+        ExactBobLocalIndex G n S D r)) :
+    exactPaddedVector G n S D r (c • z) =
+      c • exactPaddedVector G n S D r z := by
+  ext q
+  rcases q with ⟨i, j⟩
+  rcases i with i | (i | i) <;>
+    rcases j with j | (j | j) <;>
+    simp only [exactPaddedVector, PiLp.smul_apply, smul_zero]
+
 theorem exactPsi_eq_padded_normalizedPureVector_of_ne_zero
     (G : Game X Y A B) (n : ℕ) (S : Strategy (G.repeat n))
     (D : Finset (Fin n))
@@ -632,12 +650,9 @@ theorem exactPsi_eq_padded_normalizedPureVector_of_ne_zero
   unfold exactPsi normalizeOrDefault
   rw [ite_eq_right padded_nonzero, NormedSpace.normalize,
     exactPaddedVector_norm]
+  rw [normalizedPureVector, exactPaddedVector_smul]
   ext q
-  rcases q with ⟨i, j⟩
-  rcases i with i | (i | i) <;>
-    rcases j with j | (j | j) <;>
-    simp only [exactPaddedVector, normalizedPureVector, PiLp.smul_apply,
-      smul_zero, smul_eq_mul, Complex.real_smul]
+  simp only [PiLp.smul_apply, Complex.real_smul, smul_eq_mul]
 
 private theorem exactSourceGlobalCatalystWinningEffect_law_supported_verifier
     [DecidableEq A] [DecidableEq B]
@@ -4148,55 +4163,76 @@ private theorem unconditionalActualPhysicalMixedAcceptedSpectralGauge_stage
       dSVDensityRationalPublicBucketPhysicalCoherentMixedState
         (N := N) (B := B) w m ξ ζ := by
   classical
+  let system := DSVUniformDensityThresholdLocalIndex N d
+  let selected := UnconditionalSelectedCopyLocalIndex B d N m
+  let pack : Fin B × (system × Fin m) ≃ selected :=
+    (Equiv.sigmaEquivProd (Fin B) (system × Fin m)).symm.trans
+      (unconditionalActualCleanedSelectedStagePhysicalIndexEquiv B N d m)
+  have gauge (U : Matrix.unitaryGroup system ℂ)
+      (φ χ : Fin B) (x y : system) (a k : Fin m) :
+      (unconditionalActualCleanedSelectedStageSpectralUnitary
+          (B := B) (m := m) U : Matrix selected selected ℂ)
+        (pack (φ, (x, a))) (pack (χ, (y, k))) =
+        if a = k then if φ = χ then (U : Matrix system system ℂ) x y else 0 else 0 := by
+    rcases x with ⟨threshold_x, spectral_x⟩
+    rcases y with ⟨threshold_y, spectral_y⟩
+    change
+      (unconditionalActualCleanedSelectedStageSpectralUnitary
+          (B := B) (m := m) U : Matrix selected selected ℂ)
+        ⟨(φ, spectral_x), finProdFinEquiv (threshold_x, a)⟩
+        ⟨(χ, spectral_y), finProdFinEquiv (threshold_y, k)⟩ = _
+    simp only [unconditionalActualPhysicalMixedAcceptedSpectralGauge_apply
+      (B := B) (N := N) (d := d) (m := m)]
+    by_cases same_phase : φ = χ <;> by_cases same_work : a = k <;>
+      simp only [same_phase, same_work, ↓reduceIte, mul_one, mul_zero]
+  have reindex (f : selected × selected → ℂ) :
+      (∑ q, f q) =
+        ∑ χ : Fin B, ∑ x : system, ∑ k : Fin m,
+          ∑ υ : Fin B, ∑ y : system, ∑ l : Fin m,
+            f (pack (χ, (x, k)), pack (υ, (y, l))) := by
+    calc
+      _ = ∑ q : (Fin B × (system × Fin m)) × (Fin B × (system × Fin m)),
+          f (pack q.1, pack q.2) := by
+        symm
+        apply Finset.sum_bij (fun q _ => (Equiv.prodCongr pack pack) q)
+        case i_inj =>
+          intro q _ r _ equal
+          simpa only [Equiv.apply_eq_iff_eq] using equal
+        case hi =>
+          intro q _
+          simp only [mem_univ]
+        case i_surj =>
+          intro q _
+          exact ⟨(Equiv.prodCongr pack pack).symm q, Finset.mem_univ _,
+            (Equiv.prodCongr pack pack).apply_symm_apply q⟩
+        case h =>
+          intro q _
+          rfl
+      _ = _ := by simp only [Fintype.sum_prod_type]
   ext ⟨⟨⟨φ, i⟩, packedA⟩, ⟨⟨ψ, j⟩, packedB⟩⟩
   obtain ⟨⟨k, a⟩, rfl⟩ := finProdFinEquiv.surjective packedA
   obtain ⟨⟨l, b⟩, rfl⟩ := finProdFinEquiv.surjective packedB
-  have reindex_packed (f : Fin (N * m) → ℂ) :
-      (∑ packed : Fin (N * m), f packed) =
-        ∑ packed : Fin N × Fin m, f (finProdFinEquiv packed) :=
-    (Equiv.sum_comp finProdFinEquiv f).symm
   rw [unconditionalPhysicalAcceptedCoherentStage_apply
     width grid ξ ζ φ ψ i j k l a b]
-  conv_lhs =>
-    simp only [Matrix.mulVec, dotProduct, Matrix.kroneckerMap_apply,
-      Fintype.sum_prod_type, Fintype.sum_sigma]
-    simp only [reindex_packed]
-    simp only [Fintype.sum_prod_type]
-    simp only [unconditionalActualPhysicalMixedAcceptedSpectralGauge_apply
-      (B := B) (N := N) (d := d) (m := m)]
-    simp only [unconditionalActualPhysicalMixedAcceptedRawStage,
-      Equiv.symm_apply_apply, ite_mul, mul_ite, zero_mul, mul_zero, mul_one]
-    simp only [sum_ite_irrel, sum_ite_eq, mem_univ, ↓reduceIte, sum_const_zero]
-  let summand :
-      DSVUniformDensityThresholdLocalIndex N d →
-        DSVUniformDensityThresholdLocalIndex N d → ℂ :=
-    fun x y =>
-      (dSVUniformDensityAliceHistorySpectralCopy (N := N) ξ :
-        Matrix (DSVUniformDensityThresholdLocalIndex N d)
-          (DSVUniformDensityThresholdLocalIndex N d) ℂ) ⟨k, i⟩ x *
-      (((dSVUniformDensityBobHistoryCopyBasis (N := N) ζ)⁻¹ :
-        Matrix.unitaryGroup (DSVUniformDensityThresholdLocalIndex N d) ℂ) :
-        Matrix (DSVUniformDensityThresholdLocalIndex N d)
-          (DSVUniformDensityThresholdLocalIndex N d) ℂ) ⟨l, j⟩ y *
-      dSVDensityRationalPhysicalAcceptedOutcome w N ξ ζ (x, y)
-  conv_rhs =>
-    simp only [dSVDensityRationalCanonicalPrefixSpectralOutcome,
-      mulVec, dotProduct, kroneckerMap_apply, Fintype.sum_prod_type]
-  change _ = ePRState B (φ, ψ) *
-    (∑ x, ∑ y, summand x y) * embezzlementState m (a, b)
-  calc
-    _ = ∑ i' : Fin d, ∑ k' : Fin N, ∑ j' : Fin d, ∑ l' : Fin N,
-        ePRState B (φ, ψ) * summand ⟨k', i'⟩ ⟨l', j'⟩ *
-          embezzlementState m (a, b) := by
-      refine Finset.sum_congr rfl fun i' _ => Finset.sum_congr rfl fun k' _ =>
-        Finset.sum_congr rfl fun j' _ => Finset.sum_congr rfl fun l' _ => ?_
-      dsimp only [summand]
-      ac_rfl
-    _ = ePRState B (φ, ψ) *
-        (∑ i' : Fin d, ∑ k' : Fin N, ∑ j' : Fin d, ∑ l' : Fin N,
-          summand ⟨k', i'⟩ ⟨l', j'⟩) * embezzlementState m (a, b) := by
-      simp only [Finset.mul_sum, Finset.sum_mul]
-    _ = _ := by rw [unconditionalActualPhysicalMixedAcceptedSpectralGauge_sum]
+  change
+    (((unconditionalActualCleanedSelectedStageSpectralUnitary
+        (B := B) (m := m) (dSVUniformDensityAliceHistorySpectralCopy (N := N) ξ) :
+        Matrix selected selected ℂ) ⊗ₖ
+      (unconditionalActualCleanedSelectedStageSpectralUnitary
+        (B := B) (m := m) ((dSVUniformDensityBobHistoryCopyBasis (N := N) ζ)⁻¹) :
+        Matrix selected selected ℂ)).mulVec
+      (ofLp (unconditionalActualPhysicalMixedAcceptedRawStage (B := B) (m := m) w ξ ζ)))
+      (pack (φ, (⟨k, i⟩, a)), pack (ψ, (⟨l, j⟩, b))) = _
+  rw [Matrix.mulVec, dotProduct, reindex]
+  simp only [Matrix.kroneckerMap_apply, gauge]
+  simp only [unconditionalActualPhysicalMixedAcceptedRawStage, pack,
+    unconditionalActualCleanedSelectedStagePhysicalIndexEquiv,
+    Equiv.trans_apply, Equiv.sigmaEquivProd_symm_apply, Equiv.coe_fn_mk,
+    Equiv.symm_apply_apply, Sigma.eta]
+  erw [controlledPairActionSum]
+  simp only [dSVDensityRationalCanonicalPrefixSpectralOutcome, Matrix.mulVec, dotProduct,
+    Matrix.kroneckerMap_apply, Fintype.sum_prod_type]
+  rfl
 
 end
 

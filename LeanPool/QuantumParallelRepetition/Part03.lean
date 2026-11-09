@@ -570,7 +570,8 @@ theorem dSVDensityRationalCompleteProjectiveOutcome_norm_sq_eq
           (ofLp (sharedThresholdResource (d := Fin d) τ)))‖ ^ 2 =
       (∑ k : Fin N, (Matrix.trace (P k * R k)).re) /
         ((d : ℝ) * (N : ℝ))
-  simpa [τ] using
+  simpa only [τ, blockDiagonal'_transpose, one_pow, one_mul, Fintype.card_fin,
+    sum_const, card_univ, nsmul_eq_mul, mul_one] using
     sharedThresholdResource_block_action_norm_sq
       τ P R
       (fun k =>
@@ -2526,7 +2527,7 @@ theorem dSVDensityRationalCanonicalUnitPrefix_relative_distance_sq
       change x ^ 2 ≤ _
       rw [magnitude, denominator]
       norm_num only [Nat.cast_one, div_one]
-      nlinarith [sq_nonneg x]
+      nlinarith only [x_nonnegative, x_two, s_one, sq_nonneg x]
   · have r_positive_nat : 0 < r.val := Nat.pos_of_ne_zero zero
     have r_positive : (0 : ℝ) < r.val := by
       exact_mod_cast r_positive_nat
@@ -2554,8 +2555,13 @@ theorem dSVDensityRationalCanonicalUnitPrefix_relative_distance_sq
       (mul_nonneg x_nonnegative root_positive.le) linear
     have weighted : x ^ 2 * (r.val : ℝ) ≤
         4 * |(r.val : ℝ) - (s.val : ℝ)| := by
-      have root_square := Real.sq_sqrt r_positive.le
-      nlinarith [y_squared]
+      calc
+        x ^ 2 * (r.val : ℝ) = (x * Real.sqrt (r.val : ℝ)) ^ 2 := by
+          rw [mul_pow, Real.sq_sqrt r_positive.le]
+        _ ≤ (2 * y) ^ 2 := by simpa only [pow_two] using square
+        _ = 4 * |(r.val : ℝ) - (s.val : ℝ)| := by
+          rw [mul_pow, y_squared]
+          norm_num
     have rank_relative :
         x ^ 2 ≤ 4 * |(r.val : ℝ) - (s.val : ℝ)| /
           (r.val : ℝ) :=
