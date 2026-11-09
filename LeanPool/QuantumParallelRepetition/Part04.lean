@@ -765,7 +765,7 @@ theorem commonFinitePurification_weighted_left_variation_le
               finitePurificationMatrix F anchor positive hanchor meanIndex)))
         (KB.conjTranspose * KB) at hnonneg
   rw [hsum] at hnonneg
-  linarith only [positive, hanchor, hnonneg]
+  exact le_add_neg_iff_le.mp hnonneg
 
 theorem commonFinitePurification_weighted_right_variation_le
     {X Y A B ι κ eA : Type*}
@@ -827,7 +827,7 @@ theorem commonFinitePurification_weighted_right_variation_le
     intro b _
     rw [finiteLocalPurificationVector_sub_right_norm_sq]
   rw [map_sub (bornTracePairing S.state.matrix (KA.conjTranspose * KA)), hsum] at hnonneg
-  linarith only [positive, hanchor, hnonneg]
+  exact le_add_neg_iff_le.mp hnonneg
 
 end
 
@@ -5210,7 +5210,7 @@ theorem finiteRelativeEntropy_uniform_le_log_card
         rw [hratio]
         apply mul_le_mul_of_nonneg_left _ (nonnegative z)
         apply Real.log_le_log (mul_pos hp hcardpos)
-        nlinarith only [hpone]
+        exact (mul_le_iff_le_one_left hcardpos).mpr hpone
     _ = Real.log (Fintype.card Z : ℝ) := by
       rw [← Finset.sum_mul, normalized]
       ac_rfl
@@ -5519,7 +5519,7 @@ theorem finitePrefixRelativeEntropy_budget
         (finitePrefixMask base 0) joint hjoint)
       (groupedMass_nonneg
         (finitePrefixMask base 0) prior hprior)
-  linarith
+  exact sub_le_self (finiteRelativeEntropy joint prior) hzero
 
 theorem reversePartition_relativeEntropy_budget
     {M : Type*} [Fintype M]

@@ -818,13 +818,8 @@ theorem dSVDensityRationalCanonicalAcceptedTarget_distance_le
     ‖ξ.val - dSVDensityRationalCanonicalAcceptedTarget
         w N ξ‖ ≤
       Real.sqrt (1 / w + (d : ℝ) * w / (N : ℝ)) := by
-  have nonnegative : 0 ≤ 1 / w + (d : ℝ) * w / (N : ℝ) := by
-    positivity
-  have squared :=
-    dSVDensityRationalCanonicalAcceptedTarget_distance_sq_le
-      width grid ξ
-  have exact_sqrt := Real.sq_sqrt nonnegative
-  nlinarith only [squared, exact_sqrt, Real.sqrt_nonneg (1 / w + (d : ℝ) * w / (N : ℝ))]
+  exact Real.le_sqrt_of_sq_le
+    (dSVDensityRationalCanonicalAcceptedTarget_distance_sq_le width grid ξ)
 
 theorem dSVDensityRationalCanonicalAcceptedTarget_ne_zero
     {d N : ℕ} {w : ℝ} (width : 0 < w) (grid : 0 < N)
@@ -1811,7 +1806,7 @@ private theorem dSVDensityRationalActualMixed_escape_ge_diagonal
       grid dimension w ξ ζ,
     ← dSVDensityRationalActualMixedAsynchronousMass_eq_crossHazard
       w N ξ ζ] at loss
-  linarith
+  exact tsub_le_iff_left.mp loss
 
 end
 

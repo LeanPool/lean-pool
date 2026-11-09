@@ -1290,6 +1290,31 @@ private def unconditionalConjugateSourceGlobalCatalystWinningEffect
           G n S D e b₀ y)).effect b
     else 0
 
+private theorem conjugateWinningEffect_eq_transpose
+    {ι κ : Type*} [Fintype ι] [Fintype κ]
+    [DecidableEq ι] [DecidableEq κ]
+    (G : Game X Y A B) (PA : POVM A ι) (PB : POVM B κ)
+    (x : X) (y : Y) :
+    (∑ a : A, ∑ b : B,
+      if G.predicate x y a b = true then
+        (unconditionalConjugatePOVM PA).effect a ⊗ₖ
+          (unconditionalConjugatePOVM PB).effect b
+      else 0) =
+      (∑ a : A, ∑ b : B,
+        if G.predicate x y a b = true then
+          PA.effect a ⊗ₖ PB.effect b
+        else 0).transpose := by
+  classical
+  rw [Matrix.transpose_sum]
+  apply Finset.sum_congr rfl
+  intro a _
+  rw [Matrix.transpose_sum]
+  apply Finset.sum_congr rfl
+  intro b _
+  split_ifs
+  · exact unconditionalConjugatePOVM_jointEffect PA PB a b
+  · exact Matrix.transpose_zero.symm
+
 private theorem
     unconditionalConjugateSourceGlobalCatalystWinningEffect_eq_transpose
     [DecidableEq A] [DecidableEq B]
@@ -1300,21 +1325,11 @@ private theorem
         G n S D e a₀ b₀ x y =
       (exactSourceGlobalCatalystWinningEffect
         G n S D e a₀ b₀ x y).transpose := by
-  classical
-  unfold unconditionalConjugateSourceGlobalCatalystWinningEffect
-    exactSourceGlobalCatalystWinningEffect
-  rw [Matrix.transpose_sum]
-  apply Finset.sum_congr rfl
-  intro a _
-  rw [Matrix.transpose_sum]
-  apply Finset.sum_congr rfl
-  intro b _
-  split_ifs
-  · exact unconditionalConjugatePOVM_jointEffect
-      (exactSourceGlobalCatalystAlicePOVM G n S D e a₀ x)
-      (exactSourceGlobalCatalystBobPOVM G n S D e b₀ y)
-      a b
-  · exact Matrix.transpose_zero.symm
+  simpa only [unconditionalConjugateSourceGlobalCatalystWinningEffect,
+    exactSourceGlobalCatalystWinningEffect] using!
+      conjugateWinningEffect_eq_transpose G
+        (exactSourceGlobalCatalystAlicePOVM G n S D e a₀ x)
+        (exactSourceGlobalCatalystBobPOVM G n S D e b₀ y) x y
 
 private theorem unconditionalConjugateSourceGlobalCatalystWinningEffect_quadratic
     [DecidableEq A] [DecidableEq B]
@@ -6927,32 +6942,15 @@ private theorem unconditionalActualFairSourceSelectedBorn_of_base
   have work_unit : ‖work‖ = 1 :=
     unconditionalActualFairSourcePhaseHarmonicWork_norm
       phases (Nat.mul_pos grid harmonic)
-  change
-    quadraticExpectation
-      (Matrix.toEuclideanCLM
-        (n :=
-          UnconditionalSelectedCopyLocalIndex P d N m ×
-          UnconditionalSelectedCopyLocalIndex P d N m)
-        (𝕜 := ℂ)
-        (directDSVActualLocalPOVMWinningEffect G
-          (directDSVActualReindexedRetainedPOVM e
-            (integratorActualC485SourceAlicePOVM G n S D a₀ x))
-          (directDSVActualReindexedRetainedPOVM e
-            (integratorActualC485SourceBobPOVM G n S D b₀ y)) x y))
-      stage = value
-  rw [directDSVActualReindexedRetainedPOVMWinningEffect_tensor_quadratic
-    G e e
-    (integratorActualC485SourceAlicePOVM G n S D a₀ x)
-    (integratorActualC485SourceBobPOVM G n S D b₀ y)
-    x y stage (unconditionalConjugatePureVector ψ) work
-    (unconditionalActualFairSourcePhaseHarmonicStage_sourceProduct ψ)]
-  change
-    ‖work‖ ^ 2 *
-      quadraticExpectation
-        (unconditionalActualFairSourceBaseWinningCLM
-          G n S D a₀ b₀ x y)
-        (unconditionalConjugatePureVector ψ) = value
-  rw [work_unit, one_pow, one_mul, base_born]
+  have born :=
+    directDSVActualReindexedRetainedPOVMWinningEffect_tensor_quadratic
+      G e e
+      (integratorActualC485SourceAlicePOVM G n S D a₀ x)
+      (integratorActualC485SourceBobPOVM G n S D b₀ y)
+      x y stage (unconditionalConjugatePureVector ψ) work
+      (unconditionalActualFairSourcePhaseHarmonicStage_sourceProduct ψ)
+  simp only [work_unit, one_pow, one_mul] at born
+  exact born.trans base_born
 
 private theorem unconditionalActualFairSourceOuterBorn_of_base
     {X Y A B : Type}

@@ -2046,7 +2046,7 @@ private theorem unconditionalSmallSource_root_estimates
       (by norm_num : (1 / 12 : ℝ) ≤ 1 / 3)
   have delta_bound : δ ≤ R := by
     dsimp [R]
-    linarith only [scaled_nonnegative, delta_root]
+    exact le_add_of_le_of_nonneg delta_root scaled_nonnegative
   have delta_sq_bound : δ ^ 2 ≤ R := by
     linarith only [scaled_nonnegative, delta_root,
       mul_nonneg delta_nonnegative (sub_nonneg.mpr delta_bounded)]
@@ -2063,7 +2063,7 @@ private theorem unconditionalSmallSource_root_estimates
         (by norm_num : (0 : ℝ) ≤ 1 / 12)
         (by norm_num : (1 / 12 : ℝ) ≤ 1 / 6)
     dsimp [R]
-    linarith only [scaled_nonnegative, root_compare]
+    exact le_add_of_le_of_nonneg root_compare scaled_nonnegative
   exact ⟨root_nonnegative, eta_bound, delta_bound,
     delta_sq_bound, delta_sqrt_bound⟩
 
@@ -3051,7 +3051,7 @@ theorem pdfGap_le_one
     (G : Game X Y A B) :
     1 - entangledValue G ≤ 1 := by
   have nonnegative := entangledValue_nonneg G
-  linarith
+  exact sub_le_self 1 nonnegative
 
 theorem pdfPostselectionLogCost_lt_of_exponential
     {X Y A B : Type}

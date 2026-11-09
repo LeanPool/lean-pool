@@ -128,7 +128,7 @@ theorem exists_proofHarmonicNumber_ratio_ge
   have hupper := harmonicNumber_mul_le_add hd hn
   have hbudget : C < ε * harmonicNumber n := by
     have h := (div_lt_iff₀ hε).mp hnlarge
-    linarith
+    exact (div_lt_iff₀' hε).mp hnlarge
   refine ⟨n, hn, (le_div_iff₀ hden).mpr ?_⟩
   have hscaled := mul_le_mul_of_nonneg_left
     hupper (sub_nonneg.mpr hεone)
@@ -460,7 +460,7 @@ private theorem descendingHarmonicSchmidtAmplitude_le_harmonic
   have hnonneg :
       0 ≤ x * Real.sqrt ((k.val : ℝ) + 1) :=
     mul_nonneg hx hsqrt.le
-  nlinarith only [hsquare, hnonneg]
+  exact (sq_le_one_iff₀ hnonneg).mp hsquare
 
 private def diagonalSchmidtUnitVector
     {d : ℕ} (σ : Fin d → ℝ)
@@ -2466,7 +2466,7 @@ theorem dSVHeterogeneousRealStopping_escape_budget
     _ ≤ 1 := by
       have := dSVHeterogeneousRealPrefix_nonneg
         continuation continuation_nonnegative N
-      linarith only [this]
+      exact sub_le_self 1 this
 
 end
 
@@ -3543,7 +3543,7 @@ theorem quadratic_le_klFun {x : ℝ} (hx : 0 ≤ x) :
     3 * (x - 1) ^ 2 / (2 * (x + 2)) ≤ InformationTheory.klFun x := by
   have h := pinskerScalarGap_nonneg hx
   dsimp [pinskerScalarGap] at h
-  linarith
+  exact le_add_neg_iff_le.mp h
 
 /-- The entropy quantity for finite relative. -/
 def finiteRelativeEntropy {ι : Type*} [Fintype ι]
@@ -4843,7 +4843,7 @@ theorem dSVUniformDensityThresholdGrid_count_eq_floor
     mul_nonneg nonnegative gridpositive.le
   have floor_bound : Nat.floor (density * (N : ℝ)) ≤ N := by
     have product : density * (N : ℝ) ≤ (N : ℝ) := by
-      nlinarith
+      exact (mul_le_iff_le_one_left gridpositive).mpr bounded
     have floor := Nat.floor_mono product
     simpa only [ge_iff_le, Nat.floor_natCast] using floor
   have same :
