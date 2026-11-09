@@ -719,6 +719,48 @@ theorem integral_thetaT_mul (T : DyadicCube d) (w : TestFun d) :
           (T.child ε).vol := by
   simpa only [thetaT] using integral_smul_cube_difference_mul T w (D.phiT R T) (D.psiT hR hRs hFR)
 
+/-- Subtract a multiple of the denominator from a test function in a ratio difference. -/
+private theorem sum_avg_ratio_diff_mul_eq (T : DyadicCube d) (f v w : TestFun d)
+    (hvT : avg T v ≠ 0) (hvc : ∀ ε : Fin d → Bool, avg (T.child ε) v ≠ 0) :
+    ∑ ε : Fin d → Bool, (avg T f / avg T v - avg (T.child ε) f / avg (T.child ε) v) *
+        avg (T.child ε) w * (T.child ε).vol =
+      ∑ ε : Fin d → Bool,
+        (avg T f / avg T v - avg (T.child ε) f / avg (T.child ε) v) *
+          (avg (T.child ε) w - avg T w / avg T v * avg (T.child ε) v) *
+            (T.child ε).vol := by
+  have hsum : ∑ ε : Fin d → Bool,
+      (avg T f / avg T v -
+          avg (T.child ε) f / avg (T.child ε) v) *
+        avg (T.child ε) v * (T.child ε).vol = 0 := by
+    have h1 := avg_mul_vol_children' T f
+    have h2 := avg_mul_vol_children' T v
+    rw [Finset.sum_congr rfl fun ε _ => show
+      (avg T f / avg T v -
+          avg (T.child ε) f / avg (T.child ε) v) *
+        avg (T.child ε) v * (T.child ε).vol =
+      avg T f / avg T v *
+          (avg (T.child ε) v * (T.child ε).vol) -
+        avg (T.child ε) f * (T.child ε).vol by
+          rw [sub_mul, div_mul_cancel₀ _ (hvc ε)]; ring]
+    rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← h2, ← h1, div_mul_eq_mul_div,
+      mul_comm (avg T v) T.vol, ← mul_assoc, mul_div_assoc, div_self hvT, mul_one, sub_self]
+  calc ∑ ε : Fin d → Bool,
+        (avg T f / avg T v -
+            avg (T.child ε) f / avg (T.child ε) v) *
+          avg (T.child ε) w * (T.child ε).vol
+      = ∑ ε : Fin d → Bool,
+          (avg T f / avg T v -
+              avg (T.child ε) f / avg (T.child ε) v) *
+            (avg (T.child ε) w - avg T w / avg T v * avg (T.child ε) v) *
+              (T.child ε).vol
+        + avg T w / avg T v * ∑ ε : Fin d → Bool,
+          (avg T f / avg T v -
+              avg (T.child ε) f / avg (T.child ε) v) *
+            avg (T.child ε) v * (T.child ε).vol := by
+        rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+        exact Finset.sum_congr rfl fun ε _ => by ring
+    _ = _ := by rw [hsum, mul_zero, add_zero]
+
 /-- For `T ∈ 𝐓`, with `ψ = [𝔥]/[v]` on `T` and its children, the sum `∑_ε (ψ_T − ψ_{T_ε}) [w]_{T_ε}
 |T_ε|`
 equals `∑_ε ([𝔥]_T/[v]_T − [𝔥]_{T_ε}/[v]_{T_ε}) ([w]_{T_ε} − ([w]_T/[v]_T) [v]_{T_ε}) |T_ε|`, since
@@ -742,38 +784,7 @@ theorem sum_psiT_diff_mul_eq {T : DyadicCube d} (hT : T ∈ D.setT hR hRs hFR) (
       avg (T.child ε) (D.prunedH hR hRs hFR) / avg (T.child ε) (D.vP R) := fun ε => by
     rw [psiT, coefOn_eq_div (hvc ε)]
   simp only [hψT, hψc]
-  have hsum : ∑ ε : Fin d → Bool,
-      (avg T (D.prunedH hR hRs hFR) / avg T (D.vP R) -
-          avg (T.child ε) (D.prunedH hR hRs hFR) / avg (T.child ε) (D.vP R)) *
-        avg (T.child ε) (D.vP R) * (T.child ε).vol = 0 := by
-    have h1 := avg_mul_vol_children' T (D.prunedH hR hRs hFR)
-    have h2 := avg_mul_vol_children' T (D.vP R)
-    rw [Finset.sum_congr rfl fun ε _ => show
-      (avg T (D.prunedH hR hRs hFR) / avg T (D.vP R) -
-          avg (T.child ε) (D.prunedH hR hRs hFR) / avg (T.child ε) (D.vP R)) *
-        avg (T.child ε) (D.vP R) * (T.child ε).vol =
-      avg T (D.prunedH hR hRs hFR) / avg T (D.vP R) *
-          (avg (T.child ε) (D.vP R) * (T.child ε).vol) -
-        avg (T.child ε) (D.prunedH hR hRs hFR) * (T.child ε).vol by
-          rw [sub_mul, div_mul_cancel₀ _ (hvc ε)]; ring]
-    rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← h2, ← h1, div_mul_eq_mul_div,
-      mul_comm (avg T (D.vP R)) T.vol, ← mul_assoc, mul_div_assoc, div_self hvT, mul_one, sub_self]
-  calc ∑ ε : Fin d → Bool,
-        (avg T (D.prunedH hR hRs hFR) / avg T (D.vP R) -
-            avg (T.child ε) (D.prunedH hR hRs hFR) / avg (T.child ε) (D.vP R)) *
-          avg (T.child ε) w * (T.child ε).vol
-      = ∑ ε : Fin d → Bool,
-          (avg T (D.prunedH hR hRs hFR) / avg T (D.vP R) -
-              avg (T.child ε) (D.prunedH hR hRs hFR) / avg (T.child ε) (D.vP R)) *
-            (avg (T.child ε) w - avg T w / avg T (D.vP R) * avg (T.child ε) (D.vP R)) *
-              (T.child ε).vol
-        + avg T w / avg T (D.vP R) * ∑ ε : Fin d → Bool,
-          (avg T (D.prunedH hR hRs hFR) / avg T (D.vP R) -
-              avg (T.child ε) (D.prunedH hR hRs hFR) / avg (T.child ε) (D.vP R)) *
-            avg (T.child ε) (D.vP R) * (T.child ε).vol := by
-        rw [Finset.mul_sum, ← Finset.sum_add_distrib]
-        exact Finset.sum_congr rfl fun ε _ => by ring
-    _ = _ := by rw [hsum, mul_zero, add_zero]
+  exact sum_avg_ratio_diff_mul_eq T (D.prunedH hR hRs hFR) (D.vP R) w hvT hvc
 
 /-- **(2.62) for one cube** `T ∈ 𝐓`: `|∫ θ^T w| ≤ |φ_T| · (martingale expression in 𝔥, w, v) |T|`.
 [PROVED] -/
@@ -1610,13 +1621,7 @@ theorem integral_abs_rpow_eq_sum_partRG {f : TestFun d} (hf : SupportedOn f R) {
 /-- **(2.9) in real form**: `∫_P |u|^q ≤ 2^d B ε^{-1} |P|` on good cubes. [PROVED] -/
 theorem setIntegral_u_rpow_le {P : DyadicCube d} (hP : D.Good P) :
     ∫ x in P.toSet, |(D.u : (Fin d → ℝ) → ℝ) x| ^ D.q ≤ 2 ^ d * D.B / D.ε * P.vol := by
-  have hq0 : 0 < D.q := by linarith [D.hq]
-  have hε := D.ε_pos
-  have hB : 0 ≤ D.B := by linarith [D.hB]
-  have hP0 := P.vol_pos
-  have h := Real.rpow_le_rpow (lpNorm_nonneg _ _) (D.lpNorm_truncateₗ_u_le hP) hq0.le
-  rwa [← Real.rpow_mul (by positivity), one_div_mul_cancel hq0.ne', Real.rpow_one,
-    TestFun.lpNorm_truncateₗ_rpow P D.u hq0] at h
+  exact D.integral_u_rpow_le hP
 
 /-- **The reduction of `‖θ'‖_q` to `‖Θ'‖_q`** (p. 54): `‖θ'‖_q^q ≤ 2^d B ε^{-1} ‖Θ'‖_q^q`. [PROVED]
 -/
@@ -1997,31 +2002,7 @@ theorem sum_phiT_diff_mul_eq {T : DyadicCube d} (hT : T ∈ D.setTG hR hRs hFR) 
   have hφc : ∀ ε, D.phiT R (T.child ε) = avg (T.child ε) (D.ghat R) / avg (T.child ε) D.u :=
     fun ε => by rw [phiT, coefOn_eq_div (huc ε)]
   simp only [hφT, hφc]
-  have hsum : ∑ ε : Fin d → Bool,
-      (avg T (D.ghat R) / avg T D.u - avg (T.child ε) (D.ghat R) / avg (T.child ε) D.u) *
-        avg (T.child ε) D.u * (T.child ε).vol = 0 := by
-    have h1 := avg_mul_vol_children' T (D.ghat R)
-    have h2 := avg_mul_vol_children' T D.u
-    rw [Finset.sum_congr rfl fun ε _ => show
-      (avg T (D.ghat R) / avg T D.u - avg (T.child ε) (D.ghat R) / avg (T.child ε) D.u) *
-        avg (T.child ε) D.u * (T.child ε).vol =
-      avg T (D.ghat R) / avg T D.u * (avg (T.child ε) D.u * (T.child ε).vol) -
-        avg (T.child ε) (D.ghat R) * (T.child ε).vol by
-          rw [sub_mul, div_mul_cancel₀ _ (huc ε)]; ring]
-    rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← h2, ← h1, div_mul_eq_mul_div,
-      mul_comm (avg T D.u) T.vol, ← mul_assoc, mul_div_assoc, div_self huT, mul_one, sub_self]
-  calc ∑ ε : Fin d → Bool,
-        (avg T (D.ghat R) / avg T D.u - avg (T.child ε) (D.ghat R) / avg (T.child ε) D.u) *
-          avg (T.child ε) w * (T.child ε).vol
-      = ∑ ε : Fin d → Bool,
-          (avg T (D.ghat R) / avg T D.u - avg (T.child ε) (D.ghat R) / avg (T.child ε) D.u) *
-            (avg (T.child ε) w - avg T w / avg T D.u * avg (T.child ε) D.u) * (T.child ε).vol
-        + avg T w / avg T D.u * ∑ ε : Fin d → Bool,
-          (avg T (D.ghat R) / avg T D.u - avg (T.child ε) (D.ghat R) / avg (T.child ε) D.u) *
-            avg (T.child ε) D.u * (T.child ε).vol := by
-        rw [Finset.mul_sum, ← Finset.sum_add_distrib]
-        exact Finset.sum_congr rfl fun ε _ => by ring
-    _ = _ := by rw [hsum, mul_zero, add_zero]
+  exact sum_avg_ratio_diff_mul_eq T (D.ghat R) D.u w huT huc
 
 /-- **(2.62) for one cube** `T ∈ 𝐓'`. [PROVED] -/
 theorem abs_integral_thetaGT_mul_le {T : DyadicCube d} (hT : T ∈ D.setTG hR hRs hFR)
@@ -4548,15 +4529,7 @@ theorem prodNorm_update_update (p : HolderTuple n) (g : Fin n → TestFun d) {a 
     prodNorm p (Function.update (Function.update g a x) b y) =
       lpNorm (x : (Fin d → ℝ) → ℝ) (p.p a) * lpNorm (y : (Fin d → ℝ) → ℝ) (p.p b) *
         ∏ j ∈ (Finset.univ.erase a).erase b, lpNorm (g j : (Fin d → ℝ) → ℝ) (p.p j) := by
-  have e : ∏ j ∈ (Finset.univ.erase a).erase b,
-      lpNorm ((Function.update g b y j : TestFun d) : (Fin d → ℝ) → ℝ) (p.p j) =
-      ∏ j ∈ (Finset.univ.erase a).erase b, lpNorm (g j : (Fin d → ℝ) → ℝ) (p.p j) :=
-    Finset.prod_congr rfl fun j hj => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hj)]
-  rw [Function.update_comm hab, prodNorm_update,
-    ← Finset.mul_prod_erase (Finset.univ.erase a)
-      (fun j => lpNorm ((Function.update g b y j : TestFun d) : (Fin d → ℝ) → ℝ) (p.p j))
-      (Finset.mem_erase.mpr ⟨hab.symm, Finset.mem_univ b⟩),
-    Function.update_self, e]
+  rw [MirekThiele.prodNorm_update_update p hab g x y]
   ring
 
 /-! ### The resolution of the form and the coarsening of the testing functions
@@ -4763,30 +4736,7 @@ theorem coarsen_integral {P : DyadicCube d} {N : ℕ} {f : TestFun d}
 /-- Jensen on a cube via Hölder: `|[f]_L|^q |L| ≤ ∫_L |f|^q` for `q ≥ 1`. [PROVED] -/
 theorem abs_avg_rpow_mul_vol_le (L : DyadicCube d) (f : TestFun d) {q : ℝ} (hq : 1 ≤ q) :
     |avg L (f : (Fin d → ℝ) → ℝ)| ^ q * L.vol ≤ ∫ x in L.toSet, |(f : (Fin d → ℝ) → ℝ) x| ^ q := by
-  have hq0 : 0 < q := by linarith
-  have hV := L.vol_pos
-  have hM0 : 0 ≤ lpNorm (TestFun.truncateₗ L f : (Fin d → ℝ) → ℝ) q := lpNorm_nonneg _ _
-  have hMq := TestFun.lpNorm_truncateₗ_rpow L f hq0
-  have hI : |∫ x in L.toSet, (f : (Fin d → ℝ) → ℝ) x| ≤
-      L.vol ^ (1 - 1 / q) * lpNorm (TestFun.truncateₗ L f : (Fin d → ℝ) → ℝ) q := by
-    have := abs_integral_indicator_le hq (TestFun.memLp (TestFun.truncateₗ L f).2 _) L
-    rwa [TestFun.coe_truncateₗ, truncate, Set.indicator_indicator, Set.inter_self,
-      integral_indicator L.measurableSet_toSet] at this
-  have h1 : |avg L (f : (Fin d → ℝ) → ℝ)| ≤
-      L.vol ^ (-(1 / q)) * lpNorm (TestFun.truncateₗ L f : (Fin d → ℝ) → ℝ) q := by
-    rw [avg, abs_div, abs_of_pos hV, div_le_iff₀ hV]
-    refine hI.trans (le_of_eq ?_)
-    rw [mul_right_comm, ← Real.rpow_add_one hV.ne']
-    congr 2
-    ring
-  calc |avg L (f : (Fin d → ℝ) → ℝ)| ^ q * L.vol
-      ≤ (L.vol ^ (-(1 / q)) * lpNorm (TestFun.truncateₗ L f : (Fin d → ℝ) → ℝ) q) ^ q * L.vol :=
-        mul_le_mul_of_nonneg_right (Real.rpow_le_rpow (abs_nonneg _) h1 hq0.le) hV.le
-    _ = lpNorm (TestFun.truncateₗ L f : (Fin d → ℝ) → ℝ) q ^ q := by
-        rw [Real.mul_rpow (Real.rpow_nonneg hV.le _) hM0, ← Real.rpow_mul hV.le,
-          show -(1 / q) * q = -1 by rw [neg_mul, one_div, inv_mul_cancel₀ hq0.ne'],
-          Real.rpow_neg_one, mul_comm, ← mul_assoc, mul_inv_cancel₀ hV.ne', one_mul]
-    _ = _ := hMq
+  exact MirekThiele.abs_avg_rpow_mul_vol_le L f hq
 
 /-- `∑_{L ∈ 𝒟_N(P)} 𝟙_L g = 𝟙_P g` pointwise: the leaves partition `P`. [PROVED] -/
 theorem sum_indicator_level (N : ℕ) (P : DyadicCube d) (g : (Fin d → ℝ) → ℝ) (x : Fin d → ℝ) :

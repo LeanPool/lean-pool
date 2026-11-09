@@ -4407,114 +4407,6 @@ theorem eq_zero_of_forall_le_ofReal_mul {N B : ENNReal} (hB : B ≠ ⊤)
   rw [div_mul_eq_mul_div, div_le_iff₀ (by positivity)]
   nlinarith
 
-/-- The balancing parameter in the proof of Hölder's inequality. [PROVED] -/
-theorem exists_holder_balance {p p' α β : ℝ} (hp : 0 < p) (hp' : 0 < p')
-    (hpp' : 1 / p + 1 / p' = 1) (hα : 0 < α) (hβ : 0 < β) :
-    ∃ t : ℝ, 0 < t ∧ t ^ (-p) * α ^ p = α * β ∧ t ^ p' * β ^ p' = α * β := by
-  have hq : 1 / p' = 1 - 1 / p := by linarith
-  have hq' : 1 / p = 1 - 1 / p' := by linarith
-  have e3 : p / p' = p - 1 := by
-    rw [div_eq_mul_one_div, hq, mul_sub, mul_one, mul_one_div_cancel hp.ne']
-  have e4 : p' / p = p' - 1 := by
-    rw [div_eq_mul_one_div, hq', mul_sub, mul_one, mul_one_div_cancel hp'.ne']
-  refine ⟨α ^ (1 / p') * β ^ (-(1 / p)), by positivity, ?_, ?_⟩
-  · have e1 : (1 / p') * -p = -(p / p') := by ring
-    have e2 : -(1 / p) * -p = 1 := by field_simp
-    rw [Real.mul_rpow (by positivity) (by positivity), ← Real.rpow_mul hα.le,
-      ← Real.rpow_mul hβ.le, e1, e2, Real.rpow_one, mul_right_comm, ← Real.rpow_add hα, e3,
-      show -(p - 1) + p = 1 by ring, Real.rpow_one]
-  · have e1 : (1 / p') * p' = 1 := by field_simp
-    have e2 : -(1 / p) * p' = -(p' / p) := by ring
-    rw [Real.mul_rpow (by positivity) (by positivity), ← Real.rpow_mul hα.le,
-      ← Real.rpow_mul hβ.le, e1, e2, Real.rpow_one, mul_assoc, ← Real.rpow_add hβ, e4,
-      show -(p' - 1) + p' = 1 by ring, Real.rpow_one]
-
-/-- Hölder's inequality for outer measure spaces with target exponent `1`: if
-`S(FG) ≤ S₁(F) S₂(G)` on every tree and `1/p + 1/p' = 1`, then
-`‖FG‖_{L¹(S)} ≤ 2 ‖F‖_{L^p(S₁)} ‖G‖_{L^{p'}(S₂)}` (for finite right-hand side). [PROVED] -/
-theorem outerL1Norm_mul_le (S S₁ S₂ : Size d)
-    (hS₁ : ∀ F G : DyadicCube d → ℝ, ∀ T, (∀ Q, ‖F Q‖ₑ ≤ ‖G Q‖ₑ) → S₁ F T ≤ S₁ G T)
-    (hS₂ : ∀ F G : DyadicCube d → ℝ, ∀ T, (∀ Q, ‖F Q‖ₑ ≤ ‖G Q‖ₑ) → S₂ F T ≤ S₂ G T)
-    (hprod : ∀ F G : DyadicCube d → ℝ, ∀ T, S (F * G) T ≤ S₁ F T * S₂ G T)
-    {p p' : ℝ} (hp : 1 < p) (hp' : 1 < p') (hpp' : 1 / p + 1 / p' = 1)
-    (F G : DyadicCube d → ℝ) (hF : outerLpNorm S₁ p F ≠ ⊤) (hG : outerLpNorm S₂ p' G ≠ ⊤) :
-    outerLpNorm S 1 (F * G) ≤ 2 * (outerLpNorm S₁ p F * outerLpNorm S₂ p' G) := by
-  have hp0 : 0 < p := by linarith
-  have hp'0 : 0 < p' := by linarith
-  have hN : outerLpNorm S 1 (F * G) = ∫⁻ lam in Set.Ioi (0 : ℝ), superlevel S (F * G) lam := by
-    simp [outerLpNorm]
-  have hA : outerLpNorm S₁ p F ^ p = ENNReal.ofReal p *
-      ∫⁻ u in Set.Ioi (0 : ℝ), ENNReal.ofReal (u ^ (p - 1)) * superlevel S₁ F u := by
-    simp only [outerLpNorm]
-    rw [one_div, ENNReal.rpow_inv_rpow hp0.ne']
-  have hB : outerLpNorm S₂ p' G ^ p' = ENNReal.ofReal p' *
-      ∫⁻ u in Set.Ioi (0 : ℝ), ENNReal.ofReal (u ^ (p' - 1)) * superlevel S₂ G u := by
-    simp only [outerLpNorm]
-    rw [one_div, ENNReal.rpow_inv_rpow hp'0.ne']
-  have hanti : Antitone (superlevel S₁ F) := fun _ _ h => superlevel_anti S₁ F h
-  have hmF : Measurable (superlevel S₁ F) := hanti.measurable
-  -- the bound for every `t > 0`
-  have key : ∀ t : ℝ, 0 < t → outerLpNorm S 1 (F * G) ≤
-      ENNReal.ofReal (t ^ (-p)) * outerLpNorm S₁ p F ^ p +
-        ENNReal.ofReal (t ^ p') * outerLpNorm S₂ p' G ^ p' := by
-    intro t ht
-    rw [hN, hA, hB]
-    calc ∫⁻ lam in Set.Ioi (0 : ℝ), superlevel S (F * G) lam
-        ≤ ∫⁻ lam in Set.Ioi (0 : ℝ), (superlevel S₁ F (t * lam ^ (1 / p)) +
-            superlevel S₂ G (t⁻¹ * lam ^ (1 / p'))) := by
-          refine setLIntegral_mono' measurableSet_Ioi fun lam hlam => ?_
-          have hlam : 0 < lam := hlam
-          have e : lam = (t * lam ^ (1 / p)) * (t⁻¹ * lam ^ (1 / p')) := by
-            rw [mul_mul_mul_comm, mul_inv_cancel₀ ht.ne', one_mul, ← Real.rpow_add hlam, hpp',
-              Real.rpow_one]
-          conv_lhs => rw [e]
-          exact superlevel_mul_le S S₁ S₂ hS₁ hS₂ hprod F G (by positivity)
-      _ = (∫⁻ lam in Set.Ioi (0 : ℝ), superlevel S₁ F (t * lam ^ (1 / p))) +
-            ∫⁻ lam in Set.Ioi (0 : ℝ), superlevel S₂ G (t⁻¹ * lam ^ (1 / p')) :=
-          lintegral_add_left (hmF.comp (measurable_const.mul (measurable_id.pow_const _))) _
-      _ = ENNReal.ofReal (p * t ^ (-p)) *
-            (∫⁻ u in Set.Ioi (0 : ℝ), ENNReal.ofReal (u ^ (p - 1)) * superlevel S₁ F u) +
-          ENNReal.ofReal (p' * t⁻¹ ^ (-p')) *
-            ∫⁻ u in Set.Ioi (0 : ℝ), ENNReal.ofReal (u ^ (p' - 1)) * superlevel S₂ G u := by
-          rw [lintegral_Ioi_comp_rpow hp0 ht, lintegral_Ioi_comp_rpow hp'0 (inv_pos.mpr ht)]
-      _ = _ := by
-          rw [Real.rpow_neg (inv_nonneg.mpr ht.le), Real.inv_rpow ht.le, inv_inv,
-            ENNReal.ofReal_mul hp0.le, ENNReal.ofReal_mul hp'0.le]
-          ring
-  -- optimisation over `t`
-  by_cases ha0 : outerLpNorm S₁ p F = 0
-  · have : outerLpNorm S 1 (F * G) = 0 := by
-      apply eq_zero_of_forall_le_ofReal_mul (B := outerLpNorm S₂ p' G ^ p')
-        (ENNReal.rpow_ne_top_of_nonneg hp'0.le hG)
-      intro s hs
-      have := key (s ^ (1 / p')) (by positivity)
-      rwa [ha0, ENNReal.zero_rpow_of_pos hp0, mul_zero, zero_add, ← Real.rpow_mul hs.le,
-        one_div_mul_cancel hp'0.ne', Real.rpow_one] at this
-    rw [this]
-    exact zero_le
-  by_cases hb0 : outerLpNorm S₂ p' G = 0
-  · have : outerLpNorm S 1 (F * G) = 0 := by
-      apply eq_zero_of_forall_le_ofReal_mul (B := outerLpNorm S₁ p F ^ p)
-        (ENNReal.rpow_ne_top_of_nonneg hp0.le hF)
-      intro s hs
-      have := key (s ^ (-(1 / p))) (by positivity)
-      rwa [hb0, ENNReal.zero_rpow_of_pos hp'0, mul_zero, add_zero, ← Real.rpow_mul hs.le,
-        show -(1 / p) * -p = 1 by field_simp, Real.rpow_one] at this
-    rw [this]
-    exact zero_le
-  have hα : 0 < (outerLpNorm S₁ p F).toReal := ENNReal.toReal_pos ha0 hF
-  have hβ : 0 < (outerLpNorm S₂ p' G).toReal := ENNReal.toReal_pos hb0 hG
-  obtain ⟨t, ht, h1, h2⟩ := exists_holder_balance hp0 hp'0 hpp' hα hβ
-  have ea : outerLpNorm S₁ p F ^ p = ENNReal.ofReal ((outerLpNorm S₁ p F).toReal ^ p) := by
-    rw [← ENNReal.ofReal_rpow_of_nonneg ENNReal.toReal_nonneg hp0.le, ENNReal.ofReal_toReal hF]
-  have eb : outerLpNorm S₂ p' G ^ p' = ENNReal.ofReal ((outerLpNorm S₂ p' G).toReal ^ p') := by
-    rw [← ENNReal.ofReal_rpow_of_nonneg ENNReal.toReal_nonneg hp'0.le, ENNReal.ofReal_toReal hG]
-  have := key t ht
-  rw [ea, eb, ← ENNReal.ofReal_mul (Real.rpow_nonneg ht.le _),
-    ← ENNReal.ofReal_mul (Real.rpow_nonneg ht.le _), h1, h2, ← two_mul,
-    ENNReal.ofReal_mul hα.le, ENNReal.ofReal_toReal hF, ENNReal.ofReal_toReal hG] at this
-  exact this
-
 /-- The balancing parameter in the proof of Hölder's inequality with target exponent `s`,
 `1/p + 1/q = 1/s`: `t = α^{s/q} β^{-s/p}` gives `t^{-p} α^p = t^q β^q = (αβ)^s`. [PROVED] -/
 theorem exists_holder_balance' {p q s α β : ℝ} (hp : 0 < p) (hq : 0 < q) (hs : 0 < s)
@@ -4542,10 +4434,17 @@ theorem exists_holder_balance' {p q s α β : ℝ} (hp : 0 < p) (hq : 0 < q) (hs
       ← Real.rpow_mul hβ.le, e1, e2, mul_assoc, ← Real.rpow_add hβ, e3,
       Real.mul_rpow hα.le hβ.le]
 
+/-- The balancing parameter in the proof of Hölder's inequality. [PROVED] -/
+theorem exists_holder_balance {p p' α β : ℝ} (hp : 0 < p) (hp' : 0 < p')
+    (hpp' : 1 / p + 1 / p' = 1) (hα : 0 < α) (hβ : 0 < β) :
+    ∃ t : ℝ, 0 < t ∧ t ^ (-p) * α ^ p = α * β ∧ t ^ p' * β ^ p' = α * β := by
+  simpa only [Real.rpow_one] using
+    exists_holder_balance' (s := 1) hp hp' one_pos (by simpa using hpp') hα hβ
+
 /-- Hölder's inequality for outer measure spaces with general target exponent: if
 `S(FG) ≤ S₁(F) S₂(G)` on every tree and `1/p + 1/q = 1/s`, then
 `‖FG‖_{L^s(S)} ≤ 2^{1/s} ‖F‖_{L^p(S₁)} ‖G‖_{L^q(S₂)}` (for finite right-hand side). The proof
-is the layer-cake argument of `outerL1Norm_mul_le` after the substitution `λ ↦ λ^{1/s}`.
+uses the layer-cake formula after the substitution `λ ↦ λ^{1/s}`.
 [PROVED] -/
 theorem outerLpNorm_mul_le (S S₁ S₂ : Size d)
     (hS₁ : ∀ F G : DyadicCube d → ℝ, ∀ T, (∀ Q, ‖F Q‖ₑ ≤ ‖G Q‖ₑ) → S₁ F T ≤ S₁ G T)
@@ -4641,6 +4540,21 @@ theorem outerLpNorm_mul_le (S S₁ S₂ : Size d)
     ← ENNReal.ofReal_rpow_of_nonneg (by positivity) hs.le, ENNReal.ofReal_mul hα.le,
     ENNReal.ofReal_toReal hF, ENNReal.ofReal_toReal hG] at this
   exact this
+
+/-- Hölder's inequality for outer measure spaces with target exponent `1`: if
+`S(FG) ≤ S₁(F) S₂(G)` on every tree and `1/p + 1/p' = 1`, then
+`‖FG‖_{L¹(S)} ≤ 2 ‖F‖_{L^p(S₁)} ‖G‖_{L^{p'}(S₂)}` (for finite right-hand side). [PROVED] -/
+theorem outerL1Norm_mul_le (S S₁ S₂ : Size d)
+    (hS₁ : ∀ F G : DyadicCube d → ℝ, ∀ T, (∀ Q, ‖F Q‖ₑ ≤ ‖G Q‖ₑ) → S₁ F T ≤ S₁ G T)
+    (hS₂ : ∀ F G : DyadicCube d → ℝ, ∀ T, (∀ Q, ‖F Q‖ₑ ≤ ‖G Q‖ₑ) → S₂ F T ≤ S₂ G T)
+    (hprod : ∀ F G : DyadicCube d → ℝ, ∀ T, S (F * G) T ≤ S₁ F T * S₂ G T)
+    {p p' : ℝ} (hp : 1 < p) (hp' : 1 < p') (hpp' : 1 / p + 1 / p' = 1)
+    (F G : DyadicCube d → ℝ) (hF : outerLpNorm S₁ p F ≠ ⊤) (hG : outerLpNorm S₂ p' G ≠ ⊤) :
+    outerLpNorm S 1 (F * G) ≤ 2 * (outerLpNorm S₁ p F * outerLpNorm S₂ p' G) := by
+  simpa only [div_one, ENNReal.rpow_one] using
+    outerLpNorm_mul_le S S₁ S₂ hS₁ hS₂ hprod (s := 1)
+      (zero_lt_one.trans hp) (zero_lt_one.trans hp') one_pos
+      (by simpa using hpp') F G hF hG
 
 end OuterHolder
 
