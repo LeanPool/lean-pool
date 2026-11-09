@@ -5160,7 +5160,6 @@ private theorem exists_source_rounding_divisor
     lt_of_le_of_lt (le_max_right _ _) hq
   have hsmall : C / (q : ℝ) < δ ^ 2 := by
     apply (div_lt_iff₀ hqreal).mpr
-    have hcross := (div_lt_iff₀ hsquare).mp hthreshold
     exact (div_lt_iff₀' hsquare).mp hthreshold
   refine ⟨q, hqnat, ?_⟩
   calc

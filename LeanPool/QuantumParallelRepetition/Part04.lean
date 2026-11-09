@@ -2957,7 +2957,7 @@ theorem matched_payoff_discard_le
     simp only [Bool.not_eq_true] at hi
     simp only [hi, Bool.false_eq_true, ↓reduceIte, mul_one, mul_zero, tsub_le_iff_right, zero_add,
       ge_iff_le]
-    exact mul_le_of_le_one_right (nonnegative i) (payoff_le_one i)
+    exact mul_le_of_le_one_right (nonnegative i) hone
 
 end
 
@@ -3477,7 +3477,6 @@ theorem greedy_terminal_of_log_cost
     (hcost : Real.log (1 / θ) < η * (T : ℝ)) :
     (1 - η) ^ T < θ := by
   have hbase : 1 - η ≤ Real.exp (-η) := by
-    have h := Real.add_one_le_exp (-η)
     exact Real.one_sub_le_exp_neg η
   have hpow :
       (1 - η) ^ T ≤ Real.exp (-η) ^ T :=

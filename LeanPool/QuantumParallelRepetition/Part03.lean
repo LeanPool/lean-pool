@@ -1058,7 +1058,6 @@ theorem dSVDensityRationalLargeWidth_exists_fine_grid
     lt_trans (div_pos real_dimension denominator) large
   have grid : 0 < N := by exact_mod_cast real_grid
   refine ⟨N, grid, ?_⟩
-  have crossed := (div_lt_iff₀ denominator).mp large
   have small : (d : ℝ) / N < ε / (2 * (w + 1)) := by
     apply (div_lt_iff₀ real_grid).mpr
     exact (div_lt_iff₀' denominator).mp large

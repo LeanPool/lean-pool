@@ -6980,8 +6980,6 @@ private theorem unconditionalActualFairSourceOuterBorn_of_base
       ‖integratorActualC485SourceVector
         (B := P) (N := N) (m := m) width schedule ξ ζ ψ j‖ ^ 2 * value := by
   classical
-  let d : ℕ :=
-    Fintype.card (ExactGlobalHistoryLocalIndex G n S D)
   let stage := dSVDensityRationalPublicBucketCoherentPhaseSigmaState P
     (unconditionalConjugatePureVector ψ)
     (fun _ _ _ => embezzlementState (N * m))

@@ -127,7 +127,6 @@ theorem exists_proofHarmonicNumber_ratio_ge
     harmonicNumber_pos (Nat.mul_pos hd hn)
   have hupper := harmonicNumber_mul_le_add hd hn
   have hbudget : C < ε * harmonicNumber n := by
-    have h := (div_lt_iff₀ hε).mp hnlarge
     exact (div_lt_iff₀' hε).mp hnlarge
   refine ⟨n, hn, (le_div_iff₀ hden).mpr ?_⟩
   have hscaled := mul_le_mul_of_nonneg_left
