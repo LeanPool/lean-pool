@@ -1181,103 +1181,28 @@ theorem helper_hseriesDataAgree_772.{u_1, u_2} :
       newEdges newKind newVertex newOutside newDelta newGamma appendedData happendLastStored
       happendLastEdges happendLastKind extendedSeries hextendedData hroundsEq castSeries
       castSeriesStored castSeriesEdges castSeriesKind finalSeries rawDataIndex hrawFinalData
-      hprefixFields i
-  by_cases hi : i.val < ett.rounds
-  · have hraw : rawDataIndex i = zeroLast.castSucc := by
-      apply Fin.ext
-      have hiZero : i.val = 0 := by
-        have hr := hroundOne
-        omega
-      exact hiZero
-    have hp := hprefixFields i hi
-    constructor
-    · calc
-        finalSeries.data.stored i =
-            extendedSeries.data.stored (rawDataIndex i) := by
-              exact castSeriesStored hroundsEq extendedSeries i
-        _ = appendedData.stored (rawDataIndex i) := by
-              rw [hextendedData]
-        _ = zeroPrefix.data.stored zeroLast := by
-              rw [hraw]
-              simp only [appendedData, TashkinovSeriesDataAppend,
-                Fin.lastCases_castSucc]
-        _ = ett.series.data.stored i := hp.1
-    · constructor
-      · calc
-          finalSeries.data.connectingEdges i =
-              extendedSeries.data.connectingEdges
-                (rawDataIndex i) := by
-                exact castSeriesEdges hroundsEq extendedSeries i
-          _ = appendedData.connectingEdges (rawDataIndex i) := by
-                rw [hextendedData]
-          _ = zeroPrefix.data.connectingEdges zeroLast := by
-                rw [hraw]
-                simp only [appendedData, TashkinovSeriesDataAppend,
-                  Fin.lastCases_castSucc]
-          _ = ett.series.data.connectingEdges i := hp.2.1
-      · calc
-          finalSeries.data.kind i =
-              extendedSeries.data.kind (rawDataIndex i) := by
-                exact castSeriesKind hroundsEq extendedSeries i
-          _ = appendedData.kind (rawDataIndex i) := by
-                rw [hextendedData]
-          _ = zeroPrefix.data.kind zeroLast := by
-                rw [hraw]
-                simp only [appendedData, TashkinovSeriesDataAppend,
-                  Fin.lastCases_castSucc]
-          _ = ett.series.data.kind i := hp.2.2
-  · have hilast : i = Fin.last ett.rounds := by
-      apply Fin.ext
-      have hibound := i.isLt
-      simp
-      omega
-    subst i
-    constructor
-    · calc
-        finalSeries.data.stored (Fin.last ett.rounds) =
-            extendedSeries.data.stored
-              (rawDataIndex (Fin.last ett.rounds)) := by
-              exact castSeriesStored hroundsEq extendedSeries _
-        _ = appendedData.stored
-              (rawDataIndex (Fin.last ett.rounds)) := by
-              rw [hextendedData]
-        _ = appendedData.stored (Fin.last 1) := by rw [hrawFinalData]
-        _ = newStored := happendLastStored
-        _ = {choice.color} := rfl
-        _ = ett.series.data.stored (Fin.last ett.rounds) := by
-              rw [← hqSucc]
-              exact currentStored.symm
-    · constructor
-      · calc
-          finalSeries.data.connectingEdges (Fin.last ett.rounds) =
-              extendedSeries.data.connectingEdges
-                (rawDataIndex (Fin.last ett.rounds)) := by
-                exact castSeriesEdges hroundsEq extendedSeries _
-          _ = appendedData.connectingEdges
-                (rawDataIndex (Fin.last ett.rounds)) := by
-                rw [hextendedData]
-          _ = appendedData.connectingEdges (Fin.last 1) := by
-                rw [hrawFinalData]
-          _ = newEdges := happendLastEdges
-          _ = {choice.edge} := rfl
-          _ = ett.series.data.connectingEdges
-                (Fin.last ett.rounds) := by
-                rw [← hqSucc]
-                exact currentEdges.symm
-      · calc
-          finalSeries.data.kind (Fin.last ett.rounds) =
-              extendedSeries.data.kind
-                (rawDataIndex (Fin.last ett.rounds)) := by
-                exact castSeriesKind hroundsEq extendedSeries _
-          _ = appendedData.kind
-                (rawDataIndex (Fin.last ett.rounds)) := by
-                rw [hextendedData]
-          _ = appendedData.kind (Fin.last 1) := by rw [hrawFinalData]
-          _ = newKind := happendLastKind
-          _ = some TashkinovExtensionKind.SE := rfl
-          _ = ett.series.data.kind (Fin.last ett.rounds) := by
-                rw [← hqSucc]
-                exact currentKind.symm
+      hprefixFields
+  change ∀ i : Fin (ett.rounds + 1),
+      (extendedSeries.castRounds hroundsEq).data.stored i = ett.series.data.stored i ∧
+        (extendedSeries.castRounds hroundsEq).data.connectingEdges i =
+          ett.series.data.connectingEdges i ∧
+        (extendedSeries.castRounds hroundsEq).data.kind i = ett.series.data.kind i
+  simpa only [TashkinovSeries.castRounds_data] using
+    (TashkinovSeriesData.castMetadataAgreement (r := 0)
+      ett.series.data extendedSeries.data hroundsEq
+      (by
+        intro i
+        have hi : i = Fin.last 0 := by
+          apply Fin.ext
+          have bound := i.isLt
+          omega
+        subst i
+        simpa only [hextendedData, TashkinovSeriesDataAppend, Fin.lastCases_castSucc] using
+          hprefixFields (Fin.castLE (by omega) (Fin.last 0))
+            (by change 0 < ett.rounds; exact hpositive))
+      (by
+        simpa only [hextendedData, TashkinovSeriesDataAppend, Fin.lastCases_last, ← hqSucc] using
+          And.intro currentStored.symm (And.intro currentEdges.symm currentKind.symm)))
 
 theorem helper_hseriesTreeAgree_874.{u_1, u_2} :
     open scoped Classical in
@@ -1328,27 +1253,18 @@ theorem helper_hseriesTreeAgree_874.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ closureTree q hqSucc choice
       hroundOne prefixInput zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside
       newDelta newGamma appendedData happendTree extendedSeries hextendedData hroundsEq
-      castSeries castSeriesTree finalSeries rawTreeIndex j
-  have hj : j.succ = Fin.last ett.rounds := by
-    apply Fin.ext
-    have hjbound := j.isLt
-    simp
-    have hr := hroundOne
-    omega
-  have htreeIndex : rawTreeIndex j.succ.castSucc =
-      zeroLast.succ.castSucc := by
-    apply Fin.ext
-    simp [rawTreeIndex, zeroLast]
-  calc
-    finalSeries.data.tree j.succ.castSucc =
-        extendedSeries.data.tree (rawTreeIndex j.succ.castSucc) := by
-          exact castSeriesTree hroundsEq extendedSeries _
-    _ = appendedData.tree (rawTreeIndex j.succ.castSucc) := by
-          rw [hextendedData]
-    _ = appendedData.tree zeroLast.succ.castSucc := by rw [htreeIndex]
-    _ = ett.series.data.tree q.succ.castSucc := happendTree
-    _ = ett.series.data.tree j.succ.castSucc := by
-          rw [hj, hqSucc]
+      castSeries castSeriesTree finalSeries rawTreeIndex
+  change ∀ j : Fin ett.rounds,
+      (extendedSeries.castRounds hroundsEq).data.tree j.succ.castSucc =
+        ett.series.data.tree j.succ.castSucc
+  simpa only [TashkinovSeries.castRounds_data] using
+    (TashkinovSeriesData.castTreeAgreement (r := 0)
+      ett.series.data extendedSeries.data hroundsEq
+      (fun i => Fin.elim0 i)
+      (by
+        rw [← extendedSeries.castRounds_data hroundsEq,
+          TashkinovSeries.castRounds_penultimateTree, hextendedData, ← hqSucc]
+        exact happendTree))
 
 theorem helper_hdegree_1837.{u_1, u_2} :
     open scoped Classical in
@@ -2300,103 +2216,28 @@ theorem helper_hseriesDataAgree_3459.{u_1, u_2} :
       prefixInput zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside newDelta
       newGamma appendedData happendLastStored happendLastEdges happendLastKind extendedSeries
       hextendedData hroundsEq castSeries castSeriesStored castSeriesEdges castSeriesKind
-      finalSeries rawDataIndex hrawFinalData hprefixFields i
-  by_cases hi : i.val < ett.rounds
-  · have hraw : rawDataIndex i = zeroLast.castSucc := by
-      apply Fin.ext
-      have hiZero : i.val = 0 := by
-        have hr := hroundOne
-        omega
-      exact hiZero
-    have hp := hprefixFields i hi
-    constructor
-    · calc
-        finalSeries.data.stored i =
-            extendedSeries.data.stored (rawDataIndex i) := by
-              exact castSeriesStored hroundsEq extendedSeries i
-        _ = appendedData.stored (rawDataIndex i) := by
-              rw [hextendedData]
-        _ = zeroPrefix.data.stored zeroLast := by
-              rw [hraw]
-              simp only [appendedData, TashkinovSeriesDataAppend,
-                Fin.lastCases_castSucc]
-        _ = ett.series.data.stored i := hp.1
-    · constructor
-      · calc
-          finalSeries.data.connectingEdges i =
-              extendedSeries.data.connectingEdges
-                (rawDataIndex i) := by
-                exact castSeriesEdges hroundsEq extendedSeries i
-          _ = appendedData.connectingEdges (rawDataIndex i) := by
-                rw [hextendedData]
-          _ = zeroPrefix.data.connectingEdges zeroLast := by
-                rw [hraw]
-                simp only [appendedData, TashkinovSeriesDataAppend,
-                  Fin.lastCases_castSucc]
-          _ = ett.series.data.connectingEdges i := hp.2.1
-      · calc
-          finalSeries.data.kind i =
-              extendedSeries.data.kind (rawDataIndex i) := by
-                exact castSeriesKind hroundsEq extendedSeries i
-          _ = appendedData.kind (rawDataIndex i) := by
-                rw [hextendedData]
-          _ = zeroPrefix.data.kind zeroLast := by
-                rw [hraw]
-                simp only [appendedData, TashkinovSeriesDataAppend,
-                  Fin.lastCases_castSucc]
-          _ = ett.series.data.kind i := hp.2.2
-  · have hilast : i = Fin.last ett.rounds := by
-      apply Fin.ext
-      have hibound := i.isLt
-      simp
-      omega
-    subst i
-    constructor
-    · calc
-        finalSeries.data.stored (Fin.last ett.rounds) =
-            extendedSeries.data.stored
-              (rawDataIndex (Fin.last ett.rounds)) := by
-              exact castSeriesStored hroundsEq extendedSeries _
-        _ = appendedData.stored
-              (rawDataIndex (Fin.last ett.rounds)) := by
-              rw [hextendedData]
-        _ = appendedData.stored (Fin.last 1) := by rw [hrawFinalData]
-        _ = newStored := happendLastStored
-        _ = {choice.color, gamma} := rfl
-        _ = ett.series.data.stored (Fin.last ett.rounds) := by
-              rw [← hqSucc]
-              exact currentStored.symm
-    · constructor
-      · calc
-          finalSeries.data.connectingEdges (Fin.last ett.rounds) =
-              extendedSeries.data.connectingEdges
-                (rawDataIndex (Fin.last ett.rounds)) := by
-                exact castSeriesEdges hroundsEq extendedSeries _
-          _ = appendedData.connectingEdges
-                (rawDataIndex (Fin.last ett.rounds)) := by
-                rw [hextendedData]
-          _ = appendedData.connectingEdges (Fin.last 1) := by
-                rw [hrawFinalData]
-          _ = newEdges := happendLastEdges
-          _ = {choice.edge} := rfl
-          _ = ett.series.data.connectingEdges
-                (Fin.last ett.rounds) := by
-                rw [← hqSucc]
-                exact currentEdges.symm
-      · calc
-          finalSeries.data.kind (Fin.last ett.rounds) =
-              extendedSeries.data.kind
-                (rawDataIndex (Fin.last ett.rounds)) := by
-                exact castSeriesKind hroundsEq extendedSeries _
-          _ = appendedData.kind
-                (rawDataIndex (Fin.last ett.rounds)) := by
-                rw [hextendedData]
-          _ = appendedData.kind (Fin.last 1) := by rw [hrawFinalData]
-          _ = newKind := happendLastKind
-          _ = some TashkinovExtensionKind.PE := rfl
-          _ = ett.series.data.kind (Fin.last ett.rounds) := by
-                rw [← hqSucc]
-                exact currentKind.symm
+      finalSeries rawDataIndex hrawFinalData hprefixFields
+  change ∀ i : Fin (ett.rounds + 1),
+      (extendedSeries.castRounds hroundsEq).data.stored i = ett.series.data.stored i ∧
+        (extendedSeries.castRounds hroundsEq).data.connectingEdges i =
+          ett.series.data.connectingEdges i ∧
+        (extendedSeries.castRounds hroundsEq).data.kind i = ett.series.data.kind i
+  simpa only [TashkinovSeries.castRounds_data] using
+    (TashkinovSeriesData.castMetadataAgreement (r := 0)
+      ett.series.data extendedSeries.data hroundsEq
+      (by
+        intro i
+        have hi : i = Fin.last 0 := by
+          apply Fin.ext
+          have bound := i.isLt
+          omega
+        subst i
+        simpa only [hextendedData, TashkinovSeriesDataAppend, Fin.lastCases_castSucc] using
+          hprefixFields (Fin.castLE (by omega) (Fin.last 0))
+            (by change 0 < ett.rounds; exact hpositive))
+      (by
+        simpa only [hextendedData, TashkinovSeriesDataAppend, Fin.lastCases_last, ← hqSucc] using
+          And.intro currentStored.symm (And.intro currentEdges.symm currentKind.symm)))
 
 theorem helper_hseriesTreeAgree_3561.{u_1, u_2} :
     open scoped Classical in
@@ -2450,27 +2291,18 @@ theorem helper_hseriesTreeAgree_3561.{u_1, u_2} :
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ closureTree q hqSucc gamma
       choice sigmaPrev H u p hroundOne prefixInput zeroPrefix zeroLast newStored newEdges newKind
       newVertex newOutside newDelta newGamma appendedData happendTree extendedSeries
-      hextendedData hroundsEq castSeries castSeriesTree finalSeries rawTreeIndex j
-  have hj : j.succ = Fin.last ett.rounds := by
-    apply Fin.ext
-    have hjbound := j.isLt
-    simp
-    have hr := hroundOne
-    omega
-  have htreeIndex : rawTreeIndex j.succ.castSucc =
-      zeroLast.succ.castSucc := by
-    apply Fin.ext
-    simp [rawTreeIndex, zeroLast]
-  calc
-    finalSeries.data.tree j.succ.castSucc =
-        extendedSeries.data.tree (rawTreeIndex j.succ.castSucc) := by
-          exact castSeriesTree hroundsEq extendedSeries _
-    _ = appendedData.tree (rawTreeIndex j.succ.castSucc) := by
-          rw [hextendedData]
-    _ = appendedData.tree zeroLast.succ.castSucc := by rw [htreeIndex]
-    _ = ett.series.data.tree q.succ.castSucc := happendTree
-    _ = ett.series.data.tree j.succ.castSucc := by
-          rw [hj, hqSucc]
+      hextendedData hroundsEq castSeries castSeriesTree finalSeries rawTreeIndex
+  change ∀ j : Fin ett.rounds,
+      (extendedSeries.castRounds hroundsEq).data.tree j.succ.castSucc =
+        ett.series.data.tree j.succ.castSucc
+  simpa only [TashkinovSeries.castRounds_data] using
+    (TashkinovSeriesData.castTreeAgreement (r := 0)
+      ett.series.data extendedSeries.data hroundsEq
+      (fun i => Fin.elim0 i)
+      (by
+        rw [← extendedSeries.castRounds_data hroundsEq,
+          TashkinovSeries.castRounds_penultimateTree, hextendedData, ← hqSucc]
+        exact happendTree))
 
 theorem helper_branch_3453.{u_1, u_2} :
     open scoped Classical in
@@ -3188,140 +3020,9 @@ theorem helper_hfinalColor_3911.{u_1, u_2} :
     _ = appendedData.coloring (Fin.last 1) := by rw [hrawFinalData]
     _ = sigma := happendLastColor
 
-theorem helper_hseriesDataAgree_3932.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ closureTree : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-        have := GoldbergSeymour.TreeSequence.positive T
-        omega
-    ⟩ : Fin ett.rounds); q.succ = Fin.last ett.rounds →
-    ∀ (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)),
-        ett.series.data.stored q.succ = ({ choice.color } : Finset (Fin k)) →
-        ett.series.data.connectingEdges q.succ = ({ choice.edge } : Finset E) →
-        ett.series.data.kind q.succ = some TashkinovExtensionKind.SE → ett.rounds = (1 : ℕ) →
-    ∀ (prefixInput : PartialEdgeColoring E k) (zeroPrefix : TashkinovSeries G k (0 : ℕ) e0
-        prefixInput),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    let newStored : Finset (Fin k) := ({ choice.color } : Finset (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.SE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := none;
-    let appendedData : TashkinovSeriesData G k ((0 : ℕ) + (1 : ℕ)) e0 := TashkinovSeriesDataAppend
-        zeroPrefix.data closureTree sigma newStored newEdges newKind newVertex newOutside newDelta
-        newGamma; appendedData.stored (Fin.last (1 : ℕ)) = newStored →
-        appendedData.connectingEdges (Fin.last (1 : ℕ)) = newEdges → appendedData.kind (Fin.last
-        (1 : ℕ)) = newKind →
-    ∀ (extendedSeries : TashkinovSeries G k ((0 : ℕ) + (1 : ℕ)) e0 prefixInput),
-        extendedSeries.data = TashkinovSeriesDataAppend zeroPrefix.data closureTree sigma
-        newStored newEdges newKind newVertex newOutside newDelta newGamma →
-    ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
-    let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.stored i = S.data.stored (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.connectingEdges i = S.data.connectingEdges (Fin.cast (
-    by omega
-    ) i)) → (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (1 : ℕ))),
-        (castSeries h S).data.kind i = S.data.kind (Fin.cast (
-    by omega
-    ) i)) →
-    let finalSeries : TashkinovSeries G k ett.rounds e0 prefixInput := castSeries hroundsEq
-        extendedSeries;
-    let rawDataIndex : Fin (ett.rounds + (1 : ℕ)) → Fin (2 : ℕ) := fun (i : Fin (ett.rounds + (1 :
-        ℕ))) ↦ Fin.cast (
-    by
-        have := GoldbergSeymour.TreeSequence.positive T
-        omega
-    ) i; rawDataIndex (Fin.last ett.rounds) = Fin.last (1 : ℕ) → (
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))), (↑i : ℕ) < ett.rounds → zeroPrefix.data.stored zeroLast =
-        ett.series.data.stored i ∧ zeroPrefix.data.connectingEdges zeroLast =
-        ett.series.data.connectingEdges i ∧ zeroPrefix.data.kind zeroLast = ett.series.data.kind
-        i) →
-    ∀ (i : Fin (ett.rounds + (1 : ℕ))), finalSeries.data.stored i = ett.series.data.stored i ∧
-        finalSeries.data.connectingEdges i = ett.series.data.connectingEdges i ∧
-        finalSeries.data.kind i = ett.series.data.kind i := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma Tstar closureTree q hqSucc choice
-      currentStored currentEdges currentKind hroundOne prefixInput zeroPrefix zeroLast newStored
-      newEdges newKind newVertex newOutside newDelta newGamma appendedData happendLastStored
-      happendLastEdges happendLastKind extendedSeries hextendedData hroundsEq castSeries
-      castSeriesStored castSeriesEdges castSeriesKind finalSeries rawDataIndex hrawFinalData
-      hprefixFields
-  exact @helper_hseriesDataAgree_772 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive)
-      (@sigma) (@Tstar) (@closureTree) (@hqSucc) (@choice) (@currentStored)
-      (@currentEdges) (@currentKind) (@hroundOne) (@prefixInput) (@zeroPrefix)
-      (@happendLastStored) (@happendLastEdges) (@happendLastKind) (@extendedSeries)
-      (@hextendedData) (@hroundsEq) (@castSeriesStored) (@castSeriesEdges)
-      (@castSeriesKind) (@hrawFinalData) (@hprefixFields)
+alias helper_hseriesDataAgree_3932 := helper_hseriesDataAgree_772
 
-theorem helper_hseriesTreeAgree_3944.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [inst : Fintype V] [inst_1 : Fintype E] [inst_2 : DecidableEq
-        E] (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (input : PartialEdgeColoring E k) (T :
-        TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
-        e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (sigma : PartialEdgeColoring E
-        k) (_ closureTree : TreeSequence G e0),
-    let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
-    by
-        have := GoldbergSeymour.TreeSequence.positive T
-        omega
-    ⟩ : Fin ett.rounds); q.succ = Fin.last ett.rounds →
-    ∀ (choice : MaximumDefectiveChoice G e0 (ett.series.data.tree q.succ.castSucc)
-        (TashkinovStoredColors ett.series.data q.castSucc) (ett.series.data.coloring q.castSucc)),
-        ett.rounds = (1 : ℕ) →
-    ∀ (prefixInput : PartialEdgeColoring E k) (zeroPrefix : TashkinovSeries G k (0 : ℕ) e0
-        prefixInput),
-    let zeroLast : Fin ((0 : ℕ) + (1 : ℕ)) := Fin.last (0 : ℕ);
-    let newStored : Finset (Fin k) := ({ choice.color } : Finset (Fin k));
-    let newEdges : Finset E := ({ choice.edge } : Finset E);
-    let newKind : Option TashkinovExtensionKind := some TashkinovExtensionKind.SE;
-    let newVertex : Option V := some choice.vertex;
-    let newOutside : Option V := some choice.otherEndpoint;
-    let newDelta : Option (Fin k) := some choice.color;
-    let newGamma : Option (Fin k) := none;
-    let appendedData : TashkinovSeriesData G k ((0 : ℕ) + (1 : ℕ)) e0 := TashkinovSeriesDataAppend
-        zeroPrefix.data closureTree sigma newStored newEdges newKind newVertex newOutside newDelta
-        newGamma; appendedData.tree zeroLast.succ.castSucc = ett.series.data.tree q.succ.castSucc
-        →
-    ∀ (extendedSeries : TashkinovSeries G k ((0 : ℕ) + (1 : ℕ)) e0 prefixInput),
-        extendedSeries.data = TashkinovSeriesDataAppend zeroPrefix.data closureTree sigma
-        newStored newEdges newKind newVertex newOutside newDelta newGamma →
-    ∀ (hroundsEq : (0 : ℕ) + (1 : ℕ) = ett.rounds),
-    let castSeries : {a b : ℕ} → a = b → TashkinovSeries G k a e0 prefixInput → TashkinovSeries G
-        k b e0 prefixInput := fun {a b} (h : a = b) series => series.castRounds h; (
-    ∀ {a b : ℕ} (h : a = b) (S : TashkinovSeries G k a e0 prefixInput) (i : Fin (b + (2 : ℕ))),
-        (castSeries h S).data.tree i = S.data.tree (Fin.cast (
-    by omega
-    ) i)) →
-    let finalSeries : TashkinovSeries G k ett.rounds e0 prefixInput := castSeries hroundsEq
-        extendedSeries;
-    ∀ (j : Fin ett.rounds), finalSeries.data.tree j.succ.castSucc = ett.series.data.tree
-        j.succ.castSucc := by
-  classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive sigma Tstar closureTree q hqSucc choice
-      hroundOne prefixInput zeroPrefix zeroLast newStored newEdges newKind newVertex newOutside
-      newDelta newGamma appendedData happendTree extendedSeries hextendedData hroundsEq
-      castSeries castSeriesTree finalSeries
-  exact @helper_hseriesTreeAgree_874 (@V) (@E) inferInstance inferInstance
-      inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hpositive)
-      (@sigma) (@Tstar) (@closureTree) (@hqSucc) (@choice) (@hroundOne) (@prefixInput)
-      (@zeroPrefix) (@happendTree) (@extendedSeries) (@hextendedData) (@hroundsEq)
-      (@castSeriesTree)
-
+alias helper_hseriesTreeAgree_3944 := helper_hseriesTreeAgree_874
 
 /-- Existing proof-module entry point for the shared interface or construction. -/
 theorem helper_hreplacementCurrentTree_4014.{u_1, u_2} :

@@ -867,7 +867,7 @@ theorem helper_continuation_4653.{u_1, u_2} :
       (hseq : TashkinovAugmentationSequence phi S B) (t : Fin B.length)
       (ht : S.length ≤ t.val) :
       phi (B.edge t) ≠ some alpha ∧ phi (B.edge t) ≠ some beta := by
-    exact @helper_augmentationControlled_5115 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @helper_augmentationControlled_640 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@alpha) (@beta)
         (@AToT) (@hElementaryY) (@hb) (@vertexY) (@hbY) (@hAib) (@halphaA) (@horder) (@BToT)
         (@BstrictT) (@rpB) (@aboveB) (@strictB) (@belowB) (@genB) (@baseB) (@HB) (@S) (@hseq)
@@ -892,7 +892,7 @@ theorem helper_continuation_4653.{u_1, u_2} :
         ∃ baseS : HierarchyBase corr.replacementETT sigma,
           ∃ HS : TashkinovHierarchy corr.replacementETT baseS,
             SameHierarchyStages HB HS := by
-    exact @helper_replacement_5138 (@V) (@E) inferInstance inferInstance inferInstance
+    exact @helper_replacement_742 (@V) (@E) inferInstance inferInstance inferInstance
         inferInstance (@G) (@k) (@e0) (@input) (@T) (@phi) (@ett) (@base) (@C) (@hproper) (@hone)
         (@hlower) (@alpha) (@beta) (@coreToA) (@hAib) (@rpB) (@aboveB) (@strictB) (@belowB)
         (@genB) (@hMPB) (@baseB) (@hcoreB) (@HB) (@sigmaProper) (@sigmaOne) (@stable) (@stableTn)
