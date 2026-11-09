@@ -3,8 +3,8 @@
 CI restores receipts from main or earlier runs of the same PR. Every receipt
 covers module inventories, transitive local imports, dependency pins, and code.
 Static repository invariants and text style lint still run on every checkout.
-Missed checks run as concurrent Lean processes; receipts and reported errors
-keep the sequential check order.
+Missed quality audits run as concurrent Lean processes; receipts and reported
+errors keep the sequential check order.
 """
 
 from __future__ import annotations
@@ -43,9 +43,12 @@ QUALITY_INPUTS = (
 )
 GLOBAL_INPUTS = SHARED_INPUTS + LINT_INPUTS + QUALITY_INPUTS
 WORKERS_VARIABLE = "LEAN_POOL_VALIDATION_WORKERS"
-# Each Lean check process is single-threaded with about 1 GB of private memory;
-# imported .olean files are memory-mapped and shared between processes.
+# Quality audits are single-threaded Lean processes with about 1 GB of private
+# memory; imported .olean files are memory-mapped and shared between processes.
 DEFAULT_WORKERS = 4
+# Batteries' `lintCore` already runs one task per linter and declaration, so one
+# lint process saturates the runner: concurrent units only made each one slower.
+LINT_WORKERS = 1
 
 
 def validation_workers() -> int:
@@ -334,7 +337,8 @@ def lint_pool(root: Path, cache: ValidationCache) -> list[str]:
         Check("lint", modules, lambda modules=modules: _lint_unit(root, modules))
         for modules in pool_units(root)
     ]
-    return [error for errors in cache.check_all(checks) for error in errors]
+    results = cache.check_all(checks, workers=LINT_WORKERS)
+    return [error for errors in results for error in errors]
 
 
 def main() -> int:

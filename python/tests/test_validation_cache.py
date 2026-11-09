@@ -400,14 +400,13 @@ def test_parallel_checks_match_sequential_receipts(repository: Path) -> None:
 
 
 def test_lint_pool_reports_every_failed_unit_in_order(repository: Path) -> None:
-    """Buffered lint output is reported per unit; failures create no receipts."""
+    """Lint units run one at a time and every failure is reported in order."""
     commands: list[list[str]] = []
 
     def run(command: list[str], **keywords) -> subprocess.CompletedProcess:
         commands.append(command)
         modules = command[5:]
         failed = modules[0] in {"LeanPool", "LeanPool.B"}
-        time.sleep(0.1 if modules[0] == "LeanPool.B" else 0.0)
         output = f"{modules[0]}: finding\n" if failed else "Lint passed.\n"
         return subprocess.CompletedProcess(command, int(failed), output)
 
@@ -418,8 +417,7 @@ def test_lint_pool_reports_every_failed_unit_in_order(repository: Path) -> None:
         "LeanPool.B: lint failed with exit code 1\nLeanPool.B: finding",
         "LeanPool: lint failed with exit code 1\nLeanPool: finding",
     ]
-    covered = sorted(command[5:] for command in commands)
-    assert covered == sorted(pool_units(repository))
+    assert [command[5:] for command in commands] == pool_units(repository)
     assert list(cache.used) == ["lint:LeanPool.A"]
 
 
