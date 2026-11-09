@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import sys
@@ -34,22 +35,34 @@ def test_parse_elapsed_accepts_every_ps_format() -> None:
         limits.parse_elapsed("soon")
 
 
-def test_process_table_finds_only_overdue_lean_descendants() -> None:
-    """Only Lean processes under the build that ran too long are stopped."""
+def test_process_table_finds_only_overdue_lean_processes_of_the_build() -> None:
+    """Only the build's own Lean processes that ran too long are stopped."""
     table = limits.parse_process_table(
         """\
-  100     1    02:00:00 /usr/bin/python3 -m lean_pool.build_time_limits watch
-  101   100    02:00:00 /home/runner/.elan/bin/lake build LeanPool
-  102   101    01:00:01 /home/runner/.elan/bin/v4/lean LeanPool/A/Slow.lean -o x
-  103   101       05:00 /home/runner/.elan/toolchains/v4/bin/lean LeanPool/A/Fast.lean
-  104     1    09:00:00 /home/runner/.elan/toolchains/v4/bin/lean Unrelated.lean
-  105   101    02:00:00 /bin/sh -c leanc
+  100     1   100    02:00:00 /usr/bin/python3 -m lean_pool.build_time_limits watch
+  101   100   100    02:00:00 /home/runner/.elan/bin/lake build LeanPool
+  102   101   100    01:00:01 /home/runner/.elan/bin/v4/lean LeanPool/A/Slow.lean -o x
+  103   101   100       05:00 /home/runner/.elan/bin/v4/lean LeanPool/A/Fast.lean
+  104     1     1    09:00:00 /home/runner/.elan/bin/v4/lean Unrelated.lean
+  105   101   100    02:00:00 /bin/sh -c leanc
+  106     1   100    01:30:00 /home/runner/.elan/bin/v4/lean LeanPool/A/Orphan.lean
 garbage line
 """
     )
     overdue = limits.overdue_lean_processes(table, root=100, limit=3600)
-    assert [process.pid for process in overdue] == [102]
+    assert sorted(process.pid for process in overdue) == [102, 106]
     assert limits.source_of(overdue[0]) == "LeanPool/A/Slow.lean"
+
+
+def test_unreadable_process_table_is_an_error(monkeypatch) -> None:
+    """A failing ``ps`` is reported, never read as an empty table."""
+
+    def failing(*_arguments, **_options):
+        return subprocess.CompletedProcess(["ps"], 1, stdout="", stderr="denied")
+
+    monkeypatch.setattr(limits.subprocess, "run", failing)
+    with pytest.raises(limits.ProcessTableError):
+        limits.read_process_table()
 
 
 def test_module_times_reads_pool_modules_only() -> None:
@@ -121,13 +134,80 @@ def test_check_ignores_slow_unchanged_files(tmp_path: Path) -> None:
     assert limits.check(log, base, root, limit=600) == 0
 
 
+def _fake_lean(tmp_path: Path, body: str) -> tuple[Path, Path]:
+    """A Python script run through a symlink named ``lean``."""
+    lean = tmp_path / "lean"
+    lean.symlink_to(sys.executable)
+    script = tmp_path / "work.py"
+    script.write_text(body)
+    return lean, script
+
+
+def _alive(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    return True
+
+
 def test_watch_stops_a_lean_process_past_the_limit(tmp_path: Path) -> None:
     """A Lean process past the hard limit is stopped and the build fails."""
     fake_lean = tmp_path / "lean"
     fake_lean.symlink_to(shutil.which("sleep") or "/bin/sleep")
     build = ["/bin/sh", "-c", f"'{fake_lean}' 60; exit 0"]
     started = time.monotonic()
-    assert limits.watch(build, limit=1, poll=0.2) == 124
+    assert limits.watch(build, limit=1, poll=0.2, grace=0.5) == 124
+    assert time.monotonic() - started < 30
+
+
+def test_watch_kills_a_stop_ignoring_lean_after_its_parent_exits(
+    tmp_path: Path,
+) -> None:
+    """A Lean process that ignores TERM and outlives its parent is still killed."""
+    pid_file = tmp_path / "pid"
+    lean, script = _fake_lean(
+        tmp_path,
+        "import os, signal, sys, time\n"
+        "signal.signal(signal.SIGTERM, signal.SIG_IGN)\n"
+        f"open({str(pid_file)!r}, 'w').write(str(os.getpid()))\n"
+        "while True:\n"
+        "    print('still writing', flush=True)\n"
+        "    time.sleep(0.1)\n",
+    )
+    build = ["/bin/sh", "-c", f"'{lean}' '{script}' > /dev/null & sleep 2; exit 0"]
+    started = time.monotonic()
+    assert limits.watch(build, limit=1, poll=0.2, grace=0.5) == 124
+    assert time.monotonic() - started < 30
+    pid = int(pid_file.read_text())
+    deadline = time.monotonic() + 5
+    while _alive(pid) and time.monotonic() < deadline:
+        time.sleep(0.1)
+    assert not _alive(pid)
+
+
+def test_watch_leaves_no_owned_process_behind(tmp_path: Path) -> None:
+    """Background processes the build leaves running are stopped on return."""
+    pid_file = tmp_path / "pid"
+    build = ["/bin/sh", "-c", f"sleep 60 & echo $! > '{pid_file}'; exit 0"]
+    assert limits.watch(build, limit=60, poll=0.2, grace=0.5) == 0
+    pid = int(pid_file.read_text())
+    deadline = time.monotonic() + 5
+    while _alive(pid) and time.monotonic() < deadline:
+        time.sleep(0.1)
+    assert not _alive(pid)
+
+
+def test_watch_stops_the_build_when_ps_fails(monkeypatch) -> None:
+    """Without a readable process table the build is stopped, not left unwatched."""
+
+    def unreadable() -> list[limits.Process]:
+        raise limits.ProcessTableError("ps exited with status 1")
+
+    monkeypatch.setattr(limits, "read_process_table", unreadable)
+    started = time.monotonic()
+    build = [sys.executable, "-c", "import time; time.sleep(60)"]
+    assert limits.watch(build, limit=60, poll=0.2, grace=0.5) == 125
     assert time.monotonic() - started < 30
 
 
@@ -135,3 +215,47 @@ def test_watch_passes_through_the_build_status() -> None:
     """Without a stopped process the build exit status is kept."""
     assert limits.watch([sys.executable, "-c", "raise SystemExit(3)"], limit=60) == 3
     assert limits.watch([sys.executable, "-c", "pass"], limit=60) == 0
+
+
+def _outputs(root: Path, module: str) -> list[Path]:
+    relative = Path(*module.split("."))
+    folder = root / ".lake/build/lib/lean" / relative.parent
+    folder.mkdir(parents=True, exist_ok=True)
+    files = [folder / f"{relative.name}.{suffix}" for suffix in ("olean", "trace")]
+    for file in files:
+        file.write_text("compiled\n")
+    return files
+
+
+def test_prepare_rebuilds_changed_files_from_a_pre_policy_cache(
+    tmp_path: Path,
+) -> None:
+    """A restored build without the policy marker recompiles changed files."""
+    root, base = _repository(tmp_path)
+    changed = _outputs(root, BUNDLE_MODULE)
+    unchanged = _outputs(root, "LeanPool.MovingSofa.Certificates.Bundle023")
+    assert limits.prepare(base, root) == 0
+    assert not any(file.exists() for file in changed)
+    assert all(file.exists() for file in unchanged)
+
+
+def test_prepare_keeps_a_build_that_passed_this_policy(tmp_path: Path) -> None:
+    """A passing check marks the build, so its outputs are reused next time."""
+    root, base = _repository(tmp_path)
+    changed = _outputs(root, BUNDLE_MODULE)
+    log = tmp_path / "build.log"
+    log.write_text(f"✔ [1/1] Built {BUNDLE_MODULE} (300s)\n")
+    assert limits.check(log, base, root, limit=600) == 0
+    assert (root / limits.POLICY_MARKER).read_text().strip() == limits.policy_digest()
+    assert limits.prepare(base, root) == 0
+    assert all(file.exists() for file in changed)
+
+
+def test_failed_check_does_not_mark_the_build(tmp_path: Path) -> None:
+    """A build with an over-limit file is never marked as passing."""
+    root, base = _repository(tmp_path)
+    _outputs(root, BUNDLE_MODULE)
+    log = tmp_path / "build.log"
+    log.write_text(LAKE_LOG)
+    assert limits.check(log, base, root, limit=600) == 1
+    assert not (root / limits.POLICY_MARKER).exists()

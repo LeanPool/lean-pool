@@ -15,6 +15,8 @@ can run it with the runner's ``python3`` before ``uv`` is installed.
 from __future__ import annotations
 
 import argparse
+import glob
+import hashlib
 import logging
 import os
 import re
@@ -22,6 +24,7 @@ import signal
 import subprocess
 import sys
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -31,6 +34,10 @@ PROCESS_LIMIT_SECONDS = 3600
 FILE_LIMIT_SECONDS = 600
 POLL_SECONDS = 15
 TERMINATE_GRACE_SECONDS = 30
+# Written into `.lake/build` after a passing check. A restored build without the
+# current policy's marker predates this gate, so changed files in it are rebuilt.
+POLICY_MARKER = Path(".lake/build/lean-pool-build-time-policy")
+BUILD_OUTPUT_DIRECTORIES = (Path(".lake/build/lib/lean"), Path(".lake/build/ir"))
 
 _BUILT_LINE = re.compile(
     r"Built (?P<module>LeanPool(?:\.[^\s:()]+)+) "
@@ -41,12 +48,17 @@ _ELAPSED = re.compile(
 )
 
 
+class ProcessTableError(RuntimeError):
+    """``ps`` failed, so the watchdog cannot see the build's processes."""
+
+
 @dataclass(frozen=True)
 class Process:
     """One row of the process table."""
 
     pid: int
     parent: int
+    group: int
     elapsed: int
     arguments: str
 
@@ -66,19 +78,20 @@ def parse_elapsed(text: str) -> int:
 
 
 def parse_process_table(output: str) -> list[Process]:
-    """Parse ``ps -A -o pid=,ppid=,etime=,args=`` output."""
+    """Parse ``ps -A -o pid=,ppid=,pgid=,etime=,args=`` output."""
     processes = []
     for line in output.splitlines():
-        fields = line.split(None, 3)
-        if len(fields) < 3:
+        fields = line.split(None, 4)
+        if len(fields) < 4:
             continue
         try:
             processes.append(
                 Process(
                     pid=int(fields[0]),
                     parent=int(fields[1]),
-                    elapsed=parse_elapsed(fields[2]),
-                    arguments=fields[3] if len(fields) > 3 else "",
+                    group=int(fields[2]),
+                    elapsed=parse_elapsed(fields[3]),
+                    arguments=fields[4] if len(fields) > 4 else "",
                 )
             )
         except ValueError:
@@ -87,14 +100,26 @@ def parse_process_table(output: str) -> list[Process]:
 
 
 def read_process_table() -> list[Process]:
-    """Read the current process table portably (Linux and macOS)."""
-    output = subprocess.run(
-        ["ps", "-A", "-o", "pid=,ppid=,etime=,args="],
-        capture_output=True,
-        text=True,
-        check=False,
-    ).stdout
-    return parse_process_table(output)
+    """Read the current process table portably (Linux and macOS).
+
+    Raises:
+        ProcessTableError: ``ps`` failed or printed nothing usable.
+    """
+    try:
+        result = subprocess.run(
+            ["ps", "-A", "-o", "pid=,ppid=,pgid=,etime=,args="],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as error:
+        raise ProcessTableError(str(error)) from error
+    processes = parse_process_table(result.stdout)
+    if result.returncode != 0 or not processes:
+        raise ProcessTableError(
+            f"ps exited with status {result.returncode}: {result.stderr.strip()}"
+        )
+    return processes
 
 
 def is_lean_process(process: Process) -> bool:
@@ -112,25 +137,35 @@ def source_of(process: Process) -> str:
     return process.arguments
 
 
-def overdue_lean_processes(
-    processes: list[Process], root: int, limit: int
-) -> list[Process]:
-    """Lean processes descended from ``root`` that have run longer than ``limit``."""
+def owned_processes(processes: list[Process], root: int) -> list[Process]:
+    """Processes the build owns: its process group plus any descendants.
+
+    The build runs as the leader of its own process group, so a Lean process
+    stays owned even after its parent exits and it is reparented.
+    """
     children: dict[int, list[Process]] = {}
     for process in processes:
         children.setdefault(process.parent, []).append(process)
-    overdue = []
-    pending = [root]
-    seen = {root}
+    owned = {process.pid: process for process in processes if process.group == root}
+    pending = [root, *owned]
     while pending:
         for child in children.get(pending.pop(), []):
-            if child.pid in seen:
-                continue
-            seen.add(child.pid)
-            pending.append(child.pid)
-            if is_lean_process(child) and child.elapsed > limit:
-                overdue.append(child)
-    return overdue
+            if child.pid not in owned:
+                owned[child.pid] = child
+                pending.append(child.pid)
+    owned.pop(root, None)
+    return list(owned.values())
+
+
+def overdue_lean_processes(
+    processes: list[Process], root: int, limit: int
+) -> list[Process]:
+    """Lean processes owned by the build that have run longer than ``limit``."""
+    return [
+        process
+        for process in owned_processes(processes, root)
+        if is_lean_process(process) and process.elapsed > limit
+    ]
 
 
 def _signal(pid: int, number: int) -> None:
@@ -138,6 +173,17 @@ def _signal(pid: int, number: int) -> None:
         os.kill(pid, number)
     except ProcessLookupError:
         pass
+
+
+def _signal_group(group: int, number: int) -> bool:
+    """Signal a process group; ``False`` once no member is left."""
+    try:
+        os.killpg(group, number)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
 
 
 def _stop(process: Process, limit: int) -> None:
@@ -151,22 +197,96 @@ def _stop(process: Process, limit: int) -> None:
     _signal(process.pid, signal.SIGTERM)
 
 
-def watch(command: list[str], limit: int, poll: float = POLL_SECONDS) -> int:
-    """Run ``command``, stopping any Lean process that exceeds ``limit`` seconds."""
-    child = subprocess.Popen(command)
-    stopped: dict[int, float] = {}
-    while child.poll() is None:
-        now = time.monotonic()
-        for process in overdue_lean_processes(read_process_table(), child.pid, limit):
-            if process.pid not in stopped:
-                _stop(process, limit)
-                stopped[process.pid] = now
-            elif now - stopped[process.pid] > TERMINATE_GRACE_SECONDS:
-                _signal(process.pid, signal.SIGKILL)
-        try:
-            child.wait(timeout=poll)
-        except subprocess.TimeoutExpired:
-            pass
+def _end_group(group: int, grace: float, reap: Callable[[], object]) -> None:
+    """Stop every process left in the build's group: TERM, then KILL after grace."""
+    reap()
+    if not _signal_group(group, signal.SIGTERM):
+        return
+    deadline = time.monotonic() + grace
+    while time.monotonic() < deadline:
+        reap()
+        if not _signal_group(group, 0):
+            return
+        time.sleep(min(0.1, grace))
+    _signal_group(group, signal.SIGKILL)
+
+
+def _enforce(
+    root: int,
+    limit: int,
+    grace: float,
+    stopped: dict[tuple[int, str], float],
+) -> None:
+    """Stop newly overdue Lean processes and kill ones that ignored the stop."""
+    processes = read_process_table()
+    now = time.monotonic()
+    alive = {(process.pid, process.arguments) for process in processes}
+    for process in overdue_lean_processes(processes, root, limit):
+        identity = (process.pid, process.arguments)
+        if identity not in stopped:
+            _stop(process, limit)
+            stopped[identity] = now
+    for identity, since in stopped.items():
+        if identity in alive and now - since > grace:
+            _signal(identity[0], signal.SIGKILL)
+
+
+def watch(
+    command: list[str],
+    limit: int,
+    poll: float = POLL_SECONDS,
+    grace: float = TERMINATE_GRACE_SECONDS,
+) -> int:
+    """Run ``command``, stopping any Lean process that exceeds ``limit`` seconds.
+
+    The command runs in its own process group. Before returning, every process
+    left in that group is stopped, so nothing outlives the watchdog and keeps
+    the build's output open. If ``ps`` fails, the build is stopped rather than
+    left running unwatched.
+
+    Returns:
+        124 if a Lean process was stopped, 125 if the process table could not be
+        read, otherwise the command's exit status.
+    """
+    child = subprocess.Popen(command, start_new_session=True)
+    root = child.pid
+    stopped: dict[tuple[int, str], float] = {}
+
+    def forward(number: int, _frame: object) -> None:
+        _signal_group(root, number)
+
+    previous = {
+        number: signal.signal(number, forward)
+        for number in (signal.SIGINT, signal.SIGTERM)
+    }
+    status = None
+    try:
+        while True:
+            running = child.poll() is None
+            try:
+                _enforce(root, limit, grace, stopped)
+            except ProcessTableError as error:
+                print(
+                    f"::error::Cannot read the process table ({error}); "
+                    "stopping the build instead of running it without the "
+                    "60-minute limit.",
+                    flush=True,
+                )
+                status = 125
+                break
+            if not running:
+                break
+            try:
+                child.wait(timeout=poll)
+            except subprocess.TimeoutExpired:
+                pass
+    finally:
+        _end_group(root, grace, child.poll)
+        child.wait()
+        for number, handler in previous.items():
+            signal.signal(number, handler)
+    if status is not None:
+        return status
     if stopped:
         return 124
     return child.returncode
@@ -237,6 +357,45 @@ def violations(
     return sorted(found, key=lambda violation: -violation.seconds)
 
 
+def policy_digest() -> str:
+    """Identify this gate's code, so a change to the limits counts as a new policy."""
+    return hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+
+
+def prepare(base: str, root: Path) -> int:
+    """Make Lake recompile changed files unless the restored build passed this gate.
+
+    A build restored from a cache saved before this policy (or under different
+    limits) could replay a changed file that was never timed. Deleting that file's
+    outputs makes Lake compile it again, so ``check`` measures it.
+    """
+    marker = root / POLICY_MARKER
+    if marker.is_file() and marker.read_text().strip() == policy_digest():
+        print("Restored build passed the current build-time policy.")
+        return 0
+    removed = 0
+    for module in changed_modules(base, root):
+        relative = Path(*module.split("."))
+        for directory in BUILD_OUTPUT_DIRECTORIES:
+            folder = root / directory / relative.parent
+            for output in folder.glob(glob.escape(relative.name) + ".*"):
+                if output.is_file():
+                    output.unlink()
+                    removed += 1
+    print(
+        "Restored build predates the current build-time policy; removed "
+        f"{removed} compiled outputs of changed files so they are rebuilt and timed."
+    )
+    return 0
+
+
+def mark_policy(root: Path) -> None:
+    """Record that every changed file in this build passed the current policy."""
+    build = root / POLICY_MARKER.parent
+    if build.is_dir():
+        (root / POLICY_MARKER).write_text(policy_digest() + "\n")
+
+
 def check(log_path: Path, base: str, root: Path, limit: int) -> int:
     """Report changed files over the per-file limit; return the exit status."""
     times = module_times(log_path.read_text(errors="replace"))
@@ -256,7 +415,10 @@ def check(log_path: Path, base: str, root: Path, limit: int) -> int:
             f"build in under {limit} s on CI. Split the file or make its proofs "
             "cheaper."
         )
-    return 1 if found else 0
+    if found:
+        return 1
+    mark_policy(root)
+    return 0
 
 
 def main(arguments: list[str] | None = None) -> int:
@@ -266,6 +428,11 @@ def main(arguments: list[str] | None = None) -> int:
     watch_parser = commands.add_parser("watch", help="run a build under the hard limit")
     watch_parser.add_argument("--limit", type=int, default=PROCESS_LIMIT_SECONDS)
     watch_parser.add_argument("build", nargs=argparse.REMAINDER)
+    prepare_parser = commands.add_parser(
+        "prepare", help="rebuild changed files that a restored build never timed"
+    )
+    prepare_parser.add_argument("--base", required=True)
+    prepare_parser.add_argument("--root", type=Path, default=Path.cwd())
     check_parser = commands.add_parser("check", help="check changed files' build times")
     check_parser.add_argument("--log", type=Path, required=True)
     check_parser.add_argument("--base", required=True)
@@ -277,6 +444,8 @@ def main(arguments: list[str] | None = None) -> int:
         if not build:
             parser.error("watch needs a command after --")
         return watch(build, options.limit)
+    if options.command == "prepare":
+        return prepare(options.base, options.root)
     return check(options.log, options.base, options.root, options.limit)
 
 
