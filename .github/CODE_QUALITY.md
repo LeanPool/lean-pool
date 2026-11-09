@@ -24,18 +24,24 @@ warnings Lake itself prints.
 Build-time limits follow Tau Ceti's CI performance gate.
 [`build_time_limits.py`](../python/lean_pool/build_time_limits.py) runs every CI
 `lake build` in its own process group and stops any Lean process still running after
-60 minutes, which fails the build. Nothing the build started outlives it, and if the
-process table cannot be read the build is stopped rather than left unwatched.
+60 minutes, which fails the build. Before returning, it cleans up its process group
+and the descendants it observed, including after reparenting. If the process table
+cannot be read, the build is stopped rather than left unwatched.
 
 After the build, it reads Lake's per-module times from the log and fails when a file
 the PR adds or modifies took more than 600 s. Times are Lake's wall-clock times on
 GitHub's 4-vCPU runners. Existing files are checked only once a PR changes them.
 
-A changed file that CI reuses instead of compiling must have passed the same policy:
-- reused PR, rebase and queue builds must match `build_time_limits.py`;
-- a passing check marks `.lake/build`, and before each build, changed files in a
-  restored build without the current marker are deleted so Lake compiles and times
-  them again.
+Before each build, after all cache and artifact restores, `prepare` removes the
+compiled outputs of the added or modified modules that job builds. This happens
+even for a cache produced under the same policy: an untouched file in that cache
+need not have passed the changed-file limit. Each changed module must then emit a
+fresh successful build timing; missing timings and cache replays fail the check.
+Shards check their assigned modules, while the assembled and rebased root builds
+check all changed modules. Untouched modules can still reuse compiled output.
+
+Reused PR, rebase and queue artifacts must still match `build_time_limits.py`.
+That match does not replace the fresh timing required for a changed module.
 
 The Lean workflow runs on Lean, Lake, project metadata, quality-checker, and workflow changes. It restores and saves Lake caches and pulls Mathlib oleans with `lake exe cache get` when the cache is cold.
 

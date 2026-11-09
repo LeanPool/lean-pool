@@ -385,9 +385,9 @@ jobs:
           BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          # Added or modified files must build in under 600 s, and `watch` stops
-          # any Lean process after 60 minutes. `prepare` rebuilds changed files
-          # that a restored build compiled before this policy, so they get timed.
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
@@ -625,14 +625,16 @@ jobs:
               | tr '\n' ' ')
             modules="$modules $project_modules"
           done
-          # Added or modified files must build in under 600 s, and `watch` stops
-          # any Lean process after 60 minutes. `prepare` rebuilds changed files
-          # that a restored build compiled before this policy, so they get timed.
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
             time_base="$BUILD_TIME_BASE"
-            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
+            # shellcheck disable=SC2086 # modules is a space-separated list on purpose
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare \
+              --base "$time_base" --modules $modules
           fi
           # shellcheck disable=SC2086 # modules is a space-separated list on purpose
           PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
@@ -641,8 +643,9 @@ jobs:
             exit 1
           fi
           if [ -n "$time_base" ]; then
+            # shellcheck disable=SC2086 # modules is a space-separated list on purpose
             PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
-              --log shard-build.log --base "$time_base"
+              --log shard-build.log --base "$time_base" --modules $modules
           fi
 
       # Ship only what this build produced; unchanged (cache-replayed)
@@ -805,9 +808,9 @@ jobs:
           BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          # Added or modified files must build in under 600 s, and `watch` stops
-          # any Lean process after 60 minutes. `prepare` rebuilds changed files
-          # that a restored build compiled before this policy, so they get timed.
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
@@ -1068,9 +1071,9 @@ jobs:
           BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          # Added or modified files must build in under 600 s, and `watch` stops
-          # any Lean process after 60 minutes. `prepare` rebuilds changed files
-          # that a restored build compiled before this policy, so they get timed.
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then

@@ -15,16 +15,14 @@ can run it with the runner's ``python3`` before ``uv`` is installed.
 from __future__ import annotations
 
 import argparse
-import glob
-import hashlib
 import logging
 import os
 import re
+import select
 import signal
 import subprocess
 import sys
 import time
-from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -34,11 +32,6 @@ PROCESS_LIMIT_SECONDS = 3600
 FILE_LIMIT_SECONDS = 600
 POLL_SECONDS = 15
 TERMINATE_GRACE_SECONDS = 30
-# Written into `.lake/build` after a passing check. A restored build without the
-# current policy's marker predates this gate, so changed files in it are rebuilt.
-POLICY_MARKER = Path(".lake/build/lean-pool-build-time-policy")
-BUILD_OUTPUT_DIRECTORIES = (Path(".lake/build/lib/lean"), Path(".lake/build/ir"))
-
 _BUILT_LINE = re.compile(
     r"Built (?P<module>LeanPool(?:\.[^\s:()]+)+) "
     r"\((?P<value>\d+(?:\.\d+)?)(?P<unit>ms|s)\)"
@@ -168,22 +161,11 @@ def overdue_lean_processes(
     ]
 
 
-def _signal(pid: int, number: int) -> None:
-    try:
-        os.kill(pid, number)
-    except ProcessLookupError:
-        pass
-
-
-def _signal_group(group: int, number: int) -> bool:
-    """Signal a process group; ``False`` once no member is left."""
+def _signal_group(group: int, number: int) -> None:
     try:
         os.killpg(group, number)
     except ProcessLookupError:
-        return False
-    except PermissionError:
-        return True
-    return True
+        pass
 
 
 def _stop(process: Process, limit: int) -> None:
@@ -194,41 +176,155 @@ def _stop(process: Process, limit: int) -> None:
         f"{limit // 60} minutes; split the file or make its proofs cheaper.",
         flush=True,
     )
-    _signal(process.pid, signal.SIGTERM)
 
 
-def _end_group(group: int, grace: float, reap: Callable[[], object]) -> None:
-    """Stop every process left in the build's group: TERM, then KILL after grace."""
-    reap()
-    if not _signal_group(group, signal.SIGTERM):
-        return
-    deadline = time.monotonic() + grace
-    while time.monotonic() < deadline:
-        reap()
-        if not _signal_group(group, 0):
-            return
-        time.sleep(min(0.1, grace))
-    _signal_group(group, signal.SIGKILL)
+@dataclass(frozen=True)
+class OwnedProcess:
+    """A Linux process identity and stable signal handle, never just a PID."""
+
+    pid: int
+    birth: int
+    descriptor: int
 
 
-def _enforce(
-    root: int,
-    limit: int,
-    grace: float,
-    stopped: dict[tuple[int, str], float],
-) -> None:
-    """Stop newly overdue Lean processes and kill ones that ignored the stop."""
-    processes = read_process_table()
-    now = time.monotonic()
-    alive = {(process.pid, process.arguments) for process in processes}
-    for process in overdue_lean_processes(processes, root, limit):
-        identity = (process.pid, process.arguments)
-        if identity not in stopped:
-            _stop(process, limit)
-            stopped[identity] = now
-    for identity, since in stopped.items():
-        if identity in alive and now - since > grace:
-            _signal(identity[0], signal.SIGKILL)
+def _process_identity(pid: int) -> tuple[int, int, int] | None:
+    """Read kernel start ticks, current parent and group for a candidate PID."""
+    try:
+        stat = Path(f"/proc/{pid}/stat").read_text()
+    except FileNotFoundError:
+        return None
+    fields = stat.rsplit(")", 1)[1].split()
+    return int(fields[19]), int(fields[1]), int(fields[2])
+
+
+def _birth(pid: int) -> int | None:
+    identity = _process_identity(pid)
+    return identity[0] if identity else None
+
+
+def _running(process: OwnedProcess) -> bool:
+    readiness = select.poll()
+    readiness.register(process.descriptor, select.POLLIN)
+    return not readiness.poll(0)
+
+
+def _prune_owned(owned: dict[int, OwnedProcess]) -> None:
+    for pid, process in list(owned.items()):
+        if not _running(process):
+            os.close(process.descriptor)
+            del owned[pid]
+
+
+def _remember(process: Process, root: int, owned: dict[int, OwnedProcess]) -> bool:
+    previous = owned.get(process.pid)
+    if previous is not None:
+        if _running(previous):
+            return True
+        os.close(previous.descriptor)
+        del owned[process.pid]
+    try:
+        descriptor = os.pidfd_open(process.pid)
+    except ProcessLookupError:
+        return False
+    try:
+        current = _process_identity(process.pid)
+        if current is not None:
+            birth, parent, group = current
+            identity = OwnedProcess(process.pid, birth, descriptor)
+            # A stale ps row may now name a recycled, unrelated PID. Prove the
+            # current relationship after opening its stable handle instead.
+            related = process.pid == root or group == root or parent == root
+            if parent in owned and _running(owned[parent]):
+                related = True
+            if related and _running(identity) and _birth(process.pid) == birth:
+                owned[process.pid] = identity
+                return True
+    except BaseException:
+        os.close(descriptor)
+        raise
+    os.close(descriptor)
+    return False
+
+
+def _observe_owned(
+    processes: list[Process], root: int, owned: dict[int, OwnedProcess]
+) -> list[Process]:
+    """Retain descendant coverage across groups, sessions and reparenting."""
+    _prune_owned(owned)
+    pending = {root} | {pid for pid, process in owned.items() if _running(process)}
+    pending |= {process.pid for process in processes if process.group == root}
+    selected, expanded = set(pending), set()
+    while pending:
+        expanded |= pending
+        children = {process.pid for process in processes if process.parent in pending}
+        pending = children - expanded
+        selected |= children
+    candidates = [process for process in processes if process.pid in selected]
+    while candidates:
+        remaining = [p for p in candidates if not _remember(p, root, owned)]
+        if len(remaining) == len(candidates):
+            break
+        candidates = remaining
+    return [
+        process
+        for process in processes
+        if process.pid in owned
+        and _running(owned[process.pid])
+        and _birth(process.pid) == owned[process.pid].birth
+    ]
+
+
+def _signal_owned(owned: dict[int, OwnedProcess], number: int) -> None:
+    for process in owned.values():
+        try:
+            # The pidfd pins the initially checked PID/start identity, including
+            # between any last observation and the signal; PID reuse is harmless.
+            signal.pidfd_send_signal(process.descriptor, number)
+        except ProcessLookupError:
+            pass
+
+
+def _finish_group(
+    root: int, owned: dict[int, OwnedProcess], poll: float, grace: float
+) -> bool:
+    """Finish owned cleanup and retain failures of the process observer."""
+    observed = True
+    try:
+        # Discover children of observed intermediaries before TERM can reparent
+        # them. The main loop's last process-table snapshot may already be old.
+        _observe_owned(read_process_table(), root, owned)
+    except (OSError, ProcessTableError, subprocess.SubprocessError, ValueError):
+        observed = False
+    for number in (signal.SIGTERM, signal.SIGKILL):
+        _signal_group(root, number)
+        _signal_owned(owned, number)
+        deadline = time.monotonic() + (
+            grace if number == signal.SIGTERM else max(grace, 1)
+        )
+        while time.monotonic() < deadline:
+            try:
+                _observe_owned(read_process_table(), root, owned)
+            except (OSError, ProcessTableError, subprocess.SubprocessError, ValueError):
+                observed = False
+            if observed and not any(_running(process) for process in owned.values()):
+                return True
+            if number == signal.SIGKILL and not any(
+                _running(process) for process in owned.values()
+            ):
+                return observed
+            time.sleep(min(poll, 0.1, max(0, deadline - time.monotonic())))
+    if any(_running(process) for process in owned.values()):
+        raise RuntimeError("owned build processes survived SIGKILL")
+    return observed
+
+
+def _process_state(pid: int) -> str | None:
+    """Read the leader state without reaping its PID or releasing its group ID."""
+    try:
+        stat = Path(f"/proc/{pid}/stat").read_text()
+    except FileNotFoundError:
+        return None
+    return stat.rsplit(")", 1)[1].split()[0]
 
 
 def watch(
@@ -237,59 +333,86 @@ def watch(
     poll: float = POLL_SECONDS,
     grace: float = TERMINATE_GRACE_SECONDS,
 ) -> int:
-    """Run ``command``, stopping any Lean process that exceeds ``limit`` seconds.
-
-    The command runs in its own process group. Before returning, every process
-    left in that group is stopped, so nothing outlives the watchdog and keeps
-    the build's output open. If ``ps`` fails, the build is stopped rather than
-    left running unwatched.
+    """Run a build with identity-bound descendant monitoring and complete cleanup.
 
     Returns:
-        124 if a Lean process was stopped, 125 if the process table could not be
-        read, otherwise the command's exit status.
+        124 if a Lean process exceeded its limit, 125 if observation failed,
+        otherwise the command's exit status. SIGINT and SIGTERM are forwarded
+        to the owned build processes while the watchdog retains cleanup duties.
     """
+    if (
+        not hasattr(os, "pidfd_open")
+        or not hasattr(signal, "pidfd_send_signal")
+        or not Path("/proc/self/stat").is_file()
+    ):
+        print("::error::Lean build monitoring requires Linux process identity handles")
+        return 125
     child = subprocess.Popen(command, start_new_session=True)
-    root = child.pid
-    stopped: dict[tuple[int, str], float] = {}
+    owned: dict[int, OwnedProcess] = {}
 
     def forward(number: int, _frame: object) -> None:
-        _signal_group(root, number)
+        _signal_group(child.pid, number)
 
     previous = {
         number: signal.signal(number, forward)
         for number in (signal.SIGINT, signal.SIGTERM)
     }
-    status = None
+    status: int | None = None
     try:
         while True:
-            running = child.poll() is None
-            try:
-                _enforce(root, limit, grace, stopped)
-            except ProcessTableError as error:
+            processes = read_process_table()
+            leader = next((p for p in processes if p.pid == child.pid), None)
+            if leader is None or leader.group != child.pid:
+                raise ProcessTableError(
+                    "build process is missing from the process table"
+                )
+            overdue = [
+                process
+                for process in _observe_owned(processes, child.pid, owned)
+                if is_lean_process(process) and process.elapsed > limit
+            ]
+            if overdue:
+                for process in overdue:
+                    _stop(process, limit)
+                status = 124
+                break
+            if _process_state(child.pid) in {"Z", "X"}:
+                break
+            identity = owned.get(child.pid)
+            if identity is not None:
+                readiness = select.poll()
+                readiness.register(identity.descriptor, select.POLLIN)
+                readiness.poll(max(0, int(poll * 1000)))
+            else:
+                time.sleep(min(poll, 0.01))
+    except (
+        OSError,
+        ProcessTableError,
+        subprocess.SubprocessError,
+        ValueError,
+    ) as error:
+        print(f"::error::Cannot monitor Lean build processes: {error}", flush=True)
+        status = 125
+    finally:
+        # Do not reap the leader before the last signal: its unreaped PID keeps
+        # the build group from being replaced by an unrelated process group.
+        try:
+            if not _finish_group(child.pid, owned, poll, grace):
                 print(
-                    f"::error::Cannot read the process table ({error}); "
-                    "stopping the build instead of running it without the "
-                    "60-minute limit.",
+                    "::error::Process observation failed during build cleanup",
                     flush=True,
                 )
                 status = 125
-                break
-            if not running:
-                break
+        finally:
             try:
-                child.wait(timeout=poll)
-            except subprocess.TimeoutExpired:
-                pass
-    finally:
-        _end_group(root, grace, child.poll)
-        child.wait()
-        for number, handler in previous.items():
-            signal.signal(number, handler)
-    if status is not None:
-        return status
-    if stopped:
-        return 124
-    return child.returncode
+                # Forwarders must be gone before the reaped PID can be reused.
+                for number, handler in previous.items():
+                    signal.signal(number, handler)
+                returncode = child.wait()
+            finally:
+                for process in owned.values():
+                    os.close(process.descriptor)
+    return returncode if status is None else status
 
 
 def module_times(log: str) -> dict[str, float]:
@@ -357,49 +480,50 @@ def violations(
     return sorted(found, key=lambda violation: -violation.seconds)
 
 
-def policy_digest() -> str:
-    """Identify this gate's code, so a change to the limits counts as a new policy."""
-    return hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+def _selected_changed_modules(
+    base: str, root: Path, modules: list[str] | None
+) -> dict[str, str]:
+    changed = changed_modules(base, root)
+    if modules is None:
+        return changed
+    selected = set(modules)
+    return {module: path for module, path in changed.items() if module in selected}
 
 
-def prepare(base: str, root: Path) -> int:
-    """Make Lake recompile changed files unless the restored build passed this gate.
-
-    A build restored from a cache saved before this policy (or under different
-    limits) could replay a changed file that was never timed. Deleting that file's
-    outputs makes Lake compile it again, so ``check`` measures it.
-    """
-    marker = root / POLICY_MARKER
-    if marker.is_file() and marker.read_text().strip() == policy_digest():
-        print("Restored build passed the current build-time policy.")
-        return 0
+def prepare(base: str, root: Path, modules: list[str] | None = None) -> int:
+    """Invalidate changed-module artifacts so their build must record new timings."""
+    changed = _selected_changed_modules(base, root, modules)
     removed = 0
-    for module in changed_modules(base, root):
-        relative = Path(*module.split("."))
-        for directory in BUILD_OUTPUT_DIRECTORIES:
-            folder = root / directory / relative.parent
-            for output in folder.glob(glob.escape(relative.name) + ".*"):
-                if output.is_file():
-                    output.unlink()
+    for path in changed.values():
+        stem = Path(path).with_suffix("")
+        for directory in ("lib/lean", "ir"):
+            target = root / ".lake/build" / directory / stem
+            if not target.parent.is_dir():
+                continue
+            for artifact in target.parent.iterdir():
+                if artifact.name.startswith(target.name + ".") and (
+                    artifact.is_file() or artifact.is_symlink()
+                ):
+                    artifact.unlink()
                     removed += 1
     print(
-        "Restored build predates the current build-time policy; removed "
-        f"{removed} compiled outputs of changed files so they are rebuilt and timed."
+        f"Fresh build timings: invalidated {removed} artifacts for "
+        f"{len(changed)} added or modified pool files."
     )
     return 0
 
 
-def mark_policy(root: Path) -> None:
-    """Record that every changed file in this build passed the current policy."""
-    build = root / POLICY_MARKER.parent
-    if build.is_dir():
-        (root / POLICY_MARKER).write_text(policy_digest() + "\n")
-
-
-def check(log_path: Path, base: str, root: Path, limit: int) -> int:
+def check(
+    log_path: Path,
+    base: str,
+    root: Path,
+    limit: int,
+    *,
+    modules: list[str] | None = None,
+) -> int:
     """Report changed files over the per-file limit; return the exit status."""
     times = module_times(log_path.read_text(errors="replace"))
-    changed = changed_modules(base, root)
+    changed = _selected_changed_modules(base, root, modules)
     built = [module for module in changed if module in times]
     print(
         f"Per-file build-time limit {limit} s: {len(changed)} added or modified "
@@ -408,6 +532,12 @@ def check(log_path: Path, base: str, root: Path, limit: int) -> int:
     for module in sorted(built, key=lambda name: -times[name])[:10]:
         print(f"  {times[module]:8.1f} s  {changed[module]}")
     found = violations(times, changed, limit)
+    missing = sorted(set(changed) - times.keys())
+    for module in missing:
+        print(
+            f"::error file={changed[module]}::No fresh successful build timing for "
+            f"{changed[module]}; added or modified files must compile in this job."
+        )
     for violation in found:
         print(
             f"::error file={violation.path}::{violation.path} took "
@@ -415,10 +545,7 @@ def check(log_path: Path, base: str, root: Path, limit: int) -> int:
             f"build in under {limit} s on CI. Split the file or make its proofs "
             "cheaper."
         )
-    if found:
-        return 1
-    mark_policy(root)
-    return 0
+    return 1 if found or missing else 0
 
 
 def main(arguments: list[str] | None = None) -> int:
@@ -429,15 +556,17 @@ def main(arguments: list[str] | None = None) -> int:
     watch_parser.add_argument("--limit", type=int, default=PROCESS_LIMIT_SECONDS)
     watch_parser.add_argument("build", nargs=argparse.REMAINDER)
     prepare_parser = commands.add_parser(
-        "prepare", help="rebuild changed files that a restored build never timed"
+        "prepare", help="force changed files to rebuild"
     )
     prepare_parser.add_argument("--base", required=True)
     prepare_parser.add_argument("--root", type=Path, default=Path.cwd())
+    prepare_parser.add_argument("--modules", nargs="*")
     check_parser = commands.add_parser("check", help="check changed files' build times")
     check_parser.add_argument("--log", type=Path, required=True)
     check_parser.add_argument("--base", required=True)
     check_parser.add_argument("--limit", type=int, default=FILE_LIMIT_SECONDS)
     check_parser.add_argument("--root", type=Path, default=Path.cwd())
+    check_parser.add_argument("--modules", nargs="*")
     options = parser.parse_args(arguments)
     if options.command == "watch":
         build = options.build[1:] if options.build[:1] == ["--"] else options.build
@@ -445,8 +574,10 @@ def main(arguments: list[str] | None = None) -> int:
             parser.error("watch needs a command after --")
         return watch(build, options.limit)
     if options.command == "prepare":
-        return prepare(options.base, options.root)
-    return check(options.log, options.base, options.root, options.limit)
+        return prepare(options.base, options.root, options.modules)
+    return check(
+        options.log, options.base, options.root, options.limit, modules=options.modules
+    )
 
 
 if __name__ == "__main__":
