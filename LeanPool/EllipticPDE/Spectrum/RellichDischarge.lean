@@ -186,7 +186,7 @@ lemma trans_mod {Ω : Set (EuclideanSpace ℝ (Fin d))} (hΩm : MeasurableSet Ω
     rw [show ‖U‖ = ‖(↑U : H1amb Ω)‖ from rfl,
       PiLp.norm_sq_eq_of_L2 (fun _ : Fin (d + 1) => L2D Ω) (↑U)]
   rw [hnorm, Fin.sum_univ_succ]
-  linarith [sq_nonneg ‖(↑U : H1amb Ω) 0‖]
+  linarith only [sq_nonneg ‖(↑U : H1amb Ω) 0‖]
 
 /-- The embedding `embL2 Ω` is a contraction: `‖U 0‖ ≤ ‖U‖`. -/
 lemma embL2_norm_le {Ω : Set (EuclideanSpace ℝ (Fin d))} (U : H01 Ω) : ‖embL2 Ω U‖ ≤ ‖U‖ := by

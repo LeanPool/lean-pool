@@ -773,7 +773,7 @@ theorem totallyBounded_of_lipschitz_translation (S : Set (EucL2 n)) {R M Λ : �
     have key : D * η ^ 2 * (Real.sqrt D + 1) ^ 2 < ε ^ 2 * (Real.sqrt D + 1) ^ 2 :=
       calc D * η ^ 2 * (Real.sqrt D + 1) ^ 2 = D * ε ^ 2 := by rw [mul_assoc, hη2]
         _ < ε ^ 2 * (Real.sqrt D + 1) ^ 2 := by
-            nlinarith [hs, mul_nonneg (sq_nonneg ε) hsqrt0, mul_pos hε hε]
+            nlinarith only [hε, hsqrt0, hs, mul_nonneg (sq_nonneg ε) hsqrt0, mul_pos hε hε]
     exact lt_of_mul_lt_mul_right key (by positivity)
   have happrox : ∀ g ∈ S, ‖g - avg η K g‖ < ε := by
     intro g hg

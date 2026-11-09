@@ -151,12 +151,12 @@ theorem apriori_bound_sub (hd : 0 < d) {U : Set (EuclideanSpace ℝ (Fin d))}
     rw [hvx]
     have e1 : 1 ≤ Real.exp (α * (x i₀ - m)) := by
       rw [← Real.exp_zero]
-      exact Real.exp_le_exp.mpr (mul_nonneg hα0.le (by linarith))
+      exact Real.exp_le_exp.mpr (mul_nonneg hα0.le (by linarith only [h1]))
     have e2 : Real.exp (α * (x i₀ - m)) ≤ Real.exp (α * D) :=
-      Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left (by linarith) hα0.le)
+      Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left (by linarith only [h2]) hα0.le)
     constructor
-    · nlinarith [mul_nonneg hF' (sub_nonneg.mpr e2)]
-    · nlinarith [mul_nonneg hF' (sub_nonneg.mpr e1)]
+    · nlinarith only [hK0, hF', e2, mul_nonneg hF' (sub_nonneg.mpr e2)]
+    · nlinarith only [hF', e1, mul_nonneg hF' (sub_nonneg.mpr e1)]
   -- `L u ≤ L v` on the set
   have hL : ∀ x ∈ U, nondivOp a b c u x ≤ nondivOp a b c v x := by
     intro x hx
@@ -169,7 +169,7 @@ theorem apriori_bound_sub (hd : 0 < d) {U : Set (EuclideanSpace ℝ (Fin d))}
     have hw : 1 ≤ Real.exp (-α * m) * expFn α i₀ x := by
       simp only [expFn]
       rw [← Real.exp_add, ← Real.exp_zero]
-      exact Real.exp_le_exp.mpr (by nlinarith)
+      exact Real.exp_le_exp.mpr (by nlinarith only [hα1, h1])
     have hwpos : 0 < expFn α i₀ x := expFn_pos α i₀ x
     have hepos : 0 < Real.exp (-α * m) := Real.exp_pos _
     -- the principal and transport part of `L (e^{α(x - m)})` is at least `θ`
@@ -181,9 +181,9 @@ theorem apriori_bound_sub (hd : 0 < d) {U : Set (EuclideanSpace ℝ (Fin d))}
         have e1 : θ * α ^ 2 ≤ a x i₀ i₀ * α ^ 2 := mul_le_mul_of_nonneg_right haa (sq_nonneg α)
         have e2 : b x i₀ * α ≤ B * α := mul_le_mul_of_nonneg_right hbb hα0.le
         have e3 : θ * α ^ 2 - B * α = θ * α := by linear_combination α * hθα
-        linarith
-      have h4 : θ ≤ θ * α := by nlinarith
-      have h5 : 0 ≤ a x i₀ i₀ * α ^ 2 - b x i₀ * α := by linarith
+        linarith only [e1, e2, e3]
+      have h4 : θ ≤ θ * α := by rw [hθα]; exact le_add_of_nonneg_left hB0
+      have h5 : 0 ≤ a x i₀ i₀ * α ^ 2 - b x i₀ * α := hθ.le.trans (h4.trans h3)
       calc θ ≤ θ * α := h4
         _ ≤ a x i₀ i₀ * α ^ 2 - b x i₀ * α := h3
         _ = (a x i₀ i₀ * α ^ 2 - b x i₀ * α) * 1 := (mul_one _).symm
@@ -206,7 +206,7 @@ theorem apriori_bound_sub (hd : 0 < d) {U : Set (EuclideanSpace ℝ (Fin d))}
       _ ≤ F / θ * ((a x i₀ i₀ * α ^ 2 - b x i₀ * α) * (Real.exp (-α * m) * expFn α i₀ x)) :=
           mul_le_mul_of_nonneg_left hprin hF'
       _ ≤ F / θ * ((a x i₀ i₀ * α ^ 2 - b x i₀ * α) * (Real.exp (-α * m) * expFn α i₀ x))
-          + c x * (c₀ + ε * expFn α i₀ x) := by linarith
+          + c x * (c₀ + ε * expFn α i₀ x) := by linarith only [hcv]
   -- `u ≤ v` on the frontier
   have hbd : ∀ x ∈ frontier U, u x ≤ v x := by
     intro x hx
@@ -217,13 +217,13 @@ theorem apriori_bound_sub (hd : 0 < d) {U : Set (EuclideanSpace ℝ (Fin d))}
     have h4 : 0 ≤ F / θ * (Real.exp (α * D) - Real.exp (α * (x i₀ - m))) := by
       obtain ⟨_, hx2⟩ := slab_closure hslab x (frontier_subset_closure hx)
       exact mul_nonneg hF' (sub_nonneg.mpr (Real.exp_le_exp.mpr
-        (mul_le_mul_of_nonneg_left (by linarith) hα0.le)))
-    linarith
+        (mul_le_mul_of_nonneg_left (by linarith only [hx2]) hα0.le)))
+    linarith only [h1, h2, h4]
   intro x hx
   have := comparison_principle hd hU hUb ⟨x₁, hx₁⟩ hθ hsymm hell hb hc hu hvC huc hvc hL hbd x hx
   have hb2 := (hvbd x hx).2
   rw [hα] at hb2
-  linarith
+  linarith only [this, hb2]
 
 /-- **Maximum-principle bound for a solution** (Guo Theorem XI.5.1(ii), Gilbarg and Trudinger
 Theorem 3.7). On a bounded open set inside the slab `m ≤ x_{i₀} ≤ m + D`, with `c ≥ 0`, a function

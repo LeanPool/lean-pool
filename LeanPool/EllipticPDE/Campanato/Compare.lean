@@ -83,7 +83,7 @@ theorem sq_ballAverage_sub_le {Ω : Set (EuclideanSpace ℝ (Fin d))}
       (Metric.ball z σ) volume := integrable_const _
   have hpt : ∀ w ∈ Metric.ball z σ, (A - B) ^ 2 ≤ 2 * (u w - A) ^ 2 + 2 * (u w - B) ^ 2 := by
     intro w _
-    nlinarith [sq_nonneg ((u w - A) + (u w - B))]
+    nlinarith only [sq_nonneg ((u w - A) + (u w - B))]
   have hmono := setIntegral_mono_on hconst ((hiA.const_mul 2).add (hiB.const_mul 2))
     measurableSet_ball hpt
   simp only [Pi.add_apply] at hmono
@@ -161,8 +161,9 @@ theorem abs_ballAverage_sub_le_of_le {Ω : Set (EuclideanSpace ℝ (Fin d))}
     have hpow : (2 : ℝ) * (2 ^ d + 1) ≤ 2 ^ (d + 4) := by
       have : (1 : ℝ) ≤ 2 ^ d := one_le_pow₀ (by norm_num)
       rw [pow_add]
-      nlinarith
-    nlinarith [mul_nonneg hsd.le hsq, mul_nonneg (mul_nonneg hM2 hsd.le) hsq]
+      nlinarith only [this]
+    nlinarith only [hsd, hsq, h1, h2, hM2, hpow, mul_nonneg hsd.le hsq, mul_nonneg (mul_nonneg hM2
+      hsd.le) hsq]
   refine abs_le_of_sq_le_sq
     (mul_nonneg (mul_nonneg campanatoConst_nonneg hM) (Real.rpow_nonneg hr.le α)) ?_
   refine le_of_mul_le_mul_right ?_ (mul_pos hsd hω)
@@ -214,8 +215,9 @@ theorem abs_ballAverage_sub_of_dist_le {Ω : Set (EuclideanSpace ℝ (Fin d))}
     have hpow : (4 : ℝ) * 2 ^ d ≤ 2 ^ (d + 4) := by
       have : (1 : ℝ) ≤ 2 ^ d := one_le_pow₀ (by norm_num)
       rw [pow_add]
-      nlinarith
-    nlinarith [mul_nonneg hhd.le hsq, mul_nonneg (mul_nonneg hM2 hhd.le) hsq]
+      nlinarith only [this]
+    nlinarith only [hhd, hM2, hsq, hpow, mul_nonneg hhd.le hsq, mul_nonneg (mul_nonneg hM2 hhd.le)
+      hsq]
   refine abs_le_of_sq_le_sq
     (mul_nonneg (mul_nonneg campanatoConst_nonneg hM) (Real.rpow_nonneg hr.le α)) ?_
   refine le_of_mul_le_mul_right ?_ (mul_pos hhd hω)

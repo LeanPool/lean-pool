@@ -185,8 +185,8 @@ theorem EllipticCoeff.bilin_coercive (A : EllipticCoeff d)
     rw [show ‖U‖ = ‖(U : H1amb Ω)‖ from rfl, PiLp.norm_sq_eq_of_L2, Fin.sum_univ_succ]
   have hpoin : ‖(U : H1amb Ω) 0‖ ^ 2 ≤ CP * S := poincare_H01 CP hbase U.2
   have hkey : ‖U‖ * ‖U‖ ≤ (CP + 1) * S := by
-    have : ‖U‖ ^ 2 ≤ (CP + 1) * S := by rw [hnorm]; nlinarith [hpoin]
-    nlinarith [this]
+    have : ‖U‖ ^ 2 ≤ (CP + 1) * S := by rw [hnorm]; nlinarith only [hpoin]
+    nlinarith only [hnorm, hpoin, this]
   rw [mul_assoc]
   calc A.lam / (CP + 1) * (‖U‖ * ‖U‖)
       ≤ A.lam / (CP + 1) * ((CP + 1) * S) :=

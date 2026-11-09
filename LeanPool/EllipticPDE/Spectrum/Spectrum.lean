@@ -130,7 +130,7 @@ lemma solOp_inner_self_nonneg (hco : IsCoercive B) (f : L2D Ω) :
     rw [hw, ContinuousLinearEquiv.apply_symm_apply]
   rw [ha, real_inner_comm, hco.continuousLinearEquivOfBilin_apply]
   obtain ⟨C, hC, hcoer⟩ := hco
-  nlinarith [hcoer w, mul_nonneg (mul_nonneg hC.le (norm_nonneg w)) (norm_nonneg w)]
+  exact (mul_nonneg (mul_nonneg hC.le (norm_nonneg w)) (norm_nonneg w)).trans (hcoer w)
 
 /-! ### Spectral theorem and eigenfunction correspondence -/
 

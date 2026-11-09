@@ -25,9 +25,9 @@ build a `FullEllipticOp` agreeing with the given coefficients wherever the cutof
 
 For a test function `χ` of `U`, valued in `[0, 1]`,
 
-* `ã = λ I + χ (a − λ I) = χ a + (1 − χ) λ I`,
-* `b̃ = χ b`,
-* `c̃ = χ c`.
+* `a' = λ I + χ (a − λ I) = χ a + (1 − χ) λ I`,
+* `b' = χ b`,
+* `c' = χ c`.
 
 Wherever `χ = 1` the blend agrees with `P.a`, `P.b`, `P.c`; wherever `χ = 0` it reduces to the
 constant-coefficient Laplacian at level `λ`, which is trivially uniformly elliptic, bounded and
@@ -92,7 +92,7 @@ def δ (i j : Fin d) : ℝ := if i = j then 1 else 0
 def gA (χ : EuclideanSpace ℝ (Fin d) → ℝ) (i j : Fin d) (x : EuclideanSpace ℝ (Fin d)) : ℝ :=
   χ x * (P.a x i j - P.lam * δ i j)
 
-/-- The blended principal part `ã = λ I + χ (a − λ I) = χ a + (1 − χ) λ I`. -/
+/-- The blended principal part `a' = λ I + χ (a − λ I) = χ a + (1 − χ) λ I`. -/
 def aT (χ : EuclideanSpace ℝ (Fin d) → ℝ) (x : EuclideanSpace ℝ (Fin d)) (i j : Fin d) : ℝ :=
   P.lam * δ i j + P.gA χ i j x
 

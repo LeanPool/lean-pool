@@ -264,10 +264,10 @@ theorem isCompactOperator_adjoint (hK : IsCompactOperator K) :
     have hfinal : ‖Kd x - Kd (pick c)‖ ^ 2 < ε ^ 2 := by
       have hb : ‖z‖ * ‖(K.comp Kd) x - (K.comp Kd) (pick c)‖ ≤ 2 * (2 * δ) := by
         have hnn : (0 : ℝ) ≤ ‖(K.comp Kd) x - (K.comp Kd) (pick c)‖ := norm_nonneg _
-        nlinarith [hz2, hKK2.le, hnn, norm_nonneg z]
+        nlinarith only [hz2, hKK2, hnn, hKK2.le, norm_nonneg z]
       have : ‖Kd x - Kd (pick c)‖ ^ 2 ≤ 2 * (2 * δ) := le_trans hsq hb
       have hδε : 2 * (2 * δ) < ε ^ 2 := by
-        rw [hδdef]; nlinarith [hε]
+        rw [hδdef]; nlinarith only [hδdef, hδ, hε]
       linarith
     exact lt_of_pow_lt_pow_left₀ 2 hε.le hfinal
   -- totally bounded + complete codomain: the closure is compact

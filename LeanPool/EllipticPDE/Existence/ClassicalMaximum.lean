@@ -596,10 +596,10 @@ theorem weak_maximum_principle (hd : 0 < d) {U : Set (EuclideanSpace ℝ (Fin d)
     have hLv : -(a z i₀ i₀ * lam ^ 2) + b z i₀ * lam + 0 < 0 := by
       have h2 : b z i₀ * lam ≤ B * lam := mul_le_mul_of_nonneg_right hb0 hlam_pos.le
       have h3 : θ * lam ^ 2 = (B + 1) * lam := by rw [pow_two, ← mul_assoc, hθlam]
-      nlinarith
+      nlinarith only [hlam_pos, h1, h2, h3]
     have hLu := hsub z hz
     have hv0 := expFn_pos lam i₀ z
-    nlinarith [mul_pos hε hv0]
+    nlinarith only [hε, hLv, hLu, hv0, mul_pos hε hv0]
   -- for every `ε > 0` the maximum of `u + ε v` over the closure is on the frontier
   have hbound : ∀ ε > 0, u x ≤ u y + ε * M := by
     intro ε hε
@@ -622,12 +622,12 @@ theorem weak_maximum_principle (hd : 0 < d) {U : Set (EuclideanSpace ℝ (Fin d)
         simp only [zero_mul] at h1
         linarith
       · exact hzfr
-    calc u x ≤ u x + ε * v x := by nlinarith [hvpos x]
+    calc u x ≤ u x + ε * v x := by nlinarith only [hvpos, hε, hvpos x]
       _ ≤ u z + ε * v z := hzmax hx
       _ ≤ u y + ε * M := by
           have h1 : u z ≤ u y := hymax hzfr
           have h2 : v z ≤ M := hz₀ hzcl
-          nlinarith
+          nlinarith only [hε, h1, h2]
   -- let `ε` tend to zero
   refine le_of_forall_pos_le_add fun η hη => ?_
   have := hbound (η / M) (div_pos hη hMpos)

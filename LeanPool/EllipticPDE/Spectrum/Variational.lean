@@ -7,6 +7,8 @@ Authors: Alejandro Soto Franco
 -- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
+import LeanPool.EllipticPDE.Analysis.ScalarEstimates
+
 public import LeanPool.EllipticPDE.Spectrum.RellichDischarge
 public import LeanPool.EllipticPDE.Analysis.DirectMethodForm
 
@@ -188,7 +190,8 @@ theorem rayleigh_euler_lagrange (hco : IsCoercive B) (hsymm : ∀ U V : H01 Ω, 
         real_inner_self_eq_norm_sq]
       ring
     rw [hBexp, hNexp, hmin, hU] at hmain
-    nlinarith [hmain]
+    simp only [one_pow] at hmain
+    exact Analysis.quadratic_nonneg_of_rayleigh_bound hmain
   have hb := eq_zero_of_quadratic_nonneg key
   linarith
 
@@ -350,7 +353,7 @@ theorem principalEigenvalue_le_of_weak_eigen (hco : IsCoercive B) {lam : ℝ} {U
     obtain ⟨C, hC, hcoer⟩ := id hco
     have hzero : B U U = 0 := by rw [hUU, h0]; simp
     have hUpos : 0 < ‖U‖ := norm_pos_iff.mpr hU
-    nlinarith [hcoer U, mul_pos (mul_pos hC hUpos) hUpos]
+    exact (ne_of_gt ((mul_pos (mul_pos hC hUpos) hUpos).trans_le (hcoer U))) hzero
   have hpos : 0 < ‖embL2 Ω U‖ ^ 2 := by
     have := norm_pos_iff.mpr hnz
     positivity

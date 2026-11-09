@@ -250,9 +250,9 @@ theorem nondivOp_barrier_nonpos (hd : 0 < d)
         rw [abs_mul]
         exact mul_le_mul_of_nonneg_right (hb i) (abs_nonneg _)
       have h2 : |x i - y i| ≤ (1 + (x i - y i) ^ 2) / 2 := by
-        nlinarith [sq_nonneg (|x i - y i| - 1), sq_abs (x i - y i)]
+        nlinarith only [sq_nonneg (|x i - y i| - 1), sq_abs (x i - y i)]
       have h3 := neg_abs_le (b x i * (x i - y i))
-      nlinarith
+      nlinarith only [hB0, h1, h2, h3]
     have hsum : ∑ i, -(B * (1 + (x i - y i) ^ 2) / 2) = -(B * (d + sqDist y x) / 2) := by
       simp only [sqDist, Finset.sum_neg_distrib, ← Finset.sum_div, ← Finset.mul_sum,
         Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
@@ -264,33 +264,46 @@ theorem nondivOp_barrier_nonpos (hd : 0 < d)
   have hlam0 : 0 ≤ (2 * d * A + B * (d + r ^ 2) + C) / (θ * r ^ 2) :=
     div_nonneg (add_nonneg (add_nonneg (mul_nonneg (by positivity) hA0)
       (mul_nonneg hB0 (by positivity))) hC0) hθr.le
-  have hlam1 : 1 ≤ lam := by linarith
-  have hlam_pos : 0 < lam := by linarith
+  have hlam1 : 1 ≤ lam := by linarith only [hlam, hlam0]
+  have hlam_pos : 0 < lam := lt_of_lt_of_le zero_lt_one hlam1
   have hkey : (2 * d * A + B * (d + r ^ 2) + C) / (θ * r ^ 2) * (θ * r ^ 2)
       = 2 * d * A + B * (d + r ^ 2) + C := div_mul_cancel₀ _ hθr.ne'
   have hbr : lam * (2 * d * A + B * (d + sqDist y x)) + C - 4 * lam ^ 2 * θ * sqDist y x ≤ 0 := by
     have h1 : lam * θ * r ^ 2 ≥ 2 * d * A + B * (d + r ^ 2) + C + θ * r ^ 2 := by
       have := mul_le_mul_of_nonneg_right hlam hθr.le
-      nlinarith
+      nlinarith only [hkey, this]
     have h2 : 4 * lam * θ * sqDist y x ≥ lam * θ * r ^ 2 := by
       have := mul_le_mul_of_nonneg_left hq1 (by positivity : 0 ≤ 4 * lam * θ)
-      nlinarith
+      nlinarith only [this]
     have h3 : B * (d + sqDist y x) ≤ B * (d + r ^ 2) := by
-      exact mul_le_mul_of_nonneg_left (by linarith) hB0
+      exact mul_le_mul_of_nonneg_left (add_le_add_right hq2 d) hB0
     have h4 : lam * (4 * lam * θ * sqDist y x) ≥ lam * (lam * θ * r ^ 2) :=
       mul_le_mul_of_nonneg_left h2 hlam_pos.le
     have h5 : lam * (lam * θ * r ^ 2) ≥ lam * (2 * d * A + B * (d + r ^ 2) + C + θ * r ^ 2) :=
       mul_le_mul_of_nonneg_left h1 hlam_pos.le
-    have h6 : lam * C ≥ C := by nlinarith
-    nlinarith
+    have h6 : lam * C ≥ C := by simpa only [one_mul] using
+      (mul_le_mul_of_nonneg_right hlam1 hC0)
+    have h7 := mul_le_mul_of_nonneg_left (add_le_add_right h3 (2 * d * A)) hlam_pos.le
+    have hmargin : lam * (2 * d * A + B * (d + sqDist y x)) + C
+        ≤ lam * (2 * d * A + B * (d + r ^ 2) + C + θ * r ^ 2) := by
+      calc
+        _ ≤ lam * (2 * d * A + B * (d + r ^ 2)) + lam * C := add_le_add h7 h6
+        _ ≤ lam * (2 * d * A + B * (d + r ^ 2)) + lam * C + lam * (θ * r ^ 2) :=
+          le_add_of_nonneg_right (mul_nonneg hlam_pos.le hθr.le)
+        _ = _ := by ring
+    apply sub_nonpos.mpr
+    calc
+      _ ≤ lam * (2 * d * A + B * (d + r ^ 2) + C + θ * r ^ 2) := hmargin
+      _ ≤ lam * (4 * lam * θ * sqDist y x) := h5.trans h4
+      _ = _ := by ring
   -- the zeroth-order term is at most `C` times the exponential part
   have hbar_nonneg : 0 ≤ barrier lam r y x := by
     simp only [barrier, barrierExp, sub_nonneg]
     apply Real.exp_le_exp.mpr
-    nlinarith
+    exact mul_le_mul_of_nonpos_left hq2 (neg_nonpos.mpr hlam_pos.le)
   have hbar_le : barrier lam r y x ≤ barrierExp lam y x := by
     simp only [barrier, barrierExp]
-    linarith [Real.exp_pos (-lam * r ^ 2)]
+    linarith only [Real.exp_pos (-lam * r ^ 2)]
   have hcv : c x * barrier lam r y x ≤ C * barrierExp lam y x :=
     (mul_le_mul_of_nonneg_right hcC hbar_nonneg).trans (mul_le_mul_of_nonneg_left hbar_le hC0)
   have hX : 2 * lam * ∑ i, a x i i
@@ -309,7 +322,8 @@ theorem nondivOp_barrier_nonpos (hd : 0 < d)
         - 2 * lam * ∑ i, b x i * (x i - y i)) + c x * barrier lam r y x
       ≤ barrierExp lam y x * (2 * lam * ∑ i, a x i i
         - 4 * lam ^ 2 * ∑ i, ∑ j, a x i j * (x i - y i) * (x j - y j)
-        - 2 * lam * ∑ i, b x i * (x i - y i)) + C * barrierExp lam y x := by linarith
+        - 2 * lam * ∑ i, b x i * (x i - y i)) + C * barrierExp lam y x := by
+          exact add_le_add_right hcv _
     _ = barrierExp lam y x * (2 * lam * ∑ i, a x i i
         - 4 * lam ^ 2 * ∑ i, ∑ j, a x i j * (x i - y i) * (x j - y j)
         - 2 * lam * ∑ i, b x i * (x i - y i) + C) := by ring
@@ -400,7 +414,7 @@ theorem hopf_lemma_ball (hd : 0 < d) {y : EuclideanSpace ℝ (Fin d)} {r : ℝ} 
   have hsball : s ∈ ball y r := by
     rw [mem_sphere] at hs
     rw [mem_ball, hs]
-    linarith
+    linarith only [hr]
   set δ : ℝ := u x₀ - u s with hδ
   have hδpos : 0 < δ := by linarith [hlt s hsball]
   -- the barrier constants
@@ -409,13 +423,13 @@ theorem hopf_lemma_ball (hd : 0 < d) {y : EuclideanSpace ℝ (Fin d)} {r : ℝ} 
     have : 0 ≤ (2 * d * A + B * (d + r ^ 2) + C) / (θ * r ^ 2) :=
       div_nonneg (add_nonneg (add_nonneg (mul_nonneg (by positivity) hA0)
         (mul_nonneg hB0 (by positivity))) hC0) (by positivity)
-    linarith
+    linarith only [this]
   set vmax : ℝ := Real.exp (-lam * (r / 2) ^ 2) - Real.exp (-lam * r ^ 2) with hvmax
   have hvmax_pos : 0 < vmax := by
     rw [hvmax, sub_pos]
     apply Real.exp_lt_exp.mpr
-    have hsq : (r / 2) ^ 2 < r ^ 2 := by nlinarith
-    nlinarith [mul_lt_mul_of_pos_left hsq hlam_pos]
+    have hsq : (r / 2) ^ 2 < r ^ 2 := by nlinarith only [hr]
+    nlinarith only [hlam_pos, hsq, mul_lt_mul_of_pos_left hsq hlam_pos]
   set ε : ℝ := δ / (2 * vmax) with hε
   have hεpos : 0 < ε := by positivity
   have hv_outer : ∀ z, dist z y = r → barrier lam r y z = 0 := by
@@ -427,9 +441,10 @@ theorem hopf_lemma_ball (hd : 0 < d) {y : EuclideanSpace ℝ (Fin d)} {r : ℝ} 
     simp only [barrier, barrierExp, sqDist_eq, hvmax]
     rw [← dist_eq_norm]
     have : -lam * dist z y ^ 2 ≤ -lam * (r / 2) ^ 2 := by
-      have h1 : (r / 2) ^ 2 ≤ dist z y ^ 2 := by nlinarith [dist_nonneg (x := z) (y := y)]
-      nlinarith
-    linarith [Real.exp_le_exp.mpr this]
+      have h1 : (r / 2) ^ 2 ≤ dist z y ^ 2 := by nlinarith only [hr, hz, dist_nonneg (x := z) (y
+        := y)]
+      nlinarith only [hlam_pos, h1]
+    linarith only [this, Real.exp_le_exp.mpr this]
   -- `u + ε v` is a subsolution on the annulus
   have hvC : ContDiff ℝ 2 (barrier lam r y) := contDiff_barrier lam r y
   have hgC2 : ContDiffOn ℝ 2 (fun x => u x + ε * barrier lam r y x) R :=
@@ -448,12 +463,12 @@ theorem hopf_lemma_ball (hd : 0 < d) {y : EuclideanSpace ℝ (Fin d)} {r : ℝ} 
       · rw [sqDist_eq, ← dist_eq_norm]
         have := hz.2
         rw [mem_closedBall, not_le] at this
-        nlinarith
+        nlinarith only [hr, this]
       · rw [sqDist_eq, ← dist_eq_norm]
         have := hz.1
         rw [mem_ball] at this
-        nlinarith [dist_nonneg (x := z) (y := y)]
-    nlinarith
+        nlinarith only [hr, this, dist_nonneg (x := z) (y := y)]
+    nlinarith only [hεpos, h1, h0, h2]
   -- the weak maximum principle on the annulus
   have hgc : ContinuousOn (fun x => u x + ε * barrier lam r y x - u x₀) (closure R) :=
     ((huc.mono hclR).add (continuousOn_const.mul hvC.continuous.continuousOn)).sub
@@ -480,7 +495,7 @@ theorem hopf_lemma_ball (hd : 0 < d) {y : EuclideanSpace ℝ (Fin d)} {r : ℝ} 
             (huc z (mem_closedBall.mpr hz.le)).tendsto.comp h1
           exact le_of_tendsto' hcont fun n => (hlt (w n) (hw n)).le
         rw [hv_outer z hz, mul_zero, add_zero]
-        linarith
+        linarith only [huz]
       · have h1 : u z ≤ u s := hsmax (mem_sphere.mpr hz)
         have h2 : barrier lam r y z ≤ vmax := hv_le z hz.ge
         have h3 : ε * barrier lam r y z ≤ δ / 2 := by
@@ -488,9 +503,9 @@ theorem hopf_lemma_ball (hd : 0 < d) {y : EuclideanSpace ℝ (Fin d)} {r : ℝ} 
             _ = δ / 2 := by
                 rw [hε]
                 field_simp
-        linarith
+        linarith only [hδpos, h1, h3]
     rw [max_eq_right hz'] at hx'
-    linarith
+    linarith only [hx']
   -- the one-sided derivative along the inward radius
   set ξ : EuclideanSpace ℝ (Fin d) := y - x₀ with hξ
   have hpt : ∀ t ∈ Ioo (0 : ℝ) (1 / 2), x₀ + t • ξ ∈ R := by
@@ -500,12 +515,13 @@ theorem hopf_lemma_ball (hd : 0 < d) {y : EuclideanSpace ℝ (Fin d)} {r : ℝ} 
       have e : x₀ + t • (y - x₀) - y = (1 - t) • (x₀ - y) := by
         simp only [sub_smul, one_smul, smul_sub]
         abel
-      rw [e, norm_smul, Real.norm_eq_abs, abs_of_pos (by linarith [ht.2]), ← dist_eq_norm, hx₀]
+      rw [e, norm_smul, Real.norm_eq_abs, abs_of_pos (by linarith only [ht, ht.2]), ← dist_eq_norm,
+        hx₀]
     constructor
     · rw [mem_ball, hdist]
-      nlinarith [ht.1]
+      nlinarith only [hr, ht, ht.1]
     · rw [mem_closedBall, not_le, hdist]
-      nlinarith [ht.2]
+      nlinarith only [hr, ht, ht.2]
   have hφ : HasDerivAt (fun t : ℝ => u (x₀ + t • ξ) + ε * barrier lam r y (x₀ + t • ξ))
       (fderiv ℝ u x₀ ξ + ε * fderiv ℝ (barrier lam r y) x₀ ξ) 0 := by
     have h1 : HasDerivAt (fun t : ℝ => u (x₀ + t • ξ)) (fderiv ℝ u (x₀ + (0 : ℝ) • ξ) ξ) 0 :=
@@ -547,7 +563,7 @@ theorem hopf_lemma_ball (hd : 0 < d) {y : EuclideanSpace ℝ (Fin d)} {r : ℝ} 
     rw [hξ, ← neg_sub, map_neg]
   rw [hfu, hvder] at hder
   have hpos : 0 < ε * (2 * lam * r ^ 2 * barrierExp lam y x₀) := by positivity
-  linarith
+  linarith only [hder, hpos]
 
 /-- **Hopf's lemma** (Evans §6.4.2 Lemma, Gilbarg and Trudinger Lemma 3.4). A subsolution on
 an open set, continuous on its closure, strictly below its value at a point `x₀` throughout the

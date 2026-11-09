@@ -7,6 +7,8 @@ Authors: Alejandro Soto Franco
 -- Adapted for Lean Pool's pinned Lean and Mathlib; upstream commit is recorded in projects.yml.
 module
 
+import LeanPool.EllipticPDE.Analysis.ScalarEstimates
+
 public import LeanPool.EllipticPDE.Regularity.Local.Reduction
 public import LeanPool.EllipticPDE.Regularity.Local.Caccioppoli
 public import LeanPool.EllipticPDE.Regularity.TestFnCut
@@ -182,8 +184,14 @@ theorem exists_norm_redDatum_le (Op : FullEllipticOp d) (D : CoeffWeakGrad Op.to
   rw [redDatum]
   refine (norm_six_le _ _ _ _ _ _).trans ?_
   simp only at t1 t2 t3 t4 t5
-  nlinarith [t0, t1, t2, t3, t4, t5, mul_nonneg hMη hU0, mul_nonneg hS1 hf0,
-    mul_nonneg hS2 hf0, mul_nonneg hS4 hf0, mul_nonneg hS5 hf0]
+  have hsum := add_le_add (add_le_add (add_le_add (add_le_add (add_le_add t0 t1) t2) t3) t4) t5
+  calc
+    _ ≤ Mη * ‖f‖ + S1 * N + S2 * N + S1 * N + S4 * N + S5 * N := hsum
+    _ = Mη * ‖f‖ + (S1 + S2 + S1 + S4 + S5) * N := by ring
+    _ ≤ (Mη + (S1 + S2 + S1 + S4 + S5)) * (‖f‖ + N) :=
+      Analysis.weighted_pair_le_sum_mul_add hMη
+        (add_nonneg (add_nonneg (add_nonneg (add_nonneg hS1 hS2) hS1) hS4) hS5) hf0 hU0
+    _ = _ := by ring
 
 /-- The function coordinate of `η U` is `η U₀`. -/
 theorem cutoffMul_zero_ae {η : EuclideanSpace ℝ (Fin d) → ℝ} (hη : IsTestFn Ω η)
@@ -277,14 +285,14 @@ theorem interior_H2_estimate_W12 {n : ℕ} (Op : FullEllipticOp (n + 1))
       ≤ K * (1 + (n + 1) * Cg) * (‖f‖ + ‖U 0‖) := by
     refine (hK hζ hζη U f).trans ?_
     have h := mul_le_mul_of_nonneg_left hG hK0
-    nlinarith [h, mul_nonneg hK0 hU0]
+    nlinarith only [hζ, h, mul_nonneg hK0 hU0]
   have h1 := norm_nonneg (restrictL2 (Ω := V) (extendL2 hΩm ((W : H1amb Ω) i.succ)))
   have h2 := norm_nonneg (restrictL2 (Ω := V) (extendL2 hΩm ((W : H1amb Ω) 0)))
   calc ‖wki‖ ≤ C * (‖redDatum Op hA.coeffWeakGrad hη U f‖ + ‖(W : H1amb Ω) 0‖) := by linarith
     _ ≤ C * (K * (1 + (n + 1) * Cg) * (‖f‖ + ‖U 0‖) + Mη * ‖U 0‖) :=
         mul_le_mul_of_nonneg_left (add_le_add hF hW0) hC0
     _ ≤ C * ((K * (1 + (n + 1) * Cg) + Mη) * (‖f‖ + ‖U 0‖)) :=
-        mul_le_mul_of_nonneg_left (by nlinarith [mul_nonneg hMη hf0]) hC0
+        mul_le_mul_of_nonneg_left (by nlinarith only [hMη, hf0, mul_nonneg hMη hf0]) hC0
     _ = C * (K * (1 + (n + 1) * Cg) + Mη) * (‖f‖ + ‖U 0‖) := by ring
 
 end EllipticPdes.Regularity

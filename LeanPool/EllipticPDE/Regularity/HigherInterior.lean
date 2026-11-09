@@ -517,7 +517,7 @@ theorem interiorRegularityAt_succ (Op : FullEllipticOp (n + 1))
     intro ℓ
     obtain ⟨U, F, hFk, hres, hUweak, hFbd, hU0⟩ := hdat u f M hfk hM hu ℓ
     obtain ⟨HU, hHU⟩ := hIH U F (C₀ * (M + ‖(u : H1amb Ω) 0‖)) hFk hFbd hUweak
-    exact ⟨HU.congr hres, hHU.congr.mono_const (by nlinarith)⟩
+    exact ⟨HU.congr hres, hHU.congr.mono_const (by nlinarith only [hC₁0, hM0, hu00, hU0])⟩
   choose H hH using hstep
   refine ⟨HasIteratedWeakDerivOn.ofDeriv
     (fun ℓ => hasWeakDerivOn_of_hasWeakDeriv ℓ
@@ -526,7 +526,7 @@ theorem interiorRegularityAt_succ (Op : FullEllipticOp (n + 1))
   rw [norm_extendL2]
   have hprod : (0 : ℝ) ≤ 2 * C₁ * C₀ * (M + ‖(u : H1amb Ω) 0‖) :=
     mul_nonneg (mul_nonneg (by linarith) hC₀0) (by linarith)
-  nlinarith [hprod]
+  nlinarith only [hM0, hprod]
 
 /-- **Higher interior regularity (Evans, *Partial Differential Equations* (2nd ed.),
 §6.3.1, Theorem 2, p. 332; a variant of James Guo, *Partial Differential Equations*

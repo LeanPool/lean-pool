@@ -137,8 +137,8 @@ theorem exists_const_memLp_of_gradClosed_domain (hd : 1 < d)
   | succ s ih =>
     intro q hsd hpq hqs
     have hq0 : (0 : ℝ) < (q : ℝ) := lt_of_lt_of_le hp₀0 (by exact_mod_cast hpq)
-    have hsdR : (p₀ : ℝ) * ((s : ℝ) + 1) ≤ (d : ℝ) := by push_cast at hsd; linarith
-    have hsdprev : (p₀ : ℝ) * (s : ℝ) ≤ (d : ℝ) := by nlinarith
+    have hsdR : (p₀ : ℝ) * ((s : ℝ) + 1) ≤ (d : ℝ) := by push_cast at hsd; linarith only [hsd]
+    have hsdprev : (p₀ : ℝ) * (s : ℝ) ≤ (d : ℝ) := by nlinarith only [hp₀1, hsdR]
     push_cast at hqs
     -- The reciprocal at rung `s`, and the exponent naming it.
     set t : ℝ := (p₀ : ℝ)⁻¹ - (s : ℝ) * (d : ℝ)⁻¹ with ht_def
@@ -149,11 +149,11 @@ theorem exists_const_memLp_of_gradClosed_domain (hd : 1 < d)
         have hc2 : (p₀ : ℝ) * ((s : ℝ) + 1) * ((d : ℝ)⁻¹ * (p₀ : ℝ)⁻¹)
             = ((s : ℝ) + 1) * (d : ℝ)⁻¹ := by field_simp
         rw [hc1, hc2] at hmul
-        linarith
-      rw [ht_def]; linarith
+        linarith only [hmul]
+      rw [ht_def]; linarith only [hdinv0, hstep]
     have ht_le : t ≤ (p₀ : ℝ)⁻¹ := by
       have : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
-      rw [ht_def]; linarith
+      rw [ht_def]; linarith only [this]
     set Q : ℝ≥0 := Real.toNNReal t⁻¹ with hQ_def
     have hQcoe : ((Q : ℝ≥0) : ℝ) = t⁻¹ := by
       rw [hQ_def]
@@ -179,7 +179,7 @@ theorem exists_const_memLp_of_gradClosed_domain (hd : 1 < d)
         rw [← NNReal.coe_le_coe, NNReal.coe_one, hpcoe]
         have := inv_anti₀ hu0 hu1
         simpa using this
-      have htu : t ≤ u := by rw [ht_def, hu_def]; linarith
+      have htu : t ≤ u := by rw [ht_def, hu_def]; linarith only [hqs]
       have hpQ : p ≤ Q := by
         rw [← NNReal.coe_le_coe]
         refine (inv_le_inv₀ hQ0 hp0).mp ?_
@@ -217,14 +217,14 @@ theorem exists_const_memLp_of_gradClosed_domain (hd : 1 < d)
       have ht₁0 : 0 < t₁ := by
         by_contra hcon
         have hcon' : t₁ ≤ 0 := le_of_not_gt hcon
-        have hple : (d : ℝ)⁻¹ ≥ (p₀ : ℝ)⁻¹ := by rw [ht₁_def] at hcon'; linarith
+        have hple : (d : ℝ)⁻¹ ≥ (p₀ : ℝ)⁻¹ := by rw [ht₁_def] at hcon'; linarith only [hcon]
         have hdp : (d : ℝ) ≤ (p₀ : ℝ) := (inv_le_inv₀ hp₀0 hdpos).mp hple
         have hqge : (p₀ : ℝ) ≤ (q : ℝ) := by exact_mod_cast hpq
         have hqinv' : (q : ℝ)⁻¹ ≤ (d : ℝ)⁻¹ := inv_anti₀ hdpos (le_trans hdp hqge)
         have hdd : (d : ℝ)⁻¹ ≤ 2⁻¹ := by
           have := inv_anti₀ (b := (2 : ℝ)) (by norm_num) hd2R
           simpa using this
-        linarith
+        linarith only [hu1, hqinv', hdd]
       set P : ℝ≥0 := Real.toNNReal t₁⁻¹ with hP_def
       have hPcoe : ((P : ℝ≥0) : ℝ) = t₁⁻¹ := by
         rw [hP_def]
@@ -238,7 +238,7 @@ theorem exists_const_memLp_of_gradClosed_domain (hd : 1 < d)
         refine (inv_le_inv₀ hP0 hq0).mp ?_
         rw [hPinv, ht₁_def]
         have hs0 : 0 ≤ (s : ℝ) * (d : ℝ)⁻¹ := by positivity
-        linarith
+        linarith only [hp₀inv, hu1]
       obtain ⟨K₁, hK₁⟩ :=
         exists_eLpNorm_sobolevConj_le_domain hd0 hΩopen hΩb hC1 (p := p₀) (p' := P) hp₀ hp₀P
       obtain ⟨A, hA⟩ := exists_const_eLpNorm_mono_exponent_domain hΩb hq0 hqP

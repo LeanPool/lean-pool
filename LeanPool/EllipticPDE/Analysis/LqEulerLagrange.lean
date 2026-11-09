@@ -174,7 +174,7 @@ theorem euler_lagrange_of_quadratic_min {p : ℝ≥0∞} [Fact (1 ≤ p)] (hp0 :
   rw [hN0, Real.one_rpow, mul_one] at hzero
   have hcancel : r * I * (2 / r) = 2 * I := by field_simp
   rw [hcancel] at hzero
-  linarith
+  linarith only [hzero]
 
 /-- **Euler-Lagrange equation of a bilinear minimiser under an `L^q` constraint.** For a
 symmetric positive semidefinite `B`, a minimiser of `B[·, ·]` on the unit `L^q` sphere satisfies
@@ -221,7 +221,7 @@ theorem euler_lagrange_of_norm_min {p : ℝ≥0∞} [Fact (1 ≤ p)] (hp0 : p �
     (fun W => by positivity)
     (fun c W => by rw [norm_smul, mul_pow, Real.norm_eq_abs, sq_abs])
     (L := ⟪U, V⟫) (S := ‖V‖ ^ 2) (fun t => ?_) hU
-    (fun W hW => by nlinarith [hmin W hW, norm_nonneg U, norm_nonneg W])
+    (fun W hW => by nlinarith only [hmin, hW, hmin W hW, norm_nonneg U, norm_nonneg W])
   rw [← real_inner_self_eq_norm_sq, ← real_inner_self_eq_norm_sq, ← real_inner_self_eq_norm_sq,
     real_inner_add_add_self, real_inner_smul_right, real_inner_smul_left, real_inner_smul_right]
   ring

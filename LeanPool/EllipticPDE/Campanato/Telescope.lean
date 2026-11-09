@@ -144,7 +144,7 @@ theorem abs_ballAverage_sub_le_of_le_radius (hα : 0 < α) (hM : 0 ≤ M)
   have hρ2s : r * (1 / 2 : ℝ) ^ k ≤ 2 * s := by
     rw [hhalf, div_le_iff₀ h2k]
     have : (2 : ℝ) ^ (k + 1) = 2 ^ k * 2 := by ring
-    nlinarith
+    nlinarith only [hs, hk2, this]
   have hρpos : (0 : ℝ) < r * (1 / 2 : ℝ) ^ k := lt_of_lt_of_le hs hsρ
   have hρle : r * (1 / 2 : ℝ) ^ k ≤ r := by
     nth_rw 2 [← mul_one r]
@@ -159,7 +159,7 @@ theorem abs_ballAverage_sub_le_of_le_radius (hα : 0 < α) (hM : 0 ≤ M)
       ≤ campanatoConst d * M * r ^ α * (1 / (1 - dyadicRatio α)) := by
     refine htel.trans (mul_le_mul_of_nonneg_left ?_ (by positivity))
     rw [div_le_div_iff_of_pos_right hden]
-    linarith
+    linarith only [hqk]
   have hρα : (r * (1 / 2 : ℝ) ^ k) ^ α ≤ r ^ α :=
     Real.rpow_le_rpow hρpos.le hρle hα.le
   have hcomp' : |ballAverage u x (r * (1 / 2 : ℝ) ^ k) - ballAverage u x s|
