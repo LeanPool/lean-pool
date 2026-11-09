@@ -1130,40 +1130,50 @@ theorem TestFun.memLp {f : (Fin d → ℝ) → ℝ} (hf : f ∈ TestFun d) (p : 
   | add g₁ g₂ _ _ h₁ h₂ => exact h₁.add h₂
   | smul c g _ h => exact h.const_smul c
 
+/-- Hölder's inequality on a measurable set of finite measure:
+`|∫_s f| ≤ |s|^{1-1/p} ‖f‖_p` for `f ∈ L^p`, `p ≥ 1`. [PROVED] -/
+theorem abs_setIntegral_le_rpow_mul_lpNorm {f : (Fin d → ℝ) → ℝ} {p : ℝ} (hp : 1 ≤ p)
+    (hf : MemLp f (ENNReal.ofReal p) volume) {s : Set (Fin d → ℝ)} (hs : MeasurableSet s)
+    (hfin : volume s ≠ ⊤) :
+    |∫ x in s, f x| ≤ (volume s).toReal ^ (1 - 1 / p) * lpNorm f p := by
+  have hp0 : (0 : ℝ) ≤ p := by linarith
+  have h0 : 0 ≤ 1 - 1 / p := sub_nonneg.mpr ((div_le_one (by linarith)).mpr hp)
+  have h1 : eLpNorm (s.indicator f) 1 volume ≤
+      eLpNorm f (ENNReal.ofReal p) volume * volume s ^ (1 - 1 / p) := by
+    calc eLpNorm (s.indicator f) 1 volume
+        = eLpNorm f 1 (volume.restrict s) :=
+          eLpNorm_indicator_eq_eLpNorm_restrict hs.nullMeasurableSet
+      _ ≤ eLpNorm f (ENNReal.ofReal p) (volume.restrict s) *
+          (volume.restrict s) Set.univ ^
+            (1 / (1 : ENNReal).toReal - 1 / (ENNReal.ofReal p).toReal) :=
+          eLpNorm_le_eLpNorm_mul_rpow_measure_univ (ENNReal.one_le_ofReal.mpr hp)
+            hf.aestronglyMeasurable.restrict
+      _ = eLpNorm (s.indicator f) (ENNReal.ofReal p) volume * volume s ^ (1 - 1 / p) := by
+          rw [← eLpNorm_indicator_eq_eLpNorm_restrict hs.nullMeasurableSet,
+            Measure.restrict_apply_univ, ENNReal.toReal_one, div_one, ENNReal.toReal_ofReal hp0]
+      _ ≤ _ := mul_le_mul' (eLpNorm_indicator_le f hs.nullMeasurableSet) le_rfl
+  have hind : AEStronglyMeasurable (s.indicator f) volume := hf.aestronglyMeasurable.indicator hs
+  have hfin' : volume s ^ (1 - 1 / p) ≠ ⊤ := ENNReal.rpow_ne_top_of_nonneg h0 hfin
+  calc |∫ x in s, f x| = |∫ x, s.indicator f x| := by rw [integral_indicator hs]
+    _ ≤ ∫ x, |s.indicator f x| := abs_integral_le_integral_abs
+    _ = (eLpNorm (s.indicator f) 1 volume).toReal := by
+        rw [eLpNorm_one_eq_lintegral_enorm hind, ← integral_norm_eq_lintegral_enorm hind]
+        simp only [Real.norm_eq_abs]
+    _ ≤ (eLpNorm f (ENNReal.ofReal p) volume * volume s ^ (1 - 1 / p)).toReal :=
+        ENNReal.toReal_mono (ENNReal.mul_ne_top hf.eLpNorm_ne_top hfin') h1
+    _ = (volume s).toReal ^ (1 - 1 / p) * (eLpNorm f (ENNReal.ofReal p) volume).toReal := by
+        rw [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, mul_comm]
+
 /-- Hölder's inequality on a cube: `|∫_P f| ≤ |P|^{1-1/p} ‖f‖_p` for `f ∈ L^p`, `p ≥ 1`.
 [PROVED] -/
 theorem abs_integral_indicator_le {f : (Fin d → ℝ) → ℝ} {p : ℝ} (hp : 1 ≤ p)
     (hf : MemLp f (ENNReal.ofReal p) volume) (P : DyadicCube d) :
     |∫ x, P.toSet.indicator f x| ≤ P.vol ^ (1 - 1 / p) * lpNorm f p := by
-  have hmeas := P.measurableSet_toSet
-  have hp0 : (0 : ℝ) ≤ p := by linarith
-  have h0 : 0 ≤ 1 - 1 / p := sub_nonneg.mpr ((div_le_one (by linarith)).mpr hp)
-  have h1 : eLpNorm (P.toSet.indicator f) 1 volume ≤
-      eLpNorm f (ENNReal.ofReal p) volume * ENNReal.ofReal (P.vol ^ (1 - 1 / p)) := by
-    calc eLpNorm (P.toSet.indicator f) 1 volume
-        = eLpNorm f 1 (volume.restrict P.toSet) :=
-          eLpNorm_indicator_eq_eLpNorm_restrict hmeas.nullMeasurableSet
-      _ ≤ eLpNorm f (ENNReal.ofReal p) (volume.restrict P.toSet) *
-          (volume.restrict P.toSet) Set.univ ^
-            (1 / (1 : ENNReal).toReal - 1 / (ENNReal.ofReal p).toReal) :=
-          eLpNorm_le_eLpNorm_mul_rpow_measure_univ (ENNReal.one_le_ofReal.mpr hp)
-            hf.aestronglyMeasurable.restrict
-      _ = eLpNorm (P.toSet.indicator f) (ENNReal.ofReal p) volume *
-          ENNReal.ofReal (P.vol ^ (1 - 1 / p)) := by
-          rw [← eLpNorm_indicator_eq_eLpNorm_restrict hmeas.nullMeasurableSet,
-            Measure.restrict_apply_univ, DyadicCube.volume_toSet, ENNReal.toReal_one, div_one,
-            ENNReal.toReal_ofReal hp0, ENNReal.ofReal_rpow_of_nonneg P.vol_pos.le h0]
-      _ ≤ _ := mul_le_mul' (eLpNorm_indicator_le f hmeas.nullMeasurableSet) le_rfl
-  have hind : AEStronglyMeasurable (P.toSet.indicator f) volume :=
-    hf.aestronglyMeasurable.indicator hmeas
-  calc |∫ x, P.toSet.indicator f x| ≤ ∫ x, |P.toSet.indicator f x| := abs_integral_le_integral_abs
-    _ = (eLpNorm (P.toSet.indicator f) 1 volume).toReal := by
-        rw [eLpNorm_one_eq_lintegral_enorm hind, ← integral_norm_eq_lintegral_enorm hind]
-        simp only [Real.norm_eq_abs]
-    _ ≤ (eLpNorm f (ENNReal.ofReal p) volume * ENNReal.ofReal (P.vol ^ (1 - 1 / p))).toReal :=
-        ENNReal.toReal_mono (ENNReal.mul_ne_top hf.eLpNorm_ne_top ENNReal.ofReal_ne_top) h1
-    _ = P.vol ^ (1 - 1 / p) * (eLpNorm f (ENNReal.ofReal p) volume).toReal := by
-        rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (Real.rpow_nonneg P.vol_pos.le _), mul_comm]
+  have h := abs_setIntegral_le_rpow_mul_lpNorm hp hf P.measurableSet_toSet
+    (by rw [P.volume_toSet]; exact ENNReal.ofReal_ne_top)
+  simpa only [integral_indicator P.measurableSet_toSet, P.volume_toSet,
+    ENNReal.toReal_ofReal P.vol_pos.le] using h
+
 
 /-- The generator case of the truncation bound: for a product `∏_j P_j` of dyadic cubes,
 `x ↦ 𝟙_{∏ P_j}(x) ∏_j f_j(x_j)` is integrable and
@@ -1520,40 +1530,6 @@ theorem chebyshev_condition (P : DyadicCube d) {I J : ENNReal} {c : ℝ} (hc : 0
     _ = ENNReal.ofReal c⁻¹ * J := by
         rw [← mul_assoc (volume P.toSet) (volume P.toSet)⁻¹ J, ENNReal.mul_inv_cancel hP0 hPt,
           one_mul]
-
-/-- Hölder's inequality on a measurable set of finite measure:
-`|∫_s f| ≤ |s|^{1-1/p} ‖f‖_p` for `f ∈ L^p`, `p ≥ 1`. [PROVED] -/
-theorem abs_setIntegral_le_rpow_mul_lpNorm {f : (Fin d → ℝ) → ℝ} {p : ℝ} (hp : 1 ≤ p)
-    (hf : MemLp f (ENNReal.ofReal p) volume) {s : Set (Fin d → ℝ)} (hs : MeasurableSet s)
-    (hfin : volume s ≠ ⊤) :
-    |∫ x in s, f x| ≤ (volume s).toReal ^ (1 - 1 / p) * lpNorm f p := by
-  have hp0 : (0 : ℝ) ≤ p := by linarith
-  have h0 : 0 ≤ 1 - 1 / p := sub_nonneg.mpr ((div_le_one (by linarith)).mpr hp)
-  have h1 : eLpNorm (s.indicator f) 1 volume ≤
-      eLpNorm f (ENNReal.ofReal p) volume * volume s ^ (1 - 1 / p) := by
-    calc eLpNorm (s.indicator f) 1 volume
-        = eLpNorm f 1 (volume.restrict s) :=
-          eLpNorm_indicator_eq_eLpNorm_restrict hs.nullMeasurableSet
-      _ ≤ eLpNorm f (ENNReal.ofReal p) (volume.restrict s) *
-          (volume.restrict s) Set.univ ^
-            (1 / (1 : ENNReal).toReal - 1 / (ENNReal.ofReal p).toReal) :=
-          eLpNorm_le_eLpNorm_mul_rpow_measure_univ (ENNReal.one_le_ofReal.mpr hp)
-            hf.aestronglyMeasurable.restrict
-      _ = eLpNorm (s.indicator f) (ENNReal.ofReal p) volume * volume s ^ (1 - 1 / p) := by
-          rw [← eLpNorm_indicator_eq_eLpNorm_restrict hs.nullMeasurableSet,
-            Measure.restrict_apply_univ, ENNReal.toReal_one, div_one, ENNReal.toReal_ofReal hp0]
-      _ ≤ _ := mul_le_mul' (eLpNorm_indicator_le f hs.nullMeasurableSet) le_rfl
-  have hind : AEStronglyMeasurable (s.indicator f) volume := hf.aestronglyMeasurable.indicator hs
-  have hfin' : volume s ^ (1 - 1 / p) ≠ ⊤ := ENNReal.rpow_ne_top_of_nonneg h0 hfin
-  calc |∫ x in s, f x| = |∫ x, s.indicator f x| := by rw [integral_indicator hs]
-    _ ≤ ∫ x, |s.indicator f x| := abs_integral_le_integral_abs
-    _ = (eLpNorm (s.indicator f) 1 volume).toReal := by
-        rw [eLpNorm_one_eq_lintegral_enorm hind, ← integral_norm_eq_lintegral_enorm hind]
-        simp only [Real.norm_eq_abs]
-    _ ≤ (eLpNorm f (ENNReal.ofReal p) volume * volume s ^ (1 - 1 / p)).toReal :=
-        ENNReal.toReal_mono (ENNReal.mul_ne_top hf.eLpNorm_ne_top hfin') h1
-    _ = (volume s).toReal ^ (1 - 1 / p) * (eLpNorm f (ENNReal.ofReal p) volume).toReal := by
-        rw [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, mul_comm]
 
 /-- `‖u‖_q^q = ∫ |u|^q` for `u ∈ L^q`, `q > 0`. [PROVED] -/
 theorem lpNorm_rpow_eq_integral {u : (Fin d → ℝ) → ℝ} {q : ℝ} (hq : 0 < q)
@@ -2410,10 +2386,11 @@ theorem sum_rpow_le_card_mul_sum_rpow {ι : Type*} (t : Finset ι) (a : ι → �
       _ = _ := by ring
 
 open Classical in
-/-- Bounded overlap: if every point lies in at most `M` cubes of `s`, then
-`∑_{P ∈ s} ∫_P |f|^q ≤ M ∫ |f|^q`. [PROVED] -/
-theorem sum_setIntegral_le_of_overlap (s : Finset (DyadicCube d)) {M : ℕ}
-    (hM : ∀ x, (s.filter fun P => x ∈ P.toSet).card ≤ M) (f : TestFun d) {q : ℝ} (hq : 0 < q) :
+/-- Bounded overlap with a real bound `M`: `∑_{P ∈ s} ∫_P |f|^q ≤ M ∫ |f|^q` if every point lies in
+at most `M` cubes of `s`. [PROVED] -/
+theorem sum_setIntegral_le_of_overlap_real (s : Finset (DyadicCube d)) {M : ℝ}
+    (hM : ∀ x, ((s.filter fun P => x ∈ P.toSet).card : ℝ) ≤ M) (f : TestFun d) {q : ℝ}
+    (hq : 0 < q) :
     ∑ P ∈ s, ∫ x in P.toSet, |(f : (Fin d → ℝ) → ℝ) x| ^ q ≤
       M * ∫ x, |(f : (Fin d → ℝ) → ℝ) x| ^ q := by
   have hint := TestFun.integrable_abs_rpow f hq
@@ -2422,10 +2399,21 @@ theorem sum_setIntegral_le_of_overlap (s : Finset (DyadicCube d)) {M : ℕ}
   refine integral_mono (integrable_finsetSum s fun P _ => hint.indicator P.measurableSet_toSet)
     (hint.const_mul _) fun x => ?_
   change ∑ P ∈ s, P.toSet.indicator (fun x => |(f : (Fin d → ℝ) → ℝ) x| ^ q) x ≤
-    (M : ℝ) * |(f : (Fin d → ℝ) → ℝ) x| ^ q
+    M * |(f : (Fin d → ℝ) → ℝ) x| ^ q
   simp only [Set.indicator_apply]
   rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
-  exact mul_le_mul_of_nonneg_right (by exact_mod_cast hM x) (by positivity)
+  exact mul_le_mul_of_nonneg_right (hM x) (by positivity)
+
+open Classical in
+/-- Bounded overlap: if every point lies in at most `M` cubes of `s`, then
+`∑_{P ∈ s} ∫_P |f|^q ≤ M ∫ |f|^q`. [PROVED] -/
+theorem sum_setIntegral_le_of_overlap (s : Finset (DyadicCube d)) {M : ℕ}
+    (hM : ∀ x, (s.filter fun P => x ∈ P.toSet).card ≤ M) (f : TestFun d) {q : ℝ} (hq : 0 < q) :
+    ∑ P ∈ s, ∫ x in P.toSet, |(f : (Fin d → ℝ) → ℝ) x| ^ q ≤
+      M * ∫ x, |(f : (Fin d → ℝ) → ℝ) x| ^ q := by
+  exact sum_setIntegral_le_of_overlap_real s (M := (M : ℝ))
+    (fun x => by exact_mod_cast hM x) f hq
+
 
 open Classical in
 /-- Bounded overlap for sums of truncations:
@@ -2951,25 +2939,6 @@ theorem PerfectCZForm.abs_form_sub_truncate_child_le (T : PerfectCZForm d n) (p 
               exact_mod_cast Finset.card_le_card (Finset.erase_subset _ _)
           _ = n := by simp
     _ = n * 2 ^ d * prodNorm p f := by rw [hN]; ring
-
-open Classical in
-/-- Bounded overlap with a real bound `M`: `∑_{P ∈ s} ∫_P |f|^q ≤ M ∫ |f|^q` if every point lies in
-at most `M` cubes of `s`. [PROVED] -/
-theorem sum_setIntegral_le_of_overlap_real (s : Finset (DyadicCube d)) {M : ℝ}
-    (hM : ∀ x, ((s.filter fun P => x ∈ P.toSet).card : ℝ) ≤ M) (f : TestFun d) {q : ℝ}
-    (hq : 0 < q) :
-    ∑ P ∈ s, ∫ x in P.toSet, |(f : (Fin d → ℝ) → ℝ) x| ^ q ≤
-      M * ∫ x, |(f : (Fin d → ℝ) → ℝ) x| ^ q := by
-  have hint := TestFun.integrable_abs_rpow f hq
-  rw [Finset.sum_congr rfl fun P _ => (integral_indicator P.measurableSet_toSet).symm,
-    ← integral_finsetSum s fun P _ => hint.indicator P.measurableSet_toSet, ← integral_const_mul]
-  refine integral_mono (integrable_finsetSum s fun P _ => hint.indicator P.measurableSet_toSet)
-    (hint.const_mul _) fun x => ?_
-  change ∑ P ∈ s, P.toSet.indicator (fun x => |(f : (Fin d → ℝ) → ℝ) x| ^ q) x ≤
-    M * |(f : (Fin d → ℝ) → ℝ) x| ^ q
-  simp only [Set.indicator_apply]
-  rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
-  exact mul_le_mul_of_nonneg_right (hM x) (by positivity)
 
 /-- **Hölder's inequality for finite sums with finitely many factors**: if `∑_j 1/p_j = 1` with
 `p_j > 0`, then `∑_i ∏_j a_{j,i} ≤ ∏_j (∑_i a_{j,i}^{p_j})^{1/p_j}` for nonnegative `a`.
@@ -3962,36 +3931,39 @@ theorem bound_2_9' (hd : d ≠ 0) {P : DyadicCube d} (hP : D.Good P) :
         rw [show (2 : ℝ) ^ d / D.ε * (D.Q.vol⁻¹ * (D.B * D.Q.vol)) =
           2 ^ d * D.B / D.ε * (D.Q.vol⁻¹ * D.Q.vol) by ring, inv_mul_cancel₀ hV.ne', mul_one]
 
-/-- **(2.10)**: for a good cube `P` and every mean-zero `ρ` supported on `P`,
-`|Λ_P(ρ, u)| ≤ 2^d B F ‖u‖_q ε^{-1} (|P|/|Q|)^{1-1/r} ‖ρ‖_r`. [PROVED] -/
-theorem bound_2_10 (hd : d ≠ 0) {P : DyadicCube d} (hP : D.Good P) (ρ : TestFun d)
-    (hρ : SupportedOn ρ P) (hρ0 : MeanZero (ρ : (Fin d → ℝ) → ℝ)) :
-    |slotForm D.T D.a D.g P ρ| ≤
-      2 ^ d * (D.B * D.F * lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q * D.ε⁻¹) *
-        (P.vol / D.Q.vol) ^ (1 - 1 / D.r) * lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r := by
-  set K := D.B * D.F * lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q with hK
-  have hK0 : 0 ≤ K := le_of_lt (mul_pos (mul_pos (by linarith [D.hB]) D.Fpos') D.lpNorm_u_pos)
+/-- Transfer testing and off-stopping bounds to every good cube through its parent. -/
+private theorem good_form_bound (hd : d ≠ 0) {P : DyadicCube d} (hP : D.Good P)
+    {r K : ℝ} (hr : 0 < r) (hK0 : 0 ≤ K) (Φ : DyadicCube d → TestFun d → ℝ)
+    (hsub_form : ∀ {P S : DyadicCube d}, P.toSet ⊆ S.toSet → ∀ {ρ : TestFun d},
+      SupportedOn ρ P → MeanZero (ρ : (Fin d → ℝ) → ℝ) → Φ P ρ = Φ S ρ)
+    (htest : ∀ ρ : TestFun d, SupportedOn ρ D.Q → MeanZero (ρ : (Fin d → ℝ) → ℝ) →
+      |Φ D.Q ρ| ≤ K * lpNorm (ρ : (Fin d → ℝ) → ℝ) r)
+    (hnot : ∀ {P : DyadicCube d}, P ∈ D.tree → D.NotInStopping P → ∀ ρ : TestFun d,
+      SupportedOn ρ P → MeanZero (ρ : (Fin d → ℝ) → ℝ) →
+      |Φ P ρ| ≤ K * D.ε⁻¹ * (P.vol / D.Q.vol) ^ (1 - 1 / r) *
+        lpNorm (ρ : (Fin d → ℝ) → ℝ) r)
+    (ρ : TestFun d) (hρ : SupportedOn ρ P) (hρ0 : MeanZero (ρ : (Fin d → ℝ) → ℝ)) :
+    |Φ P ρ| ≤ 2 ^ d * (K * D.ε⁻¹) * (P.vol / D.Q.vol) ^ (1 - 1 / r) *
+      lpNorm (ρ : (Fin d → ℝ) → ℝ) r := by
   have hε := D.ε_pos
   have hε1 : 1 ≤ D.ε⁻¹ := (one_le_inv₀ hε).mpr (by linarith [D.ε_le])
   have hKε : 0 ≤ K * D.ε⁻¹ := mul_nonneg hK0 (inv_nonneg.mpr hε.le)
   have h2d : (1 : ℝ) ≤ 2 ^ d := one_le_pow₀ (by norm_num)
-  have hρnn : 0 ≤ lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r := ENNReal.toReal_nonneg
+  have hρnn : 0 ≤ lpNorm (ρ : (Fin d → ℝ) → ℝ) r := ENNReal.toReal_nonneg
   have hV := D.Q.vol_pos
-  have hr0 : 0 < D.r := by linarith [D.hr]
-  have hX : 0 ≤ (P.vol / D.Q.vol) ^ (1 - 1 / D.r) :=
+  have hX : 0 ≤ (P.vol / D.Q.vol) ^ (1 - 1 / r) :=
     Real.rpow_nonneg (div_nonneg P.vol_pos.le hV.le) _
   rcases D.good_cases hd hP with hA | hB
-  · calc |slotForm D.T D.a D.g P ρ|
-        ≤ K * D.ε⁻¹ * (P.vol / D.Q.vol) ^ (1 - 1 / D.r) * lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r :=
-          D.le_of_notInStopping_P3 hd hP.1 hA ρ hρ hρ0
-      _ ≤ 2 ^ d * (K * D.ε⁻¹) * (P.vol / D.Q.vol) ^ (1 - 1 / D.r) *
-            lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r :=
+  · calc |Φ P ρ|
+        ≤ K * D.ε⁻¹ * (P.vol / D.Q.vol) ^ (1 - 1 / r) * lpNorm (ρ : (Fin d → ℝ) → ℝ) r :=
+          hnot hP.1 hA ρ hρ hρ0
+      _ ≤ 2 ^ d * (K * D.ε⁻¹) * (P.vol / D.Q.vol) ^ (1 - 1 / r) *
+            lpNorm (ρ : (Fin d → ℝ) → ℝ) r :=
           mul_le_mul_of_nonneg_right
             (mul_le_mul_of_nonneg_right (le_mul_of_one_le_left hKε h2d) hX) hρnn
   · by_cases hPQ : P = D.Q
     · subst hPQ
-      have h : |slotForm D.T D.a D.g D.Q ρ| ≤ K * lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r :=
-        D.testing ρ hρ
+      have h := htest ρ hρ hρ0
       rw [div_self hV.ne', Real.one_rpow, mul_one]
       have hK' : K ≤ 2 ^ d * (K * D.ε⁻¹) := by
         calc K = 1 * (K * 1) := by ring
@@ -4001,24 +3973,37 @@ theorem bound_2_10 (hd : d ≠ 0) {P : DyadicCube d} (hP : D.Good P) (ρ : TestF
     · obtain ⟨hpar, hparQ⟩ := D.parent_notInStopping hd hB hPQ
       have hsub := P.subset_parent
       have hρ' : SupportedOn ρ P.parent := fun x hx => hρ x fun h => hx (hsub h)
-      rw [slotForm_eq_of_subset D.T D.a D.g hsub hρ hρ0]
-      have h := D.le_of_notInStopping_P3 hd hparQ hpar ρ hρ' hρ0
-      have hexp : (P.parent.vol / D.Q.vol) ^ (1 - 1 / D.r) ≤
-          2 ^ d * (P.vol / D.Q.vol) ^ (1 - 1 / D.r) := by
+      rw [hsub_form hsub hρ hρ0]
+      have h := hnot hparQ hpar ρ hρ' hρ0
+      have hexp : (P.parent.vol / D.Q.vol) ^ (1 - 1 / r) ≤
+          2 ^ d * (P.vol / D.Q.vol) ^ (1 - 1 / r) := by
         rw [DyadicCube.vol_parent, mul_div_assoc,
           Real.mul_rpow (by positivity) (div_nonneg P.vol_pos.le hV.le)]
         refine mul_le_mul_of_nonneg_right ?_ hX
-        calc ((2 : ℝ) ^ d) ^ (1 - 1 / D.r) ≤ ((2 : ℝ) ^ d) ^ (1 : ℝ) :=
-              Real.rpow_le_rpow_of_exponent_le h2d (by linarith [div_pos one_pos hr0])
+        calc ((2 : ℝ) ^ d) ^ (1 - 1 / r) ≤ ((2 : ℝ) ^ d) ^ (1 : ℝ) :=
+              Real.rpow_le_rpow_of_exponent_le h2d (by linarith [div_pos one_pos hr])
           _ = 2 ^ d := Real.rpow_one _
-      calc |slotForm D.T D.a D.g P.parent ρ|
-          ≤ K * D.ε⁻¹ * (P.parent.vol / D.Q.vol) ^ (1 - 1 / D.r) *
-              lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r := h
-        _ ≤ K * D.ε⁻¹ * (2 ^ d * (P.vol / D.Q.vol) ^ (1 - 1 / D.r)) *
-              lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r :=
+      calc |Φ P.parent ρ|
+          ≤ K * D.ε⁻¹ * (P.parent.vol / D.Q.vol) ^ (1 - 1 / r) *
+              lpNorm (ρ : (Fin d → ℝ) → ℝ) r := h
+        _ ≤ K * D.ε⁻¹ * (2 ^ d * (P.vol / D.Q.vol) ^ (1 - 1 / r)) *
+              lpNorm (ρ : (Fin d → ℝ) → ℝ) r :=
             mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hexp hKε) hρnn
-        _ = 2 ^ d * (K * D.ε⁻¹) * (P.vol / D.Q.vol) ^ (1 - 1 / D.r) *
-              lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r := by ring
+        _ = 2 ^ d * (K * D.ε⁻¹) * (P.vol / D.Q.vol) ^ (1 - 1 / r) *
+              lpNorm (ρ : (Fin d → ℝ) → ℝ) r := by ring
+
+/-- **(2.10)**: for a good cube `P` and every mean-zero `ρ` supported on `P`,
+`|Λ_P(ρ, u)| ≤ 2^d B F ‖u‖_q ε^{-1} (|P|/|Q|)^{1-1/r} ‖ρ‖_r`. [PROVED] -/
+theorem bound_2_10 (hd : d ≠ 0) {P : DyadicCube d} (hP : D.Good P) (ρ : TestFun d)
+    (hρ : SupportedOn ρ P) (hρ0 : MeanZero (ρ : (Fin d → ℝ) → ℝ)) :
+    |slotForm D.T D.a D.g P ρ| ≤
+      2 ^ d * (D.B * D.F * lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q * D.ε⁻¹) *
+        (P.vol / D.Q.vol) ^ (1 - 1 / D.r) * lpNorm (ρ : (Fin d → ℝ) → ℝ) D.r := by
+  exact D.good_form_bound hd hP (by linarith [D.hr])
+    (mul_nonneg (mul_nonneg (by linarith [D.hB]) D.Fpos'.le) (lpNorm_nonneg _ _))
+    (fun P ρ => slotForm D.T D.a D.g P ρ)
+    (fun {_ _} hsub {_} hρ hρ0 => slotForm_eq_of_subset D.T D.a D.g hsub hρ hρ0)
+    (fun ρ hρ _ => D.testing ρ hρ) (D.le_of_notInStopping_P3 hd) ρ hρ hρ0
 
 /-- The analogue of (2.10) for the extra `𝐏₃`-type condition ((2.37) in §2.4): for a good cube
 `P` and a mean-zero `ρ` supported on `P`,
@@ -4028,54 +4013,10 @@ theorem bound_2_10_w (hd : d ≠ 0) {P : DyadicCube d} (hP : D.Good P) (ρ : Tes
     |twoSlotForm D.T D.a D.b D.g P D.w ρ| ≤
       2 ^ d * (D.K * D.ε⁻¹) * (P.vol / D.Q.vol) ^ (1 - 1 / D.q) *
         lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q := by
-  have hK0 : 0 ≤ D.K := D.hK.le
-  have hε := D.ε_pos
-  have hε1 : 1 ≤ D.ε⁻¹ := (one_le_inv₀ hε).mpr (by linarith [D.ε_le])
-  have hKε : 0 ≤ D.K * D.ε⁻¹ := mul_nonneg hK0 (inv_nonneg.mpr hε.le)
-  have h2d : (1 : ℝ) ≤ 2 ^ d := one_le_pow₀ (by norm_num)
-  have hρnn : 0 ≤ lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q := ENNReal.toReal_nonneg
-  have hV := D.Q.vol_pos
-  have hq0 : 0 < D.q := by linarith [D.hq]
-  have hX : 0 ≤ (P.vol / D.Q.vol) ^ (1 - 1 / D.q) :=
-    Real.rpow_nonneg (div_nonneg P.vol_pos.le hV.le) _
-  rcases D.good_cases hd hP with hA | hB
-  · calc |twoSlotForm D.T D.a D.b D.g P D.w ρ|
-        ≤ D.K * D.ε⁻¹ * (P.vol / D.Q.vol) ^ (1 - 1 / D.q) * lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q :=
-          D.le_of_notInStopping_w hd hP.1 hA ρ hρ hρ0
-      _ ≤ 2 ^ d * (D.K * D.ε⁻¹) * (P.vol / D.Q.vol) ^ (1 - 1 / D.q) *
-            lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q :=
-          mul_le_mul_of_nonneg_right
-            (mul_le_mul_of_nonneg_right (le_mul_of_one_le_left hKε h2d) hX) hρnn
-  · by_cases hPQ : P = D.Q
-    · subst hPQ
-      have h := D.w_test ρ hρ hρ0
-      rw [div_self hV.ne', Real.one_rpow, mul_one]
-      have hK' : D.K ≤ 2 ^ d * (D.K * D.ε⁻¹) := by
-        calc D.K = 1 * (D.K * 1) := by ring
-          _ ≤ 2 ^ d * (D.K * D.ε⁻¹) :=
-            mul_le_mul h2d (mul_le_mul_of_nonneg_left hε1 hK0) (by positivity) (by positivity)
-      exact h.trans (mul_le_mul_of_nonneg_right hK' hρnn)
-    · obtain ⟨hpar, hparQ⟩ := D.parent_notInStopping hd hB hPQ
-      have hsub := P.subset_parent
-      have hρ' : SupportedOn ρ P.parent := fun x hx => hρ x fun h => hx (hsub h)
-      rw [twoSlotForm_eq_of_subset D.T D.a D.b D.g hsub D.w hρ hρ0]
-      have h := D.le_of_notInStopping_w hd hparQ hpar ρ hρ' hρ0
-      have hexp : (P.parent.vol / D.Q.vol) ^ (1 - 1 / D.q) ≤
-          2 ^ d * (P.vol / D.Q.vol) ^ (1 - 1 / D.q) := by
-        rw [DyadicCube.vol_parent, mul_div_assoc,
-          Real.mul_rpow (by positivity) (div_nonneg P.vol_pos.le hV.le)]
-        refine mul_le_mul_of_nonneg_right ?_ hX
-        calc ((2 : ℝ) ^ d) ^ (1 - 1 / D.q) ≤ ((2 : ℝ) ^ d) ^ (1 : ℝ) :=
-              Real.rpow_le_rpow_of_exponent_le h2d (by linarith [div_pos one_pos hq0])
-          _ = 2 ^ d := Real.rpow_one _
-      calc |twoSlotForm D.T D.a D.b D.g P.parent D.w ρ|
-          ≤ D.K * D.ε⁻¹ * (P.parent.vol / D.Q.vol) ^ (1 - 1 / D.q) *
-              lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q := h
-        _ ≤ D.K * D.ε⁻¹ * (2 ^ d * (P.vol / D.Q.vol) ^ (1 - 1 / D.q)) *
-              lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q :=
-            mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hexp hKε) hρnn
-        _ = 2 ^ d * (D.K * D.ε⁻¹) * (P.vol / D.Q.vol) ^ (1 - 1 / D.q) *
-              lpNorm (ρ : (Fin d → ℝ) → ℝ) D.q := by ring
+  exact D.good_form_bound hd hP (by linarith [D.hq]) D.hK.le
+    (fun P ρ => twoSlotForm D.T D.a D.b D.g P D.w ρ)
+    (fun {_ _} hsub {_} hρ hρ0 => twoSlotForm_eq_of_subset D.T D.a D.b D.g hsub D.w hρ hρ0)
+    D.w_test (D.le_of_notInStopping_w hd) ρ hρ hρ0
 
 /-! #### §2.3 The pruned function `𝔤` (paper, p. 43, (2.12))
 
@@ -4717,15 +4658,7 @@ theorem form2_hQ_u_le :
 
 /-- `‖u‖_q ≤ (B |Q|)^{1/q}`. [PROVED] -/
 theorem lpNorm_u_le : lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q ≤ (D.B * D.Q.vol) ^ (1 / D.q) := by
-  have hq0 : 0 < D.q := by linarith [D.hq]
-  have h2 : lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q ^ D.q ≤ D.B * D.Q.vol :=
-    (lpNorm_rpow_eq_integral hq0 (TestFun.memLp D.u.2 _)).trans_le D.norm
-  calc lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q
-      = (lpNorm (D.u : (Fin d → ℝ) → ℝ) D.q ^ D.q) ^ (1 / D.q) := by
-        rw [one_div]
-        exact (Real.rpow_rpow_inv ENNReal.toReal_nonneg hq0.ne').symm
-    _ ≤ (D.B * D.Q.vol) ^ (1 / D.q) :=
-        Real.rpow_le_rpow (Real.rpow_nonneg ENNReal.toReal_nonneg _) h2 (by positivity)
+  exact TestFun.lpNorm_le_rpow_of_integral_le D.u (by linarith [D.hq]) D.norm
 
 /-- **The first term of (2.15)** (p. 43): `|Λ_Q(h, [g]_Q u)| ≤ B^{1+1/q} F ‖g‖_q ‖h‖_r`, where
 `‖h‖_r = |Q|^{1/r}`. [PROVED] -/
@@ -5352,25 +5285,8 @@ in the slot `k+1`: `F_R ‖x‖_r ‖y‖_q`. [PROVED] -/
 theorem prodNorm_entries (R : DyadicCube d) (x y : TestFun d) :
     prodNorm D.p (Function.update (Function.update (fun j => TestFun.truncateₗ R (D.g j)) D.a x)
       D.b y) = D.FP R * lpNorm (x : (Fin d → ℝ) → ℝ) D.r * lpNorm (y : (Fin d → ℝ) → ℝ) D.q := by
-  have hab := D.hab
-  unfold prodNorm
-  rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ D.b),
-    ← Finset.mul_prod_erase (Finset.univ.erase D.b) _
-      (Finset.mem_erase.mpr ⟨hab, Finset.mem_univ D.a⟩)]
-  have hb : Function.update (Function.update (fun j => TestFun.truncateₗ R (D.g j)) D.a x) D.b y
-      D.b = y := by simp
-  have ha : Function.update (Function.update (fun j => TestFun.truncateₗ R (D.g j)) D.a x) D.b y
-      D.a = x := by
-    rw [Function.update_of_ne hab, Function.update_self]
-  have hJ : (Finset.univ.erase D.b).erase D.a = D.J := by rw [J, Finset.erase_right_comm]
-  have hent : ∀ j ∈ D.J, Function.update (Function.update (fun j => TestFun.truncateₗ R (D.g j))
-      D.a x) D.b y j = TestFun.truncateₗ R (D.g j) := by
-    intro j hj
-    rw [J, Finset.mem_erase, Finset.mem_erase] at hj
-    rw [Function.update_of_ne hj.1, Function.update_of_ne hj.2.1]
-  rw [hb, ha, hJ, Finset.prod_congr rfl fun j hj => by rw [hent j hj]]
-  unfold FP
-  ring
+  simpa only [FP, J, r, q] using
+    MirekThiele.prodNorm_update_update D.p D.hab (fun j => TestFun.truncateₗ R (D.g j)) x y
 
 /-- **The expansion over the children** (p. 45): for a child `c = R.child ε` of `R` and `ρ'`
 supported on `c`, `|Λ_R(h, ρ') − Λ_c(h, ρ')| ≤ n 2^d F_R |R|^{1/r} ‖ρ'‖_q`, by the decay condition
@@ -6058,25 +5974,26 @@ theorem lpNorm_truncateₗ_G_le (hG : D.GBound) {P : DyadicCube d} (hP : D.Good 
     Real.mul_rpow D.CG_pos.le (by positivity), one_div,
     Real.rpow_rpow_inv (lpNorm_nonneg _ _) hq0.ne']
 
+/-- Convert a scale-normalized local norm bound to an average bound. -/
+private theorem abs_avg_le_of_truncated_norm_bound (P Q : DyadicCube d) (f : TestFun d)
+    {q C N : ℝ} (hq : 1 ≤ q)
+    (hbound : lpNorm (TestFun.truncateₗ P f : (Fin d → ℝ) → ℝ) q ≤
+      C * (P.vol / Q.vol) ^ (1 / q) * N) :
+    |avg P f| ≤ C * Q.vol ^ (-(1 / q)) * N := by
+  have h1 := abs_avg_mul_rpow_le P f hq
+  have hdiv : (P.vol / Q.vol) ^ (1 / q) = P.vol ^ (1 / q) * Q.vol ^ (-(1 / q)) := by
+    rw [Real.div_rpow P.vol_pos.le Q.vol_pos.le, Real.rpow_neg Q.vol_pos.le, div_eq_mul_inv]
+  rw [hdiv] at hbound
+  have h3 : |avg P f| * P.vol ^ (1 / q) ≤
+      (C * Q.vol ^ (-(1 / q)) * N) * P.vol ^ (1 / q) :=
+    (h1.trans hbound).trans (le_of_eq (by ring))
+  exact le_of_mul_le_mul_right h3 (Real.rpow_pos_of_pos P.vol_pos _)
+
 /-- `|[g]_P| ≤ C_G^{1/q} |Q|^{-1/q} ‖g‖_q` on good cubes ((2.45), (2.46)). [PROVED] -/
 theorem abs_avg_G_le (hG : D.GBound) {P : DyadicCube d} (hP : D.Good P) :
     |avg P D.G| ≤ D.CG ^ (1 / D.q) * D.Q.vol ^ (-(1 / D.q)) * lpNorm (D.G : (Fin d → ℝ) → ℝ) D.q :=
       by
-  have hq0 : 0 < D.q := by linarith [D.hq]
-  have hV := D.Q.vol_pos
-  have hP0 := P.vol_pos
-  have h1 := abs_avg_mul_rpow_le P D.G D.hq.le
-  have h2 := D.lpNorm_truncateₗ_G_le hG hP
-  have hdiv : (P.vol / D.Q.vol) ^ (1 / D.q) = P.vol ^ (1 / D.q) * D.Q.vol ^ (-(1 / D.q)) := by
-    rw [Real.div_rpow hP0.le hV.le, Real.rpow_neg hV.le, div_eq_mul_inv]
-  rw [hdiv] at h2
-  have hpos : 0 < P.vol ^ (1 / D.q) := Real.rpow_pos_of_pos hP0 _
-  have h3 : |avg P D.G| * P.vol ^ (1 / D.q) ≤
-      (D.CG ^ (1 / D.q) * D.Q.vol ^ (-(1 / D.q)) * lpNorm (D.G : (Fin d → ℝ) → ℝ) D.q) *
-        P.vol ^ (1 / D.q) := by
-    refine (h1.trans h2).trans (le_of_eq ?_)
-    ring
-  exact le_of_mul_le_mul_right h3 hpos
+  exact abs_avg_le_of_truncated_norm_bound P D.Q D.G D.hq.le (D.lpNorm_truncateₗ_G_le hG hP)
 
 /-- `|x / [u]_P| ≤ 8 |x|` when `|[u]_P| > 1/8`. [PROVED] -/
 theorem abs_div_avg_u_le {P : DyadicCube d} (h : 1 / 8 < |avg P D.u|) (x : ℝ) :
@@ -7012,21 +6929,8 @@ theorem ghat_eq (R : DyadicCube d) : D.ghat R = TestFun.truncateₗ R (D.psi R) 
 theorem abs_avg_pruned_le (hG : D.GBound) {S : DyadicCube d} (hS : D.Good S) :
     |avg S D.pruned| ≤ D.locConst * D.Q.vol ^ (-(1 / D.q)) * lpNorm (D.G : (Fin d → ℝ) → ℝ) D.q :=
       by
-  have hq0 : 0 < D.q := by linarith [D.hq]
-  have hV := D.Q.vol_pos
-  have hS0 := S.vol_pos
-  have h1 := abs_avg_mul_rpow_le S D.pruned D.hq.le
-  have h2 := D.lpNorm_truncateₗ_pruned_le hG hS
-  have hdiv : (S.vol / D.Q.vol) ^ (1 / D.q) = S.vol ^ (1 / D.q) * D.Q.vol ^ (-(1 / D.q)) := by
-    rw [Real.div_rpow hS0.le hV.le, Real.rpow_neg hV.le, div_eq_mul_inv]
-  rw [hdiv] at h2
-  have hpos : 0 < S.vol ^ (1 / D.q) := Real.rpow_pos_of_pos hS0 _
-  have h3 : |avg S D.pruned| * S.vol ^ (1 / D.q) ≤
-      (D.locConst * D.Q.vol ^ (-(1 / D.q)) * lpNorm (D.G : (Fin d → ℝ) → ℝ) D.q) *
-        S.vol ^ (1 / D.q) := by
-    refine (h1.trans h2).trans (le_of_eq ?_)
-    ring
-  exact le_of_mul_le_mul_right h3 hpos
+  exact abs_avg_le_of_truncated_norm_bound S D.Q D.pruned D.hq.le
+    (D.lpNorm_truncateₗ_pruned_le hG hS)
 
 /-- `|c_S| ≤ 8 C_loc |Q|^{-1/q} ‖g‖_q` for `S` in no first stopping cube. [PROVED] -/
 theorem abs_cS_le (hG : D.GBound) {S : DyadicCube d} (hS : S ∈ D.tree) (hSs : D.NotInStopping S) :

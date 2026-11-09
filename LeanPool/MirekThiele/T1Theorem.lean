@@ -1021,23 +1021,51 @@ theorem sqTerm_eq_sum_children (P : DyadicCube d) (h : (Fin d → ℝ) → ℝ) 
     exact Finset.sum_eq_zero fun ε _ => by
       rw [Set.indicator_of_notMem (fun hx' => hx (P.child_subset ε hx')), mul_zero]
 
+/-- The square-function integrand on a finite family `S` of cubes:
+`G_S h = ∑_{P ∈ S} ∑_ε ([h]_{P_ε} − [h]_P)² 𝟙_{P_ε}`. -/
+noncomputable def sqFunS (S : Finset (DyadicCube d)) (h : TestFun d) : TestFun d :=
+  ∑ P ∈ S, ∑ ε : Fin d → Bool, ((avg (P.child ε) h - avg P h) ^ 2) • TestFun.ind (P.child ε)
+
+theorem sqFunS_apply (S : Finset (DyadicCube d)) (h : TestFun d) (x : Fin d → ℝ) :
+    (sqFunS S h : (Fin d → ℝ) → ℝ) x = ∑ P ∈ S, ∑ ε : Fin d → Bool,
+      (avg (P.child ε) h - avg P h) ^ 2 * (P.child ε).toSet.indicator (1 : (Fin d → ℝ) → ℝ) x := by
+  simp only [sqFunS, Submodule.coe_sum, Finset.sum_apply, Submodule.coe_smul, Pi.smul_apply,
+    smul_eq_mul, TestFun.coe_ind]
+
+theorem sqFunS_nonneg (S : Finset (DyadicCube d)) (h : TestFun d) (x : Fin d → ℝ) :
+    0 ≤ (sqFunS S h : (Fin d → ℝ) → ℝ) x := by
+  rw [sqFunS_apply]
+  exact Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ =>
+    mul_nonneg (sq_nonneg _) (Set.indicator_nonneg (fun _ _ => zero_le_one) _)
+
+/-- `∫ G_S h = ∑_{P ∈ S} dsq P h`. [PROVED] -/
+theorem integral_sqFunS (S : Finset (DyadicCube d)) (h : TestFun d) :
+    ∫ x, (sqFunS S h : (Fin d → ℝ) → ℝ) x = ∑ P ∈ S, dsq P h := by
+  rw [← TestFun.integralₗ_apply, sqFunS, map_sum]
+  refine Finset.sum_congr rfl fun P _ => ?_
+  rw [map_sum]
+  refine Finset.sum_congr rfl fun ε _ => ?_
+  rw [map_smul, smul_eq_mul, TestFun.integralₗ_apply,
+    ← setIntegral_eq_integral_of_forall_compl_eq_zero
+      (fun x hx => TestFun.ind_supportedOn (P.child ε) x hx),
+    StoppingData.TestFun.setIntegral_ind_of_subset (subset_refl _)]
+
 /-- The square-function integrand of `h` at resolution `N` relative to `Q`, as a dyadic test
 function: `G = ∑_{P ∈ nonleaf N Q} ∑_ε ([h]_{P_ε} − [h]_P)² 𝟙_{P_ε}`. -/
 noncomputable def sqFun (Q : DyadicCube d) (N : ℕ) (h : TestFun d) : TestFun d :=
-  ∑ P ∈ StoppingData.nonleaf N Q, ∑ ε : Fin d → Bool,
-    ((avg (P.child ε) h - avg P h) ^ 2) • TestFun.ind (P.child ε)
+  sqFunS (StoppingData.nonleaf N Q) h
+
+theorem sqFun_eq_sqFunS (Q : DyadicCube d) (N : ℕ) (h : TestFun d) :
+    sqFun Q N h = sqFunS (StoppingData.nonleaf N Q) h := rfl
 
 theorem sqFun_apply (Q : DyadicCube d) (N : ℕ) (h : TestFun d) (x : Fin d → ℝ) :
     (sqFun Q N h : (Fin d → ℝ) → ℝ) x = ∑ P ∈ StoppingData.nonleaf N Q, ∑ ε : Fin d → Bool,
       (avg (P.child ε) h - avg P h) ^ 2 * (P.child ε).toSet.indicator (1 : (Fin d → ℝ) → ℝ) x := by
-  simp only [sqFun, Submodule.coe_sum, Finset.sum_apply, Submodule.coe_smul, Pi.smul_apply,
-    smul_eq_mul, TestFun.coe_ind]
+  exact sqFunS_apply (StoppingData.nonleaf N Q) h x
 
 theorem sqFun_nonneg (Q : DyadicCube d) (N : ℕ) (h : TestFun d) (x : Fin d → ℝ) :
     0 ≤ (sqFun Q N h : (Fin d → ℝ) → ℝ) x := by
-  rw [sqFun_apply]
-  exact Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ =>
-    mul_nonneg (sq_nonneg _) (Set.indicator_nonneg (fun _ _ => zero_le_one) _)
+  exact sqFunS_nonneg (StoppingData.nonleaf N Q) h x
 
 theorem sqFun_eq_zero (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ} {h : TestFun d} {x : Fin d → ℝ}
     (hx : x ∉ Q.toSet) : (sqFun Q N h : (Fin d → ℝ) → ℝ) x = 0 := by
@@ -1069,14 +1097,7 @@ theorem tsum_sqTerm_eq (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ} {h : TestFun 
 /-- `∫ G = ∑_{P ∈ nonleaf N Q} dsq P h`. [PROVED] -/
 theorem integral_sqFun (Q : DyadicCube d) (N : ℕ) (h : TestFun d) :
     ∫ x, (sqFun Q N h : (Fin d → ℝ) → ℝ) x = ∑ P ∈ StoppingData.nonleaf N Q, dsq P h := by
-  rw [← TestFun.integralₗ_apply, sqFun, map_sum]
-  refine Finset.sum_congr rfl fun P _ => ?_
-  rw [map_sum]
-  refine Finset.sum_congr rfl fun ε _ => ?_
-  rw [map_smul, smul_eq_mul, TestFun.integralₗ_apply,
-    ← setIntegral_eq_integral_of_forall_compl_eq_zero
-      (fun x hx => TestFun.ind_supportedOn (P.child ε) x hx),
-    StoppingData.TestFun.setIntegral_ind_of_subset (subset_refl _)]
+  exact integral_sqFunS (StoppingData.nonleaf N Q) h
 
 /-- **Bessel's inequality for the finite family**: `∑_{P ∈ nonleaf N Q} dsq P h ≤ V_Q h`. [PROVED]
 -/
@@ -1266,38 +1287,6 @@ theorem sum_dsq_stopped_le_integral (hd : d ≠ 0) (hf : Integrable f volume) {l
     exact hQ ⟨P, hP, hQR.trans hRP⟩
   · intro T
     rw [← Finset.mul_sum, sum_setIntegral_abs_children T hf]
-
-/-- The square-function integrand on a finite family `S` of cubes:
-`G_S h = ∑_{P ∈ S} ∑_ε ([h]_{P_ε} − [h]_P)² 𝟙_{P_ε}`. -/
-noncomputable def sqFunS (S : Finset (DyadicCube d)) (h : TestFun d) : TestFun d :=
-  ∑ P ∈ S, ∑ ε : Fin d → Bool, ((avg (P.child ε) h - avg P h) ^ 2) • TestFun.ind (P.child ε)
-
-theorem sqFun_eq_sqFunS (Q : DyadicCube d) (N : ℕ) (h : TestFun d) :
-    sqFun Q N h = sqFunS (StoppingData.nonleaf N Q) h := rfl
-
-theorem sqFunS_apply (S : Finset (DyadicCube d)) (h : TestFun d) (x : Fin d → ℝ) :
-    (sqFunS S h : (Fin d → ℝ) → ℝ) x = ∑ P ∈ S, ∑ ε : Fin d → Bool,
-      (avg (P.child ε) h - avg P h) ^ 2 * (P.child ε).toSet.indicator (1 : (Fin d → ℝ) → ℝ) x := by
-  simp only [sqFunS, Submodule.coe_sum, Finset.sum_apply, Submodule.coe_smul, Pi.smul_apply,
-    smul_eq_mul, TestFun.coe_ind]
-
-theorem sqFunS_nonneg (S : Finset (DyadicCube d)) (h : TestFun d) (x : Fin d → ℝ) :
-    0 ≤ (sqFunS S h : (Fin d → ℝ) → ℝ) x := by
-  rw [sqFunS_apply]
-  exact Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ =>
-    mul_nonneg (sq_nonneg _) (Set.indicator_nonneg (fun _ _ => zero_le_one) _)
-
-/-- `∫ G_S h = ∑_{P ∈ S} dsq P h`. [PROVED] -/
-theorem integral_sqFunS (S : Finset (DyadicCube d)) (h : TestFun d) :
-    ∫ x, (sqFunS S h : (Fin d → ℝ) → ℝ) x = ∑ P ∈ S, dsq P h := by
-  rw [← TestFun.integralₗ_apply, sqFunS, map_sum]
-  refine Finset.sum_congr rfl fun P _ => ?_
-  rw [map_sum]
-  refine Finset.sum_congr rfl fun ε _ => ?_
-  rw [map_smul, smul_eq_mul, TestFun.integralₗ_apply,
-    ← setIntegral_eq_integral_of_forall_compl_eq_zero
-      (fun x hx => TestFun.ind_supportedOn (P.child ε) x hx),
-    StoppingData.TestFun.setIntegral_ind_of_subset (subset_refl _)]
 
 /-- Splitting the family: `G_S = G_{S ∩ p} + G_{S ∖ p}`. [PROVED] -/
 theorem sqFunS_filter_add (S : Finset (DyadicCube d)) (p : DyadicCube d → Prop)
@@ -2042,7 +2031,7 @@ theorem constOn_sqFun_level (hd : d ≠ 0) (Q : DyadicCube d) (N : ℕ) (h : Tes
     ∀ L ∈ StoppingData.level N Q, ConstOn (sqFun Q N h : (Fin d → ℝ) → ℝ) L := by
   intro L hL
   have hLm := StoppingData.m_of_mem_level hL
-  unfold sqFun
+  unfold sqFun sqFunS
   refine StoppingData.constOn_sum fun P hP => StoppingData.constOn_sum fun ε _ =>
     StoppingData.constOn_smul _ (constOn_ind ?_)
   have hPm := ((StoppingData.mem_nonleaf_iff hd).mp hP).2

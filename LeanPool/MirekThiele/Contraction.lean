@@ -376,11 +376,11 @@ noncomputable def KQ : ℝ := D.Q.vol ^ (-(1 / D.q)) * lpNorm (D.G : (Fin d → 
 
 theorem KQ_nonneg : 0 ≤ D.KQ := mul_nonneg (Real.rpow_nonneg D.Q.vol_pos.le _) (lpNorm_nonneg _ _)
 
-/-- `∑_{T' child of T} ψ_{T'} 𝟙_{T'}(x) = ψ_{T'(x)}` for `x ∈ T`, where `T'(x)` is the child
-containing `x`. [PROVED] -/
-theorem sum_children_psiT_ind_apply {T : DyadicCube d} {x : Fin d → ℝ} (hx : x ∈ T.toSet) :
-    ((∑ T' ∈ children T, D.psiT hR hRs hFR T' • TestFun.ind T' : TestFun d) :
-      (Fin d → ℝ) → ℝ) x = D.psiT hR hRs hFR (T.childAt x) := by
+/-- Evaluate a sum of child indicators at the unique child containing the point. -/
+private theorem children_smul_ind_apply (T : DyadicCube d) (c : DyadicCube d → ℝ)
+    {x : Fin d → ℝ} (hx : x ∈ T.toSet) :
+    ((∑ T' ∈ children T, c T' • TestFun.ind T' : TestFun d) : (Fin d → ℝ) → ℝ) x =
+      c (T.childAt x) := by
   rw [Submodule.coe_sum, Finset.sum_apply, children,
     Finset.sum_image fun ε _ ε' _ h => T.child_injective h]
   set ε₀ : Fin d → Bool := fun i => decide ((2 : ℝ) ^ (T.m - 1) * (2 * T.l i + 1) ≤ x i) with hε₀
@@ -394,6 +394,13 @@ theorem sum_children_psiT_ind_apply {T : DyadicCube d} {x : Fin d → ℝ} (hx :
       Set.indicator_of_notMem (fun h => Set.disjoint_left.mp (T.child_disjoint hne) h hx0),
       smul_zero]
   · exact fun h => absurd (Finset.mem_univ _) h
+
+/-- `∑_{T' child of T} ψ_{T'} 𝟙_{T'}(x) = ψ_{T'(x)}` for `x ∈ T`, where `T'(x)` is the child
+containing `x`. [PROVED] -/
+theorem sum_children_psiT_ind_apply {T : DyadicCube d} {x : Fin d → ℝ} (hx : x ∈ T.toSet) :
+    ((∑ T' ∈ children T, D.psiT hR hRs hFR T' • TestFun.ind T' : TestFun d) :
+      (Fin d → ℝ) → ℝ) x = D.psiT hR hRs hFR (T.childAt x) := by
+  exact children_smul_ind_apply T (D.psiT hR hRs hFR) hx
 
 theorem CφT_nonneg : 0 ≤ D.CφT :=
   add_nonneg D.Cφ_nonneg (mul_nonneg (by norm_num) D.locConst_nonneg)
@@ -1710,19 +1717,7 @@ theorem mem_setTG {T : DyadicCube d} :
 theorem sum_children_phiT_ind_apply {T : DyadicCube d} {x : Fin d → ℝ} (hx : x ∈ T.toSet) :
     ((∑ T' ∈ children T, D.phiT R T' • TestFun.ind T' : TestFun d) :
       (Fin d → ℝ) → ℝ) x = D.phiT R (T.childAt x) := by
-  rw [Submodule.coe_sum, Finset.sum_apply, children,
-    Finset.sum_image fun ε _ ε' _ h => T.child_injective h]
-  set ε₀ : Fin d → Bool := fun i => decide ((2 : ℝ) ^ (T.m - 1) * (2 * T.l i + 1) ≤ x i) with hε₀
-  have hx0 : x ∈ (T.child ε₀).toSet := T.mem_childAt hx
-  rw [Finset.sum_eq_single ε₀]
-  · rw [Submodule.coe_smul, Pi.smul_apply, TestFun.coe_ind, Set.indicator_of_mem hx0, Pi.one_apply,
-      smul_eq_mul, mul_one]
-    rfl
-  · intro ε _ hne
-    rw [Submodule.coe_smul, Pi.smul_apply, TestFun.coe_ind,
-      Set.indicator_of_notMem (fun h => Set.disjoint_left.mp (T.child_disjoint hne) h hx0),
-      smul_zero]
-  · exact fun h => absurd (Finset.mem_univ _) h
+  exact children_smul_ind_apply T (D.phiT R) hx
 
 /-- `|θ'^T(x)| ≤ 2 C_ψ C_{φ,T} K 𝟙_T(x)` for a non-leaf cube `T`. [PROVED] -/
 theorem abs_thetaGT_apply_le (hG : D.GBound) {T : DyadicCube d}
