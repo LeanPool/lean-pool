@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.Elementary
 public import LeanPool.GoldbergSeymour.ScheideGraphHeightOdd
@@ -504,50 +505,6 @@ private theorem helper_hsecondEnds_493.{u_1, u_2} :
     _ = s(T.vertex (Fin.castLE N.height_upper base1),
           T.vertex secondNew) := Sym2.eq_swap
 
-private theorem helper_edge_color_of_closing_support_507.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hcard : (TreeSequenceVertexSet T).card
-        = T.length + (1 : ℕ)) (horder : TashkinovOrder G = (TreeSequenceVertexSet T).card ∧ (3 :
-        ℕ) ≤ (TreeSequenceVertexSet T).card ∧ Odd (TreeSequenceVertexSet T).card ∧
-        ColoredVertexSetElementary G phi (TreeSequenceVertexSet T) ∧ ColoredVertexSetClosed G phi
-        (TreeSequenceVertexSet T)) (hlength : T.length + (1 : ℕ) = N.height + (2 : ℕ)),
-    let secondTail : Fin T.length := (⟨N.height,
-    by omega
-    ⟩ : Fin T.length);
-    ∀ (m : ℕ) (hm : N.height = (2 : ℕ) * m + (1 : ℕ)),
-    let i0 : Fin (T.length + (1 : ℕ)) := (⟨(0 : ℕ),
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let i1 : Fin (T.length + (1 : ℕ)) := (⟨(1 : ℕ),
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    ∀ (_ : (TwoColorIncidenceGraph G phi N.alpha N.beta).Walk (Sum.inl (T.vertex i0)) (Sum.inl
-        (T.vertex i1))) (_ : (TwoColorIncidenceGraph G phi N.alpha N.beta).Walk (Sum.inl (T.vertex
-        (⟨(0 : ℕ), Nat.zero_lt_succ T.length⟩ : Fin (T.length + (1 : ℕ))))) (Sum.inl (T.vertex
-        (⟨(1 : ℕ), Nat.succ_lt_succ T.positive⟩ : Fin (T.length + (1 : ℕ)))))) (_ : Fin
-        ((↑secondTail : ℕ) + (1 : ℕ))) (f : E), Sum.inr f ∈ N.closingPath.support → phi f = some
-        N.alpha ∨ phi f = some N.beta := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hcard horder hlength secondTail m hm i0 i1 _ P base1raw f hf
-  obtain ⟨n, hn, hnle⟩ :=
-    SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hf
-  have hnlt : n < N.closingPath.length := by
-    by_contra hnl
-    have hend := N.closingPath.getVert_of_length_le (i := n) (by omega)
-    rw [hn] at hend
-    simp at hend
-  have hadj := N.closingPath.adj_getVert_succ hnlt
-  rw [hn] at hadj
-  cases hz : N.closingPath.getVert (n + 1) with
-  | inl v =>
-      rw [hz] at hadj
-      simpa [TwoColorIncidenceGraph] using hadj.2
-  | inr e =>
-      rw [hz] at hadj
-      simp [TwoColorIncidenceGraph] at hadj
-
 private theorem helper_used_color_cases_532.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -805,8 +762,7 @@ private theorem helper_continuation_929.{u_1, u_2} :
   have edge_color_of_closing_support (f : E)
       (hf : Sum.inr f ∈ N.closingPath.support) :
       phi f = some N.alpha ∨ phi f = some N.beta := by
-    exact @helper_edge_color_of_closing_support_507 V E inferInstance inferInstance inferInstance
-        G k e0 phi T N hcard horder hlength m hm (by assumption) P base1raw f hf
+    exact TwoColorIncidenceGraph.edge_colors_of_mem_walk_support N.closingPath hf
   have base_nonfirst_color (j : Fin T.length)
       (hj : 1 ≤ j.val) (hjh : j.val + 2 ≤ N.height) :
       phi (T.edge j) = some N.alpha ∨ phi (T.edge j) = some N.beta := by

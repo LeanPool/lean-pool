@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.Elementary
 public import LeanPool.GoldbergSeymour.ScheideExitNoFree
@@ -54,38 +55,9 @@ theorem ScheideLargeHeightFullTrunk {V E : Type*}
     have hjh : j.val + 2 ≤ N.height := by rw [hheight_eq]; omega
     have hs := (N.closingPath_edges (T.edge j)).2
       (Or.inr ⟨j, hj, hjh, rfl⟩)
-    have he := SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hs
-    rcases he with ⟨n, hnedge, hn⟩
-    have hnpos : 0 < n := by
-      by_contra hnpos
-      have hnzero : n = 0 := by omega
-      subst n
-      have hz := N.closingPath.getVert_zero
-      rw [hz] at hnedge
-      simp at hnedge
-    have hnlt : n < N.closingPath.length := by
-      by_contra hnlt
-      have hlen := N.closingPath_length
-      rw [hheight_eq] at hlen
-      have hh := N.height_lower
-      have hstart := N.closingPath.getVert_of_length_le (i := n) (by omega)
-      rw [hnedge] at hstart
-      simp at hstart
-    have hn' := N.closingPath.adj_getVert_succ (i := n - 1) (by omega)
-    have hn'' : n - 1 + 1 = n := by omega
-    have hnedge' : N.closingPath.getVert (n - 1 + 1) = Sum.inr (T.edge j) := by
-      simpa [hn''] using hnedge
-    rw [hnedge'] at hn'
-    cases hx : N.closingPath.getVert (n - 1) with
-    | inl v =>
-      rw [hx] at hn'
-      simp only [TwoColorIncidenceGraph] at hn'
-      rcases hn' with ⟨_, h | h⟩
-      · exact ⟨N.alpha, h, Or.inl rfl⟩
-      · exact ⟨N.beta, h, Or.inr rfl⟩
-    | inr e =>
-      rw [hx] at hn'
-      simp [TwoColorIncidenceGraph] at hn'
+    rcases TwoColorIncidenceGraph.edge_colors_of_mem_walk_support N.closingPath hs with h | h
+    · exact ⟨N.alpha, h, Or.inl rfl⟩
+    · exact ⟨N.beta, h, Or.inr rfl⟩
   have hdef : DefectiveColors G phi (TreeSequenceVertexSet T) = ∅ := by
     by_contra hnon
     have hmem := Finset.nonempty_iff_ne_empty.mpr hnon

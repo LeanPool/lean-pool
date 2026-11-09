@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.AdjacentEdges
 public import LeanPool.GoldbergSeymour.TwoColorWalkConfinement
 
 public import LeanPool.GoldbergSeymour.ScheideLastExitPath
@@ -272,21 +273,15 @@ theorem ScheideOriginalDefectiveConfinement {V E : Type*}
     simpa only [VT] using hv
   have hu0ne1 : D.u0 d ≠ (R d).u1 := by
     intro heq
-    have hadj : AdjacentEdges G (D.f0 d) (R d).f1 := by
-      refine ⟨(R d).u1, ?_, ?_⟩ <;> unfold Incident
-      · rw [D.f0_ends d, heq]
-        simp
-      · rw [(R d).f1_ends]
-        simp
+    have hadj : AdjacentEdges G (D.f0 d) (R d).f1 :=
+      AdjacentEdges.of_endpoint_pairs (by simpa only [heq] using D.f0_ends d)
+        ((R d).f1_ends.trans Sym2.eq_swap)
     exact (hproper (R d).f0_ne_f1 hadj (D.f0_color d)) (R d).f1_color
   have hu0ne2 : D.u0 d ≠ (R d).u2 := by
     intro heq
-    have hadj : AdjacentEdges G (D.f0 d) (R d).f2 := by
-      refine ⟨(R d).u2, ?_, ?_⟩ <;> unfold Incident
-      · rw [D.f0_ends d, heq]
-        simp
-      · rw [(R d).f2_ends]
-        simp
+    have hadj : AdjacentEdges G (D.f0 d) (R d).f2 :=
+      AdjacentEdges.of_endpoint_pairs (by simpa only [heq] using D.f0_ends d)
+        ((R d).f2_ends.trans Sym2.eq_swap)
     exact (hproper (R d).f0_ne_f2 hadj (D.f0_color d)) (R d).f2_color
   have hu0NotXA : D.u0 d ∉ XA := by
     simp only [XA, Finset.mem_union, Finset.mem_insert,

@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.NormalCycleEdge
 public import LeanPool.GoldbergSeymour.ScheideGraphHeightOdd
@@ -296,34 +297,8 @@ theorem ScheideTrunkRotationCycle {V E : Type*}
       phi (NormalCycleEdge N i) = some N.alpha ∨
         phi (NormalCycleEdge N i) = some N.beta := by
     intro i hi
-    have hmem := hpositive_support i hi
-    obtain ⟨n, hn, hnle⟩ :=
-      SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hmem
-    have hn0 : n ≠ 0 := by
-      intro hn0
-      subst n
-      rw [N.closingPath.getVert_zero] at hn
-      simp at hn
-    have hnlt : n < N.closingPath.length := by
-      by_contra hnot
-      have heq : n = N.closingPath.length := by omega
-      subst n
-      rw [N.closingPath.getVert_length] at hn
-      simp at hn
-    have hadj := N.closingPath.adj_getVert_succ (i := n - 1) (by omega)
-    have hnext : n - 1 + 1 = n := by omega
-    rw [hnext, hn] at hadj
-    cases hp : N.closingPath.getVert (n - 1) with
-    | inl v =>
-        rw [hp] at hadj
-        have hinfo : Incident G v (NormalCycleEdge N i) ∧
-            (phi (NormalCycleEdge N i) = some N.alpha ∨
-              phi (NormalCycleEdge N i) = some N.beta) := by
-          simpa [TwoColorIncidenceGraph] using hadj
-        exact hinfo.2
-    | inr f =>
-        rw [hp] at hadj
-        simp [TwoColorIncidenceGraph] at hadj
+    exact TwoColorIncidenceGraph.edge_colors_of_mem_walk_support N.closingPath
+      (hpositive_support i hi)
   have hinjective := @helper_hinjective_193 V E inferInstance inferInstance inferInstance G k e0 phi
       T N hheight hcycle_zero hends hpositive_color
   have hthree : 3 ≤ N.height := hheight.1

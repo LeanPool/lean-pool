@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Wesley Pegden. All rights reserved.
+Copyright (c) 2026 Wesley Pegden and Lean Pool contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Wesley Pegden
+Authors: Wesley Pegden, Lean Pool contributors
 -/
 module
 
@@ -69,6 +69,17 @@ theorem TwoColorComponent.exists_colored_incident {V E : Type*}
   cases node with
   | inl _ => exact False.elim adjacent
   | inr candidate => exact ⟨candidate, adjacent⟩
+
+/-- Every edge on a vertex-rooted two-color incidence walk has a selected color. -/
+theorem TwoColorIncidenceGraph.edge_colors_of_mem_walk_support {V E : Type*}
+    {G : LooplessMultigraph V E} {k : ℕ} {phi : PartialEdgeColoring E k}
+    {alpha beta : Fin k} {root : V} {endpoint : Sum V E} {edge : E}
+    (walk : (TwoColorIncidenceGraph G phi alpha beta).Walk (Sum.inl root) endpoint)
+    (member : Sum.inr edge ∈ walk.support) :
+    phi edge = some alpha ∨ phi edge = some beta := by
+  classical
+  apply TwoColorComponent.edge_colors
+  exact SimpleGraph.ConnectedComponent.eq.mpr (walk.takeUntil _ member).reachable.symm
 
 end GoldbergSeymour
 

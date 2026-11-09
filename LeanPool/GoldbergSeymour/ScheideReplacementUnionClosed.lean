@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.AdjacentEdges
 public import LeanPool.GoldbergSeymour.ScheideSymmetricMissingInternal
 
 /-!
@@ -70,12 +71,9 @@ private theorem ScheideReplacementUnionClosed_branch_104.{u_1, u_2} :
   · have hpair : u = R.u1 ∨ u = R.u2 := by simpa [huTree] using hu
     have hadj : AdjacentEdges G f g := by
       rcases hpair with rfl | rfl
-      · refine ⟨R.u1, ?_, ?_⟩ <;> unfold Incident
-        · rw [hends]; simp
-        · rw [hge]; simp
-      · refine ⟨R.u2, ?_, ?_⟩ <;> unfold Incident
-        · rw [hends]; simp
-        · rw [hge]; simp
+      · exact AdjacentEdges.of_endpoint_pairs (hends.trans Sym2.eq_swap) hge
+      · exact AdjacentEdges.of_endpoint_pairs (hends.trans Sym2.eq_swap)
+          (hge.trans Sym2.eq_swap)
     exact (proper (by
       intro he
       apply hw

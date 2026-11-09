@@ -5,6 +5,8 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorComponent
+public import LeanPool.GoldbergSeymour.AdjacentEdges
 public import LeanPool.GoldbergSeymour.SharedFacts.ScheideHeightFiveGammaEdges
 
 public import LeanPool.GoldbergSeymour.ScheideGraphHeight
@@ -283,36 +285,6 @@ private theorem helper_missing_excludes_146.{u_1, u_2} :
     simpa [MissingColors] using hc
   exact hn hp
 
-private theorem helper_edge_color_of_closing_support_156.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [Fintype V] [Fintype E] [DecidableEq E]
-      (G : LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k)
-      (T : TreeSequence G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (f : E),
-    Sum.inr f ∈ N.closingPath.support →
-    phi f = some N.alpha ∨ phi f = some N.beta := by
-  classical
-  intro V E _ _ _ G k e0 phi T N f hf
-  obtain ⟨i, hi, hile⟩ :=
-    SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hf
-  have hilt : i < N.closingPath.length := by
-    by_contra hn
-    have hil : N.closingPath.length ≤ i := by omega
-    have hend := N.closingPath.getVert_of_length_le (i := i) hil
-    rw [hi] at hend
-    simp at hend
-  have hadj := N.closingPath.adj_getVert_succ hilt
-  rw [hi] at hadj
-  cases hz : N.closingPath.getVert (i + 1) with
-  | inl v =>
-      rw [hz] at hadj
-      have hdata : Incident G v f ∧
-          (phi f = some N.alpha ∨ phi f = some N.beta) := by
-        simpa [TwoColorIncidenceGraph] using hadj
-      exact hdata.2
-  | inr e =>
-      rw [hz] at hadj
-      simp [TwoColorIncidenceGraph] at hadj
-
 private theorem helper_ha1color_190.{u_1, u_2} :
     open scoped Classical in
     ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -350,124 +322,6 @@ private theorem helper_ha1color_190.{u_1, u_2} :
       rw [ha1ends]
       simp [Sym2.mem_iff]
     exact False.elim ((missing_excludes hbmiss hinc) h)
-
-private theorem helper_ha1a2_200.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
-    let y1 : V := T.vertex (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let r1 : Fin T.length := (⟨(1 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(1 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let r2 : Fin T.length := (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let a1 : E := T.edge r1;
-    let a2 : E := T.edge r2; G.ends a1 = s(y1, y2) → G.ends a2 = s(y2, y3) → AdjacentEdges G a1 a2
-  := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight y1 y2 y3 r1 r2 a1 a2 ha1ends ha2ends
-  refine ⟨y2, ?_, ?_⟩ <;> unfold Incident
-  · rw [ha1ends]
-    simp [Sym2.mem_iff]
-  · rw [ha2ends]
-    simp [Sym2.mem_iff]
-
-private theorem helper_ha2a3_213.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
-    let y2 : V := T.vertex (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let r2 : Fin T.length := (⟨(2 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(2 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let r3 : Fin T.length := (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let a2 : E := T.edge r2;
-    let a3 : E := T.edge r3; G.ends a2 = s(y2, y3) → G.ends a3 = s(y3, y4) → AdjacentEdges G a2 a3
-  := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight y2 y3 y4 r2 r3 a2 a3 ha2ends ha3ends
-  refine ⟨y3, ?_, ?_⟩ <;> unfold Incident
-  · rw [ha2ends]
-    simp [Sym2.mem_iff]
-  · rw [ha3ends]
-    simp [Sym2.mem_iff]
-
-private theorem helper_ha3q_226.{u_1, u_2} :
-    open scoped Classical in
-    ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
-        LooplessMultigraph V E) (k : ℕ) (e0 : E) (phi : PartialEdgeColoring E k) (T : TreeSequence
-        G e0) (N : NormalGlobalMaximumTriple G k e0 phi T) (hNheight : N.height = (5 : ℕ)),
-    let y0 : V := T.vertex (⟨(0 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(0 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y3 : V := T.vertex (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let y4 : V := T.vertex (⟨(4 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(4 : ℕ) < T.length + (1 : ℕ)) ↦
-    by omega
-    ⟩ : Fin (T.length + (1 : ℕ)));
-    let r3 : Fin T.length := (⟨(3 : ℕ),
-    have this : N.height ≤ T.length + (1 : ℕ) := N.height_upper; Decidable.byContradiction fun (a
-        : ¬(3 : ℕ) < T.length) ↦
-    by omega
-    ⟩ : Fin T.length);
-    let a3 : E := T.edge r3;
-    let q : E := N.closingEdge; G.ends a3 = s(y3, y4) → G.ends q = s(y4, y0) → AdjacentEdges G a3
-        q := by
-  classical
-  intro V E _ _ _ G k e0 phi T N hNheight y0 y3 y4 r3 a3 q ha3ends hqends
-  refine ⟨y4, ?_, ?_⟩ <;> unfold Incident
-  · rw [ha3ends]
-    simp [Sym2.mem_iff]
-  · rw [hqends]
-    simp [Sym2.mem_iff]
 
 private theorem helper_hgamma_beta_243.{u_1, u_2} :
     open scoped Classical in
@@ -540,12 +394,9 @@ private theorem helper_hv12ne_270.{u_1, u_2} :
   classical
   intro V E _ _ _ G k e0 phi T N hNheight gamma f1 f2 v1 v2 hf1color hf2color y1 y4 hproper
       hf1ends' hf2ends' hf12ne h
-  have hadj : AdjacentEdges G f1 f2 := by
-    refine ⟨v1, ?_, ?_⟩ <;> unfold Incident
-    · rw [hf1ends']
-      simp [Sym2.mem_iff]
-    · rw [hf2ends', ← h]
-      simp [Sym2.mem_iff]
+  have hadj : AdjacentEdges G f1 f2 :=
+    AdjacentEdges.of_endpoint_pairs hf1ends'
+      (by simpa only [← h] using hf2ends'.trans Sym2.eq_swap)
   exact (hproper hf12ne hadj hf1color) hf2color
 
 private theorem helper_hK8sub_343.{u_1, u_2} :
@@ -2143,8 +1994,7 @@ theorem ScheideHeightFiveOutsideLinks {V E : Type*}
   have edge_color_of_closing_support (f : E)
       (hf : Sum.inr f ∈ N.closingPath.support) :
       phi f = some N.alpha ∨ phi f = some N.beta := by
-    exact @helper_edge_color_of_closing_support_156 (@V) (@E) inferInstance inferInstance
-        inferInstance (@G) (@k) (@e0) (@phi) (@T) (@N) (@f) (@hf)
+    exact TwoColorIncidenceGraph.edge_colors_of_mem_walk_support N.closingPath hf
   have ha1support : Sum.inr a1 ∈ N.closingPath.support := by
     apply (N.closingPath_edges a1).2
     exact Or.inr ⟨r1, by simp [r1], by simp [r1, hNheight], rfl⟩
@@ -2161,8 +2011,7 @@ theorem ScheideHeightFiveOutsideLinks {V E : Type*}
         (@e0) (@phi) (@T) (@N) (@hNheight) (@ha1ends) (@missing_excludes)
         (@edge_color_of_closing_support) (@ha1support)
   have ha1a2 : AdjacentEdges G a1 a2 := by
-    exact @helper_ha1a2_200 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-        (@phi) (@T) (@N) (@hNheight) (@ha1ends) (@ha2ends)
+    exact AdjacentEdges.of_endpoint_pairs ha1ends ha2ends
   have ha12ne : a1 ≠ a2 := by
     intro h
     exact (show r1 ≠ r2 by simp [r1, r2]) (T.edge_injective (by simpa [a1, a2] using h))
@@ -2171,8 +2020,7 @@ theorem ScheideHeightFiveOutsideLinks {V E : Type*}
     · exact False.elim ((hproper ha12ne ha1a2 ha1color) h)
     · exact h
   have ha2a3 : AdjacentEdges G a2 a3 := by
-    exact @helper_ha2a3_213 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-        (@phi) (@T) (@N) (@hNheight) (@ha2ends) (@ha3ends)
+    exact AdjacentEdges.of_endpoint_pairs ha2ends ha3ends
   have ha23ne : a2 ≠ a3 := by
     intro h
     exact (show r2 ≠ r3 by simp [r2, r3]) (T.edge_injective (by simpa [a2, a3] using h))
@@ -2181,8 +2029,7 @@ theorem ScheideHeightFiveOutsideLinks {V E : Type*}
     · exact h
     · exact False.elim ((hproper ha23ne ha2a3 ha2color) h)
   have ha3q : AdjacentEdges G a3 q := by
-    exact @helper_ha3q_226 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k) (@e0)
-        (@phi) (@T) (@N) (@hNheight) (@ha3ends) (@hqends)
+    exact AdjacentEdges.of_endpoint_pairs ha3ends hqends
   have ha3qne : a3 ≠ q := by
     exact @SharedFacts.ScheideHeightFiveGammaEdges.ha3qne (@V) (@E) inferInstance
         inferInstance inferInstance (@G) (@k) (@e0)

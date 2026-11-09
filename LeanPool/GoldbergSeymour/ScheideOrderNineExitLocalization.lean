@@ -5,6 +5,7 @@ Authors: Wesley Pegden
 -/
 module
 
+public import LeanPool.GoldbergSeymour.TwoColorComponent
 public import LeanPool.GoldbergSeymour.BalancedGlobalMaximumTriple
 public import LeanPool.GoldbergSeymour.ScheideExitNoFree
 public import LeanPool.GoldbergSeymour.ScheideExitVertices
@@ -79,26 +80,7 @@ theorem ScheideOrderNineExitLocalization {V E : Type*}
   have edge_color_of_closing_support (f : E)
       (hf : Sum.inr f ∈ N.closingPath.support) :
       phi f = some N.alpha ∨ phi f = some N.beta := by
-    obtain ⟨i, hi, hile⟩ :=
-      SimpleGraph.Walk.mem_support_iff_exists_getVert.mp hf
-    have hilt : i < N.closingPath.length := by
-      by_contra hn
-      have hil : N.closingPath.length ≤ i := by omega
-      have hend := N.closingPath.getVert_of_length_le (i := i) hil
-      rw [hi] at hend
-      simp at hend
-    have hadj := N.closingPath.adj_getVert_succ hilt
-    rw [hi] at hadj
-    cases hz : N.closingPath.getVert (i + 1) with
-    | inl v =>
-        rw [hz] at hadj
-        have hdata : Incident G v f ∧
-            (phi f = some N.alpha ∨ phi f = some N.beta) := by
-          simpa [TwoColorIncidenceGraph] using hadj
-        exact hdata.2
-    | inr e =>
-        rw [hz] at hadj
-        simp [TwoColorIncidenceGraph] at hadj
+    exact TwoColorIncidenceGraph.edge_colors_of_mem_walk_support N.closingPath hf
   have hnormalColor : ∀ j : Fin T.length, 1 ≤ j.val → j.val < 4 →
       phi (T.edge j) = some N.alpha ∨ phi (T.edge j) = some N.beta := by
     intro j hjpos hjlt
