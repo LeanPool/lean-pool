@@ -150,6 +150,8 @@ The whole-library checks (`lake exe runLinter LeanPool`, `lake exe lint-style Le
 
 Warnings are not allowed. `lakefile.toml` sets `warningAsError = true`, so any warning (an unused variable, a deprecated lemma, a linter hit) fails `lake build` on your machine just as it does in CI. Fix the code; suppressing the warning is not allowed either.
 
+Every file has a build-time budget. Any file you add or modify must build in under 600 seconds on CI, and CI stops any single Lean process after 60 minutes. Split slow files or make their proofs cheaper; the advisory `/profile` report shows where the time goes.
+
 **Python.** From `python/`: `uv run ruff check`, `uv run ruff format`, and `uv run --group test pytest`.
 
 ## Coding guidelines

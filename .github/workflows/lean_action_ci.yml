@@ -36,6 +36,7 @@ on:
       - 'lake-manifest.json'
       - 'LeanPool/projects/**'
       - 'LeanPool/projects.yml'
+      - 'python/lean_pool/build_time_limits.py'
       - 'python/lean_pool/quality.py'
       - 'python/lean_pool/registry.py'
       - 'python/lean_pool/indexes.py'
@@ -380,12 +381,27 @@ jobs:
 
       - name: Build project
         id: compilation
+        env:
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          time_base=""
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            time_base="$BUILD_TIME_BASE"
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
+          fi
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
+          fi
+          if [ -n "$time_base" ]; then
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log lean-build.log --base "$time_base"
           fi
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
@@ -596,6 +612,7 @@ jobs:
       - name: Build this shard's projects
         env:
           PROJECTS: ${{ matrix.projects }}
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
           touch "$RUNNER_TEMP/build-stamp"
@@ -608,11 +625,27 @@ jobs:
               | tr '\n' ' ')
             modules="$modules $project_modules"
           done
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          time_base=""
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            time_base="$BUILD_TIME_BASE"
+            # shellcheck disable=SC2086 # modules is a space-separated list on purpose
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare \
+              --base "$time_base" --modules $modules
+          fi
           # shellcheck disable=SC2086 # modules is a space-separated list on purpose
-          ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
           if grep -nE '(^|: )warning:' shard-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
+          fi
+          if [ -n "$time_base" ]; then
+            # shellcheck disable=SC2086 # modules is a space-separated list on purpose
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log shard-build.log --base "$time_base" --modules $modules
           fi
 
       # Ship only what this build produced; unchanged (cache-replayed)
@@ -771,12 +804,33 @@ jobs:
 
       - name: Build project
         id: compilation
+        env:
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          # This run's shards already compiled and timed these projects'
+          # changed files, so assembly neither rebuilds nor re-times them.
+          SHARD_PROJECTS: ${{ join(fromJSON(needs.plan.outputs.matrix).include.*.projects, ' ') }}
         run: |
           set -euo pipefail
-          ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          time_base=""
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            time_base="$BUILD_TIME_BASE"
+            # shellcheck disable=SC2086 # SHARD_PROJECTS is a space-separated list on purpose
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare \
+              --base "$time_base" --exclude-projects $SHARD_PROJECTS
+          fi
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
+          fi
+          if [ -n "$time_base" ]; then
+            # shellcheck disable=SC2086 # SHARD_PROJECTS is a space-separated list on purpose
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log lean-build.log --base "$time_base" --exclude-projects $SHARD_PROJECTS
           fi
 
       # Main publishes the shared full build. A minimal-verifier PR publishes
@@ -1019,12 +1073,27 @@ jobs:
         run: PYTHONPATH=python uv run --project python --locked python -m lean_pool.rebase_fastpath check-index
 
       - name: Build combined Lean root
+        env:
+          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
         run: |
           set -euo pipefail
-          ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          # Always rebuild this job's changed files after every cache/artifact
+          # restore. A same-policy cache need not have timed them while changed.
+          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          time_base=""
+          if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
+             && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
+            time_base="$BUILD_TIME_BASE"
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
+          fi
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
+          fi
+          if [ -n "$time_base" ]; then
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
+              --log lean-build.log --base "$time_base"
           fi
 
       - name: Install validation dependencies

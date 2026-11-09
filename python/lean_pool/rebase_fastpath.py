@@ -31,7 +31,14 @@ ARCHIVE = f"{ARTIFACT}.tar.gz"
 MANIFEST = "rebase-build-manifest.json"
 REGISTRY = "LeanPool/projects.yml"
 INDEX = "LeanPool.lean"
-PINNED_INPUTS = ("lean-toolchain", "lake-manifest.json", "lakefile.toml")
+# Reused builds must match these files. The build-time gate is one of them, so
+# output compiled before the gate (or under other limits) is never reused unchecked.
+PINNED_INPUTS = (
+    "lean-toolchain",
+    "lake-manifest.json",
+    "lakefile.toml",
+    "python/lean_pool/build_time_limits.py",
+)
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 PROJECT = re.compile(r"[A-Za-z][A-Za-z0-9_]*\Z")
 CARD = re.compile(r"^  - slug: ([A-Za-z0-9_-]+)[ \t]*$", re.MULTILINE)
