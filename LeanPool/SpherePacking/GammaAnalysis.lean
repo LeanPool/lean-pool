@@ -2927,19 +2927,15 @@ private theorem saddle_cubic_translation_norm_le
   let H : ℝ := (1 + |u|) ^ 2
   let S : ℝ := |T| + |T| ^ 3
   have hH : 1 ≤ H := by
-    try dsimp [H]
-    linarith only [abs_nonneg u, sq_nonneg |u|]
-  have hS : 0 ≤ S := by
-    try dsimp [S]
-    positivity
-  have hT : |T| ≤ S := by
-    try dsimp [S]
-    linear_combination (pow_nonneg (abs_nonneg T) 3)
+    simpa only [one_pow] using
+      pow_le_pow_left₀ zero_le_one (le_add_of_nonneg_right (abs_nonneg u)) 2
+  have hHnonnegative : 0 ≤ H := sq_nonneg _
+  have hthree : 0 ≤ 3 * H := mul_nonneg (by norm_num) hHnonnegative
+  have hS : 0 ≤ S := add_nonneg (abs_nonneg T) (pow_nonneg (abs_nonneg T) 3)
+  have hT : |T| ≤ S := le_add_of_nonneg_right (pow_nonneg (abs_nonneg T) 3)
   have hT2 : |T| ^ 2 ≤ S := by
     exact saddle_abs_sq_le_add_cube T
-  have hT3 : |T| ^ 3 ≤ S := by
-    try dsimp [S]
-    linear_combination (abs_nonneg T)
+  have hT3 : |T| ^ 3 ≤ S := le_add_of_nonneg_left (abs_nonneg T)
   have hfirst :
       ‖(T : ℂ) * A‖ ≤ |T| * (3 * H) := by
     rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
@@ -2954,14 +2950,15 @@ private theorem saddle_cubic_translation_norm_le
       ‖C * (T : ℂ) ^ 3‖ ≤ |T| ^ 3 := by
     rw [norm_mul, norm_pow, Complex.norm_real,
       Real.norm_eq_abs]
-    linear_combination (mul_le_mul_of_nonneg_right hC (pow_nonneg (abs_nonneg T) 3))
+    exact (mul_le_mul_of_nonneg_right hC (pow_nonneg (abs_nonneg T) 3)).trans_eq
+      (one_mul _)
   have hfirst' : |T| * (3 * H) ≤ 3 * H * S := by
-    linear_combination (mul_le_mul_of_nonneg_left hT (show 0 ≤ 3 * H by positivity))
+    exact (mul_le_mul_of_nonneg_right hT hthree).trans_eq (mul_comm _ _)
   have hsecond' : |T| ^ 2 * (3 * H) ≤ 3 * H * S := by
-    linear_combination (mul_le_mul_of_nonneg_left hT2 (show 0 ≤ 3 * H by positivity))
+    exact (mul_le_mul_of_nonneg_right hT2 hthree).trans_eq (mul_comm _ _)
   have hthird' : |T| ^ 3 ≤ H * S := by
     have hraise : S ≤ H * S := by
-      linear_combination (mul_nonneg (sub_nonneg.mpr hH) hS)
+      simpa only [one_mul] using mul_le_mul_of_nonneg_right hH hS
     exact hT3.trans hraise
   calc
     ‖(T : ℂ) * A + (T : ℂ) ^ 2 * B +
@@ -2976,11 +2973,13 @@ private theorem saddle_cubic_translation_norm_le
     _ ≤ (|T| * (3 * H) + |T| ^ 2 * (3 * H)) +
         |T| ^ 3 := by
       exact add_le_add (add_le_add hfirst hsecond) hthird
-    _ ≤ 9 * H * S := by
-      linarith only [mul_nonneg (show 0 ≤ H by exact pow_two_nonneg (1 + |u|)) hS,
-        hT, hfirst', hsecond', hthird']
+    _ ≤ (3 * H * S + 3 * H * S) + H * S :=
+      add_le_add (add_le_add hfirst' hsecond') hthird'
+    _ = 7 * (H * S) := by ring
+    _ ≤ 9 * (H * S) :=
+      mul_le_mul_of_nonneg_right (by norm_num) (mul_nonneg hHnonnegative hS)
     _ = 9 * (1 + |u|) ^ 2 * (|T| + |T| ^ 3) := by
-      rfl
+      ring
 
 private theorem plusPolynomial_translation_norm_le
     (ε u T : ℝ) :
@@ -3804,7 +3803,7 @@ private theorem upperPositiveShellVariance_bounds
     try dsimp [B]
     positivity
   have hQ : 0 < shellWeight ε := shellWeight_pos ε
-  have horder : B ≤ B + 1 := by linarith only []
+  have horder : B ≤ B + 1 := le_add_of_nonneg_right zero_le_one
   have hcont : Continuous (fun a : ℝ =>
       positiveShellDensity ε a * a ^ 2 *
         Real.cosh ((1 + δ) * a)) := by
@@ -5166,8 +5165,8 @@ private theorem realHyperbolicShellPhase_hasDerivAt
     rw [hshortfun, hshortderiv]
     exact realHyperbolicShellInterval_hasDerivAt
       w hw horder u
-  have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 := by
-    linarith only []
+  have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 :=
+    le_add_of_nonneg_right zero_le_one
   have hpositive := realHyperbolicShellInterval_hasDerivAt
     (positiveShellDensity ε)
     (positiveShellDensity_continuous ε) hremote u
@@ -6689,7 +6688,7 @@ private theorem positiveShellDamping_nonneg
   unfold positiveShellDamping
   apply mul_nonneg hℓ
   apply intervalIntegral.integral_nonneg
-    (show (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 by linarith only [])
+    (le_add_of_nonneg_right zero_le_one)
   intro a ha
   unfold positiveShellDensity
   exact mul_nonneg

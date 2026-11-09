@@ -2038,9 +2038,9 @@ private theorem shellOscillation_eq_sinc (B T : ℝ) :
           2 * Real.sin (T / 2) * Real.cos ((B + 1 / 2) * T) := by
       rw [Real.sin_sub_sin]
       congr 2 <;> congr 1 <;> ring
-    field_simp
-    ring_nf at hsin ⊢
-    linear_combination (-hsin)
+    calc
+      _ = 1 - (Real.sin ((B + 1) * T) - Real.sin (B * T)) / T := by ring
+      _ = _ := by rw [hsin]; field_simp
 
 private theorem cos_le_quartic {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
     Real.cos x ≤ 1 - x ^ 2 / 2 + x ^ 4 * (5 / 96 : ℝ) := by
@@ -2050,33 +2050,18 @@ private theorem cos_le_quartic {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
 
 private theorem sin_le_quintic {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
     Real.sin x ≤ x - x ^ 3 / 6 + x ^ 5 / 96 := by
-  have hpoly : Continuous
-      (fun t : ℝ => 1 - t ^ 2 / 2 + t ^ 4 * (5 / 96 : ℝ)) := by
-    fun_prop
-  have hmono := intervalIntegral.integral_mono_on (μ := volume) hx0
-    (Real.continuous_cos.intervalIntegrable 0 x)
-    (hpoly.intervalIntegrable 0 x)
-    (fun t ht => cos_le_quartic ht.1 (ht.2.trans hx1))
-  simp only [integral_cos, Real.sin_zero, sub_zero] at hmono
-  have hderiv (t : ℝ) :
-      HasDerivAt (fun y : ℝ => y - y ^ 3 / 6 + y ^ 5 / 96)
-        (1 - t ^ 2 / 2 + t ^ 4 * (5 / 96 : ℝ)) t := by
-    convert! ((hasDerivAt_id t).sub
-      (((hasDerivAt_id t).pow 3).div_const 6)).add
-      (((hasDerivAt_id t).pow 5).div_const 96) using 1; simp only [Nat.cast_ofNat, id,
-        Nat.add_one_sub_one, mul_one]; ring
-  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt
-    (fun t _ => hderiv t) (hpoly.intervalIntegrable 0 x)] at hmono
-  norm_num at hmono
-  exact hmono
+  have hbound := (abs_le.mp (Real.sin_bound (x := x)
+    (by rwa [abs_of_nonneg hx0]))).2
+  rw [abs_of_nonneg hx0] at hbound
+  linarith only [hbound, pow_nonneg hx0 5]
 
 private theorem sin_le_linear_sub_cubic {x : ℝ}
     (hx0 : 0 ≤ x) (hxhalf : x ≤ (1 / 2 : ℝ)) :
     Real.sin x ≤ x - (4 / 25 : ℝ) * x ^ 3 := by
-  have hx1 : x ≤ (1 : ℝ) := by linear_combination hxhalf
+  have hx1 : x ≤ (1 : ℝ) := hxhalf.trans (by norm_num)
   have hsin := sin_le_quintic hx0 hx1
   have hsq : x ^ 2 ≤ (1 / 4 : ℝ) := by
-    linarith only [mul_nonneg hx0 (sub_nonneg.mpr hxhalf), hxhalf]
+    exact (pow_le_pow_left₀ hx0 hxhalf 2).trans_eq (by norm_num)
   have hcub : 0 ≤ x ^ 3 := pow_nonneg hx0 _
   have hfifth : x ^ 5 ≤ x ^ 3 / 4 := by
     have hprod := mul_nonneg hcub (sub_nonneg.mpr hsq)
@@ -2146,13 +2131,11 @@ private theorem sinc_explicit (T : ℝ) :
     rw [← sinc_abs (T / 2)]
     simp only [abs_div, Nat.abs_ofNat]
   by_cases hsmall : |T| ≤ 1
-  · have hxhalf : |T| / 2 ≤ (1 / 2 : ℝ) := by linear_combination (hsmall / 2)
+  · have hxhalf : |T| / 2 ≤ (1 / 2 : ℝ) :=
+      div_le_div_of_nonneg_right hsmall zero_le_two
     have hgap := sinc_quadratic_gap_nonneg
       (x := |T| / 2) (by positivity) hxhalf
-    have hsq : T ^ 2 ≤ (1 : ℝ) := by
-      have habsq : |T| ^ 2 ≤ (1 : ℝ) := by
-        linear_combination (mul_nonneg (abs_nonneg T) (sub_nonneg.mpr hsmall) + hsmall)
-      simpa only [sq_abs] using! habsq
+    have hsq : T ^ 2 ≤ (1 : ℝ) := (sq_le_one_iff_abs_le_one T).mpr hsmall
     have hscaled :
         (4 / 25 : ℝ) * (|T| / 2) ^ 2 =
           (1 / 25 : ℝ) * T ^ 2 := by
@@ -2161,12 +2144,9 @@ private theorem sinc_explicit (T : ℝ) :
     rw [min_eq_left hsq, hsinc]
     rwa [← hscaled]
   · have hlarge : 1 ≤ |T| := le_of_not_ge hsmall
-    have hsq : (1 : ℝ) ≤ T ^ 2 := by
-      have habsq : (1 : ℝ) ≤ |T| ^ 2 := by
-        linarith only [sq_nonneg (|T| - 1), hsmall]
-      simpa only [sq_abs] using! habsq
+    have hsq : (1 : ℝ) ≤ T ^ 2 := (one_le_sq_iff_one_le_abs T).mpr hlarge
     have hgap := abs_sinc_le_twentyfour_twentyfive
-      (x := |T| / 2) (by linarith only [hsmall])
+      (x := |T| / 2) (div_le_div_of_nonneg_right hlarge zero_le_two)
     rw [min_eq_right hsq, hsinc]
     linear_combination hgap
 
@@ -2184,7 +2164,7 @@ private theorem shellOscillation_lower_bound (B T : ℝ) :
         abs_mul _ _
       _ ≤ |Real.sinc (T / 2)| :=
         mul_le_of_le_one_right (abs_nonneg _) hcos
-  linear_combination (sinc_explicit T + hprod)
+  exact (sinc_explicit T).trans (sub_le_sub_left hprod 1)
 
 private theorem cosh_ratio_lower {a δ : ℝ} (ha : 0 ≤ a) (hδ : 0 ≤ δ) :
     Real.exp (δ * a) / 2 ≤
@@ -2217,12 +2197,12 @@ private theorem cosh_ratio_upper {a δ : ℝ} (ha : 0 ≤ a) (hδ : 0 ≤ δ) :
     Real.cosh a * Real.cosh (δ * a) +
         Real.sinh a * Real.sinh (δ * a)
       ≤ Real.cosh a * Real.cosh (δ * a) +
-          Real.cosh a * Real.sinh (δ * a) := by gcongr
+          Real.cosh a * Real.sinh (δ * a) :=
+        add_le_add le_rfl (mul_le_mul_of_nonneg_right hs hq)
     _ = Real.cosh a *
           (Real.cosh (δ * a) + Real.sinh (δ * a)) := by (symm; apply mul_add)
     _ = Real.exp (δ * a) * Real.cosh a := by
-      rw [Real.cosh_eq (δ * a), Real.sinh_eq (δ * a)]
-      ring
+      rw [Real.cosh_add_sinh, mul_comm]
 
 private noncomputable def positiveShellDensity (ε a : ℝ) : ℝ :=
   shellWeight ε / Real.cosh a
@@ -2288,7 +2268,7 @@ private theorem positiveShellDamping_lower_bound {ε ℓ δ T : ℝ}
     exact mul_le_mul_of_nonneg_right hbase
       (sub_nonneg.mpr (Real.cos_le_one _))
   have hmono := intervalIntegral.integral_mono_on
-    (μ := volume) (show B ≤ B + 1 by linarith only [])
+    (μ := volume) (le_add_of_nonneg_right zero_le_one)
     (hleft.intervalIntegrable _ _)
     (hright.intervalIntegrable _ _) hpoint
   have hleftIntegral :
@@ -2392,11 +2372,11 @@ private theorem positiveShellRadiusContribution_bounds {ε : ℝ} (hε : 0 < ε)
   constructor
   · change 0 ≤ ∫ a in B..B + 1,
         positiveShellDensity ε a * a * Real.sinh ((1 + δ) * a)
-    exact intervalIntegral.integral_nonneg (by linarith only []) hnonneg
+    exact intervalIntegral.integral_nonneg (le_add_of_nonneg_right zero_le_one) hnonneg
   · change (∫ a in B..B + 1,
         positiveShellDensity ε a * a * Real.sinh ((1 + δ) * a)) ≤ K
     have hmono := intervalIntegral.integral_mono_on (μ := volume)
-      (show B ≤ B + 1 by linarith only [])
+      (le_add_of_nonneg_right zero_le_one)
       (hright.intervalIntegrable _ _)
       ((continuous_const : Continuous (fun _ : ℝ => K)).intervalIntegrable _ _)
       hpoint
@@ -2789,8 +2769,8 @@ private theorem mellinShellPhase_continuous {ε : ℝ}
     rw [uIcc_of_le horder] at ha
     try dsimp [w]
     rw [max_eq_left ha.1]
-  have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 := by
-    linarith only []
+  have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 :=
+    le_add_of_nonneg_right zero_le_one
   have hpositive : Continuous (fun z : ℂ =>
       ∫ a in (ε⁻¹ ^ 3)..(ε⁻¹ ^ 3 + 1),
         (positiveShellDensity ε a : ℂ) *
@@ -2842,8 +2822,8 @@ private theorem mellinShellPhase_differentiable {ε : ℝ}
           (Complex.cos ((a : ℂ) * z) - 1)) := by
     rw [hshort_eq]
     exact complexShellInterval_differentiable w hw horder
-  have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 := by
-    linarith only []
+  have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 :=
+    le_add_of_nonneg_right zero_le_one
   have hpositive : Differentiable ℂ (fun z : ℂ =>
       ∫ a in (ε⁻¹ ^ 3)..(ε⁻¹ ^ 3 + 1),
         (positiveShellDensity ε a : ℂ) *

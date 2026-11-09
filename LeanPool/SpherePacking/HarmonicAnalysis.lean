@@ -1774,7 +1774,7 @@ private theorem upperPositiveShellVariance_firstBranch_le
   have hB : 0 ≤ B := by
     try dsimp [B]
     positivity
-  have horder : B ≤ B + 1 := by linarith only []
+  have horder : B ≤ B + 1 := le_add_of_nonneg_right zero_le_one
   have huabs : |u| ≤ 1 + ε / 2 := by
     apply (abs_le).mpr
     constructor <;> linarith
@@ -2575,8 +2575,7 @@ private theorem eventually_saddleSource_firstBranch_uniform_tail :
       ∀ a ∈ Icc (ε ^ 3) (10 * Real.log (1 / ε)),
         0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
-    have h := hmargin a ha
-    linear_combination hεsmall + hε + h
+    exact (by norm_num : (0 : ℝ) ≤ 1 / 2).trans (hmargin a ha)
   have hvariance :=
     upperFirstBranch_saddleSourceGaussianVariance_upper_bound
       hε hℓ hulower huupper horder hmargin' hscale
@@ -2748,7 +2747,7 @@ private theorem saddleSourcePositiveShellThirdMoment_nonneg
   have hB : 0 ≤ (ε⁻¹ ^ 3) := by
     positivity
   unfold upperPositiveShellThirdMoment
-  apply intervalIntegral.integral_nonneg (by linarith only [])
+  apply intervalIntegral.integral_nonneg (le_add_of_nonneg_right zero_le_one)
   intro a ha
   have ha : 0 ≤ a := hB.trans ha.1
   have hdensity : 0 ≤ positiveShellDensity ε a := by
@@ -2769,7 +2768,7 @@ private theorem upperPositiveShellThirdMoment_firstBranch_le
   have hB : 0 ≤ B := by
     try dsimp [B]
     positivity
-  have horder : B ≤ B + 1 := by linarith only []
+  have horder : B ≤ B + 1 := le_add_of_nonneg_right zero_le_one
   have huabs : |u| ≤ 1 + ε / 2 := by
     apply (abs_le).mpr
     constructor <;> linarith
@@ -3678,8 +3677,7 @@ private theorem eventually_saddleSourceFirstBranch_cubic_window :
   have hmargin' : ∀ a ∈ Icc (ε ^ 3)
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
-    have h := hmargin a ha
-    linear_combination h
+    exact (by norm_num : (0 : ℝ) ≤ 1 / 2).trans (hmargin a ha)
   intro κ hκ
   let A : ℝ := saddleSourceFirstBranchThirdMomentCoefficient ε /
     (12 * ε * Real.sqrt (2 * ε))
@@ -3761,8 +3759,7 @@ private theorem eventually_saddleSourceFirstBranch_central_radius_lt :
   have hmargin' : ∀ a ∈ Icc (ε ^ 3)
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
-    have h := hmargin a ha
-    linear_combination h
+    exact (by norm_num : (0 : ℝ) ≤ 1 / 2).trans (hmargin a ha)
   intro κ hκ
   let A : ℝ := (2 + ε / 2) / Real.sqrt (2 * ε)
   have htendsto :
@@ -3860,8 +3857,7 @@ private theorem eventually_saddleSourceFirstBranch_centralGaussianErrors :
   have hmargin' : ∀ a ∈ Icc (ε ^ 3)
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
-    have h := hmargin a ha
-    linear_combination h
+    exact (by norm_num : (0 : ℝ) ≤ 1 / 2).trans (hmargin a ha)
   intro κ hκ
   obtain ⟨q, hq, hqone, hfactor⟩ :=
     exists_saddleSource_central_error_tolerance hκ
@@ -3994,8 +3990,7 @@ private theorem eventually_saddleSourceSecondBranch_centralGaussianErrors :
   have hmargin' : ∀ a ∈ Icc (ε ^ 3)
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
-    have h := hmargin a ha
-    linear_combination h
+    exact (by norm_num : (0 : ℝ) ≤ 1 / 2).trans (hmargin a ha)
   intro κ hκ
   obtain ⟨q, hq, hqone, hfactor⟩ :=
     exists_saddleSource_central_error_tolerance hκ
@@ -4102,7 +4097,7 @@ private theorem upperPositiveShellDamping_local_variance_lower
     try dsimp [B]
     positivity
   have hB1 : 0 < B + 1 := by linear_combination hB
-  have horder : B ≤ B + 1 := by linarith only []
+  have horder : B ≤ B + 1 := le_add_of_nonneg_right zero_le_one
   have hwindow : (B + 1) * |T| ≤ 1 / 2 := by
     calc
       (B + 1) * |T| ≤
@@ -6446,8 +6441,7 @@ private theorem eventually_saddleSource_firstBranch_uniform_gaussian_tail :
       ∀ a ∈ Icc (ε ^ 3) (10 * Real.log (1 / ε)),
         0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
-    have h := hmargin a ha
-    linear_combination hεsmall + hε + h
+    exact (by norm_num : (0 : ℝ) ≤ 1 / 2).trans (hmargin a ha)
   have hvar :=
     upperFirstBranch_saddleSourceGaussianVariance_scaled_lower_bound
       hε hεsmall hℓ hulower huupper horder hmargin'
@@ -6614,8 +6608,7 @@ private theorem eventually_saddleSourceFirstBranch_sourceL1Tails :
   have hmargin' : ∀ a ∈ Icc (ε ^ 3)
       (10 * Real.log (1 / ε)), 0 ≤ (1 - 10 * ε * (1 + a)) := by
     intro a ha
-    have h := hmargin a ha
-    linear_combination hεsmall + hε + h
+    exact (by norm_num : (0 : ℝ) ≤ 1 / 2).trans (hmargin a ha)
   obtain ⟨Cp, hCp, hplus⟩ :=
     exists_saddleSourceCenteredPlusIntegrand_weighted_tail_integral_bound
       hε horder
@@ -7609,8 +7602,8 @@ private theorem saddleSourceShellDerivative_hasDerivAt
       rw [max_eq_left ha.1]
       congr 2
       ring
-  have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 := by
-    linarith only []
+  have hremote : (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 :=
+    le_add_of_nonneg_right zero_le_one
   have hpositive :
       HasDerivAt
         (fun v : ℝ =>

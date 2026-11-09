@@ -5894,7 +5894,7 @@ private theorem saddleSourcePositiveShellVariance_nonneg
     0 ≤ upperPositiveShellVariance ε δ := by
   unfold upperPositiveShellVariance
   apply intervalIntegral.integral_nonneg
-    (show (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 by linarith only [])
+    (le_add_of_nonneg_right zero_le_one)
   intro a ha
   unfold positiveShellDensity
   exact mul_nonneg
@@ -6647,7 +6647,7 @@ private theorem saddleSourcePositiveShellQuadraticRemainder_norm_le
   have hbound :=
     saddleSourceWeightedCosineQuadraticRemainder_norm_le
       (positiveShellDensity ε)
-      (show (ε⁻¹ ^ 3) ≤ (ε⁻¹ ^ 3) + 1 by linarith only [])
+      (le_add_of_nonneg_right zero_le_one)
       hB
       (positiveShellDensity_continuous ε).continuousOn
       (fun a ha => by

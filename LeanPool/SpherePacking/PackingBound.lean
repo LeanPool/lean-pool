@@ -1554,17 +1554,10 @@ private theorem PeriodicSpherePacking.fundamental_region_admits_norm_bound :
 private theorem PeriodicSpherePacking.basis_region_translates_cover_uniquely :
    ∀ x, ∃! g : S.lattice, g +ᵥ x ∈ fundamentalDomain (b.ofZLatticeBasis ℝ _) := by
   intro x
-  obtain ⟨g, hg, h_unique⟩ :=
-    exist_unique_vadd_mem_fundamentalDomain (b.ofZLatticeBasis ℝ _) x
-  have hg_lattice : (g : EuclideanSpace ℝ (Fin d)) ∈ S.lattice :=
-    (S.mem_integral_basis_span_iff b g).mp g.property
-  refine ⟨⟨g, hg_lattice⟩, hg, ?_⟩
-  rintro ⟨h, hh⟩ h_mem
-  apply Subtype.ext
-  exact congrArg
-    (fun z : Submodule.span ℤ (Set.range (b.ofZLatticeBasis ℝ _)) =>
-      (z : EuclideanSpace ℝ (Fin d)))
-    (h_unique ⟨h, (S.mem_integral_basis_span_iff b h).mpr hh⟩ h_mem)
+  exact (congrArg (fun lattice : Submodule ℤ (EuclideanSpace ℝ (Fin d)) =>
+    ∃! g : lattice, g +ᵥ x ∈ fundamentalDomain (b.ofZLatticeBasis ℝ _))
+      (b.ofZLatticeBasis_span ℝ)).mp
+    (exist_unique_vadd_mem_fundamentalDomain (b.ofZLatticeBasis ℝ _) x)
 
 end Fundamental_Domains_in_terms_of_Basis
 
@@ -1584,32 +1577,30 @@ private noncomputable def PeriodicSpherePacking.canonicalPackingLatticeBasis (S 
   (ENat.toENNReal (S.centerOrbitCardinality : ENat)) *
   volume (ball (0 : EuclideanSpace ℝ (Fin d)) (S.separation / 2)) /
   Real.toNNReal (ZLattice.covolume S.lattice) := by
-  obtain ⟨L, hL⟩ := S.fundamental_region_admits_norm_bound S.canonicalPackingLatticeBasis
+  let b : Basis (Fin d) ℤ S.lattice := S.canonicalPackingLatticeBasis
+  obtain ⟨L, hL⟩ := S.fundamental_region_admits_norm_bound b
   rw [S.density_eq_orbitCard_mul_ballVolume_div_domainVolume
-    S.canonicalPackingLatticeBasis hL hd]
-  have : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp hd
+    b hL hd]
   have hfinite :
-      volume (fundamentalDomain (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _)) ≠ ⊤ :=
+      volume (fundamentalDomain (b.ofZLatticeBasis ℝ _)) ≠ ⊤ :=
     (Bornology.IsBounded.measure_lt_top
-      (fundamentalDomain_isBounded (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _))).ne
+      (fundamentalDomain_isBounded (b.ofZLatticeBasis ℝ _))).ne
   have hfund :
       IsAddFundamentalDomain S.lattice
-        (fundamentalDomain (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _)) :=
-    lattice_region_is_additive_fundamental_domain S _
-      (S.basis_region_translates_cover_uniquely S.canonicalPackingLatticeBasis)
-      (fundamentalDomain_measurableSet _)
+        (fundamentalDomain (b.ofZLatticeBasis ℝ _)) :=
+    ZLattice.isAddFundamentalDomain b volume
   rw [ZLattice.covolume_eq_measure_fundamentalDomain S.lattice volume hfund]
   have hdenom :
       (↑(Real.toNNReal
         (volume.real (fundamentalDomain
-          (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _)))) : ENNReal) =
-        volume (fundamentalDomain (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _)) := by
+          (b.ofZLatticeBasis ℝ _)))) : ENNReal) =
+        volume (fundamentalDomain (b.ofZLatticeBasis ℝ _)) := by
     change ENNReal.ofReal
       (volume (fundamentalDomain
-        (S.canonicalPackingLatticeBasis.ofZLatticeBasis ℝ _))).toReal = _
+        (b.ofZLatticeBasis ℝ _))).toReal = _
     exact ENNReal.ofReal_toReal hfinite
   rw [hdenom]
-  norm_num
+  simp only [ENat.toENNReal_coe]
 
 end Periodic_Density_Formula
 
@@ -1619,19 +1610,12 @@ private theorem PeriodicSpherePacking.packing_density_zero_of_empty_centers (S :
   PeriodicSpherePacking d)
     (hd : 0 < d) [instEmpty : IsEmpty S.centers] : S.upperPackingDensity = 0 := by
   rw [S.density_eq_numReps_mul_volume_ball_div_covolume hd]
-  let b := S.canonicalPackingLatticeBasis
-  let D := fundamentalDomain (Basis.ofZLatticeBasis ℝ S.lattice b)
-  have hD_isBounded : IsBounded D :=
-    fundamentalDomain_isBounded (Basis.ofZLatticeBasis ℝ S.lattice b)
-  have hD_unique_covers : ∀ x, ∃! g : S.lattice, g +ᵥ x ∈ D :=
-    S.basis_region_translates_cover_uniquely b
-  rw [← S.card_centers_in_fundamental_region D hD_isBounded hD_unique_covers hd]
-  simp only [Set.toFinset_card, ENat.toENNReal_coe, ENNReal.div_eq_zero_iff, mul_eq_zero,
+  have : IsEmpty (Quotient S.latticeCenterTranslationAction.orbitRel) :=
+    ⟨fun q => Quotient.inductionOn q fun x => instEmpty.false x⟩
+  simp only [ENat.toENNReal_coe, ENNReal.div_eq_zero_iff, mul_eq_zero,
     Nat.cast_eq_zero, ENNReal.coe_ne_top, or_false]
   left
-  let := @Fintype.ofFinite _ <| finite_centers_in_bounded_region S D hD_isBounded hd
-  have : IsEmpty (↥(S.centers ∩ D)) := ⟨fun x => instEmpty.false ⟨x.1, x.2.1⟩⟩
-  simp only [Fintype.card_eq_zero]
+  exact Fintype.card_eq_zero
 
 end Empty_Centers
 
